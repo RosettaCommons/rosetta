@@ -799,7 +799,7 @@ MatchConstraintFileInfoList::inverse_rotamers_against_residue(
 			tr << "Can't create inverse rotamers for mcfi " << i << " because it has more or less than 2 template res." << std::endl;
 			continue;
 		}
-		core::Size const invrot_template( target_template == 1 ? 2 : 1 );
+		//core::Size const invrot_template( target_template == 1 ? 2 : 1 );
 		if( std::find( mcfis_[i]->allowed_res_name3s( target_template ).begin(), mcfis_[i]->allowed_res_name3s( target_template ).end(), target_conf->name3() ) == mcfis_[i]->allowed_res_name3s( target_template ).end() ){
 			tr << "Can't create inverse rotamers for mcfi " << i << " because it doesn't contain target template for residue " << target_conf->name3() << "." << std::endl;
 			continue;

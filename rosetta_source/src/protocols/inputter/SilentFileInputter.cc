@@ -89,7 +89,7 @@ core::pose::PoseSP SilentFileInputter::get_nth_pose( int n ) {
 
 bool SilentFileInputter::has_nth_pose( int n ) {
 	int sum = 0;
-	for( int i = 0; i < tags_.size(); i++ ) {
+	for( core::Size i = 0; i < tags_.size(); i++ ) {
 		sum += (multiplier_ - tags_[i].first	); 
 		if (sum >= n )
 			return true;

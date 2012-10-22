@@ -43,9 +43,9 @@ namespace simple_filters {
 // @brief default constructor
 PackStatFilter::PackStatFilter():
 	Filter( "PackStat" ),
-	filtered_score_( 0.58 ),  // ideally, ~0.65 is required for good packing
 	chain_( 0 ),
-	repeats_( 1 )
+	repeats_( 1 ),
+	filtered_score_( 0.58 )  // ideally, ~0.65 is required for good packing
 {}
 
 //PackStatFilter::~PackStatFilter(){}
@@ -53,18 +53,18 @@ PackStatFilter::PackStatFilter():
 // @brief constructor with arguments
 PackStatFilter::PackStatFilter( Real const & score ):
 	Filter( "PackStat" ),
-	filtered_score_( score ),
 	chain_(0),
-	repeats_(1)
+	repeats_(1),
+	filtered_score_( score )
 {}
 
 // @brief copy constructor
 PackStatFilter::PackStatFilter( PackStatFilter const & rval ):
 	//utility::pointer::ReferenceCount(),
 	Super( rval ),
-	filtered_score_( rval.filtered_score_ ),
 	chain_(rval.chain_),
-	repeats_(rval.repeats_)
+	repeats_(rval.repeats_),
+	filtered_score_( rval.filtered_score_ )
 {}
 
 // @brief set filtered secondary structure

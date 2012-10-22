@@ -24,69 +24,69 @@ namespace utility {
 // -- argmin -- //
 
 /// @brief Returns the argument whose value is minimal according to operator<.
-/// Adheres to STL numbering (0-indexed).
+/// @details Adheres to STL numbering (0-indexed).
 template <typename T>
 int argmin(const std::vector<T>& iterable) {
-  if (iterable.size() == 0)
-    return -1;
+	if (iterable.size() == 0)
+		return -1;
 
-  int min_idx = 0;
-  for (int curr_idx = 1; curr_idx < iterable.size(); ++curr_idx) {
-    if (iterable[curr_idx] < iterable[min_idx])
-      min_idx = curr_idx;
-  }
+	int min_idx = 0;
+	for (std::size_t curr_idx = 1; curr_idx < iterable.size(); ++curr_idx) {
+		if (iterable[curr_idx] < iterable[min_idx])
+			min_idx = curr_idx;
+	}
 
-  return min_idx;
+	return min_idx;
 }
 
 /// @brief Returns the argument whose value is minimal according to operator<.
-/// Adheres to Rosetta numbering (1-indexed).
+/// @details Adheres to Rosetta numbering (1-indexed).
 template <typename T>
 int argmin(const utility::vector1<T>& iterable) {
-  if (iterable.size() == 0)
-    return 0;
+	if (iterable.size() == 0)
+		return 0;
 
-  int min_idx = 1;
-  for (int curr_idx = 2; curr_idx <= iterable.size(); ++curr_idx) {
-    if (iterable[curr_idx] < iterable[min_idx])
-      min_idx = curr_idx;
-  }
+	int min_idx = 1;
+	for (std::size_t curr_idx = 2; curr_idx <= iterable.size(); ++curr_idx) {
+		if (iterable[curr_idx] < iterable[min_idx])
+			min_idx = curr_idx;
+	}
 
-  return min_idx;
+	return min_idx;
 }
 
 // -- argmax -- //
 
 /// @brief Returns the argument whose value is maximal according to operator>.
-/// Adheres to STL numbering (0-indexed).
+/// @details Adheres to STL numbering (0-indexed).
 template <typename T>
 int argmax(const std::vector<T>& iterable) {
-  if (iterable.size() == 0)
-    return -1;
+	if (iterable.size() == 0)
+		return -1;
 
-  int max_idx = 0;
-  for (int curr_idx = 1; curr_idx < iterable.size(); ++curr_idx) {
-    if (iterable[curr_idx] > iterable[max_idx])
-      max_idx = curr_idx;
-  }
+	int max_idx = 0;
+	for (std::size_t curr_idx = 1; curr_idx < iterable.size(); ++curr_idx) {
+		if (iterable[curr_idx] > iterable[max_idx])
+			max_idx = curr_idx;
+	}
 
-  return max_idx;
+	return max_idx;
 }
 
 /// @brief Returns the argument whose value is maximal according to operator>.
-/// Adheres to Rosetta numbering (1-indexed).
+/// @details Adheres to Rosetta numbering (1-indexed).
 template <typename T>
 int argmax(const utility::vector1<T>& iterable) {
-  if (iterable.size() == 0)
-    return 0;
+	if (iterable.size() == 0)
+		return 0;
 
-  int max_idx = 1;
-  for (int curr_idx = 2; curr_idx <= iterable.size(); ++curr_idx) {
-    if (iterable[curr_idx] > iterable[max_idx])
-      max_idx = curr_idx;
-  }
+	int max_idx = 1;
+	for (std::size_t curr_idx = 2; curr_idx <= iterable.size(); ++curr_idx) {
+		if (iterable[curr_idx] > iterable[max_idx])
+			max_idx = curr_idx;
+	}
 
-  return max_idx;
+	return max_idx;
 }
 
 }  // namespace utility

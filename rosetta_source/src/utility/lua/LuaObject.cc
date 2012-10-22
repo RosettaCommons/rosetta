@@ -48,7 +48,7 @@ LuaIterator LuaObject::begin() const {
 #endif
 }
 
-LuaObject LuaObject::operator[] ( const std::string & str ) const {
+LuaObject LuaObject::operator[] ( const std::string & /*str*/ ) const {
 #ifdef USELUA
 		if( luabind::type( object_ ) == LUA_TTABLE ) {
 				return LuaObject( luabind::object(object_[ str ]) );
@@ -80,7 +80,7 @@ int LuaObject::size() const {
 #endif
 }
 
-LuaObject LuaObject::operator[] ( const char * str ) const {
+LuaObject LuaObject::operator[] ( const char * /*str*/ ) const {
 #ifdef USELUA
 		if( luabind::type( object_ ) == LUA_TTABLE ) {
 				return LuaObject( luabind::object(object_[ str ]) );
@@ -93,7 +93,7 @@ LuaObject LuaObject::operator[] ( const char * str ) const {
 #endif
 }
 
-LuaObject LuaObject::operator[] ( int i ) const {
+LuaObject LuaObject::operator[] ( int /*i*/ ) const {
 #ifdef USELUA
 		if( luabind::type( object_ ) == LUA_TTABLE ) {
 				return LuaObject( luabind::object(object_[ i ]) );

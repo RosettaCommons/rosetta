@@ -40,139 +40,141 @@ class MPIHPool_RMSD : public Pool_RMSD {
 
 public:
 
-  typedef utility::vector1< core::Size > Address;
+	typedef utility::vector1< core::Size > Address;
 
-  MPIHPool_RMSD( std::string const& silent_file, core::Size levels ); //
+	MPIHPool_RMSD( std::string const& silent_file, core::Size levels ); //
 
-  //~MPIHPool_RMSD();
+	//~MPIHPool_RMSD();
+
+	using Pool_RMSD::evaluate_and_add;
+
+	core::Size evaluate_and_add(
+			core::pose::Pose const& pose,
+			std::string& best_decoy,
+			core::Real& best_rmsd);
 
 
-  core::Size evaluate_and_add(
-        core::pose::Pose const& pose,
-        std::string& best_decoy,
-        core::Real& best_rmsd);
+	void set_discovered_out( std::string const& newout );
 
+	std::string const& get_discovered_out();
 
-  void set_discovered_out( std::string const& newout );
+	void set_transition_threshold( core::Real threshold );
 
-  std::string const& get_discovered_out();
+	void set_nresidues( core::Size nres );
 
-  void set_transition_threshold( core::Real threshold );
+	core::Size get_nresidues();
 
-  void set_nresidues( core::Size nres );
+	void max_cache_size( core::Size max_cache );
 
-  core::Size get_nresidues();
+	void finalize(); //need to put in
 
-  void max_cache_size( core::Size max_cache );
+	bool is_in_neighborhood( Address & q_address, Address & ref_address );
 
-  void finalize(); //need to put in
+	core::Real resolved_level_best_rmsd( Address& addr, utility::vector1< core::Real > & rmsd );
 
-  bool is_in_neighborhood( Address & q_address, Address & ref_address );
-
-  core::Real resolved_level_best_rmsd( Address& addr, utility::vector1< core::Real > & rmsd );
-
-  bool is_new_structure( Address & address,
+	bool is_new_structure( Address & address,
 			 utility::vector1< core::Real > & radii,
 			 utility::vector1< core::Real > & rmsds );
 
-  bool is_new_structure( Address & address,
+	bool is_new_structure( Address & address,
 			 utility::vector1< core::Real > & radii,
 			 core::Real & rmsds );
 
-  core::Size find_address( Address & query_addr, utility::vector1< Address > & address_database );
+	core::Size find_address( Address & query_addr, utility::vector1< Address > & address_database );
 
-  void
-  print_address( Address & addr );
+	void
+	print_address( Address & addr );
+
 private:
 
-  void send_receive_and_write_structures( bool winning_rank, core::pose::Pose const& pose );
+	void send_receive_and_write_structures( bool winning_rank, core::pose::Pose const& pose );
 
-  void write_decoys_to_hierarchy( core::io::silent::SilentFileData& sfd, core::io::silent::SilentStructOP& ss, Address& ss_addr, core::Size new_level_begins);
+	void write_decoys_to_hierarchy( core::io::silent::SilentFileData& sfd, core::io::silent::SilentStructOP& ss, Address& ss_addr, core::Size new_level_begins);
 
-  void write_headers_to_hierarchy( core::io::silent::SilentStructOP& ss );
+	void write_headers_to_hierarchy( core::io::silent::SilentStructOP& ss );
 
 
-  void
-  buf_to_address( Address & addr, int* addr_buf, core::Size index );
+	void
+	buf_to_address( Address & addr, int* addr_buf, core::Size index );
 
-  void
-  address_to_buf( Address & addr, int* addr_buf, core::Size index );
+	void
+	address_to_buf( Address & addr, int* addr_buf, core::Size index );
 
-  bool
-  is_my_structure();
+	bool
+	is_my_structure();
 
-  core::Size
-  any_node_finished();
+	core::Size
+	any_node_finished();
 
-  void
-  update_comm( core::Size newsize );
+	void
+	update_comm( core::Size newsize );
 
-  void
-  create_comm( int* ranks_to_include, int new_size );
+	void
+	create_comm( int* ranks_to_include, int new_size );
 
-  void
-  initialize();
+	void
+	initialize();
 
-  void
-  resolve_address_and_assign_tag( Address& new_addr, core::Size& new_level_start, std::string& new_candidate_tag );
+	void
+	resolve_address_and_assign_tag( Address& new_addr, core::Size& new_level_start, std::string& new_candidate_tag );
 
-  void
-  receive_and_output_structures( core::io::silent::SilentFileData&, core::Size num_structures_to_write );
+	void
+	receive_and_output_structures( core::io::silent::SilentFileData&, core::Size num_structures_to_write );
 
-  void
-  assign_tag( std::string const& address_tag, core::Size assigned_id_num, std::string & newtag );
+	void
+	assign_tag( std::string const& address_tag, core::Size assigned_id_num, std::string & newtag );
 
-  void
-  assign_tag( Address& address_tag, core::Size assigned_id_num, std::string & newtag );
+	void
+	assign_tag( Address& address_tag, core::Size assigned_id_num, std::string & newtag );
 
-  //void
-  //increment_pool_size( core::Size num_to_add );
+	//void
+	//increment_pool_size( core::Size num_to_add );
 
-  bool
-  get_next_candidate(); //returns false if there are no more structures to process
+	bool
+	get_next_candidate(); //returns false if there are no more structures to process
 
-  void
-  receive_silent_struct_any_source( core::io::silent::SilentFileData&, core::io::silent::SilentStructOP & ss, Address& ss_addr, core::Size& new_level );
+	void
+	receive_silent_struct_any_source( core::io::silent::SilentFileData&, core::io::silent::SilentStructOP & ss, Address& ss_addr, core::Size& new_level );
 
-  void
-  send_silent_struct_to_rank( core::io::silent::SilentFileData&, core::io::silent::SilentStructOP & ss, Address& ss_addr, core::Size& new_level_begins );
+	void
+	send_silent_struct_to_rank( core::io::silent::SilentFileData&, core::io::silent::SilentStructOP & ss, Address& ss_addr, core::Size& new_level_begins );
 
-  void
-  send_silent_struct_to_rank( core::io::silent::SilentFileData&, core::io::silent::SilentStructOP & ss, Address& ss_addr, core::Size& new_level_begins, core::Size rank);
+	void
+	send_silent_struct_to_rank( core::io::silent::SilentFileData&, core::io::silent::SilentStructOP & ss, Address& ss_addr, core::Size& new_level_begins, core::Size rank);
 
-  void
-  prepare_send_new_coords( bool send_coords );
+	void
+	prepare_send_new_coords( bool send_coords );
 
-  void scan_output_and_setup_to_receive();
+	void scan_output_and_setup_to_receive();
 
-  void address_to_string( Address & address_buf, core::Size index, std::string & address_tag );
+	void address_to_string( Address & address_buf, core::Size index, std::string & address_tag );
 
-  void string_to_address( Address & address_buf, core::Size index, std::string & address_tag );
+	void string_to_address( Address & address_buf, core::Size index, std::string & address_tag );
 
-  protocols::canonical_sampling::mc_convergence_checks::HierarchicalLevel hlevel_;
-  core::Size pool_size_;
-  core::Size num_structures_added_;
-  core::Size npes_;
-  core::Size rank_;
-  core::Size pool_npes_;
-  core::Size pool_rank_;
-  std::string new_decoys_out_;
-  core::Size nresidues_;
-  core::Size const nlevels_; //number of levels cannot change during the simulation
-  bool tracer_visible_;
-  bool first_time_writing_;
+	protocols::canonical_sampling::mc_convergence_checks::HierarchicalLevel hlevel_;
+	core::Size pool_size_;
+	core::Size num_structures_added_;
+	core::Size npes_;
+	core::Size rank_;
+	core::Size pool_npes_;
+	core::Size pool_rank_;
+	std::string new_decoys_out_;
+	core::Size nresidues_;
+	core::Size const nlevels_; //number of levels cannot change during the simulation
+	bool tracer_visible_;
+	bool first_time_writing_;
 
-  utility::vector1< core::Real > level_radii_;
-  Address current_address_;
-  utility::vector1< core::Real > current_best_rmsds_;
-  Address best_address_;
-  std::string current_address_str_;
+	utility::vector1< core::Real > level_radii_;
+	Address current_address_;
+	utility::vector1< core::Real > current_best_rmsds_;
+	Address best_address_;
+	std::string current_address_str_;
 
-  DataBuffer buf_;
-  core::Size current_trajectory_state_;
+	DataBuffer buf_;
+	core::Size current_trajectory_state_;
 
 #ifdef USEMPI
-  static MPI_Comm MPI_COMM_POOL;
+	static MPI_Comm MPI_COMM_POOL;
 #endif
 };
 

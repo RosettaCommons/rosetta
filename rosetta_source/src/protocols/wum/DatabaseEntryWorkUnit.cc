@@ -80,7 +80,7 @@ DatabaseEntryWorkUnit::deserialize(){
     
     TR << "Total columns: " << entries.size() << endl;
     
-    for(int i=0; i<entries.size(); ++i){
+    for(Size i=0; i<entries.size(); ++i){
         if(!entries[i].empty()){
         	utility::vector1< std::string > key_values = utility::string_split(entries[i], ',');
             if(key_values.size() != 2){

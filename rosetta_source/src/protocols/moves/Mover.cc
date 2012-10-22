@@ -154,18 +154,18 @@ void Mover::apply( core::io::serialization::PipeMap & pmap ) {
 }
 
 // called right before mover is used , allowing mover to set settings based on state
-void Mover::parse_state( SerializableState const & state ) {
+void Mover::parse_state( SerializableState const & /*state*/ ) {
 	utility_exit_with_message("This Mover has not implemented parse_state()");
 }
 // state is not an argument because it doesn't exist at this point
-void Mover::parse_def( utility::lua::LuaObject const & def,
-				utility::lua::LuaObject const & score_fxns,
-				utility::lua::LuaObject const & tasks,
-				MoverCacheSP cache ) {
+void Mover::parse_def( utility::lua::LuaObject const & /*def*/,
+				utility::lua::LuaObject const & /*score_fxns*/,
+				utility::lua::LuaObject const & /*tasks*/,
+				MoverCacheSP /*cache*/ ) {
 	utility_exit_with_message("This Mover has not implemented parse_def()");
 }
 
-void Mover::save_state( SerializableState & state ) {
+void Mover::save_state( SerializableState & /*state*/ ) {
 	utility_exit_with_message("This Mover has not implemented save_state()");
 }
 

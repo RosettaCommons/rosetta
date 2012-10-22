@@ -68,7 +68,9 @@ public:
 	ConstraintEvaluator( std::string tag, std::string filename, Size viol_level = 0, core::Real threshold = 1.0, Size max_seq_sep = 0 );
 
 	//sets xxx_cst and xxx_viol columns
-  virtual void apply( core::pose::Pose& pose, std::string tag, core::io::silent::SilentStruct &pss) const;
+	virtual void apply( core::pose::Pose& pose, std::string tag, core::io::silent::SilentStruct &pss) const;
+
+	using evaluation::PoseEvaluator::apply;
 
 	//returns constraint score
 	virtual core::Real apply( core::pose::Pose& pose ) const;

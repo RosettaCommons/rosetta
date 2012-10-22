@@ -32,7 +32,7 @@ basic::resource_manager::ResourceOP
 DatabaseSessionLoader::create_resource(
 	basic::resource_manager::ResourceOptions const & options,
 	basic::resource_manager::LocatorID const &,
-	std::istream & istream
+	std::istream & /*istream*/
 ) const {
 	if ( ! dynamic_cast< DatabaseSessionOptions const * > ( &options ) ) {
 		throw utility::excn::EXCN_Msg_Exception( "DatabaseSessionLoader expected to be given a DatabaseSessionOptions object, " \

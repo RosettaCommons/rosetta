@@ -28,27 +28,29 @@ namespace moves {
 class ReplicaExchangeMC : public  MonteCarlo
 {
 public:
-    typedef MonteCarlo Parent;
-    typedef core::Size Size;
+	typedef MonteCarlo Parent;
+	typedef core::Size Size;
 
-    ReplicaExchangeMC(
-        Pose const & init_pose, // PoseCOP init_pose,
+	ReplicaExchangeMC(
+		Pose const & init_pose, // PoseCOP init_pose,
 		ScoreFunction const & scorefxn, // ScoreFunctionCOP scorefxn,
 		utility::vector1<core::Real> const &tlist,
 		core::Size nint
-     );
+	);
 
-    ReplicaExchangeMC(
+	ReplicaExchangeMC(
 		ScoreFunction const & scorefxn, // ScoreFunctionCOP scorefxn,
 		utility::vector1<core::Real> const &tlist,
 		core::Size nint
-    );
+	);
 
-    void init();
+	void init();
 
-    ~ReplicaExchangeMC();
+	~ReplicaExchangeMC();
 
-    void build_temperature_list(double *elist);
+	void build_temperature_list(double *elist);
+
+	using Parent::boltzmann;
 
     bool
     boltzmann(

@@ -46,7 +46,7 @@ luabind::iterator LuaIterator::raw() {
 }
 #endif
 
-bool LuaIterator::operator==(LuaIterator & other) {
+bool LuaIterator::operator==(LuaIterator & /*other*/) {
 #ifdef USELUA
 		return iterator_ == other.raw();
 #else
@@ -55,7 +55,7 @@ bool LuaIterator::operator==(LuaIterator & other) {
 #endif
 }
 
-bool LuaIterator::operator!=(LuaIterator & other) {
+bool LuaIterator::operator!=(LuaIterator & /*other*/) {
 #ifdef USELUA
 		return iterator_ != other.raw();
 #else

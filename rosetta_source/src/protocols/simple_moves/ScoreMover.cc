@@ -225,8 +225,8 @@ void ScoreMover::parse_my_tag(
 
 void ScoreMover::parse_def( utility::lua::LuaObject const & def,
 		utility::lua::LuaObject const & score_fxns,
-		utility::lua::LuaObject const & tasks,
-		protocols::moves::MoverCacheSP cache ){
+		utility::lua::LuaObject const & /*tasks*/,
+		protocols::moves::MoverCacheSP /*cache*/ ){
 	if( def["scorefxn"] ) {
 		score_function_ = protocols::elscripts::parse_scoredef( def["scorefxn"], score_fxns );
 	}

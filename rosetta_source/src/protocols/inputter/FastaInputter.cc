@@ -109,7 +109,7 @@ core::pose::PoseSP FastaInputter::get_nth_pose( int n ) {
 
 bool FastaInputter::has_nth_pose( int n ) {
 	int sum = 0;
-	for( int i = 0; i < file_names_.size(); i++ ) {
+	for( Size i = 0; i < file_names_.size(); i++ ) {
 		sum += (multiplier_ - file_names_[i].first	);
 		if (sum >= n )
 			return true;

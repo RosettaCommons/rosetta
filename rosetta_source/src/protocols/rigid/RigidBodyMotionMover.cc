@@ -152,7 +152,7 @@ void RigidBodyMotionMover::update_chunks() {
   chunks_.clear();
 
   unsigned start = 1;
-  for (unsigned i = 1; i <= tree_.num_cutpoint(); ++i) {
+  for (int i = 1; i <= tree_.num_cutpoint(); ++i) {
     unsigned stop = tree_.cutpoint(i);
     chunks_.add_loop(protocols::loops::Loop(start, stop));
     start = stop + 1;

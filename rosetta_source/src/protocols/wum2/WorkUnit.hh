@@ -45,46 +45,46 @@ void lregister_WorkUnit_ElScripts( lua_State * lstate );
 
 class WorkUnit {
 
-  public:
-		// boost serialize requires empty constructor
-		WorkUnit(){}
-		// mpi rank of master node, index of trajectory on that master node
-		WorkUnit( core::Size master,
-				core::Size trajectory_idx );
+public:
+	// boost serialize requires empty constructor
+	WorkUnit(){}
+	// mpi rank of master node, index of trajectory on that master node
+	WorkUnit( core::Size master,
+			core::Size trajectory_idx );
 
-    virtual ~WorkUnit (){}
+	virtual ~WorkUnit (){}
 
-    /// @brief Run the workunit
-    virtual void run() = 0;
+	/// @brief Run the workunit
+	virtual void run() = 0;
 
-    /// @brief Print WU details to the stream, single line by default
-		virtual void print( std::ostream & out, bool verbose = false ) const ;
+	/// @brief Print WU details to the stream, single line by default
+	virtual void print( std::ostream & out, bool verbose = false ) const ;
 
-    /// @brief Set the unixtime of the start of the execution of this WorkUnit
-		void set_run_start();
+	/// @brief Set the unixtime of the start of the execution of this WorkUnit
+	void set_run_start();
 
-    /// @brief Set the unixtime of the stop of the execution of this WorkUnit
-		void set_run_stop();
+	/// @brief Set the unixtime of the stop of the execution of this WorkUnit
+	void set_run_stop();
 
-    /// @brief Returns the difference between unix start and stop times
-		core::Size get_run_time();
+	/// @brief Returns the difference between unix start and stop times
+	core::Size get_run_time();
 
-		// Accessors/Mutators
-		void id( int id ) { id_ = id; }
-		int id() { return id_; }
+	// Accessors/Mutators
+	void id( int id ) { id_ = id; }
+	int id() { return id_; }
 
-		void master( int master ) { master_ = master; }
-		int master() { return master_; }
+	void master( int master ) { master_ = master; }
+	int master() { return master_; }
 
-		void trajectory_idx( int trajectory_idx ) { trajectory_idx_ = trajectory_idx; }
-		int trajectory_idx() { return trajectory_idx_; }
+	void trajectory_idx( int trajectory_idx ) { trajectory_idx_ = trajectory_idx; }
+	int trajectory_idx() { return trajectory_idx_; }
 
-		void prioritize( bool prioritize ) { prioritize_ = prioritize; }
-		bool prioritize() { return prioritize_; }
+	void prioritize( bool prioritize ) { prioritize_ = prioritize; }
+	bool prioritize() { return prioritize_; }
 
-		// links a cache with the WU so it can use it in run()
-		// cache is not seralized nor transferred with WU
-		void link_cache( protocols::moves::MoverCacheSP cache) { cache_ = cache; }
+	// links a cache with the WU so it can use it in run()
+	// cache is not seralized nor transferred with WU
+	void link_cache( protocols::moves::MoverCacheSP cache) { cache_ = cache; }
 
 private:
 #ifdef USEBOOSTSERIALIZE
@@ -126,95 +126,96 @@ protected:
 		// Cache pointer, is only valid after link_cache() is called
 		// is not serialized, is not sent with WU
 		protocols::moves::MoverCacheSP cache_;
-};
+};  // class WorkUnit
 
-/// #brief WorkUnit that sleeps for X seconds
+
+/// @brief WorkUnit that sleeps for X seconds
 class WorkUnit_Wait: public WorkUnit {
-  public:
-		// boost serialize requires empty constructor
-		WorkUnit_Wait(){}
+public:
+	// boost serialize requires empty constructor
+	WorkUnit_Wait(){}
     WorkUnit_Wait( core::Size master,
-				core::Size trajectory_idx,
-				long wait_time);
+			core::Size trajectory_idx,
+			long wait_time);
 
-		~WorkUnit_Wait(){}
+	~WorkUnit_Wait(){}
 
     void run();
 
-		void wait_time( long wait_time ) { wait_time_ = wait_time; }
-		long wait_time() { return wait_time_; }
+	void wait_time( long wait_time ) { wait_time_ = wait_time; }
+	long wait_time() { return wait_time_; }
 
 private:
 #ifdef USEBOOSTSERIALIZE
-		friend class boost::serialization::access;
+	friend class boost::serialization::access;
 
-		template<class Archive>
-		void serialize(Archive & ar, const unsigned int version) {
-				ar & boost::serialization::base_object<WorkUnit>(*this);
-				ar & wait_time_;
-		}
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version) {
+		ar & boost::serialization::base_object<WorkUnit>(*this);
+		ar & wait_time_;
+	}
 #endif
 
-		// in seconds
-		long wait_time_;
-};
+	// in seconds
+	long wait_time_;
+};  // class WorkUnit_Wait
 
 // Basic work unit that holds state for ElScripts
 class WorkUnit_ElScripts : public WorkUnit {
-  public:
-		// boost serialize requires empty constructor
-		WorkUnit_ElScripts(){}
-    WorkUnit_ElScripts( core::Size master,
-				core::Size trajectory_idx,
-				core::io::serialization::PipeMapSP p,
-				protocols::moves::SerializableStateSP state,
-				std::string name );
+public:
+	// boost serialize requires empty constructor
+	WorkUnit_ElScripts(){}
+	WorkUnit_ElScripts( core::Size master,
+			core::Size trajectory_idx,
+			core::io::serialization::PipeMapSP p,
+			protocols::moves::SerializableStateSP state,
+			std::string name );
 
-		~WorkUnit_ElScripts(){}
+	~WorkUnit_ElScripts(){}
     virtual void run();
 
-		// no copy constructor needed, shallow copy is fine for current use
+	// no copy constructor needed, shallow copy is fine for current use
 
     core::io::serialization::PipeMapWP pipemap() {
-			return core::io::serialization::PipeMapWP(pipemap_);
-		}
+		return core::io::serialization::PipeMapWP(pipemap_);
+	}
 
     protocols::moves::SerializableStateWP state() {
-			return protocols::moves::SerializableStateWP(state_);
-		}
+		return protocols::moves::SerializableStateWP(state_);
+	}
 
-		// cpp doesnt let you overload by return type boohoo
+	// cpp doesnt let you overload by return type boohoo
     protocols::moves::SerializableStateCWP const_state() {
-			return protocols::moves::SerializableStateCWP(state_);
-		}
+		return protocols::moves::SerializableStateCWP(state_);
+	}
 
-		// just renames pipes from old name to new name
-		// Undefined, commenting out to fix PyRosetta build  void rename_pipes( core::io::serialization::PipeMapSP p, std::map< std::string, std::string > new_names );
+	// just renames pipes from old name to new name
+	// Undefined, commenting out to fix PyRosetta build  void rename_pipes( core::io::serialization::PipeMapSP p, std::map< std::string, std::string > new_names );
 
-		std::string name() { return name_; }
-		void name( std::string name ) { name_ = name; }
+	std::string name() { return name_; }
+	void name( std::string name ) { name_ = name; }
 
 #ifdef USEBOOSTSERIALIZE
-		friend class boost::serialization::access;
+	friend class boost::serialization::access;
 
-		template<class Archive>
-		void serialize(Archive & ar, const unsigned int version) {
-				ar & boost::serialization::base_object<WorkUnit>(*this);
-				ar & pipemap_;
-				ar & state_;
-				ar & name_;
-		}
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version) {
+		ar & boost::serialization::base_object<WorkUnit>(*this);
+		ar & pipemap_;
+		ar & state_;
+		ar & name_;
+	}
 #endif
-	protected:
 
-		// makes sense to put name here instead of at base class, as this WU is used as the result WU
-		// it should hold the name of the WU that generated the result it is holding
-		std::string name_;
-		core::io::serialization::PipeMapSP pipemap_;
-		protocols::moves::SerializableStateSP state_;
-};
+protected:
+
+	// makes sense to put name here instead of at base class, as this WU is used as the result WU
+	// it should hold the name of the WU that generated the result it is holding
+	std::string name_;
+	core::io::serialization::PipeMapSP pipemap_;
+	protocols::moves::SerializableStateSP state_;
+};  // class WorkUnit_ElScripts
 }
 }
 
 #endif
-

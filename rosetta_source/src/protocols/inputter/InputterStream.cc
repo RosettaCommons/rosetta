@@ -70,7 +70,7 @@ void InputterStream::add_inputter( InputterSP inputter ) {
 	inputters_.push_back( inputter );
 }
 
-void InputterStream::parse_def( utility::lua::LuaObject const & def ) {
+void InputterStream::parse_def( utility::lua::LuaObject const & /*def*/ ) {
 }
 
 } // inputter

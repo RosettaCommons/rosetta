@@ -102,18 +102,18 @@ void NonlocalFrags::register_options() {
 }
 
 NonlocalFrags::NonlocalFrags() :
-	checkpointfile_( "nonlocalfrags.checkpoint" ),
 	single_chain_( false ),
 	relax_input_( false ),
 	relax_input_with_coordinate_constraints_( false ),
 	relax_frags_repeats_( 1 ),
+	checkpointfile_( "nonlocalfrags.checkpoint" ),
 	min_seq_sep_( 12 ),
 	ca_dist_squared_( 100.0 ),
 	min_contacts_per_res_( 1 ),
 	max_rmsd_after_relax_( 1.5 ),
 	max_ddg_score_( -4.0 ),
-	output_idealized_( false ),
-	output_frags_pdbs_( false )
+	output_frags_pdbs_( false ),
+	output_idealized_( false )
 {
 	initialize();
 }

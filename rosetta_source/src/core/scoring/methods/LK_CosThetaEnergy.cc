@@ -473,7 +473,7 @@ void
 LK_CosThetaEnergy::eval_atom_derivative_intra_RNA(
 	id::AtomID const & atom_id,
 	pose::Pose const & pose,
-	kinematics::DomainMap const & domain_map,
+	kinematics::DomainMap const & /*domain_map*/,
 	EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2

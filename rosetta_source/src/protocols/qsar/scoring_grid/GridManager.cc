@@ -229,7 +229,7 @@ core::Real GridManager::total_score(core::pose::Pose const & pose, core::Size co
 }
 
 
-std::map<std::string,core::Real> GridManager::atom_score(core::pose::Pose const & pose, core::conformation::Residue const & residue, core::Size atomindex )
+std::map<std::string,core::Real> GridManager::atom_score(core::pose::Pose const & /*pose*/, core::conformation::Residue const & residue, core::Size atomindex )
 {
 	std::map<std::string,core::Real> score_map;
 	std::map<std::string,GridBaseOP>::iterator map_iterator(grid_map_.begin());
@@ -325,7 +325,7 @@ void GridManager::update_grids(core::pose::Pose const & pose,  core::Vector cons
 		}
 
 		if(basic::options::option[basic::options::OptionKeys::qsar::max_grid_cache_size].user() &&
-			grid_map_cache_.size() >= basic::options::option[basic::options::OptionKeys::qsar::max_grid_cache_size]() )
+			grid_map_cache_.size() >= core::Size(basic::options::option[basic::options::OptionKeys::qsar::max_grid_cache_size]() ) )
 		{
 			GridManagerTracer << "Grid cache exceeds max_cache_size, clearing old scoring grids to save memory." <<std::endl;
 			grid_map_cache_.clear();

@@ -89,7 +89,7 @@ void HbaGrid::deserialize(utility::json_spirit::mObject data)
 }
 
 void
-HbaGrid::parse_my_tag(utility::tag::TagPtr const tag){
+HbaGrid::parse_my_tag(utility::tag::TagPtr const /*tag*/){
 
 }
 
@@ -128,7 +128,7 @@ void HbaGrid::refresh(core::pose::Pose const & pose, core::Vector const & center
 	refresh(pose,center);
 }
 
-core::Real HbaGrid::score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map)
+core::Real HbaGrid::score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP /*qsar_map*/)
 {
 	core::Real score = 0.0;
 	//GridBaseTracer << "map size is: " << qsar_map->size() <<std::endl;
@@ -156,7 +156,7 @@ core::Real HbaGrid::score(core::conformation::Residue const & residue, core::Rea
 	return score;
 }
 
-core::Real HbaGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP qsar_map)
+core::Real HbaGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP /*qsar_map*/)
 {
 	core::Real score = 0;
 	core::Vector const & atom_coord(residue.xyz(atomno));

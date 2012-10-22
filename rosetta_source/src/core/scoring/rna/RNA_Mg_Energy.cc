@@ -328,13 +328,13 @@ RNA_Mg_Energy::get_gaussian_score(
 /////////////////////////////////
 void
 RNA_Mg_Energy::eval_atom_derivative(
-	id::AtomID const & atom_id,
-	pose::Pose const & pose,
-	kinematics::DomainMap const & domain_map,
+	id::AtomID const & /*atom_id*/,
+	pose::Pose const & /*pose*/,
+	kinematics::DomainMap const & /*domain_map*/,
 	ScoreFunction const &,
-	EnergyMap const & weights,
-	Vector & F1,
-	Vector & F2
+	EnergyMap const & /*weights*/,
+	Vector & /*F1*/,
+	Vector & /*F2*/
  	) const
 {
 	// NEED TO FILL THIS IN LATER!!

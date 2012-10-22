@@ -223,9 +223,9 @@ FavorSequenceProfile::parse_my_tag( utility::tag::TagPtr const tag, protocols::m
 }
 
 void FavorSequenceProfile::parse_def( utility::lua::LuaObject const & def,
-		utility::lua::LuaObject const & score_fxns,
-		utility::lua::LuaObject const & tasks,
-		protocols::moves::MoverCacheSP cache ) {
+		utility::lua::LuaObject const & /*score_fxns*/,
+		utility::lua::LuaObject const & /*tasks*/,
+		protocols::moves::MoverCacheSP /*cache*/ ) {
 
 	weight_ = def["weight"] ? def["weight"].to<core::Real>() : 1;
 

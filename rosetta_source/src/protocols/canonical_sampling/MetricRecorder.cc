@@ -83,12 +83,12 @@ MetricRecorder::MetricRecorder(
 	MetricRecorder const & other
 ) :
 	protocols::canonical_sampling::ThermodynamicObserver(other),
+	file_name_(other.file_name_),
 	stride_(other.stride_),
 	cumulate_jobs_(other.cumulate_jobs_),
 	cumulate_replicas_(other.cumulate_replicas_),
 	prepend_output_name_(other.prepend_output_name_),
 	step_count_(other.step_count_),
-	file_name_(other.file_name_),
 	torsion_ids_(other.torsion_ids_),
 	last_flush_(other.last_flush_)
 {}

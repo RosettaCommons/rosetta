@@ -88,7 +88,7 @@ void PoseInfoFilter::parse_my_tag( utility::tag::TagPtr const,
 		protocols::moves::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & pose)
+		core::pose::Pose const & /*pose*/)
 {
 	// Right now we don't have any options to control, so don't bother doing anything.
 }

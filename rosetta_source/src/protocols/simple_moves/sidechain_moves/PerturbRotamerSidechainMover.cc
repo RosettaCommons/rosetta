@@ -140,7 +140,7 @@ PerturbRotamerSidechainMover::make_chi_move(
 	// find the rotamer that has the highest probability of proposing the previous chi angles
 	Real max_rot_prob = 0;
 	Size max_rot_num = 0;
-	Real rot_prob_normalize (0);
+	//Real rot_prob_normalize (0);
 
 	for (Size ii = 1; ii <= rotamers.size() ; ++ii) {
 		//TR << "rotamer.size is " << rotamers.size() << "  rotamer number is " << ii << std::endl;
@@ -172,7 +172,8 @@ Real PerturbRotamerSidechainMover::compute_proposal_density(
 	RotamerList rotamers;
 	build_rotamer_list( new_residue, false /*no filtering*/, rotamers );
 
-	Real rot_density, within_rot_density;
+	//Real rot_density;
+	Real within_rot_density;
 	//compute_rotdensities( rotamers, old_chi, new_chi, within_rot_density );
 	compute_rotdensities( rotamers, old_chi, new_chi, within_rot_density );
 	return within_rot_density;
@@ -231,7 +232,7 @@ PerturbRotamerSidechainMover::compute_rotdensities(
 	Real max_new_rot_prob(0);
 	Real max_old_rot_prob(0);
 	Real norm_prob(0);
-	Real const inv_nrot( 1.0 / rotamers.size() );
+	//Real const inv_nrot( 1.0 / rotamers.size() );
 
 	for (Size jj=1; jj <= rotamers.size(); ++jj) {
 		norm_prob+=rotamers[jj].probability();

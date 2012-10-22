@@ -289,8 +289,8 @@ ShapeComplementarityFilter::parse_my_tag(
 	}
 }
 void ShapeComplementarityFilter::parse_def( utility::lua::LuaObject const & def,
-				utility::lua::LuaObject const & score_fxns,
-				utility::lua::LuaObject const & tasks ) {
+		utility::lua::LuaObject const & /*score_fxns*/,
+		utility::lua::LuaObject const & /*tasks*/ ) {
 	filtered_sc_ = def["min_sc"] ? def["min_sc"].to<Real>() : 0.50;
 	filtered_area_ = def["min_interface"] ? def["min_interface"].to<Real>() : 0;
 	verbose_ = def["verbose"] ? def["verbose"].to<Size>() : 0;

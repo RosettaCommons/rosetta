@@ -195,13 +195,13 @@ GaussianOverlapEnergy::residue_pair_energy(
 
 void
 GaussianOverlapEnergy::eval_atom_derivative(
-	id::AtomID const & id,
-	pose::Pose const & pose,
+	id::AtomID const & /*id*/,
+	pose::Pose const & /*pose*/,
 	kinematics::DomainMap const &, // domain_map,
 	ScoreFunction const &,
 	EnergyMap const &,
-	Vector & F1,
-	Vector & F2
+	Vector & /*F1*/,
+	Vector & /*F2*/
 ) const
 {
 	using namespace numeric;

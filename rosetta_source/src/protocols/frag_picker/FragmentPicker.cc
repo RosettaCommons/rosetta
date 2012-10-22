@@ -307,7 +307,7 @@ void FragmentPicker::fragment_contacts( Size const fragment_size, utility::vecto
 									for (Size m = m_min; m <= m_max; ++m) {
 										if (m > size_of_query()) continue;
 										// chunk_i = chunk position i
-										int chunk_i = cPos_offset + m;
+										Size chunk_i = cPos_offset + m;
 										if (chunk_i < 1 || chunk_i > chunk->size()) continue;
 										// n == query position j
 										for (Size n = n_min; n <= n_max; ++n) {
@@ -362,7 +362,8 @@ void FragmentPicker::fragment_contacts( Size const fragment_size, utility::vecto
 													if (chunk_j < 1 || chunk_j > (int)chunk->size()) continue;
 
 													// skip local contacts relative to query
-													if (std::abs(int(m-n)) < contacts_min_seq_sep_) continue;
+													Size m_n_sep = std::abs(int(m - n));  // sequence separation
+													if (m_n_sep < contacts_min_seq_sep_) continue;
 													// skip local contacts relative to fragments
 													if (std::abs(int( chunk->at(chunk_i)->resi() - chunk->at(chunk_j)->resi() )) < (int)contacts_min_seq_sep_) continue;
 

@@ -15,7 +15,7 @@
 /// @detailed
 /// This class is responsible for iterating through the set of canonical amino acids and non-canonical
 /// amino acids. It first reads through a file that contains the location of residues in the database.
-/// At the begining of that file are the atom types, mm atom types, element sets, and orbital types that will
+/// At the beginning of that file are the atom types, mm atom types, element sets, and orbital types that will
 /// be used. The sets are all for fa_standard. If a new type of atoms are added for residues, this is where they
 /// would be added. Once it assigns the types, it then reads in extra residue params that are passed through the
 /// command line. Finally, patches are applied to all residues added.

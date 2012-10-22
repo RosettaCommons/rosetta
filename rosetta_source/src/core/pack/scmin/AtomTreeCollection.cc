@@ -343,7 +343,7 @@ AtomTreeCollection::AtomTreeCollection(
 }
 
 AtomTreeCollection::AtomTreeCollection(
-	pose::Pose const & pose,
+	pose::Pose const & /*pose*/,
 	rotamer_set::RotamerSet const & rset,
 	Size resid
 )

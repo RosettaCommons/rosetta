@@ -96,11 +96,11 @@ void SolvationMetaGrid::refresh(core::pose::Pose const & pose, core::Vector cons
 	}
 }
 
-void SolvationMetaGrid::parse_my_tag(utility::tag::TagPtr const tag)
+void SolvationMetaGrid::parse_my_tag(utility::tag::TagPtr const /*tag*/)
 {
 }
 
-core::Real SolvationMetaGrid::score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP)
+core::Real SolvationMetaGrid::score(core::conformation::Residue const & residue, core::Real const /*max_score*/, qsarMapOP)
 {
 	core::Real total_score = 0.0;
 	for(core::Size atom_index = 1; atom_index <= residue.natoms();++atom_index)
@@ -120,7 +120,7 @@ core::Real SolvationMetaGrid::score(core::conformation::Residue const & residue,
 	return total_score;
 }
 
-core::Real SolvationMetaGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP qsar_map)
+core::Real SolvationMetaGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP /*qsar_map*/)
 {
 	core::conformation::Atom current_atom(residue.atom(atomno));
 	std::map<core::ShortSize,SingleGridOP>::iterator grid_iterator(grid_map_.find(current_atom.type()));
@@ -147,7 +147,7 @@ void SolvationMetaGrid::set_chain(char chain)
 	}
 }
 
-void SolvationMetaGrid::dump_BRIX(std::string const & prefix)
+void SolvationMetaGrid::dump_BRIX(std::string const & /*prefix*/)
 {
 	utility_exit_with_message("SolvationMetaGrid is currently unable to output a BRIX grid, sorry :(");
 }

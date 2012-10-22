@@ -94,7 +94,7 @@ private:
   utility::vector1< core::Size > residue_unsat_polars_;
   utility::vector1< core::Real > residue_semiexpl_score_;
   core::id::AtomID_Map< core::Real > atom_semiexpl_score_;
-	core::Real semiexpl_water_cutoff_;
+  core::Real semiexpl_water_cutoff_;
 
   //holds the atom hbonds calculators necessary for this calculator
   std::string name_of_hbond_calc_;

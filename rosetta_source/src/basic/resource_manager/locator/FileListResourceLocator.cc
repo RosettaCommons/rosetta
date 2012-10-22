@@ -45,7 +45,8 @@ FileListResourceLocatorCreator::locator_type() const
 	return "FileListResourceLocator";
 }
 
-FileListResourceLocator::FileListResourceLocator()
+FileListResourceLocator::FileListResourceLocator() :
+	open_mode_()
 {
 
 }
@@ -56,8 +57,9 @@ FileListResourceLocator::~FileListResourceLocator()
 }
 
 FileListResourceLocator::FileListResourceLocator(
-  FileListResourceLocator const & src
-)
+	FileListResourceLocator const & /*src*/
+) :
+	open_mode_()
 {
 
 }

@@ -7,10 +7,10 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/wum2/EndPoint.hh
-/// @brief  Non MPI version of EndPoint
-///  This class is required because SingleNode role needs to use an EndPoint that is not MPI dependent (ie just a wrapper for 2 queues)
-/// @author Ken Jung
+/// @file    protocols/wum2/EndPoint.hh
+/// @brief   Non-MPI version of EndPoint
+/// @details This class is required because SingleNode role needs to use an EndPoint that is not MPI dependent (ie just a wrapper for 2 queues)
+/// @author  Ken Jung
 
 #ifndef INCLUDED_protocols_wum2_EndPoint_hh
 #define INCLUDED_protocols_wum2_EndPoint_hh
@@ -32,67 +32,68 @@ struct StatusResponse;
 
 class EndPoint {
 
-  public:
-    EndPoint( function < uint64_t () > role_available_mem );
-    ~EndPoint(){}
+public:
+	EndPoint( function < uint64_t () > role_available_mem );
+	virtual ~EndPoint(){}
 
-    // real memory usage
-    virtual uint64_t current_mem() {
-      return inq_.current_mem() +
-        outq_.current_mem();
-    }
+	// real memory usage
+	virtual uint64_t current_mem() {
+		return inq_.current_mem() +
+				outq_.current_mem();
+	}
 
-		WUQueue & inq() { return inq_; }
-		WUQueue & outq() { return outq_; }
+	WUQueue & inq() { return inq_; }
+	WUQueue & outq() { return outq_; }
 
-		uint64_t max_outgoing_wu_mem() {
-			// for now, return whole queue size
-			return outq_.current_mem();
-		}
+	uint64_t max_outgoing_wu_mem() {
+		// for now, return whole queue size
+		return outq_.current_mem();
+	}
 
-		// MPI derived class uses these
-		// this is easier than doing static casts to use MPI_EndPoint fxns
-    virtual void check_and_act_status_request( function< void ( StatusResponse & , int ) > functor ) {}
-    virtual void check_and_act_clearcommand() {}
-    virtual void cleanup_reqs() {}
-		virtual bool has_open_status( int rank ) {}
-    virtual void send_status_request( int rank ){}
-    virtual void listen_wu_sendrecv( StatusResponse & r, int requesting_node ){}
-    virtual bool initiate_wu_sendrecv( StatusResponse & r ) {}
-    virtual void act_on_status_response( function<bool ( StatusResponse & r )> functor ) {}
+	// MPI derived class uses these
+	// this is easier than doing static casts to use MPI_EndPoint fxns
+	// non-void functions made pure virtual to avoid compiler warnings ~ Labonte
+	virtual void check_and_act_status_request( function< void ( StatusResponse & , int ) > /*functor*/ ) {}
+	virtual void check_and_act_clearcommand() {}
+	virtual void cleanup_reqs() {}
+	virtual bool has_open_status( int /*rank*/ ) = 0;
+	virtual void send_status_request( int /*rank*/ ){}
+	virtual void listen_wu_sendrecv( StatusResponse & /*r*/, int /*requesting_node*/ ){}
+	virtual bool initiate_wu_sendrecv( StatusResponse & /*r*/ ) = 0;
+	virtual void act_on_status_response( function<bool ( StatusResponse & r )> /*functor*/ ) {}
 
-	protected:
+protected:
 
-    WUQueue inq_;
-    WUQueue outq_;
+	WUQueue inq_;
+	WUQueue outq_;
 
-    function< uint64_t () > role_available_mem_;
+	function< uint64_t () > role_available_mem_;
 
 };
 
 struct StatusResponse {
-  int rank; // rank of node responding to statusrequest
-  uint64_t incoming_allocated; // how much memory is allocated for incoming wu
-  uint64_t outq_current_mem; // how much memory outgoing queue is using
+	int rank; // rank of node responding to statusrequest
+	uint64_t incoming_allocated; // how much memory is allocated for incoming wu
+	uint64_t outq_current_mem; // how much memory outgoing queue is using
 #ifdef USEBOOSTSERIALIZE
-		template<class Archive>
-		void serialize(Archive & ar, const unsigned int version) {
-				ar & rank;
-				ar & incoming_allocated;
-				ar & outq_current_mem;
-		}
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version) {
+		ar & rank;
+		ar & incoming_allocated;
+		ar & outq_current_mem;
+	}
 #endif
 };
 
 struct StatusRequest {
-  int rank; // rank of node sending statusrequest
-  uint64_t max_outgoing_wu_mem; // the maximum amount of memory the outgoing wus will have
+	int rank; // rank of node sending statusrequest
+	uint64_t max_outgoing_wu_mem; // the maximum amount of memory the outgoing wus will have
 #ifdef USEBOOSTSERIALIZE
-		template<class Archive>
-		void serialize(Archive & ar, const unsigned int version) {
-				ar & rank;
-				ar & max_outgoing_wu_mem;
-		}
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version) {
+		ar & rank;
+		ar & max_outgoing_wu_mem;
+	}
 #endif
 };
 

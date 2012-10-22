@@ -58,6 +58,8 @@ public:
 		MakeFragmentScoringMethod("ScoreEValuator") {
 	}
 
+	using MakeFragmentScoringMethod::make;
+
 	FragmentScoringMethodOP make(Size, Real, bool, FragmentPickerOP);
 };
 

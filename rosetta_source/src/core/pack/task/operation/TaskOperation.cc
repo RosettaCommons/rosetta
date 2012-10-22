@@ -60,7 +60,7 @@ void TaskOperation::parse_tag( TagPtr tag )
 	TR << ". Probably due to (un/mis)implemented virtual method in derived class." << std::endl;
 }
 
-void TaskOperation::parse_def( utility::lua::LuaObject const & def ) {
+void TaskOperation::parse_def( utility::lua::LuaObject const & /*def*/ ) {
 	utility_exit_with_message("This TaskOperation has not implemented parse_def()");
 }
 

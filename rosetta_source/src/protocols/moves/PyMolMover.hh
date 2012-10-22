@@ -280,6 +280,8 @@ public:
 	virtual void apply( Pose & );
 
 
+	using protocols::moves::Mover::apply;
+
 	/// @brief Actually our mover does not change the Pose object, so we have additional const version...
 	virtual void apply( Pose const & );
 

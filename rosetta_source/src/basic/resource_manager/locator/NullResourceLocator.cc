@@ -97,7 +97,7 @@ NullResourceLocator::~NullResourceLocator() {}
 
 ResourceStreamOP
 NullResourceLocator::locate_resource_stream(
-	string const & locator_tag
+	string const & /*locator_tag*/
 ) const {
 	return new NullStream();
 }

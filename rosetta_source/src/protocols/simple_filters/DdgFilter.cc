@@ -53,13 +53,13 @@ DdgFilter::DdgFilter() :
 	ddg_threshold_( -15.0 ),
 	scorefxn_( NULL ),
 	rb_jump_( 1 ),
+	use_custom_task_(false),
+	repack_bound_(true),
+	relax_bound_(false),
 	repeats_( 1 ),
 	symmetry_(false),
 	repack_( true ),
-	relax_mover_( NULL ),
-	use_custom_task_(false),
-	repack_bound_(true),
-	relax_bound_(false)
+	relax_mover_( NULL )
 {
 	scorename_ = "ddg";
 }
@@ -120,7 +120,7 @@ DdgFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & data, 
 
 void DdgFilter::parse_def( utility::lua::LuaObject const & def,
 				utility::lua::LuaObject const & score_fxns,
-				utility::lua::LuaObject const & tasks ) {
+				utility::lua::LuaObject const & /*tasks*/ ) {
 	using namespace core::scoring;
 	if( def["scorename"] )
 		scorename_ = def["scorename"].to<std::string>();
@@ -251,11 +251,11 @@ DdgFilter::compute( core::pose::Pose const & pose ) const {
 
 DdgFilter::DdgFilter( core::Real const ddg_threshold, core::scoring::ScoreFunctionCOP scorefxn, core::Size const rb_jump/*=1*/, core::Size const repeats/*=1*/, bool const symmetry /*=false*/ ) :
 	Filter("Ddg" ),
-	repack_( true ),
-	relax_mover_( NULL ),
 	use_custom_task_( false ),
 	repack_bound_( true ),
-	relax_bound_( false )
+	relax_bound_( false ),
+	repack_( true ),
+	relax_mover_( NULL )
 {
 	ddg_threshold_ = ddg_threshold;
 	scorefxn_ = scorefxn->clone();

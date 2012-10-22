@@ -73,11 +73,11 @@ WorkUnit::WorkUnit
 }
 
 void
-WorkUnit::print( std::ostream & out, bool verbose ) const {
-		out << "WU_id:         " << id_    << std::endl;
-		out << "WU_time_create:" << unixtime_creation_<< std::endl;
-		out << "WU_time_start: " << unixtime_start_<< std::endl;
-		out << "WU_time_stop:  " << unixtime_stop_<< std::endl;
+WorkUnit::print( std::ostream & out, bool /*verbose*/ ) const {
+	out << "WU_id:         " << id_    << std::endl;
+	out << "WU_time_create:" << unixtime_creation_<< std::endl;
+	out << "WU_time_start: " << unixtime_start_<< std::endl;
+	out << "WU_time_stop:  " << unixtime_stop_<< std::endl;
 }
 
 
@@ -103,8 +103,8 @@ WorkUnit_Wait::WorkUnit_Wait
 (	core::Size master,
 	core::Size trajectory_idx,
 	long wait_time ) :
-	wait_time_(wait_time),
-	WorkUnit( master, trajectory_idx )
+	WorkUnit( master, trajectory_idx ),
+	wait_time_(wait_time)
 {}
 
 void WorkUnit_Wait::run(){
@@ -121,16 +121,17 @@ void WorkUnit_Wait::run(){
 
 // ---------- WorkUnit_ElScripts --------------
 
-WorkUnit_ElScripts::WorkUnit_ElScripts
-(	core::Size master,
+WorkUnit_ElScripts::WorkUnit_ElScripts (
+	core::Size master,
 	core::Size trajectory_idx,
 	core::io::serialization::PipeMapSP p,
 	protocols::moves::SerializableStateSP state,
-	std::string name ) :
-	pipemap_(p),
-	state_(state),
+	std::string name
+	) :
+	WorkUnit( master, trajectory_idx ),
 	name_(name),
-	WorkUnit( master, trajectory_idx )
+	pipemap_(p),
+	state_(state)
 {}
 
 void WorkUnit_ElScripts::run(){

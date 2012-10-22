@@ -13,7 +13,7 @@
 /// VariantTypes are used by Patches.
 ///
 /// @details
-/// VariantTypes are utilized by Patches. All the type does is adds a name
+/// VariantTypes are utilized by Patches. All the type does is add a name
 /// that can be used later on in different protocols. It also helps the patch
 /// system keep track of what residues are patched with what type. The type has
 /// no magical meaning. It is a name handler.
@@ -24,12 +24,6 @@
 ///
 /// @last_modified October 22 2010
 /////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
 /// @file
 /// @author Phil Bradley
 

@@ -76,12 +76,12 @@ LoadPDBMover::fresh_instance() const
 void
 LoadPDBMover::parse_my_tag(
 	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & data,
+	protocols::moves::DataMap & /*data*/,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )
 {
-  filename_ = tag->getOption< std::string >( "filename" );
+	filename_ = tag->getOption< std::string >( "filename" );
 	TR<<"filename: "<<filename_<<std::endl;;
 }
 

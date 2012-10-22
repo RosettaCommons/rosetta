@@ -16,7 +16,7 @@
 /// This class contains the "chemical" information for residues. This does not contain the actual
 /// xyz coordinates of the class (xyz found in core/conformation/Residue.hh). A residue in Rosetta
 /// can be a ligand, DNA, amino acid, or basically anything. A residue is read in through residue_io.cc
-/// and read from parameter files, generally located in the database chemical/residuetypes. For ligands,
+/// and read from parameter files, generally located in the database chemical/residue_types. For ligands,
 /// or anything that is not the natural 20 aa, a parameter has to be provided to rosetta through the -extra_res_fa
 /// flag. Residue_io sets private member data in ResidueType. The primary data that are set are: atoms, mmatoms, orbitals,
 /// properties of residues. These properties can be modified through patches, which is controlled through PatchOperations.cc. If
@@ -128,6 +128,8 @@ ResidueType::ResidueType(
 	n_hbond_donors_(0),
 	n_orbitals_(0),
 	n_backbone_heavyatoms_(0),
+	first_sidechain_hydrogen_( 0 ),
+	ndihe_( 0 ),
 	//lower_connect_atom_( 0 ),
 	//upper_connect_atom_( 0 ),
 	// silly that we have to initialize these to false
@@ -156,17 +158,18 @@ ResidueType::ResidueType(
 	is_adduct_( false ),
 	aa_( aa_unk ),
 	rotamer_aa_( aa_unk ),
-	//
+	name1_(),
 	nbr_atom_(1),
+	nbr_radius_( 0 ),
 	molecular_mass_(0),
 	molar_mass_(0),
 	n_actcoord_atoms_( 0 ),
-	//
 	lower_connect_id_( 0 ),
 	upper_connect_id_( 0 ),
 	n_non_polymeric_residue_connections_( 0 ),
 	n_polymeric_residue_connections_( 0 ),
 	carbohydrate_info_(NULL),
+	finalized_(false),
 	nondefault_(false),
 	base_restype_name_(""),
 	serialized_(false)

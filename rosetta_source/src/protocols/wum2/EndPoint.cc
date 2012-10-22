@@ -7,10 +7,10 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/wum2/EndPoint.cc
-/// @brief  Non MPI version of EndPoint
-///  This class is required because SingleNode role needs to use an EndPoint that is not MPI dependent (ie just a wrapper for 2 queues)
-/// @author Ken Jung
+/// @file    protocols/wum2/EndPoint.cc
+/// @brief   Non MPI version of EndPoint
+/// @details This class is required because SingleNode role needs to use an EndPoint that is not MPI dependent (ie just a wrapper for 2 queues)
+/// @author  Ken Jung
 
 #include <protocols/wum2/EndPoint.hh>
 #include <protocols/wum2/WorkUnit.hh>
@@ -18,8 +18,7 @@
 namespace protocols {
 namespace wum2 {
 
-EndPoint::EndPoint( function < uint64_t () > role_available_mem  )
-  : role_available_mem_( role_available_mem) {}
+EndPoint::EndPoint( function < uint64_t () > role_available_mem  ) : role_available_mem_( role_available_mem) {}
 
 } // wum2
 } // protocols

@@ -73,15 +73,17 @@ class SlidingWindowLoopClosure : public moves::Mover {
 public:
    ///@brief constructor: supply fragsets for fragment moves
 	SlidingWindowLoopClosure(
-      core::fragment::FragSetCOP fragset,
-      core::scoring::ScoreFunctionOP scorefxn,
-      core::kinematics::MoveMapCOP movemap
+			core::fragment::FragSetCOP fragset,
+			core::scoring::ScoreFunctionOP scorefxn,
+			core::kinematics::MoveMapCOP movemap
 	);
 
 	//@brief just set defaults -- expects fragset, scorefxn and movemap to be set later
 	SlidingWindowLoopClosure();
 
 	~SlidingWindowLoopClosure();
+
+	using moves::Mover::apply;
 
 	//@brief run find fragments that close loop  (if ideal loop closing: such that the less_cut pose is close RMSD <0.1 to pose more_cut)
 	// returns less_cut and more_cut with best fragment already applied..

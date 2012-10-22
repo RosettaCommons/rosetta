@@ -67,10 +67,10 @@ SaneMinMover::SaneMinMover(
 	core::optimization::MinimizerOptionsOP min_options_in,
 	bool cartesian_in
 ) : protocols::moves::Mover("SaneMinMover"),
+		cartesian_(cartesian_in),
 		movemap_(movemap_in),
 		scorefxn_(scorefxn_in),
-		min_options_(min_options_in),
-		cartesian_(cartesian_in)
+		min_options_(min_options_in)
 {}
 
 bool SaneMinMover::cartesian() const {

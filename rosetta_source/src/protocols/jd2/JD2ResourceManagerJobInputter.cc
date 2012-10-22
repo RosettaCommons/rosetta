@@ -837,9 +837,9 @@ JD2ResourceManagerJobInputter::read_StringVectorOption_subtag_for_job(
 void
 JD2ResourceManagerJobInputter::read_ResidueType_for_subtag(
 	utility::tag::TagPtr options_tag,
-	std::string const & jobname,
-	std::string & input_tag,
-	bool & startstruct_found,
+	std::string const & /*jobname*/,
+	std::string & /*input_tag*/,
+	bool & /*startstruct_found*/,
 	std::map< std::string, std::string > & resources_for_job
 )
 {

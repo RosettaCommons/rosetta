@@ -86,7 +86,7 @@ ChargeGrid::ChargeGrid() :
 	//
 }
 
-ChargeGrid::ChargeGrid(core::Real charge) :
+ChargeGrid::ChargeGrid(core::Real /*charge*/) :
 	SingleGrid("ChargeGrid"),
 	zeta_(4.0),
 	epsilon_(80),
@@ -190,12 +190,12 @@ void ChargeGrid::refresh(core::pose::Pose const & pose, core::Vector const & cen
 }
 
 
-void ChargeGrid::parse_my_tag(utility::tag::TagPtr const tag)
+void ChargeGrid::parse_my_tag(utility::tag::TagPtr const /*tag*/)
 {
 
 }
     
-core::Real ChargeGrid::score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map)
+core::Real ChargeGrid::score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP /*qsar_map*/)
 {
     core::Real score = 0.0;
     for(core::Size atom_index = 1; atom_index <= residue.natoms() && score < max_score; ++atom_index )
@@ -213,7 +213,7 @@ core::Real ChargeGrid::score(core::conformation::Residue const & residue, core::
 	return score;
 }
 
-core::Real ChargeGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP qsar_map)
+core::Real ChargeGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP /*qsar_map*/)
 {
 	core::Vector const & atom_coord(residue.xyz(atomno));
 	if(this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()))
@@ -261,7 +261,7 @@ core::Real ChargeGrid::nominal_depth(core::Size const & n_atoms) const
 	return(-1.0); //Something has gone rather wrong
 }
 
-core::Real ChargeGrid::charge_charge_electrostatic(core::pose::Pose const & pose, ChargeAtom const & atom_q, ChargeAtom const & atom_p) const
+core::Real ChargeGrid::charge_charge_electrostatic(core::pose::Pose const & /*pose*/, ChargeAtom const & atom_q, ChargeAtom const & atom_p) const
 {
 	core::Real distance = atom_q.xyz.distance(atom_p.xyz);
 	core::Real s_p(nominal_depth(atom_p.neighbor_count));

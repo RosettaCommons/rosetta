@@ -67,7 +67,7 @@ FileExistFilter::report_sm( core::pose::Pose const & pose ) const {
 
 core::Real
 FileExistFilter::compute(
-	core::pose::Pose const & pose
+	core::pose::Pose const & /*pose*/
 ) const {
 	using namespace std;
 

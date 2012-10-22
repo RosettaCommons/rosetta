@@ -161,9 +161,9 @@ ConstraintSetMover::parse_my_tag(
 	}
 }
 void ConstraintSetMover::parse_def( utility::lua::LuaObject const & def,
-				utility::lua::LuaObject const & score_fxns,
-				utility::lua::LuaObject const & tasks,
-				protocols::moves::MoverCacheSP cache ) {
+				utility::lua::LuaObject const & /*score_fxns*/,
+				utility::lua::LuaObject const & /*tasks*/,
+				protocols::moves::MoverCacheSP /*cache*/ ) {
 	if ( def["cst_file"] ) cst_file_ = def["cst_file"].to<std::string>();
 	if ( def["cst_fa_file"] ) cst_fa_file_ = def["cst_fa_file"].to<std::string>();
 	else cst_fa_file_=cst_file_;

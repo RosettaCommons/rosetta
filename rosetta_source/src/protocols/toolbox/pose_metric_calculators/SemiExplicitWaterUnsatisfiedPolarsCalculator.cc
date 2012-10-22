@@ -102,12 +102,12 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::SemiExplicitWaterUnsatisfiedPolars
   std::string hbond_calc,
 	scoring::ScoreFunctionOP scorefxn,
 	core::Real semiexpl_water_cutoff
-) : all_unsat_polars_( 0 ),
-    special_region_unsat_polars_(0),
-    name_of_hbond_calc_( hbond_calc ),
-		scorefxn_( scorefxn ),
-		semiexpl_water_cutoff_( semiexpl_water_cutoff ),
-    hb_database_( core::scoring::hbonds::HBondDatabase::get_database( "standard_params" ) )
+) : hb_database_( core::scoring::hbonds::HBondDatabase::get_database( "standard_params" ) ),
+	all_unsat_polars_( 0 ),
+	special_region_unsat_polars_(0),
+	semiexpl_water_cutoff_( semiexpl_water_cutoff ),
+	name_of_hbond_calc_( hbond_calc ),
+	scorefxn_( scorefxn )
 {
   atom_unsat_.clear();
   residue_unsat_polars_.clear();
@@ -123,13 +123,13 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::SemiExplicitWaterUnsatisfiedPolars
 	scoring::ScoreFunctionOP scorefxn,
   std::set< core::Size > const & special_region,
 	core::Real semiexpl_water_cutoff
-) : all_unsat_polars_(0),
-    special_region_unsat_polars_(0),
-    name_of_hbond_calc_( hbond_calc ),
-		scorefxn_( scorefxn ),
-		semiexpl_water_cutoff_( semiexpl_water_cutoff ),
-    hb_database_( core::scoring::hbonds::HBondDatabase::get_database( "standard_params" ) ),
-    special_region_( special_region )
+) : hb_database_( core::scoring::hbonds::HBondDatabase::get_database( "standard_params" ) ),
+	all_unsat_polars_(0),
+	special_region_unsat_polars_(0),
+	semiexpl_water_cutoff_( semiexpl_water_cutoff ),
+	name_of_hbond_calc_( hbond_calc ),
+	scorefxn_( scorefxn ),
+	special_region_( special_region )
 {
   atom_unsat_.clear();
   residue_unsat_polars_.clear();
@@ -269,11 +269,11 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::semiexpl_water_hbgeom_score(
 
   Residue rsd( pose.residue( seqpos ) ); 
   Pose ref_pose( pose );
-	//store hbond e before adding water
-	Real rsd_hbond_e_before( 
+  //store hbond e before adding water
+  /*Real rsd_hbond_e_before(
 			pose.energies().residue_total_energies( seqpos )[ hbond_bb_sc ] +
 			pose.energies().residue_total_energies( seqpos )[ hbond_sc ]
-	);
+  );*/
 
   //append by jump from seqpos atomno to new_rsd atom 1, maybe make random downstream atom?
   pose.append_residue_by_jump( new_rsd, seqpos, rsd.atom_name( atomno ), new_rsd.atom_name( new_atomno ), true );
@@ -337,7 +337,7 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::semiexpl_water_hbgeom_score(
 	Size water_hb_states_good( 0 );
 	hbonds::HBEvalTuple hbe_type( datm, pose.residue( don_pos ), aatm, pose.residue( acc_pos ) );
 	//granularity of enumeration
-	Size steps( 7 );
+	//Size steps( 7 );
 	//must import from hbonds/constants.hh
 	// in case you're wondering, we're sampling in angle space instead of cos(angle)
 	// space so we sample more equally in polar coord space (not more densely when cos(pi-angle)->1)
@@ -386,7 +386,7 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::semiexpl_water_hbgeom_score(
             //reset chem  bond ftree
             pose.fold_tree( f_rot );
 
-						Real water_ang( 0.0 );
+						//Real water_ang( 0.0 );
 						//store water internal bond angle
 						//WARNING: hard-coded for TP3 water (H1-O-H2)
 //            if( wat_is_acc ){
@@ -472,10 +472,10 @@ void
 SemiExplicitWaterUnsatisfiedPolarsCalculator::recompute( Pose const & in_pose )
 {
 
-  all_unsat_polars_ = 0;
-  special_region_unsat_polars_ = 0;
-	Real min_dist( core::scoring::hbonds::MIN_R );
-	Real shell_cutoff( core::scoring::hbonds::MAX_R );
+	all_unsat_polars_ = 0;
+	special_region_unsat_polars_ = 0;
+	//Real min_dist( core::scoring::hbonds::MIN_R );
+	//Real shell_cutoff( core::scoring::hbonds::MAX_R );
 	chemical::ResidueTypeSet const & rsd_set( in_pose.residue( 1 ).residue_type_set() );
 	conformation::ResidueOP wat_rsd( conformation::ResidueFactory::create_residue( rsd_set.name_map( "TP3" ) ) );
 	Size wat_O_at( 1 ); //warning! hardcoded for TP3 water!
@@ -487,8 +487,8 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::recompute( Pose const & in_pose )
 
 	if( in_pose.total_residue() != residue_unsat_polars_.size() ){
 			residue_unsat_polars_.resize( in_pose.total_residue() );
-    atom_unsat_.resize( in_pose.total_residue() );
-  }
+			atom_unsat_.resize( in_pose.total_residue() );
+	}
 
   basic::MetricValue< id::AtomID_Map< Size > > atom_hbonds_dry;
   in_pose.metric( name_of_hbond_calc_, "atom_Hbonds", atom_hbonds_dry );

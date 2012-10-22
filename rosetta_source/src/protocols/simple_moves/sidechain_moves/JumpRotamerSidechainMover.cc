@@ -198,8 +198,8 @@ JumpRotamerSidechainMover::compute_rotdensities(
 	Real& rot_density
 ) const {
 	rot_density=0;
-	Real max_new_rot_prob(0);
-	Real max_old_rot_prob(0);
+	//Real max_new_rot_prob(0);
+	//Real max_old_rot_prob(0);
 
 	utility::vector1< Real > rot_probs;
 	Real normalize;

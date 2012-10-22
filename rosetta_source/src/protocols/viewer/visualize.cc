@@ -196,7 +196,7 @@ void visit_atomtree_node(
 	// Easier to just do point-line all the time than to try and see if
 	// previous line was drawn to our parent (it rarely will be).
 
-	if (katom.parent() != NULL) {
+	if (katom.parent().get() != NULL) {
 		core::id::AtomID const & p_atom_id = katom.parent()->atom_id();
 		int p_residue_num = p_atom_id.rsd();
 		int p_atom_num = p_atom_id.atomno();

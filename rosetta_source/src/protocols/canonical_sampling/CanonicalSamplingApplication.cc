@@ -92,7 +92,7 @@ canonical_sampling_main(){
 	//basic::prof_reset();
 
 	
-	bool MPI_synchronize_pools = options::option[options::OptionKeys::canonical_sampling::probabilities::MPI_sync_pools];
+	//bool MPI_synchronize_pools = options::option[options::OptionKeys::canonical_sampling::probabilities::MPI_sync_pools];
 	bool MPI_bcast = options::option[ options::OptionKeys::canonical_sampling::probabilities::MPI_bcast ];
 	bool use_fast_sc_moves = options::option[ options::OptionKeys::canonical_sampling::probabilities::fast_sc_moves ];
 	bool no_jd2_output = options::option[options::OptionKeys::canonical_sampling::probabilities::no_jd2_output];
@@ -189,7 +189,7 @@ canonical_sampling_main(){
 
 
 	tr.Info << "using regular pool-rmsd" << std::endl;
-	protocols::jd2::JobDistributor* jd2 = protocols::jd2::JobDistributor::get_instance();
+	//protocols::jd2::JobDistributor* jd2 = protocols::jd2::JobDistributor::get_instance();
 	mc_convergence_checks::Pool_RMSD_OP pool_ptr =
 		new mc_convergence_checks::Pool_RMSD(options::option[mc::known_structures]);
 	csm->set_poolrmsd(pool_ptr);

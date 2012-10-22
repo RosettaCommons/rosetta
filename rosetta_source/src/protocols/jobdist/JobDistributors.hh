@@ -363,6 +363,8 @@ public:
 	///@brief Allows setting of inprogress.
 	virtual void startup();
 
+	using parent::get_output_filename;
+
 	///@brief Translates an output tag name to an output PDB file name.
 	virtual std::string get_output_filename(std::string const & tag);
 
@@ -428,6 +430,8 @@ public:
 		std::string const & tag,
 		core::pose::Pose & pose
 	);
+
+	using parent::get_output_filename;
 
 	///@brief Translates an output tag name to an output PDB file name.
 	virtual std::string get_output_filename(std::string const & tag);

@@ -85,7 +85,7 @@ void HbdGrid::deserialize(utility::json_spirit::mObject data)
 
 
 void
-HbdGrid::parse_my_tag(utility::tag::TagPtr const tag)
+HbdGrid::parse_my_tag(utility::tag::TagPtr const /*tag*/)
 {
 }
 
@@ -153,7 +153,7 @@ core::Real HbdGrid::score(core::conformation::Residue const & residue, core::Rea
 	return score;
 }
 
-core::Real HbdGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP qsar_map)
+core::Real HbdGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP /*qsar_map*/)
 {
 	core::Vector const & atom_coord(residue.xyz(atomno));
 	if(this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()))

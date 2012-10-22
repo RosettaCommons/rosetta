@@ -36,8 +36,8 @@ public:
 	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~Tag();
 
-  typedef std::map<std::string, std::string > options_t;
-  typedef utility::vector0< TagPtr > tags_t;
+	typedef std::map<std::string, std::string > options_t;
+	typedef utility::vector0< TagPtr > tags_t;
 
 public:
 	static size_t num_tags; // why?!

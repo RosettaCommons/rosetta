@@ -102,13 +102,13 @@ private:
 
 	// Private data ////////////////////////////////////////////////////////////
 	core::kinematics::MoveMapOP movemap_;
-	utility::vector1<core::Size> residue_list_;  // list of movable carbohydrate residues
+	utility::vector1<core::Size> residue_list_;  // list of movable carbohydrate residues by residue number
 
 	// Lists of conformers as a pair:
 	// first: the type of conformer (e.g., chair, twist-boat, etc.)
 	// second: a list of torsion angle values for that conformation
-	utility::vector1<std::pair<std::string, utility::vector1<core::Real> > > five_membered_ring_conformers_;
-	utility::vector1<std::pair<std::string, utility::vector1<core::Real> > > six_membered_ring_conformers_;
+	utility::vector1<std::pair<std::string, utility::vector1<core::Angle> > > five_membered_ring_conformers_;
+	utility::vector1<std::pair<std::string, utility::vector1<core::Angle> > > six_membered_ring_conformers_;
 
 };  // class RingConformationMover
 

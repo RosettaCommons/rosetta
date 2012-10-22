@@ -171,7 +171,7 @@ core::Vector SingleGrid::get_pdb_coords(core::grid::CartGrid<core::Real>::GridPt
 	return grid_.coords(gridpt);
 }
 
-core::Real SingleGrid::score(core::conformation::Residue const & residue, core::Real const max_score,qsarMapOP qsar_map)
+core::Real SingleGrid::score(core::conformation::Residue const & residue, core::Real const max_score,qsarMapOP /*qsar_map*/)
 {
 	core::Real score = 0.0;
 	//GridBaseTracer << "map size is: " << qsar_map->size() <<std::endl;
@@ -196,7 +196,7 @@ core::Real SingleGrid::score(core::conformation::Residue const & residue, core::
 	return score;
 }
 
-core::Real SingleGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP qsar_map)
+core::Real SingleGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP /*qsar_map*/)
 {
 	core::Vector const & atom = residue.xyz(atomno);
 	if(grid_.is_in_grid(atom.x(),atom.y(), atom.z()))

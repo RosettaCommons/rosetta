@@ -69,7 +69,7 @@ VdwGrid::VdwGrid() : SingleGrid("VdwGrid"), cutoff_(10.0)
 }
 
 void
-VdwGrid::parse_my_tag(utility::tag::TagPtr const tag){
+VdwGrid::parse_my_tag(utility::tag::TagPtr const /*tag*/){
 
 }
 
@@ -142,7 +142,7 @@ core::Real VdwGrid::score(core::conformation::Residue const & residue, core::Rea
 	return score;
 }
 
-core::Real VdwGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP qsar_map)
+core::Real VdwGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP /*qsar_map*/)
 {
 	core::Vector const & atom_coord(residue.xyz(atomno));
 	core::Real const & radius(residue.atom_type(atomno).lj_radius());

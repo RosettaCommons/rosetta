@@ -66,7 +66,7 @@ SolvationGrid::~SolvationGrid()
     
 }
 
-void SolvationGrid::refresh(core::pose::Pose const & pose, core::Vector const & center)
+void SolvationGrid::refresh(core::pose::Pose const & pose, core::Vector const & /*center*/)
 {
     core::scoring::etable::EtableCAP etable(
         core::scoring::ScoringManager::get_instance()->etable("FA_STANDARD_DEFAULT"));
@@ -134,7 +134,7 @@ void SolvationGrid::refresh(core::pose::Pose const & pose, core::Vector const & 
     refresh(pose,center);
 }
 
-void SolvationGrid::parse_my_tag(utility::tag::TagPtr const tag)
+void SolvationGrid::parse_my_tag(utility::tag::TagPtr const /*tag*/)
 {
 
 }

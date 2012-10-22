@@ -32,7 +32,7 @@
 namespace core {
 namespace chemical {
 
-/// \brief  Notion of Residue variant, eg PHOSPHO, NTERM, TERMINUS, PROTONATION, GLYCOSO ??
+/// @brief  Notion of Residue variant, eg PHOSPHO, NTERM, TERMINUS, PROTONATION, GLYCOSO ??
 
 typedef std::string VariantType;
 

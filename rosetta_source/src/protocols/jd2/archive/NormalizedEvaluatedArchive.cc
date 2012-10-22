@@ -222,6 +222,7 @@ bool NormalizedEvaluatedArchive::is_start_zero_score( std::string const& str ) c
 	for ( utility::vector1< std::string >::const_iterator it =positive_scores_.begin(); it != positive_scores_.end(); ++it ) {
 		if ( str.substr( 0, it->size() ) == *it ) return true;
 	}
+	return false;
 }
 
 ///@detail rescore and sort archive

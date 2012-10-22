@@ -269,7 +269,7 @@ WorkUnitQueue::mem_stats(
 		WU_memory += (*it)->mem_footprint();
 		WorkUnitBaseOP wu_op = *it;
 		WorkUnit_SilentStructStoreOP structure_wu = dynamic_cast<  WorkUnit_SilentStructStore * > ( wu_op() );
-		if ( structure_wu == NULL ) continue;
+		if ( structure_wu.get() == NULL ) continue;
 		SilentStructStore &decoys = structure_wu->decoys();
 		n_structs += structure_wu->decoys().size();
 		for( SilentStructStore::iterator jt =  decoys.begin();

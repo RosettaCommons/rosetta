@@ -90,7 +90,7 @@ core::pose::PoseSP PDBInputter::get_nth_pose( int n ) {
 
 bool PDBInputter::has_nth_pose( int n ) {
 	int sum = 0;
-	for( int i = 0; i < file_names_.size(); i++ ) {
+	for( core::Size i = 0; i < file_names_.size(); i++ ) {
 		sum += (multiplier_ - file_names_[i].first	); 
 		if (sum >= n )
 			return true;

@@ -95,9 +95,9 @@ ContactMapEvaluator::ContactMapEvaluator(
 	core::Size const min_seqsep
 ) :
 	evaluation::SingleValuePoseEvaluator< core::Real >( "contact_map" ),
-	native_(native_pose),
 	max_dist_(max_dist),
-	min_seqsep_(min_seqsep)
+	min_seqsep_(min_seqsep),
+	native_(native_pose)
 {}
 
 void ContactMapEvaluator::apply(

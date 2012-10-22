@@ -59,9 +59,9 @@ template< class T > void dump_matrix( Size, T const &, basic::Tracer & ) {}
 /// @brief A function (not a macro) that will print a square matrix to tr.Debug
 template< class T > void dump_matrix_no( Size nr, T const & a, basic::Tracer & tr)
 {
-	int i,k;
-	for ( i =0 ; i<nr; i++ ) {
-		for ( k =0 ; k<nr; k++ )
+	Size i,k;
+	for ( i =0 ; i<nr; ++i ) {
+		for ( k =0 ; k<nr; ++k )
 			tr.Debug << a[i][k] << " ";
 		tr.Debug << "\n";
 	}

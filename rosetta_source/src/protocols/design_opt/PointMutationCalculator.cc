@@ -554,7 +554,7 @@ PointMutationCalculator::calc_point_mut_filters(
 	green_packer->set_scorefunction( *scorefxn() );
 	green_packer->set_reference_round_task_factory( task_factory() );
 
-  int mpi_rank( 0 ), mpi_nprocs( 1 ), mpi_rank_low( 0 );
+	//int mpi_rank( 0 ), mpi_nprocs( 1 ), mpi_rank_low( 0 );
 	if( parallel() ){
 #ifdef USEMPI
 		MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);

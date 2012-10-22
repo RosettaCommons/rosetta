@@ -60,7 +60,7 @@ void FormatStringOutputter::write( PipeMap & p ){
 }
 
 void FormatStringOutputter::write( Pipe & p ) {
-	for( int idx = 0; idx < p.size(); idx++ ) {
+	for( core::Size idx = 0; idx < p.size(); idx++ ) {
 		PoseSP current_pose = p[idx];
 		filenameparts_["pipe_idx"] = idx;
 		if( current_pose ) {
@@ -81,7 +81,7 @@ void FormatStringOutputter::write( Pipe & p ) {
 void FormatStringOutputter::parse_format_string( boost::unordered_map< std::string, std::string> & filenameparts, std::string const & format_string, std::string & filename ) {
 	std::string potential_key = "";
 	bool in_potential_key = false;
-	for( int i = 0; i < format_string.size() ; i++ ) {
+	for( core::Size i = 0; i < format_string.size() ; i++ ) {
 		if( format_string[i] != '%' && ! in_potential_key ) {
 			filename.push_back( format_string[i] );
 		} else if ( format_string[i] == '%' && in_potential_key ) {

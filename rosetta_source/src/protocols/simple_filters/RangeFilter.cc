@@ -41,16 +41,17 @@ namespace simple_filters {
 RangeFilter::RangeFilter()
 {}
 
-RangeFilter::RangeFilter(Real lower_bound, Real upper_bound, FilterOP const & filter ):
-lower_bound_( lower_bound ),
-upper_bound_( upper_bound ),
-filter_(filter)
+RangeFilter::RangeFilter(Real lower_bound, Real upper_bound, FilterOP const & filter ) :
+	filter_(filter),
+	lower_bound_( lower_bound ),
+	upper_bound_( upper_bound )
 {}
+
 // @brief copy constructor
-RangeFilter::RangeFilter( RangeFilter const & rval ):
-lower_bound_( rval.lower_bound_ ),
-upper_bound_( rval.upper_bound_ ),
-filter_( rval.filter_)
+RangeFilter::RangeFilter( RangeFilter const & rval ) :
+	filter_( rval.filter_),
+	lower_bound_( rval.lower_bound_ ),
+	upper_bound_( rval.upper_bound_ )
 {}
 
 

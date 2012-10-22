@@ -66,7 +66,7 @@ ExpiryFilter::report_sm( core::pose::Pose const & pose ) const {
 
 core::Real
 ExpiryFilter::compute(
-	core::pose::Pose const & pose
+	core::pose::Pose const & /*pose*/
 ) const {
 	return( time( NULL ) - start_time() );
 }

@@ -128,7 +128,7 @@ public:
 		core::scoring::ResPairMinimizationData & respair_data_cache
 	) const;
 
-
+	using Parent::show_violations;
 
 	Size
 	show_violations( std::ostream& out, core::pose::Pose&, Size verbose_level, core::Real threshold = 1  );

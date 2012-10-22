@@ -210,7 +210,7 @@ EvaluatedArchive::evaluate_silent_struct( core::io::silent::SilentStructOP iss )
 	//runtime_assert( pss->has_energy( "chem_shifts" ) );
 	int total_time = 0;
 	if ( pss->has_energy( "total_eval_time" ) ) {
-		int total_time = pss->get_energy( "total_eval_time" );
+		total_time = pss->get_energy( "total_eval_time" );
 	}
 	total_time += time(NULL)-start_eval_time_;
 	pss->add_energy( "total_eval_time", total_time, 1.0 );
@@ -409,7 +409,7 @@ core::Real EvaluatedArchive::get_weight( std::string const& column ) const {
 	else return 0.0;
 }
 
-core::Real EvaluatedArchive::score_variation( std::string const& column ) const {
+core::Real EvaluatedArchive::score_variation( std::string const& /*column*/ ) const {
 	return 1.0;
 }
 

@@ -64,7 +64,7 @@ ReportFilter::apply( core::pose::Pose const & pose ) const {
 }
 
 void
-ReportFilter::report( std::ostream & out, core::pose::Pose const & pose ) const {
+ReportFilter::report( std::ostream & out, core::pose::Pose const & /*pose*/ ) const {
 	using namespace protocols::jd2;
 	out<<"filter: "<<report_filter_name_;
 	protocols::jd2::JobOP job2 = jd2::JobDistributor::get_instance()->current_job();
@@ -76,7 +76,7 @@ ReportFilter::report( std::ostream & out, core::pose::Pose const & pose ) const 
 }
 
 core::Real
-ReportFilter::report_sm( core::pose::Pose const & pose ) const {
+ReportFilter::report_sm( core::pose::Pose const & /*pose*/ ) const {
 	return( 0.0 );
 }
 

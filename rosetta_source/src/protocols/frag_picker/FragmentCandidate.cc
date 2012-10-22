@@ -174,7 +174,7 @@ void FragmentCandidate::print_fragment(std::ostream& out, scores::FragmentScoreM
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 		bool if_ca_in_output = false;
-		bool score_in_output = false;
+		//bool score_in_output = false;
 		if (option[frags::write_ca_coordinates].user())
 			if_ca_in_output = option[frags::write_ca_coordinates]();
 		// optionally add the total score as a comment line.

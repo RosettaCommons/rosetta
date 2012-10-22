@@ -152,9 +152,6 @@ read_topology_file(
 ///  These files contain information
 ///	 about each basic ResidueType which can be patched to created various
 ///	 variant types.
-// The above file doesn't seem to exist anymore. ~Labonte
-
-
 ResidueTypeOP
 read_topology_file(
 	utility::io::izstream & data,
@@ -283,7 +280,7 @@ read_topology_file(
 			l >> atom1;
 			l >> rotate; // not used here
 			rsd->add_residue_connection( atom1);
-			//std::cout << "CONNECT record depricated " << std::endl;
+			//std::cout << "CONNECT record deprecated " << std::endl;
 		} else if ( tag == "TYPE" ) {
 			// will probably handle this differently later on
 			l >> tag;

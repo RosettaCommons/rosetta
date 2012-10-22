@@ -71,7 +71,7 @@ void ClassicGrid::deserialize(utility::json_spirit::mObject data)
 	SingleGrid::deserialize(data["base_data"].get_obj());
 }
 
-void ClassicGrid::parse_my_tag(utility::tag::TagPtr const tag)
+void ClassicGrid::parse_my_tag(utility::tag::TagPtr const /*tag*/)
 {
 
 }

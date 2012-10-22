@@ -46,81 +46,81 @@ enum {
 
 class MPI_EndPoint : public EndPoint {
 
-  public:
-    MPI_EndPoint( mpi::communicator world, function< uint64_t () > role_available_mem );
-    ~MPI_EndPoint(){}
+public:
+	MPI_EndPoint( mpi::communicator world, function< uint64_t () > role_available_mem );
+	~MPI_EndPoint(){}
 
-    int mpi_rank() { return world_.rank(); }
+	int mpi_rank() { return world_.rank(); }
 
     // real memory usage
-    uint64_t current_mem() {
-      return inq_.current_mem() +
-        inbuf_.current_mem() +
-        outq_.current_mem() +
-        outbuf_.current_mem();
+	virtual uint64_t current_mem() {
+		return inq_.current_mem() +
+				inbuf_.current_mem() +
+				outq_.current_mem() +
+				outbuf_.current_mem();
     }
 
-    // checks and responds to a status request, then calls functor
-    // int refers to rank of node requesting the StatusResponse
-    void check_and_act_status_request( function< void ( StatusResponse & , int ) > functor );
+	// checks and responds to a status request, then calls functor
+	// int refers to rank of node requesting the StatusResponse
+	virtual void check_and_act_status_request( function< void ( StatusResponse & , int ) > functor );
 
-    // default functor for check_and_act_status_request
-    // opens irecv from asking node in anticipation of wu isend from asking node
-    // -> master sending new wu to slave
-    // opens isend to asking node in anticipation of wu irecv from asking node
-    // -> slave sending completed wu back to master
-    void listen_wu_sendrecv( StatusResponse & r, int requesting_node );
+	// default functor for check_and_act_status_request
+	// opens irecv from asking node in anticipation of wu isend from asking node
+	// -> master sending new wu to slave
+	// opens isend to asking node in anticipation of wu irecv from asking node
+	// -> slave sending completed wu back to master
+	virtual void listen_wu_sendrecv( StatusResponse & r, int requesting_node );
 
-    // isend to that node requesting a StatusResponse
-    // fills up inbound_statusresponse_, acts_on_status_response required to clear it
-    void send_status_request( int rank );
+	// isend to that node requesting a StatusResponse
+	// fills up inbound_statusresponse_, acts_on_status_response required to clear it
+	virtual void send_status_request( int rank );
 
-    // for each inbound StatusResponse, calls functor on it and then deletes it if functor return true
-    void act_on_status_response( function<bool ( StatusResponse & r )> functor );
+	// for each inbound StatusResponse, calls functor on it and then deletes it if functor return true
+	virtual void act_on_status_response( function<bool ( StatusResponse & r )> functor );
 
-    // default functor for acts_on_status_response
-    // opens irecv from asking node in anticipation of wu isend from asking node
-    // -> master sending new wu to slave
-    // opens isend to asking node in anticipation of wu irecv from asking node
-    // -> slave sending completed wu back to master
-    bool initiate_wu_sendrecv( StatusResponse & r );
+	// default functor for acts_on_status_response
+	// opens irecv from asking node in anticipation of wu isend from asking node
+	// -> master sending new wu to slave
+	// opens isend to asking node in anticipation of wu irecv from asking node
+	// -> slave sending completed wu back to master
+	virtual bool initiate_wu_sendrecv( StatusResponse & r );
 
-    // deletes reqs and corresponding buffers that have been completed succesfully
-    // also moves stuff from inbuf to inq
-    void cleanup_reqs();
+	// deletes reqs and corresponding buffers that have been completed succesfully
+	// also moves stuff from inbuf to inq
+	virtual void cleanup_reqs();
     
-    // setup an irecv from rank with WUs from rank's outbound totaling up to mem_size
-    void receive_wus( int rank, uint64_t mem_size );
+	// setup an irecv from rank with WUs from rank's outbound totaling up to mem_size
+	void receive_wus( int rank, uint64_t mem_size );
 
-    // setup an isend to rank with WUs from outbound totaling up to mem_size
-    void send_wus( int rank, uint64_t mem_size );
+	// setup an isend to rank with WUs from outbound totaling up to mem_size
+	void send_wus( int rank, uint64_t mem_size );
 
-    // checks and act to a clear queue command
-    void check_and_act_clearcommand();
+	// checks and act to a clear queue command
+	virtual void check_and_act_clearcommand();
 
-		bool has_open_status( int rank ) {
-			return open_status_.count( rank );
-		}
+	virtual bool has_open_status( int rank ) {
+		return open_status_.count( rank );
+	}
 
-  private:
+private:
 
-    mpi::communicator world_;
+	mpi::communicator world_;
 
-    WUQueueBuffer inbuf_;
-    WUQueueBuffer outbuf_;
+	WUQueueBuffer inbuf_;
+	WUQueueBuffer outbuf_;
 
-    // these hold the buffers for statusresponse sending and receiving
-    std::list< tuple< mpi::request, StatusResponse > > outbound_statusresponse_;
-    std::list< tuple< mpi::request, StatusResponse > > inbound_statusresponse_;
+	// these hold the buffers for statusresponse sending and receiving
+	std::list< tuple< mpi::request, StatusResponse > > outbound_statusresponse_;
+	std::list< tuple< mpi::request, StatusResponse > > inbound_statusresponse_;
 
-    // these hold the buffers for statusrequest sending and receiving
-    std::list< tuple< mpi::request, StatusRequest > > outbound_statusrequest_;
+	// these hold the buffers for statusrequest sending and receiving
+	std::list< tuple< mpi::request, StatusRequest > > outbound_statusrequest_;
 
-		std::set<int> open_status_; // holds ranks of nodes who have not responded to a statusrequest
+	std::set<int> open_status_; // holds ranks of nodes who have not responded to a statusrequest
 
-    // keep a irecv open for status response and clearcommand always
-    tuple< mpi::request, int > clearcommand_channel_;
-    tuple< mpi::request, StatusRequest > statusrequest_channel_;
+	// keep a irecv open for status response and clearcommand always
+	tuple< mpi::request, int > clearcommand_channel_;
+	tuple< mpi::request, StatusRequest > statusrequest_channel_;
 
 };
 

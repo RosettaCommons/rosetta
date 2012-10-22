@@ -140,7 +140,7 @@ AlignPoseToInvrotTreeMover::apply( core::pose::Pose & pose ){
 
     pose.append_residue_by_jump( *ligres, pose.total_residue() );
     target_it++;
-    Size jump_num = pose.num_jump();
+    //Size jump_num = pose.num_jump();
 
     //below commented out for now. need to think about how to best approach a
     //case where the ligand can have different rotameric states

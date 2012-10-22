@@ -512,7 +512,7 @@ private:
 	/// @brief one letter secondary structure code (3 letter alphabet)
 	char ss_;
 
-  /// @brief one letter secondary structure code (STR alphabet - Karplus et. al.)
+	/// @brief one letter secondary structure code (STR alphabet - Karplus et. al.)
 	char ss_str_;
 
 	/// @brief residue sequence number in source

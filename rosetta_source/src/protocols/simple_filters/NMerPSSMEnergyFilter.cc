@@ -74,7 +74,7 @@ protocols::filters::Filter( "NMerPSSMEnergy" )
 NMerPSSMEnergyFilter::~NMerPSSMEnergyFilter() {}
 
 void
-NMerPSSMEnergyFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & data, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
+NMerPSSMEnergyFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & /*data*/, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
 	if( ! tag->hasOption( "threshold" ) ) utility_exit_with_message("Must specify 'threshold' for NMerPSSMEnergyFilter.");
 	score_type_threshold_ = tag->getOption< core::Real >( "threshold" );

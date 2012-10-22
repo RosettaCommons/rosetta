@@ -55,7 +55,7 @@ public:
 	void add_motif( core::pose::PoseOP motif );
 	void set_symm( std::string symm_type_in ) { symm_type_ = symm_type_in; };
 
-	void set_thresholds( core::Real angle_thresh_in, core::Real trans_thresh_in, core::Real rmsd_thresh_in, core::Size clash_thresh_in ) { 
+	void set_thresholds( core::Real angle_thresh_in, core::Real trans_thresh_in, core::Real rmsd_thresh_in, core::Size /*clash_thresh_in*/ ) {
 		angle_thresh_ = angle_thresh_in;
 		trans_thresh_ = trans_thresh_in;
 		rmsd_thresh_ = rmsd_thresh_in;
@@ -80,7 +80,7 @@ public:
 
 	// symmetry-specific variants
 	bool compute_d2( core::pose::Pose const & pose, core::Real &best_score, std::string &motifhit ) const;
-	core::Real score_d2( core::Real rms, core::Real angle, core::Real trans, int clash ) const {
+	core::Real score_d2( core::Real rms, core::Real angle, core::Real trans, core::Size clash ) const {
 		if (rms<=rmsd_thresh_ && angle<=angle_thresh_ && clash<=clash_thresh_) { 
 			return(
 				angle_wt_ * (angle-angle_thresh_)

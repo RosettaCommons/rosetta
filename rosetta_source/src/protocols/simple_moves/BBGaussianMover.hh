@@ -75,6 +75,8 @@ public:
 	core::kinematics::MoveMapCOP movemap();
 	void movemap(core::kinematics::MoveMapCOP new_movemap);
 
+	using moves::Mover::last_proposal_density_ratio;
+
 	/// @brief get the ratio of proposal densities for the last move
 	Real last_proposal_density_ratio() const;
 

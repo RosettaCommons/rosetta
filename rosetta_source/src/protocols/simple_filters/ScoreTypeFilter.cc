@@ -78,7 +78,7 @@ ScoreTypeFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & 
 }
 void ScoreTypeFilter::parse_def( utility::lua::LuaObject const & def,
 				utility::lua::LuaObject const & score_fxns,
-				utility::lua::LuaObject const & tasks ) {
+				utility::lua::LuaObject const & /*tasks*/ ) {
 	using namespace core::scoring;
 
 	if( def["scorefxn"] ) {

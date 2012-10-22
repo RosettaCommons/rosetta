@@ -19,6 +19,7 @@
 #include <protocols/inputter/Inputter.hh>
 
 // Project headers
+#include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <deque>
 
@@ -63,7 +64,7 @@ class FastaInputter : public Inputter {
 		std::deque< std::pair< int, std::string> > file_names_;
 		int multiplier_;
 		bool multiply_over_all_;
-		int curr_idx_;
+		core::Size curr_idx_;
 		std::string residue_set_;
 
 }; // end FastaInputter

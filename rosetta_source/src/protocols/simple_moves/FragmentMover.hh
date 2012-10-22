@@ -53,6 +53,7 @@ public:
 	///@brief choose and insert a fragment --> has to be overloaded
 	virtual void apply( core::pose::Pose& ) = 0;
 
+	using moves::Mover::apply;
 
 	///@broef apply a fragment at pos to movemable dofs
 	virtual bool apply( core::pose::Pose&, Size pos ) const; // apply fragment at seqpos ( if possible )

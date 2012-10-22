@@ -35,8 +35,8 @@ StructuralSimilarityEvaluator::StructuralSimilarityEvaluator(
 	std::string const & tag
 ) :
 	evaluation::SingleValuePoseEvaluator< core::Real >(tag),
-	poses_(poses),
-	atom_name_(atom_name)
+	atom_name_(atom_name),
+	poses_(poses)
 {}
 
 StructuralSimilarityEvaluator::~StructuralSimilarityEvaluator() {}

@@ -215,8 +215,31 @@ sources = {
 	    "LoopMover_CCD",
 	    "LoopMover_KIC",
 	],
+	"protocols/qsar": [
+		"qsarMap",
+		"qsarMover",
+		"qsarOptFunc",
+		"RenderGridsToKinemage",
+	],
+	"protocols/qsar/scoring_grid": [
+		"GridInitMover",
+		"AtrGrid",
+		"SingleGrid",
+		"GridCreator",
+		"GridFactory",
+		"GridManager",
+        "ClassicGrid",
+		"ChargeGrid",
+		"HbaGrid",
+		"HbdGrid",
+		"RepGrid",
+		"ScoringGridLoader",
+		"VdwGrid",
+		"SolvationGrid",
+		"SolvationMetaGrid"
+	],
 	"protocols/relax": [
-                "CentroidRelax",
+		"CentroidRelax",
 		"ClassicRelax",
 		"cst_util",
 		"FastRelax",
@@ -413,8 +436,8 @@ sources = {
 		"AsymFoldandDockMoveRbJumpMover",
 		"AsymFoldandDockRbTrialMover",
 	],
-	    "protocols/simple_moves/carbohydrates": [
-        "RingConformationMover"
+	"protocols/simple_moves/carbohydrates": [
+		"RingConformationMover"
     ],
 	"protocols/simple_moves/oop": [
 		"OopPuckMover",
@@ -531,29 +554,6 @@ sources = {
 		"SeqprofConsensusOperation",
 		"SetIGTypeOperation",
 		"ThreadSequenceOperation",
-	],
-	"protocols/qsar": [
-		"qsarMap",
-		"qsarMover",
-		"qsarOptFunc",
-		"RenderGridsToKinemage",
-	],
-	"protocols/qsar/scoring_grid": [
-		"GridInitMover",
-		"AtrGrid",
-		"SingleGrid",
-		"GridCreator",
-		"GridFactory",
-		"GridManager",
-        "ClassicGrid",
-		"ChargeGrid",
-		"HbaGrid",
-		"HbdGrid",
-		"RepGrid",
-		"ScoringGridLoader",
-		"VdwGrid",
-		"SolvationGrid",
-		"SolvationMetaGrid"
 	],
 }
 include_path = [

@@ -61,14 +61,37 @@ VallResidue::VallResidue(String const & line) {
 
 /// @brief copy constructor
 VallResidue::VallResidue(VallResidue const & rval) :
-	utility::pointer::ReferenceCount(), key_(rval.key_),id_(rval.id_), aa_(rval.aa_), ss_(
-			rval.ss_), ss_str_(rval.ss_str_), resi_(rval.resi_), bF_(rval.bF_), x_(rval.x_), y_(rval.y_),
-			z_(rval.z_), cbx_(rval.cbx_), cby_(rval.cby_),
-			cbz_(rval.cbz_), cenx_(rval.cenx_), ceny_(rval.ceny_),
-			cenz_(rval.cenz_), dssp_phi_(rval.dssp_phi_), dssp_psi_(rval.dssp_psi_), sa_(rval.sa_), sa_norm_(rval.sa_norm_), nali_(rval.nali_),
-			phi_(rval.phi_), psi_(rval.psi_), omega_(rval.omega_),
-			profile_(rval.profile_), profile_struct_(rval.profile_struct_), sec_shift_data_(rval.sec_shift_data_),
-	position_index_(rval.position_index_), section_index_(rval.section_index_) {
+	utility::pointer::ReferenceCount(),
+	key_(rval.key_),
+	id_(rval.id_),
+	aa_(rval.aa_),
+	ss_(rval.ss_),
+	ss_str_(rval.ss_str_),
+	resi_(rval.resi_),
+	bF_(rval.bF_),
+	x_(rval.x_),
+	y_(rval.y_),
+	z_(rval.z_),
+	cbx_(rval.cbx_),
+	cby_(rval.cby_),
+	cbz_(rval.cbz_),
+	cenx_(rval.cenx_),
+	ceny_(rval.ceny_),
+	cenz_(rval.cenz_),
+	phi_(rval.phi_),
+	psi_(rval.psi_),
+	omega_(rval.omega_),
+	sa_(rval.sa_),
+	sa_norm_(rval.sa_norm_),
+	dssp_phi_(rval.dssp_phi_),
+	dssp_psi_(rval.dssp_psi_),
+	nali_(rval.nali_),
+	profile_(rval.profile_),
+	profile_struct_(rval.profile_struct_),
+	sec_shift_data_(rval.sec_shift_data_),
+	position_index_(rval.position_index_),
+	section_index_(rval.section_index_),
+	all_atom_residue_depth_(rval.all_atom_residue_depth_){
 }
 
 /// @brief default destructor

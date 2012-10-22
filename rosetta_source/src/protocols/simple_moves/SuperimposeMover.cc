@@ -109,7 +109,7 @@ SuperimposeMover::superimpose(
 	Size ref_start,
 	Size ref_end,
 	Size target_start,
-	Size target_end
+	Size /*target_end*/
 )
 {
 	core::id::AtomID_Map< core::id::AtomID > atom_map;
@@ -148,7 +148,7 @@ SuperimposeMover::apply( Pose & pose ) {
 	runtime_assert_msg(ref_end - ref_start == target_end - target_start, "segments to superimpose have different lenghts!");
 
 	if ( ref_pose_->total_residue() == pose.total_residue() ) {
-		core::Real rms  = superimpose( pose, *ref_pose_, ref_start, ref_end, target_start, target_end );
+		//core::Real rms  = superimpose( pose, *ref_pose_, ref_start, ref_end, target_start, target_end );
 		//TR << "Rms to reference: " << rms << std::endl;
 	}
 }
@@ -159,7 +159,11 @@ SuperimposeMover::get_name() const {
 }
 
 void
-SuperimposeMover::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+SuperimposeMover::parse_my_tag( utility::tag::TagPtr const tag,
+		protocols::moves::DataMap & /*data_map*/,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const & )
 {
 	ref_start_ = tag->getOption< Size >("ref_start",1);
 	ref_end_ = tag->getOption< Size >("ref_end",0);

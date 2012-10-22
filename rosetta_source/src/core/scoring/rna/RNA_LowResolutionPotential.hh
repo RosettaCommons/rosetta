@@ -265,7 +265,7 @@ private:
 		Real & deriv_x = dummy_deriv,
 		Real & deriv_y = dummy_deriv,
 		Real & deriv_z = dummy_deriv	) const;
-	
+
 	Real
 	get_rna_backbone_backbone_xy( Distance const x,
 													 Distance const y,

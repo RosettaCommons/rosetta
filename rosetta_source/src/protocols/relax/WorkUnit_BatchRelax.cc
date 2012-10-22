@@ -201,7 +201,7 @@ WorkUnit_BatchRelax_and_PostRescore::rescore_all_decoys(){
 	using basic::options::option;
 	using namespace basic::options;
 	using namespace core;
-	bool superimpose_to_ref = true;
+	//bool superimpose_to_ref = true;
 
 	TR << "rescore_all_decoys" << std::endl;
 

@@ -64,8 +64,8 @@ private:
 	core::Real ddg_threshold_; //dflt -15
 	core::scoring::ScoreFunctionOP scorefxn_; //dflt NULL/score12 in cstrctr/rosettascripts
 	core::Size rb_jump_; // dflt 1
-  core::pack::task::TaskFactoryOP task_factory_;
-  bool use_custom_task_;
+	core::pack::task::TaskFactoryOP task_factory_;
+	bool use_custom_task_;
 	bool repack_bound_; //dflt true; Do you want to repack in the bound state (ddG). Avoid redundant packing if already packed beforing calling the filter.
 	bool relax_bound_; //dflt false; Do you want to relax in the bound state (ddG). Avoid redundant relax if already relaxed before calling the filter.
 	utility::vector1<core::Size> chain_ids_;

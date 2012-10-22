@@ -80,7 +80,7 @@ private:
 
 	Size min_seq_sep_;
 	core::Real ca_dist_squared_;
-  Size min_contacts_per_res_;
+	Size min_contacts_per_res_;
 	core::Real max_rmsd_after_relax_;
 	core::Real max_ddg_score_;
 

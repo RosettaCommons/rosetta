@@ -174,7 +174,7 @@ PackRotamersMover::task_is_valid( Pose const & pose ) const
 void PackRotamersMover::parse_def( utility::lua::LuaObject const & def,
 				utility::lua::LuaObject const & score_fxns,
 				utility::lua::LuaObject const & tasks,
-				protocols::moves::MoverCacheSP cache ) {
+				protocols::moves::MoverCacheSP /*cache*/ ) {
 	if( def["nloop"] ) {
 		nloop_ = def["nloop"].to<Size>();
 		runtime_assert( nloop_ > 0 );

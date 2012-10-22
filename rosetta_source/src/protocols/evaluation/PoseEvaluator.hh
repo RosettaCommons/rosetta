@@ -60,7 +60,7 @@ public:
 	///@brief direct application to SilentStruct...
 	/// default implementation makes pose and calls "apply", you can overload if you don't need the pose-step
 	virtual void apply( core::io::silent::SilentStruct &pss) const;
-  virtual bool applicable( core::pose::Pose const& ) const { return true; }
+	virtual bool applicable( core::pose::Pose const& ) const { return true; }
 
 	virtual core::Size size() const = 0;
 	virtual std::string name( core::Size ) const = 0;
@@ -77,9 +77,11 @@ public:
 	virtual void apply( core::pose::Pose&, std::string tag, core::io::silent::SilentStruct &pss) const;
 	//	void apply( core::pose::Pose&, std::string tag, core::io::silent::SilentStruct &pss) const;
 
+	using PoseEvaluator::apply;
+
 	///@brief evaluate pose
 	virtual T apply( core::pose::Pose& ) const = 0;
-  virtual bool applicable( core::pose::Pose const& ) const { return true; }
+	virtual bool applicable( core::pose::Pose const& ) const { return true; }
 
 	//	void apply( core::pose::Pose&, std::string tag, core::io::silent::SilentStruct &pss) const;
 

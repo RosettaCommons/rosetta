@@ -62,7 +62,9 @@ class CombinedConstraintEvaluator : public evaluation::PoseEvaluator {
 public:
 	CombinedConstraintEvaluator( std::string tag, std::string filename, Size constraints_combine_ratio_ = 2, Size repeat = 10 );
 	//sets xxx_cst and xxx_viol columns
-  virtual void apply( core::pose::Pose& pose, std::string tag, core::io::silent::SilentStruct &pss) const;
+	virtual void apply( core::pose::Pose& pose, std::string tag, core::io::silent::SilentStruct &pss) const;
+
+	using evaluation::PoseEvaluator::apply;
 
 	//returns constraint score
 	virtual core::Real apply( core::pose::Pose& pose ) const;

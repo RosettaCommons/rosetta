@@ -192,7 +192,7 @@ void SymmetricMotifFilter::add_motif( core::pose::PoseOP motif )
 }
 
 void
-SymmetricMotifFilter::report( std::ostream & out, core::pose::Pose const & pose ) const {
+SymmetricMotifFilter::report( std::ostream & /*out*/, core::pose::Pose const & pose ) const {
 	core::Real bestscore;
 	std::string hitLocation;
 	bool found_motif = compute( pose, bestscore, hitLocation );
@@ -205,10 +205,10 @@ SymmetricMotifFilter::report( std::ostream & out, core::pose::Pose const & pose 
 }
 
 core::Real
-SymmetricMotifFilter::report_sm( core::pose::Pose const & pose ) const {
-	core::Real bestscore;
+SymmetricMotifFilter::report_sm( core::pose::Pose const & /*pose*/ ) const {
+	core::Real bestscore = 0.0;  // arbitrarily set to zero to silence compiler warning ~Labonte
 	std::string hitLocation;
-	bool found_motif = compute( pose, bestscore, hitLocation );
+	//bool found_motif = compute( pose, bestscore, hitLocation );
 	return bestscore;
 }
 
@@ -220,6 +220,7 @@ SymmetricMotifFilter::compute( core::pose::Pose const & pose, core::Real &best_s
 	if (symm_type_ == "D2") {
 		return compute_d2( pose, best_score, motifhit );
 	}
+	return false;  // added to remove compiler warning; I assume false is warranted here? ~ Labonte
 }
 
 //
@@ -247,7 +248,7 @@ SymmetricMotifFilter::compute_d2( core::pose::Pose const & pose, core::Real &bes
 		symm_info = SymmConf.Symmetry_Info();
 		nres = symm_info->num_independent_residues();
 	}
-	for (int i=1; i<=nres; ++i) {
+	for (Size i=1; i<=nres; ++i) {
 		if ( !pose.residue_type(i).is_protein() ) continue;
 		cas_pose.push_back( pose.residue(i).atom(" CA ").xyz() );
 		cas_pose.push_back( pose.residue(i).atom(" C  ").xyz() );
@@ -278,20 +279,20 @@ SymmetricMotifFilter::compute_d2( core::pose::Pose const & pose, core::Real &bes
 
 
 		// build up multi-segment motifs one segment at a time
-		for (int j=2; j<=motif_cuts_i.size(); ++j) {
+		for (Size j=2; j<=motif_cuts_i.size(); ++j) {
 			prev_Is = motif_hits_i;
 			motif_hits_i.clear();
 			segmentCounter++;
 
-			for (int k=1; k<=prev_Is.size(); ++k) {
+			for (Size k=1; k<=prev_Is.size(); ++k) {
 				utility::vector1< numeric::xyzVector< core::Real > > prevCAs;
 				utility::vector1< bool > elim(nres_prot, false);
 
 				// load prev hits' CA coords
-				for (int j_prev = 2; j_prev<j; ++j_prev) {
+				for (Size j_prev = 2; j_prev<j; ++j_prev) {
 					core::Size segstart_x = prev_Is[k][j_prev-1];
 					core::Size seglen_x   = motif_cuts_i[j_prev] - motif_cuts_i[j_prev-1] - 1;
-					for (int l=segstart_x; l<=segstart_x+seglen_x; ++l) {
+					for (Size l=segstart_x; l<=segstart_x+seglen_x; ++l) {
 						prevCAs.push_back( cas_pose[4*l-3] );
 						prevCAs.push_back( cas_pose[4*l-2] );
 						prevCAs.push_back( cas_pose[4*l-1] );
@@ -311,13 +312,13 @@ SymmetricMotifFilter::compute_d2( core::pose::Pose const & pose, core::Real &bes
 					core::Size seglen_l   = motif_cuts_i[j] - motif_cuts_i[j-1] - 1;
 					bool overlap=false;
 					if (segstart_l+seglen_l > nres_prot) continue;
-					for (int m=segstart_l; m<=segstart_l+seglen_l && !overlap; ++m) {
+					for (Size m=segstart_l; m<=segstart_l+seglen_l && !overlap; ++m) {
 						overlap |= elim[m];
 					}
 					if (overlap) continue;
 
 					utility::vector1< numeric::xyzVector< core::Real > > ca_chunk_pose = prevCAs;
-					for (int m=segstart_l; m<=segstart_l+seglen_l; ++m) {
+					for (Size m=segstart_l; m<=segstart_l+seglen_l; ++m) {
 						ca_chunk_pose.push_back( cas_pose[4*m-3] );
 						ca_chunk_pose.push_back( cas_pose[4*m-2] );
 						ca_chunk_pose.push_back( cas_pose[4*m-1] );
@@ -338,7 +339,7 @@ SymmetricMotifFilter::compute_d2( core::pose::Pose const & pose, core::Real &bes
 						motif_hits_i.push_back( newI );
 
 						TR.Debug << "Motif " << i << " hit at ";
-						for (int z=1; z<=newI.size(); ++z) TR.Debug << newI[z] << " ";
+						for (Size z=1; z<=newI.size(); ++z) TR.Debug << newI[z] << " ";
 						TR.Debug << " rms = " << rms << std::endl;
 
 						if (j == motif_cuts_i.size()) {   // last segment has been placed
@@ -354,21 +355,21 @@ SymmetricMotifFilter::compute_d2( core::pose::Pose const & pose, core::Real &bes
 	}
 
 	//  2) for each backbone hit pair combination, measure angle error
-	for (int i=1; i<=motif_hits1.size(); ++i) {
-		for (int j=1; j<=motif_hits2.size(); ++j) {
+	for (Size i=1; i<=motif_hits1.size(); ++i) {
+		for (Size j=1; j<=motif_hits2.size(); ++j) {
 			// a) check for overlap
 			utility::vector1< bool > elim(nres_prot, false);
-			for (int x=1; x<=motif_hits1[i].size(); ++x) {
+			for (Size x=1; x<=motif_hits1[i].size(); ++x) {
 				core::Size segstart_x = motif_hits1[i][x];
 				core::Size seglen_x = motif_cuts[1][x+1] - motif_cuts[1][x] - 1;
-				for (int k=segstart_x; k<=segstart_x+seglen_x; ++k)
+				for (Size k=segstart_x; k<=segstart_x+seglen_x; ++k)
 					elim[k] = true;
 			}
 			bool overlap = false;
-			for (int x=1; x<=motif_hits2[j].size() && !overlap; ++x) {
+			for (Size x=1; x<=motif_hits2[j].size() && !overlap; ++x) {
 				core::Size segstart_x = motif_hits2[j][x];
 				core::Size seglen_x = motif_cuts[2][x+1] - motif_cuts[2][x] - 1;
-				for (int k=segstart_x; k<=segstart_x+seglen_x && !overlap; ++k) {
+				for (Size k=segstart_x; k<=segstart_x+seglen_x && !overlap; ++k) {
 					overlap |= elim[k];
 				}
 			}
@@ -429,10 +430,10 @@ SymmetricMotifFilter::compute_d2( core::pose::Pose const & pose, core::Real &bes
 			numeric::xyzVector< core::Real > com2B = preTs2[j] - postTs2[j] + Rdimers[2]*delta_coms[2];
 
 			bool clashcheck = false;
-			int nclashes = 0;
+			Size nclashes = 0;
 			int CUTOFF2 = 3*3;
-			for (int x=1; x<=nres_prot && !clashcheck; ++x) {
-				for (int y=1; y<=nres_prot && !clashcheck; ++y) {
+			for (Size x=1; x<=nres_prot && !clashcheck; ++x) {
+				for (Size y=1; y<=nres_prot && !clashcheck; ++y) {
 					numeric::xyzVector< core::Real > x_x = R1A*(cas_pose[4*x-3]-postTs1[i]) + com1A;  // just check CA
 					numeric::xyzVector< core::Real > x_y = R1B*(cas_pose[4*y-3]-postTs1[i]) + com1B;  // just check CA
 					if (x_x.distance_squared(x_y) < CUTOFF2) {
@@ -441,8 +442,8 @@ SymmetricMotifFilter::compute_d2( core::pose::Pose const & pose, core::Real &bes
 					}
 				}
 			}
-			for (int x=1; x<=cas_pose.size() && !clashcheck; ++x) {
-				for (int y=1; y<=cas_pose.size() && !clashcheck; ++y) {
+			for (Size x=1; x<=cas_pose.size() && !clashcheck; ++x) {
+				for (Size y=1; y<=cas_pose.size() && !clashcheck; ++y) {
 					numeric::xyzVector< core::Real > x_x = R2A*(cas_pose[4*x]-postTs2[j]) + com2A;
 					numeric::xyzVector< core::Real > x_y = R2B*(cas_pose[4*y]-postTs2[j]) + com2B;
 					if (x_x.distance_squared(x_y) < CUTOFF2) {
@@ -464,9 +465,9 @@ SymmetricMotifFilter::compute_d2( core::pose::Pose const & pose, core::Real &bes
 				// dump ID to a string for reporting purposes
 				std::ostringstream oss;
 				oss << "( ";
-				for (int k=1; k<=motif_hits1[i].size(); ++k) oss << motif_hits1[i][k] << " ";
+				for (Size k=1; k<=motif_hits1[i].size(); ++k) oss << motif_hits1[i][k] << " ";
 				oss << ") ( ";
-				for (int k=1; k<=motif_hits2[j].size(); ++k) oss << motif_hits2[j][k] << " ";
+				for (Size k=1; k<=motif_hits2[j].size(); ++k) oss << motif_hits2[j][k] << " ";
 				oss << ")";
 				motifhit = oss.str();
 				best_score = score_i;
@@ -494,10 +495,10 @@ SymmetricMotifFilter::process_motifs() {
 
 	// parse motifs
 	nsegs_ = 0;
-	for (int i=1; i<=nmotifs; ++i) {
+	for (Size i=1; i<=nmotifs; ++i) {
 		motif_cuts[i].push_back( 0 );
 		core::pose::PoseOP motif_i = ref_motifs_[i];
-		for (int j=1; j<=motif_i->total_residue(); ++j) {
+		for (Size j=1; j<=motif_i->total_residue(); ++j) {
 			if (motif_i->pdb_info()->chain(j) == 'A') {
 				cas_chainA[i].push_back( motif_i->residue(j).atom(" CA ").xyz() );
 				cas_chainA[i].push_back( motif_i->residue(j).atom(" C  ").xyz() );
@@ -526,7 +527,7 @@ SymmetricMotifFilter::process_motifs() {
 	delta_coms.resize(nmotifs);
 	symm_orders.resize(nmotifs);
 	symm_axes.resize(nmotifs);
-	for (int i=1; i<=nmotifs; ++i) {
+	for (Size i=1; i<=nmotifs; ++i) {
 		numeric::xyzVector< core::Real > preT(0,0,0), postT(0,0,0);
 		core::Real rms = RMSwrapper( cas_chainB[i], cas_chainA[i], Rdimers[i], preT, postT);
 
@@ -584,14 +585,14 @@ SymmetricMotifFilter::process_motifs() {
 void
 SymmetricMotifFilter::parse_my_tag(
 				utility::tag::TagPtr const tag,
-				protocols::moves::DataMap & data_map,
+				protocols::moves::DataMap & /*data_map*/,
 				protocols::filters::Filters_map const &,
 				protocols::moves::Movers_map const &,
-				core::pose::Pose const & reference_pose ) {
+				core::pose::Pose const & /*reference_pose*/ ) {
 	symm_type_ = tag->getOption<std::string>( "symm_type", "D2" );
 
 	utility::vector1<std::string> motif_files( utility::string_split( tag->getOption< std::string >("motifs"), ',') );
-	for (int i=1; i<=motif_files.size(); ++i) {
+	for (Size i=1; i<=motif_files.size(); ++i) {
 		core::pose::PoseOP motif = new core::pose::Pose();
 		core::import_pose::pose_from_pdb( *motif, motif_files[i] );
 		ref_motifs_.push_back( motif );
@@ -620,7 +621,7 @@ SymmetricMotifFilter::parse_my_tag(
 
 	if (tag->hasOption("force_pos")) {
 		utility::vector1<std::string> forced( utility::string_split( tag->getOption< std::string >("force_pos"), ',') );
-		for (int i=1; i<=forced.size(); ++i)
+		for (Size i=1; i<=forced.size(); ++i)
 			forced_pos_.push_back( std::atoi( forced[i].c_str() ) );
 	}
 

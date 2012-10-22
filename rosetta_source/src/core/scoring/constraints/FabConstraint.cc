@@ -68,7 +68,7 @@ void
 FabConstraint::read_def(
     std::istream & data,
     core::pose::Pose const & pose,
-    FuncFactory const & func_factory
+    FuncFactory const & /*func_factory*/
 ) {
     utility::vector1<Size> res1;
     utility::vector1<Size> res2;

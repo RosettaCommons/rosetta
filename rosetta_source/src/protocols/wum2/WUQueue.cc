@@ -22,7 +22,7 @@
 namespace protocols{
 namespace wum2{
 
-boost::uint64_t WUQueue::serialized_size( WorkUnitSP wu ) {
+boost::uint64_t WUQueue::serialized_size( WorkUnitSP /*wu*/ ) {
 #ifdef USEBOOSTSERIALIZE
   std::stringstream s;
   boost::archive::binary_oarchive oa(s);

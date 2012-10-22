@@ -64,7 +64,7 @@ class SilentFileInputter : public Inputter {
 		std::deque< std::pair< int, std::string> > tags_;
 		int multiplier_;
 		bool multiply_over_all_;
-		int curr_idx_;
+		core::Size curr_idx_;
 		core::io::silent::SilentFileData sfd_;
 
 }; // end SilentFileInputter

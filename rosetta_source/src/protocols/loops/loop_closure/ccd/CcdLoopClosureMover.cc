@@ -24,6 +24,7 @@
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 
 // Utility Headers
+#include <utility/PyAssert.hh>
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>
@@ -137,11 +138,14 @@ CcdLoopClosureMover::get_tolerance() const {
 
 core::Real
 CcdLoopClosureMover::get_max_total_delta( std::string secstr ) const {
+	assert((secstr == "H") || (secstr == "E") || (secstr == "L"));
+	PyAssert((secstr == "H") || (secstr == "E") || (secstr == "L"),
+			"CcdLoopClosureMover::get_max_total_delta( std::string secstr ): secstr must be 'H', 'E', or 'L'.");
 	if (secstr == "H")
 		return max_total_delta_helix_;
 	else if (secstr == "E")
 		return max_total_delta_strand_;
-	else if (secstr == "L")
+	else /*secstr == "L"*/
 		return max_total_delta_loop_;
 }
 

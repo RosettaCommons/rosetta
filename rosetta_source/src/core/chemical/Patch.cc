@@ -12,7 +12,7 @@
 /// @brief
 /// implementation class for abstract class Residue
 ///
-/// @detailed
+/// @details
 /// My understanding of this piece of code comes from various conversations with
 /// Oliver Lang, Summer Thyme, and Andrew Leaver-Fay. If the ideas are incorrect, feel
 /// free to correct, but I doubt you will, because no one ever comments code.
@@ -21,10 +21,10 @@
 ///
 /// What are patches? Patches are modifications to the original amino acid residues. These
 /// modifications include capping the N and C terminus, adding phosphorylation to residues,
-/// etc, etc. The actually files that are read and used are found in:
-/// minirosetta_database/chemical/residue_type_sets/fa_standard/patches
+/// etc, etc. The actual files that are read and used are found in:
+/// rosetta_database/chemical/residue_type_sets/fa_standard/patches
 /// All of these patches are read at the beginning of a Rosetta application and are applied to all
-/// residues that are identified as needing to be patched (full of explanation on identification of
+/// residues that are identified as needing to be patched (identification of
 /// residues is explained later). Identification of residues that need to be
 /// patched varies by what is in the actual patch file. For example, residues that are C and N terminus
 /// are patched with the N and C terminus patch, which is defined in the files NtermProteinFull.txt and
@@ -36,7 +36,7 @@
 /// to make it easier to read. Important parts are shown:
 ///
 /// NAME NtermProteinFull #actual name of the patch
-/// TYPES LOWER_TERMINUS #the type that this patch belongs to. Types are defined in VariantTypes.cc/.hh
+/// TYPES LOWER_TERMINUS #the type that this patch belongs to. Types are defined in VariantType.cc/.hh
 ///
 /// #This section is for general selection rules to apply the patch.
 /// BEGIN_SELECTOR #Here is where we define how to select amino acids for the patch. Properties/variant types needed for the patch are found between the BEGIN_SELECTOR and END_SELECTOR "titles"
@@ -105,27 +105,27 @@
 /// You can specify specific selectors within the BEGIN_CASE / END_CASE by having another BEGIN_SELECTOR / END_SELECTOR block.
 /// People generally specify specific amino acids within the BEGIN_SELECTOR / END_SELECTOR blocks within the BEGIN_CASE / END_CASE blocks.
 /// At the end, there is one last BEGIN_CASE / END_CASE with no BEGIN_SELECTOR / END_SELECTOR block. This block is used to specify
-/// what to do with the general case, which was defined at the very begining of the file. A little more detail follows below
+/// what to do with the general case, which was defined at the very beginning of the file. A little more detail follows below
 ///
 /// First, you must name your patch. Then you have to give it a "type". This type is defined in VariantType.cc/.hh.
 /// All the type does is adds a name that can be used later on in different protocols.
 /// It also helps the patch system keep track of what residues are patched with what type.
-/// The type has no magical meaning, its a name that you give it that is "defined" in the variantType.cc. In short,
-/// its a name handler. Once the name and type have been assigned, you must define a general case in which your patch applies.
+/// The type has no magical meaning, it's a name that you give it that is "defined" in the variantType.cc. In short,
+/// it's a name handler. Once the name and type have been assigned, you must define a general case in which your patch applies.
 /// Generally, this means that you want it to apply to a specific type of aa, or all residues of a specific type or property.
 /// After this block comes the BEGIN_CASE / END_CASE statements. In these statements, you specify what modifications you want
 /// to apply to the residues. If you have different requirements for different amino acids, you must specify this in a BEGIN_SELECTOR /
 /// END_SELECTOR block within the BEGIN_CASE / END_CASE block. You must specify specific amino acids first, then in a new BEGIN_CASE / END_CASE
-/// block, you specify the general modfications defined by the first selector. Confusing, huh? The reason for having specific selectors defined
-/// before the general case is because...I dont know. I suspect its because of how the file is read in and applied. Regardless, if you want
+/// block, you specify the general modifications defined by the first selector. Confusing, huh? The reason for having specific selectors defined
+/// before the general case is because...I don't know. I suspect its because of how the file is read in and applied. Regardless, if you want
 /// to do something to a specific amino acid/ residue before you get to the general case, you need to have a BEGIN_CASE / END_CASE block with
 /// a selector in there before you get to the general BEGIN_CASE / END_CASE block.
 ///
 /// Using Patch Selector to Specify Application of a patch to specific residues
 ///
-/// Woah there! Now that you know how to use patches, you dont need to go all gun whole crazy and create a ton of patches. This is because
-/// all patches are read at the begging of Rosetta and applied. This creates overhead if you have a ton of patch files. To circumvent this,
-/// Someone wrote an option called -residues:patch_selectors. I dont know who wrote it, or where its located, sorry. This option allows
+/// Woah there! Now that you know how to use patches, you don't need to go all gun-ho crazy and create a ton of patches. This is because
+/// all patches are read at the beginning of Rosetta and applied. This creates overhead if you have a ton of patch files. To circumvent this,
+/// Someone wrote an option called -residues:patch_selectors. I don't know who wrote it, or where its located, sorry. This option allows
 /// you to create patches that are only loaded when you use the option -residues:patch_selectors. To get this to work, you create a patch
 /// like normal. Then, in the BEGIN_SELECTOR / END_SELECTOR line, you add a line CMDLINE_SELECTOR <name of command line>. This means, if you
 /// use the CMDLINE_SELECTOR sc_orbitals, your patch will only be loaded if you use the option -residues:patch_selectors sc_orbitals. Cool, huh?
