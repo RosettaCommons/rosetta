@@ -102,7 +102,13 @@ settings = {
 
     "linux" : {},
 
-    "macos" : {},
+    "macos" : {
+        "overrides" : {
+            "library_path" : [
+                "/usr/lib",
+            ],
+        },
+    },
 
     # Note: Setting the above paths for Windows is only useful in the site.settings
     # as there is no standard location for installed libraries and headers.
