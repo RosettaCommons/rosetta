@@ -11,7 +11,7 @@
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 from rosetta import *
-
+import tools.loops as loop_tools
 class lowRes_Loop_Modeling:
      def __init__(self, score_object, pose):
         self.score_object = score_object
@@ -31,7 +31,7 @@ class lowRes_Loop_Modeling:
          ft.clear()
          #ft.simple_tree(self.pose.total_residue())
          print len(loops_as_string_array)
-         ft, movemap, loopsLis=tools.loops.initLoops().InitializeLoops(p, loops_as_string_array, ft, movemap)
+         ft, movemap, loopsLis=loop_tools.InitializeLoops(p, loops_as_string_array, ft, movemap)
          loops = Loops()
          for loo in loopsLis:
              loops.add_loop(loo)
@@ -58,7 +58,7 @@ class lowRes_Loop_Modeling:
          ft.clear()
          #ft.simple_tree(self.pose.total_residue())
          print len(loops_as_string_array)
-         ft, movemap, loopsLis=tools.loops.initLoops().InitializeLoops(p, loops_as_string_array, ft, movemap)
+         ft, movemap, loopsLis=loop_tools.InitializeLoops(p, loops_as_string_array, ft, movemap)
          loops = Loops()
          for loo in loopsLis:
              loops.add_loop(loo)
@@ -93,7 +93,7 @@ class lowRes_Loop_Modeling:
          ft.clear()
          #ft.simple_tree(self.pose.total_residue())
          print len(loops_as_string_array)
-         ft, movemap, loopsLis=tools.loops.initLoops().InitializeLoops(p, loops_as_string_array, ft, movemap)
+         ft, movemap, loopsLis=loop_tools.InitializeLoops(p, loops_as_string_array, ft, movemap)
          loops = Loops()
 
          print "Fold Tree Correct? " + repr(ft.check_fold_tree())

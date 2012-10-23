@@ -179,7 +179,6 @@ def InitializeLoops( p, loops_as_strings, ft=0, movemap=0):
     """
     DEPRECATED? Returns loop information giving a list filled with loops, a movemap, and a new foldtree to apply
     """
-    #Movemap for each type works...
     begin = 1
     loopsLis = []
     i =1

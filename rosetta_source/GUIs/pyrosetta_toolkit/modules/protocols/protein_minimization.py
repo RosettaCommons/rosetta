@@ -20,6 +20,9 @@ class Protein_Min:
     def __init__(self, score_object, pose):
         self.score_object = score_object
         self.pose = pose
+    
+    def __exit__(self):
+        self.score_object.score.set_weight(chainbreak, 0)
         
     def Relax(self, rounds, classic, movemap = 0):
         """
@@ -44,6 +47,7 @@ class Protein_Min:
             for i in range(1, rounds+1):
                 Rel.apply(self.pose)
                 print self.score_object.score(self.pose)
+        self.score_object.score.set_weight(chainbreak, 0)
         print "Relax Complete"
 
     

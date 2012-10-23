@@ -7,7 +7,7 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 ## @file   /GUIs/pyrosetta_toolkit/modules/protocols/loop_minimization.py
-## @brief  main loop protocols
+## @brief  main loop minimization protocols
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 from rosetta import *
@@ -24,7 +24,10 @@ class Loop_Min:
         self.score_object = score_object
         self.pose = pose
         self.pwd = os.getcwd()
-
+    
+    def __exit__(self):
+        self.score_object.score.set_weight(chainbreak, 0)
+        
 #classicMinLoop
     def classicMinLoop(self, rounds, loops_as_string_array, tolerance=0.1, movemap=0):
         """
@@ -51,6 +54,7 @@ class Loop_Min:
             
         #OLD: ft.assign(ft_o)
         #OLD: p.fold_tree(ft)
+        self.score_object.score.set_weight(chainbreak, 0)
         print "Minimization Complete"
         
 #RelaxLoop    
@@ -81,8 +85,9 @@ class Loop_Min:
             for i in range(1, rounds+1):
                 print "Rounds: "+repr(i)
                 Rel.apply(self.pose)
-                print self.score_object.score(self.pose)     
-
+                print self.score_object.score(self.pose)
+                
+        self.score_object.score.set_weight(chainbreak, 0)
         print "Relax Complete"
     
     def relax_residue_and_neighbors(self, rounds, residue, chain, num_neighbors=1, bbonly=False):
@@ -110,6 +115,7 @@ class Loop_Min:
             print "Rounds: "+repr(i)
             Rel.apply(self.pose)
             print self.score_object.score(self.pose)
+        self.score_object.score.set_weight(chainbreak, 0)
         print "Relax Complete"
         
     def relaxLoopBBonly(self, rounds, loops_as_string_array, classic, movemap = 0):
@@ -171,6 +177,7 @@ class Loop_Min:
                 #ccd_closure.apply(self.pose) 
         ft.assign(ft_o)
         self.pose.fold_tree(ft)
+        self.score_object.score.set_weight(chainbreak, 0)
         print "LoopMover_Refine_Backrub Complete"
             
 #SCWRL        
