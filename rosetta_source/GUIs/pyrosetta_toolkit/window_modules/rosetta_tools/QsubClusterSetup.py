@@ -18,110 +18,106 @@ import os
 import tkFont
 import re
 import math
+from settings import QsubSettings
 
-class ClusterSetup():
+class QsubClusterSetup():
+    """
+    This class is used to make it easier to run Jobs on a cluster.  Use the functions in pyrosetta toolkit to combine resultant directories and rename.
+    """
+    
     def __init__(self):
         self.pwd = (self.location())[0]
         self.jobs = StringVar()
-        self.struc= StringVar()
-        self.SEEDMETHOD = [
-            'Job x Total Structures',
-            'Job',
-            'Custom'
-        ]
-        self.seed = StringVar()
-        self.seed.set(self.SEEDMETHOD[0])
-        self.QUEUEMETHOD = [
-            'nmf',
-            'apache',
-            'batch',
-            'glide',
-            'dna',
-            'q32'
-        ]
+        self.jobs.set("0")
+        self.struc_per_job= StringVar()
+        self.struc_per_job.set("0")
         
-        #Need to add a trace to get this to work correctly...
-        self.queueproc = {
-            'nmf':2,
-            'apache':8,
-            'batch':2,
-            'glide':2,
-            'dna':2,
-            'q32':2
-        }
+        self.known_jd2 = IntVar()
+        self.known_jd2.set(0); #JD2 int boolean.  Tells script to use any JD2 options available to it.
+        
+        
+
         self.queue = StringVar()
-        self.queue.set(self.QUEUEMETHOD[0])
+        
         self.jobname = StringVar()
         self.jobtotal = StringVar()
         self.jobtotal.set("0")
-        #self.proc = StringVar()
-        #self.proc.set(self.queueproc['nmf'])
+        
+        self.settings = QsubSettings.QsubSettings()
+        self.QUEUEMETHOD = self.settings.QUEUE_LIST; #Various Queues for the cluster to use.
+        self.queue.set(self.QUEUEMETHOD[0])
+    
     def shoWindow(self, main, row, column):
+        
+        
         self.main = main
         self.row = row; self.column = column
         
-        self.jlab = Label(self.main, text="# of Jobs")
-        self.slab = Label(self.main, text = "# of Structures/Job")
-        self.total= Label(self.main, textvariable = self.jobtotal)
-        self.name = Label(self.main, text="Job name")
-        #self.seedlabel = Label(self.main, text = "Name Method")
-        self.queuelabel = Label(self.main, text = "Queue")
-        #self.nodelabel = Label(self.main, text = 'proc/Node')
-        #self.nodeentry = Entry(self.main, textvariable = self.proc, justify=CENTER)
-        self.jent = Entry(self.main, textvariable = self.jobs, justify=CENTER); 
-        self.sent = Entry(self.main, textvariable = self.struc, justify=CENTER);
-        self.nent = Entry(self.main, textvariable = self.jobname, justify=CENTER);
-        
-        #self.seedOptions = OptionMenu(self.main, self.seed, *self.SEEDMETHOD)
+        self.job_label = Label(self.main, text="# of Jobs")
+        self.struc_per_job_label = Label(self.main, text = "# of Structures/Job")
+        self.total_struc_label= Label(self.main, textvariable = self.jobtotal)
+        self.job_name_label = Label(self.main, text="Job name")
+        self.queue_label = Label(self.main, text = "Queue")
+        self.job_entry = Entry(self.main, textvariable = self.jobs, justify=CENTER); 
+        self.struc_per_job_entry = Entry(self.main, textvariable = self.struc_per_job, justify=CENTER);
+        self.job_name_entry = Entry(self.main, textvariable = self.jobname, justify=CENTER);
         """
         Seed uses a constant 1 million + 10 for each job being kicked off on different cpus.
         This should be an option in the future...
-        -Also note that qsub directories should be an option in the future as well, as it is specific for the cluster.
         -Next, we want to add the ability to use JD2 options for those applications that require it.
         """
         self.queueOptions = OptionMenu(self.main, self.queue, *self.QUEUEMETHOD)
-        self.specQ = Button(self.main, text="Check Q Avalability:", command = lambda: self.checkspecificQ()).grid(row=self.row+4, column=self.column+1, sticky=W+E)
-        self.allQ = Button(self.main, text="Show all Q", command = lambda: self.checkallQ()).grid(row=self.row+7, column=self.column, sticky=W+E)
-        self.savebutton_ = Button(self.main, text = "Save Script", command = lambda: self.saveScript())
+        self.specQ = Button(self.main, text="Check Q Avalability:", command = lambda: self.checkspecificQ()).grid(row=self.row+2, column=self.column+3, sticky=W+E)
+        self.allQ = Button(self.main, text="Show all Q", command = lambda: self.checkallQ()).grid(row=self.row+3, column=self.column+3, sticky=W+E)
+        #self.savebutton_ = Button(self.main, text = "Save Script", command = lambda: self.saveScript(True))
         self.runbutton_ = Button(self.main, text = "Run Config", command = lambda: self.runScript())
-        #self.runCurbutton_ = Button(self.main, text = "Run Current Config", command = lambda: self.runCurrent())
+        self.jd2_checkbutton = Checkbutton(self.main, variable = self.known_jd2, text = "JD2?", )
         self.calcbutton_ = Button(self.main, text = "calc", command = lambda: self.calcTotal()); #Couldn't get the call back to work...
-        #Small Menu.
-        self.MenBar = Menu(self.main)
-        self.calc = Menu(self.main, tearoff=0)
-        self.calc.add_command(label = "Calculate Runtime", command = lambda: self.calcRunTime())
-        self.MenBar.add_cascade(label = "Caclulate", menu=self.calc)
-        self.appMen = Menu(self.main, tearoff=0)
-        self.appMen.add_command(label = "App Specific Options")
-        self.appMen.add_command(label = "Cluster Specific Options")
-        self.appMen.add_separator()
-        self.appMen.add_command(label = "Repeat for List of Proteins", command = lambda: self.listRepeat())
-        self.MenBar.add_cascade(label = "Options", menu = self.appMen)
-        self.main.config(menu=self.MenBar)
+
         
-        self.qstat = Button(text = "check Q", command = lambda: self.checkQ())
+        self.qstat = Button(text = "qstat", command = lambda: self.checkQ())
+        
         #Show all the items.
-        self.jlab.grid(row = self.row, column=self.column); self.jent.grid(column = self.column+1, row = self.row)
-        self.slab.grid(row = self.row+1, column=self.column); self.sent.grid(column=self.column+1, row=self.row+1)
-        self.total.grid(row = self.row+2, column = self.column+1)
-        self.nent.grid(row = self.row+2, column = self.column+2)
-        self.name.grid(row = self.row+2, column = self.column+3)
+        self.job_label.grid(row = self.row, column=self.column); self.job_entry.grid(column = self.column+1, row = self.row)
+        self.struc_per_job_label.grid(row = self.row+1, column=self.column); self.struc_per_job_entry.grid(column=self.column+1, row=self.row+1)
+        self.total_struc_label.grid(row = self.row+2, column = self.column+1)
+        self.job_name_entry.grid(row = self.row, column = self.column+2)
+        self.job_name_label.grid(row = self.row, column = self.column+3)
         #self.seedOptions.grid(row = self.row+3, column=self.column+2, sticky=W+E)
         #self.seedlabel.grid(row = self.row+3, column=self.column+3)
-        self.queueOptions.grid(row= self.row+4, column=self.column+2, sticky = W+E)
-        self.queuelabel.grid(row=self.row+4, column=self.column+3)
+        self.queueOptions.grid(row= self.row+1, column=self.column+2, sticky = W+E)
+        self.queue_label.grid(row=self.row+1, column=self.column+3)
         #self.nodelabel.grid(row=self.row+3, column=self.column+3)
         #self.nodeentry.grid(row=self.row+3, column=self.column+2)
-        self.savebutton_.grid(row=self.row+7, column=self.column+1, columnspan = 2, sticky=W+E)
-        self.runbutton_.grid(row = self.row+6, column = self.column+1, sticky=W+E)
-        self.runCurbutton_.grid(row = self.row+6, column=self.column+2, sticky=W+E)
+        #self.savebutton_.grid(row=self.row+7, column=self.column+1, columnspan = 2, sticky=W+E)
+        self.runbutton_.grid(row = self.row+5, column = self.column+1, columnspan = 2, sticky=W+E)
         self.calcbutton_.grid(row = self.row+2, column=self.column)
         
         self.frameHelp = Frame(self.main, bd=3, relief=GROOVE)
         self.textHelp = Text(self.frameHelp,wrap="word", height = 3, background = 'white')
         self.frameHelp.grid(row = self.row+8, column = self.column, columnspan = 4, sticky = W+E, pady = 3)
         self.textHelp.grid(row = self.row+8, column = self.column, columnspan = 4)
-        self.qstat.grid(row = self.row+9, column=self.column+3)
+        self.qstat.grid(row = self.row+5, column=self.column+3)
+        
+        self.shoMenu()
+    def shoMenu(self):
+        self.MenBar = Menu(self.main)
+        self.calc = Menu(self.main, tearoff=0)
+        self.calc.add_command(label = "Calculate Runtime", command = lambda: self.calcRunTime())
+        self.MenBar.add_cascade(label = "Caclulate", menu=self.calc)
+        self.appMen = Menu(self.main, tearoff=0)
+        #self.appMen.add_command(label = "App Specific Options")
+        self.appMen.add_command(label = "Setup Cluster Settings", command = lambda: self.shoSetup())
+        self.appMen.add_separator()
+        self.appMen.add_command(label = "Repeat for List of Proteins", command = lambda: self.listRepeat())
+        self.MenBar.add_cascade(label = "Options", menu = self.appMen)
+        self.main.config(menu=self.MenBar)
+        
+    def shoSetup(self):
+        win = Toplevel(self.main)
+        self.settings.setTk(win)
+        self.settings.shoTk(win, 0, 0)
+
     
     def listRepeat(self):
         """
@@ -129,7 +125,7 @@ class ClusterSetup():
         """
         #First, we ask for the list.
         filename = tkFileDialog.askopenfilename(title="PDBList", initialdir = self.pwd)
-        self.saveScript(F=1, repeat = filename)
+        self.saveScript(F=False, repeat = filename)
         config = tkFileDialog.askopenfilename(title="Config", initialdir = self.pwd)
         command= 'python '+ self.pwd+"/tempScript.py "+config
         os.system(command)
@@ -144,41 +140,47 @@ class ClusterSetup():
         #self.textHelp.delete(1.0, END)
         #self.textHelp.insert(1.0, os.system('qstat -q '+self.queue.get()))
         os.system('qstat -q '+self.queue.get())
+        
     def checkQ(self):
         os.system('qstat')
         return
+    
     def checkallQ(self):
         """
         checks all Q available...
         """
-        os.system('/usr/local/maui/bin/showq')
-    def saveScript(self, F=0, repeat=0):
+        os.system(self.settings.maui_showq_path)
+    def saveScript(self, ask_filename=False, repeat=0):
         """
         Script needs to take in a rosetta protocol file.
         It needs to write a file for each job for the cluster, or at least kick it off.
         It needs take in the protocol file and concatonate it to what it was using.
         I could do this in perl, but I will try to do it in python.
         """
+        
+        
+        
+        filename = self.pwd + "/tempScript.py"
         if repeat!=0:
             List = repeat
             repeat = True
-        if F==0:
-            F = tkFileDialog.asksaveasfilename(initialdir = self.pwd)+".py"
-        else:
-            F = self.pwd + "/tempScript.py"
-        FILE = open(F, 'w')
+        if ask_filename:
+            filename = tkFileDialog.asksaveasfilename(initialdir = self.pwd)
+            if not filename:
+                return
+            else:
+                filename = filename+".py"
+                
+        FILE = open(filename, 'w')
         FILE.write("import os\n"+"import sys\n"+"import re\n")
         #Here, we give the script some variables.
         variables = dict()
         variables={#Surprisingly, this actually works quite nicely.
             'jobs':self.jobs.get(),
-            'stru':self.struc.get(),
+            'stru':self.struc_per_job.get(),
             'jobname':self.jobname.get(),
             'queue':self.queue.get(),
         }
-        
-        
-
         
         if repeat:
             variables['List']=List
@@ -297,17 +299,21 @@ class ClusterSetup():
             self.textHelp.insert(1.0, "File Saved.")
         FILE.close()
     def runScript(self):
-        self.saveScript(F=1)
+        
         config = tkFileDialog.askopenfilename(initialdir = self.pwd)
-        command= 'python '+ self.pwd+"/tempScript.py "+config
-        os.system(command)
-        self.textHelp.delete(1.0, END)
-        self.textHelp.insert(1.0, "Cluster run started...")
+        if config:
+            self.saveScript(False)
+            command= 'python '+ self.pwd+"/tempScript.py "+config
+            os.system(command)
+            self.textHelp.delete(1.0, END)
+            self.textHelp.insert(1.0, "Cluster run started...")
         return
-    def runCurrent(self):
-        #First, we have to check if there even is a current script to run.  How do we do this?
-        pass
+
     def calcRunTime(self):
+        """
+        Calculates approximate runtime, graphs it if numpy and matplotlib can be imported.
+        """
+        
         time =  tkSimpleDialog.askfloat(title = "Time", prompt = "Approx Time(min) per Pose: ")
         try:
             import matplotlib.pyplot as plt
@@ -325,6 +331,7 @@ class ClusterSetup():
             plt.grid(True)
             plt.show()
             return
+        
         except ImportError:
             self.textHelp.delete(1.0, END)
             nodes = tkSimpleDialog.askinteger(title = "Nodes", prompt="Approx Number of Nodes: ")
@@ -339,12 +346,14 @@ class ClusterSetup():
     def calcTotal(self):
         try:
             jobs = int(self.jobs.get())
-            stru = int(self.struc.get())
+            stru = int(self.struc_per_job.get())
             total = str(jobs*stru)
             self.jobtotal.set(total)
             return int(total)
         except TypeError:
-            pass
+            return 0
+        except UnboundLocalError:
+            return 0
             
         
     def location(self):
@@ -359,7 +368,7 @@ class ClusterSetup():
     
 if __name__ == '__main__':
     MainWindow = Tk()
-    MainWindow.title("Rosetta Cluster Setup")
-    SetupWindow = ClusterSetup()
+    MainWindow.title("Qsub Cluster Setup")
+    SetupWindow = QsubClusterSetup()
     SetupWindow.shoWindow(MainWindow, 0, 0)
     MainWindow.mainloop()

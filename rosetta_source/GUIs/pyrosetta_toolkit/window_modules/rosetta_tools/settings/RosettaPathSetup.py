@@ -36,8 +36,8 @@ class SetupRosettaPaths(tkSimpleDialog.Dialog):
         #self.fragmentpicker = StringVar()
     
         #check_button_ck if setting file exist.  If so, load into variables.
-        if os.path.exists(self.pwd+"/RosettaSettings.txt"):
-            FILE = open(self.pwd+"/RosettaSettings.txt", 'r')
+        if os.path.exists(self.pwd+"/PATHSETTINGS.txt"):
+            FILE = open(self.pwd+"/PATHSETTINGS.txt", 'r')
             self.option_array = {"DATABASE":self.database, "APPLICATIONS":self.applications, "ROSETTA_SOURCE":self.source}
             for line in FILE:
                 lineSP = line.split()
@@ -98,7 +98,7 @@ class SetupRosettaPaths(tkSimpleDialog.Dialog):
         
         self.saveButton.grid(column = self.column, row = self.row+3, columnspan = 2, sticky = W+E)
         
-        EngPhoto =PhotoImage(file = (self.pwd+"/RosettaLogo.gif"))
+        EngPhoto =PhotoImage(file = (self.pwd+"/../media/RosettaLogo.gif"))
         self.Photo = Label(self.main, image=EngPhoto)
         self.Photo.image = EngPhoto
         self.Photo.grid(row =self.row, column = self.column+3, rowspan = 5)
@@ -135,7 +135,7 @@ class SetupRosettaPaths(tkSimpleDialog.Dialog):
         
     def apply(self):
         self.checkPaths()
-        FILE = open(self.pwd+"/RosettaSettings.txt", mode = 'w')
+        FILE = open(self.pwd+"/PATHSETTINGS.txt", mode = 'w')
         FILE.write("ROSETTA_SOURCE\t"+self.source.get()+'\n')
         FILE.write("DATABASE\t"+self.database.get()+'\n')
         FILE.write("APPLICATIONS\t"+self.applications.get()+'\n')

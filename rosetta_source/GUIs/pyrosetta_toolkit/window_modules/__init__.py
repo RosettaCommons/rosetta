@@ -1,8 +1,8 @@
 #from  vicinity_options.Vaccinity_Window import vaccinityrelaxwindow
 #from  antibodies import CDR_Analysis
 #from  antibodies import CDR_Design_Analysis
-from  rosetta_tools import RosettaSetup
-from  rosetta_tools import RosettaProtocols
+from  rosetta_tools import RosettaPathSetup
+from  rosetta_tools import RosettaProtocolBuilder
 from design_window.resfile_design import Design
 
 from scorefunction.ScoreFxnControl import *

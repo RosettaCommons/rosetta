@@ -12,8 +12,8 @@
 
 from Tkinter import *
 import tkMessageBox
-import RosettaSetup
-import RosettaClusterSetup
+from settings import RosettaPathSetup
+import QsubClusterSetup
 #import tools.pdbs
 import tkFileDialog
 import tkSimpleDialog
@@ -22,7 +22,7 @@ import os
 import tkFont
 import re
 import tools
-from ..clean_pdb import fix_pdb_window
+#from ..clean_pdb import fix_pdb_window
 
 
 
@@ -64,8 +64,9 @@ class ProtocolSetup():
             'Analysis'
         ]
         
-        self.specifOPTIONS = dict() #?
-        self.appDOC = dict() #?
+        self.specifOPTIONS = dict(); #App specific options
+        self.appDOC = dict(); #App specific documentation
+        
         self.chosen_doc_type = StringVar(); #Which doc type user has chosen to look at
         self.chosen_doc_type.set(self.doc_types[0])
     
@@ -102,7 +103,7 @@ class ProtocolSetup():
         
         self.button_show_all_options = Button(self.main, text="Show all options for app", command = lambda:os.system(self.application_directory.get()+"/"+self.last_app_clicked.get()+'.'+self.appRoot.get()+ " -help"))
     #### PHOTO ####
-        EngPhoto =PhotoImage(file = (self.pwd+"/RosettaLogo.gif"))
+        EngPhoto =PhotoImage(file = (self.pwd+"/media/RosettaLogo.gif"))
         self.Photo = Label(self.main, image=EngPhoto)
         self.Photo.image = EngPhoto
         
@@ -136,8 +137,6 @@ class ProtocolSetup():
         self.button_save_config.grid(column = self._c_, row = self._r_+1, sticky = W+E)
         self.button_load_config.grid(column = self._c_, row = self._r_+2, sticky = W+E)
         self.button_run_config.grid(column = self._c_, row = self._r_+3, sticky = W+E)
-        #self.input.grid(column=self._c_, row=self._r_+4, sticky = W+E)
-        #self.output.grid(column=self._c_, row=self._r_+5, sticky=W+E)
         
         self.author.grid(column = self._c_+8, row = self._r_, sticky=W+E)
         self.option_menu_doc_types.grid(column = self._c_+5, columnspan = 2, row = self._r_+5)
@@ -173,14 +172,14 @@ class ProtocolSetup():
         self.Setup.add_command(label = "Rosetta Paths", command = lambda: self.loadRosettaSettings())
         self.Setup.add_command(label = "Set default directory", command = lambda: tools.setdefaultdir(self.defaultdir, self.pwd))
         self.Setup.add_separator()
-        self.Setup.add_command(label = "Setup PDB(s) for Rosetta", command = lambda: fix_pdb_window.FixPDB().runfixPDBWindow(self.main, 0, 0))
+        #self.Setup.add_command(label = "Setup PDB(s) for Rosetta", command = lambda: fix_pdb_window.FixPDB().runfixPDBWindow(self.main, 0, 0))
         self.Setup.add_command(label = "Make list of PDBs from a directory", command = lambda: self.makeList())
         
         self.MenBar.add_cascade(label = "Setup", menu=self.Setup)
         self.Cluster = Menu(self.main, tearoff=0)
-        self.Cluster.add_command(label = "Setup Cluster Run", foreground='red', command = lambda: self.shoClusterSetup())
+        self.Cluster.add_command(label = "Setup  Qsub Cluster Run", command = lambda: self.shoClusterSetup())
         
-        self.Cluster.add_command(label = "Start multi-core Run")
+        self.Cluster.add_command(label = "Start multi-core Run", foreground='red')
         self.MenBar.add_cascade(label = "Parallel", menu=self.Cluster)
         self.main.config(menu=self.MenBar)
         
@@ -192,6 +191,7 @@ class ProtocolSetup():
         self.chosen_doc_type.trace_variable('w', self.appCallback)
         self.path_builder_check.trace_variable('w', self.pathBuildCallback)
         self.info_type.trace_variable('w', self.info_typeCallback)
+
 #### CALLBACK ####
     def helpCallback(self, name, index, mode):
         """
@@ -271,8 +271,8 @@ class ProtocolSetup():
         """
         Loads and shows manually currated info if possible.
         """
-        self.specifOPTIONS = pickle.load(open(self.pwd+"/Rosetta3-3.p")); #APP:Descriptions
-        self.appDOC = pickle.load(open(self.pwd+"/Rosetta3-3Apps.p")); #No Idea
+        self.specifOPTIONS = pickle.load(open(self.pwd+"/option_binaries/Rosetta3-3.p")); #APP:Descriptions
+        self.appDOC = pickle.load(open(self.pwd+"/option_binaries/Rosetta3-3Apps.p")); #APP:Documentation
         self.read_applications_from_directory(self.application_directory.get()); #Populate array_of_applications
         self.populate_applications(self.array_of_applications)
         
@@ -334,6 +334,8 @@ class ProtocolSetup():
                 os.system('rm temp_options.txt')
         self.populateOptionMenu(self.last_app_clicked.get())
         self.app_help_options = self.specifOPTIONS ; #This is so that we do not have to reload.
+    
+    
     #### FUNCTIONS ####
 
     def read_applications_from_directory(self, Apppath):
@@ -350,7 +352,7 @@ class ProtocolSetup():
         if os.path.exists(Apppath):
             list = os.listdir(Apppath)
         else:
-            os.system('rm '+self.pwd+"/RosettaSettings.txt")
+            os.system('rm '+self.pwd+"/settings/PATHSETTINGS.txt")
             self.loadRosettaSettings
             list = os.listdir(Apppath)
         for apps in list:
@@ -377,10 +379,10 @@ class ProtocolSetup():
         Load Rosetta settings text file.
         """
         
-        setup_window = RosettaSetup.SetupRosettaPaths(self.main)
+        setup_window = RosettaPathSetup.SetupRosettaPaths(self.main)
         if not setup_window.result:
             print "Please check paths and try again..."
-            second_setup_window = RosettaSetup.SetupRosettaPaths(self.main)
+            second_setup_window = RosettaPathSetup.SetupRosettaPaths(self.main)
             if not second_setup_window.result:
                 print "Directories are still wrong...exiting..."
                 exit()
@@ -389,7 +391,7 @@ class ProtocolSetup():
         self.application_directory = StringVar()
         self.source_directory = StringVar()
         
-        FILE = open(self.pwd+"/RosettaSettings.txt", 'r')
+        FILE = open(self.pwd+"/settings/PATHSETTINGS.txt", 'r')
         for line in FILE:
             lineSP = line.split()
             if lineSP[0]=="DATABASE":
@@ -520,8 +522,8 @@ class ProtocolSetup():
             
     def shoClusterSetup(self):
         WinClusSetup = Toplevel(self.main)
-        WinClusSetup.title("Cluster Setup")
-        Clus = RosettaClusterSetup.ClusterSetup()
+        WinClusSetup.title("Qsub Cluster Setup")
+        Clus = QsubClusterSetup.ClusterSetup()
         Clus.shoWindow(WinClusSetup, 0, 0)
         
         

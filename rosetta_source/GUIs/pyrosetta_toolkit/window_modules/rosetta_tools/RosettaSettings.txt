@@ -1,3 +1,0 @@
-ROSETTA_SOURCE	/Users/anniealbin/Desktop/jared/svn/rosetta/rosetta_source
-DATABASE	/Users/anniealbin/Desktop/jared/svn/rosetta/rosetta_database
-APPLICATIONS	/Users/anniealbin/Desktop/jared/svn/rosetta/rosetta_source/bin

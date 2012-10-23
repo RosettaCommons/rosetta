@@ -22,6 +22,8 @@ from modules.tools import input as input_tools
 from modules import calibur
 from modules import ImportExport
 import webbrowser
+
+
 class Menus():
     def __init__(self, main, toolkit):
 	self.main = main
@@ -269,7 +271,7 @@ class Menus():
 	"""
 
 	RosProtSet = Toplevel(self.main)
-	ProtSet = RosettaProtocols.ProtocolSetup(RosProtSet)
+	ProtSet = RosettaProtocolBuilder.ProtocolSetup(RosProtSet)
 	ProtSet.setTk()
 	ProtSet.shoTk(0, 0)
 	ProtSet.setMenu(RosProtSet)

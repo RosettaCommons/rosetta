@@ -26,7 +26,6 @@ class ScoreFxn():
     """
     This is the class where you can pick from any of rosetta's energy functions and classes, as well as edit them on the fly, save them, and load
     custom built ones.  Useful for testing new scorefunctions.
-    Problem is that it's built around Tk instead of having Tk interface be a seperate class....
     """
     
     def __init__(self):
