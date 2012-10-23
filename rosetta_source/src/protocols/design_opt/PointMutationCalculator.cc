@@ -554,9 +554,9 @@ PointMutationCalculator::calc_point_mut_filters(
 	green_packer->set_scorefunction( *scorefxn() );
 	green_packer->set_reference_round_task_factory( task_factory() );
 
-	//int mpi_rank( 0 ), mpi_nprocs( 1 ), mpi_rank_low( 0 );
-	if( parallel() ){
 #ifdef USEMPI
+	int mpi_rank( 0 ), mpi_nprocs( 1 ), mpi_rank_low( 0 );
+	if( parallel() ){
 		MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
 		MPI_Comm_size(MPI_COMM_WORLD, &mpi_nprocs);
 		//Get the lowest rank proc that's running this mover
@@ -605,8 +605,8 @@ PointMutationCalculator::calc_point_mut_filters(
 		if ( returnval != MPI_SUCCESS ) utility_exit_with_message("failed in creating a new communicator!");
 		TR << "MPI Comm created!" << std::endl;
 	*/
-#endif
 	}
+#endif
 
 	//make a single list of seqpos,aa pairs 
 	vector1< pair< Size, AA > > all_muts;
