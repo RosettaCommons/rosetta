@@ -461,7 +461,7 @@ CloudPDBWriter::record_match(  match const & m )
 		match_groups_ushits_.push_back( UpstreamHitSets( num_geom_cst() ) );
 		match_groups_dshits_.push_back( DownstreamHitSets( num_geom_cst() ) );
 		representative_group_matches_.push_back( match_dspos1( m, 1 ) );
-		//TR << "CPW pushed back first match for group " << mgroup << " match_group_ushits_.size is " << match_groups_ushits_.size() << std::endl;
+		//TR << "CPW pushed back first match for group " << mgroup << " match_group_ushits_.size is " << match_groups_ushits_.size() << ", ex geom id for hit2 is " << m[2].external_geom_id() << std::endl;
 
 		utility::vector1< core::conformation::ResidueCOP > upstream_matchres;
 		for ( Size ii = 1; ii <= m.size(); ++ii ) {
@@ -529,7 +529,7 @@ CloudPDBWriter::write_match_groups()
 			core::conformation::ResidueCOP conf =
 				coordinate_cacher()->upstream_conformation_for_hit( jj, fake_hit( rep_match.upstream_hits[ jj ] ) );
 			upstream_matchres.push_back( conf );
-			ex_geom_ids_for_upstream_res.push_back( full_hit( rep_match).external_geom_id() );
+			ex_geom_ids_for_upstream_res.push_back( rep_match.upstream_hits[jj].external_geom_id() );
 
 			if( redundant_upstream_res.find( jj ) != redundant_upstream_res.end() ){
 				us_hitset_its_[jj] = us_hitset_end_its_[jj];
