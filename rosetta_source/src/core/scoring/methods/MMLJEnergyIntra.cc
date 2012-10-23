@@ -164,9 +164,9 @@ MMLJEnergyIntra::eval_intrares_energy(
 
   // iterate over all pairs of atom in the residue
   for ( int i = 1, i_end = rsdnatom; i <= i_end; ++i ) {
-    Atom const & atom1( rsd.atom(i) );
+    conformation::Atom const & atom1( rsd.atom(i) );
     for ( int j = i + 1, j_end = rsdnatom; j <= j_end; ++j ) {
-      Atom const & atom2( rsd.atom(j) );
+    	conformation::Atom const & atom2( rsd.atom(j) );
 
       Real weight(1.0); // unused
       Size path_dist(0);

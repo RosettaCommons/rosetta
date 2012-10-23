@@ -287,9 +287,9 @@ MMLJEnergyInter::residue_pair_energy(
 
   // iterate over all pairs of atom between the residues
   for ( int i = 1, i_end = rsd1natom; i <= i_end; ++i ) {
-		Atom const & atom1( rsd1.atom(i) );
+		conformation::Atom const & atom1( rsd1.atom(i) );
 		for ( int j = 1, j_end = rsd2natom; j <= j_end; ++j ) {
-      Atom const & atom2( rsd2.atom(j) );
+      conformation::Atom const & atom2( rsd2.atom(j) );
 
       Real weight(1.0); // unused
       Size path_dist(0);

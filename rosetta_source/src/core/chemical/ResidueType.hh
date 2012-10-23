@@ -55,6 +55,7 @@
 // Unit headers
 #include <core/chemical/ResidueType.fwd.hh>
 // Package headers
+#include <core/chemical/Atom.hh>
 #include <core/chemical/AtomType.fwd.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/Adduct.hh>
@@ -82,6 +83,9 @@
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
+
+#include <core/types.hh>
+
 // Numeric headers
 #include <numeric/xyzVector.hh>
 
@@ -538,7 +542,7 @@ public:
 	Vector const &
 	xyz( Size const atm ) const
 	{
-		return xyz_[ atm ];
+		return atoms_[ atm ].xyz();
 	}
 
 	/// @brief Read access to the last_controlling_chi_ array
@@ -593,7 +597,7 @@ public:
 	std::string const &
 	mm_atom_name( Size const index ) const
 	{
-		return mm_atom_name_[ index ];
+		return atoms_[ index ].mm_name();
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -927,14 +931,14 @@ public:
 		Real const charge
 	)
 	{
-		atomic_charge_[ atom_index( atm ) ] = charge;
+		atoms_[ atom_index( atm ) ].charge( charge );
 	}
 
 	/// @brief get atom charge
 	Real
 	atomic_charge( Size const atm ) const
 	{
-		return atomic_charge_[ atm ];
+		return atoms_[ atm ].charge();
 	}
 
 	/// @brief set atom type
@@ -1042,7 +1046,7 @@ public:
 	AtomICoor const &
 	icoor( Size const atm ) const
 	{
-		return icoor_[ atm ];
+		return atoms_[ atm ].icoor();
 	}
 
 	/// @brief set AtomICoor for an atom
@@ -1100,8 +1104,8 @@ public:
 		Vector const & xyz_in
 	)
 	{
-		if ( index > xyz_.size() ) xyz_.resize(index);
-		xyz_[ index ] = xyz_in;
+		if ( index > atoms_.size() ) atoms_.resize(index);
+		atoms_[index].xyz( xyz_in );
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -1215,20 +1219,6 @@ public:
 	///
 	Size
 	add_residue_connection( std::string const & atom_name );
-
-
-
-//	/// @brief set csd atom type
-//	void
-//	set_csd_atom_type(
-//		std::string const & atom_name,
-//		std::string const & csd_atom_type_name
-//	)
-//	{
-//		csd_atom_type_index_[ atom_index( atom_name ) ] = csd_atom_types_->atom_type_index( csd_atom_type_name );
-//		csd_atom_name_[ atom_index( atom_name ) ] = csd_atom_type_name;
-//	}
-
 
 
 	//////////////////////////////////////////////////////////////////////
@@ -1876,7 +1866,7 @@ private:
 		 WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
 
 	**/
-	//utility::vector1< Atom > atoms_;
+	utility::vector1< Atom > atoms_;
 
 	//////////////////////////////////////////////////////////////////
 	// ints -- see the WARNING above if these are atom indices
@@ -1900,22 +1890,9 @@ private:
 
 	//////////////////////////////////////////////////////////////////////
 	// per-atom properties
-	/// name
-	utility::vector1< std::string > atom_name_;
-	/// MM name
-	utility::vector1< std::string > mm_atom_name_;
 	/// orbital name
 	utility::vector1<std::string > orbital_name_;
-//	utility::vector1< std::string > csd_atom_name_;
-	/// atom-type index
-	utility::vector1< Size        > atom_type_index_;
-	/// MM atom-type index
-	utility::vector1< Size        > mm_atom_type_index_;
-	/// orbital type index
 	utility::vector1<core::Size   > orbital_type_index_;
-//	utility::vector1< Size        > csd_atom_type_index_;
-	/// charge
-	utility::vector1< Real        > atomic_charge_;
 	/// indices of the atoms psuedo bonded atoms. Used in orbital code
 	utility::vector1< utility::vector1<core::Size > > orbital_bonded_neighbor_;
 	/// indices of each atom's bonded neighbors
@@ -1932,14 +1909,9 @@ private:
 	utility::vector1< Size        > attached_H_begin_;
 	/// indices of each heavyatom's last attached hydrogen
 	utility::vector1< Size        > attached_H_end_;
-	/// AtomICoor, ideal internal coordinates
-	utility::vector1< AtomICoor   > icoor_;
 	/// OrbitalICoor, ideal internal coordinates
 	utility::vector1< orbitals::ICoorOrbitalData> orbital_icoor_id_;
 	utility::vector1< orbitals::ICoorOrbitalData> new_orbital_icoor_id_;
-
-	/// ideal xyz coordinates
-	utility::vector1< Vector > xyz_;
 
 	/// ideal orbital xyz coordinates
 	utility::vector1< Vector      > orbital_xyz_;

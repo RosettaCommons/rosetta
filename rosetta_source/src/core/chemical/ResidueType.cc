@@ -286,24 +286,24 @@ ResidueType::set_upper_connect_atom( std::string const & atm_name )
 AtomType const &
 ResidueType::atom_type( Size const atomno ) const
 {
-	PyAssert((atomno > 0) && (atomno <= atom_type_index_.size()), "ResidueType::atom_type( Size const atomno ): atomno is not in this ResidueType!");
-	return ( *atom_types_ )[ atom_type_index_[ atomno ] ];
+	PyAssert((atomno > 0) && (atomno <= atoms_.size()), "ResidueType::atom_type( Size const atomno ): atomno is not in this ResidueType!");
+	return ( *atom_types_ )[ atoms_[ atomno ].atom_type_index() ];
 }
 
 /// @brief Get the chemical atom_type index number for this atom by its index number in this residue
 int
 ResidueType::atom_type_index( Size const atomno ) const
 {
-	PyAssert((atomno > 0) && (atomno <= atom_type_index_.size()), "ResidueType::atom_type_index( Size const atomno ): atomno is not in this ResidueType!");
-	return atom_type_index_[ atomno ];
+	PyAssert((atomno > 0) && (atomno <= atoms_.size()), "ResidueType::atom_type_index( Size const atomno ): atomno is not in this ResidueType!");
+	return atoms_[ atomno ].atom_type_index();
 }
 
 /// @brief Get the atom name by index
 std::string const &
 ResidueType::atom_name( Size const index ) const
 {
-	PyAssert((index > 0) && (index <= atom_name_.size()), "ResidueType::atom_name( Size const index ): index is not in this ResidueType!");
-	return atom_name_[ index ];
+	PyAssert((index > 0) && (index <= atoms_.size()), "ResidueType::atom_name( Size const index ): index is not in this ResidueType!");
+	return atoms_[ index ].name();
 }
 
 /// @brief get index of an atom's base atom
@@ -337,29 +337,26 @@ ResidueType::add_atom(
 
 	// increment atom count
 	++natoms_;
+	// index lookup by name
+	atom_index_[ atom_name ] = natoms_;
+	atom_index_[ strip_whitespace( atom_name ) ] = natoms_;
 
-	// store the name
-	atom_name_.push_back( atom_name );
-	assert( atom_name_.size() == natoms_ );
-
-	// store the mm atom name
- 	mm_atom_name_.push_back( mm_atom_type_name );
-	assert( mm_atom_name_.size() == natoms_ );
-
-//	// store the csd atom name
-//	std::string const csd_atom_type_name = "UNK";
-//	csd_atom_name_.push_back( csd_atom_type_name );
-//	assert( csd_atom_name_.size() == natoms_ );
-
-	// store the charge
-	atomic_charge_.push_back( charge );
-	assert( atomic_charge_.size() == natoms_ );
-
-	// store the atom type
-	// the next call will fail if the atom type name is unrecognized
+	// store the atom types
+	// the next calls will fail if the atom type name is unrecognized
 	Size const type( atom_types_->atom_type_index( atom_type_name ) );
-	atom_type_index_.push_back( type );
-	assert( atom_type_index_.size() == natoms_ );
+	Size const mm_type( mm_atom_types_->atom_type_index( mm_atom_type_name ) );
+
+		// store the name
+	atoms_.push_back( Atom(
+			atom_name,
+			mm_atom_type_name,
+			type, mm_type,
+			charge,
+			Vector(0.0),
+			AtomICoor( 0.0, 0.0, 0.0, atom_name, atom_name, atom_name, *this )
+	));
+
+	assert( atoms_.size() == natoms_ );
 
 	if ( (*atom_types_)[type].is_acceptor() )
 			++n_hbond_acceptors_;
@@ -376,39 +373,19 @@ ResidueType::add_atom(
 		tr.Warning << "WARNING Elements set undefined." << std::endl;
 	}
 
-	//store the mm atom type
-	Size const mm_type( mm_atom_types_->atom_type_index( mm_atom_type_name ) );
-	mm_atom_type_index_.push_back( mm_type );
-	assert( mm_atom_type_index_.size() == natoms_ );
-
-//	//store the csd atom type
-//	Size const csd_type( csd_atom_types_->atom_type_index( csd_atom_type_name ) );
-//	csd_atom_type_index_.push_back( csd_type );
-//	assert( csd_atom_type_index_.size() == natoms_ );
-
-	//
-	xyz_.push_back( Vector(0.0) );
-	assert( xyz_.size() == natoms_ );
-
 	parents_.push_back(0);
-
-	// index lookup by name
-	atom_index_[ atom_name ] = natoms_;
-	atom_index_[ strip_whitespace( atom_name ) ] = natoms_;
-
 
 	// allocate space for the new atom !!!!!!!!!!!!!!!!!!!!!!1
 	// eg, in the atom/resconn map
 	assert( atom_2_residue_connection_map_.size() == natoms_-1 &&
 					bonded_neighbor_.size() == natoms_-1 &&
-					atom_base_.size() == natoms_-1 &&
-					icoor_.size() == natoms_-1 );
+					atom_base_.size() == natoms_-1);
 	atom_2_residue_connection_map_.resize( natoms_ );
 	bonded_neighbor_.resize( natoms_ ); // added here to handle residues w/ no bonds
 	bonded_neighbor_type_.resize( natoms_);
 	cut_bond_neighbor_.resize( natoms_ ); // added here to handle residues w/ no bonds
 	atom_base_.push_back( natoms_ ); // default value, should generally be changed
-	icoor_.push_back( AtomICoor( 0.0, 0.0, 0.0, atom_name, atom_name, atom_name, *this ) );
+
 	orbital_bonded_neighbor_.resize(natoms_);
 
 }
@@ -420,7 +397,7 @@ ResidueType::set_atom_type(
 	std::string const & atom_type_name
 )
 {
-	atom_type_index_[ atom_index( atom_name ) ] = atom_types_->atom_type_index( atom_type_name );
+	atoms_[ atom_index( atom_name ) ].atom_type_index( atom_types_->atom_type_index( atom_type_name ) );
 }
 
 
@@ -431,22 +408,21 @@ ResidueType::set_mm_atom_type(
 	std::string const & mm_atom_type_name
 )
 {
-	mm_atom_type_index_[ atom_index( atom_name ) ] = mm_atom_types_->atom_type_index( mm_atom_type_name );
-	mm_atom_name_[ atom_index( atom_name ) ] = mm_atom_type_name;
+	atoms_[ atom_index( atom_name ) ].mm_atom_type_index( mm_atom_types_->atom_type_index( mm_atom_type_name ) );
 }
 
 /// @brief Get the MM atom_type for this atom by its index number in this residue
 MMAtomType const &
 ResidueType::mm_atom_type( Size const atomno ) const
 {
-	return ( *mm_atom_types_ )[ mm_atom_type_index_[ atomno ] ];
+	return ( *mm_atom_types_ )[ atoms_[ atomno ].mm_atom_type_index() ];
 }
 
 /// @brief Get the MM atom_type index number for this atom by its index number in this residue
 int
 ResidueType::mm_atom_type_index( Size const atomno ) const
 {
-	return mm_atom_type_index_[ atomno ];
+	return atoms_[ atomno ].mm_atom_type_index();
 }
 
 
@@ -480,6 +456,7 @@ ResidueType::add_orbital(
 	// store the name
 	orbital_name_.push_back( orbital_name );
 	assert( orbital_name_.size() == n_orbitals_ );
+
 
 
 	// store the atom type
@@ -518,7 +495,6 @@ ResidueType::add_orbital(
 	new_orbital_icoor_id_.resize(n_orbitals_);
 	//orbital_icoor_.push_back( orbitals::OrbitalICoor( 0.0, 0.0, 0.0, orbital_name, orbital_name, orbital_name, *this ) );
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1006,7 +982,7 @@ ResidueType::setup_atom_ordering(
 
 
 	// set atom counts
-	Size const old_natoms( atom_name_.size() );
+	Size const old_natoms( atoms_.size() );
 	assert( natoms_ == old_natoms );
 	natoms_ = old_natoms - delete_atoms_.size();
 
@@ -1018,7 +994,7 @@ ResidueType::setup_atom_ordering(
 	utility::vector1< bool > keep_me( old_natoms, true );
 	for ( Size i=1; i<= old_natoms; ++i ) {
 		if ( std::find( delete_atoms_.begin(), delete_atoms_.end(), i ) != delete_atoms_.end() ) {
-			tr.Trace << "ResidueType::finalize(): delete atom: " << atom_name_[i] << std::endl;
+			tr.Trace << "ResidueType::finalize(): delete atom: " << atoms_[i].name() << std::endl;
 			keep_me[i] = false;
 		}
 	}
@@ -1067,7 +1043,7 @@ ResidueType::setup_atom_ordering(
 		attached_H_begin_[ new_heavy_index ] = new_H_index + 1;
 		AtomIndices const & nbrs( bonded_neighbor_[ old_heavy_index ] );
 		for ( Size j=1; j<= nbrs.size(); ++j ) {
-			if ( (*atom_types_)[ atom_type_index_[ nbrs[j] ] ].is_hydrogen()) {
+			if ( (*atom_types_)[ atoms_[ nbrs[j] ].atom_type_index() ].is_hydrogen()) {
 				Size const old_H_index( nbrs[j] );
 				if ( keep_me[ old_H_index ] ) {
 					++new_H_index;
@@ -1096,47 +1072,37 @@ ResidueType::reorder_primary_data(
 	// now reorder using old2new  -- a bit of a nuisance
 	// there must be a better way to handle this!!!
 	Size const old_natoms( old2new.size() );
-	assert( old_natoms == atom_name_.size() );
+	assert( old_natoms == atoms_.size() );
 
 	// copy the old per-atom data: note that attached_H_begin and attached_H_end have already been setup
 	// and abase2_ is derived data setup down below
-	utility::vector1< std::string > old_atom_name( atom_name_ );
-	utility::vector1< std::string > old_mm_atom_name( mm_atom_name_ );
-//	utility::vector1< std::string > old_csd_atom_name( csd_atom_name_ );
-	utility::vector1< int > old_atom_type_index( atom_type_index_ );
-	utility::vector1< int > old_mm_atom_type_index( mm_atom_type_index_ );
-//	utility::vector1< int > old_csd_atom_type_index( csd_atom_type_index_ );
-	utility::vector1< Real > old_atomic_charge( atomic_charge_ );
+	utility::vector1< Atom > old_atoms( atoms_ );
+
+	//utility::vector1< Real > old_atomic_charge( atomic_charge_ );
 	utility::vector1< utility::vector1 <core::Size> > old_orbital_bonded_neighbor(orbital_bonded_neighbor_);
 	utility::vector1< AtomIndices > old_bonded_neighbor( bonded_neighbor_ );
 	utility::vector1<utility::vector1<BondName> > old_bonded_neighbor_type(bonded_neighbor_type_);
 	utility::vector1< AtomIndices > old_cut_bond_neighbor( cut_bond_neighbor_ );
 	AtomIndices old_atom_base( atom_base_ );
-	utility::vector1< AtomICoor > old_icoor( icoor_ );
 
 	utility::vector1<orbitals::ICoorOrbitalData > old_orbital_icoor(new_orbital_icoor_id_);
 
-	utility::vector1< Vector > old_xyz( xyz_ );
+	//utility::vector1< Vector > old_xyz( xyz_ );
 	utility::vector1<Size> old_parents(parents_);
 
 	if ( old_natoms != natoms_ ) { // because we deleted some atoms
-		atom_name_.resize( natoms_ );
-		mm_atom_name_.resize( natoms_ );
-//		csd_atom_name_.resize( natoms_ );
-		atom_type_index_.resize( natoms_ );
-		mm_atom_type_index_.resize( natoms_ );
-//		csd_atom_type_index_.resize( natoms_ );
-		atomic_charge_.resize( natoms_ );
+		atoms_.resize( natoms_ );
+		//atomic_charge_.resize( natoms_ );
 		orbital_bonded_neighbor_.resize( natoms_ );
 		bonded_neighbor_.resize( natoms_ );
 		bonded_neighbor_type_.resize (natoms_);
 		cut_bond_neighbor_.resize( natoms_ );
 		atom_base_.resize( natoms_ );
-		icoor_.resize( natoms_ );
+		//icoor_.resize( natoms_ );
 
 		//new_orbital_icoor_id_.resize(natoms_);
 
-		xyz_.resize( natoms_ );
+		//xyz_.resize( natoms_ );
 		parents_.resize(natoms_);
 		atom_2_residue_connection_map_.resize( natoms_ );
 	}
@@ -1145,12 +1111,13 @@ ResidueType::reorder_primary_data(
 		Size const new_index( old2new[ old_index ] );
 		if ( new_index == 0 ) continue; // deleted
 
-		atom_type_index_[ new_index ] = old_atom_type_index[ old_index ];
-		mm_atom_type_index_[ new_index ] = old_mm_atom_type_index[ old_index ];
+		atoms_[ new_index ].atom_type_index( old_atoms[ old_index ].atom_type_index() );
+		atoms_[ new_index ].mm_atom_type_index( old_atoms[ old_index ].mm_atom_type_index() );
 //		csd_atom_type_index_[ new_index ] = old_csd_atom_type_index[ old_index ];
-		atomic_charge_[ new_index ] = old_atomic_charge[ old_index ];
-		atom_name_[ new_index ] = old_atom_name[ old_index ];
-		mm_atom_name_[ new_index ] = old_mm_atom_name[ old_index ];
+		//atomic_charge_[ new_index ] = old_atomic_charge[ old_index ];
+		atoms_[ new_index ] = old_atoms[ old_index ];
+		//atom_name_[ new_index ] = old_atom_name[ old_index ];
+		//mm_atom_name_[ new_index ] = old_mm_atom_name[ old_index ];
 //		csd_atom_name_[ new_index ] = old_csd_atom_name[ old_index ];
 
 		atom_base_[ new_index ] = old2new[ old_atom_base[ old_index ] ];
@@ -1180,11 +1147,11 @@ ResidueType::reorder_primary_data(
 			if ( old2new[ old_nbr ] ) cut_bond_neighbor_[ new_index ].push_back( old2new[ old_nbr ] );
 		}
 
-		xyz_[ new_index ] = old_xyz[ old_index ];
+		//xyz_[ new_index ] = old_xyz[ old_index ];
 		parents_[ new_index ] = old_parents[ old_index ];
-		icoor_[ new_index ] = old_icoor[ old_index ];
+	//	icoor_[ new_index ] = old_icoor[ old_index ];
 		for ( Size i=1; i<= 3; ++i ) {
-			ICoorAtomID & stub_atom( icoor_[ new_index ].stub_atom( i ) );
+			ICoorAtomID & stub_atom( atoms_[ new_index ].icoor().stub_atom( i ) );
 			if ( stub_atom.type() == ICoorAtomID::INTERNAL ) {
 				stub_atom.atomno( old2new[ stub_atom.atomno() ] );
 				assert( stub_atom.atomno() ); // this will fail if we deleted a stub atom for some other atom
@@ -1225,8 +1192,8 @@ ResidueType::reorder_primary_data(
 	// atom_index_
 	atom_index_.clear();
 	for ( Size i=1; i<= natoms_; ++i ) {
-		atom_index_[ atom_name_[i] ] = i;
-		atom_index_[ strip_whitespace( atom_name_[i] ) ] = i;
+		atom_index_[ atoms_[i].name() ] = i;
+		atom_index_[ strip_whitespace( atoms_[i].name() ) ] = i;
 	}
 
 	// chi_atoms_
@@ -1314,7 +1281,7 @@ ResidueType::update_derived_data()
 
 
 	for ( Size i=1; i<= natoms_; ++i ) {
-		AtomType const & type( (*atom_types_)[ atom_type_index_[i] ] );
+		AtomType const & type( (*atom_types_)[ atoms_[i].atom_type_index() ] );
 		//Size const type( atoms_[i].type() );
 
 		//////////////////////////////////
@@ -1346,7 +1313,7 @@ ResidueType::update_derived_data()
 
 		}
 
-		if ( type.is_polar_hydrogen() &&   (std::abs(atomic_charge_[ natoms_ ] ) > 1.0e-3) ) {
+		if ( type.is_polar_hydrogen() &&   (std::abs(atoms_[ natoms_ ].charge() ) > 1.0e-3) ) {
 			Hpos_polar_.push_back( i );
 			if ( i >= first_sidechain_hydrogen_ ) {
 				Hpos_polar_sc_.push_back( i );
@@ -1834,8 +1801,8 @@ ResidueType::set_icoor(
 	Size const atomno( id.atomno() );
 	switch ( id.type() ) {
 	case ICoorAtomID::INTERNAL:
-		if ( icoor_.size() < atomno ) utility_exit_with_message("ResidueType:: shoudnt get here!");//icoor_.resize(atomno);
-		icoor_[ atomno ] = ic;
+		if ( atoms_.size() < atomno ) utility_exit_with_message("ResidueType:: shoudnt get here!");//icoor_.resize(atomno);
+		atoms_[ atomno ].icoor( ic );
 		// update atom_base?
 		if ( ( stub_atom1 != atm ) && has( stub_atom1 ) &&
 				 ( atom_base_.size() < atomno || atom_base_[ atomno ] == 0 || atom_base_[ atomno ] == atomno ) ) {
@@ -1883,8 +1850,8 @@ ResidueType::set_icoor(
 	Size const atomno( id.atomno() );
 	switch ( id.type() ) {
 	case ICoorAtomID::INTERNAL:
-		if ( icoor_.size() < atomno ) utility_exit_with_message("ResidueType:: shoudnt get here!");//icoor_.resize(atomno);
-		icoor_[ atomno ] = ic;
+		if ( atoms_.size() < atomno ) utility_exit_with_message("ResidueType:: shoudnt get here!");//icoor_.resize(atomno);
+		atoms_[ atomno ].icoor( ic );
 		// update atom_base?
 		if ( ( stub_atom1 != atm ) && has( stub_atom1 ) &&
 				 ( atom_base_.size() < atomno || atom_base_[ atomno ] == 0 || atom_base_[ atomno ] == atomno ) ) {
@@ -1966,18 +1933,18 @@ void ResidueType::assign_neighbor_atom()
 	//calculate the geometric center of all atoms in the residue
 
 	Vector total(0.0,0.0,0.0);
-	for(core::Size index = 1; index <= xyz_.size();++index)
+	for(core::Size index = 1; index <= atoms_.size();++index)
 	{
-		total += xyz_[index];
+		total += atoms_[index].xyz();
 	}
-	Vector center = total/xyz_.size();
+	Vector center = total/atoms_.size();
 
 	//locate the atom which is closest to the center
 	core::Size min_index = 0;
 	core::Real min_distance = 50000.0;
-	for(core::Size index = 1; index <= xyz_.size();++index)
+	for(core::Size index = 1; index <= atoms_.size();++index)
 	{
-		core::Real distance = center.distance(xyz_[index]);
+		core::Real distance = center.distance(atoms_[index].xyz());
 		if( (distance < min_distance) && (!atom_is_hydrogen(index)) )
 		{
 			min_distance = distance;
@@ -1986,7 +1953,7 @@ void ResidueType::assign_neighbor_atom()
 	}
 	assert(min_index != 0);
 	//set neighbor atom
-	nbr_atom(atom_name_[min_index]);
+	nbr_atom(atoms_[min_index].name());
 }
 
 void ResidueType::assign_internal_coordinates()
@@ -2204,15 +2171,15 @@ ResidueType::print_dihedrals() const
 			MMAtomType at8 = mm_atom_type( dihedral_atom_sets_[ i ].key4() );
 
 			tr.Debug << "PDB:" << "\t"
-								<< atom_name_[ dihedral_atom_sets_[ i ].key1() ] << "\t"
-								<< atom_name_[ dihedral_atom_sets_[ i ].key2() ] << "\t"
-								<< atom_name_[ dihedral_atom_sets_[ i ].key3() ] << "\t"
-								<< atom_name_[ dihedral_atom_sets_[ i ].key4() ] << "\t"
+								<< atoms_[ dihedral_atom_sets_[ i ].key1() ].name() << "\t"
+								<< atoms_[ dihedral_atom_sets_[ i ].key2() ].name() << "\t"
+								<< atoms_[ dihedral_atom_sets_[ i ].key3() ].name() << "\t"
+								<< atoms_[ dihedral_atom_sets_[ i ].key4() ].name() << "\t"
 								<< "MM:" << "\t"
-								<< mm_atom_name_[ dihedral_atom_sets_[ i ].key1() ] << "\t"
-								<< mm_atom_name_[ dihedral_atom_sets_[ i ].key2() ] << "\t"
-								<< mm_atom_name_[ dihedral_atom_sets_[ i ].key3() ] << "\t"
-								<< mm_atom_name_[ dihedral_atom_sets_[ i ].key4() ] << "\t"
+								<< atoms_[ dihedral_atom_sets_[ i ].key1() ].mm_name() << "\t"
+								<< atoms_[ dihedral_atom_sets_[ i ].key2() ].mm_name() << "\t"
+								<< atoms_[ dihedral_atom_sets_[ i ].key3() ].mm_name() << "\t"
+								<< atoms_[ dihedral_atom_sets_[ i ].key4() ].mm_name() << "\t"
 								<< "MM2:" << "\t"
 								<< at5.name() << "\t"
 								<< at6.name() << "\t"
@@ -2244,13 +2211,13 @@ ResidueType::print_bondangles() const
 			MMAtomType at7 = mm_atom_type( bondangle_atom_sets_[ i ].key3() );
 
 			tr.Debug << "PDB:" << "\t"
-								<< atom_name_[ bondangle_atom_sets_[ i ].key1() ] << "\t"
-								<< atom_name_[ bondangle_atom_sets_[ i ].key2() ] << "\t"
-								<< atom_name_[ bondangle_atom_sets_[ i ].key3() ] << "\t"
+								<< atoms_[ bondangle_atom_sets_[ i ].key1() ].name() << "\t"
+								<< atoms_[ bondangle_atom_sets_[ i ].key2() ].name() << "\t"
+								<< atoms_[ bondangle_atom_sets_[ i ].key3() ].name() << "\t"
 								<< "MM:" << "\t"
-								<< mm_atom_name_[ bondangle_atom_sets_[ i ].key1() ] << "\t"
-								<< mm_atom_name_[ bondangle_atom_sets_[ i ].key2() ] << "\t"
-								<< mm_atom_name_[ bondangle_atom_sets_[ i ].key3() ] << "\t"
+								<< atoms_[ bondangle_atom_sets_[ i ].key1() ].mm_name() << "\t"
+								<< atoms_[ bondangle_atom_sets_[ i ].key2() ].mm_name() << "\t"
+								<< atoms_[ bondangle_atom_sets_[ i ].key3() ].mm_name() << "\t"
 								<< "MM2:" << "\t"
 								<< at5.name() << "\t"
 								<< at6.name() << "\t"
@@ -2271,13 +2238,13 @@ ResidueType::print_pretty_path_distances() const
 	// print header line
 	for ( Size i = 1; i <= natoms_; ++i )
 		{
-			tr.Debug << "\t" << atom_name_[i];
+			tr.Debug << "\t" << atoms_[i].name();
 		}
 	tr.Debug << std::endl;
 
 	for ( Size j = 1; j <= natoms_; ++j )
 		{
-			tr.Debug << atom_name_[j] << "\t";
+			tr.Debug << atoms_[j].name() << "\t";
 			for ( Size k = 1; k <= natoms_; ++k )
 				{
 					tr.Debug << path_distance_[j][k] << "\t";
@@ -2416,9 +2383,9 @@ ResidueType::debug_dump_icoor()
 void
 ResidueType::show_all_atom_names( std::ostream & out ) const {
 	//	utility::vector1< std::string > names;
-	for ( utility::vector1< std::string >::const_iterator it = atom_name_.begin(), end = atom_name_.end();
+	for ( utility::vector1< Atom >::const_iterator it = atoms_.begin(), end = atoms_.end();
 				it != end; ++it ) {
-			out << *it << std::endl;
+			out << it->name() << std::endl;
 	}
 }
 
