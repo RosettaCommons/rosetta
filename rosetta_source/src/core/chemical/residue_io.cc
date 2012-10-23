@@ -549,7 +549,7 @@ read_topology_file(
 		// fill in the rsd-xyz values
 		if ( natoms == 1 ) {
 			std::string const name( rsd->atom_name(1) );
-			rsd->set_xyz( name, Vector(0.0) );
+			rsd->set_ideal_xyz( name, Vector(0.0) );
 
 		} else {
 			// now fill in the icoor values -- in principle the rsd itself could be doing this...
@@ -557,7 +557,7 @@ read_topology_file(
 				std::string name( rsd->atom_name(i) );
 				strip_whitespace( name );
 				assert( rsd_xyz.count( name ) );
-				rsd->set_xyz( name, rsd_xyz[ name ] );
+				rsd->set_ideal_xyz( name, rsd_xyz[ name ] );
 				//rsd->set_xyz( rsd->atom_name(i), atom_tree.xyz( id::AtomID(i,1) ) );
 				//rsd->atom(i).xyz( atom_tree.xyz( id::AtomID(i,1) ) );
 			}

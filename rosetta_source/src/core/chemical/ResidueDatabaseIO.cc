@@ -1292,7 +1292,7 @@ ResidueDatabaseIO::read_residue_type_icoor(
 	for ( Size i=1; i<= res_type.natoms(); ++i ) {
 		std::string name( res_type.atom_name(i) );
 		assert( rsd_xyz.count( name ) );
-		res_type.set_xyz( name, rsd_xyz[ name ] );
+		res_type.set_ideal_xyz( name, rsd_xyz[ name ] );
 	}
 
 

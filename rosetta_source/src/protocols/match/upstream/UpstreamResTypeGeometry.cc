@@ -113,14 +113,14 @@ UpstreamResTypeGeometry::initialize_from_residue_type(
 
 	if ( N_atom_id_ != 0 && CA_atom_id_ != 0 && C_atom_id_ != 0 ) {
 
-		Vector halfpoint = 0.5 * ( res.xyz( N_atom_id_ ) + res.xyz( C_atom_id_ ) );
-		HTReal ideal_frame( res.xyz( N_atom_id_ ), halfpoint, res.xyz( CA_atom_id_ ) );
+		Vector halfpoint = 0.5 * ( res.ideal_xyz( N_atom_id_ ) + res.ideal_xyz( C_atom_id_ ) );
+		HTReal ideal_frame( res.ideal_xyz( N_atom_id_ ), halfpoint, res.ideal_xyz( CA_atom_id_ ) );
 
 		/// backbone atoms, besides the cannonical 3
 		for ( Size ii = 1; ii <= n_atoms; ++ii ) {
 			if ( ii == N_atom_id_ || ii == CA_atom_id_ || ii == C_atom_id_ ) continue;
 			if ( res.last_controlling_chi( ii ) != 0 ) continue;
-			nonchi_atoms_in_ideal_frame_.push_back( ideal_frame.to_local_coordinate( res.xyz( ii ) ));
+			nonchi_atoms_in_ideal_frame_.push_back( ideal_frame.to_local_coordinate( res.ideal_xyz( ii ) ));
 			nonchi_atom_id_2_restype_atom_id_.push_back( ii );
 			restype_atom_id_2_nonchi_atom_id_[ ii ] = nonchi_atoms_in_ideal_frame_.size();
 		}
@@ -145,9 +145,9 @@ UpstreamResTypeGeometry::initialize_from_residue_type(
 		ht_for_chitip_atoms_[ ii ].walk_along_z( res.icoor( chiat4 ).d() );
 
 		HTReal chi_tip_frame(
-			res.xyz( chiat2 ),
-			res.xyz( chiat3 ),
-			res.xyz( chiat4 ) );
+			res.ideal_xyz( chiat2 ),
+			res.ideal_xyz( chiat3 ),
+			res.ideal_xyz( chiat4 ) );
 
 		Size const n_nontip_ats_for_chi = res.atoms_last_controlled_by_chi( ii ).size() - 1;
 
@@ -158,7 +158,7 @@ UpstreamResTypeGeometry::initialize_from_residue_type(
 			Size const jjatom = res.atoms_last_controlled_by_chi( ii )[ jj ];
 			if ( jjatom == chiat4 ) continue;
 
-			Vector jjloc_in_chitip_frame = chi_tip_frame.to_local_coordinate( res.xyz( jjatom ) );
+			Vector jjloc_in_chitip_frame = chi_tip_frame.to_local_coordinate( res.ideal_xyz( jjatom ) );
 			nonchitip_atoms_[ ii ].push_back( jjatom );
 			points_for_nonchitip_atoms_[ ii ].push_back( jjloc_in_chitip_frame );
 			which_point_for_atom_[ jjatom ] = points_for_nonchitip_atoms_[ ii ].size();

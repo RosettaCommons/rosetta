@@ -254,9 +254,9 @@ ZnCoordinationScorer::ZnCoordinationScorer() :
 		core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->
 		name_map( "ZNX" );
 
-	core::Vector znpos = znx_restype.xyz( znx_restype.atom_index( "ZN" ));
-	core::Vector v1pos = znx_restype.xyz( znx_restype.atom_index( "V1" ));
-	core::Vector v2pos = znx_restype.xyz( znx_restype.atom_index( "V2" ));
+	core::Vector znpos = znx_restype.ideal_xyz( znx_restype.atom_index( "ZN" ));
+	core::Vector v1pos = znx_restype.ideal_xyz( znx_restype.atom_index( "V1" ));
+	core::Vector v2pos = znx_restype.ideal_xyz( znx_restype.atom_index( "V2" ));
 	core::Vector v12_midpoint = v1pos + v2pos / 2;
 
 	HTReal znframe( v1pos, v12_midpoint, znpos );
@@ -266,7 +266,7 @@ ZnCoordinationScorer::ZnCoordinationScorer() :
 	HTReal invznframe = znframe.inverse();
 	znx_ideal_coords_.resize( znx_restype.natoms() );
 	for ( core::Size ii = 1; ii <= znx_restype.natoms(); ++ii ) {
-		znx_ideal_coords_[ ii ] = invznframe * znx_restype.xyz( ii );
+		znx_ideal_coords_[ ii ] = invznframe * znx_restype.ideal_xyz( ii );
 	}
 
 	reset_znx_orbital_coords();

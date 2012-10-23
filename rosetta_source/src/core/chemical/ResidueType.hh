@@ -538,11 +538,11 @@ public:
 		return atomno > nheavyatoms_;
 	}
 
-	///@brief this will return xyz coords for an atom based on atm index.
+	///@brief this will return the ideal xyz coords for an atom based on atm index
 	Vector const &
-	xyz( Size const atm ) const
+	ideal_xyz( Size const atm ) const
 	{
-		return atoms_[ atm ].xyz();
+		return atoms_[ atm ].ideal_xyz();
 	}
 
 	/// @brief Read access to the last_controlling_chi_ array
@@ -1089,23 +1089,23 @@ public:
 	);
 
 	void
-	set_xyz(
+	set_ideal_xyz(
 		std::string const & atm,
 		Vector const & xyz_in
 	)
 	{
 		Size const index( atom_index(atm) );
-		set_xyz(index,xyz_in);
+		set_ideal_xyz(index,xyz_in);
 	}
 
 	void
-	set_xyz(
+	set_ideal_xyz(
 		Size index,
 		Vector const & xyz_in
 	)
 	{
 		if ( index > atoms_.size() ) atoms_.resize(index);
-		atoms_[index].xyz( xyz_in );
+		atoms_[index].ideal_xyz( xyz_in );
 	}
 
 	//////////////////////////////////////////////////////////////////////

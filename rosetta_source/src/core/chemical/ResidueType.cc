@@ -1809,7 +1809,7 @@ ResidueType::set_icoor(
 			set_atom_base( atm, stub_atom1 );
 		}
 		if ( update_xyz ) {
-			set_xyz( atm, ic.build( *this ) );
+			set_ideal_xyz( atm, ic.build( *this ) );
 // 			std::cout << "building coords for atm " << name_ << ' ' << atm << ' ' <<
 // 				ic.build(*this)(1) << ' ' <<
 // 				ic.build(*this)(2) << ' ' <<
@@ -1858,7 +1858,7 @@ ResidueType::set_icoor(
 			set_atom_base( atm, stub_atom1 );
 		}
 		if ( update_xyz ) {
-			set_xyz( atm, ic.build( *this ) );
+			set_ideal_xyz( atm, ic.build( *this ) );
 // 			std::cout << "building coords for atm " << name_ << ' ' << atm << ' ' <<
 // 				ic.build(*this)(1) << ' ' <<
 // 				ic.build(*this)(2) << ' ' <<
@@ -1935,7 +1935,7 @@ void ResidueType::assign_neighbor_atom()
 	Vector total(0.0,0.0,0.0);
 	for(core::Size index = 1; index <= atoms_.size();++index)
 	{
-		total += atoms_[index].xyz();
+		total += atoms_[index].ideal_xyz();
 	}
 	Vector center = total/atoms_.size();
 
@@ -1944,7 +1944,7 @@ void ResidueType::assign_neighbor_atom()
 	core::Real min_distance = 50000.0;
 	for(core::Size index = 1; index <= atoms_.size();++index)
 	{
-		core::Real distance = center.distance(atoms_[index].xyz());
+		core::Real distance = center.distance(atoms_[index].ideal_xyz());
 		if( (distance < min_distance) && (!atom_is_hydrogen(index)) )
 		{
 			min_distance = distance;
@@ -2030,10 +2030,10 @@ void ResidueType::calculate_icoor(std::string const & child,
 	//std::cout <<child << " \""<<stub_atom1 << "\" \""<<stub_atom2<< "\" \""<<stub_atom3 << std::endl;
 	// This is basically a direct port of calc_internal_coords()
 	// found in /python/apps/public/molfile_to_params.py
-	Vector const child_xyz = xyz(atom_index(child));
-	Vector const stub1_xyz = xyz(atom_index(stub_atom1));
-	Vector const stub2_xyz = xyz(atom_index(stub_atom2));
-	Vector const stub3_xyz = xyz(atom_index(stub_atom3));
+	Vector const child_xyz = ideal_xyz(atom_index(child));
+	Vector const stub1_xyz = ideal_xyz(atom_index(stub_atom1));
+	Vector const stub2_xyz = ideal_xyz(atom_index(stub_atom2));
+	Vector const stub3_xyz = ideal_xyz(atom_index(stub_atom3));
 
 	core::Real distance = child_xyz.distance(stub1_xyz);
 	core::Real theta = 0.0;
@@ -2374,7 +2374,7 @@ ResidueType::debug_dump_icoor()
 
 	tr.Debug << "ICoor for " << name3() << std::endl;
 	for( Size ii = 1 ; ii <= natoms() ; ++ii) {
-		tr.Debug << " Atom name: " << atom_name( ii ) << " ideal xyz " << xyz(ii)[0] << "  " << xyz(ii)[1] << "  " << xyz(ii)[2] << std::endl;
+		tr.Debug << " Atom name: " << atom_name( ii ) << " ideal xyz " << ideal_xyz(ii)[0] << "  " << ideal_xyz(ii)[1] << "  " << ideal_xyz(ii)[2] << std::endl;
 	}
 
 }

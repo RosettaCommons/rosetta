@@ -472,10 +472,10 @@ select_coord_for_residue(core::conformation::Residue & res){
 		//lets use alanine as the ideal here
 		chemical::ResidueTypeSetCAP rts = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 		chemical::ResidueType const & restype= rts->name_map("ALA");//define ala
-		xyzVector< core::Real > idealN  =  (  restype.xyz( restype.atom_index("N" ) ) );
-		xyzVector< core::Real > idealCA =  (  restype.xyz( restype.atom_index("CA") ) );
-		xyzVector< core::Real > idealC  =  (  restype.xyz( restype.atom_index("C")  ) );
-		xyzVector< core::Real > idealCB  = (  restype.xyz( restype.atom_index("CB") ) );
+		xyzVector< core::Real > idealN  =  (  restype.ideal_xyz( restype.atom_index("N" ) ) );
+		xyzVector< core::Real > idealCA =  (  restype.ideal_xyz( restype.atom_index("CA") ) );
+		xyzVector< core::Real > idealC  =  (  restype.ideal_xyz( restype.atom_index("C")  ) );
+		xyzVector< core::Real > idealCB  = (  restype.ideal_xyz( restype.atom_index("CB") ) );
 		//now use the HT to map from ideal space to the current residue position
 		xyzVector< core::Real > ideal_halfpoint = 0.5 * ( idealN + idealC );
 		HTReal ideal_frame( idealN, ideal_halfpoint, idealCA );

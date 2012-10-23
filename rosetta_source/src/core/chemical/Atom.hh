@@ -62,7 +62,7 @@ public:
 			atom_type_index_(0),
 			mm_atom_type_index_(0),
 			charge_(0),
-			xyz_(),
+			ideal_xyz_(),
 			icoor_()
 	{}
 
@@ -73,7 +73,7 @@ public:
 			Size const atom_type_index,
 			Size const mm_atom_type_index,
 			Real const charge,
-			Vector const xyz,
+			Vector const ideal_xyz,
 			AtomICoor const icoor
 
 	):
@@ -83,7 +83,7 @@ public:
 		atom_type_index_(atom_type_index),
 		mm_atom_type_index_(mm_atom_type_index),
 		charge_(charge),
-		xyz_(xyz),
+		ideal_xyz_(ideal_xyz),
 		icoor_(icoor)
 	{}
 
@@ -94,7 +94,7 @@ public:
 		atom_type_index_(src.atom_type_index_),
 		mm_atom_type_index_(src.mm_atom_type_index_),
 		charge_(src.charge_),
-		xyz_(src.xyz_),
+		ideal_xyz_(src.ideal_xyz_),
 		icoor_(src.icoor_)
 	{}
 
@@ -112,7 +112,7 @@ public:
 	Size const& atom_type_index() const { return atom_type_index_; };
 	Size const& mm_atom_type_index() const { return mm_atom_type_index_; };
 	Real const& charge() const { return charge_; };
-	Vector const& xyz() const { return xyz_; };
+	Vector const& ideal_xyz() const { return ideal_xyz_; };
 	AtomICoor const& icoor() const { return icoor_; };
 // Non-const getters
 	AtomICoor & icoor() { return icoor_; };
@@ -123,7 +123,7 @@ public:
 	void atom_type_index( Size const & atom_type_index ) { atom_type_index_ = atom_type_index; };
 	void mm_atom_type_index( Size const & mm_atom_type_index ) { mm_atom_type_index_ = mm_atom_type_index; };
 	void charge( Real const & charge ) { charge_ = charge; };
-	void xyz( Vector const & xyz) { xyz_= xyz; };
+	void ideal_xyz( Vector const & ideal_xyz) { ideal_xyz_= ideal_xyz; };
 	void icoor( AtomICoor const & icoor) { icoor_ = icoor; };
 
 	// data
@@ -141,7 +141,7 @@ private:
 	/// MM atom-type index
 	Size mm_atom_type_index_;
 	Real charge_;
-	Vector xyz_;
+	Vector ideal_xyz_;
 	AtomICoor icoor_;
 };
 

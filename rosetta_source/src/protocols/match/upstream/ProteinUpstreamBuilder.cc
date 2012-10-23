@@ -402,10 +402,10 @@ FullChiSampleSet::FullChiSampleSet(
 						chi_samples_[ ii ].resize( 1 );
 						frames_[ ii ].resize( 1 );
 						chi_samples_[ ii ][ 1 ] = numeric::dihedral_degrees(
-							build_set.restype().xyz( build_set.restype().chi_atoms( ii )[ 1 ] ),
-							build_set.restype().xyz( build_set.restype().chi_atoms( ii )[ 2 ] ),
-							build_set.restype().xyz( build_set.restype().chi_atoms( ii )[ 3 ] ),
-							build_set.restype().xyz( build_set.restype().chi_atoms( ii )[ 4 ] ) );
+							build_set.restype().ideal_xyz( build_set.restype().chi_atoms( ii )[ 1 ] ),
+							build_set.restype().ideal_xyz( build_set.restype().chi_atoms( ii )[ 2 ] ),
+							build_set.restype().ideal_xyz( build_set.restype().chi_atoms( ii )[ 3 ] ),
+							build_set.restype().ideal_xyz( build_set.restype().chi_atoms( ii )[ 4 ] ) );
 					}
 					break;
 				case follow_EX_flags :

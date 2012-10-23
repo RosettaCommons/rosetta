@@ -94,7 +94,7 @@ void V2Parser::ParseAtom(std::string const atom_line, core::Size const atom_numb
 
 	core::chemical::ResidueTypeOP residue(this->GetResidueType());
 	residue->add_atom(element_id,atom_type,DEFAULT_MM_ATOM_TYPE_,charge);
-	residue->set_xyz(element_id,coordinates);
+	residue->set_ideal_xyz(element_id,coordinates);
 	//residue->finalize();
 }
 

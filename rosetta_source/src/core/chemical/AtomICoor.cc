@@ -143,7 +143,7 @@ ICoorAtomID::xyz(
 ) const
 {
 	if ( type_ == INTERNAL ) {
-		return rsd_type.xyz( atomno_ );
+		return rsd_type.ideal_xyz( atomno_ );
 	} else if ( type_ == POLYMER_LOWER ) {
 		return rsd_type.lower_connect().icoor().build( rsd_type );
 	} else if ( type_ == POLYMER_UPPER ) {
