@@ -26,6 +26,8 @@
 
 // Basic headers
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/carbohydrates.OptionKeys.gen.hh>
 
 // Numeric headers
 #include <numeric/random/random.hh>
@@ -73,7 +75,8 @@ RingConformationMover::RingConformationMover(RingConformationMover const & objec
 
 // Constructor with MoveMap input option
 /// @param    <input_movemap>: a MoveMap with desired backbone torsions set to true
-/// @remarks  Movable carbohydrate residues will generally be a subset of residues in the MoveMap whose backbone torsions are set to true.
+/// @remarks  Movable carbohydrate residues will generally be a subset of residues in the MoveMap whose backbone
+/// torsions are set to true.
 RingConformationMover::RingConformationMover(core::kinematics::MoveMapOP input_movemap)
 {
 	init(input_movemap);
@@ -148,9 +151,15 @@ void
 RingConformationMover::apply(Pose & input_pose)
 {
 	using namespace std;
+	using namespace basic::options;
 	using namespace utility;
 	using namespace conformation;
 	using namespace id;
+
+	if (option[OptionKeys::carbohydrates::lock_rings]) {
+		Warning() << "Rings have been locked; no ring conformation moves are being applied to this pose." << endl;
+		return;
+	}
 
 	show(TR);
 
@@ -187,7 +196,7 @@ RingConformationMover::apply(Pose & input_pose)
 			break;
 	}
 
-	TR << "Selected a " << conformer.first << " conformation to apply." << endl;
+	TR << "Selected the " << conformer.first << " conformation to apply." << endl;
 
 	TR << "Making move...." << endl;
 
@@ -232,6 +241,8 @@ RingConformationMover::init(core::kinematics::MoveMapOP movemap)
 
 	// TODO: Define furanose ring conformers.
 
+	// TODO: Properly name other conformers.
+
 	// Define pyranose ring conformers.
 
 	// (C-style arrays should normally be avoided, but it makes initializing the vector1 so much easier.)
@@ -242,10 +253,10 @@ RingConformationMover::init(core::kinematics::MoveMapOP movemap)
 	// It's lazy, but for now, I am adding multiple copies of each to compete with entropy of multiple twist-boat states.
 	// This will result in a 2:1 chair to twist-boat ratio, which at least matches the CAPRI 27 starting structure.
 	for (Size i = 1; i <= 6; ++i) {
-		angles[0] = 60.0; angles[1] = -60.0; angles[2] = 60.0; angles[3] = -60.0;
-		six_membered_ring_conformers_.push_back(make_pair("chair", vector1<Real>(angles, angles + 4)));
 		angles[0] = -60.0; angles[1] = 60.0; angles[2] = -60.0; angles[3] = 60.0;
-		six_membered_ring_conformers_.push_back(make_pair("chair", vector1<Real>(angles, angles + 4)));
+		six_membered_ring_conformers_.push_back(make_pair("1C4", vector1<Real>(angles, angles + 4)));
+		angles[0] = 60.0; angles[1] = -60.0; angles[2] = 60.0; angles[3] = -60.0;
+		six_membered_ring_conformers_.push_back(make_pair("4C1", vector1<Real>(angles, angles + 4)));
 	}
 
 	// Six boat conformers
@@ -253,27 +264,27 @@ RingConformationMover::init(core::kinematics::MoveMapOP movemap)
 	/*angles[0] = 0.0; angles[1] = -60.0; angles[2] = 60.0; angles[3] = 0.0;
 	six_membered_ring_conformers_.push_back(make_pair("boat", vector1<Real>(angles, angles + 4)));
 	angles[0] = 60.0; angles[1] = 0.0; angles[2] = -60.0; angles[3] = 60.0;
-	six_membered_ring_conformers_.push_back(make_pair("boat", vector1<Real>(angles, angles + 4)));
+	six_membered_ring_conformers_.push_back(make_pair("B1,4", vector1<Real>(angles, angles + 4)));
 	angles[0] = -60.0; angles[1] = 60.0; angles[2] = 0.0; angles[3] = -60.0;
 	six_membered_ring_conformers_.push_back(make_pair("boat", vector1<Real>(angles, angles + 4)));
 
 	angles[0] = 0.0; angles[1] = 60.0; angles[2] = -60.0; angles[3] = 0.0;
 	six_membered_ring_conformers_.push_back(make_pair("boat", vector1<Real>(angles, angles + 4)));
 	angles[0] = -60.0; angles[1] = 0.0; angles[2] = 60.0; angles[3] = -60.0;
-	six_membered_ring_conformers_.push_back(make_pair("boat", vector1<Real>(angles, angles + 4)));
+	six_membered_ring_conformers_.push_back(make_pair("1,4B", vector1<Real>(angles, angles + 4)));
 	angles[0] = 60.0; angles[1] = -60.0; angles[2] = 0.0; angles[3] = 60.0;
 	six_membered_ring_conformers_.push_back(make_pair("boat", vector1<Real>(angles, angles + 4)));*/
 
 	// Six twist-boat conformers
 	angles[0] = -30.0; angles[1] = -30.0; angles[2] = 60.0; angles[3] = -30.0;
-	six_membered_ring_conformers_.push_back(make_pair("twist-boat", vector1<Real>(angles, angles + 4)));
+	six_membered_ring_conformers_.push_back(make_pair("4S1", vector1<Real>(angles, angles + 4)));
 	angles[0] = -30.0; angles[1] = 60.0; angles[2] = -30.0; angles[3] = -30.0;
 	six_membered_ring_conformers_.push_back(make_pair("twist-boat", vector1<Real>(angles, angles + 4)));
 	angles[0] = 60.0; angles[1] = -30.0; angles[2] = -30.0; angles[3] = 60.0;
 	six_membered_ring_conformers_.push_back(make_pair("twist-boat", vector1<Real>(angles, angles + 4)));
 
 	angles[0] = 30.0; angles[1] = 30.0; angles[2] = -60.0; angles[3] = 30.0;
-	six_membered_ring_conformers_.push_back(make_pair("twist-boat", vector1<Real>(angles, angles + 4)));
+	six_membered_ring_conformers_.push_back(make_pair("1S4", vector1<Real>(angles, angles + 4)));
 	angles[0] = 30.0; angles[1] = -60.0; angles[2] = 30.0; angles[3] = 30.0;
 	six_membered_ring_conformers_.push_back(make_pair("twist-boat", vector1<Real>(angles, angles + 4)));
 	angles[0] = -60.0; angles[1] = 30.0; angles[2] = 30.0; angles[3] = -60.0;

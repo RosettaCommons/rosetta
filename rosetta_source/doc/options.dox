@@ -117,6 +117,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-include_sugars</b> \<Boolean\><dt>
+<dd>Sets whether or not carbohydrate residues will beloaded into Rosetta.  The default value is false.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-remember_unrecognized_res</b> \<Boolean\><dt>
 <dd>Ignore unrecognized residues, but remember them in PDBInfo.</dd><br>
 <dd>Default: false</dd><br>
@@ -12368,6 +12373,17 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-sc_bb</b> \<Boolean\><dt>
 <dd>score the backbone</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+ </li>
+<li><h2>carbohydrates</h2>
+<dl>
+<dt><b>-carbohydrates</b> \<Boolean\><dt>
+<dd>carbohydrates option group</dd><br>
+</dl>
+<dl>
+<dt><b>-lock_rings</b> \<Boolean\><dt>
+<dd>Sets whether or not alternative ring conformationswill be sampled by the protocol, (e.g, ring flips orpuckering).  The default value is false.</dd><br>
 <dd>Default: false</dd><br>
 </dl>
  </li>

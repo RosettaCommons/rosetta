@@ -7,37 +7,39 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //////////////////////////////////////////////////////////////////////
-/// @begin ResidueType
+/// @file ResidueType.cc
 ///
 /// @brief
-/// A class for defining residue
+/// A class for defining a type of residue
 ///
 /// @details
-/// This class contains the "chemical" information for residues. This does not contain the actual
-/// xyz coordinates of the class (xyz found in core/conformation/Residue.hh). A residue in Rosetta
-/// can be a ligand, DNA, amino acid, or basically anything. A residue is read in through residue_io.cc
-/// and read from parameter files, generally located in the database chemical/residue_types. For ligands,
-/// or anything that is not the natural 20 aa, a parameter has to be provided to rosetta through the -extra_res_fa
-/// flag. Residue_io sets private member data in ResidueType. The primary data that are set are: atoms, mmatoms, orbitals,
-/// properties of residues. These properties can be modified through patches, which is controlled through PatchOperations.cc. If
-/// the residuetype is modified, the indices of atoms and mmatoms and everything associated with those indices must be redefined. This
-/// redordering of indices is taken care of with the function reorder_primary_data().
+/// This class contains the "chemical" information for residues. This does not contain the actual xyz coordinates of a
+/// particular residue in a specific peptide.  (xyz coordinates are found in core/conformation/Residue.hh).  A residue
+/// in Rosetta can be a ligand, DNA, amino acid, or basically anything.  A residue is read in through residue_io.cc and
+/// read from parameter files, generally located in the database chemical/residue_types.  For ligands, or anything that
+/// is not one of the natural 20 AAs, a parameter has to be provided to rosetta through the -extra_res_fa flag.
+/// residue_io.cc sets private member data in ResidueType.  The primary data that are set are: atoms, mmatoms,
+/// orbitals, and properties of the particular residue type.  These properties can be modified through patches, which
+/// is controlled through PatchOperations.cc.  If the residue_type of a residue is modified, the indices of atoms and
+/// mmatoms and everything associated with those indices must be redefined.  This reordering of indices is taken care
+/// of with the function reorder_primary_data().
 ///
-/// Setting of primary data and then reordering is important. Primary data for the following are described:
+/// Setting of primary data and then reordering is important.  Primary data for the following are described:
 ///
-/// atoms: setting of atoms includes indexing the atoms into vectors, saving their names into vectors/maps,
-/// saving the associated mm_atom_type into a vector, saving bond connections into vectors, etc, etc. Since everything is
-/// allocated into vectors, it is easy to reorder those vectors. On any given residue, the heavy atoms are put into the vector
-/// first (their indices are first) and hydrogens are put in last.
+/// Atoms: Setting of atoms includes indexing the atoms into vectors, saving their names into vectors/maps, saving the
+/// associated mm_atom_type into a vector, saving bond connections into vectors, etc, etc.  Since everything is
+/// allocated into vectors, it is easy to reorder those vectors.  On any given residue, the heavy atoms are put into
+/// the vector first, (their indices are first,) and hydrogens are put in last.
 ///
-/// properties: properties of a residue include things like DNA, PROTEIN, SC_ORBITALS, CHARGED, etc. These properties
-/// indicate the type of residue it is and what properties that are asscociated with the residue. They
-/// are set when read in. Several lines of code must be modified to get them to work, all found in residuetype.cc
+/// Properties: Properties of a residue include things like DNA, PROTEIN, SC_ORBITALS, CHARGED, etc.  These properties
+/// indicate the type of residue it is and what properties are associated with the residue.  They are set when read in.
+/// Several lines of code must be modified to get them to work, all found here in ResidueType.cc.
 ///
-/// orbitals: orbitals are indexed seperate from atoms. They function much the same way as atoms, except for some
-/// key differences. To find atoms bonded to orbitals, you must provide the atom index, not the orbital index. I
-/// havent figured out how to get the reverse to work because of the seperate indices. Orbital xyz coordinates are not updated when atom coordinates are.
-/// This is to keep speed consistent with just having atoms. To output the orbitals, use the flag -output_orbitals
+/// Orbitals: Orbitals are indexed separately from atoms.  They function much the same way as atoms, except for some
+/// key differences.  To find atoms bonded to orbitals, you must provide the atom index, not the orbital index.  (I
+/// haven't figured out how to get the reverse to work because of the separate indices.)  Orbital xyz coordinates are
+/// not updated when atom coordinates are.  This is to keep speed consistent with just having atoms.  To output the
+/// orbitals, use the flag -output_orbitals.
 ///
 /// @author
 /// Phil Bradley
@@ -323,7 +325,7 @@ ResidueType::abase2( Size const atomno ) const
 }
 
 
-/// @note this does not set xyz coordiates for the added atom
+/// @note this does not set xyz coordinates for the added atom
 void
 ResidueType::add_atom(
 	std::string const & atom_name,
@@ -499,7 +501,7 @@ ResidueType::add_orbital(
 ///////////////////////////////////////////////////////////////////////////////
 
 /// @details add a bond between atom1 and atom2 and add a BondType object referencing the bond (default bond type of SingleBond)
-/** update bonded_neighbor_ and resize it as necessary */
+/** update bonded_neighbor_ and resize it as necessary **/
 void
 ResidueType::add_bond(
 	std::string const & atom_name1,
@@ -604,7 +606,7 @@ ResidueType::add_orbital_bond(
 
 /// @details add a cut_bond between atom1 and atom2, which disallows an atom-tree connection,
 ///            though the atoms are really bonded.
-/** update cut_bond_ and resize it as necessary */
+/** update cut_bond_ and resize it as necessary **/
 void
 ResidueType::add_cut_bond(
 	std::string const & atom_name1,
@@ -764,7 +766,7 @@ ResidueType::properties() const
 ///////////////////////////////////////////////////////////////////////////////
 
 /// @details add a property to this residue
-/** update boolean property member data accordingly */
+/** update boolean property member data accordingly **/
 void
 ResidueType::add_property( std::string const & property )
 {
@@ -838,7 +840,7 @@ ResidueType::add_property( std::string const & property )
 ///////////////////////////////////////////////////////////////////////////////
 
 /// @details delete a property to this residue
-/** update boolean property member data accordingly */
+/** update boolean property member data accordingly **/
 //    Added by Andy M. Chen in June 2009
 //    This is needed for deleting properties, which occurs in certain PTM's
 
@@ -1571,7 +1573,7 @@ ResidueType::update_derived_data()
 	 This routine updates all the derived data.\n
 	 Atom order will probably change after this call, so if you add a new
 	 property that depends on atom-indices that will have to be updated below.
-*/
+**/
 /*
 	 data that we have prior to calling this routine:
 
@@ -1620,36 +1622,36 @@ bool
 ResidueType::variants_match( ResidueType const & other ) const
 {
 
-  if ( ! basic::options::option[ basic::options::OptionKeys::pH::pH_mode ].user() ) {
-	  for ( Size ii = 1; ii <= variant_types_.size(); ++ii ) {
-		  if ( ! other.has_variant_type( variant_types_[ ii ] ) ) {
-		    return false;
-		  }
-	  }
-	  return (variant_types_.size() == other.variant_types_.size());
-  }
+	if ( ! basic::options::option[ basic::options::OptionKeys::pH::pH_mode ].user() ) {
+		for ( Size ii = 1; ii <= variant_types_.size(); ++ii ) {
+			if ( ! other.has_variant_type( variant_types_[ ii ] ) ) {
+				return false;
+			}
+		}
+		return (variant_types_.size() == other.variant_types_.size());
+	}
 
-//needed for protonated versions of the residues
-  else {
-    int this_variant_count_offset( 0 );
-	  for ( Size ii = 1; ii <= variant_types_.size(); ++ii ) {
-		  if ( variant_types_[ii] == PROTONATED || variant_types_[ii] == DEPROTONATED ) {
-			  this_variant_count_offset = 1;
-			  continue;
-		  }
-		  if ( ! other.has_variant_type( variant_types_[ ii ] ) ) {
-			return false;
-		  }
-	  }
-
-	  int other_variant_count_offset( 0 );
-		if( other.has_variant_type( PROTONATED ) || other.has_variant_type( DEPROTONATED ) ) {
-	    other_variant_count_offset = 1;
+	//needed for protonated versions of the residues
+	else {
+		int this_variant_count_offset( 0 );
+		for ( Size ii = 1; ii <= variant_types_.size(); ++ii ) {
+			if ( variant_types_[ii] == PROTONATED || variant_types_[ii] == DEPROTONATED ) {
+				this_variant_count_offset = 1;
+				continue;
+			}
+			if ( ! other.has_variant_type( variant_types_[ ii ] ) ) {
+				return false;
+			}
 		}
 
-	  return ( ( variant_types_.size() - this_variant_count_offset ) ==
+		int other_variant_count_offset( 0 );
+		if( other.has_variant_type( PROTONATED ) || other.has_variant_type( DEPROTONATED ) ) {
+			other_variant_count_offset = 1;
+		}
+
+		return ( ( variant_types_.size() - this_variant_count_offset ) ==
 							  ( other.variant_types_.size() - other_variant_count_offset ) );
-  }
+	}
 }
 
 bool
@@ -1810,10 +1812,10 @@ ResidueType::set_icoor(
 		}
 		if ( update_xyz ) {
 			set_ideal_xyz( atm, ic.build( *this ) );
-// 			std::cout << "building coords for atm " << name_ << ' ' << atm << ' ' <<
-// 				ic.build(*this)(1) << ' ' <<
-// 				ic.build(*this)(2) << ' ' <<
-// 				ic.build(*this)(3) << std::endl;
+			//std::cout << "building coords for atm " << name_ << ' ' << atm << ' ' <<
+			//		ic.build(*this)(1) << ' ' <<
+			//		ic.build(*this)(2) << ' ' <<
+			//		ic.build(*this)(3) << std::endl;
 		}
 		break;
 	case ICoorAtomID::CONNECT:
@@ -1859,10 +1861,10 @@ ResidueType::set_icoor(
 		}
 		if ( update_xyz ) {
 			set_ideal_xyz( atm, ic.build( *this ) );
-// 			std::cout << "building coords for atm " << name_ << ' ' << atm << ' ' <<
-// 				ic.build(*this)(1) << ' ' <<
-// 				ic.build(*this)(2) << ' ' <<
-// 				ic.build(*this)(3) << std::endl;
+			//std::cout << "building coords for atm " << name_ << ' ' << atm << ' ' <<
+			//		ic.build(*this)(1) << ' ' <<
+			//		ic.build(*this)(2) << ' ' <<
+			//		ic.build(*this)(3) << std::endl;
 		}
 		break;
 	case ICoorAtomID::CONNECT:

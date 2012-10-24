@@ -12,7 +12,7 @@
 /// @brief
 /// A class for defining atom parameters, known as atom_types
 ///
-/// @detailed
+/// @details
 /// This class contains the "chemical" information for atoms. This does not contain the actual
 /// xyz coordinates of the class (xyz found in core/conformation/Atom.hh. The atom_type properties
 /// are assigned by the class AtomSet which is initiated from the ChemicalManager. Atom type properties
@@ -23,7 +23,7 @@
 ///
 ///
 ///
-/// @authors
+/// @author
 /// Phil Bradley
 /// Steven Combs - comments
 ///

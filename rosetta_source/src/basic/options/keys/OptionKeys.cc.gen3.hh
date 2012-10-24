@@ -1,5 +1,3 @@
-namespace DenovoProteinDesign { BooleanOptionKey const create_from_secondary_structure( "DenovoProteinDesign:create_from_secondary_structure" );  }
-namespace RBSegmentRelax { BooleanOptionKey const RBSegmentRelax( "RBSegmentRelax" );  }
 namespace RBSegmentRelax { FileOptionKey const input_pdb( "RBSegmentRelax:input_pdb" );  }
 namespace RBSegmentRelax { FileOptionKey const rb_file( "RBSegmentRelax:rb_file" );  }
 namespace RBSegmentRelax { RealOptionKey const cst_wt( "RBSegmentRelax:cst_wt" );  }
@@ -612,6 +610,8 @@ namespace orbitals { BooleanOptionKey const bb_stats( "orbitals:bb_stats" );  }
 namespace orbitals { BooleanOptionKey const sc_stats( "orbitals:sc_stats" );  }
 namespace orbitals { BooleanOptionKey const orb_orb_stats( "orbitals:orb_orb_stats" );  }
 namespace orbitals { BooleanOptionKey const sc_bb( "orbitals:sc_bb" );  }
+namespace carbohydrates { BooleanOptionKey const carbohydrates( "carbohydrates" );  }
+namespace carbohydrates { BooleanOptionKey const lock_rings( "carbohydrates:lock_rings" );  }
 namespace dwkulp { BooleanOptionKey const dwkulp( "dwkulp" );  }
 namespace dwkulp { StringOptionKey const forcePolyAAfragments( "dwkulp:forcePolyAAfragments" );  }
 namespace matdes { BooleanOptionKey const matdes( "matdes" );  }

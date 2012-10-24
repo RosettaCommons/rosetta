@@ -21,6 +21,10 @@
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 
+// Basic headers
+#include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+
 // C++ headers
 #include <sstream>
 
@@ -33,8 +37,10 @@ public:
     setUp()
     {
         using namespace core::import_pose;
+        using namespace basic::options;
 
         core_init();
+        option[OptionKeys::in::include_sugars](true);
         pose_from_pdb(maltotriose_, "core/chemical/carbohydrates/maltotriose.pdb");
 
         // TODO: Test several other cases besides glucose.
@@ -65,7 +71,7 @@ public:
         expected_out1 << "Carbohydrate Properties for this Residue:" << endl;
         expected_out1 << " IUPAC Name: " << endl;
         expected_out1 << " Classification: aldohexose" << endl;
-        expected_out1 << " Stereochemistry: L" << endl;
+        expected_out1 << " Stereochemistry: D" << endl;
         expected_out1 << " Ring Form: pyranose" << endl;
         expected_out1 << " Anomeric Form: alpha" << endl;
         expected_out1 << " Modifications: " << endl;
@@ -80,7 +86,7 @@ public:
         expected_out3 << "Carbohydrate Properties for this Residue:" << endl;
         expected_out3 << " IUPAC Name: " << endl;
         expected_out3 << " Classification: aldohexose" << endl;
-        expected_out3 << " Stereochemistry: L" << endl;
+        expected_out3 << " Stereochemistry: D" << endl;
         expected_out3 << " Ring Form: pyranose" << endl;
         expected_out3 << " Anomeric Form: alpha" << endl;
         expected_out3 << " Modifications: " << endl;

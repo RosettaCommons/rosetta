@@ -1,5 +1,5 @@
-NAME (_->4)-alpha-D-Glup   # (_->4)-alpha-D-Glucopyranosyl-
-IO_STRING Glu Z            # Note lower case!
+NAME (_->4)-alpha-D-Glcp   # (_->4)-alpha-D-Glucopyranosyl-
+IO_STRING Glc Z            # Note lower case!
 TYPE POLYMER
 AA UNK
 ATOM  C1  CH1   X   0.18   # anomeric carbon
@@ -68,7 +68,7 @@ CHI 7  VO5  C1   C2   C3   # nu(1); duplicates BB 1, but defined differently
 CHI 8  C1   C2   C3   C4   # nu(2); duplicates BB 2
 CHI 9  C2   C3   C4   C5   # nu(3); duplicates BB 3
 CHI 10  C3   C4   C5   O5  # nu(4)
-PROPERTIES  POLAR CARBOHYDRATE ALDOSE L_SUGAR PYRANOSE ALPHA_SUGAR
+PROPERTIES  POLAR CARBOHYDRATE ALDOSE D_SUGAR PYRANOSE ALPHA_SUGAR
 NBR_ATOM  C4
 NBR_RADIUS 6.967819
 # must build main chain 1st!

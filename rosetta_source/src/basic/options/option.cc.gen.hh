@@ -26,6 +26,7 @@ option.add( basic::options::OptionKeys::in::termini, "Put full N and C termini o
 option.add( basic::options::OptionKeys::in::ignore_unrecognized_res, "Do not abort if unknown residues are found in PDB file;  instead, ignore them. Note this implies -in:ignore_waters" ).def(false);
 option.add( basic::options::OptionKeys::in::ignore_waters, "Do not abort if HOH water residues are found in PDB file;  instead, ignore them." ).def(false);
 option.add( basic::options::OptionKeys::in::add_orbitals, "Will add orbitals to residues only. Does not include orbitals to ligands. Done through params file reading." ).def(false);
+option.add( basic::options::OptionKeys::in::include_sugars, "Sets whether or not carbohydrate residues will beloaded into Rosetta.  The default value is false." ).shortd( "Load carbohydrate residues into memory?" ).legal(true).legal(false).def(false);
 option.add( basic::options::OptionKeys::in::remember_unrecognized_res, "Ignore unrecognized residues, but remember them in PDBInfo." ).def(false);
 option.add( basic::options::OptionKeys::in::remember_unrecognized_water, "Remember waters along with other unrecognized residues." ).def(false);
 option.add( basic::options::OptionKeys::in::detect_disulf, "Forcably enable or disable disulfide detection. When unspecified, rosetta conservatively detects disulfides in full atom input based on SG distance, but will not form centroid disulfides. Setting `-detect_disulf true` will force  aggressive disulfide detection in centroid poses based on CB distance. Setting `-detect_disulf false` disables all detection, even in full atom poses. Note that disabling disulfides causes severe clashes for native disulfides." ).legal(true).legal(false);
@@ -1293,10 +1294,10 @@ option.add( basic::options::OptionKeys::lh::mpi_batch_relax_absolute_max, "No de
 option.add( basic::options::OptionKeys::lh::mpi_outbound_wu_buffer_size, "No description" ).def(60);
 option.add( basic::options::OptionKeys::lh::mpi_loophash_split_size    , "No description" ).def(50);
 option.add( basic::options::OptionKeys::lh::mpi_metropolis_temp, "No description" ).def(1000000.0);
+option.add( basic::options::OptionKeys::lh::mpi_save_state_interval, "No description" ).def(1200);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::mpi_save_state_interval, "No description" ).def(1200);
-option.add( basic::options::OptionKeys::lh::mpi_master_save_score_only, "No description" ).def(true);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::mpi_master_save_score_only, "No description" ).def(true);
 option.add( basic::options::OptionKeys::lh::max_loophash_per_structure, "No description" ).def(1);
 option.add( basic::options::OptionKeys::lh::rms_limit, "How to deal with returned relaxed structures" ).def(2.0);
 option.add( basic::options::OptionKeys::lh::centroid_only, "false" ).def(false);
@@ -1939,11 +1940,11 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_p
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
+option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
+option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
-option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);
@@ -2555,6 +2556,8 @@ option.add( basic::options::OptionKeys::orbitals::bb_stats, "look at orbital bac
 option.add( basic::options::OptionKeys::orbitals::sc_stats, "look at orbital sc stats" ).def(false);
 option.add( basic::options::OptionKeys::orbitals::orb_orb_stats, "look at orbital orbital stats" ).def(false);
 option.add( basic::options::OptionKeys::orbitals::sc_bb, "score the backbone" ).def(false);
+option.add( basic::options::OptionKeys::carbohydrates::carbohydrates, "carbohydrates option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::carbohydrates::lock_rings, "Sets whether or not alternative ring conformationswill be sampled by the protocol, (e.g, ring flips orpuckering).  The default value is false." ).shortd( "Are saccharide rings allowed to flip or pucker?" ).legal(true).legal(false).def(false);
 option.add( basic::options::OptionKeys::dwkulp::dwkulp, "dwkulp option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::dwkulp::forcePolyAAfragments, "a single amino acid that will be used for fragment picking,default is blank which means taking actual sequence from pose" ).def("");
 option.add( basic::options::OptionKeys::matdes::matdes, "matdes option group" ).legal(true).def(true);

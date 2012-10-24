@@ -113,6 +113,12 @@ Options = Option_Group( '',
 		Option( 'ignore_unrecognized_res', 'Boolean', desc="Do not abort if unknown residues are found in PDB file;  instead, ignore them. Note this implies -in:ignore_waters", default='false' ),
 		Option( 'ignore_waters', 'Boolean', desc="Do not abort if HOH water residues are found in PDB file;  instead, ignore them.", default='false' ),
 		Option( 'add_orbitals', 'Boolean', desc="Will add orbitals to residues only. Does not include orbitals to ligands. Done through params file reading.", default='false'),
+        Option("include_sugars", "Boolean",
+                    desc='Sets whether or not carbohydrate residues will be'
+                    'loaded into Rosetta.  The default value is false.',
+                    short="Load carbohydrate residues into memory?",
+                    legal=["true", "false"],
+                    default="false"),
 		Option( 'remember_unrecognized_res'  , 'Boolean', desc="Ignore unrecognized residues, but remember them in PDBInfo.", default='false' ),
 		Option( 'remember_unrecognized_water', 'Boolean', desc="Remember waters along with other unrecognized residues.", default='false' ),
 		Option( 'detect_disulf', 'Boolean',
@@ -4906,6 +4912,18 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'sc_stats', 'Boolean', desc="look at orbital sc stats", default='false' ),
 		Option( 'orb_orb_stats', 'Boolean', desc="look at orbital orbital stats", default='false' ),
 		Option('sc_bb', 'Boolean', desc="score the backbone", default='false'),
+	),
+
+	###########################################################################
+	# Carbohydrate Options
+	Option_Group("carbohydrates",
+            Option("lock_rings", "Boolean",
+                    desc='Sets whether or not alternative ring conformations'
+                    'will be sampled by the protocol, (e.g, ring flips or'
+                    'puckering).  The default value is false.',
+                    short='Are saccharide rings allowed to flip or pucker?',
+                    legal=["true", "false"],
+                    default="false")
 	),
 
   ## dwkulp some options for programs

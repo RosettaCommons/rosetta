@@ -98,6 +98,7 @@
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 #include <basic/options/keys/fold_from_loops.OptionKeys.gen.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
+#include <basic/options/keys/carbohydrates.OptionKeys.gen.hh>
 #include <basic/options/keys/csa.OptionKeys.gen.hh>
 #include <basic/options/keys/hotspot.OptionKeys.gen.hh>
 #include <basic/options/keys/archive.OptionKeys.gen.hh>

@@ -247,7 +247,3 @@ int main(int argc, char *argv[])
 
 	pose.dump_pdb("/home/labonte/Workspace/test_output/modified_sugar.pdb", "");
 }
-
-
-
-

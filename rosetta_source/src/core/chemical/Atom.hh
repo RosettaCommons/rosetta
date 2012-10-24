@@ -11,12 +11,12 @@
 ///
 /// @brief
 /// A class for defining chemical atoms, with properties specific to a ResidueType, not conformation info
-/// specific to a Residue. Conformation info goes in conformaton::Atom. AtomTypes are not ResidueType specific.
+/// specific to a Residue. Conformation info goes in conformation::Atom. AtomTypes are not ResidueType specific.
 ///
 ///
 ///
 ///
-/// @authors
+/// @author
 /// Gordon Lemmon
 ///
 /////////////////////////////////////////////////////////////////////////

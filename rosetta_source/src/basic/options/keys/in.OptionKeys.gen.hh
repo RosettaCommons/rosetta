@@ -26,6 +26,7 @@ namespace in { extern BooleanOptionKey const termini; }
 namespace in { extern BooleanOptionKey const ignore_unrecognized_res; }
 namespace in { extern BooleanOptionKey const ignore_waters; }
 namespace in { extern BooleanOptionKey const add_orbitals; }
+namespace in { extern BooleanOptionKey const include_sugars; }
 namespace in { extern BooleanOptionKey const remember_unrecognized_res; }
 namespace in { extern BooleanOptionKey const remember_unrecognized_water; }
 namespace in { extern BooleanOptionKey const detect_disulf; }

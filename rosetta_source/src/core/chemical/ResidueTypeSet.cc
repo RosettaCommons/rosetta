@@ -7,10 +7,10 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //////////////////////////////////////////////////////////////////////
-/// @begin ResidueTypeSet
+/// @file ResidueTypeSet.cc
 ///
 /// @brief
-/// Residue Type Set class
+/// ResidueTypeSet class
 ///
 /// @detailed
 /// This class is responsible for iterating through the set of canonical amino acids and non-canonical
@@ -21,7 +21,7 @@
 /// command line. Finally, patches are applied to all residues added.
 ///
 ///
-/// @authors
+/// @author
 /// Phil Bradley
 /// Steven Combs - these comments
 ///
@@ -93,6 +93,8 @@ ResidueTypeSet::ResidueTypeSet(
 	name_( name ),
 	database_directory_(directory)
 {
+	using namespace basic::options;
+
 	//XRW_B_T1
 	//coarse::RuleSetOP coarsify_rule_set;
 	//XRW_E_T1
@@ -103,7 +105,7 @@ ResidueTypeSet::ResidueTypeSet(
 		ElementSetCAP elements;
 		MMAtomTypeSetCAP mm_atom_types;
 		orbitals::OrbitalTypeSetCAP orbital_types;
-//		CSDAtomTypeSetCAP csd_atom_types; kwk commenting out until there are fully implemented
+		//CSDAtomTypeSetCAP csd_atom_types; kwk commenting out until there are fully implemented
 
 		std::string const list_filename( directory + "residue_types.txt" );
 		utility::io::izstream data( list_filename.c_str() );
@@ -112,16 +114,27 @@ ResidueTypeSet::ResidueTypeSet(
 		}
 		std::string line,tag;
 		while ( getline( data,line) ) {
-			bool no_proton_states = false;
+			// Skip empty lines and comments.
 			if ( line.size() < 1 || line[0] == '#' ) continue;
+
 			// kp don't consider files for protonation versions of the residues if flag pH_mode is not used
 			// to make sure even applications that use ResidueTypeSet directly never run into problems
+			bool no_proton_states = false;
 			if ( line.size() > 20 ){
-			  if ( ( !basic::options::option[ basic::options::OptionKeys::pH::pH_mode ].user() ) &&
-			       ( line.substr (14,6) == "proton" ) )
-				  no_proton_states = true;
+				if ( ( !basic::options::option[ basic::options::OptionKeys::pH::pH_mode ].user() ) &&
+						( line.substr (14,6) == "proton" ) ) {
+					no_proton_states = true;
+				}
 			}
 			if ( no_proton_states ) continue;
+
+			// Skip carbohydrate ResidueTypes unless included with include_sugars flag.
+			if ((!option[OptionKeys::in::include_sugars]) &&
+					(line.substr(0, 27) == "residue_types/carbohydrates")) {
+				continue;
+			}
+
+			// Parse lines.
 			std::istringstream l( line );
 			l >> tag;
 			if ( tag == "ATOM_TYPE_SET" ) {
@@ -137,18 +150,18 @@ ResidueTypeSet::ResidueTypeSet(
 				l >> tag;
 				orbital_types = ChemicalManager::get_instance()->orbital_type_set(tag);
 				// kwk commenting out until the CSD_ATOM_TYPE_SET has been fully implemented
-	//			} else if ( tag == "CSD_ATOM_TYPE_SET" ) {
-//				l >> tag;
-//				csd_atom_types = ChemicalManager::get_instance()->csd_atom_type_set( tag );
-//XRW_B_T1
-/*
+			//} else if ( tag == "CSD_ATOM_TYPE_SET" ) {
+			//	l >> tag;
+			//	csd_atom_types = ChemicalManager::get_instance()->csd_atom_type_set( tag );
+			//XRW_B_T1
+			/*
 			} else if ( tag == "COARSE_RULE" ) {
 				l >> tag; // the ruleset
 				coarsify_rule_set = new coarse::RuleSet(tag);
 				l >> tag; // the fine residue set
 				fine_res_set = ChemicalManager::get_instance()->residue_type_set( tag );
-*/
-//XRW_E_T1
+			*/
+			//XRW_E_T1
 			} else {
 				std::string const filename( directory + line );
 
