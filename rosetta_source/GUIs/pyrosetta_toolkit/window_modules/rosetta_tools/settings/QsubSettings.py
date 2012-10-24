@@ -16,7 +16,7 @@ import os
 
 class QsubSettings():
     """
-    Window for setting up Qsub Settings.  Holds Qsub Settings.
+    Window for setting up Qsub Settings.  Holds Qsub Settings. Can run by itself.
     """
     
     def __init__(self):
@@ -25,7 +25,8 @@ class QsubSettings():
         self.current_queue = StringVar(); #Queue in 
         self.qsub_path = StringVar()
         self.maui_showq_path = StringVar()
-        
+        self.qsub_temp = StringVar()
+        self.tempscripts = StringVar()
         self.QUEUE_LIST = []
         #File names
         self.path_file_name = "/QSUBPATHS.txt"
@@ -37,6 +38,9 @@ class QsubSettings():
 
         
     def setTk(self, main):
+        """
+        Sets Tk window variables
+        """
         self.main = main
         self.queue_label = Label(self.main, text = "Queue")
         self.queue_entry = Entry(self.main, textvariable= self.queue)
@@ -49,6 +53,12 @@ class QsubSettings():
         self.maui_label = Label(self.main, text = "Maui showq Path")
         self.maui_entry = Entry(self.main, textvariable = self.maui_showq_path)
         
+        self.qsub_temp_label = Label(self.main, text="Qsub Output Dir")
+        self.qsub_temp_entry = Entry(self.main, textvariable = self.qsub_temp)
+        
+        self.tempscripts_label = Label(self.main, text = "Temp Shell Script Dir")
+        self.tempscripts_entry = Entry(self.main, textvariable = self.tempscripts)
+        
         self.queue_add_button = Button(self.main, text = "Add", command = lambda: self.add_to_queue_list())
         self.queue_rm_button =  Button(self.main, text = "Remove", command = lambda: self.rm_from_queue_list())
         
@@ -57,6 +67,9 @@ class QsubSettings():
         
         
     def shoTk(self, main, r, c):
+        """
+        Shows Tk window variables
+        """
         self.main = main
         self.queue_label.grid(row = r, column = c, rowspan = 2)
         self.queue_entry.grid(row = r, column = c+1, sticky = E+W)
@@ -70,12 +83,23 @@ class QsubSettings():
         self.maui_label.grid(row = r+3, column=c)
         self.maui_entry.grid(row = r+3, column = c+1, sticky=W+E)
         
-        self.save_button.grid(row = r+4, column = c, columnspan = 3, sticky = W+E)
+        self.qsub_temp_label.grid(row=r+4, column=c)
+        self.qsub_temp_entry.grid(row=r+4, column=c+1)
+        
+        self.tempscripts_label.grid(row=r+5, column=c)
+        self.tempscripts_entry.grid(row=r+5, column=c+1)
+        
+        self.save_button.grid(row = r+6, column = c, columnspan = 3, sticky = W+E)
         
     def load_settings(self):
+        """
+        Loads settings when GUI is run.  Sets settings in self.
+        """
+        
         if not os.path.exists(self.pwd+self.path_file_name):
             self.qsub_path.set('/usr/local/bin/qsub')
             self.maui_showq_path.set('/usr/local/maui/bin/showq')
+            
         else:
             FILE = open(self.pwd+self.path_file_name)
             for line in FILE:
@@ -85,6 +109,10 @@ class QsubSettings():
                     self.qsub_path.set(lineSP[1])
                 if lineSP[0]=="MAUI_SHOWQ":
                     self.maui_showq_path.set(lineSP[1])
+                if lineSP[0]=="QSUBOUTPUT":
+                    self.qsub_temp.set(lineSP[1])
+                if lineSP[0]=="TEMPSCRIPT":
+                    self.tempscripts.set(lineSP[1])
             FILE.close()
         if not os.path.exists(self.pwd+self.queue_file_name):
             
@@ -101,6 +129,7 @@ class QsubSettings():
         self.QUEUE_LIST.append(self.queue.get())
         self.queue_options["menu"].add_command(label=self.queue.get(), command=lambda temp = self.queue.get(): self.queue_options.setvar(self.queue_options.cget("textvariable"), value = temp))
         self.current_queue.set(self.queue.get())
+        
     def rm_from_queue_list(self):
         ind = self.QUEUE_LIST.index(self.current_queue.get())
         self.QUEUE_LIST.pop(ind)
@@ -123,6 +152,7 @@ class QsubSettings():
             FILE.write(queue)
         FILE.close()
         print "Settings Saved.."
+        
     def location(self):
         """
         Allows the script to be self-aware of it's path.

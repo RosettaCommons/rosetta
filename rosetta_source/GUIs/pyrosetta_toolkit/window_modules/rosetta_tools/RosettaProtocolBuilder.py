@@ -177,8 +177,8 @@ class ProtocolSetup():
         
         self.MenBar.add_cascade(label = "Setup", menu=self.Setup)
         self.Cluster = Menu(self.main, tearoff=0)
-        self.Cluster.add_command(label = "Setup  Qsub Cluster Run", command = lambda: self.shoClusterSetup())
-        
+        self.Cluster.add_command(label = "Setup  Qsub Cluster Run (JD1)", command = lambda: self.shoClusterSetup())
+        self.Cluster.add_command(label = "Setup   MPI Cluster Run (JD2)", command = lambda: self.shoMPIClusterSetup())
         self.Cluster.add_command(label = "Start multi-core Run", foreground='red')
         self.MenBar.add_cascade(label = "Parallel", menu=self.Cluster)
         self.main.config(menu=self.MenBar)
@@ -464,6 +464,7 @@ class ProtocolSetup():
         """
         self.saveConfiguration(True)
         os.system(self.application_directory.get()+"/"+self.last_app_clicked.get()+'.'+self.appRoot.get()+" @"+self.pwd+"/temp_settings_"+self.last_app_clicked.get()+".txt")
+        os.remove(self.pwd+"/temp_settings_"+self.last_app_clicked.get()+".txt")
 #### Other Windows ####
 
     def setup_pathbuilder_objects(self):
@@ -523,7 +524,7 @@ class ProtocolSetup():
     def shoClusterSetup(self):
         WinClusSetup = Toplevel(self.main)
         WinClusSetup.title("Qsub Cluster Setup")
-        Clus = QsubClusterSetup.ClusterSetup()
+        Clus = QsubClusterSetup.QsubClusterSetup()
         Clus.shoWindow(WinClusSetup, 0, 0)
         
         
