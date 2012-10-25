@@ -89,6 +89,7 @@ RestrictToAlignedSegmentsOperation::apply( core::pose::Pose const & pose, core::
 		core::Size const nearest_to_from = find_nearest_res( pose, *source_pose_[ count ], start_res_[ count ], chain() );
 		core::Size const nearest_to_to = find_nearest_res( pose, *source_pose_[ count ], std::min( stop_res_[ count ], source_pose_[ count ]->total_residue() ), chain() );
 
+		TR<<"Finding nearest residue to residue pair "<<start_res_[ count ]<<','<<stop_res_[ count ]<<" in source pose"<<std::endl;
 		if( nearest_to_from == 0 || nearest_to_to == 0 ){
 			TR<<"nearest_to_from: "<<nearest_to_from<<" nearest_to_to: "<<nearest_to_to<<". Failing"<<std::endl;
 			continue;
