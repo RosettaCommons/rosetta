@@ -566,6 +566,7 @@ SilentFileData::read_stream(
 	// SCORE: score template description
 	// SCORE: -2.00 1ERNA.pdb S_000000001
 
+	
 	read_silent_struct_type_from_remark( line, true );
 	SilentStructOP tmp_struct = create_SilentStructOP();
 
@@ -676,7 +677,15 @@ SilentFileData::read_stream(
 	return success;
 }
 
-bool SilentFileData::read_silent_struct_type_from_remark( std::string const& line, bool header ) {
+
+///@detail The first remarks line in a silent file block
+///described the type of silent file that is comming. For example, 
+///
+bool
+SilentFileData::read_silent_struct_type_from_remark(
+	std::string const& line,
+	bool header
+) {
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

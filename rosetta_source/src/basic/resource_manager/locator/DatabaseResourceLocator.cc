@@ -83,7 +83,8 @@ DatabaseResourceLocator::DatabaseResourceLocator(
 	DatabaseResourceLocator const & src
 ) :
 	database_session_resource_tag_(src.database_session_resource_tag_),
-	sql_command_(src.sql_command_)
+	sql_command_(src.sql_command_),
+	column_separator_(src.column_separator_)
 {}
 
 
@@ -92,8 +93,10 @@ DatabaseResourceLocator::show(
 	std::ostream & out
 ) const {
 	out
-		<< "DatabaseResourceLocator:" << endl;
-
+		<< "DatabaseResourceLocator:" << endl
+		<< "\tdatabase_session_resource_tag: '" << database_session_resource_tag_ << "'" << endl
+		<< "\tsql_command: '" << sql_command_ << "'" << endl
+		<< "\tcolumn_seprator: '" << column_separator_ << "'" << endl;
 }
 
 std::string
@@ -141,26 +144,34 @@ DatabaseResourceLocator::locate_resource_stream(
 	statement select_stmt(safely_prepare_statement(sql_command_, db_session));
 	select_stmt.bind(1, locator_id);
 	result res(safely_read_from_database(select_stmt));
-	StringResourceStreamOP string_resource_stream;
 
-	if(res.cols() != 1){
-		stringstream err_msg;
-		err_msg
-			<< "In the DatabaseLocator with tag '" << locator_tag() << "', the query:" << endl
-			<< sql_command_ << endl
-			<< "must return exactly one column, instead returns '" << res.cols() << "'." << endl;
-		throw utility::excn::EXCN_Msg_Exception(err_msg.str());
-	}
-
-	if(res.next()) {
-		string_resource_stream = new StringResourceStream(res);
-	} else {
+	if(!res.next()) {
 		stringstream err_msg;
 		err_msg
 			<< "In the DatabaseLocator with tag '" << locator_tag() << "', the query:" << endl
 			<< sql_command_ << endl
 			<< "with parameter '?' <- '" << locator_id << "' returned no rows." << endl;
 		throw utility::excn::EXCN_Msg_Exception(err_msg.str());
+	}
+
+
+	if(res.cols() == 0 || res.cols() == -1){
+		stringstream err_msg;
+		err_msg
+			<< "In the DatabaseLocator with tag '" << locator_tag() << "', the query:" << endl
+			<< sql_command_ << endl
+			<< "with parameter '?' <- '" << locator_id << "' returned '" << res.cols() << "' columns." << endl;
+		throw utility::excn::EXCN_Msg_Exception(err_msg.str());
+	}
+
+	stringstream concatenated_result;
+	for(Size col = 1, ncols = res.cols(); col <= ncols; ++col){
+		std::string col_val;
+		res >> col_val;
+		concatenated_result << col_val;
+		if(col < ncols){
+			concatenated_result << column_separator_;
+		}
 	}
 
 	if(res.next()){
@@ -171,6 +182,9 @@ DatabaseResourceLocator::locate_resource_stream(
 			<< "with parameter '?' <- '" << locator_id << "' returned more than on row." << endl;
 		throw utility::excn::EXCN_Msg_Exception(err_msg.str());
 	}
+
+
+	StringResourceStreamOP string_resource_stream(new StringResourceStream(concatenated_result.str()));
 
 	return string_resource_stream;
 }
@@ -193,6 +207,8 @@ DatabaseResourceLocator::parse_my_tag(
 		throw utility::excn::EXCN_Msg_Exception (
 			"The DatabaseResourceLocator requires a 'sql_command' tag that is an SQL SELECT statement with one parameter '?' and as a key returns a result set with a single column and and a single row containing the data.");
 	}
+
+	column_separator_ = tag->getOption<string>("column_separator", "\n");
 
 }
 

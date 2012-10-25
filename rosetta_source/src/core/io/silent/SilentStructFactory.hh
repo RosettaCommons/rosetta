@@ -37,6 +37,18 @@ public:
 	static SilentStructFactory * get_instance();
 
 	void factory_register( SilentStructCreatorCOP creator );
+
+	///@brief test if the specified silent struct type name is
+	///associated with a registered silent struct type.
+	bool
+	has_silent_struct_type(
+		std::string const & type_name );
+
+	///@brief pretty print a list of the available silent struct types.
+	void
+	show_available_silent_struct_types(
+		std::ostream & out);
+
 	io::silent::SilentStructOP get_silent_struct( std::string const & type_name );
 	utility::vector1< std::string > get_ss_names() const;
 

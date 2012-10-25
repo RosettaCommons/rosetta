@@ -70,6 +70,7 @@ sources = {
 		"pdb_silent",
 		"binary_protein_silent",
 		"symmetric_binary_protein_silent",
+		"silent_file_loader",
 	],
 	"kinematics" : [
 		"FoldTree",

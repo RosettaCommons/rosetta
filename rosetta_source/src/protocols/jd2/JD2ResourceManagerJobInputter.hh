@@ -69,19 +69,23 @@ private:
 	void
 	parse_job_tag(
 		utility::tag::TagPtr jobs_tags,
+		std::map< std::string, std::string > const & generic_resources_for_job,
+		basic::resource_manager::JobOptions const & generic_job_options,
 		Jobs & jobs
 	);
 
 	void
 	parse_jobs_table_tag(
 		utility::tag::TagPtr tag,
+		std::map< std::string, std::string > const & generic_resources_for_job,
+		basic::resource_manager::JobOptions const & generic_job_options,
 		Jobs & jobs
 	);
 
 	void
 	record_job(
 		std::string const & job_name,
-		std::map< std::string, std::string > resources_for_job,
+		std::map< std::string, std::string > const & resources_for_job,
 		basic::resource_manager::JobOptionsOP job_options,
 		Jobs & jobs
 	);

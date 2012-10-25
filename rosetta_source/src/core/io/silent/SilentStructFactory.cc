@@ -57,6 +57,27 @@ SilentStructFactory::factory_register( SilentStructCreatorCOP creator )
 	ss_types_[ creator->keyname() ] = creator;
 }
 
+void
+SilentStructFactory::show_available_silent_struct_types(
+	std::ostream & out
+) {
+	out << "Available silent struct types:" << std::endl;
+	for(
+		std::map< std::string, io::silent::SilentStructCreatorCOP >::const_iterator
+			it = ss_types_.begin(), ite = ss_types_.end(); it != ite; ++it
+	) {
+		out << "\t" << it->first << std::endl;
+	}
+}
+
+
+bool
+SilentStructFactory::has_silent_struct_type(
+	std::string const & type_name
+) {
+	return ss_types_.find(type_name) != ss_types_.end();
+}
+
 SilentStructOP
 SilentStructFactory::get_silent_struct( std::string const & type_name )
 {

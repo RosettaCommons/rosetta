@@ -7,26 +7,26 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.file.
 
-//// @edu   core/scoring/methods/electron_density/ElectronDensityOptions.fwd.hh
-/// @brief  Electron density resource options forward header
+/// @file   core/io/silent/SilentFileLoader.fwd.hh
+/// @brief  Forward Header for Loader for constructing a pose from a silent file
 /// @author Matthew O'Meara (mattjomeara@gmail.com)
 
-#ifndef INCLUDED_core_scoring_electron_density_ElectronDensityOptions_fwd_hh
-#define INCLUDED_core_scoring_electron_density_ElectronDensityOptions_fwd_hh
+#ifndef INCLUDED_core_io_silent_SilentFileLoader_fwd_hh
+#define INCLUDED_core_io_silent_SilentFileLoader_fwd_hh
 
 //Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace electron_density {
+namespace io {
+namespace silent {
 
-class ElectronDensityOptions;
-typedef utility::pointer::owning_ptr< ElectronDensityOptions > ElectronDensityOptionsOP;
-typedef utility::pointer::owning_ptr< ElectronDensityOptions const > ElectronDensityOptionsCOP;
+class SilentFileLoader;
+typedef utility::pointer::owning_ptr< SilentFileLoader > SilentFileLoaderOP;
+typedef utility::pointer::owning_ptr< SilentFileLoader const > SilentFileLoaderCOP;
 
-} // namespace electron_density
-} //namespace scoring
-} //namespace core
+} // namespace
+} // namespace
+} // namespace
 
 #endif

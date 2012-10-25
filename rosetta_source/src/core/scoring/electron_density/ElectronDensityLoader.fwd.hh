@@ -14,8 +14,6 @@
 #ifndef INCLUDED_core_scoring_electron_density_ElectronDensityLoader_fwd_hh
 #define INCLUDED_core_scoring_electron_density_ElectronDensityLoader_fwd_hh
 
-#ifdef ELEC_DENS
-
 //Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
@@ -30,7 +28,5 @@ typedef utility::pointer::owning_ptr< ElectronDensityLoader const > ElectronDens
 } // namespace electron_density
 } //namespace scoring
 } //namespace core
-
-#endif
 
 #endif

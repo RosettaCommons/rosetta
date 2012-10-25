@@ -76,7 +76,7 @@ private:
 
 	std::string database_session_resource_tag_;
 	std::string sql_command_;
-
+	std::string column_separator_;
 };
 
 } // namespace locator

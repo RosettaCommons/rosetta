@@ -260,15 +260,39 @@ JD2ResourceManagerJobInputter::parse_jobs_tags(
 	Jobs & jobs
 )
 {
+	//identify options and resources that apply to each job
+	std::map< std::string, std::string > generic_resources_for_job;
+	JobOptionsOP generic_job_options(new JobOptions());
+
+	for ( utility::tag::Tag::tags_t::const_iterator
+			tag_iter = jobs_tags->getTags().begin(),
+			tag_iter_end = jobs_tags->getTags().end();
+			tag_iter != tag_iter_end; ++tag_iter ) {
+		std::string const & tagname = (*tag_iter)->getName();
+		if ( tagname == "Option" ) {
+			read_Option_subtag_for_job( *tag_iter, generic_job_options );
+		} else if ( tagname == "Data" ) {
+			std::string dummy_input_tag;
+			bool startstruct_found(false);
+			read_Data_for_subtag(
+				*tag_iter, "generic", dummy_input_tag, startstruct_found,
+				generic_resources_for_job );
+			if(startstruct_found){
+				throw EXCN_Msg_Exception("In JD2ResourceManagerJobInputter: In <Jobs/> tag, a <Data/> with desc='startstruct' must occur within a <Job/> tag.");
+			}
+		}
+	}
+
+
 	for ( utility::tag::Tag::tags_t::const_iterator
 			tag_iter = jobs_tags->getTags().begin(),
 			tag_iter_end = jobs_tags->getTags().end();
 			tag_iter != tag_iter_end; ++tag_iter ) {
 		std::string const & tagname = (*tag_iter)->getName();
 		if ( tagname == "Job" ) {
-			parse_job_tag( *tag_iter, jobs );
+			parse_job_tag( *tag_iter, generic_resources_for_job, *generic_job_options, jobs );
 		} else if( tagname == "JobsTable"){
-			parse_jobs_table_tag( *tag_iter, jobs );
+			parse_jobs_table_tag( *tag_iter, generic_resources_for_job, *generic_job_options, jobs );
 		} else {
 			std::ostringstream err;
 			err << "Error parsing jobs tags in JD2ResourceManagerJobInputter: unrecognized tag '" << tagname << "'";
@@ -280,6 +304,8 @@ JD2ResourceManagerJobInputter::parse_jobs_tags(
 void
 JD2ResourceManagerJobInputter::parse_job_tag(
 	utility::tag::TagPtr jobs_tag,
+	std::map< std::string, std::string > const & generic_resources_for_job,
+	JobOptions const & generic_job_options,
 	Jobs & jobs
 )
 {
@@ -289,7 +315,7 @@ JD2ResourceManagerJobInputter::parse_job_tag(
 	bool startstruct_found( false );
 	std::string jobname;
 	std::string input_tag; // <--- pdb name
-	std::map< std::string, std::string > resources_for_job;
+	std::map< std::string, std::string > resources_for_job(generic_resources_for_job);
 
 
 	/// if the name is not given
@@ -297,7 +323,7 @@ JD2ResourceManagerJobInputter::parse_job_tag(
 		jobname = jobs_tag->getOption< std::string >( "name" );
 	}
 
-	JobOptionsOP job_options = new JobOptions;
+	JobOptionsOP job_options = new JobOptions(generic_job_options);
 	for ( utility::tag::Tag::tags_t::const_iterator
 			tag_iter = jobs_tag->getTags().begin(),
 			tag_iter_end = jobs_tag->getTags().end();
@@ -344,6 +370,8 @@ JD2ResourceManagerJobInputter::parse_job_tag(
 void
 JD2ResourceManagerJobInputter::parse_jobs_table_tag(
 	utility::tag::TagPtr tag,
+	std::map< std::string, std::string > const & generic_resources_for_job,
+	JobOptions const & generic_job_options,
 	Jobs & jobs
 ) {
 	using namespace basic::database;
@@ -404,8 +432,8 @@ JD2ResourceManagerJobInputter::parse_jobs_table_tag(
 	string previous_job_name("");
 	bool startstruct_found(false);
 	string input_tag;
-	std::map< string, string > resources_for_job;
-	JobOptionsOP job_options = new JobOptions;
+	std::map< string, string > resources_for_job(generic_resources_for_job);
+	JobOptionsOP job_options = new JobOptions(generic_job_options);
 	while(res.next()){
 		row_number++;
 
@@ -428,8 +456,8 @@ JD2ResourceManagerJobInputter::parse_jobs_table_tag(
 			}
 
 			record_job(previous_job_name, resources_for_job, job_options, jobs);
-			resources_for_job.clear();
-			job_options = new JobOptions;
+			resources_for_job = generic_resources_for_job;
+			job_options = new JobOptions(generic_job_options);
 			startstruct_found = false;
 			previous_job_name = job_name;
 
@@ -500,7 +528,7 @@ JD2ResourceManagerJobInputter::parse_jobs_table_tag(
 void
 JD2ResourceManagerJobInputter::record_job(
 	string const & job_name,
-	std::map< string, string > resources_for_job,
+	std::map< string, string > const & resources_for_job,
 	JobOptionsOP job_options,
 	Jobs & jobs
 ) {
