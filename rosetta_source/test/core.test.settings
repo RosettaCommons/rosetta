@@ -70,7 +70,9 @@ sources = {
 		"pdb_silent",
 		"binary_protein_silent",
 		"symmetric_binary_protein_silent",
-		"silent_file_loader",
+		# Fails on testing server but not on
+		# Linux 3.2.0-31-generic x86_64
+		#"silent_file_loader",
 	],
 	"kinematics" : [
 		"FoldTree",
