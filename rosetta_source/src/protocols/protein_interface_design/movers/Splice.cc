@@ -116,8 +116,8 @@ Splice::Splice() :
 	design_( false ),
 	dbase_iterate_( false ),
 	first_pass_( true ),
-	locked_res_id_( ' ' ),
 	locked_res_( NULL ),
+	locked_res_id_( ' ' ),
 	checkpointing_file_ ( "" ),
 	loop_dbase_file_name_( "" )
 {
