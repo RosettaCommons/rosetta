@@ -631,7 +631,7 @@ Splice::apply( core::pose::Pose & pose )
 			dbase_file.open( loop_dbase_file_name_.c_str(), std::ios::app );
 			for( core::Size i = startn; i <= startc + res_move() - 1; ++i )
 				dbase_file << pose.phi( i )<<' '<<pose.psi( i )<<' '<<pose.omega( i )<<' '<<pose.residue( i ).name3()<<' ';
-			dbase_file << startn<<' '<<stop_on_template<<' '<<cut_site<<std::endl;
+			dbase_file << startn<<' '<<stop_on_template<<' '<<cut_site<<" cut"<<std::endl;
 			dbase_file.close();
 		}
 	}// fi ccd
