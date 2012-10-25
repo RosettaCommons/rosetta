@@ -181,7 +181,7 @@ RingConformationMover::apply(Pose & input_pose)
 	TR << "Selected residue " << res_num << ": " << res.name() << endl;
 
 	Size ring_size = res.carbohydrate_info()->ring_size();
-	pair<string, vector1<Real> > conformer;
+	ring_conf_def conformer;
 	Size j;
 
 	switch (ring_size) {

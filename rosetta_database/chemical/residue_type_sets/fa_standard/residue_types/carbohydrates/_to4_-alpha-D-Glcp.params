@@ -1,4 +1,4 @@
-NAME (_->4)-alpha-D-Glcp   # (_->4)-alpha-D-Glucopyranosyl-
+NAME (_->4)-alpha-D-Glcp   # (_->4)-alpha-D-glucopyranosyl
 IO_STRING Glc Z            # Note lower case!
 TYPE POLYMER
 AA UNK

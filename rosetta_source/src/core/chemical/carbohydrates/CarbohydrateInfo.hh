@@ -43,7 +43,7 @@ public:
 	/// @brief  Empty constructor
 	CarbohydrateInfo();
 
-	/// @brief  Standard Constructor
+	/// @brief  Standard constructor
 	CarbohydrateInfo(core::chemical::ResidueTypeCOP residue_type);
 
 	/// @brief  Copy constructor
@@ -66,14 +66,22 @@ public:
 
 	// Accessors/Mutators
 	// Nomenclature
-	/// @brief    Return the full IUPAC name of the monosaccharide.
-	/// @remarks  not yet implemented
+	/// @brief  Return the full IUPAC name of the monosaccharide.
 	std::string
 	full_name() const
 	{
 		return full_name_;
 	}
 
+	/// @brief  Return the abbreviated IUPAC name of the monosaccharide (for use in polysaccharide sequences).
+	std::string
+	short_name() const
+	{
+		return short_name_;
+	}
+
+	/// @brief  Return the standard/common, non-residue, short name of the monosaccharide.
+	std::string	base_name() const;
 
 	// Oxidation type
 	/// @brief    Return true if the monosaccharide is an aldose.
@@ -383,12 +391,72 @@ private:
 	// Get connection data from the residue type.
 	void determine_polymer_connections();
 
+	// Determine and set the full and abbreviated IUPAC names.
+	void determine_IUPAC_names();
+
+	// Get monosaccharide root name from the 3-letter code.
+	std::string
+	root_from_code(std::string code) const
+	{
+		std::string root;
+		if (code == "Gly") {
+			root = "glycer";  // TODO: Deal with this special case later.
+		} else if (code == "Ery") {
+			root = "erythr";
+		} else if (code == "Thr") {
+			root = "thre";
+		} else if (code == "Rib") {
+			root = "rib";
+		} else if (code == "Ara") {
+			root = "arabin";
+		} else if (code == "Xyl") {
+			root = "xyl";
+		} else if (code == "Lyx") {
+			root = "lyx";
+		} else if (code == "All") {
+			root = "all";
+		} else if (code == "Alt") {
+			root = "altr";
+		} else if (code == "Glc") {
+			root = "gluc";
+		} else if (code == "Man") {
+			root = "mann";
+		} else if (code == "Gul") {
+			root = "gul";
+		} else if (code == "Ido") {
+			root = "id";
+		} else if (code == "Gal") {
+			root = "galact";
+		} else if (code == "Tal") {
+			root = "tal";
+		} else if (code == "Gly") {
+			root = "glycer";
+		} else if (code == "DHA") {
+			root = "dihydroxyacetone";  // TODO: Deal with this special case later.  Add erythrulose.
+		} else if (code == "Rul") {
+			root = "ribul";
+		} else if (code == "Xul") {
+			root = "xylul";
+		} else if (code == "Psi") {
+			root = "psic";
+		} else if (code == "Fru") {
+			root = "fruct";
+		} else if (code == "Sor") {
+			root = "sorb";
+		} else if (code == "Tag") {
+			root = "tagat";
+		}
+
+		return root;
+	}
+
 	// If cyclic, define nu angles in terms of CHI ids.
 	void define_nu_ids();
 
 	// Private data ////////////////////////////////////////////////////////////
 	core::chemical::ResidueTypeCOP residue_type_;
 	std::string full_name_;
+	std::string short_name_;
 	core::Size anomeric_carbon_;  // also indicative of location of aldehyde/ketone oxidation
 	core::Size n_carbons_;
 	char stereochem_;  // L or D

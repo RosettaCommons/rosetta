@@ -576,6 +576,8 @@ Pose::set_secstruct( Size const seqpos, char const setting )
 	conformation_->set_secstruct( seqpos, setting );
 }
 
+
+// Sequence accessors
 std::string
 Pose::sequence() const
 {
@@ -585,7 +587,6 @@ Pose::sequence() const
 	}
 	return seq;
 }
-
 
 std::string
 Pose::annotated_sequence( bool show_all_variants ) const
@@ -607,16 +608,32 @@ Pose::annotated_sequence( bool show_all_variants ) const
 }
 
 std::string
-Pose::chain_sequence( core::Size const chain_in ) const
+Pose::chain_sequence(core::Size const chain_in) const
 {
+	assert(chain_in <= conformation_->num_chains());
+	PyAssert((chain_in <= conformation_->num_chains()),
+			"Pose::chain_sequence(core::Size const chain_in): variable chain_in is out of range!");
+
 	std::string seq;
-	for ( Size i=1; i<= conformation_->size(); ++i ) {
-		if ( residue(i).chain() == chain_in ) seq += residue(i).name1();
+
+	Size begin = conformation_->chain_begin(chain_in);
+	Size end = conformation_->chain_end(chain_in);
+
+	if (!residue(begin).is_carbohydrate()) {
+		for (Size i = begin; i <= end; ++i) {
+			seq += residue(i).name1();
+		}
+	} else /*is carbohydrate*/ {
+		// Carbohydrate sequences are listed in the opposite direction as they are numbered.
+		for (Size i = end; i >= begin; --i) {
+			seq += residue(i).carbohydrate_info()->short_name();
+		}
 	}
 	return seq;
 }
 
-/// Residue at position seqpos
+
+// Residue at position seqpos
 Pose::Residue const &
 Pose::residue(
 	Size const seqpos

@@ -651,8 +651,7 @@ public:
 	void
 	set_secstruct( Size const seqpos, char const setting );
 
-	/// @brief Returns a string representing the 1-leter-coded
-	/// sequence of the pose conformation
+	/// @brief  Returns a string representing the 1-letter-coded sequence of the pose conformation.
 	///
 	/// example(s):
 	///     pose.sequence()
@@ -680,9 +679,9 @@ public:
 	std::string
 	annotated_sequence( bool show_all_variants = false ) const;
 
-	/// @brief Returns the sequence for the chain  <chain_in>
+	/// @brief Returns the sequence for the chain <chain_in>
 	///
-	/// example(s):
+	/// Example(s):
 	///     pose.chain_sequence(1)
 	/// See also:
 	///     Pose

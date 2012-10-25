@@ -1116,6 +1116,10 @@ std::ostream & operator << ( std::ostream & os, Residue const & res )
 		os << res.atom_name(j) << ": ";
 		os << atom.xyz()(1) << ' ' << atom.xyz()(2) << ' '<< atom.xyz()(3) << std::endl;
 	}
+	if (res.is_carbohydrate()) {
+		os << std::endl;
+		res.carbohydrate_info()->show(os);
+	}
 	return os;
 }
 

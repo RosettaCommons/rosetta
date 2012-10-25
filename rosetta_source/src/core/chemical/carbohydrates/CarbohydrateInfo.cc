@@ -26,6 +26,7 @@
 
 // C++ headers
 #include <iostream>
+#include <sstream>
 
 
 // Construct tracer.
@@ -138,6 +139,7 @@ CarbohydrateInfo::show(std::ostream & output) const
 
 	// Produce output.
 	output << "Carbohydrate Properties for this Residue:" << endl;
+	output << " Basic Name: " << base_name() << endl;
 	output << " IUPAC Name: " << full_name_ << endl;
 	output << " Classification: " << prefix << suffix << endl;
 	output << " Stereochemistry: " << stereochem_ << endl;
@@ -157,6 +159,13 @@ CarbohydrateInfo::show(std::ostream & output) const
 
 
 // Accessors/Mutators
+// Return the standard/common, non-residue, short name of the monosaccharide.
+std::string
+CarbohydrateInfo::base_name() const
+{
+	return root_from_code(residue_type_->name3()) + "ose";
+}
+
 // Return the attachment point of the downstream saccharide residue attached to ith branch off of this residue.
 /// @param    <i>: the branch point index
 /// @return   an integer n of (1->n) of polysaccharide nomenclature, where n specifies the attachment point on the
@@ -250,18 +259,23 @@ CarbohydrateInfo::init(core::chemical::ResidueTypeCOP residue_type)
 {
 	// Set default values.
 	residue_type_ = residue_type;
-	full_name_ = "";  // TEMP: not yet implemented
 	anomeric_carbon_ = 1;  // assumes that most sugars will be aldoses if not specified by .params file
 	n_carbons_ = get_n_carbons();
 	stereochem_ = 'D';  // assumes that most sugars will have D stereochemistry
 	ring_size_ = 0;  // assumes linear
 	anomer_ = "";  // assumes linear
-	is_glycoside_ = true;  // TEMP: not yet implemented
+	if (residue_type_->is_lower_terminus()){
+		is_glycoside_ = false;
+	} else {
+		is_glycoside_ = true;
+	}
 	is_uronic_acid_ = false;
 
 	read_and_set_properties();
 
 	determine_polymer_connections();
+
+	determine_IUPAC_names();
 
 	define_nu_ids();
 }
@@ -274,6 +288,7 @@ CarbohydrateInfo::copy_data(
 {
 	object_to_copy_to.residue_type_ = object_to_copy_from.residue_type_;
 	object_to_copy_to.full_name_ = object_to_copy_from.full_name_;
+	object_to_copy_to.short_name_ = object_to_copy_from.short_name_;
 	object_to_copy_to.anomeric_carbon_ = object_to_copy_from.anomeric_carbon_;
 	object_to_copy_to.n_carbons_ = object_to_copy_from.n_carbons_;
 	object_to_copy_to.stereochem_ = object_to_copy_from.stereochem_;
@@ -453,6 +468,76 @@ CarbohydrateInfo::determine_polymer_connections()
 	if (has_exocyclic_linkage_) {
 		glycosidic_linkage_id_.push_back(make_pair(CHI, mainchain_glycosidic_bond_acceptor_ - 1));
 	}
+}
+
+// Determine and set the full and abbreviated IUPAC names.
+// The NAME property in the .params file is actually the standard IUPAC abbreviation (of an internal/unpatched
+// residue), not the full name.  It, combined with any patches, is the Rosetta name for the ResidueType.  The IUPAC
+// names will change depending on the residue's place in the sequence and/or any patches.
+void
+CarbohydrateInfo::determine_IUPAC_names()
+{
+	using namespace std;
+
+	// Determine prefixes.
+	stringstream prefixes(stringstream::out);
+	if (!residue_type_->is_upper_terminus()) {
+		prefixes << "(_->" << mainchain_glycosidic_bond_acceptor_ << ")-";
+	}
+	if (!residue_type_->is_lower_terminus()) {
+		prefixes << anomer_ << '-';
+	}
+	prefixes << stereochem_ << '-';
+
+	// Determine root.
+	string code = residue_type_->name3();
+	string root = root_from_code(code);
+
+	// Determine suffix.
+	stringstream long_suffix(stringstream::out);
+	stringstream short_suffix(stringstream::out);
+	switch (ring_size_) {
+		case 5:
+			long_suffix << "ofuran";
+			short_suffix << 'f';
+			break;
+		case 6:
+			long_suffix << "opyran";
+			short_suffix << 'p';
+			break;
+		case 7:
+			long_suffix << "oseptan";
+			short_suffix << 's';
+			break;
+	}
+	if (residue_type_->is_lower_terminus()) {
+		if (is_glycoside_) {
+			if (is_uronic_acid_) {
+				long_suffix << "uronoside";
+				short_suffix << "A";
+			} else {
+				long_suffix << "oside";
+			}
+		} else {
+			if (is_uronic_acid_) {
+				long_suffix << "uronate";
+				short_suffix << "A";
+			} else {
+				long_suffix << "ose";
+			}
+		}
+	} else {
+		if (is_uronic_acid_) {
+			long_suffix << "uronoyl";
+			short_suffix << "A";
+		} else {
+			long_suffix << "osyl";
+		}
+		short_suffix << '-';
+	}
+
+	full_name_ = prefixes.str() + root + long_suffix.str();
+	short_name_ = prefixes.str() + code + short_suffix.str();
 }
 
 // If cyclic, define nu angles in terms of CHI ids.

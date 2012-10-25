@@ -41,8 +41,12 @@ int main(int argc, char *argv[])
 	// Import test carbohydrate pose.
 	pose_from_pdb(pose, "/home/labonte/Workspace/Carbohydrates/maltotriose.pdb");
 
+	cout << pose.sequence() << endl;
+	cout << pose.chain_sequence(1) << endl;
+
 	for (Size i = 1; i <= pose.total_residue(); ++i) {
 		Residue res = pose.residue(i);
-		cout << *(res.carbohydrate_info()) << endl << endl;
+		//cout << *(res.carbohydrate_info()) << endl << endl;
+		cout << res << endl << endl;
 	}
 }
