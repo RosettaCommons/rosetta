@@ -65,4 +65,7 @@ FA Relax:  -loops::relax [fullrelax|shortrelax|fastrelax]
 
 For more information about loop modeling flags, please check the @ref full_options_list "full options list"
 
+@section loopmodel_MPI loopmodel MPI
+The loopmodel executable has a separate MPI implementation from the JD2 implementation that serves most of Rosetta.  As normal, just compile Rosetta in mpi (add extras=mpi to the scons command line when compiling) to activate MPI.  When you run loopmodel.mpi.***, it will expect that you have precreated output directories for it, named ./output_#, where # is the zero-indexed processor rank (and you need one for each processor).  So, for a 8-processor MPI job, created output_0, output_1, ..., output_7.
+
 */
