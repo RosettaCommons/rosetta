@@ -554,6 +554,7 @@ sources = {
 		"SeqprofConsensusOperation",
 		"SetIGTypeOperation",
 		"ThreadSequenceOperation",
+		"SelectBySASAOperation",
 	],
 }
 include_path = [

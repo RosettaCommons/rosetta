@@ -68,7 +68,6 @@
 #include <devel/matdes/RestrictToNonzeroSASAOperationCreator.hh>
 #include <devel/matdes/RestrictIdentitiesOperationCreator.hh>
 #include <devel/matdes/RetrieveStoredTaskOperationCreator.hh>
-#include <devel/matdes/SelectBySASAOperationCreator.hh>
 
 #include <utility/vector1.hh>
 
@@ -96,7 +95,6 @@ static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::Bui
 static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::RestrictToNonzeroSASAOperationCreator > RestrictToNonzeroSASAOperationCreator_registrator;
 static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::RestrictIdentitiesOperationCreator > RestrictIdentitiesOperationCreator_registrator;
 static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::RetrieveStoredTaskOperationCreator > RetrieveStoredTaskOperationCreator_registrator;
-static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::SelectBySASAOperationCreator > SelectBySASAOperationCreator_registrator;
 
 // Filter creators
 static protocols::filters::FilterRegistrator< devel::matdes::OligomericAverageDegreeFilterCreator > OligomericAverageDegreeFilterCreator_registrator;

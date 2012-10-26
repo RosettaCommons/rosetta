@@ -7,16 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   devel/matdes/SelectBySASAOperation.hh
 /// @brief  Restrict design to residues matching user-specified SASA criteria in the monomeric, bound, or unbound state.
 /// @author Jacob Bale (balej@uw.edu)
 
-#ifndef INCLUDED_devel_matdes_SelectBySASAOperation_hh
-#define INCLUDED_devel_matdes_SelectBySASAOperation_hh
+#ifndef INCLUDED_protocols_toolbox_task_operations_SelectBySASAOperation_hh
+#define INCLUDED_protocols_toolbox_task_operations_SelectBySASAOperation_hh
 
 // Unit Headers
-#include <devel/matdes/SelectBySASAOperation.fwd.hh>
-#include <devel/matdes/SelectBySASAOperationCreator.hh>
+#include <protocols/toolbox/task_operations/SelectBySASAOperation.fwd.hh>
+#include <protocols/toolbox/task_operations/SelectBySASAOperationCreator.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 
 // Project Headers
@@ -30,8 +29,9 @@
 
 // C++ Headers
 
-namespace devel { 
-namespace matdes {
+namespace protocols { 
+namespace toolbox {
+namespace task_operations {
 
 class SelectBySASAOperation : public core::pack::task::operation::TaskOperation {
 public:
@@ -62,7 +62,8 @@ private:
 	bool verbose_;	
 };
 
-} //namespace matdes 
-} //namespace devel
+} //namespace task_operations
+} //namespace toolbox
+} //namespace protocols
 
 #endif 

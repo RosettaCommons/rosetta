@@ -7,28 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   devel/matdes/SelectBySASAOperation.hh
 /// @brief  Restrict design to residues matching user-specified SASA criteria in the monomeric, bound, or unbound state.
 /// @author Jacob Bale (balej@uw.edu)
 
-#ifndef INCLUDED_devel_matdes_SelectBySASAOperationCreator_hh
-#define INCLUDED_devel_matdes_SelectBySASAOperationCreator_hh
+#ifndef INCLUDED_protocols_toolbox_task_operations_SelectBySASAOperation_fwd_hh
+#define INCLUDED_protocols_toolbox_task_operations_SelectBySASAOperation_fwd_hh
 
+#include <utility/pointer/owning_ptr.hh>
 
-#include <core/pack/task/operation/TaskOperationCreator.hh>
+namespace protocols {
+namespace toolbox {
+namespace task_operations {
 
-#include <string>
+class SelectBySASAOperation;
 
-namespace devel {
-namespace matdes {
+typedef utility::pointer::owning_ptr< SelectBySASAOperation > SelectBySASAOperationOP;
+typedef utility::pointer::owning_ptr< SelectBySASAOperation const > SelectBySASAOperationCOP;
 
-class SelectBySASAOperationCreator : public core::pack::task::operation::TaskOperationCreator {
-public:
-	virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const { return "SelectBySASA"; }
-};
+} //namespace task_operations
+} //namespace toolbox
+} //namespace protocols
 
-} //namespace matdes
-} //namespace devel
-#endif
-
+#endif // INCLUDED_protocols_toolbox_task_operations_SelectBySASAOperation_fwd_hh

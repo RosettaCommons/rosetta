@@ -7,13 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   devel/matdes/SelectBySASAOperation.hh
 /// @brief  Restrict design to residues matching user-specified SASA criteria in the monomeric, bound, or unbound state.
 /// @author Jacob Bale (balej@uw.edu)
 
 // Unit Headers
-#include <devel/matdes/SelectBySASAOperation.hh>
-#include <devel/matdes/SelectBySASAOperationCreator.hh>
+#include <protocols/toolbox/task_operations/SelectBySASAOperation.hh>
+#include <protocols/toolbox/task_operations/SelectBySASAOperationCreator.hh>
 
 // Project Headers
 #include <core/conformation/symmetry/SymmetryInfo.hh>
@@ -37,10 +36,11 @@
 
 // C++ Headers
 
-static basic::Tracer TR("devel.matdes.SelectBySASAOperation" );
+static basic::Tracer TR("protocols.toolbox.task_operations.SelectBySASAOperation" );
 
-namespace devel {
-namespace matdes {
+namespace protocols {
+namespace toolbox {
+namespace task_operations {
 
 core::pack::task::operation::TaskOperationOP
 SelectBySASAOperationCreator::create_task_operation() const
@@ -269,5 +269,6 @@ SelectBySASAOperation::parse_def( utility::lua::LuaObject const & def)
 	verbose_ = def["verbose"] ? def["verbose"].to< bool >() : 0;
 }
 
-} //namespace matdes
-} //namespace devel
+} //namespace task_operations
+} //namespace toolbox
+} //namespace protocols
