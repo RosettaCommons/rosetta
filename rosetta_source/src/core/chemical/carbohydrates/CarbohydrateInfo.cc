@@ -28,6 +28,9 @@
 #include <iostream>
 #include <sstream>
 
+// boost headers
+#include <boost/assign/list_of.hpp>
+
 
 // Construct tracer.
 static basic::Tracer TR("core.chemical.carbohydrates.CarbohydrateInfo");
@@ -39,9 +42,49 @@ namespace carbohydrates {
 
 // Define static data.
 // If we ever add rare sugars larger than 7 carbons, increase the value.
-const core::Size CarbohydrateInfo::MAX_C_SIZE_LIMIT = 7;
-const core::Size CarbohydrateInfo::MIN_C_SIZE_LIMIT = 3;
+core::Size const CarbohydrateInfo::MAX_C_SIZE_LIMIT = 7;
+core::Size const CarbohydrateInfo::MIN_C_SIZE_LIMIT = 3;
 
+std::map<std::string, std::string> const CarbohydrateInfo::CODE_TO_ROOT_MAP =
+		boost::assign::map_list_of
+				// Aldotriose
+				("Gly", "glycer")  // TODO: Deal with this special case later.
+
+				// Aldotetroses
+				("Ery", "erythr")
+				("Thr", "thre")
+
+				// Aldopentoses
+				("Rib", "rib")
+				("Ara", "arabin")
+				("Xyl", "xyl")
+				("Lyx", "lyx")
+
+				// Aldohexoses
+				("All", "all")
+				("Alt", "altr")
+				("Glc", "gluc")
+				("Man", "mann")
+				("Gul", "gul")
+				("Ido", "id")
+				("Gal", "galact")
+				("Tal", "tal")
+
+				// Ketotriose
+				("DHA", "dihydroxyacet")  // TODO: Deal with this special case later.
+
+				// Ketotetrose
+				("Eul", "erythrul")  // "Eul" is my own invention. ~ Labonte
+
+				// Ketopentoses
+				("Rul", "ribul")
+				("Xul", "xylul")
+
+				// Ketohexoses
+				("Psi", "psic")
+				("Fru", "fruct")
+				("Sor", "sorb")
+				("Tag", "tagat");
 
 using namespace core;
 
@@ -49,22 +92,22 @@ using namespace core;
 // Public methods //////////////////////////////////////////////////////////////
 // Standard methods ////////////////////////////////////////////////////////////
 // Empty constructor
-CarbohydrateInfo::CarbohydrateInfo()
+CarbohydrateInfo::CarbohydrateInfo() : utility::pointer::ReferenceCount()
 {
-	chemical::ResidueTypeCOP residue_type;
+	chemical::ResidueTypeCAP residue_type;
 
 	init(residue_type);
 }
 
 // Standard constructor
 /// @param    <residue_type>: the ResidueType object containing this CarbohydrateInfo
-CarbohydrateInfo::CarbohydrateInfo(core::chemical::ResidueTypeCOP residue_type)
+CarbohydrateInfo::CarbohydrateInfo(core::chemical::ResidueTypeCAP residue_type) : utility::pointer::ReferenceCount()
 {
 	init(residue_type);
 }
 
 // Copy constructor
-CarbohydrateInfo::CarbohydrateInfo(CarbohydrateInfo const & object_to_copy)
+CarbohydrateInfo::CarbohydrateInfo(CarbohydrateInfo const & object_to_copy) : utility::pointer::ReferenceCount()
 {
 	copy_data(*this, object_to_copy);
 }
@@ -255,7 +298,7 @@ CarbohydrateInfo::glycosidic_linkage_id(core::Size torsion_index) const
 // Private methods /////////////////////////////////////////////////////////////
 // Initialize data members from properties.
 void
-CarbohydrateInfo::init(core::chemical::ResidueTypeCOP residue_type)
+CarbohydrateInfo::init(core::chemical::ResidueTypeCAP residue_type)
 {
 	// Set default values.
 	residue_type_ = residue_type;

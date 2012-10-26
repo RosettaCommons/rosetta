@@ -29,6 +29,7 @@
 #include <utility/vector1.hh>
 
 // C++ headers
+#include <map>
 #include <string>
 #include <iostream>
 
@@ -44,7 +45,7 @@ public:
 	CarbohydrateInfo();
 
 	/// @brief  Standard constructor
-	CarbohydrateInfo(core::chemical::ResidueTypeCOP residue_type);
+	CarbohydrateInfo(core::chemical::ResidueTypeCAP residue_type);
 
 	/// @brief  Copy constructor
 	CarbohydrateInfo(CarbohydrateInfo const & object_to_copy);
@@ -376,7 +377,7 @@ public:
 private:
 	// Private methods /////////////////////////////////////////////////////////
 	// Initialize data members from properties.
-	void init(core::chemical::ResidueTypeCOP residue_type);
+	void init(core::chemical::ResidueTypeCAP residue_type);
 
 	// Copy all data members from <object_to_copy_from> to <object_to_copy_to>.
 	void copy_data(CarbohydrateInfo object_to_copy_to, CarbohydrateInfo object_to_copy_from);
@@ -398,63 +399,14 @@ private:
 	std::string
 	root_from_code(std::string code) const
 	{
-		std::string root;
-		if (code == "Gly") {
-			root = "glycer";  // TODO: Deal with this special case later.
-		} else if (code == "Ery") {
-			root = "erythr";
-		} else if (code == "Thr") {
-			root = "thre";
-		} else if (code == "Rib") {
-			root = "rib";
-		} else if (code == "Ara") {
-			root = "arabin";
-		} else if (code == "Xyl") {
-			root = "xyl";
-		} else if (code == "Lyx") {
-			root = "lyx";
-		} else if (code == "All") {
-			root = "all";
-		} else if (code == "Alt") {
-			root = "altr";
-		} else if (code == "Glc") {
-			root = "gluc";
-		} else if (code == "Man") {
-			root = "mann";
-		} else if (code == "Gul") {
-			root = "gul";
-		} else if (code == "Ido") {
-			root = "id";
-		} else if (code == "Gal") {
-			root = "galact";
-		} else if (code == "Tal") {
-			root = "tal";
-		} else if (code == "Gly") {
-			root = "glycer";
-		} else if (code == "DHA") {
-			root = "dihydroxyacetone";  // TODO: Deal with this special case later.  Add erythrulose.
-		} else if (code == "Rul") {
-			root = "ribul";
-		} else if (code == "Xul") {
-			root = "xylul";
-		} else if (code == "Psi") {
-			root = "psic";
-		} else if (code == "Fru") {
-			root = "fruct";
-		} else if (code == "Sor") {
-			root = "sorb";
-		} else if (code == "Tag") {
-			root = "tagat";
-		}
-
-		return root;
+		return CODE_TO_ROOT_MAP.find(code)->second;  // operator[] is not overloaded for const maps.
 	}
 
 	// If cyclic, define nu angles in terms of CHI ids.
 	void define_nu_ids();
 
 	// Private data ////////////////////////////////////////////////////////////
-	core::chemical::ResidueTypeCOP residue_type_;
+	core::chemical::ResidueTypeCAP residue_type_;
 	std::string full_name_;
 	std::string short_name_;
 	core::Size anomeric_carbon_;  // also indicative of location of aldehyde/ketone oxidation
@@ -481,8 +433,10 @@ private:
 	utility::vector1<std::pair<core::id::TorsionType, core::Size> > nu_id_;
 
 	// Constants.
-	static const core::Size MAX_C_SIZE_LIMIT;  // maximum size of a carbohydrate carbon chain in Rosetta
-	static const core::Size MIN_C_SIZE_LIMIT;
+	static core::Size const MAX_C_SIZE_LIMIT;  // maximum size of a carbohydrate carbon chain in Rosetta
+	static core::Size const MIN_C_SIZE_LIMIT;
+
+	static std::map<std::string, std::string> const CODE_TO_ROOT_MAP;
 };  // class CarbohydrateInfo
 
 }  // namespace carbohydrates
