@@ -41,10 +41,10 @@ public:
 	SilentFileOptions(
 		std::string const & name);
 
-	SilentFileOptions(
+	/* Undefined commention out to fix PyRosetta build SilentFileOptions(
 		std::string const & name,
 		Real mapreso,
-		Real grid_spacing);
+		Real grid_spacing); */
 
 	~SilentFileOptions();
 
