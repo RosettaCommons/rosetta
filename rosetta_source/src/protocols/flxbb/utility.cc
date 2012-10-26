@@ -32,6 +32,7 @@
 
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
+#include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/constraints/ScalarWeightedFunc.hh>
@@ -86,8 +87,10 @@ constraints_sheet( Pose const & pose, BluePrintOP const & blueprint, Real const 
 	String tag( "constraints_in_beta_sheet" );
 	ScalarWeightedFuncOP cstfunc = new ScalarWeightedFunc( coef, new BoundFunc( lb, ub, sd, tag ) );
 
-	//flo sep '12 add more accurate constraints by also constraining the dihedral
-	core::scoring::constraints::FuncOP dihedral_func = new core::scoring::constraints::OffsetPeriodicBoundFunc(-0.9,0.9, sqrt(1.0/42.0), "dihed_cacb", 6.28, 0.0 );
+	//flo sep '12 add more accurate constraints by also constraining proper angles along paired residues
+	core::scoring::constraints::FuncOP cacb_dihedral_func = new core::scoring::constraints::OffsetPeriodicBoundFunc(-0.9,0.9, sqrt(1.0/42.0), "dihed_cacb", 6.28, 0.0 );
+	core::scoring::constraints::FuncOP bb_dihedral_func = new core::scoring::constraints::OffsetPeriodicBoundFunc(-0.52,0.52, sqrt(1.0/42.0), "dihed_bb", 3.14, 0.0 );
+	core::scoring::constraints::FuncOP bb_angle_func = new core::scoring::constraints::BoundFunc(1.22,1.92, sqrt(1.0/42.0), "angle_bb");
 
 	// set constraints to csts
   Size nres( pose.total_residue() );
@@ -107,7 +110,7 @@ constraints_sheet( Pose const & pose, BluePrintOP const & blueprint, Real const 
 	StrandPairings spairs = spairset.strand_pairings();
 	for ( utility::vector1< StrandPairingOP >::const_iterator it=spairs.begin(); it!=spairs.end(); ++it ) {
 
-		StrandPairing spair=**it;
+		StrandPairing & spair=**it;
 		for( Size iaa=spair.begin1(); iaa<=spair.end1(); iaa++ ) {
 			Size jaa( spair.residue_pair( iaa ) );
 			TR << iaa << ' ' << jaa << std::endl;
@@ -116,10 +119,26 @@ constraints_sheet( Pose const & pose, BluePrintOP const & blueprint, Real const 
 			csts.push_back( new AtomPairConstraint( atom1, atom2, cstfunc ) );
 			//flo sep '12: constrain dihedral, might be more accurate
 			if( basic::options::option[ basic::options::OptionKeys::flxbb::constraints_sheet_include_cacb_pseudotorsion ].value() ){
-				if( (pose.residue_type( iaa ).name3() == "GLY") || (pose.residue_type( jaa ).name3() == "GLY" ) ) continue; // don't bother with gly
+				core::id::AtomID resi_n( pose.residue_type( iaa ).atom_index( "N" ), iaa );
+				core::id::AtomID resi_c( pose.residue_type( iaa ).atom_index( "C" ), iaa );
+				core::id::AtomID resi_o( pose.residue_type( iaa ).atom_index( "O" ), iaa );
+        core::id::AtomID resj_n( pose.residue_type( jaa ).atom_index( "N" ), jaa );
+        core::id::AtomID resj_c( pose.residue_type( jaa ).atom_index( "C" ), jaa );
+        core::id::AtomID resj_o( pose.residue_type( jaa ).atom_index( "O" ), jaa );
+				csts.push_back( new core::scoring::constraints::DihedralConstraint( resi_o, resi_n, resi_c, resj_c, bb_dihedral_func ) );
+				csts.push_back( new core::scoring::constraints::DihedralConstraint( resj_o, resj_n, resj_c, resi_c, bb_dihedral_func ) );
+				if( spair.orient() == 'P' ){
+					csts.push_back( new core::scoring::constraints::AngleConstraint( resi_n, resi_c, resj_c, bb_angle_func ) );
+					csts.push_back( new core::scoring::constraints::AngleConstraint( resj_n, resj_c, resi_c, bb_angle_func ) );
+				}
+				else if( spair.orient() == 'A' ){
+          csts.push_back( new core::scoring::constraints::AngleConstraint( resi_n, resi_c, resj_n, bb_angle_func ) );
+          csts.push_back( new core::scoring::constraints::AngleConstraint( resj_n, resj_c, resi_n, bb_angle_func ) );
+				}
+				if( (pose.residue_type( iaa ).name3() == "GLY") || (pose.residue_type( jaa ).name3() == "GLY" ) ) continue; // don't bother restraining cacb dihedral with gly
 				core::id::AtomID resi_cb( pose.residue_type( iaa ).atom_index( "CB" ), iaa );
       	core::id::AtomID resj_cb( pose.residue_type( jaa ).atom_index( "CB" ), jaa );
-				csts.push_back( new core::scoring::constraints::DihedralConstraint( resi_cb, atom1, atom2, resj_cb, dihedral_func ) );
+				csts.push_back( new core::scoring::constraints::DihedralConstraint( resi_cb, atom1, atom2, resj_cb, cacb_dihedral_func ) );
 			}
 			// flo sep '12 over
 		} // for( Size i=1 )

@@ -621,7 +621,7 @@ MatchConstraintFileInfo::inverse_rotamers_against_residue(
 /// for more diversity
 /// the implementation is quite clumsy, make a one residue pose
 /// add the chainbreak variant, set the chi, return the residue
-/// put there's no easier way to simply rotate around a bond
+/// but there's no easier way to simply rotate around a bond.
 /// additional samples will be put at a phi of -60 and 70,
 /// i.e. other regions observed in ramachandran plot
 void
@@ -646,12 +646,12 @@ MatchConstraintFileInfo::process_algorithm_info(
 	// according to apl's request, only allow prespecified tags
 	// if you want to read in data for additional tags, you have
 	// to specify those here
-	if( ( tag != "match") && ( tag != "match_positions" ) && ( tag != "test")  ){
+	if( ( tag != "match") && ( tag != "match_positions" ) && ( tag != "test") && ( tag != "invrot_tree" ) ){
 		utility_exit_with_message("Tag "+tag+" not a legal option for ALGORITHM_INFO block.");
 	}
 
 	if( algorithm_inputs_.find( tag ) != algorithm_inputs_.end() ){
-		tr << "Error: tag " << tag << " was found twice in the cstfile." << std::endl;
+		tr << "Error: tag " << tag << " was found twice in the same cstfile block." << std::endl;
 		return false;
 	}
 

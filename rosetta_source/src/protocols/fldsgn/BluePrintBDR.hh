@@ -28,6 +28,7 @@
 #include <protocols/forge/build/BuildInstruction.fwd.hh>
 #include <protocols/forge/build/BuildManager.hh>
 #include <protocols/forge/components/VarLengthBuild.fwd.hh>
+#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.fwd.hh>
 #include <protocols/toolbox/match_enzdes_util/InvrotTree.fwd.hh>
 // AUTO-REMOVED #include <protocols/forge/constraints/SheetConstraintsRCG.fwd.hh>
 #include <protocols/moves/Mover.hh>
@@ -314,6 +315,7 @@ private: // data
 
 	/// @brief in case we're folding up around a ligand
 	protocols::toolbox::match_enzdes_util::InvrotTreeOP invrot_tree_;
+	toolbox::match_enzdes_util::EnzConstraintIOCOP enzcst_io_;
 
 private: // per-stage movers
 

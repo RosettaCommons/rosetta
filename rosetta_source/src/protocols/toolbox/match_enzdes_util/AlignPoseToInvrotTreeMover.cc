@@ -20,6 +20,8 @@
 #include <protocols/toolbox/match_enzdes_util/InvrotTree.hh>
 #include <protocols/toolbox/match_enzdes_util/InvrotTarget.hh>
 #include <protocols/toolbox/match_enzdes_util/AllowedSeqposForGeomCst.hh>
+#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
+#include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
 
 
 ///project headers
@@ -60,7 +62,12 @@ AlignPoseToInvrotTreeMover::AlignPoseToInvrotTreeMover(
   ) : Mover(),
       add_target_to_pose_(false), invrot_tree_(invrot_tree),
       seqpos_(seqpos), all_invrots_( invrot_tree->collect_all_inverse_rotamers() )
-{}
+{
+	geomcsts_for_superposition_.clear();
+	//this is assuming that every InvrotCollector has the same number of geomcsts.
+	//i can't imagine a situation where this wouldn't be the case...
+	for( core::Size i =1; i <= all_invrots_[1]->invrots().size() - 1; ++i) geomcsts_for_superposition_.push_back(i);
+}
 
 AlignPoseToInvrotTreeMover::~AlignPoseToInvrotTreeMover(){}
 
@@ -91,7 +98,7 @@ AlignPoseToInvrotTreeMover::apply( core::pose::Pose & pose ){
   //1a. get the invrots and pick a random one from the first list
   //utility::vector1< InvrotCollectorCOP > all_invrots(  );
   Size picked_collector( numeric::random::random_range( 1, all_invrots_.size() ) );
-  Size picked_geomcst( numeric::random::random_range( 1, all_invrots_[picked_collector]->invrots().size() - 1 ) );
+  Size picked_geomcst( geomcsts_for_superposition_[ numeric::random::random_range( 1, geomcsts_for_superposition_.size() ) ] );
   Size picked_rotamer( numeric::random::random_range(1, all_invrots_[ picked_collector ]->invrots()[picked_geomcst].size() ) );
 
   //temp debug
@@ -170,6 +177,38 @@ AlignPoseToInvrotTreeMover::set_add_target_to_pose(
 )
 {
   add_target_to_pose_ = setting;
+}
+
+void
+AlignPoseToInvrotTreeMover::set_geomcst_for_superposition_from_enz_io(
+	EnzConstraintIOCOP enzcst_io )
+{
+
+	utility::vector1< core::Size > found_geomcsts;
+	for( core::Size i = 1; i <= enzcst_io->num_mcfi_lists(); ++i ){
+		std::map< std::string, utility::vector1< std::string > > const &
+			alg_info(  enzcst_io->mcfi_list( i )->mcfi( 1 )->algorithm_inputs() );
+
+		if( alg_info.find("invrot_tree") != alg_info.end() ){
+			utility::vector1< std::string > const & info( alg_info.find( "invrot_tree" )->second );
+			for( core::Size line = 1; line <= info.size(); ++line ){
+				std::istringstream infostr( info[ line ] );
+				std::string first;
+				infostr >> first;
+				std::cout << "'" << first << "'" << std::endl;
+				if( first == "superpose" ){
+					found_geomcsts.push_back( i );
+					break;
+				}
+			}
+		}
+	}
+	if( found_geomcsts.size() != 0 ){
+		geomcsts_for_superposition_ = found_geomcsts;
+		TR << "Superposition of the pose allowed on invrot/seqpos pairs from the following constraint blocks: ";
+		for( core::Size i =1; i <= geomcsts_for_superposition_.size(); ++i ) TR << geomcsts_for_superposition_[i] << " ";
+		TR << std::endl;
+	}
 }
 
 /// @details the simplest possible implementation for now

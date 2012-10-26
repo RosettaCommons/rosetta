@@ -112,7 +112,8 @@ BluePrintBDR::BluePrintBDR() :
 	dump_pdb_when_fail_( "" ),
 	rmdl_attempts_( 1 ),
 	use_poly_val_( true ),
-	invrot_tree_(NULL)
+	invrot_tree_(NULL),
+	enzcst_io_(NULL)
 {}
 
 /// @brief value constructor
@@ -133,7 +134,8 @@ BluePrintBDR::BluePrintBDR( String const & filename, bool const ss_from_blueprin
 	dump_pdb_when_fail_( "" ),
 	rmdl_attempts_( 1 ),
 	use_poly_val_( true ),
-	invrot_tree_(NULL)
+	invrot_tree_(NULL),
+	enzcst_io_(NULL)
 {
 	set_blueprint( filename );
 }
@@ -157,7 +159,8 @@ BluePrintBDR::BluePrintBDR( BluePrintOP const & blueprintOP, bool const ss_from_
 	dump_pdb_when_fail_( "" ),
 	rmdl_attempts_( 1 ),
 	use_poly_val_( true ),
-	invrot_tree_(NULL)
+	invrot_tree_(NULL),
+	enzcst_io_(NULL)
 {}
 
 /// @Brief copy constructor
@@ -181,7 +184,8 @@ BluePrintBDR::BluePrintBDR( BluePrintBDR const & rval ) :
 	dump_pdb_when_fail_( rval.dump_pdb_when_fail_ ),
 	rmdl_attempts_( rval.rmdl_attempts_ ),
 	use_poly_val_( rval.use_poly_val_ ),
-	invrot_tree_(rval.invrot_tree_)
+	invrot_tree_(rval.invrot_tree_),
+	enzcst_io_(rval.enzcst_io_)
 {
 	if ( rval.vlb_.get() ) {
 		vlb_ = new VarLengthBuild( *rval.vlb_ );
@@ -407,8 +411,10 @@ BluePrintBDR::setup_invrot_tree_in_vlb( VarLengthBuild & vlb, Pose & pose  ) con
 	allowed_seqpos->initialize_from_command_line( posecopy ); //this could be moved somewhere else to only initialize once, but probably not that important
 	toolbox::match_enzdes_util::AlignPoseToInvrotTreeMoverOP setup_align_pose( new toolbox::match_enzdes_util::AlignPoseToInvrotTreeMover( invrot_tree_, allowed_seqpos ));
 	setup_align_pose->set_add_target_to_pose( true );
+	setup_align_pose->set_geomcst_for_superposition_from_enz_io( enzcst_io_);
 
 	toolbox::match_enzdes_util::AlignPoseToInvrotTreeMoverOP run_align_pose( new toolbox::match_enzdes_util::AlignPoseToInvrotTreeMover( invrot_tree_, allowed_seqpos ));
+	run_align_pose->set_geomcst_for_superposition_from_enz_io( enzcst_io_);
 
 	forge::constraints::InvrotTreeRCGOP invrot_rcg( new forge::constraints::InvrotTreeRCG( invrot_tree_, allowed_seqpos ) );
 	vlb.add_rcg( invrot_rcg );
@@ -418,6 +424,12 @@ BluePrintBDR::setup_invrot_tree_in_vlb( VarLengthBuild & vlb, Pose & pose  ) con
 
 	vlb.clear_user_provided_movers();
 	vlb.add_user_provided_mover( run_align_pose );
+
+	if( use_abego_bias_ ) {
+		utility::vector1< std::string > abego_to_use( blueprint_->abego() );
+		abego_to_use.push_back("X"); //kinda hacky, assuming we're only adding one ligand to pose. Ideally we'd query InvrotTree for the number of targets
+		vlb_->set_abego( abego_to_use );
+	}
 }
 
 
@@ -569,10 +581,6 @@ bool BluePrintBDR::centroid_build(
 		vlb_->add_rcg( cst );
 	}
 
-	if( invrot_tree_ ){
-		this->setup_invrot_tree_in_vlb( *vlb_, pose );
-	}
-
 	vlb_->scorefunction( sfx_ );
 	vlb_->vall_memory_usage( protocols::forge::components::VLB_VallMemoryUsage::CLEAR_IF_CACHING_FRAGMENTS );
 	vlb_->use_fullmer( use_fullmer_ );
@@ -583,6 +591,11 @@ bool BluePrintBDR::centroid_build(
 	if( use_abego_bias_ ) {
 		vlb_->set_abego( blueprint_->abego() );
 	}
+
+	if( invrot_tree_ ){
+    this->setup_invrot_tree_in_vlb( *vlb_, pose );
+  }
+
 
 	if ( use_sequence_bias_ ) {
 		vlb_->original_sequence( archive_pose.sequence() );
@@ -685,6 +698,7 @@ BluePrintBDR::parse_my_tag(
 		enzcst_io->read_enzyme_cstfile( cstfilename );
 		invrot_tree_ = new protocols::toolbox::match_enzdes_util::TheozymeInvrotTree( enzcst_io );
 		invrot_tree_->generate_targets_and_inverse_rotamers();
+		enzcst_io_ = enzcst_io;
 
 		//this also means that we'd like the constraint score terms turned on
 		if( sfx_->has_zero_weight( core::scoring::coordinate_constraint ) ) sfx_->set_weight( core::scoring::coordinate_constraint, 1.0 );

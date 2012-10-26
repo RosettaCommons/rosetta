@@ -23,6 +23,7 @@
 #include <protocols/toolbox/match_enzdes_util/AllowedSeqposForGeomCst.fwd.hh>
 #include <protocols/toolbox/match_enzdes_util/InvrotTree.fwd.hh>
 #include <protocols/toolbox/match_enzdes_util/InvrotTreeNodeBase.fwd.hh>
+#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.fwd.hh>
 
 // Project headers
 #include <core/conformation/Residue.fwd.hh>
@@ -69,6 +70,10 @@ public:
 	void
 	set_add_target_to_pose( bool const setting );
 
+	void
+	set_geomcst_for_superposition_from_enz_io(
+		EnzConstraintIOCOP enzcst_io );
+
 	/// @brief sets up a foldtree such that
 	/// the anchor residue doesn't move,
 	/// i.e. a backward edge from anchor to 1
@@ -97,6 +102,9 @@ private:
 	InvrotTreeCOP invrot_tree_;
 	AllowedSeqposForGeomCstCOP seqpos_;
 	utility::vector1< InvrotCollectorCOP > all_invrots_;
+
+	//the geomcsts for which rotamers the pose can be superimposed on
+	utility::vector1< core::Size > geomcsts_for_superposition_;
 
 };
 
