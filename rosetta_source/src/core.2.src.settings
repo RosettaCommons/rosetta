@@ -26,6 +26,7 @@ sources = {
 		"IdealBondLengthSet",
 		"MMAtomType",
 		"MMAtomTypeSet",
+		"Orbital",
 		"Patch",
 		"PatchOperation",
 		"ResConnID",

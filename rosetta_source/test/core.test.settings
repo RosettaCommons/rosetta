@@ -9,13 +9,14 @@
 
 sources = {
 	"chemical" : [
+    "AtomTests",
 		"AtomTypeSet",
 		"AtomTypeDatabaseIOTests",
-    "MMAtomTypeSet",
     "automorphism",
+    "MMAtomTypeSet",
+		"OrbitalTests",
     "ResidueTypeBloatTests",
     "ResidueTypeTests",
-    "AtomTests",
 		"ResidueTypeSetTests",
 	],
     "chemical/carbohydrates" : [

@@ -64,6 +64,7 @@
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/MMAtomType.fwd.hh>
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
+#include <core/chemical/Orbital.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/sdf/MolData.hh>
 #include <core/chemical/rna/RNA_ResidueType.hh>
@@ -649,7 +650,7 @@ public:
 	std::string const &
 	orbital_name( Size const index ) const
 	{
-		return orbital_name_[ index ];
+		return orbitals_[index].name();
 	}
 
 
@@ -1130,16 +1131,14 @@ public:
 
 	orbitals::ICoorOrbitalData const &
 	orbital_icoor_data(Size const orbital_index) const{
-		return orbital_icoor_id_[orbital_index];
+		return orbitals_[orbital_index].icoor();
 	}
 
 
 	orbitals::ICoorOrbitalData const &
 	new_orbital_icoor_data(Size const orbital_index) const{
-		return new_orbital_icoor_id_[orbital_index];
+		return orbitals_[orbital_index].new_icoor();
 	}
-
-
 
 
 	///@brief set OrbitalICoor for an orbital
@@ -1867,6 +1866,7 @@ private:
 
 	**/
 	utility::vector1< Atom > atoms_;
+	utility::vector1< Orbital > orbitals_;
 
 	//////////////////////////////////////////////////////////////////
 	// ints -- see the WARNING above if these are atom indices
@@ -1890,9 +1890,6 @@ private:
 
 	//////////////////////////////////////////////////////////////////////
 	// per-atom properties
-	/// orbital name
-	utility::vector1<std::string > orbital_name_;
-	utility::vector1<core::Size   > orbital_type_index_;
 	/// indices of the atoms psuedo bonded atoms. Used in orbital code
 	utility::vector1< utility::vector1<core::Size > > orbital_bonded_neighbor_;
 	/// indices of each atom's bonded neighbors
@@ -1909,12 +1906,7 @@ private:
 	utility::vector1< Size        > attached_H_begin_;
 	/// indices of each heavyatom's last attached hydrogen
 	utility::vector1< Size        > attached_H_end_;
-	/// OrbitalICoor, ideal internal coordinates
-	utility::vector1< orbitals::ICoorOrbitalData> orbital_icoor_id_;
-	utility::vector1< orbitals::ICoorOrbitalData> new_orbital_icoor_id_;
 
-	/// ideal orbital xyz coordinates
-	utility::vector1< Vector      > orbital_xyz_;
 	/// atom parents
 	utility::vector1< Size          > parents_;
 

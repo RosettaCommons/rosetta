@@ -30,6 +30,7 @@ def getPlatformID():
 
 def main(args):
     database="-database ~/minirosetta_database"
+    cl=""
     if len(args) <= 1:
         print "No database path supplied... usign defaut one."
     else:

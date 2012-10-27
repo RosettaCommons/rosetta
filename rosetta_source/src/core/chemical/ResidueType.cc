@@ -431,14 +431,14 @@ ResidueType::mm_atom_type_index( Size const atomno ) const
 orbitals::OrbitalType const &
 ResidueType::orbital_type(int const orbital_index)const
 {
-	return ( *orbital_types_ )[ orbital_type_index_[ orbital_index ] ];
+	return ( *orbital_types_ )[ orbitals_[ orbital_index ].orbital_type_index() ];
 
 }
 
 core::Size
 ResidueType::orbital_type_index(Size const orb_index) const
 {
-	return orbital_type_index_[orb_index];
+	return orbitals_[orb_index].orbital_type_index();
 }
 
 /// @note this does not set xyz coordiates for the added orbital but sets the index of the orbital and maps
@@ -455,26 +455,27 @@ ResidueType::add_orbital(
 	// increment orbital count
 	++n_orbitals_;
 
-	// store the name
-	orbital_name_.push_back( orbital_name );
-	assert( orbital_name_.size() == n_orbitals_ );
-
-
-
 	// store the atom type
-	// the next call will fail if the atom type name is unrecognized
+	// the next call will fail if the orbital type name is unrecognized
 	Size type( orbital_types_->orbital_type_index( orbital_type_name ) );
-	orbital_type_index_.push_back( type );
-	assert( orbital_type_index_.size() == n_orbitals_ );
+	//orbital_type_index_.push_back( type );
 
-	orbital_xyz_.push_back( Vector(0.0) );
-	assert( orbital_xyz_.size() == n_orbitals_ );
+	// store the name
+	orbitals_.push_back(Orbital(orbital_name, type, Vector(0.0)));
+	//orbital_name_.push_back( orbital_name );
+	assert( orbitals_.size() == n_orbitals_ );
+
+	orbitals_index_[ orbital_name ] = n_orbitals_;
+	orbitals_index_[ strip_whitespace( orbital_name ) ] = n_orbitals_;
+
+	//assert( orbital_type_index_.size() == n_orbitals_ );
+
+	//orbital_xyz_.push_back( Vector(0.0) );
+	//assert( orbital_xyz_.size() == n_orbitals_ );
 
 	//parents_.push_back(0);
 
 	// index lookup by name
-	orbitals_index_[ orbital_name ] = n_orbitals_;
-	orbitals_index_[ strip_whitespace( orbital_name ) ] = n_orbitals_;
 
 
 /*	// allocate space for the new atom !!!!!!!!!!!!!!!!!!!!!!1
@@ -493,8 +494,8 @@ ResidueType::add_orbital(
 
 
 
-	orbital_icoor_id_.resize(n_orbitals_);
-	new_orbital_icoor_id_.resize(n_orbitals_);
+	//orbital_icoor_id_.resize(n_orbitals_);
+	//new_orbital_icoor_id_.resize(n_orbitals_);
 	//orbital_icoor_.push_back( orbitals::OrbitalICoor( 0.0, 0.0, 0.0, orbital_name, orbital_name, orbital_name, *this ) );
 }
 
@@ -1080,16 +1081,12 @@ ResidueType::reorder_primary_data(
 	// and abase2_ is derived data setup down below
 	utility::vector1< Atom > old_atoms( atoms_ );
 
-	//utility::vector1< Real > old_atomic_charge( atomic_charge_ );
 	utility::vector1< utility::vector1 <core::Size> > old_orbital_bonded_neighbor(orbital_bonded_neighbor_);
 	utility::vector1< AtomIndices > old_bonded_neighbor( bonded_neighbor_ );
 	utility::vector1<utility::vector1<BondName> > old_bonded_neighbor_type(bonded_neighbor_type_);
 	utility::vector1< AtomIndices > old_cut_bond_neighbor( cut_bond_neighbor_ );
 	AtomIndices old_atom_base( atom_base_ );
 
-	utility::vector1<orbitals::ICoorOrbitalData > old_orbital_icoor(new_orbital_icoor_id_);
-
-	//utility::vector1< Vector > old_xyz( xyz_ );
 	utility::vector1<Size> old_parents(parents_);
 
 	if ( old_natoms != natoms_ ) { // because we deleted some atoms
@@ -1160,7 +1157,7 @@ ResidueType::reorder_primary_data(
 			}
 		}
 
-		if(new_orbital_icoor_id_.size() != 0){
+		if(orbitals_.size() != 0){
 				utility::vector1< core::Size > const orbital_indices(orbital_bonded_neighbor_[new_index]);
 				for (
 						utility::vector1< core::Size >::const_iterator
@@ -1170,16 +1167,16 @@ ResidueType::reorder_primary_data(
 				)
 				{
 
-					core::Size stub1( new_orbital_icoor_id_[*orbital_index].get_stub1());
-					core::Size stub2( new_orbital_icoor_id_[*orbital_index].get_stub2());
-					core::Size stub3( new_orbital_icoor_id_[*orbital_index].get_stub3() );
+					core::Size stub1( orbitals_[*orbital_index].new_icoor().get_stub1());
+					core::Size stub2( orbitals_[*orbital_index].new_icoor().get_stub2());
+					core::Size stub3( orbitals_[*orbital_index].new_icoor().get_stub3() );
 
 					if ( stub1 == 0 || stub2 == 0 || stub3 == 0) {
 						continue;
 					}else{
-						new_orbital_icoor_id_[*orbital_index].replace_stub1( old2new[stub1]);
-						new_orbital_icoor_id_[*orbital_index].replace_stub2( old2new[stub2]);
-						new_orbital_icoor_id_[*orbital_index].replace_stub3( old2new[stub3]);
+						orbitals_[*orbital_index].new_icoor().replace_stub1( old2new[stub1]);
+						orbitals_[*orbital_index].new_icoor().replace_stub2( old2new[stub2]);
+						orbitals_[*orbital_index].new_icoor().replace_stub3( old2new[stub3]);
 					}
 
 
@@ -1899,8 +1896,8 @@ ResidueType::set_orbital_icoor_id(
 	std::string stub1(stub_atom1);
 	std::string stub2(stub_atom2);
 	std::string stub3(stub_atom3);
-	orbitals::ICoorOrbitalData id(phi, theta, d, stub1, stub2, stub3);
-	orbital_icoor_id_[ orb_indx ] =id;
+	orbitals::ICoorOrbitalData icoor(phi, theta, d, stub1, stub2, stub3);
+	orbitals_[ orb_indx ].icoor( icoor );
 
 
 	core::Size s1(atom_index_[ stub_atom1 ]);
@@ -1908,7 +1905,7 @@ ResidueType::set_orbital_icoor_id(
 	core::Size s3(atom_index_[ stub_atom3 ]);
 	orbitals::ICoorOrbitalData new_icoor(phi, theta, d, s1, s2, s3);
 
-	new_orbital_icoor_id_[ orb_indx ]=new_icoor;
+	orbitals_[ orb_indx ].new_icoor( new_icoor );
 
 
 }
