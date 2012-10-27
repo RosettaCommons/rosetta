@@ -1,5 +1,3 @@
-namespace lh { BooleanOptionKey const mpi_master_save_score_only( "lh:mpi_master_save_score_only" );  }
-namespace lh { IntegerOptionKey const max_loophash_per_structure( "lh:max_loophash_per_structure" );  }
 namespace lh { RealOptionKey const rms_limit( "lh:rms_limit" );  }
 namespace lh { BooleanOptionKey const centroid_only( "lh:centroid_only" );  }
 namespace lh { BooleanOptionKey const write_centroid_structs( "lh:write_centroid_structs" );  }
@@ -484,6 +482,9 @@ namespace loops { RealOptionKey const refine_final_temp( "loops:refine_final_tem
 namespace loops { IntegerOptionKey const gapspan( "loops:gapspan" );  }
 namespace loops { IntegerOptionKey const spread( "loops:spread" );  }
 namespace loops { IntegerOptionKey const kinematic_wrapper_cycles( "loops:kinematic_wrapper_cycles" );  }
+namespace loops { IntegerOptionKey const kic_num_rotamer_trials( "loops:kic_num_rotamer_trials" );  }
+namespace loops { BooleanOptionKey const kic_omega_sampling( "loops:kic_omega_sampling" );  }
+namespace loops { RealOptionKey const kic_bump_overlap_factor( "loops:kic_bump_overlap_factor" );  }
 namespace loops { StringOptionKey const restrict_kic_sampling_to_torsion_string( "loops:restrict_kic_sampling_to_torsion_string" );  }
 namespace loops { BooleanOptionKey const derive_torsion_string_from_native_pose( "loops:derive_torsion_string_from_native_pose" );  }
 namespace loops { BooleanOptionKey const always_remodel_full_loop( "loops:always_remodel_full_loop" );  }

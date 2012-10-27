@@ -648,10 +648,10 @@ option.add( basic::options::OptionKeys::fold_cst::skip_on_noviolation_in_stage1,
 option.add( basic::options::OptionKeys::fold_cst::stage1_ramp_cst_cycle_factor, "spend x*<standard cycles> on each step of sequence separation" ).def(0.25);
 option.add( basic::options::OptionKeys::fold_cst::stage2_constraint_threshold, "stop runs that violate this threshold at end of stage2" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::ignore_sequence_seperation, "usually constraints are switched on according to their separation in the fold-tree" ).def(false);
+option.add( basic::options::OptionKeys::fold_cst::no_recover_low_at_constraint_switch, "dont recover low when max_seq_sep is increased" ).def(false);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::no_recover_low_at_constraint_switch, "dont recover low when max_seq_sep is increased" ).def(false);
-option.add( basic::options::OptionKeys::fold_cst::ramp_coord_cst, "ramp coord csts just like chainbreak-weights during fold-cst" ).def(false);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::ramp_coord_cst, "ramp coord csts just like chainbreak-weights during fold-cst" ).def(false);
 option.add( basic::options::OptionKeys::resample::resample, "resample option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::resample::silent, "a silent file for decoys to restart sampling from " ).def("");
 option.add( basic::options::OptionKeys::resample::tag, "which decoy to select from silent file " ).def("");
@@ -1295,11 +1295,11 @@ option.add( basic::options::OptionKeys::lh::mpi_outbound_wu_buffer_size, "No des
 option.add( basic::options::OptionKeys::lh::mpi_loophash_split_size    , "No description" ).def(50);
 option.add( basic::options::OptionKeys::lh::mpi_metropolis_temp, "No description" ).def(1000000.0);
 option.add( basic::options::OptionKeys::lh::mpi_save_state_interval, "No description" ).def(1200);
+option.add( basic::options::OptionKeys::lh::mpi_master_save_score_only, "No description" ).def(true);
+option.add( basic::options::OptionKeys::lh::max_loophash_per_structure, "No description" ).def(1);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::mpi_master_save_score_only, "No description" ).def(true);
-option.add( basic::options::OptionKeys::lh::max_loophash_per_structure, "No description" ).def(1);
-option.add( basic::options::OptionKeys::lh::rms_limit, "How to deal with returned relaxed structures" ).def(2.0);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::rms_limit, "How to deal with returned relaxed structures" ).def(2.0);
 option.add( basic::options::OptionKeys::lh::centroid_only, "false" ).def(false);
 option.add( basic::options::OptionKeys::lh::write_centroid_structs, "Output raw loophashed decoys as well as relaxed ones" ).def(false);
 option.add( basic::options::OptionKeys::lh::write_all_fa_structs, "Write out all structures returned from batch relax" ).def(false);
@@ -1783,6 +1783,9 @@ option.add( basic::options::OptionKeys::loops::refine_final_temp, "Final tempera
 option.add( basic::options::OptionKeys::loops::gapspan, "when automatically identifying loop regions, this is the maximum gap length for a single loop" ).lower(1).def(6);
 option.add( basic::options::OptionKeys::loops::spread, "when automatically identifying loop regions, this is the number of neighboring residues by which to extend out loop regions" ).lower(1).def(2);
 option.add( basic::options::OptionKeys::loops::kinematic_wrapper_cycles, "maximum number of KinematicMover apply() tries per KinematicWrapper apply()" ).def(20);
+option.add( basic::options::OptionKeys::loops::kic_num_rotamer_trials, "number of RotamerTrial iterations in each KIC cycle -- default is 1" ).def(1);
+option.add( basic::options::OptionKeys::loops::kic_omega_sampling, "Perform sampling of omega angles around 179.6 for trans, and including 0 for pre-prolines -- default false, for legacy reasons" ).def(false);
+option.add( basic::options::OptionKeys::loops::kic_bump_overlap_factor, "allow some atomic overlap in initial loop closures (should be remediated in subsequent repacking and minimization)" ).def(0.49);
 option.add( basic::options::OptionKeys::loops::restrict_kic_sampling_to_torsion_string, "restrict kinematic loop closure sampling to the phi/psi angles specified in the torsion string" ).def("");
 option.add( basic::options::OptionKeys::loops::derive_torsion_string_from_native_pose, "apply torsion-restricted sampling, and derive the torsion string from the native [or, if not provided, starting] structure" ).def(false);
 option.add( basic::options::OptionKeys::loops::always_remodel_full_loop, "always remodel the full loop segment (i.e. the outer pivots are always loop start & end) -- currently this only applies to the perturb stage -- EXPERIMENTAL" ).def(false);

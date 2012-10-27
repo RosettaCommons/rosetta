@@ -113,7 +113,7 @@ KinematicMover::KinematicMover() :
 	sfxn_( NULL ),
 	last_move_succeeded_ (false),
 	temperature_(1.0),
-	bump_overlap_factor_(0.49), // 0.6; // 0.8; // 0.8^2, allows some atomic overlap
+	bump_overlap_factor_( basic::options::option[ basic::options::OptionKeys::loops::kic_bump_overlap_factor ]() ), // 0.6; // 0.8; // 0.8^2, allows some atomic overlap
 	taboo_map_max_capacity_(0.95) // how full can the taboo map get before we re-set it? --> the higher, the more likely are almost-endless loops -- but if the value is too low it's not actual taboo sampling
 
 	{

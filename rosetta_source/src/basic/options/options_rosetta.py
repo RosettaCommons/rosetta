@@ -3664,6 +3664,18 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			desc='maximum number of KinematicMover apply() tries per KinematicWrapper apply()',
 			default = '20'
 		),
+		Option( 'kic_num_rotamer_trials', 'Integer',
+						desc='number of RotamerTrial iterations in each KIC cycle -- default is 1',
+						default = '1'
+		),
+                Option( 'kic_omega_sampling', 'Boolean',
+                        desc="Perform sampling of omega angles around 179.6 for trans, and including 0 for pre-prolines -- default false, for legacy reasons",
+                        default='false'
+                ),
+                Option( 'kic_bump_overlap_factor', 'Real',
+                        desc="allow some atomic overlap in initial loop closures (should be remediated in subsequent repacking and minimization)",
+                        default='0.49'
+                ),
 
 		## next-generation KIC
 		Option( 'restrict_kic_sampling_to_torsion_string', 'String',

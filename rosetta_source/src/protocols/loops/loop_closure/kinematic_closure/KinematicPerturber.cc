@@ -78,11 +78,14 @@ namespace protocols {
 					
 					core::Size start( kinmover_->start_res() );
 					
+					// AS: if any of the (potentially) omega-sampling flags is set, omega needs to be copied from the torsions vector
+					bool also_copy_omega = ( basic::options::option[ basic::options::OptionKeys::loops::sample_omega_at_pre_prolines ]() || basic::options::option[ basic::options::OptionKeys::loops::kic_omega_sampling ]() ) || ( basic::options::option[ basic::options::OptionKeys::loops::restrict_kic_sampling_to_torsion_string ].user() || basic::options::option[ basic::options::OptionKeys::loops::derive_torsion_string_from_native_pose ]() ) ;
+					
 					for( core::Size res = 0; res < kinmover_->segment_length(); res++ ){
 						
 						pose.set_phi( start + res, torsions[ (3*(res+1)) + 1 ] );
 						pose.set_psi( start + res, torsions[ (3*(res+1)) + 2 ] );
-						if ( basic::options::option[ basic::options::OptionKeys::loops::sample_omega_at_pre_prolines ]() ) pose.set_omega( start + res, torsions[ (3*(res+1)) + 3 ] );
+						if ( also_copy_omega ) pose.set_omega( start + res, torsions[ (3*(res+1)) + 3 ] );
 						
 					}
 				} //set_pose_after_closure
@@ -148,9 +151,11 @@ namespace protocols {
 						
 					}
 					
+					
+					// sample omegas?
+					// all omegas before prolines are assumed to be fair game. Note that we're not using move-map, which is phi/psi-specific.
 					if (  sample_omega_for_pre_prolines_ ) {
-						// sample omegas. all omegas before prolines are assumed to be fair game. Note that we're not using move-map, which is phi/psi-specific.
-						
+						// old KIC standard: coin flip between cis and trans
 						static const core::Real OMEGA_MEAN( 179.8 );
 						
 						for( core::Size i=4, cur_res = kinmover_->start_res(); i<= tor_end; cur_res++ ){
@@ -165,10 +170,29 @@ namespace protocols {
 								i += 3;
 							}
 						}
-						
+					} else if ( basic::options::option[ basic::options::OptionKeys::loops::kic_omega_sampling ]() ) {
+						// actual omega sampling, values from Berkholz et al., PNAS 2012
+						static const core::Real OMEGA_MEAN( 179.1 );
+						static const core::Real OMEGA_STDDEV( 6.3 );
+
+						// cis or trans? -- cis is much less common than trans, according to data from Matt / top8000, so the current coinflip is probably overestimating cis
+						// as a proxy, using 1/1000 for now
+						static const core::Real cis_prob_threshold = 0.0001;
+
+						for( core::Size i=4, cur_res = kinmover_->start_res(); i<= tor_end; cur_res++ ){
+							i++; //phi
+							i++; //psi
+							core::Real trans_prob = 1;
+							if ( pose.aa( cur_res+1 ) == core::chemical::aa_pro ) {
+								trans_prob = RG.uniform();
+							}
+							if ( trans_prob < cis_prob_threshold ) {
+								torsions[i++] = 0; // there's very little variation -- currently not captured here at all
+							} else { // trans
+								torsions[i++] = OMEGA_MEAN + RG.gaussian() * OMEGA_STDDEV;
+							}
+						}
 					}
-					
-					
 				} //perturb_chain
 				
 				
@@ -550,37 +574,34 @@ namespace protocols {
 						
 					}
 					
-					// the TorsionRestricted mover will automatically derive cis/trans from the torsion bin string, it [currently] does not care about external flags -- however, note that set_pose_after_closure(...) directly reads the command-line flag, so that it must be set to true in order to accept the cis torsions
+					// the TorsionRestricted mover will automatically derive cis/trans from the torsion bin string -- sampling for trans omega can be activated via the -loops:kic_omega_sampling flag (but won't affect the cis/trans choice as it does in other perturbers)
+					static const core::Real OLD_OMEGA_MEAN( 179.8 );
+					// values from Berkholz et al., PNAS 2012
+					static const core::Real OMEGA_MEAN( 179.1 );
+					static const core::Real OMEGA_STDDEV( 6.3 );
+					core::Real rand_omega;
 					
-					static const core::Real OMEGA_MEAN( 179.8 );
-					
-					for( core::Size i=4, cur_res = kinmover_->start_res(); i<= tor_end; cur_res++ ){
+					for( core::Size i=4, cur_res = kinmover_->start_res(); i<= tor_end; cur_res++ ){ // note that this ignores any movemaps for now -- usally they just refer to phi/psi, but it'd be better to check
 						
-						if ( pose.aa( cur_res+1 ) == core::chemical::aa_pro ) {
-							
-							core::Real rand_omega; // = ( static_cast<int>( RG.uniform()*2 ) ? OMEGA_MEAN : 0.0 );  // flip a coin -- either 179.8 (trans) or 0.0 (cis)
-							
-							if ( islower(predefined_torsions_[(i-4)/3 + torsion_string_offset]) ) {
+						if ( basic::options::option[ basic::options::OptionKeys::loops::kic_omega_sampling ]() || pose.aa( cur_res+1 ) == core::chemical::aa_pro) {
+							rand_omega = OLD_OMEGA_MEAN; // mainly for legacy purposes -- at least the means should be adjusted to match 
+							if ( pose.aa( cur_res+1 ) == core::chemical::aa_pro && islower(predefined_torsions_[(i-4)/3 + torsion_string_offset]) ) {
 								rand_omega = 0; // lowercase is for cis		
-								
-								//std::cerr << "cis proline at " << cur_res << std::endl; // debug
-								
-							} else {
-								rand_omega = OMEGA_MEAN;
-							}
-							//}
 							
+								//std::cerr << "cis proline at " << cur_res << std::endl; // debug
+							
+							} else { // trans
+								if ( basic::options::option[ basic::options::OptionKeys::loops::kic_omega_sampling ]() ) {
+									rand_omega = OMEGA_MEAN + RG.gaussian() * OMEGA_STDDEV;
+								}
+							}
 							i++; //phi
 							i++; //psi
 							torsions[i++] = rand_omega;
-							
-						} else {
+						} else { // not touching omega for this residue
 							i += 3;
 						}
-					}	
-					
-					//}
-					
+					}
 					
 				} //perturb_chain
 				
@@ -810,6 +831,28 @@ namespace protocols {
 							}
 						}
 						
+					} else if ( basic::options::option[ basic::options::OptionKeys::loops::kic_omega_sampling ]() ) {
+						// actual omega sampling, values from Berkholz et al., PNAS 2012
+						static const core::Real OMEGA_MEAN( 179.1 );
+						static const core::Real OMEGA_STDDEV( 6.3 );
+						
+						// cis or trans? -- cis is much less common than trans, according to data from Matt / top8000, so the current coinflip is probably overestimating cis
+						// as a proxy, using 1/1000 for now
+						static const core::Real cis_prob_threshold = 0.0001;
+						
+						for( core::Size i=4, cur_res = kinmover_->start_res(); i<= tor_end; cur_res++ ){
+							i++; //phi
+							i++; //psi
+							core::Real trans_prob = 1;
+							if ( pose.aa( cur_res+1 ) == core::chemical::aa_pro ) {
+								trans_prob = RG.uniform();
+							}
+							if ( trans_prob < cis_prob_threshold ) {
+								torsions[i++] = 0; // there's very little variation -- currently not captured here at all
+							} else { // trans
+								torsions[i++] = OMEGA_MEAN + RG.gaussian() * OMEGA_STDDEV;
+							}
+						}
 					}
 					
 					
@@ -1042,6 +1085,28 @@ namespace protocols {
 							}
 						}
 						
+					} else if ( basic::options::option[ basic::options::OptionKeys::loops::kic_omega_sampling ]() ) {
+						// actual omega sampling, values from Berkholz et al., PNAS 2012
+						static const core::Real OMEGA_MEAN( 179.1 );
+						static const core::Real OMEGA_STDDEV( 6.3 );
+						
+						// cis or trans? -- cis is much less common than trans, according to data from Matt / top8000, so the current coinflip is probably overestimating cis
+						// as a proxy, using 1/1000 for now
+						static const core::Real cis_prob_threshold = 0.0001;
+						
+						for( core::Size i=4, cur_res = kinmover_->start_res(); i<= tor_end; cur_res++ ){
+							i++; //phi
+							i++; //psi
+							core::Real trans_prob = 1;
+							if ( pose.aa( cur_res+1 ) == core::chemical::aa_pro ) {
+								trans_prob = RG.uniform();
+							}
+							if ( trans_prob < cis_prob_threshold ) {
+								torsions[i++] = 0; // there's very little variation -- currently not captured here at all
+							} else { // trans
+								torsions[i++] = OMEGA_MEAN + RG.gaussian() * OMEGA_STDDEV;
+							}
+						}
 					}
 					
 					

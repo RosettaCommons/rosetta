@@ -71,13 +71,23 @@ void KinematicWrapper::apply( core::pose::Pose & pose ){
 
 	for( /*counter*/; counter<=limit_; ++counter){
 		//pick new points for kinematic closure
-		alc_start_in_vec = RG.random_range(1,npos-2); //choose a random spot in allowed vector, but not near the end
-		alc_start = allowed_positions_[alc_start_in_vec]; //store it as start
-		alc_end_in_vec = RG.random_range(alc_start_in_vec+2, npos); //chose a post-start spot in allowed vector
-		alc_end = allowed_positions_[alc_end_in_vec]; //store it as end
+		// AS: the previous implementation had a "history bias" towards the N-terminus of the loop, as the start pivot can be anywhere between begin_loop and end_loop-2, while the choice of the end pivot depends on the start pivot 
+		// note that this implementation does not consider length restrictions for the loop, so it probably shouldn't be used for whole-protein ensemble generation -- this should be incorporated before putting the KinematicWrapper in charge of all pivot selections, including those from refine/LoopMover_KIC
+		if ( basic::options::option[ basic::options::OptionKeys::loops::legacy_kic ]() || counter % 2 == 0 ) {
+			alc_start_in_vec = RG.random_range(1,npos-2); //choose a random spot in allowed vector, but not near the end
+			alc_start = allowed_positions_[alc_start_in_vec]; //store it as start
+			alc_end_in_vec = RG.random_range(alc_start_in_vec+2, npos); //chose a post-start spot in allowed vector
+			alc_end = allowed_positions_[alc_end_in_vec]; //store it as end
+		} else {
+			alc_end_in_vec = RG.random_range(3, npos); //chose a a random spot in allowed vector, but not near the start
+			alc_end = allowed_positions_[alc_end_in_vec]; //store it as end
+			alc_start_in_vec = RG.random_range(1,alc_end_in_vec-2); //choose a spot somewhere before the end position
+			alc_start = allowed_positions_[alc_start_in_vec]; //store it as start
+		}
 		core::Size middle_offset = (alc_end - alc_start) / 2; //pick the natural middle between the two
 		alc_middle = alc_start + middle_offset;
 
+		
 		//must guaruntee alc_middle is in vector
 		bool ok(false);
 		core::Size i(alc_start_in_vec+1);

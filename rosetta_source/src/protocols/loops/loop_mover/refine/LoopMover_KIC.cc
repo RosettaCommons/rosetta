@@ -370,7 +370,9 @@ void LoopMover_Refine_KIC::apply(
 	myKinematicMover.set_rama_check( true );
 	Size kic_start, kic_middle, kic_end; // three pivot residues for kinematic loop closure
 
-	
+	// AS: adding option to change the number of rotamer trials -- just one (as in the current implementation) may be way too little
+	core::Size num_rot_trials = Size( option[ OptionKeys::loops::kic_num_rotamer_trials ]() );
+
 	// AS: setting up weights for ramping rama[2b] and/or fa_rep
 	core::Real orig_local_fa_rep_weight = local_scorefxn->get_weight( fa_rep );
 	core::Real orig_min_fa_rep_weight = min_scorefxn->get_weight( fa_rep );
@@ -523,8 +525,12 @@ void LoopMover_Refine_KIC::apply(
 			utility::vector1<bool> cur_allow_sc_move = allow_sc_vectors[ loop_ind ];
 			rottrials_packer_task->restrict_to_residues( cur_allow_sc_move );
 
-			{// kinematic trial first round
-				
+			// AS Thu Oct 25 19:41:14 PDT 2012
+			// rewriting the kinematic trials so that the 1st and 2nd round are handled by a loop instead of code duplication
+			// then incorporating the possibility to repack after each loop move (and before calling mc.boltzmann)
+			
+			core::Size num_kinematic_trials = 2;
+			for (core::Size kinematic_trial = 1; kinematic_trial <= num_kinematic_trials; kinematic_trial++) {
 				// AS: the previous implementation had a "history bias" towards the N-terminus of the loop, as the start pivot can be anywhere between begin_loop and end_loop-2, while the choice of the end pivot depends on the start pivot 
 				if ( option[ OptionKeys::loops::legacy_kic ]() || j % 2 == 0 ) {
 					kic_start = RG.random_range(begin_loop,end_loop-2);
@@ -556,9 +562,73 @@ void LoopMover_Refine_KIC::apply(
 						set_rottrials_from_kic_segment( pose, rottrials_packer_task, kic_start, kic_end ); // for rottrials
 						set_movemap_from_kic_segment( pose, cur_mm, kic_start, kic_end ); // for minimization
 					}
-					pack::rotamer_trials( pose, *local_scorefxn, rottrials_packer_task );
-					pose.update_residue_neighbors(); // to update 10A nbr graph
+				
+					// AS Oct 25, 2012: considering the order of magnitude that full-scale KIC modeling can introduce, it may be very valuable to repack before testing for acceptance
+					// * note that this probably is much less relevant in vicinity sampling -- Rotamer Trials may be enough
+					// * also note that this allows for design, which we're not testing at the moment in the standard loop modeling benchmark -- it should be checked whether this leads to collapsing structures / strong preference for small residues, and in the latter case, perhaps this part of the code should only repack, but not design
+					if ( !option[ OptionKeys::loops::legacy_kic ]() && (j%repack_period)==0 ) { 
+						// implementation copied from "main_repack_trial" below
+						
+						//tr() << " AS -- repacking after loop closure but before mc.boltzmann " << std::endl; // AS_DEBUG
+						
+						update_movemap_vectors( pose, move_maps );
+						update_allow_sc_vectors( pose, allow_sc_vectors );
+						
+						// the repack/design and subsequent minimization within this main_repack_trial block apply
+						// to all loops (and their neighbors, if requested)
+						loops_set_move_map( pose, *loops(), fix_natsc_, mm_all_loops, neighbor_dist_);
+						if(flank_residue_min_){add_loop_flank_residues_bb_to_movemap(*loops(), mm_all_loops); } // added by JQX
+						select_loop_residues( pose, *loops(), !fix_natsc_, allow_sc_move_all_loops, neighbor_dist_);
+						
+						core::pose::symmetry::make_residue_mask_symmetric( pose, allow_sc_move_all_loops );  //fpd symmetrize res mask -- does nothing if pose is not symm
+						repack_packer_task->restrict_to_residues( allow_sc_move_all_loops );
+						rottrials_packer_task->restrict_to_residues( allow_sc_move_all_loops );
+						pack::pack_rotamers( pose, *local_scorefxn, repack_packer_task ); // design here if resfile supplied
+						if ( verbose ) tr() << "energy after design: " << (*local_scorefxn)(pose) << std::endl; // DJM remove
+						if ( redesign_loop_ ) { // need to make new rottrials packer task with redesigned sequence
+							rottrials_packer_task = task_factory->create_task_and_apply_taskoperations( pose );
+							rottrials_packer_task->restrict_to_repacking();
+							rottrials_packer_task->set_bump_check( true );
+							rottrials_packer_task->restrict_to_residues( allow_sc_move_all_loops );
+							if ( verbose ) tr() << "energy after design repack: " << (*local_scorefxn)(pose) << std::endl; // DJM remove
+						}
+						
+						// minimize after repack if requested
+						// AS: note that this may not be necessary here, as we'll minimize after the rotamer trials step anyway
+						if ( min_after_repack_ ) {
+							if ( core::pose::symmetry::is_symmetric( pose ) )  {
+								//fpd  minimizing with the reduced movemap seems to cause occasional problems
+								//     in the symmetric case ... am looking into this
+								loops_set_move_map( pose, *loops(), fix_natsc_, mm_all_loops, neighbor_dist_ );
+								if(flank_residue_min_){add_loop_flank_residues_bb_to_movemap(*loops(), mm_all_loops); } // added by JQX
+								minimizer->run( pose, mm_all_loops, *min_scorefxn, options );
+							} else {
+								minimizer->run( pose, mm_all_loops, *min_scorefxn, options );
+							}
+						}
+						
+						std::string move_type;
+						if ( redesign_loop_ ) move_type = "repack+design";
+						else move_type = "repack";
+						mc.boltzmann( pose, move_type );
+						mc.show_scores();
+						if ( redesign_loop_ ) {
+							tr() << "Sequence after design step: "
+							<< pose.sequence() << std::endl;
+						}
+						if ( verbose ) tr() << "energy after repack: " << (*local_scorefxn)(pose) << std::endl;
+					} 
 
+					// AS: first do repacking (if applicable), then rotamer trials -- we've shown that this increases recovery of native side chain conformations
+					for (Size i = 1; i <= num_rot_trials; i++) {
+						pack::rotamer_trials( pose, *local_scorefxn, rottrials_packer_task );
+						pose.update_residue_neighbors(); // to update 10A nbr graph
+					}
+					//pack::pack_rotamers_loop( pose, *local_scorefxn, rottrials_packer_task, num_rot_trials ); // can we use this instead? is this really RT, or actual packing?
+					
+					
+					
+					// AS: for non-legacy-KIC one might consider putting this into an ELSE branch -- however, min_after_repack_ defaults to false, in which case we wouldn't have minimization here, which could strongly affect the likelihood of acceptance
 					if ( core::pose::symmetry::is_symmetric( pose ) )  {
 						//fpd  minimizing with the reduced movemap seems to cause occasional problems
 						//     in the symmetric case ... am looking into this
@@ -569,10 +639,12 @@ void LoopMover_Refine_KIC::apply(
 					}
 
 					// test for acceptance
-					std::string move_type = "kic_refine_r1";
+					std::stringstream k_trial;
+					k_trial << kinematic_trial;
+					std::string move_type = "kic_refine_r" + k_trial.str();
 					bool accepted = mc.boltzmann( pose, move_type );
 					if (accepted) {
-						tr() << "RMS to native after accepted kinematic round 1 move on loop "
+						tr() << "RMS to native after accepted kinematic round " << kinematic_trial << " move on loop "
 						   << loops()->size() + 1 - loop_ind << ": " // reverse the order so it corresponds with the loop file
 						   << loop_rmsd(pose, native_pose, *loops()) << std::endl;
 						//tr << "after accepted move res " << kic_start + 2 << " omega is " << pose.omega(kic_start+2) << std::endl;
@@ -582,7 +654,7 @@ void LoopMover_Refine_KIC::apply(
 							for (Size i=begin_loop-1, j=1; i<=end_loop+1; i++, j++) {
 								indices[j]=i;
 							}
-							pose.dump_pdb(loop_outfile, indices, "refine_r1");
+							pose.dump_pdb(loop_outfile, indices, "refine_r" + k_trial.str());
 							loop_outfile << "ENDMDL" << std::endl;
 						}
 						//tr << "temperature: " << temperature << std::endl;
@@ -593,76 +665,12 @@ void LoopMover_Refine_KIC::apply(
 				}
 			}
 
-			{// kinematic trial second round
-				// AS: the previous implementation had a "history bias" towards the N-terminus of the loop, as the start pivot can be anywhere between begin_loop and end_loop-2, while the choice of the end pivot depends on the start pivot
-				// -- fixing this by iterating between selecting the start and end pivot first 
-				if ( option[ OptionKeys::loops::legacy_kic ]() || j % 2 == 0 ) {
-					kic_start = RG.random_range(begin_loop,end_loop-2);
-					// choose a random end residue so the length is >= 3, <= min(loop_end, start+maxlen)
-					kic_end = RG.random_range(kic_start+2, std::min((kic_start+max_seglen_ - 1), end_loop));
-					Size middle_offset = (kic_end - kic_start) / 2;
-					kic_middle = kic_start + middle_offset;
-				} else {
-					kic_end = RG.random_range(begin_loop+2,end_loop);
-					//if (kic_end < max_seglen_) { // we need to catch the cases where kic_end-max_seglen_ < 0 -- with core::Size this would otherwise give out-of-bounds errors
-					//	kic_start = RG.random_range(begin_loop, kic_end-2);
-					//} else {
-					kic_start = RG.random_range(std::max((kic_end - std::min(max_seglen_, kic_end) + 1), begin_loop), kic_end-2);
-					//}
-					Size middle_offset = (kic_end - kic_start) / 2;
-					kic_middle = kic_start + middle_offset;
-				}
-
-				myKinematicMover.set_pivots(kic_start, kic_middle, kic_end);
-				myKinematicMover.set_temperature(temperature);
-				myKinematicMover.apply( pose );
-
-				if ( myKinematicMover.last_move_succeeded() ) {
-					if ( core::pose::symmetry::is_symmetric( pose ) )  {
-						core::pose::symmetry::make_residue_mask_symmetric( pose, cur_allow_sc_move );
-					}
-
-					// do optimizations
-					if ( optimize_only_kic_region_sidechains_after_move_ ) {
-						set_rottrials_from_kic_segment( pose, rottrials_packer_task, kic_start, kic_end ); // for rottrials
-						set_movemap_from_kic_segment( pose, cur_mm, kic_start, kic_end ); // for minimization
-					}
-					pack::rotamer_trials( pose, *local_scorefxn, rottrials_packer_task );
-					pose.update_residue_neighbors(); // to update 10A nbr graph
-					if ( core::pose::symmetry::is_symmetric( pose ) )  {
-						//fpd  minimizing with the reduced movemap seems to cause occasional problems
-						//     in the symmetric case ... am looking into this
-						minimizer->run( pose, cur_mm, *min_scorefxn, options );
-					} else {
-						//minimizer->run( pose, mm_all_loops, *min_scorefxn, options );
-						minimizer->run( pose, cur_mm, *min_scorefxn, options );
-					}
-
-					// test for acceptance
-					std::string move_type = "kic_refine_r2";
-					bool accepted = mc.boltzmann( pose, move_type );
-					if (accepted) {
-						tr() << "RMS to native after accepted kinematic round 2 move on loop " << loop_ind << ": "
-						<< loop_rmsd(pose, native_pose, *loops()) << std::endl;
-						if (local_movie) {
-							loop_outfile << "MODEL" << std::endl;
-							utility::vector1<Size> indices(end_loop - begin_loop + 3);
-							for (Size i=begin_loop-1, j=1; i<=end_loop+1; i++, j++) {
-								indices[j]=i;
-							}
-							pose.dump_pdb(loop_outfile, indices, "refine_r2");
-							loop_outfile << "ENDMDL" << std::endl;
-						}
-						//tr << "chainbreak score: " << pose.energies().total_energies()[ core::scoring::chainbreak ] << std::endl;
-						if ( verbose ) tr() << "energy after accepted move: " << (*local_scorefxn)(pose) << std::endl;
-					}
-					//mc.show_scores();
-				}
-			}
-
 		 	{ //main_repack_trial
- 				if ( (j%repack_period)==0 || j==inner_cycles ) {
- 					// repack trial
+ 				if ( ( option[ OptionKeys::loops::legacy_kic ]() && (j%repack_period)==0 ) || j==inner_cycles ) { // AS: always repack at the end of an outer cycle, to make sure the loop environment is repacked before returning from this function
+
+					//tr() << " AS -- repacking after loop closure and mc.boltzmann (legacy KIC behavior) " << std::endl; // AS_DEBUG
+
+					// repack trial
 					// DJM: we have found that updating the move maps and rottrials/repack sets once per repack period
 					//      gives better performance than updating them after every move, so we do so here for
 					//		subsequent cycles until the next repack period

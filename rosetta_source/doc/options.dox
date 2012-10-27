@@ -8656,6 +8656,21 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 20</dd><br>
 </dl>
 <dl>
+<dt><b>-kic_num_rotamer_trials</b> \<Integer\><dt>
+<dd>number of RotamerTrial iterations in each KIC cycle -- default is 1</dd><br>
+<dd>Default: 1</dd><br>
+</dl>
+<dl>
+<dt><b>-kic_omega_sampling</b> \<Boolean\><dt>
+<dd>Perform sampling of omega angles around 179.6 for trans, and including 0 for pre-prolines -- default false, for legacy reasons</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-kic_bump_overlap_factor</b> \<Real\><dt>
+<dd>allow some atomic overlap in initial loop closures (should be remediated in subsequent repacking and minimization)</dd><br>
+<dd>Default: 0.49</dd><br>
+</dl>
+<dl>
 <dt><b>-restrict_kic_sampling_to_torsion_string</b> \<String\><dt>
 <dd>restrict kinematic loop closure sampling to the phi/psi angles specified in the torsion string</dd><br>
 <dd>Default: ""</dd><br>

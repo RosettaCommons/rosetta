@@ -6,6 +6,7 @@
 -loops:ramp_fa_rep
 -loops:ramp_rama
 #-loops:kic_rama2b ## commented out as this needs lots of memory, working on a way to make this integration-testable
+-loops:kic_bump_overlap_factor 0.36
 -in:file:fullatom
 -in:file:native input/4fxn.start.pdb
 -in:file:s input/4fxn.start.pdb

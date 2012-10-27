@@ -359,9 +359,12 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 	if (loop.is_extended() ) {
 		myKinematicMover.set_idealize_loop_first( true ); // start without any native angles or lengths
 		core::Size nits=0;
-		//RAP: temporarily lower the bump_overlap_factor to 0.4 to speed-up initial loop closure after centroid radii fix
+
 		core::Real previous_bump_overlap_factor=myKinematicMover.get_bump_overlap_factor();//RAP
-		myKinematicMover.set_bump_overlap_factor(0.4);//RAP
+		if ( !option[ OptionKeys::loops::kic_bump_overlap_factor ].user() ) { // AS: allow external changes to the bump overlap factor
+			//RAP: temporarily lower the bump_overlap_factor to 0.4 to speed-up initial loop closure after centroid radii fix
+			myKinematicMover.set_bump_overlap_factor(0.4);//RAP
+		}
 		while (nits < max_kic_build_attempts_) {
 			tr() << "Attempting loop building: " << nits << " ... " << std::endl;
 			myKinematicMover.apply( pose );
@@ -373,9 +376,10 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 			}
 			nits++;
 		}
-		//RAP: restore bump_overlap_factor to original value
-		myKinematicMover.set_bump_overlap_factor(previous_bump_overlap_factor);//RAP
-
+		if ( !option[ OptionKeys::loops::kic_bump_overlap_factor ].user() ) { 
+			//RAP: restore bump_overlap_factor to original value
+			myKinematicMover.set_bump_overlap_factor(previous_bump_overlap_factor);//RAP
+		}
 		if (!myKinematicMover.last_move_succeeded()) {
 			tr().Error << "[WARNING] Failed to build loop with kinematic Mover during initial kinematic perturbation after " << nits << " trials: " << loop << std::endl;
 			set_last_move_status(protocols::moves::FAIL_RETRY);
