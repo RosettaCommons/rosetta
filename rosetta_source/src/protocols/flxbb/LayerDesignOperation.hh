@@ -149,7 +149,10 @@ private:
 
 private:
 
-	void write_pymol_script( Pose const & pos, toolbox::SelectResiduesByLayerOP srbl, std::string const & filename ) const;
+	///@brief utility function to transform a vector of position into a pymol selection command
+	std::string pos2select( utility::vector1< Size > const & pos) const;
+	///@brief write a pymol command with the different layers as selections
+	void write_pymol_script( Pose const & pos, toolbox::SelectResiduesByLayerOP srbl, std::map< std::string, utility::vector1<bool> > const & layer_specification, std::string const & filename ) const;
 
 	/// @brief add helix capping ?
 	bool add_helix_capping_;

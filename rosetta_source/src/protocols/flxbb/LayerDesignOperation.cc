@@ -63,14 +63,14 @@ using basic::Warning;
 
 #include <utility/vector0.hh>
 #include <utility/io/ozstream.hh>
+#include <utility/file/file_sys_util.hh>
 #include <ObjexxFCL/format.hh>
 #include <basic/options/keys/OptionKeys.hh>
 
 #include <boost/assign/list_inserter.hpp> 
 #include <boost/assign/list_of.hpp> 
 #include <boost/foreach.hpp>
-
-
+#include <boost/lexical_cast.hpp>
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
@@ -164,12 +164,25 @@ LayerDesignOperation::pore_radius( Real ps )
 	srbl_->pore_radius( ps );
 }
 
+std::string
+LayerDesignOperation::pos2select( utility::vector1< core::Size > const & pos ) const
+{
+	std::string str;
+	if( pos.empty() )
+		return str;
+	else
+		str = boost::lexical_cast< std::string	>( pos[1] );
+		for(Size i = 2; i <= pos.size(); i++)
+			str += "+" + boost::lexical_cast< std::string >( pos[i] );
+		return str;
+}
 
 void 
-LayerDesignOperation::write_pymol_script( core::pose::Pose const & pose, toolbox::SelectResiduesByLayerOP srbl, std::string const & filename ) const
+LayerDesignOperation::write_pymol_script( core::pose::Pose const & pose, toolbox::SelectResiduesByLayerOP srbl, std::map< std::string, utility::vector1<bool> > const & layer_specification, std::string const & filename ) const
 {
 	using utility::io::ozstream;
 	typedef utility::vector1<Size> VecSize;
+	typedef std::map< std::string, utility::vector1<bool> > LayerSpecification;
 	TR << "Writing pymol script with the layer information to "<< filename << std::endl;
 	ozstream pymol( filename );
 	TR << "Dumping pose for the script as layer_design_input.pdb" << std::endl;
@@ -179,12 +192,36 @@ LayerDesignOperation::write_pymol_script( core::pose::Pose const & pose, toolbox
 	pymol << "from pymol import cmd" << std::endl;
 	//load strucuture into pymol
 	pymol << "cmd.load('layer_design_input.pdb')" << std::endl;
-	// make the selections
+	pymol << "cmd.hide('all') " << std::endl;
+	pymol << "cmd.show('spheres')" << std::endl;
+	// make the selections for the basic layers
 	VecSize core_residues = srbl->selected_core_residues();
+	pymol << "cmd.select('core', 'resi  " << pos2select( core_residues )<< "')" << std::endl;
+	pymol << "cmd.color('red', 'core')" << std::endl;
 	VecSize boundary_residues = srbl->selected_boundary_residues();
+	pymol << "cmd.select('boundary', 'resi  " << pos2select( boundary_residues )<< "')" << std::endl;
+	pymol << "cmd.color('orange', 'boundary')" << std::endl;
 	VecSize surface_residues = srbl->selected_surface_residues();
-
-	
+	pymol << "cmd.select('surface', 'resi  " << pos2select( surface_residues ) << "')" <<  std::endl;
+	pymol << "cmd.color('yellow', 'surface')" << std::endl;
+	// make the selections for the task layers
+	utility::vector0< std::string > colors;
+	colors.push_back( "green" );
+	colors.push_back( "magenta" );
+	colors.push_back( "cyan" );
+	colors.push_back( "purpleblue" );
+	colors.push_back( "hotpink" );
+	colors.push_back( "olive" );
+	Size layer = 0;
+	for(LayerSpecification::const_iterator it = layer_specification.begin(); it != layer_specification.end(); it++){
+		utility::vector1< Size > pos;
+		for(Size i = 1; i <= pose.total_residue(); i++)
+			if( it->second[ i ])
+				pos.push_back( i );
+		pymol << "cmd.select('"<< it->first  <<"', 'resi  " << pos2select( pos )<< "')" << std::endl;
+		pymol << "cmd.color('" << colors[ layer % 6  ] << "','" << it->first << "')" << std::endl;
+		layer += 1;
+	}
 }
 
 
@@ -265,6 +302,12 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
   }
 	// calc SelectResiduesByLayer
 	srbl_->compute( pose, "" );
+
+	// make a pymol script for visualizing the layers 
+	if( make_pymol_script_ && !utility::file::file_exists( "layers.py" ) ) {
+		TR << "writing pymol script with the layer specification and saving it as layers.py" << std::endl;
+		write_pymol_script(input_pose, srbl_, layer_specification, "layers.py");
+	}
 
 	core::scoring::dssp::Dssp dssp( pose );
 	dssp.dssp_reduced();
@@ -441,6 +484,33 @@ LayerDesignOperation::parse_tag( TagPtr tag )
 				const std::string layer_to_copy = secstruct_tag->getOption< std::string >("copy_layer");
 				TR << "Copying definitions from layer " << layer_to_copy << " to layer " << layer << std::endl;
 				layer_residues_[ layer ] = layer_residues_[ layer_to_copy ];
+			}
+
+			if( secstruct == "all" &&  secstruct_tag->hasOption("append") ) {
+				const std::string aas = secstruct_tag->getOption< std::string >("append");
+				TR << "Appending residues "<< aas << " to all layers " << std::endl;
+				for(LayerResidues::iterator lrs = layer_residues_.begin(); lrs != layer_residues_.end(); lrs++) {
+					TR << "Appending residues " << aas << "to layer " << lrs->first << std::endl;
+					for(LayerDefinitions::iterator ld = lrs->second.begin(); ld != lrs->second.end(); ld++) {
+						std::set<char> temp_def_res_set( ld->second.begin(), ld->second.end());
+						temp_def_res_set.insert( aas.begin(), aas.end() );
+						layer_residues_[ lrs->first ][ ld->first ] = std::string(temp_def_res_set.begin(), temp_def_res_set.end() );
+					}
+				}
+			}
+			
+			if( secstruct == "all" &&  secstruct_tag->hasOption("exclude") ) {
+				const std::string aas = secstruct_tag->getOption< std::string >("exclude");
+				TR << "Excluding residues "<< aas << " from all layers " << std::endl;
+				for(LayerResidues::iterator lrs = layer_residues_.begin(); lrs != layer_residues_.end(); lrs++) {
+					TR << "Excluding residues " << aas << "from layer " << lrs->first << std::endl;
+					for(LayerDefinitions::iterator ld = lrs->second.begin(); ld != lrs->second.end(); ld++) {
+						std::set<char> temp_def_res_set( ld->second.begin(), ld->second.end());
+						BOOST_FOREACH(char aa, aas)
+							temp_def_res_set.erase(aa);
+						layer_residues_[ lrs->first ][ ld->first ] = std::string(temp_def_res_set.begin(), temp_def_res_set.end() );
+					}
+				}
 			}
 
 			if( secstruct_tag->hasOption("aa") ) {
