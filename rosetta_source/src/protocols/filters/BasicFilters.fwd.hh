@@ -30,6 +30,7 @@ class FalseFilter;
 class CompoundFilter;
 class CombinedFilter;
 class MoveBeforeFilter;
+class IfThenFilter;
 
 // Types
 typedef utility::pointer::owning_ptr< CompoundFilter > CompoundFilterOP;
@@ -40,6 +41,9 @@ typedef utility::pointer::owning_ptr< CombinedFilter const >  CombinedFilterCOP;
 
 typedef utility::pointer::owning_ptr< MoveBeforeFilter > MoveBeforeFilterOP;
 typedef utility::pointer::owning_ptr< MoveBeforeFilter const >  MoveBeforeFilterCOP;
+
+typedef utility::pointer::owning_ptr< IfThenFilter > IfThenFilterOP;
+typedef utility::pointer::owning_ptr< IfThenFilter const >  IfThenFilterCOP;
 
 // used by CompoundFilter
 enum boolean_operations {

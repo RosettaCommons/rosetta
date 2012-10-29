@@ -170,6 +170,48 @@ private:
 	moves::MoverOP submover_;
 };
 
+/// @brief Evaluate to a value contingent on the evaluation of another filter.
+class IfThenFilter : public Filter
+{
+public:
+	IfThenFilter();
+	//IfThenFilter(moves::MoverOP mover, FilterCOP filter);
+	virtual ~IfThenFilter();
+	bool apply( core::pose::Pose const & ) const;
+	FilterOP clone() const;
+	FilterOP fresh_instance() const;
+	void report( std::ostream &, core::pose::Pose const & ) const;
+	core::Real report_sm( core::pose::Pose const & ) const;
+	core::Real compute( core::pose::Pose const & ) const;
+
+	void threshold( core::Real threshold ) { threshold_ = threshold; }
+
+/// @brief Add a condition to the test.
+/// If testfilter evaluates true, then this filter evaluates to valuefilter.
+/// If valuefilter is NULL, then return value instead.
+/// Conditions are evaluated in the order they were added.
+	void add_condition( FilterCOP testfilter, FilterCOP valuefilter, core::Real value );
+
+/// @brief Add evaluation if no conditions trigger
+/// If elsefilter is Null, use absolute value value instead.
+	void set_else( FilterCOP elsefilter, core::Real value = 0 );
+
+	void parse_my_tag(
+		utility::tag::TagPtr const,
+		moves::DataMap &,
+		Filters_map const &,
+		moves::Movers_map const &,
+		core::pose::Pose const & );
+
+private:
+	utility::vector1< FilterCOP > iffilters_;
+	utility::vector1< FilterCOP > thenfilters_;
+	utility::vector1< core::Real > values_;
+	FilterCOP elsefilter_;
+	core::Real elsevalue_;
+	core::Real threshold_;
+};
+
 } // filters
 } // protocols
 

@@ -27,6 +27,7 @@
 // Package Headers
 
 // Project Headers
+#include <protocols/rosetta_scripts/util.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
@@ -199,7 +200,7 @@ CompoundFilter::compute( Pose const & pose ) const
 				case ( ANDNOT ) : value = value && !it->first->apply( pose ); break;
 				case ( NOR ) : value = !( value || it->first->apply( pose ) ); break;
 				case (NAND ) : value = !( value && it->first->apply( pose ) ); break;
-				case (NOT ) : 
+				case (NOT ) :
 					TR << "WARNING: CompoundFilter treating operator NOT as ANDNOT" << std::endl;
 					value = value && !it->first->apply( pose );
 					break;
@@ -293,7 +294,7 @@ CombinedFilter::~CombinedFilter() {}
 bool
 CombinedFilter::apply( core::pose::Pose const & pose ) const
 {
-	bool const value( compute( pose ) );
+	core::Real const value( compute( pose ) );
 
 	TR<<"CombinedFilter value is "<<value<<", threshold is "<< threshold_ << "."<<std::endl;
 	return( value <= threshold_ );
@@ -444,6 +445,130 @@ MoveBeforeFilter::parse_my_tag(
 
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Evaluate to a value contingent on the evaluation of another filter.
+
+IfThenFilter::IfThenFilter() :
+		Filter( "IfThenFilter" ),
+		elsevalue_(0),
+		threshold_(0)
+ {}
+IfThenFilter::~IfThenFilter() {}
+
+void
+IfThenFilter::add_condition( FilterCOP testfilter, FilterCOP valuefilter, core::Real const value ) {
+	runtime_assert( iffilters_.size() == thenfilters_.size() );
+	runtime_assert( iffilters_.size() == values_.size() );
+
+	iffilters_.push_back( testfilter );
+	thenfilters_.push_back( valuefilter );
+	values_.push_back( value );
+}
+
+void
+IfThenFilter::set_else( FilterCOP elsefilter, core::Real value ) {
+	elsefilter_ = elsefilter;
+	elsevalue_ = value;
+}
+
+bool
+IfThenFilter::apply( core::pose::Pose const & pose ) const
+{
+	core::Real const value( compute( pose ) );
+
+	TR<<"IfThenFilter value is "<<value<<", threshold is "<< threshold_ << "."<<std::endl;
+	return( value <= threshold_ );
+}
+
+FilterOP
+IfThenFilter::clone() const
+{
+	return new IfThenFilter( *this );
+}
+
+FilterOP
+IfThenFilter::fresh_instance() const
+{
+	return new IfThenFilter();
+}
+
+void
+IfThenFilter::report( std::ostream & out, core::pose::Pose const & pose ) const
+{
+	Real value( compute( pose ) );
+
+	out<<"IfThen filter returns: "<<value<<'\n';
+}
+
+core::Real
+IfThenFilter::report_sm( core::pose::Pose const & pose ) const
+{
+	return compute(pose);
+}
+
+core::Real
+IfThenFilter::compute( core::pose::Pose const & pose ) const
+{
+	assert( iffilters_.size() == thenfilters_.size() );
+	assert( iffilters_.size() == values_.size() );
+
+	for( core::Size ii(1); ii<= iffilters_.size(); ++ii ) {
+		assert( iffilters_[ii] );
+		if( iffilters_[ii]->apply( pose ) ) {
+			if( thenfilters_[ii] ) {
+				return thenfilters_[ii]->report_sm( pose );
+			} else {
+				return values_[ii];
+			}
+		}
+	}
+	if( iffilters_.size() == 0 ) {
+		TR.Warning << "WARNING: No conditional filters specified for IfThenFilter. Using else values only." << std::endl;
+	}
+	if( elsefilter_ ) {
+		return elsefilter_->report_sm( pose );
+	}
+
+	return elsevalue_;
+}
+
+
+void
+IfThenFilter::parse_my_tag(
+	TagPtr const tag,
+	moves::DataMap &,
+	Filters_map const & filters,
+	moves::Movers_map const & movers,
+	Pose const & )
+{
+	threshold( tag->getOption<core::Real>( "threshold", 0.0 ) );
+	utility::vector1< TagPtr > const sub_tags( tag->getTags() );
+	foreach(TagPtr tag_ptr, sub_tags){
+		std::string const tagname = tag_ptr->getName();
+		FilterOP valuefilter = 0; //default NULL
+		if( tag_ptr->hasOption("valuefilter") ) {
+			valuefilter = protocols::rosetta_scripts::parse_filter( tag_ptr->getOption<std::string>( "valuefilter" ), filters);
+		}
+		core::Real value( tag_ptr->getOption<core::Real>( "value", 0 ) );
+
+		if( tagname == "IF" || tagname == "ELIF" ){
+			if( ! tag_ptr->hasOption("testfilter") )  {
+				TR.Error << "In IfThenFilter, If and ELIF require a tesfilter option." << std::endl;
+				utility_exit_with_message("In IfThenFilter, If and ELIF require a tesfilter option.");
+			}
+			FilterOP testfilter = protocols::rosetta_scripts::parse_filter( tag_ptr->getOption<std::string>( "testfilter" ), filters);
+			add_condition( testfilter, valuefilter, value );
+		} else if ( tagname == "ELSE" ) {
+			set_else( valuefilter, value );
+		} else {
+			TR.Error << "Unknown subtag name in IfThenFilter: " << tagname << std::endl;
+			TR.Error << "   Acceptable values are:   IF   ELIF   ELSE" << std::endl;
+			utility_exit_with_message("Unknown subtag name in IfThenFilter: " + tagname );
+		}
+	}
+	TR << "IfThenFilter defined with " << iffilters_.size() << " conditions and " << ( elsefilter_ ? "an ": "no " ) << " else filter" << std::endl;
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // @brief FilterCreator methods
@@ -483,6 +608,13 @@ MoveBeforeFilterCreator::create_filter() const { return new MoveBeforeFilter; }
 
 std::string
 MoveBeforeFilterCreator::keyname() const { return "MoveBeforeFilter"; }
+
+FilterOP
+IfThenFilterCreator::create_filter() const { return new IfThenFilter; }
+
+std::string
+IfThenFilterCreator::keyname() const { return "IfThenFilter"; }
+
 
 } // filters
 } // protocols

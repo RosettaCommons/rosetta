@@ -71,6 +71,12 @@ public:
 	virtual std::string keyname() const;
 };
 
+class IfThenFilterCreator : public FilterCreator
+{
+public:
+	virtual FilterOP create_filter() const;
+	virtual std::string keyname() const;
+};
 
 } //namespace filters
 } //namespace protocols
