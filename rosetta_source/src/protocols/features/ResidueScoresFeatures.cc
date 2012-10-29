@@ -115,6 +115,7 @@ ResidueScoresFeatures::write_schema_to_db(
 ) const {
 	write_residue_scores_1b_table_schema(db_session);
 	write_residue_scores_2b_table_schema(db_session);
+	write_residue_scores_lr_2b_table_schema(db_session);
 }
 
 void
@@ -314,7 +315,9 @@ ResidueScoresFeatures::report_features(
 	boost::uuids::uuid const struct_id,
 	sessionOP db_session
 ){
-	insert_residue_scores_rows(pose, relevant_residues, struct_id, db_session );
+	Pose pose_copy(pose);
+	(*scfxn_)(pose_copy);
+	insert_residue_scores_rows(pose_copy, relevant_residues, struct_id, db_session);
 
 	return 0;
 }
@@ -405,7 +408,7 @@ ResidueScoresFeatures::insert_one_body_residue_score_rows(
 	insert_onebody.add_column("resNum");
 	insert_onebody.add_column("score_type_id");
 	insert_onebody.add_column("score_value");
-	insert_onebody.add_column("contex_dependent");
+	insert_onebody.add_column("context_dependent");
 
 	RowDataBaseOP batch_id_data(new RowData<Size>("batch_id", batch_id));
 	RowDataBaseOP struct_id_data(new RowData<uuid>("struct_id", struct_id));
@@ -421,7 +424,7 @@ ResidueScoresFeatures::insert_one_body_residue_score_rows(
 
 		{ // Context Independent One Body Energies
 			RowDataBaseOP context_dependent_data(
-				new RowData<bool>("context_dependnet", false));
+				new RowData<bool>("context_dependent", false));
 
 			emap.clear();
 			scfxn_->eval_ci_1b(rsd, pose, emap);
@@ -441,7 +444,7 @@ ResidueScoresFeatures::insert_one_body_residue_score_rows(
 		}
 		{ // Context Dependent One Body Energies
 			RowDataBaseOP context_dependent_data(
-				new RowData<bool>("context_dependnet", true));
+				new RowData<bool>("context_dependent", true));
 
 			emap.clear();
 			scfxn_->eval_cd_1b(rsd, pose, emap);
@@ -493,7 +496,7 @@ ResidueScoresFeatures::insert_two_body_residue_score_rows(
 	insert_twobody.add_column("resNum2");
 	insert_twobody.add_column("score_type_id");
 	insert_twobody.add_column("score_value");
-	insert_twobody.add_column("contex_dependent");
+	insert_twobody.add_column("context_dependent");
 
 	RowDataBaseOP batch_id_data(new RowData<Size>("batch_id", batch_id));
 	RowDataBaseOP struct_id_data(new RowData<uuid>("struct_id", struct_id));
@@ -525,13 +528,13 @@ ResidueScoresFeatures::insert_two_body_residue_score_rows(
 
 			RowDataBaseOP resNum1_data(
 				new RowData<Size>("resNum1", resNum1));
-			RowDataBaseOP resNum_data(
+			RowDataBaseOP resNum2_data(
 				new RowData<Size>("resNum2", resNum2));
 
 			{ // Context Independent Two Body Energies
 
 				RowDataBaseOP context_dependent_data(
-					new RowData<bool>("context_dependnet", false));
+					new RowData<bool>("context_dependent", false));
 
 				emap.clear();
 				scfxn_->eval_ci_2b(rsd, otherRsd, pose, emap);
@@ -545,14 +548,14 @@ ResidueScoresFeatures::insert_two_body_residue_score_rows(
 
 					insert_twobody.add_row(
 						make_vector(
-							batch_id_data, struct_id_data, resNum1_data, resNum1_data,
+							batch_id_data, struct_id_data, resNum1_data, resNum2_data,
 							score_type_id_data, score_value_data, context_dependent_data));
 
 				}
 			}
 			{ // Context Dependent Two Body Energies
 				RowDataBaseOP context_dependent_data(
-					new RowData<bool>("context_dependnet", true));
+					new RowData<bool>("context_dependent", true));
 
 				EnergyMap emap;
 				scfxn_->eval_cd_2b(rsd, otherRsd, pose, emap);
@@ -566,7 +569,7 @@ ResidueScoresFeatures::insert_two_body_residue_score_rows(
 
 					insert_twobody.add_row(
 						make_vector(
-							batch_id_data, struct_id_data, resNum1_data, resNum1_data,
+							batch_id_data, struct_id_data, resNum1_data, resNum2_data,
 							score_type_id_data, score_value_data, context_dependent_data));
 				}
 			}
@@ -596,7 +599,7 @@ ResidueScoresFeatures::insert_two_body_long_range_residue_score_rows(
 	insert_twobody_longrange.add_column("resNum2");
 	insert_twobody_longrange.add_column("score_type_id");
 	insert_twobody_longrange.add_column("score_value");
-	insert_twobody_longrange.add_column("contex_dependent");
+	insert_twobody_longrange.add_column("context_dependent");
 
 	RowDataBaseOP batch_id_data(new RowData<Size>("batch_id", batch_id));
 	RowDataBaseOP struct_id_data(new RowData<uuid>("struct_id", struct_id));
@@ -605,7 +608,7 @@ ResidueScoresFeatures::insert_two_body_long_range_residue_score_rows(
 
 	{ // Context Independent Long Range Two Body Energies
 		RowDataBaseOP context_dependent_data(
-			new RowData<bool>("context_dependnet", false));
+			new RowData<bool>("context_dependent", false));
 
 		for(ScoreFunction::CI_LR_2B_Methods::const_iterator
 					iter = scfxn_->ci_lr_2b_methods_begin(),
@@ -669,7 +672,7 @@ ResidueScoresFeatures::insert_two_body_long_range_residue_score_rows(
 	///  Context Dependent Long Range Two Body methods
 	{
 		RowDataBaseOP context_dependent_data(
-			new RowData<bool>("context_dependnet", true));
+			new RowData<bool>("context_dependent", true));
 
 		for(ScoreFunction::CD_LR_2B_Methods::const_iterator
 					iter = scfxn_->cd_lr_2b_methods_begin(),
