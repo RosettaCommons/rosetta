@@ -745,6 +745,12 @@ hbond_compute_energy(
 		energy += cos2ChiShifted;
 	}
 
+	Real const don_strength(database.don_strength(hbt.don_type()));
+	Real const acc_strength(database.acc_strength(hbt.acc_type()));
+	Real const bond_strength(sqrt(don_strength*acc_strength));
+
+	energy *= bond_strength;
+
 	// NOTE: if any deriv parameter omitted, we don't compute derivatives.
 	if (&dE_dxH == &DUMMY_DERIV) {
 		//energy *= chi_penalty; // multiply the chi penalty into the energy now.
@@ -752,7 +758,7 @@ hbond_compute_energy(
 	}
 
 	dE_dr =  dPr*FxD*FxH + dFSr*(PSxD*FxH + FxD*PSxH) + dFLr*(PLxD*FxH + FxD*PLxH);
-
+	dE_dr *= bond_strength;
 
 	if(use_cosAHD){
 		dE_dxD = dFxD*(Pr*FxH + FLr*PLxH + FSr*PSxH) + FxH*(FSr*dPSxD + FLr*dPLxD);

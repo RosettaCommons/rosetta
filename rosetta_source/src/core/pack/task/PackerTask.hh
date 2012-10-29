@@ -326,6 +326,7 @@ public:
 	virtual void show() const = 0;
 	virtual void show_residue_task( std::ostream & out, Size resid ) const = 0;
 	virtual void show_residue_task( Size resid ) const = 0;
+	virtual void show_all_residue_tasks( std::ostream & out ) const = 0;
 	virtual void show_all_residue_tasks() const = 0;
 
 	virtual

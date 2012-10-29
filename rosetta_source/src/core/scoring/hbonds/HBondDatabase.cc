@@ -93,6 +93,8 @@ HBondDatabase::HBondDatabase():
 	cosAHD_short_poly_lookup_(HB_EVAL_TYPE_COUNT, NULL),
 	cosAHD_long_poly_lookup_(HB_EVAL_TYPE_COUNT, NULL),
 	chi_poly_lookup_(HB_EVAL_TYPE_COUNT, NULL),
+	don_strength_lookup_(hbdon_MAX, 1.0),
+	acc_strength_lookup_(hbacc_MAX, 1.0),
 	weight_type_lookup_(HB_EVAL_TYPE_COUNT, hbw_NONE)
 {
 	HBondOptions hb_options; // default ctor reads options system, initializes default parameters tag from which this database will initialize itself.
@@ -121,6 +123,8 @@ HBondDatabase::HBondDatabase(
 	cosAHD_short_poly_lookup_(HB_EVAL_TYPE_COUNT, NULL),
 	cosAHD_long_poly_lookup_(HB_EVAL_TYPE_COUNT, NULL),
 	chi_poly_lookup_(HB_EVAL_TYPE_COUNT, NULL),
+	don_strength_lookup_(hbdon_MAX, 1.0),
+	acc_strength_lookup_(hbacc_MAX, 1.0),
 	weight_type_lookup_(HB_EVAL_TYPE_COUNT, hbw_NONE)
 {
 	initialize();
@@ -147,6 +151,8 @@ HBondDatabase::HBondDatabase(
 	cosAHD_short_poly_lookup_(src.cosAHD_short_poly_lookup_),
 	cosAHD_long_poly_lookup_(src.cosAHD_long_poly_lookup_),
 	chi_poly_lookup_(src.chi_poly_lookup_),
+	don_strength_lookup_(hbdon_MAX, 1.0),
+	acc_strength_lookup_(hbacc_MAX, 1.0),
 	weight_type_lookup_(src.weight_type_lookup_)
 {}
 
@@ -191,6 +197,13 @@ HBondDatabase::initialize()
 	initialize_HBPoly1D();
 	initialize_HBFadeInterval();
 	initialize_HBEval();
+
+	// Note if these aren't defined, then they are silently ignored
+	// Currently their use is experimental and are only defined in newer
+	// hbond parameter sets.
+	initialize_don_strength();
+	initialize_acc_strength();
+
 	initialized_ = true;
 }
 
@@ -597,6 +610,110 @@ HBondDatabase::initialize_HBEval()
 	}
 }
 
+void
+HBondDatabase::initialize_don_strength() {
+	string don_strength_fname =
+		"scoring/score_functions/hbonds/" + params_database_tag_ + "/DonStrength.csv";
+	izstream s;
+
+	try{
+		open(s, don_strength_fname, false);
+	} catch (...){
+		// Currently these are experimental so don't complain if they
+		// aren't defined.
+		return;
+	}
+
+
+	Size line_number(0);
+	Size expected_n_tokens(2);
+	vector1<string> tokens;
+	string line;
+	string don_type_name;
+	Real site_strength;
+	HBDonChemType don_chem_type;
+	while(getline(s, line)){
+		++line_number;
+		tokens = string_split(line, ',');
+		if(tokens.size() != expected_n_tokens){
+			stringstream message;
+			message
+				<< "BondStrength.csv:" << line_number << " "
+				<< "should have " << expected_n_tokens << ", "
+				<< "however it has " << tokens.size() << endl;
+			message
+				<< line << endl;
+			utility_exit_with_message(message.str());
+		}
+
+		Size i(1);
+		{
+			stringstream buf;
+			buf << tokens[i]; i++;
+			buf >> don_type_name;
+		}
+		{
+			stringstream buf;
+			buf << tokens[i]; i++;
+			buf >> site_strength;
+		}
+
+		don_chem_type = HBondTypeManager::don_chem_type_from_name(don_type_name);
+		don_strength_lookup_[don_chem_type] = site_strength;
+	}
+}
+
+void
+HBondDatabase::initialize_acc_strength() {
+	string acc_strength_fname =
+		"scoring/score_functions/hbonds/" + params_database_tag_ + "/AccStrength.csv";
+	izstream s;
+	try{
+		open(s, acc_strength_fname, false);
+	} catch (...){
+		// Currently these are experimental so don't complain if they
+		// aren't defined.
+		return;
+	}
+
+	Size line_number(0);
+	Size expected_n_tokens(2);
+	vector1<string> tokens;
+	string line;
+	string acc_type_name;
+	Real site_strength;
+	HBAccChemType acc_chem_type;
+	while(getline(s, line)){
+		++line_number;
+		tokens = string_split(line, ',');
+		if(tokens.size() != expected_n_tokens){
+			stringstream message;
+			message
+				<< "BondStrength.csv:" << line_number << " "
+				<< "should have " << expected_n_tokens << ", "
+				<< "however it has " << tokens.size() << endl;
+			message
+				<< line << endl;
+			utility_exit_with_message(message.str());
+		}
+
+		Size i(1);
+		{
+			stringstream buf;
+			buf << tokens[i]; i++;
+			buf >> acc_type_name;
+		}
+		{
+			stringstream buf;
+			buf << tokens[i]; i++;
+			buf >> site_strength;
+		}
+
+		acc_chem_type = HBondTypeManager::acc_chem_type_from_name(acc_type_name);
+		acc_strength_lookup_[acc_chem_type] = site_strength;
+	}
+}
+
 FadeIntervalCOP
 HBondDatabase::HBFadeInterval_from_name(
 	string const name
@@ -858,6 +975,25 @@ HBondDatabase::chi_poly_lookup(
 		utility_exit_with_message(message.str());
 	}
 	return p;
+}
+
+
+Real
+HBondDatabase::don_strength(
+	HBDonChemType const don_chem_type
+) const {
+	assert(don_chem_type >= 1 && don_chem_type <= hbdon_MAX );
+
+	return don_strength_lookup_[don_chem_type];
+}
+
+Real
+HBondDatabase::acc_strength(
+	HBAccChemType const acc_chem_type
+) const {
+	assert(acc_chem_type >= 1 && acc_chem_type <= hbacc_MAX );
+
+	return acc_strength_lookup_[acc_chem_type];
 }
 
 ///@details use get_hbond_evaluation_type(...) or HBEval_lookup(...)

@@ -31,7 +31,7 @@ namespace rotamer_recovery {
 
 ///@brief The reporting functionality for the rotamer recovery test
 ///
-/// Becides implementing the interface given in the base class
+/// Besides implementing the interface given in the base class
 /// RRReporter each RRReporter should have an entry in the conevience
 /// RotamerRecovery constructor so its use can be indicated by name.
 class RRReporter : public utility::pointer::ReferenceCount {

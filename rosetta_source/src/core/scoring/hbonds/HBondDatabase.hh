@@ -85,6 +85,14 @@ public:
 	void
 	initialize_HBEval();
 
+	/// @brief read table of donor bonding strengths
+	void
+	initialize_don_strength();
+
+	/// @brief read table of acceptor bonding strengths
+	void
+	initialize_acc_strength();
+
 	/// @brief read table of fade intervals
 	void
 	initialize_HBFadeInterval();
@@ -136,6 +144,14 @@ public:
 	///@brief find polynomial to hbgd_chi dimension
 	Polynomial_1dCOP
 	chi_poly_lookup( Size const hb_eval_type ) const;
+
+	///@brief get the bonding strength of a donor group
+	Real
+	don_strength( HBDonChemType const don_chem_type ) const;
+
+	///@brief get the bonding strength of an acceptor group
+	Real
+	acc_strength( HBAccChemType const ac_chem_type ) const;
 
 	///@brief find weight type for evaluation type
 	HBondWeightType
@@ -195,6 +211,8 @@ private:
 	utility::vector1< Polynomial_1dCOP > cosAHD_short_poly_lookup_;
 	utility::vector1< Polynomial_1dCOP > cosAHD_long_poly_lookup_;
 	utility::vector1< Polynomial_1dCOP > chi_poly_lookup_;
+	utility::vector1< Real > don_strength_lookup_;
+	utility::vector1< Real > acc_strength_lookup_;
 	utility::vector1< HBondWeightType > weight_type_lookup_;
 
 	static std::map< const std::string, HBondDatabaseCOP > initialized_databases_;

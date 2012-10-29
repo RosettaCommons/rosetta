@@ -1866,6 +1866,13 @@ PackerTask_::show_residue_task( Size resid ) const {
 }
 
 void
+PackerTask_::show_all_residue_tasks( std::ostream & out ) const {
+	for ( Size i=1, it_end = total_residue(); i <= it_end; ++i){
+		show_residue_task( out, i );
+	}
+}
+
+void
 PackerTask_::show_all_residue_tasks() const {
 	for ( Size i=1, it_end = total_residue(); i <= it_end; ++i){
 		show_residue_task( i );

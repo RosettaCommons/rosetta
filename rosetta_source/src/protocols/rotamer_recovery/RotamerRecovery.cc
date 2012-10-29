@@ -24,7 +24,6 @@
 #include <core/types.hh>
 #include <basic/options/option.hh>
 // AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <basic/Tracer.hh>
 // AUTO-REMOVED #include <protocols/moves/Mover.hh>
 
@@ -85,8 +84,9 @@ RotamerRecovery::RotamerRecovery(
 	RotamerRecovery const & src
 ) :
 	ReferenceCount(),
-	reporter_( src.reporter_ ),
-	comparer_( src.comparer_ )
+	protocol_( src.protocol_ ),
+	comparer_( src.comparer_ ),
+	reporter_( src.reporter_ )
 {}
 
 void

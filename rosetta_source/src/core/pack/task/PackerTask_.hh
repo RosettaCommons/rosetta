@@ -690,6 +690,7 @@ public:
 	virtual void show() const;
 	virtual void show_residue_task( std::ostream & out, Size resid ) const;
 	virtual void show_residue_task( Size resid ) const;
+	virtual void show_all_residue_tasks( std::ostream & out ) const;
 	virtual void show_all_residue_tasks() const;
 
 	///@brief read command line options (but not resfile) to set the state of the PackerTask, NOT IN CONSTRUCTOR

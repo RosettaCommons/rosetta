@@ -245,7 +245,7 @@ RotamerRecoveryFeatures::report_features(
 		task_factory_ = new TaskFactory();
 	}
 
-	PackerTaskOP packer_task(task_factory_->create_packer_task(pose));
+	PackerTaskOP packer_task(task_factory_->create_task_and_apply_taskoperations(pose));
 	packer_task->restrict_to_repacking();
 	packer_task->restrict_to_residues(relevant_residues);
 	packer_task->initialize_from_command_line();
