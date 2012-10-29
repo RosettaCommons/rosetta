@@ -41,4 +41,4 @@ if type -P sqlite3 &>/dev/null; then
 else
    echo "Please install the sqlite3 command line application to correctly run this test." > log_db_output
 fi
-#rm -rf features_IntegrationTest.db3
+rm -rf features_IntegrationTest.db3
