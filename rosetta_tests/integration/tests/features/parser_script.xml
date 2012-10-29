@@ -49,10 +49,11 @@
 
 			Energy-Function
 			<feature name=HBondParameterFeatures scorefxn=s/>
-			feature name=ScoreTypeFeatures/>                      //commented out to reduce integration test noise
-			feature name=ResidueScoresFeatures scorefxn=s/>       //commented out to reduce integration test noise
-			feature name=ResidueTotalScoresFeatures scorefxn=s/>  //commented out to reduce integration test noise
-			feature name=ScoreFunctionFeatures scorefxn=s/>       //commented out to reduce integration test noise
+			<feature name=ScoreTypeFeatures/>
+			<feature name=ResidueScoresFeatures scorefxn=s/>
+			<feature name=ResidueTotalScoresFeatures scorefxn=s/>
+			<feature name=StructureScoresFeatures scorefxn=s/>
+			<feature name=ScoreFunctionFeatures scorefxn=s/>
 
 			Experimental
 			<feature name=PdbDataFeatures/>
