@@ -7,6 +7,8 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
+########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
+
 sources = {
 	"" : [
 		"BitSet",
@@ -18,13 +20,13 @@ sources = {
                 "LexicographicalIterator",
                 "minmax",
                 "OrderedTuple",
+		"string_util",
                 #"TopScoreSelector",
 		"UTools",
 		"vector0",
 		"vector1",
 		"vector1_bool",
 		"vectorL",
-		"string_util",
 	],
 	"factory" : [
 		"Factory",
@@ -58,7 +60,6 @@ sources = {
 		"SignalHub",
 		"TokenHub",
 	],
-
         "sql_database" : [
         	"DatabaseSessionManagerTests",
 	],

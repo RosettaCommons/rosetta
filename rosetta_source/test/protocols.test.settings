@@ -7,24 +7,9 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
+########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
+
 sources = {
-        "loops" : [
-		"Loop",
-		"Loops",
-		"LoopsFileFallbackConfiguration",
-		"LoopsFileIO",
-		"LoopsFileLoader",
-		"LoopsFileOptions",
-		"LoopsUtil",
-        ],
-        "nonlocal" : [
-		"Chunk",
-		"NonlocalUtil",
-		"Region",
-        ],
-	"loophash" : [
-		"loophash",
-	],
 	"abinitio" : [
 		"FragmentMover",
 		"GunnCost",
@@ -40,14 +25,10 @@ sources = {
 		"APCluster",
 	],
 
-	"sparta" : [
-		"Sparta",
-	],
-
 	"comparative_modeling" : [
-		"util",
-		"ThreadingMover",
 		"ExtraThreadingMover",
+		"ThreadingMover",
+		"util",
 	],
 
 	"docking" : [
@@ -56,20 +37,26 @@ sources = {
 	],
 
 	"enzdes" : [
-		"LigInterfaceConstraints",
 		"HBondCalculatorsTest",
-		"PredockRotCenter",
+		"LigInterfaceConstraints",
 		"MatchConstraintFileInfo",
+		"PredockRotCenter",
 		"ResfileAutoRemap",
 	],
+
+	"features" : [
+		"BetaTurnDetectionFeatures",
+		"FeaturesReporterTests",
+		"ProteinSilentReportTests"
+        ],
 
 	"filters" : [
 		"BasicFilters",
 	],
 
 	"frag_picker" : [
-		"TorsionBinIO",
 		"FragmentCandidatesTests",
+		"TorsionBinIO",
 	],
 
 	"forge/build" : [
@@ -87,30 +74,47 @@ sources = {
 	"forge/methods" :[
 		"fold_tree_functions",
 	],
+
 	"genetic_algorithm" : [
 		"Entity",
 	],
 
-	"jobdist" : [
-		"PlainSilentFileJobDistributor",
-	],
 	"jd2" : [
 		"JD2ResourceManager",
 		"JD2ResourceManagerJobInputter",
 		"JD2ResourceManagerJobInputterSimplifiedInput",
 	],
+
        	"jd2/parser" : [
             "BluePrint",
 	],
 
+	"jobdist" : [
+		"PlainSilentFileJobDistributor",
+	],
+
 	"jumping" : [
-		"JumpSetup",
 		"Dssp",
+		"JumpSetup",
 	],
 
 	"ligand_docking": [
 		"ResidueTorsionRestraints",
  	],
+
+	"loophash" : [
+		"loophash",
+	],
+
+        "loops" : [
+		"Loop",
+		"Loops",
+		"LoopsFileFallbackConfiguration",
+		"LoopsFileIO",
+		"LoopsFileLoader",
+		"LoopsFileOptions",
+		"LoopsUtil",
+        ],
 
 	"match" : [
 		"BumpGrid",
@@ -130,14 +134,6 @@ sources = {
 		"InvrotTree",
 	],
 
-  "protein_interface_design" : [
-    "protein_interface_design",
-  ],
-
-	"rigid" : [
-		"RigidBodyMover",
-	],
-
 	"moves" : [
 		"BackrubMover",
 		"MoverContainer",
@@ -154,39 +150,63 @@ sources = {
                 "VicinitySamplingKinematicPerturber",
 	],
 
+        "nonlocal" : [
+		"Chunk",
+		"NonlocalUtil",
+		"Region",
+        ],
+
 	"optimize_weights" : [
 		"Arithmetic",
 		"DDGBindOptEData",
 	],
-	"pmut_scan" : [
-		"PointMutScanDriver",
-	],
+
 	"pack_daemon" : [
 		"DynamicAggregateFunction",
 		"EntityCorrespondence",
 		"PackDaemon",
 	],
-	"rotamer_recovery" : [
-		"RRComparer",
-		"RRReporter",
-		"RotamerRecovery"
+
+	"pmut_scan" : [
+		"PointMutScanDriver",
 	],
 
-	"features" : [
-		"BetaTurnDetectionFeatures",
-		"FeaturesReporterTests",
-		"ProteinSilentReportTests"
-        ],
+	"protein_interface_design" : [
+		"protein_interface_design",
+	],
 
 #	"qsar" : [
-#		"qsarMap"
+#		"qsarMap",
 #	],
+
+	"rigid" : [
+		"RigidBodyMover",
+	],
+
+	"rotamer_recovery" : [
+		"RotamerRecovery",
+		"RRComparer",
+		"RRReporter",
+	],
+
+	"scoring" : [
+		"InterchainEnvEnergy",
+		"InterchainPairEnergy",
+		"Interface",
+	],
+
         "simple_moves" : [
         	"FavorSequenceProfile",
         ],
+
         "simple_moves/oop" : [
         	"OopPuckMover",
         ],
+
+	"sparta" : [
+		"Sparta",
+	],
+
 	"toolbox/pose_metric_calculators" : [
 		"Neighbor_Calculators",
 #		SolubilityCalculator",
@@ -194,20 +214,14 @@ sources = {
 
 	"toolbox/task_operations" : [
                 "LimitAromaChi2Operation",
+		"ProteinInterfaceDesignOperation",
 		"RestrictOperations",
 		"RestrictNonSurfaceToRepackingOperation",
 		"RestrictToCDRH3Loop",
-		"ProteinInterfaceDesignOperation",
 	],
 
 	"util": [
 		"cout",
-	],
-
-	"scoring" : [
-    "InterchainEnvEnergy",
-    "InterchainPairEnergy",
-		"Interface",
 	],
 
 }
@@ -317,13 +331,6 @@ testinputfiles = [
 	"moves/test_in_short.pdb",
 	"moves/fullatom_typeset.test_in_short.pdb",
 	"moves/centroid_typeset.test_in_short.pdb",
-	"rigid/RigidBodyMover.pdb",
-	"rigid/RigidBodyPerturbMover_no_int.pdb",
-	"rigid/RigidBodyPerturbMover_int.pdb",
-	"rigid/RigidBodyPerturbNoCenterMover.pdb",
-	"rigid/RigidBodyRandomizeMover.pdb",
-	"rigid/RigidBodySpinMover.pdb",
-	"rigid/RigidBodyTransMover.pdb",
 	"moves/smallmoves_out.pdb",
 	"moves/shearmoves_out.pdb",
 	"moves/score12.pdb",
@@ -338,8 +345,23 @@ testinputfiles = [
 	"pmut_scan/mutants.txt",
 	"pmut_scan/shortloop.01.pdb.gz",
 	"pmut_scan/shortloop.02.pdb.gz",
+	"rigid/RigidBodyMover.pdb",
+	"rigid/RigidBodyPerturbMover_no_int.pdb",
+	"rigid/RigidBodyPerturbMover_int.pdb",
+	"rigid/RigidBodyPerturbNoCenterMover.pdb",
+	"rigid/RigidBodyRandomizeMover.pdb",
+	"rigid/RigidBodySpinMover.pdb",
+	"rigid/RigidBodyTransMover.pdb",
+	"scoring/Interface.u",
+	"scoring/dock_in.pdb",
         "simple_moves/1bl0_auto.fasta.pssm",
 	"simple_moves/oop/oop_test.pdb",
+	"sparta/2kywA.pdb",
+	"sparta/data_16988.tab",
+	"sparta/data_17280.tab",
+	"sparta/solution_0022372568.ir_solution.pdb",
+	"sparta/SAM-T08-server_TS3.pdb",
+	"sparta/17280_trim.tab",
 	"toolbox/task_operations/RestrictToInterfaceOperation.u",
 	"toolbox/task_operations/RestrictToInterfaceVectorOperation.u",
 	"toolbox/task_operations/RestrictToNeighborhoodOperation.u",
@@ -350,12 +372,4 @@ testinputfiles = [
 	"util/aHo_antibody.pdb",
         "util/demo_loopfile.loops",
 	"util/test_in.pdb",
-	"scoring/Interface.u",
-	"scoring/dock_in.pdb",
-	"sparta/2kywA.pdb",
-	"sparta/data_16988.tab",
-	"sparta/data_17280.tab",
-	"sparta/solution_0022372568.ir_solution.pdb",
-	"sparta/SAM-T08-server_TS3.pdb",
-	"sparta/17280_trim.tab",
 ]

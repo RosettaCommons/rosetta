@@ -7,47 +7,39 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
+########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
+
 sources = {
 	"" : [
+		"agglomerative_hierarchical_clustering",
+		"ClusteringTreeNode",
 		"color_util",
-		"interpolate",
-		"util",
 		"conversions",
 		"HomogeneousTransform",
+		"interpolate",
 		"MultiDimensionalHistogram",
 		"numeric.functions",
 		"PCA",
-    "prob_util",
-		"statistics.functions",
-		"sphericalVector",
+		"prob_util",
 		"Quaternion",
 		"random",
+		"sphericalVector",
+		"statistics.functions",
+		"util",
 		"xyz.functions",
 		"xyzMatrix",
 		"xyzTriple",
 		"xyzVector",
-		"ClusteringTreeNode",
-		"agglomerative_hierarchical_clustering",
-	],
-	"random" : [
-                "DistributionSampler",
-		"reservoir_sample",
-                "WeightedReservoirSampler",
-		"WeightedSampler",
-	],
-	"geometry" : [
-		"BoundingBox",
 	],
 	"fourier" : [
 		"fft",
 	],
+	"geometry" : [
+		"BoundingBox",
+	],
 	"histograms" : [
 		"OneDHistogram",
 		"TwoDHistogram",
-	],
-
-	"kdtree" : [
-		"kdtree",
 	],
 	"interpolation" : [
 		"Histogram",
@@ -58,12 +50,23 @@ sources = {
 		"Cubic_spline",
 		"TricubicSpline",
 	],
+	"kdtree" : [
+		"kdtree",
+	],
+	"random" : [
+                "DistributionSampler",
+		"reservoir_sample",
+                "WeightedReservoirSampler",
+		"WeightedSampler",
+	],
+
 }
 include_path = [ "#external/cxxtest", "#" ]
 library_path = []
 libraries    = [ "sqlite3", "cppdb", "basic", "numeric", "utility", "ObjexxFCL", "z",]
 subprojects  = []
-testinputfiles = [ "mt19937.u",
-                   "sampling.prob",
-                   "interpolation/Histogram_sample.hist",
-                 ]
+testinputfiles = [ 
+	"interpolation/Histogram_sample.hist",
+	"mt19937.u",
+	"sampling.prob",
+]

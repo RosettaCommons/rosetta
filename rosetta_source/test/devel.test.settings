@@ -7,6 +7,8 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
+########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
+
 sources = {
 	"vardist_solaccess" : [
 		"VarSolDRotamerDots",
@@ -54,15 +56,15 @@ libraries    = ["devel",
 "sqlite3" ]
 subprojects  = []
 testinputfiles = [
-    "znhash/ZNX.params",
-    "znhash/ZNX.cst",
     "znhash/1EER_A.pdb",
-    "znhash/UM_1_H5E11_95_1EER_A_ZNX_1.pdb",
-    "znhash/ZNX_1H_2DE.cst",
     "znhash/1EER_cn4_0043.pdb",
     "znhash/match_cst_pairs.txt",
+    "znhash/UM_1_H5E11_95_1EER_A_ZNX_1.pdb",
     "znhash/UM_39_H104D100_28_1EER_A_ZNX_1.pdb",
     "znhash/UM_50_H14E10_32_1EER_A_ZNX_1.pdb",
     "znhash/UM_26_H100D103_1_1EER_A_ZNX_1.pdb",
     "znhash/UM_41_H13E17_3_1EER_A_ZNX_1.pdb",
+    "znhash/ZNX.cst",
+    "znhash/ZNX.params",
+    "znhash/ZNX_1H_2DE.cst",
 ]

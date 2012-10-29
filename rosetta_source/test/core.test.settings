@@ -7,21 +7,23 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
+########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
+
 sources = {
 	"chemical" : [
-    "AtomTests",
+		"AtomTests",
 		"AtomTypeSet",
 		"AtomTypeDatabaseIOTests",
-    "automorphism",
-    "MMAtomTypeSet",
+		"automorphism",
+		"MMAtomTypeSet",
 		"OrbitalTests",
-    "ResidueTypeBloatTests",
-    "ResidueTypeTests",
+		"ResidueTypeBloatTests",
+		"ResidueTypeTests",
 		"ResidueTypeSetTests",
 	],
-    "chemical/carbohydrates" : [
-        "CarbohydrateInfo",
-    ],
+	"chemical/carbohydrates" : [
+		"CarbohydrateInfo",
+	],
 	"chemical/orbitals" :[
 		"OrbitalTypeSet",
 	],
@@ -34,7 +36,6 @@ sources = {
 		"SymmDataLoader",
 		"SymmetricConformation",
 	],
-
 	"fragment" : [
                 "BBTorsionSRFD",
                 "ConstantLengthFragments",
@@ -46,9 +47,9 @@ sources = {
 		"vall"
 	],
 	"graph" : [
+		"ArrayPool",
 		"DisjointSets",
 		"Graph",
-		"ArrayPool",
 	],
 	"grid" : [
 		"CartGrid",
@@ -59,17 +60,17 @@ sources = {
 	"io" : [
 		"PDB_IO",
 	],
+	"io/atom_tree_diffs": [
+		"atom_tree_diff",
+	],
 	"io/pdb" : [
 		"Field",
 		"HeaderInformationTests",
 	],
-	"io/atom_tree_diffs": [
-		"atom_tree_diff",
-	],
 	"io/silent" : [
-		"protein_silent",
-		"pdb_silent",
 		"binary_protein_silent",
+		"pdb_silent",
+		"protein_silent",
 		"symmetric_binary_protein_silent",
 		# Fails on testing server but not on
 		# Linux 3.2.0-31-generic x86_64
@@ -79,12 +80,6 @@ sources = {
 		"FoldTree",
 		"MoveMap",
 	],
-	"scoring/mm" : [
-		"MMBondAngleLibrary",
-		"MMBondAngleScore",
-		"MMTorsionLibrary",
-		"MMTorsionScore"
-	],
 	"optimization" : [
 		"Minimizer",
 		"ParticleSwarmMinimizer",
@@ -92,7 +87,6 @@ sources = {
 	"optimization/symmetry" : [
 		"SymmetricMinimizer",
 	],
-
 	"pack" : [
                 "annealer/FASTERAnnealer",
                 "dunbrack/DunbrackEnergy",
@@ -105,14 +99,14 @@ sources = {
 		"interaction_graph/SurfaceInteractionGraph",
 		"min_pack",
 		"RotamerTrials",
+		"rotamer_set/RotamerSet",
+		"rotamer_set/RotamerSubsets",
 		"SymmetricRotamerTrials",
 		"task/PackerTask",
 		"task/ResfileReader",
 		"task/fix_his_tautomer",
                 "task/Resfile_Silent",
                 "task/operation/TaskOperations",
-		"rotamer_set/RotamerSet",
-		"rotamer_set/RotamerSubsets",
 		"scmin/AtomTreeCollection",
 		"scmin/SCMinMinimizerMap",
 		"scmin/SCMinMultifunc",
@@ -133,38 +127,31 @@ sources = {
 		"ScoreTest",
 		"SurfacePotential",
 		"UnfoldedStatePotential",
-		"VirtualResidues",
 		"use_bicubic_interpolation",
-	],
-	"scoring/etable" : [
-		"EtableEnergy",
-		"TableVsAnalyticEtable",
-	],
-	"scoring/symmetry" : [
-		"SymmetricScoreTest",
+		"VirtualResidues",
 	],
         "scoring/carbon_hbonds" : [
                 "CarbonHBondEnergy",
-        ],
-        "scoring/custom_pair_distance" : [
-                "FullatomCustomPairDistanceEnergy",
         ],
 	"scoring/constraints" : [
 		"AngleConstraint",
 		"AtomPairConstraint",
 		"BigBinConstraint",
+		"BoundConstraint",
 		"ConstraintSetRemapping",
 		"ConstraintsEnergy",
 		"DihedralConstraint",
 		"HarmonicFunc",
 		"GaussianFunc",
-		"util",
-		"SplineFunc",
-		"BoundConstraint",
 		"ScalarWeightedFunc",
 		"SiteConstraint",
                 "SOGFunc",
+		"SplineFunc",
+		"util",
 	],
+        "scoring/custom_pair_distance" : [
+                "FullatomCustomPairDistanceEnergy",
+        ],
 	"scoring/disulfides" : [
 		"FullatomDisulfideEnergy",
 	],
@@ -174,6 +161,10 @@ sources = {
 	"scoring/electron_density" : [
 		"ElectronDensityLoader",
 	],
+	"scoring/etable" : [
+		"EtableEnergy",
+		"TableVsAnalyticEtable",
+	],
         "scoring/geometric_solvation" : [
                 "GeometricSolEnergy",
                 "OccludedHbondSolEnergy",
@@ -182,12 +173,12 @@ sources = {
 		"HackElecEnergy",
 	],
         "scoring/hbonds" : [
+                "HBondDatabaseTest",
+                "HBondDerivTest",
                 "HBondEnergy",
                 "HBonds",
                 "HBondsForDemos",
                 "polynomial",
-                "HBondDatabaseTest",
-                "HBondDerivTest",
         ],
 	"scoring/methods" : [
 		"ChainbreakEnergy",
@@ -204,18 +195,26 @@ sources = {
 		"UnfoldedStateEnergy",
 		"YHHPlanarityEnergy",
 	],
-	"scoring/nv" : [
-		"NVscore",
-		"NVlookup"
+	"scoring/mm" : [
+		"MMBondAngleLibrary",
+		"MMBondAngleScore",
+		"MMTorsionLibrary",
+		"MMTorsionScore"
 	],
-
+	"scoring/nv" : [
+		"NVlookup",
+		"NVscore",
+	],
 	"scoring/orbitals" : [
 		"OrbitalsScore"
 	],
+	"scoring/symmetry" : [
+		"SymmetricScoreTest",
+	],
 	"sequence" : [
 		"ScoringSchemes",
-		"SequenceMapping",
 		"SequenceAlignment",
+		"SequenceMapping",
 		"SequenceProfile",
 		"SequenceUtil",
 	],
@@ -288,12 +287,6 @@ testinputfiles = [
 	"io/test_in.pdb",
 	"io/test_in_idealized.pdb",
         "kinematics/test.pdb",
-        "scoring/2GB3.pdb",
-	"scoring/4dO8B.pdb",
-	"scoring/model-5.pdb",
-	"scoring/mm/MMBondAngleScoreTests.u",
-	"scoring/mm/mm_torsion_params.txt",
-	"scoring/mm/par_all27_prot_na.prm",
 	"optimization/test_in.pdb",
         "optimization/symmetry/fibril.symm",
         "optimization/symmetry/3dg1_INPUT.pdb",
@@ -325,6 +318,8 @@ testinputfiles = [
         "pack/task/operation/DisallowIfNonnativeTaskOperation.u",
         "pack/task/operation/ReplicateTaskOperation.u",
 	"pose/pdbinfo_test_in.pdb",
+        "scoring/2GB3.pdb",
+	"scoring/4dO8B.pdb",
 	"scoring/1pqc.params",
 	"scoring/1pqc_0001.pdb",
 	"scoring/1pqc_0003.pdb",
@@ -340,8 +335,6 @@ testinputfiles = [
 	"scoring/dunbrack/test_in.pdb",
 	"scoring/dunbrack/test_in_rotamers.dat",
 	"scoring/electron_density/1onc_8A.mrc",
-	"scoring/test.wts",
-	"scoring/test.wts_patch",
 	"scoring/fa_atr.data",
 	"scoring/fa_intra_atr.data",
 	"scoring/fa_intra_rep.data",
@@ -360,6 +353,11 @@ testinputfiles = [
 	"scoring/methods/score3_in.silent_out",
 	"scoring/methods/test_in.pdb",
 	"scoring/mm_twist.data",
+	"scoring/mm/MMBondAngleScoreTests.u",
+	"scoring/mm/mm_torsion_params.txt",
+	"scoring/mm/par_all27_prot_na.prm",
+	"scoring/model-5.pdb",
+	"scoring/nonideal_glycine.pdb",
 	"scoring/rms_util.u",
 	"scoring/symmetry/2akf.pdb",
 	"scoring/symmetry/atom_pair_constraint.data",
@@ -378,8 +376,9 @@ testinputfiles = [
 	"scoring/symmetry/sym_def.dat",
 	"scoring/symmetry/symm_test.pdb",
 	"scoring/symmetry/test_in.pdb",
+	"scoring/test.wts",
+	"scoring/test.wts_patch",
 	"scoring/test_in.pdb",
-	"scoring/nonideal_glycine.pdb",
 	"sequence/1aho_.fasta.pssm",
 	"sequence/1aho_hom.fasta.pssm",
 	"sequence/test.aln",
