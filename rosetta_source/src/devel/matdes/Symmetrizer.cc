@@ -190,7 +190,8 @@ Symmetrizer::parse_my_tag( TagPtr const tag,
 										 Pose const & ) {
 
 	// Turn symmetry hacks on
-	basic::options::option[basic::options::OptionKeys::symmetry::symmetry_definition].value( "dummy" );
+	if( !basic::options::option[basic::options::OptionKeys::symmetry::symmetry_definition].user() )
+		basic::options::option[basic::options::OptionKeys::symmetry::symmetry_definition].value( "dummy" );
 
 	using std::string;
 	symm_file_ = tag->getOption<string>( "symm_file" );

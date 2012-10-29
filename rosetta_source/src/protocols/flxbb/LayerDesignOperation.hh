@@ -13,6 +13,7 @@
 /// accessible surface of mainchain + CB. If resfile is read before calling this operation,
 /// this operation is not applied for the residues defined by PIKAA.
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
+/// @modified Javier Castellanos (javiercv@uw.edu )
 
 //  The following are using amino acids for each layer
 /// @CORE
@@ -73,11 +74,15 @@ public:
 	typedef TaskOperation parent;
 	typedef utility::tag::TagPtr TagPtr;
 	typedef std::map< std::string, TaskOperationOP > TaskLayers;
+	typedef std::pair< std::string, TaskOperationOP > TaskLayer;
 
-	// map of maps, the first key is the layer(core, boundary, intermediate) and the second key
-	// is the secondary structure (L,E,H). The values are string of one letter code aminoacids to
-	// be used in each layer.
-	typedef std::map< std::string, std::map< std::string, std::string > > LayerResidues;
+	// Layer Residues is a map of maps, the first key is the layer(core, boundary, intermediate) 
+	// and the second key is the secondary structure (L,E,H). The values are string of one letter
+	// code aminoacids to be used in each layer.
+	typedef std::map<  std::string, std::string > LayerDefinitions;
+	typedef std::pair< std::string, std::string > LayerDefinition;
+	typedef std::map< std::string,  LayerDefinitions > LayerResidues;
+	typedef std::pair< std::string, LayerDefinitions > Layer;
 
 public:
 
@@ -122,6 +127,8 @@ public:
 		use_original_ = true;
 	}
 
+	///@brief make pymol scripts showing the different layers
+	void make_pymol_script(bool value) { make_pymol_script_ = value; }
 
 public:
 
@@ -142,16 +149,19 @@ private:
 
 private:
 
+	void write_pymol_script( Pose const & pos, toolbox::SelectResiduesByLayerOP srbl, std::string const & filename ) const;
+
 	/// @brief add helix capping ?
 	bool add_helix_capping_;
 
 	/// @brief use original sequence for not designed layer ? otherwise the residues will be changed to ala
 	bool use_original_;
 
-	/// @brief
 	bool verbose_;
 
 	bool restrict_restypes_;
+
+	bool make_pymol_script_;
 
 	LayerResidues layer_residues_;
 	std::map< std::string, bool > design_layer_;
@@ -164,6 +174,22 @@ private:
 
 };
 
+// utility class for chaining together task operations
+class CombinedTaskOperation : public core::pack::task::operation::TaskOperation {
+	typedef core::pack::task::operation::TaskOperationOP TaskOperationOP;
+	typedef utility::vector1< TaskOperationOP > VecTaskOP;
+public:
+	CombinedTaskOperation(VecTaskOP ops);
+	/// @brief apply
+	virtual void apply( Pose const & pose, PackerTask & task ) const;
+	/// @brief make clone
+	virtual TaskOperationOP clone() const { return new CombinedTaskOperation( *this ); }
+
+private:
+	VecTaskOP task_operations_;
+};
+
+typedef utility::pointer::owning_ptr< CombinedTaskOperation > CombinedTaskOperationOP;
 
 } // flxbb
 } // protocols

@@ -207,7 +207,7 @@ void
 BuildingBlockInterfaceOperation::parse_tag( TagPtr tag )
 {
   nsub_bblock_ = tag->getOption<core::Size>("nsub_bblock", 1);
-	sym_dof_names_ = tag->getOption< std::string >( "sym_dof_names", "" );
+	sym_dof_names_ = tag->getOption< std::string >( "sym_dof_names", "JS1" );
 	contact_dist_ = tag->getOption<core::Real>("contact_dist", 10.0);
 	bblock_dist_ = tag->getOption<core::Real>("bblock_dist", 5.0);
 	fa_rep_cut_ = tag->getOption<core::Real>("fa_rep_cut", 3.0);

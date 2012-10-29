@@ -218,7 +218,7 @@ GetRBDOFValues::parse_my_tag(
 	core::pose::Pose const & )
 {
   jump_id( tag->getOption< int >( "jump", 1 ) );
-	sym_dof_name( tag->getOption< std::string >( "sym_dof_name" , "" ) );
+	sym_dof_name( tag->getOption< std::string >( "sym_dof_name" , "JS1" ) );
 	verbose( tag->getOption< bool >("verbose", 0) );
 	axis( tag->getOption< char >("axis", 'x') );
 	radial_disp( tag->getOption< bool >("get_disp", 0 ) );

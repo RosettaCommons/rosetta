@@ -165,7 +165,7 @@ TaskAwareAlaScan::parse_my_tag(
 {
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	jump( tag->getOption< Size >( "jump", 1 ) );
-	sym_dof_name( tag->getOption< std::string >( "sym_dof_name", "" ) );
+	sym_dof_name( tag->getOption< std::string >( "sym_dof_name", "JS1" ) );
 	repeats( tag->getOption< core::Size >( "repeats", 1 ) );
 	std::string const scorefxn_name( tag->getOption< std::string >( "scorefxn", "score12" ));
 	repack( tag->getOption< bool >( "repack", 1 ) );

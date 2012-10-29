@@ -33,6 +33,8 @@
 #include <basic/Tracer.hh>
 
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
 
 namespace protocols {
@@ -148,6 +150,8 @@ DetectSymmetry::apply(Pose & pose) {
 	std::string path_to_symdef = basic::database::full_name(db_file);
 	core::conformation::symmetry::SymmData symmdef;
 	symmdef.read_symmetry_data_from_file( path_to_symdef );
+	// Turn symmetry hacks on
+	basic::options::option[basic::options::OptionKeys::symmetry::symmetry_definition].value( db_file );
 	core::pose::symmetry::make_symmetric_pose( new_pose, symmdef );
 	pose = new_pose;
 	

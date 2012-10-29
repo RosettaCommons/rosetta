@@ -260,7 +260,7 @@ ClashCheckFilter::parse_my_tag(
 {
   task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
   clash_dist( tag->getOption< core::Real >( "clash_dist", 3.5 ) );
-	sym_dof_names_ = tag->getOption< std::string >( "sym_dof_names", "" );
+	sym_dof_names_ = tag->getOption< std::string >( "sym_dof_names", "JS1" );
   nsub_bblock_ = tag->getOption<core::Size>("nsub_bblock", 1);
 	threshold_ = tag->getOption<core::Size>( "cutoff", 0 );
 	verbose_ = tag->getOption< bool >( "verbose", 0 );
