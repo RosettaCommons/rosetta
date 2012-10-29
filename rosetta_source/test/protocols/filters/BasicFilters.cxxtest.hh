@@ -156,4 +156,87 @@ public:
 		TS_ASSERT_EQUALS( testfilter.report_sm( *testpose_), 3 );
 	}
 
+	void test_weights() {
+		protocols::filters::IfThenFilter filter;
+		filter.threshold( 0 );
+		filter.set_else( 0 , -10, 2 );
+		TS_ASSERT_EQUALS( filter.report_sm(*testpose_), -20 );
+
+		protocols::filters::FilterOP sf5 = new StubFilter( true, -5 );
+		filter.set_else( sf5 , 11.25, 3 );
+		TS_ASSERT_EQUALS( filter.report_sm(*testpose_), -15 );
+
+		protocols::filters::FilterOP sfT = new StubFilter( true, 222);
+		protocols::filters::FilterOP sfF = new StubFilter( false, 225);
+		protocols::filters::FilterOP sfV = new StubFilter( true, 335);
+
+		protocols::filters::IfThenFilter filter1;
+		filter1.threshold( 0 );
+		filter1.set_else( 0 , -111 );
+		filter1.add_condition( sfT, 0, 333, false, 3 );
+		TS_ASSERT_EQUALS( filter1.report_sm(*testpose_), 999 );
+
+		protocols::filters::IfThenFilter filter2;
+		filter2.threshold( 0 );
+		filter2.set_else( 0 , -112 );
+		filter2.add_condition( sfT, sfV, 333, false, 2 );
+		TS_ASSERT_EQUALS( filter2.report_sm(*testpose_), 670 );
+	}
+
+	void test_floor() {
+		protocols::filters::IfThenFilter filter;
+		filter.threshold( -5 );
+		filter.set_else( 0 , -10, 2 );
+		TS_ASSERT( filter.apply(*testpose_) );
+
+		filter.set_lower_threshold( true );
+		TS_ASSERT( ! filter.apply(*testpose_) );
+
+		filter.threshold( -30 );
+		TS_ASSERT( filter.apply(*testpose_) );
+	}
+
+	void test_invert() {
+		protocols::filters::FilterOP sfF1 = new StubFilter( false, 111);
+		protocols::filters::FilterOP sfF2 = new StubFilter( false, 222);
+		protocols::filters::FilterOP sfF3 = new StubFilter( false, 333);
+		protocols::filters::FilterOP sfT = new StubFilter( true, 225);
+
+		protocols::filters::IfThenFilter filter;
+		filter.threshold( 0 );
+		filter.set_else( 0 , -10 );
+
+		filter.add_condition( sfF1, 0, 1110, false );
+		filter.add_condition( sfT, 0, 2220, true );
+		filter.add_condition( sfF2, 0, 9999, true );
+		filter.add_condition( sfF3, 0, 3330 );
+
+		TS_ASSERT_EQUALS( filter.report_sm(*testpose_), 9999 );
+	}
+
+	void test_parse_invertweights() {
+		DataMap data;
+		Filters_map filters;
+		Movers_map movers;
+
+		filters["sfF1"] = new StubFilter( false, 1 );
+		filters["sfF2"] = new StubFilter( false, 2 );
+		filters["sfF3"] = new StubFilter( false, 3 );
+		filters["sfT10"] = new StubFilter( true, 10 );
+		filters["sfT20"] = new StubFilter( true, 20 );
+		filters["sfT99"] = new StubFilter( true, 99 );
+
+		protocols::filters::IfThenFilter  testfilter;
+		TagPtr tag = tagptr_from_string("<IfThenFilter name=test threshold=2 lower_threshold=1>\n"
+				"    <IF testfilter=sfF1 valuefilter=sfT10 weight=60/>\n"
+				"    <ELIF testfilter=sfF2 inverttest=1 valuefilter=sfF3 weight=2/>\n"
+				"    <ELSE valuefilter=sfT99 weight=5/>\n"
+				" </IfThenFilter>\n");
+
+		testfilter.parse_my_tag( tag, data, filters, movers, *testpose_ );
+
+		TS_ASSERT_EQUALS( testfilter.report_sm( *testpose_), 6 );
+		TS_ASSERT( testfilter.apply(*testpose_) );
+	}
+
 };

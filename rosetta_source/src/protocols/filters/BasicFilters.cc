@@ -10,7 +10,7 @@
 /// @file protocols/filters/BasicFilters.cc
 /// @brief
 /// @detailed
-///	  Contains currently:
+///  Contains currently:
 ///
 ///
 /// @author Florian Richter, Sarel Fleishman (sarelf@uw.edu), Rocco Moretti (rmoretti@u.washington.edu)
@@ -451,24 +451,30 @@ MoveBeforeFilter::parse_my_tag(
 IfThenFilter::IfThenFilter() :
 		Filter( "IfThenFilter" ),
 		elsevalue_(0),
-		threshold_(0)
+		threshold_(0),
+		floor_(false)
  {}
 IfThenFilter::~IfThenFilter() {}
 
 void
-IfThenFilter::add_condition( FilterCOP testfilter, FilterCOP valuefilter, core::Real const value ) {
+IfThenFilter::add_condition( FilterCOP testfilter, FilterCOP valuefilter, core::Real value, bool invert, core::Real weight) {
 	runtime_assert( iffilters_.size() == thenfilters_.size() );
 	runtime_assert( iffilters_.size() == values_.size() );
+	runtime_assert( iffilters_.size() == weights_.size() );
+	runtime_assert( iffilters_.size() == invert_.size() );
 
 	iffilters_.push_back( testfilter );
 	thenfilters_.push_back( valuefilter );
 	values_.push_back( value );
+	weights_.push_back( weight );
+	invert_.push_back( invert );
 }
 
 void
-IfThenFilter::set_else( FilterCOP elsefilter, core::Real value ) {
+IfThenFilter::set_else( FilterCOP elsefilter, core::Real value, core::Real elseweight ) {
 	elsefilter_ = elsefilter;
 	elsevalue_ = value;
+	elseweight_ = elseweight;
 }
 
 bool
@@ -476,8 +482,14 @@ IfThenFilter::apply( core::pose::Pose const & pose ) const
 {
 	core::Real const value( compute( pose ) );
 
-	TR<<"IfThenFilter value is "<<value<<", threshold is "<< threshold_ << "."<<std::endl;
-	return( value <= threshold_ );
+	TR<<"IfThenFilter value is "<<value<<", threshold is "<< threshold_;
+	if( floor_ ) {
+		TR << " (lower limit)" << std::endl;
+		return value >= threshold_;
+	} else {
+		TR << " (upper limit)" << std::endl;
+		return value <= threshold_;
+	}
 }
 
 FilterOP
@@ -511,14 +523,16 @@ IfThenFilter::compute( core::pose::Pose const & pose ) const
 {
 	assert( iffilters_.size() == thenfilters_.size() );
 	assert( iffilters_.size() == values_.size() );
+	assert( iffilters_.size() == weights_.size() );
+	assert( iffilters_.size() == invert_.size() );
 
 	for( core::Size ii(1); ii<= iffilters_.size(); ++ii ) {
 		assert( iffilters_[ii] );
-		if( iffilters_[ii]->apply( pose ) ) {
+		if( invert_[ii] ^ iffilters_[ii]->apply( pose ) ) { // XOR: if invert_ is true, true becomes false and false becomes true
 			if( thenfilters_[ii] ) {
-				return thenfilters_[ii]->report_sm( pose );
+				return weights_[ii] * thenfilters_[ii]->report_sm( pose );
 			} else {
-				return values_[ii];
+				return weights_[ii] * values_[ii];
 			}
 		}
 	}
@@ -526,10 +540,10 @@ IfThenFilter::compute( core::pose::Pose const & pose ) const
 		TR.Warning << "WARNING: No conditional filters specified for IfThenFilter. Using else values only." << std::endl;
 	}
 	if( elsefilter_ ) {
-		return elsefilter_->report_sm( pose );
+		return elseweight_ * elsefilter_->report_sm( pose );
 	}
 
-	return elsevalue_;
+	return elseweight_ * elsevalue_;
 }
 
 
@@ -538,10 +552,15 @@ IfThenFilter::parse_my_tag(
 	TagPtr const tag,
 	moves::DataMap &,
 	Filters_map const & filters,
-	moves::Movers_map const & movers,
+	moves::Movers_map const &,
 	Pose const & )
 {
 	threshold( tag->getOption<core::Real>( "threshold", 0.0 ) );
+	set_lower_threshold( tag->getOption<bool>( "lower_threshold", false ) );
+	if( tag->hasOption( "lower_threshold" ) && ! tag->hasOption( "threshold" ) ){
+		TR.Warning << "WARNING: In IfThenFilter, lower_threshold set without setting threshold." << std::endl;
+		TR.Warning << "WARNING: Note that lower_threshold is a true/false flag, not a real-valued setting." << std::endl;
+	}
 	utility::vector1< TagPtr > const sub_tags( tag->getTags() );
 	foreach(TagPtr tag_ptr, sub_tags){
 		std::string const tagname = tag_ptr->getName();
@@ -550,6 +569,7 @@ IfThenFilter::parse_my_tag(
 			valuefilter = protocols::rosetta_scripts::parse_filter( tag_ptr->getOption<std::string>( "valuefilter" ), filters);
 		}
 		core::Real value( tag_ptr->getOption<core::Real>( "value", 0 ) );
+		core::Real weight( tag_ptr->getOption<core::Real>( "weight", 1 ) );
 
 		if( tagname == "IF" || tagname == "ELIF" ){
 			if( ! tag_ptr->hasOption("testfilter") )  {
@@ -557,16 +577,19 @@ IfThenFilter::parse_my_tag(
 				utility_exit_with_message("In IfThenFilter, If and ELIF require a tesfilter option.");
 			}
 			FilterOP testfilter = protocols::rosetta_scripts::parse_filter( tag_ptr->getOption<std::string>( "testfilter" ), filters);
-			add_condition( testfilter, valuefilter, value );
+			bool inverttest = tag_ptr->getOption< bool >( "inverttest", false );
+			add_condition( testfilter, valuefilter, value, inverttest, weight );
 		} else if ( tagname == "ELSE" ) {
-			set_else( valuefilter, value );
+			set_else( valuefilter, value, weight );
 		} else {
 			TR.Error << "Unknown subtag name in IfThenFilter: " << tagname << std::endl;
 			TR.Error << "   Acceptable values are:   IF   ELIF   ELSE" << std::endl;
 			utility_exit_with_message("Unknown subtag name in IfThenFilter: " + tagname );
 		}
 	}
-	TR << "IfThenFilter defined with " << iffilters_.size() << " conditions and " << ( elsefilter_ ? "an ": "no " ) << " else filter" << std::endl;
+	TR << "IfThenFilter defined with " << iffilters_.size() << " conditions and "
+			<< ( elsefilter_ ? "an ": "no " ) << " else filter and a "
+			<< ( floor_ ? "lower " : "upper " ) << "threshold of " << threshold_ << std::endl;
 }
 
 
