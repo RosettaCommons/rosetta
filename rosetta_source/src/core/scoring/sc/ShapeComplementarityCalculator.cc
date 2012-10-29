@@ -110,6 +110,7 @@ int ShapeComplementarityCalculator::Init()
 
 ShapeComplementarityCalculator::~ShapeComplementarityCalculator()
 {
+	Reset();
 }
 
 /// @begin ShapeComplementarityCalculator::Reset()
@@ -124,12 +125,20 @@ ShapeComplementarityCalculator::~ShapeComplementarityCalculator()
 void ShapeComplementarityCalculator::Reset()
 {
 	// Free data
+	for(std::vector<Atom>::iterator a = run_.atoms.begin(); a < run_.atoms.end(); ++a) {
+		a->neighbors.clear();
+		a->buried.clear();
+	}
+
+	// Clear structures
 	run_.atoms.clear();
 	run_.probes.clear();
 	run_.dots[0].clear();
-	run_.dots[1].clear();
-	// Clear structures
-	memset(&run_, 0, sizeof(run_));
+ 	run_.dots[1].clear();
+
+	memset(&run_.results, 0, sizeof(run_.results));
+	memset(&run_.prevp, 0, sizeof(run_.prevp));
+	run_.prevburied = 0;
 }
 
 /// @begin ShapeComplementarityCalculator::CalcSc()
@@ -223,7 +232,7 @@ int ShapeComplementarityCalculator::Calc()
 	if(!run_.results.surface[1].nAtoms)
 		throw ShapeComplementarityCalculatorException("No atoms defined for molecule 2");
 
-	// Determine assign the attention numbers for each atom
+	// Determine and assign the attention numbers for each atom
 	AssignAttentionNumbers(run_.atoms);
 
 	// Now compute the surface for the atoms in the interface and its neighbours
