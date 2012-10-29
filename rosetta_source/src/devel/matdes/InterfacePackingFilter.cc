@@ -227,7 +227,7 @@ InterfacePackingFilter::parse_my_tag( utility::tag::TagPtr const tag,
 	contact_dist( tag->getOption<core::Real>("contact_dist", 10.0));
 	lower_threshold( tag->getOption< core::Real >( "lower_cutoff", -5 ) );
 	upper_threshold( tag->getOption< core::Real >( "upper_cutoff", 5 ) );
-	sym_dof_names( tag->getOption< std::string >( "sym_dof_names", "JS1" ) );
+	sym_dof_names( tag->getOption< std::string >( "sym_dof_names", "" ) );
 	TR<<"with options lower_threshold: "<<lower_threshold()<<", upper_threshold: "<<upper_threshold()<<", distance_cutoff: "<<distance_cutoff()<<"contact_dist: "<<contact_dist()<<"sym_dof_names: "<<sym_dof_names()<<std::endl;
 }
 

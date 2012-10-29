@@ -208,7 +208,7 @@ ExtractSubpose::parse_my_tag( utility::tag::TagPtr const tag,
 										 protocols::moves::Movers_map const &,
 										 core::pose::Pose const & ) {
 
-	sym_dof_names_ = tag->getOption< std::string >( "sym_dof_names","JS1" );
+	sym_dof_names_ = tag->getOption< std::string >( "sym_dof_names","" );
 	prefix_ = tag->getOption< std::string >( "prefix", "" );
 	suffix_ = tag->getOption< std::string >( "suffix", "" );
 	contact_dist_ = tag->getOption<core::Real>("contact_dist", 10.0);

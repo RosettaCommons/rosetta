@@ -246,7 +246,7 @@ SymUnsatHbondFilter::parse_my_tag( utility::tag::TagPtr const tag, protocols::mo
 {
 	upper_threshold( tag->getOption<core::Size>( "cutoff", 20 ) );
 	jump_num( tag->getOption<core::Size>( "jump", 1 ) );
-	sym_dof_names( tag->getOption< std::string >( "sym_dof_names" , "JS1" ) );
+	sym_dof_names( tag->getOption< std::string >( "sym_dof_names" , "" ) );
 	verbose( tag->getOption< bool >( "verbose", 0 ) );
 	write2pdb( tag->getOption< bool >("write2pdb", 0) );
 

@@ -275,7 +275,7 @@ SymDofMover::parse_my_tag( TagPtr const tag,
 	align_axis_ = tag->getOption<bool>( "align_axis", true );
 	auto_range_ = tag->getOption<bool>( "auto_range", false );
 	symm_file_ = tag->getOption<string>( "symm_file" );
-	sym_dof_names_ = utility::string_split( tag->getOption< std::string >( "sym_dof_names","JS1" ), ',' );
+	sym_dof_names_ = utility::string_split( tag->getOption< std::string >( "sym_dof_names","" ), ',' );
 	SymDofMoverSampler::get_instance().set_sym_dof_names(sym_dof_names_);
 
 	sampling_mode_ = tag->getOption<std::string>("sampling_mode", "single_dock");

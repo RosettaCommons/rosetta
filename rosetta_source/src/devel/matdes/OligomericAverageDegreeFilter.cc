@@ -223,7 +223,7 @@ OligomericAverageDegreeFilter::parse_my_tag(
   threshold( tag->getOption< core::Size >( "threshold", 0 ) );
   distance_threshold( tag->getOption< core::Real >( "distance_threshold", 10.0 ) );
   jump_id( tag->getOption< core::Size >( "jump", 1 ) );
-	sym_dof_names( tag->getOption< std::string >( "sym_dof_names" , "JS1" ) );
+	sym_dof_names( tag->getOption< std::string >( "sym_dof_names" , "" ) );
 	write2pdb( tag->getOption< bool >("write2pdb", 0) );
 	multicomp( tag->getOption< bool >("multicomp", 0) );
   TR << "with options threshold: " <<threshold() << " and distance_threshold " << distance_threshold() << std::endl;
