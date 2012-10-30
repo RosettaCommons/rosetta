@@ -13,7 +13,7 @@
 @page UBQ_conjugated Documentation for UBQ_E2_thioester, UBQ_Gp_CYD-CYD, and UBQ_Gp_LYX-Cterm applications
 
 @section metadata Metadata
-Last edited 8/23/12.  Code by Steven Lewis.  Corresponding PI Brian Kuhlman bkuhlman@email.unc.edu.
+Last edited 10/30/12.  Code by Steven Lewis.  Corresponding PI Brian Kuhlman bkuhlman@email.unc.edu.
 
 @section contents_note Note on contents and history
 This page documents three applications, UBQ_E2_thioester, UBQ_Gp_CYD-CYD, and UBQ_Gp_LYX-Cterm.  The code and documentation were originally written for the thioester version.  The other versions are modifications of the first, and they all behave nearly the same from the outside, so they are all documented here.  Assume the document is talking about the thioester case, but also assume what it says is true for the other cases.
@@ -100,10 +100,37 @@ General options:  All packing namespace options loaded by the PackerTask are res
 @section postprocessing Post Processing
 Pick the best models by total score and look at the satisfaction of your experimentally-derived constraints to decide which you think is most plausible.  We used the models to successfully predict a mutation to rescue a defect caused by UBQ I44A.
 
+@section scorefile_extras Extra terms in scorefile
+Most of the terms in the scorefile will be the regular scorefunction terms.  Assuming you ran with relatively default options, this will be score12; you can change that with -weights.  Here is a brief description of the remaining terms.  These do not contribute to total_score, but may be useful for filtering/postprocessing.  Some terms are from InterfaceAnalyzer and not relevant/applicable.
+
+@li amide_CE-NZ-C-CA - torsion of that bond, in degrees
+@li complex_normalized - total score / number of residues
+@li dG_cross - binding energy by the cross-interface-term method
+@li dG_cross/dSASAx100 - binding energy by the cross-interface-term method, normalized by SASA
+@li dG_separated - binding energy by the more accurate separation method
+@li dG_separated/dSASAx100 - binding energy by the more accurate separation method, normalized by sasa
+@li dSASA_hphobic - SASA of hydrophobic residues?
+@li dSASA_int - SASA of the interface
+@li dSASA_polar - SASA of polar residues
+@li delta_unsatHbonds - number of unsatisfied hydrogen bonds at the interface, that would be satisfied if the proteins weren't bound
+@li glycine_phi_C-CA-N-C - torsion of that bond, in degrees
+@li glycine_psi_NZ-C-CA-N - torsion of that bond, in degrees
+@li hbond_E_fraction - fraction of interface energy due to hbond terms (useless)
+@li lysine_chi3_CG-CD-CE-NZ - torsion of that bond, in degrees
+@li lysine_chi4_CD-CE-NZ-C - torson of that bond, in degrees
+@li nres_all - # residues
+@li nres_int - # interface residues
+@li packstat - packstat score (disabled)
+@li per_residue_energy_int - total score / number of interface residues?
+@li sc_value - sc is a shape complementarity score I know nothing about
+@li side1_normalized - score of one side of the interface, normalized by # of residues on that side
+@li side1_score - score of one side of the interface
+@li side2_normalized - score of one side of the interface, normalized by # of residues on that side
+@li side2_score - score of one side of the interface
+
 @section changelog Changes since last release
 Rosetta 3.3 was the first release.
 For the 3.4 release, the UBQ_Gp series of applications was added.
 For 3.5, the constraint code was factored out into a constraint file publication.cst, and some system-specific details in the code were altered to run under a "publication" flag.  With these changes, UBQ_Gp_CYX-Cterm was deprecated and deleted.
 Also for 3.5, an issue with omega angles near the conjugation bond was corrected.  The omega nearest the bond now starts at 180 degrees instead of 140.
-Significant refactoring is underway as of this writing, which may or may not complete in time for 3.5.
 */
