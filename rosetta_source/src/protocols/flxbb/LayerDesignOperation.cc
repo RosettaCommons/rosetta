@@ -488,28 +488,24 @@ LayerDesignOperation::parse_tag( TagPtr tag )
 
 			if( secstruct == "all" &&  secstruct_tag->hasOption("append") ) {
 				const std::string aas = secstruct_tag->getOption< std::string >("append");
-				TR << "Appending residues "<< aas << " to all layers " << std::endl;
-				for(LayerResidues::iterator lrs = layer_residues_.begin(); lrs != layer_residues_.end(); lrs++) {
-					TR << "Appending residues " << aas << "to layer " << lrs->first << std::endl;
-					for(LayerDefinitions::iterator ld = lrs->second.begin(); ld != lrs->second.end(); ld++) {
-						std::set<char> temp_def_res_set( ld->second.begin(), ld->second.end());
-						temp_def_res_set.insert( aas.begin(), aas.end() );
-						layer_residues_[ lrs->first ][ ld->first ] = std::string(temp_def_res_set.begin(), temp_def_res_set.end() );
-					}
+				LayerResidues::iterator lrs =  layer_residues_.find( layer );
+				TR << "Appending residues " << aas << " to layer " << lrs->first << std::endl;
+				for(LayerDefinitions::iterator ld = lrs->second.begin(); ld != lrs->second.end(); ld++) {
+					std::set<char> temp_def_res_set( ld->second.begin(), ld->second.end());
+					temp_def_res_set.insert( aas.begin(), aas.end() );
+					layer_residues_[ lrs->first ][ ld->first ] = std::string(temp_def_res_set.begin(), temp_def_res_set.end() );
 				}
 			}
 			
 			if( secstruct == "all" &&  secstruct_tag->hasOption("exclude") ) {
 				const std::string aas = secstruct_tag->getOption< std::string >("exclude");
-				TR << "Excluding residues "<< aas << " from all layers " << std::endl;
-				for(LayerResidues::iterator lrs = layer_residues_.begin(); lrs != layer_residues_.end(); lrs++) {
-					TR << "Excluding residues " << aas << "from layer " << lrs->first << std::endl;
-					for(LayerDefinitions::iterator ld = lrs->second.begin(); ld != lrs->second.end(); ld++) {
-						std::set<char> temp_def_res_set( ld->second.begin(), ld->second.end());
-						BOOST_FOREACH(char aa, aas)
-							temp_def_res_set.erase(aa);
-						layer_residues_[ lrs->first ][ ld->first ] = std::string(temp_def_res_set.begin(), temp_def_res_set.end() );
-					}
+				LayerResidues::iterator lrs =  layer_residues_.find( layer );
+				TR << "Excluding residues " << aas << " from layer " << lrs->first << std::endl;
+				for(LayerDefinitions::iterator ld = lrs->second.begin(); ld != lrs->second.end(); ld++) {
+					std::set<char> temp_def_res_set( ld->second.begin(), ld->second.end());
+					BOOST_FOREACH(char aa, aas)
+						temp_def_res_set.erase(aa);
+					layer_residues_[ lrs->first ][ ld->first ] = std::string(temp_def_res_set.begin(), temp_def_res_set.end() );
 				}
 			}
 
