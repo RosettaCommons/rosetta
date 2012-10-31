@@ -71,12 +71,12 @@ get_frags_map( ) {
 }
 
 
-core::fragment::FragSetOP make_frag_set(std::string ss, std::map<std::string, utility::vector1<core::fragment::FragDataOP> > & fds) {
+core::fragment::FragSetOP make_frag_set(std::string ss, std::map<std::string, utility::vector1<core::fragment::FragDataOP> > & fds, int start=1,int stop=-1) {
 	using namespace core::fragment;
 	FragSetOP frags = new ConstantLengthFragSet();
-	int const stop = ss.size() + 1 - 3;
+	if(-1==stop) stop = ss.size() + 1 - 3;
 	if((int)1 >= stop) return NULL;
-	for( core::Size i = 1; i <= (core::Size)stop; ++i ) {
+	for( core::Size i = (core::Size)start; i <= (core::Size)stop; ++i ) {
 		std::string ss3 = ss.substr(i-1,3);
 		bool mkframe = true;
 		for(core::Size j = 0; j < ss3.size(); ++j) if(ss3[j]!='H'&&ss3[j]!='E'&&ss3[j]!='L'&&ss3[j]!='_') mkframe = false;
@@ -85,7 +85,7 @@ core::fragment::FragSetOP make_frag_set(std::string ss, std::map<std::string, ut
 		utility::vector1<char> ss0,ss1,ss2;
 		if('_'==ss3[0]) { ss0.push_back('H'); ss0.push_back('E'); ss0.push_back('L'); } else ss0.push_back(ss3[0]);
 		if('_'==ss3[1]) { ss1.push_back('H'); ss1.push_back('E'); ss1.push_back('L'); } else ss1.push_back(ss3[1]);
-		if('_'==ss3[2]) { ss2.push_back('H'); ss2.push_back('E'); ss2.push_back('L'); } else ss2.push_back(ss3[2]);				
+		if('_'==ss3[2]) { ss2.push_back('H'); ss2.push_back('E'); ss2.push_back('L'); } else ss2.push_back(ss3[2]);
 		int nfrag = 0;
 		for( core::Size j = 1; j <= ss0.size(); ++j ) {
 		for( core::Size k = 1; k <= ss1.size(); ++k ) {
@@ -93,7 +93,7 @@ core::fragment::FragSetOP make_frag_set(std::string ss, std::map<std::string, ut
 			std::string ss=""; ss+=ss0[j]; ss+=ss1[k]; ss+=ss2[l];
 			//cout << "adding ss " << ss << " '" << ss0[j] << "' '" << ss1[k] << "' '" << ss2[l] << "'" << std::endl;
 			utility::vector1<FragDataOP>::iterator beg = fds[ss].begin();
-			utility::vector1<FragDataOP>::iterator end = fds[ss].end();			
+			utility::vector1<FragDataOP>::iterator end = fds[ss].end();
 			for( utility::vector1<FragDataOP>::iterator fi = beg; fi != end; ++fi ) {
 				frame->add_fragment(*fi);
 				nfrag++;
@@ -107,10 +107,10 @@ core::fragment::FragSetOP make_frag_set(std::string ss, std::map<std::string, ut
 	return frags;
 }
 
-core::fragment::FragSetOP make_frag_set(utility::vector1<char> ss, std::map<std::string, utility::vector1<core::fragment::FragDataOP> > & fds) {
+core::fragment::FragSetOP make_frag_set(utility::vector1<char> ss, std::map<std::string, utility::vector1<core::fragment::FragDataOP> > & fds,int start=1,int stop=-1) {
 	std::string s = "";
 	for(core::Size i = 1; i <= ss.size(); ++i) s += ss[i];
-	return make_frag_set(s,fds);
+	return make_frag_set(s,fds,start,stop);
 }
 
 core::fragment::FragSetOP make_frag_set_9mers(core::Size nres) {
