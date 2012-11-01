@@ -183,7 +183,7 @@ int main(int argc, char *argv[])
   mm->set_bb(begin2, false);
 	mm->set_jump(2, true);
 	mm->set_jump(5, false);
-	/*// create a standard scorefxn 
+	// create a standard scorefxn 
 	core::scoring::ScoreFunctionCOP scorefxn = new core::scoring::ScoreFunction;
 	scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "standard" );
 	// setup other inputs
@@ -195,7 +195,7 @@ int main(int argc, char *argv[])
 	// create a MinMover
 	protocols::simple_moves::MinMover minmover = protocols::simple_moves::MinMover(mm, scorefxn, min_type_in, tolerance_in, true, false, false) ;
 	// print
-	std::cout << "print MinMover:" << std::endl << minmover << std::endl;*/
+	std::cout << "print MinMover:" << std::endl << minmover << std::endl;
 
 /* // setup a movemap object
 	core::kinematics::MoveMapOP mm ( new core::kinematics::MoveMap );
@@ -214,7 +214,7 @@ int main(int argc, char *argv[])
 	dmp2.set_move_map(mm);
 	std::cout << dmp2 << std::endl;*/
 
-/*	// setup kT and nmoves
+	// setup kT and nmoves
 	Real kT = 1.0;
 	Size nmoves = 5;
 	// create a ShearMover
@@ -225,7 +225,7 @@ int main(int argc, char *argv[])
 	// create a SmallMover
 	protocols::simple_moves::SmallMover smallmover ( protocols::simple_moves::SmallMover(mm, kT, nmoves) );
 	// print
-	std::cout << "print SmallMover:" << std::endl << smallmover << std::endl;*/
+	std::cout << "print SmallMover:" << std::endl << smallmover << std::endl;
 
 
 /*	// create a PyMOL mover
@@ -301,7 +301,7 @@ int main(int argc, char *argv[])
 	protocols::loops::loop_mover::refine::LoopMover_Refine_CCD loopmover = protocols::loops::loop_mover::refine::LoopMover_Refine_CCD(emptyloops);
 	std::cout << loopmover << std::endl;*/
 
-  // create a loops object
+/*  // create a loops object
 	core::Size start = 15, start2 = 51;
 	core::Size stop = 24, stop2 = 60;
 	core::Size cutpoint = 19; 
@@ -314,7 +314,7 @@ int main(int argc, char *argv[])
 	// create an print the new loopmover
 	protocols::loops::loop_mover::refine::LoopMover_Refine_CCD loopmover2 = protocols::loops::loop_mover::refine::LoopMover_Refine_CCD(loops);
 	loopmover2.move_map(mm);
-	std::cout << loopmover2 << std::endl;
+	std::cout << loopmover2 << std::endl;*/
 
 /*	// print empty rtmover
 	protocols::simple_moves::RotamerTrialsMinMover rtmover;
@@ -360,9 +360,9 @@ int main(int argc, char *argv[])
 	//mm->set_chi_true_range(chi_begin, chi_end);
 	//mm->set_jump(2, true);
 
-	// create a CcdLoopClosureMover object
+/*	// create a CcdLoopClosureMover object
 	protocols::loops::loop_closure::ccd::CcdLoopClosureMover ccdmover ( protocols::loops::loop_closure::ccd::CcdLoopClosureMover(loop, mm) );
-	std::cout << ccdmover << std::endl;
+	std::cout << ccdmover << std::endl;*/
 
 	// create an empty loops object
 	// protocols::loops::LoopsOP emptyloops ( new protocols::loops::Loops );

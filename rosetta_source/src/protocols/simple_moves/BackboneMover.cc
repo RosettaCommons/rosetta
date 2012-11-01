@@ -577,7 +577,7 @@ std::ostream &operator<< (std::ostream &os, BackboneMover const &mover)
 			"\nTemperature factor (kT):   " << mover.temperature() <<
 			"\nNumber of moves:           " << mover.nmoves() << std::endl;
 	os << "MoveMap:" << std::endl;
-	mover.movemap()->show(); 
+	mover.movemap()->show(os); 
 	return os;
 }
 

@@ -467,7 +467,7 @@ std::ostream &operator<< (std::ostream &os, MinMover const &mover)
 	os << "Score tolerance:\t" << mover.tolerance() << "\nNb list:\t\t" << (mover.nb_list() ? "True" : "False") << 
 			"\nDeriv check:\t\t" << (mover.deriv_check() ? "True" : "False") << std::endl << "Movemap:" << std::endl;
 	if (mover.movemap() != 0) {
-		mover.movemap()->show();
+		mover.movemap()->show(os);
 	}
 	return os;
 }
