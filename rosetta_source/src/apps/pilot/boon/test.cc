@@ -18,11 +18,16 @@
 // includes
 #include <iostream>
 #include <string>
+#include <utility/vector1.hh>
 
 #include <devel/init.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
+#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/AA.hh>
+#include <core/types.hh>
+#include <core/conformation/Residue.hh>
 
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
@@ -50,12 +55,14 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/pack/task/PackerTask.hh>
+#include <core/pack/pack_rotamers.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/docking/DockMCMProtocol.hh>
+#include <protocols/rna/RNA_ProtocolUtil.hh>
 
 int main(int argc, char *argv[])
 {
@@ -76,6 +83,32 @@ int main(int argc, char *argv[])
 	//std::cout << "Hello, Rosetta World!" << std::endl;
 	//std::cout << "I just imported my first pose into Rosetta." << std::endl;
 	//std::cout << "It has " << test_pose.total_residue() << " total residues." << std::endl;
+	/*chemical::ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	pose_from_pdb(test_pose, *rsd_set, "/home/boon/data/test_rna.pdb");
+	protocols::rna::make_phosphate_nomenclature_matches_mini( test_pose );
+	// setup a packer task
+	pack::task::PackerTaskOP task ( core::pack::task::TaskFactory::create_packer_task( test_pose ) );
+	task->initialize_from_command_line().or_include_current( true );
+	for (Size ii = 1; ii <= test_pose.total_residue(); ++ii ) {
+		task->nonconst_residue_task(ii).allow_aa( na_rad );
+		task->nonconst_residue_task(ii).allow_aa( na_ura );
+		task->nonconst_residue_task(ii).allow_aa( na_rgu );
+		task->nonconst_residue_task(ii).allow_aa( na_rcy );
+		assert( task->design_residue(ii) );
+	}
+  // create a rna_lores scorefxn
+	scoring::ScoreFunction scorefxn;
+	scorefxn = scoring::ScoreFunctionFactory::create_score_function( "rna_lores" );
+	Size const nloop = 3;
+	utility::vector1< Real > score_list;
+	utility::vector1< std::string > seq_list;
+	utility::vector1< pose::PoseOP > pose_list;
+	// apply pack rotamers loop
+	pack::pack_rotamers_loop( pose, scorefxn, task, nloop, score_list, seq_list, pose_list );
+
+	for (Size n = 1; n <= pose_list.size() ; n++ ){
+		std::cout << score_list[n] << " " << seq_list[n] << std::endl;
+	}*/
 
 /*	// create a FoldTree
 	kinematics::FoldTree ft;
@@ -141,7 +174,7 @@ int main(int argc, char *argv[])
 /*	protocols::docking::ConformerSwitchMover mover;
 	std::cout << mover << std::endl;*/
 	
-/*	// setup a movemap object
+ // setup a movemap object
 	core::kinematics::MoveMapOP mm ( new core::kinematics::MoveMap );
 	Size bb_begin = 3, bb_end = 6, chi_begin = 5, chi_end = 7, begin2 = 101;
 	mm->set_bb_true_range(bb_begin, bb_end);
@@ -150,7 +183,7 @@ int main(int argc, char *argv[])
   mm->set_bb(begin2, false);
 	mm->set_jump(2, true);
 	mm->set_jump(5, false);
-	// create a standard scorefxn 
+	/*// create a standard scorefxn 
 	core::scoring::ScoreFunctionCOP scorefxn = new core::scoring::ScoreFunction;
 	scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "standard" );
 	// setup other inputs
@@ -268,7 +301,7 @@ int main(int argc, char *argv[])
 	protocols::loops::loop_mover::refine::LoopMover_Refine_CCD loopmover = protocols::loops::loop_mover::refine::LoopMover_Refine_CCD(emptyloops);
 	std::cout << loopmover << std::endl;*/
 
-/*	// create a loops object
+  // create a loops object
 	core::Size start = 15, start2 = 51;
 	core::Size stop = 24, stop2 = 60;
 	core::Size cutpoint = 19; 
@@ -281,7 +314,7 @@ int main(int argc, char *argv[])
 	// create an print the new loopmover
 	protocols::loops::loop_mover::refine::LoopMover_Refine_CCD loopmover2 = protocols::loops::loop_mover::refine::LoopMover_Refine_CCD(loops);
 	loopmover2.move_map(mm);
-	std::cout << loopmover2 << std::endl;*/
+	std::cout << loopmover2 << std::endl;
 
 /*	// print empty rtmover
 	protocols::simple_moves::RotamerTrialsMinMover rtmover;
@@ -289,7 +322,7 @@ int main(int argc, char *argv[])
 
 	// create a custom scorefxn
 	//core::scoring::ScoreFunctionOP scorefxn = new core::scoring::ScoreFunction;
-	//scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "score3" );*/
+	//scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "score3" );
 
 	// setup a packer task
 	core::pack::task::PackerTaskOP task ( core::pack::task::TaskFactory::create_packer_task( test_pose ));
@@ -299,7 +332,7 @@ int main(int argc, char *argv[])
 	task->show_residue_task(resid);
 	std::cout << "show all residue tasks" << std::endl;
 	task->show_all_residue_tasks();
-	std::cout << "print packer task" << std::endl << *task << std::endl;
+	std::cout << "print packer task" << std::endl << *task << std::endl;*/
 
 /*	// define nloop
 	//core::Size nloop = 1;
@@ -314,22 +347,22 @@ int main(int argc, char *argv[])
 	//protocols::docking::ConformerSwitchMover mover2 ( protocols::docking::ConformerSwitchMover("True", 1.0) );
 	//std::cout << mover2 << std::endl;
 
-/*  // create a loops object
-	core::Size start = 15;
-	core::Size stop = 24;
-	core::Size cutpoint = 19;
-	protocols::loops::Loop loop ( protocols::loops::Loop(start, stop, cutpoint) );
+// create a loops object
+	//core::Size start = 15;
+	//core::Size stop = 24;
+	//core::Size cutpoint = 19;
+	//protocols::loops::Loop loop ( protocols::loops::Loop(start, stop, cutpoint) );
 
   // setup a movemap object
-	core::kinematics::MoveMapOP mm (new core::kinematics::MoveMap );
-	Size bb_begin = 3, bb_end = 6, chi_begin = 5, chi_end = 7;
-	mm->set_bb_true_range(bb_begin, bb_end);
-	mm->set_chi_true_range(chi_begin, chi_end);
-	mm->set_jump(2, true);
+	//core::kinematics::MoveMapOP mm (new core::kinematics::MoveMap );
+	//Size bb_begin = 3, bb_end = 6, chi_begin = 5, chi_end = 7;
+	//mm->set_bb_true_range(bb_begin, bb_end);
+	//mm->set_chi_true_range(chi_begin, chi_end);
+	//mm->set_jump(2, true);
 
 	// create a CcdLoopClosureMover object
 	protocols::loops::loop_closure::ccd::CcdLoopClosureMover ccdmover ( protocols::loops::loop_closure::ccd::CcdLoopClosureMover(loop, mm) );
-	std::cout << ccdmover << std::endl;*/
+	std::cout << ccdmover << std::endl;
 
 	// create an empty loops object
 	// protocols::loops::LoopsOP emptyloops ( new protocols::loops::Loops );

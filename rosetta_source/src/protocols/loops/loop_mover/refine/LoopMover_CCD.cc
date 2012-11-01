@@ -189,7 +189,7 @@ std::ostream &operator<< ( std::ostream &os, LoopMover_Refine_CCD const &mover )
 				"\nRepack period:       " << mover.repack_period_ << "\nInitial temperature: " << mover.temp_initial_ << 
 				"\nFinal temperature:   " << mover.temp_final_ <<  "\nSet fold tree from loop?: " << 
 				(mover.set_fold_tree_from_loops_ ? "True" : "False") << "\nMovemap:  ";
-	if (mover.move_map() != 0) {os << std::endl; mover.move_map()->show();}
+	if (mover.move_map() != 0) {os << std::endl; mover.move_map()->show(os);}
 	else {os << "none" << std::endl;}
 	return os;
 }

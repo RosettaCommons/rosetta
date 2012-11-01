@@ -167,7 +167,7 @@ std::ostream &operator<< ( std::ostream &os, CcdLoopClosureMover const &mover )
 				"\nMax total delta helix:   " << mover.get_max_total_delta("H") << 
 				"\nMax total delta strand:  " << mover.get_max_total_delta("E") << 
 				"\nMax total delta loop:    " << mover.get_max_total_delta("L") << "\nMovemap: " << std::endl;
-	mover.movemap().show(); 
+	mover.movemap().show(os); 
 	return os;
 }
 
