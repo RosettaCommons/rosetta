@@ -961,7 +961,7 @@ public:
 	//orbital_xyz(Size const orbital_index) const;
 
 
-	Vector const
+	Vector
 	build_orbital_xyz( Size const orbital_index ) const
 	{
 /*		core::chemical::orbitals::ICoorOrbitalData orb_icoor(rsd_type_.orbital_icoor_data(orbital_index));

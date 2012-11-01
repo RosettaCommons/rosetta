@@ -96,7 +96,7 @@ OnTheFlyNode::set_rotamers(
 		sparse_mat_info_for_state_[ ii ].set_state_ind_for_this_aa_type( count_for_restype );
 		++count_for_restype;
 		++num_states_for_aatype_[ curr_restype ];
-		while ( count_for_restype > rotamers->get_n_rotamers_for_residue_type( curr_restype )) {
+		while ( count_for_restype > rotamers->get_n_rotamers_for_residue_group( curr_restype )) {
 			// increment curr_restype and skip over restypes with 0 rotamers
 			++curr_restype;
 			count_for_restype = 1;
@@ -440,15 +440,15 @@ OnTheFlyInteractionGraph::initialize(
 	rotamer_set::RotamerSets const & rot_sets( static_cast< rotamer_set::RotamerSets const & > (rot_sets_base) );
 
 	// determine max # of residue types
-	Size max_nrestypes = 0;
+	Size max_nresgroups = 0;
 	for ( Size ii = 1; ii <= rot_sets.nmoltenres(); ++ii ) {
-		Size ii_nrestypes =  rot_sets.rotamer_set_for_moltenresidue( ii )->get_n_residue_types();
-		if ( ii_nrestypes > max_nrestypes ) max_nrestypes = ii_nrestypes;
+		Size ii_nresgroups =  rot_sets.rotamer_set_for_moltenresidue( ii )->get_n_residue_groups();
+		if ( ii_nresgroups > max_nresgroups ) max_nresgroups = ii_nresgroups;
 	}
 
 	//"aa types" means "distinct groups of rotamers" -- this ig has no idea
 	// what an amino acid is or why they might be different from one another
-	num_aa_types_ = max_nrestypes;
+	num_aa_types_ = max_nresgroups;
 
 
 	for ( Size ii = 1; ii <= rot_sets.nmoltenres(); ++ii ) {

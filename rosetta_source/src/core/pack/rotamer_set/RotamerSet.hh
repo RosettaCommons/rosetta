@@ -93,18 +93,36 @@ public:
 		conformation::Residue const & rotamer
 	) = 0;
 
+	/// @brief Return the number of different residue types; two residue types are considered
+	/// different if they have a different address.
 	virtual
 	Size
 	get_n_residue_types() const = 0;
 
+	/// @brief Return the number of different residue groups.  Two residue types are considered
+	/// to be part of the same block of residues if 1. they have the same address or 2. they have
+	/// the same "name3" and the same neighbor radius.
+	virtual
+	Size
+	get_n_residue_groups() const = 0;
+
+	/// @brief Return the first rotamer of a particular residue type
 	virtual
 	Size
 	get_residue_type_begin( Size which_restype ) const = 0;
+
+	/// @brief Return the first rotamer that belongs to a particular rotamer group
+	virtual
+	Size
+	get_residue_group_begin( Size which_resgroup ) const = 0;
 
 	virtual
 	Size
 	get_n_rotamers_for_residue_type( Size which_restype ) const = 0;
 
+	virtual
+	Size
+	get_n_rotamers_for_residue_group( Size which_resgroup ) const = 0;
 
 	/// @brief Rotamers i to i+j of all the same residue type are grouped together.
 	/// This function returns the index of the residue type in a contiguous block
@@ -116,6 +134,11 @@ public:
 	virtual
 	Size
 	get_residue_type_index_for_rotamer( Size which_rotamer ) const = 0;
+
+	/// @brief Return the index of the rotamer group for a particular rotamer.
+	virtual
+	Size
+	get_residue_group_index_for_rotamer( Size which_rotamer ) const = 0;
 
 	virtual
 	void

@@ -322,9 +322,9 @@ GenBornEnergy::evaluate_rotamer_pair_energies(
 					for ( Size ll = 1, lle = set2.get_n_rotamers_for_residue_type( jj ); ll <= lle; ++ll ) {
 						Size const ll_rot_id = jj_offset + ll - 1;
 
-						Real const elecE
-							( potential_.get_res_res_elecE( *set1.rotamer( kk_rot_id ), gb_info1.residue_info( kk_rot_id ),
-																							*set2.rotamer( ll_rot_id ), gb_info2.residue_info( ll_rot_id ) ) );
+						Real const elecE(
+							potential_.get_res_res_elecE( *set1.rotamer( kk_rot_id ), gb_info1.residue_info( kk_rot_id ),
+							*set2.rotamer( ll_rot_id ), gb_info2.residue_info( ll_rot_id ) ) );
 
 						energy_table( ll_rot_id, kk_rot_id ) += static_cast< core::PackerEnergy >( weights[ gb_elec ] *  elecE );
 					}
@@ -375,9 +375,9 @@ GenBornEnergy::evaluate_rotamer_background_energies(
 			for ( Size kk = 1, kke = set.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
 				Size const kk_rot_id = ii_offset + kk - 1;
 
-				Real const elecE
-					( potential_.get_res_res_elecE( *set.rotamer( kk_rot_id ), gb_set_info.residue_info( kk_rot_id ),
-																					rsd, gb_rsd_info ) );
+				Real const elecE(
+					potential_.get_res_res_elecE( *set.rotamer( kk_rot_id ), gb_set_info.residue_info( kk_rot_id ),
+					rsd, gb_rsd_info ) );
 				energy_vector[ kk_rot_id ] += static_cast< core::PackerEnergy > (weights[ gb_elec ] *  elecE );
 			} // kk - rotamers for residue types
 		} // nbrs

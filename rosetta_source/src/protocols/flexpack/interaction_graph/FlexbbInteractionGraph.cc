@@ -635,17 +635,17 @@ FlexbbInteractionGraph::initialize( core::pack::rotamer_set::RotamerSetsBase con
 		flexseg_for_moltenres_[ ii ] = flex_sets.flexsegid_for_moltenres( ii );
 	}
 
-	// 2. determine max # of residue types
-	Size max_nrestypes = 0;
+	// 2. determine max # of residue types, asking the RotamerSets how many rotamer type groups they have
+	Size max_nresgroups = 0;
 	for ( Size ii = 1; ii <= flex_sets.nmoltenres(); ++ii ) {
 		for ( Size jj = 1; jj <= flex_sets.nbbconfs_for_moltenres( ii ); ++jj ) {
-			Size jj_nrestypes =  flex_sets.rotset_for_moltenres( ii, jj )->get_n_residue_types();
+			Size jj_nresgroups =  flex_sets.rotset_for_moltenres( ii, jj )->get_n_residue_groups();
 			//std::cout << ii << " " << jj << " jj_nrestypes: " << jj_nrestypes << " " << flex_sets.rotset_for_moltenres( ii, jj ).get() << std::endl;
-			if ( jj_nrestypes > max_nrestypes ) max_nrestypes = jj_nrestypes;
+			if ( jj_nresgroups > max_nresgroups ) max_nresgroups = jj_nresgroups;
 		}
 	}
 	//std::cout << "MAX_NRESTYPES: " << max_nrestypes << std::endl;
-	num_aa_types_ = max_nrestypes;
+	num_aa_types_ = max_nresgroups;
 
 	/// 3. create nodes, inform them of their number of backbone conformations,
 	/// and break down their rotamers by amino acid type.
@@ -658,23 +658,23 @@ FlexbbInteractionGraph::initialize( core::pack::rotamer_set::RotamerSetsBase con
 
 		// figure out which residue-type group each rotamer is a member of
 		utility::vector1< int > aatype_for_state( ii_num_states, 0 );
-		Size curr_restype = 1;
-		Size count_for_restype = 1;
-		Size const ii_nrestypes = flex_sets.rotset_for_moltenres( ii )->get_n_residue_types();
+		Size curr_resgroup = 1;
+		Size count_for_resgroup = 1;
+		Size const ii_nresgroups = flex_sets.rotset_for_moltenres( ii )->get_n_residue_groups();
 		Size which_bb = 1;
 		for ( Size jj = 1; jj <= ii_num_states; ++jj ) {
 			if ( which_bb + 1 <= ii_nbb && jj == flex_sets.local_rotid_start_for_moltenres_in_bbconf( ii, which_bb + 1 ) + 1 ) {
 				++which_bb;
-				curr_restype = 1;
-				count_for_restype = 1;
+				curr_resgroup = 1;
+				count_for_resgroup = 1;
 			}
-			aatype_for_state[ jj ] = curr_restype;
-			++count_for_restype;
-			while ( count_for_restype > flex_sets.rotset_for_moltenres( ii, which_bb )->get_n_rotamers_for_residue_type( curr_restype )) {
+			aatype_for_state[ jj ] = curr_resgroup;
+			++count_for_resgroup;
+			while ( count_for_resgroup > flex_sets.rotset_for_moltenres( ii, which_bb )->get_n_rotamers_for_residue_group( curr_resgroup )) {
 				// increment curr_restype and skip over restypes with 0 rotamers
-				++curr_restype;
-				count_for_restype = 1;
-				if ( curr_restype > ii_nrestypes ) break;
+				++curr_resgroup;
+				count_for_resgroup = 1;
+				if ( curr_resgroup > ii_nresgroups ) break;
 			}
 		}
 		set_aatypes_for_node( ii, aatype_for_state );

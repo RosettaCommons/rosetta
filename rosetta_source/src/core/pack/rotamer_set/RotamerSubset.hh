@@ -25,7 +25,7 @@
 
 //Project headers
 #include <core/conformation/Residue.fwd.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 // AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibrary.fwd.hh>
 // AUTO-REMOVED #include <core/scoring/trie/RotamerTrieBase.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
@@ -87,16 +87,32 @@ public:
 
 	virtual
 	Size
+	get_n_residue_groups() const;
+
+	virtual
+	Size
 	get_residue_type_begin( Size which_restype ) const;
+
+	virtual
+	Size
+	get_residue_group_begin( Size which_resgroup ) const;
 
 	virtual
 	Size
 	get_n_rotamers_for_residue_type( Size which_restype ) const;
 
+	virtual
+	Size
+	get_n_rotamers_for_residue_group( Size which_resgroup ) const;
+
 	///@brief given a rotamer id, return an int which represents a type for this rotamer.
 	virtual
 	Size
 	get_residue_type_index_for_rotamer( Size which_rotamer ) const ;
+
+	virtual
+	Size
+	get_residue_group_index_for_rotamer( Size which_rotamer ) const;
 
 	virtual
 	Size
@@ -166,8 +182,37 @@ private:
 	void
 	steal_rotamer( conformation::ResidueOP rotamer );
 
+
+	/// @brief declare that a new block of residue types has begun, and that new residues
+	/// are about to be pushed back.
+	void
+	prepare_for_new_residue_type( core::chemical::ResidueType const & restype );
+
+	/// @brief should two residue types be considered the same residue type?
+	bool
+	different_restype( core::chemical::ResidueType const & rt1, core::chemical::ResidueType const & rt2 ) const;
+
+	/// @brief should two residue types be considered to belong to the same residue-type group?
+	bool
+	different_resgroup( core::chemical::ResidueType const & rt1, core::chemical::ResidueType const & rt2 ) const;
+
+	/// @brief This function should not be called directly -- it ought to be called only from prepare_for_new_residue_type
+	void
+	new_residue_type();
+
+	/// @brief This function should not be called directly -- it ought to be called only from prepare_for_new_residue_type
+	void
+	new_residue_group();
+
+	/// @brief appends a rotamer to the list of rotamers, and increments the count
+	/// for the number of rotamers for the current value of n_residue_types.
+	void
+	push_back_rotamer( conformation::ResidueOP );
+
 	void
 	update_rotamer_offsets() const;
+
+
 
 public: // noop functions:
 
@@ -216,10 +261,14 @@ private:
 	Rotamers rotamers_;
 
 	mutable Size n_residue_types_;
+	mutable Size n_residue_groups_;
 	mutable utility::vector1< Size > residue_type_rotamers_begin_;
+	mutable utility::vector1< Size > residue_group_rotamers_begin_;
 	mutable utility::vector1< Size > n_rotamers_for_restype_;
+	mutable utility::vector1< Size > n_rotamers_for_resgroup_;
 
-	//mutable utility::vector1< Size > residue_type_for_rotamers_;
+	mutable utility::vector1< Size > residue_type_for_rotamers_;
+	mutable utility::vector1< Size > residue_group_for_rotamers_;
 
 	utility::vector1< conformation::AbstractRotamerTrieOP > cached_tries_;
 

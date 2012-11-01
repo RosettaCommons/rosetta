@@ -1451,17 +1451,17 @@ PDInteractionGraph::initialize( rotamer_set::RotamerSetsBase const & rot_sets_ba
 {
 	rotamer_set::RotamerSets const & rot_sets( static_cast< rotamer_set::RotamerSets const & > (rot_sets_base) );
 
-	// determine max # of residue types
-	Size max_nrestypes = 0;
+	// determine max # of residue type groups
+	Size max_nresgroups = 0;
 	for ( Size ii = 1; ii <= rot_sets.nmoltenres(); ++ii ) {
-		Size ii_nrestypes =  rot_sets.rotamer_set_for_moltenresidue( ii )->get_n_residue_types();
-		if ( ii_nrestypes > max_nrestypes ) max_nrestypes = ii_nrestypes;
+		Size ii_nresgroups =  rot_sets.rotamer_set_for_moltenresidue( ii )->get_n_residue_groups();
+		if ( ii_nresgroups > max_nresgroups ) max_nresgroups = ii_nresgroups;
 	}
 
 	//"aa types" means "distinct groups of rotamers" -- this ig has no idea
 	// what an amino acid is or why they might be different from one another
-	//set_num_aatypes( (int) max_nrestypes );
-	num_aa_types_ = (int) max_nrestypes;
+	//set_num_aatypes( (int) max_nresgroups );
+	num_aa_types_ = (int) max_nresgroups;
 
 	for ( Size ii = 1; ii <= rot_sets.nmoltenres(); ++ii ) {
 		Size const ii_num_states = rot_sets.rotamer_set_for_moltenresidue( ii )->num_rotamers();
@@ -1469,18 +1469,18 @@ PDInteractionGraph::initialize( rotamer_set::RotamerSetsBase const & rot_sets_ba
 
 		// figure out which residue-type group each rotamer is a member of
 		std::vector< int > aatype_for_state( ii_num_states + 1, 0 );
-		Size curr_restype = 1;
-		Size count_for_restype = 1;
-		Size const ii_nrestypes = rot_sets.rotamer_set_for_moltenresidue( ii )->get_n_residue_types();
+		Size curr_resgroup = 1;
+		Size count_for_resgroup = 1;
+		Size const ii_nresgroups = rot_sets.rotamer_set_for_moltenresidue( ii )->get_n_residue_groups();
 		for ( uint jj = 1; jj <= ii_num_states; ++jj ) {
 
-			aatype_for_state[ jj ] = curr_restype;
-			++count_for_restype;
-			while ( count_for_restype > rot_sets.rotamer_set_for_moltenresidue( ii )->get_n_rotamers_for_residue_type( curr_restype )) {
+			aatype_for_state[ jj ] = curr_resgroup;
+			++count_for_resgroup;
+			while ( count_for_resgroup > rot_sets.rotamer_set_for_moltenresidue( ii )->get_n_rotamers_for_residue_group( curr_resgroup )) {
 				// increment curr_restype and skip over restypes with 0 rotamers
-				++curr_restype;
-				count_for_restype = 1;
-				if ( curr_restype > ii_nrestypes ) break;
+				++curr_resgroup;
+				count_for_resgroup = 1;
+				if ( curr_resgroup > ii_nresgroups ) break;
 			}
 
 		}

@@ -658,7 +658,7 @@ FlexbbRotamerSets::compute_one_body_energies_for_otf_ig(
 		std::fill( glycine_representatives[ ii ].begin(), glycine_representatives[ ii ].end(), 0 );
 		for ( Size jj = 1; jj <= iinbb; ++jj ) {
 			FlexbbRotamerSetCOP jjrotset = rotamers_[ ii ][ jj ];
-			Size jjntypes = jjrotset->get_n_residue_types();
+			Size jjntypes = jjrotset->get_n_residue_groups();
 			bool jjregfound( false ), jjprofound( false ), jjglyfound( false );
 			for ( Size kk = 1; kk <= jjntypes; ++kk ) {
 				Size kkrep = jjrotset->get_residue_type_begin( kk );

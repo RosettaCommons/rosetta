@@ -847,7 +847,7 @@ void HPatchNode< V, E, G >::set_rotamers( rotamer_set::RotamerSetCOP rotamers ) 
 
 	for ( Size ii = 1; ii <= rotamers->num_rotamers(); ++ii ) {
 		rotamers_vector_[ ii ] = rotamers->rotamer( ii );
-		restype_group_for_rotamers_[ ii ] = rotamers->get_residue_type_index_for_rotamer( ii );
+		restype_group_for_rotamers_[ ii ] = rotamers->get_residue_group_index_for_rotamer( ii );
 	}
 
 	{ // scope -- I should make this a function

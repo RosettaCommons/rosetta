@@ -61,10 +61,8 @@ RotamerSubset::add_rotamer(
 	conformation::Residue const & rotamer
 )
 {
-	++n_residue_types_; // TOTAL HACK -- possible to add 50 HIS's and declare there to be 50 different AA types.
-	residue_type_rotamers_begin_.push_back( num_rotamers() + 1);
-	n_rotamers_for_restype_.push_back( 1 );
-	rotamers_.push_back( rotamer.clone() );
+	prepare_for_new_residue_type( rotamer.type() );
+	push_back_rotamer( rotamer.clone() );
 }
 
 
@@ -76,6 +74,13 @@ RotamerSubset::get_n_residue_types() const
 	return n_residue_types_;
 }
 
+Size
+RotamerSubset::get_n_residue_groups() const
+{
+	update_rotamer_offsets();
+	return n_residue_groups_;
+}
+
 
 Size
 RotamerSubset::get_residue_type_begin( Size which_restype ) const
@@ -83,6 +88,14 @@ RotamerSubset::get_residue_type_begin( Size which_restype ) const
 	update_rotamer_offsets();
 	assert( which_restype <= n_residue_types_ );
 	return residue_type_rotamers_begin_[ which_restype ];
+}
+
+Size
+RotamerSubset::get_residue_group_begin( Size which_resgroup ) const
+{
+	update_rotamer_offsets();
+	assert( which_resgroup <= n_residue_groups_ );
+	return residue_group_rotamers_begin_[ which_resgroup ];
 }
 
 
@@ -95,6 +108,15 @@ RotamerSubset::get_n_rotamers_for_residue_type( Size which_restype ) const
 	return n_rotamers_for_restype_[ which_restype ];
 }
 
+Size
+RotamerSubset::get_n_rotamers_for_residue_group( Size which_resgroup ) const
+{
+	update_rotamer_offsets();
+
+	assert( which_resgroup <= n_residue_groups_ );
+	return n_rotamers_for_resgroup_[ which_resgroup ];
+}
+
 /// @brief given a rotamer id, return an int which represents a type for this rotamer.
 /// INCOMPLETELY IMPLEMENTED. ANDREW: FIX THIS.
 Size
@@ -103,6 +125,16 @@ RotamerSubset::get_residue_type_index_for_rotamer( Size /* which_rotamer */ ) co
 	//return residue_type_for_rotamers_[ which_rotamer ];
 	return 1;
 }
+
+/// @brief given a rotamer id, return an int which represents a type for this rotamer.
+/// INCOMPLETELY IMPLEMENTED. ANDREW: FIX THIS.
+Size
+RotamerSubset::get_residue_group_index_for_rotamer( Size /* which_rotamer */ ) const
+{
+	//return residue_type_for_rotamers_[ which_rotamer ];
+	return 1;
+}
+
 
 Size
 RotamerSubset::num_rotamers() const
@@ -243,44 +275,134 @@ RotamerSubset::drop_rotamers_by_index(
 }
 
 void
+RotamerSubset::prepare_for_new_residue_type( core::chemical::ResidueType const & restype )
+{
+	if ( n_residue_types_ == 0 ) {
+		new_residue_type();
+		new_residue_group();
+		return;
+	}
+
+	if ( different_restype( rotamers_[ num_rotamers() ]->type(), restype )) {
+		new_residue_type();
+	}
+	if (  different_resgroup( rotamers_[ num_rotamers() ]->type(), restype )) {
+		new_residue_group();
+	}
+}
+
+bool
+RotamerSubset::different_restype( core::chemical::ResidueType const & rt1, core::chemical::ResidueType const & rt2 ) const
+{
+	return & rt1 != & rt2;
+}
+
+/// @details The logic to determine if two residue types should be classified as part of the same group.
+/// The thinking is as follows.  Two residue types are in the same group if they have the same residue type.
+/// They're in the same group if their residue types differ, but they have the same name3 (HIS vs HIS_D have
+/// the same name3) and they have the same neighbor radius (SER and PhosphoSER should have different groups).
+/// The goal is to organize residue types together which will be packed together (as happens in multistate design
+/// with HIS and HISD) and that have the same reach (as is needed for the AANeighborSparseMatrix).
+bool
+RotamerSubset::different_resgroup( core::chemical::ResidueType const & rt1, core::chemical::ResidueType const & rt2 ) const
+{
+	return & rt1 != & rt2 && ( rt1.name3() != rt2.name3() || rt1.nbr_radius() != rt2.nbr_radius() );
+}
+
+void
+RotamerSubset::new_residue_type()
+{
+	++n_residue_types_;
+	residue_type_rotamers_begin_.push_back( num_rotamers() + 1);
+	n_rotamers_for_restype_.push_back( 0 );
+}
+
+void
+RotamerSubset::new_residue_group()
+{
+	++n_residue_groups_;
+	residue_group_rotamers_begin_.push_back( num_rotamers() + 1 );
+	n_rotamers_for_resgroup_.push_back( 0 );
+}
+
+void
+RotamerSubset::push_back_rotamer( conformation::ResidueOP rotamer )
+{
+	rotamers_.push_back( rotamer );
+	residue_type_for_rotamers_.push_back( n_residue_types_ );
+	++n_rotamers_for_restype_[ n_residue_types_ ];
+}
+
+void
 RotamerSubset::update_rotamer_offsets() const
 {
 	if ( ! rotamer_offsets_require_update_ ) return;
 
 	if ( rotamers_.size() == 0 ) {
 		n_residue_types_ = 0;
-		residue_type_rotamers_begin_.resize( n_residue_types_ );
-		n_rotamers_for_restype_.resize( n_residue_types_ );
+		n_residue_groups_ = 0;
+		residue_type_for_rotamers_.resize( 0 );
+		residue_group_for_rotamers_.resize( 0 );
+		residue_type_rotamers_begin_.resize( 0 );
+		residue_group_rotamers_begin_.resize( 0 );
+		n_rotamers_for_restype_.resize( 0 );
+		n_rotamers_for_resgroup_.resize( 0 );
 		return;
 	}
 
 	/// From here forward, rotamers_.size() >= 1
-
+	residue_type_for_rotamers_.resize( rotamers_.size() );
+	residue_group_for_rotamers_.resize( rotamers_.size() );
 	n_residue_types_ = 1;
+	n_residue_groups_ = 1;
+	residue_type_for_rotamers_[ 1 ] = n_residue_types_;
+	residue_group_for_rotamers_[ 1 ] = n_residue_groups_;
 	for ( Size ii = 2; ii <= rotamers_.size(); ++ii ) {
 		// compare addresses of the two types
+		// treat them as different amino acids only if they have different name3's
+		// or if they have different radii
 		//if ( & (rotamers_[ ii ]->type()) != & (rotamers_[ ii ]->type()) ) {
-		if ( & (rotamers_[ ii ]->type()) != & (rotamers_[ ii - 1 ]->type()) ) {
+		if ( different_restype( rotamers_[ ii ]->type(), rotamers_[ ii-1 ]->type() ) ) {
 			++n_residue_types_;
 		}
+		residue_type_for_rotamers_[ ii ] = n_residue_types_;
+
+		if ( different_resgroup( rotamers_[ ii ]->type(), rotamers_[ ii-1 ]->type() ) ) {
+			++n_residue_groups_;
+		}
+		residue_group_for_rotamers_[ ii ] = n_residue_groups_;
 	}
+
 	residue_type_rotamers_begin_.resize( n_residue_types_ );
 	n_rotamers_for_restype_.resize( n_residue_types_ );
 	std::fill( residue_type_rotamers_begin_.begin(), residue_type_rotamers_begin_.end(), 0 );
 	std::fill( n_rotamers_for_restype_.begin(), n_rotamers_for_restype_.end(), 0 );
 
+	residue_group_rotamers_begin_.resize( n_residue_groups_ );
+	n_rotamers_for_resgroup_.resize( n_residue_groups_ );
+	std::fill( residue_group_rotamers_begin_.begin(), residue_group_rotamers_begin_.end(), 0 );
+	std::fill( n_rotamers_for_resgroup_.begin(), n_rotamers_for_resgroup_.end(), 0 );
+
 	Size count_seen_residue_types( 1 );
+	Size count_seen_residue_groups( 1 );
 	n_rotamers_for_restype_[ count_seen_residue_types ] = 1;
+	n_rotamers_for_resgroup_[ count_seen_residue_groups ] = 1;
 	residue_type_rotamers_begin_[ count_seen_residue_types ] = 1;
+	residue_group_rotamers_begin_[ count_seen_residue_groups ] = 1;
+
 	for ( Size ii = 2; ii <= rotamers_.size(); ++ii ) {
-		//if ( & (rotamers_[ ii ]->type()) != & (rotamers_[ ii ]->type()) ) {
-		if ( & (rotamers_[ ii ]->type()) != & (rotamers_[ ii - 1 ]->type()) ) {
+		if ( residue_type_for_rotamers_[ ii ] != residue_type_for_rotamers_[ ii-1 ] ) {
 			++count_seen_residue_types;
 			residue_type_rotamers_begin_[ count_seen_residue_types ] = ii;
 		}
 		++n_rotamers_for_restype_[ count_seen_residue_types ];
+		if ( residue_group_for_rotamers_[ ii ] != residue_group_for_rotamers_[ ii-1 ] ) {
+			++count_seen_residue_groups;
+			residue_group_rotamers_begin_[ count_seen_residue_groups ] = ii;
+		}
+		++n_rotamers_for_resgroup_[ count_seen_residue_groups ];
 	}
-
+	//std::cout << "nrestypes " << n_residue_types_ << std::endl;
 	rotamer_offsets_require_update_ = false;
 }
 

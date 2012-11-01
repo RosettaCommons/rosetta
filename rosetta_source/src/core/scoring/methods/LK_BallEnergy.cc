@@ -1035,7 +1035,7 @@ LK_BallEnergy::evaluate_rotamer_pair_energies(
 					Size const ll_rot_id = jj_offset + ll - 1;
 					EnergyMap emap;
 					residue_pair_energy( *set1.rotamer( kk_rot_id ), info1[ kk_rot_id ],
-															 *set2.rotamer( ll_rot_id ), info2[ ll_rot_id ], emap );
+						*set2.rotamer( ll_rot_id ), info2[ ll_rot_id ], emap );
 
 					energy_table( ll_rot_id, kk_rot_id ) += static_cast< core::PackerEnergy >( weights.dot( emap ) );
 				}

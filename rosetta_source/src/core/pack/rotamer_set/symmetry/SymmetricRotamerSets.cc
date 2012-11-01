@@ -82,13 +82,13 @@ SymmetricRotamerSets::compute_energies(
 	if ( pig ) {
 		precompute_two_body_energies( pose, scfxn, packer_neighbor_graph, pig );
 	} else {
-		/// is this an on the fly graph?
-		OnTheFlyInteractionGraphOP otfig = dynamic_cast< OnTheFlyInteractionGraph * > ( ig.get() );
-		if ( otfig ) {
-			utility_exit_with_message("Cannot use symmetry with on-the-fly interaction graph yet!");
-		} else {
-			utility_exit_with_message("Unknown interaction graph type encountered in RotamerSets::compute_energies()");
-		}
+		//SymmOnTheFlyInteractionGraphOP symotfig =
+		//	dynamic_cast< SymmOnTheFlyInteractionGraph * > ( ig.get() );
+		//if ( symotfig ) {
+		//	prepare_symm_otf_interaction_graph( pose, scfxn, packer_neighbor_graph, symotfig );
+		//} else {
+			utility_exit_with_message( "Encountered incompatible interaction graph type in SymmetricRotamerSets::compute_energies" );
+		//}
 	}
 
 }
@@ -133,7 +133,7 @@ SymmetricRotamerSets::precompute_two_body_energies(
   SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
 	// Two body energies
-	for ( uint ii = 1; ii <= nmoltenres(); ++ ii )
+	for ( uint ii = 1; ii <= nmoltenres(); ++ii )
 	{
 		//tt << "pairenergies for ii: " << ii << '\n';
 		uint ii_resid = moltenres_2_resid( ii );
@@ -145,7 +145,6 @@ SymmetricRotamerSets::precompute_two_body_energies(
 		{
 			uint jj_resid = (*uli)->get_second_node_ind();
 			uint jj = resid_2_moltenres( jj_resid ); //pretend we're iterating over jj >= ii
-//			if ( jj == 0 ) continue; // Andrew, remove this magic number!
 			// if jj_resid is not repackable and jj_resid is not in a different subunit continue
 			if ( jj == 0 && symm_info->chi_follows( jj_resid ) == 0  ) continue;
 			// if jj_resid is in a different subunit we need to know its master
@@ -313,6 +312,64 @@ SymmetricRotamerSets::precompute_two_body_energies(
 		}
 	}
 }
+
+/// @details Add edges between all adjacent nodes in the
+/// interaction graph, and note which of the subunit pairs are interacting.
+//void
+//SymmetricRotamerSets::prepare_symm_otf_interaction_graph(
+//	pose::Pose const & pose,
+//	scoring::ScoreFunction const & scfxn,
+//	graph::GraphCOP packer_neighbor_graph,
+//	interaction_graph::SymmOnTheFlyInteractionGraphOP ig
+//)
+//{
+//	// find SymmInfo
+//  SymmetricConformation const & SymmConf (
+//    dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
+//  SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
+//
+//	ig->initialize( *this );
+//	for ( Size ii = 1; ii <= nmoltenres(); ++ii ) {
+//		Size ii_resid = moltenres_2_resid( ii );
+//		for ( graph::Graph::EdgeListConstIter
+//				uli = packer_neighbor_graph->get_node( ii_resid )->const_upper_edge_list_begin(),
+//				ulie = packer_neighbor_graph->get_node( ii_resid )->const_upper_edge_list_end(); uli != ulie; ++uli ) {
+//			Size jj_resid = (*uli)->get_second_node_ind();
+//			Size jj = resid_2_moltenres( jj_resid );
+//			// skip jj if this is a background residue.  This is true
+//			// if jj == 0 (i.e. not a moltenresidue) and if jj_resid
+//			// is in the asymmetric unit (i.e. chi_follows(jj_resid) == 0 )
+//			// If jj is not in the asymmetric unit, and its master is
+//			// also not a molten residue
+//			if ( jj == 0 && sym_info->chi_follows( jj ) == 0 ) continue;
+//			Size jj_resid_master = sym_info->chi_follows( jj_resid ) == 0 ? jj_resid : sym_info->chi_follows( jj_resid );
+//			Size jj_master = jj == 0 ? resid_2_moltenres( jj_resid_master ), jj;
+//			// ok, jj_resid's master is also not a molten residue
+//			if ( jj_master == 0 ) continue;
+//			// or if jj_master == ii, then we're looking at a residue interacting with its symmetric clone, whic
+//			// in the context of packing, is qualified as a one-body interaction,
+//			if ( jj_master == ii ) continue;
+//
+//			// OK: ii_resid interacts with jj_resid and their interaction
+//			// needs to be counted as part of the interaction graph.
+//			Size ii_master( ii ), ii_resid_master( ii_resid );
+//			bool swap( false );
+//			if ( jj_resid_master < ii_resid_master ) {
+//				Size temp;
+//				temp = ii_master; ii_master = jj_master; jj_master = temp;
+//				temp = ii_resid_master; ii_resid_master =jj_resid_master; jj_resid_master = temp;
+//				swap = true;
+//			}
+//
+//			// next, check if the edge already exists, and, if it does,
+//			// then continue
+//			if ( ig->get_edge_exists( ii_master, jj_master ) continue;
+//
+//			ig->add_edge( ii_master, jj_master );
+//
+//		}
+//	}
+//}
 
 // @details orients all rotamers in a rotamer_set to a different (symmetrical) position
 RotamerSetOP

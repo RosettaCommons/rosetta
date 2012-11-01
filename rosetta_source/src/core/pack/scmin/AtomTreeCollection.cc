@@ -133,6 +133,7 @@ ResidueAtomTreeCollection::ResidueAtomTreeCollection(
 	atom_tree_representatives_( rset.get_n_residue_types() ),
 	residue_representatives_( atom_tree_representatives_.size() )
 {
+
 	for ( Size ii = 1; ii <= rset.get_n_residue_types(); ++ii ) {
 		residue_representatives_[ ii ] = rset.rotamer( rset.get_residue_type_begin(ii) )->clone();
 		residue_representatives_[ ii ]->seqpos( 1 ); // temporary -- while we construct the atom tree, pretend we're residue 1.
