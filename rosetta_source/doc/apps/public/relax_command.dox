@@ -265,7 +265,8 @@ endrepeat
 
 
 
-
+@section special_notes Special Notes on BatchRelax
+@li The -l flag (list of input PDBs) is treated differently by BatchRelax than most Rosetta applications.  Instead of processing each entry in -l sequentially, all are pooled into one big batch.  This has the advantage that BatchRelax can trim the pool irrespective of PDB input source, but the disadvantage that -l for sequential input is no longer available.  If all PDB inputs to -l do not match in sequence or length, you will get strange crashes in PackRotamersMover due to invalid PackerTasks.
 
 
 @section developers For developers only:
