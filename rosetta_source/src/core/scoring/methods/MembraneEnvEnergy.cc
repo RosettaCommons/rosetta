@@ -91,6 +91,12 @@ MembraneEnvEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & )
 
 }
 
+void
+MembraneEnvEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sf) const
+{
+	setup_for_scoring(pose,sf);
+}
+
 
 ///////////////////////////////////////
 //

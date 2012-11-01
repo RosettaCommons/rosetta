@@ -444,7 +444,7 @@ Minimizer::dfpmin_armijo(
 			if ( line_min->provide_stored_derivatives() ) {
 				 line_min->fetch_stored_derivatives( G );
 			} else {
-				 FRET = func_(P);
+				 //FRET = func_(P);
 				 func_.dfunc(P,G);
 			}
 
@@ -713,7 +713,7 @@ Minimizer::lbfgs(
 			if ( line_min->provide_stored_derivatives() ) {
 				 line_min->fetch_stored_derivatives( G );
 			} else {
-				 FRET = func_(X);
+				 //FRET = func_(X);
 				 func_.dfunc(X,G);
 			}
 

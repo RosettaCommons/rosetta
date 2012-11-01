@@ -127,10 +127,11 @@ Fa_MbenvEnergy::eval_fa_mbenv(
 /////////////////////////////////////////////////////////////////////////////
 void
 Fa_MbenvEnergy::setup_for_derivatives(
-                                         pose::Pose & /*pose*/,
+                                         pose::Pose & pose,
                                          ScoreFunction const & scfxn
 ) const
 {
+  potential_.compute_fa_projection( pose );
   fa_mbenv_weight_ = scfxn.weights()[ fa_mbenv ];
 }
 

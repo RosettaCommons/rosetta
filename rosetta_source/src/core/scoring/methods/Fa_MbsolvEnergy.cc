@@ -196,6 +196,7 @@ Fa_MbsolvEnergy::setup_for_derivatives(
 																				 ScoreFunction const & scfxn
 ) const
 {
+  potential_.compute_fa_projection( pose );
 	pose.update_residue_neighbors();
   fa_mbsolv_weight_ = scfxn.weights()[ fa_mbsolv ];
 }

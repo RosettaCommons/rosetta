@@ -165,7 +165,7 @@ HackElecEnergy::initialize() {
 	if( no_dis_dep_die_ ) {
 		C2_ = C1_ / max_dis_ ;
 		min_dis_score_ = C1_ / min_dis_ - C2_ ;
-		dEfac_ = -2.0 * C0_ / die_ ;
+		dEfac_ = -1.0 * C0_ / die_ ;
 	} else {
 		C2_ = C1_ / max_dis2_ ;
 		min_dis_score_ = C1_ / min_dis2_ - C2_ ;
