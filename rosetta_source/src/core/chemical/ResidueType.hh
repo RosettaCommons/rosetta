@@ -19,7 +19,7 @@
 /// and read from parameter files, generally located in the database chemical/residuetypes. For ligands,
 /// or anything that is not the natural 20 aa, a parameter has to be provided to rosetta through the -extra_res_fa
 /// flag. Residue_io sets private member data in ResidueType. The primary data that are set are: atoms, mmatoms, orbitals,
-/// properties of residues. These properties can be modified through patches, which is controlled through PatchOperations.cc. If
+/// properties of residues. These properties can be modified through patches, which is controlled through PatchOperation.cc. If
 /// the residuetype is modified, the indices of atoms and mmatoms and everything associated with those indices must be redefined. This
 /// redordering of indices is taken care of with the function reorder_primary_data().
 ///
@@ -862,14 +862,6 @@ public:
 	update_actcoord( conformation::Residue & rot ) const;
 
 
-
-
-
-
-
-
-
-
 //	/// @brief Get the CSD atom_type for this atom by its index number in this residue
 //	CSDAtomType const &
 //	csd_atom_type( int const atomno ) const
@@ -885,10 +877,6 @@ public:
 //	}
 
 
-
-
-
-
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
@@ -896,7 +884,6 @@ public:
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
-
 
 
 	//////////////////////////////////////////////////////////////////////
@@ -1157,7 +1144,6 @@ public:
 	//////////////////////////////////////////////////////////////////////
 
 
-
 	/// @brief add a chi angle defined by four atoms
 	void
 	add_chi(
@@ -1209,8 +1195,6 @@ public:
 			utility_exit_with_message( "need to finalize the residue first" );
 		}
 	}
-
-
 
 
 	/// @brief  add a ResidueConnection
@@ -1455,7 +1439,6 @@ public:
 	}
 
 
-
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
@@ -1472,7 +1455,6 @@ public:
 	{
 		return name_;
 	}
-
 
 	/// @brief set our (unique) residue name
 	void
@@ -1512,6 +1494,7 @@ public:
 		name1_ = code;
 	}
 
+
 	///@brief set the MolData object
 	void set_mol_data(sdf::MolData const & mol_data)
 	{
@@ -1522,7 +1505,6 @@ public:
 	{
 		return mol_data_;
 	}
-
 
 
 	/// our traditional residue type, if any

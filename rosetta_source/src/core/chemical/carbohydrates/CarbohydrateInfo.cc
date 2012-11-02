@@ -525,7 +525,7 @@ CarbohydrateInfo::determine_IUPAC_names()
 	// Determine prefixes.
 	stringstream prefixes(stringstream::out);
 	if (!residue_type_->is_upper_terminus()) {
-		prefixes << "(_->" << mainchain_glycosidic_bond_acceptor_ << ")-";
+		prefixes << "->" << mainchain_glycosidic_bond_acceptor_ << ")-";
 	}
 	if (!residue_type_->is_lower_terminus()) {
 		prefixes << anomer_ << '-';

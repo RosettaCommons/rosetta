@@ -42,6 +42,7 @@ public:
 		core_init();
 		option[OptionKeys::in::include_sugars](true);
 		pose_from_pdb(maltotriose_, "core/chemical/carbohydrates/maltotriose.pdb");
+		pose_from_pdb(isomaltose_,  "core/chemical/carbohydrates/isomaltose.pdb");
 
 		// TODO: Test several other cases besides glucose.
 	}
@@ -70,7 +71,7 @@ public:
 
 		expected_out1 << "Carbohydrate Properties for this Residue:" << endl;
 		expected_out1 << " Basic Name: glucose" << endl;
-		expected_out1 << " IUPAC Name: (_->4)-D-glucopyranose" << endl;
+		expected_out1 << " IUPAC Name: ->4)-D-glucopyranose" << endl;
 		expected_out1 << " Classification: aldohexose" << endl;
 		expected_out1 << " Stereochemistry: D" << endl;
 		expected_out1 << " Ring Form: pyranose" << endl;
@@ -84,7 +85,7 @@ public:
 
 		expected_out2 << "Carbohydrate Properties for this Residue:" << endl;
 		expected_out2 << " Basic Name: glucose" << endl;
-		expected_out2 << " IUPAC Name: (_->4)-alpha-D-glucopyranosyl" << endl;
+		expected_out2 << " IUPAC Name: ->4)-alpha-D-glucopyranosyl" << endl;
 		expected_out2 << " Classification: aldohexose" << endl;
 		expected_out2 << " Stereochemistry: D" << endl;
 		expected_out2 << " Ring Form: pyranose" << endl;
@@ -126,8 +127,21 @@ public:
 	// Confirm that CarbohydrateInfo.short_name_ is assigned correctly.
 	void test_Pose_chain_sequence_w_polysaccharide()
 	{
-		TS_TRACE("Testing chain_sequence() method of Pose with a polysaccharide chain.");
-		TS_ASSERT_EQUALS(maltotriose_.chain_sequence(1), "alpha-D-Glcp-(_->4)-alpha-D-Glcp-(_->4)-D-Glcp");
+		TS_TRACE("Testing chain_sequence() method of Pose with polysaccharide chains.");
+		TS_ASSERT_EQUALS(maltotriose_.chain_sequence(1), "alpha-D-Glcp-(1->4)-alpha-D-Glcp-(1->4)-D-Glcp");
+		TS_ASSERT_EQUALS(isomaltose_.chain_sequence(1), "alpha-D-Glcp-(1->6)-D-Glcp");
+	}
+
+	// Confirm that backbone torsion angles are assigned correctly.
+	void test_Pose_phi_psi_omega_w_polysaccharide()
+	{
+		TS_TRACE("Testing phi(), psi(), and omega() methods of Pose with polysaccharide chains.");
+		TS_TRACE(isomaltose_.phi(2));
+		TS_TRACE(isomaltose_.psi(2));
+		TS_TRACE(isomaltose_.omega(2));
+		//TS_ASSERT_DELTA(isomaltose_.phi(2), 44.3268, 0.001);
+		//TS_ASSERT_DELTA(isomaltose_.psi(2), 170.869, 0.001);
+		//TS_ASSERT_DELTA(isomaltose_.omega(2), 49.383, 0.001);
 	}
 
 	// Confirm that branches are handled properly.
@@ -155,6 +169,7 @@ public:
 
 private:
 	// Private data ////////////////////////////////////////////////////////////
-	core::pose::Pose maltotriose_;
+	core::pose::Pose maltotriose_;  // a (1alpha->4) trisaccharide of D-glucose
+	core::pose::Pose isomaltose_;  // a (1alpha->6) disaccharide of D-glucose
 
 };  // class CarbohydrateInfoTests

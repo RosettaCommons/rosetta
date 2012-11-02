@@ -383,7 +383,8 @@ HeaderInformation::fill_keyword_records(
 	Size line_no(1);
 	fill_wrapped_records("KEYWDS", "keywords", keywords, line_no, VR);
 }
-////////////// COMPND ///////////////////
+
+///////////// COMPND ///////////////////
 
 std::string
 HeaderInformation::compound_token_to_string(CompoundToken token) {
@@ -752,7 +753,7 @@ HeaderInformation::fill_wrapped_records(
 		R["type"].value = record_type;
 		set_line_continuation(R, line_no);
 
-		//Will the remaineder of the contents fit on this line?
+		//Will the remainder of the contents fit on this line?
 		if(contents.length() - l_begin <= field_width){
 			l_len = contents.length() - l_begin;
 		} else {
@@ -800,7 +801,7 @@ HeaderInformation::set_line_continuation(
 ) const {
 	std::string & con_field = R["continuation"].value;
 	if(line_no == 0){
-		TR.Error << "Attempting to wriat a line continuation record for line 0, please begin the line continuation count at 1." << endl;
+		TR.Error << "Attempting to write a line continuation record for line 0, please begin the line continuation count at 1." << endl;
 		utility_exit();
 	}
 	if(line_no == 1){

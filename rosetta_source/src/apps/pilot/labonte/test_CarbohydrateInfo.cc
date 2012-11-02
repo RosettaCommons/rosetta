@@ -24,29 +24,48 @@
 #include <iostream>
 
 
-int main(int argc, char *argv[])
-{
-	using namespace std;
-	using namespace core;
-	using namespace pose;
-	using namespace import_pose;
-	using namespace conformation;
+using namespace std;
+using namespace core;
+using namespace pose;
+using namespace import_pose;
+using namespace conformation;
 
+
+void
+test_sugar(Pose & sugar)
+{
+	cout << "Sequences:" << endl;
+	cout << sugar.sequence() << endl;
+	cout << sugar.chain_sequence(1) << endl;
+
+	cout << "Residue Info:" << endl;
+	for (Size i = 1; i <= sugar.total_residue(); ++i) {
+		Residue res = sugar.residue(i);
+		cout << res << endl << endl;
+	}
+}
+
+
+int
+main(int argc, char *argv[])
+{
 	// Initialize core.
 	devel::init(argc, argv);
 
 	// Declare variables.
-	Pose pose;
+	Pose maltotriose, isomaltose;
 
-	// Import test carbohydrate pose.
-	pose_from_pdb(pose, "/home/labonte/Workspace/Carbohydrates/maltotriose.pdb");
+	cout << "------------------------------------------------------------" << endl;
+	cout << "Importing maltotriose:" << endl;
 
-	cout << pose.sequence() << endl;
-	cout << pose.chain_sequence(1) << endl;
+	pose_from_pdb(maltotriose, "/home/labonte/Workspace/Carbohydrates/maltotriose.pdb");
 
-	for (Size i = 1; i <= pose.total_residue(); ++i) {
-		Residue res = pose.residue(i);
-		//cout << *(res.carbohydrate_info()) << endl << endl;
-		cout << res << endl << endl;
-	}
+	test_sugar(maltotriose);
+
+	cout << "------------------------------------------------------------" << endl;
+	cout << "Importing isomaltose:" << endl;
+
+	pose_from_pdb(isomaltose, "/home/labonte/Workspace/Carbohydrates/isomaltose.pdb");
+
+	test_sugar(isomaltose);
 }

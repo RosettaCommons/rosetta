@@ -103,7 +103,7 @@ dump_pdb(
 
  			if ( ! mask[ id::AtomID( j,i ) ] ) continue;
 
-			//skip outputing virtual atom unless specified.
+			//skip outputting virtual atom unless specified.
  			//fixed so that the last atom in atom type set can be something other than a virtual atom --steven combs
 			if ( !basic::options::option[ basic::options::OptionKeys::out::file::output_virtual ]() &&
 				rsd.atom_type(j).is_virtual() ) continue;

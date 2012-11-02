@@ -9,7 +9,7 @@
 
 /// @file
 /// @author Phil Bradley
-/// see Patch.cc to understand whats going on
+// see Patch.cc to understand what's going on
 
 #ifndef INCLUDED_core_chemical_Patch_hh
 #define INCLUDED_core_chemical_Patch_hh

@@ -49,6 +49,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <sstream>
 #include <fstream>
 //#include <core/pack/dunbrack/RotamerLibrary.fwd.hh>
 // AUTO-REMOVED #include <core/scoring/mm/MMBondAngleResidueTypeParamSet.fwd.hh>
@@ -610,26 +611,32 @@ Pose::annotated_sequence( bool show_all_variants ) const
 std::string
 Pose::chain_sequence(core::Size const chain_in) const
 {
+	using namespace std;
+
 	assert(chain_in <= conformation_->num_chains());
 	PyAssert((chain_in <= conformation_->num_chains()),
 			"Pose::chain_sequence(core::Size const chain_in): variable chain_in is out of range!");
 
-	std::string seq;
+	stringstream seq(stringstream::out);
 
 	Size begin = conformation_->chain_begin(chain_in);
 	Size end = conformation_->chain_end(chain_in);
 
 	if (!residue(begin).is_carbohydrate()) {
 		for (Size i = begin; i <= end; ++i) {
-			seq += residue(i).name1();
+			seq << residue(i).name1();
 		}
 	} else /*is carbohydrate*/ {
 		// Carbohydrate sequences are listed in the opposite direction as they are numbered.
 		for (Size i = end; i >= begin; --i) {
-			seq += residue(i).carbohydrate_info()->short_name();
+			seq << residue(i).carbohydrate_info()->short_name();
+			if (i != begin) {
+				seq << "(";
+				seq << residue(i).carbohydrate_info()->anomeric_carbon();
+			}
 		}
 	}
-	return seq;
+	return seq.str();
 }
 
 

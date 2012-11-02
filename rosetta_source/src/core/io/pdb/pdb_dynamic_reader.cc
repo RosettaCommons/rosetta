@@ -108,14 +108,14 @@ std::vector<Record> PDB_DReader::parse(const String &pdb)
 	return r;
 }
 
-/// @details Create FileData object from a given vector of Recrods.
+/// @details Create FileData object from a given vector of Records.
 FileData PDB_DReader::createFileData(std::vector<Record> & VR)
 {
 	PDB_DReaderOptions options;
 	return createFileData( VR, options );
 }
 
-/// @details Create FileData object from a given vector of Recrods.
+/// @details Create FileData object from a given vector of Records.
 FileData PDB_DReader::createFileData(std::vector<Record> & VR, PDB_DReaderOptions const & options)
 {
 	FileData fd;
@@ -141,9 +141,12 @@ FileData PDB_DReader::createFileData(std::vector<Record> & VR, PDB_DReaderOption
 	Size modelidx = 1;
 	bool modeltags_present = false;
 
+	// Loop over all PDB records stored in vector VR.
 	for(Size i=0; i<VR.size(); i++) {
+		std::string record_type = VR[i]["type"].value;
+
 		// jec reading multimodel PDBs
-		if (VR[i]["type"].value == "MODEL " ) {
+		if (record_type == "MODEL " ) {
 			// store the serial number as the filename, which will become the PDBInfo name of the pose
 			std::string temp_model = ObjexxFCL::strip_whitespace( VR[i]["serial"].value ) ;
 			fd.modeltag = temp_model.c_str();
@@ -162,14 +165,22 @@ FileData PDB_DReader::createFileData(std::vector<Record> & VR, PDB_DReaderOption
 					modeltags_present = true;
 				}
 			}
+
+		// Record contains "header information", i.e., is from the Title Section of the PDB file.
 		} else if (
-			VR[i]["type"].value == "HEADER" || VR[i]["type"].value == "KEYWDS" ||
-			VR[i]["type"].value == "TITLE " || VR[i]["type"].value == "COMPND" ||
-			VR[i]["type"].value == "EXPDTA") {
+				record_type == "HEADER" || record_type == "KEYWDS" ||
+				record_type == "TITLE " || record_type == "COMPND" ||
+				record_type == "EXPDTA") {
 			if( read_pdb_header ){
 				fd.store_header_record(VR[i]);
 			}
-		} else if( VR[i]["type"].value == "ATOM  " || VR[i]["type"].value == "HETATM")  {
+
+		// Record contains heterogen nomenclature information from the Heterogen section of the PDB file.
+		} else if (record_type == "HETNAM") {
+			fd.store_heterogen_names(VR[i]["hetID"].value, VR[i]["text"].value);
+
+		// Record contains atom information from the Coordinate Section of the PDB file.
+		} else if( record_type == "ATOM  " || record_type == "HETATM")  {
 			Record & R(VR[i]);
 
 			AtomInformation ai;
@@ -214,13 +225,15 @@ FileData PDB_DReader::createFileData(std::vector<Record> & VR, PDB_DReaderOption
 			if ( std::find( chain_list.begin(), chain_list.end(), ai.chainID ) == chain_list.end() ) {
 				chain_list.push_back( ai.chainID );
 			}
-		} else if( VR[i]["type"].value == "TER   " || VR[i]["type"].value == "END   ")  {
+		} else if( record_type == "TER   " || record_type == "END   ")  {
 			terCount++;
-		} else if( (VR[i]["type"].value == "ENDMDL") &&
+		} else if( (record_type == "ENDMDL") &&
 							 (options.obey_ENDMDL()) )  {
 		 	TR.Warning << "hit ENDMDL, not reading anything further" << std::endl;
 			break;
-		} else if( VR[i]["type"].value == "REMARK")  {
+
+		// Record contains a remark.
+		} else if( record_type == "REMARK")  {
 			pose::RemarkInfo ri;
 			ri.num = atoi( VR[i]["remarkNum"].value.c_str() ),
 			ri.value = VR[i]["value"].value;

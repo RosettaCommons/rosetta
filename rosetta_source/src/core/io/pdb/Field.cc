@@ -27,7 +27,7 @@ namespace pdb {
 using std::string;
 using std::ostream;
 
-/// @brief various constructors - only for convinience.
+/// @brief various constructors - only for convenience.
 Field::Field() :
   type(""),
   value(""),
@@ -71,14 +71,12 @@ RecordRef Field::PDB_Records_;
 
 /// @details check if records table was init, init table otherwise
 /// return reference to private static records collection
+/// @remarks See http://www.wwpdb.org/docs.html#format for details.
 RecordRef & Field::getRecordCollection()
 {
 	if( PDB_Records_.size() == 0 ) {
 		PDB_Records_ = utility::tools::make_map<string, Record>(
-			"MODEL ", utility::tools::make_map<string, Field>(
-				"type",			Field( 1,    6),
-				"serial",		Field( 7,   80) ),
-
+			// Title Section
 			"HEADER", utility::tools::make_map<string, Field>(
 				"type",           Field( 1,  6),
 				"classification", Field(11, 50),
@@ -108,66 +106,112 @@ RecordRef & Field::getRecordCollection()
 			"REMARK", utility::tools::make_map<string, Field>(
 				"type",      Field( 1,  6),
 				"remarkNum", Field( 8, 10),
-				"value",     Field(12, 70) ), // non standard name.
+				"value",     Field(12, 70) ), // non-standard name
+
+			// Primary Structure Section
+
+			// Heterogen Section
+			"HETNAM", utility::tools::make_map<string, Field>(
+				"type",         Field( 1,  6),
+				"continuation", Field( 9, 10),
+				"hetID",        Field(12, 14), // LString(3): HET identifier, right-justified
+				"text",         Field(16, 70)  // String: chemical name
+				),
+
+			// Secondary Structure Section
+
+			// Connectivity Annotation Section
+			"SSBOND", utility::tools::make_map<string, Field>(
+				"type",     Field( 1,  6),
+				"serNum",   Field( 8, 10), // Integer
+				"CYS",      Field(12, 14),
+				"chainID1", Field(16, 16), // Character
+				"seqNum1",  Field(18, 21), // Integer
+				"icode1",   Field(22, 22), // AChar
+				"CYS",      Field(26, 28),
+				"chainID2", Field(30, 30), // Character
+				"seqNum2",  Field(32, 35), // Integer
+				"icode2",   Field(36, 36), // AChar
+				"sym1",     Field(60, 65), // SymOP
+				"sym2",     Field(67, 72)  // SymOP
+				),
+			"LINK  ", utility::tools::make_map<string, Field>(
+				"type",     Field( 1,  6),
+				"name1",    Field(13, 16), // Atom
+				"altLoc1",  Field(17, 17), // Character
+				"resName1", Field(18, 20), // Residue name
+				"chainID1", Field(22, 22), // Character
+				"resSeq1",  Field(23, 26), // Integer
+				"iCode1",   Field(27, 27), // AChar
+				"name2",    Field(43, 46), // Atom
+				"altLoc2",  Field(47, 47), // Character
+				"resName2", Field(48, 50), // Residue name
+				"chainID2", Field(52, 52), // Character
+				"resSeq2",  Field(53, 56), // Integer
+				"iCode2",   Field(57, 57), // AChar
+				"sym1",     Field(60, 65), // SymOP
+				"sym2",     Field(67, 72), // SymOP
+				"length",   Field(74, 78)  // Real(5.2)
+				),
+
+			// Miscellaneous Features Section
+
+			// Crystallographic & Coordinate Transformation Section
+
+			// Coordinate Section
+			"MODEL ", utility::tools::make_map<string, Field>(
+				"type",   Field( 1,  6),
+				"serial", Field( 7, 80) ),
 
 			"ATOM  ", utility::tools::make_map<string, Field>(
 				"type",       Field( 1,  6),
-				"serial",     Field( 7, 11), /// Integer
-				"name",       Field(13, 16), /// Atom
-				"altLoc",     Field(17, 17), /// Character
-				"resName",    Field(18, 20), /// Residue name
-				"chainID",    Field(22, 22), /// Character
-				"resSeq",     Field(23, 26), /// Integer
-				"iCode",      Field(27, 27), /// AChar
-				"x",          Field(31, 38), /// Real(8.3)
-				"y",          Field(39, 46), /// Real(8.3)
-				"z",          Field(47, 54), /// Real(8.3)
-				"occupancy",  Field(55, 60), /// Real(6.2)
-				"tempFactor", Field(61, 66), /// Real(6.2)
-				///"segID",     Field(73, 76),
-				"element",    Field(77, 78), /// LString(2)
-				"charge",     Field(79, 80)  /// LString(2)
+				"serial",     Field( 7, 11), // Integer
+				"name",       Field(13, 16), // Atom
+				"altLoc",     Field(17, 17), // Character
+				"resName",    Field(18, 20), // Residue name
+				"chainID",    Field(22, 22), // Character
+				"resSeq",     Field(23, 26), // Integer
+				"iCode",      Field(27, 27), // AChar
+				"x",          Field(31, 38), // Real(8.3)
+				"y",          Field(39, 46), // Real(8.3)
+				"z",          Field(47, 54), // Real(8.3)
+				"occupancy",  Field(55, 60), // Real(6.2)
+				"tempFactor", Field(61, 66), // Real(6.2)
+				//"segID",     Field(73, 76),
+				"element",    Field(77, 78), // LString(2)
+				"charge",     Field(79, 80)  // LString(2)
 				),
 			"HETATM", utility::tools::make_map<string, Field>(
 				"type",       Field( 1,  6),
-				"serial",     Field( 7, 11), /// Integer
-				"name",       Field(13, 16), /// Atom
-				"altLoc",     Field(17, 17), /// Character
-				"resName",    Field(18, 20), /// Residue name
-				"chainID",    Field(22, 22), /// Character
-				"resSeq",     Field(23, 26), /// Integer
-				"iCode",      Field(27, 27), /// AChar
-				"x",          Field(31, 38), /// Real(8.3)
-				"y",          Field(39, 46), /// Real(8.3)
-				"z",          Field(47, 54), /// Real(8.3)
-				"occupancy",  Field(55, 60), /// Real(6.2)
-				"tempFactor", Field(61, 66), /// Real(6.2)
-				///"segID",     Field(73, 76),
-				"element",    Field(77, 78), /// LString(2)
-				"charge",     Field(79, 80)  /// LString(2)
-				),
-			"SSBOND", utility::tools::make_map<string, Field>(
-				"type",     Field( 1,  6),
-				"serNum",   Field( 8, 10), /// Integer
-				"CYS",      Field(12, 14),
-				"chainID1", Field(16, 16), /// Character
-				"seqNum1",  Field(18, 21), /// Integer
-				"icode1",   Field(22, 22), /// AChar
-				"CYS",      Field(26, 28),
-				"chainID2", Field(30, 30), /// Character
-				"seqNum2",  Field(32, 35), /// Integer
-				"icode2",   Field(36, 36), /// AChar
-				"sym1",     Field(60, 65), /// SymOP
-				"sym2",     Field(67, 72)  /// SymOP
+				"serial",     Field( 7, 11), // Integer
+				"name",       Field(13, 16), // Atom
+				"altLoc",     Field(17, 17), // Character
+				"resName",    Field(18, 20), // Residue name
+				"chainID",    Field(22, 22), // Character
+				"resSeq",     Field(23, 26), // Integer
+				"iCode",      Field(27, 27), // AChar
+				"x",          Field(31, 38), // Real(8.3)
+				"y",          Field(39, 46), // Real(8.3)
+				"z",          Field(47, 54), // Real(8.3)
+				"occupancy",  Field(55, 60), // Real(6.2)
+				"tempFactor", Field(61, 66), // Real(6.2)
+				//"segID",     Field(73, 76),
+				"element",    Field(77, 78), // LString(2)
+				"charge",     Field(79, 80)  // LString(2)
 				),
 			"TER   ", utility::tools::make_map<string, Field>(
-				"type",       Field( 1,  6),
-				"serial",     Field( 7, 11),
-				"resName",    Field(18, 20),
-				"chainID",    Field(22, 22),
-				"resSeq",     Field(23, 26),
-				"iCode",      Field(27, 27) ),
+				"type",    Field( 1,  6),
+				"serial",  Field( 7, 11),
+				"resName", Field(18, 20),
+				"chainID", Field(22, 22),
+				"resSeq",  Field(23, 26),
+				"iCode",   Field(27, 27) ),
 
+			// Connectivity Section
+
+			// Bookkeeping Section
+
+			// Unknown Type
 			"UNKNOW", utility::tools::make_map<string, Field>(
 				"type", Field( 1,  6),
 				"info", Field( 7, 80) )
@@ -177,7 +221,7 @@ RecordRef & Field::getRecordCollection()
 }
 
 
-/// @details Debug printing, serialazing to Tracer like object.
+/// @details Debug printing, serializing to Tracer like object.
 std::ostream&
 operator <<(std::ostream &os,Record const & R) {
   for(Record::const_iterator p=R.begin(); p!=R.end(); p++ ) {

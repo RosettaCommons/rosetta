@@ -555,7 +555,7 @@ void build_pose(
 }
 
 ///
-/// @details Build mini Rosetta pose object from FileData.
+/// @details Build Rosetta 3 Pose object from FileData.
 ///
 void build_pose(
 	io::pdb::FileData & fd,

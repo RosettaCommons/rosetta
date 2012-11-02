@@ -56,9 +56,10 @@ namespace pdb {
 
 typedef std::string String;
 
-/// @brief Atom_information contain information for individual atom.
-/// only fields that predent in file will be initialazed, other will have default value.
-/// That class basicaly reflect structure of 'ATOM' line in PDB file format.
+/// @brief   A class that contains information for individual atoms.
+/// @details Only fields that are present in the PDB file will be initialized;
+/// others will have the default value.
+/// This class basically reflects the structure of 'ATOM' lines in PDB file format.
 class AtomInformation
 {
 public:
@@ -110,8 +111,8 @@ public:
 typedef std::vector<AtomInformation> AtomChain;
 
 
-/// @brief Intermediate format for easy construction of core::conformation::Residue objects.
-/// Subset of data from "ATOM" lines that is shared by all atoms in a residue.
+/// @brief   Intermediate format for easy construction of core::conformation::Residue objects.
+/// @details Subset of data from "ATOM" lines that is shared by all atoms in a residue.
 class ResidueInformation
 {
 public:
@@ -149,13 +150,21 @@ public:
 	/// @brief empty destructor in C++ file to reduce number of necessary includes.
 	~FileData();
 
-	 /// only one data member, that should not preserve any 'state' - so it is public.
+	// only one data member, that should not preserve any 'state' - so it is public.
 	std::vector< AtomChain > chains;
 	//std::vector< RemarkInfo > remarks;
 	pose::RemarksOP remarks;
 	HeaderInformationOP header;
 	std::string filename;
 	std::string modeltag;
+
+	// map for storing (non-sugar) HETNAM records:
+	// key is hetID
+	std::map<std::string, std::string> heterogen_names;
+
+	// map for storing carbohydrate ResidueType base (non-variant) names; parsed from HETNAM records:
+	// key is 6-character resID
+	std::map<std::string, std::string> carbohydrate_residue_type_base_names;
 
 	void
 	initialize_header_information();
@@ -176,6 +185,13 @@ public:
 	/// calling this.
 	void
 	fill_header_records(std::vector< Record > & VR) const;
+
+	/// @brief Store heterogen name information in a map.
+	void store_heterogen_names(std::string const & hetID, std::string const & text);
+
+	/// @brief Parse heterogen name data for a given carbohydrate and save the particular base (non-variant)
+	/// ResidueType needed in a map.
+	void parse_heterogen_name_for_carbohydrate_residues(std::string const & text);
 
 	/// @brief Fill FileData structure using information from given pose object.
 	void init_from_pose(core::pose::Pose const & pose);
@@ -246,7 +262,7 @@ public:
 		core::Size & atom_index,
 		core::pose::Pose const & pose
 	);
-};
+};  // class FileData
 
 void
 write_additional_pdb_data(

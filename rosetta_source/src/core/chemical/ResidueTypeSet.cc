@@ -465,7 +465,7 @@ ResidueTypeSet::add_residue_type_to_maps( ResidueTypeOP rsd_ptr )
 
 	// For specialty amino acids, add them to the name three maps both with their PDB strings and
 	// with their specialty string -- the first three letters of the residue name.
-	// E.g. CYD will appear in both lists for name3_map_[ "CYS" ] and name3_map_[ "CYD" ]
+	// E.g., CYD will appear in both lists for name3_map_[ "CYS" ] and name3_map_[ "CYD" ]
 	if ( rsd_ptr->name3() != rsd_ptr->name().substr(0,3) ) {
 		name3_map_[ rsd_ptr->name().substr(0,3) ].push_back( rsd_ptr() );
 	}

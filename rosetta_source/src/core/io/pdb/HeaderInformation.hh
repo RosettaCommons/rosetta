@@ -328,7 +328,7 @@ private: // Helper functions
 
 private: // Data for HEADER Record
 
-	/// @brief Possibly abreviated classification type
+	/// @brief Possibly abbreviated classification type
 	std::string classification_;
 
 	/// @brief Deposition date DD-MON-YY

@@ -28,6 +28,8 @@
 
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/Patch.hh>
+#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -84,7 +86,8 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/util.tmpl.hh>\
+
 namespace core {
 namespace io {
 namespace pdb {
@@ -101,10 +104,11 @@ using std::iostream;
 
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::fmt;
-/// Tracer instance for this file
+
+// Tracer instance for this file
 static basic::Tracer TR("core.io.pdb.file_data");
 
-/// random number generator for randomizing missing density coordinates
+// random number generator for randomizing missing density coordinates
 static numeric::random::RandomGenerator RG(231411);  // <- Magic number, do not change it!
 
 // TODO: move this to core/chemical/types.hh
@@ -280,14 +284,14 @@ FileData::header_information() const {
 }
 
 ///@details Store information in the header record into the HeaderInformation
-///Note: HeaderInformation must be created explicitly before it can be filled!
+///@remarks HeaderInformation must be created explicitly before it can be filled!
 void
 FileData::store_header_record(Record & R) {
 	header->store_record(R);
 }
 
 ///@details Populate the header records from the data in the HeaderInformation
-///Note: HeaderInformation must be created explicitly before it can be filled!
+///@remarks HeaderInformation must be created explicitly before it can be filled!
 void
 FileData::fill_header_records(
 	std::vector<Record> & VR
@@ -296,13 +300,72 @@ FileData::fill_header_records(
 }
 
 ///@details finalize storing records from the data in the HeaderInformation
-///Note: HeaderInformation must be created explicitly before it can be filled!
+///@remarks HeaderInformation must be created explicitly before it can be filled!
 void
 FileData::finalize_header_information() {
 	header->finalize_parse();
 
 }
 
+// Store heterogen name information in map.
+/// @remarks  heterogen "names" for carbohydrates (from "Rosetta-ready" PDB files) instead have the name field parsed
+/// to extract the base (non-variant) ResidueType needed for a particular residue.
+void
+FileData::store_heterogen_names(std::string const & hetID, std::string const & text)
+{
+	using namespace std;
+	using namespace core::chemical::carbohydrates;
+
+	if (hetID.empty()) {
+		TR.Warning << "PDB HETNAM record is missing an heterogen ID field." << endl;
+		return;
+	}
+	if (text.empty()) {
+		TR.Warning << "PDB HETNAM chemical name field is an empty string." << endl;
+		return;
+	}
+
+	string name;
+	if (heterogen_names.count(hetID)) {
+		name = heterogen_names[hetID];
+		name.append(rstripped_whitespace(text));
+	} else {
+		name = text;
+		strip_whitespace(name);
+	}
+
+	// If the hetID is found in the map of Rosetta-allowed carbohydrate 3-letter codes....
+	if (CarbohydrateInfo::CODE_TO_ROOT_MAP.count(hetID)) {
+		parse_heterogen_name_for_carbohydrate_residues(name);
+	} else {
+		heterogen_names[hetID] = name;  // Non-carbohydrate heterogen names are simply stored in the standard PDB way.
+	}
+}
+
+// Parse heterogen name data for a given carbohydrate and save the particular base (non-variant) ResidueType needed in
+// a map.
+/// @details  The standard PDB HETNAM record is insufficient for indicating the type of carbohydrate residue found at
+/// each position of the sequence.  The PDB format only allows one heterogen name per 3-letter code.  To work around
+/// this, a PDB file containing carbohydrates will need to be made "Rosetta-ready".  3-letter codes will need to be
+/// converted from, e.g., GLC, which implies the vague "ALPHA-D-GLUCOSE", to Glc.  When Rosetta reads in a "sentence
+/// case" code such as this, it will check a resID-to-ResidueType map to determine which type of alpha-D-glucose to
+/// use, e.g., ->4)-alpha-D-glucopyranosyl or ->6)-alpha-D-glucopyranosyl or ->4)-alpha-D-glucofuranosyl, etc.  This
+/// function fills that map from a "Rosetta-ready" HETNAM text field, which includes the resID information (in the
+/// same order as in an ATOM or HETATOM record) followed by a space and the base (non-variant) ResidueType.
+void
+FileData::parse_heterogen_name_for_carbohydrate_residues(std::string const & text)
+{
+	using namespace std;
+
+	string chainID = string(text.begin(), text.begin() + 1);  // 1 character for chainID
+	string resSeq = string(text.begin() + 1, text.begin() + 5);  // 4 characters for resSeq
+	string iCode = string(text.begin() + 5, text.begin() + 6);  // 1 character for iCode
+	string key = resSeq + iCode + chainID;  // a resID, as defined elsewhere in FileData
+
+	string needed_residue_type_base_name = string(text.begin() + 7, text.end());  // name starts after 7th character
+
+	carbohydrate_residue_type_base_names[key] = needed_residue_type_base_name;
+}
 
 
 /// @details
@@ -333,6 +396,7 @@ void FileData::init_from_pose(core::pose::Pose const & pose, FileDataOptions con
 		append_residue( rsd, atom_index, pose );
 	}
 }
+
 /// @details
 /// a lightweight, direct way of limiting pose pdb output to a subset of residues
 /// the alternative of constructing new subposes for output only would be unnecessary/less efficient (?)
@@ -564,6 +628,8 @@ void FileData::create_working_data(
 	}
 }
 
+
+// Helper Functions
 /// @details Remove spaces from given string.
 inline std::string local_strip_whitespace( std::string const & name )
 {
@@ -744,7 +810,6 @@ build_pose_as_is1(
 	FileDataOptions const & options
 )
 {
-
 	typedef std::map< std::string, double > ResidueTemps;
 	typedef std::map< std::string, ResidueTemps > Temps;
 	typedef std::map< std::string, Vector > ResidueCoords;
@@ -785,6 +850,7 @@ build_pose_as_is1(
 	//recognized
 	bool last_residue_was_recognized(true);
 
+	// Loop over every residue in the FileData extracted from the PDB file.
 	for ( int i=1; i<= nres_pdb; ++i ) {
 		ResidueInformation const & rinfo = rinfos[i];
 		std::string const & pdb_name = rinfo.resName;
@@ -793,14 +859,18 @@ build_pose_as_is1(
 
 		runtime_assert( resid.size() == 6 );
 		bool const separate_chemical_entity = find(entities_begin, entities_end, chainID ) !=  entities_end;
-		bool const same_chain_prev = ( i > 1        && chainID == rinfos[i-1].chainID && rinfo.terCount == rinfos[i-1].terCount && !separate_chemical_entity);
-		bool const same_chain_next = ( i < nres_pdb && chainID == rinfos[i+1].chainID && rinfo.terCount == rinfos[i+1].terCount && !separate_chemical_entity);
+		bool const same_chain_prev = ( i > 1        && chainID == rinfos[i-1].chainID &&
+				rinfo.terCount == rinfos[i-1].terCount && !separate_chemical_entity);
+		bool const same_chain_next = ( i < nres_pdb && chainID == rinfos[i+1].chainID &&
+				rinfo.terCount == rinfos[i+1].terCount && !separate_chemical_entity);
 		bool const is_lower_terminus( i == 1 || rinfos.empty() || !same_chain_prev );
 		bool const is_upper_terminus( i == nres_pdb || !same_chain_next );
+		// bool const is_branch_point;  // TODO: This is where I will need to begin implementing branching. ~ Labonte
 
 		ResidueCoords const & xyz = rinfo.xyz;
 		ResidueTemps  const & rtemp = rinfo.temps;
 
+		// Get a list of ResidueTypes that could apply for this particular 3-letter PDB residue name.
 		ResidueTypeCOPs const & rsd_type_list( residue_set.name3_map( pdb_name ) );
 		if(!is_residue_type_recognized(
 				i, pdb_name, rsd_type_list, xyz, rtemp,
@@ -808,7 +878,6 @@ build_pose_as_is1(
 			last_residue_was_recognized = false;
 			continue;
 		}
-
 
 		// look for best match:
 		// rsd_type should have all the atoms present in xyz
@@ -823,15 +892,23 @@ build_pose_as_is1(
 			// only take the desired variants
 			if ( is_polymer && ( is_lower_terminus != rsd_type.has_variant_type( LOWER_TERMINUS ) ||
 					is_upper_terminus != rsd_type.has_variant_type( UPPER_TERMINUS )) ) {
+				TR.Debug << "for residue " << i << ", discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
 				continue;
 			}
 			if ( rsd_type.aa() == aa_cys && rsd_type.has_variant_type( DISULFIDE ) && pdb_name != "CYD" ) {
+				TR.Debug << "for residue " << i << ", discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
 				continue;
 			}
 			if ( !options.keep_input_protonation_state() &&
 				( rsd_type.has_variant_type( PROTONATED ) || rsd_type.has_variant_type( DEPROTONATED ) )){
+				TR.Debug << "for residue " << i << ", discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
 				continue;
 			}
+			if (rsd_type.is_carbohydrate() && residue_type_base_name(rsd_type) != fd.carbohydrate_residue_type_base_names[resid]) {
+				TR.Debug << "for residue " << i << ", discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
+				continue;
+			}
+
 			Size rsd_missing(0), xyz_missing(0);
 
 			for ( Size k=1; k<= rsd_type.natoms(); ++k ) {
@@ -840,7 +917,7 @@ build_pose_as_is1(
 
 			for ( ResidueCoords::const_iterator iter=xyz.begin(), iter_end=xyz.end(); iter!= iter_end; ++iter ) {
 				if ( !rsd_type.has( local_strip_whitespace(iter->first) ) &&
-						!( iter->first == " H  " && is_lower_terminus ) ) { // dont worry about missing backbone H if Nterm
+						!( iter->first == " H  " && is_lower_terminus ) ) { // don't worry about missing backbone H if Nterm
 					++rsd_missing;
 				}
 			}
@@ -1100,7 +1177,7 @@ build_pose_as_is1(
 	pose.pdb_info( pdb_info );
 }
 
-///@detail The input rsd_type_list are all the residue types that have
+///@details The input rsd_type_list are all the residue types that have
 ///the same 3 letter code as pdb_name. Return true if the list is
 ///non-empty and false otherwise.  If no residue types match, then
 ///either exit, ignore or remember the residue based on the following
@@ -1126,7 +1203,7 @@ bool is_residue_type_recognized(
 	return is_residue_type_recognized( pdb_residue_index, pdb_name, rsd_type_list, xyz, rtemp, UA_res_nums, UA_res_names, UA_atom_names, UA_coords, UA_temps, options );
 }
 
-///@detail The input rsd_type_list are all the residue types that have
+///@details The input rsd_type_list are all the residue types that have
 ///the same 3 letter code as pdb_name. Return true if the list is
 ///non-empty and false otherwise.  If no residue types match, then
 ///either exit, ignore or remember the residue based on the following

@@ -436,6 +436,7 @@ private:
 	static core::Size const MAX_C_SIZE_LIMIT;  // maximum size of a carbohydrate carbon chain in Rosetta
 	static core::Size const MIN_C_SIZE_LIMIT;
 
+public:
 	static std::map<std::string, std::string> const CODE_TO_ROOT_MAP;
 };  // class CarbohydrateInfo
 
