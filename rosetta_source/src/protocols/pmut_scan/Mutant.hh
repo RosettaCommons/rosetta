@@ -1,3 +1,6 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
 // This file is part of the Rosetta software suite and is made available under license.
 // The Rosetta software is developed by the contributing members of the Rosetta Commons consortium.
 // (C) 199x-2009 Rosetta Commons participating institutions and developers.
@@ -41,12 +44,14 @@ public:
 
 	MutationData( char wt_residue, char mut_residue, core::Size pose_resnum, core::Size pdb_resnum, char icode, char chain );
 	~MutationData();
-	
+
 	std::string mutation_string() const;
 	std::string mutation_string_PDB_numbering() const;
-	
+
 	char mut_residue() const;
 	core::Size pose_resnum() const;
+
+	char pdb_chain() const { return chain_; }
 
 	// print function for mutation data class; only used by unit tests
 	void print_mutation_data( MutationData & md );
@@ -104,6 +109,4 @@ friend class PointMutScanDriver;
 } // namespace pmut_scan
 } // namespace protocols
 
-
-#endif
-
+#endif //INCLUDED_protocols_pmut_scan_Mutant_HH

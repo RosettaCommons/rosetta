@@ -121,13 +121,24 @@ public:
 	void set_use_centroid_dG(bool const use_centroid);
 	bool get_use_centroid_dG() const;
 
+	///setters for various computations - each of these are expensive, so you can turn them off if desired
 	void set_compute_packstat(bool const compute_packstat);
+	void set_compute_interface_sc(bool const compute_interface_sc) {compute_interface_sc_ = compute_interface_sc;}
+	void set_compute_separated_sasa(bool const compute_separated_sasa) {compute_separated_sasa_ = compute_separated_sasa;}
+	void set_compute_interface_energy(bool const iface_en) {compute_interface_energy_ = iface_en;}
+	void set_calc_hbond_sasaE(bool const calc_hbond_sasaE) {calc_hbond_sasaE_ = calc_hbond_sasaE;}
+	void set_compute_interface_delta_hbond_unsat(bool const IDHU) {compute_interface_delta_hbond_unsat_ = IDHU;}
+
 	void set_pack_input(bool const pack_input);
-	void set_interface_jump(core::Size const interface_jump);
-	void set_tracer(bool const tracer);
-	void set_calcs_ready(bool const calcs_ready);
-	void set_use_jobname(bool const use_jobname);
 	void set_pack_separated(bool const pack_separated);
+
+	void set_interface_jump(core::Size const interface_jump);
+
+	void set_skip_reporting(bool const skip_reporting) {skip_reporting_ = skip_reporting;}
+	void set_tracer(bool const tracer);
+	void set_use_jobname(bool const use_jobname);
+
+	//void set_calcs_ready(bool const calcs_ready); //why is this externally accessible?
 
 	///@brief getters for the various parameters used by the analyzer
 	core::Real get_total_sasa();
@@ -208,7 +219,24 @@ private:
 	bool tracer_;
 	///@brief are calculators ready?
 	bool calcs_ready_;
+
+	///@brief bother with computing packstat
 	bool compute_packstat_;
+	///@brief bother with computing interface sc
+	bool compute_interface_sc_;
+
+	///@brief skip this expensive calculation
+	bool compute_separated_sasa_;
+	///@brief skip this expensive calculation
+	bool compute_interface_energy_;
+	///@brief skip this expensive calculation
+	bool calc_hbond_sasaE_;
+	///@brief skip this expensive calculation
+	bool compute_interface_delta_hbond_unsat_;
+
+	///@brief hush!  be quiet!  silence!
+	bool skip_reporting_;
+
 	//bool is_compute_hbond_unsat_;
 	///@brief which constructor are we using
 	bool multichain_constructor_;

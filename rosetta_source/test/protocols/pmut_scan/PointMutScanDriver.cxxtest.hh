@@ -9,7 +9,7 @@
 
 /// @file   test/protocols/pmut_scan/point_mut_scan.cxxtest.hh
 /// @brief  test suite for the pilot app point_mut_scan
-/// @author Ron Jacak
+/// @author Ron Jacak (ron.jacak@gmail.com)
 
 // Test headers
 #include <cxxtest/TestSuite.h>
@@ -20,15 +20,11 @@
 #include <protocols/pmut_scan/PointMutScanDriver.hh>
 #include <protocols/pmut_scan/Mutant.hh>
 
-// AUTO-REMOVED #include <core/graph/Graph.hh>
 #include <core/conformation/Residue.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 
 // Package Headers
 #include <test/core/init_util.hh>
@@ -51,7 +47,6 @@ class PointMutScanDriverTests : public CxxTest::TestSuite {
 	core::Real TOLERATED_ERROR;
 	utility::vector1< core::pose::Pose > input_poses;
 
-	core::scoring::ScoreFunctionOP sf;
 	utility::vector1< std::string > pdb_file_names;
 	bool double_mutant_scan;
 	bool output_mutant_structures;
@@ -77,23 +72,17 @@ class PointMutScanDriverTests : public CxxTest::TestSuite {
 	void initialize_suite() {
 		if ( suite_initialized ) return;
 		suite_initialized = true;
-		
+
 		core_init_with_additional_options( "-mute core.pack.annealer core.pack.pack_rotamers core.pack.task core.pack.interaction_graph core.scoring core.io" );
 		TOLERATED_ERROR = 0.1;
-		
+
 		// read in poses. only needed for 3 of the tests, but this is better than reading the PDBs in 3 times.
 		core::pose::Pose pose;
 		core::import_pose::pose_from_pdb( pose, "protocols/pmut_scan/shortloop.01.pdb.gz" );
 		input_poses.push_back( pose );
-		
+
 		core::import_pose::pose_from_pdb( pose, "protocols/pmut_scan/shortloop.02.pdb.gz" );
 		input_poses.push_back( pose );
-		
-		sf = core::scoring::getScoreFunction();
-
-		core::scoring::methods::EnergyMethodOptions energymethodoptions( sf->energy_method_options() );
-		energymethodoptions.hbond_options().decompose_bb_hb_into_pair_energies( true );
-		sf->set_energy_method_options( energymethodoptions );
 
 		pdb_file_names.push_back( "protocols/pmut_scan/shortloop.01.pdb.gz" );
 		pdb_file_names.push_back( "protocols/pmut_scan/shortloop.02.pdb.gz" );
@@ -121,7 +110,7 @@ class PointMutScanDriverTests : public CxxTest::TestSuite {
 
 	// --------------- Test Cases --------------- //
 
-	///@brief tests the function fill_mutations_list for whether it reads in mutant list file properly. in particular, 
+	///@brief tests the function fill_mutations_list for whether it reads in mutant list file properly. in particular,
 	/// make sure single, double and higher order mutants are read in correctly.
 	void test_fill_mutations_list() {
 		TR << "Running test_fill_mutations_list..." << std::endl;
@@ -131,7 +120,7 @@ class PointMutScanDriverTests : public CxxTest::TestSuite {
 
 		custom_test_driver.fill_mutations_list(); // reads in the file passed via the constructor
 
-		TS_ASSERT_EQUALS( custom_test_driver.n_mutants(), 5 );
+		TS_ASSERT_EQUALS( custom_test_driver.n_mutants(), core::Size(5) );
 
 		// mutant #5
 		//L S 30B T L N 30E W L T 31 Y
@@ -156,7 +145,7 @@ class PointMutScanDriverTests : public CxxTest::TestSuite {
 		protocols::pmut_scan::PointMutScanDriver driver( pdb_file_names, double_mutant_scan, list_file, output_mutant_structures );
 		driver.fill_mutations_list();
 
-		TS_ASSERT_EQUALS( driver.n_mutants(), 133 );
+		TS_ASSERT_EQUALS( driver.n_mutants(), core::Size(133) );
 
 	}
 
@@ -169,8 +158,8 @@ class PointMutScanDriverTests : public CxxTest::TestSuite {
 
 		custom_test_driver.fill_mutations_list();
 
-		// No. of double mutants possible: 19 * 19 * nres(nres-1)/2
-		TS_ASSERT_EQUALS( custom_test_driver.n_mutants(), 1805 );
+		//1805 is the number of double mutants passing the distance filter (of 7581 total, which is (7 choose 2) * 19^2).  133 is the number of single mutants also included, now that I have changed double-mutant scan to include single mutants SML 11/2/12
+		TS_ASSERT_EQUALS( custom_test_driver.n_mutants(), core::Size(1805 + 133) );
 
 	}
 
@@ -207,7 +196,7 @@ class PointMutScanDriverTests : public CxxTest::TestSuite {
 			native_poses[ ii ] = input_poses[ ii ];
 		}
 
-		driver.make_specific_mutant( mutant_poses, native_poses, sf, m );
+		driver.make_specific_mutant( mutant_poses, native_poses, m );
 
 		TS_ASSERT_EQUALS( native_poses[1].residue( 1 ).name3(), "HIS" );
 		TS_ASSERT_EQUALS( native_poses[1].residue( 6 ).name3(), "THR" );
@@ -231,7 +220,7 @@ class PointMutScanDriverTests : public CxxTest::TestSuite {
 		m.add_mutation( md1 );
 		m.add_mutation( md2 );
 		m.add_mutation( md3 );
-		
+
 		// init some mutant poses
 		utility::vector1< core::pose::Pose > mutant_poses( input_poses.size() );
 		utility::vector1< core::pose::Pose > native_poses( input_poses.size() );
@@ -239,9 +228,9 @@ class PointMutScanDriverTests : public CxxTest::TestSuite {
 			mutant_poses[ ii ] = input_poses[ ii ];
 			native_poses[ ii ] = input_poses[ ii ];
 		}
-		
+
 		utility::vector1< Mutant >::const_iterator it;
-		driver.make_specific_mutant( mutant_poses, native_poses, sf, m );
+		driver.make_specific_mutant( mutant_poses, native_poses, m );
 
 		// assert that the native poses are not changed
 		TS_ASSERT_EQUALS( native_poses[1].residue( 1 ).name3(), "HIS" );
@@ -256,4 +245,3 @@ class PointMutScanDriverTests : public CxxTest::TestSuite {
 
 
 };
-

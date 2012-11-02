@@ -11,6 +11,7 @@
 
 sources = {
 	"protocols/pmut_scan": [
+                "AlterSpecDisruptionDriver",
 		"Mutant",
 		"PointMutScanDriver",
 	],

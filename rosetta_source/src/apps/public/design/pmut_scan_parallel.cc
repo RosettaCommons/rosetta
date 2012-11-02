@@ -12,17 +12,14 @@
 
 /// @file   apps/public/design/pmut_scan_parallel.cc
 /// @brief  Main function for running the point mutant scan protocol
-/// @author Ron Jacak (ron.jacak@gmail.com)
-
-/// MPI
-#ifdef USEMPI
-#include <mpi.h>
-#endif
+/// @author Ron Jacak (ron.jacak@gmail.com); Steven Lewis smlewi@gmail.com
 
 /// Core headers
 
 // Protocol headers
 #include <protocols/pmut_scan/PointMutScanDriver.hh>
+#include <protocols/pmut_scan/AlterSpecDisruptionDriver.hh>
+
 #include <devel/init.hh>
 
 #include <basic/options/util.hh>
@@ -35,13 +32,16 @@
 
 static basic::Tracer TR("apps.pmut_scan_parallel");
 
+//Note that namespacing these has no effect on their behavior - they have to be called un-namespaced!
 // application specific options
 namespace protocols {
 namespace pmut_scan {
 
-	basic::options::BooleanOptionKey const double_mutant_scan( "protocols::pmut_scan::double_mutant_scan" );
-	basic::options::FileOptionKey const mutants_list( "protocols::pmut_scan::mutants_list" );
-	basic::options::BooleanOptionKey const output_mutant_structures( "protocols::pmut_scan::output_mutant_structures" );
+basic::options::BooleanOptionKey const double_mutant_scan( "protocols::pmut_scan::double_mutant_scan" );
+basic::options::FileOptionKey const mutants_list( "protocols::pmut_scan::mutants_list" );
+basic::options::BooleanOptionKey const output_mutant_structures( "protocols::pmut_scan::output_mutant_structures" );
+basic::options::RealOptionKey const DDG_cutoff("protocols::pmut_scan::DDG_cutoff" );
+basic::options::BooleanOptionKey const alter_spec_disruption_mode( "protocols::pmut_scan::alter_spec_disruption_mode" );
 
 } // end namespace pmut_scan
 } // end namespace protocols
@@ -51,16 +51,12 @@ int
 main( int argc, char * argv [] ) {
 
 	using namespace basic::options;
-
-#ifdef USEMPI
-	MPI_Init(&argc, &argv);
-#endif
-
 	// add application specific options to options system
 	option.add( protocols::pmut_scan::double_mutant_scan, "Scan for double mutants." ).def( false );
 	option.add( protocols::pmut_scan::mutants_list, "List of specific (single, double, or higher order) mutants to make." );
 	option.add( protocols::pmut_scan::output_mutant_structures, "Output PDB files for the mutant poses. Default: false" ).def( false );
-	
+	option.add( protocols::pmut_scan::DDG_cutoff, "filter value for mutant scanning: do not bother printing mutants that do not improve the score by this much.  Negative = better score.  Does not interfere with output_mutant_structures.  Default: -1.0").def( -1.0 );
+	option.add( protocols::pmut_scan::alter_spec_disruption_mode, "Use AlterSpecDisruption protocol instead.  Difference: assumes a two-chain system, and scans for mutations that weaken binding, as the first step of the alter_spec protocol.").def( false );
 	devel::init( argc, argv );
 
 	//
@@ -79,18 +75,23 @@ main( int argc, char * argv [] ) {
 	}
 
 	// save values of options
-	bool double_mutant_scan = option[ protocols::pmut_scan::double_mutant_scan ];
+	bool double_mutant_scan = option[ protocols::pmut_scan::double_mutant_scan ].value();
 	std::string list_file;
 	if ( option[ protocols::pmut_scan::mutants_list ].user() ) {
 		list_file = option[ protocols::pmut_scan::mutants_list ].value();
 	}
-	bool output_mutant_structures = option[ protocols::pmut_scan::output_mutant_structures ];
-	
-	protocols::pmut_scan::PointMutScanDriver driver( pdb_file_names, double_mutant_scan, list_file, output_mutant_structures );
-	driver.go();
+	bool output_mutant_structures = option[ protocols::pmut_scan::output_mutant_structures ].value();
+	core::Real DDG_cutoff = option[ protocols::pmut_scan::DDG_cutoff ].value();
 
-#ifdef USEMPI
-	MPI_Finalize();
-#endif
+	if( !option[ protocols::pmut_scan::alter_spec_disruption_mode ].value()) {
+		protocols::pmut_scan::PointMutScanDriver driver( pdb_file_names, double_mutant_scan, list_file, output_mutant_structures );
+		driver.set_ddG_cutoff(DDG_cutoff);
+		driver.go();
+	} else { //yes, this is duplication, but it's not an OP'ed class, so we have to create the object in the if
+		protocols::pmut_scan::AlterSpecDisruptionDriver driver( pdb_file_names, double_mutant_scan, list_file, output_mutant_structures );
+		driver.set_ddG_cutoff(DDG_cutoff);
+		driver.go();
+	}
 
+	return 0;
 }

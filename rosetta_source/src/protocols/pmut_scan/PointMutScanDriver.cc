@@ -1,3 +1,6 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
 // This file is part of the Rosetta software suite and is made available under license.
 // The Rosetta software is developed by the contributing members of the Rosetta Commons consortium.
 // (C) 199x-2009 Rosetta Commons participating institutions and developers.
@@ -5,7 +8,7 @@
 
 /// @file protocols/pmut_scan/PointMutScanDriver.cc
 /// @brief A protocol that tries to find stability enhancing mutations
-/// @author Ron Jacak
+/// @author Ron Jacak (ron.jacak@gmail.com)
 
 // Unit headers
 #include <protocols/pmut_scan/PointMutScanDriver.hh>
@@ -105,17 +108,17 @@ static basic::Tracer TR("protocols.pmut_scan.PointMutScanDriver");
 /// Main constructor for the class. What all does it do?
 ///
 PointMutScanDriver::PointMutScanDriver( utility::vector1< std::string > & pdb_file_names, bool double_mutant_scan, std::string list_file, bool output_mutant_structures ) :
-	pdb_file_names_( pdb_file_names ),
 	double_mutant_scan_( double_mutant_scan ),
 	mutants_list_file_( list_file ),
-	output_mutant_structures_( output_mutant_structures )
+	output_mutant_structures_( output_mutant_structures ),
+	pdb_file_names_( pdb_file_names ),
+	DDG_cutoff_(0),
+	scorefxn_(core::scoring::getScoreFunction())
 {
 
 #ifdef USEMPI
 	tag_ = 1; // need to initialize the tag on all nodes to 1 or MPI_Send/_Recv calls start acting funny
 #endif
-
-	DDG_CUTOFF_ = -1.0;
 
 	int mpi_rank( 0 ), mpi_nprocs( 1 );
 #ifdef USEMPI
@@ -128,6 +131,16 @@ PointMutScanDriver::PointMutScanDriver( utility::vector1< std::string > & pdb_fi
 
 	read_in_structures(); // all processes read in the structures
 
+
+	// create a scorefxn that will be used for all the mutants
+	// (to enable hpatch scoring, the command line weights file flag will have to be used)
+	// decompose bb hbond energies into pair energies
+	//
+	//scoring::ScoreFunctionOP scorefxn = scoring::getScoreFunction(); //in initialization list
+	scoring::methods::EnergyMethodOptions energymethodoptions( scorefxn_->energy_method_options() );
+	energymethodoptions.hbond_options().decompose_bb_hb_into_pair_energies( true );
+	scorefxn_->set_energy_method_options( energymethodoptions );
+
 }
 
 
@@ -137,7 +150,12 @@ PointMutScanDriver::PointMutScanDriver( utility::vector1< std::string > & pdb_fi
 /// @brief
 /// Destructor. What all needs to be done here?
 ///
-PointMutScanDriver::~PointMutScanDriver() {}
+PointMutScanDriver::~PointMutScanDriver() {
+	//This used to be in the parent application.  For consistency with most JD2-style MPI-compatible apps (which this is not), Finalize has been moved here.
+#ifdef USEMPI
+	MPI_Finalize();
+#endif
+}
 
 
 ///
@@ -293,6 +311,9 @@ void PointMutScanDriver::fill_mutations_list() {
 
 	Size no_double_mutants_possible = 0;
 	Size no_double_mutants_excluded_for_distance = 0;
+	Size no_double_mutants_excluded_otherwise = 0;
+	Size no_single_mutants_excluded_otherwise = 0;
+
 
 	// use the first structure to determine neighborship for all residues. this neighbor_graph will be used inside the
 	// nested for loops to skip mutants that are on opposite sides of the protein.
@@ -307,7 +328,7 @@ void PointMutScanDriver::fill_mutations_list() {
 		// try every type at each position (well, except the native type at this position!)
 		for ( Size aa_enum_index_a = 1; aa_enum_index_a <= chemical::num_canonical_aas; ++aa_enum_index_a ) {
 
-//if ( resid1 > 1 ) { break; } // for debugging only
+			//if ( resid1 > 1 ) { break; } // for debugging only
 
 			if ( pose.residue( resid1 ).aa() == chemical::AA( aa_enum_index_a ) ) { continue; }
 			if ( !pose.residue_type( resid1 ).is_protein() ) { continue; }
@@ -321,6 +342,16 @@ void PointMutScanDriver::fill_mutations_list() {
 				pose.pdb_info()->chain( resid1 )
 			);
 
+			//single mutant scan
+			Mutant m;
+			m.add_mutation( md1 ); // the variable mutations is a vector of vectors!
+			if (reject_mutant(m, pose)) { //offers a chance for child classes to inject mutant selection logic
+				++no_single_mutants_excluded_otherwise;
+			} else {
+				all_mutants_.push_back( m );
+				//TR << "fill_mutations_list(): adding mutation: " << m << std::endl;
+			}
+
 			// only do a double mutant scan if the user asked for it
 			if ( double_mutant_scan_ ) {
 
@@ -332,6 +363,7 @@ void PointMutScanDriver::fill_mutations_list() {
 					if ( neighbors[ resid1 ][ resid2 ] == false ) {
 						no_double_mutants_possible += 19;
 						no_double_mutants_excluded_for_distance += 19;
+						//TR << "skipping residue pair " << md1.mutation_string_PDB_numbering() << " and " << pose.pdb_info()->chain( resid2 ) << "-" << pose.pdb_info()->number( resid2 ) << pose.pdb_info()->icode( resid2 ) << " based on distance" << std::endl;
 						continue;
 					}
 
@@ -355,29 +387,27 @@ void PointMutScanDriver::fill_mutations_list() {
 						Mutant m;
 						m.add_mutation( md1 ); // the variable mutations is a vector of vectors!
 						m.add_mutation( md2 ); // the variable mutations is a vector of vectors!
-
+						if (reject_mutant(m, pose)) { //offers a chance for child classes to inject mutant selection logic
+							++no_double_mutants_excluded_otherwise;
+							continue;
+						}
 						all_mutants_.push_back( m );
 						//TR << "fill_mutations_list(): adding mutation: " << m << std::endl;
-					}
-
+					}//for all residue types for resid 2
 				} // all residues resid2
-
-			} else {
-				Mutant m;
-				m.add_mutation( md1 ); // the variable mutations is a vector of vectors!
-				all_mutants_.push_back( m );
-				//TR << "fill_mutations_list(): adding mutation: " << m << std::endl;
-			}
-		}
-
-	} // all residues resid1
+			}//if a double mutant scan
+		}//for all res types for resid 1
+	}//for all residues resid1
 
 	if ( MPI_rank_ == 0 ) {
-		Size single_possible = 19 * n_residue;
-		TR << "fill_mutations_list(): number single mutants possible: " << single_possible << std::endl;
-
-		TR << "fill_mutations_list(): number double mutants possible: " << no_double_mutants_possible << std::endl;
-		TR << "fill_mutations_list(): number double mutants excluded for distance: " << no_double_mutants_excluded_for_distance << std::endl;
+			Size const single_possible = 19 * n_residue;
+			TR << "fill_mutations_list(): number single mutants possible: " << single_possible << std::endl;
+			TR << "fill_mutations_list(): number single mutants excluded otherwise: " << no_single_mutants_excluded_otherwise << std::endl;
+		if ( double_mutant_scan_ ) {
+			TR << "fill_mutations_list(): number double mutants possible: " << no_double_mutants_possible << std::endl;
+			TR << "fill_mutations_list(): number double mutants excluded for distance: " << no_double_mutants_excluded_for_distance << std::endl;
+			TR << "fill_mutations_list(): number double mutants excluded otherwise: " << no_double_mutants_excluded_otherwise << std::endl;
+		}
 	}
 
 }
@@ -692,19 +722,9 @@ void PointMutScanDriver::make_mutants() {
 	utility::vector1< pose::Pose > mutant_poses( input_poses_.size() ); // this will get set in the function below
 	utility::vector1< pose::Pose > native_poses( input_poses_.size() );
 
-	// create a scorefxn that will be used for all the mutants
-	// (to enable hpatch scoring, the command line weights file flag will have to be used)
-	// decompose bb hbond energies into pair energies
-	//
-	scoring::ScoreFunctionOP scorefxn = scoring::getScoreFunction();
-
-	scoring::methods::EnergyMethodOptions energymethodoptions( scorefxn->energy_method_options() );
-	energymethodoptions.hbond_options().decompose_bb_hb_into_pair_energies( true );
-	scorefxn->set_energy_method_options( energymethodoptions );
-
 	// print out a header to the terminal
 	if ( MPI_rank_ == 0 ) {
-		TR << A( "mutation" ) << X(3) << A( "mutation_PDB_numbering" ) << X(3) << A( "average ddG" ) << X(3) << A( "average total energy" ) << std::endl;
+		TR << A( "mutation" ) << X(3) << A( "mutation_PDB_numbering" ) << X(3) << A( "average_ddG" ) << X(3) << A( "average_total_energy" ) << std::endl;
 	}
 
 	for ( Size ii=1; ii <= mutants_list_.size(); ++ii ) {
@@ -720,7 +740,7 @@ void PointMutScanDriver::make_mutants() {
 			native_poses[ ii ] = input_poses_[ ii ];
 		}
 
-		make_specific_mutant( mutant_poses, native_poses, scorefxn, m, "", "" );
+		make_specific_mutant( mutant_poses, native_poses, m, "", "" );
 		// this will result in the Mutant object 'm' being modified, and since m is a reference, the original mutants_list_
 		// will be modified, as well.
 	}
@@ -737,7 +757,7 @@ void PointMutScanDriver::make_mutants() {
 /// without having to run an entire scan protocol that would cover those mutations.
 ///
 void PointMutScanDriver::make_specific_mutant( utility::vector1< pose::Pose > & mutant_poses, utility::vector1< pose::Pose > & native_poses,
-	scoring::ScoreFunctionOP scorefxn, Mutant & m, std::string mutation_string, std::string mutation_string_PDB_numbering ) {
+	Mutant & m, std::string mutation_string, std::string mutation_string_PDB_numbering ) {
 
 	//TR << "make_specific_mutant() called. mutant_poses.size(): " << mutant_poses.size() << ", native_poses.size(): " << native_poses.size()
 	//	<< ", num mutations: " << m.n_mutations() << ", mutation_string: " << mutation_string << std::endl;
@@ -752,7 +772,7 @@ void PointMutScanDriver::make_specific_mutant( utility::vector1< pose::Pose > & 
 		for ( Size ii = 1; ii <= native_poses.size(); ++ii ) {
 
 			// make the specific mutation, but don't do any scoring; the scorefxn is needed for packing
-			make_mutant_structure( mutant_poses[ ii ], native_poses[ ii ], md, scorefxn );
+			make_mutant_structure( mutant_poses[ ii ], native_poses[ ii ], md );
 
 		}
 
@@ -762,14 +782,14 @@ void PointMutScanDriver::make_specific_mutant( utility::vector1< pose::Pose > & 
 		out << md.mutation_string();
 		std::string updated_mutation_string = out.str();
 		out.str("");
-		
+
 		out << mutation_string_PDB_numbering;
 		if ( mutation_string_PDB_numbering != "" ) { out << ","; }
 		out << md.mutation_string_PDB_numbering();
 		std::string updated_mutation_string_PDB_numbering = out.str();
-		
 
-		make_specific_mutant( mutant_poses, native_poses, scorefxn, m, updated_mutation_string, updated_mutation_string_PDB_numbering );
+
+		make_specific_mutant( mutant_poses, native_poses, m, updated_mutation_string, updated_mutation_string_PDB_numbering );
 
 	} else {
 		// make the last mutation, calculate the ddG, and print out the results
@@ -790,21 +810,20 @@ void PointMutScanDriver::make_specific_mutant( utility::vector1< pose::Pose > & 
 			// make the specific mutation, but don't do any scoring; the scorefxn is needed for packing
 			// send in the input_pose for the mutant. that way the mutant poses will be "returned" because mutant_poses
 			// is actually a reference!
-			make_mutant_structure( mutant_poses[ii], native_poses[ii], md, scorefxn );
+			make_mutant_structure( mutant_poses[ii], native_poses[ii], md );
 
 			// score the created mutant structure
 			pose::Pose & mutant_pose = mutant_poses[ ii ];
-			Energy mutant_score = (*scorefxn)( mutant_pose );
+			Energy mutant_score = score( mutant_pose );
 			mutant_poses_total_energies[ ii ] = mutant_score;
 			sum_mutant_scores += mutant_score;
 
 			// score the update native structure
 			pose::Pose & native_pose = native_poses[ ii ];
-			Energy native_score = (*scorefxn)( native_pose );
+			Energy native_score = score( native_pose );
 			native_poses_total_energies[ ii ] = native_score;
 			sum_native_scores += native_score;
 
-			// of course, we want to output structures if the user specified a mutants file!
 			if ( output_mutant_structures_ ) {
 				std::stringstream out;
 				out << mutation_string;
@@ -812,7 +831,7 @@ void PointMutScanDriver::make_specific_mutant( utility::vector1< pose::Pose > & 
 				out << md.mutation_string();
 				utility::file::FileName fn( pdb_file_names_[ ii ] );
 				std::string mutant_filename = fn.base() + "." + out.str() + ".pdb";
-				mutant_pose.dump_scored_pdb( mutant_filename, *(scorefxn()) );
+				mutant_pose.dump_scored_pdb( mutant_filename, *scorefxn_ );
 			}
 
 		}
@@ -821,7 +840,7 @@ void PointMutScanDriver::make_specific_mutant( utility::vector1< pose::Pose > & 
 		average_native_score = sum_native_scores / native_poses.size();
 
 		Real ddG_mutation = average_mutant_score - average_native_score;
-		if ( ddG_mutation > DDG_CUTOFF_ ) {
+		if ( ddG_mutation > DDG_cutoff_ ) {
 			return;
 		}
 
@@ -866,7 +885,7 @@ void PointMutScanDriver::make_specific_mutant( utility::vector1< pose::Pose > & 
 /// Given mutant and native pose references and the mutation to make, this function constructs all the necessary PackerTask
 /// Operations and Movers to apply the mutation and repacking steps to both the mutant and native poses.
 ///
-void PointMutScanDriver::make_mutant_structure( pose::Pose & mutant_pose, pose::Pose & native_pose, MutationData const & md, scoring::ScoreFunctionOP scorefxn ) {
+void PointMutScanDriver::make_mutant_structure( pose::Pose & mutant_pose, pose::Pose & native_pose, MutationData const & md ) {
 
 	Size resid = md.pose_resnum();
 	chemical::AA mut_aa = chemical::aa_from_oneletter_code( md.mut_residue() );
@@ -941,12 +960,12 @@ void PointMutScanDriver::make_mutant_structure( pose::Pose & mutant_pose, pose::
 
 	// create an actual PackerTask from the TaskFactory
 	pack::task::PackerTaskOP scan_task = mutant_tf->create_task_and_apply_taskoperations( mutant_pose );
-	scan_task->num_to_be_packed();
+	//scan_task->num_to_be_packed();
 	//TR << "mutant packer task: " << *scan_task << std::endl;  // generates a TON of output
 
 	// now create the movers that will do the repacking and minimization
-	protocols::simple_moves::PackRotamersMoverOP mutant_repacker_mover = new protocols::simple_moves::PackRotamersMover( scorefxn, scan_task, 2 ); // ndruns: 2
-	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( movemap, scorefxn, option[ OptionKeys::run::min_type ].value(), 0.01, true ); // use nb_list: true
+	protocols::simple_moves::PackRotamersMoverOP mutant_repacker_mover = new protocols::simple_moves::PackRotamersMover( scorefxn_, scan_task, 2 ); // ndruns: 2
+	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( movemap, scorefxn_, option[ OptionKeys::run::min_type ].value(), 0.01, true ); // use nb_list: true
 	protocols::simple_moves::TaskAwareMinMoverOP task_aware_min_mover = new protocols::simple_moves::TaskAwareMinMover( min_mover, mutant_tf );
 	protocols::moves::SequenceMoverOP seq_mover = new protocols::moves::SequenceMover;
 	seq_mover->add_mover( mutant_repacker_mover );
@@ -960,8 +979,8 @@ void PointMutScanDriver::make_mutant_structure( pose::Pose & mutant_pose, pose::
 	pack::task::PackerTaskOP wt_task = native_tf->create_task_and_apply_taskoperations( native_pose );
 
 	// now create the movers that will do the repacking and minimization of the native structure
-	protocols::simple_moves::PackRotamersMoverOP native_pack_mover = new protocols::simple_moves::PackRotamersMover( scorefxn, wt_task, 2 ); // ndruns: 2
-	min_mover = new protocols::simple_moves::MinMover( movemap, scorefxn, option[ OptionKeys::run::min_type ].value(), 0.01, true ); // use nb_list: true
+	protocols::simple_moves::PackRotamersMoverOP native_pack_mover = new protocols::simple_moves::PackRotamersMover( scorefxn_, wt_task, 2 ); // ndruns: 2
+	min_mover = new protocols::simple_moves::MinMover( movemap, scorefxn_, option[ OptionKeys::run::min_type ].value(), 0.01, true ); // use nb_list: true
 	task_aware_min_mover = new protocols::simple_moves::TaskAwareMinMover( min_mover, native_tf );
 	seq_mover = new protocols::moves::SequenceMover;
 	seq_mover->add_mover( native_pack_mover );
@@ -971,16 +990,22 @@ void PointMutScanDriver::make_mutant_structure( pose::Pose & mutant_pose, pose::
 
 	// this needs to get recreated each time around
 	pose::metrics::CalculatorFactory::Instance().remove_calculator( calculator_name );
-	pose::metrics::CalculatorFactory::Instance().clear_calculators();
 	mutant_nb_calculator = NULL;
 
+	return;
 
 } // done with make_mutant_structure
 
+//Virtual functions, refactored out so they can be overridden by child AlterSpecDisruptionDriver
+
+///@brief score the pose for the purposes of determining if a mutation is "good" or not.  In the base implementation, it's just a scorefunction call, but in child implementations it may be fancier (for example, calculating a binding energy instead)
+core::Energy PointMutScanDriver::score(core::pose::Pose & pose) {
+	return (*scorefxn_)(pose);
+}
 
 // setters used by the unit tests only
 void PointMutScanDriver::set_ddG_cutoff( Real threshold ) {
-	DDG_CUTOFF_ = threshold;
+	DDG_cutoff_ = threshold;
 }
 
 
@@ -1016,7 +1041,10 @@ Size PointMutScanDriver::n_mutants() const {
 	return all_mutants_.size();
 }
 
+core::scoring::ScoreFunctionCOP PointMutScanDriver::get_scorefxn() const {
+	return scorefxn_;
+}
+
 
 } // namespace pmut_scan
 } // namespace protocols
-

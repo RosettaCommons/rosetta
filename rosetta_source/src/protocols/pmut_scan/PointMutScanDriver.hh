@@ -1,11 +1,14 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
 // This file is part of the Rosetta software suite and is made available under license.
 // The Rosetta software is developed by the contributing members of the Rosetta Commons consortium.
 // (C) 199x-2009 Rosetta Commons participating institutions and developers.
 // For more information, see http://www.rosettacommons.org/.
 
-/// @file protocols/pmut_scan/point_mut_scan.hh
+/// @file protocols/pmut_scan/PointMutScanDriver.hh
 /// @brief A protocol that tries to find stability enhancing mutations
-/// @author Ron Jacak
+/// @author Ron Jacak (ron.jacak@gmail.com)
 
 #ifndef INCLUDED_protocols_pmut_scan_PointMutScanDriver_HH
 #define INCLUDED_protocols_pmut_scan_PointMutScanDriver_HH
@@ -18,24 +21,17 @@
 // Project Headers
 #include <protocols/pmut_scan/Mutant.fwd.hh>
 
-// AUTO-REMOVED #include <core/graph/Graph.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyMap.fwd.hh>
-
-// AUTO-REMOVED #include <basic/options/util.hh>
 
 // Utility headers
+#include <utility/vector1.hh>
 
 // ObjexxFCL header
 
 // C++
 #include <string>
-// AUTO-REMOVED #include <iostream>
-
-#include <utility/vector1.hh>
-
 
 namespace protocols {
 namespace pmut_scan {
@@ -46,28 +42,61 @@ public:
 	PointMutScanDriver( utility::vector1< std::string > & pdb_file_names, bool double_mutant_scan, std::string list_file, bool output_mutant_structures );
 	~PointMutScanDriver();
 
+	//This protocol is its own Job Distributor - this fires it off from application-level
 	void go();
+
+	//mutant-scanning related functions
 
 	void read_in_structures();
 	void fill_mutations_list();
 
 	void calculate_neighbor_table( core::pose::Pose & pose, utility::vector1< utility::vector1< bool > > & neighbors );
 
-	void make_specific_mutant( utility::vector1< core::pose::Pose > & mutant_poses, utility::vector1< core::pose::Pose > & native_poses,
-		core::scoring::ScoreFunctionOP scorefxn, protocols::pmut_scan::Mutant & m, std::string mutation_string = "", std::string mutation_string_PDB_numbering = "" );
+	void make_specific_mutant( utility::vector1< core::pose::Pose > & mutant_poses, utility::vector1< core::pose::Pose > & native_poses, protocols::pmut_scan::Mutant & m, std::string mutation_string = "", std::string mutation_string_PDB_numbering = "" );
 
+	///@brief score the pose for the purposes of determining if a mutation is "good" or not.  In the base implementation, it's just a scorefunction call, but in child implementations it may be fancier (for example, calculating a binding energy instead)
+	virtual core::Energy score(core::pose::Pose & pose);
+
+	///@brief accessor for scorefxn_ now that it is private member data
+	core::scoring::ScoreFunctionCOP get_scorefxn() const;// { return scorefxn_; }
+
+	///@brief offers a chance for child classes to inject mutant selection logic
+	virtual bool reject_mutant( Mutant const & /*m*/, core::pose::Pose const & /*pose*/ ) { return false; }
+
+	//unit test utilities
 	void set_ddG_cutoff( core::Real threshold );
-	
+
 	utility::vector1< Mutant >::const_iterator mutants_begin() const; // used only by unit tests
 	utility::vector1< Mutant >::const_iterator mutants_end() const;   // used only by unit tests
-	
+
 	core::Size n_mutants() const; // used only by unit tests
 
-
 private:
+
+	void make_mutants();
+
+	void make_mutant_structure( core::pose::Pose & mutant_pose, core::pose::Pose & native_pose, protocols::pmut_scan::MutationData const & md );
+
+private: //mutant scanning data
+	bool double_mutant_scan_;
+	std::string mutants_list_file_;
+	bool output_mutant_structures_;
+
+	utility::vector1< core::pose::Pose > input_poses_;
+
+	utility::vector1< Mutant > all_mutants_;
+	utility::vector1< Mutant > mutants_list_;
+
+	utility::vector1< std::string > pdb_file_names_;
+
+	core::Real DDG_cutoff_;
+
+	core::scoring::ScoreFunctionOP scorefxn_;
+
+private: //Job Distribution related functions
 	void barrier();
 	std::string node_name( core::Size rank );
-	
+
 	void read_mutants_list_file( std::string & list_file );
 	void divide_up_mutations();
 
@@ -76,15 +105,7 @@ private:
 	static protocols::pmut_scan::Mutant receive_mutant_data_from_node( int source );
 #endif
 
-	void make_mutants();
-
-	void make_mutant_structure( core::pose::Pose & mutant_pose, core::pose::Pose & native_pose, protocols::pmut_scan::MutationData const & md, core::scoring::ScoreFunctionOP scorefxn );
-
-
-private:
-	bool double_mutant_scan_;
-	std::string mutants_list_file_;
-	bool output_mutant_structures_;
+private: //Job Distribution related data
 
 #ifdef USEMPI
 	MPI_Status stat_;
@@ -94,20 +115,9 @@ private:
 	core::Size MPI_rank_;
 	core::Size MPI_nprocs_;
 
-	utility::vector1< core::pose::Pose > input_poses_;
-
-	utility::vector1< Mutant > all_mutants_;
-	utility::vector1< Mutant > mutants_list_;
-
-	utility::vector1< std::string > pdb_file_names_;
-
-	core::Real DDG_CUTOFF_;
-
-
 }; // class PointMutScanDriver
 
 } // namespace pmut_scan
 } // namespace protocols
 
-
-#endif
+#endif //INCLUDED_protocols_pmut_scan_PointMutScanDriver_HH
