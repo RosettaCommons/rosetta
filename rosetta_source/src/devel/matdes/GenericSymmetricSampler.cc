@@ -161,6 +161,8 @@ GenericSymmetricSampler::apply(Pose & pose) {
 	}
 	}
 	}
+
+	pose = best_pose;
 }
 
 void 
