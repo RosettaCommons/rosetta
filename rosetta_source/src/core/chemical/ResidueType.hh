@@ -212,13 +212,26 @@ public:
 		return atom_types_;
 	}
 
+	Atom atom(Size atom_index){
+		return atoms_[atom_index];
+	}
+
+	Atom const & atom(Size atom_index) const{
+		return atoms_[atom_index];
+	}
+
+	Orbital const & orbital(Size orbital_index) const{
+		return orbitals_[orbital_index];
+	}
+
+
 	/// @brief Get the chemical atom_type for this atom by it index number in this residue
 	AtomType const &
 	atom_type( Size const atomno ) const;
 
 	/// @brief Get the chemical atom_type index number for this atom by its index number in this residue
-	int
-	atom_type_index( Size const atomno ) const;
+//	int
+//	atom_type_index( Size const atomno ) const;
 
 	/// @brief number of atoms
 	Size
@@ -539,13 +552,6 @@ public:
 		return atomno > nheavyatoms_;
 	}
 
-	///@brief this will return the ideal xyz coords for an atom based on atm index
-	Vector const &
-	ideal_xyz( Size const atm ) const
-	{
-		return atoms_[ atm ].ideal_xyz();
-	}
-
 	/// @brief Read access to the last_controlling_chi_ array
 	utility::vector1< Size > const &
 	last_controlling_chi() const {
@@ -591,8 +597,8 @@ public:
 
 
 	/// @brief Get the MM atom_type index number for this atom by its index number in this residue
-	int
-	mm_atom_type_index( Size const atomno ) const;
+//	int
+//	mm_atom_type_index( Size const atomno ) const;
 
 	/// @brief get mm atom name by index
 	std::string const &
@@ -647,11 +653,11 @@ public:
 
 
 	/// @brief orbital name by index
-	std::string const &
-	orbital_name( Size const index ) const
-	{
-		return orbitals_[index].name();
-	}
+//	std::string const &
+//	orbital_name( Size const index ) const
+//	{
+//		return orbitals_[index].name();
+//	}
 
 
 	/// @brief get orbital index by name

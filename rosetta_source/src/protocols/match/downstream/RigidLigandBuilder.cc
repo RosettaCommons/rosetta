@@ -599,7 +599,7 @@ RigidLigandBuilder::initialize_upstream_nonbonded_min_separation_d2()
 		ProbeRadius ii_rad = atom_radii_[ ii_restype_id ];
 		for ( Size jj = 1; jj <= min_sep_d2_from_upstream_atoms_[ ii_restype_id ].size(); ++jj ) {
 			Size upstream_atom_id = min_sep_d2_from_upstream_atoms_[ ii_restype_id ][ jj ].first;
-			ProbeRadius jj_rad = probe_radius_for_atom_type( upstream_restype_->atom_type_index( upstream_atom_id ) );
+			ProbeRadius jj_rad = probe_radius_for_atom_type( upstream_restype_->atom( upstream_atom_id ).atom_type_index() );
 
 			Real dis = bbgrid().required_separation_distance( ii_rad, jj_rad );
 			min_sep_d2_from_upstream_atoms_[ ii_restype_id ][ jj ].second = dis*dis;

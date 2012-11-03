@@ -78,7 +78,7 @@ MMBondAngleResidueTypeParam::init(
 		three_atom_set const & atom_set(residue_type.bondangle(i));
 		if (!score_atom_centrally(residue_type, central_atoms_to_score, atom_set.key2())) continue;
 
-		core::Real residue_type_theta0(numeric::angle_radians(residue_type.ideal_xyz(atom_set.key1()), residue_type.ideal_xyz(atom_set.key2()), residue_type.ideal_xyz(atom_set.key3())));
+		core::Real residue_type_theta0(numeric::angle_radians(residue_type.atom(atom_set.key1()).ideal_xyz(), residue_type.atom(atom_set.key2()).ideal_xyz(), residue_type.atom(atom_set.key3()).ideal_xyz()));
 
 		std::string const & type1(residue_type.mm_atom_type(atom_set.key1()).name());
 		std::string const & type2(residue_type.mm_atom_type(atom_set.key2()).name());
@@ -154,7 +154,7 @@ MMBondAngleResidueTypeParam::init(
 
 		for (core::Size j = 1; j <= bonded_neighbors.size(); ++j) {
 
-			core::Real residue_type_theta0(numeric::angle_radians(residue_type.ideal_xyz(bonded_neighbors[j]), residue_type.ideal_xyz(connection_atomno), external_xyz));
+			core::Real residue_type_theta0(numeric::angle_radians(residue_type.atom(bonded_neighbors[j]).ideal_xyz(), residue_type.atom(connection_atomno).ideal_xyz(), external_xyz));
 
 			//std::string const & type1(residue_type.mm_atom_type(bonded_neighbors[j]).name());
 			//std::string const & type2(residue_type.mm_atom_type(connection_atomno).name());

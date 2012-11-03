@@ -123,7 +123,7 @@ main
 			TR << "Intraresidue Bond Angles:" << std::endl;
 			for (core::Size i = 1; i <= residue_type.num_bondangles(); ++i) {
 				core::chemical::bondangle_atom_set const & atom_set(residue_type.bondangle(i));
-				core::Real residue_type_theta0(numeric::angle_radians(residue_type.ideal_xyz(atom_set.key1()), residue_type.ideal_xyz(atom_set.key2()), residue_type.ideal_xyz(atom_set.key3())));
+				core::Real residue_type_theta0(numeric::angle_radians(residue_type.atom(atom_set.key1()).ideal_xyz(), residue_type.atom(atom_set.key2()).ideal_xyz(), residue_type.atom(atom_set.key3()).ideal_xyz()));
 
 				TR << residue_type.atom_name(atom_set.key1()) << "-"
 				   << residue_type.atom_name(atom_set.key2()) << "-"
@@ -161,7 +161,7 @@ main
 				TR << "Connection " << i << " Bond Angles:" << std::endl;
 				for (core::Size j = 1; j <= bonded_neighbors.size(); ++j) {
 
-					core::Real residue_type_theta0(numeric::angle_radians(residue_type.ideal_xyz(bonded_neighbors[j]), residue_type.ideal_xyz(connection_atomno), external_xyz));
+					core::Real residue_type_theta0(numeric::angle_radians(residue_type.atom(bonded_neighbors[j]).ideal_xyz(), residue_type.atom(connection_atomno).ideal_xyz(), external_xyz));
 
 					TR << residue_type.atom_name(bonded_neighbors[j]) << "-"
 					   << residue_type.atom_name(connection_atomno) << "-?";

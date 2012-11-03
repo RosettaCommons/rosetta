@@ -293,12 +293,12 @@ ResidueType::atom_type( Size const atomno ) const
 }
 
 /// @brief Get the chemical atom_type index number for this atom by its index number in this residue
-int
-ResidueType::atom_type_index( Size const atomno ) const
-{
-	PyAssert((atomno > 0) && (atomno <= atoms_.size()), "ResidueType::atom_type_index( Size const atomno ): atomno is not in this ResidueType!");
-	return atoms_[ atomno ].atom_type_index();
-}
+//int
+//ResidueType::atom_type_index( Size const atomno ) const
+//{
+//	PyAssert((atomno > 0) && (atomno <= atoms_.size()), "ResidueType::atom_type_index( Size const atomno ): atomno is not in this ResidueType!");
+//	return atoms_[ atomno ].atom_type_index();
+//}
 
 /// @brief Get the atom name by index
 std::string const &
@@ -421,11 +421,11 @@ ResidueType::mm_atom_type( Size const atomno ) const
 }
 
 /// @brief Get the MM atom_type index number for this atom by its index number in this residue
-int
-ResidueType::mm_atom_type_index( Size const atomno ) const
-{
-	return atoms_[ atomno ].mm_atom_type_index();
-}
+//int
+//ResidueType::mm_atom_type_index( Size const atomno ) const
+//{
+//	return atoms_[ atomno ].mm_atom_type_index();
+//}
 
 
 orbitals::OrbitalType const &
@@ -1765,16 +1765,6 @@ ResidueType::update_actcoord( conformation::Residue & rot ) const
 }
 
 
-
-///////////////////////////////////////////////////////////////////////////////
-// void
-// ResidueType::update_xyz_from_icoor( std::string const & atm )
-// {
-
-// }
-
-///////////////////////////////////////////////////////////////////////////////
-
 /// @details set AtomICoor for an atom
 ///
 /// will update the xyz coords as well if desired, useful inside a patching operation where new
@@ -2029,10 +2019,10 @@ void ResidueType::calculate_icoor(std::string const & child,
 	//std::cout <<child << " \""<<stub_atom1 << "\" \""<<stub_atom2<< "\" \""<<stub_atom3 << std::endl;
 	// This is basically a direct port of calc_internal_coords()
 	// found in /python/apps/public/molfile_to_params.py
-	Vector const child_xyz = ideal_xyz(atom_index(child));
-	Vector const stub1_xyz = ideal_xyz(atom_index(stub_atom1));
-	Vector const stub2_xyz = ideal_xyz(atom_index(stub_atom2));
-	Vector const stub3_xyz = ideal_xyz(atom_index(stub_atom3));
+	Vector const child_xyz = atom(atom_index(child)).ideal_xyz();
+	Vector const stub1_xyz = atom(atom_index(stub_atom1)).ideal_xyz();
+	Vector const stub2_xyz = atom(atom_index(stub_atom2)).ideal_xyz();
+	Vector const stub3_xyz = atom(atom_index(stub_atom3)).ideal_xyz();
 
 	core::Real distance = child_xyz.distance(stub1_xyz);
 	core::Real theta = 0.0;
@@ -2373,7 +2363,7 @@ ResidueType::debug_dump_icoor()
 
 	tr.Debug << "ICoor for " << name3() << std::endl;
 	for( Size ii = 1 ; ii <= natoms() ; ++ii) {
-		tr.Debug << " Atom name: " << atom_name( ii ) << " ideal xyz " << ideal_xyz(ii)[0] << "  " << ideal_xyz(ii)[1] << "  " << ideal_xyz(ii)[2] << std::endl;
+		tr.Debug << " Atom name: " << atom_name( ii ) << " ideal xyz " << atom(ii).ideal_xyz()[0] << "  " << atom(ii).ideal_xyz()[1] << "  " << atom(ii).ideal_xyz()[2] << std::endl;
 	}
 
 }

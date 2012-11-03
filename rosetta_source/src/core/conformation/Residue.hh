@@ -1013,7 +1013,7 @@ public:
 
 	std::string const &
 	orbital_name(int const orbital_index) const{
-		return rsd_type_.orbital_name(orbital_index);
+		return rsd_type_.orbital(orbital_index).name();
 	}
 
 	chemical::orbitals::OrbitalType const &

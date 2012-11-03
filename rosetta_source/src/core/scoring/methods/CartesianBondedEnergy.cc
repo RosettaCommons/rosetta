@@ -410,7 +410,7 @@ BondAngleDatabase::lookup(
 		Size const neighb_resconn = res.residue_connection_conn_id( -resconn );
 		ResidueType const & neighb_restype = neighb_res.type();
 		Size const neighb_atm = neighb_restype.residue_connection( neighb_resconn ).atomno();
-		neighb_mmatm = neighb_restype.mm_atom_type_index( neighb_atm );
+		neighb_mmatm = neighb_restype.atom( neighb_atm ).mm_atom_type_index();
 	}
 
 	// use these for mm Ktheta lookup
@@ -419,7 +419,7 @@ BondAngleDatabase::lookup(
 	// get angle
 	numeric::xyzVector<core::Real> x,y,z; // atom coords
 	if (atm1 > 0) {
-		mmatm1 = restype.mm_atom_type_index( atm1 );
+		mmatm1 = restype.atom( atm1 ).mm_atom_type_index();
 		x = newres->atom( atm1 ).xyz();
 	}
 	else {
@@ -427,7 +427,7 @@ BondAngleDatabase::lookup(
 		x = newres->residue_connection( -atm1 ).icoor().build( restype );
 	}
 	if (atm2 > 0) {
-		mmatm2 = restype.mm_atom_type_index( atm2 );
+		mmatm2 = restype.atom( atm2 ).mm_atom_type_index();
 		y = newres->atom( atm2 ).xyz();
 	}
 	else {
@@ -435,7 +435,7 @@ BondAngleDatabase::lookup(
 		y = newres->residue_connection( -atm2 ).icoor().build( restype );
 	}
 	if (atm3 > 0) {
-		mmatm3 = restype.mm_atom_type_index( atm3 );
+		mmatm3 = restype.atom( atm3 ).mm_atom_type_index();
 		z = newres->atom( atm3 ).xyz();
 	}
 	else {
@@ -530,7 +530,7 @@ BondLengthDatabase::lookup
 		Size const neighb_resconn = res.residue_connection_conn_id( -resconn );
 		ResidueType const & neighb_restype = neighb_res.type();
 		Size const neighb_atm = neighb_restype.residue_connection( neighb_resconn ).atomno();
-		neighb_mmatm = neighb_restype.mm_atom_type_index( neighb_atm );
+		neighb_mmatm = neighb_restype.atom( neighb_atm ).mm_atom_type_index();
 		//TR.Debug << "resconn atom name: " << neighb_res.atom_name( neighb_atm ) << "rsd atom name: " << res.atom_name( std::max(atm1, atm2)) << std::endl;
 		//TR.Debug << "rsd atom no: " << std::max(atm1, atm2) << " resconn atom no: " << neighb_atm << std::endl;
 		//TR.Debug << "rsd mm_atom no: " << restype.mm_atom_type_index( atm1 ) << " resconn mm_atom no: " << neighb_mmatm << std::endl;
@@ -542,7 +542,7 @@ BondLengthDatabase::lookup
 	// get length
 	numeric::xyzVector<core::Real> x,y,z; // atom coords
 	if (atm1 > 0) {
-		mmatm1 = restype.mm_atom_type_index( atm1 );
+		mmatm1 = restype.atom( atm1 ).mm_atom_type_index();
 		x = newres->atom( atm1 ).xyz();
 	}
 	else {
@@ -550,7 +550,7 @@ BondLengthDatabase::lookup
 		x = newres->residue_connection( -atm1 ).icoor().build( restype );
 	}
 	if (atm2 > 0) {
-		mmatm2 = restype.mm_atom_type_index( atm2 );
+		mmatm2 = restype.atom( atm2 ).mm_atom_type_index();
 		y = newres->atom( atm2 ).xyz();
 	}
 	else {

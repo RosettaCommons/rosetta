@@ -294,8 +294,8 @@ MMBondAngleEnergy::residue_pair_energy(
 		TR(basic::t_trace) << "Found residue connection id " << resconn_id1 << "-" << resconn_id2 << ": "
 			<< rsd1.atom_name( resconn_atomno1 ) << "-" << rsd2.atom_name( resconn_atomno2 ) << std::endl;
 
-		Size const resconn_mmat1 = rsd1_type.mm_atom_type_index( resconn_atomno1 );
-		Size const resconn_mmat2 = rsd2_type.mm_atom_type_index( resconn_atomno2 );
+		Size const resconn_mmat1 = rsd1_type.atom( resconn_atomno1 ).mm_atom_type_index();
+		Size const resconn_mmat2 = rsd2_type.atom( resconn_atomno2 ).mm_atom_type_index();
 
 		/// Score only a subset of the bong angles using the central_atoms_to_score_ list
 		/// of atom names.  If this list is empty, then score all atom pairs.
@@ -316,7 +316,7 @@ MMBondAngleEnergy::residue_pair_energy(
 			for ( Size jj = 1; jj <= rsd1_atoms_wi1_bond_of_ii.size(); ++jj ) {
 				assert( rsd1_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno1 );
 				Size const res1_lower_atomno = rsd1_atoms_wi1_bond_of_ii[ jj ].key2();
-				Size const res1_lower_mmtype = rsd1_type.mm_atom_type_index( res1_lower_atomno );
+				Size const res1_lower_mmtype = rsd1_type.atom( res1_lower_atomno ).mm_atom_type_index();
 
 				Real const angle = numeric::angle_radians(
 					rsd1.atom( res1_lower_atomno ).xyz(),
@@ -371,7 +371,7 @@ MMBondAngleEnergy::residue_pair_energy(
 			for ( Size jj = 1; jj <= rsd2_atoms_wi1_bond_of_ii.size(); ++jj ) {
 				assert( rsd2_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno2 );
 				Size const res2_lower_atomno = rsd2_atoms_wi1_bond_of_ii[ jj ].key2();
-				Size const res2_lower_mmtype = rsd2_type.mm_atom_type_index( res2_lower_atomno );
+				Size const res2_lower_mmtype = rsd2_type.atom( res2_lower_atomno ).mm_atom_type_index();
 
 				Real const angle = numeric::angle_radians(
 					rsd2.atom( res2_lower_atomno ).xyz(),
@@ -487,9 +487,9 @@ MMBondAngleEnergy::eval_intrares_energy(
 			continue;
 
 		// get mm atom type index
-		int mmat1 = rsd_type.mm_atom_type_index( rt1 );
-		int mmat2 = rsd_type.mm_atom_type_index( rt2 );
-		int mmat3 = rsd_type.mm_atom_type_index( rt3 );
+		int mmat1 = rsd_type.atom( rt1 ).mm_atom_type_index();
+		int mmat2 = rsd_type.atom( rt2 ).mm_atom_type_index();
+		int mmat3 = rsd_type.atom( rt3 ).mm_atom_type_index();
 
 		// get angle
 		Real angle = numeric::angle_radians
@@ -630,9 +630,9 @@ MMBondAngleEnergy::eval_atom_derivative(
 			if ( param_set_ ) {
 				dE_dtheta	= weights[ mm_bend ] * potential_.dscore( Ktheta, theta0, theta );
 			} else {
-				Size const mmat1 = restype.mm_atom_type_index( ii_bangle.key1() );
-				Size const mmat2 = restype.mm_atom_type_index( ii_bangle.key2() );
-				Size const mmat3 = restype.mm_atom_type_index( ii_bangle.key3() );
+				Size const mmat1 = restype.atom( ii_bangle.key1() ).mm_atom_type_index();
+				Size const mmat2 = restype.atom( ii_bangle.key2() ).mm_atom_type_index();
+				Size const mmat3 = restype.atom( ii_bangle.key3() ).mm_atom_type_index();
 
 				dE_dtheta = weights[ mm_bend ] * potential_.mm::MMBondAngleScore::dscore(
 					mm::mm_bondangle_atom_tri( mmat1, mmat2, mmat3 ), theta );
@@ -705,9 +705,9 @@ MMBondAngleEnergy::eval_atom_derivative(
 			if ( param_set_ ) {
 				dE_dtheta	= weights[ mm_bend ] * potential_.dscore( Ktheta, theta0, theta );
 			} else {
-				Size const mmat1 = neighb_restype.mm_atom_type_index( neighb_atom );
-				Size const mmat2 = restype.mm_atom_type_index( ii_pair.key1() );
-				Size const mmat3 = restype.mm_atom_type_index( ii_pair.key2() );
+				Size const mmat1 = neighb_restype.atom( neighb_atom ).mm_atom_type_index();
+				Size const mmat2 = restype.atom( ii_pair.key1() ).mm_atom_type_index();
+				Size const mmat3 = restype.atom( ii_pair.key2() ).mm_atom_type_index();
 
 				dE_dtheta = weights[ mm_bend ] * potential_.mm::MMBondAngleScore::dscore(
 					mm::mm_bondangle_atom_tri( mmat1, mmat2, mmat3 ), theta );
@@ -738,8 +738,8 @@ MMBondAngleEnergy::eval_atom_derivative(
 		if ( ! score_everything && ! score_atom_centrally( neighb_restype, neighb_atom1 )) continue;
 		// Beyond this point, we will score all atom triples
 
-		Size const mmat1 = restype.mm_atom_type_index( atomno );
-		Size const mmat2 = neighb_restype.mm_atom_type_index( neighb_atom1 );
+		Size const mmat1 = restype.atom( atomno ).mm_atom_type_index();
+		Size const mmat2 = neighb_restype.atom( neighb_atom1 ).mm_atom_type_index();
 
 
 		utility::vector1< chemical::two_atom_set > const & neighb_atoms_wi1(
@@ -751,7 +751,7 @@ MMBondAngleEnergy::eval_atom_derivative(
 			assert( neighb_pair.key1() == neighb_atom1 );
 
 			Size const neighb_atom2 = neighb_pair.key2();
-			Size const mmat3 = neighb_restype.mm_atom_type_index( neighb_atom2 );
+			Size const mmat3 = neighb_restype.atom( neighb_atom2 ).mm_atom_type_index();
 
 			//TR << "  2b. Deriv for interres angle between (" << ii_neighb << "," << neighb_atom2 << ") ("<< ii_neighb << "," << neighb_atom1 << ") " << atomno << std::endl;
 

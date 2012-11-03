@@ -154,8 +154,8 @@ MMBondLengthEnergy::residue_pair_energy(
 		TR(basic::t_trace) << "Found residue connection id " << resconn_id1 << "-" << resconn_id2 << ": "
 			<< rsd1.atom_name( resconn_atomno1 ) << "-" << rsd2.atom_name( resconn_atomno2 ) << std::endl;
 
-		Size const resconn_mmat1 = rsd1_type.mm_atom_type_index( resconn_atomno1 );
-		Size const resconn_mmat2 = rsd2_type.mm_atom_type_index( resconn_atomno2 );
+		Size const resconn_mmat1 = rsd1_type.atom( resconn_atomno1 ).mm_atom_type_index();
+		Size const resconn_mmat2 = rsd2_type.atom( resconn_atomno2 ).mm_atom_type_index();
 
 		Real const d = 
 			( rsd1.atom( resconn_atomno1 ).xyz()-rsd2.atom( resconn_atomno2 ).xyz() ).length();
@@ -193,8 +193,8 @@ MMBondLengthEnergy::eval_intrares_energy(
 		for (Size j=1; j<=atm_nbrs.size(); ++j) {
 			Size atm_j = atm_nbrs[j];
 			if ( atm_i<atm_j ) { // only score each bond once -- use restype index to define ordering
-				int mmat1 = rsd_type.mm_atom_type_index( atm_i );
-				int mmat2 = rsd_type.mm_atom_type_index( atm_j );
+				int mmat1 = rsd_type.atom( atm_i ).mm_atom_type_index();
+				int mmat2 = rsd_type.atom( atm_j ).mm_atom_type_index();
 
 				// check for vrt
 				if ( rsd_type.atom_type(atm_i).is_virtual() || rsd_type.atom_type(atm_j).is_virtual() )
@@ -244,8 +244,8 @@ MMBondLengthEnergy::eval_atom_derivative(
 	for (Size j=1; j<=atm_nbrs.size(); ++j) {
 		Size atm2 = atm_nbrs[j];
 
-		int mmat1 = rsd_type.mm_atom_type_index( atomno );
-		int mmat2 = rsd_type.mm_atom_type_index( atm2 );
+		int mmat1 = rsd_type.atom( atomno ).mm_atom_type_index();
+		int mmat2 = rsd_type.atom( atm2 ).mm_atom_type_index();
 
 		// check for vrt
 		if ( rsd_type.atom_type(atomno).is_virtual() || rsd_type.atom_type(atm2).is_virtual() )
@@ -273,8 +273,8 @@ MMBondLengthEnergy::eval_atom_derivative(
 		chemical::ResidueType const & neighb_restype( pose.residue_type( ii_neighb ) );
 		Size const neighb_atom1    = neighb_restype.residue_connection( neighb_resconn ).atomno();
 
-		Size const mmat1 = rsd_type.mm_atom_type_index( atomno );
-		Size const mmat2 = neighb_restype.mm_atom_type_index( neighb_atom1 );
+		Size const mmat1 = rsd_type.atom( atomno ).mm_atom_type_index();
+		Size const mmat2 = neighb_restype.atom( neighb_atom1 ).mm_atom_type_index();
 
 		// check for vrt
 		if ( rsd_type.atom_type(atomno).is_virtual() || neighb_restype.atom_type(neighb_atom1).is_virtual() )
