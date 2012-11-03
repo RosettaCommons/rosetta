@@ -82,6 +82,7 @@ sources = {
     "SymDofMover",
     "SymDofMoverSampler",
     "SymmetrizerSampler",
+    "GenericSymmetricSampler",
     "BuildingBlockInterfaceOperation",
     "RestrictToNonzeroSASAOperation",
 		"RestrictIdentitiesOperation",

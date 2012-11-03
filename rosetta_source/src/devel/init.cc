@@ -50,6 +50,7 @@
 #include <devel/matdes/GetRBDOFValuesCreator.hh>
 #include <devel/replica_docking/InteractionScoreFilterCreator.hh>
 #include <devel/matdes/MutationsFilterCreator.hh>
+#include <devel/matdes/GenericSymmetricSamplerCreator.hh>
 
 #include <devel/replica_docking/WrapFilterAsEvaluatorCreator.hh>
 
@@ -83,6 +84,7 @@ static protocols::moves::MoverRegistrator< devel::matdes::TaskAwareSymMinMoverCr
 static protocols::moves::MoverRegistrator< devel::matdes::StoreTaskMoverCreator > reg_StoreTaskMoverCreator;
 static protocols::moves::MoverRegistrator< devel::matdes::SymDofMoverCreator > reg_SymDofMoverCreator;
 static protocols::moves::MoverRegistrator< devel::matdes::ExtractSubposeCreator > reg_ExtractSubposeCreator;
+static protocols::moves::MoverRegistrator< devel::matdes::GenericSymmetricSamplerCreator > reg_GenericSymmetricSamplerCreator;
 static protocols::moves::MoverRegistrator< replica_docking::AddEncounterConstraintMoverCreator > reg_AddEncounterConstraintMoverCreator;
 static protocols::moves::MoverRegistrator< replica_docking::ModulatedMoverCreator > reg_ModulatedMoverCreator;
 static protocols::moves::MoverRegistrator< replica_docking::ThermodynamicRigidBodyPerturbNoCenterMoverCreator > reg_ThermodynamicRigidBodyPerturbNoCenterMoverCreator;
