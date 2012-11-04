@@ -11,6 +11,7 @@
 /// @brief  utility functions for making poses from sequences
 /// @author P. Douglas Renfrew
 /// @author Sam Deluca
+/// @author Labonte (carbohydrate versions)
 
 #ifndef INCLUDED_core_pose_annotated_sequence_hh
 #define INCLUDED_core_pose_annotated_sequence_hh
@@ -29,15 +30,20 @@
 namespace core {
 namespace pose {
 
-/// @brief return of list of ResidueTypes corresponding to an annotated protein sequence
+/// @brief return a list of ResidueTypes corresponding to an annotated protein sequence
 /// @param[in] sequence_in an annotated sequence
 /// @param[in] residue_set the desired residue set
 /// @param[in] auto_termini mark position 1, last_residue with lower, upper termini; default true
 chemical::ResidueTypeCOPs residue_types_from_sequence(
 	std::string const & sequence_in,
 	chemical::ResidueTypeSet const & residue_set,
-	bool const auto_termini = true
+	bool const /*auto_termini = true*/
 );
+
+
+/// @brief Return a list of carbohydrate ResidueTypes corresponding to an annotated polysaccharide sequence.
+chemical::ResidueTypeCOPs residue_types_from_saccharide_sequence(std::string const & sequence,
+		chemical::ResidueTypeSet const & residue_set);
 
 
 /// @brief Creates a Pose from the annotated protein sequence  <sequence>
@@ -69,9 +75,16 @@ void make_pose_from_sequence(
 	pose::Pose & pose,
 	std::string const & sequence,
 	std::string const & type_set_name,
-	//chemical::ResidueTypeSet const & residue_set,
 	bool const auto_termini = true
 );
+
+
+/// @brief Creates a Pose from an annotated polysaccharide sequence <sequence> with ResidueTypeSet <residue_set> and
+/// stores it in <pose>.
+void make_pose_from_saccharide_sequence(pose::Pose & pose,
+		std::string const & sequence,
+		chemical::ResidueTypeSet const & residue_set,
+		bool const auto_termini = true);
 
 
 /// @brief Returns the oneletter_sequence that corresponds to the given

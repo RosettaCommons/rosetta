@@ -17,6 +17,7 @@
 //#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/annotated_sequence.hh>
 //#include <core/pose/PDBInfo.hh>
 #include <core/import_pose/import_pose.hh>
 
@@ -28,6 +29,7 @@ using namespace std;
 using namespace core;
 using namespace pose;
 using namespace import_pose;
+using namespace chemical;
 using namespace conformation;
 
 
@@ -68,4 +70,12 @@ main(int argc, char *argv[])
 	pose_from_pdb(isomaltose, "/home/labonte/Workspace/Carbohydrates/isomaltose.pdb");
 
 	test_sugar(isomaltose);
+
+	cout << "------------------------------------------------------------" << endl;
+	cout << "Creating maltotriose from sequence:" << endl;
+
+	ResidueTypeSetCAP residue_set(ChemicalManager::get_instance()->residue_type_set("fa_standard"));
+	make_pose_from_saccharide_sequence(maltotriose, "alpha-D-Glcp-(1->4)-alpha-D-Glcp-(1->4)-D-Glcp", *residue_set);
+
+	test_sugar(maltotriose);
 }

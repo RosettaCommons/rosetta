@@ -11,6 +11,7 @@
 /// @brief  utility functions for making poses from sequences
 /// @author P. Douglas Renfrew
 /// @author Sam Deluca
+/// @author Labonte (carbohydrate versions)
 
 // Unit Headers
 #include <core/pose/annotated_sequence.hh>
@@ -21,6 +22,7 @@
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AA.hh>
+#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 
@@ -28,6 +30,7 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 
 
 // Utility Headers
@@ -51,10 +54,10 @@ using namespace core::conformation;
 /// sequence. NOTE: support making residue types from a fully annotated sequence
 /// now, that is, for each residue variant or ligand which cannot be deduced
 /// from one letter code directly, a [] is added directly following the one
-/// letter code containig the residue's fullname, for example
+/// letter code containing the residue's fullname, for example
 /// K[lys_p:NtermProteinFull]ADFGCH[HIS_D]QNVE[glu_p:CtermProteinFull]Z[ZN].
 /// This allows a pose to be constructed with full features from a silent output
-/// file, such as with distiguished HIS tautomers, various chain termini and
+/// file, such as with distinguished HIS tautomers, various chain termini and
 /// cutpoint variants etc. Currently not working with disulfide variant CYD, but
 /// this is on to-do list.
 chemical::ResidueTypeCOPs residue_types_from_sequence(
@@ -77,7 +80,7 @@ chemical::ResidueTypeCOPs residue_types_from_sequence(
 
 	// we start with the first character in sequence and that should be a standard AA.
 	std::string one_letter_sequence = sequence_in.substr( 0,1 );
-	Size last_index = 0; // zero means this one-letter name does not have a fullname sepcified in bracket.
+	Size last_index = 0; // zero means this one-letter name does not have a fullname specified in bracket.
 	bool in_bracket = false; // currently whether scanning fullname in bracket or not.
 
 	for ( Size seqpos = 1; seqpos < sequence_in.length(); ++seqpos ) {
@@ -111,7 +114,7 @@ chemical::ResidueTypeCOPs residue_types_from_sequence(
 	tr.Debug << "one_letter: " << one_letter_sequence << std::endl;
 	tr.Debug << "seq_in: " << sequence_in << std::endl;
 
-	// setup the pose by appending the appropriate residues residues
+	// setup the pose by appending the appropriate residues
 	for ( Size seqpos = 1; seqpos <= one_letter_sequence.length(); ++seqpos ) {
 		char aa = one_letter_sequence[ seqpos-1 ]; // string indexing is zero-based!
 		chemical::AA my_aa = chemical::aa_from_oneletter_code( aa );
@@ -163,16 +166,168 @@ chemical::ResidueTypeCOPs residue_types_from_sequence(
 }
 
 
+// Return a list of carbohydrate ResidueTypes corresponding to an annotated polysaccharide sequence.
+/// @param[in] <sequence>: an annotated polysaccharide sequence,
+/// e.g., "alpha-D-Glcp-(1->4)-alpha-D-Glcp-(1->4)-D-Glcp"
+/// @param[in] <residue_set>: the desired residue set
+/// @return    a 1-indexed vector of ResidueType owning pointers, from left-to-right, as indicated by the sequence
+/// @details   Format for <sequence>:\n
+/// Prefixes apply to the residue to which they are attached, below indicated by residue n.\n
+/// Residues are listed from N to 1, where N is the total number of residues in the saccharide.\n
+/// The sequence is parsed by reading to the next hyphen, so hyphens are crucial.\n
+/// Linkage indication: "(a->x)-" specifies the linkage of residue n, where a is the anomeric carbon number of residue
+/// (n+1) and x is the oxygen number of residue n.  The first residue listed in the annotated sequence (residue N)
+/// need not have the linkage prefix.  A ->4) ResidueType will automatically be assigned by default if not specified.\n
+/// Anomer indication: The strings "alpha-" or "beta-" are supplied next, which determines the stereochemistry of the
+/// anomeric carbon of the residue to which it is prefixed.  An alpha ResidueType will automatically be assigned by
+/// default.\n
+/// Stereochemical indication: "L-" or "D-" specifies whether residue n is an L- or D-sugar.  The default is "D-".\n
+/// 3-Letter code: A three letter code (in sentence case) MUST be supplied next.  This specifies the "base sugar name",
+/// e.g., Glc is for glucose.  (A list of all recognized 3-letter codes for sugars can be found in
+/// src/core/chemical/carbohydrates/CarbohydrateInfo.cc.)\n
+/// 1-Letter suffix: If no suffix follows, residue n will be linear.  If a letter is present, it indicates the ring
+/// size, where "f" is furanose, "p" is puranose, and "s" is septanose.
+/// @remarks   At present time, param files only exist for two variations of glucopyranose! ~ Labonte
+chemical::ResidueTypeCOPs
+residue_types_from_saccharide_sequence(std::string const & sequence,
+		chemical::ResidueTypeSet const & residue_set)
+{
+	using namespace std;
+	using namespace chemical;
+	using namespace carbohydrates;
+
+	ResidueTypeCOPs residue_types;
+
+	if (!sequence.size()) {
+		return residue_types;
+	}
+
+	// Add delimiter to end of sequence.
+	string sequence_with_hyphen = sequence + '-';
+
+	// Loop through sequence one character at a time, form affixes and 3-letter codes, and assign ResidueTypes.
+	uint const sequence_end = sequence_with_hyphen.length();
+	char character;
+	string morpheme = "";
+	string residue_type_name = "";
+	bool linkage_assigned = false;
+	bool anomer_assigned = false;
+	bool L_or_D_assigned = false;
+	for (uint chr_num = 0; chr_num <= sequence_end; ++chr_num) {
+		character = sequence_with_hyphen[chr_num];
+
+		if (character != '-') {  // '-' is the morpheme delimiter
+			morpheme += character;
+		} else {  // The morpheme is complete; interpret it....
+			// Linkage indication, first half (ignored)
+			if (morpheme[0] == '(') {
+				morpheme = "";  // The "(_" information is not needed; continue on to the next morpheme.
+
+			// Linkage indication, second half
+			} else if (morpheme[0] == '>') {
+				if (anomer_assigned || L_or_D_assigned) {
+					utility_exit_with_message("Saccharide sequence input error: "
+							"the linkage notation must precede other prefixes.");
+				} else {
+					residue_type_name += '-' + morpheme + '-';
+					linkage_assigned = true;
+					morpheme = "";
+				}
+
+			// Anomer indication
+			} else if (morpheme == "alpha" || morpheme == "beta") {
+				if (L_or_D_assigned) {
+					utility_exit_with_message("Saccharide sequence input error: "
+							"alpha/beta notation must precede L- or D- prefixes.");
+				} else {
+					// Set default linkage if missed.
+					if (!linkage_assigned) {
+						residue_type_name += "->4)-";
+						linkage_assigned = true;
+					}
+					residue_type_name += morpheme + '-';
+					anomer_assigned = true;
+					morpheme = "";
+				}
+
+			// L/D indication
+			} else if (morpheme == "L" || morpheme == "D") {
+				// Set other defaults if missed.
+				if (!linkage_assigned) {
+					residue_type_name += "->4)-";
+					linkage_assigned = true;
+				}
+				if (!anomer_assigned) {
+					residue_type_name += "alpha-";
+					anomer_assigned = true;
+				}
+				residue_type_name += morpheme + '-';
+				L_or_D_assigned = true;
+				morpheme = "";
+
+			// 3-Letter code (must be found in map of allowed 3-letter codes) and suffix
+			} else if (morpheme.length() >= 3 &&
+					CarbohydrateInfo::CODE_TO_ROOT_MAP.count(morpheme.substr(0, 3))) {
+				// Set defaults if missed.
+				if (!linkage_assigned) {
+					residue_type_name += "->4)-";
+				}
+				if (!anomer_assigned) {
+					residue_type_name += "alpha-";
+				}
+				if (!L_or_D_assigned) {
+					residue_type_name += "D-";
+				}
+
+				// Assign 3-letter code.
+				residue_type_name += morpheme.substr(0, 3);
+
+				// Check for 1-letter suffix
+				if (morpheme.length() == 4) {
+					char suffix = morpheme[3];
+					if (suffix == 'f' || suffix == 'p' || suffix == 's') {
+						residue_type_name += suffix;
+					} else {
+						utility_exit_with_message("Saccharide sequence input error: "
+								"Rosetta currently only supports 5-, 6-, or 7-membered rings.");
+					}
+				} else if (morpheme.length() > 4) {
+					utility_exit_with_message("Saccharide sequence input error: "
+							"Unrecognized modified sugar indicated by suffix.");
+				}
+
+				// Select a matching ResidueType and add to list (or exit without a match).
+				residue_types.push_back(& residue_set.name_map(residue_type_name));
+
+				// Reset variables.
+				morpheme = "";
+				residue_type_name = "";
+				linkage_assigned = false;
+				anomer_assigned = false;
+				L_or_D_assigned = false;
+
+			// Unrecognized morpheme
+			} else {
+				utility_exit_with_message("Saccharide sequence input error: "
+						"Unrecognized sugar and/or notation in sequence.");
+			}
+		}
+	}  // next chr_num
+
+	return residue_types;
+}  // residue_types_from_saccharide_sequence()
+
+
 ////////////////////////////////////////////////////////////////////////////////
 /// @details Given a Pose, a protein sequence where each character represents an
 /// amino acid, and a ResidueTypeSet, give the Pose a conformation of covalently
 /// linked residues that match the sequence. NOTE: support making pose from a
 /// fully annotated sequence now, that is, for each residue variant or ligand
 /// which cannot be deduced from one letter code directly, a [] is added
-/// directly following the one letter code containig the residue's fullname, e.g.
+/// directly following the one letter code containing the residue's fullname, e.g.
 /// K[lys_p:NtermProteinFull]ADFGCH[HIS_D]QNVE[glu_p:CtermProteinFull]Z[ZN].
 /// This allows a pose to be constructed with full features from a silent output
-/// file, such as with distiguished HIS tautomers, various chain termini and
+/// file, such as with distinguished HIS tautomers, various chain termini and
 /// cutpoint variants etc. Currently not working with disulfide variant CYD, but
 /// this is on to-do list.
 void make_pose_from_sequence(
@@ -182,8 +337,6 @@ void make_pose_from_sequence(
 	bool const auto_termini /* true */
 )
 {
-	typedef core::Size Size;
-
 	// grab residue types
 	chemical::ResidueTypeCOPs requested_types = core::pose::residue_types_from_sequence( sequence_in, residue_set, auto_termini );
 	assert( core::pose::annotated_to_oneletter_sequence( sequence_in ).length() == requested_types.size() );
@@ -215,8 +368,9 @@ void make_pose_from_sequence(
 		// do the actual append
 		if ( rsd_type.has_variant_type( chemical::LOWER_TERMINUS ) ||
 				 rsd_type.has_variant_type( chemical::N_ACETYLATION ) ||
-			new_rsd->aa() == chemical::aa_unk || new_rsd->aa() == chemical::aa_vrt ||
-				jump_to_next ) {
+				 new_rsd->aa() == chemical::aa_unk ||
+				 new_rsd->aa() == chemical::aa_vrt ||
+				 jump_to_next ) {
 			if ( new_rsd->aa() == chemical::aa_unk  || new_rsd->aa() == chemical::aa_vrt ) {
 				//fpd tr.Warning << "found unknown aminoacid or X in sequence at position " << i <<  std::endl;
 				//fpd if ( i< ie ) {
@@ -226,9 +380,9 @@ void make_pose_from_sequence(
 				// if you don't think so ... make the code more stable and remove this
 				// but only if this sequence doesn't seg-fault: KPAFGTNQEDYASYIXNGIIK" );
 
-				///fpd ^^^ the problem is that the residue following the X should be connected by a jump as well.
-				///     it should be of LOWER_TERMINUS variant type, but if not, we'll recover & spit out a warning for now.
-				///     same thing for ligands???
+				//fpd ^^^ the problem is that the residue following the X should be connected by a jump as well.
+				//     it should be of LOWER_TERMINUS variant type, but if not, we'll recover & spit out a warning for now.
+				//     same thing for ligands???
 				jump_to_next = true;
 			} else if ( jump_to_next ) {
 				jump_to_next = false;
@@ -251,10 +405,11 @@ void make_pose_from_sequence(
 } // core::pose::make_pose_from_sequence
 
 ////////////////////////////////////////////////////////////////////////////////
-/// overloaded version of previous mak_pose_from_sequence, does the same
+/// @details overloaded version of make_pose_from_sequence, does the same
 /// function, but reads in a string of the residue type set instead of a
 /// ResidueTypeSet object.  Made for PyRosetta.
-/// olange: DONT DUPLICATE CODE sid!  --- I removed the duplication by calling the original "core::pose::make_pose_from_sequence"
+// olange: DONT DUPLICATE CODE sid!
+// --- I removed the duplication by calling the original "core::pose::make_pose_from_sequence"
 void make_pose_from_sequence(
 	pose::Pose & pose,
 	std::string const & sequence_in,
@@ -264,6 +419,75 @@ void make_pose_from_sequence(
 ) {
 	chemical::ResidueTypeSetCAP residue_set( chemical::ChemicalManager::get_instance()->residue_type_set( type_set_name ) );
 	core::pose::make_pose_from_sequence( pose, sequence_in, *residue_set, auto_termini );
+}
+
+
+// Creates a Pose from an annotated polysaccharide sequence <sequence> with ResidueTypeSet <residue_set> and stores it
+// in <pose>.
+/// @param[in] <pose>: the Pose to fill
+/// @param[in] <sequence>: an annotated polysaccharide sequence,
+/// e.g., "alpha-D-Glcp-(1->4)-alpha-D-Glcp-(1->4)-D-Glcp"
+/// @param[in] <residue_set>: the desired residue set
+/// @param[in] <auto_termini>: if true (default) creates termini variants of terminal residues
+/// @details   Format for <sequence>:\n
+/// Prefixes apply to the residue to which they are attached, below indicated by residue n.\n
+/// Residues are listed from N to 1, where N is the total number of residues in the saccharide.\n
+/// The sequence is parsed by reading to the next hyphen, so hyphens are crucial.\n
+/// Linkage indication: "(a->x)-" specifies the linkage of residue n, where a is the anomeric carbon number of residue
+/// (n+1) and x is the oxygen number of residue n.  The first residue listed in the annotated sequence (residue N)
+/// need not have the linkage prefix.  A ->4) ResidueType will automatically be assigned by default if not specified.\n
+/// Anomer indication: The strings "alpha-" or "beta-" are supplied next, which determines the stereochemistry of the
+/// anomeric carbon of the residue to which it is prefixed.  An alpha ResidueType will automatically be assigned by
+/// default.\n
+/// Stereochemical indication: "L-" or "D-" specifies whether residue n is an L- or D-sugar.  The default is "D-".\n
+/// 3-Letter code: A three letter code (in sentence case) MUST be supplied next.  This specifies the "base sugar name",
+/// e.g., Glc is for glucose.  (A list of all recognized 3-letter codes for sugars can be found in
+/// src/core/chemical/carbohydrates/CarbohydrateInfo.cc.)\n
+/// 1-Letter suffix: If no suffix follows, residue n will be linear.  If a letter is present, it indicates the ring
+/// size, where "f" is furanose, "p" is puranose, and "s" is septanose.
+/// @remarks   The order of residues in the created pose is in the opposite direction as the annotated sequence of
+/// saccharide residues, as sugars are named with the 1st residue as the "main chain", with all other residues named as
+/// substituents and written as prefixes.  In other words, sugars are usually drawn and named with residue 1 to the
+/// right.\n
+/// At present time, param files only exist for two variations of glucopyranose! ~ Labonte
+void
+make_pose_from_saccharide_sequence(pose::Pose & pose,
+		std::string const & sequence,
+		chemical::ResidueTypeSet const & residue_set,
+		bool const auto_termini)
+{
+	using namespace std;
+	using namespace chemical;
+	using namespace conformation;
+
+	// Get list of carbohydrate residue types.
+	ResidueTypeCOPs residue_types = residue_types_from_saccharide_sequence(sequence, residue_set);
+
+	// Clear the pose.
+	pose.clear();
+
+	// Make the pose.
+	// Loop backwards through list, since the lower terminus (reducing end) is the last residue given in an
+	// annotated polysaccharide sequence.
+	uint last_index = residue_types.size();
+	for (uint i = last_index; i >= 1; --i) {
+		ResidueType const & rsd_type = *residue_types[i];
+		ResidueOP new_rsd(NULL);
+		new_rsd = ResidueFactory::create_residue(rsd_type);
+
+		if (i == last_index) {
+			pose.append_residue_by_jump(*new_rsd, 1, "", "", true);
+		} else {
+			pose.append_residue_by_bond( *new_rsd, true );
+		}
+	}
+
+	if (auto_termini) {
+		add_lower_terminus_type_to_pose_residue(pose, 1);
+		add_upper_terminus_type_to_pose_residue(pose, pose.total_residue());
+	}
+
+	tr.Debug << "Created carbohydrate pose with sequence: " << pose.chain_sequence(1) << endl;
 }
 
 
