@@ -37,7 +37,7 @@ namespace pose {
 chemical::ResidueTypeCOPs residue_types_from_sequence(
 	std::string const & sequence_in,
 	chemical::ResidueTypeSet const & residue_set,
-	bool const /*auto_termini = true*/
+	bool const auto_termini = true
 );
 
 
