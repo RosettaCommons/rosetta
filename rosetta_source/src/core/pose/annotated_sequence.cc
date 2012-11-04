@@ -213,7 +213,8 @@ residue_types_from_saccharide_sequence(std::string const & sequence,
 	bool linkage_assigned = false;
 	bool anomer_assigned = false;
 	bool L_or_D_assigned = false;
-	for (uint chr_num = 0; chr_num <= sequence_end; ++chr_num) {
+
+	for (uint chr_num = 0; chr_num < sequence_end; ++chr_num) {
 		character = sequence_with_hyphen[chr_num];
 
 		if (character != '-') {  // '-' is the morpheme delimiter
@@ -478,7 +479,7 @@ make_pose_from_saccharide_sequence(pose::Pose & pose,
 		if (i == last_index) {
 			pose.append_residue_by_jump(*new_rsd, 1, "", "", true);
 		} else {
-			pose.append_residue_by_bond( *new_rsd, true );
+			pose.append_residue_by_bond(*new_rsd, true);
 		}
 	}
 
