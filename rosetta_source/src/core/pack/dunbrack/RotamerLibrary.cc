@@ -189,6 +189,9 @@ rotamer_from_chi_02(
 {
 	using namespace chemical;
 
+	// This code assumes that we're dealing with a canonical aa - fail if not the case.
+	assert( res <= num_canonical_aas );
+
 	// default to 0
 	// right now this means 0 for rot numbers larger than dunbrack's nchi
 	// eg for H-chi or extra chi's
@@ -518,7 +521,7 @@ RotamerLibrary::get_rsd_library( chemical::ResidueType const & rsd_type ) const
         if ( !rsd_type.is_ligand() ) {
         TR.Debug << "Warning: using PDB_ROTAMERS for non-ligand ResidueType!" << std::endl;
         }
-    
+
 		TR.Debug << "Initializing conformer library for " << rsd_type.get_RotamerLibraryName() << std::endl;
 		SingleLigandRotamerLibraryOP pdb_rotamers = new SingleLigandRotamerLibrary();
 		pdb_rotamers->init_from_file( rsd_type.get_RotamerLibraryName(), &rsd_type );
