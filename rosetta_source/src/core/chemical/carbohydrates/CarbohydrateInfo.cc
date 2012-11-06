@@ -74,7 +74,7 @@ std::map<std::string, std::string> const CarbohydrateInfo::CODE_TO_ROOT_MAP =
 				("DHA", "dihydroxyacet")  // TODO: Deal with this special case later.
 
 				// Ketotetrose
-				("Eul", "erythrul")  // "Eul" is my own invention. ~ Labonte
+				("Eul", "erythrul")  // "Eul" is my own invention; compare Rul and Xul. ~ Labonte
 
 				// Ketopentoses
 				("Rul", "ribul")
@@ -490,9 +490,13 @@ CarbohydrateInfo::determine_polymer_connections()
 	// the same as phi(n), provided the virtual atoms are made to move with any rotation of BB X+1.
 	// The same concept holds for aldofuranoses; however, ketoses are more complicated.  the cyclic oxygen must
 	// be the reference for phi, yet CHI 2 at the anomeric position is defined with C1 as the reference atom,
-	// not the cyclic oxygen (O5 for furanoses, O6 for pyranoses).  So a unique CHI angle must be defined in
-	// .params file for phi.
-	// TODO: Correct these. Two virtual atoms in a row in a CHI gives NAN.  Will need to use vector calculus for phi.
+	// not the cyclic oxygen (O5 for furanoses, O6 for pyranoses).
+	// To complicate matters further, two virtual atoms in a row in a CHI gives NAN, so CHI angles cannot be used after
+	// all.  We will need to use vector calculus for getting and setting phi.  These calculations can be found in
+	// core/pose/carbohydrates/util.cc.
+	// For now, the below setting of glycosidic_linkage_id_[phi_torsion] is kept as (CHI, 1), but it is essentially a
+	// dummy setting for consistency, i.e., since the data is stored in a vector1 at the moment and not a map with an
+	// enum value for a key as it probably should be. ~ Labonte
 	if (is_aldose()) {
 		glycosidic_linkage_id_.push_back(make_pair(CHI, 1));
 	} else {

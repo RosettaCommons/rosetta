@@ -17,6 +17,7 @@
 
 // package headers
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/carbohydrates/util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/datacache/CacheableObserverType.hh>
 #include <core/pose/datacache/ObserverCache.hh>
@@ -348,6 +349,7 @@ Pose::split_by_chain(Size const chain_id) const{
 }
 
 
+// TODO: Move to util.cc.
 /// @details  This method updates the pose chain IDs to match the chain IDs
 /// found in pdb_info().  In some applications, it is more intuitive to change
 /// pdb chain ID letters than it is to change pose chain IDs.  This method
@@ -659,6 +661,7 @@ Pose::residue_type(
 	return conformation_->residue_type( seqpos );
 }
 
+
 // backbone torsions
 // peptides and saccharides
 
@@ -669,7 +672,6 @@ Pose::residue_type(
 /// For 2-ketopyranoses, phi is defined as O6(n)-C2(n)-OX(n-1)-CX(n-1).\n
 /// For 2-ketofuranoses, phi is defined as O5(n)-C2(n)-OX(n-1)-CX(n-1).\n
 /// Et cetera...
-/// @remarks  The bonds are correctly implemented, but the angle definitions are not yet.
 Real
 Pose::phi( Size const seqpos ) const
 {
@@ -683,13 +685,7 @@ Pose::phi( Size const seqpos ) const
 	if (residue_type(seqpos).is_protein()) {
 		return residue(seqpos).mainchain_torsion(phi_torsion);
 	} else /*is carbohydrate*/ {
-		PyAssert((seqpos != 1),
-				"Pose::phi( Size const seqpos ): variable seqpos is out of range for carbohydrates!");
-		//TorsionType id_type = residue_type(seqpos).carbohydrate_info()->glycosidic_linkage_id(phi_torsion).first;
-		//Size id_num = residue_type(seqpos).carbohydrate_info()->glycosidic_linkage_id(phi_torsion).second;
-		//return torsion(TorsionID(seqpos, id_type, id_num));
-		Size x = residue_type(seqpos - 1).carbohydrate_info()->mainchain_glycosidic_bond_acceptor();
-		return residue(seqpos - 1).mainchain_torsion(x + 1);
+		return carbohydrates::calculate_carbohydrate_phi(*this, seqpos);
 	}
 }
 

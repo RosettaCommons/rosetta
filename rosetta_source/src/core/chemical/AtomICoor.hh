@@ -172,7 +172,7 @@ private:
 /// @brief A basic class containing info of internal coordinates needed for building an atom within a ResidueType
 /**
 	 In atom tree, each atom is defined by its internal coordinates, which include a bond distance,
-	 a bond angle and a torision angle. Of course, all these internal coordinates are only meaningful
+	 a bond angle and a torsion angle. Of course, all these internal coordinates are only meaningful
 	 in the context of three reference (stub) atoms. AtomICoor information is stored in the residue param
 	 files and some terms are defined as following:\n
 	 - bond distance d_ is that between the atom to be built (child) and stub_atom1 (parent)
@@ -181,7 +181,7 @@ private:
 */
 class AtomICoor {
 public:
-	/// default constructor
+	/// @brief default constructor
 	AtomICoor():
 		index_(0),
 		phi_(0.0),
@@ -192,7 +192,7 @@ public:
 		stub_atom3_()
 	{}
 
-	/// constructor
+	/// @brief constructor
 	AtomICoor(
 		Real const phi_in,
 		Real const theta_in,
@@ -259,7 +259,7 @@ public:
 		return stub_atom1_;
 	}
 
-	/// accessor to stub_atom2 ICoorAtomID
+	/// @brief accessor to stub_atom2 ICoorAtomID
 	ICoorAtomID const &
 	stub_atom2() const
 	{
@@ -303,7 +303,7 @@ public:
 						 stub_atom3_.is_connect( connid ) );
 	}
 
-	/// accessor to stub_atom ICoorAtomID
+	/// @brief accessor to stub_atom ICoorAtomID
 	ICoorAtomID &
 	stub_atom( int const atm )
 	{
@@ -316,7 +316,7 @@ public:
 		return stub_atom1_;
 	}
 
-	/// constant accessor to stub_atom ICoorAtomID
+	/// @brief constant accessor to stub_atom ICoorAtomID
 	ICoorAtomID const &
 	stub_atom( int const atm ) const
 	{

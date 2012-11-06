@@ -66,7 +66,6 @@ void make_pose_from_sequence(
 	bool const auto_termini = true
 );
 
-
 /// @brief Creates a Pose from the annotated protein sequence  <sequence>
 /// with the desired  <type_set_name>  and stores it in  <pose>
 /// @note: any existing data in  <pose>  is cleared, auto_termini
@@ -84,6 +83,13 @@ void make_pose_from_sequence(
 void make_pose_from_saccharide_sequence(pose::Pose & pose,
 		std::string const & sequence,
 		chemical::ResidueTypeSet const & residue_set,
+		bool const auto_termini = true);
+
+/// @brief Creates a Pose from an annotated polysaccharide sequence <sequence> with residue type set name
+/// <type_set_name> and stores it in <pose>.
+void make_pose_from_saccharide_sequence(pose::Pose & pose,
+		std::string const & sequence,
+		std::string const & type_set_name,
 		bool const auto_termini = true);
 
 

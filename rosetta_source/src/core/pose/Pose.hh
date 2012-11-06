@@ -282,15 +282,15 @@ public:
 	void
 	fold_tree( kinematics::FoldTree const & fold_tree_in );
 
-  /// @brief  Now that the conformation_ member data is an owning pointer,
+	/// @brief  Now that the conformation_ member data is an owning pointer,
 	/// and we have derived classes of Conformation.
-  void
-  set_new_conformation( ConformationOP new_conformation );
+	void
+	set_new_conformation( ConformationOP new_conformation );
 
 	/// @brief  Now that the energies_ member data is an owning pointer,
-  /// and we have derived classes of Energies.
-  void
-  set_new_energies_object( scoring::EnergiesOP energies );
+	/// and we have derived classes of Energies.
+	void
+	set_new_energies_object( scoring::EnergiesOP energies );
 
 	/// @brief Returns the pose AtomTree
 	kinematics::AtomTree const &
@@ -318,6 +318,7 @@ public:
 	Pose
 	split_by_chain(Size chain_id) const;
 
+	// TODO: Move to util.hh.
 	/// @brief  Updates the pose chain IDs to match the pdb chain IDs.
 	void
 	update_pose_chains_from_pdb_chains();
@@ -857,7 +858,7 @@ public:
 	alpha( Size const pos ) const;
 
 	/// @brief Sets the alpha torsion angle of residue  <seqpos>  to  <setting>
-	/// Note:  <setting>  must be in degrees, assumes residue is an nucleic acid
+	/// @note  <setting>  must be in degrees, assumes residue is an nucleic acid
 	///
 	/// example(s):
 	///     pose.set_alpha(1)
@@ -883,7 +884,7 @@ public:
 	beta( Size const seqpos ) const;
 
 	/// @brief Sets the beta torsion angle of residue  <seqpos>  to  <setting>
-	/// Note:  <setting>  must be in degrees, assumes residue is an nucleic acid
+	/// @note  <setting>  must be in degrees, assumes residue is an nucleic acid
 	///
 	/// example(s):
 	///     pose.set_beta(2)
@@ -908,7 +909,7 @@ public:
 	Real gamma( Size const seqpos ) const;
 
 	/// @brief Sets the gamma torsion angle of residue  <seqpos>  to  <setting>
-	/// Note:  <setting>  must be in degrees, assumes residue is an nucleic acid
+	/// @note  <setting>  must be in degrees, assumes residue is an nucleic acid
 	///
 	/// example(s):
 	///     pose.set_gamma(3)
@@ -934,7 +935,7 @@ public:
 	delta( Size const pos ) const;
 
 	/// @brief Sets the delta torsion angle of residue  <seqpos>  to  <setting>
-	/// Note:  <setting>  must be in degrees, assumes residue is an nucleic acid
+	/// @note  <setting>  must be in degrees, assumes residue is an nucleic acid
 	///
 	/// example(s):
 	///     pose.set_delta(4)
@@ -960,7 +961,7 @@ public:
 	epsilon( Size const seqpos ) const;
 
 	/// @brief Sets the epsilon torsion angle of residue  <seqpos>  to  <setting>
-	/// Note:  <setting>  must be in degrees, assumes residue is an nucleic acid
+	/// @note  <setting>  must be in degrees, assumes residue is an nucleic acid
 	///
 	/// example(s):
 	///     pose.set_epsilon(5)
@@ -985,7 +986,7 @@ public:
 	Real zeta( Size const seqpos ) const;
 
 	/// @brief Sets the zeta torsion angle of residue  <seqpos>  to  <setting>
-	/// Note:  <setting>  must be in degrees, assumes residue is an nucleic acid
+	/// @note  <setting>  must be in degrees, assumes residue is an nucleic acid
 	///
 	/// example(s):
 	///     pose.set_zeta(6)
@@ -1049,7 +1050,7 @@ public:
 	Real chi( Size const seqpos ) const;
 
 	/// @brief Sets the chi torsion angle of residue  <seqpos>  to  <setting>
-	/// Note:  <setting>  must be in degrees, assumes residue is an nucleic acid
+	/// @note  <setting>  must be in degrees, assumes residue is an nucleic acid
 	///
 	/// example(s):
 	///     pose.set_chi(7)

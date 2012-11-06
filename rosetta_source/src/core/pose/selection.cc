@@ -9,8 +9,10 @@
 
 /// @file core/pose/selection.cc
 /// @brief pose residue selections
-/// @authors Sarel Fleishman (sarelf@u.washington.edu), Jacob Corn (jecorn@u.washington.edu),
-///					Rocco Moretti (rmoretti@u.washington.edu), Eva-Maria Strauch (evas01@uw.edu)
+/// @author Sarel Fleishman (sarelf@u.washington.edu)
+/// @author Jacob Corn (jecorn@u.washington.edu)
+///	@author Rocco Moretti (rmoretti@u.washington.edu)
+/// @author Eva-Maria Strauch (evas01@uw.edu)
 
 // Unit Headers
 #include <core/pose/selection.hh>
@@ -35,10 +37,6 @@
 #include <utility/vector0.hh>
 
 
-
-
-// C++ headers
-
 static basic::Tracer TR( "core.pose.selection" );
 
 namespace core {
@@ -49,7 +47,7 @@ using namespace core;
 using namespace std;
 using utility::vector1;
 
-// a convenience function to test whether the user has specified pdb numbering rather than rosetta numbering.
+/// @brief a convenience function to test whether the user has specified pdb numbering rather than rosetta numbering.
 core::Size
 get_resnum( utility::tag::TagPtr const tag_ptr, core::pose::Pose const & pose, std::string const & prefix/*=""*/ ) {
 	core::Size resnum( 0 );

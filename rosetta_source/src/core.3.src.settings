@@ -59,7 +59,10 @@ sources = {
 		"PDBInfo",
 		"PDBPoseMap",
 		"Pose",
-                "selection",
+		"selection",
+		"util",
+	],
+	"core/pose/carbohydrates": [
 		"util",
 	],
 	"core/pose/datacache": [

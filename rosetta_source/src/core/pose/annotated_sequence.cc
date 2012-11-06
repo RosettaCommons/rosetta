@@ -358,11 +358,12 @@ void make_pose_from_sequence(
 		// and this function, but it doesn't appear to be triggerable
 		// because ResidueFactory always returns a residue.  I leave it
 		// in for now, but consider taking it out.
-		if ( !new_rsd ) {
-			std::cerr << "cannot create a residue that matches the residue type "
-				<< rsd_type.name1() << " " << rsd_type.name() << " at position " << i << '\n';
-			utility_exit_with_message( "make_pose_from_sequence fails\n" );
-		}
+		// I'm taking it out. ~ Labonte
+		//if ( !new_rsd ) {
+		//	std::cerr << "cannot create a residue that matches the residue type "
+		//		<< rsd_type.name1() << " " << rsd_type.name() << " at position " << i << '\n';
+		//	utility_exit_with_message( "make_pose_from_sequence fails\n" );
+		//}
 
 		tr.Trace << "make_pose_from_sequence():  seqpos: " << i << " " << new_rsd->aa() << std::endl;
 
@@ -483,12 +484,34 @@ make_pose_from_saccharide_sequence(pose::Pose & pose,
 		}
 	}
 
+	// TEMP: Fix inter-residue torsion angel (in this case phi) until I can understand how to fix this problem globally
+	// for Rosetta.  (The default setting is 0.0, which sucks.) ~ Labonte
+	for (uint res_num = 2; res_num <= pose.total_residue(); ++res_num) {
+		pose.set_phi(res_num, 180.0);
+	}
+
 	if (auto_termini) {
 		add_lower_terminus_type_to_pose_residue(pose, 1);
 		add_upper_terminus_type_to_pose_residue(pose, pose.total_residue());
 	}
 
 	tr.Debug << "Created carbohydrate pose with sequence: " << pose.chain_sequence(1) << endl;
+}
+
+// Creates a Pose from an annotated polysaccharide sequence <sequence> with residue type set name <type_set_name> and
+// stores it in <pose>.
+/// @details Overloaded version of make_pose_from_saccharide_sequence() that takes the string name for a residue type
+/// set instead of a ResidueTypeSet object.  A convenience method for PyRosetta.
+void
+make_pose_from_saccharide_sequence(pose::Pose & pose,
+		std::string const & sequence,
+		std::string const & type_set_name,
+		bool const auto_termini /*true*/)
+{
+	using namespace chemical;
+
+	ResidueTypeSetCAP type_set(ChemicalManager::get_instance()->residue_type_set(type_set_name));
+	make_pose_from_saccharide_sequence(pose, sequence, *type_set, auto_termini);
 }
 
 

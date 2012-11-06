@@ -43,7 +43,7 @@ namespace chemical {
 /// describes how two residues are connected: e.g. the third ResConnID for
 /// residue 10 would say "I connect to residue 58 at residue 58's third residue
 /// connection" if residue 10 and residue 58 were disulfide bonded as the disulfide
-/// connection id is "3" for two mid-protein cystein residues.  The advantages
+/// connection id is "3" for two mid-protein cystine residues.  The advantages
 /// of separating ResidueConnections from atoms themselves are that 1) it allows
 /// multiple residue connections to stem from the same atom -- useful for single-atom
 /// residues, such as coordinated metals (Zn, Mg), and 2) it allows one residue
