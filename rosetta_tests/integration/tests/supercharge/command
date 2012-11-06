@@ -27,29 +27,39 @@
 # All command files should start with this line:
 #
 
-#echo "TEST1"
 
 cd %(workdir)s
 [ -x %(bin)s/supercharge.%(binext)s ] || exit 1
 
 #echo "TEST2"
 
-%(bin)s/supercharge.%(binext)s @options -database %(database)s -run:constant_seed -nodelay  2>&1 \
+%(bin)s/supercharge.%(binext)s @options1 -database %(database)s -run:constant_seed -nodelay  2>&1 \
     | egrep -vf ../../ignore_list \
-    | egrep -v pack_rotamers \
     | egrep -v cst_max_seq_sep \
     | egrep -v bytes \
-    | egrep -v Mutation \
-    | egrep -v select \
-    | egrep -v Net \
-    | egrep -v 'R=' \
-    > log
+    > log1
 
-#echo "TEST3"
+%(bin)s/supercharge.%(binext)s @options2 -database %(database)s -run:constant_seed -nodelay  2>&1 \
+    | egrep -vf ../../ignore_list \
+    | egrep -v cst_max_seq_sep \
+    | egrep -v bytes \
+    > log2
+
+%(bin)s/supercharge.%(binext)s @options3 -database %(database)s -run:constant_seed -nodelay  2>&1 \
+    | egrep -vf ../../ignore_list \
+    | egrep -v cst_max_seq_sep \
+    | egrep -v bytes \
+    > log3
+
+%(bin)s/supercharge.%(binext)s @options4 -database %(database)s -run:constant_seed -nodelay  2>&1 \
+    | egrep -vf ../../ignore_list \
+    | egrep -v cst_max_seq_sep \
+    | egrep -v bytes \
+    > log4
+
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
-#echo "TEST4"
 
 #
 # After that, do whatever you want.

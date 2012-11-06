@@ -1,0 +1,10 @@
+#-database <path>
+-s 2B3P_A_min.pdb
+-use_input_sc
+-jd2:no_output
+-ignore_unrecognized_res
+
+#AvNAPSA negative supercharging
+
+-AvNAPSA_positive
+-surface_definition_atom_neighbor_cutoff 120

@@ -1,14 +1,13 @@
-#-database <path to database>
+#-database <path>
 -s 2B3P_A_min.pdb
 -use_input_sc
--ex1
--ex2
--minimize_sidechains
 -jd2:no_output
 -ignore_unrecognized_res
 
-#local options
--neighbor_cutoff 16
+#positive supercharging
+#surface defintion by residue neighbors
+
+-surface_definition_residue_neighbor_cutoff 16
 -include_arg
 -include_lys
 -refweight_arg -1.98
@@ -16,4 +15,6 @@
 -dont_mutate_glyprocys true
 -dont_mutate_correct_charge true
 -dont_mutate_hbonded_sidechains true
--pre_minimize_input_structure false
+-nstruct 2
+-compare_energies
+-only_compare_mutated_residues
