@@ -30,6 +30,7 @@ __kernel void Check_for_intersection(
     int ray_score_ID = (particleID*100000+rayID);
     distance = 9999.;
     smallest = 9999.;
+    float dis_deviation = 0;
     int atom_ID_start = particleID*NUM_ATOMS;
     int atom_ID_stop = (particleID+1)*NUM_ATOMS;
     for(atomID = atom_ID_start; atomID < atom_ID_stop; atomID ++) {
@@ -66,7 +67,7 @@ __kernel void Check_for_intersection(
       ray_scores[ray_score_ID] = extra_point_weight;
     }
     if ( (ray.z > 0.001) && (smallest < 9999.0) ) {
-      float dist_deviation = smallest - ray.z;
+      dist_deviation = smallest - ray.z;
       if (dist_deviation < 0){
         dist_deviation = (ray.z - smallest)*steric_weight;
       }
