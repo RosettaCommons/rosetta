@@ -212,16 +212,23 @@ public:
 		return atom_types_;
 	}
 
-	Atom atom(Size atom_index){
+	Atom & atom(Size const atom_index){
 		return atoms_[atom_index];
 	}
-
-	Atom const & atom(Size atom_index) const{
+	Atom const & atom(Size const atom_index) const{
 		return atoms_[atom_index];
 	}
-
-	Orbital const & orbital(Size orbital_index) const{
+	Atom & atom(std::string const & atom_name){
+		return atoms_[ atom_index(atom_name) ];
+	}
+	Atom const & atom(std::string const & atom_name) const{
+			return atoms_[ atom_index(atom_name) ];
+	}
+	Orbital const & orbital(Size const orbital_index) const{
 		return orbitals_[orbital_index];
+	}
+	Orbital const & orbital(std::string const & orbital_name) const{
+		return orbitals_[ orbital_index(orbital_name) ];
 	}
 
 
@@ -597,15 +604,6 @@ public:
 
 
 	/// @brief Get the MM atom_type index number for this atom by its index number in this residue
-//	int
-//	mm_atom_type_index( Size const atomno ) const;
-
-	/// @brief get mm atom name by index
-	std::string const &
-	mm_atom_name( Size const index ) const
-	{
-		return atoms_[ index ].mm_name();
-	}
 
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
@@ -618,8 +616,8 @@ public:
 	chemical::orbitals::OrbitalType const &
 	orbital_type(int const orbital_index) const;
 
-	core::Size
-	orbital_type_index( Size const orb_index ) const;
+//	core::Size
+//	orbital_type_index( Size const orb_index ) const;
 
 
 	/// @brief number of orbitals
@@ -916,23 +914,6 @@ public:
 		finalized_ = false;
 		assert( has( name ) );
 		delete_atoms_.push_back( atom_index( name ) );
-	}
-
-	/// @brief set atom charge
-	void
-	set_atomic_charge(
-		std::string const & atm,
-		Real const charge
-	)
-	{
-		atoms_[ atom_index( atm ) ].charge( charge );
-	}
-
-	/// @brief get atom charge
-	Real
-	atomic_charge( Size const atm ) const
-	{
-		return atoms_[ atm ].charge();
 	}
 
 	/// @brief set atom type

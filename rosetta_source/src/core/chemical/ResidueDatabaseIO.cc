@@ -696,8 +696,8 @@ ResidueDatabaseIO::report_residue_type_atom(
 		stmt.bind(3,i);
 		stmt.bind(4,res_type.atom_name(i));
 		stmt.bind(5,res_type.atom_type(i).atom_type_name());
-		stmt.bind(6,res_type.mm_atom_name(i));
-		stmt.bind(7,res_type.atomic_charge(i));
+		stmt.bind(6,res_type.atom(i).mm_name());
+		stmt.bind(7,res_type.atom(i).charge());
 		stmt.bind(8,res_type.atom_is_backbone(i));
 		basic::database::safely_write_to_database(stmt);
 

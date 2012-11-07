@@ -318,9 +318,9 @@ MMLJEnergyInter::residue_pair_energy(
 
 // 				std::cout << "INTER"
 // 									<< " RSD1: " << std::setw(22) << rsd1type.name()
-// 									<< " ATM1: " << std::setw(4)  << rsd1type.mm_atom_name(i)
+// 									<< " ATM1: " << std::setw(4)  << rsd1type.atom(i).mm_atom_name()
 // 									<< " RSD2: " << std::setw(22) << rsd2type.name()
-// 									<< " ATM2: " << std::setw(4)  << rsd2type.mm_atom_name(j)
+// 									<< " ATM2: " << std::setw(4)  << rsd2type.atom(j).mm_atom_name()
 // 									<< " PDST: " << std::setw(3)  << path_dist
 // 									<< " DIST: " << std::setw(8)  << std::sqrt(dist_squared)
 // 									<< " WGHT: " << std::setw(4)  << weight

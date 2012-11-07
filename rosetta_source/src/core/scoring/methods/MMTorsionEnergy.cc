@@ -297,13 +297,13 @@ MMTorsionEnergy::residue_pair_energy(
 
 				TR(basic::t_trace)
 					<< "r1 " << jj_term_atomno << " " << rsd1.atom_name( jj_term_atomno ) << "("
-					<< rsd1_type.mm_atom_name( jj_term_atomno ) << ") - "
+					<< rsd1_type.atom( jj_term_atomno ).mm_name() << ") - "
 					<< "r1 " << resconn_atomno1 << " " << rsd1.atom_name( resconn_atomno1 ) << "("
-					<< rsd1_type.mm_atom_name( resconn_atomno1 ) << ") - "
+					<< rsd1_type.atom( resconn_atomno1 ).mm_name() << ") - "
 					<< "r2 " << resconn_atomno2 << " " << rsd2.atom_name( resconn_atomno2 ) << "("
-					<< rsd2_type.mm_atom_name( resconn_atomno2 ) << ") - "
+					<< rsd2_type.atom( resconn_atomno2 ).mm_name() << ") - "
 					<< "r2 " << kk_term_atomno << " " << rsd2.atom_name( kk_term_atomno ) << "("
-					<< rsd2_type.mm_atom_name( kk_term_atomno ) << ")" << std::endl;
+					<< rsd2_type.atom( kk_term_atomno ).mm_name() << ")" << std::endl;
 
 				energy += potential_.core::scoring::mm::MMTorsionScore::score(
 					mm::mm_torsion_atom_quad( mmat1, mmat2, mmat3, mmat4 ), angle );
@@ -415,10 +415,10 @@ MMTorsionEnergy::eval_intrares_energy(
 				( rsd.atom( rt1 ).xyz(), rsd.atom( rt2 ).xyz(),
 					rsd.atom( rt3 ).xyz(), rsd.atom( rt4 ).xyz() );
 
-			TR(basic::t_trace) << rt1 << " " << rsd.atom_name( rt1 ) << "(" << rsd_type.mm_atom_name( rt1 )
-				<< ") - " << rt2 << " " << rsd.atom_name( rt2 ) << "(" << rsd_type.mm_atom_name( rt2 )
-				<< ") - " << rt3 << " " << rsd.atom_name( rt3 ) << "(" << rsd_type.mm_atom_name( rt3 )
-				<< ") - " << rt4 << " " << rsd.atom_name( rt4 ) << "(" << rsd_type.mm_atom_name( rt4 )
+			TR(basic::t_trace) << rt1 << " " << rsd.atom_name( rt1 ) << "(" << rsd_type.atom( rt1 ).mm_name()
+				<< ") - " << rt2 << " " << rsd.atom_name( rt2 ) << "(" << rsd_type.atom( rt2 ).mm_name()
+				<< ") - " << rt3 << " " << rsd.atom_name( rt3 ) << "(" << rsd_type.atom( rt3 ).mm_name()
+				<< ") - " << rt4 << " " << rsd.atom_name( rt4 ) << "(" << rsd_type.atom( rt4 ).mm_name()
 				<< ") angle " << angle << std::endl;
 
 			// score dihedral

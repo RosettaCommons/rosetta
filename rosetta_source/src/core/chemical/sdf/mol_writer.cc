@@ -150,7 +150,7 @@ std::list<std::string> MolWriter::compose_atoms(core::conformation::ResidueCOP r
 		core::chemical::AtomType const atom_type = residue->atom_type(index);
 		core::chemical::ResidueTypeCOP residue_type = & residue->type();
 		std::string element = atom_type.element();
-		core::Real charge = residue_type->atomic_charge(index);
+		core::Real charge = residue_type->atom(index).charge();
 
 		std::string atom_string = line_header_ + " " + utility::to_string<core::Size>(index)+" "+
 									element+" "+ utility::to_string<core::Real>(xyz_coords.x())+ " "+

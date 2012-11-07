@@ -100,7 +100,7 @@ dump_pqr(
 				F(8,3,atom.xyz()(1)) <<
 				F(8,3,atom.xyz()(2)) <<
 				F(8,3,atom.xyz()(3)) <<
-				F(8,3,pose.residue_type(i).atomic_charge(j)) <<
+				F(8,3,pose.residue_type(i).atom(j).charge()) <<
 				F(8,3,rsd.atom_type(j).lj_radius()) << '\n';
 			}
 			else {

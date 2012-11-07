@@ -218,18 +218,18 @@ MMBondAngleEnergy::residue_pair_energy(
 				Real angle = numeric::angle_radians( rsd1.atom( neighbor_atomno ).xyz(), rsd1.atom( resconn_atomno1 ).xyz(),
 																						 rsd2.atom( resconn_atomno2 ).xyz() );
 
-				//TR << rsd1.atom_name( neighbor_atomno ) << "(" << rsd_type1.mm_atom_name( neighbor_atomno ) << ") - "
-				//<< rsd1.atom_name( resconn_atomno1 ) << "(" << rsd_type1.mm_atom_name( resconn_atomno1 ) << ") - "
-				//<< rsd2.atom_name( resconn_atomno2 ) << "(" << rsd_type2.mm_atom_name( resconn_atomno2 ) << ")" << std::endl;
+				//TR << rsd1.atom_name( neighbor_atomno ) << "(" << rsd_type1.atom( neighbor_atomno ).mm_name() << ") - "
+				//<< rsd1.atom_name( resconn_atomno1 ) << "(" << rsd_type1.atom( resconn_atomno1 ).mm_name() << ") - "
+				//<< rsd2.atom_name( resconn_atomno2 ) << "(" << rsd_type2.atom( resconn_atomno2 ).mm_name() << ")" << std::endl;
 
 				// score bond angle
 				energy += potential_.mm::MMBondAngleScore::score
 					(  mm::mm_bondangle_atom_tri( neighbor_mmat, resconn_mmat1, resconn_mmat2 ), angle );
 
 				// debug code
-				//TR << rsd1.atom_name( neighbor_atomno ) << "(" << rsd_type1.mm_atom_name( neighbor_atomno ) << ") - "
-				//<< rsd1.atom_name( resconn_atomno1 ) << "(" << rsd_type1.mm_atom_name( resconn_atomno1 ) << ") - "
-				//<< rsd2.atom_name( resconn_atomno2 ) << "(" << rsd_type2.mm_atom_name( resconn_atomno2 ) << ")   \t"
+				//TR << rsd1.atom_name( neighbor_atomno ) << "(" << rsd_type1.atom( neighbor_atomno ).mm_name() << ") - "
+				//<< rsd1.atom_name( resconn_atomno1 ) << "(" << rsd_type1.atom( resconn_atomno1 ).mm_name() << ") - "
+				//<< rsd2.atom_name( resconn_atomno2 ) << "(" << rsd_type2.atom( resconn_atomno2 ).mm_name() << ")   \t"
 				//<< potential_.mm::MMBondAngleScore::score
 				//(  mm::mm_bondangle_atom_tri( neighbor_mmat, resconn_mmat1, resconn_mmat2 ), angle ) << std::endl;
 			}
@@ -250,18 +250,18 @@ MMBondAngleEnergy::residue_pair_energy(
 				Real angle = numeric::angle_radians( rsd1.atom( resconn_atomno1 ).xyz(), rsd2.atom( resconn_atomno2 ).xyz(),
 																						 rsd2.atom( neighbor_atomno ).xyz() );
 
-				//TR << rsd1.atom_name( resconn_atomno1 ) << "(" << rsd_type1.mm_atom_name( resconn_atomno1 ) << ") - "
-				//<< rsd2.atom_name( resconn_atomno2 ) << "(" << rsd_type2.mm_atom_name( resconn_atomno2 ) << ") - "
-				//<< rsd2.atom_name( neighbor_atomno ) << "(" << rsd_type2.mm_atom_name( neighbor_atomno ) << ")" << std::endl;
+				//TR << rsd1.atom_name( resconn_atomno1 ) << "(" << rsd_type1.atom( resconn_atomno1 ).mm_name() << ") - "
+				//<< rsd2.atom_name( resconn_atomno2 ) << "(" << rsd_type2.atom( resconn_atomno2 ).mm_name() << ") - "
+				//<< rsd2.atom_name( neighbor_atomno ) << "(" << rsd_type2.atom( neighbor_atomno ).mm_name() << ")" << std::endl;
 
 				// score bond angle
 				energy += potential_.mm::MMBondAngleScore::score
 					(  mm::mm_bondangle_atom_tri( resconn_mmat1, resconn_mmat2, neighbor_mmat ), angle );
 
 				// debug code
-				//TR << rsd1.atom_name( resconn_atomno1 ) << "(" << rsd_type1.mm_atom_name( resconn_atomno1 ) << ") - "
-				//<< rsd2.atom_name( resconn_atomno2 ) << "(" << rsd_type2.mm_atom_name( resconn_atomno2 ) << ") - "
-				//<< rsd2.atom_name( neighbor_atomno ) << "(" << rsd_type2.mm_atom_name( neighbor_atomno ) << ")   \t"
+				//TR << rsd1.atom_name( resconn_atomno1 ) << "(" << rsd_type1.atom( resconn_atomno1 ).mm_name() << ") - "
+				//<< rsd2.atom_name( resconn_atomno2 ) << "(" << rsd_type2.atom( resconn_atomno2 ).mm_name() << ") - "
+				//<< rsd2.atom_name( neighbor_atomno ) << "(" << rsd_type2.atom( neighbor_atomno ).mm_name() << ")   \t"
 				//<< potential_.mm::MMBondAngleScore::score
 				//(  mm::mm_bondangle_atom_tri( resconn_mmat1, resconn_mmat2, neighbor_mmat ), angle ) << std::endl;
 			}
@@ -325,11 +325,11 @@ MMBondAngleEnergy::residue_pair_energy(
 
 				TR(basic::t_trace)
 					<< "r1 " << res1_lower_atomno << " " << rsd1.atom_name( res1_lower_atomno ) << "("
-					<< rsd1_type.mm_atom_name( res1_lower_atomno ) << ") - "
+					<< rsd1_type.atom( res1_lower_atomno ).mm_name() << ") - "
 					<< "r1 " << resconn_atomno1 << " " << rsd1.atom_name( resconn_atomno1 ) << "("
-					<< rsd1_type.mm_atom_name( resconn_atomno1 ) << ") - "
+					<< rsd1_type.atom( resconn_atomno1 ).mm_name() << ") - "
 					<< "r2 " << resconn_atomno2 << " " << rsd2.atom_name( resconn_atomno2 ) << "("
-					<< rsd2_type.mm_atom_name( resconn_atomno2 ) << ")" << std::endl;
+					<< rsd2_type.atom( resconn_atomno2 ).mm_name() << ")" << std::endl;
 
 				if ( param_set_ ) {
 
@@ -354,9 +354,9 @@ MMBondAngleEnergy::residue_pair_energy(
 				energy += potential_.mm::MMBondAngleScore::score
 					(  mm::mm_bondangle_atom_tri( res1_lower_mmtype, resconn_mmat1, resconn_mmat2 ), angle );
 
-				//TR << rsd1.atom_name( res1_lower_atomno ) << "(" << rsd1_type.mm_atom_name( res1_lower_atomno ) << ") - "
-				//<< rsd1.atom_name( resconn_atomno1 ) << "(" << rsd1_type.mm_atom_name( resconn_atomno1 ) << ") - "
-				//<< rsd2.atom_name( resconn_atomno2 ) << "(" << rsd2_type.mm_atom_name( resconn_atomno2 ) << ")   \t"
+				//TR << rsd1.atom_name( res1_lower_atomno ) << "(" << rsd1_type.atom( res1_lower_atomno ).mm_name() << ") - "
+				//<< rsd1.atom_name( resconn_atomno1 ) << "(" << rsd1_type.atom( resconn_atomno1 ).mm_name() << ") - "
+				//<< rsd2.atom_name( resconn_atomno2 ) << "(" << rsd2_type.atom( resconn_atomno2 ).mm_name() << ")   \t"
 				//<< potential_.mm::MMBondAngleScore::score
 				//(  mm::mm_bondangle_atom_tri( res1_lower_mmtype, resconn_mmat1, resconn_mmat2 ), angle ) << std::endl;
 
@@ -380,11 +380,11 @@ MMBondAngleEnergy::residue_pair_energy(
 
 				TR(basic::t_trace) << "r2 " << res2_lower_atomno << " "
 					<< rsd2.atom_name( res2_lower_atomno ) << "("
-					<< rsd2_type.mm_atom_name( res2_lower_atomno ) << ") - " << "r2 " << resconn_atomno2
+					<< rsd2_type.atom( res2_lower_atomno ).mm_name() << ") - " << "r2 " << resconn_atomno2
 					<< " " << rsd2.atom_name( resconn_atomno2 ) << "("
-					<< rsd2_type.mm_atom_name( resconn_atomno2 ) << ") - " << "r1 " << resconn_atomno1
+					<< rsd2_type.atom( resconn_atomno2 ).mm_name() << ") - " << "r1 " << resconn_atomno1
 					<< " " << rsd1.atom_name( resconn_atomno1 ) << "("
-					<< rsd1_type.mm_atom_name( resconn_atomno1 ) << ")" << std::endl;
+					<< rsd1_type.atom( resconn_atomno1 ).mm_name() << ")" << std::endl;
 
 				if ( param_set_ ) {
 
@@ -408,9 +408,9 @@ MMBondAngleEnergy::residue_pair_energy(
 
 				energy += potential_.mm::MMBondAngleScore::score
 					(  mm::mm_bondangle_atom_tri( res2_lower_mmtype, resconn_mmat2, resconn_mmat1 ), angle );
-				//TR << rsd2.atom_name( res2_lower_atomno ) << "(" << rsd2_type.mm_atom_name( res2_lower_atomno ) << ") - "
-				//<< rsd2.atom_name( resconn_atomno2 ) << "(" << rsd2_type.mm_atom_name( resconn_atomno2 ) << ") - "
-				//<< rsd1.atom_name( resconn_atomno1 ) << "(" << rsd1_type.mm_atom_name( resconn_atomno1 ) << ")   \t"
+				//TR << rsd2.atom_name( res2_lower_atomno ) << "(" << rsd2_type.atom( res2_lower_atomno ).mm_name() << ") - "
+				//<< rsd2.atom_name( resconn_atomno2 ) << "(" << rsd2_type.atom( resconn_atomno2 ).mm_name() << ") - "
+				//<< rsd1.atom_name( resconn_atomno1 ) << "(" << rsd1_type.atom( resconn_atomno1 ).mm_name() << ")   \t"
 				//<< potential_.mm::MMBondAngleScore::score
 				//(  mm::mm_bondangle_atom_tri( res2_lower_mmtype, resconn_mmat2, resconn_mmat1 ), angle ) << std::endl;
 
@@ -495,9 +495,9 @@ MMBondAngleEnergy::eval_intrares_energy(
 		Real angle = numeric::angle_radians
 			( rsd.atom( rt1 ).xyz(), rsd.atom( rt2 ).xyz(), rsd.atom( rt3 ).xyz() );
 
-		TR(basic::t_trace) << rt1 << " " << rsd.atom_name( rt1 ) << "(" << rsd_type.mm_atom_name( rt1 )
-			<< ") - " << rt2 << " " << rsd.atom_name( rt2 ) << "(" << rsd_type.mm_atom_name( rt2 )
-			<< ") - " << rt3 << " " << rsd.atom_name( rt3 ) << "(" << rsd_type.mm_atom_name( rt3 )
+		TR(basic::t_trace) << rt1 << " " << rsd.atom_name( rt1 ) << "(" << rsd_type.atom( rt1 ).mm_name()
+			<< ") - " << rt2 << " " << rsd.atom_name( rt2 ) << "(" << rsd_type.atom( rt2 ).mm_name()
+			<< ") - " << rt3 << " " << rsd.atom_name( rt3 ) << "(" << rsd_type.atom( rt3 ).mm_name()
 			<< ") angle " << angle << std::endl;
 
 		// score bond angle
@@ -505,9 +505,9 @@ MMBondAngleEnergy::eval_intrares_energy(
 			(  mm::mm_bondangle_atom_tri( mmat1, mmat2, mmat3 ), angle );
 
 		// debug code
-		//TR << rsd.atom_name( rt1 ) << "(" << rsd_type.mm_atom_name( rt1 ) << ") - "
-		//   << rsd.atom_name( rt2 ) << "(" << rsd_type.mm_atom_name( rt2 ) << ") - "
-		//   << rsd.atom_name( rt3 ) << "(" << rsd_type.mm_atom_name( rt3 ) << ")   \t"
+		//TR << rsd.atom_name( rt1 ) << "(" << rsd_type.atom( rt1 ).mm_name() << ") - "
+		//   << rsd.atom_name( rt2 ) << "(" << rsd_type.atom( rt2 ).mm_name() << ") - "
+		//   << rsd.atom_name( rt3 ) << "(" << rsd_type.atom( rt3 ).mm_name() << ")   \t"
 		//   << potential_.mm::MMBondAngleScore::score
 		//	             (  mm::mm_bondangle_atom_tri( mmat1, mmat2, mmat3 ), angle ) << std::endl;
 	}

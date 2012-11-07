@@ -292,14 +292,6 @@ ResidueType::atom_type( Size const atomno ) const
 	return ( *atom_types_ )[ atoms_[ atomno ].atom_type_index() ];
 }
 
-/// @brief Get the chemical atom_type index number for this atom by its index number in this residue
-//int
-//ResidueType::atom_type_index( Size const atomno ) const
-//{
-//	PyAssert((atomno > 0) && (atomno <= atoms_.size()), "ResidueType::atom_type_index( Size const atomno ): atomno is not in this ResidueType!");
-//	return atoms_[ atomno ].atom_type_index();
-//}
-
 /// @brief Get the atom name by index
 std::string const &
 ResidueType::atom_name( Size const index ) const
@@ -420,14 +412,6 @@ ResidueType::mm_atom_type( Size const atomno ) const
 	return ( *mm_atom_types_ )[ atoms_[ atomno ].mm_atom_type_index() ];
 }
 
-/// @brief Get the MM atom_type index number for this atom by its index number in this residue
-//int
-//ResidueType::mm_atom_type_index( Size const atomno ) const
-//{
-//	return atoms_[ atomno ].mm_atom_type_index();
-//}
-
-
 orbitals::OrbitalType const &
 ResidueType::orbital_type(int const orbital_index)const
 {
@@ -435,11 +419,11 @@ ResidueType::orbital_type(int const orbital_index)const
 
 }
 
-core::Size
-ResidueType::orbital_type_index(Size const orb_index) const
-{
-	return orbitals_[orb_index].orbital_type_index();
-}
+//core::Size
+//ResidueType::orbital_type_index(Size const orb_index) const
+//{
+//	return orbitals_[orb_index].orbital_type_index();
+//}
 
 /// @note this does not set xyz coordiates for the added orbital but sets the index of the orbital and maps
 /// it to the type of orbital.
@@ -458,20 +442,13 @@ ResidueType::add_orbital(
 	// store the atom type
 	// the next call will fail if the orbital type name is unrecognized
 	Size type( orbital_types_->orbital_type_index( orbital_type_name ) );
-	//orbital_type_index_.push_back( type );
 
 	// store the name
 	orbitals_.push_back(Orbital(orbital_name, type, Vector(0.0)));
-	//orbital_name_.push_back( orbital_name );
 	assert( orbitals_.size() == n_orbitals_ );
 
 	orbitals_index_[ orbital_name ] = n_orbitals_;
 	orbitals_index_[ strip_whitespace( orbital_name ) ] = n_orbitals_;
-
-	//assert( orbital_type_index_.size() == n_orbitals_ );
-
-	//orbital_xyz_.push_back( Vector(0.0) );
-	//assert( orbital_xyz_.size() == n_orbitals_ );
 
 	//parents_.push_back(0);
 
@@ -492,11 +469,6 @@ ResidueType::add_orbital(
 
 	//orbital_bonded_neighbor_.resize( natoms_ );
 
-
-
-	//orbital_icoor_id_.resize(n_orbitals_);
-	//new_orbital_icoor_id_.resize(n_orbitals_);
-	//orbital_icoor_.push_back( orbitals::OrbitalICoor( 0.0, 0.0, 0.0, orbital_name, orbital_name, orbital_name, *this ) );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

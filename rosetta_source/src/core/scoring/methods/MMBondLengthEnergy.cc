@@ -162,9 +162,9 @@ MMBondLengthEnergy::residue_pair_energy(
 
 		TR(basic::t_trace)
 			<< "r1 " << resconn_atomno1 << " " << rsd1.atom_name( resconn_atomno1 ) << "("
-			<< rsd1_type.mm_atom_name( resconn_atomno1 ) << ") - "
+			<< rsd1_type.atom( resconn_atomno1 ).mm_name() << ") - "
 			<< "r2 " << resconn_atomno2 << " " << rsd2.atom_name( resconn_atomno2 ) << "("
-			<< rsd2_type.mm_atom_name( resconn_atomno2 ) << ")" << std::endl;
+			<< rsd2_type.atom( resconn_atomno2 ).mm_name() << ")" << std::endl;
  
 		energy += potential_.mm::MMBondLengthScore::score
 			(  mm::mm_bondlength_atom_pair( resconn_mmat1, resconn_mmat2 ), d );
@@ -204,9 +204,9 @@ MMBondLengthEnergy::eval_intrares_energy(
 	
 				TR(basic::t_trace)
 					<< "r1 " << atm_i << " " << rsd.atom_name( atm_i ) << "("
-					<< rsd_type.mm_atom_name( atm_i ) << ") - "
+					<< rsd_type.atom( atm_i ).mm_name() << ") - "
 					<< "r2 " << atm_j << " " << rsd.atom_name( atm_j ) << "("
-					<< rsd_type.mm_atom_name( atm_j ) << ")" << std::endl;
+					<< rsd_type.atom( atm_j ).mm_name() << ")" << std::endl;
 
 				// score bond angle
 				energy += potential_.mm::MMBondLengthScore::score

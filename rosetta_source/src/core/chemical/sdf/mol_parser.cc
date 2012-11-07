@@ -129,15 +129,15 @@ void MolFileParser::parse_mol_file(core::chemical::AtomTypeSetCAP atom_types, co
 	core::Real total_charge = 0.0;
 	for(core::Size index =1; index <= molecule_container_->natoms(); ++index)
 	{
-		total_charge += molecule_container_->atomic_charge(index);
+		total_charge += molecule_container_->atom(index).charge();
 	}
 
 	core::Real charge_offset = -total_charge/static_cast<core::Real>(molecule_container_->natoms());
 	for(core::Size index = 1;index <= molecule_container_->natoms();++index)
 	{
 		std::string atom_name = molecule_container_->atom_name(index);
-		core::Real starting_charge = molecule_container_->atomic_charge(index);
-		molecule_container_->set_atomic_charge(atom_name,starting_charge+charge_offset);
+		core::Real starting_charge = molecule_container_->atom(index).charge();
+		molecule_container_->atom( atom_name ).charge(starting_charge+charge_offset);
 	}
 	molecule_container_->finalize();
 

@@ -92,7 +92,7 @@ std::string atomTyper::getType()
 				}
 			} else if(hasGuanidiniumC()) {
 				type_="Narg";
-			} else if(molecule_container_->atomic_charge(atomno_) == 1) {
+			} else if(molecule_container_->atom(atomno_).charge() == 1) {
 				type_="Nlys";
 			} else if(hasCarbonylC()){
 				if(H_single_bonds == 2) {
@@ -144,11 +144,11 @@ std::string atomTyper::getType()
 		} else if (element_ == "Fe")
 		{
 			//Read the charge, and change to +2/+3 if applicable.
-			if(molecule_container_->atomic_charge(atomno_)==2)
+			if(molecule_container_->atom(atomno_).charge()==2)
 			{
 				molecule_container_->set_atom_type(atomname_,"Fe2p");
 			}
-			else if(molecule_container_->atomic_charge(atomno_)==3)
+			else if(molecule_container_->atom(atomno_).charge()==3)
 			{
 				molecule_container_->set_atom_type(atomname_,"Fe3p");
 			}

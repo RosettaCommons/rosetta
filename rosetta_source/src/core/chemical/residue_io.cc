@@ -793,7 +793,7 @@ write_topology_file(
 
 		std::string atom_out = "ATOM " + rsd.atom_name( i ) + " " + rsd.atom_type( i ).name() + "  ";
 		atom_out = atom_out + rsd.mm_atom_type(i).name();
-		out << atom_out << " " << rsd.atomic_charge(i) << " \n";
+		out << atom_out << " " << rsd.atom(i).charge() << " \n";
 
 	} //atom write out
 
