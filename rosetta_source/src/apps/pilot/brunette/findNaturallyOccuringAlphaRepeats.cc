@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.AlignmentCluster
 
-/// @file   apps/pilot/brunette/evalRepeats
+/// @file   apps/pilot/brunette/findNaturallyOccuringRepeats
 ///
-/// @brief  analyzes helix oritentation in repeat proteins
+/// @brief  looks for repeating helices
 
 /// @usage:
 
@@ -71,7 +71,7 @@ using utility::vector1;
 using core::Size;
 using core::Real;
 
-basic::Tracer tr( "evalRepeats" );
+basic::Tracer tr( "alphaRepeatIdenfier" );
 
 void avg_ca_position(
 	const core::pose::Pose& pose,
@@ -102,11 +102,32 @@ void get_helices(core::pose::Pose& pose, protocols::loops::Loops* helices){
 			startHelix = ii;
 		if(pose.secstruct(ii) != 'H' && lastSecStruct == 'H'){
 			endHelix = ii-1;
-			helices->add_loop(Loop(startHelix,endHelix));
+			if(endHelix-startHelix >= 2)
+				helices->add_loop(Loop(startHelix,endHelix));
 		}
 		lastSecStruct = pose.secstruct(ii);
 	}
 }
+void get_sheets(core::pose::Pose& pose, protocols::loops::Loops* sheets){
+	using protocols::loops::Loop;
+	using numeric::xyzVector;
+	protocols::jumping::assign_ss_dssp( pose );
+	char lastSecStruct = pose.secstruct(1);
+	Size startSheet = 0;
+	Size endSheet = 0;
+	if(pose.secstruct(1) == 'E')
+		startSheet = 1;
+	for ( core::Size ii = 2; ii <= pose.total_residue(); ++ii ) {
+		if(pose.secstruct(ii) == 'E' && lastSecStruct != 'E')
+			startSheet = ii;
+		if(pose.secstruct(ii) != 'E' && lastSecStruct == 'E'){
+			endSheet = ii-1;
+			sheets->add_loop(Loop(startSheet,endSheet));
+		}
+		lastSecStruct = pose.secstruct(ii);
+	}
+}
+
 
 Real get_distance(const core::pose::Pose& pose, const protocols::loops::Loop helix1, const protocols::loops::Loop helix2){
 	using protocols::loops::Loop;
@@ -135,51 +156,6 @@ Real get_distance_endpoint(const core::pose::Pose& pose, const protocols::loops:
 	return(a.distance(b));
 }
 
-Real get_holes_score(const core::pose::Pose& pose){
-	core::scoring::packing::HolesParams hp_resl,hp_dec,hp_dec15;
-	hp_dec15.read_data_file(basic::database::full_name("scoring/rosettaholes/decoy15.params"));
-	Real  holes_result = core::scoring::packing::compute_dec15_score(pose);
-	return holes_result;
-}
-
-void get_angles(const core::pose::Pose& pose, const protocols::loops::Loop helix1, const protocols::loops::Loop helix2, Real& theta, Real& sigma, Real& phi){
-	using protocols::loops::Loop;
-	using numeric::xyzVector;
-	using numeric::conversions::degrees;
-	if((helix1.length() < 3) || (helix2.length() < 3)){
-		tr.Warning << "distance invoked with helix shorter than 3 residues" << std::endl;
-	}
-	xyzVector<double> h1_start, h1_stop, h2_start, h2_stop;
-	avg_ca_position(pose, Loop(helix1.start(), helix1.start()+2),&h1_start); //you want the two helices to start at the same turn.
-	avg_ca_position(pose, Loop(helix1.stop()-2, helix1.stop()),&h1_stop);
-	avg_ca_position(pose, Loop(helix2.start(), helix2.start()+2),&h2_start);
-	avg_ca_position(pose, Loop(helix2.stop()-2, helix2.stop()),&h2_stop);
-	numeric::xyzVector<Real> v1(h1_stop - h1_start);
-	numeric::xyzVector<Real> v2(h2_stop - h2_start);
-	numeric::xyzVector<Real> u1 = v1.normalize();
-	numeric::xyzVector<Real> u2 = v2.normalize();
-	numeric::xyzVector<Real> r = h1_start-h2_start;
-	numeric::xyzVector<Real> ur = r.normalize();
-	theta = degrees(numeric::arccos(u1.dot_product(u2)));
-	sigma = degrees(numeric::arccos(u1.dot_product(ur)));
-	Real phi_top = u2.dot_product((u1.cross_product(ur)));
-	Real phi_bottom = u2.dot_product(u1.cross_product(u1.cross_product(ur)));
-	phi = degrees(std::atan(phi_top/phi_bottom));
-}
-
-Real res_type_score(const core::pose::Pose& pose){
-  Real score = 0;
-	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-		if((pose.residue(ii).name3() == "VAL") || (pose.residue(ii).name3() == "ILE") || (pose.residue(ii).name3() == "LEU"))
-			score++;
-		else
-			if((pose.residue(ii).name3() == "ALA") || (pose.residue(ii).name3() == "TRP") || (pose.residue(ii).name3() == "MET"))
-				score=score-1;
-	}
-	std::cout << "score: " << score << std::endl;
-	return score;
-}
-
 
 int main( int argc, char * argv [] ) {
 	using namespace core::chemical;
@@ -197,33 +173,25 @@ int main( int argc, char * argv [] ) {
 	//create vector of input poses.
 	MetaPoseInputStream input = streams_from_cmd_line();
 	vector1<core::pose::PoseOP> poses;
-	output << "score" <<" " << "holes" << " " << "distance" << " " << "distance_endpoint" <<" " << "theta" << " " << "sigma" << " " << "phi" << " " << "tag" <<" " <<"resTypeScore" << " " << "abego" << std::endl;
+	output << "tag" << " " <<   "distance" << " " << "distance_endpoint" <<" " << "numb_helices numb_sheets" << std::endl;
 	while(input.has_another_pose()){
 		core::pose::PoseOP input_poseOP;
 		input_poseOP = new core::pose::Pose();
 		input.fill_pose(*input_poseOP,*rsd_set);
 		std::string tag = core::pose::tag_from_pose(*input_poseOP);
+		std::cout << "working on" << tag << std::endl;
 		Loops helices;
+		Loops sheets;
 		get_helices(*input_poseOP,&helices);
-		if(helices.num_loop() > 1)
-			 if((helices[1].length() > 3)&&(helices[2].length() > 3)){//assumes repeat proteins with > 1 loops
-				 Real distance = get_distance(*input_poseOP,helices[1],helices[2]);
-				 Real distance_endpoint = get_distance_endpoint(*input_poseOP,helices[1],helices[2]);
-				 Real theta;
-				 Real sigma;
-				 Real phi;
-				 get_angles(*input_poseOP,helices[1],helices[2],theta,sigma,phi);
-				 Real holesScore = get_holes_score(*input_poseOP);
-				 core::scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
-				 Real fa_score = scorefxn->score(*input_poseOP);
-				 Real resTypeScore = res_type_score(*input_poseOP);
-				 utility::vector1< std::string >  abego_vector = core::util::get_abego(*input_poseOP,1);
-				 output << F(8,3,fa_score) << " " <<F(8,3,holesScore) <<" "<< F(8,3,distance) << " " << F(8,3,distance_endpoint) <<" " << F(8,3,theta) << " "<< F(8,3,sigma) << " " << F(8,3,phi) << " " << I(6,tag) <<" " << I(4,resTypeScore) << " ";
-				 for (int ii=1; ii<35; ++ii){
-					 output << abego_vector[ii];
-				 }
-				 output << std::endl;
-			 }
+		get_sheets(*input_poseOP,&sheets);
+		//for(int ii=1; ii<=helices.size(); ++ii)
+		//	std::cout << helices[ii].start() <<"," << helices[ii].stop() << std::endl;
+		if(helices.num_loop() > 4)
+			if((helices[1].length() >= 3)&&(helices[2].length() >= 3)){//assumes repeat proteins with > 1 loops
+				Real distance = get_distance(*input_poseOP,helices[1],helices[2]);
+				Real distance_endpoint = get_distance_endpoint(*input_poseOP,helices[1],helices[2]);
+				output << I(6,tag) <<" "  << F(8,3,distance) << " " << F(8,3,distance_endpoint) << " " << I(4,helices.size()) << " " << I(4,sheets.size())  << std::endl;
+			}
 	}
 }
 
