@@ -28,6 +28,10 @@ namespace carbohydrates {
 /// @brief Calculate and return the phi angle between a saccharide residue of the given pose and the previous residue.
 core::Angle calculate_carbohydrate_phi(Pose const & pose, uint const sequence_position);
 
+/// @brief Return the number of degrees by which the phi angle between a saccharide residue of the given pose and the
+/// previous residue differs from the BB torsion used by Rosetta.
+core::Angle carbohydrate_phi_offset_from_BB(Pose const & pose, uint const sequence_position);
+
 }  // namespace carbohydrates
 }  // namespace pose
 }  // namespace core

@@ -213,7 +213,6 @@ residue_types_from_saccharide_sequence(std::string const & sequence,
 	bool linkage_assigned = false;
 	bool anomer_assigned = false;
 	bool L_or_D_assigned = false;
-
 	for (uint chr_num = 0; chr_num < sequence_end; ++chr_num) {
 		character = sequence_with_hyphen[chr_num];
 

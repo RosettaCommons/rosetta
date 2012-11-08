@@ -222,12 +222,12 @@ CarbohydrateInfo::base_name() const
 ///  CarbohydrateInfo.mainchain_glycosidic_bond_acceptor()\n
 ///  CarbohydrateInfo.n_branches()
 /// @remarks  Branches are not yet implemented.
-core::Size
-CarbohydrateInfo::branch_point(core::Size i) const
+core::uint
+CarbohydrateInfo::branch_point(core::uint i) const
 {
 	assert((i > 0) && (i <= n_branches()));
 	PyAssert((i > 0) && (i <= n_branches()),
-			"CarbohydrateInfo::branch_point(core::Size i): "
+			"CarbohydrateInfo::branch_point(core::uint i): "
 			"There is no ith branch point on this carbohydrate residue.");
 
 	return branch_points_[i];
@@ -244,12 +244,12 @@ CarbohydrateInfo::branch_point(core::Size i) const
 /// angles defining the ring, not considered BB by the atom tree must therefore be defined as CHI angles in the
 /// .params file, even though they are not in reality side-chain torsions.  Since a ring also has a multiplicity
 /// of actual side-chains, the indices for those CHI angles that are actually nu angles will vary.
-std::pair<core::id::TorsionType, core::Size>
-CarbohydrateInfo::nu_id(core::Size subscript) const
+std::pair<core::id::TorsionType, core::uint>
+CarbohydrateInfo::nu_id(core::uint subscript) const
 {
 	assert((subscript > 0) && (subscript <= ring_size_ - 2));
 	PyAssert((subscript > 0) && (subscript <= ring_size_ - 2),
-			"CarbohydrateInfo::nu_id(core::Size subscript): "
+			"CarbohydrateInfo::nu_id(core::uint subscript): "
 			"nu(subscript) does not have a CHI identifier.");
 
 	return nu_id_[subscript];
@@ -279,8 +279,8 @@ CarbohydrateInfo::nu_id(core::Size subscript) const
 /// the .params file for the residue; they are not automatically assigned.  Glycosidic linkage torsions are not
 /// necessarily defined as main chain torsions by the atom tree, so they must be designated here, in some cases with
 /// the use of CHI angles.
-std::pair<core::id::TorsionType, core::Size>
-CarbohydrateInfo::glycosidic_linkage_id(core::Size torsion_index) const
+std::pair<core::id::TorsionType, core::uint>
+CarbohydrateInfo::glycosidic_linkage_id(core::uint torsion_index) const
 {
 	Size upper_bound = 2;  // for phi and psi
 	if (has_exocyclic_linkage_) {
@@ -288,7 +288,7 @@ CarbohydrateInfo::glycosidic_linkage_id(core::Size torsion_index) const
 	}
 	assert((torsion_index >= 1) && (torsion_index <= upper_bound));
 	PyAssert((torsion_index >= 1) && (torsion_index <= upper_bound),
-			"CarbohydrateInfo::glycosidic_linkage_id(core::Size torsion_index): "
+			"CarbohydrateInfo::glycosidic_linkage_id(core::uint torsion_index): "
 			"no defined torsion angle for this index.");
 
 	return glycosidic_linkage_id_[torsion_index];
@@ -352,7 +352,7 @@ CarbohydrateInfo::get_n_carbons() const
 {
 	using namespace std;
 
-	for (Size carbon_num = MAX_C_SIZE_LIMIT; carbon_num >= MIN_C_SIZE_LIMIT; --carbon_num) {
+	for (uint carbon_num = MAX_C_SIZE_LIMIT; carbon_num >= MIN_C_SIZE_LIMIT; --carbon_num) {
 		char carbon_num_char = '0' + carbon_num;  // quick way to convert int to char
 		if (residue_type_->has(string(1, 'C') + string(1, carbon_num_char) /*convert chars to strings to concatenate*/)) {
 			return carbon_num;
@@ -378,7 +378,7 @@ CarbohydrateInfo::read_and_set_properties()
 	bool ring_size_set = false;
 	bool anomer_set = false;
 
-	for (Size i = 1, n_properties = properties.size(); i <= n_properties; ++i) {
+	for (uint i = 1, n_properties = properties.size(); i <= n_properties; ++i) {
 		if (properties[i] == "ALDOSE") {
 			if (anomeric_carbon_ != 1) {
 				utility_exit_with_message("A sugar cannot be both an aldose and a ketose; check the .param file.");
@@ -463,11 +463,11 @@ CarbohydrateInfo::determine_polymer_connections()
 	using namespace id;
 
 	if (!residue_type_->is_upper_terminus()) {
-		Size upper_atom_index = residue_type_->upper_connect_atom();
+		uint upper_atom_index = residue_type_->upper_connect_atom();
 		string atom_name = residue_type_->atom_name(upper_atom_index);
 		//char atom_number = atom_name[2];
 		mainchain_glycosidic_bond_acceptor_ = atoi(&atom_name[2]);
-		//Size position = atom_number - '0';
+		//uint position = atom_number - '0';
 	} else {
 		mainchain_glycosidic_bond_acceptor_ = 0;
 	}
@@ -476,7 +476,7 @@ CarbohydrateInfo::determine_polymer_connections()
 
 	// Exocyclic linkage?
 	Size carbons_in_ring = ring_size_ - 1 /*oxygen*/;
-	Size last_carbon_in_ring = carbons_in_ring + anomeric_carbon_ - 1;
+	uint last_carbon_in_ring = carbons_in_ring + anomeric_carbon_ - 1;
 	if (mainchain_glycosidic_bond_acceptor_ > last_carbon_in_ring) {
 		has_exocyclic_linkage_ = true;
 	} else {
@@ -602,9 +602,9 @@ CarbohydrateInfo::define_nu_ids()
 		Size n_CHIs = residue_type_->nchi();
 
 		// The final CHIs in the .params file define the (needed) ring torsions.
-		Size first_CHI = n_CHIs - n_torsions_needed + 1;
+		uint first_CHI = n_CHIs - n_torsions_needed + 1;
 
-		for (Size i = first_CHI; i <= n_CHIs; ++i) {
+		for (uint i = first_CHI; i <= n_CHIs; ++i) {
 			nu_id_.push_back(make_pair(CHI, i));
 		}
 	}

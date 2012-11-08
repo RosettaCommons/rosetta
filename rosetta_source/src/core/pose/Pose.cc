@@ -696,7 +696,6 @@ Pose::phi( Size const seqpos ) const
 /// For 2-ketopyranoses, phi is defined as O6(n)-C2(n)-OX(n-1)-CX(n-1).\n
 /// For 2-ketofuranoses, phi is defined as O5(n)-C2(n)-OX(n-1)-CX(n-1).\n
 /// Et cetera...
-/// @remarks  The bonds are correctly implemented, but the angle definitions are not yet.
 void
 Pose::set_phi( Size const seqpos, Real const setting )
 {
@@ -710,13 +709,11 @@ Pose::set_phi( Size const seqpos, Real const setting )
 	if (residue_type(seqpos).is_protein()) {
 		conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion ), setting );
 	} else /*is carbohydrate*/ {
-		PyAssert((seqpos != 1),
-				"Pose::set_phi( Size const seqpos, Real const setting ): variable seqpos is out of range for carbohydrates!");
-		//TorsionType id_type = residue_type(seqpos).carbohydrate_info()->glycosidic_linkage_id(phi_torsion).first;
-		//Size id_num = residue_type(seqpos).carbohydrate_info()->glycosidic_linkage_id(phi_torsion).second;
-		//conformation_->set_torsion(TorsionID(seqpos, id_type, id_num), setting);
-		Size x = residue_type(seqpos - 1).carbohydrate_info()->mainchain_glycosidic_bond_acceptor();
-		conformation_->set_torsion(TorsionID(seqpos - 1, BB, x + 1), setting);
+		// The torsion angle BB X+1 (from the previous residue) is the correct bond but has the incorrect reference atoms,
+		// so get the angle offset.
+		uint x = residue_type(seqpos - 1).carbohydrate_info()->mainchain_glycosidic_bond_acceptor();
+		uint offset = carbohydrates::carbohydrate_phi_offset_from_BB(*this, seqpos);
+		conformation_->set_torsion(TorsionID(seqpos - 1, BB, x + 1), setting - offset);
 	}
 }
 

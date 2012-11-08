@@ -114,7 +114,7 @@ public:
 	/// @brief    Return the anomeric carbon number.
 	/// @details  For linear monosaccharides, this number corresponds to the carbon that is oxidized to the aldehyde
 	/// or ketone.
-	core::Size
+	core::uint
 	anomeric_carbon() const
 	{
 		return anomeric_carbon_;
@@ -323,7 +323,7 @@ public:
 	/// See also:\n
 	///  CarbohydrateInfo.n_branches()\n
 	///  CarbohydrateInfo.branch_point()
-	core::Size
+	core::uint
 	mainchain_glycosidic_bond_acceptor() const
 	{
 		return mainchain_glycosidic_bond_acceptor_;
@@ -347,7 +347,7 @@ public:
 
 	/// @brief  Return the attachment point of the downstream saccharide residue attached to ith branch off of this
 	/// residue.
-	core::Size branch_point(core::Size i) const;
+	core::uint branch_point(core::uint i) const;
 
 	/// @brief  Return true if the attachment point of the downstream saccharide is on an exocyclic carbon.
 	bool
@@ -369,10 +369,10 @@ public:
 
 	// Torsion angle mappings
 	/// @brief  Return the BB or CHI identifier for the requested glycosidic linkage torsion angle.
-	std::pair<core::id::TorsionType, core::Size> glycosidic_linkage_id(core::Size torsion_index) const;
+	std::pair<core::id::TorsionType, core::uint> glycosidic_linkage_id(core::uint torsion_index) const;
 
 	/// @brief  Return the CHI identifier for the requested nu (internal ring torsion) angle.
-	std::pair<core::id::TorsionType, core::Size> nu_id(core::Size subscript) const;
+	std::pair<core::id::TorsionType, core::uint> nu_id(core::uint subscript) const;
 
 private:
 	// Private methods /////////////////////////////////////////////////////////
@@ -409,7 +409,7 @@ private:
 	core::chemical::ResidueTypeCAP residue_type_;
 	std::string full_name_;
 	std::string short_name_;
-	core::Size anomeric_carbon_;  // also indicative of location of aldehyde/ketone oxidation
+	core::uint anomeric_carbon_;  // also indicative of location of aldehyde/ketone oxidation
 	core::Size n_carbons_;
 	char stereochem_;  // L or D
 	core::Size ring_size_;  // 0 indicates linear sugar
@@ -418,8 +418,8 @@ private:
 	bool is_uronic_acid_;
 
 	// Glycosidic bond attachment points, i.e., the second integer in (1->n) notations.
-	core::Size mainchain_glycosidic_bond_acceptor_;  // 0 if N/A, i.e., if residue type is an upper terminus
-	utility::vector1<core::Size> branch_points_;
+	core::uint mainchain_glycosidic_bond_acceptor_;  // 0 if N/A, i.e., if residue type is an upper terminus
+	utility::vector1<core::uint> branch_points_;
 	bool has_exocyclic_linkage_;
 
 
@@ -427,10 +427,10 @@ private:
 	// Definitions of phi, psi, omega, and nu angles in terms of Rosetta 3 BB and CHI angles for this particular
 	// sugar.  chi angles directly correspond to CHI torsions.  (Other torsion angles further up the side chains can
 	// be accessed and set with CHI torsions but do not have an official designation, so they are not mapped.)
-	utility::vector1<std::pair<core::id::TorsionType, core::Size> > glycosidic_linkage_id_;
+	utility::vector1<std::pair<core::id::TorsionType, core::uint> > glycosidic_linkage_id_;
 
 	// The nu angles should always be the last CHI angles defined in the param file or by a patch file.
-	utility::vector1<std::pair<core::id::TorsionType, core::Size> > nu_id_;
+	utility::vector1<std::pair<core::id::TorsionType, core::uint> > nu_id_;
 
 	// Constants.
 	static core::Size const MAX_C_SIZE_LIMIT;  // maximum size of a carbohydrate carbon chain in Rosetta

@@ -19,6 +19,7 @@
 #include <core/conformation/Residue.hh>
 
 // Project headers
+#include <core/id/TorsionID.hh>
 #include <core/types.hh>
 
 // Utility headers
@@ -63,7 +64,7 @@ calculate_carbohydrate_phi(Pose const & pose, uint const sequence_position) {
 	using namespace numeric;
 	using namespace conformation;
 
-	if (sequence_position == 1) {
+	if (sequence_position == 1) {  // TODO: It's not sequence position 1 that is the problem....
 		bool is_1st_residue_of_branch = false;  // TEMP
 		if (is_1st_residue_of_branch) {
 			// TODO: When branching is implemented, this must return the 1st torsion angle back to the main chain.
@@ -102,6 +103,25 @@ calculate_carbohydrate_phi(Pose const & pose, uint const sequence_position) {
 	Vector d = res_n_minus_1->xyz(CX);
 
 	return dihedral_degrees(a, b, c, d);
+}
+
+// Return the number of degrees by which the phi angle between a saccharide residue of the given pose and the previous
+// residue differs from the BB torsion used by Rosetta.
+/// @remarks See the details for calculate_carbohydrate_phi() for an explanation on why this method is necessary.
+core::Angle
+carbohydrate_phi_offset_from_BB(Pose const & pose, uint const sequence_position)
+{
+	using namespace id;
+
+	// Get the actual value of phi.
+	Angle actual_phi = calculate_carbohydrate_phi(pose, sequence_position);
+
+	// Get the appropriate BB torsion (found on the previous residue).
+	uint x = pose.residue_type(sequence_position - 1).carbohydrate_info()->mainchain_glycosidic_bond_acceptor();
+	Angle bb_torsion = pose.torsion(TorsionID(sequence_position - 1, BB, x + 1));
+
+	// Return the difference.
+	return actual_phi - bb_torsion;
 }
 
 }  // namespace carbohydrates
