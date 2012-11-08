@@ -312,7 +312,7 @@ void FACTSRotamerSetInfo::initialize( RotamerSet const & rotamer_set )
 /*                                                                                                */
 /**************************************************************************************************/
 	FACTSPotential::FACTSPotential ():
-		MultiplicitiveFactor_(332.07156);
+		MultiplicitiveFactor_(332.07156)
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
