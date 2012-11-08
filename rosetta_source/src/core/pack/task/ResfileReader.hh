@@ -700,7 +700,7 @@ std::string
 get_token(
 	const Size which_token,
 	const utility::vector1<std::string> & tokens,
-	const bool make_uper_case = true);
+	const bool make_upper_case = true);
 
 ///@brief utility function for resfile reader
 utility::vector1< std::string >

@@ -83,7 +83,7 @@ If the pose the resfile is has pdb information associated with it (eg it was rea
 To accommodate structures with a large number of chains, following the PDB the, the chain can be any character [A-Za-z] where upper and lower case characters are treated as separate chains. For example
 @code
 10 _ PIKAA W  # Allow only Trp at residue 10 in the unlabeled chain
-40 B NC ZN    # Allow zinc at residue 40 chain B
+40 B EMPTY NC A20 NC B47 NC B48 # Disallow canonical residues (EMPTY), and then allow noncanonical types A20, B47, and B48
 40A Q ALLAA   # Residue 40, insertion code A, on chain Q, use any residue type
 @endcode
 
@@ -150,16 +150,30 @@ the PackerTask class.
  - NATAA ................ allow only the natural amino acid
  - NATRO ................ preserve the input rotamer (do not pack at all)
  - EMPTY ................ disallow all canonical amino acids ( for use with non canonicals )
- - NC <ResidueTypeName> . allow the specific possibly non canonical residue type
+ - NC <ResidueTypeName> . allow the specific possibly non canonical residue type; one residue type per NC command
 @endcode
 
 @code
 NATRO #default command that applies to everything without a non-default setting; do not repack
-begin
+start
 10 A POLAR # consider polar amino acids at position 10
 11 A POLAR PIKAA ACDEFGH # allow mutations to those in the intersection of two sets:
-# ........................ the polar amino acids and { ALA, CYS, ASP, GLU, PHE, GLY & HIS}
+# ........................ the polar amino acids and {ALA, CYS, ASP, GLU, PHE, GLY & HIS}
 # ........................ the intersection set {ASP, GLU, HIS}
+@endcode
+
+@usbsection Commands for noncanonical residue types
+Noncanonical residue types do not obey the AND-commutativity in command order that the rest of the resfile displays; this is because they default to "off" position, and must perforce be activated instead of deactivated to use.  The command to turn OFF the canonical types is EMPTY, and the command to turn ON a noncanonical type is "NC <ResidueTypeName>".
+
+@code
+NATRO #default command that applies to everything without a non-default setting; do not repack
+start
+10 A ALLAA NC ET1 # allow all 20 amino acids, plus noncanonical ET1
+11 A EMPTY NC R2  # disallow all 20 amino acids, allow only noncanonical R2
+15 A PIKAA ATSG NC SM1 # allow only ATSG and noncanonical SM1
+56 A EMPTY NC R2 NC T6 NC OP5 #allow only noncanonicals R2, T6, and OP5 (notice separate NC commands)
+#45 B NC E4 EMPTY #MALFORMED COMMAND: this will give you no residue types at all, resulting in NATRO behavior (EMPTY supersedes NC)
+#65 B NC F1 S2 T3 #MALFORMED COMMAND: this will crash because you need one NC command per noncanonical you want
 @endcode
 
 @subsection Commands for controlling conformational freedom:
