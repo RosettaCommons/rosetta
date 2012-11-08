@@ -219,20 +219,22 @@ public:
 
 	///@brief get the harmonic bond angle and bond-length spring constants
 	void
-	get_cartesian_bonded_parameters( Real &len, Real &ang, Real &tors, Real &proton ) const {
+	get_cartesian_bonded_parameters( Real &len, Real &ang, Real &tors, Real &proton , Real &imp ) const {
 		len=cartbonded_len_;
 		ang=cartbonded_ang_;
 		tors=cartbonded_tors_;
 		proton=cartbonded_proton_;
+		imp=cartbonded_improper_;
 	}
 
 	///@brief set the harmonic bond angle and bond-length spring constants
 	void
-	set_cartesian_bonded_parameters( Real len, Real ang, Real tors, Real proton ) {
+	set_cartesian_bonded_parameters( Real len, Real ang, Real tors, Real proton, Real imp ) {
 		cartbonded_len_=len;
 		cartbonded_ang_=ang;
 		cartbonded_tors_=tors;
 		cartbonded_proton_=proton;
+		cartbonded_improper_=imp;
 	}
 
 	///@brief get the harmonic bond angle and bond-length spring constants
@@ -297,7 +299,7 @@ private:
 	hbonds::HBondOptionsOP hbond_options_;
 
 	core::Size cst_max_seq_sep_;
-	core::Real cartbonded_len_, cartbonded_ang_, cartbonded_tors_, cartbonded_proton_;
+	core::Real cartbonded_len_, cartbonded_ang_, cartbonded_tors_, cartbonded_proton_, cartbonded_improper_;
 	bool cartbonded_linear_;
 
 	/// deprecated

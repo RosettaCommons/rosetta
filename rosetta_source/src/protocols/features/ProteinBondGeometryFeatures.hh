@@ -129,9 +129,9 @@ public:
 							boost::uuids::uuid struct_id,
 							utility::sql_database::sessionOP db_session);
 
-	mutable core::scoring::methods::BondAngleDatabaseOP db_angle_;
-	mutable core::scoring::methods::BondLengthDatabaseOP db_length_;
-	mutable core::scoring::methods::TorsionDatabaseOP db_torsion_;
+private:
+	// the ideal parameter database
+	core::scoring::methods::IdealParametersDatabaseOP db_;
 
 	// options
 	bool linear_bonded_potential_;

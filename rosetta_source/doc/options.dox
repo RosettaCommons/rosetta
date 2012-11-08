@@ -3776,15 +3776,12 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-bonded_params</b> \<RealVector\><dt>
-<dd>Spring constants for bonded parameters [length,angle,torsion,proton-torsion] (default 600,300,300,60)</dd><br>
+<dd>Default spring constants for bonded parameters [length,angle,torsion,proton-torsion,improper-torsion]</dd><br>
 </dl>
 <dl>
-<dt><b>-bonded_params_CHARMM_angle</b> \<Boolean\><dt>
-<dd>use CHARMM spring constants</dd><br>
-</dl>
-<dl>
-<dt><b>-bonded_params_CHARMM_length</b> \<Boolean\><dt>
-<dd>use CHARMM spring constants</dd><br>
+<dt><b>-bonded_params_dir</b> \<String\><dt>
+<dd>Spring constants for bonded parameters [length,angle,torsion,proton-torsion,improper-torsion]</dd><br>
+<dd>Default: "scoring/score_functions/bondlength_bondangle"</dd><br>
 </dl>
 <dl>
 <dt><b>-pro_close_planar_constraint</b> \<Real\><dt>
@@ -3948,6 +3945,18 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-score</b> \<Boolean\><dt>
 <dd>score option group</dd><br>
+</dl>
+<dl>
+<dt><b>-bbdep_omega</b> \<Boolean\><dt>
+<dd>Enable phi-psi dependent omega</dd><br>
+</dl>
+<dl>
+<dt><b>-bbdep_bond_params</b> \<Boolean\><dt>
+<dd>Enable phi-psi dependent bondlengths and bondangles</dd><br>
+</dl>
+<dl>
+<dt><b>-bbdep_bond_devs</b> \<Boolean\><dt>
+<dd>Enable phi-psi dependent deviations for bondlengths and bondangles</dd><br>
 </dl>
 <dl>
 <dt><b>-no_his_his_pairE</b> \<Boolean\><dt>

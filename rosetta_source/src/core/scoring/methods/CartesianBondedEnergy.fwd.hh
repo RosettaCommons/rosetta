@@ -21,13 +21,11 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-class TorsionDatabase;
-class BondAngleDatabase;
-class BondLengthDatabase;
-
-typedef  utility::pointer::owning_ptr< TorsionDatabase > TorsionDatabaseOP;
-typedef  utility::pointer::owning_ptr< BondAngleDatabase > BondAngleDatabaseOP;
-typedef  utility::pointer::owning_ptr< BondLengthDatabase > BondLengthDatabaseOP;
+class IdealParametersDatabase;
+typedef  utility::pointer::access_ptr< IdealParametersDatabase > IdealParametersDatabaseOPAP;
+typedef  utility::pointer::access_ptr< IdealParametersDatabase const > IdealParametersDatabaseOPCAP;
+typedef  utility::pointer::owning_ptr< IdealParametersDatabase > IdealParametersDatabaseOP;
+typedef  utility::pointer::owning_ptr< IdealParametersDatabase const > IdealParametersDatabaseCOP;
 
 class CartesianBondedEnergy;
 typedef  utility::pointer::access_ptr< CartesianBondedEnergy > CartesianBondedEnergyAP;

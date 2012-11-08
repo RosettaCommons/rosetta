@@ -61,6 +61,7 @@ EnergyMethodOptions::EnergyMethodOptions():
 	cartbonded_ang_(-1.0),
 	cartbonded_tors_(-1.0),
 	cartbonded_proton_(-1.0),
+	cartbonded_improper_(-1.0),
 	cartbonded_linear_(false),
 	bond_angle_residue_type_param_set_(NULL)
 {

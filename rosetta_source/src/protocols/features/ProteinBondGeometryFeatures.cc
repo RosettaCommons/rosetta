@@ -13,6 +13,7 @@
 
 // Unit Headers
 #include <core/scoring/methods/CartesianBondedEnergy.hh>
+#include <core/scoring/methods/CartBondedParameters.hh>
 #include <protocols/features/ProteinBondGeometryFeatures.hh>
 
 // Project Headers
@@ -63,18 +64,7 @@ ProteinBondGeometryFeatures::ProteinBondGeometryFeatures(){
 	basic::options::option[ basic::options::OptionKeys::score::linear_bonded_potential ]();
 
 	// initialize databases
-	if (basic::options::option[ basic::options::OptionKeys::score::bonded_params ].user()) {
-		utility::vector1<core::Real> params = basic::options::option[ basic::options::OptionKeys::score::bonded_params ]();
-
-		db_angle_ = new core::scoring::methods::BondAngleDatabase( params[2] );		//initialize from score:bonded_params
-		db_length_ = new core::scoring::methods::BondLengthDatabase( params[1] );
-		db_torsion_ = new core::scoring::methods::TorsionDatabase( params[3], params[4] );
-	}
-	else {
-		db_angle_ = new core::scoring::methods::BondAngleDatabase(150);		//initialize defaults
-		db_length_ = new core::scoring::methods::BondLengthDatabase(300);
-		db_torsion_ = new core::scoring::methods::TorsionDatabase(150,50);
-	}
+	db_ = new core::scoring::methods::IdealParametersDatabase(-1.0,-1.0,-1.0,-1.0,-1.0);
 }
 
 ProteinBondGeometryFeatures::ProteinBondGeometryFeatures( ProteinBondGeometryFeatures const & ) :
@@ -408,7 +398,7 @@ ProteinBondGeometryFeatures::report_intrares_angles(
 
 			// lookup Ktheta and theta0
 			Real Ktheta, theta0;
-			db_angle_->lookup( pose, rsd, rt1, rt2, rt3, Ktheta, theta0 );
+			db_->lookup_angle_legacy( pose, rsd, rt1, rt2, rt3, Ktheta, theta0 );
 			if (Ktheta == 0.0) continue;
 
 			// get angle
@@ -508,7 +498,7 @@ ProteinBondGeometryFeatures::report_interres_angles(
 
 					// lookup Ktheta and theta0
 					Real Ktheta, theta0;
-					db_angle_->lookup( pose, rsd1, res1_lower_atomno, resconn_atomno1, -resconn_id1, Ktheta, theta0 );
+					db_->lookup_angle_legacy( pose, rsd1, res1_lower_atomno, resconn_atomno1, -resconn_id1, Ktheta, theta0 );
 
 					if (Ktheta == 0.0) continue;
 
@@ -547,7 +537,7 @@ ProteinBondGeometryFeatures::report_interres_angles(
 
 					// lookup Ktheta and theta0
 					Real Ktheta, theta0;
-					db_angle_->lookup( pose, rsd2, res2_lower_atomno, resconn_atomno2, -resconn_id2, Ktheta, theta0 );
+					db_->lookup_angle_legacy( pose, rsd2, res2_lower_atomno, resconn_atomno2, -resconn_id2, Ktheta, theta0 );
 
 					if (Ktheta == 0.0) continue;
 					Real const angle = numeric::angle_radians(
@@ -618,7 +608,7 @@ ProteinBondGeometryFeatures::report_intrares_lengths(
 
 					// lookup Ktheta and theta0
 					Real Kd, d0;
-					db_length_->lookup( pose, rsd, atm_i, atm_j, Kd, d0 );
+					db_->lookup_length_legacy( pose, rsd, atm_i, atm_j, Kd, d0 );
 					if (Kd == 0.0) continue;
 
 					Real const d = ( rsd.atom( atm_i ).xyz()-rsd.atom( atm_j ).xyz() ).length();
@@ -696,7 +686,7 @@ ProteinBondGeometryFeatures::report_interres_lengths(
 
 				// lookup Ktheta and theta0
 				Real Kd, d0;
-				db_length_->lookup( pose, rsd1, resconn_atomno1, -resconn_id1, Kd, d0 );
+				db_->lookup_length_legacy( pose, rsd1, resconn_atomno1, -resconn_id1, Kd, d0 );
 
 				// accumulate the energy
 				Real energy_length = 0;			//ptc - dont accumulate energy, report each length on it's own.
@@ -754,7 +744,7 @@ ProteinBondGeometryFeatures::report_intrares_torsions(
 
 			// lookup Ktheta and theta0
 			Real Kphi, phi0, phi_step;
-			db_torsion_->lookup( rsd.type(), rt1, rt2, rt3, rt4, Kphi, phi0, phi_step );
+			db_->lookup_torsion_legacy( rsd.type(), rt1, rt2, rt3, rt4, Kphi, phi0, phi_step );
 			if (Kphi == 0.0) continue;
 
 			// get angle

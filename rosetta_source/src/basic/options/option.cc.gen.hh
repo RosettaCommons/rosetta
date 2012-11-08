@@ -790,9 +790,8 @@ option.add( basic::options::OptionKeys::score::ref_offsets, "offset reference en
 option.add( basic::options::OptionKeys::score::output_residue_energies, "Output the energy for each residue" ).def(false);
 option.add( basic::options::OptionKeys::score::fa_custom_pair_distance_file, "Name of custom pair distance energy file" ).def("");
 option.add( basic::options::OptionKeys::score::disulf_matching_probe, "Size of probe to use in disulfide matching score" ).def(2.5);
-option.add( basic::options::OptionKeys::score::bonded_params, "Spring constants for bonded parameters [length,angle,torsion,proton-torsion] (default 600,300,300,60)" );
-option.add( basic::options::OptionKeys::score::bonded_params_CHARMM_angle, "use CHARMM spring constants" );
-option.add( basic::options::OptionKeys::score::bonded_params_CHARMM_length, "use CHARMM spring constants" );
+option.add( basic::options::OptionKeys::score::bonded_params, "Default spring constants for bonded parameters [length,angle,torsion,proton-torsion,improper-torsion]" );
+option.add( basic::options::OptionKeys::score::bonded_params_dir, "Spring constants for bonded parameters [length,angle,torsion,proton-torsion,improper-torsion]" ).def("scoring/score_functions/bondlength_bondangle");
 option.add( basic::options::OptionKeys::score::pro_close_planar_constraint, "stdev of CD,N,CA,prevC trigonal planar constraint in pro_close energy method" ).def(0.1);
 option.add( basic::options::OptionKeys::score::linear_bonded_potential, "use linear (instead of quadratic) bonded potential" ).def(false);
 option.add( basic::options::OptionKeys::score::geom_sol_correct_acceptor_base, "Fixed definition of base atom for acceptors to match hbonds_geom" ).def(false);
@@ -826,6 +825,9 @@ option.add( basic::options::OptionKeys::score::nmer_ref_seq_length, "length of n
 option.add( basic::options::OptionKeys::corrections::corrections, "corrections option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::corrections::correct, "turn on default corrections:-corrections::chemical:icoor_05_2009-corrections::score:p_aa_pp scoring/score_functions/P_AA_pp/P_AA_pp_08.2009-corrections::score:p_aa_pp_nogridshift-corrections::score:p_aa_pp_nogridshift-corrections::score:rama_not_squared-corrections::score:rama_map scoring/score_functions/rama/Rama.10.2009.yfsong.dat-scoring::hbond_params helix_hb_06_2009-corrections::score:hbond_fade 1.9 2.3 2.3 2.6 0.3 0.7 0.0 0.05-corrections::score:ch_o_bond_potential scoring/score_functions/carbon_hbond/ch_o_bond_potential_near_min_yf.dat" ).def(false);
 option.add( basic::options::OptionKeys::corrections::score::score, "score option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::corrections::score::bbdep_omega, "Enable phi-psi dependent omega" );
+option.add( basic::options::OptionKeys::corrections::score::bbdep_bond_params, "Enable phi-psi dependent bondlengths and bondangles" );
+option.add( basic::options::OptionKeys::corrections::score::bbdep_bond_devs, "Enable phi-psi dependent deviations for bondlengths and bondangles" );
 option.add( basic::options::OptionKeys::corrections::score::no_his_his_pairE, "Set pair term for His-His to zero" );
 option.add( basic::options::OptionKeys::corrections::score::no_his_DE_pairE, "Set pair term for His-Glu and His-Asp to zero" );
 option.add( basic::options::OptionKeys::corrections::score::hbond_His_Phil_fix, "Phil's fix on Histidine interaction angular dependence" );
@@ -1295,11 +1297,11 @@ option.add( basic::options::OptionKeys::lh::mpi_outbound_wu_buffer_size, "No des
 option.add( basic::options::OptionKeys::lh::mpi_loophash_split_size    , "No description" ).def(50);
 option.add( basic::options::OptionKeys::lh::mpi_metropolis_temp, "No description" ).def(1000000.0);
 option.add( basic::options::OptionKeys::lh::mpi_save_state_interval, "No description" ).def(1200);
-option.add( basic::options::OptionKeys::lh::mpi_master_save_score_only, "No description" ).def(true);
-option.add( basic::options::OptionKeys::lh::max_loophash_per_structure, "No description" ).def(1);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::rms_limit, "How to deal with returned relaxed structures" ).def(2.0);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::mpi_master_save_score_only, "No description" ).def(true);
+option.add( basic::options::OptionKeys::lh::max_loophash_per_structure, "No description" ).def(1);
+option.add( basic::options::OptionKeys::lh::rms_limit, "How to deal with returned relaxed structures" ).def(2.0);
 option.add( basic::options::OptionKeys::lh::centroid_only, "false" ).def(false);
 option.add( basic::options::OptionKeys::lh::write_centroid_structs, "Output raw loophashed decoys as well as relaxed ones" ).def(false);
 option.add( basic::options::OptionKeys::lh::write_all_fa_structs, "Write out all structures returned from batch relax" ).def(false);
@@ -1943,11 +1945,11 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_p
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
-option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
-option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
+option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);

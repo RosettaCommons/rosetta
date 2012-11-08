@@ -86,12 +86,11 @@ OmegaTetherEnergy::residue_energy(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ){
-			return;
-	}
+	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) return;
+
 	if ( rsd.is_protein() ) {
-		Real omega_score, dscore_domega;
-		potential_.eval_omega_score_residue( rsd, omega_score, dscore_domega );
+		Real omega_score, dscore_domega, dscore_dphi, dscore_dpsi;
+		potential_.eval_omega_score_residue( rsd, omega_score, dscore_domega, dscore_dphi, dscore_dpsi );
 		emap[ omega ] += omega_score;
 	}
 }
@@ -125,10 +124,12 @@ OmegaTetherEnergy::eval_residue_dof_derivative(
 	}
 
 	Real deriv(0.0);
-	if ( tor_id.valid() && tor_id.type() == id::BB && tor_id.torsion() == 3  && rsd.is_protein() ) {
-		Real omega_score, dscore_domega;
-		potential_.eval_omega_score_residue( rsd, omega_score, dscore_domega );
-		deriv = dscore_domega;
+	if ( tor_id.valid() && tor_id.type() == id::BB && tor_id.torsion() <= 3  && rsd.is_protein() ) {
+		Real omega_score, dscore_domega, dscore_dphi, dscore_dpsi;
+		potential_.eval_omega_score_residue( rsd, omega_score, dscore_domega, dscore_dphi, dscore_dpsi );
+		if (tor_id.torsion() == 1) deriv = dscore_dphi;
+		if (tor_id.torsion() == 2) deriv = dscore_dpsi;
+		if (tor_id.torsion() == 3) deriv = dscore_domega;
 	}
 	return numeric::conversions::degrees( weights[ omega ] * deriv );
 }
@@ -152,16 +153,16 @@ OmegaTetherEnergy::old_eval_dof_derivative(
 	if ( tor_id.valid() && tor_id.type() == id::BB ) {
 		conformation::Residue const & rsd( pose.residue( tor_id.rsd() ) );
 		if ( rsd.is_protein() &&
-				 tor_id.torsion() == 3 ) {
-			Real omega_score, dscore_domega;
-			potential_.eval_omega_score_residue( rsd, omega_score,
-				dscore_domega );
-			deriv = dscore_domega;
+				 tor_id.torsion() <= 3 ) {
+			Real omega_score, dscore_domega, dscore_dphi, dscore_dpsi;
+			potential_.eval_omega_score_residue( rsd, omega_score, dscore_domega, dscore_dphi, dscore_dpsi );
+			if (tor_id.torsion() == 1) deriv = dscore_dphi;
+			if (tor_id.torsion() == 2) deriv = dscore_dpsi;
+			if (tor_id.torsion() == 3) deriv = dscore_domega;
 		}
 	}
 	// note that the atomtree Oomega dofs are in radians
 	// use degrees since dE/dangle has angle in denominator
-	//return numeric::conversions::degrees( weights[ omega ] * deriv );
 	return numeric::conversions::degrees( weights[ omega ] * deriv );
 }
 

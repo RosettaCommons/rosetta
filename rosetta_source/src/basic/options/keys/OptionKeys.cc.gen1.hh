@@ -138,8 +138,7 @@ namespace score { BooleanOptionKey const output_residue_energies( "score:output_
 namespace score { StringOptionKey const fa_custom_pair_distance_file( "score:fa_custom_pair_distance_file" );  }
 namespace score { RealOptionKey const disulf_matching_probe( "score:disulf_matching_probe" );  }
 namespace score { RealVectorOptionKey const bonded_params( "score:bonded_params" );  }
-namespace score { BooleanOptionKey const bonded_params_CHARMM_angle( "score:bonded_params_CHARMM_angle" );  }
-namespace score { BooleanOptionKey const bonded_params_CHARMM_length( "score:bonded_params_CHARMM_length" );  }
+namespace score { StringOptionKey const bonded_params_dir( "score:bonded_params_dir" );  }
 namespace score { RealOptionKey const pro_close_planar_constraint( "score:pro_close_planar_constraint" );  }
 namespace score { BooleanOptionKey const linear_bonded_potential( "score:linear_bonded_potential" );  }
 namespace score { BooleanOptionKey const geom_sol_correct_acceptor_base( "score:geom_sol_correct_acceptor_base" );  }
@@ -173,6 +172,9 @@ namespace score { IntegerOptionKey const nmer_ref_seq_length( "score:nmer_ref_se
 namespace corrections { BooleanOptionKey const corrections( "corrections" );  }
 namespace corrections { BooleanOptionKey const correct( "corrections:correct" );  }
 namespace corrections { namespace score { BooleanOptionKey const score( "corrections:score" );  } }
+namespace corrections { namespace score { BooleanOptionKey const bbdep_omega( "corrections:score:bbdep_omega" );  } }
+namespace corrections { namespace score { BooleanOptionKey const bbdep_bond_params( "corrections:score:bbdep_bond_params" );  } }
+namespace corrections { namespace score { BooleanOptionKey const bbdep_bond_devs( "corrections:score:bbdep_bond_devs" );  } }
 namespace corrections { namespace score { BooleanOptionKey const no_his_his_pairE( "corrections:score:no_his_his_pairE" );  } }
 namespace corrections { namespace score { BooleanOptionKey const no_his_DE_pairE( "corrections:score:no_his_DE_pairE" );  } }
 namespace corrections { namespace score { BooleanOptionKey const hbond_His_Phil_fix( "corrections:score:hbond_His_Phil_fix" );  } }
@@ -642,5 +644,3 @@ namespace lh { IntegerOptionKey const mpi_outbound_wu_buffer_size( "lh:mpi_outbo
 namespace lh { IntegerOptionKey const mpi_loophash_split_size    ( "lh:mpi_loophash_split_size    " );  }
 namespace lh { RealOptionKey const mpi_metropolis_temp( "lh:mpi_metropolis_temp" );  }
 namespace lh { IntegerOptionKey const mpi_save_state_interval( "lh:mpi_save_state_interval" );  }
-namespace lh { BooleanOptionKey const mpi_master_save_score_only( "lh:mpi_master_save_score_only" );  }
-namespace lh { IntegerOptionKey const max_loophash_per_structure( "lh:max_loophash_per_structure" );  }

@@ -1,3 +1,5 @@
+namespace lh { BooleanOptionKey const mpi_master_save_score_only( "lh:mpi_master_save_score_only" );  }
+namespace lh { IntegerOptionKey const max_loophash_per_structure( "lh:max_loophash_per_structure" );  }
 namespace lh { RealOptionKey const rms_limit( "lh:rms_limit" );  }
 namespace lh { BooleanOptionKey const centroid_only( "lh:centroid_only" );  }
 namespace lh { BooleanOptionKey const write_centroid_structs( "lh:write_centroid_structs" );  }
@@ -642,5 +644,3 @@ namespace DenovoProteinDesign { FileOptionKey const hydrophobic_polar_pattern( "
 namespace DenovoProteinDesign { BooleanOptionKey const use_template_sequence( "DenovoProteinDesign:use_template_sequence" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const use_template_topology( "DenovoProteinDesign:use_template_topology" );  }
 namespace DenovoProteinDesign { FileOptionKey const create_from_template_pdb( "DenovoProteinDesign:create_from_template_pdb" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const create_from_secondary_structure( "DenovoProteinDesign:create_from_secondary_structure" );  }
-namespace RBSegmentRelax { BooleanOptionKey const RBSegmentRelax( "RBSegmentRelax" );  }

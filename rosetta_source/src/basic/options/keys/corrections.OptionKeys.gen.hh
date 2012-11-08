@@ -24,6 +24,9 @@ namespace OptionKeys {
 namespace corrections { extern BooleanOptionKey const corrections; }
 namespace corrections { extern BooleanOptionKey const correct; }
 namespace corrections { namespace score { extern BooleanOptionKey const score; } }
+namespace corrections { namespace score { extern BooleanOptionKey const bbdep_omega; } }
+namespace corrections { namespace score { extern BooleanOptionKey const bbdep_bond_params; } }
+namespace corrections { namespace score { extern BooleanOptionKey const bbdep_bond_devs; } }
 namespace corrections { namespace score { extern BooleanOptionKey const no_his_his_pairE; } }
 namespace corrections { namespace score { extern BooleanOptionKey const no_his_DE_pairE; } }
 namespace corrections { namespace score { extern BooleanOptionKey const hbond_His_Phil_fix; } }

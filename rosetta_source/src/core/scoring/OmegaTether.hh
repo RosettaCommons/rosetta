@@ -16,26 +16,22 @@
 
 // Unit Headers
 #include <core/scoring/OmegaTether.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/ProteinTorsion.hh>
 
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
-
-// ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray4D.hh>
+#include <utility/io/izstream.hh>
 
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <utility/vector1.hh>
+#include <ObjexxFCL/FArray2D.hh>
 
+#include <numeric/interpolation/spline/Bicubic_spline.hh>
 
 namespace core {
 namespace scoring {
@@ -50,27 +46,35 @@ public:
 
 public:
 	OmegaTether();
-	virtual ~OmegaTether() ; // auto-removing definition from header{}
+	~OmegaTether() {}
 
 	Real
 	eval_omega_score_residue(
 		AA const res_aa,
-		Real const omega
+		Real const omega,
+		Real const phi,
+		Real const psi
 	) const;
 
 	void
 	eval_omega_score_residue(
 		conformation::Residue const & res,
 		Real & energy,
-		Real & denergy_domega
+		Real & denergy_domega,
+		Real & denergy_dphi,
+		Real & denergy_dpsi
 	) const;
 
 	void
 	eval_omega_score_residue(
 		AA const res_aa,
 		Real const omega,
+		Real const phi,
+		Real const psi,
 		Real & energy,
-		Real & denergy_domega
+		Real & denergy_domega,
+		Real & denergy_dphi,
+		Real & denergy_dpsi
 	) const;
 
 
@@ -81,20 +85,16 @@ public:
 	) const;
 
 
-/*
-	void
-	write_omega_score_all(
-		Pose const & pose
-	) const;
-
-	//Real get_omega_score_residue_deriv( int res, Pose const & a_pose, ProteinTorsion torsion ) const;
-	void eval_procheck_omega( Pose const & a_pose,
-		Real & favorable, Real & allowed, Real & generous ) const;
-*/
-
 private:
 
+	void read_omega_tables();
+	void read_table_from_stream( utility::io::izstream &, ObjexxFCL::FArray2D< Real > &, ObjexxFCL::FArray2D< Real > &);
+	void setup_interpolation( ObjexxFCL::FArray2D< Real > &, numeric::interpolation::spline::BicubicSpline  &);
 
+	// phi-psi dependent only
+	bool use_phipsi_dep_;
+	utility::vector1< ObjexxFCL::FArray2D< core::Real > > omega_mus_all_, omega_sigmas_all_;
+	utility::vector1< numeric::interpolation::spline::BicubicSpline > omega_mus_all_splines_,  omega_sigmas_all_splines_;
 };
 
 }

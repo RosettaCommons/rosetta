@@ -260,7 +260,7 @@ public:
 	virtual
 	ResidueNeighborConstIteratorOP
 	const_neighbor_iterator_begin( int resid ) const {
-		return new PeptideBondedNeighborConstIterator( resid, resid==1 ? 2:resid-1, score_types_, &tables_, &computed_ );
+		return new PeptideBondedNeighborConstIterator( resid, resid==1 ? 2:std::min( resid-1, (int)size_+1 ), score_types_, &tables_, &computed_ );
 	}
 
 	virtual
@@ -272,7 +272,7 @@ public:
 	virtual
 	ResidueNeighborConstIteratorOP
 	const_upper_neighbor_iterator_begin( int resid ) const {
-		return new PeptideBondedNeighborConstIterator( resid, resid+1, score_types_, &tables_, &computed_ );
+		return new PeptideBondedNeighborConstIterator( resid, std::min( resid+1, (int)size_+1 ), score_types_, &tables_, &computed_ );
 	}
 
 	virtual
@@ -285,7 +285,7 @@ public:
 	virtual
 	ResidueNeighborIteratorOP
 	neighbor_iterator_begin( int resid ) {
-		return new PeptideBondedNeighborIterator( resid, resid==1 ? 2:resid-1, score_types_, &tables_, &computed_ );
+		return new PeptideBondedNeighborIterator( resid, resid==1 ? 2:std::min( resid-1, (int)size_+1 ), score_types_, &tables_, &computed_ );
 	}
 
 	virtual
@@ -298,7 +298,7 @@ public:
 	ResidueNeighborIteratorOP
 	upper_neighbor_iterator_begin( int resid )
 	{
-		return new PeptideBondedNeighborIterator( resid, resid+1, score_types_, &tables_, &computed_ );
+		return new PeptideBondedNeighborIterator( resid, std::min( resid+1, (int)size_+1 ), score_types_, &tables_, &computed_ );
 	}
 
 	virtual

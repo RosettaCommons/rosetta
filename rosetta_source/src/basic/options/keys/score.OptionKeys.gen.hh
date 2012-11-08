@@ -72,8 +72,7 @@ namespace score { extern BooleanOptionKey const output_residue_energies; }
 namespace score { extern StringOptionKey const fa_custom_pair_distance_file; }
 namespace score { extern RealOptionKey const disulf_matching_probe; }
 namespace score { extern RealVectorOptionKey const bonded_params; }
-namespace score { extern BooleanOptionKey const bonded_params_CHARMM_angle; }
-namespace score { extern BooleanOptionKey const bonded_params_CHARMM_length; }
+namespace score { extern StringOptionKey const bonded_params_dir; }
 namespace score { extern RealOptionKey const pro_close_planar_constraint; }
 namespace score { extern BooleanOptionKey const linear_bonded_potential; }
 namespace score { extern BooleanOptionKey const geom_sol_correct_acceptor_base; }

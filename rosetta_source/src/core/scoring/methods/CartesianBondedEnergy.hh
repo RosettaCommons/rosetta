@@ -16,14 +16,13 @@
 
 // Unit headers
 #include <core/scoring/methods/CartesianBondedEnergy.fwd.hh>
+#include <core/scoring/methods/CartBondedParameters.hh>
 
 // Package headers
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/scoring/methods/ContextIndependentLRTwoBodyEnergy.hh>
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/mm/MMBondAngleLibrary.fwd.hh>
-#include <core/scoring/mm/MMBondLengthLibrary.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
@@ -42,22 +41,22 @@
 //#include <map>
 
 
-typedef boost::tuples::tuple< std::string, int, int, int, int > residx_atm_quad;
-typedef boost::tuples::tuple< std::string, int, int, int > residx_atm_triple;
-typedef boost::tuples::tuple< std::string, int, int > residx_atm_pair;
-//typedef boost::tuples::tuple< std::string, std::string, std::string > atm_name_triple;
+typedef boost::tuples::tuple< std::string, std::string, std::string, std::string, std::string > atm_name_quad;
+typedef boost::tuples::tuple< std::string, std::string, std::string, std::string > atm_name_triple;
+typedef boost::tuples::tuple< std::string, std::string, std::string > atm_name_pair;
+typedef boost::tuples::tuple< std::string, std::string > atm_name_single;
 
 namespace boost {
 namespace tuples {
 
-std::size_t hash_value(residx_atm_quad const& e); 
-std::size_t hash_value(residx_atm_triple const& e); 
-std::size_t hash_value(residx_atm_pair const& e); 
-//std::size_t hash_value(atm_name_triple const& e); 
-bool operator==(residx_atm_quad const& a,residx_atm_quad const& b); 
-bool operator==(residx_atm_triple const& a,residx_atm_triple const& b); 
-bool operator==(residx_atm_pair const& a,residx_atm_pair const& b); 
-//bool operator==(atm_name_triple const& a,atm_name_triple const& b); 
+std::size_t hash_value(atm_name_quad const& e); 
+std::size_t hash_value(atm_name_triple const& e); 
+std::size_t hash_value(atm_name_pair const& e); 
+std::size_t hash_value(atm_name_single const& e); 
+bool operator==(atm_name_quad const& a,atm_name_quad const& b); 
+bool operator==(atm_name_triple const& a,atm_name_triple const& b); 
+bool operator==(atm_name_pair const& a,atm_name_pair const& b); 
+bool operator==(atm_name_single const& a,atm_name_single const& b); 
 
 }
 }
@@ -66,82 +65,101 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-///////////////////
-//fpd  cache ideal torsions for fast lookup
-class TorsionDatabase  : public utility::pointer::ReferenceCount {
-public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~TorsionDatabase();
-	TorsionDatabase(Real k_tors, Real k_tors_prot);
 
-	// lookup ideal torsion; insert in DB if not there
+
+
+////////////////////
+//fpd
+//  Database stores all ideal parameters
+class IdealParametersDatabase  : public utility::pointer::ReferenceCount {
+public:
+	IdealParametersDatabase(Real k_len, Real k_ang, Real k_tors, Real k_tors_prot, Real k_tors_improper);
+
+	void init(Real k_len, Real k_ang, Real k_tors, Real k_tors_prot, Real k_tors_improper);
+
+	CartBondedParametersCAP
+	lookup_torsion(
+		core::conformation::Residue const & res,
+		std::string atm1_name, std::string atm2_name, std::string atm3_name, std::string atm4_name );
+
+	// needs both names (for keying off databases) and indices (for building those not found from ideal)
+	CartBondedParametersCAP													
+	lookup_angle(
+		core::conformation::Residue const & res,
+		bool pre_proline,
+		std::string atm1_name, std::string atm2_name, std::string atm3_name,
+		int atm1idx, int atm2idx, int atm3idx);
+
+	// needs both names (for keying off databases) and indices (for building those not found from ideal)
+	CartBondedParametersCAP													
+	lookup_length(
+		core::conformation::Residue const & res,
+		bool pre_proline,
+		std::string atm1_name, std::string atm2_name,
+		int atm1idx, int atm2idx);
+
+	// old-style interface to database
 	void													
-	lookup( core::chemical::ResidueType const & restype,
+	lookup_torsion_legacy( core::chemical::ResidueType const & restype,
 	        int atm1, int atm2, int atm3, int atm4, Real &Kphi, Real &phi0, Real &phi_step );
 
-	Real
-	ktors() { return k_torsion; }
-
-private:
-	//fpd involves a string comparison (restype) .. could be faster
-	//std::map< residx_atm_triple, core::Real > bondangles_;
-	boost::unordered_map< residx_atm_quad, core::Real > torsions_;
-	boost::unordered_map< residx_atm_quad, core::Real > torsion_steps_;
-	boost::unordered_map< residx_atm_quad, core::Real > Kphis_;
-
-	Real k_torsion, k_torsion_proton;   // can only be set in constructor
-};
-
-
-///////////////////
-//fpd  cache ideal bond angles for fast lookup
-class BondAngleDatabase  : public utility::pointer::ReferenceCount {
-public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~BondAngleDatabase();
-	BondAngleDatabase(Real k_ang);
-
-	// lookup ideal bondangle; insert in DB if not there
+	// old-style interface to database
 	void
-	lookup( core::pose::Pose const & pose, core::conformation::Residue const & res,
+	lookup_angle_legacy( core::pose::Pose const & pose, core::conformation::Residue const & res,
 		   int atm1, int atm2, int atm3, Real &Ktheta, Real &d0);
 
-
-private:
-	//fpd involves a string comparison (restype) .. could be faster
-	//std::map< residx_atm_triple, core::Real > bondangles_;
-	boost::unordered_map< residx_atm_triple, core::Real > bondangles_;
-	boost::unordered_map< residx_atm_triple, core::Real > Kangles_;
-
-	Real k_angle;  // can only be set in constructor
-	mm::MMBondAngleLibrary const & mm_bondangle_library_;
-};
-
-
-///////////////////
-//fpd  cache ideal bond lengths for fast lookup
-class BondLengthDatabase  : public utility::pointer::ReferenceCount {
-public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~BondLengthDatabase();
-	BondLengthDatabase(Real k_len);
-
-	// lookup ideal bondlength; insert in DB if not there
+	// old-style interface to database
 	void
-	lookup( core::pose::Pose const & pose, core::conformation::Residue const & res, int atm1, int atm2, Real &Kd, Real &d0 );
+	lookup_length_legacy( core::pose::Pose const & pose, core::conformation::Residue const & res, int atm1, int atm2, Real &Kd, Real &d0 );
+
+	bool bbdep_bond_params() { return bbdep_bond_params_; }
+	bool bbdep_bond_devs() { return bbdep_bond_devs_; }
 
 private:
-	//fpd involves a string comparison (restype) .. could be faster
-	//std::map< residx_atm_pair, core::Real > bondlengths_;
-	boost::unordered_map< residx_atm_pair, core::Real > bondlengths_;
-	boost::unordered_map< residx_atm_pair, core::Real > Klengths_;
+	// helper functions: find the ideal values by constructing from Rosetta's params file
+	void			
+	lookup_bondangle_buildideal(
+		core::conformation::Residue const & res,
+		int atm1, int atm2, int atm3, Real &Ktheta, Real &theta0 );
 
-	Real k_length;  // can only be set in constructor
-	mm::MMBondLengthLibrary const & mm_bondlength_library_;
+	void
+	lookup_bondlength_buildideal(
+		core::conformation::Residue const & res,
+		int atm1, int atm2, Real &Kd, Real &d0 );
+
+	// another helper function: read backbone dependent db files
+	void
+	read_bbdep_table(
+		std::string filename,
+		boost::unordered_map< atm_name_single, CartBondedParametersOP > &bondlengths,
+		boost::unordered_map< atm_name_pair, CartBondedParametersOP > &bondangles,
+		std::string res );
+
+	
+	// defaults (they should be rarely used as everything should be in the DB now)
+	Real k_length_, k_angle_, k_torsion_, k_torsion_proton_, k_torsion_improper_;
+
+	// backbone-independent parameters (keyed on atom names)
+	boost::unordered_map< atm_name_quad, 	CartBondedParametersOP > torsions_indep_;
+	boost::unordered_map< atm_name_triple, CartBondedParametersOP > bondangles_indep_;
+	boost::unordered_map< atm_name_pair, CartBondedParametersOP > bondlengths_indep_;
+
+	// backbone-dependent parameter sets
+	boost::unordered_map< atm_name_pair, CartBondedParametersOP >
+		bondangles_bbdep_def_, bondangles_bbdep_pro_, bondangles_bbdep_valile_, bondangles_bbdep_prepro_, bondangles_bbdep_gly_;
+	boost::unordered_map< atm_name_single, CartBondedParametersOP >
+		bondlengths_bbdep_def_, bondlengths_bbdep_pro_, bondlengths_bbdep_valile_, bondlengths_bbdep_prepro_, bondlengths_bbdep_gly_;
+
+	// options
+	bool bbdep_bond_params_, bbdep_bond_devs_;
 };
 
 
+
+
 ///////////////////
+///
+/// the energy method
 class CartesianBondedEnergy : public ContextIndependentLRTwoBodyEnergy {
 public:
 	typedef ContextIndependentLRTwoBodyEnergy  parent;
@@ -179,8 +197,25 @@ public:
 		EnergyMap & emap
 	) const;
 
-	virtual	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const ;
+	void
+	eval_intrares_energy(
+		conformation::Residue const &,
+		pose::Pose const &,
+		ScoreFunction const &,
+		EnergyMap &
+	) const;
+
+	//fpd because of separate pre-proline distributions
+	//    this function must be called from residue_pair_energy
+	//    rather than defined in intrares energy
+	virtual	void
+	eval_singleres_energy(
+	  conformation::Residue const & rsd,
+		pose::Pose const & pose,
+		ScoreFunction const & sfxn,
+		EnergyMap & emap,
+		bool preproline
+	) const;
 
 	// helper functions to handle improper torsions
 	// intra-res impropers
@@ -202,38 +237,66 @@ public:
 		EnergyMap & emap
 	) const;
 
-	// deriv impropers
+	void
+	eval_residue_pair_derivatives(
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		ResSingleMinimizationData const &,
+		ResSingleMinimizationData const &,
+		ResPairMinimizationData const & min_data,
+		pose::Pose const &,
+		EnergyMap const & weights,
+		utility::vector1< DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< DerivVectorPair > & r2_atom_derivs
+	) const;
+
+	// improper derivatives
  	virtual	void
  	eval_improper_torsions_derivative(
- 		id::AtomID const & id,
- 		pose::Pose const & pose,
-		kinematics::DomainMap const & domain_map,
- 		ScoreFunction const & sfxn,
- 		EnergyMap const & emap,
- 		Vector & F1,
-		Vector & F2
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		EnergyMap const & weights,
+		utility::vector1< DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< DerivVectorPair > & r2_atom_derivs
  	) const;
 
+	// improper derivatives
+ 	virtual	void
+ 	eval_improper_torsions_derivative(
+		conformation::Residue const & rsd,
+		EnergyMap const & weights,
+		utility::vector1< DerivVectorPair > & r_atom_derivs
+ 	) const;
 
-	virtual	void
-	eval_intrares_energy(
-	  conformation::Residue const & rsd,
+	// single-residue derivatives
+	void
+	eval_singleres_derivatives(
+		conformation::Residue const & rsd,
+		EnergyMap const & weights,
+		utility::vector1< DerivVectorPair > & r_atom_derivs,
+		bool preproline) const;
+
+	// dof (bbdep) derivatives
+	virtual	Real
+	eval_intraresidue_dof_derivative(
+		conformation::Residue const & rsd,
+		ResSingleMinimizationData const & min_data,
+		id::DOF_ID const & dof_id,
+		id::TorsionID const & torsion_id,
 		pose::Pose const & pose,
 		ScoreFunction const & sfxn,
-		EnergyMap & emap
+		EnergyMap const & weights
 	) const;
 
-	virtual	void
-	eval_atom_derivative(
-		id::AtomID const & id,
-		pose::Pose const & pose,
-		kinematics::DomainMap const & domain_map,
-		ScoreFunction const & sfxn,
-		EnergyMap const & emap,
-		Vector & F1,
-		Vector & F2
-	) const;
+	virtual	bool
+	defines_intrares_energy( EnergyMap const & /*weights*/ ) const { return false; }
 
+	virtual	bool
+	defines_intrares_dof_derivatives( pose::Pose const & p ) const { return true; }
+
+	//fpd  use the new minimizer interface
+	virtual bool
+	minimize_in_whole_structure_context( pose::Pose const & ) const { return false; }
 
 	virtual
 	Distance
@@ -247,15 +310,11 @@ public:
 
 private:
 
-	mutable BondAngleDatabaseOP db_angle_;
-	mutable BondLengthDatabaseOP db_length_;
-	mutable TorsionDatabaseOP db_torsion_;
+	// the ideal parameter database
+	static IdealParametersDatabaseOP db_;
 
-	// options
+	// option
 	bool linear_bonded_potential_;
-	core::Real cartbonded_len_, cartbonded_ang_, cartbonded_tors_, cartbonded_proton_;
-
-private:
 
 	virtual
 	core::Size version() const;
