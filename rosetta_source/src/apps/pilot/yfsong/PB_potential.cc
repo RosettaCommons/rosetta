@@ -91,6 +91,15 @@ void write_APBS_config(core::pose::Pose & pose, std::ostream & config_file, std:
 	numeric::xyzVector <core::Real> dimension_fine = length + numeric::xyzVector <core::Real> (fadd,fadd,fadd);
 	numeric::xyzVector <core::Real> dimension_coarse = length * cfac;
 	numeric::xyzVector <core::Size> n_grid = static_cast< numeric::xyzVector <core::Size> > (dimension_fine / space + numeric::xyzVector <core::Real> (1.,1.,1.));
+
+	// Shrink fine dimensions if they exceed coarse dimensions
+	for (core::Size i = 0; i < 3 ; i++) 
+	{
+		if(dimension_fine[i] > dimension_coarse[i])
+		{
+			dimension_fine[i] = dimension_coarse[i];
+		}
+	}
 	
 	using namespace ObjexxFCL::fmt;
 	config_file << "#" << std::endl;
