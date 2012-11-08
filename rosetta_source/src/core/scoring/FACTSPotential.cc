@@ -311,7 +311,9 @@ void FACTSRotamerSetInfo::initialize( RotamerSet const & rotamer_set )
 /*               (macro)molecule embedded in a continuum solvent using FACTS method               */
 /*                                                                                                */
 /**************************************************************************************************/
-	FACTSPotential::FACTSPotential (){
+	FACTSPotential::FACTSPotential ():
+		MultiplicitiveFactor_(332.07156);
+{
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 

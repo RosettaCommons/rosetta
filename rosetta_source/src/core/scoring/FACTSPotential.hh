@@ -459,7 +459,6 @@ namespace scoring {
 
 			// Accessors
 			Real Tau() const{	return Tau_; }
-			Real Gamma() const { return Gamma_; }
 			Real Kappa() const { return Kappa_; }
 			Real MultiplicitiveFactor() const { return MultiplicitiveFactor_; };
 			Real GBPair_cut() const { return GBpair_cut_; };
@@ -471,12 +470,7 @@ namespace scoring {
 			//solvation_free_energy corresponds to deltaG(FACTS) = deltaG(el,FACTS) + Gamma * sigma(Si(FACTS)) i.e. equation 12 on page 706 of FACTS paper
 
 			bool options_registered_;
-			const static Real Gamma_ = 0.025; // The empirical surface tension paramter
-			const static Real MultiplicitiveFactor_ = 332.07156; // An extra parameter used before Kappa
-			//const static Real MAX_SELFDCUT2 = 72.25;
-			//const static Real Tau_ = 0.9872611; // The coefficient of the GB formula in equation 8 on page 706 of FACTS paper
-			//const static Real Kappa_ = 4.0; // The coefficient of RiRj in GB formula in equation 8 part be.
-			//const static Real GBpair_cut_ = 12.0; //cut-off radius (R^FACTS_i) for calculating interaction-energy i.e. equation 8 of page 704 of FACTS paper
+			Real MultiplicitiveFactor_;
 			Real Tau_;
 			Real Kappa_;
 			Real GBpair_cut_;
