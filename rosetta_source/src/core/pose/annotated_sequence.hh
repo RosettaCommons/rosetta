@@ -22,7 +22,7 @@
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 
-// AUTO-REMOVED #include <string>
+#include <string>
 
 #include <utility/vector1.hh>
 
@@ -78,18 +78,24 @@ void make_pose_from_sequence(
 );
 
 
-/// @brief Creates a Pose from an annotated polysaccharide sequence <sequence> with ResidueTypeSet <residue_set> and
+/// @brief Create a Pose from an annotated polysaccharide sequence <sequence> with ResidueTypeSet <residue_set> and
 /// stores it in <pose>.
 void make_pose_from_saccharide_sequence(pose::Pose & pose,
 		std::string const & sequence,
 		chemical::ResidueTypeSet const & residue_set,
 		bool const auto_termini = true);
 
-/// @brief Creates a Pose from an annotated polysaccharide sequence <sequence> with residue type set name
+/// @brief Create a Pose from an annotated polysaccharide sequence <sequence> with residue type set name
 /// <type_set_name> and stores it in <pose>.
 void make_pose_from_saccharide_sequence(pose::Pose & pose,
 		std::string const & sequence,
-		std::string const & type_set_name,
+		std::string const & type_set_name = "fa_standard",
+		bool const auto_termini = true);
+
+/// @brief Return a Pose from an annotated polysaccharide sequence <sequence> with residue type set name
+/// <type_set_name>.
+pose::PoseOP pose_from_saccharide_sequence(std::string const & sequence,
+		std::string const & type_set_name = "fa_standard",
 		bool const auto_termini = true);
 
 

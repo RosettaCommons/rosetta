@@ -486,7 +486,7 @@ make_pose_from_saccharide_sequence(pose::Pose & pose,
 	// TEMP: Fix inter-residue torsion angel (in this case phi) until I can understand how to fix this problem globally
 	// for Rosetta.  (The default setting is 0.0, which sucks.) ~ Labonte
 	for (uint res_num = 2; res_num <= pose.total_residue(); ++res_num) {
-		pose.set_phi(res_num, 180.0);
+		pose.set_phi(res_num, -120.0);
 	}
 
 	if (auto_termini) {
@@ -504,13 +504,27 @@ make_pose_from_saccharide_sequence(pose::Pose & pose,
 void
 make_pose_from_saccharide_sequence(pose::Pose & pose,
 		std::string const & sequence,
-		std::string const & type_set_name,
+		std::string const & type_set_name /*"fa_standard"*/,
 		bool const auto_termini /*true*/)
 {
 	using namespace chemical;
 
 	ResidueTypeSetCAP type_set(ChemicalManager::get_instance()->residue_type_set(type_set_name));
 	make_pose_from_saccharide_sequence(pose, sequence, *type_set, auto_termini);
+}
+
+// Return a Pose from an annotated polysaccharide sequence <sequence> with residue type set name <type_set_name>.
+/// @details A convenience method for PyRosetta.
+pose::PoseOP
+pose_from_saccharide_sequence(std::string const & sequence,
+		std::string const & type_set_name /*"fa_standard"*/,
+		bool const auto_termini /*true*/)
+{
+	using namespace pose;
+
+	PoseOP pose = new Pose();
+	make_pose_from_saccharide_sequence(*pose, sequence, type_set_name, auto_termini);
+	return pose;
 }
 
 

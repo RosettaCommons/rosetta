@@ -19,6 +19,7 @@
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/annotated_sequence.hh>
 #include <core/import_pose/import_pose.hh>
 
 // Basic headers
@@ -36,15 +37,21 @@ public:
 	void
 	setUp()
 	{
+		using namespace core::pose;
 		using namespace core::import_pose;
 		using namespace basic::options;
 
 		core_init();
 		option[OptionKeys::in::include_sugars](true);
+
+		// Test that oligosaccharides are loaded correctly.
 		pose_from_pdb(maltotriose_, "core/chemical/carbohydrates/maltotriose.pdb");
 		pose_from_pdb(isomaltose_,  "core/chemical/carbohydrates/isomaltose.pdb");
 
-		// TODO: Test several other cases besides glucose.
+		// Test that oligosaccharides can be created from a given sequence.
+		make_pose_from_saccharide_sequence(lactose_, "beta-D-Galp-(1->4)-Glcp");
+
+		// TODO: Test several other cases.
 	}
 
 	// Destruction
@@ -130,18 +137,16 @@ public:
 		TS_TRACE("Testing chain_sequence() method of Pose with polysaccharide chains.");
 		TS_ASSERT_EQUALS(maltotriose_.chain_sequence(1), "alpha-D-Glcp-(1->4)-alpha-D-Glcp-(1->4)-D-Glcp");
 		TS_ASSERT_EQUALS(isomaltose_.chain_sequence(1), "alpha-D-Glcp-(1->6)-D-Glcp");
+		TS_ASSERT_EQUALS(lactose_.chain_sequence(1), "beta-D-Galp-(1->4)-D-Glcp");
 	}
 
 	// Confirm that backbone torsion angles are assigned correctly.
 	void test_Pose_phi_psi_omega_w_polysaccharide()
 	{
 		TS_TRACE("Testing phi(), psi(), and omega() methods of Pose with polysaccharide chains.");
-		TS_TRACE(isomaltose_.phi(2));
-		TS_TRACE(isomaltose_.psi(2));
-		TS_TRACE(isomaltose_.omega(2));
-		//TS_ASSERT_DELTA(isomaltose_.phi(2), 44.3268, 0.001);
-		//TS_ASSERT_DELTA(isomaltose_.psi(2), 170.869, 0.001);
-		//TS_ASSERT_DELTA(isomaltose_.omega(2), 49.383, 0.001);
+		TS_ASSERT_DELTA(isomaltose_.phi(2), 44.3268, 0.001);
+		TS_ASSERT_DELTA(isomaltose_.psi(2), -170.869, 0.001);
+		TS_ASSERT_DELTA(isomaltose_.omega(2), 49.383, 0.001);
 	}
 
 	// Confirm that branches are handled properly.
@@ -171,5 +176,6 @@ private:
 	// Private data ////////////////////////////////////////////////////////////
 	core::pose::Pose maltotriose_;  // a (1alpha->4) trisaccharide of D-glucose
 	core::pose::Pose isomaltose_;  // a (1alpha->6) disaccharide of D-glucose
+	core::pose::Pose lactose_;  // a (1beta->4) disaccharide of D-glucose and D-galactose
 
 };  // class CarbohydrateInfoTests
