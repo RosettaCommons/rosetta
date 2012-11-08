@@ -38,6 +38,7 @@ enum EnergyMethods
 enum LongRangeEnergyType {
 	constraints_lr = 1,
 	gen_born_lr,
+	facts_lr,
 	PB_elec_lr,
 	cart_bonded_lr,
 	DFIRE,

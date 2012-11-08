@@ -128,6 +128,7 @@
 #include <core/scoring/methods/SuckerEnergyCreator.hh>
 #include <core/scoring/methods/GaussianOverlapEnergyCreator.hh>
 #include <core/scoring/methods/YHHPlanarityEnergyCreator.hh>
+#include <core/scoring/methods/FACTSEnergyCreator.hh>
 #include <core/pack/interaction_graph/SurfaceEnergyCreator.hh>
 #include <core/pack/interaction_graph/HPatchEnergyCreator.hh>
 #include <core/scoring/methods/SymmetricLigandEnergyCreator.hh>
@@ -388,6 +389,7 @@ static EnergyMethodRegistrator< scoring::rna::RNA_Mg_EnergyCreator > RNA_Mg_Ener
 static EnergyMethodRegistrator< scoring::rna::RNA_FullAtomVDW_BasePhosphateCreator > RNA_FullAtomVDW_BasePhosphateCreator_registrator;
 static EnergyMethodRegistrator< scoring::sym_e::symECreator > symECreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::PoissonBoltzmannEnergyCreator > PoissonBoltzmannEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::FACTSEnergyCreator > FACTSEnergyCreator_registrator;
 
 static EnergyMethodRegistrator< scoring::saxs::FastSAXSEnergyCreator > FastSAXSEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::saxs::SAXSEnergyCreatorCEN > SAXSEnergyCreatorCEN_registrator;

@@ -1,4 +1,3 @@
-namespace fold_cst { BooleanOptionKey const ramp_coord_cst( "fold_cst:ramp_coord_cst" );  }
 namespace resample { BooleanOptionKey const resample( "resample" );  }
 namespace resample { FileOptionKey const silent( "resample:silent" );  }
 namespace resample { StringOptionKey const tag( "resample:tag" );  }
@@ -169,6 +168,10 @@ namespace score { StringOptionKey const nmer_pssm( "score:nmer_pssm" );  }
 namespace score { StringOptionKey const nmer_pssm_list( "score:nmer_pssm_list" );  }
 namespace score { RealOptionKey const nmer_pssm_scorecut( "score:nmer_pssm_scorecut" );  }
 namespace score { IntegerOptionKey const nmer_ref_seq_length( "score:nmer_ref_seq_length" );  }
+namespace score { RealOptionKey const facts_GBpair_cut( "score:facts_GBpair_cut" );  }
+namespace score { RealOptionKey const facts_kappa( "score:facts_kappa" );  }
+namespace score { BooleanOptionKey const facts_apprx( "score:facts_apprx" );  }
+namespace score { BooleanOptionKey const facts_asp_patch( "score:facts_asp_patch" );  }
 namespace corrections { BooleanOptionKey const corrections( "corrections" );  }
 namespace corrections { BooleanOptionKey const correct( "corrections:correct" );  }
 namespace corrections { namespace score { BooleanOptionKey const score( "corrections:score" );  } }

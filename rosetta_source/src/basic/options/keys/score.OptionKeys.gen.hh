@@ -103,6 +103,10 @@ namespace score { extern StringOptionKey const nmer_pssm; }
 namespace score { extern StringOptionKey const nmer_pssm_list; }
 namespace score { extern RealOptionKey const nmer_pssm_scorecut; }
 namespace score { extern IntegerOptionKey const nmer_ref_seq_length; }
+namespace score { extern RealOptionKey const facts_GBpair_cut; }
+namespace score { extern RealOptionKey const facts_kappa; }
+namespace score { extern BooleanOptionKey const facts_apprx; }
+namespace score { extern BooleanOptionKey const facts_asp_patch; }
 
 } // namespace OptionKeys
 } // namespace options
