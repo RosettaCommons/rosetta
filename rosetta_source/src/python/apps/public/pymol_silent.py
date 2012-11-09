@@ -313,7 +313,8 @@ def parse_sequence( annotated ):
     i = 0
     while i < len(annotated):
         name = annotated[i]
-        if annotated[i+1] == "[":
+	#Sometimes the last amino acid doesn't have additional type specifications.
+        if i+1 < len(annotated) and annotated[i+1] == "[":
             i=i+2
             full = []
             while i < len(annotated) and annotated[i] != "]":
@@ -381,6 +382,12 @@ def checktags(tag, rextags):
     return False
 
 def silent_load(filename, *tags, **kwds): # tags = empty loads all the strucutres. (kwds needed to eat a superflous _self parameter)
+    """silent_load filename, [tags]
+
+    Load the given tags from the given Rosetta binary-format silent file into appropriately named structures in Pymol.
+    Tags can be zero or more comma separated tag. If no tags are given, load all availible tags.
+    Python-style regex expansion can be used to match multiple tags. Regexes must match the entire tag to be accepted.
+    """
     # Add start and end so we don't get partial matches.
     # Strip out whitespace and quote marks (shouldn't occur in tags or regex, but might occur due to terminal quoting)
     rextags = [ re.compile( "^" + t.strip().strip('"'+"'") + "$") for t in tags ]
@@ -410,6 +417,9 @@ def silent_load(filename, *tags, **kwds): # tags = empty loads all the strucutre
                             pass
 
 def silent_tags(filename):
+    """silent_tags filename
+
+    Show all the availible tags associated with the given Rosetta binary-format silent file.""" 
     tags = []
     with open(filename) as f:
         for line in f:
