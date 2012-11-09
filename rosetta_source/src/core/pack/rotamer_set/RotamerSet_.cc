@@ -704,7 +704,7 @@ RotamerSet_::compute_one_body_energies(
 				rniend = lrec->const_neighbor_iterator_end( theresid );
 				(*rni) != (*rniend); ++(*rni) ) {
 			Size const neighbor_id = rni->neighbor_id();
-			if( neighbor_id == theresid ) continue; //assert( neighbor_id != theresid );
+			assert( neighbor_id != theresid );
 			if ( task.pack_residue( neighbor_id ) ) continue;
 
 			(*lr_iter)->evaluate_rotamer_background_energies(

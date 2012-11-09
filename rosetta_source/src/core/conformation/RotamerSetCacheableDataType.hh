@@ -26,7 +26,6 @@ namespace RotamerSetCacheableDataType {
 /// @brief enum indexing the types for the DataCache within the RotamerSet class
 enum Enum {
 	LK_BALL_ROTAMER_SET_INFO = 1,
-	FACTS_ROTAMER_SET_INFO,
 	GEN_BORN_ROTAMER_SET_INFO,
 	// *** IMPORTANT ***
 	// The 'num_cacheable_data_types' below must be the last enum, and must

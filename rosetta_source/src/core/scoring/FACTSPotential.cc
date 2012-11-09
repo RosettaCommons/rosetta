@@ -21,7 +21,7 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/pose/Pose.hh>
-#include <core/pack/task/PackerTask.hh>
+//#include <core/pack/task/PackerTask.hh>
 #include <core/conformation/RotamerSetBase.hh>
 #include <core/conformation/RotamerSetCacheableDataType.hh>
 #include <core/pose/datacache/CacheableDataType.hh>

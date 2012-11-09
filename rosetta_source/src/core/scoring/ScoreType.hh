@@ -234,8 +234,6 @@ enum ScoreType {
 	// 30 as of 1/7/2007 -- don't ever code using the literal "30", this is just a helpful count
 
 	gb_elec,
-	facts_elec,
-	facts_sasa,
 
 	//Full atom disulfide terms
 	dslf_ss_dst,

@@ -33,7 +33,6 @@
 #include <core/scoring/Ramachandran2B.hh>
 #include <core/scoring/OmegaTether.hh>
 #include <core/scoring/GenBornPotential.hh>
-#include <core/scoring/FACTSPotential.hh>
 #include <core/scoring/AtomVDW.hh>
 #include <core/scoring/rna/RNA_AtomVDW.hh>
 #include <core/scoring/geometric_solvation/DatabaseOccSolEne.hh>
@@ -126,7 +125,6 @@ ScoringManager::ScoringManager() :
 	p_aa_( 0 ),
 	water_adduct_hbond_potential_( 0 ),
 	gen_born_potential_( 0 ),
-	facts_potential_( 0 ),
 	fa_disulfide_potential_( 0 ),
 	cen_disulfide_potential_( 0 ),
 	disulfide_matching_potential_( 0 ),
@@ -257,17 +255,6 @@ ScoringManager::get_GenBornPotential() const
 		gen_born_potential_ = new GenBornPotential();
 	}
 	return *gen_born_potential_;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-FACTSPotential const &
-ScoringManager::get_FACTSPotential() const
-{
-	if (facts_potential_ == 0 )
-	{
-		facts_potential_ = new FACTSPotential();
-	}
-	return *facts_potential_;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

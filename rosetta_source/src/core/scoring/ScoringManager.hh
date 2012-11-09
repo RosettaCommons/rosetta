@@ -33,7 +33,6 @@
 //#include <core/scoring/InterchainPotential.fwd.hh>
 #include <core/scoring/SecondaryStructurePotential.fwd.hh>
 #include <core/scoring/GenBornPotential.fwd.hh>
-#include <core/scoring/FACTSPotential.fwd.hh>
 #include <core/scoring/AtomVDW.fwd.hh>
 #include <core/scoring/carbon_hbonds/CarbonHBondPotential.fwd.hh>
 #include <core/scoring/geometric_solvation/DatabaseOccSolEne.fwd.hh>
@@ -104,8 +103,6 @@ public:
 	PairEPotential const & get_PairEPotential() const;
 
 	GenBornPotential const & get_GenBornPotential() const;
-
-	FACTSPotential const & get_FACTSPotential() const;
 
 	dna::DNA_BasePotential const & get_DNA_BasePotential() const;
 
@@ -255,7 +252,6 @@ private:
 	mutable P_AAOP p_aa_;
 	mutable WaterAdductHBondPotentialOP water_adduct_hbond_potential_;
 	mutable GenBornPotentialOP gen_born_potential_;
-	mutable FACTSPotentialOP facts_potential_;
 	mutable disulfides::FullatomDisulfidePotentialOP fa_disulfide_potential_;
 	mutable disulfides::CentroidDisulfidePotentialOP cen_disulfide_potential_;
 	mutable disulfides::DisulfideMatchingPotentialOP disulfide_matching_potential_;
