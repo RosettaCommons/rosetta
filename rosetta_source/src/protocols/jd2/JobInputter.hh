@@ -50,10 +50,6 @@ public:
 	///  using
 	virtual JobInputterInputSource::Enum input_source() const = 0;
 
-	/// @brief if the job_inputter needs to do any resource cleanup after a job is finished, it should happen here. Stubbed out in the base class
-	//See the Jd2ResourceManagerJobInputter for a usage example
-	virtual void cleanup_input_after_job_completion(JobOP current_job_);
-
 	///@brief call this with input_source() to get the input source of a
 	///particular job inputter
 	static

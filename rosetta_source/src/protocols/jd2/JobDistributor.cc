@@ -639,7 +639,6 @@ bool JobDistributor::obtain_new_job(bool reconsider_current_job)
 void JobDistributor::job_succeeded(core::pose::Pose & pose, core::Real run_time)
 {
 	job_outputter_->final_pose(current_job_, pose);
-	job_inputter_->cleanup_input_after_job_completion(current_job_);
 	//current_job_->set_completed();
 	mark_job_as_completed(current_job_id_, run_time);
 	return;

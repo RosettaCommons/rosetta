@@ -36,6 +36,7 @@ namespace jd2 {
 class JD2ResourceManagerJobInputter : public JobInputter
 {
 public:
+	JD2ResourceManagerJobInputter();
 	virtual ~JD2ResourceManagerJobInputter();
 
 	///@brief this function is responsible for filling the pose reference with the pose indicated by the job.  The Job object (within its InnerJob) contains a PoseCOP.  This function needs to either fill the pose reference from the InnerJob or, on first demand of a pose from that InnerJob, instantiate the pose, hand off a COP to the InnerJob, and fill the reference.
@@ -48,9 +49,6 @@ public:
 	///  using
 	virtual JobInputterInputSource::Enum input_source() const;
 
-	/// @brief Delete the Resources associated with a job
-	virtual void cleanup_input_after_job_completion(JobOP current_job);
-
 	void
 	fill_jobs_from_stream(
 		std::istream & instream,
@@ -59,6 +57,11 @@ public:
 
 private:
 
+	/// @brief Delete the Resources associated with a job
+	virtual
+	void
+	cleanup_after_job_completion(
+		std::string const & job_tag);
 
 	void
 	parse_jobs_tags(
@@ -224,6 +227,11 @@ private:
         std::map< std::string, std::string > & resources_for_job
     );
 
+
+private:
+	///@brief save the last input tag so the resources loaded for it can
+	///be unloaded when we see a new input tag
+	std::string last_input_tag_;
 
 };
 

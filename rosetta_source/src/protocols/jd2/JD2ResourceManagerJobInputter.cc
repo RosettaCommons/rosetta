@@ -95,6 +95,9 @@ JD2ResourceManagerJobInputterCreator::create_JobInputter() const {
 }
 
 
+JD2ResourceManagerJobInputter::JD2ResourceManagerJobInputter() :
+	last_input_tag_("")
+{}
 
 JD2ResourceManagerJobInputter::~JD2ResourceManagerJobInputter() {}
 
@@ -105,19 +108,29 @@ JD2ResourceManagerJobInputter::pose_from_job(
 {
 	tr.Debug << "JD2ResourceManagerJobInputter::pose_from_job" << endl;
 
+	std::string const & input_tag(job->inner_job()->input_tag());
+
+	if(last_input_tag_ == ""){
+		last_input_tag_ = input_tag;
+	} else {
+		if(last_input_tag_ != input_tag){
+			cleanup_after_job_completion(last_input_tag_);
+			last_input_tag_ = input_tag;
+		}
+	}
+
 	if ( !job->inner_job()->get_pose() ) {
 		tr.Debug
-			<< "Retrieving pose from ResourceManager (tag = "
-			<< job->inner_job()->input_tag() << ")" << endl;
+			<< "Retrieving pose from ResourceManager (tag = " << input_tag << ")" << endl;
 		pose.clear();
 		JD2ResourceManager * jd2_resource_manager(
 			JD2ResourceManager::get_jd2_resource_manager_instance());
 		ResourceOP resource;
 
 		//Check to see if we have a Residue resource, if so load it into the chemical manager if it hasn't already been loaded
-		if(jd2_resource_manager->has_resource_tag_by_job_tag("residue",job->inner_job()->input_tag()))
+		if(jd2_resource_manager->has_resource_tag_by_job_tag("residue", input_tag))
 		{
-			ResourceOP residue_resource = jd2_resource_manager->get_resource_by_job_tag("residue",job->inner_job()->input_tag());
+			ResourceOP residue_resource(jd2_resource_manager->get_resource_by_job_tag("residue",input_tag));
 
 			core::chemical::ResidueTypeOP new_residue(dynamic_cast<core::chemical::ResidueType *>(residue_resource()));
 			std::string type_set_name(new_residue->residue_type_set().name());
@@ -129,15 +142,14 @@ JD2ResourceManagerJobInputter::pose_from_job(
 		}
 
 		try {
-			tr << "Loading startstruct " << jd2_resource_manager->find_resource_tag_by_job_tag( "startstruct", job->inner_job()->input_tag() ) << " for job " <<
-				job->inner_job()->input_tag() <<std::endl;
-			 resource = jd2_resource_manager->get_resource_by_job_tag(
-			"startstruct", job->inner_job()->input_tag() );
+			tr << "Loading startstruct " << jd2_resource_manager->find_resource_tag_by_job_tag( "startstruct", input_tag ) << " for job " <<
+				input_tag <<std::endl;
+			 resource = jd2_resource_manager->get_resource_by_job_tag("startstruct", input_tag);
 		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
 			std::ostringstream err;
 			err << e.msg() << std::endl;
 			err << "Failed to access 'startstruct' resource from the JD2ResourceManager for job '";
-			err << job->inner_job()->input_tag() << "' with nstruct index " << job->nstruct_index();
+			err << input_tag << "' with nstruct index " << job->nstruct_index();
 			err << "\n" << "Exception caught and re-thrown from JD2ResourceManagerJobInputter::pose_from_job\n";
 			throw utility::excn::EXCN_Msg_Exception( err.str() );
 		}
@@ -150,12 +162,9 @@ JD2ResourceManagerJobInputter::pose_from_job(
 			err
 				<< "Error trying to access starting structure (startstruct) "
 				<< "for job with tag '";
-			err << job->inner_job()->input_tag() << "'.";
-			if ( jd2_resource_manager->has_resource_tag_by_job_tag(
-					"startstruct", job->inner_job()->input_tag() ) ) {
-				ResourceTag rt =
-					jd2_resource_manager->find_resource_tag_by_job_tag(
-					"startstruct", job->inner_job()->input_tag() );
+			err << input_tag << "'.";
+			if ( jd2_resource_manager->has_resource_tag_by_job_tag("startstruct", input_tag) ) {
+				ResourceTag rt(jd2_resource_manager->find_resource_tag_by_job_tag("startstruct", input_tag));
 				err
 					<< " The resource tag '" << rt << "' "
 					<< "for this job is not for a Pose object" << endl;
@@ -192,16 +201,13 @@ JD2ResourceManagerJobInputter::fill_jobs( Jobs & jobs )
 	}
 }
 
-void JD2ResourceManagerJobInputter::cleanup_input_after_job_completion(JobOP current_job)
+void
+JD2ResourceManagerJobInputter::cleanup_after_job_completion(
+	std::string const & job_tag)
 {
 	JD2ResourceManager * jd2_resource_manager(
 				JD2ResourceManager::get_jd2_resource_manager_instance());
-	std::string job_tag(current_job->inner_job()->input_tag());
-	if(current_job->nstruct_index() < current_job->nstruct_max())
-	{
-		//If this is the case we aren't done with the nstructs yet.
-		return;
-	}
+
 	jd2_resource_manager->mark_job_tag_as_complete(job_tag);
 	std::list<ResourceTag> resources_for_job(jd2_resource_manager->get_resource_tags_for_job_tag(job_tag));
 
@@ -211,6 +217,11 @@ void JD2ResourceManagerJobInputter::cleanup_input_after_job_completion(JobOP cur
 		core::Size job_count(jd2_resource_manager->get_count_of_jobs_associated_with_resource_tag(*resource_list_it));
 		if(job_count == 0)
 		{
+			if(!jd2_resource_manager->ResourceManager::has_resource(*resource_list_it)){
+				tr << "Skipping deleting '" << *resource_list_it << "' because it doesn't exist in the ResourceManager." << std::endl;
+				continue;
+			}
+
 			//This might be a ResidueType.  if it is, we should delete the residue from the resource from the ChemicalManager
 			ResourceOP current_residue = jd2_resource_manager->find_resource(*resource_list_it);
 			core::chemical::ResidueTypeOP new_residue(dynamic_cast<core::chemical::ResidueType *>(current_residue()));

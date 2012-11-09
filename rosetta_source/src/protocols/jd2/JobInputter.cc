@@ -77,11 +77,5 @@ JobInputter::job_inputter_input_source_to_string(
 	}
 }
 
-void JobInputter::cleanup_input_after_job_completion(JobOP )
-{
-	//does nothing by default.  Most JobInputters don't need to implement this
-}
-
-
 } // jd2
 } // protocols

@@ -191,7 +191,7 @@ LazyResourceManager::get_resource_tags_for_job_tag(
 	{
 		stringstream err_msg;
 		err_msg
-			<< "Unable to find job tag " <<job_tag <<std::endl;
+			<< "Unable to find job tag '" << job_tag << "'" << std::endl;
 		utility_exit_with_message(err_msg.str());
 	}
 	return resource_list_it->second;
