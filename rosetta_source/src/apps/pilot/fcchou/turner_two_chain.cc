@@ -553,7 +553,7 @@ MC_run () {
 	utility::vector1< Size > backbones_mode ( backbones.size(), 2 );
 	utility::vector1< Size > nucleosides_mode ( nucleosides.size(), 2 );
 
-	Real const n_bp = std::min(len1, len2);
+	Size const n_bp = std::min(len1, len2);
 
 	if (len1 > len2) {
 		for (Size i = n_bp + 1; i <= len1; ++i) {
