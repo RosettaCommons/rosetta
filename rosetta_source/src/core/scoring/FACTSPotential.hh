@@ -140,9 +140,9 @@ namespace scoring {
 
 			//This function initializes the constants used for calculating the energy
 			void initialize_constants();
-			
+
 			void modify_volume( conformation::Residue const & rsd, Size i );
-			
+
 		public:
 			const static Size MAXNEIGH = 300;
 			//const static Real max_selfdcut2 = 100.0;
@@ -152,9 +152,9 @@ namespace scoring {
 			utility::vector1<Real> Ai_; // Ai (equation 3 on page 704 of FACTS paper)
 			utility::vector1<Real> Bi_; // Bi (equation 4 on page 704 of FACTS paper)
 			utility::vector1<Real> Ci_; // Ci (equation 6 on page 704 of FACTS paper)
-			utility::vector1<Real> Di_; // Di (equation 10 on page 706 of FACTS paper)	
-			utility::vector1<Real> Ei_; // Ei 
-			utility::vector1<Real> alpha_;// Gamma used in equation 12 on page 706 of FACTS paper 
+			utility::vector1<Real> Di_; // Di (equation 10 on page 706 of FACTS paper)
+			utility::vector1<Real> Ei_; // Ei
+			utility::vector1<Real> alpha_;// Gamma used in equation 12 on page 706 of FACTS paper
 			utility::vector1<bool> flag_for_calculation_;// this variable is used in res_res_burial and
 			                                             // evaluate_all_self_electrostatic_energies_and_SASA
 			utility::vector1<Vector> nmtr_; // nmtr of Bi (equation 4 on page 704 of FACTS paper)
@@ -176,12 +176,12 @@ namespace scoring {
 			Size natoms_;
 			utility::vector1<bool> not_using_;
 			utility::vector1<Real> q_; //list of charges of each atom
-			utility::vector1<Real> COradius_; //list of cut off radius (R^sphere_i) for calculating theta for self-energy 
+			utility::vector1<Real> COradius_; //list of cut off radius (R^sphere_i) for calculating theta for self-energy
 			utility::vector1<Real> volume_; //The volume for atoms with native van der waals
 
 			//For evaluating Ci for each atom (see equation 6 on page 704 of FACTS paper)
 			utility::vector1<Real> b1_;
-			utility::vector1<Real> b2_; 
+			utility::vector1<Real> b2_;
 
 			//For evaluating esolvE_i for each atom (see equation 7 on page 704 of FACTS paper)
 			utility::vector1<Real> a0_;
@@ -341,7 +341,7 @@ namespace scoring {
 			void setup_for_packing(
 														 pose::Pose & pose,
 														 utility::vector1< bool > const & repacking_residues ) const;
-			void setup_for_packing(pose::Pose & pose,	pack::task::PackerTask const & task	) const;
+			// Undefinded, commenting out to fix PyRosetta build  void setup_for_packing(pose::Pose & pose,	pack::task::PackerTask const & task	) const;
 
 			void update_residue_for_packing( pose::Pose & pose,
 																			 Size const seqpos
@@ -408,12 +408,12 @@ namespace scoring {
 																		FACTSResidueInfo & gb1
 																		) const;
 
-			Real polar_energy_pack_corrector( 
+			Real polar_energy_pack_corrector(
 																			 Residue const & ref_rsd,
 																			 Residue const & rsd,
 																			 FACTSResidueInfo const & facts_info
 																			 ) const;
-			
+
 		private:
 			void res_res_burial(
 													Residue const & rsd1,
