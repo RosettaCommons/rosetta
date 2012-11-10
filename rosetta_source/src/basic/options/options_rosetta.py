@@ -3414,7 +3414,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'stage1_1_cycles',                'Integer',    desc='Number of cycles for ab initio stage 1 in Stage1', default='2000'),
 			Option( 'stage1_2_cycles',                'Integer',    desc='Number of cycles for ab initio stage 2 in Stage1', default='2000'),
 			Option( 'stage1_3_cycles',                'Integer',    desc='Number of cycles for ab initio stage 3 in Stage1', default='2000'),
-			Option( 'stage1_4_cycles',                'Integer',    desc='Number of cycles for ab initio stage 4 in Stage1', default='4000'),
+			Option( 'stage1_4_cycles',                'Integer',    desc='Number of cycles for ab initio stage 4 in Stage1', default='400'),
 		), # hybridize
 	), # cm
 	Option_Group( 'ms' , # multistate_design

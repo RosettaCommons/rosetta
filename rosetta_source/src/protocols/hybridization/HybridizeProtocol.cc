@@ -313,23 +313,34 @@ HybridizeProtocol::check_and_create_fragments( core::pose::Pose & pose ) {
 		std::string tgt_seq = pose.sequence();
 		std::string tgt_ss(nres_tgt, '0');
 
-		// templates vote on secstruct
-		for (core::Size i=1; i<=templates_.size(); ++i) {
-			for (core::Size j=1; j<=templates_[i]->total_residue(); ++j ) {
-				core::Size tgt_pos = templates_[i]->pdb_info()->number(j);
-
-				runtime_assert( tgt_pos<=nres_tgt );
-				char tgt_ss_j = templates_[i]->secstruct(j);
-
-				if (tgt_ss[tgt_pos-1] == '0') {
-					tgt_ss[tgt_pos-1] = tgt_ss_j;
-				} else if (tgt_ss[tgt_pos-1] != tgt_ss_j) {
-					tgt_ss[tgt_pos-1] = 'D'; // templates disagree
-				}
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		if (option[ OptionKeys::in::file::psipred_ss2 ].user()) {
+			utility::vector1< char > psipred = read_psipred_ss2_file( pose );
+			for ( core::Size j=1; j<=nres_tgt; ++j ) {
+				tgt_ss[j-1] = psipred[j];
 			}
 		}
-		for ( core::Size j=1; j<=nres_tgt; ++j ) {
-			if (tgt_ss[j-1] == '0') tgt_ss[j-1] = 'D';
+		else {
+			// templates vote on secstruct
+			for (core::Size i=1; i<=templates_.size(); ++i) {
+				for (core::Size j=1; j<=templates_[i]->total_residue(); ++j ) {
+					if (!templates_[i]->residue(j).is_protein()) continue;
+					core::Size tgt_pos = templates_[i]->pdb_info()->number(j);
+					
+					runtime_assert( tgt_pos<=nres_tgt );
+					char tgt_ss_j = templates_[i]->secstruct(j);
+					
+					if (tgt_ss[tgt_pos-1] == '0') {
+						tgt_ss[tgt_pos-1] = tgt_ss_j;
+					} else if (tgt_ss[tgt_pos-1] != tgt_ss_j) {
+						tgt_ss[tgt_pos-1] = 'D'; // templates disagree
+					}
+				}
+			}
+			for ( core::Size j=1; j<=nres_tgt; ++j ) {
+				if (tgt_ss[j-1] == '0') tgt_ss[j-1] = 'D';
+			}
 		}
 
 		// pick from vall based on template SS + target sequence

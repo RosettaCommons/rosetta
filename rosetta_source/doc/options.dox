@@ -8210,7 +8210,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-stage1_4_cycles</b> \<Integer\><dt>
 <dd>Number of cycles for ab initio stage 4 in Stage1</dd><br>
-<dd>Default: 4000</dd><br>
+<dd>Default: 400</dd><br>
 </dl>
  </li>
 <li><h2>ms</h2>

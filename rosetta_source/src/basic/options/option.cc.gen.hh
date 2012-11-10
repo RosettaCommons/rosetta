@@ -1695,7 +1695,7 @@ option.add( basic::options::OptionKeys::cm::hybridize::auto_frag_insertion_weigh
 option.add( basic::options::OptionKeys::cm::hybridize::stage1_1_cycles, "Number of cycles for ab initio stage 1 in Stage1" ).def(2000);
 option.add( basic::options::OptionKeys::cm::hybridize::stage1_2_cycles, "Number of cycles for ab initio stage 2 in Stage1" ).def(2000);
 option.add( basic::options::OptionKeys::cm::hybridize::stage1_3_cycles, "Number of cycles for ab initio stage 3 in Stage1" ).def(2000);
-option.add( basic::options::OptionKeys::cm::hybridize::stage1_4_cycles, "Number of cycles for ab initio stage 4 in Stage1" ).def(4000);
+option.add( basic::options::OptionKeys::cm::hybridize::stage1_4_cycles, "Number of cycles for ab initio stage 4 in Stage1" ).def(400);
 option.add( basic::options::OptionKeys::ms::ms, "ms option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::ms::share_data, "share rotamers and energies between states -- valid only if state variability is defined rotamerically" ).def(false);
 option.add( basic::options::OptionKeys::ms::verbose, "" ).def(false);
