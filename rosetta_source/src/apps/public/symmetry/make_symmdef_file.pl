@@ -423,6 +423,7 @@ if ($ncs_mode == 1) {
 
 		# get superposition
 		my ($R,$rmsd, $COM_i, $COM_ij) = rms_align( $chains{ $primary_chain } , $chains{ $sec_chain_ids[0] } );
+		print STDERR "Aligning $primary_chain and $sec_chain wth RMS=$rmsd.\n";
 
 		if ( is_identity( $R ) ) {
 			print STDERR "Chains $primary_chain and $sec_chain related by transformation only! Aborting.\n";
