@@ -424,6 +424,10 @@ if ($ncs_mode == 1) {
 		# get superposition
 		my ($R,$rmsd, $COM_i, $COM_ij) = rms_align( $chains{ $primary_chain } , $chains{ $sec_chain_ids[0] } );
 		print STDERR "Aligning $primary_chain and $sec_chain wth RMS=$rmsd.\n";
+		print STDERR "Transformation:\n";
+		print STDERR "   ".$R->[0][0]." ".$R->[0][1]." ".$R->[0][2]."\n";
+		print STDERR "   ".$R->[1][0]." ".$R->[1][1]." ".$R->[1][2]."\n";
+		print STDERR "   ".$R->[2][0]." ".$R->[2][1]." ".$R->[2][2]."\n";
 
 		if ( is_identity( $R ) ) {
 			print STDERR "Chains $primary_chain and $sec_chain related by transformation only! Aborting.\n";
@@ -432,6 +436,9 @@ if ($ncs_mode == 1) {
 
 		my $del_COM = vsub ($COM_i, $COM_0);
 		push @allCOMs, $del_COM;
+		print STDERR "center ($primary_chain): ".$COM_0->[0]." ".$COM_0->[1]." ".$COM_0->[2]."\n";
+		print STDERR "center ($sec_chain): ".$COM_i->[0]." ".$COM_i->[1]." ".$COM_i->[2]."\n";
+		print STDERR "center->center transformation ".$del_COM->[0]." ".$del_COM->[1]." ".$del_COM->[2]."\n";
 
 		my ($X,$Y,$Z,$W)=R2quat($R);
 		my $Worig = $W;
