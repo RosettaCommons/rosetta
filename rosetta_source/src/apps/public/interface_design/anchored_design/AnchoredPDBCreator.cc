@@ -25,6 +25,7 @@
 #include <protocols/toolbox/pose_manipulation.hh>
 
 #include <protocols/loops/Loops.hh>
+#include <protocols/grafting/AnchoredGraftMover.hh>
 
 //JD headers
 #include <protocols/jd2/JobDistributor.hh>
@@ -123,21 +124,35 @@ public:
 	apply( core::pose::Pose & pose ){
 
 		//domain insertion
-		using protocols::toolbox::pose_manipulation::insert_pose_into_pose;
+		//using protocols::toolbox::pose_manipulation::insert_pose_into_pose;
 		core::Size const cycles(basic::options::option[ basic::options::OptionKeys::AnchoredPDBCreator::APDBC_cycles ].value());
-		//clone off insert_loop_end (it is passed by reference
-		core::Size loop_end(insert_loop_end);
-		core::pose::Pose combined(insert_pose_into_pose(
-			scaffold,
-			anchor,
-			insert_loop_start,
-			insert_point,
-			loop_end,
-			cycles));
+
+
+		//core::pose::Pose combined(insert_pose_into_pose(
+		//	scaffold,
+		//	anchor,
+		//	insert_loop_start,
+		//	insert_point,
+		//	loop_end,
+		//	cycles));
+
+		protocols::grafting::AnchoredGraftMover grafter = protocols::grafting::AnchoredGraftMover(insert_point, insert_point+1);
+		Size const Nter_flexibility = insert_point-insert_loop_start+1;
+		Size const Cter_flexibility = insert_loop_end-insert_point;
+
+		//(jadolfbr) Set AnchoredGraftMover options.
+		grafter.set_scaffold_flexibility(Nter_flexibility, Cter_flexibility);
+        grafter.set_cycles(cycles);
+        core::pose::Pose piece(anchor);
+		grafter.set_piece(piece, 0, 0);
+		grafter.set_mintype("dfpmin_armijo");//mintype from pose_into_pose
+		Pose combined(scaffold);//Copy the scaffold into combined before passing to Mover.
+		grafter.apply(combined);
+
 
 		//check on the loop quality
 		protocols::loops::Loops loops;
-		loops.add_loop(insert_loop_start, loop_end, insert_point);
+		loops.add_loop(insert_loop_start, grafter.get_Cter_loop_end(), insert_point);
 		protocols::analysis::LoopAnalyzerMover LAM(loops);
 		LAM.apply(combined);
 

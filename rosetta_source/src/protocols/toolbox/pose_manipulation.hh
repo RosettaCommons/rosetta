@@ -111,17 +111,6 @@ superimpose_pose_on_subset_CA(
 	int const offset = 0
 );
 
-///@author Steven Lewis smlewi@gmail.com
-///@brief inserts one pose into another pose, returning the product as a new value.  This is basically a seed for a domain insertion application.  The three core::Size arguments define a flexible surface loop on the scaffold, the insert pose will be added immediately after insert_point.  The insert will be left unchanged in internal-coordinate space except for the phi on the first residue, and the psi/omega on the last residue, and atoms whose bonding partners change as a result of the insertion.  Note that insert_loop_end is pass-by-reference: this field will be updated to reflect its numbering in the result pose (post-insertion).
-core::pose::Pose
-insert_pose_into_pose(
-											core::pose::Pose const & scaffold_pose,
-											core::pose::Pose const & insert_pose,
-											core::Size const insert_loop_start,
-											core::Size const insert_point,
-											core::Size & insert_loop_end,
-											core::Size const cycles = 1500
-);
 
 } //pose_manipulation
 } //toolbox

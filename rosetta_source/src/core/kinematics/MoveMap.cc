@@ -85,7 +85,7 @@ MoveMap::set_jump( id::JumpID const & jump, bool const setting ) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-///@details set a specific TorsionType moveable or not, eg "CHI"
+///@details set a specific TorsionType movable or not, eg "CHI"
 /// setting this TorsionType will clear data for individual MoveMapTorsionID and
 /// TorsionID with this TorsionType to keep these three maps in sync. Then query
 /// for a specific TorsionID or MoveMapTorsionID will turn to setting for TorsionType.
@@ -154,7 +154,7 @@ MoveMap::set( MoveMapTorsionID const & id, bool const setting )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-///@details set an individual Torsion movalbe or now, eg, "BB torsion 2 of residue 4"
+///@details set an individual Torsion movable or now, eg, "BB torsion 2 of residue 4"
 void
 MoveMap::set( TorsionID const & id, bool const setting )
 {

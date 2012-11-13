@@ -35,6 +35,11 @@ sources = {
 	"protocols/docking/stateless": [
 		"SaneDockingProtocol",
 	],
+    "protocols/grafting":[
+        "AnchoredGraftMover",
+        "GraftMoverBase",
+        "util",
+        ],
 	"protocols/ligand_docking": [
 		"AddHydrogen",
 		"AddHydrogens",
@@ -82,6 +87,7 @@ sources = {
 		"Interface",
 		"interface_distance_functions",
 	],
+
 }
 include_path = [
 ]
