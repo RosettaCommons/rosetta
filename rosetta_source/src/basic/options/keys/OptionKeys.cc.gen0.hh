@@ -22,6 +22,7 @@ namespace in { BooleanOptionKey const ignore_unrecognized_res( "in:ignore_unreco
 namespace in { BooleanOptionKey const ignore_waters( "in:ignore_waters" );  }
 namespace in { BooleanOptionKey const add_orbitals( "in:add_orbitals" );  }
 namespace in { BooleanOptionKey const include_sugars( "in:include_sugars" );  }
+namespace in { BooleanOptionKey const enable_branching( "in:enable_branching" );  }
 namespace in { BooleanOptionKey const remember_unrecognized_res( "in:remember_unrecognized_res" );  }
 namespace in { BooleanOptionKey const remember_unrecognized_water( "in:remember_unrecognized_water" );  }
 namespace in { BooleanOptionKey const detect_disulf( "in:detect_disulf" );  }
@@ -130,6 +131,7 @@ namespace in { namespace file { BooleanOptionKey const obey_ENDMDL( "in:file:obe
 namespace in { namespace file { BooleanOptionKey const new_chain_order( "in:file:new_chain_order" );  } }
 namespace in { namespace file { FileOptionKey const ddg_predictions_file( "in:file:ddg_predictions_file" );  } }
 namespace in { namespace file { IntegerVectorOptionKey const input_res( "in:file:input_res" );  } }
+namespace in { namespace file { BooleanOptionKey const read_pdb_link_records( "in:file:read_pdb_link_records" );  } }
 namespace in { namespace rdf { BooleanOptionKey const rdf( "in:rdf" );  } }
 namespace in { namespace rdf { BooleanOptionKey const sep_bb_ss( "in:rdf:sep_bb_ss" );  } }
 namespace MM { BooleanOptionKey const MM( "MM" );  }
@@ -643,4 +645,3 @@ namespace fold_cst { BooleanOptionKey const skip_on_noviolation_in_stage1( "fold
 namespace fold_cst { RealOptionKey const stage1_ramp_cst_cycle_factor( "fold_cst:stage1_ramp_cst_cycle_factor" );  }
 namespace fold_cst { RealOptionKey const stage2_constraint_threshold( "fold_cst:stage2_constraint_threshold" );  }
 namespace fold_cst { BooleanOptionKey const ignore_sequence_seperation( "fold_cst:ignore_sequence_seperation" );  }
-namespace fold_cst { BooleanOptionKey const no_recover_low_at_constraint_switch( "fold_cst:no_recover_low_at_constraint_switch" );  }

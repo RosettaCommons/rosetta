@@ -24,7 +24,8 @@
 #include <core/io/pdb/file_data.hh>
 #include <core/pose/Remarks.hh>
 #include <core/types.hh>
- #include <basic/options/option.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 // Utility headers
@@ -98,7 +99,7 @@ std::vector<String> split(const String &s)
 	return r;
 }
 
-/// @details Parse given PDB data (represented as a string) in to vector of Records.
+/// @details Parse given PDB data (represented as a string) into vector of Records.
 std::vector<Record> PDB_DReader::parse(const String &pdb)
 {
 	runtime_assert(!pdb.empty()); //we're wasting time if there's no data here...
@@ -121,8 +122,9 @@ FileData PDB_DReader::createFileData(std::vector<Record> & VR, PDB_DReaderOption
 	FileData fd;
 
 	bool read_pdb_header =
-		basic::options::option[
-			basic::options::OptionKeys::run::preserve_header]();
+			basic::options::option[basic::options::OptionKeys::run::preserve_header]();
+	bool read_link_records =
+			basic::options::option[basic::options::OptionKeys::in::file::read_pdb_link_records]();
 
 	fd.initialize_header_information();
 
@@ -175,6 +177,13 @@ FileData PDB_DReader::createFileData(std::vector<Record> & VR, PDB_DReaderOption
 				fd.store_header_record(VR[i]);
 			}
 
+		// Record contains nonstandard polymer linkage information from the Connectivity Annotation Section of the PDB
+		//file.
+		} else if (record_type == "LINK  ") {
+			if (read_link_records) {
+				fd.store_link_record(VR[i]);
+			}
+
 		// Record contains heterogen nomenclature information from the Heterogen section of the PDB file.
 		} else if (record_type == "HETNAM") {
 			fd.store_heterogen_names(VR[i]["hetID"].value, VR[i]["text"].value);
@@ -205,13 +214,13 @@ FileData PDB_DReader::createFileData(std::vector<Record> & VR, PDB_DReaderOption
 			ai.resSeq = atoi( R["resSeq"].value.c_str() );
 			ai.iCode = 0; if( R["iCode"].value.size() > 0 ) ai.iCode = R["iCode"].value[0];
 
-			// how can you check properly if something will successfuly convert to a number !?!?!?
+			// how can you check properly if something will successful convert to a number !?!?!?
 			bool force_no_occupancy = false;
 			if( R["x"].value == "     nan"){ai.x =0.0;force_no_occupancy=true;} else { ai.x = atof( R["x"].value.c_str() ); }
 			if( R["y"].value == "     nan"){ai.y =0.0;force_no_occupancy=true;} else { ai.y = atof( R["y"].value.c_str() ); }
 			if( R["z"].value == "     nan"){ai.z =0.0;force_no_occupancy=true;} else { ai.z = atof( R["z"].value.c_str() ); }
 
-			// check that the occupancy column actually exists. If it doesnt, assume full occupancy.
+			// check that the occupancy column actually exists. If it doesn't, assume full occupancy.
 			// otherwise read it.
 			if( R["occupancy"].value == "      ")  ai.occupancy = 1.0;
 			else                                   ai.occupancy = atof( R["occupancy"].value.c_str() );

@@ -122,6 +122,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-enable_branching</b> \<Boolean\><dt>
+<dd>Sets whether or not polymer branching is allowed.  The default value is false.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-remember_unrecognized_res</b> \<Boolean\><dt>
 <dd>Ignore unrecognized residues, but remember them in PDBInfo.</dd><br>
 <dd>Default: false</dd><br>
@@ -602,6 +607,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-input_res</b> \<IntegerVector\><dt>
 <dd>Residues already present in starting file</dd><br>
+</dl>
+<dl>
+<dt><b>-read_pdb_link_records</b> \<Boolean\><dt>
+<dd>Sets whether or not the LINK records in PDB files are read.  The default value is false.</dd><br>
+<dd>Default: false</dd><br>
 </dl>
  </li>
 <li><h2>in:rdf</h2>

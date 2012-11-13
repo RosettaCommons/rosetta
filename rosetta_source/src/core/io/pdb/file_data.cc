@@ -157,6 +157,7 @@ ResidueInformation::operator!=(
 	return !(*this == that);
 }
 
+
 /////////////////////////////////////////////
 
 FileData::~FileData()
@@ -307,6 +308,32 @@ FileData::finalize_header_information() {
 
 }
 
+
+// Store (non-standard) polymer linkages in a map.
+void
+FileData::store_link_record(Record & record)
+{
+	using namespace std;
+
+	LinkInformation link;
+
+	// Extract values from record fields.
+	link.name1_ = record["name1"].value;  // 1st atom name
+	link.resName1_ = record["resName1"].value;
+	link.resID1_ = record["resSeq1"].value + record["iCode1"].value + record["chainID1"].value;
+
+	link.name2_ = record["name2"].value;  // 2nd atom name
+	link.resName2_ = record["resName2"].value;
+	link.resID2_ = record["resSeq2"].value + record["iCode2"].value + record["chainID2"].value;
+
+	link.length_ = atof(record["length"].value.c_str());  // bond length
+
+	links[link.resID1_] = link;
+
+	TR.Debug << "LINK record information stored successfully." << std::endl;
+}
+
+
 // Store heterogen name information in map.
 /// @remarks  heterogen "names" for carbohydrates (from "Rosetta-ready" PDB files) instead have the name field parsed
 /// to extract the base (non-variant) ResidueType needed for a particular residue.
@@ -371,7 +398,6 @@ FileData::parse_heterogen_name_for_carbohydrate_residues(std::string const & tex
 /// @details
 /// init FileData structure from pose object.
 /// read atoms/residue information from Pose object and put it in FileData object using options defined in FileDataOptions.
-///
 void FileData::init_from_pose(core::pose::Pose const & pose, FileDataOptions const & options)
 {
 	using namespace core;
@@ -418,9 +444,7 @@ void FileData::init_from_pose(
 }
 
 
-///
 /// @details Convert given Pose object in to PDB format and send it to the given stream.
-///
 void FileData::dump_pdb(
 	core::pose::Pose const & pose,
 	std::ostream & out,
@@ -438,7 +462,6 @@ void FileData::dump_pdb(
 	write_additional_pdb_data( out, pose, fd, write_fold_tree );
 }
 
-///
 /// @details Convert given Pose object in to PDB format and save it to 'file_name' file.
 /// return: true if operation was completed without error, false other wise.
 bool FileData::dump_pdb(
@@ -459,7 +482,6 @@ bool FileData::dump_pdb(
 	return true;
 }
 
-///
 /// @details Convert given Pose object in to PDB format and send it to the given stream.
 /// only the residues corresponding to indices in 'residue_indices' will be output
 void
@@ -486,10 +508,8 @@ FileData::dump_pdb(
 }
 
 
-///
 /// @details Debug/Info function.
 /// Output FileData object to TR like stream in human redable format.
-///
 std::ostream& operator <<(std::ostream &os, FileData const & fd)
 {
 	os << "<FileData>{";
@@ -505,7 +525,6 @@ std::ostream& operator <<(std::ostream &os, FileData const & fd)
 
 /// @details  Temporary hacky hack
 /// Need better mechanism for this
-///
 std::string
 convert_res_name( std::string const & name )
 {
@@ -552,11 +571,9 @@ convert_atom_name( std::string const & res_name, std::string atom_name )
 	return atom_name;
 }
 
-///
-/// @details Convert FileData in to set of residues, sequences, coordinats.
+/// @details Convert FileData in to set of residues, sequences, coordinates.
 /// this is a convenience function, no magic done here.
 /// Well, maybe a little.
-///
 void FileData::create_working_data(
 	utility::vector1< ResidueInformation > & rinfo
 )
@@ -565,11 +582,9 @@ void FileData::create_working_data(
 	create_working_data( rinfo, options );
 }
 
-///
-/// @details Convert FileData in to set of residues, sequences, coordinats.
+/// @details Convert FileData in to set of residues, sequences, coordinates.
 /// this is a convenience function, no magic done here.
 /// Well, maybe a little.
-///
 void FileData::create_working_data(
 	utility::vector1< ResidueInformation > & rinfo,
 	FileDataOptions const & options
@@ -759,6 +774,7 @@ build_pose_from_pdb_as_is(
 	PDB_DReaderOptions options;
 	build_pose_from_pdb_as_is( pose, residue_set, filename, options );
 }
+
 void
 build_pose_from_pdb_as_is(
 	pose::Pose & pose,
@@ -834,6 +850,7 @@ build_pose_as_is1(
 	//Strings resids, sequence,
 	Strings pose_resids;
 	utility::vector1<ResidueTemps> pose_temps;
+	Strings branch_lower_termini;
 
 	int const nres_pdb( rinfos.size() );
 
@@ -850,7 +867,8 @@ build_pose_as_is1(
 	//recognized
 	bool last_residue_was_recognized(true);
 
-	// Loop over every residue in the FileData extracted from the PDB file.
+	// Loop over every residue in the FileData extracted from the PDB file, select appropriate ResidueTypes,
+	// create Residues, and build the Pose.
 	for ( int i=1; i<= nres_pdb; ++i ) {
 		ResidueInformation const & rinfo = rinfos[i];
 		std::string const & pdb_name = rinfo.resName;
@@ -863,9 +881,30 @@ build_pose_as_is1(
 				rinfo.terCount == rinfos[i-1].terCount && !separate_chemical_entity);
 		bool const same_chain_next = ( i < nres_pdb && chainID == rinfos[i+1].chainID &&
 				rinfo.terCount == rinfos[i+1].terCount && !separate_chemical_entity);
-		bool const is_lower_terminus( i == 1 || rinfos.empty() || !same_chain_prev );
+
+		// Determine polymer information: termini, branch points, etc.
+		bool const is_branch_point = fd.links.count(resid);  // if found in the links map
+		if (is_branch_point) {
+			// Find and store associated 1st residue of the branch to access later.
+			branch_lower_termini.push_back(fd.links[resid].resID2_);
+		}
+		bool const is_branch_lower_terminus = branch_lower_termini.contains(resid);
+		bool const is_lower_terminus( i == 1 || rinfos.empty() || (!same_chain_prev && !is_branch_lower_terminus) );
 		bool const is_upper_terminus( i == nres_pdb || !same_chain_next );
-		// bool const is_branch_point;  // TODO: This is where I will need to begin implementing branching. ~ Labonte
+
+		TR.Debug << "Residue " << i << std::endl;;
+		if (is_lower_terminus) {
+			TR.Debug << "...is a lower terminus." << std::endl;
+		}
+		if (is_upper_terminus) {
+			TR.Debug << "...is an upper terminus." << std::endl;
+		}
+		if (is_branch_point) {
+			TR.Debug << "...is a branch point." << std::endl;
+		}
+		if (is_branch_lower_terminus) {
+			TR.Debug << "...is the lower terminus of a branch." << std::endl;
+		}
 
 		ResidueCoords const & xyz = rinfo.xyz;
 		ResidueTemps  const & rtemp = rinfo.temps;
@@ -892,22 +931,32 @@ build_pose_as_is1(
 			// only take the desired variants
 			if ( is_polymer && ( is_lower_terminus != rsd_type.has_variant_type( LOWER_TERMINUS ) ||
 					is_upper_terminus != rsd_type.has_variant_type( UPPER_TERMINUS )) ) {
-				TR.Debug << "for residue " << i << ", discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
+				TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
+				continue;
+			}
+			if (is_polymer && (is_branch_point != rsd_type.has_variant_type(BRANCH_POINT))) {
+				TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
+				continue;
+			}
+			if (is_polymer && (is_branch_lower_terminus != rsd_type.has_variant_type(BRANCH_LOWER_TERMINUS))) {
+				TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
 				continue;
 			}
 			if ( rsd_type.aa() == aa_cys && rsd_type.has_variant_type( DISULFIDE ) && pdb_name != "CYD" ) {
-				TR.Debug << "for residue " << i << ", discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
+				TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
 				continue;
 			}
 			if ( !options.keep_input_protonation_state() &&
 				( rsd_type.has_variant_type( PROTONATED ) || rsd_type.has_variant_type( DEPROTONATED ) )){
-				TR.Debug << "for residue " << i << ", discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
+				TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
 				continue;
 			}
 			if (rsd_type.is_carbohydrate() && residue_type_base_name(rsd_type) != fd.carbohydrate_residue_type_base_names[resid]) {
-				TR.Debug << "for residue " << i << ", discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
+				TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
 				continue;
 			}
+
+			TR.Debug << "Trying '" << rsd_type.name() << "' ResidueType" << std::endl;
 
 			Size rsd_missing(0), xyz_missing(0);
 
@@ -937,14 +986,14 @@ build_pose_as_is1(
 		if(!best_index){
 			utility_exit_with_message( "Unrecognized residue: " + pdb_name );
 		}
+
 		ResidueType const & rsd_type( *(rsd_type_list[ best_index ]) );
-		//TR << "match: " << i << ' ' << rsd_type.name() << ' ' << best_xyz_missing << "\n";
+		TR.Debug << "Match: '" << rsd_type.name() << "'; missing " << best_xyz_missing << " coordinates" << std::endl;
 
 		if ( best_rsd_missing ) {
 			TR << "[ WARNING ] discarding " << best_rsd_missing << " atoms at position " << i <<
 				" in file " << fd.filename << ". Best match rsd_type:  " << rsd_type.name() << std::endl;
 		}
-
 
 		// check for missing mainchain atoms:
 		if ( rsd_type.is_polymer() ) {
@@ -986,13 +1035,11 @@ build_pose_as_is1(
 				// This is a bit of a dirty hack but it fixes the major problem of reading in rosetta
 				// pdbs which suually start at 0,0,0. However the magnitude of this offset is so small
 				// that the output pdbs should still match input pdbs. hopefully. yes. aehm.
-
-				double offset = 1e-250; /// coordinates now double, so we can use _really_ small offset.
+				double offset = 1e-250; // coordinates now double, so we can use _really_ small offset.
 				new_rsd->atom( local_strip_whitespace(iter->first) ).xyz( iter->second + offset );
 			}
 			//else runtime_assert( iter->first == " H  " && rsd_type.is_terminus() ); // special casee
 		}
-
 
 		// fill in b-factor from pdb file
 		// for ( ResidueTemps::const_iterator iter=res_temps.begin(), iter_end = res_temps.end();
@@ -1004,7 +1051,12 @@ build_pose_as_is1(
 		// }
 		Size const old_nres( pose.total_residue() );
 
-		if ( old_nres && ( is_lower_terminus  || !new_rsd->is_polymer() || !pose.residue_type( old_nres ).is_polymer() || !last_residue_was_recognized) ) {
+		if ( old_nres &&
+				( is_lower_terminus  ||
+				is_branch_lower_terminus ||  // TEMP
+				!new_rsd->is_polymer() ||
+				!pose.residue_type( old_nres ).is_polymer() ||
+				!last_residue_was_recognized) ) {
 			pose.append_residue_by_jump( *new_rsd, 1 /*pose.total_residue()*/ );
 		} else {
 			pose.append_residue_by_bond( *new_rsd );
@@ -1015,7 +1067,7 @@ build_pose_as_is1(
 
 
 		// update the pose-internal chain label if necessary
-		if ( is_lower_terminus && pose.total_residue() > 1 ) {
+		if ( (is_lower_terminus || is_branch_lower_terminus) && pose.total_residue() > 1 ) {
 			pose.conformation().insert_chain_ending( pose.total_residue() - 1 );
 		}
 
@@ -1023,19 +1075,28 @@ build_pose_as_is1(
 
 	} // i=1,nres_pdb
 
-	if( options.check_if_residues_are_termini() == true ) { // check termini status of pose residues
+
+	// Check termini status of newly created pose residues.
+	// Will this ever happen? ~ Labonte
+	if( options.check_if_residues_are_termini() ) {
 		Size const nres( pose.total_residue() );
 		for ( Size i=1; i<= nres; ++i ) {
 			//Residue const & rsd( pose.residue( i ) ); // THIS WAS A BAD BUG
 			if ( !pose.residue_type(i).is_polymer() ) continue;
 			if ( !pose.residue_type(i).is_lower_terminus() &&
-					( i == 1 || !pose.residue_type( i-1 ).is_polymer() || pose.residue_type( i-1 ).is_upper_terminus() ) ) {
-				TR << "Adding undetected lower terminus type! " << i << std::endl;
+					( i == 1 ||
+					!pose.residue_type( i-1 ).is_polymer() ||
+					(pose.residue_type( i-1 ).is_upper_terminus() &&
+							!pose.residue_type( i ).has_variant_type(BRANCH_LOWER_TERMINUS)) ) ) {
+				TR << "Adding undetected lower terminus type to residue " << i << std::endl;
 				core::pose::add_lower_terminus_type_to_pose_residue( pose, i );
 			}
 			if ( !pose.residue_type(i).is_upper_terminus() &&
-					( i == nres || !pose.residue_type(i+1).is_polymer() || pose.residue_type(i+1).is_lower_terminus() ) ) {
-				TR << "Adding undetected upper terminus type! " << i << std::endl;
+					( i == nres ||
+					!pose.residue_type(i+1).is_polymer() ||
+					pose.residue_type(i+1).is_lower_terminus() ||
+					pose.residue_type(i+1).has_variant_type(BRANCH_LOWER_TERMINUS)) ) {
+				TR << "Adding undetected upper terminus type to residue " << i << std::endl;
 				core::pose::add_upper_terminus_type_to_pose_residue( pose, i );
 			}
 		}
@@ -1120,7 +1181,8 @@ build_pose_as_is1(
 
 	pose.conformation().fill_missing_atoms( missing );
 
-	// most DNA structures lack 5' phosphate groups. 5' phosphates must be built to serve as part of the backbone for atom/fold tree purposes. Here they are made virtual so as not to affect physical calculations.
+	// most DNA structures lack 5' phosphate groups. 5' phosphates must be built to serve as part of the backbone for
+	// atom/fold tree purposes. Here they are made virtual so as not to affect physical calculations.
 	for ( uint seqpos(1), nres( pose.total_residue() ); seqpos <= nres; ++seqpos ) {
 		Residue const & rsd( pose.residue( seqpos ) );
 		if ( ! rsd.type().is_DNA() ) continue;

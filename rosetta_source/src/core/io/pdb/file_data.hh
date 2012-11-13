@@ -106,7 +106,7 @@ public:
 		<< "}";
 		return os;
 	}
-};
+};  // class AtomInformation
 
 typedef std::vector<AtomInformation> AtomChain;
 
@@ -134,11 +134,22 @@ public:
 	utility::vector1< AtomInformation > atoms;
 	std::map< std::string, Vector > xyz; //< map of names to coords;  redundant but used a lot in reader
 	std::map< std::string, double > temps; //< map of names to B-factors;  redundant but used a lot in reader
-};
+};  // class ResidueInformation
 
-///
+
+/// @brief A structure for storing information from PDB LINK records.
+struct LinkInformation {
+	std::string name1_;
+	std::string resName1_;
+	std::string resID1_;  // a 6-character resID, as defined elsewhere in FileData
+	std::string name2_;
+	std::string resName2_;
+	std::string resID2_;
+	core::Distance length_;
+};  // struct LinkInformation
+
+
 /// @brief FileData class. Hold data created from PDB file.
-///
 class FileData
 {
 public:
@@ -157,6 +168,12 @@ public:
 	HeaderInformationOP header;
 	std::string filename;
 	std::string modeltag;
+
+	// map for storing LINK records:
+	// key is 6-character resID of 1st residue in link
+	// TODO: Redesign to allow for multiple branches from the same residue; as keys must be unique, this current method
+	// limits us to a single branch. ~ Labonte
+	std::map<std::string, LinkInformation> links;
 
 	// map for storing (non-sugar) HETNAM records:
 	// key is hetID
@@ -186,12 +203,18 @@ public:
 	void
 	fill_header_records(std::vector< Record > & VR) const;
 
+
+	/// @brief Store (non-standard) polymer linkages in a map.
+	void store_link_record(Record & record);
+
+
 	/// @brief Store heterogen name information in a map.
 	void store_heterogen_names(std::string const & hetID, std::string const & text);
 
 	/// @brief Parse heterogen name data for a given carbohydrate and save the particular base (non-variant)
 	/// ResidueType needed in a map.
 	void parse_heterogen_name_for_carbohydrate_residues(std::string const & text);
+
 
 	/// @brief Fill FileData structure using information from given pose object.
 	void init_from_pose(core::pose::Pose const & pose);

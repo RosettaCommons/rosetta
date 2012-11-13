@@ -59,3 +59,5 @@ patches/ActeylatedProteinNterm.txt
 ## carbohydrate patches
 patches/carbohydrates/lower_terminus.txt
 patches/carbohydrates/upper_terminus.txt
+patches/carbohydrates/6-branch.txt
+patches/carbohydrates/branch_lower_term.txt

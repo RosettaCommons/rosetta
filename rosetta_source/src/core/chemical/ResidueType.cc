@@ -44,8 +44,6 @@
 /// @author
 /// Phil Bradley
 /// Steven Combs - these comments
-///
-///
 ////////////////////////////////////////////////////////////////////////
 
 // Unit headers
@@ -773,9 +771,9 @@ ResidueType::add_property( std::string const & property )
 		is_carbohydrate_ = true;
 	} else if ( property == "LIGAND" ) {
 		is_ligand_ = true;
-  } else if ( property == "SURFACE" ) {
-    is_surface_ = true;
-  } else if ( property == "LOWER_TERMINUS" ) {
+	} else if ( property == "SURFACE" ) {
+		is_surface_ = true;
+	} else if ( property == "LOWER_TERMINUS" ) {
 		is_terminus_ = true;
 		is_lower_terminus_ = true;
 	} else if ( property == "UPPER_TERMINUS" ) {
@@ -791,6 +789,8 @@ ResidueType::add_property( std::string const & property )
 		is_terminus_ = true;
 		is_upper_terminus_ = true;
 		is_methylated_cterminus_ = true;
+	} else if (property == "BRANCH_POINT") {
+		;  // Null statement for now.... ~ Labonte
     } else if (
             (property == "ALDOSE") ||
             (property == "KETOSE") ||
@@ -804,7 +804,7 @@ ResidueType::add_property( std::string const & property )
             (property == "URONIC_ACID")) {
         ;  // Null statement -- these properties will be added to carbohydrate_info_ by update_derived_data().
 	} else {
-		tr.Warning << "WARNING:: unrecognized residuetype property: " << property << std::endl;
+		tr.Warning << "WARNING:: unrecognized residue type property: " << property << std::endl;
 	}
 
 	properties_.push_back( property );
@@ -1742,7 +1742,6 @@ ResidueType::update_actcoord( conformation::Residue & rot ) const
 /// will update the xyz coords as well if desired, useful inside a patching operation where new
 /// atoms are being added.
 ///
-
 void
 ResidueType::set_icoor(
 	Size const & index,
@@ -1871,8 +1870,6 @@ ResidueType::set_orbital_icoor_id(
 
 
 }
-
-
 
 
 void ResidueType::set_RotamerLibraryName( std::string const & filename )

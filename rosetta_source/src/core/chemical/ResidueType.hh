@@ -10,40 +10,40 @@
 /// @begin ResidueType
 ///
 /// @brief
-/// A class for defining residue
+/// A class for defining a type of residue
 ///
 /// @details
-/// This class contains the "chemical" information for residues. This does not contain the actual
-/// xyz coordinates of the class (xyz found in core/conformation/Residue.hh). A residue in Rosetta
-/// can be a ligand, DNA, amino acid, or basically anything. A residue is read in through residue_io.cc
-/// and read from parameter files, generally located in the database chemical/residuetypes. For ligands,
-/// or anything that is not the natural 20 aa, a parameter has to be provided to rosetta through the -extra_res_fa
-/// flag. Residue_io sets private member data in ResidueType. The primary data that are set are: atoms, mmatoms, orbitals,
-/// properties of residues. These properties can be modified through patches, which is controlled through PatchOperation.cc. If
-/// the residuetype is modified, the indices of atoms and mmatoms and everything associated with those indices must be redefined. This
-/// redordering of indices is taken care of with the function reorder_primary_data().
+/// This class contains the "chemical" information for residues. This does not contain the actual xyz coordinates of a
+/// particular residue in a specific peptide.  (xyz coordinates are found in core/conformation/Residue.hh).  A residue
+/// in Rosetta can be a ligand, DNA, amino acid, or basically anything.  A residue is read in through residue_io.cc and
+/// read from parameter files, generally located in the database chemical/residue_types.  For ligands, or anything that
+/// is not one of the natural 20 AAs, a parameter has to be provided to rosetta through the -extra_res_fa flag.
+/// residue_io.cc sets private member data in ResidueType.  The primary data that are set are: atoms, mmatoms,
+/// orbitals, and properties of the particular residue type.  These properties can be modified through patches, which
+/// is controlled through PatchOperations.cc.  If the residue_type of a residue is modified, the indices of atoms and
+/// mmatoms and everything associated with those indices must be redefined.  This reordering of indices is taken care
+/// of with the function reorder_primary_data().
 ///
-/// Setting of primary data and then reordering is important. Primary data for the following are described:
+/// Setting of primary data and then reordering is important.  Primary data for the following are described:
 ///
-/// atoms: setting of atoms includes indexing the atoms into vectors, saving their names into vectors/maps,
-/// saving the associated mm_atom_type into a vector, saving bond connections into vectors, etc, etc. Since everything is
-/// allocated into vectors, it is easy to reorder those vectors. On any given residue, the heavy atoms are put into the vector
-/// first (their indices are first) and hydrogens are put in last.
+/// Atoms: Setting of atoms includes indexing the atoms into vectors, saving their names into vectors/maps, saving the
+/// associated mm_atom_type into a vector, saving bond connections into vectors, etc, etc.  Since everything is
+/// allocated into vectors, it is easy to reorder those vectors.  On any given residue, the heavy atoms are put into
+/// the vector first, (their indices are first,) and hydrogens are put in last.
 ///
-/// properties: properties of a residue include things like DNA, PROTEIN, SC_ORBITALS, CHARGED, etc. These properties
-/// indicate the type of residue it is and what properties that are asscociated with the residue. They
-/// are set when read in. Several lines of code must be modified to get them to work, all found in residuetype.cc
+/// Properties: Properties of a residue include things like DNA, PROTEIN, SC_ORBITALS, CHARGED, etc.  These properties
+/// indicate the type of residue it is and what properties are associated with the residue.  They are set when read in.
+/// Several lines of code must be modified to get them to work, all found here in ResidueType.cc.
 ///
-/// orbitals: orbitals are indexed seperate from atoms. They function much the same way as atoms, except for some
-/// key differences. To find atoms bonded to orbitals, you must provide the atom index, not the orbital index. I
-/// havent figured out how to get the reverse to work because of the seperate indices. Orbital xyz coordinates are not updated when atom coordinates are.
-/// This is to keep speed consistent with just having atoms. To output the orbitals, use the flag -output_orbitals
+/// Orbitals: Orbitals are indexed separately from atoms.  They function much the same way as atoms, except for some
+/// key differences.  To find atoms bonded to orbitals, you must provide the atom index, not the orbital index.  (I
+/// haven't figured out how to get the reverse to work because of the separate indices.)  Orbital xyz coordinates are
+/// not updated when atom coordinates are.  This is to keep speed consistent with just having atoms.  To output the
+/// orbitals, use the flag -output_orbitals.
 ///
 /// @author
 /// Phil Bradley
 /// Steven Combs - these comments
-///
-///
 ////////////////////////////////////////////////////////////////////////
 
 
@@ -1217,6 +1217,7 @@ public:
 	/// @brief add an atom to the list for calculating actcoord center
 	void add_actcoord_atom( std::string const & atom );
 
+
 	/// @brief is polymer?
 	bool
 	is_polymer() const
@@ -1244,7 +1245,6 @@ public:
 	{
 		return is_RNA_;
 	}
-
 
 	/// @brief is coarse?
 	bool
@@ -1280,8 +1280,6 @@ public:
 	  return is_surface_;
 	}
 
-
-
 	///@brief does this residue have sidechain orbitals?
 	bool
 	has_sc_orbitals() const
@@ -1289,7 +1287,7 @@ public:
 		return has_sc_orbitals_;
 	}
 
-  /// @brief is polar?
+	/// @brief is polar?
 	bool
 	is_polar() const
 	{
@@ -1317,14 +1315,12 @@ public:
 		return is_terminus_;
 	}
 
-
 	/// @brief is lower terminus?
 	bool
 	is_lower_terminus() const
 	{
 		return is_lower_terminus_;
 	}
-
 
 	/// @brief is upper terminus?
 	bool
@@ -1345,6 +1341,16 @@ public:
 	is_methylated_cterminus() const
 	{
 		return is_methylated_cterminus_;
+	}
+
+	/// @brief is branch point for a branched polymer?
+	bool
+	is_branch_point() const
+	{
+		if (branch_point_atoms_.size() == 0) {
+			return false;
+		}
+		return true;
 	}
 
 	/// @brief  Check if atom is virtual.
@@ -2090,15 +2096,18 @@ private:
 
 	/// @brief  Polymer lower connections
 	/// @note  ResidueConnection objects store the ideal internal coordinates for the connected atom
-	// ResidueConnection lower_connect_; // depricated
+	// ResidueConnection lower_connect_; // deprecated
 	Size lower_connect_id_; // which connection is the lower connection?
 	/// @brief  Polymer upper connections
 	/// @note  ResidueConnection objects store the ideal internal coordinates for the connected atom
-	// ResidueConnection upper_connect_; // depricated
+	// ResidueConnection upper_connect_; // deprecated
 	Size upper_connect_id_; // which connection is the upper connection?
 
 	Size n_non_polymeric_residue_connections_;
 	Size n_polymeric_residue_connections_;
+
+	// A list of all atoms (by atom name) to which other branches are attached.
+	utility::vector1<std::string> branch_point_atoms_;
 
 	///////////////////////////////////////////////////////////////////////
 	// These arrays are temporary, will be cleared in finalize():

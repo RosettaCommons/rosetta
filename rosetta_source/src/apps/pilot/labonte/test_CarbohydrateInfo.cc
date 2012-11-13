@@ -55,7 +55,7 @@ main(int argc, char *argv[])
 	devel::init(argc, argv);
 
 	// Declare variables.
-	Pose maltotriose, isomaltose;
+	Pose maltotriose, isomaltose, lactose, amylopectin;
 
 	cout << "------------------------------------------------------------" << endl;
 	cout << "Importing maltotriose:" << endl;
@@ -72,10 +72,24 @@ main(int argc, char *argv[])
 	test_sugar(isomaltose);
 
 	cout << "------------------------------------------------------------" << endl;
+	cout << "Importing lactose:" << endl;
+
+	pose_from_pdb(lactose, "/home/labonte/Workspace/Carbohydrates/lactose.pdb");
+
+	test_sugar(lactose);
+
+	cout << "------------------------------------------------------------" << endl;
 	cout << "Creating maltotriose from sequence:" << endl;
 
 	ResidueTypeSetCAP residue_set(ChemicalManager::get_instance()->residue_type_set("fa_standard"));
 	make_pose_from_saccharide_sequence(maltotriose, "alpha-D-Glcp-(1->4)-alpha-D-Glcp-(1->4)-D-Glcp", *residue_set);
 
 	test_sugar(maltotriose);
+
+	cout << "------------------------------------------------------------" << endl;
+	cout << "Importing branched amylopectin fragment:" << endl;
+
+	pose_from_pdb(amylopectin, "/home/labonte/Workspace/Carbohydrates/amylopectin_fragment.pdb");
+
+	test_sugar(amylopectin);
 }

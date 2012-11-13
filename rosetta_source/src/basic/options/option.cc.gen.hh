@@ -27,6 +27,7 @@ option.add( basic::options::OptionKeys::in::ignore_unrecognized_res, "Do not abo
 option.add( basic::options::OptionKeys::in::ignore_waters, "Do not abort if HOH water residues are found in PDB file;  instead, ignore them." ).def(false);
 option.add( basic::options::OptionKeys::in::add_orbitals, "Will add orbitals to residues only. Does not include orbitals to ligands. Done through params file reading." ).def(false);
 option.add( basic::options::OptionKeys::in::include_sugars, "Sets whether or not carbohydrate residues will beloaded into Rosetta.  The default value is false." ).shortd( "Load carbohydrate residues into memory?" ).legal(true).legal(false).def(false);
+option.add( basic::options::OptionKeys::in::enable_branching, "Sets whether or not polymer branching is allowed.  The default value is false." ).shortd( "Allow polymer branching?" ).legal(true).legal(false).def(false);
 option.add( basic::options::OptionKeys::in::remember_unrecognized_res, "Ignore unrecognized residues, but remember them in PDBInfo." ).def(false);
 option.add( basic::options::OptionKeys::in::remember_unrecognized_water, "Remember waters along with other unrecognized residues." ).def(false);
 option.add( basic::options::OptionKeys::in::detect_disulf, "Forcably enable or disable disulfide detection. When unspecified, rosetta conservatively detects disulfides in full atom input based on SG distance, but will not form centroid disulfides. Setting `-detect_disulf true` will force  aggressive disulfide detection in centroid poses based on CB distance. Setting `-detect_disulf false` disables all detection, even in full atom poses. Note that disabling disulfides causes severe clashes for native disulfides." ).legal(true).legal(false);
@@ -135,6 +136,7 @@ option.add( basic::options::OptionKeys::in::file::obey_ENDMDL, "Stop reading a P
 option.add( basic::options::OptionKeys::in::file::new_chain_order, "ensures chain from different MODEL records have differnet mini chains" ).def(false);
 option.add( basic::options::OptionKeys::in::file::ddg_predictions_file, "File that contains mutational ddG information. Used by ddG task operation/filter." ).def("");
 option.add( basic::options::OptionKeys::in::file::input_res, "Residues already present in starting file" );
+option.add( basic::options::OptionKeys::in::file::read_pdb_link_records, "Sets whether or not the LINK records in PDB files are read.  The default value is false." ).shortd( "Read LINK records?" ).legal(true).legal(false).def(false);
 option.add( basic::options::OptionKeys::in::rdf::rdf, "rdf option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::in::rdf::sep_bb_ss, "separate RDFs by SS for backbone atypes " ).def(true);
 option.add( basic::options::OptionKeys::MM::MM, "MM option group" ).legal(true).def(true);
@@ -648,10 +650,10 @@ option.add( basic::options::OptionKeys::fold_cst::skip_on_noviolation_in_stage1,
 option.add( basic::options::OptionKeys::fold_cst::stage1_ramp_cst_cycle_factor, "spend x*<standard cycles> on each step of sequence separation" ).def(0.25);
 option.add( basic::options::OptionKeys::fold_cst::stage2_constraint_threshold, "stop runs that violate this threshold at end of stage2" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::ignore_sequence_seperation, "usually constraints are switched on according to their separation in the fold-tree" ).def(false);
-option.add( basic::options::OptionKeys::fold_cst::no_recover_low_at_constraint_switch, "dont recover low when max_seq_sep is increased" ).def(false);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::ramp_coord_cst, "ramp coord csts just like chainbreak-weights during fold-cst" ).def(false);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::no_recover_low_at_constraint_switch, "dont recover low when max_seq_sep is increased" ).def(false);
+option.add( basic::options::OptionKeys::fold_cst::ramp_coord_cst, "ramp coord csts just like chainbreak-weights during fold-cst" ).def(false);
 option.add( basic::options::OptionKeys::resample::resample, "resample option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::resample::silent, "a silent file for decoys to restart sampling from " ).def("");
 option.add( basic::options::OptionKeys::resample::tag, "which decoy to select from silent file " ).def("");
@@ -1945,10 +1947,10 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_p
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
+option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
-option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);

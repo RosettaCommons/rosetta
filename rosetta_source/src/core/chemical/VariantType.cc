@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //////////////////////////////////////////////////////////////////////
-/// @begin VariantType.cc
+/// @file core/chemical/VariantType.cc
 ///
 /// @brief
 /// VariantTypes are used by Patches.
@@ -55,6 +55,10 @@ VariantType const CUTPOINT_LOWER( "CUTPOINT_LOWER" );
 VariantType const CUTPOINT_UPPER( "CUTPOINT_UPPER" );
 ///
 VariantType const DISULFIDE( "DISULFIDE" );
+/// @brief Variant type used for branched polymers and glycosylations.
+VariantType const BRANCH_POINT("BRANCH_POINT");
+/// @brief Variant type used for branched polymers and glycosylations.
+VariantType const BRANCH_LOWER_TERMINUS("BRANCH_LOWER_TERMINUS");
 ///
 VariantType const ADDUCT( "ADDUCT" );
 

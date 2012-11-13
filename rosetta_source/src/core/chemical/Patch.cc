@@ -216,7 +216,6 @@ tag_from_line( std::string const & line )
 /// @brief create a PatchCase from input lines
 /// @details add selector_ from lines enclosed by "BEGIN_SELECTOR" and "END_SELECTOR".\n
 /// add operations_ from each input line containing a single operation
-
 PatchCaseOP
 case_from_lines(
 		utility::vector1< std::string > const & lines
@@ -260,7 +259,7 @@ PatchCase::apply( ResidueType const & rsd_in ) const
 	return rsd;
 }
 
-/// @detals	- first read in all lines from the file, discarding # comment lines
+/// @details	- first read in all lines from the file, discarding # comment lines
 /// - parse input lines for Patch name and variant types (NAME, TYPES)
 ///	- parse input lines for general ResidueSelector defined for this Patch (BEGIN_SELECTOR, END_SELECTOR)
 ///	- parse input lines to create each case acoordingly (BEGIN_CASE, END_CASE)

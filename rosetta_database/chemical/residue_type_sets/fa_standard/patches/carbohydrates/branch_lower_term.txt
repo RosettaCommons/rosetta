@@ -1,0 +1,16 @@
+## full-atom carbohydrate branch lower terminus patch
+
+NAME branch_lower_terminus
+TYPES BRANCH_LOWER_TERMINUS
+
+BEGIN_SELECTOR
+PROPERTY CARBOHYDRATE
+NOT VARIANT_TYPE BRANCH_POINT
+NOT VARIANT_TYPE LOWER_TERMINUS
+END_SELECTOR
+
+BEGIN_CASE
+
+# Fill in details later.
+
+END_CASE

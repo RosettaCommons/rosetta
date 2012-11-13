@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
+/// @file   core/chemical/VariantType.hh
 /// @author Phil Bradley
-/// see varianttype.cc for explanation
+// see VariantType.cc for explanation
 
 #ifndef INCLUDED_core_chemical_VariantType_hh
 #define INCLUDED_core_chemical_VariantType_hh
@@ -38,6 +38,8 @@ extern VariantType const LOWER_TERMINUS;
 extern VariantType const CUTPOINT_UPPER;
 extern VariantType const CUTPOINT_LOWER;
 extern VariantType const DISULFIDE;
+extern VariantType const BRANCH_POINT;
+extern VariantType const BRANCH_LOWER_TERMINUS;
 extern VariantType const METHYLATION;
 extern VariantType const ADDUCT;
 extern VariantType const CENTROID_HA;
