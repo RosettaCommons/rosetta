@@ -78,7 +78,7 @@ patch_operation_from_patch_file_line( std::string const & line ) {
 	using numeric::conversions::radians;
 	std::istringstream l( line );
 	std::string tag, atom1, atom2, atom3, atom4, atom_name, atom_type_name, mm_atom_type_name, property;
-	Real charge, mean, sdev;
+	Real charge, mean, sdev, radius;
 	Size chino;
 	l >> tag;
 	if ( l.fail() || tag[0] == '#' ) return 0;
@@ -183,6 +183,27 @@ patch_operation_from_patch_file_line( std::string const & line ) {
 		std::string path;
 		l >> path;
 		return new NCAARotLibPath( path );
+	}
+	else if ( tag == "SET_NBR_ATOM") {
+		l >> atom_name;
+		if ( l.fail() ) return 0;
+		return new SetNbrAtom( atom_name );
+	}
+	else if ( tag == "SET_NBR_RADIUS") {
+		l >> radius;
+		if ( l.fail() ) return 0;
+		return new SetNbrRadius( radius );
+	}
+	else if ( tag == "SET_ORIENT_ATOM") {
+		l >> tag;
+		if ( tag == "NBR" ) {
+			return new SetOrientAtom(true);
+		} else if ( tag == "DEFAULT" ) {
+			return new SetOrientAtom(false);
+		} else {
+			tr.Warning << "Unknown SET_ORIENT ATOM tag: " << tag << std::endl;
+			return 0;
+		}
 	}
 	tr.Warning << "patch_operation_from_patch_file_line: bad line: " << line << std::endl;
 

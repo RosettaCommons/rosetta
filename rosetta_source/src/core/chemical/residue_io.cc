@@ -332,7 +332,15 @@ read_topology_file(
 			Real radius;
 			l >> radius;
 			rsd->nbr_radius( radius );
-
+		} else if ( tag == "ORIENT_ATOM" ) {
+			l >> tag;
+			if ( tag == "NBR" ) {
+				rsd->force_nbr_atom_orient(true);
+			} else if ( tag == "DEFAULT" ) {
+				rsd->force_nbr_atom_orient(false);
+			} else {
+				utility_exit_with_message("Unknown ORIENT_ATOM mode: " + tag );
+			}
 		} else if ( tag == "PROPERTIES" ) {
 			l >> tag;
 			while ( !l.fail() ) {
@@ -855,7 +863,7 @@ write_topology_file(
 
 	out << "NBR_ATOM " << rsd.atom_name( rsd.nbr_atom() ) << " \n";
 	out << "NBR_RADIUS " << rsd.nbr_radius() << " \n";
-
+	if (rsd.force_nbr_atom_orient()) { out << "ORIENT_ATOM NBR\n"; }
 
 	//actcoord atoms
 	if( rsd.actcoord_atoms().size() > 0 ){

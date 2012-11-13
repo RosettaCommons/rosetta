@@ -161,6 +161,7 @@ ResidueType::ResidueType(
 	name1_(),
 	nbr_atom_(1),
 	nbr_radius_( 0 ),
+	force_nbr_atom_orient_(false),
 	molecular_mass_(0),
 	molar_mass_(0),
 	n_actcoord_atoms_( 0 ),
@@ -2312,6 +2313,75 @@ ResidueType::note_chi_controls_atom( Size chi, Size atomno )
 		}
 	}
 
+}
+
+void
+ResidueType::select_orient_atoms(
+	Size & center,
+	Size & nbr1,
+	Size & nbr2
+) const
+{
+	center = 0;
+	nbr1 = 0;
+	nbr2 = 0;
+
+	// No backbone atoms, all backbone atoms, or orient mode explicitly set to nbr_atom
+	if ( first_sidechain_atom() == 1 || first_sidechain_atom() > natoms() || force_nbr_atom_orient() ) {
+		// If no backbone atoms (or all bb atoms), assume nbr_atom will be close to center-of-mass.
+		center = nbr_atom();
+		// If is hydrogen or too few neighbors, try trekking up the atom tree
+		while( center > nheavyatoms() || bonded_neighbor(center).size() < 2 ) {
+			center = atom_base(center);
+		}
+		AtomIndices const & nbrs( bonded_neighbor(center) );
+		// First try to find two neighbors that are heavyatoms
+		for( Size j=1; j<= nbrs.size(); ++j ) {
+			Size const nbr( nbrs[j] );
+			if( nbr <= nheavyatoms() ) {
+				if ( nbr1 ) nbr2 = nbr;
+				else nbr1 = nbr;
+			}
+		}
+		// Failing that, just try for two neighbors!
+		if( !( center && nbr1 && nbr2 ) ) {
+			for( Size j=1; j<= nbrs.size(); ++j ) {
+				Size const nbr( nbrs[j] );
+				if ( nbr1 ) nbr2 = nbr;
+				else nbr1 = nbr;
+			}
+		}
+		if( !( center && nbr1 && nbr2 ) ) {
+			// assert() isn't enough for these cases b/c they're typically ligands
+			// and thus depend on user input -- need to be caught even in release mode.
+			utility_exit_with_message("Cannot superimpose residues of type "+name());
+		}
+		//std::cout << "Superimposing on " << atom_name(center) << " " << atom_name(nbr1) << " " << atom_name(nbr2) << "\n";
+
+	} else {
+		// look for a backbone atom, one of whose neighbors is a sidechain atom
+		// center will be this atom
+		// nbr1 and nbr2 will be the backbone heavyatom nbrs of this atom
+		// eg center = CA, nbr1 = N. nbr2 = C in the protein case
+		for ( Size atom_index(1); atom_index <= natoms(); ++atom_index ) {
+			if ( atom_is_backbone( atom_index ) ) {
+				AtomIndices const & nbrs( bonded_neighbor( atom_index ) );
+				center = 0; nbr1 = 0; nbr2 = 0;
+				for ( Size nbr_index(1); nbr_index <= nbrs.size(); ++nbr_index ) {
+					Size const nbr( nbrs[ nbr_index ] );
+					if ( !atom_is_backbone( nbr ) && atom_base( nbr ) == atom_index ) {
+						// nbr is a sidechain atom that branches from the atom at atom_index
+						center = atom_index;
+					} else if ( atom_is_backbone( nbr ) && nbr <= nheavyatoms() ) {
+						// nbr is a backbone heavy atom neighbor of the atom at atom_index
+						if ( nbr1 ) nbr2 = nbr;
+						else nbr1 = nbr;
+					}
+				}
+			} // atom_index is backbone
+			if ( center && nbr1 && nbr2 ) break;
+		} // atom_index
+	}
 }
 
 void

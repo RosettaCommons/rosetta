@@ -268,6 +268,8 @@ void
 Patch::read_file( std::string const & filename )
 {
 	// clear old data
+	tr.Debug << "Reading patch file: " << filename << std::endl;
+
 	name_ = "";
 	types_.clear();
 	selector_.clear();

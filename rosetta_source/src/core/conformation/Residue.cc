@@ -371,81 +371,10 @@ Residue::update_actcoord()
 	rsd_type_.update_actcoord( *this );
 }
 
-
-
-
-
-
-void
-Residue::select_orient_atoms(
-	Size & center,
-	Size & nbr1,
-	Size & nbr2
-) const
+void Residue::select_orient_atoms(Size & center, Size & nbr1, Size & nbr2) const
 {
-
-	Size const first_scatom( rsd_type_.first_sidechain_atom() );
-	center = 0;
-	nbr1 = 0;
-	nbr2 = 0;
-
-	if ( first_scatom == 1 || first_scatom > natoms() ) {
-		// If no backbone atoms (or all bb atoms), assume nbr_atom will be close to center-of-mass.
-		center = nbr_atom();
-		// If is hydrogen or too few neighbors, try trekking up the atom tree
-		while( center > rsd_type_.nheavyatoms() || rsd_type_.bonded_neighbor(center).size() < 2 ) {
-			center = atom_base(center);
-		}
-		AtomIndices const & nbrs( rsd_type_.bonded_neighbor(center) );
-		// First try to find two neighbors that are heavyatoms
-		for( Size j=1; j<= nbrs.size(); ++j ) {
-			Size const nbr( nbrs[j] );
-			if( nbr <= rsd_type_.nheavyatoms() ) {
-				if ( nbr1 ) nbr2 = nbr;
-				else nbr1 = nbr;
-			}
-		}
-		// Failing that, just try for two neighbors!
-		if( !( center && nbr1 && nbr2 ) ) {
-			for( Size j=1; j<= nbrs.size(); ++j ) {
-				Size const nbr( nbrs[j] );
-				if ( nbr1 ) nbr2 = nbr;
-				else nbr1 = nbr;
-			}
-		}
-		if( !( center && nbr1 && nbr2 ) ) {
-			// assert() isn't enough for these cases b/c they're typically ligands
-			// and thus depend on user input -- need to be caught even in release mode.
-			utility_exit_with_message("Cannot superimpose residues of type "+name());
-		}
-		//std::cout << "Superimposing on " << atom_name(center) << " " << atom_name(nbr1) << " " << atom_name(nbr2) << "\n";
-
-	} else {
-		// look for a backbone atom, one of whose neighbors is a sidechain atom
-		// center will be this atom
-		// nbr1 and nbr2 will be the backbone heavyatom nbrs of this atom
-		// eg center = CA, nbr1 = N. nbr2 = C in the protein case
-		for ( Size atom_index(1); atom_index <= rsd_type_.natoms(); ++atom_index ) {
-			if ( rsd_type_.atom_is_backbone( atom_index ) ) {
-				AtomIndices const & nbrs( rsd_type_.bonded_neighbor( atom_index ) );
-				center = 0; nbr1 = 0; nbr2 = 0;
-				for ( Size nbr_index(1); nbr_index <= nbrs.size(); ++nbr_index ) {
-					Size const nbr( nbrs[ nbr_index ] );
-					if ( !rsd_type_.atom_is_backbone( nbr ) && rsd_type_.atom_base( nbr ) == atom_index ) {
-						// nbr is a sidechain atom that branches from the atom at atom_index
-						center = atom_index;
-					} else if ( rsd_type_.atom_is_backbone( nbr ) && nbr <= rsd_type_.nheavyatoms() ) {
-						// nbr is a backbone heavy atom neighbor of the atom at atom_index
-						if ( nbr1 ) nbr2 = nbr;
-						else nbr1 = nbr;
-					}
-				}
-			} // atom_index is backbone
-			if ( center && nbr1 && nbr2 ) break;
-		} // atom_index
-	}
+	rsd_type_.select_orient_atoms(center, nbr1, nbr2);
 }
-
 
 /// @details  Helper function: selects atoms to orient on and transforms all of my atoms to
 /// orient onto another residue. Used by place(). Need to think a bit more about the
@@ -462,31 +391,16 @@ Residue::orient_onto_residue( Residue const & src )
 
 	assert( center && nbr1 && nbr2 );
 	// this will fail if src doesnt have these atoms -- think more about this!
-	int const
-		src_center( src.atom_index( rsd_type_.atom_name( center ) ) ),
-		src_nbr1  ( src.atom_index( rsd_type_.atom_name( nbr1 ) ) ),
-		src_nbr2  ( src.atom_index( rsd_type_.atom_name( nbr2 ) ) );
+	//
+	orient_onto_residue(
+		src,
+		center,
+		nbr1,
+		nbr2,
+		src.atom_index( rsd_type_.atom_name( center )),
+		src.atom_index( rsd_type_.atom_name( nbr1 )),
+		src.atom_index( rsd_type_.atom_name( nbr2 )));
 
-	// explanation for taking the midpoint...?
-	Vector const
-		rot_midpoint ( 0.5 * (     atom(     nbr1 ).xyz() +     atom(     nbr2 ).xyz() ) ),
-		src_midpoint ( 0.5 * ( src.atom( src_nbr1 ).xyz() + src.atom( src_nbr2 ).xyz() ) );
-
-	Stub rot_stub( atom( center ).xyz(),
-								 rot_midpoint,
-								 atom( nbr1 ).xyz() );
-
-	Stub src_stub( src.atom( src_center ).xyz(),
-								 src_midpoint,
-								 src.atom( src_nbr1 ).xyz() );
-
-	// this could be made faster by getting the composite rotation and translation
-
-	for ( Size i=1; i<= rsd_type_.natoms(); ++i ) {
-		Vector const old_xyz( atoms()[i].xyz() );
-		Vector const new_xyz( src_stub.local2global( rot_stub.global2local( old_xyz ) ) );
-		atoms()[i].xyz( new_xyz );
-	}
 } // orient_onto_residue( Residue const & src)
 
 
@@ -496,32 +410,34 @@ Residue::orient_onto_residue(
 	utility::vector1< std::pair< std::string, std::string > > const & atom_pairs
 )
 {
-
 	using kinematics::Stub;
-	//first a couple of checks whether the input makes sense
 
-	if( atom_pairs.size() < 3 ){
-		utility_exit_with_message( "orient onto residue sez: you have to specify at least 3 atom pairs to allow proper orienting of the residue.");
+	// Verify that three atom pairs have been provided
+	if( atom_pairs.size() != 3 ){
+		utility_exit_with_message( "Three atom pairs must be provided in Residue::orient_onto_residue.");
 	}
+	
+	orient_onto_residue(
+			src,
+			atom_index( atom_pairs[1].second ),
+			atom_index( atom_pairs[2].second ),
+			atom_index( atom_pairs[3].second ),
+			src.atom_index( atom_pairs[1].first ),
+			src.atom_index( atom_pairs[2].first ),
+			src.atom_index( atom_pairs[3].first ));
+} //orient_onto_residue( Residue src, atom_pairs )
 
-	if( atom_pairs.size() > 3 ){
-		utility_exit_with_message( "orient onto residue sez: for the moment this function can't handle more than 3 atom pairs.");
-	}
+void Residue::orient_onto_residue(
+			Residue const & src,
+			Size center, Size nbr1, Size nbr2,
+			Size src_center, Size src_nbr1, Size src_nbr2)
+{
+	using kinematics::Stub;
 
 	//NOTE: the implementation of this function might change in the future
 	//from strictly superimposing on three atoms to superposition along the lines
 	//of what is in numeric::model_quality::findUU()
-
-	Size
-		center( atom_index( atom_pairs[1].second ) ),
-		nbr1( atom_index( atom_pairs[2].second ) ),
-		nbr2( atom_index( atom_pairs[3].second ) );
-
-	int const
-		src_center( src.atom_index( atom_pairs[1].first ) ),
-		src_nbr1  ( src.atom_index( atom_pairs[2].first ) ),
-		src_nbr2  ( src.atom_index( atom_pairs[3].first) );
-
+	
 	// explanation for taking the midpoint...?
 	Vector const
 		rot_midpoint ( 0.5 * (     atom(     nbr1 ).xyz() +     atom(     nbr2 ).xyz() ) ),
@@ -542,8 +458,7 @@ Residue::orient_onto_residue(
 		Vector const new_xyz( src_stub.local2global( rot_stub.global2local( old_xyz ) ) );
 		atoms()[i].xyz( new_xyz );
 	}
-
-} //orient_onto_residue( Residue src, atom_pairs )
+}
 
 
 /// @details place/orient "this" Residue onto "src" Residue by backbone superimposition

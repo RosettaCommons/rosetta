@@ -1728,8 +1728,29 @@ public:
 
 	}
 
-    /// @brief  Return the CarbohydrateInfo object containing sugar-specific properties for this residue.
-    core::chemical::carbohydrates::CarbohydrateInfoCOP carbohydrate_info() const;
+	/// @brief  Return the CarbohydrateInfo object containing sugar-specific properties for this residue.
+	core::chemical::carbohydrates::CarbohydrateInfoCOP carbohydrate_info() const;
+
+	/// @brief Set force_nbr_atom_orient_, used to control orient atoms selected by select_orient_atoms
+	void
+	force_nbr_atom_orient( bool force_orient )
+	{
+		force_nbr_atom_orient_ = force_orient;
+	}
+
+	/// @brief Return force_nbr_atom_orient_, used to control orient atoms selected by select_orient_atoms
+	bool force_nbr_atom_orient() const
+	{
+		return force_nbr_atom_orient_;
+	}
+
+	/// @brief Selects three atoms for orienting this residue type
+	void
+	select_orient_atoms(
+			Size & center,
+			Size & nbr1,
+			Size & nbr2
+	) const;
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
@@ -2043,6 +2064,10 @@ private:
 	Size nbr_atom_;
 	/// radius cutoff to define neighors
 	Real nbr_radius_;
+
+	// Controls which atoms are selected by "select_orient_atoms",
+	// used to overlay residues during packing.
+	bool force_nbr_atom_orient_;
 
 	Real molecular_mass_;
 	Real molar_mass_;

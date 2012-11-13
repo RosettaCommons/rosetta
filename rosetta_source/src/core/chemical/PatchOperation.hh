@@ -687,6 +687,72 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief set the residue neighbor atom
+class SetNbrAtom : public PatchOperation {
+public:
+	/// @brief constructor
+	SetNbrAtom( std::string const & atom_name_in ) :
+		atom_name_( atom_name_in )
+	{}
+
+	/// @brief set the residue neighbor atom
+	bool
+	apply( ResidueType & rsd ) const
+	{
+		if ( !rsd.has( atom_name_ ) ) {
+			TR_PatchOperations.Debug << "SetNbrAtom::apply failed: " << rsd.name() << " is missing atom " << atom_name_ <<	std::endl;
+			return true; // failure
+		} else {
+			rsd.nbr_atom( atom_name_ );
+		}
+		return false;
+	}
+
+private:
+	std::string atom_name_;
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief set the residue neighbor radius
+class SetNbrRadius : public PatchOperation {
+public:
+	/// @brief constructor
+	SetNbrRadius( Real const & radius ) :
+		radius_( radius )
+	{}
+
+	/// @brief set the residue neighbor atom
+	bool
+	apply( ResidueType & rsd ) const
+	{
+		rsd.nbr_radius( radius_ );
+		return false;
+	}
+
+private:
+	Real radius_;
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Set orient atom selection mode.
+class SetOrientAtom : public PatchOperation {
+	public:
+		SetOrientAtom(bool force_nbr_atom_orient):
+			force_nbr_atom_orient_(force_nbr_atom_orient)
+		{}
+
+		bool
+		apply( ResidueType & rsd ) const
+		{
+			rsd.force_nbr_atom_orient( force_nbr_atom_orient_ );
+			return false;
+		}
+
+	private:
+		bool force_nbr_atom_orient_;
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief set the path to a rotamer library for an NCAA that is not in dunbrack
 class NCAARotLibPath : public PatchOperation {
 public:

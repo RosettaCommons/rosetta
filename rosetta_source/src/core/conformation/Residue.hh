@@ -1780,7 +1780,7 @@ public:
 			Conformation const & conformation
 	);
 
-	/// @brief Select three atoms for orienting
+	/// @brief Selects three atoms for orienting this residue
 	void
 	select_orient_atoms(
 			Size & center,
@@ -1792,7 +1792,10 @@ public:
 	void
 	orient_onto_residue( Residue const & src );
 
-	/// @brief Orient our coords onto those of  <src>, using the atoms specified in the input
+	/// @brief Orient our coords onto those of  <src>, using the three atom pairs specified in the input
+	/// @param atom_pairs 
+	//		Atom pairs used for alignment of the form:
+	//		{ src_center : center, src_nbr1 : nbr1, src_nbr2 : nbr1 }
 	void
 	orient_onto_residue(
 			Residue const & src,
@@ -1877,7 +1880,11 @@ private:
 	Residue const &
 	operator = ( Residue const & rhs );
 
-
+	/// @brief Orient coords onto those of  <src>, using the specified atoms
+	void orient_onto_residue(
+			Residue const & src,
+			Size center, Size nbr1, Size nbr2,
+			Size src_center, Size src_nbr1, Size src_nbr2);
 
 	/////////////////////////////////////////////////////////////////////////////
 	// data
