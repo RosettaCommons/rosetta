@@ -109,7 +109,7 @@ void SilentFileJobOutputter::set_defaults() {
 		utility_exit_with_message("Please supply a file name with the -out:file:silent flag. If you specify a path the -out:path:all flag, the -out:file:silent file name will be relative to it.");
 	}
 
-	if ( silent_file_.relative() ) {
+	if (! silent_file_.absolute() ) {
 		silent_file_.path( option[ out::path::all ]().path() + "/" + silent_file_.path() );
 		//FileName takes care of platform-specific path seperator, i.e.,  "/" or "\" ...
 	}

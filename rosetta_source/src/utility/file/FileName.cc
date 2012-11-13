@@ -69,7 +69,7 @@ namespace file {
 	bool
 	FileName::relative() const
 	{
-		return ( ( ! path_.empty() ) && ( path_[ 0 ] != platform::file::PATH_SEPARATOR ) );
+		return !absolute();
 	}
 
 
