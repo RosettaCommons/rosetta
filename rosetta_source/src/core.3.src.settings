@@ -499,6 +499,7 @@ sources = {
 	],
 	"core/scoring/sc": [
 		"ShapeComplementarityCalculator",
+		"MolecularSurfaceCalculator",
 	],
 	"core/scoring/sym_e": [
 		"symE",
