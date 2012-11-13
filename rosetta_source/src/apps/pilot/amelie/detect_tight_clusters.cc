@@ -41,6 +41,7 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/pack_rotamers.hh>
+#include <protocols/relax/FastRelax.hh>
 //#include <protocols/simple_moves/MinPackMover.hh> // for MinPacker
 #include <core/pack/min_pack.hh> // core/unwrapped MinPacker
 #include <core/pack/rotamer_trials.hh> 
@@ -110,6 +111,8 @@ OPT_1GRP_KEY(Boolean, detect_tight_clusters, min_pack)
 //OPT_1GRP_KEY(Boolean, detect_tight_clusters, stochastic_pack) 
 OPT_1GRP_KEY(Boolean, detect_tight_clusters, rot_trials_min) 
 OPT_1GRP_KEY(Boolean, detect_tight_clusters, rot_trials) 
+OPT_1GRP_KEY(Boolean, detect_tight_clusters, sidechain_fastrelax) 
+OPT_1GRP_KEY(Boolean, detect_tight_clusters, cartmin) 
 OPT_1GRP_KEY(Boolean, detect_tight_clusters, backrub)
 OPT_1GRP_KEY(Real, detect_tight_clusters, backrub_sc_prob) // probability of making a side chain move within the backrub option -- default 0.25
 
@@ -212,6 +215,32 @@ void compare_chi1_2_angles(
 	}
 }
 
+void
+sidechain_fastrelax(
+										core::scoring::ScoreFunctionOP scorefxn,
+										utility::vector1< bool > const & is_flexible,
+										bool const cartesian_min,
+										core::pose::Pose & pose
+										)
+{
+	protocols::relax::FastRelax fastrelax( scorefxn, 0 );
+	fastrelax.cartesian( cartesian_min );
+
+	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+
+	movemap->set_bb(false);
+	movemap->set_chi(false);
+	movemap->set_jump(false);
+
+	for ( core::Size i=1; i<= pose.total_residue(); ++i ) {
+		if ( is_flexible[i] ) {
+			movemap->set_chi( i, true );
+		}
+	}
+
+	fastrelax.set_movemap( movemap );
+	fastrelax.apply( pose );
+}
 
 
 void repack_cluster(
@@ -302,6 +331,14 @@ void repack_cluster(
 			for (core::Size ri = 0; ri < rot_trials_iterations; ri++) {
 				rtmin.rtmin( repacked, *score_fxn, repack_packer_task );
 			}
+
+		} else if ( option[ detect_tight_clusters::sidechain_fastrelax ] ) {
+			/// use Mike's fast-relax protocol, keeping the backbone fixed
+			bool const cartmin( option[ detect_tight_clusters::cartmin ] ); /// option: use cartesian-space min
+			// Phil: you should also allow setting of just the cart_bonded subterms (angle/length/etc)
+			if ( cartmin ) runtime_assert( score_fxn->get_weight( core::scoring::cart_bonded ) > 1e-3 ); 
+			sidechain_fastrelax( score_fxn, allow_repacked, cartmin, repacked );
+			
 		} else if ( option[ detect_tight_clusters::backrub ]() ) {// note that backrub only makes sense for 8A repacking
 			
 			core::pose::Pose best_backrub(repacked);
@@ -830,6 +867,8 @@ int main( int argc, char * argv [] )
 	//NEW_OPT(detect_tight_clusters::stochastic_pack, "use stochastic pack", false);
 	NEW_OPT(detect_tight_clusters::rot_trials_min, "use rotamer trials with minimization after initial repack (10 trials)", false);
 	NEW_OPT(detect_tight_clusters::rot_trials, "use rotamer trials after initial repack", false);
+	NEW_OPT(detect_tight_clusters::sidechain_fastrelax, "use sidechain fast-relax protocol", false);
+	NEW_OPT(detect_tight_clusters::cartmin, "Use cartesian space minimization. Only for sidechain-fast-relax protocol right now. Score function must have non-zero weight for cart_bonded term.", false);
 	NEW_OPT(detect_tight_clusters::backrub, "use backrub to move both backbone and side chain", false);
 	NEW_OPT(detect_tight_clusters::backrub_sc_prob, "probability of making a side chain move within backrub (default 0.25)", 0.25);
 	NEW_OPT(detect_tight_clusters::external_cluster, "provide all cluster positions in PDB numbering (chain pos vector)", utility::vector1<std::string>()); // half of these will be casted to chars, the other half to ints...
