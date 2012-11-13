@@ -56,13 +56,13 @@ protocols::jd2::FileJobOutputter::FileJobOutputter() : parent(), write_scorefile
 		scorefile_name_ = option[ out::file::scorefile ]();
 		if ( option[ out::path::score ].user() ) {
 			scorefile_name_.path( option[ out::path::score ]().path() );
-        }else if ( scorefile_name_.relative() ) {
-            scorefile_name_.path( default_path.path() + "/" + scorefile_name_.path() );
-        }
+			}else if (! scorefile_name_.absolute() ) {
+					scorefile_name_.path( default_path.path() + "/" + scorefile_name_.path() );
+			}
 	}else if(option [out::file::score_only].user()){
 		write_scorefile_ = true;
 		scorefile_name_ = option[out::file::score_only]();
-		if ( scorefile_name_.relative() ) scorefile_name_.path( default_path.path() + "/" + scorefile_name_.path() );
+		if (! scorefile_name_.absolute() ) scorefile_name_.path( default_path.path() + "/" + scorefile_name_.path() );
 	}else if ( !option[ run::no_scorefile ]() ) {
 		write_scorefile_ = true;
 		// set up all the information for the scorefile
