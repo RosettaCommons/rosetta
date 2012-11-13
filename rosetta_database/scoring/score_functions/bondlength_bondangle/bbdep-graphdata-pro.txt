@@ -1,3 +1,22 @@
+# Conformation-dependent library for backbone geometry in proteins
+# October 14, 2009
+# 
+# Copyright (c) 2009 Donald S. Berkholz, Maxim V. Shapovalov, Roland L. Dunbrack, Jr., and P. Andrew Karplus
+# Department of Biochemistry and Biophysics, Oregon State University, 2011 ALS, Corvallis, OR 97331, USA
+# Institute for Cancer Research, Fox Chase Cancer Center, 333 Cottman Avenue, Philadelphia, PA 19111, USA
+# 
+# For additional information please visit:
+# ----------------------------------------
+# http://proteingeometry.sourceforge.net
+# http://dunbrack.fccc.edu/ProteinBackboneGeometryLibrary.php
+# 
+# and for the publication itself:
+# -------------------------------
+# http://www.cell.com/structure/abstract/S0969-2126%2809%2900335-9
+# Berkholz DS, MV Shapovalov MV, RL Dunbrack RL, Jr., Karplus PA
+# "Conformation Dependence of Backbone Geometry in Proteins", doi:10.1016/j.str.2009.08.012
+# 
+#
 #PhiStart	PhiStop	PsiStart	PsiStop	Observations	PhiAvg(i)	PhiDev(i)	PsiAvg(i)	PsiDev(i)	OmeAvg(i)	OmeDev(i)	C(-1)-NAvg(i)	C(-1)-NDev(i)	N-CAAvg(i)	N-CADev(i)	CA-CBAvg(i)	CA-CBDev(i)	CA-CAvg(i)	CA-CDev(i)	C-OAvg(i)	C-ODev(i)	C(-1)-N-CAAvg(i)	C(-1)-N-CADev(i)	N-CA-CBAvg(i)	N-CA-CBDev(i)	N-CA-CAvg(i)	N-CA-CDev(i)	CB-CA-CAvg(i)	CB-CA-CDev(i)	CA-C-OAvg(i)	CA-C-ODev(i)	CA-C-N(+1)Avg(i)	CA-C-N(+1)Dev(i)	O-C-N(+1)Avg(i)	O-C-N(+1)Dev(i)	Chi1Avg(i)	Chi1Dev(i)	Chi2Avg(i)	Chi2Dev(i)	Chi3Avg(i)	Chi3Dev(i)	Chi4Avg(i)	Chi4Dev(i)	ZetaAvg(i)	ZetaDev(i)
 90.0	100.0	260.0	270.0	5	-83.7167110617	136.263663215	84.5825269808	52.1012781348	178.569904274	157.117917667	1.33847236946	0.0208945241074	1.47847594706	0.0174381739142	1.52612592815	0.00584677157683	1.53637879103	0.00807395958184	1.2254953156	0.0148972220051	121.388634198	0.871306796611	102.725330468	0.755932183142	112.916710433	3.57879091419	111.363990155	1.26099080504	122.371253209	1.54639851807	115.410966767	1.32240480713	122.135684797	1.56155081229	30.7439929511	8.44881547838	-36.7362964481	83.7448319467	27.544743065	12.0660017167	-8.37314287962	52.1100668058	38.155096896	0.620986750722
 110.0	120.0	160.0	170.0	68	-65.7053132991	104.304060199	-15.9279642602	54.1853742399	179.480689514	142.824005454	1.33937312128	0.00909128303861	1.46802793055	0.0155532756782	1.53759765411	0.0146617911315	1.51804866151	0.0179471214337	1.23885618291	0.0146481513482	119.961629938	1.2430477329	103.292802579	0.971963906519	114.47937008	1.40867715984	111.307202931	1.50088909409	119.033729752	1.99229791627	118.717576909	1.50193081831	122.206606628	2.01611526915	9.5779061864	173.414172457	-14.4442818345	213.324992	12.5964487272	163.871194791	-6.05481935422	218.01208513	37.7937838505	1.28479842606

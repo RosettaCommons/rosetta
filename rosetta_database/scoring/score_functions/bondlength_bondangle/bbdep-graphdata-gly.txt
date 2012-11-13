@@ -1,3 +1,22 @@
+# Conformation-dependent library for backbone geometry in proteins
+# October 14, 2009
+# 
+# Copyright (c) 2009 Donald S. Berkholz, Maxim V. Shapovalov, Roland L. Dunbrack, Jr., and P. Andrew Karplus
+# Department of Biochemistry and Biophysics, Oregon State University, 2011 ALS, Corvallis, OR 97331, USA
+# Institute for Cancer Research, Fox Chase Cancer Center, 333 Cottman Avenue, Philadelphia, PA 19111, USA
+# 
+# For additional information please visit:
+# ----------------------------------------
+# http://proteingeometry.sourceforge.net
+# http://dunbrack.fccc.edu/ProteinBackboneGeometryLibrary.php
+# 
+# and for the publication itself:
+# -------------------------------
+# http://www.cell.com/structure/abstract/S0969-2126%2809%2900335-9
+# Berkholz DS, MV Shapovalov MV, RL Dunbrack RL, Jr., Karplus PA
+# "Conformation Dependence of Backbone Geometry in Proteins", doi:10.1016/j.str.2009.08.012
+# 
+#
 #PhiStart	PhiStop	PsiStart	PsiStop	Observations	PhiAvg(i)	PhiDev(i)	PsiAvg(i)	PsiDev(i)	OmeAvg(i)	OmeDev(i)	C(-1)-NAvg(i)	C(-1)-NDev(i)	N-CAAvg(i)	N-CADev(i)	CA-CBAvg(i)	CA-CBDev(i)	CA-CAvg(i)	CA-CDev(i)	C-OAvg(i)	C-ODev(i)	C(-1)-N-CAAvg(i)	C(-1)-N-CADev(i)	N-CA-CBAvg(i)	N-CA-CBDev(i)	N-CA-CAvg(i)	N-CA-CDev(i)	CB-CA-CAvg(i)	CB-CA-CDev(i)	CA-C-OAvg(i)	CA-C-ODev(i)	CA-C-N(+1)Avg(i)	CA-C-N(+1)Dev(i)	O-C-N(+1)Avg(i)	O-C-N(+1)Dev(i)	Chi1Avg(i)	Chi1Dev(i)	Chi2Avg(i)	Chi2Dev(i)	Chi3Avg(i)	Chi3Dev(i)	Chi4Avg(i)	Chi4Dev(i)	ZetaAvg(i)	ZetaDev(i)
 70.0	80.0	30.0	40.0	3	-103.42034088	0	-145.252380627	0	-177.372360133	0	1.32501169133	0.0057246536447	1.46610196608	0.0287809756433	0	0	1.52770706407	0.0101893649753	1.23012709125	0.0104725247715	123.173932762	3.35599909844	0	0	111.453102353	2.07127024181	0	0	121.807202411	1.11380556917	115.227122203	1.03944223939	122.909229601	2.03997613936	0	0	0	0	0	0	0	0	0	0
 50.0	60.0	310.0	320.0	6	-125.764534566	0	135.231370788	0	-177.357118221	0	1.32670558977	0.0167131991133	1.45674491159	0.0128782621003	0	0	1.51046056404	0.00846111624102	1.23245755472	0.0104699060287	122.742215762	0.810285236249	0	0	109.814638817	1.67105008307	0	0	120.028189973	0.499259184766	116.862993481	0.651831957305	123.094551616	0.59385041437	0	0	0	0	0	0	0	0	0	0
