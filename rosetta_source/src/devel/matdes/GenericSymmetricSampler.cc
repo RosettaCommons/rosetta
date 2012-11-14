@@ -149,7 +149,13 @@ GenericSymmetricSampler::apply(Pose & pose) {
       TR.Error << "Mover failed. Exit." << std::endl;
       break;
     }
-		core::Real myscore = usescore_? (*scorefxn_)(pose) : filter_->report_sm( pose );
+		core::Real myscore;
+		if (usescore_) {
+			myscore = (*scorefxn_)(pose);
+		} else {
+			myscore = filter_->report_sm( pose );
+		}
+
 		if (maxscore_) 	myscore*=-1;
 		if (myscore < best_score ) {
 			best_score = myscore;
@@ -191,6 +197,9 @@ GenericSymmetricSampler::parse_my_tag( TagPtr const tag,
 	std::string filter_name( tag->getOption< std::string >( "filter_name", "true_filter" ) );
 	Filters_map::const_iterator find_filter( filters.find( filter_name ));
 	runtime_assert( find_filter!=filters.end() );
+	filter_ = find_filter->second;
+	runtime_assert( filter_ );
+
 
 	// optional scorefunction ... overrides filter
 	std::string sfxn ( tag->getOption< std::string >( "scorefxn", "" ) );
