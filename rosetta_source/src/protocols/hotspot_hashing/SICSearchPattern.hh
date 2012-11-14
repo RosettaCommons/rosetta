@@ -12,8 +12,8 @@
 /// @author 
 
 
-#ifndef INCLUDED_protocols_hotspot_hashing_SurfaceSearchPattern_hh
-#define INCLUDED_protocols_hotspot_hashing_SurfaceSearchPattern_hh
+#ifndef INCLUDED_protocols_hotspot_hashing_SICSearchPattern_hh
+#define INCLUDED_protocols_hotspot_hashing_SICSearchPattern_hh
 
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -28,28 +28,43 @@
 #include <core/pose/Pose.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 
-#include <core/kinematics/RT.hh>
+#include <core/kinematics/Stub.hh>
+
+#include <protocols/sic_dock/SICFast.hh>
 #include <protocols/hotspot_hashing/SearchPattern.hh>
 
 namespace protocols {
 namespace hotspot_hashing {
 
-class SurfaceSearchPattern : public SearchPattern
+class SICPatternAtTransform : public SearchPattern
 {
 	public:
-		SurfaceSearchPattern(
-        core::pose::Pose const & source_pose,
-				core::pack::task::TaskFactoryOP surface_selection,
-				core::Real surface_density);
+		const static core::Real default_displacement = 100;
+
+		SICPatternAtTransform(
+			core::pose::Pose const & source_pose,
+			core::pose::Pose const & placed_pose,
+			SearchPatternOP slide_pattern,
+			SearchPatternOP source_pattern,
+			core::Real starting_displacement = default_displacement);
+
+		SICPatternAtTransform(
+			core::pose::Pose const & source_pose,
+			core::pose::Pose const & placed_pose,
+			SearchPatternOP slide_pattern,
+			core::Real starting_displacement = default_displacement);
 
 		virtual utility::vector1<core::kinematics::Stub> Searchpoints();
-		utility::vector1<VectorPair> surface_vectors() { return surface_vectors_; }
+
+		core::kinematics::Stub slideSourceAtLocation(core::kinematics::Stub slide_location, core::kinematics::Stub source_transform);
 
 	private:
-    utility::vector1<VectorPair> surface_vectors_;
-
-		core::Real surface_density_;
+		protocols::sic_dock::SICFast sic_fast_;
+		core::Real starting_displacement_;
+		SearchPatternOP slide_pattern_;
+		SearchPatternOP source_pattern_;
 };
+
 }
 }
 

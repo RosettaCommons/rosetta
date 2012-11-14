@@ -68,7 +68,7 @@ class PlaceProbeMover : virtual public protocols::moves::Mover
     core::Size total_search_partition_;
 
     bool initialized_pattern_;
-    utility::vector1<RT> search_points_;
+    utility::vector1<core::kinematics::Stub> search_points_;
 };
 
 }

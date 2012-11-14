@@ -31,7 +31,9 @@ sources = {
 "protocols/hotspot_hashing": [
 	"HotspotStub",
   "HotspotStubSet",
+  "StubGenerator",
   "SearchPattern",
+  "SICSearchPattern",
   "SurfaceSearchPattern",
   "MinimizingPatternSearch",
   "PlaceMinimizeSearch",

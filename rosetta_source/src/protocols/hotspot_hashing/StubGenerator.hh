@@ -10,23 +10,19 @@
 /// @file
 /// @brief
 /// @author Alex Ford (fordas@u.washington.edu)
-
+//
 #ifndef INCLUDED_protocols_hotspot_hashing_StubGenerator_hh
 #define INCLUDED_protocols_hotspot_hashing_StubGenerator_hh
 
 // Unit headers
 #include <protocols/hotspot_hashing/StubGenerator.fwd.hh>
-#include <core/kinematics/RT.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/util.hh>
-#include <core/conformation/Residue.hh>
-#include <core/pose/Pose.hh>
-#include <protocols/filters/Filter.hh>
+#include <core/kinematics/Stub.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
 
 // Utility Headers
 #include <core/types.hh>
+#include <numeric/xyzVector.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/owning_ptr.hh>
 
@@ -37,70 +33,28 @@ namespace hotspot_hashing {
 
 class StubGenerator
 {
+	public:
+		typedef  numeric::xyzMatrix< core::Real > Matrix;
+		typedef  numeric::xyzVector< core::Real > Vector;
+
   public:
-    StubGenerator();
+    static core::conformation::ResidueOP getStubByName( std::string name );
 
-    static core::conformation::ResidueOP getStubByName( std::string name )
-    {
-      using namespace core::conformation;
-      using namespace core::chemical;
-      
-      ResidueOP residue = ResidueFactory::create_residue(
-          rsd_set_from_cmd_line()->name_map( name ) );
+		static void placeResidueAtTransform( core::pose::Pose & pose, core::conformation::ResidueCOP sourceResidue, core::kinematics::Stub transform, core::Size & residuejumpindex, core::Size & residueindex);
 
-			applyRT(residue, residueStubCentroidTransform(residue));
-    }
+		static void placeResidueOnPose(core::pose::Pose & pose, core::conformation::ResidueCOP residue);
 
-    static void applyRT( core::conformation::ResidueOP residue, RT transform )
-		{
-			for (core::Size i = 1; i <= residue->natoms(); i++) 
-			{
-				residue->set_xyz(
-						i,
-						transform.get_rotation() * (residue->xyz(i) + transform.get_translation()));
-			}
-		}
+		//@brief Moves residue into the transform's reference frame via local2global.
+    static void moveIntoStubFrame(core::conformation::ResidueOP residue, core::kinematics::Stub transform);
 
-		static RT residueStubCentroidTransform(core::conformation::ResidueCOP const residue)
-		{
-			// Canonical transform aligns CA atom to <0, 0, 0>
-			// CA->SC heavyatom centroid vector along <1,0,0>
-			// CA->C vector on the XY plane (<CA->C> * <0,0,1> == 0)
-			
-			Vector position = -residue->xyz(residue->atom_index("CA"));
-			
-			Vector xunit = Vector(1, 0, 0);
-			Vector yunit = Vector(0, 1, 0);
+		//@brief Moves residue from transform's reference frame via global2local.
+    static void moveFromStubFrame(core::conformation::ResidueOP residue, core::kinematics::Stub transform);
 
-			Vector cacentroid_vector = residueStubCentroid(residue) + position;
-			Matrix cacentroid_rotation = rotation_matrix( cacentroid_vector.cross(xunit), angle_of(cacentroid_vector, xunit));
+		static core::kinematics::Stub residueStubCentroidFrame(core::conformation::ResidueCOP const residue);
 
-			Vector cac_vector_prime = cacentroid_rotation * (residue->xyz(residue->atom_index("C")) + position);
-			Vector cac_vector_zyprojection = Vector(0, cac_vector_prime.y(), cac_vector_prime.z());
-			Matrix cac_rotation = rotation_matrix( cac_vector_zyprojection.cross(yunit), angle_of(cac_vector_zyprojection, yunit));
-
-			return RT(cac_rotation * cacentroid_rotation, position);
-		}
-
-		static Vector residueStubCentroid(core::conformation::ResidueCOP const residue)
-		{
-			Vector centroid;
-			centroid = 0;
-
-			if (residue->first_sidechain_atom() > residue->nheavyatoms())
-			{
-				return residue->xyz(residue->nbr_atom());
-			}
-
-			for (core::Size i = residue->first_sidechain_atom(); i <= residue->nheavyatoms(); ++i)
-			{
-				centroid += residue->xyz(i);
-			}
-
-			centroid /= (1 + residue->nheavyatoms() - residue->first_sidechain_atom());
-
-			return centroid;
-		}
+		static Vector residueStubCentroid(core::conformation::ResidueCOP const residue);
+	private:
+		StubGenerator();
 };
 
 } // namespace hotspot_hashing

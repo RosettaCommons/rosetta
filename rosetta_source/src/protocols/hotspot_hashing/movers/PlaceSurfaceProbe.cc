@@ -107,12 +107,7 @@ SearchPatternOP PlaceSurfaceProbe::create_search_pattern(core::pose::Pose const 
 	return new SurfaceSearchPattern(
 							target_pose,
 							surface_selection_,
-							search_density_,
-							angle_sampling_,
-							translocation_sampling_,
-							max_radius_,
-							distance_sampling_,
-							max_distance_);
+							search_density_);
 }
 
 void

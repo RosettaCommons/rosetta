@@ -105,7 +105,7 @@ void PlaceLSMProbe::apply(core::pose::Pose & pose)
 
 	core::Size nstruct = jd2::JobDistributor::get_instance()->current_job()->nstruct_index();
 	
-  RT transform = search_points_[nstruct % search_points_.size()];
+  core::kinematics::Stub transform = search_points_[nstruct % search_points_.size()];
 
 	core::Size residuejumpindex;
 	core::Size residueindex;

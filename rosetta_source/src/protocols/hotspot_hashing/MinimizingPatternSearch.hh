@@ -26,6 +26,7 @@
 
 #include <core/types.hh>
 
+#include <core/kinematics/Stub.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
@@ -180,7 +181,7 @@ class MinimizingPatternSearch : public utility::pointer::ReferenceCount
 
 			scorefile << "model pre_score post_score" << std::endl;
 
-			utility::vector1<RT> searchpoints = searchPattern.Searchpoints();
+			utility::vector1<core::kinematics::Stub> searchpoints = searchPattern.Searchpoints();
 
 			tr.Info << "Initialized search pattern. Points: " << searchpoints.size() << std::endl;
 
@@ -189,7 +190,7 @@ class MinimizingPatternSearch : public utility::pointer::ReferenceCount
 
 			core::Size transformindex = 1;
 
-			foreach(RT transform, searchpoints)
+			foreach(core::kinematics::Stub transform, searchpoints)
 			{
 				// Clone target pose, residue is cloned internally pose.
 				core::pose::Pose pose(targetPose);
@@ -255,7 +256,7 @@ class MinimizingPatternSearch : public utility::pointer::ReferenceCount
 			clusterfile.close();
 		};
 
-		static void placeResidueAtTransform( core::pose::Pose & pose, core::conformation::ResidueCOP sourceResidue, RT & transform, core::Size & residuejumpindex, core::Size & residueindex)
+		static void placeResidueAtTransform( core::pose::Pose & pose, core::conformation::ResidueCOP sourceResidue, core::kinematics::Stub & transform, core::Size & residuejumpindex, core::Size & residueindex)
 		{
 			tr.Debug << "Placing at transform: " << transform << std::endl;
 
@@ -272,20 +273,20 @@ class MinimizingPatternSearch : public utility::pointer::ReferenceCount
 
 			// Place residue in "canonical" position
 			// Calculate transforms to move target atom to 0,0,0 and rotate into canonical position
-			RT residuetransform = residueStubCentroidTransform(residue);
+			core::kinematics::Stub residuetransform = residueStubCentroidTransform(residue);
 
-			if (residuetransform.get_translation().length() != 0)
+			if (residuetransform.v.length() != 0)
 			{
-				newjump.translation_along_axis(upstreamstub, residuetransform.get_translation(), residuetransform.get_translation().length());
+				newjump.translation_along_axis(upstreamstub, residuetransform.v, residuetransform.v.length());
 			}
 
-			newjump.rotation_by_matrix(upstreamstub, Vector(0, 0, 0), residuetransform.get_rotation());
+			newjump.rotation_by_matrix(upstreamstub, Vector(0, 0, 0), residuetransform.M);
 
 			// Apply target transformation
-			newjump.rotation_by_matrix(upstreamstub, Vector(0, 0, 0), transform.get_rotation());
-			if (transform.get_translation().length() != 0)
+			newjump.rotation_by_matrix(upstreamstub, Vector(0, 0, 0), transform.M);
+			if (transform.v.length() != 0)
 			{
-				newjump.translation_along_axis(upstreamstub, transform.get_translation(), transform.get_translation().length());
+				newjump.translation_along_axis(upstreamstub, transform.v, transform.v.length());
 			}
 
 			pose.set_jump(residuejumpindex, newjump);
@@ -294,7 +295,7 @@ class MinimizingPatternSearch : public utility::pointer::ReferenceCount
 			tr.Debug << "Placed residue at anchor location: " << finalresidue->xyz(residue->atom_index("CA")) << std::endl;
 		};
 
-		static RT residueCanonicalTransform(core::conformation::ResidueCOP const residue)
+		static core::kinematics::Stub residueCanonicalTransform(core::conformation::ResidueCOP const residue)
 		{
 			// Canonical transform aligns CA atom to <0, 0, 0>
 			// CA->CB vector along <1,0,0>
@@ -312,10 +313,10 @@ class MinimizingPatternSearch : public utility::pointer::ReferenceCount
 			Vector cac_vector_zyprojection = Vector(0, cac_vector_prime.y(), cac_vector_prime.z());
 			Matrix cac_rotation = rotation_matrix( cac_vector_zyprojection.cross(zunit), angle_of(cac_vector_zyprojection, zunit));
 
-			return RT(cac_rotation * cacb_rotation, position);
+			return core::kinematics::Stub(cac_rotation * cacb_rotation, position);
 		}
 
-		static RT residueStubCentroidTransform(core::conformation::ResidueCOP const residue)
+		static core::kinematics::Stub residueStubCentroidTransform(core::conformation::ResidueCOP const residue)
 		{
 			// Canonical transform aligns CA atom to <0, 0, 0>
 			// CA->SC heavyatom centroid vector along <1,0,0>
@@ -333,7 +334,7 @@ class MinimizingPatternSearch : public utility::pointer::ReferenceCount
 			Vector cac_vector_zyprojection = Vector(0, cac_vector_prime.y(), cac_vector_prime.z());
 			Matrix cac_rotation = rotation_matrix( cac_vector_zyprojection.cross(yunit), angle_of(cac_vector_zyprojection, yunit));
 
-			return RT(cac_rotation * cacentroid_rotation, position);
+			return core::kinematics::Stub(cac_rotation * cacentroid_rotation, position);
 		}
 
 		static Vector residueStubCentroid(core::conformation::ResidueCOP const residue)

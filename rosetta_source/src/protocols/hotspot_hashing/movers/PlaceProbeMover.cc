@@ -37,7 +37,6 @@
 
 #include <protocols/hotspot_hashing/SearchPattern.hh>
 #include <protocols/hotspot_hashing/SurfaceSearchPattern.hh>
-#include <protocols/hotspot_hashing/PlaceMinimizeSearch.hh>
 
 #include <protocols/hotspot_hashing/StubGenerator.hh>
 
@@ -86,12 +85,12 @@ void PlaceProbeMover::apply(core::pose::Pose & pose)
 		search_index = search_points_.size();
 	}
 	
-  RT transform = search_points_[search_index];
+	core::kinematics::Stub transform = search_points_[search_index];
 
 	core::Size residuejumpindex;
 	core::Size residueindex;
 
-	PlaceMinimizeSearch::placeResidueAtTransform(pose, *target_residue_, transform, residuejumpindex, residueindex);
+	StubGenerator::placeResidueAtTransform(pose, target_residue_, transform, residuejumpindex, residueindex);
 
 	core::pose::add_variant_type_to_pose_residue( pose, "SHOVE_BB", residueindex );
 }

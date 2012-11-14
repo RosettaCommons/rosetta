@@ -30,12 +30,10 @@
 #include <numeric/xyz.functions.hh>
 
 #include <core/types.hh>
-#include <core/kinematics/RT.hh>
+#include <core/kinematics/Stub.hh>
 
 namespace protocols {
 namespace hotspot_hashing {
-
-using core::kinematics::RT;
 
 typedef numeric::xyzMatrix< core::Real > Matrix;
 typedef numeric::xyzVector< core::Real > Vector;
@@ -74,10 +72,6 @@ inline std::ostream& operator<<(std::ostream &strm, const Matrix &matrix) {
   return strm << "[" << matrix.row_x() << "," << matrix.row_y() << "," << matrix.row_z() << "]";
 }
 
-//inline std::ostream& operator<<(std::ostream &strm, const RT &tp) {
-//  return strm << "(" << tp.get_translation() << "," << tp.get_rotation() << ")";
-//}
-
 inline std::ostream& operator<<(std::ostream &strm, const VectorPair &vp) {
   return strm << "(" << vp.position << "," << vp.direction << ")";
 }
@@ -85,7 +79,7 @@ inline std::ostream& operator<<(std::ostream &strm, const VectorPair &vp) {
 class SearchPattern : public utility::pointer::ReferenceCount
 {
 	public:
-		virtual utility::vector1<RT> Searchpoints() = 0;
+		virtual utility::vector1<core::kinematics::Stub> Searchpoints() = 0;
 };
 
 typedef utility::pointer::owning_ptr<SearchPattern>  SearchPatternOP;
@@ -94,24 +88,22 @@ typedef utility::pointer::owning_ptr<SearchPattern const>  SearchPatternCOP;
 class ConstPattern : public SearchPattern
 {
 	public:
-		virtual utility::vector1<RT> Searchpoints()
-		{
-			utility::vector1<RT> searchpoints;
-			searchpoints.push_back(
-					RT(
-						numeric::z_rotation_matrix_degrees((core::Real)90),
-						Vector(10, 0, 0)));
-			searchpoints.push_back(
-					RT(
-						numeric::z_rotation_matrix_degrees((core::Real)0),
-						Vector(0, 0, 0)));
-			searchpoints.push_back(
-					RT(
-						numeric::z_rotation_matrix_degrees((core::Real)270),
-						Vector(-10, 0, 0)));
+		ConstPattern() :
+			target_stub(core::kinematics::default_stub)
+		{}
 
+		ConstPattern(core::kinematics::Stub target) :
+			target_stub(target)
+		{}
+
+		virtual utility::vector1<core::kinematics::Stub> Searchpoints()
+		{
+			utility::vector1<core::kinematics::Stub> searchpoints;
+			searchpoints.push_back(target_stub);
 			return searchpoints;
 		}
+
+		core::kinematics::Stub target_stub;
 };
 
 class TestPattern : public SearchPattern
@@ -121,9 +113,9 @@ class TestPattern : public SearchPattern
 		{
 		}
 
-		virtual utility::vector1<RT> Searchpoints()
+		virtual utility::vector1<core::kinematics::Stub> Searchpoints()
 		{
-			utility::vector1<RT> searchpoints;
+			utility::vector1<core::kinematics::Stub> searchpoints;
 
 			core::Real x = 0;
 			core::Real y = 0;
@@ -140,7 +132,7 @@ class TestPattern : public SearchPattern
 							Vector translation = Vector(x, y, z);
 							Matrix rotation = numeric::z_rotation_matrix_degrees(angle);
 
-							RT tp(rotation, translation);
+							core::kinematics::Stub tp(rotation, translation);
 							searchpoints.push_back(tp);
 						}
 					}
@@ -171,9 +163,9 @@ class LSMSearchPattern : public SearchPattern
 
 		}
 
-		virtual utility::vector1<RT> Searchpoints()
+		virtual utility::vector1<core::kinematics::Stub> Searchpoints()
 		{
-			utility::vector1<RT> searchpoints;
+			utility::vector1<core::kinematics::Stub> searchpoints;
 
 			Vector xunit = Vector(0, 0, 1);
 			Matrix normal_rotation = rotation_matrix( lsmspec_.direction.cross(xunit), angle_of(lsmspec_.direction, xunit));
@@ -191,7 +183,7 @@ class LSMSearchPattern : public SearchPattern
 								Vector translation = Vector(x, y, z);
 								Matrix rotation = numeric::x_rotation_matrix_degrees(angle);
 
-								RT tp(rotation * normal_rotation, translation + lsmspec_.position);
+								core::kinematics::Stub tp(rotation * normal_rotation, translation + lsmspec_.position);
 								searchpoints.push_back(tp);
 							}
 						}
@@ -246,6 +238,50 @@ class LSMSearchPattern : public SearchPattern
 		core::Real max_distance_;
 };
 
+class RotationSearchPattern : public SearchPattern
+{
+	public:
+		RotationSearchPattern(
+				core::Real x_sampling,
+				core::Real y_sampling,
+				core::Real x_min = 0,
+				core::Real x_max = 360,
+				core::Real y_min = 0,
+				core::Real y_max = 90) :
+			x_sampling(x_sampling),
+			y_sampling(y_sampling),
+			x_min(x_min),
+			x_max(x_max),
+			y_min(y_min),
+			y_max(y_max)
+		{}
+
+		core::Real x_sampling;
+		core::Real y_sampling;
+		core::Real x_min;
+		core::Real x_max;
+		core::Real y_min;
+		core::Real y_max;
+		
+	virtual utility::vector1<core::kinematics::Stub> Searchpoints()
+	{
+		utility::vector1<core::kinematics::Stub> searchpoints;
+
+		for(core::Real x_sample = x_min; x_sample <= x_max; x_sample += x_sampling)
+		{
+			for(core::Real y_sample = y_min; y_sample <= y_max; y_sample += y_sampling)
+			{
+				searchpoints.push_back(
+						core::kinematics::Stub(
+							numeric::x_rotation_matrix_degrees(x_sample) * numeric::y_rotation_matrix_degrees(y_sample),
+							Vector()));
+			}
+		}
+
+		return searchpoints; 
+	}
+};
+
 class PartitionedSearchPattern : public SearchPattern
 {
 	public:
@@ -260,11 +296,11 @@ class PartitionedSearchPattern : public SearchPattern
 			runtime_assert(partition >= 0 && partition < total_partitions && total_partitions > 0)
 		}
 		
-		virtual utility::vector1<RT> Searchpoints()
+		virtual utility::vector1<core::kinematics::Stub> Searchpoints()
 		{
-			utility::vector1<RT> sourcepoints = source_pattern_->Searchpoints();
+			utility::vector1<core::kinematics::Stub> sourcepoints = source_pattern_->Searchpoints();
 
-			utility::vector1<RT> searchpoints;
+			utility::vector1<core::kinematics::Stub> searchpoints;
 			searchpoints.reserve((sourcepoints.size() / total_partitions_) + 1);
 
 			for (core::Size i = partition_; i < sourcepoints.size(); i += total_partitions_)
@@ -288,11 +324,11 @@ class SearchPatternTransform : public SearchPattern
 			source_pattern_(source_pattern)
 		{}
 		
-		virtual utility::vector1<RT> Searchpoints()
+		virtual utility::vector1<core::kinematics::Stub> Searchpoints()
 		{
-			utility::vector1<RT> sourcepoints = source_pattern_->Searchpoints();
+			utility::vector1<core::kinematics::Stub> sourcepoints = source_pattern_->Searchpoints();
 
-			utility::vector1<RT> searchpoints;
+			utility::vector1<core::kinematics::Stub> searchpoints;
 			searchpoints.reserve(sourcepoints.size());
 
 			for (core::Size i = 1; i <= sourcepoints.size(); i++)
@@ -303,7 +339,7 @@ class SearchPatternTransform : public SearchPattern
 			return searchpoints; 
 		}
 
-		virtual RT transform(RT source) = 0;
+		virtual core::kinematics::Stub transform(core::kinematics::Stub source) = 0;
 
 	private:
 		SearchPatternOP source_pattern_;
@@ -316,15 +352,15 @@ class SearchPatternExpansion : public SearchPattern
 			source_pattern_(source_pattern)
 		{}
 		
-		virtual utility::vector1<RT> Searchpoints()
+		virtual utility::vector1<core::kinematics::Stub> Searchpoints()
 		{
-			utility::vector1<RT> sourcepoints = source_pattern_->Searchpoints();
+			utility::vector1<core::kinematics::Stub> sourcepoints = source_pattern_->Searchpoints();
 
-			utility::vector1<RT> searchpoints;
+			utility::vector1<core::kinematics::Stub> searchpoints;
 
 			for (core::Size i = 1; i <= sourcepoints.size(); i++)
 			{
-				utility::vector1<RT> newpoints = expand(sourcepoints[i]);
+				utility::vector1<core::kinematics::Stub> newpoints = expand(sourcepoints[i]);
 
 				searchpoints.insert(searchpoints.end(), newpoints.begin(), newpoints.end());
 			}
@@ -332,7 +368,7 @@ class SearchPatternExpansion : public SearchPattern
 			return searchpoints; 
 		}
 
-		virtual utility::vector1<RT> expand(RT source) = 0;
+		virtual utility::vector1<core::kinematics::Stub> expand(core::kinematics::Stub source) = 0;
 
 	private:
 		SearchPatternOP source_pattern_;

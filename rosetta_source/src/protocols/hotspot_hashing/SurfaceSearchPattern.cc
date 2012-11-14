@@ -44,34 +44,25 @@ static basic::Tracer TR( "protocols.hotspot_hashing.SurfaceSearchPattern" );
 
 SurfaceSearchPattern::SurfaceSearchPattern(
 	core::pose::Pose const & source_pose,
-	core::pack::task::TaskFactoryOP surface_selection_,
-	core::Real surface_density,
-	core::Real angle_sampling,
-	core::Real translocation_sampling,
-	core::Real max_radius,
-	core::Real distance_sampling,
-	core::Real max_distance) : 
+	core::pack::task::TaskFactoryOP surface_selection,
+	core::Real surface_density) : 
 	surface_vectors_(),
-	surface_density_(surface_density),
-	angle_sampling_(angle_sampling),
-	translocation_sampling_(translocation_sampling),
-	max_radius_(max_radius),
-	distance_sampling_(distance_sampling),
-	max_distance_(max_distance)
+	surface_density_(surface_density)
 {
 	using namespace core::scoring::sc;
 
 	core::pose::Pose pose(source_pose);
 
 	// Create list of target residues using taskoperation
-  core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose );
-  if ( surface_selection_ != 0 )
+  core::pack::task::PackerTaskOP task;
+  if ( surface_selection != 0 )
 	{
-    task = surface_selection_->create_task_and_apply_taskoperations( pose );
+    task = surface_selection->create_task_and_apply_taskoperations( pose );
 		TR.Debug << "Initializing from packer task." << std::endl;
   }
 	else
 	{
+		task = core::pack::task::TaskFactory::create_packer_task( pose );
 		TR.Debug << "No packer task specified, using default task." << std::endl;
   }
 
@@ -101,7 +92,7 @@ SurfaceSearchPattern::SurfaceSearchPattern(
 		else if (task->pack_residue(surface_dots[i].atom->nresidue))
 		{
 			selected_dots++;
-			surface_vectors_.push_back(VectorPair(surface_dots[i].coor, surface_dots[i].outnml));
+			surface_vectors_.push_back(VectorPair(surface_dots[i].coor, -surface_dots[i].outnml));
 		}
 		else
 		{
@@ -144,39 +135,20 @@ SurfaceSearchPattern::SurfaceSearchPattern(
 	}
 }
 
-utility::vector1<RT> SurfaceSearchPattern::Searchpoints()
+utility::vector1<core::kinematics::Stub> SurfaceSearchPattern::Searchpoints()
 {
-	utility::vector1<RT> searchpoints;
+	utility::vector1<core::kinematics::Stub> searchpoints;
 
 	for (core::Size i = 1; i <= surface_vectors_.size(); i++)
 	{
 		VectorPair search_vector = surface_vectors_[i];
 
-		Vector xunit = Vector(0, 0, 1);
-		Matrix normal_rotation = numeric::rotation_matrix( search_vector.direction.cross(xunit), angle_of(search_vector.direction, xunit));
-		
-		for (core::Real x = -max_radius_; x <= max_radius_; x += translocation_sampling_)
-		{
-			for (core::Real y = -max_radius_; y <= max_radius_; y += translocation_sampling_)
-			{
-				if(sqrt(x*x + y*y) <= max_radius_)
-				{
-					for (core::Real z = 0; z <= max_distance_; z += distance_sampling_)
-					{
-						for (core::Real angle = 0; angle < 360; angle += angle_sampling_)
-						{
-							Vector translation = Vector(x, y, z);
-							Matrix rotation = numeric::x_rotation_matrix_degrees(angle);
+		core::kinematics::Stub tp(
+				search_vector.position,
+				search_vector.position + search_vector.direction,
+				search_vector.position + search_vector.direction + (search_vector.position != 0 ? search_vector.position.cross(search_vector.direction) : (search_vector.position + 1).cross(search_vector.direction)));
 
-							RT tp(
-									rotation * normal_rotation,
-									translation + search_vector.position);
-							searchpoints.push_back(tp);
-						}
-					}
-				}
-			}
-		}
+		searchpoints.push_back(tp);
 	}
 
 	return searchpoints;

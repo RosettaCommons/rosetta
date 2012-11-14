@@ -24,7 +24,7 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 
-#include <core/kinematics/RT.hh>
+#include <core/kinematics/Stub.hh>
 #include <protocols/hotspot_hashing/SearchPattern.hh>
 
 namespace protocols {
@@ -55,9 +55,9 @@ class PlaceMinimizeSearch : public utility::pointer::ReferenceCount
 
 		friend class HotspotHashingTests;
 
-		static void placeResidueAtTransform( core::pose::Pose & pose, core::conformation::Residue const & residue, RT transform, core::Size & residuejumpindex, core::Size & residueindex );
+		static void placeResidueAtTransform( core::pose::Pose & pose, core::conformation::Residue const & residue, core::kinematics::Stub transform, core::Size & residuejumpindex, core::Size & residueindex );
 
-		static RT residueStubCentroidTransform(core::conformation::Residue const & residue);
+		static core::kinematics::Stub residueStubCentroidTransform(core::conformation::Residue const & residue);
 		static Vector residueStubCentroid(core::conformation::Residue const & residue);
 		static void placeResidueOnPose(core::pose::Pose & pose, core::conformation::Residue const & residue);
 

@@ -23,7 +23,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 
-#include <core/kinematics/RT.hh>
+#include <core/kinematics/Stub.hh>
 #include <protocols/hotspot_hashing/movers/PlaceLSMProbe.fwd.hh>
 #include <protocols/hotspot_hashing/SearchPattern.hh>
 
@@ -90,7 +90,7 @@ class PlaceLSMProbe : public protocols::moves::Mover
     core::conformation::ResidueCOP target_residue_;
 
     bool initialized_pattern_;
-    utility::vector1<RT> search_points_;
+    utility::vector1<core::kinematics::Stub> search_points_;
 };
 
 } // movers
