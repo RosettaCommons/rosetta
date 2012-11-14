@@ -73,15 +73,15 @@ class PlaceSurfaceProbe : public protocols::hotspot_hashing::movers::PlaceProbeM
 
   private:
 
-		core::Real search_density_;
 		core::pack::task::TaskFactoryOP surface_selection_;
 
-		core::Real x_angle_sampling_;
-		core::Real y_angle_sampling_;
+		core::Real search_density_;
+		core::Real coarse_angle_sampling_;
+		core::Real coarse_sampling_;
 
-		core::Real refinement_distance_sampling_;
 		core::Real refinement_distance_;
-		core::Real refinement_translation_sampling_;
+		core::Real refinement_angle_sampling_;
+		core::Real refinement_sampling_;
 
 		SearchPatternOP initialize_refinement_pattern();
 		SearchPatternOP refinement_pattern_;

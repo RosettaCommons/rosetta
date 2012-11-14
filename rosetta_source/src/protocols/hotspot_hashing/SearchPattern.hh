@@ -31,6 +31,7 @@
 
 #include <core/types.hh>
 #include <core/kinematics/Stub.hh>
+#include <core/kinematics/RT.hh>
 
 namespace protocols {
 namespace hotspot_hashing {
@@ -341,6 +342,78 @@ class RotationSearchPattern : public SearchPattern
 		utility::vector1<core::kinematics::Stub> searchpoints_;
 };
 
+class SphericalRotationSearchPattern : public SearchPattern
+{
+	// http://upload.wikimedia.org/wikipedia/commons/4/4f/3D_Spherical.svg
+	// Uses spherical coordinates as outlined in the above diagram.
+	// Altitude rotate is equiv. to theta, rotation off the polar axis.
+	// Azmiuth rotate is equiv. to phi, rotation around the polar axis.
+	// Polar rotate is rotation around the result vector from alt/azm rotation.
+
+	public:
+		SphericalRotationSearchPattern(
+				core::Real polar_rotation_sampling,
+				core::Real altitude_rotation_sampling,
+				core::Real azmiuth_rotation_sampling,
+				core::Real polar_min = 0,
+				core::Real polar_max = 360,
+				core::Real altitude_min = 0,
+				core::Real altitude_max = 360,
+				core::Real azmiuth_min = 0,
+				core::Real azmiuth_max = 360) :
+			searchpoints_(),
+		  polar_rotation_sampling(polar_rotation_sampling),
+		  altitude_rotation_sampling(altitude_rotation_sampling),
+		  azmiuth_rotation_sampling(azmiuth_rotation_sampling),
+		  polar_min(polar_min),
+		  polar_max(polar_max),
+		  altitude_min(altitude_min),
+		  altitude_max(altitude_max),
+		  azmiuth_min(azmiuth_min),
+		  azmiuth_max(azmiuth_max)
+		{
+			searchpoints_ = generate_search_points();
+		}
+
+		core::Real polar_rotation_sampling;
+		core::Real altitude_rotation_sampling;
+		core::Real azmiuth_rotation_sampling;
+		core::Real polar_min;
+		core::Real polar_max;
+		core::Real altitude_min;
+		core::Real altitude_max;
+		core::Real azmiuth_min;
+		core::Real azmiuth_max;
+		
+		utility::vector1<core::kinematics::Stub> generate_search_points()
+		{
+			utility::vector1<core::kinematics::Stub> searchpoints;
+
+			for(core::Real polar_sample = polar_min; polar_sample <= polar_max; polar_sample += polar_rotation_sampling)
+			{
+				for(core::Real altitude_sample = altitude_min; altitude_sample <= altitude_max; altitude_sample += altitude_rotation_sampling)
+				{
+					for(core::Real azmiuth_sample = azmiuth_min; azmiuth_sample <= azmiuth_max; azmiuth_sample += azmiuth_rotation_sampling)
+					{
+						searchpoints.push_back(
+								core::kinematics::Stub(
+									numeric::x_rotation_matrix_degrees(azmiuth_sample) * numeric::y_rotation_matrix_degrees(altitude_sample) * numeric::x_rotation_matrix_degrees(polar_sample),
+									Vector(0)));
+					}
+				}
+			}
+
+			return searchpoints; 
+		}
+
+		utility::vector1<core::kinematics::Stub> Searchpoints()
+		{
+			return searchpoints_;
+		}
+
+		utility::vector1<core::kinematics::Stub> searchpoints_;
+};
+
 class CartesianSearchPattern : public SearchPattern
 {
 	public:
@@ -381,6 +454,21 @@ class CartesianSearchPattern : public SearchPattern
 		utility::vector1<core::kinematics::Stub> generate_search_points()
 		{
 			utility::vector1<core::kinematics::Stub> searchpoints;
+			
+			if(x_sampling <= 0)
+			{
+				x_sampling = x_max - x_min + 1;
+			}
+
+			if(y_sampling <= 0)
+			{
+				y_sampling = y_max - y_min + 1;
+			}
+
+			if(z_sampling <= 0)
+			{
+				z_sampling = z_max - z_min + 1;
+			}
 
 			for(core::Real x_sample = x_min; x_sample <= x_max; x_sample += x_sampling)
 			{
@@ -440,6 +528,44 @@ class PartitionedSearchPattern : public SearchPattern
 		SearchPatternOP source_pattern_;
 		core::Size partition_;
 		core::Size total_partitions_;
+};
+
+class ComposeSearchPatterns : public SearchPattern
+{
+	public:
+		ComposeSearchPatterns(
+				SearchPatternOP source_pattern_a,
+				SearchPatternOP source_pattern_b) :
+			source_pattern_a(source_pattern_a),
+			source_pattern_b(source_pattern_b)
+		{ }
+
+		virtual utility::vector1<core::kinematics::Stub> Searchpoints()
+		{
+			utility::vector1<core::kinematics::Stub> sourcepoints_a = source_pattern_a->Searchpoints();
+			utility::vector1<core::kinematics::Stub> sourcepoints_b = source_pattern_b->Searchpoints();
+
+			utility::vector1<core::kinematics::Stub> searchpoints;
+			searchpoints.reserve(sourcepoints_a.size() * sourcepoints_b.size());
+
+			for (core::Size a = 1; a <= sourcepoints_a.size(); a += 1)
+			{
+				for (core::Size b = 1; b <= sourcepoints_b.size(); b += 1)
+				{
+					core::kinematics::Stub result;
+					core::kinematics::RT(core::kinematics::default_stub, sourcepoints_b[b]).make_jump(sourcepoints_a[a], result);
+					searchpoints.push_back(result);
+				}
+			}
+
+			return searchpoints; 
+		}
+
+	
+	private:
+		SearchPatternOP source_pattern_a;
+		SearchPatternOP source_pattern_b;
+
 };
 
 class SearchPatternTransform : public SearchPattern

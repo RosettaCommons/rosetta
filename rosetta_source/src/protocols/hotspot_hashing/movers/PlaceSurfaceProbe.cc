@@ -58,13 +58,13 @@ static basic::Tracer TR( "protocols.hotspot_hashing.movers.PlaceSurfaceProbe" );
 PlaceSurfaceProbe::PlaceSurfaceProbe() :
 	  protocols::moves::Mover("PlaceSurfaceProbe"),
 	  protocols::hotspot_hashing::movers::PlaceProbeMover(),
-		search_density_(0),
 		surface_selection_(NULL),
-		x_angle_sampling_(0),
-		y_angle_sampling_(0),
-		refinement_distance_sampling_(0),
+		search_density_(0),
+		coarse_angle_sampling_(0),
+		coarse_sampling_(0),
 		refinement_distance_(0),
-		refinement_translation_sampling_(0),
+		refinement_angle_sampling_(0),
+		refinement_sampling_(0),
 		refinement_pattern_(NULL)
 {
  
@@ -74,11 +74,11 @@ PlaceSurfaceProbe::PlaceSurfaceProbe() :
 PlaceSurfaceProbe::PlaceSurfaceProbe(
 		std::string residue_name,
 		core::Real search_density,
-		core::Real x_angle_sampling,
-		core::Real y_angle_sampling,
-		core::Real refinement_distance_sampling,
+		core::Real coarse_angle_sampling,
+		core::Real coarse_sampling,
 		core::Real refinement_distance,
-		core::Real refinement_translation_sampling,
+		core::Real refinement_angle_sampling,
+		core::Real refinement_sampling,
     core::conformation::ResidueCOP target_residue,
 		core::pack::task::TaskFactoryOP surface_selection,
     core::Size search_partition,
@@ -90,12 +90,11 @@ PlaceSurfaceProbe::PlaceSurfaceProbe(
 			search_partition,
 			total_search_partition),
 		search_density_(search_density),
-		surface_selection_(surface_selection),
-		x_angle_sampling_(x_angle_sampling),
-		y_angle_sampling_(y_angle_sampling),
-		refinement_distance_sampling_(refinement_distance_sampling),
+		coarse_angle_sampling_(coarse_angle_sampling),
+		coarse_sampling_(coarse_sampling),
 		refinement_distance_(refinement_distance),
-		refinement_translation_sampling_(refinement_translation_sampling),
+		refinement_angle_sampling_(refinement_angle_sampling),
+		refinement_sampling_(refinement_sampling),
 		refinement_pattern_(initialize_refinement_pattern())
 {
 }
@@ -115,8 +114,25 @@ SearchPatternOP PlaceSurfaceProbe::create_search_pattern(core::pose::Pose const 
 							surface_selection_,
 							search_density_));
 
+	core::Real expected_course_search_bound = std::sqrt(search_density_);
 	SearchPatternOP residue_sampling_pattern(
-			new RotationSearchPattern(x_angle_sampling_, y_angle_sampling_));
+			new ComposeSearchPatterns(
+				new SphericalRotationSearchPattern(
+					coarse_angle_sampling_,
+					coarse_angle_sampling_,
+					coarse_angle_sampling_,
+					0, 360,
+					0, 90,
+					0, 360),
+				new CartesianSearchPattern(
+					0,
+					coarse_sampling_,
+					coarse_sampling_,
+					0, 0,
+					-(expected_course_search_bound / 2),
+					expected_course_search_bound / 2,
+					-(expected_course_search_bound / 2),
+					expected_course_search_bound / 2)));
 
 	core::pose::Pose residue_pose;
 
@@ -147,7 +163,13 @@ SearchPatternOP PlaceSurfaceProbe::create_partitioned_search_pattern(core::pose:
 			new PartitionedSearchPattern(surface_pattern, search_partition_, total_search_partition_));
 
 	SearchPatternOP residue_sampling_pattern(
-			new RotationSearchPattern(x_angle_sampling_, y_angle_sampling_));
+			new SphericalRotationSearchPattern(
+				coarse_angle_sampling_,
+				coarse_angle_sampling_,
+				coarse_angle_sampling_,
+				0, 360,
+				0, 180,
+				0, 360));
 
 	core::pose::Pose residue_pose;
 
@@ -171,19 +193,23 @@ SearchPatternOP PlaceSurfaceProbe::create_refinement_pattern(core::pose::Pose co
 
 SearchPatternOP PlaceSurfaceProbe::initialize_refinement_pattern()
 {
-	core::Real expected_bound = std::sqrt(search_density_);
-
-	return new CartesianSearchPattern(
-				refinement_distance_sampling_,
-				refinement_translation_sampling_,
-				refinement_translation_sampling_,
-				-refinement_distance_,
-				refinement_distance_,
-				-(expected_bound / 2),
-				expected_bound / 2,
-				-(expected_bound / 2),
-				expected_bound / 2
-			);
+	return new ComposeSearchPatterns(
+				new SphericalRotationSearchPattern(
+					refinement_angle_sampling_,
+					refinement_angle_sampling_,
+					refinement_angle_sampling_,
+					0, coarse_angle_sampling_,
+					0, coarse_angle_sampling_,
+					0, coarse_angle_sampling_),
+				new CartesianSearchPattern(
+					refinement_sampling_,
+					refinement_sampling_,
+					refinement_sampling_,
+					-refinement_distance_, refinement_distance_,
+					-(coarse_sampling_ / 2),
+					coarse_sampling_ / 2,
+					-(coarse_sampling_ / 2),
+					coarse_sampling_ / 2));
 }
 
 void
@@ -205,13 +231,13 @@ PlaceSurfaceProbe::parse_my_tag( utility::tag::TagPtr const tag,
 	search_density_ = tag->getOption< core::Real >( "search_density", 1);
 	surface_selection_ = protocols::rosetta_scripts::parse_task_operations( tag, data );
 
-	// Sampling Spec
-	x_angle_sampling_ = tag->getOption< core::Real >( "x_angle_sampling", 5 );
-	y_angle_sampling_ = tag->getOption< core::Real >( "y_angle_sampling", 5 );
+	// Coarse grid spec
+	coarse_angle_sampling_ = tag->getOption< core::Real >( "coarse_angle_sampling");
+	coarse_sampling_ = tag->getOption< core::Real >( "coarse_sampling");
 
-	refinement_distance_sampling_ = tag->getOption< core::Real >( "refinement_distance_sampling", .05 );
-	refinement_distance_ = tag->getOption< core::Real >( "refinement_distance", 1 );
-	refinement_translation_sampling_ = tag->getOption< core::Real >( "refinement_translation_sampling", .05 );
+	refinement_angle_sampling_ = tag->getOption< core::Real >( "refinement_angle_sampling");
+	refinement_sampling_ = tag->getOption< core::Real >( "refinement_sampling");
+	refinement_distance_ = tag->getOption< core::Real >( "refinement_distance");
 
 	refinement_pattern_ = initialize_refinement_pattern();
 }
