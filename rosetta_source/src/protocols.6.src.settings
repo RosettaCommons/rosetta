@@ -30,7 +30,13 @@ sources = {
 ],
 "protocols/hotspot_hashing": [
 	"HotspotStub",
-"HotspotStubSet",
+  "HotspotStubSet",
+  "SearchPattern",
+  "MinimizingPatternSearch",
+  "PlaceMinimizeSearch",
+],
+"protocols/hotspot_hashing/filters": [
+  "LSMGridProbe",
 ],
 "protocols/match": [
 	"BumpGrid",

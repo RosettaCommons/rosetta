@@ -79,6 +79,10 @@ sources = {
 		"Entity",
 	],
 
+	"hotspot_hashing" : [
+		"hotspot_hashing",
+	],
+
 	"jd2" : [
 		"JD2ResourceManager",
 		"JD2ResourceManagerJobInputter",
