@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/hotspot_hashing/filters/LSMGridProbe.hh
+/// @file protocols/hotspot_hashing/movers/PlaceProbeMover.hh
 /// @brief
 /// @author Alex Ford fordas@uw.edu
 
-#ifndef INCLUDED_protocols_hotspot_hashing_movers_PlaceLSMProbe_hh
-#define INCLUDED_protocols_hotspot_hashing_movers_PlaceLSMProbe_hh
+#ifndef INCLUDED_protocols_hotspot_hashing_movers_PlaceProbeMover_hh
+#define INCLUDED_protocols_hotspot_hashing_movers_PlaceProbeMover_hh
 
 
 // Project Headers
@@ -23,10 +23,6 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 
-#include <core/kinematics/RT.hh>
-#include <protocols/hotspot_hashing/movers/PlaceLSMProbe.fwd.hh>
-#include <protocols/hotspot_hashing/SearchPattern.hh>
-
 // Unit headers
 
 namespace protocols
@@ -36,65 +32,47 @@ namespace hotspot_hashing
 namespace movers
 {
 
-class PlaceLSMProbe : public protocols::moves::Mover
+class PlaceProbeMover : virtual public protocols::moves::Mover
 {
-  private:
-    typedef protocols::moves::Mover parent;
   public:
-    PlaceLSMProbe();
+    PlaceProbeMover();
 
-    PlaceLSMProbe(
+    PlaceProbeMover(
 			std::string residue_name,
-			VectorPair lsm_spec,
-			core::Size lsm_id,
-			core::Real angle_sampling,
-			core::Real translocation_sampling,
-			core::Real max_radius,
-			core::Real distance_sampling,
-			core::Real max_distance,
-			bool log_pose,
-			core::conformation::ResidueCOP target_residue);
+			core::conformation::ResidueCOP target_residue,
+      core::Size search_partition = 1,
+      core::Size total_search_partition = 1);
 
     virtual void apply( Pose & );
 
-    virtual std::string get_name() const { return "PlaceLSMProbe"; }
+    virtual bool reinitialize_for_new_input() const { return false; }
 
-		virtual protocols::moves::MoverOP clone() const;
-
-    void parse_my_tag(
+  protected:
+		///@brief Parses tag compoments for PlaceProbeMover
+    void parse_place_probe_tag(
          utility::tag::TagPtr const tag,
          protocols::moves::DataMap &,
          protocols::filters::Filters_map const &,
          protocols::moves::Movers_map const &,
          core::pose::Pose const &);
 
-    virtual bool reinitialize_for_new_input() const { return true; }
+    void check_and_initialize(core::pose::Pose const & target_pose);
 
-  protected:
-    void check_and_initialize();
+    virtual SearchPatternOP create_search_pattern(core::pose::Pose const & target_pose) = 0;
+    virtual SearchPatternOP create_partitioned_search_pattern(core::pose::Pose const & target_pose);
 
-  private:
 		std::string residue_name_;
-
-    VectorPair lsm_spec_;
-		core::Size lsm_id_;
-
-		core::Real angle_sampling_;
-		core::Real translocation_sampling_;
-		core::Real max_radius_;
-		core::Real distance_sampling_;
-		core::Real max_distance_;
-
-    bool log_pose_;
-
     core::conformation::ResidueCOP target_residue_;
+
+    core::Size search_partition_;
+    core::Size total_search_partition_;
 
     bool initialized_pattern_;
     utility::vector1<RT> search_points_;
 };
 
-} // movers
-} // hotspot_hashing
-} // protocols
+}
+}
+}
 
 #endif 

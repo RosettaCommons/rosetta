@@ -180,7 +180,7 @@ class MinimizingPatternSearch : public utility::pointer::ReferenceCount
 
 			scorefile << "model pre_score post_score" << std::endl;
 
-			utility::vector1<TransformPair> searchpoints = searchPattern.Searchpoints();
+			utility::vector1<RT> searchpoints = searchPattern.Searchpoints();
 
 			tr.Info << "Initialized search pattern. Points: " << searchpoints.size() << std::endl;
 
@@ -189,7 +189,7 @@ class MinimizingPatternSearch : public utility::pointer::ReferenceCount
 
 			core::Size transformindex = 1;
 
-			foreach(TransformPair transform, searchpoints)
+			foreach(RT transform, searchpoints)
 			{
 				// Clone target pose, residue is cloned internally pose.
 				core::pose::Pose pose(targetPose);
@@ -255,7 +255,7 @@ class MinimizingPatternSearch : public utility::pointer::ReferenceCount
 			clusterfile.close();
 		};
 
-		static void placeResidueAtTransform( core::pose::Pose & pose, core::conformation::ResidueCOP sourceResidue, TransformPair & transform, core::Size & residuejumpindex, core::Size & residueindex)
+		static void placeResidueAtTransform( core::pose::Pose & pose, core::conformation::ResidueCOP sourceResidue, RT & transform, core::Size & residuejumpindex, core::Size & residueindex)
 		{
 			tr.Debug << "Placing at transform: " << transform << std::endl;
 
@@ -272,20 +272,20 @@ class MinimizingPatternSearch : public utility::pointer::ReferenceCount
 
 			// Place residue in "canonical" position
 			// Calculate transforms to move target atom to 0,0,0 and rotate into canonical position
-			TransformPair residuetransform = residueStubCentroidTransform(residue);
+			RT residuetransform = residueStubCentroidTransform(residue);
 
-			if (residuetransform.translation.length() != 0)
+			if (residuetransform.get_translation().length() != 0)
 			{
-				newjump.translation_along_axis(upstreamstub, residuetransform.translation, residuetransform.translation.length());
+				newjump.translation_along_axis(upstreamstub, residuetransform.get_translation(), residuetransform.get_translation().length());
 			}
 
-			newjump.rotation_by_matrix(upstreamstub, Vector(0, 0, 0), residuetransform.rotation);
+			newjump.rotation_by_matrix(upstreamstub, Vector(0, 0, 0), residuetransform.get_rotation());
 
 			// Apply target transformation
-			newjump.rotation_by_matrix(upstreamstub, Vector(0, 0, 0), transform.rotation);
-			if (transform.translation.length() != 0)
+			newjump.rotation_by_matrix(upstreamstub, Vector(0, 0, 0), transform.get_rotation());
+			if (transform.get_translation().length() != 0)
 			{
-				newjump.translation_along_axis(upstreamstub, transform.translation, transform.translation.length());
+				newjump.translation_along_axis(upstreamstub, transform.get_translation(), transform.get_translation().length());
 			}
 
 			pose.set_jump(residuejumpindex, newjump);
@@ -294,7 +294,7 @@ class MinimizingPatternSearch : public utility::pointer::ReferenceCount
 			tr.Debug << "Placed residue at anchor location: " << finalresidue->xyz(residue->atom_index("CA")) << std::endl;
 		};
 
-		static TransformPair residueCanonicalTransform(core::conformation::ResidueCOP const residue)
+		static RT residueCanonicalTransform(core::conformation::ResidueCOP const residue)
 		{
 			// Canonical transform aligns CA atom to <0, 0, 0>
 			// CA->CB vector along <1,0,0>
@@ -312,10 +312,10 @@ class MinimizingPatternSearch : public utility::pointer::ReferenceCount
 			Vector cac_vector_zyprojection = Vector(0, cac_vector_prime.y(), cac_vector_prime.z());
 			Matrix cac_rotation = rotation_matrix( cac_vector_zyprojection.cross(zunit), angle_of(cac_vector_zyprojection, zunit));
 
-			return TransformPair(position, cac_rotation * cacb_rotation);
+			return RT(cac_rotation * cacb_rotation, position);
 		}
 
-		static TransformPair residueStubCentroidTransform(core::conformation::ResidueCOP const residue)
+		static RT residueStubCentroidTransform(core::conformation::ResidueCOP const residue)
 		{
 			// Canonical transform aligns CA atom to <0, 0, 0>
 			// CA->SC heavyatom centroid vector along <1,0,0>
@@ -333,7 +333,7 @@ class MinimizingPatternSearch : public utility::pointer::ReferenceCount
 			Vector cac_vector_zyprojection = Vector(0, cac_vector_prime.y(), cac_vector_prime.z());
 			Matrix cac_rotation = rotation_matrix( cac_vector_zyprojection.cross(yunit), angle_of(cac_vector_zyprojection, yunit));
 
-			return TransformPair(position, cac_rotation * cacentroid_rotation);
+			return RT(cac_rotation * cacentroid_rotation, position);
 		}
 
 		static Vector residueStubCentroid(core::conformation::ResidueCOP const residue)

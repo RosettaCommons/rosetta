@@ -32,6 +32,7 @@ sources = {
 	"HotspotStub",
   "HotspotStubSet",
   "SearchPattern",
+  "SurfaceSearchPattern",
   "MinimizingPatternSearch",
   "PlaceMinimizeSearch",
 ],
@@ -39,7 +40,9 @@ sources = {
   "LSMGridProbe",
 ],
 "protocols/hotspot_hashing/movers": [
+  "PlaceProbeMover",
   "PlaceLSMProbe",
+  "PlaceSurfaceProbe",
 ],
 "protocols/match": [
 	"BumpGrid",

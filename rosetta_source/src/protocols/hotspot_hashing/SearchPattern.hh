@@ -20,41 +20,26 @@
 
 #include <devel/init.hh>
 
-
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/exit.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyz.functions.hh>
 
 #include <core/types.hh>
+#include <core/kinematics/RT.hh>
 
 namespace protocols {
 namespace hotspot_hashing {
 
+using core::kinematics::RT;
+
 typedef numeric::xyzMatrix< core::Real > Matrix;
 typedef numeric::xyzVector< core::Real > Vector;
 
-class TransformPair
-{
-public:
-	TransformPair (Vector translation, Matrix rotation) :
-		translation(translation),
-		rotation(rotation)
-	{
-	};
-
-	TransformPair() :
-		translation(0, 0, 0),
-		rotation(Matrix::diag(1, 1, 1))
-	{
-	};
-
-	Vector translation;
-	Matrix rotation;
-};
 
 class VectorPair
 {
@@ -89,20 +74,18 @@ inline std::ostream& operator<<(std::ostream &strm, const Matrix &matrix) {
   return strm << "[" << matrix.row_x() << "," << matrix.row_y() << "," << matrix.row_z() << "]";
 }
 
-inline std::ostream& operator<<(std::ostream &strm, const TransformPair &tp) {
-  return strm << "(" << tp.translation << "," << tp.rotation << ")";
-}
+//inline std::ostream& operator<<(std::ostream &strm, const RT &tp) {
+//  return strm << "(" << tp.get_translation() << "," << tp.get_rotation() << ")";
+//}
 
 inline std::ostream& operator<<(std::ostream &strm, const VectorPair &vp) {
   return strm << "(" << vp.position << "," << vp.direction << ")";
 }
 
-
-
 class SearchPattern : public utility::pointer::ReferenceCount
 {
 	public:
-		virtual utility::vector1<TransformPair> Searchpoints() = 0;
+		virtual utility::vector1<RT> Searchpoints() = 0;
 };
 
 typedef utility::pointer::owning_ptr<SearchPattern>  SearchPatternOP;
@@ -111,12 +94,21 @@ typedef utility::pointer::owning_ptr<SearchPattern const>  SearchPatternCOP;
 class ConstPattern : public SearchPattern
 {
 	public:
-		virtual utility::vector1<TransformPair> Searchpoints()
+		virtual utility::vector1<RT> Searchpoints()
 		{
-			utility::vector1<TransformPair> searchpoints;
-			searchpoints.push_back(TransformPair(Vector(10, 0, 0), numeric::z_rotation_matrix_degrees((core::Real)90)));
-			searchpoints.push_back(TransformPair(Vector(0, 0, 0), numeric::z_rotation_matrix_degrees((core::Real)0)));
-			searchpoints.push_back(TransformPair(Vector(-10, 0, 0), numeric::z_rotation_matrix_degrees((core::Real)270)));
+			utility::vector1<RT> searchpoints;
+			searchpoints.push_back(
+					RT(
+						numeric::z_rotation_matrix_degrees((core::Real)90),
+						Vector(10, 0, 0)));
+			searchpoints.push_back(
+					RT(
+						numeric::z_rotation_matrix_degrees((core::Real)0),
+						Vector(0, 0, 0)));
+			searchpoints.push_back(
+					RT(
+						numeric::z_rotation_matrix_degrees((core::Real)270),
+						Vector(-10, 0, 0)));
 
 			return searchpoints;
 		}
@@ -129,9 +121,9 @@ class TestPattern : public SearchPattern
 		{
 		}
 
-		virtual utility::vector1<TransformPair> Searchpoints()
+		virtual utility::vector1<RT> Searchpoints()
 		{
-			utility::vector1<TransformPair> searchpoints;
+			utility::vector1<RT> searchpoints;
 
 			core::Real x = 0;
 			core::Real y = 0;
@@ -148,7 +140,7 @@ class TestPattern : public SearchPattern
 							Vector translation = Vector(x, y, z);
 							Matrix rotation = numeric::z_rotation_matrix_degrees(angle);
 
-							TransformPair tp(translation, rotation);
+							RT tp(rotation, translation);
 							searchpoints.push_back(tp);
 						}
 					}
@@ -179,9 +171,9 @@ class LSMSearchPattern : public SearchPattern
 
 		}
 
-		virtual utility::vector1<TransformPair> Searchpoints()
+		virtual utility::vector1<RT> Searchpoints()
 		{
-			utility::vector1<TransformPair> searchpoints;
+			utility::vector1<RT> searchpoints;
 
 			Vector xunit = Vector(0, 0, 1);
 			Matrix normal_rotation = rotation_matrix( lsmspec_.direction.cross(xunit), angle_of(lsmspec_.direction, xunit));
@@ -199,7 +191,7 @@ class LSMSearchPattern : public SearchPattern
 								Vector translation = Vector(x, y, z);
 								Matrix rotation = numeric::x_rotation_matrix_degrees(angle);
 
-								TransformPair tp(translation + lsmspec_.position, rotation * normal_rotation);
+								RT tp(rotation * normal_rotation, translation + lsmspec_.position);
 								searchpoints.push_back(tp);
 							}
 						}
@@ -254,6 +246,97 @@ class LSMSearchPattern : public SearchPattern
 		core::Real max_distance_;
 };
 
+class PartitionedSearchPattern : public SearchPattern
+{
+	public:
+		PartitionedSearchPattern(
+				SearchPatternOP source_pattern,
+				core::Size partition,
+				core::Size total_partitions) :
+			source_pattern_(source_pattern),
+			partition_(partition),
+			total_partitions_(total_partitions)
+		{
+			runtime_assert(partition >= 0 && partition < total_partitions && total_partitions > 0)
+		}
+		
+		virtual utility::vector1<RT> Searchpoints()
+		{
+			utility::vector1<RT> sourcepoints = source_pattern_->Searchpoints();
+
+			utility::vector1<RT> searchpoints;
+			searchpoints.reserve((sourcepoints.size() / total_partitions_) + 1);
+
+			for (core::Size i = partition_; i < sourcepoints.size(); i += total_partitions_)
+			{
+				searchpoints.push_back(sourcepoints[i+1]);
+			}
+
+			return searchpoints; 
+		}
+
+	private:
+		SearchPatternOP source_pattern_;
+		core::Size partition_;
+		core::Size total_partitions_;
+};
+
+class SearchPatternTransform : public SearchPattern
+{
+	public:
+		SearchPatternTransform( SearchPatternOP source_pattern ) :
+			source_pattern_(source_pattern)
+		{}
+		
+		virtual utility::vector1<RT> Searchpoints()
+		{
+			utility::vector1<RT> sourcepoints = source_pattern_->Searchpoints();
+
+			utility::vector1<RT> searchpoints;
+			searchpoints.reserve(sourcepoints.size());
+
+			for (core::Size i = 1; i <= sourcepoints.size(); i++)
+			{
+				searchpoints.push_back( transform(sourcepoints[i]));
+			}
+
+			return searchpoints; 
+		}
+
+		virtual RT transform(RT source) = 0;
+
+	private:
+		SearchPatternOP source_pattern_;
+};
+
+class SearchPatternExpansion : public SearchPattern
+{
+	public:
+		SearchPatternExpansion( SearchPatternOP source_pattern ) :
+			source_pattern_(source_pattern)
+		{}
+		
+		virtual utility::vector1<RT> Searchpoints()
+		{
+			utility::vector1<RT> sourcepoints = source_pattern_->Searchpoints();
+
+			utility::vector1<RT> searchpoints;
+
+			for (core::Size i = 1; i <= sourcepoints.size(); i++)
+			{
+				utility::vector1<RT> newpoints = expand(sourcepoints[i]);
+
+				searchpoints.insert(searchpoints.end(), newpoints.begin(), newpoints.end());
+			}
+
+			return searchpoints; 
+		}
+
+		virtual utility::vector1<RT> expand(RT source) = 0;
+
+	private:
+		SearchPatternOP source_pattern_;
+};
 
 }
 }

@@ -27,6 +27,7 @@
 #include <protocols/hotspot_hashing/SearchPattern.hh>
 #include <protocols/hotspot_hashing/PlaceMinimizeSearch.hh>
 #include <core/chemical/ChemicalManager.hh>
+#include <core/kinematics/RT.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/chemical/ResidueType.hh>
@@ -50,8 +51,10 @@ namespace
 	using core::chemical::ChemicalManager;
 	using core::chemical::ResidueType;
 	*/
+	using core::kinematics::RT;
 
   class HotspotHashingTests : public CxxTest::TestSuite {
+
     public:
       void setUp() 
       {
@@ -75,7 +78,7 @@ namespace
 					residue = core::conformation::ResidueFactory::create_residue( restype );
 
 					Vector stub_centroid = PlaceMinimizeSearch::residueStubCentroid(*residue);
-					TransformPair centroid_transform = PlaceMinimizeSearch::residueStubCentroidTransform(*residue);
+					RT centroid_transform = PlaceMinimizeSearch::residueStubCentroidTransform(*residue);
 
 
 					Vector ca_location = residue->xyz("CA");
@@ -84,10 +87,10 @@ namespace
 					Vector c_location = residue->xyz("C");
 
 					TS_ASSERT_DELTA(cb_location, stub_centroid, 1e-3);
-					TS_ASSERT_DELTA(-ca_location, centroid_transform.translation, 1e-3);
+					TS_ASSERT_DELTA(-ca_location, centroid_transform.get_translation(), 1e-3);
 
 					Vector cb_vector = cb_location - ca_location;
-					Vector cb_rotated = centroid_transform.rotation * cb_vector;
+					Vector cb_rotated = centroid_transform.get_rotation() * cb_vector;
 					TS_ASSERT_DELTA(xunit, cb_rotated.normalize(), 1e-3);
 				}
 			}
@@ -111,7 +114,7 @@ namespace
 				// Null transform
 				{
 					core::pose::Pose testPose(targetPose);
-					TransformPair transform;
+					RT transform;
 
 					core::Size jumpindex;
 					core::Size residueindex;
@@ -151,8 +154,8 @@ namespace
 					Vector translation(10, 5, 2.5);
 
 					core::pose::Pose testPose(targetPose);
-					TransformPair transform;
-					transform.translation = translation;
+					RT transform;
+					transform.set_translation(translation);
 
 					core::Size jumpindex;
 					core::Size residueindex;
@@ -184,8 +187,8 @@ namespace
 					Matrix rotation = rotation_matrix(xunit.cross(yunit), angle_of(xunit, yunit));
 
 					core::pose::Pose testPose(targetPose);
-					TransformPair transform;
-					transform.rotation = rotation;
+					RT transform;
+					transform.set_rotation(rotation);
 
 					core::Size jumpindex;
 					core::Size residueindex;
@@ -217,8 +220,8 @@ namespace
 					Matrix rotation = numeric::rotation_matrix(yunit.cross(zunit), angle_of(yunit, zunit));
 
 					core::pose::Pose testPose(targetPose);
-					TransformPair transform;
-					transform.rotation = rotation;
+					RT transform;
+					transform.set_rotation(rotation);
 
 					core::Size jumpindex;
 					core::Size residueindex;
@@ -253,8 +256,8 @@ namespace
 					Matrix rotation = numeric::rotation_matrix(xunit.cross(zunit), angle_of(xunit, zunit));
 
 					core::pose::Pose testPose(targetPose);
-					TransformPair transform;
-					transform.rotation = rotation;
+					RT transform;
+					transform.set_rotation(rotation);
 
 					core::Size jumpindex;
 					core::Size residueindex;
@@ -290,9 +293,9 @@ namespace
 					Matrix rotation = numeric::rotation_matrix(xunit.cross(zunit), angle_of(xunit, zunit));
 
 					core::pose::Pose testPose(targetPose);
-					TransformPair transform;
-					transform.translation = translation;
-					transform.rotation = rotation;
+					RT transform;
+					transform.set_translation(translation);
+					transform.set_rotation(rotation);
 
 					core::Size jumpindex;
 					core::Size residueindex;
@@ -342,13 +345,13 @@ namespace
 						distance_sampling,
 						max_distance);
 
-				utility::vector1<TransformPair> points_zero = zero_pattern.Searchpoints();
+				utility::vector1<RT> points_zero = zero_pattern.Searchpoints();
 				TS_ASSERT_EQUALS(points_zero.size(), 4 /*angles*/ * 13 /*trans*/ * 3 /*dist*/);
 
 				// Assert on location
-				foreach(TransformPair transform, points_zero)
+				foreach(RT transform, points_zero)
 				{
-					TS_ASSERT_LESS_THAN_EQUALS(lsm_zero.position.distance(transform.translation), std::sqrt( max_radius * max_radius + max_distance * max_distance));
+					TS_ASSERT_LESS_THAN_EQUALS(lsm_zero.position.distance(transform.get_translation()), std::sqrt( max_radius * max_radius + max_distance * max_distance));
 				}
 
 				//LSM taken from test structure
@@ -362,16 +365,16 @@ namespace
 						2,
 						1,
 						2);
-				utility::vector1<TransformPair> points_test = test_pattern.Searchpoints();
+				utility::vector1<RT> points_test = test_pattern.Searchpoints();
 				TS_ASSERT_EQUALS(points_test.size(), 4 /*angles*/ * 13 /*trans*/ * 3 /*dist*/);
 
-				foreach(TransformPair transform, points_test)
+				foreach(RT transform, points_test)
 				{
-					TS_ASSERT_LESS_THAN_EQUALS(lsm_test.position.distance(transform.translation), std::sqrt( max_radius * max_radius + max_distance * max_distance));
+					TS_ASSERT_LESS_THAN_EQUALS(lsm_test.position.distance(transform.get_translation()), std::sqrt( max_radius * max_radius + max_distance * max_distance));
 				}
 			}
 			 
-			void place_and_assert_transform(core::pose::Pose & targetPose, core::conformation::ResidueOP residue, protocols::hotspot_hashing::TransformPair transform)
+			void place_and_assert_transform(core::pose::Pose & targetPose, core::conformation::ResidueOP residue, protocols::hotspot_hashing::RT transform)
 			{
 				using namespace protocols::hotspot_hashing;
 				core::Size jumpindex;
@@ -387,11 +390,11 @@ namespace
 				core::conformation::Residue const &placedResidue = targetPose.residue(residueindex);
 
 				Vector residue_CA_location = placedResidue.xyz(placedResidue.atom_index("CA"));
-				TS_ASSERT_DELTA(residue_CA_location, transform.translation, 1e-3);
+				TS_ASSERT_DELTA(residue_CA_location, transform.get_translation(), 1e-3);
 
 				Vector stubcentroid = PlaceMinimizeSearch::residueStubCentroid(placedResidue);
 				Vector CA_centroid_vector = (stubcentroid - residue_CA_location).normalize();
-				Vector xunit_rotated = transform.rotation * Vector(1, 0, 0);
+				Vector xunit_rotated = transform.get_rotation() * Vector(1, 0, 0);
 
 				TS_ASSERT_DELTA(CA_centroid_vector, xunit_rotated, 1e-3); 		
 			}
@@ -421,9 +424,9 @@ namespace
 						2,
 						1,
 						2);
-				utility::vector1<TransformPair> points_test = test_pattern.Searchpoints();
+				utility::vector1<RT> points_test = test_pattern.Searchpoints();
 
-				foreach(TransformPair transform, points_test)
+				foreach(RT transform, points_test)
 				{
 					core::pose::Pose testPose(targetPose);
 

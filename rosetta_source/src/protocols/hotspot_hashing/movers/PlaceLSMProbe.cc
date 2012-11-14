@@ -105,7 +105,7 @@ void PlaceLSMProbe::apply(core::pose::Pose & pose)
 
 	core::Size nstruct = jd2::JobDistributor::get_instance()->current_job()->nstruct_index();
 	
-  TransformPair transform = search_points_[nstruct];
+  RT transform = search_points_[nstruct % search_points_.size()];
 
 	core::Size residuejumpindex;
 	core::Size residueindex;
@@ -136,9 +136,14 @@ void PlaceLSMProbe::check_and_initialize()
 
   protocols::jd2::JobOP current_job(jd2::JobDistributor::get_instance()->current_job());
 
-  if (current_job->nstruct_max() != search_points_.size())
+  if (current_job->nstruct_max() < search_points_.size())
 	{
-		TR.Warning << "Current job nstruct_max: " << current_job->nstruct_max() << " not equal to search pattern size: " << search_points_.size() << std::endl;
+		TR.Error << "Current job nstruct_max: " << current_job->nstruct_max() << " less than search pattern size: " << search_points_.size() << std::endl;
+	}
+
+  if (current_job->nstruct_max() < search_points_.size())
+	{
+		TR.Warning << "Current job nstruct_max: " << current_job->nstruct_max() << " greater than search pattern size: " << search_points_.size() << " Search points will be repeated." << std::endl;
 	}
 }
 
