@@ -61,6 +61,3 @@ patches/carbohydrates/lower_terminus.txt
 patches/carbohydrates/upper_terminus.txt
 patches/carbohydrates/6-branch.txt
 patches/carbohydrates/branch_lower_term.txt
-
-# Patches for hotspot hashing protocol
-patches/SC_Fragment.txt

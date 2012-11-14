@@ -11,5 +11,3 @@ patches/RepulsiveOnly_fa.txt
 
 ## uncomment this Brian
 patches/CtermConnect.txt
-# Patches for hotspot hashing protocol
-patches/SC_Fragment.txt
