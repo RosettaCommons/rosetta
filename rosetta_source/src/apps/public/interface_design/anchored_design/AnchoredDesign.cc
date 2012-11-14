@@ -16,28 +16,22 @@
 
 // Project Headers
 
+#include <protocols/jd2/JobDistributor.hh>
+
 // Utility Headers
 #include <devel/init.hh>
 #include <basic/Tracer.hh>
-#include <protocols/jd2/JobDistributor.hh>
 
 // Numeric headers
 
 // C++ headers
-// AUTO-REMOVED #include <iostream>
-#include <string>
-
-#include <utility/vector1.hh>
-
-
-// option key includes
 
 using basic::T;
 using basic::Error;
 using basic::Warning;
 
 //replaces cout
-static basic::Tracer TR("apps.pilot.smlewis.AnchoredDesign");
+static basic::Tracer TR("apps.public.interface_design.anchored_design.AnchoredDesign");
 
 ///@brief main method for anchored design.  most activity in the movers.
 int

@@ -11,12 +11,12 @@
 /// @author Steven Lewis
 
 ////////////////////////////////////////////WARNING WARNING WARNING
-//This code will not run well without some other changes to mini.  It is intended to run across the entire PDB.
-//To use it, you are strongly encouraged to "robustify" mini.  This will cause bad PDBs to be ignored rather than
+//This code will not run well without some other changes to Rosetta.  It is intended to run across the entire PDB.
+//To use it, you are strongly encouraged to "robustify" Rosetta.  This will cause bad PDBs to be ignored rather than
 //causing crashes!  To robustify mini:
 // replace all assert statements in the vectorL (vector1) class with runtime_assert statements
 // replace all assert statements in the Conformation class with runtime_assert statements
-// merge checkin 31910 to JobDistributor.hh, or do something for the same forget-PDBs effect (you'll run out of mem.)
+// use the -jd2:delete_old_poses flag to prevent a memory leak in the large -l environment
 // use the -in::file::obey_ENDMDL flag to read in only one model from multimodel NMR PDBs
 // make sure EXIT_THROWS_EXCEPTION is defined in user.settings.
 // See also the "RobustRosetta" documentation file.
@@ -35,16 +35,18 @@
 
 #include <core/conformation/PointGraph.hh>
 #include <core/conformation/find_neighbors.hh>
+#include <core/conformation/PointGraphData.hh>
+#include <core/graph/UpperEdgeGraph.hh>
 
 #include <core/scoring/dssp/Dssp.hh>
 
-// AUTO-REMOVED #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/moves/Mover.hh>
 
 // Utility Headers
 #include <devel/init.hh>
+#include <utility/vector1.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
@@ -54,19 +56,14 @@
 // option key includes
 #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 
-#include <core/conformation/PointGraphData.hh>
-#include <core/graph/UpperEdgeGraph.hh>
-#include <utility/vector1.hh>
-
-
 // C++ headers
-//#include <string>
+#include <string>
 
 using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("apps.pilot.smlewis.AnchorFinder");
+static basic::Tracer TR("apps.public.interface_design.anchored_design.AnchorFinder");
 
 basic::options::IntegerOptionKey const window_size("window_size");
 basic::options::RealOptionKey const loopness("loopness");

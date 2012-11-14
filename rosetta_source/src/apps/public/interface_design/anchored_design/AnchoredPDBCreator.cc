@@ -16,7 +16,7 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+#include <core/import_pose/import_pose.hh>
 #include <core/pose/PDBPoseMap.hh>
 #include <core/pose/PDBInfo.hh>
 
@@ -29,7 +29,6 @@
 
 //JD headers
 #include <protocols/jd2/JobDistributor.hh>
-// AUTO-REMOVED #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/Job.hh>
 
 // Utility Headers
@@ -37,19 +36,13 @@
 #include <basic/options/option.hh>
 #include <utility/io/izstream.hh>
 #include <basic/Tracer.hh>
-
-// option key includes
-// AUTO-REMOVED #include <basic/options/keys/AnchoredDesign.OptionKeys.gen.hh>
-
-#include <core/import_pose/import_pose.hh>
-
 #include <utility/vector1.hh>
 
 using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("apps.pilot.smlewis.AnchoredPDBCreator");
+static basic::Tracer TR("apps.public.interface_design.anchored_design.AnchoredPDBCreator");
 
 namespace basic{ namespace options{ namespace OptionKeys{
 namespace AnchoredPDBCreator{
@@ -209,6 +202,8 @@ int main( int argc, char* argv[] )
 	devel::init(argc, argv);
 
 	protocols::jd2::JobDistributor::get_instance()->go(new APDBCMover);
+
+	TR << "************************d**o**n**e**************************************" << std::endl;
 
  	return 0;
 }
