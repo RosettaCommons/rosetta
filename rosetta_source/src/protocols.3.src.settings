@@ -379,6 +379,7 @@ sources = {
 	"protocols/simple_moves": [
 		"AddCavitiesMover",
 		"AddConstraintsToCurrentConformationMover",
+		"ModifyVariantTypeMover",
 		"BackboneMover",
 		"BBConRotMover",
 		"BBGaussianMover",
