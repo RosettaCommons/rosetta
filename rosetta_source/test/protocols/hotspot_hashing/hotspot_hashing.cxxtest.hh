@@ -27,6 +27,7 @@
 #include <numeric/random/random.hh>
 #include <numeric/xyz.functions.hh>
 
+#include <protocols/sic_dock/SICFast.hh>
 #include <protocols/hotspot_hashing/SearchPattern.hh>
 #include <protocols/hotspot_hashing/StubGenerator.hh>
 #include <protocols/hotspot_hashing/SurfaceSearchPattern.hh>
@@ -44,6 +45,7 @@
 
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
+#include <boost/lexical_cast.hpp>
 
 static basic::Tracer TR("protocols.hotspot_hashing.hotspot_hashing.cxxtest");
 
@@ -556,25 +558,38 @@ namespace
 
 			void test_sicsearchpattern()
 			{
+				// Sample at finer resolution in some cases.
+				for (core::Real i = 0; i <= 180; i+= 5)
+				{
+					run_rotated_sic_test(i);
+				}
+			}
+
+			void run_rotated_sic_test(core::Real rotation_degrees)
+			{
+				TR.Debug << "Rotated sic test: " << rotation_degrees << std::endl;
 				using namespace protocols::hotspot_hashing;
 				using core::kinematics::Stub;
 
         // Initialize target pose
         core::pose::Pose residue_pose;
+        core::pose::Pose mobile_residue_pose;
 
         // Initialize residue representation
         core::conformation::ResidueOP residue = StubGenerator::getStubByName("ALA");
 
 				core::Size jumpindex;
 				core::Size residueindex;
-				StubGenerator::placeResidueOnPose(residue_pose, residue);
 
-				residue_pose.dump_pdb("residue_pose.pdb");
+				// Initialize static residue in rotated position.
+				Stub static_stub(numeric::y_rotation_matrix_degrees(rotation_degrees), Vector(0));
+				StubGenerator::placeResidueAtTransform(residue_pose, residue, static_stub, jumpindex, residueindex);
 
-				Stub slide_stub(
-						Vector(0, 0, 0),
-						Vector(1, 0, 0),
-						Vector(0, 1, 0));
+				// Initialize mobile residue in non-rotated position, prepare rotated slide stub.
+				Stub slide_stub(numeric::y_rotation_matrix_degrees(rotation_degrees - 180.), Vector(0));
+				StubGenerator::placeResidueOnPose(mobile_residue_pose, residue);
+
+				residue_pose.dump_pdb("sic_residue_pose_" + boost::lexical_cast<std::string>(rotation_degrees) + ".pdb");
 
 				SearchPatternOP slide_pattern(new ConstPattern(slide_stub));
 
@@ -585,12 +600,12 @@ namespace
 					StubGenerator::moveIntoStubFrame(pre_slide_residue, slide_stub);
 					StubGenerator::placeResidueOnPose(pre_slide, pre_slide_residue);
 
-					pre_slide.dump_pdb("pre_slide.pdb");
+					pre_slide.dump_pdb("sic_pre_slide_pose_" + boost::lexical_cast<std::string>(rotation_degrees) + ".pdb");
 				}
 
 				core::Real clash_distance = basic::options::option[basic::options::OptionKeys::sicdock::clash_dis]();
 
-				SICPatternAtTransform sic_pattern(residue_pose, residue_pose, slide_pattern);
+				SICPatternAtTransform sic_pattern(residue_pose, mobile_residue_pose, slide_pattern);
 
 				utility::vector1<core::kinematics::Stub> searchpoints = sic_pattern.Searchpoints();
 
@@ -603,14 +618,66 @@ namespace
 					StubGenerator::moveIntoStubFrame(post_slide_residue, searchpoints[1]);
 					StubGenerator::placeResidueOnPose(post_slide, post_slide_residue);
 
-					post_slide.dump_pdb("post_slide.pdb");
+					post_slide.dump_pdb("sic_post_slide_pose_" + boost::lexical_cast<std::string>(rotation_degrees) + ".pdb");
 					// Expected distance between CB atoms is 2*clash_distance
-					Vector start_ca_loc = slide_stub.local2global( residue->xyz("CB"));
+					// Calculate global residue position in the slide frame (rotated)
+					// and the post-slide frame
+					Vector start_ca_loc = slide_stub.local2global( residue->xyz("CA"));
 					Vector start_cb_loc = slide_stub.local2global( residue->xyz("CB"));
 					Vector contact_cb_loc = searchpoints[1].local2global( residue->xyz("CB"));
-					Vector src_cb_loc = residue->xyz("CB");
+					Vector src_cb_loc = static_stub.local2global(residue->xyz("CB"));
 
-					Vector src_to_contact_cb = contact_cb_loc - src_cb_loc;
+					// Convert coordinates from the rotated frame into source frame
+					// Should move CA-CB vector back onto X axis
+					Vector start_ca_loc_trans = static_stub.global2local(start_ca_loc);
+					Vector start_cb_loc_trans = static_stub.global2local(start_cb_loc);
+					Vector contact_cb_loc_trans = static_stub.global2local(contact_cb_loc);
+					Vector src_cb_loc_trans = static_stub.global2local(src_cb_loc);
+
+					Vector src_to_contact_cb = contact_cb_loc_trans - src_cb_loc_trans;
+
+					TS_ASSERT_DELTA(src_to_contact_cb, Vector(clash_distance, 0, 0), 1e-3);
+
+					TS_ASSERT_DELTA(src_to_contact_cb.x(), clash_distance, 1e-3);
+					TS_ASSERT_DELTA(src_to_contact_cb.y(), 0, 1e-3);
+					TS_ASSERT_DELTA(src_to_contact_cb.z(), 0, 1e-3);
+				}
+				
+				{
+					TR.Debug << "SIC validation." << std::endl;
+					//Validate sic operation with SICFast
+					protocols::sic_dock::SICFast sic_fast;
+					sic_fast.init(mobile_residue_pose, residue_pose);
+
+					Vector slide_vector = slide_stub.local2global(Vector(-1,0,0));
+
+					Stub displaced_stub(slide_stub);
+					displaced_stub.v += slide_vector * 100;
+
+					// Expected distance between CB atoms is 2*clash_distance
+					// Calculate global residue position in the slide frame (rotated)
+					// and the post-slide frame
+					Vector start_ca_loc = displaced_stub.local2global( residue->xyz("CA"));
+					Vector start_cb_loc = displaced_stub.local2global( residue->xyz("CB"));
+
+					core::Real sic_distance = sic_fast.slide_into_contact(
+							displaced_stub,
+							core::kinematics::default_stub,
+							slide_vector);
+
+					displaced_stub.v += slide_vector * sic_distance;
+
+					Vector contact_cb_loc = displaced_stub.local2global( residue->xyz("CB"));
+					Vector src_cb_loc = static_stub.local2global(residue->xyz("CB"));
+
+					// Convert coordinates from the rotated frame into source frame
+					// Should move CA-CB vector back onto X axis
+					Vector start_ca_loc_trans = static_stub.global2local(start_ca_loc);
+					Vector start_cb_loc_trans = static_stub.global2local(start_cb_loc);
+					Vector contact_cb_loc_trans = static_stub.global2local(contact_cb_loc);
+					Vector src_cb_loc_trans = static_stub.global2local(src_cb_loc);
+
+					Vector src_to_contact_cb = contact_cb_loc_trans - src_cb_loc_trans;
 
 					TS_ASSERT_DELTA(src_to_contact_cb, Vector(clash_distance, 0, 0), 1e-3);
 

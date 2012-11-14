@@ -98,7 +98,8 @@ public:
 	Real
 	increase_packer_residue_radius(
 		pose::Pose const & pose,
-		task::PackerTaskCOP the_task
+		task::PackerTaskCOP the_task,
+		core::Size residue_in
 	) const;
 
 #ifdef USEBOOSTSERIALIZE

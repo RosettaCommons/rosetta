@@ -196,8 +196,10 @@ find_residue_max_radii(
 							rotsetop_iter = the_task->residue_task( ii ).rotamer_set_operation_begin(),
 							rotsetop_end = the_task->residue_task( ii ).rotamer_set_operation_end();
 						rotsetop_iter != rotsetop_end; ++rotsetop_iter ) {
-				if( (*rotsetop_iter)->increase_packer_residue_radius( pose, the_task ) > max_rad_change ) {
-					max_rad_change = (*rotsetop_iter)->increase_packer_residue_radius( pose, the_task );
+
+				core::Real radius_change = (*rotsetop_iter)->increase_packer_residue_radius( pose, the_task, ii );
+				if( radius_change > max_rad_change ) {
+					max_rad_change = radius_change;
 				}
 			}
 			if( max_rad_change != 0.0 ) max_radius_for_res = max_radius_for_res + max_rad_change;

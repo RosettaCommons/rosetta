@@ -43,11 +43,11 @@ class PlaceSurfaceProbe : public protocols::hotspot_hashing::movers::PlaceProbeM
     PlaceSurfaceProbe(
 			std::string residue_name,
 			core::Real search_density,
-			core::Real angle_sampling,
-			core::Real translocation_sampling,
-			core::Real max_radius,
-			core::Real distance_sampling,
-			core::Real max_distance,
+			core::Real x_angle_sampling,
+			core::Real y_angle_sampling,
+			core::Real refinement_distance_sampling,
+			core::Real refinement_distance,
+			core::Real refinement_translation_sampling,
 			core::conformation::ResidueCOP target_residue,
 			core::pack::task::TaskFactoryOP surface_selection = NULL,
       core::Size search_partition = 1,
@@ -68,17 +68,23 @@ class PlaceSurfaceProbe : public protocols::hotspot_hashing::movers::PlaceProbeM
 
   protected:
     virtual SearchPatternOP create_search_pattern(core::pose::Pose const & target_pose);
+    virtual SearchPatternOP create_partitioned_search_pattern(core::pose::Pose const & target_pose);
+		virtual SearchPatternOP create_refinement_pattern(core::pose::Pose const & target_pose, core::Size target_residue);
 
   private:
 
 		core::Real search_density_;
 		core::pack::task::TaskFactoryOP surface_selection_;
 
-		core::Real angle_sampling_;
-		core::Real translocation_sampling_;
-		core::Real max_radius_;
-		core::Real distance_sampling_;
-		core::Real max_distance_;
+		core::Real x_angle_sampling_;
+		core::Real y_angle_sampling_;
+
+		core::Real refinement_distance_sampling_;
+		core::Real refinement_distance_;
+		core::Real refinement_translation_sampling_;
+
+		SearchPatternOP initialize_refinement_pattern();
+		SearchPatternOP refinement_pattern_;
 };
 
 }

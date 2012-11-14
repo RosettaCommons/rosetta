@@ -258,7 +258,8 @@ class MinimizingPatternSearch : public utility::pointer::ReferenceCount
 
 		static void placeResidueAtTransform( core::pose::Pose & pose, core::conformation::ResidueCOP sourceResidue, core::kinematics::Stub & transform, core::Size & residuejumpindex, core::Size & residueindex)
 		{
-			tr.Debug << "Placing at transform: " << transform << std::endl;
+			tr.Debug << "Placing at transform: ";
+			stub_to_points(tr.Debug, transform) << std::endl;
 
 			// Places residue at last jump & residue number
 			placeResidueOnPose(pose, sourceResidue);

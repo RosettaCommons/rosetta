@@ -37,6 +37,7 @@
 
 #include <protocols/hotspot_hashing/SearchPattern.hh>
 #include <protocols/hotspot_hashing/SurfaceSearchPattern.hh>
+#include <protocols/hotspot_hashing/SICSearchPattern.hh>
 #include <protocols/hotspot_hashing/PlaceMinimizeSearch.hh>
 
 #include <protocols/hotspot_hashing/StubGenerator.hh>
@@ -59,11 +60,12 @@ PlaceSurfaceProbe::PlaceSurfaceProbe() :
 	  protocols::hotspot_hashing::movers::PlaceProbeMover(),
 		search_density_(0),
 		surface_selection_(NULL),
-		angle_sampling_(0),
-		translocation_sampling_(0),
-		max_radius_(0),
-		distance_sampling_(0),
-		max_distance_(0)
+		x_angle_sampling_(0),
+		y_angle_sampling_(0),
+		refinement_distance_sampling_(0),
+		refinement_distance_(0),
+		refinement_translation_sampling_(0),
+		refinement_pattern_(NULL)
 {
  
 } 
@@ -72,11 +74,11 @@ PlaceSurfaceProbe::PlaceSurfaceProbe() :
 PlaceSurfaceProbe::PlaceSurfaceProbe(
 		std::string residue_name,
 		core::Real search_density,
-		core::Real angle_sampling,
-		core::Real translocation_sampling,
-		core::Real max_radius,
-		core::Real distance_sampling,
-		core::Real max_distance,
+		core::Real x_angle_sampling,
+		core::Real y_angle_sampling,
+		core::Real refinement_distance_sampling,
+		core::Real refinement_distance,
+		core::Real refinement_translation_sampling,
     core::conformation::ResidueCOP target_residue,
 		core::pack::task::TaskFactoryOP surface_selection,
     core::Size search_partition,
@@ -89,11 +91,12 @@ PlaceSurfaceProbe::PlaceSurfaceProbe(
 			total_search_partition),
 		search_density_(search_density),
 		surface_selection_(surface_selection),
-		angle_sampling_(angle_sampling),
-		translocation_sampling_(translocation_sampling),
-		max_radius_(max_radius),
-		distance_sampling_(distance_sampling),
-		max_distance_(max_distance)
+		x_angle_sampling_(x_angle_sampling),
+		y_angle_sampling_(y_angle_sampling),
+		refinement_distance_sampling_(refinement_distance_sampling),
+		refinement_distance_(refinement_distance),
+		refinement_translation_sampling_(refinement_translation_sampling),
+		refinement_pattern_(initialize_refinement_pattern())
 {
 }
 
@@ -104,10 +107,83 @@ protocols::moves::MoverOP PlaceSurfaceProbe::clone() const
 
 SearchPatternOP PlaceSurfaceProbe::create_search_pattern(core::pose::Pose const & target_pose)
 {
-	return new SurfaceSearchPattern(
+	using core::conformation::ResidueOP;
+
+	SearchPatternOP surface_pattern(
+			new SurfaceSearchPattern(
 							target_pose,
 							surface_selection_,
-							search_density_);
+							search_density_));
+
+	SearchPatternOP residue_sampling_pattern(
+			new RotationSearchPattern(x_angle_sampling_, y_angle_sampling_));
+
+	core::pose::Pose residue_pose;
+
+	ResidueOP virtual_bb_residue = core::pose::add_variant_type_to_residue(*target_residue_, "VIRTUAL_BB", target_pose);
+	StubGenerator::placeResidueOnPose(residue_pose, virtual_bb_residue);
+
+	SearchPatternOP sampled_surface_pattern(
+			new SICPatternAtTransform(
+				target_pose,
+				residue_pose,
+				surface_pattern,
+				residue_sampling_pattern));
+
+	return sampled_surface_pattern;
+}
+
+SearchPatternOP PlaceSurfaceProbe::create_partitioned_search_pattern(core::pose::Pose const & target_pose)
+{
+	using core::conformation::ResidueOP;
+
+	SearchPatternOP surface_pattern(
+			new SurfaceSearchPattern(
+							target_pose,
+							surface_selection_,
+							search_density_));
+
+	SearchPatternOP partitioned_surface_pattern(
+			new PartitionedSearchPattern(surface_pattern, search_partition_, total_search_partition_));
+
+	SearchPatternOP residue_sampling_pattern(
+			new RotationSearchPattern(x_angle_sampling_, y_angle_sampling_));
+
+	core::pose::Pose residue_pose;
+
+	ResidueOP virtual_bb_residue = core::pose::add_variant_type_to_residue(*target_residue_, "VIRTUAL_BB", target_pose);
+	StubGenerator::placeResidueOnPose(residue_pose, virtual_bb_residue);
+
+	SearchPatternOP sampled_surface_pattern(
+			new SICPatternAtTransform(
+				target_pose,
+				residue_pose,
+				partitioned_surface_pattern,
+				residue_sampling_pattern));
+
+	return sampled_surface_pattern;
+}
+
+SearchPatternOP PlaceSurfaceProbe::create_refinement_pattern(core::pose::Pose const & target_pose, core::Size target_residue)
+{
+	return refinement_pattern_;
+}
+
+SearchPatternOP PlaceSurfaceProbe::initialize_refinement_pattern()
+{
+	core::Real expected_bound = std::sqrt(search_density_);
+
+	return new CartesianSearchPattern(
+				refinement_distance_sampling_,
+				refinement_translation_sampling_,
+				refinement_translation_sampling_,
+				-refinement_distance_,
+				refinement_distance_,
+				-(expected_bound / 2),
+				expected_bound / 2,
+				-(expected_bound / 2),
+				expected_bound / 2
+			);
 }
 
 void
@@ -130,27 +206,14 @@ PlaceSurfaceProbe::parse_my_tag( utility::tag::TagPtr const tag,
 	surface_selection_ = protocols::rosetta_scripts::parse_task_operations( tag, data );
 
 	// Sampling Spec
-	angle_sampling_ = tag->getOption< core::Real >( "angle_sampling", 15 );
-	translocation_sampling_ = tag->getOption< core::Real >( "translocation_sampling", 1 );
-	max_radius_ = tag->getOption< core::Real >( "max_radius", 0 );
-	distance_sampling_ = tag->getOption< core::Real >( "distance_sampling", 1 );
-	max_distance_ = tag->getOption< core::Real >( "max_distance", 0 );
+	x_angle_sampling_ = tag->getOption< core::Real >( "x_angle_sampling", 5 );
+	y_angle_sampling_ = tag->getOption< core::Real >( "y_angle_sampling", 5 );
 
-  // Partition Spec
-  search_partition_ = tag->getOption< core::Size >( "search_partition", 0 );
-  total_search_partition_ = tag->getOption< core::Size >( "total_search_partition", 1 );
+	refinement_distance_sampling_ = tag->getOption< core::Real >( "refinement_distance_sampling", .05 );
+	refinement_distance_ = tag->getOption< core::Real >( "refinement_distance", 1 );
+	refinement_translation_sampling_ = tag->getOption< core::Real >( "refinement_translation_sampling", .05 );
 
-  TR<<"<PlaceSurfaceProbe " <<
-		"residue_name=\"" << residue_name_ << "\" " <<
-		"search_partition=\"" << search_partition_ << "\" " <<
-		"total_search_partition=\"" << total_search_partition_ << "\" " <<
- 	  "search_density=" << search_density_ << " "<< 
- 	  "angle_sampling=" << angle_sampling_ << " "<< 
- 	  "translocation_sampling=" << translocation_sampling_ << " "<< 
- 	  "max_radius=" << max_radius_ << " "<< 
- 	  "distance_sampling=" << distance_sampling_ << " "<< 
- 	  "max_distance=" << max_distance_ << " "<< 
-		">"<< std::endl;
+	refinement_pattern_ = initialize_refinement_pattern();
 }
 
 protocols::moves::MoverOP

@@ -64,16 +64,65 @@ class VectorPair
 		Vector direction;
 };
 
-inline std::ostream& operator<<(std::ostream &strm, const Vector &vector) {
-  return strm << "[" << vector.x() << "," << vector.y() << "," << vector.z() << "]";
+inline std::ostream& operator<<(std::ostream &stream, const Vector &vector)
+{
+  return stream <<  vector.x() << "," << vector.y() << "," << vector.z();
 }
 
-inline std::ostream& operator<<(std::ostream &strm, const Matrix &matrix) {
-  return strm << "[" << matrix.row_x() << "," << matrix.row_y() << "," << matrix.row_z() << "]";
+inline std::istream &
+operator >>( std::istream & stream, Vector & v )
+{
+	core::Real x, y, z;
+	stream >> x;
+	stream.ignore(1, ',');
+	stream >> y;
+	stream.ignore(1, ',');
+	stream >> z;
+
+	v.x(x);
+	v.y(y);
+	v.z(z);
+
+	return stream;
 }
 
-inline std::ostream& operator<<(std::ostream &strm, const VectorPair &vp) {
-  return strm << "(" << vp.position << "," << vp.direction << ")";
+inline std::ostream& stub_to_points(std::ostream &stream, const core::kinematics::Stub &stub)
+{
+	/// Generate three points that would yield this stub
+	Vector a = stub.local2global(Vector(0, 0, 0));
+	Vector b = stub.local2global(Vector(-1, 0, 0));
+	Vector c = stub.local2global(Vector(0, 1, 0));
+
+	return stream << a << ";" << b << ";" << c;
+}
+
+inline std::istream& stub_from_points( std::istream & stream, core::kinematics::Stub & stub )
+{
+	Vector a, b, c;
+	stream >> a;
+	stream.ignore(1, ';');
+	stream >> b;
+	stream.ignore(1, ';');
+	stream >> c;
+
+	stub.from_four_points(a, a, b, c);
+
+	return stream;
+}
+
+inline std::ostream& operator<<(std::ostream &stream, const VectorPair &pair)
+{
+	return stream << pair.position << ";" << pair.direction;
+}
+
+inline std::istream &
+operator >>( std::istream & stream, VectorPair & pair )
+{
+	stream >> pair.position;
+	stream.ignore(1, ';');
+	stream >> pair.direction;
+
+	return stream;
 }
 
 class SearchPattern : public utility::pointer::ReferenceCount
@@ -248,13 +297,16 @@ class RotationSearchPattern : public SearchPattern
 				core::Real x_max = 360,
 				core::Real y_min = 0,
 				core::Real y_max = 90) :
+			searchpoints_(),
 			x_sampling(x_sampling),
 			y_sampling(y_sampling),
 			x_min(x_min),
 			x_max(x_max),
 			y_min(y_min),
 			y_max(y_max)
-		{}
+		{
+			searchpoints_ = generate_search_points();
+		}
 
 		core::Real x_sampling;
 		core::Real y_sampling;
@@ -263,23 +315,96 @@ class RotationSearchPattern : public SearchPattern
 		core::Real y_min;
 		core::Real y_max;
 		
-	virtual utility::vector1<core::kinematics::Stub> Searchpoints()
-	{
-		utility::vector1<core::kinematics::Stub> searchpoints;
-
-		for(core::Real x_sample = x_min; x_sample <= x_max; x_sample += x_sampling)
+		utility::vector1<core::kinematics::Stub> generate_search_points()
 		{
-			for(core::Real y_sample = y_min; y_sample <= y_max; y_sample += y_sampling)
+			utility::vector1<core::kinematics::Stub> searchpoints;
+
+			for(core::Real x_sample = x_min; x_sample <= x_max; x_sample += x_sampling)
 			{
-				searchpoints.push_back(
-						core::kinematics::Stub(
-							numeric::x_rotation_matrix_degrees(x_sample) * numeric::y_rotation_matrix_degrees(y_sample),
-							Vector()));
+				for(core::Real y_sample = y_min; y_sample <= y_max; y_sample += y_sampling)
+				{
+					searchpoints.push_back(
+							core::kinematics::Stub(
+								numeric::x_rotation_matrix_degrees(x_sample) * numeric::y_rotation_matrix_degrees(y_sample),
+								Vector(0)));
+				}
 			}
+
+			return searchpoints; 
 		}
 
-		return searchpoints; 
-	}
+		utility::vector1<core::kinematics::Stub> Searchpoints()
+		{
+			return searchpoints_;
+		}
+
+		utility::vector1<core::kinematics::Stub> searchpoints_;
+};
+
+class CartesianSearchPattern : public SearchPattern
+{
+	public:
+		CartesianSearchPattern(
+				core::Real x_sampling,
+				core::Real y_sampling,
+				core::Real z_sampling,
+				core::Real x_min,
+				core::Real x_max,
+				core::Real y_min,
+				core::Real y_max,
+				core::Real z_min,
+				core::Real z_max) :
+			searchpoints_(),
+			x_sampling(x_sampling),
+			y_sampling(y_sampling),
+			z_sampling(z_sampling),
+			x_min(x_min),
+			x_max(x_max),
+			y_min(y_min),
+			y_max(y_max),
+			z_min(z_min),
+			z_max(z_max)
+		{
+			searchpoints_ = generate_search_points();
+		}
+
+		core::Real x_sampling;
+		core::Real y_sampling;
+		core::Real z_sampling;
+		core::Real x_min;
+		core::Real x_max;
+		core::Real y_min;
+		core::Real y_max;
+		core::Real z_min;
+		core::Real z_max;
+
+		utility::vector1<core::kinematics::Stub> generate_search_points()
+		{
+			utility::vector1<core::kinematics::Stub> searchpoints;
+
+			for(core::Real x_sample = x_min; x_sample <= x_max; x_sample += x_sampling)
+			{
+				for(core::Real y_sample = y_min; y_sample <= y_max; y_sample += y_sampling)
+				{
+					for(core::Real z_sample = z_min; z_sample <= z_max; z_sample += z_sampling)
+					{
+						searchpoints.push_back(
+								core::kinematics::Stub(
+									Matrix::identity(),
+									Vector(x_sample, y_sample, z_sample)));
+					}
+				}
+			}
+
+			return searchpoints; 
+		}
+
+		utility::vector1<core::kinematics::Stub> Searchpoints()
+		{
+			return searchpoints_;
+		}
+
+		utility::vector1<core::kinematics::Stub> searchpoints_;
 };
 
 class PartitionedSearchPattern : public SearchPattern

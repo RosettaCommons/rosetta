@@ -35,6 +35,7 @@ sources = {
   "SearchPattern",
   "SICSearchPattern",
   "SurfaceSearchPattern",
+  "SearchPatternRotSetOp",
   "MinimizingPatternSearch",
   "PlaceMinimizeSearch",
 ],

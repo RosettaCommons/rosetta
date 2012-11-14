@@ -113,16 +113,6 @@ LimitAromaChi2_RotamerSetOperation::alter_rotamer_set(
 
 } // alter_rotamer_set
 
-core::Real
-LimitAromaChi2_RotamerSetOperation::increase_packer_residue_radius(
-	Pose const &, // pose,
-	PackerTaskCOP //the_task
-) const
-{
-	return 0.0;
-}
-
-
 ///////////////////////////////////////////////////////////////////////////////////////////
 core::pack::task::operation::TaskOperationOP
 LimitAromaChi2OperationCreator::create_task_operation() const

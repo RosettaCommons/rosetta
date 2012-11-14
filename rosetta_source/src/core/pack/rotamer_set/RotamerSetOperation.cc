@@ -42,7 +42,8 @@ RotamerSetOperation::~RotamerSetOperation() {}
 core::Real
 RotamerSetOperation::increase_packer_residue_radius(
 	pose::Pose const &, // pose,
-	task::PackerTaskCOP //the_task
+	task::PackerTaskCOP, //the task
+	core::Size //the residue index
 ) const
 {
 	return 0.0;

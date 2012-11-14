@@ -80,14 +80,6 @@ public:
 		RotamerSet & rotamer_set
 	);
 
-	virtual
-	Real
-	increase_packer_residue_radius(
-		Pose const & pose,
-		PackerTaskCOP the_task
-	) const;
-
-
 public:
 
 

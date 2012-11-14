@@ -56,8 +56,6 @@ class SICPatternAtTransform : public SearchPattern
 
 		virtual utility::vector1<core::kinematics::Stub> Searchpoints();
 
-		core::kinematics::Stub slideSourceAtLocation(core::kinematics::Stub slide_location, core::kinematics::Stub source_transform);
-
 	private:
 		protocols::sic_dock::SICFast sic_fast_;
 		core::Real starting_displacement_;

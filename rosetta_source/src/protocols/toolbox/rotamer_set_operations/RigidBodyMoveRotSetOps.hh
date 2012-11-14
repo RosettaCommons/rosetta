@@ -35,7 +35,7 @@ namespace toolbox {
 namespace rotamer_set_operations {
 
 /// @details base class that handles single residue (usually ligand) rigid
-/// body movements in the packer. it holds a list of alternative rigid body
+/// body movements in the packer. subclass generates a list of alternative rigid body
 /// placements. when the alter_rotamer_set function is called, this class
 /// superimposes all rotamers in the initial RotamerSet onto every alternative
 /// rigid body conformation in the member data list. these superimposed
@@ -46,27 +46,44 @@ namespace rotamer_set_operations {
 /// and any of the alternate conformations is returned.
 ///
 /// Generating the alternative rigid body positions:
-/// In the base class, the alternative positions can only be set from the outside.
-/// there are many other conceivable ways of generating alternative confs though
-/// (docking, systematically, etc). Ideally, if one wanted to generate them in this
-/// way, one would need to write a new class derived from this base class that
-/// only deals with generating the alternative rigid body conf, and this base class
-/// handles the packer specific stuff (superposition/neighbor radius)
-class RigidBodyMoveRSO : public core::pack::rotamer_set::RotamerSetOperation
+///
+///   Subclasses must implement get_rigid_body_confs.
+///
+///   Subclasses may implement increase_packer_residue_radius to 
+/// optimize this calculation. Default implementation calls get_rigid_body_confs
+/// and calculates the maximum nbr_atom delta.
+///
+class RigidBodyMoveBaseRSO : public core::pack::rotamer_set::RotamerSetOperation
 {
-public:
 	typedef core::pack::rotamer_set::RotamerSetOperation parent;
-	typedef core::Real Real;
-	typedef core::Size Size;
 
-	RigidBodyMoveRSO( core::Size seqpos );
-	RigidBodyMoveRSO( RigidBodyMoveRSO const & other );
-	~RigidBodyMoveRSO();
+	protected:
+	RigidBodyMoveBaseRSO() :
+		parent()
+	{}
 
-	virtual
-	core::pack::rotamer_set::RotamerSetOperationOP
-	clone() const;
+	RigidBodyMoveBaseRSO(const RigidBodyMoveBaseRSO& other) :
+		parent(other),
+		bump_selector_(other.bump_selector_)
+	{}
 
+
+	public:
+	/// @brief Adds additional rotamers at each rb conf.
+	///
+	/// @details
+	/// fairly simple: iterate over the rotamers in the rotamer_set, superimpose
+	/// each of them onto all the internally stored rigid body confs, and then
+	/// add the newly generated rotamers to the rotamer_set
+	///
+	/// Recalculates chi-angle expansion via call to RotamerSet::extra_chi_samples
+	/// and then generate candidate rotamers from each rb conf via
+	/// SingleResidueRotamerLibrary::fill_rotamer_vector if rotamer library is
+	/// available for the residue type, else just adds the alternate confs.
+	///
+	/// Does not have full safety checks to make sure all the rotamers in the set are
+	/// of the same residue type as the internally stored ones, i.e. that no user sets this
+	/// position to designing in the task
 	virtual
 	void
 	alter_rotamer_set(
@@ -77,34 +94,72 @@ public:
 		core::pack::rotamer_set::RotamerSet & rotamer_set
 	);
 
+	/// @brief returns the largest possible change in nbr atoms location
+	/// 
+	/// Default implementation calls determine_larget_nbr_atom_distance with
+	/// results of get_rigid_body_confs. Override this function if calculation
+	/// can be optimized without call call to get_rigid_body_confs.
 	virtual
-	Real
+	core::Real
 	increase_packer_residue_radius(
 		core::pose::Pose const & pose,
-		core::pack::task::PackerTaskCOP //the_task
-	) const;
+		core::pack::task::PackerTaskCOP, //the_task
+		core::Size residue_index
+	);
+
+	/// @brief returns candidate alternate RB conformations
+	virtual
+	utility::vector1< core::conformation::ResidueCOP >
+	get_rigid_body_confs(
+		core::pose::Pose const & pose,
+		core::pack::task::PackerTask const & ptask,
+		core::Size residue_index) = 0;
+
+	/// @brief returns the largest observed distance between the nbr atom
+	/// in the target res and the nbr atom in any of the candidate rb confs
+	static
+	core::Real
+	determine_largest_nbr_atom_distance(
+		core::conformation::Residue const & target_res,
+		utility::vector1< core::conformation::ResidueCOP > alternate_confs);
+
+	private:
+		core::pack::rotamer_set::BumpSelector bump_selector_;
+};
+
+/// @details
+/// Basic implementation of alternate rb conf set operation. 
+/// The alternative positions are set externally before packing.
+class RigidBodyMoveRSO : public RigidBodyMoveBaseRSO
+{
+public:
+	typedef RigidBodyMoveBaseRSO parent;
+
+	// 'seqpos' could be removed, it can be derived from the input
+	// rotamer set. It is left in as a sanity check for this class.
+	RigidBodyMoveRSO( core::Size seqpos );
+	RigidBodyMoveRSO( RigidBodyMoveRSO const & other );
+
+	virtual
+	core::pack::rotamer_set::RotamerSetOperationOP
+	clone() const;
+
+	virtual
+	utility::vector1< core::conformation::ResidueCOP >
+	get_rigid_body_confs(
+		core::pose::Pose const & pose,
+		core::pack::task::PackerTask const & ptask,
+		core::Size residue_index);
 
 	void
 	set_rigid_body_confs(
 		utility::vector1< core::conformation::ResidueCOP > const & rigid_body_confs
 	);
 
-	/// @brief returns the largest observed distance between the nbr atom
-	/// in the target res and the nbr atom in any of the saved rb confs
-	Real
-	determine_largest_nbr_atom_distance(
-		core::conformation::Residue const & target_res
-	) const;
-
-
-protected:
-
-
 private:
 
 	core::Size seqpos_;
 	utility::vector1< core::conformation::ResidueCOP > rigid_body_confs_;
-	core::pack::rotamer_set::BumpSelector bump_selector_;
 };
 
 } //namespace protocols

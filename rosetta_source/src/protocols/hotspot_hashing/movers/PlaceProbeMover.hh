@@ -23,6 +23,9 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 
+#include <core/scoring/ScoreFunction.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
+
 // Unit headers
 
 namespace protocols
@@ -35,6 +38,16 @@ namespace movers
 class PlaceProbeMover : virtual public protocols::moves::Mover
 {
   public:
+		enum ExecutionMode
+		{
+			RunAll, OnePerStruct
+		};
+
+		enum StructureOutputMode
+		{
+			None, Probe, Full
+		};
+
     PlaceProbeMover();
 
     PlaceProbeMover(
@@ -56,13 +69,27 @@ class PlaceProbeMover : virtual public protocols::moves::Mover
          protocols::moves::Movers_map const &,
          core::pose::Pose const &);
 
+	  StructureOutputMode parse_output_mode(std::string name);
+
     void check_and_initialize(core::pose::Pose const & target_pose);
+
+    void execute_one_search(core::pose::Pose & target_pose, core::Size search_index);
+
+		void perform_local_refinement(core::pose::Pose & target_pose, core::Size target_residue);
 
     virtual SearchPatternOP create_search_pattern(core::pose::Pose const & target_pose) = 0;
     virtual SearchPatternOP create_partitioned_search_pattern(core::pose::Pose const & target_pose);
 
+		virtual SearchPatternOP create_refinement_pattern(core::pose::Pose const & target_pose, core::Size target_residue);
+		virtual core::pack::task::PackerTaskOP create_refinement_packing_task(core::pose::Pose const & target_pose, core::Size target_residue);
+
 		std::string residue_name_;
+		std::vector<std::string> residue_variants_;
+
     core::conformation::ResidueCOP target_residue_;
+		core::scoring::ScoreFunctionCOP refinement_scorefxn_;
+
+		ExecutionMode current_mode_;
 
     core::Size search_partition_;
     core::Size total_search_partition_;

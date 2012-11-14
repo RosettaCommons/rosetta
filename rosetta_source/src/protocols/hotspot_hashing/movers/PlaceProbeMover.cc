@@ -13,7 +13,12 @@
 /// @author Alex Ford fordas@uw.edu
 //
 
+#include <sstream>
+
 #include <basic/Tracer.hh>
+
+#include <boost/algorithm/string.hpp>   
+#include <boost/lexical_cast.hpp>   
 
 #include <utility/tag/Tag.hh>
 #include <utility/exit.hh>
@@ -25,9 +30,14 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/operation/TaskOperations.hh>
+
+#include <core/scoring/ScoreFunction.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/DataMap.fwd.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/JobDistributor.hh>
@@ -37,6 +47,7 @@
 
 #include <protocols/hotspot_hashing/SearchPattern.hh>
 #include <protocols/hotspot_hashing/SurfaceSearchPattern.hh>
+#include <protocols/hotspot_hashing/SearchPatternRotSetOp.hh>
 
 #include <protocols/hotspot_hashing/StubGenerator.hh>
 
@@ -54,6 +65,7 @@ static basic::Tracer TR( "protocols.hotspot_hashing.movers.PlaceProbeMover" );
 PlaceProbeMover::PlaceProbeMover() :
     residue_name_(""),
     target_residue_(NULL),
+    current_mode_(RunAll),
     search_partition_(0),
     total_search_partition_(1),
     initialized_pattern_(false),
@@ -67,6 +79,7 @@ PlaceProbeMover::PlaceProbeMover(
 		core::Size total_search_partition) :
 		residue_name_(residue_name),
     target_residue_(target_residue),
+    current_mode_(RunAll),
     search_partition_(search_partition),
     total_search_partition_(total_search_partition),
     initialized_pattern_(false),
@@ -77,14 +90,31 @@ void PlaceProbeMover::apply(core::pose::Pose & pose)
 {
 	check_and_initialize(pose);
 
-	core::Size nstruct = jd2::JobDistributor::get_instance()->current_job()->nstruct_index();
-
-	core::Size search_index = nstruct % search_points_.size();
-	if( search_index == 0 )
+	if(current_mode_ == OnePerStruct)
 	{
-		search_index = search_points_.size();
+		core::Size nstruct = jd2::JobDistributor::get_instance()->current_job()->nstruct_index();
+
+		core::Size search_index = nstruct % search_points_.size();
+		if( search_index == 0 )
+		{
+			search_index = search_points_.size();
+		}
+
+		execute_one_search(pose, search_index);
 	}
-	
+	else
+	{
+		for (core::Size i = 1; i <= search_points_.size(); i++)
+		{
+			core::pose::Pose tmp_pose(pose);
+			execute_one_search(tmp_pose, i);
+		}
+	}
+}
+
+void PlaceProbeMover::execute_one_search(core::pose::Pose & pose, core::Size search_index)
+{
+	//TODO extract placement into a separate task
 	core::kinematics::Stub transform = search_points_[search_index];
 
 	core::Size residuejumpindex;
@@ -92,7 +122,26 @@ void PlaceProbeMover::apply(core::pose::Pose & pose)
 
 	StubGenerator::placeResidueAtTransform(pose, target_residue_, transform, residuejumpindex, residueindex);
 
-	core::pose::add_variant_type_to_pose_residue( pose, "SHOVE_BB", residueindex );
+	{
+		std::stringstream sstream;
+		stub_to_points(sstream, transform);
+
+		jd2::JobDistributor::get_instance()->current_job()->add_string_string_pair(
+				"placeprobe_prerefine_stub", sstream.str());
+	}
+	
+	perform_local_refinement(pose, residueindex);
+
+	core::conformation::ResidueCOP post_refinement_residue(pose.residue(residueindex));
+	core::kinematics::Stub post_refinement_transform = StubGenerator::residueStubCentroidFrame(post_refinement_residue);
+
+	{
+		std::stringstream sstream;
+		stub_to_points(sstream, post_refinement_transform);
+
+		jd2::JobDistributor::get_instance()->current_job()->add_string_string_pair(
+				"placeprobe_postrefine_stub", sstream.str());
+	}
 }
 
 void PlaceProbeMover::check_and_initialize(core::pose::Pose const & target_pose)
@@ -107,6 +156,8 @@ void PlaceProbeMover::check_and_initialize(core::pose::Pose const & target_pose)
 	TR.Debug << "Initializing search pattern." << std::endl;
 
   SearchPatternOP search_pattern = create_partitioned_search_pattern(target_pose);
+
+	search_points_ = search_pattern->Searchpoints();
 
 	TR.Info << "Initialized search pattern. Size: " << search_points_.size() << std::endl;
 
@@ -126,6 +177,42 @@ void PlaceProbeMover::check_and_initialize(core::pose::Pose const & target_pose)
 SearchPatternOP PlaceProbeMover::create_partitioned_search_pattern(core::pose::Pose const & target_pose)
 {
 	return new PartitionedSearchPattern(create_search_pattern(target_pose), search_partition_, total_search_partition_);
+}
+
+SearchPatternOP PlaceProbeMover::create_refinement_pattern(core::pose::Pose const & target_pose, core::Size target_residue)
+{
+	return new ConstPattern(); 
+}
+
+void PlaceProbeMover::perform_local_refinement(core::pose::Pose & target_pose, core::Size target_residue)
+{
+	core::pack::task::PackerTaskOP packer_task = create_refinement_packing_task(target_pose, target_residue);
+
+	protocols::simple_moves::PackRotamersMoverOP packer =
+		new protocols::simple_moves::PackRotamersMover(refinement_scorefxn_, packer_task);
+
+	packer->apply(target_pose);
+}
+
+core::pack::task::PackerTaskOP PlaceProbeMover::create_refinement_packing_task(core::pose::Pose const & target_pose, core::Size target_residue)
+{
+	TR.Debug << "Creating refinement packing task." << std::endl;
+	core::pack::task::TaskFactory taskfactory;
+
+  taskfactory.push_back( new core::pack::task::operation::InitializeFromCommandline() );
+	taskfactory.push_back( new AddSearchPatternRotSetOp(
+																target_residue,
+																create_refinement_pattern(target_pose, target_residue)));
+
+	core::pack::task::PackerTaskOP task = taskfactory.create_task_and_apply_taskoperations( target_pose );
+
+	utility::vector1<bool> packmask(target_pose.total_residue(), false);
+	packmask[target_residue] = true;
+	task->restrict_to_residues(packmask);
+
+	task->nonconst_residue_task(target_residue).restrict_to_repacking();
+
+	return task;
 }
 
 void
@@ -156,9 +243,53 @@ PlaceProbeMover::parse_place_probe_tag( utility::tag::TagPtr const tag,
 		utility_exit_with_message("Invalid search partition specification.");
 	}
 
+	std::string mode_specification = tag->getOption<std::string>("execution_mode", "all");
+	boost::algorithm::to_lower(mode_specification);
+
+	if(mode_specification == "all")
+	{
+		current_mode_ = RunAll;
+	}
+	else if(mode_specification == "one")
+	{
+		current_mode_ = OnePerStruct;
+	}
+	else
+	{
+		TR.Error << "Invalid mode specification: " << mode_specification << std::endl;
+		utility_exit_with_message("Invalid mode specification: " + mode_specification);
+	}
+
+	// Refinement scorefunction
+	refinement_scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data );
+
 	// Initialize residue representation
 	target_residue_ = StubGenerator::getStubByName( residue_name_ );
 }
+
+	
+PlaceProbeMover::StructureOutputMode PlaceProbeMover::parse_output_mode(std::string name)
+{
+	boost::algorithm::to_lower(name);
+
+	if(name == "none")
+	{
+		return None;
+	}
+	else if(name == "probe")
+	{
+		return Probe;
+	}
+	else if(name == "full")
+	{
+		return Full;
+	}
+	else
+	{
+		TR.Error << "Invalid output mode specification: " << name << std::endl;
+		utility_exit_with_message("Invalid output mode specification: " + name);
+	}
+};
 
 }
 }
