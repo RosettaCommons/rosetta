@@ -109,6 +109,7 @@ SymmetricRotamerSet_::compute_one_body_energies(
 		energies[ ii ] += static_cast< core::PackerEnergy > (sf.weights().dot( emap ))*symm_info->score_multiply_factor(); // precision loss here. Multiply with the number of total subunits to get the total energy
 	}
 
+
 	sf.evaluate_rotamer_intrares_energies( *this, pose, temp_energies );
 	// multiply the rotamer_intrares energy with the number of subunits in the system
 	PackerEnergyMultiply( temp_energies, symm_info->score_multiply_factor() );
@@ -133,8 +134,8 @@ SymmetricRotamerSet_::compute_one_body_energies(
 			// multiply it with the number of subunits in the system
 			std::fill( temp_energies.begin(), temp_energies.end(), core::PackerEnergy( 0.0 ) );
 			sf.evaluate_rotamer_background_energies( *this, neighbor, pose, temp_energies );
-					PackerEnergyMultiply( temp_energies, symm_info->score_multiply_factor() );
-					PackerEnergyAdd( energies, temp_energies );
+			PackerEnergyMultiply( temp_energies, symm_info->score_multiply_factor() );
+			PackerEnergyAdd( energies, temp_energies );
 //					PackerEnergyAdd( energies, temp_energies );
 		} else {
 			// We have a self interaction. We have to calculate the rotamer-rotamer pair interaction
@@ -276,6 +277,7 @@ SymmetricRotamerSet_::orient_rotamer_set_to_symmetric_partner(
     rot != rot_end; ++rot) {
       conformation::Residue target_rsd( *residue_in );
       target_rsd.orient_onto_residue( pose.residue( sympos ) );
+			target_rsd.copy_residue_connections_from( pose.residue( sympos ) );
 			sym_rotamer_set->set_resid( sympos );
       sym_rotamer_set->add_rotamer( target_rsd );
   }

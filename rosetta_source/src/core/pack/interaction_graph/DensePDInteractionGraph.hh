@@ -404,13 +404,6 @@ DensePDInteractionGraph const * DensePDNode::get_dpdig_owner() const
 	return static_cast< DensePDInteractionGraph const * > (get_owner());
 }
 
-
-inline
-DensePDNode const * DensePDEdge::get_dpd_node( int index ) const
-{
-	return static_cast< DensePDNode const * >  (get_node( index ));
-}
-
 inline
 DensePDNode * DensePDEdge::get_dpd_node( int index )
 {
@@ -420,7 +413,7 @@ DensePDNode * DensePDEdge::get_dpd_node( int index )
 inline
 DensePDInteractionGraph const * DensePDEdge::get_dpdig_owner() const
 {
-	return static_cast< DensePDInteractionGraph * > (get_owner());
+	return static_cast< DensePDInteractionGraph const * > (get_owner());
 }
 
 inline

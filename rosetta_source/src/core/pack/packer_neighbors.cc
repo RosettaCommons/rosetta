@@ -28,6 +28,8 @@
 #include <core/graph/Graph.hh>
 #include <core/conformation/PointGraph.hh>
 #include <core/conformation/find_neighbors.hh>
+#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
 
 // Utility Headers
 #include <utility/vector1.functions.hh>
@@ -79,6 +81,14 @@ create_packer_graph(
 		g->copy_connectivity( pose.energies().energy_graph() );
 	} else {
 
+		/// OK -- rewriting this function to be symmetry aware
+		conformation::symmetry::SymmetryInfoCOP symm_info;
+		if ( dynamic_cast< conformation::symmetry::SymmetricConformation const * > ( & pose.conformation() ) ) {
+			conformation::symmetry::SymmetricConformation const & symmconf(
+				static_cast< conformation::symmetry::SymmetricConformation const & > ( pose.conformation() ));
+			symm_info = symmconf.Symmetry_Info();
+		}
+
 		// find radii for residues...   NOTE: flo oct 08, not anymore, doing this in above function now
 		//utility::vector1< Distance > residue_radii = find_residue_max_radii( pose, task );
 
@@ -94,14 +104,22 @@ create_packer_graph(
 		// add edges
 		//for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		for ( Size ii = 1; ii <= total_nodes; ++ii ) {
-			Distance const ii_itxn_rad = residue_radii[ ii ] + atomic_itxn_dist;
+			Size ii_asu = ii;
+			if ( symm_info && symm_info->bb_follows( ii ) != 0 ) {
+				ii_asu = symm_info->bb_follows(ii);
+			}
+			Distance const ii_itxn_rad = residue_radii[ ii_asu ] + atomic_itxn_dist;
 			for ( core::conformation::PointGraph::UpperEdgeListConstIter
 				iter = point_graph->get_vertex( ii ).const_upper_edge_list_begin(),
 				iter_end = point_graph->get_vertex( ii ).const_upper_edge_list_end();
 				iter != iter_end; ++iter ) {
 
 				Size jj = iter->upper_vertex();
-				Distance const jj_rad = residue_radii[ jj ];
+				Size jj_asu = jj;
+				if ( symm_info && symm_info->bb_follows( jj ) != 0 ) {
+					jj_asu = symm_info->bb_follows(jj);
+				}
+				Distance const jj_rad = residue_radii[ jj_asu ];
 
 				if ( jj_rad + ii_itxn_rad > 0 &&
 						iter->data().dsq() < ( jj_rad + ii_itxn_rad )*( jj_rad + ii_itxn_rad ) ) {

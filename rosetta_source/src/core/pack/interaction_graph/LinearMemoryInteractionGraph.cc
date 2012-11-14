@@ -51,11 +51,6 @@ LinearMemNode::LinearMemNode(
 	int num_states
 ) :
 	OnTheFlyNode( owner, node_id, num_states ),
-	num_states_to_keep_in_recent_history_( 0 ),
-	curr_num_in_recent_history_( 0 ),
-	head_of_rh_queue_ptr_( 0 ),
-	end_of_rh_queue_ptr_( 0 ),
-	states_2_recent_history_( num_states, 0 ),
 	current_state_( 0 ),
 	curr_state_one_body_energy_( 0.0f ),
 	curr_state_total_energy_( 0.0f ),
@@ -69,6 +64,7 @@ LinearMemNode::LinearMemNode(
 	num_recently_accepted_( 0 ),
 	filled_substitution_history_( false )
 {
+	rhq_.num_elements( num_states );
 }
 
 LinearMemNode::~LinearMemNode()
@@ -88,7 +84,7 @@ LinearMemNode::prepare_for_simulated_annealing()
 				get_incident_linmem_edge(jj)->reset_state_energies(
 					get_node_index(),
 					ii,
-					states_2_recent_history_[ ii ]
+					rhq_.pos_in_history_queue( ii )
 				);
 			}
 		}
@@ -143,8 +139,7 @@ LinearMemNode::count_dynamic_memory() const
 {
 	unsigned int total_memory = OnTheFlyNode::count_dynamic_memory();
 
-	total_memory += recent_history_queue_.size() * sizeof( history_queue_struct );
-	total_memory += states_2_recent_history_.size() * sizeof( int );
+	total_memory += rhq_.dynamic_memory_usage();
 	total_memory += aa_neighbors_for_edges_.size() * sizeof( unsigned char );
 	total_memory += neighbors_curr_state_.size() * sizeof( int );
 	total_memory += neighbors_state_recent_history_index_.size() * sizeof( int );
@@ -207,7 +202,7 @@ LinearMemNode::assign_state(int new_state)
 				current_state_,
 				curr_state_sparse_mat_info_,
 				bumped_recent_history_index,
-				head_of_rh_queue_ptr_,
+				rhq_.head_of_queue(),
 				curr_state_two_body_energies_[ii]
 			);
 
@@ -244,7 +239,7 @@ LinearMemNode::partial_assign_state( int new_state )
 			current_state_,
 			curr_state_sparse_mat_info_,
 			bumped_recent_history_index,
-			head_of_rh_queue_ptr_
+			rhq_.head_of_queue()
 		);
 	}
 	alternate_state_is_being_considered_ = false;
@@ -280,7 +275,7 @@ LinearMemNode::project_deltaE_for_substitution
 	// << " alt state " << alternate_state << "...";
 
 	alternate_state_ = alternate_state;
-	int alternate_state_recent_history_index = states_2_recent_history_[ alternate_state_ ];
+	int alternate_state_recent_history_index = rhq_.pos_in_history_queue( alternate_state_ );
 
 	bool store_rpes = num_recently_accepted_ < THRESHOLD_ACCEPTANCE_RATE_FOR_RPE_STORAGE;
 
@@ -607,7 +602,7 @@ LinearMemNode::commit_considered_substitution()
 			current_state_,
 			curr_state_sparse_mat_info_,
 			bumped_recent_history_index,
-			head_of_rh_queue_ptr_,
+			rhq_.head_of_queue(),
 			neighbors_curr_state_[ ii ]
 		);
 	}
@@ -708,24 +703,13 @@ void LinearMemNode::set_recent_history_size(
 	int num_states_to_maintain_in_recent_history
 )
 {
-	num_states_to_keep_in_recent_history_ =
-		num_states_to_maintain_in_recent_history;
-	recent_history_queue_.resize( num_states_to_keep_in_recent_history_ );
-	for (int ii = 1; ii <= num_states_to_keep_in_recent_history_; ++ii)
-	{
-		recent_history_queue_[ii].more_recent_ptr = 0;
-		recent_history_queue_[ii].state_in_rh = 0;
-		recent_history_queue_[ii].more_ancient_ptr = 0;
-	}
-	curr_num_in_recent_history_ = 0;
-	head_of_rh_queue_ptr_ = 0;
-	end_of_rh_queue_ptr_ = 0;
+	rhq_.history_size( num_states_to_maintain_in_recent_history );
 }
 
 int
 LinearMemNode::get_recent_history_size() const
 {
-	return num_states_to_keep_in_recent_history_;
+	return rhq_.history_size();
 }
 
 
@@ -816,69 +800,7 @@ LinearMemNode::calc_deltaEpd( int alternate_state )
 int
 LinearMemNode::update_recent_history( int state )
 {
-	if ( states_2_recent_history_[ state ] != 0 ) {
-		//already stored in recent history -- nothing gets bumped
-		int const state_rh_id = states_2_recent_history_[ state ];
-		if ( head_of_rh_queue_ptr_ == state_rh_id ) return 0;
-
-		int const anc_id = recent_history_queue_[ state_rh_id ].more_ancient_ptr;
-		int const rec_id = recent_history_queue_[ state_rh_id ].more_recent_ptr;
-
-		recent_history_queue_[ rec_id ].more_ancient_ptr = anc_id;
-		if ( state_rh_id != end_of_rh_queue_ptr_ ) {
-			recent_history_queue_[ anc_id ].more_recent_ptr = rec_id;
-		} else {
-			end_of_rh_queue_ptr_ = rec_id;
-		}
-
-		recent_history_queue_[ head_of_rh_queue_ptr_ ].more_recent_ptr = state_rh_id;
-		recent_history_queue_[ state_rh_id ].more_ancient_ptr = head_of_rh_queue_ptr_;
-		recent_history_queue_[ state_rh_id ].more_recent_ptr = 0;
-		head_of_rh_queue_ptr_ = state_rh_id;
-
-		return 0;
-	} else if ( curr_num_in_recent_history_ < num_states_to_keep_in_recent_history_ ) {
-		++curr_num_in_recent_history_;
-		if ( curr_num_in_recent_history_ == 1 ) end_of_rh_queue_ptr_ = 1;
-
-		states_2_recent_history_[ state ] = curr_num_in_recent_history_;
-		recent_history_queue_[ curr_num_in_recent_history_ ].state_in_rh = state;
-
-		if ( head_of_rh_queue_ptr_ != 0 ) {
-			recent_history_queue_[ head_of_rh_queue_ptr_ ].more_recent_ptr = curr_num_in_recent_history_;
-		}
-		recent_history_queue_[ curr_num_in_recent_history_ ].more_ancient_ptr = head_of_rh_queue_ptr_;
-		recent_history_queue_[ curr_num_in_recent_history_ ].more_recent_ptr = 0;
-		head_of_rh_queue_ptr_ = curr_num_in_recent_history_;
-
-	} else {
-		//not in recent history, something gets bumped
-
-		if ( num_states_to_keep_in_recent_history_ == 1 ) {
-			states_2_recent_history_[ recent_history_queue_[ 1 ].state_in_rh ] = 0;
-			states_2_recent_history_[ state ] = 1;
-			recent_history_queue_[ 1 ].state_in_rh = state;
-			return 1;
-		} else {
-			int const prev_end = end_of_rh_queue_ptr_;
-			int const one_before_end = recent_history_queue_[ prev_end ].more_recent_ptr;
-			recent_history_queue_[ one_before_end ].more_ancient_ptr = 0;
-			end_of_rh_queue_ptr_ = one_before_end;
-
-			states_2_recent_history_[ recent_history_queue_[ prev_end ].state_in_rh ] = 0;
-
-			states_2_recent_history_[ state ] = prev_end;
-			recent_history_queue_[ prev_end ].state_in_rh = state;
-
-			recent_history_queue_[ prev_end ].more_recent_ptr = 0;
-			recent_history_queue_[ prev_end ].more_ancient_ptr = head_of_rh_queue_ptr_;
-			recent_history_queue_[ head_of_rh_queue_ptr_ ].more_recent_ptr = prev_end;
-			head_of_rh_queue_ptr_ = prev_end;
-
-			return prev_end;
-		}
-	}
-	return 0; //control of flow never reaches here; makes compiler happy
+	return rhq_.push_to_front_of_history_queue( state );
 }
 
 

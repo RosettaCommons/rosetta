@@ -76,6 +76,8 @@ public:
 protected:
 	void update_edge_vector();
 
+public:
+
 	//Read access to private data granted to derived classes
 	//inlined for efficiency
 	inline
@@ -101,6 +103,10 @@ protected:
 	{
 		return num_edges_to_larger_indexed_nodes_;
 	}
+
+public:
+
+	/// These functions are public for the sake of writing good unit tests
 
 	inline
 	EdgeBase const * get_incident_edge( int index ) const
@@ -138,6 +144,7 @@ protected:
 		return adjacent_node_[ index ];
 	}
 
+protected:
 	inline
 	bool get_edge_vector_up_to_date() const
 	{
@@ -246,7 +253,13 @@ protected:
 
 public:
 	inline
-	InteractionGraphBase* get_owner() const
+	InteractionGraphBase const * get_owner() const
+	{
+		return owner_;
+	}
+
+	inline
+	InteractionGraphBase * get_owner()
 	{
 		return owner_;
 	}
@@ -415,6 +428,13 @@ protected:
 	virtual unsigned int count_dynamic_memory() const;
 
 	void drop_edge(std::list< EdgeBase* >::iterator edge);
+
+public:
+
+	/// The following functions provide access to the nodes and edges in the graph
+	/// though, their use is strongly discouraged except for in writing unit tests
+	/// to ensure that the graphs are properly implemented.
+
 	EdgeBase const * find_edge(int node1, int node2) const;
 	EdgeBase * find_edge(int node1, int node2);
 
@@ -451,6 +471,8 @@ protected:
 	{
 		return ig_edge_list_.end();
 	}
+
+protected:
 
 	inline
 	int get_node_state_offset( int index ) const

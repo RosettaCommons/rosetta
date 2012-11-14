@@ -2510,11 +2510,8 @@ void HPatchEdge< V, E, G >::acknowledge_substitution() {
 		}
 
 		// debug
-		Size const node_not_changing_num_atoms = get_hpatch_node( node_not_changing_ )->get_current_state_num_atoms();
-		Size const node_changing_alt_state_num_atoms = get_hpatch_node( node_changing_ )->get_alt_state_num_atoms();
-
-		assert( node_changing_alt_state_num_atoms <= alt_state_atom_atom_overlaps_.size() );
-		assert( node_not_changing_num_atoms <= alt_state_atom_atom_overlaps_[1].size() );
+		assert( get_hpatch_node( node_changing_ )->get_alt_state_num_atoms() <= alt_state_atom_atom_overlaps_.size() );
+		assert( get_hpatch_node( node_not_changing_ )->get_current_state_num_atoms() <= alt_state_atom_atom_overlaps_[1].size() );
 
 		if ( current_state_atom_atom_overlaps_.size() < alt_state_atom_atom_overlaps_[1].size() ) {
 			current_state_atom_atom_overlaps_.resize( alt_state_atom_atom_overlaps_[1].size() );
@@ -2529,7 +2526,8 @@ void HPatchEdge< V, E, G >::acknowledge_substitution() {
 		for ( Size ii=1; ii <= alt_state_atom_atom_overlaps_.size(); ++ii ) {
 			/// strict monotone growth
 			assert( alt_state_atom_atom_overlaps_[ ii ].size() <= alt_state_atom_atom_overlaps_[ 1 ].size() );
-			assert( ii > node_changing_alt_state_num_atoms || node_not_changing_num_atoms <= alt_state_atom_atom_overlaps_[ii].size() );
+			assert( ii > get_hpatch_node( node_changing_ )->get_alt_state_num_atoms()  ||
+				get_hpatch_node( node_not_changing_ )->get_current_state_num_atoms() <= alt_state_atom_atom_overlaps_[ii].size() );
 			for ( Size jj = 1; jj <= alt_state_atom_atom_overlaps_[ ii ].size(); ++jj ) {
 				current_state_atom_atom_overlaps_[ jj ][ ii ] = alt_state_atom_atom_overlaps_[ ii ][ jj ];
 			}

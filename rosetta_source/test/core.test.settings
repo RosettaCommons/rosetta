@@ -97,6 +97,8 @@ sources = {
 		"interaction_graph/RotamerDots",
 		"interaction_graph/SimpleInteractionGraph",
 		"interaction_graph/SurfaceInteractionGraph",
+		"interaction_graph/SymmLinMemInteractionGraph",
+		"interaction_graph/SymmMinimalistInteractionGraph",
 		"min_pack",
 		"RotamerTrials",
 		"rotamer_set/RotamerSet",

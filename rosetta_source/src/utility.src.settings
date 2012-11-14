@@ -20,6 +20,7 @@ sources = {
 		"LexicographicalIterator",
 		"mpi_util",
 		"PyExitCallback",
+		"recent_history_queue",
 		"static_database",
 		"string_util",
 	],

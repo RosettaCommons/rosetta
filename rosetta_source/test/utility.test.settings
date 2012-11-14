@@ -20,6 +20,7 @@ sources = {
                 "LexicographicalIterator",
                 "minmax",
                 "OrderedTuple",
+		"recent_history_queue",
 		"string_util",
                 #"TopScoreSelector",
 		"UTools",

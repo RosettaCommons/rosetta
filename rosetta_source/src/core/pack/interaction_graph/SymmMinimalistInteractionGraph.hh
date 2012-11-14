@@ -7,53 +7,43 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/pack/interaction_graph/LinearMemoryInteractionGraph.hh
+/// @file   core/pack/interaction_graph/SymmMinimalistInteractionGraph.hh
 /// @brief
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_core_pack_interaction_graph_LinearMemoryInteractionGraph_hh
-#define INCLUDED_core_pack_interaction_graph_LinearMemoryInteractionGraph_hh
+#ifndef INCLUDED_core_pack_interaction_graph_SymmMinimalistInteractionGraph_hh
+#define INCLUDED_core_pack_interaction_graph_SymmMinimalistInteractionGraph_hh
 
 // Unit Headers
-#include <core/pack/interaction_graph/LinearMemoryInteractionGraph.fwd.hh>
+#include <core/pack/interaction_graph/SymmMinimalistInteractionGraph.fwd.hh>
 
 // Package Headers
-#include <core/pack/interaction_graph/OnTheFlyInteractionGraph.hh>
+#include <core/pack/interaction_graph/SymmOnTheFlyInteractionGraph.hh>
 
 #include <ObjexxFCL/FArray3D.hh>
 
 #include <utility/vector1.hh>
-#include <utility/recent_history_queue.hh>
 
 
 namespace core {
 namespace pack {
 namespace interaction_graph {
 
-/// @brief for storing three peices of associated data describing
-/// the recent history structure on a LinearMemNode.
-struct history_queue_struct
-{
-	int more_recent_ptr;
-	int state_in_rh;
-	int more_ancient_ptr;
-};
-
-class LinearMemNode : public OnTheFlyNode
+class SymmMinimalistNode : public SymmOnTheFlyNode
 {
 public:
 	/// @brief main constructor, no default ctor, uncopyable
-	LinearMemNode(
+	SymmMinimalistNode(
 		InteractionGraphBase * owner,
 		int node_id,
 		int num_states
 	);
 
 	/// @brief virtual dstor
-	virtual ~LinearMemNode();
+	virtual ~SymmMinimalistNode();
 
 	//virtual methods inherited from NodeBase
-	/// @brief linmem ig does not have to do anything before sim annealing begins
+	/// @brief symmin ig does not have to do anything before sim annealing begins
 	virtual void prepare_for_simulated_annealing();
 	/// @brief write internal energy and bookkeeping data to standard out
 	virtual void print() const;
@@ -76,12 +66,6 @@ public:
 	inline
 	int get_current_state() const
 	{ return current_state_; }
-
-
-	/// @brief return the "recent state id" for the currently assigned state
-	inline
-	int get_curr_state_recent_state_id() const
-	{ return rhq_.head_of_queue(); }
 
 	/// @brief return the one-body energy for the currently assigned state
 	inline
@@ -117,25 +101,18 @@ public:
 	void acknowledge_neighbors_state_substitution(
 		int edge_to_altered_neighbor,
 		core::PackerEnergy new_edge_energy,
-		int other_node_new_state,
-		SparseMatrixIndex const & other_node_new_state_sparse_info,
-		int other_node_recent_history_index
+		int other_node_new_state
 	);
 
 	void
 	acknowledge_neighbors_partial_state_substitution(
 		int edge_to_altered_neighbor,
-		int other_node_new_state,
-		SparseMatrixIndex const & other_node_new_state_sparse_info,
-		int other_state_recent_history_index
+		int other_node_new_state
 	);
 
 	inline
 	SparseMatrixIndex const &
 	get_sparse_mat_info_for_curr_state() const;
-
-	void set_recent_history_size( int num_states_to_maintain_in_recent_history );
-	int get_recent_history_size() const;
 
 	void print_internal_energies() const;
 
@@ -144,71 +121,43 @@ public:
 	virtual unsigned int count_static_memory() const;
 	virtual unsigned int count_dynamic_memory() const;
 
-protected:
-
-	inline
-	conformation::Residue const &
-	get_current_rotamer()
-	{
-		return get_rotamer( current_state_ );
-	}
-
-	//Hooks for SASANode< V, E, G > class
-	//i.e. for non-PD classes which are templated to use either PD or OTF graphs
-	core::PackerEnergy get_curr_pd_energy_total() const { return curr_state_total_energy_;}
-	core::PackerEnergy get_alt_pd_energy_total() const { return alternate_state_total_energy_;}
-	void set_alternate_state( int alt ) { alternate_state_ = alt; }
-	int get_alternate_state() const { return alternate_state_; }
-	void calc_deltaEpd( int alternate_state );
-
-	bool considering_alternate_state() const
-	{
-		return alternate_state_is_being_considered_;
-	}
-
 private:
 
 	void update_internal_vectors();
 
-	inline
-	LinearMemEdge const * get_incident_linmem_edge( int index ) const;
+public:
 
 	inline
-	LinearMemEdge * get_incident_linmem_edge( int index );
+	SymmMinimalistEdge const * get_incident_symmin_edge( int index ) const;
 
 	inline
-	LinearMemNode const * get_adjacent_linmem_node( int index ) const;
+	SymmMinimalistEdge * get_incident_symmin_edge( int index );
 
 	inline
-	LinearMemNode * get_adjacent_linmem_node( int index );
+	SymmMinimalistNode const * get_adjacent_symmin_node( int index ) const;
 
 	inline
-	LinearMemoryInteractionGraph const *
-	get_linmem_ig_owner() const;
+	SymmMinimalistNode * get_adjacent_symmin_node( int index );
 
 	inline
-	LinearMemoryInteractionGraph *
-	get_linmem_ig_owner();
+	SymmMinimalistInteractionGraph const *
+	get_symmin_ig_owner() const;
 
-	int update_recent_history( int state );
+	inline
+	SymmMinimalistInteractionGraph *
+	get_symmin_ig_owner();
 
 private:
 	/// Data
-	utility::recent_history_queue rhq_;
 
-	ObjexxFCL::FArray3D< unsigned char > aa_neighbors_for_edges_;
 	utility::vector1< int > neighbors_curr_state_;
-	utility::vector1< int > neighbors_state_recent_history_index_;
-	utility::vector1< SparseMatrixIndex > neighbors_curr_state_sparse_info_;
 
 	int current_state_;
-	SparseMatrixIndex curr_state_sparse_mat_info_;
 	core::PackerEnergy curr_state_one_body_energy_;
 	core::PackerEnergy curr_state_total_energy_;
 	utility::vector1< core::PackerEnergy > curr_state_two_body_energies_;
 
 	int alternate_state_;
-	SparseMatrixIndex alt_state_sparse_mat_info_;
 	core::PackerEnergy alternate_state_one_body_energy_;
 	core::PackerEnergy alternate_state_total_energy_;
 	utility::vector1< core::PackerEnergy > alternate_state_two_body_energies_;
@@ -216,50 +165,20 @@ private:
 	bool alternate_state_is_being_considered_;
 	bool already_prepped_for_simA_;
 
-	ObjexxFCL::FArray1D_int accepted_rejected_substitution_history_;
-	int accepted_history_head_;
-	int num_recently_accepted_;
-	bool filled_substitution_history_;
-
-	static const int ACCEPTED = 1;
-	static const int REJECTED = 0;
-
-	static const int ACCEPTANCE_REJECTION_HISTORY_LENGTH = 100;
-	static const int THRESHOLD_ACCEPTANCE_RATE_FOR_RPE_STORAGE = 10;
 };
 
-class LinearMemEdge : public OnTheFlyEdge
+class SymmMinimalistEdge : public SymmOnTheFlyEdge
 {
 public:
-	LinearMemEdge(
+	SymmMinimalistEdge(
 		InteractionGraphBase* owner,
 		int first_node_ind,
 		int second_node_ind
 	);
 
-	virtual ~LinearMemEdge();
-
-	virtual
-	void
-	set_sparse_aa_info(
-		ObjexxFCL::FArray2_bool const &
-	);
-
-	virtual
-	void force_aa_neighbors( int node1aa, int node2aa);
-
-	virtual
-	void force_all_aa_neighbors();
-
-	virtual
-	bool
-	get_sparse_aa_info(
-		int node1aa,
-		int node2aa
-	) const;
+	virtual ~SymmMinimalistEdge();
 
 	virtual core::PackerEnergy get_two_body_energy( int const node1state, int const node2state) const;
-
 
 	//virtual methods inherited from EdgeBase
 	virtual void prepare_for_simulated_annealing();
@@ -269,49 +188,32 @@ public:
 	void acknowledge_state_change(
 		int node_ind,
 		int new_state,
-		SparseMatrixIndex const & new_state_sparse_info,
-		int bumped_recent_history_index,
-		int new_state_recent_history_index,
 		core::PackerEnergy & new_energy
 	);
 	void acknowledge_state_zeroed( int node_ind );
 
 	void acknowledge_partial_state_change(
 		int node_ind,
-		int new_state,
-		SparseMatrixIndex const & new_state_sparse_info,
-		int bumped_recent_history_index,
-		int new_state_recent_history_index
+		int new_state
 	);
 
 	core::PackerEnergy get_energy_following_partial_state_assignment();
 
-	void reset_state_energies(
-		int node_index,
-		int state,
-		int recent_history_id
+	core::PackerEnergy
+	get_energy_for_alt_state(
+		int changing_node_index
 	);
 
-	core::PackerEnergy
-	get_energy_for_alt_state
-	(
-		bool store_rpes,
-		int changing_node_index,
-		int alternate_state,
-		int alternate_state_recent_history_index,
-		int other_node_curr_state,
-		int other_node_state_recent_history_index
-	);
+		
+	core::PackerEnergy curr_state_energy() const { return curr_state_energy_; }
+	core::PackerEnergy alt_state_energy() const { return alt_state_energy_; }
+
 
 	inline
 	void acknowledge_substitution(
 		int substituted_node_index,
 		core::PackerEnergy const curr_state_energy,
-		int nodes_new_state,
-		SparseMatrixIndex const & nodes_new_state_sparse_info,
-		int bumped_recent_history_index,
-		int new_state_recent_history_index,
-		int neighbors_curr_state
+		int nodes_new_state
 	);
 
 	int get_two_body_table_size() const;
@@ -319,31 +221,17 @@ public:
 
 	void print_current_energy() const;
 
-
-	ObjexxFCL::FArray2D< unsigned char > const & get_sparse_aa_neighbor_info( );
-	//ObjexxFCL::FArray1D_int const & get_second_node_num_states_per_aa();
-
-	static core::PackerEnergy const NOT_YET_COMPUTED_ENERGY; //an energy lower than any RPE could ever be
-
 	virtual unsigned int count_static_memory() const;
 	virtual unsigned int count_dynamic_memory() const;
 
 	virtual void set_edge_weight( Real weight );
 
-protected:
-
-	//Hooks for SASAEdge< V, E, G > class
-	void declare_energies_final_no_deletion() { LinearMemEdge::prepare_for_simulated_annealing(); }
-	void prepare_for_simulated_annealing_no_deletion() { LinearMemEdge::prepare_for_simulated_annealing(); }
-	bool pd_edge_table_all_zeros() const { return false;}
-
-
 private:
 
-	inline LinearMemNode const * get_linmem_node( int index ) const;
-	inline LinearMemNode * get_linmem_node( int index );
-	inline LinearMemoryInteractionGraph const * get_linmem_ig_owner() const;
-	inline LinearMemoryInteractionGraph * get_linmem_ig_owner();
+	inline SymmMinimalistNode const * get_symmin_node( int index ) const;
+	inline SymmMinimalistNode * get_symmin_node( int index );
+	inline SymmMinimalistInteractionGraph const * get_symmin_ig_owner() const;
+	inline SymmMinimalistInteractionGraph * get_symmin_ig_owner();
 
 	void
 	handle_bumped_recent_history_state_for_node(
@@ -365,17 +253,17 @@ private:
 	bool preped_for_sim_annealing_;
 
 		//no default constructor, uncopyable
-	LinearMemEdge();
-	LinearMemEdge( LinearMemEdge const & );
-	LinearMemEdge & operator = ( LinearMemEdge const & );
+	SymmMinimalistEdge();
+	SymmMinimalistEdge( SymmMinimalistEdge const & );
+	SymmMinimalistEdge & operator = ( SymmMinimalistEdge const & );
 
 };
 
-class LinearMemoryInteractionGraph : public OnTheFlyInteractionGraph
+class SymmMinimalistInteractionGraph : public SymmOnTheFlyInteractionGraph
 {
 public:
-	LinearMemoryInteractionGraph( int numNodes );
-	virtual ~LinearMemoryInteractionGraph();
+	SymmMinimalistInteractionGraph( int numNodes );
+	virtual ~SymmMinimalistInteractionGraph();
 
 	//virtual methods inherited from InteractionGraphBase
 	virtual void  blanket_assign_state_0();
@@ -410,20 +298,18 @@ protected:
 	void update_internal_energy_totals();
 
 	inline
-	LinearMemNode const * get_linmem_node(int index) const
+	SymmMinimalistNode const * get_symmin_node(int index) const
 	{
-		return static_cast< LinearMemNode const * > (get_node( index ));
+		return static_cast< SymmMinimalistNode const * > (get_node( index ));
 	}
 
 	inline
-	LinearMemNode * get_linmem_node(int index)
+	SymmMinimalistNode * get_symmin_node(int index)
 	{
-		return static_cast< LinearMemNode * > (get_node( index ));
+		return static_cast< SymmMinimalistNode * > (get_node( index ));
 	}
 
 private:
-	void set_recent_history_sizes();
-	//static int get_cmdline_history_size();
 
 	bool first_time_prepping_for_simA_;
 	int num_commits_since_last_update_;
@@ -436,150 +322,114 @@ private:
 	static const int COMMIT_LIMIT_BETWEEN_UPDATES = 1024; // 2^10
 
 	//no default constructor, uncopyable
-	LinearMemoryInteractionGraph();
-	LinearMemoryInteractionGraph( LinearMemoryInteractionGraph const & );
-	LinearMemoryInteractionGraph & operator = ( LinearMemoryInteractionGraph const & );
+	SymmMinimalistInteractionGraph();
+	SymmMinimalistInteractionGraph( SymmMinimalistInteractionGraph const & );
+	SymmMinimalistInteractionGraph & operator = ( SymmMinimalistInteractionGraph const & );
 };
 
 
 inline
-LinearMemoryInteractionGraph const *
-LinearMemNode::get_linmem_ig_owner() const
+SymmMinimalistInteractionGraph const *
+SymmMinimalistNode::get_symmin_ig_owner() const
 {
-	return static_cast< LinearMemoryInteractionGraph const * > (get_owner());
+	return static_cast< SymmMinimalistInteractionGraph const * > (get_owner());
 }
 
 inline
-LinearMemoryInteractionGraph *
-LinearMemNode::get_linmem_ig_owner()
+SymmMinimalistInteractionGraph *
+SymmMinimalistNode::get_symmin_ig_owner()
 {
-	return static_cast< LinearMemoryInteractionGraph * > (get_owner());
+	return static_cast< SymmMinimalistInteractionGraph * > (get_owner());
 }
 
 inline
-LinearMemEdge const *
-LinearMemNode::get_incident_linmem_edge( int index ) const
+SymmMinimalistEdge const *
+SymmMinimalistNode::get_incident_symmin_edge( int index ) const
 {
-	return static_cast< LinearMemEdge const * > (get_incident_edge( index ));
+	return static_cast< SymmMinimalistEdge const * > (get_incident_edge( index ));
 }
 
 inline
-LinearMemEdge *
-LinearMemNode::get_incident_linmem_edge( int index )
+SymmMinimalistEdge *
+SymmMinimalistNode::get_incident_symmin_edge( int index )
 {
-	return static_cast< LinearMemEdge * > (get_incident_edge( index ));
+	return static_cast< SymmMinimalistEdge * > (get_incident_edge( index ));
 }
 
 inline
-LinearMemNode const *
-LinearMemNode::get_adjacent_linmem_node( int index ) const
+SymmMinimalistNode const *
+SymmMinimalistNode::get_adjacent_symmin_node( int index ) const
 {
-	return static_cast< LinearMemNode const * > (get_adjacent_node( index ));
+	return static_cast< SymmMinimalistNode const * > (get_adjacent_node( index ));
 }
 
 inline
-LinearMemNode *
-LinearMemNode::get_adjacent_linmem_node( int index )
+SymmMinimalistNode *
+SymmMinimalistNode::get_adjacent_symmin_node( int index )
 {
-	return static_cast< LinearMemNode * > (get_adjacent_node( index ));
+	return static_cast< SymmMinimalistNode * > (get_adjacent_node( index ));
 }
 
 inline
-LinearMemNode const *
-LinearMemEdge::get_linmem_node( int index ) const
+SymmMinimalistNode const *
+SymmMinimalistEdge::get_symmin_node( int index ) const
 {
-	return static_cast< LinearMemNode const * > (get_node( index ));
+	return static_cast< SymmMinimalistNode const * > (get_node( index ));
 }
 
 inline
-LinearMemNode *
-LinearMemEdge::get_linmem_node( int index )
+SymmMinimalistNode *
+SymmMinimalistEdge::get_symmin_node( int index )
 {
-	return static_cast< LinearMemNode * > (get_node( index ));
-}
-
-
-inline
-LinearMemoryInteractionGraph const *
-LinearMemEdge::get_linmem_ig_owner() const
-{
-	return static_cast< LinearMemoryInteractionGraph const * > (get_owner());
-}
-
-inline
-LinearMemoryInteractionGraph *
-LinearMemEdge::get_linmem_ig_owner()
-{
-	return static_cast< LinearMemoryInteractionGraph * > (get_owner());
+	return static_cast< SymmMinimalistNode * > (get_node( index ));
 }
 
 
 inline
-SparseMatrixIndex const &
-LinearMemNode::get_sparse_mat_info_for_curr_state() const
+SymmMinimalistInteractionGraph const *
+SymmMinimalistEdge::get_symmin_ig_owner() const
 {
-	return get_sparse_mat_info_for_state( current_state_ );
+	return static_cast< SymmMinimalistInteractionGraph const * > (get_owner());
 }
+
+inline
+SymmMinimalistInteractionGraph *
+SymmMinimalistEdge::get_symmin_ig_owner()
+{
+	return static_cast< SymmMinimalistInteractionGraph * > (get_owner());
+}
+
 
 inline
 void
-LinearMemEdge::acknowledge_substitution(
+SymmMinimalistEdge::acknowledge_substitution(
 	int substituted_node_index,
 	core::PackerEnergy const curr_state_energy,
-	int nodes_new_state,
-	SparseMatrixIndex const & nodes_new_state_sparse_info,
-	int bumped_recent_history_index,
-	int new_state_recent_history_index,
-	int neighbors_curr_state
+	int nodes_new_state
 )
 {
-	int node_substituted = substituted_node_index == get_node_index(0) ? 0 : 1;
-	int node_not_substituted = ! node_substituted;
-
-	handle_bumped_recent_history_state_for_node(
-		node_substituted,
-		node_not_substituted,
-		bumped_recent_history_index );
+	int node_not_substituted = substituted_node_index == get_node_index(0) ? 1 : 0;
 
 	curr_state_energy_ = curr_state_energy;
-	if ( neighbors_curr_state != 0 ) {
-		stored_rpes_[ node_substituted ]
-			( neighbors_curr_state, new_state_recent_history_index ) =
-			curr_state_energy_;
-	}
-
-	get_linmem_node( node_not_substituted )->
-		acknowledge_neighbors_state_substitution
-		(
+	get_symmin_node( node_not_substituted )->acknowledge_neighbors_state_substitution(
 		get_edges_position_in_nodes_edge_vector( node_not_substituted ),
 		curr_state_energy_,
-		nodes_new_state,
-		nodes_new_state_sparse_info,
-		new_state_recent_history_index
+		nodes_new_state
 	);
-
-	return;
 }
 
 inline
 void
-LinearMemNode::acknowledge_neighbors_state_substitution(
+SymmMinimalistNode::acknowledge_neighbors_state_substitution(
 	int edge_to_altered_neighbor,
 	core::PackerEnergy new_edge_energy,
-	int other_node_new_state,
-	SparseMatrixIndex const & other_node_new_state_sparse_info,
-	int other_node_recent_history_index
+	int other_node_new_state
 )
 {
 	curr_state_total_energy_ +=
 		new_edge_energy - curr_state_two_body_energies_[ edge_to_altered_neighbor ];
 	curr_state_two_body_energies_[ edge_to_altered_neighbor ] = new_edge_energy;
 	neighbors_curr_state_[ edge_to_altered_neighbor ] = other_node_new_state;
-	neighbors_curr_state_sparse_info_[ edge_to_altered_neighbor ]  =
-		other_node_new_state_sparse_info;
-	neighbors_state_recent_history_index_[ edge_to_altered_neighbor ] =
-		other_node_recent_history_index;
-	return;
 }
 
 

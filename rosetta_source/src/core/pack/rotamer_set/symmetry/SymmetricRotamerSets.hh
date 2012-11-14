@@ -16,18 +16,18 @@
 
 // Unit Headers
 #include <core/pack/rotamer_set/symmetry/SymmetricRotamerSets.fwd.hh>
+
+// Package Headers
 #include <core/pack/rotamer_set/RotamerSets.hh>
+#include <core/pack/interaction_graph/SymmOnTheFlyInteractionGraph.fwd.hh>
+
+// Project Headers
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
+// Utility headers
 #include <utility/vector1.hh>
 
-
-// Package Headers
-
-// Project Headers
-
-// Utility Headers
 
 namespace core {
 namespace pack {
@@ -77,12 +77,29 @@ public:
 		bool const finalize_edges = true
 	);
 
-  RotamerSetOP
-  orient_rotamer_set_to_symmetric_partner(
-    pose::Pose const & pose,
-    uint const & setpos,
-    uint const & symmpos
-  );
+	void
+	prepare_symm_otf_interaction_graph(
+		pose::Pose const & pose,
+		scoring::ScoreFunction const & scfxn,
+		graph::GraphCOP packer_neighbor_graph,
+		interaction_graph::SymmOnTheFlyInteractionGraphOP ig
+	);
+
+	void
+	compute_proline_correction_energies_for_otf_graph(
+		pose::Pose const & pose,
+		conformation::symmetry::SymmetryInfoCOP symm_info,
+		scoring::ScoreFunction const & scfxn,
+		graph::GraphCOP packer_neighbor_graph,
+		interaction_graph::SymmOnTheFlyInteractionGraphOP otfig
+	);
+
+	RotamerSetOP
+	orient_rotamer_set_to_symmetric_partner(
+		pose::Pose const & pose,
+		uint const & setpos,
+		uint const & symmpos
+	);
 
 	bool
 	final_visit_to_edge(

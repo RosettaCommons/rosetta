@@ -198,7 +198,7 @@ private:
 	/// @brief computes one body energies for the on-the-fly graph, calculating proline-correction
 	/// terms for protien-residues that allow prolines and storing them on the otf edges
 	void
-	compute_proline_correct_energies_for_otf_graph(
+	compute_proline_correction_energies_for_otf_graph(
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scfxn,
 		graph::GraphCOP packer_neighbor_graph,

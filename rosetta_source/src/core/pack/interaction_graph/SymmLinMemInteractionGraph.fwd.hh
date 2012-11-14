@@ -7,29 +7,32 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/pack/interaction_graph/SymmOnTheFlyInteractionGraph.fwd.hh
+/// @file   core/pack/interaction_graph/SymmLinMemInteractionGraph.fwd.hh
 /// @brief
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_core_pack_interaction_graph_SymmOnTheFlyInteractionGraph_fwd_hh
-#define INCLUDED_core_pack_interaction_graph_SymmOnTheFlyInteractionGraph_fwd_hh
+#ifndef INCLUDED_core_pack_interaction_graph_SymmLinMemInteractionGraph_fwd_hh
+#define INCLUDED_core_pack_interaction_graph_SymmLinMemInteractionGraph_fwd_hh
 
+// Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
 namespace pack {
 namespace interaction_graph {
 
-class SymmOnTheFlyNode;
-class SymmOnTheFlyEdge;
-class SymmOnTheFlyInteractionGraph;
+class SymmLinearMemNode;
+class SymmLinearMemEdge;
+class SymmLinearMemoryInteractionGraph;
 
-typedef utility::pointer::owning_ptr< SymmOnTheFlyInteractionGraph > SymmOnTheFlyInteractionGraphOP;
-typedef utility::pointer::owning_ptr< SymmOnTheFlyInteractionGraph const > SymmOnTheFlyInteractionGraphCOP;
+typedef utility::pointer::owning_ptr< SymmLinearMemoryInteractionGraph > SymmLinearMemoryInteractionGraphOP;
+typedef utility::pointer::owning_ptr< SymmLinearMemoryInteractionGraph const > SymmLinearMemoryInteractionGraphCOP;
+
 
 }
 }
 }
 
-#endif //INCLUDED_core_pack_interaction_graph_SymmOnTheFlyInteractionGraph_FWD_HH
+#endif
+
 

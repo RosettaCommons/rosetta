@@ -21,9 +21,10 @@
 // AUTO-REMOVED #include <core/pack/interaction_graph/AminoAcidNeighborSparseMatrix.hh>
 #include <core/pack/interaction_graph/SparseMatrixIndex.hh>
 #include <core/pack/interaction_graph/FixedBBInteractionGraph.hh>
+#include <core/pack/interaction_graph/OnTheFlyInteractionGraph.hh>
 
 #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
-#include <core/pack/rotamer_set/symmetry/SymmetricRotamerSet.fwd.hh>
+#include <core/pack/rotamer_set/symmetry/SymmetricRotamerSet_.fwd.hh>
 
 // Project headers
 #include <core/conformation/Residue.fwd.hh>
@@ -31,6 +32,7 @@
 #include <core/conformation/Residue.hh> // WIN32 INCLUDE
 #endif
 
+#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
@@ -43,9 +45,11 @@
 // ObjexxFCL headers
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
+#include <ObjexxFCL/FArray4D.hh>
 
 #include <utility/vector1.hh>
 
+#include <numeric/HomogeneousTransform.hh>
 
 // Utility headers
 
@@ -57,13 +61,6 @@ namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
 namespace core {
 namespace pack {
 namespace interaction_graph {
-
-enum ResiduePairEvalType {
-	whole_whole = 0,
-	whole_sc,
-	sc_whole,
-	sc_sc
-};
 
 class SymmOnTheFlyNode : public FixedBBNode
 {
@@ -89,46 +86,58 @@ public:
 	virtual void add_to_one_body_energy( int state, core::PackerEnergy energy );
 	virtual void zero_one_body_energy( int state );
 
+	/// @brief the number of distinct ResidueType objects pointed to by all of the
+	/// rotamrs for this node.
 	inline
 	int
-	get_num_aa_types() const
+	get_num_res_types() const
 	{
-		return num_aa_types_;
+		return num_res_types_;
+	}
+
+	/// @brief the number of ResidueType groups, as defined by the RotamerSet's logic
+	/// for grouping different ResidueType objects which have the same "name3" and
+	/// the same neighbor radius.
+	inline
+	int
+	get_num_restype_groups() const
+	{
+		return num_restype_groups_;
 	}
 
 	inline
 	utility::vector1< int > &
-	get_num_states_for_aa_types()
+	get_num_states_for_restype_group()
 	{
-		return num_states_for_aatype_;
+		return num_states_for_restype_group_;
 	}
 
 	inline
 	utility::vector1< int > const &
-	get_num_states_for_aa_types() const
+	get_num_states_for_restype_group() const
 	{
-		return num_states_for_aatype_;
+		return num_states_for_restype_group_;
 	}
 
 	inline
 	int
-	get_num_states_for_aa_type( int aa_type )
+	get_num_states_for_restype_group( int restype_group )
 	{
-		return num_states_for_aatype_[ aa_type ];
+		return num_states_for_restype_group_[ restype_group ];
 	}
 
-	inline
-	SparseMatrixIndex const &
-	get_sparse_mat_info_for_state( int state ) const
-	{
-		assert( state > 0 && state <= get_num_states() );
-		return sparse_mat_info_for_state_[ state ];
-	}
+	//inline
+	//SparseMatrixIndex const &
+	//get_sparse_mat_info_for_state( int state ) const
+	//{
+	//	assert( state > 0 && state <= get_num_states() );
+	//	return sparse_mat_info_for_state_[ state ];
+	//}
 
 	inline
 	int
-	get_state_offset_for_aatype( int aatype ) const {
-		return state_offset_for_aatype_[ aatype ];
+	get_state_offset_for_restype_group( int restype_group ) const {
+		return state_offset_for_restype_group_[ restype_group ];
 	}
 
 	inline
@@ -170,7 +179,7 @@ public:
 	BoundingSphere
 	bb_bounding_sphere( int subunit ) const;
 
-protected:
+public:
 
 	inline
 	SymmOnTheFlyEdge *
@@ -202,20 +211,21 @@ private:
 	/// Pointers to the rotamers held in the rotamer set
 	utility::vector1< conformation::ResidueCOP > rotamers_;
 
-	/// An array of rotamer_set_->get_n_residue_types()
+	/// An array of arrays of rotamer_set_->get_n_residue_types()
 	/// rotamer representatives who will be filled, just in time, with the
 	/// transformed coordinates that map between the rotamers built for the asymmetric
 	/// unit, and those on all of the symmetric clones.
-	utility::vector1< conformation::ResidueOP > rotamer_representatives_;
+	utility::vector1< utility::vector1< conformation::ResidueOP > > rotamer_representatives_;
 
 	/// Bounding spheres for each of the rotamers in the asymmetric unit
 	utility::vector1< BoundingSphere > sc_bounding_spheres_;
 	BoundingSphere bb_bounding_sphere_;
 
-	int num_aa_types_; // rename num_aa_groups_
-	utility::vector1< int > num_states_for_aatype_; // rename
-	utility::vector1< int > state_offset_for_aatype_;
-	utility::vector1< SparseMatrixIndex > sparse_mat_info_for_state_;
+	int num_res_types_;
+	int num_restype_groups_;
+	utility::vector1< int > num_states_for_restype_group_;
+	utility::vector1< int > state_offset_for_restype_group_;
+	//utility::vector1< SparseMatrixIndex > sparse_mat_info_for_state_;
 	utility::vector1< core::PackerEnergy > one_body_energies_;
 	bool distinguish_backbone_and_sidechain_;
 };
@@ -232,7 +242,7 @@ public:
 	);
 
 	void
-	set_ProCorrection_values(
+	add_ProCorrection_values(
 		int node_not_necessarily_proline,
 		int state,
 		core::PackerEnergy bb_nonprobb_E,
@@ -267,8 +277,41 @@ public:
 		return eval_types_[ which_node( node_index ) ];
 	}
 
-	bool
-	residues_adjacent_for_subunit_pair( int which_node, int other_node_subunit, int whichnode_aa, int othernode_aa ) const;
+	void
+	set_residues_adjacent_for_subunit_pair(
+		int which_node,
+		int other_node_subunit
+	);
+
+	unsigned char
+	residues_adjacent_for_subunit_pair(
+		int which_node, // 1 or 2
+		int other_node_subunit, // subunit for othernode
+		int whichnode_restypegroup, // restype group for first node
+		int othernode_restypegroup // restype group for the other node
+	) const;
+
+	/// @brief fullfilling base class virtual member request -- however, this funciton does not quite
+	/// make sense for a symmetric oft ig so this is just stubbed out as a noop.
+	virtual
+	void set_sparse_aa_info(ObjexxFCL::FArray2_bool const & ) {}
+
+	/// @brief fullfilling base class virtual member request -- however, this function does not quite
+	/// make sense for a symmetric otf ig, so this is just stubbed out to return true.
+  virtual
+  bool get_sparse_aa_info( int, int ) const { return true; }
+
+	/// @brief fullfilling base class virtual member request -- however, this funciton does not quite
+	/// make sense for a symmetric oft ig so this is just stubbed out as a noop.
+  virtual
+  void force_aa_neighbors( int, int ) {}
+
+	/// @brief fullfilling base class virtual member request -- however, this funciton does not quite
+	/// make sense for a symmetric oft ig so this is just stubbed out as a noop.
+  virtual
+  void force_all_aa_neighbors() {}
+
+  virtual core::PackerEnergy get_two_body_energy( int const, int const ) const = 0;
 
 protected:
 
@@ -296,22 +339,27 @@ protected:
 		return static_cast< SymmOnTheFlyNode * > (get_node( which_node ));
 	}
 
-private:
-	Size n_subunits;
+	inline
+	SymmOnTheFlyInteractionGraph const *
+	get_otf_owner() const;
 
+	inline
+	SymmOnTheFlyInteractionGraph *
+	get_otf_owner();
+
+private:
 	/// Dimensions:  naatypes x naatypes x n_subunits x 2
 	/// aa_adjacency( l, k, j, i );
 	/// i = 1 or 2, repesnting either the lower or upper node respectively, the residue of which lives in the asymmetric unit
 	/// j = 1..n_subunits, representing the subunit of origin for the other node's residue
 	/// k = amino acid type for node i
 	/// l = amino acid type for the other node
-	ObjexxFCL::FArray4D< bool > aa_adjacency_;
+	ObjexxFCL::FArray4D< unsigned char > restypegroup_adjacency_;
 
 	utility::vector1< core::PackerEnergy > proline_corrections_[ 2 ];
 	ResiduePairEvalType eval_types_[ 2 ];
 	bool long_range_interactions_exist_;
 	bool short_range_interactions_exist_;
-	utility::vector1< int > residues_adjacent_for_subunit_pair;
 };
 
 class SymmOnTheFlyInteractionGraph : public FixedBBInteractionGraph
@@ -329,10 +377,12 @@ public:
 
 	virtual void initialize( rotamer_set::RotamerSetsBase const & rot_sets );
 
+	virtual int get_num_aatypes() const { return num_restype_groups_; }
+
 	inline
-	int get_num_aatypes() const
+	int get_num_restype_groups() const
 	{
-		return num_aa_types_;
+		return num_restype_groups_;
 	}
 
 	bool
@@ -354,7 +404,7 @@ public:
 	{
 		return *pose_;
 	}
-	
+
 	conformation::symmetry::SymmetryInfoCOP
 	symm_info() const;
 
@@ -411,13 +461,19 @@ public:
 	core::PackerEnergy
 	get_one_body_energy_for_node_state( int node, int state);
 
+//	void
+//	set_sparse_aa_info_for_edge(
+//		int node1,
+//		int node2,
+//		FArray2_bool const & sparse_conn_info
+//	);
+
 	void
-	set_sparse_aa_info_for_edge(
+	set_residues_adjacent_for_subunit_pair_for_edge(
 		int node1,
 		int node2,
-		FArray2_bool const & sparse_conn_info
-	);
-
+		int asu_node_index,
+		int other_node_subunit );
 
 	void
 	reset_rpe_calculations_count();
@@ -435,7 +491,7 @@ public:
 	//virtual bool build_sc_only_rotamer() const = 0;
 
 	void
-	set_ProCorrection_values_for_edge(
+	add_ProCorrection_values_for_edge(
 		int node1,
 		int node2,
 		int node_not_neccessarily_proline,
@@ -463,9 +519,11 @@ public:
 
 	/// @brief Return the homogeneous transform to translate and rotate coordinates
 	/// originally in the asymmetric unit into a given destination subunit.
-	HTReal const & symmetric_transform( dst_subunit ) const;
+	inline
+	HTReal const &
+	symmetric_transform( Size dst_subunit ) const { return symmetric_transforms_[ dst_subunit ]; }
 
-protected:
+public:
 
 	inline
 	SymmOnTheFlyNode *
@@ -482,13 +540,11 @@ protected:
 	}
 
 private:
-	int num_aa_types_;
+	int num_restype_groups_;
 	mutable Size num_rpe_calcs_;
 
 	conformation::symmetry::SymmetryInfoCOP symm_info_;
-
 	utility::vector1< HTReal > symmetric_transforms_;
-
 	scoring::ScoreFunctionOP score_function_;
 	pose::PoseOP pose_;
 
@@ -546,6 +602,18 @@ SymmOnTheFlyNode::get_on_the_fly_owner() const
 {
 	assert( dynamic_cast< SymmOnTheFlyInteractionGraph const * > ( get_owner() ) );
 	return static_cast< SymmOnTheFlyInteractionGraph const * > ( get_owner() );
+}
+
+inline
+SymmOnTheFlyInteractionGraph const *
+SymmOnTheFlyEdge::get_otf_owner() const {
+	return static_cast< SymmOnTheFlyInteractionGraph const * > (get_owner());
+}
+
+inline
+SymmOnTheFlyInteractionGraph *
+SymmOnTheFlyEdge::get_otf_owner() {
+	return static_cast< SymmOnTheFlyInteractionGraph * > (get_owner() );
 }
 
 }

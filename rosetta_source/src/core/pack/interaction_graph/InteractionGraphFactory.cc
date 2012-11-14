@@ -1,4 +1,3 @@
-
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
@@ -23,12 +22,15 @@
 #include <core/pack/interaction_graph/LinearMemoryInteractionGraph.hh>
 #include <core/pack/interaction_graph/SurfaceInteractionGraph.hh>
 #include <core/pack/interaction_graph/HPatchInteractionGraph.hh>
+#include <core/pack/interaction_graph/SymmLinMemInteractionGraph.hh>
 
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/task/PackerTask.hh>
+
+#include <core/pose/symmetry/util.hh>
 
 #include <basic/Tracer.hh>
 
@@ -63,6 +65,15 @@ InteractionGraphFactory::create_interaction_graph(
 	if ( ! the_task.design_any() ) { surface_weight = 0; hpatch_weight = 0; }
 
 	if ( the_task.linmem_ig() ) {
+		/// Symmetric OTFIGs are not currently capable of handling either the Surface or HPatch scores, so check
+		/// for symmetry first and return a (pairwise-decomposable) SymmLinearMemoryInteractionGraph if requested.
+		if ( pose::symmetry::is_symmetric( pose )) {
+			T << "Instantiating SymmLinearMemoryInteractionGraph" << std::endl;
+			SymmLinearMemoryInteractionGraphOP symlinmemig = new SymmLinearMemoryInteractionGraph( the_task.num_to_be_packed() );
+			symlinmemig->set_pose( pose );
+			symlinmemig->set_score_function( sfxn );
+			return symlinmemig;
+		}
 
 		if ( surface_weight ) {
 			T << "Instantiating LinearMemorySurfaceInteractionGraph" << std::endl;

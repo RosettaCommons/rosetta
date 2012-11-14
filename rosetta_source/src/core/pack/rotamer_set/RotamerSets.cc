@@ -357,7 +357,7 @@ RotamerSets::compute_energies(
 		OnTheFlyInteractionGraphOP otfig = dynamic_cast< OnTheFlyInteractionGraph * > ( ig.get() );
 		if ( otfig ) {
 			prepare_otf_graph( pose, scfxn, packer_neighbor_graph, otfig );
-			compute_proline_correct_energies_for_otf_graph( pose, scfxn, packer_neighbor_graph, otfig);
+			compute_proline_correction_energies_for_otf_graph( pose, scfxn, packer_neighbor_graph, otfig);
 		} else {
 			utility_exit_with_message("Unknown interaction graph type encountered in RotamerSets::compute_energies()");
 		}
@@ -613,7 +613,7 @@ RotamerSets::prepare_otf_graph(
 /// 1. Iterate across all edges in the graph
 ///    2. Calculate proline-correction terms between neighbors
 void
-RotamerSets::compute_proline_correct_energies_for_otf_graph(
+RotamerSets::compute_proline_correction_energies_for_otf_graph(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & scfxn,
 	graph::GraphCOP packer_neighbor_graph,

@@ -82,6 +82,9 @@ sources = {
 		"SimpleInteractionGraph",
 		"SurfaceEnergy",
 		"SurfacePotential",
+		"SymmOnTheFlyInteractionGraph",
+		"SymmLinMemInteractionGraph",
+		"SymmMinimalistInteractionGraph",
 	],
 	"core/pack/rotamer_set": [
 		"bb_independent_rotamers",
