@@ -442,7 +442,7 @@ LayerDesignOperation::parse_tag( TagPtr tag )
 
 	set_verbose( tag->getOption< bool >( "verbose", false ) );
 	set_restrict_restypes( tag->getOption< bool >( "restrict_restypes", true ) );
-	make_pymol_script( tag->getOption< bool >("make_pymol_script", "false") );
+	make_pymol_script( tag->getOption< bool >("make_pymol_script", false) );
 
 	BOOST_FOREACH( utility::tag::TagPtr const layer_tag, tag->getTags() ){
 
