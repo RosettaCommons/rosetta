@@ -38,6 +38,9 @@ sources = {
 "protocols/hotspot_hashing/filters": [
   "LSMGridProbe",
 ],
+"protocols/hotspot_hashing/movers": [
+  "PlaceLSMProbe",
+],
 "protocols/match": [
 	"BumpGrid",
 	"Hit",

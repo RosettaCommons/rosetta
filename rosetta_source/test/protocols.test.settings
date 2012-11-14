@@ -305,6 +305,7 @@ testinputfiles = [
 	"frag_picker/t286_.6.csts",
 	"frag_picker/1a32A-H1.vall",
 	"frag_picker/1a32A-H1.9mers",
+	"hotspot_hashing/3ve0_IJ.pdb",
         "jd2/parser/test.bbskel",
 	"jobdist/PlainSilentFileJobDistributor_test.out",
 	"jumping/jump_test.pdb",

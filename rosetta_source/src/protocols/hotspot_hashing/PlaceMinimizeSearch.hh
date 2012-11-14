@@ -52,14 +52,15 @@ class PlaceMinimizeSearch : public utility::pointer::ReferenceCount
 		
 		void execute();
 
-		friend class PlaceMinimizeSearchTest;
+		friend class HotspotHashingTests;
 
-	protected:
 		static void placeResidueAtTransform( core::pose::Pose & pose, core::conformation::Residue const & residue, TransformPair transform, core::Size & residuejumpindex, core::Size & residueindex );
+
 		static TransformPair residueStubCentroidTransform(core::conformation::Residue const & residue);
 		static Vector residueStubCentroid(core::conformation::Residue const & residue);
 		static void placeResidueOnPose(core::pose::Pose & pose, core::conformation::Residue const & residue);
 
+	protected:
 		void logPreMinPose(core::pose::Pose & pose, core::Size transformindex, core::Size residuejumpindex, core::Size residueindex);
 		void logPostMinPose(core::pose::Pose & pose, core::Size transformindex, core::Size residuejumpindex, core::Size residueindex);
 

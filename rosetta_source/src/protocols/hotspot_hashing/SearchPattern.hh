@@ -15,7 +15,11 @@
 #ifndef INCLUDED_protocols_hotspot_hashing_SearchPattern_hh
 #define INCLUDED_protocols_hotspot_hashing_SearchPattern_hh
 
+#include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
+
 #include <devel/init.hh>
+
 
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -205,6 +209,41 @@ class LSMSearchPattern : public SearchPattern
 
 			return searchpoints;
 		}
+	
+		static bool parse_lsm_spec(std::string lsmstring, VectorPair & lsmspec)
+		{
+			std::vector< std::string > vectors;
+			boost::split( vectors, lsmstring, boost::is_any_of(":") );
+
+			if(vectors.size() != 2){
+				return false;
+			}
+
+			std::vector< std::string > position;
+			std::vector< std::string > direction;
+
+			boost::split( position, vectors[0], boost::is_any_of(",") );
+			boost::split( direction, vectors[1], boost::is_any_of(",") );
+
+			if(position.size() != 3 || direction.size() != 3){
+				return false;
+			}
+
+			using boost::lexical_cast;
+
+			lsmspec = VectorPair(
+					Vector(
+						lexical_cast<core::Real>(position[0]), 
+						lexical_cast<core::Real>(position[1]), 
+						lexical_cast<core::Real>(position[2])),
+					Vector(
+						lexical_cast<core::Real>(direction[0]), 
+						lexical_cast<core::Real>(direction[1]), 
+						lexical_cast<core::Real>(direction[2])));
+			
+			return true;
+		}
+
 
 	private:
 		VectorPair lsmspec_;

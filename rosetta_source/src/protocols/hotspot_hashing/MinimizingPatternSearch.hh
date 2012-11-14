@@ -279,10 +279,10 @@ class MinimizingPatternSearch : public utility::pointer::ReferenceCount
 				newjump.translation_along_axis(upstreamstub, residuetransform.translation, residuetransform.translation.length());
 			}
 
-			newjump.rotation_by_matrix(upstreamstub, Vector(), residuetransform.rotation);
+			newjump.rotation_by_matrix(upstreamstub, Vector(0, 0, 0), residuetransform.rotation);
 
 			// Apply target transformation
-			newjump.rotation_by_matrix(upstreamstub, Vector(), transform.rotation);
+			newjump.rotation_by_matrix(upstreamstub, Vector(0, 0, 0), transform.rotation);
 			if (transform.translation.length() != 0)
 			{
 				newjump.translation_along_axis(upstreamstub, transform.translation, transform.translation.length());

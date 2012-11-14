@@ -22,6 +22,7 @@
 
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/exit.hh>
 
 #include <basic/Tracer.hh>
 
@@ -136,6 +137,8 @@ void PlaceMinimizeSearch::execute()
 
 void PlaceMinimizeSearch::placeResidueAtTransform( core::pose::Pose & pose, core::conformation::Residue const & residue, TransformPair transform, core::Size & residuejumpindex, core::Size & residueindex )
 {
+	tr.Debug << "Placing at transform: " << transform << std::endl;
+
   // Places residue at last jump & residue number
   placeResidueOnPose(pose, residue);
   residueindex = pose.total_residue();
@@ -154,10 +157,10 @@ void PlaceMinimizeSearch::placeResidueAtTransform( core::pose::Pose & pose, core
     newjump.translation_along_axis(upstreamstub, residuetransform.translation, residuetransform.translation.length());
   }
 
-  newjump.rotation_by_matrix(upstreamstub, Vector(), residuetransform.rotation);
+  newjump.rotation_by_matrix(upstreamstub, Vector(0, 0, 0), residuetransform.rotation);
 
   // Apply target transformation
-  newjump.rotation_by_matrix(upstreamstub, Vector(), transform.rotation);
+  newjump.rotation_by_matrix(upstreamstub, Vector(0, 0, 0), transform.rotation);
   if (transform.translation.length() != 0)
   {
     newjump.translation_along_axis(upstreamstub, transform.translation, transform.translation.length());
@@ -174,15 +177,16 @@ TransformPair PlaceMinimizeSearch::residueStubCentroidTransform(core::conformati
   // CA->SC heavyatom centroid vector along <1,0,0>
   // CA->C vector on the XY plane (<CA->C> * <0,0,1> == 0)
   
-  Vector position = -residue.xyz("CA");
+  Vector position = -residue.xyz(residue.atom_index("CA"));
+	Vector stub_centroid = residueStubCentroid(residue);
   
   Vector xunit = Vector(1, 0, 0);
   Vector yunit = Vector(0, 1, 0);
 
-  Vector cacentroid_vector = residueStubCentroid(residue) + position;
+  Vector cacentroid_vector = stub_centroid + position;
   Matrix cacentroid_rotation = rotation_matrix( cacentroid_vector.cross(xunit), angle_of(cacentroid_vector, xunit));
 
-  Vector cac_vector_prime = cacentroid_rotation * (residue.xyz("C") + position);
+  Vector cac_vector_prime = cacentroid_rotation * (residue.xyz(residue.atom_index("C")) + position);
   Vector cac_vector_zyprojection = Vector(0, cac_vector_prime.y(), cac_vector_prime.z());
   Matrix cac_rotation = rotation_matrix( cac_vector_zyprojection.cross(yunit), angle_of(cac_vector_zyprojection, yunit));
 
@@ -197,7 +201,7 @@ Vector PlaceMinimizeSearch::residueStubCentroid(core::conformation::Residue cons
   if (residue.first_sidechain_atom() > residue.nheavyatoms())
   {
     //TODO Generate pseudocentroid from mainchain atoms
-    return centroid;
+		utility_exit_with_message("Unable to compute stub centroid w/ no side-chain heavyatoms.");
   }
 
   for (core::Size i = residue.first_sidechain_atom(); i <= residue.nheavyatoms(); ++i)

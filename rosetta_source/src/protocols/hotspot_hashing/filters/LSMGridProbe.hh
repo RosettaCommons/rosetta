@@ -55,8 +55,6 @@ class LSMGridProbe : public protocols::filters::Filter
                        protocols::filters::Filters_map const &,
                        protocols::moves::Movers_map const &,
                        core::pose::Pose const & );
-
-		static bool parse_lsm_spec(std::string lsmspec, VectorPair & lsmspec);
   private:
 		std::string residue_name_;
 

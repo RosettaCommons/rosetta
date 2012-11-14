@@ -14,9 +14,6 @@
 
 #include <sstream>
 
-#include <boost/algorithm/string.hpp>
-#include <boost/lexical_cast.hpp>
-
 #include <basic/Tracer.hh>
 
 #include <utility/tag/Tag.hh>
@@ -115,7 +112,7 @@ LSMGridProbe::parse_my_tag( utility::tag::TagPtr const tag,
 	if(tag->hasOption("lsm_spec"))
 	{
 		// Parses spec string into ref.
-		if(!parse_lsm_spec(tag->getOption<std::string>("lsm_spec"), lsm_spec_))
+		if(!LSMSearchPattern::parse_lsm_spec(tag->getOption<std::string>("lsm_spec"), lsm_spec_))
 		{
 			utility_exit_with_message( "unable to parse lsm_spec \"" + tag->getOption<std::string>("lsm_spec") + "\"" );
 		}
@@ -143,40 +140,6 @@ LSMGridProbe::parse_my_tag( utility::tag::TagPtr const tag,
  	  "distance_sampling=" << distance_sampling_ << " "<< 
  	  "max_distance=" << max_distance_ << " "<< 
 		">"<< std::endl;
-}
-
-bool LSMGridProbe::parse_lsm_spec(std::string lsmstring, VectorPair & lsmspec)
-{
-	std::vector< std::string > vectors;
-	boost::split( vectors, lsmstring, boost::is_any_of(":") );
-
-	if(vectors.size() != 2){
-		return false;
-	}
-
-	std::vector< std::string > position;
-	std::vector< std::string > direction;
-
-	boost::split( position, vectors[0], boost::is_any_of(",") );
-	boost::split( direction, vectors[1], boost::is_any_of(",") );
-
-	if(position.size() != 3 || direction.size() != 3){
-		return false;
-	}
-
-	using boost::lexical_cast;
-
-	lsmspec = VectorPair(
-			Vector(
-				lexical_cast<core::Real>(position[0]), 
-				lexical_cast<core::Real>(position[1]), 
-				lexical_cast<core::Real>(position[2])),
-			Vector(
-				lexical_cast<core::Real>(direction[0]), 
-				lexical_cast<core::Real>(direction[1]), 
-				lexical_cast<core::Real>(direction[2])));
-	
-	return true;
 }
 
 bool LSMGridProbe::apply( core::pose::Pose const & pose) const
