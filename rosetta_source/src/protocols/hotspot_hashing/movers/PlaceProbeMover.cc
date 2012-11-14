@@ -127,21 +127,36 @@ void PlaceProbeMover::execute_one_search(core::pose::Pose & pose, core::Size sea
 		stub_to_points(sstream, transform);
 
 		jd2::JobDistributor::get_instance()->current_job()->add_string_string_pair(
-				"placeprobe_prerefine_stub", sstream.str());
+				"placeprobe_prerefine_centroid_stub", sstream.str());
 	}
 	
 	perform_local_refinement(pose, residueindex);
 
 	core::conformation::ResidueCOP post_refinement_residue(pose.residue(residueindex));
-	core::kinematics::Stub post_refinement_transform = StubGenerator::residueStubCentroidFrame(post_refinement_residue);
 
 	{
+		core::kinematics::Stub post_refinement_centroid_transform = StubGenerator::residueStubCentroidFrame(post_refinement_residue);
 		std::stringstream sstream;
-		stub_to_points(sstream, post_refinement_transform);
+		stub_to_points(sstream, post_refinement_centroid_transform);
 
 		jd2::JobDistributor::get_instance()->current_job()->add_string_string_pair(
-				"placeprobe_postrefine_stub", sstream.str());
+				"placeprobe_postrefine_centroid_stub", sstream.str());
 	}
+
+	{
+		core::kinematics::Stub post_refinement_orient_transform = StubGenerator::residueStubOrientFrame(post_refinement_residue);
+		std::stringstream sstream;
+		stub_to_points(sstream, post_refinement_orient_transform);
+
+		jd2::JobDistributor::get_instance()->current_job()->add_string_string_pair(
+				"placeprobe_postrefine_orient_stub", sstream.str());
+	}
+
+	jd2::JobDistributor::get_instance()->current_job()->add_string_string_pair(
+			"placeprobe_residue_name", post_refinement_residue->name());
+
+	jd2::JobDistributor::get_instance()->current_job()->add_string_string_pair(
+			"placeprobe_residue_number", boost::lexical_cast<std::string>(residueindex));
 }
 
 void PlaceProbeMover::check_and_initialize(core::pose::Pose const & target_pose)
@@ -152,6 +167,8 @@ void PlaceProbeMover::check_and_initialize(core::pose::Pose const & target_pose)
   {
     return;
   }
+
+	initialized_pattern_ = true;
 
 	TR.Debug << "Initializing search pattern." << std::endl;
 
@@ -168,9 +185,9 @@ void PlaceProbeMover::check_and_initialize(core::pose::Pose const & target_pose)
 		TR.Error << "Current job nstruct_max: " << current_job->nstruct_max() << " less than search pattern size: " << search_points_.size() << std::endl;
 	}
 
-  if (current_job->nstruct_max() < search_points_.size())
+  if (current_job->nstruct_max() > search_points_.size())
 	{
-		TR.Warning << "Current job nstruct_max: " << current_job->nstruct_max() << " greater than search pattern size: " << search_points_.size() << " Search points will be repeated" << std::endl;
+		TR.Warning << "Current job nstruct_max: " << current_job->nstruct_max() << " greater than search pattern size: " << search_points_.size() << " (Search points will be repeated.)" << std::endl;
 	}
 }
 
@@ -220,7 +237,7 @@ PlaceProbeMover::parse_place_probe_tag( utility::tag::TagPtr const tag,
                                 protocols::moves::DataMap & data,
                                 protocols::filters::Filters_map const &,
                                 protocols::moves::Movers_map const &,
-                                core::pose::Pose const &)
+                                core::pose::Pose const & target_pose)
 {
 	// Residue spec
 	if(tag->hasOption("residue_name"))
@@ -265,6 +282,7 @@ PlaceProbeMover::parse_place_probe_tag( utility::tag::TagPtr const tag,
 
 	// Initialize residue representation
 	target_residue_ = StubGenerator::getStubByName( residue_name_ );
+	target_residue_ = core::pose::add_variant_type_to_residue( *target_residue_, "SC_FRAGMENT", target_pose );
 }
 
 	

@@ -50,6 +50,18 @@ class StubGenerator
 		//@brief Moves residue from transform's reference frame via global2local.
     static void moveFromStubFrame(core::conformation::ResidueOP residue, core::kinematics::Stub transform);
 
+		//@brief Returns a stub generated from the residue's orient atoms.
+		//
+		//Used in recapitulating residue orientations when the residue type is known.
+		static core::kinematics::Stub residueStubOrientFrame(core::conformation::ResidueCOP const residue);
+
+		//@brief Returns a stub generated from the residue's backbone and centroid location.
+		//
+		// Used in orienting residues of varying type in a generation direction of "interest".
+		//
+		// Transform aligns CA atom to <0, 0, 0>
+		// CA->SC heavyatom centroid vector along <1,0,0>
+		// CA->C vector on the XY plane (<CA->C> * <0,0,1> == 0)
 		static core::kinematics::Stub residueStubCentroidFrame(core::conformation::ResidueCOP const residue);
 
 		static Vector residueStubCentroid(core::conformation::ResidueCOP const residue);

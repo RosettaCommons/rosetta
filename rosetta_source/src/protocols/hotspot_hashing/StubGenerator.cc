@@ -131,6 +131,15 @@ void StubGenerator::moveFromStubFrame( core::conformation::ResidueOP residue, co
   }
 }
 
+core::kinematics::Stub StubGenerator::residueStubOrientFrame(core::conformation::ResidueCOP const residue)
+{
+	core::Size a, b, c;
+	residue->select_orient_atoms( a, b, c );
+	core::kinematics::Stub result(residue->xyz(a), residue->xyz(b), residue->xyz(c));
+
+	return result;
+}
+
 core::kinematics::Stub StubGenerator::residueStubCentroidFrame(core::conformation::ResidueCOP const residue)
 {
 	// Obtain the stub needed to generate 
