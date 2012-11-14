@@ -346,7 +346,7 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 		if( active_layers.empty() && design_layer_.find(srbl_layer)->second ) {
 			active_layers.push_back(srbl_layer);
 		} else {
-			if(use_original_)
+			if(use_original_ && design_layer_.find( srbl_layer)->second )
   			task.nonconst_residue_task( i ).restrict_to_repacking();
 
 		}
@@ -358,9 +358,9 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 		// skip the residue if this position is defined as PIKAA, NATRO or NATAA in the resfile
 		//if( task.residue_task( i ).command_string().find( "PIKAA" ) != std::string::npos ){
 		const std::string resfile_cmd =  task.residue_task( i ).command_string();
-		if( resfile_cmd.find( "PIKAA" ) != std::string::npos || resfile_cmd.find( "NATRO" ) != std::string::npos || resfile_cmd.find( "NATAA" ) != std::string::npos  ){
+		if( resfile_cmd.find( "PIKAA" ) != std::string::npos || resfile_cmd.find( "NATRO" ) != std::string::npos ){
 			if( verbose_ ) {
-				TR << " ,Resfile info is used." << std::endl;
+				TR << " ,Resfile info is used. (" << resfile_cmd  << ")"<< std::endl;
 			}
 			continue;
 		}
