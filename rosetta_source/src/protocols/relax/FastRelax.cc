@@ -591,8 +591,10 @@ void FastRelax::apply( core::pose::Pose & pose ){
 
 
 	/// OK, start of actual protocol
-	pose::Pose start_pose=pose;
-	pose::Pose best_pose=pose;
+	pose::Pose start_pose;
+	start_pose.set_new_conformation( ConformationOP(pose.conformation()) );
+	pose::Pose best_pose;
+	best_pose.set_new_conformation( ConformationOP(pose.conformation()) );
 	core::Real best_score=100000000.0;
 	core::Size accept_count = 0;
 	core::Size chk_counter = 0;
@@ -603,7 +605,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 
 
 	// Optain the native pose
-	if( !get_native_pose() ) set_native_pose( new Pose( start_pose ) );
+	if( !get_native_pose() ) set_native_pose( new Pose( pose ) );
 
 	// Statistic information
 	std::vector< core::Real > best_score_log;
@@ -800,10 +802,10 @@ void FastRelax::apply( core::pose::Pose & pose ){
 
 
 		if( cmd.command == "load_best" ){
-			pose = best_pose;
+			pose.set_new_conformation( ConformationOP(best_pose.conformation()) );
 		}	else
 		if( cmd.command == "load_start" ){
-			pose = start_pose;
+			pose.set_new_conformation( ConformationOP(start_pose.conformation()) );
 		}	else
 
 		if( cmd.command == "exit" ){
