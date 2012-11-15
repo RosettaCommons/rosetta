@@ -18,8 +18,6 @@
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 
-#include <devel/init.hh>
-
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/exit.hh>

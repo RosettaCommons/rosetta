@@ -18,8 +18,6 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 
-#include <devel/init.hh>
-
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/owning_ptr.hh>
