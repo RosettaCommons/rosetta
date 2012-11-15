@@ -892,7 +892,7 @@ build_pose_as_is1(
 		bool const is_lower_terminus( i == 1 || rinfos.empty() || (!same_chain_prev && !is_branch_lower_terminus) );
 		bool const is_upper_terminus( i == nres_pdb || !same_chain_next );
 
-		TR.Debug << "Residue " << i << std::endl;;
+		TR.Debug << "Residue " << i << std::endl;
 		if (is_lower_terminus) {
 			TR.Debug << "...is a lower terminus." << std::endl;
 		}
@@ -1033,7 +1033,7 @@ build_pose_as_is1(
 				// offsetting all coordinates by a small constant prevents problems with atoms located
 				// at position (0,0,0).
 				// This is a bit of a dirty hack but it fixes the major problem of reading in rosetta
-				// pdbs which suually start at 0,0,0. However the magnitude of this offset is so small
+				// pdbs which usually start at 0,0,0. However the magnitude of this offset is so small
 				// that the output pdbs should still match input pdbs. hopefully. yes. aehm.
 				double offset = 1e-250; // coordinates now double, so we can use _really_ small offset.
 				new_rsd->atom( local_strip_whitespace(iter->first) ).xyz( iter->second + offset );
@@ -1049,17 +1049,21 @@ build_pose_as_is1(
 		// 		new_rsd->atom( local_strip_whitespace(iter->first) ).temperature( iter->second );
 		// 	}
 		// }
-		Size const old_nres( pose.total_residue() );
 
-		if ( old_nres &&
-				( is_lower_terminus  ||
-				is_branch_lower_terminus ||  // TEMP
-				!new_rsd->is_polymer() ||
-				!pose.residue_type( old_nres ).is_polymer() ||
-				!last_residue_was_recognized) ) {
-			pose.append_residue_by_jump( *new_rsd, 1 /*pose.total_residue()*/ );
-		} else {
+		// Add this new residue to the pose by appending.
+		Size const old_nres( pose.total_residue() );
+		if (!old_nres) /*first residue?*/ {
 			pose.append_residue_by_bond( *new_rsd );
+		} else {
+			if (is_lower_terminus ||
+					is_branch_lower_terminus ||
+					!new_rsd->is_polymer() ||
+					!pose.residue_type(old_nres).is_polymer() ||
+					!last_residue_was_recognized) {
+				pose.append_residue_by_jump(*new_rsd, 1);
+			} else {
+				pose.append_residue_by_bond(*new_rsd);
+			}
 		}
 		pose_to_rinfo.push_back( Size(i) );
 		pose_resids.push_back( rinfo.resid );
@@ -1072,7 +1076,6 @@ build_pose_as_is1(
 		}
 
 		last_residue_was_recognized = true;
-
 	} // i=1,nres_pdb
 
 
@@ -1196,6 +1199,11 @@ build_pose_as_is1(
 		}
 	}
 
+	// Look for and create any remaining non-mainchain (Edge::CHEMICAL) bonds based on a specified radius from any
+	// unsatisfied residue connections.  This is used for such things as branched polymers, ubiquitination, or covalent
+	// intermediates.  Note: The fold tree will remain with a jump between each such bond until import_pose::
+	// set_reasonable_fold_tree() is called later, which actually adds the CHEMICAL edges to fold tree; this method
+	// simply makes the bonds.
 	pose.conformation().detect_bonds();
 
 	//mjo TODO: this can try to access pose->pdb_info() which is not yet
@@ -1260,7 +1268,7 @@ bool is_residue_type_recognized(
 	utility::vector1<std::string> & UA_atom_names,
 	utility::vector1<numeric::xyzVector<Real> > & UA_coords,
 	utility::vector1<core::Real> & UA_temps){
-	
+
 	FileDataOptions options;
 	return is_residue_type_recognized( pdb_residue_index, pdb_name, rsd_type_list, xyz, rtemp, UA_res_nums, UA_res_names, UA_atom_names, UA_coords, UA_temps, options );
 }

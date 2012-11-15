@@ -1401,8 +1401,6 @@ get_residue_connections(
 /// Uses fold_tree to deduce the incoming/outgoing connections for the new residue and the old residue
 /// We want it to be the case that the tree we get after this call is the same one that we would have gotten
 /// by calling build_tree
-///
-
 void
 replace_residue_in_atom_tree(
 	conformation::Residue const & new_rsd,
