@@ -96,6 +96,7 @@ static FilterRegistrator< protocols::simple_filters::PoseInfoFilterCreator > reg
 static FilterRegistrator< protocols::simple_filters::RangeFilterCreator > reg_RangeFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ReportFilterCreator > reg_ReportFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ResidueBurialFilterCreator > reg_ResidueBurialFilterCreator;
+static FilterRegistrator< protocols::simple_filters::ResidueCountFilterCreator > reg_ResidueCountFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ResidueDistanceFilterCreator > reg_ResidueDistanceFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ResidueIEFilterCreator > reg_ResidueIEFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ResiduesInInterfaceFilterCreator > reg_ResiduesInInterfaceFilterCreator;

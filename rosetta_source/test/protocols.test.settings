@@ -199,6 +199,10 @@ sources = {
 		"Interface",
 	],
 
+        "simple_filters" : [
+        	"ResidueCountFilter",
+        ],
+
         "simple_moves" : [
         	"FavorSequenceProfile",
         ],

@@ -82,6 +82,7 @@
 #include <protocols/simple_filters/RangeFilterCreator.hh>
 #include <protocols/simple_filters/ReportFilterCreator.hh>
 #include <protocols/simple_filters/ResidueBurialFilterCreator.hh>
+#include <protocols/simple_filters/ResidueCountFilterCreator.hh>
 #include <protocols/simple_filters/ResidueDistanceFilterCreator.hh>
 #include <protocols/simple_filters/ResidueIEFilterCreator.hh>
 #include <protocols/simple_filters/ResiduesInInterfaceFilterCreator.hh>

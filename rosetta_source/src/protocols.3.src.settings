@@ -352,6 +352,7 @@ sources = {
 		"RdcTargetEvaluatorCreator",
 		"ReportFilter",
 		"ResidueBurialFilter",
+		"ResidueCountFilter",
 		"ResidueDistanceFilter",
 		"ResidueIEFilter",
 		"ResiduesInInterfaceFilter",
