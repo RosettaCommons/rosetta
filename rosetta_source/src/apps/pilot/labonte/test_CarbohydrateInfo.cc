@@ -14,11 +14,13 @@
 
 // Project headers
 #include <devel/init.hh>
-//#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
+#include <core/types.hh>
+#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
-//#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/import_pose/import_pose.hh>
 
 // C++ headers
@@ -33,17 +35,32 @@ using namespace chemical;
 using namespace conformation;
 
 
+string const PATH = "../test/core/chemical/carbohydrates/";
+//string const PATH = "/home/labonte/Workspace/Carbohydrates/";
+
+
 void
 test_sugar(Pose & sugar)
 {
-	cout << "Sequences:" << endl;
-	cout << sugar.sequence() << endl;
-	cout << sugar.chain_sequence(1) << endl;
+	cout << endl << sugar << endl;
 
-	cout << "Residue Info:" << endl;
-	for (Size i = 1; i <= sugar.total_residue(); ++i) {
+	cout << "Sequences:" << endl;
+	Size n_chains = sugar.conformation().num_chains();
+	for (core::uint i = 1; i <= n_chains; ++i) {
+		cout << " Chain " << i << ": ";
+		cout << sugar.chain_sequence(i) << endl;
+	}
+
+	cout << endl << "Residue Info:" << endl;
+	Size n_res = sugar.total_residue();
+	for (core::uint i = 1; i <= n_res; ++i) {
 		Residue res = sugar.residue(i);
-		cout << res << endl << endl;
+		//cout << res << endl << endl;
+		cout << "Residue " << i << ": " << res.name() << endl;
+		cout << " 3-Letter Code: " << res.name3();
+		cout << "  1-Letter Code: " << res.name1() << endl;
+		cout << " PDB ID: " << sugar.pdb_info()->pose2pdb(i) << endl;
+		cout << *(res.carbohydrate_info()) << endl << endl;
 	}
 }
 
@@ -56,25 +73,25 @@ main(int argc, char *argv[])
 
 	// Declare variables.
 	Pose maltotriose, isomaltose, lactose, amylopectin;
-
+	/*
 	cout << "------------------------------------------------------------" << endl;
 	cout << "Importing maltotriose:" << endl;
 
-	pose_from_pdb(maltotriose, "/home/labonte/Workspace/Carbohydrates/maltotriose.pdb");
+	pose_from_pdb(maltotriose, PATH + "maltotriose.pdb");
 
 	test_sugar(maltotriose);
 
 	cout << "------------------------------------------------------------" << endl;
 	cout << "Importing isomaltose:" << endl;
 
-	pose_from_pdb(isomaltose, "/home/labonte/Workspace/Carbohydrates/isomaltose.pdb");
+	pose_from_pdb(isomaltose, PATH + "isomaltose.pdb");
 
 	test_sugar(isomaltose);
 
 	cout << "------------------------------------------------------------" << endl;
 	cout << "Importing lactose:" << endl;
 
-	pose_from_pdb(lactose, "/home/labonte/Workspace/Carbohydrates/lactose.pdb");
+	pose_from_pdb(lactose, PATH + "lactose.pdb");
 
 	test_sugar(lactose);
 
@@ -85,11 +102,11 @@ main(int argc, char *argv[])
 	make_pose_from_saccharide_sequence(maltotriose, "alpha-D-Glcp-(1->4)-alpha-D-Glcp-(1->4)-D-Glcp", *residue_set);
 
 	test_sugar(maltotriose);
-
+	*/
 	cout << "------------------------------------------------------------" << endl;
 	cout << "Importing branched amylopectin fragment:" << endl;
 
-	pose_from_pdb(amylopectin, "/home/labonte/Workspace/Carbohydrates/amylopectin_fragment.pdb");
+	pose_from_pdb(amylopectin, PATH + "amylopectin_fragment.pdb");
 
 	test_sugar(amylopectin);
 }

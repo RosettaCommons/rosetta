@@ -1210,7 +1210,7 @@ public:
 	}
 
 
-	/// @brief set a connection to this residue by adding its parnter's residue number
+	/// @brief set a connection to this residue by adding its partner's residue number
 	void
 	residue_connection_partner(
 			Size const resconn_index, // ie, our connid
@@ -1924,7 +1924,7 @@ private:
 	/////////////////////////////////
 	/// Inter-residue connection data
 
-	/// @brief true iff is_polymer() and either upper_connect or lower_connect (if they exist)
+	/// @brief true if is_polymer() and either upper_connect or lower_connect (if they exist)
 	/// do not connect to seqpos()+1 or seqpos()-1
 	bool nonstandard_polymer_;
 

@@ -647,8 +647,6 @@ FoldTree::insert_fold_tree_by_jump(
 /// @details  Add a new residue -- either polymer or jump -- to the end of the tree
 /// if the new residue is appended by polymer connection, add it at the end of polymer.
 /// if the new residue is appended by jump connection, the cutpoint is the original polymer end
-///
-///
 void
 FoldTree::append_residue(
 	bool const attach_by_jump, // = false,
