@@ -15,6 +15,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
+#include <protocols/simple_moves/MissingDensityToJumpMover.hh>
 
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
@@ -71,7 +72,7 @@ public:
 		core::optimization::CartesianMinimizer minimizer;
 		core::optimization::MinimizerOptions minoptions( "lbfgs_armijo_nonmonotone", 1e-3, true, debug_derivs, debug_derivs );
 		minoptions.nblist_auto_update( true );
-		minoptions.max_iter( 500 );
+		minoptions.max_iter( 200 );
 
 		// scorefunction0 -- fix bad chainbreaks
 		core::scoring::ScoreFunctionOP scorefxn0 = core::scoring::getScoreFunction();
@@ -120,6 +121,7 @@ my_main( void* ) {
 	SequenceMoverOP seq( new SequenceMover() );
 	if (option[ symmetry::symmetry_definition ].user()) seq->add_mover( new protocols::simple_moves::symmetry::SetupForSymmetryMover() );
 	if (option[ constraints::cst_file ].user()) seq->add_mover( new protocols::simple_moves::ConstraintSetMover(  ) );
+	seq->add_mover( new protocols::simple_moves::MissingDensityToJumpMover );
 	seq->add_mover( new protocols::simple_moves::SwitchResidueTypeSetMover("centroid") );
 	seq->add_mover( new CenRelaxMover() );
 
