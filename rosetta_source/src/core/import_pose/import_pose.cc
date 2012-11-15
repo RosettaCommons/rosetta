@@ -27,7 +27,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/VariantType.hh>
+// AUTO-REMOVED #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 // AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
@@ -100,7 +100,6 @@ read_additional_pdb_data(
 	ImportPoseOptions options;
 	read_additional_pdb_data( s, pose, options, read_fold_tree );
 }
-
 void
 read_additional_pdb_data(
 	std::string const & s,
@@ -149,6 +148,7 @@ read_additional_pdb_data(
 	}
 
 }
+
 
 
 pose::PoseOP pose_from_pdb(std::string const & filename, bool read_fold_tree)
@@ -628,10 +628,12 @@ void build_pose_as_is2(
 }
 
 /// @details
-/// All ligand residues and polymer branches have been appended by a jump.  This method creates a new fold tree without
-/// jumps through ligands, using CHEMICAL edges instead.
+/// all ligand residues have been appended by a jump -- create a fold tree without jumps through
+/// ligands.
 void
-set_reasonable_fold_tree(pose::Pose & pose)
+set_reasonable_fold_tree(
+	pose::Pose & pose
+)
 {
 	// An empty pose doesn't have jumps through ligands
 	// (Will encounter a SegFault otherwise)
@@ -639,7 +641,6 @@ set_reasonable_fold_tree(pose::Pose & pose)
 		return;
 	}
 
-	using namespace core::chemical;
 	using namespace core::kinematics;
 	TR.Debug << "original fold tree: " << pose.fold_tree() << std::endl;
 
@@ -652,11 +653,9 @@ set_reasonable_fold_tree(pose::Pose & pose)
 	Size last_jump_id = 0;
 	for( FoldTree::const_iterator i = origft.begin(), i_end = origft.end(); i != i_end; ++i ) {
 		Edge e = *i;
-		// Jump to a ligand residue or polymer branch?
-		if( e.is_jump() &&
-				(pose.residue_type(e.stop()).has_variant_type(BRANCH_LOWER_TERMINUS) ||
-				!pose.residue_type(e.stop()).is_polymer() ) ) {
-			Size const ii = e.stop(); // the residue at the end of the jump
+		// Jump to a ligand residue?
+		if( e.is_jump() && !pose.residue_type(e.stop()).is_polymer() ) {
+			Size const ii = e.stop(); // the ligand residue at the end of the jump
 			conformation::Residue const & ii_res = pose.residue(ii);
 			// Now we'll prepare a chemical edge by first finding the connecting atoms
 			// between the two residues
@@ -666,16 +665,14 @@ set_reasonable_fold_tree(pose::Pose & pose)
 				Size jj_res_ID= ii_res.connect_map( jj ).resid();
 				if ( jj_res_ID < ii){
 					core::conformation::Residue const &  jj_res=pose.residue(jj_res_ID);
-					// Ensure that the connection is either a polymer branching or a ligand of the same chain.
-					if ((jj_res.has_variant_type(BRANCH_POINT) && ii_res.has_variant_type(BRANCH_LOWER_TERMINUS)) ||
-							(jj_res.chain() == ii_res.chain())) {
-						int ii_connect_ID = ii_res.connect_atom(jj_res);
-						int jj_connect_ID = jj_res.connect_atom(ii_res);
+					if( jj_res.chain() == ii_res.chain() ) {
+						int ii_connect_ID= ii_res.connect_atom(jj_res);
+						int jj_connect_ID= jj_res.connect_atom(ii_res);
 
-						std::string ii_connector = ii_res.atom_name(ii_connect_ID);
-						std::string jj_connector = jj_res.atom_name(jj_connect_ID);
+						std::string ii_connector= ii_res.atom_name(ii_connect_ID);
+						std::string jj_connector= jj_res.atom_name(jj_connect_ID);
 
-						newft.add_edge(jj_res_ID, ii, jj_connector, ii_connector);
+						newft.add_edge( jj_res_ID, ii, jj_connector, ii_connector);
 
 						found_connection_residue_in_fold_tree = true;
 						break;

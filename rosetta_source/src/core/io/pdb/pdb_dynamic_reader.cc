@@ -214,7 +214,7 @@ FileData PDB_DReader::createFileData(std::vector<Record> & VR, PDB_DReaderOption
 			ai.resSeq = atoi( R["resSeq"].value.c_str() );
 			ai.iCode = 0; if( R["iCode"].value.size() > 0 ) ai.iCode = R["iCode"].value[0];
 
-			// how can you check properly if something will successfully convert to a number !?!?!?
+			// how can you check properly if something will successful convert to a number !?!?!?
 			bool force_no_occupancy = false;
 			if( R["x"].value == "     nan"){ai.x =0.0;force_no_occupancy=true;} else { ai.x = atof( R["x"].value.c_str() ); }
 			if( R["y"].value == "     nan"){ai.y =0.0;force_no_occupancy=true;} else { ai.y = atof( R["y"].value.c_str() ); }

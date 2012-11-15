@@ -262,7 +262,7 @@ PatchCase::apply( ResidueType const & rsd_in ) const
 /// @details	- first read in all lines from the file, discarding # comment lines
 /// - parse input lines for Patch name and variant types (NAME, TYPES)
 ///	- parse input lines for general ResidueSelector defined for this Patch (BEGIN_SELECTOR, END_SELECTOR)
-///	- parse input lines to create each case accordingly (BEGIN_CASE, END_CASE)
+///	- parse input lines to create each case acoordingly (BEGIN_CASE, END_CASE)
 /// @note keep the order to avoid triggering parsing errors
 void
 Patch::read_file( std::string const & filename )

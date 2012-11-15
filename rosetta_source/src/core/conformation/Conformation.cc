@@ -557,8 +557,6 @@ Conformation::append_residue(
 	Residue const & new_rsd( *residues_[ seqpos ] );
 
 	int anchor_atomno( 0 );
-
-	// If there is an anchor atom specified, find its index number in the residue.
 	if ( anchor_id.atom().size() ) anchor_atomno = residues_[ anchor_id.rsd() ]->atom_index( anchor_id.atom() );
 	// update the fold_tree
 	if ( first_residue ) {
@@ -581,7 +579,6 @@ Conformation::append_residue(
 			fold_tree_->append_residue( attach_by_jump, anchor_id.rsd(), anchor_id.atom(), root_atom );
 		}
 	}
-	TR.Debug << "CURRENT_" << *fold_tree_ << std::endl;
 
 	// update the atom_tree.
 	// alternatively we could call setup_atom_tree, would be more expensive.
@@ -594,6 +591,7 @@ Conformation::append_residue(
 
 	} else {
 		insert_residue_into_atom_tree( new_rsd, *fold_tree_, const_residues(), *atom_tree_ );
+
 	}
 
 	residue_torsions_need_updating_ = true;
@@ -601,6 +599,7 @@ Conformation::append_residue(
 
 	notify_length_obs( LengthEvent( this, LengthEvent::RESIDUE_APPEND, seqpos - 1, 1, &new_rsd ), false );
 } // append_residue
+
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1486,7 +1485,7 @@ Conformation::detect_bonds()
 	}
 	if ( num_incomp == 0 ) return;
 
-	TR.Debug << "Looking for connection partners for " << num_incomp << " residues" << std::endl;
+	//std::cout << "Looking for connection partners for " << num_incomp << " residues" << std::endl;
 
 	utility::vector1< Size > incomp_2_resid( num_incomp );
 	for ( Size ii = 1; ii <= size(); ++ii ) {
@@ -2277,7 +2276,7 @@ Conformation::const_residues() const
 void
 Conformation::setup_atom_tree()
 {
-	// this owns the tree
+	/// this owns the tree
 	kinematics::AtomPointer2D atom_pointer;
 	build_tree( *fold_tree_, const_residues(), atom_pointer );
 
@@ -3035,7 +3034,6 @@ Conformation::residues_append( Residue const & new_rsd, bool const start_new_cha
 	if ( nres > 1 ) {
 		if ( start_new_chain ) {
 			residues_[ nres ]->chain( residues_[ nres - 1 ]->chain() + 1 );
-			TR.Debug << "Starting a new chain: chain " << residues_[nres - 1]->chain() << std::endl;
 		} else {
 			residues_[ nres ]->chain( residues_[ nres - 1 ]->chain() );
 		}

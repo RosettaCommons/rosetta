@@ -43,7 +43,7 @@ sources = {
 		"MSA_design", # /* Justin Ashworth, documentation pending further testing, test/integration/tests/sequence_profile_constraints */
 		#"jd2_parser_DNAInt", # /* Justin Ashworth, doc/apps/pilot/jd2_parser_DNAInt.dox, */
 	],
-
+	
 	# B ######################################################################
 	"pilot/barak" : [
 		#"BuildFloppyTail",
@@ -93,7 +93,7 @@ sources = {
 		#"identify_homolog_inaccuracies",
 		#"contact_map_from_homologs",
 	],
-
+	
 	# C ######################################################################
 	"pilot/chen" : [
 		"simple_dna_regression_test", # /* ???,Documentation Location,Demo Location */
@@ -135,7 +135,7 @@ sources = {
 		#"sequencerecovery",
 		#"generate_orbital_statistics",
 	],
-
+	
 	# D ######################################################################
 	"pilot/dan" : [
 		#"sidechain_min", # /* Dan Mandell,Documentation Location,Demo Location */
@@ -193,9 +193,9 @@ sources = {
 		#"flexibleLoopDesign",
 		#"reportFragments",
 	],
-
+	
 	# E ######################################################################
-
+	
 	# F ######################################################################
 	"pilot/firas" : [
 		#"check_burial", # /* Firas,Documentation Location,Demo Location */
@@ -217,13 +217,13 @@ sources = {
 		#"cen_hybridize_ft", # /* Frank Dimaio,Documentation Location,Demo Location */
 		#"cen_relax", # /* Frank Dimaio,Documentation Location,Demo Location */
 	],
-
+	
 	# G ######################################################################
 	"pilot/grant" : [
 		#"RedesignXtal_Test", # /* Grant,Documentation Location,Demo Location */
 		#"AbInitio_MPI",
 	],
-
+	
 	# H ######################################################################
 	"pilot/habib" : [
 		#"david_find_contacts",
@@ -240,14 +240,14 @@ sources = {
 		#"david_find_best_contact_pocket",
 		#"david_darc_multirun",
 	],
-
+	
 	# I ######################################################################
 	"pilot/ian" : [
 		#"ligdock_confidence", # /* Ian Davis,Documentation Location,Demo Location */
 		#"cluster_ligand_poses", # /* Ian Davis,Documentation Location,Demo Location */
 		"select_best_unique_ligand_poses_jd1", # /* Ian Davis,Documentation Location,Demo Location */
 	],
-
+	
 	# J ######################################################################
  	"pilot/james" : [
 		"analyze_casp9",
@@ -358,7 +358,7 @@ sources = {
 	"pilot/jstev" : [
 		#"collect_features",
  	],
-
+ 	
 	# K ######################################################################
 	"pilot/kdrew" : [
 		"oop_dock_design",
@@ -381,11 +381,9 @@ sources = {
 	"pilot/kuichan" : [
 		#"design_disulfide",
 	],
-
+	
 	# L ######################################################################
 	"pilot/labonte" : [
-		#"tester",
-		#"debug_branching",
 		"test_RingConformationMover",
 		"test_CarbohydrateInfo"
 	],
@@ -409,7 +407,7 @@ sources = {
 	"pilot/luki" : [
 		"sc",
 	],
-
+	
 	# M ######################################################################
 	"pilot/mdsmith" : [
 		#"ligand_motifs",
@@ -442,7 +440,7 @@ sources = {
 	"pilot/murphp" : [
 		"inv_kin_lig_loop_design", # /* Paul Murphy,Documentation Location,Demo Location */
 	],
-
+	
 	# N ######################################################################
 	"pilot/neil" : [
 		#"enumeration_test",
@@ -469,7 +467,7 @@ sources = {
 		#"ncontact", # /* Nobuyasu,Documentation Location,Demo Location */
 		"make_blueprint", # /* Nobuyasu,Documentation Location,Demo Location */
 	],
-
+	
 	# O ######################################################################
 	"pilot/olli" : [
 		"r_play_with_etables",
@@ -501,7 +499,7 @@ sources = {
 	"pilot/opt_e" : [
 		#"optE_simple", # /* Andrew Leaver-Fay,Documentation Location,Demo Location */
 	],
-
+	
 	# P ######################################################################
 	"pilot/phil" : [
 		"test1", # /* Phil Bradley,Documentation Location,Demo Location */
@@ -516,9 +514,9 @@ sources = {
 	"pilot/possu" : [
 		#"remodel",
 	],
-
+	
 	# Q ######################################################################
-
+	
 	# R ######################################################################
  	"pilot/ragul" : [
 		# "ragul_fingerprint_test",
@@ -591,7 +589,7 @@ sources = {
 		#"pcs_score_select",
 		#"pcs_score_individual_residues",
 	],
-
+	
 	# S ######################################################################
 	"pilot/sarel" : [
 		"hotspot_stub_constraint_test", # /* Sarel Fleishman,Documentation Location,Demo Location */
@@ -624,9 +622,9 @@ sources = {
 	],
 
 	# U ######################################################################
-
+	
 	# V ######################################################################
-
+	
 	# W ######################################################################
 	"pilot/wendao" : [
 		"test_bbmc",
@@ -751,7 +749,7 @@ sources = {
 	],
 
 	# X ######################################################################
-
+	
 	# Y ######################################################################
 	"pilot/yab" : [
 		#"buns_report", # /* Yih-En Andrew Ban, private app, private app */
@@ -760,7 +758,7 @@ sources = {
 	"pilot/yfsong" : [
 		#"plot_hb",
 	],
-
+	
 	# Z ######################################################################
 	"pilot/zhezhang" : [
 		"extract_CA_coords",
