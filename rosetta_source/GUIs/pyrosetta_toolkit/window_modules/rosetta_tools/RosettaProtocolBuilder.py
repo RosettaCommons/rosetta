@@ -10,21 +10,22 @@
 ## @brief  Main window for settup up Rosetta config files.
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
+#Tk Imports
 from Tkinter import *
 import tkMessageBox
-from settings import RosettaPathSetup
-import QsubClusterSetup
-#import tools.pdbs
 import tkFileDialog
 import tkSimpleDialog
+
+#Python Imports
 import pickle
 import os
 import tkFont
 import re
 import tools
-#from ..clean_pdb import fix_pdb_window
 
-
+#Project Imports
+from settings import RosettaPathSetup
+import QsubClusterSetup
 
 class RosettaProtocolBuilder():
     """

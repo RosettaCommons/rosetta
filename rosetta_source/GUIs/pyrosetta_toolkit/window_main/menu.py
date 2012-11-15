@@ -49,22 +49,12 @@ class Menus():
 	self.MenBar.add_cascade(label = "Antibodies", menu=self.Antibody)
 	"""
 
-    #### File Menu ####
-	self.MenFile=Menu(self.MenBar, tearoff=0)
-	input_object = ImportExport.InputFiles(self, self.toolkit)
-	self.MenFile.add_command(label="Load PDB", command=lambda: input_object.choose_load_pose())
-	self.MenFile.add_command(label="Load PDB list", command=lambda: input_object.set_PDBLIST())
-	self.MenFile.add_checkbutton(label="Set Pymol Observer", variable=self.toolkit.PyMOLObject.auto_send) #this option should be set only once.
-	self.MenFile.add_command(label="Configure Option System",command = lambda: self.show_OptionsSystemManager())
-	self.MenFile.add_command(label ="Setup PDB for Rosetta", command=lambda: FixPDBWindow().runfixPDBWindow(self.main, 0, 0))
-	self.MenFile.add_command(label ="Enable Constraints", foreground='red')
-	self.MenFile.add_command(label ="Enable Symmetry", foreground='red')
-	self.MenFile.add_command(label ="Enable Non-Standard Residues", foreground='red')
+
 	
       #### Import ####
 	self.MenImport = Menu(self.MenBar, tearoff=0)
 	self.MenImport.add_command(label="Loop File", command = lambda: self.load_loop())
-	self.MenFile.add_cascade(label="Import", menu=self.MenImport)
+	
 	
       #### Export ####
 	self.MenExport = Menu(self.MenBar, tearoff=0)
@@ -79,23 +69,35 @@ class Menus():
 	#self.MenExport.add_command(label="Save Database")
 	#self.MenExport.add_command(label="Save loops as new PDBs")
 	
-	self.MenFile.add_cascade(label="Export", menu=self.MenExport) #export xml, options, command line, etc etc
+    #### File Menu ####
+	self.MenFile=Menu(self.MenBar, tearoff=0)
+	input_object = ImportExport.InputFiles(self, self.toolkit)
+	self.MenFile.add_command(label="Load PDB", command=lambda: input_object.choose_load_pose())
+	self.MenFile.add_command(label="Load PDB list", command=lambda: input_object.set_PDBLIST())
+	self.MenFile.add_cascade(label="Import", menu=self.MenImport)
+	self.MenFile.add_cascade(label="Export", menu=self.MenExport)
+	self.MenFile.add_checkbutton(label="Set Pymol Observer", variable=self.toolkit.PyMOLObject.auto_send) #this option should be set only once.
+	self.MenFile.add_command(label="Configure Option System",command = lambda: self.show_OptionsSystemManager())
+	self.MenFile.add_command(label ="Setup PDB for Rosetta", command=lambda: FixPDBWindow().runfixPDBWindow(self.main, 0, 0))
+	self.MenFile.add_command(label ="Enable Constraints", foreground='red')
+	self.MenFile.add_command(label ="Enable Symmetry", foreground='red')
+	self.MenFile.add_command(label ="Enable Non-Standard Residues", foreground='red')
+	self.MenBar.add_cascade(label="File", menu=self.MenFile)
 	self.MenFile.add_separator()
 	self.MenFile.add_command(label= "Rosetta Command-Line Creator", command = lambda: self.show_RosettaProtocolBuilder())
-	self.MenBar.add_cascade(label="File", menu=self.MenFile)
-	
 	
     #### Protein Design Menu ####
 	self.MenDesign=Menu(self.MenBar, tearoff=0)
-	self.MenDesign.add_command(label="Design File ToolBox", command=lambda: self.show_ResfileDesignWindow())
-	self.MenDesign.add_command(label="Remodel Protein", foreground='red')
+	self.MenDesign.add_command(label="Setup Resfile for PDB", command=lambda: self.show_ResfileDesignWindow())
+	self.MenDesign.add_command(label="Setup Blueprint for PDB", foreground='red')
+	self.MenDesign.add_command(label="Structure Editing and Grafting", foreground='red')
 	self.MenBar.add_cascade(label="Protein Design", menu=self.MenDesign)
 
     #### Advanced Control Menu ####
 	self.FineControl=Menu(self.MenBar, tearoff=0)
-	self.FineControl.add_command(label="Advanced PyMOL Visualization", command=lambda: self.toolkit.PyMOLObject.makeWindow(0, 0, Toplevel(self.main), self.toolkit.ScoreObject))
+	self.FineControl.add_command(label="PyMOL Visualization", command=lambda: self.toolkit.PyMOLObject.makeWindow(0, 0, Toplevel(self.main), self.toolkit.ScoreObject))
 	self.FineControl.add_command(label="Full Control Toolbox", command=lambda: self.toolkit.FullControlObject.makeWindow(Toplevel(self.main)))
-	self.FineControl.add_command(label="ScoreFxn Control", command =lambda: self.toolkit.ScoreObject.makeWindow(Toplevel(self.main), self.toolkit.pose))
+	self.FineControl.add_command(label="ScoreFxn Control + Creation", command =lambda: self.toolkit.ScoreObject.makeWindow(Toplevel(self.main), self.toolkit.pose))
 	self.FineControl.add_separator()
 	self.FineControl.add_command(label="Interactive Terminal", foreground='red',command = lambda: self.show_IpythonWindow())
 	self.FineControl.add_command(label="Jump into Session", foreground='red', command = lambda: embed())
