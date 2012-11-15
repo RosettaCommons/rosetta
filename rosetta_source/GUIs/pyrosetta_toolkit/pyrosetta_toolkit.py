@@ -13,10 +13,16 @@
 import sys
 
 import tkFont
-from rosetta import *
 
+
+#Tk 
 from Tkinter import *
 from Tkinter import Frame as FrameTk
+import tkFileDialog
+import tkMessageBox
+import tkSimpleDialog
+
+#Python
 from os import listdir
 from os import getcwd
 from shutil import copy
@@ -26,9 +32,23 @@ from os import path
 from os import system
 import glob
 import signal
-import tkFileDialog
-import tkMessageBox
-import tkSimpleDialog
+
+#Rosetta
+from rosetta import *
+from modules import tools
+import functools
+
+#Toolkit
+
+from window_main.InputFrame import *
+from window_main.menu import *
+from window_main.OutputFrame import *
+from window_main.QuickProtocolsFrame import *
+from window_main.SimpleAnalysisFrame import *
+
+from window_modules.pymol_integration.PyMOL import AdvancedPyMOL
+from window_modules.scorefunction.ScoreFxnControl import ScoreFxn
+from window_modules.full_control.FullControlWindow import FullControlWindow
 
 def location():
    """
@@ -43,33 +63,6 @@ def location():
 
 sys.path.append(location()[0]); #Allows all Window_Modules to use Modules.
 
-from modules import tools
-
-#from Modules import *
-import functools
-#import tools.pdbs
-
-#import Window_Modules
-#from Window_Modules.ScoreFunction.ScoreFxnControl import *
-from window_modules import *
-from window_main.InputFrame import *
-from window_main.menu import *
-from window_main.OutputFrame import *
-from window_main.QuickProtocolsFrame import *
-from window_main.SimpleAnalysisFrame import *
-
-
-
-
-
-"""
-print CDR_Analysis.__file__
-#Um...
-opts = ['app', '-database', os.path.abspath( os.environ['PYROSETTA_DATABASE']), '-ex1', '-ex2aro', '-dun08', '-ramaneighbors true']
-args = rosetta.utility.vector1_string()
-args.extend(opts)
-rosetta.core.init(args)
-"""
 
 class main_window:
    def __init__(self):
@@ -111,7 +104,7 @@ class main_window:
    def _init_objects(self):
       self.ScoreObject = ScoreFxn(); #Main Score Function Object. Holds Score.  Controls switching scorefunctions, etc.
       self.PyMOLObject = AdvancedPyMOL(self.pose); #PyMOL Object for advanced visualization.
-      self.FullControlObject = FullControl(self.ScoreObject, self.pose); #Handles full control of protein.  This way, everything is saved...which is sorta cool.
+      self.FullControlObject = FullControlWindow(self.ScoreObject, self.pose); #Handles full control of protein.  This way, everything is saved...which is sorta cool.
    
    def _init_input_variables(self):
       self.input_class = InputFrame(self._tk_, self)
@@ -177,6 +170,8 @@ class main_window:
       #self.output_textbox.pack(side=BOTTOM, padx=3, pady=3)
       #self.output_frame.pack(side=BOTTOM, padx=3, pady=3)
       """
+      
+      
 class MainTracer(rosetta.basic.PyTracer):
    def __init__(self, textbox):
         rosetta.basic.PyTracer.__init__(self)

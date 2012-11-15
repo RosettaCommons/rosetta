@@ -74,6 +74,7 @@ class AdvancedPyMOL():
 	except AttributeError:
 	    tkMessageBox.showwarning(message = 'Please Load a Pose...')
 	    return
+	    
 	self.ScoreObject = ScoreObject; self.score = self.ScoreObject.score
 
 	self.viewlabel_ = Label(self.main, text="View Options")

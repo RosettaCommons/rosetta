@@ -15,15 +15,16 @@ import tkFileDialog
 from modules.tools import pdbs as pdb_tools
 import os
 import re
-class FixPDB:
+class FixPDBWindow:
      """
      Quick and dirty cleaning of PDB.
+     There are scripts floating around for more robust methods of cleaning PDBs.
      """
    
      def runfixPDBWindow(self, m, r, c):
         """
         This First asks for a list of PDB paths.  Then it can do two things, depending on the choices:  Remove HETATM, fix Alternate Residues/Occupancies.
-        Gives a GUI, because, well, why not? Should be rewritten a bit and expanded...
+        Gives a GUI, because, well, why not?
         m = Main Window
         r = Row
         c = Column
@@ -87,6 +88,7 @@ class FixPDB:
         pdbname = os.path.basename(filename)
         pdb_tools.pdbTools().savePDB(pdbDic, outdir+"/"+pdbname)
         print "File Saved..."
+        
      def getfile(self):
         """
         simply gets a filename...wish I could do this within the command syntax of tkinter...

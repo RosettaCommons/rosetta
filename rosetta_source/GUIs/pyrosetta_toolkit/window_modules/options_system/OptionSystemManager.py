@@ -16,7 +16,7 @@ import tkFileDialog
 import os
 
 
-class Option_System_Manager:
+class OptionSystemManager:
     def __init__(self, current_directory=False):
         
         self.opts = []
@@ -183,7 +183,7 @@ class Option_System_Manager:
         print "Options extended.."
         
 if __name__ == '__main__':
-    test = Option_System_Manager()
+    test = OptionSystemManager()
     main = Tk()
     test.setTk(main)
     test.shoTk()

@@ -25,7 +25,7 @@ from modules.protocols import loop_minimization
 from modules.ScoreBase import *
 
 
-class FullControl():
+class FullControlWindow():
     """
     Window for full control of protein backbone and sidechains
     """
@@ -86,12 +86,21 @@ class FullControl():
         self.shoInfo(res, chain)
     
     def makeWindow(self, main, r=0, c=0):
+        
+        try :
+	    print self.pose.pdb_info().name()
+	except AttributeError:
+	    tkMessageBox.showwarning(message = 'Please Load a Pose...')
+	    return
+            
         try:
             self.score_base = ScoreBase(self.pose, self.score_object.score)
+            
         except PyRosettaException:
             print "Please Load a pose"
-            exit()
-            #return
+            return
+        
+        print "Everything is dieing."
             
         self.main = main
         self.main.title("Full Control")

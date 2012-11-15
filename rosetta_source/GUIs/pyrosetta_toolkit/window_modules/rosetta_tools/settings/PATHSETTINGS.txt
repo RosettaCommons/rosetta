@@ -1,3 +1,0 @@
-ROSETTA_SOURCE	/home/jadolfbr/Documents/modeling/rosetta/git2/rosetta/rosetta_source
-DATABASE	/home/jadolfbr/Documents/modeling/rosetta/git2/rosetta/rosetta_database
-APPLICATIONS	/home/jadolfbr/Documents/modeling/rosetta/git2/rosetta/rosetta_source/bin

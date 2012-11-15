@@ -12,7 +12,8 @@
 
 
 from Tkinter import *
-from window_modules import *
+import webbrowser
+
 #from window_modules.interactive_terminal import IPython
 from modules.tools import output as output_tools
 from modules.tools import general_tools
@@ -21,15 +22,19 @@ from modules import help as help_tools
 from modules.tools import input as input_tools
 from modules import calibur
 from modules import ImportExport
-import webbrowser
 
+#Windows
+from window_modules.options_system.OptionSystemManager import OptionSystemManager
+from window_modules.clean_pdb.FixPDBWindow import FixPDBWindow
+from window_modules.rosetta_tools.RosettaProtocolBuilder import RosettaProtocolBuilder
+from window_modules.design.ResfileDesignWindow import ResfileDesignWindow
 
 class Menus():
     def __init__(self, main, toolkit):
 	self.main = main
-	self.toolkit = toolkit
+	self.toolkit = toolkit 
 	self.MenBar=Menu(self.main)
-	self.options_class = Option_System_Manager(self.toolkit.current_directory.get())
+	self.options_class = OptionSystemManager(self.toolkit.current_directory.get())
     def setTk(self):
 
 	"""
@@ -50,8 +55,8 @@ class Menus():
 	self.MenFile.add_command(label="Load PDB", command=lambda: input_object.choose_load_pose())
 	self.MenFile.add_command(label="Load PDB list", command=lambda: input_object.set_PDBLIST())
 	self.MenFile.add_checkbutton(label="Set Pymol Observer", variable=self.toolkit.PyMOLObject.auto_send) #this option should be set only once.
-	self.MenFile.add_command(label="Configure Option System",command = lambda: self.shoOptions())
-	self.MenFile.add_command(label ="Setup PDB for Rosetta", command=lambda: FixPDB().runfixPDBWindow(self.main, 0, 0))
+	self.MenFile.add_command(label="Configure Option System",command = lambda: self.show_OptionsSystemManager())
+	self.MenFile.add_command(label ="Setup PDB for Rosetta", command=lambda: FixPDBWindow().runfixPDBWindow(self.main, 0, 0))
 	self.MenFile.add_command(label ="Enable Constraints", foreground='red')
 	self.MenFile.add_command(label ="Enable Symmetry", foreground='red')
 	self.MenFile.add_command(label ="Enable Non-Standard Residues", foreground='red')
@@ -63,9 +68,9 @@ class Menus():
 	
       #### Export ####
 	self.MenExport = Menu(self.MenBar, tearoff=0)
-	self.MenExport.add_command(label="SCWRL seq File", command=lambda: self.savSeq())
+	self.MenExport.add_command(label="SCWRL seq File", command=lambda: self.save_SCWRL_sequence_file())
 	self.MenExport.add_separator()
-	self.MenExport.add_command(label="Rosetta Loop File", foreground = 'red', command = lambda: self.savLoop())
+	self.MenExport.add_command(label="Rosetta Loop File", foreground = 'red', command = lambda: self.save_loop_file())
 	self.MenExport.add_command(label="Rosetta ResFile", foreground='red')
 	self.MenExport.add_command(label="Rosetta Blueprint File", foreground='red')
 	self.MenExport.add_separator()
@@ -76,13 +81,13 @@ class Menus():
 	
 	self.MenFile.add_cascade(label="Export", menu=self.MenExport) #export xml, options, command line, etc etc
 	self.MenFile.add_separator()
-	self.MenFile.add_command(label= "Rosetta Command-Line Creator", command = lambda: self.shoRosettaProtocolSetup())
+	self.MenFile.add_command(label= "Rosetta Command-Line Creator", command = lambda: self.show_RosettaProtocolBuilder())
 	self.MenBar.add_cascade(label="File", menu=self.MenFile)
 	
 	
     #### Protein Design Menu ####
 	self.MenDesign=Menu(self.MenBar, tearoff=0)
-	self.MenDesign.add_command(label="Design File ToolBox", command=lambda: self.shoDesign1())
+	self.MenDesign.add_command(label="Design File ToolBox", command=lambda: self.show_ResfileDesignWindow())
 	self.MenDesign.add_command(label="Remodel Protein", foreground='red')
 	self.MenBar.add_cascade(label="Protein Design", menu=self.MenDesign)
 
@@ -92,7 +97,7 @@ class Menus():
 	self.FineControl.add_command(label="Full Control Toolbox", command=lambda: self.toolkit.FullControlObject.makeWindow(Toplevel(self.main)))
 	self.FineControl.add_command(label="ScoreFxn Control", command =lambda: self.toolkit.ScoreObject.makeWindow(Toplevel(self.main), self.toolkit.pose))
 	self.FineControl.add_separator()
-	self.FineControl.add_command(label="Interactive Terminal", foreground='red',command = lambda: self.shoIPythonWindow())
+	self.FineControl.add_command(label="Interactive Terminal", foreground='red',command = lambda: self.show_IpythonWindow())
 	self.FineControl.add_command(label="Jump into Session", foreground='red', command = lambda: embed())
 	self.MenBar.add_cascade(label = "Advanced", menu = self.FineControl)
 
@@ -153,10 +158,6 @@ class Menus():
 
 	self.MenHelp.add_separator()
 	self.MenBar.add_cascade(label="Help", menu=self.MenHelp)
-    
-    #### Window CheckButtons ######
-	self.checkbutton_fullcontrol = Checkbutton(self.main, text="FullControl")
-	self.checkbutton_pymol = Checkbutton(self.main, text = "PyMOL Visualization")
 
     def shoTk(self):
 	self.main.config(menu=self.MenBar)
@@ -166,9 +167,7 @@ class Menus():
 
 ##### MENU FUNCTIONS #######
 
-    def printPDB(self):
-	print pdbDic
-    def savSeq(self):
+    def save_SCWRL_sequence_file(self):
 	"""
 	Saves SCWRL sequence file
 	"""
@@ -199,7 +198,7 @@ class Menus():
 	    self.toolkit.loops_as_strings.append(string)
 	    self.toolkit.input_class.loops_listbox.insert(END, string)
 
-    def savLoop(self):
+    def save_loop_file(self):
 	"""
 	Saves a Loop File for Rosetta
 	"""
@@ -213,70 +212,41 @@ class Menus():
 	    output_tools.savLoop(self.toolkit.pose, out, self.toolkit.loops_as_strings)
 	return
     
-#### WINDOWS ##### (ADD NEW WINDOWS TO THIS) #######
-    def shoOptions(self):
+    
+    
+#### WINDOWS ##### (ADD NEW WINDOWS TO THIS THAT NEED TO BE SET UP) #######
+
+    def show_OptionsSystemManager(self):
 	"""
 	Main Design window interacting with options system
 	"""
-	#Broken?  What the fuck?
-	WinOptions = Toplevel(self.main)
-	self.options_class.setTk(WinOptions)
+	
+	top_level_tk = Toplevel(self.main)
+	self.options_class.setTk(top_level_tk)
 	self.options_class.shoTk()
-    def shoDesign1(self):
+    def show_ResfileDesignWindow(self):
 	"""
 	Main Design window for creating a ResFile
 	"""
-	#Broken?  What the fuck?
-	WinDesign1 = Toplevel(self.main)
-	design1 = Design(WinDesign1, self.toolkit.DesignDic, self.toolkit.pose)
-	design1.setTk()
-	design1.shoTk()
-	design1.setTypes()
-    def shoAnalyze(self):
-	"""
-	Main Analysis window
-	"""
+	
+	top_level_tk = Toplevel(self.main)
+	resfile_design_window = ResfileDesignWindow(top_level_tk, self.toolkit.DesignDic, self.toolkit.pose)
+	resfile_design_window.setTk()
+	resfile_design_window.shoTk()
+	resfile_design_window.setTypes()
 
-	WinAnalyze = Toplevel(self.main); Analyze1 = AnalyzePyRosetta(WinAnalyze)
-	Analyze1.setTk(); Analyze1.shoTk(); Analyze1.setLis()
-    def shoPdbTools(self):
-	"""
-	PDB Tools for cleaning pdb files, hopfully more stuff in the future..
-	"""
-
-	WinPDB = Toplevel(self.main);
-	PDB1 = PdbTools(WinPDB);
-	PDB1.setTk(); PDB1.shoTk()
-    def shoCDRAnalysis(self):
-	"""
-	CDR Analysis window.  Needs to be optional as 300 mb of pdb is a lot.
-	"""
-
-	WinCDRAnal = Toplevel(self.main)
-	CDRWindow = CDR_Analysis.CDRAnalysis(WinCDRAnal, 0, 0)
-	seq = StringVar()
-	if VarLoopSeq.get() =="":
-	    seq.set("Sequence")
-	else:
-	    print ":"+VarLoopSeq.get()+":"
-	    seq.set(VarLoopSeq.get())
-	seq2 = StringVar()
-	seq2.set("New")
-	CDRWindow.setTk(seq, seq2)
-	CDRWindow.grid()
-
-    def shoRosettaProtocolSetup(self):
+    def show_RosettaProtocolBuilder(self):
 	"""
 	Rosetta Protocols - Used to make commands from lists of possible options.
 	"""
 
-	RosProtSet = Toplevel(self.main)
-	ProtSet = RosettaProtocolBuilder.ProtocolSetup(RosProtSet)
-	ProtSet.setTk()
-	ProtSet.shoTk(0, 0)
-	ProtSet.setMenu(RosProtSet)
+	top_level_tk = Toplevel(self.main)
+	rosetta_protocol_builder = RosettaProtocolBuilder(top_level_tk)
+	rosetta_protocol_builder.setTk()
+	rosetta_protocol_builder.shoTk(0, 0)
+	rosetta_protocol_builder.setMenu(top_level_tk)
     
-    def shoIPythonWindow(self):
+    def show_IpythonWindow(self):
 	"""
 	IPython Interactive Window.  Isolated from variables for now.
 	"""

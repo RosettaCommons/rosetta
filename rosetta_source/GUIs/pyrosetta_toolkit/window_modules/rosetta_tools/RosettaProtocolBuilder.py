@@ -26,10 +26,10 @@ import tools
 
 
 
-class ProtocolSetup():
+class RosettaProtocolBuilder():
     """
-    This allows you to setup a rosetta protocol.  Save it's options file, or run it.
-    Very useful to see all the applications, see possible options, and see descriptions for each option.
+    This allows you to setup a rosetta run.  Save it's options file, or run it.
+    Useful to see all the applications, see possible options, and see descriptions for each option.
     Implementation of Doxygen integration and options_rosetta.py parsing next.
     
     """
@@ -589,7 +589,7 @@ class ProtocolSetup():
 if __name__ == '__main__':
     MainWindow = Tk()
     MainWindow.title("Window to Rosetta")
-    SetupWindow = ProtocolSetup(MainWindow)
+    SetupWindow = RosettaProtocolBuilder(MainWindow)
     SetupWindow.setTk()
     SetupWindow.shoTk(0, 0)
     SetupWindow.setMenu(MainWindow)

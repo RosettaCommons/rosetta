@@ -18,7 +18,7 @@ import tkFileDialog
 from modules.definitions.restype_definitions import *
 import os
 
-class Design:
+class ResfileDesignWindow:
     def __init__(self, main, DesignDic, pose):
         self.main=main
         self.main.title("Design Toolbox")
