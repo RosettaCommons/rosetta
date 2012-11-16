@@ -284,13 +284,9 @@ JD2ResourceManagerJobInputter::parse_jobs_tags(
 			read_Option_subtag_for_job( *tag_iter, generic_job_options );
 		} else if ( tagname == "Data" ) {
 			std::string dummy_input_tag;
-			bool startstruct_found(false);
 			read_Data_for_subtag(
-				*tag_iter, "generic", dummy_input_tag, startstruct_found,
+				*tag_iter, "generic", dummy_input_tag,
 				generic_resources_for_job );
-			if(startstruct_found){
-				throw EXCN_Msg_Exception("In JD2ResourceManagerJobInputter: In <Jobs/> tag, a <Data/> with desc='startstruct' must occur within a <Job/> tag.");
-			}
 		}
 	}
 
@@ -310,6 +306,8 @@ JD2ResourceManagerJobInputter::parse_jobs_tags(
 			EXCN_Msg_Exception( err.str() );
 		}
 	}
+
+	check_each_job_has_startstruct(jobs);
 }
 
 void
@@ -323,7 +321,6 @@ JD2ResourceManagerJobInputter::parse_job_tag(
   JD2ResourceManager * jd2rm( JD2ResourceManager::get_jd2_resource_manager_instance());
 
 	//InnerJobOP inner_job = new InnerJob;
-	bool startstruct_found( false );
 	std::string jobname;
 	std::string input_tag; // <--- pdb name
 	std::map< std::string, std::string > resources_for_job(generic_resources_for_job);
@@ -343,15 +340,10 @@ JD2ResourceManagerJobInputter::parse_job_tag(
 		if ( tagname == "Option" ) {
 			read_Option_subtag_for_job( *tag_iter, job_options );
 		} else if ( tagname == "Data" ) {
-			read_Data_for_subtag( *tag_iter, jobname, input_tag, startstruct_found, resources_for_job );
+			read_Data_for_subtag( *tag_iter, jobname, input_tag, resources_for_job );
 		} else if (tagname == "ResidueType") {
-			read_ResidueType_for_subtag(*tag_iter, jobname, input_tag, startstruct_found, resources_for_job);
+			read_ResidueType_for_subtag(*tag_iter, resources_for_job);
 		}// are there other kinds of tags?
-	}
-
-	if ( ! startstruct_found ) {
-		std::string errmsg( "Error: Job given without a 'startstruct'" );
-		throw EXCN_Msg_Exception( errmsg );
 	}
 
 	if(jobs_tag->hasOption("nstruct")){
@@ -412,9 +404,6 @@ JD2ResourceManagerJobInputter::parse_jobs_table_tag(
 		"\n"
 		"    job_name, 'Resource', desc, resource_tag\n"
 		"    job_name, 'Option', option_key, option_value\n"
-		"\n"
-		" * The table should 'ORDER BY job_name', to have data for a\n"
-    "   specific job adjacent in the table\n"
 		"\n"
 		" * Each job should have a 'startstruct' resource that is used as the primary input\n"
 		"\n"
@@ -549,22 +538,45 @@ JD2ResourceManagerJobInputter::record_job(
 
 	using namespace basic::options;
 
-	Size nstruct(1);
-	if(job_options->has_option(OptionKeys::out::nstruct)){
-		nstruct = job_options->get_option(OptionKeys::out::nstruct);
-	}
-
 	for ( std::map< string, string >::const_iterator
 			iter = resources_for_job.begin(), iter_end = resources_for_job.end();
 			iter != iter_end; ++iter ) {
 		jd2rm->add_resource_tag_by_job_tag( iter->first, job_name, iter->second );
 	}
 
-	InnerJobOP inner_job = new InnerJob( job_name, nstruct );
 	JD2ResourceManager::get_jd2_resource_manager_instance()->add_job_options(
 		job_name, job_options);
-	for ( Size ii = 1; ii <= nstruct; ++ii ) {
-		jobs.push_back( new Job( inner_job, ii ));
+
+	//Have the jobs with this job_name already been created?
+	core::Size n_jobs(0);
+	for(Jobs::const_iterator ii = jobs.begin(), iie = jobs.end(); ii != iie; ++ii){
+		if( (*ii)->input_tag() == job_name ) {
+			n_jobs++;
+		}
+	}
+
+	//If not, then add them
+	if(n_jobs==0){
+		Size nstruct(1);
+		if(job_options->has_option(OptionKeys::out::nstruct)){
+			nstruct = job_options->get_option(OptionKeys::out::nstruct);
+		}
+
+		InnerJobOP inner_job = new InnerJob( job_name, nstruct );
+		for ( Size ii = 1; ii <= nstruct; ++ii ) {
+			jobs.push_back( new Job( inner_job, ii ));
+		}
+	} else {
+		if(job_options->has_option(OptionKeys::out::nstruct)){
+			Size requested_nstruct = job_options->get_option(OptionKeys::out::nstruct);
+			if(requested_nstruct != n_jobs){
+				std::stringstream err_msg;
+				err_msg
+					<< "Conflicting specification for nstruct for job with name '" << job_name << "'" << std::endl
+					<< "Previous nstruct=" << n_jobs << ", new nstruct=" << requested_nstruct << std::endl;
+				throw EXCN_Msg_Exception( err_msg.str() );
+			}
+		}
 	}
 }
 
@@ -872,17 +884,12 @@ JD2ResourceManagerJobInputter::read_StringVectorOption_subtag_for_job(
 	job_options->add_option( strinvectopt, vals );
 }
 
-    
+
 void
 JD2ResourceManagerJobInputter::read_ResidueType_for_subtag(
 	utility::tag::TagPtr options_tag,
-	std::string const & /*jobname*/,
-	std::string & /*input_tag*/,
-	bool & /*startstruct_found*/,
 	std::map< std::string, std::string > & resources_for_job
-)
-{
-
+){
 	std::string rname;
 
 	std::ostringstream err;
@@ -919,7 +926,6 @@ JD2ResourceManagerJobInputter::read_Data_for_subtag(
 	utility::tag::TagPtr data_tag,
 	std::string const & jobname,
 	std::string & input_tag,
-	bool & startstruct_found,
 	std::map< std::string, std::string > & resources_for_job
 )
 {
@@ -927,8 +933,8 @@ JD2ResourceManagerJobInputter::read_Data_for_subtag(
 
 	bool desc_found( false );
 	bool resource_found( false );
-	bool local_startstruct_found( false );
 	bool pdb_found( false );
+	bool local_startstruct_found( false );
 	std::string desc;
 	std::string rname;
 	std::string locator = "";
@@ -938,7 +944,6 @@ JD2ResourceManagerJobInputter::read_Data_for_subtag(
 			opt_iter != opt_iter_end; ++opt_iter ) {
 		if ( opt_iter->first == "desc" ) {
 			if ( opt_iter->second == "startstruct" ) {
-				startstruct_found = true;
 				local_startstruct_found = true;
 			}
 			desc_found = true;
@@ -988,7 +993,7 @@ JD2ResourceManagerJobInputter::read_Data_for_subtag(
 		err << "Problem encountered ";
 		if ( jobname.size() != 0 ) {
 			err << "for job named '" << jobname << "'";
-		} else if ( desc != "startstruct" && startstruct_found ) {
+		} else if ( desc != "startstruct" && resources_for_job.find("startstruct") != resources_for_job.end()) {
 			err << "for job whose starstruct is given as '" << resources_for_job[ "startstruct" ] << "'";
 		}
 		err << ".\nOptions given:\n";
@@ -1027,6 +1032,25 @@ JD2ResourceManagerJobInputter::read_Data_for_subtag(
 		resources_for_job[ desc ] = rname;
 	}
 
+}
+
+void
+JD2ResourceManagerJobInputter::check_each_job_has_startstruct(
+	Jobs const & jobs
+) const {
+  JD2ResourceManager * jd2rm(
+		JD2ResourceManager::get_jd2_resource_manager_instance());
+
+	for(
+		Jobs::const_iterator job=jobs.begin(), jobs_end=jobs.end();
+		job != jobs_end; ++job){
+		if(!(jd2rm->has_resource_tag_by_job_tag("startstruct", (*job)->input_tag()))) {
+			std::stringstream errmsg;
+			errmsg
+				<< "Error: Job '" << (*job)->input_tag() << "' given without a 'startstruct'";
+			throw EXCN_Msg_Exception( errmsg.str() );
+		}
+	}
 }
 
 JobInputterInputSource::Enum

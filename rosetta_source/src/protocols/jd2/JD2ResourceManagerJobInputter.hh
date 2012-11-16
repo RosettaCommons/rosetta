@@ -214,19 +214,19 @@ private:
 		utility::tag::TagPtr options_tag,
 		std::string const & jobname,
 		std::string & input_tag,
-		bool & startstruct_found,
 		std::map< std::string, std::string > & resources_for_job
 	);
-    
-    void
-    read_ResidueType_for_subtag(
-        utility::tag::TagPtr options_tag,
-        std::string const & jobname,
-        std::string & input_tag,
-        bool & startstruct_found,
-        std::map< std::string, std::string > & resources_for_job
-    );
 
+	void
+	read_ResidueType_for_subtag(
+		utility::tag::TagPtr options_tag,
+		std::map< std::string, std::string > & resources_for_job
+	);
+
+	void
+	check_each_job_has_startstruct(
+		Jobs const & jobs
+	) const;
 
 private:
 	///@brief save the last input tag so the resources loaded for it can

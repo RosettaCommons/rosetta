@@ -16,6 +16,7 @@
 #include <test/protocols/init_util.hh>
 
 // Project headers
+#include <protocols/jd2/JD2ResourceManager.hh>
 #include <protocols/jd2/JD2ResourceManagerJobInputter.hh>
 #include <protocols/jd2/Job.hh>
 
@@ -28,6 +29,7 @@
 
 using namespace protocols::jd2;
 
+
 class JD2ResourceManagerJobInputterTests : public CxxTest::TestSuite {
 
 public:
@@ -36,6 +38,10 @@ public:
 	}
 
 	void test_JD2ResourceManagerJobInputter_read_job_w_nstruct_10() {
+		JD2ResourceManager * jd2rm(
+			JD2ResourceManager::get_jd2_resource_manager_instance());
+		jd2rm->clear();
+
 		std::string xmlfile =
 			"<JD2ResourceManagerJobInputter>\n"
 			"  <Jobs>\n"
@@ -58,6 +64,10 @@ public:
 	}
 
 	void test_JD2ResourceManagerJobInputter_read_job_w_nstruct_10_option_without_namespace() {
+		JD2ResourceManager * jd2rm(
+			JD2ResourceManager::get_jd2_resource_manager_instance());
+		jd2rm->clear();
+
 		std::string xmlfile =
 			"<JD2ResourceManagerJobInputter>\n"
 			"  <Jobs>\n"
@@ -80,6 +90,10 @@ public:
 	}
 
 	void test_JD2ResourceManagerJobInputter_missing_desc_in_job() {
+		JD2ResourceManager * jd2rm(
+			JD2ResourceManager::get_jd2_resource_manager_instance());
+		jd2rm->clear();
+
 		std::string xmlfile =
 			"<JD2ResourceManagerJobInputter>\n"
 			"  <Jobs>\n"
@@ -112,6 +126,10 @@ public:
 	}
 
 	void test_JD2ResourceManagerJobInputter_missing_resource_and_pdb_for_startstruct_data_in_job() {
+		JD2ResourceManager * jd2rm(
+			JD2ResourceManager::get_jd2_resource_manager_instance());
+		jd2rm->clear();
+
 		std::string xmlfile =
 			"<JD2ResourceManagerJobInputter>\n"
 			"  <Jobs>\n"
@@ -144,6 +162,10 @@ public:
 	}
 
 	void test_JD2ResourceManagerJobInputter_found_both_resource_and_pdb_for_startstruct_data_in_job() {
+		JD2ResourceManager * jd2rm(
+			JD2ResourceManager::get_jd2_resource_manager_instance());
+		jd2rm->clear();
+
 		std::string xmlfile =
 			"<JD2ResourceManagerJobInputter>\n"
 			"  <Jobs>\n"
@@ -178,6 +200,10 @@ public:
 
 	/// Only the starstruct is allowed to give a "pdb" option
 	void test_JD2ResourceManagerJobInputter_pdb_without_startstruct_in_job() {
+		JD2ResourceManager * jd2rm(
+			JD2ResourceManager::get_jd2_resource_manager_instance());
+		jd2rm->clear();
+
 		std::string xmlfile =
 			"<JD2ResourceManagerJobInputter>\n"
 			"  <Jobs>\n"
@@ -211,6 +237,10 @@ public:
 	}
 
 	void test_JD2ResourceManagerJobInputter_job_without_startstruct() {
+		JD2ResourceManager * jd2rm(
+			JD2ResourceManager::get_jd2_resource_manager_instance());
+		jd2rm->clear();
+
 		std::string xmlfile =
 			"<JD2ResourceManagerJobInputter>\n"
 			"  <Jobs>\n"
@@ -226,7 +256,7 @@ public:
 			inputter.fill_jobs_from_stream( jobstream, jobvector );
 			TS_ASSERT( false ); // should throw an exception
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
-			std::string expected_error = "Error: Job given without a 'startstruct'";
+			std::string expected_error = "Error: Job 'first' given without a 'startstruct'";
 			if ( e.msg() != expected_error ) {
 				std::cout << "expected error: '" << expected_error << "'" << std::endl;
 				std::cout << "actual error:   '" << e.msg() << "'" << std::endl;
@@ -238,6 +268,10 @@ public:
 	}
 
 	void test_JD2ResourceManagerJobInputter_integer_option_read() {
+		JD2ResourceManager * jd2rm(
+			JD2ResourceManager::get_jd2_resource_manager_instance());
+		jd2rm->clear();
+
 		std::string xmlfile =
 			"<JD2ResourceManagerJobInputter>\n"
 			"  <Jobs>\n"
@@ -261,6 +295,10 @@ public:
 	}
 
 	void test_JD2ResourceManagerJobInputter_integer_option_read_error() {
+		JD2ResourceManager * jd2rm(
+			JD2ResourceManager::get_jd2_resource_manager_instance());
+		jd2rm->clear();
+
 		std::string xmlfile =
 			"<JD2ResourceManagerJobInputter>\n"
 			"  <Jobs>\n"
@@ -290,6 +328,10 @@ public:
 
 	}
 	void test_JD2ResourceManagerJobInputter_real_option_read() {
+		JD2ResourceManager * jd2rm(
+			JD2ResourceManager::get_jd2_resource_manager_instance());
+		jd2rm->clear();
+
 		std::string xmlfile =
 			"<JD2ResourceManagerJobInputter>\n"
 			"  <Jobs>\n"
@@ -313,6 +355,10 @@ public:
 
 	}
 	void test_JD2ResourceManagerJobInputter_real_option_read_error() {
+		JD2ResourceManager * jd2rm(
+			JD2ResourceManager::get_jd2_resource_manager_instance());
+		jd2rm->clear();
+
 		std::string xmlfile =
 			"<JD2ResourceManagerJobInputter>\n"
 			"  <Jobs>\n"
@@ -342,6 +388,10 @@ public:
 
 	}
 	void test_JD2ResourceManagerJobInputter_boolean_option_read() {
+		JD2ResourceManager * jd2rm(
+			JD2ResourceManager::get_jd2_resource_manager_instance());
+		jd2rm->clear();
+
 		std::string xmlfile =
 			"<JD2ResourceManagerJobInputter>\n"
 			"  <Jobs>\n"
@@ -365,6 +415,10 @@ public:
 
 	}
 	void test_JD2ResourceManagerJobInputter_boolean_option_read_error() {
+		JD2ResourceManager * jd2rm(
+			JD2ResourceManager::get_jd2_resource_manager_instance());
+		jd2rm->clear();
+
 		std::string xmlfile =
 			"<JD2ResourceManagerJobInputter>\n"
 			"  <Jobs>\n"
@@ -396,6 +450,10 @@ public:
 	}
 
 	void test_JD2ResourceManagerJobInputter_nonexistant_option_read_error() {
+		JD2ResourceManager * jd2rm(
+			JD2ResourceManager::get_jd2_resource_manager_instance());
+		jd2rm->clear();
+
 		std::string xmlfile =
 			"<JD2ResourceManagerJobInputter>\n"
 			"  <Jobs>\n"
@@ -425,6 +483,10 @@ public:
 	}
 
 	void test_JD2ResourceManagerJobInputter_nonexistant_option_read_error2() {
+		JD2ResourceManager * jd2rm(
+			JD2ResourceManager::get_jd2_resource_manager_instance());
+		jd2rm->clear();
+
 		std::string xmlfile =
 			"<JD2ResourceManagerJobInputter>\n"
 			"  <Jobs>\n"
