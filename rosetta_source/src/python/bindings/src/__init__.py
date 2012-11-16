@@ -352,6 +352,10 @@ def Set(list_in):
     """Creates a Vector1 object, deducing type from the given list."""
     if all([isinstance(x, int) for x in list_in]):
         t = utility.set_int
+    elif all([isinstance(x, float) or isinstance(x, int) for x in list_in]):
+        t = utility.set_double
+    elif all([isinstance(x, str) for x in list_in]):
+        t = utility.set_string
     else:
         raise Exception('Set: attemting to create vector of unknow type ' +
                         'or mixed type vector init_list = ' + str(list_in))
