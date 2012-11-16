@@ -12,6 +12,12 @@
 
 
 from rosetta import *
+from rosetta.protocols.analysis import *
+from rosetta.protocols.vip import *
+import tkMessageBox
+import tkSimpleDialog
+import tkFileDialog
+import time
 import math
 import loops as loop_tools
 
@@ -78,7 +84,109 @@ def readFASC(fileName):
                 x = x+2
     return fascData
         
+#### Analyze Movers ####
 
+def analyze_packing(p):
+    pack_mover = PackStatMover()
+    print "\nSee the paper on RosettaHoles to find out more about this statistic (Protein Sci. 2009 Jan;18(1):229-39.)"
+    pack_mover.apply(p)
+
+def analyze_interface(p, scorefxn):
+    print "Analyzing Interface.  "
+    print "\nNo references are directly associated with this protocol. It was used with Documentation for AnchoredDesign application (see that app's documentation) and CAPRI21 interface descrimination. (Steven Lewis)"
+    print "The Mover will seperate chains defined in the interface to calculate energy differences.  Repacking is recommended."
+    chains = ""
+    if (p.conformation().num_chains()==2):
+        pass
+    else:
+        print "std::set not in python.  Returning for now."
+        chains = tkSimpleDialog.askstring(title = "-fixedchains", prompt = "Please input chains to keep fixed  - seperated by a space")
+        chains.upper()
+        if (chains):
+            chains = chains.split()
+        else:return
+        
+    pack_together = tkMessageBox.askyesno(message="rePack before separation")
+    pack_separated = tkMessageBox.askyesno(message="rePack after separation (Recommended)")
+
+    if (p.conformation().num_chains()==2):
+        interface_mover = InterfaceAnalyzerMover(1, True, scorefxn, False, pack_together, pack_separated)
+        interface_mover.apply(p)
+    
+    else:
+        chain_ids = []
+        #Get ChainIDs
+        for chain in chains:
+            for i in range(1, p.total_residue()+1):
+                if (p.pdb_info().chain( i ) == chain):
+                    chain_ids.append( p.chain(i))
+                    break
+        
+        #Pass in the set.
+        interface_mover = InterfaceAnalyzerMover(set(chain_ids), True, scorefxn, False, pack_together, pack_separated)
+        interface_mover.apply(p)
+        
+def analyze_loops(p, loops_as_strings):
+    """
+    Uses AnalyzeLoopMover to pring loop information.
+    """
+    
+    if not loops_as_strings: return
+    loops_object = loop_tools.InitializeLoops(p, loops_as_strings)
+    loop_mover = LoopAnalyzerMover(loops_object, True)
+    loop_mover.apply(p)
+
+def analyze_vip(p, scorefxn, current_directory):
+    """
+    Uses VIP mover to get Mutational information.
+    Should be threaded, which will be added soon.
+    """
+    vip_mover = VIP_Mover()
+    vip_mover.set_initial_pose(p)
+    old_energy = scorefxn(p)
+    print "\nThis is going to take some time...."
+    print "This code uses the RosettaHoles approach to identify problematic buried cavities, and suggests a set of mutations that are predicted to improve stability as determined by improvements to the RosettaHoles and Rosetta fullatom energy scores."
+    print "NOTE: For full options, please see the Rosetta application."
+    print "Please see Borgo, B., Havranek, J.J. (2012), 'Automated selection of stabilizing mutations in designed and natural proteins', Proc. Natl. Acad. Sci. USA, v.109(5) pp.1494-99."
+    time.sleep(6)
+    if (tkMessageBox.askyesno(message="Continue?")):
+        pass
+    else:
+        return
+    cycles = tkSimpleDialog.askinteger(title = "Cycles", prompt="Please enter max cycles", initialvalue=rosetta.core.get_integer_option('cp:ncycles'))
+    
+    # Rewritten in python From VIP.cc so the same behavior is met.  Just an interface through PyRosetta to the application code.
+    not_finished=True
+    improved = False
+    i=1
+    while (not_finished):
+
+        vip_mover.apply()
+        out = vip_mover.get_final_pose()
+        print "Comparing new energy " + repr(scorefxn(out)) + " with old energy " + repr(old_energy)
+        if (old_energy>scorefxn(out)):
+            improved = True
+        else:
+            improved = False
+            
+        if(improved):
+            for j in range(1, p.total_residue()+1):
+                if( out.residue(j).name() != p.residue(j).name() ):
+                    position = out.pdb_info().number(j)
+                    pdb_chain = out.pdb_info().chain(j)
+                    print "Accepting mutation at position "+repr(pdb_position)+" chain "+pdb_chain +" from " +p.residue(j).name() +" to " +out.residue(j).name()
+            old_energy = scorefxn(out)
+        
+        i+=1
+        if cycles==0:not_finished=improved
+        else:not_finished=(i<=cycles)
+    
+    
+    if (tkMessageBox.askyesno(message="Output PDB?")):
+        filename = tkFileDialog.asksaveasfilename(initialdir=current_directory)
+        if not filename: return
+        out.dump_pdb(filename)
+        print "Output PDB Saved..."
         
 #### Rotamers ####
     """

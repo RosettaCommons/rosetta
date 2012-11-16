@@ -32,17 +32,14 @@ class highRes_Loop_Modeling:
         ft.clear()
         #ft.simple_tree(self.posetotal_residue())
         print len(loops_as_string_array)
-        ft, movemap, loopsLis=tools.loops.initLoops().InitializeLoops(p, loops_as_string_array, ft, movemap)
-        loops = Loops()
-        for loo in loopsLis:
-            loops.add_loop(loo)
+        ft, movemap, loops_object=tools.loops.initLoops().InitializeLoops(p, loops_as_string_array, ft, movemap)
         print "Fold Tree Correct? " + repr(ft.check_fold_tree())
         self.posefold_tree(ft)
         score = create_score_function_ws_patch('standard', 'score12')
         ob=int(ob); rounds=int(rounds)            
         if ob == 1:
             self.obs.add_observer(self.pose)
-        loop_refine = LoopMover_Refine_CCD(loops)
+        loop_refine = LoopMover_Refine_CCD(loops_object)
         loop_refine.set_scorefxn(score)
         print self.score_object.score(self.pose)
         for i in range(1, rounds+1):    
@@ -65,13 +62,11 @@ class highRes_Loop_Modeling:
         ft.clear()
         #ft.simple_tree(self.posetotal_residue())
         print len(loops_as_string_array)
-        ft, movemap, loopsLis=tools.loops.initLoops().InitializeLoops(p, loops_as_string_array, ft, movemap)
-        loops = Loops()
-        for loo in loopsLis:
-            loops.add_loop(loo)
+        ft, movemap, loops_object=tools.loops.initLoops().InitializeLoops(p, loops_as_string_array, ft, movemap)
+
         print "Fold Tree Correct? " + repr(ft.check_fold_tree())
         self.posefold_tree(ft)
-        loop_refine = LoopMover_Refine_KIC(loops)
+        loop_refine = LoopMover_Refine_KIC(loops_object)
         loop_refine.set_scorefxn(score)
         for i in range(1, rounds+1):    
             loop_refine.apply(self.pose)

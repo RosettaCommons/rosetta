@@ -10,19 +10,18 @@
 ## @brief  Main window for the toolkit.  
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
-import sys
-
-import tkFont
 
 
-#Tk 
+
+#Tk Imports
 from Tkinter import *
 from Tkinter import Frame as FrameTk
 import tkFileDialog
 import tkMessageBox
 import tkSimpleDialog
+import tkFont
 
-#Python
+#Python Imports
 from os import listdir
 from os import getcwd
 from shutil import copy
@@ -32,14 +31,14 @@ from os import path
 from os import system
 import glob
 import signal
+import sys
 
-#Rosetta
+#Rosetta Imports
 from rosetta import *
 from modules import tools
 import functools
 
-#Toolkit
-
+#Toolkit Imports
 from window_main.InputFrame import *
 from window_main.menu import *
 from window_main.OutputFrame import *
@@ -50,6 +49,8 @@ from window_modules.pymol_integration.PyMOL import AdvancedPyMOL
 from window_modules.scorefunction.ScoreFxnControl import ScoreFxn
 from window_modules.full_control.FullControlWindow import FullControlWindow
 
+
+
 def location():
    """
    Allows the script to be self-aware of it's path.
@@ -59,8 +60,6 @@ def location():
    p = os.path.abspath(__file__)
    pathSP = os.path.split(p)
    return pathSP
-
-
 sys.path.append(location()[0]); #Allows all Window_Modules to use Modules.
 
 
@@ -90,8 +89,16 @@ class main_window:
       outfont = tkFont.Font(size=12)
       self.output_textbox= Text(self.output_frame,wrap="word", height=7,width=103,font = outfont)
       
-      sys.stdout = self; #Set stdout to be redirected to textbox using the write function override.
+      self.old_stdout = sys.stdout
+      self.terminal_output = IntVar()
+      self.terminal_output.trace_variable('w', self.output_tracer)
+      self.terminal_output.set(0)
       
+   def redirect_stdout_to_textbox(self):
+      sys.stdout = self; #Set stdout to be redirected to textbox using the write function override.
+   
+   def redirect_stdout_to_default(self):
+      sys.stdout = self.old_stdout
       
    def write(self, text):
       self.output_textbox.insert(1.0, text)
@@ -119,7 +126,7 @@ class main_window:
       self.output_class = OutputFrame(self._tk_, self)
       self.outdir = self.output_class.outdir
       self.outname = self.output_class.outname
-      
+
       
    def _init_protocol_variables(self):
       self.protocol_class = QuickProtocolsFrame(self._tk_, self, bd=2, relief=RAISED)
@@ -170,18 +177,27 @@ class main_window:
       #self.output_textbox.pack(side=BOTTOM, padx=3, pady=3)
       #self.output_frame.pack(side=BOTTOM, padx=3, pady=3)
       """
+   def output_tracer(self, name, index, mode):
+      """
+      Controls where stdout goes.  Textbox or Terminal.
+      Does not override Tracer for now.
+      """
       
+      varvalue = self.terminal_output.get()
+      
+      if (varvalue):
+         self.redirect_stdout_to_default()
+      else:
+         self.redirect_stdout_to_textbox()
       
 class MainTracer(rosetta.basic.PyTracer):
    def __init__(self, textbox):
         rosetta.basic.PyTracer.__init__(self)
-        self.textbox=textbox
+        self.textbox = textbox
    def output_callback(self, s):
       s = "  "+s
       self.textbox.insert(1.0, s)
       #print s
-   def setTextBox(textbox):
-      self.textbox = textbox
    
       
 

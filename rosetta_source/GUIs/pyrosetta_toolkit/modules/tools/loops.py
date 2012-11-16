@@ -177,10 +177,10 @@ def return_rosetta_Loop(p, loop_string):
 
 def InitializeLoops( p, loops_as_strings, ft=0, movemap=0):
     """
-    DEPRECATED? Returns loop information giving a list filled with loops, a movemap, and a new foldtree to apply
+    Returns loop information giving a Loops object, a movemap, and a new foldtree to apply
     """
     begin = 1
-    loopsLis = []
+    loops_object = Loops()
     i =1
     for x in loops_as_strings:
         LoopFull = x.split(":")
@@ -202,7 +202,7 @@ def InitializeLoops( p, loops_as_strings, ft=0, movemap=0):
             end=p.pdb_info().pdb2pose(LoopFull[2], int(LoopFull[1]));
             cut = start+((end-start)/2)
             loo = Loop(start, end, cut)
-            loopsLis.append(loo)
+            loops_object.add_loop(loo)
             #ft.new_jump(start-2, end+2, cut)
             if ft!=0:
                 if i ==1:
@@ -218,13 +218,13 @@ def InitializeLoops( p, loops_as_strings, ft=0, movemap=0):
         if movemap !=0:
             movemap = self.loopMovemap(p, movemap, loops_as_strings)
     if ft ==0 and movemap==0:
-        return loopsLis
+        return loops_object
     elif ft ==0 and movemap!=0:
-        return(movemap, loopsLis)
+        return(movemap, loops_object)
     elif ft!=0 and movemap ==0:
-        return(ft, loopsLis)
+        return(ft, loops_object)
     else:
-        return(ft, movemap, loopsLis)
+        return(ft, movemap, loops_object)
 #### Random Loop Tools ####
 
 

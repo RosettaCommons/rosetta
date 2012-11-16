@@ -732,7 +732,7 @@ void InterfaceAnalyzerMover::report_data(){
 		//T(posename_base_) << "AVG HBOND EXPOSURE RATIO: " << hbond_exposure_ratio_ << std::endl; does not help
 		//T(posename_base_) << "HBOND SASA / INTERFACE dSASA: " << total_hb_sasa_ / interface_delta_sasa_ << std::endl;
 		T(posename_base_) << "HBOND ENERGY: " << total_hb_E_ << std::endl;
-		T(posename_base_) << "HBOND ENERGY/ SEPARATED INTERAFCE ENERGY: " << total_hb_E_ / separated_interface_energy_ << std::endl;
+		T(posename_base_) << "HBOND ENERGY/ SEPARATED INTERFACE ENERGY: " << total_hb_E_ / separated_interface_energy_ << std::endl;
 		if (compute_packstat_)
 			T(posename_base_) << "INTERFACE PACK STAT: " << interface_packstat_ << std::endl;
 		if (compute_interface_sc_)

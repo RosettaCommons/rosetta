@@ -200,7 +200,7 @@ def pose_from_pubchem( cid , name , temporary = True ):
     return pose
 
 # returns a pose containing a ligand
-def pose_from_params( filename , params_list )
+def pose_from_params( filename , params_list ):
     res_set = generate_nonstandard_residue_set( params_list )
     pose = Pose()
     pose_from_pdb( pose , res_set , filename )

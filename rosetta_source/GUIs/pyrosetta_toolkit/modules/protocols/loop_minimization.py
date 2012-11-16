@@ -155,9 +155,7 @@ class Loop_Min:
         ft = self.pose.fold_tree(); ft_o = FoldTree()
         ft_o.assign(ft)
         ft.clear()
-        ft, movemap, loopsLis=loop_tools.InitializeLoops(self.pose, loops_as_string_array, ft, movemap)
-        for loo in loopsLis:
-            loops.add_loop(loo)
+        ft, movemap, loops_object=loop_tools.InitializeLoops(self.pose, loops_as_string_array, ft, movemap)
         print ft
         print "Fold Tree Correct? " + repr(ft.check_fold_tree())
         self.pose.fold_tree(ft)
@@ -165,8 +163,8 @@ class Loop_Min:
         if self.score_object.score ==0:
             self.score_object.score = create_self.score_object.score_function_ws_patch('standard', 'self.score_object.score12')
         self.score_object.score.set_weight(chainbreak, 100); #Taking No Chances!
-        print loops
-        ref=LoopMover_Refine_Backrub(loops, self.score_object.score)
+        print loops_object
+        ref=LoopMover_Refine_Backrub(loops_object, self.score_object.score)
         print self.score_object.score(self.pose)
         for i in range(1, rounds+1):
             print "Rounds: "+repr(i)
