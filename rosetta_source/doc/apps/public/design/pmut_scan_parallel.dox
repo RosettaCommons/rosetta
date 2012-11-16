@@ -128,8 +128,7 @@ By default, fixbb uses the standard annealer used in [Kuhlman et al. Science, 20
 
 To run a scan for stabilizing <b>single (point) mutants</b> on the PDB 1ABC:
 @verbatim
-[mpirun -np 100] ~/rosettabin/pmut_scan_parallel.macosgccrelease -database ~/rosettadb -s 1ABC.pdb.gz -ex1 -ex2 -extrachi_cutoff 1 -use_input_sc 
--ignore_unrecognized_res -no_his_his_pairE -multi_cool_annealer 10 -mute basic core
+[mpirun -np 100] ~/rosettabin/pmut_scan_parallel.macosgccrelease -database ~/rosettadb -s 1ABC.pdb.gz -ex1 -ex2 -extrachi_cutoff 1 -use_input_sc -ignore_unrecognized_res -no_his_his_pairE -multi_cool_annealer 10 -mute basic core
 @endverbatim
 
 To run a scan for stabilizing <b>double</b> mutants on the PDB 1ABC:
@@ -152,6 +151,23 @@ To score a pre-determined list of mutants, create output structures for each of 
 [mpirun -np 100] ~/rosettabin/pmut_scan_parallel.macosgccrelease -database ~/rosettadb -s 1ABC.pdb.gz -mutants_list mutants.txt -output_mutant_structures -ex1 -ex1:level 3 -ex2 -ex2:level 3 -ex3 -extrachi_cutoff 1 -use_input_sc -ignore_unrecognized_res -no_his_his_pairE -multi_cool_annealer 10 -mute basic core
 @endverbatim
 
+@section mutant_list_file_format Mutant List file format
+@li lines starting with # are ignored
+@li format is "chain current_seq resnum[icode] new_seq"
+@li repeat that format as necessary for multiple mutants
+@li each line is its own mutant
+
+Examples:
+@verbatim
+# a single mutant
+A N 1 G
+
+# a double mutant
+A N 1 G A S 13 N
+
+# a double mutant with insertion codes on the residue numbers
+A N 1E G A S 13G N
+@endverbatim
 
 @section outputs Expected Outputs
 
