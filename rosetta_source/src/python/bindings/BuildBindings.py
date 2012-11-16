@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # :noTabs=true: :collapseFolds=10:
 
 # (c) Copyright Rosetta Commons Member Institutions.

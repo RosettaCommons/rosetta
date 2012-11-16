@@ -348,6 +348,19 @@ def Vector1(list_in):
     return v
 
 
+def Set(list_in):
+    """Creates a Vector1 object, deducing type from the given list."""
+    if all([isinstance(x, int) for x in list_in]):
+        t = utility.set_int
+    else:
+        raise Exception('Set: attemting to create vector of unknow type ' +
+                        'or mixed type vector init_list = ' + str(list_in))
+
+    s = t()
+    for i in list_in: s.add(i)
+    return s
+
+
 # New methods.
 def generate_nonstandard_residue_set(params_list):
     """

@@ -54,4 +54,9 @@ void __utility_by_hand_ending__()
     ;
 
     wrap_std_map< std::map<int, int> >("map_int_int");
+
+    //std::set<int> s_int;  set_repr(s_int);
+    wrap_std_set< int, CP_CNCR, CP_CCR >("set_int");
+    wrap_std_set< core::Size, CP_CNCR, CP_CCR >("set_Size");
+    wrap_std_set< core::SSize, CP_CNCR, CP_CCR >("set_SSize");
 }

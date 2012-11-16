@@ -46,6 +46,7 @@
 #include "utility/exit.hh"
 
 #include <ostream>
+#include <set>
 
 
 namespace bp = boost::python;
@@ -184,6 +185,45 @@ void wrap_std_map(char * name)
 	bp::class_< T >(name)
 		.def( bp::map_indexing_suite< T >())
 		;
+}
+
+
+// std::set --------------------------------------------------------------------------------------------------------------------
+template< class T > void add_to_set(std::set<T> & s, const T & v) { s.insert(v); }
+template< class T > void erase_from_set(std::set<T> & s, const T & v) { s.erase(v); }
+
+template< class TT > inline typename std::set<TT>::iterator set_begin( std::set<TT> & v ) { return v.begin(); }
+template< class TT > inline typename std::set<TT>::iterator set_end  ( std::set<TT> & v ) { return v.end(); }
+
+template <class T>
+std::string set_repr(std::set<T> const & s)
+{
+	typedef std::set<T> Stype;
+	typedef typename std::set<T>::iterator Stype_iterator;
+
+    std::ostringstream os;
+    os << "<set>[";
+    for(Stype_iterator p=s.begin(); p!=s.end(); ++p) os << *p << ", ";
+    os << "]";
+    return os.str();
+}
+
+
+template< class Htype, class CP, class CP_const>
+void wrap_std_set(char * name)
+{
+	typedef std::set<Htype> Ttype;
+	bp::class_<Ttype>(name)
+	.def( bp::init< >() )
+	.def( bp::init< std::set<Htype> const & >() )
+
+	.def("__contains__", &std::set<Htype>::count )
+	.def("add", &add_to_set<Htype> )
+	.def("erase",  &erase_from_set<Htype> )
+	.def("__len__",  &std::set<Htype>::size )
+	.def("__iter__", bp::range(&set_begin<Htype>, &set_end<Htype> ) )
+	.def("__str__", &set_repr<Htype> )
+	;
 }
 
 template< class Type >
