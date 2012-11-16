@@ -81,7 +81,7 @@ public:
 		scorefxn0->set_weight( core::scoring::cart_bonded, 0.1 );
 		core::scoring::methods::EnergyMethodOptions options0(scorefxn0->energy_method_options());
 		options0.set_cartesian_bonded_linear(true);
-		options0.set_cartesian_bonded_parameters(10,1,0,0);
+		options0.set_cartesian_bonded_parameters(10,1,0,0,0);
 		scorefxn0->set_energy_method_options(options0);
 		minimizer.run( pose, mm, *scorefxn0, minoptions );
 
