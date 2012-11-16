@@ -405,8 +405,6 @@ JD2ResourceManagerJobInputter::parse_jobs_table_tag(
 		"    job_name, 'Resource', desc, resource_tag\n"
 		"    job_name, 'Option', option_key, option_value\n"
 		"\n"
-		" * Each job should have a 'startstruct' resource that is used as the primary input\n"
-		"\n"
 		" * desc: A job-agnostic description for a resource like 'native' or 'symm_data'\n"
 		"   that can be referenced in the protocol.\n"
 		"\n"
@@ -430,7 +428,6 @@ JD2ResourceManagerJobInputter::parse_jobs_table_tag(
 
 	Size row_number(0);
 	string previous_job_name("");
-	bool startstruct_found(false);
 	string input_tag;
 	std::map< string, string > resources_for_job(generic_resources_for_job);
 	JobOptionsOP job_options = new JobOptions(generic_job_options);
@@ -443,31 +440,15 @@ JD2ResourceManagerJobInputter::parse_jobs_table_tag(
 		if(row_number != 1 && previous_job_name != job_name){
 			// we've just finished collecting information for the job,
 			// record job and reset the invariants
-			if(!startstruct_found){
-				stringstream err_msg;
-				err_msg
-					<< "No 'startstruct' resource was provided "
-					<< "for Job with name '" << previous_job_name << "'" << endl
-					<< "The JobsTable tag requires a 'sql_command' tag" << endl
-					<< job_table_schema << endl
-					<< "SQL query:" << endl
-					<< sql_command << endl;
-					throw EXCN_Msg_Exception(err_msg.str());
-			}
-
 			record_job(previous_job_name, resources_for_job, job_options, jobs);
 			resources_for_job = generic_resources_for_job;
 			job_options = new JobOptions(generic_job_options);
-			startstruct_found = false;
 			previous_job_name = job_name;
 
 		}
 
 
 		if(resource_type == "Resource"){
-			if(key == "startstruct") {
-				startstruct_found = true;
-			}
 			resources_for_job[ key ] = value;
 		} else if (resource_type == "Option"){
 			parse_options_name_and_value(key, value, job_options);
@@ -499,27 +480,6 @@ JD2ResourceManagerJobInputter::parse_jobs_table_tag(
 
 	if(row_number == 0){
 		tr.Warning << "JobsTable returned no rows." << endl;
-	}
-
-	if(!startstruct_found){
-		stringstream err_msg;
-		err_msg
-			<< "No 'startstruct' resource was provided "
-			<< "for Job with name '" << previous_job_name << "'" << endl
-			<< "The JobsTable tag requires a 'sql_command' tag" << endl
-			<< job_table_schema << endl
-			<< endl
-			<< "SQL query:" << endl
-			<< sql_command << endl
-			<< endl
-			<< "Resources:" << endl;
-		for(std::map<string,string>::const_iterator i=resources_for_job.begin(), ie=resources_for_job.end(); i != ie; ++i){
-			err_msg << "\t '" << i->first << "' <- '" << i->second << "'" << endl;
-		}
-		err_msg
-			<< "Options:" << endl
-			<< job_options << endl;
-		throw EXCN_Msg_Exception(err_msg.str());
 	}
 
 	record_job(previous_job_name, resources_for_job, job_options, jobs);

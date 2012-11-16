@@ -75,12 +75,12 @@ ResidueCountFilter::parse_my_tag(
 	core::pose::Pose const &
 ) {
 	if(tag->hasOption("max_residue_count")){
-		enable_max_residue_count();
+		enable_max_residue_count(true);
 		max_residue_count(tag->getOption< core::Size >("max_residue_count"));
 	}
 
 	if(tag->hasOption("min_residue_count")){
-		enable_min_residue_count();
+		enable_min_residue_count(true);
 		min_residue_count(tag->getOption< core::Size >("min_residue_count"));
 	}
 }
