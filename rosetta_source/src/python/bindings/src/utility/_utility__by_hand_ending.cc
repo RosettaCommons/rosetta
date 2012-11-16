@@ -54,12 +54,15 @@ void __utility_by_hand_ending__()
     ;
 
     wrap_std_map< std::map<int, int> >("map_int_int");
+    wrap_std_map< std::map<std::string, core::Real> >("map_string_Real");
+    wrap_std_map< std::map<std::string, int> >("map_string_int");
 
     //std::set<int> s_int;  set_repr(s_int);
     wrap_std_set< int,           CP_CNCR, CP_CCR >("set_int");
     wrap_std_set< unsigned int,  CP_CNCR, CP_CCR >("set_uint");
     wrap_std_set< unsigned long, CP_CNCR, CP_CCR >("set_ulong");
     wrap_std_set< double,        CP_CNCR, CP_CCR >("set_double");
+    wrap_std_set< core::Real,    CP_CNCR, CP_CCR >("set_Real");
     wrap_std_set< char,          CP_CNCR, CP_CCR >("set_char");
     wrap_std_set< std::string,   CP_CNCR, CP_CCR >("set_string");
     wrap_std_set< core::Size,    CP_CNCR, CP_CCR >("set_Size");
