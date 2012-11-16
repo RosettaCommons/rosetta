@@ -15,6 +15,9 @@
 #Disastrous if you forget this - do not want tons of repeated structures out!
 -jd2:no_output
 
+#Prevents wasted memory from already-processed structures
+-jd2:delete_old_poses
+
 #settings for AnchorFinder
 -window_size 5
 -loopness 1
