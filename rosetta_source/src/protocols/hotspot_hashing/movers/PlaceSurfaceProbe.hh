@@ -18,13 +18,21 @@
 // Project Headers
 #include <string>
 
-#include <protocols/moves/Mover.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
 
-#include <protocols/hotspot_hashing/movers/PlaceSurfaceProbe.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
+#include <core/kinematics/Stub.fwd.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/scoring/ScoreFunction.hh>
+
+#include <protocols/hotspot_hashing/SearchPattern.fwd.hh>
 #include <protocols/hotspot_hashing/movers/PlaceProbeMover.hh>
+#include <protocols/hotspot_hashing/movers/PlaceSurfaceProbe.fwd.hh>
+#include <protocols/moves/DataMap.fwd.hh>
+#include <protocols/moves/Mover.hh>
+
 
 // Unit headers
 

@@ -39,7 +39,7 @@
 namespace protocols {
 namespace hotspot_hashing {
 
-static basic::Tracer tr( "protocols.hotspot_hashing.PlaceMinimizeSearch" );
+static basic::Tracer tr( "protocols.hotspot_hashing.StubGenerator" );
 
 core::conformation::ResidueOP StubGenerator::getStubByName( std::string name )
 {

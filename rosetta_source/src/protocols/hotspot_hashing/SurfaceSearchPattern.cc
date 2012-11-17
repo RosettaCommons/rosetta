@@ -35,8 +35,6 @@
 #include <protocols/hotspot_hashing/SearchPattern.hh>
 #include <protocols/hotspot_hashing/SurfaceSearchPattern.hh>
 
-#include <protocols/hotspot_hashing/PlaceMinimizeSearch.hh>
-
 namespace protocols {
 namespace hotspot_hashing {
 

@@ -36,15 +36,9 @@ sources = {
   "SICSearchPattern",
   "SurfaceSearchPattern",
   "SearchPatternRotSetOp",
-  "MinimizingPatternSearch",
-  "PlaceMinimizeSearch",
-],
-"protocols/hotspot_hashing/filters": [
-  "LSMGridProbe",
 ],
 "protocols/hotspot_hashing/movers": [
   "PlaceProbeMover",
-  "PlaceLSMProbe",
   "PlaceSurfaceProbe",
 ],
 "protocols/match": [

@@ -31,8 +31,6 @@
 #include <protocols/fldsgn/filters/SecondaryStructureFilterCreator.hh>
 #include <protocols/fldsgn/filters/SheetTopologyFilterCreator.hh>
 
-#include <protocols/hotspot_hashing/filters/LSMGridProbeFilterCreator.hh>
-
 #include <protocols/ligand_docking/AtomCountFilterCreator.hh>
 #include <protocols/ligand_docking/ChainExistsFilterCreator.hh>
 #include <protocols/ligand_docking/CompleteConnectionsFilterCreator.hh>

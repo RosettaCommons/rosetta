@@ -38,7 +38,6 @@
 #include <protocols/hotspot_hashing/SearchPattern.hh>
 #include <protocols/hotspot_hashing/SurfaceSearchPattern.hh>
 #include <protocols/hotspot_hashing/SICSearchPattern.hh>
-#include <protocols/hotspot_hashing/PlaceMinimizeSearch.hh>
 
 #include <protocols/hotspot_hashing/StubGenerator.hh>
 

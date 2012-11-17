@@ -81,7 +81,6 @@ static MoverRegistrator< forge::remodel::RemodelMoverCreator > reg_RemodelMoverC
 
 static MoverRegistrator< idealize::IdealizeMoverCreator > reg_IdealizeMoverCreator;
 
-static MoverRegistrator< hotspot_hashing::movers::PlaceLSMProbeCreator> reg_PlaceLSMProbeCreator;
 static MoverRegistrator< hotspot_hashing::movers::PlaceSurfaceProbeCreator> reg_PlaceSurfaceProbeCreator;
 
 static MoverRegistrator< ligand_docking::AddHydrogensCreator > reg_AddHydrogensCreator;

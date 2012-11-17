@@ -76,7 +76,6 @@
 
 #include <protocols/idealize/IdealizeMoverCreator.hh>
 
-#include <protocols/hotspot_hashing/movers/PlaceLSMProbeCreator.hh>
 #include <protocols/hotspot_hashing/movers/PlaceSurfaceProbeCreator.hh>
 
 #include <protocols/ligand_docking/AddHydrogensCreator.hh>

@@ -31,6 +31,8 @@
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/RT.hh>
 
+#include <protocols/hotspot_hashing/SearchPattern.fwd.hh>
+
 namespace protocols {
 namespace hotspot_hashing {
 
@@ -129,9 +131,6 @@ class SearchPattern : public utility::pointer::ReferenceCount
 	public:
 		virtual utility::vector1<core::kinematics::Stub> Searchpoints() = 0;
 };
-
-typedef utility::pointer::owning_ptr<SearchPattern>  SearchPatternOP;
-typedef utility::pointer::owning_ptr<SearchPattern const>  SearchPatternCOP;
 
 class ConstPattern : public SearchPattern
 {
