@@ -10,7 +10,7 @@
 /// @file   core/pose/util.cc
 /// @brief  Pose class utilities
 /// @author Phil Bradley
-/// @author Modified by Sergey Lyskov, Rhiju Das
+/// @author Modified by Sergey Lyskov, Rhiju Das, Steven Lewis
 
 // Unit headers
 #include <core/pose/util.hh>
@@ -34,6 +34,7 @@
 #include <utility/io/izstream.hh>
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
+#include <utility/excn/Exceptions.hh>
 
 // Project headers
 // AUTO-REMOVED #include <core/chemical/AtomType.hh>
@@ -920,7 +921,7 @@ bool is_ideal_position(
 }
 
 ///@brief this function removes all residues from the pose which are not protein residues.  This removal includes, but is not limited to, metals, DNA, RNA, and ligands.  It will NOT remove ligands which are canonical residues (for example, if a protein binds an alanine monomer, the monomer will be untouched).
-void remove_nonprotein_residues( core::pose::Pose & pose)
+void remove_nonprotein_residues( core::pose::Pose & pose )
 {
 	core::Size i(1);
 	while(i <= pose.total_residue()) {
@@ -930,8 +931,12 @@ void remove_nonprotein_residues( core::pose::Pose & pose)
 }
 
 ///@brief this function removes all residues with both UPPER and LOWER terminus types.  This is intended for removing ligands that are canonical residues.
-void remove_ligand_canonical_residues( core::pose::Pose & pose)
+void remove_ligand_canonical_residues( core::pose::Pose & pose )
 {
+	if(pose.total_residue() == 1) { //if we have only one residue, it cannot be removed, and this is going to crash
+		throw utility::excn::EXCN_Msg_Exception("Pose utility remove_ligand_canonical_residues: I have received a pose with only one residue but cannot delete the last residue of the pose.");
+	}
+
 	core::Size i(1);
 	while(i <= pose.total_residue()) {
 		if(pose.residue_type(i).is_upper_terminus() && pose.residue_type(i).is_lower_terminus())

@@ -250,10 +250,10 @@ bool is_ideal_position(
 );
 
 ///@brief this function removes all residues from the pose which are not protein residues.  This removal includes, but is not limited to, metals, DNA, RNA, and ligands.  It will NOT remove ligands which are canonical residues (for example, if a protein binds an alanine monomer, the monomer will be untouched).
-void remove_nonprotein_residues( core::pose::Pose & pose);
+void remove_nonprotein_residues( core::pose::Pose & pose );
 
 ///@brief this function removes all residues with both UPPER and LOWER terminus types.  This is intended for removing ligands that are canonical residues.
-void remove_ligand_canonical_residues( core::pose::Pose & pose);
+void remove_ligand_canonical_residues( core::pose::Pose & pose );
 
 ///@brief this function compares pose atom coordinates for equality; it is not the == operator because it does not compare all pose data.
 ///@author Steven Lewis smlewi@gmail.com
