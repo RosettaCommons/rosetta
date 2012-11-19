@@ -39,6 +39,8 @@ DeltaFilter::DeltaFilter() :
 	range_( 0.0 ),
 	lower_( false ),
 	upper_( true ),
+	reset_baseline_( false ),
+	new_baseline_( 0.0 ),
 	unbound_( false ),
 	relax_unbound_( false ),
 	jump_( 0 ),
@@ -97,6 +99,30 @@ DeltaFilter::baseline() const{
 	return baseline_;
 }
 
+core::Real
+DeltaFilter::new_baseline() const {
+	core::pose::Pose p( *reference_pose_ );
+	if(p.total_residue() == 0) { // If reference pose wasn't properly initialized, fast fail with interpretable error message
+		utility_exit_with_message("Reference pose used with DeltaFilter wasn't initialized properly!");
+	}
+	relax_mover()->apply( p );
+	unbind( p );
+	core::Real tmp_baseline = filter_->report_sm( p );
+	TR << "Setting new baseline to " << tmp_baseline << "." << std::endl;
+	return tmp_baseline;
+}
+
+void
+DeltaFilter::reference_pose( core::pose::PoseOP ref_pose )
+{
+	reference_pose_ = ref_pose;
+}
+
+void
+DeltaFilter::ref_baseline( core::Real const rb ){
+	ref_baseline_ = rb;
+}
+
 void
 DeltaFilter::baseline( core::Real const b ){
 	baseline_ = b;
@@ -133,6 +159,16 @@ DeltaFilter::upper() const{
 }
 
 void
+DeltaFilter::reset_baseline( bool const rs ){
+	reset_baseline_ = rs;
+}
+
+bool
+DeltaFilter::reset_baseline() const{
+	return( reset_baseline_ );
+}
+
+void
 DeltaFilter::filter( protocols::filters::FilterOP filter ){
 	filter_ = filter;
 }
@@ -166,8 +202,11 @@ DeltaFilter::compute( core::pose::Pose const & p ) const{
 	core::pose::Pose pose( p );
 	unbind( pose );
 	core::Real const filter_val( filter()->report_sm( pose ) );
-	TR<<"Filter "<<filter()->get_user_defined_name()<<" returns "<<filter_val<<". Baseline is "<<baseline()<<std::endl;
-	return( filter_val - baseline() );
+	core::Real current_baseline;
+	if(reset_baseline()) current_baseline = new_baseline();
+	else current_baseline = baseline();
+	TR<<"Filter "<<filter()->get_user_defined_name()<<" returns "<<filter_val<<". Baseline is "<<current_baseline<<std::endl;
+	return( filter_val - current_baseline );
 }
 
 core::Real
