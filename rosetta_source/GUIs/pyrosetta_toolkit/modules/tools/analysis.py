@@ -99,7 +99,6 @@ def analyze_interface(p, scorefxn):
     if (p.conformation().num_chains()==2):
         pass
     else:
-        print "std::set not in python.  Returning for now."
         chains = tkSimpleDialog.askstring(title = "-fixedchains", prompt = "Please input chains to keep fixed  - seperated by a space")
         chains.upper()
         if (chains):
@@ -123,7 +122,7 @@ def analyze_interface(p, scorefxn):
                     break
         
         #Pass in the set.
-        interface_mover = InterfaceAnalyzerMover(set(chain_ids), True, scorefxn, False, pack_together, pack_separated)
+        interface_mover = InterfaceAnalyzerMover(rosetta.Set(chain_ids), True, scorefxn, False, pack_together, pack_separated)
         interface_mover.apply(p)
         
 def analyze_loops(p, loops_as_strings):
