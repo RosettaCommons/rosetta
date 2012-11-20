@@ -307,7 +307,7 @@ PlaceProbeMover::StructureOutputMode PlaceProbeMover::parse_output_mode(std::str
 		TR.Error << "Invalid output mode specification: " << name << std::endl;
 		utility_exit_with_message("Invalid output mode specification: " + name);
 	}
-};
+}
 
 }
 }

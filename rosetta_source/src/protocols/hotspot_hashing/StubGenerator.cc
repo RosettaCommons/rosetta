@@ -67,7 +67,7 @@ void StubGenerator::placeResidueAtTransform( core::pose::Pose & pose, core::conf
   residuejumpindex = pose.num_jump();
 
   tr.Debug << "Placed residue at anchor location: " << pose.residue(residueindex).xyz("CA") << std::endl;
-};
+}
 
 void StubGenerator::placeResidueOnPose(core::pose::Pose & pose, core::conformation::ResidueCOP residue)
 {
@@ -113,7 +113,7 @@ void StubGenerator::placeResidueOnPose(core::pose::Pose & pose, core::conformati
 
 
   tr.Debug << "Appended residue on pose. Residue: " << pose.total_residue() << " Jump: " << pose.num_jump() << " Anchor atom: " << residue->atom_name(residue->nbr_atom()) << std::endl;
-};
+}
 
 void StubGenerator::moveIntoStubFrame( core::conformation::ResidueOP residue, core::kinematics::Stub transform )
 {

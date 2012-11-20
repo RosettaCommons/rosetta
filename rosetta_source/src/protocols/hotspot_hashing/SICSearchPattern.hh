@@ -39,7 +39,7 @@ namespace hotspot_hashing {
 class SICPatternAtTransform : public SearchPattern
 {
 	public:
-		const static core::Real default_displacement = 100;
+		const static core::Size default_displacement = 100;
 
 		SICPatternAtTransform(
 			core::pose::Pose const & source_pose,
