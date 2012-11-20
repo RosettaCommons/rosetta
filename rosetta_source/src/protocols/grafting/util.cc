@@ -149,7 +149,6 @@ insert_pose_into_pose(
 
 	//Set a fold tree.
 	core::kinematics::FoldTree new_tree = core::kinematics::remodel_fold_tree_to_account_for_insertion(original_scaffold_tree, insert_point, insert_length);
-	new_tree.add_edge(Edge(1, combined.total_residue(), Edge::PEPTIDE));
 	combined.fold_tree(new_tree);
 	return combined;
 }
