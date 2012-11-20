@@ -14,6 +14,7 @@
 -mute core.chemical 
 -mute protocols.jumping
 -mute core.scoring.dssp
+-mute core.io.pdb.file_data
 
 -frag3 input/boinc_aat286_03_05.200_v1_3.gz
 -frag9 input/boinc_aat286_09_05.200_v1_3.gz
