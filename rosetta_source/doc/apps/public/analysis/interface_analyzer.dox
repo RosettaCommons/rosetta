@@ -13,7 +13,7 @@
 @page InterfaceAnalyzer_doc Documentation for InterfaceAnalyzer application
 
 @section metadata Metadata
-Last updated 4/7/11 by Steven Lewis.  The PI is Brian Kuhlman, bkuhlman@email.unc.edu.
+Last updated 1/20/12 by Steven Lewis.  The PI is Brian Kuhlman, bkuhlman@email.unc.edu.
 
 @section code_demos Code and Demo
 InterfaceAnalyzer has a suite of integration test/demos at rosetta/rosetta_tests/integration/tests/InterfaceAnalyzer.  The application resides at rosetta/rosetta_source/src/apps/public/analysis/InterfaceAnalyzer.cc, and its mover at rosetta/rosetta_source/src/protocols/anchored_design/InterfaceAnalyzerMover.*
@@ -67,7 +67,7 @@ Describe the options your protocol uses.
 @li -use_resfile (bool) - warns the protocol to watch for the existence of a resfile if it is supposed to do any packing steps.  (This is normally signealed by the existance of the -resfile flag, but here the underlying InterfaceAnalyzerMover is not intended to use -resfile under normal circumstances, so a separate flag is needed.  You can still pass the resfile with -resfile.)  Note that resfile commands indicating design are ignored; InterfaceAnalzyer does repacking ONLY.
 @li -score:weights  weightsfile - weight set for the scorefunction, defaults to Score12
 @li -score:patch patchfile - patch file for the scorefunction, defaults to Score12
-@li -pose_metrics::inter_group_neighbors_calculator (real) - If using the multichain constructor (the -fixedchains option), this controls how far apart neighbors are detected - a residue is at the interface if it is within X angstroms of a residue in the other group; I think distances are determined by the nbr_atom position, which the residue params file defines as usually c-beta.
+@li -pose_metrics::inter_group_neighbors_cutoff (real) - If using the multichain constructor (the -fixedchains option), this controls how far apart neighbors are detected - a residue is at the interface if it is within X angstroms of a residue in the other group; I think distances are determined by the nbr_atom position, which the residue params file defines as usually c-beta.  Defaults to 10 Angstroms.
 @li -pose_metrics::interface_cutoff (real) - If detecting the interface between two chains, this sets the detection limit for neighbors.  A residue is at the interface if it is within X angstroms of a residue in the other group; I think distances are determined by the nbr_atom position, which the residue params file defines as usually c-beta.
 
 General Rosetta/JD2 options are accepted: in:file:s, in:file:l, in:file:silent for input; -database for the database, etc.
