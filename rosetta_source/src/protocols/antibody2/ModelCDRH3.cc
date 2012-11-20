@@ -38,7 +38,6 @@
 #include <protocols/antibody2/H3PerturbCCD.hh>
 #include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/H3CterInsert.hh>
-#include <protocols/antibody2/RefineCDRH1Centroid.hh>
 #include <core/pose/PDBInfo.hh>
 
 

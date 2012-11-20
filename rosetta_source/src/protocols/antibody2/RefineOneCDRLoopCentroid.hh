@@ -8,7 +8,7 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer, email:license@u.washington.edu
 
-/// @file protocols/antibody2/RefineCDRH1Centroid.hh
+/// @file protocols/antibody2/RefineOneCDRLoopCentroid.hh
 /// @brief Build a homology model of an antibody2
 /// @detailed
 ///
@@ -17,27 +17,20 @@
 
 
 
-#ifndef INCLUDED_protocols_antibody2_RefineCDRH1Centroid_hh
-#define INCLUDED_protocols_antibody2_RefineCDRH1Centroid_hh
+#ifndef INCLUDED_protocols_antibody2_RefineOneCDRLoopCentroid_hh
+#define INCLUDED_protocols_antibody2_RefineOneCDRLoopCentroid_hh
 
 
 #include <core/pose/Pose.hh>
-#include <core/pack/task/TaskFactory.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-
 #include <protocols/loops/Loops.hh>
-
 #include <protocols/simple_moves/MinMover.fwd.hh>
-#include <protocols/simple_moves/PackRotamersMover.fwd.hh>
-
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
-#include <protocols/moves/ChangeFoldTreeMover.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
-
 #include <protocols/antibody2/AntibodyInfo.hh>
-#include <protocols/antibody2/RefineCDRH1Centroid.fwd.hh>
+#include <protocols/antibody2/RefineOneCDRLoopCentroid.fwd.hh>
 
 
 
@@ -45,55 +38,64 @@ using namespace core;
 namespace protocols {
 namespace antibody2 {
 
-class RefineCDRH1Centroid: public moves::Mover {
+class RefineOneCDRLoopCentroid: public moves::Mover {
 
 
 public:
 
-    /// @brief default constructor
-	RefineCDRH1Centroid();
-
     /// @brief constructor with arguments
-    RefineCDRH1Centroid(AntibodyInfoOP antibody_info, AntibodyCDRNameEnum loop_name);
-
+    RefineOneCDRLoopCentroid(AntibodyInfoCOP antibody_info,
+							 AntibodyCDRNameEnum const & loop_name);
+	
+	RefineOneCDRLoopCentroid(AntibodyInfoCOP antibody_info,
+							 AntibodyCDRNameEnum const & loop_name,
+					 		core::scoring::ScoreFunctionCOP scorefxn );
+	
     /// @brief constructor with arguments
-    RefineCDRH1Centroid( loops::Loop a_cdr_loop);
+    RefineOneCDRLoopCentroid( loops::Loop const & a_cdr_loop);
+	
+	RefineOneCDRLoopCentroid( loops::Loop const & a_cdr_loop,
+							 core::scoring::ScoreFunctionCOP scorefxn );
 
     /// @brief default destructor
-	~RefineCDRH1Centroid();
+	~RefineOneCDRLoopCentroid();
     
-	void set_default();
-	virtual void apply( pose::Pose & pose_in );
+
+	virtual void apply( pose::Pose & pose );
+	
     virtual std::string get_name() const;
+	
 
+	void set_benchmark(bool const & setting){
+        benchmark_ = setting;
+    }
+	void set_snugfit(bool const & setting){
+        snug_fit_ = setting;
+    }
+	void set_refine_input_loop(bool const & setting){
+        refine_input_loop_ = setting;
+    }
+	
+	void set_score_function(core::scoring::ScoreFunctionCOP scorefxn);
 
-
+	
 private:
-    void init(loops::Loop a_cdr_loop);
-
-    void finalize_setup( core::pose::Pose & pose );
+	void set_default();
+    void finalize_setup( core::pose::Pose const & pose );
 	void loop_centroid_relax(
-                             pose::Pose & pose_in,
+                             pose::Pose & pose,
                              Size const loop_begin,
                              Size const loop_end );
-    
+	
+private:
     loops::Loop the_cdr_loop_;
     
     bool benchmark_;
-    scoring::ScoreFunctionOP lowres_scorefxn_;
-	/// @brief refine H3 only
-	bool antibody_refine_;
-    
-    /// @brief enable docking local refine of LH chains & simultaneous H3 min
 	bool snug_fit_;
-    
-    /// @brief just refine input loop
 	bool refine_input_loop_;
-    
+	scoring::ScoreFunctionOP lowres_scorefxn_;
 
 };
-
-
 
 
 
@@ -103,11 +105,5 @@ private:
 } // namespace protocols
 
 #endif
-
-
-
-
-
-
 
 

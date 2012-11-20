@@ -18,6 +18,7 @@
 
 
 #include <protocols/antibody2/RefineOneCDRLoop.hh>
+#include <protocols/antibody2/RefineOneCDRLoopCentroid.hh>
 #include <basic/Tracer.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -170,13 +171,18 @@ void RefineOneCDRLoop::apply(core::pose::Pose &pose){
         utility_exit_with_message("the resultions of the 'pose' and the 'scoring function' don't match!");
     }
     
-    
-    if( refine_mode_ == "legacy_refine_ccd" ){
-        H3RefineCCDOP legacy_refine_ccd = new H3RefineCCD(ab_info_, h3, scorefxn_);
-            legacy_refine_ccd -> pass_start_pose(start_pose_);
+	if(refine_mode_ == "legacy_centroid_refine_ccd"){
+		RefineOneCDRLoopCentroidOP legacy_centroid_refine_ccd = new RefineOneCDRLoopCentroid( ab_info_, cdr_loop_name_, scorefxn_ );
+		legacy_centroid_refine_ccd -> apply(pose);
+	}  //the legacy centroid_refine_ccd method
+	
+    else if( refine_mode_ == "legacy_refine_ccd" ){
+        H3RefineCCDOP legacy_refine_ccd = new H3RefineCCD(ab_info_, cdr_loop_name_, scorefxn_);
+		legacy_refine_ccd -> pass_start_pose(start_pose_);
+		if (!flank_relax_) { legacy_refine_ccd->turn_off_flank_relax();}
         legacy_refine_ccd -> apply(pose);
     }  // the legacy refine_ccd method
-    
+	
     else{
                 /// FIXME:   JQX this should be fixed by a simple loops object
         loops::Loop one_cdr_loop = ab_info_->get_CDR_loop(cdr_loop_name_);

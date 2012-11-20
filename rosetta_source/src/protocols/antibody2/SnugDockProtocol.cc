@@ -184,7 +184,7 @@ void SnugDockProtocol::init()
 	using basic::options::option;
 	using namespace basic::options::OptionKeys;
 	if ( option[ basic::options::OptionKeys::antibody::refine ].user() ) {
-		loop_refinement_method_  = option[ basic::options::OptionKeys::antibody::refine ]() ;
+		loop_refinement_method_  = option[ basic::options::OptionKeys::antibody::centroid_refine ]() ;
 	}
 	else{
 		loop_refinement_method_ = "refine_kic";

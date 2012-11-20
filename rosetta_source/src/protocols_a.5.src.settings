@@ -34,7 +34,7 @@ sources = {
 		"LHRepulsiveRampLegacy",
 		"RefineOneCDRLoop",
 		"H3RefineCCD",
-		"RefineCDRH1Centroid",
+		"RefineOneCDRLoopCentroid",
 		"CDRsMinPackMin",
 		"SnugDock",
 		"SnugDockProtocol",

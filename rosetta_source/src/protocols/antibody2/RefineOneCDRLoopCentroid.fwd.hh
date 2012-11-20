@@ -12,17 +12,17 @@
 /// @brief forward declaration
 /// @author Jianqing Xu (xubest@gmail.com)
 
-#ifndef INCLUDED_protocols_antibody2_RefineCDRH1Centroid_fwd_hh
-#define INCLUDED_protocols_antibody2_RefineCDRH1Centroid_fwd_hh
+#ifndef INCLUDED_protocols_antibody2_RefineOneCDRLoopCentroid_fwd_hh
+#define INCLUDED_protocols_antibody2_RefineOneCDRLoopCentroid_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace antibody2 {
         
-    class RefineCDRH1Centroid;
-    typedef utility::pointer::owning_ptr< RefineCDRH1Centroid > RefineCDRH1CentroidOP;
-    typedef utility::pointer::owning_ptr< RefineCDRH1Centroid const > RefineCDRH1CentroidCOP;
+    class RefineOneCDRLoopCentroid;
+    typedef utility::pointer::owning_ptr< RefineOneCDRLoopCentroid > RefineOneCDRLoopCentroidOP;
+    typedef utility::pointer::owning_ptr< RefineOneCDRLoopCentroid const > RefineOneCDRLoopCentroidCOP;
         
 }
 }
