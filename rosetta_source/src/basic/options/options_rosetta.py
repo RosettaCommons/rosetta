@@ -4531,6 +4531,10 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			desc='Choose a refine method to model H3 in high-resol model',
 			default='legacy_perturb_ccd'
 			),
+		Option('centroid_refine', 'String',
+			desc='Choose a refine method to refine a loop in centroid mode',
+			default='refine_kic'
+			),
 		Option( 'snug_loops', 'Boolean',
 			desc='Allow CDR loop backbone flexibility during minimization',
 			default='false'

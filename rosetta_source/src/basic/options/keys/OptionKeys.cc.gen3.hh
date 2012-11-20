@@ -395,6 +395,7 @@ namespace antibody { BooleanOptionKey const rt_min( "antibody:rt_min" );  }
 namespace antibody { BooleanOptionKey const bad_nter( "antibody:bad_nter" );  }
 namespace antibody { StringOptionKey const remodel( "antibody:remodel" );  }
 namespace antibody { StringOptionKey const refine( "antibody:refine" );  }
+namespace antibody { StringOptionKey const centroid_refine( "antibody:centroid_refine" );  }
 namespace antibody { BooleanOptionKey const snug_loops( "antibody:snug_loops" );  }
 namespace antibody { FileOptionKey const input_fv( "antibody:input_fv" );  }
 namespace antibody { BooleanOptionKey const camelid( "antibody:camelid" );  }

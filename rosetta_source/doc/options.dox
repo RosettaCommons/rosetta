@@ -11366,6 +11366,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: "legacy_perturb_ccd"</dd><br>
 </dl>
 <dl>
+<dt><b>-centroid_refine</b> \<String\><dt>
+<dd>Choose a refine method to refine a loop in centroid mode</dd><br>
+<dd>Default: "refine_kic"</dd><br>
+</dl>
+<dl>
 <dt><b>-snug_loops</b> \<Boolean\><dt>
 <dd>Allow CDR loop backbone flexibility during minimization</dd><br>
 <dd>Default: false</dd><br>

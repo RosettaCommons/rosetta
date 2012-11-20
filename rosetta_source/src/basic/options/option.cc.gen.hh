@@ -2347,6 +2347,7 @@ option.add( basic::options::OptionKeys::antibody::rt_min, "minimize the rotamer 
 option.add( basic::options::OptionKeys::antibody::bad_nter, "the n-terminal is bad because of bad H3 grafting" ).def(true);
 option.add( basic::options::OptionKeys::antibody::remodel, "Choose a perturb method to model H3 in centroid mode" ).def("legacy_perturb_ccd");
 option.add( basic::options::OptionKeys::antibody::refine, "Choose a refine method to model H3 in high-resol model" ).def("legacy_perturb_ccd");
+option.add( basic::options::OptionKeys::antibody::centroid_refine, "Choose a refine method to refine a loop in centroid mode" ).def("refine_kic");
 option.add( basic::options::OptionKeys::antibody::snug_loops, "Allow CDR loop backbone flexibility during minimization" ).def(false);
 option.add( basic::options::OptionKeys::antibody::input_fv, "input antibody variable (Fv) region" ).def("FR02.pdb");
 option.add( basic::options::OptionKeys::antibody::camelid, "Camelid input with only heavy (VH) chain" ).def(false);
