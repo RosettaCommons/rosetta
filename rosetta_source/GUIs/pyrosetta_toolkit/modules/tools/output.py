@@ -10,19 +10,25 @@
 ## @brief  general output functions for the toolkit
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
+#Rosetta Imports
 from rosetta import *
+
+#Python Imports
+import os
+import re
+
+#Tkinter Imports
 import tkFileDialog
 import tkMessageBox
 import tkSimpleDialog
 from Tkinter import Listbox
+
+#Toolkit Imports
+import sequence
+import loops
 from modules.PDB import *
 from modules.tools import loops as loop_tools
-import sequence
-import os
-import loops
-import re
-
-
+from window_main import global_variables
 
 
 def dumpPDB(p, file, score):
@@ -180,15 +186,15 @@ def saveSeqFile(p, fileout, loopsLis):
     FILE.close()
     return
 
-def make_PDBLIST(current_directory, directory=""):
+def make_PDBLIST(directory=""):
     """
     Makes a list of PDB's from a directory.  Does not walk directory.  This can be an option later.
     Later realize could have used find command...
     """
     if directory=="":
-        directory = tkFileDialog.askdirectory(initialdir = current_directory)
-    if directory ==None:
-        return
+        directory = tkFileDialog.askdirectory(initialdir = global_variables.current_directory)
+        if not directory: return
+        global_variables.current_directory=directory
     FILES = os.listdir(directory)
     NEWFILE = open(directory+"/PDBLIST.txt", 'w')
     for names in FILES:
@@ -201,11 +207,12 @@ def make_PDBLIST(current_directory, directory=""):
     NEWFILE.close()
     return directory+"/PDBLIST.txt"
 
-def make_PDBLIST_recursively(current_directory, directory=""):
+def make_PDBLIST_recursively(directory=""):
     if directory=="":
-        directory = tkFileDialog.askdirectory(initialdir = current_directory)
-    if directory ==None:
-        return
+        directory = tkFileDialog.askdirectory(initialdir = global_variables.current_directory)
+        if not directory: return
+        global_variables.current_directory=directory
+    
     contains = ".pdb"
     NEWFILE = open(directory+"/PDBLIST_RECURSIVE.txt", 'w')
     filenum = 1
@@ -225,13 +232,16 @@ def make_PDBLIST_recursively(current_directory, directory=""):
 def return_rosetta_numbering(loops_as_strings):
     for string in loops_as_strings:
         pass
-def convert_PDBLIST_to_sqlite3db(current_directory, filename=""):
+    
+def convert_PDBLIST_to_sqlite3db(filename=""):
     
     
     if filename=="":
-        filename = tkFileDialog.askopenfilename(initialdir = current_directory)
-    if filename ==None:
-        return
+        filename = tkFileDialog.askopenfilename(initialdir = global_variables.current_directory)
+        if not filename: return
+        global_variables.current_directory = os.path.dirname(filename)
+    
+    
     
     PDBLIST = open(filename, 'r')
     dbname = os.path.dirname(filename)+"/DATABASE.db"
@@ -274,7 +284,9 @@ def score_PDBLIST(pdblist_path, score):
     """
     
     if not pdblist_path:
-        pdblist_path = tkFileDialog.askopenfilename(title = "PDBLIST")
+        pdblist_path = tkFileDialog.askopenfilename(initialdir = global_variables.current_directory, title = "PDBLIST")
+        if not pdblist_path: return
+        global_variables.current_directory = os.path.dirname(pdblist_path)
         PDBLIST = open(pdblist_path, 'r')
     else:
         PDBLIST = open(pdblist_path, 'r')
@@ -290,7 +302,7 @@ def score_PDBLIST(pdblist_path, score):
             continue
         e = score(p)
         SCORED_PDBLIST.write(path+"\t%.3f\n"%e)
-    print "Complete"
+    print "\nComplete. File written to SCORED_PDBLIST.txt\n"
     PDBLIST.close()
     SCORED_PDBLIST.close()
         
@@ -300,16 +312,16 @@ def convert_PDBLIST_to_rosetta_db(current_directory):
 
 #### FASTA OUTPUT ####
 
-def save_FASTA(pose, base_name, outfilename = False, current_directory=False, loops_as_strings = False ):
+def save_FASTA(pose, base_name, outfilename = False, loops_as_strings = False ):
     """
     If outfilename is False, will ask for a directory using current_directory.
     If loops_as_strings is given, output FASTA of loops.
     Uses Pyrosetta...
     """
     if not outfilename:
-        outfilename = tkFileDialog.asksaveasfilename(initialdir = current_directory, message="Output FASTA to...")
-    if not outfilename:
-        return
+        outfilename = tkFileDialog.asksaveasfilename(initialdir = global_variables.current_directory, title="Output FASTA to...")
+        if not outfilename: return
+        global_variables.current_directory = os.path.dirname(outfilename)
     OUTFILE = open(outfilename, 'w')
     if loops_as_strings:
         for loop_string in loops_as_strings:
@@ -323,16 +335,18 @@ def save_FASTA(pose, base_name, outfilename = False, current_directory=False, lo
         OUTFILE.write(seq+"\n")
     OUTFILE.close()
     return
-def save_FASTA_PDBLIST(pdblist_path, outfilename=False, current_directory=False, loops_as_strings=False):
+
+def save_FASTA_PDBLIST(pdblist_path, outfilename=False, loops_as_strings=False):
     """
     If outfilename is False, will ask for a filename
     Goes through each member of PDBLIST
     Uses pyrosetta, much slower...Could use my PDB class...
     """
     if not outfilename:
-        outfilename = tkFileDialog.asksaveasfilename(initialdir = current_directory, message="Output FASTA to...")
-    if not outfilename:
-        return
+        outfilename = tkFileDialog.asksaveasfilename(initialdir = global_variables.current_directory, title="Output FASTA to...")
+        if not outfilename:return
+        global_variables.current_directory = os.path.dirname(outfilename)
+    
     OUTFILE = open(outfilename, 'w')
     PDBLIST = open(pdblist_path, 'r')
     for pdbpath in PDBLIST:
@@ -362,12 +376,13 @@ def save_FASTA_PDBLIST(pdblist_path, outfilename=False, current_directory=False,
     return
 
     
-def exportPDBSCORE(self, cwd, score):
+def exportPDBSCORE(self, score):
     """
     Exports a list of scores.
     """
-    PDBLIST = tkFileDialog.askopenfile(title = "PDBLIST", initialdir = cwd)
-    OUTFILE = tkFileDialog.asksaveasfile(title = "Save As...", initialdir = cwd)
+    
+    PDBLIST = tkFileDialog.askopenfile(title = "PDBLIST", initialdir = global_variables.current_directory)
+    OUTFILE = tkFileDialog.asksaveasfile(title = "Save As...", initialdir = global_variables.current_directory)
     
     if PDBLIST == None or OUTFILE==None:
         return
@@ -380,6 +395,6 @@ def exportPDBSCORE(self, cwd, score):
         SCORE = score(p)
         print SCORE
         OUTFILE.write(PDBPath+":%.3f"%SCORE+"\n")
-    print "Complete"
+    print "\nComplete\n"
     PDBLIST.close()
     OUTFILE.close()

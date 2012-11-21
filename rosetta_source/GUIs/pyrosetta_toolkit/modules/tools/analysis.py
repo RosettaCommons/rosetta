@@ -10,17 +10,21 @@
 ## @brief  Functions for analysis in the toolkit
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
-
+#Rosetta Imports
 from rosetta import *
-from rosetta.protocols.analysis import *
-from rosetta.protocols.vip import *
+
+#Tkinter Imports
 import tkMessageBox
 import tkSimpleDialog
 import tkFileDialog
 import time
 import math
+import os.path
+#Toolkit Imports
+from rosetta.protocols.analysis import *
+from rosetta.protocols.vip import *
 import loops as loop_tools
-
+from window_main import global_variables
 
 def RetPhiPsi(p):
     tot=p.total_residue()
@@ -135,7 +139,7 @@ def analyze_loops(p, loops_as_strings):
     loop_mover = LoopAnalyzerMover(loops_object, True)
     loop_mover.apply(p)
 
-def analyze_vip(p, scorefxn, current_directory):
+def analyze_vip(p, scorefxn):
     """
     Uses VIP mover to get Mutational information.
     Should be threaded, which will be added soon.
@@ -182,7 +186,8 @@ def analyze_vip(p, scorefxn, current_directory):
     
     
     if (tkMessageBox.askyesno(message="Output PDB?")):
-        filename = tkFileDialog.asksaveasfilename(initialdir=current_directory)
+        filename = tkFileDialog.asksaveasfilename(initialdir=global_variables.current_directory)
+        global_variables.current_directory= os.path.dirname(filename)
         if not filename: return
         out.dump_pdb(filename)
         print "Output PDB Saved..."

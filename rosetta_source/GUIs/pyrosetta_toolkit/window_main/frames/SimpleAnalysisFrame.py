@@ -6,14 +6,19 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-## @file   /GUIs/pyrosetta_toolkit/window_main/simple_analysis.py
+## @file   /GUIs/pyrosetta_toolkit/window_main/frames/simple_analysis.py
 ## @brief  Handles simple analysis component of the GUI 
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
+#Rosetta Imports
+from rosetta import *
+
+#Tkinter Imports
 from Tkinter import *
 from Tkinter import Frame as TkFrame
-from rosetta import *
 import tkFileDialog
+
+#Toolkit Imports
 from modules.tools import analysis as analysis_tools
 from modules.tools import input as input_tools
 from modules.tools import loops as loop_tools
@@ -24,7 +29,7 @@ class SimpleAnalysisFrame(TkFrame):
         TkFrame.__init__(self, main, **options)
         self.toolkit = toolkit
         self.basicOPT = StringVar()
-        self.basicOPT.set("Basic")
+        self.basicOPT.set("Basic Analysis")
         self.basicOPTIONS = {
             "Score FA Energies":lambda:self.print_full_energy(),
             "Score Loops":lambda: self.score_loops(),
@@ -35,15 +40,15 @@ class SimpleAnalysisFrame(TkFrame):
         }
         
         self.rmsdOPT = StringVar()
-        self.rmsdOPT.set("RMSD")
+        self.rmsdOPT.set("RMSD Analysis")
         self.rmsdOPTIONS = {
-            "RMSD: C alpha":lambda:analysis_tools.rmsd(self.rmsdP, self.toolkit.pose, self.toolkit.loops_as_strings, True),
-            "RMSD: BB heavy":lambda:analysis_tools.rmsd(self.rmsdP, self.toolkit.pose, self.toolkit.loops_as_strings, False),
-            "RMSD: all atom":lambda:analysis_tools.rmsd(self.rmsdP, self.toolkit.pose, self.toolkit.loops_as_strings, False, True),
+            "RMSD: C alpha":lambda:analysis_tools.rmsd(self.rmsdP, self.toolkit.pose, self.toolkit.input_class.loops_as_strings, True),
+            "RMSD: BB heavy":lambda:analysis_tools.rmsd(self.rmsdP, self.toolkit.pose, self.toolkit.input_class.loops_as_strings, False),
+            "RMSD: all atom":lambda:analysis_tools.rmsd(self.rmsdP, self.toolkit.pose, self.toolkit.input_class.loops_as_strings, False, True),
             "RMSD: - Load Pose":lambda:self.rmsd_load_pose(),
-            "Native RMSD: C alpha":lambda:analysis_tools.rmsd(self.toolkit.native_pose, self.toolkit.pose, self.toolkit.loops_as_strings, True),
-            "Native RMSD: BB heavy":lambda:analysis_tools.rmsd(self.toolkit.native_pose, self.toolkit.pose, self.toolkit.loops_as_strings, False),
-            "Native RMSD: all atom":lambda:analysis_tools.rmsd(self.toolkit.native_pose, self.toolkit.pose, self.toolkit.loops_as_strings, False, True),
+            "Native RMSD: C alpha":lambda:analysis_tools.rmsd(self.toolkit.native_pose, self.toolkit.pose, self.toolkit.input_class.loops_as_strings, True),
+            "Native RMSD: BB heavy":lambda:analysis_tools.rmsd(self.toolkit.native_pose, self.toolkit.pose, self.toolkit.input_class.loops_as_strings, False),
+            "Native RMSD: all atom":lambda:analysis_tools.rmsd(self.toolkit.native_pose, self.toolkit.pose, self.toolkit.input_class.loops_as_strings, False, True),
         }
         
     #### Set Tracers ####
@@ -54,7 +59,7 @@ class SimpleAnalysisFrame(TkFrame):
         self.grid_GUI_objects()
         
     def create_GUI_objects(self):
-        self.label_widget=Label(self, text="Basic Analysis", font=("Arial"))
+        #self.label_widget=Label(self, text="Basic Analysis", font=("Arial"))
         self.option_menu_basic = OptionMenu(self, self.basicOPT, *(sorted(self.basicOPTIONS)))
         self.option_menu_rmsd = OptionMenu(self, self.rmsdOPT, *(sorted(self.rmsdOPTIONS)))
         self.kickBasic = Button(self, text = "Go", command = lambda: self.kickOptions(self.basicOPT.get()))
@@ -66,7 +71,7 @@ class SimpleAnalysisFrame(TkFrame):
         Rowspan: 2
         """
         r=0; c=0;
-        self.label_widget.grid(row=r, column=c, columnspan=2,)
+        #self.label_widget.grid(row=r, column=c, columnspan=2,)
         self.option_menu_basic.grid(row=r+1, column=c, sticky=W+E); self.option_menu_rmsd.grid(row = r+1, column=c+1, sticky=W+E)
         
         
@@ -93,7 +98,7 @@ class SimpleAnalysisFrame(TkFrame):
         return
       
     def score_loops(self):
-        for l in self.toolkit.loops_as_strings:
+        for l in self.toolkit.input_class.loops_as_strings:
             print "\n"+l
             residue_array = loop_tools.return_residue_array(self.toolkit.pose, l)
             start_chain = self.toolkit.pose.pdb_info().pose2pdb(residue_array[0])
@@ -106,7 +111,7 @@ class SimpleAnalysisFrame(TkFrame):
             print "Total Neighbor (ci_2b) Interaction energy: %.3f REU"%n_e
     
     def print_full_energy(self):
-        self.toolkit.ScoreObject.score.show(self.toolkit.pose)
+        self.toolkit.score_class.score.show(self.toolkit.pose)
         
     def print_hbonds(self):
         n = self.toolkit.input_class.ScoreBaseObject.ret_n_hbonds()

@@ -10,51 +10,47 @@
 ## @brief  general input functions for the toolkit
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
+#Rosetta Imports
 from rosetta import *
+
+#Python Imports
+import os
+import re
+
+#Tkinter Imports
 import tkFileDialog
 import tkMessageBox
 import tkSimpleDialog
 from Tkinter import Listbox
+
+#Toolkit Imports
 import interfaces
-import os
-import re
+from window_main import global_variables
 
-
-#rosetta.init()
-
-pwd = os.getcwd()
-
-"""
-PyRosetta Loading controls with TK
-"""
-
-
-def tk_get_directory(open):
+def tk_get_directory():
     """
     Loads a Folder through the tk File Dialog
     """
-    dir = os.getcwd()
-    if open==0:
-        dirname1 = tkFileDialog.askdirectory(initialdir=dir,title='Pick a directory')
-    else:
-        dirname1 = tkFileDialog.askdirectory(initialdir=open, title='Pick a directory')
-    if not dirname1:
-        return
-    x=dirname1.split()       
-    print dirname1
-    return dirname1
+
+    dir_name = tkFileDialog.askdirectory(initialdir=global_variables.current_directory, title='Pick a directory')
+    
+    if not dir_name:
+        return      
+    print dir_name
+    global_variables.current_directory = dir_name
+    return dir_name
 
 def tk_get_file():
     """
     Loads a File through the tk File Dialog
     """
-    dir = os.getcwd()
-    filename1 = tkFileDialog.askopenfilename(initialdir=dir, title='Pick a file')
-    if not filenmame1:
+    filename = tkFileDialog.askopenfilename(initialdir=global_variables.current_directory, title='Pick a file')
+    if not filename:
         return
-    filename1 = self.fixFilename(filename1)
-    print filename1
-    return filename1
+    filename = self.fixFilename(filename)
+    global_variables.current_directory = os.path.dirname(filename)
+    print filename
+    return filename
 
 def load_pdb(file):
     """

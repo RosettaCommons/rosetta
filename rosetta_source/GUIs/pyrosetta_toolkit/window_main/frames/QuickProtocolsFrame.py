@@ -6,16 +6,23 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-## @file   /GUIs/pyrosetta_toolkit/window_main/quick_min.py
+## @file   /GUIs/pyrosetta_toolkit/window_main/frames/quick_min.py
 ## @brief  Handles the quick protocols section of the GUI
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
+#Rosetta Imports
+from rosetta import *
+
+#Tkinter Imports
+from Tkinter import *
+from Tkinter import Frame as TkFrame
+
+#Toolkit Imports
 from modules.protocols.loop_minimization import Loop_Min
 from modules.protocols.protein_minimization import Protein_Min
 from modules.tools import output as output_tools
-from Tkinter import *
-from Tkinter import Frame as TkFrame
-from rosetta import *
+
+
 
 class QuickProtocolsFrame(TkFrame):
     def __init__(self, main, toolkit, **options):
@@ -33,8 +40,8 @@ class QuickProtocolsFrame(TkFrame):
         self.set_options_menus()
         
         #Will change when protocols are re-organized.
-        self.loop_protocols = Loop_Min(self.toolkit.ScoreObject, self.toolkit.pose)
-        self.full_protocols = Protein_Min(self.toolkit.ScoreObject, self.toolkit.pose)
+        self.loop_protocols = Loop_Min(self.toolkit.score_class, self.toolkit.pose)
+        self.full_protocols = Protein_Min(self.toolkit.score_class, self.toolkit.pose)
 
         self.create_GUI_objects()
         self.grid_GUI_objects()
@@ -59,15 +66,9 @@ class QuickProtocolsFrame(TkFrame):
         
     def create_GUI_objects(self):
         
-        self.label_quick_min = Label(self, text="Quick Protocols", font=("Arial"))
+        #self.label_quick_min = Label(self, text="Quick Protocols", font=("Arial"))
         self.check_button_Rand=Checkbutton(self, text="Randomize Loops?", variable=self.randomize_loops_bool, command=lambda: self.toolkit.pose.assign(tools.loops.initLoops().RandLoop(self.toolkit.pose, self.toolkit.input_class.loops_as_strings, self.toolkit.output_class.show_pymol.get())))
         self.check_button_Relax=Checkbutton(self, text="Fast Relax?", variable=self.fast_relax_bool)
-        self.button_LoopW=Button(self, text="Write New PDB")
-        
-        ##### CDRS ######
-        self.button_L1=Button(self, text="CDR L1", command=lambda: setL1()); self.button_L2=Button(self, text="CDR L2", command=lambda: setL2()); self.button_L3=Button(self, text="CDR L3", command=lambda: setL3())
-        self.button_H1=Button(self, text="CDR H1", command=lambda: setH1()); self.button_H2=Button(self, text="CDR H2", command=lambda: setH2()); self.button_H3=Button(self, text="CDR H3", command=lambda: setH3())
-        ##### CDRS ######
         
         self.entry_decoy=Entry(self, textvariable=self.toolkit.output_class.decoys, justify=CENTER)
         self.SliHigh=Scale(self, orient=HORIZONTAL, to=100, resolution=1, from_=1, relief=SUNKEN)
@@ -85,7 +86,7 @@ class QuickProtocolsFrame(TkFrame):
         Columnspan : 2
         """
         r = 0; c=0;
-        self.label_quick_min.grid(row=r, column=c, columnspan=2, pady=15)
+        #self.label_quick_min.grid(row=r, column=c, columnspan=2, pady=15)
         self.entry_decoy.grid(row=r+3, column=c); self.label_Dec.grid(row=r+3, column=c+1)
         self.SliHigh.grid(row=r+4, column=c, sticky=W+E); self.label_High.grid(row=r+4, column=c+1)
         self.check_button_Relax.grid(row=r+5, column=c, columnspan = 2)
@@ -101,7 +102,7 @@ class QuickProtocolsFrame(TkFrame):
         """
         
         if self.toolkit.output_class.auto_write.get():
-            jd=PyJobDistributor(self.toolkit.outdir.get() + "/" + self.toolkit.outname.get(), int(self.entry_decoy.get()), self.toolkit.ScoreObject.score);
+            jd=PyJobDistributor(self.toolkit.output_class.outdir.get() + "/" + self.toolkit.output_class.outname.get(), int(self.entry_decoy.get()), self.toolkit.score_class.score);
             jd.native_pose = self.toolkit.native_pose
             for i in range(0, int(self.entry_decoy.get())):
                 print "Decoy: "+repr(i)
@@ -119,7 +120,7 @@ class QuickProtocolsFrame(TkFrame):
         This kicks the minimization of the protein.
         """
         if self.toolkit.output_class.auto_write.get():
-            jd=PyJobDistributor(self.toolkit.outdir.get() + "/" + self.toolkit.outname.get(), int(self.entry_decoy.get()), self.toolkit.ScoreObject.score);
+            jd=PyJobDistributor(self.toolkit.output_class.outdir.get() + "/" + self.toolkit.output_class.outname.get(), int(self.entry_decoy.get()), self.toolkit.score_class.score);
             jd.native_pose = self.toolkit.native_pose
             for i in range(0, int(self.entry_decoy.get())):
                 print "Decoy: "+repr(i)

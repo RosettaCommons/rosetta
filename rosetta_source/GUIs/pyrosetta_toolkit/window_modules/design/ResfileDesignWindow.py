@@ -10,13 +10,20 @@
 ## @brief  Main resfile design window.  
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
-
-from Tkinter import *
+#Rosetta Imports
 from rosetta import *
-from modules.tools import output as output_tools
-import tkFileDialog
-from modules.definitions.restype_definitions import *
+
+#Python Imports
 import os
+
+#Tkinter Imports
+from Tkinter import *
+import tkFileDialog
+
+#Toolkit Imports
+from modules.tools import output as output_tools
+from modules.definitions.restype_definitions import *
+from window_main import global_variables
 
 class ResfileDesignWindow:
     def __init__(self, main, DesignDic, pose):
@@ -392,7 +399,7 @@ class ResfileDesignWindow:
     
 #### FUNCTIONS ####
     def saveDesign(self):
-        out = tkFileDialog.asksaveasfilename(initialdir = self.pwd, title ="Save As...")
+        out = tkFileDialog.asksaveasfilename(initialdir = global_variables.current_directory, title ="Save As...")
         if not out:
             return
         output_tools.save_resfile_w_designdic(self.pose, self.DesignDic, out)
