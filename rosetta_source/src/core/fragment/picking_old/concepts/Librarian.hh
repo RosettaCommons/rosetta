@@ -17,6 +17,11 @@
 // unit headers
 #include <core/fragment/picking_old/concepts/Librarian.fwd.hh>
 
+#include <core/fragment/picking_old/vall/gen/VallFragmentGen.hh>
+#include <core/fragment/picking_old/vall/eval/VallFragmentEval.hh>
+#include <core/fragment/picking_old/vall/scores/VallFragmentScore.hh>
+#include <core/fragment/picking_old/vall/VallLibrary.hh>
+
 // type headers
 #include <core/types.hh>
 
@@ -105,7 +110,7 @@ public: // library operations
 
 
 	/// @brief create sorted list corresponding to fragments in Library
-	/// @details uses Bookmark '<' for evaluation
+	/// @details uses Bookmark < for evaluation
 	/// @return true if creation successful, false otherwise (e.g. no ExtentEvaluators or ExtentGenerators found)
 	inline
 	bool catalog( Library const & library ) {
@@ -265,6 +270,11 @@ private: // data
 
 };
 
+class Librarian_VallFragmentScore_VallFragmentEval_VallFragmentGen_VallLibrary: public
+Librarian<core::fragment::picking_old::vall::scores::VallFragmentScore,
+          core::fragment::picking_old::vall::eval::VallFragmentEval,
+          core::fragment::picking_old::vall::gen::VallFragmentGen,
+          core::fragment::picking_old::vall::VallLibrary> {};
 
 } // concepts
 } // picking_old

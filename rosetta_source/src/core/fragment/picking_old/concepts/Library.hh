@@ -21,6 +21,7 @@
 // project headers
 #include <core/types.hh>
 
+#include <core/fragment/picking_old/vall/VallSection.hh>
 
 namespace core {
 namespace fragment {
@@ -134,6 +135,9 @@ private: // data
 
 
 };
+
+// Concrete version for PyRosetta
+class Library_VallSections: public Library<core::fragment::picking_old::vall::VallSections> {};
 
 
 } // concepts

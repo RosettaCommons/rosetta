@@ -19,6 +19,8 @@
 // type headers
 #include <core/types.hh>
 
+#include <core/fragment/picking_old/vall/VallResidue.hh>
+
 
 namespace core {
 namespace fragment {
@@ -129,6 +131,9 @@ private: // data
 
 };
 
+
+// Concrete version for PyRosetta
+class Book_VallResidues : public Book<core::fragment::picking_old::vall::VallResidues> {};
 
 } // concepts
 } // picking_old

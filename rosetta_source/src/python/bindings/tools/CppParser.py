@@ -294,7 +294,7 @@ class CppFunction:
             # in future we can just locate enums in all parsed code but for now lets not guess...
             known_bad_defaults = ['(((utility::tag::Tag*)operator new(', 'utility::vector0<int, std::allocator<int>', 'MATCH_YR', 'std::cout', 'typename ', 'std::make_pair [with ',
                 'core::chemical::ChemicalManager::residue_type_set(const std::string&)(((const std::string&)(& core::chemical::FA_STANDARD',
-                'core::scoring::hbonds::DUMMY_DERIVS',
+                'core::scoring::hbonds::DUMMY_DERIVS', 'core::fragment::BBTorsionSRFD',
             ]
             for bd in known_bad_defaults:
                 if x.default.startswith(bd): return _r
@@ -808,7 +808,7 @@ class CppClass:
     #def getCallbackClassName(self): return 'PY_'+ self.name
     def getCallbackClassName(self): return self.name
 
-    def getMangledName(self, name): return name.replace(' ', '_').replace('<', '_T_').replace('>', '_T').replace('::', '_').replace(',', '_')
+    def getMangledName(self, name): return name.replace(' ', '_').replace('<', '_T_').replace('>', '_T').replace('::', '_').replace(',', '_').replace('*', '_st_')
 
     def getExposerName(self, name): return self.getMangledName(name) + '_exposer'
 
