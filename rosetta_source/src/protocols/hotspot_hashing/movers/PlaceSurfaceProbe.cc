@@ -52,7 +52,7 @@ namespace hotspot_hashing
 namespace movers
 {
 
-static basic::Tracer TR( "protocols.hotspot_hashing.movers.PlaceSurfaceProbe" ); 
+static basic::Tracer TR( "protocols.hotspot_hashing.movers.PlaceSurfaceProbe" );
 
 PlaceSurfaceProbe::PlaceSurfaceProbe() :
 	  protocols::moves::Mover("PlaceSurfaceProbe"),
@@ -66,8 +66,8 @@ PlaceSurfaceProbe::PlaceSurfaceProbe() :
 		refinement_sampling_(0),
 		refinement_pattern_(NULL)
 {
- 
-} 
+
+}
 
 
 PlaceSurfaceProbe::PlaceSurfaceProbe(
@@ -251,6 +251,11 @@ std::string
 PlaceSurfaceProbeCreator::keyname() const
 {
   return "PlaceSurfaceProbe";
+}
+
+std::string PlaceSurfaceProbeCreator::mover_name()
+{
+	return "PlaceSurfaceProbeMover";
 }
 
 }

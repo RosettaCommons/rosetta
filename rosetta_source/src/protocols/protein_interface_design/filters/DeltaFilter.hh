@@ -61,7 +61,7 @@ public:
 	bool reset_baseline() const;
 	void reset_baseline( bool const rs );
 	core::Real new_baseline() const;
-	void new_baseline( core::Real const new_baseline );
+	// Undefinded, commenting out to fix PyRosetta build  void new_baseline( core::Real new_baseline );
 	void filter( protocols::filters::FilterOP filter );
 	protocols::filters::FilterOP filter() const;
 	core::Real range() const;

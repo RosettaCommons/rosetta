@@ -110,9 +110,7 @@ public:
 		int other_node_new_state
 	);
 
-	inline
-	SparseMatrixIndex const &
-	get_sparse_mat_info_for_curr_state() const;
+	// Undefinded, commenting out to fix PyRosetta build  inline SparseMatrixIndex const & get_sparse_mat_info_for_curr_state() const;
 
 	void print_internal_energies() const;
 
@@ -204,7 +202,7 @@ public:
 		int changing_node_index
 	);
 
-		
+
 	core::PackerEnergy curr_state_energy() const { return curr_state_energy_; }
 	core::PackerEnergy alt_state_energy() const { return alt_state_energy_; }
 
