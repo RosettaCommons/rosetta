@@ -41,6 +41,7 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pack/task/PackerTask_.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/scoring/dssp/Dssp.hh>
@@ -51,6 +52,7 @@
 #include <protocols/moves/DataMap.hh>
 
 // Utility Headers
+#include <protocols/flxbb/utility.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
@@ -300,22 +302,35 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 	 } else {
 		pose = input_pose;
   }
-	// calc SelectResiduesByLayer
-	srbl_->compute( pose, "" );
 
 	// make a pymol script for visualizing the layers 
 	if( make_pymol_script_ && !utility::file::file_exists( "layers.py" ) ) {
 		TR << "writing pymol script with the layer specification and saving it as layers.py" << std::endl;
 		write_pymol_script(input_pose, srbl_, layer_specification, "layers.py");
 	}
-
+	
 	core::scoring::dssp::Dssp dssp( pose );
 	dssp.dssp_reduced();
+	
+	// calc SelectResiduesByLayer
+	// srbl_->compute( pose, dssp.get_dssp_secstruct() );                                                                                                                   // TL: this command will fail if there is a ligand.
+	// we need to add a SS identifier for the ligand if there is one
+	String secstruct = dssp.get_dssp_secstruct();
+	utility::vector1<Size> ligands = protocols::flxbb::find_ligands( pose );
+  TR << "secstruct is:" << secstruct << std::endl;
+	for( Size i=1; i <= ligands.size(); i++) {
+		TR << "adding an L to the secstruct string due to unknown AA" << std::endl;
+		secstruct += 'L';
+	}
+	srbl_->compute( pose, secstruct );
+
 	// find the position of residues of helix capping and intial residue of helix
 	bool flag( false );
 	utility::vector1< bool > helix_capping( pose.total_residue(), false );
 	utility::vector1< bool > initial_helix( pose.total_residue(), false );
 	for( Size i=1; i<=pose.total_residue(); ++i ) {
+		// if this residue is not a protein residue, we shouldn't process it further
+		if ( ! pose.residue( i ).is_protein() ) continue;
 		char ss( dssp.get_dssp_secstruct( i ) );
 		if( ss == 'H' && flag == false && i != 1 ) {
 			initial_helix[ i ] = true;
@@ -333,6 +348,8 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 	task.nonconst_residue_task( pose.total_residue() ).restrict_absent_canonical_aas( restrict_to_aa );
 
 	for( Size i=2; i<=pose.total_residue()-1; ++i ) {
+		// if the residue is not a protein, we should continue on to the next one, but make the non-protein residue repackable only
+		if ( ! pose.residue( i ).is_protein() ){ task.nonconst_residue_task( i ).restrict_to_repacking(); continue; }
 
 		const std::string srbl_layer = srbl_->layer(i);
 		// check if the residue is specified in any of the task defined layer

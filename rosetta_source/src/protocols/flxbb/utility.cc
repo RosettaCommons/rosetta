@@ -148,6 +148,8 @@ constraints_sheet( Pose const & pose, BluePrintOP const & blueprint, Real const 
 	return csts;
 } // constraint_sheet
 
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ConstraintOPs
 constraints_NtoC( Pose const & pose, Real const coef, Real const condist )
@@ -254,6 +256,24 @@ constraints_sheet( Pose const & pose, Real const coef, Real const condist )
 	return csts;
 
 } // constraint_sheet
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Looks for unknown amino acids in the pose and returns their indices
+utility::vector1<Size>
+find_ligands( Pose const & pose )
+{
+	utility::vector1<Size> retval;
+	// look at each amino acid to see if it is of unknown type
+	for( Size i = 1; i <= pose.total_residue(); i++ ) {
+		if ( ! pose.residue( i ).is_protein() ) {
+			TR << "Residue " << i << " (type=" << pose.residue(i).name3() << ") is probably a ligand" << std::endl;
+			retval.push_back( i );
+		}
+	}
+	// WARNING: This doesn't rearrange residue numbers to put the ligands at the end
+	// However, this behavior IS important for many functions
+	return retval;
+}
 
 } //namespace flxbb
 } //namespace protocols

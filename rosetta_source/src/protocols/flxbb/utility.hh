@@ -28,6 +28,7 @@
 namespace protocols {
 namespace flxbb {
 
+typedef core::Size Size;
 typedef core::Real Real;
 typedef core::pose::Pose Pose;
 typedef protocols::jd2::parser::BluePrintOP BluePrintOP;
@@ -48,6 +49,13 @@ constraints_sheet( Pose const & pose, Real const coef, Real const condist=5.5 );
 ConstraintOPs
 constraints_NtoC( Pose const & pose, Real const coef, Real const condist=11.0 );
 
+/// @brief Looks for unknown amino acids in the pose and returns their indices
+utility::vector1<Size>
+find_ligands( Pose const & pose );
+
+// @brief finds the first non-ligand residue in the pose  (should be the N-terminus)
+Size
+get_first_protein_residue( Pose const & pose );
 
 } // namespace flxbb
 } // namespace protocols
