@@ -11,7 +11,7 @@
 ///
 /// @brief  abstract base class that generates constraints during forge loop remodelling
 /// @author Florian Richter, floric@u.washington.edu, april 2009
-
+/// @modified Tom Linsky, tlinsky@uw.edu
 
 
 
@@ -30,6 +30,7 @@
 #include <core/scoring/constraints/Constraint.hh> // WIN32 INCLUDE
 #endif
 #include <core/id/SequenceMapping.fwd.hh>
+#include <protocols/moves/Mover.hh>
 
 //utility headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -43,21 +44,31 @@ namespace remodel {
 
 
 /// @brief pure virtual base class
-class RemodelConstraintGenerator : public utility::pointer::ReferenceCount
+class RemodelConstraintGenerator : public protocols::moves::Mover
 {
 public: // typedefs
 	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~RemodelConstraintGenerator();
 
+	///@brief generates constraints and adds them to the pose
+	virtual
+	void apply( core::pose::Pose & pose );
 
-	typedef protocols::forge::components::VarLengthBuildCAP VarLengthBuildCAP;
+	void parse_my_tag(
+		utility::tag::TagPtr const tag,
+		protocols::moves::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const & );
+
+	typedef protocols::forge::components::VarLengthBuildAP VarLengthBuildAP;
 
 
 public: //constructors
 
 	RemodelConstraintGenerator();
 
-	//RemodelConstraintGenerator( RemodelConstraintGenerator const & rval );
+	RemodelConstraintGenerator( RemodelConstraintGenerator const & rval );
 
 
 public:
@@ -79,17 +90,33 @@ public:
 	generate_remodel_constraints(
 		core::pose::Pose const & pose ) = 0;
 
-	VarLengthBuildCAP
+	/// @brief Pose-specific setup routines go here
+	virtual void
+	init( core::pose::Pose const & ) {};
+
+	VarLengthBuildAP
 	vlb() const;
 
 	void
-	set_vlb( VarLengthBuildCAP vlb );
+	set_vlb( VarLengthBuildAP vlb );
+
+	std::string
+	id() const;
+
+	void
+	set_id( std::string const & id );
 
 	void
 	set_seqmap( core::id::SequenceMappingCOP seqmap );
 
 	core::id::SequenceMappingCOP
 	seqmap() const;
+
+	core::scoring::constraints::ConstraintCOPs
+	constraints() const;
+
+	static core::scoring::constraints::ConstraintCOPs const
+	lookup_stored_constraints( std::string const & id );
 
 protected:
 
@@ -102,14 +129,23 @@ protected:
 	void
 	clear_constraints();
 
+	void
+	clear_stored_constraints();
+
+	void
+	store_constraints();
+
 private:
 
-	utility::vector1< core::scoring::constraints::ConstraintCOP > remodel_csts_;
+	std::string id_;
+
+	core::scoring::constraints::ConstraintCOPs csts_;
 
 	core::id::SequenceMappingCOP seqmap_;
 
-	VarLengthBuildCAP vlb_;
+	VarLengthBuildAP vlb_;
 
+	static std::map<std::string,core::scoring::constraints::ConstraintCOPs> cst_map_;
 
 }; //class RemodelConstraintGenerator
 
@@ -122,3 +158,4 @@ private:
 
 
 #endif
+

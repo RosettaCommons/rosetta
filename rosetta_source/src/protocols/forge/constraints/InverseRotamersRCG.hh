@@ -30,6 +30,7 @@
 #include <core/scoring/constraints/Func.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
+#include <protocols/moves/DataMap.fwd.hh>
 
 // C++headers
 #include <list>
@@ -57,20 +58,44 @@ class InverseRotamersRCG : public remodel::RemodelConstraintGenerator
 {
 
 public:
+	// constructors and virtual functions
+	InverseRotamersRCG();
 
+	/// @brief copy constructor
+	InverseRotamersRCG( InverseRotamersRCG const & rval );
+
+	/// @brief value constructor which initializes and then calls init()
 	InverseRotamersRCG(
-		core::Size lstart,
-		core::Size lstop,
+		core::Size const lstart,
+		core::Size const lstop,
 		std::list< core::conformation::ResidueCOP > const & inverse_rotamers
 	);
 
  ~InverseRotamersRCG();
+
+	virtual void
+	parse_my_tag( TagPtr const tag,
+								protocols::moves::DataMap & data,
+								protocols::filters::Filters_map const & filters,
+								protocols::moves::Movers_map const & movers,
+								core::pose::Pose const & pose );
+
+	virtual std::string
+	get_name() const;
+
+	virtual protocols::moves::MoverOP
+	fresh_instance() const;
+
+	virtual protocols::moves::MoverOP
+	clone() const;
 
 	virtual
 	void
 	generate_remodel_constraints(
 		core::pose::Pose const & pose );
 
+public:
+	// public member functions
 	void
 	set_constraint_func(
 		core::scoring::constraints::FuncOP constraint_func );
@@ -78,17 +103,18 @@ public:
 	void
 	clear_inverse_rotamers();
 
-protected:
+	/// @brief initialize with given lstart, lstop, and inverse rotamer residue list
+	void init( core::Size const lstart,
+						 core::Size const lstop,
+						 std::list< core::conformation::ResidueCOP > const & inverse_rotamers );
 
 private:
-
 	utility::vector1< forge::build::Interval > intervals_;
 
 	std::list< core::conformation::ResidueCOP > inverse_rotamers_;
 
 	core::scoring::constraints::FuncOP constraint_func_;
 	core::Real func_sd_;
-
 }; //class InverseRotamersRCG
 
 

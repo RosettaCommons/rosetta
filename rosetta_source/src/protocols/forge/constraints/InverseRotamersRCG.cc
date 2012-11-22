@@ -11,18 +11,26 @@
 ///
 /// @brief
 /// @author Florian Richter, floric@u.washington.edu, april 2010
+/// @modified Tom Linsky, tlinsky@uw.edu
 
+//unit headers
 #include <protocols/forge/constraints/InverseRotamersRCG.hh>
-#include <protocols/forge/build/Interval.hh>
-#include <protocols/toolbox/match_enzdes_util/util_functions.hh>
+#include <protocols/forge/constraints/InverseRotamersCstGeneratorCreator.hh>
 
+//protocol headers
+#include <protocols/forge/build/Interval.hh>
+
+//project headers
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
-#include <basic/Tracer.hh>
+#include <protocols/toolbox/match_enzdes_util/util_functions.hh>
 
+//utility headers
+#include <basic/Tracer.hh>
+#include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 
 
@@ -32,27 +40,84 @@ namespace protocols{
 namespace forge{
 namespace constraints{
 
-InverseRotamersRCG::InverseRotamersRCG(
-	core::Size lstart,
-	core::Size lstop,
-	std::list< core::conformation::ResidueCOP > const & inverse_rotamers
-	) : constraint_func_(NULL), func_sd_(0.4)
+protocols::moves::MoverOP
+InverseRotamersCstGeneratorCreator::create_mover() const
 {
-	intervals_.clear();
-	inverse_rotamers_.clear();
-	intervals_.push_back( forge::build::Interval( lstart, lstop ) );
-	for( std::list< core::conformation::ResidueCOP >::const_iterator rot_it( inverse_rotamers.begin() ), rot_end( inverse_rotamers.end() );
-			 rot_it != rot_end; ++rot_it ){
-		inverse_rotamers_.push_back( *rot_it );
-	}
+	return new InverseRotamersRCG();
+}
+
+std::string
+InverseRotamersCstGeneratorCreator::keyname() const
+{
+	return InverseRotamersCstGeneratorCreator::mover_name();
+}
+
+std::string
+InverseRotamersCstGeneratorCreator::mover_name()
+{
+	return "InverseRotamersCstGenerator";
+}
+
+InverseRotamersRCG::InverseRotamersRCG()
+	: RemodelConstraintGenerator(),
+		constraint_func_( NULL ),
+		func_sd_( 0.4 )
+{}
+
+InverseRotamersRCG::InverseRotamersRCG( InverseRotamersRCG const & rval )
+	: RemodelConstraintGenerator( rval ),
+		constraint_func_( rval.constraint_func_ ),
+		func_sd_( rval.func_sd_ )
+{}
+
+InverseRotamersRCG::InverseRotamersRCG(
+	core::Size const lstart,
+	core::Size const lstop,
+	std::list< core::conformation::ResidueCOP > const & inverse_rotamers )
+	: RemodelConstraintGenerator(),
+		constraint_func_(NULL),
+		func_sd_(0.4)
+{
+	init( lstart, lstop, inverse_rotamers );
 }
 
 InverseRotamersRCG::~InverseRotamersRCG(){}
 
 void
+InverseRotamersRCG::parse_my_tag( TagPtr const tag,
+																	protocols::moves::DataMap & data,
+																	protocols::filters::Filters_map const & filters,
+																	protocols::moves::Movers_map const & movers,
+																	core::pose::Pose const & pose )
+{
+	RemodelConstraintGenerator::parse_my_tag( tag, data, filters, movers, pose );
+	//nothing here right now
+}
+
+std::string
+InverseRotamersRCG::get_name() const
+{
+	return InverseRotamersCstGeneratorCreator::mover_name();
+}
+
+
+protocols::moves::MoverOP
+InverseRotamersRCG::fresh_instance() const
+{
+	return new InverseRotamersRCG();
+}
+
+protocols::moves::MoverOP
+InverseRotamersRCG::clone() const
+{
+	return new InverseRotamersRCG( *this );
+}
+
+void
 InverseRotamersRCG::generate_remodel_constraints(
 	core::pose::Pose const & pose )
 {
+	//tr << "Generating remodel constraints" << std::endl;
 	//using namespace core::scoring::constraints;
 	//safeguard against bad user input
 	if( inverse_rotamers_.size() == 0 ){
@@ -75,10 +140,13 @@ InverseRotamersRCG::generate_remodel_constraints(
 			seqpos.push_back( remres );
 		}
 	}
+	//tr << "adding the constraint to RCG" << std::endl;
 	this->add_constraint( protocols::toolbox::match_enzdes_util::constrain_pose_res_to_invrots( inverse_rotamers_, seqpos, pose, constraint_func_ ) );
+	//tr << "clearing inverse rotamers" << std::endl;
 
 	//we can probably delete the inverse rotamers now, to save some memory
 	this->clear_inverse_rotamers();
+	//tr << "done generating remodel constraints!" << std::endl;
 }
 
 void
@@ -92,6 +160,21 @@ InverseRotamersRCG::clear_inverse_rotamers()
 {
 	inverse_rotamers_.clear();
 }
+
+void
+InverseRotamersRCG::init( core::Size const lstart,
+													core::Size const lstop,
+													std::list< core::conformation::ResidueCOP > const & inverse_rotamers )
+{
+	intervals_.clear();
+	inverse_rotamers_.clear();
+	intervals_.push_back( forge::build::Interval( lstart, lstop ) );
+	for( std::list< core::conformation::ResidueCOP >::const_iterator rot_it( inverse_rotamers.begin() ), rot_end( inverse_rotamers.end() );
+			 rot_it != rot_end; ++rot_it ){
+		inverse_rotamers_.push_back( *rot_it );
+	}
+}
+
 
 } //namespace remodel
 } //namespace forge

@@ -10,6 +10,7 @@
 /// @file  protocols/toolbox/match_enzdes_util/util_functions.cc
 /// @brief bunch of utility functions
 /// @author Florian Richter, floric@u.washington.edu
+/// @modified Tom Linsky, tlinsky@uw.edu
 
 //unit headers
 #include <protocols/toolbox/match_enzdes_util/util_functions.hh>
@@ -233,7 +234,47 @@ split_up_remark_line(
 	return false;
 }  //split up remark line function
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// @brief finds the first non-ligand residue in the pose  (should be the N-terminus)
+core::Size
+get_first_protein_residue( core::pose::Pose const & pose )
+{
+	// This will not work properly on structures with multiple chains, for now
+
+	// briefly, loop through the list of residues in the pose, from 1 to N
+	// if the pose is not in the list of ligands, it is the N-terminal residue
+	for( core::Size i = 1; i <= pose.total_residue(); i++) {
+		if ( pose.residue( i ).is_protein() ){
+			return i;
+		}
+	}
+
+	tr << "No non-ligand residues were detected!!" << std::endl;
+	runtime_assert( false );
+	return -1;
 }
-} // enzdes
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// @brief finds the first non-ligand residue in the pose  (should be the N-terminus)
+core::Size
+get_last_protein_residue( core::pose::Pose const & pose )
+{
+	// This should fail on structures with multiple chains, for now
+
+	// briefly, loop through the list of residues in the pose, from 1 to N
+	// if the pose is not in the list of ligands, it is the N-terminal residue
+	for( core::Size i = pose.total_residue(); i >= 1; i--) {
+		if ( pose.residue( i ).is_protein() ){
+			return i;
+		}
+	}
+
+	tr << "No non-ligand residues were detected!!" << std::endl;
+	runtime_assert( false );
+	return -1;
+}
+
+}  // match_enzdes_util
+} // toolbox
 } //protocols
 

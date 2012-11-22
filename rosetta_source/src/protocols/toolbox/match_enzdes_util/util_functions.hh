@@ -98,8 +98,17 @@ split_up_remark_line(
 	core::Size & ex_geom_id
 );
 
-}
-} // enzdes
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// @brief finds the first non-ligand residue in the pose  (should be the N-terminus)
+core::Size get_first_protein_residue( core::pose::Pose const & pose );
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// @brief finds the first non-ligand residue in the pose  (should be the N-terminus)
+core::Size get_last_protein_residue( core::pose::Pose const & pose );
+
+
+}  // match_enzdes_util
+} // toolbox
 } //protocols
 
 

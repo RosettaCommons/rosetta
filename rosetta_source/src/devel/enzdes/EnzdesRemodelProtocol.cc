@@ -279,9 +279,9 @@ EnzdesRemodelMover::EnzdesRemodelMover( EnzdesRemodelMover const & other )
 	postdesign_filters_(other.postdesign_filters_),
 	start_to_current_smap_(other.start_to_current_smap_),
 	target_inverse_rotamers_(other.target_inverse_rotamers_),
-	rcgs_(other.rcgs_),
 	include_existing_conf_as_invrot_target_(other.include_existing_conf_as_invrot_target_),
 	non_remodel_match_pos_(other.non_remodel_match_pos_),
+	rcgs_(other.rcgs_),
 	ss_similarity_probability_(other.ss_similarity_probability_ )
 {}
 

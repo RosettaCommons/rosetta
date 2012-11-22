@@ -11,7 +11,7 @@
 ///
 /// @brief
 /// @author Nobuyasu Koga( nobuyasu@uw.edu ) , October 2009
-
+/// @modified Tom Linsky (tlinsky@uw.edu), Nov 2012
 
 #ifndef INCLUDED_protocols_forge_constraints_NtoC_RCG_hh
 #define INCLUDED_protocols_forge_constraints_NtoC_RCG_hh
@@ -46,9 +46,27 @@ public:
 
 	NtoC_RCG();
 
+	NtoC_RCG( NtoC_RCG const & rval );
+
 	NtoC_RCG( Real const dist, Real const coef );
 
 	virtual ~NtoC_RCG();
+
+	virtual void
+	parse_my_tag( TagPtr const tag,
+								protocols::moves::DataMap & data,
+								protocols::filters::Filters_map const & filters,
+								protocols::moves::Movers_map const & movers,
+								core::pose::Pose const & pose );
+
+	virtual std::string
+	get_name() const;
+
+	virtual protocols::moves::MoverOP
+	fresh_instance() const;
+
+	virtual protocols::moves::MoverOP
+	clone() const;
 
 	virtual
 	void generate_remodel_constraints( Pose const & pose );

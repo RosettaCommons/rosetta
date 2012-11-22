@@ -7,27 +7,27 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
-/// @brief
-/// @author Nobuyasu Koga
+///@file protocols/fldsgn/SheetCstGeneratorCreator.hh
+///@brief This class will create instances of the SheetConstraintsRCG mover
+///@author Tom Linsky (tlinsky@uw.edu)
 
-#ifndef INCLUDED_protocols_jd2_parser_BluePrint_FWD_HH
-#define INCLUDED_protocols_jd2_parser_BluePrint_FWD_HH
+#ifndef INCLUDED_protocols_fldsgn_SheetCstGeneratorCreator_hh
+#define INCLUDED_protocols_fldsgn_SheetCstGeneratorCreator_hh
 
-#include <utility/pointer/owning_ptr.hh>
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#include <protocols/moves/MoverCreator.hh>
 
 namespace protocols {
-namespace jd2 {
-namespace parser {
+namespace fldsgn {
 
-class BluePrint;
-typedef utility::pointer::owning_ptr< BluePrint > BluePrintOP;
-typedef utility::pointer::owning_ptr< BluePrint const > BluePrintCOP;
+class SheetCstGeneratorCreator : public protocols::moves::MoverCreator {
+public:
+  virtual protocols::moves::MoverOP create_mover() const;
+  virtual std::string keyname() const;
+  static std::string mover_name();
+};
 
-} // parser
-} // jd2
-} // protocols
+}
+}
 
 #endif
+

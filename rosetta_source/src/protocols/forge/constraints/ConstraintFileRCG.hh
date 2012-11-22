@@ -11,7 +11,7 @@
 ///
 /// @brief
 /// @author Nobuyasu Koga( nobuyasu@uw.edu ) , October 2009
-
+/// @modified Tom Linsky ( tlinsky@uw.edu ), Nov 2012
 
 #ifndef INCLUDED_protocols_forge_constraints_ConstraintFileRCG_hh
 #define INCLUDED_protocols_forge_constraints_ConstraintFileRCG_hh
@@ -43,12 +43,26 @@ public:
 	typedef core::pose::Pose Pose;
 
 public:
+	ConstraintFileRCG();
 
 	ConstraintFileRCG( String const & filename );
 
 	virtual ~ConstraintFileRCG();
 
 	void set_cstfile( String const & filename );
+
+	virtual void
+	parse_my_tag( TagPtr const tag,
+								protocols::moves::DataMap & data,
+								protocols::filters::Filters_map const & filters,
+								protocols::moves::Movers_map const & movers,
+								core::pose::Pose const & pose );
+
+	virtual std::string
+	get_name() const;
+
+	virtual protocols::moves::MoverOP
+	fresh_instance() const;
 
 	virtual
 	void generate_remodel_constraints( Pose const & pose );

@@ -12,23 +12,21 @@
 /// @brief
 /// @author Florian Richter, floric@u.washington.edu, april 2009
 
-
-
-
 #ifndef INCLUDED_protocols_forge_remodel_ResidueVicinityRCG_hh
 #define INCLUDED_protocols_forge_remodel_ResidueVicinityRCG_hh
 
-
+// protocol headers
 #include <protocols/forge/remodel/RemodelConstraintGenerator.hh>
 // AUTO-REMOVED #include <protocols/forge/build/BuildInstruction.hh>
 
-#include <core/scoring/constraints/Func.fwd.hh>
-
-//#include <core/conformation
+// project headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/types.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
+#include <core/scoring/constraints/Func.fwd.hh>
+#include <core/types.hh>
+#include <protocols/moves/DataMap.fwd.hh>
 
+//utility headers
 #include <utility/vector1.hh>
 
 
@@ -170,6 +168,11 @@ class ResidueVicinityRCG : public RemodelConstraintGenerator
 {
 
 public:
+	// Constructors and virtual functions
+	ResidueVicinityRCG();
+
+	/// @brief copy construtor
+	ResidueVicinityRCG( ResidueVicinityRCG const & rval );
 
 	ResidueVicinityRCG(
 		core::Size lstart,
@@ -179,12 +182,29 @@ public:
 
 	virtual ~ResidueVicinityRCG();
 
-	virtual
+ 	virtual
 	void
 	generate_remodel_constraints(
 		core::pose::Pose const & pose );
 
+	virtual void
+	parse_my_tag( TagPtr const tag,
+								protocols::moves::DataMap & data,
+								protocols::filters::Filters_map const & filters,
+								protocols::moves::Movers_map const & movers,
+								core::pose::Pose const & pose );
 
+	virtual std::string
+	get_name() const;
+
+	virtual protocols::moves::MoverOP
+	fresh_instance() const;
+
+	virtual protocols::moves::MoverOP
+	clone() const;
+
+public:
+	// Public member functions
 	void
 	clear_rv_infos(){
 		rv_infos_.clear(); }
@@ -194,6 +214,15 @@ public:
 	add_rv_info(
 		ResidueVicinityInfoOP rv_info ){
 		rv_infos_.push_back( rv_info ); }
+
+	void
+	lstart( core::Size const lstart );
+
+	void
+	lstop( core::Size const lstop );
+
+	void
+	set_rv_infos( utility::vector1< ResidueVicinityInfoOP > const & rv_infos );
 
 protected:
 

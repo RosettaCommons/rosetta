@@ -12,18 +12,16 @@
 /// @brief
 /// @author Florian Richter, floric@u.washington.edu, april 2009
 
-
+// unit headers
 #include <protocols/forge/remodel/ResidueVicinityRCG.hh>
 
-// AUTO-REMOVED #include <protocols/forge/build/BuildManager.hh>
-// AUTO-REMOVED #include <protocols/forge/build/Interval.hh>
-// AUTO-REMOVED #include <protocols/forge/components/VarLengthBuild.hh>
 
-//#include <core/chemical/ResidueType.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
+//package headers
+#include <protocols/forge/remodel/ResidueVicinityCstGeneratorCreator.hh>
+
+//project headers
 #include <core/id/AtomID.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/BoundConstraint.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
@@ -32,10 +30,9 @@
 #include <basic/Tracer.hh>
 #include <protocols/constraints_additional/AmbiguousMultiConstraint.hh>
 
+//utility headers
+#include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
-
-
-
 
 static basic::Tracer tr( "protocols.forge.remodel.ResidueVicinityRCG" );
 
@@ -112,6 +109,37 @@ ResidueVicinityInfo::set_lt_dih( core::scoring::constraints::FuncOP lt_dih ){
 	lt_dih_ = lt_dih; }
 
 
+//ResidueVicinityConstraintsCreator Functions
+protocols::moves::MoverOP
+ResidueVicinityCstGeneratorCreator::create_mover() const
+{
+	return new ResidueVicinityRCG();
+}
+
+std::string
+ResidueVicinityCstGeneratorCreator::keyname() const
+{
+	return ResidueVicinityCstGeneratorCreator::mover_name();
+}
+
+std::string
+ResidueVicinityCstGeneratorCreator::mover_name()
+{
+	return "ResidueVicinityCstCreator";
+}
+
+ResidueVicinityRCG::ResidueVicinityRCG()
+	: RemodelConstraintGenerator(),
+		lstart_( 0 ),
+		lstop_( 0 )
+{}
+
+ResidueVicinityRCG::ResidueVicinityRCG( ResidueVicinityRCG const & rval )
+	: RemodelConstraintGenerator( rval ),
+		lstart_( rval.lstart_ ),
+		lstop_( rval.lstop_ )
+{}
+
 ResidueVicinityRCG::ResidueVicinityRCG(
 	core::Size lstart,
 	core::Size lstop,
@@ -122,6 +150,43 @@ ResidueVicinityRCG::ResidueVicinityRCG(
 {}
 
 ResidueVicinityRCG::~ResidueVicinityRCG() {}
+
+void
+ResidueVicinityRCG::parse_my_tag( TagPtr const tag,
+																	protocols::moves::DataMap & data,
+																	protocols::filters::Filters_map const & filters,
+																	protocols::moves::Movers_map const & movers,
+																	core::pose::Pose const & pose )
+{
+	RemodelConstraintGenerator::parse_my_tag( tag, data, filters, movers, pose );
+	lstart( tag->getOption< core::Size >( "lstart", lstart_ ) );
+	if ( lstart_ == 0 ) {
+		utility_exit_with_message("lstart must be specified in ResidueVicinityCstGenerator mover");
+	}
+	lstop( tag->getOption< core::Size >( "lstart", lstop_ ) );
+	if ( lstop_ == 0 ) {
+		utility_exit_with_message("lstop must be specified in ResidueVicinityCstGenerator mover");
+	}
+}
+
+std::string
+ResidueVicinityRCG::get_name() const
+{
+	return ResidueVicinityCstGeneratorCreator::mover_name();
+}
+
+
+protocols::moves::MoverOP
+ResidueVicinityRCG::fresh_instance() const
+{
+	return new ResidueVicinityRCG();
+}
+
+protocols::moves::MoverOP
+ResidueVicinityRCG::clone() const
+{
+	return new ResidueVicinityRCG( *this );
+}
 
 /// @brief for every ResidueVicinityInfo (RVI) that this generator has, an AmbiguousConstraint between the
 /// @brief neighbor atoms of all residues in the remodel region and the RVI are generated.
@@ -271,6 +336,25 @@ ResidueVicinityRCG::generate_remodel_constraints_for_respair(
 	} //loop over targ residue atoms
 
 }
+
+void
+ResidueVicinityRCG::lstart( core::Size const lstart )
+{
+	lstart_ = lstart;
+}
+
+void
+ResidueVicinityRCG::lstop( core::Size const lstop )
+{
+	lstop_ = lstop;
+}
+
+void
+ResidueVicinityRCG::set_rv_infos( utility::vector1< ResidueVicinityInfoOP > const & rv_infos )
+{
+	rv_infos_ = rv_infos;
+}
+
 
 } //namespace remodel
 } //namespace forge

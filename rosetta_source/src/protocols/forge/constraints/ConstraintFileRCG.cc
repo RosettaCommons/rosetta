@@ -14,6 +14,7 @@
 
 // Unit header
 #include <protocols/forge/constraints/ConstraintFileRCG.hh>
+#include <protocols/forge/constraints/ConstraintFileCstGeneratorCreator.hh>
 
 // Package headers
 #include <core/scoring/constraints/ConstraintIO.hh>
@@ -21,9 +22,9 @@
 #include <core/id/SequenceMapping.hh>
 
 // Project headers
-// AUTO-REMOVED #include <basic/options/option.hh>
+#include <basic/options/option.hh>
 #include <basic/Tracer.hh>
-
+#include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 
 
@@ -33,17 +34,35 @@ namespace protocols{
 namespace forge{
 namespace constraints{
 
+std::string
+ConstraintFileCstGeneratorCreator::keyname() const
+{
+	return ConstraintFileCstGeneratorCreator::mover_name();
+}
+
+protocols::moves::MoverOP
+ConstraintFileCstGeneratorCreator::create_mover() const
+{
+	return new ConstraintFileRCG();
+}
+
+std::string
+ConstraintFileCstGeneratorCreator::mover_name()
+{
+	return "ConstraintFileCstGenerator";
+}
+
 /// @brief
-//ConstraintFileRCG::ConstraintFileRCG():
-//	RemodelConstraintGenerator(),
-//	filename_( "" )
-//{
-//	using namespace basic::options;
-//	using namespace basic::options::OptionKeys;
-//	if( option[ constraints::cst_file ].user() ){
-//		filename_ = option[ constraints::cst_file ].value().at( 1 );
-//	}
-//}
+ConstraintFileRCG::ConstraintFileRCG():
+	RemodelConstraintGenerator(),
+	filename_( "" )
+{
+	/*using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	if( option[ constraints::cst_file ].user() ){
+		filename_ = option[ constraints::cst_file ].value().at( 1 );
+		}*/
+}
 
 /// @brief
 ConstraintFileRCG::ConstraintFileRCG( String const & filename ):
@@ -53,6 +72,29 @@ ConstraintFileRCG::ConstraintFileRCG( String const & filename ):
 
 /// @brief
 ConstraintFileRCG::~ConstraintFileRCG() {}
+
+void
+ConstraintFileRCG::parse_my_tag( TagPtr const tag,
+												protocols::moves::DataMap & data,
+												protocols::filters::Filters_map const & filters,
+												protocols::moves::Movers_map const & movers,
+												core::pose::Pose const & pose )
+{
+	RemodelConstraintGenerator::parse_my_tag( tag, data, filters, movers, pose );
+	set_cstfile( tag->getOption< std::string >( "filename", filename_ ) );
+}
+
+std::string
+ConstraintFileRCG::get_name() const
+{
+	return ConstraintFileCstGeneratorCreator::mover_name();
+}
+
+protocols::moves::MoverOP
+ConstraintFileRCG::fresh_instance() const
+{
+	return new ConstraintFileRCG();
+}
 
 /// @brief
 void
@@ -66,6 +108,9 @@ void
 ConstraintFileRCG::generate_remodel_constraints( Pose const & pose )
 {
 	using namespace core::scoring::constraints;
+	if ( filename_ == "" ) {
+		utility_exit_with_message( "ConstraintFileCstGenerator requires that a constraint filename be specified." );
+	}
 	ConstraintSetOP constraints = ConstraintIO::get_instance()->read_constraints( filename_, new ConstraintSet, pose );
 	this->add_constraints( constraints->get_all_constraints() );
 } //generate constraints

@@ -62,6 +62,7 @@
 #include <protocols/fldsgn/BluePrintBDRCreator.hh>
 #include <protocols/fldsgn/CircularPermutationCreator.hh>
 #include <protocols/fldsgn/MatchResiduesMoverCreator.hh>
+#include <protocols/fldsgn/SheetCstGeneratorCreator.hh>
 
 #include <protocols/fldsgn/potentials/SetAACompositionPotentialCreator.hh>
 #include <protocols/fldsgn/potentials/SetSecStructEnergiesCreator.hh>
@@ -71,8 +72,14 @@
 #include <protocols/flxbb/FlxbbDesignCreator.hh>
 #include <protocols/flxbb/InterlockAromaCreator.hh>
 
+#include <protocols/forge/constraints/ConstraintFileCstGeneratorCreator.hh>
+#include <protocols/forge/constraints/InverseRotamersCstGeneratorCreator.hh>
+#include <protocols/forge/constraints/InvrotTreeCstGeneratorCreator.hh>
+#include <protocols/forge/constraints/NtoCCstGeneratorCreator.hh>
+
 #include <protocols/forge/remodel/RemodelLoopMoverCreator.hh>
 #include <protocols/forge/remodel/RemodelMoverCreator.hh>
+#include <protocols/forge/remodel/ResidueVicinityCstGeneratorCreator.hh>
 
 #include <protocols/idealize/IdealizeMoverCreator.hh>
 

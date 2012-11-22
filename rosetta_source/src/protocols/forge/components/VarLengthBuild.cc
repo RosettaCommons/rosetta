@@ -442,6 +442,16 @@ void VarLengthBuild::apply( Pose & pose ) {
 	}
 	//pose.dump_pdb("vlb_aft_setup_movers.pdb");
 
+	// fix the abego string to deal with ligands that might have been added to the pose
+	if( abego_.size() > 0 ) {
+		TR << "Abego size=" << abego_.size() << " and pose size=" << pose.total_residue() << std::endl;
+		//runtime_assert( abego_.size() <= pose.total_residue() );
+		// account for possible ligands in the pose
+		for ( core::Size i=abego_.size(); i<pose.total_residue(); ++i ) {
+			abego_.push_back("X");
+		}
+	}
+
 	// centroid level protocol
 	if ( get_last_move_status() == MS_SUCCESS ) {
 		if ( pose.residue( 1 ).residue_type_set().name() != core::chemical::CENTROID ) {
@@ -945,7 +955,7 @@ VarLengthBuild::FrameList VarLengthBuild::pick_fragments(
 		} else {
 			aa_sub = "";
 		}
-		//std::cout << "complete_ss length: " << complete_ss.length() << " complete_abego size: " << complete_abego.size() << std::endl;
+		//TR << "complete_ss length: " << complete_ss.length() << " complete_abego size: " << complete_abego.size() << std::endl;
 		utility::vector1< String > abego_sub;
 		if ( complete_abego.size() > 0 ) {
 			runtime_assert( complete_ss.length() == complete_abego.size() );
@@ -994,9 +1004,8 @@ VarLengthBuild::setup_remodel_constraints(
 	}
 
 	for( utility::vector1< RemodelConstraintGeneratorOP >::iterator rcg_it = rcgs_.begin(); rcg_it != rcgs_.end(); ++rcg_it ){
-
 		(*rcg_it)->set_seqmap( this->manager().sequence_mapping());
-
+		TR << "Adding remodel constraints to pose using " << (*rcg_it)->get_name() << std::endl;
 		(*rcg_it)->add_remodel_constraints_to_pose( pose );
 	}
 }
