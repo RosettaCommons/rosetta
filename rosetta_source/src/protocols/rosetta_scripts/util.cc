@@ -370,7 +370,7 @@ find_nearest_res( core::pose::Pose const & source, core::pose::Pose const & targ
       nearest_res = i;
     }
   }
-  if( min_dist <= 2.0 ) return nearest_res;
+  if( min_dist <= 3.0 ) return nearest_res;
   else return 0;
 }
 
