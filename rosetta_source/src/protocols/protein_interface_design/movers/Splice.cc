@@ -119,7 +119,10 @@ Splice::Splice() :
 	locked_res_( NULL ),
 	locked_res_id_( ' ' ),
 	checkpointing_file_ ( "" ),
-	loop_dbase_file_name_( "" )
+	loop_dbase_file_name_( "" ),
+	loop_pdb_source_( "" ),
+	mover_tag_( NULL ),
+	splice_filter_( NULL )
 {
 	torsion_database_.clear();
 	delta_lengths_.clear();
@@ -285,6 +288,7 @@ Splice::apply( core::pose::Pose & pose )
 	using namespace protocols::rosetta_scripts;
 	using core::chemical::DISULFIDE;
 
+	set_last_move_status( protocols::moves::MS_SUCCESS );
 	TR<<"Starting splice apply"<<std::endl;
 	save_values();
 	if( locked_res() ){
@@ -365,6 +369,10 @@ Splice::apply( core::pose::Pose & pose )
 		if( dbase_entry == 0 )// failed to read entry
 			return;
 		dofs = torsion_database_[ dbase_entry ];
+		std::string const source_pdb_name( dofs.source_pdb() );
+		TR<<"Taking loop from source pdb "<<source_pdb_name<<std::endl;
+		if( mover_tag_() != NULL )
+			mover_tag_->obj = source_pdb_name;
 		foreach( BBDofs & resdofs, dofs ){/// transform 3-letter code to 1-letter code
 			using namespace core::chemical;
 			if( resdofs.resn() == "CYD" ){// at one point it would be a good idea to use disfulfides rather than bail out on them...; I think disulfided cysteins wouldn't be written as CYD. This requires something more clever...
@@ -604,7 +612,13 @@ Splice::apply( core::pose::Pose & pose )
 			core::Real const average_rms( rms / total_residue_new );
 			TR<<"Average distance of spliced segment to original: "<< average_rms<<std::endl;
 			if( average_rms >= rms_cutoff() ){
-				TR<<"Failing."<<std::endl;
+				TR<<"Failing because rmsd = "<<average_rms<<std::endl;
+				set_last_move_status( protocols::moves::FAIL_RETRY );
+				retrieve_values();
+				return;
+			}
+			if( !splice_filter()->apply( pose ) ){
+				TR<<"Failing because filter fails"<<std::endl;
 				set_last_move_status( protocols::moves::FAIL_RETRY );
 				retrieve_values();
 				return;
@@ -631,7 +645,11 @@ Splice::apply( core::pose::Pose & pose )
 			dbase_file.open( loop_dbase_file_name_.c_str(), std::ios::app );
 			for( core::Size i = startn; i <= startc + res_move() - 1; ++i )
 				dbase_file << pose.phi( i )<<' '<<pose.psi( i )<<' '<<pose.omega( i )<<' '<<pose.residue( i ).name3()<<' ';
-			dbase_file << startn<<' '<<stop_on_template<<' '<<cut_site<<" cut"<<std::endl;
+			dbase_file << startn<<' '<<stop_on_template<<' '<<cut_site<<' ';
+			if( loop_pdb_source_ != "" )
+				dbase_file << loop_pdb_source_<<std::endl;
+			else
+				dbase_file << "cut" << std::endl; // the word cut is used as a placeholder. It is advised to use instead the source pdb file in this field so as to keep track of the origin of dbase loops
 			dbase_file.close();
 		}
 	}// fi ccd
@@ -669,7 +687,7 @@ Splice::get_name() const {
 }
 
 void
-Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose )
+Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protocols::filters::Filters_map const & filters, protocols::moves::Movers_map const &, core::pose::Pose const & pose )
 {
 	start_pose_ = new core::pose::Pose( pose );
 	runtime_assert( tag->hasOption( "task_operations" ) != (tag->hasOption( "from_res" ) || tag->hasOption( "to_res" ) ) || tag->hasOption( "torsion_database" ) ); // it makes no sense to activate both taskoperations and from_res/to_res.
@@ -757,7 +775,12 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 	}
 	checkpointing_file( tag->getOption< std::string > ( "checkpointing_file", "" ) );
 	loop_dbase_file_name( tag->getOption< std::string > ( "loop_dbase_file_name", "" ) );
-	TR<<"from_res: "<<from_res()<<" to_res: "<<to_res()<<" dbase_iterate: "<<dbase_iterate()<<" randomize_cut: "<<randomize_cut()<<" source_pdb: "<<source_pdb()<<" ccd: "<<ccd()<<" rms_cutoff: "<<rms_cutoff()<<" res_move: "<<res_move()<<" template_file: "<<template_file()<<" checkpointing_file: "<<checkpointing_file_<<" loop_dbase_file_name: "<<loop_dbase_file_name_<<std::endl;
+	if( tag->hasOption( "splice_filter" ))
+		splice_filter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "splice_filter" ), filters ) );
+	if( tag->hasOption( "mover_tag" ) )
+		mover_tag_ = protocols::moves::get_set_from_datamap< protocols::moves::DataMapObj< std::string > >( "tags", tag->getOption< std::string >( "mover_tag" ), data );
+	loop_pdb_source( tag->getOption< std::string >( "loop_pdb_source", "" ) );
+	TR<<"from_res: "<<from_res()<<" to_res: "<<to_res()<<" dbase_iterate: "<<dbase_iterate()<<" randomize_cut: "<<randomize_cut()<<" source_pdb: "<<source_pdb()<<" ccd: "<<ccd()<<" rms_cutoff: "<<rms_cutoff()<<" res_move: "<<res_move()<<" template_file: "<<template_file()<<" checkpointing_file: "<<checkpointing_file_<<" loop_dbase_file_name: "<<loop_dbase_file_name_<<" loop_pdb_source: "<<loop_pdb_source()<<" mover_tag: "<<mover_tag_<<std::endl;
 }
 
 protocols::moves::MoverOP
@@ -808,10 +831,11 @@ Splice::read_torsion_database(){
 			core::Real phi, psi, omega;
 			std::string resn;
 			line_stream >> phi >> psi >> omega >> resn;
-			if( resn == "cut" || resn == "CUT" ){ /// ugly!!!
+			if( line_stream.eof() ){// the end of the line signifies that we're reading the start, stop, cut, source_pdb fields
 				bbdof_entry.start_loop( (core::Size ) phi );
 				bbdof_entry.stop_loop( (core::Size ) psi );
 				bbdof_entry.cut_site( (core::Size ) omega );
+				bbdof_entry.source_pdb( resn );
 			}
 			else
 				bbdof_entry.push_back( BBDofs( 0/*resid*/, phi, psi, omega, resn ) ); /// resid may one day be used. Currently it isn't
@@ -948,6 +972,16 @@ Splice::loop_dbase_file_name( std::string const s ){
 std::string
 Splice::loop_dbase_file_name() const{
 	return loop_dbase_file_name_;
+}
+
+void
+Splice::loop_pdb_source( std::string const s ){
+	loop_pdb_source_ = s;
+}
+
+std::string
+Splice::loop_pdb_source() const{
+	return loop_pdb_source_;
 }
 
 } //movers

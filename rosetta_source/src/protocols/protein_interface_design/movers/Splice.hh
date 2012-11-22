@@ -34,8 +34,8 @@ namespace movers {
 class BBDofs : public utility::pointer::ReferenceCount
 {
 	public:
-		BBDofs() : resid_( 0 ), phi_( 0.0 ), psi_( 0.0 ), omega_( 0.0 ), resn_( "" ) {}
-		BBDofs( core::Size const resid, core::Real const phi, core::Real const psi, core::Real const omega, std::string const resn ) : resid_( resid ), phi_( phi ), psi_( psi ), omega_( omega ), resn_( resn ) {}
+		BBDofs() : resid_( 0 ), phi_( 0.0 ), psi_( 0.0 ), omega_( 0.0 ), resn_( "" ){}
+		BBDofs( core::Size const resid, core::Real const phi, core::Real const psi, core::Real const omega, std::string const resn ) : resid_( resid ), phi_( phi ), psi_( psi ), omega_( omega ), resn_( resn ){}
 		core::Size resid() const{ return resid_; }
 		core::Real phi() const{ return phi_; }
 		core::Real psi() const{ return psi_; }
@@ -62,7 +62,7 @@ class ResidueBBDofs : public utility::pointer::ReferenceCount
 		typedef bbdof_list::iterator iterator;
 		typedef bbdof_list::const_iterator const_iterator;
 
-		ResidueBBDofs() : cut_site_( 0 ), start_loop_( 0 ), stop_loop_( 0 ) { clear(); }
+		ResidueBBDofs() : cut_site_( 0 ), start_loop_( 0 ), stop_loop_( 0 ), source_pdb_("") { clear(); }
 		virtual ~ResidueBBDofs();
 		void cut_site( core::Size const c ){ cut_site_ = c; }
 		core::Size cut_site() const { return cut_site_; }
@@ -78,9 +78,12 @@ class ResidueBBDofs : public utility::pointer::ReferenceCount
 		void start_loop( core::Size const s ){ start_loop_ = s; }
 		core::Size stop_loop() const{ return stop_loop_; }
 		void stop_loop( core::Size const s ){ stop_loop_ = s; }
+		std::string source_pdb() const{ return source_pdb_; }
+		void source_pdb( std::string const s ){ source_pdb_ = s; }
 	private:
 		core::Size cut_site_, start_loop_, stop_loop_;
 		bbdof_list bbdofs_;
+		std::string source_pdb_; // the source pdb from which the loop is taken
 };
 
 
@@ -154,6 +157,10 @@ public:
 
 	std::string loop_dbase_file_name() const;
 	void loop_dbase_file_name( std::string const f );
+	void loop_pdb_source( std::string const l );
+	std::string loop_pdb_source() const;
+	protocols::filters::FilterOP splice_filter() const{ return splice_filter_; }
+	void splice_filter( protocols::filters::FilterOP f ){ splice_filter_ = f; }
 
 private:
 	void save_values(); // call at beginning of apply. Used to keep the from_res/to_res values, which might be changed by apply during a run
@@ -187,6 +194,9 @@ private:
 	char locked_res_id_; // dflt ''; the one-letter code for the locked residue
 	std::string checkpointing_file_; // dflt ""; a file that contains checkpointing information to recover from job termination when iterating over a loop database
 	std::string loop_dbase_file_name_; //dflt ""; a file name into which the loop database is dumped
+	std::string loop_pdb_source_; //dflt ""; what is the source pdb from which the loop came? This is used in writing the loop to the loop dbase, and helps keep track of where loops come from during design.
+	utility::pointer::owning_ptr< protocols::moves::DataMapObj< std::string > > mover_tag_; /// dflt NULL; to communicate the current Splice mover's loop origin to the GenericMC
+	protocols::filters::FilterOP splice_filter_;
 };
 
 

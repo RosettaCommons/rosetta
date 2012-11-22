@@ -56,6 +56,7 @@
 #include <fstream>
 #include <utility/io/izstream.hh>
 #include <sstream>
+#include <core/pose/util.hh>
 
 static basic::Tracer TR("protocols.moves.GenericMonteCarloMover");
 static basic::Tracer TR_energies("protocols.moves.GenericMonteCarloMover.individual_energies");
@@ -106,7 +107,8 @@ GenericMonteCarloMover::GenericMonteCarloMover():
 	adaptive_movers_( false ),
 	adaptation_period_( 0 ),
 	saved_accept_file_name_( "" ),
-	saved_trial_number_file_( "" )
+	saved_trial_number_file_( "" ),
+	mover_tag_( NULL )
 {
   initialize();
 }
@@ -134,7 +136,8 @@ GenericMonteCarloMover::GenericMonteCarloMover(
 	boltz_rank_( false ),
 	last_accepted_pose_( NULL ),
 	lowest_score_pose_( NULL ),
-	saved_accept_file_name_( "" )
+	saved_accept_file_name_( "" ),
+	mover_tag_( NULL )
 {
   initialize();
 }
@@ -162,7 +165,8 @@ GenericMonteCarloMover::GenericMonteCarloMover(
   recover_low_( true ),
 	rank_by_filter_(1),
 	boltz_rank_( false ),
-	saved_accept_file_name_( "" )
+	saved_accept_file_name_( "" ),
+	mover_tag_( NULL )
 {
   initialize();
 }
@@ -523,6 +527,17 @@ GenericMonteCarloMover::boltzmann( Pose & pose )
 				if( saved_accept_file_name_ != "" ){
 					TR<<"Dumping accepted file to disk as: "<<saved_accept_file_name_<<std::endl;
 					pose.dump_pdb( saved_accept_file_name_ );
+					if( mover_tag_() != NULL ){
+						TR<<"Dumping accepted mover tag to disk"<<std::endl;
+						std::ofstream f;
+						std::string const fname( saved_accept_file_name_ + ".mover_tag" );
+						f.open( fname.c_str(), std::ios::out );
+						if( !f.good() )
+							utility_exit_with_message( "Unable to open MC mover_tag file " + fname );
+						f<<mover_tag_->obj;
+						f.close();
+						core::pose::add_comment( pose, user_defined_mover_name_, mover_tag_->obj ); /// adding comment to the pose to save the mover's tag since it's accepted
+					}
 				}
       }
       return( true );
@@ -592,6 +607,17 @@ GenericMonteCarloMover::load_trial_number_from_checkpoint() const{
 	core::Size trial;
 	line_stream >> trial;
 	TR<<"Loaded trial number: "<<trial<<std::endl;
+	if( mover_tag_() != NULL ){
+		std::string const fname( saved_trial_number_file_ + ".mover_tag" );
+		ifstream f_mover_tag( fname.c_str(), ios::in );
+		if( f_mover_tag.good() ){
+			f_mover_tag >> mover_tag_->obj;
+			TR<<"Loaded mover_tag from checkpointing file: "<<mover_tag_->obj<<std::endl;
+		}
+		else
+			TR<<"File containing mover_tag "<<fname<<" not found. Not loading movertag from checkpoint"<<std::endl;
+	}
+
 	return trial;
 }
 
@@ -778,16 +804,16 @@ GenericMonteCarloMover::parse_my_tag( TagPtr const tag, DataMap & data, Filters_
 	if( adaptive_movers() )
 		adaptation_period( tag->getOption< core::Size >( "adaptation_period", std::max( (int) maxtrials_ / 10, 10 ) ) );
 
-	String const  mover_name( tag->getOption< String >( "mover_name" ,""));
-	if( data.has( "stopping_condition", mover_name ) ){
-		TR<<mover_name<<" defines its own stopping condition, and GenericMC will respect this stopping condition"<<std::endl;
-		mover_stopping_condition_ = data.get< DataMapObj< bool > * >( "stopping_condition", mover_name );
+	String const  user_defined_mover_name_( tag->getOption< String >( "mover_name" ,""));
+	if( data.has( "stopping_condition", user_defined_mover_name_ ) ){
+		TR<<user_defined_mover_name_<<" defines its own stopping condition, and GenericMC will respect this stopping condition"<<std::endl;
+		mover_stopping_condition_ = data.get< DataMapObj< bool > * >( "stopping_condition", user_defined_mover_name_ );
 	}
 
 	String const filter_name( tag->getOption< String >( "filter_name", "true_filter" ) );
-	Movers_map::const_iterator  find_mover ( movers.find( mover_name ));
+	Movers_map::const_iterator  find_mover ( movers.find( user_defined_mover_name_ ));
 	Filters_map::const_iterator find_filter( filters.find( filter_name ));
-	if( find_mover == movers.end() && mover_name != "" ) {
+	if( find_mover == movers.end() && user_defined_mover_name_ != "" ) {
 		TR.Error << "ERROR !! mover not found in map: \n" << tag << std::endl;
 		runtime_assert( find_mover != movers.end() );
 	}
@@ -795,7 +821,7 @@ GenericMonteCarloMover::parse_my_tag( TagPtr const tag, DataMap & data, Filters_
 		TR.Error << "ERROR !! filter not found in map: \n" << tag << std::endl;
 		runtime_assert( find_filter != filters.end() );
 	}
-	if( mover_name != "" )
+	if( user_defined_mover_name_ != "" )
 		mover_ = find_mover->second;
 
 	if( adaptive_movers() ) /// adaptive movers only works if the mover being called is of type parsedprotocol
@@ -822,7 +848,7 @@ GenericMonteCarloMover::parse_my_tag( TagPtr const tag, DataMap & data, Filters_
 	}
 
 	if( filters_.size() == 0 ){
-		TR << "Apply mover of " << mover_name << ", and evaluate score by " << sfxn
+		TR << "Apply mover of " << user_defined_mover_name_ << ", and evaluate score by " << sfxn
 		<< " at Temperature=" << temperature_ << ", ntrails= " << maxtrials_ << std::endl;
 	}
 
@@ -875,6 +901,8 @@ GenericMonteCarloMover::parse_my_tag( TagPtr const tag, DataMap & data, Filters_
 
 	saved_accept_file_name_ = tag->getOption< std::string >( "saved_accept_file_name", "" );
 	saved_trial_number_file_ = tag->getOption< std::string >( "saved_trial_number_file", "" );
+	if( tag->hasOption( "mover_tag" ) )
+		mover_tag_ = protocols::moves::get_set_from_datamap< DataMapObj< std::string > >( "tags", tag->getOption< std::string >( "mover_tag" ), data );
   initialize();
 }
 
