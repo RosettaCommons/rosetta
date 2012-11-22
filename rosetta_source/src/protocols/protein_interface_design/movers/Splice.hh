@@ -16,7 +16,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
+#include <protocols/filters/Filter.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/moves/DataMapObj.hh>
@@ -24,7 +24,6 @@
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
-#include <protocols/moves/DataMapObj.hh>
 
 namespace protocols {
 namespace protein_interface_design {
