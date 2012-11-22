@@ -219,7 +219,7 @@ FilterScanFilter::single_substitution( core::pose::Pose & pose, core::Size const
   allowed_aas[ target_aa ] = true;
   TaskFactoryOP mut_res = new TaskFactory( *task_factory() );
   DesignAroundOperationOP dao = new DesignAroundOperation;///restrict repacking to 8.0A around target res to save time
-  dao->design_shell( 8.0 );
+  dao->design_shell( 6.0 );
   dao->include_residue( resi );
   mut_res->push_back( dao );
   PackerTaskOP mutate_residue = mut_res->create_task_and_apply_taskoperations( pose );
