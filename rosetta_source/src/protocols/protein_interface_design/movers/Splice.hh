@@ -16,7 +16,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/filters/Filter.hh>
+#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/moves/DataMapObj.hh>
@@ -158,8 +158,8 @@ public:
 	void loop_dbase_file_name( std::string const f );
 	void loop_pdb_source( std::string const l );
 	std::string loop_pdb_source() const;
-	protocols::filters::FilterOP splice_filter() const{ return splice_filter_; }
-	void splice_filter( protocols::filters::FilterOP f ){ splice_filter_ = f; }
+	protocols::filters::FilterOP splice_filter() const;
+	void splice_filter( protocols::filters::FilterOP f );
 
 private:
 	void save_values(); // call at beginning of apply. Used to keep the from_res/to_res values, which might be changed by apply during a run

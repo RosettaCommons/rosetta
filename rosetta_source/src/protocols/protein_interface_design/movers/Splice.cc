@@ -984,6 +984,16 @@ Splice::loop_pdb_source() const{
 	return loop_pdb_source_;
 }
 
+protocols::filters::FilterOP
+Splice::splice_filter() const{
+	return splice_filter_;
+}
+
+void
+Splice::splice_filter( protocols::filters::FilterOP f ){
+	splice_filter_ = f;
+}
+
 } //movers
 } //protein_interface_design
 } //protocols
