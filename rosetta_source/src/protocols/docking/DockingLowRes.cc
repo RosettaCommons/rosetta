@@ -13,6 +13,7 @@
 /// @author Monica Berrondo
 /// @author Modified by Sergey Lyskov
 /// @author Modified by Jacob Corn
+/// @author Modified by Daisuke Kuroda
 
 #include <protocols/docking/DockingLowRes.hh>
 
@@ -28,9 +29,6 @@
 
 #include <core/scoring/ScoreFunction.hh>
 
-#include <protocols/docking/DockingEnsemble.hh>
-
-#include <protocols/docking/ConformerSwitchMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 // AUTO-REMOVED #include <protocols/moves/OutputMovers.hh>
@@ -143,10 +141,6 @@ void DockingLowRes::set_default() {
 
 	inner_cycles_ = 50;
 	outer_cycles_ = 10;
-
-	// initialize the ensemble movers
-	ensemble1_mover_ = NULL;
-	ensemble2_mover_ = NULL;
 }
 
 void DockingLowRes::sync_objects_with_flags()
@@ -175,21 +169,7 @@ void DockingLowRes::set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn )
 	// mc object score function is out of sync and needs to be recreated
 	flags_and_objects_are_in_sync_ = false;
 }
-
-void DockingLowRes::set_ensemble1( DockingEnsembleOP ensemble1 )
-{
-	if ( ensemble1 ){
-		ensemble1_mover_ = new protocols::docking::ConformerSwitchMover( ensemble1 );
-	}
-}
-
-void DockingLowRes::set_ensemble2( DockingEnsembleOP ensemble2 )
-{
-	if ( ensemble2 ){
-		ensemble2_mover_= new protocols::docking::ConformerSwitchMover( ensemble2 );
-	}
-}
-
+    
 void DockingLowRes::finalize_setup( core::pose::Pose & pose){
 	using namespace moves;
 
@@ -197,10 +177,6 @@ void DockingLowRes::finalize_setup( core::pose::Pose & pose){
 
 	docking_lowres_protocol_ = new SequenceMover;
 	docking_lowres_protocol_->add_mover( rb_mover_ );
-
-	//for ensemble mode
-	if ( ensemble1_mover_ ) docking_lowres_protocol_->add_mover( ensemble1_mover_ );
-	if ( ensemble2_mover_ ) docking_lowres_protocol_->add_mover( ensemble2_mover_ );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -224,6 +200,7 @@ void DockingLowRes::apply( core::pose::Pose & pose )
 {
 	using namespace scoring;
 
+	//TR << "in " << name << "apply" << std::endl;
 	TR << "in DockingLowRes.apply" << std::endl;
 
 	if ( !flags_and_objects_are_in_sync_ ){
@@ -262,7 +239,7 @@ void DockingLowRes::apply( core::pose::Pose & pose )
 
 std::string
 DockingLowRes::get_name() const {
-	return "DockingLowRes";
+	return type();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -291,25 +268,24 @@ void DockingLowRes::rigid_body_trial( core::pose::Pose & pose )
 	using namespace moves;
 
 	//	PDBDumpMoverOP dump = new PDBDumpMover("lowres_cycle_");
-//	dump->apply( pose );
-//	MCShowMoverOP mc_show = new MCShowMover( mc_ );
-//	mc_show->apply( pose );
-
+    //	dump->apply( pose );
+    //	MCShowMoverOP mc_show = new MCShowMover( mc_ );
+    //	mc_show->apply( pose );
+    
 	rb_mover_->rot_magnitude( rot_magnitude_ );
 	rb_mover_->trans_magnitude( trans_magnitude_ );
 
 	TrialMoverOP rb_trial = new TrialMover( docking_lowres_protocol_, mc_ );
 //	rb_trial->keep_stats_type( moves::all_stats );
 	rb_trial->keep_stats_type( accept_reject );
-
+    
 	RepeatMoverOP rb_cycle = new RepeatMover( rb_trial, inner_cycles_ );
-
 	rb_cycle->apply( pose );
-
+    
 	pose = mc_->lowest_score_pose();
-	mc_->reset( pose );
+    mc_->reset( pose );
 
-	accept_rate_ = rb_trial->acceptance_rate();
+    accept_rate_ = rb_trial->acceptance_rate();
 }
 
 moves::MonteCarloOP DockingLowRes::get_mc() { return mc_; }
@@ -317,40 +293,36 @@ moves::MonteCarloOP DockingLowRes::get_mc() { return mc_; }
 
 /// @details  Show the complete setup of the docking protocol
 void
-DockingLowRes::show( std::ostream & out ) {
-	out << *this;
-}
-
-std::ostream & operator<<(std::ostream& out, const DockingLowRes & dp )
-{
-	using namespace ObjexxFCL::fmt;
-
+DockingLowRes::show( std::ostream & out ) const {
+    using namespace ObjexxFCL::fmt;
+    
 	// All output will be 80 characters - 80 is a nice number, don't you think?
 	std::string line_marker = "///";
 	out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
 	out << line_marker << A( 47, " Docking Low Res Protocol" ) << space( 27 ) << line_marker << std::endl;
 	out << line_marker << space( 74 ) << line_marker << std::endl;
-
+    
 	// Display the number of inner cycles during low res docking
-	out << line_marker << " Centroid Inner Cycles: " << dp.inner_cycles_ ;
+	out << line_marker << " Centroid Inner Cycles: " << inner_cycles_ ;
 	out << space( 48 ) << line_marker << std::endl;
-
+    
 	// Display the number of outer cycles during low res docking
-	out << line_marker << " Centroid Outer Cycles: " << dp.outer_cycles_;
+	out << line_marker << " Centroid Outer Cycles: " << outer_cycles_;
 	out << space( 48 ) << line_marker << std::endl;
-
+    
 	// Display the state of the filters (on or off)
-	out << line_marker << " Ensemble 1: " << ( ( dp.ensemble1_mover_ ) ? ( "on" ) : ( "off " ) );
-	out << space( 59 ) << line_marker << std::endl;
-	out << line_marker << " Ensemble 2: " << ( ( dp.ensemble2_mover_ ) ? ( "on" ) : ( "off " ) );
-	out << space( 59 ) << line_marker << std::endl;
 	out << line_marker << " Scorefunction: " << space( 58 ) << line_marker << std::endl;
-	dp.scorefxn_->show(out);
+	scorefxn_->show(out);
 	out <<std::endl;
-
+    
 	// Close the box I have drawn
 	out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
-	return out;
+}
+
+std::ostream & operator<<(std::ostream& out, const DockingLowRes & dp)
+{
+	dp.show( out );
+    return out;
 }
 
 } // namespace docking

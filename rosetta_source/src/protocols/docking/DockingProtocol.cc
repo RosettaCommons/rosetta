@@ -17,7 +17,7 @@
 /// @author Monica Berrondo
 /// @author Sid Chaudhury
 /// @author Jeff Gray
-
+/// @author Modified by Daisuke Kuroda
 
 // Unit Headers
 #include <protocols/docking/DockingProtocol.hh>
@@ -28,6 +28,7 @@
 #include <protocols/docking/DockingEnsemble.hh>
 #include <protocols/docking/DockFilters.hh>
 #include <protocols/docking/DockingLowRes.hh>
+#include <protocols/docking/DockingLowResEnsemble.hh>
 #include <protocols/docking/DockMinMover.hh>
 #include <protocols/docking/DockMCMProtocol.hh>
 #include <protocols/docking/DockingHighResLegacy.hh>
@@ -243,7 +244,8 @@ DockingProtocol::set_default()
 	use_legacy_protocol_ = false;
 	ignore_default_docking_task_ = false;
 	design_ = false;
-
+    if_ensemble_ = false;
+    
 	lowres_inner_cycles_ = 50;
 	lowres_outer_cycles_ = 10;
 
@@ -289,11 +291,20 @@ void DockingProtocol::setup_objects()
 void DockingProtocol::sync_objects_with_flags()
 {
 	if ( !docking_local_refine_ ) {
-		if ( !perturber_ ){
+        if( ensemble2_filename_ != "" ){
+            if_ensemble_ = true;
+        }
+		        
+        if ( !perturber_ ){
 			perturber_ = new DockingInitialPerturbation( movable_jumps_, true /*slide into contact*/ );
 		}
 		if ( !docking_lowres_mover_ ){
-			docking_lowres_mover_ = new DockingLowRes( docking_scorefxn_low_, movable_jumps_ );
+            // Modified by DK
+            if( if_ensemble_ ){
+                docking_lowres_mover_ = new DockingLowResEnsemble( docking_scorefxn_low_, movable_jumps_ );
+            } else {
+                docking_lowres_mover_ = new DockingLowRes( docking_scorefxn_low_, movable_jumps_ );
+            }
 		}
 		if ( !no_filters_ && !lowres_filter_ ) {
 			lowres_filter_ = new protocols::docking::DockingLowResFilter();
@@ -515,11 +526,11 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 		end_res = cutpoint;
 
 		ensemble1_ = new DockingEnsemble( start_res, end_res, rb_jump, ensemble1_filename_, "dock_ens_conf1", docking_scorefxn_low_, docking_scorefxn_high_ );
-
+        
 		TR << "Ensemble 2: " << ensemble2_filename_ << std::endl;
 		start_res = cutpoint + 1;
 		end_res = pose.total_residue();
-
+       
 		ensemble2_ = new DockingEnsemble( start_res, end_res, rb_jump, ensemble2_filename_, "dock_ens_conf2", docking_scorefxn_low_, docking_scorefxn_high_ );
 
 		// recover sidechains mover is not needed with ensemble docking since the sidechains are recovered from the partners in the ensemble file
@@ -532,12 +543,12 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 		set_lowres_scorefxn( docking_scorefxn_ens );
 		// pass the scorefunction to the low res mover
 		docking_lowres_mover_->set_scorefxn( docking_scorefxn_low_ );
-
-//		docking_highres_ens = new core::scoring::ScoreFunction( *docking_scorefxn_high_ );
-//		docking_highres_ens->set_weight( core::scoring::dock_ens_conf, 1.0 );
-//		set_highres_scorefxn( docking_highres_ens, docking_scorefxn_pack_ ); // sets csts for mc and minimization, but not packing
-//		// pass the score function to the high res mover
-//		docking_highres_mover_->set_scorefxn( docking_scorefxn_high_ );
+        
+        //docking_highres_ens = new core::scoring::ScoreFunction( *docking_scorefxn_high_ );
+        //docking_highres_ens->set_weight( core::scoring::dock_ens_conf, 1.0 );
+        //set_highres_scorefxn( docking_highres_ens, docking_scorefxn_pack_ ); // sets csts for mc and minimization, but not packing
+		// pass the score function to the high res mover
+        //docking_highres_mover_->set_scorefxn( docking_scorefxn_high_ );
 	} else { //if ensemble docking
 		if ( recover_sidechains_filename_ != "" ) {
 			if ( !recover_sidechains_ ) {
@@ -553,14 +564,19 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 		}
 	} //if ensemble docking
 
-	// pass the ensemble movers to the lowres protocol
 	if ( docking_lowres_mover_ ) {
-		docking_lowres_mover_->set_ensemble1( ensemble1_ );
-		docking_lowres_mover_->set_ensemble2( ensemble2_ );
-		docking_lowres_mover_->set_inner_cycles( lowres_inner_cycles_ );
-		docking_lowres_mover_->set_outer_cycles( lowres_outer_cycles_ );
-	}
+        // pass the ensemble movers to the lowres protocol
+        if( if_ensemble_ && docking_lowres_mover_->get_name() == "DockingLowResEnsemble" ){
+            DockingLowResEnsemble* ensemble_mover = dynamic_cast< DockingLowResEnsemble* >(docking_lowres_mover_.get());
 
+            ensemble_mover->set_ensemble1( ensemble1_ );
+            ensemble_mover->set_ensemble2( ensemble2_ );
+        }
+        
+        docking_lowres_mover_->set_inner_cycles( lowres_inner_cycles_ );
+        docking_lowres_mover_->set_outer_cycles( lowres_outer_cycles_ );
+    }
+    
 	// set relevant information to legacy high res mover
 	if ( docking_highres_mover_ ) {
 		if ( docking_highres_mover_->get_name() == "DockingHighResLegacy" && design_ ) {

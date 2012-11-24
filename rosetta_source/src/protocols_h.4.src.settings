@@ -19,6 +19,7 @@ sources = {
 		"DockingHighResLegacy",
 		"DockingInitialPerturbation",
 		"DockingLowRes",
+		"DockingLowResEnsemble",
 		"DockingPrepackProtocol",
 		"DockingProtocol",
 		"DockMCMCycle",

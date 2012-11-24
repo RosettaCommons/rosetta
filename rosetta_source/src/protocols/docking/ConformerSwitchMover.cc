@@ -10,7 +10,7 @@
 /// @file ConformerSwitchMover.cc
 /// @brief code for the conformer switch mover in ensemble docking
 /// @author Sid Chaudhury
-/// @Modified by Daisuke Kuroda
+/// @author Modified by Daisuke Kuroda
 
 
 #include <protocols/docking/ConformerSwitchMover.hh>
@@ -140,8 +140,8 @@ void ConformerSwitchMover::apply( core::pose::Pose & pose )
 		);
 	}
 
-	basic::datacache::CacheableStringFloatMapOP data
-		= dynamic_cast< basic::datacache::CacheableStringFloatMap * >
+	basic::datacache::CacheableStringFloatMap *data
+		= dynamic_cast< basic::datacache::CacheableStringFloatMap* >
 		( pose.data().get_raw_ptr(CacheableDataType::ARBITRARY_FLOAT_DATA) );
 
 	data->map()[ ensemble_->partner() ] = ensemble_->lowres_reference_energy(conf_num);

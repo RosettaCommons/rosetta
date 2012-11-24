@@ -21,6 +21,7 @@
 // Package Headers
 #include <protocols/docking/types.hh>
 #include <protocols/docking/DockingEnsemble.fwd.hh>
+#include <protocols/docking/DockingLowResEnsemble.fwd.hh>
 #include <protocols/docking/DockFilters.fwd.hh>
 #include <protocols/docking/DockingLowRes.fwd.hh>
 #include <protocols/docking/DockingHighRes.fwd.hh>
@@ -138,7 +139,7 @@ public:
 	void set_sc_min( bool sc_min );
 	void set_rt_min( bool rt_min );
 	void set_dock_min( bool const dock_min );
-
+    
 	void set_no_filters( bool no_filters );
 	void set_low_res_protocol_only( bool const low_res_protocol_only );
 	void set_docking_local_refine( bool const docking_local_refine );
@@ -201,7 +202,6 @@ public:
 	// function for the parser with lots of accessors
 	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 
-
 private:
 	/// information about the mode
 	bool user_defined_; // for constructor options passed to init
@@ -216,6 +216,8 @@ private:
 	bool rt_min_;
 	bool dock_min_;
 
+    bool if_ensemble_;  // Add by DK
+    
 	bool no_filters_;
 	bool use_legacy_protocol_;
 	bool docking_local_refine_;
@@ -234,7 +236,7 @@ private:
 
 	/// jumps that rigid_body transformations can occur over
 	DockJumps movable_jumps_;
-
+    
 	// score functions
 	core::scoring::ScoreFunctionOP docking_scorefxn_low_;
 	core::scoring::ScoreFunctionOP docking_scorefxn_high_;
@@ -260,7 +262,7 @@ private:
 	protocols::docking::DockingEnsembleOP ensemble1_;
 	protocols::docking::DockingEnsembleOP ensemble2_;
 	std::string ensemble1_filename_, ensemble2_filename_;
-
+    
 	// constraint set mover
 	protocols::simple_moves::ConstraintSetMoverOP docking_constraint_;
 
@@ -283,7 +285,7 @@ private:
 
 	/// @brief Sets up the instance of DockingProtocol and initializes all members based on values passed in at construction
 	///		or via the command line.
-  void init(
+	void init(
 		DockJumps const movable_jumps,
 		bool const low_res_protocol_only_,
 		bool const docking_local_refine,

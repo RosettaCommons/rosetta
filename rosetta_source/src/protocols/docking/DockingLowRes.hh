@@ -19,14 +19,12 @@
 
 #include <protocols/docking/types.hh>
 #include <protocols/docking/DockingLowRes.fwd.hh>
-#include <protocols/docking/DockingEnsemble.fwd.hh>
 
 // Package headers
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
-#include <protocols/docking/ConformerSwitchMover.fwd.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/Mover.hh>
@@ -35,8 +33,6 @@
 // AUTO-REMOVED #include <protocols/simple_filters/ScoreCutoffFilter.hh>
 
 #include <string>
-
-
 
 // option key includes
 
@@ -96,31 +92,38 @@ public:
 	// option setters
 	void set_inner_cycles( core::Size inner_cycles ) { inner_cycles_=inner_cycles; }
 	void set_outer_cycles( core::Size outer_cycles ) { outer_cycles_=outer_cycles; }
-	void set_ensemble1( DockingEnsembleOP ensemble1 );
-	void set_ensemble2( DockingEnsembleOP ensemble2 );
-
-	void show( std::ostream & out=std::cout );
+    
+	virtual void show( std::ostream & out=std::cout ) const;
 	friend std::ostream & operator<<(std::ostream& out, const DockingLowRes & dp );
 
-private:
-	// protocol stuff
-	core::scoring::ScoreFunctionCOP scorefxn_;
-	core::kinematics::MoveMapOP movemap_;
-	protocols::moves::MonteCarloOP mc_;
-	protocols::moves::SequenceMoverOP docking_lowres_protocol_;
-	protocols::rigid::RigidBodyPerturbNoCenterMoverOP rb_mover_;
-	protocols::docking::ConformerSwitchMoverOP ensemble1_mover_;
-	protocols::docking::ConformerSwitchMoverOP ensemble2_mover_;
-
-	bool flags_and_objects_are_in_sync_;
+    bool flags_and_objects_are_in_sync_;
 	bool first_apply_with_current_setup_;
 
-	// docking
-	core::Size inner_cycles_, outer_cycles_; //rb_jump_
+    // Add by dK
+    // docking
 	DockJumps movable_jumps_;
-	core::Real trans_magnitude_, rot_magnitude_, accept_rate_;
-	bool chi_, bb_, nb_list_;
 
+    // Add by DK
+	protocols::moves::SequenceMoverOP docking_lowres_protocol_;
+    core::scoring::ScoreFunctionCOP scorefxn_;
+    
+protected:
+    /// @brief Performs the portion of setup of non-primitive members that requires a pose - called on apply
+    virtual void finalize_setup( core::pose::Pose & pose);
+        
+private:
+    // protocol stuff
+	//core::scoring::ScoreFunctionCOP scorefxn_;
+	core::kinematics::MoveMapOP movemap_;
+	protocols::rigid::RigidBodyPerturbNoCenterMoverOP rb_mover_;
+	protocols::moves::MonteCarloOP mc_;
+
+    // Comment out by DK
+	// docking
+	//DockJumps movable_jumps_;
+	core::Real trans_magnitude_, rot_magnitude_, accept_rate_;
+	core::Size inner_cycles_, outer_cycles_; //rb_jump_
+	bool chi_, bb_, nb_list_;
 	core::Real temperature_;
 
 	/// @brief Sets up the instance of DockingLowRes and initializes all members based on values passed in at construction
@@ -129,9 +132,6 @@ private:
 		DockJumps const movable_jumps,
 		core::scoring::ScoreFunctionCOP scorefxn
 	);
-
-	/// @brief Performs the portion of setup of non-primitive members that requires a pose - called on apply
-	void finalize_setup( core::pose::Pose & pose);
 };
 
 } // docking
