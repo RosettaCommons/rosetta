@@ -20,10 +20,12 @@
 #include <protocols/docking/types.hh>
 #include <protocols/docking/DockingLowRes.fwd.hh>
 
+
 // Package headers
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+
 
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
@@ -33,6 +35,8 @@
 // AUTO-REMOVED #include <protocols/simple_filters/ScoreCutoffFilter.hh>
 
 #include <string>
+
+
 
 // option key includes
 
@@ -92,6 +96,8 @@ public:
 	// option setters
 	void set_inner_cycles( core::Size inner_cycles ) { inner_cycles_=inner_cycles; }
 	void set_outer_cycles( core::Size outer_cycles ) { outer_cycles_=outer_cycles; }
+
+
     
 	virtual void show( std::ostream & out=std::cout ) const;
 	friend std::ostream & operator<<(std::ostream& out, const DockingLowRes & dp );

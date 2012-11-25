@@ -18,7 +18,7 @@
 #define INCLUDED_protocols_docking_DockingLowRes_Ensemble_hh
 
 #include <protocols/docking/types.hh>
-#include <protocols/docking/DockingLowRes.fwd.hh>
+#include <protocols/docking/DockingLowRes.hh>
 #include <protocols/docking/DockingLowResEnsemble.fwd.hh>
 #include <protocols/docking/DockingEnsemble.fwd.hh>
 
