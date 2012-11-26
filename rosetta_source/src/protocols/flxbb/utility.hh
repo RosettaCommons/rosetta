@@ -54,8 +54,7 @@ utility::vector1<Size>
 find_ligands( Pose const & pose );
 
 // @brief finds the first non-ligand residue in the pose  (should be the N-terminus)
-Size
-get_first_protein_residue( Pose const & pose );
+// Undefined, commenting out to fix PyRosetta build  Size get_first_protein_residue( Pose const & pose );
 
 } // namespace flxbb
 } // namespace protocols

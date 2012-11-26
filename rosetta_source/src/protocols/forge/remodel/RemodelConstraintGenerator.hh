@@ -112,8 +112,7 @@ public:
 	core::id::SequenceMappingCOP
 	seqmap() const;
 
-	core::scoring::constraints::ConstraintCOPs
-	constraints() const;
+	// Undefindef, commenting out to fix PyRosetta build  core::scoring::constraints::ConstraintCOPs constraints() const;
 
 	static core::scoring::constraints::ConstraintCOPs const
 	lookup_stored_constraints( std::string const & id );
