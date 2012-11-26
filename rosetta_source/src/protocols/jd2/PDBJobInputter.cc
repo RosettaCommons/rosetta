@@ -52,12 +52,12 @@ void protocols::jd2::PDBJobInputter::pose_from_job( core::pose::Pose & pose, Job
 	TR << "PDBJobInputter::pose_from_job" << std::endl;
 
 	if( !job->inner_job()->get_pose() ){
+		TR << "filling pose from PDB " << job->input_tag() << std::endl;
 		core::import_pose::pose_from_pdb( pose, job->input_tag() );
 		load_pose_into_job(pose, job);
-		TR << "filling pose from PDB " << job->input_tag() << std::endl;
 	} else {
-		pose = *(job->inner_job()->get_pose());
 		TR << "filling pose from saved copy " << job->input_tag() << std::endl;
+		pose = *(job->inner_job()->get_pose());
 	}
 }
 
