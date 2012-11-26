@@ -7,104 +7,30 @@
 // For more information, see http://www.rosettacommons.org/.
 
 /// @file protocols/pmut_scan/AlterSpecDisruptionDriver.cc
-/// @brief A protocol that tries to find stability enhancing mutations
-/// @author Ron Jacak
+/// @brief A protocol that tries to find interface-disrupting mutations as phase 1 of an altered-specificity protocol
+/// @author Steven Lewis smlewi@gmail.com
 
 // Unit headers
 #include <protocols/pmut_scan/AlterSpecDisruptionDriver.hh>
 #include <protocols/pmut_scan/Mutant.hh>
 
 //project Headers
-#include <basic/MetricValue.hh>
-#include <basic/Tracer.hh>
-#include <basic/options/util.hh>
-
-#include <core/chemical/AA.hh>
-#include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/init.hh>
-#include <core/kinematics/MoveMap.hh>
-
-#include <core/graph/Graph.hh>
-#include <core/conformation/PointGraph.hh>
-#include <core/conformation/find_neighbors.hh>
-
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/TaskFactory.hh>
-
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/metrics/CalculatorFactory.hh>
-#include <core/import_pose/import_pose.hh>
 
 #include <core/conformation/Conformation.hh>
-
-#include <core/scoring/EnergyMap.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionInfo.hh>
-#include <core/scoring/ScoreType.hh>
-#include <core/scoring/hbonds/HBondOptions.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
-
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/moves/MoverContainer.hh>
-#include <protocols/simple_moves/TaskAwareMinMover.hh>
-
-#include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
-#include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperation.hh>
 
 #include <protocols/analysis/InterfaceAnalyzerMover.hh>
 
 // Utility Headers
-#include <utility/file/FileName.hh>
 #include <utility/excn/Exceptions.hh>
-
-// Numeric Headers
-
-// ObjexxFCL Headers
-#include <ObjexxFCL/format.hh>
-
-// C++ headers
-#include <iostream>
-#include <fstream>
-#include <string>
-
-#ifdef USEMPI
-/// MPI
-#include <mpi.h>
-#endif
-
-// option key includes
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-
-//Auto Headers
-#include <core/conformation/PointGraphData.hh>
-#include <core/graph/UpperEdgeGraph.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-
-using namespace basic::options;
-using namespace basic::options::OptionKeys;
-
-using namespace core;
-using namespace core::pack::task::operation;
-using namespace core::pack::task;
-
-using namespace protocols;
-using namespace ObjexxFCL::fmt;
-using namespace utility;
-
+#include <basic/Tracer.hh>
 
 namespace protocols {
 namespace pmut_scan {
 
-
 static basic::Tracer TR("protocols.pmut_scan.AlterSpecDisruptionDriver");
-
 
 ///
 /// @begin AlterSpecDisruptionDriver::AlterSpecDisruptionDriver
@@ -160,6 +86,7 @@ core::Energy AlterSpecDisruptionDriver::score(core::pose::Pose & pose) {
 	//no clear way to get IAM to use the same TaskFactory
 	IAM_->set_compute_interface_energy(true); //speed
 	IAM_->apply(pose);
+	//NOTICE THIS IS NEGATED!  The parent code is expecting to stabilize things; we want to destabilize them.
 	return -IAM_->get_separated_interface_energy();
 
 }
