@@ -30,7 +30,7 @@ class ResfileDesignWindow:
         self.main=main
         self.main.title("Design Toolbox")
         self.pwd = self.location()[0]
-        self.DesignDic = DesignDic; #Main dictionary for saving the resfile info.
+        self.DesignDic = DesignDic; #Main dictionary for saving the resfile info. Can be empty upon construction of window.
         #current and design are labeled opposite . need to fix.
         self.current_accessible_sa = StringVar(); self.current_relative_mutability = StringVar(); self.current_surface_probability = StringVar()
         self.design_accessible_sa = StringVar(); self.design_relative_mutability = StringVar(); self.design_surface_probability = StringVar()
@@ -137,9 +137,7 @@ class ResfileDesignWindow:
                 print "Residue does not exist in PDB..."
                 return
             
-            if resName =="HIS_D":
-                print "HIS_D selected, using data for HIS"
-                resName = "HIS"
+            resName = resName.split("_")[0]; #Fix for Rosetta designated chain endings, His_d
             self.current_residue_name.set(resName)
             #Fix for not having data for certain residue types:
             try:
@@ -206,9 +204,7 @@ class ResfileDesignWindow:
                         resType = self.pose.pdb_info().pdb2pose(self.current_chain.get(), i)
                         #Gets name according to rosetta
                         resType = self.pose.residue(resType).name()
-                        #His Fix
-                        if resType == "HIS_D":
-                            resType="HIS"
+                        resType = resType.split("_")[0]; #Fix for Rosetta designated chain endings, His_d
                         for y in self.residue_definitions.restype_info["All"]:
                             z = y.split(":")
                             if resType == z[1]:
@@ -232,8 +228,7 @@ class ResfileDesignWindow:
                 for i in range(start, end+1):
                     resType = i
                     resType = self.pose.residue(resType).name()
-                    if resType=="HIS_D":
-                        resType="HIS"
+                    resType = resType.split("_")[0]; #Fix for Rosetta designated chain endings, His_d
                     res = repr(i) + ":"+self.current_chain.get()
                     resType = "Conserved:"+resType
                     for types in self.residue_definitions.restype_info[resType]:
@@ -247,8 +242,7 @@ class ResfileDesignWindow:
                 for i in range(start, end+1):
                     resType = i
                     resType = self.pose.residue(resType).name()
-                    if resType =="HIS_D":
-                        resType = "HIS"
+                    resType = resType.split("_")[0]; #Fix for Rosetta designated chain endings, His_d
                     res = repr(i) + ":"+self.current_chain.get()
                     resType = "Conserved:"+resType
                     for types in self.residue_definitions.restype_info[resType]:
@@ -278,8 +272,7 @@ class ResfileDesignWindow:
         else:
             resType = self.pose.pdb_info().pdb2pose(self.current_chain.get(), int(self.current_residue.get()))
             res = self.pose.residue(resType).name()
-            if res == "HIS_D":
-                res = "HIS"
+            resType = resType.split("_")[0]; #Fix for Rosetta designated chain endings, His_d
             self.current_residue_name.set(res)
             try:
                 self.design_accessible_sa.set(self.residue_definitions.resinfo[self.pose.residue(resType).name()][0])
@@ -400,8 +393,7 @@ class ResfileDesignWindow:
 #### FUNCTIONS ####
     def saveDesign(self):
         out = tkFileDialog.asksaveasfilename(initialdir = global_variables.current_directory, title ="Save As...")
-        if not out:
-            return
+        if not out: return
         output_tools.save_resfile_w_designdic(self.pose, self.DesignDic, out)
         outSP = out.split("/")
         length = len(outSP)

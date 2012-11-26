@@ -34,7 +34,7 @@ def closeLoop_ccd( rounds, loo, movemap):
 
 def return_residue_array( p, loop_string):
     """
-    Returns an array in Rosetta numbering from the loop_string (start:end:chain)
+    Returns an array of rosetta residue numbers from the loop_string (start:end:chain)
     Works with individual residues, loops, termini, and chains.
     Use this to interact with movemap, packer, etc and loops_as_strings from GUI.
     """
@@ -144,7 +144,7 @@ def setLoopBreak( p, start, end, chain, cut):
 
 def loopArea( p, loops_as_strings, rosetta=1):
     """
-    Takes in the raw Loops List, Returns a new loop list of list.  rosetta=1; list of resdidue_arrays for each loop., or regular of res:chain (rosetta=0)
+    Takes in the raw Loops List, Returns a new loop list of list.  List of residue_arrays for each loop(rosetta=1) or regular of res:chain array(rosetta=0)
     Used for creating a sequence file for scwrl.
     """
     

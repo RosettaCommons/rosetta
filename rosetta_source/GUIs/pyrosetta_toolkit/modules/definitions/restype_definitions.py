@@ -27,7 +27,7 @@ class definitions():
         self.resinfo = dict()
         self.set_mutation_info()
         self.set_residue_info()
-        
+
     def get_residue_info(self):
         return self.restype_info
     
@@ -35,10 +35,19 @@ class definitions():
         return self.resinfo
     
     def get_one_letter_from_three(self, three_letter_code):
-        pass
+        three_letter_code = three_letter_code.split("_")[0].upper(); #Fix for Rosetta designated chain endings.
+        if three_letter_code=="CYD": three_letter_code="CYS"; #Fix for Disulfide
+        for triplet in self.restype_info["All"]:
+            tripletSP = triplet.split(":")
+            if tripletSP[1]==three_letter_code:
+                return tripletSP[2]
     
     def get_three_letter_from_one(self, one_letter_code):
-        pass
+        one_letter_code = one_letter_code.upper()
+        for triplet in self.restype_info["All"]:
+            tripletSP = triplet.split(":")
+            if tripletSP[2]==one_letter_code:
+                return tripletSP[1]
     
     def set_residue_info(self):
         self.restype_info["Charged"]=("Lysine:LYS:K",

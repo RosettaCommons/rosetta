@@ -68,16 +68,17 @@ class Menus():
 
       #### Import ####
 	self.import_menu = Menu(self.main_menu, tearoff=0)
-	self.import_menu.add_command(label="Loop File", command = lambda: self.load_loop())
+	self.import_menu.add_command(label="Rosetta Loop File", command = lambda: self.load_loop())
+	#self.import_menu.add_command(label="Rosetta Resfile", command = lambda: input_tools.load_resfile())
 
 
       #### Export ####
 	self.export_menu = Menu(self.main_menu, tearoff=0)
 	self.export_menu.add_command(label="SCWRL seq File", command=lambda: self.save_SCWRL_sequence_file())
 	self.export_menu.add_separator()
-	self.export_menu.add_command(label="Rosetta Loop File", foreground = 'red', command = lambda: self.save_loop_file())
-	self.export_menu.add_command(label="Rosetta Basic ResFile", foreground='red')
-	self.export_menu.add_command(label="Rosetta Basic Blueprint File", foreground='red')
+	self.export_menu.add_command(label="Rosetta Loop File", command = lambda: output_tools.save_loop_file(self.toolkit.pose, self.toolkit.input_class.loops_as_strings))
+	self.export_menu.add_command(label="Rosetta Basic ResFile", command = lambda: output_tools.save_basic_resfile(self.toolkit.pose))
+	self.export_menu.add_command(label="Rosetta Basic Blueprint File", command = lambda: output_tools.save_basic_blueprint(self.toolkit.pose))
 	self.export_menu.add_separator()
 	self.export_menu.add_command(label = "FASTA (Pose)", command=lambda: output_tools.save_FASTA(self.toolkit.pose, self.toolkit.outname.get(), False ))
 	self.export_menu.add_command(label = "FASTA (Loops)", command = lambda: output_tools.save_FASTA(self.toolkit.pose, self.toolkit.outname.get(), False, self.toolkit.input_class.loops_as_strings))

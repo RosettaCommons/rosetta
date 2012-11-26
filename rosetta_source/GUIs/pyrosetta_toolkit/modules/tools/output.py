@@ -29,11 +29,11 @@ import loops
 from modules.PDB import *
 from modules.tools import loops as loop_tools
 from window_main import global_variables
-
+from modules.definitions import restype_definitions
 
 def dumpPDB(p, file, score):
     """
-    Dumps the pose using the Job Distributor
+    Dumps the pose using the Py Job Distributor
     """
     jd=PyJobDistributor(file, 100000, score); #This number is high so that it outputs a pose even if one with the name already exists...
     #native_pose = Pose()
@@ -44,6 +44,9 @@ def dumpPDB(p, file, score):
     
 def showPose(p, observer):
     
+    if not p.total_residue():
+        print "\n No pose loaded...\n"
+        return
     #self.obs.add_observer(p)
     score = create_score_function_ws_patch('standard', 'score12')
     print score(p)
@@ -53,55 +56,60 @@ def showPose(p, observer):
     #obs.pymol.apply(p)
     return p
     
-def savLoop(p, out, loops_as_strings, ask_info=True):
+def save_loop_file(p, loops_as_strings, ask_info=True):
     """
-    Saves a Rosetta Loop file.  Also asks to discard residues or not. Should be rewritten.
+    Saves a Rosetta Loop file.  Also asks to discard residues or not.
     """
-    newList = loop_tools.loopArea(p, loops_as_strings)
+    if not p.total_residue():
+        print "\n No pose loaded...\n"
+        return
+    
+    if not loops_as_strings:
+        print "\n No loops to save...\n"
+        return
+
+    
     if ask_info:
         
-        defcut = tkMessageBox.askquestion(message="Define Cutpoints?", default=tkMessageBox.NO)
-        discard = tkMessageBox.askquestion(message = "Discard Phi/Psi and build using ideal bond lengths and angles?")
+        ask_cut_points = tkMessageBox.askyesno(message="Define Cutpoints?", default=tkMessageBox.NO)
+
+        discard_loops =  tkMessageBox.askyesno(message = "Discard Phi/Psi and build using ideal bond lengths and angles?")
     else:
-        defcut = True
-        discard = 0
-        
-    if defcut =="yes": defcut = True
-    if discard=='yes': discard= 1
-    else: discard=0
-    
-    FILE = open(out, 'w')
-    l = 0;
-    for loop in newList:
-        start = loop[0]
-        end = loop[-1]
-        print "Got start and end."
-        cut = (end - start)/2
-        cut = start+cut
+        ask_cut_points = False
+        discard_loops = True
+    outfilename = tkFileDialog.asksaveasfilename(initialdir = global_variables.current_directory, title="Output loop file to...")
+    if not outfilename: return
+    FILE = open(outfilename, 'w')
+    for loop_string in loops_as_strings:
+        loop_stringSP = loop_string.split(":")
+        start = p.pdb_info().pdb2pose(loop_stringSP[2], int(loop_stringSP[0]))
+        end = p.pdb_info().pdb2pose(loop_stringSP[2], int(loop_stringSP[1]))
+
         #This asks the user for each loop what he/she would like to do in terms of cutpoints.  Default= somewhere near the middle.
-        if defcut ==True:
-            cut = tkSimpleDialog.askstring(title="cutpoint", prompt="Cutpoint for Loop (#, default, 0 for random)" + loops_as_strings[l], initialvalue="default")
-            if cut== "default":
-                cut = (end - start)/2
-                cut = start+cut
-            elif cut =="0":
-                cut=0
-            else:
-                LisSp = loops_as_strings[l].split(":")
-                startSP = LisSp[0]
-                cut = int(cut) - int(startSP)
-                cut = start + cut
-                if ((cut <= start) | (cut >= end)):
-                    #Future - makes sure cut point exists, and then have them point it back in.
-                    tkMessageBox.showerror(message="Invalid CutPoint!")
-                    savLoop(p, out, loops_as_strings)
-                    return
-                
-        FILE.write("LOOP"+" "+repr(start)+" "+repr(end)+" "+repr(cut)+" 0 "+repr(discard)+"\n")
-        l +=1
+        if ask_cut_points:
+            cutpoint_known = False
+            
+            while not cutpoint_known:
+                cut = tkSimpleDialog.askstring(title="cutpoint", prompt="Cutpoint for Loop (#, default, 0 for random) " +loop_string, initialvalue="default")
+                if cut== "default":
+                    cut = (end - start)/2
+                    cut = start+cut
+                    cutpoint_known=True
+                elif cut =="0":
+                    cut=0
+                    cutpoint_known=True
+                else:
+                    if ((int(cut) < start) | (int(cut) > end)):
+                        tkMessageBox.showerror(message="Invalid CutPoint!")
+                        cut = int(cut)
+                        cutpoint_known=False
+        else:
+            cut = (end - start)/2
+            cut = start+cut
+        FILE.write("LOOP"+" "+repr(start)+" "+repr(end)+" "+repr(cut)+" 0 "+repr(int(discard_loops))+"\n")
         
     FILE.close()
-    print "Loop File written..."
+    print "\nLoop File written...\n"
     return
 
 def clean_whitespace(obj):
@@ -115,11 +123,28 @@ def clean_whitespace(obj):
         return dict((k, clean_whitespace(v)) for (k,v) in obj.items())
     else:
         return obj
-        
+
+def save_basic_resfile(p):
+    """
+    Saves an empty resfile, numbered by PDB with NATRO designation
+    """
+    if not p.total_residue():
+        print "\n No pose loaded...\n"
+        return
+    
+    ResDic = dict()
+    outfilename = tkFileDialog.asksaveasfilename(initialdir = global_variables.current_directory, title="Output resfile to...")
+    if not outfilename: return
+    save_resfile_w_designdic(p, ResDic, outfilename)
+    
 def save_resfile_w_designdic(p, ResDic, filename):
     """
-    Saves a Design Residue file, readable by PyRosetta and Rosetta.
+    Saves a resifile, readable by PyRosetta and Rosetta.
+    ResDic can be empty.
     """
+    if not p.total_residue():
+        print "\n No pose loaded...\n"
+        return
     
     tot = p.total_residue()
     FILE = open(filename, 'w')
@@ -150,12 +175,15 @@ def save_resfile_w_designdic(p, ResDic, filename):
             line = pdbStr + chainStr + "  NATRO" + "\n"
             FILE.write(line)
     FILE.close()
-    print "Res File written...."  
+    print "\nRes File written....\n"  
 
 def createSeqFile(p, newList):
     """
     Used in conversion to output scwrl sequence file.
     """
+    if not p.total_residue():
+        print "\n No pose loaded...\n"
+        return
     
     seq = p.sequence()
     print seq
@@ -179,6 +207,10 @@ def createSeqFile(p, newList):
     
 
 def saveSeqFile(p, fileout, loopsLis):
+    if not p.total_residue():
+        print "\n No pose loaded...\n"
+        return
+    
     newList = loop_tools.loopArea(p, loopsLis)
     seq = createSeqFile(p, newList)
     FILE = open(fileout, 'w')
@@ -186,6 +218,35 @@ def saveSeqFile(p, fileout, loopsLis):
     FILE.close()
     return
 
+
+
+def save_basic_blueprint(p, output=True):
+    """
+    Saves a basic blueprint file to be manually edited.
+    If output is false, returns a string of the file for manipulation.
+    """
+    if not p.total_residue():
+        print "\n No pose loaded...\n"
+        return
+    
+    out_string = ""
+    define = restype_definitions.definitions()
+    for i in range(1, p.total_residue()+1):
+        pdb_num = p.pdb_info().number(i)
+        single_letter_code = define.get_one_letter_from_three(p.residue(i).name())
+        out_string = out_string+repr(pdb_num)+" "+single_letter_code+" . NATRO\n"
+    
+    if output:
+        outfilename = tkFileDialog.asksaveasfilename(initialdir = global_variables.current_directory)
+        if not outfilename:return
+        FILE = open(outfilename, 'w')
+        FILE.write(out_string)
+        FILE.close()
+        print "\nBlueprint Saved...\n"
+    else:
+        return out_string
+
+############PDBLIST TOOLS##########################
 def make_PDBLIST(directory=""):
     """
     Makes a list of PDB's from a directory.  Does not walk directory.  This can be an option later.
@@ -318,6 +379,10 @@ def save_FASTA(pose, base_name, outfilename = False, loops_as_strings = False ):
     If loops_as_strings is given, output FASTA of loops.
     Uses Pyrosetta...
     """
+    if not pose.total_residue():
+        print "\n No pose loaded...\n"
+        return
+    
     if not outfilename:
         outfilename = tkFileDialog.asksaveasfilename(initialdir = global_variables.current_directory, title="Output FASTA to...")
         if not outfilename: return
