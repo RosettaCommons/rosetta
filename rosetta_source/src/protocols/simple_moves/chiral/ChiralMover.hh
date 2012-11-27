@@ -7,53 +7,63 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file /protocols/simple_moves/oop/OopPatcher.hh
+/// @file /protocols/simple_moves/chiral/ChiralMover.hh
 /// @brief
 /// @author Kevin Drew, kdrew@nyu.edu
-#ifndef INCLUDED_protocols_simple_moves_oop_OopPatcher_hh
-#define INCLUDED_protocols_simple_moves_oop_OopPatcher_hh
+#ifndef INCLUDED_protocols_simple_moves_chiral_ChiralMover_hh
+#define INCLUDED_protocols_simple_moves_chiral_ChiralMover_hh
 // Unit Headers
-#include <protocols/simple_moves/oop/OopPatcher.fwd.hh>
+#include <protocols/simple_moves/chiral/ChiralMover.fwd.hh>
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/moves/Mover.hh>
+#include <core/chemical/ResidueType.hh>
+#include <core/chemical/Patch.hh>
+
+#include <map>
 
 // Utility Headers
-#include <core/types.hh>
+//#include <core/types.hh>
 //#include <utility/vector1.hh>
 
 namespace protocols {
 namespace simple_moves {
-namespace oop {
+namespace chiral {
 
-void add_oop_constraint( core::pose::Pose & pose, core::Size oop_seq_position, core::Real distance, core::Real std );
-void add_oop_constraint( core::pose::Pose & pose, core::Size oop_seq_position );
+enum Chirality {
+	L_CHIRALITY=1,
+	D_CHIRALITY,
+	FLIP_CHIRALITY //flip to the other chirality, ie L->D or D->L
+};
 
+
+bool is_d_chiral( core::chemical::ResidueType restype );
+bool is_l_chiral( core::chemical::ResidueType restype );
 
 ///@details
-class OopPatcher : public protocols::moves::Mover {
+class ChiralMover : public protocols::moves::Mover {
 
 public:
 
 	///@brief
-	OopPatcher( core::Size oop_seq_position );
+	ChiralMover( core::Size chiral_seq_position );
+	ChiralMover( core::Size chiral_seq_position, Chirality chirality );
 
-	virtual ~OopPatcher();
+	virtual ~ChiralMover();
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
-
+	
 private:
 
-	core::Size const oop_pre_pos_;
-	core::Size const oop_post_pos_;
-};//end OopPatcher
+	core::Size const chiral_seq_pos_;
+	Chirality const chirality_;
+
+};//end ChiralMover
 
 
-
-
-}//namespace oop
+}//namespace chiral
 }//namespace simple_moves
 }//namespace protocols
 
-#endif // INCLUDED_protocols_simple_moves_oop_OopPatcher_hh
+#endif // INCLUDED_protocols_simple_moves_chiral_ChiralMover_hh

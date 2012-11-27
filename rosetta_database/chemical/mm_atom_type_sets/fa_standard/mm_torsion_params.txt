@@ -919,5 +919,13 @@ CC	CT1	CF3	F3	0.1580	3	0.00	#from:	X	CT3	 CF3	X
 
 #CT2-CT2-NH1-CT1
 CT2	CT2	NH1	CT1	1.8000	1	0.00 #from CT2	CT2	NH1	C
+#CT2-CT2-NH1-CT2
+CT2	CT2	NH1	CT2	1.8000	1	0.00 #from CT2	CT2	NH1	C
 
 #X	X	X	X	0.0000	1 	0.00    #This is basically an "emergency" faux quadruplet for debugging - you should probably never be using it; instead change your parameters file to use VIRT instead of X for the mm atom type (it will have the same effect, but in the intended fashion) -- SML
+
+CT2	CT2	CE1	CE1	0.5000	1	180.00	#from:	CE2	CE1	CT2	CT3
+CT2	CT2	CE1	CE1	1.3000	3	180.00	#from:	CE2	CE1	CT2	CT3
+HE1	CE1	CT2	CT2	0.1200	3	0.00 # HE1 CE1 CT2 CT3
+CE1	CE1	CT2	NH1	0.5000	1	180.00	#from:	CE2	CE1	CT2	CT3
+HE1	CE1	CT2	NH1	0.1200	3	0.00	#from:	HE1	CE1	CT2	CT3

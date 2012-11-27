@@ -70,10 +70,63 @@ void OopMover::apply( core::pose::Pose & pose )
 	//kdrew: an oop post position cannot be first position
 	runtime_assert ( oop_post_pos_ != 1 );
 
+	//kdrew: first residue is a special case, no phi torsion
+	if( pose.residue_type( oop_pre_pos_ ).is_lower_terminus() )
+	{
+		//kdrew: no phi angle, adjust CYP-N-Ca-C torsion
+		Real offset = 180 + phi_angle_ ;
+
+		AtomID aidCYP( pose.residue(oop_pre_pos_).atom_index("CYP"), oop_pre_pos_ );
+		AtomID aidN( pose.residue(oop_pre_pos_).atom_index("N"), oop_pre_pos_ );
+		AtomID aidCA( pose.residue(oop_pre_pos_).atom_index("CA"), oop_pre_pos_ );
+		AtomID aidC( pose.residue(oop_pre_pos_).atom_index("C"), oop_pre_pos_ );
+
+		pose.conformation().set_torsion_angle( aidCYP, aidN, aidCA, aidC, radians( offset ) ); 
+	}
+
+
+	TR << "current oop_pre ("<< oop_pre_pos_<< ") PHI: " << pose.phi(oop_pre_pos_) << std::endl;
 	pose.set_phi(oop_pre_pos_, phi_angle_);
+	TR << "new oop_pre ("<< oop_pre_pos_<< ") PHI: " << pose.phi(oop_pre_pos_) << std::endl;
 	//pose.dump_pdb( "rosetta_out_oop_pre.pdb" );
+	TR << "current oop_pre ("<< oop_pre_pos_<< ") PSI: " << pose.psi(oop_pre_pos_) << std::endl;
 	pose.set_psi(oop_pre_pos_, psi_angle_);
+	TR << "new oop_pre ("<< oop_pre_pos_<< ") PSI: " << pose.psi(oop_pre_pos_) << std::endl;
 	//pose.dump_pdb( "rosetta_out_oop_pre_pos_t.pdb" );
+
+	update_hydrogens_( pose );
+
+}
+
+std::string
+OopMover::get_name() const {
+	return "OopMover";
+}
+
+///@brief
+OopMover::OopMover( 
+		core::Size oop_seq_position 
+	): Mover(), oop_pre_pos_(oop_seq_position), oop_post_pos_(oop_seq_position+1)
+{
+	Mover::type( "OopMover" );
+}
+
+OopMover::OopMover( 
+		core::Size oop_seq_position, 
+		core::Real phi_angle,
+		core::Real psi_angle
+	): Mover(), oop_pre_pos_(oop_seq_position), oop_post_pos_(oop_seq_position+1), phi_angle_(phi_angle), psi_angle_(psi_angle)
+{
+	Mover::type( "OopMover" );
+
+}
+
+OopMover::~OopMover(){}
+
+void OopMover::update_hydrogens_( core::pose::Pose & pose )
+{
+	using numeric::conversions::radians;
+	using numeric::conversions::degrees;
 
 	AtomID aidVZP( pose.residue(oop_pre_pos_).atom_index("VZP"), oop_pre_pos_);
 	AtomID aidCYP( pose.residue(oop_pre_pos_).atom_index("CYP"), oop_pre_pos_);
@@ -127,34 +180,7 @@ void OopMover::apply( core::pose::Pose & pose )
 	//kdrew: 1HZP CZP N_Z CA_Z
 	TR<<"1HZP-CZP-N-CA: "<< degrees(pose.conformation().torsion_angle(aid1HZP,aidCZP,aidN_Z,aidCA_Z)) << std::endl; 
 
-	//pose.dump_pdb( "rosetta_moved_puck_helper.pdb"  );
-
 }
-
-std::string
-OopMover::get_name() const {
-	return "OopMover";
-}
-
-///@brief
-OopMover::OopMover( 
-		core::Size oop_seq_position 
-	): Mover(), oop_pre_pos_(oop_seq_position), oop_post_pos_(oop_seq_position+1)
-{
-	Mover::type( "OopMover" );
-}
-
-OopMover::OopMover( 
-		core::Size oop_seq_position, 
-		core::Real phi_angle,
-		core::Real psi_angle
-	): Mover(), oop_pre_pos_(oop_seq_position), oop_post_pos_(oop_seq_position+1), phi_angle_(phi_angle), psi_angle_(psi_angle)
-{
-	Mover::type( "OopMover" );
-
-}
-
-OopMover::~OopMover(){}
 
 }//oop
 }//simple_moves

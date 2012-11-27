@@ -43,12 +43,18 @@ public:
 	virtual void set_phi( core::Real angle ) { phi_angle_ = angle; }
 	virtual void set_psi( core::Real angle ) { psi_angle_ = angle; }
 
+	virtual void update_hydrogens( core::pose::Pose & pose ) { update_hydrogens_( pose ); }
+
 private:
 
 	core::Size const oop_pre_pos_;
 	core::Size const oop_post_pos_;
 	core::Real phi_angle_;
 	core::Real psi_angle_;
+
+private:
+
+	void update_hydrogens_( core::pose::Pose & pose );
 
 };//end OopMover
 

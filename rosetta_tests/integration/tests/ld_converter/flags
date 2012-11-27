@@ -1,0 +1,6 @@
+-s input/AAdAdA.pdb
+-score:weights mm_std 
+-out:nstruct 1 
+-convert_D_positions 1 3 
+-convert_L_positions 2 4 
+

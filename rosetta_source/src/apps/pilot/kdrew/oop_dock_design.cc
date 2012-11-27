@@ -30,6 +30,8 @@
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/ScoringManager.hh>
 
+#include <core/chemical/VariantType.hh>
+
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 
@@ -51,6 +53,7 @@
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/oop/OopRandomPuckMover.hh>
 #include <protocols/simple_moves/oop/OopRandomSmallMover.hh>
+#include <protocols/simple_moves/oop/OopPatcher.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 
@@ -157,6 +160,7 @@ namespace oddm {
 	BooleanOptionKey const final_design_min( "oddm::final_design_min" );
 	BooleanOptionKey const use_soft_rep( "oddm::use_soft_rep" );
 	BooleanOptionKey const mc_initial_pose( "oddm::mc_initial_pose" );
+	BooleanOptionKey const oop_design_first( "oddm::oop_design_first" );
 
 	BooleanOptionKey const pymol( "oddm::pymol" );
 	BooleanOptionKey const keep_history( "oddm::keep_history" );
@@ -164,7 +168,7 @@ namespace oddm {
 	// design options
 	RealOptionKey const desn_mc_temp( "oddm::desn_mc_temp" );
 
-	IntegerVectorOptionKey const oop_positions( "oddm::oop_positions" );
+	//IntegerVectorOptionKey const oop_positions( "oddm::oop_positions" );
 
 }
 
@@ -221,14 +225,15 @@ main( int argc, char* argv[] )
 	option.add( oddm::final_design_min, "Do a final repack/design and minimization. Default true" ).def(true);
 	option.add( oddm::use_soft_rep, "Use soft repulsion for pertubation and initial design. Default false" ).def(false);
 	option.add( oddm::mc_initial_pose, "Allow initial pose to be considered as lowest energy pose. Default false" ).def(false);
+	option.add( oddm::oop_design_first, "Design before pertubation (want when initial struct is aligned to hotspot)  Default false" ).def(false);
 
 	option.add( oddm::pymol, "Set up pymol mover. Default false" ).def(false);
 	option.add( oddm::keep_history, "Keep history in pymol. Requires oddm::pymol set to true. Default false" ).def(false);
 
 	option.add( oddm::desn_mc_temp, "The temperature to use for the design/minimization phase of the ODDM protocol. Defaults to 0.8." ).def( 0.8 );
 
-	utility::vector1< core::Size > empty_vector(0);
-	option.add( oddm::oop_positions, "The positions of the first residues of oop rings" ).def( empty_vector );
+	//utility::vector1< core::Size > empty_vector(0);
+	//option.add( oddm::oop_positions, "The positions of the first residues of oop rings" ).def( empty_vector );
 
 	// init command line options
 	//you MUST HAVE THIS CALL near the top of your main function, or your code will crash when you first access the command line options
@@ -308,11 +313,18 @@ OopDockDesignMinimizeMover::apply(
 	kinematics::MoveMapOP pert_pep_mm( new kinematics::MoveMap() );
 	pert_pep_mm->set_bb_true_range(pep_start, pep_end);
 	
-	//kdrew: do not use small/shear mover on oop positions, use oop mover instead
-	utility::vector1< core::Size > const oop_seq_positions = option[ oddm::oop_positions ].value();
-	for( Size i = 1; i <= oop_seq_positions.size(); i++  )
+	//kdrew: automatically find oop positions
+	utility::vector1< core::Size > oop_seq_positions; 
+	for ( Size i = 1; i <= pose.total_residue(); ++i )
 	{
-		pert_pep_mm->set_bb( oop_seq_positions[i], false );
+		if( pose.residue(i).has_variant_type(chemical::OOP_PRE) == 1)
+		{
+			oop_seq_positions.push_back( i );
+			//kdrew: set up constraints
+			add_oop_constraint( pose, i );
+			//kdrew: do not use small/shear mover on oop positions, use oop mover instead
+			pert_pep_mm->set_bb( i, false );
+		}
 	}
 
 	// create small and shear movers
@@ -338,8 +350,10 @@ OopDockDesignMinimizeMover::apply(
 	OopPuck Setup
 	**********************************************************/
 
-	oop::OopRandomSmallMoverOP opm_small( new oop::OopRandomSmallMover( option[ oddm::oop_positions ].value(), 2.0 ) );
-	oop::OopRandomPuckMoverOP opm_puck( new oop::OopRandomPuckMover( option[ oddm::oop_positions ].value() ) );
+	//oop::OopRandomSmallMoverOP opm_small( new oop::OopRandomSmallMover( option[ oddm::oop_positions ].value(), 2.0 ) );
+	//oop::OopRandomPuckMoverOP opm_puck( new oop::OopRandomPuckMover( option[ oddm::oop_positions ].value() ) );
+	oop::OopRandomSmallMoverOP opm_small( new oop::OopRandomSmallMover( oop_seq_positions, 2.0 ) );
+	oop::OopRandomPuckMoverOP opm_puck( new oop::OopRandomPuckMover( oop_seq_positions ) );
 	
 	/******************************************************************************
 	Rotamer Trials Setup
@@ -488,6 +502,14 @@ if( option[ oddm::pymol ].value() )
 
 
 		pert_mc->reset(pose);
+
+		//kdrew: a quick design/repack prior to pertubation, often the initial structure given is aligned to hotspot Ca Cb vector 
+		//kdrew: and do not want to perturb away until designed in hotspot residue
+		if( k == 1 && option[ oddm::oop_design_first ].value() )
+		{
+			desn_sequence->apply( pose );
+		}
+
 		// pert loop
 		for( Size j = 1; j <= Size( option[ oddm::pert_num ].value() ); ++j ) {
 			TR << "PERTURB: " << k << " / "  << j << std::endl;
@@ -496,20 +518,11 @@ if( option[ oddm::pymol ].value() )
 		}
 		pert_mc->recover_low( pose );
 		curr_job->add_string_real_pair( "ENERGY_PERT (pert score) recovered low", (*pert_score_fxn)(pose) );
-		//std::stringstream filename_pdb;
-		//filename_pdb << "post_perturb" << k << ".pdb";
-		//TR << filename_pdb.str() << std::endl;
-		//pose.dump_pdb(filename_pdb.str());
 
 		// design
 		TR << "DESIGN: " << k << std::endl;
 		desn_sequence->apply( pose );
 		curr_job->add_string_real_pair( "ENERGY_DESN (hard score)", (*score_fxn)(pose) );
-
-		//std::stringstream filename_pdb2;
-		//filename_pdb2 << "post_design" << k << ".pdb";
-		//TR << filename_pdb2.str() << std::endl;
-		//pose.dump_pdb(filename_pdb2.str());
 
 		//kdrew: reset mc after first cycle if not considering initial pose
 		if( !option[ oddm::mc_initial_pose ].value() && k == 1 )
@@ -543,6 +556,13 @@ if( option[ oddm::pymol ].value() )
 	basic::MetricValue< utility::vector1< core::Size > > mv_unsat_res_seperated;
 	basic::MetricValue< core::Real > mv_pack_complex;
 	basic::MetricValue< core::Real > mv_pack_seperated;
+
+	basic::MetricValue< core::Real > mv_repack_sasa_seperated;
+	basic::MetricValue< utility::vector1< core::Size > > mv_repack_unsat_res_seperated;
+	basic::MetricValue< core::Real > mv_repack_pack_seperated;
+	core::Real repack_energy_seperated;
+	core::Real repack_hbond_ener_sum_seperated;
+
 	core::Real energy_complex;
 	core::Real energy_seperated;
 	core::Real hbond_ener_sum_complex;
@@ -604,31 +624,69 @@ if( option[ oddm::pymol ].value() )
 	translate->apply( stats_pose );
 	//stats_pose.dump_pdb("stats_trans1000.pdb");
 
+	Pose repack_stats_pose( stats_pose );
+	
+	//kdrew: probably should repack and minimize here after separation
+	TaskFactoryOP tf(new TaskFactory());
+	tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
+	//kdrew: do not do design, makes NATAA if res file is not specified
+	operation::RestrictToRepackingOP rtrp( new operation::RestrictToRepacking() );
+	tf->push_back( rtrp );
+	simple_moves::PackRotamersMoverOP packer( new protocols::simple_moves::PackRotamersMover() );
+	packer->task_factory( tf );
+	packer->score_function( score_fxn );
+	packer->apply( repack_stats_pose );
+
+	// create move map for minimization
+	kinematics::MoveMapOP separate_min_mm( new kinematics::MoveMap() );
+	separate_min_mm->set_bb( true );
+	separate_min_mm->set_chi( true );
+	separate_min_mm->set_jump( 1, true );
+
+	// create minimization mover
+	simple_moves::MinMoverOP separate_min( new simple_moves::MinMover( separate_min_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01,	true ) );
+	// final min (okay to use ta min here)
+	separate_min->apply( repack_stats_pose );
+
 	// seperate stats
 	energy_seperated = (*score_fxn)(stats_pose);
+	repack_energy_seperated = (*score_fxn)(repack_stats_pose);
 	stats_pose.metric("sasa","total_sasa",mv_sasa_seperated);
+	repack_stats_pose.metric("sasa","total_sasa",mv_repack_sasa_seperated);
 	stats_pose.metric("unsat", "residue_bur_unsat_polars", mv_unsat_res_seperated);
+	repack_stats_pose.metric("unsat", "residue_bur_unsat_polars", mv_repack_unsat_res_seperated);
 	utility::vector1< core::Size > const unsat_res_seperated(mv_unsat_res_seperated.value());
 	stats_pose.metric( "pack", "total_packstat", mv_pack_seperated );
+	repack_stats_pose.metric( "pack", "total_packstat", mv_repack_pack_seperated );
 	scoring::EnergyMap seperated_emap( stats_pose.energies().total_energies() );
 	hbond_ener_sum_seperated = seperated_emap[ hbond_sr_bb ] + seperated_emap[ hbond_lr_bb ] + seperated_emap[ hbond_bb_sc ] + seperated_emap[ hbond_sc ];
+	scoring::EnergyMap repack_seperated_emap( repack_stats_pose.energies().total_energies() );
+	repack_hbond_ener_sum_seperated = repack_seperated_emap[ hbond_sr_bb ] + repack_seperated_emap[ hbond_lr_bb ] + repack_seperated_emap[ hbond_bb_sc ] + repack_seperated_emap[ hbond_sc ];
 
 	// add values to job so that they will be output in the pdb
 	curr_job->add_string_real_pair( "ENERGY_COMPLEX:\t\t", energy_complex );
 	curr_job->add_string_real_pair( "ENERGY_SEPERATE:\t\t", energy_seperated );
 	curr_job->add_string_real_pair( "ENERGY_DIFF:\t\t", energy_complex - energy_seperated );
+	curr_job->add_string_real_pair( "REPACK_ENERGY_SEPERATE:\t\t", repack_energy_seperated );
+	curr_job->add_string_real_pair( "REPACK_ENERGY_DIFF:\t\t", energy_complex - repack_energy_seperated );
 
 	curr_job->add_string_real_pair( "SASA_COMPLEX:\t\t", mv_sasa_complex.value() );
 	curr_job->add_string_real_pair( "SASA_SEPERATE:\t\t", mv_sasa_seperated.value() );
 	curr_job->add_string_real_pair( "SASA_DIFF:\t\t", mv_sasa_complex.value() - mv_sasa_seperated.value() );
+	curr_job->add_string_real_pair( "REPACK_SASA_SEPERATE:\t\t", mv_repack_sasa_seperated.value() );
+	curr_job->add_string_real_pair( "REPACK_SASA_DIFF:\t\t", mv_sasa_complex.value() - mv_repack_sasa_seperated.value() );
 
 	curr_job->add_string_real_pair( "HB_ENER_COMPLEX:\t\t", hbond_ener_sum_complex );
 	curr_job->add_string_real_pair( "HB_ENER_SEPERATE:\t\t", hbond_ener_sum_seperated );
 	curr_job->add_string_real_pair( "HB_ENER_DIFF:\t\t", hbond_ener_sum_complex - hbond_ener_sum_seperated );
+	curr_job->add_string_real_pair( "REPACK_HB_ENER_SEPERATE:\t\t", repack_hbond_ener_sum_seperated );
+	curr_job->add_string_real_pair( "REPACK_HB_ENER_DIFF:\t\t", hbond_ener_sum_complex - repack_hbond_ener_sum_seperated );
 
 	curr_job->add_string_real_pair( "PACK_COMPLEX:\t\t", mv_pack_complex.value() );
 	curr_job->add_string_real_pair( "PACK_SEPERATE:\t\t", mv_pack_seperated.value() );
 	curr_job->add_string_real_pair( "PACK_DIFF:\t\t", mv_pack_complex.value() - mv_pack_seperated.value() );
+	curr_job->add_string_real_pair( "REPACK_PACK_SEPERATE:\t\t", mv_repack_pack_seperated.value() );
+	curr_job->add_string_real_pair( "REPACK_PACK_DIFF:\t\t", mv_pack_complex.value() - mv_repack_pack_seperated.value() );
 
 }
 // this only works for two chains and assumes the protein is first and the peptide is second

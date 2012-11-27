@@ -103,6 +103,14 @@ patch_operation_from_patch_file_line( std::string const & line ) {
 		if ( line.size() < 19 ) return 0;
 		std::string const three_letter_code( line.substr(14,3) ), one_letter_code( line.substr(18,1) );
 		return new SetIO_String( three_letter_code, one_letter_code[0] );
+	} else if ( tag == "NBR_ATOM" ) {
+		l >> atom_name;
+		if ( l.fail() ) return 0;
+		return new SetNbrAtom( atom_name );
+	} else if ( tag == "NBR_RADIUS" ) {
+		Real radius;
+		l >> radius;
+		return new SetNbrRadius( radius );
 	} else if ( tag == "ADD_PROPERTY" ) {
 		l >> property;
 		if ( l.fail() ) return 0;

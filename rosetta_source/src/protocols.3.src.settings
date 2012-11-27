@@ -441,6 +441,9 @@ sources = {
 	"protocols/simple_moves/carbohydrates": [
 		"RingConformationMover"
     ],
+	"protocols/simple_moves/chiral": [
+		"ChiralMover",
+	],
 	"protocols/simple_moves/oop": [
 		"OopPuckMover",
 		"OopMover",

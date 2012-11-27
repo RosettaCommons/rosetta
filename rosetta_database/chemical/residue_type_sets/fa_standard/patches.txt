@@ -1,3 +1,4 @@
+
 patches/CtermProteinFull.txt
 patches/Cterm_amidation.txt
 patches/NtermProteinFull.txt
@@ -61,3 +62,10 @@ patches/carbohydrates/lower_terminus.txt
 patches/carbohydrates/upper_terminus.txt
 patches/carbohydrates/6-branch.txt
 patches/carbohydrates/branch_lower_term.txt
+
+#patches/hbs_pre.txt
+#patches/hbs_post.txt
+
+#patches/oop_pre.txt
+#patches/oop_post.txt
+

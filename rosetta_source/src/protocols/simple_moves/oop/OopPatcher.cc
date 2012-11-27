@@ -18,10 +18,13 @@
 // Project Headers
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
+#include <core/scoring/constraints/ConstraintSet.fwd.hh>
+#include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
+#include <core/chemical/Patch.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/util.hh>
@@ -51,10 +54,60 @@ namespace protocols {
 namespace simple_moves {
 namespace oop {
 
+void add_oop_constraint( core::pose::Pose & pose, core::Size oop_seq_position )
+{
+	add_oop_constraint( pose, oop_seq_position, 1.5, 0.05 );
+}
+void add_oop_constraint( core::pose::Pose & pose, core::Size oop_seq_position, core::Real distance, core::Real std )
+{
+	using namespace core::id;
+	using namespace core::scoring;
+	using namespace core::scoring::constraints;
+
+	//kdrew: add constraint
+	HarmonicFuncOP harm_func  (new HarmonicFunc( distance, std ) );
+																			 
+	AtomID aidCYP( pose.residue( oop_seq_position ).atom_index("CYP"), oop_seq_position );
+	AtomID aidCZP( pose.residue( oop_seq_position+1 ).atom_index("CZP"), oop_seq_position+1 );
+
+	ConstraintCOP atompair = new AtomPairConstraint( aidCYP, aidCZP, harm_func );
+
+	pose.add_constraint( atompair );
+
+	TR << "added atom pair constraint to oop at residue: " << oop_seq_position << " with distance: " << distance << " and std: "<< std << std::endl;
+
+}
+
 void OopPatcher::apply( core::pose::Pose & pose )
 {
 	TR<< "patching residues" <<std::endl;
+	
+	//kdrew: an oop pre position cannot be last position
+	runtime_assert_msg ( oop_pre_pos_ != pose.total_residue(), "beginning of oop cannot be last residue" );
+	//kdrew: an oop post position cannot be first position
+	runtime_assert ( oop_post_pos_ != 1 );
+
 	chemical::ResidueTypeSetCAP restype_set = chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
+
+	std::string const pre_base_name( core::chemical::residue_type_base_name( pose.residue_type( oop_pre_pos_ ) ) );
+	std::string const post_base_name( core::chemical::residue_type_base_name( pose.residue_type( oop_post_pos_ ) ) );
+	TR << "pre restype basename: " << pre_base_name << std::endl;
+	TR << "post restype basename: " << post_base_name << std::endl;
+
+	//kdrew: check for proline
+	if ( pre_base_name == "PRO" || pre_base_name == "DPRO" ||
+		 post_base_name == "PRO" || post_base_name == "DPRO" )
+	{
+    	utility_exit_with_message("Cannot patch proline");
+	}
+	if ( pose.residue(oop_pre_pos_).has_variant_type(chemical::OOP_POST) == 1) 
+	{
+    	utility_exit_with_message("Cannot patch OOP_PRE on an OOP_POST");
+	}
+	if ( pose.residue(oop_post_pos_).has_variant_type(chemical::OOP_PRE) == 1) 
+	{
+    	utility_exit_with_message("Cannot patch OOP_POST on an OOP_PRE");
+	}
 
 	//kdrew: check if already patched
 	if ( pose.residue(oop_pre_pos_).has_variant_type(chemical::OOP_PRE) != 1)
@@ -67,10 +120,10 @@ void OopPatcher::apply( core::pose::Pose & pose )
 
 		//kdrew: add variant
 		conformation::Residue replace_res_pre( restype_set->get_residue_type_with_variant_added(pre_base_type, chemical::OOP_PRE), true );
+		TR<< replace_res_pre.name() << std::endl;
 
 		replace_res_pre.set_all_chi(pose.residue(oop_pre_pos_).chi());
 		//replace_res_pre.mainchain_torsions(pose.residue(oop_pre_pos_).mainchain_torsions());
-
 
 		pose.replace_residue( oop_pre_pos_, replace_res_pre, true );
 		conformation::idealize_position( oop_pre_pos_, pose.conformation() );
@@ -94,6 +147,15 @@ void OopPatcher::apply( core::pose::Pose & pose )
 		//pose.dump_pdb( "rosetta_out_oop_pre_pos_t_patch.pdb" );
 
 	}// if post
+
+	add_oop_constraint( pose, oop_pre_pos_ );
+
+	//kdrew: need to do all at once at the end because occasionally will get error:
+	//kdrew: Unable to handle change in the number of residue connections in the presence of pseudobonds!
+	//pose.conformation().detect_bonds();
+	//pose.conformation().detect_pseudobonds();
+	//pose.conformation().update_polymeric_connection( oop_pre_pos_ );
+	//pose.conformation().update_polymeric_connection( oop_post_pos_ );
 
 }
 

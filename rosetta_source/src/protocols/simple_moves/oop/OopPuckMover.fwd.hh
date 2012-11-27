@@ -35,6 +35,13 @@ class OopPuckMinusMover;
 typedef utility::pointer::owning_ptr< OopPuckMinusMover > OopPuckMinusMoverOP;
 typedef utility::pointer::owning_ptr< OopPuckMinusMover const > OopPuckMinusMoverCOP;
 
+class OopDPuckPlusMover;
+typedef utility::pointer::owning_ptr< OopDPuckPlusMover > OopDPuckPlusMoverOP;
+typedef utility::pointer::owning_ptr< OopDPuckPlusMover const > OopDPuckPlusMoverCOP;
+
+class OopDPuckMinusMover;
+typedef utility::pointer::owning_ptr< OopDPuckMinusMover > OopDPuckMinusMoverOP;
+typedef utility::pointer::owning_ptr< OopDPuckMinusMover const > OopDPuckMinusMoverCOP;
 
 }//oop
 }//simple_moves

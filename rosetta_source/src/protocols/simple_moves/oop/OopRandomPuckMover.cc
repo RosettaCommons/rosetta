@@ -15,6 +15,7 @@
 #include <protocols/simple_moves/oop/OopRandomPuckMover.fwd.hh>
 #include <protocols/simple_moves/oop/OopRandomPuckMover.hh>
 #include <protocols/simple_moves/oop/OopPuckMover.hh>
+#include <protocols/simple_moves/chiral/ChiralMover.hh>
 // Package Headers
 
 // Project Headers
@@ -51,6 +52,10 @@ using namespace core;
 using namespace conformation;
 using namespace chemical;
 using namespace core::id;
+using namespace protocols;
+using namespace protocols::moves;
+using namespace protocols::simple_moves;
+using namespace protocols::simple_moves::chiral;
 
 namespace protocols {
 namespace simple_moves {
@@ -86,17 +91,35 @@ void OopRandomPuckMover::apply( core::pose::Pose & pose ){
 	runtime_assert ( random_pucker == "OOP_PUCK_PLUS" || random_pucker == "OOP_PUCK_MINUS" );
 	TR << random_pucker <<std::endl;
 
-	oop::OopPuckPlusMoverOP oop_plus_mover ( new oop::OopPuckPlusMover( random_pos ) );
-	oop::OopPuckMinusMoverOP oop_minus_mover ( new oop::OopPuckMinusMover( random_pos ) );
+	oop::OopMoverOP oop_mover; 
+	ResidueType restype = pose.residue_type( random_pos );
 
+	//kdrew: determine which mover should be used, use D puck movers for chiral D oops
 	if ( random_pucker == "OOP_PUCK_PLUS" ) 
 	{
-		oop_plus_mover->apply( pose );
+		if ( is_d_chiral( restype ) )
+		{
+			oop_mover = new oop::OopDPuckPlusMover( random_pos ) ;
+		}
+		else
+		{
+			oop_mover = new oop::OopPuckPlusMover( random_pos ) ;
+		}
 	}
 	else if (random_pucker == "OOP_PUCK_MINUS" )
 	{
-		oop_minus_mover->apply( pose );
+		if ( is_d_chiral ( restype ) )
+		{
+			oop_mover = new oop::OopDPuckMinusMover( random_pos ) ;
+		}
+		else
+		{
+			oop_mover = new oop::OopPuckMinusMover( random_pos ) ;
+		}
 	}
+
+	oop_mover->apply( pose );
+
 
 }//apply
 

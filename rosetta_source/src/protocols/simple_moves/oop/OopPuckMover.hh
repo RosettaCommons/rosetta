@@ -47,41 +47,27 @@ public:
 
 };//end OopPuckMinusMover
 
-
-/*
-///@details
-class OopPuckMover : public protocols::moves::Mover {
+//kdrew: defines puck mover class for D chiral oop residues in half-chair conformation
+class OopDPuckPlusMover : public OopMover {
 
 public:
 
-	///@brief
-	OopPuckMover(
-	);
-
-	OopPuckMover( utility::vector1< core::Size > oop_seq_positions, bool oop_puck_plus, bool oop_puck_minus, bool random, bool patch );
-
-	OopPuckMover( utility::vector1< core::Size > oop_seq_positions, bool oop_puck_plus, bool oop_puck_minus, bool random, bool patch, bool oop_puck_small, core::Real max_small_angle );
-
-	OopPuckMover( utility::vector1< core::Size > oop_seq_positions );
-
-	virtual ~OopPuckMover();
-
-	virtual void apply( core::pose::Pose & pose );
+	OopDPuckPlusMover( core::Size oop_seq_position );
+	virtual ~OopDPuckPlusMover();
 	virtual std::string get_name() const;
 
-private:
+};//end OopDPuckPlusMover
 
-	bool oop_puck_plus_;
-	bool oop_puck_minus_;
-	bool random_;
-	utility::vector1< core::Size > const oop_seq_positions_;
-	utility::vector1< std::string > available_moves_;
-	bool patch_;
-	bool oop_puck_small_;
-	core::Real max_small_angle_;
+//kdrew: defines puck mover class for D chiral oop residues in boat conformation
+class OopDPuckMinusMover : public OopMover {
 
-};//end OopPuckMover
-*/
+public:
+
+	OopDPuckMinusMover( core::Size oop_seq_position );
+	virtual ~OopDPuckMinusMover();
+	virtual std::string get_name() const;
+
+};//end OopDPuckMinusMover
 
 
 }//namespace oop

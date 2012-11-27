@@ -366,6 +366,7 @@ sources = {
 		#"oop_puck_energy_calc",
 		#"oop_puck_energy_calc_mc",
 		#"oop_dimer_rama_calc",
+		"ld_converter",
 	],
 	"pilot/kenjung" : [
 		"loophash_createfiltereddb",
@@ -760,7 +761,6 @@ sources = {
 	"pilot/yfsong" : [
 		#"plot_hb",
 	],
-
 	# Z ######################################################################
 	"pilot/zhezhang" : [
 		"extract_CA_coords",
