@@ -180,7 +180,7 @@ LayerDesignOperation::pos2select( utility::vector1< core::Size > const & pos ) c
 }
 
 void 
-LayerDesignOperation::write_pymol_script( core::pose::Pose const & pose, toolbox::SelectResiduesByLayerOP srbl, std::map< std::string, utility::vector1<bool> > const & layer_specification, std::string const & filename ) const
+LayerDesignOperation::write_pymol_script( core::pose::Pose const & pose, toolbox::SelectResiduesByLayerOP srbl, std::map< std::string, utility::vector1<bool> > const & layer_specification, bool has_ligand, std::string const & filename ) const
 {
 	using utility::io::ozstream;
 	typedef utility::vector1<Size> VecSize;
@@ -223,6 +223,11 @@ LayerDesignOperation::write_pymol_script( core::pose::Pose const & pose, toolbox
 		pymol << "cmd.select('"<< it->first  <<"', 'resi  " << pos2select( pos )<< "')" << std::endl;
 		pymol << "cmd.color('" << colors[ layer % 6  ] << "','" << it->first << "')" << std::endl;
 		layer += 1;
+	}
+	if(has_ligand) {
+		pymol << "cmd.select('ligand', 'organic')" << std::endl;
+		pymol << "cmd.show('sticks','ligand')" << std::endl;
+		pymol << "cmd.color('gray','ligand')" << std::endl;
 	}
 }
 
@@ -303,27 +308,27 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 		pose = input_pose;
   }
 
-	// make a pymol script for visualizing the layers 
-	if( make_pymol_script_ && !utility::file::file_exists( "layers.py" ) ) {
-		TR << "writing pymol script with the layer specification and saving it as layers.py" << std::endl;
-		write_pymol_script(input_pose, srbl_, layer_specification, "layers.py");
-	}
-	
 	core::scoring::dssp::Dssp dssp( pose );
 	dssp.dssp_reduced();
 	
-	// calc SelectResiduesByLayer
-	// srbl_->compute( pose, dssp.get_dssp_secstruct() );                                                                                                                   // TL: this command will fail if there is a ligand.
 	// we need to add a SS identifier for the ligand if there is one
 	String secstruct = dssp.get_dssp_secstruct();
 	utility::vector1<Size> ligands = protocols::flxbb::find_ligands( pose );
+	bool has_ligand = false;
   TR << "secstruct is:" << secstruct << std::endl;
 	for( Size i=1; i <= ligands.size(); i++) {
 		TR << "adding an L to the secstruct string due to unknown AA" << std::endl;
 		secstruct += 'L';
+		has_ligand = true;
 	}
 	srbl_->compute( pose, secstruct );
 
+	// make a pymol script for visualizing the layers 
+	if( make_pymol_script_ && !utility::file::file_exists( "layers.py" ) ) {
+		TR << "writing pymol script with the layer specification and saving it as layers.py" << std::endl;
+		write_pymol_script(input_pose, srbl_, layer_specification, has_ligand, "layers.py");
+	}
+	
 	// find the position of residues of helix capping and intial residue of helix
 	bool flag( false );
 	utility::vector1< bool > helix_capping( pose.total_residue(), false );
