@@ -35,6 +35,8 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
+#include <core/scoring/constraints/AtomPairConstraint.hh>
+#include <core/scoring/constraints/HarmonicFunc.hh>
 
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
@@ -129,10 +131,13 @@ public:
 		sfxn->set_weight( fa_atr, 0.8 );
 		sfxn->set_weight( fa_rep, 0.44 );
 		sfxn->set_weight( fa_sol, 0.65 );
+		sfxn->set_weight( atom_pair_constraint, 0.5 );
+
 		methods::EnergyMethodOptionsOP emopts( new methods::EnergyMethodOptions( sfxn->energy_method_options() ));
     emopts->hbond_options().decompose_bb_hb_into_pair_energies( true );
     sfxn->set_energy_method_options( *emopts );
 
+		pose.add_constraint( new core::scoring::constraints::AtomPairConstraint( core::id::AtomID( 4, 11 ), core::id::AtomID( 4, 12 ), new core::scoring::constraints::HarmonicFunc( 5.0, 1.0 )));
 		core::Real const initial_score = (*sfxn)( pose ); // score the pose first;
 		sfxn->setup_for_packing( pose, task->repacking_residues(), task->designing_residues() );
 		GraphOP packer_neighbor_graph = create_packer_graph( pose, *sfxn, task );

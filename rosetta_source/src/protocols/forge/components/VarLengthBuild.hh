@@ -132,12 +132,12 @@ public: // virtual constructors
 
 	/// @brief clone this object
 	virtual
-	MoverOP clone();
+	MoverOP clone() const;
 
 
 	/// @brief create a new instance of this type of object
 	virtual
-	MoverOP fresh_instance();
+	MoverOP fresh_instance() const;
 
 
 public: // accessors

@@ -65,10 +65,10 @@ public: //constructor/destructor
 public: // virtual constructors
 
 	virtual
-	MoverOP clone() ;
+	MoverOP clone() const;
 
 	virtual
-	MoverOP fresh_instance();
+	MoverOP fresh_instance() const;
 
 public: // options
 

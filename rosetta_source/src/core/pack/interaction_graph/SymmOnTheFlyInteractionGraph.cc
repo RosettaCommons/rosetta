@@ -244,9 +244,15 @@ SymmOnTheFlyNode::compute_rotamer_pair_energy(
 		for ( Size jj = 1; jj <= nsubunits; ++jj ) {
 
 			tbody_emap.zero();
+
+			/// iijj_score_multiply does double duty:
+			/// 1 ) it indicates whether a pair of amino acids on certain subunits are adjacent
+			/// 2 ) it gives the symmetry multiplication factor for the subunit pair
+			/// It does not, however, indicate what the multiplication factor should be for long-range two body
+			/// interactions if the amino acids are not close enough to qualify for short-range interactionsm
 			unsigned char iijj_score_multiply = spanning_edge.residues_adjacent_for_subunit_pair( ii, jj, ii_restype_group, jj_restype_group );
-			//std::cout << "compute_rotamer_pair_energy: " << ii << " " << jj << " " << ii_restype_group << " " << jj_restype_group << " " << (int) iijj_score_multiply << std::endl;
-			if ( iijj_score_multiply == 0 ) continue;
+
+			if ( iijj_score_multiply == 0 && ! spanning_edge.long_range_interactions_exist() ) continue;
 
 			Size this_subunit = ii == 1 ? asu_index : jj;
 			Size other_subunit = ii == 1 ? jj : asu_index;
@@ -260,7 +266,7 @@ SymmOnTheFlyNode::compute_rotamer_pair_energy(
 			BoundingSphere other_bb_bounding_sphere = neighbor.bb_bounding_sphere( other_subunit );
 
 			// evaluate short-ranged interactions for this pair, if appropriate
-			if ( spanning_edge.short_range_interactions_exist() ) {
+			if ( iijj_score_multiply != 0 && spanning_edge.short_range_interactions_exist() ) {
 
 				switch ( spanning_edge.eval_type( get_node_index() )) {
 				case ( sc_sc ) :
@@ -369,19 +375,28 @@ SymmOnTheFlyNode::compute_rotamer_pair_energy(
 					( get_on_the_fly_owner()->score_function().weights().dot( tbody_emap ) );
 			}
 
-			if ( get_incident_otf_edge( edge_making_energy_request )->long_range_interactions_exist() ) {
+			/// Long range interaction energies for this rotamer pair
+			if ( spanning_edge.long_range_interactions_exist() ) {
 				EnergyMap emap;
-				for ( ScoreFunction::LR_2B_MethodIterator
-						iter = get_on_the_fly_owner()->score_function().long_range_energies_begin(),
-						iter_end = get_on_the_fly_owner()->score_function().long_range_energies_end();
-						iter != iter_end; ++iter ) {
-					(*iter)->residue_pair_energy(
-						this_rotamer, other_rotamer,
-						get_on_the_fly_owner()->pose(), get_on_the_fly_owner()->score_function(),
-						emap );
+				Size lr_iijj_score_multiply( iijj_score_multiply );
+				if ( lr_iijj_score_multiply == 0 ) {
+					lr_iijj_score_multiply = get_on_the_fly_owner()->symm_info()->score_multiply(
+						this_rotamer.seqpos(), other_rotamer.seqpos() );
 				}
-				esum += iijj_score_multiply * static_cast< core::PackerEnergy >
-					( get_on_the_fly_owner()->score_function().weights().dot( emap ) );
+				if ( lr_iijj_score_multiply != 0 ) {
+					for ( ScoreFunction::LR_2B_MethodIterator
+							iter = get_on_the_fly_owner()->score_function().long_range_energies_begin(),
+							iter_end = get_on_the_fly_owner()->score_function().long_range_energies_end();
+							iter != iter_end; ++iter ) {
+						(*iter)->residue_pair_energy(
+							this_rotamer, other_rotamer,
+							get_on_the_fly_owner()->pose(),
+							get_on_the_fly_owner()->score_function(),
+							emap );
+					}
+					esum += lr_iijj_score_multiply * static_cast< core::PackerEnergy >
+						( get_on_the_fly_owner()->score_function().weights().dot( emap ) );
+				}
 			}
 		}
 	}

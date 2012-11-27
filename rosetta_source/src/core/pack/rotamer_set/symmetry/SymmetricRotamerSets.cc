@@ -395,6 +395,59 @@ SymmetricRotamerSets::prepare_symm_otf_interaction_graph(
 		}
 	}
 
+	// Iterate across the long range energy functions and use the iterators generated
+	// by the LRnergy container object
+	for ( scoring::ScoreFunction::LR_2B_MethodIterator
+			lr_iter = sfxn.long_range_energies_begin(),
+			lr_end  = sfxn.long_range_energies_end();
+			lr_iter != lr_end; ++lr_iter ) {
+		scoring::LREnergyContainerCOP lrec = pose.energies().long_range_container( (*lr_iter)->long_range_type() );
+		if ( !lrec || lrec->empty() ) continue; // only score non-empty energies.
+		// Potentially O(N^2) operation...
+
+		for ( uint ii = 1; ii <= nmoltenres(); ++ ii ) {
+			Size const ii_resid = moltenres_2_resid( ii );
+
+			for ( scoring::ResidueNeighborConstIteratorOP
+					rni = lrec->const_upper_neighbor_iterator_begin( ii_resid ),
+					rniend = lrec->const_upper_neighbor_iterator_end( ii_resid );
+    			(*rni) != (*rniend); ++(*rni) ) {
+
+				Size jj_resid = rni->upper_neighbor_id();
+				Size jj = resid_2_moltenres( jj_resid );
+
+				// skip jj if this is a background residue.  This is true
+				// if jj == 0 (i.e. not a moltenresidue) and if jj_resid
+				// is in the asymmetric unit (i.e. chi_follows(jj_resid) == 0 )
+				// or if jj is not in the asymmetric unit, and its master is
+				// also not a molten residue
+				if ( jj == 0 && symm_info->chi_follows( jj_resid ) == 0 ) { /*std::cout << "jj==0 && symm_info->chi_follows( jj_resid ) == 0" << std::endl;*/ continue; }
+				Size jj_resid_master = symm_info->chi_follows( jj_resid ) == 0 ? jj_resid : symm_info->chi_follows( jj_resid );
+				Size jj_master = jj == 0 ? resid_2_moltenres( jj_resid_master ) : jj;
+				// ok, jj_resid's master is also not a molten residue
+				if ( jj_master == 0 ) { /*std::cout << "jj_master == 0" << std::endl;*/ continue; }
+				// or if jj_master == ii, then we're looking at a residue interacting with its symmetric clone, which
+				// in the context of packing, is qualified as a one-body interaction,
+				if ( jj_master == ii ) { /*std::cout << "jj_master == ii" << std::endl;*/ continue; }
+
+				// OK: ii_resid interacts with jj_resid and their interaction
+				// needs to be counted as part of the interaction graph.
+				Size ii_master( ii ), ii_resid_master( ii_resid );
+				if ( jj_resid_master < ii_resid_master ) {
+					std::swap( ii_master, jj_master );
+				}
+				//std::cout << "OK we have a winner: " << ii_master << " " << jj_master << " from " << ii_resid << " " << jj_resid << std::endl;
+
+				/// figure out how to notify the lrec that it should only consider these two residues neighbors
+				/// for the sake of packing...
+				if ( ! ig->get_edge_exists( ii_master, jj_master ) ) {
+					ig->add_edge( ii_master, jj_master );
+				}
+				ig->note_long_range_interactions_exist_for_edge( ii_master, jj_master );
+			}
+		}
+  }
+
 	compute_proline_correction_energies_for_otf_graph( pose, symm_info, sfxn, packer_neighbor_graph, ig );
 }
 

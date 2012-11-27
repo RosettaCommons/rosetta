@@ -125,13 +125,13 @@ RemodelDesignMover::RemodelDesignMover(RemodelData const & remodel_data, Remodel
   RemodelDesignMover::~RemodelDesignMover(){}
 
 /// @brief clone this object
-  RemodelDesignMover::MoverOP RemodelDesignMover::clone() {
+  RemodelDesignMover::MoverOP RemodelDesignMover::clone() const {
   return new RemodelDesignMover( *this );
 }
 
 
 /// @brief create this type of object
-  RemodelDesignMover::MoverOP RemodelDesignMover::fresh_instance() {
+  RemodelDesignMover::MoverOP RemodelDesignMover::fresh_instance() const {
   return new RemodelDesignMover();
 }
 

@@ -81,13 +81,13 @@ RemodelAccumulator::RemodelAccumulator(WorkingRemodelSet & working_model){
 RemodelAccumulator::~RemodelAccumulator(){}
 
 /// @brief clone this object
-RemodelAccumulator::MoverOP RemodelAccumulator::clone() {
+RemodelAccumulator::MoverOP RemodelAccumulator::clone() const {
 	return new RemodelAccumulator( *this );
 }
 
 
 /// @brief create this type of object
-RemodelAccumulator::MoverOP RemodelAccumulator::fresh_instance() {
+RemodelAccumulator::MoverOP RemodelAccumulator::fresh_instance() const {
 	return new RemodelAccumulator();
 }
 

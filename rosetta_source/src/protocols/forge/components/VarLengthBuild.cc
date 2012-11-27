@@ -186,13 +186,13 @@ VarLengthBuild::~VarLengthBuild() {}
 
 
 /// @brief clone this object
-protocols::moves::MoverOP VarLengthBuild::clone() {
+protocols::moves::MoverOP VarLengthBuild::clone() const {
 	return new VarLengthBuild( *this );
 }
 
 
 /// @brief create a new instance of this type of object
-protocols::moves::MoverOP VarLengthBuild::fresh_instance() {
+protocols::moves::MoverOP VarLengthBuild::fresh_instance() const {
 	return new VarLengthBuild();
 }
 

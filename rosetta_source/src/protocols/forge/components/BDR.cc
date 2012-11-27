@@ -108,13 +108,13 @@ BDR::~BDR() {}
 
 
 /// @brief clone this object
-BDR::MoverOP BDR::clone() {
+BDR::MoverOP BDR::clone() const {
 	return new BDR( *this );
 }
 
 
 /// @brief create this type of object
-BDR::MoverOP BDR::fresh_instance() {
+BDR::MoverOP BDR::fresh_instance() const {
 	return new BDR();
 }
 
