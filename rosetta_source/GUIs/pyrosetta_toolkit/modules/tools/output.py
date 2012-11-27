@@ -79,6 +79,8 @@ def save_loop_file(p, loops_as_strings, ask_info=True):
         discard_loops = True
     outfilename = tkFileDialog.asksaveasfilename(initialdir = global_variables.current_directory, title="Output loop file to...")
     if not outfilename: return
+    global_variables.current_directory=os.path.dirname(outfilename)
+    
     FILE = open(outfilename, 'w')
     for loop_string in loops_as_strings:
         loop_stringSP = loop_string.split(":")
@@ -135,6 +137,8 @@ def save_basic_resfile(p):
     ResDic = dict()
     outfilename = tkFileDialog.asksaveasfilename(initialdir = global_variables.current_directory, title="Output resfile to...")
     if not outfilename: return
+    global_variables.current_directory=os.path.dirname(outfilename)
+    
     save_resfile_w_designdic(p, ResDic, outfilename)
     
 def save_resfile_w_designdic(p, ResDic, filename):
@@ -239,6 +243,8 @@ def save_basic_blueprint(p, output=True):
     if output:
         outfilename = tkFileDialog.asksaveasfilename(initialdir = global_variables.current_directory)
         if not outfilename:return
+        global_variables.current_directory=os.path.dirname(outfilename)
+        
         FILE = open(outfilename, 'w')
         FILE.write(out_string)
         FILE.close()
@@ -256,14 +262,28 @@ def make_PDBLIST(directory=""):
         directory = tkFileDialog.askdirectory(initialdir = global_variables.current_directory)
         if not directory: return
         global_variables.current_directory=directory
+    
+    contains = tkSimpleDialog.askstring(title="Contains...", prompt="Separate mutliple matches by a coma...", initialvalue=".pdb,")
+    containsSP = contains.split(",")
     FILES = os.listdir(directory)
     NEWFILE = open(directory+"/PDBLIST.txt", 'w')
-    for names in FILES:
-        if re.search(".pdb", names) and (re.search("\._", names)== None) and (re.search("~", names)== None):#This shows how stupid python/linux can be...:
-            print names
-            p = os.path.join(directory, names)
+    filenum=1
+    for name in FILES:
+        match = True; #Assumes true.  If 
+        for pattern in containsSP:
+            pattern = pattern.strip()
+            if re.search(pattern, name) and (re.search("\._", name)== None) and (re.search("~", name)== None):#This shows how stupid python/linux can be...:
+                continue
+            else:
+                match=False
+                continue
+            
+        if match:
+            print "File "+repr(filenum)+":"+name
+            p = os.path.join(directory, name)
+            filenum+=1
             NEWFILE.write(p+"\n")
-    print "Written..."
+                
     print "File saved as 'PDBLIST.txt' in directory specified."
     NEWFILE.close()
     return directory+"/PDBLIST.txt"
@@ -274,18 +294,27 @@ def make_PDBLIST_recursively(directory=""):
         if not directory: return
         global_variables.current_directory=directory
     
-    contains = ".pdb"
+    contains = tkSimpleDialog.askstring(title="Contains...", prompt="Separate mutliple matches by a coma...", initialvalue=".pdb,")
     NEWFILE = open(directory+"/PDBLIST_RECURSIVE.txt", 'w')
     filenum = 1
+    containsSP = contains.split(",")
     for root, dirs, files in os.walk(directory, topdown=True):
         #print "Root" + root
         for f in files:
-            if re.search(".pdb", f) and (re.search("\._", f)== None) and (re.search("~", f)== None):#This shows how stupid python/linux can be...:
-                print "File_"+repr(filenum)+"_"+f
+            match = True; #Assumes true.  If 
+            for pattern in containsSP:
+                pattern = pattern.strip()
+                if re.search(pattern, f) and (re.search("\._", f)== None) and (re.search("~", f)== None):#This shows how stupid python/linux can be...:
+                    continue
+                else:
+                    match=False
+                    continue
+            
+            if match:
+                print "File "+repr(filenum)+":"+f
                 p = os.path.join(root, f)
                 filenum+=1
                 NEWFILE.write(p+"\n")
-                filenum+=1
     NEWFILE.close()
     print "File saved as 'PDBLIST.txt' in directory specified."
     return directory+"/PDBLIST_RECURSIVE.txt"
@@ -294,50 +323,77 @@ def return_rosetta_numbering(loops_as_strings):
     for string in loops_as_strings:
         pass
     
-def convert_PDBLIST_to_sqlite3db(filename=""):
+def convert_PDBLIST_to_sqlite3db(pdblist_path):
+    """
+    Adds each PDB info excluding header information into an SQLITE3 Database.  The module for this is modules/PDB.py.
+    Needs to be basename as querying with '/' in a string doesn't seem to work.
+    """
     
-    
-    if filename=="":
-        filename = tkFileDialog.askopenfilename(initialdir = global_variables.current_directory)
-        if not filename: return
-        global_variables.current_directory = os.path.dirname(filename)
-    
-    
-    
-    PDBLIST = open(filename, 'r')
-    dbname = os.path.dirname(filename)+"/DATABASE.db"
+    if not pdblist_path:
+        print "Please choose PDBList..."
+        return
+    structID = tkSimpleDialog.askstring(title="structID", prompt="These entries will have a structID of...", initialvalue="na")
+    PDBLIST = open(pdblist_path, 'r')
+    dbname = os.path.dirname(pdblist_path)+"/DATABASE.db"
     print dbname
     DB = PDB("", "", "", False, dbname)
     i = 1
     for filepath in PDBLIST:
         pdbID = os.path.basename(filepath).split(".")[0]
-        DB.set_basic_options(pdbID, i, "x")
+        pdbID = filepath
+        DB.set_basic_options(pdbID, i, structID)
         filepath = filepath.strip()
         DB.read_pdb_into_database_flat(filepath, False, False)
         i+=1
     DB.db.close()
     print "Database written to PDBLIST directory"
 
-"""
-def extract_pdbs_from_sqlite3db(current_directory, list="", dbfile = ""):
-    if list=="":
-        filename = tkFileDialog.askopenfilename(initialdir = current_directory, message="PDBLIST")
-        
-    if filename ==None:
-        return
-    dir = os.path.split(PDBLIST)[0]
+def extract_pdb_from_sqlite3db():
+    dbfilename = tkFileDialog.askopenfilename(initialdir = global_variables.current_directory, title = "Database filename")
+    if not dbfilename: return
+    global_variables.current_directory = os.path.dirname(dbfilename)
     
-    PDBLIST = open(filename, 'r')
+    pdbID = tkSimpleDialog.askstring(title = "pdbID", prompt="Please enter the pdbID/filepath you wish to extract")
+    if not pdbID: return
     
-    if dbfile=="":
-        dbfilename = tkFileDialog.askopenfilename(initialdir = dir, message="dbfilename")
-        dir = os.path.split(PDBLIST)[0]
-    if dbfilename ==None:
-        return
+    pdbdb = PDB_database(dbfilename)
+    print "Database Opened"
+    table = pdbdb.scrub("pdb")
+    pdbdb.query_pdbID(table, pdbID)
+    outname = tkFileDialog.asksaveasfilename(initialdir = global_variables.current_directory)
+    if not outname: return
+    global_variables.current_directory = os.path.dirname(outname)
     
-    pdbdb = PDB_database()
-"""
+    pdbdb.set_output_DIR(os.path.dirname(outname))
+    pdbdb.save_cur_as_pdb(os.path.basename(outname))
 
+def extract_pdbs_from_sqlite3db(pdblist_path):
+    dbfilename = tkFileDialog.askopenfilename(initialdir = global_variables.current_directory, title = "Database filename")
+    if not dbfilename: return
+    global_variables.current_directory = os.path.dirname(dbfilename)
+    pdbdb = PDB_database(dbfilename)
+    print "Database Opened"
+    outdir = tkFileDialog.askdirectory(initialdir = global_variables.current_directory, title= "Choose output directory")
+    global_variables.current_directory = outdir
+    
+    keep_original_filename = tkMessageBox.askyesno(title="Keep Original Filename?", message="Add numerical designation to filename to keep from overwriting same PDBs in list?", default=tkMessageBox.NO)
+    strucID = tkSimpleDialog.askstring(title="strucID", prompt="Extract entries with structID of...", initialvalue="na")
+    PDBLIST = open(pdblist_path, 'r')
+    pdbdb.set_output_DIR(outdir)
+    filenum = 1
+    table = pdbdb.scrub("pdb")
+    for pdbID in PDBLIST:
+        pdbdb.query_pdbID_and_strucID(table, os.path.basename(pdbID), strucID)
+        newname = os.path.basename(pdbID)
+        if not keep_original_filename: newname = newname+"_"+repr(filenum)
+        print "Saving "+ newname
+        pdbdb.save_cur_as_pdb(newname)
+        pdbdb._reset_cursor()
+        filenum+=1
+        
+    print "Finished..."
+    PDBLIST.close()
+ 
 def score_PDBLIST(pdblist_path, score):
     """
     Outputs a simple pdb vs score for simple analysis.

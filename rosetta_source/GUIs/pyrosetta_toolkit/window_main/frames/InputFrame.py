@@ -93,12 +93,21 @@ class InputFrame(Frame):
 
 
 #### LOOPS ####
-
+    def load_loop(self):
+        loops_as_strings = self.input_class.load_loop()
+        for loop_string in loops_as_strings:
+            loop_stringSP = loop_string.split(":")
+            self.input_class.loop_start.set(loop_stringSP[0])
+            self.input_class.loop_end.set(loop_stringSP[1])
+            self.input_class.loop_chain.set(loop_stringSP[2])
+            self.addLoop()
+            
     def addLoop(self):
         looFull = self.input_class.loop_start.get()+ ":"+ self.input_class.loop_end.get()+":"+self.input_class.loop_chain.get().upper()
         self.input_class.loops_as_strings.append(looFull)
         self.loops_listbox.insert(END, looFull)
         #print self.toolkit.input_class.loops_as_strings
+        
     def remLoop(self):
 
         self.input_class.loops_as_strings.remove(self.loops_listbox.get(self.loops_listbox.curselection()))

@@ -59,16 +59,47 @@ class GUIInput:
         """
         Loads a File through the tk File Dialog
         """
-        f = tkFileDialog.askopenfilename(initialdir=global_variables.current_directory, title='Pick a file')
-        if not f:return
-        self.pdb_path.set(f)
-        global_variables.current_directory= os.path.dirname(f)
+        infilename = tkFileDialog.askopenfilename(initialdir=global_variables.current_directory, title='Pick a file')
+        if not infilename:return
+        self.pdb_path.set(infilename)
+        global_variables.current_directory= os.path.dirname(infilename)
         print global_variables.current_directory
         self.load_pose()
     
     def set_PDBLIST(self):
-        f = tkFileDialog.askopenfilename(initialdir=global_variables.current_directory,title='Pick a directory')
-        if not f:return
-        global_variables.current_directory =os.path.dirname(f)
+        infilename = tkFileDialog.askopenfilename(initialdir=global_variables.current_directory,title='Open PDBLIST')
+        if not infilename:return
+        global_variables.current_directory =os.path.dirname(infilename)
         print "PDBLIST set"
-        self.PDBLIST.set(f)
+        self.PDBLIST.set(infilename)
+        
+    def load_loop(self):
+        """
+        Returns a loops_as_strings array to be used by the InputFrame
+        """
+        
+        if not self.toolkit.pose.total_residue():
+            print "\nNumbering conversion requires a pose to be loaded...please load a pose.."
+            return
+        
+        infilename = tkFileDialog.askopenfilename(initialdir=global_variables.current_directory,title='Open Loop file')
+        if not infilename: return
+        global_variables.current_directory =os.path.dirname(infilename)
+        FILE = open(infilename, 'r')
+        loops_as_strings = []
+        for line in FILE:
+            print line
+            line = line.strip()
+            lineSP = line.split()
+            start = lineSP[1]
+            end = lineSP[2]
+            chain_start = self.toolkit.pose.pdb_info().chain(int(start))
+            chain_end = self.toolkit.pose.pdb_info().chain(int(end))
+            if chain_start != chain_end:
+                print "Invalid loop for GUI.  Start and end residues are on different chains.\n"
+                return
+            loop_string = repr(self.toolkit.pose.pdb_info().number(int(start)))+":"+repr(self.toolkit.pose.pdb_info().number(int(end)))+":"+chain_start
+            loops_as_strings.append(loop_string)
+        FILE.close()
+        return loops_as_strings
+            

@@ -34,7 +34,10 @@ class PDB:
         if memory:
             self.db = sqlite3.connect(":memory:") #Can always switch this by using a.db = "adsfasdf" to connect to a different database and add information into it.  
         else:
+            if not os.path.exists(os.path.dirname(path)):
+                os.mkdir(os.path.dirname(path))
             self.db = sqlite3.connect(path)
+            
         self.db_util = PDB_database(self.db)
         self.set_basic_options(pdbID, modelID, structID)
         self.pdb_url = "http://www.rcsb.org/pdb/files"
@@ -42,6 +45,7 @@ class PDB:
         
     def __exit__(self):
         self.db.close()
+        
     def set_basic_options(self,pdbID, modelID, structID):
         self.pdbID = pdbID
         self.modelID = modelID
@@ -123,7 +127,10 @@ class PDB_database:
     """
     
     def __init__(self, database):
-        self.db = database
+        if type(database) is str:
+            self.db = sqlite3.connect(database)
+        else:
+            self.db = database
         self.db.row_factory = sqlite3.Row #Sets sqlite3 to return values based on a nice list of dictionaries for each row.  Pretty awesome. 
         self._reset_cursor()
         #MUST QUERY THE TABLE INTERESTED IN FIRST!!!
@@ -157,6 +164,12 @@ class PDB_database:
     def query_pdbID(self, table, pdbID):
         self.cur.execute("SELECT * FROM "+table+" WHERE pdbID=?", (pdbID,))
     
+    def query_strucID(self, table, strucID):
+        self.cur.execute("SELECT * FROM "+table+" WHERE strucID=?", (strucID,))
+        
+    def query_pdbID_and_strucID(self, table, pdbID, strucID):
+        self.cur.execute("SELECT * FROM "+table+" WHERE pdbID=? AND strucID=?", (pdbID, strucID))
+        
     def query_chain(self, table, chain):
         self.cur.execute("SELECT * FROM "+table+" WHERE chain=?", (chain,))
     
@@ -208,7 +221,6 @@ class PDB_database:
     def save_cur_as_db(self, filename, seperate_structures=False):
         """
         Saves current DB at the current cursor to an sqlite3 db file
-        Cursor can be on header, pdb, anything really.
         """
         pass
     
@@ -287,10 +299,10 @@ if __name__ == '__main__':
     """
     Specifically for testing ATM.
     """
-    pdbID = '2j88'
+    pdbID = '1hil'
     modelID = 'FULL'
-    outDIR = '/Users/jadolfbr/Desktop/Testing/PDBDB'
-    s = PDB(pdbID, modelID, False, outDIR+'/Full2.db')
+    outDIR = os.path.split(os.path.abspath(__file__))[0]
+    s = PDB(pdbID, modelID, "x", False, outDIR+'/testing.db')
     s.fetch_and_read_pdb_into_database()
     
     table =s.db_util.scrub('pdb')
@@ -313,9 +325,9 @@ if __name__ == '__main__':
     #s.db_util.save_cur_as_pdb("model_query.pdb")
     
     s.db_util._reset_cursor()
-    s.db_util.query_chain(table, 'L')
-    s.db_util.query_piece(table, 24, 48, 'H')
-    s.db_util.save_cur_as_pdb("H1_CDR.pdb")
+    s.db_util.query_chain(table, 'A')
+    s.db_util.query_piece(table, 24, 48, 'A')
+    s.db_util.save_cur_as_pdb("H1A_CDR.pdb")
     
     #Loading Local Files.
     

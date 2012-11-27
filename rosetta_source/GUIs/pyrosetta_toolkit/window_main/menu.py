@@ -68,7 +68,7 @@ class Menus():
 
       #### Import ####
 	self.import_menu = Menu(self.main_menu, tearoff=0)
-	self.import_menu.add_command(label="Rosetta Loop File", command = lambda: self.load_loop())
+	self.import_menu.add_command(label="Rosetta Loop File", command = lambda: self.toolkit.input_frame.load_loop())
 	#self.import_menu.add_command(label="Rosetta Resfile", command = lambda: input_tools.load_resfile())
 
 
@@ -89,7 +89,7 @@ class Menus():
 	self.file_menu=Menu(self.main_menu, tearoff=0)
 	
 	self.file_menu.add_command(label="Load PDB", command=lambda: self.toolkit.input_class.choose_load_pose())
-	self.file_menu.add_command(label="Load PDB list", command=lambda: self.toolkit.input_class.set_PDBLIST())
+	self.file_menu.add_command(label="Load PDBList", command=lambda: self.toolkit.input_class.set_PDBLIST())
 	self.file_menu.add_cascade(label="Import", menu=self.import_menu)
 	self.file_menu.add_cascade(label="Export", menu=self.export_menu)
 	self.file_menu.add_checkbutton(label="Set Pymol Observer", variable=self.toolkit.pymol_class.auto_send) #this option should be set only once.
@@ -122,6 +122,7 @@ class Menus():
 	self.advanced_menu.add_command(label="Full Control Toolbox", command=lambda: self.toolkit.fullcontrol_class.makeWindow(Toplevel(self.main)))
 	self.advanced_menu.add_command(label="ScoreFxn Control + Creation", command =lambda: self.toolkit.score_class.makeWindow(Toplevel(self.main), self.toolkit.pose))
 	self.advanced_menu.add_separator()
+	#self.advanced_menu.add_command(label="Extract PDB from SQLite3 DB", command = lambda: output_tools.extract_pdb_from_sqlite3db())
 	self.advanced_menu.add_command(label="Interactive Terminal", foreground='red',command = lambda: self.show_IpythonWindow())
 	self.advanced_menu.add_command(label="Jump into Session", foreground='red', command = lambda: embed())
 	self.main_menu.add_cascade(label = "Advanced", menu = self.advanced_menu)
@@ -174,7 +175,6 @@ class Menus():
 	self.pdblist_analysis_menu.add_command(label = "Get top % models", foreground='red')
 	#self.pdblist_analysis_menu.add_command(label = "Filter  PDBList by Loop Energy")
 	#self.pdblist_analysis_menu.add_command(label = "Filter  PDBList by E Component")
-
 	self.pdblist_tools_menu.add_cascade(label = "Analysis", menu=self.pdblist_analysis_menu)
 
 	self.sequence_menu = Menu(self.main_menu, tearoff=0)
@@ -185,11 +185,12 @@ class Menus():
 	self.pdblist_tools_menu.add_cascade(label = "Sequence", menu=self.sequence_menu)
 	self.pdblist_tools_menu.add_separator()
 	self.pdblist_tools_menu.add_command(label = "Create PDBList", command = lambda: self.toolkit.input_class.PDBLIST.set(output_tools.make_PDBLIST()))
-	self.pdblist_tools_menu.add_command(label = "Create PDBList Recursively", command = lambda: self.toolkit.input_class.PDBLIST.set(output_tools.make_PDBLIST_recursively(global_variables.current_directory)))
+	self.pdblist_tools_menu.add_command(label = "Create PDBList Recursively", command = lambda: self.toolkit.input_class.PDBLIST.set(output_tools.make_PDBLIST_recursively()))
 	self.pdblist_tools_menu.add_separator()
-	self.pdblist_tools_menu.add_command(label = "Convert PDBList to SQLite3 DB", command = lambda: output_tools.convert_PDBLIST_to_sqlite3db(self.toolkit.input_class.PDBLIST.get()))
 	self.pdblist_tools_menu.add_command(label = "Cluster PDBList using Calibur", foreground='red')
-	self.pdblist_tools_menu.add_separator()
+	#self.pdblist_tools_menu.add_command(label = "Convert PDBList to SQLite3 DB", command = lambda: output_tools.convert_PDBLIST_to_sqlite3db(self.toolkit.input_class.PDBLIST.get()))
+	#self.pdblist_tools_menu.add_command(label = "Extract PDBList from SQLite3 DB", command = lambda: output_tools.extract_pdbs_from_sqlite3db(self.toolkit.input_class.PDBLIST.get()))
+	#self.pdblist_tools_menu.add_separator()
 	self.pdblist_tools_menu.add_command(label = "Rename All PDBs Recursively + Copy to Outpath", command = lambda: output_tools.rename_and_save(self.toolkit.input_class.PDBLIST.get()))
 	self.pdblist_tools_menu.add_separator()
 
