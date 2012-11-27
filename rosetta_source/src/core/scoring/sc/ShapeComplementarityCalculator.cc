@@ -58,6 +58,8 @@
 #include <map>
 #include <string>
 
+#define UPPER_MULTIPLE(n,d) (((n)%(d)) ? (((n)/(d)+1)*(d)) : (n))
+
 static basic::Tracer TR("core.scoring.sc.ShapeComplementarityCalculator");
 
 using namespace core;
