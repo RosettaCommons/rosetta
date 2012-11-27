@@ -209,7 +209,7 @@ sources = {
         ],
 
         "simple_moves/chiral" : [
-        	"ChiralMover",
+        	#"ChiralMover",
         ],
 
         "simple_moves/oop" : [
@@ -370,6 +370,7 @@ testinputfiles = [
 	"scoring/dock_in.pdb",
         "simple_moves/1bl0_auto.fasta.pssm",
 	"simple_moves/chiral/AAdAdA.pdb",
+	"simple_moves/chiral/DALA.params",
 	"simple_moves/oop/oop_test.pdb",
 	"sparta/2kywA.pdb",
 	"sparta/data_16988.tab",
