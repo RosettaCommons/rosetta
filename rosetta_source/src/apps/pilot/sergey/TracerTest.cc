@@ -30,12 +30,59 @@
 #include <numeric/random/random.hh>
 
 
+#include <core/scoring/etable/Etable.hh>
+//#include <core/scoring/ScoringManager.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/Energies.hh>
+
+#include <core/scoring/Ramachandran.hh>
+#include <core/pack/dunbrack/RotamerLibrary.hh>
+#include <core/scoring/hbonds/HBondSet.hh>
+
+#include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/MoveMap.hh>
+#include <core/id/AtomID_Map.hh>
+
+#include <core/optimization/AtomTreeMinimizer.hh>
+#include <core/optimization/MinimizerOptions.hh>
+
+#include <core/pose/Pose.hh>
+
+#include <basic/database/open.hh>
+#include <core/io/pdb/pdb_dynamic_reader.hh>
+#include <core/io/pdb/file_data.hh>
+#include <core/io/pdb/pose_io.hh>
+#include <core/import_pose/import_pose.hh>
+#include <core/pose/annotated_sequence.hh>
 
 #include <ostream>
 #include <fstream>
 
+//#include <boost/libs/thread/thread.cpp>
+//#include <boost/libs/thread/tss.cpp>
+//#include <boost/libs/thread/mutex.cpp>
+//#include <boost/libs/thread/exceptions.cpp>
+//#include <boost/libs/thread/once.cpp>
+
+#include <iostream>
+
+
+// option key includes
+
+#include <basic/options/keys/james.OptionKeys.gen.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+
+// Utility headers
+#include <utility/exit.hh>
+
+
 
 basic::Tracer TM("TMemory");
+
+basic::Tracer TR_("global");
+
 
 void TracerDiskSpaceTest(void)
 {
@@ -67,8 +114,8 @@ using basic::Error;
 using basic::Warning;
 
 //basic::Tracer TR("TTest", basic::t_info, true);
-basic::Tracer TR("core.TTest");
-basic::Tracer TR2("core.TTest.T2");
+//basic::Tracer TR("core.TTest");
+//basic::Tracer TR2("core.TTest.T2");
 
 
 using namespace core;
@@ -93,6 +140,9 @@ std::ostream& operator <<(std::ostream &tr, AA)
 
 void test_Tracer()
 {
+	basic::Tracer TR("core.TTest");
+	basic::Tracer TR2("core.TTest.T2");
+
 	TR.Fatal   << "Some Fatal Error here... " << "000 " << std::endl;
 	TR.Fatal   << "2222 Fatal Error here... " << "___ " << std::endl;
 	TR << "... regular output ";
@@ -128,6 +178,7 @@ void test_Tracer()
 	TR.Debug   << "Debug...\n" << std::endl;
 	TR << "... regular output \n" << std::endl;
 	TR.Trace   << "Trace... unflushed...\n";// << std::endl;
+	TR.Fatal   << "Fatal... unflushed...\n";// << std::endl;
 	TR << "... regular output \n" << std::endl;
 
 	show( TR );
@@ -174,37 +225,16 @@ void test_Random(void)
 	core::init_random_generators(1000, numeric::random::_RND_TestRun_, "mt19937");
 	for(int i=0; i<100; i++) {
 		double r = numeric::random::uniform();
-		TR.precision(25);
-		TR << i << " " << r << std::endl;
+		TR_.precision(25);
+		TR_ << i << " " << r << std::endl;
 	}
 }
 
 
-
-
-//#include <boost/libs/thread/thread.cpp>
-//#include <boost/libs/thread/tss.cpp>
-//#include <boost/libs/thread/mutex.cpp>
-//#include <boost/libs/thread/exceptions.cpp>
-//#include <boost/libs/thread/once.cpp>
-
-
-
-#include <iostream>
-
-
-// option key includes
-
-#include <basic/options/keys/james.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-
-// Utility headers
-#include <utility/exit.hh>
-
-
 int main( int argc, char * argv [] )
 {
+	basic::Tracer TR("main");
+
 	using namespace core;
 	using namespace basic::options::OptionKeys;
 
@@ -212,9 +242,29 @@ int main( int argc, char * argv [] )
 
 	devel::init(argc, argv);
 
+	{
+		using basic::T;
+		{
+			core::pose::Pose pose;
+			core::import_pose::pose_from_pdb(pose, "test_in.pdb");
+
+			core::scoring::ScoreFunctionOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function("standard");
+			T("Score:") << scorefxn->score(pose)  << std::endl;
+			pose.energies().residue_total_energies(1);
+			T("Scoring done!") << "---------------------" << std::endl;
+		}
+		{
+			T("Testing pose_from_sequence...") << std::endl;
+			std::string sequence(1000, 'V');
+			core::pose::Pose pose;
+			core::pose::make_pose_from_sequence(pose, sequence, "fa_standard");
+			T("Testing pose_from_sequence... Done!") << std::endl;
+		}
+	}
+
 	test_Tracer();
 	std::cout << "Done !-------------------------------" << std::endl;
-	return 0;
+	//return 0;
 
 
 	TR << "Some unflushed output 1...\n";
