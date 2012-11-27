@@ -23,7 +23,7 @@ from modules.tools import sequence
 from modules import help as help_tools
 from modules.tools import input as input_tools
 from modules import calibur
-
+from modules.protocols import docking
 
 #Window Imports
 from window_modules.options_system.OptionSystemManager import OptionSystemManager
@@ -146,15 +146,35 @@ class Menus():
 	"""
 	
 	self.protocols_menu = Menu(self.main_menu, tearoff=0)
-	self.protocols_menu.add_command(label = "Set # of Processors", foreground='red')
-	self.protocols_menu.add_command(label = "Protein Design", foreground='red')
-	self.protocols_menu.add_command(label = "Protein Docking", foreground='red')
-	self.protocols_menu.add_command(label = "Ligand Docking", foreground='red')
-	self.protocols_menu.add_command(label = "Loop Modeling", foreground='red')
-	self.protocols_menu.add_command(label = "FloppyTail Modeling", foreground='red')
+	self.protocols_menu.add_command(label = "Set Processors")
 	self.protocols_menu.add_separator()
-	self.protocols_menu.add_command(label = "Grafting", foreground='red')
-	self.protocols_menu.add_command(label = "Remodel", foreground='red')
+	#Design
+	self.design_protocols = Menu(self.main_menu, tearoff=0)
+	self.design_protocols.add_command(label = "FixedBB")
+	self.design_protocols.add_command(label = "Remodel", foreground='red')
+	
+	#Docking
+	self.docking_protocols = Menu(self.main_menu, tearoff=0)
+	self.docking_protocols.add_command(label = "High Resolution", command = lambda: docking.Docking(self.toolkit.pose, self.toolkit.score_class, self.toolkit.output_class).high_res_dock())
+	self.docking_protocols.add_command(label = "Ligand", foreground='red')
+	
+	#Loop Modeling
+	self.loop_modeling_protocols=Menu(self.main_menu, tearoff=0)
+	self.loop_modeling_protocols_low = Menu(self.main_menu,tearoff=0)
+	self.loop_modeling_protocols_low.add_command(label = "CCD")
+	self.loop_modeling_protocols_low.add_command(label = "KIC")
+	self.loop_modeling_protocols_high = Menu(self.main_menu, tearoff=0)
+	self.loop_modeling_protocols_high.add_command(label = "CCD")
+	self.loop_modeling_protocols_high.add_command(label = "KIC")
+	self.loop_modeling_protocols.add_cascade(label = "Low Resolution", menu = self.loop_modeling_protocols_low)
+	self.loop_modeling_protocols.add_cascade(label = "High Resolution", menu = self.loop_modeling_protocols_high)
+	
+	self.protocols_menu.add_cascade(label = "Loop Modeling", menu = self.loop_modeling_protocols)
+	self.protocols_menu.add_cascade(label = "Docking", menu = self.docking_protocols)
+	self.protocols_menu.add_cascade(label = "Design", menu = self.design_protocols)
+	
+	
+	self.protocols_menu.add_separator()
 	
 	self.main_menu.add_cascade(label = "Protocols", menu=self.protocols_menu)
 

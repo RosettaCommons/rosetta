@@ -113,7 +113,7 @@ class main_window:
       self.input_frame = InputFrame(self._tk_, self, self.input_class, bd=1, relief=SUNKEN)
       self.output_frame = OutputFrame(self._tk_, self, self.output_class, bd=1, relief = SUNKEN)
       
-      self.protocol_frame = QuickProtocolsFrame(self._tk_, self, bd=1, relief=SUNKEN)
+      self.protocol_frame = QuickProtocolsFrame(self._tk_, self, self.output_class, bd=1, relief=SUNKEN)
       self.simple_analysis_frame = SimpleAnalysisFrame(self._tk_, self, bd=2, relief=SUNKEN)
       self.menu_class = Menus(self._tk_, self)
       

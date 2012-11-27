@@ -27,6 +27,7 @@ class GUIOutput:
         self.outdir = StringVar(); self.outdir.set(global_variables.current_directory)
         self.outname = StringVar(); self.outname.set("0")
         self.decoys=IntVar(); self.decoys.set(0)
+        self.rounds=IntVar(); self.rounds.set(1)
         self.VarLoopSeq = StringVar(); #Sequence of the particular region just queried.
         self.auto_write = IntVar(); self.auto_write.set(0) ; #Auto Save pose after protocol?
 
