@@ -59,8 +59,6 @@ public:
 
 	HelixBundleFeatures();
 
-	void init_from_options();
-
 	virtual
 	std::string
 	type_name() const  {
