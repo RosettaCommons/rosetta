@@ -1223,7 +1223,24 @@ CartesianBondedEnergy::residue_pair_energy(
 	 pose::Pose const & pose,
 	 ScoreFunction const & sf,
 	 EnergyMap & emap
+) const
+{
+	if ( rsd1.seqpos() < rsd2.seqpos() ) {
+		residue_pair_energy_sorted( rsd1, rsd2, pose, sf, emap );
+	} else {
+		residue_pair_energy_sorted( rsd2, rsd1, pose, sf, emap );
+	}
+}
+
+void
+CartesianBondedEnergy::residue_pair_energy_sorted(
+   conformation::Residue const & rsd1,
+	 conformation::Residue const & rsd2,
+	 pose::Pose const & pose,
+	 ScoreFunction const & sf,
+	 EnergyMap & emap
 ) const {
+
 	using namespace numeric;
 
 	assert( rsd2.seqpos() > rsd1.seqpos() );

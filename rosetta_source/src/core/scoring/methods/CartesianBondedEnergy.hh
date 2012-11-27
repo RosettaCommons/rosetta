@@ -197,6 +197,16 @@ public:
 		EnergyMap & emap
 	) const;
 
+	/// here, rsd1.seqpos() < rsd2.seqpos()
+	void
+	residue_pair_energy_sorted(
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		pose::Pose const & pose,
+		ScoreFunction const & sf,
+		EnergyMap & emap
+	) const;
+
 	void
 	eval_intrares_energy(
 		conformation::Residue const &,
