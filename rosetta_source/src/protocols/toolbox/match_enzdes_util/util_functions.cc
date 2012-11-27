@@ -251,7 +251,7 @@ get_first_protein_residue( core::pose::Pose const & pose )
 
 	tr << "No non-ligand residues were detected!!" << std::endl;
 	runtime_assert( false );
-	return -1;
+	return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -271,7 +271,7 @@ get_last_protein_residue( core::pose::Pose const & pose )
 
 	tr << "No non-ligand residues were detected!!" << std::endl;
 	runtime_assert( false );
-	return -1;
+	return 0;
 }
 
 }  // match_enzdes_util
