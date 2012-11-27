@@ -36,9 +36,9 @@
 			<feature name=SaltBridgeFeatures/>
 
 			Multi-Body
-            		<feature name=GeometricSolvationFeatures/>
+			<feature name=GeometricSolvationFeatures/>
 			<feature name=HelixBundleFeatures/>
-			<feature name=StrandBundleFeatures/>
+			feature name=StrandBundleFeatures/>
 			<feature name=PairFeatures/>
 			<feature name=PoseConformationFeatures/>
 			<feature name=RadiusOfGyrationFeatures/>

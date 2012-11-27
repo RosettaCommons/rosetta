@@ -18,23 +18,13 @@
 // Unit headers
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
+#include <numeric/xyz.functions.hh>
 #include <numeric/types.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
 
-// External headers
-#include <Eigen/Eigen>
-
 namespace numeric {
-
-	/// @brief a function to sort pairs that doesn't require
-	/// operators for the second element in the pair. This is
-	/// needed below
-	inline bool
-	compare_first_only(const std::pair<double,Eigen::VectorXd> &left, const std::pair<double,Eigen::VectorXd> &right) {
-			return left.first < right.first;
-	}
 
 	/// @brief return the first principal component
 	/// of the given set of points
@@ -45,66 +35,57 @@ namespace numeric {
 		return principal_components(coords).col(1);
 	}
 
-	/// @brief return a matrix containing the 3 principal components
-	/// of the given set of points
+	/// @brief return a matrix containing the first 3 principal components
+	/// of the given set of points. Matrix columns are principal components,
+	/// first column is first component, etc.
 	template< typename T >
 	inline
 	xyzMatrix< T >
 	principal_components( utility::vector1< xyzVector< T > > const & coords )
 	{
-		using namespace Eigen;
-
-		Size n = coords.size();
-		MatrixXd data_points = MatrixXd::Zero(3, n);//3 dimensions x # of points
-		for(Size i=1; i<=coords.size(); ++i)
+		Size n_coords = coords.size();
+		
+		xyzVector< T > mean_vector(0.0);
+		for (Size i = 1; i <= n_coords; ++i)
 		{
-			data_points(0,i-1)=coords[i].x();
-			data_points(1,i-1)=coords[i].y();
-			data_points(2,i-1)=coords[i].z();
+			mean_vector += coords[i];
 		}
-
-		MatrixXd mean_subtracted_data = data_points;
-		for (int i = 0; i < 3; ++i)
+		mean_vector /= n_coords;
+		
+		//Compute the covariance matrix
+		xyzMatrix< T > covariance_matrix(0.0);
+		for (Size i = 1; i <= 3; ++i)
 		{
-			T mean = (mean_subtracted_data.row(i).sum())/n; //compute mean of each dimension (x,y,z)
-			VectorXd meanVector  = VectorXd::Constant(n,mean); //create a vector with constant value = mean
-			mean_subtracted_data.row(i) -= meanVector; //subtract mean from every point for the current dimension
+			for (Size j = 1; j <= 3; ++j)
+			{
+				for (Size k = 1; k <= n_coords; ++k)
+				{
+					covariance_matrix(i,j) += (mean_vector(i) - coords[k](i)) *
+						(mean_vector(j) - coords[k](j));
+				}
+				covariance_matrix(i,j) /= n_coords;
+			}
 		}
-
-		// get the covariance matrix
-		MatrixXd Covariance = MatrixXd::Zero(3, 3);
-		Covariance = (1 / (T)n) * mean_subtracted_data * mean_subtracted_data.transpose();
-
-		// compute the eigenvalue on the Cov Matrix
-		EigenSolver<MatrixXd> m_solve(Covariance);
-		VectorXd eigenvalues = VectorXd::Zero(3);
-		eigenvalues = m_solve.eigenvalues().real();
-
-		MatrixXd eigenvectors = MatrixXd::Zero(n, 3);
-		eigenvectors = m_solve.eigenvectors().real();
-
-		//Create a mapping between eigenvalues and eigenvectors
-		utility::vector1< std::pair<double, VectorXd > > value_vector_pairs;
+		
+		//Solve eigenvectors/values
+		xyzMatrix< T > evecs;
+		xyzVector< T > evals =
+			eigenvector_jacobi( covariance_matrix, (T)0.001, evecs );
+		
+		utility::vector1< std::pair<T, xyzVector<T> > > sorted_val_vec_pairs;
 		for (Size i = 1 ; i <= 3; ++i)
 		{
-			value_vector_pairs.push_back(std::make_pair(eigenvalues(i-1), eigenvectors.col(i-1)));//eigenvalues is 0-indexed
+			sorted_val_vec_pairs.push_back(std::make_pair(evals(i), evecs.col(i)));
 		}
-
+		
 		//Sort eigenvectors highest to lowest based on eigenvalues
-		sort(value_vector_pairs.begin(), value_vector_pairs.end(), compare_first_only);
-
-		//Convert to xyzMatrix
-		xyzMatrix<T> sorted_eigenvectors;
-		for (int i = 0; i < 3; i++)
-		{
-			numeric::xyzVector<T> xyz_eigenvector(
-				value_vector_pairs[i+1].second(0),
-				value_vector_pairs[i+1].second(1),
-				value_vector_pairs[i+1].second(2));
-			sorted_eigenvectors.col(i+1, xyz_eigenvector);
-		}
-
-		return sorted_eigenvectors;
+		sort(sorted_val_vec_pairs.rbegin(), sorted_val_vec_pairs.rend());
+		xyzMatrix< T > sorted_evecs;
+		sorted_evecs.col_x(sorted_val_vec_pairs[1].second);
+		sorted_evecs.col_y(sorted_val_vec_pairs[2].second);
+		sorted_evecs.col_z(sorted_val_vec_pairs[3].second);
+		
+		return sorted_evecs;
 	}
 
 }//namespace

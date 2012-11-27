@@ -35,6 +35,23 @@ namespace protocols {
 namespace features {
 namespace helixAssembly {
 
+struct FragmentPair
+{
+	FragmentPair(HelicalFragmentOP frag1, HelicalFragmentOP frag2):
+	fragment_1(frag1),
+	fragment_2(frag2)
+	{}
+
+	HelicalFragmentOP fragment_1;
+	HelicalFragmentOP fragment_2;
+	
+	core::Real end_1_distance;
+	core::Real end_2_distance;
+	core::Real fa_attr;
+	core::Real fa_fraction;
+	core::Real crossing_angle;
+};
+	
 class HelixBundleFeatures : public protocols::features::FeaturesReporter
 {
 
@@ -42,7 +59,7 @@ public:
 
 	HelixBundleFeatures();
 
-	// Undefined, commenting out to fix PyRosetta build.  void init_from_options();
+	void init_from_options();
 
 	virtual
 	std::string
@@ -72,17 +89,15 @@ public:
 	utility::vector1<std::string>
 	features_reporter_dependencies() const;
 	
-	void
-	generate_comparison_list(
-		utility::vector1<HelicalFragmentOP> all_helix_fragments,
-		core::Size prev_index,
-		utility::vector1<HelicalFragmentOP> fragment_list
+	bool
+	valid_frag_set(
+		std::set<HelicalFragmentOP> const & frag_set
 	);
 
 	bool
 	check_cap_distances(
 		core::pose::Pose const & pose,
-		utility::vector1<HelicalFragmentOP> frag_set
+		utility::vector1<HelicalFragmentOP> const & frag_set
 	);
 
 	///@brief collect all the feature data for the pose
@@ -100,16 +115,43 @@ public:
 		boost::uuids::uuid struct_id,
 		utility::sql_database::sessionOP db_session
 	);
-
+	
+	void
+	calc_pc_and_com(
+		core::pose::Pose const & pose,
+		HelicalFragmentOP fragment
+	);
+	
 	///@brief create a bundle-pose from the combination of fragments
 	/// and record the "interface" SASA for each helix against the
 	/// rest of the bundle
 	void
 	record_helix_sasas(
 		core::pose::Pose const & pose,
-		utility::vector1<HelicalFragmentOP> & bundle_fragments
+		std::set<HelicalFragmentOP> const & frag_set
 	);
-
+	
+	utility::vector1<FragmentPair>
+	get_helix_pairs(
+		core::pose::Pose const & pose,
+		utility::vector1<HelicalFragmentOP> helix_fragments
+	);
+	
+	///@brief calculate the shared fa_attr for each pair of helices
+	/// in the bundle
+	void
+	calc_fa_energy(
+		core::pose::Pose const & pose,
+		FragmentPair & fragment_pair
+	);
+	
+	///@brief calculate the crossing angles of the helix fragment in the bundle set
+	void
+	calc_crossing_angles(
+		core::pose::Pose const & pose,
+		FragmentPair & fragment_pair
+	);
+	
 private:
 
 	//Maximum allowable distance, in angstroms, between any two helix ends
@@ -121,11 +163,19 @@ private:
 	//number of residues in each helix
 	core::Size helix_size_;
 	
-	//List of all sublists of size bundle_size from the total number of helix fragments
-	utility::vector1< utility::vector1<HelicalFragmentOP> > comparison_list_;
+	//minimum residue_normalized fa_attr between two helix fragments in order to be considered
+	//interacting
+	core::Real min_per_residue_fa_attr_;
+	
+	//minimum fraction of
+	core::Real min_interacting_set_fraction_;
+	
+	//maximum degrees off parallel for crossing angle
+	core::Real max_degrees_off_parallel_;
 	
 	protocols::simple_filters::InterfaceSasaFilter sasa_filter_;
-
+	
+	core::scoring::ScoreFunctionOP scorefxn_;
 };
 
 } //namespace helixAssembly

@@ -145,11 +145,17 @@ SecondaryStructureSegmentFeatures::is_loop(std::string dssp_code){
 		dssp_code == "T" ||
 		dssp_code == "S" ||
 		dssp_code == "B" ||
-		dssp_code == "G" ||
 		dssp_code == "I" ||
 		dssp_code == " ";
 }
 
+bool
+SecondaryStructureSegmentFeatures::is_helix(std::string dssp_code){
+	return
+		dssp_code == "H" ||
+		dssp_code == "G";
+}
+	
 ///@brief collect all the feature data for the pose
 core::Size
 SecondaryStructureSegmentFeatures::report_features(
@@ -184,10 +190,15 @@ SecondaryStructureSegmentFeatures::report_features(
 		
 		res >> resNum >> residue_secondary;
 		
-		//Use standard 'C' for all loop-like dssp codes (blank, T, and 
+		//Use non-standard 'L' for all loop-like dssp codes
 		if(is_loop(residue_secondary))
 		{
 			residue_secondary="L";
+		}
+		//include 3/10 helix as 'H', DSSP often classifies ends of helices as 3/10
+		else if(is_helix(residue_secondary))
+		{
+			residue_secondary="H";
 		}
 		
 		if(residue_secondary != segment_secondary)

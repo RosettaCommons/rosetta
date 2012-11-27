@@ -29,11 +29,8 @@
 //Devel
 //#include <devel/helixAssembly/NativeResidue.hh>
 
-//External
-//#include <boost/serialization/access.hpp>
-//#include <boost/serialization/map.hpp>
-//#include <boost/serialization/vector.hpp>
-//#include <boost/serialization/string.hpp>
+//Numeric
+#include <numeric/xyzVector.hh>
 
 //C++ Headers
 #include <string>
@@ -60,8 +57,17 @@ public:
 	core::Size size() const;
 	bool reversed() const;
 	
+	void principal_component(numeric::xyzVector<core::Real> principal_component);
+	numeric::xyzVector<core::Real> principal_component() const;
+	
+	void com(numeric::xyzVector<core::Real> com);
+	numeric::xyzVector<core::Real> com() const;
+	
 	void sasa(core::Real sasa);
 	core::Real sasa() const;
+	
+	/// @brief output operator
+	friend std::ostream & operator <<(std::ostream & os, HelicalFragment const & t);
 
 private:
 	core::Size start_;
@@ -69,6 +75,8 @@ private:
 	std::string pdb_source_;
 	bool direction_;
 	core::Real sasa_;
+	numeric::xyzVector<core::Real> com_;
+	numeric::xyzVector<core::Real> principal_component_;
 };
 
 }

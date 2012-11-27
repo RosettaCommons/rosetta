@@ -28,6 +28,7 @@
 
 //C++
 #include <cmath>
+#include <iostream>
 
 namespace protocols {
 namespace features {
@@ -47,6 +48,18 @@ core::Size HelicalFragment::end() const { return end_; }
 core::Size HelicalFragment::seq_end() const { return std::max(start_, end_); }
 bool HelicalFragment::reversed() const { return start_ > end_; }
 
+numeric::xyzVector<core::Real> HelicalFragment::com() const{ return com_; }
+void HelicalFragment::com(numeric::xyzVector<core::Real> com)
+{
+	this->com_ = com;
+}
+
+numeric::xyzVector<core::Real> HelicalFragment::principal_component() const { return principal_component_; }
+void HelicalFragment::principal_component(numeric::xyzVector<core::Real> principal_component)
+{
+	this->principal_component_ = principal_component;
+}
+	
 core::Real HelicalFragment::sasa() const { return sasa_; }
 void HelicalFragment::sasa(core::Real sasa)
 {
@@ -58,6 +71,13 @@ core::Size HelicalFragment::size() const
 	return (end_ > start_) ? end_-start_+1 : start_-end_+1;
 }
 
+std::ostream &
+operator <<( std::ostream & os, HelicalFragment const & t )
+{
+	os << "(" << t.start() << ", " << t.end() << ")";
+	return os;
+}
+	
 } //namespace helixAssembly
 } //namespace features
 } //namespace protocols

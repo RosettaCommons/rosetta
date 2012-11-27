@@ -62,6 +62,9 @@ public:
 	bool
 	is_loop(std::string dssp_code);
 	
+	bool
+	is_helix(std::string dssp_code);
+	
 	void
 	parse_my_tag(
 		utility::tag::TagPtr const tag,

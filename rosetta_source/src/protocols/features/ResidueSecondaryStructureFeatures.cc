@@ -121,54 +121,6 @@ ResidueSecondaryStructureFeatures::write_schema_to_db(utility::sql_database::ses
 	residue_secondary_structure.add_foreign_key(dssp_fk);
 
 	residue_secondary_structure.write(db_session);
-
-	/******helix_segments******/
-	Column helix_id("helix_id", new DbInteger(), false);
-	Column residue_begin("residue_begin", new DbInteger(), false);
-	Column residue_end("residue_end", new DbInteger(), false);
-
-	utility::vector1<Column> helix_pkey_cols;
-	helix_pkey_cols.push_back(struct_id);
-	helix_pkey_cols.push_back(helix_id);
-
-	utility::vector1<Column> fkey_cols_begin;
-	fkey_cols_begin.push_back(struct_id);
-	fkey_cols_begin.push_back(residue_begin);
-
-	utility::vector1<Column> fkey_cols_end;
-	fkey_cols_end.push_back(struct_id);
-	fkey_cols_end.push_back(residue_end);
-
-	Schema helix_segments("helix_segments", PrimaryKey(helix_pkey_cols));
-
-	helix_segments.add_column(struct_id);
-	helix_segments.add_column(helix_id);
-	helix_segments.add_column(residue_begin);
-	helix_segments.add_column(residue_end);
-
-	helix_segments.add_foreign_key(ForeignKey(fkey_cols_begin, "residues", fkey_reference_cols, true));
-	helix_segments.add_foreign_key(ForeignKey(fkey_cols_end, "residues", fkey_reference_cols, true));
-
-	helix_segments.write(db_session);
-
-	/******beta_segments******/
-	Column beta_id("beta_id", new DbInteger(), false);
-
-	utility::vector1<Column> beta_pkey_cols;
-	beta_pkey_cols.push_back(struct_id);
-	beta_pkey_cols.push_back(beta_id);
-
-	Schema beta_segments("beta_segments", PrimaryKey(beta_pkey_cols));
-
-	beta_segments.add_column(struct_id);
-	beta_segments.add_column(beta_id);
-	beta_segments.add_column(residue_begin);
-	beta_segments.add_column(residue_end);
-
-	beta_segments.add_foreign_key(ForeignKey(fkey_cols_begin, "residues", fkey_reference_cols, true));
-	beta_segments.add_foreign_key(ForeignKey(fkey_cols_end, "residues", fkey_reference_cols, true));
-
-	beta_segments.write(db_session);
 }
 
 utility::vector1<std::string>
@@ -188,63 +140,22 @@ ResidueSecondaryStructureFeatures::report_features(
 	// compute dssp
 	core::scoring::dssp::Dssp all_dssp(pose);
 
-	//stores the secondary structure for the current stretch of secondary structure
-	string segment_secondary;
-	Size segment_begin=1;
-	Size segment_end;
-	Size helix_counter=1;
-	Size beta_counter=1;
-	//Size loop_counter=1;
-
 	//Create the statement strings outside the loops so we don't need to rcreate them for every residue
 	std::string sec_structure_statement_string = "INSERT INTO residue_secondary_structure (struct_id, resNum, dssp) VALUES (?,?,?);";
-	std::string helix_segment_statement_string = "INSERT INTO helix_segments (struct_id, helix_id, residue_begin, residue_end) VALUES (?,?,?,?);";
-	std::string beta_segment_statement_string = "INSERT INTO beta_segments (struct_id, beta_id, residue_begin, residue_end) VALUES (?,?,?,?);";
+	
+	core::Size adjusted_resnum=0;
 	for(Size resNum=1; resNum <= pose.total_residue(); ++resNum){
 		if(!relevant_residues[resNum]) continue;
 
 
+		//If this is not a protein residue then skip it. Keep a counter
+		//of protein-only residues to reference DSSP
 		if(!pose.residue(resNum).is_protein()){
-			// Due to limitations with the current DSSP code,
-			// the indexing gets off after a non-protein residue
-			// and leads to a segmentation fault.
-			break;
+			continue;
 		}
+		adjusted_resnum++;
 
-		string residue_secondary = string(1, all_dssp.get_dssp_secstruct(resNum));
-		if(residue_secondary != segment_secondary){
-
-			if(resNum > 1){
-				segment_end=resNum-1;
-				if(segment_secondary == "H"){
-
-					statement stmt(basic::database::safely_prepare_statement(helix_segment_statement_string,db_session));
-					stmt.bind(1,struct_id);
-					stmt.bind(2,helix_counter);
-					stmt.bind(3,segment_begin);
-					stmt.bind(4,segment_end);
-
-					basic::database::safely_write_to_database(stmt);
-
-					++helix_counter;
-				}
-				else if(segment_secondary == "E"){
-
-					statement stmt(basic::database::safely_prepare_statement(beta_segment_statement_string,db_session));
-					stmt.bind(1,struct_id);
-					stmt.bind(2,beta_counter);
-					stmt.bind(3,segment_begin);
-					stmt.bind(4,segment_end);
-
-					basic::database::safely_write_to_database(stmt);
-
-					++beta_counter;
-				}
-			}
-			segment_secondary = residue_secondary;
-			segment_begin=resNum;
-		}
-
+		string residue_secondary = string(1, all_dssp.get_dssp_secstruct(adjusted_resnum));
 		statement stmt(basic::database::safely_prepare_statement(sec_structure_statement_string,db_session));
 		stmt.bind(1,struct_id);
 		stmt.bind(2,resNum);

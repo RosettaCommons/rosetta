@@ -55,8 +55,8 @@ class PCATests : public CxxTest::TestSuite {
 
 		// initialize points
 		points.push_back(xyzVector_float(1.0,2.0,3.0));
+		points.push_back(xyzVector_float(3.0,2.0,1.0));
 		points.push_back(xyzVector_float(4.0,5.0,6.0));
-		points.push_back(xyzVector_float(7.0,8.0,9.0));
 
 		delta_percent = 0.0001;
 	}
@@ -75,17 +75,18 @@ class PCATests : public CxxTest::TestSuite {
 		xyzMatrix_float pca_results =
 			principal_components(points);
 
-		TS_ASSERT_DELTA( pca_results.xx(), -0.81650, delta_percent );
-		TS_ASSERT_DELTA( pca_results.yx(), 0.40825, delta_percent );
-		TS_ASSERT_DELTA( pca_results.zx(), 0.40825, delta_percent );
+		TS_ASSERT_DELTA( pca_results.xx(), 0.31775412, delta_percent );
+		TS_ASSERT_DELTA( pca_results.yx(), 0.54635078, delta_percent );
+		TS_ASSERT_DELTA( pca_results.zx(), 0.77494085, delta_percent );
 
-		TS_ASSERT_DELTA( pca_results.xy(), 0.00000, delta_percent );
-		TS_ASSERT_DELTA( pca_results.yy(), -0.70711, delta_percent );
-		TS_ASSERT_DELTA( pca_results.zy(), 0.70711, delta_percent );
+		TS_ASSERT_DELTA( pca_results.xy(), 0.85530704, delta_percent );
+		TS_ASSERT_DELTA( pca_results.yy(), 0.18759693, delta_percent );
+		TS_ASSERT_DELTA( pca_results.zy(), -0.48296729, delta_percent );
 
-		TS_ASSERT_DELTA( pca_results.xz(), 0.57735, delta_percent );
-		TS_ASSERT_DELTA( pca_results.yz(), 0.57735, delta_percent );
-		TS_ASSERT_DELTA( pca_results.zz(), 0.57735, delta_percent );
+		TS_ASSERT_DELTA( pca_results.xz(), -0.40924600, delta_percent );
+		TS_ASSERT_DELTA( pca_results.yz(), 0.81627715, delta_percent );
+		TS_ASSERT_DELTA( pca_results.zz(), -0.40768793, delta_percent );
+
 	}
 
 	void test_first_pc() {
@@ -95,9 +96,9 @@ class PCATests : public CxxTest::TestSuite {
 		xyzVector_float first_pc =
 			first_principal_component(points);
 
-		TS_ASSERT_DELTA( first_pc.x(), -0.81650, delta_percent );
-		TS_ASSERT_DELTA( first_pc.y(), 0.40825, delta_percent );
-		TS_ASSERT_DELTA( first_pc.z(), 0.40825, delta_percent );
+		TS_ASSERT_DELTA( first_pc.x(), 0.31775412, delta_percent );
+		TS_ASSERT_DELTA( first_pc.y(), 0.54635078, delta_percent );
+		TS_ASSERT_DELTA( first_pc.z(), 0.77494085, delta_percent );
 
 	}
 
