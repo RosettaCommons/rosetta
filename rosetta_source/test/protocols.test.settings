@@ -208,9 +208,9 @@ sources = {
         	"FavorSequenceProfile",
         ],
 
-        "simple_moves/chiral" : [
+        #"simple_moves/chiral" : [
         	#"ChiralMover",
-        ],
+        #],
 
         "simple_moves/oop" : [
         	"OopPuckMover",
@@ -369,8 +369,8 @@ testinputfiles = [
 	"scoring/Interface.u",
 	"scoring/dock_in.pdb",
         "simple_moves/1bl0_auto.fasta.pssm",
-	"simple_moves/chiral/AAdAdA.pdb",
-	"simple_moves/chiral/DALA.params",
+	#"simple_moves/chiral/AAdAdA.pdb",
+	#"simple_moves/chiral/DALA.params",
 	"simple_moves/oop/oop_test.pdb",
 	"sparta/2kywA.pdb",
 	"sparta/data_16988.tab",
