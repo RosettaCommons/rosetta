@@ -13,7 +13,6 @@
 #ifndef INCLUDED_protocols_design_opt_GreedyOptMutationMover_hh
 #define INCLUDED_protocols_design_opt_GreedyOptMutationMover_hh
 #include <protocols/design_opt/GreedyOptMutationMover.fwd.hh>
-#include <protocols/protein_interface_design/filters/DeltaFilter.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <utility/tag/Tag.fwd.hh>
@@ -27,7 +26,6 @@
 #include <utility/vector1.hh>
 
 #include <protocols/filters/Filter.hh>
-
 
 namespace protocols {
 namespace design_opt{
@@ -45,8 +43,6 @@ public:
 		protocols::filters::FilterOP filter,
 		core::Real filter_delta = 0,
 		std::string sample_type = "low",
-		bool stop_before_condition = false,
-		bool skip_best_check = false,
 		bool dump_pdb = false,
 		bool dump_table = false,
 		bool rtmin = false,
@@ -75,10 +71,6 @@ public:
 	void filter_delta( core::Real filter_delta );
 	protocols::filters::FilterOP filter() const;
 	void filter( protocols::filters::FilterOP filter );
-	bool stop_before_condition() const;
-	void stop_before_condition( bool const stop_before_condition );
-	bool skip_best_check() const;
-	void skip_best_check( bool const skip_best_check );
 	bool dump_pdb() const;
 	void dump_pdb( bool const dump_pdb );
 	bool dump_table() const;
@@ -100,10 +92,7 @@ private:
 	protocols::moves::MoverOP relax_mover_;
 	protocols::filters::FilterOP filter_;
 	core::Real filter_delta_;
-	utility::vector1<protocols::protein_interface_design::filters::DeltaFilterOP> reset_delta_filters_;
 	std::string sample_type_;
-	bool stop_before_condition_;
-	bool skip_best_check_;
 	bool dump_pdb_;
 	bool dump_table_;
 	core::Size diversify_lvl_;
