@@ -366,8 +366,6 @@ ResidueScoresFeatures::insert_residue_scores_rows(
 
 	Size const batch_id(get_batch_id(struct_id, db_session));
 
-	ScoreTypes ci_lr_2b( scfxn_->ci_lr_2b_types() );
-	ScoreTypes cd_lr_2b( scfxn_->cd_lr_2b_types() );
 
 	vector1<bool> relevant_and_virtual_residues(relevant_residues);
 	// Since some scores terms, such as elec_dens_fast and constraints,
@@ -379,9 +377,7 @@ ResidueScoresFeatures::insert_residue_scores_rows(
 			relevant_and_virtual_residues[i] = true;
 		}
 	}
-	std::string lr_twob_string = "INSERT INTO residue_scores_lr_2b (batch_id, struct_id, resNum1, resNum2, score_type_id, score_value, context_dependent) VALUES (?,?,?,?,?,?,?);";
 
-	statement lr_twob_stmt(basic::database::safely_prepare_statement(lr_twob_string,db_session));
 
 	insert_one_body_residue_score_rows(
 		temp_pose, relevant_and_virtual_residues, batch_id, struct_id, db_session);
