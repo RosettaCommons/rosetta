@@ -1579,6 +1579,20 @@ ScoreFunction::eval_ci_2b(
 
 }
 
+void
+ScoreFunction::eval_ci_lr_2b(
+						  conformation::Residue const & rsd1,
+						  conformation::Residue const & rsd2,
+						  pose::Pose const & pose,
+						  EnergyMap & emap
+						  ) const
+{
+	for ( CI_LR_2B_Methods::const_iterator iter = ci_lr_2b_methods_.begin(),
+		 iter_end = ci_lr_2b_methods_.end(); iter != iter_end; ++iter ) {
+		(*iter)->residue_pair_energy( rsd1, rsd2, pose, *this, emap );
+	}
+	
+}
 
 void
 ScoreFunction::eval_ci_2b_bb_bb(
@@ -1644,6 +1658,21 @@ ScoreFunction::eval_cd_2b(
 	}
 }
 
+void
+ScoreFunction::eval_cd_lr_2b(
+							 conformation::Residue const & rsd1,
+							 conformation::Residue const & rsd2,
+							 pose::Pose const & pose,
+							 EnergyMap & emap
+							 ) const
+{
+	for ( CD_LR_2B_Methods::const_iterator iter = cd_lr_2b_methods_.begin(),
+		 iter_end = cd_lr_2b_methods_.end(); iter != iter_end; ++iter ) {
+		(*iter)->residue_pair_energy( rsd1, rsd2, pose, *this, emap );
+	}
+	
+}
+	
 void
 ScoreFunction::eval_cd_2b_bb_bb(
 	conformation::Residue const & rsd1,

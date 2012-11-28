@@ -193,6 +193,9 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "rama2b"  ] = rama2b;
 	name2score_type_[ "omega"    ] = omega;
 	name2score_type_[ "fa_dun" ] = fa_dun;
+	name2score_type_[ "fa_dun_dev" ] = fa_dun_dev;
+ 	name2score_type_[ "fa_dun_rot" ] = fa_dun_rot;
+	name2score_type_[ "fa_dun_semi" ] = fa_dun_semi;
 	name2score_type_[ "p_aa_pp" ] = p_aa_pp;
 	name2score_type_[ "yhh_planarity" ] = yhh_planarity;
 	name2score_type_[ "h2o_intra" ] =  h2o_intra;

@@ -35,6 +35,7 @@
 #include <utility/vector1.hh>
 
 
+
 namespace core {
 namespace pack {
 namespace dunbrack {
@@ -55,6 +56,9 @@ scoring::ScoreTypes
 DunbrackEnergyCreator::score_types_for_method() const {
 	ScoreTypes sts;
 	sts.push_back( fa_dun );
+	sts.push_back( fa_dun_dev );
+	sts.push_back( fa_dun_rot );
+	sts.push_back( fa_dun_semi );
 	return sts;
 }
 
@@ -104,6 +108,9 @@ DunbrackEnergy::residue_energy(
 	if ( rotlib ) {
 		dunbrack::RotamerLibraryScratchSpace scratch;
 		emap[ fa_dun ] += rotlib->rotamer_energy( rsd, scratch );
+		emap[ fa_dun_rot ] += scratch.fa_dun_rot();
+		emap[ fa_dun_semi ] += scratch.fa_dun_semi();
+		emap[ fa_dun_dev  ] += scratch.fa_dun_dev();
 	}
 	//--count_present;
 	//std::cout << "D" << count_present << std::flush;
@@ -129,6 +136,9 @@ DunbrackEnergy::eval_residue_dof_derivative(
 	}
 
 	Real deriv(0.0);
+	Real deriv_dev(0.0);
+	Real deriv_rot(0.0);
+	Real deriv_semi(0.0);
 	if ( tor_id.valid() ) {
 		assert( rsd.seqpos() == tor_id.rsd() );
 		//utility::vector1< Real > dE_dbb, dE_dchi;
@@ -140,12 +150,17 @@ DunbrackEnergy::eval_residue_dof_derivative(
 			rotlib->rotamer_energy_deriv( rsd, scratch );
 			if ( tor_id.type() == id::BB  && tor_id.torsion() <= dunbrack::DUNBRACK_MAX_BBTOR ) {
 				deriv = scratch.dE_dbb()[ tor_id.torsion() ];
+				deriv_dev = scratch.dE_dbb_dev()[ tor_id.torsion() ];
+				deriv_rot = scratch.dE_dbb_rot()[ tor_id.torsion() ];
+				deriv_semi = scratch.dE_dbb_semi()[ tor_id.torsion() ];
 			} else if ( tor_id.type() == id::CHI && tor_id.torsion() <= dunbrack::DUNBRACK_MAX_SCTOR ) {
 				deriv = scratch.dE_dchi()[ tor_id.torsion() ];
+				deriv_dev = scratch.dE_dchi_dev()[ tor_id.torsion() ];
+				deriv_semi = scratch.dE_dchi_semi()[ tor_id.torsion() ];
 			}
 		}
 	}
-	return numeric::conversions::degrees( weights[ fa_dun ] * deriv );
+	return numeric::conversions::degrees( weights[ fa_dun ] * deriv + weights[ fa_dun_dev ] * deriv_dev + weights[ fa_dun_rot ] * deriv_rot + weights[ fa_dun_semi ] * deriv_semi);
 }
 
 
@@ -170,6 +185,9 @@ DunbrackEnergy::eval_dof_derivative(
 	//std::cout << "dD" << count_present << std::flush;
 
 	Real deriv(0.0);
+	Real deriv_dev(0.0);
+	Real deriv_rot(0.0);
+  Real deriv_semi(0.0);
 	if ( tor_id.valid() ) {
 		//utility::vector1< Real > dE_dbb, dE_dchi;
 		//		std::cerr << __FILE__<< ' ' << __LINE__ << ' ' << tor_id.rsd() << std::endl;
@@ -187,15 +205,20 @@ DunbrackEnergy::eval_dof_derivative(
 			if ( pose.residue_type( tor_id.rsd() ).is_protein() ) {
 				if ( tor_id.type() == id::BB  && tor_id.torsion() <= dunbrack::DUNBRACK_MAX_BBTOR ) {
 					deriv = scratch.dE_dbb()[ tor_id.torsion() ];
+					deriv_dev = scratch.dE_dbb_dev()[ tor_id.torsion() ];
+					deriv_rot = scratch.dE_dbb_rot()[ tor_id.torsion() ];
+        	deriv_semi = scratch.dE_dbb_semi()[ tor_id.torsion() ];
 				} else if ( tor_id.type() == id::CHI && tor_id.torsion() <= dunbrack::DUNBRACK_MAX_SCTOR ) {
 					deriv = scratch.dE_dchi()[ tor_id.torsion() ];
+					deriv_dev = scratch.dE_dchi_dev()[ tor_id.torsion() ];
+        	deriv_semi = scratch.dE_dchi_semi()[ tor_id.torsion() ];
 				}
 			}
 		}
 	}
 	//--count_present;
 	//std::cout << "dD" << count_present << std::flush;
-	return numeric::conversions::degrees( weights[ fa_dun ] * deriv );
+	return numeric::conversions::degrees( weights[ fa_dun ] * deriv + weights[ fa_dun_dev ] * deriv_dev + weights[ fa_dun_rot ] * deriv_rot + weights[ fa_dun_semi ] * deriv_semi );
 }
 
 /// @brief DunbrackEnergy is context independent; indicates that no context graphs are required

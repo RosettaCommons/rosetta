@@ -507,21 +507,38 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::rotamer_energy_deriv_bbdep(
 
 	/// sum derivatives.
 	Real3 & dE_dbb(  scratch.dE_dbb() );
+	Real3 & dE_dbb_dev(  scratch.dE_dbb_dev() );
+	Real3 & dE_dbb_rot(  scratch.dE_dbb_rot() );
+	Real3 & dE_dbb_semi(  scratch.dE_dbb_semi() );
 	Real4 & dE_dchi( scratch.dE_dchi() );
+	Real4 & dE_dchi_dev( scratch.dE_dchi_dev() );
+	Real4 & dE_dchi_semi( scratch.dE_dchi_semi() );
 
 	std::fill( dE_dchi.begin(), dE_dchi.end(), 0.0 );
+	std::fill( dE_dchi_dev.begin(), dE_dchi_dev.end(), 0.0 );
+	std::fill( dE_dchi_semi.begin(), dE_dchi_semi.end(), 0.0 );
 	std::fill( dE_dbb.begin(), dE_dbb.end(), 0.0 );
+	std::fill( dE_dbb_dev.begin(), dE_dbb_dev.end(), 0.0 );
+	std::fill( dE_dbb_rot.begin(), dE_dbb_rot.end(), 0.0 );
+	std::fill( dE_dbb_semi.begin(), dE_dbb_semi.end(), 0.0 );
 
 	for ( Size i=1; i<= DUNBRACK_MAX_BBTOR; ++i ) {
 		dE_dbb[ i ] = scratch.dchidevpen_dbb()[ i ];
+		dE_dbb_dev[ i ] = scratch.dchidevpen_dbb()[ i ];
+		//dE_dbb_rot[ i ] = scratch.dneglnrotprob_dbb()[ i ];
 	}
 	dE_dbb[ RotamerLibraryScratchSpace::AA_PHI_INDEX ] += dnrchiscore_dphi;
 	dE_dbb[ RotamerLibraryScratchSpace::AA_PSI_INDEX ] += dnrchiscore_dpsi;
+	dE_dbb_semi[ RotamerLibraryScratchSpace::AA_PHI_INDEX ] = dnrchiscore_dphi;
+	dE_dbb_semi[ RotamerLibraryScratchSpace::AA_PSI_INDEX ] = dnrchiscore_dpsi;
+
 
 	for ( Size i=1; i <= T; ++i ) {
 		dE_dchi[ i ] = scratch.dchidevpen_dchi()[ i ];
+		dE_dchi_dev[ i ] = scratch.dchidevpen_dchi()[ i ];
 	}
 	dE_dchi[ T + 1 ] = dnrchiscore_dchi;
+	dE_dchi_semi[ T + 1 ] = dnrchiscore_dchi;
 
 	parent::correct_termini_derivatives( rsd, scratch );
 
@@ -554,8 +571,15 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::rotamer_energy_deriv_bbind(
 
 	/// sum derivatives.
 	Real3 & dE_dbb(  scratch.dE_dbb() );
+	Real3 & dE_dbb_dev(  scratch.dE_dbb_dev() );
+	Real3 & dE_dbb_rot(  scratch.dE_dbb_rot() );
+	Real3 & dE_dbb_semi(  scratch.dE_dbb_semi() );
 	Real4 & dE_dchi( scratch.dE_dchi() );
+	Real4 & dE_dchi_dev( scratch.dE_dchi_dev() );
+	Real4 & dE_dchi_semi( scratch.dE_dchi_semi() );
 	std::fill( dE_dchi.begin(), dE_dchi.end(), 0.0 );
+	std::fill( dE_dchi_dev.begin(), dE_dchi_dev.end(), 0.0 );
+	std::fill( dE_dchi_semi.begin(), dE_dchi_semi.end(), 0.0 );
 
 	// p0 - the base probability -- not modified by the chi-dev penalty
 	Real const rotprob( scratch.rotprob() );
@@ -570,12 +594,16 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::rotamer_energy_deriv_bbind(
 
 	for ( Size i=1; i<= DUNBRACK_MAX_BBTOR; ++i ) {
 		dE_dbb[ i ] = invp * scratch.drotprob_dbb()[ i ] + scratch.dchidevpen_dbb()[ i ];
+		dE_dbb_dev[ i ] = scratch.dchidevpen_dbb()[ i ];
+		dE_dbb_rot[ i ] = invp * scratch.drotprob_dbb()[ i ];
 	}
 
 	for ( Size i=1; i<= T; ++i ) {
 		dE_dchi[ i ] = scratch.dchidevpen_dchi()[ i ];
+		dE_dchi_dev[ i ] = scratch.dchidevpen_dchi()[ i ];
 	}
 	dE_dchi[ T + 1 ] = dnrchiscore_dnrchi;
+	dE_dchi_semi[ T + 1 ] = dnrchiscore_dnrchi;
 
 	parent::correct_termini_derivatives( rsd, scratch );
 

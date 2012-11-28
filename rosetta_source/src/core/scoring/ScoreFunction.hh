@@ -724,6 +724,18 @@ public:
 		pose::Pose const & pose,
 		EnergyMap & emap
 	) const;
+	
+	/// @brief Accumulates the unweighted context independent long range two body
+	/// interaction energies of  <pose>  between Residue  <rsd1>  and Residue
+	/// <rsd2>  into EnergyMap  <emap>
+	/// @note: EnergyMap is an EMapVector
+	void
+	eval_ci_lr_2b(
+			   conformation::Residue const & rsd1,
+			   conformation::Residue const & rsd2,
+			   pose::Pose const & pose,
+			   EnergyMap & emap
+			   ) const;
 
 	/// @brief Accumulates the unweighted context independent two body
 	/// interaction energies of  <pose>  between the backbones of Residue
@@ -775,6 +787,18 @@ public:
 		EnergyMap & emap
 	) const;
 
+	/// @brief Accumulate the unweighted long range context dependent two body
+	/// interaction energies of  <pose>  between Residue  <rsd1>  and Residue
+	/// <rsd2>  into EnergyMap  <emap>
+	/// @note: EnergyMap is an EMapVector
+	virtual
+	void
+	eval_cd_lr_2b(
+			   conformation::Residue const & rsd1,
+			   conformation::Residue const & rsd2,
+			   pose::Pose const & pose,
+			   EnergyMap & emap
+			   ) const;
 
 	/// @brief Accumulates the unweighted short ranged context dependent two body
 	/// interaction energies of  <pose>  between the backbones of Residue

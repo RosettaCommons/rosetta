@@ -61,7 +61,17 @@ public:
 	Real3 const & dchidevpen_dbb() const { return dchidevpen_dbb_; }
 	Real4 const & dchidevpen_dchi() const { return dchidevpen_dchi_; }
 	Real3 const & dE_dbb() const { return dE_dbb_; }
+	Real3 const & dE_dbb_dev() const { return dE_dbb_dev_; }
+	Real3 const & dE_dbb_semi() const { return dE_dbb_semi_; }
 	Real4 const & dE_dchi() const { return dE_dchi_; }
+	Real4 const & dE_dchi_dev() const { return dE_dchi_dev_; }
+	Real4 const & dE_dchi_semi() const { return dE_dchi_semi_; }
+
+	// fpd per-chi components of bb derivs
+	Real4 const & dE_dphi_dev() const { return dE_dphi_dev_; }
+	//Real4 const & dE_dphi_rot() { return dE_dphi_rot_; }
+	Real4 const & dE_dpsi_dev() const { return dE_dpsi_dev_; }
+	//Real4 const & dE_dpsi_rot() { return dE_dpsi_rot_; }
 
 	Real fa_dun_tot() const { return fa_dun_tot_; }
 	Real fa_dun_rot() const { return fa_dun_rot_; }
@@ -85,7 +95,18 @@ public:
 	Real3  & dchidevpen_dbb()   { return dchidevpen_dbb_; }
 	Real4  & dchidevpen_dchi()  { return dchidevpen_dchi_; }
 	Real3  & dE_dbb()  { return dE_dbb_; }
+	Real3  & dE_dbb_dev()  { return dE_dbb_dev_; }
+	Real3  & dE_dbb_rot()  { return dE_dbb_rot_; }
+	Real3  & dE_dbb_semi()  { return dE_dbb_semi_; }
 	Real4  & dE_dchi() { return dE_dchi_; }
+	Real4  & dE_dchi_dev() { return dE_dchi_dev_; }
+	Real4  & dE_dchi_semi() { return dE_dchi_semi_; }
+
+	// fpd per-chi components of bb derivs
+	Real4  & dE_dphi_dev() { return dE_dphi_dev_; }
+	//Real4  & dE_dphi_rot() { return dE_dphi_rot_; }
+	Real4  & dE_dpsi_dev() { return dE_dpsi_dev_; }
+	//Real4  & dE_dpsi_rot() { return dE_dpsi_rot_; }
 
 	Real & fa_dun_tot() { return fa_dun_tot_; }
 	Real & fa_dun_rot() { return fa_dun_rot_; }
@@ -111,7 +132,19 @@ private:
 	Real3 dchidevpen_dbb_;
 	Real4 dchidevpen_dchi_;
 	Real3 dE_dbb_;
+	Real3 dE_dbb_dev_;
+	Real3 dE_dbb_rot_;
+	Real3 dE_dbb_semi_;
 	Real4 dE_dchi_;
+	Real4 dE_dchi_dev_;
+	Real4 dE_dchi_semi_;
+
+	// fpd per-chi components of bb derivs
+	Real4 dE_dphi_dev_;
+	//Real4 dE_dphi_rot_;
+	Real4 dE_dpsi_dev_;
+	//Real4 dE_dpsi_rot_;
+	
 
 	Real fa_dun_tot_;
 	Real fa_dun_rot_;

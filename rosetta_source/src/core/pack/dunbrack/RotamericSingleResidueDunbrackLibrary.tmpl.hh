@@ -463,7 +463,10 @@ RotamericSingleResidueDunbrackLibrary< T >::rotamer_energy_deriv(
 
 	/// sum derivatives.
 	Real3 & dE_dbb(  scratch.dE_dbb() );
+	Real3 & dE_dbb_dev(  scratch.dE_dbb_dev() );
+	Real3 & dE_dbb_rot(  scratch.dE_dbb_rot() );
 	Real4 & dE_dchi( scratch.dE_dchi() );
+	Real4 & dE_dchi_dev( scratch.dE_dchi_dev() );
 
 	// p0 - the base probability -- not modified by the chi-dev penalty
 
@@ -475,13 +478,18 @@ RotamericSingleResidueDunbrackLibrary< T >::rotamer_energy_deriv(
 	for ( Size i=1; i<= nbb; ++i ) {
 		if ( basic::options::option[ basic::options::OptionKeys::corrections::score::use_bicubic_interpolation ] ) {
 			dE_dbb[ i ] = scratch.dneglnrotprob_dbb()[ i ] + scratch.dchidevpen_dbb()[ i ];
+			dE_dbb_dev[ i ] = scratch.dchidevpen_dbb()[ i ];
+			dE_dbb_rot[ i ] = scratch.dneglnrotprob_dbb()[ i ];
 		} else {
 			dE_dbb[ i ] = invp * scratch.drotprob_dbb()[ i ] + scratch.dchidevpen_dbb()[ i ];
+			dE_dbb_dev[ i ] = scratch.dchidevpen_dbb()[ i ];
+			dE_dbb_rot[ i ] = invp * scratch.drotprob_dbb()[ i ]; 
 		}
 	}
 
 	for ( Size i=1; i<= T; ++i ) {
 		dE_dchi[ i ] = scratch.dchidevpen_dchi()[ i ];
+		dE_dchi_dev[ i ] = scratch.dchidevpen_dchi()[ i ];
 	}
 
 	correct_termini_derivatives( rsd, scratch );
@@ -614,7 +622,6 @@ RotamericSingleResidueDunbrackLibrary< T >::eval_rotameric_energy_deriv(
 
 	if ( ! eval_deriv ) return score;
 
-
 	dchidevpen_dbb[ RotamerLibraryScratchSpace::AA_PHI_INDEX ] = 0.0;
 	dchidevpen_dbb[ RotamerLibraryScratchSpace::AA_PSI_INDEX ] = 0.0;
 	for ( Size ii = 1; ii <= T; ++ii ) {
@@ -633,21 +640,26 @@ RotamericSingleResidueDunbrackLibrary< T >::eval_rotameric_energy_deriv(
 
 		/// also need to add in derivatives for log(stdv) height normalization
 		/// dE/dphi = (above) + 1/stdv * dstdv/dphi
-
 		dchidevpen_dbb[ RotamerLibraryScratchSpace::AA_PHI_INDEX  ] +=
+			( g*fprime*dchimean_dphi[ ii ] - f*gprime*dchisd_dphi[ ii ] ) * invgg;
+		scratch.dE_dphi_dev()[ ii ] =
 			( g*fprime*dchimean_dphi[ ii ] - f*gprime*dchisd_dphi[ ii ] ) * invgg;
 
 		// Derivatives for the change in the Gaussian height normalization due to sd changing as a function of phi
 		if ( basic::options::option[ basic::options::OptionKeys::corrections::score::dun_normsd ] ) {
 			dchidevpen_dbb[ RotamerLibraryScratchSpace::AA_PHI_INDEX ] += 1/chisd[ii]*dchisd_dphi[ii];
+			scratch.dE_dphi_dev()[ ii ] += 1/chisd[ii]*dchisd_dphi[ii];
 		}
 
 		dchidevpen_dbb[ RotamerLibraryScratchSpace::AA_PSI_INDEX  ] +=
+			( g*fprime*dchimean_dpsi[ ii ] - f*gprime*dchisd_dpsi[ ii ] ) * invgg;
+		scratch.dE_dpsi_dev()[ ii ] =
 			( g*fprime*dchimean_dpsi[ ii ] - f*gprime*dchisd_dpsi[ ii ] ) * invgg;
 
 		// Derivatives for the change in the Gaussian height normalization due to sd changing as a function of psi
 		if ( basic::options::option[ basic::options::OptionKeys::corrections::score::dun_normsd ] ) {
 			dchidevpen_dbb[ RotamerLibraryScratchSpace::AA_PSI_INDEX  ] += 1/chisd[ii]*dchisd_dpsi[ii];
+			scratch.dE_dpsi_dev()[ ii ] += 1/chisd[ii]*dchisd_dpsi[ii];
 		}
 
 		dchidevpen_dchi[ ii ] = chidev[ ii ] / ( chisd[ ii ] * chisd[ ii ] );
@@ -801,9 +813,15 @@ RotamericSingleResidueDunbrackLibrary< T >::correct_termini_derivatives(
 	// mt: torsions are kept fixed.
 	if ( rsd.is_lower_terminus() ) {
 		scratch.dE_dbb()[ RotamerLibraryScratchSpace::AA_PHI_INDEX ] = 0;
+		scratch.dE_dbb_dev()[ RotamerLibraryScratchSpace::AA_PHI_INDEX ] = 0;
+		scratch.dE_dbb_rot()[ RotamerLibraryScratchSpace::AA_PHI_INDEX ] = 0;
+		scratch.dE_dbb_semi()[ RotamerLibraryScratchSpace::AA_PHI_INDEX ] = 0;
 	}
 	if ( rsd.is_upper_terminus() ) {
 		scratch.dE_dbb()[ RotamerLibraryScratchSpace::AA_PSI_INDEX ] = 0;
+		scratch.dE_dbb_dev()[ RotamerLibraryScratchSpace::AA_PSI_INDEX ] = 0;
+		scratch.dE_dbb_rot()[ RotamerLibraryScratchSpace::AA_PSI_INDEX ] = 0;
+		scratch.dE_dbb_semi()[ RotamerLibraryScratchSpace::AA_PSI_INDEX ] = 0;
 	}
 
 
