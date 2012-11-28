@@ -20,3 +20,4 @@
 -dont_mutate_correct_charge true
 -dont_mutate_hbonded_sidechains true
 
+-out:path outpath

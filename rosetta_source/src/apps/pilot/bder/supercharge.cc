@@ -12,6 +12,45 @@
 /// @details There are two modes for supercharging.  The first is called AvNAPSA developed by the David Liu lab at Harvard.  In this approach, surface residues are defined by the Average # Neighbor Atoms Per Sidechain Atom (AvNAPSA value), with a cutoff of 150.  I think 100 is a safer cutoff.  Arg, Lys, Asp, Glu, Asn, Gln are the only residues allowed to mutated.  Lys is always chosen for positive, Glu is always chosen for negative, unless the native is Asn, then Asp is chosen.  Thus, the sequence is deterministic.  If one desires a particular net charge, the residues would be sorted from low to high AvNAPSA value and mutated one at a time until the target charge is achieved - this ignores the ceiling of 150 or 100.  The second approach uses the Rosetta score function to guide the surface mutagenesis.  The user must specifiy if Arg, Lys, or Asp, Glu are desired, and what the reference weights are.  Alternatively, the  user can specify a target net charge, and the reference weights of the charged residues will be incremented/decremented until the net charge is reached.
 /// @author Bryan Der
 
+
+//AvNAPSA-mode, target charge
+//1. Define surface.  sort NQ and RK/DE residues by AvNAPSA value (low to high)
+//2. Next residue in sorted list: Positive: mutate DENQ-->K, Negative: mutate RKQ-->E and N-->D
+//3. If net charge = target net charge, output pdb
+
+//AvNAPSA-mode, no target charge
+//1. Define surface by AvNAPSA value (<100 default)
+//2. For each NQ and DE/RK residue in the surface: Positive: mutate DENQ-->K, Negative: mutate RKQ-->E and N-->D
+//3. Output pdb
+
+//Rosetta-mode, target charge
+//1. Define surface.  Neighbor by distance calculator (CB dist.), <16 neighbors default
+// or Define surface by AvNAPSA value (<100 default)
+//2. Set design task
+//   read user resfile, if provided
+//   dont_mutate gly, pro, cys
+//   dont_mutate h-bonded sidechains
+//   dont_mutate correct charge residues
+//3. Set reference energies for RK/DE, starting at user input values
+//4. pack rotamers mover
+//5. check net charge, increment/decrement reference energies (back to step 3.)
+//6. Once a pack rotamers run results in the correct net charge, output pdb
+
+//Rosetta-mode, no target charge
+//1. Define surface.  Neighbor by distance calculator (CB dist.), <16 neighbors default
+// or Define surface by AvNAPSA value (<100 default)
+//2. Set design task
+//   read user resfile, if provided
+//   dont_mutate gly, pro, cys
+//   dont_mutate h-bonded sidechains
+//   dont_mutate correct charge residues
+//3. Set reference energies for RK/DE, using the user input values
+//4. pack rotamers mover
+//5. Output pdb
+
+
+
+
 #include <devel/init.hh>
 
 #include <core/conformation/Residue.hh>
@@ -27,6 +66,7 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/Energies.hh>
+#include <core/scoring/hbonds/HBondSet.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/simple_moves/MinMover.hh>
@@ -36,6 +76,7 @@
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/MetricValue.hh>
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
@@ -43,13 +84,14 @@
 #include <utility/io/ozstream.hh> // used to create a resfile
 #include <sstream>
 #include <string>
-
-#include <core/scoring/hbonds/HBondSet.hh>
+#include <fstream>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/sort_predicates.hh>
 #include <math.h>
+
+#include <protocols/outputter/ResFileOutputter.hh>
 
 
 //tracers
@@ -112,8 +154,11 @@ public:
   apply( Pose & pose ) {
 		using namespace basic::options;
 
+		out_path_ = basic::options::option[ OptionKeys::out::path::path ]();
+
+
 		//If the target net charge is -10, current net charge is -4, and incluge_arg is used instead of include_asp, there is no way to reach the target net charge
-		if( option[local::Rosetta_target_net_charge] != 9999 ) {
+		if( option[local::Rosetta_target_net_charge].user() ) {
 			int current_net_charge = get_net_charge( pose );
 			int Rosetta_target_net_charge = option[local::Rosetta_target_net_charge];
 			int delta_charge = Rosetta_target_net_charge - current_net_charge;
@@ -141,7 +186,7 @@ public:
 		Pose const starting_pose( pose ); //save starting pose to list mutations
 		Pose native( starting_pose );
 
-		//AvNAPSA mode? does not use Rosetta energy calculation, chooses mutable positions solely by number of atom neighbors per sidechain
+		//AvNAPSA mode.  Does not use Rosetta energy calculation, chooses mutable positions solely by number of atom neighbors per sidechain
 		if(option[local::AvNAPSA_positive] || option[local::AvNAPSA_negative] ){
 			AvNAPSA_values( pose );
 			set_resfile_AvNAPSA( pose );
@@ -252,9 +297,9 @@ public:
 	void
 	set_resfile_AvNAPSA( Pose const & pose ) {
 
-		TR << "Creating a resfile, it will be saved as ./resfile_output_AvNAPSA" << std::endl;
+		TR << "Creating a resfile, it will be saved as " << out_path_ << "resfile_output_Asc" << std::endl;
 		utility::io::ozstream OutputResfile;
-		OutputResfile.open("resfile_output_AvNAPSA");
+		OutputResfile.open( out_path_ + '/' + "resfile_output_Asc" );
 
 		OutputResfile << "NATAA" << std::endl;
 		OutputResfile << "start" << std::endl;
@@ -262,7 +307,7 @@ public:
 		std::stringstream pymol_avnapsa_residues;
 		utility::vector1< Size > residues_to_mutate; //will be appended either to acheive correct charge or based on AvNAPSA value cutoff
 
-		if( basic::options::option[local::AvNAPSA_target_net_charge] == 9999 ) {
+		if( ! basic::options::option[local::AvNAPSA_target_net_charge].user() ) {
 			largest_mutated_AvNAPSA_ = (Size) basic::options::option[local::surface_definition_atom_neighbor_cutoff]; // no specified net charge, largest AvNAPSA allowed equals the cutoff.  This value is used to name output PDBs.
 			for( Size i(1); i <= AvNAPSA_values_.size(); ++i) {
 				if( AvNAPSA_values_[i] < basic::options::option[local::surface_definition_atom_neighbor_cutoff] && AvNAPSA_values_[i] != 9999 ) {
@@ -375,7 +420,7 @@ public:
 			TR << "Reading resfile from user input... make sure ALLAA is set as the default in your resfile!!" << std::endl;
 		}
 
-		task_factory->push_back( new operation::ReadResfile( "resfile_output_AvNAPSA" ) ); // reads the resfile previously created, adds to the user resfile (if provided)
+		task_factory->push_back( new operation::ReadResfile( out_path_ + '/' + "resfile_output_Asc" ) ); // reads the resfile previously created, adds to the user resfile (if provided)
 
 		using namespace core::scoring;
 		ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH );
@@ -411,7 +456,8 @@ public:
 		TR << "NEW NAME FOR SUPERCHARGED OUTPUT: " << outputname_ << std::endl;
 
 		scorefxn->score( pose );
-		pose.dump_scored_pdb( outputname_, *scorefxn );
+
+		pose.dump_scored_pdb( out_path_ + '/' + outputname_, *scorefxn );
 
 		print_netcharge_and_mutations(starting_pose, pose );
 
@@ -594,9 +640,9 @@ public:
 	void set_resfile( Pose const & pose ){
 		using namespace basic::options;
 
-		TR << "Creating a resfile, it will be saved as ./resfile_output" << std::endl;
+		TR << "Creating a resfile, it will be saved as " << out_path_ << "resfile_output_Rsc" << std::endl;
 		utility::io::ozstream OutputResfile;
-		OutputResfile.open("resfile_output");
+		OutputResfile.open( out_path_ + '/' + "resfile_output_Rsc" );
 
 		OutputResfile << "NATAA" << std::endl;
 		OutputResfile << "start" << std::endl;
@@ -637,7 +683,7 @@ public:
 				}
 			}
 
-			//preserve strong sidechain hbonds
+			//dont_mutate strong sidechain hbonds
 			if( option[local::dont_mutate_hbonded_sidechains] ) {
 				//hbond detection
 				bool found_sc_hbond( false );
@@ -690,6 +736,7 @@ public:
 			OutputResfile << std::endl;
 
 		}//iterate over surface residues
+
 		return;
 	}
 
@@ -737,7 +784,7 @@ public:
 			TR << "Reading resfile from user input... make sure ALLAA is set as the default in your resfile!!" << std::endl;
 		}
 
-		task_factory->push_back( new operation::ReadResfile( "resfile_output" ) ); // reads the resfile previously created, adds to the user resfile (if provided)
+		task_factory->push_back( new operation::ReadResfile( out_path_ + '/' + "resfile_output_Rsc" ) ); // reads the resfile previously created, adds to the user resfile (if provided)
 
 		using namespace core::scoring;
 		ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH );
@@ -761,10 +808,12 @@ public:
 		//Pose pre_design( pose );
 		//native_ = pre_design;
 
-		int net_charge_target = option[local::Rosetta_target_net_charge];
+
 
 		//if a target net charge is given as an option, iterate between packrot and incrementing refweights until target charge is acheived
-		if( net_charge_target != 9999) {
+		if( option[local::Rosetta_target_net_charge].user() ) {
+
+			int net_charge_target = option[local::Rosetta_target_net_charge];
 			int charge_diff = abs( get_net_charge(pose) - net_charge_target );
 
 
@@ -886,7 +935,7 @@ public:
 		std::stringstream ss_i;
 		std::string i_string;
 
-		if( option[local::Rosetta_target_net_charge] == 9999 ) {
+		if( ! option[local::Rosetta_target_net_charge].user() ) {
 
 			Size nstruct = (Size) option[local::nstruct].value();
 			for( Size i=1; i <= nstruct; ++i ) {
@@ -910,7 +959,8 @@ public:
 				TR << "NEW NAME FOR SUPERCHARGED OUTPUT: " << outputname_ << std::endl;
 
 				scorefxn->score( pose );
-				pose.dump_scored_pdb( outputname_, *scorefxn ); //score with regular-weighted scorefunction
+
+				pose.dump_scored_pdb( out_path_ + '/' + outputname_, *scorefxn );  //score with regular-weighted scorefunction
 
 				print_netcharge_and_mutations(starting_pose, pose );
 
@@ -928,7 +978,8 @@ public:
 			TR << "NEW NAME FOR SUPERCHARGED OUTPUT: " << outputname_ << std::endl;
 
 			scorefxn->score( pose );
-			pose.dump_scored_pdb( outputname_, *scorefxn ); //score with regular-weighted scorefunction
+
+			pose.dump_scored_pdb( out_path_ + '/' + outputname_, *scorefxn );  //score with regular-weighted scorefunction
 
 			print_netcharge_and_mutations(starting_pose, pose );
 
@@ -1303,6 +1354,7 @@ public:
 private:
 	SizeSet surface_res_;
 	std::string outputname_;
+	std::string out_path_;
 	utility::vector1< Real > AvNAPSA_values_;
 	Size largest_mutated_AvNAPSA_;
 	Pose native_;
@@ -1317,7 +1369,7 @@ int main( int argc, char* argv[] )
 	using basic::options::option;
 	option.add( local::AvNAPSA_positive, "AvNAPSA positive supercharge").def(false);
 	option.add( local::AvNAPSA_negative, "AvNAPSA negative supercharge").def(false);
-	option.add( local::AvNAPSA_target_net_charge, "AvNAPSA target net charge").def(9999);
+	option.add( local::AvNAPSA_target_net_charge, "AvNAPSA target net charge").def(0);
 	option.add( local::surface_definition_atom_neighbor_cutoff, "AvNAPSA neighbor atom cutoff").def(100); // this is how AvNAPSA defines surface, can be used in the Rosetta approach
 
 	option.add( local::surface_definition_residue_neighbor_cutoff, "cutoff for surface residues ( <= # is surface)" ).def(16);
@@ -1335,7 +1387,7 @@ int main( int argc, char* argv[] )
 	option.add( local::pre_packminpack, "pack-min-pack before supercharging").def(false);
 
 	option.add( local::nstruct, "local nstruct").def(1);
-	option.add( local::Rosetta_target_net_charge, "desired net charge for final variant").def(9999);
+	option.add( local::Rosetta_target_net_charge, "desired net charge for final variant").def(0);
 	option.add( local::surface_definition_by_atom, "surface definition by atom").def(false);
 
 	option.add( local::compare_energies, "compare energy terms for all residues").def(false);
@@ -1349,4 +1401,3 @@ int main( int argc, char* argv[] )
 
   return 0;
 }
-

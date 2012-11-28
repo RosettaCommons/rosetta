@@ -18,3 +18,7 @@
 -nstruct 2
 -compare_energies
 -only_compare_mutated_residues
+
+-resfile resfile
+
+-out:path outpath

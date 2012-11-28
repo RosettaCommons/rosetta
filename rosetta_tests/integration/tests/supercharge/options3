@@ -9,3 +9,4 @@
 -AvNAPSA_negative
 -AvNAPSA_target_net_charge -25
 
+-out:path outpath
