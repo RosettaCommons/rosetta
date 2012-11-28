@@ -339,13 +339,17 @@ calc_pareto_front(
 		for( Size j = 1; j <= n; ++j ){
 			if( j == i ) continue;
 			is_dom = true;
+			is_equal = true;
 			for( Size k = 1; k <= d; ++k ){
+				//check for same coords
+				is_equal = is_equal && ( coords[ i ][ k ] == coords[ j ][ k ] );
 				//i not dominated by j if less in any dimension
-				if( coords[ i ][ k ] <= coords[ j ][ k ] ){
-					is_dom = 0;
+				if( coords[ i ][ k ] < coords[ j ][ k ] ){
+					is_dom = false;
 					break;
 				}
 			}
+			if( is_equal ) is_dom = false;
 			if( is_dom ) break;
 		}
 		if( is_dom ) is_pfront[ i ] = false;
@@ -506,9 +510,11 @@ ParetoOptMutationMover::apply( core::pose::Pose & pose )
 			Size resi( seqpos_aa_vals_vec_[ iseq ].first );
 			TR << "Combining " << pfront_poses_.size() << " pareto opt structures with mutations at residue " << resi << std::endl;
 			//over each current pfront pose
+			//HEY NEIL: pfront_poses_ contains all the current poses
 			for( Size ipose = 1; ipose <= pfront_poses_.size(); ++ipose ){
 				//over all aa's at seqpos
 				for( Size iaa = 1; iaa <= seqpos_aa_vals_vec_[ iseq ].second.size(); ++iaa ){
+					//HEY NEIL: inside this double loop, all pfront_poses_ are combined with all muts at this position
 					AA target_aa( seqpos_aa_vals_vec_[ iseq ].second[ iaa ].first );
 					pose::Pose new_pose( pfront_poses_[ ipose ] );
 
