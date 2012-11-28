@@ -368,9 +368,8 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 		if( active_layers.empty() && design_layer_.find(srbl_layer)->second ) {
 			active_layers.push_back(srbl_layer);
 		} else {
-			if(use_original_ && design_layer_.find( srbl_layer)->second )
+			if(use_original_ &&  !design_layer_.find( srbl_layer)->second )
   			task.nonconst_residue_task( i ).restrict_to_repacking();
-
 		}
 
 		char ss( dssp.get_dssp_secstruct( i ) );
