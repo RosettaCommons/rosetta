@@ -35,6 +35,7 @@ sources = {
 		"InverseRotamersRCG",
 		"InvrotTreeRCG",
 		"NtoC_RCG",
+                "RemoveCsts",
 	],
 	"protocols/forge/methods": [
 		"chainbreak_eval",

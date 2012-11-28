@@ -82,6 +82,7 @@ static MoverRegistrator< forge::constraints::ConstraintFileCstGeneratorCreator >
 static MoverRegistrator< forge::constraints::InverseRotamersCstGeneratorCreator > reg_InverseRotamersCstGeneratorCreator;
 static MoverRegistrator< forge::constraints::InvrotTreeCstGeneratorCreator > reg_InvrotTreeCstGeneratorCreator;
 static MoverRegistrator< forge::constraints::NtoCCstGeneratorCreator > reg_NtoCCstGeneratorCreator;
+static MoverRegistrator< forge::constraints::RemoveCstsCreator > reg_RemoveCstsCreator;
 
 static MoverRegistrator< forge::remodel::ResidueVicinityCstGeneratorCreator > reg_ResidueVicinityCstGeneratorCreator;
 static MoverRegistrator< forge::remodel::RemodelLoopMoverCreator > reg_RemodelLoopMoverCreator;

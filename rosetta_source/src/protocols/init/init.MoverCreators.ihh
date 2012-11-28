@@ -76,6 +76,7 @@
 #include <protocols/forge/constraints/InverseRotamersCstGeneratorCreator.hh>
 #include <protocols/forge/constraints/InvrotTreeCstGeneratorCreator.hh>
 #include <protocols/forge/constraints/NtoCCstGeneratorCreator.hh>
+#include <protocols/forge/constraints/RemoveCstsCreator.hh>
 
 #include <protocols/forge/remodel/RemodelLoopMoverCreator.hh>
 #include <protocols/forge/remodel/RemodelMoverCreator.hh>
