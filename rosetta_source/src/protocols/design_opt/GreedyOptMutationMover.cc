@@ -76,7 +76,8 @@ GreedyOptMutationMover::GreedyOptMutationMover() :
 	diversify_lvl_( 1 ),
 	stopping_condition_( NULL ),
 	rtmin_( false ),
-	parallel_( false )
+	parallel_( false ),
+	shuffle_order_( false )
 {
 	if( sample_type_ == "high" ){
 		flip_sign_ = Real( -1 );
@@ -104,6 +105,7 @@ GreedyOptMutationMover::GreedyOptMutationMover(
 	bool dump_table,
 	bool rtmin,
 	bool parallel,
+	bool shuffle_order,
 	core::Size diversify_lvl,
 	protocols::filters::FilterOP stopping_condition
 ) :
@@ -120,6 +122,7 @@ GreedyOptMutationMover::GreedyOptMutationMover(
 	dump_table_ = dump_table;
 	rtmin_ = rtmin;
 	parallel_ = parallel;
+	shuffle_order_ = shuffle_order;
 	stopping_condition_ = stopping_condition;
 
 	if( sample_type_ == "high" ){
@@ -281,6 +284,14 @@ bool
 GreedyOptMutationMover::parallel() const{ return parallel_; }
 
 void
+GreedyOptMutationMover::shuffle_order( bool const b ){
+	shuffle_order_ = b;
+}
+
+bool
+GreedyOptMutationMover::shuffle_order() const{ return shuffle_order_; }
+
+void
 GreedyOptMutationMover::dump_scoring_table( std::string filename, core::pose::Pose const & ref_pose ) const{
   utility::io::ozstream outtable(filename, std::ios::out | std::ios::app ); // Append if logfile already exists.
 	if( outtable ){
@@ -385,10 +396,15 @@ GreedyOptMutationMover::apply(core::pose::Pose & pose )
 			std::sort( seqpos_aa_val_vec_[ ivec ].second.begin(),
 					seqpos_aa_val_vec_[ ivec ].second.end(), cmp_pair_by_second );
 		}
-		//now sort seqpos_aa_val_vec_ by *first* (lowest) val in each seqpos vector, low to high
-		//uses cmp_pair_vec_by_first_vec_val to sort based on second val in
-		//first pair element of vector in pair( size, vec( pair ) )
-		std::sort( seqpos_aa_val_vec_.begin(), seqpos_aa_val_vec_.end(), cmp_pair_vec_by_first_vec_val );
+		//now randomize the sequence position order?
+		if( shuffle_order() ) std::random_shuffle( seqpos_aa_val_vec_.begin(), seqpos_aa_val_vec_.end() );
+		//or sort
+		else{
+			//now sort seqpos_aa_val_vec_ by *first* (lowest) val in each seqpos vector, low to high
+			//uses cmp_pair_vec_by_first_vec_val to sort based on second val in
+			//first pair element of vector in pair( size, vec( pair ) )
+			std::sort( seqpos_aa_val_vec_.begin(), seqpos_aa_val_vec_.end(), cmp_pair_vec_by_first_vec_val );
+		}
 
 		//finally, dump table to file, if requested.
 		if( dump_table() ){
@@ -508,6 +524,8 @@ GreedyOptMutationMover::parse_my_tag( utility::tag::TagPtr const tag,
 	dump_table( tag->getOption< bool >( "dump_table", false ) );
 	rtmin( tag->getOption< bool >( "rtmin", false ) );
 	parallel( tag->getOption< bool >( "parallel", false ) );
+	//load shuffle_order
+	shuffle_order( tag->getOption< bool >( "shuffle_order", false ) );
 	if( tag->hasOption( "stopping_condition" ) ){
 		std::string const stopping_filter_name( tag->getOption< std::string >( "stopping_condition" ) );
 		stopping_condition( protocols::rosetta_scripts::parse_filter( stopping_filter_name, filters ) );

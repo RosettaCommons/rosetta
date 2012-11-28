@@ -339,7 +339,7 @@ calc_pareto_front(
 		for( Size j = 1; j <= n; ++j ){
 			if( j == i ) continue;
 			is_dom = true;
-			is_equal = true;
+			bool is_equal = true;
 			for( Size k = 1; k <= d; ++k ){
 				//check for same coords
 				is_equal = is_equal && ( coords[ i ][ k ] == coords[ j ][ k ] );

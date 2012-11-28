@@ -47,6 +47,7 @@ public:
 		bool dump_table = false,
 		bool rtmin = false,
 		bool parallel = false,
+		bool shuffle_order = false,
 		core::Size diversify_lvl = core::Size( 1 ),
 		protocols::filters::FilterOP stopping_condition = protocols::filters::FilterOP( NULL )
 	);
@@ -86,6 +87,8 @@ public:
 	void rtmin( bool const b );
 	bool parallel() const;
 	void parallel( bool const b );
+	bool shuffle_order() const;
+	void shuffle_order( bool const b );
 private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	core::scoring::ScoreFunctionOP scorefxn_;
@@ -102,6 +105,7 @@ private:
 	core::pose::Pose ref_pose_;
 	bool rtmin_; //dflt false; should we rtmin after packing?
 	bool parallel_; //parallelize pointmut calc with MPI?
+	bool shuffle_order_; //randomize the order that mutations are attempted?
 	core::Real design_shell_;//dflt -1 to only allow pointmutations, higher allows suroundings to be designed as well
 	core::Real repack_shell_;
 };
