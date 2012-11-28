@@ -13,6 +13,7 @@
 #include <protocols/design_opt/GreedyOptMutationMover.hh>
 #include <protocols/design_opt/GreedyOptMutationMoverCreator.hh>
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
+#include <protocols/protein_interface_design/filters/DeltaFilter.hh>
 #include <core/pose/PDBInfo.hh>
 #include <fstream>
 // AUTO-REMOVED #include <utility/file/FileName.hh>
@@ -496,6 +497,7 @@ GreedyOptMutationMover::apply(core::pose::Pose & pose )
 			std::string const fname( delta_filter->get_user_defined_name() );
 			core::Real const fbaseline( delta_filter->filter()->report_sm( pose ) );
 			delta_filter->baseline( fbaseline );
+			delta_filter->ref_baseline( fbaseline );
 			TR<<"Reset baseline for DeltaFilter "<<fname<<" to "<<fbaseline<<std::endl;
 		}
 	}

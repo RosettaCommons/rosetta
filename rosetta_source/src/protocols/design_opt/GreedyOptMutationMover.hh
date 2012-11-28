@@ -13,7 +13,7 @@
 #ifndef INCLUDED_protocols_design_opt_GreedyOptMutationMover_hh
 #define INCLUDED_protocols_design_opt_GreedyOptMutationMover_hh
 #include <protocols/design_opt/GreedyOptMutationMover.fwd.hh>
-#include <protocols/protein_interface_design/filters/DeltaFilter.hh>
+#include <protocols/protein_interface_design/filters/DeltaFilter.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <utility/tag/Tag.fwd.hh>

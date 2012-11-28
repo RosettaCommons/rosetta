@@ -14,7 +14,6 @@
 #ifndef INCLUDED_protocols_protein_interface_design_filters_DeltaFilter_hh
 #define INCLUDED_protocols_protein_interface_design_filters_DeltaFilter_hh
 
-
 // Project Headers
 #include <protocols/filters/Filter.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -50,18 +49,13 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & );
-	void reference_pose( core::pose::PoseOP ref_pose );
 	void ref_baseline( core::Real const rb );
 	core::Real baseline() const;
-	void baseline( core::Real const baseline );
+	void baseline( core::Real const b );
 	bool lower() const;
 	void lower( bool const l );
 	bool upper() const;
 	void upper( bool const u );
-	bool reset_baseline() const;
-	void reset_baseline( bool const rs );
-	core::Real new_baseline() const;
-	// Undefinded, commenting out to fix PyRosetta build  void new_baseline( core::Real new_baseline );
 	void filter( protocols::filters::FilterOP filter );
 	protocols::filters::FilterOP filter() const;
 	core::Real range() const;
@@ -77,9 +71,9 @@ public:
 private:
 
 	protocols::filters::FilterOP filter_; //which filter to use
-	core::Real baseline_, new_baseline_; // dflt 0.0; the baseline against which to compare
+	core::Real baseline_; // dflt 0.0; the baseline against which to compare
 	core::Real range_; // dflt 0.0; how much above/below baseline to allow
-  bool lower_, upper_, reset_baseline_; // dflt false, true, respectively; use a lower/upper cutoff
+  bool lower_, upper_; // dflt false, true, respectively; use a lower/upper cutoff
 	bool unbound_; //dflt false; evaluate the filter in the unbound state? If so, activate jump, below
 	bool relax_unbound_; //dflt false; call relax mover on unbound pose?
 	core::Size jump_; //dflt 0, but defaults to 1 if unbound is true
