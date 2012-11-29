@@ -13,7 +13,10 @@
 
 //TaskOperationCreator #includes
 #include <core/pack/task/operation/TaskOperationRegistrator.hh>
-
+#include <core/pack/task/operation/ResFilterRegistrator.hh>
+#include <core/pack/task/operation/ResFilterCreators.hh>
+#include <core/pack/task/operation/ResFilterFactory.hh>
+#include <core/pack/task/operation/ResLvlTaskOperationFactory.hh>
 #include <protocols/dna/RestrictDesignToProteinDNAInterfaceCreator.hh>
 #include <protocols/dna/WatsonCrickRotamerCouplingsCreator.hh>
 
@@ -33,6 +36,7 @@
 #include <protocols/toolbox/task_operations/ModifyAnnealerCreator.hh>
 #include <protocols/toolbox/task_operations/PreventChainFromRepackingOperationCreator.hh>
 #include <protocols/toolbox/task_operations/PreventResiduesFromRepackingOperationCreator.hh>
+#include <protocols/toolbox/task_operations/ProteinCoreResFilterCreator.hh>
 #include <protocols/toolbox/task_operations/ProteinInterfaceDesignOperationCreator.hh>
 #include <protocols/toolbox/task_operations/ReadResfileFromDBCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictByCalculatorsOperationCreator.hh>

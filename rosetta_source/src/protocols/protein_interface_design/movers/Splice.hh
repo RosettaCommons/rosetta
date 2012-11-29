@@ -13,6 +13,7 @@
 #ifndef INCLUDED_protocols_protein_interface_design_movers_Splice_hh
 #define INCLUDED_protocols_protein_interface_design_movers_Splice_hh
 #include <protocols/protein_interface_design/movers/Splice.fwd.hh>
+#include <protocols/protein_interface_design/movers/SpliceSegment.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
@@ -24,6 +25,8 @@
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
+#include <protocols/moves/DataMapObj.hh>
+#include <core/sequence/SequenceProfile.fwd.hh>
 
 namespace protocols {
 namespace protein_interface_design {
@@ -160,6 +163,19 @@ public:
 	std::string loop_pdb_source() const;
 	protocols::filters::FilterOP splice_filter() const;
 	void splice_filter( protocols::filters::FilterOP f );
+	void database_pdb_entry( std::string const s ){ database_pdb_entry_ = s; }
+	std::string database_pdb_entry() const { return database_pdb_entry_; }
+
+/// sequence profiles
+/// Splice changes the backbone of the current pose and the following methods deal with dynamically constructing a
+/// sequence profile for the current backbone choices.
+	void read_splice_segments( std::string const segment_type, std::string const segment_name, std::string const file_name );
+	core::sequence::SequenceProfileOP generate_sequence_profile();
+	void load_pdb_segments_from_pose_comments( core::pose::Pose  const  & p); // get the segment names for those segments that are constant in this splice function
+	void modify_pdb_segments_with_current_segment( std::string const pdb_name ); // set the current segment name
+	void add_sequence_constraints( core::pose::Pose & pose ); // add SequenceProfileConstraints based on the sequence profile
+	void profile_weight_away_from_interface( core::Real const p );
+	core::Real profile_weight_away_from_interface() const;
 
 private:
 	void save_values(); // call at beginning of apply. Used to keep the from_res/to_res values, which might be changed by apply during a run
@@ -176,6 +192,7 @@ private:
 	core::pack::task::TaskFactoryOP design_task_factory_; // dflt NULL; a task_factory used to restrict design during splicing. A 'good' idea for this is to define the aligned segments through RestrictToAlignedSegments and send those to this task_factory. During splicing, this task_factory will be used to restrict the design operations in addition to what DesignAroundOperation determines as the designable residues. So, by applying the user-defined RestrictToAlignedSegments as well as dao, you get design on the spliced segment + its vicinity in other aligned segments, and repack in a slightly larger shell.
 	std::string torsion_database_fname_; //dflt ""; set to true in order to read directly from a torsion database
 	core::Size database_entry_; //dflt 0; in which case tests a random entry in each apply
+	std::string database_pdb_entry_; // dflt ""; e.g., "1yihl" specify this only if you want just one loop to be spliced
 	utility::vector1< ResidueBBDofs > torsion_database_;
 	std::string template_file_; //dflt ""; which source file to use as the template to determine what from_res() and to_res() refer to. The input structure may change during a trajectory and so from_res() and to_res() might lose their sense. If this is "", the input file is taken to be template
 	bool poly_ala_; /// dflt true; thread ala residues in each position other than Gly/Pro or conserved in the source pdb. If false, keeps the input sequence (except Gly/Pro, which are replaced)
@@ -196,6 +213,13 @@ private:
 	std::string loop_pdb_source_; //dflt ""; what is the source pdb from which the loop came? This is used in writing the loop to the loop dbase, and helps keep track of where loops come from during design.
 	utility::pointer::owning_ptr< protocols::moves::DataMapObj< std::string > > mover_tag_; /// dflt NULL; to communicate the current Splice mover's loop origin to the GenericMC
 	protocols::filters::FilterOP splice_filter_;
+
+///sequence profiles
+	bool use_sequence_profiles_; // dflt false; set internally only, by whether or not the Segments are defined
+	std::string segment_type_; //dflt ""; what segment is this? Used to decide which profiles to use. examples, L1,L2,L3
+	std::map< std::string, SpliceSegmentOP > splice_segments_; // stores sequence profiles for all possible segments (this doesn't change during a run), e.g., L1, ...; L2, ....
+	std::map< std::string/*which segment (L1,L2...)*/, std::string/*pdb name*/ > pdb_segments_; // which pdb file did each segment in the current pose come from (used to build the current profile). This uses the pose comment structure to retain the information through successive applies
+	core::Real profile_weight_away_from_interface_; //dflt 1.0; you can define a different weight outside an 8A shell around the partner protein. This should typically be set higher than 1.0, implying that the sequence profile carries a larger weight away from the functional site
 };
 
 

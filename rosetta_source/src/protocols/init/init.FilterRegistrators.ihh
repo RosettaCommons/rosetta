@@ -82,6 +82,7 @@ static FilterRegistrator< protocols::simple_filters::ConservedPosMutationFilterC
 static FilterRegistrator< protocols::simple_filters::DdgFilterCreator > reg_DdgFilterCreator;
 static FilterRegistrator< protocols::simple_filters::EnergyPerResidueFilterCreator > reg_EnergyPerResidueFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ExpiryFilterCreator > reg_ExpiryFilterCreator;
+static FilterRegistrator< protocols::simple_filters::NonSequentialNeighborsFilterCreator > reg_NonSequentialNeighborsFilterCreator;
 static FilterRegistrator< protocols::simple_filters::FileExistFilterCreator > reg_FileExistFilterCreator;
 static FilterRegistrator< protocols::simple_filters::FileRemoveFilterCreator > reg_FileRemoveFilterCreator;
 static FilterRegistrator< protocols::simple_filters::HolesFilterCreator > reg_HolesFilterCreator;

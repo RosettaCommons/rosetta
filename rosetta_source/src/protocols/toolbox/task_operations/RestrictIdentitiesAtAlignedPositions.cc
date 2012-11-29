@@ -90,12 +90,16 @@ RestrictIdentitiesAtAlignedPositionsOperation::apply( core::pose::Pose const & p
 			continue;
 		}//fi
 		RestrictAbsentCanonicalAASRLTOP racaas = new RestrictAbsentCanonicalAASRLT;
+		PreventRepackingRLTOP pr = new PreventRepackingRLT;
 		char const residue_id( source_pose_->residue( resid ).name1() );
 		std::string residues_to_keep("");
 		residues_to_keep += residue_id;
 		racaas->aas_to_keep( residues_to_keep );
 		OperateOnCertainResidues oocr;
-		oocr.op( racaas );
+		if( prevent_repacking() && source_pose_->residue( resid ).name1() == pose.residue( nearest_to_res ).name1() ) /// if the source and designed pose have the same residue identity we can additionally prevent repacking at this position
+			oocr.op( pr );
+		else
+			oocr.op( racaas );
 		utility::vector1< core::Size > temp_vec;
 		temp_vec.clear();
 		temp_vec.push_back( nearest_to_res );
@@ -127,6 +131,7 @@ RestrictIdentitiesAtAlignedPositionsOperation::parse_tag( TagPtr tag )
 		TR<<res_str<<",";
 	}
 	design_only_target_residues( tag->getOption< bool >( "design_only_target_residues", false ) );
+	prevent_repacking( tag->getOption< bool >( "prevent_repacking", false ) );
 	TR<<std::endl;
 }
 
