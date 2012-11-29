@@ -29,6 +29,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <core/pose/PDBInfo.hh>
 
 
 namespace protocols {
@@ -73,8 +74,11 @@ LoopLengthChange::apply( core::pose::Pose & pose )
   runtime_assert( loop_end() >= loop_start() );
   runtime_assert( loop_end() + delta() >= loop_start() );
   if( delta() < 0 ){
-    for( int del(-1); del>=delta(); --del )
-      pose.delete_polymer_residue( loop_start() + 1 );
+    for( int del(0); del>delta(); --del ){
+      pose.delete_polymer_residue( loop_end() + del );
+//			pose.conformation().insert_ideal_geometry_at_polymer_bond( loop_start() );
+//			pose.conformation().insert_ideal_geometry_at_polymer_bond( loop_start() + 1 );
+		}
   }
   else if( delta() > 0 ){
     using namespace core::chemical;
@@ -88,7 +92,8 @@ _geometry*/ );
 //      pose.set_omega(loop_end()+leng-1,180.0);
     }
   }
-//  pose.update_residue_neighbors();
+  pose.update_residue_neighbors();
+	pose.pdb_info()->obsolete( true );
 }
 
 std::string
