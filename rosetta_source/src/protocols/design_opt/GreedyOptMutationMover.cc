@@ -20,6 +20,7 @@
 // AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 // AUTO-REMOVED #include <basic/options/option_macros.hh>
 #include <numeric/random/random.hh>
+#include <numeric/random/random_permutation.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
@@ -396,15 +397,10 @@ GreedyOptMutationMover::apply(core::pose::Pose & pose )
 			std::sort( seqpos_aa_val_vec_[ ivec ].second.begin(),
 					seqpos_aa_val_vec_[ ivec ].second.end(), cmp_pair_by_second );
 		}
-		//now randomize the sequence position order?
-		if( shuffle_order() ) std::random_shuffle( seqpos_aa_val_vec_.begin(), seqpos_aa_val_vec_.end() );
-		//or sort
-		else{
-			//now sort seqpos_aa_val_vec_ by *first* (lowest) val in each seqpos vector, low to high
-			//uses cmp_pair_vec_by_first_vec_val to sort based on second val in
-			//first pair element of vector in pair( size, vec( pair ) )
-			std::sort( seqpos_aa_val_vec_.begin(), seqpos_aa_val_vec_.end(), cmp_pair_vec_by_first_vec_val );
-		}
+		//now sort seqpos_aa_val_vec_ by *first* (lowest) val in each seqpos vector, low to high
+		//uses cmp_pair_vec_by_first_vec_val to sort based on second val in
+		//first pair element of vector in pair( size, vec( pair ) )
+		std::sort( seqpos_aa_val_vec_.begin(), seqpos_aa_val_vec_.end(), cmp_pair_vec_by_first_vec_val );
 
 		//finally, dump table to file, if requested.
 		if( dump_table() ){
@@ -417,7 +413,12 @@ GreedyOptMutationMover::apply(core::pose::Pose & pose )
 		}
 	}
 
-	TR<<"Combining sorted independently optimal mutations… " << std::endl;
+	//now randomize the sequence position order?
+	if( shuffle_order() ){
+		numeric::random::random_permutation( seqpos_aa_val_vec_.begin(), seqpos_aa_val_vec_.end(), RG );
+		TR<<"Combining shuffled independently optimal mutations… " << std::endl;
+	}
+	else TR<<"Combining sorted independently optimal mutations… " << std::endl;
 	//reset pose to original, init starting filter val
 	//must use same relax mover before scoring so comparison is fair!
 	pose = start_pose;
