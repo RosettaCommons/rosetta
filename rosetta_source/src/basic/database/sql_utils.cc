@@ -445,6 +445,27 @@ safely_write_to_database(
 
 		}catch(cppdb::cppdb_error & except)
 		{
+#ifdef USEMPI
+			if(except.what() == "database is locked"){
+				stringstream err_msg;
+				err_msg
+					<< "database is locked" << std::endl
+					<< std::endl
+					<< "PSA: If this is an sqlite3 session, running under MPI, and you are using the database primarily for writing output," << std::endl
+					<< "consider using the 'separate_db_per_mpi_process' option if you're not already using it." << std::endl
+					<< "To do this add separate_db_per_mpi_process=1 to a RosettaScripts/resource_definitions xml tag that takes database options" << std::endl
+					<< "or add -inout:dbms:separate_db_per_mpi_process to the command line or flags file" << std::endl
+					<< "This option will append '_<mpi_rank>' to the database filename for each mpi process. Once the run has finished," << std::endl
+					<< "these databases can be merged together using " << std::endl
+					<< std::endl
+					<< "        bash /path/to/rosetta_tests/features/sample_sources/merge.sh <output_db> <input_db_part_1> [<input_db_part_2> [ ... ] ]" << std::endl
+					<< std::endl
+					<< "For more information see the database connection options page in the Rosetta Wiki: RosettaScripts_database_connection_options" << std::endl
+					<< except.what() << std::endl;
+				utility_exit_with_message(err_msg.str());
+			}
+#endif
+
 			utility_exit_with_message(except.what());
 		}
 
