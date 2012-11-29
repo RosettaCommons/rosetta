@@ -59,7 +59,8 @@ SequenceProfileConstraint::SequenceProfileConstraint()
 	: Constraint( res_type_constraint ),
 		seqpos_(0),
 		sequence_profile_(NULL),
-		mapping_(NULL)
+		mapping_(NULL),
+		weight_( 1.0 )
 {}
 
 SequenceProfileConstraint::SequenceProfileConstraint(
@@ -71,7 +72,8 @@ SequenceProfileConstraint::SequenceProfileConstraint(
 	Constraint( res_type_constraint ),
 	seqpos_( seqpos ),
 	sequence_profile_( profile ),
-	mapping_( mapping )
+	mapping_( mapping ),
+	weight_( 1.0 )
 {}
 
 SequenceProfileConstraint::SequenceProfileConstraint(
@@ -82,7 +84,8 @@ SequenceProfileConstraint::SequenceProfileConstraint(
 	Constraint( res_type_constraint ),
 	seqpos_( seqpos ),
 	sequence_profile_( sequence_profile ),
-	mapping_( mapping )
+	mapping_( mapping ),
+	weight_( 1.0 )
 {}
 
 SequenceProfileConstraint::~SequenceProfileConstraint() {}
@@ -182,9 +185,9 @@ SequenceProfileConstraint::show( std::ostream & os ) const {
 			if( profile_pos == 0 ) return; // safety/relevance check
 		}
 		typedef utility::vector1<Real> RealVec;
-		//if( profile_pos == 1 ) 
+		//if( profile_pos == 1 )
 //			os << "SequenceProfile start" << std::endl;
-		
+
 		if( profile_pos <= sequence_profile_->size() ) {
 			RealVec const & aa_scores( sequence_profile_->prof_row( profile_pos ) );
 			os << "SequenceProfile -1 " << profile_pos << " " << aa_scores.size() << " ";
@@ -285,12 +288,12 @@ SequenceProfileConstraint::score(
 	utility::vector1< Real > const & position_profile( profile[ profile_pos ] );
 	if ( size_t(aa) > position_profile.size() ) return; // safety/relevance check
 	Real const score( position_profile[aa] );
-	TR(t_trace) << "seqpos " << seqpos_ << " aa " << aa << " " << score << std::endl;
+	TR(t_trace) << "seqpos " << seqpos_ << " aa " << aa << " " << weight() * score << std::endl;
 
 	if( sequence_profile_->negative_better() ) {
-		emap[ this->score_type() ] += score;
+		emap[ this->score_type() ] += weight() * score;
 	} else {
-		emap[ this->score_type() ] -= score;
+		emap[ this->score_type() ] -= weight() * score;
 	}
 }
 
@@ -320,6 +323,16 @@ std::string
 SequenceProfileConstraintCreator::keyname() const
 {
         return "SequenceProfile";
+}
+
+core::Real
+SequenceProfileConstraint::weight() const{
+	return weight_;
+}
+
+void
+SequenceProfileConstraint::weight( core::Real const w ){
+	weight_ = w;
 }
 
 } // namespace constraints

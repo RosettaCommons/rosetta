@@ -92,11 +92,11 @@ public:
 	core::id::SequenceMappingCOP profile_mapping() const;
 
 	virtual core::Size natoms() const { return 0; }
-	virtual AtomID const & atom( core::Size const ) const { 
+	virtual AtomID const & atom( core::Size const ) const {
 		utility_exit_with_message("SequenceProfileConstraint is not atom-based!.");
 		return core::id::BOGUS_ATOM_ID; // required for compilation on Windows
 	};
-	
+
 	virtual utility::vector1< core::Size > residues() const;
 
 	virtual ConstraintOP remap_resid( SequenceMapping const & ) const;
@@ -118,12 +118,16 @@ public:
 		EnergyMap const &
 	) const;
 
+	void weight( core::Real const w );
+	core::Real weight() const;
+
 private:
 	core::Size seqpos_;
 	// COP is deliberate, as sequence profiles are typically shared amoung many constraints, and as such probably shouldn't be fiddled with
 	SequenceProfileCOP sequence_profile_;
 	/// @brief A mapping of current pose numbers onto profile numbers.
 	core::id::SequenceMappingCOP mapping_;
+	core::Real weight_; //dflt 1; allows weighting the profile's contribution according to different criteria, for instance according to whether the position is close or far from the active site
 };
 
 } // namespace constraints
