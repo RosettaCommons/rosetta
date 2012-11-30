@@ -108,6 +108,7 @@ LayerDesignOperation::LayerDesignOperation():
 	use_original_( true ),
 	verbose_( false ),
 	restrict_restypes_( true ),
+	repack_non_designed_residues_( true ),
 	make_pymol_script_( false ),
 	srbl_( new toolbox::SelectResiduesByLayer )
 {
@@ -121,6 +122,7 @@ LayerDesignOperation::LayerDesignOperation( bool dsgn_core, bool dsgn_boundary, 
 	use_original_( true ),
 	verbose_( false ),
 	restrict_restypes_( true ),
+	repack_non_designed_residues_( true ),
 	make_pymol_script_( false ),
 	srbl_( new toolbox::SelectResiduesByLayer )
 {
@@ -352,32 +354,54 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 	task.nonconst_residue_task( 1 ).restrict_absent_canonical_aas( restrict_to_aa );
 	task.nonconst_residue_task( pose.total_residue() ).restrict_absent_canonical_aas( restrict_to_aa );
 
+	TR << "---------------------------------------" << std::endl;
 	for( Size i=2; i<=pose.total_residue()-1; ++i ) {
 		// if the residue is not a protein, we should continue on to the next one, but make the non-protein residue repackable only
 		if ( ! pose.residue( i ).is_protein() ){ task.nonconst_residue_task( i ).restrict_to_repacking(); continue; }
 
 		const std::string srbl_layer = srbl_->layer(i);
-		// check if the residue is specified in any of the task defined layer
+		// check if the residue is specified in any of the task defined layer and
+		// append that layer into the active layers
 		utility::vector1< std::string > active_layers;
 		BOOST_FOREACH(const LayerSpecification::value_type& layer_pair, layer_specification) {
 			if( (layer_pair.second)[i] == true) 
 				active_layers.push_back( layer_pair.first );
 		}
-		// If there are no active layers and the working layer is designable
-		// append the working layer
-		if( active_layers.empty() && design_layer_.find(srbl_layer)->second ) {
-			active_layers.push_back(srbl_layer);
-		} else {
-			if(use_original_ &&  !design_layer_.find( srbl_layer)->second )
-  			task.nonconst_residue_task( i ).restrict_to_repacking();
-		}
 
 		char ss( dssp.get_dssp_secstruct( i ) );
-		TR << " Resnum=" << i << " ,SS=" << ss << " "
-			 << " Sasa=" << ObjexxFCL::fmt::F( 6, 2, srbl_->rsd_sasa( i ) ) << std::endl;
+		TR << "Residue " << i << std::endl;
+		TR << "    ss=" << ss << " "
+			 << "    Sasa=" << ObjexxFCL::fmt::F( 6, 2, srbl_->rsd_sasa( i ) ) << std::endl;
+		TR << "    basic layer = " << srbl_layer << std::endl;
+
+
+		// If there are no active layers and the working layer is designable
+		// append the working layer
+		if( design_layer_.find(srbl_layer)->second || !active_layers.empty() ) { // srbl_layer is set to be designed
+			if( active_layers.empty() )
+				active_layers.push_back( srbl_layer );
+		} else { // srbl_layer is not set to be designed, the sidechain will be reapcked or left untouched
+			if( repack_non_designed_residues_ ) {
+  			task.nonconst_residue_task( i ).restrict_to_repacking();
+				TR << "    restricting aminoacid to repacking" << std::endl;
+			} 
+			else {
+  			task.nonconst_residue_task( i ).prevent_repacking();
+				TR << "    prenventing aminoacid from  repacking" << std::endl;
+			}
+		}
+		TR << "    Active layers: ";
+		BOOST_FOREACH(std::string s, active_layers){
+			TR << s << "    " ;
+		}
+		if(active_layers.empty())
+			TR << "none" << std::endl;
+		else
+			TR << std::endl;
+		TR << "---------------------------------------" << std::endl;
+
 
 		// skip the residue if this position is defined as PIKAA, NATRO or NATAA in the resfile
-		//if( task.residue_task( i ).command_string().find( "PIKAA" ) != std::string::npos ){
 		const std::string resfile_cmd =  task.residue_task( i ).command_string();
 		if( resfile_cmd.find( "PIKAA" ) != std::string::npos || resfile_cmd.find( "NATRO" ) != std::string::npos ){
 			if( verbose_ ) {
@@ -418,11 +442,14 @@ LayerDesignOperation::parse_tag( TagPtr tag )
 	String design_layers = tag->getOption< String >( "layer", "core_boundary_surface" );
 	if (design_layers == "all")
 		design_layers = "core_boundary_surface";
+	if (design_layers == "other" || design_layers == "user")
+		design_layers = "";
 	utility::vector1< String > layers( utility::string_split( design_layers, '_' ) );
 	BOOST_FOREACH(std::string &  layer, layers) {
 		design_layer_[ layer ] = true;
 	}
 	
+	repack_non_designed_residues_ = tag->getOption< bool >("repack_non_design", 1);
 
 	srbl_->set_design_layer( true, true, true);
 
@@ -578,9 +605,10 @@ LayerDesignOperation::parse_tag( TagPtr tag )
 
 
 	TR << "Layers to be designed:";
-	BOOST_FOREACH( DesignLayerPair l_p, design_layer_) 
+	BOOST_FOREACH( DesignLayerPair l_p, design_layer_)  {
 		if( l_p.second )
 			TR << "\t" << l_p.first;
+	}
 	TR << std::endl;
 	// print the layer definitions
 	TR << std::endl;

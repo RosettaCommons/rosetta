@@ -157,8 +157,11 @@ private:
 	/// @brief add helix capping ?
 	bool add_helix_capping_;
 
-	/// @brief use original sequence for not designed layer ? otherwise the residues will be changed to ala
+	/// @brief use original sequence for not designed layer ? 
 	bool use_original_;
+
+	///@brief
+	bool repack_non_designed_residues_;
 
 	bool verbose_;
 
