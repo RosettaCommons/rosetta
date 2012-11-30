@@ -47,7 +47,7 @@ SpliceSegment::read_profile( string const file_name, string const segment_name )
 	utility::file::FileName const fname( file_name );
 	TR<<"reading sequence profile from "<<file_name<<std::endl;
 	new_seqprof->read_from_file( fname );
-	sequence_profile_.insert( pair< string, SequenceProfileOP >( file_name, new_seqprof ) );
+	sequence_profile_.insert( pair< string, SequenceProfileOP >( segment_name, new_seqprof ) );
 }
 
 SequenceProfileOP
@@ -83,6 +83,7 @@ concatenate_profiles( utility::vector1< SequenceProfileOP > const profiles ){
 		}
 	}
 	TR<<"concatenated "<<profiles.size()<<" profiles with a total length of "<<concatenated_profile->size()<<std::endl;
+	return concatenated_profile;
 }
 
 /// @brief reads the pdb-profile match file, matching each pdb file to one profile

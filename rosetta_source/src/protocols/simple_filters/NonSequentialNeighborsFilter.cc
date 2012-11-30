@@ -65,7 +65,7 @@ NonSequentialNeighborsFilter::apply( core::pose::Pose const & pose ) const {
 }
 
 void
-NonSequentialNeighborsFilter::report( std::ostream & out, core::pose::Pose const & pose ) const {
+NonSequentialNeighborsFilter::report( std::ostream &, core::pose::Pose const & pose ) const {
 	compute( pose );
 }
 
@@ -78,7 +78,7 @@ core::Size
 NonSequentialNeighborsFilter::residue_neighbors( core::pose::Pose const & pose, core::Size const resi ) const{
 	core::Size count_neighbors = 0;
 	core::Size const target_chain( pose.chain( resi ) );
-	for( core::Size resj = 1; resj <= pose.total_residue(); ++resj ){
+	for( core::Size resj = pose.conformation().chain_begin( target_chain ); resj <= pose.conformation().chain_end( target_chain ); ++resj ){
 		if( resj >= resi - neighbor_cutoff() && resj <= resi + neighbor_cutoff() )
 			continue;
 		core::Real const distance( pose.residue( resi ).xyz( pose.residue( resi ).nbr_atom() ).distance( pose.residue( resj ).xyz( pose.residue( resj ).nbr_atom() ) ) );
