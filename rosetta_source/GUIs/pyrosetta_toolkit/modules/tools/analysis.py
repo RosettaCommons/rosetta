@@ -17,9 +17,12 @@ from rosetta import *
 import tkMessageBox
 import tkSimpleDialog
 import tkFileDialog
+
+#Python Imports
 import time
 import math
 import os.path
+
 #Toolkit Imports
 from rosetta.protocols.analysis import *
 from rosetta.protocols.vip import *

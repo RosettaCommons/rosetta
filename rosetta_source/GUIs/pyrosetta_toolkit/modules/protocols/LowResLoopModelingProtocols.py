@@ -1,0 +1,99 @@
+#!/usr/bin/python
+
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+## @file   /GUIs/pyrosetta_toolkit/modules/protocols/loop_modeling_low.py
+## @brief  Low res loop modeling protocols
+## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
+
+#Rosetta Imports
+from rosetta import *
+from rosetta.protocols.loops.loop_mover.perturb import *
+
+#Tkinter Imports
+from Tkinter import *
+import tkMessageBox
+import tkSimpleDialog
+import tkFileDialog
+
+#Toolkit Imports
+from ProtocolBaseClass import ProtocolBaseClass
+import modules.tools.loops as loop_tools
+from window_main import global_variables
+
+class LowResLoopModelingProtocols(ProtocolBaseClass):
+     def __init__(self, pose, score_class, input_class, output_class):
+          ProtocolBaseClass.__init__(self, pose, score_class, input_class, output_class)
+              
+     def default_CCD(self, fragset=False, fraglength=False):
+          """
+          LoopMover_Perturb_CCD for Low Resolution Loop Modeling
+          REQUIRES FRAGSET!!
+          """
+          
+          result = tkMessageBox.askyesno(title="Continue?", message="Centroid scorefunction should be set before proceeding (cen_std/score4L recommended).  Proceed?")
+          if not result: return
+          
+          if not fragset:
+               fragset = tkFileDialog.askopenfilename(initialdir = global_variables.current_directory, title="Fragset File")
+               if not fragset:return
+               
+          if not fraglength:
+               fraglength = tkSimpleDialog.askinteger(title="Fragment Length", initialvalue=3)
+               
+          movemap=MoveMap()
+          ft = self.pose.fold_tree(); ft_o = FoldTree()
+          ft_o.assign(ft)
+          ft.clear()
+          #ft.simple_tree(self.pose.total_residue())
+          print len(loops_as_string_array)
+          ft, movemap, loops_object=loop_tools.InitializeLoops(p, loops_as_string_array, ft, movemap)
+          print "Fold Tree Correct? " + repr(ft.check_fold_tree())
+          self.pose.fold_tree(ft)
+          Frag = ConstantLengthFragSet(fraglength, fragset)
+          
+          switch = SwitchResidueTypeSetMover("centroid")
+          recover = ReturnSidechainMover(self.pose)
+          switch.apply(self.pose)
+          x = LoopMover_Perturb_CCD(loops_object, self.score_class.score, Frag)
+          self.run_protocol(x)
+          recover.apply(self.pose)
+          ft.assign(ft_o)
+          self.pose.fold_tree(ft)
+
+                 
+     def default_KIC(self):
+          """
+          LoopMover_Perturb_KIC for Low Resolution Loop Modeling
+          """
+          result = tkMessageBox.askyesno(title="Continue?", message="Centroid scorefunction should be set before proceeding (cen_std/score4L recommended).  Proceed?")
+          if not result: return
+          
+          extend = tkMessageBox.askyesno(title="Extended", message="Start with idealized bond lenghths, angles, and discard original phi/psi?")
+          movemap=MoveMap()
+          ft = self.pose.fold_tree(); ft_o = FoldTree()
+          ft_o.assign(ft)
+          ft.clear()
+          #ft.simple_tree(self.pose.total_residue())
+          ft, movemap, loops_object=loop_tools.InitializeLoops(self.pose, self.input_class.loops_as_strings, ft, movemap)
+          print "Fold Tree Correct? " + repr(ft.check_fold_tree())
+          self.pose.fold_tree(ft)
+          
+          #Setup extended loop to throw away initial loop structure
+          if extend:
+               for loop in loops_object:
+                    loop.set_extended(True)
+                    
+          kic_mover= LoopMover_Perturb_KIC(loops_object, self.score_class.score)
+          
+          switch = SwitchResidueTypeSetMover("centroid")
+          recover = ReturnSidechainMover(self.pose)
+          switch.apply(self.pose)
+          self.run_protocol(kic_mover)
+          recover.apply(self.pose)
+          ft.assign(ft_o)
+          self.pose.fold_tree(ft)

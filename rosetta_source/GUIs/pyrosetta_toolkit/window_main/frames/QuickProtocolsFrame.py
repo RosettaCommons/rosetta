@@ -18,8 +18,8 @@ from Tkinter import *
 from Tkinter import Frame as TkFrame
 
 #Toolkit Imports
-from modules.protocols.loop_minimization import Loop_Min
-from modules.protocols.protein_minimization import Protein_Min
+from modules.protocols.LoopMinimizationProtocols import LoopMinimizationProtocols
+from modules.protocols.ProteinMinimizationProtocols import ProteinMinimizationProtocols
 from modules.tools import output as output_tools
 
 
@@ -41,8 +41,8 @@ class QuickProtocolsFrame(TkFrame):
         self.set_options_menus()
         
         #Will change when protocols are re-organized.
-        self.loop_protocols = Loop_Min(self.toolkit.score_class, self.toolkit.pose)
-        self.full_protocols = Protein_Min(self.toolkit.score_class, self.toolkit.pose)
+        self.loop_protocols = LoopMinimizationProtocols(self.toolkit.pose, self.toolkit.score_class, self.toolkit.input_class, self.output_class)
+        self.full_protocols = ProteinMinimizationProtocols(self.toolkit.pose, self.toolkit.score_class, self.toolkit.input_class, self.output_class)
 
         self.create_GUI_objects()
         self.grid_GUI_objects()
@@ -50,19 +50,19 @@ class QuickProtocolsFrame(TkFrame):
     def set_options_menus(self):
         
         self.LoopMinOPTIONS = {
-            "Relax Loop(s)":lambda: self.loop_protocols.RelaxLoop(self.rounds_entry.get(), self.toolkit.input_class.loops_as_strings, self.fast_relax_bool.get()),
-            #"Backrub Loop(s)":self.loop_protocols.LoopBackrubRef(self.rounds_entry.get(), self.toolkit.input_class.loops_as_strings),
-            "Minimize Loop(s)":lambda: self.loop_protocols.classicMinLoop(self.rounds_entry.get(), self.toolkit.input_class.loops_as_strings),
-            "Optimize Loop Rotamers":lambda: self.loop_protocols.optimizeRotLoop(self.rounds_entry.get(), self.toolkit.input_class.loops_as_strings),
-            "Optimize Loop Rotamers (SCWRL)":lambda: self.loop_protocols.SCWRL(self.toolkit.input_class.loops_as_strings, int(self.rounds_entry.get()) )
+            "Relax Loop(s)":lambda: self.loop_protocols.RelaxLoop(self.fast_relax_bool.get()),
+            #"Backrub Loop(s)":self.loop_protocols.LoopBackrubRef(),
+            "Minimize Loop(s)":lambda: self.loop_protocols.classicMinLoop(),
+            "Optimize Loop Rotamers":lambda: self.loop_protocols.optimizeRotLoop(),
+            "Optimize Loop Rotamers (SCWRL)":lambda: self.loop_protocols.SCWRL()
         }
         
         self.FullMinOPTIONS = {
-            "Relax All":lambda: self.full_protocols.Relax(self.rounds_entry.get(), self.fast_relax_bool.get()),
+            "Relax All":lambda: self.full_protocols.Relax(self.fast_relax_bool.get()),
             #"Backrub All"lambda: self.full_protocols.Backrub(self.rounds_entry.get())
-            "Minimize All":lambda: self.full_protocols.classicMin(self.rounds_entry.get()),
-            "Optimize All Rotamers":lambda: self.full_protocols.optimizeRot(self.rounds_entry.get()),
-            "Optimize All Rotamers (SCWRL)":lambda: self.full_protocols.SCWRL(int(self.rounds_entry.get()))
+            "Minimize All":lambda: self.full_protocols.classicMin(),
+            "Optimize All Rotamers":lambda: self.full_protocols.optimizeRot(),
+            "Optimize All Rotamers (SCWRL)":lambda: self.full_protocols.SCWRL()
         }
         
     def create_GUI_objects(self):
@@ -101,37 +101,17 @@ class QuickProtocolsFrame(TkFrame):
         """
         This kicks the minimization of the loop.
         """
-        
-        if self.output_class.auto_write.get():
-            jd=PyJobDistributor(self.output_class.outdir.get() + "/" + self.output_class.outname.get(), int(self.decoy_entry.get()), self.toolkit.score_class.score);
-            jd.native_pose = self.toolkit.native_pose
-            for i in range(0, int(self.decoy_entry.get())):
-                print "Decoy: "+repr(i)
-                func = self.LoopMinOPTIONS[self.loopCommand.get()]
-                func()
-                jd.output_decoy(self.toolkit.pose)
-                
-        else:
-            func = self.LoopMinOPTIONS[self.loopCommand.get()]
-            func()
+        func = self.LoopMinOPTIONS[self.loopCommand.get()]
+        func()
         return
     
     def kickMinimizationFull(self):
         """
         This kicks the minimization of the protein.
         """
-        if self.output_class.auto_write.get():
-            jd=PyJobDistributor(self.output_class.outdir.get() + "/" + self.output_class.outname.get(), int(self.decoy_entry.get()), self.toolkit.score_class.score);
-            jd.native_pose = self.toolkit.native_pose
-            for i in range(0, int(self.decoy_entry.get())):
-                print "Decoy: "+repr(i)
-                func = self.FullMinOPTIONS[self.fullCommand.get()]
-                func()
-                jd.output_decoy(self.toolkit.pose)
-                
-        else:
-            func = self.FullMinOPTIONS[self.fullCommand.get()]
-            func()
+        func = self.FullMinOPTIONS[self.fullCommand.get()]
+        func()
+        
         return
             
     

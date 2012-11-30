@@ -20,8 +20,8 @@ import modules.tools.analysis as analysis_tools
 from modules.definitions.restype_definitions import *
 from modules.tools import general_tools
 from modules.tools import protocols as protocol_tools
-from modules.protocols import for_design
-from modules.protocols import loop_minimization
+from modules.protocols.DesignProtocols import DesignProtocols
+from modules.protocols.LoopMinimizationProtocols import LoopMinimizationProtocols
 from modules.ScoreBase import *
 
 
@@ -30,12 +30,12 @@ class FullControlWindow():
     Window for full control of protein backbone and sidechains
     """
     
-    def __init__(self, ScoreObject, pose):
+    def __init__(self, ScoreObject, pose, input_class, output_class):
         
         #Main classes
         self.pose = pose
-        self.design_protocols = for_design.design_protocols(ScoreObject, self.pose)
-        self.loop_protocols = loop_minimization.Loop_Min(ScoreObject, self.pose)
+        self.design_protocols = DesignProtocols(self.pose, ScoreObject, input_class, output_class)
+        self.loop_protocols = LoopMinimizationProtocols(self.pose, ScoreObject, input_class, output_class)
         self.residue_definitions = definitions(); #Defines all residue type information.
         self.score_object = ScoreObject
         

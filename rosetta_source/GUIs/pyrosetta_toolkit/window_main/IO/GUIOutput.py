@@ -22,7 +22,7 @@ class GUIOutput:
         """
         Clas responsible for managing output variables of the GUI.
         """
-        
+        self.processors = IntVar(); self.processors.set(1); # We will only use more if the user sets more to use.
         self.toolkit = toolkit;
         self.outdir = StringVar(); self.outdir.set(global_variables.current_directory)
         self.outname = StringVar(); self.outname.set("0")
@@ -31,6 +31,10 @@ class GUIOutput:
         self.VarLoopSeq = StringVar(); #Sequence of the particular region just queried.
         self.auto_write = IntVar(); self.auto_write.set(0) ; #Auto Save pose after protocol?
 
+        self.terminal_output = IntVar(); #Tracer to redirect stdout or not.  Tracer code is in PyRosetta Toolkit.py 0 is textbox, 1 is stdout.
+
+        
+        
         #### Tracers ####
         self.auto_write.trace_variable('w', self.auto_set_decoys)
         self.decoys.trace_variable('w', self.auto_set_write)

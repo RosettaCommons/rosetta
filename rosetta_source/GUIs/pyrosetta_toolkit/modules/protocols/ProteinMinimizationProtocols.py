@@ -10,92 +10,81 @@
 ## @brief  minimization protocols for whole pose
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
+#Rosetta Imports
 from rosetta import *
-from modules.tools import general_tools as gen_tools
+
+#Python Imports
 import os
 from shutil import rmtree
 from sys import platform
 
-class Protein_Min:
-    def __init__(self, score_object, pose):
-        self.score_object = score_object
-        self.pose = pose
+#Toolkit Imports
+from modules.tools import general_tools as gen_tools
+from ProtocolBaseClass import ProtocolBaseClass
+
+
+class ProteinMinimizationProtocols(ProtocolBaseClass):
+    def __init__(self, pose, score_class, input_class, output_class):
+        ProtocolBaseClass.__init__(self, pose, score_class, input_class, output_class)
     
     def __exit__(self):
-        self.score_object.score.set_weight(chainbreak, 0)
+        self.score_class.score.set_weight(chainbreak, 0)
         
-    def Relax(self, rounds, classic, movemap = 0):
+    def Relax(self, classic, movemap = 0):
         """
         Relaxes the pose using either Fast Relax or Classic Relax
         If Classic is anything other then 0, then Fast Relax occurs.
-        This is useful as a Tk Checkbutton. (uses self.score_object.score 12 and standard)
         """
-        rounds=int(rounds); classic=int(classic)
-        self.score_object.score.set_weight(chainbreak, 100)
-        print self.score_object.score(self.pose)
+        classic=int(classic)
+        self.score_class.score.set_weight(chainbreak, 100)
+        print self.score_class.score(self.pose)
         if classic==0:
-            Rel=ClassicRelax(self.score_object.score)
+            Rel=ClassicRelax(self.score_class.score)
             if movemap!=0:
                 ClassicRelax.set_movemap(movemap)
-            for i in range(1, rounds+1):
-                Rel.apply(self.pose)
-                print self.self.score_object.score(self.pose)
+            self.run_protocol(Rel)
         else:
-            Rel=FastRelax(self.score_object.score)
+            Rel=FastRelax(self.score_class.score)
             if movemap!=0:
                 FastRelax.set_movemap(movemap)
-            for i in range(1, rounds+1):
-                Rel.apply(self.pose)
-                print self.score_object.score(self.pose)
-        self.score_object.score.set_weight(chainbreak, 0)
-        print "Relax Complete"
+            self.run_protocol(Rel)
+                
+        self.score_class.score.set_weight(chainbreak, 0)
 
-    
-    def RelaxBB(self, rounds, classic):
+    def RelaxBB(self, classic):
         movemap = MoveMap()
         movemap.set_bb(True)
-        movemap.set_chi(True)
-        self.Relax(rounds, classic, movemap)
+        movemap.set_chi(False)
+        self.Relax(classic, movemap)
         
     
     
-    def classicMin(self, rounds, tolerance=0.1):
+    def classicMin(self, tolerance=0.1):
         """
         Does a classic min using Dfpmin and the classic MinMover with a tolerance of .5
-        Later will add choices if needs be
         """
         
-
-        print self.score_object.score(self.pose)
         min_type="dfpmin"
         movemap = MoveMap()
         movemap.set_bb(True)
         movemap.set_chi(True)
-        minmover=MinMover(movemap, self.score_object.score, min_type, tolerance, True)
-        
-        for i in range(1, rounds+1):
-            minmover.apply(self.pose)
-            print self.score_object.score(self.pose)
-        print "Minimization Complete"
+        minmover=MinMover(movemap, self.score_class.score, min_type, tolerance, True)
+        self.run_protocol(minmover)
 
-    def Backrub(self, rounds, ob):
+    def Backrub(self):
         print "Currently Implementing......."
         return p
     
-    def optimizeRot(self, rounds):
+    def optimizeRot(self):
         """
-        This optimizes the Side Chain Rotamers of your pose.  It uses the All atom self.score_object.score functions:
-        :Standard and self.score_object.score12: Perhaps later, when I learn more about OOP, a self.score_object.score can be given optionally.
+        This optimizes the Side Chain Rotamers of your pose.  It uses the All atom self.score_class.score functions:
+        :Standard and self.score_class.score12: Perhaps later, when I learn more about OOP, a self.score_class.score can be given optionally.
         """
 
-        print self.score_object.score(self.pose)
         packer_task=standard_packer_task(self.pose)
         packer_task.restrict_to_repacking()
-        pack_mover=PackRotamersMover(self.score_object.score, packer_task)
-        for i in range(1, rounds+1):
-            pack_mover.apply(self.pose)
-            print self.score_object.score(self.pose)
-        print "Optimization Complete"
+        pack_mover=PackRotamersMover(self.score_class.score, packer_task)
+        self.run_protocol(pack_mover)
     
     def linearizePose(self):
         for i in range(1, p.total_residue()+1):
@@ -105,12 +94,12 @@ class Protein_Min:
             self.pose.set_omega(i, 180)
     
     def SCWRL(self, rounds):
-        
         """
-        This uses Scwrl4 to rebuild sidechains of the entire protein.  Ob is not int, rounds is int.
+        This uses Scwrl4 to rebuild sidechains of the entire protein.
+        Scwrl4 should be in the scwrl/[platform] directory.
         """
         pwd = os.path.split(os.path.abspath(__file__))[0]
-        print self.score_object.score(self.pose)
+        print self.score_class.score(self.pose)
         tempdir = pwd + "/temp/"
         if not os.path.exists:
             os.mkdir(tempdir)
@@ -123,7 +112,7 @@ class Protein_Min:
             if not os.path.exists(pwd+"/Scwrl/"+plat+"/Scwrl4"):
                 print "SCWRL not compiled.  Please install scwrl to use scwrl features. (/SCWRL/platform)"
                 return
-            for i in range(0, rounds):
+            for i in range(0, self.output_class.rounds):
                 #This may need to be changed to a call function in the future.
                 self.pose.dump_pdb(tempdir+"/temp.pdb")
                 filein = tempdir +"/temp.pdb"
@@ -136,5 +125,5 @@ class Protein_Min:
                 #Removes temp files
                 rmtree(tempdir)
                 #os.mkdir(tempdir)
-        print self.score_object.score(self.pose)
+        print self.score_class.score(self.pose)
 

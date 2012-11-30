@@ -18,18 +18,6 @@ import os
 import general_tools
 import re
 
-#### LOOP CLOSURE ####
-def closeLoop_ccd( rounds, loo, movemap):
-    """
-    Closes Loop using CCD. Loo is a Rosetta Loops object.
-    """
-    
-    ccd_closure = CcdLoopClosureMover(loo, movemap)
-    for i in range(1, rounds+1):
-        ccd_closure.apply(self.pose)
-        self.score_object.score(self.pose)
-    print "CCD complete"
-    
 #### LOOP INITIALIZATION ####
 
 def return_residue_array( p, loop_string):
@@ -136,7 +124,7 @@ def loopChiPacker( p, pack, loops_as_strings):
 def setLoopBreak( p, start, end, chain, cut):
     start = p.pdb_info().pdb2pose(chain, int(start)); end = p.pdb_info().pdb2pose(chain,int(end))
     loo=Loop(start,end, int(cut))
-    self.InitializeLoopMovemap(start, end)
+    InitializeLoopMovemap(start, end)
     set_single_loop_fold_tree(p, loo)
     print "Break Setup"
     print p
@@ -216,7 +204,7 @@ def InitializeLoops( p, loops_as_strings, ft=0, movemap=0):
                 i+=1
                 ft.add_edge(begin+2, int(p.total_residue()), -1)
         if movemap !=0:
-            movemap = self.loopMovemap(p, movemap, loops_as_strings)
+            movemap = loopMovemap(p, movemap, loops_as_strings)
     if ft ==0 and movemap==0:
         return loops_object
     elif ft ==0 and movemap!=0:
@@ -225,55 +213,24 @@ def InitializeLoops( p, loops_as_strings, ft=0, movemap=0):
         return(ft, loops_object)
     else:
         return(ft, movemap, loops_object)
+        
 #### Random Loop Tools ####
 
-
-def RandLoop( p, LisLoops, ob):
-    """
-    Randomizes the loop.  Completely.  It can get pretty ugly....
-    
-    """
-    for loop in LisLoops:
-        loopSP = loop.split(":")
-        start=int(loopSP[0]); end= int(loopSP[1]); chain = loopSP[2]; ob = int(ob)
-        start = p.pdb_info().pdb2pose(loopSP[2], start); end = p.pdb_info().pdb2pose(loopSP[2],end)
-        if ob ==1:
-            self.obs.add_observer(p)
-        start=int(start); end=int(end)
-        loo=self.InitializeLoop(start, end, p, chain)
-        ft = p.fold_tree(); ft_o = FoldTree()
-        ft_o.assign(ft)
-        set_single_loop_fold_tree(p, loo)
-        
-        for i in range(start, end+1):
-            print "Completely Randomizing Loop"
-            print i
-            phi_angle=p.phi(i); phi_perturb=(phi_angle-90+random.random()*180)
-            psi_angle=p.psi(i); psi_perturb=(psi_angle-90+random.random()*180)
-            p.set_phi(i, phi_perturb); p.set_psi(i, psi_perturb)
-        movemap= self.InitializeLoopMovemap(start, end)
-        closer = Close_Loop_Algorithms()
-        p.assign(closeLoop_ccd(p, 10, loo, movemap))
-        ft.assign(ft_o)
-        p.fold_tree(ft)
-    return p
-
-def linearizeLoops( p, LisLoop, ob):
+def linearizeLoops( p, loops_as_strings):
     """
     Linearizes the LisLoop; Only works for real loops!
     """
-    for loop in LisLoop:
+    for loop in loops_as_strings:
         loopSp = loop.split(":")
         start = int(loopSp[0]); end = int(loopSp[1]); chain = loopSp[2]
         start = p.pdb_info().pdb2pose(chain, start); end = p.pdb_info().pdb2pose(chain,end)
-        loo=self.InitializeLoop(start, end, p, chain)
+        loo=InitializeLoop(start, end, p, chain)
         set_single_loop_fold_tree(p, loo)
         for i in range(start, end+1):
-            print "Completely Randomizing Loop"
+            print "Completely Linearizing Loop"
             print i
             p.set_phi(i, 180); p.set_psi(i, 180)
-        movemap= self.InitializeLoopMovemap(start, end)
-        p.assign(closeLoop_ccd(p, 10, loo, movemap))
+        movemap= InitializeLoopMovemap(start, end)
     return p
 
 #### Loop Editing ####
@@ -284,7 +241,6 @@ def delLoop( p, start, end, chain):
     Soon will output the original residue numbering.
     """
     
-    self.obs.add_observer(p)
     start = int(start); end = int(end); print start; print end;
     start = p.pdb_info().pdb2pose(chain, start); end = p.pdb_info().pdb2pose(chain,end)
     length=end-start
@@ -295,66 +251,4 @@ def delLoop( p, start, end, chain):
     
     for i in range(1, length+2):
         p.delete_polymer_residue(start)
-    return p
-
-def delCDRLoops( p):
-    #L1
-    start = p.pdb_info().pdb2pose(L, 24); end = p.pdb_info().pdb2pose(L,42)
-    length=end-start
-    print length
-    for i in range(1, length+1):
-        p.delete_plolymer_residue(start)
-
-
-def insertNewLoop( p, seq, start, end, chain):
-    """
-    Warning:  Does not work well.
-    Start-end signifies where between the loop you want to put something.
-    """
-    
-    p2=Pose(); #end=int(end)
-    seq = "A"+seq+"A"
-    make_pose_from_sequence(p2, seq, "fa_standard")
-    print p2
-    length=p2.total_residue()
-    TrueLength = length-2
-    norm=180
-    res_num=1
-    while res_num<(p2.total_residue()+1):
-        p2.set_phi(res_num, norm)
-        p2.set_psi(res_num, norm)
-        p2.set_omega(res_num, norm)
-        res_num +=1
-        Ores=1
-    
-    end = p.pdb_info().pdb2pose(chain, (int(end)))
-    cut=p.pdb_info().pdb2pose(chain, int(start))
-    for i in range(1, length-1):
-        print i
-        x = length-i; print x
-        res=p2.residue(x); print p2.residue(x)
-        p.prepend_polymer_residue_before_seqpos(res, end, True)
-        loo = Loop(cut-1, cut+i, cut)
-        movemap = initLoops().InitializeLoopMovemap(cut-1, cut+i)
-        set_single_loop_fold_tree(p, loo)
-        ccd_closure = CcdLoopClosureMover(loo, movemap)
-        ccd_closure.apply(p)
-        #p.set_phi(end, norm); p.set_psi(end, norm); p.set_omega(end, norm)
-    
-    
-    
-    #This tries to set the residues inserted to a good starting position before CCD...
-    
-    dL = tools.general_tools.getDist(p, int(start), int(end), "CA", "CA")
-    print "Distance between cuts:  " +repr(dL)
-    VarSres=round(dL/3.75)
-    VarStartRes = (TrueLength-VarSres)/2
-    print "Residues needed to span length:  " + repr(VarSres)
-    pwd = os.getcwd(); name = pwd + "/"+"temp.pdb"
-    dump_pdb(p, name)
-    pose_from_pdb(p, name)
-    os.remove(name)
-    print "Sequence Inserted....."
-    print p
-    print "New Sequence Numbering: Residues " +repr(cut+1) +" To " + repr(cut+TrueLength) + " Chain A"
     return p

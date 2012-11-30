@@ -10,97 +10,86 @@
 ## @brief  main loop minimization protocols
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
+#Rosetta Imports
 from rosetta import *
-from modules.tools import loops as loop_tools
-from modules.tools import general_tools as tools
-from modules.tools import output as ouput_tools
-from modules.tools import sequence as sequence_tools
+
+#Python Imports
 from shutil import rmtree
 from sys import platform
 import os
 
-class Loop_Min:        
-    def __init__(self, score_object, pose):
-        self.score_object = score_object
-        self.pose = pose
+#Toolkit Imports
+from modules.tools import loops as loop_tools
+from modules.tools import general_tools as tools
+from modules.tools import output as ouput_tools
+from modules.tools import sequence as sequence_tools
+from ProtocolBaseClass import ProtocolBaseClass
+
+class LoopMinimizationProtocols(ProtocolBaseClass):        
+    def __init__(self, pose, score_class, input_class, output_class):
+        ProtocolBaseClass.__init__(self, pose, score_class, input_class, output_class)
+
         self.pwd = os.getcwd()
     
     def __exit__(self):
-        self.score_object.score.set_weight(chainbreak, 0)
+        self.score_class.score.set_weight(chainbreak, 0)
         
 #classicMinLoop
-    def classicMinLoop(self, rounds, loops_as_string_array, tolerance=0.1, movemap=0):
+    def classicMinLoop(self, tolerance=0.1, movemap=0):
         """
         This is the classic MinMover, with dfpmin for a Loop.
         Not actually defining a loop, only regions in the movemap
         May have a problem if using Centroid....
-        If Movemap is given, loops_as_string_array does not matter!!
         """
 
         if movemap ==0:
             movemap=MoveMap()
-            movemap = loop_tools.loopMovemap(self.pose, movemap, loops_as_string_array)
+            movemap = loop_tools.loopMovemap(self.pose, movemap, self.input_class.loops_as_strings)
 
-        rounds=int(rounds)
-        self.score_object.score.set_weight(chainbreak, 100); #Makes sure loop/domain does not break!
-        print self.score_object.score(self.pose)
+        self.score_class.score.set_weight(chainbreak, 100); #Makes sure loop/domain does not break!
         min_type="dfpmin"
-        minmover=MinMover(movemap, self.score_object.score, min_type, tolerance, True)
-        print self.score_object.score(self.pose)
-        for i in range(1, rounds+1):
-            print "Rounds: "+repr(i)
-            minmover.apply(self.pose)
-            print self.score_object.score(self.pose)
+        minmover=MinMover(movemap, self.score_class.score, min_type, tolerance, True)
+        self.run_protocol(minmover)
             
-        #OLD: ft.assign(ft_o)
-        #OLD: p.fold_tree(ft)
-        self.score_object.score.set_weight(chainbreak, 0)
-        print "Minimization Complete"
-        
+        self.score_class.score.set_weight(chainbreak, 0)
+
 #RelaxLoop    
-    def RelaxLoop(self, rounds, loops_as_string_array, classic, movemap = 0):
+    def RelaxLoop(self, classic, movemap = 0):
         """
         Classic and Fast Relax for the loop.  Uses the Movemap from this class.
         ClassicRelax=0; FastRelax=1 for classic setting
-        If Movemap is give, the loops_as_string_array does not matter...
+        If Movemap is give, the self.input_class.loops_as_strings does not matter...
         """
+        classic=int(classic)
 
-        rounds=int(rounds); classic=int(classic)
-
-        #This Handles Vaccinity Relax.
         if movemap ==0:
             movemap = MoveMap()
-            movemap = loop_tools.loopMovemap(self.pose, movemap, loops_as_string_array)
+            movemap = loop_tools.loopMovemap(self.pose, movemap, self.input_class.loops_as_strings)
 
-        self.score_object.score.set_weight(chainbreak, 100)
+        self.score_class.score.set_weight(chainbreak, 100)
         
         if classic==0:
-            Rel=ClassicRelax(self.score_object.score, movemap)
-            for i in range(1, rounds+1):
-                Rel.apply(self.pose)
-                print self.score_object.score(self.pose)
+            Rel=ClassicRelax(self.score_class.score, movemap)
+            self.run_protocol(Rel)
         else:
-            Rel=FastRelax(self.score_object.score)
+            Rel=FastRelax(self.score_class.score)
             Rel.set_movemap(movemap)
-            for i in range(1, rounds+1):
-                print "Rounds: "+repr(i)
-                Rel.apply(self.pose)
-                print self.score_object.score(self.pose)
+            self.run_protocol(Rel)
                 
-        self.score_object.score.set_weight(chainbreak, 0)
-        print "Relax Complete"
+        self.score_class.score.set_weight(chainbreak, 0)
     
     def relax_residue_and_neighbors(self, rounds, residue, chain, num_neighbors=1, bbonly=False):
         """
         Relaxes a residue and the residues on either side by Rosetta numbering!.
-        Does not care if there is a jump between them.  This should change.
+        Does not care if there is a jump between them.
+        Used in FullControlWindow
         """
         
         res = int(residue)
         res = self.pose.pdb_info().pdb2pose(chain, res)
-        self.score_object.score.set_weight(chainbreak, 100)
-        print self.score_object.score(self.pose)
-        Rel = FastRelax(self.score_object.score)
+        self.score_class.score.set_weight(chainbreak, 100)
+        print self.score_class.score(self.pose)
+        Rel = FastRelax(self.score_class.score)
         movemap = MoveMap()
         if not bbonly:
             for i in range(res-num_neighbors, res+num_neighbors+1):
@@ -114,39 +103,34 @@ class Loop_Min:
         for i in range(1, rounds+1):
             print "Rounds: "+repr(i)
             Rel.apply(self.pose)
-            print self.score_object.score(self.pose)
-        self.score_object.score.set_weight(chainbreak, 0)
+            print self.score_class.score(self.pose)
+        self.score_class.score.set_weight(chainbreak, 0)
         print "Relax Complete"
         
-    def relaxLoopBBonly(self, rounds, loops_as_string_array, classic, movemap = 0):
+    def relaxLoopBBonly(self, classic, movemap = 0):
         """
         Relaxes a given loop.  Only BB.
         """
         movemap = MoveMap()
-        movemap = loop_tools.loopBBMovemap(self.pose, movemap, loops_as_string_array)
-        self.RelaxLoop(rounds, loops_as_string_array, classic, movemap)
+        movemap = loop_tools.loopBBMovemap(self.pose, movemap, self.input_class.loops_as_strings)
+        self.RelaxLoop(rounds, movemap)
         
 
-    def optimizeRotLoop(self, rounds, loops_as_string_array):
+    def optimizeRotLoop(self):
         """
         Optomizes Loop Rotamers using the PackRotamersMover
         """
-        rounds = int(rounds)
-        print self.score_object.score(self.pose)
+
         packer_task=standard_packer_task(self.pose)
         packer_task.restrict_to_repacking()
         packer_task.temporarily_fix_everything()
-        packer_task = loop_tools.loopChiPacker(self.pose, packer_task, loops_as_string_array)
-        pack_mover=PackRotamersMover(self.score_object.score, packer_task)
+        packer_task = loop_tools.loopChiPacker(self.pose, packer_task, self.input_class.loops_as_strings)
+        pack_mover=PackRotamersMover(self.score_class.score, packer_task)
         print packer_task
-        for i in range(1, rounds+1):
-            print "Rounds: "+repr(i)
-            pack_mover.apply(self.pose)
-            print self.score_object.score(self.pose)
-        print "Optimization Complete"
+        self.run_protocol(pack_mover)
     
 #LoopBackrubRef    
-    def LoopBackrubRef(self, rounds, loops_as_string_array):
+    def LoopBackrubRef(self):
         """
         Backrubs the loop using the LoopMover_Refine_Backrub Mover
         As far as I know, it does not work.  Though it would be nice.
@@ -155,32 +139,30 @@ class Loop_Min:
         ft = self.pose.fold_tree(); ft_o = FoldTree()
         ft_o.assign(ft)
         ft.clear()
-        ft, movemap, loops_object=loop_tools.InitializeLoops(self.pose, loops_as_string_array, ft, movemap)
+        ft, movemap, loops_object=loop_tools.InitializeLoops(self.pose, self.input_class.loops_as_strings, ft, movemap)
         print ft
         print "Fold Tree Correct? " + repr(ft.check_fold_tree())
         self.pose.fold_tree(ft)
         rounds=int(rounds)
-        if self.score_object.score ==0:
-            self.score_object.score = create_self.score_object.score_function_ws_patch('standard', 'self.score_object.score12')
-        self.score_object.score.set_weight(chainbreak, 100); #Taking No Chances!
+        if self.score_class.score ==0:
+            self.score_class.score = create_self.score_class.score_function_ws_patch('standard', 'self.score_class.score12')
+        self.score_class.score.set_weight(chainbreak, 100); #Taking No Chances!
         print loops_object
-        ref=LoopMover_Refine_Backrub(loops_object, self.score_object.score)
-        print self.score_object.score(self.pose)
-        for i in range(1, rounds+1):
-            print "Rounds: "+repr(i)
-            ref.apply(self.pose)
-            print self.score_object.score(self.pose)
-            #for loo in loopsLis:
-                #ccd_closure = CcdLoopClosureMover(loo, movemap)
-                #ccd_closure.apply(self.pose) 
+        ref=LoopMover_Refine_Backrub(loops_object, self.score_class.score)
+        
+        self.run_protocol(ref)
         ft.assign(ft_o)
         self.pose.fold_tree(ft)
-        self.score_object.score.set_weight(chainbreak, 0)
-        print "LoopMover_Refine_Backrub Complete"
+        self.score_class.score.set_weight(chainbreak, 0)
             
 #SCWRL        
-    def SCWRL(self, LoopsLis, rounds, seqFile=0):        
-        print self.score_object.score(self.pose)
+    def SCWRL(self, seqFile=0):
+        """
+        This uses Scwrl4 to rebuild sidechains of only regions specified.
+        Scwrl4 should be in the scwrl/[platform] directory.
+        """
+        rounds = self.output_class.rounds.get()
+        print self.score_class.score(self.pose)
         pwd = os.path.split(os.path.abspath(__file__))[0]
         tempdir = pwd+"/temp"
         
@@ -205,7 +187,7 @@ class Loop_Min:
                     filein = tempdir+"/temp.pdb"
                     #Gets info for loops, writes a sequence file, loads it into Scwrl.
                     fileout = tempdir + "/seqtemp.seq"
-                    output_tools.saveSeqFile(self.pose, fileout, LoopsLis)
+                    output_tools.saveSeqFile(self.pose, fileout, self.input_class.loops_as_strings)
                     print pwd+"/Scwrl/"+plat+"/Scwrl4 -i "+filein+" -s "+fileout+" -0 "+"-o "+tempdir+"/new_temp.pdb"
                     os.system(pwd+"/Scwrl/"+plat+"/Scwrl4 -i "+filein+" -s "+fileout+" -0 "+"-o "+tempdir+"/new_temp.pdb")
                     x = Pose()
@@ -227,4 +209,4 @@ class Loop_Min:
                     rmtree(tempdir)
                     #os.mkdir(pwd+"/temp")
 
-        print self.score_object.score(self.pose)
+        print self.score_class.score(self.pose)

@@ -13,7 +13,7 @@
 #Tk and Python Imports
 from Tkinter import *
 import webbrowser
-
+import tkSimpleDialog
 #Module Imports
 from modules.tools import output as output_tools
 from modules.tools import analysis as analysis_tools
@@ -23,7 +23,11 @@ from modules.tools import sequence
 from modules import help as help_tools
 from modules.tools import input as input_tools
 from modules import calibur
-from modules.protocols import docking
+
+from modules.protocols.DockingProtocols import DockingProtocols
+from modules.protocols.DesignProtocols import DesignProtocols
+from modules.protocols.LowResLoopModelingProtocols import LowResLoopModelingProtocols
+from modules.protocols.HighResLoopModelingProtocols import HighResLoopModelingProtocols
 
 #Window Imports
 from window_modules.options_system.OptionSystemManager import OptionSystemManager
@@ -60,7 +64,7 @@ class Menus():
 	"""
 
 	self.main.config(menu=self.main_menu)
-
+	
     def _set_file_menu(self):
 	"""
 	Sets import, export, and main File menu
@@ -146,35 +150,64 @@ class Menus():
 	"""
 	
 	self.protocols_menu = Menu(self.main_menu, tearoff=0)
-	self.protocols_menu.add_command(label = "Set Processors")
+	self.protocols_menu.add_command(label = "Set processes to use", command = lambda: self.toolkit.output_class.processors.set(tkSimpleDialog.askinteger(title="Processesors", prompt="Please set the number of processess you wish to create for protocol runs.", initialvalue=self.toolkit.output_class.processors.get())))
 	self.protocols_menu.add_separator()
+	
+	#Setup Protocol Classes. Should this go to Main File? They are very light weight classes.
+	self.design_class = DesignProtocols(self.toolkit.pose, self.toolkit.score_class, self.toolkit.input_class, self.toolkit.output_class)
+	self.docking_class = DockingProtocols(self.toolkit.pose, self.toolkit.score_class, self.toolkit.input_class, self.toolkit.output_class)
+	self.low_res_loop_modeling_class = LowResLoopModelingProtocols(self.toolkit.pose, self.toolkit.score_class, self.toolkit.input_class, self.toolkit.output_class)
+	self.high_res_loop_modeling_class = HighResLoopModelingProtocols(self.toolkit.pose, self.toolkit.score_class, self.toolkit.input_class, self.toolkit.output_class)
+	
 	#Design
+	
 	self.design_protocols = Menu(self.main_menu, tearoff=0)
-	self.design_protocols.add_command(label = "FixedBB")
+	self.design_protocols.add_command(label = "FixedBB", command = lambda: self.design_class.packDesign())
+	self.design_protocols.add_command(label = "Grafting", foreground='red')
 	self.design_protocols.add_command(label = "Remodel", foreground='red')
 	
 	#Docking
+	
 	self.docking_protocols = Menu(self.main_menu, tearoff=0)
-	self.docking_protocols.add_command(label = "High Resolution", command = lambda: docking.Docking(self.toolkit.pose, self.toolkit.score_class, self.toolkit.output_class).high_res_dock())
+	self.docking_protocols.add_command(label = "Low Resolution", command = lambda: self.docking_class.low_res_dock())
+	self.docking_protocols.add_command(label = "High Resolution", command = lambda: self.docking_class.high_res_dock())
 	self.docking_protocols.add_command(label = "Ligand", foreground='red')
 	
 	#Loop Modeling
+
 	self.loop_modeling_protocols=Menu(self.main_menu, tearoff=0)
 	self.loop_modeling_protocols_low = Menu(self.main_menu,tearoff=0)
-	self.loop_modeling_protocols_low.add_command(label = "CCD")
-	self.loop_modeling_protocols_low.add_command(label = "KIC")
+	self.loop_modeling_protocols_low.add_command(label = "CCD", command = lambda: self.low_res_loop_modeling_class.default_CCD())
+	self.loop_modeling_protocols_low.add_command(label = "KIC", command = lambda: self.low_res_loop_modeling_class.default_KIC())
 	self.loop_modeling_protocols_high = Menu(self.main_menu, tearoff=0)
-	self.loop_modeling_protocols_high.add_command(label = "CCD")
-	self.loop_modeling_protocols_high.add_command(label = "KIC")
+	self.loop_modeling_protocols_high.add_command(label = "CCD", command = lambda: self.high_res_loop_modeling_class.default_CCD())
+	self.loop_modeling_protocols_high.add_command(label = "KIC", command = lambda: self.high_res_loop_modeling_class.default_KIC())
 	self.loop_modeling_protocols.add_cascade(label = "Low Resolution", menu = self.loop_modeling_protocols_low)
 	self.loop_modeling_protocols.add_cascade(label = "High Resolution", menu = self.loop_modeling_protocols_high)
 	
+	#General Modeling (Homology/Abinitio)
+	self.general_protocols = Menu(self.main_menu, tearoff=0)
+	self.servers = Menu(self.main_menu, tearoff = 0); #Because why not?
+	
+	#Servers.  Because there are tons of work in these, and I can't add everything.
+	self.servers.add_command(label = "ROSIE Servers", command = lambda: webbrowser.open("http://rosie.rosettacommons.org/"))
+	self.servers.add_separator()
+	self.servers.add_command(label = "Backrub", command = lambda: webbrowser.open("https://kortemmelab.ucsf.edu/backrub/cgi-bin/rosettaweb.py?query=submit"))
+	self.servers.add_command(label = "Fragments", command = lambda: webbrowser.open("http://robetta.bakerlab.org/fragmentsubmit.jsp"))
+	self.servers.add_command(label = "Interface Alanine Scan", command = lambda: webbrowser.open("http://robetta.bakerlab.org/alascansubmit.jsp"))
+	self.servers.add_command(label = "DNA Interface Scan", command = lambda: webbrowser.open("http://robetta.bakerlab.org/dnainterfacescansubmit.jsp"))
+	
+	self.general_protocols.add_cascade(label = "Web Servers", menu = self.servers)
+	
+	self.general_protocols.add_separator()
+	self.general_protocols.add_command(label = "Ab Initio", foreground='red')
+	self.general_protocols.add_command(label = "Homology Modeling", foreground='red')
+	self.protocols_menu.add_cascade(label = "General", menu = self.general_protocols)
+	self.protocols_menu.add_separator()
 	self.protocols_menu.add_cascade(label = "Loop Modeling", menu = self.loop_modeling_protocols)
 	self.protocols_menu.add_cascade(label = "Docking", menu = self.docking_protocols)
 	self.protocols_menu.add_cascade(label = "Design", menu = self.design_protocols)
 	
-	
-	self.protocols_menu.add_separator()
 	
 	self.main_menu.add_cascade(label = "Protocols", menu=self.protocols_menu)
 
@@ -224,9 +257,13 @@ class Menus():
 	self.help_menu=Menu(self.main_menu, tearoff=0)
 	self.help_menu.add_command(label="About", command=lambda: help_tools.about())
 	self.help_menu.add_command(label = "License", command = lambda: help_tools.show_license())
-	self.help_menu.add_command(label="PyRosetta Tutorials", command = lambda: webbrowser.open("http://www.pyrosetta.org/tutorials"))
+	self.help_menu.add_separator()
 	self.help_menu.add_command(label="Rosetta Manual", command = lambda: webbrowser.open("http://www.rosettacommons.org/manual_guide"))
 	self.help_menu.add_command(label="Rosetta Glossary", command=lambda: help_tools.print_glossary())
+	self.help_menu.add_command(label="Rosetta Forums", command = lambda: webbrowser.open("www.rosettacommons.org/forum"))
+	self.help_menu.add_command(label="Rosetta BugTracker", command = lambda: webbrowser.open("www.bugs.rosettacommons.org"))
+	self.help_menu.add_separator()
+	self.help_menu.add_command(label="PyRosetta Tutorials", command = lambda: webbrowser.open("http://www.pyrosetta.org/tutorials"))
 	self.help_devel_menu = Menu(self.main_menu, tearoff=0)
 	self.help_devel_menu.add_command(label = "Wiki Page", command = lambda: webbrowser.open("https://wiki.rosettacommons.org/index.php/PyRosetta_Toolkit"))
 	self.help_menu.add_cascade(label = "Developers: ", menu = self.help_devel_menu)

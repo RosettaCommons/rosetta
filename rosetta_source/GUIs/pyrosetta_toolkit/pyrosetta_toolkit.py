@@ -89,22 +89,25 @@ class main_window:
       self.output_textbox= Text(self.textbox_frame,wrap="word", height=7,width=103,font = outfont)
       
       self.old_stdout = sys.stdout
-      self.terminal_output = IntVar()
-      self.terminal_output.trace_variable('w', self.output_tracer)
-      self.terminal_output.set(0)
-   
+      
+      self.output_class.terminal_output.trace_variable('w', self.output_tracer)
+      self.output_class.terminal_output.set(0)
+      print "For additional protocol options, please use the Option System Manager.\n"
+      print "Please see RosettaCommons for full documentation and references for all protocols and tools utilized in the GUI\n"
+      
    def _initialize_GUI(self):
       """
       Creates object for the GUI
       """
-      
-      self.score_class = ScoreFxn(); #Main Score Function Object. Holds Score.  Controls switching scorefunctions, etc.
-      self.pymol_class = AdvancedPyMOL(self.pose); #PyMOL Object for advanced visualization.
-      self.fullcontrol_class = FullControlWindow(self.score_class, self.pose); #Handles full control of protein.  This way, everything is saved...which is sorta cool.
-      
       self.options_class = OptionSystemManager(global_variables.current_directory)
       self.input_class = GUIInput(self)
       self.output_class = GUIOutput(self)
+      
+      self.score_class = ScoreFxn(); #Main Score Function Object. Holds Score.  Controls switching scorefunctions, etc.
+      self.pymol_class = AdvancedPyMOL(self.pose); #PyMOL Object for advanced visualization.
+      self.fullcontrol_class = FullControlWindow(self.score_class, self.pose, self.input_class, self.output_class); #Handles full control of protein.  This way, everything is saved...which is sorta cool.
+      
+
       
    def _initialize_Frames(self):
       """
@@ -162,9 +165,11 @@ class main_window:
       
    def redirect_stdout_to_textbox(self):
       sys.stdout = self; #Set stdout to be redirected to textbox using the write function override.
-   
+      print "Redirect stdout to textbox"
+      
    def redirect_stdout_to_default(self):
       sys.stdout = self.old_stdout
+      print "Redirect stdout to default"
       
    def write(self, text):
       self.output_textbox.insert(1.0, text)
@@ -175,7 +180,7 @@ class main_window:
       Does not override Tracer for now.
       """
       
-      varvalue = self.terminal_output.get()
+      varvalue = self.output_class.terminal_output.get()
       
       if (varvalue):
          self.redirect_stdout_to_default()

@@ -53,6 +53,7 @@ class GUIInput:
         pdbname = os.path.basename(self.pdb_path.get())
         pdbname = pdbname.split(".")[0]
         self.toolkit.output_class.outname.set(pdbname)
+        self.toolkit.output_class.outdir.set(os.path.dirname(self.pdb_path.get()))
         self.toolkit.DesignDic = dict()
         
     def choose_load_pose(self):

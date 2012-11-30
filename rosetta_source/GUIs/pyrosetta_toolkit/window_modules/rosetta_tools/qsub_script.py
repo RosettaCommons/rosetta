@@ -220,7 +220,6 @@ def main(args):
             for i in range(1, options.jobs+1):
                 base_config = list(config)
                 scriptname =options.tempscripts+'/'+rootjob+'/'+rootjob+'_'+pdb_jobname+'_'+repr(i)+'.in'
-                JOBSCRIPT = open(scriptname, 'w')
                 jran = str(1000000+offset)
                 suff = str(i)
                 base_config.append('-in:file:s '+pdbPATH+' -constant_seed -jran '+jran)

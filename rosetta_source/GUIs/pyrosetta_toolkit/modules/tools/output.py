@@ -210,12 +210,12 @@ def createSeqFile(p, newList):
     return seq
     
 
-def saveSeqFile(p, fileout, loopsLis):
+def saveSeqFile(p, fileout, loops_as_strings):
     if not p.total_residue():
         print "\n No pose loaded...\n"
         return
     
-    newList = loop_tools.loopArea(p, loopsLis)
+    newList = loop_tools.loopArea(p, loops_as_strings)
     seq = createSeqFile(p, newList)
     FILE = open(fileout, 'w')
     FILE.write(seq+"\n")

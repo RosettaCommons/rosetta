@@ -20,13 +20,15 @@ def about():
     """
     This will be a menu pop up
     """
-    message = "GUI Originally Created by Jared Adolf-Bryfogle, July 2012.\n"
+    message = "GUI Originally Created by Jared Adolf-Bryfogle, March 2011-2013.\n"
     message = message + "Roland Dunbrack / FCCC / Drexel College of Medicine.\n"
     message = message + "PyRosetta created by Jeffrey J. Gray, Sergey Lyskov, and the PyRosetta Team at JHU.\n"
+    message = message + "All Rosetta code is a community effort by the extraordinary RosettaCommons Team."
     tkMessageBox.showinfo(title="About", message=message)
-    #print "Created by Jared Adolf-Bryfogle, Copyright Feb 2010, All Rights Reserved"
-    #print "Roland Dunbrack / Fox Chase Cancer Center / Drexel College of Medicine"
-    #print "PyRosetta copyright their respective owners."
+
+
+def citation():
+    pass
 
 def mutSA():
     message = "Accessible Surface Area: Square Angstroms, (Chothia 1976)"
@@ -48,6 +50,10 @@ def show_license():
     tkMessageBox.showinfo(title="License", message=message)
     
 def print_glossary():
+    """
+    Added by Steven Combs.  Need to do this justice and figure out how to format it.  Custom message box or window with a textbox would work.
+    """
+    
     message = "all-atom = in the case of sampling, synonymous with fine movements and often including side chain information; also referred to as high-resolution \n \
     benchmark = another word for a test of a method, scoring function, algorithm, etc. by comparing results from the method to accepted methods/models \n \
     binary file = a file in machine-readable language that can be executed to do something in silico \n \
