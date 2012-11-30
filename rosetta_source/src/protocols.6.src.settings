@@ -163,6 +163,7 @@ sources = {
 		"SetupHotspotConstraintsLoopsMover",
 		"SpinMover",
 		"Splice",
+		"SpliceSegment",
 		"SubroutineMover",
 		"TaskAwareCsts",
 		"TryRotamers",
