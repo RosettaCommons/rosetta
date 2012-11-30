@@ -1,13 +1,3 @@
-namespace lh { BooleanOptionKey const mpi_master_save_score_only( "lh:mpi_master_save_score_only" );  }
-namespace lh { IntegerOptionKey const max_loophash_per_structure( "lh:max_loophash_per_structure" );  }
-namespace lh { RealOptionKey const rms_limit( "lh:rms_limit" );  }
-namespace lh { BooleanOptionKey const centroid_only( "lh:centroid_only" );  }
-namespace lh { BooleanOptionKey const write_centroid_structs( "lh:write_centroid_structs" );  }
-namespace lh { BooleanOptionKey const write_all_fa_structs( "lh:write_all_fa_structs" );  }
-namespace lh { BooleanOptionKey const sandbox( "lh:sandbox" );  }
-namespace lh { BooleanOptionKey const create_db( "lh:create_db" );  }
-namespace lh { FileOptionKey const sample_weight_file( "lh:sample_weight_file" );  }
-namespace lh { namespace fragpdb { BooleanOptionKey const fragpdb( "lh:fragpdb" );  } }
 namespace lh { namespace fragpdb { StringOptionKey const out_path( "lh:fragpdb:out_path" );  } }
 namespace lh { namespace fragpdb { IntegerVectorOptionKey const indexoffset( "lh:fragpdb:indexoffset" );  } }
 namespace lh { namespace fragpdb { StringVectorOptionKey const bin( "lh:fragpdb:bin" );  } }
@@ -632,6 +622,25 @@ namespace chemically_conjugated_docking { BooleanOptionKey const dont_minimize_o
 namespace chemically_conjugated_docking { BooleanOptionKey const pdz( "chemically_conjugated_docking:pdz" );  }
 namespace chemically_conjugated_docking { FileOptionKey const GTPasepdb( "chemically_conjugated_docking:GTPasepdb" );  }
 namespace chemically_conjugated_docking { IntegerOptionKey const GTPase_residue( "chemically_conjugated_docking:GTPase_residue" );  }
+namespace FloppyTail { BooleanOptionKey const FloppyTail( "FloppyTail" );  }
+namespace FloppyTail { IntegerOptionKey const flexible_start_resnum( "FloppyTail:flexible_start_resnum" );  }
+namespace FloppyTail { IntegerOptionKey const flexible_stop_resnum( "FloppyTail:flexible_stop_resnum" );  }
+namespace FloppyTail { StringOptionKey const flexible_chain( "FloppyTail:flexible_chain" );  }
+namespace FloppyTail { RealOptionKey const shear_on( "FloppyTail:shear_on" );  }
+namespace FloppyTail { namespace short_tail { BooleanOptionKey const short_tail( "FloppyTail:short_tail" );  } }
+namespace FloppyTail { namespace short_tail { RealOptionKey const short_tail_fraction( "FloppyTail:short_tail:short_tail_fraction" );  } }
+namespace FloppyTail { namespace short_tail { RealOptionKey const short_tail_off( "FloppyTail:short_tail:short_tail_off" );  } }
+namespace FloppyTail { BooleanOptionKey const pair_off( "FloppyTail:pair_off" );  }
+namespace FloppyTail { BooleanOptionKey const publication( "FloppyTail:publication" );  }
+namespace FloppyTail { BooleanOptionKey const C_root( "FloppyTail:C_root" );  }
+namespace FloppyTail { BooleanOptionKey const force_linear_fold_tree( "FloppyTail:force_linear_fold_tree" );  }
+namespace FloppyTail { BooleanOptionKey const debug( "FloppyTail:debug" );  }
+namespace FloppyTail { BooleanOptionKey const perturb_show( "FloppyTail:perturb_show" );  }
+namespace FloppyTail { IntegerOptionKey const perturb_cycles( "FloppyTail:perturb_cycles" );  }
+namespace FloppyTail { RealOptionKey const perturb_temp( "FloppyTail:perturb_temp" );  }
+namespace FloppyTail { IntegerOptionKey const refine_cycles( "FloppyTail:refine_cycles" );  }
+namespace FloppyTail { RealOptionKey const refine_temp( "FloppyTail:refine_temp" );  }
+namespace FloppyTail { IntegerOptionKey const refine_repack_cycles( "FloppyTail:refine_repack_cycles" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const DenovoProteinDesign( "DenovoProteinDesign" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const redesign_core( "DenovoProteinDesign:redesign_core" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const redesign_loops( "DenovoProteinDesign:redesign_loops" );  }
@@ -641,7 +650,3 @@ namespace DenovoProteinDesign { BooleanOptionKey const disallow_native_aa( "Deno
 namespace DenovoProteinDesign { BooleanOptionKey const optimize_loops( "DenovoProteinDesign:optimize_loops" );  }
 namespace DenovoProteinDesign { FileOptionKey const secondary_structure_file( "DenovoProteinDesign:secondary_structure_file" );  }
 namespace DenovoProteinDesign { FileOptionKey const hydrophobic_polar_pattern( "DenovoProteinDesign:hydrophobic_polar_pattern" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const use_template_sequence( "DenovoProteinDesign:use_template_sequence" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const use_template_topology( "DenovoProteinDesign:use_template_topology" );  }
-namespace DenovoProteinDesign { FileOptionKey const create_from_template_pdb( "DenovoProteinDesign:create_from_template_pdb" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const create_from_secondary_structure( "DenovoProteinDesign:create_from_secondary_structure" );  }

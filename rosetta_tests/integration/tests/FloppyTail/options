@@ -25,39 +25,38 @@
 
 #local
 #start of tail
--flexible_start_resnum 180
+-FloppyTail:flexible_start_resnum 180
 #end of tail (assumed to be end of chain)
-#-flexible_stop_resnum 
+#-FloppyTail:flexible_stop_resnum 
 #chain of tail
--flexible_chain C
+-FloppyTail:flexible_chain C
 #used for preventing loss of compactness at centroid/fa switch; see documentation
--short_tail_off 0
--short_tail_fraction 1.0
+-FloppyTail:short_tail:short_tail_off 0
+-FloppyTail:short_tail:short_tail_fraction 1.0
 
 #shear does nothing for extended tails; see documentation
--shear_on .33333333333333333333
+-FloppyTail:shear_on .33333333333333333333
 
 #turn this one OFF for other uses; activates publication-relevant metrics
--publication true
+-FloppyTail:publication true
 
-#borrowed from AnchoredDesign
 #debugging
-#-AnchoredDesign:perturb_show
-#-AnchoredDesign:debug
+#-FloppyTail:perturb_show
+#-FloppyTail:debug
 #MC temperatures
-#-AnchoredDesign:perturb_temp
-#-AnchoredDesign:refine_temp
+#-FloppyTail:perturb_temp
+#-FloppyTail:refine_temp
 
 #frequency of full repacking; 10 used for test to fit in refine_cycles
-#-AnchoredDesign:refine_repack_cycles 100
--AnchoredDesign:refine_repack_cycles 10
+#-FloppyTail:refine_repack_cycles 100
+-FloppyTail:refine_repack_cycles 10
 
 #low-end production numbers
-#-AnchoredDesign:perturb_cycles 5000
-#-AnchoredDesign:refine_cycles 3000
+#-FloppyTail:perturb_cycles 5000
+#-FloppyTail:refine_cycles 3000
 #-nstruct 5000
 
 #runs in 26 seconds on my machine
--AnchoredDesign:perturb_cycles 100
--AnchoredDesign:refine_cycles 20
+-FloppyTail:perturb_cycles 100
+-FloppyTail:refine_cycles 20
 -nstruct 1

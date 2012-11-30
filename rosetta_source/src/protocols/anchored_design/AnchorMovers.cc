@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file /protocols/AnchoredDesign/AnchorMovers.cc
-/// @brief Anchored design movers (protocol-level, perturb, refine, CCD w/ anchor)
-/// @author Steven Lewis
+/// @file protocols/anchored_design/AnchorMovers.cc
+/// @brief Anchored design movers (protocol-level, perturb, refine)
+/// @author Steven Lewis smlewi@gmail.com
 
 // Unit Headers
 #include <protocols/anchored_design/AnchorMovers.hh>

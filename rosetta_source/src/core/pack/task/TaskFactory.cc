@@ -37,6 +37,11 @@ TaskFactory::TaskFactory( TaskFactory const & src)
 	copy_operations( src );
 }
 
+TaskFactoryOP TaskFactory::clone() const
+{
+	return new TaskFactory(*this);
+}
+
 TaskFactory::~TaskFactory() {}
 
 TaskFactory const &

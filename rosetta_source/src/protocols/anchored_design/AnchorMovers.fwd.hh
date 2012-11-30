@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/AnchoredDesign/AnchorMovers.fwd.hh
+/// @file   protocols/anchored_design/AnchorMovers.fwd.hh
 /// @brief  Anchor Movers forward declarations header
 /// @author Steven Lewis (smlewi@unc.edu)
 
@@ -18,9 +18,8 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-
-namespace protocols{
-namespace anchored_design{
+namespace protocols {
+namespace anchored_design {
 
 //Forwards and OP typedefs
 class AnchoredDesignMover;
@@ -32,7 +31,7 @@ typedef utility::pointer::owning_ptr< AnchoredPerturbMover > AnchoredPerturbMove
 class AnchoredRefineMover;
 typedef utility::pointer::owning_ptr< AnchoredRefineMover > AnchoredRefineMoverOP;
 
-}//AnchoredDesign
-}//protocols
+} //AnchoredDesign
+} //protocols
 
 #endif //INCLUDED_protocols_AnchoredDesign_AnchorMovers_FWD_HH

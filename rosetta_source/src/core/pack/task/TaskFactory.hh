@@ -59,6 +59,8 @@ public:
 
 	TaskFactory const & operator = ( TaskFactory const & );
 
+	virtual TaskFactoryOP clone() const;
+
 	/// @brief  Non static version.
 	PackerTaskOP
 	create_task_and_apply_taskoperations( pose::Pose const & pose ) const;

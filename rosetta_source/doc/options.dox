@@ -9412,6 +9412,106 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 85</dd><br>
 </dl>
  </li>
+<li><h2>FloppyTail</h2>
+<dl>
+<dt><b>-FloppyTail</b> \<Boolean\><dt>
+<dd>FloppyTail option group</dd><br>
+</dl>
+<dl>
+<dt><b>-flexible_start_resnum</b> \<Integer\><dt>
+<dd>starting residue for the flexible region, using PDB numbering</dd><br>
+<dd>Default: 180</dd><br>
+</dl>
+<dl>
+<dt><b>-flexible_stop_resnum</b> \<Integer\><dt>
+<dd>stop residue for the flexible region, using PDB numbering.  If unspecified, it assumes the end of the pose.</dd><br>
+<dd>Default: 0</dd><br>
+</dl>
+<dl>
+<dt><b>-flexible_chain</b> \<String\><dt>
+<dd>chain ID for flexible region</dd><br>
+<dd>Default: "C"</dd><br>
+</dl>
+<dl>
+<dt><b>-shear_on</b> \<Real\><dt>
+<dd>fraction of perturb moves when shear turns on (0.5 = halfway through)</dd><br>
+<dd>Default: 1.0/3.0</dd><br>
+</dl>
+ </li>
+<li><h2>FloppyTail:short_tail</h2>
+<dl>
+<dt><b>-short_tail</b> \<Boolean\><dt>
+<dd>short_tail option group</dd><br>
+</dl>
+<dl>
+<dt><b>-short_tail_fraction</b> \<Real\><dt>
+<dd>what fraction of the flexible segment is used in the short-tail section of refinement (not compatible with non-terminal flexible regions)</dd><br>
+<dd>Default: 1.0</dd><br>
+</dl>
+<dl>
+<dt><b>-short_tail_off</b> \<Real\><dt>
+<dd>fraction of refine cycles where movemap reverts to full tail (0.5 = halfway through)</dd><br>
+<dd>Default: 0.0</dd><br>
+</dl>
+ </li>
+<li><h2>FloppyTail</h2>
+<dl>
+<dt><b>-pair_off</b> \<Boolean\><dt>
+<dd>turn off Epair electrostatics term.  Used once for a simple side experiment, not meant for general use.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-publication</b> \<Boolean\><dt>
+<dd>output statistics used in publication.  TURN OFF if not running publication demo.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-C_root</b> \<Boolean\><dt>
+<dd>Reroot the fold_tree to the C-terminus.  If your flexible region is N-terminal, or closer to the first half of the pose, this will speed computation.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-force_linear_fold_tree</b> \<Boolean\><dt>
+<dd>Force a linear fold tree.  Used in combination with C_root and reordering the chains in your input PDB to ensure you get exactly the right kinematics</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-debug</b> \<Boolean\><dt>
+<dd>debug mode (extra checks and pdb dumps)</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-perturb_show</b> \<Boolean\><dt>
+<dd>dump perturbed centroid pdbs as well as final results</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-perturb_cycles</b> \<Integer\><dt>
+<dd>perturbation phase runs for <input> cycles</dd><br>
+<dd>Default: 5</dd><br>
+</dl>
+<dl>
+<dt><b>-perturb_temp</b> \<Real\><dt>
+<dd>perturbation phase temperature for monte carlo</dd><br>
+<dd>Default: 0.8</dd><br>
+</dl>
+<dl>
+<dt><b>-refine_cycles</b> \<Integer\><dt>
+<dd>refinement phase runs for <input> cycles</dd><br>
+<dd>Default: 5</dd><br>
+</dl>
+<dl>
+<dt><b>-refine_temp</b> \<Real\><dt>
+<dd>refinement phase temperature for monte carlo</dd><br>
+<dd>Default: 0.8</dd><br>
+</dl>
+<dl>
+<dt><b>-refine_repack_cycles</b> \<Integer\><dt>
+<dd>refinement phase runs repack every <input> cycles</dd><br>
+<dd>Range: 2-</dd><br>
+<dd>Default: 20</dd><br>
+</dl>
+ </li>
 <li><h2>DenovoProteinDesign</h2>
 <dl>
 <dt><b>-DenovoProteinDesign</b> \<Boolean\><dt>

@@ -650,14 +650,14 @@ option.add( basic::options::OptionKeys::fold_cst::skip_on_noviolation_in_stage1,
 option.add( basic::options::OptionKeys::fold_cst::stage1_ramp_cst_cycle_factor, "spend x*<standard cycles> on each step of sequence separation" ).def(0.25);
 option.add( basic::options::OptionKeys::fold_cst::stage2_constraint_threshold, "stop runs that violate this threshold at end of stage2" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::ignore_sequence_seperation, "usually constraints are switched on according to their separation in the fold-tree" ).def(false);
-
-}
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::no_recover_low_at_constraint_switch, "dont recover low when max_seq_sep is increased" ).def(false);
+option.add( basic::options::OptionKeys::fold_cst::no_recover_low_at_constraint_switch, "dont recover low when max_seq_sep is increased" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::ramp_coord_cst, "ramp coord csts just like chainbreak-weights during fold-cst" ).def(false);
 option.add( basic::options::OptionKeys::resample::resample, "resample option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::resample::silent, "a silent file for decoys to restart sampling from " ).def("");
 option.add( basic::options::OptionKeys::resample::tag, "which decoy to select from silent file " ).def("");
-option.add( basic::options::OptionKeys::resample::stage1, "if true restart after stage1, otherwise after stage2 " ).def(false);
+
+}
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::resample::stage1, "if true restart after stage1, otherwise after stage2 " ).def(false);
 option.add( basic::options::OptionKeys::resample::stage2, "if true restart after stage1, otherwise after stage2 " ).def(false);
 option.add( basic::options::OptionKeys::resample::jumps, "if true restart after stage1, otherwise after stage2 " ).def(false);
 option.add( basic::options::OptionKeys::resample::min_max_start_seq_sep, "range of (random) start values for seq-separation" ).def(0);
@@ -1299,9 +1299,7 @@ option.add( basic::options::OptionKeys::lh::mpi_outbound_wu_buffer_size, "No des
 option.add( basic::options::OptionKeys::lh::mpi_loophash_split_size    , "No description" ).def(50);
 option.add( basic::options::OptionKeys::lh::mpi_metropolis_temp, "No description" ).def(1000000.0);
 option.add( basic::options::OptionKeys::lh::mpi_save_state_interval, "No description" ).def(1200);
-
-}
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::mpi_master_save_score_only, "No description" ).def(true);
+option.add( basic::options::OptionKeys::lh::mpi_master_save_score_only, "No description" ).def(true);
 option.add( basic::options::OptionKeys::lh::max_loophash_per_structure, "No description" ).def(1);
 option.add( basic::options::OptionKeys::lh::rms_limit, "How to deal with returned relaxed structures" ).def(2.0);
 option.add( basic::options::OptionKeys::lh::centroid_only, "false" ).def(false);
@@ -1311,7 +1309,9 @@ option.add( basic::options::OptionKeys::lh::sandbox, "Sand box mode" ).def(false
 option.add( basic::options::OptionKeys::lh::create_db, "Make database with this loopsize" ).def(false);
 option.add( basic::options::OptionKeys::lh::sample_weight_file, "Holds the initial per residue sample weights" );
 option.add( basic::options::OptionKeys::lh::fragpdb::fragpdb, "fragpdb option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::lh::fragpdb::out_path, "Path where pdbs are saved" ).def("");
+
+}
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::fragpdb::out_path, "Path where pdbs are saved" ).def("");
 option.add( basic::options::OptionKeys::lh::fragpdb::indexoffset, "list of index offset pairs" ).def(-1);
 option.add( basic::options::OptionKeys::lh::fragpdb::bin, "list of bin keys" ).def(utility::vector1<std::string>());
 option.add( basic::options::OptionKeys::lh::symfragrm::symfragrm, "symfragrm option group" ).legal(true).def(true);
@@ -1935,6 +1935,25 @@ option.add( basic::options::OptionKeys::chemically_conjugated_docking::dont_mini
 option.add( basic::options::OptionKeys::chemically_conjugated_docking::pdz, "For the UBQ_Gp_LYX-Cterm executable, if -publication is already on, switch to the PDZ center of mass instead of ubiquitin center of mass for the extra statistics calculations.  Don't use this option unless trying to reproduce publication XXXX" ).def(false);
 option.add( basic::options::OptionKeys::chemically_conjugated_docking::GTPasepdb, "GTPase structure, or the structure of the thing that is attached to (has cysteine) and does not move; should be one chain" ).def("2OB4.pdb");
 option.add( basic::options::OptionKeys::chemically_conjugated_docking::GTPase_residue, "GTPase lysine (PDB numbering) (where the ubiquitin gets attached; assumed to be on the first chain of GTPase_pdb" ).def(85);
+option.add( basic::options::OptionKeys::FloppyTail::FloppyTail, "FloppyTail option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::FloppyTail::flexible_start_resnum, "starting residue for the flexible region, using PDB numbering" ).def(180);
+option.add( basic::options::OptionKeys::FloppyTail::flexible_stop_resnum, "stop residue for the flexible region, using PDB numbering.  If unspecified, it assumes the end of the pose." ).def(0);
+option.add( basic::options::OptionKeys::FloppyTail::flexible_chain, "chain ID for flexible region" ).def("C");
+option.add( basic::options::OptionKeys::FloppyTail::shear_on, "fraction of perturb moves when shear turns on (0.5 = halfway through)" ).def(1.0/3.0);
+option.add( basic::options::OptionKeys::FloppyTail::short_tail::short_tail, "short_tail option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::FloppyTail::short_tail::short_tail_fraction, "what fraction of the flexible segment is used in the short-tail section of refinement (not compatible with non-terminal flexible regions)" ).def(1.0);
+option.add( basic::options::OptionKeys::FloppyTail::short_tail::short_tail_off, "fraction of refine cycles where movemap reverts to full tail (0.5 = halfway through)" ).def(0.0);
+option.add( basic::options::OptionKeys::FloppyTail::pair_off, "turn off Epair electrostatics term.  Used once for a simple side experiment, not meant for general use." ).def(false);
+option.add( basic::options::OptionKeys::FloppyTail::publication, "output statistics used in publication.  TURN OFF if not running publication demo." ).def(false);
+option.add( basic::options::OptionKeys::FloppyTail::C_root, "Reroot the fold_tree to the C-terminus.  If your flexible region is N-terminal, or closer to the first half of the pose, this will speed computation." ).def(false);
+option.add( basic::options::OptionKeys::FloppyTail::force_linear_fold_tree, "Force a linear fold tree.  Used in combination with C_root and reordering the chains in your input PDB to ensure you get exactly the right kinematics" ).def(false);
+option.add( basic::options::OptionKeys::FloppyTail::debug, "debug mode (extra checks and pdb dumps)" ).def(false);
+option.add( basic::options::OptionKeys::FloppyTail::perturb_show, "dump perturbed centroid pdbs as well as final results" ).def(false);
+option.add( basic::options::OptionKeys::FloppyTail::perturb_cycles, "perturbation phase runs for <input> cycles" ).def(5);
+option.add( basic::options::OptionKeys::FloppyTail::perturb_temp, "perturbation phase temperature for monte carlo" ).def(0.8);
+option.add( basic::options::OptionKeys::FloppyTail::refine_cycles, "refinement phase runs for <input> cycles" ).def(5);
+option.add( basic::options::OptionKeys::FloppyTail::refine_temp, "refinement phase temperature for monte carlo" ).def(0.8);
+option.add( basic::options::OptionKeys::FloppyTail::refine_repack_cycles, "refinement phase runs repack every <input> cycles" ).lower(2).def(20);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::DenovoProteinDesign, "DenovoProteinDesign option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_core, "redesign core of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_loops, "redesign loops of pdb" ).def(false);
@@ -1944,13 +1963,13 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::disallow_native_aa,
 option.add( basic::options::OptionKeys::DenovoProteinDesign::optimize_loops, "do serious loop modeling at the end of designrelax mover" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file, "has fasta file format - describes secondary structure of desired target with H/C/E" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
-option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
+
+}
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
-
-}
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);

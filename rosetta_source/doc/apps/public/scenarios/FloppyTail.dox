@@ -64,26 +64,25 @@ This code was intended for a single purpose, but it may work if you have a simil
 @li FloppyTail now fully supports modeling internal linker regions (to do domain assembly).  It detects interfaces between the internally rigid portions and packs accordingly.
 
 @section ft_options Options
-FloppyTail supports three types of options: general rosetta options (packing, etc.), generic protocol options like "how many cycles" borrowed from the (unreleased) AnchoredDesign application, and FloppyTail specific options.
 
 FloppyTail options
 @li flexible_start_resnum - integer - this is the start of the flexible tail in PDB numbering. (See below that you have an option for passing a MoveMap file instead).
 @li flexible_stop_resnum - integer - this is the end of the flexible region, in PDB numbering.  Passing 0 or not using this option means the entire chain after flexible_start_resnum. (See below that you have an option for passing a MoveMap file instead).
 @li flexible_chain - string - the first character of this string is interpreted as the PDB chain for the flexible region; any other characters are ignored.
 @li shear_on - real - In centroid mode, shear moves are completely nonproductive early on when the tail is still largely extended.  This value gives the fraction of centroid cycles when shear moves will be allowed (introduced into the moveset of the RandomMover choosing perturbation moves).  For example, passing 0.333 means that for the first third of centroid mode, shear moves will be disallowed.
-@li short_tail_fraction - real - Fraction of the tail used in the short tail fraction of refinement mode.  0.1 would mean the last tenth of the tail is flexible.  Not compatible with non-terminal flexible regions.
-@li short_tail_off - real - Fraction of refinement cycles dedicated to refining only the short part of the tail.  0.33 means the first third of refinement cycles will be with the shorter flexible region.
+@li short_tail::short_tail_fraction - real - Fraction of the tail used in the short tail fraction of refinement mode.  0.1 would mean the last tenth of the tail is flexible.  Not compatible with non-terminal flexible regions.
+@li short_tail::short_tail_off - real - Fraction of refinement cycles dedicated to refining only the short part of the tail.  0.33 means the first third of refinement cycles will be with the shorter flexible region.
 @li pair_off - boolean - If true, disable the electrostatic Epair (pair and fa_pair) terms.  Used for a control experiment, not for general use.
 @li publication - boolean - If true, output system-specific results used in the demo and publication.  Use FALSE for any other purpose; this boolean activates code including hardcoded references to particular residues and will cause either a crash or silly behavior on systems other than the demo/publication.
 
-AnchoredDesign options (borrowed for simplicity, not tied to AnchoredDesign in any other way); all are in the AnchoredDesign namespace
-@li AnchoredDesign::perturb_temp - real - Monte Carlo temperature for perturb phase (0.8 used for production)
-@li AnchoredDesign::perturb_cycles - unsigned integer - number of perturb phase cycles (5000 used for production)
-@li AnchoredDesign::perturb_show - boolean - if true, outputs centroid poses after perturbation
-@li AnchoredDesign::debug - debug - if true, outputs poses for each monte carlo cycle
-@li AnchoredDesign::refine_temp - real - Monte Carlo temperature for refine phase (0.8 used for production)
-@li AnchoredDesign::refine_cycles - unsigned integer - number of refine phase cycles (3000 used for production)
-@li AnchoredDesign::refine_repack_cycles - unsigned integer - Perform a repack/minimize every N cycles of refine mode (30 used for production)
+Monte Carlo sampling control options
+@li FloppyTail::perturb_temp - real - Monte Carlo temperature for perturb phase (0.8 used for production)
+@li FloppyTail::perturb_cycles - unsigned integer - number of perturb phase cycles (5000 used for production)
+@li FloppyTail::perturb_show - boolean - if true, outputs centroid poses after perturbation
+@li FloppyTail::debug - debug - if true, outputs poses for each monte carlo cycle
+@li FloppyTail::refine_temp - real - Monte Carlo temperature for refine phase (0.8 used for production)
+@li FloppyTail::refine_cycles - unsigned integer - number of refine phase cycles (3000 used for production)
+@li FloppyTail::refine_repack_cycles - unsigned integer - Perform a repack/minimize every N cycles of refine mode (30 used for production)
 
 General options:  All packing namespace options loaded by the PackerTask are respected.  jd2 namespace options are respected.  Anything very low-level, like the database paths, is respected.
 @li packing::resfile - string - @ref resfiles - resfile if you want one
@@ -124,4 +123,6 @@ For 3.2, there was a major under-the-hood change which decreases runtime, scalin
 For 3.3, the publication flag was added for simplicity.  The C_root flag was added to speed computation on non-c-terminal tails.  Constraints work in fullatom mode.  Full support for domain assembly (internal linkers) was added.
 
 For 3.4, I added the ability to specify a custom MoveMap, which also allows for multiple rigid and flexible regions.
+
+For 3.5, FloppyTail was refactored into a proper Mover in the protocols library; this should be invisible to end users.
 */

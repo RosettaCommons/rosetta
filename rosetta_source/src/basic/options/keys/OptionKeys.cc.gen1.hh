@@ -1,8 +1,3 @@
-namespace fold_cst { BooleanOptionKey const no_recover_low_at_constraint_switch( "fold_cst:no_recover_low_at_constraint_switch" );  }
-namespace fold_cst { BooleanOptionKey const ramp_coord_cst( "fold_cst:ramp_coord_cst" );  }
-namespace resample { BooleanOptionKey const resample( "resample" );  }
-namespace resample { FileOptionKey const silent( "resample:silent" );  }
-namespace resample { StringOptionKey const tag( "resample:tag" );  }
 namespace resample { BooleanOptionKey const stage1( "resample:stage1" );  }
 namespace resample { BooleanOptionKey const stage2( "resample:stage2" );  }
 namespace resample { BooleanOptionKey const jumps( "resample:jumps" );  }
@@ -645,3 +640,13 @@ namespace lh { IntegerOptionKey const mpi_outbound_wu_buffer_size( "lh:mpi_outbo
 namespace lh { IntegerOptionKey const mpi_loophash_split_size    ( "lh:mpi_loophash_split_size    " );  }
 namespace lh { RealOptionKey const mpi_metropolis_temp( "lh:mpi_metropolis_temp" );  }
 namespace lh { IntegerOptionKey const mpi_save_state_interval( "lh:mpi_save_state_interval" );  }
+namespace lh { BooleanOptionKey const mpi_master_save_score_only( "lh:mpi_master_save_score_only" );  }
+namespace lh { IntegerOptionKey const max_loophash_per_structure( "lh:max_loophash_per_structure" );  }
+namespace lh { RealOptionKey const rms_limit( "lh:rms_limit" );  }
+namespace lh { BooleanOptionKey const centroid_only( "lh:centroid_only" );  }
+namespace lh { BooleanOptionKey const write_centroid_structs( "lh:write_centroid_structs" );  }
+namespace lh { BooleanOptionKey const write_all_fa_structs( "lh:write_all_fa_structs" );  }
+namespace lh { BooleanOptionKey const sandbox( "lh:sandbox" );  }
+namespace lh { BooleanOptionKey const create_db( "lh:create_db" );  }
+namespace lh { FileOptionKey const sample_weight_file( "lh:sample_weight_file" );  }
+namespace lh { namespace fragpdb { BooleanOptionKey const fragpdb( "lh:fragpdb" );  } }

@@ -3880,6 +3880,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
                 Option( 'input_pdb','File', desc='input pdb file', default='LoopModel::input_pdb' ),
                 Option( 'loop_file','File', desc='input loops list file', default='LoopModel::loop_file' ),
  ),
+	#########################AnchoredDesign#############################
  Option_Group( 'AnchoredDesign',
                Option( 'anchor', 'File', desc='anchor specification file', default='anchor' ),
                Option( 'allow_anchor_repack', 'Boolean', desc='allow repacking of anchor (default is to prevent)', default='false'),
@@ -3917,6 +3918,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 								 Option( 'anchor_noise_constraints_mode', 'Boolean', desc='Hold the anchor loosely (via constraints), not rigidly.  Automatically generate the constraints from the starting pose.  Mildly randomize the anchor\'s placement before modeling (up to 1 angstrom in x,y,z from initial placement.)  Only compatible with single-residue anchors.  Used to meet a reviewer\'s commentary.', default = 'false'),
 							 ),
   ), #closes option group AnchoredDesign
+
+  ############################UBQ_*, chemically_conjugated_docking, UBQ_E2_thioester, UBQ_Gp_*########################
  Option_Group( 'chemically_conjugated_docking',
 							 #UBQ_E2_thioester AND shared group
 							 Option( 'UBQpdb', 'File', desc='ubiquitin structure, or the structure for the attached thing that is moving', default='1UBQ.pdb'),
@@ -3936,6 +3939,29 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 							 Option( 'GTPasepdb', 'File', desc='GTPase structure, or the structure of the thing that is attached to (has cysteine) and does not move; should be one chain', default='2OB4.pdb'),
 							 Option( 'GTPase_residue', 'Integer', desc='GTPase lysine (PDB numbering) (where the ubiquitin gets attached; assumed to be on the first chain of GTPase_pdb', default='85'),
 							 ), #closes option group chemically_conjugated_docking
+
+  #################################FloppyTail####################################################
+	Option_Group( 'FloppyTail',
+	  Option( 'flexible_start_resnum', 'Integer', desc='starting residue for the flexible region, using PDB numbering', default='180'),
+		Option( 'flexible_stop_resnum', 'Integer', desc='stop residue for the flexible region, using PDB numbering.  If unspecified, it assumes the end of the pose.', default='0'),
+		Option( 'flexible_chain', 'String', desc='chain ID for flexible region', default='C'),
+		Option( 'shear_on', 'Real', desc='fraction of perturb moves when shear turns on (0.5 = halfway through)', default='1.0/3.0'),
+		Option_Group( 'short_tail',
+			Option( 'short_tail_fraction', 'Real', desc='what fraction of the flexible segment is used in the short-tail section of refinement (not compatible with non-terminal flexible regions)', default='1.0'),
+			Option( 'short_tail_off', 'Real', desc='fraction of refine cycles where movemap reverts to full tail (0.5 = halfway through)', default='0.0'),
+    ),
+		Option( 'pair_off', 'Boolean', desc='turn off Epair electrostatics term.  Used once for a simple side experiment, not meant for general use.', default='false'),
+		Option( 'publication', 'Boolean', desc='output statistics used in publication.  TURN OFF if not running publication demo.', default='false'),
+		Option( 'C_root', 'Boolean', desc='Reroot the fold_tree to the C-terminus.  If your flexible region is N-terminal, or closer to the first half of the pose, this will speed computation.', default='false'),
+		Option( 'force_linear_fold_tree', 'Boolean', desc='Force a linear fold tree.  Used in combination with C_root and reordering the chains in your input PDB to ensure you get exactly the right kinematics', default='false'),
+		Option( 'debug', 'Boolean', desc='debug mode (extra checks and pdb dumps)', default='false' ),
+    Option( 'perturb_show', 'Boolean', desc='dump perturbed centroid pdbs as well as final results', default='false' ),
+    Option( 'perturb_cycles', 'Integer', desc='perturbation phase runs for <input> cycles', default = '5' ),
+    Option( 'perturb_temp', 'Real', desc='perturbation phase temperature for monte carlo', default = '0.8' ),
+    Option( 'refine_cycles', 'Integer', desc='refinement phase runs for <input> cycles', default = '5' ),
+    Option( 'refine_temp', 'Real', desc='refinement phase temperature for monte carlo', default = '0.8' ),
+    Option( 'refine_repack_cycles', 'Integer', desc='refinement phase runs repack every <input> cycles', lower = '2', default = '20' ),
+  ), #closes option group FloppyTail
 
  Option_Group( 'DenovoProteinDesign',
                 Option( 'redesign_core', 'Boolean', desc='redesign core of pdb', default='false'),

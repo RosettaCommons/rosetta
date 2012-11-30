@@ -30,7 +30,7 @@
 #include <basic/options/keys/chunk.OptionKeys.gen.hh>
 #include <basic/options/keys/batch_relax.OptionKeys.gen.hh>
 #include <basic/options/keys/DenovoProteinDesign.OptionKeys.gen.hh>
-#include <basic/options/keys/pepspec.OptionKeys.gen.hh>
+#include <basic/options/keys/FloppyTail.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <basic/options/keys/assembly.OptionKeys.gen.hh>
 #include <basic/options/keys/abrelax.OptionKeys.gen.hh>
@@ -88,6 +88,7 @@
 #include <basic/options/keys/casp.OptionKeys.gen.hh>
 #include <basic/options/keys/ms.OptionKeys.gen.hh>
 #include <basic/options/keys/rbe.OptionKeys.gen.hh>
+#include <basic/options/keys/pepspec.OptionKeys.gen.hh>
 #include <basic/options/keys/dwkulp.OptionKeys.gen.hh>
 #include <basic/options/keys/canonical_sampling.OptionKeys.gen.hh>
 #include <basic/options/keys/parser.OptionKeys.gen.hh>
