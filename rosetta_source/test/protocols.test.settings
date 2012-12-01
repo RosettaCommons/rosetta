@@ -75,6 +75,10 @@ sources = {
 		"fold_tree_functions",
 	],
 
+        "forge/remodel" :[
+                "RemodelConstraintGenerator",
+        ],
+
 	"genetic_algorithm" : [
 		"Entity",
 	],
@@ -311,6 +315,9 @@ testinputfiles = [
 	"enzdes/mcfi_test.cst",
 	"enzdes/parse_cst_test.xml",
 	"enzdes/resfile_remap.resfile",
+        "forge/remodel/bad_pair.blueprint",
+        "forge/remodel/test.blueprint",
+        "forge/remodel/test.pdb",
 	"frag_picker/t286_.6.csts",
 	"frag_picker/1a32A-H1.vall",
 	"frag_picker/1a32A-H1.9mers",
