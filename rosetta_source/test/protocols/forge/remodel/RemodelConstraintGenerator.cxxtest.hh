@@ -130,10 +130,11 @@ public:
     // first, we should try scoring a pose without constraints
     core::pose::Pose pose_nocst;
     core::import_pose::pose_from_pdb(pose_nocst, "protocols/forge/remodel/test.pdb" );
-    core::Real no_cst_score( scorefxn->score( pose_nocst ) );
+    //core::Real no_cst_score( scorefxn->score( pose_nocst ) );
 		TR << "Before adding csts" << std::endl;
     //scorefxn->show( TR, pose_nocst );		TR.flush();
     core::Real dihedral_cst( pose_nocst.energies().total_energies()[ scoring::dihedral_constraint ] );
+		TS_ASSERT_DELTA( dihedral_cst, 0.0, 1e-4 );
 
     core::pose::Pose testpose;
     core::import_pose::pose_from_pdb( testpose, "protocols/forge/remodel/test.pdb" );
