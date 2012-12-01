@@ -18,6 +18,7 @@
 
 #include <protocols/filters/BasicFilterCreators.hh>
 #include <protocols/filters/ContingentFilterCreator.hh>
+#include <protocols/filters/ReplicateFilterCreator.hh>
 #include <protocols/filters/TimeFilterCreator.hh>
 
 #include <protocols/fldsgn/filters/CoreDunbrackFilterCreator.hh>

@@ -75,25 +75,25 @@ using protocols::moves::NullMover;
 
 ///@brief Generate a tagptr from a string
 /// For parse_my_tag tests, only do the relevant tag, not the full <ROSETTASCRIPTS> ... </ROSETTASCRIPTS> wrapped tag.
-TagPtr tagptr_from_string(std::string input) {
+inline TagPtr tagptr_from_string(std::string input) {
 	std::stringstream instream( input );
 	return utility::tag::Tag::create( instream );
 }
 
 ///@brief setup filters map with some of the the RosettaScript defaults
-void prime_Filters( Filters_map & filters ) {
+inline void prime_Filters( Filters_map & filters ) {
 	filters["true_filter"] = new protocols::filters::TrueFilter;
 	filters["false_filter"] = new protocols::filters::FalseFilter;
 }
 
 ///@brief setup movers map with some of the the RosettaScript defaults
-void prime_Movers( Movers_map & movers ) {
+inline void prime_Movers( Movers_map & movers ) {
 	movers["null"] = new protocols::moves::NullMover;
 }
 
 ///@brief setup data map with *some* of the the RosettaScript defaults
 
-void prime_Data( DataMap & data ) {
+inline void prime_Data( DataMap & data ) {
 	core::scoring::ScoreFunctionOP commandline_sfxn = core::scoring::getScoreFunction();
 	core::scoring::ScoreFunctionOP score12 = core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::STANDARD_WTS, core::scoring::SCORE12_PATCH );
 
@@ -126,5 +126,46 @@ public: // Yes, public - deliberately so people can easily change them, if they 
 	core::Real value_;
 	std::string tag_;
 };
+
+typedef utility::pointer::owning_ptr< StubFilter >  StubFilterOP;
+typedef utility::pointer::owning_ptr< StubFilter const >  StubFilterCOP;
+
+///@brief A simple filter for helping to test nested classes
+/// will apply() with the given truth value,
+/// When called, report_sm() will cycle through the given list of values
+
+class StubMultiFilter : public Filter {
+public:
+	StubMultiFilter( bool truth = true,std::string tag = "" ) :
+		truth_(truth),
+		pos_(1),
+		tag_(tag)
+	{}
+	FilterOP clone() const { return new StubMultiFilter( *this ); }
+	FilterOP fresh_instance() const {	return new StubMultiFilter(); }
+	void set( utility::vector1<core::Real> const & values, bool truth=true, std::string tag="") { values_ = values, truth_ = truth; tag_ = tag; }
+	void set_pos( core::Size pos = 1) { pos_ = pos; }
+	bool apply( core::pose::Pose const & ) const { return truth_; }
+	core::Real report_sm( core::pose::Pose const & ) const { 
+		if ( pos_ == 0 || pos_ > values_.size() ) { pos_ = 1; }
+		++pos_; // Overflow taken care of next time around
+		return values_[ pos_ - 1 ];
+	}
+	void report( std::ostream & ostream, core::pose::Pose const & ) const {
+		ostream << "StubMultiFilter " << tag_ << ": " << truth_ << " ";
+		for( core::Size ii(1); ii <= values_.size(); ++ii ) {
+			ostream << values_[ ii ] << " ";
+		}
+		ostream << std::endl;
+	}
+public: // Yes, public - deliberately so people can easily change them, if they want to
+	bool truth_;
+	mutable core::Size pos_;
+	std::string tag_;
+	utility::vector1<core::Real> values_;
+};
+
+typedef utility::pointer::owning_ptr< StubMultiFilter >  StubMultiFilterOP;
+typedef utility::pointer::owning_ptr< StubMultiFilter const >  StubMultiFilterCOP;
 
 #endif

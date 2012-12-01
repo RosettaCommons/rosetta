@@ -28,6 +28,7 @@ sources = {
 		"Filter",
 		"FilterCreator",
 		"FilterFactory",
+		"ReplicateFilter",
 		"TimeFilter",
 	],
 	"protocols/idealize": [
