@@ -21,16 +21,17 @@
 namespace numeric {
 
 numeric::Real median( utility::vector1< numeric::Real > const & values ) {
+	assert( values.size() ); // An empty list doesn't have a median
 	utility::vector1< numeric::Real > vals = values;
 	std::sort( vals.begin(), vals.end() );
 
 	numeric::Size const n_vals( vals.size() );
 	numeric::Real retval( 0.0 );
-	if ( n_vals % 2 == 0 ) {
-		retval = vals[ n_vals / 2 ];
-	} else {
-		retval += 0.5 * vals[ ( n_vals - 1 ) / 2 ];
-		retval += 0.5 * vals[ ( n_vals + 1 ) / 2 ];
+	if ( n_vals % 2 == 0 ) { // Even number of items
+		retval += 0.5 * vals[ n_vals / 2 ];
+		retval += 0.5 * vals[ n_vals / 2 + 1];
+	} else { // Odd number of items
+		retval = vals[ (n_vals - 1) / 2 + 1 ];
 	}
 	return retval;
 }

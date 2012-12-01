@@ -41,8 +41,11 @@ class NumericUtilTests : public CxxTest::TestSuite {
 		vector1< Real > values;
 		// 1-10 in random order
 		values.push_back( 1 );
+		TS_ASSERT_DELTA( median( values ), 1, delta );
 		values.push_back( 3 );
+		TS_ASSERT_DELTA( median( values ), 2, delta );
 		values.push_back( 6 );
+		TS_ASSERT_DELTA( median( values ), 3, delta );
 		values.push_back( 4 );
 		values.push_back( 5 );
 		values.push_back( 2 );
@@ -51,9 +54,9 @@ class NumericUtilTests : public CxxTest::TestSuite {
 		values.push_back( 7 );
 		values.push_back( 9 );
 
-		TS_ASSERT_DELTA( median( values ), 5, delta );
-		values.push_back( 11 );
 		TS_ASSERT_DELTA( median( values ), 5.5, delta );
+		values.push_back( 11 );
+		TS_ASSERT_DELTA( median( values ), 6, delta );
 	}
 
 	void test_mean() {
