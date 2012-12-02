@@ -84,7 +84,7 @@ Sigmoid::compute(
 	core::pose::Pose const & pose
 ) const {
   core::Real const val( ( negate() ? -filter()->report_sm( pose ) : filter()->report_sm( pose ) ) - baseline_ );
-  core::Real const transform( 1.0 - 1.0 / ( ( 1.0 + std::exp( ( val - offset_ ) * steepness_ ) ) ) );
+  core::Real const transform( 1.0 / ( ( 1.0 + std::exp( ( val - offset_ ) * steepness_ ) ) ) );
   TR<<"filter val/transform: "<<val<<" "<<transform<<std::endl;
   TR<<"returning: "<<transform<<std::endl;
   return( transform );

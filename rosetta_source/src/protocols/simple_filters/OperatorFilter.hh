@@ -26,7 +26,7 @@ namespace protocols {
 namespace simple_filters {
 
 enum Operation { SUM, PRODUCT, NORMALIZED_SUM, MAX, MIN };
-///@brief simply take a list of filters and do something with them
+///@brief simply take a list of filters and combine them using the operation above
 class Operator : public filters::Filter
 {
   public:
@@ -46,7 +46,7 @@ class Operator : public filters::Filter
 		core::Real compute( core::pose::Pose const & pose ) const;
     utility::vector1< protocols::filters::FilterOP > filters() const;
     void add_filter( protocols::filters::FilterOP f );
-		void reset_baseline( core::pose::Pose const & pose ); /// goes over Sigmoid filters and resets them
+		void reset_baseline( core::pose::Pose const & pose ); /// goes over Sigmoid filters and resets them. Note that this is nonconst, and cannot be called from apply
   	core::Real threshold() const{ return threshold_; }
   	void threshold( core::Real const t ){ threshold_ = t; }
 		Operation operation() const{ return operation_; }

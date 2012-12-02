@@ -51,6 +51,7 @@ Operator::reset_baseline( core::pose::Pose const & pose ){
 	foreach( protocols::filters::FilterOP f, filters() ){
 		if( f->get_type() == "Sigmoid" ){
 			SigmoidOP sigmoid_filter( dynamic_cast< Sigmoid * >( f() ) );
+			runtime_assert( sigmoid_filter );
 			sigmoid_filter->reset_baseline( pose );
 			TR<<"Resetting Sigmoid filter's baseline"<<std::endl;
 		}
