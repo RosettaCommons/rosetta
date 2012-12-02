@@ -105,7 +105,8 @@ void reinitialize_mingraph_neighborhood_for_residue(
 
 RTMin::RTMin()
 	: minimize_ligand_chis_(true),
-		minimize_ligand_jumps_(false)
+		minimize_ligand_jumps_(false),
+		nonideal_(false)
 {}
 
 RTMin::RTMin(
@@ -173,6 +174,7 @@ RTMin::rtmin(
 	scoring::MinimizationGraph mingraph( pose.total_residue() );
 
 	SCMinMinimizerMap scminmap;
+	scminmap.set_nonideal( nonideal_ );
 	scminmap.set_total_residue( pose.total_residue() );
 
 	EnergyMap emap_dummy;
@@ -211,14 +213,14 @@ RTMin::rtmin(
 	/// in real rtmin, the active residues will be examined in a random order;
 	/// random__shuffle( active_residues );
 
-	optimization::Multivec chi( 4 ); // guess -- resized smaller
+	optimization::Multivec chi( nonideal_? 14:4 ); // guess -- resized smaller
 
 	for ( Size ii = 1; ii <= active_residues.size(); ++ii ) {
 		/// Now, build rotamers, prep the nodes and edges of the minimization graph
 		/// and build the AtomTreeCollection for this residue;
 		Size iiresid = active_residues[ ii ];
 		conformation::Residue const & trial_res = pose.residue( iiresid );
-		scminmap.activate_residue_chi( iiresid );
+		scminmap.activate_residue_dofs( iiresid );
 
 		//pretend this is a repacking and only this residue is being repacked
 		//while all other residues are being held fixed.
@@ -376,8 +378,6 @@ RTMin::rtmin(
 			/// Note: our neighborlist may have gone out-of-date.  Update now to make sure the best rotamer is placed in the pose
 			reinitialize_mingraph_neighborhood_for_residue( pose, scfxn, bgres, scminmap, scminmap.residue( iiresid ), mingraph );
 			Real const end_score = scmin_multifunc( chi );
-			//std::cout << "start func: " << start_func << " end func: " << end_func << " end score: " << end_score << std::endl;
-
 			//for ( Size kk = 1; kk <= chi.size(); ++kk ) {
 			//	std::cout << "chi " << kk << " " << chi[ kk ] << " vs "
 			//		<< ii_atc->residue_atomtree_collection( iiresid ).active_residue().chi()[ kk ]
@@ -444,7 +444,7 @@ RTMin::rtmin(
 
 		}*/
 		active_residue_has_been_visited[ iiresid ] = true;
-		scminmap.clear_active_chi();
+		scminmap.clear_active_dofs();
 		pose.replace_residue( iiresid, *bgres[ iiresid ], false );
 
 #ifdef APL_FULL_DEBUG

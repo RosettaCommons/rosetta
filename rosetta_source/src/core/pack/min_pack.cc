@@ -93,7 +93,7 @@ create_scmin_minimizer_map(
 	scminmap->set_total_residue( pose.total_residue() );
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		if ( task->being_packed( ii )) {
-			scminmap->activate_residue_chi( ii );
+			scminmap->activate_residue_dofs( ii );
 		} else {
 			scminmap->set_natoms_for_residue( ii, pose.residue( ii ).natoms() );
 		}
@@ -355,8 +355,8 @@ get_residue_current_energy(
 #endif
 
 	/// 2.
-	scminmap.clear_active_chi();
-	scminmap.activate_residue_chi( resid );
+	scminmap.clear_active_dofs();
+	scminmap.activate_residue_dofs( resid );
 	scminmap.set_natoms_for_residue( resid, atc->residue_atomtree_collection( resid ).active_restype().natoms() );
 	scminmap.setup( atc );
 
@@ -365,7 +365,9 @@ get_residue_current_energy(
 
 	/// 4.
 	scmin::SCMinMultifunc scmin_func( pose, bgres, sfxn, mingraph, scminmap );
-	utility::vector1< Real > chi = ratc.active_residue().chi();
+	//utility::vector1< Real > chi = ratc.active_residue().chi();
+	utility::vector1< Real > chi;
+	scminmap.starting_dofs( chi );
 
 	Real funcval = scmin_func( chi );
 
@@ -441,10 +443,10 @@ get_total_energy_for_state(
 	}
 
 	/// 2.
-	scminmap.clear_active_chi();
+	scminmap.clear_active_dofs();
 	for ( Size ii = 1; ii <= rotsets.nmoltenres(); ++ii ) {
 		Size iiresid = rotsets.moltenres_2_resid( ii );
-		scminmap.activate_residue_chi( iiresid );
+		scminmap.activate_residue_dofs( iiresid );
 		scminmap.set_natoms_for_residue( iiresid, atc->residue_atomtree_collection( iiresid ).active_restype().natoms() );
 	}
 	scminmap.setup( atc );
@@ -459,12 +461,14 @@ get_total_energy_for_state(
 	/// 4.
 	scmin::SCMinMultifunc scmin_func( pose, bgres, sfxn, mingraph, scminmap );
 	utility::vector1< Real > allchi;
-	for ( Size ii = 1; ii <= rotsets.nmoltenres(); ++ii ) {
-		Size iiresid = rotsets.moltenres_2_resid( ii );
-		scmin::ResidueAtomTreeCollection & iiratc = atc->residue_atomtree_collection( iiresid );
-		utility::vector1< Real > chi = iiratc.active_residue().chi();
-		for ( Size jj = 1; jj <= chi.size(); ++jj ) allchi.push_back( chi[ jj ] );
-	}
+	//for ( Size ii = 1; ii <= rotsets.nmoltenres(); ++ii ) {
+	//	Size iiresid = rotsets.moltenres_2_resid( ii );
+	//	scmin::ResidueAtomTreeCollection & iiratc = atc->residue_atomtree_collection( iiresid );
+	//	utility::vector1< Real > chi = iiratc.active_residue().chi();
+	//	for ( Size jj = 1; jj <= chi.size(); ++jj ) allchi.push_back( chi[ jj ] );
+	//}
+	scminmap.starting_dofs( allchi );
+
 
 	return scmin_func( allchi );
 }
@@ -522,8 +526,8 @@ minimize_alt_rotamer(
 
 	if ( curr_state.any_unassigned() ) return 0.0; // quit now; can't minimize in the absence of assigned rotamers
 
-	scminmap.clear_active_chi();
-	scminmap.activate_residue_chi( resid );
+	scminmap.clear_active_dofs();
+	scminmap.activate_residue_dofs( resid );
 	scminmap.setup( atc );
 
 	/// 3.
@@ -531,7 +535,9 @@ minimize_alt_rotamer(
 
 	/// 4.
 	scmin::SCMinMultifunc scmin_func( pose, bgres, sfxn, mingraph, scminmap );
-	utility::vector1< Real > chi = ratc.active_residue().chi();
+	//utility::vector1< Real > chi = ratc.active_residue().chi();
+	utility::vector1< Real > chi;
+	scminmap.starting_dofs( chi );
 
 	/// 5.
 	optimization::Minimizer minimizer( scmin_func, min_options );
@@ -733,7 +739,8 @@ void
 min_pack(
 	pose::Pose & pose,
 	scoring::ScoreFunction const & sfxn,
-	task::PackerTaskCOP input_task
+	task::PackerTaskCOP input_task,
+	bool nonideal
 )
 {
 	using namespace interaction_graph;
@@ -767,6 +774,7 @@ min_pack(
 
 	/// 2.
 	scmin::SCMinMinimizerMapOP scminmap = create_scmin_minimizer_map( pose, task );
+	scminmap->set_nonideal(nonideal);
 	scoring::MinimizationGraphOP mingraph = create_minimization_graph( pose, sfxn, *task, *packer_neighbor_graph, *scminmap );
 
 	/// 3.

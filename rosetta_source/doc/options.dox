@@ -11891,6 +11891,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>max cycles for MinimizerOptions</dd><br>
 <dd>Default: 1</dd><br>
 </dl>
+<dl>
+<dt><b>-scmin_nonideal</b> \<Boolean\><dt>
+<dd>Do we allow sidechain nonideality during scmin (e.g. rtmin and min_pack)</dd><br>
+<dd>Default: false</dd><br>
+</dl>
  </li>
 <li><h2>swa</h2>
 <dl>

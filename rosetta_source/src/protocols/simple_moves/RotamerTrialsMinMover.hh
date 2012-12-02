@@ -73,6 +73,9 @@ public:
 		TaskFactoryCOP factory_in
 	);
 
+	void
+	init();
+
 	virtual ~RotamerTrialsMinMover();
 
 	///@brief Apply Rotamer-Trials with minimization to pose, using the score function
@@ -128,6 +131,7 @@ private:
 	///@brief TaskFactory allows for nonconstant sequences to be used with RotamerTrialsMover
 	///CAUTION: the factory is externally modifiable.
 	TaskFactoryCOP factory_;
+	bool nonideal_;
 };
 
 	/// @brief Wrapper for Rotamer Trials with Minimization, which modifies only

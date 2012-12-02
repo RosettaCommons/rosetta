@@ -218,9 +218,13 @@ SCMinMultifunc::dfunc( Multivec const & chi, Multivec & dE_dchi ) const
 		/// 4. Evaluate chi-dof derivatives
 		Real dofderiv = eval_dof_deriv_for_minnode( * g_.get_minimization_node( iidofnode.rsd() ),
 			scminmap_.residue( iidofnode.rsd() ), pose_, junk, torid, sfxn_, sfxn_.weights() );
-		dE_dchi[ ii ] = optimization::torsional_derivative_from_cartesian_derivatives(
-			scminmap_.atom( iidofnode.atom_id() ), iidofnode,
-			dofderiv, numeric::constants::d::rad2deg );
+
+		//fpd  we assume that torsion-defined funcs have no derivatives w.r.t. d or theta DOFs
+		if (iidofnode.type() == core::id::PHI) {
+			dE_dchi[ ii ] = optimization::torsional_derivative_from_cartesian_derivatives(
+				scminmap_.atom( iidofnode.atom_id() ), iidofnode,
+				dofderiv, numeric::constants::d::rad2deg );
+		}
 	}
 
 }

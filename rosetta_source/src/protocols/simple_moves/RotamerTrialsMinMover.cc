@@ -28,6 +28,10 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/keys/optimization.OptionKeys.gen.hh>
+
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
@@ -49,6 +53,7 @@ namespace simple_moves {
 RotamerTrialsMinMover::RotamerTrialsMinMover() : protocols::moves::Mover()
 {
 	protocols::moves::Mover::type( "RotamerTrialsMin" );
+	init();
 }
 
 // constructor with arguments
@@ -59,6 +64,7 @@ RotamerTrialsMinMover::RotamerTrialsMinMover(
 {
 	protocols::moves::Mover::type( "RotamerTrialsMin" );
 	task_ = task_in.clone();
+	init();
 }
 
 // constructor with arguments
@@ -68,7 +74,15 @@ RotamerTrialsMinMover::RotamerTrialsMinMover(
 ) : protocols::moves::Mover(), scorefxn_( scorefxn_in ), task_( NULL ), factory_( factory_in )
 {
 	protocols::moves::Mover::type( "RotamerTrialsMin" );
+	init();
 }
+
+void
+RotamerTrialsMinMover::init()
+{
+	nonideal_ = basic::options::option[ basic::options::OptionKeys::optimization::scmin_nonideal ]();
+}
+
 
 RotamerTrialsMinMover::~RotamerTrialsMinMover() {}
 
@@ -83,6 +97,7 @@ RotamerTrialsMinMover::apply( core::pose::Pose & pose )
 	//TR << *(task(pose)) << std::flush;
 	( *scorefxn_ )(pose); // Ensure scorefunction data is appropriately initialized
 	core::pack::RTMin RTMin;
+	RTMin.set_nonideal(nonideal_);
 	RTMin.rtmin( pose, *scorefxn_, task(pose) );
 }
 
@@ -135,6 +150,10 @@ RotamerTrialsMinMover::parse_my_tag(
 		new_task_factory = new core::pack::task::TaskFactory;
 	}
 	task_factory( new_task_factory );
+
+	if (tag->hasOption( "nonideal" )) {
+		nonideal_ = tag->getOption<bool>( "nonideal" );
+	}
 }
 
 ///@brief Return a new mover instance (for RosettaScripts)
@@ -185,6 +204,7 @@ EnergyCutRotamerTrialsMinMover::EnergyCutRotamerTrialsMinMover() :
 	protocols::simple_moves::RotamerTrialsMinMover()
 {
 	protocols::moves::Mover::type( "EnergyCutRotamerTrialsMin" );
+	init();
 }
 
 // constructor with arguments
@@ -196,6 +216,7 @@ EnergyCutRotamerTrialsMinMover::EnergyCutRotamerTrialsMinMover(
 ) : protocols::simple_moves::RotamerTrialsMinMover(scorefxn_in, task_in), mc_( mc_in ), energycut_( energycut_in )
 {
 	protocols::moves::Mover::type( "EnergyCutRotamerTrialsMin" );
+	init();
 }
 
 // constructor with arguments
@@ -207,6 +228,7 @@ EnergyCutRotamerTrialsMinMover::EnergyCutRotamerTrialsMinMover(
 ) : protocols::simple_moves::RotamerTrialsMinMover(scorefxn_in, factory_in), mc_( mc_in ), energycut_( energycut_in )
 {
 	protocols::moves::Mover::type( "EnergyCutRotamerTrialsMin" );
+	init();
 }
 
 EnergyCutRotamerTrialsMinMover::~EnergyCutRotamerTrialsMinMover() {}

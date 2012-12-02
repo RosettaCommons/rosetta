@@ -30,6 +30,7 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/kinematics/AtomTree.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/id/DOF_ID.hh>
 
 
 #ifdef WIN32
@@ -101,7 +102,6 @@ public:
 
 	Size ative_restype_index() const { return active_restype_; }
 	void set_active_restype_index( Size restype_index );
-	/// void idealize_active_restype(); // set all atom tree sidechain coordinates to their ideal values
 
 	/// @brief The responsibility for making sure that the active residue and the active atomtree
 	/// are in synch is offloaded to an external class so that the calls to "active_residue()" and
@@ -134,9 +134,24 @@ public:
 		return *active_atom_tree_;
 	}
 
+	///fpd  get dof value by DOF_ID
+	///     NOTE input resid must be 1
+	core::Real dof( core::id::DOF_ID const &dofid );
+
 	/// @brief Assigns the chi dihedral for the active restype.  Must be followed by a call to
 	/// update_residue() before the next call to active_residue()
 	void set_chi( Size chi_index, Real value );
+
+	///fpd bondlength analog to set_chi
+	///    like set_chi, assumes changes propagate to atomtree
+	///    keyed off of chi#, so we only allow distances corresponding to chi angles to refine
+	///    distance corresponds to the distance between atoms 3 and 4 defining the chi
+	///    chino==0 ==> CA-CB distance, which allows us to refine ALA CB position for example
+	void set_d( Size chi_index, Real value );
+
+	///fpd bondangle analog to set_chi
+	///    same idea as set_d
+	void set_theta( Size chi_index, Real value );
 
 	/// @brief Assigns the coordinates for a residue.  Must be followed by a call to
 	/// update_atom_tree() before the next cal to active_atom_tree().

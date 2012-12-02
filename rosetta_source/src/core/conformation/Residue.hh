@@ -1754,6 +1754,19 @@ public:
 		return rsd_type_.icoor( atm );
 	}
 
+	///fpd bondlength analog to set_chi
+	///    like set_chi, assumes changes propagate to atomtree
+	///    keyed off of chi#, so we only allow distances corresponding to chi angles to refine
+	///    distance corresponds to the distance between atoms 3 and 4 defining the chi
+	///    chino==0 ==> CA-CB distance, which allows us to refine ALA CB position for example
+	void
+	set_d( int const chino, Real const setting );
+
+	///fpd bondangle analog to set_chi
+	///    same idea as set_d
+	void
+	set_theta( int const chino, Real const setting );
+
 	/// @brief Sets this residue's chi angle  <chino>  to  <setting>
 	/// assuming that changes propagate according to the atom_base tree
 	void

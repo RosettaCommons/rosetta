@@ -27,7 +27,6 @@
 // AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 
 // Utility Headers
@@ -36,11 +35,12 @@
 // AUTO-REMOVED #include <utility/string_util.hh>
 
 // option key includes
-// AUTO-REMOVED #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/keys/optimization.OptionKeys.gen.hh>
 
 
 namespace protocols {
@@ -81,7 +81,9 @@ MinPackMover::MinPackMover() :
 	task_(0),
 	task_factory_(0),
 	stochastic_pack_( false )
-{}
+{
+	init();
+}
 
 MinPackMover::MinPackMover( std::string const & type_name ) :
 	protocols::moves::Mover( type_name ),
@@ -89,7 +91,9 @@ MinPackMover::MinPackMover( std::string const & type_name ) :
 	task_(0),
 	task_factory_(0),
 	stochastic_pack_( false )
-{}
+{
+	init();
+}
 
 	// constructors with arguments
 MinPackMover::MinPackMover(
@@ -100,7 +104,9 @@ MinPackMover::MinPackMover(
 	task_( 0 ),
 	task_factory_(0),
 	stochastic_pack_( false )
-{}
+{
+	init();
+}
 
 
 MinPackMover::MinPackMover(
@@ -112,9 +118,17 @@ MinPackMover::MinPackMover(
 	task_( task ),
 	task_factory_(0),
 	stochastic_pack_( false )
-{}
+{
+	init();
+}
 
 MinPackMover::~MinPackMover(){}
+
+void
+MinPackMover::init()
+{
+	nonideal_ = basic::options::option[ basic::options::OptionKeys::optimization::scmin_nonideal ]();
+}
 
 MinPackMover::MinPackMover( MinPackMover const & other ) :
 	//utility::pointer::ReferenceCount(),
@@ -124,6 +138,7 @@ MinPackMover::MinPackMover( MinPackMover const & other ) :
 	scorefxn_ = other.score_function();
 	task_ = other.task();
 	task_factory_ = other.task_factory();
+	nonideal_ = other.nonideal_;
 }
 
 void
@@ -148,7 +163,7 @@ MinPackMover::apply( Pose & pose )
 	if ( stochastic_pack_ ) {
 		core::pack::stochastic_pack( pose, *scorefxn_, task );
 	} else {
-		core::pack::min_pack( pose, *scorefxn_, task );
+		core::pack::min_pack( pose, *scorefxn_, task, nonideal_ );
 	}
 
 }
@@ -187,6 +202,10 @@ MinPackMover::parse_my_tag(
 	}
 	parse_score_function( tag, datamap, filters, movers, pose );
 	parse_task_operations( tag, datamap, filters, movers, pose );
+
+	if (tag->hasOption( "nonideal" )) {
+		nonideal_ = tag->getOption<bool>( "nonideal" );
+	}
 }
 
 ///@brief parse "scorefxn" XML option (can be employed virtually by derived Packing movers)

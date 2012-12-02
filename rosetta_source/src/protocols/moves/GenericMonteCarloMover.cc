@@ -723,8 +723,8 @@ GenericMonteCarloMover::apply( Pose & pose )
 					protocols::filters::FilterOP filt( cs_it->first );
 					if( filt->get_type() == "Operator" ){
 						TR<<"Resetting Operator filter's baseline"<<std::endl;
-						protocols::simple_filters::OperatorOP operator_filter( dynamic_cast< protocols::simple_filters::Operator * >( filt() ) );
-						operator_filter->reset_baseline( pose );
+						//protocols::simple_filters::OperatorOP operator_filter( dynamic_cast< protocols::simple_filters::Operator * >( filt() ) );
+						//operator_filter->reset_baseline( pose );
 					}// fi Operator
 				}// for cs_it
 			} //foreach

@@ -886,6 +886,76 @@ Residue::n_bonded_neighbor_all_res(
 }
 
 
+///fpd bondlength analog to set_chi
+///    like set_chi, assumes changes propagate to atomtree
+///    keyed off of chi#, so we only allow distances corresponding to chi angles to refine
+///    distance corresponds to the distance between atoms 3 and 4 defining the chi
+///    chino==0 ==> CA-CB distance, which allows us to refine ALA CB position for example
+void
+Residue::set_d( int const chino, Real const setting ) {
+	int const effchi = (chino==0)? 1 : 0;
+	int const baseatom = (chino==0)? 2 : 3;
+
+	AtomIndices const & chi_atoms( rsd_type_.chi_atoms( effchi ) );
+
+	// get the current d
+	Real const current_d( ( atom(chi_atoms[baseatom+1]).xyz() - atom(chi_atoms[baseatom]).xyz() ).length() );
+
+	assert( rsd_type_.atom_base( chi_atoms[baseatom] ) == chi_atoms[baseatom] );
+	numeric::xyzMatrix< Real > const R(numeric::xyzMatrix<Real>::identity());
+
+	Vector const axis (( atom(chi_atoms[baseatom+1]).xyz() - atom(chi_atoms[baseatom]).xyz() ).normalized());
+	Vector const v( (setting-current_d)*axis );
+
+	// apply the transform to all "downstream" atoms
+	apply_transform_downstream( chi_atoms[baseatom+1], R, v );
+
+	ASSERT_ONLY(Real const new_d( ( atom(chi_atoms[baseatom+1]).xyz() - atom(chi_atoms[baseatom]).xyz() ).length() );)
+	assert( std::abs( new_d - setting ) < 1e-2 );
+
+	update_actcoord();//ek added 4/28/10
+}
+
+
+///fpd bondangle analog to set_chi (see above for details)
+void
+Residue::set_theta( int const chino, Real const setting ) {
+	int const effchi = (chino==0)? 1 : 0;
+	int const baseatom = (chino==0)? 2 : 3;
+
+	AtomIndices const & chi_atoms( rsd_type_.chi_atoms( effchi ) );
+
+	// get the current chi angle
+	Real const current_theta
+		( numeric::angle_degrees( atom( chi_atoms[baseatom-1] ).xyz(), atom( chi_atoms[baseatom] ).xyz(), atom( chi_atoms[baseatom+1] ).xyz() ) );
+
+	Vector const v12( atom(chi_atoms[baseatom]).xyz() - atom(chi_atoms[baseatom-1]).xyz() );
+	Vector const v23( atom(chi_atoms[baseatom+1]).xyz() - atom(chi_atoms[baseatom]).xyz() );
+	Vector const axis	(v12.cross(v23).normalized());
+
+	// debug ordering of chi atoms
+	assert( ( rsd_type_.atom_base( chi_atoms[baseatom] ) == chi_atoms[baseatom-1]  ) &&
+		( rsd_type_.atom_base( chi_atoms[baseatom+1] ) == chi_atoms[baseatom]  ) );
+
+	numeric::xyzMatrix< Real > const R
+		( numeric::rotation_matrix_degrees( axis, - setting + current_theta ) );
+
+	Vector const chi_atom2_xyz( atom( chi_atoms[baseatom] ).xyz() );
+	Vector const v( chi_atom2_xyz - R * chi_atom2_xyz );
+
+	// apply the transform to all "downstream" atoms
+	apply_transform_downstream( chi_atoms[baseatom], R, v );
+
+	ASSERT_ONLY(Real const new_th(numeric::angle_degrees( 
+	              atom( chi_atoms[baseatom-1] ).xyz(), atom( chi_atoms[baseatom] ).xyz(), atom( chi_atoms[baseatom+1] ).xyz() )); )
+	assert( std::abs( basic::subtract_degree_angles( new_th, setting ) ) < 1e-2 );
+
+	update_actcoord();
+}
+
+
+
+
 /////////////////////////////////////////////////////////////////////////////
 /// @details this assumes that change propagates according to the information from
 /// atom_base array, not from atom tree. So be sure not to get into an

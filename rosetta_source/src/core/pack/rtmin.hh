@@ -50,6 +50,8 @@ public:
 	~RTMin();
 
 public:
+	void set_nonideal(bool nonideal_in) { nonideal_ = nonideal_in; }
+
 	void
 	rtmin(
 		pose::Pose & pose,
@@ -60,6 +62,7 @@ public:
 private:
 	bool minimize_ligand_chis_;
 	bool minimize_ligand_jumps_;
+	bool nonideal_;
 };
 
 void

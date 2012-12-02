@@ -223,6 +223,11 @@ void ResidueAtomTreeCollection::update_atom_tree()
 	tree.dof( dofid );
 }
 
+core::Real ResidueAtomTreeCollection::dof( core::id::DOF_ID const &dofid )
+{
+	return atom_tree_representatives_[ active_restype_ ]->dof( dofid );
+}
+
 /// @brief Assigns the chi dihedral for the active restype.  Must be followed by a call to
 /// update_residue() before the next call to active_residue()
 void ResidueAtomTreeCollection::set_chi( Size chi_index, Real value )
@@ -232,6 +237,30 @@ void ResidueAtomTreeCollection::set_chi( Size chi_index, Real value )
 	atom_tree_representatives_[ active_restype_ ]->set_dof(
 		id::DOF_ID( id::AtomID( residue_representatives_[ active_restype_ ]->chi_atoms( chi_index )[ 4 ], 1 ), id::PHI ),
 		numeric::constants::d::degrees_to_radians * value );
+}
+
+void ResidueAtomTreeCollection::set_d( Size chi_index, Real value )
+{
+	int const effchi = (chi_index==0)? 1 : chi_index;
+	int const baseatom = (chi_index==0)? 3 : 4;
+
+	assert( effchi > 0 && effchi <= residue_representatives_[ active_restype_ ]->nchi() );
+	residue_uptodate_ = false;
+	atom_tree_representatives_[ active_restype_ ]->set_dof(
+		id::DOF_ID( id::AtomID( residue_representatives_[ active_restype_ ]->chi_atoms( effchi )[ baseatom ], 1 ), id::D ), 
+		            value );
+}
+
+void ResidueAtomTreeCollection::set_theta( Size chi_index, Real value )
+{
+	int const effchi = (chi_index==0)? 1 : chi_index;
+	int const baseatom = (chi_index==0)? 3 : 4;
+
+	assert( effchi > 0 && effchi <= residue_representatives_[ active_restype_ ]->nchi() );
+	residue_uptodate_ = false;
+	atom_tree_representatives_[ active_restype_ ]->set_dof(
+		id::DOF_ID( id::AtomID( residue_representatives_[ active_restype_ ]->chi_atoms( effchi )[ baseatom ], 1 ), id::THETA ), 
+		            numeric::constants::d::degrees_to_radians * value );
 }
 
 /// @brief Assigns the coordinates for a residue.  Must be followed by a call to

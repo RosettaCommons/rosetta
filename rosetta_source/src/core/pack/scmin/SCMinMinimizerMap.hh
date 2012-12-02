@@ -69,10 +69,10 @@ public:
 	void set_total_residue( Size total_residue );
 
 	/// @brief Disable the minimization for all residues.  Ammortized O(1).
-	void clear_active_chi();
+	void clear_active_dofs();
 
-	/// @brief Activate all the chi for a particular residue.  Ammortized O(1).
-	void activate_residue_chi( Size resindex );
+	/// @brief Activate all the dofs for a particular residue.  Ammortized O(1).
+	void activate_residue_dofs( Size resindex );
 
 	/// @brief Invoked during the depth-first traversal through the AtomTree.  The AtomTree
 	/// is indicating that a particular torsion is dependent on another torsion.  Record
@@ -117,10 +117,11 @@ public:
 
 	Size n_dof_nodes() const { return n_active_dof_nodes_; }
 
-	/// @brief Initialize a multivec with the chi reflected in the current residue(s)
-	void starting_dofs( optimization::Multivec & chi ) const;
+	/// @brief Initialize a multivec with the dofs reflected in the current residue(s)
+	void starting_dofs( optimization::Multivec & dofs ) const;
+
 	/// @brief Assign the chi values to the residue(s)
-	void assign_dofs_to_mobile_residues( optimization::Multivec const & chi );
+	void assign_dofs_to_mobile_residues( optimization::Multivec const & dofs );
 
 	optimization::DOF_Node &
 	dof_node( Size index ) {
@@ -149,6 +150,11 @@ public:
 		return atom_derivatives_[ resid ];
 	}
 
+	void
+	set_nonideal( bool val_in ) {
+		nonideal_ = val_in;
+	}
+
 private:
 	void reset_dof_nodes();
 
@@ -159,7 +165,9 @@ private:
 	Size nactive_residues_;
 	utility::vector1< Size > active_residues_;
 	utility::vector1< Size > active_residue_index_for_res_;
-	utility::vector1< Size > chi_start_for_active_residue_; // what's the index of the first chi for a particular active residue?
+	utility::vector1< Size > chi_start_for_active_residue_;   // what's the index of the first chi for a particular active residue?
+	                                                          //fpd  not sure if nonideal analogues are needed for this ... 
+
 	utility::vector1< utility::vector1< Size > > active_residue_atom_to_dofnode_index_;
 
 	utility::vector1< utility::vector1< scoring::DerivVectorPair > > atom_derivatives_;
@@ -176,14 +184,17 @@ private:
 	/// this variable tells us which residue is actually being represented.
 	Size focused_residue_;
 
-	/// For parent_dof lookup: track which chi a particular atom is responsible for.
-	Size chi_start_for_focused_residue_;
-	Size nchi_added_for_focused_residue_;
+	/// For parent_dof lookup: track which dofs a particular atom are responsible for.
+	Size dof_start_for_focused_residue_;
+	Size ndofs_added_for_focused_residue_;
 	utility::vector1< Size > atoms_representing_chis_;
+	utility::vector1< Size > atoms_representing_ds_;
+	utility::vector1< Size > atoms_representing_thetas_;
 
 	/// Don't destory DOF_Nodes between rounds of minimization, just mark them as inactive.
 	Size n_active_dof_nodes_;
 
+	bool nonideal_;
 };
 
 

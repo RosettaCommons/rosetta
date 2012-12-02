@@ -69,6 +69,9 @@ public:
 	// copy constructor
 	MinPackMover( MinPackMover const & other );
 
+	void
+	init();
+
 	// methods
 	virtual void apply( Pose & pose );
 	virtual std::string get_name() const;
@@ -126,7 +129,7 @@ private:
 	TaskFactoryCOP task_factory_;
 
 	bool stochastic_pack_; // calls stochastic_pack instead of min_pack if true
-
+	bool nonideal_;
 };
 
 

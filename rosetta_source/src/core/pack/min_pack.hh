@@ -32,7 +32,8 @@ void
 min_pack(
 	pose::Pose & pose,
 	scoring::ScoreFunction const & sfxn,
-	task::PackerTaskCOP task
+	task::PackerTaskCOP task,
+	bool nonideal=false
 );
 
 void
