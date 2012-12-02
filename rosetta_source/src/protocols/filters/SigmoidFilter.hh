@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/simple_filters/SigmoidFilter.hh
+/// @file protocols/filters/SigmoidFilter.hh
 
-#ifndef INCLUDED_protocols_simple_filters_SigmoidFilter_hh
-#define INCLUDED_protocols_simple_filters_SigmoidFilter_hh
+#ifndef INCLUDED_protocols_filters_SigmoidFilter_hh
+#define INCLUDED_protocols_filters_SigmoidFilter_hh
 
 //unit headers
-#include <protocols/simple_filters/SigmoidFilter.fwd.hh>
+#include <protocols/filters/SigmoidFilter.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -23,7 +23,7 @@
 #include <protocols/moves/Mover.fwd.hh>
 
 namespace protocols {
-namespace simple_filters {
+namespace filters {
 
 ///@brief transform the output from a regular filter into a sigmoid ranging from 0-1 according to:
 /// fx = 1/[1 + exp[ ( x - offset ) * steepness ]

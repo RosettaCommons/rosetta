@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/simple_filters/OperatorFilterCreator.hh
+/// @file   protocols/filters/OperatorFilterCreator.hh
 /// @brief  FilterCreators for the OperatorFilter
 
 
 
-#ifndef INCLUDED_protocols_simple_filters_OperatorFilterCreator_hh
-#define INCLUDED_protocols_simple_filters_OperatorFilterCreator_hh
+#ifndef INCLUDED_protocols_filters_OperatorFilterCreator_hh
+#define INCLUDED_protocols_filters_OperatorFilterCreator_hh
 
 // Package Headers
 #include <protocols/filters/FilterCreator.hh>
@@ -25,7 +25,7 @@
 #include <string>
 
 namespace protocols {
-namespace simple_filters {
+namespace filters {
 
 class OperatorFilterCreator : public protocols::filters::FilterCreator
 {

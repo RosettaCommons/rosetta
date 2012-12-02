@@ -57,7 +57,7 @@
 #include <utility/io/izstream.hh>
 #include <sstream>
 #include <core/pose/util.hh>
-#include <protocols/simple_filters/OperatorFilter.hh>
+#include <protocols/filters/OperatorFilter.hh>
 #include <protocols/filters/BasicFilters.hh>
 
 static basic::Tracer TR("protocols.moves.GenericMonteCarloMover");
@@ -723,8 +723,8 @@ GenericMonteCarloMover::apply( Pose & pose )
 					protocols::filters::FilterOP filt( cs_it->first );
 					if( filt->get_type() == "Operator" ){
 						TR<<"Resetting Operator filter's baseline"<<std::endl;
-						//protocols::simple_filters::OperatorOP operator_filter( dynamic_cast< protocols::simple_filters::Operator * >( filt() ) );
-						//operator_filter->reset_baseline( pose );
+						protocols::filters::OperatorOP operator_filter( dynamic_cast< protocols::filters::Operator * >( filt() ) );
+						operator_filter->reset_baseline( pose );
 					}// fi Operator
 				}// for cs_it
 			} //foreach

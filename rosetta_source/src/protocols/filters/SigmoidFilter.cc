@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/simple_filters/SigmoidFilter.cc
+/// @file protocols/filters/SigmoidFilter.cc
 /// @brief
 /// @author Gabi Pszolla & Sarel Fleishman
 
 
 //Unit Headers
-#include <protocols/simple_filters/SigmoidFilter.hh>
-#include <protocols/simple_filters/SigmoidFilterCreator.hh>
+#include <protocols/filters/SigmoidFilter.hh>
+#include <protocols/filters/SigmoidFilterCreator.hh>
 #include <utility/tag/Tag.hh>
 //Project Headers
 #include <basic/Tracer.hh>
@@ -25,9 +25,9 @@
 #include <sstream>
 
 namespace protocols{
-namespace simple_filters {
+namespace filters {
 
-static basic::Tracer TR( "protocols.simple_filters.Sigmoid" );
+static basic::Tracer TR( "protocols.filters.Sigmoid" );
 
 protocols::filters::FilterOP
 SigmoidFilterCreator::create_filter() const { return new Sigmoid; }

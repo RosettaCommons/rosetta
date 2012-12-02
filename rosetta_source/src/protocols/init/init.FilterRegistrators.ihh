@@ -91,7 +91,7 @@ static FilterRegistrator< protocols::simple_filters::InterfaceSasaFilterCreator 
 static FilterRegistrator< protocols::simple_filters::InterfaceBindingEnergyDensityFilterCreator > reg_InterfaceBindingEnergyDensityFilterCreator;
 static FilterRegistrator< protocols::simple_filters::NeighborTypeFilterCreator > reg_NeighborTypeFilterCreator;
 static FilterRegistrator< protocols::simple_filters::NMerPSSMEnergyFilterCreator > reg_NMerPSSMEnergyFilterCreator;
-static FilterRegistrator< protocols::simple_filters::OperatorFilterCreator > reg_OperatorFilterCreator;
+static FilterRegistrator< protocols::filters::OperatorFilterCreator > reg_OperatorFilterCreator;
 static FilterRegistrator< protocols::simple_filters::PackStatFilterCreator > reg_PackStatFilterCreator;
 static FilterRegistrator< protocols::simple_filters::PoseInfoFilterCreator > reg_PoseInfoFilterCreator;
 static FilterRegistrator< protocols::simple_filters::RangeFilterCreator > reg_RangeFilterCreator;
@@ -106,7 +106,7 @@ static FilterRegistrator< protocols::simple_filters::RotamerBoltzmannWeightFilte
 static FilterRegistrator< protocols::simple_filters::ScoreCutoffFilterCreator > reg_ScoreCutoffFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ScoreTypeFilterCreator > reg_ScoreTypeFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ShapeComplementarityFilterCreator > reg_ScFilterCreator;
-static FilterRegistrator< protocols::simple_filters::SigmoidFilterCreator > reg_SigmoidFilterCreator;
+static FilterRegistrator< protocols::filters::SigmoidFilterCreator > reg_SigmoidFilterCreator;
 static FilterRegistrator< protocols::simple_filters::SymmetricMotifFilterCreator > reg_SymmetricMotifFilterCreator;
 static FilterRegistrator< protocols::simple_filters::SidechainRmsdFilterCreator > reg_SidechainRmsdFilterCreator;
 static FilterRegistrator< protocols::simple_filters::TerminusDistanceFilterCreator > reg_TerminusDistanceFilterCreator;

@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/simple_filters/OperatorFilter.hh
+/// @file protocols/filters/OperatorFilter.hh
 
-#ifndef INCLUDED_protocols_simple_filters_OperatorFilter_hh
-#define INCLUDED_protocols_simple_filters_OperatorFilter_hh
+#ifndef INCLUDED_protocols_filters_OperatorFilter_hh
+#define INCLUDED_protocols_filters_OperatorFilter_hh
 
 //unit headers
-#include <protocols/simple_filters/OperatorFilter.fwd.hh>
+#include <protocols/filters/OperatorFilter.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -23,7 +23,7 @@
 #include <protocols/moves/Mover.fwd.hh>
 
 namespace protocols {
-namespace simple_filters {
+namespace filters {
 
 enum Operation { SUM, PRODUCT, NORMALIZED_SUM, MAX, MIN };
 ///@brief simply take a list of filters and combine them using the operation above

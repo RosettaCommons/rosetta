@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/simple_filters/OperatorFilter.cc
+/// @file protocols/filters/OperatorFilter.cc
 /// @brief
 /// @author Gabi Pszolla & Sarel Fleishman
 
 
 //Unit Headers
-#include <protocols/simple_filters/OperatorFilter.hh>
-#include <protocols/simple_filters/OperatorFilterCreator.hh>
-#include <protocols/simple_filters/SigmoidFilter.hh>
+#include <protocols/filters/OperatorFilter.hh>
+#include <protocols/filters/OperatorFilterCreator.hh>
+#include <protocols/filters/SigmoidFilter.hh>
 #include <utility/tag/Tag.hh>
 //Project Headers
 #include <basic/Tracer.hh>
@@ -26,9 +26,9 @@
 #include <utility/string_util.hh>
 #include <protocols/filters/BasicFilters.hh>
 namespace protocols{
-namespace simple_filters {
+namespace filters {
 
-static basic::Tracer TR( "protocols.simple_filters.Operator" );
+static basic::Tracer TR( "protocols.filters.Operator" );
 
 protocols::filters::FilterOP
 OperatorFilterCreator::create_filter() const { return new Operator; }
@@ -55,6 +55,8 @@ Operator::reset_baseline( core::pose::Pose const & pose ){
     for( protocols::filters::CompoundFilter::CompoundStatement::iterator cs_it = comp_filt_op->begin(); cs_it != comp_filt_op->end(); ++cs_it ){
        protocols::filters::FilterOP f( cs_it->first );
 			if( f->get_type() == "Sigmoid" ){
+				using namespace protocols::filters;
+
 				SigmoidOP sigmoid_filter( dynamic_cast< Sigmoid * >( f() ) );
 				runtime_assert( sigmoid_filter );
 				sigmoid_filter->reset_baseline( pose );

@@ -28,6 +28,8 @@ sources = {
 		"Filter",
 		"FilterCreator",
 		"FilterFactory",
+		"OperatorFilter",
+		"SigmoidFilter",
 		"ReplicateFilter",
 		"TimeFilter",
 	],

@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/simple_filters/SigmoidFilterCreator.hh
+/// @file   protocols/filters/SigmoidFilterCreator.hh
 /// @brief  FilterCreators for the SigmoidFilter
 
 
 
-#ifndef INCLUDED_protocols_simple_filters_SigmoidFilterCreator_hh
-#define INCLUDED_protocols_simple_filters_SigmoidFilterCreator_hh
+#ifndef INCLUDED_protocols_filters_SigmoidFilterCreator_hh
+#define INCLUDED_protocols_filters_SigmoidFilterCreator_hh
 
 // Package Headers
 #include <protocols/filters/FilterCreator.hh>
@@ -25,7 +25,7 @@
 #include <string>
 
 namespace protocols {
-namespace simple_filters {
+namespace filters {
 
 class SigmoidFilterCreator : public protocols::filters::FilterCreator
 {
