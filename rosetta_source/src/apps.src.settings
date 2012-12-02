@@ -130,6 +130,9 @@ sources = {
 		"make_rot_lib",
 		"UnfoldedStateEnergyCalculator",
 	],
+	"public/noncanonical_backbones": [
+		"oop_design",
+	],
 	"public/pepspec": [
 		"pepspec",
 		"pepspec_anchor_dock",
