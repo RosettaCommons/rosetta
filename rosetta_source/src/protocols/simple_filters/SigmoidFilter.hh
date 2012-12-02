@@ -56,6 +56,8 @@ class Sigmoid : public filters::Filter
 		void reset_baseline( core::pose::Pose const & pose ); /// allows within-trajectory resetting of the baseline. Notice this is nonconst, so can't be called from apply
   	core::Real threshold() const{ return threshold_; }
   	void threshold( core::Real const t ){ threshold_ = t; }
+		void baseline_checkpointing_filename( std::string const s ){ baseline_checkpointing_filename_ = s; }
+		std::string baseline_checkpointing_filename() const{ return baseline_checkpointing_filename_; }
   private:
     protocols::filters::FilterOP filter_; /// dflt NULL
     core::Real steepness_; //dflt 1
@@ -63,6 +65,7 @@ class Sigmoid : public filters::Filter
 		core::Real baseline_; /// dflt 0; this is tricky; used internally to keep track of where the pose started. It is only reset by reset_baseline, and cannot, due to constness, be changed by apply
     bool negate_; /// dflt false
 		core::Real threshold_; /// dflt 0 (always accept)
+		std::string baseline_checkpointing_filename_; // dflt ""; If this is set, the baseline value is saved to a checkpointing file to allow for recovery of the baseline after failure.
 };
 }
 }

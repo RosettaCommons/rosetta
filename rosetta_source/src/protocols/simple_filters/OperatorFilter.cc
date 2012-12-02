@@ -24,6 +24,7 @@
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 #include <utility/string_util.hh>
+#include <protocols/filters/BasicFilters.hh>
 namespace protocols{
 namespace simple_filters {
 
@@ -48,14 +49,19 @@ Operator::~Operator() {}
 
 void
 Operator::reset_baseline( core::pose::Pose const & pose ){
-	foreach( protocols::filters::FilterOP f, filters() ){
-		if( f->get_type() == "Sigmoid" ){
-			SigmoidOP sigmoid_filter( dynamic_cast< Sigmoid * >( f() ) );
-			runtime_assert( sigmoid_filter );
-			sigmoid_filter->reset_baseline( pose );
-			TR<<"Resetting Sigmoid filter's baseline"<<std::endl;
-		}
-	}
+	foreach( protocols::filters::FilterOP comp_statement_filt, filters() ){///all RosettaScripts user-defined filters are compoundstatements
+    protocols::filters::CompoundFilterOP comp_filt_op( dynamic_cast< protocols::filters::CompoundFilter * >( comp_statement_filt() ) );
+    runtime_assert( comp_filt_op );
+    for( protocols::filters::CompoundFilter::CompoundStatement::iterator cs_it = comp_filt_op->begin(); cs_it != comp_filt_op->end(); ++cs_it ){
+       protocols::filters::FilterOP f( cs_it->first );
+			if( f->get_type() == "Sigmoid" ){
+				SigmoidOP sigmoid_filter( dynamic_cast< Sigmoid * >( f() ) );
+				runtime_assert( sigmoid_filter );
+				sigmoid_filter->reset_baseline( pose );
+				TR<<"Resetting Sigmoid filter's baseline"<<std::endl;
+			}
+		}//for cs_it
+	}//foreach
 }
 
 void

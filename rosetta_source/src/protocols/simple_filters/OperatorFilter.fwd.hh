@@ -18,10 +18,10 @@
 namespace protocols {
 namespace simple_filters {
 
-class OperatorFilter;
+class Operator;
 
-typedef utility::pointer::owning_ptr< OperatorFilter > OperatorFilterOP;
-typedef utility::pointer::owning_ptr< OperatorFilter const > OperatorFilterCOP;
+typedef utility::pointer::owning_ptr< Operator > OperatorOP;
+typedef utility::pointer::owning_ptr< Operator const > OperatorCOP;
 
 }
 }

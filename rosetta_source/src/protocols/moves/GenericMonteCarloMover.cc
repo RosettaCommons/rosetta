@@ -57,6 +57,8 @@
 #include <utility/io/izstream.hh>
 #include <sstream>
 #include <core/pose/util.hh>
+#include <protocols/simple_filters/OperatorFilter.hh>
+#include <protocols/filters/BasicFilters.hh>
 
 static basic::Tracer TR("protocols.moves.GenericMonteCarloMover");
 static basic::Tracer TR_energies("protocols.moves.GenericMonteCarloMover.individual_energies");
@@ -599,6 +601,7 @@ GenericMonteCarloMover::load_trial_number_from_checkpoint() const{
 	core::Size const end = f.tellg();
 	if( end - begin == 0 )//file size == 0
 		return 1;
+	f.seekg( 0, ios::beg );// return to the beginning
 
 	TR<<"Loading trial number from checkpoint"<<std::endl;
 	std::string line;
@@ -712,6 +715,20 @@ GenericMonteCarloMover::apply( Pose & pose )
 	}
   for( Size i=load_trial_number_from_checkpoint(); i<=maxtrials_; i++ ){
     TR<<"Trial number: "<<i<<std::endl;
+		if( i == 1 ){
+			foreach( protocols::filters::FilterOP comp_statement_filt, filters_ ){ /// User defined filters in RosettaScripts are all CompoundFilter, so poke inside...
+				protocols::filters::CompoundFilterOP comp_filt_op( dynamic_cast< protocols::filters::CompoundFilter * >( comp_statement_filt() ) );
+				runtime_assert( comp_filt_op );
+				for( protocols::filters::CompoundFilter::CompoundStatement::iterator cs_it = comp_filt_op->begin(); cs_it != comp_filt_op->end(); ++cs_it ){
+					protocols::filters::FilterOP filt( cs_it->first );
+					if( filt->get_type() == "Operator" ){
+						TR<<"Resetting Operator filter's baseline"<<std::endl;
+						protocols::simple_filters::OperatorOP operator_filter( dynamic_cast< protocols::simple_filters::Operator * >( filt() ) );
+						operator_filter->reset_baseline( pose );
+					}// fi Operator
+				}// for cs_it
+			} //foreach
+		}//fi i == 1
 		if( i > 1 && adaptive_movers() && i % adaptation_period() == 0 ){
 /// The probability for each mover within a single-random parsedprotocol is determined by the number of accepts it had during the previous adaptation period:
 /// each mover is assigned a pseducount of 1, and then any additional accept favors it over others. At the adaptation stage, the total number of accepts (including pseudocounts) is used to normalize the individual movers' number of accepts and the probability is the mover's accepts / by the total accepts
