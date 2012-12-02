@@ -24,7 +24,7 @@
 #include <protocols/rosetta_scripts/util.hh>
 
 #include <utility/vector1.hh>
-#include <numeric/util.cc>
+#include <numeric/util.hh>
 
 #include <algorithm>
 
