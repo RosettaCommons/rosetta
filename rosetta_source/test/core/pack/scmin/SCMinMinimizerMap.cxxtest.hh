@@ -116,7 +116,7 @@ public:
 		collection->residue_atomtree_collection( 7 ).set_active_restype_index( 20 );
 		SCMinMinimizerMap scminmap;
 		scminmap.set_total_residue( 20 );
-		scminmap.activate_residue_chi( 7 );
+		scminmap.activate_residue_dofs( 7 );
 
 		scminmap.setup( collection );
 
@@ -137,8 +137,8 @@ public:
 
 		collection->residue_atomtree_collection( 11 ).set_active_restype_index( 8 );
 
-		scminmap.clear_active_chi();
-		scminmap.activate_residue_chi( 11 );
+		scminmap.clear_active_dofs();
+		scminmap.activate_residue_dofs( 11 );
 		scminmap.setup( collection );
 
 		Residue const & res11( collection->residue_atomtree_collection( 11 ).active_residue() );

@@ -122,7 +122,7 @@ public:
 		collection->residue_atomtree_collection( 7 ).set_active_restype_index( 21 );
 		SCMinMinimizerMap scminmap;
 		scminmap.set_total_residue( 20 );
-		scminmap.activate_residue_chi( 7 );
+		scminmap.activate_residue_dofs( 7 );
 
 		scminmap.setup( collection );
 
