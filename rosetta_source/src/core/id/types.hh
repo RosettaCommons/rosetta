@@ -18,7 +18,7 @@
 
 // Package headers
 #include <core/types.hh>
-
+#include <string>
 
 namespace core {
 namespace id {
@@ -41,9 +41,14 @@ enum DOF_Type {
 	RB3,
 	RB4,
 	RB5,
-	RB6
+	RB6,
+	DOF_Type_MAX = RB6
 };
 static Size const n_DOF_Type( 9 ); // Update this if DOF_Type changes
+
+std::string DOF_Type_to_string( DOF_Type dof_type );
+DOF_Type string_to_DOF_Type( std::string const & dof_type );
+
 
 /// @brief Torsion type -- used in the TorsionID class
 /// - BB: backbone torsion
@@ -52,8 +57,13 @@ static Size const n_DOF_Type( 9 ); // Update this if DOF_Type changes
 enum TorsionType {
 	BB = 1,
 	CHI,
-	JUMP
+	JUMP,
+	TorsionType_MAX=JUMP
 };
+
+std::string TorsionType_to_string( TorsionType torsion_type );
+TorsionType string_to_TorsionType( std::string const & torsion_type );
+
 
 static Size const   phi_torsion( 1 );
 static Size const   psi_torsion( 2 );

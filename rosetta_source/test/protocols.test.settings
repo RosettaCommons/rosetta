@@ -211,6 +211,7 @@ sources = {
 
         "simple_moves" : [
         	"FavorSequenceProfile",
+        	"MinMover",
         ],
 
         #"simple_moves/chiral" : [

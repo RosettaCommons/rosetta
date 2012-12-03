@@ -203,7 +203,8 @@ MinMover::apply_dof_tasks_to_movemap(
 	for(
 		DOF_TaskMap::const_iterator t=dof_tasks_.begin(), te=dof_tasks_.end();
 		t != te; ++t){
-		//generate task
+
+		core::id::TorsionType const & torsion_type = t->first;
 		PackerTaskOP task( t->second->create_task_and_apply_taskoperations( pose ) );
 
 		//modify movemap by task
@@ -211,11 +212,8 @@ MinMover::apply_dof_tasks_to_movemap(
 
 		for ( Size i(1); i <= nres; ++i ) {
 			if ( !task->pack_residue( i ) ){
-				if( t->first.first == core::id::PHI ){
-					movemap.set( t->first.second, false );
-				} else {
-					movemap.set( t->first.first, false );
-				}
+				movemap.set(
+					core::kinematics::MoveMap::MoveMapTorsionID(i, torsion_type),	false );
 			}
 		}
 	}
@@ -392,7 +390,6 @@ void MinMover::parse_chi_and_bb( TagPtr const tag )
 void
 MinMover::parse_dof_task_type(
 	std::string const & tag_name,
-	core::id::DOF_Type dof_type,
 	core::id::TorsionType torsion_type,
 	TagPtr const tag,
 	protocols::moves::DataMap & data
@@ -419,10 +416,7 @@ MinMover::parse_dof_task_type(
 			utility_exit_with_message("TaskOperation " + t_o_key + " not found in DataMap.");
 		}
 	}
-	dof_tasks_[
-		std::make_pair<core::id::DOF_Type, core::id::TorsionType>(
-			dof_type, torsion_type)] =
-		task_factory;
+	dof_tasks_[ torsion_type ] = task_factory;
 }
 
 void
@@ -433,27 +427,14 @@ MinMover::parse_dof_tasks(
 
 	if(
 		tag->hasOption("bb_task_operations") ||
-		tag->hasOption("chi_task_operations") ||
-		tag->hasOption("bondangle_task_operations") ||
-		tag->hasOption("bondlength_task_operations")){
+		tag->hasOption("chi_task_operations")) {
 		TR
 			<< "Adding the following task operations to mover " << tag->getName() << " "
 			<< "called " << tag->getOption<std::string>( "name", "no_name" ) << ":" << std::endl;
 	}
 
-	parse_dof_task_type( "bb_task_operations", core::id::PHI, core::id::BB, tag, data );
-	parse_dof_task_type( "chi_task_operations", core::id::PHI, core::id::CHI, tag, data );
-	parse_dof_task_type(
-		"bondangle_task_operations",
-		core::id::THETA,
-		core::id::BB, // (dummy parameter)
-		tag, data );
-
-	parse_dof_task_type(
-		"bondlength_task_operations",
-		core::id::D,
-		core::id::BB, // (dummy parameter)
-		tag, data );
+	parse_dof_task_type( "bb_task_operations", core::id::BB, tag, data );
+	parse_dof_task_type( "chi_task_operations", core::id::CHI, tag, data );
 }
 
 std::ostream &operator<< (std::ostream &os, MinMover const &mover)

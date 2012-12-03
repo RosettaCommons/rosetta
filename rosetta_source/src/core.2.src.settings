@@ -103,6 +103,7 @@ sources = {
 		"SequenceMapping",
 		"TorsionID",
 		"TorsionID_Range",
+		"types",
 	],
 	"core/kinematics": [
 		"AtomTree",
