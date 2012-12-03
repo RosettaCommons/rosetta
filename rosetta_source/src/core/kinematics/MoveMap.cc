@@ -19,8 +19,6 @@
 // Package headers
 #include <core/id/DOF_ID.hh>
 #include <core/id/TorsionID.hh>
-#include <core/id/JumpID.hh>
-#include <core/id/types.hh>
 
 // C++ headers
 // AUTO-REMOVED #include <iterator>
@@ -509,43 +507,6 @@ MoveMap::init_from_file( std::string const & filename ) {
 
 } // init_from_file
 
-
-bool
-operator==( MoveMap const & a, MoveMap const & b )
-{
-	return
-		std::equal(
-			a.torsion_type_map_.begin(),
-			a.torsion_type_map_.end(),
-			b.torsion_type_map_.begin()) &&
-		std::equal(
-			a.move_map_torsion_id_map_.begin(),
-			a.move_map_torsion_id_map_.end(),
-			b.move_map_torsion_id_map_.begin()) &&
-		std::equal(
-			a.torsion_id_map_.begin(),
-			a.torsion_id_map_.end(),
-			b.torsion_id_map_.begin()) &&
-		std::equal(
-			a.dof_type_map_.begin(),
-			a.dof_type_map_.end(),
-			b.dof_type_map_.begin()) &&
-		std::equal(
-			a.dof_id_map_.begin(),
-			a.dof_id_map_.end(),
-			b.dof_id_map_.begin()) &&
-		std::equal(
-			a.jump_id_map_.begin(),
-			a.jump_id_map_.end(),
-			b.jump_id_map_.begin());
-}
-
-bool
-operator!=( MoveMap const & a, MoveMap const & b ) {
-	return !( a == b );
-}
-
-
 void
 MoveMap::show( std::ostream & out, Size total_residue) const
 {
@@ -563,160 +524,41 @@ MoveMap::show( std::ostream & out, Size total_residue) const
 void
 MoveMap::show( std::ostream & out ) const
 {
-	using std::endl;
-	std::string const header_sep(31, '-'), field_sep(" ");
-	if(!dof_type_map_.empty()){
-		out << "DOF_Type Level Control:" << endl;
-		out << header_sep << endl;
-		out
-			<< A(8, "DOF_Type") << field_sep
-			<< A(10, "TRUE/FALSE") << endl;
-		out << header_sep << endl;
-		for(
-			DOF_TypeMap::const_iterator
-				it = dof_type_begin(), it_end = dof_type_end();
-			it != it_end; ++it){
-			out
-				<< A(8, DOF_Type_to_string(it->first)) << field_sep
-				<< A(10, it->second ? "TRUE" : "FALSE") << endl;
+	out << "-------------------------------\n";	
+	out <<A(8,"resnum")<<' '<<A(8,"Type") <<' '<<A(12,"TRUE/FALSE ")<<std::endl;
+	out << "-------------------------------\n";
+	Size prev_resnum;
+	utility::vector1< bool > jumpbool;
+	utility::vector1< Size > jumpnum;
+	for (MoveMapTorsionID_Map::const_iterator it = movemap_torsion_id_begin(), it_end = movemap_torsion_id_end(); it != it_end; ++it){		
+		MoveMapTorsionID mmtorsionID = it->first;
+		bool boolean = it->second;
+		Size res = mmtorsionID.first;
+		TorsionType torsiontype = mmtorsionID.second;
+
+		// convert enum to string output
+		std::string type;
+		if (torsiontype == 1) {type = "BB ";}
+		else if (torsiontype == 2) {type = "SC ";}
+		else if (torsiontype == 3) {
+			type = "JUMP"; jumpbool.push_back(boolean); jumpnum.push_back(res);}
+
+		// Only show each residue/jump number once (and only if torsion type is either BB or SC)
+		if ((prev_resnum == mmtorsionID.first) && (type != "JUMP")) {
+			out << A(8,' ') <<' '<< A(8,type) <<' '<< A(8,(boolean ? "TRUE":"FALSE"))<< "\n";
 		}
-		out << endl;
+		else if ((prev_resnum != mmtorsionID.first) && (type != "JUMP")) {
+			out << I(8,3,res) <<' '<< A(8,type) <<' '<< A(8,(boolean ? "TRUE":"FALSE"))<< "\n";
+		}
+
+		// Remember the previous residue/jump number
+		prev_resnum = res;
 	}
-
-	if(!torsion_type_map_.empty()){
-		out << "TorsionType Level Control:" << endl;
-		out << header_sep << endl;
-		out
-			<< A(11, "TorsionType") << field_sep
-			<< A(10, "TRUE/FALSE")
-			<< endl;
-		out << header_sep << endl;
-		for(
-			TorsionTypeMap::const_iterator
-				it = torsion_type_begin(), it_end = torsion_type_end();
-			it != it_end; ++it){
-			out
-				<< A(11, TorsionType_to_string(it->first)) << field_sep
-				<< A(10, it->second ? "TRUE" : "FALSE")
-				<< endl;
-		}
-		out << endl;
-	}
-
-	if(!move_map_torsion_id_map_.empty()){
-		out << "(Residue, TorsionType) Level Control:" << endl;
-		out << header_sep << endl;
-		out
-			<< A(6,"resnum") << field_sep
-			<< A(11,"TorsionType") << field_sep
-			<< A(10,"TRUE/FALSE") << endl;
-		out << header_sep << endl;
-
-		utility::vector1< bool > jumpbool;
-		utility::vector1< Size > jumpnum;
-		for (MoveMapTorsionID_Map::const_iterator it = movemap_torsion_id_begin(), it_end = movemap_torsion_id_end(); it != it_end; ++it){
-			MoveMapTorsionID mmtorsionID = it->first;
-			bool boolean = it->second;
-			Size res = mmtorsionID.first;
-			TorsionType torsiontype = mmtorsionID.second;
-
-			// convert enum to string output
-			std::string type;
-			if (torsiontype == 1) {type = "BB";}
-			else if (torsiontype == 2) {type = "SC";}
-			else if (torsiontype == 3) {
-				type = "JUMP"; jumpbool.push_back(boolean); jumpnum.push_back(res);}
-
-			if (type != "JUMP") {
-				out
-					<< I(6,3,res) << field_sep
-					<< A(11,type) << field_sep
-					<< A(10, boolean ? "TRUE":"FALSE" ) << endl;
-			}
-		}
-		out << endl;
-
-		if(jumpnum.size() != 0){
-			out << "FoldTree based Jump Control:" << endl;
-			out << header_sep << endl;
-			out
-				<< A(7,"jumpnum") << field_sep
-				<< A(4,"Type") << field_sep
-				<< A(10,"TRUE/FALSE") << endl;
-			out << header_sep << endl;
-			for (Size i = 1; i <= jumpnum.size(); ++i) {
-				out
-					<< I(7, 3, jumpnum[i]) << field_sep
-					<< A(4,"JUMP") << field_sep
-					<< A(10, jumpbool[i] ? "TRUE":"FALSE" ) << endl;
-			}
-			out << endl;
-		}
-	}
-
-	if(!jump_id_map_.empty()){
-		out << "Fold Tree Independent Jump Control" << endl;
-		out << header_sep << endl;
-		out
-			<< A(4, "Res1") << field_sep
-			<< A(4, "Res2") << field_sep
-			<< A(10, "TRUE/FALSE") << endl;
-		out << header_sep << endl;
-		for(
-			JumpID_Map::const_iterator
-				it = jump_id_begin(), it_end = jump_id_end();
-			it != it_end; ++it){
-			core::id::JumpID jump_id(it->first);
-			out
-				<< A(4, jump_id.rsd1()) << field_sep
-				<< A(4, jump_id.rsd2()) << field_sep
-				<< A(10, it->second ? "TRUE" : "FALSE");
-		}
-		out << endl;
-	}
-
-	if(!torsion_id_map_.empty()){
-		out << " (Residue, TorsionType, torsion_num) Level Control:" << endl;
-		out << header_sep << endl;
-		out
-			<< A(6, "resnum") << field_sep
-			<< A(11, "TorsionType") << field_sep
-			<< A(7, "tor_num") << field_sep
-			<< A(10, "TRUE/FALSE") << endl;
-		out << header_sep << endl;
-		for(
-			TorsionID_Map::const_iterator
-				it = torsion_id_begin(), it_end = torsion_id_end();
-			it != it_end; ++it){
-			out
-				<< A(6, it->first.rsd()) << field_sep
-				<< A(11, TorsionType_to_string(it->first.type())) << field_sep
-				<< A(7, it->first.torsion()) << field_sep
-				<< A(10, it->second ? "TRUE" : "FALSE") << endl;
-		}
-		out << endl;
-	}
-
-	if(!dof_id_map_.empty()){
-		out << " (Residue, Atom, DOF_Type) Level Control:" << endl;
-		out << header_sep << endl;
-		out
-			<< A(6, "resnum") << field_sep
-			<< A(6, "atmnum") << field_sep
-			<< A(8, "DOF_Type") << field_sep
-			<< A(10, "TRUE/FALSE") << endl;
-		out << header_sep << endl;
-		for(
-			DOF_ID_Map::const_iterator
-				it = dof_id_begin(), it_end = dof_id_end();
-			it != it_end; ++it){
-			out
-				<< A(6, it->first.rsd()) << field_sep
-				<< A(6, it->first.atomno()) << field_sep
-				<< A(8, DOF_Type_to_string(it->first.type())) << field_sep
-				<< A(10, it->second ? "TRUE" : "FALSE") << endl;
-		}
-		out << endl;
+	out << "-------------------------------\n";	
+	out <<A(8,"jumpnum")<<' '<<A(8,"Type") <<' '<<A(12,"TRUE/FALSE ")<<std::endl;
+	out << "-------------------------------\n";
+	for (Size i = 1; i <= jumpnum.size(); ++i) {
+		out << I(8,3,jumpnum[i])<<' '<< A(8,"JUMP") <<' '<< A(8,(jumpbool[i] ? "TRUE":"FALSE"))<< "\n";
 	}
 }
 

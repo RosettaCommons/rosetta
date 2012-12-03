@@ -71,7 +71,6 @@ public: // Properties
   Size
   rsd1() const { return rsd1_; }
 
-	// why does this accessor return a non-const reference!!
   inline
   Size &
   rsd2() { return rsd2_; }

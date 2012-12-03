@@ -61,9 +61,12 @@ public:
 	typedef core::Real Real;
 
 private:
-
+	// This type needs both DOF_Type and Torsion type to handle both
+	// backbone torsion angles and bond angles and bond lengths.
 	typedef
-		std::map< core::id::TorsionType, core::pack::task::TaskFactoryOP >
+		std::map<
+			std::pair< core::id::DOF_Type, core::id::TorsionType >,
+			core::pack::task::TaskFactoryOP >
 		DOF_TaskMap;
 
 public:
@@ -114,6 +117,7 @@ public:
 
 	void parse_dof_task_type(
 		std::string const & tag_name,
+		core::id::DOF_Type dof_type,
 		core::id::TorsionType torsion_type,
 		TagPtr const tag,
 		protocols::moves::DataMap & data);

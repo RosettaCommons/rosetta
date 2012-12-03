@@ -58,25 +58,6 @@ namespace kinematics {
 /// one residue)
 /// @li DOF-base: DOF_type( D, THETA, PHI ) -> DOF_ID (D, THETA, PHI of one atom)
 ///
-/// For reference, there are the types and maps:
-///
-/// TorsionType: {BB, CHI, JUMP}                    core/id/types.hh
-/// JumpID: (res_num, res_num)                      core/id/JumpID.hh
-/// MoveMapTorsionID: (res_num, TorsionType)        core/kinematics/MoveMap.hh
-/// TorsionID: (res_num, TorsionType, torsion_num)  core/id/TorsionID.hh
-/// AtomID: (res_num, atom_num)                     core/id/AtomID.hh
-///
-/// DOF_Type: {PHI, THETA, D, RB1, RB2, ..., RB6}   core/id/types.hh
-/// DOF_ID: (AtomID, DOF_Type)                      core/id/DOF_ID.hh
-///
-///    torsion_type_map_: TorsionType -> bool
-///      jump_id_map_: JumpID -> bool
-///      move_map_torsion_id_map_: MoveMapTorsionID -> bool
-///        torsion_id_map_: TorsionID -> bool
-///
-///    dof_type_map_: DOF_Type -> bool
-///      dof_id_map_: DOF_ID -> bool
-///
 /// setting for each level are stored in a map structure and they are only
 /// added to the map when setting methods are invoked. As a result, MoveMap
 /// does not behave like a "Boolean vector" which always contains setting for
@@ -559,15 +540,6 @@ public: // movemap-movemap functionality
 public: // i/o
 	/// @brief Read MoveMap from file.
 	void init_from_file( std::string const & filename );
-
-public: // equality operators
-	friend
-	bool
-	operator==( MoveMap const & a, MoveMap const & b );
-
-	friend
-	bool
-	operator!=( MoveMap const & a, MoveMap const & b );
 
 public: // status
 	/// @brief gives the BB and CHI bool values up to a given residue number
