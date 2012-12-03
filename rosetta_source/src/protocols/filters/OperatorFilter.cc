@@ -84,7 +84,11 @@ Operator::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap &, filter
 		operation( MAX );
 	if( op=="MIN" )
 		operation( MIN );
-	if( op != "SUM" && op != "PRODUCT" && op != "NORMALIZED_SUM" && op != "MAX" && op != "MIN" )
+	if( op=="SUBTRACT" )
+		operation( SUBTRACT );
+	if( op=="ABS" )
+		operation( ABS );
+	if( op != "SUM" && op != "PRODUCT" && op != "NORMALIZED_SUM" && op != "MAX" && op != "MIN" && op != "SUBTRACT" && op != "ABS" )
 		utility_exit_with_message( "Operation " + op + " not recognized" );
 	threshold( tag->getOption< core::Real >( "threshold", 0 ) );
 
@@ -93,6 +97,10 @@ Operator::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap &, filter
 		add_filter( protocols::rosetta_scripts::parse_filter( fname, filters ) );
 		TR<<"Adding filter "<<fname<<std::endl;
 	}
+	if( operation() == SUBTRACT && filters_.size() != 2 )
+		utility_exit_with_message( "Operation SUBTRACT requested, but the number of filters provided is different than 2. I only know how to subtract one filter from another" );
+	if( operation() == ABS && filters_.size() != 1 )
+		utility_exit_with_message( "Operation ABS requested, but the number of filters provided is different than 1. I only know how to take the absolute value of one filter" );
 	TR<<" using operator "<<op<<std::endl;
 }
 
@@ -121,6 +129,21 @@ Operator::compute(
 	core::pose::Pose const & pose
 ) const {
 	core::Real val( 0.0 );
+	if( operation() == SUBTRACT ){
+		runtime_assert( filters().size() == 2 );
+		core::Real const val1( filters()[ 1 ]->report_sm( pose ) );
+		core::Real const val2( filters()[ 2 ]->report_sm( pose ) );
+		core::Real const difference( val1 - val2 );
+		TR<<"Filters' values "<<val1<<" "<<val2<<" and the difference is "<<difference<<std::endl;
+		return difference;
+	}
+	if( operation() == ABS ){
+		runtime_assert( filters().size() == 1 );
+		core::Real const val( filters()[ 1 ]->report_sm( pose ) );
+		core::Real const abs_val( std::abs( val ) );
+		TR<<"Filter returns "<<val<<" and its absolute value is "<<abs_val<<std::endl;
+		return abs_val;
+	}
 	if( operation() == PRODUCT )
 		val = 1.0;
 	if( operation() == MIN )

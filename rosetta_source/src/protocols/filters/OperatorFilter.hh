@@ -25,7 +25,7 @@
 namespace protocols {
 namespace filters {
 
-enum Operation { SUM, PRODUCT, NORMALIZED_SUM, MAX, MIN };
+enum Operation { SUM, PRODUCT, NORMALIZED_SUM, MAX, MIN, SUBTRACT, ABS };
 ///@brief simply take a list of filters and combine them using the operation above
 class Operator : public filters::Filter
 {
