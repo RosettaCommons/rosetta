@@ -588,28 +588,28 @@ GenericMonteCarloMover::boltzmann( Pose & pose )
 } // boltzmann
 
 core::Size
-GenericMonteCarloMover::load_trial_number_from_checkpoint() const{
+GenericMonteCarloMover::load_trial_number_from_checkpoint( core::pose::Pose & pose ){
 	using namespace std;
-	if( saved_trial_number_file_ == "" )
-		return 1;
-	ifstream f( saved_trial_number_file_.c_str(), ios::in );
-	if( !f.good() )
-		return 1;
+	core::Size trial( 1 );
+	if( saved_trial_number_file_ != "" ){
+		ifstream f( saved_trial_number_file_.c_str(), ios::in );
+		if( f.good() ){
+			core::Size const begin = f.tellg();
+			f.seekg( 0, ios::end );
+			core::Size const end = f.tellg();
+			if( end - begin != 0 ){//file size != 0
+				f.seekg( 0, ios::beg );// return to the beginning
 
-	core::Size const begin = f.tellg();
-	f.seekg( 0, ios::end );
-	core::Size const end = f.tellg();
-	if( end - begin == 0 )//file size == 0
-		return 1;
-	f.seekg( 0, ios::beg );// return to the beginning
-
-	TR<<"Loading trial number from checkpoint"<<std::endl;
-	std::string line;
-	getline( f, line );
-	std::istringstream line_stream( line );
-	core::Size trial;
-	line_stream >> trial;
-	TR<<"Loaded trial number: "<<trial<<std::endl;
+				TR<<"Loading trial number from checkpoint"<<std::endl;
+				std::string line;
+				getline( f, line );
+				std::istringstream line_stream( line );
+				line_stream >> trial;
+				TR<<"Loaded trial number: "<<trial<<std::endl;
+			}//fi end-begin
+			f.close();
+		}//fi f.good()
+	}// fi saved_trial_number_file_ != ""
 	if( mover_tag_() != NULL ){
 		std::string const fname( saved_trial_number_file_ + ".mover_tag" );
 		ifstream f_mover_tag( fname.c_str(), ios::in );
@@ -620,7 +620,26 @@ GenericMonteCarloMover::load_trial_number_from_checkpoint() const{
 		else
 			TR<<"File containing mover_tag "<<fname<<" not found. Not loading movertag from checkpoint"<<std::endl;
 	}
-
+	/// see if any subfilters need to be reset
+	bool call_reset( false );
+	using namespace protocols::filters;
+	foreach( FilterOP comp_statement_filt, filters_ ){ /// User defined filters in RosettaScripts are all CompoundFilter, so poke inside...
+		CompoundFilterOP comp_filt_op( dynamic_cast< CompoundFilter * >( comp_statement_filt() ) );
+		runtime_assert( comp_filt_op );
+		for( CompoundFilter::CompoundStatement::iterator cs_it = comp_filt_op->begin(); cs_it != comp_filt_op->end(); ++cs_it ){
+			FilterOP filt( cs_it->first );
+			if( filt->get_type() == "Operator" ){
+				TR<<"Resetting Operator filter's baseline"<<std::endl;
+				OperatorOP operator_filter( dynamic_cast< Operator * >( filt() ) );
+				operator_filter->reset_baseline( pose, trial != 1/*if trial>1, attempt to read the baselines from checkpointing files. Otherwise, don't use the checkpointing files*/ );
+				call_reset = true;
+			}// fi Operator
+		}// for cs_it
+	} //foreach
+	if( call_reset ){
+		TR<<"Resetting Boltzmann's accepted values, in case filters have changed during loading"<<std::endl;
+		reset( pose );// this is called to reset the boltzmann scores with the new baselines
+	}
 	return trial;
 }
 
@@ -713,22 +732,8 @@ GenericMonteCarloMover::apply( Pose & pose )
 		runtime_assert( mover_pp->mode() == "single_random" );
 		mover_accepts = utility::vector1< core::Size >( mover_pp->size(), 1 ); /// each mover gets a pseudocount of 1. This ensures that the running probability of each mover never goes to 0
 	}
-  for( Size i=load_trial_number_from_checkpoint(); i<=maxtrials_; i++ ){
+  for( Size i=load_trial_number_from_checkpoint( pose ); i<=maxtrials_; i++ ){
     TR<<"Trial number: "<<i<<std::endl;
-		if( i == 1 ){
-			foreach( protocols::filters::FilterOP comp_statement_filt, filters_ ){ /// User defined filters in RosettaScripts are all CompoundFilter, so poke inside...
-				protocols::filters::CompoundFilterOP comp_filt_op( dynamic_cast< protocols::filters::CompoundFilter * >( comp_statement_filt() ) );
-				runtime_assert( comp_filt_op );
-				for( protocols::filters::CompoundFilter::CompoundStatement::iterator cs_it = comp_filt_op->begin(); cs_it != comp_filt_op->end(); ++cs_it ){
-					protocols::filters::FilterOP filt( cs_it->first );
-					if( filt->get_type() == "Operator" ){
-						TR<<"Resetting Operator filter's baseline"<<std::endl;
-						protocols::filters::OperatorOP operator_filter( dynamic_cast< protocols::filters::Operator * >( filt() ) );
-						operator_filter->reset_baseline( pose );
-					}// fi Operator
-				}// for cs_it
-			} //foreach
-		}//fi i == 1
 		if( i > 1 && adaptive_movers() && i % adaptation_period() == 0 ){
 /// The probability for each mover within a single-random parsedprotocol is determined by the number of accepts it had during the previous adaptation period:
 /// each mover is assigned a pseducount of 1, and then any additional accept favors it over others. At the adaptation stage, the total number of accepts (including pseudocounts) is used to normalize the individual movers' number of accepts and the probability is the mover's accepts / by the total accepts
@@ -783,7 +788,7 @@ GenericMonteCarloMover::apply( Pose & pose )
 
     // Iterate over the list of triggers, executing each of them in turn
     fire_all_triggers(i, maxtrials_, pose, score_function());
-		save_trial_number_to_checkpoint( i );
+		save_trial_number_to_checkpoint( i+1 );
   } // i<=maxtrials_
 
 	// Output final diagnositics, for potential tuning

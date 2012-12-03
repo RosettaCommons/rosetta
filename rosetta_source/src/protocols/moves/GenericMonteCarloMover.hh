@@ -271,7 +271,7 @@ public:
 	void saved_accept_file_name( std::string const );
 	std::string saved_trial_number_file() const;
 	void saved_trial_number_file( std::string const );
-	core::Size load_trial_number_from_checkpoint() const;
+	core::Size load_trial_number_from_checkpoint( core::pose::Pose & );
 	void save_trial_number_to_checkpoint( core::Size const i ) const;
 private:
 	/// @brief evalute pose by ScoreFunctionOP or FilterOP

@@ -50,12 +50,18 @@ baseline_checkpointing_filename_( "" )
 
 Sigmoid::~Sigmoid() {}
 
+/// @brief The first MC trajectory should not read the baseline from the checkpoint file, instead, it should set the baseline
+/// attempt_read_from_checkpoint determines whether a read attempt from checkpoint should be attempted
 void
-Sigmoid::reset_baseline( core::pose::Pose const & pose ){
+Sigmoid::reset_baseline( core::pose::Pose const & pose, bool const attempt_read_from_checkpoint ){
 	using namespace std;
 
 	bool compute_new_baseline( false );
-	if( baseline_checkpointing_filename_ != "" ){
+	if( attempt_read_from_checkpoint )
+		TR<<"Reading baseline from checkpoint file, if one exists"<<std::endl;
+	else
+		TR<<"Not reading from checkpoint file"<<std::endl;
+	if( attempt_read_from_checkpoint && baseline_checkpointing_filename_ != "" ){
 	  ifstream f( baseline_checkpointing_filename_.c_str(), ios::in );
 		if( !f.good() )
 			compute_new_baseline = true;
@@ -73,8 +79,10 @@ Sigmoid::reset_baseline( core::pose::Pose const & pose ){
 		  std::istringstream line_stream( line );
 		  line_stream >> baseline_;
 		  TR<<"Loading Sigmoid baseline from checkpoint. Loaded baseline: "<<baseline_<<std::endl;
+			f.close();
 			return;
 		}
+		f.close();
 	}
 
 	baseline_ = filter()->report_sm( pose );

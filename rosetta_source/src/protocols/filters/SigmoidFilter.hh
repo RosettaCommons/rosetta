@@ -53,7 +53,7 @@ class Sigmoid : public filters::Filter
     void negate( bool const b ){ negate_ = b; }
     protocols::filters::FilterOP filter() const;
     void filter( protocols::filters::FilterOP f );
-		void reset_baseline( core::pose::Pose const & pose ); /// allows within-trajectory resetting of the baseline. Notice this is nonconst, so can't be called from apply
+		void reset_baseline( core::pose::Pose const & pose, bool const attempt_read_from_checkpoint ); /// allows within-trajectory resetting of the baseline. Notice this is nonconst, so can't be called from apply. attempt_read_from_checkpoint should be true for MC trials > 1, but false otherwise
   	core::Real threshold() const{ return threshold_; }
   	void threshold( core::Real const t ){ threshold_ = t; }
 		void baseline_checkpointing_filename( std::string const s ){ baseline_checkpointing_filename_ = s; }

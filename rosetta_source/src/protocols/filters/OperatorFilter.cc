@@ -48,19 +48,23 @@ threshold_( 0.0 )
 Operator::~Operator() {}
 
 void
-Operator::reset_baseline( core::pose::Pose const & pose ){
-	foreach( protocols::filters::FilterOP comp_statement_filt, filters() ){///all RosettaScripts user-defined filters are compoundstatements
-    protocols::filters::CompoundFilterOP comp_filt_op( dynamic_cast< protocols::filters::CompoundFilter * >( comp_statement_filt() ) );
+Operator::reset_baseline( core::pose::Pose const & pose, bool const attempt_read_from_checkpoint ){
+	foreach( FilterOP comp_statement_filt, filters() ){///all RosettaScripts user-defined filters are compoundstatements
+    CompoundFilterOP comp_filt_op( dynamic_cast< CompoundFilter * >( comp_statement_filt() ) );
     runtime_assert( comp_filt_op );
-    for( protocols::filters::CompoundFilter::CompoundStatement::iterator cs_it = comp_filt_op->begin(); cs_it != comp_filt_op->end(); ++cs_it ){
+    for( CompoundFilter::CompoundStatement::iterator cs_it = comp_filt_op->begin(); cs_it != comp_filt_op->end(); ++cs_it ){
        protocols::filters::FilterOP f( cs_it->first );
 			if( f->get_type() == "Sigmoid" ){
-				using namespace protocols::filters;
-
 				SigmoidOP sigmoid_filter( dynamic_cast< Sigmoid * >( f() ) );
 				runtime_assert( sigmoid_filter );
-				sigmoid_filter->reset_baseline( pose );
+				sigmoid_filter->reset_baseline( pose, attempt_read_from_checkpoint );
 				TR<<"Resetting Sigmoid filter's baseline"<<std::endl;
+			}
+			else if( f->get_type() == "Operator" ){ //recursive call
+				OperatorOP operator_filter( dynamic_cast< Operator * >( f() ) );
+				runtime_assert( operator_filter );
+				operator_filter->reset_baseline( pose, attempt_read_from_checkpoint );
+				TR<<"Resetting Operator filter's baseline"<<std::endl;
 			}
 		}//for cs_it
 	}//foreach
@@ -107,7 +111,9 @@ Operator::report( std::ostream &o, core::pose::Pose const & pose ) const {
 
 core::Real
 Operator::report_sm( core::pose::Pose const & pose ) const {
-	return( compute( pose ) );
+	core::Real const val( compute( pose ) );
+	TR<<"Operator returning: "<<val<<std::endl;
+	return( val );
 }
 
 core::Real
