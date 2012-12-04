@@ -54,14 +54,15 @@ namespace matdes {
 SaveResfileToDiskFilter::SaveResfileToDiskFilter() {}
 
 // @brief constructor with arguments
-SaveResfileToDiskFilter::SaveResfileToDiskFilter( core::pack::task::TaskFactoryOP task_factory, utility::vector1<core::Size> r, bool d, std::string n, std::string s, std::string p, std::string g ):
+SaveResfileToDiskFilter::SaveResfileToDiskFilter( core::pack::task::TaskFactoryOP task_factory, utility::vector1<core::Size> r, bool d, std::string n, std::string s, std::string p, std::string g, std::string srp ):
 	task_factory_( task_factory ),
 	selected_resis_( r ),
 	designable_only_( d ),
 	resfile_name_( n ),
 	resfile_suffix_( s ),
 	resfile_prefix_( p ),
-	resfile_general_property_( g )
+	resfile_general_property_( g ),
+	selected_resis_property_( srp )
 {}
 
 // @brief copy constructor
@@ -73,7 +74,8 @@ SaveResfileToDiskFilter::SaveResfileToDiskFilter( SaveResfileToDiskFilter const 
 	resfile_name_( rval.resfile_name_ ),
 	resfile_suffix_( rval.resfile_suffix_ ),
 	resfile_prefix_( rval.resfile_prefix_ ),
-	resfile_general_property_( rval.resfile_general_property_ )
+	resfile_general_property_( rval.resfile_general_property_ ),
+	selected_resis_property_( rval.selected_resis_property_ )
 {}
 
 // @brief destructor
@@ -97,6 +99,7 @@ std::string SaveResfileToDiskFilter::resfile_name() const { return resfile_name_
 std::string SaveResfileToDiskFilter::resfile_suffix() const { return resfile_suffix_; }
 std::string SaveResfileToDiskFilter::resfile_prefix() const { return resfile_prefix_; }
 std::string SaveResfileToDiskFilter::resfile_general_property() const { return resfile_general_property_; }
+std::string SaveResfileToDiskFilter::selected_resis_property() const { return selected_resis_property_; }
 
 // @brief setters
 void SaveResfileToDiskFilter::task_factory( core::pack::task::TaskFactoryOP task_factory ) { task_factory_ = task_factory; }
@@ -106,6 +109,7 @@ void SaveResfileToDiskFilter::resfile_name( std::string const n ) { resfile_name
 void SaveResfileToDiskFilter::resfile_suffix( std::string const s ) { resfile_suffix_ = s; }
 void SaveResfileToDiskFilter::resfile_prefix( std::string const p ) { resfile_prefix_ = p; }
 void SaveResfileToDiskFilter::resfile_general_property( std::string const g ) { resfile_general_property_ = g; }
+void SaveResfileToDiskFilter::selected_resis_property( std::string const srp ) { selected_resis_property_ = srp; }
 
 /// @brief Applies the TaskOperations specified in the xml, and then selects either
 // the repackable or designable residues depending on what the user specifies
@@ -155,7 +159,11 @@ SaveResfileToDiskFilter::write_resfile( Pose const & pose, utility::vector1< cor
   resfile.open( resfile_to_write.c_str(), std::ios::out );
   resfile << resfile_general_property() << "\nstart\n";
 	for ( core::Size i=1; i<=selected_residues.size(); i++ ) {
-		resfile << selected_residues[i] << '\t' << pose.pdb_info()->chain(selected_residues[i]) << " PIKAA " << pose.residue(selected_residues[i]).name1() << '\n';
+		if ( selected_resis_property() != "" ) {
+			resfile << selected_residues[i] << '\t' << pose.pdb_info()->chain(selected_residues[i]) << " " << selected_resis_property() << '\n';
+		} else {
+			resfile << selected_residues[i] << '\t' << pose.pdb_info()->chain(selected_residues[i]) << " PIKAA " << pose.residue(selected_residues[i]).name1() << '\n';
+		}
   }
   resfile.close();
 
@@ -188,6 +196,7 @@ SaveResfileToDiskFilter::parse_my_tag(
 	resfile_prefix( tag->getOption< std::string >( "resfile_prefix", "" ) );
 	resfile_name( tag->getOption< std::string >( "resfile_name", "" ) );
 	resfile_general_property( tag->getOption< std::string >( "resfile_general_property", "NATAA" ) );
+	selected_resis_property( tag->getOption< std::string >( "selected_resis_property", "" ) );
 }
 /*
 core::Real

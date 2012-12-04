@@ -70,7 +70,8 @@ public:// constructor/destructor
 			std::string resfile_name,
 			std::string resfile_suffix,
 			std::string resfile_prefix,
-			std::string resfile_general_property
+			std::string resfile_general_property,
+			std::string selected_resis_property
 	); 
 
 	// @brief copy constructor
@@ -102,6 +103,7 @@ public:// setters
 	void resfile_suffix( std::string const s );
 	void resfile_prefix( std::string const p );
 	void resfile_general_property( std::string const g );
+	void selected_resis_property( std::string const g );
 
 public:// getters
 	core::pack::task::TaskFactoryOP task_factory() const;
@@ -111,6 +113,7 @@ public:// getters
 	std::string resfile_suffix() const;
 	std::string resfile_prefix() const;
 	std::string resfile_general_property() const;
+	std::string selected_resis_property() const;
 
 public:// parser
 
@@ -144,6 +147,7 @@ private:
 	std::string resfile_suffix_;
 	std::string resfile_prefix_;
 	std::string resfile_general_property_;
+	std::string selected_resis_property_;
 
 };
 
