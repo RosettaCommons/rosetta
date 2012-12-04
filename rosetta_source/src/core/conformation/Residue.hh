@@ -25,6 +25,8 @@
 
 #include <core/conformation/PseudoBond.hh>
 #include <core/chemical/AtomType.fwd.hh>
+#include <core/chemical/Atom.hh>
+#include <core/chemical/Orbital.hh>
 
 
 // Project headers
@@ -187,7 +189,7 @@ public:
 	Real
 	atomic_charge( int const atomno ) const
 	{
-		return rsd_type_.atom( atomno )->charge();
+		return rsd_type_.atom( atomno ).charge();
 	}
 
 	/// @brief  Check if atom is virtual.
@@ -993,7 +995,7 @@ public:
 	set_orbital_xyz( core::Size const orbital_index, Vector const & xyz_in )
 	{
 		orbitals_[ orbital_index ].xyz( xyz_in );
-		orbitals_[orbital_index].type(rsd_type_.orbital(orbital_index)->orbital_type_index() );
+		orbitals_[orbital_index].type(rsd_type_.orbital(orbital_index).orbital_type_index() );
 	}
 
 
@@ -1013,7 +1015,7 @@ public:
 
 	std::string const &
 	orbital_name(int const orbital_index) const{
-		return rsd_type_.orbital(orbital_index)->name();
+		return rsd_type_.orbital(orbital_index).name();
 	}
 
 	chemical::orbitals::OrbitalType const &
@@ -1710,7 +1712,7 @@ public:
 	std::string const &
 	mm_atom_name(int const atom) const
 	{
-		return rsd_type_.atom(atom)->mm_name();
+		return rsd_type_.atom(atom).mm_name();
 	}
 
 	/// @brief Returns this residue's ResidueType name

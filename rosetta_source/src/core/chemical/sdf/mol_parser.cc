@@ -129,15 +129,15 @@ void MolFileParser::parse_mol_file(core::chemical::AtomTypeSetCAP atom_types, co
 	core::Real total_charge = 0.0;
 	for(core::Size index =1; index <= molecule_container_->natoms(); ++index)
 	{
-		total_charge += molecule_container_->atom(index)->charge();
+		total_charge += molecule_container_->atom(index).charge();
 	}
 
 	core::Real charge_offset = -total_charge/static_cast<core::Real>(molecule_container_->natoms());
 	for(core::Size index = 1;index <= molecule_container_->natoms();++index)
 	{
 		std::string atom_name = molecule_container_->atom_name(index);
-		core::Real starting_charge = molecule_container_->atom(index)->charge();
-		molecule_container_->atom( atom_name )->charge(starting_charge+charge_offset);
+		core::Real starting_charge = molecule_container_->atom(index).charge();
+		molecule_container_->atom( atom_name ).charge(starting_charge+charge_offset);
 	}
 	molecule_container_->finalize();
 
@@ -146,7 +146,7 @@ void MolFileParser::parse_mol_file(core::chemical::AtomTypeSetCAP atom_types, co
 	{
 
 		//if you uncomment this tracer statement ChemicalManager segfaults and i have no idea why
-		MolParserTracer.Debug << "assigning \"" << preset_nbr<< "\" as nbr atom" <<std::endl;
+		MolParserTracer.Debug << "assigning \"" <<preset_nbr<< "\" as nbr atom" <<std::endl;
 		molecule_container_->nbr_atom(preset_nbr);
 		//molecule_container_->assign_neighbor_atom();
 	}else

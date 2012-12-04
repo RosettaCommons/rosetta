@@ -269,7 +269,7 @@ AtomAtomPairFeatures::report_atom_pairs(
 		for(Size atom_num1=1; atom_num1 <= res1.natoms(); ++atom_num1){
 			Vector const & atom1_xyz( res1.xyz(atom_num1) );
 
-			Size const atom_index1(res1.type().atom(atom_num1)->atom_type_index());
+			Size const atom_index1(res1.type().atom(atom_num1).atom_type_index());
 			map<Size, Size>::const_iterator const i_relevant_atom_index1(
 				atom_index_to_relevant_atom_index_.find(atom_index1));
 			if(i_relevant_atom_index1 == atom_index_to_relevant_atom_index_.end()){

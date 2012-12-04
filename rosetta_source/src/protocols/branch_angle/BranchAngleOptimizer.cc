@@ -442,10 +442,10 @@ BranchAngleOptimizer::param1(
 		                    tolerance_);
 	}
 
-	int const main_mmtype1(pose.residue_type(main_atomid1.rsd()).atom(main_atomid1.atomno())->mm_atom_type_index());
-	int const center_mmtype(pose.residue_type(center_atomid.rsd()).atom(center_atomid.atomno())->mm_atom_type_index());
-	int const main_mmtype2(pose.residue_type(main_atomid2.rsd()).atom(main_atomid2.atomno())->mm_atom_type_index());
-	int const branch_mmtype1(pose.residue_type(branch_atomid1.rsd()).atom(branch_atomid1.atomno())->mm_atom_type_index());
+	int const main_mmtype1(pose.residue_type(main_atomid1.rsd()).atom(main_atomid1.atomno()).mm_atom_type_index());
+	int const center_mmtype(pose.residue_type(center_atomid.rsd()).atom(center_atomid.atomno()).mm_atom_type_index());
+	int const main_mmtype2(pose.residue_type(main_atomid2.rsd()).atom(main_atomid2.atomno()).mm_atom_type_index());
+	int const branch_mmtype1(pose.residue_type(branch_atomid1.rsd()).atom(branch_atomid1.atomno()).mm_atom_type_index());
 
 	mm_bondangle_library_citer_pair m1_m2(mm_bondangle_library_.lookup(main_mmtype1, center_mmtype, main_mmtype2));
 	mm_bondangle_library_citer_pair m1_b1(mm_bondangle_library_.lookup(main_mmtype1, center_mmtype, branch_mmtype1));
@@ -500,11 +500,11 @@ BranchAngleOptimizer::param2(
 												tolerance_);
 	}
 
-	int const main_mmtype1(pose.residue_type(main_atomid1.rsd()).atom(main_atomid1.atomno())->mm_atom_type_index());
-	int const center_mmtype(pose.residue_type(center_atomid.rsd()).atom(center_atomid.atomno())->mm_atom_type_index());
-	int const main_mmtype2(pose.residue_type(main_atomid2.rsd()).atom(main_atomid2.atomno())->mm_atom_type_index());
-	int const branch_mmtype1(pose.residue_type(branch_atomid1.rsd()).atom(branch_atomid1.atomno())->mm_atom_type_index());
-	int const branch_mmtype2(pose.residue_type(branch_atomid2.rsd()).atom(branch_atomid2.atomno())->mm_atom_type_index());
+	int const main_mmtype1(pose.residue_type(main_atomid1.rsd()).atom(main_atomid1.atomno()).mm_atom_type_index());
+	int const center_mmtype(pose.residue_type(center_atomid.rsd()).atom(center_atomid.atomno()).mm_atom_type_index());
+	int const main_mmtype2(pose.residue_type(main_atomid2.rsd()).atom(main_atomid2.atomno()).mm_atom_type_index());
+	int const branch_mmtype1(pose.residue_type(branch_atomid1.rsd()).atom(branch_atomid1.atomno()).mm_atom_type_index());
+	int const branch_mmtype2(pose.residue_type(branch_atomid2.rsd()).atom(branch_atomid2.atomno()).mm_atom_type_index());
 
 	mm_bondangle_library_citer_pair m1_m2(mm_bondangle_library_.lookup(main_mmtype1, center_mmtype, main_mmtype2));
 	mm_bondangle_library_citer_pair m1_b1(mm_bondangle_library_.lookup(main_mmtype1, center_mmtype, branch_mmtype1));

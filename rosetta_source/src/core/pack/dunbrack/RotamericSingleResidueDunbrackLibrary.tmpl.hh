@@ -1530,10 +1530,10 @@ RotamericSingleResidueDunbrackLibrary< T >::chisamples_for_rotamer_and_chi(
 			// just use the chi of the platonic residue -- this could be made faster, but chi is not part of rsdtype intrfc
 			// Is this code ever executed?  It's not going to be executed for any amino acid...
 			Real const icoor_chi( numeric::dihedral(
-				rsd_type.atom( rsd_type.chi_atoms( chi_index )[1] )->ideal_xyz(),
-				rsd_type.atom( rsd_type.chi_atoms( chi_index )[2] )->ideal_xyz(),
-				rsd_type.atom( rsd_type.chi_atoms( chi_index )[3] )->ideal_xyz(),
-				rsd_type.atom( rsd_type.chi_atoms( chi_index )[4] )->ideal_xyz()
+				rsd_type.atom( rsd_type.chi_atoms( chi_index )[1] ).ideal_xyz(),
+				rsd_type.atom( rsd_type.chi_atoms( chi_index )[2] ).ideal_xyz(),
+				rsd_type.atom( rsd_type.chi_atoms( chi_index )[3] ).ideal_xyz(),
+				rsd_type.atom( rsd_type.chi_atoms( chi_index )[4] ).ideal_xyz()
 			));
 			total_chi.push_back( icoor_chi );
 			total_ex_steps.push_back( 0. );

@@ -37,7 +37,6 @@
 
 // Utility headers
 #include <utility/vector1_bool.hh>
-#include <utility/pointer/ReferenceCount.hh>
 
 // C++ headers
 #include <string>
@@ -49,7 +48,7 @@ namespace chemical {
 ///
 /// @details name, element, certain properties and parameters from .params file
 ///
-class Atom : public utility::pointer::ReferenceCount{
+class Atom {
 
 public:
 
@@ -89,7 +88,6 @@ public:
 	{}
 
 	Atom(Atom const & src) :
-		utility::pointer::ReferenceCount(),
 		name_( src.name_ ),
 		//type_name_(src.type_name),
 		mm_name_(src.mm_name_),

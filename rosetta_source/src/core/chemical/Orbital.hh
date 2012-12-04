@@ -37,7 +37,6 @@
 
 // Utility headers
 #include <utility/vector1_bool.hh>
-#include <utility/pointer/ReferenceCount.hh>
 
 // C++ headers
 #include <string>
@@ -49,7 +48,7 @@ namespace chemical {
 ///
 /// @details name, element, certain properties and parameters from .params file
 ///
-class Orbital : public utility::pointer::ReferenceCount{
+class Orbital {
 
 public:
 
@@ -78,7 +77,6 @@ public:
 	{}
 
 	Orbital(Orbital const & src) :
-		utility::pointer::ReferenceCount(),
 		name_( src.name_ ),
 		orbital_type_index_(src.orbital_type_index_),
 		ideal_xyz_(src.ideal_xyz_),

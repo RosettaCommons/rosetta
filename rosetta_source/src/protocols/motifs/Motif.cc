@@ -428,9 +428,9 @@ Motif::generate_atom_ints(
 	Size res1_atom2_index = rsd_type.atom_index( res1_atom2_name_ );
 	Size res1_atom3_index = rsd_type.atom_index( res1_atom3_name_ );
 
-	int res1_atom1_int_ = rsd_type.atom( res1_atom1_index)->atom_type_index();
-	int res1_atom2_int_ = rsd_type.atom( res1_atom2_index )->atom_type_index();
-	int res1_atom3_int_ = rsd_type.atom( res1_atom3_index )->atom_type_index();
+	int res1_atom1_int_ = rsd_type.atom( res1_atom1_index).atom_type_index();
+	int res1_atom2_int_ = rsd_type.atom( res1_atom2_index ).atom_type_index();
+	int res1_atom3_int_ = rsd_type.atom( res1_atom3_index ).atom_type_index();
 	int res2_atom1_int_ = atset->atom_type_index(res2_atom1_name_);
 	int res2_atom2_int_ = atset->atom_type_index(res2_atom2_name_);
 	int res2_atom3_int_ = atset->atom_type_index(res2_atom3_name_);

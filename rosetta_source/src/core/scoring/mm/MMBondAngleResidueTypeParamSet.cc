@@ -202,9 +202,9 @@ MMBondAngleResidueTypeParamSet::lookup(
 		return;
 	}
 
-	int const mmtype1(conformation.residue_type(atomid1.rsd()).atom(atomid1.atomno())->mm_atom_type_index());
-	int const mmtype2(conformation.residue_type(atomid2.rsd()).atom(atomid2.atomno())->mm_atom_type_index());
-	int const mmtype3(conformation.residue_type(atomid3.rsd()).atom(atomid3.atomno())->mm_atom_type_index());
+	int const mmtype1(conformation.residue_type(atomid1.rsd()).atom(atomid1.atomno()).mm_atom_type_index());
+	int const mmtype2(conformation.residue_type(atomid2.rsd()).atom(atomid2.atomno()).mm_atom_type_index());
+	int const mmtype3(conformation.residue_type(atomid3.rsd()).atom(atomid3.atomno()).mm_atom_type_index());
 
 	mm_bondangle_library_citer_pair params(mm_bondangle_library_->lookup(mmtype1, mmtype2, mmtype3));
 

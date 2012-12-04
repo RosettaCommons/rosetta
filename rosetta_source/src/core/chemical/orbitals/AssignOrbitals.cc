@@ -67,7 +67,7 @@ void AssignOrbitals::assign_orbitals( )
 				core::Size atm_index3= restype_->bonded_neighbor(Aindex_)[2];
 				AOdist_ =0.7;
 				AOhybridization_=2;
-				numeric::xyzVector<core::Real> acct_coord = ((restype_->atom(Aindex_)->ideal_xyz() - restype_->atom(atm_index2)->ideal_xyz())/2);
+				numeric::xyzVector<core::Real> acct_coord = ((restype_->atom(Aindex_).ideal_xyz() - restype_->atom(atm_index2).ideal_xyz())/2);
 
 				//std::cout << restype_->name3() << " " << restype_->atom_name(Aindex_) << " " << restype_->atom_name(atm_index2) << " " << restype_->atom_name(atm_index3) << std::endl;
 				//std::cout << acct_coord.x() << " " << acct_coord.y() << " " << acct_coord.z() << std::endl;
@@ -76,7 +76,7 @@ void AssignOrbitals::assign_orbitals( )
 				new_action.zero();
 				for ( Size ii = 1; ii <= restype_->actcoord_atoms().size(); ++ii )
 				{
-					new_action += restype_->atom(restype_->actcoord_atoms()[ii])->ideal_xyz();
+					new_action += restype_->atom(restype_->actcoord_atoms()[ii]).ideal_xyz();
 				}
 				new_action.x() /= restype_->actcoord_atoms().size();
 				new_action.y() /= restype_->actcoord_atoms().size();
@@ -85,16 +85,16 @@ void AssignOrbitals::assign_orbitals( )
 
 
 
-				numeric::xyzVector<core::Real> vector_d( new_action - restype_->atom(atm_index2)->ideal_xyz());
-				numeric::xyzVector<core::Real> vector_f( new_action - restype_->atom(atm_index3)->ideal_xyz());
+				numeric::xyzVector<core::Real> vector_d( new_action - restype_->atom(atm_index2).ideal_xyz());
+				numeric::xyzVector<core::Real> vector_f( new_action - restype_->atom(atm_index3).ideal_xyz());
 
 				//Create an object of Class utility::vector1 to hold the xyz coordinates of orbitals(e.g., cross products)
 				//Get two cross products of the two vectors, one is above, the other is below the plane defined by the two vectors
 				utility::vector1< numeric::xyzVector<core::Real> > pi_orbital_xyz_vector;
 				numeric::xyzVector<core::Real> xyz_right = cross_product(vector_d, vector_f);
 				numeric::xyzVector<core::Real> xyz_left = cross_product(-vector_d, vector_f);
-				pi_orbital_xyz_vector.push_back((xyz_left.normalized() *  AOdist_) + restype_->atom(atm_index3)->ideal_xyz());
-				pi_orbital_xyz_vector.push_back((xyz_right.normalized() *  AOdist_) + restype_->atom(atm_index3)->ideal_xyz());
+				pi_orbital_xyz_vector.push_back((xyz_left.normalized() *  AOdist_) + restype_->atom(atm_index3).ideal_xyz());
+				pi_orbital_xyz_vector.push_back((xyz_right.normalized() *  AOdist_) + restype_->atom(atm_index3).ideal_xyz());
 
 
 				for(core::Size vector_index = 1; vector_index <= pi_orbital_xyz_vector.size(); ++vector_index){
@@ -102,9 +102,9 @@ void AssignOrbitals::assign_orbitals( )
 					std::string p_orbital_element_name( make_orbital_element_name() );
 					set_orbital_type_and_bond(Aindex_, p_orbital_element_name, p_orbital_type_full_name);
 
-					Vector const stub1_xyz = restype_->atom(Aindex_)->ideal_xyz();
-					Vector const stub2_xyz = restype_->atom(atm_index2)->ideal_xyz();
-					Vector const stub3_xyz = restype_->atom(atm_index3)->ideal_xyz();
+					Vector const stub1_xyz = restype_->atom(Aindex_).ideal_xyz();
+					Vector const stub2_xyz = restype_->atom(atm_index2).ideal_xyz();
+					Vector const stub3_xyz = restype_->atom(atm_index3).ideal_xyz();
 
 					core::Real const distance(pi_orbital_xyz_vector[vector_index].distance(stub1_xyz) );
 
@@ -181,12 +181,12 @@ void AssignOrbitals::assign_orbitals( )
 */
 
 
-				numeric::xyzVector<core::Real> vector_a(restype_->atom(Aindex_)->ideal_xyz() - restype_->atom(atm_index2)->ideal_xyz()   );
-				numeric::xyzVector<core::Real> vector_b( restype_->atom(Aindex_)->ideal_xyz() - restype_->atom(atm_index3)->ideal_xyz() );
+				numeric::xyzVector<core::Real> vector_a(restype_->atom(Aindex_).ideal_xyz() - restype_->atom(atm_index2).ideal_xyz()   );
+				numeric::xyzVector<core::Real> vector_b( restype_->atom(Aindex_).ideal_xyz() - restype_->atom(atm_index3).ideal_xyz() );
 				numeric::xyzVector<core::Real> vector_ab_norm = vector_a.normalized()+vector_b.normalized();
 
 				utility::vector1< numeric::xyzVector<core::Real> > orbital_xyz_vectors;
-				orbital_xyz_vectors.push_back((vector_ab_norm.normalized()*AOdist_)+restype_->atom(Aindex_)->ideal_xyz());
+				orbital_xyz_vectors.push_back((vector_ab_norm.normalized()*AOdist_)+restype_->atom(Aindex_).ideal_xyz());
 
 				//utility::vector1< numeric::xyzVector<core::Real> > orbital_xyz_vectors = cross_product_helper(Aindex_,atm_index2,atm_index3,AOdist_);
 				//add_orbitals_to_restype(atm_index2, atm_index3, /*orbital_info,*/ atmtype, "p", orbital_xyz_vectors);
@@ -425,8 +425,8 @@ utility::vector1< numeric::xyzVector<core::Real> > AssignOrbitals::cross_product
 	    //std::cout << "atm_index1: " << atm_index1 << " index 2: " << atm_index2 << " index3 " << atm_index3 << std::endl;
 
 		//define two vectors, both pointing back to the central atom with atm_index2
-		numeric::xyzVector<core::Real> vector_d( restype_->atom(atm_index1)->ideal_xyz() - restype_->atom(atm_index2)->ideal_xyz());
-		numeric::xyzVector<core::Real> vector_f( restype_->atom(atm_index1)->ideal_xyz() - restype_->atom(atm_index3)->ideal_xyz());
+		numeric::xyzVector<core::Real> vector_d( restype_->atom(atm_index1).ideal_xyz() - restype_->atom(atm_index2).ideal_xyz());
+		numeric::xyzVector<core::Real> vector_f( restype_->atom(atm_index1).ideal_xyz() - restype_->atom(atm_index3).ideal_xyz());
 
 		//Create an object of Class utility::vector1 to hold the xyz coordinates of orbitals(e.g., cross products)
 		//Get two cross products of the two vectors, one is above, the other is below the plane defined by the two vectors
@@ -436,8 +436,8 @@ utility::vector1< numeric::xyzVector<core::Real> > AssignOrbitals::cross_product
 
 		//Normalize the two new vectors, xyz_right and xyz_left to get a unit vector.
 		//pi_orbital_xyz_vector now stores the new xyz coordinates of the pi orbitals.
-		pi_orbital_xyz_vector.push_back((xyz_right.normalized() * dist) + restype_->atom(atm_index1)->ideal_xyz());
-		pi_orbital_xyz_vector.push_back((xyz_left.normalized() *  dist) + restype_->atom(atm_index1)->ideal_xyz());
+		pi_orbital_xyz_vector.push_back((xyz_right.normalized() * dist) + restype_->atom(atm_index1).ideal_xyz());
+		pi_orbital_xyz_vector.push_back((xyz_left.normalized() *  dist) + restype_->atom(atm_index1).ideal_xyz());
 
 		return pi_orbital_xyz_vector;
 
@@ -518,9 +518,9 @@ void AssignOrbitals::calculate_orbital_icoor(
 		std::string const orbital_element_name
 )
 {
-	Vector const stub1_xyz = restype_->atom(atm_index1)->ideal_xyz();
-	Vector const stub2_xyz = restype_->atom(atm_index2)->ideal_xyz();
-	Vector const stub3_xyz = restype_->atom(atm_index3)->ideal_xyz();
+	Vector const stub1_xyz = restype_->atom(atm_index1).ideal_xyz();
+	Vector const stub2_xyz = restype_->atom(atm_index2).ideal_xyz();
+	Vector const stub3_xyz = restype_->atom(atm_index3).ideal_xyz();
 
 	core::Real const distance(orbital_xyz.distance(stub1_xyz) );
 
@@ -574,9 +574,9 @@ utility::vector1< numeric::xyzVector<core::Real> >  AssignOrbitals::Coordinates_
 	//create a new vector to hold coordinates of P orbitals.
 	utility::vector1< numeric::xyzVector<core::Real> > orbital_xyz_vector;
 
-	numeric::xyzVector<core::Real> vector_a = restype_->atom(atm_index1)->ideal_xyz();
-	numeric::xyzVector<core::Real> vector_b = restype_->atom(atm_index2)->ideal_xyz();
-	numeric::xyzVector<core::Real> vector_c = restype_->atom(atm_index3)->ideal_xyz();
+	numeric::xyzVector<core::Real> vector_a = restype_->atom(atm_index1).ideal_xyz();
+	numeric::xyzVector<core::Real> vector_b = restype_->atom(atm_index2).ideal_xyz();
+	numeric::xyzVector<core::Real> vector_c = restype_->atom(atm_index3).ideal_xyz();
 
 	//core::Real distance_xa = 01.0;
 		core::Real angle_xab = numeric::constants::r::pi_over_3; //60 degrees
@@ -639,10 +639,10 @@ utility::vector1< numeric::xyzVector<core::Real> >  AssignOrbitals::Coordinates_
 
 	 utility::vector1< numeric::xyzVector<core::Real> > orbital_xyz_vector;
 
-	 numeric::xyzVector<core::Real> vector_a = restype_->atom(atm_index1)->ideal_xyz();
-	 numeric::xyzVector<core::Real> vector_b = restype_->atom(atm_index2)->ideal_xyz();
-	 numeric::xyzVector<core::Real> vector_c = restype_->atom(atm_index3)->ideal_xyz();
-	 numeric::xyzVector<core::Real> vector_d = restype_->atom(atm_index4)->ideal_xyz();
+	 numeric::xyzVector<core::Real> vector_a = restype_->atom(atm_index1).ideal_xyz();
+	 numeric::xyzVector<core::Real> vector_b = restype_->atom(atm_index2).ideal_xyz();
+	 numeric::xyzVector<core::Real> vector_c = restype_->atom(atm_index3).ideal_xyz();
+	 numeric::xyzVector<core::Real> vector_d = restype_->atom(atm_index4).ideal_xyz();
 
 	 numeric::xyzVector<core::Real> x
     (

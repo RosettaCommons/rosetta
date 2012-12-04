@@ -175,6 +175,7 @@ public:
 		ElementSetCAP element_types,
 		MMAtomTypeSetCAP mm_atom_types,
 		orbitals::OrbitalTypeSetCAP orbital_types//,
+//		CSDAtomTypeSetCAP csd_atom_types kwk commenting out csd atom types until they have been fully implemented
 	);
 
 
@@ -211,22 +212,22 @@ public:
 		return atom_types_;
 	}
 
-	AtomOP atom(Size const atom_index){
+	Atom & atom(Size const atom_index){
 		return atoms_[atom_index];
 	}
-	AtomCOP atom(Size const atom_index) const{
+	Atom const & atom(Size const atom_index) const{
 		return atoms_[atom_index];
 	}
-	AtomOP atom(std::string const & atom_name){
+	Atom & atom(std::string const & atom_name){
 		return atoms_[ atom_index(atom_name) ];
 	}
-	AtomCOP atom(std::string const & atom_name) const{
+	Atom const & atom(std::string const & atom_name) const{
 			return atoms_[ atom_index(atom_name) ];
 	}
-	OrbitalCOP orbital(Size const orbital_index) const{
+	Orbital const & orbital(Size const orbital_index) const{
 		return orbitals_[orbital_index];
 	}
-	OrbitalCOP orbital(std::string const & orbital_name) const{
+	Orbital const & orbital(std::string const & orbital_name) const{
 		return orbitals_[ orbital_index(orbital_name) ];
 	}
 
@@ -1020,7 +1021,7 @@ public:
 	AtomICoor const &
 	icoor( Size const atm ) const
 	{
-		return atoms_[ atm ]->icoor();
+		return atoms_[ atm ].icoor();
 	}
 
 	/// @brief set AtomICoor for an atom
@@ -1079,7 +1080,7 @@ public:
 	)
 	{
 		if ( index > atoms_.size() ) atoms_.resize(index);
-		atoms_[index]->ideal_xyz( xyz_in );
+		atoms_[index].ideal_xyz( xyz_in );
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -1104,13 +1105,13 @@ public:
 
 	orbitals::ICoorOrbitalData const &
 	orbital_icoor_data(Size const orbital_index) const{
-		return orbitals_[orbital_index]->icoor();
+		return orbitals_[orbital_index].icoor();
 	}
 
 
 	orbitals::ICoorOrbitalData const &
 	new_orbital_icoor_data(Size const orbital_index) const{
-		return orbitals_[orbital_index]->new_icoor();
+		return orbitals_[orbital_index].new_icoor();
 	}
 
 
@@ -1860,8 +1861,8 @@ private:
 		 WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
 
 	**/
-	AtomOPs atoms_;
-	OrbitalOPs orbitals_;
+	utility::vector1< Atom > atoms_;
+	utility::vector1< Orbital > orbitals_;
 
 	//////////////////////////////////////////////////////////////////
 	// ints -- see the WARNING above if these are atom indices

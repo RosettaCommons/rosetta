@@ -247,14 +247,14 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 				chiat4( res.chi_atoms( ii )[ 4 ] );
 
 			chitip_start_frames.push_back( UpstreamResTypeGeometry::HTReal(
-				res.atom( chiat1 )->ideal_xyz(),
-				res.atom( chiat2 )->ideal_xyz(),
-				res.atom( chiat3 )->ideal_xyz() ));
+				res.atom( chiat1 ).ideal_xyz(),
+				res.atom( chiat2 ).ideal_xyz(),
+				res.atom( chiat3 ).ideal_xyz() ));
 
 			chitip_frames.push_back( UpstreamResTypeGeometry::HTReal(
-				res.atom( chiat2 )->ideal_xyz(),
-				res.atom( chiat3 )->ideal_xyz(),
-				res.atom( chiat4 )->ideal_xyz() ));
+				res.atom( chiat2 ).ideal_xyz(),
+				res.atom( chiat3 ).ideal_xyz(),
+				res.atom( chiat4 ).ideal_xyz() ));
 
 			//ht = chitip_start_frames[ ii ];
 			//std::cout << "chitip_start_frames:" << ii << std::endl;
@@ -264,10 +264,10 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 
 
 			Real const dihedral = numeric::dihedral_degrees(
-				res.atom( chiat1 )->ideal_xyz(),
-				res.atom( chiat2 )->ideal_xyz(),
-				res.atom( chiat3 )->ideal_xyz(),
-				res.atom( chiat4 )->ideal_xyz()
+				res.atom( chiat1 ).ideal_xyz(),
+				res.atom( chiat2 ).ideal_xyz(),
+				res.atom( chiat3 ).ideal_xyz(),
+				res.atom( chiat4 ).ideal_xyz()
 			);
 			//std::cout << "Ideal dihedral " << ii << " " << dihedral << std::endl;
 
@@ -288,7 +288,7 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 		for ( Size ii = 1; ii <= leu_geom.natoms(); ++ii ) {
 			//std::cout << "Atom " << ii << " Icoor: ";
 			//std::cout << trpcage.residue_type( 2 ).xyz( ii ).x() << " " <<trpcage.residue_type( 2 ).xyz( ii ).y() << " " <<trpcage.residue_type( 2 ).xyz( ii ).z() << std::endl;
-			Vector ideal = trpcage.residue_type( 2 ).atom( ii )->ideal_xyz();
+			Vector ideal = trpcage.residue_type( 2 ).atom( ii ).ideal_xyz();
 
 			Size controlling_chi = leu_geom.controlling_chi_for_atom()[ ii ];
 			if ( controlling_chi == 0 ) continue;
