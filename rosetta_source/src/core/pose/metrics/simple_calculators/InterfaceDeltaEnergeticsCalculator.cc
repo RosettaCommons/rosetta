@@ -10,6 +10,8 @@
 /// @file   core/pose/metrics/simple_metrics/InterfaceDeltaEnergeticsCalculator.cc
 /// @brief  InterfaceDeltaEnergeticsCalculator class
 /// @author John Karanicolas
+/// @author Roland A Pache
+
 
 // Unit headers
 #include <core/pose/metrics/simple_calculators/InterfaceDeltaEnergeticsCalculator.hh>
@@ -57,6 +59,19 @@ InterfaceDeltaEnergeticsCalculator::InterfaceDeltaEnergeticsCalculator( std::str
 	}
 }
 
+// preferred alternative constructor - use an existing InterfaceNeighborDefinitionCalculator and define a set of score types to ignore
+    InterfaceDeltaEnergeticsCalculator::InterfaceDeltaEnergeticsCalculator( std::string const & NameOfInterfaceNeighborDefinitionCalculator, utility::vector1<core::scoring::ScoreType> const & score_types_to_ignore ) :
+	EnergyDependentCalculator(),
+	name_of_InterfaceNeighborDefinitionCalculator_(NameOfInterfaceNeighborDefinitionCalculator)
+{
+    score_types_to_ignore_=score_types_to_ignore;
+    if ( ! core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( name_of_InterfaceNeighborDefinitionCalculator_ ) ) {
+        basic::Error() << "Tried to tie InterfaceDeltaEnergeticsCalculator to InterfaceNeighborDefinitionCalculator " <<
+        name_of_InterfaceNeighborDefinitionCalculator_ << " but this calculator does not exist." << std::endl;
+        utility_exit();
+    }
+}
+    
 
 // less preferred constructor - creates a new InterfaceNeighborDefinitionCalculator
 InterfaceDeltaEnergeticsCalculator::InterfaceDeltaEnergeticsCalculator( Size const chain1_number, Size const chain2_number ) :
@@ -208,8 +223,13 @@ void InterfaceDeltaEnergeticsCalculator::recompute( Pose const & this_pose ) {
 
 	} //loop over long range energy types
 
-	// Save the most recently used weights, as well as the total (weighted) delta score
+	// Save the most recently used weights
 	weights_ = this_pose.energies().weights();
+    //set weights of score types to ignore to 0 
+    for (vector1<core::scoring::ScoreType>::const_iterator cit=score_types_to_ignore_.begin(); cit!=score_types_to_ignore_.end(); ++cit) {
+        weights_[*cit]=0.0;
+    }
+    //Save the total (weighted) delta score
 	weighted_total_ = delta_energies_unweighted_.dot(weights_);
 
 	//debug stuff

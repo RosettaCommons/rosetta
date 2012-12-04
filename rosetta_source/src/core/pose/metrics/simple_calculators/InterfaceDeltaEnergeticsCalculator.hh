@@ -10,6 +10,7 @@
 /// @file
 /// @brief
 /// @author John Karanicolas
+/// @author Roland A Pache
 
 
 #ifndef INCLUDED_core_pose_metrics_simple_calculators_InterfaceDeltaEnergeticsCalculator_HH
@@ -23,7 +24,7 @@
 #include <basic/MetricValue.fwd.hh>
 
 #include <utility/vector1.hh>
-
+#include <core/scoring/ScoreType.hh>
 
 
 
@@ -38,6 +39,9 @@ public:
 
 	// preferred constructor - use an existing InterfaceNeighborDefinitionCalculator
 	InterfaceDeltaEnergeticsCalculator( std::string const & NameOfInterfaceNeighborDefinitionCalculator );
+    
+    // preferred alternative constructor - use an existing InterfaceNeighborDefinitionCalculator and define a set of score types to ignore
+	InterfaceDeltaEnergeticsCalculator( std::string const & NameOfInterfaceNeighborDefinitionCalculator, utility::vector1<core::scoring::ScoreType> const & score_types_to_ignore );
 
 	// less preferred constructor - create a new InterfaceNeighborDefinitionCalculator
 	InterfaceDeltaEnergeticsCalculator( core::Size const chain1_number, core::Size const chain2_number );
@@ -46,7 +50,7 @@ public:
 	InterfaceDeltaEnergeticsCalculator( char const chain1_letter, char const chain2_letter );
 
 	core::pose::metrics::PoseMetricCalculatorOP clone() const
-	{ return new core::pose::metrics::simple_calculators::InterfaceDeltaEnergeticsCalculator( name_of_InterfaceNeighborDefinitionCalculator_ ); }
+	{ return new core::pose::metrics::simple_calculators::InterfaceDeltaEnergeticsCalculator( name_of_InterfaceNeighborDefinitionCalculator_, score_types_to_ignore_ ); }
 
 protected:
 
@@ -57,6 +61,7 @@ protected:
 private:
 
 	std::string name_of_InterfaceNeighborDefinitionCalculator_;
+    utility::vector1<core::scoring::ScoreType> score_types_to_ignore_;
 
 	core::scoring::EnergyMap delta_energies_unweighted_;
 	core::scoring::EnergyMap weights_;

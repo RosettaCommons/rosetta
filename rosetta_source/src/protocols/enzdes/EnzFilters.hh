@@ -10,6 +10,7 @@
 /// @file protocols/enzdes/EnzFilters.hh
 /// @brief definition of filter classes for enzdes in rosetta_scripts framework
 /// @author Sagar Khare (khares@uw.edu)
+/// @author Roland A Pache
 
 #ifndef INCLUDED_protocols_enzdes_EnzFilters_hh
 #define INCLUDED_protocols_enzdes_EnzFilters_hh
@@ -337,7 +338,7 @@ private:
 		utility::vector1< core::Size > const & res_subset ) const;
 
 	void
-	setup_pose_metric_calculators ( core::pose::Pose const & pose ) const;
+	setup_pose_metric_calculators ( core::pose::Pose const & pose, bool separate_out_constraints ) const;
 
 	bool no_packstat_calc_, native_comparison_;
 	bool repack_no_lig_, keep_rnl_pose_;

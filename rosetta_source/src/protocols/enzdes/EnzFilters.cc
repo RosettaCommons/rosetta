@@ -10,6 +10,8 @@
 /// @file protocols/enzdes/EnzFilters.cc
 /// @brief
 /// @author Sagar Khare (khares@uw.edu)
+/// @author Roland A Pache
+
 
 // unit headers
 #include <protocols/enzdes/EnzFilters.hh>
@@ -842,11 +844,11 @@ EnzdesScorefileFilter::examine_pose(
 		spec_segments_ = utility::pointer::static_pointer_cast< core::pose::datacache::SpecialSegmentsObserver const >(pose.observer_cache().get_const_ptr( core::pose::datacache::CacheableObserverType::SPECIAL_SEGMENTS_OBSERVER ) )->segments();
 	}
 
-	setup_pose_metric_calculators( pose );
-
 	bool separate_out_constraints = false;
 	utility::vector1< std::string >::const_iterator cstfind = find( relevant_scoreterms_.begin(), relevant_scoreterms_.end(),"all_cst");
 	if( cstfind != relevant_scoreterms_.end() ) separate_out_constraints = true;
+    
+    setup_pose_metric_calculators( pose, separate_out_constraints );
 
   //first write out the relevant score terms for the pose total
   for( utility::vector1< std::string >::const_iterator sco_it = relevant_scoreterms_.begin();
@@ -1079,15 +1081,7 @@ EnzdesScorefileFilter::compute_metrics_for_residue_subset(
 			}
 			//std::cerr << " hehe, just executed pose metric for " << calc_it->first << " calculator   ";
 
-
-			//special case: if this is an interface calculation, we do not want to include constraint terms
-			//hacky at the moment, haven't figured out yet how to do this really clean
-			if( separate_out_constraints && ( calc_it->first == "interf_E_1_2") ){
-				core::Real cst_val(0.0);
-				for( core::Size ii =1; ii <= res_subset.size(); ++ii ) cst_val += enzutil::sum_constraint_scoreterms(calc_pose, res_subset[ii]);
-				calc_value = calc_value - ( 2 * cst_val );
-			}
-			SilentEnergy new_se( res_calc_name, calc_value, 1, width);
+            SilentEnergy new_se( res_calc_name, calc_value, 1, width);
 			silent_Es_.push_back( new_se );
 
 		} // for calculators this res
@@ -1099,7 +1093,7 @@ EnzdesScorefileFilter::compute_metrics_for_residue_subset(
 
 /// @brief function to setup residue specific calculators for all the catalytic residues and the ligand
 void
-EnzdesScorefileFilter::setup_pose_metric_calculators( core::pose::Pose const & pose ) const
+EnzdesScorefileFilter::setup_pose_metric_calculators( core::pose::Pose const & pose, bool separate_out_constraints ) const
 {
 
 	using namespace core::pose::metrics;
@@ -1199,6 +1193,14 @@ if( !CalculatorFactory::Instance().check_calculator_exists( charge_calc_name ) )
 		spec_seg_first_res.insert( spec_segments_[speccount].first );
 		scoreres.push_back(  spec_segments_[speccount].first );
 	}
+    
+    //detect all protein chains
+    std::set< core::Size > protein_chains;
+    for( utility::vector1< core::Size >::const_iterator vecit( scoreres.begin() );  vecit != scoreres.end(); ++vecit){
+        if (pose.residue_type( *vecit ).is_protein()) {
+            protein_chains.insert(pose.chain( *vecit ));
+        }
+    }
 
 	for( utility::vector1< core::Size >::const_iterator vecit( scoreres.begin() );  vecit != scoreres.end(); ++vecit){
 
@@ -1208,36 +1210,39 @@ if( !CalculatorFactory::Instance().check_calculator_exists( charge_calc_name ) )
 
 		//first a couple of ligand specific calculators ( interface SASA and interface energetics)
 		if( pose.residue_type( *vecit ).is_ligand() ){
+            Size lig_chain = pose.chain( *vecit );
+            std::string lig_ch_string = utility::to_string( lig_chain );
+            for (std::set< core::Size >::const_iterator vecit2(protein_chains.begin()); vecit2!=protein_chains.end(); ++vecit2) {
+				Size prot_chain=*vecit2;
+                std::string prot_ch_string = utility::to_string( prot_chain );
+                if( lig_chain == prot_chain ) { utility_exit_with_message( "WTF?!? ligand and residue 1 are on the same chain... " );}
 
-			if( pose.conformation().num_chains() != 2){
-				std::cerr << "WARNING: the input pose has more than two chains, interface score reported in scorefile might not be accurate." << std::endl;
-			}
-			Size lig_chain = pose.chain( *vecit );
-			Size prot_chain = pose.chain( 1 );   //we're making the not so wild assumption that the the first residue in the pose belongs to the protein
-			std::string lig_ch_string = utility::to_string( lig_chain );
-			std::string prot_ch_string = utility::to_string( prot_chain );
-			if( lig_chain == prot_chain ) { utility_exit_with_message( "WTF?!? ligand and residue 1 are on the same chain... " );}
+                std::string lig_interface_neighbor_calc_name = "neighbor_def_" + prot_ch_string + "_" + lig_ch_string;
+                std::string lig_dsasa_calc_name = "dsasa_" + prot_ch_string + "_" + lig_ch_string;
+                std::string lig_interface_e_calc_name = "interf_E_" + prot_ch_string + "_" + lig_ch_string;
 
-			std::string lig_interface_neighbor_calc_name = "neighbor_def_" + prot_ch_string + "_" + lig_ch_string;
-			std::string lig_dsasa_calc_name = "dsasa_" + prot_ch_string + "_" + lig_ch_string;
-			std::string lig_interface_e_calc_name = "interf_E_" + prot_ch_string + "_" + lig_ch_string;
-
-			if( !CalculatorFactory::Instance().check_calculator_exists( lig_interface_neighbor_calc_name ) ){
-				PoseMetricCalculatorOP lig_neighbor_calc = new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( prot_chain, lig_chain );
-				CalculatorFactory::Instance().register_calculator( lig_interface_neighbor_calc_name, lig_neighbor_calc );
-			}
-			if( !CalculatorFactory::Instance().check_calculator_exists( lig_dsasa_calc_name ) ){
-				PoseMetricCalculatorOP lig_dsasa_calc = new core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator( prot_chain, lig_chain );
-				CalculatorFactory::Instance().register_calculator( lig_dsasa_calc_name, lig_dsasa_calc );
-			}
-			if( !CalculatorFactory::Instance().check_calculator_exists( lig_interface_e_calc_name ) ){
-				PoseMetricCalculatorOP lig_interf_E_calc = new core::pose::metrics::simple_calculators::InterfaceDeltaEnergeticsCalculator( lig_interface_neighbor_calc_name );
-				CalculatorFactory::Instance().register_calculator( lig_interface_e_calc_name, lig_interf_E_calc );
-			}
-
-			calculators_this_res.push_back( std::pair< std::string, std::string > ( lig_interface_e_calc_name, "weighted_total") );
-			calculators_this_res.push_back( std::pair< std::string, std::string > ( lig_dsasa_calc_name, "frac_ch2_dsasa") );
-
+                if( !CalculatorFactory::Instance().check_calculator_exists( lig_interface_neighbor_calc_name ) ){
+                    PoseMetricCalculatorOP lig_neighbor_calc = new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( prot_chain, lig_chain );
+                    CalculatorFactory::Instance().register_calculator( lig_interface_neighbor_calc_name, lig_neighbor_calc );
+                }
+                if( !CalculatorFactory::Instance().check_calculator_exists( lig_dsasa_calc_name ) ){
+                    PoseMetricCalculatorOP lig_dsasa_calc = new core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator( prot_chain, lig_chain );
+                    CalculatorFactory::Instance().register_calculator( lig_dsasa_calc_name, lig_dsasa_calc );
+                }
+                if( !CalculatorFactory::Instance().check_calculator_exists( lig_interface_e_calc_name ) ){
+                    utility::vector1<ScoreType> score_types_to_ignore;
+                    if (separate_out_constraints) {
+                        score_types_to_ignore.push_back( ScoreType( atom_pair_constraint ) );
+                        score_types_to_ignore.push_back( ScoreType( angle_constraint ) );
+                        score_types_to_ignore.push_back( ScoreType( dihedral_constraint ) );
+                    }
+                    PoseMetricCalculatorOP lig_interf_E_calc = new core::pose::metrics::simple_calculators::InterfaceDeltaEnergeticsCalculator( lig_interface_neighbor_calc_name, score_types_to_ignore );
+                    CalculatorFactory::Instance().register_calculator( lig_interface_e_calc_name, lig_interf_E_calc );
+                }
+                
+                calculators_this_res.push_back( std::pair< std::string, std::string > ( lig_interface_e_calc_name, "weighted_total") );
+                calculators_this_res.push_back( std::pair< std::string, std::string > ( lig_dsasa_calc_name, "frac_ch2_dsasa") );
+            }
 		} //ligand specific calculators set up
 
 		//now calculators for every residue, for starters number of Hbonds and number of buried polars
