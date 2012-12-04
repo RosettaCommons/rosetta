@@ -479,7 +479,7 @@ public:
 			return true; // failure
 		} else {
 			//std::cout << "SetAtomicCharge::apply: " << atom_name_ << ' ' << charge_ << std::endl;
-			rsd.atom( atom_name_ ).charge( charge_ );
+			rsd.atom( atom_name_ )->charge( charge_ );
 		}
 		return false;
 	}

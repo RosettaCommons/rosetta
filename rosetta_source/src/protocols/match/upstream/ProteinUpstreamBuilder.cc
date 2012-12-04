@@ -340,7 +340,7 @@ void BuildSet::set_residue_type(
 	}
 
 	for ( Size ii = 1; ii <= atom_radii_.size(); ++ii ) {
-		atom_radii_[ ii ] = probe_radius_for_atom_type( restype_->atom( ii ).atom_type_index() );
+		atom_radii_[ ii ] = probe_radius_for_atom_type( restype_->atom( ii )->atom_type_index() );
 	}
 }
 
@@ -402,10 +402,10 @@ FullChiSampleSet::FullChiSampleSet(
 						chi_samples_[ ii ].resize( 1 );
 						frames_[ ii ].resize( 1 );
 						chi_samples_[ ii ][ 1 ] = numeric::dihedral_degrees(
-							build_set.restype().atom( build_set.restype().chi_atoms( ii )[ 1 ] ).ideal_xyz(),
-							build_set.restype().atom( build_set.restype().chi_atoms( ii )[ 2 ] ).ideal_xyz(),
-							build_set.restype().atom( build_set.restype().chi_atoms( ii )[ 3 ] ).ideal_xyz(),
-							build_set.restype().atom( build_set.restype().chi_atoms( ii )[ 4 ] ).ideal_xyz() );
+							build_set.restype().atom( build_set.restype().chi_atoms( ii )[ 1 ] )->ideal_xyz(),
+							build_set.restype().atom( build_set.restype().chi_atoms( ii )[ 2 ] )->ideal_xyz(),
+							build_set.restype().atom( build_set.restype().chi_atoms( ii )[ 3 ] )->ideal_xyz(),
+							build_set.restype().atom( build_set.restype().chi_atoms( ii )[ 4 ] )->ideal_xyz() );
 					}
 					break;
 				case follow_EX_flags :

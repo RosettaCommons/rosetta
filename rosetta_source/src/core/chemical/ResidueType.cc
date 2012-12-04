@@ -114,13 +114,12 @@ ResidueType::ResidueType(
 	AtomTypeSetCAP atom_types,
 	ElementSetCAP elements,
 	MMAtomTypeSetCAP mm_atom_types,
-	orbitals::OrbitalTypeSetCAP orbital_types//, CSDAtomTypeSetCAP csd_atom_types kwk commenting out csd atom types until they are fully functional
+	orbitals::OrbitalTypeSetCAP orbital_types
 ) :
 	atom_types_( atom_types ),
 	elements_( elements ),
 	mm_atom_types_( mm_atom_types ),
 	orbital_types_( orbital_types),
-//	csd_atom_types_( csd_atom_types ),
 	residue_type_set_( 0 ),
 	natoms_(0),
 	nheavyatoms_(0),
@@ -199,6 +198,29 @@ ResidueTypeOP
 ResidueType::clone() const
 {
 	ResidueTypeOP rsd_ptr( new ResidueType( *this ) );
+	// If we store atom & orbital pointers than we need to deep copy...
+	AtomOPs atoms;
+	for(
+			AtomOPs::const_iterator begin = atoms_.begin(),
+			end=atoms_.end();
+			begin != end;
+			begin++
+	){
+		atoms.push_back(new Atom(**begin));
+	}
+	rsd_ptr->atoms_ = atoms;
+
+	OrbitalOPs orbitals;
+	for(
+			OrbitalOPs::const_iterator begin = orbitals_.begin(),
+			end=orbitals_.end();
+			begin != end;
+			begin++
+	){
+		orbitals.push_back(new Orbital(**begin));
+	}
+	rsd_ptr->orbitals_ =orbitals;
+
 	return rsd_ptr;
 }
 
@@ -288,7 +310,7 @@ AtomType const &
 ResidueType::atom_type( Size const atomno ) const
 {
 	PyAssert((atomno > 0) && (atomno <= atoms_.size()), "ResidueType::atom_type( Size const atomno ): atomno is not in this ResidueType!");
-	return ( *atom_types_ )[ atoms_[ atomno ].atom_type_index() ];
+	return ( *atom_types_ )[ atoms_[ atomno ]->atom_type_index() ];
 }
 
 /// @brief Get the atom name by index
@@ -296,7 +318,7 @@ std::string const &
 ResidueType::atom_name( Size const index ) const
 {
 	PyAssert((index > 0) && (index <= atoms_.size()), "ResidueType::atom_name( Size const index ): index is not in this ResidueType!");
-	return atoms_[ index ].name();
+	return atoms_[ index ]->name();
 }
 
 /// @brief get index of an atom's base atom
@@ -340,7 +362,7 @@ ResidueType::add_atom(
 	Size const mm_type( mm_atom_types_->atom_type_index( mm_atom_type_name ) );
 
 		// store the name
-	atoms_.push_back( Atom(
+	atoms_.push_back( new Atom(
 			atom_name,
 			mm_atom_type_name,
 			type, mm_type,
@@ -390,7 +412,7 @@ ResidueType::set_atom_type(
 	std::string const & atom_type_name
 )
 {
-	atoms_[ atom_index( atom_name ) ].atom_type_index( atom_types_->atom_type_index( atom_type_name ) );
+	atoms_[ atom_index( atom_name ) ]->atom_type_index( atom_types_->atom_type_index( atom_type_name ) );
 }
 
 
@@ -401,20 +423,20 @@ ResidueType::set_mm_atom_type(
 	std::string const & mm_atom_type_name
 )
 {
-	atoms_[ atom_index( atom_name ) ].mm_atom_type_index( mm_atom_types_->atom_type_index( mm_atom_type_name ) );
+	atoms_[ atom_index( atom_name ) ]->mm_atom_type_index( mm_atom_types_->atom_type_index( mm_atom_type_name ) );
 }
 
 /// @brief Get the MM atom_type for this atom by its index number in this residue
 MMAtomType const &
 ResidueType::mm_atom_type( Size const atomno ) const
 {
-	return ( *mm_atom_types_ )[ atoms_[ atomno ].mm_atom_type_index() ];
+	return ( *mm_atom_types_ )[ atoms_[ atomno ]->mm_atom_type_index() ];
 }
 
 orbitals::OrbitalType const &
 ResidueType::orbital_type(int const orbital_index)const
 {
-	return ( *orbital_types_ )[ orbitals_[ orbital_index ].orbital_type_index() ];
+	return ( *orbital_types_ )[ orbitals_[ orbital_index ]->orbital_type_index() ];
 
 }
 
@@ -443,7 +465,7 @@ ResidueType::add_orbital(
 	Size type( orbital_types_->orbital_type_index( orbital_type_name ) );
 
 	// store the name
-	orbitals_.push_back(Orbital(orbital_name, type, Vector(0.0)));
+	orbitals_.push_back(new Orbital(orbital_name, type, Vector(0.0)));
 	assert( orbitals_.size() == n_orbitals_ );
 
 	orbitals_index_[ orbital_name ] = n_orbitals_;
@@ -970,7 +992,7 @@ ResidueType::setup_atom_ordering(
 	utility::vector1< bool > keep_me( old_natoms, true );
 	for ( Size i=1; i<= old_natoms; ++i ) {
 		if ( std::find( delete_atoms_.begin(), delete_atoms_.end(), i ) != delete_atoms_.end() ) {
-			tr.Trace << "ResidueType::finalize(): delete atom: " << atoms_[i].name() << std::endl;
+			tr.Trace << "ResidueType::finalize(): delete atom: " << atoms_[i]->name() << std::endl;
 			keep_me[i] = false;
 		}
 	}
@@ -1019,7 +1041,7 @@ ResidueType::setup_atom_ordering(
 		attached_H_begin_[ new_heavy_index ] = new_H_index + 1;
 		AtomIndices const & nbrs( bonded_neighbor_[ old_heavy_index ] );
 		for ( Size j=1; j<= nbrs.size(); ++j ) {
-			if ( (*atom_types_)[ atoms_[ nbrs[j] ].atom_type_index() ].is_hydrogen()) {
+			if ( (*atom_types_)[ atoms_[ nbrs[j] ]->atom_type_index() ].is_hydrogen()) {
 				Size const old_H_index( nbrs[j] );
 				if ( keep_me[ old_H_index ] ) {
 					++new_H_index;
@@ -1052,7 +1074,7 @@ ResidueType::reorder_primary_data(
 
 	// copy the old per-atom data: note that attached_H_begin and attached_H_end have already been setup
 	// and abase2_ is derived data setup down below
-	utility::vector1< Atom > old_atoms( atoms_ );
+	utility::vector1< AtomOP > old_atoms( atoms_ );
 
 	utility::vector1< utility::vector1 <core::Size> > old_orbital_bonded_neighbor(orbital_bonded_neighbor_);
 	utility::vector1< AtomIndices > old_bonded_neighbor( bonded_neighbor_ );
@@ -1083,14 +1105,7 @@ ResidueType::reorder_primary_data(
 		Size const new_index( old2new[ old_index ] );
 		if ( new_index == 0 ) continue; // deleted
 
-		atoms_[ new_index ].atom_type_index( old_atoms[ old_index ].atom_type_index() );
-		atoms_[ new_index ].mm_atom_type_index( old_atoms[ old_index ].mm_atom_type_index() );
-//		csd_atom_type_index_[ new_index ] = old_csd_atom_type_index[ old_index ];
-		//atomic_charge_[ new_index ] = old_atomic_charge[ old_index ];
 		atoms_[ new_index ] = old_atoms[ old_index ];
-		//atom_name_[ new_index ] = old_atom_name[ old_index ];
-		//mm_atom_name_[ new_index ] = old_mm_atom_name[ old_index ];
-//		csd_atom_name_[ new_index ] = old_csd_atom_name[ old_index ];
 
 		atom_base_[ new_index ] = old2new[ old_atom_base[ old_index ] ];
 		assert( atom_base_[ new_index ] ); // this will fail if we deleted an atom which was the atom_base for another atom
@@ -1119,11 +1134,9 @@ ResidueType::reorder_primary_data(
 			if ( old2new[ old_nbr ] ) cut_bond_neighbor_[ new_index ].push_back( old2new[ old_nbr ] );
 		}
 
-		//xyz_[ new_index ] = old_xyz[ old_index ];
 		parents_[ new_index ] = old_parents[ old_index ];
-	//	icoor_[ new_index ] = old_icoor[ old_index ];
 		for ( Size i=1; i<= 3; ++i ) {
-			ICoorAtomID & stub_atom( atoms_[ new_index ].icoor().stub_atom( i ) );
+			ICoorAtomID & stub_atom( atoms_[ new_index ]->icoor().stub_atom( i ) );
 			if ( stub_atom.type() == ICoorAtomID::INTERNAL ) {
 				stub_atom.atomno( old2new[ stub_atom.atomno() ] );
 				assert( stub_atom.atomno() ); // this will fail if we deleted a stub atom for some other atom
@@ -1140,16 +1153,16 @@ ResidueType::reorder_primary_data(
 				)
 				{
 
-					core::Size stub1( orbitals_[*orbital_index].new_icoor().get_stub1());
-					core::Size stub2( orbitals_[*orbital_index].new_icoor().get_stub2());
-					core::Size stub3( orbitals_[*orbital_index].new_icoor().get_stub3() );
+					core::Size stub1( orbitals_[*orbital_index]->new_icoor().get_stub1());
+					core::Size stub2( orbitals_[*orbital_index]->new_icoor().get_stub2());
+					core::Size stub3( orbitals_[*orbital_index]->new_icoor().get_stub3() );
 
 					if ( stub1 == 0 || stub2 == 0 || stub3 == 0) {
 						continue;
 					}else{
-						orbitals_[*orbital_index].new_icoor().replace_stub1( old2new[stub1]);
-						orbitals_[*orbital_index].new_icoor().replace_stub2( old2new[stub2]);
-						orbitals_[*orbital_index].new_icoor().replace_stub3( old2new[stub3]);
+						orbitals_[*orbital_index]->new_icoor().replace_stub1( old2new[stub1]);
+						orbitals_[*orbital_index]->new_icoor().replace_stub2( old2new[stub2]);
+						orbitals_[*orbital_index]->new_icoor().replace_stub3( old2new[stub3]);
 					}
 
 
@@ -1164,8 +1177,8 @@ ResidueType::reorder_primary_data(
 	// atom_index_
 	atom_index_.clear();
 	for ( Size i=1; i<= natoms_; ++i ) {
-		atom_index_[ atoms_[i].name() ] = i;
-		atom_index_[ strip_whitespace( atoms_[i].name() ) ] = i;
+		atom_index_[ atoms_[i]->name() ] = i;
+		atom_index_[ strip_whitespace( atoms_[i]->name() ) ] = i;
 	}
 
 	// chi_atoms_
@@ -1253,7 +1266,7 @@ ResidueType::update_derived_data()
 
 
 	for ( Size i=1; i<= natoms_; ++i ) {
-		AtomType const & type( (*atom_types_)[ atoms_[i].atom_type_index() ] );
+		AtomType const & type( (*atom_types_)[ atoms_[i]->atom_type_index() ] );
 		//Size const type( atoms_[i].type() );
 
 		//////////////////////////////////
@@ -1285,7 +1298,7 @@ ResidueType::update_derived_data()
 
 		}
 
-		if ( type.is_polar_hydrogen() &&   (std::abs(atoms_[ natoms_ ].charge() ) > 1.0e-3) ) {
+		if ( type.is_polar_hydrogen() &&   (std::abs(atoms_[ natoms_ ]->charge() ) > 1.0e-3) ) {
 			Hpos_polar_.push_back( i );
 			if ( i >= first_sidechain_hydrogen_ ) {
 				Hpos_polar_sc_.push_back( i );
@@ -1763,7 +1776,7 @@ ResidueType::set_icoor(
 	switch ( id.type() ) {
 	case ICoorAtomID::INTERNAL:
 		if ( atoms_.size() < atomno ) utility_exit_with_message("ResidueType:: shoudnt get here!");//icoor_.resize(atomno);
-		atoms_[ atomno ].icoor( ic );
+		atoms_[ atomno ]->icoor( ic );
 		// update atom_base?
 		if ( ( stub_atom1 != atm ) && has( stub_atom1 ) &&
 				 ( atom_base_.size() < atomno || atom_base_[ atomno ] == 0 || atom_base_[ atomno ] == atomno ) ) {
@@ -1812,7 +1825,7 @@ ResidueType::set_icoor(
 	switch ( id.type() ) {
 	case ICoorAtomID::INTERNAL:
 		if ( atoms_.size() < atomno ) utility_exit_with_message("ResidueType:: shoudnt get here!");//icoor_.resize(atomno);
-		atoms_[ atomno ].icoor( ic );
+		atoms_[ atomno ]->icoor( ic );
 		// update atom_base?
 		if ( ( stub_atom1 != atm ) && has( stub_atom1 ) &&
 				 ( atom_base_.size() < atomno || atom_base_[ atomno ] == 0 || atom_base_[ atomno ] == atomno ) ) {
@@ -1859,7 +1872,7 @@ ResidueType::set_orbital_icoor_id(
 	std::string stub2(stub_atom2);
 	std::string stub3(stub_atom3);
 	orbitals::ICoorOrbitalData icoor(phi, theta, d, stub1, stub2, stub3);
-	orbitals_[ orb_indx ].icoor( icoor );
+	orbitals_[ orb_indx ]->icoor( icoor );
 
 
 	core::Size s1(atom_index_[ stub_atom1 ]);
@@ -1867,7 +1880,7 @@ ResidueType::set_orbital_icoor_id(
 	core::Size s3(atom_index_[ stub_atom3 ]);
 	orbitals::ICoorOrbitalData new_icoor(phi, theta, d, s1, s2, s3);
 
-	orbitals_[ orb_indx ].new_icoor( new_icoor );
+	orbitals_[ orb_indx ]->new_icoor( new_icoor );
 
 
 }
@@ -1894,7 +1907,7 @@ void ResidueType::assign_neighbor_atom()
 	Vector total(0.0,0.0,0.0);
 	for(core::Size index = 1; index <= atoms_.size();++index)
 	{
-		total += atoms_[index].ideal_xyz();
+		total += atoms_[index]->ideal_xyz();
 	}
 	Vector center = total/atoms_.size();
 
@@ -1903,7 +1916,7 @@ void ResidueType::assign_neighbor_atom()
 	core::Real min_distance = 50000.0;
 	for(core::Size index = 1; index <= atoms_.size();++index)
 	{
-		core::Real distance = center.distance(atoms_[index].ideal_xyz());
+		core::Real distance = center.distance(atoms_[index]->ideal_xyz());
 		if( (distance < min_distance) && (!atom_is_hydrogen(index)) )
 		{
 			min_distance = distance;
@@ -1912,7 +1925,7 @@ void ResidueType::assign_neighbor_atom()
 	}
 	assert(min_index != 0);
 	//set neighbor atom
-	nbr_atom(atoms_[min_index].name());
+	nbr_atom(atoms_[min_index]->name());
 }
 
 void ResidueType::assign_internal_coordinates()
@@ -1989,10 +2002,10 @@ void ResidueType::calculate_icoor(std::string const & child,
 	//std::cout <<child << " \""<<stub_atom1 << "\" \""<<stub_atom2<< "\" \""<<stub_atom3 << std::endl;
 	// This is basically a direct port of calc_internal_coords()
 	// found in /python/apps/public/molfile_to_params.py
-	Vector const child_xyz = atom(atom_index(child)).ideal_xyz();
-	Vector const stub1_xyz = atom(atom_index(stub_atom1)).ideal_xyz();
-	Vector const stub2_xyz = atom(atom_index(stub_atom2)).ideal_xyz();
-	Vector const stub3_xyz = atom(atom_index(stub_atom3)).ideal_xyz();
+	Vector const child_xyz = atom(atom_index(child))->ideal_xyz();
+	Vector const stub1_xyz = atom(atom_index(stub_atom1))->ideal_xyz();
+	Vector const stub2_xyz = atom(atom_index(stub_atom2))->ideal_xyz();
+	Vector const stub3_xyz = atom(atom_index(stub_atom3))->ideal_xyz();
 
 	core::Real distance = child_xyz.distance(stub1_xyz);
 	core::Real theta = 0.0;
@@ -2130,15 +2143,15 @@ ResidueType::print_dihedrals() const
 			MMAtomType at8 = mm_atom_type( dihedral_atom_sets_[ i ].key4() );
 
 			tr.Debug << "PDB:" << "\t"
-								<< atoms_[ dihedral_atom_sets_[ i ].key1() ].name() << "\t"
-								<< atoms_[ dihedral_atom_sets_[ i ].key2() ].name() << "\t"
-								<< atoms_[ dihedral_atom_sets_[ i ].key3() ].name() << "\t"
-								<< atoms_[ dihedral_atom_sets_[ i ].key4() ].name() << "\t"
+								<< atoms_[ dihedral_atom_sets_[ i ].key1() ]->name() << "\t"
+								<< atoms_[ dihedral_atom_sets_[ i ].key2() ]->name() << "\t"
+								<< atoms_[ dihedral_atom_sets_[ i ].key3() ]->name() << "\t"
+								<< atoms_[ dihedral_atom_sets_[ i ].key4() ]->name() << "\t"
 								<< "MM:" << "\t"
-								<< atoms_[ dihedral_atom_sets_[ i ].key1() ].mm_name() << "\t"
-								<< atoms_[ dihedral_atom_sets_[ i ].key2() ].mm_name() << "\t"
-								<< atoms_[ dihedral_atom_sets_[ i ].key3() ].mm_name() << "\t"
-								<< atoms_[ dihedral_atom_sets_[ i ].key4() ].mm_name() << "\t"
+								<< atoms_[ dihedral_atom_sets_[ i ].key1() ]->mm_name() << "\t"
+								<< atoms_[ dihedral_atom_sets_[ i ].key2() ]->mm_name() << "\t"
+								<< atoms_[ dihedral_atom_sets_[ i ].key3() ]->mm_name() << "\t"
+								<< atoms_[ dihedral_atom_sets_[ i ].key4() ]->mm_name() << "\t"
 								<< "MM2:" << "\t"
 								<< at5.name() << "\t"
 								<< at6.name() << "\t"
@@ -2170,13 +2183,13 @@ ResidueType::print_bondangles() const
 			MMAtomType at7 = mm_atom_type( bondangle_atom_sets_[ i ].key3() );
 
 			tr.Debug << "PDB:" << "\t"
-								<< atoms_[ bondangle_atom_sets_[ i ].key1() ].name() << "\t"
-								<< atoms_[ bondangle_atom_sets_[ i ].key2() ].name() << "\t"
-								<< atoms_[ bondangle_atom_sets_[ i ].key3() ].name() << "\t"
+								<< atoms_[ bondangle_atom_sets_[ i ].key1() ]->name() << "\t"
+								<< atoms_[ bondangle_atom_sets_[ i ].key2() ]->name() << "\t"
+								<< atoms_[ bondangle_atom_sets_[ i ].key3() ]->name() << "\t"
 								<< "MM:" << "\t"
-								<< atoms_[ bondangle_atom_sets_[ i ].key1() ].mm_name() << "\t"
-								<< atoms_[ bondangle_atom_sets_[ i ].key2() ].mm_name() << "\t"
-								<< atoms_[ bondangle_atom_sets_[ i ].key3() ].mm_name() << "\t"
+								<< atoms_[ bondangle_atom_sets_[ i ].key1() ]->mm_name() << "\t"
+								<< atoms_[ bondangle_atom_sets_[ i ].key2() ]->mm_name() << "\t"
+								<< atoms_[ bondangle_atom_sets_[ i ].key3() ]->mm_name() << "\t"
 								<< "MM2:" << "\t"
 								<< at5.name() << "\t"
 								<< at6.name() << "\t"
@@ -2197,13 +2210,13 @@ ResidueType::print_pretty_path_distances() const
 	// print header line
 	for ( Size i = 1; i <= natoms_; ++i )
 		{
-			tr.Debug << "\t" << atoms_[i].name();
+			tr.Debug << "\t" << atoms_[i]->name();
 		}
 	tr.Debug << std::endl;
 
 	for ( Size j = 1; j <= natoms_; ++j )
 		{
-			tr.Debug << atoms_[j].name() << "\t";
+			tr.Debug << atoms_[j]->name() << "\t";
 			for ( Size k = 1; k <= natoms_; ++k )
 				{
 					tr.Debug << path_distance_[j][k] << "\t";
@@ -2402,7 +2415,7 @@ ResidueType::debug_dump_icoor()
 
 	tr.Debug << "ICoor for " << name3() << std::endl;
 	for( Size ii = 1 ; ii <= natoms() ; ++ii) {
-		tr.Debug << " Atom name: " << atom_name( ii ) << " ideal xyz " << atom(ii).ideal_xyz()[0] << "  " << atom(ii).ideal_xyz()[1] << "  " << atom(ii).ideal_xyz()[2] << std::endl;
+		tr.Debug << " Atom name: " << atom_name( ii ) << " ideal xyz " << atom(ii)->ideal_xyz()[0] << "  " << atom(ii)->ideal_xyz()[1] << "  " << atom(ii)->ideal_xyz()[2] << std::endl;
 	}
 
 }
@@ -2411,9 +2424,9 @@ ResidueType::debug_dump_icoor()
 void
 ResidueType::show_all_atom_names( std::ostream & out ) const {
 	//	utility::vector1< std::string > names;
-	for ( utility::vector1< Atom >::const_iterator it = atoms_.begin(), end = atoms_.end();
+	for ( utility::vector1< AtomOP >::const_iterator it = atoms_.begin(), end = atoms_.end();
 				it != end; ++it ) {
-			out << it->name() << std::endl;
+			out << (*it)->name() << std::endl;
 	}
 }
 

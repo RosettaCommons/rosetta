@@ -1191,7 +1191,7 @@ bump_grid_to_enclose_pose( core::pose::Pose const & pose )
 	Vector bbl( first_xyz - at1rad ), bbu( first_xyz + at1rad );
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		for ( Size jj = 1; jj <= pose.residue( ii ).natoms(); ++jj ) {
-			Real jjrad = BumpGrid::probe_radius( probe_radius_for_atom_type( pose.residue_type( ii ).atom( jj ).atom_type_index() ));
+			Real jjrad = BumpGrid::probe_radius( probe_radius_for_atom_type( pose.residue_type( ii ).atom( jj )->atom_type_index() ));
 			bbl.min( pose.residue( ii ).xyz( jj ) - jjrad );
 			bbu.max( pose.residue( ii ).xyz( jj ) + jjrad );
 		}

@@ -113,14 +113,14 @@ UpstreamResTypeGeometry::initialize_from_residue_type(
 
 	if ( N_atom_id_ != 0 && CA_atom_id_ != 0 && C_atom_id_ != 0 ) {
 
-		Vector halfpoint = 0.5 * ( res.atom( N_atom_id_ ).ideal_xyz() + res.atom( C_atom_id_ ).ideal_xyz() );
-		HTReal ideal_frame( res.atom( N_atom_id_ ).ideal_xyz(), halfpoint, res.atom( CA_atom_id_ ).ideal_xyz() );
+		Vector halfpoint = 0.5 * ( res.atom( N_atom_id_ )->ideal_xyz() + res.atom( C_atom_id_ )->ideal_xyz() );
+		HTReal ideal_frame( res.atom( N_atom_id_ )->ideal_xyz(), halfpoint, res.atom( CA_atom_id_ )->ideal_xyz() );
 
 		/// backbone atoms, besides the cannonical 3
 		for ( Size ii = 1; ii <= n_atoms; ++ii ) {
 			if ( ii == N_atom_id_ || ii == CA_atom_id_ || ii == C_atom_id_ ) continue;
 			if ( res.last_controlling_chi( ii ) != 0 ) continue;
-			nonchi_atoms_in_ideal_frame_.push_back( ideal_frame.to_local_coordinate( res.atom( ii ).ideal_xyz() ));
+			nonchi_atoms_in_ideal_frame_.push_back( ideal_frame.to_local_coordinate( res.atom( ii )->ideal_xyz() ));
 			nonchi_atom_id_2_restype_atom_id_.push_back( ii );
 			restype_atom_id_2_nonchi_atom_id_[ ii ] = nonchi_atoms_in_ideal_frame_.size();
 		}
@@ -145,9 +145,9 @@ UpstreamResTypeGeometry::initialize_from_residue_type(
 		ht_for_chitip_atoms_[ ii ].walk_along_z( res.icoor( chiat4 ).d() );
 
 		HTReal chi_tip_frame(
-			res.atom( chiat2 ).ideal_xyz(),
-			res.atom( chiat3 ).ideal_xyz(),
-			res.atom( chiat4 ).ideal_xyz() );
+			res.atom( chiat2 )->ideal_xyz(),
+			res.atom( chiat3 )->ideal_xyz(),
+			res.atom( chiat4 )->ideal_xyz() );
 
 		Size const n_nontip_ats_for_chi = res.atoms_last_controlled_by_chi( ii ).size() - 1;
 
@@ -158,7 +158,7 @@ UpstreamResTypeGeometry::initialize_from_residue_type(
 			Size const jjatom = res.atoms_last_controlled_by_chi( ii )[ jj ];
 			if ( jjatom == chiat4 ) continue;
 
-			Vector jjloc_in_chitip_frame = chi_tip_frame.to_local_coordinate( res.atom( jjatom ).ideal_xyz() );
+			Vector jjloc_in_chitip_frame = chi_tip_frame.to_local_coordinate( res.atom( jjatom )->ideal_xyz() );
 			nonchitip_atoms_[ ii ].push_back( jjatom );
 			points_for_nonchitip_atoms_[ ii ].push_back( jjloc_in_chitip_frame );
 			which_point_for_atom_[ jjatom ] = points_for_nonchitip_atoms_[ ii ].size();

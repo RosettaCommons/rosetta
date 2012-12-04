@@ -158,9 +158,9 @@ public:
 			core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->
 			name_map( "ZNX" );
 
-		core::Vector znpos = znx_restype.atom( znx_restype.atom_index( "ZN" )).ideal_xyz();
-		core::Vector v1pos = znx_restype.atom( znx_restype.atom_index( "V1" )).ideal_xyz();
-		core::Vector v2pos = znx_restype.atom( znx_restype.atom_index( "V2" )).ideal_xyz();
+		core::Vector znpos = znx_restype.atom( znx_restype.atom_index( "ZN" ))->ideal_xyz();
+		core::Vector v1pos = znx_restype.atom( znx_restype.atom_index( "V1" ))->ideal_xyz();
+		core::Vector v2pos = znx_restype.atom( znx_restype.atom_index( "V2" ))->ideal_xyz();
 		core::Vector v12_midpoint = v1pos + v2pos / 2;
 
 		numeric::HomogeneousTransform< core::Real > znframe( v1pos, v12_midpoint, znpos );
@@ -169,7 +169,7 @@ public:
 		numeric::HomogeneousTransform< core::Real > invznframe = znframe.inverse();
 		utility::vector1< core::Vector > znx_ideal_coords( znx_restype.natoms() );
 		for ( core::Size ii = 1; ii <= znx_restype.natoms(); ++ii ) {
-			znx_ideal_coords[ ii ] = invznframe * znx_restype.atom( ii ).ideal_xyz();
+			znx_ideal_coords[ ii ] = invznframe * znx_restype.atom( ii )->ideal_xyz();
 			if ( ii != 1 ) {
 				znx_ideal_coords[ ii ].normalize();
 			}

@@ -177,7 +177,7 @@ MMLJEnergyIntra::eval_intrares_energy(
 				Real dist_squared( atom1.xyz().distance_squared( atom2.xyz() ) );
 				// calc energy
 				Real rep(0), atr(0);
-				potential_.score( rsdtype.atom( i ).mm_atom_type_index(), rsdtype.atom( j ).mm_atom_type_index(),	path_dist, dist_squared, rep, atr );
+				potential_.score( rsdtype.atom( i )->mm_atom_type_index(), rsdtype.atom( j )->mm_atom_type_index(),	path_dist, dist_squared, rep, atr );
 				total_rep += rep;
 				total_atr += atr;
 // 		  	std::cout << "INTRA"

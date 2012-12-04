@@ -70,7 +70,7 @@ Residue::Residue( ResidueType const & rsd_type_in, bool const /*dummy_arg*/ ):
 {
 
 	for ( Size i=1; i<= rsd_type_.natoms(); ++i ) {
-		atoms_.push_back( Atom( rsd_type_.atom(i).ideal_xyz(), rsd_type_.atom(i).atom_type_index(),  rsd_type_.atom(i).mm_atom_type_index() ) );
+		atoms_.push_back( Atom( rsd_type_.atom(i)->ideal_xyz(), rsd_type_.atom(i)->atom_type_index(),  rsd_type_.atom(i)->mm_atom_type_index() ) );
 		//std::cout << this->atom_name(i) << std::endl;
 	}
 
@@ -79,7 +79,7 @@ Residue::Residue( ResidueType const & rsd_type_in, bool const /*dummy_arg*/ ):
 		utility::vector1<core::Size> const & orbital_indices(rsd_type_.bonded_orbitals(atom_with_orbitals));
 		foreach(core::Size orbital_index, orbital_indices){
 			Vector orb_xyz(this->build_orbital_xyz(orbital_index));
-			core::Size type = rsd_type_.orbital(orbital_index).orbital_type_index();
+			core::Size type = rsd_type_.orbital(orbital_index)->orbital_type_index();
 			orbitals_.push_back(orbitals::OrbitalXYZCoords(orb_xyz, type));
 		}
 	}
@@ -116,7 +116,7 @@ Residue::Residue(
 
 
 	for ( Size i=1; i<= rsd_type_.natoms(); ++i ) {
-		atoms_.push_back( Atom( rsd_type_.atom(i).ideal_xyz(), rsd_type_.atom(i).atom_type_index(), rsd_type_.atom(i).mm_atom_type_index() ));
+		atoms_.push_back( Atom( rsd_type_.atom(i)->ideal_xyz(), rsd_type_.atom(i)->atom_type_index(), rsd_type_.atom(i)->mm_atom_type_index() ));
 	}
 
 	assert( current_rsd.mainchain_torsions().size() == rsd_type_.mainchain_atoms().size() );
@@ -164,7 +164,7 @@ Residue::Residue(
 		utility::vector1<core::Size> const & orbital_indices(rsd_type_.bonded_orbitals(atom_with_orbitals));
 		foreach(core::Size orbital_index, orbital_indices){
 			Vector orb_xyz(this->build_orbital_xyz(orbital_index));
-			core::Size type = rsd_type_.orbital(orbital_index).orbital_type_index();
+			core::Size type = rsd_type_.orbital(orbital_index)->orbital_type_index();
 			orbitals_.push_back(orbitals::OrbitalXYZCoords(orb_xyz, type));
 		}
 	}

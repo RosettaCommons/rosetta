@@ -142,7 +142,7 @@ void ctabV2000Parser::set_atom_type(core::Size atomno, std::string atomname)
 		case 'O':
 			total_bonds+=2;
 		}
-		total_bonds+=molecule_container_->atom(atomno).charge();
+		total_bonds+=molecule_container_->atom(atomno)->charge();
 		total_bonds-=typer.getNumBonds();
 		while(total_bonds>0)
 		{
@@ -286,7 +286,7 @@ void ctabV3000Parser::set_atom_type(core::Size atomno, std::string atomname)
 		case 'O':
 			total_bonds+=2;
 		}
-		total_bonds+=molecule_container_->atom(atomno).charge();
+		total_bonds+=molecule_container_->atom(atomno)->charge();
 		total_bonds-=typer.getNumBonds();
 		while(total_bonds>0)
 		{
