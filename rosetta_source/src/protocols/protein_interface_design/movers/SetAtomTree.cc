@@ -32,6 +32,8 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <utility/vector0.hh>
+#include <protocols/simple_moves/CutChainMover.hh>
+#include <protocols/rigid/RB_geometry.hh>
 
 
 namespace protocols {
@@ -76,7 +78,8 @@ SetAtomTree::SetAtomTree() :
 	connect_to_( "" ),
 	anchor_res_( "" ),
 	connect_from_( "" ),
-	host_chain_( 2 )
+	host_chain_( 2 ),
+	two_parts_chain1_( false )
 {}
 
 SetAtomTree::~SetAtomTree() {}
@@ -106,6 +109,7 @@ SetAtomTree::parse_my_tag( TagPtr const tag, DataMap &, protocols::filters::Filt
 			connect_from_ = tag->getOption< std::string >( "connect_from" );
 	}
 	host_chain_ = tag->getOption< core::Size >( "host_chain", 2);
+	two_parts_chain1( tag->getOption< bool >( "two_parts_chain1", false ) );
 	TR<<"resnum: "<<resnum_<<" anchor: "<< anchor_res_<<std::endl;
 }//end parse my tag
 
@@ -188,6 +192,44 @@ SetAtomTree::apply( core::pose::Pose & pose )
 		TR<<new_ft<<std::endl;
 		pose.fold_tree( new_ft );
 		TR<<"Simple tree: "<<pose.fold_tree()<<std::endl;
+		return;
+	}
+	if( two_parts_chain1() ){
+		using namespace protocols::geometry;
+		protocols::simple_moves::CutChainMover ccm;
+		ccm.bond_length( 15.0 );
+		ccm.chain_id( 1 );
+		core::Size const cut( ccm.chain_cut( pose ) );
+		core::Size const CoM1 = (core::Size ) residue_center_of_mass( pose, 1, cut );
+		core::Size const CoM2 = (core::Size ) residue_center_of_mass( pose, cut + 1, pose.conformation().chain_end( 1 ) );
+		core::Size const CoM3 = (core::Size ) residue_center_of_mass( pose, pose.conformation().chain_begin( 2 ), pose.conformation().chain_end( 2 ) );
+		core::Size const CoM1_full_length = (core::Size ) residue_center_of_mass( pose, pose.conformation().chain_begin( 1 ), pose.conformation().chain_end( 1 ) );
+		TR<<"CoM1/CoM2/CoM3/CoM1_full_length/cut: "<<CoM1<<'/'<<CoM2<<'/'<<CoM3<<'/'<<'/'<<CoM1_full_length<<'/'<<cut<<std::endl;
+		core::kinematics::FoldTree new_ft;
+		new_ft.clear();
+		using namespace std;
+		if( CoM1_full_length <= cut ){
+			new_ft.add_edge( 1, min( CoM1_full_length, CoM1 ), -1 );
+			new_ft.add_edge( min( CoM1_full_length, CoM1 ), max( CoM1_full_length, CoM1 ), -1 );
+			new_ft.add_edge( max( CoM1_full_length, CoM1 ), cut, -1 );
+			new_ft.add_edge( cut + 1, CoM2, -1 );
+			new_ft.add_edge( CoM2, pose.conformation().chain_end( 1 ), -1 );
+		}
+		else{
+			new_ft.add_edge( 1, CoM1, -1 );
+			new_ft.add_edge( CoM1, cut, -1 );
+			new_ft.add_edge( cut + 1, min( CoM2, CoM1_full_length ), -1 );
+			new_ft.add_edge( min( CoM2, CoM1_full_length ), max( CoM2, CoM1_full_length ), -1 );
+			new_ft.add_edge( max( CoM2, CoM1_full_length ), pose.conformation().chain_end( 1 ), -1 );
+		}
+		new_ft.add_edge( pose.conformation().chain_begin( 2 ), CoM3, -1 );
+		new_ft.add_edge( CoM3, pose.conformation().chain_end( 2 ), -1 );
+		new_ft.add_edge( CoM1, CoM2, 1 );
+		new_ft.add_edge( CoM1_full_length, CoM3, 2 );
+		new_ft.delete_self_edges();
+		new_ft.reorder( 1 );
+		TR<<new_ft<<std::endl;
+		pose.fold_tree( new_ft );
 		return;
 	}
 
