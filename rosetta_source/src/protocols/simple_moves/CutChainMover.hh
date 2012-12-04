@@ -51,11 +51,11 @@ create_subpose(core::pose::Pose & pose );
 void
 foldTree (core::pose::Pose & pose);
 
-core::Real bond() const;
-core::Size chainId() const;
+core::Real bond_length() const;
+core::Size chain_id() const;
 
-void bond(core::Real);
-void chainId(core::Size);
+void bond_length(core::Real const);
+void chain_id(core::Size const);
 
 private:
 	core::Real bond_length_;

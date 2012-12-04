@@ -111,31 +111,31 @@ CutChainMover::get_name() const {
 }
 
 core::Real
-CutChainMover::bond() const {
+CutChainMover::bond_length() const {
 	return bond_length_;
 }
 
 core::Size
-CutChainMover::chainId() const {
+CutChainMover::chain_id() const {
 	return chain_id_;
 }
 
 //setters
 void
-CutChainMover::bond(core::Real length){
+CutChainMover::bond_length(core::Real const length){
 	bond_length_ = length;
 }
 void
-CutChainMover::chainId(core::Size ID){
+CutChainMover::chain_id(core::Size const ID){
 	chain_id_ = ID;
 }
 void
 CutChainMover::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose )
 {
-  bond( tag->getOption< core::Real >( "bond_length", 4.0 ) );
-  chainId( tag->getOption< core::Size >( "chain_id", 1 ) );
-	TR<<" bond_length: "<<bond();
-	TR<<"Chain id: "<<chainId();
+  bond_length( tag->getOption< core::Real >( "bond_length", 4.0 ) );
+  chain_id( tag->getOption< core::Size >( "chain_id", 1 ) );
+	TR<<" bond_length: "<<bond_length();
+	TR<<"Chain id: "<<chain_id();
 	TR<<std::endl;
 }
 
@@ -143,18 +143,18 @@ void CutChainMover::apply( core::pose::Pose & pose )
 {
 		create_subpose(pose);
 		foldTree(pose);
-		
+
 }
 
 core::Size
-CutChainMover::chain_cut( core::pose::Pose & pose) 
+CutChainMover::chain_cut( core::pose::Pose & pose)
 {
 	core::Size cut_pos = -1;
 	for( core::Size resj = pose.conformation().chain_begin( chain_id_ ); resj <= pose.conformation().chain_end( chain_id_ )-1; ++resj ){
 		core::Real const distance = pose.residue( resj+1 ).xyz( "N" ).distance(pose.residue( resj ).xyz( "C" ));
-			TR<<"distance is: "<<distance<<std::endl;
-			TR<<"residue name is : "<<pose.residue(resj).name1()<<std::endl;
-		if( distance > bond()){
+//			TR<<"distance is: "<<distance<<std::endl;
+//			TR<<"residue name is : "<<pose.residue(resj).name1()<<std::endl;
+		if( distance > bond_length()){
 			cut_pos = resj;
 			TR<<"Found cut at: "<<resj<<std::endl;
 			break;
@@ -183,8 +183,8 @@ core::Size const s1 = chain_cut(pose);
 core::kinematics::FoldTree ft;
 	ft.clear();
 	ft.add_edge( 1, s1, -1 );
-	ft.add_edge( s1, s1+1, 1 );	
-	ft.add_edge( s1+1, pose.conformation().chain_end( chainId()), -1 );
+	ft.add_edge( s1, s1+1, 1 );
+	ft.add_edge( s1+1, pose.conformation().chain_end( chain_id()), -1 );
 TR<<"old foldtree: "<<pose.fold_tree()<<std::endl;
 pose.fold_tree(ft);
 TR<<"new_foldtree: "<<pose.fold_tree()<<std::endl;
@@ -192,5 +192,5 @@ pose.conformation().detect_disulfides();
 }
 
 
-} // moves
+} // simple_moves
 } // protocols
