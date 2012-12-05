@@ -62,12 +62,18 @@ public:
 	bool design_only_target_residues() const{ return design_only_target_residues_; }
 	bool prevent_repacking() const{ return prevent_repacking_; }
 	void prevent_repacking( bool const b ){ prevent_repacking_ = b; }
+	void keep_aas( std::string const s ){ keep_aas_ = s; }
+	std::string keep_aas() const{ return keep_aas_; }
+	void restrict_identities( bool const b ){ restrict_identities_ = b; }
+	bool restrict_identities() const { return restrict_identities_; }
 private:
 	core::pose::PoseOP source_pose_;
 	utility::vector1< core::Size > res_ids_; // start and end will be parsed at apply time to determine the relevant residue numbers
 	core::Size chain_; //dflt 1; chain on which to search for aligned residues
 	bool design_only_target_residues_; //dflt false; if true, designs only the target residues to the identities seen in the source_pose and repacks a 6A shell around. If false, sets the target residues to design, and does not change the packer tasks for other residues
 	bool prevent_repacking_; //dflt 0; if the identity of the aligned and target residue is the same, should we prevent repacking?
+	std::string keep_aas_;//dflt "ACDEFGHIKLMNPQRSTVWY"
+	bool restrict_identities_; //dflt false; set to true, then keep_aas_ above takes effect
 };
 
 } //namespace protocols

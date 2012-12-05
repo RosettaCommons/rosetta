@@ -54,8 +54,12 @@ using namespace core::pack::task::operation;
 using namespace std;
 
 RestrictIdentitiesAtAlignedPositionsOperation::RestrictIdentitiesAtAlignedPositionsOperation() :
+	RestrictOperationsBase(),
 	chain_( 1 ),
-	design_only_target_residues_( false )
+	design_only_target_residues_( false ),
+	prevent_repacking_( false ),
+	keep_aas_( "ACDEFGHIKLMNPQRSTVWY" ),
+	restrict_identities_( false )
 {
 	source_pose_ = new core::pose::Pose;
 	res_ids_.clear();
@@ -89,17 +93,21 @@ RestrictIdentitiesAtAlignedPositionsOperation::apply( core::pose::Pose const & p
 			TR<<"WARNING: could not find a residue near to "<<resid<<std::endl;
 			continue;
 		}//fi
-		RestrictAbsentCanonicalAASRLTOP racaas = new RestrictAbsentCanonicalAASRLT;
+		RestrictAbsentCanonicalAASRLTOP racaas1 = new RestrictAbsentCanonicalAASRLT; /// used to determine the single residue identity taken from the source pose
+		RestrictAbsentCanonicalAASRLTOP racaas2 = new RestrictAbsentCanonicalAASRLT; /// used to limit identities to those specified by the user
 		PreventRepackingRLTOP pr = new PreventRepackingRLT;
 		char const residue_id( source_pose_->residue( resid ).name1() );
 		std::string residues_to_keep("");
 		residues_to_keep += residue_id;
-		racaas->aas_to_keep( residues_to_keep );
+		racaas1->aas_to_keep( residues_to_keep );
+		racaas2->aas_to_keep( keep_aas_ );
 		OperateOnCertainResidues oocr;
 		if( prevent_repacking() && source_pose_->residue( resid ).name1() == pose.residue( nearest_to_res ).name1() ) /// if the source and designed pose have the same residue identity we can additionally prevent repacking at this position
 			oocr.op( pr );
+		else if( restrict_identities() )
+			oocr.op( racaas2 );
 		else
-			oocr.op( racaas );
+			oocr.op( racaas1 );
 		utility::vector1< core::Size > temp_vec;
 		temp_vec.clear();
 		temp_vec.push_back( nearest_to_res );
@@ -132,6 +140,8 @@ RestrictIdentitiesAtAlignedPositionsOperation::parse_tag( TagPtr tag )
 	}
 	design_only_target_residues( tag->getOption< bool >( "design_only_target_residues", false ) );
 	prevent_repacking( tag->getOption< bool >( "prevent_repacking", false ) );
+	keep_aas_ = tag->getOption< std::string >( "keep_aas", "ACDEFGHIKLMNPQRSTVWY" );
+	restrict_identities( tag->hasOption( "keep_aas" ) );
 	TR<<std::endl;
 }
 
