@@ -90,10 +90,7 @@ private:
 	/// but that costs a set comparison or two array sorts, so we don't right now.
 	inline
 	bool
-	can_pair(Size i, Size j) {
-		return restype_->atom(i).atom_type_index() == restype_->atom(j).atom_type_index()
-			&& restype_->nbrs(i).size() == restype_->nbrs(j).size();
-	}
+	can_pair(Size i, Size j);
 
 	/// @brief Does the current mapping preserve all edges?
 	/// @details That is, if (i,j) is an edge, is (curr_[i],curr_[j]) also an edge?

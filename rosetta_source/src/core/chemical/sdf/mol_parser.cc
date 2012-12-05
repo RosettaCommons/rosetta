@@ -15,6 +15,8 @@
 #include <string>
 #include <algorithm>
 #include <utility/vector1.hh>
+#include <core/chemical/Atom.hh>
+#include <core/chemical/Orbital.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/sdf/v2_parser.hh>
 #include <core/chemical/sdf/v3_parser.hh>

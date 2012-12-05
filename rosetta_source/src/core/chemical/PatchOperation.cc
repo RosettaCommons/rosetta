@@ -12,6 +12,7 @@
 /// @author Phil Bradley
 // Unit headers
 #include <core/chemical/PatchOperation.hh>
+#include <core/chemical/Atom.hh>
 
 // Package Headers
 
@@ -39,6 +40,19 @@ namespace chemical {
 PatchOperation::~PatchOperation() {}
 
 static basic::Tracer tr("core.chemical");
+
+bool
+SetAtomicCharge::apply( ResidueType & rsd ) const
+{
+	if ( !rsd.has( atom_name_ ) ) {
+		TR_PatchOperations.Debug << "SetAtomicCharge::apply failed: " << rsd.name() << " is missing atom: " << atom_name_ << std::endl;
+		return true; // failure
+	} else {
+		//std::cout << "SetAtomicCharge::apply: " << atom_name_ << ' ' << charge_ << std::endl;
+		rsd.atom( atom_name_ ).charge( charge_ );
+	}
+	return false;
+}
 
 /// helper function
 std::string
@@ -71,7 +85,6 @@ SetICoor::apply( ResidueType & rsd ) const
 	rsd.set_icoor( atom, phi_, theta_, d_, stub1, stub2, stub3, rebuild_icoor_xyz );
 	return false;
 }
-
 
 PatchOperationOP
 patch_operation_from_patch_file_line( std::string const & line ) {

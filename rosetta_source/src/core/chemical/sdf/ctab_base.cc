@@ -12,7 +12,7 @@
 
 #include <core/chemical/sdf/ctab_base.hh>
 #include <core/chemical/sdf/ctab_typer.hh>
-
+#include <core/chemical/Atom.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomTypeSet.hh>

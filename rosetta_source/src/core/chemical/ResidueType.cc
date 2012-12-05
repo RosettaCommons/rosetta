@@ -209,6 +209,27 @@ ResidueType::residue_type_set( ResidueTypeSetCAP set_in )
 	residue_type_set_ = set_in;
 }
 
+Atom & ResidueType::atom(Size const atom_index){
+	return atoms_[atom_index];
+}
+Atom const & ResidueType::atom(Size const atom_index) const{
+	return atoms_[atom_index];
+}
+Atom & ResidueType::atom(std::string const & atom_name){
+	return atoms_[ atom_index(atom_name) ];
+}
+Atom const & ResidueType::atom(std::string const & atom_name) const{
+		return atoms_[ atom_index(atom_name) ];
+}
+Orbital const & ResidueType::orbital(Size const orbital_index) const{
+	return orbitals_[orbital_index];
+}
+Orbital const & ResidueType::orbital(std::string const & orbital_name) const{
+	return orbitals_[ orbital_index(orbital_name) ];
+}
+
+
+
 /// @details set the atom which connects to the lower connection
 void
 ResidueType::set_lower_connect_atom( std::string const & atm_name )
@@ -575,6 +596,18 @@ ResidueType::add_orbital_bond(
 	orbital_bonded_neighbor_[i1].push_back(i2);
 
 }
+
+orbitals::ICoorOrbitalData const &
+ResidueType::orbital_icoor_data(Size const orbital_index) const{
+	return orbitals_[orbital_index].icoor();
+}
+
+
+orbitals::ICoorOrbitalData const &
+ResidueType::new_orbital_icoor_data(Size const orbital_index) const{
+	return orbitals_[orbital_index].new_icoor();
+}
+
 
 /// @details add a cut_bond between atom1 and atom2, which disallows an atom-tree connection,
 ///            though the atoms are really bonded.
@@ -1710,6 +1743,12 @@ ResidueType::set_backbone_heavyatom( std::string const & name )
 	force_bb_.push_back( atom_index( name ) );
 }
 
+/// @brief AtomICoord of an atom
+AtomICoor const &
+ResidueType::icoor( Size const atm ) const
+{
+	return atoms_[ atm ].icoor();
+}
 
 Size
 ResidueType::add_residue_connection( std::string const & atom_name )
@@ -2018,6 +2057,25 @@ void ResidueType::calculate_icoor(std::string const & child,
 	set_icoor(child,phi,theta,distance,stub_atom1,stub_atom2,stub_atom3);
 }
 
+void
+ResidueType::set_ideal_xyz(
+	std::string const & atm,
+	Vector const & xyz_in
+)
+{
+	Size const index( atom_index(atm) );
+	set_ideal_xyz(index,xyz_in);
+}
+
+void
+ResidueType::set_ideal_xyz(
+	Size index,
+	Vector const & xyz_in
+)
+{
+	if ( index > atoms_.size() ) atoms_.resize(index);
+	atoms_[index].ideal_xyz( xyz_in );
+}
 
 // Return the CarbohydrateInfo object containing sugar-specific properties for this residue.
 core::chemical::carbohydrates::CarbohydrateInfoCOP

@@ -55,7 +55,7 @@
 // Unit headers
 #include <core/chemical/ResidueType.fwd.hh>
 // Package headers
-#include <core/chemical/Atom.hh>
+#include <core/chemical/Atom.fwd.hh>
 #include <core/chemical/AtomType.fwd.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/Adduct.hh>
@@ -64,7 +64,7 @@
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/MMAtomType.fwd.hh>
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
-#include <core/chemical/Orbital.hh>
+#include <core/chemical/Orbital.fwd.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/sdf/MolData.hh>
 #include <core/chemical/rna/RNA_ResidueType.hh>
@@ -212,24 +212,13 @@ public:
 		return atom_types_;
 	}
 
-	Atom & atom(Size const atom_index){
-		return atoms_[atom_index];
-	}
-	Atom const & atom(Size const atom_index) const{
-		return atoms_[atom_index];
-	}
-	Atom & atom(std::string const & atom_name){
-		return atoms_[ atom_index(atom_name) ];
-	}
-	Atom const & atom(std::string const & atom_name) const{
-			return atoms_[ atom_index(atom_name) ];
-	}
-	Orbital const & orbital(Size const orbital_index) const{
-		return orbitals_[orbital_index];
-	}
-	Orbital const & orbital(std::string const & orbital_name) const{
-		return orbitals_[ orbital_index(orbital_name) ];
-	}
+	Atom & atom(Size const atom_index);
+	Atom const & atom(Size const atom_index) const;
+	Atom & atom(std::string const & atom_name);
+	Atom const & atom(std::string const & atom_name) const;
+
+	Orbital const & orbital(Size const orbital_index) const;
+	Orbital const & orbital(std::string const & orbital_name) const;
 
 
 	/// @brief Get the chemical atom_type for this atom by it index number in this residue
@@ -866,21 +855,6 @@ public:
 	update_actcoord( conformation::Residue & rot ) const;
 
 
-//	/// @brief Get the CSD atom_type for this atom by its index number in this residue
-//	CSDAtomType const &
-//	csd_atom_type( int const atomno ) const
-//	{
-//		return ( *csd_atom_types_ )[ csd_atom_type_index_[ atomno ] ];
-//	}
-
-//	/// @brief Get the CSD atom_type index number for this atom by its index number in this residue
-//	int
-//	csd_atom_type_index( int const atomno ) const
-//	{
-//		return csd_atom_type_index_[ atomno ];
-//	}
-
-
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
@@ -1019,10 +993,7 @@ public:
 
 	/// @brief AtomICoord of an atom
 	AtomICoor const &
-	icoor( Size const atm ) const
-	{
-		return atoms_[ atm ].icoor();
-	}
+	icoor( Size const atm ) const;
 
 	/// @brief set AtomICoor for an atom
 	void
@@ -1067,21 +1038,13 @@ public:
 	set_ideal_xyz(
 		std::string const & atm,
 		Vector const & xyz_in
-	)
-	{
-		Size const index( atom_index(atm) );
-		set_ideal_xyz(index,xyz_in);
-	}
+	);
 
 	void
 	set_ideal_xyz(
 		Size index,
 		Vector const & xyz_in
-	)
-	{
-		if ( index > atoms_.size() ) atoms_.resize(index);
-		atoms_[index].ideal_xyz( xyz_in );
-	}
+	);
 
 	//////////////////////////////////////////////////////////////////////
 	/////////////////////////orbitals/////////////////////////////////////
@@ -1104,15 +1067,11 @@ public:
 	);
 
 	orbitals::ICoorOrbitalData const &
-	orbital_icoor_data(Size const orbital_index) const{
-		return orbitals_[orbital_index].icoor();
-	}
+	orbital_icoor_data(Size const orbital_index) const;
 
 
 	orbitals::ICoorOrbitalData const &
-	new_orbital_icoor_data(Size const orbital_index) const{
-		return orbitals_[orbital_index].new_icoor();
-	}
+	new_orbital_icoor_data(Size const orbital_index) const;
 
 
 	///@brief set OrbitalICoor for an orbital

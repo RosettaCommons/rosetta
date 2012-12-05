@@ -21,7 +21,7 @@
 
 // Project headers
 #include <core/chemical/ResidueType.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
+#include <core/chemical/Atom.hh>
 
 // Utility headers
 #include <utility/exit.hh>

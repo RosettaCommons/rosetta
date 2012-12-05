@@ -15,6 +15,7 @@
 // AUTO-REMOVED #include <basic/Tracer.hh>
 #include <core/chemical/sdf/ctab_typer.hh>
 #include <core/chemical/AtomType.hh>
+#include <core/chemical/Atom.hh>
 // AUTO-REMOVED #include <utility/string_util.hh>
 //#include <core/chemical/ResidueType.hh>
 //#include <protocols/ligand_docking/ColoredGraph.hh>

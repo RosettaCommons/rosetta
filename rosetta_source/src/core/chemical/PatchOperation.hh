@@ -472,17 +472,7 @@ public:
 
 	/// set an atom's charge
 	bool
-	apply( ResidueType & rsd ) const
-	{
-		if ( !rsd.has( atom_name_ ) ) {
-			TR_PatchOperations.Debug << "SetAtomicCharge::apply failed: " << rsd.name() << " is missing atom: " << atom_name_ << std::endl;
-			return true; // failure
-		} else {
-			//std::cout << "SetAtomicCharge::apply: " << atom_name_ << ' ' << charge_ << std::endl;
-			rsd.atom( atom_name_ ).charge( charge_ );
-		}
-		return false;
-	}
+	apply( ResidueType & rsd ) const;
 
 private:
 	/// atom's name

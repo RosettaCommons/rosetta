@@ -27,6 +27,7 @@
 #include <basic/basic.hh>
 #include <basic/Tracer.hh>
 #include <core/chemical/AtomType.hh>
+#include <core/chemical/Atom.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 
 // ObjexxFCL headers
@@ -200,6 +201,44 @@ ResidueOP
 Residue::clone() const
 {
 	return new Residue( *this );
+}
+
+
+Size
+Residue::atom_type_index( Size const atomno ) const
+{
+	return atoms_[ atomno ].type();
+}
+
+Real
+Residue::atomic_charge( int const atomno ) const
+{
+	return rsd_type_.atom( atomno ).charge();
+}
+
+Vector const &
+Residue::xyz( Size const atm_index ) const
+{
+	return atoms_[ atm_index ].xyz();
+}
+
+Vector const &
+Residue::xyz( std::string const & atm_name ) const
+{
+	return atom( atm_name ).xyz();
+}
+
+void
+Residue::set_xyz( core::Size const atm_index, Vector const & xyz_in )
+{
+	atoms_[ atm_index ].xyz( xyz_in );
+}
+
+void
+Residue::set_xyz( std::string const & atm_name, Vector const & xyz_in )
+{
+	atom( atm_name ).xyz( xyz_in );
+
 }
 
 

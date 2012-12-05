@@ -20,6 +20,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueSupport.hh>
 
+#include <core/chemical/Atom.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/MMAtomType.hh>
 // AUTO-REMOVED #include <core/chemical/orbitals/OrbitalType.hh>

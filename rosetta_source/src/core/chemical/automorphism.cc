@@ -14,13 +14,13 @@
 
 
 #include <core/chemical/automorphism.hh>
+#include <core/chemical/Atom.hh>
 
 #include <utility/vector1.hh>
 
 
 namespace core {
 namespace chemical {
-
 
 /// @details First automorphism is the identity, [1 2 3 4 ... N]
 /// The algorithm works its way through the list of atoms one at a time,
@@ -82,6 +82,12 @@ AutomorphismIterator::next()
 	return empty_list_; // to make compiler happy -- never get here
 }
 
+inline
+bool
+AutomorphismIterator::can_pair(Size i, Size j) {
+	return restype_->atom(i).atom_type_index() == restype_->atom(j).atom_type_index()
+		&& restype_->nbrs(i).size() == restype_->nbrs(j).size();
+}
 
 } // namespace chemical
 } // namespace core

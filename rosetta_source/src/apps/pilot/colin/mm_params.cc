@@ -21,6 +21,7 @@
 #include <devel/init.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/Atom.hh>
 
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/FoldTree.hh>

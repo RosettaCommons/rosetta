@@ -13,6 +13,7 @@
 
 // Project Headers
 #include <basic/Tracer.hh>
+#include <core/chemical/Atom.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>

@@ -173,10 +173,7 @@ public:
 	///     AtomType
 	///     Pose
 	Size
-	atom_type_index( Size const atomno ) const
-	{
-		return atoms_[ atomno ].type();
-	}
+	atom_type_index( Size const atomno ) const;
 
 	/// @brief Returns the atom charge of this residue's atom with index number  <atomno>
 	///
@@ -187,10 +184,7 @@ public:
 	///     Residue.atom_index
 	///     Pose
 	Real
-	atomic_charge( int const atomno ) const
-	{
-		return rsd_type_.atom( atomno ).charge();
-	}
+	atomic_charge( int const atomno ) const;
 
 	/// @brief  Check if atom is virtual.
 	bool
@@ -531,10 +525,7 @@ public:
 	///     Residue.set_xyz
 	///     Pose
 	Vector const &
-	xyz( Size const atm_index ) const
-	{
-		return atoms_[ atm_index ].xyz();
-	}
+	xyz( Size const atm_index ) const;
 
 	/// @brief Returns the position of this residue's atom with name  <atm_name>
 	/// @note: position is a Vector
@@ -548,10 +539,7 @@ public:
 	///     Residue.set_xyz
 	///     Pose
 	Vector const &
-	xyz( std::string const & atm_name ) const
-	{
-		return atom( atm_name ).xyz();
-	}
+	xyz( std::string const & atm_name ) const;
 
 
 	/// @brief Sets the position of this residue's atom with index number  <atm_index>
@@ -565,10 +553,7 @@ public:
 	///     Residue.xyz
 	///     Pose
 	void
-	set_xyz( core::Size const atm_index, Vector const & xyz_in )
-	{
-		atoms_[ atm_index ].xyz( xyz_in );
-	}
+	set_xyz( core::Size const atm_index, Vector const & xyz_in );
 
 	/// @brief Sets the position of this residue's atom with name  <atm_name>
 	///
@@ -581,13 +566,7 @@ public:
 	///     Residue.xyz
 	///     Pose
 	void
-	set_xyz( std::string const & atm_name, Vector const & xyz_in )
-	{
-		atom( atm_name ).xyz( xyz_in );
-
-	}
-
-
+	set_xyz( std::string const & atm_name, Vector const & xyz_in );
 
 	/// @brief Returns the index number of the last backbone heavyatom
 	/// @note  The heavyatoms come first in atom ordering,
