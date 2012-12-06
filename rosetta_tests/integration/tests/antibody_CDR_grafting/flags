@@ -1,4 +1,4 @@
--s input/FR02_filled_new.pdb
+-s FR02_filled_new.pdb
 -antibody::graft_l1
 -antibody::graft_l2
 -antibody::graft_l3
