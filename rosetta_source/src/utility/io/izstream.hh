@@ -27,7 +27,7 @@
 // Project headers
 #include <utility/file/gzip_util.hh>
 #include <utility/vector1.hh>
-#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
+#if defined( USE_FILE_PROVIDER )
 #include <utility/inline_file_provider.hh>
 #endif
 
@@ -72,7 +72,7 @@ public: // Creation
 	izstream() :
 		compression_( NONE ),
 		zip_stream_p_( 0 )
-#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
+#if defined( USE_FILE_PROVIDER )
 		,file_provider_stream( &bad_stream )
 #endif
 
@@ -88,7 +88,7 @@ public: // Creation
 	) :
 		compression_( NONE ),
 		zip_stream_p_( 0 )
-#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )		
+#if defined( USE_FILE_PROVIDER )		
 		,file_provider_stream( &bad_stream )
 #endif
 
@@ -115,8 +115,9 @@ public: // Methods: conversion
 	inline
 	operator bool() const
 	{
-		#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
-			return file_provider_stream->good();
+		#if defined( USE_FILE_PROVIDER )
+     // if file is present in inline file provider, return true
+			if( file_provider_stream->good() ) return true;
 		#endif
 		//return ( zip_stream_p_ ? zip_stream_p_->good() : if_stream_.good() );
 		// proper behavior is actually ( ! fail() )
@@ -128,9 +129,12 @@ public: // Methods: conversion
 	inline
 	operator std::istream const &() const
 	{
-		#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
-			return *file_provider_stream;
-		#endif
+		#if defined( USE_FILE_PROVIDER )
+			// if file is present in inline file provider, return that - otherwise return an actual istream
+      if (file_provider_stream->good() ){ 
+        return *file_provider_stream;
+		  }
+    #endif
 		return ( zip_stream_p_
 		 ? static_cast< std::istream const & >( *zip_stream_p_ )
 		 : static_cast< std::istream const & >( if_stream_ ) );
@@ -141,9 +145,11 @@ public: // Methods: conversion
 	inline
 	operator std::istream &()
 	{
-		#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
-			return *file_provider_stream;
-		#endif
+		#if defined( USE_FILE_PROVIDER )
+      if (file_provider_stream->good() ){ 
+			  return *file_provider_stream;
+		  }
+    #endif
 		return ( zip_stream_p_
 		 ? static_cast< std::istream & >( *zip_stream_p_ )
 		 : static_cast< std::istream & >( if_stream_ ) );
@@ -197,10 +203,13 @@ public: // Methods: i/o
 	void
 	clear()
 	{
-	 	#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
-	  file_provider_stream->clear();
-		return;
-		#endif
+	 	#if defined( USE_FILE_PROVIDER )
+    // if the file is coming from the file provider then clear that stream. Otherwise go on to clear the actual file streams.
+    if (file_provider_stream->good() ){ 
+	    file_provider_stream->clear();
+		  return;
+		}
+    #endif
 		if_stream_.clear();
 		if ( zip_stream_p_ ) zip_stream_p_->clear();
 	}
@@ -211,9 +220,11 @@ public: // Methods: i/o
 	void
 	close()
 	{
-	 	#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
-	  //file_provider_stream->clear();
-		return;
+	 	#if defined( USE_FILE_PROVIDER )
+	  // no need to do anything if file is comign from file provider and not from disk
+    if (file_provider_stream->good() ){ 
+		  return;
+    }
 		#endif
 		compression_ = NONE;
 		if_stream_.close();
@@ -228,12 +239,14 @@ public: // Methods: i/o
 	void
 	seek_beg()
 	{
-	 	#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
-	  file_provider_stream->clear();
-		file_provider_stream->seekg( std::ios_base::beg );
-	  file_provider_stream->clear();
-		return;
-		#endif
+	 	#if defined( USE_FILE_PROVIDER )
+    if (file_provider_stream->good() ){ 
+      file_provider_stream->clear();
+      file_provider_stream->seekg( std::ios_base::beg );
+      file_provider_stream->clear();
+      return;
+		}
+    #endif
 		if_stream_.clear();
 		if_stream_.seekg( std::ios_base::beg );
 		if_stream_.clear();
@@ -466,9 +479,11 @@ public: // Properties
 	std::istream const &
 	operator ()() const
 	{
-		#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
+		#if defined( USE_FILE_PROVIDER )
+    if (file_provider_stream->good() ){ 
 			return *file_provider_stream;
-		#endif
+		}
+    #endif
 		return ( zip_stream_p_
 		 ? static_cast< std::istream const & >( *zip_stream_p_ )
 		 : static_cast< std::istream const & >( if_stream_ ) );
@@ -480,9 +495,11 @@ public: // Properties
 	std::istream &
 	operator ()()
 	{
-		#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
+		#if defined( USE_FILE_PROVIDER )
+    if (file_provider_stream->good() ){ 
 			return *file_provider_stream;
-		#endif
+		}
+    #endif
 		return ( zip_stream_p_
 		 ? static_cast< std::istream & >( *zip_stream_p_ )
 		 : static_cast< std::istream & >( if_stream_ ) );
@@ -494,9 +511,11 @@ public: // Properties
 	std::istream const &
 	stream() const
 	{
-		#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
+		#if defined( USE_FILE_PROVIDER )
+    if (file_provider_stream->good() ){ 
 			return *file_provider_stream;
-		#endif
+		}
+    #endif
 		return ( zip_stream_p_
 		 ? static_cast< std::istream const & >( *zip_stream_p_ )
 		 : static_cast< std::istream const & >( if_stream_ ) );
@@ -508,9 +527,11 @@ public: // Properties
 	std::istream &
 	stream()
 	{
-		#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
+		#if defined( USE_FILE_PROVIDER )
+    if (file_provider_stream->good() ){ 
 			return *file_provider_stream;
-		#endif
+		}
+    #endif
 		return ( zip_stream_p_
 		 ? static_cast< std::istream & >( *zip_stream_p_ )
 		 : static_cast< std::istream & >( if_stream_ ) );
@@ -704,7 +725,7 @@ private: // Fields
 	/// library comes before the basic library), so setting the
 	/// alternate search paths is it the responsibility of core::init()
 	static vector1< std::string > alternative_search_paths_;
-#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER ) 
+#if defined( USE_FILE_PROVIDER ) 
 	std::istream *file_provider_stream;
 	std::stringstream bad_stream;
 #endif

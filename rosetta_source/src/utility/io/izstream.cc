@@ -19,7 +19,7 @@
 // Project headers
 #include <utility/file/file_sys_util.hh>
 
-#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
+#if defined( USE_FILE_PROVIDER )
 #include <utility/inline_file_provider.hh>
 #endif
 
@@ -42,9 +42,8 @@ namespace io {
 		using zlib_stream::zip_istream;
 
 
-#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
+#if defined( USE_FILE_PROVIDER )
 	utility::Inline_File_Provider *provider = utility::Inline_File_Provider::get_instance();
-	
 	if( (open_mode & std::ios_base::out ) ){
 		throw( "Cannot open output file in istream inline file provider " );
 	}
@@ -54,7 +53,10 @@ namespace io {
 		 file_provider_stream = &bad_stream;
 		 file_provider_stream->setstate( ios_base::failbit | ios_base::badbit );
 	}
-	return;
+	
+  if (file_provider_stream->good() ){ 
+    return;
+  }
 #endif
 
 		// Close the file if open and reset the state

@@ -20,7 +20,7 @@
 
 // Project headers
 #include <utility/file/file_sys_util.hh>
-#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
+#if defined( USE_FILE_PROVIDER )
 #include <utility/inline_file_provider.hh>
 #endif
 #include <utility/exit.hh>
@@ -72,16 +72,19 @@ ozstream::open(
 		using zlib_stream::zip_ostream;
 
 
-	#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
-		utility::Inline_File_Provider *provider = utility::Inline_File_Provider::get_instance();
-
-		if(!provider->get_ostream( filename_a , &file_provider_stream )){
-			 std::cerr << "Cannot find inline file: " << filename_a << std::endl;
-			 file_provider_stream = &bad_stream;
-			 file_provider_stream->setstate( ios_base::failbit | ios_base::badbit );
-		}
-		return;
-	#endif
+//	#if defined( USE_FILE_PROVIDER )
+//		utility::Inline_File_Provider *provider = utility::Inline_File_Provider::get_instance();
+//
+//		if(!provider->get_ostream( filename_a , &file_provider_stream )){
+//			 std::cerr << "Cannot find inline file: " << filename_a << std::endl;
+//			 file_provider_stream = &bad_stream;
+//			 file_provider_stream->setstate( ios_base::failbit | ios_base::badbit );
+//		}
+//		
+//    if (file_provider_stream->good() ){
+//      return;
+//    }
+//	#endif
 
 		// Close the file if open and reset the state
 		close();

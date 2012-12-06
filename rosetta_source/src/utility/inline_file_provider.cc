@@ -29,11 +29,53 @@ Inline_File_Provider* Inline_File_Provider::get_instance(){
 }
 
 void Inline_File_Provider::show_contents(){
-//	for( unsigned int i = 0; i < static_database_size; ++i ){
-//		std::cout << "FILE:     " << static_database[i][0] << std::endl;
-//		std::cout << "CONTENTS: " << static_database[i][1] << std::endl;
-//		std::cout << "-----------------------" << std::endl;
-//	}
+
+}
+
+void Inline_File_Provider::init_static_inputs(){
+
+}
+
+void Inline_File_Provider::add_input_file( const std::string &filename, const std::string &contents ){
+	std::stringstream *newstream = new std::stringstream( contents );
+	std::string filtered_filename( standardise_filename( filename ) );
+	std::cout << "Creating inline input file: '" << filename << "' = (" << filtered_filename << ")" << std::endl; 
+	input_files.push_back( std::make_pair( filtered_filename, newstream ) ); 
+}
+
+class predicate_cmp_filename
+{
+ public: 
+  predicate_cmp_filename( std::string filename ): filename_(filename) {}
+
+  bool operator() ( std::pair < std::string, std::stringstream* > &a ) const
+  {
+    return a.first == filename_;
+  }
+ private:
+  std::string filename_;
+};
+
+
+void Inline_File_Provider::clear_input_files(){ 
+  input_files.clear();
+}
+
+void Inline_File_Provider::remove_input_file( const std::string &filename ){
+  
+  std::vector < std::pair < std::string, std::stringstream* > >::iterator found;
+
+  predicate_cmp_filename pred(filename);  
+
+  do{
+    found = std::find_if( input_files.begin(), input_files.end(), pred );
+    if ( found != input_files.end() ){
+      input_files.erase( found );
+    }else{
+      break;
+    }
+  }while(true);
+   
 }
 
 std::string Inline_File_Provider::standardise_filename( std::string filename ){
@@ -60,14 +102,15 @@ bool Inline_File_Provider::file_exists( const std::string& filename )
 
 	std::cout << "Looking for inline file: '" << filtered_filename << "'" << std::endl; 
 	// first find the data stupid simple search
-	int i = 0;
-	for( i = 0; i < static_database_size; ++i ){
-		if( std::string( static_database[i][0] ) == filtered_filename ){
-			return true;	
+  // look through input_files
+	for( std::vector < std::pair < std::string, std::stringstream* > >::iterator it = input_files.begin();
+	     it != input_files.end(); ++it ){
+		if( it->first == filtered_filename ){
+			return true;
 		}
 	}
 	
-	// now look through outfiles
+	// now look through output_files
 	for( std::vector < std::pair < std::string, std::stringstream* > >::iterator it = output_files.begin();
 	     it != output_files.end(); ++it ){
 		if( it->first == filtered_filename ){
@@ -79,10 +122,10 @@ bool Inline_File_Provider::file_exists( const std::string& filename )
 
 bool Inline_File_Provider::get_ostream( const std::string& filename, std::ostream **the_stream )
 {
-	std::cout << "Creating inline file: '" << filename << "'" << std::endl; 
 	std::stringstream *newstream = new std::stringstream( );
 
 	std::string filtered_filename( standardise_filename( filename ) );
+	std::cout << "Creating inline output file: '" << filename << "' = (" << filtered_filename << ")" << std::endl; 
 	output_files.push_back( std::make_pair( filtered_filename, newstream ) ); 
 	(*the_stream) = newstream;
 	return true;
@@ -98,39 +141,26 @@ bool Inline_File_Provider::get_istream( const std::string& filename, std::istrea
 	return result;
 }
 
-bool Inline_File_Provider::get_sstream( const std::string& filename, std::stringstream **the_stream ){
-	std::string filtered_filename( standardise_filename( filename ) );
-	std::cout << "Looking for inline file: '" << filtered_filename << "'" << std::endl; 
-	
-	// first find the data stupid simple search
-	int i = 0;
-	for( i = 0; i < static_database_size; ++i ){
-		if( std::string( static_database[i][0] ) == filtered_filename ){
-			break;
-		}
-	}
-	// did we find it ?
-	if( i <  static_database_size ){
-		const char *the_data = static_database[i][1];
-		std::stringstream *newstream = new std::stringstream( the_data );
-		streambucket.push_back( newstream );
-		(*the_stream) = streambucket[ streambucket.size()-1 ];
-		return true;
-	}
-
-	// now look through outfiles
-	std::vector < std::pair < std::string, std::stringstream* > >::iterator it = output_files.begin();
-	for( ; it != output_files.end(); ++it ){
-		if( it->first == filtered_filename ){
+bool Inline_File_Provider::find_sstream( std::vector < std::pair < std::string, std::stringstream* > > &file_catalog, const std::string& filename, std::stringstream **the_stream ){
+	std::vector < std::pair < std::string, std::stringstream* > >::iterator it = file_catalog.begin();
+	for( ; it != file_catalog.end(); it++ ){
+		if( it->first == filename ){
 			break;	
 		}
 	}
-
-	if( it != output_files.end() ){
+	if( it != file_catalog.end() ){
 		(*the_stream) = it->second; 
 		return true;
 	}
-	
+  return false;
+}
+
+bool Inline_File_Provider::get_sstream( const std::string& filename, std::stringstream **the_stream ){
+	std::string filtered_filename( standardise_filename( filename ) );
+	std::cout << "Looking for inline file: '" << filtered_filename << "'" << std::endl; 
+
+  if( find_sstream( input_files, filtered_filename, the_stream) ) return true;
+  if( find_sstream( output_files, filtered_filename, the_stream) ) return true;
 	return false;
 }
 

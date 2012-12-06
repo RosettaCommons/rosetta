@@ -36,17 +36,27 @@ class Inline_File_Provider {
 
 	public:
 		static Inline_File_Provider* get_instance();
-		void show_contents();
-		bool file_exists( const std::string& filename );
+		void init_static_inputs();
+    void show_contents();
+
+    void add_input_file( const std::string &filename, const std::string &contents ); 
+	  void clear_input_files();
+    void remove_input_file( const std::string &filename );
+	
+    bool file_exists( const std::string& filename );
 		
 		bool get_ostream( const std::string& filename, std::ostream **the_stream );
 		
 		bool get_istream( const std::string& filename, std::istream **the_stream );
 		bool get_sstream( const std::string& filename, std::stringstream **the_stream );
 	private:
+    
+    bool find_sstream( std::vector < std::pair < std::string, std::stringstream* > > &file_catalog, const std::string& filename, std::stringstream **the_stream );
+
 		std::string standardise_filename( std::string filename );
 		static Inline_File_Provider* instance_;
-		std::vector < std::stringstream* > streambucket;
+		
+    std::vector < std::pair < std::string, std::stringstream* > > input_files;
 
 		std::vector < std::pair < std::string, std::stringstream* > > output_files;
 };
