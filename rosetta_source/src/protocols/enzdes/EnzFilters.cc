@@ -1232,6 +1232,7 @@ if( !CalculatorFactory::Instance().check_calculator_exists( charge_calc_name ) )
                 if( !CalculatorFactory::Instance().check_calculator_exists( lig_interface_e_calc_name ) ){
                     utility::vector1<ScoreType> score_types_to_ignore;
                     if (separate_out_constraints) {
+                        score_types_to_ignore.push_back( ScoreType( coordinate_constraint ) );
                         score_types_to_ignore.push_back( ScoreType( atom_pair_constraint ) );
                         score_types_to_ignore.push_back( ScoreType( angle_constraint ) );
                         score_types_to_ignore.push_back( ScoreType( dihedral_constraint ) );
