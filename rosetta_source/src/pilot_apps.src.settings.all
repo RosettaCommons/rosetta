@@ -571,6 +571,7 @@ sources = {
 		#"report_cavities_for_plugin",
 	],
 	"pilot/rpache" : [
+                #"generate_matcher_constraints",
 		#"calibrate_pdb_via_sidechain_optimization",
 	],
 	"pilot/rvernon" : [
