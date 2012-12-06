@@ -139,7 +139,24 @@ namespace options {
 		if ( error ) std_exit_wrapper( EXIT_FAILURE );
 	}
 
+	/// @brief Load the user-specified option values
+	void
+	OptionCollection::load(
+		const std::vector<std::string> & args,
+		bool const free_args // Support free argument (without - prefix)?
+	)
+	{
+		using std::string;
 
+		// Put the arguments strings in a list
+		ValueStrings arg_strings;
+		for ( std::vector<std::string>::const_iterator arg = args.begin(); arg != args.end();  ++arg ){ 
+			arg_strings.push_back( *arg );
+			argv_copy_ += " " + (*arg);
+		}
+
+    load( "", arg_strings, free_args); 
+	} // load
 
 
 	/// @brief Load the user-specified option values
@@ -151,7 +168,6 @@ namespace options {
 	)
 	{
 		using std::string;
-		typedef  std::string::size_type  size_type;
 
 		// Put the arguments strings in a list
 		ValueStrings arg_strings;
@@ -160,6 +176,21 @@ namespace options {
 			std::string temp( argv[ iarg ] );
 			argv_copy_ += " " + temp;
 		}
+
+    load( std::string(argv[0]), arg_strings, free_args); 
+	} // load
+
+
+
+	void
+  OptionCollection::load(
+		std::string executable_name, // usually argv[ 0 ]
+    ValueStrings& arg_strings,
+    bool const free_args // Support free argument (without - prefix)?
+	){
+		using std::string;
+		typedef  std::string::size_type  size_type;
+
 		try {
 			// Load the options
 			string cid; // Context option id
@@ -215,7 +246,7 @@ namespace options {
 
 			// Help
 			if ( option( help ) ) { // Display help and exit
-				std::cout << "\nUsage:\n\n" << argv[ 0 ] << " [options]\n";
+				std::cout << "\nUsage:\n\n" << executable_name << " [options]\n";
 				show_help_hier( std::cout );
 				std_exit_wrapper( EXIT_SUCCESS );
 			}
@@ -254,7 +285,12 @@ namespace options {
 
 		}
 
-	} // load
+
+  }
+
+
+
+
 
 ///@brief Load all options in a flags file
 void OptionCollection::load_options_from_stream(std::istream& stream, std::string const & file_string, std::string const & cid) {

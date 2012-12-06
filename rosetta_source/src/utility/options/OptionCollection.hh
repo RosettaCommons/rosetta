@@ -57,11 +57,12 @@
 #include <utility/exit.hh>
 
 // C++ headers
+#include <stdlib.h>
 #include <cassert>
 #include <iosfwd>
 #include <list>
 #include <string>
-
+#include <vector>
 
 namespace utility {
 namespace options {
@@ -450,6 +451,12 @@ public: // Methods
 	void
 	check_specs() const;
 
+	/// @brief Load the user-specified option values
+	void
+	load(
+		const std::vector< std::string> & args,
+		bool const free_args // Support free argument (without - prefix)?
+	);
 
 	/// @brief Load the user-specified option values
 	void
@@ -457,6 +464,14 @@ public: // Methods
 		int const argc,
 		char * const argv[],
 		bool const free_args = false // Support free argument (without - prefix)?
+	);
+	
+	/// @brief Load the user-specified option values
+  void
+  load(
+		std::string executable_name, // usually argv[ 0 ]
+		ValueStrings& arg_strings,
+    bool const free_args // Support free argument (without - prefix)?
 	);
 
 	///@brief Load all options in a flags file
