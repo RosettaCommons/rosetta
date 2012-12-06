@@ -58,7 +58,7 @@ CalculatorFilter::CalculatorFilter(CalculatorFilter const & other) :
 {}
 
 
-CalculatorFilter::~CalculatorFilter() {};
+CalculatorFilter::~CalculatorFilter() {}
 
 bool
 CalculatorFilter::apply(core::pose::Pose const & pose) const
