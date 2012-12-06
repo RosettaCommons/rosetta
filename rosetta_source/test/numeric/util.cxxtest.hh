@@ -79,6 +79,52 @@ class NumericUtilTests : public CxxTest::TestSuite {
 		TS_ASSERT_DELTA( mean( values ), 6.0, delta );
 	}
 
+  void test_min() {
+    using utility::vector1;
+    using namespace numeric;
+    vector1< Real > values;
+    // 1-10 in random order
+    values.push_back( 7 );
+    TS_ASSERT_DELTA( min( values ), 7, delta );
+    values.push_back( 3 );
+    TS_ASSERT_DELTA( min( values ), 3, delta );
+    values.push_back( 6 );
+    TS_ASSERT_DELTA( min( values ), 3, delta );
+    values.push_back( 4 );
+    values.push_back( 5 );
+    values.push_back( 2 );
+    values.push_back( 10 );
+    values.push_back( 8 );
+    values.push_back( 1 );
+    values.push_back( 9 );
+    TS_ASSERT_DELTA( min( values ), 1, delta );
+    values.push_back( 11 );
+    TS_ASSERT_DELTA( min( values ), 1, delta );
+  }
+
+  void test_max() {
+    using utility::vector1;
+    using namespace numeric;
+    vector1< Real > values;
+    // 1-10 in random order
+    values.push_back( 7 );
+    TS_ASSERT_DELTA( max( values ), 7, delta );
+    values.push_back( 3 );
+    TS_ASSERT_DELTA( max( values ), 7, delta );
+    values.push_back( 6 );
+    TS_ASSERT_DELTA( max( values ), 7, delta );
+    values.push_back( 4 );
+    values.push_back( 5 );
+    values.push_back( 2 );
+    values.push_back( 10 );
+    values.push_back( 8 );
+    values.push_back( 1 );
+    values.push_back( 9 );
+    TS_ASSERT_DELTA( max( values ), 10, delta );
+    values.push_back( 11 );
+    TS_ASSERT_DELTA( max( values ), 11, delta );
+  }
+
 	void test_log() {
 		TS_ASSERT_DELTA(numeric::log(2,2), 1, delta);
 		TS_ASSERT_DELTA(numeric::log(4,2), 2, delta);

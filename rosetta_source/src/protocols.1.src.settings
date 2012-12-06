@@ -24,6 +24,7 @@ sources = {
 	],
 	"protocols/filters": [
 		"BasicFilters",
+		"CalculatorFilter",
 		"ContingentFilter",
 		"Filter",
 		"FilterCreator",

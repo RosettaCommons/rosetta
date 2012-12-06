@@ -26,6 +26,7 @@ static FilterRegistrator< protocols::enzdes::LigDSasaFilterCreator > reg_LigDSas
 static FilterRegistrator< protocols::enzdes::LigInterfaceEnergyFilterCreator > reg_LigInterfaceEnergyFilterCreator;
 static FilterRegistrator< protocols::enzdes::RepackWithoutLigandFilterCreator > reg_RepackWithoutLigandFilterCreator;
 
+static FilterRegistrator< protocols::filters::CalculatorFilterCreator > reg_CalculatorFilterCreator;
 static FilterRegistrator< protocols::filters::CombinedFilterCreator > reg_CombinedFilterCreator;
 static FilterRegistrator< protocols::filters::CompoundFilterCreator > reg_CompoundFilterCreator;
 static FilterRegistrator< protocols::filters::ContingentFilterCreator > reg_ContingentFilterCreator;

@@ -12,6 +12,7 @@
 sources = {
 	"numeric": [
 		"agglomerative_hierarchical_clustering",
+		"Calculator",
 		"ClusteringTreeNode",
 		"color_util",
 		"constants",

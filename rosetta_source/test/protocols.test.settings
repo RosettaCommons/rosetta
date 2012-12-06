@@ -52,6 +52,7 @@ sources = {
 
 	"filters" : [
 		"BasicFilters",
+		"CalculatorFilter",
 		"ReplicateFilter",
 	],
 

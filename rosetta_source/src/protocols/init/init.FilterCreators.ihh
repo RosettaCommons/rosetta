@@ -17,6 +17,7 @@
 #include <protocols/enzdes/EnzFilterCreators.hh>
 
 #include <protocols/filters/BasicFilterCreators.hh>
+#include <protocols/filters/CalculatorFilterCreator.hh>
 #include <protocols/filters/ContingentFilterCreator.hh>
 #include <protocols/filters/ReplicateFilterCreator.hh>
 #include <protocols/filters/TimeFilterCreator.hh>

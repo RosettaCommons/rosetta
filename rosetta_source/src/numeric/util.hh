@@ -14,8 +14,8 @@
 #ifndef INCLUDED_numeric_util_hh
 #define INCLUDED_numeric_util_hh
 
-
 #include <numeric/types.hh>
+#include <numeric/numeric.functions.hh>
 #include <utility/vector1.hh>
 
 #include <limits>
@@ -76,6 +76,28 @@ namespace numeric {
 	numeric::Real median( utility::vector1< numeric::Real > const & values );
 
 	numeric::Real mean( utility::vector1< numeric::Real > const & values );
+
+	template < typename T >
+	T max( utility::vector1< T > const & values ) {
+		assert(values.size());
+		T retval = values[1];
+		for( numeric::Size ii(2); ii <= values.size(); ++ii) {
+			retval = max(retval, values[ii]);
+		}
+		return retval;
+	}
+
+	template < typename T >
+	T min( utility::vector1< T > const & values ) {
+		assert(values.size());
+		T retval = values[1];
+		for( numeric::Size ii(2); ii <= values.size(); ++ii) {
+			retval = min(retval, values[ii]);
+		}
+		return retval;
+	}
+
+
 
 	/// @brief Calculates the acceptance probability of a given score-change at
 	/// the given temperature, generally used in simulated annealing algorithms.
