@@ -50,6 +50,7 @@ sources = {
 		"packstat",
 		"relax",
 		"sequence_tolerance",
+		"supercharge",
 		"SymDock",
 		"vip",
 	],
