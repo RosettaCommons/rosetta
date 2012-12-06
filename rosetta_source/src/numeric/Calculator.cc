@@ -38,6 +38,7 @@ class CalculatorParser;
 void do_add_symbol(CalculatorParser & cp, std::string name, double value); 
 
 // These adapter functions are needed to get the type determination for the underlying overloaded functions correct
+double do_abs( double a) { return std::abs(a); }
 double do_pow( double a, double b ) { return std::pow(a, b); }
 double do_exp( double a ) { return std::exp(a); }
 double do_ln( double a ) { return std::log(a); }
@@ -107,7 +108,8 @@ public:
 		    ;
 
 		function =
-		      ( no_case["exp"] >> '(' >> expression >> ')' ) [ _val = phoenix::bind(do_exp, qi::_1) ]
+		      ( no_case["abs"] >> '(' >> expression >> ')' ) [ _val = phoenix::bind(do_abs, qi::_1) ]
+		    | ( no_case["exp"] >> '(' >> expression >> ')' ) [ _val = phoenix::bind(do_exp, qi::_1) ]
 		    | ( no_case["ln"]  >> '(' >> expression >> ')' ) [ _val = phoenix::bind(do_ln, qi::_1) ]
 		    | ( no_case["log"]  >> '(' >> expression >> ')' ) [ _val = phoenix::bind(do_log10, qi::_1) ]
 		    | ( no_case["log"]  >> '(' >> expression >> ',' >> expression >> ')' ) [ _val = phoenix::bind(do_log, qi::_1, qi::_2) ]

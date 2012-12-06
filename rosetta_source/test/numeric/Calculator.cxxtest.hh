@@ -101,10 +101,10 @@ public:
     TS_ASSERT( ! calc.compute( vars, out ) );
     TS_ASSERT_DELTA( out, 2 , delta_ );
 
-    numeric::Calculator calc2(" cos(SIN( d2r(-180)) ) + ln(exp(log(10)+2)) + sqrt(9)*LOG2(logs) + cosy*(2-1) + log(27,3) + mean(1, 1.5, 3, 4.5) + min(-0.2, 3, 0.6)"); // 1 + 3 + 3*3 + 1.5 + 3 + 2.5 + -0.2
+    numeric::Calculator calc2(" cos(SIN( d2r(-180)) ) + ln(exp(log(10)+2)) + sqrt(9)*LOG2(logs) + cosy*(2-1) + log(27,3) + mean(1, 1.5, 3, 4.5) + ABS(min(-0.2, 3, 0.6))"); // 1 + 3 + 3*3 + 1.5 + 3 + 2.5 + 0.2
 
     out = 9999;
     TS_ASSERT( ! calc2.compute( vars, out ) );
-    TS_ASSERT_DELTA( out, 19.8 , delta_ );
+    TS_ASSERT_DELTA( out, 20.2 , delta_ );
 	}
 };
