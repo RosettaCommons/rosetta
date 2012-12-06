@@ -16,6 +16,7 @@ from rosetta import *
 #Python Imports
 import os
 import re
+import tarfile
 
 #Tkinter Imports
 import tkFileDialog
@@ -145,6 +146,9 @@ def save_resfile_w_designdic(p, ResDic, filename):
     """
     Saves a resifile, readable by PyRosetta and Rosetta.
     ResDic can be empty.
+    ResDic is [string pdbNum:pdbChain]:[array name:three_letter:one_letter string]
+    If NC - ResDic should be [string pdbNum:pdbChain]:[array 'NC':residue string]
+    How to incorporate NC?
     """
     if not p.total_residue():
         print "\n No pose loaded...\n"
@@ -159,23 +163,28 @@ def save_resfile_w_designdic(p, ResDic, filename):
         pdbNum = p.pdb_info().number(i)
         pdbStr = str(pdbNum).rjust(4)
         res = repr(pdbNum) + ":" +chain
+        #res - string pdbNum:chain
         if res in ResDic:
             x = ""
             print res
-            for residues in ResDic[res]:
-                print residues
-                if residues == "NATRO":
+            for residue_string in ResDic[res]:
+                print residue_string
+                if residue_string == "NATRO":
                     line = pdbStr + chainStr + "  NATRO"+"\n"                      
-                elif residues == "NATAA":
+                elif residue_string == "NATAA":
                     line = pdbStr + chainStr + "  NATAA"+ "\n"
-                elif residues == "ALLAA":
+                elif residue_string == "ALLAA":
                     line = pdbStr + chainStr + "  ALLAA" + "\n"
+                elif residue_string.split(":")[0]=="NC":
+                    x = x +residue_string.split(":")[1]+" "
+                    line = pdbStr + chainStr + "  NC  " + x + "\n";
                 else:
-                    residuesAll = residues.split(":")
+                    residuesAll = residue_string.split(":")
                     x = x + residuesAll[2]
-                    line = pdbStr + chainStr + "  PIKAA  " + x + "\n"
+                    line = pdbStr + chainStr + "  PIKAA  " + x + "\n"; #Just gets rewritten if more residues to add
             FILE.write(line)
         else:
+            #If residue not found in Resdic, give NATRO
             line = pdbStr + chainStr + "  NATRO" + "\n"
             FILE.write(line)
     FILE.close()
@@ -497,7 +506,7 @@ def save_FASTA_PDBLIST(pdblist_path, outfilename=False, loops_as_strings=False):
     return
 
     
-def exportPDBSCORE(self, score):
+def exportPDBSCORE(score):
     """
     Exports a list of scores.
     """
@@ -519,3 +528,61 @@ def exportPDBSCORE(self, score):
     print "\nComplete\n"
     PDBLIST.close()
     OUTFILE.close()
+    
+def output_molfile_to_params():
+    """
+    Uses molfile to params in pyrosetta bindings to convert.
+    """
+    
+    print "Using molfile_to_params.py script located in pyrosetta/toolbox/molfile2params written by Ian W Davis.  For more options, please see script."
+    script_path = os.environ["PYROSETTA"]+"/toolbox/molfile2params/molfile_to_params.py"
+    
+    if not os.path.exists(script_path):
+        print "Untarring script"
+        extract_path = os.environ["PYROSETTA"]+"/toolbox"
+        tar_path = extract_path+"/molfile2params.tar.gz"
+        tfile = tarfile.open(tar_path)
+        if tarfile.is_tarfile(tfile):
+            tfile.extractall(extract_path)
+        else:
+            print "Could not extract tar file."
+            return
+    
+    mdl_file = tkFileDialog.askopenfilename(initialdir = global_variables.current_directory, title = "Open MDL file")
+    if not mdl_file:return
+    global_variables.current_directory=os.path.dirname(mdl_file)
+    
+    output_kinemage = tkMessageBox.askyesno(title = "kinemage", message="Output kinemage file for ligand visualization?")
+    
+    options = " "
+    if output_kinemage:
+        options = options+"-k "
+    
+    outdir = os.path.dirname(mdl_file)+os.path.basename(mdl_file).split(".")[0]
+    if not os.path.exists(outdir): os.mkdir(outdir)
+    
+    prefix = outdir+"/"+os.path.basename(mdl_file).split(".")[0]
+    
+    options = options +"-c "+"-p "+prefix
+    
+    print "Running molfile_to_params with these options: "+options
+    os.system("python "+script_path+options)
+    print "Parameters generated. Output directed to: "+outdir
+    
+    return
+    
+def save_param_path_list(array_of_paths):
+    """
+    Saves a file of paths.
+    """
+    outfilename = tkFileDialog.asksaveasfilename(initialdir = global_variables.current_directory, title="Output Parm pathList to...")
+    if not outfilename:return
+    global_variables.current_directory = os.path.dirname(outfilename)
+    FILE = open(outfilename, 'w')
+    d = dict()
+    #Uniqify the output
+    for path in array_of_paths:d[path]=0
+    
+    for path in d:
+        FILE.write(path+"\n")
+    FILE.close()

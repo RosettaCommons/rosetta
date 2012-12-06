@@ -112,7 +112,7 @@ class ProteinMinimizationProtocols(ProtocolBaseClass):
             if not os.path.exists(pwd+"/Scwrl/"+plat+"/Scwrl4"):
                 print "SCWRL not compiled.  Please install scwrl to use scwrl features. (/SCWRL/platform)"
                 return
-            for i in range(0, self.output_class.rounds):
+            for i in range(0, self.output_class.rounds.get()):
                 #This may need to be changed to a call function in the future.
                 self.pose.dump_pdb(tempdir+"/temp.pdb")
                 filein = tempdir +"/temp.pdb"

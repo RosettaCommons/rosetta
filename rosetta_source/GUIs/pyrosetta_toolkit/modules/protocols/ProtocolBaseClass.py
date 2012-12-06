@@ -114,7 +114,6 @@ class ProtocolBaseClass:
                             if total_running_jobs>=total_allowed_jobs: break
             
                 if total_running_jobs==0:
-                    print "Finished? "
                     job_complete=True
                         
                 
@@ -125,9 +124,9 @@ class ProtocolBaseClass:
                 print "Start: "+ repr(start_energy_score)+"\n"        
                 print "End: "+ repr(self.score_class.score(self.pose))
         
-        self.output_class.terminal_output.set(0)
+        self.output_class.terminal_output.set(0); #Reset output to textbox
         
-        print "NOTE: If decoys have been output, original decoy is still loaded. "
+        print "NOTE: If > 1 decoy has been created, original decoy is still loaded. "
         print "Job Complete."
         
         return
@@ -138,7 +137,7 @@ class ProtocolBaseClass:
         """
         Used for multiprocessing.  
         """
-        p = Pose(); #Copy it so that each process is working on a different pose object. How about for the mover? Probably will have problems.
+        p = Pose(); #Copy it so that each process is working on a different pose object.
         p.assign(self.pose)
         print outputname
         start = self.score_class.score(p)
@@ -148,5 +147,7 @@ class ProtocolBaseClass:
         p.dump_pdb(outputname)
         print "Start: " +repr(start)
         print "End: " +repr(self.score_class.score(p))
+        if self.output_class.decoys.get()==1:
+            self.pose.assign(p)
             
             

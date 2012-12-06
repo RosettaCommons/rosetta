@@ -36,10 +36,11 @@ class DockingProtocols(ProtocolBaseClass):
         result = tkMessageBox.askokcancel(title="Continue?", message="Docking requires 10^5-10^6 decoys and the appropriate scorefunction (interchain_cen).  Continue?")
         if not result: return
         to_dock = tkSimpleDialog.askstring(title = "Input", prompt="Please supply two partners (ex - A_B or A_BC ).  The first will be held rigid.")
+        if not to_dock: return
         to_dock = to_dock.upper()
         setup_foldtree(self.pose, to_dock, Vector1([1]))
         switch = SwitchResidueTypeSetMover("centroid")
-        recover = RecoverSidechainsMover(self.pose)
+        recover = ReturnSidechainMover(self.pose)
         switch.apply(self.pose)
         low_res_mover = DockingLowRes(self.score_class.score, 1)
         self.run_protocol(low_res_mover)
@@ -51,6 +52,7 @@ class DockingProtocols(ProtocolBaseClass):
         
         to_dock = tkSimpleDialog.askstring(title = "Input", prompt="Please supply two partners (ex - A_B or A_BC ).  The first will be held rigid.")
         to_dock = to_dock.upper()
+        if not to_dock: return
         if self.score_class.ScorePatch.get()!="docking":
             result = tkMessageBox.askokcancel(title="Continue?", message="Docking patch not set in scorefunction. Continue?")
             if not result:return

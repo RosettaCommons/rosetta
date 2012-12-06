@@ -14,6 +14,7 @@
 from Tkinter import *
 import webbrowser
 import tkSimpleDialog
+
 #Module Imports
 from modules.tools import output as output_tools
 from modules.tools import analysis as analysis_tools
@@ -35,6 +36,7 @@ from window_modules.clean_pdb.FixPDBWindow import FixPDBWindow
 from window_modules.rosetta_tools.RosettaProtocolBuilder import RosettaProtocolBuilder
 from window_modules.design.ResfileDesignWindow import ResfileDesignWindow
 #from window_modules.interactive_terminal import IPython
+from window_modules.ligand_ncaa_ptm_manager.ligand_ncaa_ptm_manager import ligand_ncaa_ptm_manager
 import global_variables
 
 class Menus():
@@ -72,7 +74,8 @@ class Menus():
 
       #### Import ####
 	self.import_menu = Menu(self.main_menu, tearoff=0)
-	self.import_menu.add_command(label="Rosetta Loop File", command = lambda: self.toolkit.input_frame.load_loop())
+	self.import_menu.add_command(label="Param PathList File", command = lambda: self.toolkit.input_class.load_param_list())
+	self.import_menu.add_command(label="Rosetta Loop File", command = lambda: self.toolkit.input_class.load_loop())
 	#self.import_menu.add_command(label="Rosetta Resfile", command = lambda: input_tools.load_resfile())
 
 
@@ -83,6 +86,8 @@ class Menus():
 	self.export_menu.add_command(label="Rosetta Loop File", command = lambda: output_tools.save_loop_file(self.toolkit.pose, self.toolkit.input_class.loops_as_strings))
 	self.export_menu.add_command(label="Rosetta Basic ResFile", command = lambda: output_tools.save_basic_resfile(self.toolkit.pose))
 	self.export_menu.add_command(label="Rosetta Basic Blueprint File", command = lambda: output_tools.save_basic_blueprint(self.toolkit.pose))
+	self.export_menu.add_separator()
+	self.export_menu.add_command(label="Param PathList File", command = lambda: output_tools.save_param_path_list(self.toolkit.input_class.param_paths))
 	self.export_menu.add_separator()
 	self.export_menu.add_command(label = "FASTA (Pose)", command=lambda: output_tools.save_FASTA(self.toolkit.pose, self.toolkit.outname.get(), False ))
 	self.export_menu.add_command(label = "FASTA (Loops)", command = lambda: output_tools.save_FASTA(self.toolkit.pose, self.toolkit.outname.get(), False, self.toolkit.input_class.loops_as_strings))
@@ -118,24 +123,34 @@ class Menus():
 	self.analysis_menu.add_command(label = "VIP Analyzer", foreground='red', command = lambda: analysis_tools.analyze_vip(self.toolkit.pose, self.toolkit.score_class.score, self.toolkit.pwd))
 	self.advanced_menu.add_cascade(label = "Analysis", menu = self.analysis_menu)
 	self.advanced_menu.add_separator()
-	self.advanced_menu.add_command(label ="Enable Constraints", foreground='red')
-	self.advanced_menu.add_command(label ="Enable Symmetry", foreground='red')
-	self.advanced_menu.add_command(label ="Enable Non-Standard Residues", foreground='red')
+	self.advanced_menu.add_command(label ="Enable Constraints", command = lambda: input_tools.add_constraints_to_pose_and_scorefunction(self.toolkit.pose, self.toolkit.score_class.score))
+	#self.advanced_menu.add_command(label ="Enable Symmetry", foreground='red')
+	
+	#NonStandard
+	self.non_standard_menu = Menu(self.main_menu, tearoff=0)
+	self.non_standard_menu.add_command(label = "Ligand/NCAA/PTM Manager", command = lambda: self.show_ligand_ncaa_ptm_manager())
+	self.non_standard_menu.add_separator()
+	self.non_standard_menu.add_command(label = "Download Rosetta NCAA Rotamer Library", command=lambda: webbrowser.open("http://carl.bio.nyu.edu/~renfrew/ncaa/"))
+	self.non_standard_menu.add_command(label = "Convert molfile to param files", command = lambda: output_tools.output_molfile_to_params())
+	self.non_standard_menu.add_separator()
+	self.non_standard_menu.add_command(label = "Documentation", command = lambda: webbrowser.open("http://www.pyrosetta.org/obtaining-and-preparing-ligand-pdb-files"))
+	
+	self.advanced_menu.add_cascade(label ="Enable NCAA/PTM/Ligands", menu=self.non_standard_menu)
 	self.advanced_menu.add_separator()
 	self.advanced_menu.add_command(label="PyMOL Visualization", command=lambda: self.toolkit.pymol_class.makeWindow(0, 0, Toplevel(self.main), self.toolkit.score_class))
-	self.advanced_menu.add_command(label="Full Control Toolbox", command=lambda: self.toolkit.fullcontrol_class.makeWindow(Toplevel(self.main)))
-	self.advanced_menu.add_command(label="ScoreFxn Control + Creation", command =lambda: self.toolkit.score_class.makeWindow(Toplevel(self.main), self.toolkit.pose))
+	self.advanced_menu.add_command(label="ScoreFunction Control and Creation", command =lambda: self.toolkit.score_class.makeWindow(Toplevel(self.main), self.toolkit.pose))
+	self.advanced_menu.add_command(label="Per Residue Control and Analysis", command=lambda: self.toolkit.fullcontrol_class.makeWindow(Toplevel(self.main)))
 	self.advanced_menu.add_separator()
 	#self.advanced_menu.add_command(label="Extract PDB from SQLite3 DB", command = lambda: output_tools.extract_pdb_from_sqlite3db())
-	self.advanced_menu.add_command(label="Interactive Terminal", foreground='red',command = lambda: self.show_IpythonWindow())
-	self.advanced_menu.add_command(label="Jump into Session", foreground='red', command = lambda: embed())
+	#self.advanced_menu.add_command(label="Interactive Terminal", foreground='red',command = lambda: self.show_IpythonWindow())
+	#self.advanced_menu.add_command(label="Jump into Session", foreground='red', command = lambda: embed())
 	self.main_menu.add_cascade(label = "Advanced", menu = self.advanced_menu)
 
 
-
+	
     def _set_protein_design_menu(self):
 	"""
-	Sets the Protein Design menu.  Need a seperate menu for peptide/ligand design in the future.
+	Sets the Protein Design menu.
 	"""
 
 	self.protein_design_menu=Menu(self.main_menu, tearoff=0)
@@ -146,11 +161,14 @@ class Menus():
 
     def _set_protocols_menu(self):
 	"""
-	Menu for running protocols through PyRosetta, if the user really wants to.
+	Menu for running protocols through PyRosetta.
 	"""
 	
 	self.protocols_menu = Menu(self.main_menu, tearoff=0)
-	self.protocols_menu.add_command(label = "Set processes to use", command = lambda: self.toolkit.output_class.processors.set(tkSimpleDialog.askinteger(title="Processesors", prompt="Please set the number of processess you wish to create for protocol runs.", initialvalue=self.toolkit.output_class.processors.get())))
+
+	self.protocols_menu.add_command(label = "Set processors to use", command = lambda: self.toolkit.output_class.processors.set(tkSimpleDialog.askinteger(title="Processesors", prompt="Please set the number of processess you wish to create for protocol runs.", initialvalue=self.toolkit.output_class.processors.get())))
+	self.protocols_menu.add_command(label = "Enable MPI Mode", foreground = 'red')
+
 	self.protocols_menu.add_separator()
 	
 	#Setup Protocol Classes. Should this go to Main File? They are very light weight classes.
@@ -245,7 +263,6 @@ class Menus():
 	#self.pdblist_tools_menu.add_command(label = "Extract PDBList from SQLite3 DB", command = lambda: output_tools.extract_pdbs_from_sqlite3db(self.toolkit.input_class.PDBLIST.get()))
 	#self.pdblist_tools_menu.add_separator()
 	self.pdblist_tools_menu.add_command(label = "Rename All PDBs Recursively + Copy to Outpath", command = lambda: output_tools.rename_and_save(self.toolkit.input_class.PDBLIST.get()))
-	self.pdblist_tools_menu.add_separator()
 
 	self.main_menu.add_cascade(label = "PDBList Tools", menu=self.pdblist_tools_menu)
 
@@ -272,8 +289,7 @@ class Menus():
 	self.help_desmut_menu.add_command(label = "Relative Mutability", command=lambda: help_tools.mutRM())
 	self.help_desmut_menu.add_command(label = "Surface Probability", command=lambda: help_tools.mutSP())
 	self.help_menu.add_cascade(label="Mutability Data", menu=self.help_desmut_menu)
-
-	self.help_menu.add_separator()
+	
 	self.main_menu.add_cascade(label="Help", menu=self.help_menu)
 
 
@@ -289,6 +305,12 @@ class Menus():
 
 #### WINDOWS ##### (ADD NEW WINDOWS TO THIS THAT NEED TO BE SET UP) #######
 
+    def show_ligand_ncaa_ptm_manager(self):
+	top_level_tk = Toplevel(self.main)
+	ptm = ligand_ncaa_ptm_manager(self.toolkit.input_class, self.toolkit.score_class, self.toolkit.pose)
+	ptm.setTk(top_level_tk)
+	ptm.shoTk(0, 0)
+	
     def show_OptionsSystemManager(self):
 	"""
 	Main Design window interacting with options system
@@ -297,6 +319,7 @@ class Menus():
 	top_level_tk = Toplevel(self.main)
 	self.toolkit.options_class.setTk(top_level_tk)
 	self.toolkit.options_class.shoTk()
+	
     def show_ResfileDesignWindow(self):
 	"""
 	Main Design window for creating a ResFile

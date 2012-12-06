@@ -17,6 +17,7 @@ from rosetta import *
 
 #Python Imports
 import os.path
+import re
 
 #Tkinter Imports
 from Tkinter import StringVar
@@ -25,6 +26,7 @@ import tkFileDialog
 #Toolkit Imports
 from window_main import global_variables
 from modules.ScoreBase import ScoreBase as score_base
+from modules.tools import input as input_tools
 
 class GUIInput:
     def __init__(self, toolkit):
@@ -38,27 +40,17 @@ class GUIInput:
         self.loop_sequence=StringVar(); #Sequence in Entry
         self.loops_as_strings = []; #Array of Loops: start:end:chain
         self.loops = Loops()
-
+        
+        self.param_pathlist_file = ""; #Path to a file which lists paths to all params to use.  One on each line
+        self.param_paths = []; #Array of parameter paths.
+        self.loaded_paths = [];  #Since something about loading a new residuetypeset is global, with horrible exception handling, WE need to keep track of it.
+        self.nonstandard_ResidueTypeSet = ""; #This is set through the ncaa window or loading a param path file.  It is here for access since the ChemicalManager instance is a singleton and cannot be reinstantiated with new residues.
+        
 #### POSE INPUT ####
 
-    def load_pose(self):
-        
-        print self.pdb_path.get()
-        pose_from_pdb(self.toolkit.pose, self.pdb_path.get())
-        self.toolkit.native_pose.assign(self.toolkit.pose); #Set native pose for RMSD.
-
-        print self.toolkit.pose
-        self.toolkit.pymol_class.SendNewPose()
-        self.ScoreBaseObject = score_base(self.toolkit.pose, self.toolkit.score_class.score); #Score Base object for controling scoring of loops.
-        pdbname = os.path.basename(self.pdb_path.get())
-        pdbname = pdbname.split(".")[0]
-        self.toolkit.output_class.outname.set(pdbname)
-        self.toolkit.output_class.outdir.set(os.path.dirname(self.pdb_path.get()))
-        self.toolkit.DesignDic = dict()
-        
     def choose_load_pose(self):
         """
-        Loads a File through the tk File Dialog
+        Loads a Pose through the tk File Dialog
         """
         infilename = tkFileDialog.askopenfilename(initialdir=global_variables.current_directory, title='Pick a file')
         if not infilename:return
@@ -66,13 +58,48 @@ class GUIInput:
         global_variables.current_directory= os.path.dirname(infilename)
         print global_variables.current_directory
         self.load_pose()
-    
+        
+    def load_pose(self):
+        
+        print self.pdb_path.get()
+        if self.nonstandard_ResidueTypeSet:
+            self.toolkit.pose.assign(pose_from_pdb(self.nonstandard_ResidueTypeSet, self.pdb_path.get()))
+        else:
+            pose_from_pdb(self.toolkit.pose, self.pdb_path.get())
+        self.toolkit.native_pose.assign(self.toolkit.pose); #Set native pose for RMSD.
+
+        print self.toolkit.pose
+        self.toolkit.pymol_class.SendNewPose()
+        self.ScoreBaseObject = score_base(self.toolkit.pose, self.toolkit.score_class.score);
+        pdbname = os.path.basename(self.pdb_path.get())
+        pdbname = pdbname.split(".")[0]
+        self.toolkit.output_class.outname.set(pdbname)
+        self.toolkit.output_class.outdir.set(os.path.dirname(self.pdb_path.get()))
+        self.toolkit.DesignDic = dict()
+        
     def set_PDBLIST(self):
         infilename = tkFileDialog.askopenfilename(initialdir=global_variables.current_directory,title='Open PDBLIST')
         if not infilename:return
         global_variables.current_directory =os.path.dirname(infilename)
         print "PDBLIST set"
         self.PDBLIST.set(infilename)
+    
+    def load_param_list(self):
+        """
+        Loads paths from param path files into an array.  Creates a residue type set from the params.
+        """
+        infilename = tkFileDialog.askopenfilename(initialdir=global_variables.current_directory,title='Open param pathList file')
+        if not infilename: return
+        self.param_pathlist_file = infilename
+        global_variables.current_directory =os.path.dirname(infilename)
+        FILE = open(infilename, 'r')
+        for line in FILE:
+            if re.search("#", line): continue
+            line = line.strip()
+            self.param_paths.append(line)
+        
+        self.nonstandard_ResidueTypeSet, self.loaded_paths = input_tools.get_residuetypeset_from_path_array(self.param_paths, self.loaded_paths)
+        FILE.close()
         
     def load_loop(self):
         """

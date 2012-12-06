@@ -34,7 +34,9 @@ class ResfileDesignWindow:
         #current and design are labeled opposite . need to fix.
         self.current_accessible_sa = StringVar(); self.current_relative_mutability = StringVar(); self.current_surface_probability = StringVar()
         self.design_accessible_sa = StringVar(); self.design_relative_mutability = StringVar(); self.design_surface_probability = StringVar()
-        self.current_residue_name = StringVar()
+        self.current_residue_name = StringVar(); #Split three letter aa code.
+        self.current_residue_name_full = StringVar(); #Full rosetta code including variants.
+        
         self.current_residue = StringVar(); 
         self.current_chain = StringVar(); 
         self.pose = pose
@@ -47,7 +49,7 @@ class ResfileDesignWindow:
         #self.entry_Chain = Entry(self.main, textvariable=DesignChain, justify=CENTER)
         
         self.label_Chain = Label(self.main, text = "Chain")
-        self.shoRes = Label(self.main, textvariable=self.current_residue_name)
+        self.shoRes = Label(self.main, textvariable=self.current_residue_name_full)
         self.label_Res = Label(self.main, text = "Residue or Start:End")
         self.listbox_restypes = Listbox(self.main)
         self.listbox_residues = Listbox(self.main)
@@ -137,20 +139,23 @@ class ResfileDesignWindow:
                 print "Residue does not exist in PDB..."
                 return
             
-            resName = resName.split("_")[0]; #Fix for Rosetta designated chain endings, His_d
+            
+            self.current_residue_name_full.set(resName)
+            three_letter_name = resName.split("_")[0]; #Fix for Rosetta designated chain endings, His_d
             self.current_residue_name.set(resName)
+            
             #Fix for not having data for certain residue types:
             try:
-                self.design_accessible_sa.set(self.residue_definitions.resinfo[self.pose.residue(resType).name()][0])
-                self.design_relative_mutability.set(self.residue_definitions.resinfo[self.pose.residue(resType).name()][1])
-                self.design_surface_probability.set(self.residue_definitions.resinfo[self.pose.residue(resType).name()][2])
+                self.design_accessible_sa.set(self.residue_definitions.resinfo[three_letter_name][0])
+                self.design_relative_mutability.set(self.residue_definitions.resinfo[three_letter_name][1])
+                self.design_surface_probability.set(self.residue_definitions.resinfo[three_letter_name][2])
             except KeyError:
                 print "No Data for restype"
                 self.design_accessible_sa.set("")
                 self.design_relative_mutability.set("")
                 self.design_surface_probability.set("")
                 
-            con = "Conserved:" +self.pose.residue(resType).name()
+            con = "Conserved:" +three_letter_name
             self.listbox_restypes.delete(9)
             self.listbox_restypes.insert(9, con)
             if self.DesignDic.has_key(res):
@@ -204,7 +209,7 @@ class ResfileDesignWindow:
                         resType = self.pose.pdb_info().pdb2pose(self.current_chain.get(), i)
                         #Gets name according to rosetta
                         resType = self.pose.residue(resType).name()
-                        resType = resType.split("_")[0]; #Fix for Rosetta designated chain endings, His_d
+                        resType = resType.split("_")[0];
                         for y in self.residue_definitions.restype_info["All"]:
                             z = y.split(":")
                             if resType == z[1]:
@@ -228,7 +233,7 @@ class ResfileDesignWindow:
                 for i in range(start, end+1):
                     resType = i
                     resType = self.pose.residue(resType).name()
-                    resType = resType.split("_")[0]; #Fix for Rosetta designated chain endings, His_d
+                    resType = resType.split("_")[0]; 
                     res = repr(i) + ":"+self.current_chain.get()
                     resType = "Conserved:"+resType
                     for types in self.residue_definitions.restype_info[resType]:
@@ -242,7 +247,7 @@ class ResfileDesignWindow:
                 for i in range(start, end+1):
                     resType = i
                     resType = self.pose.residue(resType).name()
-                    resType = resType.split("_")[0]; #Fix for Rosetta designated chain endings, His_d
+                    resType = resType.split("_")[0];
                     res = repr(i) + ":"+self.current_chain.get()
                     resType = "Conserved:"+resType
                     for types in self.residue_definitions.restype_info[resType]:
@@ -272,7 +277,9 @@ class ResfileDesignWindow:
         else:
             resType = self.pose.pdb_info().pdb2pose(self.current_chain.get(), int(self.current_residue.get()))
             res = self.pose.residue(resType).name()
-            resType = resType.split("_")[0]; #Fix for Rosetta designated chain endings, His_d
+            
+            self.current_residue_name_full.set(res)
+            res= res.split("_")[0]; 
             self.current_residue_name.set(res)
             try:
                 self.design_accessible_sa.set(self.residue_definitions.resinfo[self.pose.residue(resType).name()][0])

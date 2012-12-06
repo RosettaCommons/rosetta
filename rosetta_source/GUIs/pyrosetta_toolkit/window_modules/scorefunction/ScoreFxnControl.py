@@ -40,9 +40,7 @@ class ScoreFxn():
             "Set ScoreFunction",
             "Score Pose",
         ]
-        
-        
-        
+      
 
     def makeWindow(self, main, p, r=0, c=0):
         """
@@ -51,7 +49,6 @@ class ScoreFxn():
         
         #Listboxes with Labels
         
-        #Sets it's own variables I guess?
         self.pose = p
         self.main = main
         self.main.title("ScoreFxn Control")
@@ -108,6 +105,7 @@ class ScoreFxn():
     #This Gets all of the score types from PyRosetta Database
         self.populateScoreList()
         self.updateScoreandTerms()
+        
     def readDefaults(self):
         """
         Opens text file with default settings.
@@ -156,17 +154,13 @@ class ScoreFxn():
         #Later - We should put this as a file, check to see if anything has changed in the dir, and if it has,
         #Load everything up.
         for scorefile in sorted(Scorefiles):
-            scorefile = scorefile.split("/")
-            scorefile = scorefile[len(scorefile)-1]
-            scorefile = scorefile.split(".")
-            scorefile = scorefile[0]
+            scorefile = os.path.basename(scorefile).split(".")[0]
             self.ScoreTypeListbox.insert(END, scorefile)
+            
         self.ScorePatchListbox.insert(END, "None")
+        
         for patchfile in sorted(Patchfiles):
-            patchfile = patchfile.split("/")
-            patchfile = patchfile[len(patchfile)-1]
-            patchfile = patchfile.split(".")
-            patchfile = patchfile[0]
+            patchfile = os.path.basename(patchfile).split(".")[0]
             self.ScorePatchListbox.insert(END, patchfile)
     
     def populateETerms(self, nonzeroList, zeroList):
@@ -254,12 +248,15 @@ class ScoreFxn():
             pass
     def updateScore(self):
         self.ScoreType.set(self.ScoreTypeListbox.get(self.ScoreTypeListbox.curselection()))
+        self.scoreOption("Set ScoreFunction")
         self.updateScoreandTerms()
     def updatePatch(self):
         self.ScorePatch.set(self.ScorePatchListbox.get(self.ScorePatchListbox.curselection()))
+        self.scoreOption("Set ScoreFunction")
         self.updateScoreandTerms()
     def removePatch(self):
         self.ScorePatch.set("None")
+        self.scoreOption("Set ScoreFunction")
         self.updateScoreandTerms()
     def changeWeight(self, box):
         """
@@ -268,19 +265,14 @@ class ScoreFxn():
         term = box.get(box.curselection())
         termSP = term.split(";")
         if len(termSP)>=2:
-            print "This should not be empty"
             newWeight = tkSimpleDialog.askfloat(title="New", prompt = "Enter New Weight", initialvalue=float(termSP[1]))
-            if newWeight ==None:
-                """
-                This is what tkSimpleDialog returns if nothing is selected!!
-                """
-                
-                return
-            elif newWeight == 0:
+            
+            if  newWeight == 0:
                 print "Zeroing E term"
                 self.score.set_weight(eval(termSP[0]), 0)
                 self.zero, self.nonzero = self.scoreOption("Breakdown ScoreFxn")
                 self.populateETerms(self.nonzero, self.zero)
+            elif  not newWeight: return
             else:
                 print "Changing E term"
                 self.score.set_weight(eval(termSP[0]), newWeight)
@@ -334,7 +326,7 @@ class ScoreFxn():
         """
         Updates Term listboxes, and sets the score to the stringvariables scorepatch and scoretype
         """
-        self.scoreOption("Set ScoreFunction")
+        #self.scoreOption("Set ScoreFunction")
         self.zero, self.nonzero = self.scoreOption("Breakdown ScoreFxn")
         self.populateETerms(self.nonzero, self.zero)
     

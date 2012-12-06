@@ -126,3 +126,43 @@ def get_pdb_list_from_dir(dir):
             directorylist.remove(Files)
     return directorylist
     
+def add_constraints_to_pose_and_scorefunction(pose, score, default_weight = 1.0, constraint_types = False):
+    """
+    Adds constraint from file to pose and score.  Sets all constraint_types to 1.0.
+    Can pass an array of constraint_types.
+    """
+    if not constraint_types:
+        constraint_types = [atom_pair_constraint, angle_constraint, dihedral_constraint, coordinate_constraint, constant_constraint]
+    
+    constraint_file = tkFileDialog.askopenfilename(initialdir=global_variables.current_directory, title = "Open Constraint File")
+    if not constraint_file:return
+    global_variables.current_directory = os.path.dirname(constraint_file)
+    print "Setting constraints to pose and scorefunction at default weight of 1.0 if not already set.  "
+    setup = ConstraintSetMover()
+    setup.constraint_file(constraint_file)
+    setup.apply(pose)
+    
+    for constraint in constraint_types:
+        if score.get_weight()==0:
+            score.set_weight(constraint, default_weight)
+            
+def get_residuetypeset_from_path_array(param_path_array, loaded_path_array):
+    """
+    Returns ResidueTypeSet from an array of paths.
+    """
+    
+    #So that there are no duplicates.
+    params = dict()
+    for p in param_path_array:
+        #Only add to unique dictionary if path is not in loaded_path_array
+        try:
+            ind = loaded_path_array.index(p)
+        except ValueError:
+            params[p]=0
+            loaded_path_array.append(p)
+    if not params: return
+    params_paths = utility.vector1_string()
+    params_paths.extend(list(params.keys()))
+    residuetypeset = generate_nonstandard_residue_set(params_paths)
+    print "Nonstandard residue type set loaded."
+    return residuetypeset, loaded_path_array

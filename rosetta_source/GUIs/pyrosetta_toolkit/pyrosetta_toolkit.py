@@ -11,15 +11,10 @@
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
-
-
-#Tk Imports
-from Tkinter import *
-from Tkinter import Frame as FrameTk
-import tkFileDialog
-import tkMessageBox
-import tkSimpleDialog
-import tkFont
+#Rosetta Imports
+from rosetta import *
+from modules import tools
+import functools
 
 #Python Imports
 from os import listdir
@@ -33,10 +28,13 @@ import glob
 import signal
 import sys
 
-#Rosetta Imports
-from rosetta import *
-from modules import tools
-import functools
+#Tk Imports
+from Tkinter import *
+from Tkinter import Frame as FrameTk
+import tkFileDialog
+import tkMessageBox
+import tkSimpleDialog
+import tkFont
 
 #Toolkit Imports
 from window_main import global_variables

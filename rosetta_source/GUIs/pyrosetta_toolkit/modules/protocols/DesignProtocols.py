@@ -17,6 +17,7 @@ from rosetta import *
 #Tkinter Imports
 from Tkinter import *
 import tkFileDialog
+import tkSimpleDialog
 
 #Toolkit Imports
 from ProtocolBaseClass import ProtocolBaseClass
@@ -33,7 +34,8 @@ class DesignProtocols(ProtocolBaseClass):
             if not resfile:return
             
         task = TaskFactory.create_packer_task(self.pose)
-        task.read_resfile(resFile)
+        parse_resfile(self.pose, task, resFile)
+
         design_mover = PackRotamersMover(self.score_class.score, task)
         self.run_protocol(design_mover)
     
@@ -54,7 +56,23 @@ class DesignProtocols(ProtocolBaseClass):
         
         res = self.pose.pdb_info().pdb2pose(chain, int(res))
         task = TaskFactory.create_packer_task(self.pose)
+        task.restrict_to_repacking()
         task.temporarily_fix_everything()
+        #task = self._get_set_pack_neighbors(res, task)
+        task.temporarily_set_pack_residue(res, True)
+        pack_mover = PackRotamersMover(self.score_class.score, task)
+        print self.score_class.score(self.pose)
+        pack_mover.apply(self.pose)
+        print self.score_class.score(self.pose)
+    
+    def design_residue(self, res, chain):
+        """
+        Designs a residue by task not restricting to repacking.
+        """
+        res = self.pose.pdb_info().pdb2pose(chain, int(res))
+        task = TaskFactory.create_packer_task(self.pose)
+        task.temporarily_fix_everything()
+        #task = self._get_set_pack_neighbors(res, task)
         task.temporarily_set_pack_residue(res, True)
         pack_mover = PackRotamersMover(self.score_class.score, task)
         print self.score_class.score(self.pose)
@@ -65,10 +83,29 @@ class DesignProtocols(ProtocolBaseClass):
         new_res = new_res.split(":")
         new_res = new_res[2]
         res = self.pose.pdb_info().pdb2pose(chain, int(res))
-
+        #radius = tkSimpleDialog.askfloat(title="Pack radius", prompt = "Please enter the desired neighbor packing radius (A)", initialvalue=0.0)
+        #print radius
         print self.score_class.score(self.pose)
         print "Mutating to " + new_res
-        mutate_residue(self.pose, res, new_res)
+        #self.pose = mutate_residue(self.pose, res, new_res, radius, self.score_class.score); TypeError
+        self.pose = mutate_residue(self.pose, res, new_res)
         print self.score_class.score(self.pose)
         print "Mutagenesis Complete."
         return self.pose
+    
+    def _get_set_pack_neighbors(self, res, task):
+        """
+        Asks for packing radius.  Sets task to prevent repacking for all but within that radius.
+        Original Author: Evan H. Baugh, Johns Hopkins University. from mutants.py.
+        Somehow not working with task
+        """
+        radius = tkSimpleDialog.askfloat(title="Pack radius", prompt = "Please enter the desired neighbor packing radius (A)", initialvalue=0.0)
+        
+        center = self.pose.residue( res ).nbr_atom_xyz()
+        for i in range( 1 , self.pose.total_residue() + 1 ):
+        # only pack the mutating residue and any within the pack_radius
+            if not i == res or center.distance_squared(self.pose.residue( i ).nbr_atom_xyz() ) > radius**2:
+                task.nonconst_residue_task( i ).prevent_repacking()
+                
+        return task
+

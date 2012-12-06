@@ -50,7 +50,7 @@ def mutate_residue( pose , mutant_position , mutant_aa ,
     ####    the area around the mutant residue (no pack_radius feature)
     #mutator = MutateResidue( mutant_position , mutant_aa )
     #mutator.apply( test_pose )
-
+    
     if pose.is_fullatom() == False:
         IOError( 'mutate_residue only works with fullatom poses' )
 

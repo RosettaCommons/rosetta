@@ -10,12 +10,20 @@
 ## @brief  Full Control window
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
+#Rosetta Imports
 from rosetta import *
-from Tkinter import *
+from rosetta.core.pose import remove_variant_type_from_pose_residue
+
+#Python Imports
 import glob
+
+#Tkinter Imports
+from Tkinter import *
 import tkFileDialog
 import tkMessageBox
 import tkSimpleDialog
+
+#Toolkit Imports
 import modules.tools.analysis as analysis_tools
 from modules.definitions.restype_definitions import *
 from modules.tools import general_tools
@@ -23,7 +31,7 @@ from modules.tools import protocols as protocol_tools
 from modules.protocols.DesignProtocols import DesignProtocols
 from modules.protocols.LoopMinimizationProtocols import LoopMinimizationProtocols
 from modules.ScoreBase import *
-
+from window_modules.ligand_ncaa_ptm_manager.ligand_ncaa_ptm_manager import ligand_ncaa_ptm_manager
 
 class FullControlWindow():
     """
@@ -38,7 +46,7 @@ class FullControlWindow():
         self.loop_protocols = LoopMinimizationProtocols(self.pose, ScoreObject, input_class, output_class)
         self.residue_definitions = definitions(); #Defines all residue type information.
         self.score_object = ScoreObject
-        
+        self.variant_manager = ligand_ncaa_ptm_manager(input_class, ScoreObject, pose)
         
         
         #GUI variables
@@ -55,12 +63,13 @@ class FullControlWindow():
         self.residue_energy_total = StringVar()
         self.residue_energy_of_Eterm = StringVar(); #Energy of the particular residue
         
-        
+        self.variant = StringVar()
         
     def __exit__(self):
         exit()
         
     def shoInfo(self, res, chain):
+	self.populate_restype_listbox()
         try:
             res = self.pose.pdb_info().pdb2pose(chain, int(res))
             self.restype_var.set(self.pose.residue(res).name()); #Exception comes from this! Segfualts on .psi etc.  This needs to be first. 
@@ -100,7 +109,6 @@ class FullControlWindow():
             print "Please Load a pose"
             return
         
-        print "Everything is dieing."
             
         self.main = main
         self.main.title("Full Control")
@@ -135,7 +143,11 @@ class FullControlWindow():
         self.button_relax_residue_and_neighbors_bb=Button(self.main, text= "Relax X-Res-X (BB only)", command = lambda: self.relax_residue_neighbors(True))
         self.button_backrub_residue_and_neighbors=Button(self.main, text = "Backrub X-Res-X", state=DISABLED)
         self.button_Pack = Button(self.main, text = "Pack Rotamer", command=lambda: self.packRes())
+	self.button_full_design = Button(self.main, text="Design", command = lambda: self.desRes())
         self.listbox_mutate_restypes = Listbox(self.main)
+	self.variant_listbox = Listbox(self.main)
+	self.add_variant_button = Button(self.main, text = "Add Variant", command = lambda: self.mutate_to_variant())
+	self.remove_variant_button = Button(self.main, text = "Remove Variant", command = lambda: self.remove_variant())
         self.label_Etot = Label(self.main, text = "Total Residue Energy")
         self.entry_Etot = Label(self.main, textvariable = self.residue_energy_total, relief=SUNKEN)
         self.label_Terms = Label(self.main, text = "energy terms")
@@ -156,13 +168,18 @@ class FullControlWindow():
         self.label_rotamer_probability.grid(row=r+13, column=c+0); self.label_rotamer_energy.grid(row=r+13, column=c+2)
         
     #### Mutagenesis, Repacking, Residue Energies ####
+	self.button_full_design.grid(row=r+13, column=c+1)
         self.button_Pack.grid(row=r+15, column=c+1)
         self.listbox_mutate_restypes.grid(row=r+17, column=c+1, rowspan=6)
-        self.entry_Etot.grid(row=r+23, column=c+0); self.entry_ResE.grid(row=r+23, column=c+2)
-        self.label_Etot.grid(row=r+24, column=c+0); self.label_Terms.grid(row=r+24, column=c+1); self.label_Etype.grid(row=r+24, column=c+2)
-        self.listbox_energy_terms.grid(row=r+25, column = 1, rowspan=6)
+	self.variant_listbox.grid(row = r+23, column=c+1, rowspan=6)
+	self.remove_variant_button.grid(row=r+23, column=c); self.add_variant_button.grid(row=r+23, column=c+2)
+        self.entry_Etot.grid(row=r+29, column=c+0); self.entry_ResE.grid(row=r+29, column=c+2)
+        self.label_Etot.grid(row=r+30, column=c+0); self.label_Terms.grid(row=r+30, column=c+1); self.label_Etype.grid(row=r+30, column=c+2)
+        self.listbox_energy_terms.grid(row=r+31, column = 1, rowspan=6)
         self.listbox_mutate_restypes.bind("<Double-Button-1>", lambda event: self.mutRes())
-        self.listbox_energy_terms.bind("<Double-Button-1>", lambda event: self.get_residue_energy(self.listbox_energy_terms.get(self.listbox_energy_terms.curselection())))
+	self.variant_listbox.bind("<ButtonRelease-1>", lambda event: self.show_variant_info())
+        self.variant_listbox.bind("<Double-Button-1>", lambda event: self.mutate_to_variant())
+	self.listbox_energy_terms.bind("<Double-Button-1>", lambda event: self.get_residue_energy(self.listbox_energy_terms.get(self.listbox_energy_terms.curselection())))
     
     #### Quick Min ####
         self.button_relax_residue.grid(row=r+17, column=c+2, sticky= W+E)
@@ -170,16 +187,11 @@ class FullControlWindow():
         self.button_relax_residue_and_neighbors.grid(row=r+18, column=c+2, sticky= W+E)
         #self.button_relax_residue_and_neighbors_bb.grid(row=r+18, column=c+2, sticky= W+E)
         self.button_backrub_residue_and_neighbors.grid(row=r+18, column=c, sticky= W+E)
-        #Need to use a ScoreFxnControl Object.  Would like to use the currently selected Scoretype though - So - Pass the Object!!
-        #Populating the Listboxes:
-        (zeroscores, nonzeroscores) = self.score_object.scoreOption("Breakdown ScoreFxn")
-        for type in nonzeroscores:
-            self.listbox_energy_terms.insert(END, type)
-            #For now, I will show this.  Later, I will use an object to hold all Residue and Design/CDR info.  Useful in the future.
-
-        for type in self.residue_definitions.restype_info["All"]:
-            self.listbox_mutate_restypes.insert(END, type)
-    
+        
+	#Populating the Listboxes:
+	self.populate_restype_listbox()
+	self.populate_variant_listbox()
+	
     def get_residue_energy(self, type_weight_string):
         self.last_type_string_selected = type_weight_string
         type_string = type_weight_string.split(";")[0]
@@ -191,8 +203,49 @@ class FullControlWindow():
         e = weight*emap[self.score_base.fa_terms[type_string]]
         self.eterm_type.set(type_string)
         self.residue_energy_of_Eterm.set("%.3f REU"%e)
-        
-    #### 'CALLBACKS' ####
+    
+    def populate_restype_listbox(self):
+	self.listbox_energy_terms.delete(0, END)
+	(zeroscores, nonzeroscores) = self.score_object.scoreOption("Breakdown ScoreFxn")
+        for type in nonzeroscores:
+            self.listbox_energy_terms.insert(END, type)
+            #For now, I will show this.  Later, I will use an object to hold all Residue and Design/CDR info.  Useful in the future.
+
+        for type in self.residue_definitions.restype_info["All"]:
+            self.listbox_mutate_restypes.insert(END, type)
+	    
+    def populate_variant_listbox(self):
+	self.variant_listbox.delete(0, END)
+	for variant in sorted(self.variant_manager.patch_type_map):
+	    self.variant_listbox.insert(END, variant)
+	    
+	    
+    def show_variant_info(self):
+	variant = self.variant_listbox.get(self.variant_listbox.curselection())
+	p = ""
+	for type in self.variant_manager.patch_type_map[variant]:
+	    p = p+" "+type+","
+	print "Types: "+p
+	self.variant.set(variant)
+    def mutate_to_variant(self):
+	variant = self.variant_listbox.get(self.variant_listbox.curselection())
+	
+	self.variant_manager.current_variant.set(variant.upper())
+	residue = self.pose.pdb_info().pdb2pose(self.chain.get(), int(self.resnum.get()))
+	try:
+	    self.variant_manager.current_main_selection.set("patch")
+	except AttributeError:
+	    pass
+	
+	self.variant_manager.mutate(residue)
+	self.shoInfo(self.resnum.get(), self.chain.get())
+    
+    def remove_variant(self):
+	resnum = self.pose.pdb_info().pdb2pose(self.chain.get(), int(self.resnum.get()))
+	remove_variant_type_from_pose_residue(self.pose, self.variant.get().upper(), resnum)
+	self.shoInfo(self.resnum.get(), self.chain.get())
+	
+    #### Functions ####
     def relax_residue(self):
         """
         Relaxes the given residue
@@ -219,3 +272,7 @@ class FullControlWindow():
     def mutRes(self):
         self.design_protocols.mutateRes(self.resnum.get(), self.chain.get(), self.listbox_mutate_restypes.get(self.listbox_mutate_restypes.curselection()))
         self.shoInfo(self.resnum.get(), self.chain.get())
+    
+    def desRes(self):
+	self.design_protocols.design_residue(self.resnum.get(), self.chain.get())
+	self.shoInfo(self.resnum.get(), self.chain.get())
