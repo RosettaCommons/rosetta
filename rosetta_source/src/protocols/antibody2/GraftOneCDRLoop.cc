@@ -178,7 +178,7 @@ void GraftOneCDRLoop::apply( pose::Pose & pose_in ){
     // Maybe I should remove this number 2, just copy the loop itself !!!!!
     
     for ( Size i=query_start-stem_copy_size_; i <= query_end+stem_copy_size_; ++i ) {
-        Size template_num ( i - (query_start-5) );  // this "5" is the default in the l1.pdb, you have 4 residues before the 1st one
+        Size template_num ( i - (query_start-5) );  // this "5" is the default in the L1.pdb, you have 4 residues before the 1st one
 //        TRG<<" i="<<i<<"    template_num="<<template_num<<std::endl;
         conformation::Residue const & source_rsd( pose_in.residue( i ) );
         conformation::Residue const & target_rsd( template_pose.residue( template_num) );
