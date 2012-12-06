@@ -887,6 +887,7 @@ void
 Splice::read_torsion_database(){
 	using namespace std;
 
+	TR<<"Reading torsion database"<<std::endl;
   utility::io::izstream data( torsion_database_fname_ );
   if ( !data ) {
     TR << "cannot open torsion database " << torsion_database_fname_ << std::endl;
