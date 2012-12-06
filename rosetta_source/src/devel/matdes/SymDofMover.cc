@@ -24,6 +24,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/symmetry/util.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/symmetry/util.hh>
 #include <core/conformation/symmetry/VirtualCoordinate.hh>
 #include <core/conformation/symmetry/SymmData.hh>

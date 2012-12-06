@@ -13,47 +13,19 @@
 /// @Gordon Lemmon
 
 #include <protocols/ligand_docking/AddHydrogen.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
-
 
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
-// AUTO-REMOVED #include <protocols/jd2/Job.hh>
-
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-
-// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
-
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
-
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/RotamerConstraint.hh>
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <basic/prof.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreType.hh>
 
 #include <basic/Tracer.hh>
-
-// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
 
 #include <ObjexxFCL/string.functions.hh>
 
 #include <core/chemical/PatchOperation.hh>
 
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
-
-// option key includes
-
-// AUTO-REMOVED #include <basic/options/keys/docking.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <protocols/jd2/JobDistributor.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueSelector.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <utility/tag/Tag.hh>
 
 #include <core/chemical/ResidueTypeSet.hh>
 #include <utility/vector0.hh>

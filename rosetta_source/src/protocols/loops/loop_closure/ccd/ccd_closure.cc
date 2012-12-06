@@ -17,6 +17,7 @@
 // Rosetta Headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/Ramachandran.hh>
 #include <core/scoring/ScoringManager.hh>

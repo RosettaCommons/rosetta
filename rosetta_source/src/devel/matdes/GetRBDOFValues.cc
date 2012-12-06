@@ -22,6 +22,7 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Conformation.hh>
 
 // Utility headers

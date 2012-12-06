@@ -28,6 +28,7 @@
 
 #include <basic/Tracer.hh>
 // AUTO-REMOVED #include <core/chemical/util.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>

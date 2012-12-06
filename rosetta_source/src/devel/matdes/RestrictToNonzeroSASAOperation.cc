@@ -16,6 +16,7 @@
 #include <devel/matdes/RestrictToNonzeroSASAOperationCreator.hh>
 
 // Project Headers
+#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/make_symmetric_task.hh>

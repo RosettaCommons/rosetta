@@ -22,6 +22,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/symmetry/util.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/moves/DataMap.hh>

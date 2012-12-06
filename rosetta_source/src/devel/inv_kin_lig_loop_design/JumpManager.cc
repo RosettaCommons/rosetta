@@ -24,6 +24,7 @@
 
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/import_pose.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Conformation.hh>
 
 #include <numeric/random/random.hh>

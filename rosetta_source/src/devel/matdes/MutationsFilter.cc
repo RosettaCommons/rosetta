@@ -14,6 +14,7 @@
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
 #include <basic/Tracer.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>

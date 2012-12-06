@@ -22,6 +22,7 @@
 //Auto Headers
 #include <platform/types.hh>
 #include <core/chemical/AtomType.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/etable/Etable.hh>
 #include <core/scoring/etable/EtableEnergy.hh>

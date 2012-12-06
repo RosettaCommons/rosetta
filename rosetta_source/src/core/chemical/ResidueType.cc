@@ -48,6 +48,7 @@
 
 // Unit headers
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueConnection.hh>
 
 // Package Headers
 #include <core/conformation/Residue.hh>
@@ -291,12 +292,66 @@ ResidueType::set_upper_connect_atom( std::string const & atm_name )
 	update_residue_connection_mapping();
 }
 
-//ResidueOP
-//ResidueType::create_rotamer() const
-//{
-//	ResidueOP rotptr( new Rotamer( *this ));
-//	return rotptr;
-//}
+ResidueConnection const &
+ResidueType::upper_connect() const
+{
+	//return upper_connect_;
+	assert( is_polymer_ );
+	assert( upper_connect_id_ != 0 );
+	return residue_connections_[ upper_connect_id_ ];
+}
+
+///
+ResidueConnection const &
+ResidueType::lower_connect() const
+{
+	assert( is_polymer_ );
+	assert( lower_connect_id_ != 0 );
+	return residue_connections_[ lower_connect_id_ ];
+	//return lower_connect_;
+}
+
+Size
+ResidueType::lower_connect_atom() const {
+	assert( is_polymer_ );
+	assert( lower_connect_id_ != 0 );
+	return residue_connections_[ lower_connect_id_ ].atomno();
+}
+
+/// @brief index number of the atom which connects to the upper connection
+Size
+ResidueType::upper_connect_atom() const
+{
+	assert( is_polymer_ );
+	assert( upper_connect_id_ != 0 );
+	return residue_connections_[ upper_connect_id_ ].atomno();
+}
+
+/// @brief number of ResidueConnections, counting polymeric residue connections
+Size
+ResidueType::n_residue_connections() const
+{
+	return residue_connections_.size();
+}
+
+Size
+ResidueType::residue_connect_atom_index( Size const resconn_id ) const {
+	return residue_connections_[ resconn_id ].atomno();
+}
+
+
+/// @brief get a ResidueConection
+ResidueConnection const &
+ResidueType::residue_connection( Size const i ) const
+{
+	return residue_connections_[i];
+}
+
+ResidueConnection &
+ResidueType::residue_connection( Size const i )
+{
+	return residue_connections_[ i ];
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 //

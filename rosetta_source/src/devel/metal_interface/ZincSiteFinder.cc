@@ -15,6 +15,7 @@
 #include <devel/metal_interface/FindClosestAtom.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
 

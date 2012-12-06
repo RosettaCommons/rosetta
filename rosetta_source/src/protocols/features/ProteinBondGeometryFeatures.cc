@@ -24,6 +24,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <numeric/xyz.functions.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <basic/basic.hh>

@@ -18,6 +18,7 @@
 #include <core/scoring/EnergyMap.hh>
 
 // Project headers
+#include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>

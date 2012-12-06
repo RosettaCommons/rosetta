@@ -27,7 +27,7 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-
+#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/util.hh>
 #include <core/pose/symmetry/util.hh>

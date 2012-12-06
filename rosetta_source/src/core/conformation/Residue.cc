@@ -28,6 +28,7 @@
 #include <basic/Tracer.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/Atom.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 
 // ObjexxFCL headers

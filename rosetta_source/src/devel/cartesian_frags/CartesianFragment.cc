@@ -14,7 +14,7 @@
 // libRosetta headers
 #include <devel/cartesian_frags/CartesianFragment.hh>
 #include <core/conformation/Conformation.hh>
-
+#include <core/chemical/ResidueConnection.hh>
 #include <core/kinematics/util.hh>
 
 #include <core/id/AtomID_Map.hh>

@@ -14,7 +14,7 @@
 #include <devel/cartesian_frags/CartesianFragment.hh>
 #include <devel/cartesian_frags/dna_util.hh>
 #include <devel/cartesian_frags/DNA_FragLib.hh>
-
+#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Conformation.hh>
 
 #include <core/scoring/constraints/HarmonicFunc.hh>

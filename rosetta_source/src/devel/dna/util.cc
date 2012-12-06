@@ -18,6 +18,7 @@
 using namespace protocols::dna;
 
 #include <core/types.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueSelector.hh>
 // AUTO-REMOVED #include <core/chemical/VariantType.hh>

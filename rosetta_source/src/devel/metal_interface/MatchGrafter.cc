@@ -17,6 +17,7 @@
 
 #include <core/chemical/util.hh>
 #include <core/chemical/VariantType.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ResidueTypeSet.hh> //for changing the HIS tautomer
 #include <core/chemical/ResidueType.hh> //for CYZ residue
 #include <core/chemical/AtomType.hh>

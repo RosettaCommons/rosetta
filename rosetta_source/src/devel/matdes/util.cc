@@ -17,6 +17,7 @@
 #include <devel/matdes/util.hh>
 
 // project headers
+#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>

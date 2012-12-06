@@ -18,6 +18,7 @@
 // AUTO-REMOVED #include <core/chemical/AtomType.hh>
 // AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
 // AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 

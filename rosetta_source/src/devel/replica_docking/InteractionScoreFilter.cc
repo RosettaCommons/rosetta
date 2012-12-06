@@ -17,6 +17,7 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/Jump.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 

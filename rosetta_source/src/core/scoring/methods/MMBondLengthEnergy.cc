@@ -22,6 +22,7 @@
 // Project headers
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/AtomType.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>

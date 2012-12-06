@@ -16,7 +16,7 @@
 
 
 // Rosetta headers
-//#include <core/chemical/ResidueFactory.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueSupport.hh>
 

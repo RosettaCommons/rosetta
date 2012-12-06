@@ -21,18 +21,17 @@
 #include <core/conformation/signals/IdentityEvent.hh>
 #include <core/conformation/signals/LengthEvent.hh>
 #include <core/conformation/signals/XYZEvent.hh>
-// AUTO-REMOVED #include <core/kinematics/util.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/NamedAtomID.hh>
 
-//#include <core/id/types.hh>
 #include <core/kinematics/constants.hh>
 
 // Project headers
 #include <core/conformation/Residue.hh>
 #include <core/conformation/PseudoBond.hh>
 #include <core/conformation/util.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
 
@@ -42,7 +41,6 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-// AUTO-REMOVED #include <core/conformation/PointGraph.hh>
 #include <core/conformation/find_neighbors.hh>
 
 #include <numeric/constants.hh>
@@ -2595,6 +2593,18 @@ Conformation::show_residue_connections(std::ostream &os) const
 	}
 }
 
+id::AtomID
+Conformation::inter_residue_connection_partner(
+	Size const seqpos,
+	int const connection_index
+) const
+{
+	Residue const & rsd( *residues_[ seqpos ] );
+	return id::AtomID( rsd.residue_connection        ( connection_index ).atomno(),
+										 rsd.residue_connection_partner( connection_index ) );
+	//utility_exit_with_message( "Conformation::inter_residue_connection_partner is undefined!" );
+	//return id::BOGUS_ATOM_ID;
+}
 
 /// @detailed
 /// virtual atoms are excluded by default

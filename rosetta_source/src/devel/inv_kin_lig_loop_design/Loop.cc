@@ -18,6 +18,7 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+#include <core/chemical/ResidueConnection.hh>
 
 namespace devel {
 

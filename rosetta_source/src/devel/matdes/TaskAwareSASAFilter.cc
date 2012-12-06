@@ -31,6 +31,7 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Residue.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/moves/Mover.hh>

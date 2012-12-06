@@ -35,6 +35,7 @@
 #include <protocols/forge/remodel/ResidueVicinityRCG.hh>
 #include <protocols/forge/constraints/InverseRotamersRCG.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh> //unnecessary include
+#include <core/chemical/ResidueConnection.hh>
 // AUTO-REMOVED #include <protocols/backrub/BackrubMover.hh> //unnecessary include
 // AUTO-REMOVED #include <protocols/loops/kinematic_closure/KinematicMover.hh> //unnecessary include
 // AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh> //unnecessary include

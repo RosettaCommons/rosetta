@@ -22,26 +22,16 @@
 
 //////////////////////////////////
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/chemical/util.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/VariantType.hh>
-// AUTO-REMOVED #include <core/id/AtomID.hh>
-// AUTO-REMOVED #include <core/io/silent/ProteinSilentStruct.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.tmpl.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Ramachandran.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreType.hh>
 #include <basic/Tracer.hh>
 #include <core/kinematics/Jump.hh>
 
 #include <protocols/loops/Loop.hh>
 #include <numeric/kinematic_closure/bridgeObjects.hh>
-// AUTO-REMOVED #include <protocols/moves/kinematic_closure/kinematic_closure_helpers.hh>
 
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>

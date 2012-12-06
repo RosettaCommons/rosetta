@@ -810,14 +810,7 @@ public:
 	inter_residue_connection_partner(
 		Size const seqpos,
 		int const connection_index
-	) const
-	{
-		Residue const & rsd( *residues_[ seqpos ] );
-		return id::AtomID( rsd.residue_connection        ( connection_index ).atomno(),
-											 rsd.residue_connection_partner( connection_index ) );
-		//utility_exit_with_message( "Conformation::inter_residue_connection_partner is undefined!" );
-		//return id::BOGUS_ATOM_ID;
-	}
+	) const;
 
 
 	/// @brief get all atoms bonded to another

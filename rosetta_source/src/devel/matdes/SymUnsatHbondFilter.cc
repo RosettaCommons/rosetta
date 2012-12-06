@@ -49,6 +49,7 @@
 #include <core/pose/metrics/PoseMetricCalculatorBase.hh>
 #include <basic/MetricValue.hh>
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/symmetry/SymDof.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>

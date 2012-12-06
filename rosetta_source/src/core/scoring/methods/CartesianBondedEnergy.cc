@@ -24,6 +24,7 @@
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/ResidueFactory.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueTypeSet.hh>

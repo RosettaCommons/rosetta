@@ -25,6 +25,7 @@
 #include <core/import_pose/import_pose.hh>
 
 #include <basic/options/option.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Residue.hh>
 
 // AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>

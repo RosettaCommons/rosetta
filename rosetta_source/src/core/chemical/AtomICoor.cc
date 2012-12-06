@@ -17,8 +17,7 @@
 #include <core/chemical/AtomICoor.hh>
 
 // Project headers
-// Commented by inclean daemon #include <core/chemical/ResidueType.hh>
-// Commented by inclean daemon #include <core/conformation/Residue.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Conformation.hh>
 #include <basic/Tracer.hh>
 

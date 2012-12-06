@@ -22,7 +22,7 @@
 #include <core/scoring/ScoreFunction.hh>
 
 // AUTO-REMOVED #include <core/chemical/ChemicalManager.hh> //CENTROID, FA_STANDARD
-
+#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Conformation.hh>
 
 #include <core/kinematics/FoldTree.hh>

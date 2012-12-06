@@ -28,6 +28,7 @@
 // Project headers
 #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Residue.hh>
 
 // AUTO-REMOVED #include <core/scoring/constraints/AngleConstraint.hh>

@@ -40,6 +40,7 @@
 #include <numeric/conversions.hh>
 
 #include <core/chemical/MMAtomType.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/kinematics/tree/Atom.hh>
 #include <core/pose/annotated_sequence.hh>

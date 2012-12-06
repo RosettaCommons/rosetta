@@ -40,6 +40,7 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
+#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/types.hh>
 #include <core/kinematics/Jump.hh>

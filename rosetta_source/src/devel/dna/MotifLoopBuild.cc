@@ -13,7 +13,7 @@
 /// @author Josh Friedman, jfried23@uw.edu, feb 2012
 
 
-
+#include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/types.hh>
 #include <core/import_pose/import_pose.hh>

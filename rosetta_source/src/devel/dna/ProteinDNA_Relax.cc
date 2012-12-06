@@ -17,6 +17,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Residue.hh>
 // AUTO-REMOVED #include <core/conformation/ResidueMatcher.hh>
 // AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>

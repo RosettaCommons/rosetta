@@ -16,6 +16,7 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/ResidueFactory.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/Patch.hh>
 #include <core/chemical/VariantType.hh>

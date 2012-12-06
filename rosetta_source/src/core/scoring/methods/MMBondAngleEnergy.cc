@@ -22,6 +22,7 @@
 // Project headers
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/AtomType.hh>  // for is_virtual()
+#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/mm/MMBondAngleResidueTypeParam.hh>
 #include <core/pose/Pose.hh>

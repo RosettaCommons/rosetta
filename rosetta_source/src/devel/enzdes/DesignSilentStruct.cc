@@ -23,6 +23,7 @@
 #include <vector>
 #include <map>
 
+#include <core/chemical/ResidueConnection.hh>
 #include <core/pose/Pose.hh>
 
 // mini headers

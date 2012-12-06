@@ -21,6 +21,7 @@
 #include <core/scoring/dna/BasePartner.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>

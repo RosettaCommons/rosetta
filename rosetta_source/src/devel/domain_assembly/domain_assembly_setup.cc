@@ -19,6 +19,7 @@
 #include <basic/options/option.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/AA.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueType.hh>

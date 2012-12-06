@@ -21,6 +21,7 @@
 // Project Headers
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>

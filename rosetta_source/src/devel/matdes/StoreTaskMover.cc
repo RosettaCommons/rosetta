@@ -18,6 +18,7 @@
 #include <devel/matdes/StoreTaskMoverCreator.hh>
 
 //project headers
+#include <core/chemical/ResidueConnection.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>

@@ -28,6 +28,7 @@
 
 
 // Project Headers
+#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Residue.hh>
 // AUTO-REMOVED #include <core/conformation/PseudoBond.hh>
 #include <core/scoring/etable/atom_pair_energy_inline.hh>

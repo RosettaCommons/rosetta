@@ -16,6 +16,7 @@
 
 // Project headers
 #include <core/chemical/Atom.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/scoring/mm/MMBondAngleLibrary.hh>
 #include <basic/Tracer.hh>

@@ -22,6 +22,7 @@
 #include <core/scoring/rms_util.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/PointGraph.hh>
 #include <core/conformation/find_neighbors.hh>
 

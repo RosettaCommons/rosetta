@@ -11,7 +11,7 @@
 /// @brief
 
 #include <devel/cartesian_frags/SafeID.hh>
-
+#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/kinematics/Stub.hh>
 

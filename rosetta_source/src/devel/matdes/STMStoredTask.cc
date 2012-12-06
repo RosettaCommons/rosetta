@@ -20,6 +20,7 @@
 #include <basic/Tracer.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
+#include <core/chemical/ResidueConnection.hh>
 
 namespace devel {
 namespace matdes {

@@ -31,6 +31,7 @@
 
 #include <ObjexxFCL/FArray1D.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/util.hh>
 #include <core/pose/symmetry/util.hh>

@@ -16,6 +16,7 @@
 #include <devel/matdes/BuildingBlockInterfaceOperationCreator.hh>
 
 // Project Headers
+#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/task/PackerTask.hh>

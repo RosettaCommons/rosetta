@@ -4,7 +4,7 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-//#include <core/chemical/AtomTypeSet.cc>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/AtomType.hh>  
 
 #include <core/pack/rotamer_set/RotamerSet.hh>

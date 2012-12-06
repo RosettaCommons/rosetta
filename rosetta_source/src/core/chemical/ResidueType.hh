@@ -56,6 +56,7 @@
 #include <core/chemical/ResidueType.fwd.hh>
 // Package headers
 #include <core/chemical/Atom.fwd.hh>
+#include <core/chemical/AtomICoor.hh>
 #include <core/chemical/AtomType.fwd.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/Adduct.hh>
@@ -65,7 +66,7 @@
 #include <core/chemical/MMAtomType.fwd.hh>
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
 #include <core/chemical/Orbital.fwd.hh>
-#include <core/chemical/ResidueConnection.hh>
+#include <core/chemical/ResidueConnection.fwd.hh>
 #include <core/chemical/sdf/MolData.hh>
 #include <core/chemical/rna/RNA_ResidueType.hh>
 // only compiles with the .hh below; anyone know why I can't use the .fwd.hh here? ~Labonte
@@ -259,11 +260,7 @@ public:
 
 	/// @brief index number of the atom which connects to the lower connection
 	Size
-	lower_connect_atom() const {
-		assert( is_polymer_ );
-		assert( lower_connect_id_ != 0 );
-		return residue_connections_[ lower_connect_id_ ].atomno();
-	}
+	lower_connect_atom() const;
 
 	/// @brief path distance (number of bonds separated) between a pair of atoms
 	int
@@ -720,24 +717,10 @@ public:
 	set_lower_connect_atom( std::string const & atm_name );
 
 	///
-	ResidueConnection const &
-	upper_connect() const
-	{
-		//return upper_connect_;
-		assert( is_polymer_ );
-		assert( upper_connect_id_ != 0 );
-		return residue_connections_[ upper_connect_id_ ];
-	}
+	ResidueConnection const & upper_connect() const;
 
 	///
-	ResidueConnection const &
-	lower_connect() const
-	{
-		assert( is_polymer_ );
-		assert( lower_connect_id_ != 0 );
-		return residue_connections_[ lower_connect_id_ ];
-		//return lower_connect_;
-	}
+	ResidueConnection const & lower_connect() const;
 
 	Size
 	upper_connect_id() const
@@ -753,12 +736,7 @@ public:
 
 	/// @brief index number of the atom which connects to the upper connection
 	Size
-	upper_connect_atom() const
-	{
-		assert( is_polymer_ );
-		assert( upper_connect_id_ != 0 );
-		return residue_connections_[ upper_connect_id_ ].atomno();
-	}
+	upper_connect_atom() const;
 
 	/// @brief set the atom which connects to the upper connection
 	void
@@ -776,10 +754,7 @@ public:
 
 	/// @brief number of ResidueConnections, counting polymeric residue connections
 	Size
-	n_residue_connections() const
-	{
-		return residue_connections_.size();
-	}
+	n_residue_connections() const;
 
 	Size
 	n_polymeric_residue_connections() const {
@@ -792,17 +767,9 @@ public:
 	}
 
 	/// @brief get a ResidueConection
-	ResidueConnection const &
-	residue_connection( Size const i ) const
-	{
-		return residue_connections_[i];
-	}
+	ResidueConnection const & residue_connection( Size const i ) const;
 
-	ResidueConnection &
-	residue_connection( Size const i )
-	{
-		return residue_connections_[ i ];
-	}
+	ResidueConnection & residue_connection( Size const i );
 
 
 	/// @brief Does an atom form any inter-residue chemical bonds?
@@ -839,10 +806,7 @@ public:
 	}
 
 	Size
-	residue_connect_atom_index( Size const resconn_id ) const {
-		return residue_connections_[ resconn_id ].atomno();
-	}
-
+	residue_connect_atom_index( Size const resconn_id ) const;
 
 
 	/// @brief require actcoord?

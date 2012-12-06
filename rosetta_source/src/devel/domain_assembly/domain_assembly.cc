@@ -43,6 +43,7 @@
 // AUTO-REMOVED #include <protocols/loops/loops_main.hh>
 // AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AA.hh>
+#include <core/chemical/ResidueConnection.hh>
 // AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 
 #include <core/scoring/TenANeighborGraph.hh>

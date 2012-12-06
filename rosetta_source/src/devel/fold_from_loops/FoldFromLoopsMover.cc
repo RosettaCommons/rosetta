@@ -16,7 +16,7 @@
 #include <devel/fold_from_loops/FoldFromLoopsMover.hh>
 #include <devel/fold_from_loops/FoldFromLoops_functions.hh>
 
-
+#include <core/chemical/ResidueConnection.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/util.hh>

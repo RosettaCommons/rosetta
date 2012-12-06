@@ -24,6 +24,7 @@
 // #include <Util/Abng.hh>
 
 // Project headers
+#include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/pose/Pose.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>

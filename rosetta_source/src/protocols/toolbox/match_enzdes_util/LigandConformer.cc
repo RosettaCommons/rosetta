@@ -18,6 +18,7 @@
 
 // Project headers
 #include <core/chemical/AtomType.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Residue.hh>
 
 // ObjexxFCL headers

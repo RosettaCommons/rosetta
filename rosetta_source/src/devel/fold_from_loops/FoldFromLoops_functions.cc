@@ -13,7 +13,7 @@
 
 //Unite headers
 #include <devel/fold_from_loops/FoldFromLoops_functions.hh>
-
+#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueSelector.hh>

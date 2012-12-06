@@ -20,6 +20,7 @@
 //project headers
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>

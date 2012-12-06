@@ -17,6 +17,7 @@
 #include <ObjexxFCL/format.hh>
 #include <basic/MetricValue.hh>
 #include <basic/Tracer.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>

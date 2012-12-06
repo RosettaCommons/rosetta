@@ -24,6 +24,7 @@
 #include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/scoring/constraints/CircularHarmonicFunc.hh>
 #include <core/scoring/constraints/MinMultiHarmonicFunc.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Residue.hh>
 
 // Project Headers

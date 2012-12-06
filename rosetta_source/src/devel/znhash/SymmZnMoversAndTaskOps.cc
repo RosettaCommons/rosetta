@@ -54,6 +54,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/graph/Graph.hh>
 
+#include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
