@@ -105,6 +105,11 @@ VariantType const OOP_PRE("OOP_PRE");
 ///@ brief oop_post patch, used for oligooxopiperazines (OOPs)
 VariantType const OOP_POST("OOP_POST");
 
+///@ brief hbs_pre patch, used for hydrogen bond surrogates
+VariantType const HBS_PRE("HBS_PRE");
+///@ brief hbs_post patch, used for hydrogen bond surrogates
+VariantType const HBS_POST("HBS_POST");
+
 ///@brief This is used for chemically conjugable residues (LYX, CYX)
 ///used for sidechain conjugation (like ubiquitination)
 VariantType const SIDECHAIN_CONJUGATION("SIDECHAIN_CONJUGATION");

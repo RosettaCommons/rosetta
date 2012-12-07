@@ -8,9 +8,6 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 
-//kdrew: based on code from mini/src/apps/public/scenarios/doug_dock_design_min_mod2_cal_cal.cc 
-//			and https://svn.rosettacommons.org/source/branches/releases/rosetta-3.1/manual/advanced/example_protocol.cc
-
 //Headers are generally organized by either what they do or where they come from.  This organization is first core library headers, then protocols library, then utility stuff.
 
 
@@ -51,9 +48,7 @@
 #include <protocols/simple_moves/TaskAwareMinMover.hh>
 #include <protocols/simple_moves/BackboneMover.fwd.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/oop/OopRandomPuckMover.hh>
-#include <protocols/simple_moves/oop/OopRandomSmallMover.hh>
-#include <protocols/simple_moves/oop/OopPatcher.hh>
+#include <protocols/simple_moves/hbs/HbsPatcher.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 
@@ -90,7 +85,7 @@ using namespace pose;
 using namespace protocols;
 using namespace protocols::moves;
 using namespace protocols::simple_moves;
-using namespace protocols::simple_moves::oop;
+using namespace protocols::simple_moves::hbs;
 using namespace protocols::rigid;
 using namespace protocols::toolbox;
 using namespace protocols::toolbox::pose_metric_calculators;
@@ -105,43 +100,43 @@ using utility::file::FileName;
 
 
 // tracer - used to replace cout
-static basic::Tracer TR("OopDesign");
+static basic::Tracer TR("HbsDesign");
 
 // application specific options
-namespace oop_design {
+namespace hbs_design {
 	// pert options
-	//RealOptionKey const mc_temp( "oop_design::mc_temp" );
-	//RealOptionKey const pert_dock_rot_mag( "oop_design::pert_dock_rot_mag" );
-	//RealOptionKey const pert_dock_trans_mag( "oop_design::pert_dock_trans_mag" );
+	//RealOptionKey const mc_temp( "hbs_design::mc_temp" );
+	//RealOptionKey const pert_dock_rot_mag( "hbs_design::pert_dock_rot_mag" );
+	//RealOptionKey const pert_dock_trans_mag( "hbs_design::pert_dock_trans_mag" );
 
-	//IntegerOptionKey const pert_pep_num_rep( "oop_design::pert_pep_num_rep" );
-	IntegerOptionKey const pert_num( "oop_design::pert_num" );
-	IntegerOptionKey const design_loop_num( "oop_design::design_loop_num" );
+	//IntegerOptionKey const pert_pep_num_rep( "hbs_design::pert_pep_num_rep" );
+	IntegerOptionKey const pert_num( "hbs_design::pert_num" );
+	IntegerOptionKey const design_loop_num( "hbs_design::design_loop_num" );
 
-	IntegerVectorOptionKey const oop_design_positions( "oop_design::oop_design_positions" );
+	IntegerVectorOptionKey const hbs_design_positions( "hbs_design::hbs_design_positions" );
 
 }
 
-class OopDesignMover : public Mover {
+class HbsDesignMover : public Mover {
 
 	public:
 
 		//default ctor
-		OopDesignMover(): Mover("OopDesignMover"){}
+		HbsDesignMover(): Mover("HbsDesignMover"){}
 
 		//default dtor
-		virtual ~OopDesignMover(){}
+		virtual ~HbsDesignMover(){}
 
 		//methods
 		void setup_pert_foldtree( core::pose::Pose & pose);
 		void setup_filter_stats();
 		virtual void apply( core::pose::Pose & pose );
-		virtual std::string get_name() const { return "OopDesignMover"; }
+		virtual std::string get_name() const { return "HbsDesignMover"; }
 
 };
 
-typedef utility::pointer::owning_ptr< OopDesignMover > OopDesignMoverOP;
-typedef utility::pointer::owning_ptr< OopDesignMover const > OopDesignMoverCOP;
+typedef utility::pointer::owning_ptr< HbsDesignMover > HbsDesignMoverOP;
+typedef utility::pointer::owning_ptr< HbsDesignMover const > HbsDesignMoverCOP;
 
 
 int
@@ -155,24 +150,24 @@ main( int argc, char* argv[] )
 	// add application specific options to options system
 	// There are far more options here than you will realistically need for a program of this complexity - but this gives you an idea of how to fine-grain option-control everything
 	/*
-	option.add( oop_design::mc_temp, "The temperature to use for the outer loop of the ODDM protocol. Defaults to 1.0." ).def( 1.0 );
-	option.add( oop_design::pert_dock_rot_mag, "The rotation magnitude for the ridged body pertubation in the pertubation phase of the ODDM protocol. Defaults to 1.0." ).def( 1 );
-	option.add( oop_design::pert_dock_trans_mag, "The translation magnitude for the ridged body pertubation in the pertubation phase of the ODDM protocol. Defaults to 0.5." ).def( 0.5 );
+	option.add( hbs_design::mc_temp, "The temperature to use for the outer loop of the ODDM protocol. Defaults to 1.0." ).def( 1.0 );
+	option.add( hbs_design::pert_dock_rot_mag, "The rotation magnitude for the ridged body pertubation in the pertubation phase of the ODDM protocol. Defaults to 1.0." ).def( 1 );
+	option.add( hbs_design::pert_dock_trans_mag, "The translation magnitude for the ridged body pertubation in the pertubation phase of the ODDM protocol. Defaults to 0.5." ).def( 0.5 );
 	*/
 
-	//option.add( oop_design::pert_pep_num_rep, "Number of small and shear iterations for the peptide" ).def( 100 );
-	option.add( oop_design::pert_num, "Number of iterations of perturbation loop per design" ).def(10);
-	option.add( oop_design::design_loop_num, "Number of iterations of pertubation and design" ).def(10);
+	//option.add( hbs_design::pert_pep_num_rep, "Number of small and shear iterations for the peptide" ).def( 100 );
+	option.add( hbs_design::pert_num, "Number of iterations of perturbation loop per design" ).def(10);
+	option.add( hbs_design::design_loop_num, "Number of iterations of pertubation and design" ).def(10);
 
 	utility::vector1< core::Size > empty_vector(0);
-	option.add( oop_design::oop_design_positions, "Positions of oop to design" ).def( empty_vector );
+	option.add( hbs_design::hbs_design_positions, "Positions of hbs to design" ).def( empty_vector );
 
 	// init command line options
 	//you MUST HAVE THIS CALL near the top of your main function, or your code will crash when you first access the command line options
 	devel::init(argc, argv);
 
 	//create mover instance
-	OopDesignMoverOP OD_mover( new OopDesignMover() );
+	HbsDesignMoverOP OD_mover( new HbsDesignMover() );
 
 	OD_mover->setup_filter_stats();
 
@@ -182,7 +177,7 @@ main( int argc, char* argv[] )
 }//main
 
 void
-OopDesignMover::apply(
+HbsDesignMover::apply(
 	core::pose::Pose & pose
 )
 {
@@ -197,70 +192,52 @@ OopDesignMover::apply(
 	setup_pert_foldtree( pose );
 
 	// create a monte carlo object for the full cycle
-	//moves::MonteCarloOP mc( new moves::MonteCarlo( pose, *score_fxn, option[ oop_design::mc_temp ].value() ) );
+	//moves::MonteCarloOP mc( new moves::MonteCarlo( pose, *score_fxn, option[ hbs_design::mc_temp ].value() ) );
 	moves::MonteCarloOP mc( new moves::MonteCarlo( pose, *score_fxn, 1.0 ) );
 
 	// jump, rot_mag, trans_mag
 	rigid::RigidBodyPerturbMoverOP pert_dock_rbpm( new rigid::RigidBodyPerturbMover(1, 1.0, 0.5 ) );
 
 	/*********************************************************
-	Oop Setup
+	HBS Setup
 	**********************************************************/
 
-	// get oop start and end positions
+	// get hbs start and end positions
 	Size pep_start( pose.conformation().chain_begin( 2 ) ); Size pep_end( pose.total_residue() );
-	TR << "oop_start: " << pep_start << " oop_end: " << pep_end << std::endl;
+	TR << "hbs_start: " << pep_start << " hbs_end: " << pep_end << std::endl;
 
-	// create movemap for oop
+	// create movemap for hbs
 	kinematics::MoveMapOP pert_pep_mm( new kinematics::MoveMap() );
 	pert_pep_mm->set_bb_true_range(pep_start, pep_end);
 	
-	//kdrew: automatically find oop positions
-	utility::vector1< core::Size > oop_seq_positions; 
+	//kdrew: automatically find hbs positions
+	utility::vector1< core::Size > hbs_seq_positions; 
 	for ( Size i = 1; i <= pose.total_residue(); ++i )
 	{
-		if( pose.residue(i).has_variant_type(chemical::OOP_PRE) == 1)
+		if( pose.residue(i).has_variant_type(chemical::HBS_PRE) == 1)
 		{
-			oop_seq_positions.push_back( i );
+			hbs_seq_positions.push_back( i );
 			//kdrew: set up constraints
-			add_oop_constraint( pose, i );
-			//kdrew: do not use small/shear mover on oop positions, use oop mover instead
+			add_hbs_constraint( pose, i );
+			//kdrew: do not use small/shear mover on hbs positions, use hbs mover instead
 			pert_pep_mm->set_bb( i, false );
 
 			if( score_fxn->has_zero_weight( core::scoring::atom_pair_constraint ) )
 			{
 				score_fxn->set_weight( core::scoring::atom_pair_constraint, 1.0 );
 			}
+
 		}
 	}
 
-	// create small and shear movers
-	simple_moves::SmallMoverOP pert_pep_small( new simple_moves::SmallMover( pert_pep_mm, 0.8, 1 ) );
-
-	// create random mover
-	moves::RandomMoverOP pert_pep_random( new moves::RandomMover() );
-	pert_pep_random->add_mover( pert_pep_small, 1 );
-
-	// create repeat mover
-	moves::RepeatMoverOP pert_pep_repeat( new moves::RepeatMover( pert_pep_random, 20 ) ); //repeat 20 times
-
-	/*********************************************************
-	OopPuck Setup
-	**********************************************************/
-
-	oop::OopRandomSmallMoverOP opm_small( new oop::OopRandomSmallMover( oop_seq_positions, 2.0 ) );
-	oop::OopRandomPuckMoverOP opm_puck( new oop::OopRandomPuckMover( oop_seq_positions ) );
-	
 	/*********************************************************
 	Common Setup
 	**********************************************************/
 
 	// create a random mover to hold the docking, and peptide pertubation movers
+	//kdrew: only doing rigid body for this app
 	moves::RandomMoverOP pert_random( new moves::RandomMover() );
 	pert_random->add_mover( pert_dock_rbpm, 1 );
-	pert_random->add_mover( pert_pep_repeat, 0.5 );
-	pert_random->add_mover( opm_small, 0.5 );
-	pert_random->add_mover( opm_puck, 0.1 );
 
 	// create a sequence move to hold random and rotamer trials movers
 	moves::SequenceMoverOP pert_sequence( new moves::SequenceMover() );
@@ -283,7 +260,7 @@ OopDesignMover::apply(
 
 	// create move map for minimization
 	kinematics::MoveMapOP desn_mm( new kinematics::MoveMap() );
-	//kdrew: set backbone of target false and backbone of oop true, decide whether to do this or not
+	//kdrew: set backbone of target false and backbone of hbs true, decide whether to do this or not
 	desn_mm->set_bb( false );
 	desn_mm->set_bb_true_range( pep_start, pep_end );
 	//desn_mm->set_bb( true );
@@ -307,12 +284,12 @@ OopDesignMover::apply(
 	protocols::jd2::JobOP curr_job( protocols::jd2::JobDistributor::get_instance()->current_job() );
 
 	//pose.dump_pdb("pre_main_loop.pdb");
-	for ( Size k = 1; k <= Size( option[ oop_design::design_loop_num ].value() ); ++k ) {
+	for ( Size k = 1; k <= Size( option[ hbs_design::design_loop_num ].value() ); ++k ) {
 
 		mc->reset(pose);
 
 		// pert loop
-		for( Size j = 1; j <= Size( option[ oop_design::pert_num ].value() ); ++j ) {
+		for( Size j = 1; j <= Size( option[ hbs_design::pert_num ].value() ); ++j ) {
 			TR << "PERTURB: " << k << " / "  << j << std::endl;
 			pert_trial->apply( pose );
 		}
@@ -336,14 +313,14 @@ OopDesignMover::apply(
 			task->nonconst_residue_task(i).initialize_from_command_line();
 		}
 
-		utility::vector1<Size> oop_designable_positions = option[ oop_design::oop_design_positions ].value();
-		//kdrew: internal indexing for oop chain
-		Size oop_pos = 0;
+		utility::vector1<Size> hbs_designable_positions = option[ hbs_design::hbs_design_positions ].value();
+		//kdrew: internal indexing for hbs chain
+		Size hbs_pos = 0;
 		// Set which residues can be designed
 		for (Size i=pep_start; i<=pep_end; i++) {
-			oop_pos++;
-			TR << "oop postion " << oop_pos << std::endl;
-			if ( oop_designable_positions.end() == find(oop_designable_positions.begin(), oop_designable_positions.end(), oop_pos ))
+			hbs_pos++;
+			TR << "hbs postion " << hbs_pos << std::endl;
+			if ( hbs_designable_positions.end() == find(hbs_designable_positions.begin(), hbs_designable_positions.end(), hbs_pos ))
 			{
 				TR << "  not designed" << std::endl;
 				task->nonconst_residue_task(i).restrict_to_repacking();
@@ -495,7 +472,7 @@ OopDesignMover::apply(
 // this only works for two chains and assumes the protein is first and the peptide is second
 // inspired by protocols/docking/DockingProtocol.cc
 void
-OopDesignMover::setup_pert_foldtree( 
+HbsDesignMover::setup_pert_foldtree( 
 	core::pose::Pose & pose 
 )
 {
@@ -535,7 +512,7 @@ OopDesignMover::setup_pert_foldtree(
 }
 
 void
-OopDesignMover::setup_filter_stats()
+HbsDesignMover::setup_filter_stats()
 {
 	/*********************************************************************************************************************
 	Filter / Stats Setup

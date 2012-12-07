@@ -111,6 +111,7 @@ put links to commonly referred to documentation pages here.
 	- @ref pmut_scan_parallel "Documentation for the point mutant scan application"
 	- @ref remodel "Documentation for RosettaRemodel"
 	- @ref oop_design "Documentation for the oligooxopiperazine (oop) design app"
+	- @ref hbs_design "Documentation for the hydrogen bond surrogate (hbs) design app"
 
 @section mainpage_namespaces Important Namespaces
 

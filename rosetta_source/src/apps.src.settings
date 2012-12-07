@@ -132,6 +132,7 @@ sources = {
 		"UnfoldedStateEnergyCalculator",
 	],
 	"public/noncanonical_backbones": [
+		"hbs_design",
 		"oop_design",
 	],
 	"public/pepspec": [

@@ -75,6 +75,9 @@ extern VariantType const REPLONLY;
 extern VariantType const OOP_PRE;
 extern VariantType const OOP_POST;
 
+extern VariantType const HBS_PRE;
+extern VariantType const HBS_POST;
+
 //This is used for chemically conjugable residues (LYX, CYX) used for sidechain conjugation (like ubiquitination)
 extern VariantType const SIDECHAIN_CONJUGATION;
 

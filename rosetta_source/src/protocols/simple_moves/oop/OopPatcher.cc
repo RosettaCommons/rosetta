@@ -74,6 +74,7 @@ void add_oop_constraint( core::pose::Pose & pose, core::Size oop_seq_position, c
 
 	pose.add_constraint( atompair );
 
+
 	TR << "added atom pair constraint to oop at residue: " << oop_seq_position << " with distance: " << distance << " and std: "<< std << std::endl;
 
 }

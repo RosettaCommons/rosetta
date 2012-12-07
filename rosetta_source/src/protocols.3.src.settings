@@ -446,6 +446,9 @@ sources = {
 	"protocols/simple_moves/chiral": [
 		"ChiralMover",
 	],
+	"protocols/simple_moves/hbs": [
+		"HbsPatcher",
+	],
 	"protocols/simple_moves/oop": [
 		"OopPuckMover",
 		"OopMover",
