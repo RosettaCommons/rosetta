@@ -108,6 +108,7 @@ using utility::tools::make_vector1;
 typedef  numeric::xyzMatrix< Real > Matrix;
 
 OPT_KEY( String, out_scores_prefix )
+OPT_KEY( String, save_torsions )
 OPT_KEY( String, force_field )
 OPT_KEY( String, seq )
 OPT_KEY( String, out_pdb )
@@ -127,7 +128,8 @@ OPT_KEY( RealVector, ST_weight_list )
 static const scoring::rna::RNA_FittedTorsionInfo rna_fitted_torsion_info;
 static numeric::random::RandomGenerator RG(5075);  // <- Magic number, do not change it!
 
-typedef std::pair<unsigned int, float[4]> RNA_scores; //count, total_score, hbond_sc, fa_stack, rna_torsion
+typedef std::pair< unsigned int, float[4]> RNA_scores; //count, total_score, hbond_sc, fa_stack, rna_torsion
+typedef std::pair< core::Size, utility::vector1< utility::vector1< Real > > > Torsions;
 /*
 //////////Binary IO////////////////
 void 
@@ -630,6 +632,7 @@ double_helix_test(){
 	scorefxn -> show(pose);
 
 	std::string const score_out_prefix = option[ out_scores_prefix ] ();
+	std::string const torsion_list_out = option[ save_torsions ] ();
 	std::string const outfile = option[ out::file::o ] ();
 	Size const num_cycle = option[ n_cycle ]();
 	Real const kT_sys = option[ kT ] ();
@@ -676,6 +679,8 @@ double_helix_test(){
 
 	//Initialize binary score saving
 	utility::vector1 <RNA_scores> scores_list;
+	utility::vector1 <Torsions> torsions_list;
+	bool is_save_torsions = ( torsion_list_out != "" );
 	ScoreFunctionOP fa_stack_scorefxn = new ScoreFunction;
 	ScoreFunctionOP hbond_sc_scorefxn = new ScoreFunction;
 	ScoreFunctionOP hbond_intra_scorefxn = new ScoreFunction;
@@ -691,6 +696,10 @@ double_helix_test(){
 	current_scores.second[1] = (*hbond_sc_scorefxn)(pose);
 	current_scores.second[2] = (*fa_stack_scorefxn)(pose);
 	current_scores.second[3] = (*rna_torsion_scorefxn)(pose);
+
+	Torsions current_torsions;
+	current_torsions.first = 1;
+	current_torsions.second = suite_torsion;
 	///////////////////////////////////
 
 	for (Size cycle = 1; cycle <= num_cycle; cycle++) {
@@ -722,15 +731,21 @@ double_helix_test(){
 			++n_accpet;
 
 			scores_list.push_back(current_scores);
+			if (is_save_torsions) torsions_list.push_back(current_torsions);
+
 			current_scores.first = 1;
 			current_scores.second[0] = score;
 			current_scores.second[1] = (*hbond_sc_scorefxn)(pose);
 			current_scores.second[2] = (*fa_stack_scorefxn)(pose);
 			current_scores.second[3] = (*rna_torsion_scorefxn)(pose);
 
+			current_torsions.first = 1;
+			current_torsions.second = suite_torsion;
+
 		} else {
 			suite_torsion_new = suite_torsion;
 			++current_scores.first;
+			++current_torsions.first;
 		}
 
 		E_cum += score;
@@ -794,6 +809,22 @@ double_helix_test(){
 		out.close();
 	}
 
+	if (is_save_torsions) {
+		ozstream out;
+		std::ostringstream oss;
+		oss << torsion_list_out << '_' << std::fixed << std::setprecision(2) << kT_sys << ".out.gz";
+		out.open(oss.str());
+		for (Size i = 1; i <= torsions_list.size(); ++i) {
+			out << torsions_list[i].first << ' ';
+			for (Size j = 1; j <= torsions_list[i].second.size(); ++j) {
+				for (Size k = 1; k <= torsions_list[i].second[j].size(); ++k) {
+					out << std::fixed << std::setprecision( 2 ) << torsions_list[i].second[j][k] << ' ';
+				}
+			}
+			out << std::endl;
+		}
+		out.close();
+	}
 }
 //////////////////////////////////
 void
@@ -1095,6 +1126,7 @@ main( int argc, char * argv [] )
 	utility::vector1< Real > blank_size_vector_real;
 
 	NEW_OPT(out_scores_prefix, "", "");
+	NEW_OPT(save_torsions, "", "");
 	NEW_OPT(force_field, "score_file", "rna/rna_hires_fang");
 	NEW_OPT( seq, "sequence to model", "" );
 	NEW_OPT( out_pdb, "output pdb name", "test.pdb" );

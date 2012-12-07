@@ -32,6 +32,7 @@
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
 #include <core/scoring/Energies.hh>
+#include <core/scoring/dna/base_geometry.hh>
 #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -112,7 +113,7 @@ typedef  numeric::xyzMatrix< Real > Matrix;
 static const scoring::rna::RNA_FittedTorsionInfo rna_fitted_torsion_info;
 static numeric::random::RandomGenerator RG(5075);  // <- Magic number, do not change it!
 
-typedef std::pair< core::Size, utility::vector1<float> > Trajectory_point;
+typedef utility::vector1<float> float_vec;
 typedef boost::array<float,5> Backbone_Torsion;
 typedef boost::array<float,2> Nucleoside_Torsion;
 
@@ -127,8 +128,10 @@ OPT_KEY( RealVector, kT_list )
 OPT_KEY( RealVector, weight_list )
 OPT_KEY( RealVector, input_torsion )
 OPT_KEY( String, output_prefix )
+OPT_KEY( Boolean, output_min_pose )
 OPT_KEY( Boolean, save_torsions )
 OPT_KEY( Boolean, save_score_terms )
+OPT_KEY( Boolean, save_base_steps )
 
 //////////////////////////////////
 //Torsion angles setup and apply to pose.
@@ -203,6 +206,76 @@ apply_all( utility::vector1< Backbone_Torsion > const & backbones,
 		apply_nucleoside( nucleosides[i], pose, i );
 	}
 	apply_nucleoside( nucleosides[i], pose, i );
+}
+//////////////////////////////////
+void
+get_backbone( Backbone_Torsion & backbone, 
+							pose::Pose const & pose,
+							Size const suite ){
+
+	using namespace id;
+	using namespace scoring::rna;
+
+	backbone[0] = pose.torsion( TorsionID( suite  , id::BB, 5 ) ); //epsilon
+	backbone[1] = pose.torsion( TorsionID( suite  , id::BB, 6 ) ); //zeta
+	backbone[2] = pose.torsion( TorsionID( suite+1, id::BB, 1 ) ); //alpha
+	backbone[3] = pose.torsion( TorsionID( suite+1, id::BB, 2 ) ); //beta
+	backbone[4] = pose.torsion( TorsionID( suite+1, id::BB, 3 ) ); //gamma
+
+}
+//////////////////////////////////
+void
+get_nucleoside( Nucleoside_Torsion & nucleoside, 
+							  pose::Pose const & pose,
+								Size const residue ){
+
+	using namespace id;
+	using namespace scoring::rna;
+
+	
+	nucleoside[0] = pose.torsion( TorsionID( residue, id::BB , 4 ) ); //delta
+	nucleoside[1] = pose.torsion( TorsionID( residue, id::CHI, 1 ) ); //chi
+}
+//////////////////////////////////
+void
+get_all( utility::vector1< Backbone_Torsion > & backbones,
+				 utility::vector1< Nucleoside_Torsion > & nucleosides,
+				 pose::Pose const & pose )
+{
+	Size i;
+	for (i = 1; i <= backbones.size(); ++i) {
+		get_backbone( backbones[i], pose, i );
+		get_nucleoside( nucleosides[i], pose, i );
+	}
+	get_nucleoside( nucleosides[i], pose, i );
+}
+//////////////////////////////////
+void
+get_all_tor_id( utility::vector1< id::TorsionID > & tor_id,
+								utility::vector1< Real > & torsions,
+								utility::vector1< Backbone_Torsion > const & backbones,
+								utility::vector1< Nucleoside_Torsion > const & nucleosides,
+								Size const skipped_backbone )
+{
+	using namespace id;
+
+	tor_id.clear();
+	torsions.clear();
+	for (Size i = 1; i <= backbones.size(); ++i) {
+		if (i == skipped_backbone) continue;
+		tor_id.push_back( TorsionID( i  , id::BB, 5 ) ); //epsilon
+		tor_id.push_back( TorsionID( i  , id::BB, 6 ) ); //zeta
+		tor_id.push_back( TorsionID( i+1, id::BB, 1 ) ); //alpha
+		tor_id.push_back( TorsionID( i+1, id::BB, 2 ) ); //beta
+		tor_id.push_back( TorsionID( i+1, id::BB, 3 ) ); //gamma
+
+		for (Size j = 0; j != 5; ++j) torsions.push_back( backbones[i][j] );
+	}
+
+	for (Size i = 1; i <= nucleosides.size(); ++i) {
+		tor_id.push_back( TorsionID( i, id::CHI, 1 ) ); 
+		torsions.push_back( nucleosides[i][1] );
+	}
 }
 /////////////////////////////////
 //Create the starting model.
@@ -476,6 +549,44 @@ get_score_terms( utility::vector1< float > & data,
 }
 //////////////////////////////////
 void
+get_base_steps( utility::vector1< float > & data,
+								pose::Pose & pose )
+{
+	Size const n_res = pose.total_residue();
+	Size const n_res_half = pose.total_residue() / 2;
+
+	for (Size i = 1; i <= n_res_half - 1; ++i) {
+		utility::vector1 <Real> params (6);
+		scoring::dna::get_base_step_params( pose.residue(i), pose.residue(n_res + 1 - i), 
+																				pose.residue(i + 1), pose.residue(n_res - i), params );
+		for (Size j = 1; j <= 6; ++j) {
+			data.push_back(params[j]);
+		}
+	}
+}
+///////////////////////////////////
+void
+helix_minimize (core::pose::Pose & pose, scoring::ScoreFunctionOP scorefxn) {
+	using namespace optimization;
+	using namespace id;
+
+	AtomTreeMinimizer minimizer;
+	float const dummy_tol ( 0.00000001 );
+	MinimizerOptions min_options ( "dfpmin_armijo", dummy_tol, false, false, false );
+
+	kinematics::MoveMap mm;
+	mm.set_bb ( true );
+	mm.set_chi ( false );
+	mm.set_jump ( false );
+
+	for (Size i = 1; i <= pose.total_residue(); ++i) {
+		mm.set( TorsionID( i, id::CHI, 1 ), true );
+	}	
+
+	minimizer.run ( pose, mm, *scorefxn, min_options );
+}
+//////////////////////////////////
+void
 MC_run () {
 	using namespace chemical;
 	using namespace scoring;
@@ -493,23 +604,29 @@ MC_run () {
 
 	//Scorefxn list (hbond_sc, fa_stack, rna_torsion)
 	utility::vector1< ScoreFunctionOP > scorefxns;
-	ScoreFunctionOP hbond_sc_fxn = new ScoreFunction;
-	hbond_sc_fxn -> set_weight( hbond_sc, 1.0 );
-	scorefxns.push_back( hbond_sc_fxn );
-	ScoreFunctionOP fa_stack_fxn = new ScoreFunction;
-	fa_stack_fxn -> set_weight( fa_stack, 1.0 );
-	scorefxns.push_back( fa_stack_fxn );
-	ScoreFunctionOP rna_torsion_fxn = new ScoreFunction;
-	rna_torsion_fxn -> set_weight( rna_torsion, 1.0 );
-	scorefxns.push_back( rna_torsion_fxn );
+	utility::vector1< ScoreType > scoretypes;
+	scoretypes.push_back( hbond_sc );
+	scoretypes.push_back( hbond_intra );
+	scoretypes.push_back( rna_torsion );
+	scoretypes.push_back( fa_stack );
+	scoretypes.push_back( CI_geom_sol );
+	scoretypes.push_back( lk_nonpolar );
+
+	for (Size i = 1; i <= scoretypes.size(); ++i) {
+		ScoreFunctionOP scorefxn_test = new ScoreFunction;
+		scorefxn_test -> set_weight( scoretypes[i], 1.0 );
+		scorefxns.push_back( scorefxn_test );
+	}
 	//
 
 	Pose pose;
 	setup_pose(pose);
 	scorefxn -> show(pose);
 
+	bool const is_output_min_pose = option[ output_min_pose ]();
 	bool const is_save_torsions = option[ save_torsions ]();
 	bool const is_save_score_terms = option[ save_score_terms ]();
+	bool const is_save_base_steps = option[ save_base_steps ]();
 	std::string const out_prefix = option[ output_prefix ]();
 	Size const num_cycle = option[ n_cycle ]();
 	utility::vector1< Real > const kTs = option[ kT_list ] ();
@@ -584,15 +701,23 @@ MC_run () {
 	Size current_count = 1;
 
 	//Saved data
-	utility::vector1< utility::vector1< Trajectory_point > > data_list;
-	utility::vector1< float > data_point;
+	utility::vector1< float_vec > data_list;
 	for (Size i = 1; i <= kT_id_max; ++i) {
-		utility::vector1< Trajectory_point > empty_data;
+	  float_vec empty_data;
 		data_list.push_back( empty_data );
 	}
+	float_vec test_vec;
+	test_vec.push_back( float(current_count) );
+	test_vec.push_back( score );
+	if (is_save_torsions) get_torsion_list(test_vec, backbones, nucleosides, len1);
+	if (is_save_score_terms) get_score_terms(test_vec, pose, scorefxns);
+	if (is_save_base_steps) get_base_steps(test_vec, pose);
+	Size const data_dim_1 = test_vec.size();
 
 	Real const rep_score_cutoff = 100;
 	Real const exchange_rate = 0.2;
+	Pose min_pose = pose;
+	Real min_score = score;
 	clock_t const time_start( clock() );
 
 	///////////////////////////////////
@@ -616,17 +741,22 @@ MC_run () {
 		}
 
 		if (kT < 0 || score_new < score || RG.uniform() < exp( (score - score_new) / kT )) {
-			data_point.clear();
-			data_point.push_back( score );
-			if (is_save_torsions) get_torsion_list(data_point, backbones, nucleosides, len1);
-			if (is_save_score_terms) get_score_terms(data_point, pose, scorefxns);
-			data_list[kT_id].push_back( Trajectory_point (current_count, data_point) );
+			data_list[kT_id].push_back( float(current_count) );
+			data_list[kT_id].push_back( score );
+			if (is_save_torsions) get_torsion_list(data_list[kT_id], backbones, nucleosides, len1);
+			if (is_save_score_terms) get_score_terms(data_list[kT_id], pose, scorefxns);
+			if (is_save_base_steps) get_base_steps(data_list[kT_id], pose);
 			
 			current_count = 1;
 			score = score_new;
 			backbones = backbones_new;
 			nucleosides = nucleosides_new;
 			++n_accpet;
+
+			if (is_output_min_pose && score < min_score) {
+				min_score = score;
+				min_pose = pose;
+			}
 		} else {
 			++current_count;
 		}
@@ -642,21 +772,29 @@ MC_run () {
 				if (kT_id_new < 1 || kT_id_new > kT_id_max) continue;
 			}
 			kT_new = kTs[kT_id_new];
-			log_prob = -( (kT < 0) ? 0 : (score / kT) ) - ( (kT_new < 0) ? 0 : (score / kT_new) ) + weights[kT_id_new] - weights[kT_id];
+			log_prob = ( (kT < 0) ? 0 : (score / kT) ) - ( (kT_new < 0) ? 0 : (score / kT_new) ) + weights[kT_id_new] - weights[kT_id];
 			if (log_prob > 0 || RG.uniform() < exp (log_prob) ) { //check if we want to exchange kT
 				++n_acpt_exch;
 				kT_id = kT_id_new;
 				kT = kT_new;
 
-				data_point.clear();
-				data_point.push_back( score );
-				if (is_save_torsions) get_torsion_list(data_point, backbones, nucleosides, len1);
-				if (is_save_score_terms) get_score_terms(data_point, pose, scorefxns);
-				data_list[kT_id].push_back( Trajectory_point (current_count, data_point) ); 
+				data_list[kT_id].push_back( float(current_count) );
+				data_list[kT_id].push_back( score );
+				if (is_save_torsions) get_torsion_list(data_list[kT_id], backbones, nucleosides, len1);
+				if (is_save_score_terms) get_score_terms(data_list[kT_id], pose, scorefxns);
+				if (is_save_base_steps) get_base_steps(data_list[kT_id], pose);
 				current_count = 1;
 			}
 		}
 	}
+
+	//Save the last scores
+	data_list[kT_id].push_back( float(current_count) );
+	data_list[kT_id].push_back( score );
+	if (is_save_torsions) get_torsion_list(data_list[kT_id], backbones, nucleosides, len1);
+	if (is_save_score_terms) get_score_terms(data_list[kT_id], pose, scorefxns);
+	if (is_save_base_steps) get_base_steps(data_list[kT_id], pose);
+	////////////////////
 
 	std::cout << "Total number of cycles = " << num_cycle << std::endl;
 	std::cout << "Accept rate:" << (1.0 * n_accpet / num_cycle) << std::endl;
@@ -669,25 +807,21 @@ MC_run () {
 	//Output data
 	for (Size id = 1; id <= kT_id_max; ++id) {
 		Real const kT = kTs[id];
-		ozstream out;
 		std::ostringstream oss;
-		oss << out_prefix << '_' << std::fixed << std::setprecision(2) << kT << ".out.gz";
-		out.open(oss.str());
-		for (Size i = 1; i <= data_list[id].size(); ++i) {
-			out << data_list[id][i].first << ' ';
-			for (Size j = 1; j <= data_list[id][i].second.size(); ++j) {
-				Real const & value = data_list[id][i].second[j];
-				if ( value < 0.00005 && value > -0.00005 ) {
-					out << "0 ";
-				} else if ( value > 999 ) {
-					out << "999 ";
-				} else {
-					out << std::fixed << std::setprecision( 4 ) << value << ' ';
-				}
-			}
-			out << std::endl;
-		}
+		oss << out_prefix << '_' << std::fixed << std::setprecision(2) << kT << ".binout";
+		std::ofstream out (oss.str().c_str(), std::ios::out | std::ios::binary);
+		Size const data_dim_2 = data_list[id].size() / data_dim_1;
+		//std::cout << data_dim_2 << ' ' << data_dim_1 << ' ' << data_list[id].size() << ' ' << sizeof(Size) << std::endl;
+		out.write( (const char*) &data_dim_2, sizeof(Size) );
+		out.write( (const char*) &data_dim_1, sizeof(Size) );
+		out.write( (const char*) &data_list[id][1], sizeof(float) * data_list[id].size() );
 		out.close();
+	}
+
+	if (is_output_min_pose) {
+		helix_minimize( min_pose, scorefxn );
+		min_pose.dump_pdb("min_pose.pdb");
+		scorefxn -> show( min_pose );
 	}
 }
 //////////////////////////////////
@@ -742,6 +876,153 @@ torsion2pdb()
 }
 
 //////////////////////////////////
+void
+hessian_estimate()
+{
+	using namespace utility::io;
+	using namespace scoring;
+
+	//Setup scoring function
+	std::string const force_field_name = option[force_field];
+	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( force_field_name );
+
+	//Pose setup
+	Pose pose;
+	setup_pose(pose);
+
+	std::string const sequence1 = option[ seq1 ]();
+	std::string const sequence2 = option[ seq2 ]();
+	std::string const total_seq = sequence1 + sequence2;
+	Size const n_res = total_seq.size();
+	Size const len1  = sequence1.size();
+	Size const len2  = sequence2.size();
+
+	Size n_torsion = 2 * n_res;
+	if (len2 == 0 ) {
+		n_torsion += 5 * (n_res - 1);
+	} else {
+		n_torsion += 5 * (n_res - 2);
+	}
+
+	std::pair < Backbone_Torsion,  Nucleoside_Torsion > const ideal_torsions = ideal_A_form_torsions();
+
+	utility::vector1< Backbone_Torsion > backbones;
+	utility::vector1< Nucleoside_Torsion > nucleosides;
+
+	Size curr_position = 1;
+	for (Size i = 1; i <= n_res-1; ++i) {
+		backbones.push_back( ideal_torsions.first );
+	}
+	for (Size i = 1; i <= n_res; ++i) {
+		nucleosides.push_back( ideal_torsions.second );
+	}
+
+	//Minimize the pose to the local minimum
+	helix_minimize( pose, scorefxn );
+	get_all(  backbones, nucleosides, pose );
+	utility::vector1< id::TorsionID > tor_id;
+	utility::vector1< Real > torsions;
+
+	get_all_tor_id(tor_id, torsions, backbones, nucleosides, len1);
+	
+	Size const n_dof = torsions.size();
+	Real const delta  = 0.000001;
+	Real const half_delta  = delta * 0.5;
+	std::cout << "Min score = " << (*scorefxn) (pose) << std::endl;
+
+	ozstream out;
+	out.open("hessian.txt");
+
+	for (Size i = 1; i <= n_dof; ++i) {
+		for (Size j = 1; j <= n_dof; ++j) {
+			Real const orig_tor_i = pose.torsion( tor_id[i] );
+			Real const orig_tor_j = pose.torsion( tor_id[j] );
+			Real scorepp, scoremm, scoremp, scorepm;
+
+			if ( i == j ) {
+				//++
+				pose.set_torsion( tor_id[i], orig_tor_i + delta );
+				scorepp = (*scorefxn) ( pose );
+
+				//+- & -+
+				pose.set_torsion( tor_id[i], orig_tor_i );
+				scorepm = (*scorefxn) ( pose );
+				scoremp = scorepm;
+
+				//--
+				pose.set_torsion( tor_id[i], orig_tor_i - delta );
+				scoremm = (*scorefxn) ( pose );
+				std::cout << std::fixed << std::setprecision( 10 ) << scorepp << ' ' << scoremm << ' ' << scorepm << std::endl;
+			} else {
+				//++
+				pose.set_torsion( tor_id[i], orig_tor_i + half_delta );
+				pose.set_torsion( tor_id[j], orig_tor_j + half_delta );
+				scorepp = (*scorefxn) ( pose );
+
+				//+-
+				pose.set_torsion( tor_id[i], orig_tor_i + half_delta );
+				pose.set_torsion( tor_id[j], orig_tor_j - half_delta );
+				scorepm = (*scorefxn) ( pose );
+
+				//-+
+				pose.set_torsion( tor_id[i], orig_tor_i - half_delta );
+				pose.set_torsion( tor_id[j], orig_tor_j + half_delta );
+				scoremp = (*scorefxn) ( pose );
+
+				//--
+				pose.set_torsion( tor_id[i], orig_tor_i - half_delta );
+				pose.set_torsion( tor_id[j], orig_tor_j - half_delta );
+				scoremm = (*scorefxn) ( pose );
+			}
+ 
+			pose.set_torsion( tor_id[i], orig_tor_i );
+			pose.set_torsion( tor_id[j], orig_tor_j );
+
+			out << ( scorepp + scoremm - scorepm - scoremp ) / delta / delta << ' ';
+		}
+		out << std::endl;
+	}
+	out.close();
+}
+//////////////////////////////////
+void 
+bp_score_calibrate()
+{
+	using namespace scoring;
+	using namespace protocols::swa;
+	using namespace utility::io;
+	//Setup scoring function
+	std::string const force_field_name = option[force_field];
+	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( force_field_name );
+
+	//Pose setup
+	Pose pose, pose_ref;
+	setup_pose(pose);
+	pose_ref = pose;
+
+	std::string const sequence1 = option[ seq1 ]();
+	std::string const sequence2 = option[ seq2 ]();
+	Size const len1      = sequence1.size();
+	Size const len2      = sequence2.size();
+	Size const total_len = len1 + len2;
+
+	utility::vector1< Size > moving_res;
+	for (Size i = len1 + 1; i <= total_len; ++i) moving_res.push_back(i);
+	pose.dump_pdb("start_bp.pdb");
+
+
+	translate( pose_ref, Vector( 0.2, 0, 0 ), pose_ref, moving_res );
+
+	ozstream out;
+	out.open("scores.txt");
+
+	for (Real i = 0; i <= 6; i += 0.01) {
+		translate( pose, Vector( i, 0, 0 ), pose_ref, moving_res );
+		Real const score = (*scorefxn) (pose);
+		out << i << ' ' << score << std::endl;
+	}
+}
+//////////////////////////////////
 void*
 my_main( void* )
 {
@@ -751,8 +1032,11 @@ my_main( void* )
 		MC_run();
 	} else if ( algorithm_name == "torsion2pdb" ) {
 		torsion2pdb();
+	} else if ( algorithm_name == "hessian" ) {
+		hessian_estimate();
+	} else if ( algorithm_name == "bp_score_cali" ) {
+		bp_score_calibrate();
 	}
-		
 	exit( 0 );
 }
 //////////////////////////////////
@@ -774,8 +1058,10 @@ main( int argc, char * argv [] )
 	NEW_OPT( weight_list, "list of ST weights", blank_size_vector_real );
 	NEW_OPT( input_torsion, "list of torsions", blank_size_vector_real );
 	NEW_OPT( output_prefix, "prefix for the out file", "" );
+	NEW_OPT( output_min_pose, "output_lowest_score_pose", false );
 	NEW_OPT( save_torsions, "save torsion angles", false );
 	NEW_OPT( save_score_terms, "save score_terms", false );
+	NEW_OPT( save_base_steps, "save base steps", false );
 	/////////////////////////////
 	// setup
 	//////////////////////////////
