@@ -21,6 +21,7 @@ sources = {
                 "minmax",
                 "OrderedTuple",
 		"recent_history_queue",
+		"simulate_mpi",
 		"string_util",
                 #"TopScoreSelector",
 		"UTools",

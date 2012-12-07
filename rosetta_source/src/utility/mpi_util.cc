@@ -13,22 +13,19 @@
 
 // Unit headers
 #include <utility/mpi_util.hh>
-
-#ifdef USEMPI // MPI version
-	#define MPI_ONLY(x) x
-#else // Non MPI Versin
-	#define MPI_ONLY(x)
-#endif
-
+#include <utility/SimulateMPI.hh>
 
 namespace utility {
+
+
+#ifdef USEMPI
+
+#define MPI_ONLY(x) x
 
 int
 mpi_rank() {
 	int return_val( 0 );
-#ifdef USEMPI
 	MPI_Comm_rank( MPI_COMM_WORLD, & return_val);/* get current process id */
-#endif
 	return return_val;
 }
 
@@ -37,17 +34,15 @@ int
 mpi_nprocs()
 {
 	int return_val( 0 );
-#ifdef USEMPI
 	MPI_Comm_size( MPI_COMM_WORLD, & return_val);/* get number of processes */
-#endif
 	return return_val;
 }
 
 std::string
-receive_string_from_node( int MPI_ONLY( source ) )
-{
+receive_string_from_node(
+	int source
+) {
 	std::string return_val;
-#ifdef USEMPI
 	int len( 0 );
 	int tag( 1 );
 	MPI_Status stat;
@@ -57,71 +52,68 @@ receive_string_from_node( int MPI_ONLY( source ) )
 	MPI_Recv( str, len, MPI_CHAR, source, tag, MPI_COMM_WORLD, & stat );
 	return_val = std::string( str, len );
 	delete [] str;
-#endif
 	return return_val;
 }
 
 void
-send_string_to_node( int MPI_ONLY( destination ), std::string const & MPI_ONLY( message ) )
-{
-#ifdef USEMPI
+send_string_to_node(
+	int destination,
+	std::string const & message
+) {
 	int tag( 1 );
 	int len( message.size() );
 	MPI_Send( &len, 1, MPI_INT, destination, tag, MPI_COMM_WORLD );
 	MPI_Send( const_cast< char * > (message.c_str()), len, MPI_CHAR, destination, tag, MPI_COMM_WORLD );
-#endif
 }
 
 
 char
-receive_char_from_node( int MPI_ONLY( source ) )
-{
+receive_char_from_node(
+	int source
+) {
 	char return_val = 0;
-#ifdef USEMPI
 	int tag( 1 );
 	MPI_Status stat;
 	MPI_Recv( &return_val, 1, MPI_CHAR, source, tag, MPI_COMM_WORLD, & stat );
-#endif
 	return return_val;
 }
 
 void
-send_char_to_node( int MPI_ONLY( destination ), char MPI_ONLY( message ) )
-{
-#ifdef USEMPI
+send_char_to_node(
+	int destination,
+	char message
+) {
 	int tag( 1 );
 	MPI_Send( &message, 1, MPI_CHAR, destination, tag, MPI_COMM_WORLD );
-#endif
 }
 
 int
-receive_integer_from_node( int MPI_ONLY( source ) )
-{
+receive_integer_from_node(
+	int source
+) {
 	int return_val(0);
-#ifdef USEMPI
 	int tag( 1 );
 	MPI_Status stat;
 	MPI_Recv( &return_val, 1, MPI_INT, source, tag, MPI_COMM_WORLD, & stat );
-#endif
 	return return_val;
 }
 
 
 void
-send_integer_to_node( int MPI_ONLY( destination ), int MPI_ONLY( message ) )
-{
-#ifdef USEMPI
+send_integer_to_node(
+	int destination,
+	int message
+) {
 	int tag( 1 );
 	MPI_Send( &message, 1, MPI_INT, destination, tag, MPI_COMM_WORLD );
-#endif
 }
 
 
 utility::vector1< int >
-receive_integers_from_node( int MPI_ONLY( source ) )
-{
+receive_integers_from_node(
+	int source
+) {
 	utility::vector1< int > return_val;
-#ifdef USEMPI
 	int len( 0 );
 	int tag( 1 );
 	MPI_Status stat;
@@ -133,53 +125,51 @@ receive_integers_from_node( int MPI_ONLY( source ) )
 		for ( int ii = 0; ii < len; ++ii ) return_val[ ii + 1 ] = intarray[ ii ];
 		delete [] intarray;
 	}
-#endif
 	return return_val;
 }
 
 
 void
-send_integers_to_node( int MPI_ONLY( destination ), utility::vector1< int > const & MPI_ONLY( message ) )
-{
-#ifdef USEMPI
+send_integers_to_node(
+	int destination,
+	utility::vector1< int > const & message
+) {
 	int tag( 1 );
 	int len( message.size() );
 	MPI_Send( &len, 1, MPI_INT, destination, tag, MPI_COMM_WORLD );
 	if ( len != 0 ) {
 		MPI_Send( const_cast< int * > (&message[1]), len, MPI_INT, destination, tag, MPI_COMM_WORLD );
 	}
-#endif
 }
 
 double
-receive_double_from_node( int MPI_ONLY( source ) )
-{
+receive_double_from_node(
+	int source
+) {
 	double return_val(0);
-#ifdef USEMPI
 	int tag( 1 );
 	MPI_Status stat;
 	MPI_Recv( &return_val, 1, MPI_DOUBLE, source, tag, MPI_COMM_WORLD, & stat );
-#endif
 	return return_val;
 }
 
 
 void
-send_double_to_node( int MPI_ONLY( destination ), double MPI_ONLY( message ) )
-{
-#ifdef USEMPI
+send_double_to_node(
+	int destination,
+	double message
+) {
 	int tag( 1 );
 	MPI_Send( &message, 1, MPI_DOUBLE, destination, tag, MPI_COMM_WORLD );
-#endif
 }
 
 
 
 utility::vector1< double >
-receive_doubles_from_node( int MPI_ONLY( source ) )
-{
+receive_doubles_from_node(
+	int source
+) {
 	utility::vector1< double > return_val;
-#ifdef USEMPI
 	int len( 0 );
 	int tag( 1 );
 	MPI_Status stat;
@@ -191,23 +181,200 @@ receive_doubles_from_node( int MPI_ONLY( source ) )
 		for ( int ii = 0; ii < len; ++ii ) return_val[ ii + 1 ] = doublearray[ ii ];
 		delete [] doublearray;
 	}
-#endif
 	return return_val;
 }
 
 
 void
-send_doubles_to_node( int MPI_ONLY( destination ), utility::vector1< double > const & MPI_ONLY( message ) )
-{
-#ifdef USEMPI
+send_doubles_to_node(
+	int destination,
+	utility::vector1< double > const & message
+) {
 	int tag( 1 );
 	int len( message.size() );
 	MPI_Send( &len, 1, MPI_INT, destination, tag, MPI_COMM_WORLD );
 	if ( len != 0 ) {
 		MPI_Send( const_cast< double * > (&message[1]), len, MPI_DOUBLE, destination, tag, MPI_COMM_WORLD );
 	}
-#endif
 }
+
+////////////////////////////
+#else // USEMPI is not used
+///////////////////////////
+
+#define MPI_ONLY(x)
+
+int
+mpi_rank() {
+	if(SimulateMPI::simulate_mpi()){
+		return SimulateMPI::mpi_rank();
+	} else {
+		int return_val( 0 );
+		return return_val;
+	}
+}
+
+
+int
+mpi_nprocs()
+{
+	if(SimulateMPI::simulate_mpi()){
+		return SimulateMPI::mpi_nprocs();
+	} else {
+		int return_val( 0 );
+		return return_val;
+	}
+}
+
+std::string
+receive_string_from_node(
+	int source
+) {
+	if(SimulateMPI::simulate_mpi()){
+		return SimulateMPI::receive_string_from_node(source);
+	} else {
+		std::string return_val;
+		return return_val;
+	}
+}
+
+void
+send_string_to_node(
+	int destination,
+	std::string const & message)
+{
+	if(SimulateMPI::simulate_mpi()){
+		SimulateMPI::send_string_to_node(destination, message);
+	} else {
+		return;
+	}
+}
+
+char
+receive_char_from_node(
+	int source
+) {
+	if(SimulateMPI::simulate_mpi()){
+		return SimulateMPI::receive_char_from_node(source);
+	} else {
+		char return_val = 0;
+		return return_val;
+	}
+}
+
+void
+send_char_to_node(
+	int destination,
+	char message)
+{
+	if(SimulateMPI::simulate_mpi()){
+		SimulateMPI::send_char_to_node(destination, message);
+	} else {
+		return;
+	}
+}
+
+int
+receive_integer_from_node(
+	int source
+) {
+	if(SimulateMPI::simulate_mpi()){
+		return SimulateMPI::receive_integer_from_node(source);
+	} else {
+		int return_val = 0;
+		return return_val;
+	}
+}
+
+void
+send_integer_to_node(
+	int destination,
+	int message)
+{
+	if(SimulateMPI::simulate_mpi()){
+		SimulateMPI::send_integer_to_node(destination, message);
+	} else {
+		return;
+	}
+}
+
+utility::vector1< int >
+receive_integers_from_node(
+	int source
+) {
+	if(SimulateMPI::simulate_mpi()){
+		return SimulateMPI::receive_integers_from_node(source);
+	} else {
+		utility::vector1< int > return_val;
+		return return_val;
+	}
+}
+
+void
+send_integers_to_node(
+	int destination,
+	utility::vector1< int > const & message)
+{
+	if(SimulateMPI::simulate_mpi()){
+		SimulateMPI::send_integers_to_node(destination, message);
+	} else {
+		return;
+	}
+}
+
+
+
+double
+receive_double_from_node(
+	int source
+) {
+	if(SimulateMPI::simulate_mpi()){
+		return SimulateMPI::receive_double_from_node(source);
+	} else {
+		double return_val = 0;
+		return return_val;
+	}
+}
+
+void
+send_double_to_node(
+	int destination,
+	double message)
+{
+	if(SimulateMPI::simulate_mpi()){
+		SimulateMPI::send_double_to_node(destination, message);
+	} else {
+		return;
+	}
+}
+
+utility::vector1< double >
+receive_doubles_from_node(
+	int source
+) {
+	if(SimulateMPI::simulate_mpi()){
+		return SimulateMPI::receive_doubles_from_node(source);
+	} else {
+		utility::vector1< double > return_val;
+		return return_val;
+	}
+}
+
+void
+send_doubles_to_node(
+	int destination,
+	utility::vector1< double > const & message)
+{
+	if(SimulateMPI::simulate_mpi()){
+		SimulateMPI::send_doubles_to_node(destination, message);
+	} else {
+		return;
+	}
+}
+
+
+#endif // USEMPI
+
 
 
 }

@@ -19,6 +19,7 @@ sources = {
 		"integer_mapping",
 		"LexicographicalIterator",
 		"mpi_util",
+		"SimulateMPI",
 		"PyExitCallback",
 		"recent_history_queue",
 		"static_database",
