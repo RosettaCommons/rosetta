@@ -1835,7 +1835,8 @@ Options = Option_Group( '',
 			"-corrections::score:p_aa_pp_nogridshift"
 			#"-corrections::score:no_his_his_pairE"
 			"-corrections::score:p_aa_pp_nogridshift"
-			"-corrections::score:rama_not_squared"
+			"-corrections
+			::score:rama_not_squared"
 			"-corrections::score:rama_map scoring/score_functions/rama/Rama.10.2009.yfsong.dat"
 			"-scoring::hbond_params helix_hb_06_2009"
 			"-corrections::score:hbond_fade 1.9 2.3 2.3 2.6 0.3 0.7 0.0 0.05"

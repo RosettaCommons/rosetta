@@ -42,22 +42,22 @@ public:
 	Size period() const = 0;
 
 	virtual
-	Real dmu_dphi(Real phi, Real psi) const {
+	Real dmu_dphi(Real /*phi*/, Real /*psi*/) const {
 		return 0;
 	}
 
 	virtual
-	Real dK_dphi(Real phi, Real psi) const {
+	Real dK_dphi(Real /*phi*/, Real /*psi*/) const {
 		return 0;
 	}
 
 	virtual
-	Real dmu_dpsi(Real phi, Real psi) const {
+	Real dmu_dpsi(Real /*phi*/, Real /*psi*/) const {
 		return 0;
 	}
 
 	virtual
-	Real dK_dpsi(Real phi, Real psi) const {
+	Real dK_dpsi(Real /*phi*/, Real /*psi*/) const {
 		return 0;
 	}
 

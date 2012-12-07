@@ -184,6 +184,83 @@ std::string get_restag( core::chemical::ResidueType const & restype ) {
 	return restype.name3();
 }
 
+ResidueCartBondedParameters::ResidueCartBondedParameters() :
+	bb_N_index_( 0 ),
+	bb_CA_index_( 0 ),
+	bb_C_index_( 0 ),
+	bb_O_index_( 0 ),
+	bb_H_index_( 0 )
+{}
+
+ResidueCartBondedParameters::~ResidueCartBondedParameters() {}
+
+void ResidueCartBondedParameters::add_length_parameter(  Size2 atom_inds, CartBondedParametersCOP params )
+{
+	length_params_.push_back( std::make_pair( atom_inds, params ));
+}
+
+void ResidueCartBondedParameters::add_angle_parameter(   Size3 atom_inds, CartBondedParametersCOP params )
+{
+	angle_params_.push_back( std::make_pair( atom_inds, params ));
+}
+
+void ResidueCartBondedParameters::add_torsion_parameter( Size4 atom_inds, CartBondedParametersCOP params )
+{
+	torsion_params_.push_back( std::make_pair( atom_inds, params ));
+}
+
+void ResidueCartBondedParameters::add_improper_torsion_parameter( Size4 atom_inds, CartBondedParametersCOP params )
+{
+	improper_torsion_params_.push_back( std::make_pair( atom_inds, params ));
+}
+
+void ResidueCartBondedParameters::add_bbdep_length_parameter(  Size2 atom_inds, CartBondedParametersCOP params )
+{
+	bbdep_length_params_.push_back( std::make_pair( atom_inds, params ));
+}
+
+void ResidueCartBondedParameters::add_bbdep_angle_parameter(   Size3 atom_inds, CartBondedParametersCOP params )
+{
+	bbdep_angle_params_.push_back( std::make_pair( atom_inds, params ));
+}
+
+void ResidueCartBondedParameters::add_lower_connect_angle_params( Size3 atom_inds, CartBondedParametersCOP params )
+{
+	lower_connect_angle_params_.push_back( std::make_pair( atom_inds, params ));
+}
+
+void ResidueCartBondedParameters::add_upper_connect_angle_params( Size3 atom_inds, CartBondedParametersCOP params )
+{
+	upper_connect_angle_params_.push_back( std::make_pair( atom_inds, params ));
+}
+
+void ResidueCartBondedParameters::bb_N_index( Size index )  { bb_N_index_  = index; }
+void ResidueCartBondedParameters::bb_CA_index( Size index ) { bb_CA_index_ = index; }
+void ResidueCartBondedParameters::bb_C_index( Size index )  { bb_C_index_  = index; }
+void ResidueCartBondedParameters::bb_O_index( Size index )  { bb_O_index_  = index; }
+void ResidueCartBondedParameters::bb_H_index( Size index )  { bb_H_index_  = index; }
+
+void ResidueCartBondedParameters::ca_cprev_n_h_interres_torsion_params(
+	CartBondedParametersCOP params
+)
+{
+	ca_cprev_n_h_interres_torsion_params_ = params;
+}
+
+void ResidueCartBondedParameters::ca_nnext_c_o_interres_torsion_params(
+	CartBondedParametersCOP params
+)
+{
+	ca_nnext_c_o_interres_torsion_params_ = params;
+}
+
+void ResidueCartBondedParameters::cprev_n_bond_length_params(
+	CartBondedParametersCOP params
+)
+{
+	cprev_n_bond_length_params_ = params;
+}
+
 
 ////////////////////////
 // constructors
@@ -225,8 +302,14 @@ IdealParametersDatabase::IdealParametersDatabase(Real k_len_in, Real k_ang_in, R
 }
 
 // read bb-dep and bb-indep parameter files from the rosetta database
-void 
-IdealParametersDatabase::init(Real k_len_in, Real k_ang_in, Real k_tors_in, Real k_tors_prot_in, Real k_tors_improper_in) {
+void
+IdealParametersDatabase::init(
+	Real k_len_in,
+	Real k_ang_in,
+	Real k_tors_in,
+	Real k_tors_prot_in,
+	Real k_tors_improper_in
+) {
 	TR << "Initializing IdealParametersDatabase with default Ks="
 		<< k_len_in << " , " << k_ang_in << " , " << k_tors_in << " , " << k_tors_prot_in << " , " << k_tors_improper_in << std::endl;
 	k_length_ = k_len_in;
@@ -292,7 +375,7 @@ IdealParametersDatabase::init(Real k_len_in, Real k_ang_in, Real k_tors_in, Real
 	if (!bbdep_bond_params_) return;
 
 	// read bb-dep parameters
-	//NOTE this must be read after the bbindep params are read 
+	//NOTE this must be read after the bbindep params are read
 	//   as deviations for low count rama bins are smoothed using the bb-indep deviations
 	read_bbdep_table( libpath+"/bbdep-all-but-gly-pro-xpro-ile-val.txt", bondlengths_bbdep_def_, bondangles_bbdep_def_, "ALA" );
 	read_bbdep_table( libpath+"/bbdep-graphdata-gly.txt", bondlengths_bbdep_gly_, bondangles_bbdep_gly_, "GLY" );
@@ -311,7 +394,7 @@ IdealParametersDatabase::read_bbdep_table(
 			boost::unordered_map< atm_name_pair, CartBondedParametersOP > &bondangles,
 			std::string resbase )
 {
-	using numeric::constants::f::pi;
+	using numeric::constants::d::pi;
 	using namespace ObjexxFCL;
 
 	Real DEV_SCALE = 0.1; // scaling factor between bbindep and bbdep spring constants
@@ -320,9 +403,9 @@ IdealParametersDatabase::read_bbdep_table(
 	utility::io::izstream instream;
 	basic::database::open( instream, filename );
 
-	//PhiStart PhiStop PsiStart PsiStop Observations PhiAvg(i) PhiDev(i) PsiAvg(i) PsiDev(i) OmeAvg(i) OmeDev(i) C(-1)-NAvg(i) C(-1)-NDev(i) N-CAAvg(i) 
-	// N-CADev(i) CA-CBAvg(i) CA-CBDev(i) CA-CAvg(i) CA-CDev(i) C-OAvg(i) C-ODev(i) C(-1)-N-CAAvg(i) C(-1)-N-CADev(i) N-CA-CBAvg(i) N-CA-CBDev(i) 
-	// N-CA-CAvg(i) N-CA-CDev(i) CB-CA-CAvg(i) CB-CA-CDev(i) CA-C-OAvg(i) CA-C-ODev(i) CA-C-N(+1)Avg(i) CA-C-N(+1)Dev(i) O-C-N(+1)Avg(i) O-C-N(+1)Dev(i) 
+	//PhiStart PhiStop PsiStart PsiStop Observations PhiAvg(i) PhiDev(i) PsiAvg(i) PsiDev(i) OmeAvg(i) OmeDev(i) C(-1)-NAvg(i) C(-1)-NDev(i) N-CAAvg(i)
+	// N-CADev(i) CA-CBAvg(i) CA-CBDev(i) CA-CAvg(i) CA-CDev(i) C-OAvg(i) C-ODev(i) C(-1)-N-CAAvg(i) C(-1)-N-CADev(i) N-CA-CBAvg(i) N-CA-CBDev(i)
+	// N-CA-CAvg(i) N-CA-CDev(i) CB-CA-CAvg(i) CB-CA-CDev(i) CA-C-OAvg(i) CA-C-ODev(i) CA-C-N(+1)Avg(i) CA-C-N(+1)Dev(i) O-C-N(+1)Avg(i) O-C-N(+1)Dev(i)
 	// Chi1Avg(i) Chi1Dev(i) Chi2Avg(i) Chi2Dev(i) Chi3Avg(i) Chi3Dev(i) Chi4Avg(i) Chi4Dev(i) ZetaAvg(i) ZetaDev(i)
 	core::Real phiL,phiH,psiL,psiH,phiAvg,phiDev,psiAvg,psiDev,OmegaAvg,OmegaDev;
 	core::Real CNavg,CNdev, NCAavg,NCAdev, CACBavg,CACBdev, CACavg,CACdev, COavg,COdev;
@@ -511,14 +594,18 @@ IdealParametersDatabase::read_bbdep_table(
 
 void
 IdealParametersDatabase::lookup_bondangle_buildideal(
-		core::conformation::Residue const & res,
-		int atm1, int atm2, int atm3, Real &Ktheta, Real &theta0) {
+	core::chemical::ResidueType const & restype,
+	int atm1,
+	int atm2,
+	int atm3,
+	Real & Ktheta,
+	Real & theta0
+) {
 	Ktheta = k_angle_;
 
 	// Create mini-conformation for idealized residue
-	chemical::ResidueType const & restype = res.type();
 	conformation::ResidueOP newres = conformation::ResidueFactory::create_residue( restype );
-	
+
 	// get angle
 	numeric::xyzVector<core::Real> x,y,z; // atom coords
 	if (atm1 > 0) {
@@ -540,7 +627,7 @@ IdealParametersDatabase::lookup_bondangle_buildideal(
 	}
 
 	theta0 = numeric::angle_radians ( x,y,z );
-	
+
 	// EXCEPTIONS
 	// ignore proline C-ND which is handled by pro_close
 	if (restype.aa() == core::chemical::aa_pro) {
@@ -572,34 +659,36 @@ IdealParametersDatabase::lookup_bondangle_buildideal(
 }
 
 
-void												
+void
 IdealParametersDatabase::lookup_bondlength_buildideal(
-			core::conformation::Residue const & res,
-			int atm1, int atm2, Real &Kd, Real &d0 ) {
+	core::chemical::ResidueType const & restype,
+	int atm1,
+	int atm2,
+	Real &Kd,
+	Real &d0
+)
+{
 	Kd = k_length_;
 
 	// Create mini-conformation for idealized residue
-	chemical::ResidueType const & restype = res.type();
 	core::conformation::ResidueOP newres = conformation::ResidueFactory::create_residue( restype );
 
 	// get length
 	numeric::xyzVector<core::Real> x,y,z; // atom coords
 	if (atm1 > 0) {
 		x = newres->atom( atm1 ).xyz();
-	}
-	else {
+	} else {
 		x = newres->residue_connection( -atm1 ).icoor().build( restype );
 	}
 
 	if (atm2 > 0) {
 		y = newres->atom( atm2 ).xyz();
-	}
-	else {
+	} else {
 		y = newres->residue_connection( -atm2 ).icoor().build( restype );
 	}
 
 	d0 = (x-y).length();
-	 
+
 	//  ignore proline C-ND which is handled by pro_close
 	if (restype.aa() == core::chemical::aa_pro &&
 	    (atm1>0 && atm2>0) &&
@@ -608,21 +697,25 @@ IdealParametersDatabase::lookup_bondlength_buildideal(
 		Kd = d0 = 0.0;
 	}
 }
-	
+
 
 
 //////////////////////
 /// Torsion Database
 // lookup ideal intra-res torsion
 // torsion DB is unique is that it never tries to build from ideal
-CartBondedParametersCAP
+CartBondedParametersCOP
 IdealParametersDatabase::lookup_torsion(
-			core::conformation::Residue const & res,
-			std::string atm1_name, std::string atm2_name, std::string atm3_name, std::string atm4_name ) {
+	core::chemical::ResidueType const & restype,
+	std::string const & atm1_name,
+	std::string const & atm2_name,
+	std::string const & atm3_name,
+	std::string const & atm4_name
+)
+{
 	using namespace core::chemical;
 
 	// use 'annotated sequence' to id this restype
-	chemical::ResidueType const & restype = res.type();
 	std::string restag = get_restag( restype );
 
 	// there is no bb-dep torsion database
@@ -631,13 +724,13 @@ IdealParametersDatabase::lookup_torsion(
 	atm_name_quad tuple1( restag, atm1_name,atm2_name,atm3_name,atm4_name );
 	boost::unordered_map<atm_name_quad,CartBondedParametersOP>::iterator b_it = torsions_indep_.find( tuple1 );
 	if ( b_it != torsions_indep_.end() ) {
-		return CartBondedParametersCAP(*b_it->second);
+		return b_it->second;
 	}
 
 	atm_name_quad tuple2( "*", atm1_name,atm2_name,atm3_name,atm4_name );
 	b_it = torsions_indep_.find( tuple2 );
 	if ( b_it != torsions_indep_.end() ) {
-		return CartBondedParametersCAP(*b_it->second);
+		return b_it->second;
 	}
 
 	// if we don't find this torsion in the table, it's unconstrained
@@ -647,16 +740,19 @@ IdealParametersDatabase::lookup_torsion(
 
 /// Angle Database
 ///   build from ideal if not found
-CartBondedParametersCAP												
+CartBondedParametersCOP
 IdealParametersDatabase::lookup_angle(
-			core::conformation::Residue const & res,
-			bool pre_proline,
-			std::string atm1_name, std::string atm2_name, std::string atm3_name,
-			int atm1idx, int atm2idx, int atm3idx ) {
+	core::chemical::ResidueType const & restype,
+	bool pre_proline,
+	std::string const & atm1_name,
+	std::string const & atm2_name,
+	std::string const & atm3_name,
+	int atm1idx,
+	int atm2idx,
+	int atm3idx
+) {
 	using namespace core::chemical;
 
-	// use 'annotated sequence' to id this restype
-	chemical::ResidueType const &restype = res.type();
 	std::string restag = get_restag( restype );
 	atm_name_triple tuple( restag, atm1_name,atm2_name,atm3_name );
 
@@ -677,41 +773,43 @@ IdealParametersDatabase::lookup_angle(
 	atm_name_pair alt_tuple( atm1_name,atm2_name,atm3_name );
 	boost::unordered_map<atm_name_pair,CartBondedParametersOP>::iterator a_it = angle_table->find( alt_tuple );
 	if ( a_it != angle_table-> end() ) {
-		 return CartBondedParametersCAP(*a_it->second);
+		 return a_it->second;
 	}
 
 	// 2 lookup in bb-indep table
 	boost::unordered_map<atm_name_triple,CartBondedParametersOP>::iterator b_it = bondangles_indep_.find( tuple );
 	if ( b_it != bondangles_indep_.end() ) {
-		 return CartBondedParametersCAP(*b_it->second);
+		 return b_it->second;
 	}
 
 	atm_name_triple tuple_alt( "*", atm1_name,atm2_name,atm3_name );
 	b_it = bondangles_indep_.find( tuple_alt );
 	if ( b_it != bondangles_indep_.end() ) {
-		return CartBondedParametersCAP(*b_it->second);
+		return b_it->second;
 	}
 
 	// 3 build from ideal, add to bb-indep table
 	Real Ktheta, theta0;
-	lookup_bondangle_buildideal( res, atm1idx, atm2idx, atm3idx, Ktheta, theta0 );
+	lookup_bondangle_buildideal( restype, atm1idx, atm2idx, atm3idx, Ktheta, theta0 );
 	bondangles_indep_[ tuple ] = new BBIndepCartBondedParameters( theta0, Ktheta );
 	TR << "Adding undefined angle "
 	   << tuple.get<0>() << ": " << tuple.get<1>() << "," << tuple.get<2>() << "," << tuple.get<3>() << " to DB with"
-	   << " theta0 = " << theta0 << " , Ktheta = " << Ktheta << std::endl; 
+	   << " theta0 = " << theta0 << " , Ktheta = " << Ktheta << std::endl;
 
-	return CartBondedParametersCAP(*bondangles_indep_[ tuple ]);
+	return bondangles_indep_[ tuple ];
 }
 
 /// BondLength Database
 ///   build from ideal if not found
-CartBondedParametersCAP
+CartBondedParametersCOP
 IdealParametersDatabase::lookup_length(
-			conformation::Residue const & res,
-			bool pre_proline,
-			std::string atm1_name, std::string atm2_name,
-			int atm1idx, int atm2idx ) {
-	chemical::ResidueType const &restype = res.type();
+	chemical::ResidueType const & restype,
+	bool pre_proline,
+	std::string const & atm1_name,
+	std::string const & atm2_name,
+	int atm1idx,
+	int atm2idx
+) {
 
 	// use 'annotated sequence' to id this restype
 	std::string restag = get_restag( restype );
@@ -735,39 +833,47 @@ IdealParametersDatabase::lookup_length(
 	atm_name_single alt_tuple( atm1_name,atm2_name );
 	boost::unordered_map<atm_name_single,CartBondedParametersOP>::iterator a_it = length_table->find( alt_tuple );
 	if ( a_it != length_table->end() ) {
-		 return CartBondedParametersCAP(*a_it->second);
+		 return a_it->second;
 	}
 
 	// 2 lookup in bb-indep table
 	boost::unordered_map<atm_name_pair,CartBondedParametersOP>::iterator b_it = bondlengths_indep_.find( tuple );
 	if ( b_it != bondlengths_indep_.end() ) {
-		 return CartBondedParametersCAP(*b_it->second);
+		 return b_it->second;
 	}
 
 	atm_name_pair tuple_alt( "*", atm1_name,atm2_name );
 	b_it = bondlengths_indep_.find( tuple_alt );
 	if ( b_it != bondlengths_indep_.end() ) {
-		return CartBondedParametersCAP(*b_it->second);
+		return b_it->second;
 	}
 
 	// 3 build from ideal, add to bb-indep table
 	Real Kd, d0;
-	lookup_bondlength_buildideal( res, atm1idx, atm2idx, Kd, d0 );
+	lookup_bondlength_buildideal( restype, atm1idx, atm2idx, Kd, d0 );
 	bondlengths_indep_[ tuple ] = new BBIndepCartBondedParameters( d0, Kd );
 	TR << "Adding undefined length "
 	   << tuple.get<0>() << ": " << tuple.get<1>() << "," << tuple.get<2>() << "," << " to DB with"
-	   << " d0 = " << d0 << " , Kd = " << Kd << std::endl; 
+	   << " d0 = " << d0 << " , Kd = " << Kd << std::endl;
 
-	return CartBondedParametersCAP(*bondlengths_indep_[ tuple ]);
+	return bondlengths_indep_[ tuple ];
 }
 
 
 
 // old-style interface to database
 // somewhat slow as it will always build the ideal residue on the fly
-void													
-IdealParametersDatabase::lookup_torsion_legacy( core::chemical::ResidueType const & restype,
-    int atm1, int atm2, int atm3, int atm4, Real &Kphi, Real &phi0, Real &phi_step ) {
+void
+IdealParametersDatabase::lookup_torsion_legacy(
+	core::chemical::ResidueType const & restype,
+	int atm1,
+	int atm2,
+	int atm3,
+	int atm4,
+	Real & Kphi,
+	Real & phi0,
+	Real &phi_step
+) {
 	using namespace core::chemical;
 
 	Kphi=k_torsion_; // default
@@ -818,7 +924,7 @@ IdealParametersDatabase::lookup_torsion_legacy( core::chemical::ResidueType cons
 		y = newres->atom( atm2 ).xyz();
 		z = newres->atom( atm3 ).xyz();
 		w = newres->atom( atm4 ).xyz();
-	
+
 		phi0 = numeric::dihedral_radians ( x,y,z,w );
 
 		//////// exceptions!
@@ -845,15 +951,15 @@ IdealParametersDatabase::lookup_torsion_legacy( core::chemical::ResidueType cons
 			Kphi=0.0; phi0=0.0;
 		}
 		if ( restype.aa() == aa_arg  &&
-				(   restype.atom_name(atm1) == " NH1" || restype.atom_name(atm4) == " NH1" 
+				(   restype.atom_name(atm1) == " NH1" || restype.atom_name(atm4) == " NH1"
 				 || restype.atom_name(atm1) == " NH2" || restype.atom_name(atm4) == " NH2") ) {
-			phi_step = numeric::constants::f::pi;
+			phi_step = numeric::constants::d::pi;
 		}
-		if ( restype.has_variant_type(chemical::LOWER_TERMINUS) && 
+		if ( restype.has_variant_type(chemical::LOWER_TERMINUS) &&
 				 ( ( restype.atom_name(atm2) == " N  " && restype.atom_name(atm3) == " CA ") ||
 					 ( restype.atom_name(atm3) == " N  " && restype.atom_name(atm2) == " CA ")  ) ) {
 			Kphi=k_torsion_proton_;
-			phi_step = 2.0*numeric::constants::f::pi/3.0;
+			phi_step = 2.0*numeric::constants::d::pi/3.0;
 		}
 
 		if (proton_chi) {
@@ -868,8 +974,15 @@ IdealParametersDatabase::lookup_torsion_legacy( core::chemical::ResidueType cons
 // old-style interface to database
 // somewhat slow as it will always build the ideal residue on the fly
 void
-IdealParametersDatabase::lookup_angle_legacy( core::pose::Pose const & pose, core::conformation::Residue const & res,
-	  int atm1, int atm2, int atm3, Real &Ktheta, Real &theta0) {
+IdealParametersDatabase::lookup_angle_legacy(
+	core::pose::Pose const & /*pose*/,
+	core::conformation::Residue const & res,
+	int atm1,
+	int atm2,
+	int atm3,
+	Real & Ktheta,
+	Real & theta0
+) {
 	using namespace core::chemical;
 
 	Ktheta=k_angle_;
@@ -878,10 +991,10 @@ IdealParametersDatabase::lookup_angle_legacy( core::pose::Pose const & pose, cor
 
 	// Create mini-conformation for idealized residue
 	conformation::ResidueOP newres = conformation::ResidueFactory::create_residue( restype );
-	
+
 	// use these for mm Ktheta lookup
-	Size mmatm1, mmatm2, mmatm3;						
-	
+	//Size mmatm1, mmatm2, mmatm3;
+
 	// get angle
 	numeric::xyzVector<core::Real> x,y,z; // atom coords
 	if (atm1 > 0) {
@@ -904,7 +1017,7 @@ IdealParametersDatabase::lookup_angle_legacy( core::pose::Pose const & pose, cor
 	}
 
 	theta0 = numeric::angle_radians ( x,y,z );
-	
+
 	//fpd ignore proline C-ND which is handled by pro_close
 	if (restype.aa() == core::chemical::aa_pro) {
 		bool hasCD = (atm1>0 && restype.atom_name(atm1)==" CD ")
@@ -936,8 +1049,14 @@ IdealParametersDatabase::lookup_angle_legacy( core::pose::Pose const & pose, cor
 // old-style interface to database
 // somewhat slow as it will always build the ideal residue on the fly
 void
-IdealParametersDatabase::lookup_length_legacy( core::pose::Pose const & pose, core::conformation::Residue const & res,
-		int atm1, int atm2, Real &Kd, Real &d0 )
+IdealParametersDatabase::lookup_length_legacy(
+	core::pose::Pose const & /*pose*/,
+	core::conformation::Residue const & res,
+	int atm1,
+	int atm2,
+	Real &Kd,
+	Real &d0
+)
 {
 	using namespace core::chemical;
 
@@ -964,7 +1083,7 @@ IdealParametersDatabase::lookup_length_legacy( core::pose::Pose const & pose, co
 	}
 
 	d0 = (x-y).length();
-	  
+
 	if (restype.aa() == core::chemical::aa_pro &&
 	    (atm1>0 && atm2>0) &&
 	    ( ( restype.atom_name(atm1) == " CD " && restype.atom_name(atm2) == " N  ") ||
@@ -975,22 +1094,296 @@ IdealParametersDatabase::lookup_length_legacy( core::pose::Pose const & pose, co
 	return;
 }
 
+ResidueCartBondedParameters const &
+IdealParametersDatabase::parameters_for_restype(
+	core::chemical::ResidueType const & restype,
+	bool prepro
+)
+{
+	std::map< chemical::ResidueType const *, ResidueCartBondedParametersOP > const & resdatamap = prepro ?
+		prepro_restype_data_ : nonprepro_restype_data_;
+
+	std::map< chemical::ResidueType const *, ResidueCartBondedParametersOP >::const_iterator iter = resdatamap.find( & restype );
+	if ( iter == resdatamap.end() ) {
+		create_parameters_for_restype( restype, prepro );
+		std::map< chemical::ResidueType const *, ResidueCartBondedParametersOP >::const_iterator iter2 = resdatamap.find( & restype );
+		assert ( iter2 != resdatamap.end() );
+		return *iter2->second;
+	}
+	return *iter->second;
+}
+
+
+void
+IdealParametersDatabase::create_parameters_for_restype(
+	core::chemical::ResidueType const & rsd_type,
+	bool prepro
+)
+{
+	ResidueCartBondedParametersOP restype_params = new ResidueCartBondedParameters;
+
+	for ( Size dihe = 1; dihe <= rsd_type.ndihe(); ++dihe ){
+		// get ResidueType ints
+		Size rt1 = ( rsd_type.dihedral( dihe ) ).key1();
+		Size rt2 = ( rsd_type.dihedral( dihe ) ).key2();
+		Size rt3 = ( rsd_type.dihedral( dihe ) ).key3();
+		Size rt4 = ( rsd_type.dihedral( dihe ) ).key4();
+		ResidueCartBondedParameters::Size4 ids;
+		ids[ 1 ] = rt1; ids[ 2 ] = rt2; ids[ 3 ] = rt3; ids[ 4 ] = rt4;
+
+		// lookup Kphi and phi0
+		std::string atm1name=rsd_type.atom_name(rt1); boost::trim(atm1name);
+		std::string atm2name=rsd_type.atom_name(rt2); boost::trim(atm2name);
+		std::string atm3name=rsd_type.atom_name(rt3); boost::trim(atm3name);
+		std::string atm4name=rsd_type.atom_name(rt4); boost::trim(atm4name);
+		CartBondedParametersCOP tor_params = lookup_torsion(rsd_type,
+			atm1name,atm2name,atm3name,atm4name );
+
+		if ( !tor_params || tor_params->is_null() ) continue;
+
+		restype_params->add_torsion_parameter( ids, tor_params );
+	}
+
+	// for each angle in the residue
+	for ( Size bondang = 1; bondang <= rsd_type.num_bondangles(); ++bondang ) {
+		// get ResidueType ints
+		Size rt1 = ( rsd_type.bondangle( bondang ) ).key1();
+		Size rt2 = ( rsd_type.bondangle( bondang ) ).key2();
+		Size rt3 = ( rsd_type.bondangle( bondang ) ).key3();
+		ResidueCartBondedParameters::Size3 ids;
+		ids[ 1 ] = rt1; ids[ 2 ] = rt2; ids[ 3 ] = rt3;
+
+		// lookup Ktheta and theta0
+		std::string atm1name=rsd_type.atom_name(rt1); boost::trim(atm1name);
+		std::string atm2name=rsd_type.atom_name(rt2); boost::trim(atm2name);
+		std::string atm3name=rsd_type.atom_name(rt3); boost::trim(atm3name);
+		CartBondedParametersCOP ang_params = lookup_angle( rsd_type, prepro,
+			atm1name,atm2name,atm3name, rt1,rt2,rt3 );
+
+		if ( ang_params->is_null() ) continue;
+
+		restype_params->add_angle_parameter( ids, ang_params );
+	}
+
+	// for each bond
+	for (Size atm_i=1; atm_i<=rsd_type.natoms(); ++atm_i) {
+		chemical::AtomIndices atm_nbrs = rsd_type.nbrs( atm_i );
+		for (Size j=1; j<=atm_nbrs.size(); ++j) {
+			Size atm_j = atm_nbrs[j];
+			if ( atm_i < atm_j ) { // only score each bond once -- use restype index to define ordering
+
+				ResidueCartBondedParameters::Size2 ids;
+				ids[1] = atm_i; ids[2] = atm_j;
+
+				// lookup Kd and d0
+				std::string atm1name = rsd_type.atom_name(atm_i); boost::trim(atm1name);
+				std::string atm2name = rsd_type.atom_name(atm_j); boost::trim(atm2name);
+				CartBondedParametersCOP len_params = lookup_length(rsd_type, prepro,
+					atm1name,atm2name, atm_i, atm_j );
+
+				if ( len_params->is_null() ) continue;
+
+				restype_params->add_length_parameter( ids, len_params );
+			}
+		}
+	}
+
+	// improper torsions
+	{
+		using namespace core::chemical;
+
+		std::string atm1, atm2, atm3, atm4;
+		if (rsd_type.aa() == aa_asp && rsd_type.has( "CB" ) && rsd_type.has( "CG" ) && rsd_type.has( "OD1" ) && rsd_type.has( "OD2" ) ) {
+			// asp CB-CG-OD1-OD2
+			atm1 = "CB"; atm2 = "CG"; atm3 = "OD1"; atm4 = "OD2";
+		} else if (rsd_type.aa() == aa_glu && rsd_type.has( "CG" ) && rsd_type.has( "CD" ) && rsd_type.has( "OE1" ) && rsd_type.has( "OE2" )) {
+			// glu CG-CD-OE1-OE2
+			atm1 = "CG"; atm2 = "CD"; atm3 = "OE1"; atm4 = "OE2";
+		} else if (rsd_type.aa() == aa_asn && rsd_type.has( "CB" ) && rsd_type.has( "CG" ) && rsd_type.has( "OD1" ) && rsd_type.has( "ND2" )) {
+			// asn CB-CG-OD-ND
+			atm1 = "CB"; atm2 = "CG"; atm3 = "OD1"; atm4 = "ND2";
+		} else if (rsd_type.aa() == aa_gln && rsd_type.has( "CG" ) && rsd_type.has( "CD" ) && rsd_type.has( "OE1" ) && rsd_type.has( "NE2" )) {
+			// gln CG-CD-OE-NE
+			atm1 = "CG"; atm2 = "CD"; atm3 = "OE1"; atm4 = "NE2";
+		}
+
+		if ( atm1 != "" ) {
+			ResidueCartBondedParameters::Size4 ids;
+			ids[1] = rsd_type.atom_index(atm1);
+			ids[2] = rsd_type.atom_index(atm2);
+			ids[3] = rsd_type.atom_index(atm3);
+			ids[4] = rsd_type.atom_index(atm4);
+
+			CartBondedParametersCOP tor_params = lookup_torsion( rsd_type, atm1, atm2, atm3, atm4 );
+			if ( ! tor_params->is_null() ) {
+				restype_params->add_improper_torsion_parameter( ids, tor_params );
+			}
+		}
+	}
+
+	/// Keep track of the bond angles and lengths that are used in the backbone dependent calculations
+
+	// loop over all bb-dep angles and bonds;
+	// hardcode the bbdep angles and lengths to save a bit of time
+	// connection IDs are hardcoded ... is this a problem? APL: Yes, c- or n- terminal disulfides would give you
+	// trouble, but the connection IDs don't have to be hard coded.
+
+	/// backbone dependent bond lengths
+	bool is_nterm = rsd_type.aa() <= chemical::num_canonical_aas && rsd_type.has_variant_type( core::chemical::LOWER_TERMINUS );
+	bool is_cterm = rsd_type.aa() <= chemical::num_canonical_aas && rsd_type.has_variant_type( core::chemical::UPPER_TERMINUS );
+	for (int i=1; i<=5; ++i) {
+		if (i==1 && is_nterm) continue;
+		if (i==3 && rsd_type.aa() == core::chemical::aa_gly) continue;
+
+		std::string atm1,atm2;
+		core::Size rt1,rt2;
+		if (i==1) { atm1="C";  atm2="N";  rt1 = 0;                           rt2 = rsd_type.atom_index(" N  ");}
+		if (i==2) { atm1="N";  atm2="CA"; rt1 = rsd_type.atom_index(" N  "); rt2 = rsd_type.atom_index(" CA "); }
+		if (i==3) { atm1="CA"; atm2="CB"; rt1 = rsd_type.atom_index(" CA "); rt2 = rsd_type.atom_index(" CB "); }
+		if (i==4) { atm1="CA"; atm2="C";  rt1 = rsd_type.atom_index(" CA "); rt2 = rsd_type.atom_index(" C  "); }
+		if (i==5) { atm1="C";  atm2="O";  rt1 = rsd_type.atom_index(" C  "); rt2 = rsd_type.atom_index(" O  "); }
+
+		ResidueCartBondedParameters::Size2 ids;
+		ids[1] = rt1; ids[2] = rt2;
+
+		CartBondedParametersCOP len_params = lookup_length( rsd_type, is_nterm ? false : prepro, atm1, atm2, rt1, rt2 );
+		restype_params->add_bbdep_length_parameter( ids, len_params );
+	}
+
+	// backbone dependent bond angles
+	for (int i=1; i<=7; ++i) {
+		if ((i==2 || i==4) && rsd_type.aa() == core::chemical::aa_gly) continue;
+		if (i==1 && is_nterm) continue;
+		if ((i==6 || i==7) && is_cterm) continue;
+
+		std::string atm1,atm2,atm3;
+		core::Size rt1,rt2,rt3;
+		if (i==1) { atm1="C";  atm2="N";  atm3="CA"; rt1=0;                           rt2=rsd_type.atom_index(" N  "); rt3=rsd_type.atom_index(" CA ");}
+		if (i==2) { atm1="N";  atm2="CA"; atm3="CB"; rt1=rsd_type.atom_index(" N  "); rt2=rsd_type.atom_index(" CA "); rt3=rsd_type.atom_index(" CB "); }
+		if (i==3) { atm1="N";  atm2="CA"; atm3="C";  rt1=rsd_type.atom_index(" N  "); rt2=rsd_type.atom_index(" CA "); rt3=rsd_type.atom_index(" C  "); }
+		if (i==4) { atm1="CB"; atm2="CA"; atm3="C";  rt1=rsd_type.atom_index(" CB "); rt2=rsd_type.atom_index(" CA "); rt3=rsd_type.atom_index(" C  "); }
+		if (i==5) { atm1="CA"; atm2="C";  atm3="O";  rt1=rsd_type.atom_index(" CA "); rt2=rsd_type.atom_index(" C  "); rt3=rsd_type.atom_index(" O  "); }
+		if (i==6) { atm1="CA"; atm2="C";  atm3="N";  rt1=rsd_type.atom_index(" CA "); rt2=rsd_type.atom_index(" C  "); rt3=0; }
+		if (i==7) { atm1="O";  atm2="C";  atm3="N";  rt1=rsd_type.atom_index(" O  "); rt2=rsd_type.atom_index(" C  "); rt3=0; }
+
+		ResidueCartBondedParameters::Size3 ids;
+		ids[1] = rt1; ids[2] = rt2; ids[3] = rt3;
+
+		CartBondedParametersCOP ang_params = lookup_angle(rsd_type, prepro, atm1,atm2,atm3, rt1,rt2,rt3 );
+		restype_params->add_bbdep_angle_parameter( ids, ang_params );
+
+	}
+
+	// atom pairs near the upper connect:
+	{
+		if ( rsd_type.upper_connect_id() != 0 ) {
+			utility::vector1< chemical::two_atom_set > const & upconn_ats(
+				rsd_type.atoms_within_one_bond_of_a_residue_connection( rsd_type.upper_connect_id() ));
+			for ( Size ii = 1; ii <= upconn_ats.size(); ++ii ) {
+
+				std::string atm1name=rsd_type.atom_name( upconn_ats[ii].key2() ); boost::trim(atm1name);
+				std::string atm2name=rsd_type.atom_name( upconn_ats[ii].key1() ); boost::trim(atm2name);
+				std::string atm3name="N";
+
+				// lookup Ktheta and theta0
+				CartBondedParametersCOP ang_params = lookup_angle( rsd_type, prepro,
+					atm1name, atm2name, atm3name, upconn_ats[ii].key2(), upconn_ats[ii].key1(),
+					-1 * ( (int) rsd_type.upper_connect_id() ));
+				ResidueCartBondedParameters::Size3 inds;
+				inds[1] = upconn_ats[ii].key2();
+				inds[2] = upconn_ats[ii].key1();
+				inds[3] = 0;
+				restype_params->add_upper_connect_angle_params( inds, ang_params );
+			}
+		}
+	}
+
+	// atom pairs near the lower connect:
+	{
+		if ( rsd_type.lower_connect_id() != 0 ) {
+			utility::vector1< chemical::two_atom_set > const & loconn_ats(
+				rsd_type.atoms_within_one_bond_of_a_residue_connection( rsd_type.lower_connect_id() ));
+			for ( Size ii = 1; ii <= loconn_ats.size(); ++ii ) {
+
+				std::string atm1name=rsd_type.atom_name( loconn_ats[ii].key2() ); boost::trim(atm1name);
+				std::string atm2name=rsd_type.atom_name( loconn_ats[ii].key1() ); boost::trim(atm2name);
+				std::string atm3name="C";
+
+				// lookup Ktheta and theta0
+				CartBondedParametersCOP ang_params = lookup_angle( rsd_type, prepro,
+					atm1name, atm2name, atm3name, loconn_ats[ii].key2(), loconn_ats[ii].key1(),
+					-1 * ( (int) rsd_type.lower_connect_id() ));
+				ResidueCartBondedParameters::Size3 inds;
+				inds[1] = loconn_ats[ii].key2();
+				inds[2] = loconn_ats[ii].key1();
+				inds[3] = 0;
+				restype_params->add_lower_connect_angle_params( inds, ang_params );
+			}
+		}
+	}
+
+	/// Atom IDs
+	if ( rsd_type.has( "N" ) ) {
+		restype_params->bb_N_index( rsd_type.atom_index( "N" ) );
+	}
+	if ( rsd_type.has( "CA" ) ) {
+		restype_params->bb_CA_index( rsd_type.atom_index( "CA" ) );
+	}
+	if ( rsd_type.has( "C" ) ) {
+		restype_params->bb_C_index( rsd_type.atom_index( "C" ) );
+	}
+	if ( rsd_type.has( "O" ) ) {
+		restype_params->bb_O_index( rsd_type.atom_index( "O" ) );
+	}
+	if ( rsd_type.has( "H" ) ) {
+		restype_params->bb_H_index( rsd_type.atom_index( "H" ) );
+	}
+
+	/// ca_cprev_n_h improper torsion
+	if ( restype_params->bb_N_index() != 0 && restype_params->bb_H_index() != 0 && restype_params->bb_CA_index() != 0 ) {
+		CartBondedParametersCOP tor_params = lookup_torsion( rsd_type, "CA", "C", "N", "H" );
+		restype_params->ca_cprev_n_h_interres_torsion_params( tor_params );
+	}
+
+	// ca_nnext_c_o improper torsion
+	if ( restype_params->bb_C_index() != 0 && restype_params->bb_O_index() != 0 && restype_params->bb_CA_index() != 0 ) {
+		CartBondedParametersCOP tor_params = lookup_torsion( rsd_type, "CA", "N", "C", "O" );
+		restype_params->ca_nnext_c_o_interres_torsion_params( tor_params );
+	}
+
+	// caprev_n bond length
+	if ( restype_params->bb_N_index() != 0 && rsd_type.lower_connect_id() != 0 ) {
+		CartBondedParametersCOP len_params = lookup_length( rsd_type, prepro, "N", "C", restype_params->bb_N_index(), -1 * ((int) rsd_type.lower_connect_id() ) );
+		assert( len_params );
+		restype_params->cprev_n_bond_length_params( len_params );
+	}
+
+	if ( prepro ) {
+		prepro_restype_data_[ & rsd_type ] = restype_params;
+	} else {
+		nonprepro_restype_data_[ & rsd_type ] = restype_params;
+	}
+
+}
+
 
 
 //////////////////////
 /// EnergyMethod
 CartesianBondedEnergy::CartesianBondedEnergy( methods::EnergyMethodOptions const & options ) :
-	parent( new CartesianBondedEnergyCreator ) {
+	parent( new CartesianBondedEnergyCreator )
+{
 	// if flag _or_ energy method wants a linear potential, make the potential linear
-	linear_bonded_potential_ = 
+	linear_bonded_potential_ =
 		basic::options::option[ basic::options::OptionKeys::score::linear_bonded_potential ]() ||
 		options.get_cartesian_bonded_linear();
 
 	// initialize databases
 	core::Real cartbonded_len, cartbonded_ang, cartbonded_tors, cartbonded_proton , cartbonded_improper;
 	options.get_cartesian_bonded_parameters( cartbonded_len, cartbonded_ang, cartbonded_tors, cartbonded_proton , cartbonded_improper );
-	if (!db_)
+	if (!db_) {
 		db_ = new IdealParametersDatabase(cartbonded_len, cartbonded_ang, cartbonded_tors, cartbonded_proton , cartbonded_improper);
+	}
 }
 
 CartesianBondedEnergy::CartesianBondedEnergy( CartesianBondedEnergy const & src ) : parent( src ) {
@@ -1005,11 +1398,11 @@ CartesianBondedEnergy::clone() const {
 }
 
 
-methods::LongRangeEnergyType
-CartesianBondedEnergy::long_range_type() const { return methods::cart_bonded_lr; }
-
 void
-CartesianBondedEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const {
+CartesianBondedEnergy::setup_for_scoring(
+	pose::Pose & pose,
+	ScoreFunction const &
+) const {
 	using namespace methods;
 
 	// create LR energy container
@@ -1056,166 +1449,6 @@ CartesianBondedEnergy::defines_residue_pair_energy(
 }
 
 
-void
-CartesianBondedEnergy::eval_improper_torsions(
-   conformation::Residue const & rsd1,
-	 conformation::Residue const & rsd2,
-	 pose::Pose const & pose,
-	 ScoreFunction const & ,
-	 EnergyMap & emap
-) const {
-	using namespace core::chemical;
-	using numeric::constants::f::pi;
-
-	// backbone C-N-CA-H
-	assert( rsd1.seqpos() < rsd2.seqpos() );
-	conformation::Residue const &res_low = rsd1;
-	conformation::Residue const &res_high = rsd2;
-
-	core::Real energy_torsion = 0.0;
-
-	if (!res_low.is_protein() || !res_high.is_protein()) return;
-
-	if (res_high.aa() != aa_pro && res_high.has(" H  ") ) {  // check for terminal variants
-		core::Size atm1 = res_high.atom_index(" CA ");
-		core::Size atm2 = res_low.atom_index(" C  ");
-		core::Size atm3 = res_high.atom_index(" N  ");
-		core::Size atm4 = res_high.atom_index(" H  ");
-
-		CartBondedParametersCAP tor_params = db_->lookup_torsion(res_low, "CA","C","N","H");
-		runtime_assert( tor_params ); //fpd  fail if this is not in DB
-		if (!tor_params->is_null()) {  // however, if it is in the db but with 0 weight, that is OK
-			Real Kphi = tor_params->K(0,0), phi0=tor_params->mu(0,0), phi_step=2*pi/tor_params->period();
-			Real angle = numeric::dihedral_radians
-				( res_high.atom( atm1 ).xyz(), res_low.atom( atm2 ).xyz(), res_high.atom( atm3 ).xyz(), res_high.atom( atm4 ).xyz() );
-
-			Real del_phi = basic::subtract_radian_angles(angle, phi0);
-			del_phi = basic::periodic_range( del_phi, phi_step );
-	
-			if (pose.pdb_info() && 0.5*Kphi*del_phi*del_phi > CUTOFF) {
-				TR.Debug << pose.pdb_info()->name() << " seqpos: " << res_low.seqpos() << " pdbpos: " << pose.pdb_info()->number(res_low.seqpos()) << " improper torsion: " <<
-					res_low.name() << " : " <<
-					res_high.atom_name( atm1 ) << " , " << res_low.atom_name( atm2 ) << " , " <<
-					res_high.atom_name( atm3 ) << " , " << res_high.atom_name( atm4 ) << "   (" <<
-					Kphi << ") " << angle << " " << phi0 << "    sc=" << 0.5*Kphi*del_phi*del_phi << std::endl;
-			}
-	
-			if (linear_bonded_potential_ && std::fabs(del_phi)>1) 
-				energy_torsion += 0.5*Kphi*std::fabs(del_phi);
-			else 
-				energy_torsion += 0.5*Kphi*del_phi*del_phi;
-		}
-	}
-
-	{
-		core::Size atm1 = res_low.atom_index(" CA ");
-		core::Size atm2 = res_high.atom_index(" N  ");
-		core::Size atm3 = res_low.atom_index(" C  ");
-		core::Size atm4 = res_low.atom_index(" O  ");
-
-		CartBondedParametersCAP tor_params = db_->lookup_torsion(res_low, "CA", "N", "C", "O");
-		runtime_assert( tor_params ); //fpd  fail if this is not in DB
-		if (!tor_params->is_null()) {  // however, if it is in the db but with 0 weight, that is OK
-			Real Kphi = tor_params->K(0,0), phi0=tor_params->mu(0,0), phi_step=2*pi/tor_params->period();
-			Real angle = numeric::dihedral_radians
-				( res_low.atom( atm1 ).xyz(), res_high.atom( atm2 ).xyz(), res_low.atom( atm3 ).xyz(), res_low.atom( atm4 ).xyz() );
-	
-			Real del_phi = basic::subtract_radian_angles(angle, phi0);
-			del_phi = basic::periodic_range( del_phi, phi_step );
-	
-			if (pose.pdb_info() && 0.5*Kphi*del_phi*del_phi > CUTOFF) {
-				TR.Debug << pose.pdb_info()->name() << " seqpos: " << res_low.seqpos() << " pdbpos: " << pose.pdb_info()->number(res_low.seqpos()) << " improper torsion: " <<
-					res_low.name() << " : " <<
-					res_low.atom_name( atm1 ) << " , " << res_high.atom_name( atm2 ) << " , " <<
-					res_low.atom_name( atm3 ) << " , " << res_low.atom_name( atm4 ) << "   (" <<
-					Kphi << ") " << angle << " " << phi0 << "    sc="  << 0.5*Kphi*del_phi*del_phi << std::endl;
-			}
-	
-			if (linear_bonded_potential_ && std::fabs(del_phi)>1) 
-				energy_torsion += 0.5*Kphi*std::fabs(del_phi);
-			else 
-				energy_torsion += 0.5*Kphi*del_phi*del_phi;
-		}
-	}
-
-	emap[ cart_bonded_torsion ] += energy_torsion;
-	emap[ cart_bonded ] += energy_torsion; // potential double counting
-}
-
-void
-CartesianBondedEnergy::eval_improper_torsions(
-   conformation::Residue const & rsd,
-	 pose::Pose const & pose,
-	 ScoreFunction const & ,
-	 EnergyMap & emap
-) const {
-	using namespace core::chemical;
-	using numeric::constants::f::pi;
-
-	if (!pose.is_fullatom()) return;
-
-	std::string atm1, atm2, atm3, atm4;
-	core::Size rt1, rt2, rt3, rt4;
-	if (rsd.aa() == aa_asp) {
-		// asp CB-CG-OD1-OD2
-		atm1 = "CB"; atm2 = "CG"; atm3 = "OD1"; atm4 = "OD2";
-	} else if (rsd.aa() == aa_glu) {
-		// glu CG-CD-OE1-OE2
-		atm1 = "CG"; atm2 = "CD"; atm3 = "OE1"; atm4 = "OE2";
-	} else if (rsd.aa() == aa_asn) {
-		// asn CB-CG-OD-ND
-		atm1 = "CB"; atm2 = "CG"; atm3 = "OD1"; atm4 = "ND2";
-	} else if (rsd.aa() == aa_gln) {
-		// gln CG-CD-OE-NE
-		atm1 = "CG"; atm2 = "CD"; atm3 = "OE1"; atm4 = "NE2";
-	} else {
-		return;
-	}
-	rt1 = rsd.atom_index(atm1);
-	rt2 = rsd.atom_index(atm2);
-	rt3 = rsd.atom_index(atm3);
-	rt4 = rsd.atom_index(atm4);
-
-	CartBondedParametersCAP tor_params = db_->lookup_torsion(rsd, atm1, atm2, atm3, atm4);
-	runtime_assert( tor_params ); //fpd  fail if this is not in DB
-	if (tor_params->is_null())
-		return;  // however, if it is in the db but with 0 weight, that is OK
-
-	Real Kphi = tor_params->K(0,0), phi0=tor_params->mu(0,0), phi_step=2*pi/tor_params->period();
-	Real angle = numeric::dihedral_radians
-		( rsd.atom( rt1 ).xyz(), rsd.atom( rt2 ).xyz(), rsd.atom( rt3 ).xyz(), rsd.atom( rt4 ).xyz() );
-	Real del_phi = basic::subtract_radian_angles(angle, phi0);
-	del_phi = basic::periodic_range( del_phi, phi_step );
-
-	if (pose.pdb_info() && 0.5*Kphi*del_phi*del_phi > CUTOFF) {
-		TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd.seqpos() << " pdbpos: " << pose.pdb_info()->number(rsd.seqpos()) << " improper torsion: " <<
-			rsd.name() << " : " <<
-			atm1 << " , " << atm2 << " , " <<
-			atm3 << " , " << atm4 << "   (" <<
-			Kphi << ") " << angle << " " << phi0 << "    sc="  << 0.5*Kphi*del_phi*del_phi << std::endl;
-	}
-
-	core::Real energy_torsion;
-	if (linear_bonded_potential_ && std::fabs(del_phi)>1) 
-		energy_torsion = 0.5*Kphi*std::fabs(del_phi);
-	else 
-		energy_torsion = 0.5*Kphi*del_phi*del_phi;
-
-	emap[ cart_bonded_torsion ] += energy_torsion;
-	emap[ cart_bonded ] += energy_torsion; // potential double counting
-}
-
-
-// because of preproline potential, everything is done in res_pair
-void
-CartesianBondedEnergy::eval_intrares_energy(
-	conformation::Residue const &,
-	pose::Pose const &,
-	ScoreFunction const &,
-	EnergyMap &
-) const
-{
-}
 
 void
 CartesianBondedEnergy::residue_pair_energy(
@@ -1233,44 +1466,42 @@ CartesianBondedEnergy::residue_pair_energy(
 	}
 }
 
-void
-CartesianBondedEnergy::residue_pair_energy_sorted(
-   conformation::Residue const & rsd1,
-	 conformation::Residue const & rsd2,
-	 pose::Pose const & pose,
-	 ScoreFunction const & sf,
-	 EnergyMap & emap
-) const {
 
+// because of preproline potential, everything is done in res_pair
+void
+CartesianBondedEnergy::eval_intrares_energy(
+	conformation::Residue const &,
+	pose::Pose const &,
+	ScoreFunction const &,
+	EnergyMap &
+) const
+{
+}
+
+///////////////////////////
+///
+void
+CartesianBondedEnergy::eval_residue_pair_derivatives(
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	ResSingleMinimizationData const &,
+	ResSingleMinimizationData const &,
+	ResPairMinimizationData const & /*min_data*/,
+	pose::Pose const & pose,
+	EnergyMap const & weights,
+	utility::vector1< DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< DerivVectorPair > & r2_atom_derivs
+) const
+{
 	using namespace numeric;
 
 	assert( rsd2.seqpos() > rsd1.seqpos() );
-
-	core::Size resid = rsd1.seqpos();
-	bool is_cterm = (pose.fold_tree().is_cutpoint( resid ));
-	bool preproline = (!is_cterm && rsd2.aa() == core::chemical::aa_pro);
+	bool preproline = (rsd2.aa()==core::chemical::aa_pro);
 
 	if ( rsd1.aa() == core::chemical::aa_vrt) return;
 
-	// get subcomponents
-	eval_singleres_energy(rsd1, pose, sf, emap, preproline); // calls singleres improper
-
-	// last residue won't ever be rsd1, so we need to explicitly call eval_singleres
-	Size nres = pose.total_residue();
-	if( core::pose::symmetry::is_symmetric(pose) ) nres = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
-	if (rsd2.seqpos() == nres) {
-		eval_singleres_energy(rsd2, pose, sf, emap, false);
-	}
-
-	// bail out if the residues aren't bonded or we cross a cutpoint
-	if (!rsd1.is_bonded(rsd2)) { return; }
-	if ( is_cterm ) { return; }
-
-	eval_improper_torsions( rsd1, rsd2, pose, sf, emap );
-
-	Real energy_angle=0, energy_length=0;
-	chemical::ResidueType const & rsd1_type = rsd1.type();
-	chemical::ResidueType const & rsd2_type = rsd2.type();
+	ResidueCartBondedParameters const & res1params = db_->parameters_for_restype( rsd1.type(), preproline );
+	ResidueCartBondedParameters const & res2params = db_->parameters_for_restype( rsd2.type(), false );
 
 	// get phi,psis for bb-dep angles/lengths
 	Real phi1=0,psi1=0,phi2=0,psi2=0;
@@ -1283,306 +1514,58 @@ CartesianBondedEnergy::residue_pair_energy_sorted(
 		psi2 = nonnegative_principal_angle_degrees( rsd2.mainchain_torsion(2));
 	}
 
-	utility::vector1< Size > const & r1_resconn_ids( rsd1.connections_to_residue( rsd2 ) );
-	for ( Size ii = 1; ii <= r1_resconn_ids.size(); ++ii ) {
-		Size const resconn_id1( r1_resconn_ids[ii] );
-		Size const resconn_id2( rsd1.residue_connection_conn_id( resconn_id1 ) );
+	// get subcomponents
+	eval_singleres_derivatives( rsd1, res1params, phi1, psi1, weights, r1_atom_derivs );
 
-		Size const resconn_atomno1( rsd1.residue_connection( resconn_id1 ).atomno() );
-		Size const resconn_atomno2( rsd2.residue_connection( resconn_id2 ).atomno() );
-
-		// compute bond-angle energies with two atoms on rsd1
-		utility::vector1< chemical::two_atom_set > const & rsd1_atoms_wi1_bond_of_ii(
-			rsd1_type.atoms_within_one_bond_of_a_residue_connection( resconn_id1 ));
-		for ( Size jj = 1; jj <= rsd1_atoms_wi1_bond_of_ii.size(); ++jj ) {
-			assert( rsd1_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno1 );
-			Size const res1_lower_atomno = rsd1_atoms_wi1_bond_of_ii[ jj ].key2();
-
-			Real const angle = numeric::angle_radians(
-				rsd1.atom( res1_lower_atomno ).xyz(),
-				rsd1.atom( resconn_atomno1 ).xyz(),
-				rsd2.atom( resconn_atomno2 ).xyz() );
-			std::string atm1name=rsd1.atom_name(res1_lower_atomno); boost::trim(atm1name);
-			std::string atm2name=rsd1.atom_name(resconn_atomno1); boost::trim(atm2name);
-			std::string atm3name=rsd2.atom_name(resconn_atomno2); boost::trim(atm3name);
-
-			// lookup Ktheta and theta0
-			CartBondedParametersCAP ang_params = db_->lookup_angle(rsd1, preproline,
-				atm1name, atm2name, atm3name, res1_lower_atomno, resconn_atomno1, -resconn_id1);
-			if (ang_params->is_null()) continue;
-			Real Ktheta=ang_params->K(phi1,psi1), theta0=ang_params->mu(phi1,psi1);
-
-			if (pose.pdb_info() && 0.5*Ktheta*(angle-theta0)*(angle-theta0) > CUTOFF) {
-				TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd1.seqpos() 
-				   << " pdbpos: " << pose.pdb_info()->number(rsd1.seqpos()) << " angle rsd1: " << rsd1.name() << ":" << rsd1_type.atom_name( res1_lower_atomno ) << " , "
-				   << rsd1_type.atom_name( resconn_atomno1 ) << " , " << rsd2_type.atom_name( resconn_atomno2 )<< "   ("
-				   << Ktheta << ")   " << angle << "  " << theta0
-				   << "   sc=" << 0.5*Ktheta*(angle-theta0)*(angle-theta0) << std::endl;
-			}
-
-			// accumulate the energy
-			if (linear_bonded_potential_ && std::fabs(angle-theta0)>1) {
-				energy_angle += 0.5*Ktheta*std::fabs(angle-theta0);
-			} else {
-				energy_angle += 0.5*Ktheta*(angle-theta0) * (angle-theta0);
-			}
-		}
-
-		/// compute bond-angle energies with two atoms on rsd2
-		utility::vector1< chemical::two_atom_set > const & rsd2_atoms_wi1_bond_of_ii(
-			rsd2_type.atoms_within_one_bond_of_a_residue_connection( resconn_id2 ));
-		for ( Size jj = 1; jj <= rsd2_atoms_wi1_bond_of_ii.size(); ++jj ) {
-			assert( rsd2_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno2 );
-			Size const res2_lower_atomno = rsd2_atoms_wi1_bond_of_ii[ jj ].key2();
-
-			// lookup Ktheta and theta0
-			// set pre-proline to false here -- it refers to rsd2+1 which would make this three-body
-			std::string atm1name=rsd2.atom_name(res2_lower_atomno); boost::trim(atm1name);
-			std::string atm2name=rsd2.atom_name(resconn_atomno2); boost::trim(atm2name);
-			std::string atm3name=rsd1.atom_name(resconn_atomno1); boost::trim(atm3name);
-			CartBondedParametersCAP ang_params = db_->lookup_angle(rsd2, false,
-				atm1name, atm2name, atm3name, res2_lower_atomno, resconn_atomno2, -resconn_id2);
-			if (ang_params->is_null()) continue;
-			Real Ktheta=ang_params->K(phi2,psi2), theta0=ang_params->mu(phi2,psi2);
-
-			if (Ktheta == 0.0) continue;
-			Real const angle = numeric::angle_radians(
-				rsd2.atom( res2_lower_atomno ).xyz(),
-				rsd2.atom( resconn_atomno2 ).xyz(),
-				rsd1.atom( resconn_atomno1 ).xyz() );
-
-			if (pose.pdb_info() && 0.5*Ktheta*(angle-theta0)*(angle-theta0) > CUTOFF) {
-				TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd2.seqpos() 
-				   << " pdbpos: " << pose.pdb_info()->number(rsd2.seqpos()) << " angle rsd2: " << rsd2.name() << ":" << rsd2_type.atom_name( res2_lower_atomno ) << " , "
-			     << rsd2_type.atom_name( resconn_atomno2 ) << " , " << rsd1_type.atom_name( resconn_atomno1 )<< "   ("
-				   << Ktheta << ")   " << angle << "  " << theta0
-				   << "   sc=" << 0.5*Ktheta*(angle-theta0)*(angle-theta0) << std::endl;
-			}
-			
-			// accumulate the energy
-			if (linear_bonded_potential_ && std::fabs(angle-theta0)>1) {
-				energy_angle += 0.5*Ktheta*std::fabs(angle-theta0);
-			} else {
-				energy_angle += 0.5*Ktheta*(angle-theta0) * (angle-theta0);
-			}
-		}
-
-		/////////////
-		/// finally, compute the bondlength across the interface
-		Real length =
-			( rsd2.atom( resconn_atomno2 ).xyz() - rsd1.atom( resconn_atomno1 ).xyz() ).length();
-
-		// lookup Kd and d0
-		// again, pre-pro == false, definitions are based on pro as rsd2+1
-		std::string atm1name=rsd2.atom_name(resconn_atomno2); boost::trim(atm1name);
-		std::string atm2name=rsd1.atom_name(resconn_atomno1); boost::trim(atm2name);
-		CartBondedParametersCAP len_params = db_->lookup_length(rsd2, false,
-				atm1name, atm2name, resconn_atomno2, -resconn_id2);
-
-		if (len_params->is_null()) continue;
-		Real Kd=len_params->K(phi2,psi2), d0=len_params->mu(phi2,psi2);
-
-		if (pose.pdb_info() && 0.5*Kd*(length-d0) * (length-d0) > CUTOFF) {
-			TR.Debug << pose.pdb_info()->name() 
-			   << " pdbpos rsd1: " << pose.pdb_info()->number(rsd1.seqpos()) << " length rsd1 rsd2: " << rsd1.seqpos() << " -- " << rsd2.seqpos() << "  "
-			   << rsd1.name() << ":" << rsd1_type.atom_name( resconn_atomno1 ) << " , " << rsd2_type.atom_name( resconn_atomno2 )<< "   ("
-			   << Kd << ")   " << length << "  " << d0
-			   << "   sc=" << 0.5*Kd*(length-d0)*(length-d0) << std::endl;
-		}
-
-		// accumulate the energy
-		if (linear_bonded_potential_ && std::fabs(length-d0)>1) {
-			energy_length += 0.5*Kd*std::fabs(length-d0);
-		} else {
-			energy_length += 0.5*Kd*(length-d0)*(length-d0);
-		}
+	// cterm special case
+	Size nres = pose.total_residue();
+	if( core::pose::symmetry::is_symmetric(pose) ) nres = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
+	if (rsd2.seqpos() == nres) {
+		eval_singleres_derivatives(rsd2, res2params, phi2, psi2, weights, r2_atom_derivs );
 	}
 
-	emap[ cart_bonded_angle ] += energy_angle;
-	emap[ cart_bonded_length ] += energy_length;
+	// bail out if the residues aren't bonded or we cross a cutpoint
+	if (!rsd1.is_bonded(rsd2)) { return; }
+	if ( pose.fold_tree().is_cutpoint( rsd1.seqpos() ) ) { return; }
 
-	// fpd note this is double counting if both cart_bonded and cart_bonded_* are set
-	emap[ cart_bonded ] += energy_angle;
-	emap[ cart_bonded ] += energy_length;
+	eval_improper_torsion_derivatives( rsd1, rsd2, res1params, res2params, weights, r1_atom_derivs, r2_atom_derivs );
+
+	eval_interresidue_angle_derivs_two_from_rsd1(
+		rsd1, rsd2, res1params, res2params, phi1, psi1,
+		weights, r1_atom_derivs, r2_atom_derivs );
+
+	eval_interresidue_angle_derivs_two_from_rsd2(
+		rsd1, rsd2, res1params, res2params, phi2, psi2,
+		weights, r1_atom_derivs, r2_atom_derivs );
+
+	eval_interresidue_bond_length_derivs(
+		rsd1, rsd2, res1params, res2params, phi2, psi2,
+		weights, r1_atom_derivs, r2_atom_derivs );
 }
 
-void
-CartesianBondedEnergy::eval_singleres_energy(
-	conformation::Residue const & rsd,
-	pose::Pose const & pose,
-	ScoreFunction const & sf,
-	EnergyMap & emap,
-	bool preproline
-) const {
-	using numeric::constants::f::pi;
-	using namespace numeric;
-
-	Real energy_angle=0, energy_length=0, energy_torsion=0;	
-	chemical::ResidueType const & rsd_type = rsd.type();
-
-	if ( rsd_type.aa() == core::chemical::aa_vrt) return;
-
-	eval_improper_torsions( rsd, pose, sf, emap );
-
-	// phi/psi
-	Real phi=0,psi=0;
-	if (rsd.is_protein()) {
-		phi = nonnegative_principal_angle_degrees( rsd.mainchain_torsion(1));
-		psi = nonnegative_principal_angle_degrees( rsd.mainchain_torsion(2));
-	}
-
-	for ( Size dihe = 1; dihe <= rsd_type.ndihe(); ++dihe ){
-		// get ResidueType ints
-		int rt1 = ( rsd_type.dihedral( dihe ) ).key1();
-		int rt2 = ( rsd_type.dihedral( dihe ) ).key2();
-		int rt3 = ( rsd_type.dihedral( dihe ) ).key3();
-		int rt4 = ( rsd_type.dihedral( dihe ) ).key4();
-
-		// lookup Kphi and phi0
-		std::string atm1name=rsd.atom_name(rt1); boost::trim(atm1name);
-		std::string atm2name=rsd.atom_name(rt2); boost::trim(atm2name);
-		std::string atm3name=rsd.atom_name(rt3); boost::trim(atm3name);
-		std::string atm4name=rsd.atom_name(rt4); boost::trim(atm4name);
-		CartBondedParametersCAP tor_params = db_->lookup_torsion(rsd,
-			atm1name,atm2name,atm3name,atm4name );
-
-		if (!tor_params || tor_params->is_null()) continue;
-
-		Real Kphi=tor_params->K(phi,psi), phi0=tor_params->mu(phi,psi), phi_step=2*pi/tor_params->period();
-
-		// get angle
-		Real angle = numeric::dihedral_radians
-			( rsd.atom( rt1 ).xyz(), rsd.atom( rt2 ).xyz(),
-				rsd.atom( rt3 ).xyz(), rsd.atom( rt4 ).xyz() );
-
-		// accumulate the energy
-		Real del_phi = basic::subtract_radian_angles(angle, phi0);
-		if (phi_step>0) del_phi = basic::periodic_range( del_phi, phi_step );
-
- 		if (pose.pdb_info() && 0.5*Kphi*del_phi*del_phi > CUTOFF) {
- 			TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd.seqpos() << " pdbpos: " << pose.pdb_info()->number(rsd.seqpos()) << " intrares torsion: " <<
- 				rsd_type.name() << " : " <<
- 			  rsd.atom_name( rt1 ) << " , " << rsd.atom_name( rt2 ) << " , " <<
- 			  rsd.atom_name( rt3 ) << " , " << rsd.atom_name( rt4 )<< "   ("
-			  << Kphi << ")   " << angle << "  " << phi0
-			  << "   sc=" << 0.5*Kphi*del_phi*del_phi << std::endl;
- 		}
-
-		if (linear_bonded_potential_ && std::fabs(del_phi)>1) 
-			energy_torsion += 0.5*Kphi*std::fabs(del_phi);
-		else 
-			energy_torsion += 0.5*Kphi*del_phi*del_phi;
-	}
-
-	// for each angle in the residue
-	for ( Size bondang = 1; bondang <= rsd_type.num_bondangles(); ++bondang ) {
-		// get ResidueType ints
-		Size rt1 = ( rsd_type.bondangle( bondang ) ).key1();
-		Size rt2 = ( rsd_type.bondangle( bondang ) ).key2();
-		Size rt3 = ( rsd_type.bondangle( bondang ) ).key3();
-
-		// lookup Ktheta and theta0
-		std::string atm1name=rsd.atom_name(rt1); boost::trim(atm1name);
-		std::string atm2name=rsd.atom_name(rt2); boost::trim(atm2name);
-		std::string atm3name=rsd.atom_name(rt3); boost::trim(atm3name);
-		CartBondedParametersCAP ang_params = db_->lookup_angle(rsd, preproline,
-			atm1name,atm2name,atm3name, rt1,rt2,rt3 );
-
-		if (ang_params->is_null()) continue;
-		Real Ktheta=ang_params->K(phi,psi), theta0=ang_params->mu(phi,psi);
-
-		// get angle
-		Real const angle = numeric::angle_radians(
-			rsd.atom( rt1 ).xyz(),
-			rsd.atom( rt2 ).xyz(),
-			rsd.atom( rt3 ).xyz() );
-
- 		if ( pose.pdb_info() && 0.5*Ktheta*(angle-theta0) * (angle-theta0) > CUTOFF) {
- 			TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd.seqpos() << " pdbpos: " << pose.pdb_info()->number(rsd.seqpos()) << " intrares angle: " <<
- 				rsd_type.name() << " : " <<
- 			  rsd.atom_name( rt1 ) << " , " << rsd.atom_name( rt2 ) << " , " <<
- 			  rsd.atom_name( rt3 ) << "   ("
-			  << Ktheta << ")   " << angle << "  " << theta0
-			  << "   sc=" << 0.5*Ktheta*(angle-theta0) * (angle-theta0) << std::endl;
- 		}
-
-		// accumulate the energy
-		if (linear_bonded_potential_ && std::fabs(angle - theta0)>1) {
-			energy_angle += 0.5*Ktheta*std::fabs(angle-theta0);
-		} else {
-			energy_angle += 0.5*Ktheta*(angle-theta0) * (angle-theta0);
-		}
-	}
-
-	// for each bond
-	for (Size atm_i=1; atm_i<=rsd_type.natoms(); ++atm_i) {
-		chemical::AtomIndices atm_nbrs = rsd_type.nbrs( atm_i );
-		for (Size j=1; j<=atm_nbrs.size(); ++j) {
-			Size atm_j = atm_nbrs[j];
-			if ( atm_i<atm_j ) { // only score each bond once -- use restype index to define ordering
-
-				// lookup Kd and d0
-				std::string atm1name=rsd.atom_name(atm_i); boost::trim(atm1name);
-				std::string atm2name=rsd.atom_name(atm_j); boost::trim(atm2name);
-				CartBondedParametersCAP len_params = db_->lookup_length(rsd, preproline,
-					atm1name,atm2name, atm_i,atm_j );
-				if (len_params->is_null()) continue;
-
-				Real Kd=len_params->K(phi,psi), d0=len_params->mu(phi,psi);
-				Real const d = ( rsd.xyz( atm_i )-rsd.xyz( atm_j ) ).length();
-
-				if ( pose.pdb_info() && 0.5*Kd*(d-d0)*(d-d0) > CUTOFF) {
-					TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd.seqpos() << " pdbpos: " << pose.pdb_info()->number(rsd.seqpos()) << " intrares angle: " <<
-						rsd_type.name() << " : " <<
-						rsd.atom_name( atm_i ) << " , " << rsd.atom_name( atm_j ) << "   ("
-						<< Kd << ")   " << d << "  " << d0
-						<< "   sc=" << 0.5*Kd*(d-d0)*(d-d0) << std::endl;
-				}
-
-				// accumulate the energy
-				if (linear_bonded_potential_ && std::fabs(d - d0)>1) {
-					energy_length += 0.5*Kd*std::fabs(d-d0);
-				} else {
-					energy_length += 0.5*Kd*(d-d0)*(d-d0);
-				}
-			}
-		}
-	}
-
-	// add energy to emap
-	emap[ cart_bonded_angle ] += energy_angle;
-	emap[ cart_bonded_length ] += energy_length;
-	emap[ cart_bonded_torsion ] += energy_torsion;
-
-	// fpd note this is dounble counting if both cart_bonded and cart_bonded_* are set
-	emap[ cart_bonded ] += energy_angle;
-	emap[ cart_bonded ] += energy_length;
-	emap[ cart_bonded ] += energy_torsion; 
-}
-
-
-// dof (bbdep) derivatives
+/// @details Evaluate dE/dphi and dE/dpsi for the backbone-dependent
+/// terms, if they are active.
 Real
 CartesianBondedEnergy::eval_intraresidue_dof_derivative(
-		conformation::Residue const & rsd,
-		ResSingleMinimizationData const & min_data,
-		id::DOF_ID const & dof_id,
-		id::TorsionID const & tor_id,
-		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights
+	conformation::Residue const & rsd,
+	ResSingleMinimizationData const & /*min_data*/,
+	id::DOF_ID const & /*dof_id*/,
+	id::TorsionID const & tor_id,
+	pose::Pose const & pose,
+	ScoreFunction const & /*sfxn*/,
+	EnergyMap const & weights
 ) const {
 	using namespace numeric;
-	using numeric::constants::f::pi;
+	using numeric::constants::d::pi;
 
 	// save some time if we're only doing bb-indep
 	if (!db_->bbdep_bond_params()) return 0.0;
 
-	if ( !tor_id.valid() || tor_id.type()!=id::BB || tor_id.torsion() > 2  || !rsd.is_protein() ) 
+	if ( !tor_id.valid() || tor_id.type()!=id::BB || tor_id.torsion() > 2  || !rsd.is_protein() )
 		return 0.0;
 
 	core::Size resid = rsd.seqpos();
-	bool is_nterm = ((resid==1) || pose.fold_tree().is_cutpoint( resid-1 ));
+	//bool is_nterm = ((resid==1) || pose.fold_tree().is_cutpoint( resid-1 ));
 	bool is_cterm = ((resid==pose.total_residue()) || pose.fold_tree().is_cutpoint( resid ));
 	bool preproline = (!is_cterm && pose.residue( resid+1 ).aa() == core::chemical::aa_pro);
 
@@ -1593,11 +1576,126 @@ CartesianBondedEnergy::eval_intraresidue_dof_derivative(
 		psi = nonnegative_principal_angle_degrees( rsd.mainchain_torsion(2));
 	}
 
+	ResidueCartBondedParameters const & resparams  = db_->parameters_for_restype( rsd.type(), preproline );
+
 	core::Real deriv=0.0;
+
+	/// Backbone dependent bond lengths
+	utility::vector1< ResidueCartBondedParameters::length_parameter > const & lps = resparams.bbdep_length_parameters();
+	for ( Size ii = 1; ii <= lps.size(); ++ii ) {
+		ResidueCartBondedParameters::Size2 const & atids( lps[ ii ].first );
+		CartBondedParameters const & len_params( *lps[ ii ].second );
+
+		Real const K = len_params.K(phi,psi);
+		Real const mu = len_params.mu(phi,psi);
+		Vector at1xyz, at2xyz( rsd.xyz( atids[2] ));
+		if ( atids[1] == 0 ) {
+			// connection atom from previous residue
+			chemical::ResidueType const & prevrestype = pose.residue_type( rsd.seqpos() - 1 );
+			Size prev_c_atom = prevrestype.upper_connect().atomno();
+			at1xyz = pose.xyz( id::AtomID( prev_c_atom, rsd.seqpos() - 1 ));
+		} else {
+			at1xyz = rsd.xyz( atids[1] );
+		}
+
+		Real const d = at1xyz.distance( at2xyz );
+
+		core::Real dmu_dtor, dK_dtor=0.0;
+		core::Real dscore_dK=0.0, dscore_dmu;
+
+		if (tor_id.torsion()==1) {
+			dmu_dtor = len_params.dmu_dphi(phi,psi);
+		} else {
+			dmu_dtor = len_params.dmu_dpsi(phi,psi);
+		}
+		if (linear_bonded_potential_ && std::fabs(d - mu)>1) {
+			dscore_dmu = -K * ((d - mu)>0 ? 1:-1);
+		} else {
+			dscore_dmu = -K * (d - mu);
+		}
+		if (db_->bbdep_bond_devs()) {
+			if (tor_id.torsion()==1) {
+				dK_dtor = len_params.dK_dphi(phi,psi);
+			} else {
+				dK_dtor = len_params.dK_dpsi(phi,psi);
+			}
+			if (linear_bonded_potential_ && std::fabs(d - mu)>1) {
+				dscore_dK = 0.5*std::fabs(d - mu);
+			} else {
+				dscore_dK = 0.5*(d - mu)*(d - mu);   // currently we have no -log(K) term in our score
+			}
+		}
+
+		// derivatives w.r.t. phi/psi
+		deriv += (weights[ cart_bonded_length ] + weights[ cart_bonded ]) * (dscore_dmu*dmu_dtor + dscore_dK*dK_dtor);
+	}
+
+	/// Backbone-dependent bond angles
+	utility::vector1< ResidueCartBondedParameters::angle_parameter > const & aps = resparams.bbdep_angle_parameters();
+	for ( Size ii = 1; ii <= aps.size(); ++ii ) {
+		ResidueCartBondedParameters::Size3 const & atids( aps[ ii ].first );
+		CartBondedParameters const & ang_params( *aps[ ii ].second );
+
+		Real const K = ang_params.K(phi,psi);
+		Real const mu = ang_params.mu(phi,psi);
+		Vector at1xyz, at2xyz( rsd.xyz( atids[2] )), at3xyz;
+		if ( atids[1] == 0 ) {
+			// connection atom from previous residue
+			chemical::ResidueType const & prevrestype = pose.residue_type( rsd.seqpos() - 1 );
+			Size prev_c_atom = prevrestype.upper_connect().atomno();
+			at1xyz = pose.xyz( id::AtomID( prev_c_atom, rsd.seqpos() - 1 ));
+		} else {
+			at1xyz = rsd.xyz( atids[1] );
+		}
+		if ( atids[3] == 0 ) {
+			// connection atom from the next residue
+			chemical::ResidueType const & nextrestype = pose.residue_type( rsd.seqpos() + 1 );
+			Size next_n_atom = nextrestype.lower_connect().atomno();
+			at3xyz = pose.xyz( id::AtomID( next_n_atom, rsd.seqpos() + 1 ));
+		} else {
+			at3xyz = rsd.xyz( atids[3] );
+		}
+
+		Real const angle = numeric::angle_radians(at1xyz,at2xyz,at3xyz);
+
+		core::Real dmu_dtor, dK_dtor=0.0;
+		core::Real dscore_dK=0.0, dscore_dmu;
+
+		if (tor_id.torsion()==1) {
+			dmu_dtor = ang_params.dmu_dphi(phi,psi);
+		} else {
+			dmu_dtor = ang_params.dmu_dpsi(phi,psi);
+		}
+		if (linear_bonded_potential_ && std::fabs(angle - mu)>1) {
+			dscore_dmu = -K * ((angle - mu)>0 ? 1:-1);
+		} else {
+			dscore_dmu = -K * (angle - mu);
+		}
+
+		if (db_->bbdep_bond_devs()) {
+			if (tor_id.torsion()==1) {
+				dK_dtor = ang_params.dK_dphi(phi,psi);
+			} else {
+				dK_dtor = ang_params.dK_dpsi(phi,psi);
+			}
+			if (linear_bonded_potential_ && std::fabs(angle - mu)>1) {
+				dscore_dK = 0.5*std::fabs(angle - mu);
+			} else {
+				dscore_dK = 0.5*(angle - mu)*(angle - mu);   // currently we have no -log(K) term in our score
+			}
+		}
+
+		// derivatives w.r.t. phi/psi
+		deriv += (weights[ cart_bonded_angle ] + weights[ cart_bonded ]) * (dscore_dmu*dmu_dtor + dscore_dK*dK_dtor);
+	}
+
+
 
 	// loop over all bb-dep angles and bonds, summing dmu_dphi and dK_dphi
 	// hardcode the bbdep angles and lengths to save a bit of time
 	// connection IDs are hardcoded ... is this a problem?
+
+	/*
 	for (int i=1; i<=5; ++i) {
 		if (i==1 && is_nterm) continue;
 		if (i==3 && rsd.aa() == core::chemical::aa_gly) continue;
@@ -1613,9 +1711,9 @@ CartesianBondedEnergy::eval_intraresidue_dof_derivative(
 		Vector atom1xyz, atom2xyz = rsd.atom( rt2 ).xyz();
 		if (i==1)
 			atom1xyz = pose.residue( resid-1 ).atom(" C  ").xyz();
-		else 
+		else
 			atom1xyz = rsd.atom( rt1 ).xyz();
-		CartBondedParametersCAP len_params = db_->lookup_length(rsd, (i==1)?false:preproline, atm1,atm2, rt1,rt2 );
+		CartBondedParametersCOP len_params = db_->lookup_length(rsd.type(), (i==1)?false:preproline, atm1,atm2, rt1,rt2 );
 
 		Real const d = ( atom2xyz-atom1xyz ).length();
 		core::Real mu,K, dmu_dtor, dK_dtor=0.0;
@@ -1649,8 +1747,9 @@ CartesianBondedEnergy::eval_intraresidue_dof_derivative(
 
 		// derivatives w.r.t. phi/psi
 		deriv += (weights[ cart_bonded_length ] + weights[ cart_bonded ]) * (dscore_dmu*dmu_dtor + dscore_dK*dK_dtor);
-	}
+	}*/
 
+	/*
 	for (int i=1; i<=7; ++i) {
 		if ((i==2 || i==4) && rsd.aa() == core::chemical::aa_gly) continue;
 		if (i==1 && is_nterm) continue;
@@ -1669,14 +1768,14 @@ CartesianBondedEnergy::eval_intraresidue_dof_derivative(
 		Vector atom1xyz, atom2xyz = rsd.atom( rt2 ).xyz(), atom3xyz;
 		if (i==1)
 			atom1xyz = pose.residue( resid-1 ).atom(" C  ").xyz();
-		else 
+		else
 			atom1xyz = rsd.atom( rt1 ).xyz();
 		if (i==6 || i==7)
 			atom3xyz = pose.residue( resid+1 ).atom(" N  ").xyz();
-		else 
+		else
 			atom3xyz = rsd.atom( rt3 ).xyz();
 
-		CartBondedParametersCAP ang_params = db_->lookup_angle(rsd, preproline, atm1,atm2,atm3, rt1,rt2,rt3 );
+		CartBondedParametersCOP ang_params = db_->lookup_angle(rsd.type(), preproline, atm1,atm2,atm3, rt1,rt2,rt3 );
 
 		Real const angle = numeric::angle_radians(atom1xyz,atom2xyz,atom3xyz);
 
@@ -1712,54 +1811,756 @@ CartesianBondedEnergy::eval_intraresidue_dof_derivative(
 
 		// derivatives w.r.t. phi/psi
 		deriv += (weights[ cart_bonded_angle ] + weights[ cart_bonded ]) * (dscore_dmu*dmu_dtor + dscore_dK*dK_dtor);
-	}
+	}*/
 	return 180/pi * deriv;
 }
 
+/// @brief CartesianBondedEnergy does not have an atomic interation threshold
+Distance
+CartesianBondedEnergy::atomic_interaction_cutoff() const {
+	return 0.0;
+}
+
+
+/// @brief CartesianBondedEnergy is context independent; indicates that no context graphs are required
+void
+CartesianBondedEnergy::indicate_required_context_graphs(utility::vector1< bool > & ) const {}
+
+
+methods::LongRangeEnergyType
+CartesianBondedEnergy::long_range_type() const { return methods::cart_bonded_lr; }
+
+void
+CartesianBondedEnergy::residue_pair_energy_sorted(
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	pose::Pose const & pose,
+	ScoreFunction const &,
+	EnergyMap & emap
+) const {
+
+	using namespace numeric;
+
+	assert( rsd2.seqpos() > rsd1.seqpos() );
+
+	core::Size resid = rsd1.seqpos();
+	bool is_cterm = (pose.fold_tree().is_cutpoint( resid ));
+	bool preproline = (!is_cterm && rsd2.aa() == core::chemical::aa_pro);
+
+	if ( rsd1.aa() == core::chemical::aa_vrt) return;
+
+	ResidueCartBondedParameters const & rsd1params = db_->parameters_for_restype( rsd1.type(), preproline );
+	ResidueCartBondedParameters const & rsd2params = db_->parameters_for_restype( rsd2.type(), false );
+
+	Real phi1=0,psi1=0,phi2=0,psi2=0;
+	if (rsd1.is_protein()) {
+		phi1 = nonnegative_principal_angle_degrees( rsd1.mainchain_torsion(1));
+		psi1 = nonnegative_principal_angle_degrees( rsd1.mainchain_torsion(2));
+	}
+	if (rsd2.is_protein()) {
+		phi2 = nonnegative_principal_angle_degrees( rsd2.mainchain_torsion(1));
+		psi2 = nonnegative_principal_angle_degrees( rsd2.mainchain_torsion(2));
+	}
+
+	// get one body component (but which has two-body influence based on whether or not rsd2 is a proline)
+	eval_singleres_energy(rsd1, rsd1params, phi1, psi1, pose, emap ); // calls singleres improper
+
+	// last residue won't ever be rsd1, so we need to explicitly call eval_singleres for rsd2 if rsd2 is the
+	// last residue
+	Size nres = pose.total_residue();
+	if( core::pose::symmetry::is_symmetric(pose) ) nres = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
+	if (rsd2.seqpos() == nres) {
+		// get one body component for the last residue
+		eval_singleres_energy(rsd2, rsd2params, phi2, psi2, pose, emap );
+	}
+
+	// bail out if the residues aren't bonded or we cross a cutpoint
+	if (!rsd1.is_bonded(rsd2)) { return; }
+	if ( is_cterm ) { return; }
+
+	/// evaluate all the inter-residue energy components
+	eval_residue_pair_energies( rsd1, rsd2, rsd1params, rsd2params, phi1, psi1, phi2, psi2, pose, emap );
+
+}
+
+void
+CartesianBondedEnergy::eval_singleres_energy(
+	conformation::Residue const & rsd,
+	ResidueCartBondedParameters const & resparams,
+	Real phi,
+	Real psi,
+	pose::Pose const & pose,
+	EnergyMap & emap
+) const
+{
+	using numeric::constants::d::pi;
+	using namespace numeric;
+
+	assert ( rsd.aa() != core::chemical::aa_vrt );
+
+	eval_singleres_improper_torsion_energies( rsd, resparams, pose, emap );
+	eval_singleres_torsion_energies( rsd, resparams, phi, psi, pose, emap );
+	eval_singleres_angle_energies(   rsd, resparams, phi, psi, pose, emap );
+	eval_singleres_length_energies(  rsd, resparams, phi, psi, pose, emap );
+
+}
+
+void
+CartesianBondedEnergy::eval_singleres_improper_torsion_energies(
+	conformation::Residue const & rsd,
+	ResidueCartBondedParameters const & resparams,
+	pose::Pose const & pose,
+	EnergyMap & emap
+) const
+{
+	using namespace core::chemical;
+	using numeric::constants::d::pi;
+
+	utility::vector1< ResidueCartBondedParameters::torsion_parameter > const & itps(
+		resparams.improper_torsion_parameters() );
+
+	for ( Size ii = 1, iiend = itps.size(); ii <= iiend; ++ii ) {
+		ResidueCartBondedParameters::Size4 const & atids( itps[ ii ].first );
+		CartBondedParameters const & tor_params( *itps[ ii ].second );
+		Real Kphi = tor_params.K(0,0);
+		Real phi0 = tor_params.mu(0,0);
+		Real phi_step=2 * pi / tor_params.period();
+		Real angle = numeric::dihedral_radians(
+			rsd.xyz( atids[1] ), rsd.xyz( atids[2] ), rsd.xyz( atids[3] ), rsd.xyz( atids[4] ) );
+		Real del_phi = basic::subtract_radian_angles( angle, phi0 );
+		del_phi = basic::periodic_range( del_phi, phi_step );
+
+		core::Real const energy_torsion = eval_score( del_phi, Kphi, 0 );
+
+		// Send a message to the user about a bad angle, if necessary.
+		// Make sure not to send output to a tracer in the middle of
+		// scoring unless that tracer is visible, since that can be very expensive
+		if ( energy_torsion > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
+			TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd.seqpos() << " pdbpos: " <<
+				pose.pdb_info()->number(rsd.seqpos()) << " improper torsion: " <<
+				rsd.name() << " : " <<
+				rsd.atom_name( atids[1] ) << " , " << rsd.atom_name( atids[2] ) << " , " <<
+				rsd.atom_name( atids[3] ) << " , " << rsd.atom_name( atids[4] ) << "   (" <<
+				Kphi << ") " << angle << " " << phi0 << "    sc="  << energy_torsion << std::endl;
+		}
+
+		emap[ cart_bonded_torsion ] += energy_torsion;
+		emap[ cart_bonded ] += energy_torsion; // potential double counting*/
+	}
+}
+
+/// @brief helper function to handle intrares bond torsions
+void
+CartesianBondedEnergy::eval_singleres_torsion_energies(
+	conformation::Residue const & rsd,
+	ResidueCartBondedParameters const & resparams,
+	Real const phi,
+	Real const psi,
+	pose::Pose const & pose,
+	EnergyMap & emap
+) const
+{
+	using namespace core::chemical;
+	using numeric::constants::d::pi;
+
+	utility::vector1< ResidueCartBondedParameters::torsion_parameter > const & tps( resparams.torsion_parameters() );
+
+	for ( Size ii = 1, iiend = tps.size(); ii <= iiend; ++ii ) {
+		ResidueCartBondedParameters::Size4 const & atids( tps[ ii ].first );
+		CartBondedParameters const & tor_params( *tps[ ii ].second );
+
+		Real Kphi = tor_params.K(phi,psi);
+		Real phi0 = tor_params.mu(phi,psi);
+		Real phi_step = 2 * pi / tor_params.period();
+		Real angle = numeric::dihedral_radians(
+			rsd.xyz( atids[1] ), rsd.xyz( atids[2] ), rsd.xyz( atids[3] ), rsd.xyz( atids[4] ) );
+		Real del_phi = basic::subtract_radian_angles(angle, phi0);
+		if ( phi_step > 0 ) del_phi = basic::periodic_range( del_phi, phi_step );
+
+		core::Real const energy_torsion = eval_score( del_phi, Kphi, 0 );
+
+		// Send a message to the user about a bad angle, if necessary.
+		// Make sure not to send output to a tracer in the middle of
+		// scoring unless that tracer is visible, since that can be very expensive
+		if ( energy_torsion > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
+			TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd.seqpos() << " pdbpos: " <<
+				pose.pdb_info()->number(rsd.seqpos()) << " intrares torsion: " <<
+				rsd.name() << " : " <<
+				rsd.atom_name( atids[1] ) << " , " << rsd.atom_name( atids[2] ) << " , " <<
+				rsd.atom_name( atids[3] ) << " , " << rsd.atom_name( atids[4] ) << "   (" <<
+				Kphi << ") " << angle << " " << phi0 << "    sc="  << energy_torsion << std::endl;
+		}
+
+		emap[ cart_bonded_torsion ] += energy_torsion;
+		emap[ cart_bonded ] += energy_torsion; // potential double counting*/
+	}
+}
+
+/// @brief helper function to handle intrares bond angles
+void
+CartesianBondedEnergy::eval_singleres_angle_energies(
+	conformation::Residue const & rsd,
+	ResidueCartBondedParameters const & resparams,
+	Real const phi,
+	Real const psi,
+	pose::Pose const & pose,
+	EnergyMap & emap
+) const
+{
+	using namespace core::chemical;
+
+	utility::vector1< ResidueCartBondedParameters::angle_parameter > const & aps( resparams.angle_parameters() );
+
+	for ( Size ii = 1, iiend = aps.size(); ii <= iiend; ++ii ) {
+		ResidueCartBondedParameters::Size3 const & atids( aps[ ii ].first );
+		CartBondedParameters const & ang_params( *aps[ ii ].second );
+		Real Ktheta = ang_params.K(phi,psi);
+		Real theta0 = ang_params.mu(phi,psi);
+		Real angle = numeric::angle_radians( rsd.xyz(atids[1]), rsd.xyz(atids[2]), rsd.xyz(atids[3]) );
+
+		Real const energy_angle = eval_score( angle, Ktheta, theta0 );
+
+		// Send a message to the user about a bad angle, if necessary.
+		// Make sure not to send output to a tracer in the middle of
+		// scoring unless that tracer is visible, since that can be very expensive
+		if ( energy_angle > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
+			TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd.seqpos() << " pdbpos: " <<
+				pose.pdb_info()->number(rsd.seqpos()) << " intrares angle: " <<
+				rsd.name() << " : " <<
+				rsd.atom_name( atids[1] ) << " , " << rsd.atom_name( atids[2] ) << " , " <<
+				rsd.atom_name( atids[3] ) << "   (" <<
+				Ktheta << ") " << angle << " " << theta0 << "    sc=" <<
+				energy_angle << std::endl;
+		}
+
+		// accumulate the energy
+		emap[ cart_bonded_angle ] += energy_angle;
+		emap[ cart_bonded ] += energy_angle; // potential double counting*/
+	}
+}
+
+/// @brief helper function to handle intrares bond lengths
+void
+CartesianBondedEnergy::eval_singleres_length_energies(
+	conformation::Residue const & rsd,
+	ResidueCartBondedParameters const & resparams,
+	Real const phi,
+	Real const psi,
+	pose::Pose const & pose,
+	EnergyMap & emap
+) const
+{
+	using namespace core::chemical;
+
+	utility::vector1< ResidueCartBondedParameters::length_parameter > const & lps( resparams.length_parameters() );
+
+	for ( Size ii = 1, iiend = lps.size(); ii <= iiend; ++ii ) {
+		ResidueCartBondedParameters::Size2 const & atids( lps[ ii ].first );
+		CartBondedParameters const & len_params( *lps[ ii ].second );
+		Real const Kd = len_params.K(phi,psi);
+		Real const d0 = len_params.mu(phi,psi);
+		Real const d = rsd.xyz(atids[1]).distance( rsd.xyz( atids[2] ));
+
+		Real const energy_length = eval_score( d, Kd, d0 );
+		// Send a message to the user about a bad angle, if necessary.
+		// Make sure not to send output to a tracer in the middle of
+		// scoring unless that tracer is visible, since that can be very expensive
+		if ( energy_length > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
+			TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd.seqpos() << " pdbpos: " << pose.pdb_info()->number(rsd.seqpos()) << " intrares angle: " <<
+				rsd.type().name() << " : " <<
+				rsd.atom_name( atids[1] ) << " , " << rsd.atom_name( atids[2] ) << "   ("
+				<< Kd << ")   " << d << "  " << d0
+				<< "   sc=" << energy_length << std::endl;
+		}
+
+		// accumulate the energy
+		emap[ cart_bonded ] += energy_length;
+		emap[ cart_bonded_length ] += energy_length;
+	}
+}
+
+/// @details rsd1.seqpos < rsd2.seqpos, and rsd1&rsd2 should be chemically
+/// bonded.
+void
+CartesianBondedEnergy::eval_residue_pair_energies(
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	ResidueCartBondedParameters const & rsd1params,
+	ResidueCartBondedParameters const & rsd2params,
+	Real phi1,
+	Real psi1,
+	Real phi2,
+	Real psi2,
+	pose::Pose const & pose,
+	EnergyMap & emap
+) const
+{
+	eval_improper_torsions( rsd1, rsd2, rsd1params, rsd2params, pose, emap );
+	eval_interresidue_angle_energies_two_from_rsd1( rsd1, rsd2, rsd1params, rsd2params, phi1, psi1, pose, emap );
+	eval_interresidue_angle_energies_two_from_rsd2( rsd1, rsd2, rsd1params, rsd2params, phi2, psi2, pose, emap );
+	eval_interresidue_bond_energy( rsd1, rsd2, rsd1params, rsd2params, phi2, psi2, pose, emap );
+}
+
+void
+CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd1(
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	ResidueCartBondedParameters const & rsd1params,
+	ResidueCartBondedParameters const & rsd2params,
+	Real phi1,
+	Real psi1,
+	pose::Pose const & pose,
+	EnergyMap & emap
+) const
+{
+	using namespace core::chemical;
+	if ( rsd1.aa() <= num_canonical_aas && rsd2.aa() <= num_canonical_aas &&
+			rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() ) {
+
+		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
+		assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
+		assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
+
+		utility::vector1< ResidueCartBondedParameters::angle_parameter > const & aps( rsd1params.upper_connect_angle_params() );
+		for ( Size ii = 1, iiend = aps.size(); ii <= iiend; ++ii ) {
+			ResidueCartBondedParameters::Size3 const & atids( aps[ ii ].first );
+			CartBondedParameters const & ang_params( *aps[ ii ].second );
+			Real Ktheta = ang_params.K(phi1,psi1);
+			Real theta0 = ang_params.mu(phi1,psi1);
+			Real angle = numeric::angle_radians(
+				rsd1.xyz(atids[1]), rsd1.xyz(atids[2]),
+				rsd2.xyz( rsd2params.bb_N_index() ) );
+
+			Real const energy_angle = eval_score( angle, Ktheta, theta0 );
+			// Send a message to the user about a bad angle, if necessary.
+			// Make sure not to send output to a tracer in the middle of
+			// scoring unless that tracer is visible, since that can be very expensive
+			if ( energy_angle > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
+				TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd1.seqpos()
+					<< " pdbpos: " << pose.pdb_info()->number(rsd1.seqpos()) << " angle rsd1: " << rsd1.name()
+					<< ":" << rsd1.atom_name( atids[1] ) << " , "
+					<< rsd1.atom_name( atids[2] ) << " , " << rsd2.atom_name( rsd2params.bb_N_index() )<< "   ("
+					<< Ktheta << ")   " << angle << "  " << theta0
+					<< "   sc=" << energy_angle << std::endl;
+			}
+
+			// accumulate the energy
+			emap[ cart_bonded_angle ] += energy_angle;
+			emap[ cart_bonded ] += energy_angle; // potential double counting*/
+		}
+
+	} else {
+		// At the time of the writing of this comment, the CartesianBondEnergy is used only
+		// to evaluate protein energetics, and the only inter-residue bonds it is evaluated
+		// on is peptide bonds.  If that persists, then this "else" clause will never be executed.
+		// If it does get executed, then this else clause ought to be optimized.
+		// Before the above "if" and the below "else" clauses got separated, the only code
+		// executed was the "else" clause and it was rediculously slow.  I mean much much
+		// slower than evaluating the etable energies.  REEAAALLLLY SLOW.
+
+		utility::vector1< Size > const & r1_resconn_ids( rsd1.connections_to_residue( rsd2 ) );
+		for ( Size ii = 1; ii <= r1_resconn_ids.size(); ++ii ) {
+			Size const resconn_id1( r1_resconn_ids[ii] );
+			Size const resconn_id2( rsd1.residue_connection_conn_id( resconn_id1 ) );
+
+			Size const resconn_atomno1( rsd1.residue_connection( resconn_id1 ).atomno() );
+			Size const resconn_atomno2( rsd2.residue_connection( resconn_id2 ).atomno() );
+
+			// compute bond-angle energies with two atoms on rsd1
+			utility::vector1< chemical::two_atom_set > const & rsd1_atoms_wi1_bond_of_ii(
+				rsd1.type().atoms_within_one_bond_of_a_residue_connection( resconn_id1 ));
+			for ( Size jj = 1; jj <= rsd1_atoms_wi1_bond_of_ii.size(); ++jj ) {
+				assert( rsd1_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno1 );
+				Size const res1_lower_atomno = rsd1_atoms_wi1_bond_of_ii[ jj ].key2();
+
+				Real const angle = numeric::angle_radians(
+					rsd1.atom( res1_lower_atomno ).xyz(),
+					rsd1.atom( resconn_atomno1 ).xyz(),
+					rsd2.atom( resconn_atomno2 ).xyz() );
+				std::string atm1name=rsd1.atom_name(res1_lower_atomno); boost::trim(atm1name);
+				std::string atm2name=rsd1.atom_name(resconn_atomno1); boost::trim(atm2name);
+				std::string atm3name=rsd2.atom_name(resconn_atomno2); boost::trim(atm3name);
+
+				// lookup Ktheta and theta0
+				CartBondedParametersCOP ang_params = db_->lookup_angle(rsd1.type(), rsd2.aa() == chemical::aa_pro,
+					atm1name, atm2name, atm3name, res1_lower_atomno, resconn_atomno1, -resconn_id1);
+				if (ang_params->is_null()) continue;
+				Real Ktheta=ang_params->K(phi1,psi1), theta0=ang_params->mu(phi1,psi1);
+
+				Real const energy_angle = eval_score( angle, Ktheta, theta0 );
+
+				// Send a message to the user about a bad angle, if necessary.
+				// Make sure not to send output to a tracer in the middle of
+				// scoring unless that tracer is visible, since that can be very expensive
+				if ( energy_angle > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
+					TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd1.seqpos()
+						<< " pdbpos: " << pose.pdb_info()->number(rsd1.seqpos()) << " angle rsd1: " << rsd1.name()
+						<< ":" << rsd1.atom_name( res1_lower_atomno ) << " , "
+						<< rsd1.atom_name( resconn_atomno1 ) << " , " << rsd2.atom_name( resconn_atomno2 )<< "   ("
+						<< Ktheta << ")   " << angle << "  " << theta0
+						<< "   sc=" << energy_angle << std::endl;
+				}
+
+				// accumulate the energy
+				emap[ cart_bonded_angle ] += energy_angle;
+				emap[ cart_bonded ] += energy_angle; // potential double counting*/
+			}
+		}
+	}
+}
+
+void
+CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd2(
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	ResidueCartBondedParameters const & rsd1params,
+	ResidueCartBondedParameters const & rsd2params,
+	Real phi2,
+	Real psi2,
+	pose::Pose const & pose,
+	EnergyMap & emap
+) const
+{
+	using namespace core::chemical;
+	if ( rsd1.aa() <= num_canonical_aas && rsd2.aa() <= num_canonical_aas &&
+			rsd1.residue_connection_partner( rsd1.upper_connect().index() )== rsd2.seqpos() ) {
+
+		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
+		assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
+		assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
+
+		utility::vector1< ResidueCartBondedParameters::angle_parameter > const & aps( rsd2params.lower_connect_angle_params() );
+		for ( Size ii = 1, iiend = aps.size(); ii <= iiend; ++ii ) {
+			ResidueCartBondedParameters::Size3 const & atids( aps[ ii ].first );
+			CartBondedParameters const & ang_params( *aps[ ii ].second );
+			Real Ktheta = ang_params.K(phi2,psi2);
+			Real theta0 = ang_params.mu(phi2,psi2);
+			Real angle = numeric::angle_radians(
+				rsd2.xyz(atids[1]), rsd2.xyz(atids[2]),
+				rsd1.xyz( rsd1params.bb_C_index() ) );
+
+			Real const energy_angle = eval_score( angle, Ktheta, theta0 );
+
+			// Send a message to the user about a bad angle, if necessary.
+			// Make sure not to send output to a tracer in the middle of
+			// scoring unless that tracer is visible, since that can be very expensive
+			if ( energy_angle > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
+				TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd2.seqpos()
+					<< " pdbpos: " << pose.pdb_info()->number(rsd2.seqpos()) << " angle rsd2: " << rsd2.name()
+					<< ":" << rsd2.atom_name( atids[1] ) << " , "
+					<< rsd2.atom_name( atids[2] ) << " , " << rsd1.atom_name( rsd1params.bb_C_index()  )
+					<< "   (" << Ktheta << ")   " << angle << "  " << theta0
+					<< "   sc=" << energy_angle << std::endl;
+			}
+
+			// accumulate the energy
+			emap[ cart_bonded_angle ] += energy_angle;
+			emap[ cart_bonded ] += energy_angle; // potential double counting*/
+		}
+
+	} else {
+		// At the time of the writing of this comment, the CartesianBondEnergy is used only
+		// to evaluate protein energetics, and the only inter-residue bonds it is evaluated
+		// on is peptide bonds.  If that persists, then this "else" clause will never be executed.
+		// If it does get executed, then this else clause ought to be optimized.
+		// Before the above "if" and the below "else" clauses got separated, the only code
+		// executed was the "else" clause and it was rediculously slow.  I mean much much
+		// slower than evaluating the etable energies.  REEAAALLLLY SLOW.
+
+		utility::vector1< Size > const & r1_resconn_ids( rsd1.connections_to_residue( rsd2 ) );
+		for ( Size ii = 1; ii <= r1_resconn_ids.size(); ++ii ) {
+			Size const resconn_id1( r1_resconn_ids[ii] );
+			Size const resconn_id2( rsd1.residue_connection_conn_id( resconn_id1 ) );
+
+			Size const resconn_atomno1( rsd1.residue_connection( resconn_id1 ).atomno() );
+			Size const resconn_atomno2( rsd2.residue_connection( resconn_id2 ).atomno() );
+
+			/// compute bond-angle energies with two atoms on rsd2
+			utility::vector1< chemical::two_atom_set > const & rsd2_atoms_wi1_bond_of_ii(
+				rsd2.type().atoms_within_one_bond_of_a_residue_connection( resconn_id2 ));
+			for ( Size jj = 1; jj <= rsd2_atoms_wi1_bond_of_ii.size(); ++jj ) {
+				assert( rsd2_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno2 );
+				Size const res2_lower_atomno = rsd2_atoms_wi1_bond_of_ii[ jj ].key2();
+
+				// lookup Ktheta and theta0
+				// set pre-proline to false here -- it refers to rsd2+1 which would make this three-body
+				std::string atm1name=rsd2.atom_name(res2_lower_atomno); boost::trim(atm1name);
+				std::string atm2name=rsd2.atom_name(resconn_atomno2); boost::trim(atm2name);
+				std::string atm3name=rsd1.atom_name(resconn_atomno1); boost::trim(atm3name);
+				CartBondedParametersCOP ang_params = db_->lookup_angle(rsd2.type(), false,
+					atm1name, atm2name, atm3name, res2_lower_atomno, resconn_atomno2, -resconn_id2);
+				if (ang_params->is_null()) continue;
+				Real Ktheta=ang_params->K(phi2,psi2), theta0=ang_params->mu(phi2,psi2);
+
+				if (Ktheta == 0.0) continue;
+				Real const angle = numeric::angle_radians(
+					rsd2.atom( res2_lower_atomno ).xyz(),
+					rsd2.atom( resconn_atomno2 ).xyz(),
+					rsd1.atom( resconn_atomno1 ).xyz() );
+
+				Real const energy_angle = eval_score( angle, Ktheta, theta0 );
+
+				// Send a message to the user about a bad angle, if necessary.
+				// Make sure not to send output to a tracer in the middle of
+				// scoring unless that tracer is visible, since that can be very expensive
+				if ( energy_angle > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
+					TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd2.seqpos()
+						<< " pdbpos: " << pose.pdb_info()->number(rsd2.seqpos()) << " angle rsd2: " << rsd2.name()
+						<< ":" << rsd2.atom_name( res2_lower_atomno ) << " , "
+						<< rsd2.atom_name( resconn_atomno2 ) << " , " << rsd1.atom_name( resconn_atomno1 )
+						<< "   (" << Ktheta << ")   " << angle << "  " << theta0
+						<< "   sc=" << energy_angle << std::endl;
+				}
+
+				// accumulate the energy
+				emap[ cart_bonded_angle ] += energy_angle;
+				emap[ cart_bonded ] += energy_angle; // potential double counting*/
+
+			}
+		}
+	}
+}
+
+void
+CartesianBondedEnergy::eval_interresidue_bond_energy(
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	ResidueCartBondedParameters const & rsd1params,
+	ResidueCartBondedParameters const & rsd2params,
+	Real phi2,
+	Real psi2,
+	pose::Pose const & pose,
+	EnergyMap & emap
+) const
+{
+	using namespace core::chemical;
+	if ( rsd1.aa() <= num_canonical_aas && rsd2.aa() <= num_canonical_aas &&
+			rsd1.residue_connection_partner( rsd1.upper_connect().index() )== rsd2.seqpos() ) {
+
+		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
+		assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
+		assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
+
+		/////////////
+		/// finally, compute the bondlength across the interface
+		Real length = rsd1.xyz( rsd1params.bb_C_index() ).distance( rsd2.xyz( rsd2params.bb_N_index() ) );
+
+		// lookup Kd and d0
+		CartBondedParametersCOP len_params = rsd2params.cprev_n_bond_length_params();
+
+		if (len_params->is_null()) return;
+		Real Kd=len_params->K(phi2,psi2), d0=len_params->mu(phi2,psi2);
+
+		Real const energy_length = eval_score( length, Kd, d0 );
+
+		// Send a message to the user about a bad distance, if necessary.
+		// Make sure not to send output to a tracer in the middle of
+		// scoring unless that tracer is visible, since that can be very expensive
+		if ( energy_length > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
+			TR.Debug << pose.pdb_info()->name()
+				<< " pdbpos rsd1: " << pose.pdb_info()->number(rsd1.seqpos()) << " length rsd1 rsd2: " << rsd1.seqpos() << " -- " << rsd2.seqpos() << "  "
+				<< rsd1.name() << ":" << rsd1.atom_name( rsd1params.bb_C_index() ) << " , " << rsd2.atom_name( rsd2params.bb_N_index() )<< "   ("
+				<< Kd << ")   " << length << "  " << d0
+				<< "   sc=" << energy_length << std::endl;
+		}
+
+		// accumulate the energy
+		emap[ cart_bonded ] += energy_length;
+		emap[ cart_bonded_length ] += energy_length;
+
+	} else {
+		// At the time of the writing of this comment, the CartesianBondEnergy is used only
+		// to evaluate protein energetics, and the only inter-residue bonds it is evaluated
+		// on is peptide bonds.  If that persists, then this "else" clause will never be executed.
+		// If it does get executed, then this else clause ought to be optimized.
+		// Before the above "if" and the below "else" clauses got separated, the only code
+		// executed was the "else" clause and it was rediculously slow.  I mean much much
+		// slower than evaluating the etable energies.  REEAAALLLLY SLOW.
+
+		utility::vector1< Size > const & r1_resconn_ids( rsd1.connections_to_residue( rsd2 ) );
+		for ( Size ii = 1; ii <= r1_resconn_ids.size(); ++ii ) {
+			Size const resconn_id1( r1_resconn_ids[ii] );
+			Size const resconn_id2( rsd1.residue_connection_conn_id( resconn_id1 ) );
+
+			Size const resconn_atomno1( rsd1.residue_connection( resconn_id1 ).atomno() );
+			Size const resconn_atomno2( rsd2.residue_connection( resconn_id2 ).atomno() );
+
+			/////////////
+			/// finally, compute the bondlength across the interface
+			Real length =
+				( rsd2.atom( resconn_atomno2 ).xyz() - rsd1.atom( resconn_atomno1 ).xyz() ).length();
+
+			// lookup Kd and d0
+			// again, pre-pro == false, definitions are based on pro as rsd2+1
+			std::string atm1name=rsd2.atom_name(resconn_atomno2); boost::trim(atm1name);
+			std::string atm2name=rsd1.atom_name(resconn_atomno1); boost::trim(atm2name);
+			CartBondedParametersCOP len_params = db_->lookup_length(rsd2.type(), false,
+					atm1name, atm2name, resconn_atomno2, -resconn_id2);
+
+			if (len_params->is_null()) continue;
+			Real Kd=len_params->K(phi2,psi2), d0=len_params->mu(phi2,psi2);
+
+			Real const energy_length = eval_score( length, Kd, d0 );
+
+			// Send a message to the user about a bad distance, if necessary.
+			// Make sure not to send output to a tracer in the middle of
+			// scoring unless that tracer is visible, since that can be very expensive
+			if ( energy_length > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
+				TR.Debug << pose.pdb_info()->name()
+					<< " pdbpos rsd1: " << pose.pdb_info()->number(rsd1.seqpos()) << " length rsd1 rsd2: " << rsd1.seqpos() << " -- " << rsd2.seqpos() << "  "
+					<< rsd1.name() << ":" << rsd1.atom_name( resconn_atomno1 ) << " , " << rsd2.atom_name( resconn_atomno2 )<< "   ("
+					<< Kd << ")   " << length << "  " << d0
+					<< "   sc=" << energy_length << std::endl;
+			}
+
+			// accumulate the energy
+			emap[ cart_bonded ] += energy_length;
+			emap[ cart_bonded_length ] += energy_length;
+		}
+	}
+
+}
+
+void
+CartesianBondedEnergy::eval_improper_torsions(
+   conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	ResidueCartBondedParameters const & rsd1params,
+	ResidueCartBondedParameters const & rsd2params,
+	pose::Pose const & pose,
+	EnergyMap & emap
+) const
+{
+	using namespace core::chemical;
+	using numeric::constants::d::pi;
+
+	assert( rsd1.seqpos() < rsd2.seqpos() );
+
+	if ( !rsd1.is_protein() || !rsd2.is_protein()) return;
+
+	// backbone CA-Cprev-N-H
+	if ( rsd2.aa() != aa_pro && rsd2params.bb_H_index() != 0 ) {
+		CartBondedParametersCOP tor_params = rsd2params.ca_cprev_n_h_interres_torsion_params();
+		if ( !tor_params->is_null() ) {
+			Real const Kphi = tor_params->K(0,0);
+			Real const phi0=tor_params->mu(0,0);
+			Real const phi_step=2*pi/tor_params->period();
+			Real angle = numeric::dihedral_radians(
+				rsd2.xyz( rsd2params.bb_CA_index() ),
+				rsd1.xyz( rsd1params.bb_C_index() ),
+				rsd2.xyz( rsd2params.bb_N_index() ),
+				rsd2.xyz( rsd2params.bb_H_index() )
+			);
+			Real del_phi = basic::subtract_radian_angles(angle, phi0);
+			del_phi = basic::periodic_range( del_phi, phi_step );
+
+			Real energy_torsion = eval_score( del_phi, Kphi, 0 );
+
+			// Send a message to the user about a bad angle, if necessary.
+			// Make sure not to send output to a tracer in the middle of
+			// scoring unless that tracer is visible, since that can be very expensive
+			if ( energy_torsion > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
+				TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd1.seqpos() << " pdbpos: " <<
+					pose.pdb_info()->number(rsd1.seqpos()) << " improper torsion: " <<
+					rsd1.name() << " : " <<
+					rsd2.atom_name( rsd2params.bb_CA_index() ) << " , " << rsd1.atom_name( rsd1params.bb_C_index() ) << " , " <<
+					rsd2.atom_name( rsd2params.bb_N_index() )  << " , " << rsd2.atom_name( rsd2params.bb_H_index() ) << "   (" <<
+					Kphi << ") " << angle << " " << phi0 << "    sc=" << energy_torsion << std::endl;
+			}
+
+			emap[ cart_bonded ] += energy_torsion;
+			emap[ cart_bonded_torsion ] += energy_torsion;
+		}
+
+	}
+
+	// backbone CA-Nnext-C-O
+	{
+		CartBondedParametersCOP tor_params = rsd1params.ca_nnext_c_o_interres_torsion_params();
+		if ( !tor_params->is_null() ) {
+			Real const Kphi = tor_params->K(0,0);
+			Real const phi0=tor_params->mu(0,0);
+			Real const phi_step=2*pi/tor_params->period();
+			Real angle = numeric::dihedral_radians(
+				rsd1.xyz( rsd1params.bb_O_index() ),
+				rsd1.xyz( rsd1params.bb_C_index() ),
+				rsd2.xyz( rsd2params.bb_N_index() ),
+				rsd1.xyz( rsd1params.bb_CA_index() )
+			);
+			Real del_phi = basic::subtract_radian_angles(angle, phi0);
+			del_phi = basic::periodic_range( del_phi, phi_step );
+
+			Real energy_torsion = eval_score( del_phi, Kphi, 0 );
+
+			// Send a message to the user about a bad angle, if necessary.
+			// Make sure not to send output to a tracer in the middle of
+			// scoring unless that tracer is visible, since that can be very expensive
+			if ( energy_torsion > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
+				TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd1.seqpos() << " pdbpos: " <<
+					pose.pdb_info()->number(rsd1.seqpos()) << " improper torsion: " <<
+					rsd1.name() << " : " <<
+					rsd1.atom_name( rsd1params.bb_O_index() ) << " , " << rsd1.atom_name( rsd1params.bb_C_index() ) << " , " <<
+					rsd2.atom_name( rsd2params.bb_N_index() ) << " , " << rsd1.atom_name( rsd1params.bb_CA_index() ) << "   (" <<
+					Kphi << ") " << angle << " " << phi0 << "    sc=" << energy_torsion << std::endl;
+			}
+
+			emap[ cart_bonded ] += energy_torsion;
+			emap[ cart_bonded_torsion ] += energy_torsion;
+		}
+	}
+
+
+}
 
 ///
 void
 CartesianBondedEnergy::eval_singleres_derivatives(
-			conformation::Residue const & rsd,
-			EnergyMap const & weights,
-			utility::vector1< DerivVectorPair > & r_atom_derivs,
-			bool preproline
+	conformation::Residue const & rsd,
+	ResidueCartBondedParameters const & resparams,
+	Real phi,
+	Real psi,
+	EnergyMap const & weights,
+	utility::vector1< DerivVectorPair > & r_atom_derivs
 ) const {
-	using numeric::constants::f::pi;
+	using numeric::constants::d::pi;
 	using namespace numeric;
 
 	chemical::ResidueType const & rsd_type = rsd.type();
 	if ( rsd_type.aa() == core::chemical::aa_vrt) return;
 
-	// impropers
-	eval_improper_torsions_derivative( rsd, weights, r_atom_derivs );
+	eval_singleres_improper_torsions_derivatives( rsd, resparams, weights, r_atom_derivs );
+	eval_singleres_torsion_derivatives( rsd, resparams, phi, psi, weights, r_atom_derivs );
+	eval_singleres_angle_derivatives(   rsd, resparams, phi, psi, weights, r_atom_derivs );
+	eval_singleres_length_derivatives(  rsd, resparams, phi, psi, weights, r_atom_derivs );
 
-	// phi/psi
-	Real phi=0,psi=0;
-	if (rsd.is_protein()) {
-		phi = nonnegative_principal_angle_degrees( rsd.mainchain_torsion(1));
-		psi = nonnegative_principal_angle_degrees( rsd.mainchain_torsion(2));
-	}
+}
 
-	// [1] torsions
-	for ( Size dihe = 1; dihe <= rsd_type.ndihe(); ++dihe ){
-		// get ResidueType ints
-		int rt1 = ( rsd_type.dihedral( dihe ) ).key1();
-		int rt2 = ( rsd_type.dihedral( dihe ) ).key2();
-		int rt3 = ( rsd_type.dihedral( dihe ) ).key3();
-		int rt4 = ( rsd_type.dihedral( dihe ) ).key4();
+/// @brief helper function to handle intrares bond torsions
+void
+CartesianBondedEnergy::eval_singleres_torsion_derivatives(
+	conformation::Residue const & rsd,
+	ResidueCartBondedParameters const & resparams,
+	Real const phi,
+	Real const psi,
+	EnergyMap const & weights,
+	utility::vector1< DerivVectorPair > & r_atom_derivs
+) const
+{
+	using namespace core::chemical;
+	using numeric::constants::d::pi;
 
-		// lookup Kphi and phi0
-		std::string atm1name=rsd.atom_name(rt1); boost::trim(atm1name);
-		std::string atm2name=rsd.atom_name(rt2); boost::trim(atm2name);
-		std::string atm3name=rsd.atom_name(rt3); boost::trim(atm3name);
-		std::string atm4name=rsd.atom_name(rt4); boost::trim(atm4name);
-		CartBondedParametersCAP tor_params = db_->lookup_torsion(rsd,
-			atm1name,atm2name,atm3name,atm4name );
+	utility::vector1< ResidueCartBondedParameters::torsion_parameter > const & tps( resparams.torsion_parameters() );
 
-		if (!tor_params || tor_params->is_null()) continue;
+	Real const weight = weights[ cart_bonded_torsion ] + weights[ cart_bonded ];
 
-		Real Kphi=tor_params->K(phi,psi), phi0=tor_params->mu(phi,psi), phi_step=2*pi/tor_params->period();
+	for ( Size ii = 1, iiend = tps.size(); ii <= iiend; ++ii ) {
+		ResidueCartBondedParameters::Size4 const & atids( tps[ ii ].first );
+		Size const rt1( atids[1] ), rt2( atids[2] ), rt3( atids[3] ), rt4( atids[4] );
+		CartBondedParameters const & tor_params( *tps[ ii ].second );
+
+		Real Kphi = tor_params.K(phi,psi);
+		Real phi0 = tor_params.mu(phi,psi);
+		Real phi_step = 2 * pi / tor_params.period();
 
 		Vector f1(0.0), f2(0.0);
 		Real angle(0.0), dE_dphi;
@@ -1767,10 +2568,11 @@ CartesianBondedEnergy::eval_singleres_derivatives(
 		numeric::deriv::dihedral_p1_cosine_deriv( rsd.xyz( rt1 ), rsd.xyz( rt2 ), rsd.xyz( rt3 ), rsd.xyz( rt4 ), angle, f1, f2 );
 		Real del_phi = basic::subtract_radian_angles(angle, phi0);
 		if (phi_step>0) del_phi = basic::periodic_range( del_phi, phi_step );
-		if (linear_bonded_potential_ && std::fabs(del_phi)>1)
-			dE_dphi = (weights[ cart_bonded_torsion ] + weights[ cart_bonded ]) * Kphi * (del_phi>0? 1 : -1);
-		else
-			dE_dphi = (weights[ cart_bonded_torsion ] + weights[ cart_bonded ]) * Kphi * del_phi;
+		if (linear_bonded_potential_ && std::fabs(del_phi)>1) {
+			dE_dphi = weight * Kphi * (del_phi>0? 1 : -1);
+		} else {
+			dE_dphi = weight * Kphi * del_phi;
+		}
 		r_atom_derivs[ rt1 ].f1() += dE_dphi * f1;
 		r_atom_derivs[ rt1 ].f2() += dE_dphi * f2;
 
@@ -1781,12 +2583,7 @@ CartesianBondedEnergy::eval_singleres_derivatives(
 
 		f1 = f2 = Vector(0.0);
 		numeric::deriv::dihedral_p2_cosine_deriv( rsd.xyz( rt4 ), rsd.xyz( rt3 ), rsd.xyz( rt2 ), rsd.xyz( rt1 ), angle, f1, f2 );
-		del_phi = basic::subtract_radian_angles(angle, phi0);
-		if (phi_step>0) del_phi = basic::periodic_range( del_phi, phi_step );
-		if (linear_bonded_potential_ && std::fabs(del_phi)>1)
-			dE_dphi = (weights[ cart_bonded_torsion ] + weights[ cart_bonded ]) * Kphi * (del_phi>0? 1 : -1);
-		else
-			dE_dphi = (weights[ cart_bonded_torsion ] + weights[ cart_bonded ]) * Kphi * del_phi;
+
 		r_atom_derivs[ rt3 ].f1() += dE_dphi * f1;
 		r_atom_derivs[ rt3 ].f2() += dE_dphi * f2;
 
@@ -1794,35 +2591,43 @@ CartesianBondedEnergy::eval_singleres_derivatives(
 		numeric::deriv::dihedral_p1_cosine_deriv( rsd.xyz( rt4 ), rsd.xyz( rt3 ), rsd.xyz( rt2 ), rsd.xyz( rt1 ), angle, f1, f2 );
 		r_atom_derivs[ rt4 ].f1() += dE_dphi * f1;
 		r_atom_derivs[ rt4 ].f2() += dE_dphi * f2;
+
 	}
+}
 
+/// @brief helper function to handle intrares bond angles
+void
+CartesianBondedEnergy::eval_singleres_angle_derivatives(
+	conformation::Residue const & rsd,
+	ResidueCartBondedParameters const & resparams,
+	Real const phi,
+	Real const psi,
+	EnergyMap const & weights,
+	utility::vector1< DerivVectorPair > & r_atom_derivs
+) const
+{
+	using namespace core::chemical;
 
-	// [2] angles
-	for ( Size bondang = 1; bondang <= rsd_type.num_bondangles(); ++bondang ) {
-		// get ResidueType ints
-		Size rt1 = ( rsd_type.bondangle( bondang ) ).key1();
-		Size rt2 = ( rsd_type.bondangle( bondang ) ).key2();
-		Size rt3 = ( rsd_type.bondangle( bondang ) ).key3();
+	utility::vector1< ResidueCartBondedParameters::angle_parameter > const & aps( resparams.angle_parameters() );
+	Real const weight = weights[ cart_bonded_angle ] + weights[ cart_bonded ];
 
-		// lookup Ktheta and theta0
-		std::string atm1name=rsd.atom_name(rt1); boost::trim(atm1name);
-		std::string atm2name=rsd.atom_name(rt2); boost::trim(atm2name);
-		std::string atm3name=rsd.atom_name(rt3); boost::trim(atm3name);
-		CartBondedParametersCAP ang_params = db_->lookup_angle(rsd, preproline,
-			atm1name,atm2name,atm3name, rt1,rt2,rt3 );
-
-		if (ang_params->is_null()) continue;
-
-		Real Ktheta=ang_params->K(phi,psi), theta0=ang_params->mu(phi,psi);
+	for ( Size ii = 1, iiend = aps.size(); ii <= iiend; ++ii ) {
+		ResidueCartBondedParameters::Size3 const & atids( aps[ ii ].first );
+		Size const rt1( atids[1] ), rt2( atids[2] ), rt3( atids[3] );
+		CartBondedParameters const & ang_params( *aps[ ii ].second );
+		if (ang_params.is_null()) continue;
+		Real Ktheta = ang_params.K(phi,psi);
+		Real theta0 = ang_params.mu(phi,psi);
 
 		Vector f1(0.0), f2(0.0);
 		Real theta(0.0), dE_dtheta;
 
 		numeric::deriv::angle_p1_deriv( rsd.xyz( rt1 ), rsd.xyz( rt2 ), rsd.xyz( rt3 ), theta, f1, f2 );
-		if (linear_bonded_potential_ && std::fabs(theta - theta0)>1)
-			dE_dtheta = (weights[ cart_bonded_angle ] + weights[ cart_bonded ]) * Ktheta * ((theta - theta0)>0? 1 : -1);
-		else
-			dE_dtheta = (weights[ cart_bonded_angle ] + weights[ cart_bonded ]) * Ktheta * (theta - theta0);
+		if (linear_bonded_potential_ && std::fabs(theta - theta0)>1) {
+			dE_dtheta = weight * Ktheta * ((theta > theta0)>0? 1 : -1);
+		} else {
+			dE_dtheta = weight * Ktheta * (theta - theta0);
+		}
 		r_atom_derivs[ rt1 ].f1() += dE_dtheta * f1;
 		r_atom_derivs[ rt1 ].f2() += dE_dtheta * f2;
 
@@ -1834,291 +2639,514 @@ CartesianBondedEnergy::eval_singleres_derivatives(
 		r_atom_derivs[ rt3 ].f1() += dE_dtheta * f1;
 		r_atom_derivs[ rt3 ].f2() += dE_dtheta * f2;
 	}
+}
 
-	// [3] bonds
-	for (Size atm_i=1; atm_i<=rsd_type.natoms(); ++atm_i) {
-		chemical::AtomIndices atm_nbrs = rsd_type.nbrs( atm_i );
-		for (Size j=1; j<=atm_nbrs.size(); ++j) {
-			Size atm_j = atm_nbrs[j];
-			if ( atm_i<atm_j ) { // only score each bond once -- use restype index to define ordering
-				// lookup Kd and d0
-				std::string atm1name=rsd.atom_name(atm_i); boost::trim(atm1name);
-				std::string atm2name=rsd.atom_name(atm_j); boost::trim(atm2name);
-				CartBondedParametersCAP len_params = db_->lookup_length(rsd, preproline,
-					atm1name,atm2name, atm_i,atm_j );
-				if (len_params->is_null()) continue;
+/// @brief helper function to handle intrares bond lengths
+void
+CartesianBondedEnergy::eval_singleres_length_derivatives(
+	conformation::Residue const & rsd,
+	ResidueCartBondedParameters const & resparams,
+	Real const phi,
+	Real const psi,
+	EnergyMap const & weights,
+	utility::vector1< DerivVectorPair > & r_atom_derivs
+) const
+{
+	using namespace core::chemical;
 
-				Real Kd=len_params->K(phi,psi), d0=len_params->mu(phi,psi);
+	utility::vector1< ResidueCartBondedParameters::length_parameter > const & lps( resparams.length_parameters() );
+	Real const weight = weights[ cart_bonded_length ] + weights[ cart_bonded ];
 
-				Vector f1(0.0), f2(0.0);
-				Real d=0, dE_dd;
+	for ( Size ii = 1, iiend = lps.size(); ii <= iiend; ++ii ) {
+		ResidueCartBondedParameters::Size2 const & atids( lps[ ii ].first );
+		Size const rt1( atids[1] ), rt2( atids[2] );
+		CartBondedParameters const & len_params( *lps[ ii ].second );
+		if (len_params.is_null() ) continue;
 
-				numeric::deriv::distance_f1_f2_deriv( rsd.xyz( atm_i ), rsd.xyz( atm_j ), d, f1, f2 );
-				if (linear_bonded_potential_ && std::fabs(d - d0)>1)
-					dE_dd = (weights[ cart_bonded_length ] + weights[ cart_bonded ]) * Kd * ((d - d0)>0? 1 : -1);
-				else
-					dE_dd = (weights[ cart_bonded_length ] + weights[ cart_bonded ]) * Kd * (d - d0);
-				r_atom_derivs[ atm_i ].f1() += dE_dd * f1;
-				r_atom_derivs[ atm_i ].f2() += dE_dd * f2;
+		Real const Kd = len_params.K(phi,psi);
+		Real const d0 = len_params.mu(phi,psi);
 
-				numeric::deriv::distance_f1_f2_deriv( rsd.xyz( atm_j ), rsd.xyz( atm_i ), d, f1, f2 );
-				r_atom_derivs[ atm_j ].f1() += dE_dd * f1;
-				r_atom_derivs[ atm_j ].f2() += dE_dd * f2;
-			}
+		Vector f1(0.0), f2(0.0);
+		Real d=0, dE_dd;
+
+		numeric::deriv::distance_f1_f2_deriv( rsd.xyz( rt1 ), rsd.xyz( rt2 ), d, f1, f2 );
+		if (linear_bonded_potential_ && std::fabs(d - d0)>1) {
+			dE_dd = weight * Kd * ((d - d0)>0? 1 : -1);
+		} else {
+			dE_dd = weight * Kd * (d - d0);
 		}
+		r_atom_derivs[ rt1 ].f1() += dE_dd * f1;
+		r_atom_derivs[ rt1 ].f2() += dE_dd * f2;
+
+		r_atom_derivs[ rt2 ].f1() -= dE_dd * f1;
+		r_atom_derivs[ rt2 ].f2() -= dE_dd * f2;
+
+	}
+}
+
+// deriv impropers
+void
+CartesianBondedEnergy::eval_singleres_improper_torsions_derivatives(
+	conformation::Residue const & rsd,
+	ResidueCartBondedParameters const & resparams,
+	EnergyMap const & weights,
+	utility::vector1< DerivVectorPair > & r_atom_derivs
+) const {
+	using namespace core::chemical;
+	using numeric::constants::d::pi;
+
+	utility::vector1< ResidueCartBondedParameters::torsion_parameter > const & itps(
+		resparams.improper_torsion_parameters() );
+	Real const weight = weights[ cart_bonded_torsion ] + weights[ cart_bonded ];
+
+	for ( Size ii = 1, iiend = itps.size(); ii <= iiend; ++ii ) {
+		ResidueCartBondedParameters::Size4 const & atids( itps[ ii ].first );
+		Size const rt1( atids[1] ), rt2( atids[2] ), rt3( atids[3] ), rt4( atids[4] );
+		CartBondedParameters const & tor_params( *itps[ ii ].second );
+		Real Kphi = tor_params.K(0,0);
+		Real phi0 = tor_params.mu(0,0);
+		Real phi_step=2 * pi / tor_params.period();
+
+
+		Vector f1(0.0), f2(0.0);
+		Real phi=0, dE_dphi;
+
+		numeric::deriv::dihedral_p1_cosine_deriv(
+			rsd.xyz( rt1 ), rsd.xyz( rt2 ), rsd.xyz( rt3 ), rsd.xyz( rt4 ), phi, f1, f2 );
+		Real del_phi = basic::subtract_radian_angles(phi, phi0);
+		del_phi = basic::periodic_range( del_phi, phi_step );
+		if (linear_bonded_potential_ && std::fabs(del_phi)>1) {
+			dE_dphi = weight * Kphi * (del_phi>0? 1 : -1);
+		} else {
+			dE_dphi = weight * Kphi * del_phi;
+		}
+		r_atom_derivs[ rt1 ].f1() += dE_dphi * f1;
+		r_atom_derivs[ rt1 ].f2() += dE_dphi * f2;
+
+		f1 = f2 = Vector(0.0);
+		numeric::deriv::dihedral_p2_cosine_deriv(
+			rsd.xyz( rt1 ), rsd.xyz( rt2 ), rsd.xyz( rt3 ), rsd.xyz( rt4 ), phi, f1, f2 );
+		r_atom_derivs[ rt2 ].f1() += dE_dphi * f1;
+		r_atom_derivs[ rt2 ].f2() += dE_dphi * f2;
+
+		f1 = f2 = Vector(0.0);
+		numeric::deriv::dihedral_p2_cosine_deriv(
+			rsd.xyz( rt4 ), rsd.xyz( rt3 ), rsd.xyz( rt2 ), rsd.xyz( rt1 ), phi, f1, f2 );
+
+		r_atom_derivs[ rt3 ].f1() += dE_dphi * f1;
+		r_atom_derivs[ rt3 ].f2() += dE_dphi * f2;
+
+		f1 = f2 = Vector(0.0);
+		numeric::deriv::dihedral_p1_cosine_deriv(
+			rsd.xyz( rt4 ), rsd.xyz( rt3 ), rsd.xyz( rt2 ), rsd.xyz( rt1 ), phi, f1, f2 );
+		r_atom_derivs[ rt4 ].f1() += dE_dphi * f1;
+		r_atom_derivs[ rt4 ].f2() += dE_dphi * f2;
 	}
 }
 
 
-///////////////////////////
-///
+
 void
-CartesianBondedEnergy::eval_residue_pair_derivatives(
+CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd1(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	ResSingleMinimizationData const &,
-	ResSingleMinimizationData const &,
-	ResPairMinimizationData const & min_data,
-	pose::Pose const & pose,
+	ResidueCartBondedParameters const & rsd1params,
+	ResidueCartBondedParameters const & rsd2params,
+	Real phi1,
+	Real psi1,
 	EnergyMap const & weights,
 	utility::vector1< DerivVectorPair > & r1_atom_derivs,
 	utility::vector1< DerivVectorPair > & r2_atom_derivs
 ) const
 {
-	using namespace numeric;
+	using namespace core::chemical;
+	if ( rsd1.aa() <= num_canonical_aas && rsd2.aa() <= num_canonical_aas &&
+			rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() ) {
 
-	assert( rsd2.seqpos() > rsd1.seqpos() );
-	bool preproline = (rsd2.aa()==core::chemical::aa_pro);
+		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
+		assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
+		assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
 
-	chemical::ResidueType const & rsd1_type = rsd1.type();
-	chemical::ResidueType const & rsd2_type = rsd2.type();
+		utility::vector1< ResidueCartBondedParameters::angle_parameter > const & aps( rsd1params.upper_connect_angle_params() );
+		for ( Size ii = 1, iiend = aps.size(); ii <= iiend; ++ii ) {
+			ResidueCartBondedParameters::Size3 const & atids( aps[ ii ].first );
+			CartBondedParameters const & ang_params( *aps[ ii ].second );
+			Real Ktheta = ang_params.K(phi1,psi1);
+			Real theta0 = ang_params.mu(phi1,psi1);
 
-	if ( rsd1.aa() == core::chemical::aa_vrt) return;
-
-	// get subcomponents
-	eval_singleres_derivatives( rsd1, weights, r1_atom_derivs, preproline );
-
-	// cterm special case
-	Size nres = pose.total_residue();
-	if( core::pose::symmetry::is_symmetric(pose) ) nres = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
-	if (rsd2.seqpos() == nres) {
-		eval_singleres_derivatives(rsd2, weights, r2_atom_derivs, false );
-	}
-
-	// bail out if the residues aren't bonded or we cross a cutpoint
-	if (!rsd1.is_bonded(rsd2)) { return; }
-	if ( pose.fold_tree().is_cutpoint( rsd1.seqpos() ) ) { return; }
-
-	eval_improper_torsions_derivative( rsd1, rsd2, weights, r1_atom_derivs, r2_atom_derivs );
-
-	// get phi,psis for bb-dep angles/lengths
-	Real phi1=0,psi1=0,phi2=0,psi2=0;
-	if (rsd1.is_protein()) {
-		phi1 = nonnegative_principal_angle_degrees( rsd1.mainchain_torsion(1));
-		psi1 = nonnegative_principal_angle_degrees( rsd1.mainchain_torsion(2));
-	}
-	if (rsd2.is_protein()) {
-		phi2 = nonnegative_principal_angle_degrees( rsd2.mainchain_torsion(1));
-		psi2 = nonnegative_principal_angle_degrees( rsd2.mainchain_torsion(2));
-	}
-
-	utility::vector1< Size > const & r1_resconn_ids( rsd1.connections_to_residue( rsd2 ) );
-	for ( Size ii = 1; ii <= r1_resconn_ids.size(); ++ii ) {
-		Size const resconn_id1( r1_resconn_ids[ii] );
-		Size const resconn_id2( rsd1.residue_connection_conn_id( resconn_id1 ) );
-
-		Size const resconn_atomno1( rsd1.residue_connection( resconn_id1 ).atomno() );
-		Size const resconn_atomno2( rsd2.residue_connection( resconn_id2 ).atomno() );
-
-		/// [1] angles involving two atoms on this rsd1
-		utility::vector1< chemical::two_atom_set > const & rsd1_atoms_wi1_bond_of_ii(
-			rsd1_type.atoms_within_one_bond_of_a_residue_connection( resconn_id1 ));
-		for ( Size jj = 1; jj <= rsd1_atoms_wi1_bond_of_ii.size(); ++jj ) {
-			assert( rsd1_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno1 );
-			Size const res1_lower_atomno = rsd1_atoms_wi1_bond_of_ii[ jj ].key2();
-
-			Real const angle = numeric::angle_radians(
-				rsd1.atom( res1_lower_atomno ).xyz(),
-				rsd1.atom( resconn_atomno1 ).xyz(),
-				rsd2.atom( resconn_atomno2 ).xyz() );
-			std::string atm1name=rsd1.atom_name(res1_lower_atomno); boost::trim(atm1name);
-			std::string atm2name=rsd1.atom_name(resconn_atomno1); boost::trim(atm2name);
-			std::string atm3name=rsd2.atom_name(resconn_atomno2); boost::trim(atm3name);
-
-			// lookup Ktheta and theta0
-			CartBondedParametersCAP ang_params = db_->lookup_angle(rsd1, preproline,
-				atm1name, atm2name, atm3name, res1_lower_atomno, resconn_atomno1, -resconn_id1);
-			if (ang_params->is_null()) continue;
-			Real Ktheta=ang_params->K(phi1,psi1), theta0=ang_params->mu(phi1,psi1);
+			// temp -- rename these variables, ok?
+			Size const res1_lower_atomno = atids[1], resconn_atomno1 = atids[2], resconn_atomno2 = rsd2params.bb_N_index();
 
 			Vector f1(0.0), f2(0.0);
 			Real theta(0.0), dE_dtheta;
-			numeric::deriv::angle_p1_deriv( 
+			numeric::deriv::angle_p1_deriv(
 			   rsd1.xyz( res1_lower_atomno ), rsd1.xyz( resconn_atomno1 ), rsd2.xyz( resconn_atomno2 ), theta, f1, f2 );
-			if (linear_bonded_potential_ && std::fabs(theta - theta0)>1)
+			if (linear_bonded_potential_ && std::fabs(theta - theta0)>1) {
 				dE_dtheta = (weights[ cart_bonded_angle ] + weights[ cart_bonded ]) * Ktheta * ((theta - theta0)>0? 1 : -1);
-			else
+			} else {
 				dE_dtheta = (weights[ cart_bonded_angle ] + weights[ cart_bonded ]) * Ktheta * (theta - theta0);
+			}
 			r1_atom_derivs[ res1_lower_atomno ].f1() += dE_dtheta * f1;
 			r1_atom_derivs[ res1_lower_atomno ].f2() += dE_dtheta * f2;
-	
+
 			numeric::deriv::angle_p2_deriv(
 			   rsd1.xyz( res1_lower_atomno ), rsd1.xyz( resconn_atomno1 ), rsd2.xyz( resconn_atomno2 ), theta, f1, f2 );
 			r1_atom_derivs[ resconn_atomno1 ].f1() += dE_dtheta * f1;
 			r1_atom_derivs[ resconn_atomno1 ].f2() += dE_dtheta * f2;
-	
-			numeric::deriv::angle_p1_deriv( 
+
+			numeric::deriv::angle_p1_deriv(
 			    rsd2.xyz( resconn_atomno2 ), rsd1.xyz( resconn_atomno1 ), rsd1.xyz( res1_lower_atomno ), theta, f1, f2 );
 			r2_atom_derivs[ resconn_atomno2 ].f1() += dE_dtheta * f1;
 			r2_atom_derivs[ resconn_atomno2 ].f2() += dE_dtheta * f2;
 		}
 
+	} else {
+		// At the time of the writing of this comment, the CartesianBondEnergy is used only
+		// to evaluate protein energetics, and the only inter-residue bonds it is evaluated
+		// on is peptide bonds.  If that persists, then this "else" clause will never be executed.
+		// If it does get executed, then this else clause ought to be optimized.
+		// Before the above "if" and the below "else" clauses got separated, the only code
+		// executed was the "else" clause and it was rediculously slow.  I mean much much
+		// slower than evaluating the etable energies.  REEAAALLLLY SLOW.
 
-		/// [2] angles involving two atoms on this rsd2
-		utility::vector1< chemical::two_atom_set > const & rsd2_atoms_wi1_bond_of_ii(
-			rsd2_type.atoms_within_one_bond_of_a_residue_connection( resconn_id2 ));
-		for ( Size jj = 1; jj <= rsd2_atoms_wi1_bond_of_ii.size(); ++jj ) {
-			assert( rsd2_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno2 );
-			Size const res2_lower_atomno = rsd2_atoms_wi1_bond_of_ii[ jj ].key2();
+		utility::vector1< Size > const & r1_resconn_ids( rsd1.connections_to_residue( rsd2 ) );
+		for ( Size ii = 1; ii <= r1_resconn_ids.size(); ++ii ) {
+			Size const resconn_id1( r1_resconn_ids[ii] );
+			Size const resconn_id2( rsd1.residue_connection_conn_id( resconn_id1 ) );
 
-			// lookup Ktheta and theta0
-			// set pre-proline to false here -- it refers to rsd2+1 which would make this three-body
-			std::string atm1name=rsd2.atom_name(res2_lower_atomno); boost::trim(atm1name);
-			std::string atm2name=rsd2.atom_name(resconn_atomno2); boost::trim(atm2name);
-			std::string atm3name=rsd1.atom_name(resconn_atomno1); boost::trim(atm3name);
-			CartBondedParametersCAP ang_params = db_->lookup_angle(rsd2, false,
-				atm1name, atm2name, atm3name, res2_lower_atomno, resconn_atomno2, -resconn_id2);
-			if (ang_params->is_null()) continue;
-			Real Ktheta=ang_params->K(phi2,psi2), theta0=ang_params->mu(phi2,psi2);
+			Size const resconn_atomno1( rsd1.residue_connection( resconn_id1 ).atomno() );
+			Size const resconn_atomno2( rsd2.residue_connection( resconn_id2 ).atomno() );
+
+			// compute bond-angle energies with two atoms on rsd1
+			utility::vector1< chemical::two_atom_set > const & rsd1_atoms_wi1_bond_of_ii(
+				rsd1.type().atoms_within_one_bond_of_a_residue_connection( resconn_id1 ));
+			for ( Size jj = 1; jj <= rsd1_atoms_wi1_bond_of_ii.size(); ++jj ) {
+				assert( rsd1_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno1 );
+				Size const res1_lower_atomno = rsd1_atoms_wi1_bond_of_ii[ jj ].key2();
+
+				//Real const angle = numeric::angle_radians( // why compute the angle if you're not going to use it?
+				//	rsd1.atom( res1_lower_atomno ).xyz(),
+				//	rsd1.atom( resconn_atomno1 ).xyz(),
+				//	rsd2.atom( resconn_atomno2 ).xyz() );
+				std::string atm1name=rsd1.atom_name(res1_lower_atomno); boost::trim(atm1name);
+				std::string atm2name=rsd1.atom_name(resconn_atomno1); boost::trim(atm2name);
+				std::string atm3name=rsd2.atom_name(resconn_atomno2); boost::trim(atm3name);
+
+				// lookup Ktheta and theta0
+				CartBondedParametersCOP ang_params = db_->lookup_angle(rsd1.type(), rsd2.aa() == chemical::aa_pro,
+					atm1name, atm2name, atm3name, res1_lower_atomno, resconn_atomno1, -resconn_id1);
+				if (ang_params->is_null()) continue;
+				Real Ktheta=ang_params->K(phi1,psi1), theta0=ang_params->mu(phi1,psi1);
+
+				Vector f1(0.0), f2(0.0);
+				Real theta(0.0), dE_dtheta;
+				numeric::deriv::angle_p1_deriv(
+					rsd1.xyz( res1_lower_atomno ), rsd1.xyz( resconn_atomno1 ), rsd2.xyz( resconn_atomno2 ), theta, f1, f2 );
+				if (linear_bonded_potential_ && std::fabs(theta - theta0)>1)
+					dE_dtheta = (weights[ cart_bonded_angle ] + weights[ cart_bonded ]) * Ktheta * ((theta - theta0)>0? 1 : -1);
+				else
+					dE_dtheta = (weights[ cart_bonded_angle ] + weights[ cart_bonded ]) * Ktheta * (theta - theta0);
+				r1_atom_derivs[ res1_lower_atomno ].f1() += dE_dtheta * f1;
+				r1_atom_derivs[ res1_lower_atomno ].f2() += dE_dtheta * f2;
+
+				numeric::deriv::angle_p2_deriv(
+					rsd1.xyz( res1_lower_atomno ), rsd1.xyz( resconn_atomno1 ), rsd2.xyz( resconn_atomno2 ), theta, f1, f2 );
+				r1_atom_derivs[ resconn_atomno1 ].f1() += dE_dtheta * f1;
+				r1_atom_derivs[ resconn_atomno1 ].f2() += dE_dtheta * f2;
+
+				numeric::deriv::angle_p1_deriv(
+					 rsd2.xyz( resconn_atomno2 ), rsd1.xyz( resconn_atomno1 ), rsd1.xyz( res1_lower_atomno ), theta, f1, f2 );
+				r2_atom_derivs[ resconn_atomno2 ].f1() += dE_dtheta * f1;
+				r2_atom_derivs[ resconn_atomno2 ].f2() += dE_dtheta * f2;
+			}
+		}
+	}
+}
+
+void
+CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd2(
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	ResidueCartBondedParameters const & rsd1params,
+	ResidueCartBondedParameters const & rsd2params,
+	Real phi2,
+	Real psi2,
+	EnergyMap const & weights,
+	utility::vector1< DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< DerivVectorPair > & r2_atom_derivs
+) const
+{
+	using namespace core::chemical;
+	if ( rsd1.aa() <= num_canonical_aas && rsd2.aa() <= num_canonical_aas &&
+			rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() ) {
+
+		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
+		assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
+		assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
+
+		utility::vector1< ResidueCartBondedParameters::angle_parameter > const & aps( rsd2params.lower_connect_angle_params() );
+		for ( Size ii = 1, iiend = aps.size(); ii <= iiend; ++ii ) {
+			ResidueCartBondedParameters::Size3 const & atids( aps[ ii ].first );
+			CartBondedParameters const & ang_params( *aps[ ii ].second );
+			Real Ktheta = ang_params.K(phi2,psi2);
+			Real theta0 = ang_params.mu(phi2,psi2);
+
+			// temp -- rename these variables, ok?
+			Size const res2_lower_atomno = atids[1], resconn_atomno2 = atids[2], resconn_atomno1 = rsd1params.bb_C_index();
 
 			Vector f1(0.0), f2(0.0);
 			Real theta(0.0), dE_dtheta;
-			numeric::deriv::angle_p1_deriv( 
-			   rsd2.xyz( res2_lower_atomno ), rsd2.xyz( resconn_atomno2 ), rsd1.xyz( resconn_atomno1 ), theta, f1, f2 );
-			if (linear_bonded_potential_ && std::fabs(theta - theta0)>1)
+			numeric::deriv::angle_p1_deriv(
+				rsd2.xyz( res2_lower_atomno ), rsd2.xyz( resconn_atomno2 ), rsd1.xyz( resconn_atomno1 ), theta, f1, f2 );
+			if ( linear_bonded_potential_ && std::fabs(theta - theta0)>1 ) {
 				dE_dtheta = (weights[ cart_bonded_angle ] + weights[ cart_bonded ]) * Ktheta * ((theta - theta0)>0? 1 : -1);
-			else
+			} else {
 				dE_dtheta = (weights[ cart_bonded_angle ] + weights[ cart_bonded ]) * Ktheta * (theta - theta0);
+			}
 			r2_atom_derivs[ res2_lower_atomno ].f1() += dE_dtheta * f1;
 			r2_atom_derivs[ res2_lower_atomno ].f2() += dE_dtheta * f2;
 
-			numeric::deriv::angle_p2_deriv( 
-			   rsd2.xyz( res2_lower_atomno ), rsd2.xyz( resconn_atomno2 ), rsd1.xyz( resconn_atomno1 ), theta, f1, f2 );
+			numeric::deriv::angle_p2_deriv(
+				rsd2.xyz( res2_lower_atomno ), rsd2.xyz( resconn_atomno2 ), rsd1.xyz( resconn_atomno1 ), theta, f1, f2 );
 			r2_atom_derivs[ resconn_atomno2 ].f1() += dE_dtheta * f1;
 			r2_atom_derivs[ resconn_atomno2 ].f2() += dE_dtheta * f2;
 
-			numeric::deriv::angle_p1_deriv( 
-			   rsd1.xyz( resconn_atomno1 ), rsd2.xyz( resconn_atomno2 ), rsd2.xyz( res2_lower_atomno ), theta, f1, f2 );
+			numeric::deriv::angle_p1_deriv(
+				rsd1.xyz( resconn_atomno1 ), rsd2.xyz( resconn_atomno2 ), rsd2.xyz( res2_lower_atomno ), theta, f1, f2 );
 			r1_atom_derivs[ resconn_atomno1 ].f1() += dE_dtheta * f1;
 			r1_atom_derivs[ resconn_atomno1 ].f2() += dE_dtheta * f2;
 		}
 
-		// [3] Bonds across connection
-		std::string atm1name=rsd2.atom_name(resconn_atomno2); boost::trim(atm1name);
-		std::string atm2name=rsd1.atom_name(resconn_atomno1); boost::trim(atm2name);
-		CartBondedParametersCAP len_params = db_->lookup_length(rsd2, false,
-				atm1name, atm2name, resconn_atomno2, -resconn_id2);
+	} else {
+		// At the time of the writing of this comment, the CartesianBondEnergy is used only
+		// to evaluate protein energetics, and the only inter-residue bonds it is evaluated
+		// on is peptide bonds.  If that persists, then this "else" clause will never be executed.
+		// If it does get executed, then this else clause ought to be optimized.
+		// Before the above "if" and the below "else" clauses got separated, the only code
+		// executed was the "else" clause and it was rediculously slow.  I mean much much
+		// slower than evaluating the etable energies.  REEAAALLLLY SLOW.
 
-		if (len_params->is_null()) continue;
-		Real Kd=len_params->K(phi2,psi2), d0=len_params->mu(phi2,psi2);
+		utility::vector1< Size > const & r1_resconn_ids( rsd1.connections_to_residue( rsd2 ) );
+		for ( Size ii = 1; ii <= r1_resconn_ids.size(); ++ii ) {
+			Size const resconn_id1( r1_resconn_ids[ii] );
+			Size const resconn_id2( rsd1.residue_connection_conn_id( resconn_id1 ) );
+
+			Size const resconn_atomno1( rsd1.residue_connection( resconn_id1 ).atomno() );
+			Size const resconn_atomno2( rsd2.residue_connection( resconn_id2 ).atomno() );
+
+			utility::vector1< chemical::two_atom_set > const & rsd2_atoms_wi1_bond_of_ii(
+				rsd2.type().atoms_within_one_bond_of_a_residue_connection( resconn_id2 ));
+			for ( Size jj = 1; jj <= rsd2_atoms_wi1_bond_of_ii.size(); ++jj ) {
+				assert( rsd2_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno2 );
+				Size const res2_lower_atomno = rsd2_atoms_wi1_bond_of_ii[ jj ].key2();
+
+				// lookup Ktheta and theta0
+				// set pre-proline to false here -- it refers to rsd2+1 which would make this three-body
+				std::string atm1name=rsd2.atom_name(res2_lower_atomno); boost::trim(atm1name);
+				std::string atm2name=rsd2.atom_name(resconn_atomno2); boost::trim(atm2name);
+				std::string atm3name=rsd1.atom_name(resconn_atomno1); boost::trim(atm3name);
+				CartBondedParametersCOP ang_params = db_->lookup_angle(rsd2.type(), false,
+					atm1name, atm2name, atm3name, res2_lower_atomno, resconn_atomno2, -resconn_id2);
+				if (ang_params->is_null()) continue;
+				Real Ktheta=ang_params->K(phi2,psi2), theta0=ang_params->mu(phi2,psi2);
+
+				Vector f1(0.0), f2(0.0);
+				Real theta(0.0), dE_dtheta;
+				numeric::deriv::angle_p1_deriv(
+					rsd2.xyz( res2_lower_atomno ), rsd2.xyz( resconn_atomno2 ), rsd1.xyz( resconn_atomno1 ), theta, f1, f2 );
+				if (linear_bonded_potential_ && std::fabs(theta - theta0)>1)
+					dE_dtheta = (weights[ cart_bonded_angle ] + weights[ cart_bonded ]) * Ktheta * ((theta - theta0)>0? 1 : -1);
+				else
+					dE_dtheta = (weights[ cart_bonded_angle ] + weights[ cart_bonded ]) * Ktheta * (theta - theta0);
+				r2_atom_derivs[ res2_lower_atomno ].f1() += dE_dtheta * f1;
+				r2_atom_derivs[ res2_lower_atomno ].f2() += dE_dtheta * f2;
+
+				numeric::deriv::angle_p2_deriv(
+					rsd2.xyz( res2_lower_atomno ), rsd2.xyz( resconn_atomno2 ), rsd1.xyz( resconn_atomno1 ), theta, f1, f2 );
+				r2_atom_derivs[ resconn_atomno2 ].f1() += dE_dtheta * f1;
+				r2_atom_derivs[ resconn_atomno2 ].f2() += dE_dtheta * f2;
+
+				numeric::deriv::angle_p1_deriv(
+					rsd1.xyz( resconn_atomno1 ), rsd2.xyz( resconn_atomno2 ), rsd2.xyz( res2_lower_atomno ), theta, f1, f2 );
+				r1_atom_derivs[ resconn_atomno1 ].f1() += dE_dtheta * f1;
+				r1_atom_derivs[ resconn_atomno1 ].f2() += dE_dtheta * f2;
+			}
+		}
+	}
+}
+
+void
+CartesianBondedEnergy::eval_interresidue_bond_length_derivs(
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	ResidueCartBondedParameters const & rsd1params,
+	ResidueCartBondedParameters const & rsd2params,
+	Real phi2,
+	Real psi2,
+	EnergyMap const & weights,
+	utility::vector1< DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< DerivVectorPair > & r2_atom_derivs
+) const
+{
+	using namespace core::chemical;
+	if ( rsd1.aa() <= num_canonical_aas && rsd2.aa() <= num_canonical_aas &&
+			rsd1.residue_connection_partner( rsd1.upper_connect().index() )== rsd2.seqpos() ) {
+
+		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
+		assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
+		assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
+
+		// lookup Kd and d0
+		CartBondedParametersCOP len_params = rsd2params.cprev_n_bond_length_params();
+
+		if (len_params->is_null()) return;
+		Real const Kd = len_params->K(phi2,psi2);
+		Real const d0 = len_params->mu(phi2,psi2);
+
+		Size const r1at = rsd1params.bb_C_index();
+		Size const r2at = rsd2params.bb_N_index();
 
 		Vector f1(0.0), f2(0.0);
 		Real d=0, dE_dd;
 
-		numeric::deriv::distance_f1_f2_deriv( rsd2.xyz( resconn_atomno2 ), rsd1.xyz( resconn_atomno1 ), d, f1, f2 );
-		if (linear_bonded_potential_ && std::fabs(d - d0)>1)
+		numeric::deriv::distance_f1_f2_deriv( rsd2.xyz( r2at ), rsd1.xyz( r1at ), d, f1, f2 );
+		if (linear_bonded_potential_ && std::fabs(d - d0)>1) {
 			dE_dd = (weights[ cart_bonded_length ] + weights[ cart_bonded ]) * Kd * ((d - d0)>0? 1 : -1);
-		else
+		} else {
 			dE_dd = (weights[ cart_bonded_length ] + weights[ cart_bonded ]) * Kd * (d - d0);
-		r2_atom_derivs[ resconn_atomno2 ].f1() += dE_dd * f1;
-		r2_atom_derivs[ resconn_atomno2 ].f2() += dE_dd * f2;
+		}
+		r2_atom_derivs[ r2at ].f1() += dE_dd * f1;
+		r2_atom_derivs[ r2at ].f2() += dE_dd * f2;
 
-		numeric::deriv::distance_f1_f2_deriv( rsd1.xyz( resconn_atomno1 ), rsd2.xyz( resconn_atomno2 ), d, f1, f2 );
-		r1_atom_derivs[ resconn_atomno1 ].f1() += dE_dd * f1;
-		r1_atom_derivs[ resconn_atomno1 ].f2() += dE_dd * f2;
+		r1_atom_derivs[ r1at ].f1() -= dE_dd * f1;
+		r1_atom_derivs[ r1at ].f2() -= dE_dd * f2;
+
+
+	} else {
+		// At the time of the writing of this comment, the CartesianBondEnergy is used only
+		// to evaluate protein energetics, and the only inter-residue bonds it is evaluated
+		// on is peptide bonds.  If that persists, then this "else" clause will never be executed.
+		// If it does get executed, then this else clause ought to be optimized.
+		// Before the above "if" and the below "else" clauses got separated, the only code
+		// executed was the "else" clause and it was rediculously slow.  I mean much much
+		// slower than evaluating the etable energies.  REEAAALLLLY SLOW.
+
+		utility::vector1< Size > const & r1_resconn_ids( rsd1.connections_to_residue( rsd2 ) );
+		for ( Size ii = 1; ii <= r1_resconn_ids.size(); ++ii ) {
+			Size const resconn_id1( r1_resconn_ids[ii] );
+			Size const resconn_id2( rsd1.residue_connection_conn_id( resconn_id1 ) );
+
+			Size const resconn_atomno1( rsd1.residue_connection( resconn_id1 ).atomno() );
+			Size const resconn_atomno2( rsd2.residue_connection( resconn_id2 ).atomno() );
+
+			// [3] Bonds across connection
+			std::string atm1name=rsd2.atom_name(resconn_atomno2); boost::trim(atm1name);
+			std::string atm2name=rsd1.atom_name(resconn_atomno1); boost::trim(atm2name);
+			CartBondedParametersCOP len_params = db_->lookup_length(rsd2.type(), false,
+					atm1name, atm2name, resconn_atomno2, -resconn_id2);
+
+			if (len_params->is_null()) continue;
+			Real Kd=len_params->K(phi2,psi2), d0=len_params->mu(phi2,psi2);
+
+			Vector f1(0.0), f2(0.0);
+			Real d=0, dE_dd;
+
+			numeric::deriv::distance_f1_f2_deriv( rsd2.xyz( resconn_atomno2 ), rsd1.xyz( resconn_atomno1 ), d, f1, f2 );
+			if (linear_bonded_potential_ && std::fabs(d - d0)>1)
+				dE_dd = (weights[ cart_bonded_length ] + weights[ cart_bonded ]) * Kd * ((d - d0)>0? 1 : -1);
+			else
+				dE_dd = (weights[ cart_bonded_length ] + weights[ cart_bonded ]) * Kd * (d - d0);
+			r2_atom_derivs[ resconn_atomno2 ].f1() += dE_dd * f1;
+			r2_atom_derivs[ resconn_atomno2 ].f2() += dE_dd * f2;
+
+			numeric::deriv::distance_f1_f2_deriv( rsd1.xyz( resconn_atomno1 ), rsd2.xyz( resconn_atomno2 ), d, f1, f2 );
+			r1_atom_derivs[ resconn_atomno1 ].f1() += dE_dd * f1;
+			r1_atom_derivs[ resconn_atomno1 ].f2() += dE_dd * f2;
+		}
 	}
 }
 
-
 // deriv impropers
 void
-CartesianBondedEnergy::eval_improper_torsions_derivative(
+CartesianBondedEnergy::eval_improper_torsion_derivatives(
 	conformation::Residue const & res1,
 	conformation::Residue const & res2,
+	ResidueCartBondedParameters const & rsd1params,
+	ResidueCartBondedParameters const & rsd2params,
 	EnergyMap const & weights,
 	utility::vector1< DerivVectorPair > & r1_atom_derivs,
 	utility::vector1< DerivVectorPair > & r2_atom_derivs
 ) const {
 	using namespace core::chemical;
-	using numeric::constants::f::pi;
+	using numeric::constants::d::pi;
 
 	assert ( res1.seqpos() < res2.seqpos() );
 
 	// backbone C-N-CA-H
 	if (!res1.is_protein() || !res2.is_protein()) return;
+	Real weight = weights[ cart_bonded_torsion ] + weights[ cart_bonded ];
 
-	if (res2.aa() != aa_pro && res2.has(" H  ") ) {  // check for terminal variants
-		core::Size atm1 = res2.atom_index(" CA ");
-		core::Size atm2 = res1.atom_index(" C  ");
-		core::Size atm3 = res2.atom_index(" N  ");
-		core::Size atm4 = res2.atom_index(" H  ");
+	// backbone CA-Cprev-N-H
+	if ( res2.aa() != aa_pro && rsd2params.bb_H_index() != 0 ) {
+		CartBondedParametersCOP tor_params = rsd2params.ca_cprev_n_h_interres_torsion_params();
+		if ( !tor_params->is_null() ) {
+			Real const Kphi = tor_params->K(0,0);
+			Real const phi0=tor_params->mu(0,0);
+			Real const phi_step=2*pi/tor_params->period();
 
-		CartBondedParametersCAP tor_params = db_->lookup_torsion(res1, "CA","C","N","H");
-		runtime_assert( tor_params ); //fpd  fail if this is not in DB
-		if (!tor_params->is_null()) {  // however, if it is in the db but with 0 weight, that is OK
-			Real Kphi = tor_params->K(0,0), phi0=tor_params->mu(0,0), phi_step=2*pi/tor_params->period();
-	
 			Vector f1(0.0), f2(0.0);
 			Real phi=0, dE_dphi;
+
+			Size const atm1( rsd2params.bb_CA_index() );
+			Size const atm2( rsd1params.bb_C_index() );
+			Size const atm3( rsd2params.bb_N_index() );
+			Size const atm4( rsd2params.bb_H_index() );
 
 			numeric::deriv::dihedral_p1_cosine_deriv(
 				res2.xyz( atm1 ), res1.xyz( atm2 ), res2.xyz( atm3 ), res2.xyz( atm4 ), phi, f1, f2 );
 			Real del_phi = basic::subtract_radian_angles(phi, phi0);
 			del_phi = basic::periodic_range( del_phi, phi_step );
-			if (linear_bonded_potential_ && std::fabs(del_phi)>1)
-				dE_dphi = (weights[ cart_bonded_torsion ] + weights[ cart_bonded ]) * Kphi * (del_phi>0? 1 : -1);
-			else
-				dE_dphi = (weights[ cart_bonded_torsion ] + weights[ cart_bonded ]) * Kphi * del_phi;
+			if (linear_bonded_potential_ && std::fabs(del_phi)>1) {
+				dE_dphi = weight * Kphi * (del_phi>0? 1 : -1);
+			} else {
+				dE_dphi = weight * Kphi * del_phi;
+			}
 			r2_atom_derivs[ atm1 ].f1() += dE_dphi * f1;
 			r2_atom_derivs[ atm1 ].f2() += dE_dphi * f2;
-	
+
 			f1 = f2 = Vector(0.0);
 			numeric::deriv::dihedral_p2_cosine_deriv(
 				res2.xyz( atm1 ), res1.xyz( atm2 ), res2.xyz( atm3 ), res2.xyz( atm4 ), phi, f1, f2 );
 			r1_atom_derivs[ atm2 ].f1() += dE_dphi * f1;
 			r1_atom_derivs[ atm2 ].f2() += dE_dphi * f2;
-	
+
 			f1 = f2 = Vector(0.0);
 			numeric::deriv::dihedral_p2_cosine_deriv(
 				res2.xyz( atm4 ), res2.xyz( atm3 ), res1.xyz( atm2 ), res2.xyz( atm1 ), phi, f1, f2 );
-			del_phi = basic::subtract_radian_angles(phi, phi0);
-			del_phi = basic::periodic_range( del_phi, phi_step );
-			if (linear_bonded_potential_ && std::fabs(del_phi)>1)
-				dE_dphi = (weights[ cart_bonded_torsion ] + weights[ cart_bonded ]) * Kphi * (del_phi>0? 1 : -1);
-			else
-				dE_dphi = (weights[ cart_bonded_torsion ] + weights[ cart_bonded ]) * Kphi * del_phi;
 			r2_atom_derivs[ atm3 ].f1() += dE_dphi * f1;
 			r2_atom_derivs[ atm3 ].f2() += dE_dphi * f2;
-	
+
 			f1 = f2 = Vector(0.0);
-			numeric::deriv::dihedral_p1_cosine_deriv( 
+			numeric::deriv::dihedral_p1_cosine_deriv(
 				res2.xyz( atm4 ), res2.xyz( atm3 ), res1.xyz( atm2 ), res2.xyz( atm1 ), phi, f1, f2 );
 			r2_atom_derivs[ atm4 ].f1() += dE_dphi * f1;
 			r2_atom_derivs[ atm4 ].f2() += dE_dphi * f2;
 		}
 	}
 
+	// backbone CA-Nnext-C-O
 	{
-		core::Size atm1 = res1.atom_index(" CA ");
-		core::Size atm2 = res2.atom_index(" N  ");
-		core::Size atm3 = res1.atom_index(" C  ");
-		core::Size atm4 = res1.atom_index(" O  ");
-
-		CartBondedParametersCAP tor_params = db_->lookup_torsion(res1, "CA", "N", "C", "O");
-		runtime_assert( tor_params ); //fpd  fail if this is not in DB
+		CartBondedParametersCOP tor_params = rsd1params.ca_nnext_c_o_interres_torsion_params();
 		if (!tor_params->is_null()) {  // however, if it is in the db but with 0 weight, that is OK
-			Real Kphi = tor_params->K(0,0), phi0=tor_params->mu(0,0), phi_step=2*pi/tor_params->period();
-	
+			core::Size const atm1 = rsd1params.bb_CA_index();
+			core::Size const atm2 = rsd2params.bb_N_index();
+			core::Size const atm3 = rsd1params.bb_C_index();
+			core::Size const atm4 = rsd1params.bb_O_index();
+
+			Real const Kphi = tor_params->K(0,0);
+			Real const phi0=tor_params->mu(0,0);
+			Real const phi_step=2*pi/tor_params->period();
+
 			Vector f1(0.0), f2(0.0);
 			Real phi=0, dE_dphi;
 
@@ -2126,13 +3154,14 @@ CartesianBondedEnergy::eval_improper_torsions_derivative(
 				res1.xyz( atm1 ), res2.xyz( atm2 ), res1.xyz( atm3 ), res1.xyz( atm4 ), phi, f1, f2 );
 			Real del_phi = basic::subtract_radian_angles(phi, phi0);
 			del_phi = basic::periodic_range( del_phi, phi_step );
-			if (linear_bonded_potential_ && std::fabs(del_phi)>1)
+			if (linear_bonded_potential_ && std::fabs(del_phi)>1) {
 				dE_dphi = (weights[ cart_bonded_torsion ] + weights[ cart_bonded ]) * Kphi * (del_phi>0? 1 : -1);
-			else
+			} else {
 				dE_dphi = (weights[ cart_bonded_torsion ] + weights[ cart_bonded ]) * Kphi * del_phi;
+			}
 			r1_atom_derivs[ atm1 ].f1() += dE_dphi * f1;
 			r1_atom_derivs[ atm1 ].f2() += dE_dphi * f2;
-	
+
 			f1 = f2 = Vector(0.0);
 			numeric::deriv::dihedral_p2_cosine_deriv(
 				res1.xyz( atm1 ), res2.xyz( atm2 ), res1.xyz( atm3 ), res1.xyz( atm4 ), phi, f1, f2 );
@@ -2142,17 +3171,11 @@ CartesianBondedEnergy::eval_improper_torsions_derivative(
 			f1 = f2 = Vector(0.0);
 			numeric::deriv::dihedral_p2_cosine_deriv(
 				res1.xyz( atm4 ), res1.xyz( atm3 ), res2.xyz( atm2 ), res1.xyz( atm1 ), phi, f1, f2 );
-			del_phi = basic::subtract_radian_angles(phi, phi0);
-			del_phi = basic::periodic_range( del_phi, phi_step );
-			if (linear_bonded_potential_ && std::fabs(del_phi)>1)
-				dE_dphi = (weights[ cart_bonded_torsion ] + weights[ cart_bonded ]) * Kphi * (del_phi>0? 1 : -1);
-			else
-				dE_dphi = (weights[ cart_bonded_torsion ] + weights[ cart_bonded ]) * Kphi * del_phi;
 			r1_atom_derivs[ atm3 ].f1() += dE_dphi * f1;
 			r1_atom_derivs[ atm3 ].f2() += dE_dphi * f2;
-	
+
 			f1 = f2 = Vector(0.0);
-			numeric::deriv::dihedral_p1_cosine_deriv( 
+			numeric::deriv::dihedral_p1_cosine_deriv(
 				res1.xyz( atm4 ), res1.xyz( atm3 ), res2.xyz( atm2 ), res1.xyz( atm1 ), phi, f1, f2 );
 			r1_atom_derivs[ atm4 ].f1() += dE_dphi * f1;
 			r1_atom_derivs[ atm4 ].f2() += dE_dphi * f2;
@@ -2161,96 +3184,20 @@ CartesianBondedEnergy::eval_improper_torsions_derivative(
 }
 
 
-// deriv impropers
-void
-CartesianBondedEnergy::eval_improper_torsions_derivative(
-	conformation::Residue const & rsd,
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & r_atom_derivs
-) const {
-	using namespace core::chemical;
-	using numeric::constants::f::pi;
-
-	if (rsd.type().residue_type_set().name() != core::chemical::FA_STANDARD) return;
-
-	std::string atm1, atm2, atm3, atm4;
-	core::Size rt1, rt2, rt3, rt4;
-	if (rsd.aa() == aa_asp) {
-		// asp CB-CG-OD1-OD2
-		atm1 = "CB"; atm2 = "CG"; atm3 = "OD1"; atm4 = "OD2";
-	} else if (rsd.aa() == aa_glu) {
-		// glu CG-CD-OE1-OE2
-		atm1 = "CG"; atm2 = "CD"; atm3 = "OE1"; atm4 = "OE2";
-	} else if (rsd.aa() == aa_asn) {
-		// asn CB-CG-OD-ND
-		atm1 = "CB"; atm2 = "CG"; atm3 = "OD1"; atm4 = "ND2";
-	} else if (rsd.aa() == aa_gln) {
-		// gln CG-CD-OE-NE
-		atm1 = "CG"; atm2 = "CD"; atm3 = "OE1"; atm4 = "NE2";
+Real
+CartesianBondedEnergy::eval_score(
+	Real val,  // actual value
+	Real K,    // spring constant
+	Real val0  // ideal value
+) const
+{
+	Real const absdiff = std::fabs(val-val0);
+	if ( linear_bonded_potential_ && absdiff > 1 ) {
+		return 0.5 * K * absdiff;
 	} else {
-		return;
+		return 0.5 * K * absdiff * absdiff;
 	}
-	rt1 = rsd.atom_index(atm1);
-	rt2 = rsd.atom_index(atm2);
-	rt3 = rsd.atom_index(atm3);
-	rt4 = rsd.atom_index(atm4);
-
-	Vector f1(0.0), f2(0.0);
-	Real phi=0, dE_dphi;
-
-	CartBondedParametersCAP tor_params = db_->lookup_torsion(rsd, atm1, atm2, atm3, atm4);
-	runtime_assert( tor_params ); //fpd  fail if this is not in DB
-	if (tor_params->is_null())
-		return;  // however, if it is in the db but with 0 weight, that is OK
-
-	Real Kphi = tor_params->K(0,0), phi0=tor_params->mu(0,0), phi_step=2*pi/tor_params->period();
-
-	numeric::deriv::dihedral_p1_cosine_deriv(
-		rsd.xyz( rt1 ), rsd.xyz( rt2 ), rsd.xyz( rt3 ), rsd.xyz( rt4 ), phi, f1, f2 );
-	Real del_phi = basic::subtract_radian_angles(phi, phi0);
-	del_phi = basic::periodic_range( del_phi, phi_step );
-	if (linear_bonded_potential_ && std::fabs(del_phi)>1)
-		dE_dphi = (weights[ cart_bonded_torsion ] + weights[ cart_bonded ]) * Kphi * (del_phi>0? 1 : -1);
-	else
-		dE_dphi = (weights[ cart_bonded_torsion ] + weights[ cart_bonded ]) * Kphi * del_phi;
-	r_atom_derivs[ rt1 ].f1() += dE_dphi * f1;
-	r_atom_derivs[ rt1 ].f2() += dE_dphi * f2;
-
-	f1 = f2 = Vector(0.0);
-	numeric::deriv::dihedral_p2_cosine_deriv(
-		rsd.xyz( rt1 ), rsd.xyz( rt2 ), rsd.xyz( rt3 ), rsd.xyz( rt4 ), phi, f1, f2 );
-	r_atom_derivs[ rt2 ].f1() += dE_dphi * f1;
-	r_atom_derivs[ rt2 ].f2() += dE_dphi * f2;
-
-	f1 = f2 = Vector(0.0);
-	numeric::deriv::dihedral_p2_cosine_deriv(
-		rsd.xyz( rt4 ), rsd.xyz( rt3 ), rsd.xyz( rt2 ), rsd.xyz( rt1 ), phi, f1, f2 );
-	del_phi = basic::subtract_radian_angles(phi, phi0);
-	del_phi = basic::periodic_range( del_phi, phi_step );
-	if (linear_bonded_potential_ && std::fabs(del_phi)>1)
-		dE_dphi = (weights[ cart_bonded_torsion ] + weights[ cart_bonded ]) * Kphi * (del_phi>0? 1 : -1);
-	else
-		dE_dphi = (weights[ cart_bonded_torsion ] + weights[ cart_bonded ]) * Kphi * del_phi;
-	r_atom_derivs[ rt3 ].f1() += dE_dphi * f1;
-	r_atom_derivs[ rt3 ].f2() += dE_dphi * f2;
-
-	f1 = f2 = Vector(0.0);
-	numeric::deriv::dihedral_p1_cosine_deriv( 
-		rsd.xyz( rt4 ), rsd.xyz( rt3 ), rsd.xyz( rt2 ), rsd.xyz( rt1 ), phi, f1, f2 );
-	r_atom_derivs[ rt4 ].f1() += dE_dphi * f1;
-	r_atom_derivs[ rt4 ].f2() += dE_dphi * f2;
 }
-
-
-/// @brief CartesianBondedEnergy does not have an atomic interation threshold
-Distance
-CartesianBondedEnergy::atomic_interaction_cutoff() const {
-	return 0.0;
-}
-
-/// @brief CartesianBondedEnergy is context independent; indicates that no context graphs are required
-void
-CartesianBondedEnergy::indicate_required_context_graphs(utility::vector1< bool > & ) const {}
 
 core::Size
 CartesianBondedEnergy::version() const {

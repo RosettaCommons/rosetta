@@ -183,6 +183,8 @@ sources = {
                 "polynomial",
         ],
 	"scoring/methods" : [
+		"CartesianBondedEnergy",
+		"CartesianBondedEnergyBBDep",
 		"ChainbreakEnergy",
 		"ContactOrderEnergy",
 		"LinearChainbreakEnergy",
