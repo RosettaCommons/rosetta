@@ -116,9 +116,9 @@ class ligand_ncaa_ptm_manager:
         self.current_main_selection.set(self.selections[0])
         
         #Photo.  This is for Jason Labonte, for his help in understanding how Rosetta works with NCAA/Patches
-        #DesignPhoto =PhotoImage(file = os.path.dirname(os.path.abspath(__file__))+"/media/glcnac_clean.gif")
-        #self.Photo = Label(master=self.main, image=DesignPhoto)
-        #self.Photo.image = DesignPhoto
+        DesignPhoto =PhotoImage(file = os.path.dirname(os.path.abspath(__file__))+"/media/glcnac_clean.gif")
+        self.Photo = Label(master=self.main, image=DesignPhoto)
+        self.Photo.image = DesignPhoto
         
     def shoTk(self, r, c):
         """
@@ -131,7 +131,7 @@ class ligand_ncaa_ptm_manager:
         self.mutate_button.grid(row=r+3, column=c+3)
         self.reload_pdb_button.grid(row=r+4, column=c+3);
         
-        #self.Photo.grid(row=7, column=c+3, rowspan=9, sticky=E)
+        self.Photo.grid(row=7, column=c+3, rowspan=9, sticky=E)
         self.show_name.grid(row=r+8, column=c+1, columnspan=2)
         self.label_variant.grid(row=r+9, column=c+1); self.label_three_letter.grid(row=r+9, column=c+2)
         
