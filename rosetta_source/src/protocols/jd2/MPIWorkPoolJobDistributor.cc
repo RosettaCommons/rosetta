@@ -24,6 +24,7 @@
 #include <protocols/jd2/Job.hh>
 #include <basic/message_listening/MessageListenerFactory.hh>
 #include <basic/message_listening/MessageListener.hh>
+#include <basic/message_listening/util.hh>
 
 
 #include <protocols/moves/Mover.hh>
@@ -160,33 +161,45 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 				break;
 			case REQUEST_MESSAGE_TAG:
 			{
-				TR << "Master Node: received a message request from the slave node, having the message listener factor create the appropriate message" << std::endl;
-				basic::message_listening::MessageListenerOP listener(
-					basic::message_listening::MessageListenerFactory::get_instance()->get_listener(
-						(basic::message_listening::listener_tags)slave_data));
+
+				using namespace basic::message_listening;
+
+				listener_tags listener_tag((listener_tags)slave_data);
+				MessageListenerOP listener(MessageListenerFactory::get_instance()->get_listener(listener_tag));
 
 				std::string message_data = utility::receive_string_from_node(status.MPI_SOURCE);
-				TR
-					<< "Master Node: received message data, '" << message_data << "',"
-					<< " from the slave node, processing data now" << std::endl;
 				std::string return_info="";
 				bool request_slave_data = listener->request(message_data, return_info);
-
-				//send the listener's data to the slave node. If the listener
-				//needs information from the slave then wait for a message
-				//from the same node
-				TR
-					<< "Master Node: sending the listener generated data back to the slave"
-					<< (request_slave_data ? " waiting for more data from slave... " : "" ) <<  std::endl;
 				utility::send_string_to_node(status.MPI_SOURCE, return_info);
+
+				TR
+					<< "Master Node: node '" << status.MPI_SOURCE << "' "
+					<< "requests from the message listener '" << listener_tag_to_name(listener_tag) << "' "
+					<< "data on '" << message_data << "', "
+					<< "respond with '" << return_info << "' "
+					<< (request_slave_data ? " and requests more data." : ".") << std::endl;
+
 				if(request_slave_data){
 					message_data = utility::receive_string_from_node(status.MPI_SOURCE);
-					TR << "Master Node: received data from slave node: '"  << message_data << "'" << std::endl;
+					TR
+						<< "Master Node: Received from node '" << status.MPI_SOURCE << "' "
+						<< "'" << message_data << "'" << std::endl;
 					listener->receive(message_data);
 				}
 
 				break;
+
 			}
+			default:
+			{
+				std::stringstream err_msg;
+				err_msg
+					<< "Received unrecognized mpi_tag '" << status.MPI_TAG << "' " << std::endl
+					<< "\tfrom node '" << status.MPI_SOURCE << "' " << std::endl
+					<< "\twith data '" << slave_data << "'";
+				utility_exit_with_message(err_msg.str());
+			}
+
 		}
 	}
 	TR << "Master Node: Finished handing out jobs" << std::endl;
@@ -221,26 +234,41 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 				break;
 			case REQUEST_MESSAGE_TAG:
 			{
-				TR << "Master Node: received a message request from the slave node, having the message listener factory create the appropriate message" << std::endl;
-				basic::message_listening::MessageListenerOP listener(
-					basic::message_listening::MessageListenerFactory::get_instance()->get_listener(
-						(basic::message_listening::listener_tags)slave_data));
+				using namespace basic::message_listening;
 
-				TR << "Master Node: received message data from the slave node, processing data now" << std::endl;
+				listener_tags listener_tag((listener_tags)slave_data);
+				MessageListenerOP listener(MessageListenerFactory::get_instance()->get_listener(listener_tag));
+
 				std::string message_data = utility::receive_string_from_node(status.MPI_SOURCE);
 				std::string return_info="";
 				bool request_slave_data = listener->request(message_data, return_info);
-
-				//send the listener's data to the slave node. If the listener needs information from the slave then wait for a message from the same node
-				TR << "Master Node: sending the listener generated data back to the slave" << std::endl;
 				utility::send_string_to_node(status.MPI_SOURCE, return_info);
+
+				TR
+					<< "Master Node: node '" << status.MPI_SOURCE << "' "
+					<< "requests from the message listener '" << listener_tag_to_name(listener_tag) << "' "
+					<< "data on '" << message_data << "', "
+					<< "respond with '" << return_info << "' "
+					<< (request_slave_data ? " and requests more data." : ".") << std::endl;
+
 				if(request_slave_data){
-					TR << "Master Node: received data from slave node" << std::endl;
 					message_data = utility::receive_string_from_node(status.MPI_SOURCE);
+					TR
+						<< "Master Node: Received from node '" << status.MPI_SOURCE << "' "
+						<< "'" << message_data << "'" << std::endl;
 					listener->receive(message_data);
 				}
 
 				break;
+			}
+			default:
+			{
+				std::stringstream err_msg;
+				err_msg
+					<< "Received unrecognized mpi_tag '" << status.MPI_TAG << "' " << std::endl
+					<< "\tfrom node '" << status.MPI_SOURCE << "' " << std::endl
+					<< "\twith data '" << slave_data << "'";
+				utility_exit_with_message(err_msg.str());
 			}
 		}
 	}

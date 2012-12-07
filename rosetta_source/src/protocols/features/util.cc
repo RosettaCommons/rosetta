@@ -34,6 +34,7 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 #include <utility/string_util.hh>
+#include <utility/mpi_util.hh>
 #include <utility/exit.hh>
 
 #include <cppdb/frontend.h>
@@ -107,22 +108,27 @@ get_protocol_and_batch_id(
 	string listener_data="";
 
 	if(rank != 0) {
-		listener_data = request_data_from_head_node(
-			DATABASE_PROTOCOL_AND_BATCH_ID_TAG, identifier);
-		TR << "Received data from head node: " << listener_data << endl;
+		listener_data = request_data_from_head_node(DATABASE_PROTOCOL_AND_BATCH_ID_TAG, identifier);
+		TR
+			<< "Requesting data on '" << identifier << "' "
+			<< "from the DATABASE_PROTOCOL_AND_BATCH_ID_TAG message listener on head node." << std::endl;
+
 	} else {
 		MessageListenerOP listener(
 			MessageListenerFactory::get_instance()->get_listener(
 				DATABASE_PROTOCOL_AND_BATCH_ID_TAG));
 		listener->request(identifier,listener_data);
-		//listener->recieve(listener_data);
-		TR << "Received data from message listener: " << listener_data << endl;
+
+		TR
+			<< "Requesting data on '" << identifier << "' "
+			<< "from the DATABASE_PROTOCOL_AND_BATCH_ID_TAG message listener." << std::endl;
 	}
 
 	//deserialize data into protocol_id and batch_id
 	pair<Size, Size> ids = deserialize_db_listener_data(listener_data);
 	protocol_id = ids.first;
 	batch_id = ids.second;
+	TR << "Received protocol_id='" << protocol_id << "' and batch_id='" << batch_id << "'" << std::endl;
 
 	//no protocol id set yet - create protocol and first batch
 	if(protocol_id==0){
@@ -137,24 +143,13 @@ get_protocol_and_batch_id(
 			utility_exit_with_message(err_msg.str());
 		}
 
-		//currently batches don't have descriptions
-		try {
-			batch_id = batch_features->report_features(
-				protocol_id, identifier, "", db_session);
-		} catch (cppdb_error error){
-			stringstream err_msg;
-			err_msg
-				<< "Failed to set the batch id for batch '" << identifier << "' "
-				<< "with protocol_id '" << protocol_id << "'" << endl
-				<< "Error Message:" << endl << error.what() << endl;
-			utility_exit_with_message(err_msg.str());
-		}
-
+		TR
+			<< "Initilize the protocol_id='" << protocol_id << "' "
+			<< "and tell it to the head node." << std::endl;
 
 		if(rank != 0) {
-			send_data_to_head_node(
-				DATABASE_PROTOCOL_AND_BATCH_ID_TAG,
-				serialize_ids(protocol_id, identifier, batch_id));
+			TR << "Send the protocol_id '" << protocol_id << "' to the head node." << std::endl;
+			utility::send_string_to_node(0/*HEAD*/, serialize_ids(protocol_id, identifier, batch_id));
 		} else {
 			MessageListenerOP listener(
 				MessageListenerFactory::get_instance()->get_listener(
@@ -163,23 +158,17 @@ get_protocol_and_batch_id(
 		}
 
 	}
-	//protocol is set, but this is a new batch
-	else if(batch_id==0){
 
-		batch_id = batch_features->report_features(
-			protocol_id, identifier, "", db_session);
-
-		if(rank != 0){
-			send_data_to_head_node(
-				DATABASE_PROTOCOL_AND_BATCH_ID_TAG,
-				serialize_ids(protocol_id, identifier, batch_id));
-		} else {
-			MessageListenerOP listener(
-				MessageListenerFactory::get_instance()->get_listener(
-					DATABASE_PROTOCOL_AND_BATCH_ID_TAG));
-			listener->receive(serialize_ids(protocol_id, identifier, batch_id));
-		}
-
+	// setup the batch_id
+	try {
+		batch_features->report_features(batch_id, protocol_id, identifier, "", db_session);
+	} catch (cppdb_error error){
+		stringstream err_msg;
+		err_msg
+			<< "Failed to set the batch id for batch '" << identifier << "' "
+			<< "with protocol_id '" << protocol_id << "'" << endl
+			<< "Error Message:" << endl << error.what() << endl;
+		utility_exit_with_message(err_msg.str());
 	}
 
 #endif
@@ -203,9 +192,20 @@ get_protocol_and_batch_id(
 
 	if(!static_batch_id_map_.count(identifier)){
 		TR << "Initializing batch table" << endl;
+
+		Size max_batch_id(0);
+		for(
+			std::map< std::string, Size >::const_iterator
+				i = static_batch_id_map_.begin(), ie = static_batch_id_map_.end();
+			i != ie; ++i){
+			max_batch_id = std::max(max_batch_id, i->second);
+		}
+		batch_id = max_batch_id + 1;
+		static_batch_id_map_[identifier] = batch_id;
+
 		try {
-			batch_id = batch_features->report_features(
-				protocol_id, identifier, "", db_session);
+			batch_features->report_features(
+				batch_id, protocol_id, identifier, "", db_session);
 		} catch (cppdb_error error){
 			stringstream err_msg;
 			err_msg
@@ -214,8 +214,6 @@ get_protocol_and_batch_id(
 				<< "Error Message:" << endl << error.what() << endl;
 			utility_exit_with_message(err_msg.str());
 		}
-
-		static_batch_id_map_[identifier] = batch_id;
 	}
 	else{
 		batch_id=static_batch_id_map_[identifier];

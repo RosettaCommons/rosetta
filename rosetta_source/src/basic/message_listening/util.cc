@@ -33,7 +33,7 @@ using utility::send_string_to_node;
 using utility::receive_string_from_node;
 
 
-static basic::Tracer TR("protocols.jd2.JobDistributor");
+static basic::Tracer TR("basic.message_listening");
 
 ///@brief used for message passing to the
 ///MPIWorkPoolJobDistributor. This function will ask the head node for

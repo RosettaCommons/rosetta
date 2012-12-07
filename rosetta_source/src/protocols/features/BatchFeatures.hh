@@ -60,15 +60,13 @@ public:
 	///@brief return sql statments that add indexes check invariants etc.
 	//std::string cleanup() const;
 
-	///@brief collect all the feature data for the pose
-	///if protocol_id is 0 autoincrement the protocol_id
 	core::Size
 	report_features(
-					core::Size protocol_id,
-					std::string name,
-					std::string description,
-					utility::sql_database::sessionOP db_session
-					);
+		core::Size batch_id,
+		core::Size protocol_id,
+		std::string name,
+		std::string description,
+		utility::sql_database::sessionOP db_session);
 
 	core::Size
 	report_features(

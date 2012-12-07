@@ -75,7 +75,7 @@ BatchFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) c
 	using namespace basic::database::schema_generator;
 
 	PrimaryKey batch_id(
-		Column("batch_id", new DbInteger(), false /*not null*/, true /*autoincrement*/));
+		Column("batch_id", new DbInteger(), false /*not null*/, false /*autoincrement*/));
 
 	ForeignKey protocol_id(
 		Column("protocol_id", new DbInteger()),
@@ -109,32 +109,29 @@ BatchFeatures::indices() const {
 
 Size
 BatchFeatures::report_features(
+	Size batch_id,
 	Size protocol_id,
 	std::string name,
 	std::string description,
 	sessionOP db_session
 ){
-	TR << "Writing to batches table with name " << name << ", referencing protocol " << protocol_id << std::endl;
-	std::string insert_string("INSERT INTO batches (protocol_id, name, description) VALUES (?,?,?);");
+	TR.Debug
+		<< "Writing to batches table with:" << std::endl
+		<< "\tbatch_id '" << batch_id << "'" << std::endl
+		<< "\tprotocol_id '" << protocol_id << "'" << std::endl
+		<< "\tname '" << name << "'" << std::endl
+		<< "\tdescription '" << description << "'" << std::endl;
+
+	std::string insert_string("INSERT INTO batches (batch_id, protocol_id, name, description) VALUES (?,?,?,?);");
 	cppdb::statement insert_statement = basic::database::safely_prepare_statement(insert_string,db_session);
-	insert_statement.bind(1,protocol_id);
-	insert_statement.bind(2,name);
-	insert_statement.bind(3,description);
+	insert_statement.bind(1,batch_id);
+	insert_statement.bind(2,protocol_id);
+	insert_statement.bind(3,name);
+	insert_statement.bind(4,description);
 
 	basic::database::safely_write_to_database(insert_statement);
 
-	std::string select = "SELECT batch_id, protocol_id, name FROM batches;";
-	cppdb::statement select_stmt = basic::database::safely_prepare_statement(select,db_session);
-
-	cppdb::result res(basic::database::safely_read_from_database(select_stmt));
-	while(res.next()){
-		signed long long b_id, p_id;
-		std::string test_name;
-		res >> b_id >> p_id >> test_name;
-	}
-
-	int test = insert_statement.sequence_last("batches_batch_id_seq");
-	return test;
+	return 0;
 }
 
 } // features namesapce
