@@ -54,6 +54,8 @@ class ligand_ncaa_ptm_manager:
         self.param_name_map = dict(); #[string "name_selection]:[instance ParamProperties]
         
         self.variant_map = dict(); #[string variant]:[array param_name string]
+        self.three_letter_to_prop_map = dict(); #[string three_letter_code]:[PropertyClass instance]
+        
         self.read_patches()
         self.read_params()
         self.selections = ["patch", "ligand", "polymer"]
@@ -74,7 +76,12 @@ class ligand_ncaa_ptm_manager:
         
         #self.type_selection.trace_variable('w', self.type_selection_callback)
         #self.name_selection.trace_variable('w', self.name_selection_callback)
-        
+        self.please_delete = []; #Array of paths that are deleted when the module is closed
+    
+    def __exit__(self):
+        for path in self.please_delete:
+            os.remove(path)
+            
     def setTk(self, main):
         """
         Set TK objects
@@ -83,7 +90,6 @@ class ligand_ncaa_ptm_manager:
         print "To permenantly enable patches and parameters for amino acids, polymers, and ligands uncomment the file in: "
         print os.environ['PYROSETTA_DATABASE']+'/chemical/residue_type_sets/fa_standard/patches.txt'
         print os.environ['PYROSETTA_DATABASE']+'/chemical/residue_type_sets/fa_standard/residue_types.txt'
-        print "\n"
         print "It is recommended to switch at least the statistical residue-based pair potential to the coulumbic atom-based hack_elec potential"
         print "This may increase run time, but not by much.  "
         #print "In preliminary results, it has also been shown to increase rotamer recovery for cannonical AA's (unpublished/Dunbrack Lab)"
@@ -108,7 +114,7 @@ class ligand_ncaa_ptm_manager:
         self.reload_pdb_button = Button(self.main, text = "Reload PDB", command = lambda:self.input_class.choose_load_pose())
         
         
-        self.e_function_label = Label(self.main, text = "Energy Function Optimization", font=tkFont.Font(weight='bold', size=14))
+        self.e_function_label = Label(self.main, text = "Energy Function Optimization", font=tkFont.Font(weight='bold', size=13))
         self.electrostatics_label = Label(self.main, text = "Electrostatic", )
         self.switch_pair_to_elec_button=Button(self.main, text = "statistical -> columbic", command = lambda: self.set_hack_elec(True))
         self.switch_elec_to_pair_button=Button(self.main, text = "statistical <- columbic", command = lambda: self.set_hack_elec(False))
@@ -126,12 +132,12 @@ class ligand_ncaa_ptm_manager:
         """
         
         self.main_selection.grid(row=r, column=c+1, columnspan=2); #Cannot decide to columnspan or not!
-        self.type_listbox.grid(row=r+1, column=c+1, padx=15, rowspan=6); self.name_listbox.grid(row=r+1, column=c+2, padx=5, rowspan=6)
+        self.type_listbox.grid(row=r+1, column=c+1, padx=15, rowspan=6); self.name_listbox.grid(row=r+1, column=c+2, rowspan=6)
         self.add_param_to_session_button.grid(row=r+2, column=c+3)
         self.mutate_button.grid(row=r+3, column=c+3)
         self.reload_pdb_button.grid(row=r+4, column=c+3);
         
-        self.Photo.grid(row=7, column=c+3, rowspan=9, sticky=E)
+        self.Photo.grid(row=7, column=c+3, rowspan=9, sticky=W+E, padx=10)
         self.show_name.grid(row=r+8, column=c+1, columnspan=2)
         self.label_variant.grid(row=r+9, column=c+1); self.label_three_letter.grid(row=r+9, column=c+2)
         
@@ -212,7 +218,7 @@ class ligand_ncaa_ptm_manager:
         if self.current_main_selection.get()=="patch":
             self.current_variant.set(self.prop.molecule_type.get())
         else:
-            pass
+            self.current_variant.set(self.prop.variant.get())
         self.current_three_letter.set(self.prop.three_letter_name.get())
         self.current_default.set(str(self.prop.rosetta_read_state))
     
@@ -255,7 +261,7 @@ class ligand_ncaa_ptm_manager:
             resnum = self.pose.pdb_info().pdb2pose(residue.split(":")[1], int(residue.split(":")[0]))
             residue_object = self.pose.residue(resnum)
             set = residue_object.residue_type_set()
-            if not set.has_name(self.prop.found_name):
+            if not set.has_name(self.prop.found_name.get()):
                 print "Residue does not have ResidueType in it's ResidueTypeSet."
                 print "Unable to mutate"
                 return
@@ -270,10 +276,23 @@ class ligand_ncaa_ptm_manager:
             os.remove(global_variables.current_directory+"/temp_resfile.txt")
             print self.score_class.score(self.pose)
             print "Position mutated + Packed"
+            
+    def set_prop(self, prop):
+        """
+        Sets the current propertyclass, whether it be param or patch
+        """
+        self.prop = prop
+    
+    def get_prop(self):
+        """
+        Gets the current propertyclass, whether it be param or patch
+        """
+        return self.prop
     
     def enable(self):
         """
         The original reason the window was created.
+        To use outside of gui window, just use set_prop before running.
         """
         
         #self.prop is set from name callback.  Now we get the path.  Add it.
@@ -328,10 +347,11 @@ class ligand_ncaa_ptm_manager:
             base = os.path.basename(self.prop.path).split(".")[0]
             new_base = base+".txt"
             os.system("cp "+self.prop.path.strip("\n")+" "+os.path.dirname(self.prop.path)+"/"+new_base)
-            os.system("open_command "+os.path.dirname(self.prop.path)+"/"+new_base)
+            os.system(open_command+os.path.dirname(self.prop.path)+"/"+new_base)
             #print "open "+os.path.dirname(self.prop.path)+"/"+new_base+" &"
-            os.system("rm "+os.path.dirname(self.prop.path)+"/"+new_base)
-        
+            #os.system("rm "+os.path.dirname(self.prop.path)+"/"+new_base)
+            self.please_delete.append(os.path.dirname(self.prop.path)+"/"+new_base)
+            
     def read_patches(self):
         """
         Read patches from directory
@@ -353,6 +373,7 @@ class ligand_ncaa_ptm_manager:
                 p = PatchProperties(path)
                 self.populate_type_map(self.patch_type_map, p)
                 self.populate_name_map(self.patch_name_map, p)
+                self.populate_three_letter_map(self.three_letter_to_prop_map, p)
                 
     def read_params(self):
         """
@@ -367,7 +388,7 @@ class ligand_ncaa_ptm_manager:
                 self.populate_main_map(self.param_main_map, p)
                 self.populate_type_map(self.param_type_map, p)
                 self.populate_name_map(self.param_name_map, p)
-            
+                self.populate_three_letter_map(self.three_letter_to_prop_map, p)
         
     def populate_type_map(self, dictionary, property_class):
         """
@@ -403,6 +424,13 @@ class ligand_ncaa_ptm_manager:
             dictionary[property_class.main_type.get().lower()]=dict()
             dictionary[property_class.main_type.get().lower()][(property_class.molecule_type.get().lower())]=0   
     
+    def populate_three_letter_map(self, dictionary, property_class):
+        if not property_class.three_letter_name.get():
+            dictionary[property_class.three_letter_name.get()] = property_class
+            #property_class.three_letter_name.set('unknown')
+        
+        
+        
     """
     def populate_variant_map(self, dictionary, property_class):
 
@@ -503,11 +531,12 @@ class ParamsProperties(Properties):
         self.found_name = StringVar(); #Name in file
         self.three_letter_name=StringVar()
         self.main_type = StringVar()
-        
+        self.variant = StringVar()
         self.properties={
             "NAME":self.found_name,
             "IO_STRING":self.three_letter_name,
             #This looks like either Ligand or Polymer.
+            "VARIANT":self.variant,
             "TYPE":self.main_type
         }
         self.read_properties()

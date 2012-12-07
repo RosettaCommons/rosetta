@@ -16,17 +16,20 @@
 from rosetta import *
 
 #Python Imports
+import urllib2
 import os.path
 import re
 
 #Tkinter Imports
 from Tkinter import StringVar
 import tkFileDialog
+import tkSimpleDialog
 
 #Toolkit Imports
 from window_main import global_variables
-from modules.ScoreBase import ScoreBase as score_base
+from modules.RegionalScoring import RegionalScoring
 from modules.tools import input as input_tools
+from window_modules.clean_pdb.FixPDBWindow import FixPDBWindow
 
 class GUIInput:
     def __init__(self, toolkit):
@@ -46,6 +49,7 @@ class GUIInput:
         self.loaded_paths = [];  #Since something about loading a new residuetypeset is global, with horrible exception handling, WE need to keep track of it.
         self.nonstandard_ResidueTypeSet = ""; #This is set through the ncaa window or loading a param path file.  It is here for access since the ChemicalManager instance is a singleton and cannot be reinstantiated with new residues.
         
+        self.pdb_url = "http://www.rcsb.org/pdb/files"
 #### POSE INPUT ####
 
     def choose_load_pose(self):
@@ -54,29 +58,54 @@ class GUIInput:
         """
         infilename = tkFileDialog.askopenfilename(initialdir=global_variables.current_directory, title='Pick a file')
         if not infilename:return
-        self.pdb_path.set(infilename)
+        
         global_variables.current_directory= os.path.dirname(infilename)
         print global_variables.current_directory
-        self.load_pose()
+        self.load_pose(infilename)
         
-    def load_pose(self):
+    def fetch_pdb(self):
+        """
+        Fetches the PDB, opens FixPDBWindow to allow the user to clean the PDB before trying to load it.
+        """
+        #Create default directory
+        outpath = self.toolkit.toolkit_home+"/PDBs"
+        if not os.path.exists(outpath):os.mkdir(outpath)
+        global_variables.current_directory = outpath
         
+        #Ask for PDB id.
+        pdbID = tkSimpleDialog.askstring(title="Fetch pdb", prompt="Please enter PDB ID.")
+        if not pdbID: return
+        
+        #Open and Write the PDB
+        FILE = urllib2.urlopen(self.pdb_url+'/'+pdbID.lower()+'.pdb')
+        OUTFILE = open(outpath+'/'+pdbID.upper()+'.pdb', 'w')
+        for line in FILE:
+            OUTFILE.write(line)
+        OUTFILE.close()
+        
+        fetched_pdb = outpath+'/'+pdbID.upper()+'.pdb'
+        print "PDB saved to pyrosetta_toolkit/PDBs"
+        cleaner = FixPDBWindow(self, self.toolkit.score_class, self.toolkit.pose, fetched_pdb)
+        cleaner.runfixPDBWindow(self.toolkit._tk_, 0, 0)
+        
+    def load_pose(self, path):
+        self.pdb_path.set(path)
         print self.pdb_path.get()
         if self.nonstandard_ResidueTypeSet:
-            self.toolkit.pose.assign(pose_from_pdb(self.nonstandard_ResidueTypeSet, self.pdb_path.get()))
+            self.toolkit.pose.assign(pose_from_pdb(self.nonstandard_ResidueTypeSet, path))
         else:
             pose_from_pdb(self.toolkit.pose, self.pdb_path.get())
         self.toolkit.native_pose.assign(self.toolkit.pose); #Set native pose for RMSD.
 
         print self.toolkit.pose
         self.toolkit.pymol_class.SendNewPose()
-        self.ScoreBaseObject = score_base(self.toolkit.pose, self.toolkit.score_class.score);
-        pdbname = os.path.basename(self.pdb_path.get())
+        self.regional_scoring_class = RegionalScoring(self.toolkit.pose, self.toolkit.score_class.score);
+        pdbname = os.path.basename(path)
         pdbname = pdbname.split(".")[0]
         self.toolkit.output_class.outname.set(pdbname)
         self.toolkit.output_class.outdir.set(os.path.dirname(self.pdb_path.get()))
         self.toolkit.DesignDic = dict()
-        
+    
     def set_PDBLIST(self):
         infilename = tkFileDialog.askopenfilename(initialdir=global_variables.current_directory,title='Open PDBLIST')
         if not infilename:return

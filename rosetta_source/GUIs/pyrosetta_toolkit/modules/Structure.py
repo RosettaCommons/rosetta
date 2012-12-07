@@ -7,14 +7,13 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 ## @file   /GUIs/pyrosetta_toolkit/modules/Structure.py
-## @brief  Class for structural representations of specific protein types.  Antibody and CDR work, feel free to add.
+## @brief  Class for structural representations of specific protein types.  Antibody and CDR work, feel free to add.  CDR Stuff Will be in C++ Rosetta soon.
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
+#Python Imports
 import os
 import sys
 
-#from rosetta import *
-    
 class Antibody_Structure:
     def __init__(self):
         #3 Different ways to access the CDR Loops.  Should be one.  Not convoluted.

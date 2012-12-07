@@ -10,18 +10,20 @@
 ## @brief  A PDB class for reading PDBs into an sqlite3 database.  
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
-
+#Python Imports
+import os
+import urllib2
 
 try:
     import sqlite3
 except ImportError:
     print "Please reinstall python with sqlite3 support. "
     exit()
-import os
-import urllib2
+    
 
 
-class PDB:
+
+class SQLPDB:
     def __init__(self, pdbID, modelID, structID, memory=False, path=False):
         """
         First, we read the PDB. This can then be acessed, etc.
@@ -143,8 +145,7 @@ class PDB_database:
         
     def _convert_rosetta_db_to_basic_db(self):
         """
-        This MAY eventually convert a Rosetta PDB database into a basic database structure that I am using.
-        Why not just go with Rosetta's?  Lol.  
+        This MAY eventually convert a Rosetta PDB database into a basic database structure that I am using.  
         """
         pass
     def set_output_DIR(self, outDIR):

@@ -98,6 +98,7 @@ class Menus():
 	self.file_menu=Menu(self.main_menu, tearoff=0)
 	
 	self.file_menu.add_command(label="Load PDB", command=lambda: self.toolkit.input_class.choose_load_pose())
+	self.file_menu.add_command(label="Fetch PDB", command = lambda: self.toolkit.input_class.fetch_pdb())
 	self.file_menu.add_command(label="Load PDBList", command=lambda: self.toolkit.input_class.set_PDBLIST())
 	self.file_menu.add_cascade(label="Import", menu=self.import_menu)
 	self.file_menu.add_cascade(label="Export", menu=self.export_menu)
@@ -105,7 +106,7 @@ class Menus():
 	self.file_menu.add_command(label = "Show Pose in PyMOL", command = lambda: self.toolkit.pymol_class.pymover.apply(self.toolkit.pose))
 	#self.file_menu.add_checkbutton(label="Set stdout to terminal", variable = self.toolkit.terminal_output)
 	self.file_menu.add_command(label="Configure Option System",command = lambda: self.show_OptionsSystemManager())
-	self.file_menu.add_command(label ="Setup PDB for Rosetta", command=lambda: FixPDBWindow().runfixPDBWindow(self.main, 0, 0))
+	self.file_menu.add_command(label ="Setup PDB for Rosetta", command=lambda: self.show_fxpdb_window())
 	self.main_menu.add_cascade(label="File", menu=self.file_menu)
 	self.file_menu.add_separator()
 	self.file_menu.add_command(label= "Rosetta Command-Line Creator", command = lambda: self.show_RosettaProtocolBuilder())
@@ -304,7 +305,10 @@ class Menus():
 
 
 #### WINDOWS ##### (ADD NEW WINDOWS TO THIS THAT NEED TO BE SET UP) #######
-
+    def show_fxpdb_window(self):
+	cleaner = FixPDBWindow(self.toolkit.input_class, self.toolkit.score_class, self.toolkit.pose)
+	cleaner.runfixPDBWindow(self.main, 0, 0)
+	
     def show_ligand_ncaa_ptm_manager(self):
 	top_level_tk = Toplevel(self.main)
 	ptm = ligand_ncaa_ptm_manager(self.toolkit.input_class, self.toolkit.score_class, self.toolkit.pose)

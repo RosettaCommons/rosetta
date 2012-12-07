@@ -47,9 +47,8 @@ from window_main.IO.GUIInput import GUIInput
 from window_main.IO.GUIOutput import GUIOutput
 
 from window_modules.pymol_integration.PyMOL import AdvancedPyMOL
-from window_modules.scorefunction.ScoreFxnControl import ScoreFxn
+from window_modules.scorefunction.ScoreFxnControl import ScoreFxnControl
 from window_modules.full_control.FullControlWindow import FullControlWindow
-
 
 def location():
    """
@@ -73,6 +72,7 @@ class main_window:
       self.pose = Pose()
       self.native_pose = Pose()
       self.current_directory = global_variables.current_directory = self.location()[0]
+      self.toolkit_home = self.location()[0]
       self.DesignDic = dict()
       
       
@@ -101,7 +101,7 @@ class main_window:
       self.input_class = GUIInput(self)
       self.output_class = GUIOutput(self)
       
-      self.score_class = ScoreFxn(); #Main Score Function Object. Holds Score.  Controls switching scorefunctions, etc.
+      self.score_class = ScoreFxnControl(); #Main Score Function Object. Holds Score.  Controls switching scorefunctions, etc.
       self.pymol_class = AdvancedPyMOL(self.pose); #PyMOL Object for advanced visualization.
       self.fullcontrol_class = FullControlWindow(self.score_class, self.pose, self.input_class, self.output_class); #Handles full control of protein.  This way, everything is saved...which is sorta cool.
       

@@ -47,11 +47,12 @@ class OptionSystemManager:
             '-out:file:silent'
         ]
 
+        self.common_option = StringVar(); self.common_option.set(self.common_options[0])
+        self.custom_option = StringVar()
         
     def setTk(self, main):
         self.main = main
-        self.common_option = StringVar(); self.common_option.set(self.common_options[0])
-        self.custom_option = StringVar()
+
     
     #### Set ####
         self.common_option_menu = OptionMenu(self.main, self.common_option, *self.common_options)
@@ -65,6 +66,7 @@ class OptionSystemManager:
         self.load_button=Button(self.main, text = "Load ...", command = lambda: self.load_settings(""))
         self.clear_button=Button(self.main, text = "Clear Defaults", command = lambda: self.clear_defaults())
         self.clear_current_button = Button(self.main, text = "Clear Current", command = lambda: self.reset_options())
+        
     def shoTk(self, r=0, c=0):
         self.common_option_menu.grid(row = r, column=c, sticky=W+E)
         self.custom_option_entry.grid(row=r+1, column=c, sticky=W+E)
@@ -76,10 +78,11 @@ class OptionSystemManager:
         self.load_button.grid(row= r+1, column=c+3, sticky=W+E)
         self.clear_button.grid(row=r+2, column=c+2, columnspan=2, sticky=W+E)
         self.clear_current_button.grid(row = r+3, column=c+2, columnspan = 2, sticky=W+E)
+        
     def find_rosetta_database(self):
         '''
         Directly from __init__ file in /rosetta
-        Writer: Sergey Lyskov
+        Author: Sergey Lyskov
         '''
         if os.path.isdir('rosetta_database'):
             self.database = os.path.abspath('rosetta_database')

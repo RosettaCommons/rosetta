@@ -10,12 +10,11 @@
 ## @brief  Class for analyzing design results from a fasta of sequences
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
+#Python Imports
+import re
 
 #Tkinter Imports
 from Tkinter import *
-
-#Python Imports
-import re
 
 #Toolkit Imports
 from prettytable import prettytable

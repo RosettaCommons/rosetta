@@ -10,19 +10,25 @@
 ## @brief  Scorefunction window.  Holds current scorefunction accross GUI.  
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
+#Rosetta Imports
 from rosetta import *
+
+#Python Imports
 from Tkinter import *
-#from modules.ScoreBase import *
 import glob
 from os import environ as env
 from os import path
+
+#Tkinter Imports
 import tkFileDialog
 import tkMessageBox
 import tkSimpleDialog
+
+#Toolkit Imports
 from modules.tools import output as output_tools
 
 
-class ScoreFxn():
+class ScoreFxnControl():
     """
     This is the class where you can pick from any of rosetta's energy functions and classes, as well as edit them on the fly, save them, and load
     custom built ones.  Useful for testing new scorefunctions.

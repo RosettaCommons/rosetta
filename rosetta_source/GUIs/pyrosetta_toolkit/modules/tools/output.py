@@ -27,7 +27,7 @@ from Tkinter import Listbox
 #Toolkit Imports
 import sequence
 import loops
-from modules.PDB import *
+from modules.SQLPDB import *
 from modules.tools import loops as loop_tools
 from window_main import global_variables
 from modules.definitions import restype_definitions
@@ -148,7 +148,6 @@ def save_resfile_w_designdic(p, ResDic, filename):
     ResDic can be empty.
     ResDic is [string pdbNum:pdbChain]:[array name:three_letter:one_letter string]
     If NC - ResDic should be [string pdbNum:pdbChain]:[array 'NC':residue string]
-    How to incorporate NC?
     """
     if not p.total_residue():
         print "\n No pose loaded...\n"
@@ -176,8 +175,10 @@ def save_resfile_w_designdic(p, ResDic, filename):
                 elif residue_string == "ALLAA":
                     line = pdbStr + chainStr + "  ALLAA" + "\n"
                 elif residue_string.split(":")[0]=="NC":
-                    x = x +residue_string.split(":")[1]+" "
-                    line = pdbStr + chainStr + "  NC  " + x + "\n";
+                    type = residue_string.split(":")[1]+" "
+                    x = x+" NC "+type
+                    #Looks like for each NC you need NC designation.
+                    line = pdbStr + chainStr + x + "\n";
                 else:
                     residuesAll = residue_string.split(":")
                     x = x + residuesAll[2]
@@ -345,7 +346,7 @@ def convert_PDBLIST_to_sqlite3db(pdblist_path):
     PDBLIST = open(pdblist_path, 'r')
     dbname = os.path.dirname(pdblist_path)+"/DATABASE.db"
     print dbname
-    DB = PDB("", "", "", False, dbname)
+    DB = SQLPDB("", "", "", False, dbname)
     i = 1
     for filepath in PDBLIST:
         pdbID = os.path.basename(filepath).split(".")[0]

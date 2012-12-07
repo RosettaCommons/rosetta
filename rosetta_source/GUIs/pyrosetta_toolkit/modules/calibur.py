@@ -10,9 +10,7 @@
 ## @brief  Functions for running and parsing calibur.
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
-
-#This is meant to be a set of functions for running and parsing calibur#
-#Calibur path should be in PATH#
+#Python Imports
 import sys
 import os
 import re
@@ -20,7 +18,9 @@ import re
 class calibur:
     def __init__(self, caliburPath=set):
         """
+        This is meant to be a set of functions for running and parsing calibur
         Uses system path, or specified path in calculations.
+        Calibur path should be in PATH, or specified upon construction.
         """
         
         if caliburPath ==set:

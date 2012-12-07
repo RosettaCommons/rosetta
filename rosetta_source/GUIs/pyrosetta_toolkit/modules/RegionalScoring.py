@@ -6,24 +6,21 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-## @file   /GUIs/pyrosetta_toolkit/modules/ScoreBase.py
-## @brief  Class/Functions for advanced score functionality.  
+## @file   /GUIs/pyrosetta_toolkit/modules/RegionalScoring.py
+## @brief  Class/Functions for Regional Scoring and term Switching
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
-
-
+#Rosetta Imports
 from rosetta import *
 
-#For Testing?:
-#pose = Pose()
-#pose_from_pdb(pose, "../testing/2j88.pdb")
-#score = create_score_function_ws_patch("standard", "score12")
 
-class ScoreBase():
+class RegionalScoring():
     def __init__(self, pose, scorefxn):
         """
-        Class for quickly scoring more complex things (loops, domains, cores?), switching energy types and (possibly) rotamer libraries on-the-fly
+        Class for quickly scoring more complex things - Regions (loops, domains, cores?), switching energy types and (possibly) rotamer libraries on-the-fly
         Not used as a container class.
+        Also for switching scoreterms (rama->rama2b, pair->hack_elec, etc.)
+        Some functions may eventually be ported to C++ Rosetta if they are deemed useful enough.
         """
         
         self.pose = pose
@@ -58,9 +55,10 @@ class ScoreBase():
             "dslf_ss_dih":dslf_ss_dih,
             "dslf_ca_dih":dslf_ca_dih
         }
+        
     def ret_pose_number(self, chain, resNum):
         """
-        Returns Pos Numbering.  Takes Chain and Resnum.
+        Returns Pose Numbering.  Takes Chain and Resnum.
         """
         return self.pose.pdb_info().pdb2pose(chain, resNum)
         
@@ -101,7 +99,6 @@ class ScoreBase():
         neighbor is defined as any residue pair having a non-zero ci_2b energy.
         Divides the sum by two to account for double counting.  This has been checked in the Energies object and is true.
         Weighted!
-        NOTE - INLCUDED residue-residue interactions within loop.  Now fixed.
         """
         
         emap = core.scoring.EMapVector()
@@ -174,6 +171,7 @@ class ScoreBase():
         for type in self.scoretypes:
             e = e+self.weights[type]*emap[type]
         return e
+    
     def ret_residue_energy(self, poseNum):
         """
         Returns individual residue energies. By EMAP.

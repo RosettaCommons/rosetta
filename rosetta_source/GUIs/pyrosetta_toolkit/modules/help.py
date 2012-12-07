@@ -10,7 +10,7 @@
 ## @brief  Functions for the help menu item.
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
-
+#Tkinter Imports
 import tkMessageBox
 import tkSimpleDialog
 

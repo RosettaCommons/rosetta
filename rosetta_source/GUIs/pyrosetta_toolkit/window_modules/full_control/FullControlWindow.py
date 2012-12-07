@@ -30,7 +30,7 @@ from modules.tools import general_tools
 from modules.tools import protocols as protocol_tools
 from modules.protocols.DesignProtocols import DesignProtocols
 from modules.protocols.LoopMinimizationProtocols import LoopMinimizationProtocols
-from modules.ScoreBase import *
+from modules.RegionalScoring import *
 from window_modules.ligand_ncaa_ptm_manager.ligand_ncaa_ptm_manager import ligand_ncaa_ptm_manager
 
 class FullControlWindow():
@@ -64,7 +64,7 @@ class FullControlWindow():
         self.residue_energy_of_Eterm = StringVar(); #Energy of the particular residue
         
         self.variant = StringVar()
-        
+        self.variant_map = dict(); # [string variant]:[string names]
     def __exit__(self):
         exit()
         
@@ -103,7 +103,7 @@ class FullControlWindow():
 	    return
             
         try:
-            self.score_base = ScoreBase(self.pose, self.score_object.score)
+            self.score_base = RegionalScoring(self.pose, self.score_object.score)
             
         except PyRosettaException:
             print "Please Load a pose"
@@ -216,17 +216,41 @@ class FullControlWindow():
 	    
     def populate_variant_listbox(self):
 	self.variant_listbox.delete(0, END)
+	
+	#Patches first
 	for variant in sorted(self.variant_manager.patch_type_map):
+	    if not self.variant_map.has_key(variant):
+		self.variant_map[variant]=[]
+		for type in self.variant_manager.patch_type_map[variant]:
+		    self.variant_map[variant].append(type)
+	
+	"""
+	#Now params - Adding variants from params -  Protonated, deprotonated, doesn't seem to work.  So, we are commmenting this out for now. 
+	for name in self.variant_manager.param_name_map:
+	    p = self.variant_manager.param_name_map[name]
+	    
+	    if p.variant.get():
+		variant = p.variant.get().lower()
+		if not self.variant_map.has_key(variant):
+		    self.variant_map[variant]=[]
+		    self.variant_map[variant].append(p.name.get())
+		else:
+		    self.variant_map[variant].append(p.name.get())
+	"""
+	
+	for variant in sorted(self.variant_map):
 	    self.variant_listbox.insert(END, variant)
-	    
-	    
+		
     def show_variant_info(self):
 	variant = self.variant_listbox.get(self.variant_listbox.curselection())
 	p = ""
-	for type in self.variant_manager.patch_type_map[variant]:
-	    p = p+" "+type+","
+	for name in self.variant_map[variant]:
+	    p = p+" "+name+","
+
 	print "Types: "+p
 	self.variant.set(variant)
+	
+	
     def mutate_to_variant(self):
 	variant = self.variant_listbox.get(self.variant_listbox.curselection())
 	
