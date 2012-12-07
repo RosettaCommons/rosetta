@@ -463,14 +463,16 @@ Splice::apply( core::pose::Pose & pose )
 		TR<<"Cut placed at: "<<cut_site<<std::endl;
   }// fi randomize_cut
 //	pose.dump_pdb( "before_ft_test.pdb" );
-	fold_tree( pose, from_res(), to_res(), cut_site );/// the fold_tree routine will actually set the fold tree to surround the loop
+	fold_tree( pose, from_res(), pose.total_residue()/*to_res() SJF DEBUGGING 7Dec12*/, cut_site );/// the fold_tree routine will actually set the fold tree to surround the loop
 //	pose.dump_pdb( "after_ft_test.pdb" );
 /// change the loop length
+  TR<<"Foldtree before loop length change: "<<pose.fold_tree()<<std::endl;
 	protocols::protein_interface_design::movers::LoopLengthChange llc;
 	llc.loop_start( from_res() );
 	llc.loop_end( cut_site + residue_diff < from_res() ? to_res() : cut_site );
 	llc.delta( residue_diff );
 	llc.apply( pose );
+  TR<<"Foldtree after loop length change: "<<pose.fold_tree()<<std::endl;
 
 //	pose.dump_pdb( "after_2ndllc_test.pdb" );
 /// set torsions
@@ -924,13 +926,17 @@ Splice::fold_tree( core::pose::Pose & pose, core::Size const start, core::Size c
 	core::conformation::Conformation const & conf( pose.conformation() );
 	core::Size const s1 = std::max( (core::Size) 2, start - 6 );
 	core::Size const s2 = std::min( conf.chain_end( 1 )/* - 1*/, stop + 6 );
-	if( conf.num_chains() == 1 ){
-		FoldTreeFromLoops ffl;
-		Loop loop( s1, s2, cut/*cut*/ );
-		LoopsOP loops = new Loops();
-		loops->push_back( loop );
-		ffl.loops( loops );
-		ffl.apply( pose );
+	core::kinematics::FoldTree ft;
+	ft.clear();
+	if( conf.num_chains() == 1 ){/// build simple ft for the cut
+		ft.add_edge( 1, s1, -1 );
+		ft.add_edge( s1, s2, 1 );
+		ft.add_edge( s1, cut, -1 );
+		ft.add_edge( s2, cut + 1, -1 );
+		ft.add_edge( s2, pose.total_residue(), -1 );
+		ft.delete_self_edges();
+		TR<<"single chain ft: "<<ft<<std::endl;
+		pose.fold_tree( ft );
 		return;
 	}
 	core::Size from_res( 0 );
@@ -940,8 +946,6 @@ Splice::fold_tree( core::pose::Pose & pose, core::Size const start, core::Size c
 			break;
 		}
 	}
-	core::kinematics::FoldTree ft;
-	ft.clear();
 	ft.add_edge( 1, s1, -1 );
 	ft.add_edge( s1, s2, 1 );
 	ft.add_edge( s2, conf.chain_end( 1 ), -1 );
