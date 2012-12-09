@@ -139,6 +139,9 @@ sources = {
 		"pepspec",
 		"pepspec_anchor_dock",
 	],
+	"public/pocket": [
+		"pocket_measure",
+	],
 	"public/rna": [
 		"rna_cluster",
 		"rna_database",
