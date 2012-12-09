@@ -1,0 +1,6 @@
+-s input/1r2d_closed.pdb
+-num_angles 100
+-central_relax_pdb_num 133
+-pocket_max_spacing 12
+-pocket_psp false
+-pocket_sps

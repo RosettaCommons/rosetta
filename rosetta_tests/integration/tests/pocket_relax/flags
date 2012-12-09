@@ -1,0 +1,11 @@
+-relax:fast
+-pocket_zero_derivatives
+-pocket_max_spacing 12
+-pocket_psp false
+-pocket_sps
+-pocket_max_size 300
+-pocket_num_angles 2
+-score:patch input/pocket.wts.patch
+-s input/1r2d_closed.pdb
+-nstruct 1
+-cst_fa_file input/constraints
