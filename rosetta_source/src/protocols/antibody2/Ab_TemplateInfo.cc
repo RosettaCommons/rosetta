@@ -136,8 +136,8 @@ pose::Pose Ab_TemplateInfo::get_one_template_pose(std::string cdr_name){
     
     TemplatePoseMap::iterator iter = templates_poses_.begin();
 	iter = templates_poses_.find(cdr_name);
-	if ( iter != templates_poses_.end() ) {return iter->second;}
-    
+	if ( iter == templates_poses_.end() ) {utility_exit_with_message("Cannot find pose to return!");}
+	return iter->second;
 }
     
     

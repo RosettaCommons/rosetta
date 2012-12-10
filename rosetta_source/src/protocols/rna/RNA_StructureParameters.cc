@@ -1061,13 +1061,13 @@ RNA_StructureParameters::random_jump_change( pose::Pose & pose ) const
 		// Check that we can actually insert here. At least one of the jump partners
 		// should allow moves. (I guess the other one can stay fixed).
 		Size const jump_pos1( pose.fold_tree().upstream_jump_residue( which_jump ) );
-		Size const jump_pos2( pose.fold_tree().downstream_jump_residue( which_jump ) );
+		// Size const jump_pos2( pose.fold_tree().downstream_jump_residue( which_jump ) ); // Unused variable causes warning.
 
 		Residue const & rsd1 = pose.residue( jump_pos1 );
 		AtomID jump_atom_id1( rsd1.atom_index( default_jump_atom( rsd1 ) ), jump_pos1 );
 
-		Residue const & rsd2 = pose.residue( jump_pos2 );
-		AtomID jump_atom_id2( rsd2.atom_index( default_jump_atom( rsd2 ) ), jump_pos2 );
+		// Residue const & rsd2 = pose.residue( jump_pos2 ); // Unused variable causes warning.
+		// AtomID jump_atom_id2( rsd2.atom_index( default_jump_atom( rsd2 ) ), jump_pos2 ); // Unused variable causes warning.
 
 		if ( allow_insert_->get( jump_atom_id1 ) ||
 				 allow_insert_->get( jump_atom_id1 ) ) break; // found an OK jump.

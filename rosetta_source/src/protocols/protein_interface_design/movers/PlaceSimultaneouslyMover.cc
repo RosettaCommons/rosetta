@@ -157,7 +157,7 @@ PlaceSimultaneouslyMover::minimize_all( core::pose::Pose & pose, core::Size cons
 
 	core::Size fixed_res(1);
 	if( host_chain_ == 1 ) fixed_res = pose.total_residue();
-	core::id::AtomID const fixed_atom_id = core::id::AtomID( pose.residue(fixed_res).atom_index("CA"), fixed_res );
+	// core::id::AtomID const fixed_atom_id = core::id::AtomID( pose.residue(fixed_res).atom_index("CA"), fixed_res ); // Unused variable causes a warning.
 
 	core::scoring::ScoreFunctionCOP stub_scorefxn( make_stub_scorefxn() );
 

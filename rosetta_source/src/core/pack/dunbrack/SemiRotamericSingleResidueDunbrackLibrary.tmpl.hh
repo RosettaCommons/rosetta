@@ -573,7 +573,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::rotamer_energy_deriv_bbind(
 	Real3 & dE_dbb(  scratch.dE_dbb() );
 	Real3 & dE_dbb_dev(  scratch.dE_dbb_dev() );
 	Real3 & dE_dbb_rot(  scratch.dE_dbb_rot() );
-	Real3 & dE_dbb_semi(  scratch.dE_dbb_semi() );
+	//Real3 & dE_dbb_semi(  scratch.dE_dbb_semi() );
 	Real4 & dE_dchi( scratch.dE_dchi() );
 	Real4 & dE_dchi_dev( scratch.dE_dchi_dev() );
 	Real4 & dE_dchi_semi( scratch.dE_dchi_semi() );

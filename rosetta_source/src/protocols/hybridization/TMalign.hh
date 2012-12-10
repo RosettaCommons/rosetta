@@ -148,12 +148,12 @@ public:
 		}
 	}
 
-	//    Please note this fucntion is not a correct implementation of
+	//    Please note this function is not a correct implementation of
 	//     the N-W dynamic programming because the score tracks back only
 	//     one layer of the matrix. This code was exploited in TM-align
 	//     because it is about 1.5 times faster than a complete N-W code
 	//     and does not influence much the final structure alignment result.
-	void NWDP_TM(int const len1, int const len2, double const gap_open, vector < int > & j2i)
+	void NWDP_TM(Size const len1, Size const len2, double const gap_open, vector < int > & j2i)
 	{
 		//NW dynamic programming for alignment
 		//not a standard implementation of NW algorithm
@@ -164,20 +164,20 @@ public:
 
 		//initialization
 		val[0][0]=0;
-		for(Size i=0; i<=len1; i++) {
+		for(Size i=0; i<=len1; ++i) {
 			val[i][0]=0;
 			path[i][0]=false; //not from diagonal
 		}
 
-		for(Size j=0; j<=len2; j++) {
+		for(Size j=0; j<=len2; ++j) {
 			val[0][j]=0;
 			path[0][j]=false; //not from diagonal
 			j2i[j]=-1;	//all are not aligned, only use j2i[1:len2]
 		}
 
 		//decide matrix and path
-		for(Size i=1; i<=len1; i++)	 {
-			for(Size j=1; j<=len2; j++) {
+		for(Size i=1; i<=len1; ++i)	 {
+			for(Size j=1; j<=len2; ++j) {
 				d=val[i-1][j-1]+score[i][j]; //diagonal
 
 				//symbol insertion in horizontal (= a gap in vertical)

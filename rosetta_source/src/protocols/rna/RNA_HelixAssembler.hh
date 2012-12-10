@@ -47,6 +47,7 @@ public:
 	virtual protocols::moves::MoverOP clone() const;
 
 	/// @brief Apply the loop-rebuild protocol to the input pose
+	using protocols::moves::Mover::apply;
 	void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
 

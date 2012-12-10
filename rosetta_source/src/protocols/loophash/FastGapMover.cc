@@ -108,7 +108,7 @@ FastGapMover::apply( pose::Pose & pose ) {
 
 		// copy pose
 		PoseOP working_pose = new Pose(pose);
-		Size idx = 1;
+		//Size idx = 1;
 
 		// convert pose to centroid pose:
 		if( working_pose->is_fullatom() ){

@@ -67,6 +67,9 @@ public:
 
 private:
 	void initialize( Pose & );
+
+	using protocols::simple_moves::PackRotamersMover::run;
+
 	void run();
 	void add_dna_states( Pose const & , PackerTaskCOP );
 

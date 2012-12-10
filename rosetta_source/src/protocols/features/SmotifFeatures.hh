@@ -41,62 +41,62 @@
 namespace protocols{
 namespace features{
 
-	struct SecondaryStructureSegment{
-		core::Size segment_id;
-		core::Size residue_begin;
-		core::Size residue_end;
-		std::string dssp;
-	};
+struct SecondaryStructureSegment{
+	core::Size segment_id;
+	core::Size residue_begin;
+	core::Size residue_end;
+	std::string dssp;
+};
 
-	class SmotifFeatures : public protocols::features::FeaturesReporter {
-	public:
-		SmotifFeatures();
+class SmotifFeatures : public protocols::features::FeaturesReporter {
+public:
+	SmotifFeatures();
 
-		SmotifFeatures(
-			core::scoring::ScoreFunctionOP scfxn);
+	SmotifFeatures(
+		core::scoring::ScoreFunctionOP scfxn);
 
-		SmotifFeatures( SmotifFeatures const & src );
+	SmotifFeatures( SmotifFeatures const & src );
 
-		virtual ~SmotifFeatures();
+	virtual ~SmotifFeatures();
 
-		///@brief return string with class name
-		std::string
-		type_name() const;
+	///@brief return string with class name
+	std::string
+	type_name() const;
 
-		///@brief generate the table schemas and write them to the database
-		void
-		write_schema_to_db(utility::sql_database::sessionOP db_session) const;
+	///@brief generate the table schemas and write them to the database
+	void
+	write_schema_to_db(utility::sql_database::sessionOP db_session) const;
 
-		///@brief return the set of features reporters that are required to
-		///also already be extracted by the time this one is used.
-		utility::vector1<std::string>
-		features_reporter_dependencies() const;
+	///@brief return the set of features reporters that are required to
+	///also already be extracted by the time this one is used.
+	utility::vector1<std::string>
+	features_reporter_dependencies() const;
 
-		void
-		parse_my_tag(
-			utility::tag::TagPtr const tag,
-			protocols::moves::DataMap & data,
-			protocols::filters::Filters_map const & /*filters*/,
-			protocols::moves::Movers_map const & /*movers*/,
-			core::pose::Pose const & /*pose*/);
+	void
+	parse_my_tag(
+		utility::tag::TagPtr const tag,
+		protocols::moves::DataMap & data,
+		protocols::filters::Filters_map const & /*filters*/,
+		protocols::moves::Movers_map const & /*movers*/,
+		core::pose::Pose const & /*pose*/);
 
-		utility::vector1<SecondaryStructureSegment>
-		get_ss_segments(
-			boost::uuids::uuid struct_id,
-			utility::sql_database::sessionOP db_session);
+	utility::vector1<SecondaryStructureSegment>
+	get_ss_segments(
+		boost::uuids::uuid struct_id,
+		utility::sql_database::sessionOP db_session);
 
-		/* Undefined, commenting out to fix PyRosetta build  numeric::xyzVector<core::Real>
-		pca(utility::vector1< numeric::xyzVector< core::Real > > coords); */
+	/* Undefined, commenting out to fix PyRosetta build  numeric::xyzVector<core::Real>
+	pca(utility::vector1< numeric::xyzVector< core::Real > > coords); */
 
-		///@brief collect all the feature data for the pose
-		core::Size
-		report_features(
-			core::pose::Pose const & pose,
-			utility::vector1< bool > const & relevant_residues,
-			boost::uuids::uuid struct_id,
-			utility::sql_database::sessionOP db_session
-			);
-	};
+	///@brief collect all the feature data for the pose
+	core::Size
+	report_features(
+		core::pose::Pose const & pose,
+		utility::vector1< bool > const & relevant_residues,
+		boost::uuids::uuid struct_id,
+		utility::sql_database::sessionOP db_session
+		);
+};
 
 } // namespace
 } // namespace

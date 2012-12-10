@@ -45,7 +45,7 @@ MolecularMassFilter::apply( core::pose::Pose const & pose ) const {
 	core::Size const start = pose.conformation().chain_begin(chain_id);
 	core::Size const end = pose.conformation().chain_end(chain_id);
 
-	core::Real mass=0;
+	//core::Real mass=0;
 
 
 	if(	core::pose::molecular_mass(start,end,pose) > mass_limit_ ){

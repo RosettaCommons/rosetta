@@ -215,7 +215,7 @@ void emit_intermediate(const core::pose::Pose& pose,
     core::io::pdb::dump_pdb(pose, filename);
 }
 
-protocols::comparative_modeling::ThreadingJob const * const current_job() {
+protocols::comparative_modeling::ThreadingJob const * /*const*/ current_job() {
   using protocols::jd2::InnerJobCOP;
   using protocols::jd2::JobDistributor;
   using protocols::comparative_modeling::ThreadingJob;

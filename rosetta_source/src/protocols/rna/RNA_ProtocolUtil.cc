@@ -1091,10 +1091,10 @@ virtualize_5prime_phosphates( pose::Pose & pose ){
 
 	for ( Size i = 1; i < pose.total_residue(); i++ ) {
 
-		if ( i==1 || ( pose.fold_tree().is_cutpoint( i-1 ) &&
+		if ( i==1 || (( pose.fold_tree().is_cutpoint( i-1 ) &&
 									 !pose.residue( i-1 ).has_variant_type( chemical::CUTPOINT_LOWER ) &&
 									 !pose.residue( i   ).has_variant_type( chemical::CUTPOINT_UPPER ) ) &&
-				 pose.residue(i).is_RNA() ){
+				 pose.residue(i).is_RNA()) ){
 			pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", i );
 		}
 
@@ -1211,8 +1211,8 @@ get_rigid_body_jumps( core::pose::Pose const & pose ) {
 
 	for ( Size n = 1; n <= pose.fold_tree().num_jump(); n++ ){
 		TR.Debug << "checking jump: " <<  pose.fold_tree().upstream_jump_residue( n ) << " to " <<  pose.fold_tree().downstream_jump_residue( n ) << std::endl;
-		if ( pose.fold_tree().upstream_jump_residue( n ) == pose.total_residue()  ||
-				 pose.fold_tree().downstream_jump_residue( n ) == pose.total_residue()  ){
+		if ( pose.fold_tree().upstream_jump_residue( n ) == (int)pose.total_residue()  ||
+				 pose.fold_tree().downstream_jump_residue( n ) == (int)pose.total_residue()  ){
 			TR.Debug << "found jump to virtual anchor at: " << n << std::endl;
 
 			rigid_body_jumps.push_back( n );

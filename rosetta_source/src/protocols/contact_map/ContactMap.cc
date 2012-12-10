@@ -79,9 +79,9 @@ std::string ContactMapCreator::mover_name() {
 /// @brief	Default constructor
 ContactMap::ContactMap() :
 	Mover(ContactMapCreator::mover_name()),
+	output_prefix_("contact_map_"),
 	n_poses_(0),
 	distance_cutoff_(10.0),
-	output_prefix_("contact_map_"),
 	models_per_file_(1),
 	reset_count_(true),
 	row_format_(false)
@@ -90,17 +90,17 @@ ContactMap::ContactMap() :
 
 /// @brief	Copy constructor
 ContactMap::ContactMap(ContactMap const & contact_map) :
-    Mover(contact_map),
-    n_poses_(contact_map.n_poses_),
-    distance_cutoff_(contact_map.distance_cutoff_),
-    output_prefix_(contact_map.output_prefix_),
-    contacts_(contact_map.contacts_),
-    output_matrix_(contact_map.output_matrix_),
-    column_names_(contact_map.column_names_),
-    row_names_(contact_map.row_names_),
-    models_per_file_(contact_map.models_per_file_),
-    reset_count_(contact_map.reset_count_),
-    row_format_(contact_map.row_format_)
+		Mover(contact_map),
+		contacts_(contact_map.contacts_),
+		output_matrix_(contact_map.output_matrix_),
+		column_names_(contact_map.column_names_),
+		row_names_(contact_map.row_names_),
+		output_prefix_(contact_map.output_prefix_),
+		n_poses_(contact_map.n_poses_),
+		distance_cutoff_(contact_map.distance_cutoff_),
+		models_per_file_(contact_map.models_per_file_),
+		reset_count_(contact_map.reset_count_),
+		row_format_(contact_map.row_format_)
 {
 }
 

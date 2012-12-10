@@ -167,7 +167,7 @@ CoupledSidechainProtocol::init_from_options() {
 
 	using namespace options;
 	using namespace options::OptionKeys;
-	core::Real unif = option[ rotamers::unif ];
+	// core::Real unif = option[ rotamers::unif ]; // Unused variable causes warning.
 	core::Real pert = option[ rotamers::pert ];
 	core::Real within = option[ rotamers::within ];
 	ntrials_=option[ run::n_cycles ]();

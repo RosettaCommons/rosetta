@@ -71,7 +71,7 @@ public:
 		std::list< core::conformation::ResidueCOP > const & inverse_rotamers
 	);
 
- ~InverseRotamersRCG();
+	~InverseRotamersRCG();
 
 	virtual void
 	parse_my_tag( TagPtr const tag,
@@ -102,6 +102,8 @@ public:
 
 	void
 	clear_inverse_rotamers();
+
+	using remodel::RemodelConstraintGenerator::init;
 
 	/// @brief initialize with given lstart, lstop, and inverse rotamer residue list
 	void init( core::Size const lstart,

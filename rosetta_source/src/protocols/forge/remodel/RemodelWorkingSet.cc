@@ -115,7 +115,7 @@ WorkingRemodelSet::WorkingRemodelSet(WorkingRemodelSet const & rval):
 	sequence = rval.sequence;
 	ss = rval.ss;
 	abego = rval.abego;
-	hasInsertion= hasInsertion;
+	hasInsertion = rval.hasInsertion;
 }
 
 WorkingRemodelSet & WorkingRemodelSet::operator = ( WorkingRemodelSet const & rval ){
@@ -126,15 +126,15 @@ WorkingRemodelSet & WorkingRemodelSet::operator = ( WorkingRemodelSet const & rv
 		abego = rval.abego;
 		translate_index = rval.translate_index;
 		begin = rval.begin ;
-		end =rval.end;
-		copy_begin= rval.copy_begin ;
-		copy_end =rval.copy_end ;
-		src_begin =rval.src_begin;
-		src_end =rval.src_end;
-		hasInsertion= hasInsertion;
+		end = rval.end;
+		copy_begin = rval.copy_begin ;
+		copy_end = rval.copy_end ;
+		src_begin = rval.src_begin;
+		src_end = rval.src_end;
+		hasInsertion = rval.hasInsertion;
 		manager = rval.manager;
-		task =  rval.task ;
-		rvjump_pose =  rval.rvjump_pose;
+		task = rval.task ;
+		rvjump_pose = rval.rvjump_pose;
 	}
 	return *this;
 }
@@ -201,7 +201,7 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 	}
 
 
-// find all the indices.
+	// find all the indices.
 	//identify truncation
 	// for all the positions that are not extensions "x" or "X", put them in the
 	// temp_for_truncation vector -- this corresponds to all the regions need to
@@ -312,12 +312,12 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 			}
 		}
 		else if (next.index != first.index+1 && (i+1) == (int)temp.size()-1 ){ //if there's a loner in the end by itself
-        segment.residues.push_back(first.index);
-        segmentStorageVector.push_back(segment);
-        segment.residues.clear();
-        segment.residues.push_back(next.index);
-        segmentStorageVector.push_back(segment);
-        segment.residues.clear();
+			segment.residues.push_back(first.index);
+			segmentStorageVector.push_back(segment);
+			segment.residues.clear();
+			segment.residues.push_back(next.index);
+			segmentStorageVector.push_back(segment);
+			segment.residues.clear();
     }
 		else {
 			segment.residues.push_back(first.index);
@@ -420,9 +420,10 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 		core::Size idFront = segmentStorageVector[i].residues.front();
 		core::Size idBack = segmentStorageVector[i].residues.back();
 		core::Size seg_size = (int)data.blueprint.size();
-		core::Size rep_number = option[ OptionKeys::remodel::repeat_structure];
+		//core::Size rep_number = option[ OptionKeys::remodel::repeat_structure];
 		std::string DSSP = data.dssp_updated_ss;
 
+		// I don't know what happens when one assigns -1 to a Size, but this needs to be fixed. ~Labonte
 		core::Size head = -1, tail = -1, headNew = -1, tailNew = -1; //safety, init to negative values
 
 		//use temp_For_copy to identify if it's de novo build; not empty means it's a loop case.
@@ -486,7 +487,7 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 
 		this->loops.add_loop(segmentStorageVector[i].residues.front(), segmentStorageVector[i].residues.back(), segmentStorageVector[i].residues.front()+1, 0, 0);
 
-	  // process regions containing insertion
+		// process regions containing insertion
 		if ( headNew <= insertStartIndex && tailNew >= insertEndIndex && ((insertEndIndex-insertStartIndex) != 0)){
 			TR << "segment contain insertion, skip normal SegmentRebuild instructions, use SegmentInsert instructions instead" << std::endl;
 		String beforeInsert = DSSP.substr(headNew-1, insertStartIndex-head+1);
@@ -524,7 +525,7 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 		  TR << "debug: N-term deletion" << std::endl;
 			this->manager.add( new SegmentRebuild( Interval(1,tail),  DSSP.substr( headNew-1, gap ), aa.substr( headNew-1,gap )) );
 		} 
-		else if (tail != input_pose.total_residue() && tailNew == model_length && headNew == 1 && segmentStorageVector[i].residues.back() == model_length ){ // C-term deletion
+		else if (tail != input_pose.total_residue() && tailNew == (Size)model_length && headNew == 1 && segmentStorageVector[i].residues.back() == model_length ){ // C-term deletion
 			gap = (int)data.blueprint.size()-segmentStorageVector[i].residues.front()+1;
 		  TR << "debug: C-term deletion" << std::endl;
 			this->manager.add( new SegmentRebuild( Interval(head,input_pose.total_residue()), DSSP.substr( segmentStorageVector[i].residues.front()-1, gap ), aa.substr( segmentStorageVector[i].residues.front()-1, gap )) );

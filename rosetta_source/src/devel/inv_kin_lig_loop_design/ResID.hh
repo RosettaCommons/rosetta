@@ -36,7 +36,7 @@ namespace devel {
     // ==================== ResID ====================
     // ===============================================
 
-    class ResID;
+    struct ResID;
     typedef map<ResID,core::conformation::Residue*> resids_type;
 
     struct ResID {

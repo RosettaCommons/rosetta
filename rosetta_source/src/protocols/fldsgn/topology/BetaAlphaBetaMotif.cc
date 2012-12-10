@@ -91,14 +91,14 @@ BetaAlphaBetaMotif::BetaAlphaBetaMotif( BetaAlphaBetaMotif const & s ):
 	helix_( s.helix_ ),
 	cross_over_( s.cross_over_ ),
 	left_handed_( s.left_handed_ ),
+	sheet_plane_( s.sheet_plane_ ),
+	sheet_pos_( s.sheet_pos_ ),
 	hs_dist_( s.hs_dist_ ),
 	hs_angle_( s.hs_angle_ ),
 	hs1_dist_( s.hs1_dist_ ),
 	hs2_dist_( s.hs2_dist_ ),
 	hsheet_elev_angle_( s.hsheet_elev_angle_ ),
 	helix_cycle_( s.helix_cycle_ ),
-	sheet_plane_( s.sheet_plane_ ),
-	sheet_pos_( s.sheet_pos_ ),
 	geometry_is_initialized_( s.geometry_is_initialized_ )
 {}
 
@@ -349,8 +349,8 @@ BetaAlphaBetaMotif::calc_geometry( SS_Info2_COP const ssinfo, SheetSetCOP const 
 	Size ref1_stid = sheet->order_strand( ref1 );
 	Size ref2_stid = sheet->order_strand( ref2 );
 
-	Strand const & ref_s1 = *ssinfo->strand( ref1_stid );
-	Strand const & ref_s2 = *ssinfo->strand( ref2_stid );
+	// Strand const & ref_s1 = *ssinfo->strand( ref1_stid ); // Unused variable causes warning.
+	// Strand const & ref_s2 = *ssinfo->strand( ref2_stid ); // Unused variable causes warning.
 
 	int refs1_orient = sheet->orient_strand( ref1 );
 	int refs2_orient = sheet->orient_strand( ref2 );
@@ -416,7 +416,7 @@ BetaAlphaBetaMotif::calc_geometry( SS_Info2_COP const ssinfo, SheetSetCOP const 
 		runtime_assert( ref3 > 0 );
 
 		Size ref3_stid = sheet->order_strand( ref3 );
-		Strand const & ref_s3 = *ssinfo->strand( ref3_stid );
+		// Strand const & ref_s3 = *ssinfo->strand( ref3_stid ); // Unused variable causes warning.
 		int refs3_orient = sheet->orient_strand( ref3 );
 
 		Real ss_sign3( 1.0 );

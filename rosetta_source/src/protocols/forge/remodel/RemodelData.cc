@@ -394,7 +394,7 @@ protocols::forge::remodel::RemodelData::translateDSSP_ABEGO(std::string & ss, st
 	
 	if (abego_switch){ //need to make a new string with DSSP assignment and swap
 		found_idx = ss.find_first_of("abegoABEGO"); // this substitution use all 5 regions
-		for (int idx = 0; idx < ss.length(); idx++){
+		for (core::Size idx = 0; idx < ss.length(); idx++){
 			if (ss[idx] == 'A' || ss[idx] == 'a'){
 				trans_ss.push_back('H');
 			}

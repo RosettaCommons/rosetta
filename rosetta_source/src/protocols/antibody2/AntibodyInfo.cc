@@ -1059,7 +1059,8 @@ void AntibodyInfo::identify_CDR_from_a_sequence(std::string const & querychain){
 	int lenl1 = 0, lenl2 = 0, lenl3 = 0, lenh1 = 0, lenh2 = 0, lenh3 = 0;
 	int posl1_s = 0, posl1_e = 0, posl2_s = 0, posl2_e = 0, posl3_s = 0, posl3_e = 0;
 	int posh1_s = 0, posh1_e = 0, posh2_s = 0, posh2_e = 0, posh3_s = 0, posh3_e = 0;
-	int i = 0, k = 0, l = 0, m = 0, n = 0;
+	// int i = 0, // Unused variable causes warning.
+	int k = 0, l = 0, m = 0, n = 0;
 	
 	int pos_fr1_s = 0, pos_fr1_e = 0, pos_fr2_s = 0, pos_fr2_e = 0;
 	int pos_fr3_s = 0, pos_fr3_e = 0, pos_fr4_s = 0, pos_fr4_e = 0;
@@ -1086,7 +1087,7 @@ void AntibodyInfo::identify_CDR_from_a_sequence(std::string const & querychain){
 	std::string p4_h1[] = {"Q","K","H","E","L","R"};
 	
 	// For H3	W-[GA]-X-[DRG]
-	std::string p1_h3[] = {"W","V"};
+	// std::string p1_h3[] = {"W","V"}; // Unused variable causes warning.
 	std::string p2_h3[] = {"G","A","C"};
 	std::string p3_h3[] = {"A","P","C","D","E","Q","N","R","K","H","W","Y","F","M","T","V","I","S","L","G"};
 	std::string p4_h3[] = {"G","R","D","Q","V"};

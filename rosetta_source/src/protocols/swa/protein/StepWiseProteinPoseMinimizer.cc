@@ -99,7 +99,7 @@ namespace protein {
 
 
   //////////////////////////////////////////////////////////////////////////
-	void StepWiseProteinPoseMinimizer::initialize_protein_input_silent_file_data_from_pose_list( PoseList & pose_list ){
+	void StepWiseProteinPoseMinimizer::initialize_protein_input_silent_file_data_from_pose_list( PoseList & /*pose_list*/ ){
     using namespace core::pose;
     using namespace core::io::silent;
 

@@ -37,6 +37,7 @@ public:
 	//destructor -- necessary? -- YES destructors are necessary.
 	~RNA_DeleteMover();
 
+	using protocols::moves::Mover::apply;
   void
 	apply( core::pose::Pose & pose, Size const res_to_delete, protocols::swa::monte_carlo::MovingResidueCase const moving_residue_case  );
 

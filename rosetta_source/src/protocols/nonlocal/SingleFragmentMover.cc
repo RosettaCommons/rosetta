@@ -95,7 +95,8 @@ void SingleFragmentMover::apply(core::pose::Pose& pose) {
 
   // determine whether the pose is in fullatom mode. if so, warn the user and
   // convert it to centroid mode automatically.
-  bool was_fullatom = to_centroid(&pose);
+  // bool was_fullatom = // Unused variable causes warning.
+	to_centroid(&pose);
 
   // reuse <chunks_> when possible
   const FoldTree& current_tree = pose.fold_tree();

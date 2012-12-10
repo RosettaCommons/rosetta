@@ -67,7 +67,7 @@ void decompose(core::Size min_chunk_sz,
 void emit_intermediate(const core::pose::Pose& pose, const std::string& file);
 
 /// @brief Retrieves the current job from the JobDistributor
-protocols::comparative_modeling::ThreadingJob const * const current_job();
+protocols::comparative_modeling::ThreadingJob const * /*const*/ current_job();
 
 /// @brief Computes the distance between consecutive CA atoms. If the distance exceeds
 /// a user-specified threshold, creates a new chunk and adds it to <chunks>. CA-CA

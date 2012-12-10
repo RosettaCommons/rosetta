@@ -302,7 +302,7 @@ std::set<Size> get_coreDistDeviationResiduesToConstrain(const Real distDeviation
 
 /// @brief This util uses the above utilities to create a list of which CA residues to constrain.*Pose is not const because gaps of more than 3.5 angstroms are changed to be jumps
 /// First loop through it only constrains the core residues
-std::set<Size> get_residuesToConstrain(const Size coordCstGapInitial, const Real gdtThresh, Pose& pose){
+std::set<Size> get_residuesToConstrain(const Size /*coordCstGapInitial*/, const Real gdtThresh, Pose& pose){
 	using namespace protocols::moves;
 	using namespace core::scoring;
 	using namespace core::scoring::constraints;
@@ -314,7 +314,7 @@ std::set<Size> get_residuesToConstrain(const Size coordCstGapInitial, const Real
 	const Real COORDINATE_CST_WT = 1;
 	const Size CORE_RESIDUES_TO_CONSTRAIN = 3;
 	const Size RDS_OF_RELAX = 2; //default is 2
-	Size coordCstGap = coordCstGapInitial;
+	// Size coordCstGap = coordCstGapInitial; // Unused variable causes warning.
 	//Get input pdbs-------------------------------------------------------------
 	std::set< Size > caAtomsToConstrain;
 	//if missing density exists fix gaps.

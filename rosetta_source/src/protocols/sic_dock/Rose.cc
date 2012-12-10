@@ -45,7 +45,7 @@ Rose::Rose(PoseCOP pin, core::id::AtomID_Map<Real>  const & clash_atoms  ) : p(p
 
 
 bool Rose::clashes(RCR o) const {
-	Real const & thresh_2 = h->grid_size2();
+	// Real const & thresh_2 = h->grid_size2(); // Unused variable causes warning.
 	RCR b( h->natom() >  o.h->natom() ? *this : o );
 	RCR s( h->natom() <= o.h->natom() ? *this : o );
 	// XC s2b( b.h->translation() + ( (s.x-s.h->translation()) / b.x ) );
@@ -58,7 +58,7 @@ bool Rose::clashes(RCR o) const {
 
 Size Rose::contacts(RCR o) const {
 	Size count = 0;
-	Real const & thresh_2 = h->grid_size2();
+	// Real const & thresh_2 = h->grid_size2(); // Unused variable causes warning.
 	RCR b( h->natom() >  o.h->natom() ? *this : o );
 	RCR s( h->natom() <= o.h->natom() ? *this : o );
 	// (~d)*n

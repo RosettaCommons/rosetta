@@ -64,6 +64,8 @@ public:
 
 private:
 	void initialize( Pose & );
+	
+	using protocols::simple_moves::PackRotamersMover::run;
 	void run();
 /// @brief add target and competitor states
 	void add_states( Pose const & );

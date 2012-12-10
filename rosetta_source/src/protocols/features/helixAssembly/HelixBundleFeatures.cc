@@ -77,9 +77,9 @@ using cppdb::statement;
 using cppdb::result;
 
 HelixBundleFeatures::HelixBundleFeatures() :
-bundle_size_(3),
-helix_size_(14),
-helix_cap_dist_cutoff_(12.0)
+		helix_cap_dist_cutoff_(12.0),
+		bundle_size_(3),
+		helix_size_(14)
 {
 	scorefxn_ = core::scoring::getScoreFunction();
 }
@@ -482,8 +482,8 @@ HelixBundleFeatures::calc_crossing_angles(
 /// rest of the bundle
 void
 HelixBundleFeatures::record_helix_sasas(
-	core::pose::Pose const & pose,
-	std::set<HelicalFragmentOP> const & frag_set
+	core::pose::Pose const & /*pose*/,
+	std::set<HelicalFragmentOP> const & /*frag_set*/
 ){
 //	utility::vector1<core::Size> positions;
 //	utility::vector1< std::pair<core::Size, core::Size> > helix_ends;
@@ -645,10 +645,10 @@ HelixBundleFeatures::calc_pc_and_com(
 void
 HelixBundleFeatures::parse_my_tag(
 	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & data,
+	protocols::moves::DataMap & /*data*/,
 	protocols::filters::Filters_map const & /*filters*/,
 	protocols::moves::Movers_map const & /*movers*/,
-	core::pose::Pose const & pose
+	core::pose::Pose const & /*pose*/
 ){
 	runtime_assert(tag->getOption<string>("name") == type_name());
 	
@@ -761,7 +761,7 @@ HelixBundleFeatures::report_features(
 //			bundle_insert_stmt.bind(3,helix_size_);
 			basic::database::safely_write_to_database(bundle_insert_stmt);
 			
-			core::Size bundle_id(bundle_insert_stmt.sequence_last("helix_bundles_bundle_id_seq"));
+			//core::Size bundle_id(bundle_insert_stmt.sequence_last("helix_bundles_bundle_id_seq"));
 			
 			std::map<HelicalFragmentOP, core::Size> helix_ids;
 			for(std::set<HelicalFragmentOP>::const_iterator it=cur_frag_set.begin(); it != cur_frag_set.end();

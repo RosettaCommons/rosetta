@@ -55,9 +55,9 @@ DDomainParse::pulldomain( int isize0, int ist, int ilast, utility::vector1< core
 	idip = 1;
 
 	utility::vector1< int> maxe1(mseq_), maxe2(mseq_);
-	core::Real tmp0 = -100.0, tmp10 = 100.0, tmp20 = 100.0;
+	core::Real /*tmp0 = -100.0,*/ tmp10 = 100.0, tmp20 = 100.0;
 	int ikp = 1;
-	int i0 = 0, idip0 = 1, kk1 = 0, kk2 = 0;
+	int /*i0 = 0,*/ /*idip0 = 1,*/ kk1 = 0, kk2 = 0;
 
 	for (int i=isize0; i<=ilast-isize0; ++i) {
 		core::Real tmp = resect[i];
@@ -81,7 +81,7 @@ DDomainParse::pulldomain( int isize0, int ist, int ilast, utility::vector1< core
 			}
 		}
 
-		int k1 = 0;
+		core::Size k1 = 0;
 		for (int k=maxe1[i]; k<=i; ++k) {
 			core::Real de1 = resect[k] - tmp;
 			if (de1 > hcut_)
@@ -97,7 +97,7 @@ DDomainParse::pulldomain( int isize0, int ist, int ilast, utility::vector1< core
 				break;
 		}
 
-		int k2 = 0;
+		core::Size k2 = 0;
 		for (int k=maxe2[i]; k<=ilast; ++k) {
 			core::Real de1 = resect[k] - tmp;
 			if (de1 > hcut_)
@@ -232,7 +232,7 @@ DDomainParse::ddomain_pot(
 {
 	resect.resize(mseq_);
 
-	core::Real ave = 0.0, rcut = 6.5, ect = 0, dr = 0;
+	core::Real ave = 0.0, rcut = 6.5, /*ect = 0,*/ dr = 0;
 	int ipt1 = 0, ipt2 = 0;
 	for (int k=ist; k<=ilast - 1; ++k) {
 		core::Real ect = 0.0;
@@ -273,7 +273,7 @@ DDomainParse::split( core::pose::Pose const &templ, core::Size nres ) {
 
 	// grab "centroid" from pose
 	// use same definition as DDomain
-	for (int i=1; i<=mseq_; ++i) {
+	for (core::Size i=1; i<=mseq_; ++i) {
 		core::conformation::Residue const &rsd_i = templ.residue(i);
 		core::Size nsc=0;
 		if (rsd_i.aa() == core::chemical::aa_gly) {

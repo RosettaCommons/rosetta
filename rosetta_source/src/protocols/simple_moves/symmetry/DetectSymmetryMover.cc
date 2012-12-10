@@ -80,7 +80,7 @@ DetectSymmetry::apply(Pose & pose) {
 	//check that the chains have the same sequence
 	std::string seq1 = pose.chain_sequence(1);
 	const Pose ref_pose( pose, 1, seq1.size() );
-	for(int i = 1; i < symmetric_type; i++){
+	for(Size i = 1; i < symmetric_type; ++i){
 		if( seq1 != pose.chain_sequence(i) ) utility_exit_with_message("subunits have different sequence! structure can't be symmetric");
 		Pose test_pose( pose, i*seq1.size()+1 , (i + 1)*seq1.size() );
 		core::Real rms = core::scoring::CA_rmsd(ref_pose, test_pose);

@@ -212,6 +212,8 @@ class OptionFileBlock : public OptionBlock {
 public:
 	OptionFileBlock ( std::string name ) : OptionBlock( name ) {};
 	bool read_entries(FILE *in_file, std::string &next_block);
+	
+	using OptionBlock::write_entries;
 	void write_entries(FILE *out_file);
 };
 
@@ -238,6 +240,8 @@ class OptionFile : public OptionBackend {
 	OptionFile(std::string in_file,std::string out_file);
 	~OptionFile(); /* destructor calls write_options if not already done manually */
 	void get_options(OptionModule& block);
+	
+	using OptionBackend::write_options;
 	void write_options(); //* writes options, if called multiple times file is overwritten */
 protected:
 	void read_options();
@@ -255,6 +259,8 @@ protected:
 public:
 	static void process_options( int& argc, char* argv[] ) { get_instance().process_options_(argc, argv ); };
 	void get_options(OptionModule&);
+	
+	using OptionBackend::write_options;
 	void write_options() { OptionBackend::write_options(std::cout); };
 	static CommandLineOptions& get_instance() {
 		static CommandLineOptions the_singleton;
@@ -303,7 +309,8 @@ private:
 	public:
 		COPT(std::string comment) : base_opt(std::string(";")+comment, std::string(""), std::string("") ) {};
 		std::string value() const { return ""; };
-		void set_value(std::string) const {};
+		using base_opt::set_value;
+		virtual void set_value(std::string) const {};
 	};
 
 

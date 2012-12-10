@@ -44,11 +44,11 @@ namespace features{
 SecondaryStructureSegmentFeatures::SecondaryStructureSegmentFeatures()
 {}
 
-SecondaryStructureSegmentFeatures::SecondaryStructureSegmentFeatures(core::scoring::ScoreFunctionOP scfxn)
+SecondaryStructureSegmentFeatures::SecondaryStructureSegmentFeatures(core::scoring::ScoreFunctionOP /*scfxn*/)
 {	
 }
 
-SecondaryStructureSegmentFeatures::SecondaryStructureSegmentFeatures( SecondaryStructureSegmentFeatures const & src )
+SecondaryStructureSegmentFeatures::SecondaryStructureSegmentFeatures( SecondaryStructureSegmentFeatures const & /*src*/ )
 {
 }
 
@@ -130,11 +130,11 @@ SecondaryStructureSegmentFeatures::features_reporter_dependencies() const
 
 void
 SecondaryStructureSegmentFeatures::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & data,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
-	core::pose::Pose const & pose)
+	utility::tag::TagPtr const /*tag*/,
+	protocols::moves::DataMap & /*data*/,
+	protocols::filters::Filters_map const & /*filters*/,
+	protocols::moves::Movers_map const & /*movers*/,
+	core::pose::Pose const & /*pose*/)
 {}
 
 ///@brief Return true if the dssp code is irregular (blank), hydrogen

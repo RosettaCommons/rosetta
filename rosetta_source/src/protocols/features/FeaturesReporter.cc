@@ -110,7 +110,7 @@ FeaturesReporter::report_features(
 	sessionOP db_session
 ){
 	vector1<bool> relevant_residues(true, pose.total_residue());
-	return report_features(pose, relevant_residues, parent_id,db_session);
+	return report_features(pose, relevant_residues, parent_id, db_session);
 }
 
 ///@details Extract all features from the pose to the database.  The

@@ -135,7 +135,8 @@ namespace rna {
 		VDW_atr_rep_screen_(true),
 		include_syn_chi_(false),
 		allow_syn_pyrimidine_(false), //New option Nov 15, 2010
-		distinguish_pucker_(true), 
+		distinguish_pucker_(true),
+		build_pose_from_scratch_(false), //July 03, 2012. This was previously uninitialized in floating_base_sampling mode! lead to early return from cluster_pose_data_list() function on some compiler/machine! [Specifically on the Biox2-cluster RUNS after converted to qsub (~April 2012)
 		current_score_cutoff_(999999.9), //Feb 02, 2012
 		//current_score_cutoff_(99999999999.9999), //New option May 12, 2010, Feb 02, 2012; This might lead to server-test error at R47200 
 		finer_sampling_at_chain_closure_(false), //New option Jun 10 2010
@@ -154,8 +155,8 @@ namespace rna {
 		do_not_sample_multiple_virtual_sugar_(false), //Nov 13, 2010, optimize the chain closure step speed
 		sample_ONLY_multiple_virtual_sugar_(false), //Nov 13, 2010, optimize the chain closure step speed
 		assert_no_virt_ribose_sampling_(false), //July 28 2011
-		output_pdb_(false), //Sept 24, 2011
-		build_pose_from_scratch_(false) //July 03, 2012. This was previously uninitialized in floating_base_sampling mode! lead to early return from cluster_pose_data_list() function on some compiler/machine! [Specifically on the Biox2-cluster RUNS after converted to qsub (~April 2012)
+		output_pdb_(false) //Sept 24, 2011
+		
   {
 		set_native_pose( job_parameters_->working_native_pose() );
 

@@ -78,12 +78,12 @@ PlaceSurfaceProbe::PlaceSurfaceProbe(
 		core::Real refinement_distance,
 		core::Real refinement_angle_sampling,
 		core::Real refinement_sampling,
-    core::conformation::ResidueCOP target_residue,
-		core::pack::task::TaskFactoryOP surface_selection,
-    core::Size search_partition,
-    core::Size total_search_partition) :
-    protocols::moves::Mover( "PlaceSurfaceProbe" ),
-	  protocols::hotspot_hashing::movers::PlaceProbeMover(
+		core::conformation::ResidueCOP target_residue,
+		core::pack::task::TaskFactoryOP /*surface_selection*/,
+		core::Size search_partition,
+		core::Size total_search_partition) :
+		protocols::moves::Mover( "PlaceSurfaceProbe" ),
+		protocols::hotspot_hashing::movers::PlaceProbeMover(
 			residue_name,
 			target_residue,
 			search_partition,
@@ -185,7 +185,7 @@ SearchPatternOP PlaceSurfaceProbe::create_partitioned_search_pattern(core::pose:
 	return sampled_surface_pattern;
 }
 
-SearchPatternOP PlaceSurfaceProbe::create_refinement_pattern(core::pose::Pose const & target_pose, core::Size target_residue)
+SearchPatternOP PlaceSurfaceProbe::create_refinement_pattern(core::pose::Pose const & /*target_pose*/, core::Size /*target_residue*/)
 {
 	return refinement_pattern_;
 }

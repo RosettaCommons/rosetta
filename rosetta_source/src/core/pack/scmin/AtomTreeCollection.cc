@@ -241,8 +241,8 @@ void ResidueAtomTreeCollection::set_chi( Size chi_index, Real value )
 
 void ResidueAtomTreeCollection::set_d( Size chi_index, Real value )
 {
-	int const effchi = (chi_index==0)? 1 : chi_index;
-	int const baseatom = (chi_index==0)? 3 : 4;
+	Size const effchi = (chi_index==0)? 1 : chi_index;
+	Size const baseatom = (chi_index==0)? 3 : 4;
 
 	assert( effchi > 0 && effchi <= residue_representatives_[ active_restype_ ]->nchi() );
 	residue_uptodate_ = false;
@@ -253,8 +253,8 @@ void ResidueAtomTreeCollection::set_d( Size chi_index, Real value )
 
 void ResidueAtomTreeCollection::set_theta( Size chi_index, Real value )
 {
-	int const effchi = (chi_index==0)? 1 : chi_index;
-	int const baseatom = (chi_index==0)? 3 : 4;
+	Size const effchi = (chi_index==0)? 1 : chi_index;
+	Size const baseatom = (chi_index==0)? 3 : 4;
 
 	assert( effchi > 0 && effchi <= residue_representatives_[ active_restype_ ]->nchi() );
 	residue_uptodate_ = false;

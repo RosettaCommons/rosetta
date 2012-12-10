@@ -41,7 +41,8 @@ public:
 
 	//destructor
 	~RNA_AddMover();
-
+	
+	using protocols::moves::Mover::apply;
   void
 	apply( core::pose::Pose & pose, Size const res_to_add, protocols::swa::monte_carlo::MovingResidueCase const moving_residue_case  );
 

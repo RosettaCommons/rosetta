@@ -572,7 +572,7 @@ ZNCoordinationConstraintPlacerMover::add_matcher_remark_lines_for_zn_coordinatio
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 	Size nsubunits = symm_info->subunits();
 	Size nres_asu = symm_info->num_independent_residues();
-	Size nres_monomer = symm_info->num_independent_residues() - 1;
+	// Size nres_monomer = symm_info->num_independent_residues() - 1; // Unused variable causes warning.
 
 	symdes_znx_coordination_data coordination_data;
 	// Read in the original remark lines from the m1 match constraint file and translate them
@@ -970,7 +970,7 @@ void InsertZincCoordinationRemarkLines::apply( core::pose::Pose & p )
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 	Size nsubunits = symm_info->subunits();
 	Size nres_asu = symm_info->num_independent_residues();
-	Size nres_monomer = symm_info->num_independent_residues() - 1;
+	// Size nres_monomer = symm_info->num_independent_residues() - 1; // Unused variable causes warning.
 
 	FindZnCoordinatingResidues finder;
 	finder.find_coordinating_residues( p );
@@ -1063,7 +1063,7 @@ void DisableZnCoordinationResiduesTaskOp::apply(
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 	Size nsubunits = symm_info->subunits();
 	Size nres_asu = symm_info->num_independent_residues();
-	Size nres_monomer = symm_info->num_independent_residues() - 1;
+	// Size nres_monomer = symm_info->num_independent_residues() - 1; // Unused varaible causes warning.
 
 	task.nonconst_residue_task( nres_asu ).prevent_repacking();
 

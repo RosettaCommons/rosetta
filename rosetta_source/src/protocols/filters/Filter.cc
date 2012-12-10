@@ -93,8 +93,9 @@ Filter::Filter( std::string const & type )
 Filter::Filter( Filter const & init )
 	:	utility::pointer::ReferenceCount(),
 		type_( init.type_ ),
-		scorename_("defaultscorename"),
-		user_defined_name_( init.user_defined_name_ )
+		user_defined_name_( init.user_defined_name_ ),
+		scorename_("defaultscorename")
+		
 {}
 
 Filter::~Filter() {}
@@ -131,9 +132,9 @@ void Filter::score( core::io::serialization::PipeMap & pmap ) {
 		clear();
 	}
 }
-void Filter::parse_def( utility::lua::LuaObject const & def,
-				utility::lua::LuaObject const & score_fxns,
-				utility::lua::LuaObject const & tasks ){
+void Filter::parse_def( utility::lua::LuaObject const & /*def*/,
+				utility::lua::LuaObject const & /*score_fxns*/,
+				utility::lua::LuaObject const & /*tasks*/ ){
 	utility_exit_with_message("This Filter has not implemented parse_def()");
 }
 // end mpr support

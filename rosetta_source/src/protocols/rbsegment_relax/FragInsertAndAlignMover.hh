@@ -69,6 +69,8 @@ public:
 
 	virtual std::string get_name() const;
 
+	using protocols::moves::Mover::apply;
+
 	/// @brief insert one RB fragment + realign
 	void apply( core::pose::Pose & pose, int idx, bool idealize=false);
 

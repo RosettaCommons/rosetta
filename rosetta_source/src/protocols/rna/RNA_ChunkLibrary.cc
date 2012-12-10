@@ -208,7 +208,7 @@ namespace rna{
 		covered_by_chunk_.dimension( sequence_of_big_pose.size(), false );
 
 		utility::vector1< Size > input_res;
-		Size chunk_res_count( 0 );
+		// Size chunk_res_count( 0 ); // Unused variable causes warning.
 
 		for ( Size n = 1; n <= silent_files.size(); n++ ) {
 
@@ -441,10 +441,8 @@ namespace rna{
 			}
 		}
 
-		// A return value is required. Please fix this.
-#ifdef WIN32
+		// Can't get here unless everything is OK!
 		return true;
-#endif
 	}
 
 

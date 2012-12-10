@@ -73,7 +73,7 @@ public:
 	void
 	slide_back_to_origin( core::pose::Pose & pose );
 
-	Size const
+	Size
 	num_domains(){ return num_domains_;}
 
 	void

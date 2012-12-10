@@ -235,7 +235,7 @@ SetupHotspotConstraintsLoopsMover::generate_csts(
 	}
 	core::id::AtomID fixed_atom(1, 1);
 	core::Real worst_allowed_stub_bonus = 0;
-	bool apply_self_energies = false;
+	// bool apply_self_energies = false; // Unused variable causes warning.
 
 	// Take in a scaffold pose (with PackerTask, for its DesignMap), and a set of stubs.
 		// Each repacked residue will get one "AmbiguousConstraint".
@@ -359,7 +359,7 @@ SetupHotspotConstraintsLoopsMover::parse_my_tag( TagPtr const tag, DataMap & dat
   apply_self_energies_ = tag->getOption<bool>( "apply_stub_self_energies", 0 );
   bump_cutoff_ = tag->getOption<Real>( "apply_stub_bump_cutoff", 10. );
   apply_ambiguous_constraints_ = tag->getOption<bool>( "pick_best_energy_constraint", 1 );
-	core::Real const bb_stub_cst_weight( tag->getOption< core::Real >( "backbone_stub_constraint_weight", 1.0 ) );
+	// core::Real const bb_stub_cst_weight( tag->getOption< core::Real >( "backbone_stub_constraint_weight", 1.0 ) );  // Unused variable causes warning.
 
   colonyE_ = tag->getOption<bool>( "colonyE", 0 );
 

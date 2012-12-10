@@ -230,7 +230,7 @@ HelixPairingFilter::compute( Pose const & pose ) const
 
 	// set SS_Info
 	SS_Info2_OP  ss_info = new SS_Info2( pose, secstruct_ );
-	Helices const & helices( ss_info->helices() );
+	// Helices const & helices( ss_info->helices() ); // Unused variable causes warning.
 
 	// calc geometry of helixpairing
 	hpairset.calc_geometry( ss_info );

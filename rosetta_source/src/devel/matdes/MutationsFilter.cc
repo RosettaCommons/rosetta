@@ -42,8 +42,8 @@ MutationsFilter::MutationsFilter() :
 	rate_threshold_( 0.0 ),
 	mutation_threshold_( 100 ),
 	mutations_( 0 ),
-	packable_( 0 ),
-	verbose_( 0 )
+	verbose_( 0 ),
+	packable_( 0 )
 {}
 
 core::pack::task::TaskFactoryOP

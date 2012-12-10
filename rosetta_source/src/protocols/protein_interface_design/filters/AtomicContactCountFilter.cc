@@ -70,8 +70,8 @@ AtomicContactCountFilter::AtomicContactCountFilter( AtomicContactCountFilter con
 	distance_cutoff_(src.distance_cutoff_),
 	filter_mode_(src.filter_mode_),
 	normalize_by_sasa_(src.normalize_by_sasa_),
-	sym_dof_name_(src.sym_dof_name_),
-	jump_(src.jump_)
+	jump_(src.jump_),
+	sym_dof_name_(src.sym_dof_name_)
 {
 }
 

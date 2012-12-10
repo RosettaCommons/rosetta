@@ -41,9 +41,9 @@ public:
 	MainChainTorsionSet
 	operator=( MainChainTorsionSet const & src );
 
-	core::Real const phi() const;
-	core::Real const psi() const;
-	core::Real const omega() const;
+	core::Real phi() const;
+	core::Real psi() const;
+	core::Real omega() const;
 
 private:
 	core::Real phi_;

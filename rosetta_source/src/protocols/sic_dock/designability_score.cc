@@ -142,7 +142,7 @@ XfoxmScore::score(
 	// // if( ss1=='H' && ss2=='L' || ss1=='L' && ss2=='H' ) a = hl;
 	// // if( ss1=='E' && ss2=='L' || ss1=='L' && ss2=='E' ) a = el;		
 	Real dx,dy,dz,ex,ey,ez;
-	if(ss1=='E' && ss2=='H' || ss1=='L' && ss2=='H' || ss1=='L' && ss2=='E'){
+	if((ss1=='E' && ss2=='H') || (ss1=='L' && ss2=='H') || (ss1=='L' && ss2=='E')){
 		   get_xform_stats(s2,s1,dx,dy,dz,ex,ey,ez); // reverse
 	} else get_xform_stats(s1,s2,dx,dy,dz,ex,ey,ez);
 	int idx = dx+8.0; // 0.0-0.999 -> 10

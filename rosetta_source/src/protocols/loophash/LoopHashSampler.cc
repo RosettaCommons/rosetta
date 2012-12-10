@@ -62,8 +62,8 @@ LoopHashSampler::LoopHashSampler(
 	max_rms_   ( 100.0 ),
 	max_struct_ (10),
 	max_struct_per_radius_ (10),
-	nprefilter_ ( 0 ), // OBSOLETE?
-	nonideal_ ( false )
+	nonideal_ ( false ),
+	nprefilter_ ( 0 ) // OBSOLETE?
 {
 	set_defaults();
 }
@@ -464,9 +464,9 @@ struct FilterBucket {
 // very very similar to build_structures(), but too lazy to make separate functions to reduce redundancy
  void
  LoopHashSampler::close_gaps(
-		const core::pose::Pose& start_pose,
-    std::vector< core::pose::Pose> &lib_structs,
-		core::Size loop_size
+		const core::pose::Pose& /*start_pose*/,
+		std::vector< core::pose::Pose> &/*lib_structs*/,
+		core::Size /*loop_size*/
 	)
   {
 }

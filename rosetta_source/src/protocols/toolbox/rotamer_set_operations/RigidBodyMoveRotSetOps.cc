@@ -235,8 +235,8 @@ RigidBodyMoveRSO::clone() const{
 
 utility::vector1< core::conformation::ResidueCOP >
 RigidBodyMoveRSO::get_rigid_body_confs(
-	core::pose::Pose const & pose,
-	core::pack::task::PackerTask const & ptask,
+	core::pose::Pose const & /*pose*/,
+	core::pack::task::PackerTask const & /*ptask*/,
 	core::Size residue_index)
 {
 	runtime_assert(residue_index == seqpos_);

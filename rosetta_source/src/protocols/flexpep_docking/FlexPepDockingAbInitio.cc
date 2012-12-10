@@ -425,7 +425,7 @@ FlexPepDockingAbInitio::restorePSER(core::pose::Pose& pose, std::set<int> const&
       iter != pSer_positions.end(); iter++)
     {
       int resid = *iter;
-      Residue const & asp( pose.residue( resid ) );
+      // Residue const & asp( pose.residue( resid ) ); // Unused variable causes warning.
       ResidueOP pSer( ResidueFactory::create_residue( centroid_set->name_map("SER") ) );
       pose.replace_residue( resid, *pSer, true );
       core::pose::add_variant_type_to_pose_residue( pose , core::chemical::PHOSPHORYLATION, resid );

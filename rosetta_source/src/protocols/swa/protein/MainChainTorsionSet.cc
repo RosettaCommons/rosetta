@@ -60,9 +60,9 @@ namespace protein {
 
 	MainChainTorsionSet::~MainChainTorsionSet(){}
 
-	core::Real const MainChainTorsionSet::phi() const{ return phi_; }
-	core::Real const MainChainTorsionSet::psi() const{ return psi_; }
-	core::Real const MainChainTorsionSet::omega() const{ return omega_; }
+	core::Real MainChainTorsionSet::phi() const{ return phi_; }
+	core::Real MainChainTorsionSet::psi() const{ return psi_; }
+	core::Real MainChainTorsionSet::omega() const{ return omega_; }
 
 	MainChainTorsionSet
 	MainChainTorsionSet::operator=( MainChainTorsionSet const & src )

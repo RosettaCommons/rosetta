@@ -60,7 +60,9 @@ private:
 	void set_core_chunks(const protocols::loops::Loops & chunks);
 
 	// fold tree
-	void jumps_and_cuts_from_pose( core::pose::Pose & pose, utility::vector1< std::pair<int, int > > & jumps, utility::vector1< int > & cuts);
+	void jumps_and_cuts_from_pose( core::pose::Pose & pose,
+			utility::vector1< std::pair<core::Size, core::Size > > & jumps,
+			utility::vector1< core::Size > & cuts);
 
 	// cutpoints selection logic
 	utility::vector1 < core::Size > decide_cuts(core::pose::Pose & pose, core::Size n_residues);
@@ -82,11 +84,11 @@ private:
 
 	void add_overlapping_pair_chunks(
     core::Size const index,
-    utility::vector1<int> & cuts,
-    utility::vector1<std::pair<int, int> > & jumps,
+    utility::vector1<core::Size> & cuts,
+    utility::vector1<std::pair<core::Size, core::Size> > & jumps,
     std::set<core::Size> & rooted_chunk_indices );
 
-	void remove_cut( core::Size const cut, utility::vector1<int> & cuts );
+	void remove_cut( core::Size const cut, utility::vector1<core::Size> & cuts );
 
 private:
 	// DATA

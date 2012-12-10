@@ -166,7 +166,7 @@ MPI_LoopHashRefine_Master::process_inbound_wus(){
 		WorkUnit_SilentStructStoreOP structure_wu = dynamic_cast<  WorkUnit_SilentStructStore * > ( next_wu() );
 
 		// If upcast was unsuccessful - warn and ignore.
-		if ( structure_wu == NULL ){
+		if ( structure_wu.get() == NULL ){
 			TR << "Cannot save structural data for WU: " << std::endl;
 			next_wu->print( TR );
 			continue;
@@ -527,7 +527,7 @@ MPI_LoopHashRefine_Master::load_sample_weight() {
 		} else {
 				TR << "Using default sample weight of 50 for every residue" << std::endl;
 				std::string t = "50";
-				for( int i = 0; i < (*(library_central().begin()))->nres() - 1; i++ ) {
+				for( Size i = 0; i < (*(library_central().begin()))->nres() - 1; i++ ) {
 						t += " 50";
 				}
 				sample_weight_str_ = t;

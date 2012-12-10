@@ -91,7 +91,7 @@ RemoveCsts::parse_my_tag( TagPtr const tag,
 	protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover( generator_id_, movers );
 	assert( utility::pointer::dynamic_pointer_cast< protocols::forge::remodel::RemodelConstraintGenerator >( mover ) );
 	protocols::forge::remodel::RemodelConstraintGeneratorOP rcg;
-	if ( rcg = utility::pointer::static_pointer_cast< protocols::forge::remodel::RemodelConstraintGenerator >( mover ) ) {
+	if ( (rcg = utility::pointer::static_pointer_cast< protocols::forge::remodel::RemodelConstraintGenerator >( mover )) ) {
 		set_generator( rcg );
 	} else {
 		utility_exit_with_message( "Error parsing generator option to RemoveCsts: the specified mover " + generator_id_ + " is not a constraint generator." );

@@ -432,7 +432,8 @@ namespace rna {
 
 		if(verbose) std::cout << "before superimpose_pose" << std::endl;		
 
-		Real const alignment_rmsd=core::scoring::superimpose_pose( VDW_rep_screen_pose, working_pose, alignment_atom_id_map);	
+		/*Real const alignment_rmsd= // Unused variable causes warning.*/
+		core::scoring::superimpose_pose( VDW_rep_screen_pose, working_pose, alignment_atom_id_map);
 
 		if(verbose) std::cout << "after superimpose_pose" << std::endl;		
 

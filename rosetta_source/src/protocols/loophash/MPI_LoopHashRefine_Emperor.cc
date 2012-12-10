@@ -134,7 +134,7 @@ MPI_LoopHashRefine_Emperor::process_inbound_wus(){
 		runtime_assert( next_wu );
 		WorkUnit_SilentStructStoreOP structure_wu = dynamic_cast<  WorkUnit_SilentStructStore * > ( next_wu() );
 
-		if ( structure_wu == NULL ){
+		if ( structure_wu.get() == NULL ){
 			TR << "Cannot save structural data for WU: " << std::endl;
 			next_wu->print( TR );
 			continue;

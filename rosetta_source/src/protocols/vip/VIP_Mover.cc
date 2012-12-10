@@ -159,8 +159,6 @@ namespace vip {
 			for( core::Size j = 1; j <= initial_pose.residue(i).nheavyatoms(); j++ ){
 				if( initial_pose.residue(i).xyz(j).distance( cppos ) < min ){
 					min = initial_pose.residue(i).xyz(j).distance( cppos );
-				} else {
-					min = min;
 				}
 			}
 		}

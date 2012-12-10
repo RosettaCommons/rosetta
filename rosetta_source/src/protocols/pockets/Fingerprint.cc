@@ -191,7 +191,10 @@ void NonPlaidFingerprint::trim_based_on_known_ligand(core::pose::Pose const & kn
 
 	protocols::pockets::PlaidFingerprint known_pf( known_ligand_pose, *this );
 	std::list< spherical_coor_triplet > triplet_trim_data;
-	for (std::list<spherical_coor_triplet>::const_iterator pro = triplet_fingerprint_data_.begin(), lig = known_pf.triplet_fingerprint_data().begin(); pro != triplet_fingerprint_data_.end(), lig != known_pf.triplet_fingerprint_data().end(); ++pro, ++lig) {
+	for (std::list<spherical_coor_triplet>::const_iterator pro = triplet_fingerprint_data_.begin(),
+				lig = known_pf.triplet_fingerprint_data().begin();
+			pro != triplet_fingerprint_data_.end() && lig != known_pf.triplet_fingerprint_data().end();
+			++pro, ++lig) {
 		assert( std::abs( pro->phi - lig->phi ) < 0.001 );
 		assert( std::abs( pro->psi - lig->psi ) < 0.001 );
 		if (lig->rho < 0.001) continue;
@@ -501,7 +504,10 @@ core::Real PlaidFingerprint::fp_compare( FingerprintBase const & fp, core::Real 
 	core::Real Total_score = 0;
 	core::Size num_points = 0;
 
-	for (std::list<spherical_coor_triplet>::const_iterator pi = fp.triplet_fingerprint_data().begin(), li = triplet_fingerprint_data_.begin(); pi != fp.triplet_fingerprint_data().end(), li != triplet_fingerprint_data_.end(); ++pi, ++li) {
+	for (std::list<spherical_coor_triplet>::const_iterator pi = fp.triplet_fingerprint_data().begin(),
+				li = triplet_fingerprint_data_.begin();
+			pi != fp.triplet_fingerprint_data().end() && li != triplet_fingerprint_data_.end();
+			++pi, ++li) {
 		assert( std::abs( pi->phi - li->phi ) < 0.001 );
 		assert( std::abs( pi->psi - li->psi ) < 0.001 );
 

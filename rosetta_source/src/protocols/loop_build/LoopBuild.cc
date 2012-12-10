@@ -88,7 +88,7 @@ LoopBuild_main( bool  ) {
 	std::string const intermedrelax( option[ OptionKeys::loops::intermedrelax ]() );
 	std::string const refine       ( option[ OptionKeys::loops::refine ]() );
 	std::string const relax        ( option[ OptionKeys::loops::relax ]() );
-	bool const keep_time      ( option[ OptionKeys::loops::timer ]() );
+	//bool const keep_time      ( option[ OptionKeys::loops::timer ]() );
 
 	TR << "==== Loop protocol: ================================================="
 		<< std::endl;

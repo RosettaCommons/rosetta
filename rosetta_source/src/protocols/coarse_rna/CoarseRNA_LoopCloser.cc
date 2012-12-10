@@ -310,7 +310,7 @@ CoarseRNA_LoopCloser::filter_path( utility::vector1< core::Size > & upstream_res
 	for ( Size n = 1; n <= upstream_res.size(); n++ ) {
 
 		Size const i( upstream_res[ n ] );
-		AtomID atom_id = named_atom_id_to_atom_id( NamedAtomID( " P  ", i ), pose );
+		// AtomID atom_id = named_atom_id_to_atom_id( NamedAtomID( " P  ", i ), pose ); // Unused variable causes warning.
 
 		//		if ( !is_filter_res[ i ] &&
 		//				 allow_insert_->get( atom_id ) )  new_upstream_res.push_back( i );

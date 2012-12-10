@@ -439,7 +439,7 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 		}
 
 		//take the jumps and set repeating RT
-		Size jump_offset = pose.num_jump(); //pose at this stage should at most have only one jump;
+		//Size jump_offset = pose.num_jump(); //pose at this stage should at most have only one jump;
 		//for (Size rep = 1; rep < repeat_number; rep++){
 			for (Size i = 1; i<= repeat_pose.num_jump();){
 				for (Size j = 1; j<= pose.num_jump(); j++,i++){
@@ -1517,13 +1517,13 @@ void RemodelLoopMover::loophash_stage(
 		using namespace core::chemical;
 
 		Size max_res = 0;
-		for (int i = 1; i<= constantPose.total_residue(); i++){
+		for (core::Size i = 1; i<= constantPose.total_residue(); i++){
 			if (!constantPose.residue_type(i).is_ligand()){ //if not ligand, and assume ligand is always at the end!
 				max_res = i;
 			}
 		}
 		utility::vector1< core::Size > residue_indices;
-		for(int i = 1; i <= max_res; ++i){
+		for(core::Size i = 1; i <= max_res; ++i){
 				residue_indices.push_back(i);
 		}
 		ResidueTypeSetCAP residue_set(

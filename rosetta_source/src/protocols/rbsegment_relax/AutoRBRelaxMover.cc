@@ -311,7 +311,7 @@ AutoRBMover::grow_flexible( core::Size maxlen , core::Size nres , core::Size min
 //// set up foldtree, variants, movemap, etc.
 void
 AutoRBMover::setup_topology( core::pose::Pose & pose ) {
-	core::Size nres = pose.total_residue()-1; // terminal VRT
+	//core::Size nres = pose.total_residue()-1; // terminal VRT
 
 	rigid_segs_.clear();
 	rb_chunks_.clear();

@@ -348,8 +348,8 @@ HitNeighborFinder::connected_components() const
 		if ( hitlist.empty() ) continue;
 		std::fill( visited_halfbins.begin(), visited_halfbins.end(), false ); // mark all halfbins as not-yet visited.
 		Size first_hit_index = hitlist.begin()->first;
-		Hit const * first_hit = hitlist.begin()->second;
-		Bin6D query_bin = binner_->bin6( first_hit->second() );
+		// Hit const * first_hit = hitlist.begin()->second; // Unused variable causes a warning.
+		// Bin6D query_bin = binner_->bin6( first_hit->second() ); // Unused variable causes a warning.
 		//boost::uint64_t bin_index = binner_->bin_index( query_bin );
 
 		/// 1. Mark all the hits in this bin as members of the same CC.
@@ -500,7 +500,7 @@ HitNeighborFinder::neighbor_hits( HitPtrList const & queryhits ) const
 			iter != iter_end; ++iter ) {
 		//Size query_id = iter->first;
 		Hit const * query_hit = *iter;
-		Bin6D query_bin = binner_->bin6( query_hit->second() );
+		// Bin6D query_bin = binner_->bin6( query_hit->second() ); // Unused variable causes a warning.
 		Bin6D query_halfbin = binner_->halfbin6( query_hit->second() );
 		Real6 halfsteps( binner_->halfbin_widths() );
 		for ( Size ii = 1; ii <= 6; ++ii ) {

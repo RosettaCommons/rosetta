@@ -131,6 +131,8 @@ RNA_DeNovoProtocol::RNA_DeNovoProtocol(
 		close_loops_in_last_round_( true ),
 		close_loops_after_each_move_( false ),
 		simple_rmsd_cutoff_relax_( false ),
+		allow_bulge_( allow_bulge ),
+		allow_consecutive_bulges_( false ),
 		m_Temperature_( 2.0 ),
 		frag_size_( 3 ),
 		rna_params_file_( "" ),
@@ -152,8 +154,6 @@ RNA_DeNovoProtocol::RNA_DeNovoProtocol(
 		staged_constraints_( false ),
 		chainbreak_weight_( -1.0 ), /* use rna_lores.wts number unless user specified. -1.0 is never really used. */
 		linear_chainbreak_weight_( -1.0 ),  /* use rna_lores.wts number unless user specified. -1.0 is never really used. */
-		allow_bulge_( allow_bulge ),
-		allow_consecutive_bulges_( false ),
 		titrate_stack_bonus_( true ),
 		move_first_rigid_body_( false ),
 		root_at_first_rigid_body_( false ),

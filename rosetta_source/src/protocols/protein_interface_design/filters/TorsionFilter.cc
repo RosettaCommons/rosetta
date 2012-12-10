@@ -106,6 +106,7 @@ Torsion::compute( core::pose::Pose const & p ) const{
 		if( torsion() == "psi" ) return p.psi( resnum() );
 		if( torsion() == "omega" ) return p.omega( resnum() );
 	}
+	return 0.; // You gotta return something!
 }
 
 core::Real

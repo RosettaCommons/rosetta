@@ -171,8 +171,8 @@ void CompoundTranslate::apply(core::pose::Pose & pose) {
 
 	std::set<core::Size> chains_to_translate;
 
-	TranslateOPs::iterator begin= translates_.begin();
-	TranslateOPs::iterator const end= translates_.end();
+	// TranslateOPs::iterator begin= translates_.begin(); // Unused variable causes warning.
+	// TranslateOPs::iterator const end= translates_.end(); // Unused variable causes warning.
 
 	foreach(TranslateOP translate, translates_){
 		core::Size chain_id= translate->get_chain_id(pose);

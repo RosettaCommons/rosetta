@@ -92,12 +92,12 @@ void cutpoint_probabilities(const unsigned num_residues, const core::kinematics:
 
   // List of cutpoints sorted by position
   std::set<unsigned> cutpoints;
-  for (unsigned i = 1; i <= tree.num_cutpoint(); ++i) {
+  for (int i = 1; i <= tree.num_cutpoint(); ++i) {
     unsigned cutpoint = tree.cutpoint(i);
     if (cutpoint == num_residues)  // cutpoint at end of chain
       continue;
 
-    cutpoints.insert(cutpoint);
+    cutpoints.insert((unsigned)cutpoint);
   }
 
   p->clear();
@@ -114,7 +114,7 @@ void cutpoint_probabilities(const unsigned num_residues, const core::kinematics:
 void invalidate_residues_spanning_cuts(const core::kinematics::FoldTree& tree,
                                        const core::Size fragment_len,
                                        Probabilities* probs) {
-  for (unsigned i = 1; i <= tree.num_cutpoint(); ++i) {
+  for (int i = 1; i <= tree.num_cutpoint(); ++i) {
     const unsigned cutpoint = tree.cutpoint(i);
     for (unsigned j = (cutpoint - fragment_len + 2); j <= cutpoint; ++j) {
       (*probs)[j] = 0;

@@ -45,11 +45,11 @@ sources = {
 		"CombineChainsMover",
 		"PostDockAssemblyScorer",
 	],
-         #I put this here because there is some thematic similarity; it has no dependencies higher than protocols.3.  SML
-        "protocols/floppy_tail": [
-                "FloppyTailMover",
-                "FloppyTail_publication",
-        ],
+	#I put this here because there is some thematic similarity; it has no dependencies higher than protocols.3.  SML
+	"protocols/floppy_tail": [
+		"FloppyTailMover",
+		"FloppyTail_publication",
+	],
 	"protocols/rbsegment_relax": [
 		"AutoRBRelaxMover",
 		"FragInsertAndAlignMover",

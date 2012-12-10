@@ -106,9 +106,9 @@ LayerDesignOperation::LayerDesignOperation():
 	TaskOperation(),
 	add_helix_capping_( true ),
 	use_original_( true ),
+	repack_non_designed_residues_( true ),
 	verbose_( false ),
 	restrict_restypes_( true ),
-	repack_non_designed_residues_( true ),
 	make_pymol_script_( false ),
 	srbl_( new toolbox::SelectResiduesByLayer )
 {
@@ -120,9 +120,9 @@ LayerDesignOperation::LayerDesignOperation( bool dsgn_core, bool dsgn_boundary, 
 	TaskOperation(),
 	add_helix_capping_( true ),
 	use_original_( true ),
+	repack_non_designed_residues_( true ),
 	verbose_( false ),
 	restrict_restypes_( true ),
-	repack_non_designed_residues_( true ),
 	make_pymol_script_( false ),
 	srbl_( new toolbox::SelectResiduesByLayer )
 {

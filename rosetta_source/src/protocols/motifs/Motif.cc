@@ -328,22 +328,22 @@ Motif::Motif(
 	res1_atom1_name_( src.res1_atom1_name_ ),
 	res1_atom2_name_( src.res1_atom2_name_ ),
 	res1_atom3_name_( src.res1_atom3_name_ ),
-	res1_atom1_index_( src.res1_atom1_index_ ),
-	res1_atom2_index_( src.res1_atom2_index_ ),
-	res1_atom3_index_( src.res1_atom3_index_ ),
 	res1_atom1_int_( src.res1_atom1_int_ ),
 	res1_atom2_int_( src.res1_atom2_int_ ),
 	res1_atom3_int_( src.res1_atom3_int_ ),
+	res1_atom1_index_( src.res1_atom1_index_ ),
+	res1_atom2_index_( src.res1_atom2_index_ ),
+	res1_atom3_index_( src.res1_atom3_index_ ),
 	restype_name2_( src.restype_name2_ ),
 	res2_atom1_name_( src.res2_atom1_name_ ),
 	res2_atom2_name_( src.res2_atom2_name_ ),
 	res2_atom3_name_( src.res2_atom3_name_ ),
-	res2_atom1_index_( src.res2_atom1_index_ ),
-	res2_atom2_index_( src.res2_atom2_index_ ),
-	res2_atom3_index_( src.res2_atom3_index_ ),
 	res2_atom1_int_( src.res2_atom1_int_ ),
 	res2_atom2_int_( src.res2_atom2_int_ ),
 	res2_atom3_int_( src.res2_atom3_int_ ),
+	res2_atom1_index_( src.res2_atom1_index_ ),
+	res2_atom2_index_( src.res2_atom2_index_ ),
+	res2_atom3_index_( src.res2_atom3_index_ ),
 	forward_jump_( src.forward_jump_ ),
 	backward_jump_( src.backward_jump_ ),
 	remark_( src.remark_ ),
@@ -422,15 +422,16 @@ Motif::generate_atom_ints(
   core::chemical::AtomTypeSetCAP atset = core::chemical::ChemicalManager::get_instance()->atom_type_set( core::chemical::FA_STANDARD );
  mt << "Res1: " <<  res1_atom1_name_ << res1_atom2_name_ << res1_atom3_name_ << " res2: " << res2_atom1_name_ << res2_atom2_name_ << res2_atom3_name_ << std::endl;
 
-	core::chemical::ResidueTypeSet & rsd_set( core::chemical::ChemicalManager::get_instance()->nonconst_residue_type_set( core::chemical::FA_STANDARD ) );
-	core::chemical::ResidueType const & rsd_type( rsd_set.name_map( restype_name1_ ) );
-	Size res1_atom1_index = rsd_type.atom_index( res1_atom1_name_ );
-	Size res1_atom2_index = rsd_type.atom_index( res1_atom2_name_ );
-	Size res1_atom3_index = rsd_type.atom_index( res1_atom3_name_ );
-
-	int res1_atom1_int_ = rsd_type.atom( res1_atom1_index).atom_type_index();
-	int res1_atom2_int_ = rsd_type.atom( res1_atom2_index ).atom_type_index();
-	int res1_atom3_int_ = rsd_type.atom( res1_atom3_index ).atom_type_index();
+	// core::chemical::ResidueTypeSet & rsd_set( core::chemical::ChemicalManager::get_instance()->nonconst_residue_type_set( core::chemical::FA_STANDARD ) ); // Unused variable causes warning
+	// core::chemical::ResidueType const & rsd_type( rsd_set.name_map( restype_name1_ ) ); // Unused variable causes warning
+	// Size res1_atom1_index = rsd_type.atom_index( res1_atom1_name_ ); // Unused variable causes warning
+	// Size res1_atom2_index = rsd_type.atom_index( res1_atom2_name_ ); // Unused variable causes warning
+	// Size res1_atom3_index = rsd_type.atom_index( res1_atom3_name_ ); // Unused variable causes warning
+	
+	// FIXME: these local variables have the same name as data members!
+	// int res1_atom1_int_ = rsd_type.atom( res1_atom1_index).atom_type_index(); // Unused variable causes warning
+	// int res1_atom2_int_ = rsd_type.atom( res1_atom2_index ).atom_type_index(); // Unused variable causes warning
+	// int res1_atom3_int_ = rsd_type.atom( res1_atom3_index ).atom_type_index(); // Unused variable causes warning
 	int res2_atom1_int_ = atset->atom_type_index(res2_atom1_name_);
 	int res2_atom2_int_ = atset->atom_type_index(res2_atom2_name_);
 	int res2_atom3_int_ = atset->atom_type_index(res2_atom3_name_);

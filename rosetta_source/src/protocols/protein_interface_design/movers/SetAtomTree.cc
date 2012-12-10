@@ -73,13 +73,13 @@ SetAtomTree::SetAtomTree() :
 	protocols::moves::Mover( SetAtomTreeCreator::mover_name() ),
 	docking_ft_( false ),
 	simple_ft_( false ),
+	two_parts_chain1_( false ),
 	jump_( 1 ),
 	resnum_( "" ),
 	connect_to_( "" ),
 	anchor_res_( "" ),
 	connect_from_( "" ),
-	host_chain_( 2 ),
-	two_parts_chain1_( false )
+	host_chain_( 2 )
 {}
 
 SetAtomTree::~SetAtomTree() {}

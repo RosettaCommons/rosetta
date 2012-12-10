@@ -116,8 +116,8 @@ ReportSequenceDifferences::calculate( pose::Pose const  & pose1_in, pose::Pose c
 	/// Now handled automatically.  scorefxn1->accumulate_residue_total_energies( pose1 );
 	/// Now handled automatically.  scorefxn2->accumulate_residue_total_energies( pose2 );
 
-	core::scoring::EnergyMap weights1 = pose1.energies().weights();
-	core::scoring::EnergyMap weights2 = pose2.energies().weights();
+	// core::scoring::EnergyMap weights1 = pose1.energies().weights(); // Unused variable causes a warning.
+	// core::scoring::EnergyMap weights2 = pose2.energies().weights(); // Unused variable causes a warning.
 
 	runtime_assert( pose1.total_residue() == pose2.total_residue() );
 	for( core::Size i = 1; i <= pose1.total_residue(); ++i ) {

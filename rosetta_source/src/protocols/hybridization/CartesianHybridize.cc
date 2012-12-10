@@ -154,7 +154,7 @@ CartesianHybridize::CartesianHybridize(
 
 	// use chunks to subdivide contigs
 	core::Size ntempls = templates_.size();
-	for( int tmpl = 1; tmpl <= ntempls; ++tmpl) {
+	for( core::Size tmpl = 1; tmpl <= ntempls; ++tmpl) {
 		core::Size ncontigs = template_contigs_[tmpl].size();  // contigs to start
 		for (int i=1; i<=(int)ncontigs; ++i) {
 			core::Size cstart = template_contigs_[tmpl][i].start(), cstop = template_contigs_[tmpl][i].stop();
@@ -487,7 +487,7 @@ CartesianHybridize::apply( Pose & pose ) {
 	bool no_ns_moves = no_global_frame_; // (numeric::random::uniform() <= 0.1);
 
 sampler:
-	for (int m=1; m<=NMACROCYCLES; m+=1) {
+	for (core::Size m=1; m<=NMACROCYCLES; ++m) {
 		core::Real bonded_weight = max_cart;
 		if (m==1)	bonded_weight = 0.0*max_cart;
 		if (m==2) bonded_weight = 0.01*max_cart;
@@ -567,7 +567,10 @@ sampler:
 				core::Size templ_id = numeric::random::random_range( 1, templates_.size() );
 				core::Size nfrags = template_contigs_[templ_id].num_loop();
 				// remove non-protein frags
-				while (templates_[templ_id]->pdb_info()->number(template_contigs_[templ_id][nfrags].start()) > n_prot_res) --nfrags;
+				while (templates_[templ_id]->pdb_info()->number(template_contigs_[templ_id][nfrags].start()) >
+						(int)n_prot_res) {
+					--nfrags;
+				}
 				//randomly pick frag
 				core::Size frag_id = numeric::random::random_range( 1, nfrags );
 				protocols::loops::LoopOP frag =  new protocols::loops::Loop ( template_contigs_[templ_id][frag_id] );

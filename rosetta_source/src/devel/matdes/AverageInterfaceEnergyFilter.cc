@@ -44,7 +44,6 @@ AverageInterfaceEnergyFilter::AverageInterfaceEnergyFilter() :
 	parent( "AverageInterfaceEnergy" ),
 	task_factory_( NULL ),
 	scorefxn_( NULL ),
-	score_type_( score_type_ ),
 	threshold_( 100000 ),
 	bb_bb_( false )
 {}

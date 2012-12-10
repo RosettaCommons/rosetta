@@ -56,7 +56,7 @@ SearchPatternRotSetOp::clone() const
 
 utility::vector1< core::conformation::ResidueCOP > SearchPatternRotSetOp::get_rigid_body_confs(
   core::pose::Pose const & pose,
-  core::pack::task::PackerTask const & ptask,
+  core::pack::task::PackerTask const & /*ptask*/,
   core::Size residue_index)
 {
 	utility::vector1< core::conformation::ResidueCOP > result_residues;
@@ -153,7 +153,7 @@ AddSearchPatternRotSetOp::parse_tag( TagPtr /*tag*/ )
 
 void
 AddSearchPatternRotSetOp::apply(
-	core::pose::Pose const & pose,
+	core::pose::Pose const & /*pose*/,
 	core::pack::task::PackerTask & task
 ) const
 {

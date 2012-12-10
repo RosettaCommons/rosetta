@@ -509,7 +509,7 @@ namespace rna {
 	void 
 	Analyze_base_bin_map(std::map<Base_bin , int , compare_base_bin> const & base_bin_map, std::string const foldername){
 
-                const Real DEGS_PER_RAD = 180. / numeric::NumericTraits<Real>::pi();
+		// const Real DEGS_PER_RAD = 180. / numeric::NumericTraits<Real>::pi(); // Unused variable causes warning.
 
 		Analyze_base_bin_map(base_bin_map, "x", "y", foldername);
 		Analyze_base_bin_map(base_bin_map, "x", "z", foldername);
@@ -667,9 +667,9 @@ namespace rna {
 
 		numeric::xyzMatrix< core::Real > invert_coordinate_matrix= inverse(base_coordinate_matrix);
 	
-		Size count=0;
+		// Size count=0; // Unused variable causes warning.
 		for( Size at = 1; at <= rsd.natoms(); at++){
-			std::string const & atom_name=rsd.type().atom_name(at);	
+			// std::string const & atom_name=rsd.type().atom_name(at); // Unused variable causes warning.
 //			std::cout << "atom_name= " << atom_name << std::endl;	
 //			AtomID id( j, i )
 			id::AtomID const id( at, seq_num);

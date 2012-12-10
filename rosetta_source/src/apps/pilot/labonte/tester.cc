@@ -207,7 +207,11 @@ int main(int argc, char *argv[])
 	cout << " (should equal psi(n+1): " << pose.psi(2) << ")" << endl;
 	cout << "  5 " << pose.chi(5, 1) << endl;
 
+<<<<<<< HEAD
+	for (Size i = 2; i <= pose.total_residue() - 1; ++i) {
+=======
 	for (Size i = 2; i <= n_res - 1; ++i) {
+>>>>>>> 5ba795356492eab96a76c8cfdb95b920113ea029
 		cout << "Residue: " << i << endl;
 		cout << " Phi: " << pose.phi(i) << endl;
 		cout << " Psi: " << pose.psi(i) << endl;

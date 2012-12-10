@@ -38,6 +38,21 @@ sources = {
 		"Templates",
 		"vs_test",
 	],
+	"protocols/hybridization" : [
+		"CartesianHybridize",
+		"CartesianSampler",
+		"ChunkTrialMover",
+		"DDomainParse",
+		"DomainAssembly",
+		"FoldTreeHybridize",
+		"HybridizeFoldtreeDynamic",
+		"HybridizeProtocol",
+		"InsertChunkMover",
+		"TemplateHistory",
+		"WeightedFragmentTrialMover",
+		"WeightedFragmentSmoothTrialMover",
+		"util",
+	],
 	"protocols/jumping": [
 		"DisulfPairingLibrary",
 		"DisulfPairingsList",
@@ -77,14 +92,14 @@ sources = {
 		"StructureIndependentPeakCalibrator",
 		"util",
 	],
-        "protocols/surface_docking": [
+	"protocols/surface_docking": [
 		"CentroidRelaxMover",
 		"FullatomRelaxMover",
 		"SlideIntoSurface",
 		"SurfaceDockingProtocol",
 		"SurfaceOrientMover",
 		"SurfaceParameters",
-        ],
+	],
 	"protocols/symmetric_docking": [
 		"SymDockBaseProtocol",
 		"SymDockingHiRes",
@@ -126,21 +141,6 @@ sources = {
 		"TopologyClaimerFactory",
 		"util",
 	],
-	"protocols/hybridization" : [
-		"CartesianHybridize",
-		"CartesianSampler",
-		"ChunkTrialMover",
-		"DDomainParse",
-		"DomainAssembly",
-		"FoldTreeHybridize",
-		"HybridizeFoldtreeDynamic",
-		"HybridizeProtocol",
-		"InsertChunkMover",
-		"TemplateHistory",
-		"WeightedFragmentTrialMover",
-		"WeightedFragmentSmoothTrialMover",
-		"util",
-        ],
 }
 include_path = [
 ]

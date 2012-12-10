@@ -213,7 +213,7 @@ void ExtraThreadingMover::apply(
  	typedef vector1< Size >::const_iterator iter;
 	std::map< Size, Size > template_to_query_res; // keeps track of residues that we've added to query_pose.
 	Size const query_jump_anchor( query_pose.total_residue() ); // maybe do this with a VRT residue later.
-	Size current_chain( query_pose.residue(query_jump_anchor).chain() );
+	//Size current_chain( query_pose.residue(query_jump_anchor).chain() );
 
 	for ( iter it = residue_selection_.begin(), end = residue_selection_.end(); it != end; ++it ) {
 		Residue const & template_res(template_pose_.residue(*it));

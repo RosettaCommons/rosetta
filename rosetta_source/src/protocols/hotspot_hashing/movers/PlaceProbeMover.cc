@@ -196,7 +196,7 @@ SearchPatternOP PlaceProbeMover::create_partitioned_search_pattern(core::pose::P
 	return new PartitionedSearchPattern(create_search_pattern(target_pose), search_partition_, total_search_partition_);
 }
 
-SearchPatternOP PlaceProbeMover::create_refinement_pattern(core::pose::Pose const & target_pose, core::Size target_residue)
+SearchPatternOP PlaceProbeMover::create_refinement_pattern(core::pose::Pose const & /*target_pose*/, core::Size /*target_residue*/)
 {
 	return new ConstPattern(); 
 }
@@ -253,7 +253,7 @@ PlaceProbeMover::parse_place_probe_tag( utility::tag::TagPtr const tag,
   search_partition_ = tag->getOption< core::Size >( "search_partition", 0 );
   total_search_partition_ = tag->getOption< core::Size >( "total_search_partition", 1 );
 
-	if (!(search_partition_ >= 0 && search_partition_ < total_search_partition_ && total_search_partition_ > 0))
+	if (!(search_partition_ < total_search_partition_ && total_search_partition_ > 0))
 	{
 		TR.Error << "Invalid search partition specficition. Partition: " << search_partition_ << " Total partitions: " << total_search_partition_ << std::endl;
 

@@ -41,7 +41,7 @@ public:
 
 	//destructor -- necessary? -- YES destructors are necessary.
 	~RNA_AddOrDeleteMover();
-
+	using protocols::moves::Mover::apply;
   void
   apply( core::pose::Pose & pose, std::string & move_type );
 

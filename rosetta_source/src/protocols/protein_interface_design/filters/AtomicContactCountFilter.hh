@@ -56,7 +56,7 @@ class AtomicContactCountFilter : public protocols::filters::Filter
     void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	
 		/// @brief Returns true if the given pose passes the filter, false otherwise.
-		virtual bool apply( core::pose::Pose const & pose ) const { return true; }
+		virtual bool apply( core::pose::Pose const & /*pose*/ ) const { return true; }
 
 		/// @brief used to report filter internals through a score or silent file
 		// to determine that derived class has not overridden }

@@ -218,7 +218,7 @@ SilentStructStore::~SilentStructStore() {}
 	  utility::vector1< std::string > tags_wanted; // empty vector signals "read all" according to author of silent io
     sfd.read_stream( input, tags_wanted, false  );
 		utility::vector1< std::string> comments = sfd.comment_lines();
-		utility::vector1< std::string >::iterator citer = comments.begin();
+		// utility::vector1< std::string >::iterator citer = comments.begin(); // Unused variable was causing a warning
     // Now loop over each structure in that silent file
 		for ( core::io::silent::SilentFileData::iterator iter = sfd.begin(), end = sfd.end(); iter != end; ++iter ) {
 			add( *iter);

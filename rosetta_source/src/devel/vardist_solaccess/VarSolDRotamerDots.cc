@@ -835,10 +835,10 @@ VarSolDRotamerDots::get_atom_overlap_masks(
 	Real dist_sq = at1_xyz.distance_squared( at2_xyz );
 	if ( dist_sq > interaction_radii_squared( rotamer_->atom(at_this).type(), other.rotamer_->atom(at_other).type() ) ) return false;
 
-	int degree_of_overlap;
+	// int degree_of_overlap; // Unused variable causes warning.
 	int aphi_1_2, aphi_2_1;
 	int theta_1_2, theta_2_1;
-	int masknum;
+	// int masknum; // Unused variable causes warning.
 
 	distance = std::sqrt( dist_sq );
 

@@ -110,7 +110,7 @@ bool get_rt_over_leap( const core::pose::Pose& orig_pose, core::Size ir, core::S
 	while (!pose.residue_type(nres).is_polymer()) nres--;
 
 	// get current cutpoints; don't try to connect these
-	utility::vector1< int > cuts_in = pose.fold_tree().cutpoints();
+	utility::vector1< Size > cuts_in = pose.fold_tree().cutpoints();
 	std::sort( cuts_in.begin(), cuts_in.end() );
 
 	// bail if (ir,jr) crosses a cut
@@ -226,7 +226,7 @@ bool get_rt_over_leap_fast( core::pose::Pose& pose, core::Size ir, core::Size jr
 	while (!pose.residue_type(nres).is_polymer()) nres--;
 
 	// get current cutpoints; don't try to connect these
-	utility::vector1< int > cuts_in = pose.fold_tree().cutpoints();
+	utility::vector1< Size > cuts_in = pose.fold_tree().cutpoints();
 	std::sort( cuts_in.begin(), cuts_in.end() );
 
 	// bail if (ir,jr) crosses a cut

@@ -48,6 +48,7 @@ public:
 	}
 
 	/// @brief Apply the loop-rebuild protocol to the input pose
+	using protocols::moves::Mover::apply;
 	virtual
 	void apply( core::pose::Pose & pose );
 

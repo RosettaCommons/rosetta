@@ -87,7 +87,7 @@ namespace protein {
 		if ( native_pose_op != 0 ){
 
 			core::pose::Pose pose_for_superpose = pose; // is this necessary? quite a bit of overhead.
-			core::pose::Pose const & native_pose_for_superpose( *native_pose_op );
+			// core::pose::Pose const & native_pose_for_superpose( *native_pose_op ); // Unused variable causes warning.
 
 			Real rmsd( -1.0), backbone_rmsd( -1.0), all_rmsd( -1.0 );
 

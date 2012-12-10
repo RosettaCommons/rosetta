@@ -60,12 +60,12 @@ GetRBDOFValues::GetRBDOFValues():
 	jump_id_( 1 ),
 	sym_dof_name_( "" ),
 	verbose_( 0 ),
-	axis_( 'x' ),
 	radial_disp_( 0 ),
 	angle_( 0 ),
+	get_init_value_( 0 ),
+	axis_( 'x' ),
 	init_disp_( 0 ),
-	init_angle_( 0 ),
-	get_init_value_( 0 )
+	init_angle_( 0 )
 {}
 
 
@@ -74,12 +74,12 @@ GetRBDOFValues::GetRBDOFValues( int jump, std::string dof_name, bool verb, char 
 	jump_id_( jump),
 	sym_dof_name_( dof_name ),
 	verbose_( verb ),
-	axis_( ax ),
 	radial_disp_( disp ),
 	angle_( ang ),
+	get_init_value_( get_init ),
+	axis_( ax ),
 	init_disp_( init_d ),
-	init_angle_( init_a ),
-	get_init_value_( get_init )
+	init_angle_( init_a )
 {}
 
 // @brief copy constructor
@@ -88,12 +88,12 @@ GetRBDOFValues::GetRBDOFValues( GetRBDOFValues const & rval ):
 	jump_id_( rval.jump_id_ ),
 	sym_dof_name_( rval.sym_dof_name_ ),
 	verbose_( rval.verbose_ ),
-	axis_( rval.axis_ ),
 	radial_disp_( rval.radial_disp_ ),
 	angle_( rval.angle_ ),
+	get_init_value_( rval.get_init_value_ ),
+	axis_( rval.axis_ ),
 	init_disp_( rval.init_disp_ ),
-	init_angle_( rval.init_angle_ ),
-	get_init_value_( rval.get_init_value_ )
+	init_angle_( rval.init_angle_ )
 {}
 
 // @brief destructor
@@ -156,7 +156,7 @@ core::Real GetRBDOFValues::compute( Pose const & pose, bool const & verb, std::s
 	if (get_init) {
 		if ( dof_name == "" ) utility_exit_with_message("A sym_dof_name must be specified in order to access the initial values from the SymDofSampler.");
 		sym_dof_names = SymDofMoverSampler::get_instance().get_sym_dof_names();
-		for (int i = 1; i <= sym_dof_names.size(); i++) {
+		for (Size i = 1; i <= sym_dof_names.size(); i++) {
 			if ( dof_name == sym_dof_names[i] ) index = i;
 		}
 	}
@@ -205,7 +205,9 @@ core::Real GetRBDOFValues::compute( Pose const & pose, bool const & verb, std::s
 // @brief Dummy Filter apply function
 bool GetRBDOFValues::apply( Pose const & pose ) const
 {
-	core::Real value( compute(pose, verbose(), sym_dof_name(), jump_id(), axis(), radial_disp(), angle(), init_disp(), init_angle(), get_init_value() ) );
+	//core::Real value( // Unused variable causes warning.
+	compute(pose, verbose(), sym_dof_name(), jump_id(), axis(), radial_disp(), angle(), init_disp(), init_angle(), get_init_value() );
+	// );
   return( true );
 } 
 
@@ -213,7 +215,7 @@ bool GetRBDOFValues::apply( Pose const & pose ) const
 void
 GetRBDOFValues::parse_my_tag(
 	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & data,
+	protocols::moves::DataMap & /*data*/,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )

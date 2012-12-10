@@ -249,7 +249,7 @@ setup_foldtree(
 	}
 	Size cutpoint = 0;
 	for ( Size i=2; i<= pose.total_residue(); ++i ) {
-		if ( pose.chain(i) == first_chain_second_partner ) {
+		if ( (Size)pose.chain(i) == first_chain_second_partner ) {
 			cutpoint = i-1;
 			break;
 		}

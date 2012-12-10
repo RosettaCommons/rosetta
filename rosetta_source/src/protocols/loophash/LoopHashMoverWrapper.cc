@@ -97,21 +97,21 @@ LoopHashMoverWrapperCreator::mover_name()
 LoopHashMoverWrapper::LoopHashMoverWrapper() :
 	protocols::moves::Mover( LoopHashMoverWrapperCreator::mover_name() ),
 	library_( NULL ),
+	fastrelax_( NULL ),
 	min_bbrms_( 0 ),
 	max_bbrms_( 0 ),
 	min_rms_( 0 ),
 	max_rms_( 0 ),
-	max_nstruct_( 1000000 ),
 	start_res_( 2 ),
 	stop_res_( 0 ),
-	fastrelax_( NULL ),
-	prefilter_scorefxn_( NULL ),
-	nprefilter_( 0 ),
-	ideal_( false ),
+	max_nstruct_( 1000000 ),
 	cenfilter_( NULL ),
 	ranking_cenfilter_( NULL ),
 	fafilter_( NULL ),
 	ranking_fafilter_( NULL ),
+	nprefilter_( 0 ),
+	prefilter_scorefxn_( NULL ),
+	ideal_( false ),
 	sample_weight_const_( 1 )
 {
 	loop_sizes_.clear();

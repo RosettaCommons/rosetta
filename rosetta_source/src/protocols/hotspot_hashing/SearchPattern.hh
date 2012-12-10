@@ -295,13 +295,13 @@ class RotationSearchPattern : public SearchPattern
 				core::Real x_max = 360,
 				core::Real y_min = 0,
 				core::Real y_max = 90) :
-			searchpoints_(),
 			x_sampling(x_sampling),
 			y_sampling(y_sampling),
 			x_min(x_min),
 			x_max(x_max),
 			y_min(y_min),
-			y_max(y_max)
+			y_max(y_max),
+			searchpoints_()
 		{
 			searchpoints_ = generate_search_points();
 		}
@@ -358,7 +358,6 @@ class SphericalRotationSearchPattern : public SearchPattern
 				core::Real altitude_max = 360,
 				core::Real azmiuth_min = 0,
 				core::Real azmiuth_max = 360) :
-			searchpoints_(),
 		  polar_rotation_sampling(polar_rotation_sampling),
 		  altitude_rotation_sampling(altitude_rotation_sampling),
 		  azmiuth_rotation_sampling(azmiuth_rotation_sampling),
@@ -367,7 +366,8 @@ class SphericalRotationSearchPattern : public SearchPattern
 		  altitude_min(altitude_min),
 		  altitude_max(altitude_max),
 		  azmiuth_min(azmiuth_min),
-		  azmiuth_max(azmiuth_max)
+		  azmiuth_max(azmiuth_max),
+			searchpoints_()
 		{
 			searchpoints_ = generate_search_points();
 		}
@@ -424,7 +424,6 @@ class CartesianSearchPattern : public SearchPattern
 				core::Real y_max,
 				core::Real z_min,
 				core::Real z_max) :
-			searchpoints_(),
 			x_sampling(x_sampling),
 			y_sampling(y_sampling),
 			z_sampling(z_sampling),
@@ -433,7 +432,8 @@ class CartesianSearchPattern : public SearchPattern
 			y_min(y_min),
 			y_max(y_max),
 			z_min(z_min),
-			z_max(z_max)
+			z_max(z_max),
+			searchpoints_()
 		{
 			searchpoints_ = generate_search_points();
 		}

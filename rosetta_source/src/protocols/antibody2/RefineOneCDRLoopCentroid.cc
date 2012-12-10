@@ -134,7 +134,7 @@ void RefineOneCDRLoopCentroid::set_score_function(core::scoring::ScoreFunctionCO
 	
 	
 	
-void RefineOneCDRLoopCentroid::finalize_setup( core::pose::Pose const & pose ){
+void RefineOneCDRLoopCentroid::finalize_setup( core::pose::Pose const & /*pose*/ ){
     TR<<"   start finalize_setup function ..."<<std::endl;
 	if (!lowres_scorefxn_) {
 		lowres_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "cen_std", "score4L" );

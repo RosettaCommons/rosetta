@@ -44,14 +44,14 @@ TemplateHistory::get( core::Size resid ){
 
 void 
 TemplateHistory::setall( int template_id ) {
-	for (int i=1; i<=history_.size(); ++i)
+	for (core::Size i=1; i<=history_.size(); ++i)
 		history_[i] = template_id;
 }
 
 void 
 TemplateHistory::set( core::Size start_res, core::Size stop_res, int template_id) {
 	runtime_assert( stop_res<=history_.size() );
-	for (int i=start_res; i<=stop_res; ++i)
+	for (core::Size i=start_res; i<=stop_res; ++i)
 		history_[i] = template_id;
 }
 

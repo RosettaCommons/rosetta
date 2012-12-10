@@ -340,7 +340,7 @@ void VarLengthBuild::apply( Pose & pose ) {
 			original2modified = manager_.modify( pose );
 		}
 	}
-  if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user()) {
+	if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user()) {
 
 		Size len_start = remodel_data_.sequence.length();
 
@@ -380,7 +380,7 @@ void VarLengthBuild::apply( Pose & pose ) {
 
 			Size len_diff = (2*remodel_data_.sequence.length()) - pose.total_residue();
 			// append a tail of the same length
-			for (int i = 1; i<= len_diff; i++){
+			for (Size i = 1; i<= len_diff; i++){
 				core::chemical::ResidueTypeSet const & rsd_set = (pose.residue(1).residue_type_set());
 				core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set.name_map("ALA") ) );
 				pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.total_residue(), true);
@@ -401,7 +401,7 @@ void VarLengthBuild::apply( Pose & pose ) {
 
 			Size len_diff = (2*remodel_data_.sequence.length()) - archive_pose.total_residue();
 			// append a tail of the same length
-			for (int i = 1; i<= len_diff; i++){
+			for (Size i = 1; i<= len_diff; i++){
 				core::chemical::ResidueTypeSet const & rsd_set = (archive_pose.residue(1).residue_type_set());
 				core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set.name_map("ALA") ) );
 				archive_pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,archive_pose.total_residue(), true);
@@ -420,8 +420,8 @@ void VarLengthBuild::apply( Pose & pose ) {
 		assert( pose.total_residue() == (2* remodel_data_.sequence.length()));
 		repeat_tail_length_ = remodel_data_.sequence.length();
 
-		//update the new lenghened pose with pose angles.
-		for (int i = remodel_data_.sequence.length()+1, j=1; i<= pose.total_residue(); i++,j++){
+		//update the new lengthened pose with pose angles.
+		for (Size i = remodel_data_.sequence.length()+1, j=1; i<= pose.total_residue(); i++,j++){
 			if (cached_phi.size() != 0){
 				pose.set_phi(i, cached_phi[j]);
 				pose.set_psi(i, cached_psi[j]);

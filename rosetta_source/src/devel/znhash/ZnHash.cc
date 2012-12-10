@@ -394,9 +394,9 @@ void ZnCoordinationScorer::add_match_from_file(
 	assert( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->has_name( "ZNX" ));
 
 
-	core::chemical::ResidueType const & znx_restype =
+	/*core::chemical::ResidueType const & znx_restype =
 		core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->
-		name_map( "ZNX" );
+		name_map( "ZNX" ); */ // Unused variable causes warning.
 
 	core::pose::Pose match_pose;
 	core::import_pose::pose_from_pdb( match_pose, match_file_name );

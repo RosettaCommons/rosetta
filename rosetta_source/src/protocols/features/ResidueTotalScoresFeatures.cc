@@ -193,7 +193,7 @@ ResidueTotalScoresFeatures::insert_residue_total_scores_rows(
 	Pose temp_pose = pose;
 	(*scfxn_)(temp_pose);
 
-	Size const batch_id(get_batch_id(struct_id, db_session));
+	//Size const batch_id(get_batch_id(struct_id, db_session));
 
 	string const stmt_string("INSERT INTO residue_total_scores (struct_id, resNum, score_value ) VALUES (?,?,?);");
 

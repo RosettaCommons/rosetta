@@ -189,9 +189,9 @@ void HybridizeFoldtreeDynamic::choose_anchors() {
 		anchor_positions_.push_back( choose_anchor_position(core_chunks_[i]) );
 }
 
-/// from cmiles:
-///   mu : midpoint of the chunk
-///   sigma : linear function of chunk length
+// from cmiles:
+//   mu : midpoint of the chunk
+//   sigma : linear function of chunk length
 core::Size HybridizeFoldtreeDynamic::choose_anchor_position(const protocols::loops::Loop & chunk) const {
 	using boost::math::normal;
 	using core::Size;
@@ -331,7 +331,9 @@ void HybridizeFoldtreeDynamic::reset(
 }
 
 // stolen from protocols::forge::methods::jumps_and_cuts_from_pose
-void HybridizeFoldtreeDynamic::jumps_and_cuts_from_pose( core::pose::Pose & pose, utility::vector1< std::pair< int, int > > & jumps, utility::vector1< int > & cuts) {
+void HybridizeFoldtreeDynamic::jumps_and_cuts_from_pose( core::pose::Pose & pose,
+		utility::vector1< std::pair< core::Size, core::Size > > & jumps,
+		utility::vector1< core::Size > & cuts) {
 
 	core::kinematics::FoldTree f_orig = pose.fold_tree();
 
@@ -355,8 +357,8 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 	bool use_symm = core::pose::symmetry::is_symmetric(pose);
 
 	// Define jumps, cuts
-	vector1<int> cuts;
-	vector1<std::pair<int, int> > jumps;
+	vector1<core::Size> cuts;
+	vector1<std::pair<core::Size, core::Size> > jumps;
 
 	// "symmetry-safe" version
 	core::kinematics::FoldTree tree = core::conformation::symmetry::get_asymm_unit_fold_tree( pose.conformation() );
@@ -364,8 +366,8 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 	if (use_symm) jump_root = anchor_positions_[1];
 
 	// keep a copy of cuts and jumps, if they are in the region outside of the chunk definition
-	vector1<int> cuts_old;
-	vector1<std::pair<int, int> > jumps_old;
+	vector1<Size> cuts_old;
+	vector1<std::pair<Size, Size> > jumps_old;
 	core::Size last_chunk_residue(chunks_[chunks_.num_loop()].stop());
 
 	if (!use_symm) {
@@ -571,7 +573,7 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 		utility::vector1< core::Size > jump_points;
 		core::kinematics::FoldTree const const_tree( tree );
 		for ( core::kinematics::FoldTree::const_iterator it = const_tree.begin(), it_end = const_tree.end(); it != it_end; ++it ) {
-			if (it->start() == jump_root) jump_points.push_back(it->stop());
+			if (it->start() == (int)jump_root) jump_points.push_back(it->stop());
 		}
 		for (core::Size i=1;i<=jump_points.size();++i) {
 			std::set< std::pair< core::Size, core::Size > > remove; // keep track of edges to replace
@@ -579,12 +581,12 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 			core::kinematics::FoldTree const const_new_tree( tree );
 			for ( core::kinematics::FoldTree::const_iterator it = const_new_tree.begin(), it_end = const_new_tree.end(); it != it_end; ++it ) {
 				std::set< std::pair< core::Size, core::Size > > remove_tmp;
-				if (it->start() == jump_points[i] && it->label() == core::kinematics::Edge::PEPTIDE) {
+				if (it->start() == (int)jump_points[i] && it->label() == core::kinematics::Edge::PEPTIDE) {
 					core::Size start = it->start();
 					core::Size stop = it->stop();
 					remove_tmp.insert(std::pair< core::Size, core::Size >( start, stop ));
 					for ( core::kinematics::FoldTree::const_iterator jt = it+1, jt_end = const_new_tree.end(); jt != jt_end; ++jt ) {
-						if (jt->start() == stop && jt->label() == core::kinematics::Edge::PEPTIDE) {
+						if (jt->start() == (int)stop && jt->label() == core::kinematics::Edge::PEPTIDE) {
 							stop = jt->stop();
 							remove_tmp.insert(std::pair< core::Size, core::Size >( jt->start(), jt->stop() ));
 						}
@@ -623,8 +625,8 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 // strand pairings
 void HybridizeFoldtreeDynamic::add_overlapping_pair_chunks(
 		core::Size const index,
-		utility::vector1<int> & cuts,
-		utility::vector1<std::pair<int, int> > & jumps,
+		utility::vector1<core::Size> & cuts,
+		utility::vector1<std::pair<core::Size, core::Size> > & jumps,
 		std::set<core::Size> & rooted_chunk_indices
 ) {
 	utility::vector1<core::Size> pair_chunks; // pair chunks that pair with root chunk (index)
@@ -640,7 +642,7 @@ void HybridizeFoldtreeDynamic::add_overlapping_pair_chunks(
 		utility::vector1< std::pair< core::Size, utility::vector1<core::Size> > > start_pair_chunks_tmp;
 		utility::vector1< std::pair< core::Size, utility::vector1<std::pair<core::Size, core::Size> > > > start_pair_chunks_pairs_tmp;
 		for (core::Size i=1;i<=start_pair_chunks.size();++i) {
-			core::Size root = start_pair_chunks[i].first;
+			//core::Size root = start_pair_chunks[i].first;
 			utility::vector1<core::Size>this_pair_chunks = start_pair_chunks[i].second;
 			utility::vector1<std::pair<core::Size, core::Size> >this_pair_chunks_pairs = start_pair_chunks_pairs[i].second;
 			assert( this_pair_chunks.size() == this_pair_chunks_pairs.size() );
@@ -671,8 +673,8 @@ void HybridizeFoldtreeDynamic::add_overlapping_pair_chunks(
 	}
 }
 
-void HybridizeFoldtreeDynamic::remove_cut( core::Size const cut, utility::vector1<int> & cuts ) {
-	utility::vector1<int> cuts_tmp;
+void HybridizeFoldtreeDynamic::remove_cut( core::Size const cut, utility::vector1<core::Size> & cuts ) {
+	utility::vector1<core::Size> cuts_tmp;
 	for (core::Size i=1; i<=cuts.size(); ++i)
 		if (cuts[i] != cut) cuts_tmp.push_back(cuts[i]);
 	cuts = cuts_tmp;

@@ -60,6 +60,8 @@ public: // Methods
 	void
 	dfunc( core::optimization::Multivec const & , core::optimization::Multivec & ) const;
 
+	using core::optimization::Multifunc::dump;
+
 	/// @brief Error state reached; dump out current pdb.
 	virtual
 	void

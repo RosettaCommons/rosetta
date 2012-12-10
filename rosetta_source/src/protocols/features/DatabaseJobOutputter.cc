@@ -194,7 +194,7 @@ bool DatabaseJobOutputter::job_has_completed(
 		utility::vector1<core::Size> batch_ids(option[out::resume_batch].value());
 		core::Size placeholder_count = batch_ids.size();
 		std::string placeholder_block= "(?";
-		for(int j = 1; j < placeholder_count; ++j)
+		for(Size j = 1; j < placeholder_count; ++j)
 		{
 			placeholder_block += ",?";
 		}
@@ -203,7 +203,7 @@ bool DatabaseJobOutputter::job_has_completed(
 		std::string job_completion_string = "SELECT count(*) FROM sampled_structures WHERE tag=? AND batch_id IN " +placeholder_block+";";
 		cppdb::statement job_completion_statement(basic::database::safely_prepare_statement(job_completion_string,db_session));
 		job_completion_statement.bind(1,output_name(job));
-		for(int i = 1; i <= batch_ids.size();++i)
+		for(Size i = 1; i <= batch_ids.size();++i)
 		{
 			core::Size column_index =i+1;
 			job_completion_statement.bind(column_index,batch_ids[i]);

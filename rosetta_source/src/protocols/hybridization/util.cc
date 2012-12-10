@@ -133,7 +133,7 @@ void setup_fullatom_constraints(
 void generate_centroid_constraints(
 		core::pose::Pose &pose,
 		utility::vector1 < core::pose::PoseCOP > templates,
-		utility::vector1 < core::Real > template_weights,
+		utility::vector1 < core::Real > /*template_weights*/,
 		std::set< core::Size > ignore_res )
 {
 

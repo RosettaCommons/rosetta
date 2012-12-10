@@ -292,8 +292,8 @@ void FaSlideAwayFromSurface::apply( core::pose::Pose & pose )
 	trans_mover->trans_axis(-1*surfaceParams.slideaxis);
 
 	(*scorefxn_)( pose );
-	core::Real const initial_fa_rep = pose.energies().total_energies()[ fa_rep ];
-	bool are_touching = false;
+	//core::Real const initial_fa_rep = pose.energies().total_energies()[ fa_rep ];
+	//bool are_touching = false;
 	//moves::RigidBodyTransMover trans_mover( pose, rb_jump_ );
 
 	//Moving away

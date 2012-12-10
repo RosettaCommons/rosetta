@@ -589,7 +589,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 						if ( remodel_mover->get_last_move_status() != protocols::moves::MS_SUCCESS) {
 							set_last_move_status(protocols::moves::FAIL_RETRY);
 							TR << "Structure " << " failed initial kinematic closure. Skipping..." << std::endl;
-								bool fail = true; // make this
+								//bool fail = true; // make this
 							pose.fold_tree( f_orig );
 							return;
 						}

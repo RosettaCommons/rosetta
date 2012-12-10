@@ -53,8 +53,8 @@ namespace filters {
 // @brief default constructor
 HelixKinkFilter::HelixKinkFilter():
 	Filter( "HelixKink" ),
-	secstruct_( "" ),
-	bend_angle_( 20.0 )
+	bend_angle_( 20.0 ),
+	secstruct_( "" )
 {}
 
 
@@ -62,8 +62,8 @@ HelixKinkFilter::HelixKinkFilter():
 HelixKinkFilter::HelixKinkFilter( HelixKinkFilter const & rval ):
 	//utility::pointer::ReferenceCount(),
 	Super( rval ),
-	secstruct_( rval.secstruct_ ),
-	bend_angle_( rval.bend_angle_ )
+	bend_angle_( rval.bend_angle_ ),
+	secstruct_( rval.secstruct_ )
 {}
 
 

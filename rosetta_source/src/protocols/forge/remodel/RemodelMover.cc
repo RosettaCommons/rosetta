@@ -432,14 +432,14 @@ void RemodelMover::apply( Pose & pose ) {
 		//that after modify. Residues beyond first copy+ jxn doesn't really matter
 		if (pose.total_residue() < 2*remodel_data.sequence.length()){ //just making sure it's shorter before grow, input pose can be longer
 			Size len_diff = (2*remodel_data_.sequence.length()) - pose.total_residue();
-      // append a tail of the same length
-      for (int i = 1; i<= len_diff; i++){
-        core::chemical::ResidueTypeSet const & rsd_set = (pose.residue(1).residue_type_set());
-        core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set.name_map("ALA") ) );
-        pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.total_residue(), true);
-        pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.total_residue()-1);
-        pose.set_omega(pose.total_residue()-1,180);
-      }
+			// append a tail of the same length
+			for (Size i = 1; i<= len_diff; ++i){
+				core::chemical::ResidueTypeSet const & rsd_set = (pose.residue(1).residue_type_set());
+				core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set.name_map("ALA") ) );
+				pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.total_residue(), true);
+				pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.total_residue()-1);
+				pose.set_omega(pose.total_residue()-1,180);
+			}
 		}
 	}
 
@@ -475,16 +475,16 @@ if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure
   }
 
 	if ( pose.total_residue() < (remodel_data_.sequence.length()*2) ) {
-      Size len_diff = (2*remodel_data_.sequence.length()) - pose.total_residue();
-      // append a tail of the same length
-      for (int i = 1; i<= len_diff; i++){
-        core::chemical::ResidueTypeSet const & rsd_set = (pose.residue(1).residue_type_set());
-        core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set.name_map("ALA") ) );
-        pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.total_residue(), true);
-        pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.total_residue()-1);
-        pose.set_omega(pose.total_residue()-1,180);
-      }
-  }
+		Size len_diff = (2*remodel_data_.sequence.length()) - pose.total_residue();
+		// append a tail of the same length
+		for (Size i = 1; i<= len_diff; ++i){
+			core::chemical::ResidueTypeSet const & rsd_set = (pose.residue(1).residue_type_set());
+			core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set.name_map("ALA") ) );
+			pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.total_residue(), true);
+			pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.total_residue()-1);
+			pose.set_omega(pose.total_residue()-1,180);
+		}
+	}
 
 }
 
@@ -732,13 +732,13 @@ TR << "ORIGINAL TREE: " << pose.fold_tree() << std::endl;
 				cmmop->import(remodel_data_.natro_movemap_);
 				cmmop->import( manager_.movemap() );
 
-				for (int i = 1; i<= pose.total_residue(); i++){
+				for (Size i = 1; i<= pose.total_residue(); ++i){
 					std::cout << "bb at " << i << " " << cmmop->get_bb(i) << std::endl;
 				}
 
 				//adding angles and bonds dof
-			//	cmmop->set(core::id::THETA, true);
-			//	cmmop->set(core::id::D, true);
+				//	cmmop->set(core::id::THETA, true);
+				//	cmmop->set(core::id::D, true);
 
 				 for(Size i = 1; i <= pose.n_residue(); i++) {
 						for(Size j = 1; j <= pose.residue(i).nheavyatoms(); j++) {

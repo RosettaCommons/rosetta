@@ -50,8 +50,8 @@ MotifHit::MotifHit( MotifHit const & src ) :
 	utility::pointer::ReferenceCount( src ),
 	motifcop_( src.motifcop()->clone() ),
 	vbpos_( src.vbpos_ ),
-	final_test_( src.final_test_ ),
 	passed_automorphism_( src.passed_automorphism_ ),
+	final_test_( src.final_test_ ),
 	build_rotamer_( src.build_rotamer()->clone() ),
 	target_conformer_( src.target_conformer()->clone() )
 {}

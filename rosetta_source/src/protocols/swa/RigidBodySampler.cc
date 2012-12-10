@@ -379,7 +379,8 @@ RigidBodySampler::~RigidBodySampler() {}
 			apply_rigid_body_settings( pose, pose_start,
 																 alpha, beta, gamma, x, y, z );
 
-			Real const energy = (*scorefxn_)( pose );
+			// Real const energy = // Unused variable causes warning.
+			(*scorefxn_)( pose );
 
 			count_total_++;
 			std::string const tag = "S_" + ObjexxFCL::lead_zero_string_of( count_total_, 6 );

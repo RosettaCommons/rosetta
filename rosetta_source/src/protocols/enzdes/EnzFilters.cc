@@ -431,7 +431,7 @@ LigInterfaceEnergyFilter::parse_my_tag( TagPtr const tag, DataMap & data, Filter
 }
 void LigInterfaceEnergyFilter::parse_def( utility::lua::LuaObject const & def,
 				utility::lua::LuaObject const & score_fxns,
-				utility::lua::LuaObject const & tasks ){
+				utility::lua::LuaObject const & /*tasks*/ ){
   using namespace core::scoring;
 
 	if( def["scorefxn"] ) {

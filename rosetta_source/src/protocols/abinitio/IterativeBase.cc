@@ -1726,7 +1726,7 @@ void IterativeBase::compute_cores() {
 	if ( nstruct==0 ) return;
 	toolbox::DecoySetEvaluation eval;
 	eval.reserve( nstruct );
-	Size nres( (*decoys().begin())->nres() );
+	//Size nres( (*decoys().begin())->nres() );
 	//	Size ct( 1 );
 	//for ( const_decoy_iterator iss = decoys().begin(); iss != decoys().end(); ++iss, ++ct ) {
 	//		if ( ct > nstruct ) break;

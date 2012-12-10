@@ -1284,7 +1284,7 @@ namespace rna {
 
 		Output_title_text("Enter StepWiseRNA_VirtualRiboseSampler::sample_virtual_ribose");	
 
-		clock_t const time_start( clock() ); 
+		// clock_t const time_start( clock() ); // Unused variable causes warning.
  
 
 		/////////////////////Copy the conformation but nothing else. No energy and no cache data (having cache data can cause problem with column_name order in output silent_file!)//////////////////////////////

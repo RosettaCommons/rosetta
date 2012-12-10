@@ -88,22 +88,23 @@ static numeric::random::RandomGenerator RG(7590021);  // <- Magic number, do not
 
 namespace protocols {
 namespace loophash {
-	LoopHashRelaxProtocol::LoopHashRelaxProtocol( LoopHashLibraryOP library	) : library_(library)
-	{
-		std::cout << "HERE!" << std::endl;
-	}
 
-  void
-  LoopHashRelaxProtocol::manual_call( core::pose::Pose& pose ){
-    using namespace basic::options;
-    using namespace basic::options::OptionKeys;
-    using namespace core::scoring;
-      
-    core::Size skim_size = 2;
-  
-    if( !library_ ) std::cout << std::string( "FATAL ERROR: Libary not loaded ") ;
+LoopHashRelaxProtocol::LoopHashRelaxProtocol( LoopHashLibraryOP library	) : library_(library)
+{
+	std::cout << "HERE!" << std::endl;
+}
 
-    core::Real mpi_metropolis_temp_ = option[ lh::mpi_metropolis_temp ]();
+void
+LoopHashRelaxProtocol::manual_call( core::pose::Pose& pose ){
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	using namespace core::scoring;
+
+	core::Size skim_size = 2;
+
+	if( !library_ ) std::cout << std::string( "FATAL ERROR: Libary not loaded ") ;
+
+	//core::Real mpi_metropolis_temp_ = option[ lh::mpi_metropolis_temp ]();
 
     LocalInserter_SimpleMinOP simple_inserter( new LocalInserter_SimpleMin() );
     LoopHashSampler  lsampler( library_, simple_inserter );
@@ -141,7 +142,7 @@ namespace loophash {
     
     //read_coord_cst(); //include this function later !                 
 
-    core::Size total_starttime = time(NULL);
+    //core::Size total_starttime = time(NULL);
     
     static int casecount = 0;
     core::pose::Pose opose = pose;
@@ -179,7 +180,7 @@ namespace loophash {
       lsampler.set_stop_res(  stop_res );
       lsampler.build_structures( pose, lib_structs );
       core::Size endtime2 = time(NULL);
-      core::Size loophash_time = endtime2 - starttime2;
+      //core::Size loophash_time = endtime2 - starttime2;
       TR.Info << "FOUND (" << start_res << " to " << stop_res << "): " 
               << lib_structs.size() << " states in time: " 
               << endtime2 - starttime2 << " s " << std::endl;
@@ -221,7 +222,7 @@ namespace loophash {
     core::Size starttime = time(NULL);
     relax->batch_apply( select_lib_structs );
     core::Size endtime = time(NULL);
-    core::Size batchrelax_time = endtime - starttime; 
+    //core::Size batchrelax_time = endtime - starttime;
     TR.Info << "Batchrelax time: " << endtime - starttime << " for " << select_lib_structs.size() << " structures " << std::endl;
 
     core::Real bestscore = MAXIMAL_FLOAT;
@@ -255,18 +256,18 @@ namespace loophash {
 
 
 
-  void
-  LoopHashRelaxProtocol::apply( core::pose::Pose& pose )
-  {
-  }
+void
+LoopHashRelaxProtocol::apply( core::pose::Pose& /*pose*/ )
+{
+}
 
-  protocols::moves::MoverOP LoopHashRelaxProtocol::clone() const {
+protocols::moves::MoverOP LoopHashRelaxProtocol::clone() const {
 		return new LoopHashRelaxProtocol( *this );
 	}
 
-	protocols::moves::MoverOP	LoopHashRelaxProtocol::fresh_instance() const {
-		return new LoopHashRelaxProtocol( library_ );
-	}
+protocols::moves::MoverOP	LoopHashRelaxProtocol::fresh_instance() const {
+	return new LoopHashRelaxProtocol( library_ );
+}
 
 } // namespace loops
 } // namespace protocols

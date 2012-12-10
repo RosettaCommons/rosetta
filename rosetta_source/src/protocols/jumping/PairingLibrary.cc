@@ -525,7 +525,7 @@ PairingLibrary::get_random_beta_sheet_jump(
 		// key for looking up the template geometry:
 		std::pair<int,int> generic_key (orientation,0);
 		std::pair<int,int> specific_key (pos1,pos2);
-		std::pair<int,int> key (specific_key);
+		// std::pair<int,int> key (specific_key); // Unused variable causes warning.
 
 		const PairingTemplateList & templates
 		( pairings_.find( specific_key )->second );
@@ -559,7 +559,7 @@ PairingLibrary::get_random_beta_sheet_jump(
 		// key for looking up the template geometry:
 		std::pair<int,int> generic_key (orientation,0);
 		std::pair<int,int> specific_key (pos1,pos2);
-		std::pair<int,int> key (specific_key);
+		// std::pair<int,int> key (specific_key); // Unused variable causes warning.
 
 		const PairingTemplateList & templates
 		( pairings_.find( specific_key )->second );

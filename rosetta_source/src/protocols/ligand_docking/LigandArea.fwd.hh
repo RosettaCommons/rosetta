@@ -22,7 +22,7 @@
 namespace protocols {
 namespace ligand_docking {
 
-struct LigandArea;
+class LigandArea;
 
 typedef utility::pointer::owning_ptr< LigandArea > LigandAreaOP;
 typedef utility::pointer::owning_ptr< LigandArea const > LigandAreaCOP;

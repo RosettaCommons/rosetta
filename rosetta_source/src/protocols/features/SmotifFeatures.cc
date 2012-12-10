@@ -56,11 +56,11 @@ static basic::Tracer TR("protocols.features.SmotifFeatures");
 SmotifFeatures::SmotifFeatures()
 {}
 		
-SmotifFeatures::SmotifFeatures(core::scoring::ScoreFunctionOP scfxn)
+SmotifFeatures::SmotifFeatures(core::scoring::ScoreFunctionOP /*scfxn*/)
 {	
 }
 		
-SmotifFeatures::SmotifFeatures( SmotifFeatures const & src )
+SmotifFeatures::SmotifFeatures( SmotifFeatures const & /*src*/ )
 {
 }
 		
@@ -158,11 +158,11 @@ SmotifFeatures::features_reporter_dependencies() const
 
 void
 SmotifFeatures::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & data,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
-	core::pose::Pose const & pose)
+	utility::tag::TagPtr const /*tag*/,
+	protocols::moves::DataMap & /*data*/,
+	protocols::filters::Filters_map const & /*filters*/,
+	protocols::moves::Movers_map const & /*movers*/,
+	core::pose::Pose const & /*pose*/)
 {
 }
 		
@@ -170,7 +170,7 @@ SmotifFeatures::parse_my_tag(
 core::Size
 SmotifFeatures::report_features(
 	core::pose::Pose const & pose,
-	utility::vector1< bool > const & relevant_residues,
+	utility::vector1< bool > const & /*relevant_residues*/,
 	boost::uuids::uuid struct_id,
 	utility::sql_database::sessionOP db_session)
 {
@@ -269,6 +269,7 @@ SmotifFeatures::report_features(
 			}
 		}
 	}
+	return 0;  // Added to remove warning; should this be returning an ID of some sort? ~Labonte
 }
 
 utility::vector1<SecondaryStructureSegment>

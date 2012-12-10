@@ -172,13 +172,13 @@ void PairingStatistics::add_entry(core::scoring::dssp::StrandPairing const& ps, 
 
 void PairingStatistics::add_topology( core::scoring::dssp::StrandPairingSet const& topology, Model const& id ) {
 	//	if (! topology.size() ) return; //also add empty sets  -- otherwise the modelname floats around and can't be found in this list
-  for ( core::scoring::dssp::StrandPairingSet::const_iterator it = topology.begin(), eit = topology.end();
-	it != eit; ++it  ) {
-    bool merged ( false );
+	for ( core::scoring::dssp::StrandPairingSet::const_iterator it = topology.begin(), eit = topology.end();
+			it != eit; ++it  ) {
+		//bool merged ( false );
 		tr.Trace << "adding stand pairing to hash.. " << *it << std::endl;
 		add_entry( *it, id );
-  }
-  topols_[ id ] = topology;
+	}
+	topols_[ id ] = topology;
 }
 
 

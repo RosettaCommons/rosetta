@@ -161,9 +161,10 @@ class Contact{
 public:
 	/// @brief Default constructor
 	Contact(ContactPartner p1 = ContactPartner(), ContactPartner p2 = ContactPartner()) :
-        partner1_(p1),
-        partner2_(p2),
-        count_(0){}
+		count_(0),
+		partner1_(p1),
+		partner2_(p2)
+	{}
 
 	/// @brief	Adds distance to the contact
 	void add_distance( core::Real distance );

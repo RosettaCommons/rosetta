@@ -43,8 +43,10 @@ class ConstraintEvaluatorWrapper : public evaluation::PoseEvaluator {
 public:
 	ConstraintEvaluatorWrapper( std::string const& name, ConstraintClaimerCOP claimer ); //for factory
 
+	using evaluation::PoseEvaluator::apply;
+
 	//sets xxx_cst and xxx_viol columns
-  virtual void apply( core::pose::Pose& pose, std::string tag, core::io::silent::SilentStruct &pss) const;
+	virtual void apply( core::pose::Pose& pose, std::string tag, core::io::silent::SilentStruct &pss) const;
 
 	//returns constraint score
 	virtual core::Real apply( core::pose::Pose& pose ) const;

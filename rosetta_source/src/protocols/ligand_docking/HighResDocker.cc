@@ -218,8 +218,8 @@ HighResDocker::tether_ligands(core::pose::Pose & pose){
 
 void
 HighResDocker::remove_ligand_tethers(core::pose::Pose pose, TetherLigandOPs ligand_tethers){
-	TetherLigandOPs::const_iterator begin= ligand_tethers.begin();
-	TetherLigandOPs::const_iterator const end= ligand_tethers.end();
+	// TetherLigandOPs::const_iterator begin= ligand_tethers.begin(); // Unused variable causes warning.
+	// TetherLigandOPs::const_iterator const end= ligand_tethers.end(); // Unused variable causes warning.
 
 	foreach(TetherLigandOP ligand_tether, ligand_tethers){
 		ligand_tether->release(pose);
@@ -407,7 +407,7 @@ void HighResDocker::apply_rigid_body_moves(
 		core::pose::Pose & pose,
 		utility::vector1<protocols::moves::MoverOP> & rigid_body_movers
 ){
-	utility::vector1<protocols::moves::MoverOP>::iterator rigid_body_mover= rigid_body_movers.begin();
+	// utility::vector1<protocols::moves::MoverOP>::iterator rigid_body_mover= rigid_body_movers.begin(); // Unused variable causes warning.
 	foreach(protocols::moves::MoverOP rigid_body_mover, rigid_body_movers){
 		rigid_body_mover->apply(pose);
 	}

@@ -99,6 +99,7 @@ class RigidBodyMoveBaseRSO : public core::pack::rotamer_set::RotamerSetOperation
 	/// Default implementation calls determine_larget_nbr_atom_distance with
 	/// results of get_rigid_body_confs. Override this function if calculation
 	/// can be optimized without call call to get_rigid_body_confs.
+	using core::pack::rotamer_set::RotamerSetOperation::increase_packer_residue_radius;
 	virtual
 	core::Real
 	increase_packer_residue_radius(

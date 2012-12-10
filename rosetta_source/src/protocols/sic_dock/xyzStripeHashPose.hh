@@ -91,8 +91,8 @@ public:
 		int natom = 0;
 		for(int ir = 1; ir <= (int)p.n_residue(); ++ir) {
 			core::conformation::Residue const & r(p.residue(ir));
-			     if(  CA==m ) if(r.has("CA")) natom++;
-			else if(  CB==m ) if(r.has("CB")) natom++;
+			     if(  CA==m ){ if(r.has("CA")){ natom++; }}
+			else if(  CB==m ){ if(r.has("CB")){ natom++; }}
 			else if( NBR==m ) natom++;
 			else if( BB ==m ) natom += r.has("N")+r.has("CA")+r.has("C")+r.has("O")+r.has("CB");
 			else if( HVY==m ) natom += r.nheavyatoms();
