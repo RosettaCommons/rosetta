@@ -67,10 +67,10 @@ public:
 	bool
 	simulate_mpi();
 
-	static
+	/* static
 	SimulateMPI *
-	get_simulation();
-
+	get_simulation(); */
+	
 	static
 	void
 	initialize_simulation( int nprocs );
