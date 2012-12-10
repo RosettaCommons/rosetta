@@ -51,10 +51,13 @@ class Operator : public filters::Filter
   	void threshold( core::Real const t ){ threshold_ = t; }
 		Operation operation() const{ return operation_; }
 		void operation( Operation const o ){ operation_ = o; }
+		void negate( bool const b ){ negate_ = b; }
+		bool negate() const{ return negate_; }
   private:
     utility::vector1< protocols::filters::FilterOP > filters_;
 		Operation operation_; // dflt PRODUCT
 		core::Real threshold_; // dflt 0
+		bool negate_; // dflt false; in optimization, useful to get values between -1 - 0 rather than 0-1
 };
 }
 }

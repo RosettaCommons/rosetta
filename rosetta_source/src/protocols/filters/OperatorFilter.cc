@@ -40,7 +40,8 @@ OperatorFilterCreator::keyname() const { return "Operator"; }
 Operator::Operator() :
 protocols::filters::Filter( "Operator" ),
 operation_( PRODUCT ),
-threshold_( 0.0 )
+threshold_( 0.0 ),
+negate_( false )
 {
 	filters_.clear();
 }
@@ -91,6 +92,7 @@ Operator::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap &, filter
 	if( op != "SUM" && op != "PRODUCT" && op != "NORMALIZED_SUM" && op != "MAX" && op != "MIN" && op != "SUBTRACT" && op != "ABS" )
 		utility_exit_with_message( "Operation " + op + " not recognized" );
 	threshold( tag->getOption< core::Real >( "threshold", 0 ) );
+	negate( tag->getOption< bool >( "negate", false ) );
 
   utility::vector1< std::string > const filter_names( utility::string_split( tag->getOption< std::string >( "filters" ), ',' ) );
 	foreach( std::string const fname, filter_names ){
@@ -108,7 +110,10 @@ bool
 Operator::apply( core::pose::Pose const & pose ) const {
 	core::Real const val ( compute( pose ) );
 	TR<<"Filter returns "<<val<<std::endl;
-	return( val >= threshold() );
+	if( negate() )
+		return( val <= threshold() );
+	else
+		return( val >= threshold() );
 }
 
 void
@@ -133,14 +138,14 @@ Operator::compute(
 		runtime_assert( filters().size() == 2 );
 		core::Real const val1( filters()[ 1 ]->report_sm( pose ) );
 		core::Real const val2( filters()[ 2 ]->report_sm( pose ) );
-		core::Real const difference( val1 - val2 );
+		core::Real const difference( negate() ? val2 - val1 : val1 - val2 );
 		TR<<"Filters' values "<<val1<<" "<<val2<<" and the difference is "<<difference<<std::endl;
 		return difference;
 	}
 	if( operation() == ABS ){
 		runtime_assert( filters().size() == 1 );
 		core::Real const val( filters()[ 1 ]->report_sm( pose ) );
-		core::Real const abs_val( std::abs( val ) );
+		core::Real const abs_val( negate() ? -std::abs( val ) : std::abs( val ) );
 		TR<<"Filter returns "<<val<<" and its absolute value is "<<abs_val<<std::endl;
 		return abs_val;
 	}
@@ -167,7 +172,10 @@ Operator::compute(
 	}
 	if( operation() == NORMALIZED_SUM )
 		val /= (core::Real) filters().size();
-  return( val );
+	if( negate() )
+		return( -1.0 * val );
+	else
+  	return( val );
 }
 
 utility::vector1< protocols::filters::FilterOP >
