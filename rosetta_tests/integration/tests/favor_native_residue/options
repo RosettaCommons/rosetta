@@ -1,0 +1,25 @@
+#input pdb
+-s 1l2y.pdb
+
+#This exclusion reduces memory use on irrelevant, unlikely-to-be-used special residue types
+-chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer protein_cutpoint_upper protein_cutpoint_lower VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm
+
+#scorefunction corrections; suggested in all cases.  May be redundant with XML.
+-corrections::score::score12prime
+-corrections::score::no_his_his_pairE
+
+#suggested minimum extra rotamers for a real design run
+#-packing:ex1
+#-packing:ex2
+-packing:use_input_sc
+
+
+#It is absolutely necessary to uncomment this (remove #) and supply a valid database path
+#-database /path/to/rosetta_database
+
+#useful for bookkeeping; deactivated for test
+#-run:version
+#-options:user
+
+#input script
+-parser:protocol favor_native_residue.xml
