@@ -5,6 +5,7 @@ the conversion from the "multiplicative" form the sp2 potential to the "additive
 
 This parameter set is intended for use with the following additional flags:
 
+-hbond_params sp2_params <-- specify the parameters contained within the rosetta_database/scoring/score_functions/hbonds/sp2_params directory
 -score::hb_sp2_chipen
 -hb_sp2_BAH180_rise 0.75  <--- currently the default parameter for this option, so it may be omitted.
 -hbond_measure_sp3acc_BAH_from_hvy
