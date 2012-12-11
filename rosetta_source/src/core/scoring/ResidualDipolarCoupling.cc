@@ -334,7 +334,7 @@ RDC::RDC_TYPE RDC::get_RDC_data_type(std::string const & atom1,
 	RDC_TYPE RDC_type;
 	if ((elem1 == "N" && elem2 == "H") || (elem1 == "H" && elem2 == "N"))
 		RDC_type = RDC_TYPE_NH;
-	else if ((elem1 == "C" && elem2 == "H") || (elem1 == "H" && elem2 == "C"))
+	else if ((elem1 == "CA" && elem2 == "HA") || (elem1 == "HA" && elem2 == "CA"))
 		RDC_type = RDC_TYPE_CH;
 	else if ((elem1 == "C" && elem2 == "N") || (elem1 == "N" && elem2 == "C"))
 		RDC_type = RDC_TYPE_NC;
@@ -471,12 +471,12 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 		numeric::xyzVector<Real> r( pose.residue(it->res1()).atom(it->atom1()).xyz() - pose.residue(it->res2()).atom(it->atom2()).xyz());
 
 		core::Real r2 = r.norm_squared();
-		//core::Real scale_to_NH = 36.5089/1.042/1.042/1.042;
-		//if ( correct_NH ) scale_to_NH = 36.5089/1.042/1.042/1.042; // set but never used ~Labonte
+		//core::Real scale_to_NH = 36.5089/1.041/1.041/1.041;
+		//if ( correct_NH ) scale_to_NH = 36.5089/1.041/1.041/1.041; // set but never used ~Labonte
 		core::Real invr = 1.0 / sqrt(r2);
 		if ( it->type() == RDC::RDC_TYPE_NH && correct_NH ) {
-			r.normalize(1.042);
-			r2 = 1.042 * 1.042;
+			r.normalize(1.041);
+			r2 = 1.041 * 1.041;
 			invr = 1.0 / sqrt(r2);
 		}
 
@@ -644,7 +644,7 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
     //compute derivatives
 		//prefactor used in derivative calculations
 		core::Real pfac = weight* rdc.Dconst() * invr2 * invr;
-    core::Real const pfac_NH = weight * 36.5089/1.042/1.042/1.042;
+    core::Real const pfac_NH = weight * 36.5089/1.041/1.041/1.041;
 
 		if (bReduced) {
 			if ( tr.Trace.visible() ) tr.Trace << "reducing coupling for " << rdc << " dev: " << dev
@@ -682,10 +682,10 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 
     //compute contribution from one ex
 		//	std::cout << "WEIGHT " << weight <<std::endl;
-		//(36.5089/1.042/1.042/1.042) is the Dcnst_NH/1.042^3
+		//(36.5089/1.041/1.041/1.041) is the Dcnst_NH/1.041^3
 		vtot += 0.5*sqr( dev )*weight;
 		//vtoti += 0.5*sqr( dev )*Smax[ex];
-		//vtoti += 0.5*sqr( dev )*Smax[ex]/( EV_[ex][0]/2*(36.5089/1.042/1.042/1.042)*EV_[ex][0]/2*(36.5089/1.042/1.042/1.042)); //weight by Da
+		//vtoti += 0.5*sqr( dev )*Smax[ex]/( EV_[ex][0]/2*(36.5089/1.041/1.041/1.041)*EV_[ex][0]/2*(36.5089/1.041/1.041/1.041)); //weight by Da
 		//vtoti += 0.5*sqr( dev )*Smax[ex]/( EV_[ex][0]/2*pfac*EV_[ex][0]/2*pfac); //weight by Da
 		wsv2 += weight*sqr(dev);
 		sw += weight;
@@ -759,9 +759,9 @@ double frdc( double r0, double r1, double r2, double rdcconst, const double *par
 
 double frdcDa( double r0, double r1, double r2, double rdcconst, double const tensorDa, const double *par)
 {
-        double Ax=(3.0*par[0]/2.0-1.0)*tensorDa/(36.5089/1.042/1.042/1.042);
-        double Ay=-(3.0*par[0]/2.0+1.0)*tensorDa/(36.5089/1.042/1.042/1.042);
-        double Az=2.0*tensorDa/(36.5089/1.042/1.042/1.042);
+        double Ax=(3.0*par[0]/2.0-1.0)*tensorDa/(36.5089/1.041/1.041/1.041);
+        double Ay=-(3.0*par[0]/2.0+1.0)*tensorDa/(36.5089/1.041/1.041/1.041);
+        double Az=2.0*tensorDa/(36.5089/1.041/1.041/1.041);
 //use radius instead
         double a=par[1];
         double b=par[2];
@@ -775,9 +775,9 @@ double frdcDa( double r0, double r1, double r2, double rdcconst, double const te
 
 double frdcR( double r0, double r1, double r2, double rdcconst, double const tensorR, const double *par)
 {
-        double Ax=(3.0*tensorR/2.0-1.0)*par[0]/(36.5089/1.042/1.042/1.042);
-        double Ay=-(3.0*tensorR/2.0+1.0)*par[0]/(36.5089/1.042/1.042/1.042);
-        double Az=2.0*par[0]/(36.5089/1.042/1.042/1.042);
+        double Ax=(3.0*tensorR/2.0-1.0)*par[0]/(36.5089/1.041/1.041/1.041);
+        double Ay=-(3.0*tensorR/2.0+1.0)*par[0]/(36.5089/1.041/1.041/1.041);
+        double Az=2.0*par[0]/(36.5089/1.041/1.041/1.041);
 //use radius instead
         double a=par[1];
         double b=par[2];
@@ -791,9 +791,9 @@ double frdcR( double r0, double r1, double r2, double rdcconst, double const ten
 
 double frdcDaR( double r0, double r1, double r2, double rdcconst, double const tensorDa, double const tensorR, const double *par)
 {
-        double Ax=(3.0*tensorR/2.0-1.0)*tensorDa/(36.5089/1.042/1.042/1.042);
-        double Ay=-(3.0*tensorR/2.0+1.0)*tensorDa/(36.5089/1.042/1.042/1.042);
-        double Az=2.0*tensorDa/(36.5089/1.042/1.042/1.042);
+        double Ax=(3.0*tensorR/2.0-1.0)*tensorDa/(36.5089/1.041/1.041/1.041);
+        double Ay=-(3.0*tensorR/2.0+1.0)*tensorDa/(36.5089/1.041/1.041/1.041);
+        double Az=2.0*tensorDa/(36.5089/1.041/1.041/1.041);
 //use radius instead
         double a=par[0];
         double b=par[1];
@@ -896,7 +896,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(core::pose::Pose const& pose)
 	}
   id=0;
 
-	core::Real scale_to_NH = 36.5089/1.042/1.042/1.042;
+	core::Real scale_to_NH = 36.5089/1.041/1.041/1.041;
 
 	for (it = All_RDC_lines_.begin(); it != All_RDC_lines_.end(); ++it) {
 		if ( it->res1() > pose.total_residue() || it->res2() > pose.total_residue() ) {
@@ -918,10 +918,12 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(core::pose::Pose const& pose)
 		core::Real r2 = r.norm_squared();
 		core::Real invr = 1.0 / sqrt(r2);
 
+    //tr.Trace << " invr before correction: " << invr << std::endl;
+
     if ( correct_NH )  {
-      scale_to_NH = 36.5089/1.042/1.042/1.042;
+      scale_to_NH = 36.5089/1.041/1.041/1.041;
       if ( it->type() == RDC::RDC_TYPE_NH && std::abs((int) it->res1()-(int) it->res2())==0 ) {
-          r.normalize(1.042);
+          r.normalize(1.041);
           r2 = r.norm_squared();
           invr = 1.0 / sqrt(r2);
         } else if ( it->type() == RDC::RDC_TYPE_NC && std::abs((int) it->res1()-(int) it->res2())==1 ) {
@@ -929,7 +931,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(core::pose::Pose const& pose)
           r2 = r.norm_squared();
           invr = 1.0 / sqrt(r2);
         } else if ( it->type() == RDC::RDC_TYPE_CH && std::abs((int) it->res1()-(int) it->res2())==0 ) {
-          r.normalize(1.08);
+          r.normalize(1.107);
           r2 = r.norm_squared();
           invr = 1.0 / sqrt(r2);
         } else if ( it->type() == RDC::RDC_TYPE_CC && std::abs((int) it->res1()-(int) it->res2())==0 ) {
@@ -942,16 +944,21 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(core::pose::Pose const& pose)
         }
     }//end of correct_NH 
 
+
 		core::Real pfac = it->Dconst();
 		bool bCSA(false);// hook up for later... to compute chemical shift anisotropy
 		if (!bCSA) {
 			pfac *= invr * invr * invr;
 		}
 
+
 		//check the -1 if it is correct
 	  id = All_RDC_lines_[nrow].expid();
 	  //scale rdcs accordingly
     obs = All_RDC_lines_[nrow].Jdipolar()*(scale_to_NH)/pfac;
+
+    //tr.Trace << " invr after correction: " << invr << std::endl;
+    //tr.Trace << " scaling: " << (scale_to_NH)/pfac << " original: " << All_RDC_lines_[nrow].Jdipolar() << " after " << obs << std::endl;
 
 		r0_[nrow-1] = r.normalized().x();
 		r1_[nrow-1] = r.normalized().y();
@@ -1097,7 +1104,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(core::pose::Pose const& pose)
 	 	 		tr.Trace << "alpha: " << par[ex*n_par+2]*180/numeric::NumericTraits<Real>::pi()<< std::endl;
    	 		tr.Trace << "beta: " << par[ex*n_par+3]*180/numeric::NumericTraits<Real>::pi()<< std::endl;
 	 	 		tr.Trace << "gamma:" << par[ex*n_par+4]*180/numeric::NumericTraits<Real>::pi()<< std::endl;
-	 	 		tr.Trace << "Da:" << 1.0/2.0*(-Ax-Ay)*(36.5089/1.042/1.042/1.042)<< std::endl;
+	 	 		tr.Trace << "Da:" << 1.0/2.0*(-Ax-Ay)*(36.5089/1.041/1.041/1.041)<< std::endl;
 	 	 		tr.Trace << "R:" << 2.0/3.0*(Ay-Ax)/(Ax+Ay)<< std::endl;
 	 	 		tr.Trace << "norm:" << bestnorm<<std::endl;
 	 	 		tr.Trace << "Pales Da:" << 3.0/4.0*(-Ax-Ay)<< std::endl;
@@ -1111,6 +1118,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(core::pose::Pose const& pose)
 		Real vtot = 0;
 	  Real Q = 0;
 	  Real Qex = 0;
+	  //Real Qexunscale = 0;
 	  Real Qnorm = 0;
 
    	Size irow(0);
@@ -1137,7 +1145,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(core::pose::Pose const& pose)
 
     if ( correct_NH )  {
       if ( it->type() == RDC::RDC_TYPE_NH && std::abs((int) it->res1()-(int) it->res2())==0 ) {
-          r.normalize(1.042);
+          r.normalize(1.041);
           r2 = r.norm_squared();
           invr = 1.0 / sqrt(r2);
         } else if ( it->type() == RDC::RDC_TYPE_NC && std::abs((int) it->res1()-(int) it->res2())==1 ) {
@@ -1145,7 +1153,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(core::pose::Pose const& pose)
           r2 = r.norm_squared();
           invr = 1.0 / sqrt(r2);
         } else if ( it->type() == RDC::RDC_TYPE_CH && std::abs((int) it->res1()-(int) it->res2())==0 ) {
-          r.normalize(1.08);
+          r.normalize(1.107);
           r2 = r.norm_squared();
           invr = 1.0 / sqrt(r2);
         } else if ( it->type() == RDC::RDC_TYPE_CC && std::abs((int) it->res1()-(int) it->res2())==0 ) {
@@ -1206,7 +1214,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(core::pose::Pose const& pose)
 		vtot += 0.5*sqr( dev )*weight;
 
 		//vtot += 0.5*sqr( dev )*Smax[ex]/(lenex_[ex+1]);
-		//vtot += 0.5*sqr( dev )*Smax[ex]/( parbest[ex*n_par+0]*(36.5089/1.042/1.042/1.042)* parbest[ex*n_par+0] *(36.5089/1.042/1.042/1.042)* lenex_[ex+1]);
+		//vtot += 0.5*sqr( dev )*Smax[ex]/( parbest[ex*n_par+0]*(36.5089/1.041/1.041/1.041)* parbest[ex*n_par+0] *(36.5089/1.041/1.041/1.041)* lenex_[ex+1]);
 		//vtot += 0.5*sqr( dev )*Smax[ex]/( parbest[ex*n_par+0]*rdcconst_[prelen+irow] * parbest[ex*n_par+0] *rdcconst_[prelen+irow] * lenex_[ex+1]);
 
 	 	//tr.Trace << "debug ex: " << ex << " lenex_[ex]  " << lenex_[ex] << " irow " << irow <<std::endl;
@@ -1238,14 +1246,19 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(core::pose::Pose const& pose)
 		sw += weight;
 		Q += sqr( dev );
 		Qex +=sqr( dev );
+		//Qexunscale +=sqr( dev )/((scale_to_NH)/(rdc.Dconst() * invr2 * invr))/((scale_to_NH)/(rdc.Dconst() * invr2 * invr));
 		Qnorm += sqr( obs );
 
 		//printout Qbax_ for each experiment
 		if ( irow==lenex_[ex+1]-1 ) {
 	  	if ( tr.Trace.visible() ) {
-				tr.Trace << "ex: " << ex << " Qbax_: " << sqrt(Qex/lenex_[ex+1])/sqrt(sqr(parbest[ex*n_par+0]*(36.5089/1.042/1.042/1.042))*(4+3*sqr(parbest[ex*n_par+1]))/5) << std::endl; //JACS 2003 125(30) 9179-9191 Table 2 lagend
+				tr.Trace << "ex: " << ex << " Qbax: " << sqrt(Qex/lenex_[ex+1])/sqrt(sqr(parbest[ex*n_par+0]*(36.5089/1.041/1.041/1.041))*(4+3*sqr(parbest[ex*n_par+1]))/5) << std::endl; //JACS 2003 125(30) 9179-9191 Table 2 lagend
+			  tr.Trace << "ex: " << ex << " rms: " << sqrt(Qex/lenex_[ex+1]) << std::endl;
+				//tr.Trace << "ex: " << ex << " Qbax_2: " << sqrt(Qexunscale/lenex_[ex+1])/sqrt(sqr(parbest[ex*n_par+0]*(36.5089/1.041/1.041/1.041))*(4+3*sqr(parbest[ex*n_par+1]))/5) << std::endl; //JACS 2003 125(30) 9179-9191 Table 2 lagend
+			  //tr.Trace << "ex: " << ex << " rms_dc2: " << sqrt(Qexunscale/lenex_[ex+1]) << std::endl;
 			}
-			Qex =0;
+			Qex=0;
+			//Qexunscale =0;
 	  }
 
 		//increament the array
@@ -1311,7 +1324,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDa(core::pose::Pose const& pos
 	}
   id=0;
 
-  core::Real scale_to_NH = 36.5089/1.042/1.042/1.042;
+  core::Real scale_to_NH = 36.5089/1.041/1.041/1.041;
 	for (it = All_RDC_lines_.begin(); it != All_RDC_lines_.end(); ++it) {
 		if ( it->res1() > pose.total_residue() || it->res2() > pose.total_residue() ) {
 			if ( tr.Debug.visible() ) tr.Debug << "non-existing residue, ignore RDC" << std::endl;
@@ -1332,9 +1345,9 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDa(core::pose::Pose const& pos
     core::Real invr = 1.0 / sqrt(r2);
 
     if ( correct_NH )  {
-      scale_to_NH = 36.5089/1.042/1.042/1.042;
+      scale_to_NH = 36.5089/1.041/1.041/1.041;
       if ( it->type() == RDC::RDC_TYPE_NH && std::abs((int) it->res1()-(int) it->res2())==0 ) {
-          r.normalize(1.042);
+          r.normalize(1.041);
           r2 = r.norm_squared();
           invr = 1.0 / sqrt(r2);
         } else if ( it->type() == RDC::RDC_TYPE_NC && std::abs((int) it->res1()-(int) it->res2())==1 ) {
@@ -1342,7 +1355,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDa(core::pose::Pose const& pos
           r2 = r.norm_squared();
           invr = 1.0 / sqrt(r2);
         } else if ( it->type() == RDC::RDC_TYPE_CH && std::abs((int) it->res1()-(int) it->res2())==0 ) {
-          r.normalize(1.08);
+          r.normalize(1.107);
           r2 = r.norm_squared();
           invr = 1.0 / sqrt(r2);
         } else if ( it->type() == RDC::RDC_TYPE_CC && std::abs((int) it->res1()-(int) it->res2())==0 ) {
@@ -1447,8 +1460,8 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDa(core::pose::Pose const& pos
 	   if ( tr.Trace.visible() ) {
 	      tr.Trace << std::endl;
 	 	 		tr.Trace << "ex: " << ex << std::endl;
-	 	 		tr.Trace << "Ax: " << (3.0*par[ex*n_par+0]/2.0-1.0)*tensorDa[ex+1]/(36.5089/1.042/1.042/1.042)<< std::endl;
-	 	 		tr.Trace << "Ay: " << -(3.0*par[ex*n_par+0]/2.0+1.0)*tensorDa[ex+1]/(36.5089/1.042/1.042/1.042)<< std::endl;
+	 	 		tr.Trace << "Ax: " << (3.0*par[ex*n_par+0]/2.0-1.0)*tensorDa[ex+1]/(36.5089/1.041/1.041/1.041)<< std::endl;
+	 	 		tr.Trace << "Ay: " << -(3.0*par[ex*n_par+0]/2.0+1.0)*tensorDa[ex+1]/(36.5089/1.041/1.041/1.041)<< std::endl;
 	 	 		tr.Trace << "alpha: " << par[ex*n_par+1]<< std::endl;
    	 		tr.Trace << "beta: " << par[ex*n_par+2]<< std::endl;
 	 	 		tr.Trace << "gamma:" << par[ex*n_par+3]<< std::endl;
@@ -1462,6 +1475,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDa(core::pose::Pose const& pos
 		Real vtot = 0;
 	  Real Q = 0;
 	  Real Qex = 0;
+	  //Real Qexunscale = 0;
 	  Real Qnorm = 0;
 
    	Size irow(0);
@@ -1486,7 +1500,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDa(core::pose::Pose const& pos
 
     if ( correct_NH )  {
       if ( it->type() == RDC::RDC_TYPE_NH && std::abs((int) it->res1()-(int) it->res2())==0 ) {
-          r.normalize(1.042);
+          r.normalize(1.041);
           r2 = r.norm_squared();
           invr = 1.0 / sqrt(r2);
         } else if ( it->type() == RDC::RDC_TYPE_NC && std::abs((int) it->res1()-(int) it->res2())==1 ) {
@@ -1494,7 +1508,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDa(core::pose::Pose const& pos
           r2 = r.norm_squared();
           invr = 1.0 / sqrt(r2);
         } else if ( it->type() == RDC::RDC_TYPE_CH && std::abs((int) it->res1()-(int) it->res2())==0 ) {
-          r.normalize(1.08);
+          r.normalize(1.107);
           r2 = r.norm_squared();
           invr = 1.0 / sqrt(r2);
         } else if ( it->type() == RDC::RDC_TYPE_CC && std::abs((int) it->res1()-(int) it->res2())==0 ) {
@@ -1518,9 +1532,9 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDa(core::pose::Pose const& pos
 		it->Jdipolar_computed_ = computed_coupling/((scale_to_NH)/(rdc.Dconst() * invr2 * invr));
 
 		//parameters after fitting
-		core::Real Axx=(3.0*par[ex*n_par+0]/2.0-1.0)*tensorDa[ex+1]/(36.5089/1.042/1.042/1.042);
-		core::Real Ayy=-(3.0*par[ex*n_par+0]/2.0+1.0)*tensorDa[ex+1]/(36.5089/1.042/1.042/1.042);
-		core::Real Azz=2.0*tensorDa[ex+1]/(36.5089/1.042/1.042/1.042);
+		core::Real Axx=(3.0*par[ex*n_par+0]/2.0-1.0)*tensorDa[ex+1]/(36.5089/1.041/1.041/1.041);
+		core::Real Ayy=-(3.0*par[ex*n_par+0]/2.0+1.0)*tensorDa[ex+1]/(36.5089/1.041/1.041/1.041);
+		core::Real Azz=2.0*tensorDa[ex+1]/(36.5089/1.041/1.041/1.041);
 		core::Real a=par[ex*n_par+1];
 		core::Real b=par[ex*n_par+2];
 		core::Real c=par[ex*n_par+3];
@@ -1559,8 +1573,9 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDa(core::pose::Pose const& pos
 		if ( irow==lenex_[ex+1]-1 ) {
 	  	if ( tr.Trace.visible() ) {
 				tr.Trace << "ex: " << ex << " Qbax_: " << sqrt(Qex/lenex_[ex+1])/sqrt(sqr(tensorDa[ex+1])*(4+3*sqr(par[ex*n_par+0]))/5) << std::endl; //JACS 2003 125(30) 9179-9191 Table 2 lagend
+        tr.Trace << "ex: " << ex << " rms_dc: " << sqrt(Qex/lenex_[ex+1]) << std::endl;
 			}
-			Qex =0;
+			Qex=0;
 	  }
 
 
@@ -1624,7 +1639,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsR(core::pose::Pose const& pose
 	}
   id=0;
 
-  core::Real scale_to_NH = 36.5089/1.042/1.042/1.042;
+  core::Real scale_to_NH = 36.5089/1.041/1.041/1.041;
 
 	for (it = All_RDC_lines_.begin(); it != All_RDC_lines_.end(); ++it) {
 		if ( it->res1() > pose.total_residue() || it->res2() > pose.total_residue() ) {
@@ -1646,9 +1661,9 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsR(core::pose::Pose const& pose
     core::Real invr = 1.0 / sqrt(r2);
 
     if ( correct_NH )  {
-      scale_to_NH = 36.5089/1.042/1.042/1.042;
+      scale_to_NH = 36.5089/1.041/1.041/1.041;
       if ( it->type() == RDC::RDC_TYPE_NH && std::abs((int) it->res1()-(int) it->res2())==0 ) {
-          r.normalize(1.042);
+          r.normalize(1.041);
           r2 = r.norm_squared();
           invr = 1.0 / sqrt(r2);
         } else if ( it->type() == RDC::RDC_TYPE_NC && std::abs((int) it->res1()-(int) it->res2())==1 ) {
@@ -1656,7 +1671,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsR(core::pose::Pose const& pose
           r2 = r.norm_squared();
           invr = 1.0 / sqrt(r2);
         } else if ( it->type() == RDC::RDC_TYPE_CH && std::abs((int) it->res1()-(int) it->res2())==0 ) {
-          r.normalize(1.08);
+          r.normalize(1.107);
           r2 = r.norm_squared();
           invr = 1.0 / sqrt(r2);
         } else if ( it->type() == RDC::RDC_TYPE_CC && std::abs((int) it->res1()-(int) it->res2())==0 ) {
@@ -1758,8 +1773,8 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsR(core::pose::Pose const& pose
 	   if ( tr.Trace.visible() ) {
 	      tr.Trace << std::endl;
 	 	 		tr.Trace << "ex: " << ex << std::endl;
-	 	 		tr.Trace << "Ax: " << (3.0*tensorR[ex+1]/2.0-1.0)*par[ex*n_par+0]/(36.5089/1.042/1.042/1.042)<< std::endl;
-	 	 		tr.Trace << "Ay: " << -(3.0*tensorR[ex+1]/2.0+1.0)*par[ex*n_par+0]/(36.5089/1.042/1.042/1.042)<< std::endl;
+	 	 		tr.Trace << "Ax: " << (3.0*tensorR[ex+1]/2.0-1.0)*par[ex*n_par+0]/(36.5089/1.041/1.041/1.041)<< std::endl;
+	 	 		tr.Trace << "Ay: " << -(3.0*tensorR[ex+1]/2.0+1.0)*par[ex*n_par+0]/(36.5089/1.041/1.041/1.041)<< std::endl;
 	 	 		tr.Trace << "alpha: " << par[ex*n_par+1]<< std::endl;
    	 		tr.Trace << "beta: " << par[ex*n_par+2]<< std::endl;
 	 	 		tr.Trace << "gamma:" << par[ex*n_par+3]<< std::endl;
@@ -1798,7 +1813,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsR(core::pose::Pose const& pose
 
     if ( correct_NH )  {
       if ( it->type() == RDC::RDC_TYPE_NH && std::abs((int) it->res1()-(int) it->res2())==0 ) {
-          r.normalize(1.042);
+          r.normalize(1.041);
           r2 = r.norm_squared();
           invr = 1.0 / sqrt(r2);
         } else if ( it->type() == RDC::RDC_TYPE_NC && std::abs((int) it->res1()-(int) it->res2())==1 ) {
@@ -1806,7 +1821,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsR(core::pose::Pose const& pose
           r2 = r.norm_squared();
           invr = 1.0 / sqrt(r2);
         } else if ( it->type() == RDC::RDC_TYPE_CH && std::abs((int) it->res1()-(int) it->res2())==0 ) {
-          r.normalize(1.08);
+          r.normalize(1.107);
           r2 = r.norm_squared();
           invr = 1.0 / sqrt(r2);
         } else if ( it->type() == RDC::RDC_TYPE_CC && std::abs((int) it->res1()-(int) it->res2())==0 ) {
@@ -1829,9 +1844,9 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsR(core::pose::Pose const& pose
     it->Jdipolar_computed_ = computed_coupling/((scale_to_NH)/(rdc.Dconst() * invr2 * invr));
 
 		//parameters after fitting
-		core::Real Axx=(3.0*tensorR[ex+1]/2.0-1.0)*par[ex*n_par+0]/(36.5089/1.042/1.042/1.042);
-		core::Real Ayy=-(3.0*tensorR[ex+1]/2.0+1.0)*par[ex*n_par+0]/(36.5089/1.042/1.042/1.042);
-		core::Real Azz=2.0*par[ex*n_par+0]/(36.5089/1.042/1.042/1.042);
+		core::Real Axx=(3.0*tensorR[ex+1]/2.0-1.0)*par[ex*n_par+0]/(36.5089/1.041/1.041/1.041);
+		core::Real Ayy=-(3.0*tensorR[ex+1]/2.0+1.0)*par[ex*n_par+0]/(36.5089/1.041/1.041/1.041);
+		core::Real Azz=2.0*par[ex*n_par+0]/(36.5089/1.041/1.041/1.041);
 		core::Real a=par[ex*n_par+1];
 		core::Real b=par[ex*n_par+2];
 		core::Real c=par[ex*n_par+3];
@@ -1857,7 +1872,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsR(core::pose::Pose const& pose
 		//compute energy
 		vtot += 0.5*sqr( dev )*weight;
 		//vtot += 0.5*sqr( dev )*Smax[ex]/(lenex_[ex+1]);
-		//vtot += 0.5*sqr( dev )*Smax[ex]/( par[ex*n_par+0]/(2*(36.5089/1.042/1.042/1.042))*par[ex*n_par+0]/(2*(36.5089/1.042/1.042/1.042))*lenex_[ex+1]);
+		//vtot += 0.5*sqr( dev )*Smax[ex]/( par[ex*n_par+0]/(2*(36.5089/1.041/1.041/1.041))*par[ex*n_par+0]/(2*(36.5089/1.041/1.041/1.041))*lenex_[ex+1]);
 		//vtot += 0.5*sqr( dev )*Smax[ex]/( par[ex*n_par+0]/(2*rdcconst_[prelen+irow])*par[ex*n_par+0]/(2*rdcconst_[prelen+irow])*lenex_[ex+1]);
 		//vtot += 0.5*sqr( dev )*weight; //xweight if we want that
 		//      vtot += sqrt( dev );
@@ -1871,8 +1886,9 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsR(core::pose::Pose const& pose
 		if ( irow==lenex_[ex+1]-1 ) {
 	  	if ( tr.Trace.visible() ) {
 				tr.Trace << "ex: " << ex << " Qbax_: " << sqrt(Qex/lenex_[ex+1])/sqrt(sqr(par[ex*n_par+0])*(4+3*sqr(tensorR[ex+1]))/5) << std::endl; //JACS 2003 125(30) 9179-9191 Table 2 lagend
+        tr.Trace << "ex: " << ex << " rms_dc: " << sqrt(Qex/lenex_[ex+1]) << std::endl;
 			}
-			Qex =0;
+			Qex=0;
 	  }
 
 
@@ -1938,7 +1954,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDaR(core::pose::Pose const& po
 	}
   id=0;
 
-  core::Real scale_to_NH = 36.5089/1.042/1.042/1.042;
+  core::Real scale_to_NH = 36.5089/1.041/1.041/1.041;
 
 	for (it = All_RDC_lines_.begin(); it != All_RDC_lines_.end(); ++it) {
 		if ( it->res1() > pose.total_residue() || it->res2() > pose.total_residue() ) {
@@ -1959,9 +1975,9 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDaR(core::pose::Pose const& po
     core::Real invr = 1.0 / sqrt(r2);
 
     if ( correct_NH )  {
-			scale_to_NH = 36.5089/1.042/1.042/1.042;
+			scale_to_NH = 36.5089/1.041/1.041/1.041;
       if ( it->type() == RDC::RDC_TYPE_NH && std::abs((int) it->res1()-(int) it->res2())==0 ) {
-        	r.normalize(1.042);
+        	r.normalize(1.041);
         	r2 = r.norm_squared();
         	invr = 1.0 / sqrt(r2);
     		} else if ( it->type() == RDC::RDC_TYPE_NC && std::abs((int) it->res1()-(int) it->res2())==1 ) {
@@ -1969,7 +1985,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDaR(core::pose::Pose const& po
         	r2 = r.norm_squared();
         	invr = 1.0 / sqrt(r2);
     		} else if ( it->type() == RDC::RDC_TYPE_CH && std::abs((int) it->res1()-(int) it->res2())==0 ) {
-        	r.normalize(1.08);
+        	r.normalize(1.107);
         	r2 = r.norm_squared();
         	invr = 1.0 / sqrt(r2);
     		} else if ( it->type() == RDC::RDC_TYPE_CC && std::abs((int) it->res1()-(int) it->res2())==0 ) {
@@ -2075,8 +2091,8 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDaR(core::pose::Pose const& po
 	 	 		tr.Trace << "ex: " << ex << std::endl;
 	 	 		tr.Trace << " tensorDa["<<ex<<"]: "<<tensorDa[ex+1]<< std::endl;
 	 	 		tr.Trace << " tensorR["<<ex<<"]: "<<tensorR[ex+1]<< std::endl;
-	 	 		tr.Trace << "Ax: " << (3.0*tensorR[ex+1]/2.0-1.0)*tensorDa[ex+1]/(36.5089/1.042/1.042/1.042)<< std::endl;
-	 	 		tr.Trace << "Ay: " << -(3.0*tensorR[ex+1]/2.0+1.0)*tensorDa[ex+1]/(36.5089/1.042/1.042/1.042)<< std::endl;
+	 	 		tr.Trace << "Ax: " << (3.0*tensorR[ex+1]/2.0-1.0)*tensorDa[ex+1]/(36.5089/1.041/1.041/1.041)<< std::endl;
+	 	 		tr.Trace << "Ay: " << -(3.0*tensorR[ex+1]/2.0+1.0)*tensorDa[ex+1]/(36.5089/1.041/1.041/1.041)<< std::endl;
 	 	 		tr.Trace << "alpha: " << par[ex*n_par+0]<< std::endl;
    	 		tr.Trace << "beta: " << par[ex*n_par+1]<< std::endl;
 	 	 		tr.Trace << "gamma:" << par[ex*n_par+2]<< std::endl;
@@ -2118,7 +2134,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDaR(core::pose::Pose const& po
 
     if ( correct_NH )  {
       if ( it->type() == RDC::RDC_TYPE_NH && std::abs((int) it->res1()-(int) it->res2())==0 ) {
-          r.normalize(1.042);
+          r.normalize(1.041);
           r2 = r.norm_squared();
           invr = 1.0 / sqrt(r2);
         } else if ( it->type() == RDC::RDC_TYPE_NC && std::abs((int) it->res1()-(int) it->res2())==1 ) {
@@ -2126,7 +2142,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDaR(core::pose::Pose const& po
           r2 = r.norm_squared();
           invr = 1.0 / sqrt(r2);
         } else if ( it->type() == RDC::RDC_TYPE_CH && std::abs((int) it->res1()-(int) it->res2())==0 ) {
-          r.normalize(1.08);
+          r.normalize(1.107);
           r2 = r.norm_squared();
           invr = 1.0 / sqrt(r2);
         } else if ( it->type() == RDC::RDC_TYPE_CC && std::abs((int) it->res1()-(int) it->res2())==0 ) {
@@ -2149,9 +2165,9 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDaR(core::pose::Pose const& po
     it->Jdipolar_computed_ = computed_coupling/((scale_to_NH)/(rdc.Dconst() * invr2 * invr));
 
 		//parameters after fitting
-		core::Real Axx=(3.0*tensorR[ex+1]/2.0-1.0)*tensorDa[ex+1]/(36.5089/1.042/1.042/1.042);
-		core::Real Ayy=-(3.0*tensorR[ex+1]/2.0+1.0)*tensorDa[ex+1]/(36.5089/1.042/1.042/1.042);
-		core::Real Azz=2.0*tensorDa[ex+1]/(36.5089/1.042/1.042/1.042);
+		core::Real Axx=(3.0*tensorR[ex+1]/2.0-1.0)*tensorDa[ex+1]/(36.5089/1.041/1.041/1.041);
+		core::Real Ayy=-(3.0*tensorR[ex+1]/2.0+1.0)*tensorDa[ex+1]/(36.5089/1.041/1.041/1.041);
+		core::Real Azz=2.0*tensorDa[ex+1]/(36.5089/1.041/1.041/1.041);
 		core::Real a=par[ex*n_par+0];
 		core::Real b=par[ex*n_par+1];
 		core::Real c=par[ex*n_par+2];
@@ -2188,8 +2204,9 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDaR(core::pose::Pose const& po
 		if ( irow==lenex_[ex+1]-1 ) {
 	  	if ( tr.Trace.visible() ) {
 				tr.Trace << "ex: " << ex << " Qbax_: " << sqrt(Qex/lenex_[ex+1])/sqrt(sqr(tensorDa[ex+1])*(4+3*sqr(tensorR[ex+1]))/5) << std::endl; //JACS 2003 125(30) 9179-9191 Table 2 lagend
+        tr.Trace << "ex: " << ex << " rms_dc: " << sqrt(Qex/lenex_[ex+1]) << std::endl;
 			}
-			Qex =0;
+			Qex=0;
 	  }
 
 
@@ -2286,7 +2303,7 @@ void ResidualDipolarCoupling::show_rdc_values( std::ostream& out, Size ex ) cons
 	Size const width( 8 );
 	//mjo comment out width_large because it is unused and causes a warning
 	//Size const width_large(6);
-	Size const precision( 2 );
+	Size const precision( 3 );
 	utility::vector1<core::scoring::RDC>::const_iterator it;
 	for (it = All_RDC_lines_.begin(); it != All_RDC_lines_.end(); ++it) {
 		if(it->expid() == ex){

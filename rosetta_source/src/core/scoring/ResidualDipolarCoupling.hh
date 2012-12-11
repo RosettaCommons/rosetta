@@ -267,15 +267,21 @@ public:
 	}
 
 	inline Real fixed_dist() const {
+    //changed to reproduce constants from the DC server
+	  //http://spin.niddk.nih.gov/bax/software/dc/#dc_di
 		runtime_assert( 0 ); ///don't use this
 		if (type() == RDC_TYPE_NH)
-			return 1.042;
+			return 1.041;
+			//return 1.042;
 		else if (type() == RDC_TYPE_NC)
 			return 1.329;
+			//return 1.329;
 		else if (type() == RDC_TYPE_CH)
-			return 1.08;
+			return 1.107;
+			//return 1.08;
 		else if (type() == RDC_TYPE_CC)
 			return 1.525;
+			//return 1.525;
 		//should never get here...
 		runtime_assert( 0 );
 		return 0;
