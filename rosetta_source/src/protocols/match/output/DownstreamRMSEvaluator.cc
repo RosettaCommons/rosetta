@@ -29,7 +29,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace protocols {
 namespace match {
 namespace output {
@@ -98,17 +97,17 @@ DownstreamRMSEvaluator::score( match const & m ) const
 	Real rms_sum = 0.0;
 	for ( Size ii = 1; ii <= n_geometric_constraints_; ++ii ) {
 		if ( ! ds_builders_[ ii ] ) continue;
-		for ( Size jj = 1; jj <= n_geometric_constraints_; ++jj ) {
+		for ( Size jj = ii+1; jj <= n_geometric_constraints_; ++jj ) {
 			if ( ! ds_builders_[ jj ] ) continue;
 
 			Real iijj_rms = 0.0;
-			for ( Size kk = 1; kk <= atoms_to_compare_.size(); ++kk ) {
+			Size num_atoms_to_compare=atoms_to_compare_.size();
+      for ( Size kk = 1; kk <= num_atoms_to_compare; ++kk ) {
 				iijj_rms += ds_coords[ ii ][ kk ].distance_squared( ds_coords[ jj ][ kk ] );
 			}
-			rms_sum += std::sqrt( iijj_rms );
+			rms_sum += std::sqrt( iijj_rms/num_atoms_to_compare );
 		}
 	}
-
 	return rms_sum;
 }
 

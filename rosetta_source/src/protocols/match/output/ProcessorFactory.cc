@@ -13,6 +13,7 @@
 ///         MatchProcessor classes.
 /// @author Alex Zanghellini (zanghell@u.washington.edu)
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com), porting to mini
+/// @author Roland A Pache
 
 // Unit headers
 #include <protocols/match/output/ProcessorFactory.hh>
@@ -160,10 +161,11 @@ ProcessorFactory::create_evaluator(
 	if ( mtask->evaluator_name() == "DownstreamRMSEvaluator" ) {
 		DownstreamRMSEvaluatorOP rms_eval = new DownstreamRMSEvaluator;
 		rms_eval->set_n_geometric_constraints( matcher->n_geometric_constraints() );
-		for ( Size ii = 1; ii <= matcher->n_geometric_constraints(); ++ii ) {
+    for ( Size ii = 1; ii <= matcher->n_geometric_constraints(); ++ii ) {
 			/// HACK -- all RigidLigandBuilders are equivalent -- FIX THIS!
 			rms_eval->set_downstream_builder( ii, matcher->downstream_builder( ii ) );
 		}
+    rms_eval->set_downstream_pose(matcher->downstream_pose());
 		return rms_eval;
 	} else {
 		utility_exit_with_message( "Could not recognize requested MatchEvaluator named: " + mtask->evaluator_name() );
