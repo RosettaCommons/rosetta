@@ -272,7 +272,8 @@ settings = {
     "gcc, warnings_as_errors" : {
         "appends" : {
             "flags" : {
-                "compile"   : [ "Werror", '-Wno-unknown-pragmas', ],
+                "compile"   : [ "Werror", ],
+                "warn"      : [ '-Wno-unknown-pragmas', ],
             },
         },
     },
@@ -1199,7 +1200,8 @@ settings = {
     "clang, warnings_as_errors" : {
         "appends" : {
             "flags" : {
-                "compile"   : [ "Werror", 'no-unknown-pragmas',],
+                "compile"   : [ "Werror", ],
+                "warn"      : [ '-Wno-unknown-pragmas', ],
             },
         },
     },
