@@ -272,7 +272,7 @@ settings = {
     "gcc, warnings_as_errors" : {
         "appends" : {
             "flags" : {
-                "compile"   : [ "Werror",],
+                "compile"   : [ "Werror", '-Wno-unknown-pragmas', ],
             },
         },
     },
@@ -435,7 +435,7 @@ settings = {
             "cxx"           : "llvm-g++-4.2",
         },
     },
-    
+
     "gcc, 4.2, macos, 10.8" : {
         "overrides" : {
             "cc"            : "llvm-gcc-4.2",
@@ -1199,7 +1199,7 @@ settings = {
     "clang, warnings_as_errors" : {
         "appends" : {
             "flags" : {
-                "compile"   : [ "Werror",],
+                "compile"   : [ "Werror", 'no-unknown-pragmas',],
             },
         },
     },
