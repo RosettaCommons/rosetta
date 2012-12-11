@@ -273,7 +273,7 @@ settings = {
         "appends" : {
             "flags" : {
                 "compile"   : [ "Werror", ],
-                "warn"      : [ '-Wno-unknown-pragmas', ],
+                "warn"      : [ 'Wno-unknown-pragmas', ],
             },
         },
     },
@@ -1201,7 +1201,7 @@ settings = {
         "appends" : {
             "flags" : {
                 "compile"   : [ "Werror", ],
-                "warn"      : [ '-Wno-unknown-pragmas', ],
+                "warn"      : [ 'Wno-unknown-pragmas', ],
             },
         },
     },
