@@ -144,7 +144,7 @@ CoupledSidechainProtocolCreator::mover_name() {
 	return "SidechainMC";
 }
 */
-CoupledSidechainProtocol::CoupledSidechainProtocol()
+CoupledSidechainProtocol::CoupledSidechainProtocol()  : protocols::moves::Mover()
 {
 	//	set_defaults();
 	init_from_options();

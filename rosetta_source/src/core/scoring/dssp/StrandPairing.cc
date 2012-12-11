@@ -552,31 +552,31 @@ bool StrandPairing::merge(const StrandPairing &other, bool domerge) {
 		otherex.extend_to(begin1_);
 		otherex.extend_to(end1_);
 
-    bool changed = other.begin1_ < begin1_ || other.end1_ > end1_;
-    // Now do actual merge
-    // Add in holes in myex extension that are present in otherex
-    for(Size res = myex.begin1_; res <= myex.end1_; res++) {
-      Size i = res - myex.begin1_;
-      if((res < begin1_ || res > end1_) && otherex.pairing1[i] == 0) {
+		//bool changed = other.begin1_ < begin1_ || other.end1_ > end1_;
+		// Now do actual merge
+		// Add in holes in myex extension that are present in otherex
+		for(Size res = myex.begin1_; res <= myex.end1_; res++) {
+			Size i = res - myex.begin1_;
+			if((res < begin1_ || res > end1_) && otherex.pairing1[i] == 0) {
 				if(myex.pairing1[i] == 0 || otherex.pairing2[myex.pairing1[i] - otherex.begin2_] > 0)
 					std::cout << "SERIOUS PROBLEM.\n";
 				myex.pairing2[myex.pairing1[i] - myex.begin2_] = 0;
 				myex.pairing1[i] = myex.pleating1[i] = 0;
-      }
-      // Fill in holes in myex overlap with values from otherex
-      if(res >= std::max(begin1_,other.begin1_) && res <= std::min(end1_,other.end1_) && myex.pairing1[i] == 0 && otherex.pairing1[i] > 0) {
+			}
+			// Fill in holes in myex overlap with values from otherex
+			if(res >= std::max(begin1_,other.begin1_) && res <= std::min(end1_,other.end1_) && myex.pairing1[i] == 0 && otherex.pairing1[i] > 0) {
 				if(myex.pairing2[otherex.pairing1[i]-myex.begin2_] > 0)
 					std::cout << "ANOTHER SERIOUS PROBLEM.\n";
 				myex.pairing1[i] = otherex.pairing1[i];
 				myex.pleating1[i] = otherex.pleating1[i];
 				myex.pairing2[otherex.pairing1[i] - myex.begin2_] = res;
-				changed = true;
-      }
-    }
+				//changed = true;  // set but never used ~Labonte
+			}
+		}
 		if ( !myex.valid_ends() ) return false;
-    *this = myex;
-  }
-  return possible;
+		*this = myex;
+	}
+	return possible;
 }
 
 Size StrandPairing::get_pleating( Size res ) const {

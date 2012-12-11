@@ -796,7 +796,9 @@ namespace rna {
 	
 
 			return output_pose_data_list;
-			std::cout << "Total time in Floating_base_chain_closure_post_processing: " << static_cast<Real>( clock() - time_start_post_processing ) / CLOCKS_PER_SEC << std::endl;
+			// The following line would never have been reached. ~Labonte
+			//std::cout << "Total time in Floating_base_chain_closure_post_processing: " <<
+					//static_cast<Real>( clock() - time_start_post_processing ) / CLOCKS_PER_SEC << std::endl;
 
 	}		
 

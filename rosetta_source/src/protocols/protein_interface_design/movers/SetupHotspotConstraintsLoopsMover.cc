@@ -262,7 +262,7 @@ SetupHotspotConstraintsLoopsMover::generate_csts(
 	}
 
 	tr.Info << "Making hotspot constraints..." << std::endl;
-	Size scaffold_seqpos(0);
+	//Size scaffold_seqpos(0);
 	Size ct_cst( 0 );
 	for ( core::Size resnum=55; resnum <= 71; ++resnum ) {
 
@@ -270,7 +270,7 @@ SetupHotspotConstraintsLoopsMover::generate_csts(
 		//		if ( ! task->pack_residue(resnum) ) continue;
 
 		// sets the index used by the hotspot for its associated scaffold
-		scaffold_seqpos = resnum - pose.conformation().chain_begin( pose.chain( resnum ) );
+		//scaffold_seqpos = resnum - pose.conformation().chain_begin( pose.chain( resnum ) );  // set but never used
 
 		// Start the vector which will become a single AmbiguousConstraint, if apply_ambiguous_constraints is true
 		utility::vector1< core::scoring::constraints::ConstraintCOP > ambig_csts;

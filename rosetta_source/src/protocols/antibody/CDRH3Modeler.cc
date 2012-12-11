@@ -295,12 +295,12 @@ void CDRH3Modeler::build_centroid_loop() {
 	my_loop_move->apply( antibody_in_.Fv );
     */
 
-	Size unaligned_cdr_loop_begin(0), unaligned_cdr_loop_end(0);
+	Size unaligned_cdr_loop_begin(0)/*, unaligned_cdr_loop_end(0)*/;
 	core::import_pose::pose_from_pdb( template_pose_, "hfr.pdb" );
 	std::string template_name = "h3";
 	antibody::Antibody hfr_template( template_pose_, template_name );
 	unaligned_cdr_loop_begin = hfr_template.current_start;
-	unaligned_cdr_loop_end = hfr_template.current_end;
+	//unaligned_cdr_loop_end = hfr_template.current_end;  // set but never used ~Labonte
 
 	antibody_in_.Fv.set_psi( antibody_in_.cdrh_[3][1] - 1,
 		template_pose_.psi( unaligned_cdr_loop_begin - 1 ) );
@@ -918,8 +918,8 @@ bool CDRH3Modeler::CDR_H3_filter(
 	// chop out the loop
 	pose::Pose h3_loop( pose_in, loop_begin - 2, loop_begin + size + 1 );
 
-	bool is_kinked( false );
-	bool is_extended( false );
+	//bool is_kinked( false );
+	//bool is_extended( false );
 	bool is_H3( false );
 
 	// extract 3 letter residue codes for the chopped loop
@@ -949,7 +949,7 @@ bool CDRH3Modeler::CDR_H3_filter(
 				(base_dihedral < kink_upper_bound))
 			{
 				// std::cout << "KINK Found" << std::endl; // aroop_temp remove
-				is_kinked = true;
+				//is_kinked = true;  // set but never used ~Labonte
 				is_H3 = true;
 			}
 	}
@@ -961,7 +961,7 @@ bool CDRH3Modeler::CDR_H3_filter(
 		if( ( base_dihedral > extended_lower_bound ) &&
 				( base_dihedral < extended_upper_bound) ) {
 			// std::cout << "EXTENDED Found" << std::endl; // aroop_temp remove
-			is_extended = true;
+			//is_extended = true;  // set but never used ~Labonte
 			is_H3 = true;
 		}
 
@@ -987,7 +987,7 @@ bool CDRH3Modeler::CDR_H3_filter(
 					( base_dihedral < kink_upper_bound ) ) {
 				// aroop_temp remove
 				// std::cout << "KINK (special 1b) Found" << std::endl;
-				is_kinked = true;
+				//is_kinked = true;  // set but never used ~Labonte
 				is_H3 = true;
 			}
 		}
@@ -1002,7 +1002,7 @@ bool CDRH3Modeler::CDR_H3_filter(
 				(base_dihedral < kink_upper_bound ) ) {
 			// aroop_temp remove
 			// std::cout << "KINK (w sb) Found" << std::endl;
-			is_kinked = true;
+			//is_kinked = true;  // set but never used ~Labonte
 			is_H3 = true;
 		}
 		if(!is_H3) {
@@ -1017,7 +1017,7 @@ bool CDRH3Modeler::CDR_H3_filter(
 					( base_dihedral < extended_upper_bound ) ) {
 				// aroop_temp remove
 				// std::cout << "EXTENDED (special 1c) Found" << std::endl;
-				is_extended = true;
+				//is_extended = true;  // set but never used ~Labonte
 				is_H3 = true;
 			}
 		}
@@ -1032,7 +1032,7 @@ bool CDRH3Modeler::CDR_H3_filter(
 				( base_dihedral < extended_upper_bound ) ) {
 			// aroop_temp remove
 			// std::cout << "EXTENDED (w sb) Found" << std::endl;
-			is_extended = true;
+			//is_extended = true;  // set but never used ~Labonte
 			is_H3 = true;
 		}
 	}

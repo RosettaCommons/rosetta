@@ -56,8 +56,8 @@ DDomainParse::pulldomain( int isize0, int ist, int ilast, utility::vector1< core
 
 	utility::vector1< int> maxe1(mseq_), maxe2(mseq_);
 	core::Real /*tmp0 = -100.0,*/ tmp10 = 100.0, tmp20 = 100.0;
-	int ikp = 1;
-	int /*i0 = 0,*/ /*idip0 = 1,*/ kk1 = 0, kk2 = 0;
+	//int ikp = 1;
+	//int i0 = 0, idip0 = 1, kk1 = 0, kk2 = 0;
 
 	for (int i=isize0; i<=ilast-isize0; ++i) {
 		core::Real tmp = resect[i];
@@ -119,15 +119,15 @@ DDomainParse::pulldomain( int isize0, int ist, int ilast, utility::vector1< core
 		core::Real de2 = resect[maxe2[i]] - tmp;
 
 		if (tmp < tmp20 && de1 > hcut_ && de2 > hcut_) {
-			ikp = i;
+			//ikp = i;  // set but never used ~Labonte
 			tmp20 = tmp;
 		}
 		if ((k1 > length_ && k2 > length_)) {
 			if (tmp < tmp10) {
 				tmp10 = tmp;
 				idip = i;
-				kk1 = k1;
-				kk2 = k2;
+				//kk1 = k1;  // set but never used ~Labonte
+				//kk2 = k2;  // set but never used ~Labonte
 			}
 		}
 	}

@@ -463,7 +463,7 @@ core::pack::rotamer_set::RotamerSetOP
 Motif::build_rotamers(
 	core::pose::Pose & pose,
 	Size const rotamer_build_position,
-	bool use_forward,
+	bool /*use_forward*/,
 	Size const ex_,
 	bool res2
 ) const
@@ -492,10 +492,10 @@ Motif::build_rotamers(
 	// Here's the aa to build
 	if( res2 ) {
 		aa_info[ aa_from_name( restype_name2() ) ] = true;
-		use_forward = true;
+		//use_forward = true;  // set but never used ~Labonte
 	} else {
 		aa_info[ aa_from_name( restype_name1() ) ] = true;
-		use_forward = false;
+		//use_forward = false;  // set but never used ~Labonte
 	}
 	// This functionality WILL fail if neither of the residues put into your constructor are amino acids
 	// Should put a safety check here to make sure that only amino acids are being rotamerized

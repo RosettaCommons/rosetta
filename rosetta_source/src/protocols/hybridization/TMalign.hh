@@ -2152,15 +2152,15 @@ public:
 
 		numeric::xyzVector <core::Real> t0;
 		numeric::xyzMatrix <core::Real> u0;
-		double d0_0, TM_0;
+		//double d0_0, TM_0;
 		double Lnorm_0=ylen;
 
 		//normalized by length of structure A
 		parameter_set4final(Lnorm_0);
 		d0A=d0;
-		d0_0=d0A;
+		//d0_0=d0A;  // set but never used ~Labonte
 		TM1=TMscore8_search(xtm, ytm, n_ali8_, t0, u0, simplify_step, score_sum_method, &rmsd);
-		TM_0=TM1;
+		//TM_0=TM1;  // set but never used ~Labonte
 
 		//normalized by length of structure B
 		parameter_set4final(xlen+0.0);

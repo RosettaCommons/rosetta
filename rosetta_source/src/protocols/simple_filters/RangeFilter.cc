@@ -38,17 +38,17 @@ namespace protocols {
 namespace simple_filters {
 
 // @brief default constructor
-RangeFilter::RangeFilter()
+RangeFilter::RangeFilter() : protocols::filters::Filter()
 {}
 
-RangeFilter::RangeFilter(Real lower_bound, Real upper_bound, FilterOP const & filter ) :
+RangeFilter::RangeFilter(Real lower_bound, Real upper_bound, FilterOP const & filter ) : protocols::filters::Filter(),
 	filter_(filter),
 	lower_bound_( lower_bound ),
 	upper_bound_( upper_bound )
 {}
 
 // @brief copy constructor
-RangeFilter::RangeFilter( RangeFilter const & rval ) :
+RangeFilter::RangeFilter( RangeFilter const & rval ) : protocols::filters::Filter(),
 	filter_( rval.filter_),
 	lower_bound_( rval.lower_bound_ ),
 	upper_bound_( rval.upper_bound_ )

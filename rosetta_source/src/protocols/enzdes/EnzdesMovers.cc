@@ -68,16 +68,17 @@ namespace enzdes {
 static basic::Tracer mv_tr("protocols.enzdes.PredesignPerturbMover");
 //PredesignPerturbMoverCreator
 
-EnzdesConstraintReporter::EnzdesConstraintReporter() :
+EnzdesConstraintReporter::EnzdesConstraintReporter() : utility::pointer::ReferenceCount(),
 	ligand_seqpos_( 0 )
 {}
 
 EnzdesConstraintReporter::~EnzdesConstraintReporter() {}
 
 EnzdesConstraintReporter::EnzdesConstraintReporter( EnzdesConstraintReporter const & src ) :
-	constrained_lig_atoms_( src.constrained_lig_atoms_ ),
-	constrained_nonligand_atoms_( src.constrained_nonligand_atoms_ ),
-	ligand_seqpos_( src.ligand_seqpos_ )
+		utility::pointer::ReferenceCount(),
+		constrained_lig_atoms_( src.constrained_lig_atoms_ ),
+		constrained_nonligand_atoms_( src.constrained_nonligand_atoms_ ),
+		ligand_seqpos_( src.ligand_seqpos_ )
 {}
 
 

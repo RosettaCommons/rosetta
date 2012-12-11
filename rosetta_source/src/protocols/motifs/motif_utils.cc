@@ -486,7 +486,7 @@ get_LigandMotifLibrary_user()
 		motifs.add_ligand_from_file( motif_filename ); //This is main change to continue on ligand path
 		mu_tr << "added motifs from file" << std::endl;
 		return motifs;
-		mu_tr << "returned motifs" << std::endl;
+		//mu_tr << "returned motifs" << std::endl;  // This code will never be reached. ~Labonte
 	} else {
 		// (not anymore) Program terminates if no MotifLibrary is given by the command line options
 		// utility_exit_with_message( "ERROR! User must provide input motifs as either a list of PDBs or as a motif file" );

@@ -124,12 +124,12 @@ InterfacePackingFilter::compute( core::pose::Pose const & pose ) const{
 	using namespace core::pose::symmetry;
 
 	core::pose::Pose sub_pose; 
-  core::scoring::packing::HolesParams hp(basic::database::full_name("scoring/rosettaholes/decoy15.params"));
+	core::scoring::packing::HolesParams hp(basic::database::full_name("scoring/rosettaholes/decoy15.params"));
 	core::Real cutoff2 = distance_cutoff_*distance_cutoff_;
-  core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
-  core::Size monomer_lower_bound, monomer_upper_bound, ir, jr, base;
-  utility::vector1<core::Size> sub_pose_resis, neighbor_resis;
-  core::Size count = 0; Real if_score = 0;
+	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
+	core::Size monomer_lower_bound, /*monomer_upper_bound,*/ ir, jr, base;
+	utility::vector1<core::Size> sub_pose_resis, neighbor_resis;
+	core::Size count = 0; Real if_score = 0;
 	utility::vector1<std::string> sym_dof_name_list;
 	std::string sym_dof_name;
 
@@ -159,7 +159,7 @@ InterfacePackingFilter::compute( core::pose::Pose const & pose ) const{
 			if ( is_upstream(i) ) continue;
 			if ( start ) monomer_lower_bound = i;
 			start = false;
-			monomer_upper_bound = i;
+			//monomer_upper_bound = i;  // set but never used ~Labonte
 			nres_monomer++;
 		}
 		TR << "nres_monomer: " << nres_monomer << " for sym_dof_name: " << sym_dof_name << std::endl;

@@ -503,7 +503,7 @@ class PartitionedSearchPattern : public SearchPattern
 			partition_(partition),
 			total_partitions_(total_partitions)
 		{
-			runtime_assert(partition >= 0 && partition < total_partitions && total_partitions > 0)
+			runtime_assert(partition < total_partitions)
 		}
 		
 		virtual utility::vector1<core::kinematics::Stub> Searchpoints()

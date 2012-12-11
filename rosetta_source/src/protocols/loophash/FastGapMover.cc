@@ -152,7 +152,7 @@ FastGapMover::find_next_gap( Pose & pose, Size & idx, Real & gap_distance ) {
 	// find chain breaks to add to gaplist
 	kinematics::FoldTree f( pose.fold_tree() );
 	for ( Size i = idx + 1; i < nres; ++i ) {
-			bool chain_break = false;
+			//bool chain_break = false;
 			Size j = i+1;
 			conformation::Residue const & rsd = pose.residue(i);
 			conformation::Residue const & next_rsd = pose.residue(j);
@@ -160,7 +160,7 @@ FastGapMover::find_next_gap( Pose & pose, Size & idx, Real & gap_distance ) {
 					Real dist_squared = rsd.atom( rsd.upper_connect_atom() ).xyz().distance_squared(next_rsd.atom( next_rsd.lower_connect_atom() ).xyz());
 					gap_distance = std::sqrt(dist_squared);
 					if (dist_squared > chain_break_cutoff || dist_squared < 0.1) {
-							chain_break = true;
+							//chain_break = true;  // set but never used ~Labonte
 							idx = i;
 							return;
 					}

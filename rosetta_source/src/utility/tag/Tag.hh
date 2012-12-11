@@ -83,7 +83,7 @@ public:
 			t = boost::lexical_cast<T>(i->second);
 		} catch(boost::bad_lexical_cast &) {
 			std::cerr << "getOption: key= " << key << " stream extraction failed! Tried to parse '" << i->second <<
-				"' returning uninitialized value: '" << t << "'" << std::endl;
+					"' returning uninitialized value: '" << t << "'" << std::endl;
 		}
 		return t;
 	}
@@ -102,7 +102,7 @@ public:
 			t = boost::lexical_cast<T>(i->second);
 		} catch(boost::bad_lexical_cast &) {
 			std::cerr << "getOption: key= " << key << " stream extraction failed! Tried to parse '" << i->second <<
-				"' returning uninitialized value: '" << t << "'" << std::endl;
+					"' returning uninitialized value: '" << t << "'" << std::endl;
 		}
 		return t;
 	}

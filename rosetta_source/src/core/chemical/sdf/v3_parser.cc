@@ -42,8 +42,8 @@ void V3Parser::ParseTable()
 	bool atom_block(false);
 	bool bond_block(false);
 	//std::map<core::Size,std::string> atom_type_data = this->ParseAtomTypeData();
-	core::Size atom_count(0);
-	core::Size bond_count(0);
+	//core::Size atom_count(0);
+	//core::Size bond_count(0);
 	for(core::Size line_number = 1; line_number <= ctab_length; ++line_number)
 	{
 		std::string current_line(this->connection_table_line(line_number));
@@ -59,8 +59,8 @@ void V3Parser::ParseTable()
 		}
 		if(line_vector[3] == "COUNTS")
 		{
-			atom_count = atoi(line_vector[4].c_str());
-			bond_count = atoi(line_vector[5].c_str());
+			//atom_count = atoi(line_vector[4].c_str());  // set but never used ~Labonte
+			//bond_count = atoi(line_vector[5].c_str());  // set but never used ~Labonte
 		}else if(line_vector[3] == "BEGIN")
 		{
 			if (line_vector[4] == "ATOM")

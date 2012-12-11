@@ -831,16 +831,16 @@ FoldTree::delete_segment(
 		if ( pos1 == -1 || pos2 == -1 ) assert( it->is_polymer() );
 
 		if ( pos1 == -1 ) {
-			assert( dir == n2c && it->start() == seg_begin && it->stop() > seg_end ||
-				dir == c2n && it->start() == seg_end   && it->stop() < seg_begin );
+			assert( (dir == n2c && it->start() == seg_begin && it->stop() > seg_end) ||
+				(dir == c2n && it->start() == seg_end   && it->stop() < seg_begin) );
 			if ( dir == n2c ) {
 				pos1 = seg_begin; // n2c
 			} else {
 				pos1 = seg_begin - 1; // c2n
 			}
 		} else if ( pos2 == -1 ) {
-			assert( dir == c2n && it->stop() == seg_begin && it->start() > seg_end ||
-				dir == n2c && it->stop() == seg_end   && it->start() < seg_begin );
+			assert( (dir == c2n && it->stop() == seg_begin && it->start() > seg_end) ||
+				(dir == n2c && it->stop() == seg_end   && it->start() < seg_begin) );
 			if ( dir == c2n ) {
 				pos2 = seg_begin; // c2n
 			} else {

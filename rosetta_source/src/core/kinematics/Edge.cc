@@ -120,8 +120,8 @@ operator >>( std::istream & is, Edge & e )
 	if ( e.stop_atom_ == "X" ) e.stop_atom_ = "";
 
 	// allow either both atoms set or both unset
-	assert( ( e.start_atom_.size() && e.stop_atom_.size() )
-		|| ( e.start_atom_.size() == 0) && (e.stop_atom_.size() ==0 ));
+	assert( ( (e.start_atom_.size() && e.stop_atom_.size()) )
+		|| (( e.start_atom_.size() == 0) && (e.stop_atom_.size() ==0 )));
 
 	is >> tag;
 	e.bKeepStubInResidue_ = false;

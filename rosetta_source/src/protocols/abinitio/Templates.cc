@@ -270,10 +270,10 @@ void
 Templates::scored_fragpick_list( TemplateList& frag_list ) const {
 	frag_list.clear();
 
-	bool bScoreFilter = false;
+	//bool bScoreFilter = false;
 	Real wTopol( 0.0 ), wExtern( 0.0 );
 	if ( option[ templates::fragsteal::topN ].user() ) {
-		bScoreFilter = true;
+		//bScoreFilter = true;  // set but never used ~Labonte
 		wTopol = option[ templates::fragsteal::wTopol ];
 		wExtern = option[ templates::fragsteal::wExtern ];
 	}

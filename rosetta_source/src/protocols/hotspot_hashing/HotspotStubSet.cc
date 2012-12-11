@@ -1296,14 +1296,14 @@ HotspotStubSet::add_hotspot_constraints_to_pose(
 	}
 
 	TR << "Making hotspot constraints..." << std::endl;
-	Size scaffold_seqpos(0);
+	//Size scaffold_seqpos(0);
 	for ( core::Size resnum=1; resnum <= pose.total_residue(); ++resnum ) {
 
 		// Check that this position is allowed to be used for stub constraints
 		if ( ! packer_task->pack_residue(resnum) ) continue;
 
 		// sets the index used by the hotspot for its associated scaffold
-		scaffold_seqpos = resnum - pose.conformation().chain_begin( pose.chain( resnum ) );
+		//scaffold_seqpos = resnum - pose.conformation().chain_begin( pose.chain( resnum ) );  // set but never used
 
 		// Start the vector which will become a single AmbiguousConstraint, if apply_ambiguous_constraints is true
 		utility::vector1< core::scoring::constraints::ConstraintCOP > ambig_csts;

@@ -231,7 +231,7 @@ return "StepWisePoseSetup";
 	StepWisePoseSetup::figure_out_working_sequence_and_mapping(){
 
 		utility::vector1< std::pair< core::Size, core::Size > > chain_boundaries;
-		core::Size num_chains;
+		//core::Size num_chains;
 		std::map< core::Size, core::Size > full_to_sub;
 		std::string working_sequence;
 
@@ -294,7 +294,7 @@ return "StepWisePoseSetup";
 		//		std::cout << "FOUND CHAIN " << start_chain << " " << end_chain << std::endl;
 		//		check_moving_res_in_chain( start_chain, end_chain, chain_boundaries.size(), which_chain_has_moving_res );
 
-		num_chains = chain_boundaries.size();
+		//num_chains = chain_boundaries.size();  // set but never used ~Labonte
 
 		//		if  ( which_chain_has_moving_res== 0 ) {
 		//			utility_exit_with_message( "Could not figure out which chain to attach moving_res to!" );

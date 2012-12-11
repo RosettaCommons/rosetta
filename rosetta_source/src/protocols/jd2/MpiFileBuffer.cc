@@ -256,17 +256,18 @@ bool MpiFileBuffer::remote_close_file( std::string const& filename ) {
 
 
 void MpiFileBuffer::release_file( std::string filename ) {
-//if this is a reference i get seqfault, since it might point into list where I erease  from...
+	//if this is a reference I get seqfault, since it might point into list where I erase from...
 	std::list< std::string >::iterator iter = find( blocked_files_.begin(), blocked_files_.end(), filename );
 	if ( iter != blocked_files_.end() ) {
 		blocked_files_.erase( iter );
 		runtime_assert( buffer_rank_ != my_rank_ );
+#ifdef USEMPI
 		int buf[ 4 ];
 		buf[ 0 ] = my_rank_;
 		buf[ 1 ] = filename.size();
 		buf[ 2 ] = MPI_RELEASE_FILE;
 		buf[ 3 ] = 0;
-#ifdef USEMPI
+//#ifdef USEMPI
 		tr.Debug << "release file " << filename << std::endl;
 		MPI_Send(buf, 4, MPI_INT, buffer_rank_, MPI_STREAM_TAG, MPI_COMM_WORLD );
 		//don't send filename again....

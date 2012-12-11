@@ -84,13 +84,13 @@ ABEGO::check_rama( Real const & phi, Real const & psi, Real const & omega )
 }
 
 /// @brief default constructor
-ABEGOManager::ABEGOManager()
+ABEGOManager::ABEGOManager() : utility::pointer::ReferenceCount()
 {
 	initialize();
 }
 
 /// @brief copy constructor	
-ABEGOManager::ABEGOManager( ABEGOManager const & rval ):
+ABEGOManager::ABEGOManager( ABEGOManager const & rval ) : utility::pointer::ReferenceCount(),
 	totnum_abego_( rval.totnum_abego_ ),
 	name2abego_( rval.name2abego_ )
 {}

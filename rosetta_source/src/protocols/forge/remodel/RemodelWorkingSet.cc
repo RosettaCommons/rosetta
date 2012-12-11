@@ -155,7 +155,7 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 	int model_length = (int)data.sequence.size();
 	bool NtermExt = false;
 	bool CtermExt = false;
-	bool length_changed = false;
+	//bool length_changed = false;
 
 	// copy ss/seq from RemodelData so it can be passed elsewhere later
 	this->ss = data.dssp_updated_ss;
@@ -190,7 +190,7 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 	}
 
 	if (data.blueprint[model_length-1].index != data.blueprint[model_length-1].original_index) {
-		length_changed = true;
+		//length_changed = true;  set but never used ~Labonte
 		std::cout << "length change found" << std::endl;
 	}
 

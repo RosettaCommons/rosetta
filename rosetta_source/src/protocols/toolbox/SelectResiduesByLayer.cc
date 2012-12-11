@@ -42,7 +42,7 @@ namespace protocols {
 namespace toolbox {
 
 /// @brief default constructor
-SelectResiduesByLayer::SelectResiduesByLayer():
+SelectResiduesByLayer::SelectResiduesByLayer() : utility::pointer::ReferenceCount(),
 	pick_core_( false ),
 	pick_boundary_( false ),
 	pick_surface_( false ),
@@ -54,7 +54,10 @@ SelectResiduesByLayer::SelectResiduesByLayer():
 
 
 /// @brief value constructor
-SelectResiduesByLayer::SelectResiduesByLayer( bool const pick_core, bool const pick_boundary, bool const pick_surface ):
+SelectResiduesByLayer::SelectResiduesByLayer(
+		bool const pick_core,
+		bool const pick_boundary,
+		bool const pick_surface ) : utility::pointer::ReferenceCount(),
 	pick_core_( pick_core ),
 	pick_boundary_( pick_boundary ),
 	pick_surface_( pick_surface ),
@@ -65,7 +68,7 @@ SelectResiduesByLayer::SelectResiduesByLayer( bool const pick_core, bool const p
 }
 
 /// @brief value constructor
-SelectResiduesByLayer::SelectResiduesByLayer( String const pick ):
+SelectResiduesByLayer::SelectResiduesByLayer( String const pick ) : utility::pointer::ReferenceCount(),
 	pick_core_( false ),
 	pick_boundary_( false ),
 	pick_surface_( false ),
@@ -93,7 +96,7 @@ SelectResiduesByLayer::SelectResiduesByLayer( String const pick ):
 SelectResiduesByLayer::~SelectResiduesByLayer() {}
 
 /// @brief copy constructor
-SelectResiduesByLayer::SelectResiduesByLayer( SelectResiduesByLayer const & rval ):
+SelectResiduesByLayer::SelectResiduesByLayer( SelectResiduesByLayer const & rval ) : utility::pointer::ReferenceCount(),
 	pick_core_( rval.pick_core_ ),
 	pick_boundary_( rval.pick_boundary_ ),
 	pick_surface_( rval.pick_surface_ ),

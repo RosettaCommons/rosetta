@@ -550,7 +550,7 @@ RNA_StructureParameters::add_new_RNA_jump(
 
 	char e1('W') ,e2('W'), o('A');
 	bool found_pairing( false );
-	bool flip( false ); // wait, why do we need flip?
+	//bool flip( false ); // wait, why do we need flip?  // We don't. ~Labonte
 	for ( Size n = 1;  n <= rna_pairing_list_.size(); n++ ){
 		RNA_Pairing pairing = rna_pairing_list_[n];
 		if (pairing.pos1 == jump_pos1 && pairing.pos2 == jump_pos2 ){
@@ -558,7 +558,7 @@ RNA_StructureParameters::add_new_RNA_jump(
 			e2 = pairing.edge2;
 			o  = pairing.orientation;
 			found_pairing = true;
-			flip = false;
+			//flip = false;  // set but never used ~Labonte
 			break;
 		}
 		if (pairing.pos1 == jump_pos2 && pairing.pos2 == jump_pos1 ){
@@ -566,7 +566,7 @@ RNA_StructureParameters::add_new_RNA_jump(
 			e2 = pairing.edge1;
 			o  = pairing.orientation;
 			found_pairing = true;
-			flip = true;
+			//flip = true;  // set but never used ~Labonte
 			break;
 		}
 	}

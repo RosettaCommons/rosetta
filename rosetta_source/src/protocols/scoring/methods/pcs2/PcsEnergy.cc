@@ -488,7 +488,7 @@ PcsEnergy::CA_search_scores_and_tensors(utility::vector1<core::Real> & vec_best_
 																				GridSearchIteratorCA & grid_it) const{
 
 	core::Real x, y, z;
-	core::Real best_score, score;
+	core::Real best_score/*, score*/;  // redefined later ~Labonte
 	core::Size i;
 	core::Size size_of;
 	utility::vector1<core::Real> vec_score_temp;
@@ -573,7 +573,7 @@ PcsEnergy::CA_search_scores_and_tensors(utility::vector1<core::Real> & vec_best_
 		test_at_least_one_iteration = true;
 		//		std::cerr << "Trying " << x << " " << y << " " << z << std::endl;
 		temp_coo.assign(x, y, z);
-		score = 0;
+		//score = 0;
 
 
 		vect_to_opti[1] = x;
@@ -678,7 +678,7 @@ PcsEnergy::CA_search_scores_and_tensors_with_svd(utility::vector1<core::Real> & 
 																								GridSearchIteratorCA & grid_it) const{
 
 	core::Real x, y, z;
-	core::Real best_score, score;
+	core::Real best_score/*, score*/;  // redefined later ~Labonte
 	core::Size i;
 	core::Size size_of;
 	utility::vector1<core::Real> vec_score_temp;
@@ -735,7 +735,6 @@ PcsEnergy::CA_search_scores_and_tensors_with_svd(utility::vector1<core::Real> & 
 	core::Real epsilon(0.0001);
 
 
-
 	utility::vector1<core::Real> vect_to_opti;
 
 	vect_to_opti.push_back(0);
@@ -754,7 +753,7 @@ PcsEnergy::CA_search_scores_and_tensors_with_svd(utility::vector1<core::Real> & 
 		test_at_least_one_iteration = true;
 		//		std::cerr << "Trying " << x << " " << y << " " << z << std::endl;
 		temp_coo.assign(x, y, z);
-		score = 0;
+		//score = 0;
 
 
 		vect_to_opti[1] = x;

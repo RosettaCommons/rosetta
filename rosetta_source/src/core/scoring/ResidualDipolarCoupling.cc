@@ -470,15 +470,15 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 		++nrow;
 		numeric::xyzVector<Real> r( pose.residue(it->res1()).atom(it->atom1()).xyz() - pose.residue(it->res2()).atom(it->atom2()).xyz());
 
-    core::Real r2 = r.norm_squared();
-    core::Real scale_to_NH = 36.5089/1.042/1.042/1.042;
-    if ( correct_NH ) scale_to_NH = 36.5089/1.042/1.042/1.042;
-    core::Real invr = 1.0 / sqrt(r2);
-    if ( it->type() == RDC::RDC_TYPE_NH && correct_NH ) {
-        r.normalize(1.042);
-        r2 = 1.042 * 1.042;
-        invr = 1.0 / sqrt(r2);
-    }
+		core::Real r2 = r.norm_squared();
+		//core::Real scale_to_NH = 36.5089/1.042/1.042/1.042;
+		//if ( correct_NH ) scale_to_NH = 36.5089/1.042/1.042/1.042; // set but never used ~Labonte
+		core::Real invr = 1.0 / sqrt(r2);
+		if ( it->type() == RDC::RDC_TYPE_NH && correct_NH ) {
+			r.normalize(1.042);
+			r2 = 1.042 * 1.042;
+			invr = 1.0 / sqrt(r2);
+		}
 
 		core::Real pfac = it->Dconst();
 		bool bCSA(false);// hook up for later... to compute chemical shift anisotropy

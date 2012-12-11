@@ -24,7 +24,7 @@
 // AUTO-REMOVED #include <core/pose/PDBInfo.hh> // temp
 #include <core/scoring/sasa.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
+#include <basic/Tracer.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/ubyte.hh>
@@ -53,9 +53,9 @@
 
 //#define FILE_DEBUG 1
 
-#ifdef FILE_DEBUG
+//#ifdef FILE_DEBUG
 static basic::Tracer TR("core.scoring.sasa");
-#endif
+//#endif
 
 using namespace ObjexxFCL::fmt;
 
@@ -911,9 +911,9 @@ calc_per_res_hydrophobic_sasa( pose::Pose const & pose,
 
 	core::Real total_sasa = 0.0;
 	total_sasa = core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, false /* no big polar H */, atom_subset, use_naccess_sasa_radii );
-	#ifdef FILE_DEBUG
-		TR << "total_sasa: " << total_sasa << std::endl;
-	#endif
+	//#ifdef FILE_DEBUG
+		TR.Debug << "total_sasa: " << total_sasa << std::endl;
+	//#endif
 
 	// now we have to figure out how much hydrophobic sasa each atom/residue has
 	core::Real total_hydrophobic_sasa = 0.0;
@@ -958,7 +958,7 @@ calc_per_res_hydrophobic_sasa( pose::Pose const & pose,
 	return total_hydrophobic_sasa;
 }
 
-
+#ifdef FILE_DEBUG
 ///
 /// @begin sasa.cc::print_dot_bit_string
 ///
@@ -968,23 +968,24 @@ calc_per_res_hydrophobic_sasa( pose::Pose const & pose,
 void print_dot_bit_string( utility::vector1< ObjexxFCL::ubyte > & values ) {
 	for ( int bb = 1; bb <= num_bytes; ++bb ) {
 		int bit;
-#ifdef FILE_DEBUG
+//#ifdef FILE_DEBUG
 		if ( (bb-1)*8 % 16 == 0 ) std::cout << (bb-1) * 8 << ":";
-#endif
+//#endif
 		for ( int index=7; index >= 0; index-- ) {
 			bit = ( ( (int)values[ bb ] >> index ) & 1 );
-#ifdef FILE_DEBUG
+//#ifdef FILE_DEBUG
 			std::cout << bit;
-#endif
+//#endif
 		}
-#ifdef FILE_DEBUG
+//#ifdef FILE_DEBUG
 		std::cout << " ";
-#endif
+//#endif
 	}
-#ifdef FILE_DEBUG
+//#ifdef FILE_DEBUG
 	std::cout << std::endl;
-#endif
+//#endif
 }
+#endif
 
 } // namespace scoring
 } // namespace core

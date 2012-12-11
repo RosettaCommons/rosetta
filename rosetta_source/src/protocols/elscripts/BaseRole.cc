@@ -85,21 +85,21 @@ void BaseRole::lua_init(){
     luaL_openlibs(lstate_);
 
     // start everything into a elscripts namespace
-    std::string action = R"DELIM(
-      els = {}
-      setmetatable(els, {__index = _G })
-      do
-        local _ENV = els
-        dtasks = {}
-        dscorefxns = {}
-        dmovers = {}
-        dfilters = {}
-        dinputters = {}
-        dinputterstream = {}
-        doutputters = {}
-        dworkunits = {}
-      end
-      )DELIM";
+    std::string action = "DELIM(\n"
+      "els = {}\n"
+      "setmetatable(els, {__index = _G })\n"
+      "do\n"
+      "  local _ENV = els\n"
+      "  dtasks = {}\n"
+      "  dscorefxns = {}\n"
+      "  dmovers = {}\n"
+      "  dfilters = {}\n"
+      "  dinputters = {}\n"
+      "  dinputterstream = {}\n"
+      "  doutputters = {}\n"
+      "  dworkunits = {}\n"
+      "end\n"
+      ")DELIM";
     int err = luaL_dostring ( lstate_, action.c_str() );
     if( err == 1) {
       TR << "Creating els namespace failed. Error is:" << std::endl;
@@ -144,20 +144,20 @@ void BaseRole::lua_init(){
       std::ifstream script( scriptname );
       std::string script_contents((std::istreambuf_iterator<char>(script)),
                       std::istreambuf_iterator<char>());
-      std::string closure_script = R"DELIM(
-        do
-          local _ENV = _ENV
-          function els_setenv(t) _ENV = t end
-          function loop_every()
-            master:make_wu_until_limit("default", 1)
-          end
-          )DELIM"
-          // I guess manually load in modules here
-          + modules::MonteCarlo
-          + script_contents
-          + R"(
-        end
-        )";
+      std::string closure_script = "DELIM(\n"
+        "do\n"
+        "  local _ENV = _ENV\n"
+        "  function els_setenv(t) _ENV = t end\n"
+        "  function loop_every()\n"
+        "    master:make_wu_until_limit(\"default\", 1)\n"
+        "  end\n"
+        "  )DELIM"
+        // I guess manually load in modules here
+        + modules::MonteCarlo
+        + script_contents
+        + "(\n"
+        "end\n"
+        ")";
       err = luaL_dostring ( lstate_, closure_script.c_str() );
       if( err == 1) {
         TR << "Loading lua script '" << scriptname << "' failed. Error is:" << std::endl;

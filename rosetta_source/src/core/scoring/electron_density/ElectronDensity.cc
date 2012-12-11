@@ -2863,15 +2863,15 @@ core::Real ElectronDensity::matchRes(
 
 			numeric::xyzVector< core::Real > dVdx_ij(0,0,0), dOdx_ij(0,0,0), dO2dx_ij(0,0,0), dCOdx_ij(0,0,0), dC2dx_ij(0,0,0), dCdx_ij(0,0,0);
 
-			core::Real k;
-			if ( j <= nResAtms) {
+			//core::Real k;
+			/*if ( j <= nResAtms) {
 				std::string elt_i = atom_type_set[ rsd.atom_type_index( j ) ].element();
 				OneGaussianScattering sig_j = get_A( elt_i );
-				k = sig_j.k( PattersonB, max_del_grid );
+				//k = sig_j.k( PattersonB, max_del_grid );  // set but never used ~Labonte
 			} else {
-				OneGaussianScattering const &sig_j = contextAtomAs[j-nResAtms];
-				k = sig_j.k( PattersonB, max_del_grid );
-			}
+				OneGaussianScattering const & sig_j = contextAtomAs[j-nResAtms];
+				//k = sig_j.k( PattersonB, max_del_grid );  // set but never used ~Labonte
+			}*/
 
 			int npoints = rho_dx_pt_ij.size();
 			for (int n=1; n<=npoints; ++n) {

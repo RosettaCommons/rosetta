@@ -69,19 +69,19 @@ DatabaseResourceLocatorCreator::locator_type() const {
 
 ///// DatabaseResourceLocator /////
 
-DatabaseResourceLocator::DatabaseResourceLocator() {}
+DatabaseResourceLocator::DatabaseResourceLocator() : basic::resource_manager::ResourceLocator() {}
 
 DatabaseResourceLocator::DatabaseResourceLocator(
 	std::string const & database_session_resource_tag,
 	std::string const & sql_command
-) :
+) : basic::resource_manager::ResourceLocator(),
 	database_session_resource_tag_(database_session_resource_tag),
 	sql_command_(sql_command)
 {}
 
 DatabaseResourceLocator::DatabaseResourceLocator(
 	DatabaseResourceLocator const & src
-) :
+) : basic::resource_manager::ResourceLocator(),
 	database_session_resource_tag_(src.database_session_resource_tag_),
 	sql_command_(src.sql_command_),
 	column_separator_(src.column_separator_)

@@ -3586,7 +3586,9 @@ void HPatchInteractionGraph< V, E, G >::blanket_assign_state_0() {
 	// instead of calling update_internal, just reset the cached energy values to zero. the values should already be
 	// at zero because they are default init'd by the constructor to be 0, but the unit tests re-use the same IG and
 	// just call prep_for_simA() and this method to reinit the IG.
-	total_energy_current_state_assignment_ = total_energy_current_state_assignment_ = 0.0;
+
+	// Was total_energy_alternate_state_assignment_ intended below as well? ~Labonte
+	total_energy_current_state_assignment_ = /*total_energy_current_state_assignment_ =*/ 0.0;
 	hpatch_energy_current_state_assignment_ = hpatch_energy_alternate_state_assignment_ = 0.0;
 
 	/// set all nodes as participating in a rotamer substitution if any node's state is 0 (unassigned)

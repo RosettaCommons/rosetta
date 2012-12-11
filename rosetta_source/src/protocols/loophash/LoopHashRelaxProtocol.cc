@@ -197,7 +197,7 @@ LoopHashRelaxProtocol::manual_call( core::pose::Pose& pose ){
     }
 
     core::Real bestcenscore = MAXIMAL_FLOAT;
-    core::Size bestcenindex = 0;
+    //core::Size bestcenindex = 0;
     for( core::Size h = 0; h < select_lib_structs.size(); h++){
       core::pose::Pose rpose;
       select_lib_structs[h]->fill_pose( rpose );
@@ -213,7 +213,7 @@ LoopHashRelaxProtocol::manual_call( core::pose::Pose& pose ){
       TR.Info << "refrms: " << refrms << "  Energy: " << decoy_score << std::endl;
       if( decoy_score < bestcenscore ){
         bestcenscore = decoy_score;
-        bestcenindex = h;
+        //bestcenindex = h;  // set but never used ~Labonte
       }
     }
     TR.Info << "Best:" << "  Energy: " << bestcenscore << std::endl;
@@ -226,7 +226,7 @@ LoopHashRelaxProtocol::manual_call( core::pose::Pose& pose ){
     TR.Info << "Batchrelax time: " << endtime - starttime << " for " << select_lib_structs.size() << " structures " << std::endl;
 
     core::Real bestscore = MAXIMAL_FLOAT;
-    core::Size bestindex = 0;
+    //core::Size bestindex = 0;
     core::pose::Pose relax_winner;
     for( core::Size h = 0; h < select_lib_structs.size(); h++){
       TR.Info << "DOING: " << h << " / " << select_lib_structs.size() << std::endl;
@@ -242,7 +242,7 @@ LoopHashRelaxProtocol::manual_call( core::pose::Pose& pose ){
 
       if( score < bestscore ){
         bestscore = score;
-        bestindex = h;
+        //bestindex = h;  // set but never used ~Labonte
         relax_winner = rpose;
       }
     }

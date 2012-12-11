@@ -241,19 +241,19 @@ void APCluster::update_r_ik(core::Real lambda)
 		// Compute the max and runner-up just once per point.
 		// Reduces time complexity from O(N^3) to O(N^2)
 		core::Real max1 = p.a_kk + p.s_kk, max2 = p.a_kk + p.s_kk;
-		core::Size max1_k = i, max2_k = i;
+		core::Size max1_k = i/*, max2_k = i*/;
 		for(core::Size kk = 1, kk_end = p.candidates.size(); kk <= kk_end; ++kk) {
 			Exemplar const & e_kk = p.candidates[kk];
 			core::Real const as = e_kk.a_ik + e_kk.s_ik;
 			if( as >= max2 ) {
 				if( as >= max1 ) {
 					max2 = max1;
-					max2_k = max1_k;
+					//max2_k = max1_k;  // set but never used ~Labonte
 					max1 = as;
 					max1_k = e_kk.k;
 				} else {
 					max2 = as;
-					max2_k = e_kk.k;
+					//max2_k = e_kk.k;  // set but never used ~Labonte
 				}
 			}
 		}

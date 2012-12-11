@@ -128,14 +128,14 @@ FileStream::stream() {
 
 FileSystemResourceLocator::FileSystemResourceLocator(
 	std::ios_base::openmode open_mode
-) :
+) : basic::resource_manager::ResourceLocator(),
 	open_mode_(open_mode)
 {}
 
 
 FileSystemResourceLocator::FileSystemResourceLocator(
-  FileSystemResourceLocator const & src
-) :
+		FileSystemResourceLocator const & src
+) : basic::resource_manager::ResourceLocator(),
 	open_mode_(src.open_mode_)
 {}
 

@@ -79,7 +79,7 @@ void CSScore::do_caching(VallChunkOP current_chunk) {
 	////ONLY USED IN THE OLD MFR VERSION OF THE SCORE
 	//Real const clip_factor(3.0);
 
-	bool vall_data(false);
+	//bool vall_data(false);
 	trCSScore.Debug << "caching CS score for " << current_chunk->get_pdb_id()
 	                        << " of size " << current_chunk->size() << std::endl;
 
@@ -146,7 +146,7 @@ void CSScore::do_caching(VallChunkOP current_chunk) {
 
 					tmp += sigmoid_diff;
 					count += 1;
-					vall_data = true;
+					//vall_data = true;  set but never used ~Labonte
 
 
 					//THIS IS WHAT THE ORIGINAL CSROSETTA CS SCORE FUNCTION LOOKED LIKE:

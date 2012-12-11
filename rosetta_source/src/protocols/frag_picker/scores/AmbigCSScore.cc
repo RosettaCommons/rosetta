@@ -83,9 +83,9 @@ void AmbigCSScore::do_caching(VallChunkOP current_chunk) {
 	//larger differences are adjusted down to clip_factor*v_shift
 	//Real const clip_factor(3.0);
 
-	bool vall_data(false);
+	//bool vall_data(false);
 	trAmbigCSScore << "caching CS score for " << current_chunk->get_pdb_id()
-	                        << " of size " << current_chunk->size() << std::endl;
+			<< " of size " << current_chunk->size() << std::endl;
 
 	//Check to see if the cache needs to be recalculated
 	std::string & tmp = current_chunk()->chunk_key();
@@ -99,7 +99,7 @@ void AmbigCSScore::do_caching(VallChunkOP current_chunk) {
 	std::pair< Real, Real > empty(0,0);
 	utility::vector1< utility::vector1< std::pair< Real, Real> > > temp( current_chunk->size(),
 	utility::vector1<std::pair< Real, Real> > (query_sequence_length, empty ) );
-  runtime_assert( target_Ashifts_.size() > 0 );
+	runtime_assert( target_Ashifts_.size() > 0 );
 
 	//SIGMOID CONSTANTS - Should be set in constructor, not command line flags
 	Real a( option[frags::sigmoid_cs_A]() ); // default = 4
@@ -154,7 +154,7 @@ void AmbigCSScore::do_caching(VallChunkOP current_chunk) {
 
 					tmp += sigmoid_diff;
 					count += 1;
-					vall_data = true;
+					//vall_data = true;  set but never used ~Labonte
 
 
 					//THIS IS WHAT THE ORIGINAL CSROSETTA CS SCORE FUNCTION LOOKED LIKE:

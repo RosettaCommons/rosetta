@@ -36,10 +36,10 @@ Constraint::show_violations(
 	std::ostream & out,
 	pose::Pose const &,
 	Size,
-	Real threshold
+	Real /*threshold*/
 ) const {
 	out << "Constraint_show_violation stubbed out!\n" ;
-	threshold = 1; //to make compile happy
+	//threshold = 1; //to make compile happy // set but never used ~Labonte
 	return 0;
 }
 

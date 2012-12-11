@@ -865,7 +865,7 @@ void PocketGrid::searchX(core::Size thr, bool psp){
       bool t_surf=false;
       core::Size count=0;
       core::Size pcount=0;
-      int start=-1;
+      //int start=-1;
       for (core::Size x=0;x<xdim_;x++){
         if (surf){
           if (psp){
@@ -885,7 +885,7 @@ void PocketGrid::searchX(core::Size thr, bool psp){
                     if (grid_[x-c][y][z]==EMPTY) grid_[x-c][y][z]=PSP;
                 }
               }
-              start=x;
+              //start=x;  // set but never used ~Labonte
               count=0;
               if (grid_[x][y][z]==HSURFACE || grid_[x][y][z]==PSURFACE || grid_[x][y][z]==T_SURFACE) pcount=0;
             } else{
@@ -906,7 +906,7 @@ void PocketGrid::searchX(core::Size thr, bool psp){
                   else if (grid_[x][y][z]!=TP_POCKET)  grid_[x-c][y][z]=POCKET;
                 }
               }
-              start=x;
+              //start=x;  // set but never used ~Labonte
               count=0;
             } else{
               count=0;
@@ -923,7 +923,7 @@ void PocketGrid::searchX(core::Size thr, bool psp){
               surf=true;
               if (grid_[x][y][z]==T_SURFACE||grid_[x][y][z]==TP_POCKET) t_surf=true;
               count=0;
-              start=x;
+              //start=x;  // set but never used ~Labonte
             }
 
           }else{
@@ -931,7 +931,7 @@ void PocketGrid::searchX(core::Size thr, bool psp){
               surf=true;
               if (grid_[x][y][z]==T_SURFACE) t_surf=true;
               count=0;
-              start=x;
+              //start=x;  // set but never used ~Labonte
             }
           }
         }
@@ -946,7 +946,7 @@ void PocketGrid::searchY(core::Size thr, bool psp){
       bool t_surf=false;
       core::Size count=0;
       core::Size pcount=0;
-      int start=-1;
+      //int start=-1;
       for (core::Size y=0;y<ydim_;y++){
         if (surf){
           if (psp){
@@ -967,7 +967,7 @@ void PocketGrid::searchY(core::Size thr, bool psp){
                     if (grid_[x][y-c][z]==EMPTY) grid_[x][y-c][z]=PSP;
                 }
               }
-              start=x;
+              //start=x;  // set but never used ~Labonte
               count=0;
               if (grid_[x][y][z]==HSURFACE || grid_[x][y][z]==PSURFACE || grid_[x][y][z]==T_SURFACE) pcount=0;
             } else{
@@ -988,7 +988,7 @@ void PocketGrid::searchY(core::Size thr, bool psp){
                   else if (grid_[x][y][z]!=TP_POCKET)  grid_[x][y-c][z]=POCKET;
                 }
               }
-              start=y;
+              //start=y;  // set but never used ~Labonte
               count=0;
             } else{
               count=0;
@@ -1005,7 +1005,7 @@ void PocketGrid::searchY(core::Size thr, bool psp){
               surf=true;
               if (grid_[x][y][z]==T_SURFACE||grid_[x][y][z]==TP_POCKET) t_surf=true;
               count=0;
-              start=x;
+              //start=x;  // set but never used ~Labonte
             }
 
           }else{
@@ -1013,7 +1013,7 @@ void PocketGrid::searchY(core::Size thr, bool psp){
               surf=true;
               if (grid_[x][y][z]==T_SURFACE) t_surf=true;
               count=0;
-              start=y;
+              //start=y;  // set but never used ~Labonte
             }
           }
         }
@@ -1029,7 +1029,7 @@ void PocketGrid::searchZ(core::Size thr, bool psp){
       bool t_surf=false;
       core::Size count=0;
       core::Size pcount=0;
-      int start=-1;
+      //int start=-1;
       for (core::Size z=0;z<zdim_;z++){
         if (surf){
           if (psp){
@@ -1050,7 +1050,7 @@ void PocketGrid::searchZ(core::Size thr, bool psp){
                   ;
                 }
               }
-              start=x;
+              //start=x;  // set but never used ~Labonte
               count=0;
               if (grid_[x][y][z]==HSURFACE || grid_[x][y][z]==PSURFACE || grid_[x][y][z]==T_SURFACE) pcount=0;
             } else{
@@ -1071,7 +1071,7 @@ void PocketGrid::searchZ(core::Size thr, bool psp){
                   else if (grid_[x][y][z]!=TP_POCKET)  grid_[x][y][z-c]=POCKET;
                 }
               }
-              start=z;
+              //start=z;  // set but never used ~Labonte
               count=0;
             } else{
               count=0;
@@ -1088,7 +1088,7 @@ void PocketGrid::searchZ(core::Size thr, bool psp){
               surf=true;
               if (grid_[x][y][z]==T_SURFACE||grid_[x][y][z]==TP_POCKET) t_surf=true;
               count=0;
-              start=x;
+              //start=x;  // set but never used ~Labonte
             }
 
           }else{
@@ -1096,7 +1096,7 @@ void PocketGrid::searchZ(core::Size thr, bool psp){
               surf=true;
               if (grid_[x][y][z]==T_SURFACE) t_surf=true;
               count=0;
-              start=z;
+              //start=z;  // set but never used ~Labonte
             }
           }
         }
@@ -1120,8 +1120,8 @@ void PocketGrid::searchD1(core::Size thr, bool psp){
       core::Size count=0;
       core::Size pcount=0;
       core::Size count2=0;
-      int start=-1;
-      bool empty=false;
+      //int start=-1;
+      //bool empty=false;
       int x=ix;
       int y=iy;
       int z=zstart;
@@ -1155,7 +1155,7 @@ void PocketGrid::searchD1(core::Size thr, bool psp){
                     if (grid_[x-xfact*c][y-yfact*c][z-zfact*c]==EMPTY) grid_[x-xfact*c][y-yfact*c][z-zfact*c]=PSP;
                 }
               }
-              start=c;
+              //start=c;  // set but never used ~Labonte
               count=0;
               if (grid_[x][y][z]==HSURFACE || grid_[x][y][z]==PSURFACE || grid_[x][y][z]==T_SURFACE) pcount=0;
             } else{
@@ -1168,7 +1168,7 @@ void PocketGrid::searchD1(core::Size thr, bool psp){
           }else{
             if (grid_[x][y][z]==EMPTY||grid_[x][y][z]==POCKET||grid_[x][y][z]==TP_POCKET){
               count++;
-              empty=true;
+              //empty=true;
             }else if (grid_[x][y][z]==HSURFACE || grid_[x][y][z]==PSURFACE||grid_[x][y][z]==T_SURFACE){
               if (grid_[x][y][z]==T_SURFACE) t_surf=true;
               if (count> thr){
@@ -1178,17 +1178,17 @@ void PocketGrid::searchD1(core::Size thr, bool psp){
                 }
 
               }
-              start=c;
+              //start=c;  // set but never used ~Labonte
               count=0;
               if (grid_[x][y][z]==T_SURFACE) t_surf=true;
               else t_surf=false;
-              empty=false;
+              //empty=false;
             } else{
               count=0;
               pcount=0;
               surf=false;
               t_surf=false;
-              empty=false;
+              //empty=false;
             }
           }
         }else{
@@ -1199,7 +1199,7 @@ void PocketGrid::searchD1(core::Size thr, bool psp){
               surf=true;
               if (grid_[x][y][z]==T_SURFACE) t_surf=true;
               count=0;
-              start=c;
+              //start=c;  // set but never used ~Labonte
             }
 
           }else{
@@ -1207,8 +1207,8 @@ void PocketGrid::searchD1(core::Size thr, bool psp){
               surf=true;
               if (grid_[x][y][z]==T_SURFACE) t_surf=true;
               count=0;
-              start=c;
-              empty=false;
+              //start=c;  // set but never used ~Labonte
+              //empty=false;
             }
           }
         }
@@ -1231,7 +1231,7 @@ void PocketGrid::searchD2(core::Size thr, bool psp){
       core::Size count=0;
       core::Size pcount=0;
       core::Size count2=0;
-      int start=-1;
+      //int start=-1;
       for (int c=0;c<diag;c++){
         int x=(ix+xfact*count2);
         while (x<0) {x+=xdim_;count=0;}
@@ -1263,7 +1263,7 @@ void PocketGrid::searchD2(core::Size thr, bool psp){
 
                 }
               }
-              start=c;
+              //start=c;  // set but never used ~Labonte
               count=0;
               if (grid_[x][y][z]==HSURFACE || grid_[x][y][z]==PSURFACE || grid_[x][y][z]==T_SURFACE) pcount=0;
             } else{
@@ -1284,7 +1284,7 @@ void PocketGrid::searchD2(core::Size thr, bool psp){
                   else if (grid_[x-xfact*c][y-yfact*c][z-zfact*c]!=TP_POCKET) grid_[x-xfact*c][y-yfact*c][z-zfact*c]=POCKET;
                 }
               }
-              start=c;
+              //start=c;  // set but never used ~Labonte
               count=0;
             } else{
               count=0;
@@ -1301,14 +1301,14 @@ void PocketGrid::searchD2(core::Size thr, bool psp){
               surf=true;
               if (grid_[x][y][z]==T_SURFACE) t_surf=true;
               count=0;
-              start=c;
+              //start=c;  // set but never used ~Labonte
             }
           }else{
             if (grid_[x][y][z]==HSURFACE || grid_[x][y][z]==PSURFACE||grid_[x][y][z]==T_SURFACE){
               if (grid_[x][y][z]==T_SURFACE) t_surf=true;
               surf=true;
               count=0;
-              start=c;
+              //start=c;  // set but never used ~Labonte
             }
           }
         }
@@ -1332,7 +1332,7 @@ void PocketGrid::searchD3(core::Size thr, bool psp){
       core::Size count=0;
       core::Size pcount=0;
       core::Size count2=0;
-      int start=-1;
+      //int start=-1;
       for (int c=0;c<diag;c++){
         int x=(ix+xfact*count2);
         while (x<0) {x+=xdim_;count=0;}
@@ -1365,7 +1365,7 @@ void PocketGrid::searchD3(core::Size thr, bool psp){
               }
               count=0;
               pcount=0;
-              start=c;
+              //start=c;  // set but never used ~Labonte
               count=0;
               if (grid_[x][y][z]==HSURFACE || grid_[x][y][z]==PSURFACE || grid_[x][y][z]==T_SURFACE) pcount=0;
             } else{
@@ -1386,7 +1386,7 @@ void PocketGrid::searchD3(core::Size thr, bool psp){
               }
               count=0;
               pcount=0;
-              start=c;
+              //start=c;  // set but never used ~Labonte
               count=0;
             } else{
               surf=false;
@@ -1401,14 +1401,14 @@ void PocketGrid::searchD3(core::Size thr, bool psp){
               surf=true;
               if (grid_[x][y][z]==T_SURFACE) t_surf=true;
               count=0;
-              start=c;
+              //start=c;  // set but never used ~Labonte
             }
           }else{
             if (grid_[x][y][z]==HSURFACE || grid_[x][y][z]==PSURFACE||grid_[x][y][z]==T_SURFACE){
               if (grid_[x][y][z]==T_SURFACE) t_surf=true;
               surf=true;
               count=0;
-              start=c;
+              //start=c;  // set but never used ~Labonte
             }
           }
         }
@@ -1432,7 +1432,7 @@ void PocketGrid::searchD4(core::Size thr, bool psp){
       core::Size count=0;
       core::Size pcount=0;
       core::Size count2=0;
-      int start=-1;
+      //int start=-1;
       for (int c=0;c<diag;c++){
         int x=(ix+xfact*count2);
         while (x<0) {x+=xdim_;count=0;}
@@ -1464,7 +1464,7 @@ void PocketGrid::searchD4(core::Size thr, bool psp){
 
                 }
               }
-              start=c;
+              //start=c;  // set but never used ~Labonte
               count=0;
               if (grid_[x][y][z]==HSURFACE || grid_[x][y][z]==PSURFACE || grid_[x][y][z]==T_SURFACE) pcount=0;
             } else{
@@ -1487,7 +1487,7 @@ void PocketGrid::searchD4(core::Size thr, bool psp){
               }
               count=0;
               pcount=0;
-              start=c;
+              //start=c;  // set but never used ~Labonte
               count=0;
             } else{
               surf=false;
@@ -1502,14 +1502,14 @@ void PocketGrid::searchD4(core::Size thr, bool psp){
               surf=true;
               if (grid_[x][y][z]==T_SURFACE) t_surf=true;
               count=0;
-              start=c;
+              //start=c;  // set but never used ~Labonte
             }
           }else{
             if (grid_[x][y][z]==HSURFACE || grid_[x][y][z]==PSURFACE||grid_[x][y][z]==T_SURFACE){
               if (grid_[x][y][z]==T_SURFACE) t_surf=true;
               surf=true;
               count=0;
-              start=c;
+              //start=c;  // set but never used ~Labonte
             }
           }
         }

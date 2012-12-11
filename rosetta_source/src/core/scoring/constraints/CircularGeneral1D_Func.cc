@@ -44,7 +44,7 @@ CircularGeneral1D_Func::CircularGeneral1D_Func( std::string const & filename )
 	stream.open( filename );
 
 	std::string line;
-	Real x( 0.0 ), x_prev( 0.0 ), val( 0.0 );
+	Real x( 0.0 ), /*x_prev( 0.0 ),*/ val( 0.0 );
 	Size count( 0 );
 	utility::vector1< Real > all_vals;
 
@@ -60,7 +60,7 @@ CircularGeneral1D_Func::CircularGeneral1D_Func( std::string const & filename )
 
 		all_vals.push_back( val );
 
-		x_prev = x;
+		//x_prev = x;  // set but never used ~Labonte
 	}
 
 	num_bins_ = all_vals.size();

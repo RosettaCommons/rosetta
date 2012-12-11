@@ -113,12 +113,12 @@ bool GunnCostScore::cached_score(FragmentCandidateOP fragment,
 
 	Size frag_len = fragment->get_length();
 	Size ifr = 1;
-	bool if_found = false;
+	//bool if_found = false;
 	for(ifr=1;ifr<=frag_sizes_.size();ifr++) {
-	    if(frag_sizes_[ifr] == frag_len) {
-		if_found = true;
-		break;
-	    }
+		if(frag_sizes_[ifr] == frag_len) {
+			//if_found = true;  set but never used ~Labonte
+			break;
+		}
 	}
 //	if(! if_found) {
 //	    frag_sizes_.push_back( frag_len );

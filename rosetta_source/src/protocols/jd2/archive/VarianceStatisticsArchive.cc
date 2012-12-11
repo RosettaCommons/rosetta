@@ -54,7 +54,7 @@ bool VarianceStatisticsArchive::add_evaluated_structure( core::io::silent::Silen
 	if ( RG.uniform() < insertion_prob_ ) { //keep or not ?
 		//replace with random element
 		Size rg_pos( static_cast< int >( RG.uniform() * decoys().size() ) );
-		runtime_assert( rg_pos < decoys().size() && rg_pos >= 0 );
+		runtime_assert( rg_pos < decoys().size() );
 		SilentStructs::iterator it=decoys().begin();
 		while ( rg_pos-- > 0 ) {
 			++it;

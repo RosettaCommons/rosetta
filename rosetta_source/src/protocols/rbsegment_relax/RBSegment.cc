@@ -225,7 +225,7 @@ void read_RBSegment_file(
 	if ( autoGenerateLoops && simple_seg_list.size() > 0 ) {
 		std::sort( simple_seg_list.begin(), simple_seg_list.end(), RB_lt());
 		int start_res=1, end_res=simple_seg_list[1][1].start()-1;
-		int cutpt = (start_res+end_res)/2;
+		//int cutpt = (start_res+end_res)/2;
 		int nsegs = simple_seg_list.size();
 
 		if (end_res > start_res)
@@ -235,7 +235,7 @@ void read_RBSegment_file(
 		for (int i=1; i<nsegs; ++i) {
 			start_res = simple_seg_list[i][1].end()+1;
 			end_res   = simple_seg_list[i+1][1].start()-1;
-			cutpt = (start_res+end_res)/2;
+			//cutpt = (start_res+end_res)/2;  // set but never used ~Labonte
 			if (end_res > start_res)
 				loops.push_back( protocols::loops::Loop(start_res, end_res, 0, 0.0, false) );
 			else if (end_res == start_res)
@@ -245,7 +245,7 @@ void read_RBSegment_file(
 		}
 		start_res = simple_seg_list[nsegs][1].end()+1;
 		end_res   = nres;
-		cutpt = (start_res+end_res)/2;
+		//cutpt = (start_res+end_res)/2;  // set but never used ~Labonte
 		if (end_res > start_res)
 			loops.push_back( protocols::loops::Loop(start_res, end_res, 0, 0.0, false) );
 		else if (end_res == start_res)

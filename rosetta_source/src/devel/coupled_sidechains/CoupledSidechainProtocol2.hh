@@ -71,7 +71,7 @@ public:
 	/// @brief default constructor
 	CoupledSidechainProtocol();
 
-	CoupledSidechainProtocol( CoupledSidechainProtocol const & ) {};
+	CoupledSidechainProtocol( CoupledSidechainProtocol const & ) : protocols::moves::Mover() {}
 
 	void
 	show_counters( std::ostream & out );

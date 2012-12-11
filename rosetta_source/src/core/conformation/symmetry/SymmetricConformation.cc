@@ -846,7 +846,7 @@ SymmetricConformation::detect_disulfides()
 
 		Distance best_match( 0.0 );
 		Size best_neighbor( 0 );
-		Size best_neighbor_cysid( 0 );
+		//Size best_neighbor_cysid( 0 );
 
 		for ( PointGraph::UpperEdgeListConstIter
 				ii_iter = pg->get_vertex( ii ).upper_edge_list_begin(),
@@ -867,7 +867,7 @@ SymmetricConformation::detect_disulfides()
 				jj_res.atom( jj_res.atom_index( distance_atom )).xyz() );
 			if ( best_neighbor == 0 || dist < best_match ) {
 				best_neighbor = jj_resid;
-				best_neighbor_cysid = jj;
+				//best_neighbor_cysid = jj;  // set but never used ~Labonte
 				best_match = dist;
 			}
 		}

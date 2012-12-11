@@ -50,7 +50,7 @@ using basic::Warning;
 
 /// @details Invoke clone() on each of the movers that are contained by this MoverContainer
 /// to create deep copies.
-MoverContainer::MoverContainer( MoverContainer const & source )
+MoverContainer::MoverContainer( MoverContainer const & source ) : protocols::moves::Mover()
 {
 	//remember that movers_ is a vector0
 	movers_.resize( source.movers_.size() );

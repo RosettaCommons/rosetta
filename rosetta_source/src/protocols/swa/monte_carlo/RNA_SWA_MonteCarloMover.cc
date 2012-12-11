@@ -96,7 +96,7 @@ namespace monte_carlo {
 
 		MonteCarloOP monte_carlo = new MonteCarlo( pose, *scorefxn_, kT_ );
 
-		bool accepted( true );
+		//bool accepted( true );
 		std::string move_type;
 
 		for (Size count = 1; count <= num_cycles_; count++) {
@@ -125,7 +125,7 @@ namespace monte_carlo {
 				rna_o2star_mover_->apply( pose, move_type );
 			}
 
-			accepted = monte_carlo->boltzmann( pose, move_type );
+			/*accepted =*/ monte_carlo->boltzmann( pose, move_type );
 
 			//Real const current_score = (*scorefxn_)( pose );
 

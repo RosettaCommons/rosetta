@@ -55,24 +55,24 @@ ABEGO_SS_Config::ABEGO_SS_Config(std::string & file_name) : source_file_name_(fi
 		    t.push_back(*tok_iter);
 		trABEGO_SS_Config.Trace << "Parsing a line: "<<line<<"\n\t("<<t.size()<<" tokens)"<<std::endl;
 		if(line.find(':')!=line.npos) {
-		    Size pool_id;
-		    utility::vector1< std::pair<Size,Size> > bins;
-		    std::string pool_name;
-		    pool_id = boost::lexical_cast<int>(t[1]);
-		    pool_name = t[2];
-		    trABEGO_SS_Config.Trace << "a new pool defined: >"<<pool_name<<"<";
-		    for(Size i=3;i<=t.size();i+=2) {
-			bins.push_back( std::pair<Size,Size>(ss_index(t[i][0]),abego_index(t[i+1][0])) );
-			trABEGO_SS_Config.Trace << " "<<bins[bins.size()].first<<" : "<<bins[bins.size()].second;
-		    }
-		    trABEGO_SS_Config.Trace << std::endl;
-		    pool_defs_.push_back( bins );
-		    pool_names_.push_back( pool_name );
+			//Size pool_id;
+			utility::vector1< std::pair<Size,Size> > bins;
+			std::string pool_name;
+			//pool_id = boost::lexical_cast<int>(t[1]);  set but never used ~Labonte
+			pool_name = t[2];
+			trABEGO_SS_Config.Trace << "a new pool defined: >"<<pool_name<<"<";
+			for(Size i=3;i<=t.size();i+=2) {
+				bins.push_back( std::pair<Size,Size>(ss_index(t[i][0]),abego_index(t[i+1][0])) );
+				trABEGO_SS_Config.Trace << " "<<bins[bins.size()].first<<" : "<<bins[bins.size()].second;
+			}
+			trABEGO_SS_Config.Trace << std::endl;
+			pool_defs_.push_back( bins );
+			pool_names_.push_back( pool_name );
 		} else {
-		    utility::vector1<Real> row;
-		    for(Size i=5;i<=t.size();i++)
-			row.push_back( boost::lexical_cast<double>(t[i]) );
-		    bin_probs_.push_back(row);
+			utility::vector1<Real> row;
+			for(Size i=5;i<=t.size();i++)
+				row.push_back( boost::lexical_cast<double>(t[i]) );
+			bin_probs_.push_back(row);
 		}
 	}
 	data.close();

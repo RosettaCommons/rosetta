@@ -84,7 +84,7 @@ bool SheetFilter::apply( core::pose::Pose const & pose ) const {
 
 	float min_dotprod;
 	float max_distance;
-	float handedness_score_;
+	//float handedness_score_;
 	int nstrands,nsheets;
 	int local_pairs,nonlocal_pairs;
 
@@ -166,9 +166,9 @@ bool SheetFilter::apply( core::pose::Pose const & pose ) const {
 
 	int result = 0;
 
-	ingo_sheet_stuff(max_res,ss,max_res*max_pos,position,isN,isCA,isC,
-	 res_num,distance_cutoff,nstrands,nsheets,max_distance,
-	 min_dotprod,local_pairs,nonlocal_pairs,result);
+	ingo_sheet_stuff(max_res, ss, max_res*max_pos, position, isN, isCA, isC,
+			res_num, distance_cutoff, nstrands, nsheets, max_distance,
+			min_dotprod, local_pairs, nonlocal_pairs, result);
 
 //$$$	if ( result > 0 ) sheet_filter = false;
 //$$$	if ( result == 2 ) sheet_filter = true;  // pass toblerone (not possible)
@@ -582,7 +582,7 @@ SheetFilter::ingo_hand(
 	lctn.dimension( nres, 3 );
 
 //---- local:
-	int cnt,hel_ib,i,j,ll,str_ib;
+	int cnt, /*hel_ib,*/ i, j, ll, str_ib;
 	float dot_prod;
 //      float dpr,ln1,ln2;
 	FArray1D_float midpoint( 3 );
@@ -624,10 +624,10 @@ SheetFilter::ingo_hand(
 
 //  -  check for helix or strands from other sheets in between strands
 //     must be consecutive strands
-	hel_ib = 0; // js helix in between
+	//hel_ib = 0; // js helix in between
 	str_ib = 0; // js strand in between
 	for ( j = stpppt(str1) + 1; j <= strtpt(str2) - 1; ++j ) {
-		if ( scstr(j) == 1 ) hel_ib = 1;
+		//if ( scstr(j) == 1 ) hel_ib = 1;  // set but never used ~Labonte
 		if ( scstr(j) == 2 ) str_ib = 1;
 	}
 	if ( str_ib == 1 ) return;

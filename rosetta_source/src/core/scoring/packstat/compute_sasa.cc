@@ -1203,7 +1203,7 @@ cavity_distance_constraint(
 		Real const d0 = roi_max.distance(roi_ca);
 		TRcs << "PACKSTAT_ROI " << roi << " d0 is " << d0 << std::endl;
 		Real best_clust_score = 0.0;
-		Size best_clust = 123456789;
+		//Size best_clust = 123456789;
 		numeric::xyzVector<core::Real> best_clust_wcen;
 		for( Size i = 1; i <= clusters.size(); ++i ) {
 			Real clust_score = 0.0, clust_wtot = 0.0;
@@ -1229,7 +1229,7 @@ cavity_distance_constraint(
 			if( clust_score > best_clust_score ) {
 				best_clust_score = clust_score;
 				best_clust_wcen = clust_wcen;
-				best_clust = i;
+				//best_clust = i;  // set but never used ~Labonte
 			}
 		}
 

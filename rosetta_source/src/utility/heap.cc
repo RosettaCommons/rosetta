@@ -150,8 +150,8 @@ heap::heap_replace(
 {
 // modifes heap
 
-	bool err;
-	err = false;
+	//bool err;
+	//err = false;
 
 	heap_[0] = val; // overwrite the lowest element
 	coheap_[0] = coval;

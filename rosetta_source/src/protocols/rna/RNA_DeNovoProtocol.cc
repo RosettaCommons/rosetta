@@ -231,7 +231,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 		std::string const out_file_tag = "S_"+lead_zero_string_of( n, 6 );
 		if (tag_is_done_[ out_file_tag ] ) continue;
 
-		bool	do_close_loops_( false );
+		//bool do_close_loops_( false );
 		Size ntries( 0 );
 		bool found_good_decoy( false );
 
@@ -247,7 +247,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 			rna_chunk_library_->initialize_random_chunks( pose ); //actually not random if only one chunk in each region.
 			if ( close_loops_after_each_move_ ) {
 				rna_loop_closer_->apply( pose );
-				do_close_loops_ = true;
+				//do_close_loops_ = true;  // set but never used ~Labonte
 			}
 
 			if (dump_pdb_) dump_pdb( pose, "start.pdb" );

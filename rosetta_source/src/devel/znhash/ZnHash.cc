@@ -223,7 +223,7 @@ ZnHash::ZnCoordinateHash::const_iterator ZnHash::hash_end() const
 	return zn_hash_.end();
 }
 
-ZnCoordinationScorer::ZnCoordinationScorer() :
+ZnCoordinationScorer::ZnCoordinationScorer() : utility::pointer::ReferenceCount(),
 	well_depth_( 1.0 ),
 	idealize_input_virtual_atoms_( true ),
 	max_natoms_(0),
@@ -282,7 +282,7 @@ ZnCoordinationScorer::ZnCoordinationScorer() :
 
 ZnCoordinationScorer::~ZnCoordinationScorer() {}
 
-ZnCoordinationScorer::ZnCoordinationScorer( ZnCoordinationScorer const & src ) :
+ZnCoordinationScorer::ZnCoordinationScorer( ZnCoordinationScorer const & src ) : utility::pointer::ReferenceCount(),
 	znx_ideal_coords_( src.znx_ideal_coords_ ),
 	ramp_to_zero_poly_( src.ramp_to_zero_poly_ ),
 	well_depth_( src.well_depth_ ),

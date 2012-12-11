@@ -250,8 +250,8 @@ heap_replace(
 
 // modifes heap
 
-	bool err;
-	err = false;
+	//bool err;
+	//err = false;  set but never used ~Labonte
 
 	heap(0) = val; // overwrite the lowest element
 	coheap(0) = coval;

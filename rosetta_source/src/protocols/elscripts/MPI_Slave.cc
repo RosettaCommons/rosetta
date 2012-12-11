@@ -84,10 +84,10 @@ void MPI_Slave::go(){
 			if( castattempt ) {
 				std::string wuname = castattempt->name();
 				// create temporary environment that will be thrown away after run()
-				std::string action = R"DELIM(
-					tmp_run_env = {}
-					setmetatable(tmp_run_env, {__index = _G })
-					)DELIM";
+				std::string action = "DELIM(\n"
+					"tmp_run_env = {}\n"
+					"setmetatable(tmp_run_env, {__index = _G })\n"
+					")DELIM";
 				int err = luaL_dostring ( lstate_, action.c_str() );
 				if( err == 1) {
 					TR << "Creating tmp namespace for run_on_slave() on slave failed. Error is:" << std::endl;
@@ -101,11 +101,11 @@ void MPI_Slave::go(){
 				luabind::globals(lstate_)["tmp_run_env"]["traj_idx"] = castattempt->trajectory_idx();
 
 				//calling run fxn
-				action = R"(
-					els_setenv(tmp_run_env)
-					els.workunits.)"+wuname+R"DELIM(.run_on_slave()
-					tmp_run_env = {} -- delete tmp_env after calling run_on_slave()
-					)DELIM";
+				action = "(\n"
+					"els_setenv(tmp_run_env)\n"
+					"els.workunits.)"+wuname+"DELIM(.run_on_slave()\n"
+					"tmp_run_env = {} -- delete tmp_env after calling run_on_slave()\n"
+					")DELIM";
 				err = luaL_dostring ( lstate_, action.c_str() );
 				if( err == 1) {
 					TR << "Calling lua function for workunit " << wuname << " run_on_slave fxn failed. Error is:" << std::endl;

@@ -240,8 +240,8 @@ public:
 				for ( int j = 0; j < 3; ++j ) tgt_pos(j+1,i) -= tgt_com[j];
 
 			// score == rms (?)
-			float rms_out=999.0;
-			rms_out = numeric::model_quality::rms_wrapper( frag_size, tgt_pos, tmpl_pos);
+			//float rms_out=999.0;
+			//rms_out = numeric::model_quality::rms_wrapper( frag_size, tgt_pos, tmpl_pos);  set but never used ~Labonte
 
 			// sort on seq score (?)
 			score = seq_score;

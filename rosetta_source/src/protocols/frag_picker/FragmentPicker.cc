@@ -598,7 +598,7 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 
 	// skip positions from an input alignment if one exists
 	utility::vector1<bool> skip_position( size_of_query(), false );
-	bool has_positions_to_skip = false;
+	//bool has_positions_to_skip = false;
 	if (option[ in::file::alignment ].user()) {
 		utility::vector1<core::sequence::SequenceAlignment> alns =
 			core::sequence::read_aln( option[ cm::aln_format ](), option[ in::file::alignment ]()[1] );
@@ -615,7 +615,7 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 			bool const gap_exists( t_resi == 0 ); // query residue maps to a gap
 			if ( !gap_exists ) {
 				skip_position[resi] = true;
-				has_positions_to_skip = true;
+				//has_positions_to_skip = true;  set but never used ~Labonte
 			}
 		}
 	}

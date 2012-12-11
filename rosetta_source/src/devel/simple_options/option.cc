@@ -274,8 +274,7 @@ void OptionBlock::write_lines(FILE *out) {
 			if(line.name[0]==';' || (line.name.length()>2 && line.name[1]==';'))
 	fprintf(out,"%-24s\n",line.name.c_str());
 			else {
-	int bla=1;
-	bla=1;
+	//int bla=1;
 	//fprintf(out,"%-24s = %s\n",line.name.c_str(),line.value.c_str());
 			}
 		} else {
@@ -369,15 +368,16 @@ void trim (char *str);
 				 and stored as an instance of  OptionEntry in lines[]
 */
 bool OptionFileBlock::read_entries(FILE *in,string &next_block) {
-	char      buf[STRLEN],lbuf[STRLEN],rbuf[STRLEN];
-	char      *ptr,*cptr;
-	int       nin,lc,i,j,k;
+	char buf[STRLEN], lbuf[STRLEN], rbuf[STRLEN];
+	char *ptr, *cptr;
+	int /*nin,*/ lc, i, j, k;
 
 	/* leftovers from the GROMACS code */
 	const char *fn="option_file"; //used in fprintf(debug,...
 	FILE *debug = NULL;
 
-	nin = lc  = 0;
+	//nin = 0;  // set but never used ~Labonte
+	lc  = 0;
 	do {
 		ptr=fgets2(buf,STRLEN-1,in);
 		lc++;

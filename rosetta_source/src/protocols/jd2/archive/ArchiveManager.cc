@@ -583,12 +583,13 @@ ArchiveManager::jobs_completed() {// core::Size batch_id, bool final, core::Size
 void
 ArchiveManager::queue_batch( Batch const& batch ) {
 	tr.Debug << "queue new batch into MPIArchiveJobDistributor " << batch.flag_file() << std::endl;
+#ifdef USEMPI
 	Size const size( 3 );
 	int buf[ size ];
 	buf[ 0 ] = ADD_BATCH;
 	buf[ 1 ] = batch.id();
 	buf[ 2 ] = batch.nstruct();
-#ifdef USEMPI
+//#ifdef USEMPI
 	MPI_Send( &buf, size, MPI_INT, jd_master_rank_, MPI_JOB_DIST_TAG, MPI_COMM_WORLD );
 	//need to have MPI_JOB_DIST_TAG... since it goes into main msg-loop of JobDist
 
@@ -619,12 +620,13 @@ ArchiveManager::cancel_batch( Batch& batch, bool allow_reading_of_decoys ) {
 		return;
 	}
 	tr.Debug << "cancel batch  " << batch.flag_file() << std::endl;
+#ifdef USEMPI
 	Size const size( 3 );
 	int buf[ size ];
 	buf[ 0 ] = CANCEL_BATCH;
 	buf[ 1 ] = batch.id();
 	buf[ 2 ] = batch.nstruct();
-#ifdef USEMPI
+//#ifdef USEMPI
 	MPI_Send( &buf, size, MPI_INT, jd_master_rank_, MPI_JOB_DIST_TAG, MPI_COMM_WORLD );
 	//need to have MPI_JOB_DIST_TAG... since it goes into main msg-loop of JobDist
 

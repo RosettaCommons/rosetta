@@ -507,7 +507,7 @@ void guess_rbsegs_from_pose(
 	if ( simple_segments.size() > 1 ) {
 		std::sort( simple_segments.begin(), simple_segments.end(), RB_lt());
 		int start_res=1, end_res=simple_segments[1][1].start()-1;
-		int cutpt = (start_res+end_res)/2;
+		//int cutpt = (start_res+end_res)/2;
 		int nsegs = simple_segments.size();
 
 		if (end_res >= start_res)
@@ -519,7 +519,7 @@ void guess_rbsegs_from_pose(
 		}
 		start_res = simple_segments[nsegs][1].end()+1;
 		end_res   = nres;
-		cutpt = (start_res+end_res)/2;
+		//cutpt = (start_res+end_res)/2;  // set but never used ~Labonte
 		if (end_res >= start_res)
 			loops.push_back( protocols::loops::Loop(start_res, end_res, 0, 0.0, false) );
 

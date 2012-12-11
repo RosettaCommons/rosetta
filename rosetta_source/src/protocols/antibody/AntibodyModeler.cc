@@ -627,7 +627,7 @@ AntibodyModeler::all_cdr_VL_VH_fold_tree(
 		Size const loop_stop ( it->stop() );
 		Size const loop_cutpoint ( it->cut() );
 		Size edge_start(0), edge_stop(0);
-		bool edge_found = false;
+		//bool edge_found = false;
 		const FoldTree & f_const = f;
 		Size const num_jump = f_const.num_jump();
 		for( FoldTree::const_iterator it2=f_const.begin(),
@@ -636,7 +636,7 @@ AntibodyModeler::all_cdr_VL_VH_fold_tree(
 			edge_stop = std::max( it2->start(), it2->stop() );
 			if ( ! it2->is_jump() && loop_start > edge_start
 					 && loop_stop < edge_stop ) {
-				edge_found = true;
+				//edge_found = true;  // set but never used ~Labonte
 				goto L100;
 			}
 		}
@@ -743,14 +743,14 @@ AntibodyModeler::repulsive_ramp(
 	Size rep_ramp_cycles(3);
 	Size cycles(4);
 	Real minimization_threshold(15.0);
-	Real func_tol(1.0);
+	//Real func_tol(1.0);
 	//mjo commenting out 'nb_list' because it is unused and causes a warning
 	//bool nb_list( true );
 	if( benchmark_ ) {
 		rep_ramp_cycles = 1;
 		cycles = 1;
 		minimization_threshold = 150.0;
-		func_tol = 10.0;
+		//func_tol = 10.0;  // set but never used ~Labonte
 	}
 
 	Real rep_ramp_step = (rep_weight_max - 0.02) / Real(rep_ramp_cycles-1);

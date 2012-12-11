@@ -525,13 +525,13 @@ SymmetricRotamerSets::compute_proline_correction_energies_for_otf_graph(
 
 			Size ii_master( ii ), ii_resid_master( ii_resid );
 			Size ii_subunit = 1; Size jj_subunit = (jj_resid-1) / symm_info->num_independent_residues() + 1;
-			bool swap( false );
+			//bool swap( false );
 			if ( jj_resid_master < ii_resid_master ) {
 				Size temp;
 				temp = ii_master; ii_master = jj_master; jj_master = temp;
 				temp = ii_resid_master; ii_resid_master =jj_resid_master; jj_resid_master = temp;
 				temp = ii_subunit; ii_subunit = jj_subunit; jj_subunit = temp;
-				swap = true;
+				//swap = true;  // set but never used ~Labonte
 			}
 
 			/// 2. Calculate proline-correction terms between neighbors

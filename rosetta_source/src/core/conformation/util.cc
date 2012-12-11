@@ -457,11 +457,11 @@ is_ideal_position(
 	}
 	// add polymer nbrs if needed
 	int seqpos_miniconf(1);
-	bool lower_connect( false ), upper_connect( false );
+	//bool lower_connect( false ), upper_connect( false );
 	if ( rsd.is_polymer() ) {
 		// prepending previous neighbour
 		if ( seqpos > 1 && !rsd.is_lower_terminus() && !conf.fold_tree().is_cutpoint( seqpos-1 ) ) {
-			lower_connect = true;
+			//lower_connect = true;  // set but never used ~Labonte
 			seqpos_miniconf = 2; // pushed forward by prependedq residue
 			Residue const & prev_rsd = conf.residue( seqpos-1 );
 			miniconf.safely_prepend_polymer_residue_before_seqpos // TODO: safely is probably unneeded here, verify this point
@@ -472,7 +472,7 @@ is_ideal_position(
 		}
 		// appending next neighbour
 		if ( seqpos < conf.size() && !rsd.is_upper_terminus() && !conf.fold_tree().is_cutpoint( seqpos ) ) {
-			upper_connect = true;
+			//upper_connect = true;  // set but never used ~Labonte
 			Residue const & next_rsd = conf.residue( seqpos+1 );
 			miniconf.safely_append_polymer_residue_after_seqpos
 				( next_rsd, seqpos_miniconf, false /*build_ideal_geom*/ );

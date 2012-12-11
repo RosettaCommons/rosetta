@@ -97,7 +97,7 @@ SplineGenerator::get_interpolator()
 			CompoundInterpolatorOP interp = new CompoundInterpolator();
 			points_.push_back( Point(ubx_,uby_,ubdy_));
 			Real lbx  = lbx_;
-			Real lby  = lby_;
+			//Real lby  = lby_;
 			Real lbdy = lbdy_;
 			for( size_t i = 1; i <= points_.size(); i++ ) {
 				Point & p( points_[i] );
@@ -107,7 +107,7 @@ SplineGenerator::get_interpolator()
 					// std::cerr << "add range " << lbx << " " << p.x << std::endl;
 					interp->add_range( InterpolatorOP(new SimpleInterpolator(x,y,lbdy,p.dy)), lbx, p.x );
 					lbx  = p.x;
-					lby  = p.y;
+					//lby  = p.y;  // set, but never used ~Labonte
 					lbdy = p.dy;
 					x.clear();
 					y.clear();

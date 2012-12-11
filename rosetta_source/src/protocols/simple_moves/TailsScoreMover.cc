@@ -267,7 +267,7 @@ double TailsScoreMover::score_mode2(int& out_min_ltail_length, int& out_min_rtai
 	int number_of_tail_steps = sequence_length/2;
 	utility::vector1< core::Size > tail;
 	Real min_updated_tail_score = score_function()->get_sub_score_exclude_res(pose, tail);
-	Real original_tail_score =  score_function()->get_sub_score_exclude_res(pose, tail);
+	//Real original_tail_score = score_function()->get_sub_score_exclude_res(pose, tail);
 	Real updated_tail_score = score_function()->get_sub_score_exclude_res(pose, tail);
 	Real min_tail_length = 0;
 	Real min_ltail_length = 0;
@@ -296,7 +296,7 @@ double TailsScoreMover::score_mode2(int& out_min_ltail_length, int& out_min_rtai
 		tail.push_back(rcount);
 	}
 	min_updated_tail_score = score_function()->get_sub_score_exclude_res(pose, tail);
-	original_tail_score =  score_function()->get_sub_score_exclude_res(pose, tail);
+	//original_tail_score = score_function()->get_sub_score_exclude_res(pose, tail);  // set but never used ~Labonte
 	updated_tail_score = score_function()->get_sub_score_exclude_res(pose, tail);
 	min_tail_length = 0;
 	//search for right tail now

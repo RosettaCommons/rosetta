@@ -212,7 +212,7 @@ void cartesian_collect_torsional_deriv(
 
 		// convert to cartesian derivatives on those atoms using the usual MD code - lift from PD
 		//core::Real epot_dihedral_this=0;
-		core::Real phi, sin_phi, cos_phi;
+		core::Real /*phi,*/ sin_phi, cos_phi;
 		core::Vector vti_vta, vta_vtb, vtb_vtj;
 		core::Vector nrml1, nrml2, nrml3;
 		core::Real inv_nrml1_mag, inv_nrml2_mag, inv_nrml3_mag;
@@ -254,7 +254,7 @@ void cartesian_collect_torsional_deriv(
 		nrml2.y() *= inv_nrml2_mag;
 		nrml2.z() *= inv_nrml2_mag;
 
-		phi = -atan2(sin_phi, cos_phi);
+		//phi = -atan2(sin_phi, cos_phi);  // set but never used ~Labonte
 
 		if(fabs(sin_phi) > 0.1) {
 			nrml1.x() *= inv_nrml1_mag;

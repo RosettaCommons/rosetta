@@ -916,8 +916,10 @@ Conformation::insert_residue_by_jump(
 	assert( old_size );
 	assert( fold_tree_->is_cutpoint( seqpos-1 ) );
 
-	int anchor_atomno( 0 );
-	if ( anchor_atom.size() ) anchor_atomno = residues_[ anchor_pos ]->atom_index( anchor_atom );
+	//int anchor_atomno( 0 );
+	//if ( anchor_atom.size() ) {
+		// anchor_atomno = residues_[ anchor_pos ]->atom_index( anchor_atom );  // set but never used ~Labonte
+	//}
 	//if ( !anchor_atomno ) anchor_atomno = kinematics::get_anchor_atomno( residue_( anchor_pos ), kinematics::dir_jump );
 	//if (   !root_atomno )   root_atomno = kinematics::get_root_atomno  (             new_rsd_in, kinematics::dir_jump );
 
@@ -1879,7 +1881,7 @@ Conformation::detect_disulfides()
 
 		Distance best_match( 0.0 );
 		Size best_neighbor( 0 );
-		Size best_neighbor_cysid( 0 );
+		//Size best_neighbor_cysid( 0 );
 
 		for ( PointGraph::UpperEdgeListConstIter
 				ii_iter = pg->get_vertex( ii ).upper_edge_list_begin(),
@@ -1900,7 +1902,7 @@ Conformation::detect_disulfides()
 				jj_res.atom( jj_res.atom_index( distance_atom )).xyz() );
 			if ( best_neighbor == 0 || dist < best_match ) {
 				best_neighbor = jj_resid;
-				best_neighbor_cysid = jj;
+				//best_neighbor_cysid = jj;  // set but never used ~Labonte
 				best_match = dist;
 			}
 		}

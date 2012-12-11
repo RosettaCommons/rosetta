@@ -626,11 +626,11 @@ OTFFlexbbEdge::zero_state_on_node( int which_node )
 
 	parent::set_node_state_to_zero( which_node );
 	all_vs_bb_energy_curr_conf_[ 0 ] = all_vs_bb_energy_curr_conf_[ 1 ] = 0.0;
-	procorr_curr_conf_[ 0 ] = procorr_curr_conf_[ 0 ] = 0.0;
+	procorr_curr_conf_[ 0 ] = /*procorr_curr_conf_[ 0 ] =*/ 0.0;  // Was procorr_curr_conf_[ 1 ] meant? ~Labonte
 	scsc_energy_curr_conf_ = 0;
 
 	all_vs_bb_energy_alt_conf_[ 0 ] = all_vs_bb_energy_alt_conf_[ 1 ] = 0.0;
-	procorr_alt_conf_[ 0 ] = procorr_alt_conf_[ 0 ] = 0.0;
+	procorr_alt_conf_[ 0 ] = /*procorr_alt_conf_[ 0 ] =*/ 0.0;  // Was procorr_alt_conf_[ 1 ] meant? ~Labonte
 	scsc_energy_alt_conf_ = 0;
 
 }

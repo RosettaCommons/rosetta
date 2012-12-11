@@ -317,7 +317,7 @@ RigidBodySampler::~RigidBodySampler() {}
 
 		if (native_pose_) {
 			Real const rmsd = all_atom_rmsd( pose, *native_pose_ );
-			if ( rmsd_cutoff_ > 0.0 & rmsd > rmsd_cutoff_ ) return;
+			if ( (rmsd_cutoff_ > 0.0) && (rmsd > rmsd_cutoff_) ) return;
 			s.add_energy( "all_rms", rmsd );
 		}
 

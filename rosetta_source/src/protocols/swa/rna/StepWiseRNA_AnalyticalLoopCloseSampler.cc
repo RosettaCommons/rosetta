@@ -236,7 +236,7 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 	if ( gap_size == 0 ) pose::add_variant_type_to_pose_residue ( screening_pose, "VIRTUAL_PHOSPHATE", five_prime_chain_break_res + 1 );
 
 	//Start the Rotamer Sampling
-	Real current_score ( 0.0 ), delta_rep_score ( 0.0 ), delta_atr_score ( 0.0 );
+	Real /*current_score ( 0.0 ),*/ delta_rep_score ( 0.0 ), delta_atr_score ( 0.0 );
 	core::Real delta_pucker;
 	core::Real nu2_pucker;
 	core::Real nu1_pucker;
@@ -368,7 +368,7 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 				ss << "U" << total_count;
 				std::string tag = ss.str();
 				total_count++;
-				current_score = Pose_selection_by_full_score ( pose_data_list, pose, tag );
+				/*current_score =*/ Pose_selection_by_full_score ( pose_data_list, pose, tag );
 
 				if ( verbose_ ) {
 					std::cout << tag <<  std::endl;

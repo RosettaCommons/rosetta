@@ -126,7 +126,7 @@ void LoopRebuild::apply( core::pose::Pose & pose ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	core::Real score_filter_cutoff;
+	//core::Real score_filter_cutoff;
 	bool passed_score_filter( false );
 	int const n_score_filter_fail_tol( 2 );
 	int n_score_filter_fail( 0 );
@@ -148,7 +148,7 @@ void LoopRebuild::apply( core::pose::Pose & pose ) {
 
 	Loops_in_.verify_against( pose );
 	protocols::loops::set_secstruct_from_psipred_ss2( pose );
-	score_filter_cutoff = get_score_filter_cutoff();
+	//score_filter_cutoff = get_score_filter_cutoff();  // set but never used ~Labonte
 
 	TR.Debug << "Loop file size (after filtering) : " << Loops_in_.size() << std::endl;
 	//save the initial pose  in case failed scorefilter

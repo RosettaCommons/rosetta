@@ -654,12 +654,12 @@ bool BBConRotMover::closure(
     using numeric::constants::d::pi;
     using numeric::constants::d::pi_2;
 
-    Real sinA1,cosA1,sinA2,cosA2;
-    Real sinO1,cosO1,sinO2,cosO2;
+    Real sinA1, cosA1, sinA2, cosA2;
+    Real sinO1, cosO1, /*sinO2,*/ cosO2;
     //Real a[3],b[3],c[3],d[3],k[3],j[3],n[3],v[3];
-    Vector a,b,c,d,k,j,n,v;
-    Real k_2,j_2,v_2,va;
-    Real w,w_2,h,h_2,g,p1_2,p2_2,p3_2;
+    Vector a, b, c, d, k, j, n, v;
+    Real k_2, j_2, v_2, va;
+    Real w, w_2, h, h_2, g, p1_2, p2_2, p3_2;
     //Real R2[3][3], R2t[3][3];
     //Real T0[3][3], T0t[3][3], T1[3][3], T1t[3][3], T2[3][3], T2t[3][3];
     //xyzMatrix R2, R2t;
@@ -707,7 +707,7 @@ bool BBConRotMover::closure(
     a = T2 * p3;
     k = a + p2;
     cosO2 = cos( theta2_old );
-    sinO2 = sin( theta2_old );
+    //sinO2 = sin( theta2_old );  // set but never used ~Labonte
     //set_rotation_matrix_X( cosO2, sinO2, R2, R2t );
     xyzMatrix R2(x_rotation_matrix_radians(theta2_old));
     v = R2 * k;
@@ -838,7 +838,7 @@ bool BBConRotMover::get_determinant(double a[5][5], int n, double &d)
     int i,imax=0,j,k;
     double big,dum,sum,temp;
     double vv[10];
-    int indx[10];
+    //int indx[10];
 
     d=1.0;
     for (i=0;i<n;i++) {
@@ -879,7 +879,7 @@ bool BBConRotMover::get_determinant(double a[5][5], int n, double &d)
             d = -(d);
             vv[imax]=vv[j];
         }
-        indx[j]=imax;
+        //indx[j]=imax;  // set but never used ~Labonte
         if (a[j][j] == 0.0) a[j][j]=1.0e-20;
         if (j != (n-1)) {
             dum=1.0/(a[j][j]);

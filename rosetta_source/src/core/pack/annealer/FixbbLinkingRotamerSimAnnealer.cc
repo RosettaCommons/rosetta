@@ -313,7 +313,7 @@ void FixbbLinkingRotamerSimAnnealer::run()
 			RotamerSetCOP rotamer_set( rotamer_sets()->rotamer_set_for_moltenresidue( moltenres_id ) );
 			ResidueCOP new_rotamer( rotamer_set->rotamer( rotamer_state_on_moltenres ) );
 
-			core::PackerEnergy tmp_currentenergy;
+			//core::PackerEnergy tmp_currentenergy;
 
 			//setup energy to keep track of changes
 			core::PackerEnergy delta_energy_accumulated=0, previous_energy_for_node_accumulated=0;
@@ -395,7 +395,7 @@ void FixbbLinkingRotamerSimAnnealer::run()
 				ig_->consider_substitution( (*it).first,  (*it).second,
 																		delta_energy_temp, previous_energy_for_node_temp );
 
-				tmp_currentenergy = currentenergy;
+				//tmp_currentenergy = currentenergy;  // set but never used ~Labonte
 				currentenergy = ig_->commit_considered_substitution();
 
 				{ // debugging
@@ -486,7 +486,7 @@ void FixbbLinkingRotamerSimAnnealer::run()
 					core::PackerEnergy dE, oldE;
 					ig_->consider_substitution( (*it).first,  state_on_node((*it).first),
 																			dE, oldE );
-					tmp_currentenergy = currentenergy;
+					//tmp_currentenergy = currentenergy;  // set but never used ~Labonte
 					currentenergy = ig_->commit_considered_substitution();
 				}
 			//std::cout << "REJECT: currentenergy " << currentenergy << std::endl;

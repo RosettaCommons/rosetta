@@ -108,17 +108,17 @@ Master::Master( int num_trajectories, boost::uint64_t mem_limit, boost::uint64_t
     }
 
 		// setting up a new env for each traj
-    std::string action = R"DELIM(
-      traj_env = {}
-			for i=0,num_trajectories do
-				traj_env[i] = {}
-				setmetatable( traj_env[i], { __index = _G } )
-				local _ENV = traj_env[i]
-				traj_idx = i
-				wu_made = {}
-				wu_done = {}
-			end
-			)DELIM";
+		std::string action = "DELIM(\n"
+			"traj_env = {}\n"
+			"for i=0,num_trajectories do\n"
+			"	traj_env[i] = {}\n"
+			"	setmetatable( traj_env[i], { __index = _G } )\n"
+			"	local _ENV = traj_env[i]\n"
+			"	traj_idx = i\n"
+			"	wu_made = {}\n"
+			"	wu_done = {}\n"
+			"end\n"
+			")DELIM";
     int err = luaL_dostring ( lstate_, action.c_str() );
     if( err == 1) {
       TR << "Setting up trajectory environments failed. Error is:" << std::endl;
@@ -186,17 +186,17 @@ void Master::go(){
 
 			// calling proceed fxn
 			// also increment wu_done here to save overhead of calling into lua vm
-			std::string action = R"(
-				do
-					local _ENV = traj_env[)" + boost::lexical_cast<std::string>(traj_idx_) + R"(]
-					if wu_done.)"+wuname+R"( == nil then
-						wu_done.)"+wuname+R"( = 0
-					end
-					wu_done.)"+wuname+R"( = wu_done.)"+wuname+R"( + 1
-					els_setenv(_ENV)
-					els.workunits.)"+wuname+R"DELIM(.proceed_on_master()
-				end
-				)DELIM";
+			std::string action = "(\n"
+				"do\n"
+				"	local _ENV = traj_env[)" + boost::lexical_cast<std::string>(traj_idx_) + "(]\n"
+				"	if wu_done.)"+wuname+"( == nil then\n"
+				"		wu_done.)"+wuname+"( = 0\n"
+				"	end\n"
+				"	wu_done.)"+wuname+"( = wu_done.)"+wuname+"( + 1\n"
+				"	els_setenv(_ENV)\n"
+				"	els.workunits.)"+wuname+"DELIM(.proceed_on_master()\n"
+				"end\n"
+				")DELIM";
 			int err = luaL_dostring ( lstate_, action.c_str() );
 			if( err == 1) {
 				TR << "Calling lua function for workunit " << wuname << " proceed_on_master fxn failed. Error is:" << std::endl;
@@ -298,17 +298,17 @@ void Master::end_traj() {
 	TR << "Finished " << num_trajectories_finished_ << " trajectories." << std::endl;
 
 	// reset the traj env
-	std::string action = R"(
-		i = )" + boost::lexical_cast<std::string>(traj_idx_) + R"DELIM(
-		traj_env[i] = {}
-		setmetatable( traj_env[i], { __index = _G } )
-		do
-			local _ENV = traj_env[i]
-			traj_idx = i
-			wu_made = {}
-			wu_done = {}
-		end
-		)DELIM";
+	std::string action = "(\n"
+		"i = )" + boost::lexical_cast<std::string>(traj_idx_) + "DELIM(\n"
+		"traj_env[i] = {}\n"
+		"setmetatable( traj_env[i], { __index = _G } )\n"
+		"do\n"
+		"	local _ENV = traj_env[i]\n"
+		"	traj_idx = i\n"
+		"	wu_made = {}\n"
+		"	wu_done = {}\n"
+		"end\n"
+		")DELIM";
 		int err = luaL_dostring ( lstate_, action.c_str() );
 	if( err == 1) {
 		TR << "Cleaning up trajectory " << traj_idx_ << " environment failed. Error is:" << std::endl;

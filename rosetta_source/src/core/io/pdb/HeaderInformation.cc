@@ -56,7 +56,7 @@ using ObjexxFCL::stripped_whitespace; // copy
 
 static basic::Tracer TR("core.io.pdb.HeaderInformation");
 
-HeaderInformation::HeaderInformation() :
+HeaderInformation::HeaderInformation() : utility::pointer::ReferenceCount(),
 	classification_(""),
 	dep_year_(0),
 	dep_month_(0),
@@ -72,7 +72,7 @@ HeaderInformation::HeaderInformation() :
 {}
 
 HeaderInformation::HeaderInformation(
-	HeaderInformation const & src) :
+	HeaderInformation const & src) : utility::pointer::ReferenceCount(),
 	classification_(src.classification_),
 	dep_year_(src.dep_year_),
 	dep_month_(src.dep_month_),

@@ -641,7 +641,7 @@ void ClassicAbinitio::set_cycles( Real increase_cycles ) {
 		stage2_cycles_ = 0;
 		stage3_cycles_ = 0;
 		stage4_cycles_ = 0;
-		bSkipStage2_ = bSkipStage3_ = bSkipStage3_ = true;
+		bSkipStage2_ = bSkipStage3_ = /*bSkipStage3_ =*/ true;  // Was bSkipStage4_ meant? ~Labonte
 	}
 }
 

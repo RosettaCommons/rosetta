@@ -29,8 +29,7 @@ namespace core {
 namespace scoring {
 
 /// default constructor -- fill this in
-ScoreFunctionInfo::ScoreFunctionInfo()
-:
+ScoreFunctionInfo::ScoreFunctionInfo() : utility::pointer::ReferenceCount(),
 	max_atomic_interaction_distance_( 0.0 ),
 	max_context_neighbor_cutoff_( 0.0 ),
 	context_graphs_required_( num_context_graph_types, false ),
@@ -40,8 +39,7 @@ ScoreFunctionInfo::ScoreFunctionInfo()
 /// @details Make sure to make a copy of the EMOpts, instead of just copying the pointer;
 /// we don't want SFIs to share pointers to the same objects or the object could change
 /// underneath the SFI.
-ScoreFunctionInfo::ScoreFunctionInfo( ScoreFunctionInfo const & src )
-:
+ScoreFunctionInfo::ScoreFunctionInfo( ScoreFunctionInfo const & src ) : utility::pointer::ReferenceCount(),
 	max_atomic_interaction_distance_( src.max_atomic_interaction_distance_ ),
 	max_context_neighbor_cutoff_( src.max_context_neighbor_cutoff_ ),
 	context_graphs_required_( src.context_graphs_required_ ),

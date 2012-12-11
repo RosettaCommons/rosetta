@@ -328,8 +328,8 @@ MembranePotential::evaluate_env( //_and_cbeta_scores(
 	Real t3 = 2.0;
 	int s2 = 14;
 	int s3 = 14;
-	int layer1,layer2,layer,B_layer; // B_layer will be removed just keep it for now...
-	Real f,z,zn,low;
+	int layer1, layer2, layer/*, B_layer*/; // B_layer will be removed just keep it for now...
+	Real f, z, zn, low;
 
 	Real const env6_weight=1.0;
 	Real const env10_weight=1.0;
@@ -346,7 +346,7 @@ MembranePotential::evaluate_env( //_and_cbeta_scores(
 		if ( ( MembraneDepth < 11.0 ) || ( MembraneDepth > 49.0 ) ) {
 			//pure water layer
 			layer = 3;
-			B_layer = 1;
+			//B_layer = 1;  // set but never used ~Labonte
 			Real score6 (env6_weight*mem_env_log6_( rsd.aa(), layer, static_cast< int >( fcen6 ) ));
 			Real score10 (env10_weight* mem_env_log10_( rsd.aa(), layer, static_cast< int >( fcen10 ) ) );
 			membrane_env_score = score6 + score10;
@@ -356,7 +356,7 @@ MembranePotential::evaluate_env( //_and_cbeta_scores(
 			//interpolate between water and interface phases
 			layer1 = 2; //interface layer
 			layer2 = 3; //water layer
-			B_layer = 1;
+			//B_layer = 1;  // set but never used ~Labonte
 
 			if ( MembraneDepth <= 13.0 ) {
 				low = 13.0;
@@ -384,7 +384,7 @@ MembranePotential::evaluate_env( //_and_cbeta_scores(
 		else if ( ( MembraneDepth > 13.0 && MembraneDepth < 17.0 ) || ( MembraneDepth > 43.0 && MembraneDepth < 47.0 ) ) {
 			//pure interface phase
 			layer = 2; //interface layer
-			B_layer = 1;
+			//B_layer = 1;  // set but never used ~Labonte
 			Real score6 ( env6_weight*mem_env_log6_( rsd.aa(), layer, static_cast< int >( fcen6 ) ) );
 			Real score10 ( env10_weight*mem_env_log10_( rsd.aa(), layer, static_cast< int >( fcen10 ) ) );
 			membrane_env_score = score6 + score10;
@@ -412,17 +412,17 @@ MembranePotential::evaluate_env( //_and_cbeta_scores(
 
 			if ( MembraneDepth <= 18.0 || MembraneDepth >= 42.0 ) {
 				layer = 2;
-				B_layer = 1;
+				//B_layer = 1;  // set but never used ~Labonte
 			} else {
 				layer = 1;
-				B_layer = 2;
+				//B_layer = 2;  // set but never used ~Labonte
 			}
 
 		}
 		else {
 			//pure hydrophobic phase
 			layer = 1;
-			B_layer = 2;
+			//B_layer = 2;  // set but never used ~Labonte
 
 			Real score6  (env6_weight *mem_env_log6_(  rsd.aa(), layer, static_cast< int >( fcen6  ) ));
 			Real score10 (env10_weight*mem_env_log10_( rsd.aa(), layer, static_cast< int >( fcen10 ) ));

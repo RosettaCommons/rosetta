@@ -939,10 +939,10 @@ Splice::fold_tree( core::pose::Pose & pose, core::Size const start, core::Size c
 		pose.fold_tree( ft );
 		return;
 	}
-	core::Size from_res( 0 );
+	//core::Size from_res( 0 );
 	for( core::Size resi = conf.chain_begin( 1 ); resi <= conf.chain_end( 1 ); ++resi ){
 		 if( pose.residue( resi ).has_variant_type( core::chemical::DISULFIDE ) ){
-			from_res = resi;
+			//from_res = resi;  // set but never used ~Labonte
 			break;
 		}
 	}
@@ -1000,9 +1000,9 @@ Splice::fold_tree( core::pose::Pose & pose, core::Size const start, core::Size c
 		ft.add_edge( conf.chain_begin( 2 ), conf.chain_end( 2 ), -1 );
 	ft.reorder(1);
 	TR<<"Previous ft: "<<pose.fold_tree()<<std::endl;
-//	pose.dump_pdb( "before_ft.pdb" );
+	//	pose.dump_pdb( "before_ft.pdb" );
 	pose.fold_tree( ft );
-//	pose.dump_pdb( "after_ft.pdb" );
+	//	pose.dump_pdb( "after_ft.pdb" );
 	TR<<"Current ft: "<<pose.fold_tree()<<std::endl;
 }
 

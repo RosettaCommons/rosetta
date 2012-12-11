@@ -134,7 +134,7 @@ void ModifyVariantTypeMover::parse_my_tag(
 	std::string remove_type_value = tag->getOption< std::string >( "remove_type", "");
 	boost::split(remove_target_types_, remove_type_value, boost::is_any_of(","));
 
-	if (add_target_types_.size() == 0 & remove_target_types_.size() == 0)
+	if (add_target_types_.size() == 0 && remove_target_types_.size() == 0)
 	{
 		TR.Error << "Must specify add_type and/or remove_type type in ModifyVariantTypeMover." << std::endl;
 		utility_exit_with_message("Must specify add_type and/or remove_type type in ModifyVariantTypeMover.");

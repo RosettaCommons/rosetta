@@ -554,7 +554,7 @@ int MolecularSurfaceCalculator::FindNeighborsForAtom(Atom &atom1)
 int MolecularSurfaceCalculator::SecondLoop(Atom &atom1)
 {
 	Vec3 uij, tij;
-	ScValue erj, eri, rij, density, dij, asymm, _far_, contain;
+	ScValue erj, eri, rij, /*density,*/ dij, asymm, _far_, contain;
 	int between;
 	std::vector<Atom*> &neighbors = atom1.neighbors;
 
@@ -567,7 +567,7 @@ int MolecularSurfaceCalculator::SecondLoop(Atom &atom1)
 			continue;
 
 		erj = atom2.radius + settings.rp;
-		density = (atom1.density + atom2.density) / 2;
+		//density = (atom1.density + atom2.density) / 2;  // set but never used ~Labonte
 		dij = atom1.distance(atom2);
 
 		uij = (atom2 - atom1) / dij;
@@ -849,7 +849,7 @@ int MolecularSurfaceCalculator::GenerateToroidalSurface(
 		int between)
 {
 	std::vector<Atom*> &neighbors = atom1.neighbors;
-	ScValue density, ri, rj, rb, rci, rcj, rs, e, edens, eri, erj, erl, dtq, pcusp, anglei, anglej, dt, ts, ps, area;
+	ScValue density, /*ri,*/ /*rj,*/ rb, rci, rcj, rs, e, edens, eri, erj, erl, dtq, pcusp, /*anglei,*/ /*anglej,*/ dt, ts, ps, area;
 	Vec3 pi, pj, axis, dij, pqi, pqj, qij, qjk, qj;
 
 	std::vector<Vec3> subs;
@@ -857,8 +857,8 @@ int MolecularSurfaceCalculator::GenerateToroidalSurface(
 	// following Fortran original
 	// will be optimized by compiler
 	density = (atom1.density + atom2.density) / 2;
-	ri = atom1.radius;
-	rj = atom2.radius;
+	//ri = atom1.radius;  // set but never used ~Labonte
+	//rj = atom2.radius;  // set but never used ~Labonte
 	eri = (atom1.radius + settings.rp);
 	erj = (atom2.radius + settings.rp);
 	rci = rij * atom1.radius / eri;
@@ -928,12 +928,12 @@ int MolecularSurfaceCalculator::GenerateToroidalSurface(
 		dt = pqi.dot(pi);
 		if(dt >= 1.0 || dt <= -1.0)
 			return 0;
-		anglei = acosf(dt);
+		//anglei = acosf(dt);  // set but never used ~Labonte
 
 		dt = pqj.dot(pj);
 		if(dt >= 1.0 || dt <= -1.0)
 			return 0;
-		anglej = acosf(dt);
+		//anglej = acosf(dt);  // set but never used ~Labonte
 
 		// convert two arcs to points
 		if(atom1.atten >= ATTEN_2) {

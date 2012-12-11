@@ -147,7 +147,7 @@ HSSTriplet::calc_geometry( SS_Info2_COP const ssinfo )
 	Real dot_hs1 = hx.orient().dot( s1.orient() );
 	Real dot_hs2 = hx.orient().dot( s2.orient() );
 
-	Real sign_ss, sign_hs1, sign_hs2;
+	Real sign_ss/*, sign_hs1, sign_hs2*/;
 
 	if( dot_ss < 0 ) {
 		sign_ss = -1.0;
@@ -158,18 +158,18 @@ HSSTriplet::calc_geometry( SS_Info2_COP const ssinfo )
 	}
 
 	if( dot_hs1 < 0 ) {
-		sign_hs1 = -1.0;
+		//sign_hs1 = -1.0;  // set but never used ~Labonte
 		hs1_orient_ = "A";
 	} else {
-		sign_hs1 = 1.0;
+		//sign_hs1 = 1.0;  // set but never used ~Labonte
 		hs1_orient_ = "P";
 	}
 
 	if( dot_hs2 < 0 ) {
-		sign_hs2 = -1.0;
+		//sign_hs2 = -1.0;  // set but never used ~Labonte
 		hs2_orient_ = "A";
 	} else {
-		sign_hs2 = 1.0;
+		//sign_hs2 = 1.0;  // set but never used ~Labonte
 		hs2_orient_ = "P";
 	}
 

@@ -62,7 +62,7 @@ SOGFunc_Impl::read_data( std::istream & in ) {
 
 	if ( !renormalize ) {
 		for ( Size ii = 1; ii <= weights_.size(); ++ii ) {
-			bool renormalize(false);
+			//bool renormalize(false);
 			if ( numeric::isinf( weights_[ii] ) || numeric::isnan( weights_[ii] ) ) {
 				renormalize = true;
 			}

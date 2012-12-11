@@ -136,7 +136,7 @@ namespace protocols {
 namespace comparative_modeling {
 
 //constructors
-LoopRelaxMover::LoopRelaxMover() :
+LoopRelaxMover::LoopRelaxMover() : moves::Mover(),
 	guarded_loops_( new loops::GuardedLoopsFromFile )
 {
 	set_defaults_();
@@ -151,7 +151,7 @@ LoopRelaxMover::LoopRelaxMover(
 	std::string const & refine,
 	std::string const & relax,
 	loops::Loops const & loops
-) :
+) : moves::Mover(),
 	cmd_line_csts_( true ),
 	copy_sidechains_( true ),
 	n_rebuild_tries_( 3 ),
@@ -172,7 +172,7 @@ LoopRelaxMover::LoopRelaxMover(
 	std::string const & refine,
 	std::string const & relax,
 	loops::LoopsFileData const & loops_from_file
-) :
+) : moves::Mover(),
 	cmd_line_csts_( true ),
 	copy_sidechains_( true ),
 	n_rebuild_tries_( 3 ),
@@ -190,7 +190,7 @@ LoopRelaxMover::LoopRelaxMover(
 	std::string const & refine,
 	std::string const & relax,
 	loops::GuardedLoopsFromFileOP guarded_loops
-) :
+) : moves::Mover(),
 	cmd_line_csts_( true ),
 	copy_sidechains_( true ),
 	n_rebuild_tries_( 3 ),
@@ -203,7 +203,7 @@ LoopRelaxMover::LoopRelaxMover(
 {}
 
 /// @brief Copy-ctor; shallow copy of all data object.
-LoopRelaxMover::LoopRelaxMover( LoopRelaxMover const & src ) :
+LoopRelaxMover::LoopRelaxMover( LoopRelaxMover const & src ) : moves::Mover(),
 	cmd_line_csts_( src.cmd_line_csts_ ),
 	copy_sidechains_( src.copy_sidechains_ ),
 	n_rebuild_tries_( src.n_rebuild_tries_ ),

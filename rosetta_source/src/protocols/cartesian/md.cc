@@ -285,7 +285,7 @@ void MolecularDynamics::getCartesianDerivatives(
 
 
 		//float  epot_dihedral_this=0;
-		float  phi, sin_phi, cos_phi;
+		float  /*phi,*/ sin_phi, cos_phi;
 		core::Vector vti_vta, vta_vtb, vtb_vtj;
 		core::Vector nrml1, nrml2, nrml3;
 		float  inv_nrml1_mag, inv_nrml2_mag, inv_nrml3_mag;
@@ -342,7 +342,7 @@ void MolecularDynamics::getCartesianDerivatives(
 		nrml2.y() *= inv_nrml2_mag;
 		nrml2.z() *= inv_nrml2_mag;
 
-		phi = -atan2(sin_phi, cos_phi);
+		//phi = -atan2(sin_phi, cos_phi);  // set but never used ~Labonte
 
 		if(fabs(sin_phi) > 0.1) {
 			nrml1.x() *= inv_nrml1_mag;
@@ -1342,13 +1342,13 @@ void MolecularDynamics::applyForces_BeeMan(
 
 	//int i;
 	double t;
-	double t2;
+	//double t2;
 	double tinvmass;
 	core::Vector dr, dv;
 	core::Vector t2a;
 
 	t = 1E-15;
-	t2 = sqr(t);
+	//t2 = sqr(t);  // set but never used ~Labonte
 
 	float forcemul =  -( 1E10 / 6.0221418E23 * 4184.0); 
 
@@ -1549,7 +1549,7 @@ void MolecularDynamics::applyForces_ConjugateGradient(
 	static double m_StepMultiplier = 1.0;
 	float StepSize = 0.000001;
 	float forcemul = 1; // ( 1E10 / 6.0221418E23 * 4184.0); 
-	static bool backstep = false;
+	//static bool backstep = false;
 
 	//std::cout << "-----> " << m_StepMultiplier << std::endl;
 	if(Step != 0) {
@@ -1588,7 +1588,7 @@ void MolecularDynamics::applyForces_ConjugateGradient(
 				cartom[i].old_velocity = cartom[i].velocity;; // save old directions
 			}
 			m_OldEnergy = current_energy;
-			backstep = false;
+			//backstep = false;  // set but never used ~Labonte
 			//} else {
 			//	 std::cout << "BACKSTEP\n";			
 
@@ -1603,7 +1603,7 @@ void MolecularDynamics::applyForces_ConjugateGradient(
 			}
 			//m_OldEnergy += 1; // no idea what this is !?
 
-			backstep = true;
+			//backstep = true;  // set but never used ~Labonte
 			//return;
 
 		}

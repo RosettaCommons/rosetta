@@ -320,7 +320,7 @@ StrandPairing::is_member( Size const res ) {
 Size
 StrandPairing::residue_pair( Size const res )
 {
-	runtime_assert( begin1_ <= res && res <= end1_ || begin2_ <= res && res <= end2_ );
+	runtime_assert( (begin1_ <= res && res <= end1_) || (begin2_ <= res && res <= end2_) );
 	return residue_pair_[ res ];
 }
 
