@@ -104,6 +104,13 @@ public:
 private:
 };
 
+class EXCN_RosettaScriptsOption : public EXCN_Msg_Exception {
+public:
+	EXCN_RosettaScriptsOption( std::string const& msg ) :
+		EXCN_Msg_Exception( msg ) {};
+private:
+};
+
 }
 }
 
