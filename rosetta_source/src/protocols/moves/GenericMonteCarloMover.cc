@@ -527,19 +527,19 @@ GenericMonteCarloMover::boltzmann( Pose & pose )
         lowest_score_ = ranking_score;
         mc_accepted_ = MCA_accepted_score_beat_low; //3;
 				if( saved_accept_file_name_ != "" ){
-					TR<<"Dumping accepted file to disk as: "<<saved_accept_file_name_<<std::endl;
-					pose.dump_pdb( saved_accept_file_name_ );
 					if( mover_tag_() != NULL ){
-						TR<<"Dumping accepted mover tag to disk"<<std::endl;
-						std::ofstream f;
-						std::string const fname( saved_accept_file_name_ + ".mover_tag" );
-						f.open( fname.c_str(), std::ios::out );
-						if( !f.good() )
-							utility_exit_with_message( "Unable to open MC mover_tag file " + fname );
-						f<<mover_tag_->obj;
-						f.close();
+						TR<<"Adding accepted mover tag to pose comments"<<std::endl;
+//						std::ofstream f;
+//						std::string const fname( saved_accept_file_name_ + ".mover_tag" );
+//						f.open( fname.c_str(), std::ios::out );
+//						if( !f.good() )
+//							utility_exit_with_message( "Unable to open MC mover_tag file " + fname );
+//						f<<mover_tag_->obj;
+//						f.close();
 						core::pose::add_comment( pose, user_defined_mover_name_, mover_tag_->obj ); /// adding comment to the pose to save the mover's tag since it's accepted
 					}
+					TR<<"Dumping accepted file to disk as: "<<saved_accept_file_name_<<std::endl;
+					pose.dump_pdb( saved_accept_file_name_ );
 				}
       }
       return( true );
@@ -623,18 +623,26 @@ GenericMonteCarloMover::load_trial_number_from_checkpoint( core::pose::Pose & po
 	/// see if any subfilters need to be reset
 	bool call_reset( false );
 	using namespace protocols::filters;
-	foreach( FilterOP comp_statement_filt, filters_ ){ /// User defined filters in RosettaScripts are all CompoundFilter, so poke inside...
-		CompoundFilterOP comp_filt_op( dynamic_cast< CompoundFilter * >( comp_statement_filt() ) );
-		runtime_assert( comp_filt_op );
-		for( CompoundFilter::CompoundStatement::iterator cs_it = comp_filt_op->begin(); cs_it != comp_filt_op->end(); ++cs_it ){
-			FilterOP filt( cs_it->first );
-			if( filt->get_type() == "Operator" ){
+	foreach( FilterOP filter, filters_ ){
+		if( filter->get_type() == "Operator" ){
 				TR<<"Resetting Operator filter's baseline"<<std::endl;
-				OperatorOP operator_filter( dynamic_cast< Operator * >( filt() ) );
+				OperatorOP operator_filter( dynamic_cast< Operator * >( filter() ) );
 				operator_filter->reset_baseline( pose, trial != 1/*if trial>1, attempt to read the baselines from checkpointing files. Otherwise, don't use the checkpointing files*/ );
 				call_reset = true;
-			}// fi Operator
-		}// for cs_it
+		}// fi Operator
+		else if( filter->get_type() == "CompoundStatement" ){ /// User defined filters with confidence!=1 in RosettaScripts are all CompoundFilter, so poke inside...
+			CompoundFilterOP comp_filt_op( dynamic_cast< CompoundFilter * >( filter() ) );
+			runtime_assert( comp_filt_op );
+			for( CompoundFilter::CompoundStatement::iterator cs_it = comp_filt_op->begin(); cs_it != comp_filt_op->end(); ++cs_it ){
+				FilterOP filt( cs_it->first );
+				if( filt->get_type() == "Operator" ){
+					TR<<"Resetting Operator filter's baseline"<<std::endl;
+					OperatorOP operator_filter( dynamic_cast< Operator * >( filt() ) );
+					operator_filter->reset_baseline( pose, trial != 1/*if trial>1, attempt to read the baselines from checkpointing files. Otherwise, don't use the checkpointing files*/ );
+					call_reset = true;
+				}// fi Operator
+			}// for cs_it
+		}//elseif CompoundStatement
 	} //foreach
 	if( call_reset ){
 		TR<<"Resetting Boltzmann's accepted values, in case filters have changed during loading"<<std::endl;

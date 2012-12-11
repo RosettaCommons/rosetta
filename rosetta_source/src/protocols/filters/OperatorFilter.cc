@@ -50,24 +50,38 @@ Operator::~Operator() {}
 
 void
 Operator::reset_baseline( core::pose::Pose const & pose, bool const attempt_read_from_checkpoint ){
-	foreach( FilterOP comp_statement_filt, filters() ){///all RosettaScripts user-defined filters are compoundstatements
-    CompoundFilterOP comp_filt_op( dynamic_cast< CompoundFilter * >( comp_statement_filt() ) );
-    runtime_assert( comp_filt_op );
-    for( CompoundFilter::CompoundStatement::iterator cs_it = comp_filt_op->begin(); cs_it != comp_filt_op->end(); ++cs_it ){
-       protocols::filters::FilterOP f( cs_it->first );
-			if( f->get_type() == "Sigmoid" ){
-				SigmoidOP sigmoid_filter( dynamic_cast< Sigmoid * >( f() ) );
-				runtime_assert( sigmoid_filter );
-				sigmoid_filter->reset_baseline( pose, attempt_read_from_checkpoint );
-				TR<<"Resetting Sigmoid filter's baseline"<<std::endl;
-			}
-			else if( f->get_type() == "Operator" ){ //recursive call
-				OperatorOP operator_filter( dynamic_cast< Operator * >( f() ) );
-				runtime_assert( operator_filter );
-				operator_filter->reset_baseline( pose, attempt_read_from_checkpoint );
-				TR<<"Resetting Operator filter's baseline"<<std::endl;
-			}
-		}//for cs_it
+	foreach( FilterOP filter, filters() ){
+		if( filter->get_type() == "Sigmoid" ){
+			SigmoidOP sigmoid_filter( dynamic_cast< Sigmoid * >( filter() ) );
+			runtime_assert( sigmoid_filter );
+			sigmoid_filter->reset_baseline( pose, attempt_read_from_checkpoint );
+			TR<<"Resetting Sigmoid filter's baseline"<<std::endl;
+		}
+		else if( filter->get_type() == "Operator" ){ //recursive call
+			OperatorOP operator_filter( dynamic_cast< Operator * >( filter() ) );
+			runtime_assert( operator_filter );
+			operator_filter->reset_baseline( pose, attempt_read_from_checkpoint );
+			TR<<"Resetting Operator filter's baseline"<<std::endl;
+		}
+		else if( filter->get_type() == "CompoundStatement" ){///all RosettaScripts user-defined filters with confidence!=1 are compoundstatements
+		  CompoundFilterOP comp_filt_op( dynamic_cast< CompoundFilter * >( filter() ) );
+		  runtime_assert( comp_filt_op );
+		  for( CompoundFilter::CompoundStatement::iterator cs_it = comp_filt_op->begin(); cs_it != comp_filt_op->end(); ++cs_it ){
+		     protocols::filters::FilterOP f( cs_it->first );
+				if( f->get_type() == "Sigmoid" ){
+					SigmoidOP sigmoid_filter( dynamic_cast< Sigmoid * >( f() ) );
+					runtime_assert( sigmoid_filter );
+					sigmoid_filter->reset_baseline( pose, attempt_read_from_checkpoint );
+					TR<<"Resetting Sigmoid filter's baseline"<<std::endl;
+				}
+				else if( f->get_type() == "Operator" ){ //recursive call
+					OperatorOP operator_filter( dynamic_cast< Operator * >( f() ) );
+					runtime_assert( operator_filter );
+					operator_filter->reset_baseline( pose, attempt_read_from_checkpoint );
+					TR<<"Resetting Operator filter's baseline"<<std::endl;
+				}
+			}//for cs_it
+		}//elseif CompoundStatement
 	}//foreach
 }
 
