@@ -1,6 +1,27 @@
 Generated HBond parameters by Matthew O'Meara and Andrew Leaver-Fay in 2011-2012 
 
-This is the 9a parameter set.
+12/11/12: This is the 9g parameter set.  The 9a parameter set had problems with it resulting from
+the conversion from the "multiplicative" form the sp2 potential to the "additive" form.
+
+This parameter set is intended for use with the following additional flags:
+
+-score::hb_sp2_chipen
+-hb_sp2_BAH180_rise 0.75  <--- currently the default parameter for this option, so it may be omitted.
+-hbond_measure_sp3acc_BAH_from_hvy
+-lj_hbond_hdis 1.75
+-lj_hbond_OH_donor_dis 2.6
+-score:weights sp2_correction.wts
+
+The sp2_correction.wts parameter set differs from score12 only in the addition of the "yhh_planarity"
+term, which puts a sinusoidal penalty on tyrosine's chi2 when it deviates from 0 or 180, and
+it also increases the weight on alpha-helical hydrogen bonds (hbond_sr_bb) so that they are weighted
+equally to the beta-sheet hydrogen bonds (hbond_lr_bb).  Or rather, the new weight set does not
+down-weight alpha-helical hydrogne bonds the way that score12 does. Alpha-helical hydrogen bonds
+don't actually get stronger with the new weight set; the sp2 potential penalizes them significantly
+in comparison to the closer-to-ideal beta-sheet hydrogen bonds -- the downweighting that score12
+applies no longer is necessary.
+
+...
 
 README.txt: this file
 schema.sql: sql schema definition for tables
