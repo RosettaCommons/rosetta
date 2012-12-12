@@ -149,7 +149,6 @@ sources = {
 		"BackrubMover",
 		"MoverContainer",
 		"MoversTest",
-		"RotateJumpAxisMover",
 		"ScoreTest",
 		"SmallMover",
 		"ShearMover",
@@ -193,6 +192,7 @@ sources = {
 
 	"rigid" : [
 		"RigidBodyMover",
+		"RotateJumpAxisMover",
 	],
 
 	"rotamer_recovery" : [
@@ -354,10 +354,6 @@ testinputfiles = [
 	"moves/centroid_typeset.test_in_short.pdb",
 	"moves/fullatom_typeset.test_in_short.pdb",
 	"moves/kinematic_closure/VicinitySamplingKinematicPerturber.u",
-	"moves/RotateJumpAxisMover.pdb",
-	"moves/RotateJumpAxisMover_random.pdb",
-	"moves/RotateJumpAxisMover_range.pdb",
-	"moves/RotateJumpAxisMover_single.pdb",
 	"moves/score12.pdb",
 	"moves/score12.u",
 	"moves/shearmoves_out.pdb",
@@ -380,6 +376,11 @@ testinputfiles = [
 	"rigid/RigidBodyRandomizeMover.pdb",
 	"rigid/RigidBodySpinMover.pdb",
 	"rigid/RigidBodyTransMover.pdb",
+	"rigid/RotateJumpAxisMover.pdb",
+	"rigid/RotateJumpAxisMover_random.pdb",
+	"rigid/RotateJumpAxisMover_range.pdb",
+	"rigid/RotateJumpAxisMover_single.pdb",
+	"rigid/RotateJumpAxisMover_underspecified_jump.pdb",
 	"scoring/Interface.u",
 	"scoring/dock_in.pdb",
         "simple_moves/1bl0_auto.fasta.pssm",

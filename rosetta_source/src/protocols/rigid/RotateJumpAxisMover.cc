@@ -16,6 +16,7 @@
 
 // Project Headers
 #include <core/conformation/Conformation.hh>
+#include <core/conformation/util.hh> //get_anchor_and_root_atoms
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 
@@ -53,15 +54,28 @@ namespace rigid {
 void RotateJumpAxisMover::apply( core::pose::Pose & pose ){
 
 	//first determine where the jump is
-	core::Size const upstream_res(pose.fold_tree().jump_edge(rb_jump_num_).start());
-	core::Size const downstream_res(pose.fold_tree().jump_edge(rb_jump_num_).stop());
-	std::string const upstream_atom(pose.fold_tree().jump_edge(rb_jump_num_).upstream_atom());
-	std::string const downstream_atom(pose.fold_tree().jump_edge(rb_jump_num_).downstream_atom());
+	core::kinematics::Edge const & rb_jump(pose.fold_tree().jump_edge(rb_jump_num_));
+	core::Size const upstream_resid(rb_jump.start());
+	core::Size const downstream_resid(rb_jump.stop());
+	//these fail if for an underspecified jump (meaning, !edge.has_atom_info())
+	//std::string const upstream_atom(pose.fold_tree().jump_edge(rb_jump_num_).upstream_atom());
+	//std::string const downstream_atom(pose.fold_tree().jump_edge(rb_jump_num_).downstream_atom());
+	core::conformation::Residue const & upstream_res(pose.residue(upstream_resid));
+	core::conformation::Residue const & downstream_res(pose.residue(downstream_resid));
+
+	//Use Phil's lookup to protect from !edge.has_atom_info()
+	core::Size upstream_atomno, downstream_atomno;
+	core::conformation::get_anchor_and_root_atoms(
+		upstream_res,
+		downstream_res,
+		rb_jump,
+		upstream_atomno,
+		downstream_atomno);
 
 	//calculate the rotation axis and angle
 	//looking down the axis from the upstream to downstream atom, positive rotations are counterclockwise
-	core::Vector axis( pose.residue(upstream_res).atom(upstream_atom).xyz()//minus
-										 - pose.residue(downstream_res).atom(downstream_atom).xyz() );
+	core::Vector axis( upstream_res.atom(upstream_atomno).xyz()//minus
+										 - downstream_res.atom(downstream_atomno).xyz() );
 	core::Angle angle(calc_angle());
 
 	TR << angle << std::endl;
