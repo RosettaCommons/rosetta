@@ -220,7 +220,7 @@ split_up_remark_line(
 		if( resA.size() == 2 ) resA = " " + resA;
 		if( resB.size() == 2 ) resB = " " + resB;
 
-		if( !line_stream.good() ){
+		if( line_stream.bad() ){
 			tr << "ERROR when trying to split up pdb remark line. Not all fields seem to have been specified." << std::endl;
 			return false;
 		}

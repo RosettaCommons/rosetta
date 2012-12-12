@@ -1306,7 +1306,8 @@ MatcherTask::initialize_active_site_definition_from_command_line()
 		while ( istr ) {
 			std::string atname;
 			istr >> atname;
-			if ( istr.good() ) {
+			if ( ! istr.bad() ) {
+				if ( atname == "" ) break;
 				if ( downstream_pose_->residue( 1 ).has( atname ) ) {
 					TR << "Requiring downstream atom '" << atname << "' to reside in the scaffold's active site" << std::endl;
 					downstream_atoms_required_inside_active_site_.push_back(
@@ -1338,7 +1339,10 @@ MatcherTask::initialize_active_site_definition_from_command_line()
 			}
 			if ( ! istr.good() ) break;
 			istr >> radius;
-			if ( ! istr.good() ) break;
+			if ( istr.bad() ) {
+				std::cerr << "Error reading active_site_definition: expected to read a radius after reading resid " << resid << std::endl;
+				utility_exit_with_message( "Problem reading active_site_definition " + filename );
+			}
 			TR << "Including sphere of radius " << radius << " surrounding scaffold residue " << resid << " in active site definition" << std::endl;
 			upstream_resids_and_radii_defining_active_site_.push_back( std::make_pair( resid, radius ));
 		}

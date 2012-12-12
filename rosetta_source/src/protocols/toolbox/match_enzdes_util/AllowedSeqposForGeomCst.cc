@@ -135,11 +135,11 @@ AllowedSeqposForGeomCst::initialize_from_command_line( core::pose::PoseCOP pose 
     std::list< Size > upstream_build_resids;
     TR << "Reading match::scaffold_active_stie_residues " << filename << ":";
     while ( istr ) {
-      Size resid;
+      Size resid( 0 );
       istr >> resid;
-      if ( istr.good() ) {
-	TR << " " << resid;
-	upstream_build_resids.push_back( resid );
+      if ( ! istr.bad() && resid != 0 ) {
+				TR << " " << resid;
+				upstream_build_resids.push_back( resid );
       }
 
     }
@@ -164,14 +164,17 @@ AllowedSeqposForGeomCst::initialize_from_command_line( core::pose::PoseCOP pose 
       utility_exit_with_message( "Could not read first line from match::scaffold_active_site_residues_for_geomcsts " + filename );
     }
     istr >> ncsts_string;
-    if ( ! istr.good() ) {
+    if ( istr.bad() ) {
       utility_exit_with_message( "Failed to read N_CST field in first line from match::scaffold_active_site_residues_for_geomcsts " + filename );
+    }
+    if ( ! istr.good() ) {
+      utility_exit_with_message( "Unexpected end of file after reading N_CST field in first line from match::scaffold_active_site_residues_for_geomcsts " + filename );
     }
     if ( ncsts_string != "N_CST" ) {
       utility_exit_with_message( "Failed to read N_CST field in first line from match::scaffold_active_site_residues_for_geomcsts " + filename );
     }
     istr >> ncsts;
-    if ( ! istr.good() ) {
+    if ( istr.bad() ) {
       utility_exit_with_message( "Failed to read the number of geometric constraints in first line from match::scaffold_active_site_residues_for_geomcsts " + filename );
     }
     //if ( ncsts != enz_input_data_->mcfi_lists_size() ) {
@@ -188,11 +191,11 @@ AllowedSeqposForGeomCst::initialize_from_command_line( core::pose::PoseCOP pose 
     utility::vector1< Size > data_read_for_cst( ncsts, 0 );
     Size linenum = 2;
     while ( istr ) {
-      Size geomcst_id;
+      Size geomcst_id( 0 );
       istr >> geomcst_id;
-      if ( istr.eof() ) break;
+      if ( istr.eof() && geomcst_id == 0 ) break;
 
-      if ( ! istr.good() ) {
+      if ( istr.bad() ) {
 	utility_exit_with_message( "Reading line " + utility::to_string( linenum ) + " of " + filename + ". Failed to read the geometric constraint id at the beginning of the line." );
       }
       if ( geomcst_id > ncsts ) {
@@ -212,53 +215,52 @@ AllowedSeqposForGeomCst::initialize_from_command_line( core::pose::PoseCOP pose 
       TR << std::endl << geomcst_id << " :";
       std::string first_token;
       istr >> first_token;
-      if( !istr.good() ) utility_exit_with_message( "Apparently there are no residues listed for geom cst " + utility::to_string( geomcst_id ) + " in file " + filename +".");
+      if( istr.bad() ) utility_exit_with_message( "Apparently there are no residues listed for geom cst " + utility::to_string( geomcst_id ) + " in file " + filename +".");
       if( ( first_token == "ALL" ) || (first_token == "all" ) ){
-	if( !pose ) utility_exit_with_message("AllowedSeqposForGeomCst requested to use all build pos for a certain constraint, but no pose passed into function, can't generate list.");
-	TR << "All pose positions requested, using ";
-	for( core::Size seqpos = 1; seqpos <= pose->total_residue(); ++seqpos ){
-	  if( pose->residue(seqpos).is_protein() ){
-	    seqpos_for_geomcst_[geomcst_id ].push_back( seqpos );
-	    TR << " " << seqpos;
-	  }
-	}
-	istr.getline( finish_the_line );
-      }
-      else{
-	Size first_resid(0);
-	std::istringstream firststr( first_token );
-	firststr >> first_resid;
-	if( first_resid != 0) { //&& (first_resid <= upstream_pose_->total_residue() )){
-	  seqpos_for_geomcst_[geomcst_id].push_back( first_resid );
-	  TR << " " << first_resid;
-	}
-	else{
-	  utility_exit_with_message("Bad first residue listed for geomcst " + utility::to_string( geomcst_id ) + " in file " + filename +": " + first_token);
-	}
-	istr.getline( finish_the_line );
-	if( finish_the_line != ""){
-	  std::istringstream isstr( finish_the_line );
-	  while ( isstr.good() ) {
-	    Size resid( 0 );
-	    isstr >> resid;
-	    if ( ! isstr.bad() ) {
-	      //if ( resid > 0 && resid <= upstream_pose_->total_residue() ) {
-		TR << " " << resid;
-		seqpos_for_geomcst_[ geomcst_id ].push_back( resid );
-		//}
-		//else if ( resid > upstream_pose_->total_residue() ){
-		//std::cerr << std::endl << "ERROR parsing line fragment: " << finish_the_line << std::endl;
-		//utility_exit_with_message( "Reading line " + utility::to_string( linenum ) + " of " + filename + ". Requested upstream build resid of " + utility::to_string(resid) + " exceeds the number of residues in the pose ( " + utility::to_string( upstream_pose_->total_residue() ) + ")"  );
-		//} else {
-		//std::cerr << std::endl << "ERROR parsing line fragment: " << finish_the_line << std::endl;
-		//utility_exit_with_message( "Reading line " + utility::to_string( linenum ) + " of " + filename + ". Failed to read an integer."  );
-		//}
-	    } else {
-	      std::cerr << std::endl << "ERROR parsing line fragment: " << finish_the_line << std::endl;
-	      utility_exit_with_message( "Reading line " + utility::to_string( linenum ) + " of " + filename + ". Only integers may be included." );
-	    }
-	  } //while loop over line
-	}//if finish_the_line has stuff in it
+				if( !pose ) utility_exit_with_message("AllowedSeqposForGeomCst requested to use all build pos for a certain constraint, but no pose passed into function, can't generate list.");
+				TR << "All pose positions requested, using ";
+				for( core::Size seqpos = 1; seqpos <= pose->total_residue(); ++seqpos ){
+					if( pose->residue(seqpos).is_protein() ){
+						seqpos_for_geomcst_[geomcst_id ].push_back( seqpos );
+						TR << " " << seqpos;
+					}
+				}
+				istr.getline( finish_the_line );
+      } else {
+				Size first_resid(0);
+				std::istringstream firststr( first_token );
+				firststr >> first_resid;
+				if( first_resid != 0) { //&& (first_resid <= upstream_pose_->total_residue() )){
+					seqpos_for_geomcst_[geomcst_id].push_back( first_resid );
+					TR << " " << first_resid;
+				}	else {
+					utility_exit_with_message("Bad first residue listed for geomcst " + utility::to_string( geomcst_id ) + " in file " + filename +": " + first_token);
+				}
+				istr.getline( finish_the_line );
+				if( finish_the_line != ""){
+					std::istringstream isstr( finish_the_line );
+					while ( isstr.good() ) {
+						Size resid( 0 );
+						isstr >> resid;
+						if ( isstr.eof() && resid == 0 ) break;
+						if ( ! isstr.bad() ) {
+							//if ( resid > 0 && resid <= upstream_pose_->total_residue() ) {
+							TR << " " << resid;
+							seqpos_for_geomcst_[ geomcst_id ].push_back( resid );
+							//}
+							//else if ( resid > upstream_pose_->total_residue() ){
+							//std::cerr << std::endl << "ERROR parsing line fragment: " << finish_the_line << std::endl;
+							//utility_exit_with_message( "Reading line " + utility::to_string( linenum ) + " of " + filename + ". Requested upstream build resid of " + utility::to_string(resid) + " exceeds the number of residues in the pose ( " + utility::to_string( upstream_pose_->total_residue() ) + ")"  );
+							//} else {
+							//std::cerr << std::endl << "ERROR parsing line fragment: " << finish_the_line << std::endl;
+							//utility_exit_with_message( "Reading line " + utility::to_string( linenum ) + " of " + filename + ". Failed to read an integer."  );
+							//}
+						} else {
+							std::cerr << std::endl << "ERROR parsing line fragment: " << finish_the_line << std::endl;
+							utility_exit_with_message( "Reading line " + utility::to_string( linenum ) + " of " + filename + ". Only integers may be included." );
+						}
+					} //while loop over line
+				}//if finish_the_line has stuff in it
       }//if all pos else
       ++linenum;
     } //loop over lines
@@ -266,8 +268,8 @@ AllowedSeqposForGeomCst::initialize_from_command_line( core::pose::PoseCOP pose 
     bool any_absent( false );
     for ( Size ii = 1; ii <= ncsts; ++ii ) {
       if ( data_read_for_cst[ ii ] == 0 ) {
-	std::cerr << "ERROR reading " << filename << ": did not find residue list for constraint # " << ii << std::endl;
-	any_absent = true;
+				std::cerr << "ERROR reading " << filename << ": did not find residue list for constraint # " << ii << std::endl;
+				any_absent = true;
       }
     }
     if ( any_absent ) {
