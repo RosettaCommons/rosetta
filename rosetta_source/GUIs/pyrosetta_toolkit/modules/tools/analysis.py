@@ -39,17 +39,20 @@ def RetFAEnergyAll(p):
     for i in range(0, p.total_residue()):
         p.energies().show(i)
         
-def rmsd(rmsdP, p, loops_as_strings, ca_only = False, all_atom=False):
+def rmsd(native, p, loops_as_strings, ca_only = False, all_atom=False):
     """
-    Returns RMSD for Full Protein, as well as any loops in loops_as_strings.
+    Prints + Returns RMSD for Full Protein, as well as any loops in loops_as_strings.
     """
-    
+    rms = ""
     if ca_only:
-        print "\nCA RMSD %.3f"%CA_rmsd(rmsdP, p)
+        rms = CA_rmsd(native, p)
+        print "\nCA RMSD %.3f"%rms
     elif all_atom:
-        print "\nAll Atom RMSD %.3f"%all_atom_rmsd(rmsdP, p)
+        rms = all_atom_rmsd(native, p)
+        print "\nAll Atom RMSD %.3f"%rms
     else:
-        print "\nBB RMSD %.3f"%bb_rmsd(rmsdP, p)
+        rms = bb_rmsd(native, p)
+        print "\nBB RMSD %.3f"%rms
         
     #if start !=0 and end!=0:
     #    start = p.pdb_info().pdb2pose(chain, int(start)); end = p.pdb_info().pdb2pose(chain, int(end))
@@ -57,11 +60,12 @@ def rmsd(rmsdP, p, loops_as_strings, ca_only = False, all_atom=False):
     #    loops = Loops()
     #    loops.add_loop(loo)
         
-    #    lrms = loop_rmsd(p, rmsdP, loops, False)
+    #    lrms = loop_rmsd(p, native, loops, False)
     #    print "Loop RMSD:" + str(lrms)
     
     if all_atom:bb_only = False
     else: bb_only=True
+    loop_rmsd_map = dict(); #[loop_string]:[lrms] and ['total']:[total average loop rms]
     if loops_as_strings:
         all_rosetta_loops = Loops()
         for loop_string in loops_as_strings:
@@ -71,11 +75,14 @@ def rmsd(rmsdP, p, loops_as_strings, ca_only = False, all_atom=False):
             single_loops.add_loop(rosetta_loop)
             all_rosetta_loops.add_loop(rosetta_loop)
             
-            lrms = loop_rmsd(p, rmsdP, single_loops, ca_only, bb_only)
+            lrms = loop_rmsd(p, native, single_loops, ca_only, bb_only)
             print "\n"+loop_string+" RMSD %.3f"%lrms
-        lrms = loop_rmsd(p, rmsdP, all_rosetta_loops, ca_only, bb_only)
+            loop_rmsd_map[loop_string]=lrms
+        lrms = loop_rmsd(p, native, all_rosetta_loops, ca_only, bb_only)
+        loop_rmsd_map["total"]=lrms
         print "\nALL Loop RMSD:%.3f"%lrms
-    return
+        
+    return rms, loop_rmsd_map
 
 def readFASC(fileName):
     File = open(fileName, 'r')

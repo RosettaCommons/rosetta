@@ -10,7 +10,7 @@
 ///@author Florian Richter, Andrew Leaver-Fay
 /*!
 
-@page matcher Documentation for the matcher
+@page match Documentation for the match application
 
 @section metadata Metadata
 This document was written by Florian Richter and Andrew Leaver-Fay in August 2010. The section about generating ligand grids was written by Lucas Nivon. The <code>match</code> application is maintained by David Baker's lab. Send questions to dabaker@u.washington.edu

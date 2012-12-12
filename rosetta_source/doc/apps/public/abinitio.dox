@@ -10,7 +10,7 @@
 ///@author David E Kim
 /*!
 
-@page abinitio Documentation for ab initio protein structure modeling application (AbinitioRelax)
+@page AbinitioRelax Documentation for ab initio protein structure modeling application (AbinitioRelax)
 
 @section metadata Metadata
 This document was last updated on November, 2010 by David E Kim <dekim@uw.edu>.  The PI is David Baker <dabaker@uw.edu>.

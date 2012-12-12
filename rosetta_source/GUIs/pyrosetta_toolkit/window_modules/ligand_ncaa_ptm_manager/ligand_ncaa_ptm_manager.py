@@ -34,7 +34,7 @@ from modules.tools import general_tools as gen_tools
 class ligand_ncaa_ptm_manager:
     """
     Class for exploring Rosetta's variants, NCAA's, and ligands.  Enable ligands/NCAA + mutate to them.
-    Useful to quickly get the three letter code read by rosetta for your protein of interest.  You can then search+replace in a texteditor.
+    Can use outside of windows.  Just don't use the setTk and shoTk functions.  Everything is setup in init.  To use mutate function, just use getters and setters to set a particular prop first!
     """
     def __init__(self, input_class, score_class, pose):
         self.pose = pose
@@ -53,11 +53,13 @@ class ligand_ncaa_ptm_manager:
         self.param_type_map = dict(); #[string "type_selection"]:[array param_name string]
         self.param_name_map = dict(); #[string "name_selection]:[instance ParamProperties]
         
-        self.variant_map = dict(); #[string variant]:[array param_name string]
         self.three_letter_to_prop_map = dict(); #[string three_letter_code]:[PropertyClass instance]
+        self.variant_map = dict(); #[string variant]:[array param_name string]
+
+        self.__read_patches__()
+        self.__read_params__()
         
-        self.read_patches()
-        self.read_params()
+        
         self.selections = ["patch", "ligand", "polymer"]
         
         #ListBox Selections
@@ -72,10 +74,11 @@ class ligand_ncaa_ptm_manager:
         self.current_name = StringVar()
         
         ###Callbacks###
-        self.current_main_selection.trace_variable('w', self.main_selection_callback)
+        self.current_main_selection.trace_variable('w', self.__main_selection_callback__)
         
-        #self.type_selection.trace_variable('w', self.type_selection_callback)
-        #self.name_selection.trace_variable('w', self.name_selection_callback)
+        #self.type_selection.trace_variable('w', self.__type_selection_callback__)
+        #self.name_selection.trace_variable('w', self.__name_selection_callback__)
+
         self.please_delete = []; #Array of paths that are deleted when the module is closed
     
     def __exit__(self):
@@ -97,9 +100,9 @@ class ligand_ncaa_ptm_manager:
         self.main = main
         self.main_selection = OptionMenu(self.main, self.current_main_selection, *self.selections)
         self.type_listbox = Listbox(self.main)
-        self.type_listbox.bind("<ButtonRelease-1>", lambda event:self.type_selection_callback())
+        self.type_listbox.bind("<ButtonRelease-1>", lambda event:self.__type_selection_callback__())
         self.name_listbox = Listbox(self.main)
-        self.name_listbox.bind("<ButtonRelease-1>", lambda event:self.name_selection_callback())
+        self.name_listbox.bind("<ButtonRelease-1>", lambda event:self.__name_selection_callback__())
         self.name_listbox.bind("<Double-Button-1>", lambda event :self.open_param_or_patch())
         self.label_variant = Label(self.main, text="Variant", font=tkFont.Font(weight='bold'))
         self.label_three_letter=Label(self.main, text="Code Read", font=tkFont.Font(weight='bold'))
@@ -153,76 +156,60 @@ class ligand_ncaa_ptm_manager:
         self.electrostatics_label.grid(row=r+14, column=c+1, columnspan=2)
         self.switch_pair_to_elec_button.grid(row=r+15, column=c+1, columnspan=2)
         self.switch_elec_to_pair_button.grid(row=r+16, column=c+1, columnspan=2)
-    
-    ###Callbacks###
-    
-    def main_selection_callback(self, name, index, mode):
+
+### 'Public' Getter and Setters ###
+
+    def get_prop(self):
         """
-        Callback for when you select a main (patch, ligand, polymer)
+        Gets current property objects
         """
+        return self.prop
+    
+    def set_prop(self, prop):
+        """
+        Sets prop.  Use this before mutating.
+        """
+        self.prop = prop
+      
+    def get_prop_from_three_letter_code(self, code):
+        return self.three_letter_to_prop_map[code]
         
-        varValue = self.current_main_selection.get()
-        #Exception handling for using the module without windows (Full Control)
-        try:
-            self.name_listbox.delete(0, END)
-            self.mutate_button.config(state=DISABLED)
-            if varValue=="patch":
-                self.add_param_to_session_button.config(state=DISABLED)
-                
-                self.type_listbox.delete(0, END)
-                for key in sorted(self.patch_type_map):
-                    self.type_listbox.insert(END, key)
-            else:
-                try:
-                    #self.add_param_to_session_button.config(state=NORMAL)
-                    
-                    self.type_listbox.delete(0, END)
-                    for key in sorted(self.param_main_map[varValue]):
-                        self.type_listbox.insert(END, key)
-                    self.current_variant.set("")
-                except AttributeError:
-                    return
-        except AttributeError:
-            pass
+    def get_param_main_map(self):return self.param_main_map
     
-    def type_selection_callback(self):
-        """
-        Callback for selecting a type in the type_listbox
-        """
-        self.current_type_selection.set(self.type_listbox.get(self.type_listbox.curselection()))
-        if self.current_main_selection.get()=="patch":
-            self.name_listbox.delete(0, END)
-            for value in self.patch_type_map[self.current_type_selection.get()]:
-                self.name_listbox.insert(END, value)
-        else:
-            self.name_listbox.delete(0, END)
-            for value in self.param_type_map[self.current_type_selection.get()]:
-                self.name_listbox.insert(END, value)
-                
-    def name_selection_callback(self):
-        """
-        Callback for selecting a name in the name_listbox
-        """
-        self.current_name.set(self.name_listbox.get(self.name_listbox.curselection()))
-        self.mutate_button.config(state=NORMAL)
-        if self.current_main_selection.get()=="patch":
-            self.prop = self.patch_name_map[self.current_name.get()]
-        else:
-            self.prop = self.param_name_map[self.current_name.get()]
-            
-        if not self.prop.rosetta_read_state:
-            self.add_param_to_session_button.config(state=NORMAL)
-        else:
-            self.add_param_to_session_button.config(state=DISABLED)
-            
-        if self.current_main_selection.get()=="patch":
-            self.current_variant.set(self.prop.molecule_type.get())
-        else:
-            self.current_variant.set(self.prop.variant.get())
-        self.current_three_letter.set(self.prop.three_letter_name.get())
-        self.current_default.set(str(self.prop.rosetta_read_state))
+    def get_param_type_map(self):return self.param_type_map
     
-    ###Functions###
+    def get_param_name_map(self):return self.param_name_map
+    
+    def get_patch_type_map(self):return self.patch_type_map
+    
+    def get_patch_name_map(self):return self.patch_name_map
+    
+    
+    def get_patch_property_class(self, name):
+        """
+        Returns a patch property class from name.
+        """
+        return self.patch_name_map[name]
+    
+    def get_patch_property(self, name, type):
+        """
+        Returns a string of the patch property.  IO string, variant, etc.  See below for options.
+        """
+        return self.patch_name_map[name].get_property(type)
+    
+    def get_param_property_class(self, name):
+        """
+        Returns a param property class from name.
+        """
+        return self.param_name_map[name]
+        
+    def get_param_property(self, name, type):
+        """
+        Returns a string of the param property.  IO_String, etc.  See below for options.
+        """
+        return self.param_name_map[name].get_property(type)
+        
+    ### Main Functions ###
     def mutate(self, resnum=False):
         if self.current_main_selection.get()=="patch":
             variant = self.current_variant.get()
@@ -351,8 +338,77 @@ class ligand_ncaa_ptm_manager:
             #print "open "+os.path.dirname(self.prop.path)+"/"+new_base+" &"
             #os.system("rm "+os.path.dirname(self.prop.path)+"/"+new_base)
             self.please_delete.append(os.path.dirname(self.prop.path)+"/"+new_base)
+    ###Callbacks###
+    
+    def __main_selection_callback__(self, name, index, mode):
+        """
+        Callback for when you select a main (patch, ligand, polymer)
+        """
+        
+        varValue = self.current_main_selection.get()
+        #Exception handling for using the module without windows (Full Control)
+        try:
+            self.name_listbox.delete(0, END)
+            self.mutate_button.config(state=DISABLED)
+            if varValue=="patch":
+                self.add_param_to_session_button.config(state=DISABLED)
+                
+                self.type_listbox.delete(0, END)
+                for key in sorted(self.patch_type_map):
+                    self.type_listbox.insert(END, key)
+            else:
+                try:
+                    #self.add_param_to_session_button.config(state=NORMAL)
+                    
+                    self.type_listbox.delete(0, END)
+                    for key in sorted(self.param_main_map[varValue]):
+                        self.type_listbox.insert(END, key)
+                    self.current_variant.set("")
+                except AttributeError:
+                    return
+        except AttributeError:
+            pass
+    
+    def __type_selection_callback__(self):
+        """
+        Callback for selecting a type in the type_listbox
+        """
+        self.current_type_selection.set(self.type_listbox.get(self.type_listbox.curselection()))
+        if self.current_main_selection.get()=="patch":
+            self.name_listbox.delete(0, END)
+            for value in self.patch_type_map[self.current_type_selection.get()]:
+                self.name_listbox.insert(END, value)
+        else:
+            self.name_listbox.delete(0, END)
+            for value in self.param_type_map[self.current_type_selection.get()]:
+                self.name_listbox.insert(END, value)
+                
+    def __name_selection_callback__(self):
+        """
+        Callback for selecting a name in the name_listbox
+        """
+        self.current_name.set(self.name_listbox.get(self.name_listbox.curselection()))
+        self.mutate_button.config(state=NORMAL)
+        if self.current_main_selection.get()=="patch":
+            self.prop = self.patch_name_map[self.current_name.get()]
+        else:
+            self.prop = self.param_name_map[self.current_name.get()]
             
-    def read_patches(self):
+        if not self.prop.rosetta_read_state:
+            self.add_param_to_session_button.config(state=NORMAL)
+        else:
+            self.add_param_to_session_button.config(state=DISABLED)
+            
+        if self.current_main_selection.get()=="patch":
+            self.current_variant.set(self.prop.molecule_type.get())
+        else:
+            self.current_variant.set(self.prop.variant.get())
+        self.current_three_letter.set(self.prop.three_letter_name.get())
+        self.current_default.set(str(self.prop.rosetta_read_state))
+        
+    ###Setup###
+    
+    def __read_patches__(self):
         """
         Read patches from directory
         """
@@ -360,8 +416,8 @@ class ligand_ncaa_ptm_manager:
         files = glob.glob(self.patch_directory+"/*.txt")
         for path in files:
             p = PatchProperties(path)
-            self.populate_type_map(self.patch_type_map, p)
-            self.populate_name_map(self.patch_name_map, p)
+            self.__populate_type_map__(self.patch_type_map, p)
+            self.__populate_name_map__(self.patch_name_map, p)
             #self.populate_variant_map(self.variant_map, p)
             
         #Grab for carbohydrates.  Maybe all of them will be organized soon...
@@ -371,11 +427,12 @@ class ligand_ncaa_ptm_manager:
             files = glob.glob(dir_path+"/*.txt")
             for path in files:
                 p = PatchProperties(path)
-                self.populate_type_map(self.patch_type_map, p)
-                self.populate_name_map(self.patch_name_map, p)
-                self.populate_three_letter_map(self.three_letter_to_prop_map, p)
+
+                self.__populate_type_map__(self.patch_type_map, p)
+                self.__populate_name_map__(self.patch_name_map, p)
+                self.__populate_three_letter_map__(self.three_letter_to_prop_map, p)
                 
-    def read_params(self):
+    def __read_params__(self):
         """
         Read params from directory
         """
@@ -385,12 +442,12 @@ class ligand_ncaa_ptm_manager:
             files = glob.glob(dir_path+"/*.params")
             for path in files:
                 p = ParamsProperties(path, type)
-                self.populate_main_map(self.param_main_map, p)
-                self.populate_type_map(self.param_type_map, p)
-                self.populate_name_map(self.param_name_map, p)
-                self.populate_three_letter_map(self.three_letter_to_prop_map, p)
+                self.__populate_main_map__(self.param_main_map, p)
+                self.__populate_type_map__(self.param_type_map, p)
+                self.__populate_name_map__(self.param_name_map, p)
+                self.__populate_three_letter_map__(self.three_letter_to_prop_map, p)
         
-    def populate_type_map(self, dictionary, property_class):
+    def __populate_type_map__(self, dictionary, property_class):
         """
         Populate type map for use in type_listbox
         """
@@ -400,9 +457,9 @@ class ligand_ncaa_ptm_manager:
                 dictionary[property_class.molecule_type.get().lower()].append(property_class.name.get())
         else:
             dictionary[property_class.molecule_type.get().lower()]=[]
-            self.populate_type_map(dictionary, property_class)
+            self.__populate_type_map__(dictionary, property_class)
             
-    def populate_name_map(self, dictionary, property_class):
+    def __populate_name_map__(self, dictionary, property_class):
         """
         Populate name map for use in name_listbox
         """
@@ -411,7 +468,7 @@ class ligand_ncaa_ptm_manager:
         else:
             dictionary[property_class.name.get()]=property_class
     
-    def populate_main_map(self, dictionary, property_class):
+    def __populate_main_map__(self, dictionary, property_class):
         """
         Populate main_map for use in main callback - differentiate between ligand and polymer for params.
         """
@@ -424,29 +481,11 @@ class ligand_ncaa_ptm_manager:
             dictionary[property_class.main_type.get().lower()]=dict()
             dictionary[property_class.main_type.get().lower()][(property_class.molecule_type.get().lower())]=0   
     
-    def populate_three_letter_map(self, dictionary, property_class):
+    def __populate_three_letter_map__(self, dictionary, property_class):
         if not property_class.three_letter_name.get():
             dictionary[property_class.three_letter_name.get()] = property_class
             #property_class.three_letter_name.set('unknown')
         
-        
-        
-    """
-    def populate_variant_map(self, dictionary, property_class):
-
-        Popluate viariant_map mainly for Full Control window to mutate to variants easily.  And give some information about the names of those variants.
-
-        
-        if property_class.variant_type.get()=="":
-            property_class.variant_type.set('unknown')
-            
-        if dictionary.has_key(property_class.variant_type.get().lower()):
-            dictionary[property_class.variant_type.get().lower()].append(property_class.name.get().lower())
-        else:
-            dictionary[property_class.variant_type.get().lower()]=dict()
-            dictionary[property_class.variant_type.get().lower()]=[]
-            dictionary[property_class.variant_type.get().lower()].append(property_class.name.get().lower())
-    """
     
 class Properties:
     """
@@ -456,8 +495,18 @@ class Properties:
     def __init__(self, path):
         self.path = path
         self.basename = os.path.basename(self.path).split(".")[0]
-        self.properties=[]
+        self.properties=dict()
     
+    def get_property(self, type):
+        """
+        Returns specific property from self.properties dictionary.
+        """
+        if not self.properties:
+            print "Properties not set."
+            return
+        
+        return self.properties[type].get()
+        
     def read_properties(self):
         """
         Sets properties specified in self.properties dictionary.
@@ -494,8 +543,8 @@ class Properties:
                 
 class PatchProperties(Properties):
     """
-    Reads Patch+ param files.  Grabs properties to show/manipulate in GUI.
-    Container for properties.
+    Reads patch files.  Grabs properties to show/manipulate in GUI.
+    Container for properties, which are stored in StringVar objects and can be accessed through properties dictionary or get_property() function
     """
     
     def __init__(self, path):
@@ -520,6 +569,10 @@ class PatchProperties(Properties):
     
         
 class ParamsProperties(Properties):
+    """
+    Reads param files.  Grabs properties to show/manipulate in GUI.
+    Container for properties, which are stored in StringVar objects and can be accessed through properties dictionary or get_property() function
+    """
     def __init__(self, path, base_type):
         Properties.__init__(self, path)
         self.molecule_type = StringVar()

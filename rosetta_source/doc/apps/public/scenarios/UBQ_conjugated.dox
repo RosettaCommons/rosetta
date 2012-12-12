@@ -65,37 +65,37 @@ See test/integration/tests/UBQ_E2_thioester/ for example usage.  Basically all y
 UBQ_E2_thioester supports three types of options: general rosetta options (packing, etc.), generic protocol options like "how many cycles" borrowed from the AnchoredDesign application, and UBQ_E2_thioester specific options.
 
 UBQ_E2_thioester options
-@li UBQpdb - File - input UBQ PDB, we used 1UBQ.
-@li E2pdb - File - input E2 PDB; we used a trimmed version of 2OB4.  Renamed GTPasepdb for the UBQ_Gp series.
-@li E2_residue - Integer - Which E2 residue is the active cysteine?  85 is default; correct for 2OB4.  Renamed GPTase_residue for the UBQ_Gp series.
-@li SASAfilter - Real - minimum SASA filter value.  Default 1000 used for production.
-@li scorefilter - Real - filter value for maximum total score.  Default 10; 0 used for production.
-@li publication - Boolean - Publication mode?  In publication mode, the code runs an extra analysis step to find the neighbors of ubiquitin I44.  This is used for the integration test and for reproducibility but has no other purpose.  Defaults to false, but use true for reproduction.
-@li n_tail_res - Integer - number of moving C-terminal tail residues on attached protein (ubiquitin).  Defaults to 3, which matches the original publication.  Not present at the time of publication.
+@li -UBQpdb - File - input UBQ PDB, we used 1UBQ.
+@li -E2pdb - File - input E2 PDB; we used a trimmed version of 2OB4.  Renamed GTPasepdb for the UBQ_Gp series.
+@li -E2_residue - Integer - Which E2 residue is the active cysteine?  85 is default; correct for 2OB4.  Renamed GPTase_residue for the UBQ_Gp series.
+@li -SASAfilter - Real - minimum SASA filter value.  Default 1000 used for production.
+@li -scorefilter - Real - filter value for maximum total score.  Default 10; 0 used for production.
+@li -publication - Boolean - Publication mode?  In publication mode, the code runs an extra analysis step to find the neighbors of ubiquitin I44.  This is used for the integration test and for reproducibility but has no other purpose.  Defaults to false, but use true for reproduction.
+@li -n_tail_res - Integer - number of moving C-terminal tail residues on attached protein (ubiquitin).  Defaults to 3, which matches the original publication.  Not present at the time of publication.
 
 Experimental UBQ_E2_thioester options
-@li two_ubiquitins - Boolean - Mind-blowing - use two ubiquitins (assembled for a K48 linkage) to try to examine the transition state.  Don't use this option unless trying to reproduce publication XXXX, default='false'
-@li extra_bodies - FileVector - extra structures to add before modeling.  Should be in the coordinate frame of the non-moving partner.  Will not move during modeling.  Will be detected as part of the nonmoving body for repacking purposes.
-@li UBQ2_lys - Integer - which Lys on the second UB will be conjugated, default=48
-@li UBQ2_pdb - File - PDB for second ubiquitin (second moving chain).  Only active if -two_ubiquitins is used; inactive otherwise.  Optional; defaults to value of -UBQpdb if not passed.
-@li dont_minimize_omega - Boolean - disable minimization of omega angles near thioester in MoveMap; not present in original publications (Saha; Baker), default=false
+@li -two_ubiquitins - Boolean - Mind-blowing - use two ubiquitins (assembled for a K48 linkage) to try to examine the transition state.  Don't use this option unless trying to reproduce publication XXXX, default='false'
+@li -extra_bodies - FileVector - extra structures to add before modeling.  Should be in the coordinate frame of the non-moving partner.  Will not move during modeling.  Will be detected as part of the nonmoving body for repacking purposes.
+@li -UBQ2_lys - Integer - which Lys on the second UB will be conjugated, default=48
+@li -UBQ2_pdb - File - PDB for second ubiquitin (second moving chain).  Only active if -two_ubiquitins is used; inactive otherwise.  Optional; defaults to value of -UBQpdb if not passed.
+@li -dont_minimize_omega - Boolean - disable minimization of omega angles near thioester in MoveMap; not present in original publications (Saha; Baker), default=false
 
 Experimental UBQ_Gp* options
-@li pdz - Boolean - For the UBQ_Gp_LYX-Cterm executable, if -publication is already on, switch to the PDZ center of mass instead of ubiquitin center of mass for the extra statistics calculations.  Don\'t use this option unless trying to reproduce publication XXXX, default=false
+@li -pdz - Boolean - For the UBQ_Gp_LYX-Cterm executable, if -publication is already on, switch to the PDZ center of mass instead of ubiquitin center of mass for the extra statistics calculations.  Don\'t use this option unless trying to reproduce publication XXXX, default=false
 
 AnchoredDesign options (borrowed for simplicity, not tied to AnchoredDesign in any other way); all are in the AnchoredDesign namespace
-@li AnchoredDesign::refine_temp - real - Monte Carlo temperature for refine phase (0.8 used for production)
-@li AnchoredDesign::refine_cycles - unsigned integer - number of refine phase cycles (20000 used for production)
-@li AnchoredDesign::refine_repack_cycles - unsigned integer - Perform a repack/minimize every N cycles of refine mode (100 used for production)
+@li -AnchoredDesign::refine_temp - real - Monte Carlo temperature for refine phase (0.8 used for production)
+@li -AnchoredDesign::refine_cycles - unsigned integer - number of refine phase cycles (20000 used for production)
+@li -AnchoredDesign::refine_repack_cycles - unsigned integer - Perform a repack/minimize every N cycles of refine mode (100 used for production)
 
 General options:  All packing namespace options loaded by the PackerTask are respected.  jd2 namespace options are respected, although input modes are not.  Anything very low-level, like the database paths, is respected.
-@li run::min_type - string - @ref minimization_overview - minimizer type.  dfpmin_armijo_nonmonotone used for production.
-@li nblist_autoupdate - boolean - I'm told this makes minimization faster
-@li nstruct - integer - number of structures to generate
-@li packing:repack_only - boolean - because you don't want to design, you should pass this
-@li generic_job_name - file - this tags the output with a particular name, useful because since there's no normal job distributor input it give strange names to the outputs.
-@li cst_fa_weight - weight for constraints.  Was originally implemented as -constraintweight.  50 used for production.
-@li cst_fa_file - file path for constraints.  Originally, these were hard-coded into the file; instead they are now supplied as publication.cst in the integration test/demo.
+@li -run::min_type - string - @ref minimization_overview - minimizer type.  dfpmin_armijo_nonmonotone used for production.
+@li -nblist_autoupdate - boolean - I'm told this makes minimization faster
+@li -nstruct - integer - number of structures to generate
+@li -packing:repack_only - boolean - because you don't want to design, you should pass this
+@li -generic_job_name - file - this tags the output with a particular name, useful because since there's no normal job distributor input it give strange names to the outputs.
+@li -cst_fa_weight - weight for constraints.  Was originally implemented as -constraintweight.  50 used for production.
+@li -cst_fa_file - file path for constraints.  Originally, these were hard-coded into the file; instead they are now supplied as publication.cst in the integration test/demo.
 
 @section postprocessing Post Processing
 Pick the best models by total score and look at the satisfaction of your experimentally-derived constraints to decide which you think is most plausible.  We used the models to successfully predict a mutation to rescue a defect caused by UBQ I44A.

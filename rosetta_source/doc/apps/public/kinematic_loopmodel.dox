@@ -10,7 +10,7 @@
 ///@author Daniel J. Mandell, Roland A. Pache, Amelie Stein
 /*!
 
-@page kinematic_loopmodel Documentation for kinematic loop modeling
+@page loopmodel Documentation for kinematic loop modeling
 
 @section metadata Metadata
 This document was last updated October 10, 2012 by Amelie Stein. The corresponding PIs for this application are Tanja Kortemme <kortemme@cgl.ucsf.edu> and Evangelos A. Coutsias <coutsias@unm.edu>.

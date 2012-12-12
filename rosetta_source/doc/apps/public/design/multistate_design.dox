@@ -15,7 +15,7 @@
 
 /*!
 
-@page multistate_design Documentation for the mpi_msd application for performing multistate design and distributing the load with MPI, "mpi_msd"
+@page mpi_msd Documentation for the mpi_msd application for performing multistate design and distributing the load with MPI, "mpi_msd"
 
 
 @section metadata Metadata

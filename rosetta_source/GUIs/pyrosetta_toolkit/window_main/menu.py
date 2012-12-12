@@ -10,10 +10,14 @@
 ## @brief  Handles main menu component of the GUI
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
-#Tk and Python Imports
-from Tkinter import *
+#Python Imports
+import os
 import webbrowser
+
+#Tkinter Imports
+from Tkinter import *
 import tkSimpleDialog
+import tkFileDialog
 
 #Module Imports
 from modules.tools import output as output_tools
@@ -24,6 +28,7 @@ from modules.tools import sequence
 from modules import help as help_tools
 from modules.tools import input as input_tools
 from modules import calibur
+from modules.ScoreAnalysis import ScoreAnalysis
 
 from modules.protocols.DockingProtocols import DockingProtocols
 from modules.protocols.DesignProtocols import DesignProtocols
@@ -33,7 +38,7 @@ from modules.protocols.HighResLoopModelingProtocols import HighResLoopModelingPr
 #Window Imports
 from window_modules.options_system.OptionSystemManager import OptionSystemManager
 from window_modules.clean_pdb.FixPDBWindow import FixPDBWindow
-from window_modules.rosetta_tools.RosettaProtocolBuilder import RosettaProtocolBuilder
+from window_modules.rosetta_tools.RosettaFlagFileBuilder import RosettaFlagFileBuilder
 from window_modules.design.ResfileDesignWindow import ResfileDesignWindow
 #from window_modules.interactive_terminal import IPython
 from window_modules.ligand_ncaa_ptm_manager.ligand_ncaa_ptm_manager import ligand_ncaa_ptm_manager
@@ -44,7 +49,7 @@ class Menus():
 	self.main = main
 	self.toolkit = toolkit
 	self.main_menu=Menu(self.main)
-	
+	self.score_analyzer = ScoreAnalysis(); #Needs to exist as instance due to holding data from load data.  Eventually these functions can go into it's own window.
 
 
     def setTk(self):
@@ -56,7 +61,6 @@ class Menus():
 	self._set_file_menu()
 	self._set_advanced_menu()
 	self._set_protocols_menu()
-	self._set_protein_design_menu()
 	self._set_pdblist_menu()
 	self._set_help_menu()
 
@@ -102,13 +106,15 @@ class Menus():
 	self.file_menu.add_command(label="Load PDBList", command=lambda: self.toolkit.input_class.set_PDBLIST())
 	self.file_menu.add_cascade(label="Import", menu=self.import_menu)
 	self.file_menu.add_cascade(label="Export", menu=self.export_menu)
+	self.file_menu.add_separator()
+	
 	self.file_menu.add_checkbutton(label="Set Pymol Observer", variable=self.toolkit.pymol_class.auto_send) #this option should be set only once.
 	self.file_menu.add_command(label = "Show Pose in PyMOL", command = lambda: self.toolkit.pymol_class.pymover.apply(self.toolkit.pose))
-	#self.file_menu.add_checkbutton(label="Set stdout to terminal", variable = self.toolkit.terminal_output)
 	self.file_menu.add_command(label="Configure Option System",command = lambda: self.show_OptionsSystemManager())
 	self.file_menu.add_command(label ="Setup PDB for Rosetta", command=lambda: self.show_fxpdb_window())
 	self.main_menu.add_cascade(label="File", menu=self.file_menu)
 	self.file_menu.add_separator()
+	self.file_menu.add_checkbutton(label="Set Output to Terminal", variable = self.toolkit.output_class.terminal_output)
 	self.file_menu.add_command(label= "Rosetta Command-Line Creator", command = lambda: self.show_RosettaProtocolBuilder())
 
     def _set_advanced_menu(self):
@@ -117,17 +123,27 @@ class Menus():
 	"""
 
 	self.advanced_menu=Menu(self.main_menu, tearoff=0)
+	
+	###Analysis###
 	self.analysis_menu = Menu(self.main_menu, tearoff=0)
+
 	self.analysis_menu.add_command(label = "Interface Analyzer", command=lambda: analysis_tools.analyze_interface(self.toolkit.pose, self.toolkit.score_class.score))
 	self.analysis_menu.add_command(label = "Packing Analyzer", command = lambda: analysis_tools.analyze_packing(self.toolkit.pose))
 	self.analysis_menu.add_command(label = "Loops Analyzer", command = lambda: analysis_tools.analyze_loops(self.toolkit.pose, self.toolkit.input_class.loops_as_strings))
 	self.analysis_menu.add_command(label = "VIP Analyzer", foreground='red', command = lambda: analysis_tools.analyze_vip(self.toolkit.pose, self.toolkit.score_class.score, self.toolkit.pwd))
 	self.advanced_menu.add_cascade(label = "Analysis", menu = self.analysis_menu)
+	
+	###Design###
+	self.design_menu=Menu(self.main_menu, tearoff=0)
+	self.design_menu.add_command(label="Setup Resfile for PDB", command=lambda: self.show_ResfileDesignWindow())
+	self.design_menu.add_command(label="Setup Blueprint for PDB", foreground='red')
+	#self.design_menu.add_command(label="Structure Editing and Grafting", foreground='red')
+	self.advanced_menu.add_cascade(label = "Design", menu=self.design_menu)
 	self.advanced_menu.add_separator()
 	self.advanced_menu.add_command(label ="Enable Constraints", command = lambda: input_tools.add_constraints_to_pose_and_scorefunction(self.toolkit.pose, self.toolkit.score_class.score))
 	#self.advanced_menu.add_command(label ="Enable Symmetry", foreground='red')
 	
-	#NonStandard
+	###NonStandard###
 	self.non_standard_menu = Menu(self.main_menu, tearoff=0)
 	self.non_standard_menu.add_command(label = "Ligand/NCAA/PTM Manager", command = lambda: self.show_ligand_ncaa_ptm_manager())
 	self.non_standard_menu.add_separator()
@@ -146,19 +162,6 @@ class Menus():
 	#self.advanced_menu.add_command(label="Interactive Terminal", foreground='red',command = lambda: self.show_IpythonWindow())
 	#self.advanced_menu.add_command(label="Jump into Session", foreground='red', command = lambda: embed())
 	self.main_menu.add_cascade(label = "Advanced", menu = self.advanced_menu)
-
-
-	
-    def _set_protein_design_menu(self):
-	"""
-	Sets the Protein Design menu.
-	"""
-
-	self.protein_design_menu=Menu(self.main_menu, tearoff=0)
-	self.protein_design_menu.add_command(label="Setup Resfile for PDB", command=lambda: self.show_ResfileDesignWindow())
-	self.protein_design_menu.add_command(label="Setup Blueprint for PDB", foreground='red')
-	self.protein_design_menu.add_command(label="Structure Editing and Grafting", foreground='red')
-	self.main_menu.add_cascade(label="Protein Design", menu=self.protein_design_menu)
 
     def _set_protocols_menu(self):
 	"""
@@ -182,7 +185,7 @@ class Menus():
 	
 	self.design_protocols = Menu(self.main_menu, tearoff=0)
 	self.design_protocols.add_command(label = "FixedBB", command = lambda: self.design_class.packDesign())
-	self.design_protocols.add_command(label = "Grafting", foreground='red')
+	#self.design_protocols.add_command(label = "Grafting", foreground='red')
 	self.design_protocols.add_command(label = "Remodel", foreground='red')
 	
 	#Docking
@@ -236,25 +239,32 @@ class Menus():
 	"""
 
 	self.pdblist_tools_menu = Menu(self.main_menu, tearoff=0)
-	self.pdblist_analysis_menu = Menu(self.main_menu, tearoff=0)
 	#There are scripts in RosettaTools that do this welll...
-	self.pdblist_analysis_menu.add_command(label = "Energy vs RMSD", foreground='red')
-	self.pdblist_analysis_menu.add_command(label = "Energy vs RMSD (Region(s))", foreground='red')
-	self.pdblist_analysis_menu.add_separator()
-	self.pdblist_analysis_menu.add_command(label = "Rescore PDBList", command = lambda: output_tools.score_PDBLIST(self.toolkit.input_class.PDBLIST.get(), self.toolkit.score_class.score))
-	self.pdblist_analysis_menu.add_command(label = "Load Scores", foreground='red')
-	self.pdblist_analysis_menu.add_command(label = "Get top model", foreground='red')
-	self.pdblist_analysis_menu.add_command(label = "Get top % models", foreground='red')
-	#self.pdblist_analysis_menu.add_command(label = "Filter  PDBList by Loop Energy")
-	#self.pdblist_analysis_menu.add_command(label = "Filter  PDBList by E Component")
-	self.pdblist_tools_menu.add_cascade(label = "Analysis", menu=self.pdblist_analysis_menu)
+	self.score_menu = Menu(self.main_menu, tearoff=0)
+	self.score_menu.add_command(label = "Rescore PDBList", command = lambda: output_tools.score_PDBLIST(self.toolkit.input_class.PDBLIST.get(), self.toolkit.score_class.score))
+	self.score_menu.add_command(label = "Load Scores", command = lambda: self.load_scores_for_score_analysis())
+	self.score_menu.add_separator()
+    	self.score_menu.add_command(label = "Get top model", command = lambda: self.score_analyzer.get_top_scoring())
+	self.score_menu.add_command(label = "Get top % models", command = lambda: self.score_analyzer.get_top_scoring_by_percent())
+	self.score_menu.add_command(label = "Get top # models", command = lambda: self.score_analyzer.get_top_scoring_by_number())
+	self.score_menu.add_separator()
+	self.score_menu.add_command(label = "Energy vs RMSD", command=lambda:self.score_analyzer.get_score_vs_rmsd(self.toolkit.pose, self.toolkit.input_class.loops_as_strings))
+	self.score_menu.add_separator()
+	
+	#self.plot_menu = Menu(self.main_menu, tearoff=0)
+	#self.plot_menu.add_command(label = "Plot Score KDE", command = lambda:self.score_analyzer.plot_score_kde(), foreground='red')
+	#self.plot_menu.add_command(label = "Plot Score vs RMSD", command = lambda: self.score_analyzer.plot_score_vs_rmsd(), foreground='red')
+	#self.plot_menu.add_command(label = "Plot Score vs RMSD KDE", command = lambda: self.score_analyzer.plot_score_vs_rmsd_KDE(), foreground='red')
+	#self.score_menu.add_cascade(label = "R Plots", menu = self.plot_menu)
+	
+	self.pdblist_tools_menu.add_cascade(label = "Score Analysis", menu=self.score_menu)
 
 	self.sequence_menu = Menu(self.main_menu, tearoff=0)
 	self.sequence_menu.add_command(label = "Output FASTA for Each PDB", command = lambda: output_tools.save_FASTA_PDBLIST(self.toolkit.input_class.PDBLIST.get(), False))
 	self.sequence_menu.add_command(label = "Output FASTA for Each Region", command = lambda: output_tools.save_FASTA_PDBLIST(self.toolkit.input_class.PDBLIST.get(), False, self.toolkit.input_class.loops_as_strings))
 	#If you need this, you know how to program: self.sequence_menu.add_command(label = "Output LOOP file for each PDB", command = lambda: output_tools.save_LOOP_PDBLIST(self.toolkit.input_class.PDBLIST.get()))
 	self.sequence_menu.add_command(label = "Output Design Breakdown for each Loop", foreground='red')
-	self.pdblist_tools_menu.add_cascade(label = "Sequence", menu=self.sequence_menu)
+	self.pdblist_tools_menu.add_cascade(label = "Sequence Analysis", menu=self.sequence_menu)
 	self.pdblist_tools_menu.add_separator()
 	self.pdblist_tools_menu.add_command(label = "Create PDBList", command = lambda: self.toolkit.input_class.PDBLIST.set(output_tools.make_PDBLIST()))
 	self.pdblist_tools_menu.add_command(label = "Create PDBList Recursively", command = lambda: self.toolkit.input_class.PDBLIST.set(output_tools.make_PDBLIST_recursively()))
@@ -300,9 +310,11 @@ class Menus():
 
 ##### MENU FUNCTIONS #######
 
-
-
-
+    def load_scores_for_score_analysis(self):
+	filename = tkFileDialog.askopenfilename(title="Open ScoredPDBList, .fasc, or .sc file", initialdir=global_variables.current_directory)
+	if not filename:return
+	global_variables.current_directory = os.path.dirname(filename)
+	self.score_analyzer.set_filepath(filename)
 
 #### WINDOWS ##### (ADD NEW WINDOWS TO THIS THAT NEED TO BE SET UP) #######
     def show_fxpdb_window(self):
@@ -341,7 +353,7 @@ class Menus():
 	"""
 
 	top_level_tk = Toplevel(self.main)
-	rosetta_protocol_builder = RosettaProtocolBuilder(top_level_tk)
+	rosetta_protocol_builder = RosettaFlagFileBuilder(top_level_tk)
 	rosetta_protocol_builder.setTk()
 	rosetta_protocol_builder.shoTk(0, 0)
 	rosetta_protocol_builder.setMenu(top_level_tk)

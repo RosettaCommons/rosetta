@@ -57,7 +57,7 @@ Though this application makes use of classes designed to incorporate multiple st
 
 @li -database [file path] - the Rosetta 3 database location
 
-@li -in:%file:s [file path] - the structure used for packing
+@li -in:file:s [file path] - the structure used for packing
 
 @li -packing:resfile [file path] - define which residues can be mutated/repacked
 

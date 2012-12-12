@@ -39,12 +39,13 @@ class OptionSystemManager:
             self.load_settings(self.pwd+"/settings.txt")
             
         self.common_options = [
-            'Custom:',
+            'Enter Custom:',
             '-dun10',
             '-ex2',
             '-use_bicubic_interpolation',
             '-ignore_unrecognized_res',
-            '-out:file:silent'
+            '-out:file:silent',
+            '-relax:constrain_relax_to_start_coords'
         ]
 
         self.common_option = StringVar(); self.common_option.set(self.common_options[0])
@@ -67,6 +68,9 @@ class OptionSystemManager:
         self.clear_button=Button(self.main, text = "Clear Defaults", command = lambda: self.clear_defaults())
         self.clear_current_button = Button(self.main, text = "Clear Current", command = lambda: self.reset_options())
         
+    ### Callbacks ###
+        #self.common_option.trace_variable('w', self.common_option_disable)
+        
     def shoTk(self, r=0, c=0):
         self.common_option_menu.grid(row = r, column=c, sticky=W+E)
         self.custom_option_entry.grid(row=r+1, column=c, sticky=W+E)
@@ -78,7 +82,17 @@ class OptionSystemManager:
         self.load_button.grid(row= r+1, column=c+3, sticky=W+E)
         self.clear_button.grid(row=r+2, column=c+2, columnspan=2, sticky=W+E)
         self.clear_current_button.grid(row = r+3, column=c+2, columnspan = 2, sticky=W+E)
-        
+    
+    def common_option_disable(self, name, index, mode):
+        """
+        Callback for common_option.  If not set to enter custom, disables option entry.
+        """
+        varValue = self.common_option.get()
+        if varValue==self.common_options[0]:
+            self.custom_option_entry.config(state=NORMAL)
+        else:
+            self.custom_option_entry.config(state=DISABLED)
+            
     def find_rosetta_database(self):
         '''
         Directly from __init__ file in /rosetta
@@ -168,6 +182,7 @@ class OptionSystemManager:
         self.args = rosetta.utility.vector1_string()
         self.args.extend(self.opts)
         rosetta.core.init(self.args)
+        
     def extend(self):
         '''
         calls extend options.  Used to determine if common option or custom option.

@@ -26,7 +26,7 @@ import tkSimpleDialog
 
 #Toolkit Imports
 from modules.tools import output as output_tools
-
+from window_main import global_variables
 
 class ScoreFxnControl():
     """
@@ -196,8 +196,15 @@ class ScoreFxnControl():
             return scoretemp
         elif Option=="Score Pose":
             scoretemp = self.scoreOption("Set Temp Score")
+            
+            if self.pose.total_residue()==0:
+                print "No Pose loaded..."
+                return
+            
             print scoretemp(self.pose)
             self.score.show(self.pose)
+
+
             return
         elif Option=="Breakdown ScoreFxn":
             #self.scoreOption("Set ScoreFunction")
@@ -305,9 +312,10 @@ class ScoreFxnControl():
         """
         Saves New Energy Weights
         """
-        f= tkFileDialog.asksaveasfilename(initialdir = self.wd)
+        f= tkFileDialog.asksaveasfilename(initialdir = global_variables.current_directory)
         if not f:
             return
+        global_variables.current_directory = path.dirname(f)
         FILE = open(f, 'w')
         FILE.write(self.ret_Refs())
         for term in sorted(self.nonzero):
@@ -319,7 +327,7 @@ class ScoreFxnControl():
         name = tkSimpleDialog.askstring(title = "Save", prompt = "Name")
         if not name:
             return
-        FILE = open(self.wd + "/"+name, 'w'); FILE.write(self.ret_Refs())
+        FILE = open(global_variables.current_directory + "/"+name, 'w'); FILE.write(self.ret_Refs())
         for term in sorted(self.nonzero):
             termSP = term.split("; ")
             FILE.write(termSP[0]+" "+termSP[1]+"\n")

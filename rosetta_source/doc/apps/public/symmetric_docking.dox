@@ -16,7 +16,7 @@
 ///@author Ingemar André
 /*!
 
-@page symmetric_docking Documentation for symmetric docking application
+@page SymDock Documentation for the symmetric docking application
 
 @section metadata Metadata
 This document was edited Aug 20th 2010 by Ingemar Andre. This application in rosetta was created by Ingemar André.
@@ -51,7 +51,7 @@ Observe that for more complex symmetries you may have to edit the definition fil
 
 @li -database [file path] - the Rosetta 3 database location
 
-@li -in:%file:s [file path] - the input subunit structure
+@li -in:file:s [file path] - the input subunit structure
 
 @li -ex1, -ex2, -extrachi_cutoff [num residues], etc. - increase the resolution of the rotamer library
 

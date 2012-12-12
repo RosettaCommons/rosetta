@@ -122,12 +122,10 @@ class ResfileDesignWindow:
         
         self.listbox_current_designs.delete(0, END)
         self.current_residueFull = self.current_residue.get().split(":")
-        #print "This is not working...."
         
         if len(self.current_residueFull) > 1:
             self.listbox_restypes.delete(9)
             self.listbox_restypes.insert(9, "Conserved")
-            #print "What the hell is this?"
         else:
             res = self.current_residueFull[0] +":"+self.current_chain.get()
             #print res
@@ -167,6 +165,10 @@ class ResfileDesignWindow:
         What happens when you click a design type (conserved, polar, etc.)
         """
         
+        #Ropulate if more then 1 residue
+        #if self.current_residue.get().split(":")>1:
+            #self.check_residue_callback()
+            
         ListTypesFull.delete(0, END)
         type = ListTypes.get(ListTypes.curselection())
         self.TypeCurSelection.set(type)
@@ -180,7 +182,7 @@ class ResfileDesignWindow:
         
     def add_to_current_designs_callback(self, ListTypesFull, check_button_ckList):
         """
-        What happens when you add a residue type to the design.  Updates other listboxes, etc.  Needs to be rewritten for clarity in code.
+        What happens when you add a residue type to the design.  Updates other listboxes, etc.
         """
         
         self.current_chainFull = self.current_residue.get().split(":")
@@ -230,25 +232,28 @@ class ResfileDesignWindow:
             elif (ListTypesFull.get(ListTypesFull.curselection()))=="All Conserved Mutations":
                 start = self.pose.pdb_info().pdb2pose(self.current_chain.get(), ResStart)
                 end =   self.pose.pdb_info().pdb2pose(self.current_chain.get(), ResEnd)
+                print repr(start); print repr(end)
                 for i in range(start, end+1):
+                    print i
                     resType = i
                     resType = self.pose.residue(resType).name()
                     resType = resType.split("_")[0]; 
-                    res = repr(i) + ":"+self.current_chain.get()
                     resType = "Conserved:"+resType
+                    res = self.pose.pdb_info().pose2pdb(i).split()[0]+":"+self.current_chain.get()
                     for types in self.residue_definitions.restype_info[resType]:
                         if self.DesignDic.has_key(res):
                             self.DesignDic[res].append(types)
                         else:
                             self.DesignDic[res] = [types, ]
             elif (ListTypesFull.get(ListTypesFull.curselection()))=="All Conserved Mutations+Self":
+                print "4"
                 start = self.pose.pdb_info().pdb2pose(self.current_chain.get(), ResStart)
                 end =   self.pose.pdb_info().pdb2pose(self.current_chain.get(), ResEnd)
                 for i in range(start, end+1):
                     resType = i
                     resType = self.pose.residue(resType).name()
                     resType = resType.split("_")[0];
-                    res = repr(i) + ":"+self.current_chain.get()
+                    res = self.pose.pdb_info().pose2pdb(i).split()[0]+":"+self.current_chain.get()
                     resType = "Conserved:"+resType
                     for types in self.residue_definitions.restype_info[resType]:
                         if self.DesignDic.has_key(res):

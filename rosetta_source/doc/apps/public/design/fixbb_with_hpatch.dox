@@ -15,7 +15,7 @@
 
 /*!
 
-@page fixbb_with_hpatch Documentation for using the fixed backbone design application, "fixbb", with the 'hpatch' solubility score term
+@page fixbb Documentation for using the fixed backbone design application, "fixbb", with the 'hpatch' solubility score term
 
 @section metadata Metadata
 This document was last edited on June 22, 2011 by Ron Jacak. The code was written by Ron Jacak and Andrew Leaver-Fay. The corresponding PI is Brian Kuhlman (bkuhlman@email.unc.edu).

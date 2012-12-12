@@ -64,8 +64,7 @@ class FixPDBWindow:
           
      def runfixPDBWindow(self, m, r, c):
           """
-          This First asks for a list of PDB paths.  Then it can do two things, depending on the choices:  Remove HETATM, fix Alternate Residues/Occupancies.
-          Gives a GUI, because, well, why not?
+          Shows the Window.  Very simple window, but works well enough for what it does. Can use a PDB or PDBList. 
           m = Main Window
           r = Row
           c = Column
@@ -214,7 +213,7 @@ class FixPDBWindow:
           
      def fixonepdb(self, filename, outdir, silence_dialogs=False):
           """
-          Goes through each option, runs the specified command.  Saves PDB at the end.
+          Goes through each option, runs the specified command on a file name after loading it into PythonPDB. Saves PDB at the end.
           """
           self.clean_pdb = PythonPDB(filename)
           pdb_map = self.clean_pdb.get_pdb_map()

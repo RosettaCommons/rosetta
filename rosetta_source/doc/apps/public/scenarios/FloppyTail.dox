@@ -66,34 +66,34 @@ This code was intended for a single purpose, but it may work if you have a simil
 @section ft_options Options
 
 FloppyTail options
-@li flexible_start_resnum - integer - this is the start of the flexible tail in PDB numbering. (See below that you have an option for passing a MoveMap file instead).
-@li flexible_stop_resnum - integer - this is the end of the flexible region, in PDB numbering.  Passing 0 or not using this option means the entire chain after flexible_start_resnum. (See below that you have an option for passing a MoveMap file instead).
-@li flexible_chain - string - the first character of this string is interpreted as the PDB chain for the flexible region; any other characters are ignored.
-@li shear_on - real - In centroid mode, shear moves are completely nonproductive early on when the tail is still largely extended.  This value gives the fraction of centroid cycles when shear moves will be allowed (introduced into the moveset of the RandomMover choosing perturbation moves).  For example, passing 0.333 means that for the first third of centroid mode, shear moves will be disallowed.
-@li short_tail::short_tail_fraction - real - Fraction of the tail used in the short tail fraction of refinement mode.  0.1 would mean the last tenth of the tail is flexible.  Not compatible with non-terminal flexible regions.
-@li short_tail::short_tail_off - real - Fraction of refinement cycles dedicated to refining only the short part of the tail.  0.33 means the first third of refinement cycles will be with the shorter flexible region.
-@li pair_off - boolean - If true, disable the electrostatic Epair (pair and fa_pair) terms.  Used for a control experiment, not for general use.
-@li publication - boolean - If true, output system-specific results used in the demo and publication.  Use FALSE for any other purpose; this boolean activates code including hardcoded references to particular residues and will cause either a crash or silly behavior on systems other than the demo/publication.
+@li -flexible_start_resnum - integer - this is the start of the flexible tail in PDB numbering. (See below that you have an option for passing a MoveMap file instead).
+@li -flexible_stop_resnum - integer - this is the end of the flexible region, in PDB numbering.  Passing 0 or not using this option means the entire chain after flexible_start_resnum. (See below that you have an option for passing a MoveMap file instead).
+@li -flexible_chain - string - the first character of this string is interpreted as the PDB chain for the flexible region; any other characters are ignored.
+@li -shear_on - real - In centroid mode, shear moves are completely nonproductive early on when the tail is still largely extended.  This value gives the fraction of centroid cycles when shear moves will be allowed (introduced into the moveset of the RandomMover choosing perturbation moves).  For example, passing 0.333 means that for the first third of centroid mode, shear moves will be disallowed.
+@li -short_tail::short_tail_fraction - real - Fraction of the tail used in the short tail fraction of refinement mode.  0.1 would mean the last tenth of the tail is flexible.  Not compatible with non-terminal flexible regions.
+@li -short_tail::short_tail_off - real - Fraction of refinement cycles dedicated to refining only the short part of the tail.  0.33 means the first third of refinement cycles will be with the shorter flexible region.
+@li -pair_off - boolean - If true, disable the electrostatic Epair (pair and fa_pair) terms.  Used for a control experiment, not for general use.
+@li -publication - boolean - If true, output system-specific results used in the demo and publication.  Use FALSE for any other purpose; this boolean activates code including hardcoded references to particular residues and will cause either a crash or silly behavior on systems other than the demo/publication.
 
 Monte Carlo sampling control options
-@li FloppyTail::perturb_temp - real - Monte Carlo temperature for perturb phase (0.8 used for production)
-@li FloppyTail::perturb_cycles - unsigned integer - number of perturb phase cycles (5000 used for production)
-@li FloppyTail::perturb_show - boolean - if true, outputs centroid poses after perturbation
-@li FloppyTail::debug - debug - if true, outputs poses for each monte carlo cycle
-@li FloppyTail::refine_temp - real - Monte Carlo temperature for refine phase (0.8 used for production)
-@li FloppyTail::refine_cycles - unsigned integer - number of refine phase cycles (3000 used for production)
-@li FloppyTail::refine_repack_cycles - unsigned integer - Perform a repack/minimize every N cycles of refine mode (30 used for production)
+@li -FloppyTail::perturb_temp - real - Monte Carlo temperature for perturb phase (0.8 used for production)
+@li -FloppyTail::perturb_cycles - unsigned integer - number of perturb phase cycles (5000 used for production)
+@li -FloppyTail::perturb_show - boolean - if true, outputs centroid poses after perturbation
+@li -FloppyTail::debug - debug - if true, outputs poses for each monte carlo cycle
+@li -FloppyTail::refine_temp - real - Monte Carlo temperature for refine phase (0.8 used for production)
+@li -FloppyTail::refine_cycles - unsigned integer - number of refine phase cycles (3000 used for production)
+@li -FloppyTail::refine_repack_cycles - unsigned integer - Perform a repack/minimize every N cycles of refine mode (30 used for production)
 
 General options:  All packing namespace options loaded by the PackerTask are respected.  jd2 namespace options are respected.  Anything very low-level, like the database paths, is respected.
-@li packing::resfile - string - @ref resfiles - resfile if you want one
-@li packing::repack_only - boolean - Tells the code not to perform design.  Design is performed by default because PackerTasks behave that way.
-@li in::file::frag3 - string - @ref directory_core_fragments - fragments if you've got them
-@li run::min_type - string - @ref minimization_overview - minimizer type.  dfpmin_armijo_nonmonotone used for production.
-@li nstruct - integer - number of structures to generate
-@li constraints::cst_file - string - @ref constraint_file - for constraints (the centroid phase)
-@li constraints::cst_weight - real - constraints weight (centroid phase)
-@li constraints::cst_fa_file - string - @ref constraint_file - for constraints (the fullatom phase)
-@li constraints::cst_fa_weight - real - constraints weight (fullatom phase)
+@li -packing::resfile - string - @ref resfiles - resfile if you want one
+@li -packing::repack_only - boolean - Tells the code not to perform design.  Design is performed by default because PackerTasks behave that way.
+@li -in::file::frag3 - string - @ref directory_core_fragments - fragments if you've got them
+@li -run::min_type - string - @ref minimization_overview - minimizer type.  dfpmin_armijo_nonmonotone used for production.
+@li -nstruct - integer - number of structures to generate
+@li -constraints::cst_file - string - @ref constraint_file - for constraints (the centroid phase)
+@li -constraints::cst_weight - real - constraints weight (centroid phase)
+@li -constraints::cst_fa_file - string - @ref constraint_file - for constraints (the fullatom phase)
+@li -constraints::cst_fa_weight - real - constraints weight (fullatom phase)
 
 @section multiple_linkers_mode Multiple flexible linkers mode
 For release 3.4, FloppyTail supports multiple flexible linkers.  To use these, you have to write your own MoveMap file to tell FloppyTail what is flexible, and pass it in via the flag in:file:movemap.  The formatting is described in the header to the function core::kinematics::MoveMap::init_from_file (probably at core/kinematics/MoveMap.hh).  Briefly, do this:

@@ -10,7 +10,7 @@
 ///@author P. Douglas Renfrew (renfrew@nyu.edu)
 /*!
 
-@page USEC Documentation for UnfoldedStateEnergyCalculator application
+@page UnfoldedStateEnergyCalculator USEC Documentation for UnfoldedStateEnergyCalculator application
 
 @section metadata Metadata
 State when the documentation was last updated December 2011 by P. Douglas Renfrew. The PI for this application is Brian Kuhlman (bkuhlman@email.unc.edu).
@@ -52,18 +52,18 @@ There should be 1801 gzipped pdb files and a text file containing a list of them
 The UnfoldedStateEnergyCalculator is relatively easy to run.
 @section ft_options Options
 
-@li frag_size: single integer value, sets the number of residues in each fragment, should be an odd number and has a default of 5 which is what was used in the accompanying publication
-@li residue_name: string value, sets the three letter code of the residue type which the central residue will be mutated to
-@li repack_fragments: boolean value, controls if the fragments will be repacked before scoring and defaults to true
-@li native_sequence: boolean value, controls if the central residue will be mutated before scoring and defaults to false
+@li -frag_size: single integer value, sets the number of residues in each fragment, should be an odd number and has a default of 5 which is what was used in the accompanying publication
+@li -residue_name: string value, sets the three letter code of the residue type which the central residue will be mutated to
+@li -repack_fragments: boolean value, controls if the fragments will be repacked before scoring and defaults to true
+@li -native_sequence: boolean value, controls if the central residue will be mutated before scoring and defaults to false
 
 Additionally it is strongly recommended to add the following flags as they will make Rosetta handle more pdb files and improves runtime by disabling default features that will be negated by the fragmenting and prepacking
 
-@li ignore_unrecognized_res: causes Rosetta to ignore unrecognized residue types and 
-@li ex1 and ex2 and extrachi_cutoff 0: force rosetta to use additional rotamer during the fragment repacking
-@li mute all and unmute devel.UnfoldedStateEnergyCalculator and unmute protocols.jd2.PDBJobInputer: reduces the size of the log file significantly by turning off unnecessary output
-@li no_optH true: turns off the hydrogen optimization done when the protein is first read in 
-@li detect_disulf false: turns off disulfide detection
+@li -ignore_unrecognized_res: causes Rosetta to ignore unrecognized residue types and 
+@li -ex1 and ex2 and extrachi_cutoff 0: force rosetta to use additional rotamer during the fragment repacking
+@li -mute all and unmute devel.UnfoldedStateEnergyCalculator and unmute protocols.jd2.PDBJobInputer: reduces the size of the log file significantly by turning off unnecessary output
+@li -no_optH true: turns off the hydrogen optimization done when the protein is first read in 
+@li -detect_disulf false: turns off disulfide detection
 
 Continuing the ornithine example we have used in the two previous protocol captures, to calculate the unfolded state energies one would run the following command.
 

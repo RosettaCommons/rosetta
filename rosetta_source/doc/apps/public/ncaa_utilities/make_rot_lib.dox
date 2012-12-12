@@ -10,7 +10,7 @@
 ///@author P. Douglas Renfrew (renfrew@nyu.edu)
 /*!
 
-@page mrl Documentation for MakeRotLib application
+@page make_rot_lib Documentation for the MakeRotLib application
 
 @section metadata Metadata
 The documentation was last updated in December 2011, by P. Douglas Renfrew. The PI for this application is Brian Kuhlman (bkuhlman@email.unc.edu).

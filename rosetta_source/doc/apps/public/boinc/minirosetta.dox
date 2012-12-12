@@ -9,7 +9,7 @@
 
 /*!
 
-@page boinc_minirosetta_usage Boinc minirosetta application usage and overview
+@page minirosetta Boinc minirosetta application usage and overview
 
 @section metadata Metadata
 The relevant Mini-Rosetta code is in minirosetta.cc
