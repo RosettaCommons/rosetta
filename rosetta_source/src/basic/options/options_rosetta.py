@@ -3916,7 +3916,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 								 Option( 'delete_interface_native_sidechains', 'Boolean', desc='benchmarking option.  delete input sidechains as prepacking step before running centroid or fullatom phases.  use if also using use_input_sc and doing benchmarking.  use_input_sc is used because of sidechain minimization, not to maintain input sidechains.'),
 								 Option( 'RMSD_only_this', 'File', desc='Perform only RMSD calculations without modifying input.  Only used for re-running metrics during benchmarking/debugging.'),
 								 Option( 'anchor_noise_constraints_mode', 'Boolean', desc='Hold the anchor loosely (via constraints), not rigidly.  Automatically generate the constraints from the starting pose.  Mildly randomize the anchor\'s placement before modeling (up to 1 angstrom in x,y,z from initial placement.)  Only compatible with single-residue anchors.  Used to meet a reviewer\'s commentary.', default = 'false'),
-							 ),
+								 Option( 'super_secret_fixed_interface_mode', 'Boolean', desc='hold the anchor-containing loop fixed.  Currently in testing.', default = 'false'),
+							 ), #closes subgroup testing
   ), #closes option group AnchoredDesign
 
   ############################UBQ_*, chemically_conjugated_docking, UBQ_E2_thioester, UBQ_Gp_*########################

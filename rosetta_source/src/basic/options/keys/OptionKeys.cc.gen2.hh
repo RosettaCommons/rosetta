@@ -606,6 +606,7 @@ namespace AnchoredDesign { namespace testing { BooleanOptionKey const anchor_via
 namespace AnchoredDesign { namespace testing { BooleanOptionKey const delete_interface_native_sidechains( "AnchoredDesign:testing:delete_interface_native_sidechains" );  } }
 namespace AnchoredDesign { namespace testing { FileOptionKey const RMSD_only_this( "AnchoredDesign:testing:RMSD_only_this" );  } }
 namespace AnchoredDesign { namespace testing { BooleanOptionKey const anchor_noise_constraints_mode( "AnchoredDesign:testing:anchor_noise_constraints_mode" );  } }
+namespace AnchoredDesign { namespace testing { BooleanOptionKey const super_secret_fixed_interface_mode( "AnchoredDesign:testing:super_secret_fixed_interface_mode" );  } }
 namespace chemically_conjugated_docking { BooleanOptionKey const chemically_conjugated_docking( "chemically_conjugated_docking" );  }
 namespace chemically_conjugated_docking { FileOptionKey const UBQpdb( "chemically_conjugated_docking:UBQpdb" );  }
 namespace chemically_conjugated_docking { FileOptionKey const E2pdb( "chemically_conjugated_docking:E2pdb" );  }
@@ -649,4 +650,3 @@ namespace DenovoProteinDesign { BooleanOptionKey const redesign_complete( "Denov
 namespace DenovoProteinDesign { BooleanOptionKey const disallow_native_aa( "DenovoProteinDesign:disallow_native_aa" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const optimize_loops( "DenovoProteinDesign:optimize_loops" );  }
 namespace DenovoProteinDesign { FileOptionKey const secondary_structure_file( "DenovoProteinDesign:secondary_structure_file" );  }
-namespace DenovoProteinDesign { FileOptionKey const hydrophobic_polar_pattern( "DenovoProteinDesign:hydrophobic_polar_pattern" );  }

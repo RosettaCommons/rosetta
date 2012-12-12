@@ -179,6 +179,8 @@ public:
 	void set_no_frags(bool no_frags);
 	///@brief special anchor_noise_constraints_mode
 	void set_anchor_noise_constraints_mode(bool anchor_noise_constraints_mode);
+	///@brief special super_secret_fixed_interface_mode
+	void set_super_secret_fixed_interface_mode(bool super_secret_fixed_interface_mode);
 
 	///@brief dye position used in dye modeling publication
 	core::Size get_akash_dyepos() const;
@@ -206,6 +208,8 @@ public:
 	bool get_no_frags() const;
 	///@brief special anchor_noise_constraints_mode
 	bool get_anchor_noise_constraints_mode() const;
+	///@brief special super_secret_fixed_interface_mode
+	bool get_super_secret_fixed_interface_mode() const;
 
 	///@brief read options from the option system
 	void read_options();
@@ -297,6 +301,8 @@ private:
 	bool no_frags_;
 	///@brief special anchor_noise_constraints_mode
 	bool anchor_noise_constraints_mode_;
+	///@brief special super_secret_fixed_interface_mode
+	bool super_secret_fixed_interface_mode_;
 
 };//end AnchorMoversData class
 

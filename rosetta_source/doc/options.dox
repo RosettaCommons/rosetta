@@ -9331,6 +9331,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Hold the anchor loosely (via constraints), not rigidly.  Automatically generate the constraints from the starting pose.  Mildly randomize the anchor's placement before modeling (up to 1 angstrom in x,y,z from initial placement.)  Only compatible with single-residue anchors.  Used to meet a reviewer's commentary.</dd><br>
 <dd>Default: false</dd><br>
 </dl>
+<dl>
+<dt><b>-super_secret_fixed_interface_mode</b> \<Boolean\><dt>
+<dd>hold the anchor-containing loop fixed.  Currently in testing.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
  </li>
 <li><h2>chemically_conjugated_docking</h2>
 <dl>

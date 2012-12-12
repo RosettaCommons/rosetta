@@ -125,14 +125,15 @@ protocols::anchored_design::AnchorMoversData::AnchorMoversData() :
 	loop_file_( EMPTY_STRING ),
 	frag3_( EMPTY_STRING ),
 	no_frags_( false ),
-	anchor_noise_constraints_mode_( false )
+	anchor_noise_constraints_mode_( false ),
+	super_secret_fixed_interface_mode_( false )
 {}
 
 ///@details constructor takes an anchor and loop object and sets up internals reasonably; options boolean is optionally optional.  If you use this constructor, you will need to later manually give fragments to the AnchorMoversData object or use one of its fragments functions to determine what type of fragments to use.
 protocols::anchored_design::AnchorMoversData::AnchorMoversData(
-																													 protocols::anchored_design::AnchorCOP anchor,
-																													 protocols::loops::Loops const & loops,
-																													 bool const options) :
+	protocols::anchored_design::AnchorCOP anchor,
+	protocols::loops::Loops const & loops,
+	bool const options) :
 	utility::pointer::ReferenceCount(),
 	anchor_(anchor), //redundant, given that set_loops_and_anchor takes care of it
 	anchor_loop_index_( 0 ),
@@ -160,7 +161,8 @@ protocols::anchored_design::AnchorMoversData::AnchorMoversData(
 	loop_file_( EMPTY_STRING ),
 	frag3_( EMPTY_STRING ),
 	no_frags_( false ),
-	anchor_noise_constraints_mode_( false )
+	anchor_noise_constraints_mode_( false ),
+	super_secret_fixed_interface_mode_( false )
 {
 	//TR << "loops/anchor ctor" << std::endl;
 
@@ -204,7 +206,9 @@ protocols::anchored_design::AnchorMoversData::AnchorMoversData( core::pose::Pose
 	loop_file_( EMPTY_STRING ),
 	frag3_( EMPTY_STRING ),
 	no_frags_( false ),
-	anchor_noise_constraints_mode_( false )
+	anchor_noise_constraints_mode_( false ),
+	super_secret_fixed_interface_mode_( false )
+
 {
 	//TR << "pose ctor" << std::endl;
 
@@ -217,7 +221,7 @@ protocols::anchored_design::AnchorMoversData::AnchorMoversData( core::pose::Pose
 	anchor_ = new protocols::anchored_design::Anchor(pose);
 
 	// read loops file
-    loops_ = protocols::loops::Loops( loop_file_ );
+	loops_ = protocols::loops::Loops( loop_file_ );
 	//we do not need to check if the anchor and loop are compatible here; pick_new_cutpoints will take care of it later
 
 	//this will overwrite anchor_ and loops_ with modified versions of themselves, and fill in movemaps, etc
@@ -275,6 +279,7 @@ AnchorMoversData & AnchorMoversData::operator=( AnchorMoversData const & rhs ){
 	frag3_ = rhs.get_frag3();
 	no_frags_ = rhs.get_no_frags();
 	anchor_noise_constraints_mode_ = rhs.get_anchor_noise_constraints_mode();
+	super_secret_fixed_interface_mode_ = rhs.get_super_secret_fixed_interface_mode();
 
 	set_loops_and_anchor(rhs.anchor_, rhs.loops());
 
@@ -329,7 +334,7 @@ void protocols::anchored_design::AnchorMoversData::set_centroid_scorefunction( c
 
 ///@details set up kinematics' loops and anchors; these are combined because loop setup depends on anchor
 void protocols::anchored_design::AnchorMoversData::set_loops_and_anchor( protocols::anchored_design::AnchorCOP anchor,
-	                                                                   protocols::loops::Loops loops)
+	protocols::loops::Loops loops)
 {
 	anchor_ = anchor;
 
@@ -419,15 +424,15 @@ void protocols::anchored_design::AnchorMoversData::input_loops_into_tuples(proto
 	for( protocols::loops::Loops::const_iterator it=loops.begin(), it_end=loops.end(); it != it_end; ++it ){
 		//instantiate tuple
 		loops_and_fa_mms_.push_back( Loop_mm_tuple(
-																							 *it,
-																							 core::kinematics::MoveMapOP(new core::kinematics::MoveMap() ),
-																							 core::kinematics::MoveMapOP(new core::kinematics::MoveMap() )
+				*it,
+				core::kinematics::MoveMapOP(new core::kinematics::MoveMap() ),
+				core::kinematics::MoveMapOP(new core::kinematics::MoveMap() )
 			) );
 
 		loops_and_cen_mms_.push_back( Loop_mm_tuple(
-																								*it,
-																								core::kinematics::MoveMapOP(new core::kinematics::MoveMap() ),
-																								core::kinematics::MoveMapOP(new core::kinematics::MoveMap() )
+				*it,
+				core::kinematics::MoveMapOP(new core::kinematics::MoveMap() ),
+				core::kinematics::MoveMapOP(new core::kinematics::MoveMap() )
 			) );
 	}
 }
@@ -441,15 +446,22 @@ void protocols::anchored_design::AnchorMoversData::locate_anchor_loop()
 		core::Size const loopstart(loop(i).start()), loopend(loop(i).stop());
 		if ( (loopstart < anchorstart) && (loopend > anchorend) ){
 			TR << "anchor start/end " << anchorstart << "/" << anchorend
-				 << " fits within loop start/end " << loopstart << "/" << loopend << std::endl;
+			<< " fits within loop start/end " << loopstart << "/" << loopend << std::endl;
 			anchor_loop_index_ = i;
 			return;
 		}// end if-anchor-is-in-this-loop
 	}//end iterate over all loops
 
+	if(get_super_secret_fixed_interface_mode()) {
+		anchor_loop_index_ = 0; //I don't know what this will do, but it should cause bounds errors if something untoward happens (good except bad)
+		TR << "anchor start/end " << anchorstart << "/" << anchorend
+		<< " not within a loop; appropriate for super_secret_fixed_interface_mode" << std::endl;
+		return;
+	}
+
 	//if we did not return above
 	Error() << "Anchor does not reside completely within a loop.  Anchor start and end: " << anchorstart
-					<< " " << anchorend << std::endl;
+	<< " " << anchorend << std::endl;
 	utility_exit();
 }
 
@@ -481,13 +493,17 @@ void protocols::anchored_design::AnchorMoversData::setup_movemaps()
 
 	}//for each loop
 
-	fix_anchor( movemap_fa( anchor_loop_index_ ), false );
-	fix_anchor( movemap_fa_omegafixed( anchor_loop_index_ ), false );
-	fix_anchor( movemap_fa_all_, false );
+	if( !get_super_secret_fixed_interface_mode() ) {
+		fix_anchor( movemap_fa( anchor_loop_index_ ), false );
+		fix_anchor( movemap_fa_omegafixed( anchor_loop_index_ ), false );
+		fix_anchor( movemap_fa_all_, false );
 
-	fix_anchor( movemap_cen( anchor_loop_index_ ), true );
-	fix_anchor( movemap_cen_omegafixed( anchor_loop_index_ ), true );
-	fix_anchor( movemap_cen_all_, true );
+		fix_anchor( movemap_cen( anchor_loop_index_ ), true );
+		fix_anchor( movemap_cen_omegafixed( anchor_loop_index_ ), true );
+		fix_anchor( movemap_cen_all_, true );
+	}
+
+	return;
 }
 
 void protocols::anchored_design::AnchorMoversData::set_movemap(core::kinematics::MoveMapOP movemap, core::Size seqpos, bool omega)
@@ -503,8 +519,8 @@ void protocols::anchored_design::AnchorMoversData::set_movemap(core::kinematics:
 
 void protocols::anchored_design::AnchorMoversData::fix_anchor( core::kinematics::MoveMapOP movemap, bool const centroid )
 {
-	//skip this function in unbound mode or anchors_via_constraints mode
-	if( unbound_mode_ ) return; //completely ignore the anchor in unbound mode
+	//skip this function in unbound mode or super_secret_fixed_interface_mode_ or anchors_via_constraints mode
+	if( unbound_mode_ || get_super_secret_fixed_interface_mode() ) return;
 	if( anchor_via_constraints_ && !centroid ) { //if we have constraints, and this is NOT for the centroid phase...
 		movemap->set_jump(1, true); //magic number: the anchor-target jump is 1; TODO: make this a named variable
 		//do NOT re-fix the anchor residues
@@ -612,7 +628,7 @@ void protocols::anchored_design::AnchorMoversData::set_unset_packertask_factory(
 
 	//operation to protect anchor
 	operation::PreventRepackingOP prop( new operation::PreventRepacking );
-	if (!allow_anchor_repack_){
+	if (!allow_anchor_repack_ && !get_super_secret_fixed_interface_mode()){
 		TR << "autogenerated TaskFactory will prevent repacking for anchor" << std::endl;
 		for( core::Size i(anchor_->start()); i<= anchor_->end(); ++i){
 			prop->include_residue(i);
@@ -773,6 +789,8 @@ void protocols::anchored_design::AnchorMoversData::set_frag3(std::string const &
 void protocols::anchored_design::AnchorMoversData::set_no_frags(bool const no_frags) { no_frags_= no_frags;}
 ///@brief special anchor_noise_constraints_mode
 void protocols::anchored_design::AnchorMoversData::set_anchor_noise_constraints_mode(bool const anchor_noise_constraints_mode) { anchor_noise_constraints_mode_= anchor_noise_constraints_mode;}
+///@brief special super_secret_fixed_interface_mode
+void protocols::anchored_design::AnchorMoversData::set_super_secret_fixed_interface_mode(bool const super_secret_fixed_interface_mode) { super_secret_fixed_interface_mode_= super_secret_fixed_interface_mode;}
 
 ///@brief dye position used in dye modeling publication
 core::Size protocols::anchored_design::AnchorMoversData::get_akash_dyepos() const { return akash_dyepos_;}
@@ -798,6 +816,8 @@ std::string const & protocols::anchored_design::AnchorMoversData::get_frag3() co
 bool protocols::anchored_design::AnchorMoversData::get_no_frags() const { return no_frags_;}
 ///@brief special anchor_noise_constraints_mode
 bool protocols::anchored_design::AnchorMoversData::get_anchor_noise_constraints_mode() const { return anchor_noise_constraints_mode_;}
+///@brief special super_secret_fixed_interface_mode
+bool protocols::anchored_design::AnchorMoversData::get_super_secret_fixed_interface_mode() const { return super_secret_fixed_interface_mode_;}
 
 void protocols::anchored_design::AnchorMoversData::read_options() {
 
@@ -857,6 +877,10 @@ void protocols::anchored_design::AnchorMoversData::read_options() {
 
 	//bool anchor_noise_constraints_mode_;
 	anchor_noise_constraints_mode_ = option[ testing::anchor_noise_constraints_mode ].value();
+
+	super_secret_fixed_interface_mode_ = option[ testing::super_secret_fixed_interface_mode ].value();
+
+	return;
 }
 
 ///@brief get string name for neighborhood_calc_
