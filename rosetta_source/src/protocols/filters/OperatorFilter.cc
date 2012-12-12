@@ -103,7 +103,9 @@ Operator::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap &, filter
 		operation( SUBTRACT );
 	if( op=="ABS" )
 		operation( ABS );
-	if( op != "SUM" && op != "PRODUCT" && op != "NORMALIZED_SUM" && op != "MAX" && op != "MIN" && op != "SUBTRACT" && op != "ABS" )
+	if( op == "BOOLEAN_OR" )
+		operation( BOOLEAN_OR );
+	if( op != "SUM" && op != "PRODUCT" && op != "NORMALIZED_SUM" && op != "MAX" && op != "MIN" && op != "SUBTRACT" && op != "ABS" && op != "BOOLEAN_OR" )
 		utility_exit_with_message( "Operation " + op + " not recognized" );
 	threshold( tag->getOption< core::Real >( "threshold", 0 ) );
 	negate( tag->getOption< bool >( "negate", false ) );
@@ -113,8 +115,8 @@ Operator::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap &, filter
 		add_filter( protocols::rosetta_scripts::parse_filter( fname, filters ) );
 		TR<<"Adding filter "<<fname<<std::endl;
 	}
-	if( operation() == SUBTRACT && filters_.size() != 2 )
-		utility_exit_with_message( "Operation SUBTRACT requested, but the number of filters provided is different than 2. I only know how to subtract one filter from another" );
+	if( ( operation() == SUBTRACT || operation() == BOOLEAN_OR ) && filters_.size() != 2 )
+		utility_exit_with_message( "Operation "+op+" requested, but the number of filters provided is different than 2. I only know how to "+op+" one filter from another" );
 	if( operation() == ABS && filters_.size() != 1 )
 		utility_exit_with_message( "Operation ABS requested, but the number of filters provided is different than 1. I only know how to take the absolute value of one filter" );
 	TR<<" using operator "<<op<<std::endl;
@@ -148,13 +150,21 @@ Operator::compute(
 	core::pose::Pose const & pose
 ) const {
 	core::Real val( 0.0 );
-	if( operation() == SUBTRACT ){
+	if( operation() == SUBTRACT || operation() == BOOLEAN_OR ){
 		runtime_assert( filters().size() == 2 );
 		core::Real const val1( filters()[ 1 ]->report_sm( pose ) );
 		core::Real const val2( filters()[ 2 ]->report_sm( pose ) );
 		core::Real const difference( negate() ? val2 - val1 : val1 - val2 );
-		TR<<"Filters' values "<<val1<<" "<<val2<<" and the difference is "<<difference<<std::endl;
-		return difference;
+		core::Real const boolean_or( negate() ? -( val1 + val2 - val1 * val2 ) : val1 + val2 - val1 * val2 );
+		TR<<"Filters' values "<<val1<<" "<<val2;
+		if( operation() == SUBTRACT ){
+			TR<<" and the difference is "<<difference<<std::endl;
+			return difference;
+		}
+		else if( operation() == BOOLEAN_OR ){
+			TR<<" the boolean or value is "<<boolean_or<<std::endl;
+			return boolean_or;
+		}
 	}
 	if( operation() == ABS ){
 		runtime_assert( filters().size() == 1 );
