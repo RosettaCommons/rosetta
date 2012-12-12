@@ -18,7 +18,7 @@
 #include <test/UTracer.hh>
 
 // Unit header
-#include <protocols/moves/RotateJumpAxisMover.hh>
+#include <protocols/rigid/RotateJumpAxisMover.hh>
 
 // project headers
 #include <core/types.hh>
@@ -82,8 +82,8 @@ public:
 	void test_RotateJumpAxisMover_single() {
 
 		////////////////////////RJAmover///////////////////////////////////////////////
-		using protocols::moves::RotateJumpAxisMoverOP;
-		using protocols::moves::RotateJumpAxisMover;
+		using protocols::rigid::RotateJumpAxisMoverOP;
+		using protocols::rigid::RotateJumpAxisMover;
 		core::Angle degrees(10);
 		RotateJumpAxisMoverOP RJA_mover = new RotateJumpAxisMover(rb_jump, degrees);
 
@@ -98,8 +98,8 @@ public:
 	void test_RotateJumpAxisMover_range() {
 
 		////////////////////////RJAmover///////////////////////////////////////////////
-		using protocols::moves::RotateJumpAxisMoverOP;
-		using protocols::moves::RotateJumpAxisMover;
+		using protocols::rigid::RotateJumpAxisMoverOP;
+		using protocols::rigid::RotateJumpAxisMover;
 		core::Angle upper(20), lower(10);
 		RotateJumpAxisMoverOP RJA_mover = new RotateJumpAxisMover(rb_jump, lower, upper);
 
@@ -114,8 +114,8 @@ public:
 	void test_RotateJumpAxisMover_random() {
 
 		////////////////////////RJAmover///////////////////////////////////////////////
-		using protocols::moves::RotateJumpAxisMoverOP;
-		using protocols::moves::RotateJumpAxisMover;
+		using protocols::rigid::RotateJumpAxisMoverOP;
+		using protocols::rigid::RotateJumpAxisMover;
 		RotateJumpAxisMoverOP RJA_mover = new RotateJumpAxisMover(rb_jump);
 
 		/////////////////////////run
