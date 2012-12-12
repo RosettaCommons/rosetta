@@ -147,7 +147,7 @@ The resulting output using the command above is a silent output file (1elwA_sile
 \n
 @subsection abinitiorelax_cluster_options Clustering using the cluster application
 
-Models from a single silent output file can be clustered using the @ref cluster_commands "cluster.linuxgccrelease" cluster application.
+Models from a single silent output file can be clustered using the @ref cluster "cluster.linuxgccrelease" cluster application.
 
 PDB files of the cluster members are extracted from the silent output file by the cluster application.
 

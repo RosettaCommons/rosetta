@@ -15,7 +15,7 @@ The code for this application is in src/apps/public/scenarios/loops_from_density
 This is a simple routine aimed at automatically creating loopfiles for remodeling structures into density.  It finds the regions of the structure with worst local fit to density, and rebuilds them, limiting how far into secondary structure elements are rebuilt.
 
 @limits Limitations
-This routine does not perform loop modeling.  Rather, it creates input files for the @ref loopmodeling "loopmodeling application" automatically.  Please the the demo in 'demo/electron_density/cryoEM_tutoral/scenario4_loop_remodel' to see the role this application plays in a model-building pipeline.
+This routine does not perform loop modeling.  Rather, it creates input files for the @ref loopmodel "loopmodeling application" automatically.  Please the the demo in 'demo/electron_density/cryoEM_tutoral/scenario4_loop_remodel' to see the role this application plays in a model-building pipeline.
 
 @section inputs Input Files
 Data must be input as a PDB file(s) with -s/-l.
@@ -33,6 +33,6 @@ There are only 4 options that are useful to the protocol's output:
 Generally '-frac_loop 0.3 -max_strand_melt 1 -max_helix_melt -1 -edensity:sliding_window 9' provides good results.  If many short loops are predicted you might want to increase 'sliding_window' or decrease 'frac_loop'.
 
 @section outputs Expected Outputs
-For each input PDB, a .loopfile is output.  This may be used directly by @ref loopmodeling "loopmodeling".  The output file also contains per-residue real-space correlations.
+For each input PDB, a .loopfile is output.  This may be used directly by @ref loopmodel "loopmodeling".  The output file also contains per-residue real-space correlations.
 
 */

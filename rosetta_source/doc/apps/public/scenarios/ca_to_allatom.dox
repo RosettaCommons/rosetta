@@ -42,7 +42,7 @@ The first column is the word 'SEGMENT', the second is a <i>unique</i> identifier
 A <b>vall file</b> (specified with -loops:vall) is used to generate backbone fragments dynamically.  A version of it is included in the Rosetta database.
 
 @section ft_options Options
-The options listed below include those specific to the ca_to_allatom application and a selection of common flags that may be useful.  If a post-run looprelax is enabled, then the app takes all @ref loopmodeling "looprelax" and @ref relax_commands "relax" specific options.  If modelling into density, the app takes all @ref density_map_scoring "density-fitting" options.
+The options listed below include those specific to the ca_to_allatom application and a selection of common flags that may be useful.  If a post-run looprelax is enabled, then the app takes all @ref loopmodel "looprelax" and @ref relax "relax" specific options.  If modelling into density, the app takes all @ref density_map_scoring "density-fitting" options.
 
 <b>Common options:</b>
 
@@ -115,6 +115,6 @@ rg          2.0
 
 @section postprocess Post Processing
 
-Post-processing is highly dependent on the accuracy of the initial C-alpha trace.  If the lowest-energy models show good convergence (either by visual inspection or @ref cluster_command "clustering") then minimal postprcessing is needed.  Alternately, these models may serve as starting points for additional modelling with @ref loopmodeling "loopmodeling".
+Post-processing is highly dependent on the accuracy of the initial C-alpha trace.  If the lowest-energy models show good convergence (either by visual inspection or @ref cluster "clustering") then minimal postprcessing is needed.  Alternately, these models may serve as starting points for additional modelling with @ref loopmodel "loopmodeling".
 
 */

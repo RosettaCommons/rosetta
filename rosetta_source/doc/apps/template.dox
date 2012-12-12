@@ -11,6 +11,7 @@
 /*!
 
 @page AppName Documentation for AppName application
+AppName should match the C++ application if applicable.  If the document is an extension of a particular app, the c++ application should be within AppName (fixbb vs fixbb_with_hpatch)
 
 @section metadata Metadata
 State when the documentation was last updated, by whom. State the PI for this application and their email address.  They are the corresponding author.

@@ -10,7 +10,7 @@
 ///@author Sinisa Bjelic and TJ Brunette
 /*!
 
-@page loopmodel Documentation for fragment-based ccd loop modeling
+@page loopmodel_ccd Documentation for fragment-based ccd loop modeling
 
 @section metadata Metadata
 This document was last updated August 11, 2010 by TJ Brunette & Sinisa Bjelic. The corresponding PIs for this application are David Baker <dbaker@u.washington.edu>.

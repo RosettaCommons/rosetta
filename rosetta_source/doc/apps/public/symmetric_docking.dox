@@ -55,7 +55,7 @@ Observe that for more complex symmetries you may have to edit the definition fil
 
 @li -ex1, -ex2, -extrachi_cutoff [num residues], etc. - increase the resolution of the rotamer library
 
-Currently the best place to read about packing options in general is in the documentation for the @ref fixed_backbone "fixed backbone design application".
+Currently the best place to read about packing options in general is in the documentation for the @ref fixbb "fixed backbone design application".
 
 @subsection options_docking Standard Docking options
 @li	-docking:docking_local_refine		-	Do a local refinement of the docking position (high resolution).

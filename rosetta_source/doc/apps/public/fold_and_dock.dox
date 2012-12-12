@@ -28,7 +28,7 @@ The code for the fold-and-dock application is in <code>rosetta/rosetta_source/sr
 Das R, André I, Shen Y, Wu Y, Lemak A, Bansal S, Arrowsmith CH, Szyperski T, Baker D. Simultaneous prediction of protein folding and docking at high resolution. Proc Natl Acad Sci U S A. 2009 Nov 10;106(45):18978-83. Epub 2009 Oct 28.
 
 @section purpose Purpose
-The application predicts the structure of symmetric homooligomeric protein assemblies starting from the sequence of a subunit. It is a combination of the abinitio and @ref symmetric_docking "symmetric assembly protocol".
+The application predicts the structure of symmetric homooligomeric protein assemblies starting from the sequence of a subunit. It is a combination of the abinitio and @ref SymDock "symmetric assembly protocol".
 
 @section algorithm Algorithm
 The protocol start by generating an initial symmetric assembly configuration described by the symmetrical definition file given as a input to rosetta using an extended conformation of the subunits. The rigid body position is then randomized to get an unbiased starting state.

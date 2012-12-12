@@ -10,7 +10,7 @@
 ///@author Daniel J. Mandell, Roland A. Pache, Amelie Stein
 /*!
 
-@page loopmodel Documentation for kinematic loop modeling
+@page loopmodel_kinematic Documentation for kinematic loop modeling
 
 @section metadata Metadata
 This document was last updated October 10, 2012 by Amelie Stein. The corresponding PIs for this application are Tanja Kortemme <kortemme@cgl.ucsf.edu> and Evangelos A. Coutsias <coutsias@unm.edu>.
@@ -213,7 +213,7 @@ chainbreak: 0.0254188 (score of the chainbreak term, smaller value means well-cl
 @endverbatim
 
 @section kic_preprocessing Pre-processing
-The KIC refine protocol will perform a repack of all residues within the neighbor distance of any loop before attempting any KIC moves. Note that off-rotamer side-chain conformations in the starting structure are included in the packer, but if they are ever replaced they are excluded from further consideration. See the @ref fixed_backbone to repack, redesign and/or minimize any or all side-chains in the starting structure if desired. For benchmarking purposes, the initial side-chains in Mandell <em>et al</em>. were discarded, repacked, and minimized before running the loopmodel application.
+The KIC refine protocol will perform a repack of all residues within the neighbor distance of any loop before attempting any KIC moves. Note that off-rotamer side-chain conformations in the starting structure are included in the packer, but if they are ever replaced they are excluded from further consideration. See the @ref fixbb to repack, redesign and/or minimize any or all side-chains in the starting structure if desired. For benchmarking purposes, the initial side-chains in Mandell <em>et al</em>. were discarded, repacked, and minimized before running the loopmodel application.
 
 @section kic_postprocess Post-processing
 For benchmarking purposes, creating a score <em>vs</em> rmsd plot across decoys and looking for near native 'energy funnels' is good way to test the performance of the protocols on a system, and can help to determine whether errors are due to scoring or sampling. For blind prediction and refinement, such plots can still be useful to look for convergence or multiple minima in the energy landscape. Decoys may also be pairwise-clustered to search for well-populated regions of conformational space that may represent alternative low-energy conformations. For more on analyzing loop modeling results, please see Mandell <em>et al.</em> and the accompanying supplemental referenced above.
