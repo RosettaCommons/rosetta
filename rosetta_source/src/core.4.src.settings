@@ -111,8 +111,10 @@ sources = {
 	],
 	"core/pack/scmin": [
 		"AtomTreeCollection",
-		"SCMinMinimizerMap",
+		"AtomTreeSCMinMinimizerMap",
+		"CartSCMinMinimizerMap",
 		"SCMinMultifunc",
+		"CartSCMinMultifunc",
 		"SidechainStateAssignment",
 	],
 	"core/pack/task": [
@@ -135,7 +137,7 @@ sources = {
 		"ResLvlTaskOperations",
 		"TaskOperation",
 		"TaskOperationFactory",
-		"TaskOperations",
+		"TaskOperations", 
 	],
 	"core/pack/task/operation/util": [
 		"interface_vector_calculate",

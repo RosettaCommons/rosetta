@@ -100,7 +100,7 @@ public:
 
 	virtual ~ResidueAtomTreeCollection();
 
-	Size ative_restype_index() const { return active_restype_; }
+	Size active_restype_index() const { return active_restype_; }
 	void set_active_restype_index( Size restype_index );
 
 	/// @brief The responsibility for making sure that the active residue and the active atomtree
@@ -157,6 +157,7 @@ public:
 	/// update_atom_tree() before the next cal to active_atom_tree().
 	void set_rescoords( conformation::Residue const & res );
 	void set_rescoords( utility::vector1< Vector > const & coords );
+	void set_rescoords( utility::vector1< id::AtomID > const & atms, utility::vector1< Vector > const & coords );
 
 	void save_momento( ResidueAtomTreeCollectionMomento & momento ) const;
 	void update_from_momento( ResidueAtomTreeCollectionMomento const & momento );

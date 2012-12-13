@@ -132,6 +132,7 @@ private:
 	///CAUTION: the factory is externally modifiable.
 	TaskFactoryCOP factory_;
 	bool nonideal_;
+	bool cartesian_;
 };
 
 	/// @brief Wrapper for Rotamer Trials with Minimization, which modifies only

@@ -22,7 +22,10 @@
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/scmin/SCMinMultifunc.hh>
+#include <core/pack/scmin/CartSCMinMultifunc.hh>
 #include <core/pack/scmin/SCMinMinimizerMap.hh>
+#include <core/pack/scmin/AtomTreeSCMinMinimizerMap.hh>
+#include <core/pack/scmin/CartSCMinMinimizerMap.hh>
 #include <core/pack/scmin/AtomTreeCollection.hh>
 
 // Project headers
@@ -68,6 +71,8 @@
 #include <numeric/random/random_permutation.hh>
 
 // AUTO-REMOVED #include <ObjexxFCL/format.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/optimization.OptionKeys.gen.hh>
 
 // STL headers
 // AUTO-REMOVED #include <ctime>
@@ -106,7 +111,8 @@ void reinitialize_mingraph_neighborhood_for_residue(
 RTMin::RTMin()
 	: minimize_ligand_chis_(true),
 		minimize_ligand_jumps_(false),
-		nonideal_(false)
+		nonideal_(false),
+		cartesian_(false)
 {}
 
 RTMin::RTMin(
@@ -136,6 +142,7 @@ RTMin::rtmin(
 	using namespace scoring::methods;
 	using namespace optimization;
 	using namespace graph;
+	using namespace basic::options;
 	typedef utility::vector1< core::conformation::ResidueCOP > ResidueCOPs;
 
 	/// 1st verify that all energy methods are compatible with rtmin.
@@ -173,14 +180,30 @@ RTMin::rtmin(
 	graph::GraphOP packer_neighbor_graph = pack::create_packer_graph( pose, scfxn, input_task );
 	scoring::MinimizationGraph mingraph( pose.total_residue() );
 
-	SCMinMinimizerMap scminmap;
-	scminmap.set_nonideal( nonideal_ );
-	scminmap.set_total_residue( pose.total_residue() );
+	SCMinMinimizerMapOP scminmap;
+	if (cartesian_) {
+		scminmap = new CartSCMinMinimizerMap();
+	} else {
+		scminmap = new AtomTreeSCMinMinimizerMap();
+	}
+	scminmap->set_nonideal( nonideal_ );
+	scminmap->set_total_residue( pose.total_residue() );
 
 	EnergyMap emap_dummy;
 
 	// true -- nblist, false -- deriv_check, false -- deriv_verbose
-	optimization::MinimizerOptions min_options( "dfpmin", 0.1, true, false, false );
+	//optimization::MinimizerOptions min_options( "dfpmin", 0.1, true, false, false );
+	std::string minimizer = "dfpmin";
+	Size max_iter=200;
+	if (cartesian_) {
+		minimizer = "lbfgs_armijo";
+		max_iter = 25;
+	}
+
+	optimization::MinimizerOptions min_options( minimizer, 0.1, true, false, false );
+	min_options.max_iter(max_iter);
+	min_options.silent(true);
+
 
 	for ( Size ii = 1; ii <= input_task->num_to_be_packed(); ++ii ) {
 		Size iires = active_residues[ ii ];
@@ -193,12 +216,12 @@ RTMin::rtmin(
 				inactive_neighbors.push_back( jjres );
 				residue_is_inactive_neighbor[ jjres ] = true;
 				bgres[ jjres ] = new Residue( pose.residue( jjres ) );
-				scminmap.set_natoms_for_residue( jjres, bgres[ jjres ]->natoms() );
+				scminmap->set_natoms_for_residue( jjres, bgres[ jjres ]->natoms() );
 				/// Do setup_for_minimizing for background nodes once and leave them alone for
 				/// the rest of the trajectory
 				scfxn.setup_for_minimizing_for_node(
 					* mingraph.get_minimization_node( jjres ), pose.residue( jjres ),
-					scminmap, pose, false, emap_dummy );
+					*scminmap, pose, false, emap_dummy );
 			}
 			if ( ! input_task->being_packed( jjres ) || iires < jjres ) {
 				mingraph.add_edge( iires, jjres ); // add edges, but don't bother calling setup_for_minimization yet
@@ -213,14 +236,18 @@ RTMin::rtmin(
 	/// in real rtmin, the active residues will be examined in a random order;
 	/// random__shuffle( active_residues );
 
-	optimization::Multivec chi( nonideal_? 14:4 ); // guess -- resized smaller
+	Size ndofs = 4;
+	if (nonideal_) ndofs=14;
+	if (cartesian_) ndofs=75;
+
+	optimization::Multivec chi(ndofs); // guess -- resized smaller
 
 	for ( Size ii = 1; ii <= active_residues.size(); ++ii ) {
 		/// Now, build rotamers, prep the nodes and edges of the minimization graph
 		/// and build the AtomTreeCollection for this residue;
 		Size iiresid = active_residues[ ii ];
 		conformation::Residue const & trial_res = pose.residue( iiresid );
-		scminmap.activate_residue_dofs( iiresid );
+		scminmap->activate_residue_dofs( iiresid );
 
 		//pretend this is a repacking and only this residue is being repacked
 		//while all other residues are being held fixed.
@@ -237,7 +264,7 @@ RTMin::rtmin(
 		ii_atc->residue_atomtree_collection( iiresid ).set_active_restype_index( 1 ); // start at the beginning.
 		ii_atc->residue_atomtree_collection( iiresid ).set_rescoords( * iirotset->rotamer( 1 ) );
 		ii_atc->residue_atomtree_collection( iiresid ).update_atom_tree();
-		scminmap.setup( ii_atc );
+		scminmap->setup( ii_atc );
 
 		{/// SCOPE -- make sure the minimization graph is ready to optimize this residue
 		Residue const & iirsd( ii_atc->residue_atomtree_collection( iiresid ).active_residue() );
@@ -245,11 +272,11 @@ RTMin::rtmin(
 			// we have not ever done setup for scoring for this residue
 			scfxn.setup_for_minimizing_for_node(
 				* mingraph.get_minimization_node( iiresid ), iirsd,
-				scminmap, pose, false, emap_dummy );
+				*scminmap, pose, false, emap_dummy );
 		} else {
 			scfxn.reinitialize_minnode_for_residue(
 				* mingraph.get_minimization_node( iiresid ), iirsd,
-				scminmap, pose );
+				*scminmap, pose );
 		}
 		for ( graph::Node::EdgeListIter
 				eiter = mingraph.get_node( iiresid )->edge_list_begin(),
@@ -263,8 +290,8 @@ RTMin::rtmin(
 				scfxn.setup_for_minimizing_for_node(
 					* mingraph.get_minimization_node( jjresid ),
 					* bgres[ jjresid ],
-					scminmap, pose, false, emap_dummy );
-				scminmap.set_natoms_for_residue( jjresid, bgres[ jjresid ]->natoms() );
+					*scminmap, pose, false, emap_dummy );
+				scminmap->set_natoms_for_residue( jjresid, bgres[ jjresid ]->natoms() );
 			}
 			Residue const & jjrsd( * bgres[ jjresid ] );
 			MinimizationEdge & min_edge( static_cast< MinimizationEdge & > ( **eiter ));
@@ -272,7 +299,7 @@ RTMin::rtmin(
 			if ( jjresid < iiresid ) {
 				if ( residue_is_inactive_neighbor[ jjresid ] || ! active_residue_has_been_visited[ jjresid ] ) {
 					scfxn.setup_for_minimizing_sr2b_enmeths_for_minedge(
-						jjrsd, iirsd, min_edge, scminmap, pose, true, false, ( EnergyEdge * ) 0, emap_dummy );
+						jjrsd, iirsd, min_edge, *scminmap, pose, true, false, ( EnergyEdge * ) 0, emap_dummy );
 				} else {
 					min_edge.reinitialize_active_energy_methods( iirsd, jjrsd, pose, true);
 				}
@@ -282,7 +309,7 @@ RTMin::rtmin(
 			} else {
 				if ( residue_is_inactive_neighbor[ jjresid ]  || ! active_residue_has_been_visited[ jjresid ] ) {
 					scfxn.setup_for_minimizing_sr2b_enmeths_for_minedge(
-						iirsd, jjrsd, min_edge, scminmap, pose, true, false, ( EnergyEdge * ) 0, emap_dummy );
+						iirsd, jjrsd, min_edge, *scminmap, pose, true, false, ( EnergyEdge * ) 0, emap_dummy );
 				} else {
 					min_edge.reinitialize_active_energy_methods( jjrsd, iirsd, pose, true);
 				}
@@ -319,7 +346,7 @@ RTMin::rtmin(
 				conformation::Residue const & lower_res( r1 == iiresid ? iirsd : *bgres[ jjresid ] );
 				conformation::Residue const & upper_res( r1 == iiresid ? *bgres[ jjresid ] : iirsd );
 				scfxn.setup_for_lr2benmeth_minimization_for_respair(
-					lower_res, upper_res, *iter, mingraph, scminmap, pose,
+					lower_res, upper_res, *iter, mingraph, *scminmap, pose,
 					res_moving_wrt_eachother, false, rni, dummy_emap );
 			}
 		}
@@ -335,7 +362,7 @@ RTMin::rtmin(
 		Real best_real_score( 0.0 );
 #endif
 		ResidueAtomTreeCollectionMomento momento;
-		scminmap.set_natoms_for_residue( iiresid, ii_atc->residue_atomtree_collection( iiresid ).active_residue().natoms()  );
+		scminmap->set_natoms_for_residue( iiresid, ii_atc->residue_atomtree_collection( iiresid ).active_residue().natoms()  );
 		for ( Size jj = 1, jj_end = iirotset->num_rotamers(); jj <= jj_end; ++jj ) {
 			if (next_restype_index <= iirotset->get_n_residue_types() &&
 					iirotset->get_residue_type_begin( next_restype_index ) == jj ) {
@@ -344,17 +371,17 @@ RTMin::rtmin(
 
 				ii_atc->residue_atomtree_collection( iiresid ).set_rescoords( * iirotset->rotamer( jj ));
 				ii_atc->residue_atomtree_collection( iiresid ).update_atom_tree();
-				scminmap.set_natoms_for_residue( iiresid, iirotset->rotamer( jj )->natoms() );
+				scminmap->set_natoms_for_residue( iiresid, iirotset->rotamer( jj )->natoms() );
 
-				scminmap.setup( ii_atc ); // traverse the atom tree and identify dofs
+				scminmap->setup( ii_atc ); // traverse the atom tree and identify dofs
 			}
 
 			ii_atc->residue_atomtree_collection( iiresid ).set_rescoords( * iirotset->rotamer( jj ));
 			ii_atc->residue_atomtree_collection( iiresid ).update_atom_tree();
 			//chi = iirotset->rotamer( jj )->chi();
-			scminmap.starting_dofs( chi );
+			scminmap->starting_dofs( chi );
 
-			reinitialize_mingraph_neighborhood_for_residue( pose, scfxn, bgres, scminmap, scminmap.residue( iiresid ), mingraph );
+			reinitialize_mingraph_neighborhood_for_residue( pose, scfxn, bgres, *scminmap, scminmap->residue( iiresid ), mingraph );
 
 #ifdef APL_FULL_DEBUG
 			pose.replace_residue( iiresid, ii_atc->residue_atomtree_collection( iiresid ).active_residue(), false );
@@ -362,22 +389,23 @@ RTMin::rtmin(
 #endif
 			//pose.dump_pdb( "rtmin_before_" + utility::to_string( iiresid ) + "_" + utility::to_string( jj ) + ".pdb" );
 			/// OK: Minimization graph is initialized.  Now setup the SCMinMultifunc
-			SCMinMultifunc scmin_multifunc( pose, bgres, scfxn, mingraph, scminmap );
+			//SCMinMultifunc scmin_multifunc( pose, bgres, scfxn, mingraph, *scminmap );
+			MultifuncOP scmin_multifunc = scminmap->make_multifunc( pose, bgres, scfxn, mingraph );
 			//Real const start_score( scmin_multifunc( chi ) );
 
 			//std::cout << "Starting comparison: " << iiresid << " " << start_score  << " " << iirotset->rotamer( jj )->name() << std::endl;
 #ifdef APL_FULL_DEBUG
-			deriv_check_for_residue( iiresid, jj, scmin_multifunc, chi );
+			deriv_check_for_residue( iiresid, jj, *scmin_multifunc, chi );
 			compare_mingraph_and_energy_graph( iiresid, pose, scfxn, mingraph );
 #endif
 
-			Minimizer minimizer( scmin_multifunc, min_options );
-			//Real const start_func = scmin_multifunc( chi );
+			Minimizer minimizer( *scmin_multifunc, min_options );
+			//Real const start_func = (*scmin_multifunc)( chi );
 			//Real const end_func =
 			minimizer.run( chi );
 			/// Note: our neighborlist may have gone out-of-date.  Update now to make sure the best rotamer is placed in the pose
-			reinitialize_mingraph_neighborhood_for_residue( pose, scfxn, bgres, scminmap, scminmap.residue( iiresid ), mingraph );
-			Real const end_score = scmin_multifunc( chi );
+			reinitialize_mingraph_neighborhood_for_residue( pose, scfxn, bgres, *scminmap, scminmap->residue( iiresid ), mingraph );
+			Real const end_score = (*scmin_multifunc)( chi );
 			//for ( Size kk = 1; kk <= chi.size(); ++kk ) {
 			//	std::cout << "chi " << kk << " " << chi[ kk ] << " vs "
 			//		<< ii_atc->residue_atomtree_collection( iiresid ).active_residue().chi()[ kk ]
@@ -389,7 +417,7 @@ RTMin::rtmin(
 			pose.replace_residue( iiresid, ii_atc->residue_atomtree_collection( iiresid ).active_residue(), false );
 			Real const real_end_score( scfxn( pose ) );
 			//std::cout << "Ending comparison: " << iiresid  << " " << end_score << " " << real_end_score << " " << iirotset->rotamer( jj )->name() << std::endl;
-			deriv_check_for_residue( iiresid, jj, scmin_multifunc, chi );
+			deriv_check_for_residue( iiresid, jj, *scmin_multifunc, chi );
 			compare_mingraph_and_energy_graph( iiresid, pose, scfxn, mingraph );
 			//if ( iiresid == 14 && jj == 7 ) {
 			//	atom_tree_multifunc_dump( pose, scfxn, chi, ii );
@@ -424,7 +452,7 @@ RTMin::rtmin(
 
 		//scfxn.reinitialize_minnode_for_residue( * mingraph.get_minimization_node( iiresid ),
 		//	*bgres[ iiresid ], scminmap, pose );
-		reinitialize_mingraph_neighborhood_for_residue( pose, scfxn, bgres, scminmap, *bgres[ iiresid ], mingraph );
+		reinitialize_mingraph_neighborhood_for_residue( pose, scfxn, bgres, *scminmap, *bgres[ iiresid ], mingraph );
 
 		/*for ( graph::Graph::EdgeListIter
 				edgeit = mingraph.get_node( iiresid )->edge_list_begin(),
@@ -444,7 +472,7 @@ RTMin::rtmin(
 
 		}*/
 		active_residue_has_been_visited[ iiresid ] = true;
-		scminmap.clear_active_dofs();
+		scminmap->clear_active_dofs();
 		pose.replace_residue( iiresid, *bgres[ iiresid ], false );
 
 #ifdef APL_FULL_DEBUG

@@ -16,7 +16,7 @@
 #include <core/pack/scmin/SCMinMultifunc.hh>
 
 // Package headers
-#include <core/pack/scmin/SCMinMinimizerMap.hh>
+#include <core/pack/scmin/AtomTreeSCMinMinimizerMap.hh>
 #include <core/pack/scmin/AtomTreeCollection.hh>
 
 // Test headers
@@ -120,7 +120,7 @@ public:
 
 		AtomTreeCollectionOP collection = new AtomTreeCollection( pose, *task );
 		collection->residue_atomtree_collection( 7 ).set_active_restype_index( 21 );
-		SCMinMinimizerMap scminmap;
+		AtomTreeSCMinMinimizerMap scminmap;
 		scminmap.set_total_residue( 20 );
 		scminmap.activate_residue_dofs( 7 );
 

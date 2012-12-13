@@ -18,7 +18,8 @@
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/scmin/AtomTreeCollection.hh>
 #include <core/pack/scmin/SCMinMinimizerMap.hh>
-#include <core/pack/scmin/SCMinMultifunc.hh>
+#include <core/pack/scmin/AtomTreeSCMinMinimizerMap.hh>
+#include <core/pack/scmin/CartSCMinMinimizerMap.hh>
 #include <core/pack/scmin/SidechainStateAssignment.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/rotamer_set/ContinuousRotamerSet.hh>
@@ -82,14 +83,21 @@ static numeric::random::RandomGenerator RG(22307);
 scmin::SCMinMinimizerMapOP
 create_scmin_minimizer_map(
 	pose::Pose const & pose,
-	task::PackerTaskCOP task
+	task::PackerTaskCOP task,
+	bool cartesian
 )
 {
 	/// create the scminmap and activate all chi for all residues being packed.
 	/// This is important for the initialization of the MinimizationGraph; the
 	/// domain map that the scminmap provides to the ScoreFunction must state
 	/// that each of the molten residues have color 0.
-	scmin::SCMinMinimizerMapOP scminmap = new scmin::SCMinMinimizerMap;
+	scmin::SCMinMinimizerMapOP scminmap;
+	if (cartesian) {
+		scminmap = new scmin::CartSCMinMinimizerMap();
+	} else {
+		scminmap = new scmin::AtomTreeSCMinMinimizerMap();
+	}
+
 	scminmap->set_total_residue( pose.total_residue() );
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		if ( task->being_packed( ii )) {
@@ -364,12 +372,13 @@ get_residue_current_energy(
 	reinitialize_mingraph_neighborhood_for_residue( pose, sfxn, bgres, scminmap, ratc.active_residue(), mingraph );
 
 	/// 4.
-	scmin::SCMinMultifunc scmin_func( pose, bgres, sfxn, mingraph, scminmap );
+	//scmin::SCMinMultifunc scmin_func( pose, bgres, sfxn, mingraph, scminmap );
+	optimization::MultifuncOP scmin_func = scminmap.make_multifunc( pose, bgres, sfxn, mingraph );
 	//utility::vector1< Real > chi = ratc.active_residue().chi();
 	utility::vector1< Real > chi;
 	scminmap.starting_dofs( chi );
 
-	Real funcval = scmin_func( chi );
+	Real funcval = (*scmin_func)( chi );
 
 #ifdef APL_FULL_DEBUG
 	bool bad = false;
@@ -459,7 +468,8 @@ get_total_energy_for_state(
 	}
 
 	/// 4.
-	scmin::SCMinMultifunc scmin_func( pose, bgres, sfxn, mingraph, scminmap );
+	//scmin::SCMinMultifunc scmin_func( pose, bgres, sfxn, mingraph, scminmap );
+	optimization::MultifuncOP scmin_func = scminmap.make_multifunc( pose, bgres, sfxn, mingraph );
 	utility::vector1< Real > allchi;
 	//for ( Size ii = 1; ii <= rotsets.nmoltenres(); ++ii ) {
 	//	Size iiresid = rotsets.moltenres_2_resid( ii );
@@ -470,7 +480,7 @@ get_total_energy_for_state(
 	scminmap.starting_dofs( allchi );
 
 
-	return scmin_func( allchi );
+	return (*scmin_func)( allchi );
 }
 
 Real
@@ -534,18 +544,19 @@ minimize_alt_rotamer(
 	reinitialize_mingraph_neighborhood_for_residue( pose, sfxn, bgres, scminmap, ratc.active_residue(), mingraph );
 
 	/// 4.
-	scmin::SCMinMultifunc scmin_func( pose, bgres, sfxn, mingraph, scminmap );
+	//scmin::SCMinMultifunc scmin_func( pose, bgres, sfxn, mingraph, scminmap );
+	optimization::MultifuncOP scmin_func = scminmap.make_multifunc( pose, bgres, sfxn, mingraph );
 	//utility::vector1< Real > chi = ratc.active_residue().chi();
 	utility::vector1< Real > chi;
 	scminmap.starting_dofs( chi );
 
 	/// 5.
-	optimization::Minimizer minimizer( scmin_func, min_options );
+	optimization::Minimizer minimizer( *scmin_func, min_options );
 	minimizer.run( chi );
 
 	/// 6.
 	reinitialize_mingraph_neighborhood_for_residue( pose, sfxn, bgres, scminmap, ratc.active_residue(), mingraph );
-	Real final_energy_for_residue = scmin_func( chi );
+	Real final_energy_for_residue = (*scmin_func)( chi );
 
 	/// 7.
 	//TR << "start energy for rotamer on " << resid << " " << start_energy_for_residue << " final energy: " << final_energy_for_residue << std::endl;
@@ -740,6 +751,7 @@ min_pack(
 	pose::Pose & pose,
 	scoring::ScoreFunction const & sfxn,
 	task::PackerTaskCOP input_task,
+	bool cartesian,
 	bool nonideal
 )
 {
@@ -773,7 +785,7 @@ min_pack(
 	rotsets->prepare_sets_for_packing( pose, sfxn );
 
 	/// 2.
-	scmin::SCMinMinimizerMapOP scminmap = create_scmin_minimizer_map( pose, task );
+	scmin::SCMinMinimizerMapOP scminmap = create_scmin_minimizer_map( pose, task, cartesian );
 	scminmap->set_nonideal(nonideal);
 	scoring::MinimizationGraphOP mingraph = create_minimization_graph( pose, sfxn, *task, *packer_neighbor_graph, *scminmap );
 
@@ -781,7 +793,16 @@ min_pack(
 	scmin::AtomTreeCollectionOP atc = new scmin::AtomTreeCollection( pose, *rotsets );
 
 	// true -- nblist, false -- deriv_check, false -- deriv_verbose
-	optimization::MinimizerOptions min_options( "dfpmin", 0.1, true, false, false );
+	//optimization::MinimizerOptions min_options( "dfpmin", 0.1, true, false, false );
+	std::string minimizer = "dfpmin";
+	Size max_iter=200;
+	if (cartesian) {
+		minimizer = "lbfgs_armijo";
+		max_iter = 25;
+	}
+	optimization::MinimizerOptions min_options( minimizer, 0.1, true, false, false );
+	min_options.max_iter(max_iter);
+	min_options.silent(true);
 
 
 #ifdef APL_FULL_DEBUG

@@ -186,23 +186,23 @@ void ResidueAtomTreeCollection::update_residue()
 
 	residue_uptodate_ = true;
 	AtomTree const & tree( * atom_tree_representatives_[ active_restype_ ] );
+	Residue & rsd( *residue_representatives_[ active_restype_ ] );
 	if ( tree.residue_xyz_change_list_begin() != tree.residue_xyz_change_list_end() ) {
 		assert( *( tree.residue_xyz_change_list_begin() ) == 1 );
-		Residue & rsd( *residue_representatives_[ active_restype_ ] );
 		for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
 			rsd.set_xyz( ii, tree.xyz( id::AtomID( ii, 1 ) ));
 		}
 
-		// chi angles
-		for ( Size ii = 1, ii_end = rsd.nchi(); ii <= ii_end; ++ii ) {
-			//std::cout << "Chi: " << ii << " " << tree.dof( DOF_ID( AtomID( rsd.chi_atoms(ii)[4], 1), PHI )) << " and ";
-			rsd.chi()[ ii ] = numeric::constants::d::radians_to_degrees * tree.dof( DOF_ID( AtomID( rsd.chi_atoms(ii)[4], 1), PHI ));
-			//std::cout << rsd.chi()[ ii ] << std::endl;
-		}
 		tree.note_coordinate_change_registered();
 	}
-	active_residue_->update_actcoord();
 
+	// copy chi angles from atomtree->res
+	for ( Size ii = 1, ii_end = rsd.nchi(); ii <= ii_end; ++ii ) {
+		//std::cout << "Chi: " << ii << " " << tree.dof( DOF_ID( AtomID( rsd.chi_atoms(ii)[4], 1), PHI )) << " and ";
+		rsd.chi()[ ii ] = numeric::constants::d::radians_to_degrees * tree.dof( DOF_ID( AtomID( rsd.chi_atoms(ii)[4], 1), PHI ));
+		//std::cout << rsd.chi()[ ii ] << std::endl;
+	}
+	active_residue_->update_actcoord();
 }
 
 /// @brief See comments for update_residue().  After a call to "set_rescoords", the user must
@@ -287,6 +287,23 @@ ResidueAtomTreeCollection::set_rescoords( utility::vector1< Vector > const & coo
 	assert( coords.size() == residue_representatives_[ active_restype_ ]->natoms() );
 	for ( Size ii = 1; ii <= residue_representatives_[ active_restype_ ]->natoms(); ++ii ) {
 		residue_representatives_[ active_restype_ ]->set_xyz( ii, coords[ ii ] );
+	}
+	//residue_representatives_[ active_restype_ ]->update_actcoord();
+	update_atom_tree();
+	update_residue(); // now, copy the chi angles out of the atom tree
+}
+
+/// @brief
+void
+ResidueAtomTreeCollection::set_rescoords( 
+	utility::vector1< id::AtomID > const & atms, utility::vector1< Vector > const & coords )
+{
+	assert( atms.size() == coords.size() );
+	Size natoms = atms.size();
+
+	/// trust the the input residue's chi angles are correct
+	for ( Size ii = 1; ii <= natoms; ++ii ) {
+		residue_representatives_[ active_restype_ ]->set_xyz( atms[ii].atomno(), coords[ ii ] );
 	}
 	//residue_representatives_[ active_restype_ ]->update_actcoord();
 	update_atom_tree();

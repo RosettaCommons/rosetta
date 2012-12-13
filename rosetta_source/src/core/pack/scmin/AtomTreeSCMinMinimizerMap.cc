@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/pack/scmin/SCMinMinimizerMap.cc
+/// @file   core/pack/scmin/AtomTreeSCMinMinimizerMap.cc
 /// @brief  Class for identifying the sidechain DOFs in the AtomTree which are free during
 ///         any particular call to the minimizer.
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 
 // Unit headers
-#include <core/pack/scmin/SCMinMinimizerMap.hh>
+#include <core/pack/scmin/AtomTreeSCMinMinimizerMap.hh>
 
 // Package Headers
 // AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
@@ -43,19 +43,19 @@ namespace core {
 namespace pack {
 namespace scmin {
 
-SCMinMinimizerMap::SCMinMinimizerMap() :
-	nactive_residues_( 0 ),
+AtomTreeSCMinMinimizerMap::AtomTreeSCMinMinimizerMap() :
+	SCMinMinimizerMap(),
 	dof_mask_( 1, false ),
-	focused_residue_( 0 ),
-	dof_start_for_focused_residue_( 0 ),
-	ndofs_added_for_focused_residue_( 0 ),
-	n_active_dof_nodes_( 0 ),
-	nonideal_(false)
-{}
+  n_active_dof_nodes_( 0 ),
+  dof_start_for_focused_residue_( 0 ),
+  ndofs_added_for_focused_residue_( 0 )
+{
 
-SCMinMinimizerMap::~SCMinMinimizerMap() {}
+}
 
-void SCMinMinimizerMap::set_total_residue( Size total_residue )
+AtomTreeSCMinMinimizerMap::~AtomTreeSCMinMinimizerMap() {}
+
+void AtomTreeSCMinMinimizerMap::set_total_residue( Size total_residue )
 {
 	reset_dof_nodes();
 	nactive_residues_ = 0;
@@ -76,7 +76,7 @@ void SCMinMinimizerMap::set_total_residue( Size total_residue )
 }
 
 /// @brief Disable the minimization for all residues.  Ammortized O(1).
-void SCMinMinimizerMap::clear_active_dofs()
+void AtomTreeSCMinMinimizerMap::clear_active_dofs()
 {
 	for ( Size ii = 1; ii <= nactive_residues_; ++ii ) {
 		domain_map_( active_residues_[ ii ] ) = 1;
@@ -92,7 +92,7 @@ void SCMinMinimizerMap::clear_active_dofs()
 }
 
 /// @details This should be called at most once per residue between calls to "clear_active_chi"
-void SCMinMinimizerMap::activate_residue_dofs( Size resindex )
+void AtomTreeSCMinMinimizerMap::activate_residue_dofs( Size resindex )
 {
 	assert( domain_map_( resindex ) == 1 ); // activate_residue_chi should not have already been called.
 	assert( active_residue_index_for_res_[ resindex ] == 0 ); // activate_residue_chi should not have already been called.
@@ -103,11 +103,32 @@ void SCMinMinimizerMap::activate_residue_dofs( Size resindex )
 
 }
 
+/// @brief Convenience lookup -- turns over the request to the AtomTreeCollection
+conformation::Residue const &
+AtomTreeSCMinMinimizerMap::residue( Size seqpos ) const
+{
+	return atcs_for_residues_[ seqpos ]->active_residue();
+}
+
+kinematics::tree::Atom const &
+AtomTreeSCMinMinimizerMap::atom( AtomID const & atid ) const
+{
+	return atcs_for_residues_[ atid.rsd() ]->active_atom_tree().atom( id::AtomID( atid.atomno(), 1 ) );
+}
+
+
+void AtomTreeSCMinMinimizerMap::set_natoms_for_residue( Size resid, Size natoms )
+{
+	if ( atom_derivatives_[ resid ].size() < natoms ) {
+		atom_derivatives_[ resid ].resize( natoms );
+	}
+}
+
 /// @brief Invoked during the depth-first traversal through the AtomTree.  The AtomTree
 /// is indicating that a particular torsion is dependent on another torsion.  Record
 /// that fact.
 void
-SCMinMinimizerMap::add_torsion(
+AtomTreeSCMinMinimizerMap::add_torsion(
 	DOF_ID const & new_torsion,
 	DOF_ID const & parent
 )
@@ -157,7 +178,7 @@ SCMinMinimizerMap::add_torsion(
 /// tree is indicating that a given atom is controlled by a particular DOF.  Record
 /// that fact.
 void
-SCMinMinimizerMap::add_atom(
+AtomTreeSCMinMinimizerMap::add_atom(
 	AtomID const & atom_id,
 	DOF_ID const & dof_id
 )
@@ -196,7 +217,7 @@ SCMinMinimizerMap::add_atom(
 /// @brief Traverse the atom trees in preparation for minimization to tie together all the
 /// DOFs and the atoms they control.
 void
-SCMinMinimizerMap::setup( AtomTreeCollectionOP trees )
+AtomTreeSCMinMinimizerMap::setup( AtomTreeCollectionOP trees )
 {
 	reset_dof_nodes();
 	atom_tree_collection_ = trees;
@@ -262,15 +283,8 @@ SCMinMinimizerMap::setup( AtomTreeCollectionOP trees )
 	}
 }
 
-/// @brief Convenience lookup -- turns over the request to the AtomTreeCollection
-conformation::Residue const &
-SCMinMinimizerMap::residue( Size seqpos ) const
-{
-	return atcs_for_residues_[ seqpos ]->active_residue();
-}
-
 void
-SCMinMinimizerMap::starting_dofs( optimization::Multivec & dof ) const
+AtomTreeSCMinMinimizerMap::starting_dofs( optimization::Multivec & dof ) const
 {
 	dof.resize( n_active_dof_nodes_ );
 
@@ -302,7 +316,7 @@ SCMinMinimizerMap::starting_dofs( optimization::Multivec & dof ) const
 }
 
 void
-SCMinMinimizerMap::assign_dofs_to_mobile_residues( optimization::Multivec const & dofs )
+AtomTreeSCMinMinimizerMap::assign_dofs_to_mobile_residues( optimization::Multivec const & dofs )
 {
 	assert( dofs.size() == n_active_dof_nodes_ );
 
@@ -340,8 +354,8 @@ SCMinMinimizerMap::assign_dofs_to_mobile_residues( optimization::Multivec const 
 	}
 }
 
-SCMinMinimizerMap::DOF_Node const &
-SCMinMinimizerMap::dof_node_for_chi( Size resid, Size chiid ) const
+AtomTreeSCMinMinimizerMap::DOF_Node const &
+AtomTreeSCMinMinimizerMap::dof_node_for_chi( Size resid, Size chiid ) const
 {
 	Size atno = atcs_for_residues_[ resid ]->active_residue().chi_atoms( chiid )[ 4 ];
 	Size actid = active_residue_index_for_res_[ resid ];
@@ -350,7 +364,7 @@ SCMinMinimizerMap::dof_node_for_chi( Size resid, Size chiid ) const
 }
 
 id::TorsionID
-SCMinMinimizerMap::tor_for_dof( DOF_ID const & dofid ) const
+AtomTreeSCMinMinimizerMap::tor_for_dof( DOF_ID const & dofid ) const
 {
 	if (dofid.type() != core::id::PHI) return core::id::BOGUS_TORSION_ID;
 
@@ -360,13 +374,18 @@ SCMinMinimizerMap::tor_for_dof( DOF_ID const & dofid ) const
 	return torid;
 }
 
-kinematics::tree::Atom const &
-SCMinMinimizerMap::atom( AtomID const & atid ) const
+/// @details super simple -- no need for a sort (nor is there a need in the optimization::MinimizerMap for that matter).
+void AtomTreeSCMinMinimizerMap::link_torsion_vectors()
 {
-	return atcs_for_residues_[ atid.rsd() ]->active_atom_tree().atom( id::AtomID( atid.atomno(), 1 ) );
+	/// by construction, DOFs are added such that index( parent ) < index( child ).
+	/// (i.e. we have a partial order of DOFs and DOF_Nodes are added in a monotonically increasing manner in that partial order)
+	//fpd  this still holds for Ds/thetas
+	for ( Size ii = n_active_dof_nodes_; ii >= 1; --ii ) {
+		dof_nodes_[ ii ]->link_vectors();
+	}
 }
 
-void SCMinMinimizerMap::zero_atom_derivative_vectors()
+void AtomTreeSCMinMinimizerMap::zero_atom_derivative_vectors()
 {
 	for ( Size ii = 1; ii <= nactive_residues_; ++ii ) {
 		Size iiresid = active_residues_[ ii ];
@@ -377,25 +396,7 @@ void SCMinMinimizerMap::zero_atom_derivative_vectors()
 	}
 }
 
-/// @details super simple -- no need for a sort (nor is there a need in the optimization::MinimizerMap for that matter).
-void SCMinMinimizerMap::link_torsion_vectors()
-{
-	/// by construction, DOFs are added such that index( parent ) < index( child ).
-	/// (i.e. we have a partial order of DOFs and DOF_Nodes are added in a monotonically increasing manner in that partial order)
-	//fpd  this still holds for Ds/thetas
-	for ( Size ii = n_active_dof_nodes_; ii >= 1; --ii ) {
-		dof_nodes_[ ii ]->link_vectors();
-	}
-}
-
-void SCMinMinimizerMap::set_natoms_for_residue( Size resid, Size natoms )
-{
-	if ( atom_derivatives_[ resid ].size() < natoms ) {
-		atom_derivatives_[ resid ].resize( natoms );
-	}
-}
-
-void SCMinMinimizerMap::reset_dof_nodes()
+void AtomTreeSCMinMinimizerMap::reset_dof_nodes()
 {
 	for ( Size ii = 1; ii <= n_active_dof_nodes_; ++ii ) {
 		dof_nodes_[ ii ]->set_parent( 0 );

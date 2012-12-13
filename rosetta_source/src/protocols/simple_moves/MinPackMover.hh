@@ -129,7 +129,7 @@ private:
 	TaskFactoryCOP task_factory_;
 
 	bool stochastic_pack_; // calls stochastic_pack instead of min_pack if true
-	bool nonideal_;
+	bool nonideal_,cartesian_;
 };
 
 

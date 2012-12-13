@@ -128,6 +128,7 @@ void
 MinPackMover::init()
 {
 	nonideal_ = basic::options::option[ basic::options::OptionKeys::optimization::scmin_nonideal ]();
+	cartesian_ = basic::options::option[ basic::options::OptionKeys::optimization::scmin_cartesian ]();
 }
 
 MinPackMover::MinPackMover( MinPackMover const & other ) :
@@ -139,6 +140,7 @@ MinPackMover::MinPackMover( MinPackMover const & other ) :
 	task_ = other.task();
 	task_factory_ = other.task_factory();
 	nonideal_ = other.nonideal_;
+	cartesian_ = other.cartesian_;
 }
 
 void
@@ -163,7 +165,7 @@ MinPackMover::apply( Pose & pose )
 	if ( stochastic_pack_ ) {
 		core::pack::stochastic_pack( pose, *scorefxn_, task );
 	} else {
-		core::pack::min_pack( pose, *scorefxn_, task, nonideal_ );
+		core::pack::min_pack( pose, *scorefxn_, task, cartesian_, nonideal_ );
 	}
 
 }
@@ -205,6 +207,9 @@ MinPackMover::parse_my_tag(
 
 	if (tag->hasOption( "nonideal" )) {
 		nonideal_ = tag->getOption<bool>( "nonideal" );
+	}
+	if (tag->hasOption( "cartesian" )) {
+		cartesian_ = tag->getOption<bool>( "cartesian" );
 	}
 }
 

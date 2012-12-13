@@ -7,25 +7,23 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/pack/scmin/SCMinMultifunc.cc
+/// @file   core/pack/scmin/CartSCMinMultifunc.cc
 /// @brief  Class for interfacing with the minimizer during sidechain minimization.
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 // Unit headers
-#include <core/pack/scmin/SCMinMultifunc.hh>
+#include <core/pack/scmin/CartSCMinMultifunc.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <core/pack/scmin/AtomTreeCollection.hh>
+#include <core/pack/scmin/CartSCMinMinimizerMap.hh>
 #include <core/pack/scmin/SCMinMinimizerMap.hh>
 
 // Project Headers
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/kinematics/AtomTree.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/scoring/MinimizationGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/optimization/atom_tree_minimize.hh>
+#include <core/optimization/cartesian_minimize.hh> // VectorQuad, tors->cart conversions
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -37,6 +35,7 @@
 #include <core/kinematics/Jump.hh>
 #include <core/optimization/DOF_Node.hh>
 #include <core/scoring/DerivVectorPair.hh>
+#include <core/chemical/ResidueType.hh>
 
 
 namespace core {
@@ -44,7 +43,7 @@ namespace pack {
 namespace scmin {
 
 
-SCMinMultifunc::SCMinMultifunc(
+CartSCMinMultifunc::CartSCMinMultifunc(
 	pose::Pose & p,
 	utility::vector1< conformation::ResidueCOP > const & bg_residues,
 	scoring::ScoreFunction const & sfxn,
@@ -55,18 +54,22 @@ SCMinMultifunc::SCMinMultifunc(
 	bg_residues_( bg_residues ),
 	sfxn_( sfxn ),
 	g_( mingraph ),
-	scminmap_( scminmap ),
+	scminmap_(dynamic_cast<CartSCMinMinimizerMap&>( scminmap )),
 	scoretypes_( sfxn_.get_nonzero_weighted_scoretypes() )
-{}
+{
+}
 
-SCMinMultifunc::~SCMinMultifunc() {}
+CartSCMinMultifunc::~CartSCMinMultifunc() {}
 
+
+//fpd  same as AtomTree version
+//fpd    - new logic is in assign_dofs_to_mobile_residues
 Real
-SCMinMultifunc::operator ()( Multivec const & chi ) const
+CartSCMinMultifunc::operator ()( Multivec const & xs ) const
 {
 	using namespace scoring;
 
-	scminmap_.assign_dofs_to_mobile_residues( chi );
+	scminmap_.assign_dofs_to_mobile_residues( xs );
 
 	/// 1. setup for scoring -- nodes first
 	for ( Size ii = 1, iiend = scminmap_.nactive_residues(); ii <= iiend; ++ii ) {
@@ -127,8 +130,9 @@ SCMinMultifunc::operator ()( Multivec const & chi ) const
 }
 
 
+//fpd only logic change in stages 3 & 4
 void
-SCMinMultifunc::dfunc( Multivec const & chi, Multivec & dE_dchi ) const
+CartSCMinMultifunc::dfunc( Multivec const & chi, Multivec & dE_dx ) const
 {
 	using namespace scoring;
 	scminmap_.assign_dofs_to_mobile_residues( chi );
@@ -199,79 +203,77 @@ SCMinMultifunc::dfunc( Multivec const & chi, Multivec & dE_dchi ) const
 
 	/// 3. Accumulate the atom derivatives into the DOF_Node f1/f2s
 	for ( Size ii = 1, iiend = scminmap_.n_dof_nodes(); ii <= iiend; ++ii ) {
-		optimization::DOF_Node & iidofnode( scminmap_.dof_node( ii ) );
-		iidofnode.F1() = 0; iidofnode.F2() = 0;
-		optimization::DOF_Node::AtomIDs iiatoms( iidofnode.atoms() );
-		for ( Size jj = 1, jjend = iiatoms.size(); jj <= jjend; ++jj ) {
-			iidofnode.F1() += scminmap_.atom_derivatives( iiatoms[ jj ].rsd() )[ iiatoms[ jj ].atomno() ].f1();
-			iidofnode.F2() += scminmap_.atom_derivatives( iiatoms[ jj ].rsd() )[ iiatoms[ jj ].atomno() ].f2();
-		}
+		id::AtomID const & atom_id( scminmap_.get_atom(ii) );
+		Vector F2 = scminmap_.atom_derivatives( atom_id.rsd() )[ atom_id.atomno() ].f2();
+		dE_dx[3*ii-2] = F2[0];
+		dE_dx[3*ii-1] = F2[1];
+		dE_dx[3*ii  ] = F2[2];
 	}
 
-	/// 3. Link torsion vectors
-	scminmap_.link_torsion_vectors();
-
+	/// 4. get torsional derivs & convert to cartesian
 	id::DOF_ID junk;
-	for ( Size ii = 1, iiend = scminmap_.n_dof_nodes(); ii <= iiend; ++ii ) {
-		optimization::DOF_Node & iidofnode( scminmap_.dof_node( ii ) );
-		//fpd  we assume that torsion-defined funcs have no derivatives w.r.t. d or theta DOFs
-		if (iidofnode.type() == core::id::PHI) {
-			id::TorsionID torid = scminmap_.tor_for_dof( iidofnode.dof_id() );
-			/// 4. Evaluate chi-dof derivatives
-			Real dofderiv = eval_dof_deriv_for_minnode( * g_.get_minimization_node( iidofnode.rsd() ),
-				scminmap_.residue( iidofnode.rsd() ), pose_, junk, torid, sfxn_, sfxn_.weights() );
+	for ( Size ii = 1, iiend = scminmap_.nactive_residues(); ii <= iiend; ++ii ) {
+		Size const iiresid = scminmap_.active_residue( ii );
+		conformation::Residue const & iires( scminmap_.residue( iiresid ) );
 
-			dE_dchi[ ii ] = optimization::torsional_derivative_from_cartesian_derivatives(
-				scminmap_.atom( iidofnode.atom_id() ), iidofnode,
-				dofderiv, numeric::constants::d::rad2deg );
+		// loop through chis -- some of this logic might be better moved to scminminimizermap
+		for ( Size jj = 1; jj <= iires.nchi(); ++jj ) {
+			id::TorsionID torid(iiresid, id::CHI, jj);
+			chemical::AtomIndices const &chi_atoms = iires.chi_atoms( jj );
+			
+			Real dofderiv = eval_dof_deriv_for_minnode( 
+				*g_.get_minimization_node( iiresid ),
+				scminmap_.residue( iiresid ),
+				pose_, junk, torid, sfxn_, sfxn_.weights() );
+	
+			optimization::VectorQuad coords( 
+				iires.xyz(chi_atoms[1]),
+				iires.xyz(chi_atoms[2]), 
+				iires.xyz(chi_atoms[3]), 
+				iires.xyz(chi_atoms[4]) );
+			optimization::VectorQuad grads;
+			optimization::tors_deriv_to_cartesian( dofderiv, coords, grads );
+
+			Size kkatmidx1 = scminmap_.get_atom_index(id::AtomID(chi_atoms[1], iiresid)); // returns 0 if this atom is fixed
+			Size kkatmidx2 = scminmap_.get_atom_index(id::AtomID(chi_atoms[2], iiresid));
+			Size kkatmidx3 = scminmap_.get_atom_index(id::AtomID(chi_atoms[3], iiresid));
+			Size kkatmidx4 = scminmap_.get_atom_index(id::AtomID(chi_atoms[4], iiresid));
+			if (kkatmidx1>0) {
+				dE_dx[3*kkatmidx1-2] += grads.get<0>().x();
+				dE_dx[3*kkatmidx1-1] += grads.get<0>().y();
+				dE_dx[3*kkatmidx1  ] += grads.get<0>().z();
+			}
+			if (kkatmidx2>0) {
+				dE_dx[3*kkatmidx2-2] += grads.get<1>().x();
+				dE_dx[3*kkatmidx2-1] += grads.get<1>().y();
+				dE_dx[3*kkatmidx2  ] += grads.get<1>().z();
+			}
+			if (kkatmidx3>0) {
+				dE_dx[3*kkatmidx3-2] += grads.get<2>().x();
+				dE_dx[3*kkatmidx3-1] += grads.get<2>().y();
+				dE_dx[3*kkatmidx3  ] += grads.get<2>().z();
+			}
+			if (kkatmidx4>0) {
+				dE_dx[3*kkatmidx4-2] += grads.get<3>().x();
+				dE_dx[3*kkatmidx4-1] += grads.get<3>().y();
+				dE_dx[3*kkatmidx4  ] += grads.get<3>().z();
+			}
 		}
+
+		// TODO if bb is allowed to move, add in contributions from bb torsions
 	}
 }
 
 bool
-SCMinMultifunc::abort_min( Multivec const & ) const {
+CartSCMinMultifunc::abort_min( Multivec const & ) const {
 	return false;
 }
 
 
 void
-SCMinMultifunc::dump( Multivec const & /*vars*/, Multivec const & /*vars2*/ ) const
+CartSCMinMultifunc::dump( Multivec const & /*vars*/, Multivec const & /*vars2*/ ) const
 {}
 
-
-/*void
-SCMinMultifunc::eval_atom_deriv(
-	id::AtomID const & atom,
-	Vector & F1,
-	Vector & F2
-) const
-{
-	using namespace scoring;
-
-	Size const rsdno = atom.rsd();
-	Size const atomno = atom.atomno();
-
-	conformation::Residue const & rsd = scminmap_.residue( rsdno );
-
-	MinimizationNode const & minnode =  * g_.get_minimization_node( rsdno );
-	/// 1. eval intra-residue derivatives
-	eval_atom_derivative_for_minnode( minnode, atomno, rsd, pose_, scminmap_.dm(), sfxn_, sfxn_.weights(), F1, F2 );
-
-	ResSingleMinimizationData const & ressingle_min_data( minnode.res_min_data() );
-	/// 2. eval inter-residue derivatives
-	for ( graph::Node::EdgeListConstIter
-			edgeit = minnode.const_edge_list_begin(), edgeit_end = minnode.const_edge_list_end();
-			edgeit != edgeit_end; ++edgeit ) {
-		MinimizationEdge const & minedge = static_cast< MinimizationEdge const & > ( (**edgeit) );
-		Size const other_rsdno = minedge.get_other_ind( rsdno );
-		conformation::Residue const & other_rsd( scminmap_.dm()( other_rsdno ) == 0 ? scminmap_.residue( other_rsdno ) : *bg_residues_[ other_rsdno ]);
-		ResSingleMinimizationData const & other_ressingle_min_data( g_.get_minimization_node( other_rsdno )->res_min_data() );
-
-		eval_atom_deriv_for_minedge( minedge, atomno, rsd, other_rsd,
-			ressingle_min_data, other_ressingle_min_data,
-			pose_, scminmap_.dm(), sfxn_, sfxn_.weights(), F1, F2 );
-	}
-}*/
 
 
 } // namespace scmin

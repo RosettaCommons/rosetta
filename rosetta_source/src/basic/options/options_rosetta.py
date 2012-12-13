@@ -4785,6 +4785,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'scale_rb','Real', desc='max cycles for MinimizerOptions', default='10'),
 		Option( 'scale_rbangle','Real', desc='max cycles for MinimizerOptions', default='1'),
 		Option( 'scmin_nonideal','Boolean', desc='Do we allow sidechain nonideality during scmin (e.g. rtmin and min_pack)', default='false'),
+		Option( 'scmin_cartesian','Boolean', desc='Toggle Cartesian-space minimization during scmin (e.g. rtmin and min_pack)', default='false'),
 	),
 
 	################################

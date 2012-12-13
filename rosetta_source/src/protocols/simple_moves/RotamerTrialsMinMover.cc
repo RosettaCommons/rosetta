@@ -81,6 +81,7 @@ void
 RotamerTrialsMinMover::init()
 {
 	nonideal_ = basic::options::option[ basic::options::OptionKeys::optimization::scmin_nonideal ]();
+	cartesian_ = basic::options::option[ basic::options::OptionKeys::optimization::scmin_cartesian ]();
 }
 
 
@@ -98,6 +99,7 @@ RotamerTrialsMinMover::apply( core::pose::Pose & pose )
 	( *scorefxn_ )(pose); // Ensure scorefunction data is appropriately initialized
 	core::pack::RTMin RTMin;
 	RTMin.set_nonideal(nonideal_);
+	RTMin.set_cartesian(cartesian_);
 	RTMin.rtmin( pose, *scorefxn_, task(pose) );
 }
 
@@ -153,6 +155,9 @@ RotamerTrialsMinMover::parse_my_tag(
 
 	if (tag->hasOption( "nonideal" )) {
 		nonideal_ = tag->getOption<bool>( "nonideal" );
+	}
+	if (tag->hasOption( "cartesian" )) {
+		cartesian_ = tag->getOption<bool>( "cartesian" );
 	}
 }
 

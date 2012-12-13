@@ -7,16 +7,18 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/pack/scmin/SCMinMinimizerMap.hh
+/// @file   core/pack/scmin/AtomTreeSCMinMinimizerMap.hh
 /// @brief  Class for identifying the sidechain DOFs in the AtomTree which are free during
 ///         any particular call to the minimizer.
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_core_pack_scmin_SCMinMinimizerMap_hh
-#define INCLUDED_core_pack_scmin_SCMinMinimizerMap_hh
+#ifndef INCLUDED_core_pack_scmin_AtomTreeSCMinMinimizerMap_hh
+#define INCLUDED_core_pack_scmin_AtomTreeSCMinMinimizerMap_hh
 
 // Unit headers
-#include <core/pack/scmin/SCMinMinimizerMap.fwd.hh>
+#include <core/pack/scmin/AtomTreeSCMinMinimizerMap.fwd.hh>
+#include <core/pack/scmin/SCMinMultifunc.hh>
+#include <core/pack/scmin/SCMinMinimizerMap.hh>
 
 // Package Headers
 #include <core/pack/scmin/AtomTreeCollection.hh>
@@ -33,8 +35,6 @@
 #include <core/kinematics/tree/Atom.fwd.hh>
 // AUTO-REMOVED #include <core/kinematics/DomainMap.hh>
 #include <core/scoring/DerivVectorPair.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/MinimizationGraph.fwd.hh>
 #include <core/optimization/types.hh>
 #include <core/optimization/DOF_Node.hh>
 #include <core/optimization/Multifunc.fwd.hh>
@@ -57,60 +57,53 @@ namespace pack {
 namespace scmin {
 
 /// @brief
-class SCMinMinimizerMap : public kinematics::MinimizerMapBase
+class AtomTreeSCMinMinimizerMap : public SCMinMinimizerMap
 {
 public:
-	SCMinMinimizerMap() :
-		focused_residue_( 0 ),
-	  nactive_residues_( 0 ),
-	  nonideal_(false)
-	{}
+	typedef optimization::DOF_Node   DOF_Node;
+	typedef optimization::DOF_NodeOP DOF_NodeOP;
 
-	virtual
-	~SCMinMinimizerMap() {}
+public:
+	AtomTreeSCMinMinimizerMap();
+	virtual ~AtomTreeSCMinMinimizerMap();
 
-
-	/// @brief the SCMinMinimizerMap has to know how many residues are in the pose; this allows
+	/// @brief the AtomTreeSCMinMinimizerMap has to know how many residues are in the pose; this allows
 	/// it to do O(1) updates to its DomainMap -- this function costs O(N).
 	virtual
-	void set_total_residue( Size total_residue ) = 0;
+	void set_total_residue( Size total_residue );
 
 	/// @brief Disable the minimization for all residues.  Ammortized O(1).
 	virtual
-	void clear_active_dofs() = 0;
+	void clear_active_dofs();
 
 	/// @brief Activate all the dofs for a particular residue.  Ammortized O(1).
 	virtual
-	void activate_residue_dofs( Size resindex ) = 0;
+	void activate_residue_dofs( Size resindex );
 
 	/// @brief Invoked during the depth-first traversal through the AtomTree.  The AtomTree
 	/// is indicating that a particular torsion is dependent on another torsion.  Record
 	/// that fact.
-	//fpd seperate implementations in cart and atomtree
 	virtual
 	void
 	add_torsion(
 		DOF_ID const & new_torsion,
 		DOF_ID const & parent
-	) = 0;
+	);
 
 	/// @brief Invoked during the depth-first traversal through the AtomTree; the atom
 	/// tree is indicating that a given atom is controlled by a particular DOF.  Record
 	/// that fact.
-	//fpd seperate implementations in cart and atomtree
 	virtual
 	void
 	add_atom(
 		AtomID const & atom_id,
 		DOF_ID const & dof_id
-	) = 0;
+	);
 
 	/// @brief Traverse the atom trees in preparation for minimization to tie together all the
 	/// DOFs and the atoms they control.
-	//fpd seperate implementations in cart and atomtree
-	virtual
 	void
-	setup( AtomTreeCollectionOP trees ) = 0;
+	setup( AtomTreeCollectionOP trees );
 
 public:
 
@@ -124,86 +117,73 @@ public:
 	/// @brief Inline accessor
 	inline kinematics::DomainMap const & dm() const { return domain_map_; }
 
-	/// @brief Convenience lookup -- turns over the request to the AtomTreeCollection
-	virtual
-	conformation::Residue const &
-	residue( Size seqpos ) const = 0;
-
-	virtual
-	Size n_dof_nodes() const = 0;
+	Size n_dof_nodes() const { return n_active_dof_nodes_; }
 
 	/// @brief Initialize a multivec with the dofs reflected in the current residue(s)
-	virtual
-	void starting_dofs( optimization::Multivec & dofs ) const = 0;
+	void starting_dofs( optimization::Multivec & dofs ) const;
 
 	/// @brief Assign the chi values to the residue(s)
-	virtual
-	void assign_dofs_to_mobile_residues( optimization::Multivec const & dofs ) = 0;
+	void assign_dofs_to_mobile_residues( optimization::Multivec const & dofs );
 
-	// fpd get dof_node by index
-	virtual
 	optimization::DOF_Node &
-	dof_node( Size index ) = 0;
+	dof_node( Size index ) {
+		assert( index > 0 && index <= n_active_dof_nodes_ );
+		return *dof_nodes_[ index ];
+	}
 
 	virtual
+	conformation::Residue const &
+	residue( Size seqpos ) const;
+
 	optimization::DOF_Node const &
-	dof_node_for_chi( Size resid, Size chiid ) const = 0;
+	dof_node_for_chi( Size resid, Size chiid ) const;
 
-	virtual
 	id::TorsionID
-	tor_for_dof( id::DOF_ID const & dofid ) const = 0;
+	tor_for_dof( id::DOF_ID const & dofid ) const;
 
-	virtual
 	kinematics::tree::Atom const &
-	atom( AtomID const & atid ) const = 0;
+	atom( AtomID const & atid ) const;
 
-	virtual
-	void zero_atom_derivative_vectors() = 0;
+	void zero_atom_derivative_vectors();
 
 	/// @brief propagate f1/f2's up from children to parents
-	virtual
-	void link_torsion_vectors() = 0;
+	void link_torsion_vectors();
 
-	virtual
-	void set_natoms_for_residue( Size resid, Size natoms ) = 0;
+	void set_natoms_for_residue( Size resid, Size natoms );
 
-	utility::vector1< scoring::DerivVectorPair > &
-	atom_derivatives( Size resid ) {
-		return atom_derivatives_[ resid ];
-	}
-
-	void
-	set_nonideal( bool val_in ) {
-		nonideal_ = val_in;
-	}
-
-	virtual
 	optimization::MultifuncOP
 	make_multifunc(
 		pose::Pose & p,
 		utility::vector1< conformation::ResidueCOP > const & bg_residues,
 		scoring::ScoreFunction const & sfxn,
-		scoring::MinimizationGraph & mingraph) = 0;
+		scoring::MinimizationGraph & mingraph)
+	{
+		optimization::MultifuncOP retval( new SCMinMultifunc(p,bg_residues,sfxn,mingraph,*this) );
+		return retval;
+	}
 
 protected:
-	virtual
-	void reset_dof_nodes() = 0;
+	void reset_dof_nodes();
 
-protected:
-	/// each atom tree in the AtomTreeCollection will tell us that it represents residue 1.
-	/// this variable tells us which residue is actually being represented.
-	Size focused_residue_;
+private:
+	utility::vector1< ResidueAtomTreeCollectionOP > atcs_for_residues_;
 
-	Size nactive_residues_;
+	id::DOF_ID_Mask dof_mask_; // used in recursive descent through an atom tree
+	utility::vector1< optimization::DOF_NodeOP > dof_nodes_;
+	Size n_active_dof_nodes_;
 
-	utility::vector1< utility::vector1< scoring::DerivVectorPair > > atom_derivatives_;
+	AtomTreeCollectionOP atom_tree_collection_;
+	utility::vector1< Size > atoms_representing_chis_;
+	utility::vector1< Size > atoms_representing_ds_;
+	utility::vector1< Size > atoms_representing_thetas_;
 
-	utility::vector1< Size > active_residue_index_for_res_;
-	utility::vector1< Size > active_residues_;
-	kinematics::DomainMap    domain_map_;
+	utility::vector1< Size > chi_start_for_active_residue_;   // what's the index of the first chi for a particular active residue?
+	                                                          //fpd  not sure if nonideal analogues are needed for this ... 
+	utility::vector1< utility::vector1< Size > > active_residue_atom_to_dofnode_index_;
 
-	// fpd for cartesian control bb movement instead
-	bool nonideal_;
+	/// For parent_dof lookup: track which dofs a particular atom are responsible for.
+	Size dof_start_for_focused_residue_;
+	Size ndofs_added_for_focused_residue_;
 };
 
 

@@ -51,6 +51,7 @@ public:
 
 public:
 	void set_nonideal(bool nonideal_in) { nonideal_ = nonideal_in; }
+	void set_cartesian(bool cartesian_in) { cartesian_ = cartesian_in; }
 
 	void
 	rtmin(
@@ -63,6 +64,7 @@ private:
 	bool minimize_ligand_chis_;
 	bool minimize_ligand_jumps_;
 	bool nonideal_;
+	bool cartesian_;
 };
 
 void
