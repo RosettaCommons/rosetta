@@ -1,0 +1,74 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+///@author Jared Adolf-Bryfogle
+/*!
+
+@page pyrosetta_toolkit Documentation for the PyRosetta Toolkit GUI
+
+@section metadata Metadata
+This document was last updated December 2012, by Jared Adolf-Bryfogle <jadolfbr@gmail.com>.
+The PI for this application is Roland Dunbrack <Roland.Dunbrack@fccc.edu>
+
+The application was developed by:
+@li Jared Adolf-Bryfogle
+
+@section code_demos Code and Demo
+The Code is available in rosetta_source/GUIs/pyrosetta_toolkit.
+Use ./pyrosetta_toolkit.py within the code directory to run the application.
+
+@section refs References
+Reference in Publication.
+
+@section purpose Purpose
+This GUI is used to run Rosetta protocols, setup Rosetta specific filetypes, and analyze PDB files and Rosetta decoy outputs.
+
+@limits Limitations
+This application does not run all Rosetta Applications.  It does, however, run some of the most common ones.  Although multiprocessing is implemented, full production runs of rosetta applications usually require a cluster.
+Always check relevant Rosetta Documentation on RosettaCommons.  Additional options for most protocols can be added through the Option System Manager.
+
+@modes Modes
+
+@subsection main Main Window
+
+@subsection file_menu File Menu
+
+@subsection advanced_menu Advanced Menu
+
+@subsection protocol_menu Protocol Menu
+
+@subsection pdblist_menu PDBList Menu
+
+@subsection help_menu Help Menu
+
+
+@section inputs Input Files
+PDB, PDBList
+If there are any special input file types, describe them here.
+@li Common file types (loop file, fragment files, etc) will be described in a common place; link to those documents with the ATref command.
+@li Uncommon and app-specific file types should be described here.
+@li Link to (or at least give paths to) examples of each from your integration test/demo.
+@li Mention what you expect the input structure to be: if it's loop modeling, does the loop need to be present, or will it build from scratch?  If it's ligand binding, does there need to be a copy of the ligand in the input structure?
+
+@section tips Tips
+-Setup PyRosetta in BashRC.
+-Use PyMOL Integration - Setup auto server
+-Set default Options
+-Set default Scorefunction
+-Advanced Users: To add windows and functions to the GUI see supplemental material in the paper.
+
+@section outputs Expected Outputs
+-List outputs available
+What does your protocol produce?  Usually it will be just a PDB and a scorefile, but note if there should be more.  Note what the normal exit status of the protocol is (for example, "You'll see the jd2 x jobs completed in y seconds message if successfully completed".)
+
+@section postprocess Post Processing
+? talk about PDBList?
+What post processing steps are typical?  Are score vs RMSD plots useful?  Are structures clustered (if so, give a command line)?  Is it obvious when either the application has succeeded or if it has failed (e.g. if the protocol makes predictions like "This is the docked conformation of proteins A and B").  In the case of designs, how should designs be selected?
+
+*/

@@ -222,7 +222,7 @@ def main(args):
                 scriptname =options.tempscripts+'/'+rootjob+'/'+rootjob+'_'+pdb_jobname+'_'+repr(i)+'.in'
                 jran = str(1000000+offset)
                 suff = str(i)
-                base_config.append('-in:file:s '+pdbPATH+' -constant_seed -jran '+jran)
+                base_config.append('-in:file:s '+pdbPATH+' -run:constant_seed -run:jran '+jran)
                 write_jobscript(new_outpath, scriptname, pdb_jobname, x, base_config)
                 print 'Kicking Job number '+repr(x)+'_'+name
                 offset = offset+10

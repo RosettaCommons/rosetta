@@ -30,7 +30,7 @@ from window_main import global_variables
 from modules.RegionalScoring import RegionalScoring
 from modules.tools import input as input_tools
 from window_modules.clean_pdb.FixPDBWindow import FixPDBWindow
-
+from window_modules.options_system.OptionSystemManager import OptionSystemManager
 class GUIInput:
     def __init__(self, toolkit):
         self.toolkit = toolkit; #Basically an AP of the toolkit
@@ -48,6 +48,8 @@ class GUIInput:
         self.param_paths = []; #Array of parameter paths.
         self.loaded_paths = [];  #Since something about loading a new residuetypeset is global, with horrible exception handling, WE need to keep track of it.
         self.nonstandard_ResidueTypeSet = ""; #This is set through the ncaa window or loading a param path file.  It is here for access since the ChemicalManager instance is a singleton and cannot be reinstantiated with new residues.
+        
+        self.options_manager= OptionSystemManager(); #This is due to Protocols needing Rosetta to be reinitialized without loosing already set options -  to set the seed up before multiprocessing runs!
         
         self.pdb_url = "http://www.rcsb.org/pdb/files"
 #### POSE INPUT ####

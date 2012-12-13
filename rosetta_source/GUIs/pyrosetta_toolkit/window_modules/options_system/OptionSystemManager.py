@@ -10,28 +10,37 @@
 ## @brief  Window to load and set rosetta global options
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
+#Rosetta Imports
 from rosetta import *
-from Tkinter import *
-import tkFileDialog
+
+#Python Imports
 import os
 
+#Tkinter Imports
+from Tkinter import *
+import tkFileDialog
+
+#Toolkit Imports
+from window_main import global_variables
 
 class OptionSystemManager:
-    def __init__(self, current_directory=False):
-        
+    def __init__(self):
+        """
+        Interacts with the rosetta options system by re-initing every time.
+        To get and set options That do not have to be always present use:
+        (These will be lost when protocols are run as protocols need to reinitialize rosetta if run on multiple processors)
+        rosetta.basic.options.get_datatype_option('string_without_-')
+        rosetta.basic.options.set_datatype_option('string_without_-', value)
+        Else: use OptionSystemManager.add_option('string')
+        """
         self.opts = []
         self.args = rosetta.utility.vector1_string()
         self.find_rosetta_database()
-        self.basic_options = ["app", "-database", self.database, "-ex1", "-ex2aro"]
+        self.basic_options = ["app", "-database", self.database, "-ex1", "-ex2aro", "-run:seed_offset 1000"]
         self.extra_options = []
         self.pwd = self.location()[0]
         
-        ## Used due to main Gui
-        if not current_directory:
-            self.current_dirctory = self.pwd
-        else:
-            self.current_directory = current_directory
-        ## Used due to main Gui
+        self.current_directory = global_variables.current_directory
         
         self.reset_options()
         if os.path.exists(self.pwd+"/settings.txt"):
@@ -83,6 +92,13 @@ class OptionSystemManager:
         self.clear_button.grid(row=r+2, column=c+2, columnspan=2, sticky=W+E)
         self.clear_current_button.grid(row = r+3, column=c+2, columnspan = 2, sticky=W+E)
     
+    def add_option(self, option_string):
+        """
+        Used to add an option outside of the GUI.
+        """
+        self.common_option.set(option_string)
+        self.extend()
+        
     def common_option_disable(self, name, index, mode):
         """
         Callback for common_option.  If not set to enter custom, disables option entry.
@@ -169,6 +185,13 @@ class OptionSystemManager:
             FILE.write(option+"\n")
         FILE.close()
         print "Settings saved...."
+    
+    def re_init(self):
+        """
+        Used by multiprocessing protocols to reinit rosetta with arguments held here.
+        ANY arguments set by rosetta.basic.options.set_xxx_option() MAY be annihilated.
+        """
+        rosetta.core.init(self.args)
         
     def reset_options(self):
         '''

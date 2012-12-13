@@ -36,7 +36,7 @@ from modules.protocols.LowResLoopModelingProtocols import LowResLoopModelingProt
 from modules.protocols.HighResLoopModelingProtocols import HighResLoopModelingProtocols
 
 #Window Imports
-from window_modules.options_system.OptionSystemManager import OptionSystemManager
+#from window_modules.options_system.OptionSystemManager import OptionSystemManager
 from window_modules.clean_pdb.FixPDBWindow import FixPDBWindow
 from window_modules.rosetta_tools.RosettaFlagFileBuilder import RosettaFlagFileBuilder
 from window_modules.design.ResfileDesignWindow import ResfileDesignWindow
@@ -333,8 +333,8 @@ class Menus():
 	"""
 
 	top_level_tk = Toplevel(self.main)
-	self.toolkit.options_class.setTk(top_level_tk)
-	self.toolkit.options_class.shoTk()
+	self.toolkit.input_class.options_manager.setTk(top_level_tk)
+	self.toolkit.input_class.options_manager.shoTk()
 	
     def show_ResfileDesignWindow(self):
 	"""

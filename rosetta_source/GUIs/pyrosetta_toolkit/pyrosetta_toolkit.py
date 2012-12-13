@@ -97,7 +97,7 @@ class main_window:
       """
       Creates object for the GUI
       """
-      self.options_class = OptionSystemManager(global_variables.current_directory)
+      #self.options_class = OptionSystemManager(global_variables.current_directory)Relocated to input_class
       self.input_class = GUIInput(self)
       self.output_class = GUIOutput(self)
       

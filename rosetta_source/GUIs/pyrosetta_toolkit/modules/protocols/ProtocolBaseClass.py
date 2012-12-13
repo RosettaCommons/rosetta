@@ -12,6 +12,7 @@
 
 #Rosetta Imports
 from rosetta import *
+import rosetta.basic.options
 
 #Python Imports
 import multiprocessing
@@ -26,7 +27,6 @@ import os.path
 
 
 #Toolkit Imports
-
 
 class ProtocolBaseClass:
     def __init__(self, pose, score_class, input_class, output_class):
@@ -59,13 +59,17 @@ class ProtocolBaseClass:
 
         if self.output_class.auto_write.get():
             
+            base_seed = 1111111
+            seed_offset = 125
+            job_offset = 0; #What increments and is added to base_seed
             #First, we have an array of jobs:
             workers = []
             for i in range(1, self.output_class.decoys.get()+1):
                 outname = self.pdb_name+"_decoy_"+repr(i)+".pdb"
-                worker = Process(name = "decoy_"+repr(i), target=self._run_mover, args=(mover, outname))
+                seed = base_seed+job_offset
+                worker = Process(name = "decoy_"+repr(i), target=self._run_mover, args=(mover, outname, seed))
                 workers.append(worker)
-            
+                job_offset = job_offset+seed_offset
             total_allowed_jobs = self.output_class.processors.get()
             print "Total allowed jobs: "+repr(total_allowed_jobs)
             total_running_jobs = 0
@@ -124,6 +128,7 @@ class ProtocolBaseClass:
                 print "Start: "+ repr(start_energy_score)+"\n"        
                 print "End: "+ repr(self.score_class.score(self.pose))
         
+        time.sleep(15); #So that the children can finish output
         self.output_class.terminal_output.set(0); #Reset output to textbox
         
         print "NOTE: If > 1 decoy has been created, original decoy is still loaded. "
@@ -133,10 +138,14 @@ class ProtocolBaseClass:
     
         
         
-    def _run_mover(self, mover, outputname):
+    def _run_mover(self, mover, outputname, seed):
         """
         Used for multiprocessing.  
         """
+        #Set the seed offset:
+        self.input_class.options_manager.re_init()
+        #rosetta.basic.options.set_integer_option('run:seed_offset', 1000)
+        
         p = Pose(); #Copy it so that each process is working on a different pose object.
         p.assign(self.pose)
         print outputname

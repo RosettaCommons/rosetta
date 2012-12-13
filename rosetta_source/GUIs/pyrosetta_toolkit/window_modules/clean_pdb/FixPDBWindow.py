@@ -12,6 +12,8 @@
 
 #Rosetta imports
 from rosetta.basic.options import get_boolean_option
+from rosetta.basic.options import set_boolean_option
+
 #Python Imports
 import os
 import re
@@ -26,7 +28,6 @@ from window_main import global_variables
 from modules.PythonPDB import PythonPDB
 from modules.SQLPDB import SQLPDB
 from window_modules.ligand_ncaa_ptm_manager.ligand_ncaa_ptm_manager import ligand_ncaa_ptm_manager
-from window_modules.options_system.OptionSystemManager import OptionSystemManager
 
 class FixPDBWindow:
      """
@@ -87,7 +88,8 @@ class FixPDBWindow:
           self.replace_res_and_atoms_button=Checkbutton(fixWindow, variable = self.replace_res_and_atoms_var, text = "Replace known unrecognized residues and atoms")
           self.gobutton_ = Button(fixWindow, text = "GO", command = lambda: self.runFixPDB())
           self.loadbutton = Button(fixWindow, text = "Load Cleaned PDB", command = lambda: self.load_cleaned_pdb())
-          self.ignore_unrecognized = Button(fixWindow, text = "Set -ignore_unrecognized_res option", command = lambda: self.set_ignore_unrecognized())
+          #This may need to change to use __init__, but hopefully not.
+          self.ignore_unrecognized = Button(fixWindow, text = "Set -ignore_unrecognized_res option", command = lambda: self.input_class.options_manager.add_option('ignore_unrecognized_res'))
           self.pathEntry.grid(row = r, column=c)
           self.pathbutton_.grid(row=r, column = c+1)
           self.remH20.grid(row=r, column=c+2, sticky=W)
@@ -166,14 +168,6 @@ class FixPDBWindow:
                          pass
                
           self.input_class.load_pose(self.cleaned_pdb_path.get())
-     
-     def set_ignore_unrecognized(self):
-          """
-          Uses the option system manager to extend options in order to ignore unrecognized before load.
-          """
-          manager = OptionSystemManager()
-          manager.common_option.set('-ignore_unrecognized_res')
-          manager.extend()
      
      def runFixPDB(self):
           """
