@@ -11,7 +11,7 @@ rm -rf $1/basic
 rm -rf $1/core
 rm -rf $1/devel
 rm -rf $1/numeric
-rm -rf $1/ObjecxxFCL
+rm -rf $1/ObjexxFCL
 rm -rf $1/protocols
 rm -rf $1/utility
 
