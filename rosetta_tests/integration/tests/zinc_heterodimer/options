@@ -1,0 +1,15 @@
+#-database <path to database>
+
+-resfile resfile
+-nstruct 1
+
+-partner1 2D4X.pdb
+-partner2 1UBQ.pdb
+-partner2_residue 68
+-match_pdb 2D4X.C135-C137-H192_match_00161.pdb
+-skip_sitegraft_repack false
+
+#-AnchoredDesign::perturb_temp
+-AnchoredDesign::perturb_cycles 3
+-AnchoredDesign::perturb_show true
+-AnchoredDesign::refine_cycles 1
