@@ -257,8 +257,7 @@ RTMin::rtmin(
 		rotamer_set::RotamerSetOP iirotset = rsf.create_rotamer_set( trial_res );
 		iirotset->set_resid( iiresid );
 		iirotset->build_rotamers( pose, scfxn, *input_task, packer_neighbor_graph );
-		Size const ii_curr_rot = iirotset->id_for_current_rotamer();
-		assert( ii_curr_rot != 0 );
+		assert( iirotset->id_for_current_rotamer() != 0 );
 
 		AtomTreeCollectionOP ii_atc = new AtomTreeCollection( pose, *iirotset, iiresid );
 		ii_atc->residue_atomtree_collection( iiresid ).set_active_restype_index( 1 ); // start at the beginning.

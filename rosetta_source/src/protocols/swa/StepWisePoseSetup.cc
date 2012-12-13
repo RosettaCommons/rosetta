@@ -929,7 +929,7 @@ return "StepWisePoseSetup";
 		assert( root_res > 0 );
 		core::kinematics::FoldTree f = pose.fold_tree();
 		bool reorder_went_OK = f.reorder( root_res );
-		assert( reorder_went_OK );
+		runtime_assert( reorder_went_OK );
 		pose.fold_tree( f );
 
 
@@ -1168,7 +1168,6 @@ return "StepWisePoseSetup";
 		working_pose = Pose(); //clear this out.
 
 		ObjexxFCL::FArray1D< Size > const & is_working_res( job_parameters_->is_working_res() );
-		std::string const & working_sequence( job_parameters_->working_sequence() );
 
 		// Need a simple fold tree for following to work...
 		Pose full_pose_copy = pose;
@@ -1186,7 +1185,7 @@ return "StepWisePoseSetup";
 			}
 		}
 
-		assert( working_pose.sequence() == working_sequence );
+		assert( working_pose.sequence() == job_parameters_->working_sequence() );
 
 		// RNA thing.
 		protocols::rna::make_phosphate_nomenclature_matches_mini( working_pose );

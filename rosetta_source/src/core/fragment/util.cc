@@ -641,8 +641,7 @@ void make_pose_from_frags( pose::Pose & pose, std::string sequence, utility::vec
 	pose.fold_tree(tree);
 
 	// Ensure that the FoldTree is left in a consistent state
-	const core::kinematics::FoldTree& treecheck = pose.fold_tree();
-	assert(treecheck.check_fold_tree());
+	assert(pose.fold_tree().check_fold_tree());
 
 	// orient the fragments in the pose based on CA fragment data
 	total_size = 0;

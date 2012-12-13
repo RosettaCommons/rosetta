@@ -958,6 +958,7 @@ calc_per_res_hydrophobic_sasa( pose::Pose const & pose,
 	return total_hydrophobic_sasa;
 }
 
+#ifdef FILE_DEBUG
 ///
 /// @begin sasa.cc::print_dot_bit_string
 ///
@@ -984,6 +985,7 @@ void print_dot_bit_string( utility::vector1< ObjexxFCL::ubyte > & values ) {
 	std::cout << std::endl;
 //#endif
 }
+#endif
 
 
 } // namespace scoring

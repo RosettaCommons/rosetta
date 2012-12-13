@@ -714,7 +714,7 @@ namespace rna {
 			using namespace ObjexxFCL;
 
 			Output_title_text("Floating_base_chain_closure POST_PROCESSING");
-			clock_t const time_start_post_processing( clock() ); 
+			//clock_t const time_start_post_processing( clock() );
 
 			utility::vector1< pose_data_struct2 > output_pose_data_list;
 

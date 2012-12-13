@@ -347,7 +347,7 @@ parse_resfile_string_with_no_lockdown( core::pose::Pose const & pose, core::pack
 			if(pose.pdb_info()){
 				resid = pose.pdb_info()->pdb2pose().find( chain, PDBnum, icode );
 			} else {
-				if((1 <= PDBnum) && (PDBnum <= pose.total_residue())) {
+				if((1 <= PDBnum) && (PDBnum <= (int)pose.total_residue())) {
 					resid = PDBnum;
 				}
 			}

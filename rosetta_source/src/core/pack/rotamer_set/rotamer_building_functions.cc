@@ -189,18 +189,15 @@ build_lib_dna_rotamers(
 	if ( simple_way )
 		rotamers.push_back( rot );
 	else {
-		Pose mini_pose;
+		pose::Pose mini_pose;
 		mini_pose.append_residue_by_bond( pose.residue( resid-1 ) );
 		mini_pose.append_residue_by_bond( *rot );
 		mini_pose.append_residue_by_jump( pose.residue( resid+1 ), 1 );
 
 		Size const seqpos(2);
-		Residue const &
-			prev_rsd( mini_pose.residue(seqpos-1) ),
-			rsd( mini_pose.residue(seqpos  ) ),
-			next_rsd( mini_pose.residue(seqpos+1) );
+		Residue const & rsd( mini_pose.residue(seqpos  ) ), next_rsd( mini_pose.residue(seqpos+1) );
 
-		assert( rsd.is_NA() && prev_rsd.is_NA() );
+		assert( rsd.is_NA() && mini_pose.residue(seqpos-1).is_NA() );
 
 		Vector const P_O3( ( next_rsd.xyz("P") - rsd.xyz("O3*") ) );
 		Real const target_distance( P_O3.length() );
@@ -422,7 +419,7 @@ build_random_dna_rotamers(
 		///////////////////////////////////////////////////////////////////
 		// new fancy way
 		// make a minipose
-		Pose mini_pose;
+		pose::Pose mini_pose;
 		mini_pose.append_residue_by_bond( pose.residue( resid-1 ) );
 		mini_pose.append_residue_by_bond( *rot );
 		mini_pose.append_residue_by_jump( pose.residue( resid+1 ), 1 );

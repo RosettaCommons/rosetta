@@ -83,7 +83,7 @@ void PDNode::print() const
 	std::cerr << std::endl  << "-----------------" << std::endl;
 }
 
-/// @detais The graph doesn't know anything specific about amino acid types, for
+/// @details The graph doesn't know anything specific about amino acid types, for
 /// instance, nothing specially distinguishes glycine and threonine.
 /// The sparse-matrix representation for the PDEdge two-body energy tables
 /// requires knowing when two states are of the *same* amino acid type and
@@ -92,12 +92,10 @@ void PDNode::print() const
 /// @param aatypes_for_state - [in] - amino acid type for each state in the node
 void PDNode::set_amino_acid_types( std::vector< int > const & aatypes_for_state)
 {
-	assert(aatypes_for_state.size() == (unsigned int) (get_num_states() + 1) );
+	assert(aatypes_for_state.size() == (Size)(get_num_states() + 1) );
 
-	int owners_num_aatypes = num_states_for_aatype_.size();
-	for (int ii = 1; ii <= get_num_states(); ii++) {
-		assert( aatypes_for_state[ii] > 0 &&
-			aatypes_for_state[ii] <= owners_num_aatypes);
+	for (int ii = 1; ii <= get_num_states(); ++ii) {
+		assert( aatypes_for_state[ii] > 0 && aatypes_for_state[ii] <= (int)num_states_for_aatype_.size());
 
 		sparse_mat_info_for_state_[ii].set_aa_type( aatypes_for_state[ii] );
 

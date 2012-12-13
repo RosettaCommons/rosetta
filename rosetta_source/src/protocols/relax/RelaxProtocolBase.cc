@@ -404,7 +404,6 @@ void RelaxProtocolBase::set_up_constraints( core::pose::Pose &pose, core::kinema
 		}
 
 		core::Size nres = pose.total_residue();
-		core::Size n_targ_res = constraint_target_pose.total_residue();
 
 		for ( Size i = 1; i<= nres; ++i ) {
 			if ( pose.fold_tree().is_root(i) ) continue; // Skip root virtual atom.
@@ -412,7 +411,7 @@ void RelaxProtocolBase::set_up_constraints( core::pose::Pose &pose, core::kinema
 			if ( coordconstraint_segments_.is_loop_residue( i ) ) {
 				Size j(seq_map[i]);
 				if( j == 0 ) continue;
-				assert( j <= n_targ_res ); // Should be, if map was set up properly.
+				assert( j <= constraint_target_pose.total_residue() ); // Should be, if map was set up properly.
 
 				Residue const & pose_i_rsd( pose.residue(i) );
 				Residue const & targ_j_rsd( constraint_target_pose.residue(j) );

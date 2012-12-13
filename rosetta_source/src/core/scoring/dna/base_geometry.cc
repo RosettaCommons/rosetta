@@ -548,6 +548,7 @@ get_stub_stub_params(
 	Params & params
 )
 {
+	using namespace std;
 	using numeric::conversions::degrees;
 	using numeric::arccos;
 
@@ -628,19 +629,17 @@ get_stub_stub_params(
 	// remove this debugging stuff, preserved in old code at the end of the file
 	if ( local_debug ) {
 		{ // sin gamma version of params[2] is a simple dot product:
-			Real const tmp1 = std::sin( gamma ) * params[2] / gamma;
-			Real const tmp2 = dot( Vector( cross( stub2.M.col_y(),
-																											stub1.M.col_y() ) ),
-															MBT.col_x() );
-			assert( std::abs( tmp1-tmp2)<1e-2 );
+			//Real const tmp1 = (sin( gamma ) * params[2] / gamma);
+			//Real const tmp2 = dot( Vector( cross( stub2.M.col_y(), stub1.M.col_y() ) ), MBT.col_x() );
+			assert( abs( (sin( gamma ) * params[2] / gamma) -
+						  dot( Vector( cross( stub2.M.col_y(), stub1.M.col_y() ) ), MBT.col_x() )) < 1e-2 );
 		}
 
 		{ // sin gamma version of params[3] is a simple dot product:
-			Real const tmp1( std::sin( gamma ) * params[3] / gamma );
-			Real const tmp2( dot( Vector( cross( stub2.M.col_y(),
-																										 stub1.M.col_y() )),
-														 MBT.col_z() ) );
-			assert( std::abs( tmp1-tmp2)<1e-2 );
+			//Real const tmp1( sin( gamma ) * params[3] / gamma );
+			//Real const tmp2( dot( Vector( cross( stub2.M.col_y(), stub1.M.col_y() )), MBT.col_z() ) );
+			assert( abs( ( sin( gamma ) * params[3] / gamma ) -
+						   dot( Vector( cross( stub2.M.col_y(), stub1.M.col_y() )), MBT.col_z() ) ) < 1e-2 );
 		}
 
 		// check sign conventions
@@ -652,20 +651,19 @@ get_stub_stub_params(
 		Vector tmp( cross( M2.col_z(), M1.col_z() ) );
 		assert( cross( tmp, MBT.col_y() ).length() <1e-2 );
 
-		Real const p1x =
-			std::asin( dot( MBT.col_y(), cross( M2.col_x(), M1.col_x() ) ) );
-		Real const p1z =
-			std::asin( dot( MBT.col_y(), cross( M2.col_z(), M1.col_z() ) ) );
-		assert( base_flipped ||
-						( std::abs( params[1] - p1x ) + std::abs( params[1] - p1z )<1e-2));
+		//Real const p1x = std::asin( dot( MBT.col_y(), cross( M2.col_x(), M1.col_x() ) ) );
+		//Real const p1z = std::asin( dot( MBT.col_y(), cross( M2.col_z(), M1.col_z() ) ) );
+		assert( ( base_flipped ) ||
+				( abs( params[1] - asin( dot( MBT.col_y(), cross( M2.col_x(), M1.col_x() ) ) ) ) +
+				  abs( params[1] - asin( dot( MBT.col_y(), cross( M2.col_z(), M1.col_z() ) ) ) ) < 1e-2 ) );
 		//std::cout << "equal? p1: " << params[1] << ' ' << p1x << ' ' << p1z <<
  		//	std::endl;
 
-		Real const p2 = gamma * std::cos( phi_prime );
-		Real const p3 = gamma * std::sin( phi_prime );
-		Real const dev( std::abs( p2 - params[2] ) + std::abs( p3 - params[3] ) );
+		//Real const p2 = gamma * cos( phi_prime );
+		//Real const p3 = gamma * sin( phi_prime );
+		//Real const dev( std::abs( p2 - params[2] ) + std::abs( p3 - params[3] ) );
 		//std::cout << "dev: " << dev << std::endl;
-		assert( dev < 1e-2 );
+		assert( abs( gamma * cos( phi_prime ) - params[2] ) + abs( gamma * sin( phi_prime ) - params[3] ) < 1e-2 );
 
 		// check sign conventions
 		assert( params[1] * dot( MBT.col_y(), cross( M2.col_x(), M1.col_x() ) ) > 0);
@@ -1052,11 +1050,7 @@ get_base_pair_params_old(
 													dot( M1.col_z(), M2.col_z() ) );
 
 	if ( local_debug ) {
-		Real const tmp1( std::abs( params[1] ) );
-		Real const tmp2( arccos( dot( M1.col_z(), M2.col_z() ) ) );
-		assert( std::abs( tmp1 - tmp2 ) <1e-2 );
-		assert( std::abs( std::abs( params[1] ) -
-											arccos( dot( M1.col_z(), M2.col_z() ) ) )<1e-2 );
+		assert( abs( abs( params[1] ) - arccos( dot( M1.col_z(), M2.col_z() ) ) ) < 1e-2 );
 	}
 
 	// buckle:
@@ -1076,19 +1070,17 @@ get_base_pair_params_old(
 	// debugging:
 	if ( local_debug ) {
 		{ // sin gamma version of params[2] is a simple dot product:
-			Real const tmp1 = std::sin( gamma ) * params[2] / gamma;
-			Real const tmp2 = dot( Vector( cross( stub2.M.col_y(),
-																											stub1.M.col_y() ) ),
-															MBT.col_x() );
-			assert( std::abs( tmp1-tmp2)<1e-2 );
+			//Real const tmp1 = sin( gamma ) * params[2] / gamma;
+			//Real const tmp2 = dot( Vector( cross( stub2.M.col_y(), stub1.M.col_y() ) ), MBT.col_x() );
+			assert( abs(sin( gamma ) * params[2] / gamma -
+						dot( Vector( cross( stub2.M.col_y(), stub1.M.col_y() ) ), MBT.col_x() )) < 1e-2 );
 		}
 
 		{ // sin gamma version of params[3] is a simple dot product:
-			Real const tmp1( std::sin( gamma ) * params[3] / gamma );
-			Real const tmp2( dot( Vector( cross( stub2.M.col_y(),
-																										 stub1.M.col_y() )),
-														 MBT.col_z() ) );
-			assert( std::abs( tmp1-tmp2)<1e-2 );
+			//Real const tmp1( sin( gamma ) * params[3] / gamma );
+			//Real const tmp2( dot( Vector( cross( stub2.M.col_y(), stub1.M.col_y() )), MBT.col_z() ) );
+			assert( abs(sin( gamma ) * params[3] / gamma -
+					dot( Vector( cross( stub2.M.col_y(), stub1.M.col_y() )), MBT.col_z() )) < 1e-2 );
 		}
 
 		// check sign conventions
@@ -1100,20 +1092,19 @@ get_base_pair_params_old(
 		Vector tmp( cross( M2.col_z(), M1.col_z() ) );
 		assert( cross( tmp, MBT.col_y() ).length() <1e-2 );
 
-		Real const p1x =
-			std::asin( dot( MBT.col_y(), cross( M2.col_x(), M1.col_x() ) ) );
-		Real const p1z =
-			std::asin( dot( MBT.col_y(), cross( M2.col_z(), M1.col_z() ) ) );
-		assert( base_flipped ||
-						( std::abs( params[1] - p1x ) + std::abs( params[1] - p1z )<1e-2));
+		//Real const p1x = std::asin( dot( MBT.col_y(), cross( M2.col_x(), M1.col_x() ) ) );
+		//Real const p1z = std::asin( dot( MBT.col_y(), cross( M2.col_z(), M1.col_z() ) ) );
+		assert( ( base_flipped ) ||
+				( abs( params[1] - asin( dot( MBT.col_y(), cross( M2.col_x(), M1.col_x() ) ) ) ) +
+				  abs( params[1] - asin( dot( MBT.col_y(), cross( M2.col_z(), M1.col_z() ) ) ) ) < 1e-2 ) );
 		//std::cout << "equal? p1: " << params[1] << ' ' << p1x << ' ' << p1z <<
  		//	std::endl;
 
-		Real const p2 = gamma * std::cos( phi_prime );
-		Real const p3 = gamma * std::sin( phi_prime );
-		Real const dev( std::abs( p2 - params[2] ) + std::abs( p3 - params[3] ) );
+		//Real const p2 = gamma * cos( phi_prime );
+		//Real const p3 = gamma * sin( phi_prime );
+		//Real const dev( std::abs( p2 - params[2] ) + std::abs( p3 - params[3] ) );
 		//std::cout << "dev: " << dev << std::endl;
-		assert( dev < 1e-2 );
+		assert( abs( gamma * cos( phi_prime ) - params[2] ) + abs( gamma * sin( phi_prime ) - params[3] ) < 1e-2 );
 
 		// check sign conventions
 		assert( params[1] * dot( MBT.col_y(), cross( M2.col_x(), M1.col_x() ) ) > 0);
@@ -1194,17 +1185,11 @@ get_base_step_params(
 
 	// TWIST
 	// x,y,z make rh coord system
-	params[1] = std::atan2( dot( M1.col_x(), M2.col_y() ),
-													dot( M1.col_x(), M2.col_x() ) );
+	params[1] = atan2( dot( M1.col_x(), M2.col_y() ), dot( M1.col_x(), M2.col_x() ) );
 
 	if ( local_debug ) {
-		Real const tmp1( std::abs( params[1] ) );
-		Real const tmp2( arccos( dot( M1.col_x(), M2.col_x() ) ) );
-		assert( std::abs( tmp1 - tmp2 ) <1e-2 );
-		assert( std::abs( std::abs( params[1] ) -
-											arccos( dot( M1.col_x(), M2.col_x() ) ) )<1e-2 );
+		assert( abs( abs( params[1] ) - arccos( dot( M1.col_x(), M2.col_x() ) ) ) < 1e-2 );
 	}
-
 
 
 	// ROLL:
@@ -1224,19 +1209,17 @@ get_base_step_params(
 	// debugging:
 	if ( local_debug ) {
 		{ // sin gamma version of params[2] (roll) is a simple dot product:
-			Real const tmp1 = std::sin( gamma ) * params[2] / gamma;
-			Real const tmp2 = dot( Vector( cross( stub2.M.col_z(),
-																						stub1.M.col_z() ) ),
-															MBT.col_y() );
-			assert( std::abs( tmp1-tmp2)<1e-2 );
+			//Real const tmp1 = sin( gamma ) * params[2] / gamma;
+			//Real const tmp2 = dot( Vector( cross( stub2.M.col_z(), stub1.M.col_z() ) ), MBT.col_y() );
+			assert( abs( sin( gamma ) * params[2] / gamma -
+						 dot( Vector( cross( stub2.M.col_z(), stub1.M.col_z() ) ), MBT.col_y() )) < 1e-2 );
 		}
 
 		{ // sin gamma version of params[3] (tilt) is a simple dot product:
-			Real const tmp1( std::sin( gamma ) * params[3] / gamma );
-			Real const tmp2( dot( Vector( cross( stub2.M.col_z(),
-																										 stub1.M.col_z() )),
-														 MBT.col_x() ) );
-			assert( std::abs( tmp1-tmp2)<1e-2 );
+			//Real const tmp1( sin( gamma ) * params[3] / gamma );
+			//Real const tmp2( dot( Vector( cross( stub2.M.col_z(), stub1.M.col_z() )), MBT.col_x() ) );
+			assert( abs( sin( gamma ) * params[3] / gamma -
+						 dot( Vector( cross( stub2.M.col_z(), stub1.M.col_z() )), MBT.col_x() )) < 1e-2 );
 		}
 
 		// check sign conventions
@@ -1248,19 +1231,18 @@ get_base_step_params(
 		Vector tmp( cross( M2.col_x(), M1.col_x() ) );
 		assert( cross( tmp, MBT.col_z() ).length() <1e-2 );
 
-		Real const p1x =
-			std::asin( dot( MBT.col_z(), cross( M2.col_y(), M1.col_y() ) ) );
-		Real const p1z =
-			std::asin( dot( MBT.col_z(), cross( M2.col_x(), M1.col_x() ) ) );
+		//Real const p1x = std::asin( dot( MBT.col_z(), cross( M2.col_y(), M1.col_y() ) ) );
+		//Real const p1z = std::asin( dot( MBT.col_z(), cross( M2.col_x(), M1.col_x() ) ) );
 		//std::cout << "equal? p1: " << params[1] << ' ' << p1x << ' ' << p1z <<
  		//	std::endl;
-		assert( std::abs( params[1] - p1x ) + std::abs( params[1] - p1z )<1e-2);
+		assert( abs( params[1] - asin( dot( MBT.col_z(), cross( M2.col_y(), M1.col_y() ) ) ) ) +
+				abs( params[1] - asin( dot( MBT.col_z(), cross( M2.col_x(), M1.col_x() ) ) ) ) < 1e-2 );
 
-		Real const p2 = gamma * std::cos( phi_prime );
-		Real const p3 = gamma * std::sin( phi_prime );
-		Real const dev( std::abs( p2 - params[2] ) + std::abs( p3 - params[3] ) );
+		//Real const p2 = gamma * cos( phi_prime );
+		//Real const p3 = gamma * sin( phi_prime );
+		//Real const dev( std::abs( p2 - params[2] ) + std::abs( p3 - params[3] ) );
 		//std::cout << "dev: " << dev << std::endl;
-		assert( dev < 1e-2 );
+		assert( abs( gamma * cos( phi_prime ) - params[2] ) + abs( gamma * sin( phi_prime ) - params[3] ) < 1e-2 );
 
 		// check sign conventions
 		assert( params[1] * dot( MBT.col_z(), cross( M2.col_y(), M1.col_y() ) ) > 0);

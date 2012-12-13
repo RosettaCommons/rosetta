@@ -229,7 +229,7 @@ void StarAbinitio::setup_kinematics(const Loops& aligned, const vector1<unsigned
                                               ft_cuts,       // cuts
                                               vres);         // root
 
-  assert(status);
+  runtime_assert(status);
   pose->fold_tree(tree);
   core::util::add_cutpoint_variants(pose);
 

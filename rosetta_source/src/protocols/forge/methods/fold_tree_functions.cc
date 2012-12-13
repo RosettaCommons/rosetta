@@ -1121,7 +1121,7 @@ replace(
 
 	// finalize
 	bool const success = new_ft.reorder( final_ft_root );
-	assert( success );
+	runtime_assert( success );
 
 	return new_ft;
 }

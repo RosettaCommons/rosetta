@@ -948,7 +948,7 @@ namespace rna {
 				}
 				
 				
-				//current_score=Pose_selection_by_full_score(pose_data_list, pose, tag);  // set but never used ~Labonte
+				/*current_score = */ Pose_selection_by_full_score(pose_data_list, pose, tag);
 
 				if(verbose_){
 					std::cout << tag <<  std::endl;

@@ -24,7 +24,8 @@
 #include <basic/database/open.hh>
 
 #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
+#include <utility/vector1.hh>
+#include <utility/exit.hh>
 #include <numeric/conversions.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
@@ -32,8 +33,6 @@
 
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/format.hh>
-
-#include <utility/vector1.hh>
 
 
 using namespace ObjexxFCL;
@@ -580,10 +579,10 @@ DNA_BasePotential::eval_base_step_derivative(
 
 		Real const gamma_sin_gamma( gamma / std::sin( gamma ) );
 
-		assert( std::abs( roll - gamma_sin_gamma *
+		runtime_assert( std::abs( roll - gamma_sin_gamma *
 											dot( cross( z2, z1 ), MBT.col_y() ) ) < 1e-2 );
 
-		assert( std::abs( tilt - gamma_sin_gamma *
+		runtime_assert( std::abs( tilt - gamma_sin_gamma *
 											dot( cross( z2, z1 ), MBT.col_x() ) ) < 1e-2 );
 
 		F1 += dE_dtilt * gamma_sin_gamma * rad2deg *
