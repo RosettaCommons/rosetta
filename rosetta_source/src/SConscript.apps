@@ -112,10 +112,7 @@ for entry in actual.sources:
   last_list_entry=list_entry[len(list_entry)-1]
   prog_name = last_list_entry[0:len(last_list_entry)-3]
   target = ""
-  if len(build.options.extras) == 0:
-    target =  prog_name + ".default." + build.options.os + build.options.cxx + build.options.mode
-  else:
-    target =  prog_name + "." + "".join(build.options.extras)+ "." + build.options.os + build.options.cxx + build.options.mode
+  target =  prog_name + "." + "".join(build.options.extras)+ "." + build.options.os + build.options.cxx + build.options.mode
   stripped_target = prog_name + "." + build.options.os + build.options.cxx + build.options.mode
   exe = env.Program( target, entry )
   Depends("#bin/" + stripped_target, "#bin/" + target)
