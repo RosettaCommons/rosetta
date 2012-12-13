@@ -1,0 +1,24 @@
+<dock_design>
+		<TASKOPERATIONS>
+			<RestrictToRepacking name=restrict/>
+			<OperateOnCertainResidues name=onlypacksome>
+				<PreventRepackingRLT/>
+				<NoResFilter>
+					<ResidueIndexIs indices=10,35,48,57,59/>
+				</NoResFilter>
+			</OperateOnCertainResidues> 
+		</TASKOPERATIONS>
+		<SCOREFXNS>
+			<score12_cart weights=score12_cart symmetric=0>
+			</score12_cart>
+		</SCOREFXNS>
+		<FILTERS>
+		</FILTERS>
+		<MOVERS>
+			<RotamerTrialsMinMover name=rtmin scorefxn=score12_cart task_operations=restrict,onlypacksome cartesian=1/>
+		</MOVERS>
+
+		<PROTOCOLS>
+			<Add mover=rtmin/>
+	   </PROTOCOLS>
+</dock_design>

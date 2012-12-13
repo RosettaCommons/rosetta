@@ -1,0 +1,6 @@
+-s input/2IGD.pdb
+-mute core.util.prof ## dont show timing info
+-mute core.io.database
+-parser:protocol rtmin_cart.xml
+-out:suffix _rtmin_cart
+-overwrite

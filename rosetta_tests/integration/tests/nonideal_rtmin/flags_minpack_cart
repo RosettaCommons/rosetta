@@ -1,0 +1,6 @@
+-s input/2IGD.pdb
+-mute core.util.prof ## dont show timing info
+-mute core.io.database
+-parser:protocol minpack_cart.xml
+-out:suffix _minpack_cart
+-overwrite
