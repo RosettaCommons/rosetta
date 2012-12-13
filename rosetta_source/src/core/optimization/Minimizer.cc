@@ -74,17 +74,21 @@ Minimizer::run(
 		dfpmin( phipsi, end_func, fractional_converge_test, ITMAX );
 	} else if ( type == "dfpmin_armijo" ) {
 		LineMinimizationAlgorithmOP armijo_line_search( new ArmijoLineMinimization( func_, false, phipsi_inout.size() ) );
+		armijo_line_search->silent( options_.silent() );
 		dfpmin_armijo( phipsi, end_func, fractional_converge_test, armijo_line_search, ITMAX );
 	} else if ( type == "dfpmin_armijo_nonmonotone" ) {
 		LineMinimizationAlgorithmOP armijo_line_search( new ArmijoLineMinimization( func_, true, phipsi_inout.size() ) );
+		armijo_line_search->silent( options_.silent() );
 		dfpmin_armijo( phipsi, end_func, fractional_converge_test, armijo_line_search, ITMAX );
 	} else if ( type == "dfpmin_atol" ) {
 		dfpmin( phipsi, end_func, absolute_converge_test, ITMAX );
 	} else if ( type == "dfpmin_armijo_atol" ) {
 		LineMinimizationAlgorithmOP armijo_line_search( new ArmijoLineMinimization( func_, false, phipsi_inout.size() ) );
+		armijo_line_search->silent( options_.silent() );
 		dfpmin_armijo( phipsi, end_func, absolute_converge_test, armijo_line_search, ITMAX );
 	} else if ( type == "dfpmin_armijo_nonmonotone_atol" ) {
 		LineMinimizationAlgorithmOP armijo_line_search( new ArmijoLineMinimization( func_, true, phipsi_inout.size() ) );
+		armijo_line_search->silent( options_.silent() );
 		dfpmin_armijo( phipsi, end_func, absolute_converge_test, armijo_line_search, ITMAX );
 	} else if ( type == "dfpmin_strong_wolfe" ) {
 		LineMinimizationAlgorithmOP strong_wolfe_line_search( new StrongWolfeLineMinimization( func_, false, phipsi_inout.size() ) );
@@ -94,10 +98,20 @@ Minimizer::run(
 		dfpmin_armijo( phipsi, end_func, absolute_converge_test, strong_wolfe_line_search, ITMAX );
 	} else if ( type == "lbfgs_armijo" ) {
 		LineMinimizationAlgorithmOP armijo_line_search( new ArmijoLineMinimization( func_, false, phipsi_inout.size() ) );
+		armijo_line_search->silent( options_.silent() );
 		lbfgs( phipsi, end_func, fractional_converge_test, armijo_line_search, ITMAX );
+	} else if ( type == "lbfgs_armijo_atol" ) {
+		LineMinimizationAlgorithmOP armijo_line_search( new ArmijoLineMinimization( func_, false, phipsi_inout.size() ) );
+		armijo_line_search->silent( options_.silent() );
+		lbfgs( phipsi, end_func, absolute_converge_test, armijo_line_search, ITMAX );
 	} else if ( type == "lbfgs_armijo_nonmonotone" ) {
 		LineMinimizationAlgorithmOP armijo_line_search( new ArmijoLineMinimization( func_, true, phipsi_inout.size() ) );
+		armijo_line_search->silent( options_.silent() );
 		lbfgs( phipsi, end_func, fractional_converge_test, armijo_line_search, ITMAX );
+	} else if ( type == "lbfgs_armijo_nonmonotone_atol" ) {
+		LineMinimizationAlgorithmOP armijo_line_search( new ArmijoLineMinimization( func_, true, phipsi_inout.size() ) );
+		armijo_line_search->silent( options_.silent() );
+		lbfgs( phipsi, end_func, absolute_converge_test, armijo_line_search, ITMAX );
 	} else if ( type == "lbfgs_strong_wolfe" ) {
 		LineMinimizationAlgorithmOP strong_wolfe_line_search( new StrongWolfeLineMinimization( func_, false, phipsi_inout.size() ) );
 		lbfgs( phipsi, end_func, fractional_converge_test, strong_wolfe_line_search, ITMAX );
@@ -285,7 +299,9 @@ Minimizer::dfpmin(
 				 }
 			}
 	 }
-	 TR.Warning << "WARNING: DFPMIN MAX CYCLES " << ITMAX << " EXCEEDED, BUT FUNC NOT CONVERGED!" << std::endl;
+
+	 if (!options_.silent())
+		 TR.Warning << "WARNING: DFPMIN MAX CYCLES " << ITMAX << " EXCEEDED, BUT FUNC NOT CONVERGED!" << std::endl;
 
 	 //		std::cout << "Called line minimization " << line_min->_num_linemin_calls << std::endl;
 	 return;
@@ -373,7 +389,7 @@ Minimizer::dfpmin_armijo(
 
 			if ( converge_test( FRET, prior_func_value ) ) {
 				 //$$$   std::cout << "dfpmin called linmin " << linmin_count << " times" << std::endl;
-				 if (Gmax<=1.0) {
+				 if (Gmax<=options_.gmax_cutoff_for_convergence()) {
 
 						//std::cout << "N= " << N << " ITER= " << ITER << " #F-eval= " << NF << " maxG= " << SS( Gmax ) << " Gnorm= " << SS( Gnorm ) << " step= " << SS( line_min->_last_accepted_step ) << " func= " << SS( FRET ) << " time= " << SS( get_timer("dfpmin") ) << std::endl;
 
@@ -394,7 +410,8 @@ Minimizer::dfpmin_armijo(
 							 // Not convergence yet. Reinitialize HESSIN to a diagonal matrix & update direction XI.
 							 // This requires G to be correctly the gradient of the function.
 
-							 TR.Warning << ":( reset HESSIN from failed line search" << std::endl;
+							 if (!options_.silent())
+								 TR.Warning << ":( reset HESSIN from failed line search" << std::endl;
 
 							 line_min->_deriv_sum = 0.0;
 							 for ( int i = 1; i <= N; ++i ) {
@@ -517,7 +534,8 @@ Minimizer::dfpmin_armijo(
 			} // HOPT == 1
 	 } // for ITER
 
-	 TR.Warning << "WARNING: DFPMIN (Armijo) MAX CYCLES " << ITMAX << " EXCEEDED, BUT FUNC NOT CONVERGED!" << std::endl;
+	 if (!options_.silent())
+		 TR.Warning << "WARNING: DFPMIN (Armijo) MAX CYCLES " << ITMAX << " EXCEEDED, BUT FUNC NOT CONVERGED!" << std::endl;
 
 	 //	std::cout << "Called line minimization " << line_min->_num_linemin_calls << std::endl;
 	 return;
@@ -644,7 +662,7 @@ Minimizer::lbfgs(
 			FRET = (*line_min)( X, D );
 
 			if ( converge_test( FRET, prior_func_value ) || line_min->_last_accepted_step == 0) {
-				 if (Gmax<=1.0) {
+				 if (Gmax<=options_.gmax_cutoff_for_convergence()) {
 						return;
 				 } else {
 						if (line_min->_last_accepted_step == 0) { // failed line search
@@ -688,7 +706,8 @@ Minimizer::lbfgs(
 
 							// if the line minimzer fails again, abort
 							if (line_min->_last_accepted_step == 0) {
-								TR << "Line serach failed even after resetting Hessian; aborting at iter#" << ITER << std::endl;
+								if (!options_.silent())
+									TR << "Line search failed even after resetting Hessian; aborting at iter#" << ITER << std::endl;
 								return;
 							}
 						}
@@ -736,10 +755,10 @@ Minimizer::lbfgs(
 			lm[CURPOS].ys = ys;
 
 			// underflow check
-			if (ys < 1e-12) {
-				TR << "Line search step leads to underflow! Aborting at iter#" << ITER << std::endl;
-				return;
-			}
+			//if (std::fabs(ys) < 1e-12) {
+			//	TR << "Line search step leads to underflow (ys=" << ys << ")! Aborting at iter#" << ITER << std::endl;
+			//	return;
+			//}
 
 			// Recursive formula to compute dir = -(H \cdot g).
 			// 		This is described in page 779 of:
@@ -762,6 +781,8 @@ Minimizer::lbfgs(
 				 j--;
 				 if (j<=0) j=M; // wrap around
 
+			   if (std::fabs(lm[j].ys) < 1e-9) continue;
+
 				 // \alpha_{j} = \rho_{j} s^{t}_{j} \cdot q_{k+1}
 				 lm[j].alpha = 0;
 				 for ( int i = 1; i <= N; ++i ) {
@@ -780,6 +801,8 @@ Minimizer::lbfgs(
 			//}
 
 			for ( int pts=0; pts<bound; ++pts ) {
+			   if (std::fabs(lm[j].ys) < 1e-9) continue;
+
 				 // \beta_{j} = \rho_{j} y^t_{j} \cdot \gamma_{i}
 				 core::Real beta=0.0;
 				 for ( int i = 1; i <= N; ++i ) {
@@ -797,7 +820,8 @@ Minimizer::lbfgs(
 			}
 	 }
 
-	 TR.Warning << "WARNING: LBFGS MAX CYCLES " << ITMAX << " EXCEEDED, BUT FUNC NOT CONVERGED!" << std::endl;
+	 if (!options_.silent())
+		 TR.Warning << "WARNING: LBFGS MAX CYCLES " << ITMAX << " EXCEEDED, BUT FUNC NOT CONVERGED!" << std::endl;
 
 	 return;
 }

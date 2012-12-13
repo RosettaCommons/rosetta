@@ -103,7 +103,7 @@ public:
 		_stored_derivatives( dimension, 0.0 ),
 		_last_accepted_step( 1.0 ), _func_to_beat( 0.0 ),
 		_deriv_sum( 0.0 ),_num_linemin_calls(0),_tolerance( 0.1 ),
-		_func( score_fxn ), _nonmonotone( false ) {};
+		_func( score_fxn ), _nonmonotone( false ), _silent( false ) {};
 	virtual Real operator()( Multivec & , Multivec & ){ return 0.0; };
 	virtual bool provide_stored_derivatives(){ return false; };
 	bool nonmonotone() { return _nonmonotone; };
@@ -114,6 +114,10 @@ public:
 	Real secant_interpolation( Real point1, Real deriv1, Real point2, Real deriv2 );
 	Real cubic_interpolation( Real point1, Real func1, Real deriv1, Real point2, Real func2, Real deriv2 );
 
+	bool silent() { return _silent; };
+	void silent(bool s_in) { _silent=s_in; };
+
+
 	Multivec _stored_derivatives;
 	Real _last_accepted_step;
 	Real _func_to_beat;
@@ -123,6 +127,7 @@ protected:
 	Real const _tolerance;
 	Multifunc const & _func;
 	bool _nonmonotone;
+	bool _silent;
 };
 
 /////////////////////////////////////////////////////////

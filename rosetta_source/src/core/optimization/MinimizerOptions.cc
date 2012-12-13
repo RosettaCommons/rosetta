@@ -50,6 +50,8 @@ MinimizerOptions::MinimizerOptions(
 	deriv_check_verbose_( deriv_check_verbose_in ),
 	deriv_check_to_stdout_( true ), // by default, send the result of a deriv-check call to the screen.
 	// should make these configurable of course
+  silent_( false ),
+  gmax_cutoff_for_convergence_( 1.0 ),
 	ax_init_( 0.0 ),
 	xx_init_( 0.1 ),
 	bx_init_( 0.2 ),
@@ -175,8 +177,28 @@ MinimizerOptions::nblist_auto_update( bool setting ) {
 	nblist_auto_update_ = setting;
 }
 
+bool
+MinimizerOptions::silent() const {
+	return silent_;
+}
+
+void
+MinimizerOptions::silent( bool setting ) {
+	silent_ = setting;
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // low-level params
+
+Real
+MinimizerOptions::gmax_cutoff_for_convergence() const {
+	return gmax_cutoff_for_convergence_;
+}
+
+void
+MinimizerOptions::gmax_cutoff_for_convergence( Real setting ) {
+	gmax_cutoff_for_convergence_ = setting;
+}
 
 // bracketing params for linmin
 Real

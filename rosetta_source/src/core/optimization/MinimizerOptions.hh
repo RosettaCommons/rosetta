@@ -101,6 +101,18 @@ public:
 	void
 	nblist_auto_update( bool setting );
 
+	bool
+	silent() const;
+
+	void
+	silent( bool silent_in );
+
+	Real
+	gmax_cutoff_for_convergence() const;
+
+	void
+	gmax_cutoff_for_convergence( Real gmax_in );
+
 	/////////////////////////////////////////////////////////////////////////////
 	// low-level params
 
@@ -142,6 +154,11 @@ private:
 	bool deriv_check_;
 	bool deriv_check_verbose_;
 	bool deriv_check_to_stdout_;
+
+	bool silent_;  // no minimizer output
+
+	Real gmax_cutoff_for_convergence_;  // armijo line min: only converge if max grad < this value 
+	                                    //    defaults to 1.0
 
 	Real ax_init_;
 	Real xx_init_;

@@ -30,11 +30,13 @@
 #include <core/optimization/CartesianMultifunc.fwd.hh>
 #include <utility/vector1.hh>
 
+#include <boost/tuple/tuple.hpp>
 
 
 namespace core {
 namespace optimization {
 
+typedef boost::tuple< Vector,Vector,Vector,Vector > VectorQuad;
 
 void
 cartesian_dfunc(
@@ -72,6 +74,13 @@ cart_numerical_derivative_check(
 	NumericalDerivCheckResultOP deriv_check_result,
 	bool const verbose // = true
 );
+
+void
+tors_deriv_to_cartesian(
+	Real dE_dtor,
+	VectorQuad const & coords,
+	VectorQuad & dE_dxs);
+
 
 
 } // namespace optimization

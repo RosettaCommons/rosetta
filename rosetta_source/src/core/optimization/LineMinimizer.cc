@@ -436,8 +436,10 @@ ArmijoLineMinimization::Armijo(
 		if ( ( init_step <= 1e-5 * far_step ) ||
 					(init_step < MINSTEP && func_value >= _func_to_beat)) {
 			Real test_step = ( func_value - _func_to_beat ) / init_step;
-			TR.Error << "Inaccurate G! step= " << ( init_step ) << " Deriv= " <<
-						( _deriv_sum ) << " Finite Diff= " << ( test_step ) << std::endl;
+			if (!_silent) {
+				TR.Error << "Inaccurate G! step= " << ( init_step ) << " Deriv= " <<
+							( _deriv_sum ) << " Finite Diff= " << ( test_step ) << std::endl;
+			}
 			func_eval.dump( init_step );
 			_last_accepted_step = 0.0;
 			return _func_to_beat;

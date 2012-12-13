@@ -100,6 +100,7 @@ cartesian_dfunc(
 	cartesian_collect_atompairE_deriv( pose, min_map, scorefxn, dE_dvars, scale );
 
 	// now loop over the torsions in the map
+	Size ntorsions=min_map.ntorsions();
 	cartesian_collect_torsional_deriv( pose, min_map, scorefxn, dE_dvars, scale );
 
 	scorefxn.finalize_after_derivatives( pose );
@@ -210,142 +211,35 @@ void cartesian_collect_torsional_deriv(
 		AtomID id1, id2, id3, id4;
 		pose.conformation().get_torsion_angle_atom_ids( TorsionID, id1,id2,id3,id4 );
 
-		// convert to cartesian derivatives on those atoms using the usual MD code - lift from PD
-		//core::Real epot_dihedral_this=0;
-		core::Real /*phi,*/ sin_phi, cos_phi;
-		core::Vector vti_vta, vta_vtb, vtb_vtj;
-		core::Vector nrml1, nrml2, nrml3;
-		core::Real inv_nrml1_mag, inv_nrml2_mag, inv_nrml3_mag;
+		VectorQuad coords( pose.xyz(id1) , pose.xyz(id2) , pose.xyz(id3) , pose.xyz(id4) );
+		VectorQuad grads;
 
-		core::Vector dcosdnrml1(0,0,0), dcosdnrml2(0,0,0), dsindnrml3(0,0,0), dsindnrml2(0,0,0);
-		core::Vector f, fi, fab, fj;
+		tors_deriv_to_cartesian( deriv, coords, grads );
 
-		vti_vta = pose.xyz( id1 ) - pose.xyz( id2 );
-		vta_vtb = pose.xyz( id2 ) - pose.xyz( id3 );
-		vtb_vtj = pose.xyz( id3 ) - pose.xyz( id4 );
-
-		fi.x() = 0;  fi.y() = 0;  fi.z() = 0;
-		fab.x() = 0; fab.y() = 0; fab.z() = 0;
-		fj.x() = 0;  fj.y() = 0;  fj.z() = 0;
-
-		nrml1.x() = (vti_vta.y() * vta_vtb.z() - vti_vta.z() * vta_vtb.y());
-		nrml1.y() = (vti_vta.z() * vta_vtb.x() - vti_vta.x() * vta_vtb.z());
-		nrml1.z() = (vti_vta.x() * vta_vtb.y() - vti_vta.y() * vta_vtb.x());
-
-		nrml2.x() = (vta_vtb.y() * vtb_vtj.z() - vta_vtb.z() * vtb_vtj.y());
-		nrml2.y() = (vta_vtb.z() * vtb_vtj.x() - vta_vtb.x() * vtb_vtj.z());
-		nrml2.z() = (vta_vtb.x() * vtb_vtj.y() - vta_vtb.y() * vtb_vtj.x());
-
-		nrml3.x() = (vta_vtb.y() * nrml1.z() - vta_vtb.z() * nrml1.y());
-		nrml3.y() = (vta_vtb.z() * nrml1.x() - vta_vtb.x() * nrml1.z());
-		nrml3.z() = (vta_vtb.x() * nrml1.y() - vta_vtb.y() * nrml1.x());
-
-		//inv_nrml1_mag = 1.0 / sqrt(sqr(nrml1.x()) + sqr(nrml1.y()) + sqr(nrml1.z()));
-		//inv_nrml2_mag = 1.0 / sqrt(sqr(nrml2.x()) + sqr(nrml2.y()) + sqr(nrml2.z()));
-		//inv_nrml3_mag = 1.0 / sqrt(sqr(nrml3.x()) + sqr(nrml3.y()) + sqr(nrml3.z()));
-		inv_nrml1_mag = 1.0 / nrml1.length();
-		inv_nrml2_mag = 1.0 / nrml2.length();
-		inv_nrml3_mag = 1.0 / nrml3.length();
-
-		cos_phi = (nrml1.x() * nrml2.x() + nrml1.y() * nrml2.y() + nrml1.z() * nrml2.z()) * inv_nrml1_mag * inv_nrml2_mag;
-		sin_phi = (nrml3.x() * nrml2.x() + nrml3.y() * nrml2.y() + nrml3.z() * nrml2.z()) * inv_nrml3_mag * inv_nrml2_mag;
-
-		nrml2.x() *= inv_nrml2_mag;
-		nrml2.y() *= inv_nrml2_mag;
-		nrml2.z() *= inv_nrml2_mag;
-
-		//phi = -atan2(sin_phi, cos_phi);  // set but never used ~Labonte
-
-		if(fabs(sin_phi) > 0.1) {
-			nrml1.x() *= inv_nrml1_mag;
-			nrml1.y() *= inv_nrml1_mag;
-			nrml1.z() *= inv_nrml1_mag;
-
-			dcosdnrml1.x() = inv_nrml1_mag * (nrml1.x() * cos_phi - nrml2.x());
-			dcosdnrml1.y() = inv_nrml1_mag * (nrml1.y() * cos_phi - nrml2.y());
-			dcosdnrml1.z() = inv_nrml1_mag * (nrml1.z() * cos_phi - nrml2.z());
-
-			dcosdnrml2.x() = inv_nrml2_mag * (nrml2.x() * cos_phi - nrml1.x());
-			dcosdnrml2.y() = inv_nrml2_mag * (nrml2.y() * cos_phi - nrml1.y());
-			dcosdnrml2.z() = inv_nrml2_mag * (nrml2.z() * cos_phi - nrml1.z());
-
-		} else {
-			nrml3.x() *= inv_nrml3_mag;
-			nrml3.y() *= inv_nrml3_mag;
-			nrml3.z() *= inv_nrml3_mag;
-
-			dsindnrml3.x() = inv_nrml3_mag * (nrml3.x() * sin_phi - nrml2.x());
-			dsindnrml3.y() = inv_nrml3_mag * (nrml3.y() * sin_phi - nrml2.y());
-			dsindnrml3.z() = inv_nrml3_mag * (nrml3.z() * sin_phi - nrml2.z());
-
-			dsindnrml2.x() = inv_nrml2_mag * (nrml2.x() * sin_phi - nrml3.x());
-			dsindnrml2.y() = inv_nrml2_mag * (nrml2.y() * sin_phi - nrml3.y());
-			dsindnrml2.z() = inv_nrml2_mag * (nrml2.z() * sin_phi - nrml3.z());
-		}
-		deriv *= -1;
-
-		// forces
-		if(fabs(sin_phi) > 0.1) {
-			deriv /= sin_phi;
-			fi.x() += deriv * (vta_vtb.y() * dcosdnrml1.z() - vta_vtb.z() * dcosdnrml1.y());
-			fi.y() += deriv * (vta_vtb.z() * dcosdnrml1.x() - vta_vtb.x() * dcosdnrml1.z());
-			fi.z() += deriv * (vta_vtb.x() * dcosdnrml1.y() - vta_vtb.y() * dcosdnrml1.x());
-
-			fj.x() += deriv * (vta_vtb.z() * dcosdnrml2.y() - vta_vtb.y() * dcosdnrml2.z());
-			fj.y() += deriv * (vta_vtb.x() * dcosdnrml2.z() - vta_vtb.z() * dcosdnrml2.x());
-			fj.z() += deriv * (vta_vtb.y() * dcosdnrml2.x() - vta_vtb.x() * dcosdnrml2.y());
-
-			fab.x() += deriv * (vti_vta.z() * dcosdnrml1.y() - vti_vta.y() * dcosdnrml1.z() + vtb_vtj.y() * dcosdnrml2.z() - vtb_vtj.z() * dcosdnrml2.y());
-			fab.y() += deriv * (vti_vta.x() * dcosdnrml1.z() - vti_vta.z() * dcosdnrml1.x() + vtb_vtj.z() * dcosdnrml2.x() - vtb_vtj.x() * dcosdnrml2.z());
-			fab.z() += deriv * (vti_vta.y() * dcosdnrml1.x() - vti_vta.x() * dcosdnrml1.y() + vtb_vtj.x() * dcosdnrml2.y() - vtb_vtj.y() * dcosdnrml2.x());
-
-		} else {
-			deriv /= -cos_phi;
-
-			fi.x() += deriv * ((vta_vtb.y() * vta_vtb.y() + vta_vtb.z() * vta_vtb.z()) * dsindnrml3.x() - vta_vtb.x() * vta_vtb.y() * dsindnrml3.y() - vta_vtb.x() * vta_vtb.z() * dsindnrml3.z());
-			fi.y() += deriv * ((vta_vtb.z() * vta_vtb.z() + vta_vtb.x() * vta_vtb.x()) * dsindnrml3.y() - vta_vtb.y() * vta_vtb.z() * dsindnrml3.z() - vta_vtb.y() * vta_vtb.x() * dsindnrml3.x());
-			fi.z() += deriv * ((vta_vtb.x() * vta_vtb.x() + vta_vtb.y() * vta_vtb.y()) * dsindnrml3.z() - vta_vtb.z() * vta_vtb.x() * dsindnrml3.x() - vta_vtb.z() * vta_vtb.y() * dsindnrml3.y());
-
-			fj.x() += deriv * (dsindnrml2.y() * vta_vtb.z() - dsindnrml2.z() * vta_vtb.y());
-			fj.y() += deriv * (dsindnrml2.z() * vta_vtb.x() - dsindnrml2.x() * vta_vtb.z());
-			fj.z() += deriv * (dsindnrml2.x() * vta_vtb.y() - dsindnrml2.y() * vta_vtb.x());
-
-			fab.x() += deriv * (-(vta_vtb.y() * vti_vta.y() + vta_vtb.z() * vti_vta.z()) * dsindnrml3.x()
-				+ (2.0 * vta_vtb.x() * vti_vta.y() - vti_vta.x() * vta_vtb.y()) * dsindnrml3.y()
-				+ (2.0 * vta_vtb.x() * vti_vta.z() - vti_vta.x() * vta_vtb.z()) * dsindnrml3.z() + dsindnrml2.z() * vtb_vtj.y() - dsindnrml2.y() * vtb_vtj.z());
-			fab.y() += deriv * (-(vta_vtb.z() * vti_vta.z() + vta_vtb.x() * vti_vta.x()) * dsindnrml3.y()
-				+ (2.0 * vta_vtb.y() * vti_vta.z() - vti_vta.y() * vta_vtb.z()) * dsindnrml3.z()
-				+ (2.0 * vta_vtb.y() * vti_vta.x() - vti_vta.y() * vta_vtb.x()) * dsindnrml3.x() + dsindnrml2.x() * vtb_vtj.z() - dsindnrml2.z() * vtb_vtj.x());
-			fab.z() += deriv * (-(vta_vtb.x() * vti_vta.x() + vta_vtb.y() * vti_vta.y()) * dsindnrml3.z()
-				+ (2.0 * vta_vtb.z() * vti_vta.x() - vti_vta.z() * vta_vtb.x()) * dsindnrml3.x()
-				+ (2.0 * vta_vtb.z() * vti_vta.y() - vti_vta.z() * vta_vtb.y()) * dsindnrml3.y() + dsindnrml2.y() * vtb_vtj.x() - dsindnrml2.x() * vtb_vtj.y());
-		}
-
-		// finally ... add to cartesian derivs
 		core::Size atmidx1 = min_map.get_atom_index(id1);
 		core::Size atmidx2 = min_map.get_atom_index(id2);
 		core::Size atmidx3 = min_map.get_atom_index(id3);
 		core::Size atmidx4 = min_map.get_atom_index(id4);
 
 		if (atmidx1>0) {
-			dE_dvars[3*atmidx1-2] += scale*(fi.x());
-			dE_dvars[3*atmidx1-1] += scale*(fi.y());
-			dE_dvars[3*atmidx1  ] += scale*(fi.z());
+			dE_dvars[3*atmidx1-2] += scale*(grads.get<0>().x());
+			dE_dvars[3*atmidx1-1] += scale*(grads.get<0>().y());
+			dE_dvars[3*atmidx1  ] += scale*(grads.get<0>().z());
 		}
 		if (atmidx2>0) {
-			dE_dvars[3*atmidx2-2] += scale*(fab.x() - fi.x());
-			dE_dvars[3*atmidx2-1] += scale*(fab.y() - fi.y());
-			dE_dvars[3*atmidx2  ] += scale*(fab.z() - fi.z());
+			dE_dvars[3*atmidx2-2] += scale*(grads.get<1>().x());
+			dE_dvars[3*atmidx2-1] += scale*(grads.get<1>().y());
+			dE_dvars[3*atmidx2  ] += scale*(grads.get<1>().z());
 		}
 		if (atmidx3>0) {
-			dE_dvars[3*atmidx3-2] += scale*(fj.x() - fab.x());
-			dE_dvars[3*atmidx3-1] += scale*(fj.y() - fab.y());
-			dE_dvars[3*atmidx3  ] += scale*(fj.z() - fab.z());
+			dE_dvars[3*atmidx3-2] += scale*(grads.get<2>().x());
+			dE_dvars[3*atmidx3-1] += scale*(grads.get<2>().y());
+			dE_dvars[3*atmidx3  ] += scale*(grads.get<2>().z());
 		}
 		if (atmidx4>0) {
-			dE_dvars[3*atmidx4-2] -= scale*(fj.x());
-			dE_dvars[3*atmidx4-1] -= scale*(fj.y());
-			dE_dvars[3*atmidx4  ] -= scale*(fj.z());
+			dE_dvars[3*atmidx4-2] -= scale*(grads.get<3>().x());
+			dE_dvars[3*atmidx4-1] -= scale*(grads.get<3>().y());
+			dE_dvars[3*atmidx4  ] -= scale*(grads.get<3>().z());
 		}
 
 	} // loop over torsions
@@ -522,6 +416,129 @@ cart_numerical_derivative_check(
 
 	if ( deriv_check_result ) deriv_check_result->add_deriv_data( min_debug );
 }
+
+
+// fpd convert torsional derivs to cartesian
+void
+tors_deriv_to_cartesian( Real dE_dtor, VectorQuad const & coords, VectorQuad & dE_dxs)
+{
+	// convert to cartesian derivatives on those atoms using the usual MD code - lift from PD
+	//core::Real epot_dihedral_this=0;
+	core::Real sin_phi, cos_phi;
+	core::Vector vti_vta, vta_vtb, vtb_vtj;
+	core::Vector nrml1, nrml2, nrml3;
+	core::Real inv_nrml1_mag, inv_nrml2_mag, inv_nrml3_mag;
+
+	core::Vector dcosdnrml1(0,0,0), dcosdnrml2(0,0,0), dsindnrml3(0,0,0), dsindnrml2(0,0,0);
+	core::Vector f(0,0,0), fi(0,0,0), fab(0,0,0), fj(0,0,0);
+
+	vti_vta = coords.get<0>() - coords.get<1>();
+	vta_vtb = coords.get<1>() - coords.get<2>();
+	vtb_vtj = coords.get<2>() - coords.get<3>();
+
+	nrml1.x() = (vti_vta.y() * vta_vtb.z() - vti_vta.z() * vta_vtb.y());
+	nrml1.y() = (vti_vta.z() * vta_vtb.x() - vti_vta.x() * vta_vtb.z());
+	nrml1.z() = (vti_vta.x() * vta_vtb.y() - vti_vta.y() * vta_vtb.x());
+
+	nrml2.x() = (vta_vtb.y() * vtb_vtj.z() - vta_vtb.z() * vtb_vtj.y());
+	nrml2.y() = (vta_vtb.z() * vtb_vtj.x() - vta_vtb.x() * vtb_vtj.z());
+	nrml2.z() = (vta_vtb.x() * vtb_vtj.y() - vta_vtb.y() * vtb_vtj.x());
+
+	nrml3.x() = (vta_vtb.y() * nrml1.z() - vta_vtb.z() * nrml1.y());
+	nrml3.y() = (vta_vtb.z() * nrml1.x() - vta_vtb.x() * nrml1.z());
+	nrml3.z() = (vta_vtb.x() * nrml1.y() - vta_vtb.y() * nrml1.x());
+
+	inv_nrml1_mag = 1.0 / nrml1.length();
+	inv_nrml2_mag = 1.0 / nrml2.length();
+	inv_nrml3_mag = 1.0 / nrml3.length();
+
+	cos_phi = (nrml1.x() * nrml2.x() + nrml1.y() * nrml2.y() + nrml1.z() * nrml2.z()) * inv_nrml1_mag * inv_nrml2_mag;
+	sin_phi = (nrml3.x() * nrml2.x() + nrml3.y() * nrml2.y() + nrml3.z() * nrml2.z()) * inv_nrml3_mag * inv_nrml2_mag;
+
+	nrml2.x() *= inv_nrml2_mag;
+	nrml2.y() *= inv_nrml2_mag;
+	nrml2.z() *= inv_nrml2_mag;
+
+	//phi = -atan2(sin_phi, cos_phi);
+
+	if(fabs(sin_phi) > 0.1) {
+		nrml1.x() *= inv_nrml1_mag;
+		nrml1.y() *= inv_nrml1_mag;
+		nrml1.z() *= inv_nrml1_mag;
+
+		dcosdnrml1.x() = inv_nrml1_mag * (nrml1.x() * cos_phi - nrml2.x());
+		dcosdnrml1.y() = inv_nrml1_mag * (nrml1.y() * cos_phi - nrml2.y());
+		dcosdnrml1.z() = inv_nrml1_mag * (nrml1.z() * cos_phi - nrml2.z());
+
+		dcosdnrml2.x() = inv_nrml2_mag * (nrml2.x() * cos_phi - nrml1.x());
+		dcosdnrml2.y() = inv_nrml2_mag * (nrml2.y() * cos_phi - nrml1.y());
+		dcosdnrml2.z() = inv_nrml2_mag * (nrml2.z() * cos_phi - nrml1.z());
+
+	} else {
+		nrml3.x() *= inv_nrml3_mag;
+		nrml3.y() *= inv_nrml3_mag;
+		nrml3.z() *= inv_nrml3_mag;
+
+		dsindnrml3.x() = inv_nrml3_mag * (nrml3.x() * sin_phi - nrml2.x());
+		dsindnrml3.y() = inv_nrml3_mag * (nrml3.y() * sin_phi - nrml2.y());
+		dsindnrml3.z() = inv_nrml3_mag * (nrml3.z() * sin_phi - nrml2.z());
+
+		dsindnrml2.x() = inv_nrml2_mag * (nrml2.x() * sin_phi - nrml3.x());
+		dsindnrml2.y() = inv_nrml2_mag * (nrml2.y() * sin_phi - nrml3.y());
+		dsindnrml2.z() = inv_nrml2_mag * (nrml2.z() * sin_phi - nrml3.z());
+	}
+	dE_dtor *= -1;
+
+	// forces
+	if(fabs(sin_phi) > 0.1) {
+		dE_dtor /= sin_phi;
+		fi.x() += dE_dtor * (vta_vtb.y() * dcosdnrml1.z() - vta_vtb.z() * dcosdnrml1.y());
+		fi.y() += dE_dtor * (vta_vtb.z() * dcosdnrml1.x() - vta_vtb.x() * dcosdnrml1.z());
+		fi.z() += dE_dtor * (vta_vtb.x() * dcosdnrml1.y() - vta_vtb.y() * dcosdnrml1.x());
+
+		fj.x() += dE_dtor * (vta_vtb.z() * dcosdnrml2.y() - vta_vtb.y() * dcosdnrml2.z());
+		fj.y() += dE_dtor * (vta_vtb.x() * dcosdnrml2.z() - vta_vtb.z() * dcosdnrml2.x());
+		fj.z() += dE_dtor * (vta_vtb.y() * dcosdnrml2.x() - vta_vtb.x() * dcosdnrml2.y());
+
+		fab.x() += dE_dtor * (vti_vta.z() * dcosdnrml1.y() - vti_vta.y() * dcosdnrml1.z() + vtb_vtj.y() * dcosdnrml2.z() - vtb_vtj.z() * dcosdnrml2.y());
+		fab.y() += dE_dtor * (vti_vta.x() * dcosdnrml1.z() - vti_vta.z() * dcosdnrml1.x() + vtb_vtj.z() * dcosdnrml2.x() - vtb_vtj.x() * dcosdnrml2.z());
+		fab.z() += dE_dtor * (vti_vta.y() * dcosdnrml1.x() - vti_vta.x() * dcosdnrml1.y() + vtb_vtj.x() * dcosdnrml2.y() - vtb_vtj.y() * dcosdnrml2.x());
+
+	} else {
+		dE_dtor /= -cos_phi;
+
+		fi.x() += dE_dtor * 
+			((vta_vtb.y()*vta_vtb.y() + vta_vtb.z()*vta_vtb.z())*dsindnrml3.x()
+			 - vta_vtb.x()*vta_vtb.y()*dsindnrml3.y() - vta_vtb.x()* vta_vtb.z()*dsindnrml3.z());
+		fi.y() += dE_dtor *
+			((vta_vtb.z()*vta_vtb.z() + vta_vtb.x()*vta_vtb.x())*dsindnrml3.y() 
+			 - vta_vtb.y()*vta_vtb.z()*dsindnrml3.z() - vta_vtb.y()* vta_vtb.x()*dsindnrml3.x());
+		fi.z() += dE_dtor * 
+			((vta_vtb.x()*vta_vtb.x() + vta_vtb.y()*vta_vtb.y())*dsindnrml3.z() 
+			 - vta_vtb.z()*vta_vtb.x()*dsindnrml3.x() - vta_vtb.z()*vta_vtb.y()*dsindnrml3.y());
+
+		fj.x() += dE_dtor * (dsindnrml2.y() * vta_vtb.z() - dsindnrml2.z() * vta_vtb.y());
+		fj.y() += dE_dtor * (dsindnrml2.z() * vta_vtb.x() - dsindnrml2.x() * vta_vtb.z());
+		fj.z() += dE_dtor * (dsindnrml2.x() * vta_vtb.y() - dsindnrml2.y() * vta_vtb.x());
+
+		fab.x() += dE_dtor * (-(vta_vtb.y() * vti_vta.y() + vta_vtb.z() * vti_vta.z()) * dsindnrml3.x()
+			+ (2.0 * vta_vtb.x() * vti_vta.y() - vti_vta.x() * vta_vtb.y()) * dsindnrml3.y()
+			+ (2.0 * vta_vtb.x() * vti_vta.z() - vti_vta.x() * vta_vtb.z()) * dsindnrml3.z() + dsindnrml2.z() * vtb_vtj.y() - dsindnrml2.y() * vtb_vtj.z());
+		fab.y() += dE_dtor * (-(vta_vtb.z() * vti_vta.z() + vta_vtb.x() * vti_vta.x()) * dsindnrml3.y()
+			+ (2.0 * vta_vtb.y() * vti_vta.z() - vti_vta.y() * vta_vtb.z()) * dsindnrml3.z()
+			+ (2.0 * vta_vtb.y() * vti_vta.x() - vti_vta.y() * vta_vtb.x()) * dsindnrml3.x() + dsindnrml2.x() * vtb_vtj.z() - dsindnrml2.z() * vtb_vtj.x());
+		fab.z() += dE_dtor * (-(vta_vtb.x() * vti_vta.x() + vta_vtb.y() * vti_vta.y()) * dsindnrml3.z()
+			+ (2.0 * vta_vtb.z() * vti_vta.x() - vti_vta.z() * vta_vtb.x()) * dsindnrml3.x()
+			+ (2.0 * vta_vtb.z() * vti_vta.y() - vti_vta.z() * vta_vtb.y()) * dsindnrml3.y() + dsindnrml2.y() * vtb_vtj.x() - dsindnrml2.x() * vtb_vtj.y());
+	}
+
+	boost::get<0>(dE_dxs) = fi;
+	boost::get<1>(dE_dxs) = fab-fi;
+	boost::get<2>(dE_dxs) = fj-fab;
+	boost::get<3>(dE_dxs) = fj;
+}
+
+
 
 
 } // namespace optimization
