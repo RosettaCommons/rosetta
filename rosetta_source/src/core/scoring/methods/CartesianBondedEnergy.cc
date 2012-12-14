@@ -1228,50 +1228,53 @@ IdealParametersDatabase::create_parameters_for_restype(
 	// connection IDs are hardcoded ... is this a problem? APL: Yes, c- or n- terminal disulfides would give you
 	// trouble, but the connection IDs don't have to be hard coded.
 
-	/// backbone dependent bond lengths
-	bool is_nterm = rsd_type.aa() <= chemical::num_canonical_aas && rsd_type.has_variant_type( core::chemical::LOWER_TERMINUS );
-	bool is_cterm = rsd_type.aa() <= chemical::num_canonical_aas && rsd_type.has_variant_type( core::chemical::UPPER_TERMINUS );
-	for (int i=1; i<=5; ++i) {
-		if (i==1 && is_nterm) continue;
-		if (i==3 && rsd_type.aa() == core::chemical::aa_gly) continue;
-
-		std::string atm1,atm2;
-		core::Size rt1,rt2;
-		if (i==1) { atm1="C";  atm2="N";  rt1 = 0;                           rt2 = rsd_type.atom_index(" N  ");}
-		if (i==2) { atm1="N";  atm2="CA"; rt1 = rsd_type.atom_index(" N  "); rt2 = rsd_type.atom_index(" CA "); }
-		if (i==3) { atm1="CA"; atm2="CB"; rt1 = rsd_type.atom_index(" CA "); rt2 = rsd_type.atom_index(" CB "); }
-		if (i==4) { atm1="CA"; atm2="C";  rt1 = rsd_type.atom_index(" CA "); rt2 = rsd_type.atom_index(" C  "); }
-		if (i==5) { atm1="C";  atm2="O";  rt1 = rsd_type.atom_index(" C  "); rt2 = rsd_type.atom_index(" O  "); }
-
-		ResidueCartBondedParameters::Size2 ids;
-		ids[1] = rt1; ids[2] = rt2;
-
-		CartBondedParametersCOP len_params = lookup_length( rsd_type, is_nterm ? false : prepro, atm1, atm2, rt1, rt2 );
-		restype_params->add_bbdep_length_parameter( ids, len_params );
-	}
-
-	// backbone dependent bond angles
-	for (int i=1; i<=7; ++i) {
-		if ((i==2 || i==4) && rsd_type.aa() == core::chemical::aa_gly) continue;
-		if (i==1 && is_nterm) continue;
-		if ((i==6 || i==7) && is_cterm) continue;
-
-		std::string atm1,atm2,atm3;
-		core::Size rt1,rt2,rt3;
-		if (i==1) { atm1="C";  atm2="N";  atm3="CA"; rt1=0;                           rt2=rsd_type.atom_index(" N  "); rt3=rsd_type.atom_index(" CA ");}
-		if (i==2) { atm1="N";  atm2="CA"; atm3="CB"; rt1=rsd_type.atom_index(" N  "); rt2=rsd_type.atom_index(" CA "); rt3=rsd_type.atom_index(" CB "); }
-		if (i==3) { atm1="N";  atm2="CA"; atm3="C";  rt1=rsd_type.atom_index(" N  "); rt2=rsd_type.atom_index(" CA "); rt3=rsd_type.atom_index(" C  "); }
-		if (i==4) { atm1="CB"; atm2="CA"; atm3="C";  rt1=rsd_type.atom_index(" CB "); rt2=rsd_type.atom_index(" CA "); rt3=rsd_type.atom_index(" C  "); }
-		if (i==5) { atm1="CA"; atm2="C";  atm3="O";  rt1=rsd_type.atom_index(" CA "); rt2=rsd_type.atom_index(" C  "); rt3=rsd_type.atom_index(" O  "); }
-		if (i==6) { atm1="CA"; atm2="C";  atm3="N";  rt1=rsd_type.atom_index(" CA "); rt2=rsd_type.atom_index(" C  "); rt3=0; }
-		if (i==7) { atm1="O";  atm2="C";  atm3="N";  rt1=rsd_type.atom_index(" O  "); rt2=rsd_type.atom_index(" C  "); rt3=0; }
-
-		ResidueCartBondedParameters::Size3 ids;
-		ids[1] = rt1; ids[2] = rt2; ids[3] = rt3;
-
-		CartBondedParametersCOP ang_params = lookup_angle(rsd_type, prepro, atm1,atm2,atm3, rt1,rt2,rt3 );
-		restype_params->add_bbdep_angle_parameter( ids, ang_params );
-
+	//fpd protein only
+	if (rsd_type.is_protein()) {
+		/// backbone dependent bond lengths
+		bool is_nterm = rsd_type.aa() <= chemical::num_canonical_aas && rsd_type.has_variant_type( core::chemical::LOWER_TERMINUS );
+		bool is_cterm = rsd_type.aa() <= chemical::num_canonical_aas && rsd_type.has_variant_type( core::chemical::UPPER_TERMINUS );
+		for (int i=1; i<=5; ++i) {
+			if (i==1 && is_nterm) continue;
+			if (i==3 && rsd_type.aa() == core::chemical::aa_gly) continue;
+	
+			std::string atm1,atm2;
+			core::Size rt1,rt2;
+			if (i==1) { atm1="C";  atm2="N";  rt1 = 0;                           rt2 = rsd_type.atom_index(" N  ");}
+			if (i==2) { atm1="N";  atm2="CA"; rt1 = rsd_type.atom_index(" N  "); rt2 = rsd_type.atom_index(" CA "); }
+			if (i==3) { atm1="CA"; atm2="CB"; rt1 = rsd_type.atom_index(" CA "); rt2 = rsd_type.atom_index(" CB "); }
+			if (i==4) { atm1="CA"; atm2="C";  rt1 = rsd_type.atom_index(" CA "); rt2 = rsd_type.atom_index(" C  "); }
+			if (i==5) { atm1="C";  atm2="O";  rt1 = rsd_type.atom_index(" C  "); rt2 = rsd_type.atom_index(" O  "); }
+	
+			ResidueCartBondedParameters::Size2 ids;
+			ids[1] = rt1; ids[2] = rt2;
+	
+			CartBondedParametersCOP len_params = lookup_length( rsd_type, is_nterm ? false : prepro, atm1, atm2, rt1, rt2 );
+			restype_params->add_bbdep_length_parameter( ids, len_params );
+		}
+	
+		// backbone dependent bond angles
+		for (int i=1; i<=7; ++i) {
+			if ((i==2 || i==4) && rsd_type.aa() == core::chemical::aa_gly) continue;
+			if (i==1 && is_nterm) continue;
+			if ((i==6 || i==7) && is_cterm) continue;
+	
+			std::string atm1,atm2,atm3;
+			core::Size rt1,rt2,rt3;
+			if (i==1) { atm1="C";  atm2="N";  atm3="CA"; rt1=0;                           rt2=rsd_type.atom_index(" N  "); rt3=rsd_type.atom_index(" CA ");}
+			if (i==2) { atm1="N";  atm2="CA"; atm3="CB"; rt1=rsd_type.atom_index(" N  "); rt2=rsd_type.atom_index(" CA "); rt3=rsd_type.atom_index(" CB "); }
+			if (i==3) { atm1="N";  atm2="CA"; atm3="C";  rt1=rsd_type.atom_index(" N  "); rt2=rsd_type.atom_index(" CA "); rt3=rsd_type.atom_index(" C  "); }
+			if (i==4) { atm1="CB"; atm2="CA"; atm3="C";  rt1=rsd_type.atom_index(" CB "); rt2=rsd_type.atom_index(" CA "); rt3=rsd_type.atom_index(" C  "); }
+			if (i==5) { atm1="CA"; atm2="C";  atm3="O";  rt1=rsd_type.atom_index(" CA "); rt2=rsd_type.atom_index(" C  "); rt3=rsd_type.atom_index(" O  "); }
+			if (i==6) { atm1="CA"; atm2="C";  atm3="N";  rt1=rsd_type.atom_index(" CA "); rt2=rsd_type.atom_index(" C  "); rt3=0; }
+			if (i==7) { atm1="O";  atm2="C";  atm3="N";  rt1=rsd_type.atom_index(" O  "); rt2=rsd_type.atom_index(" C  "); rt3=0; }
+	
+			ResidueCartBondedParameters::Size3 ids;
+			ids[1] = rt1; ids[2] = rt2; ids[3] = rt3;
+	
+			CartBondedParametersCOP ang_params = lookup_angle(rsd_type, prepro, atm1,atm2,atm3, rt1,rt2,rt3 );
+			restype_params->add_bbdep_angle_parameter( ids, ang_params );
+	
+		}
 	}
 
 	// atom pairs near the upper connect:
@@ -1869,7 +1872,7 @@ CartesianBondedEnergy::residue_pair_energy_sorted(
 	// last residue
 	Size nres = pose.total_residue();
 	if( core::pose::symmetry::is_symmetric(pose) ) nres = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
-	if (rsd2.seqpos() == nres) {
+	if (rsd2.seqpos() == nres && rsd2.aa() != core::chemical::aa_vrt) {
 		// get one body component for the last residue
 		eval_singleres_energy(rsd2, rsd2params, phi2, psi2, pose, emap );
 	}
@@ -1880,7 +1883,6 @@ CartesianBondedEnergy::residue_pair_energy_sorted(
 
 	/// evaluate all the inter-residue energy components
 	eval_residue_pair_energies( rsd1, rsd2, rsd1params, rsd2params, phi1, psi1, phi2, psi2, pose, emap );
-
 }
 
 void
