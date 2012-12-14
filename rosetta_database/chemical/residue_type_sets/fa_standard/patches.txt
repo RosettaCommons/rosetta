@@ -7,6 +7,8 @@ patches/UpperDNA.txt
 patches/SpecialRotamer.txt
 patches/protein_cutpoint_upper.txt
 patches/protein_cutpoint_lower.txt
+patches/dna_cutpoint_upper.txt
+patches/dna_cutpoint_lower.txt
 patches/VirtualBB.txt
 patches/ShoveBB.txt
 patches/VirtualDNAPhosphate.txt

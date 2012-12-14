@@ -1,0 +1,25 @@
+## patch for the residue on the upper side of a cutpoint, for loop modeling
+
+NAME dna_cutpoint_upper
+TYPES CUTPOINT_UPPER
+
+BEGIN_SELECTOR
+PROPERTY DNA
+NOT VARIANT_TYPE LOWER_TERMINUS
+NOT VARIANT_TYPE CUTPOINT_UPPER
+END_SELECTOR
+
+
+BEGIN_CASE ################################# general
+
+ADD_ATOM OVU1 VIRT VIRT 0.0
+ADD_BOND P OVU1
+SET_BACKBONE_HEAVYATOM OVU1
+
+##
+## these bond lengths and angles should be common to all DNA parameter files
+##
+SET_ICOOR OVU1 114.2 76.3 1.608 P O5* O1P ## ensures proper offset between O1P and OVU1
+
+END_CASE
+
