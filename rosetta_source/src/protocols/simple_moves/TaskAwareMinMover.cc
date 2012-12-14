@@ -170,6 +170,11 @@ TaskAwareMinMover::parse_my_tag(
 	}
 	if ( tag->hasOption("chi") ) chi_ = tag->getOption<bool>("chi");
 	if ( tag->hasOption("bb") ) bb_ = tag->getOption<bool>("bb");
+	if( tag->hasOption( "jump" ) ){
+		std::string const jump( tag->getOption< std::string >( "jump" ) );
+		if( jump != "0" && jump != "1" )
+			utility_exit_with_message( "TaskAwareMinMover only knows how to interpret jump=1(all jumps true) or jump=0 (false). I got jump = "+jump );
+	}
 	jump_ = tag->getOption< bool >( "jump", false );
 	minmover_ = new MinMover;
 	// call to MinMover::parse_my_tag avoided here to prevent collision of chi and bb tag options
