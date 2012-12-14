@@ -98,17 +98,17 @@ NonSequentialNeighborsFilter::compute(
 		protocols::rigid::RigidBodyTransMover rbtm( copy_pose, jump() );
 		rbtm.step_size( 10000.0 );
 		rbtm.apply( copy_pose );
-		TR<<"Unbound complex"<<std::endl;
+		TR.Debug<<"Unbound complex"<<std::endl;
 	}
 	if( resnum() == 0 ){// working on entire protein
 		for( core::Size resi = 1; resi <= pose.total_residue(); ++resi ){
 			core::Size const count_neighbors( residue_neighbors( copy_pose, resi ) );
-			TR<<"neighbors of residue "<<resi<<": "<<count_neighbors<<std::endl;
+			TR.Debug<<"neighbors of residue "<<resi<<": "<<count_neighbors<<std::endl;
 		}// for resi
 		return 1.0; // dummy return
 	}// fi resnum==0
 	core::Size const count_neighbors( residue_neighbors( copy_pose, resnum() ) );
-	TR<<"neighbors of residue "<<resnum()<<": "<<count_neighbors<<std::endl;
+	TR.Debug<<"neighbors of residue "<<resnum()<<": "<<count_neighbors<<std::endl;
 	return( count_neighbors );
 }
 
