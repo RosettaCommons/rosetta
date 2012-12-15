@@ -237,9 +237,9 @@ void cartesian_collect_torsional_deriv(
 			dE_dvars[3*atmidx3  ] += scale*(grads.get<2>().z());
 		}
 		if (atmidx4>0) {
-			dE_dvars[3*atmidx4-2] -= scale*(grads.get<3>().x());
-			dE_dvars[3*atmidx4-1] -= scale*(grads.get<3>().y());
-			dE_dvars[3*atmidx4  ] -= scale*(grads.get<3>().z());
+			dE_dvars[3*atmidx4-2] += scale*(grads.get<3>().x());
+			dE_dvars[3*atmidx4-1] += scale*(grads.get<3>().y());
+			dE_dvars[3*atmidx4  ] += scale*(grads.get<3>().z());
 		}
 
 	} // loop over torsions
@@ -535,7 +535,7 @@ tors_deriv_to_cartesian( Real dE_dtor, VectorQuad const & coords, VectorQuad & d
 	boost::get<0>(dE_dxs) = fi;
 	boost::get<1>(dE_dxs) = fab-fi;
 	boost::get<2>(dE_dxs) = fj-fab;
-	boost::get<3>(dE_dxs) = fj;
+	boost::get<3>(dE_dxs) = -fj;
 }
 
 
