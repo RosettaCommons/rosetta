@@ -128,8 +128,9 @@
 #include <protocols/moves/MonteCarloRecoverCreator.hh>
 #include <protocols/moves/MonteCarloTestCreator.hh>
 #include <protocols/moves/RampingMoverCreator.hh>
-
 #include <protocols/nonlocal/SingleFragmentMoverCreator.hh>
+
+#include <protocols/pb_potential/SetupPoissonBoltzmannPotentialCreator.hh>
 
 #include <protocols/protein_interface_design/movers/AddChainBreakCreator.hh>
 #include <protocols/protein_interface_design/movers/AddSidechainConstraintsToHotspotsCreator.hh>

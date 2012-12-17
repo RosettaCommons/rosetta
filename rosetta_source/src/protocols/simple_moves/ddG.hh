@@ -18,7 +18,8 @@
 // Package headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreType.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
+#include <basic/datacache/CacheableData.hh>
+#include <core/scoring/methods/PoissonBoltzmannEnergy.hh>
 
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/types.hh>
@@ -31,7 +32,7 @@
 //Auto Headers
 #include <protocols/simple_moves/DesignRepackMover.hh>
 
-
+#include <vector>
 
 namespace protocols {
 namespace simple_moves {
@@ -39,17 +40,24 @@ namespace simple_moves {
 class ddG : public simple_moves::DesignRepackMover
 {
 public:
+	
 	typedef core::Real Real;
 	typedef core::scoring::ScoreType ScoreType;
 	typedef core::pose::Pose Pose;
+
+	/// Default step size used for translating unbounded pose
+	static const Real DEFAULT_TRANS_STEP_SIZE;
+	/// Default step size used for translating unbounded pose when Poisson-Boltzmann potential energy estimation is enabled.
+	static const Real DEFAULT_TRANS_STEP_SIZE_PB;
+
 public :
 	ddG();
 	ddG( core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const jump=1, bool const symmetry=false );
 	ddG( core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const jump/*=1*/, utility::vector1<core::Size> const & chain_ids, bool const symmetry /*=false*/ );
 	virtual void apply (Pose & pose);
-	void calculate( Pose const & pose );
-	void symm_ddG( core::pose::Pose const & pose_in );
-	void no_repack_ddG(core::pose::Pose const & pose_in);
+	void calculate( Pose const & pose_in );
+	void symm_ddG( core::pose::Pose & pose_in );
+	void no_repack_ddG(core::pose::Pose & pose_in);
 	void report_ddG( std::ostream & out ) const;
 	Real sum_ddG() const;
 	core::Size rb_jump() const { return rb_jump_; }
@@ -99,6 +107,10 @@ private :
 	bool repack_bound_;
 	bool relax_bound_;
 
+	/// info carrier for poisson-boltzmann potential energy computation
+	core::scoring::methods::PBLifetimeCacheOP pb_cached_data_;
+	/// step size for translating unbound pose.  the default size may be too large or too small for some applications.
+	Real translation_step_size_;
 };
 
 } // movers

@@ -845,10 +845,10 @@ option.add( basic::options::OptionKeys::corrections::score::dun02_file, "Name of
 option.add( basic::options::OptionKeys::corrections::score::ch_o_bond_potential, "Name of ch_o_bond potential file (search in the local directory first, then look in the database)" ).def("scoring/score_functions/carbon_hbond/ch_o_bond_potential.dat");
 option.add( basic::options::OptionKeys::corrections::score::hack_elec_co_only, "Using only CO-CO interactions in hack_elec_bb_bb" ).def(false);
 option.add( basic::options::OptionKeys::corrections::score::lj_hbond_hdis, "Lennard Jones sigma value for hatms, classically it's been at 1.95 but the average A-H distance for hydrogen bonding is 1.75 from crystal structures. (momeara)" ).def(1.95);
-option.add( basic::options::OptionKeys::corrections::score::PB_potential_file, "Poisson Boltzmann potential file pre-calculated with APBS." );
+option.add( basic::options::OptionKeys::corrections::score::PB_charged_chains, "Chain numbers that carries charge in the PB calculation" ).def(utility::vector1<int>(1, 1));
 option.add( basic::options::OptionKeys::corrections::score::PB_sidechain_only, "Only calculate interactions to sidechain." ).def(true);
-option.add( basic::options::OptionKeys::corrections::score::PB_score_residue_range, "start and end residue sequence numbers to be included in the PB calculation" );
 option.add( basic::options::OptionKeys::corrections::score::PB_revamp_near_chain, "Scale down PB interactions if near the given chain. Use chain numbers as input." );
+option.add( basic::options::OptionKeys::corrections::score::apbs_path, "Path to the APBS (Adaptive Poisson-Boltzmann Solver) executable" );
 option.add( basic::options::OptionKeys::corrections::score::PB_potential_cap, "Cap for PB potential input" ).def(20.0);
 option.add( basic::options::OptionKeys::corrections::score::lj_hbond_OH_donor_dis, "Lennard Jones sigma value for O in OH donor groups.  Classically it has been 3.0 but the average distances from crystal structurs is 2.6 (momeara)" ).def(3.0);
 option.add( basic::options::OptionKeys::corrections::score::score12prime, "Whenever getScoreFunction() would have returned the ScoreFunction from standard.wts + score12.wts_patch, instead return a revised score12 (score12prime) with reference energies optimized with optE for sequence profile recovery" ).def(false);
@@ -2452,7 +2452,7 @@ option.add( basic::options::OptionKeys::optimization::scale_theta, "max cycles f
 option.add( basic::options::OptionKeys::optimization::scale_rb, "max cycles for MinimizerOptions" ).def(10);
 option.add( basic::options::OptionKeys::optimization::scale_rbangle, "max cycles for MinimizerOptions" ).def(1);
 option.add( basic::options::OptionKeys::optimization::scmin_nonideal, "Do we allow sidechain nonideality during scmin (e.g. rtmin and min_pack)" ).def(false);
-option.add( basic::options::OptionKeys::optimization::scmin_cartesian, "Toggle Cartesian-space minimization during scmin (e.g. rtmin and min_pack)" ).def(false);
+option.add( basic::options::OptionKeys::optimization::scmin_cartesian, "Toggle Cartesian-space minimization during scmin (e.g. rmin and min_pack)" ).def(false);
 option.add( basic::options::OptionKeys::swa::swa, "swa option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::swa::s1, "input file(s)" );
 option.add( basic::options::OptionKeys::swa::s2, "input file(s)" );

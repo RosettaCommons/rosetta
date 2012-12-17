@@ -156,6 +156,14 @@ public:
  	void
  	hbond_options( hbonds::HBondOptions const & opts );
 
+	std::string const & pb_bound_tag() const;
+	std::string & pb_bound_tag();
+	void pb_bound_tag( std::string const & tag );
+
+	std::string const & pb_unbound_tag() const;
+	std::string & pb_unbound_tag();
+	void pb_unbound_tag( std::string const & tag );
+
 	/// @brief  This is used in the construction of the VDW_Energy's AtomVDW object
 	std::string const &
 	atom_vdw_atom_type_set_name() const;
@@ -297,10 +305,11 @@ private:
 	bool hackelec_no_dis_dep_die_;
 	bool exclude_DNA_DNA_;
 	hbonds::HBondOptionsOP hbond_options_;
-
 	core::Size cst_max_seq_sep_;
 	core::Real cartbonded_len_, cartbonded_ang_, cartbonded_tors_, cartbonded_proton_, cartbonded_improper_;
 	bool cartbonded_linear_;
+	std::string pb_bound_tag_;
+	std::string pb_unbound_tag_;
 
 	/// deprecated
 	utility::vector1<std::string> bond_angle_central_atoms_to_score_;

@@ -20,28 +20,48 @@
 
 // Package headers
 #include <core/scoring/methods/ContextIndependentLRTwoBodyEnergy.hh>
-// AUTO-REMOVED #include <core/scoring/PoissonBoltzmannPotential.hh>
-// AUTO-REMOVED #include <core/scoring/PoissonBoltzmannPotential.fwd.hh>
+#include <core/scoring/PoissonBoltzmannPotential.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/scoring/methods/EnergyMethod.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-
+#include <basic/datacache/CacheableData.hh>
+#include <basic/datacache/DataCache.fwd.hh>
 #include <utility/vector1.hh>
 
-
+#include <string>
+#include <map>
 
 namespace core {
 namespace scoring {
 namespace methods {
 
+class PBLifetimeCache : public basic::datacache::CacheableData{
+public:
+	PBLifetimeCache();
+	virtual ~PBLifetimeCache();
+	basic::datacache::CacheableDataOP clone() const;
+	void set_charged_residues_map( const std::map<std::string, bool> & charged_residues_map );
+	void set_energy_state( const std::string& energy_state );
+	void set_pose( const std::string& energy_state, const core::pose::Pose & pose );
+	std::map<std::string, bool> & get_charged_residues_map();
+	const std::string & get_energy_state() const;
+	core::pose::PoseCOP & get_pose( const std::string& energy_state );
+	
+private:
+	std::map<std::string, bool> charged_residues_map_;
+	std::map<std::string, core::pose::PoseCOP> poses_by_state_;
+	std::string energy_state_;
+};
+
 ///
 class PoissonBoltzmannEnergy : public ContextIndependentLRTwoBodyEnergy {
 public:
 	typedef ContextIndependentLRTwoBodyEnergy  parent;
-
+	typedef core::scoring::methods::PBLifetimeCache PBLifetimeCache;
+	typedef core::scoring::methods::PBLifetimeCacheOP PBLifetimeCacheOP;
 public:
 
 	///
@@ -121,18 +141,37 @@ public:
 	virtual
 	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const;
 	
-
 /////////////////////////////////////////////////////////////////////////////
 // data
 /////////////////////////////////////////////////////////////////////////////
 
 private:
 
-// const-ref to scoring database
-//core::scoring::PoissonBoltzmannPotential const & potential_;
-bool potential_is_loaded_;
-core::Size fixed_residue_;
-	
+	///
+	/// Compare if two poses are close in fold within tolerance.
+	///
+	/// To be specific, it returns True if for all a in A and b in B, abs(a.xyz - b.xyz) <= tol,
+	/// for A and B are sets of all atoms in protein 1 and protein 2, respectively.
+	///
+	/// @param pose1 A protein's pose
+	/// @param pose2 Another protein's pose
+	/// @param atom_num The atom number
+	/// @param tol   Tolerable distance in Angstrom, >= 0.A
+	///
+	bool protein_position_equal_within( pose::Pose const & pose1, 
+																			pose::Pose const & pose2, 
+																			Size atom_num,
+																			Real tolA) const;
+
+	// const-ref to scoring database
+	core::Size fixed_residue_;
+  mutable scoring::PoissonBoltzmannPotentialOP poisson_boltzmann_potential_;
+
+	// Cached objects for speed
+	mutable std::map<std::string, pose::PoseCAP> cached_pose_by_state_;
+	mutable std::map<std::string, bool> charged_residues_;
+	mutable utility::vector1<Size> charged_chains_;
+
 virtual
 core::Size version() const;
 

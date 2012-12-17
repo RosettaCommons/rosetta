@@ -4037,8 +4037,9 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 1.95</dd><br>
 </dl>
 <dl>
-<dt><b>-PB_potential_file</b> \<File\><dt>
-<dd>Poisson Boltzmann potential file pre-calculated with APBS.</dd><br>
+<dt><b>-PB_charged_chains</b> \<IntegerVector\><dt>
+<dd>Chain numbers that carries charge in the PB calculation</dd><br>
+<dd>Default: utility::vector1<int>(1, 1)</dd><br>
 </dl>
 <dl>
 <dt><b>-PB_sidechain_only</b> \<Boolean\><dt>
@@ -4046,12 +4047,12 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: true</dd><br>
 </dl>
 <dl>
-<dt><b>-PB_score_residue_range</b> \<IntegerVector\><dt>
-<dd>start and end residue sequence numbers to be included in the PB calculation</dd><br>
-</dl>
-<dl>
 <dt><b>-PB_revamp_near_chain</b> \<IntegerVector\><dt>
 <dd>Scale down PB interactions if near the given chain. Use chain numbers as input.</dd><br>
+</dl>
+<dl>
+<dt><b>-apbs_path</b> \<String\><dt>
+<dd>Path to the APBS (Adaptive Poisson-Boltzmann Solver) executable</dd><br>
 </dl>
 <dl>
 <dt><b>-PB_potential_cap</b> \<Real\><dt>
@@ -11903,7 +11904,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-scmin_cartesian</b> \<Boolean\><dt>
-<dd>Toggle Cartesian-space minimization during scmin (e.g. rtmin and min_pack)</dd><br>
+<dd>Toggle Cartesian-space minimization during scmin (e.g. rmin and min_pack)</dd><br>
 <dd>Default: false</dd><br>
 </dl>
  </li>

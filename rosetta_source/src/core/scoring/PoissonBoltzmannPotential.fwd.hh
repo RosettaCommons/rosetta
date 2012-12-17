@@ -15,15 +15,19 @@
 #define INCLUDED_core_scoring_PoissonBoltzmannPotential_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/pointer/access_ptr.hh>
 
 namespace core {
 namespace scoring {
 
 class PoissonBoltzmannPotential;
 
-typedef  utility::pointer::owning_ptr< PoissonBoltzmannPotential > PoissonBoltzmannPotentialOP;
-typedef  utility::pointer::owning_ptr< PoissonBoltzmannPotential const > PoissonBoltzmannPotentialCOP;
-
+typedef utility::pointer::owning_ptr< PoissonBoltzmannPotential > PoissonBoltzmannPotentialOP;
+typedef utility::pointer::owning_ptr< PoissonBoltzmannPotential const > PoissonBoltzmannPotentialCOP;
+typedef utility::pointer::access_ptr< PoissonBoltzmannPotential > PoissonBoltzmannPotentialAP;
+typedef utility::pointer::access_ptr< PoissonBoltzmannPotential const > PoissonBoltzmannPotentialCAP;
+	//template <typename Key, typename Val> class HashTable;
+	//typedef HashTable< std::string, bool > HashTable_str_bool;
 }
 }
 

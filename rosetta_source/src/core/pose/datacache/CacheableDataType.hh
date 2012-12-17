@@ -74,6 +74,7 @@ enum Enum {
 	LK_BALL_POSE_INFO,
 	STRUCTURAL_CONSERVATION,
 	SURFACE_PARAMS,
+	PB_LIFETIME_CACHE, // Poisson-boltzmann energy state dependent data (see PoissonBoltzmannEnergy)
 	SUB_TO_FULL_INFO, // protocols/swa/monte_carlo/SubToFullInfo.cc
 
 	// *** IMPORTANT ***

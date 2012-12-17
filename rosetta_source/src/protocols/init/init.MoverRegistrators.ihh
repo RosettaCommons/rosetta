@@ -133,8 +133,9 @@ static MoverRegistrator< moves::IteratedConvergenceMoverCreator > reg_IteratedCo
 static MoverRegistrator< moves::MonteCarloRecoverCreator > reg_GenericMonteCarloRecoverCreator;
 static MoverRegistrator< moves::MonteCarloTestCreator > reg_MonteCarloTestCreator;
 static MoverRegistrator< moves::RampingMoverCreator > reg_RampingMoverCreator;
-
 static MoverRegistrator< nonlocal::SingleFragmentMoverCreator > reg_SingleFragmentMoverCreator;
+
+static MoverRegistrator< pb_potential::SetupPoissonBoltzmannPotentialCreator > reg_SetupPoissonBoltzmannPotentialCreator;
 
 static MoverRegistrator< protein_interface_design::movers::AddChainBreakCreator > reg_AddChainBreakCreator;
 static MoverRegistrator< protein_interface_design::movers::AddSidechainConstraintsToHotspotsCreator > reg_AddSidechainConstraintsToHotspotsCreator;

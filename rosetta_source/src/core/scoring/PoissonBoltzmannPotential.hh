@@ -14,11 +14,6 @@
 #ifndef INCLUDED_core_scoring_PoissonBoltzmannPotential_HH
 #define INCLUDED_core_scoring_PoissonBoltzmannPotential_HH
 
-// core
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/types.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-
 // Unit Headers
 #include <core/scoring/PoissonBoltzmannPotential.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -33,22 +28,26 @@
 #include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.hh>
 
-
+#include <map>
 
 namespace core {
 namespace scoring {
 
-
-
 class PoissonBoltzmannPotential : public utility::pointer::ReferenceCount
 {
 public:
+	static const std::string APBS_CONFIG_EXT;
+	static const std::string APBS_PQR_EXT;
+	static const std::string APBS_DX_EXT;
+	static const std::string DEFAULT_APBS_EXE;
+
+
 	PoissonBoltzmannPotential();
 
 	virtual ~PoissonBoltzmannPotential(); // auto-removing definition from header{}
 
-	void read_APBS_potential(std::string const & apbs_potential_fn);
-	core::Real get_potential(ObjexxFCL::FArray3D< core::Real > const & potential, numeric::xyzVector<core::Real> const & cartX) const;
+	core::Real get_potential(ObjexxFCL::FArray3D< core::Real > const & potential, 
+													 numeric::xyzVector<core::Real> const & cartX) const;
 	void
 	eval_PB_energy_residue(
 	   core::conformation::Residue const & rsd,
@@ -69,11 +68,6 @@ public:
 	inline void idx2cart( numeric::xyzVector<Q> const & idxX , numeric::xyzVector<core::Real> &cartX ) const {
 		cartX = i2c_*numeric::xyzVector<core::Real>(idxX - numeric::xyzVector<Q> (1,1,1)) + lower_bound_;
 	}
-
-	bool isLoaded() {
-		return potential_is_loaded_;
-	}
-
 	numeric::xyzVector< core::Real > lower_bound() const {
 		return lower_bound_;
 	}
@@ -89,6 +83,14 @@ public:
 		return false;
 	}
 
+	/// Execute ABPS to freshly compute the electrotatic field.
+	/// @param pose  The pose
+	/// @param state_tag Arbitrary string for generating APBS files.  e.g. The current energy state.
+	/// @param is_residue_charged_by_name Which residues are charged?  The key is the residue name.
+	void solve_pb( core::pose::Pose const & pose, 
+								 std::string const & state_tag,
+								 std::map<std::string, bool> const & is_residue_charged_by_name );
+
 private:
 	numeric::xyzMatrix< core::Real > i2c_, c2i_;
 	numeric::xyzVector< core::Real > lower_bound_;
@@ -96,11 +98,24 @@ private:
 	numeric::xyzVector< core::Real > grid_spacing_;
 	numeric::xyzVector< core::Size > n_grid_;
 	ObjexxFCL::FArray3D< core::Real > potential_;
-	bool potential_is_loaded_;
-};
 
-void dump_pqr(core::pose::Pose const & pose, std::ostream & out, std::string const & tag,  utility::vector1 <Size> const & zero_charge_chains);
-PoissonBoltzmannPotential & get_PB_potential();
+	std::string config_filename_;
+	std::string pqr_filename_;
+	std::string dx_filename_;
+	std::string apbs_exe_;
+
+	/// Prepare ABPS - generate .in and .pqr
+	void write_config (
+			core::pose::Pose const & pose) const;
+
+	/// Read & load the APBS results
+	void load_APBS_potential();
+
+	/// Write out .pqr
+	void write_pqr( core::pose::Pose const & pose,
+									std::map<std::string, bool> const & is_residue_charged_by_name) const;
+
+};
 
 }
 }

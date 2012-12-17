@@ -192,7 +192,8 @@ DdgFilter::repeats( core::Size const repeats )
 }
 
 core::Real
-DdgFilter::compute( core::pose::Pose const & pose ) const {
+DdgFilter::compute( core::pose::Pose const & pose_in ) const {
+	core::pose::Pose pose(pose_in);
 	if( repack() ){
 		protocols::simple_moves::ddG ddg( scorefxn_, rb_jump_, chain_ids_, symmetry_ );
 		if ( use_custom_task() ) {

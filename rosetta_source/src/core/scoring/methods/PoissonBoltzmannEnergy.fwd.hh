@@ -18,6 +18,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/pointer/access_ptr.hh>
 
 namespace core {
 namespace scoring {
@@ -27,7 +28,15 @@ class PoissonBoltzmannEnergy;
 
 typedef utility::pointer::owning_ptr< PoissonBoltzmannEnergy > PoissonBoltzmannEnergyOP;
 typedef utility::pointer::owning_ptr< PoissonBoltzmannEnergy const > PoissonBoltzmannEnergyCOP;
+typedef utility::pointer::access_ptr< PoissonBoltzmannEnergy > PoissonBoltzmannEnergyAP;
+typedef utility::pointer::access_ptr< PoissonBoltzmannEnergy const > PoissonBoltzmannEnergyCAP;
 
+class PBLifetimeCache;
+
+typedef utility::pointer::owning_ptr< PBLifetimeCache > PBLifetimeCacheOP;
+typedef utility::pointer::owning_ptr< PBLifetimeCache const > PBLifetimeCacheCOP;
+typedef utility::pointer::access_ptr< PBLifetimeCache > PBLifetimeCacheAP;
+typedef utility::pointer::access_ptr< PBLifetimeCache const > PBLifetimeCacheCAP;
 } // methods
 } // scoring
 } // core

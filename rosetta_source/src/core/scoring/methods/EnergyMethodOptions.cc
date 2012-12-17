@@ -63,6 +63,8 @@ EnergyMethodOptions::EnergyMethodOptions():
 	cartbonded_proton_(-1.0),
 	cartbonded_improper_(-1.0),
 	cartbonded_linear_(false),
+	pb_bound_tag_("bound"),
+	pb_unbound_tag_("unbound"),
 	bond_angle_residue_type_param_set_(NULL)
 {
 	initialize_from_options();
@@ -110,6 +112,8 @@ EnergyMethodOptions::operator=(EnergyMethodOptions const & src) {
 		cartbonded_tors_ = src.cartbonded_tors_;
 		cartbonded_proton_ = src.cartbonded_proton_;
 		cartbonded_linear_ = src.cartbonded_linear_;
+		pb_bound_tag_ = src.pb_bound_tag_;
+		pb_unbound_tag_ = src.pb_unbound_tag_;
 	}
 	return *this;
 }
@@ -221,6 +225,31 @@ EnergyMethodOptions::hbond_options( hbonds::HBondOptions const & opts ) {
 	hbond_options_ = new hbonds::HBondOptions( opts );
 }
 
+std::string const & 
+EnergyMethodOptions::pb_bound_tag() const {
+	return pb_bound_tag_;
+}
+std::string & 
+EnergyMethodOptions::pb_bound_tag() {
+	return pb_bound_tag_;
+}
+void 
+EnergyMethodOptions::pb_bound_tag( std::string const & tag ) {
+	 pb_bound_tag_ = tag;
+}
+std::string const & 
+EnergyMethodOptions::pb_unbound_tag() const {
+	return pb_unbound_tag_;
+}
+std::string & 
+EnergyMethodOptions::pb_unbound_tag() {
+	return pb_unbound_tag_;
+}
+void 
+EnergyMethodOptions::pb_unbound_tag( std::string const & tag ) {
+	pb_unbound_tag_ = tag;
+}
+
 /// @brief  This is used in the construction of the VDW_Energy's AtomVDW object
 string const &
 EnergyMethodOptions::atom_vdw_atom_type_set_name() const {
@@ -320,6 +349,7 @@ EnergyMethodOptions::bond_angle_residue_type_param_set(core::scoring::mm::MMBond
 /// used inside ScoreFunctionInfo::operator==
 bool
 operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
+
 	return ( ( a.etable_type_ == b.etable_type_ ) &&
 		( a.analytic_etable_evaluation_ == b.analytic_etable_evaluation_ ) &&
 		( a.atom_vdw_atom_type_set_name_ == b.atom_vdw_atom_type_set_name_ ) &&
@@ -341,7 +371,10 @@ operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 		( a.cartbonded_proton_ == b.cartbonded_proton_ ) &&
 		( a.cartbonded_linear_ == b.cartbonded_linear_ ) &&
 		( a.bond_angle_central_atoms_to_score_ == b.bond_angle_central_atoms_to_score_ ) &&
-		( a.bond_angle_residue_type_param_set_ == b.bond_angle_residue_type_param_set_ ) );
+		( a.bond_angle_residue_type_param_set_ == b.bond_angle_residue_type_param_set_ ) &&
+		( a.pb_bound_tag_ == b.pb_bound_tag_ ) &&
+					 ( a.pb_unbound_tag_ == b.pb_unbound_tag_ ) )
+		;
 }
 
 /// used inside ScoreFunctionInfo::operator==
@@ -375,6 +408,8 @@ EnergyMethodOptions::show( std::ostream & out ) const {
 	out << "EnergyMethodOptions::show: exclude_DNA_DNA: "
 			<< (exclude_DNA_DNA_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: cst_max_seq_sep: " << cst_max_seq_sep_ << std::endl;
+	//out << "EnergyMethodOptions::show: pb_bound_tag: " << pb_bound_tag_ << std::endl;
+	//out << "EnergyMethodOptions::show: pb_unbound_tag: " << pb_unbound_tag_ << std::endl;
 	out << "EnergyMethodOptions::show: bond_angle_central_atoms_to_score:";
 	if (bond_angle_residue_type_param_set_) {
 		out << "setting ignored";

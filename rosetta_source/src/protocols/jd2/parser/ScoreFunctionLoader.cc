@@ -33,6 +33,7 @@
 #include <protocols/moves/DataMap.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/string_util.hh>
 
 #define foreach BOOST_FOREACH
 
@@ -131,7 +132,14 @@ void ScoreFunctionLoader::load_data(
 				if( mod_tag->hasOption( "decompose_bb_hb_into_pair_energies" )) {
 					hboptions->decompose_bb_hb_into_pair_energies( mod_tag->getOption<bool>( "decompose_bb_hb_into_pair_energies" ) );
 				}
-
+				if( mod_tag->hasOption( "pb_bound_tag" )) {
+					emoptions.pb_bound_tag( mod_tag->getOption<std::string>("pb_bound_tag" ) );
+					TR << "User defined bound tag: " << emoptions.pb_bound_tag() << std::endl;
+				}
+				if( mod_tag->hasOption( "pb_unbound_tag" )) {
+					emoptions.pb_unbound_tag( mod_tag->getOption<std::string>("pb_unbound_tag" ) );
+					TR << "User defined unbound tag: " << emoptions.pb_unbound_tag() << std::endl;
+				}
 				in_scorefxn->set_energy_method_options( emoptions );
 			}
 		} // Mod tags
@@ -151,6 +159,22 @@ void ScoreFunctionLoader::load_data(
 		if (scorefxn_symm) {
 			in_scorefxn = ScoreFunctionOP( new SymmetricScoreFunction( in_scorefxn ) );
 			TR<<"symmetrizing "<<scorefxn_name<<'\n';
+		}
+
+		// auto-generate and set cache-tags for bound and unbound energy states, if PB term is used.
+		if( !in_scorefxn->has_zero_weight(PB_elec) ) {
+
+			core::scoring::methods::EnergyMethodOptions emoptions( in_scorefxn->energy_method_options() );
+			// Don't overwrite if it's already set, by "Set" modifier.
+			if( emoptions.pb_bound_tag() == "" ){
+				//std::string bound_tag = scorefxn_name + "_" + "bound";
+				emoptions.pb_bound_tag( "bound" );
+			}
+			if( emoptions.pb_unbound_tag() == "" ){
+				//std::string unbound_tag = scorefxn_name + "_" + "unbound";
+				emoptions.pb_unbound_tag( "unbound" );
+			}
+			in_scorefxn->set_energy_method_options( emoptions );
 		}
 
 		data.add( "scorefxns" , scorefxn_name, in_scorefxn );
