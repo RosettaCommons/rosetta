@@ -4,17 +4,13 @@
 -jd2:no_output
 -ignore_unrecognized_res
 
-#negative supercharging
-#surface defintion by atom neighbors
-
--surface_definition_by_atom
 -surface_definition_atom_neighbor_cutoff 100
 -pre_packminpack true
 -include_asp
 -include_glu
 -refweight_asp -0.6
 -refweight_glu -0.8
--Rosetta_target_net_charge -14
+-target_net_charge -14
 
 -dont_mutate_glyprocys true
 -dont_mutate_correct_charge true

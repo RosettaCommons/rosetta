@@ -4,9 +4,7 @@
 -jd2:no_output
 -ignore_unrecognized_res
 
-#AvNAPSA negative supercharging
-
 -AvNAPSA_negative
--AvNAPSA_target_net_charge -25
+-target_net_charge -25
 
 -out:path outpath

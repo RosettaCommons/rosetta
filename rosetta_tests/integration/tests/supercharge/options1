@@ -4,9 +4,6 @@
 -jd2:no_output
 -ignore_unrecognized_res
 
-#positive supercharging
-#surface defintion by residue neighbors
-
 -surface_definition_residue_neighbor_cutoff 16
 -include_arg
 -include_lys

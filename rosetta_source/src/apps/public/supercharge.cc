@@ -110,11 +110,11 @@ namespace local{
 //AvNAPSA-mode
 basic::options::BooleanOptionKey const AvNAPSA_positive("AvNAPSA_positive");
 basic::options::BooleanOptionKey const AvNAPSA_negative("AvNAPSA_negative");
-basic::options::IntegerOptionKey const AvNAPSA_target_net_charge("AvNAPSA_target_net_charge");
+
+basic::options::IntegerOptionKey const target_net_charge("target_net_charge");
 
 //AvNAPSA-mode or Rosetta-mode
-basic::options::BooleanOptionKey const surface_definition_by_atom("surface_definition_by_atom"); // this is how AvNAPSA defines surface, can be used in the Rosetta approach
-basic::options::IntegerOptionKey const surface_definition_atom_neighbor_cutoff("surface_definition_atom_neighbor_cutoff"); // if AvNAPSA_target_net_charge is specified, the AvNAPSA cutoff is ignored
+basic::options::IntegerOptionKey const surface_definition_atom_neighbor_cutoff("surface_definition_atom_neighbor_cutoff"); // if target_net_charge is specified, the AvNAPSA cutoff is ignored
 
 //Rosetta-mode (these will be ignored if AvNAPSA mode is on via AvNAPSA_positive or AvNAPSA_negative)
 basic::options::IntegerOptionKey const surface_definition_residue_neighbor_cutoff("surface_definition_residue_neighbor_cutoff"); //for choosing surface residues, cannot be done in AvNAPSA mode
@@ -131,7 +131,6 @@ basic::options::BooleanOptionKey const dont_mutate_correct_charge("dont_mutate_c
 basic::options::BooleanOptionKey const dont_mutate_hbonded_sidechains("dont_mutate_hbonded_sidechains"); // true by default
 basic::options::BooleanOptionKey const pre_packminpack("pre_packminpack"); // true by default
 basic::options::IntegerOptionKey const nstruct("nstruct"); // custom nstruct, not used in AvNAPSA mode bc that sequence is deterministic
-basic::options::IntegerOptionKey const Rosetta_target_net_charge("Rosetta_target_net_charge"); //will use the refweights as a starting point, then iterate between packtrot and increment/decrement the refweights
 
 //AvNAPSA-mode or Rosetta-mode
 basic::options::BooleanOptionKey const compare_energies("compare_energies");
@@ -157,23 +156,32 @@ public:
 		out_path_ = basic::options::option[ OptionKeys::out::path::path ]();
 
 
-		//If the target net charge is -10, current net charge is -4, and incluge_arg is used instead of include_asp, there is no way to reach the target net charge
-		if( option[local::Rosetta_target_net_charge].user() ) {
+		//If the target net charge is -10, current net charge is -4, need to perform positive-supercharging
+		if( option[local::target_net_charge].user() ) {
+
 			int current_net_charge = get_net_charge( pose );
-			int Rosetta_target_net_charge = option[local::Rosetta_target_net_charge];
-			int delta_charge = Rosetta_target_net_charge - current_net_charge;
-			if(delta_charge < 0 && !option[local::include_asp] && !option[local::include_glu]) {
-				TR << "Your target charge is more negative (or less positive) but you did not use include_asp or include_glu" << std::endl;
-				set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
-				return;
+			int target_net_charge = option[local::target_net_charge];
+			int delta_charge = target_net_charge - current_net_charge;
+
+			if( delta_charge < 0 ) {
+
+				if( !option[local::include_asp] && !option[local::include_glu] && !option[local::AvNAPSA_negative] ) {
+					TR << "Current charge: " << current_net_charge << ".  Target charge: " << target_net_charge << ".  Protocol cannot add negative charge with current options" << std::endl;
+					set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
+					return;
+				}
 			}
-			else if(delta_charge > 0 && !option[local::include_arg] && !option[local::include_lys]) {
-				TR << "Your target charge is more positive (or less negative) but you did not use include_arg or include_lys" << std::endl;
-				set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
-				return;
+
+			else if( delta_charge > 0 ) {
+				if( !option[local::include_arg] && !option[local::include_lys] && !option[local::AvNAPSA_positive] ) {
+					TR << "Current charge: " << current_net_charge << ".  Target charge: " << target_net_charge << ".  Protocol cannot add positive charge with current options" << std::endl;
+					set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
+					return;
+				}
 			}
+
 			else if(delta_charge == 0) {
-				TR << "Your target charge is equal to the current charge, no supercharging necessary" << std::endl;
+				TR << "Current charge: " << current_net_charge << ".  Target charge: " << target_net_charge << ".  No supercharging necessary." << std::endl;
 				set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
 				return;
 			}
@@ -307,7 +315,7 @@ public:
 		std::stringstream pymol_avnapsa_residues;
 		utility::vector1< Size > residues_to_mutate; //will be appended either to acheive correct charge or based on AvNAPSA value cutoff
 
-		if( ! basic::options::option[local::AvNAPSA_target_net_charge].user() ) {
+		if( ! basic::options::option[local::target_net_charge].user() ) {
 			largest_mutated_AvNAPSA_ = (Size) basic::options::option[local::surface_definition_atom_neighbor_cutoff]; // no specified net charge, largest AvNAPSA allowed equals the cutoff.  This value is used to name output PDBs.
 			for( Size i(1); i <= AvNAPSA_values_.size(); ++i) {
 				if( AvNAPSA_values_[i] < basic::options::option[local::surface_definition_atom_neighbor_cutoff] && AvNAPSA_values_[i] != 9999 ) {
@@ -330,16 +338,16 @@ public:
 
 			//append residues to mutate until the resulting net charge would be correct +- 1
 			int net_charge = get_net_charge( pose );
-			TR << "Starting net charge is " << net_charge << " and AvNAPSA_target_net_charge is " << basic::options::option[local::AvNAPSA_target_net_charge] << std::endl;
+			TR << "Starting net charge is " << net_charge << " and target_net_charge is " << basic::options::option[local::target_net_charge] << std::endl;
 
 			for(Size i(1); i <= pair_residue_avnapsa.size(); ++i) {
 				Size this_res = pair_residue_avnapsa[i].first;
 				std::string name3 = pose.residue(this_res).name3();
 
-				if( basic::options::option[local::AvNAPSA_positive] && net_charge >= basic::options::option[local::AvNAPSA_target_net_charge] ) {
+				if( basic::options::option[local::AvNAPSA_positive] && net_charge >= basic::options::option[local::target_net_charge] ) {
 					break; // if positive enough
 				}
-				else if( basic::options::option[local::AvNAPSA_negative] && net_charge <= basic::options::option[local::AvNAPSA_target_net_charge] ) {
+				else if( basic::options::option[local::AvNAPSA_negative] && net_charge <= basic::options::option[local::target_net_charge] ) {
 					break; // if negative enough
 				}
 				else if( pair_residue_avnapsa[i].second != 9999 ) { // if not charged enough, add another residue to mutate
@@ -539,7 +547,7 @@ public:
 	void set_surface( Pose const & pose ){
 
 		//define surface by residue neighbors
-		if( ! basic::options::option[local::surface_definition_by_atom] ) {
+		if( ! basic::options::option[local::surface_definition_atom_neighbor_cutoff].user() ) {
 			// registering the calculators (in this way will not allow nstruct > 1)
 			Size biggest_calc(0);
 			std::string const calc_stem("nbr_dist_calc_");
@@ -811,20 +819,25 @@ public:
 
 
 		//if a target net charge is given as an option, iterate between packrot and incrementing refweights until target charge is acheived
-		if( option[local::Rosetta_target_net_charge].user() ) {
+		if( option[local::target_net_charge].user() ) {
 
-			int net_charge_target = option[local::Rosetta_target_net_charge];
+			int net_charge_target = option[local::target_net_charge];
 			int charge_diff = abs( get_net_charge(pose) - net_charge_target );
 
 
-      Real refweight_max_absvalue(3.0);
+      Real refweight_max_absvalue(3.2);
       bool refweight_under_max( true );
       Real refweight_increment(0.10);
       Size counter(0);
 			while ( charge_diff > 1 && counter < 40 && refweight_under_max ) {
 
 				int net_charge = get_net_charge( pose );
-				refweight_increment = abs(net_charge - net_charge_target) / 100;  // bigger diff in net charge results in bigger increment
+
+				//fine-tunes the changes to refweight depending on the charge difference
+				if( abs(net_charge - net_charge_target) > 10 )     { refweight_increment = 0.5; }
+				else if( abs(net_charge - net_charge_target) > 2 ) { refweight_increment = 0.1; }
+				else if( abs(net_charge - net_charge_target) < 2 ) { refweight_increment = 0.02;}
+
 
 				//not positive enough
 				if( net_charge < net_charge_target && option[local::include_arg] ) {
@@ -844,6 +857,7 @@ public:
 				//not negative enough
 				if( net_charge > net_charge_target && option[local::include_asp] ) {
 					custom_ref_weights[3] = custom_ref_weights[3] - refweight_increment;
+					//TR << "TEST " << refweight_increment << std::endl;
 				}
 				if( net_charge > net_charge_target && option[local::include_glu] ) {
 					custom_ref_weights[4] = custom_ref_weights[4] - refweight_increment;
@@ -864,14 +878,13 @@ public:
 				//////////////////////////////////////////////////////////////////////////////
 
 				TR << "Supercharging the protein surface... current charge: " << net_charge << "  target charge: " << net_charge_target << std::endl;
+				TR << "Refweights D E K R " << custom_ref_weights[3] << " " << custom_ref_weights[4] << " " << custom_ref_weights[9] << " " << custom_ref_weights[15] << std::endl;
 				packrot_mover->apply( pose );
 
 				charge_diff = abs( get_net_charge(pose) - net_charge_target );
 
 				counter++;
-        if(counter > 20) {
-          refweight_increment = 0.02;
-        }
+
         if( fabs(custom_ref_weights[15]) > refweight_max_absvalue || fabs(custom_ref_weights[9]) > refweight_max_absvalue || fabs(custom_ref_weights[3]) > refweight_max_absvalue || fabs(custom_ref_weights[4]) > refweight_max_absvalue ) {
           refweight_under_max = false;
         }
@@ -935,7 +948,7 @@ public:
 		std::stringstream ss_i;
 		std::string i_string;
 
-		if( ! option[local::Rosetta_target_net_charge].user() ) {
+		if( ! option[local::target_net_charge].user() ) {
 
 			Size nstruct = (Size) option[local::nstruct].value();
 			for( Size i=1; i <= nstruct; ++i ) {
@@ -1369,7 +1382,7 @@ int main( int argc, char* argv[] )
 	using basic::options::option;
 	option.add( local::AvNAPSA_positive, "AvNAPSA positive supercharge").def(false);
 	option.add( local::AvNAPSA_negative, "AvNAPSA negative supercharge").def(false);
-	option.add( local::AvNAPSA_target_net_charge, "AvNAPSA target net charge").def(0);
+	option.add( local::target_net_charge, "target net charge").def(0);
 	option.add( local::surface_definition_atom_neighbor_cutoff, "AvNAPSA neighbor atom cutoff").def(100); // this is how AvNAPSA defines surface, can be used in the Rosetta approach
 
 	option.add( local::surface_definition_residue_neighbor_cutoff, "cutoff for surface residues ( <= # is surface)" ).def(16);
@@ -1387,8 +1400,6 @@ int main( int argc, char* argv[] )
 	option.add( local::pre_packminpack, "pack-min-pack before supercharging").def(false);
 
 	option.add( local::nstruct, "local nstruct").def(1);
-	option.add( local::Rosetta_target_net_charge, "desired net charge for final variant").def(0);
-	option.add( local::surface_definition_by_atom, "surface definition by atom").def(false);
 
 	option.add( local::compare_energies, "compare energy terms for all residues").def(false);
 	option.add( local::only_compare_mutated_residues, "mutated residues only").def(false);
