@@ -85,7 +85,7 @@ ObjexxFCL::FArray2D_ubyte const & get_masks();
 Real calc_per_res_hydrophobic_sasa( pose::Pose const & pose,
 	utility::vector1< Real > & rsd_sasa, utility::vector1< Real > & rsd_hydrophobic_sasa, Real const probe_radius, bool use_naccess_sasa_radii = false );
 
-void print_dot_bit_string( utility::vector1< ObjexxFCL::ubyte > & values );
+// Undefined, commenting out to fix PyRosetta build  void print_dot_bit_string( utility::vector1< ObjexxFCL::ubyte > & values );
 
 } // namespace scoring
 } // namespace core
