@@ -12,6 +12,8 @@
 
 #Rosetta Imports
 from rosetta import *
+from rosetta.basic.options import get_string_option
+from rosetta.basic.options import get_real_option
 
 #Python Imports
 from shutil import rmtree
@@ -35,20 +37,20 @@ class LoopMinimizationProtocols(ProtocolBaseClass):
         self.score_class.score.set_weight(chainbreak, 0)
         
 #classicMinLoop
-    def classicMinLoop(self, tolerance=0.1, movemap=0):
+    def classicMinLoop(self, tolerance=False, movemap=False):
         """
-        This is the classic MinMover, with dfpmin for a Loop.
+        This is the classic MinMover, with option run:min_type defining the minimization type, and run_tolerance defining the tolerance.
         Not actually defining a loop, only regions in the movemap
         May have a problem if using Centroid....
         """
 
-        if movemap ==0:
+        if not movemap:
             movemap=MoveMap()
             movemap = loop_tools.loopMovemap(self.pose, movemap, self.input_class.loops_as_strings)
-
+        if not tolerance:
+            tolerance = get_real_option('run:min_tolerance')
         self.score_class.score.set_weight(chainbreak, 100); #Makes sure loop/domain does not break!
-        min_type="dfpmin"
-        minmover=MinMover(movemap, self.score_class.score, min_type, tolerance, True)
+        minmover=MinMover(movemap, self.score_class.score, get_string_option('run:min_type'), tolerance, True)
         self.run_protocol(minmover)
             
         self.score_class.score.set_weight(chainbreak, 0)

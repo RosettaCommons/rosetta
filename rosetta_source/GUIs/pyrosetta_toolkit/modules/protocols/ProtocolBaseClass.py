@@ -58,10 +58,7 @@ class ProtocolBaseClass:
         self.output_class.terminal_output.set(1); #Redirect to stdout. For multiprocessing and major Rosetta output.
 
         if self.output_class.auto_write.get():
-            
-            base_seed = 1111111
-            seed_offset = 125
-            job_offset = 0; #What increments and is added to base_seed
+            #Multiprocessing is done manually due to mover being unpicklable - Hence no Queue or Pool objects.
             #First, we have an array of jobs:
             workers = []
             for i in range(1, self.output_class.decoys.get()+1):
@@ -69,7 +66,6 @@ class ProtocolBaseClass:
                 seed = base_seed+job_offset
                 worker = Process(name = "decoy_"+repr(i), target=self._run_mover, args=(mover, outname, seed))
                 workers.append(worker)
-                job_offset = job_offset+seed_offset
             total_allowed_jobs = self.output_class.processors.get()
             print "Total allowed jobs: "+repr(total_allowed_jobs)
             total_running_jobs = 0
@@ -142,11 +138,10 @@ class ProtocolBaseClass:
         """
         Used for multiprocessing.  
         """
-        #Set the seed offset:
+        #Reinitialize Rosetta to reinitialize options, and specifically, the SEED.
         self.input_class.options_manager.re_init()
-        #rosetta.basic.options.set_integer_option('run:seed_offset', 1000)
         
-        p = Pose(); #Copy it so that each process is working on a different pose object.
+        p = Pose(); #Copy it so that each process is working on a different pose object. Probably unnessessary.
         p.assign(self.pose)
         print outputname
         start = self.score_class.score(p)

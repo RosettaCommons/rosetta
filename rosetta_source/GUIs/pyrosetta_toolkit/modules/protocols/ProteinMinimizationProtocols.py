@@ -12,6 +12,8 @@
 
 #Rosetta Imports
 from rosetta import *
+from rosetta.basic.options import get_string_option
+from rosetta.basic.options import get_real_option
 
 #Python Imports
 import os
@@ -30,7 +32,7 @@ class ProteinMinimizationProtocols(ProtocolBaseClass):
     def __exit__(self):
         self.score_class.score.set_weight(chainbreak, 0)
         
-    def Relax(self, classic, movemap = 0):
+    def Relax(self, classic, movemap = False):
         """
         Relaxes the pose using either Fast Relax or Classic Relax
         If Classic is anything other then 0, then Fast Relax occurs.
@@ -40,12 +42,12 @@ class ProteinMinimizationProtocols(ProtocolBaseClass):
         print self.score_class.score(self.pose)
         if classic==0:
             Rel=ClassicRelax(self.score_class.score)
-            if movemap!=0:
+            if movemap:
                 ClassicRelax.set_movemap(movemap)
             self.run_protocol(Rel)
         else:
             Rel=FastRelax(self.score_class.score)
-            if movemap!=0:
+            if movemap:
                 FastRelax.set_movemap(movemap)
             self.run_protocol(Rel)
                 
@@ -59,12 +61,15 @@ class ProteinMinimizationProtocols(ProtocolBaseClass):
         
     
     
-    def classicMin(self, tolerance=0.1):
+    def classicMin(self, tolerance=False):
         """
-        Does a classic min using Dfpmin and the classic MinMover with a tolerance of .5
+        Does a classic min using run_type and run_tolerance.
         """
         
-        min_type="dfpmin"
+        min_type = get_string_option('run:min_type')
+        if not tolerance:
+            tolerance = get_real_option('run:min_tolerance')
+            
         movemap = MoveMap()
         movemap.set_bb(True)
         movemap.set_chi(True)
@@ -77,8 +82,7 @@ class ProteinMinimizationProtocols(ProtocolBaseClass):
     
     def optimizeRot(self):
         """
-        This optimizes the Side Chain Rotamers of your pose.  It uses the All atom self.score_class.score functions:
-        :Standard and self.score_class.score12: Perhaps later, when I learn more about OOP, a self.score_class.score can be given optionally.
+        This optimizes Sidechain Rotamers using the basic PackRotamersMover
         """
 
         packer_task=standard_packer_task(self.pose)

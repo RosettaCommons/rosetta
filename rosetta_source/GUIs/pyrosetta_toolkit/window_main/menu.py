@@ -38,7 +38,8 @@ from modules.protocols.HighResLoopModelingProtocols import HighResLoopModelingPr
 #Window Imports
 #from window_modules.options_system.OptionSystemManager import OptionSystemManager
 from window_modules.clean_pdb.FixPDBWindow import FixPDBWindow
-from window_modules.rosetta_tools.RosettaFlagFileBuilder import RosettaFlagFileBuilder
+#from window_modules.rosetta_tools.RosettaFlagFileBuilder import RosettaFlagFileBuilder
+from rosetta_flag_file_builder.RosettaFlagFileBuilder import RosettaFlagFileBuilder
 from window_modules.design.ResfileDesignWindow import ResfileDesignWindow
 #from window_modules.interactive_terminal import IPython
 from window_modules.ligand_ncaa_ptm_manager.ligand_ncaa_ptm_manager import ligand_ncaa_ptm_manager
@@ -107,9 +108,10 @@ class Menus():
 	self.file_menu.add_cascade(label="Import", menu=self.import_menu)
 	self.file_menu.add_cascade(label="Export", menu=self.export_menu)
 	self.file_menu.add_separator()
-	
+	self.file_menu.add_command(label = "Set processors to use", command = lambda: self.toolkit.output_class.processors.set(tkSimpleDialog.askinteger(title="Processesors", prompt="Please set the number of processess you wish to create for protocol runs.", initialvalue=self.toolkit.output_class.processors.get())))
 	self.file_menu.add_checkbutton(label="Set Pymol Observer", variable=self.toolkit.pymol_class.auto_send) #this option should be set only once.
 	self.file_menu.add_command(label = "Show Pose in PyMOL", command = lambda: self.toolkit.pymol_class.pymover.apply(self.toolkit.pose))
+	self.file_menu.add_separator()
 	self.file_menu.add_command(label="Configure Option System",command = lambda: self.show_OptionsSystemManager())
 	self.file_menu.add_command(label ="Setup PDB for Rosetta", command=lambda: self.show_fxpdb_window())
 	self.main_menu.add_cascade(label="File", menu=self.file_menu)
@@ -170,7 +172,6 @@ class Menus():
 	
 	self.protocols_menu = Menu(self.main_menu, tearoff=0)
 
-	self.protocols_menu.add_command(label = "Set processors to use", command = lambda: self.toolkit.output_class.processors.set(tkSimpleDialog.askinteger(title="Processesors", prompt="Please set the number of processess you wish to create for protocol runs.", initialvalue=self.toolkit.output_class.processors.get())))
 	self.protocols_menu.add_command(label = "Enable MPI Mode", foreground = 'red')
 
 	self.protocols_menu.add_separator()
@@ -241,7 +242,7 @@ class Menus():
 	self.pdblist_tools_menu = Menu(self.main_menu, tearoff=0)
 	#There are scripts in RosettaTools that do this welll...
 	self.score_menu = Menu(self.main_menu, tearoff=0)
-	self.score_menu.add_command(label = "Rescore PDBList", command = lambda: output_tools.score_PDBLIST(self.toolkit.input_class.PDBLIST.get(), self.toolkit.score_class.score))
+	self.score_menu.add_command(label = "Rescore PDBList", command = lambda: output_tools.score_PDBLIST(self.toolkit.input_class.PDBLIST.get(), self.toolkit.score_class.score, False, self.toolkit.output_class))
 	self.score_menu.add_command(label = "Load Scores", command = lambda: self.load_scores_for_score_analysis())
 	self.score_menu.add_separator()
     	self.score_menu.add_command(label = "Get top model", command = lambda: self.score_analyzer.get_top_scoring())
@@ -288,8 +289,8 @@ class Menus():
 	self.help_menu.add_separator()
 	self.help_menu.add_command(label="Rosetta Manual", command = lambda: webbrowser.open("http://www.rosettacommons.org/manual_guide"))
 	self.help_menu.add_command(label="Rosetta Glossary", command=lambda: help_tools.print_glossary())
-	self.help_menu.add_command(label="Rosetta Forums", command = lambda: webbrowser.open("www.rosettacommons.org/forum"))
-	self.help_menu.add_command(label="Rosetta BugTracker", command = lambda: webbrowser.open("www.bugs.rosettacommons.org"))
+	self.help_menu.add_command(label="Rosetta Forums", command = lambda: webbrowser.open("http://www.rosettacommons.org/forum"))
+	self.help_menu.add_command(label="Rosetta BugTracker", command = lambda: webbrowser.open("http://bugs.rosettacommons.org"))
 	self.help_menu.add_separator()
 	self.help_menu.add_command(label="PyRosetta Tutorials", command = lambda: webbrowser.open("http://www.pyrosetta.org/tutorials"))
 	self.help_devel_menu = Menu(self.main_menu, tearoff=0)

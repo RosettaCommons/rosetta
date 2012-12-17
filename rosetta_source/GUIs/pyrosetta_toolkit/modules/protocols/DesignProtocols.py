@@ -12,12 +12,18 @@
 
 #Rosetta Imports
 from rosetta import *
+from rosetta.basic.options import get_string_option
+
 #from rosetta.protocols.forge.remodel import *
+
+#Python Imports
+import time
 
 #Tkinter Imports
 from Tkinter import *
 import tkFileDialog
 import tkSimpleDialog
+import tkMessageBox
 
 #Toolkit Imports
 from ProtocolBaseClass import ProtocolBaseClass
@@ -28,16 +34,38 @@ class DesignProtocols(ProtocolBaseClass):
         ProtocolBaseClass.__init__(self, pose, score_class, input_class, output_class)
         
     def packDesign(self, resFile=False):
+        """
+        Follows fixbb.cc to allow most user defined options within the GUI.
+        Limitations: No symmetry.  Annealers should work fine through the options system.
+        """
         
         if not resfile:
             resfile = tkFileDialog.askopenfilename(initialdir = global_variables.current_directory, title="Open Resfile..")
             if not resfile:return
-            
+        
         task = TaskFactory.create_packer_task(self.pose)
         parse_resfile(self.pose, task, resFile)
-
-        design_mover = PackRotamersMover(self.score_class.score, task)
-        self.run_protocol(design_mover)
+        s_mover = SequenceMover()
+        result = tkMessageBox.askyesno(title='-min_pack', message="Pack and minimize sidechains simultaneously?")
+        if result:
+            design_mover = MinPackMover(self.score_class.score, task)
+            s_mover.add_mover(design_mover)
+        else:
+            design_mover = PackRotamersMover(self.score_class.score, task)
+            s_mover.add_mover(design_mover)
+        
+        result = tkMessageBox.askyesno(title='-minimize_sidecahins', message="Do minimization of side chains after rotamer packing (slower)")
+        
+        if result:
+            mm = MoveMap(); #Empty movemap
+            min_mover = MinMover(mm, self.score_class.score, get_string_option('run:min_type'), 0.01, True)
+            task_min_mover = TaskAwareMinMover(min_mover, task)
+            s_mover.add_mover(task_min_mover)
+            
+        
+        print "Please cite the many references included for Fixed Backbone Design in the Rosetta Manual."
+        time.sleep(5)
+        self.run_protocol(s_mover)
     
     def remodel(self, blueprint=False):
         """

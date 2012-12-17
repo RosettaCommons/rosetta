@@ -166,7 +166,7 @@ def main(args):
     
     
     #Remove and parse anything we need from the config file.
-    flags_to_remove = ['#', '-out:nstruct', '-constant_seed', '-jran']
+    flags_to_remove = ['#', '-out:nstruct', '-constant_seed', '-jran', '-nstruct']
     outpath = None;
     for option in config:
         if re.search('-out:path', option):

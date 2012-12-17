@@ -38,7 +38,7 @@ def RetPhiPsi(p):
 def RetFAEnergyAll(p):
     for i in range(0, p.total_residue()):
         p.energies().show(i)
-        
+
 def rmsd(native, p, loops_as_strings, ca_only = False, all_atom=False):
     """
     Prints + Returns RMSD for Full Protein, as well as any loops in loops_as_strings.
@@ -141,7 +141,8 @@ def analyze_interface(p, scorefxn):
         
 def analyze_loops(p, loops_as_strings):
     """
-    Uses AnalyzeLoopMover to pring loop information.
+    Uses AnalyzeLoopMover to print loop information.
+    To accurately use this, add cutpoint variants using the FullControl Window.
     """
     
     if not loops_as_strings: return
@@ -152,7 +153,6 @@ def analyze_loops(p, loops_as_strings):
 def analyze_vip(p, scorefxn):
     """
     Uses VIP mover to get Mutational information.
-    Should be threaded, which will be added soon.
     """
     vip_mover = VIP_Mover()
     vip_mover.set_initial_pose(p)
@@ -222,7 +222,7 @@ def return_energy(p, res, chain=0, type = fa_dun):
     
 def return_probability(p, res, chain=0):
     """
-    Returns probability of rotamer
+    Returns probability of rotamer based on -ln(p)=E -> p = e^-E
     """
     
     e = return_energy(p, res, chain)

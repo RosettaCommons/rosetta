@@ -10,11 +10,9 @@
 ## @brief  Main window for settup up Rosetta config files.
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
-#Tk Imports
-from Tkinter import *
-import tkMessageBox
-import tkFileDialog
-import tkSimpleDialog
+
+
+
 
 #Python Imports
 import pickle
@@ -23,6 +21,18 @@ import tkFont
 import re
 import tools
 import webbrowser
+import sys
+
+#Append Python Path
+p = os.path.split(os.path.abspath(__file__))[0]
+p2 = p.split("/"); p2.pop()
+sys.path.append("/".join(p2)+'/pyrosetta_toolkit'); #Allows use of pyrosetta_toolkit modules and windows.
+
+#Tkinter Imports
+from Tkinter import *
+import tkMessageBox
+import tkFileDialog
+import tkSimpleDialog
 
 #Project Imports
 from settings import RosettaPathSetup
@@ -56,11 +66,12 @@ class RosettaFlagFileBuilder():
         ]
         self.doc_types = [
             #"Metadata",
-            "Options",
             "Code and Demo",
             "References",
             "Purpose",
             "Algorithm",
+            "Limitations",
+            "Modes",
             "Input Files",
             "Options",
             "Tips",
@@ -99,13 +110,9 @@ class RosettaFlagFileBuilder():
         self.setup_pathbuilder_objects()
         
     def setTk(self):
-        self.listbox_applications = Listbox(self.main)
+        self.listbox_applications = Listbox(self.main, bd=4, relief=GROOVE)
         self.option_menu_options = OptionMenu(self.main, self.option, "Options")
         self.button_add_option = Button(self.main, text = "Add Option", command = lambda: self.textbox_cmd_options.insert(1.0,self.option.get()+"\n"))
-        
-        self.button_save_config = Button(self.main, text = "Save Configuration", command = lambda: self.saveConfiguration())
-        self.button_load_config = Button(self.main, text = "Load Configuration", command = lambda: self.loadConfiguration())
-        self.button_run_config  = Button(self.main, text = "Run  Configuration", command = lambda: self.runConfiguration())
         
         self.button_show_all_options = Button(self.main, text="Show all options for app", command = lambda:os.system(self.application_directory.get()+"/"+self.appDOC[self.last_app_clicked.get()]["AppName"]+'.'+self.appRoot.get()+ " -help"))
     
@@ -119,8 +126,8 @@ class RosettaFlagFileBuilder():
         self.author = Button(self.main, text = "Author", command = lambda:self.documentation_textbox.insert(1.0, self.appDOC[self.last_app_clicked.get()]['Metadata']+"\n\n"))
         
         self.check_button_path_builder=Checkbutton(self.main, variable=self.path_builder_check, text=" Show Path Builder?")
-        self.documentation_frame = Frame(self.main, bd=3, relief=GROOVE);helpfont = tkFont.Font(size=12)
-        self.documentation_textbox = Text(self.documentation_frame,wrap="word", height = 20, width=65, background = 'white', font = helpfont)
+        self.documentation_frame = Frame(self.main, bd=3, relief=GROOVE);helpfont = tkFont.Font(size=11)
+        self.documentation_textbox = Text(self.documentation_frame,wrap="word", height = 20, width=58, background = 'white', font = helpfont)
 
     #### Config ####
         scroll_cmd_options = Scrollbar(self.main)
@@ -139,11 +146,8 @@ class RosettaFlagFileBuilder():
         self.listbox_applications.grid(row = self._r_, column = self._c_, sticky = W+E)
         #self.optionEntry.grid(column = self._c_+1, row = self._r_, columnspan = 3)
         self.option_menu_options.grid(column = self._c_+1, row = self._r_, sticky = W+E)
-        self.button_show_all_options.grid(column=self._c_+1, row=self._r_+1, sticky=W+E, columnspan=2)
+        #self.button_show_all_options.grid(column=self._c_, row=self._r_+1+1+1+1, sticky=W+E)
         self.button_add_option.grid(column=self._c_+2, row = self._r_, sticky = W+E)
-        self.button_save_config.grid(column = self._c_, row = self._r_+1, sticky = W+E)
-        self.button_load_config.grid(column = self._c_, row = self._r_+2, sticky = W+E)
-        self.button_run_config.grid(column = self._c_, row = self._r_+3, sticky = W+E)
         
         self.author.grid(column = self._c_+8, row = self._r_, sticky=W+E)
         self.option_menu_doc_types.grid(column = self._c_+5, columnspan = 2, row = self._r_+5)
@@ -165,13 +169,17 @@ class RosettaFlagFileBuilder():
     def setMenu(self, main):
         self.main = main
         self.MenBar = Menu(self.main)
-        self.Help = Menu(self.main, tearoff=0)
+        
         #self.Help.add_command(label = "General")
         #self.Help.add_command(label = "Running")
         #self.Help.add_command(label = "Parallel Runs")
-        self.Help.add_command(label = "List all Possible Options for app", command = lambda: os.system(self.application_directory.get()+"/"+self.last_app_clicked.get()+'.'+self.appRoot.get()+ " -help"))
-        self.MenBar.add_cascade(label = "Help", menu = self.Help)
-        
+
+        self.file_menu = Menu(self.main, tearoff=0)
+        self.file_menu.add_command(label = 'Save Configuration', command = lambda: self.saveConfiguration())
+        self.file_menu.add_command(label = 'Load Configuration', command = lambda: self.loadConfiguration())
+        self.file_menu.add_separator()
+        self.file_menu.add_command(label = 'Run Configuration', command = lambda: self.runConfiguration())
+        self.MenBar.add_cascade(label = "File", menu = self.file_menu)
         self.MenRepopulate = Menu(self.main, tearoff=0)
         self.MenRepopulate.add_radiobutton(label = "All Available Options", variable = self.info_type, value="full")
         self.MenRepopulate.add_radiobutton(label = "Doxygen Documentation", variable = self.info_type, value="doxygen")
@@ -191,6 +199,16 @@ class RosettaFlagFileBuilder():
         #self.Cluster.add_command(label = "Setup   MPI Cluster Run (JD2)", command = lambda: self.shoMPIClusterSetup())
         #self.Cluster.add_command(label = "Start multi-core Run", foreground='red')
         self.MenBar.add_cascade(label = "Parallel", menu=self.Cluster)
+        self.help = Menu(self.main, tearoff=0)
+        
+        self.help.add_command(label="Rosetta Manual", command = lambda: webbrowser.open("http://www.rosettacommons.org/manual_guide"))
+        self.help.add_command(label="Rosetta Forums", command = lambda: webbrowser.open("http://www.rosettacommons.org/forum"))
+        self.help.add_command(label="Rosetta BugTracker", command = lambda: webbrowser.open("http://bugs.rosettacommons.org"))
+        self.help.add_separator()
+        self.help.add_command(label = "List all Possible Options for app", command = lambda: os.system(self.application_directory.get()+"/"+self.last_app_clicked.get()+'.'+self.appRoot.get()+ " -help"))
+        self.MenBar.add_cascade(label = "Help", menu = self.help)
+        
+        
         self.main.config(menu=self.MenBar)
         
         self.documentation_textbox.insert(1.0, "Efforts are under way to standardize and better parse the formatting, but please refer to rosettacommons for full production runs.\n")
@@ -204,17 +222,10 @@ class RosettaFlagFileBuilder():
         """
         
         # Add database and app path to config before saving.
-        #Checks to make sure the correct app is selected and NAMED right due to doxygen bs - so we don't screw up when running on the cluster.
+        #Checks to make sure the correct app is selected and NAMED right due to doxygen bs - so we don't screw up when running.
         app = self.appDOC[self.last_app_clicked.get()]["AppName"]
-        appRoot=""
 
-
-        app_found = False
-        for name in self.app_binaries:
-            if re.search(app, name):
-                
-                app_found = True
-        if not app_found:
+        if not os.path.exists(self.application_directory.get()+"/"+app+'.'+self.appRoot.get()):
             app= tkSimpleDialog.askstring(title="Continue?", prompt="Application not found.  Please double check name: ", initialvalue=app)
     
         if not app:return
@@ -229,7 +240,7 @@ class RosettaFlagFileBuilder():
         #config = self.toolKitInterfaceConfigChange(config)
         FILE.write(config)
         FILE.close()
-        return
+        return app
     
     def loadConfiguration(self):
         """
@@ -246,7 +257,7 @@ class RosettaFlagFileBuilder():
         app = app.replace("#", "")
         for p in self.appDOC:
             if app==p:
-                app = appDOC[p]["AppName"]
+                app = self.appDOC[p]["AppName"]
             
         print app
         for stuff in configSP:
@@ -260,6 +271,7 @@ class RosettaFlagFileBuilder():
         #set curselection to app type:
         self.listbox_applications.selection_set(self.array_of_applications.index(app))
         #self.listbox_applications.selection_set()
+        self.__populate_option_menu__(app)
         self.textbox_cmd_options.insert(1.0, config)
         return
     
@@ -267,8 +279,10 @@ class RosettaFlagFileBuilder():
         """
         Used for quick run.  Like conversions, scoring, etc.
         """
-        self.saveConfiguration(True)
-        app = self.appDOC[self.last_app_clicked.get()]["AppName"]
+        app = self.saveConfiguration(True)
+        #processors = tkSimpleDialog.askinteger(title='processors', prompt="Processors to use", initialvalue=1)
+        #if not processors: return
+        
         os.system(self.application_directory.get()+"/"+app+'.'+self.appRoot.get()+" @"+self.pwd+"/temp_settings_"+app+".txt")
         os.remove(self.pwd+"/temp_settings_"+app+".txt")
         
@@ -284,7 +298,7 @@ class RosettaFlagFileBuilder():
 #### CALLBACK ####
     def __option_doc_callback__(self, name, index, mode):
         """
-        Inserts option info into documentation_textbox.
+        Inserts option documentation info into documentation_textbox.
         """
         
         varValue = self.option.get()
@@ -296,7 +310,7 @@ class RosettaFlagFileBuilder():
         
     def __app_doc_callback__(self, name, index, mode):
         """
-        Inserts documentation for an app
+        Repopulate function.
         """
         
         varValue = self.chosen_doc_type.get();
@@ -623,15 +637,16 @@ class RosettaFlagFileBuilder():
         root = tkFileDialog.askdirectory(initialdir = self.defaultdir)
         return root
     
+    #These do not correspond to where the position is, but they should.
     def insertDIR_File(self):
-        self.textbox_cmd_options.insert(1.0, " "+self.root.get()+"/"+self.filename.get())
+        self.textbox_cmd_options.insert("1.end", " "+self.root.get()+"/"+self.filename.get()+" ")
         
     def insertDIR_(self):
-        self.textbox_cmd_options.insert(1.0, " "+self.root.get())
+        self.textbox_cmd_options.insert("1.end", " "+self.root.get())
         
     def insertSearch(self):
         filepath = tkFileDialog.askopenfilename(initialdir = self.defaultdir)
-        self.textbox_cmd_options.insert(1.0, " "+filepath)
+        self.textbox_cmd_options.insert("1.end", " "+filepath)
             
     def shoClusterSetup(self):
         WinClusSetup = Toplevel(self.main)

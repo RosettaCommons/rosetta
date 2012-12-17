@@ -94,6 +94,7 @@ class Data:
         self.options=StringVar(); self.tips = StringVar(); self.outputs = StringVar()
         self.postprocess = StringVar(); self.new_stuff = StringVar();
         self.AppName = StringVar(); #The real app name from the file.
+        self.limits = StringVar(); self.modes = StringVar()
         #Now we have a dictionary for matching them.  This would be simple in perl.
         #Since for the lower case, people don't seem to be following the convention (fp_algorithm?), we use the cap form and match the line.
         self.sections = {
@@ -108,7 +109,9 @@ class Data:
             "Expected Outputs":self.outputs,
             "Post Processing":self.postprocess,
             "new_stuff":self.new_stuff,
-            "AppName":self.AppName
+            "AppName":self.AppName,
+            "Limitations":self.limits,
+            "Modes":self.modes
         }
        
         self.__parse_sections__()
@@ -204,9 +207,9 @@ if __name__ == '__main__':
     Testing
     """
     Tk()
-    source_dir = "/Users/jadolfbr/Desktop/Lab_Primary/modeling/rosetta/git2/rosetta_source"
+    source_dir = ""
     parser = DoxygenParser(source_dir)
-    op = parser.get_app_section("abinitio", "Options")
+    op = parser.get_app_section("FloppyTail", "Options")
     #Test not matching:
     print op
     """

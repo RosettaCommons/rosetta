@@ -11,6 +11,7 @@
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
+
 #Rosetta Imports
 from rosetta import *
 from modules import tools
@@ -28,6 +29,11 @@ import glob
 import signal
 import sys
 
+#Append Python Path
+p = os.path.split(os.path.abspath(__file__))[0]
+p2 = p.split("/"); p2.pop()
+sys.path.append("/".join(p2)); #Allows all Window_Modules to use Modules and the use of python GUIs from main GUI directory
+
 #Tk Imports
 from Tkinter import *
 from Tkinter import Frame as FrameTk
@@ -37,8 +43,8 @@ import tkSimpleDialog
 import tkFont
 
 #Toolkit Imports
-from window_main import global_variables
 from window_main.menu import *
+from window_main import global_variables
 from window_main.frames.InputFrame import InputFrame
 from window_main.frames.OutputFrame import OutputFrame
 from window_main.frames.QuickProtocolsFrame import QuickProtocolsFrame
@@ -49,18 +55,6 @@ from window_main.IO.GUIOutput import GUIOutput
 from window_modules.pymol_integration.PyMOL import AdvancedPyMOL
 from window_modules.scorefunction.ScoreFxnControl import ScoreFxnControl
 from window_modules.full_control.FullControlWindow import FullControlWindow
-
-def location():
-   """
-   Allows the script to be self-aware of it's path.
-   So that it can be imported/ran from anywhere.
-   """
-        
-   p = os.path.abspath(__file__)
-   pathSP = os.path.split(p)
-   return pathSP
-sys.path.append(location()[0]); #Allows all Window_Modules to use Modules.
-
 
 class main_window:
    def __init__(self):

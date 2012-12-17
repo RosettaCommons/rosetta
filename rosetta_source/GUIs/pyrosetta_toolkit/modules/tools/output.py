@@ -17,6 +17,9 @@ from rosetta import *
 import os
 import re
 import tarfile
+import multiprocessing
+from multiprocessing import Process
+import time
 
 #Tkinter Imports
 import tkFileDialog
@@ -403,11 +406,33 @@ def extract_pdbs_from_sqlite3db(pdblist_path):
         
     print "Finished..."
     PDBLIST.close()
- 
-def score_PDBLIST(pdblist_path, score):
+
+def rescore_single_pdb(path, scorefunction, manager_dict):
+    """
+    Used by score_PDBList for multiprocessing rescoring of decoy structures.
+    Only speed up if PDBs are large.
+    """
+    p = Pose()
+    try:
+        pose_from_pdb(p, path)
+
+    except PyRosettaException:
+        print "Cannot Load "+path+ " Try using -ignore_unrecognized_residues in options window..."
+        return
+    
+    #Extra measure of protection to make sure we get to the end of the function.
+    if p.total_residue()>0:
+        print "Loaded PDB"
+        score = scorefunction(p)
+        manager_dict[path]=score
+    else:
+        return
+    
+def score_PDBLIST(pdblist_path, score, multiprocess=False, output_class=False):
     """
     Outputs a simple pdb vs score for simple analysis.
     if pdblist_path=False, a dialog box opens.
+    If output_class is given, will grab the number of processors and attempt multiprocessing rescoring of all PDBs.
     """
     
     if not pdblist_path:
@@ -418,20 +443,90 @@ def score_PDBLIST(pdblist_path, score):
     else:
         PDBLIST = open(pdblist_path, 'r')
     SCORED_PDBLIST = open(os.path.dirname(pdblist_path)+"/SCORED_PDBLIST.txt", 'w')
-    for path in PDBLIST:
-        path = path.strip()
-        print path
-        p = Pose()
-        try:
-            pose_from_pdb(p, path)
-        except PyRosettaException:
-            print "Cannot Load "+path+ " Try using -ignore_unrecognized_residues in options window..."
-            continue
-        e = score(p)
-        SCORED_PDBLIST.write(path+"\t%.3f\n"%e)
-    print "\nComplete. File written to SCORED_PDBLIST.txt\n"
-    PDBLIST.close()
-    SCORED_PDBLIST.close()
+    
+    processors = output_class.processors.get()
+    if multiprocess:
+        for path in PDBLIST:
+            path = path.strip()
+            print path
+            p = Pose()
+            try:
+                pose_from_pdb(p, path)
+            except PyRosettaException:
+                print "Cannot Load "+path+ " Try using -ignore_unrecognized_residues in options window..."
+                continue
+            e = score(p)
+            SCORED_PDBLIST.write(path+"\t%.3f\n"%e)
+        print "\nComplete. File written to SCORED_PDBLIST.txt\n"
+        PDBLIST.close()
+        SCORED_PDBLIST.close()
+        
+    #Multiprocessing - Actually slower for small PDB's.
+    else:
+        output_class.terminal_output.set(1)
+        manager = multiprocessing.Manager()
+        result_map = manager.dict(); #[path]:[score]
+        workers = []
+        i=1
+        for line in PDBLIST:
+            line = line.strip()
+            if not os.path.exists(line):
+                print "Could not find "+line
+                print "Skipping"
+                continue
+            result_map[line]="NA"
+            worker = Process(name = line, target=rescore_single_pdb, args=(line, score, result_map))
+            workers.append(worker)
+            i+=1
+        total_allowed_jobs = processors
+        print "Total allowed jobs: "+repr(total_allowed_jobs)
+        total_running_jobs = 0
+        job_complete=False
+              
+        #Run the protocol
+        while not job_complete:
+
+            
+            time.sleep(1)
+            for worker in workers:
+                if worker.is_alive():
+                    pass
+                    #There is no code for worker hasn't started yet that I can figure out.  So, something else needs to check it!
+                elif result_map[worker.name]!="NA":
+                    print "%s.exitcode = %s" %(worker.name, worker.exitcode)
+                    
+                    workers.pop(workers.index(worker)); #If the job is done, pop it.
+                    total_running_jobs-=1
+                    print "Total running jobs: "+repr(total_running_jobs)
+                    print "Total workers waiting: "+repr(len(workers)-total_running_jobs)
+                    
+            if len(workers)==0:
+                job_complete=True
+                break
+            
+            if total_running_jobs<total_allowed_jobs:
+                for worker in workers:
+                    if not worker.is_alive():
+                        print "Starting Worker"
+                        try:
+                            worker.start()
+                        except AssertionError:
+                            continue
+                        total_running_jobs+=1
+                        if total_running_jobs>=total_allowed_jobs: break
+        
+            if total_running_jobs==0:
+                job_complete=True
+        
+        for path in result_map.keys():
+            e = result_map[path]
+            print path+"\t%.3f\n"%e
+            SCORED_PDBLIST.write(path+"\t%.3f\n"%e)
+            
+        print "\nComplete. File written to SCORED_PDBLIST.txt\n"
+        output_class.terminal_output.set(0)
+        SCORED_PDBLIST.close()
+        
         
 def convert_PDBLIST_to_rosetta_db(current_directory):
     pass

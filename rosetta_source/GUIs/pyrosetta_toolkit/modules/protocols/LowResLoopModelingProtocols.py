@@ -32,7 +32,6 @@ class LowResLoopModelingProtocols(ProtocolBaseClass):
      def default_CCD(self, fragset=False, fraglength=False):
           """
           LoopMover_Perturb_CCD for Low Resolution Loop Modeling
-          REQUIRES FRAGSET!!
           """
           
           result = tkMessageBox.askyesno(title="Continue?", message="Centroid scorefunction should be set before proceeding (cen_std/score4L recommended).  Proceed?")
