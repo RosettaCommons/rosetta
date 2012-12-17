@@ -408,8 +408,8 @@ EnergyMethodOptions::show( std::ostream & out ) const {
 	out << "EnergyMethodOptions::show: exclude_DNA_DNA: "
 			<< (exclude_DNA_DNA_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: cst_max_seq_sep: " << cst_max_seq_sep_ << std::endl;
-	//out << "EnergyMethodOptions::show: pb_bound_tag: " << pb_bound_tag_ << std::endl;
-	//out << "EnergyMethodOptions::show: pb_unbound_tag: " << pb_unbound_tag_ << std::endl;
+	out << "EnergyMethodOptions::show: pb_bound_tag: " << pb_bound_tag_ << std::endl;
+	out << "EnergyMethodOptions::show: pb_unbound_tag: " << pb_unbound_tag_ << std::endl;
 	out << "EnergyMethodOptions::show: bond_angle_central_atoms_to_score:";
 	if (bond_angle_residue_type_param_set_) {
 		out << "setting ignored";
