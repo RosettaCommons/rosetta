@@ -37,13 +37,13 @@ public:
 	std::string chain;
 	core::Size chain_id;
 	core::Size jump_id;
-	//Distribution distribution;
 	core::Real move_distance;
 	core::Real box_size;
 	core::Real angle;
 	core::Size cycles;
 	core::Real temperature;
-	Transform_info(): chain(""), move_distance(0),box_size(0), angle(0), cycles(0){};
+	core::Size repeats;
+	Transform_info(): chain(""), move_distance(0),box_size(0), angle(0), cycles(0),repeats(1){};
 };
 
 class Transform: public protocols::moves::Mover
