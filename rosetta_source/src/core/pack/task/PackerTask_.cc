@@ -147,9 +147,9 @@ ResidueLevelTask_::ResidueLevelTask_(
 	determine_if_designing();
 	determine_if_repacking();
 	// assert packable by default
-	assert( being_packed() );
+	runtime_assert( being_packed() );
 	// This is the same assertion, really, but coded directly
-	assert( ! allowed_residue_types_.empty() );
+	runtime_assert( ! allowed_residue_types_.empty() );
 }
 
 ResidueLevelTask_::~ResidueLevelTask_() {}
@@ -164,7 +164,7 @@ ResidueLevelTask_::extrachi_sample_level(
 {
 
 	if ( concrete_residue->is_DNA() ) {
-		assert( chi == 1 );
+		runtime_assert( chi == 1 );
 		return exdna_sample_level_;
 	}
 	if ( concrete_residue->is_aromatic()  && chi <= 2 ) {
@@ -314,8 +314,8 @@ void ResidueLevelTask_::target_type( chemical::ResidueTypeCOP type ) {
 	bool allowed( std::find( allowed_residue_types_.begin(), allowed_residue_types_.end(), type ) !=
 		            allowed_residue_types_.end() );
 	if ( !allowed ) {
-		T << "Target type " << type->name() << " is not an allowed type!" << std::endl;
-		assert( allowed );
+		T.Error << "Target type " << type->name() << " is not an allowed type!" << std::endl;
+		utility_exit();
 		return;
 	}
 	target_residue_type_ = type; /// non-commutative if multiple target residue types are set.
@@ -691,8 +691,9 @@ void ResidueLevelTask_::prevent_repacking()
 
 
 ///@details contract (and) the list of available aas for canonical aa's
-///if an amino acid is not present in the boolean vector, then do not allow it at this position
-///boolean vector is based on the aa enum; see another example with PIKAA
+///if an amino acid is not present (false) in the boolean vector, then do not allow it at this position
+///boolean vector is based on the aa enum; see another example with PIKAA.
+///The boolean vector is a 20-length vector in alphabetical order by one-letter code.
 void
 ResidueLevelTask_::restrict_absent_canonical_aas( utility::vector1< bool > const & allowed_aas )
 {
@@ -728,10 +729,11 @@ ResidueLevelTask_::restrict_absent_canonical_aas( utility::vector1< bool > const
 	do_restrict_absent_canonical_aas( allowed_aas );
 }
 
+//The boolean vector is a 20-length vector in alphabetical order by one-letter code.
 void
 ResidueLevelTask_::do_restrict_absent_canonical_aas( utility::vector1< bool > const & allowed_aas )
 {
-	assert( allowed_aas.size() == chemical::num_canonical_aas );
+	runtime_assert( allowed_aas.size() == chemical::num_canonical_aas );
 	for ( ResidueTypeCOPListIter
 			allowed_iter = allowed_residue_types_.begin(),
 			iter_next = allowed_residue_types_.begin(),
@@ -753,7 +755,7 @@ ResidueLevelTask_::do_restrict_absent_canonical_aas( utility::vector1< bool > co
 //@details Same behavior as restrict_absent_canonical_aas except that it always allows the native aa at a position even if it is not included in the allowed residues
 void
 ResidueLevelTask_::restrict_nonnative_canonical_aas( utility::vector1< bool > const & allowed_aas){
-	assert( allowed_aas.size() == chemical::num_canonical_aas );
+	runtime_assert( allowed_aas.size() == chemical::num_canonical_aas );
 	for ( ResidueTypeCOPListIter
 					allowed_iter = allowed_residue_types_.begin(),
 					iter_next = allowed_residue_types_.begin(),
@@ -1028,7 +1030,7 @@ ResidueLevelTask_::determine_if_designing()
 		}
 	}
 	if ( design_disabled_ || disabled_ ) {
-		assert( ! found_aa_difference );
+		runtime_assert( ! found_aa_difference );
 		designing_ = false;
 	}
 }
@@ -1952,7 +1954,8 @@ ResidueLevelTask const &
 PackerTask_::residue_task( Size resid ) const
 {
 	// packer has no need to read residue-level task for a residue that has been disabled
-	assert( pack_residue_[ resid ] );
+	//This makes the assumption that ONLY the packer is allowed to use this function
+	//assert( pack_residue_[ resid ] );
 	return residue_tasks_[ resid ];
 }
 

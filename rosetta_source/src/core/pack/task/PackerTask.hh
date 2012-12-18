@@ -164,10 +164,10 @@ public:
 	virtual void prevent_repacking() = 0;
 
 	// contract (and) the list of available aas for canonical aa's
-	// if an amino acid is not present in the boolean vector, then do not allow it at this position
+	// if an amino acid is not present (false) in the boolean vector, then do not allow it at this position.  The boolean vector is a 20-length vector in alphabetical order by one-letter code.
 	virtual void restrict_absent_canonical_aas( utility::vector1< bool > const & ) = 0;
 
-	// if an amino acid is not present in the boolean vector, then do not allow it at this position.
+	// if an amino acid is not present (false) in the boolean vector, then do not allow it at this position.  The boolean vector is a 20-length vector in alphabetical order by one-letter code.
 	// If the mode tag is specified, use that it when outputing the task mode in the resfile format rather than PIKAA or NOTAA.
 	virtual void restrict_absent_canonical_aas( utility::vector1< bool > const & allowed_aas, std::string const & mode ) = 0;
 
@@ -188,7 +188,7 @@ public:
 	virtual chemical::ResidueTypeSet const & get_original_residue_set() const = 0;
 
 	///@brief
-	virtual chemical::AA const & get_original_residue() const = 0; 
+	virtual chemical::AA const & get_original_residue() const = 0;
 
 	// expand (or) the list of available aa's for non-cannonicals
 	virtual void allow_noncanonical_aa(
