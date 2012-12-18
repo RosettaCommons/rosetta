@@ -30,6 +30,9 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/constraints/AtomPairConstraint.hh>
+#include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/dna/base_geometry.hh>
@@ -45,6 +48,7 @@ using utility::vector1;
 using utility::string_split;
 
 #include <numeric/xyzVector.hh>
+#include <numeric/conversions.hh>
 typedef numeric::xyzVector< core::Real > xyzVec;
 
 
@@ -243,6 +247,10 @@ std::string dna_full_name3( std::string const & name3 )
 	if ( name3 == "  C" || name3 == " DC" || name3 == "CYT" ) return "CYT";
 	if ( name3 == "  G" || name3 == " DG" || name3 == "GUA" ) return "GUA";
 	if ( name3 == "  T" || name3 == " DT" || name3 == "THY" ) return "THY";
+	if ( name3 == " rA" ) return "RAD";
+	if ( name3 == " rC" ) return "RCY";
+	if ( name3 == " rG" ) return "RGU";
+	if ( name3 == " rU" ) return "URA";
 	return name3;
 }
 
@@ -1070,6 +1078,87 @@ not_already_connected(
 
 	return true;
 }
+
+
+void
+set_base_segment_chainbreak_constraints(
+	pose::Pose & pose,
+	core::Size const start_base,
+	core::Size const end_base
+)
+{
+	using namespace scoring::constraints;
+	using namespace id;
+	using numeric::conversions::radians;
+
+	pose::PDBInfoCOP pdb_data( pose.pdb_info() );
+
+//	Size const nres( pose.total_residue() );
+
+	// From Phil
+	Real const O3_P_distance( 1.608 );
+	Real const O3_angle( 119.8 );
+	Real const  P_angle( 103.4 );
+	Real const  O1P_angle( 108.23 );
+
+	Real const distance_stddev( 0.3 ); // amber is 0.0659
+	Real const angle_stddev_degrees( 35 ); // amber is 8.54 (P angle), 5.73 (O3 angle)
+
+	FuncOP const distance_func( new HarmonicFunc( O3_P_distance, distance_stddev ) );
+	FuncOP const O3_angle_func( new HarmonicFunc( radians( O3_angle ), radians( angle_stddev_degrees ) ) );
+	FuncOP const  P_angle_func( new HarmonicFunc( radians(  P_angle ), radians( angle_stddev_degrees ) ) );
+	FuncOP const O1P_angle_func( new HarmonicFunc( radians(  O1P_angle ), radians( angle_stddev_degrees ) ) );
+
+	assert( start_base <= end_base );
+
+	// First the start base
+	if( !pose.residue_type( start_base ).is_lower_terminus() ) {
+		conformation::Residue const & rsd1( pose.residue( start_base-1 ) );
+		conformation::Residue const & rsd2( pose.residue( start_base   ) );
+
+		// Setup constraints to close bb
+
+		AtomID const C3_id( rsd1.atom_index( "C3*" ), start_base - 1 );
+		AtomID const O3_id( rsd1.atom_index( "O3*" ), start_base - 1 );
+		AtomID const  P_id( rsd2.atom_index( "P"   ), start_base );
+		AtomID const O5_id( rsd2.atom_index( "O5*" ), start_base );
+		AtomID const O1P_id( rsd2.atom_index( "O1P" ), start_base );
+
+     // distance from O3* to P
+     pose.add_constraint( new AtomPairConstraint( O3_id, P_id, distance_func ) );
+     // angle at O3*
+     pose.add_constraint( new AngleConstraint( C3_id, O3_id, P_id, O3_angle_func ) );
+     // angle at P
+     pose.add_constraint( new AngleConstraint( O3_id, P_id, O5_id,  P_angle_func ) );
+     // another angle at P - try not to get goofy geometries
+     pose.add_constraint( new AngleConstraint( O3_id, P_id, O5_id,  P_angle_func ) );
+     pose.add_constraint( new AngleConstraint( O3_id, P_id, O1P_id,  O1P_angle_func ) );
+	}
+
+	// Next the end base
+	if( !pose.residue_type( end_base ).is_upper_terminus() ) {
+		conformation::Residue const & rsd1( pose.residue( end_base   ) );
+		conformation::Residue const & rsd2( pose.residue( end_base+1 ) );
+
+		// Setup constraints to close bb
+
+		AtomID const C3_id( rsd1.atom_index( "C3*" ), end_base );
+		AtomID const O3_id( rsd1.atom_index( "O3*" ), end_base );
+		AtomID const  P_id( rsd2.atom_index( "P"   ), end_base + 1 );
+		AtomID const O5_id( rsd2.atom_index( "O5*" ), end_base + 1 );
+		AtomID const O1P_id( rsd2.atom_index( "O1P" ), end_base + 1 );
+
+     // distance from O3* to P
+     pose.add_constraint( new AtomPairConstraint( O3_id, P_id, distance_func ) );
+     pose.add_constraint( new AngleConstraint( O3_id, P_id, O1P_id,  O1P_angle_func ) );
+     // angle at O3*
+     pose.add_constraint( new AngleConstraint( C3_id, O3_id, P_id, O3_angle_func ) );
+     // angle at P
+     pose.add_constraint( new AngleConstraint( O3_id, P_id, O5_id,  P_angle_func ) );
+	}
+
+}
+
 
 
 } // namespace dna

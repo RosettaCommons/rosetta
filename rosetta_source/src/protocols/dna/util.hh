@@ -220,6 +220,14 @@ not_already_connected(
 );
 
 
+void
+set_base_segment_chainbreak_constraints(
+	core::pose::Pose & pose,
+	core::Size const this_base,
+	core::Size const end_base
+);
+
+
 } // namespace dna
 } // namespace protocols
 

@@ -413,7 +413,7 @@ get_base_pair_stub_slow(
 	first_base_sidechain_atom = rsd2.first_sidechain_atom();
 	if ( rsd1.is_RNA() ) {
 		++first_base_sidechain_atom;
-	}	
+	}
 	for ( Size i = first_base_sidechain_atom; i<= rsd2.nheavyatoms(); ++i ) {
 		basepair_atoms.push_back( rsd2.xyz(i) );
 	}
@@ -744,7 +744,7 @@ seqpos_is_base_step_anchor(
 	BasePartner const & partner( retrieve_base_partner_from_pose( pose ) );
 	conformation::Residue const & rsd( pose.residue( seqpos ) );
 
-	return ( seqpos < pose.total_residue() && ( rsd.is_DNA()  || rsd.is_RNA() )&& !rsd.is_lower_terminus() && partner[ seqpos ] && 
+	return ( seqpos < pose.total_residue() && ( rsd.is_DNA()  || rsd.is_RNA() )&& !rsd.is_lower_terminus() && partner[ seqpos ] &&
 	partner[ seqpos+1 ] && partner[seqpos] == partner[seqpos+1]+1 && partner[seqpos] != seqpos+1 );
 }
 
@@ -1253,6 +1253,153 @@ get_base_step_params(
 	params[2] = degrees( params[2] );
 	params[3] = degrees( params[3] );
 }
+
+
+////////////////////////////////////////////////////////////////////////////
+void
+get_base_pucker(
+	conformation::Residue const & rsd,
+	std::pair< std::string, int > & pucker,
+	Real & pseudorotation,
+	Real & amplitude
+)
+{
+	using numeric::conversions::radians;
+	using numeric::conversions::degrees;
+
+	utility::vector1< std::string > names;
+	names.push_back( "C1*" );
+	names.push_back( "C2*" );
+	names.push_back( "C3*" );
+	names.push_back( "C4*" );
+	names.push_back( "O4*" );
+
+	utility::vector1< Vector > atoms;
+	for ( int i=1; i<= 5; ++i ) {
+		atoms.push_back( rsd.xyz( names[i] ) );
+	}
+
+	Real mindot = 1000.0;
+	bool exxo( false );
+	utility::vector1< Real > torsions(5, 0.0);
+	for ( int ii=1; ii<= 5; ++ii ) {
+
+		torsions[ ii ] = dihedral_radians(
+																			atoms[ 4 ],
+																			atoms[ 5 ],
+																			atoms[ 1 ],
+																			atoms[ 2 ]
+																			);
+
+		Vector n12 = (( atoms[2]-atoms[1] ).cross( atoms[3]-atoms[2] ) ).normalized();
+		Real dot = std::abs( n12.dot( ( atoms[4]-atoms[3] ).normalized() ) );
+		if ( dot < mindot ) {
+			// get pucker
+			//Real pucker_dot = n12.dot( ( atoms[5] - Real(0.5) * ( atoms[4] + atoms[1] ) ).normalized() );
+
+			mindot = dot;
+			pucker.first = names[5];
+			exxo = ( n12.dot( ( atoms[5] - Real(0.5) * ( atoms[4] + atoms[1] ) ).normalized() ) > 0.0 );
+		}
+
+		atoms.push_back( atoms[1] );
+		atoms.erase( atoms.begin() );
+
+		names.push_back( names[1] );
+		names.erase( names.begin() );
+
+	}
+
+	pseudorotation = atan(
+													( ( torsions[2] + torsions[5] ) - ( torsions[1] + torsions[4] ) ) /
+													( 2.0 * torsions[3] * ( sin( radians(36.0) ) + sin( radians(72.0)) ) )
+												);
+
+	pseudorotation = degrees( pseudorotation );
+	if( torsions[3] < 0.0 ) pseudorotation += 180.0;
+
+	pseudorotation = basic::periodic_range( pseudorotation, 360.0 );
+
+	amplitude = degrees( torsions[3] / ( cos( radians( pseudorotation ) ) + 1.0e-20 ) );
+
+	// additional integer for scannability
+	{
+		int const atom_index( std::find( names.begin(), names.end(), pucker.first ) - names.begin() );
+		int const sign_index( exxo ? 0 : 1 );
+		if ( atom_index%2 == sign_index ) pucker.second = atom_index+1;
+		else                              pucker.second = atom_index-4;
+	}
+
+	if ( exxo ) pucker.first += " exxo";
+	else pucker.first += " endo";
+}
+
+///////////////////////////////////////////////////////////////////////////////
+kinematics::Stub
+get_midstep_stub(
+	kinematics::Stub const & in_stub1,
+	kinematics::Stub const & in_stub2
+)
+{
+	using numeric::conversions::degrees;
+	using numeric::arccos;
+
+	// Reordering as Phil did
+	kinematics::Stub stub1( kinematics::Stub::Matrix::cols( in_stub2.M.col_y(), in_stub2.M.col_z(), in_stub2.M.col_x() ), in_stub2.v );
+	kinematics::Stub stub2( kinematics::Stub::Matrix::cols( in_stub1.M.col_y(), in_stub1.M.col_z(), in_stub1.M.col_x() ), in_stub1.v );
+
+	// copy matrices
+	Matrix M1( stub1.M ), M2( stub2.M );
+
+	assert( is_orthonormal( M1, 1e-3 ) );
+	assert( is_orthonormal( M2, 1e-3 ) );
+
+	bool base_flipped = false;
+	if ( dot( M1.col_z(), M2.col_z() ) < 0.0 ) {
+		base_flipped = true;
+		basic::T("core.scoring.base_geometry") << "get_midstep_stub: base flip!!!\n";
+		//utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
+	}
+
+	// The nomenclature for the angles is the base pair convention (buckle, opening)
+	// but the math is the same as for base steps, and the code in get_stub_stub_params works
+	// for both.
+	//
+	// get angle between the y-axes
+	Real const gamma( arccos( dot( M1.col_y(), M2.col_y() ) ) );
+
+	Vector const bo( ( cross( M2.col_y(), M1.col_y() ) ).normalized() );
+
+	Matrix R_gamma_2( rotation_matrix( bo, gamma/2.0f ) );
+
+	M2 = R_gamma_2 * M2;
+	M1 = R_gamma_2.transposed() * M1;
+
+	assert( is_orthonormal( M1, 1e-3 ) );
+	assert( is_orthonormal( M2, 1e-3 ) );
+
+	// build mid-stub triad
+	assert( M1.col_y().distance( M2.col_y() ) < 1e-3 );
+	assert( std::abs( dot( bo, M1.col_y() ) ) < 1e-3 );
+
+	Matrix MBT;
+	MBT.col_y( M1.col_y() );
+
+	assert( std::abs( dot( M1.col_z(), MBT.col_y() ) ) < 1e-3 );
+	assert( std::abs( dot( M2.col_z(), MBT.col_y() ) ) < 1e-3 );
+	assert( std::abs( dot( M1.col_x(), MBT.col_y() ) ) < 1e-3 );
+	assert( std::abs( dot( M2.col_x(), MBT.col_y() ) ) < 1e-3 );
+
+	// get
+	MBT.col_x( ( 0.5f * ( M1.col_x() + M2.col_x() ) ).normalized() );
+	MBT.col_z( ( 0.5f * ( M1.col_z() + M2.col_z() ) ).normalized() );
+
+	assert( is_orthonormal( MBT, 1e-3 ) );
+
+	return kinematics::Stub( MBT, 0.5f*( stub1.v + stub2.v ) );
+
+}
+
 
 
 } // namespace dna
