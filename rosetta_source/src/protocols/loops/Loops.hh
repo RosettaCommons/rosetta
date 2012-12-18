@@ -260,7 +260,7 @@ public:
 	///@brief set each loop-residue in the vector to val.
 	/// input vector of nres length ( if shorter last residues of loop are ignored )
 	template< class T >
-	void transfer_to_residue_vector( utility::vector1< T >&, T val );
+	void transfer_to_residue_vector( utility::vector1< T >&, T val ) const;
 
 	///@brief add all residues within this loop definition into selection
 	void get_residues( utility::vector1< Size>& selection ) const;

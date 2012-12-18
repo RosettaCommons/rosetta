@@ -51,6 +51,8 @@
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <protocols/toolbox/task_operations/RestrictToLoopsAndNeighbors.hh>
+
 
 #include <core/pose/symmetry/util.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
@@ -347,44 +349,36 @@ void LoopMover_Refine_CCD::apply(
 		minimizer = new core::optimization::AtomTreeMinimizer;
 	}
 
-	pack::task::PackerTaskOP base_packer_task;
-
 	// create default Packer behavior if none has been set via TaskFactory
 	if ( task_factory_ == 0 ) {
 		// the default Packer behavior is defined here
 		using namespace core::pack::task;
 		using namespace core::pack::task::operation;
+		using toolbox::task_operations::RestrictToLoopsAndNeighbors;
+		using toolbox::task_operations::RestrictToLoopsAndNeighborsOP;
 		task_factory_ = new TaskFactory;
 		task_factory_->push_back( new InitializeFromCommandline );
 		task_factory_->push_back( new IncludeCurrent );
 		task_factory_->push_back( new NoRepackDisulfides );
-		base_packer_task = task_factory_->create_task_and_apply_taskoperations( pose );
-		if ( redesign_loop_ ) {
-			// allow design at loop positions
-			for ( Size i=1; i<= nres; ++i ) {
-				if ( !is_loop[i] ) base_packer_task->nonconst_residue_task( i ).restrict_to_repacking();
-			}
-		} else {
-			// restrict to repacking at all positions
-			base_packer_task->restrict_to_repacking();
-		}
+
+		RestrictToLoopsAndNeighborsOP restrict_to_loops_and_neighbors = new RestrictToLoopsAndNeighbors();
+
+		// This can be simplified by making a constructor that takes these settings as arguments
+		restrict_to_loops_and_neighbors->set_cutoff_distance( 10.0 );
+		restrict_to_loops_and_neighbors->set_design_loop( redesign_loop_ );
+		restrict_to_loops_and_neighbors->set_include_neighbors( repack_neighbors );
+		restrict_to_loops_and_neighbors->set_loops( loops() );
+
+		task_factory_->push_back( restrict_to_loops_and_neighbors );
+
 		// additional default behavior: packing restricted to active loops
 		packing_isolated_to_active_loops_ = true;
-	} else {
-		base_packer_task = task_factory_->create_task_and_apply_taskoperations( pose );
 	}
-	base_packer_task->set_bump_check( true );
 
-	// repack trial
-	pack::task::PackerTaskOP this_packer_task( base_packer_task->clone() );
-	utility::vector1<bool> allow_repacked( nres, false );
-	if ( packing_isolated_to_active_loops_ ) {
-		select_loop_residues( pose, *loops(), repack_neighbors, allow_repacked, 10.0 /* neighbor_cutoff */ );
-		core::pose::symmetry::make_residue_mask_symmetric( pose, allow_repacked );
-		             // does nothing if pose is not symm
-		this_packer_task->restrict_to_residues( allow_repacked );
-	}
-	pack::pack_rotamers( pose, *local_scorefxn, this_packer_task );
+	pack::task::PackerTaskOP pack_task = task_factory_->create_task_and_apply_taskoperations( pose );
+	pack_task->set_bump_check( true );
+	
+	pack::pack_rotamers( pose, *local_scorefxn, pack_task );
 	std::string move_type = "repack";
 	mc.boltzmann( pose, move_type );
 	mc.show_scores();
@@ -397,14 +391,9 @@ void LoopMover_Refine_CCD::apply(
 		out << pose.energies();
 	}
 
-	// remember all packable/repacked residues
-	for ( Size index(1); index <= nres; ++index ) {
-		if ( !this_packer_task->residue_task(index).being_packed() ) allow_repacked[index] = false;
-		else allow_repacked[index] = true;
-	}
 	// set minimization degrees of freedom for all loops
 	kinematics::MoveMapOP mm_all_loops = new core::kinematics::MoveMap;
-	setup_movemap( pose, *loops(), allow_repacked, mm_all_loops );
+	setup_movemap( pose, *loops(), pack_task->repacking_residues(), mm_all_loops );
 
 	// small/shear move parameters
 	// should be options
@@ -435,7 +424,7 @@ void LoopMover_Refine_CCD::apply(
 				one_loop.add_loop( it );
 				// set up movemap properly
 				kinematics::MoveMapOP mm_one_loop( new kinematics::MoveMap() );
-				setup_movemap( pose, one_loop, allow_repacked, mm_one_loop );
+				setup_movemap( pose, one_loop, pack_task->repacking_residues(), mm_one_loop );
 
 				if (local_debug) {
 					tr() << "chutmp-debug small_move-0: " << "  " << (*local_scorefxn)(pose) << std::endl;
@@ -471,7 +460,9 @@ void LoopMover_Refine_CCD::apply(
 					out << pose.energies();
 				}
 
-				pack::rotamer_trials( pose, *local_scorefxn, this_packer_task );
+				pack_task = task_factory_->create_task_and_apply_taskoperations( pose );
+				pack_task->set_bump_check( true );
+				pack::rotamer_trials( pose, *local_scorefxn, pack_task );
 
 				if (local_debug) {
 					tr() << "chutmp-debug small_move-3: " << "  " << (*local_scorefxn)(pose) << std::endl;
@@ -480,7 +471,7 @@ void LoopMover_Refine_CCD::apply(
 					pose.dump_pdb("small_move-3.pdb");
 				}
 
-				setup_movemap( pose, *loops(), allow_repacked, mm_all_loops );
+				setup_movemap( pose, *loops(), pack_task->repacking_residues(), mm_all_loops );
 				if(flank_residue_min_){add_loop_flank_residues_bb_to_movemap(*loops(), *mm_all_loops); } // added by JQX
 				minimizer->run( pose, *mm_all_loops, *local_scorefxn, options );
 
@@ -509,13 +500,13 @@ void LoopMover_Refine_CCD::apply(
 				one_loop.add_loop( it );
 				// set up movemap properly
 				kinematics::MoveMapOP mm_one_loop( new kinematics::MoveMap() );
-				setup_movemap( pose, one_loop, allow_repacked, mm_one_loop );
+				setup_movemap( pose, one_loop, pack_task->repacking_residues(), mm_one_loop );
 				protocols::simple_moves::ShearMover shear_moves( mm_one_loop, temperature, nmoves );
 				shear_moves.apply( pose );
 				if (! it->is_terminal( pose ) ) ccd_close_loops( pose, one_loop, *mm_one_loop);
-				pack::rotamer_trials( pose, *local_scorefxn, this_packer_task );
+				pack::rotamer_trials( pose, *local_scorefxn, pack_task );
 				(*local_scorefxn)(pose); // update 10A nbr graph, silly way to do this
-				setup_movemap( pose, *loops(), allow_repacked, mm_all_loops );
+				setup_movemap( pose, *loops(), pack_task->repacking_residues(), mm_all_loops );
 				if(flank_residue_min_){add_loop_flank_residues_bb_to_movemap(*loops(), *mm_all_loops); } // added by JQX
 				minimizer->run( pose, *mm_all_loops, *local_scorefxn, options );
 				std::string move_type = "shear_ccd_min";
@@ -526,12 +517,10 @@ void LoopMover_Refine_CCD::apply(
 				if ( (j%repack_period_)==0 || j==inner_cycles ) {
 					// repack trial
 
-					if ( packing_isolated_to_active_loops_ ) {
-						select_loop_residues( pose, *loops(), repack_neighbors, allow_repacked, 10.0 /* neighbor_cutoff */ );
-					}
-					core::pose::symmetry::make_residue_mask_symmetric( pose, allow_repacked );  //fpd symmetrize res mask -- does nothing if pose is not symm
-					this_packer_task->restrict_to_residues( allow_repacked );
-					pack::pack_rotamers( pose, *local_scorefxn, this_packer_task );
+					pack_task = task_factory_->create_task_and_apply_taskoperations( pose );
+					pack_task->set_bump_check( true );
+					
+					pack::pack_rotamers( pose, *local_scorefxn, pack_task );
 					std::string move_type = "repack";
 					mc.boltzmann( pose, move_type );
 					mc.show_scores();

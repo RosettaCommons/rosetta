@@ -29,7 +29,7 @@ namespace loops {
 ///@brief set each loop-residue in the vector to val.
 /// input vector of nres length ( if shorter last residues of loop are ignored )
 template< class T >
-void Loops::transfer_to_residue_vector( utility::vector1< T > & vector, T val ) {
+void Loops::transfer_to_residue_vector( utility::vector1< T > & vector, T val ) const {
 	core::Size nres = vector.size();
 	for ( const_iterator it = begin(); it  != end(); ++it ) {
 		if ( it->start() <= nres ) {

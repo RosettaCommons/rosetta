@@ -47,11 +47,12 @@
 #include <protocols/toolbox/task_operations/RestrictToAlignedSegmentsCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictIdentitiesAtAlignedPositionsCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictToCDRH3LoopCreator.hh>
-#include <protocols/toolbox/task_operations/RestrictToTerminiOperationCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterfaceCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterfaceOperationCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterfaceVectorOperationCreator.hh>
+#include <protocols/toolbox/task_operations/RestrictToLoopsAndNeighborsCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperationCreator.hh>
+#include <protocols/toolbox/task_operations/RestrictToTerminiOperationCreator.hh>
 #include <protocols/toolbox/task_operations/SeqprofConsensusOperationCreator.hh> //also effectively RestrictConservedLowDdgOperationCreator.hh
 #include <protocols/toolbox/task_operations/SetIGTypeOperationCreator.hh>
 #include <protocols/toolbox/task_operations/ThreadSequenceOperationCreator.hh>

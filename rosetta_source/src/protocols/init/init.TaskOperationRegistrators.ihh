@@ -47,11 +47,12 @@ static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictIn
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictToAlignedSegmentsOperationCreator > RestrictToAlignedSegmentsCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictIdentitiesAtAlignedPositionsOperationCreator > RestrictIdentitiesAtAlignedPositionsCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictToCDRH3LoopCreator > RestrictToCDRH3LoopCreator_registrator;
-static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictToTerminiOperationCreator > RestrictToTerminiOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictToInterfaceCreator > RestrictToInterfaceCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictToInterfaceOperationCreator > RestrictToInterfaceOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictToInterfaceVectorOperationCreator > RestrictToInterfaceVectorOperationCreator_registrator;
+static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictToLoopsAndNeighborsCreator > RestrictToLoopsAndNeighborsCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictToNeighborhoodOperationCreator > RestrictToNeighborhoodOperationCreator_registrator;
+static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictToTerminiOperationCreator > RestrictToTerminiOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::SeqprofConsensusOperationCreator > SeqprofConsensusOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::SetIGTypeOperationCreator > SetIGTypeOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::ThreadSequenceOperationCreator > ThreadSequenceOperationCreator_registrator;
