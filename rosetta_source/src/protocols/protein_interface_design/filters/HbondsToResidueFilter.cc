@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file devel/protein_interface_design/dock_design_filters.cc
+/// @file protocols/protein_interface_design/filters/HbondsToResidueFilter.cc 
 /// @brief
 /// @author Sarel Fleishman (sarelf@u.washington.edu), Jacob Corn (jecorn@u.washington.edu)
 #include <protocols/protein_interface_design/filters/HbondsToResidueFilter.hh>
