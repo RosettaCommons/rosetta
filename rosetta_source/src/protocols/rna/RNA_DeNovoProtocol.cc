@@ -351,21 +351,9 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 		if (allow_bulge_) {
 			//Apply bulges
 			Size const num_res_virtualized =
-				protocols::swa::rna::virtualize_energetically_unfavorable_nucleotides( pose,
-																																							 allowed_bulge_res_,
-																																							 hires_scorefxn_,
-																																							 out_file_tag,
-																																							 true /*allow_pre_virtualize*/,
-																																							 allow_consecutive_bulges_,
-																																							 false /*verbose*/ );
-			//Minimize again.
-			if (minimize_structure_ && num_res_virtualized != 0){
-				rna_minimizer_->apply( pose );
-				if (close_loops_at_end_) {
-					rna_loop_closer_->apply( pose, rna_structure_parameters_->connections() );
-				}
-			}
-			if (relax_structure_ && num_res_virtualized != 0)	rna_relaxer_->apply( pose );
+				protocols::swa::rna::virtualize_bulges( pose, allowed_bulge_res_, hires_scorefxn_, 
+                                                         out_file_tag, true /*allow_pre_virtualize*/,
+								                        allow_consecutive_bulges_, false /*verbose*/ );
 		}
 
 		std::string const out_file_name = out_file_tag + ".pdb";

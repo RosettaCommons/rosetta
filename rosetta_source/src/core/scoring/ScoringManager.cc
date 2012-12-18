@@ -39,6 +39,7 @@
 #include <core/scoring/dna/DNA_BasePotential.hh>
 #include <core/scoring/rna/RNA_LowResolutionPotential.hh>
 #include <core/scoring/rna/RNA_TorsionPotential.hh>
+#include <core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.hh>
 #include <core/scoring/dna/DirectReadoutPotential.hh>
 #include <core/scoring/P_AA.hh>
 #include <core/scoring/WaterAdductHBondPotential.hh>
@@ -122,6 +123,7 @@ ScoringManager::ScoringManager() :
 	carbon_hbond_potential_( 0 ),
 	rna_low_resolution_potential_( 0 ),
 	rna_torsion_potential_( 0 ),
+    rna_chemical_shift_potential_( 0 ),
 	p_aa_( 0 ),
 	water_adduct_hbond_potential_( 0 ),
 	gen_born_potential_( 0 ),
@@ -331,6 +333,17 @@ ScoringManager::get_RNA_TorsionPotential() const
 		rna_torsion_potential_ = new rna::RNA_TorsionPotential();
 	}
 	return *rna_torsion_potential_;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+rna::chemical_shift::RNA_ChemicalShiftPotential const &
+ScoringManager::get_RNA_ChemicalShiftPotential() const
+{
+	if (rna_chemical_shift_potential_ == 0 )
+	{
+		rna_chemical_shift_potential_= new rna::chemical_shift::RNA_ChemicalShiftPotential();
+	}
+	return *rna_chemical_shift_potential_;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

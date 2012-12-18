@@ -2872,13 +2872,13 @@ principal_angle_degrees( T const & angle )
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	core::Size
-	virtualize_energetically_unfavorable_nucleotides(core::pose::Pose & input_pose,
-																								utility::vector1< core::Size > const & allow_bulge_res_list,
-																								core::scoring::ScoreFunctionOP const & scorefxn,
-																								std::string const & tag,
-																								bool const allow_pre_virtualize,
-																								bool const allow_consecutive_bulges,
-																								bool const verbose){
+	virtualize_bulges(core::pose::Pose & input_pose,
+					  utility::vector1< core::Size > const & allow_bulge_res_list,
+					  core::scoring::ScoreFunctionOP const & scorefxn,
+					  std::string const & tag,
+					  bool const allow_pre_virtualize,
+					  bool const allow_consecutive_bulges,
+					  bool const verbose){
 
 		using namespace core::pose;
 		using namespace core::scoring;
@@ -2893,7 +2893,7 @@ principal_angle_degrees( T const & angle )
 
 
 		if(verbose){
-			std::cout << "Enter virtualize_energetically_unfavorable_nucleotides() " << std::endl;
+			std::cout << "Enter virtualize_bulges() " << std::endl;
 			std::cout << "rna_bulge_bonus= " << rna_bulge_bonus << std::endl;
 			Output_boolean("allow_pre_virtualize= ",allow_pre_virtualize); std::cout << std::endl;
 			Output_boolean("allow_consecutive_bulges= ",allow_consecutive_bulges); std::cout << std::endl;
@@ -2987,7 +2987,7 @@ principal_angle_degrees( T const & angle )
 
 		if(num_res_virtualized>0){
 			std::cout << "----------------------------------------------------------" << std::endl;
-			std::cout << "Inside virtualize_energetically_unfavorable_nucleotides() " << std::endl;
+			std::cout << "Inside virtualize_bulges() " << std::endl;
 			std::cout << "TOTAL_NUM_ROUND= " << round_num << std::endl;
 			std::cout << "tag= " << tag << std::endl;
 			std::cout << "num_res_virtualized= " << num_res_virtualized << std::endl;
@@ -2996,17 +2996,6 @@ principal_angle_degrees( T const & angle )
 			std::cout << "----------------------------------------------------------" << std::endl;
 
 		}
-
-/*
-		if(round_num>2){
-			std::cout << "TOTAL_NUM_ROUND= " << round_num;
-			std::cout << "Inside virtualize_energetically_unfavorable_nucleotides() " << std::endl;
-			std::cout << "TOTAL_NUM_ROUND is greater than 2 !!" << std::endl;
-			std::cout << "num_res_virtualized= " << num_res_virtualized;
-			std::cout << " start_score= " << start_score << " final_score= " << final_score << std::endl;
-		}
-*/
-
 
 		return num_res_virtualized;
 

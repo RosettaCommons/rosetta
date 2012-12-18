@@ -332,6 +332,8 @@ enum ScoreType {
 	holes_min,
 	holes_min_mean,
 
+    rna_chem_shift, //RNA NMR chemical shift pseudo-energy term
+
 	dab_sasa, // classic 1.4A probe solvant accessible surface area
 	dab_sev,  // solvent excluded volume -- volume of atoms inflated by 1.4A
 	sa, // nonpolar contribution in GBSA

@@ -485,6 +485,16 @@ sources = {
 		"RNA_VDW_Energy",
 		"RNA_FullAtomVDW_BasePhosphate",
 	],
+
+	"core/scoring/rna/chemical_shift" : [
+		"RNA_CS_Parameters",
+		"RNA_CS_Util",
+		"RNA_CS_RingCurrent",
+		"RNA_CS_MagneticAnisotropy",
+		"RNA_ChemicalShiftPotential",
+		"RNA_ChemicalShiftEnergy",
+	],
+
 	"core/scoring/saxs": [
 		"FastSAXSEnergy",
 		"FormFactor",

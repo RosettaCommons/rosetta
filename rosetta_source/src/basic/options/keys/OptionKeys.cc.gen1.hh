@@ -115,6 +115,9 @@ namespace score { StringOptionKey const NV_table( "score:NV_table" );  }
 namespace score { BooleanOptionKey const disable_orientation_dependent_rna_ch_o_bonds( "score:disable_orientation_dependent_rna_ch_o_bonds" );  }
 namespace score { StringOptionKey const rna_torsion_potential( "score:rna_torsion_potential" );  }
 namespace score { BooleanOptionKey const rna_torsion_skip_chainbreak( "score:rna_torsion_skip_chainbreak" );  }
+namespace score { StringOptionKey const rna_chemical_shift_exp_data( "score:rna_chemical_shift_exp_data" );  }
+namespace score { StringOptionKey const rna_chemical_shift_H5_prime_mode( "score:rna_chemical_shift_H5_prime_mode" );  }
+namespace score { IntegerVectorOptionKey const rna_chemical_shift_include_res( "score:rna_chemical_shift_include_res" );  }
 namespace score { BooleanOptionKey const use_2prime_OH_potential( "score:use_2prime_OH_potential" );  }
 namespace score { BooleanOptionKey const include_neighbor_base_stacks( "score:include_neighbor_base_stacks" );  }
 namespace score { BooleanOptionKey const find_neighbors_3dgrid( "score:find_neighbors_3dgrid" );  }

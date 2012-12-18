@@ -259,6 +259,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "holes_decoy" ] = holes_decoy;
 	name2score_type_[ "holes_min" ] = holes_min;
 	name2score_type_[ "holes_min_mean" ] = holes_min_mean;
+	name2score_type_[ "rna_chem_shift" ] = rna_chem_shift;
 	name2score_type_[ "dab_sasa" ] = dab_sasa;
 	name2score_type_[ "dab_sev" ] = dab_sev;
 	name2score_type_[ "sa" ] = sa;

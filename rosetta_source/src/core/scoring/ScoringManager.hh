@@ -39,6 +39,7 @@
 #include <core/scoring/rna/RNA_AtomVDW.fwd.hh>
 #include <core/scoring/rna/RNA_TorsionPotential.fwd.hh>
 #include <core/scoring/rna/RNA_LowResolutionPotential.fwd.hh>
+#include <core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.fwd.hh>
 #include <core/scoring/P_AA.fwd.hh>
 #include <core/scoring/WaterAdductHBondPotential.fwd.hh>
 #include <core/scoring/disulfides/FullatomDisulfidePotential.fwd.hh>
@@ -137,6 +138,8 @@ public:
 	rna::RNA_LowResolutionPotential const & get_RNA_LowResolutionPotential() const;
 
 	rna::RNA_TorsionPotential const & get_RNA_TorsionPotential() const;
+
+    rna::chemical_shift::RNA_ChemicalShiftPotential const & get_RNA_ChemicalShiftPotential() const;
 
 	dna::DirectReadoutPotential const & get_DirectReadoutPotential() const;
 
@@ -249,6 +252,7 @@ private:
 	mutable carbon_hbonds::CarbonHBondPotentialOP carbon_hbond_potential_;
 	mutable rna::RNA_LowResolutionPotentialOP rna_low_resolution_potential_;
 	mutable rna::RNA_TorsionPotentialOP rna_torsion_potential_;
+    mutable rna::chemical_shift::RNA_ChemicalShiftPotential * rna_chemical_shift_potential_;
 	mutable P_AAOP p_aa_;
 	mutable WaterAdductHBondPotentialOP water_adduct_hbond_potential_;
 	mutable GenBornPotentialOP gen_born_potential_;

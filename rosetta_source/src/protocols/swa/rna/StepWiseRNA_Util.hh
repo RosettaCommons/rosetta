@@ -409,13 +409,13 @@ void
 set_CCD_torsions_to_zero(core::pose::Pose & pose, core::Size const five_prime_res);
 
 core::Size
-virtualize_energetically_unfavorable_nucleotides(core::pose::Pose & input_pose,
-																							utility::vector1< core::Size > const & allow_bulge_res_list,
-																							core::scoring::ScoreFunctionOP const & scorefxn,
-																							std::string const & tag,
-																							bool const allow_pre_virtualize,
-																							bool const allow_consecutive_bulges,
-																							bool const verbose);
+virtualize_bulges(core::pose::Pose & input_pose,
+				  utility::vector1< core::Size > const & allow_bulge_res_list,
+				  core::scoring::ScoreFunctionOP const & scorefxn,
+				  std::string const & tag,
+				  bool const allow_pre_virtualize,
+				  bool const allow_consecutive_bulges,
+				  bool const verbose);
 
 std::string
 get_tag_from_pdb_filename(std::string const pdb_filename);
