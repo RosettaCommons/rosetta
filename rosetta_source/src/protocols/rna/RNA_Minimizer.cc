@@ -96,27 +96,27 @@ namespace protocols {
 namespace rna {
 
 RNA_Minimizer::RNA_Minimizer():
-  Mover(),
-	deriv_check_( false ),
-  use_coordinate_constraints_( false ), // DO NOT CHECK IN
-	coord_sdev_( 10.0 * std::sqrt(10.0) ), // awkward, but matches an old setting.
-	coord_cst_weight_( 1.0 ),
-	rounds_( basic::options::option[ basic::options::OptionKeys::rna::minimize_rounds ] ),
-	skip_o2star_trials_( false ),
-	perform_minimizer_run_( true ),
-	vary_bond_geometry_( false ),
-	include_default_linear_chainbreak_( true ),
-	verbose_( false ), //Parin S. Jan 07, 2012
-	do_dump_pdb_( false ),
-	move_first_rigid_body_( false ),
-	min_type_( "dfpmin" ) //Parin S. Jan 12, 2012
+    Mover(),
+    deriv_check_( false ),
+    use_coordinate_constraints_( false ), // DO NOT CHECK IN
+    coord_sdev_( 10.0 * std::sqrt(10.0) ), // awkward, but matches an old setting.
+    coord_cst_weight_( 1.0 ),
+    rounds_( basic::options::option[ basic::options::OptionKeys::rna::minimize_rounds ] ),
+    skip_o2star_trials_( false ),
+    perform_minimizer_run_( true ),
+    vary_bond_geometry_( false ),
+    include_default_linear_chainbreak_( true ),
+    verbose_( false ), //Parin S. Jan 07, 2012
+    do_dump_pdb_( false ),
+    move_first_rigid_body_( false ),
+    min_type_( "dfpmin" ) //Parin S. Jan 12, 2012
 {
-	Mover::type("RNA_Minimizer");
-	if ( basic::options::option[ basic::options::OptionKeys::score::weights ].user() ) {
-		scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( basic::options::option[ basic::options::OptionKeys::score::weights ]() );
-	} else {
-		scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::RNA_HIRES_WTS );
-	}
+    Mover::type("RNA_Minimizer");
+    if ( basic::options::option[ basic::options::OptionKeys::score::weights ].user() ) {
+        scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( basic::options::option[ basic::options::OptionKeys::score::weights ]() );
+    } else {
+        scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::RNA_HIRES_WTS );
+    }
 }
 
 /// @details  Apply the RNA full atom minimizer.

@@ -128,23 +128,23 @@ public:
 	//	void
 	//	set_allow_insert( FArray1D <bool> const & allow_insert  ){ allow_insert_ = allow_insert; }
 
-	void
-  jump_change_frequency( core::Real const value ){ jump_change_frequency_ = value; }
+    void
+    jump_change_frequency( core::Real const value ){ jump_change_frequency_ = value; }
 
-	void
-  set_close_loops( bool const setting ){
-		close_loops_at_end_ = setting;
-		if ( close_loops_at_end_ ) binary_rna_output_ = true;
-	}
+    void
+    set_close_loops( bool const setting ){
+        close_loops_at_end_ = setting;
+        if ( close_loops_at_end_ ) binary_rna_output_ = true;
+    }
 
-	void
-  set_close_loops_after_each_move( bool const setting ){ close_loops_after_each_move_ = setting; }
+    void
+    set_close_loops_after_each_move( bool const setting ){ close_loops_after_each_move_ = setting; }
 
-	void
-  simple_rmsd_cutoff_relax( bool const setting ){ simple_rmsd_cutoff_relax_ = setting; }
+    void
+    simple_rmsd_cutoff_relax( bool const setting ){ simple_rmsd_cutoff_relax_ = setting; }
 
-	void
-  output_lores_silent_file( bool const setting ){ output_lores_silent_file_ = setting; }
+    void
+    output_lores_silent_file( bool const setting ){ output_lores_silent_file_ = setting; }
 
 	void
 	set_filter_lores_base_pairs( bool const setting ){ filter_lores_base_pairs_ = setting; }
@@ -245,13 +245,13 @@ private:
 	setup_rigid_body_mover( core::pose::Pose const & pose, core::Size const r, core::Size const rounds );
 
 
-	void
-	output_silent_struct( core::io::silent::SilentStruct & s,
-												core::io::silent::SilentFileData & silent_file_data,
-												std::string const & silent_file,
-												core::pose::Pose & pose,
-												std::string const out_file_tag,
-												bool const score_only = false ) const;
+    void
+    output_silent_struct( core::io::silent::SilentStruct & s,
+                          core::io::silent::SilentFileData & silent_file_data,
+                          std::string const & silent_file,
+                          core::pose::Pose & pose,
+                          std::string const out_file_tag,
+                          bool const score_only = false ) const;
 
 	void
 	do_random_moves( core::pose::Pose & pose );
@@ -262,8 +262,8 @@ private:
 	void
 	update_denovo_scorefxn_weights( Size const & r, Size const & rounds );
 
-	Size
-  figure_out_constraint_separation_cutoff( Size const & r, Size const & rounds, Size const & max_dist );
+    Size
+    figure_out_constraint_separation_cutoff( Size const & r, Size const & rounds, Size const & max_dist );
 
 	void
 	update_pose_constraints( Size const & r, Size const & rounds, core::pose::Pose & pose );
@@ -295,6 +295,11 @@ private:
 	bool
 	check_score_filter( core::Real const lores_score_, std::list< core::Real > & all_lores_score_ );
 
+    void
+    apply_chem_shift_data(core::pose::Pose & pose, std::string const out_file_tag);
+
+    void
+    add_chem_shift_info(core::io::silent::SilentStruct & silent_struct, core::pose::Pose const & const_pose) const;
 
 private:
 
@@ -319,6 +324,8 @@ private:
 
 	bool simple_rmsd_cutoff_relax_;
 	bool allow_bulge_, allow_consecutive_bulges_;
+
+    bool const use_chem_shift_data_;
 
 	// parameters
 	core::Real m_Temperature_; // default temperature for monte carlo
@@ -361,6 +368,7 @@ private:
 
 	std::string lores_scorefxn_;
 	core::scoring::ScoreFunctionOP denovo_scorefxn_, hires_scorefxn_;
+	core::scoring::ScoreFunctionOP chem_shift_scorefxn_;
 	core::scoring::ScoreFunctionOP initial_denovo_scorefxn_;
 	core::scoring::rna::RNA_LowResolutionPotential local_rna_low_resolution_potential_;
 

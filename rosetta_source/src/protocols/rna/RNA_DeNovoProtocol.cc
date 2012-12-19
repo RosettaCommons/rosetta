@@ -10,7 +10,7 @@
 /// @file RNA de novo fragment assembly
 /// @brief protocols that are specific to RNA_DeNovoProtocol
 /// @detailed
-/// @author Rhiju Das
+/// @author Rhiju Das, Parin Sripakdeevong, Fang-Chieh Chou
 
 
 // Unit headers
@@ -45,8 +45,10 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/rna/RNA_Util.hh>
+#include <core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
@@ -61,6 +63,9 @@
 // AUTO-REMOVED #include <protocols/viewer/viewers.hh>
 #include <core/kinematics/ShortestPathInFoldTree.hh>
 #include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
+
+#include <core/scoring/Energies.hh>
+#include <core/scoring/EnergyMap.hh>
 
 #include <utility/file/file_sys_util.hh>
 
@@ -133,6 +138,9 @@ RNA_DeNovoProtocol::RNA_DeNovoProtocol(
 		simple_rmsd_cutoff_relax_( false ),
 		allow_bulge_( allow_bulge ),
 		allow_consecutive_bulges_( false ),
+        use_chem_shift_data_( basic::options::option[ 
+                                basic::options::OptionKeys::
+                                score::rna_chemical_shift_exp_data].user()),
 		m_Temperature_( 2.0 ),
 		frag_size_( 3 ),
 		rna_params_file_( "" ),
@@ -198,16 +206,8 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 	initialize_movers( pose );
 	if (dump_pdb_) pose.dump_pdb( "init.pdb" );
 
-	// RNA low resolution score function.
+	// RNA score function (both low-res and high-res).
 	initialize_scorefxn( pose );
-
-	// RNA high-resolution score function.
-	if ( basic::options::option[ basic::options::OptionKeys::score::weights ].user() ) {
-		hires_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function(
-				basic::options::option[ basic::options::OptionKeys::score::weights ]() );
-	} else {
-		hires_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::RNA_HIRES_WTS );
-	}
 
 	//Keep a copy for resetting after each decoy.
 	Pose start_pose = pose;
@@ -346,15 +346,17 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 			if (close_loops_at_end_) rna_loop_closer_->apply( pose, rna_structure_parameters_->connections() );
 		}
 
-		if (relax_structure_)	rna_relaxer_->apply( pose );
+        if(use_chem_shift_data_) apply_chem_shift_data(pose, out_file_tag);
 
-		if (allow_bulge_) {
-			//Apply bulges
-			Size const num_res_virtualized =
-				protocols::swa::rna::virtualize_bulges( pose, allowed_bulge_res_, hires_scorefxn_, 
+        if(relax_structure_)   rna_relaxer_->apply( pose );
+
+        if(allow_bulge_){
+            //Apply bulges
+            Size const num_res_virtualized =
+                 protocols::swa::rna::virtualize_bulges( pose, allowed_bulge_res_, hires_scorefxn_, 
                                                          out_file_tag, true /*allow_pre_virtualize*/,
-								                        allow_consecutive_bulges_, false /*verbose*/ );
-		}
+                                                         allow_consecutive_bulges_, false /*verbose*/ );
+        }
 
 		std::string const out_file_name = out_file_tag + ".pdb";
 		if (dump_pdb_)	 dump_pdb( pose,  out_file_name );
@@ -379,6 +381,7 @@ RNA_DeNovoProtocol::initialize_scorefxn( core::pose::Pose & pose ) {
 
 	using namespace core::scoring;
 
+	// RNA low-resolution score function.
 	denovo_scorefxn_ = ScoreFunctionFactory::create_score_function( lores_scorefxn_ );
 
 	initialize_constraints( pose );
@@ -388,6 +391,23 @@ RNA_DeNovoProtocol::initialize_scorefxn( core::pose::Pose & pose ) {
 	if ( chainbreak_weight_ > -1 ) initial_denovo_scorefxn_->set_weight( chainbreak, chainbreak_weight_ );
 
 	if ( linear_chainbreak_weight_ > -1 ) initial_denovo_scorefxn_->set_weight( linear_chainbreak, linear_chainbreak_weight_ );
+
+
+    // RNA high-resolution score function.
+    hires_scorefxn_ = rna_minimizer_->clone_scorefxn();
+
+
+    // RNA high-resolution score function + rna_chem_shift term
+    if(use_chem_shift_data_){
+
+        Real const CS_weight = 4.0; //hard-coded to 4.0 based on CS-ROSETTA-RNA work (Parin et al. 2012).
+
+        chem_shift_scorefxn_ =  new ScoreFunction;
+
+        chem_shift_scorefxn_ = hires_scorefxn_->clone();
+
+        chem_shift_scorefxn_->set_weight( rna_chem_shift, CS_weight );
+    }
 
 }
 
@@ -576,9 +596,9 @@ RNA_DeNovoProtocol::calc_rmsds( core::io::silent::SilentStruct & s, core::pose::
 ///////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_DeNovoProtocol::output_silent_struct(
-										core::io::silent::SilentStruct & s, core::io::silent::SilentFileData & silent_file_data,
-										std::string const & silent_file, pose::Pose & pose, std::string const out_file_tag,
-										bool const score_only /* = false */) const
+    core::io::silent::SilentStruct & s, core::io::silent::SilentFileData & silent_file_data,
+    std::string const & silent_file, pose::Pose & pose, std::string const out_file_tag,
+    bool const score_only /* = false */) const
 {
 
 	using namespace core::io::silent;
@@ -604,7 +624,11 @@ RNA_DeNovoProtocol::output_silent_struct(
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-RNA_DeNovoProtocol::output_to_silent_file( core::pose::Pose & pose, std::string const & silent_file, std::string const & out_file_tag, bool const score_only /* = false */) const
+RNA_DeNovoProtocol::output_to_silent_file( 
+    core::pose::Pose & pose, 
+    std::string const & silent_file, 
+    std::string const & out_file_tag, 
+    bool const score_only /* = false */) const
 {
 
 	using namespace core::io::silent;
@@ -618,13 +642,22 @@ RNA_DeNovoProtocol::output_to_silent_file( core::pose::Pose & pose, std::string 
 	// Why do I need to supply the damn file name? That seems silly.
 	TR << "Making silent struct for " << out_file_tag << std::endl;
 
-	if ( binary_rna_output_ ) {
-		BinaryRNASilentStruct s( pose, out_file_tag );
-		output_silent_struct( s, silent_file_data, silent_file, pose, out_file_tag, score_only );
-	} else {
-		RNA_SilentStruct s( pose, out_file_tag );
-		output_silent_struct( s, silent_file_data, silent_file, pose, out_file_tag, score_only );
-	}
+    if ( binary_rna_output_ ) {
+        BinaryRNASilentStruct s( pose, out_file_tag );
+
+        if(use_chem_shift_data_) add_chem_shift_info( s, pose);
+
+        output_silent_struct( s, silent_file_data, silent_file, pose, out_file_tag, score_only );
+
+    } else {
+        RNA_SilentStruct s( pose, out_file_tag );
+
+        if(use_chem_shift_data_) add_chem_shift_info( s, pose);
+
+        output_silent_struct( s, silent_file_data, silent_file, pose, out_file_tag, score_only );
+
+    }
+
 }
 
 
@@ -1162,6 +1195,78 @@ RNA_DeNovoProtocol::check_score_filter( Real const lores_score, std::list< Real 
 	TR << "Comparing current lores score " << lores_score << " to automatically determined cutoff: " << all_lores_score_cutoff << " based on " << autofilter_score_quantile_ << " quantile from "  << n << " models so far" << std::endl;
 	return ( lores_score <= all_lores_score_cutoff );
 }
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+void
+RNA_DeNovoProtocol::apply_chem_shift_data(core::pose::Pose & pose, std::string const out_file_tag){
+
+    using namespace core::scoring;
+	using namespace core::io::pdb;
+
+    if(!use_chem_shift_data_) utility_exit_with_message("use_chem_shift_data_ == false!");
+
+    if (minimize_structure_){
+
+        //align_and_output_to_silent_file( pose, "BEFORE_CS_MINIMIZE_" + silent_file_, "BEFORE_CS_MINIMIZE_" + out_file_tag ); //testing
+
+        rna_minimizer_->set_score_function(chem_shift_scorefxn_); //use the chem_shift_scorefxn_
+
+        rna_minimizer_->apply( pose );
+
+        rna_minimizer_->set_score_function(hires_scorefxn_); //set back the original scorefxn.
+
+        //align_and_output_to_silent_file( pose, "AFTER_CS_MINIMIZE_" + silent_file_, "AFTER_CS_MINIMIZE_" + out_file_tag ); //testing
+
+        if (close_loops_at_end_) rna_loop_closer_->apply( pose, rna_structure_parameters_->connections() );
+    }
+
+    (*chem_shift_scorefxn_)( pose );
+
+
+}
+
+
+void
+RNA_DeNovoProtocol::add_chem_shift_info(core::io::silent::SilentStruct & silent_struct, core::pose::Pose const & const_pose) const {
+
+    using namespace core::scoring;
+    using namespace core::pose;
+
+    if(!use_chem_shift_data_) utility_exit_with_message("use_chem_shift_data_ == false!");
+
+    pose::Pose chem_shift_pose=const_pose; //HARD COPY SLOW!
+
+    core::scoring::ScoreFunctionOP temp_scorefxn = new ScoreFunction;
+
+    temp_scorefxn->set_weight( scoring::rna_chem_shift  , 1.00 );
+
+    (*temp_scorefxn)(chem_shift_pose);
+
+    EnergyMap const & energy_map=chem_shift_pose.energies().total_energies();
+
+    Real const rosetta_chem_shift_score= energy_map[ scoring::rna_chem_shift ];
+
+    //This statement should be very fast except possibly the 1st call.
+    core::scoring::rna::chemical_shift::RNA_ChemicalShiftPotential const & 
+        rna_chemical_shift_potential( core::scoring::ScoringManager::get_instance()->get_RNA_ChemicalShiftPotential() );
+
+    Size const num_chem_shift_data_points=rna_chemical_shift_potential.get_total_exp_chemical_shift_data_points();
+
+    //rosetta_chem_shift_score --> Sum_square chemical_shift deviation.
+
+    Real const chem_shift_RMSD=sqrt( rosetta_chem_shift_score / float(num_chem_shift_data_points) );
+
+    silent_struct.add_energy( "chem_shift_RMSD", chem_shift_RMSD);  
+
+    silent_struct.add_energy( "num_chem_shift_data", float(num_chem_shift_data_points) ); 
+
+    if(silent_struct.has_energy("rna_chem_shift")==false){ 
+        //If missing this term, then the rna_chem_shift weight is probably zero in the weight_file.
+        silent_struct.add_energy( "rna_chem_shift", 0.0);
+    }
+
+}
+
 
 } // namespace rna
 } // namespace protocols
