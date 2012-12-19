@@ -36,6 +36,7 @@
 #include <numeric/xyz.functions.hh>
 #include <numeric/numeric.functions.hh>
 #include <numeric/random/random.hh>
+#include <numeric/PCA.hh>
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -224,8 +225,8 @@ namespace antibody2{
         Size stop(input_loop.stop()+1);
         
         
-        //bool is_kinked( false );
-        //bool is_extended( false );
+        bool is_kinked( false );
+        bool is_extended( false );
         bool is_H3( false );
         
         // extract 3 letter residue codes for the chopped loop
@@ -290,7 +291,7 @@ namespace antibody2{
             if( (base_dihedral > kink_lower_bound) && (base_dihedral < kink_upper_bound))
             {
                 // std::cout << "KINK Found" << std::endl; // aroop_temp remove
-                //is_kinked = true;  // set but never used ~Labonte
+                is_kinked = true;
                 is_H3 = true;
             }
         }
@@ -303,7 +304,7 @@ namespace antibody2{
             
             if( ( base_dihedral>extended_lower_bound) && (base_dihedral<extended_upper_bound) ) {
                 // std::cout << "EXTENDED Found" << std::endl; // aroop_temp remove
-                //is_extended = true;  // set but never used ~Labonte
+                is_extended = true;
                 is_H3 = true;
             }
             
@@ -328,7 +329,7 @@ namespace antibody2{
                    ( base_dihedral < kink_upper_bound ) ) {
                     // aroop_temp remove
                     // std::cout << "KINK (special 1b) Found" << std::endl;
-                    //is_kinked = true;  // set but never used ~Labonte
+                    is_kinked = true;
                     is_H3 = true;
                 }
             }
@@ -343,7 +344,7 @@ namespace antibody2{
                (base_dihedral < kink_upper_bound ) ) {
                 // aroop_temp remove
                 // std::cout << "KINK (w sb) Found" << std::endl;
-                //is_kinked = true;  // set but never used ~Labonte
+                is_kinked = true;
                 is_H3 = true;
             }
             if(!is_H3) {
@@ -355,7 +356,7 @@ namespace antibody2{
                    ( base_dihedral < extended_upper_bound ) ) {
                     // aroop_temp remove
                     // std::cout << "EXTENDED (special 1c) Found" << std::endl;
-                	//is_extended = true;  // set but never used ~Labonte
+                    is_extended = true;
                     is_H3 = true;
                 }
             }
@@ -371,7 +372,7 @@ namespace antibody2{
                ( base_dihedral < extended_upper_bound ) ) {
                 // aroop_temp remove
                 // std::cout << "EXTENDED (w sb) Found" << std::endl;
-                //is_extended = true;  // set but never used ~Labonte
+                is_extended = true;
                 is_H3 = true;
             }
         }
@@ -628,7 +629,48 @@ core::pack::task::TaskFactoryOP setup_packer_task(pose::Pose & pose_in )
     } 
     
     
-    
+    Real vl_vh_packing_angle ( const pose::Pose & pose_in, AntibodyInfoOP ab_info ) {
+		
+		vector1< Size > vl_vh_residues = ab_info->get_PackingAngleResidues();
+		
+		vector1< numeric::xyzVector< Real > > vl_coord_set;
+		for (Size i=1; i<=8; ++i){
+			vl_coord_set.push_back( pose_in.residue( vl_vh_residues[i] ).xyz( "CA" ) );
+		}
+		
+		vector1< numeric::xyzVector< Real > > vh_coord_set;
+		for (Size i=9; i<=16; ++i){
+			vh_coord_set.push_back( pose_in.residue( vl_vh_residues[i] ).xyz( "CA" ) );
+		}		
+		
+		Size vl_n_res = vl_coord_set.size();
+		numeric::xyzVector< Real > vl_centroid(0.0);
+		for (Size i = 1; i <= vl_n_res; ++i) {
+			vl_centroid += vl_coord_set[i];
+		}
+		vl_centroid /= vl_n_res;
+		
+		Size vh_n_res = vh_coord_set.size();
+		numeric::xyzVector< Real > vh_centroid(0.0);
+		for (Size i = 1; i <= vh_n_res; ++i) {
+			vh_centroid += vh_coord_set[i];
+		}
+		vh_centroid /= vh_n_res;
+		
+		numeric::xyzVector< Real > vl_first_principal_component = numeric::first_principal_component( vl_coord_set );
+		numeric::xyzVector< Real > vh_first_principal_component = numeric::first_principal_component( vh_coord_set );
+		
+		vl_first_principal_component += vl_centroid;
+		vh_first_principal_component += vh_centroid;
+		
+		Real packing_angle = numeric::dihedral_degrees( vl_first_principal_component, vl_centroid, vh_centroid, vh_first_principal_component );
+		
+		if ( packing_angle > 0 ) {
+			packing_angle -= 180;
+		}
+		
+		return packing_angle;
+	}
     
     
 

@@ -90,6 +90,7 @@ core::Real global_loop_rmsd ( const core::pose::Pose & pose_in,
                               const core::pose::Pose & native_pose, 
                               loops::LoopsOP current_loop );
 
+core::Real vl_vh_packing_angle ( const core::pose::Pose & pose_in, AntibodyInfoOP ab_info );
     
     
     

@@ -453,6 +453,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 		job->add_string_real_pair("L1_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(l1) ));
 	}
 	job->add_string_real_pair("AF_constraint", constraint_score);
+	job->add_string_real_pair("VL_VH_angle", vl_vh_packing_angle( pose, ab_info_ ));
 
 	set_last_move_status( protocols::moves::MS_SUCCESS );   
 

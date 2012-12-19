@@ -58,7 +58,9 @@ enum AntibodyNumberingEnum{
 	
 enum BeginEndEnum{
     Begin = 1,
-	End
+	End,
+	Pack_Angle_Begin,
+	Pack_Angle_End
 };
     
 enum H3BaseTypeEnum{
@@ -179,6 +181,11 @@ public:
     H3BaseTypeEnum get_Predicted_H3BaseType() const {
         return predicted_H3_base_type_;
     }
+	
+	/// @brief get residues used to calculate VL/VH packing angle
+	vector1< Size > get_PackingAngleResidues() const {
+		return packing_angle_residues_;
+	}
 
     /// @brief use the H3 cterm coordinates in the pose to calculate the cterminal type
     //std::string calculate_H3_base_by_coordinates(pose::Pose const & pose) const;
@@ -206,6 +213,9 @@ private:
 	
     /// @brief setup the framework information based on the input numbering scheme
     void setup_FrameWorkInfo(pose::Pose const & pose );
+	
+	/// @brief setup the residues used to calculate VL/VH packing angle
+	void setup_VL_VH_packing_angle( pose::Pose const & pose );
     
     /// @brief predict H3 cterminus base as Kinked or Extended
     void predict_H3_base_type( pose::Pose const & pose ) ;
@@ -248,6 +258,7 @@ private:
 	loops::LoopsOP loopsop_having_allcdrs_;  // one Loops object containing the set of Loop objects for all CDRs
 	vector1< vector1<FrameWork> > framework_info_ ;
 	vector1<char> ab_sequence_;
+	vector1< Size > packing_angle_residues_;
     
 	/// Antibody properties
     AntibodyNumberingEnum numbering_scheme_;

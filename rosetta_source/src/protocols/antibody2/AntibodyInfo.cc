@@ -135,6 +135,8 @@ void AntibodyInfo::init(pose::Pose const & pose){
     
     setup_FrameWorkInfo(pose) ;
     
+	setup_VL_VH_packing_angle( pose );
+	
     predict_H3_base_type( pose );
 }
 
@@ -268,7 +270,27 @@ void AntibodyInfo::setup_FrameWorkInfo( pose::Pose const & pose ) {
 }
 	
 	
-    
+
+void AntibodyInfo::setup_VL_VH_packing_angle( pose::Pose const & pose ) {
+	
+	vector1<char> Chain_IDs_for_packing_angle;
+	for (Size i=1;i<=2;++i) { Chain_IDs_for_packing_angle.push_back('L'); } // VL
+    for (Size i=1;i<=2;++i) { Chain_IDs_for_packing_angle.push_back('H'); } // VH
+	
+	vector1< vector1< Size > > packing_angle_numbering_info = get_CDR_NumberingInfo(numbering_scheme_);
+	
+	Size packing_angle_start_in_pose, packing_angle_stop_in_pose;
+	
+	for (Size i=1; i<=4; ++i){
+		packing_angle_start_in_pose = pose.pdb_info()->pdb2pose( Chain_IDs_for_packing_angle[i], packing_angle_numbering_info[Pack_Angle_Begin][i]);
+		packing_angle_stop_in_pose = pose.pdb_info()->pdb2pose( Chain_IDs_for_packing_angle[i], packing_angle_numbering_info[Pack_Angle_End][i]);
+		for (Size j=packing_angle_start_in_pose; j<=packing_angle_stop_in_pose; j++){
+			packing_angle_residues_.push_back( j );
+		}
+	}
+}
+	
+	
 
 	
 ////////////////////////////////////////////////////////////////////////////////
@@ -509,8 +531,8 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type_new_rule( pose::Pose 
         TR << "AC Finished Detecting Regular CDR H3 Stem Type: "
     << "Kink: " << kinked_H3 << " Extended: " << extended_H3 << std::endl;
 } // detect_regular_CDR_H3_stem_type()
-    
-    
+
+	
     
 ////////////////////////////////////////////////////////////////////////////////
 ///                                                                          ///
@@ -619,7 +641,7 @@ kinematics::FoldTreeCOP AntibodyInfo::get_FoldTree_AllCDRs_LHDock( pose::Pose & 
         Size const loop_stop ( it->stop() );
         Size const loop_cutpoint ( it->cut() );
         Size edge_start(0), edge_stop(0);
-        //bool edge_found = false;
+        bool edge_found = false;
         const FoldTree & f_const = *f;
         Size const num_jump = f_const.num_jump();
         for( FoldTree::const_iterator it2=f_const.begin(), it2_end=f_const.end(); it2 !=it2_end; ++it2 ) {
@@ -628,7 +650,7 @@ kinematics::FoldTreeCOP AntibodyInfo::get_FoldTree_AllCDRs_LHDock( pose::Pose & 
             edge_start = std::min( it2->start(), it2->stop() );
             edge_stop  = std::max( it2->start(), it2->stop() );
             if ( ! it2->is_jump() && loop_start > edge_start && loop_stop < edge_stop ) {
-                //edge_found = true;  // set but never used ~Labonte
+                edge_found = true;
                 break;
             }
         }
@@ -958,11 +980,11 @@ vector1< vector1<Size> > AntibodyInfo::get_CDR_NumberingInfo(AntibodyNumberingEn
     
 
     // definte local variables
-    vector1<int> start, stop;
+    vector1<int> start, stop, pack_angle_start, pack_angle_stop;
     vector1< vector1<int> > local_numbering_info;
 
     // doesn't hurt to clear all the contents, no matter they are empty or not
-    start.clear(); stop.clear();
+    start.clear(); stop.clear(); pack_angle_start.clear(); pack_angle_stop.clear();
     for (Size i=1;i<=local_numbering_info.size(); ++i){
         local_numbering_info[i].clear();
     }
@@ -984,6 +1006,11 @@ vector1< vector1<Size> > AntibodyInfo::get_CDR_NumberingInfo(AntibodyNumberingEn
         start.push_back(24); stop.push_back(34);  //l1
         start.push_back(50); stop.push_back(56);  //l2
         start.push_back(89); stop.push_back(97);  //l3
+		// VL-VH packing angle residues
+		pack_angle_start.push_back(35); pack_angle_stop.push_back(38);  //VL
+		pack_angle_start.push_back(85); pack_angle_stop.push_back(88);  //VL
+		pack_angle_start.push_back(36); pack_angle_stop.push_back(39);  //VH
+		pack_angle_start.push_back(89); pack_angle_stop.push_back(92);  //VH
     }
     //**********************************************************************************
     //  Chothia Numbering                                                              *
@@ -998,6 +1025,11 @@ vector1< vector1<Size> > AntibodyInfo::get_CDR_NumberingInfo(AntibodyNumberingEn
         start.push_back(24); stop.push_back(34);  //l1
         start.push_back(50); stop.push_back(56);  //l2
         start.push_back(89); stop.push_back(97);  //l3
+		// VL-VH packing angle residues
+		pack_angle_start.push_back(35); pack_angle_stop.push_back(38);  //VL
+		pack_angle_start.push_back(85); pack_angle_stop.push_back(88);  //VL
+		pack_angle_start.push_back(36); pack_angle_stop.push_back(39);  //VH
+		pack_angle_start.push_back(89); pack_angle_stop.push_back(92);  //VH
     }
 
     //**********************************************************************************
@@ -1030,6 +1062,8 @@ vector1< vector1<Size> > AntibodyInfo::get_CDR_NumberingInfo(AntibodyNumberingEn
 	
 	local_numbering_info.push_back(start);
 	local_numbering_info.push_back(stop);
+	local_numbering_info.push_back(pack_angle_start);
+	local_numbering_info.push_back(pack_angle_stop);
 	return local_numbering_info;
 }
 
