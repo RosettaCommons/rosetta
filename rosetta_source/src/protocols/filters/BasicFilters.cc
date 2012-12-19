@@ -108,12 +108,16 @@ StochasticFilter::parse_my_tag(
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // @brief Used to define a compound logical statement involving other filters with
 // AND, OR and XOR
-CompoundFilter::CompoundFilter() : Filter( "CompoundStatement" ) {}
+CompoundFilter::CompoundFilter() :
+		Filter( "CompoundStatement" ),
+		invert_(false)
+ {}
 CompoundFilter::~CompoundFilter() {}
 
 CompoundFilter::CompoundFilter( CompoundStatement const & compound_statement ) :
 	Filter( "CompoundStatement" ),
-	compound_statement_( compound_statement )
+	compound_statement_( compound_statement ),
+	invert_(false)
 {}
 
 bool
@@ -207,6 +211,7 @@ CompoundFilter::compute( Pose const & pose ) const
 			}
 		}
 	}
+	if( invert_ ) value = !value;
 	return( value );
 }
 
@@ -239,6 +244,12 @@ CompoundFilter::end() const
 	return( compound_statement_.end() );
 }
 
+void
+CompoundFilter::invert( bool const inv )
+{
+	invert_ = inv;
+}
+
 /// @details call the compound statement's constituent filters' set_resid
 void
 CompoundFilter::set_resid( core::Size const resid )
@@ -256,6 +267,7 @@ CompoundFilter::parse_my_tag(
 	Pose const & )
 {
 	TR<<"CompoundStatement"<<std::endl;
+	invert_ = tag->getOption<bool>( "invert", false );
 
 	foreach(TagPtr cmp_tag_ptr, tag->getTags() ){
 		std::string const operation( cmp_tag_ptr->getName() );

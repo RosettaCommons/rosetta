@@ -140,7 +140,7 @@ InterfacePackingFilter::compute( core::pose::Pose const & pose ) const{
 		sym_dof_name = sym_dof_name_list[i];
 
 		if (sym_dof_name == "") {
-			utility_exit_with_message("The required argument, sym_dof_names, for the InterfacePackingFilter was now set properly.");
+			utility_exit_with_message("The required argument, sym_dof_names, for the InterfacePackingFilter was not set properly.");
 		}
 
 		int	sym_aware_jump_id = core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_name );
@@ -159,7 +159,6 @@ InterfacePackingFilter::compute( core::pose::Pose const & pose ) const{
 			if ( is_upstream(i) ) continue;
 			if ( start ) monomer_lower_bound = i;
 			start = false;
-			//monomer_upper_bound = i;  // set but never used ~Labonte
 			nres_monomer++;
 		}
 		TR << "nres_monomer: " << nres_monomer << " for sym_dof_name: " << sym_dof_name << std::endl;

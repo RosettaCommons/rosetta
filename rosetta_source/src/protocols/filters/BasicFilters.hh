@@ -102,6 +102,7 @@ public:
 	iterator end();
 	const_iterator end() const;
 	virtual void set_resid( core::Size const resid );
+	void invert( bool const inv );
 
 	void parse_my_tag(
 		utility::tag::TagPtr const,
@@ -113,6 +114,7 @@ public:
 private:
 	core::Real threashold_;
 	CompoundStatement compound_statement_;
+	bool invert_;
 };
 
 /// @brief Used to combine multiple seperate filters into a single filter value
