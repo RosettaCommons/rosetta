@@ -2,118 +2,193 @@ symmetry_name C37
 subunits 37
 number_of_interfaces 36
 E = 2*S1  + 1*(S1:S2) + 1*(S1:S3) + 1*(S1:S4) + 1*(S1:S5) + 1*(S1:S6) + 1*(S1:S7) + 1*(S1:S8) + 1*(S1:S9) + 1*(S1:S10) + 1*(S1:S11) + 1*(S1:S12) + 1*(S1:S13) + 1*(S1:S14) + 1*(S1:S15) + 1*(S1:S16) + 1*(S1:S17) + 1*(S1:S18) + 1*(S1:S19) + 1*(S1:S20) + 1*(S1:S21) + 1*(S1:S22) + 1*(S1:S23) + 1*(S1:S24) + 1*(S1:S25) + 1*(S1:S26) + 1*(S1:S27) + 1*(S1:S28) + 1*(S1:S29) + 1*(S1:S30) + 1*(S1:S31) + 1*(S1:S32) + 1*(S1:S33) + 1*(S1:S34) + 1*(S1:S35) + 1*(S1:S36) + 1*(S1:S37)
-anchor_residue 1
+anchor_residue COM
 virtual_coordinates_start
+xyz C1 0,0,1 +0.0000000,+1.0000000,0 0,0,0
 xyz S1 0,0,1 +0.0000000,+1.0000000,0 0,0,0
+xyz C2 0,0,1 +0.1690008,+0.9856159,0 0,0,0
 xyz S2 0,0,1 +0.1690008,+0.9856159,0 0,0,0
+xyz C3 0,0,1 +0.3331398,+0.9428774,0 0,0,0
 xyz S3 0,0,1 +0.3331398,+0.9428774,0 0,0,0
+xyz C4 0,0,1 +0.4876949,+0.8730141,0 0,0,0
 xyz S4 0,0,1 +0.4876949,+0.8730141,0 0,0,0
+xyz C5 0,0,1 +0.6282200,+0.7780358,0 0,0,0
 xyz S5 0,0,1 +0.6282200,+0.7780358,0 0,0,0
+xyz C6 0,0,1 +0.7506723,+0.6606747,0 0,0,0
 xyz S6 0,0,1 +0.7506723,+0.6606747,0 0,0,0
+xyz C7 0,0,1 +0.8515291,+0.5243073,0 0,0,0
 xyz S7 0,0,1 +0.8515291,+0.5243073,0 0,0,0
+xyz C8 0,0,1 +0.9278890,+0.3728565,0 0,0,0
 xyz S8 0,0,1 +0.9278890,+0.3728565,0 0,0,0
+xyz C9 0,0,1 +0.9775552,+0.2106793,0 0,0,0
 xyz S9 0,0,1 +0.9775552,+0.2106793,0 0,0,0
+xyz C10 0,0,1 +0.9990990,+0.0424412,0 0,0,0
 xyz S10 0,0,1 +0.9990990,+0.0424412,0 0,0,0
+xyz C11 0,0,1 +0.9919004,-0.1270178,0 0,0,0
 xyz S11 0,0,1 +0.9919004,-0.1270178,0 0,0,0
+xyz C12 0,0,1 +0.9561667,-0.2928228,0 0,0,0
 xyz S12 0,0,1 +0.9561667,-0.2928228,0 0,0,0
+xyz C13 0,0,1 +0.8929259,-0.4502037,0 0,0,0
 xyz S13 0,0,1 +0.8929259,-0.4502037,0 0,0,0
+xyz C14 0,0,1 +0.8039971,-0.5946332,0 0,0,0
 xyz S14 0,0,1 +0.8039971,-0.5946332,0 0,0,0
+xyz C15 0,0,1 +0.6919389,-0.7219561,0 0,0,0
 xyz S15 0,0,1 +0.6919389,-0.7219561,0 0,0,0
+xyz C16 0,0,1 +0.5599748,-0.8285096,0 0,0,0
 xyz S16 0,0,1 +0.5599748,-0.8285096,0 0,0,0
+xyz C17 0,0,1 +0.4119012,-0.9112285,0 0,0,0
 xyz S17 0,0,1 +0.4119012,-0.9112285,0 0,0,0
+xyz C18 0,0,1 +0.2519781,-0.9677329,0 0,0,0
 xyz S18 0,0,1 +0.2519781,-0.9677329,0 0,0,0
+xyz C19 0,0,1 +0.0848059,-0.9963975,0 0,0,0
 xyz S19 0,0,1 +0.0848059,-0.9963975,0 0,0,0
+xyz C20 0,0,1 -0.0848059,-0.9963975,0 0,0,0
 xyz S20 0,0,1 -0.0848059,-0.9963975,0 0,0,0
+xyz C21 0,0,1 -0.2519781,-0.9677329,0 0,0,0
 xyz S21 0,0,1 -0.2519781,-0.9677329,0 0,0,0
+xyz C22 0,0,1 -0.4119012,-0.9112285,0 0,0,0
 xyz S22 0,0,1 -0.4119012,-0.9112285,0 0,0,0
+xyz C23 0,0,1 -0.5599748,-0.8285096,0 0,0,0
 xyz S23 0,0,1 -0.5599748,-0.8285096,0 0,0,0
+xyz C24 0,0,1 -0.6919389,-0.7219561,0 0,0,0
 xyz S24 0,0,1 -0.6919389,-0.7219561,0 0,0,0
+xyz C25 0,0,1 -0.8039971,-0.5946332,0 0,0,0
 xyz S25 0,0,1 -0.8039971,-0.5946332,0 0,0,0
+xyz C26 0,0,1 -0.8929259,-0.4502037,0 0,0,0
 xyz S26 0,0,1 -0.8929259,-0.4502037,0 0,0,0
+xyz C27 0,0,1 -0.9561667,-0.2928228,0 0,0,0
 xyz S27 0,0,1 -0.9561667,-0.2928228,0 0,0,0
+xyz C28 0,0,1 -0.9919004,-0.1270178,0 0,0,0
 xyz S28 0,0,1 -0.9919004,-0.1270178,0 0,0,0
+xyz C29 0,0,1 -0.9990990,+0.0424412,0 0,0,0
 xyz S29 0,0,1 -0.9990990,+0.0424412,0 0,0,0
+xyz C30 0,0,1 -0.9775552,+0.2106793,0 0,0,0
 xyz S30 0,0,1 -0.9775552,+0.2106793,0 0,0,0
+xyz C31 0,0,1 -0.9278890,+0.3728565,0 0,0,0
 xyz S31 0,0,1 -0.9278890,+0.3728565,0 0,0,0
+xyz C32 0,0,1 -0.8515291,+0.5243073,0 0,0,0
 xyz S32 0,0,1 -0.8515291,+0.5243073,0 0,0,0
+xyz C33 0,0,1 -0.7506723,+0.6606747,0 0,0,0
 xyz S33 0,0,1 -0.7506723,+0.6606747,0 0,0,0
+xyz C34 0,0,1 -0.6282200,+0.7780358,0 0,0,0
 xyz S34 0,0,1 -0.6282200,+0.7780358,0 0,0,0
+xyz C35 0,0,1 -0.4876949,+0.8730141,0 0,0,0
 xyz S35 0,0,1 -0.4876949,+0.8730141,0 0,0,0
+xyz C36 0,0,1 -0.3331398,+0.9428774,0 0,0,0
 xyz S36 0,0,1 -0.3331398,+0.9428774,0 0,0,0
+xyz C37 0,0,1 -0.1690008,+0.9856159,0 0,0,0
 xyz S37 0,0,1 -0.1690008,+0.9856159,0 0,0,0
 virtual_coordinates_stop
-connect_virtual J2 S1 S2
-connect_virtual J3 S1 S3
-connect_virtual J4 S1 S4
-connect_virtual J5 S1 S5
-connect_virtual J6 S1 S6
-connect_virtual J7 S1 S7
-connect_virtual J8 S1 S8
-connect_virtual J9 S1 S9
-connect_virtual J10 S1 S10
-connect_virtual J11 S1 S11
-connect_virtual J12 S1 S12
-connect_virtual J13 S1 S13
-connect_virtual J14 S1 S14
-connect_virtual J15 S1 S15
-connect_virtual J16 S1 S16
-connect_virtual J17 S1 S17
-connect_virtual J18 S1 S18
-connect_virtual J19 S1 S19
-connect_virtual J20 S1 S20
-connect_virtual J21 S1 S21
-connect_virtual J22 S1 S22
-connect_virtual J23 S1 S23
-connect_virtual J24 S1 S24
-connect_virtual J25 S1 S25
-connect_virtual J26 S1 S26
-connect_virtual J27 S1 S27
-connect_virtual J28 S1 S28
-connect_virtual J29 S1 S29
-connect_virtual J30 S1 S30
-connect_virtual J31 S1 S31
-connect_virtual J32 S1 S32
-connect_virtual J33 S1 S33
-connect_virtual J34 S1 S34
-connect_virtual J35 S1 S35
-connect_virtual J36 S1 S36
-connect_virtual J37 S1 S37
-connect_virtual JS1 S1 SUBUNIT
-connect_virtual JS2 S2 SUBUNIT
-connect_virtual JS3 S3 SUBUNIT
-connect_virtual JS4 S4 SUBUNIT
-connect_virtual JS5 S5 SUBUNIT
-connect_virtual JS6 S6 SUBUNIT
-connect_virtual JS7 S7 SUBUNIT
-connect_virtual JS8 S8 SUBUNIT
-connect_virtual JS9 S9 SUBUNIT
-connect_virtual JS10 S10 SUBUNIT
-connect_virtual JS11 S11 SUBUNIT
-connect_virtual JS12 S12 SUBUNIT
-connect_virtual JS13 S13 SUBUNIT
-connect_virtual JS14 S14 SUBUNIT
-connect_virtual JS15 S15 SUBUNIT
-connect_virtual JS16 S16 SUBUNIT
-connect_virtual JS17 S17 SUBUNIT
-connect_virtual JS18 S18 SUBUNIT
-connect_virtual JS19 S19 SUBUNIT
-connect_virtual JS20 S20 SUBUNIT
-connect_virtual JS21 S21 SUBUNIT
-connect_virtual JS22 S22 SUBUNIT
-connect_virtual JS23 S23 SUBUNIT
-connect_virtual JS24 S24 SUBUNIT
-connect_virtual JS25 S25 SUBUNIT
-connect_virtual JS26 S26 SUBUNIT
-connect_virtual JS27 S27 SUBUNIT
-connect_virtual JS28 S28 SUBUNIT
-connect_virtual JS29 S29 SUBUNIT
-connect_virtual JS30 S30 SUBUNIT
-connect_virtual JS31 S31 SUBUNIT
-connect_virtual JS32 S32 SUBUNIT
-connect_virtual JS33 S33 SUBUNIT
-connect_virtual JS34 S34 SUBUNIT
-connect_virtual JS35 S35 SUBUNIT
-connect_virtual JS36 S36 SUBUNIT
-connect_virtual JS37 S37 SUBUNIT
+connect_virtual JS1 C1 S1
+connect_virtual JS1S S1 SUBUNIT
+connect_virtual JC2 C1 C2
+connect_virtual JS2 C2 S2
+connect_virtual JS2S S2 SUBUNIT
+connect_virtual JC3 C1 C3
+connect_virtual JS3 C3 S3
+connect_virtual JS3S S3 SUBUNIT
+connect_virtual JC4 C1 C4
+connect_virtual JS4 C4 S4
+connect_virtual JS4S S4 SUBUNIT
+connect_virtual JC5 C1 C5
+connect_virtual JS5 C5 S5
+connect_virtual JS5S S5 SUBUNIT
+connect_virtual JC6 C1 C6
+connect_virtual JS6 C6 S6
+connect_virtual JS6S S6 SUBUNIT
+connect_virtual JC7 C1 C7
+connect_virtual JS7 C7 S7
+connect_virtual JS7S S7 SUBUNIT
+connect_virtual JC8 C1 C8
+connect_virtual JS8 C8 S8
+connect_virtual JS8S S8 SUBUNIT
+connect_virtual JC9 C1 C9
+connect_virtual JS9 C9 S9
+connect_virtual JS9S S9 SUBUNIT
+connect_virtual JC10 C1 C10
+connect_virtual JS10 C10 S10
+connect_virtual JS10S S10 SUBUNIT
+connect_virtual JC11 C1 C11
+connect_virtual JS11 C11 S11
+connect_virtual JS11S S11 SUBUNIT
+connect_virtual JC12 C1 C12
+connect_virtual JS12 C12 S12
+connect_virtual JS12S S12 SUBUNIT
+connect_virtual JC13 C1 C13
+connect_virtual JS13 C13 S13
+connect_virtual JS13S S13 SUBUNIT
+connect_virtual JC14 C1 C14
+connect_virtual JS14 C14 S14
+connect_virtual JS14S S14 SUBUNIT
+connect_virtual JC15 C1 C15
+connect_virtual JS15 C15 S15
+connect_virtual JS15S S15 SUBUNIT
+connect_virtual JC16 C1 C16
+connect_virtual JS16 C16 S16
+connect_virtual JS16S S16 SUBUNIT
+connect_virtual JC17 C1 C17
+connect_virtual JS17 C17 S17
+connect_virtual JS17S S17 SUBUNIT
+connect_virtual JC18 C1 C18
+connect_virtual JS18 C18 S18
+connect_virtual JS18S S18 SUBUNIT
+connect_virtual JC19 C1 C19
+connect_virtual JS19 C19 S19
+connect_virtual JS19S S19 SUBUNIT
+connect_virtual JC20 C1 C20
+connect_virtual JS20 C20 S20
+connect_virtual JS20S S20 SUBUNIT
+connect_virtual JC21 C1 C21
+connect_virtual JS21 C21 S21
+connect_virtual JS21S S21 SUBUNIT
+connect_virtual JC22 C1 C22
+connect_virtual JS22 C22 S22
+connect_virtual JS22S S22 SUBUNIT
+connect_virtual JC23 C1 C23
+connect_virtual JS23 C23 S23
+connect_virtual JS23S S23 SUBUNIT
+connect_virtual JC24 C1 C24
+connect_virtual JS24 C24 S24
+connect_virtual JS24S S24 SUBUNIT
+connect_virtual JC25 C1 C25
+connect_virtual JS25 C25 S25
+connect_virtual JS25S S25 SUBUNIT
+connect_virtual JC26 C1 C26
+connect_virtual JS26 C26 S26
+connect_virtual JS26S S26 SUBUNIT
+connect_virtual JC27 C1 C27
+connect_virtual JS27 C27 S27
+connect_virtual JS27S S27 SUBUNIT
+connect_virtual JC28 C1 C28
+connect_virtual JS28 C28 S28
+connect_virtual JS28S S28 SUBUNIT
+connect_virtual JC29 C1 C29
+connect_virtual JS29 C29 S29
+connect_virtual JS29S S29 SUBUNIT
+connect_virtual JC30 C1 C30
+connect_virtual JS30 C30 S30
+connect_virtual JS30S S30 SUBUNIT
+connect_virtual JC31 C1 C31
+connect_virtual JS31 C31 S31
+connect_virtual JS31S S31 SUBUNIT
+connect_virtual JC32 C1 C32
+connect_virtual JS32 C32 S32
+connect_virtual JS32S S32 SUBUNIT
+connect_virtual JC33 C1 C33
+connect_virtual JS33 C33 S33
+connect_virtual JS33S S33 SUBUNIT
+connect_virtual JC34 C1 C34
+connect_virtual JS34 C34 S34
+connect_virtual JS34S S34 SUBUNIT
+connect_virtual JC35 C1 C35
+connect_virtual JS35 C35 S35
+connect_virtual JS35S S35 SUBUNIT
+connect_virtual JC36 C1 C36
+connect_virtual JS36 C36 S36
+connect_virtual JS36S S36 SUBUNIT
+connect_virtual JC37 C1 C37
+connect_virtual JS37 C37 S37
+connect_virtual JS37S S37 SUBUNIT
 set_dof JS1 x y angle_x angle_y angle_z
-set_jump_group GJS JS1 JS2 JS3 JS4 JS5 JS6 JS7 JS8 JS9 JS10 JS11 JS12 JS13 JS14 JS15 JS16 JS17 JS18 JS19 JS20 JS21 JS22 JS23 JS24 JS25 JS26 JS27 JS28 JS29 JS30 JS31 JS32 JS33 JS34 JS35 JS36 JS37
+set_jump_group JGS JS1 JS2 JS3 JS4 JS5 JS6 JS7 JS8 JS9 JS10 JS11 JS12 JS13 JS14 JS15 JS16 JS17 JS18 JS19 JS20 JS21 JS22 JS23 JS24 JS25 JS26 JS27 JS28 JS29 JS30 JS31 JS32 JS33 JS34 JS35 JS36 JS37
+set_jump_group JGSS JS1S JS2S JS3S JS4S JS5S JS6S JS7S JS8S JS9S JS10S JS11S JS12S JS13S JS14S JS15S JS16S JS17S JS18S JS19S JS20S JS21S JS22S JS23S JS24S JS25S JS26S JS27S JS28S JS29S JS30S JS31S JS32S JS33S JS34S JS35S JS36S JS37S

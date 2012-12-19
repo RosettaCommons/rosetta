@@ -2,25 +2,38 @@ symmetry_name C6
 subunits 6
 number_of_interfaces 5
 E = 2*S1  + 1*(S1:S2) + 1*(S1:S3) + 1*(S1:S4) + 1*(S1:S5) + 1*(S1:S6)
-anchor_residue 1
+anchor_residue COM
 virtual_coordinates_start
+xyz C1 0,0,1 +0.0000000,+1.0000000,0 0,0,0
 xyz S1 0,0,1 +0.0000000,+1.0000000,0 0,0,0
+xyz C2 0,0,1 +0.8660254,+0.5000000,0 0,0,0
 xyz S2 0,0,1 +0.8660254,+0.5000000,0 0,0,0
+xyz C3 0,0,1 +0.8660254,-0.5000000,0 0,0,0
 xyz S3 0,0,1 +0.8660254,-0.5000000,0 0,0,0
+xyz C4 0,0,1 +0.0000000,-1.0000000,0 0,0,0
 xyz S4 0,0,1 +0.0000000,-1.0000000,0 0,0,0
+xyz C5 0,0,1 -0.8660254,-0.5000000,0 0,0,0
 xyz S5 0,0,1 -0.8660254,-0.5000000,0 0,0,0
+xyz C6 0,0,1 -0.8660254,+0.5000000,0 0,0,0
 xyz S6 0,0,1 -0.8660254,+0.5000000,0 0,0,0
 virtual_coordinates_stop
-connect_virtual J2 S1 S2
-connect_virtual J3 S1 S3
-connect_virtual J4 S1 S4
-connect_virtual J5 S1 S5
-connect_virtual J6 S1 S6
-connect_virtual JS1 S1 SUBUNIT
-connect_virtual JS2 S2 SUBUNIT
-connect_virtual JS3 S3 SUBUNIT
-connect_virtual JS4 S4 SUBUNIT
-connect_virtual JS5 S5 SUBUNIT
-connect_virtual JS6 S6 SUBUNIT
+connect_virtual JS1 C1 S1
+connect_virtual JS1S S1 SUBUNIT
+connect_virtual JC2 C1 C2
+connect_virtual JS2 C2 S2
+connect_virtual JS2S S2 SUBUNIT
+connect_virtual JC3 C1 C3
+connect_virtual JS3 C3 S3
+connect_virtual JS3S S3 SUBUNIT
+connect_virtual JC4 C1 C4
+connect_virtual JS4 C4 S4
+connect_virtual JS4S S4 SUBUNIT
+connect_virtual JC5 C1 C5
+connect_virtual JS5 C5 S5
+connect_virtual JS5S S5 SUBUNIT
+connect_virtual JC6 C1 C6
+connect_virtual JS6 C6 S6
+connect_virtual JS6S S6 SUBUNIT
 set_dof JS1 x y angle_x angle_y angle_z
-set_jump_group GJS JS1 JS2 JS3 JS4 JS5 JS6
+set_jump_group JGS JS1 JS2 JS3 JS4 JS5 JS6
+set_jump_group JGSS JS1S JS2S JS3S JS4S JS5S JS6S
