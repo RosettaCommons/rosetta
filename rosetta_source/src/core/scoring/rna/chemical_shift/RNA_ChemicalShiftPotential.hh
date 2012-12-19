@@ -105,7 +105,7 @@ class RNA_ChemicalShiftPotential : public utility::pointer::ReferenceCount{
 		string_list(std::string const string_one) const;
 
 		utility::vector1< std::string > 
-		string_list(std::string const string_one, std::string const string_one) const;
+		string_list(std::string const string_one, std::string const string_two) const;
 
 		
 
