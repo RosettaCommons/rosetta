@@ -29,7 +29,7 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 
 
-#include <core/pack/task/PackerTask.hh>
+//#include <core/pack/task/PackerTask.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
@@ -99,6 +99,7 @@ DNATorsionEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const 
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+/*
 void
 DNATorsionEnergy::setup_for_packing( pose::Pose & pose, pack::task::PackerTask const & task ) const{
 	//	if ( constraints_ready_) return;
@@ -111,7 +112,7 @@ DNATorsionEnergy::setup_for_packing( pose::Pose & pose, pack::task::PackerTask c
 
 	constraints_ready_ = true;
 }
-
+*/
 ///////////////////////////////////////////////////////////////////////////////
 void
 DNATorsionEnergy::residue_pair_energy(

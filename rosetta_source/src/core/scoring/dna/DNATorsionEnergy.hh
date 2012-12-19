@@ -27,7 +27,7 @@
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/pack/task/PackerTask.hh>
+//#include <core/pack/task/PackerTask.hh>
 
 #include <map>
 
@@ -66,9 +66,9 @@ public:
  	setup_for_derivatives( pose::Pose &pose, ScoreFunction const &scfxn ) const;
 
 	//
-	virtual
-	void
-	setup_for_packing( pose::Pose & pose, pack::task::PackerTask const & ) const;
+//	virtual
+//	void
+//	setup_for_packing( pose::Pose & pose, pack::task::PackerTask const & ) const;
 
 	/// @brief Evaluate the intra-residue constraint energy for a given residue
 	virtual
