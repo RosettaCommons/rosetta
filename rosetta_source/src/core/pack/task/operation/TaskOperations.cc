@@ -184,6 +184,7 @@ RestrictAbsentCanonicalAAS::keep_aas( std::string const keep )
 	keep_aas( canonical_aas_to_keep );
 }
 
+// if an amino acid is not present (false) in the boolean vector, then do not allow it at this position.  The boolean vector is a 20-length vector in alphabetical order by one-letter code. 
 void
 RestrictAbsentCanonicalAAS::keep_aas( utility::vector1< bool > const keep )
 {

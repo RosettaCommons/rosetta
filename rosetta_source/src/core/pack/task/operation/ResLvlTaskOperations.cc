@@ -66,6 +66,7 @@ void RestrictAbsentCanonicalAASRLT::apply( ResidueLevelTask & rlt ) const
 	rlt.restrict_absent_canonical_aas( canonical_aas_to_keep_ );
 }
 
+// if an amino acid is not present (false) in the boolean vector, then do not allow it at this position.  The boolean vector is a 20-length vector in alphabetical order by one-letter code.
 void RestrictAbsentCanonicalAASRLT::aas_to_keep( utility::vector1< bool > const & aa_flags )
 {
 	runtime_assert( aa_flags.size() == chemical::num_canonical_aas );

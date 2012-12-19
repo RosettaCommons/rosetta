@@ -109,7 +109,7 @@ public:
 
 	/// @brief a human-readible string-based mutator
 	void keep_aas( std::string const keep_aas );
-	/// @brief direct vector1-basd mutator
+	/// @brief direct vector1-basd mutator.  If an amino acid is not present (false) in the boolean vector, then do not allow it at this position.  The boolean vector is a 20-length vector in alphabetical order by one-letter code.
 	void keep_aas( utility::vector1< bool > keep_aas );
 	virtual void parse_tag( TagPtr );
 	void include_residue( core::Size const resid );
