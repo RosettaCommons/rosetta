@@ -45,31 +45,31 @@ namespace chemical_shift {
 
 
 enum atomitem{oshi = 1, xdir, ydir, zdir, csca, suga, rcl1, rcl2, rcl3, maca, maqx, maqw, maqy, maqz, marx, mary, marz, chco, chrg, last_atomdesc}; 
-								//1			2			3			4			5			6		 7     8      9    10			11		  12		13			14			15			16			17			18			19			20
+                   //1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18    19              20
 
-		//const char* const atomdesc[] = {"OSHI", "XDIR", "YDIR", "ZDIR", "CSCA", "SUGA", 
-		//				"RCL1", "RCL2", "RCL3", "MACA", "MAQX", "MAQW", 
-		//				"MAQY", "MAQZ", "MARX", "MARY", "MARZ", "CHCO", 
-		//				"CHRG"};
-		// Numerical data in the description of atoms (add 4 letter abbs
-		// for new data, used by new calculations in this list)
-		// and add the same abbs in the same order in the enum line above
-		// (before last_atomdesc)
+        //const char* const atomdesc[] = {"OSHI", "XDIR", "YDIR", "ZDIR", "CSCA", "SUGA", 
+        //              "RCL1", "RCL2", "RCL3", "MACA", "MAQX", "MAQW", 
+        //              "MAQY", "MAQZ", "MARX", "MARY", "MARZ", "CHCO", 
+        //              "CHRG"};
+        // Numerical data in the description of atoms (add 4 letter abbs
+        // for new data, used by new calculations in this list)
+        // and add the same abbs in the same order in the enum line above
+        // (before last_atomdesc)
 
- 			// OSHI, offset of the chemical shift calculation
-	 		// XDIR, YDIR, ZDIR x-axis, y-axis, z-axis
-			// from mean of all atoms tagged 1 to mean of all atoms tagged 2
-			// CSCA has to be nonzero if the chemical shift must be calculated for the atom
-	 		// SUGA has to be true if an atom counts to the sugar part
-			// Magnetic anisotropy and Ring current are not calculated for base
-			// protons they are however for the sugar protons.
-	 		// MA is data for MAGNETIC ANISOTROPY MODULE
-	   	// MACA has to be nonzero if this atom gives no contribution to MA
-	   	// MAQ/MAR are the Q and R tensors. MAQW = the Qxy tensor!
-	 		// CHCO must be the atom number to which te hydrogen is attached 
-	 			//   if the csd due to the electrical field has to be calculated for
-	 			//   this hydrogen atom
-	 		// CHRG charge information for an atom
+        // OSHI, offset of the chemical shift calculation
+        // XDIR, YDIR, ZDIR x-axis, y-axis, z-axis
+        // from mean of all atoms tagged 1 to mean of all atoms tagged 2
+        // CSCA has to be nonzero if the chemical shift must be calculated for the atom
+        // SUGA has to be true if an atom counts to the sugar part
+        // Magnetic anisotropy and Ring current are not calculated for base
+        // protons they are however for the sugar protons.
+        // MA is data for MAGNETIC ANISOTROPY MODULE
+        // MACA has to be nonzero if this atom gives no contribution to MA
+        // MAQ/MAR are the Q and R tensors. MAQW = the Qxy tensor!
+        // CHCO must be the atom number to which te hydrogen is attached 
+        //   if the csd due to the electrical field has to be calculated for
+        //   this hydrogen atom
+        // CHRG charge information for an atom
 
 
 
@@ -86,29 +86,29 @@ class RNA_CS_residue_parameters : public utility::pointer::ReferenceCount {
 
 		std::string const base_name() const;
 
-		Size const num_rings() const;
+		Size num_rings() const;
 
-		Real const ring_intensity(Size const ring_ID) const;
+		Real ring_intensity(Size const ring_ID) const;
 
-		Real const ring_radius(Size const ring_ID) const;
+		Real ring_radius(Size const ring_ID) const;
 
-		Real const ring_height(Size const ring_ID) const;
+		Real ring_height(Size const ring_ID) const;
 
-		Size const get_atomnames_size() const;
+		Size get_atomnames_size() const;
 
 		std::string const get_atomname(Size const count) const;
 
 		utility::vector1< std::string > const & get_ring_center_representative_atoms() const;
 
-		Real const atom_data(Size const atom, atomitem const item) const;
+		Real atom_data(Size const atom, atomitem const item) const;
 
-		Real const ring_current_coeff() const;
+		Real ring_current_coeff() const;
 
-		Real const magentic_anisotropy_r_coeff() const;
+		Real magentic_anisotropy_r_coeff() const;
 
-		Real const magentic_anisotropy_q_coeff() const;
+		Real magentic_anisotropy_q_coeff() const;
 
-		chemical::AA const aa() const;
+		chemical::AA aa() const;
 
 	private:
 

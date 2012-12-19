@@ -31,15 +31,15 @@ namespace chemical_shift {
 	RNA_CS_residue_parameters::RNA_CS_residue_parameters(chemical::AA const & res_aa):
 		res_aa_(res_aa),
 		maxatoms_(40),
-    // Numerical data which is not specific for one of the bases
+        // Numerical data which is not specific for one of the bases
 		RCCO_(2.13),  // RCCO Constant in the formula for calculating the ring current effect
 		MACQ_(5.368), // MACQ Constant for the q factor of the Magnetic Anisotropy (this is the paramagnetic component coefficient)
 		MACR_(1.967)  // MACR Constant for the r factor of the Magnetic Anisotropy (this is the diamagnetic component coefficient)
 		//Currently no including charge parameters:        
 		// CHAC a coefficent for charge calculation
-    // CHBC b coefficent for charge calculation
-    // CONV conversion factor in charge calculation
-    // CHD0 dielectric constant 0th order
+        // CHBC b coefficent for charge calculation
+        // CONV conversion factor in charge calculation
+        // CHD0 dielectric constant 0th order
 	 	// CHD1 dielectric constant 1st order
 	{
 
@@ -95,27 +95,27 @@ namespace chemical_shift {
 			//MARY  5.283 5.308  4.902  5.615 5.842  5.349 5.267 4.980 5.537  4.942
 			//MARZ  5.206 5.494  5.212  5.648 5.716  5.515 4.606 5.252 5.609  4.443 
 	  
-			atomnames_.push_back("N1");	//1 	
+			atomnames_.push_back("N1");	//1
 			atomnames_.push_back("C2");	//2
 			atomnames_.push_back("N3");	//3
-			atomnames_.push_back("C4");	//4						
-			atomnames_.push_back("C5");	//5		
-			atomnames_.push_back("C6");	//6	
-			atomnames_.push_back("N6");	//7		
-			atomnames_.push_back("N7");	//8			
-			atomnames_.push_back("C8");	//9			
-			atomnames_.push_back("N9");	//10			
+			atomnames_.push_back("C4");	//4
+			atomnames_.push_back("C5");	//5
+			atomnames_.push_back("C6");	//6
+			atomnames_.push_back("N6");	//7
+			atomnames_.push_back("N7");	//8
+			atomnames_.push_back("C8");	//9
+			atomnames_.push_back("N9");	//10
 
-																																	realatomdata_[1 ][rcl1]=1.0; 																   	
-			realatomdata_[2 ][xdir]=2.0;  	realatomdata_[2 ][ydir]=2.0;  	realatomdata_[2 ][rcl1]=1.0;																   	
-																		realatomdata_[3 ][ydir]=1.0;  	realatomdata_[3 ][rcl1]=1.0;																 
-			realatomdata_[4 ][xdir]=1.0;  	realatomdata_[4 ][ydir]=2.0;  	realatomdata_[4 ][rcl1]=1.0;   		realatomdata_[4 ][rcl2]=1.0; 
-																																	realatomdata_[5 ][rcl1]=1.0;  	 	realatomdata_[5 ][rcl2]=1.0; 
-																																	realatomdata_[6 ][rcl1]=1.0;																 
-																																																														 
-																																																	realatomdata_[8 ][rcl2]=1.0; 
-																																																	realatomdata_[9 ][rcl2]=1.0; 
-																																																	realatomdata_[10][rcl2]=1.0; 
+                                                                            realatomdata_[1 ][rcl1]=1.0;
+            realatomdata_[2 ][xdir]=2.0;    realatomdata_[2 ][ydir]=2.0;    realatomdata_[2 ][rcl1]=1.0;
+                                            realatomdata_[3 ][ydir]=1.0;    realatomdata_[3 ][rcl1]=1.0;
+            realatomdata_[4 ][xdir]=1.0;    realatomdata_[4 ][ydir]=2.0;    realatomdata_[4 ][rcl1]=1.0;    realatomdata_[4 ][rcl2]=1.0; 
+                                                                            realatomdata_[5 ][rcl1]=1.0;    realatomdata_[5 ][rcl2]=1.0; 
+                                                                            realatomdata_[6 ][rcl1]=1.0;
+
+                                                                                                            realatomdata_[8 ][rcl2]=1.0; 
+                                                                                                            realatomdata_[9 ][rcl2]=1.0; 
+                                                                                                            realatomdata_[10][rcl2]=1.0; 
 
 			realatomdata_[1 ][maca]=1.0;  	realatomdata_[1 ][maqx]=2.943;	realatomdata_[1 ][maqw]=-0.524;		realatomdata_[1 ][maqy]=2.644; 
 			realatomdata_[2 ][maca]=1.0;  	realatomdata_[2 ][maqx]=3.050;	realatomdata_[2 ][maqw]= 0.404;		realatomdata_[2 ][maqy]=2.700;     
@@ -191,7 +191,7 @@ namespace chemical_shift {
 			ring_height_.push_back(0.5660); //RCH1 0.5660
 			ring_height_.push_back(0.5660); //RCH2 0.5660
 
-			//  		  1     2      3      4     5      6     7     8     9      10     11
+			//      1     2      3      4     5      6     7     8     9      10     11
 			//ATOM  N1    C2     N2    N3    C4     C5     C6    O6    N7     C8     N9
 			//XDIR  0     2      0     0     1      0      0     0     0      0      0
 			//YDIR  0     2      0     1     2      0      0     0     0      0      0
@@ -206,29 +206,29 @@ namespace chemical_shift {
 			//MARY  5.060 5.415  5.289 5.080 5.571  5.635  5.192 4.747 5.902  5.619  4.914
 			//MARZ  4.503 5.548  4.617 5.301 5.716  5.758  5.436 4.692 5.212  5.650  4.429
 
-			atomnames_.push_back("N1");	//1 	
+			atomnames_.push_back("N1");	//1
 			atomnames_.push_back("C2");	//2
 			atomnames_.push_back("N2");	//3
 			atomnames_.push_back("N3");	//4
-			atomnames_.push_back("C4");	//5						
-			atomnames_.push_back("C5");	//6		
-			atomnames_.push_back("C6");	//7	
-			atomnames_.push_back("O6");	//8		
-			atomnames_.push_back("N7");	//9			
-			atomnames_.push_back("C8");	//10			
-			atomnames_.push_back("N9");	//11		
+			atomnames_.push_back("C4");	//5
+			atomnames_.push_back("C5");	//6
+			atomnames_.push_back("C6");	//7
+			atomnames_.push_back("O6");	//8
+			atomnames_.push_back("N7");	//9
+			atomnames_.push_back("C8");	//10
+			atomnames_.push_back("N9");	//11
 
-																																	realatomdata_[1 ][rcl1]=1.0; 																
-			realatomdata_[2 ][xdir]=2.0;  	realatomdata_[2 ][ydir]=2.0;  	realatomdata_[2 ][rcl1]=1.0; 																   	
-																																														 																 
-																		realatomdata_[4 ][ydir]=1.0;  	realatomdata_[4 ][rcl1]=1.0; 																 
-			realatomdata_[5 ][xdir]=1.0;  	realatomdata_[5 ][ydir]=2.0;  	realatomdata_[5 ][rcl1]=1.0;  	 	realatomdata_[5 ][rcl2]=1.0; 
-																																	realatomdata_[6 ][rcl1]=1.0;  	 	realatomdata_[6 ][rcl2]=1.0; 
-																																	realatomdata_[7 ][rcl1]=1.0; 																 
-																																														 																
-																																																	realatomdata_[9 ][rcl2]=1.0; 
-																																																	realatomdata_[10][rcl2]=1.0; 
-																																																	realatomdata_[11][rcl2]=1.0; 
+                                                                            realatomdata_[1 ][rcl1]=1.0;
+            realatomdata_[2 ][xdir]=2.0;    realatomdata_[2 ][ydir]=2.0;    realatomdata_[2 ][rcl1]=1.0;
+
+                                            realatomdata_[4 ][ydir]=1.0;    realatomdata_[4 ][rcl1]=1.0;
+            realatomdata_[5 ][xdir]=1.0;    realatomdata_[5 ][ydir]=2.0;    realatomdata_[5 ][rcl1]=1.0;    realatomdata_[5 ][rcl2]=1.0; 
+                                                                            realatomdata_[6 ][rcl1]=1.0;    realatomdata_[6 ][rcl2]=1.0;
+                                                                            realatomdata_[7 ][rcl1]=1.0;
+
+                                                                                                            realatomdata_[9 ][rcl2]=1.0; 
+                                                                                                            realatomdata_[10][rcl2]=1.0; 
+                                                                                                            realatomdata_[11][rcl2]=1.0; 
 
 			realatomdata_[1 ][maca]=1.0;  	realatomdata_[1 ][maqx]=2.731;	realatomdata_[1 ][maqw]=-0.209;		realatomdata_[1 ][maqy]=2.369; 
 			realatomdata_[2 ][maca]=1.0;  	realatomdata_[2 ][maqx]=2.985;	realatomdata_[2 ][maqw]= 0.182;		realatomdata_[2 ][maqy]=3.126;     
@@ -303,7 +303,7 @@ namespace chemical_shift {
 
 			ring_height_.push_back(0.5770); //RCH1 0.5770 
 
-			//  		  1      2      3      4      5     6     7      8    
+			//      1      2      3      4      5     6     7      8    
 			//ATOM  N1     C2     O2     N3     C4    N4    C5     C6     
 			//XDIR  0      2      0      0      0     0     0      1 
 			//YDIR  1      2      0      0      0     0     0      2 
@@ -317,26 +317,26 @@ namespace chemical_shift {
 			//MARY  5.034  5.211  4.495  5.334  5.390 5.209 5.985  5.571 
 			//MARZ  4.489  5.445  4.711  5.231  5.535 4.577 5.833  5.626 
 
-			atomnames_.push_back("N1");	//1 	
-			atomnames_.push_back("C2");	//2
-			atomnames_.push_back("O2");	//3
-			atomnames_.push_back("N3");	//4
-			atomnames_.push_back("C4");	//5						
-			atomnames_.push_back("N4");	//6		
-			atomnames_.push_back("C5");	//7	
-			atomnames_.push_back("C6");	//8		
+			atomnames_.push_back("N1"); //1
+			atomnames_.push_back("C2"); //2
+			atomnames_.push_back("O2"); //3
+			atomnames_.push_back("N3"); //4
+			atomnames_.push_back("C4"); //5
+			atomnames_.push_back("N4"); //6
+			atomnames_.push_back("C5"); //7
+			atomnames_.push_back("C6"); //8
 
 
-																 	 	realatomdata_[1 ][ydir]=1.0;  	realatomdata_[1 ][rcl1]=1.0; 																
-			realatomdata_[2 ][xdir]=2.0;  	realatomdata_[2 ][ydir]=2.0;  	realatomdata_[2 ][rcl1]=1.0; 																   	
-																																														 																 
-																																	realatomdata_[4 ][rcl1]=1.0; 																 
-																																	realatomdata_[5 ][rcl1]=1.0;
-																																														 
-																																	realatomdata_[7 ][rcl1]=1.0; 																 
-			realatomdata_[8 ][xdir]=1.0;  	realatomdata_[8 ][ydir]=2.0;  	realatomdata_[8 ][rcl1]=1.0; 																
-																																														
-																																													
+                                            realatomdata_[1 ][ydir]=1.0;    realatomdata_[1 ][rcl1]=1.0;
+            realatomdata_[2 ][xdir]=2.0;    realatomdata_[2 ][ydir]=2.0;    realatomdata_[2 ][rcl1]=1.0;
+
+                                                                            realatomdata_[4 ][rcl1]=1.0;
+                                                                            realatomdata_[5 ][rcl1]=1.0;
+
+                                                                            realatomdata_[7 ][rcl1]=1.0;
+            realatomdata_[8 ][xdir]=1.0;    realatomdata_[8 ][ydir]=2.0;    realatomdata_[8 ][rcl1]=1.0;
+
+
 			realatomdata_[1 ][maca]=1.0;  	realatomdata_[1 ][maqx]=2.675;	realatomdata_[1 ][maqw]=-0.592;		realatomdata_[1 ][maqy]=2.715; 
 			realatomdata_[2 ][maca]=1.0;  	realatomdata_[2 ][maqx]=2.917;	realatomdata_[2 ][maqw]=-0.236;		realatomdata_[2 ][maqy]=3.179;     
 			realatomdata_[3 ][maca]=1.0;  	realatomdata_[3 ][maqx]=1.496;	realatomdata_[3 ][maqw]=-0.724;		realatomdata_[3 ][maqy]=2.264;     
@@ -401,7 +401,7 @@ namespace chemical_shift {
 
 			ring_height_.push_back(0.5770); //RCH1 0.5770 
 
-			//  		  1      2      3      4      5     6     7      8  
+			//      1      2      3      4      5     6     7      8  
 			//ATOM  N1     C2     O2     N3     C4    O4    C5     C6
 			//XDIR  0      2      0      0      0     0     0      1
 			//YDIR  1      2      0      0      0     0     0      2
@@ -415,26 +415,26 @@ namespace chemical_shift {
 			//MARY  5.097  5.240  4.484  5.112  5.260 4.696 5.883  5.646
 			//MARZ  4.521  5.460  4.705  4.529  5.470 4.666 5.782  5.663
 
-			atomnames_.push_back("N1");	//1 	
+			atomnames_.push_back("N1");	//1
 			atomnames_.push_back("C2");	//2
 			atomnames_.push_back("O2");	//3
 			atomnames_.push_back("N3");	//4
-			atomnames_.push_back("C4");	//5						
-			atomnames_.push_back("O4");	//6		
-			atomnames_.push_back("C5");	//7	
-			atomnames_.push_back("C6");	//8		
+			atomnames_.push_back("C4");	//5
+			atomnames_.push_back("O4");	//6
+			atomnames_.push_back("C5");	//7
+			atomnames_.push_back("C6");	//8
 
 
-																 	 	realatomdata_[1 ][ydir]=1.0;  	realatomdata_[1 ][rcl1]=1.0; 																
-			realatomdata_[2 ][xdir]=2.0;  	realatomdata_[2 ][ydir]=2.0;  	realatomdata_[2 ][rcl1]=1.0; 																   	
-																																														 																 
-																																	realatomdata_[4 ][rcl1]=1.0; 																 
-																																	realatomdata_[5 ][rcl1]=1.0;
-																																														 
-																																	realatomdata_[7 ][rcl1]=1.0; 																 
-			realatomdata_[8 ][xdir]=1.0;  	realatomdata_[8 ][ydir]=2.0;  	realatomdata_[8 ][rcl1]=1.0; 																
-																																														
-																																													
+                                            realatomdata_[1 ][ydir]=1.0;    realatomdata_[1 ][rcl1]=1.0;
+            realatomdata_[2 ][xdir]=2.0;    realatomdata_[2 ][ydir]=2.0;    realatomdata_[2 ][rcl1]=1.0;
+
+                                                                            realatomdata_[4 ][rcl1]=1.0;
+                                                                            realatomdata_[5 ][rcl1]=1.0;
+
+                                                                            realatomdata_[7 ][rcl1]=1.0;
+            realatomdata_[8 ][xdir]=1.0;    realatomdata_[8 ][ydir]=2.0;    realatomdata_[8 ][rcl1]=1.0;
+
+
 			realatomdata_[1 ][maca]=1.0;  	realatomdata_[1 ][maqx]=2.257;	realatomdata_[1 ][maqw]=-0.020;		realatomdata_[1 ][maqy]=2.773; 
 			realatomdata_[2 ][maca]=1.0;  	realatomdata_[2 ][maqx]=2.921;	realatomdata_[2 ][maqw]=-0.253;		realatomdata_[2 ][maqy]=3.176;     
 			realatomdata_[3 ][maca]=1.0;  	realatomdata_[3 ][maqx]=1.517;	realatomdata_[3 ][maqw]=-0.726;		realatomdata_[3 ][maqy]=2.269;     
@@ -525,13 +525,13 @@ namespace chemical_shift {
 	}
 
 	////////////////////////////////////////////////////////////
-	Size const
+	Size
 	RNA_CS_residue_parameters::num_rings() const{ 
 		return num_rings_;
 	}
 
 	////////////////////////////////////////////////////////////
-	Real const
+	Real
 	RNA_CS_residue_parameters::ring_intensity(Size const ring_ID) const{
 
 		if(ring_ID>num_rings_) utility_exit_with_message("ring_ID ("+ string_of(ring_ID) + ")>num_rings_("+ string_of(num_rings_) + ")!");
@@ -544,7 +544,7 @@ namespace chemical_shift {
 	}
 
 	////////////////////////////////////////////////////////////
-	Real const 
+	Real
 	RNA_CS_residue_parameters::ring_radius(Size const ring_ID) const{
 
 		if(ring_ID>num_rings_) utility_exit_with_message("ring_ID ("+ string_of(ring_ID) + ")>num_rings_("+ string_of(num_rings_) + ")!");
@@ -556,7 +556,7 @@ namespace chemical_shift {
 	}
 
 	////////////////////////////////////////////////////////////
-	Real const
+	Real
 	RNA_CS_residue_parameters::ring_height(Size const ring_ID) const{
 
 		if(ring_ID>num_rings_) utility_exit_with_message("ring_ID ("+ string_of(ring_ID) + ")>num_rings_("+ string_of(num_rings_) + ")!");
@@ -568,7 +568,7 @@ namespace chemical_shift {
 	}
 
 	////////////////////////////////////////////////////////////
-	Size const
+	Size
 	RNA_CS_residue_parameters::get_atomnames_size() const{
 
 		return atomnames_.size();
@@ -586,7 +586,7 @@ namespace chemical_shift {
 
 
 	////////////////////////////////////////////////////////////
-	Real const
+	Real
 	RNA_CS_residue_parameters::atom_data(Size const atom, atomitem const item) const{
 
 
@@ -603,7 +603,7 @@ namespace chemical_shift {
 	}
 
 	////////////////////////////////////////////////////////////
-	Real const
+	Real
 	RNA_CS_residue_parameters::ring_current_coeff() const
 	{
 		return RCCO_;
@@ -611,7 +611,7 @@ namespace chemical_shift {
 	}
 
 	////////////////////////////////////////////////////////////
-	Real const
+	Real
 	RNA_CS_residue_parameters::magentic_anisotropy_r_coeff() const
 	{
 		return MACR_;
@@ -619,14 +619,14 @@ namespace chemical_shift {
 	}
 
 	////////////////////////////////////////////////////////////
-	Real const
+	Real
 	RNA_CS_residue_parameters::magentic_anisotropy_q_coeff() const
 	{
 		return MACQ_;
 
 	}
 	////////////////////////////////////////////////////////////
-	chemical::AA const 
+	chemical::AA
 	RNA_CS_residue_parameters::aa() const{
 		return res_aa_;
 	}
