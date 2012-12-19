@@ -36,6 +36,8 @@
 #include <core/scoring/AtomVDW.hh>
 #include <core/scoring/rna/RNA_AtomVDW.hh>
 #include <core/scoring/geometric_solvation/DatabaseOccSolEne.hh>
+#include <core/scoring/dna/DNABFormPotential.hh>
+#include <core/scoring/dna/DNATorsionPotential.hh>
 #include <core/scoring/dna/DNA_BasePotential.hh>
 #include <core/scoring/rna/RNA_LowResolutionPotential.hh>
 #include <core/scoring/rna/RNA_TorsionPotential.hh>
@@ -119,6 +121,8 @@ ScoringManager::ScoringManager() :
 	mm_lj_energy_table_( 0 ),
 	mm_torsion_library_( 0 ),
 	mm_bondangle_library_( 0 ),
+	dnabform_( 0 ),
+	dna_torsion_potential_( 0 ),
 	DNA_base_potential_( 0 ),
 	carbon_hbond_potential_( 0 ),
 	rna_low_resolution_potential_( 0 ),
@@ -423,6 +427,28 @@ ScoringManager::get_OmegaTether() const
 	return *omega_;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+dna::DNABFormPotential const &
+ScoringManager::get_DNABFormPotential() const
+{
+	if( dnabform_ == 0 )
+	{
+		dnabform_ =  new dna::DNABFormPotential;
+	}
+	return *dnabform_;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+dna::DNATorsionPotential const &
+ScoringManager::get_DNATorsionPotential() const
+{
+	if (dna_torsion_potential_ == 0 )
+	{
+		dna_torsion_potential_ = new dna::DNATorsionPotential();
+	}
+	return *dna_torsion_potential_;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 core::scoring::mm::MMTorsionLibrary const &
@@ -902,6 +928,8 @@ ScoringManager::energy_method(
 		return new PairEnergy;
 	case fa_dun:
 		return new DunbrackEnergy;
+	case dna_chi:
+		return new dna::DNAChiEnergy;
 	case p_aa_pp:
 		return new P_AA_pp_Energy;
 	case pro_close:
@@ -1004,6 +1032,10 @@ ScoringManager::energy_method(
 	case rna_fa_atr_base:
 	case rna_fa_rep_base:
 		return new rna::RNA_LJ_BaseEnergy( *etable( options.etable_type() ) );
+  case dna_bb_torsion:
+  case dna_sugar_close:
+  case dna_base_distance:
+    return new dna::DNATorsionEnergy;
 	case rg:
 		return new RG_Energy_Fast;
 	case co:

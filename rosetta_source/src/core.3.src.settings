@@ -140,6 +140,7 @@ sources = {
 		"CarbonHBondPotential",
 	],
 	"core/scoring/constraints": [
+		"AmberPeriodicFunc",
 		"AmbiguousConstraint",
 		"AmbiguousNMRConstraint",
 		"AmbiguousNMRDistanceConstraint",
@@ -231,6 +232,10 @@ sources = {
 		"BasePartner",
 		"DirectReadoutPotential",
 		"DNA_BasePotential",
+		"DNAChiEnergy",
+		"DNATorsionEnergy",
+		"DNATorsionPotential",
+		"DNABFormPotential",
 		"setup",
 	],
 	"core/scoring/dssp": [

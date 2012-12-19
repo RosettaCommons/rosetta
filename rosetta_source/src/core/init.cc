@@ -93,6 +93,8 @@
 #include <core/scoring/hackelec/HackElecEnergyAroAllCreator.hh>
 #include <core/scoring/hackelec/RNAHackElecEnergyCreator.hh>
 #include <core/scoring/hackaro/HackAroEnergyCreator.hh>
+#include <core/scoring/dna/DNAChiEnergyCreator.hh>
+#include <core/scoring/dna/DNATorsionEnergyCreator.hh>
 #include <core/scoring/methods/DNA_BaseEnergyCreator.hh>
 #include <core/scoring/methods/DirectReadoutEnergyCreator.hh>
 #include <core/scoring/methods/DistanceChainbreakEnergyCreator.hh>
@@ -333,6 +335,8 @@ static EnergyMethodRegistrator< scoring::hackelec::RNAHackElecEnergyCreator > RN
 static EnergyMethodRegistrator< scoring::hackelec::HackElecEnergyAroAroCreator > HackElecEnergyAroAroCreator_registrator;
 static EnergyMethodRegistrator< scoring::hackelec::HackElecEnergyAroAllCreator > HackElecEnergyAroAllCreator_registrator;
 static EnergyMethodRegistrator< scoring::hackaro::HackAroEnergyCreator > HackAroEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::dna::DNAChiEnergyCreator > DNAChiEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::dna::DNATorsionEnergyCreator > DNATorsionEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::DNA_BaseEnergyCreator > DNA_BaseEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::DirectReadoutEnergyCreator > DirectReadoutEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::DistanceChainbreakEnergyCreator > DistanceChainbreakEnergyCreator_registrator;

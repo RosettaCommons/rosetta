@@ -162,6 +162,11 @@ enum ScoreType {
 	//	fa_stack_pyrimidine,          // stacking interaction modeled as pairwise atom-atom interactions FOR PYRIMIDINE
 	fa_stack_aro,
 
+	// DNA constraints-based torsional potentials
+	dna_bb_torsion,
+	dna_sugar_close,
+	dna_base_distance,
+
 	CI_geom_sol,           //Context independent version. Currently tested only for RNA case.
 	CI_geom_sol_intra_RNA, //RNA specific score term
 
@@ -269,6 +274,7 @@ enum ScoreType {
 	fa_dun_dev,
 	fa_dun_rot,
 	fa_dun_semi,
+	dna_chi,
 	p_aa_pp,
 	yhh_planarity,
 	h2o_intra,

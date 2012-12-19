@@ -196,6 +196,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "fa_dun_dev" ] = fa_dun_dev;
  	name2score_type_[ "fa_dun_rot" ] = fa_dun_rot;
 	name2score_type_[ "fa_dun_semi" ] = fa_dun_semi;
+	name2score_type_[ "dna_chi" ] = dna_chi;
 	name2score_type_[ "p_aa_pp" ] = p_aa_pp;
 	name2score_type_[ "yhh_planarity" ] = yhh_planarity;
 	name2score_type_[ "h2o_intra" ] =  h2o_intra;
@@ -314,7 +315,9 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "CI_geom_sol"    ] = CI_geom_sol;
 	name2score_type_[ "CI_geom_sol_intra_RNA"    ] = CI_geom_sol_intra_RNA;
 
-
+	name2score_type_[ "dna_bb_torsion"] = dna_bb_torsion;
+	name2score_type_[ "dna_sugar_close"] = dna_sugar_close;
+	name2score_type_[ "dna_base_distance"] = dna_base_distance;
 
 	name2score_type_[ "chainbreak" ] = chainbreak;
 	name2score_type_[ "linear_chainbreak" ] = linear_chainbreak;

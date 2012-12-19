@@ -21,6 +21,8 @@
 //#include <core/pack/dunbrack/RotamerLibrary.fwd.hh>
 #include <core/scoring/PairEPotential.fwd.hh>
 #include <core/scoring/dna/DNA_BasePotential.fwd.hh>
+#include <core/scoring/dna/DNABFormPotential.fwd.hh>
+#include <core/scoring/dna/DNATorsionPotential.fwd.hh>
 #include <core/scoring/dna/DirectReadoutPotential.fwd.hh>
 #include <core/scoring/Ramachandran.fwd.hh>
 #include <core/scoring/Ramachandran2B.fwd.hh>
@@ -112,6 +114,10 @@ public:
 	Ramachandran2B const & get_Ramachandran2B() const;
 
 	Ramachandran const & get_Ramachandran() const;
+
+	dna::DNABFormPotential const & get_DNABFormPotential() const;
+
+	dna::DNATorsionPotential const & get_DNATorsionPotential() const;
 
 	OmegaTether const & get_OmegaTether() const;
 
@@ -248,6 +254,8 @@ private:
 	mutable mm::MMBondAngleLibraryOP mm_bondangle_library_;
 	mutable mm::MMBondLengthLibraryOP mm_bondlength_library_;
 	//P_AA                     Paa_ppPotential_;
+	mutable dna::DNABFormPotential * dnabform_;
+	mutable dna::DNATorsionPotential * dna_torsion_potential_;
 	mutable dna::DNA_BasePotentialOP DNA_base_potential_;
 	mutable carbon_hbonds::CarbonHBondPotentialOP carbon_hbond_potential_;
 	mutable rna::RNA_LowResolutionPotentialOP rna_low_resolution_potential_;
