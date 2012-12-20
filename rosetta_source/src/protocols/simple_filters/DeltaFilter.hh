@@ -7,27 +7,26 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/filters/DeltaFilter.hh
+/// @file protocols/simple_filters/DeltaFilter.hh
 /// @brief Reports the average degree of connectivity of interface residues
 /// @author Sarel Fleishman (sarelf@uw.edu)
 
-#ifndef INCLUDED_protocols_protein_interface_design_filters_DeltaFilter_hh
-#define INCLUDED_protocols_protein_interface_design_filters_DeltaFilter_hh
+#ifndef INCLUDED_protocols_simple_filters_DeltaFilter_hh
+#define INCLUDED_protocols_simple_filters_DeltaFilter_hh
 
 // Project Headers
 #include <protocols/filters/Filter.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
-#include <protocols/protein_interface_design/filters/DeltaFilter.fwd.hh>
+#include <protocols/simple_filters/DeltaFilter.fwd.hh>
 
 #include <utility/vector1.hh>
 
 // Unit headers
 
 namespace protocols {
-namespace protein_interface_design{
-namespace filters {
+namespace simple_filters {
 
 class DeltaFilter : public protocols::filters::Filter
 {
@@ -84,9 +83,8 @@ private:
 	void unbind( core::pose::Pose & ) const; //utility function for unbinding the pose
 };
 
-} // filters
-} //protein_interface_design
+} // simple_filters
 } // protocols
 
-#endif //INCLUDED_protocols_Filters_DeltaFilter_HH_
+#endif //INCLUDED_protocols_simple_filters_DeltaFilter_HH_
 

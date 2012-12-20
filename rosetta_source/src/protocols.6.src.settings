@@ -109,7 +109,6 @@ sources = {
 		"AverageDegreeFilter",
 		"BindingStrainFilter",
 		"BoltzmannFilter",
-		"DeltaFilter",
 		"DesignableResiduesFilter",
 		"DisulfideFilter",
 		"FilterScan",

@@ -8,8 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @author Sarel Fleishman (sarelf@uw.edu)
-#include <protocols/protein_interface_design/filters/DeltaFilter.hh>
-#include <protocols/protein_interface_design/filters/DeltaFilterCreator.hh>
+#include <protocols/simple_filters/DeltaFilter.hh>
+#include <protocols/simple_filters/DeltaFilterCreator.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <core/scoring/ScoreFunction.hh>
 
@@ -25,10 +25,9 @@
 #include <utility/vector1.hh>
 
 namespace protocols {
-namespace protein_interface_design{
-namespace filters {
+namespace simple_filters {
 
-static basic::Tracer TR( "protocols.protein_interface_design.filters.DeltaFilter" );
+static basic::Tracer TR( "protocols.simple_filters.DeltaFilter" );
 
 ///@brief default ctor
 DeltaFilter::DeltaFilter() :
@@ -259,6 +258,5 @@ DeltaFilter::relax_mover( protocols::moves::MoverOP const m ){
 	relax_mover_ = m;
 }
 
-} // filters
-} // protein_interface_design
+} // simple_filters
 } // protocols

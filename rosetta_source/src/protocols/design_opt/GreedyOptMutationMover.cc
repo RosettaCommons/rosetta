@@ -12,7 +12,7 @@
 #include <protocols/design_opt/PointMutationCalculator.hh>
 #include <protocols/design_opt/GreedyOptMutationMover.hh>
 #include <protocols/design_opt/GreedyOptMutationMoverCreator.hh>
-//#include <protocols/protein_interface_design/filters/DeltaFilter.hh>
+#include <protocols/simple_filters/DeltaFilter.hh>
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
 #include <core/pose/PDBInfo.hh>
 #include <fstream>
@@ -262,17 +262,16 @@ bool
 GreedyOptMutationMover::skip_best_check() const{
   return skip_best_check_;
 }
-/*
-utility::vector1< protocols::protein_interface_design::filters::DeltaFilterOP > 
+
+utility::vector1< protocols::simple_filters::DeltaFilterOP > 
 GreedyOptMutationMover::delta_filters() const { 
 	return reset_delta_filters_; 
 }
 
 void 
-GreedyOptMutationMover::delta_filters( utility::vector1< protocols::protein_interface_design::filters::DeltaFilterOP > const d ){ 
+GreedyOptMutationMover::delta_filters( utility::vector1< protocols::simple_filters::DeltaFilterOP > const d ){ 
 	reset_delta_filters_ = d; 
 }
-*/
 
 void
 GreedyOptMutationMover::sample_type( std::string const sample_type ){
@@ -519,16 +518,14 @@ GreedyOptMutationMover::apply(core::pose::Pose & pose )
     TR << "Mutation " << start_pose.residue( seqpos ).name1() << seqpos << pose.residue( seqpos ).name1() << " accepted. New best value is "<< val << std::endl;
     best_val = val;
     best_pose = pose;
-/*
     //Optionally reset baseline for Delta Filters (useful so that the mutations are still evaluated on an individual basis, in the context of the current best pose).
-    foreach( protocols::protein_interface_design::filters::DeltaFilterOP const delta_filter, reset_delta_filters_ ){
+    foreach( protocols::simple_filters::DeltaFilterOP const delta_filter, reset_delta_filters_ ){
       std::string const fname( delta_filter->get_user_defined_name() );
       core::Real const fbaseline( delta_filter->filter()->report_sm( pose ) );
       delta_filter->baseline( fbaseline );
       delta_filter->ref_baseline( fbaseline );
       TR<<"Reset baseline for DeltaFilter "<<fname<<" to "<<fbaseline<<std::endl;
     }
-*/
   }
 //recover best pose after last step
 pose = best_pose;
@@ -550,18 +547,16 @@ GreedyOptMutationMover::parse_my_tag( utility::tag::TagPtr const tag,
 	if( filter_it == filters.end() )
 		utility_exit_with_message( "Filter "+filter_name+" not found" );
 	filter( filter_it->second );
-/* 
 	//get filters to reset each time a mutation is accepted. For instance, reset the baseline value of delta filters to be the best pose.
 	utility::vector1< std::string > delta_filter_names;
 	delta_filter_names.clear();
   if( tag->hasOption( "reset_delta_filters" ) ){
 		delta_filter_names = utility::string_split( tag->getOption< std::string >( "reset_delta_filters" ), ',' );
 		foreach( std::string const fname, delta_filter_names ){
-			reset_delta_filters_.push_back( dynamic_cast< protocols::protein_interface_design::filters::DeltaFilter * >( protocols::rosetta_scripts::parse_filter( fname, filters )() ) );
+			reset_delta_filters_.push_back( dynamic_cast< protocols::simple_filters::DeltaFilter * >( protocols::rosetta_scripts::parse_filter( fname, filters )() ) );
       TR<<"The baseline for Delta Filter "<<fname<<" will be reset upon each accepted mutation"<<std::endl;
     }
   }
-*/
 	//load relax mover
 	std::string const relax_mover_name( tag->getOption< std::string >( "relax_mover", "null" ) );
 	protocols::moves::Movers_map::const_iterator mover_it( movers.find( relax_mover_name ) );

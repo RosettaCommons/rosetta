@@ -61,7 +61,6 @@ static FilterRegistrator< protocols::protein_interface_design::filters::AtomicCo
 static FilterRegistrator< protocols::protein_interface_design::filters::AverageDegreeFilterCreator > reg_AverageFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::BindingStrainFilterCreator > reg_BindingStrainFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::BoltzmannFilterCreator > reg_BoltzmannCreator;
-static FilterRegistrator< protocols::protein_interface_design::filters::DeltaFilterCreator > reg_DeltaFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::DesignableResiduesFilterCreator > reg_DesignableResiduesFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::DisulfideFilterCreator > reg_DisulfideFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::FilterScanFilterCreator > reg_FilterScanFilterCreator;
@@ -82,6 +81,7 @@ static FilterRegistrator< protocols::simple_filters::AtomicDistanceFilterCreator
 static FilterRegistrator< protocols::simple_filters::BuriedUnsatHbondFilterCreator > reg_BuriedUnsatHbondFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ConservedPosMutationFilterCreator > reg_ConservedPosMutationFilterCreator;
 static FilterRegistrator< protocols::simple_filters::DdgFilterCreator > reg_DdgFilterCreator;
+static FilterRegistrator< protocols::simple_filters::DeltaFilterCreator > reg_DeltaFilterCreator;
 static FilterRegistrator< protocols::simple_filters::EnergyPerResidueFilterCreator > reg_EnergyPerResidueFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ExpiryFilterCreator > reg_ExpiryFilterCreator;
 static FilterRegistrator< protocols::simple_filters::NonSequentialNeighborsFilterCreator > reg_NonSequentialNeighborsFilterCreator;

@@ -46,7 +46,6 @@
 #include <protocols/protein_interface_design/filters/AverageDegreeFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/BindingStrainFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/BoltzmannFilterCreator.hh>
-#include <protocols/protein_interface_design/filters/DeltaFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/DesignableResiduesFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/DisulfideFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/FilterScanCreator.hh>
@@ -68,6 +67,7 @@
 #include <protocols/simple_filters/BuriedUnsatHbondFilterCreator.hh>
 #include <protocols/simple_filters/ConservedPosMutationFilterCreator.hh>
 #include <protocols/simple_filters/DdgFilterCreator.hh>
+#include <protocols/simple_filters/DeltaFilterCreator.hh>
 #include <protocols/simple_filters/FileExistFilterCreator.hh>
 #include <protocols/simple_filters/FileRemoveFilterCreator.hh>
 #include <protocols/simple_filters/EnergyPerResidueFilterCreator.hh>

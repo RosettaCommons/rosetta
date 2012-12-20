@@ -322,6 +322,7 @@ sources = {
 		"ContactMapEvaluator",
 		"ContactMapEvaluatorCreator",
 		"DdgFilter",
+		"DeltaFilter",
 		"ExpiryFilter",
 		"FileExistFilter",
 		"FileRemoveFilter",

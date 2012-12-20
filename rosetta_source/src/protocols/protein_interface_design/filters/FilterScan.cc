@@ -48,7 +48,7 @@
 #include <utility/vector0.hh>
 #include <core/pose/symmetry/util.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
-#include <protocols/protein_interface_design/filters/DeltaFilter.hh>
+#include <protocols/simple_filters/DeltaFilter.hh>
 #include <utility/string_util.hh>
 #include <ObjexxFCL/format.hh>
 
@@ -254,8 +254,8 @@ FilterScanFilter::single_substitution( core::pose::Pose & pose, core::Size const
 	}
 }
 
-utility::vector1< DeltaFilterOP > FilterScanFilter::delta_filters() const { return delta_filters_; }
-void FilterScanFilter::delta_filters( utility::vector1< DeltaFilterOP > const d ){ delta_filters_ = d; }
+utility::vector1< protocols::simple_filters::DeltaFilterOP > FilterScanFilter::delta_filters() const { return delta_filters_; }
+void FilterScanFilter::delta_filters( utility::vector1< protocols::simple_filters::DeltaFilterOP > const d ){ delta_filters_ = d; }
 
 bool
 FilterScanFilter::apply(core::pose::Pose const & p ) const
@@ -289,7 +289,7 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 		///compute baseline
 		single_substitution( pose, resi, pose.residue( resi ).aa() ); /// mutates to self. This simply activates packing/rtmin/relax at the site. By doing this on a per residue basis we ensure that the baseline is computed in exactly the same way as the mutations
 //		pose.dump_scored_pdb( "at_baseline.pdb", *scorefxn() );
-		foreach( DeltaFilterOP const delta_filter, delta_filters_ ){
+		foreach( protocols::simple_filters::DeltaFilterOP const delta_filter, delta_filters_ ){
 			std::string const fname( delta_filter->get_user_defined_name() );
 			core::Real const fbaseline( delta_filter->filter()->report_sm( pose ) );
 			delta_filter->baseline( fbaseline );
@@ -310,7 +310,7 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 //				pose.dump_scored_pdb( "after_mut.pdb", *scorefxn() );
 			 bool triage_filter_pass( false );
 			 if( delta_filters_.size() > 0 ){
-				 foreach( DeltaFilterCOP const delta_filter, delta_filters_ ){
+				 foreach( protocols::simple_filters::DeltaFilterCOP const delta_filter, delta_filters_ ){
 					 triage_filter_pass = delta_filter->apply( pose );
 					 if( !triage_filter_pass )
 						 break;
@@ -435,7 +435,7 @@ FilterScanFilter::parse_my_tag( utility::tag::TagPtr const tag,
 		delta_filter_names = utility::string_split( tag->getOption< std::string >( "delta_filters" ), ',' );
 		TR<<"Using delta filters: ";
 		foreach( std::string const fname, delta_filter_names ){
-			delta_filters_.push_back( dynamic_cast< DeltaFilter * >( protocols::rosetta_scripts::parse_filter( fname, filters )() ) );
+			delta_filters_.push_back( dynamic_cast< protocols::simple_filters::DeltaFilter * >( protocols::rosetta_scripts::parse_filter( fname, filters )() ) );
 			TR<<fname<<",";
 		}
 		TR<<std::endl;

@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/protein_interface_design/filters/DeltaFilterCreator.hh
+/// @file   protocols/simple_filters/DeltaFilterCreator.hh
 /// @brief  FilterCreators for the DeltaFilter
-/// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
+/// @author  Sarel Fleishman sarelf@uw.edu
 
-#ifndef INCLUDED_protocols_protein_interface_design_filters_DeltaFilterCreator_hh
-#define INCLUDED_protocols_protein_interface_design_filters_DeltaFilterCreator_hh
+#ifndef INCLUDED_protocols_simple_filters_DeltaFilterCreator_hh
+#define INCLUDED_protocols_simple_filters_DeltaFilterCreator_hh
 
 // Package Headers
 #include <protocols/filters/FilterCreator.hh>
@@ -24,8 +24,7 @@
 #include <string>
 
 namespace protocols {
-namespace protein_interface_design {
-namespace filters {
+namespace simple_filters {
 
 class DeltaFilterCreator : public protocols::filters::FilterCreator
 {
@@ -35,8 +34,7 @@ public:
 };
 
 
-} //namespace filters
-} //namespace protein_interface_design
+} //namespace simple_filters
 } //namespace protocols
 
 #endif

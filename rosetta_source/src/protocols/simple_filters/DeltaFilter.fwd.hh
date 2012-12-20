@@ -7,21 +7,20 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/protein_interface_design/filters/DeltaFilter.fwd.hh
+/// @file   protocols/simple_filters/DeltaFilter.fwd.hh
 /// @brief  forward declaration for DeltaFilter
 /// @author  Sarel Fleishman sarelf@uw.edu
 
 
-#ifndef INCLUDED_protocols_protein_interface_design_filters_DeltaFilter_fwd_hh
-#define INCLUDED_protocols_protein_interface_design_filters_DeltaFilter_fwd_hh
+#ifndef INCLUDED_protocols_simple_filters_DeltaFilter_fwd_hh
+#define INCLUDED_protocols_simple_filters_DeltaFilter_fwd_hh
 
 
 // Utility headers
 #include <utility/pointer/owning_ptr.fwd.hh>
 
 namespace protocols {
-namespace protein_interface_design{
-namespace filters {
+namespace simple_filters {
 
 // Forward
 class DeltaFilter;
@@ -30,8 +29,7 @@ class DeltaFilter;
 typedef utility::pointer::owning_ptr< DeltaFilter >  DeltaFilterOP;
 typedef utility::pointer::owning_ptr< DeltaFilter const >  DeltaFilterCOP;
 
-} // namespace filters
-} //namespace protein_interface_design
+} // namespace simple_filters
 } // namespace protocols
 
 #endif
