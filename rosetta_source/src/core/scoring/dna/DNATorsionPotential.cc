@@ -57,6 +57,7 @@ namespace core {
 namespace scoring {
 namespace dna {
 
+enum{ WHATEVER, ALPHA, BETA, GAMMA, DELTA, EPSILON, ZETA, CHI, NU0, NU1, NU2, NU3, NU4 };
 
 DNATorsionPotential::DNATorsionPotential():
 	////////////////////////////////////////////////////////////////////////////
