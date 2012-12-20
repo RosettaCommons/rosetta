@@ -1,0 +1,73 @@
+core.init: (0) Mini-Rosetta version 7d57530cd3baf6e0ae8e4850101f0f1d11e372df from ssh://timjacobs@76.182.98.0:5522/Users/timjacobs/rosetta
+core.init: (0) command: /home/tjacobs2/rosetta/rosetta_source/bin/rosetta_scripts.mpipostgresopencl.linuxclangdebug -parser:protocol parser_script.xml -s tree_1.pdb @options
+core.init: (0) 'RNG device' seed mode, using '/dev/urandom', seed=60812397 seed_offset=0 real_seed=60812397
+core.init.random: (0) RandomGenerator:init: Normal mode, seed=60812397 RG_type=mt19937
+core.init: (0) found database environment variable ROSETTA3_DB: /home/tjacobs2/rosetta/rosetta_database
+protocols.jd2.PDBJobInputter: (0) Instantiate PDBJobInputter
+protocols.jd2.PDBJobInputter: (0) PDBJobInputter::fill_jobs
+protocols.jd2.PDBJobInputter: (0) pushing tree_1.pdb nstruct index 1
+protocols.jd2.PDBJobInputter: (0) pushing test_1.pdb nstruct index 1
+protocols.evaluation.ChiWellRmsdEvaluatorCreator: (0) Evaluation Creator active ... 
+protocols.jd2.JobDistributor: (0) Parser is present.  Input mover will be overwritten with whatever the parser creates.
+protocols.jd2.PDBJobInputter: (0) PDBJobInputter::pose_from_job
+protocols.jd2.PDBJobInputter: (0) filling pose from PDB tree_1.pdb
+core.chemical.ResidueTypeSet: (0) Finished initializing fa_standard residue type set.  Created 6392 residue types
+core.conformation.Conformation: (0) [ WARNING ] missing heavyatom:  OXT on residue VAL_p:CtermProteinFull 14
+core.pack.task: (0) Packer task: initialize from command line() 
+protocols.jd2.DockDesignParser: (0) dock_design_filename=parser_script.xml
+protocols.jd2.DockDesignParser: (0) Parsed script:
+<ROSETTASCRIPTS>
+	<SCOREFXNS/>
+	<TASKOPERATIONS/>
+	<MOVERS>
+		<FragmentLoopInserter loop_anchor=14 max_rms=1.0 name=frag_inserter/>
+		<CCDLoopCloser max_ccd_moves_per_closure_attempt=10 max_closure_attempts=1 name=ccd prevent_nonloop_modifications=1/>
+		<LoopCreationMover design_loops=0 include_neighbors=0 loop_closer=ccd loop_inserter=frag_inserter minimize_loops=1 name=lcm num_iterations=1/>
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover_name=lcm/>
+	</PROTOCOLS>
+</ROSETTASCRIPTS>
+core.scoring.ScoreFunctionFactory: (0) SCOREFUNCTION: standard
+core.scoring.ScoreFunctionFactory: (0) SCOREFUNCTION PATCH: score12
+core.scoring.etable: (0) Starting energy table calculation
+core.scoring.etable: (0) smooth_etable: changing atr/rep split to bottom of energy well
+core.scoring.etable: (0) smooth_etable: spline smoothing lj etables (maxdis = 6)
+core.scoring.etable: (0) smooth_etable: spline smoothing solvation etables (max_dis = 6)
+core.scoring.etable: (0) Finished calculating energy tables.
+basic.io.database: (0) Database file opened: scoring/score_functions/PairEPotential/pdb_pair_stats_fine
+basic.io.database: (0) Database file opened: scoring/score_functions/hbonds/standard_params/HBPoly1D.csv
+basic.io.database: (0) Database file opened: scoring/score_functions/hbonds/standard_params/HBFadeIntervals.csv
+basic.io.database: (0) Database file opened: scoring/score_functions/hbonds/standard_params/HBEval.csv
+basic.io.database: (0) Database file opened: scoring/score_functions/EnvPairPotential/env_log.txt
+basic.io.database: (0) Database file opened: scoring/score_functions/EnvPairPotential/cbeta_den.txt
+basic.io.database: (0) Database file opened: scoring/score_functions/EnvPairPotential/pair_log.txt
+basic.io.database: (0) Database file opened: scoring/score_functions/EnvPairPotential/cenpack_log.txt
+basic.io.database: (0) Database file opened: scoring/score_functions/EnvPairPotential/env_log.txt
+basic.io.database: (0) Database file opened: scoring/score_functions/EnvPairPotential/cbeta_den.txt
+basic.io.database: (0) Database file opened: scoring/score_functions/EnvPairPotential/pair_log.txt
+basic.io.database: (0) Database file opened: scoring/score_functions/EnvPairPotential/cenpack_log.txt
+basic.io.database: (0) Database file opened: scoring/score_functions/MembranePotential/CEN6_mem_env_log.txt
+basic.io.database: (0) Database file opened: scoring/score_functions/MembranePotential/CEN10_mem_env_log.txt
+basic.io.database: (0) Database file opened: scoring/score_functions/MembranePotential/memcbeta_den.txt
+basic.io.database: (0) Database file opened: scoring/score_functions/MembranePotential/mem_pair_log.txt
+basic.io.database: (0) Database file opened: scoring/score_functions/P_AA_pp/P_AA
+basic.io.database: (0) Database file opened: scoring/score_functions/P_AA_pp/P_AA_n
+basic.io.database: (0) Database file opened: scoring/score_functions/P_AA_pp/P_AA_pp
+basic.io.database: (0) Database file opened: scoring/score_functions/rama/Rama_smooth_dyn.dat_ss_6.4
+core.scoring.etable: (0) Using alternate parameters: LJ_RADIUS_SOFT in Etable construction.
+core.scoring.etable: (0) Starting energy table calculation
+core.scoring.etable: (0) smooth_etable: changing atr/rep split to bottom of energy well
+core.scoring.etable: (0) smooth_etable: spline smoothing lj etables (maxdis = 6)
+core.scoring.etable: (0) smooth_etable: spline smoothing solvation etables (max_dis = 6)
+core.scoring.etable: (0) Finished calculating energy tables.
+basic.io.database: (0) Database file opened: scoring/score_functions/EnvPairPotential/env_log.txt
+basic.io.database: (0) Database file opened: scoring/score_functions/EnvPairPotential/cbeta_den.txt
+basic.io.database: (0) Database file opened: scoring/score_functions/EnvPairPotential/pair_log.txt
+basic.io.database: (0) Database file opened: scoring/score_functions/EnvPairPotential/cenpack_log.txt
+basic.io.database: (0) Database file opened: scoring/score_functions/InterchainPotential/interchain_env_log.txt
+basic.io.database: (0) Database file opened: scoring/score_functions/InterchainPotential/interchain_pair_log.txt
+basic.io.database: (0) Database file opened: scoring/score_functions/EnvPairPotential/env_log.txt
+basic.io.database: (0) Database file opened: scoring/score_functions/EnvPairPotential/cbeta_den.txt
+basic.io.database: (0) Database file opened: scoring/score_functions/EnvPairPotential/pair_log.txt
+basic.io.database: (0) Database file opened: scoring/score_functions/EnvPairPotential/cenpack_log.txt

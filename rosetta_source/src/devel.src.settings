@@ -69,6 +69,14 @@ sources = {
 		"Protocol",
 		"ResID",
 	],
+	"devel/loop_creation/": [
+		"CCDLoopCloser",
+		"FragmentLoopInserter",
+		#"KICLoopCloser",
+		"LoopCreationMover",
+		"LoopCloser",
+		"LoopInserter",
+	],
 	"devel/loop_extend": [
 		"LoopExtendMover",
 	],

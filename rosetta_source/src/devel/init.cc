@@ -27,6 +27,9 @@
 
 //mover creators
 #include <devel/enzdes/EnzdesRemodelMoverCreator.hh>
+#include <devel/loop_creation/LoopCreationMoverCreator.hh>
+#include <devel/loop_creation/CCDLoopCloserCreator.hh>
+#include <devel/loop_creation/FragmentLoopInserterCreator.hh>
 #include <devel/matdes/SymmetrizerMoverCreator.hh>
 #include <devel/matdes/TaskAwareSymMinMoverCreator.hh>
 #include <devel/matdes/StoreTaskMoverCreator.hh>
@@ -79,6 +82,9 @@ protocols::moves::MoverRegistrator< enzdes::EnzdesRemodelMoverCreator > reg_Enzd
 protocols::moves::MoverRegistrator< vardist_solaccess::LoadVarSolDistSasaCalculatorMoverCreator > reg_LoadVarSolDistSasaCalculatorMoverCreator;
 protocols::moves::MoverRegistrator< devel::znhash::InsertZincCoordinationRemarkLinesCreator > reg_InsertZincCoordinationRemarkLinesCreator;
 protocols::moves::MoverRegistrator< znhash::LoadZnCoordNumHbondCalculatorMoverCreator > reg_LoadZnCoordNumHbondCalculatorMoverCreator;
+static protocols::moves::MoverRegistrator< devel::loop_creation::LoopCreationMoverCreator > reg_LoopCreationMoverCreator;
+static protocols::moves::MoverRegistrator< devel::loop_creation::FragmentLoopInserterCreator > reg_FragmentLoopInserterCreator;
+static protocols::moves::MoverRegistrator< devel::loop_creation::CCDLoopCloserCreator > reg_CCDLoopCloserCreator;
 static protocols::moves::MoverRegistrator< devel::matdes::SymmetrizerMoverCreator > reg_SymmetrizerMoverCreator;
 static protocols::moves::MoverRegistrator< devel::matdes::TaskAwareSymMinMoverCreator > reg_TaskAwareSymMinMoverCreator;
 static protocols::moves::MoverRegistrator< devel::matdes::StoreTaskMoverCreator > reg_StoreTaskMoverCreator;
