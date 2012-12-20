@@ -13,7 +13,7 @@
 #ifndef INCLUDED_protocols_design_opt_GreedyOptMutationMover_hh
 #define INCLUDED_protocols_design_opt_GreedyOptMutationMover_hh
 #include <protocols/design_opt/GreedyOptMutationMover.fwd.hh>
-#include <protocols/protein_interface_design/filters/DeltaFilter.fwd.hh>
+//#include <protocols/protein_interface_design/filters/DeltaFilter.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <utility/tag/Tag.fwd.hh>
@@ -90,8 +90,8 @@ public:
   void stop_before_condition( bool const stop_before_condition );
   bool skip_best_check() const;
   void skip_best_check( bool const skip_best_check );
-	utility::vector1< protocols::protein_interface_design::filters::DeltaFilterOP > delta_filters() const;
-	void delta_filters( utility::vector1< protocols::protein_interface_design::filters::DeltaFilterOP > const d );
+//	utility::vector1< protocols::protein_interface_design::filters::DeltaFilterOP > delta_filters() const;
+//	void delta_filters( utility::vector1< protocols::protein_interface_design::filters::DeltaFilterOP > const d );
 	bool rtmin() const;
 	void rtmin( bool const b );
 	bool parallel() const;
@@ -114,7 +114,7 @@ private:
 	core::pose::Pose ref_pose_;
   bool stop_before_condition_;
   bool skip_best_check_;
-  utility::vector1<protocols::protein_interface_design::filters::DeltaFilterOP> reset_delta_filters_;
+//  utility::vector1<protocols::protein_interface_design::filters::DeltaFilterOP> reset_delta_filters_;
 	bool rtmin_; //dflt false; should we rtmin after packing?
 	bool parallel_; //parallelize pointmut calc with MPI?
 	bool shuffle_order_; //randomize the order that mutations are attempted?
