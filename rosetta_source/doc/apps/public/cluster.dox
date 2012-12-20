@@ -31,7 +31,7 @@ cluster center it is most similar to. If the closest cluster is more then "clust
 This rule is applied to all remaining structures.
 Clusters can be size limited, sorted by energy etc.. (see options)
 
-@section commands Command lines
+@section commands Command Line Options
 *Sample command*
 @verbatim
 cluster.linuxgccrelease @flags > cluster.log

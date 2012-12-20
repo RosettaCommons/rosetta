@@ -43,12 +43,13 @@ class RosettaFlagFileBuilder():
     """
     This allows you to setup a rosetta run.  Save it's options file, or run it.
     Useful to see all the applications, see possible options, and see descriptions for each option.
-    Implementation of Doxygen integration and options_rosetta.py parsing next.
+    Work is under way to enable better parsing of app documentation.
     
     """
     
     
     def __init__ (self, main):
+        main.title("Rosetta Flag File Builder")
         self.main = main
         self.pwd = (self.location())[0]
         self.defaultdir = tools.loaddefaultdir(self.pwd)
@@ -475,7 +476,8 @@ class RosettaFlagFileBuilder():
                     except IndexError:
                         pass
                         
-        self.array_of_applications = sorted(self.appOPTIONS)
+        #self.array_of_applications = sorted(self.appOPTIONS); #ONLY App Documentation with options
+        self.array_of_applications = sorted(self.appDOC); #All App Documentation
         self.__populate_applications__(self.array_of_applications)
         self.__read_general_options__()
         self.app_help_options = self.appOPTIONS ; #This is so that we do not have to reload.

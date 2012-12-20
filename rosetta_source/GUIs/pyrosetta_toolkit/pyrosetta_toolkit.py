@@ -156,12 +156,14 @@ class main_window:
       self._tk_.mainloop()
       
    def redirect_stdout_to_textbox(self):
-      sys.stdout = self; #Set stdout to be redirected to textbox using the write function override.
       print "Redirect stdout to textbox"
+      sys.stdout = self; #Set stdout to be redirected to textbox using the write function override.
+      
       
    def redirect_stdout_to_default(self):
-      sys.stdout = self.old_stdout
       print "Redirect stdout to default"
+      sys.stdout = self.old_stdout
+      
       
    def write(self, text):
       self.output_textbox.insert(1.0, text)
@@ -203,8 +205,6 @@ class MainTracer(rosetta.basic.PyTracer):
 
 
 if __name__ == '__main__':
-   rosetta.init()
-
    rosetta.init()
    main_window_class = main_window()
    TR = MainTracer(main_window_class.output_textbox)

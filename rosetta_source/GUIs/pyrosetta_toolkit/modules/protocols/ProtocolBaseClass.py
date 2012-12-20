@@ -63,8 +63,7 @@ class ProtocolBaseClass:
             workers = []
             for i in range(1, self.output_class.decoys.get()+1):
                 outname = self.pdb_name+"_decoy_"+repr(i)+".pdb"
-                seed = base_seed+job_offset
-                worker = Process(name = "decoy_"+repr(i), target=self._run_mover, args=(mover, outname, seed))
+                worker = Process(name = "decoy_"+repr(i), target=self._run_mover, args=(mover, outname))
                 workers.append(worker)
             total_allowed_jobs = self.output_class.processors.get()
             print "Total allowed jobs: "+repr(total_allowed_jobs)
@@ -124,7 +123,7 @@ class ProtocolBaseClass:
                 print "Start: "+ repr(start_energy_score)+"\n"        
                 print "End: "+ repr(self.score_class.score(self.pose))
         
-        time.sleep(15); #So that the children can finish output
+        time.sleep(5); #So that the children can finish output
         self.output_class.terminal_output.set(0); #Reset output to textbox
         
         print "NOTE: If > 1 decoy has been created, original decoy is still loaded. "
@@ -134,7 +133,7 @@ class ProtocolBaseClass:
     
         
         
-    def _run_mover(self, mover, outputname, seed):
+    def _run_mover(self, mover, outputname):
         """
         Used for multiprocessing.  
         """

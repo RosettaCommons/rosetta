@@ -143,7 +143,7 @@ def add_constraints_to_pose_and_scorefunction(pose, score, default_weight = 1.0,
     setup.apply(pose)
     
     for constraint in constraint_types:
-        if score.get_weight()==0:
+        if score.get_weight(constraint)==0:
             score.set_weight(constraint, default_weight)
             
 def get_residuetypeset_from_path_array(param_path_array, loaded_path_array):

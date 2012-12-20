@@ -45,7 +45,7 @@ column6  "boolean":  Extend loop. Default false
 @endverbatim
 @li Fragment files
 
-@section commands Command lines
+@section commands Command Line Options
 You can run loop modeling with the following flags:
 @verbatim
 -in::file::fullatom
@@ -58,9 +58,9 @@ You can run loop modeling with the following flags:
 @endverbatim
 Other combinable flags:
 @verbatim
-Centroid remodelling:  -loops::remodel [perturb_ccd|perturb_alc|quick_ccd|old_looprelax]
-Fullatom refinement:  -loops::refine [refine_ccd|refine_alc]
-FA Relax:  -loops::relax [fullrelax|shortrelax|fastrelax]
+-loops::remodel [perturb_ccd|perturb_alc|quick_ccd|old_looprelax]     Centroid remodelling
+-loops::refine [refine_ccd|refine_alc]                                Fullatom refinement
+-loops::relax [fullrelax|shortrelax|fastrelax]                        Fullatom relax
 @endverbatim
 
 For more information about loop modeling flags, please check the @ref full_options_list "full options list"

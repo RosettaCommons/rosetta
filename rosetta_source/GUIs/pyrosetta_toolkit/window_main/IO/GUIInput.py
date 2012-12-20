@@ -94,6 +94,9 @@ class GUIInput:
         cleaner.runfixPDBWindow(self.toolkit._tk_, 0, 0)
         
     def load_pose(self, path):
+        """
+        Load a pose into the toolkit.pose variable.  Setup nessessary variables/etc for objects and window objects of the toolkit.  Can have NCAA that have been enabled.
+        """
         self.pdb_path.set(path)
         print self.pdb_path.get()
         if self.nonstandard_ResidueTypeSet:
@@ -110,6 +113,17 @@ class GUIInput:
         self.toolkit.output_class.outname.set(pdbname)
         self.toolkit.output_class.outdir.set(os.path.dirname(self.pdb_path.get()))
         self.toolkit.DesignDic = dict()
+    
+    def return_loaded_pose(self, path):
+        """
+        Load and return a pose.  Can have NCAA that have been enabled.
+        """
+        p = Pose()
+        if self.nonstandard_ResidueTypeSet:
+            p.assign(pose_from_pdb(self.nonstandard_ResidueTypeSet, path))
+        else:
+            pose_from_pdb(p, self.pdb_path.get())
+        return p
     
     def set_PDBLIST(self):
         infilename = tkFileDialog.askopenfilename(initialdir=global_variables.current_directory,title='Open PDBLIST')

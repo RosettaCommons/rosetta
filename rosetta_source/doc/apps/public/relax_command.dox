@@ -31,7 +31,7 @@ Relax takes as input one or more structures in silent or PDB format. All JD2 opt
 Relax outputs one or more structures in silent or PDB format. All JD2 output options apply (see JD2 Documentation for more details)
 As always -nstruct regulates the number of outputs per input structure.
 
-@section commands Command lines
+@section commands Command Line Options
 <b>Sample command</b>
 @verbatim
 relax.linuxgccrelease -database ~/rosetta_database -in:file:s input.pdb -in:file:fullatom -native 1a19.pdb -out:file:silent default.out -relax:quick

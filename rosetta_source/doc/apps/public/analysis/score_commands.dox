@@ -24,7 +24,7 @@ This document was edited Nov 1st 2008 by Yi Liu. This application in mini was cr
 This application simply rescores PDBs and silent files. It also can be used to extract PDBs from silent files,
 assemble PDBs into silent files.
 
-@section commands Command lines
+@section commands Command Line Options
 @verbatim
 ** Sample command:  score.linuxgccrelease @flags > score.log
 

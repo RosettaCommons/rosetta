@@ -57,7 +57,7 @@ class ScoreFxnControl():
         
         self.pose = p
         self.main = main
-        self.main.title("ScoreFxn Control")
+        self.main.title("ScoreFunction Control")
         
         #Menu:
         self.MenBar = Menu(self.main)

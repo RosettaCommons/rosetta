@@ -34,14 +34,11 @@ from modules.protocols.DockingProtocols import DockingProtocols
 from modules.protocols.DesignProtocols import DesignProtocols
 from modules.protocols.LowResLoopModelingProtocols import LowResLoopModelingProtocols
 from modules.protocols.HighResLoopModelingProtocols import HighResLoopModelingProtocols
+from modules.protocols.GraftingProtocols import GraftMoverWindow
 
-#Window Imports
-#from window_modules.options_system.OptionSystemManager import OptionSystemManager
 from window_modules.clean_pdb.FixPDBWindow import FixPDBWindow
-#from window_modules.rosetta_tools.RosettaFlagFileBuilder import RosettaFlagFileBuilder
 from rosetta_flag_file_builder.RosettaFlagFileBuilder import RosettaFlagFileBuilder
 from window_modules.design.ResfileDesignWindow import ResfileDesignWindow
-#from window_modules.interactive_terminal import IPython
 from window_modules.ligand_ncaa_ptm_manager.ligand_ncaa_ptm_manager import ligand_ncaa_ptm_manager
 import global_variables
 
@@ -186,6 +183,7 @@ class Menus():
 	
 	self.design_protocols = Menu(self.main_menu, tearoff=0)
 	self.design_protocols.add_command(label = "FixedBB", command = lambda: self.design_class.packDesign())
+	self.design_protocols.add_command(label = "Grafting", command = lambda:self.show_graftmover_window())
 	#self.design_protocols.add_command(label = "Grafting", foreground='red')
 	self.design_protocols.add_command(label = "Remodel", foreground='red')
 	
@@ -221,7 +219,6 @@ class Menus():
 	self.servers.add_command(label = "DNA Interface Scan", command = lambda: webbrowser.open("http://robetta.bakerlab.org/dnainterfacescansubmit.jsp"))
 	
 	self.general_protocols.add_cascade(label = "Web Servers", menu = self.servers)
-	
 	self.general_protocols.add_separator()
 	self.general_protocols.add_command(label = "Ab Initio", foreground='red')
 	self.general_protocols.add_command(label = "Homology Modeling", foreground='red')
@@ -318,6 +315,12 @@ class Menus():
 	self.score_analyzer.set_filepath(filename)
 
 #### WINDOWS ##### (ADD NEW WINDOWS TO THIS THAT NEED TO BE SET UP) #######
+    def show_graftmover_window(self):
+	grafter = GraftMoverWindow(self.toolkit.pose, self.toolkit.score_class, self.toolkit.input_class, self.toolkit.output_class)
+	top_level_tk = Toplevel(self.main)
+	grafter.setTk(top_level_tk)
+	grafter.shoTk(0,0)
+	
     def show_fxpdb_window(self):
 	cleaner = FixPDBWindow(self.toolkit.input_class, self.toolkit.score_class, self.toolkit.pose)
 	cleaner.runfixPDBWindow(self.main, 0, 0)

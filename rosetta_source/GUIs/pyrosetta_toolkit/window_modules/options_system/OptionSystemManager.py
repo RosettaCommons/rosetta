@@ -61,6 +61,7 @@ class OptionSystemManager:
         self.custom_option = StringVar()
         
     def setTk(self, main):
+        main.title("Options System Manager")
         self.main = main
 
     

@@ -89,7 +89,7 @@ class FixPDBWindow:
           self.gobutton_ = Button(fixWindow, text = "GO", command = lambda: self.runFixPDB())
           self.loadbutton = Button(fixWindow, text = "Load Cleaned PDB", command = lambda: self.load_cleaned_pdb())
           #This may need to change to use __init__, but hopefully not.
-          self.ignore_unrecognized = Button(fixWindow, text = "Set -ignore_unrecognized_res option", command = lambda: self.input_class.options_manager.add_option('ignore_unrecognized_res'))
+          self.ignore_unrecognized = Button(fixWindow, text = "Set -ignore_unrecognized_res option", command = lambda: self.input_class.options_manager.add_option('-ignore_unrecognized_res'))
           self.pathEntry.grid(row = r, column=c)
           self.pathbutton_.grid(row=r, column = c+1)
           self.remH20.grid(row=r, column=c+2, sticky=W)
@@ -242,9 +242,6 @@ class FixPDBWindow:
           
           print "File Saved..."
           
-          if not self.unrecognized_aa and not self.off_by_default_aa:
-               print "PDB has no unrecognized aa, and all ncaa found are on by default!"
-               return
           
           if self.check_rosetta_var.get():
                print "Checking for unrecognized residues"
@@ -253,6 +250,10 @@ class FixPDBWindow:
                print "Checking for off-by-default residues"
                self.check_for_rosetta_off_aa(self.clean_pdb.get_pdb_map())
                
+               if not self.unrecognized_aa and not self.off_by_default_aa:
+                    print "PDB has no unrecognized aa, and all ncaa found are on by default!"
+                    return
+          
                FILE = open(outdir+"/"+pdbname.split(".")[0]+"_rosetta_check_log.txt", 'w')
                FILE.write("#unrecognized\n")
                unique = dict()
@@ -274,7 +275,8 @@ class FixPDBWindow:
                FILE.close
                
                print "Please see "+outdir+"/"+pdbname.split(".")[0]+"_rosetta_check_log.txt"
-          
+               
+
           #Print Unrecognized and Rosetta Off Info.  if not 'silence' variable, pop up.
           #If not silence, ask to Load PDB?
      
@@ -307,7 +309,11 @@ class FixPDBWindow:
                          found=True
                          break
                if not found:
-                    self.off_by_default_aa.append(pdb_map[num]["three_letter_code"])
+                    try:
+                         self.recognized_aa.index(pdb_map[num]["three_letter_code"])
+                         self.off_by_default_aa.append(pdb_map[num]["three_letter_code"])
+                    except ValueError:
+                         pass
      
      def getfile(self):
           """

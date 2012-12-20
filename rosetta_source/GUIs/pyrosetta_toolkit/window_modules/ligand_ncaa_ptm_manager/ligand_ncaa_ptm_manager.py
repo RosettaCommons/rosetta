@@ -89,6 +89,7 @@ class ligand_ncaa_ptm_manager:
         """
         Set TK objects
         """
+        main.title("Ligand/NCAA/PTM Manager")
         print "\n"
         print "To permenantly enable patches and parameters for amino acids, polymers, and ligands uncomment the file in: "
         print os.environ['PYROSETTA_DATABASE']+'/chemical/residue_type_sets/fa_standard/patches.txt'
@@ -338,6 +339,7 @@ class ligand_ncaa_ptm_manager:
             #print "open "+os.path.dirname(self.prop.path)+"/"+new_base+" &"
             #os.system("rm "+os.path.dirname(self.prop.path)+"/"+new_base)
             self.please_delete.append(os.path.dirname(self.prop.path)+"/"+new_base)
+            
     ###Callbacks###
     
     def __main_selection_callback__(self, name, index, mode):
