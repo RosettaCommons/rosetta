@@ -11,7 +11,7 @@
 ///
 /// Options: 
 ///
-/// vector1<Integer> corrections::score::PB_charged_chain
+/// vector1<Integer> pb_potential::charged_chain
 ///    The chain numbers (>=1) of which charge is non-zero.
 ///    The electrostatic will be computed for the atoms in these chains.
 ///
@@ -23,7 +23,7 @@
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/corrections.OptionKeys.gen.hh>
+#include <basic/options/keys/pb_potential.OptionKeys.gen.hh>
 
 // Unit Headers
 #include <core/scoring/PoissonBoltzmannPotential.hh>
@@ -69,7 +69,7 @@ typedef PoissonBoltzmannPotential PB;
 const std::string PB::APBS_CONFIG_EXT = ".in";
 const std::string PB::APBS_PQR_EXT = ".pqr";
 const std::string PB::APBS_DX_EXT = ".dx";
-const std::string PB::DEFAULT_APBS_EXE = "apbs";  // in runtime directory
+const std::string PB::DEFAULT_APBS_PATH = "apbs";
 
 // @brief Auto-generated virtual destructor
 PB::~PoissonBoltzmannPotential() {}
@@ -78,7 +78,7 @@ PB::PoissonBoltzmannPotential()
 	:config_filename_("Unknown.in"),
 	 pqr_filename_("Unknown.pqr"),
 	 dx_filename_("Unknown.dx"),
-	 apbs_exe_(DEFAULT_APBS_EXE)
+	 apbs_path_(DEFAULT_APBS_PATH)
 {
 }
 
@@ -128,8 +128,8 @@ PB::solve_pb( core::pose::Pose const & pose,
 							std::string const & tag, 
 							std::map<std::string, bool> const & is_residue_charged_by_name ) {
 
-	if (basic::options::option[basic::options::OptionKeys::corrections::score::apbs_path].user()) {
-		apbs_exe_ = basic::options::option[basic::options::OptionKeys::corrections::score::apbs_path];
+	if (basic::options::option[basic::options::OptionKeys::pb_potential::apbs_path].user()) {
+		apbs_path_ = basic::options::option[basic::options::OptionKeys::pb_potential::apbs_path];
 	}
 
 	// Generate filenames based on the given tag.
@@ -139,7 +139,7 @@ PB::solve_pb( core::pose::Pose const & pose,
 
 	write_pqr(pose, is_residue_charged_by_name );
 	write_config(pose);
-	std::string command_line(apbs_exe_ + " " + config_filename_);
+	std::string command_line(apbs_path_ + " " + config_filename_);
 	system(command_line.c_str());
 
 	// Check if APBS succeeded.  If not, get out.
@@ -379,11 +379,11 @@ PB::load_APBS_potential()
 				for (int k=1; k<=potential_.u3(); k++) {
 					p_stream >> buff;
 					potential_(i,j,k) = atof(buff.c_str());
-					if (potential_(i,j,k) > basic::options::option[ basic::options::OptionKeys::corrections::score::PB_potential_cap ]) {
-						potential_(i,j,k) = basic::options::option[ basic::options::OptionKeys::corrections::score::PB_potential_cap ];
+					if (potential_(i,j,k) > basic::options::option[ basic::options::OptionKeys::pb_potential::potential_cap ]) {
+						potential_(i,j,k) = basic::options::option[ basic::options::OptionKeys::pb_potential::potential_cap ];
 					}
-					if (potential_(i,j,k) < -basic::options::option[ basic::options::OptionKeys::corrections::score::PB_potential_cap ]) {
-						potential_(i,j,k) = -basic::options::option[ basic::options::OptionKeys::corrections::score::PB_potential_cap ];
+					if (potential_(i,j,k) < -basic::options::option[ basic::options::OptionKeys::pb_potential::potential_cap ]) {
+						potential_(i,j,k) = -basic::options::option[ basic::options::OptionKeys::pb_potential::potential_cap ];
 					}
 				}
 		break;

@@ -62,6 +62,7 @@
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
+#include <basic/options/keys/pb_potential.OptionKeys.gen.hh>
 
 // C++ headers
 #include <map>
@@ -117,7 +118,8 @@ ddG::ddG() :
 		use_custom_task_(false),
 		repack_bound_(true),
 		relax_bound_(false),
-		translation_step_size_(DEFAULT_TRANS_STEP_SIZE)
+		trans_step_size_(DEFAULT_TRANS_STEP_SIZE),
+		pb_enabled_(false)
 {
 	bound_energies_.clear();
 	unbound_energies_.clear();
@@ -125,61 +127,82 @@ ddG::ddG() :
 	unbound_per_residue_energies_.clear();
 }
 
-ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const jump/*=1*/, bool const symmetry /*=false*/ ) :
+ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in, 
+					core::Size const jump/*=1*/,
+					bool const symmetry /*=false*/ ) : 
 		simple_moves::DesignRepackMover(ddGCreator::mover_name()),
 		bound_total_energy_(0.0),
 		unbound_total_energy_(0.0),
-		repeats_(0),
-		rb_jump_(0),
-		symmetry_(false),
+		repeats_(1),
+		rb_jump_(jump),
+		symmetry_(symmetry),
 		per_residue_ddg_(false),
-		repack_(false),
+		repack_(true),
 		relax_mover_( NULL ),
 		use_custom_task_(false),
 		repack_bound_(true),
 		relax_bound_(false),
-		translation_step_size_(DEFAULT_TRANS_STEP_SIZE)
+		trans_step_size_(DEFAULT_TRANS_STEP_SIZE),
+		pb_enabled_(false)
 {
 	scorefxn_ = new core::scoring::ScoreFunction( *scorefxn_in );
-	rb_jump_ = jump;
-	symmetry_ = symmetry;
-	per_residue_ddg_ = false;
-	repack_ = true;
-	repeats_ = 1;
 
 	bound_energies_.clear();
 	unbound_energies_.clear();
 	bound_per_residue_energies_.clear();
 	unbound_per_residue_energies_.clear();
+
+	// Determine if this PB enabled.
+	if( scorefxn_->get_weight(core::scoring::PB_elec) != 0.) {
+		// Set this to PB enabled
+		pb_enabled_ = true;
+		trans_step_size_ = DEFAULT_TRANS_STEP_SIZE_PB;
+		TR << "PB enabled" << std::endl;
+	}
+	else{
+		pb_enabled_ = false;
+		trans_step_size_ = DEFAULT_TRANS_STEP_SIZE;
+	}
 }
 
-ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const jump/*=1*/, utility::vector1<core::Size> const & chain_ids, bool const symmetry /*=false*/ ) :
+ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in, 
+					core::Size const jump/*=1*/, 
+					utility::vector1<core::Size> const & chain_ids, 
+					bool const symmetry /*=false*/ ) : 
 		simple_moves::DesignRepackMover(ddGCreator::mover_name()),
 		bound_total_energy_(0.0),
 		unbound_total_energy_(0.0),
-		repeats_(0),
-		rb_jump_(0),
-		symmetry_(false),
+		repeats_(1),
+		rb_jump_(jump),
+		symmetry_(symmetry),
 		per_residue_ddg_(false),
-		repack_(false),
+		repack_(true),
 		relax_mover_( NULL ),
 		use_custom_task_(false),
 		repack_bound_(true),
 		relax_bound_(false),
-		translation_step_size_(DEFAULT_TRANS_STEP_SIZE)
+		trans_step_size_(DEFAULT_TRANS_STEP_SIZE), 
+		pb_enabled_(false)
 {
 	scorefxn_ = new core::scoring::ScoreFunction( *scorefxn_in );
-	rb_jump_ = jump;
 	chain_ids_ = chain_ids;
-	symmetry_ = symmetry;
-	per_residue_ddg_ = false;
-	repack_ = true;
-	repeats_ = 1;
 
 	bound_energies_.clear();
 	unbound_energies_.clear();
 	bound_per_residue_energies_.clear();
 	unbound_per_residue_energies_.clear();
+
+	// Determine if this PB enabled.
+	if( scorefxn_->get_weight(core::scoring::PB_elec) != 0.) {
+		// Set this to PB enabled
+		pb_enabled_ = true;
+		trans_step_size_ = DEFAULT_TRANS_STEP_SIZE_PB;
+		TR << "PB enabled" << std::endl;
+	}
+	else{
+		pb_enabled_ = false;
+		trans_step_size_ = DEFAULT_TRANS_STEP_SIZE;
+	}
 }
 void ddG::parse_my_tag(
 	utility::tag::TagPtr const tag,
@@ -227,22 +250,37 @@ void ddG::parse_my_tag(
 		utility_exit_with_message("You can't move the first chain.  Moving chain 2 is the same as moving chain 1, so do that instead.");
 	}
 
+	// Construct score function.
 	std::string const scorefxn_name( tag->getOption<std::string>( "scorefxn", "score12" ) );
 	scorefxn_ = new ScoreFunction( *(data.get< ScoreFunction * >( "scorefxns", scorefxn_name )) );
+
+	// Determine if this PB enabled.
+	if( scorefxn_->get_weight(core::scoring::PB_elec) != 0.) {
+		// Set this to PB enabled
+		pb_enabled_ = true;
+		trans_step_size_ = DEFAULT_TRANS_STEP_SIZE_PB;
+		TR << "PB enabled" << std::endl;
+	}
+	else{
+		pb_enabled_ = false;
+		trans_step_size_ = DEFAULT_TRANS_STEP_SIZE;
+	}
 }
 
 ddG::~ddG() {}
 
 void ddG::apply(Pose & pose)
 {
+	using namespace core::scoring::methods;
+	EnergyMethodOptions emoptions = scorefxn_->energy_method_options();
+
 	if(per_residue_ddg_)
 	{
-		core::scoring::methods::EnergyMethodOptionsOP energy_options(new core::scoring::methods::EnergyMethodOptions(scorefxn_->energy_method_options()));
+		EnergyMethodOptionsOP energy_options(new core::scoring::methods::EnergyMethodOptions(scorefxn_->energy_method_options()));
 		energy_options->hbond_options().decompose_bb_hb_into_pair_energies(true);
 		scorefxn_->set_energy_method_options(*energy_options);
 
 	}
-
 	Real average_ddg = 0.0;
 	std::map<Size, Real> average_per_residue_ddgs;
 
@@ -376,10 +414,7 @@ ddG::calculate( pose::Pose const & pose_original )
 	// work on a copy, don't/can't modify the original comformation.
 	pose::Pose pose = pose_original;
 
-	// Is PB-potential computation enabled?
-	bool pb_enabled = false;
-
-	// Dummy state as default (<= pb_enabled=false)
+	// Dummy state as default (<= pb_enabled_=false)
 	std::string original_state = "stateless";
 
 	//----------------------------------
@@ -390,8 +425,7 @@ ddG::calculate( pose::Pose const & pose_original )
 	core::scoring::methods::EnergyMethodOptions emoptions = scorefxn_->energy_method_options();
 
 	// First see if this method is called as part of PB-electrostatic computation.
-	if( pose.data().has(pose::datacache::CacheableDataType::PB_LIFETIME_CACHE) ) {
-		pb_enabled = true;
+	if( pb_enabled_ ) {
 		cached_data = static_cast< PBLifetimeCacheOP > (pose.data().get_ptr< PBLifetimeCache > ( pose::datacache::CacheableDataType::PB_LIFETIME_CACHE ));
 		runtime_assert( cached_data != 0 );
 		original_state = cached_data->get_energy_state();
@@ -411,7 +445,7 @@ ddG::calculate( pose::Pose const & pose_original )
 	//---------------------------------
 	// Bound state
 	//---------------------------------
-	if( pb_enabled ) cached_data->set_energy_state(emoptions.pb_bound_tag());
+	if( pb_enabled_ ) cached_data->set_energy_state(emoptions.pb_bound_tag());
 
 	repack_partner1_ = true;
 	repack_partner2_ = true;
@@ -464,7 +498,7 @@ ddG::calculate( pose::Pose const & pose_original )
 	//---------------------------------
 	// Unbound state
 	//---------------------------------
-	if( pb_enabled ) cached_data->set_energy_state(emoptions.pb_unbound_tag());
+	if( pb_enabled_ ) cached_data->set_energy_state(emoptions.pb_unbound_tag());
 
 	if(chain_ids_.size() > 0)
 	{
@@ -476,7 +510,7 @@ ddG::calculate( pose::Pose const & pose_original )
 			core::Size current_jump_id = core::pose::get_jump_id_from_chain_id(current_chain_id,pose);
 			rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose, current_jump_id) );
 			// Commented by honda: APBS blows up grid > 500.  Just use the default just like bound-state.			
-			translate->step_size( translation_step_size_ );
+			translate->step_size( trans_step_size_ );
 			translate->trans_axis(translation_axis);
 			translate->apply( pose );
 		}
@@ -485,7 +519,7 @@ ddG::calculate( pose::Pose const & pose_original )
 		rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose, rb_jump_ ) );
 
 		// Commented by honda: APBS blows up grid > 500.  Just use the default just like bound-state.
-		translate->step_size( translation_step_size_ );
+		translate->step_size( trans_step_size_ );
 		translate->apply( pose );
 	}
 
@@ -503,7 +537,7 @@ ddG::calculate( pose::Pose const & pose_original )
 	//----------------------------------
 	// Return to the original state
 	//----------------------------------
-	if( pb_enabled ) {
+	if( pb_enabled_ ) {
 		cached_data->set_energy_state( original_state );
 		pb_cached_data_ = cached_data;
 	}
@@ -520,10 +554,7 @@ ddG::symm_ddG( pose::Pose & pose_original )
 	// work on a copy, don't/can't modify the original comformation.
 	pose::Pose pose = pose_original;
 
-	// Is PB-potential computation enabled?
-	bool pb_enabled = false;
-
-	// Dummy state as default (<= pb_enabled=false)
+	// Dummy state as default (<= pb_enabled_=false)
 	std::string original_state = "stateless";
 
 	//----------------------------------
@@ -534,8 +565,7 @@ ddG::symm_ddG( pose::Pose & pose_original )
 	core::scoring::methods::EnergyMethodOptions emoptions = scorefxn_->energy_method_options();
 
 	// First see if this method is called as part of PB-electrostatic computation.
-	if( pose.data().has(pose::datacache::CacheableDataType::PB_LIFETIME_CACHE) ) {
-		pb_enabled = true;
+	if( pb_enabled_ ) {
 		cached_data = static_cast< PBLifetimeCacheOP > (pose.data().get_ptr< PBLifetimeCache > ( pose::datacache::CacheableDataType::PB_LIFETIME_CACHE ));
 		runtime_assert( cached_data != 0 );
 		original_state = cached_data->get_energy_state();
@@ -554,7 +584,7 @@ ddG::symm_ddG( pose::Pose & pose_original )
 	//---------------------------------
 	// Bound state
 	//---------------------------------
-	if( pb_enabled ) cached_data->set_energy_state(emoptions.pb_bound_tag());
+	if( pb_enabled_ ) cached_data->set_energy_state(emoptions.pb_bound_tag());
 
 	//setup_packer_and_movemap( pose );
 	task_ = core::pack::task::TaskFactory::create_packer_task( pose );
@@ -588,10 +618,10 @@ ddG::symm_ddG( pose::Pose & pose_original )
 	//---------------------------------
 	// Unbound state
 	//---------------------------------
-	if( pb_enabled ) cached_data->set_energy_state( emoptions.pb_unbound_tag() );
+	if( pb_enabled_ ) cached_data->set_energy_state( emoptions.pb_unbound_tag() );
 
 	rigid::RigidBodyDofSeqTransMoverOP translate( new rigid::RigidBodyDofSeqTransMover( dofs ) );
-	translate->step_size( translation_step_size_ );
+	translate->step_size( trans_step_size_ );
 	translate->apply( pose );
 	pack::symmetric_pack_rotamers( pose, *scorefxn_, task_ );
 	if( relax_mover() )
@@ -606,7 +636,7 @@ ddG::symm_ddG( pose::Pose & pose_original )
 	//----------------------------------
 	// Return to the original state
 	//----------------------------------
-	if( pb_enabled ) {
+	if( pb_enabled_ ) {
 		cached_data->set_energy_state( original_state );
 		pb_cached_data_ = cached_data;
 	}
@@ -621,9 +651,9 @@ ddG::no_repack_ddG(Pose & pose_original)
 	pose::Pose pose = pose_original;
 
 	// Is PB-potential computation enabled?
-	bool pb_enabled = false;
+	bool pb_enabled_ = false;
 
-	// Dummy state as default (<= pb_enabled=false)
+	// Dummy state as default (<= pb_enabled_=false)
 	std::string original_state = "stateless";
 
 	//----------------------------------
@@ -634,8 +664,7 @@ ddG::no_repack_ddG(Pose & pose_original)
 	core::scoring::methods::EnergyMethodOptions emoptions = scorefxn_->energy_method_options();
 
 	// First see if this method is called as part of PB-electrostatic computation.
-	if( pose.data().has(pose::datacache::CacheableDataType::PB_LIFETIME_CACHE) ) {
-		pb_enabled = true;
+	if( pb_enabled_ ) {
 		cached_data = static_cast< PBLifetimeCacheOP > (pose.data().get_ptr< PBLifetimeCache > ( pose::datacache::CacheableDataType::PB_LIFETIME_CACHE ));
 		runtime_assert( cached_data != 0 );
 		original_state = cached_data->get_energy_state();
@@ -644,7 +673,7 @@ ddG::no_repack_ddG(Pose & pose_original)
 	//---------------------------------
 	// Bound state
 	//---------------------------------
-	if( pb_enabled ) cached_data->set_energy_state( emoptions.pb_bound_tag() );
+	if( pb_enabled_ ) cached_data->set_energy_state( emoptions.pb_bound_tag() );
 
 	(*scorefxn_)( pose );
 	fill_energy_vector( pose, bound_energies_ );
@@ -657,7 +686,7 @@ ddG::no_repack_ddG(Pose & pose_original)
 	//---------------------------------
 	// Unbound state
 	//---------------------------------
-	if( pb_enabled ) cached_data->set_energy_state( emoptions.pb_unbound_tag() );
+	if( pb_enabled_ ) cached_data->set_energy_state( emoptions.pb_unbound_tag() );
 
 	if(chain_ids_.size()  > 0 )
 	{
@@ -670,14 +699,14 @@ ddG::no_repack_ddG(Pose & pose_original)
 			core::Size current_jump_id = core::pose::get_jump_id_from_chain_id(current_chain_id,pose);
 			rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose, current_jump_id) );
 			translate->trans_axis(translation_axis);
-			translate->step_size( translation_step_size_ );
+			translate->step_size( trans_step_size_ );
 			translate->apply( pose );
 		}
 
 	}else
 	{
 		rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose,rb_jump_ ) );
-		translate->step_size( translation_step_size_ );
+		translate->step_size( trans_step_size_ );
 		translate->apply( pose );
 	}
 
@@ -693,7 +722,7 @@ ddG::no_repack_ddG(Pose & pose_original)
 	//----------------------------------
 	// Return to the original state
 	//----------------------------------
-	if( pb_enabled ) {
+	if( pb_enabled_ ) {
 		cached_data->set_energy_state( original_state );
 		pb_cached_data_ = cached_data;
 	}

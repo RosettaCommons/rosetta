@@ -41,6 +41,8 @@ namespace simple_filters {
 
 static basic::Tracer TR( "protocols.simple_filters.DdgFilter" );
 
+const core::Real DdgFilter::DEFAULT_TRANS_STEP_SIZE = 1000.0;
+const core::Real DdgFilter::DEFAULT_TRANS_STEP_SIZE_PB = 100.0;
 protocols::filters::FilterOP
 DdgFilterCreator::create_filter() const { return new DdgFilter; }
 
@@ -59,9 +61,44 @@ DdgFilter::DdgFilter() :
 	repeats_( 1 ),
 	symmetry_(false),
 	repack_( true ),
-	relax_mover_( NULL )
+	relax_mover_( NULL ),
+	pb_enabled_(false),
+	trans_step_size_(DEFAULT_TRANS_STEP_SIZE)
 {
 	scorename_ = "ddg";
+}
+
+
+DdgFilter::DdgFilter( core::Real const ddg_threshold, 
+											core::scoring::ScoreFunctionCOP scorefxn, 
+											core::Size const rb_jump/*=1*/, 
+											core::Size const repeats/*=1*/, 
+											bool const symmetry /*=false*/ ) :
+	Filter("Ddg" ),
+	ddg_threshold_(ddg_threshold),
+	scorefxn_(scorefxn->clone()),
+	rb_jump_(rb_jump),
+	use_custom_task_( false ),
+	repack_bound_( true ),
+	relax_bound_( false ),
+	repeats_(repeats),
+	symmetry_(symmetry),
+	repack_( true ),
+	relax_mover_( NULL ),
+	pb_enabled_(false),
+	trans_step_size_(DEFAULT_TRANS_STEP_SIZE)
+{
+	// Determine if this PB enabled.
+	if( scorefxn_->get_weight(core::scoring::PB_elec) != 0.) {
+		// Set this to PB enabled
+		pb_enabled_ = true;
+		trans_step_size_ = DEFAULT_TRANS_STEP_SIZE_PB;
+		TR << "PB enabled" << std::endl;
+	}
+	else{
+		pb_enabled_ = false;
+		trans_step_size_ = DEFAULT_TRANS_STEP_SIZE;
+	}
 }
 
 DdgFilter::~DdgFilter() {}
@@ -116,6 +153,18 @@ DdgFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & data, 
 		TR<<"ddg filter with threshold "<< ddg_threshold_<<" repeats="<<repeats()<<" and scorefxn "<<scorefxn_name<<" with symmetry " <<std::endl;
 	else
 		TR<<"ddg filter with threshold "<< ddg_threshold_<<" repeats="<<repeats()<<" and scorefxn "<<scorefxn_name<<" over jump "<<rb_jump_<<" and repack "<<repack()<<std::endl;
+
+	// Determine if this PB enabled.
+	if( scorefxn_->get_weight(core::scoring::PB_elec) != 0.) {
+		// Set this to PB enabled
+		pb_enabled_ = true;
+		trans_step_size_ = DEFAULT_TRANS_STEP_SIZE_PB;
+		TR << "PB enabled" << std::endl;
+	}
+	else{
+		pb_enabled_ = false;
+		trans_step_size_ = DEFAULT_TRANS_STEP_SIZE;
+	}
 }
 
 void DdgFilter::parse_def( utility::lua::LuaObject const & def,
@@ -230,14 +279,14 @@ DdgFilter::compute( core::pose::Pose const & pose_in ) const {
 				core::Size current_chain_id = *chain_it;
 				core::Size current_jump_id = core::pose::get_jump_id_from_chain_id(current_chain_id,split_pose);
 				rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( split_pose, current_jump_id) );
-				translate->step_size( 1000.0 );
+				translate->step_size( trans_step_size_ );
 				translate->trans_axis(translation_axis);
 				translate->apply( split_pose );
 			}
 		}else
 		{
 			rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( split_pose, rb_jump_ ) );
-			translate->step_size( 1000.0 );
+			translate->step_size( trans_step_size_ );
 			translate->apply( split_pose );
 		}
 
@@ -246,23 +295,6 @@ DdgFilter::compute( core::pose::Pose const & pose_in ) const {
 		core::Real const dG( bound_energy - unbound_energy );
 		return( dG );
 	}
-}
-
-
-
-DdgFilter::DdgFilter( core::Real const ddg_threshold, core::scoring::ScoreFunctionCOP scorefxn, core::Size const rb_jump/*=1*/, core::Size const repeats/*=1*/, bool const symmetry /*=false*/ ) :
-	Filter("Ddg" ),
-	use_custom_task_( false ),
-	repack_bound_( true ),
-	relax_bound_( false ),
-	repack_( true ),
-	relax_mover_( NULL )
-{
-	ddg_threshold_ = ddg_threshold;
-	scorefxn_ = scorefxn->clone();
-	rb_jump_ = rb_jump;
-	repeats_ = repeats;
-	symmetry_ = symmetry;
 }
 
 void

@@ -37,7 +37,7 @@
 
 // command line options
 #include <basic/options/option.hh>
-#include <basic/options/keys/corrections.OptionKeys.gen.hh>
+#include <basic/options/keys/pb_potential.OptionKeys.gen.hh>
 
 #include <string>
 #include <fstream> // for ifstream
@@ -72,8 +72,8 @@ SetupPBCreator::mover_name()
   return "SetupPoissonBoltzmannPotential";
 }
 
-const std::string 
-SetupPB::DEFAULT_APBS_PATH = "apbs";
+const std::string SetupPB::DEFAULT_APBS_PATH = "apbs";
+
 SetupPB::SetupPoissonBoltzmannPotential()
 {}
 
@@ -103,9 +103,9 @@ SetupPB::apply(core::pose::Pose & pose ) {
   remove("*.in");
 	remove("*.pqr");
 
-	// Prescore to cache bound/unbound poses.
+	// Prescore to cache bound/unbound poses.  This is necessary for filters.
 	// Bound, unbound
-	ddg_->apply(pose);
+ 	ddg_->apply(pose);
 
 }
 
@@ -147,7 +147,7 @@ SetupPB::parse_my_tag( utility::tag::TagPtr const tag,
 	}
 	apbsstream.close();
 
-	basic::options::option[basic::options::OptionKeys::corrections::score::apbs_path](apbs_path);
+	basic::options::option[basic::options::OptionKeys::pb_potential::apbs_path](apbs_path);
 
 
 	utility::vector1<Size> charged_chains;
@@ -162,7 +162,7 @@ SetupPB::parse_my_tag( utility::tag::TagPtr const tag,
 		TR << "No user defined charged chains.  Default to : 1" << std::endl;
 		charged_chains.push_back(1);
 	}
-	basic::options::option[basic::options::OptionKeys::corrections::score::PB_charged_chains](charged_chains);
+	basic::options::option[basic::options::OptionKeys::pb_potential::charged_chains](charged_chains);
 
 	utility::vector1<Size> revamp_near_chain;
 	if( tag->hasOption("revamp_near_chain") ) {
@@ -170,30 +170,25 @@ SetupPB::parse_my_tag( utility::tag::TagPtr const tag,
     for( core::Size i=1; i<=temp.size(); ++i ) {
       revamp_near_chain.push_back(atoi(temp[i].c_str()));
     }
-		basic::options::option[basic::options::OptionKeys::corrections::score::PB_revamp_near_chain]( revamp_near_chain);
-	}
-	else{
-		TR << "No revamp_near_chain" << std::endl;
+		basic::options::option[basic::options::OptionKeys::pb_potential::revamp_near_chain]( revamp_near_chain);
 	}
 
 	core::Real potential_cap;
 	if( tag->hasOption("potential_cap") ) {
 		potential_cap = tag->getOption<core::Real>( "potential_cap" );
-		basic::options::option[basic::options::OptionKeys::corrections::score::PB_potential_cap]( potential_cap );
-	}
-	else{
-		TR << "No potential_cap" << std::endl;
+		basic::options::option[basic::options::OptionKeys::pb_potential::potential_cap]( potential_cap );
 	}
 
 	bool sidechain_only;
 	if( tag->hasOption("sidechain_only") ) {
-		basic::options::option[basic::options::OptionKeys::corrections::score::PB_sidechain_only]( sidechain_only ); 
-	}
-	else{
-		TR << "No sidechain_only" << std::endl;
+		basic::options::option[basic::options::OptionKeys::pb_potential::sidechain_only]( sidechain_only ); 
 	}
 
-
+	core::Real epsilon;
+	if( tag->hasOption("epsilon") ) {
+		epsilon = tag->getOption<core::Real>( "epsilon" );
+		basic::options::option[basic::options::OptionKeys::pb_potential::epsilon]( epsilon );
+	}
 
 	//-------------------------------------------------------------------------
 	// Initialize DDG for pre-scoring, which compute bound & unbound energies.

@@ -27,6 +27,7 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.hh>
+#include <utility/file/PathName.hh>
 
 #include <map>
 
@@ -39,7 +40,7 @@ public:
 	static const std::string APBS_CONFIG_EXT;
 	static const std::string APBS_PQR_EXT;
 	static const std::string APBS_DX_EXT;
-	static const std::string DEFAULT_APBS_EXE;
+	static const std::string DEFAULT_APBS_PATH;
 
 
 	PoissonBoltzmannPotential();
@@ -102,7 +103,7 @@ private:
 	std::string config_filename_;
 	std::string pqr_filename_;
 	std::string dx_filename_;
-	std::string apbs_exe_;
+	std::string apbs_path_;  // full path name to the APBS executable: e.g. /usr/bin/apbs.exe
 
 	/// Prepare ABPS - generate .in and .pqr
 	void write_config (

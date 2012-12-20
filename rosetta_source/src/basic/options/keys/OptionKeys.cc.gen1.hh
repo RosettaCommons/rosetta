@@ -1,4 +1,3 @@
-namespace resample { BooleanOptionKey const stage2( "resample:stage2" );  }
 namespace resample { BooleanOptionKey const jumps( "resample:jumps" );  }
 namespace resample { RealVectorOptionKey const min_max_start_seq_sep( "resample:min_max_start_seq_sep" );  }
 namespace loopfcst { BooleanOptionKey const loopfcst( "loopfcst" );  }
@@ -188,11 +187,6 @@ namespace corrections { namespace score { StringOptionKey const dun02_file( "cor
 namespace corrections { namespace score { StringOptionKey const ch_o_bond_potential( "corrections:score:ch_o_bond_potential" );  } }
 namespace corrections { namespace score { BooleanOptionKey const hack_elec_co_only( "corrections:score:hack_elec_co_only" );  } }
 namespace corrections { namespace score { RealOptionKey const lj_hbond_hdis( "corrections:score:lj_hbond_hdis" );  } }
-namespace corrections { namespace score { IntegerVectorOptionKey const PB_charged_chains( "corrections:score:PB_charged_chains" );  } }
-namespace corrections { namespace score { BooleanOptionKey const PB_sidechain_only( "corrections:score:PB_sidechain_only" );  } }
-namespace corrections { namespace score { IntegerVectorOptionKey const PB_revamp_near_chain( "corrections:score:PB_revamp_near_chain" );  } }
-namespace corrections { namespace score { StringOptionKey const apbs_path( "corrections:score:apbs_path" );  } }
-namespace corrections { namespace score { RealOptionKey const PB_potential_cap( "corrections:score:PB_potential_cap" );  } }
 namespace corrections { namespace score { RealOptionKey const lj_hbond_OH_donor_dis( "corrections:score:lj_hbond_OH_donor_dis" );  } }
 namespace corrections { namespace score { BooleanOptionKey const score12prime( "corrections:score:score12prime" );  } }
 namespace corrections { namespace score { RealOptionKey const hb_sp2_BAH180_rise( "corrections:score:hb_sp2_BAH180_rise" );  } }
@@ -654,3 +648,7 @@ namespace lh { FileOptionKey const sample_weight_file( "lh:sample_weight_file" )
 namespace lh { namespace fragpdb { BooleanOptionKey const fragpdb( "lh:fragpdb" );  } }
 namespace lh { namespace fragpdb { StringOptionKey const out_path( "lh:fragpdb:out_path" );  } }
 namespace lh { namespace fragpdb { IntegerVectorOptionKey const indexoffset( "lh:fragpdb:indexoffset" );  } }
+namespace lh { namespace fragpdb { StringVectorOptionKey const bin( "lh:fragpdb:bin" );  } }
+namespace lh { namespace symfragrm { BooleanOptionKey const symfragrm( "lh:symfragrm" );  } }
+namespace lh { namespace symfragrm { FileVectorOptionKey const pdblist( "lh:symfragrm:pdblist" );  } }
+namespace rbe { BooleanOptionKey const rbe( "rbe" );  }

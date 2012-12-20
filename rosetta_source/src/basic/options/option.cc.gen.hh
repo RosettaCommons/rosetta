@@ -656,10 +656,10 @@ option.add( basic::options::OptionKeys::resample::resample, "resample option gro
 option.add( basic::options::OptionKeys::resample::silent, "a silent file for decoys to restart sampling from " ).def("");
 option.add( basic::options::OptionKeys::resample::tag, "which decoy to select from silent file " ).def("");
 option.add( basic::options::OptionKeys::resample::stage1, "if true restart after stage1, otherwise after stage2 " ).def(false);
+option.add( basic::options::OptionKeys::resample::stage2, "if true restart after stage1, otherwise after stage2 " ).def(false);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::resample::stage2, "if true restart after stage1, otherwise after stage2 " ).def(false);
-option.add( basic::options::OptionKeys::resample::jumps, "if true restart after stage1, otherwise after stage2 " ).def(false);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::resample::jumps, "if true restart after stage1, otherwise after stage2 " ).def(false);
 option.add( basic::options::OptionKeys::resample::min_max_start_seq_sep, "range of (random) start values for seq-separation" ).def(0);
 option.add( basic::options::OptionKeys::loopfcst::loopfcst, "loopfcst option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::loopfcst::coord_cst_weight, "use coord constraints for template" ).def(0.0);
@@ -848,11 +848,6 @@ option.add( basic::options::OptionKeys::corrections::score::dun02_file, "Name of
 option.add( basic::options::OptionKeys::corrections::score::ch_o_bond_potential, "Name of ch_o_bond potential file (search in the local directory first, then look in the database)" ).def("scoring/score_functions/carbon_hbond/ch_o_bond_potential.dat");
 option.add( basic::options::OptionKeys::corrections::score::hack_elec_co_only, "Using only CO-CO interactions in hack_elec_bb_bb" ).def(false);
 option.add( basic::options::OptionKeys::corrections::score::lj_hbond_hdis, "Lennard Jones sigma value for hatms, classically it's been at 1.95 but the average A-H distance for hydrogen bonding is 1.75 from crystal structures. (momeara)" ).def(1.95);
-option.add( basic::options::OptionKeys::corrections::score::PB_charged_chains, "Chain numbers that carries charge in the PB calculation" ).def(utility::vector1<int>(1, 1));
-option.add( basic::options::OptionKeys::corrections::score::PB_sidechain_only, "Only calculate interactions to sidechain." ).def(true);
-option.add( basic::options::OptionKeys::corrections::score::PB_revamp_near_chain, "Scale down PB interactions if near the given chain. Use chain numbers as input." );
-option.add( basic::options::OptionKeys::corrections::score::apbs_path, "Path to the APBS (Adaptive Poisson-Boltzmann Solver) executable" );
-option.add( basic::options::OptionKeys::corrections::score::PB_potential_cap, "Cap for PB potential input" ).def(20.0);
 option.add( basic::options::OptionKeys::corrections::score::lj_hbond_OH_donor_dis, "Lennard Jones sigma value for O in OH donor groups.  Classically it has been 3.0 but the average distances from crystal structurs is 2.6 (momeara)" ).def(3.0);
 option.add( basic::options::OptionKeys::corrections::score::score12prime, "Whenever getScoreFunction() would have returned the ScoreFunction from standard.wts + score12.wts_patch, instead return a revised score12 (score12prime) with reference energies optimized with optE for sequence profile recovery" ).def(false);
 option.add( basic::options::OptionKeys::corrections::score::hb_sp2_BAH180_rise, "The rise from -0.5 for the BAH=180 value for the additive chi/BAH sp2 potential" ).def(0.75);
@@ -1314,13 +1309,13 @@ option.add( basic::options::OptionKeys::lh::sample_weight_file, "Holds the initi
 option.add( basic::options::OptionKeys::lh::fragpdb::fragpdb, "fragpdb option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::lh::fragpdb::out_path, "Path where pdbs are saved" ).def("");
 option.add( basic::options::OptionKeys::lh::fragpdb::indexoffset, "list of index offset pairs" ).def(-1);
-
-}
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::fragpdb::bin, "list of bin keys" ).def(utility::vector1<std::string>());
+option.add( basic::options::OptionKeys::lh::fragpdb::bin, "list of bin keys" ).def(utility::vector1<std::string>());
 option.add( basic::options::OptionKeys::lh::symfragrm::symfragrm, "symfragrm option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::lh::symfragrm::pdblist, "list of pdbs to be processed" );
 option.add( basic::options::OptionKeys::rbe::rbe, "rbe option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::rbe::server_url, "serverurl for rosetta backend" );
+
+}
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::rbe::server_url, "serverurl for rosetta backend" );
 option.add( basic::options::OptionKeys::rbe::server_port, "port for rosetta backend" ).def("80");
 option.add( basic::options::OptionKeys::rbe::poll_frequency, "No description" ).def(1.0);
 option.add( basic::options::OptionKeys::blivens::blivens, "blivens option group" ).legal(true).def(true);
@@ -1969,14 +1964,14 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure
 option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
-
-}
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
+option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
-option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
+
+}
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_pdb, "PDB file from which to draw constraints" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrbmoves, "number of rigid-body moves" ).def(100);
@@ -2620,6 +2615,13 @@ option.add( basic::options::OptionKeys::matdes::mutalyze::min_rb, "Specify wheth
 option.add( basic::options::OptionKeys::gpu::gpu, "Enable/Disable GPU support" ).def(true);
 option.add( basic::options::OptionKeys::gpu::device, "GPU device to use" ).def(1);
 option.add( basic::options::OptionKeys::gpu::threads, "Max GPU threads to use" ).def(2048);
+option.add( basic::options::OptionKeys::pb_potential::pb_potential, "pb_potential option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::pb_potential::charged_chains, "Chain numbers that carries charge in the PB calculation" ).def(1);
+option.add( basic::options::OptionKeys::pb_potential::sidechain_only, "Only calculate interactions to sidechain." ).def(true);
+option.add( basic::options::OptionKeys::pb_potential::revamp_near_chain, "Scale down PB interactions if near the given chain. Use chain numbers as input." );
+option.add( basic::options::OptionKeys::pb_potential::apbs_path, "Path to the APBS (Adaptive Poisson-Boltzmann Solver) executable" );
+option.add( basic::options::OptionKeys::pb_potential::potential_cap, "Cap for PB potential input" ).def(20.0);
+option.add( basic::options::OptionKeys::pb_potential::epsilon, "Tolerance in A.  When a charged atom moves byond this tolerance, the PDE is resolved." ).def(2.0);
 
 }
 

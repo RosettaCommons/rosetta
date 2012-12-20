@@ -110,7 +110,9 @@ private :
 	/// info carrier for poisson-boltzmann potential energy computation
 	core::scoring::methods::PBLifetimeCacheOP pb_cached_data_;
 	/// step size for translating unbound pose.  the default size may be too large or too small for some applications.
-	Real translation_step_size_;
+	Real trans_step_size_;
+	/// true when PB potential is part of scorefxn
+	bool pb_enabled_;
 };
 
 } // movers

@@ -1,8 +1,3 @@
-namespace DenovoProteinDesign { FileOptionKey const create_from_template_pdb( "DenovoProteinDesign:create_from_template_pdb" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const create_from_secondary_structure( "DenovoProteinDesign:create_from_secondary_structure" );  }
-namespace RBSegmentRelax { BooleanOptionKey const RBSegmentRelax( "RBSegmentRelax" );  }
-namespace RBSegmentRelax { FileOptionKey const input_pdb( "RBSegmentRelax:input_pdb" );  }
-namespace RBSegmentRelax { FileOptionKey const rb_file( "RBSegmentRelax:rb_file" );  }
 namespace RBSegmentRelax { RealOptionKey const cst_wt( "RBSegmentRelax:cst_wt" );  }
 namespace RBSegmentRelax { RealOptionKey const cst_width( "RBSegmentRelax:cst_width" );  }
 namespace RBSegmentRelax { StringOptionKey const cst_pdb( "RBSegmentRelax:cst_pdb" );  }
@@ -647,3 +642,10 @@ namespace matdes { namespace mutalyze { BooleanOptionKey const min_rb( "matdes:m
 namespace gpu { BooleanOptionKey const gpu( "gpu" );  }
 namespace gpu { IntegerOptionKey const device( "gpu:device" );  }
 namespace gpu { IntegerOptionKey const threads( "gpu:threads" );  }
+namespace pb_potential { BooleanOptionKey const pb_potential( "pb_potential" );  }
+namespace pb_potential { IntegerVectorOptionKey const charged_chains( "pb_potential:charged_chains" );  }
+namespace pb_potential { BooleanOptionKey const sidechain_only( "pb_potential:sidechain_only" );  }
+namespace pb_potential { IntegerVectorOptionKey const revamp_near_chain( "pb_potential:revamp_near_chain" );  }
+namespace pb_potential { StringOptionKey const apbs_path( "pb_potential:apbs_path" );  }
+namespace pb_potential { RealOptionKey const potential_cap( "pb_potential:potential_cap" );  }
+namespace pb_potential { RealOptionKey const epsilon( "pb_potential:epsilon" );  }

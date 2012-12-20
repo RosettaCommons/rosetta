@@ -165,6 +165,7 @@ private:
 
 	// const-ref to scoring database
 	core::Size fixed_residue_;
+	core::Real epsilon_;
   mutable scoring::PoissonBoltzmannPotentialOP poisson_boltzmann_potential_;
 
 	// Cached objects for speed

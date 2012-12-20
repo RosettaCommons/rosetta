@@ -3703,6 +3703,20 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: true</dd><br>
 </dl>
 <dl>
+<dt><b>-rna_chemical_shift_exp_data</b> \<String\><dt>
+<dd>rna_chemical_shift_exp_data</dd><br>
+<dd>Default: ""</dd><br>
+</dl>
+<dl>
+<dt><b>-rna_chemical_shift_H5_prime_mode</b> \<String\><dt>
+<dd>rna_chemical_shift_H5_prime_mode</dd><br>
+<dd>Default: ""</dd><br>
+</dl>
+<dl>
+<dt><b>-rna_chemical_shift_include_res</b> \<IntegerVector\><dt>
+<dd>rna_chemical_shift_include_res</dd><br>
+</dl>
+<dl>
 <dt><b>-use_2prime_OH_potential</b> \<Boolean\><dt>
 <dd>Use torsional potential for RNA 2prime OH.</dd><br>
 <dd>Default: true</dd><br>
@@ -4035,29 +4049,6 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-lj_hbond_hdis</b> \<Real\><dt>
 <dd>Lennard Jones sigma value for hatms, classically it's been at 1.95 but the average A-H distance for hydrogen bonding is 1.75 from crystal structures. (momeara)</dd><br>
 <dd>Default: 1.95</dd><br>
-</dl>
-<dl>
-<dt><b>-PB_charged_chains</b> \<IntegerVector\><dt>
-<dd>Chain numbers that carries charge in the PB calculation</dd><br>
-<dd>Default: utility::vector1<int>(1, 1)</dd><br>
-</dl>
-<dl>
-<dt><b>-PB_sidechain_only</b> \<Boolean\><dt>
-<dd>Only calculate interactions to sidechain.</dd><br>
-<dd>Default: true</dd><br>
-</dl>
-<dl>
-<dt><b>-PB_revamp_near_chain</b> \<IntegerVector\><dt>
-<dd>Scale down PB interactions if near the given chain. Use chain numbers as input.</dd><br>
-</dl>
-<dl>
-<dt><b>-apbs_path</b> \<String\><dt>
-<dd>Path to the APBS (Adaptive Poisson-Boltzmann Solver) executable</dd><br>
-</dl>
-<dl>
-<dt><b>-PB_potential_cap</b> \<Real\><dt>
-<dd>Cap for PB potential input</dd><br>
-<dd>Default: 20.0</dd><br>
 </dl>
 <dl>
 <dt><b>-lj_hbond_OH_donor_dis</b> \<Real\><dt>
@@ -12689,6 +12680,40 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-threads</b> \<Integer\><dt>
 <dd>Max GPU threads to use</dd><br>
 <dd>Default: 2048</dd><br>
+</dl>
+ </li>
+<li><h2>pb_potential</h2>
+<dl>
+<dt><b>-pb_potential</b> \<Boolean\><dt>
+<dd>pb_potential option group</dd><br>
+</dl>
+<dl>
+<dt><b>-charged_chains</b> \<IntegerVector\><dt>
+<dd>Chain numbers that carries charge in the PB calculation</dd><br>
+<dd>Default: 1</dd><br>
+</dl>
+<dl>
+<dt><b>-sidechain_only</b> \<Boolean\><dt>
+<dd>Only calculate interactions to sidechain.</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-revamp_near_chain</b> \<IntegerVector\><dt>
+<dd>Scale down PB interactions if near the given chain. Use chain numbers as input.</dd><br>
+</dl>
+<dl>
+<dt><b>-apbs_path</b> \<String\><dt>
+<dd>Path to the APBS (Adaptive Poisson-Boltzmann Solver) executable</dd><br>
+</dl>
+<dl>
+<dt><b>-potential_cap</b> \<Real\><dt>
+<dd>Cap for PB potential input</dd><br>
+<dd>Default: 20.0</dd><br>
+</dl>
+<dl>
+<dt><b>-epsilon</b> \<Real\><dt>
+<dd>Tolerance in A.  When a charged atom moves byond this tolerance, the PDE is resolved.</dd><br>
+<dd>Default: 2.0</dd><br>
 </dl>
 </ul>
  */

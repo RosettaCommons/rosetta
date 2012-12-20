@@ -1863,11 +1863,6 @@ Options = Option_Group( '',
 			Option( 'ch_o_bond_potential',   'String', desc="Name of ch_o_bond potential file (search in the local directory first, then look in the database)" , default="scoring/score_functions/carbon_hbond/ch_o_bond_potential.dat" ),
 			Option( 'hack_elec_co_only',   'Boolean', desc="Using only CO-CO interactions in hack_elec_bb_bb", default = 'false' ),
 			Option( 'lj_hbond_hdis', 'Real', desc="Lennard Jones sigma value for hatms, classically it's been at 1.95 but the average A-H distance for hydrogen bonding is 1.75 from crystal structures. (momeara)", default = '1.95' ),
-			Option( 'PB_charged_chains', 'IntegerVector', desc="Chain numbers that carries charge in the PB calculation",default='utility::vector1<int>(1, 1)' ),
-			Option( 'PB_sidechain_only', 'Boolean', desc="Only calculate interactions to sidechain.", default="true" ),
-			Option( 'PB_revamp_near_chain', 'IntegerVector', desc="Scale down PB interactions if near the given chain. Use chain numbers as input." ),
-			Option( 'apbs_path', 'String', desc="Path to the APBS (Adaptive Poisson-Boltzmann Solver) executable"),
-			Option( 'PB_potential_cap', 'Real', desc="Cap for PB potential input", default = '20.0' ),
 			Option( 'lj_hbond_OH_donor_dis', 'Real', desc="Lennard Jones sigma value for O in OH donor groups.  Classically it has been 3.0 but the average distances from crystal structurs is 2.6 (momeara)", default='3.0'),
 			Option( 'score12prime', 'Boolean', desc="Whenever getScoreFunction() would have returned the ScoreFunction from standard.wts + score12.wts_patch, instead return a revised score12 (score12prime) with reference energies optimized with optE for sequence profile recovery", default='false' ),
 			Option( 'hb_sp2_BAH180_rise', 'Real', desc="The rise from -0.5 for the BAH=180 value for the additive chi/BAH sp2 potential", default="0.75"),
@@ -3054,6 +3049,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option('debug_output', 'Boolean', default='false',desc='specify whether or not to write a whole bunch of debug statements to standard out'),
 		Option('dump_pdbs','Boolean',default='true',desc='specify whether or not to dump repacked wild-type and mutant pdbs'),
 		Option('weight_file', 'String', default='ddg.wts',desc='specifies the weight-files to be used in calculations'),
+
 	),
 
 	# options for my inv_kin_lig_loop_design program.
@@ -5027,7 +5023,14 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
                 Option('threads', 'Integer', desc='Max GPU threads to use', default = '2048'),
         ), # gpu
 
-
+	Option_Group( 'pb_potential',
+		Option( 'charged_chains', 'IntegerVector', desc="Chain numbers that carries charge in the PB calculation",default='1' ),
+		Option( 'sidechain_only', 'Boolean', desc="Only calculate interactions to sidechain.", default="true" ),
+		Option( 'revamp_near_chain', 'IntegerVector', desc="Scale down PB interactions if near the given chain. Use chain numbers as input." ),
+		Option( 'apbs_path', 'String', desc="Path to the APBS (Adaptive Poisson-Boltzmann Solver) executable"),
+		Option( 'potential_cap', 'Real', desc="Cap for PB potential input", default = '20.0' ),
+		Option( 'epsilon', 'Real', desc="Tolerance in A.  When a charged atom moves byond this tolerance, the PDE is resolved.", default='2.0'),
+	), # pb_potential
 ) # end options
 
 

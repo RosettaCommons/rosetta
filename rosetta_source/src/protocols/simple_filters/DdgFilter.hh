@@ -32,8 +32,14 @@ namespace simple_filters {
 class DdgFilter : public filters::Filter
 {
 public:
+	const static core::Real DEFAULT_TRANS_STEP_SIZE;
+	const static core::Real DEFAULT_TRANS_STEP_SIZE_PB;
 	DdgFilter();
-	DdgFilter( core::Real const ddg_threshold, core::scoring::ScoreFunctionCOP scorefxn, core::Size const rb_jump=1, core::Size const repeats=1, bool const symmetry=false );
+	DdgFilter( core::Real const ddg_threshold, 
+						 core::scoring::ScoreFunctionCOP scorefxn, 
+						 core::Size const rb_jump=1,
+						 core::Size const repeats=1, 
+						 bool const symmetry=false);
 	bool apply( core::pose::Pose const & pose ) const;
 	filters::FilterOP clone() const;
 	filters::FilterOP fresh_instance() const;
@@ -61,6 +67,10 @@ public:
 	void relax_mover( protocols::moves::MoverOP m );
 	protocols::moves::MoverOP relax_mover() const;
 private:
+
+	// initialize PB related features
+	void initPB();
+
 	core::Real ddg_threshold_; //dflt -15
 	core::scoring::ScoreFunctionOP scorefxn_; //dflt NULL/score12 in cstrctr/rosettascripts
 	core::Size rb_jump_; // dflt 1
@@ -73,6 +83,12 @@ private:
 	bool symmetry_; //dflt false
 	bool repack_; //dflt true; Do you want to repack in the bound and unbound states (ddG) or merely compute the dG
 	protocols::moves::MoverOP relax_mover_; //dflt NULL; in the unbound state, prior to taking the energy, should we do any relaxation
+
+	/// is PB enabled?
+	bool pb_enabled_;
+
+	/// Step size used to translate the geometory; ddG needs to know if the value is user-defined.
+	core::Real trans_step_size_;
 };
 
 
