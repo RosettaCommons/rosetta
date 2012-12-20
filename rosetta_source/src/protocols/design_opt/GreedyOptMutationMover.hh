@@ -13,6 +13,7 @@
 #ifndef INCLUDED_protocols_design_opt_GreedyOptMutationMover_hh
 #define INCLUDED_protocols_design_opt_GreedyOptMutationMover_hh
 #include <protocols/design_opt/GreedyOptMutationMover.fwd.hh>
+#include <protocols/protein_interface_design/filters/DeltaFilter.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <utility/tag/Tag.fwd.hh>
@@ -45,6 +46,8 @@ public:
 		std::string sample_type = "low",
 		bool dump_pdb = false,
 		bool dump_table = false,
+    bool stop_before_condition = false,
+    bool skip_best_check = false,
 		bool rtmin = false,
 		bool parallel = false,
 		bool shuffle_order = false,
@@ -83,6 +86,12 @@ public:
 	void diversify_lvl( core::Size const diversify_lvl );
 	void stopping_condition( protocols::filters::FilterOP f ){ stopping_condition_ = f; }
 	protocols::filters::FilterOP stopping_condition() const{ return stopping_condition_; }
+  bool stop_before_condition() const;
+  void stop_before_condition( bool const stop_before_condition );
+  bool skip_best_check() const;
+  void skip_best_check( bool const skip_best_check );
+	utility::vector1< protocols::protein_interface_design::filters::DeltaFilterOP > delta_filters() const;
+	void delta_filters( utility::vector1< protocols::protein_interface_design::filters::DeltaFilterOP > const d );
 	bool rtmin() const;
 	void rtmin( bool const b );
 	bool parallel() const;
@@ -103,6 +112,9 @@ private:
 	protocols::filters::FilterOP stopping_condition_; // dflt NULL ; if defined, stops greedy optimization when the filter's apply evaluates to true;
 	utility::vector1< std::pair< core::Size, utility::vector1< std::pair< core::chemical::AA, core::Real > > > > seqpos_aa_val_vec_;
 	core::pose::Pose ref_pose_;
+  bool stop_before_condition_;
+  bool skip_best_check_;
+  utility::vector1<protocols::protein_interface_design::filters::DeltaFilterOP> reset_delta_filters_;
 	bool rtmin_; //dflt false; should we rtmin after packing?
 	bool parallel_; //parallelize pointmut calc with MPI?
 	bool shuffle_order_; //randomize the order that mutations are attempted?

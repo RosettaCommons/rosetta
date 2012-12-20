@@ -11,6 +11,7 @@
 //#include <algorithm >
 #include <protocols/design_opt/PointMutationCalculator.hh>
 #include <protocols/design_opt/GreedyOptMutationMover.hh>
+#include <protocols/protein_interface_design/filters/DeltaFilter.hh>
 #include <protocols/design_opt/GreedyOptMutationMoverCreator.hh>
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
 #include <core/pose/PDBInfo.hh>
@@ -47,7 +48,7 @@
 #include <utility/vector0.hh>
 #include <core/pose/symmetry/util.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
-
+#include <utility/string_util.hh>
 #include <utility/io/ozstream.hh>
 
 //Auto Headers
@@ -76,6 +77,8 @@ GreedyOptMutationMover::GreedyOptMutationMover() :
 	dump_table_( false ),
 	diversify_lvl_( 1 ),
 	stopping_condition_( NULL ),
+  stop_before_condition_( false ),
+  skip_best_check_( false ),
 	rtmin_( false ),
 	parallel_( false ),
 	shuffle_order_( false )
@@ -104,6 +107,8 @@ GreedyOptMutationMover::GreedyOptMutationMover(
 	std::string sample_type,
 	bool dump_pdb,
 	bool dump_table,
+  bool stop_before_condition,
+  bool skip_best_check,
 	bool rtmin,
 	bool parallel,
 	bool shuffle_order,
@@ -121,6 +126,8 @@ GreedyOptMutationMover::GreedyOptMutationMover(
 	diversify_lvl_ = diversify_lvl;
 	dump_pdb_ = dump_pdb;
 	dump_table_ = dump_table;
+  stop_before_condition_ = stop_before_condition;
+  skip_best_check_ = skip_best_check;
 	rtmin_ = rtmin;
 	parallel_ = parallel;
 	shuffle_order_ = shuffle_order;
@@ -235,6 +242,37 @@ bool
 GreedyOptMutationMover::dump_table() const{
 	return dump_table_;
 }
+
+void
+GreedyOptMutationMover::stop_before_condition( bool const stop_before_condition ){
+  stop_before_condition_ = stop_before_condition;
+}
+
+bool
+GreedyOptMutationMover::stop_before_condition() const{
+  return stop_before_condition_;
+}
+
+void
+GreedyOptMutationMover::skip_best_check( bool const skip_best_check ){
+  skip_best_check_ = skip_best_check;
+}
+
+bool
+GreedyOptMutationMover::skip_best_check() const{
+  return skip_best_check_;
+}
+
+utility::vector1< protocols::protein_interface_design::filters::DeltaFilterOP > 
+GreedyOptMutationMover::delta_filters() const { 
+	return reset_delta_filters_; 
+}
+
+void 
+GreedyOptMutationMover::delta_filters( utility::vector1< protocols::protein_interface_design::filters::DeltaFilterOP > const d ){ 
+	reset_delta_filters_ = d; 
+}
+
 
 void
 GreedyOptMutationMover::sample_type( std::string const sample_type ){
@@ -463,20 +501,33 @@ GreedyOptMutationMover::apply(core::pose::Pose & pose )
 		ptmut_calc->eval_filters( pose, filter_pass, vals );
 		Real const val( vals[ 1 ] );
 
-		if( !filter_pass ) continue;
-		//score mutation, reset best_pose, best val if is lower
-		if( val > best_val ){
-			TR << "Mutation " << start_pose.residue( seqpos ).name1() << seqpos << pose.residue( seqpos ).name1() << " rejected. Current best value is "<< best_val << std::endl;
-			continue;
-		}
-		TR << "Mutation " << start_pose.residue( seqpos ).name1() << seqpos << pose.residue( seqpos ).name1() << " accepted. New best value is "<< val << std::endl;
-		best_val = val;
-		best_pose = pose;
-		if( stopping_condition() && stopping_condition()->apply( pose ) ){
-			TR<<"Stopping condition evaluates to true. Stopping early."<<std::endl;
-			return;
-		}
-	}
+    if( !filter_pass ) continue;
+    //score mutation, reset best_pose, best val if is lower
+    if( val > best_val && !skip_best_check() ){
+      TR << "Mutation " << start_pose.residue( seqpos ).name1() << seqpos << pose.residue( seqpos ).name1() << " rejected. Current best value is "<< best_val << std::endl;
+      continue;
+    }
+    if( stopping_condition() && stopping_condition()->apply( pose ) ){
+      if( !stop_before_condition() ) {
+        TR<<"Stopping condition evaluates to true. Stopping early and accepting the last mutation: "<< start_pose.residue( seqpos ).name1() << seqpos << pose.residue( seqpos ).name1() << std::endl;
+        return;
+      } else {
+        TR<<"Stopping condition evaluates to true. Stopping early and rejecting the last mutation."<< start_pose.residue( seqpos ).name1() << seqpos << pose.residue( seqpos ).name1() << std::endl;
+        break;
+      }
+    }
+    TR << "Mutation " << start_pose.residue( seqpos ).name1() << seqpos << pose.residue( seqpos ).name1() << " accepted. New best value is "<< val << std::endl;
+    best_val = val;
+    best_pose = pose;
+    //Optionally reset baseline for Delta Filters (useful so that the mutations are still evaluated on an individual basis, in the context of the current best pose).
+    foreach( protocols::protein_interface_design::filters::DeltaFilterOP const delta_filter, reset_delta_filters_ ){
+      std::string const fname( delta_filter->get_user_defined_name() );
+      core::Real const fbaseline( delta_filter->filter()->report_sm( pose ) );
+      delta_filter->baseline( fbaseline );
+      delta_filter->ref_baseline( fbaseline );
+      TR<<"Reset baseline for DeltaFilter "<<fname<<" to "<<fbaseline<<std::endl;
+    }
+  }
 //recover best pose after last step
 pose = best_pose;
 }
@@ -497,6 +548,16 @@ GreedyOptMutationMover::parse_my_tag( utility::tag::TagPtr const tag,
 	if( filter_it == filters.end() )
 		utility_exit_with_message( "Filter "+filter_name+" not found" );
 	filter( filter_it->second );
+  //get filters to reset each time a mutation is accepted. For instance, reset the baseline value of delta filters to be the best pose.
+	utility::vector1< std::string > delta_filter_names;
+	delta_filter_names.clear();
+  if( tag->hasOption( "reset_delta_filters" ) ){
+		delta_filter_names = utility::string_split( tag->getOption< std::string >( "reset_delta_filters" ), ',' );
+		foreach( std::string const fname, delta_filter_names ){
+			reset_delta_filters_.push_back( dynamic_cast< protocols::protein_interface_design::filters::DeltaFilter * >( protocols::rosetta_scripts::parse_filter( fname, filters )() ) );
+      TR<<"The baseline for Delta Filter "<<fname<<" will be reset upon each accepted mutation"<<std::endl;
+    }
+  }
 	//load relax mover
 	std::string const relax_mover_name( tag->getOption< std::string >( "relax_mover", "null" ) );
 	protocols::moves::Movers_map::const_iterator mover_it( movers.find( relax_mover_name ) );
@@ -519,6 +580,10 @@ GreedyOptMutationMover::parse_my_tag( utility::tag::TagPtr const tag,
 	if( filter_delta() != Real( 0. ) && diversify_lvl() == Size( 1 ) ) diversify_lvl( 20 );
 	//load scorefxn
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
+  //stop mover once the stopping_condition is reached and do not accept the last mutation (ie, reject the mutation that set the stopping_condition to true)
+  stop_before_condition( tag->getOption< bool >( "stop_before_condition", false ) );
+  //accept mutations during the combining stage as long as they pass the filter(s), regardless of whether or not the value is the best so far.
+  skip_best_check( tag->getOption< bool >( "skip_best_check", false ) );	
 	//load dump_pdb
 	dump_pdb( tag->getOption< bool >( "dump_pdb", false ) );
 	//load dump_table
