@@ -41,8 +41,7 @@ namespace simple_filters {
 
 static basic::Tracer TR( "protocols.simple_filters.DdgFilter" );
 
-const core::Real DdgFilter::DEFAULT_TRANS_STEP_SIZE = 1000.0;
-const core::Real DdgFilter::DEFAULT_TRANS_STEP_SIZE_PB = 100.0;
+const core::Real DdgFilter::STEP_SIZE = 100.0;
 protocols::filters::FilterOP
 DdgFilterCreator::create_filter() const { return new DdgFilter; }
 
@@ -62,8 +61,7 @@ DdgFilter::DdgFilter() :
 	symmetry_(false),
 	repack_( true ),
 	relax_mover_( NULL ),
-	pb_enabled_(false),
-	trans_step_size_(DEFAULT_TRANS_STEP_SIZE)
+	pb_enabled_(false)
 {
 	scorename_ = "ddg";
 }
@@ -85,19 +83,16 @@ DdgFilter::DdgFilter( core::Real const ddg_threshold,
 	symmetry_(symmetry),
 	repack_( true ),
 	relax_mover_( NULL ),
-	pb_enabled_(false),
-	trans_step_size_(DEFAULT_TRANS_STEP_SIZE)
+	pb_enabled_(false)
 {
 	// Determine if this PB enabled.
 	if( scorefxn_->get_weight(core::scoring::PB_elec) != 0.) {
 		// Set this to PB enabled
 		pb_enabled_ = true;
-		trans_step_size_ = DEFAULT_TRANS_STEP_SIZE_PB;
 		TR << "PB enabled" << std::endl;
 	}
 	else{
 		pb_enabled_ = false;
-		trans_step_size_ = DEFAULT_TRANS_STEP_SIZE;
 	}
 }
 
@@ -123,7 +118,11 @@ DdgFilter::repack() const
 }
 
 void
-DdgFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & data, filters::Filters_map const & , moves::Movers_map const & movers, core::pose::Pose const & )
+DdgFilter::parse_my_tag( utility::tag::TagPtr const tag, 
+												 moves::DataMap & data, 
+												 filters::Filters_map const & , 
+												 moves::Movers_map const & movers, 
+												 core::pose::Pose const & )
 {
 	using namespace core::scoring;
 
@@ -158,12 +157,10 @@ DdgFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & data, 
 	if( scorefxn_->get_weight(core::scoring::PB_elec) != 0.) {
 		// Set this to PB enabled
 		pb_enabled_ = true;
-		trans_step_size_ = DEFAULT_TRANS_STEP_SIZE_PB;
 		TR << "PB enabled" << std::endl;
 	}
 	else{
 		pb_enabled_ = false;
-		trans_step_size_ = DEFAULT_TRANS_STEP_SIZE;
 	}
 }
 
@@ -273,20 +270,20 @@ DdgFilter::compute( core::pose::Pose const & pose_in ) const {
 		if(chain_ids_.size() > 0)
 		{
 			//We want to translate each chain the same direction, though it doesnt matter much which one
-			core::Vector translation_axis(1,0,0);
+			core::Vector translation_axis(1,0,0); 
 			for(utility::vector1<core::Size>::const_iterator chain_it = chain_ids_.begin(); chain_it != chain_ids_.end();++chain_it)
 			{
 				core::Size current_chain_id = *chain_it;
 				core::Size current_jump_id = core::pose::get_jump_id_from_chain_id(current_chain_id,split_pose);
 				rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( split_pose, current_jump_id) );
-				translate->step_size( trans_step_size_ );
+				translate->step_size( STEP_SIZE );
 				translate->trans_axis(translation_axis);
 				translate->apply( split_pose );
 			}
 		}else
 		{
 			rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( split_pose, rb_jump_ ) );
-			translate->step_size( trans_step_size_ );
+			translate->step_size( STEP_SIZE );
 			translate->apply( split_pose );
 		}
 

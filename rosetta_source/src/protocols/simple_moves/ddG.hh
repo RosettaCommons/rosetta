@@ -45,10 +45,13 @@ public:
 	typedef core::scoring::ScoreType ScoreType;
 	typedef core::pose::Pose Pose;
 
-	/// Default step size used for translating unbounded pose
-	static const Real DEFAULT_TRANS_STEP_SIZE;
-	/// Default step size used for translating unbounded pose when Poisson-Boltzmann potential energy estimation is enabled.
-	static const Real DEFAULT_TRANS_STEP_SIZE_PB;
+	/// step size used to translate pose, default 100.
+	/// NOTES by Sachko Honda: This value used to be hard coded to 1000 for unbound poses,
+  /// whereas the default 100 was used for bounded.
+	/// The choice of value 1000 was arbitrary by the original author.
+	/// The value is now reduced to 100 in order to help the PDE solver (APBS)
+	/// from blowing up.
+	static const Real STEP_SIZE;
 
 public :
 	ddG();

@@ -102,8 +102,7 @@ using namespace core;
 using namespace protocols::simple_moves;
 using namespace core::scoring;
 
-const Real ddG::DEFAULT_TRANS_STEP_SIZE = 1000.0;
-const Real ddG::DEFAULT_TRANS_STEP_SIZE_PB = 100.;
+const Real ddG::STEP_SIZE = 100.0;
 
 ddG::ddG() :
 		simple_moves::DesignRepackMover(ddGCreator::mover_name()),
@@ -118,7 +117,6 @@ ddG::ddG() :
 		use_custom_task_(false),
 		repack_bound_(true),
 		relax_bound_(false),
-		trans_step_size_(DEFAULT_TRANS_STEP_SIZE),
 		pb_enabled_(false)
 {
 	bound_energies_.clear();
@@ -142,7 +140,6 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 		use_custom_task_(false),
 		repack_bound_(true),
 		relax_bound_(false),
-		trans_step_size_(DEFAULT_TRANS_STEP_SIZE),
 		pb_enabled_(false)
 {
 	scorefxn_ = new core::scoring::ScoreFunction( *scorefxn_in );
@@ -156,12 +153,10 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 	if( scorefxn_->get_weight(core::scoring::PB_elec) != 0.) {
 		// Set this to PB enabled
 		pb_enabled_ = true;
-		trans_step_size_ = DEFAULT_TRANS_STEP_SIZE_PB;
 		TR << "PB enabled" << std::endl;
 	}
 	else{
 		pb_enabled_ = false;
-		trans_step_size_ = DEFAULT_TRANS_STEP_SIZE;
 	}
 }
 
@@ -181,7 +176,6 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 		use_custom_task_(false),
 		repack_bound_(true),
 		relax_bound_(false),
-		trans_step_size_(DEFAULT_TRANS_STEP_SIZE), 
 		pb_enabled_(false)
 {
 	scorefxn_ = new core::scoring::ScoreFunction( *scorefxn_in );
@@ -196,12 +190,10 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 	if( scorefxn_->get_weight(core::scoring::PB_elec) != 0.) {
 		// Set this to PB enabled
 		pb_enabled_ = true;
-		trans_step_size_ = DEFAULT_TRANS_STEP_SIZE_PB;
 		TR << "PB enabled" << std::endl;
 	}
 	else{
 		pb_enabled_ = false;
-		trans_step_size_ = DEFAULT_TRANS_STEP_SIZE;
 	}
 }
 void ddG::parse_my_tag(
@@ -258,12 +250,10 @@ void ddG::parse_my_tag(
 	if( scorefxn_->get_weight(core::scoring::PB_elec) != 0.) {
 		// Set this to PB enabled
 		pb_enabled_ = true;
-		trans_step_size_ = DEFAULT_TRANS_STEP_SIZE_PB;
 		TR << "PB enabled" << std::endl;
 	}
 	else{
 		pb_enabled_ = false;
-		trans_step_size_ = DEFAULT_TRANS_STEP_SIZE;
 	}
 }
 
@@ -510,7 +500,7 @@ ddG::calculate( pose::Pose const & pose_original )
 			core::Size current_jump_id = core::pose::get_jump_id_from_chain_id(current_chain_id,pose);
 			rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose, current_jump_id) );
 			// Commented by honda: APBS blows up grid > 500.  Just use the default just like bound-state.			
-			translate->step_size( trans_step_size_ );
+			translate->step_size( STEP_SIZE );
 			translate->trans_axis(translation_axis);
 			translate->apply( pose );
 		}
@@ -519,7 +509,7 @@ ddG::calculate( pose::Pose const & pose_original )
 		rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose, rb_jump_ ) );
 
 		// Commented by honda: APBS blows up grid > 500.  Just use the default just like bound-state.
-		translate->step_size( trans_step_size_ );
+		translate->step_size( STEP_SIZE );
 		translate->apply( pose );
 	}
 
@@ -621,7 +611,7 @@ ddG::symm_ddG( pose::Pose & pose_original )
 	if( pb_enabled_ ) cached_data->set_energy_state( emoptions.pb_unbound_tag() );
 
 	rigid::RigidBodyDofSeqTransMoverOP translate( new rigid::RigidBodyDofSeqTransMover( dofs ) );
-	translate->step_size( trans_step_size_ );
+	translate->step_size( STEP_SIZE );
 	translate->apply( pose );
 	pack::symmetric_pack_rotamers( pose, *scorefxn_, task_ );
 	if( relax_mover() )
@@ -699,14 +689,14 @@ ddG::no_repack_ddG(Pose & pose_original)
 			core::Size current_jump_id = core::pose::get_jump_id_from_chain_id(current_chain_id,pose);
 			rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose, current_jump_id) );
 			translate->trans_axis(translation_axis);
-			translate->step_size( trans_step_size_ );
+			translate->step_size( STEP_SIZE );
 			translate->apply( pose );
 		}
 
 	}else
 	{
 		rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose,rb_jump_ ) );
-		translate->step_size( trans_step_size_ );
+		translate->step_size( STEP_SIZE );
 		translate->apply( pose );
 	}
 

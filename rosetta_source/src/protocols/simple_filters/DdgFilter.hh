@@ -10,6 +10,7 @@
 /// @file protocols/simple_filters/DdgFilter.hh
 /// @brief definition of filter class DdgFilter.
 /// @author Sarel Fleishman (sarelf@u.washington.edu), Jacob Corn (jecorn@u.washington.edu)
+/// Augmented for PB support by Sachko Honda (honda@apl.washington.edu) December 2012.
 
 #ifndef INCLUDED_protocols_simple_filters_DdgFilter_hh
 #define INCLUDED_protocols_simple_filters_DdgFilter_hh
@@ -24,16 +25,20 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/task/TaskFactory.hh>
 
-
-
 namespace protocols {
 namespace simple_filters {
 
 class DdgFilter : public filters::Filter
 {
 public:
-	const static core::Real DEFAULT_TRANS_STEP_SIZE;
-	const static core::Real DEFAULT_TRANS_STEP_SIZE_PB;
+	/// step size used to translate pose, default 100.
+	/// NOTES by Sachko Honda: This value used to be hard coded to 1000 for unbound poses,
+  /// whereas the default 100 was used for bounded.
+	/// The choice of value 1000 was arbitrary by the original author.
+	/// The value is now reduced to 100 in order to help the PDE solver (APBS)
+	/// from blowing up.
+	const static core::Real STEP_SIZE;
+
 	DdgFilter();
 	DdgFilter( core::Real const ddg_threshold, 
 						 core::scoring::ScoreFunctionCOP scorefxn, 
@@ -86,9 +91,6 @@ private:
 
 	/// is PB enabled?
 	bool pb_enabled_;
-
-	/// Step size used to translate the geometory; ddG needs to know if the value is user-defined.
-	core::Real trans_step_size_;
 };
 
 
