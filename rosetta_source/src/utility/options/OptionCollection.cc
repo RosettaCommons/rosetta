@@ -15,7 +15,6 @@
 
 // Unit headers
 #include <utility/options/OptionCollection.hh>
-#include <utility/options/mpi_stderr.hh>
 // Package headers
 #include <utility/options/keys/OptionKeys.hh>
 #include <utility/exit.hh>
@@ -49,7 +48,7 @@ namespace options {
 
 
 	void std_exit_wrapper( const int error_code ){
-		#ifdef  __native_client__ 
+		#ifdef  EXIT_THROWS_EXCEPTION 
 			throw( std::string( "std::exit() was called" ) );
 			return;
 		#endif
@@ -105,19 +104,6 @@ namespace options {
 //		}
 //	}
 
-
-//	/// @brief Specify an option that requires a second option to also be specified
-//	void
-//	OptionCollection::requires(
-//		OptionKey const & key1,
-//		OptionKey const & key2
-//	)
-//	{
-//		if ( ( (*this)[ key1 ].user() ) && ( ! (*this)[ key2 ].user() ) ) {
-//			std::cerr << "ERROR: Option " << key1.id() << " specified requires option " << key2.id() << std::endl;
-//			std_exit_wrapper( EXIT_FAILURE );
-//		}
-//	}
 
 
 	/// @brief Check for problems in the option specifications
@@ -220,8 +206,7 @@ namespace options {
 					// Parse argument to get file specification string
 					size_type const fb( arg_string.find_first_not_of( "@\"" ) );
 					if ( fb == string::npos ) { // -...-
-						mpi_safe_std_err( "ERROR: Unsupported option file specification: " + arg_string );
-						std_exit_wrapper( EXIT_FAILURE );
+						throw( excn::EXCN_Msg_Exception( "ERROR: Unsupported option file specification: " + arg_string ));
 					}
 					size_type const fe( arg_string.find_last_not_of( '"' ) );
 					string file_string( fb <= fe ? arg_string.substr( fb, fe - fb + 1 ) : string() );
@@ -229,13 +214,11 @@ namespace options {
 					load_options_from_file(ObjexxFCL::trim(file_string), cid);
 
 				} else if ( ! free_args ) { // Warn about free argument
-					mpi_safe_std_err( "ERROR: Unused \"free\" argument specified: " + arg_string );
-					std_exit_wrapper( EXIT_FAILURE );
+					throw( excn::EXCN_Msg_Exception( "ERROR: Unused \"free\" argument specified: " + arg_string ));
 				}
 			}
 		} catch ( excn::EXCN_Msg_Exception &excn ) {
-			mpi_safe_std_err( "ERROR: " + excn.msg() );
-			std_exit_wrapper( EXIT_FAILURE );
+			throw( excn::EXCN_Msg_Exception( "ERROR: " + excn.msg() ));
 		}
 
 		// Check for problems in the option values
@@ -421,8 +404,7 @@ void OptionCollection::load_options_from_stream(std::istream& stream, std::strin
 			// Parse argument to get file specification string
 			size_type const fb( line.find_first_not_of( "@\"" ) );
 			if ( fb == string::npos ) { // -...-
-				mpi_safe_std_err( "ERROR: Unsupported option file specification: " + line );
-				std_exit_wrapper( EXIT_FAILURE );
+				throw( excn::EXCN_Msg_Exception( "ERROR: Unsupported option file specification: " + line ));
 			}
 			size_type const fe( line.find_last_not_of( "\" " ) );
 			string file_string( fb <= fe ? line.substr( fb, fe - fb + 1 ) : string() );
@@ -441,8 +423,7 @@ void OptionCollection::load_options_from_file(std::string const & file_string, s
 	try {
 		load_options_from_file_exception( file_string, cid );
 	} catch ( excn::EXCN_Msg_Exception& excn ) {
-		mpi_safe_std_err("ERROR: " + excn.msg() ); //ERROR: Option file open failed for: "+file_string );
-		std_exit_wrapper( EXIT_FAILURE );
+		throw( excn::EXCN_Msg_Exception("ERROR: " + excn.msg() ) );
 	}
 }
 
@@ -451,8 +432,6 @@ void OptionCollection::load_options_from_file_exception(std::string const & file
 
 	utility::io::izstream stream( file_string.c_str() );
 	if ( ! stream ) {
-		//mpi_safe_std_err("ERROR: Option file open failed for: "+file_string );
-		//		std_exit_wrapper( EXIT_FAILURE );
 		throw( excn::EXCN_Msg_Exception( "Option file open failed for: "+file_string ) );
 	}
 	load_options_from_stream( stream, file_string, cid );
@@ -472,19 +451,17 @@ void OptionCollection::load_option_from_file(
 
 	// Now next argument *should* be a file name
 	if( arg_strings.size() < 1 ) {
-		mpi_safe_std_err("ERROR: No file name supplied for option: "+ arg_string);
-		std_exit_wrapper( EXIT_FAILURE );
+		throw( excn::EXCN_Msg_Exception("ERROR: No file name supplied for option: "+ arg_string));
 	}
 
 	// Open the option file
 	string const file_name( arg_strings.front() ); // Lead argument string
-	mpi_safe_std_err("load_option from file:"+file_name);
+	throw( excn::EXCN_Msg_Exception("load_option from file:"+file_name));
 
 	arg_strings.pop_front(); // Remove lead argument
 	utility::io::izstream stream( file_name.c_str() );
 	if ( ! stream ) {
-		mpi_safe_std_err("ERROR: Option file open failed for: "+file_name);
-		std_exit_wrapper( EXIT_FAILURE );
+		throw( excn::EXCN_Msg_Exception("ERROR: Option file open failed for: "+file_name));
 	}
 	string res;
 	while ( stream ) {
@@ -502,8 +479,7 @@ void OptionCollection::load_option_from_file(
 	try{
 		load_option_cl( arg_string, f_args, cid );
 	} catch ( excn::EXCN_Msg_Exception &excn ) {
-		mpi_safe_std_err( "ERROR: " + excn.msg() );
-		std_exit_wrapper( EXIT_FAILURE );
+		throw( excn::EXCN_Msg_Exception( "ERROR: " + excn.msg() ));
 	}
 
 }
@@ -980,8 +956,6 @@ void OptionCollection::load_option_from_file(
 			top = true;
 		}
 		if ( kb == string::npos ) { // -...-
-			//mpi_safe_std_err("ERROR: Unsupported option specified: "+arg_string);
-			//std_exit_wrapper( EXIT_FAILURE );
 			throw( excn::EXCN_Msg_Exception( "Unsupported option specified: "+arg_string ) );
 		}
 		size_type const ke( arg_string.find_first_of( "= \t" ) );
@@ -1016,8 +990,6 @@ void OptionCollection::load_option_from_file(
 		OptionKey const & key( OptionKeys::key( key_id ) );
 		if( ! has( key ) ) {
 			throw( excn::EXCN_Msg_Exception( "No option exists for the valid option key -" + key.id() ) );
-			//mpi_safe_std_err("ERROR: No option exists for the valid option key -"+ key.id());
-			//std_exit_wrapper( EXIT_FAILURE );
 		}
 		Option & opt( option( key ) );
 		if ( key.scalar() ) { // Scalar option key
@@ -1034,14 +1006,9 @@ void OptionCollection::load_option_from_file(
 				VectorOption & vopt( option< VectorOption >( key ) );
 				if ( ( vopt.n() > 0 ) || ( vopt.n_lower() > 0 ) ) {
 					throw ( excn::EXCN_Msg_Exception( "No values specified for multi-valued option -"+ key.id() ) );
-					//					mpi_safe_std_err("ERROR: No values specified for multi-valued option -"+ key.id()
-					//+ " requiring one or more values");
-					//std_exit_wrapper( EXIT_FAILURE );
 				}
 			} else if ( ! opt.is_cl_value( arg_strings.front() ) ) { // No values of correct type
 				throw ( excn::EXCN_Msg_Exception( "No values of the appropriate type specified for multi-valued option -"+key.id() ) );
-				//mpi_safe_std_err("ERROR: No values of the appropriate type specified for multi-valued option -"+key.id());
-				//std_exit_wrapper( EXIT_FAILURE );
 			} else { // Take value(s)
 				// This takes the first value even if the vector is full to trigger an error
 				opt.cl_value( arg_strings.front() ); // Use the first argument
@@ -1070,14 +1037,10 @@ void OptionCollection::load_option_from_file(
 		runtime_assert( OptionKeys::has( key_id ) ); // Precondition
 		OptionKey const & key( OptionKeys::key( key_id ) );
 		if( ! has( key ) ) {
-			//			mpi_safe_std_err("ERROR: No option exists for the valid option key -" + key.id() );
-			//std_exit_wrapper( EXIT_FAILURE );
 			throw( excn::EXCN_Msg_Exception(" No option exists for the valid option key - " + key.id() ) );
 		}
 		if ( key.scalar() ) { // Scalar option key
 			if ( val_strings.size() > 1 ) { // Multiple values for a scalar option
-				//				mpi_safe_std_err("ERROR: Multiple values specified for option -" + key.id() );
-				//				std_exit_wrapper( EXIT_FAILURE );
 				throw( excn::EXCN_Msg_Exception(" Multiple values specified for option -" + key.id() ) );
 			}
 			option( key ).cl_value( val_strings.empty() ? string() : *val_strings.begin() );
@@ -1086,9 +1049,6 @@ void OptionCollection::load_option_from_file(
 			if ( val_strings.empty() ) { // No values for a vector option
 				VectorOption & vopt( option< VectorOption >( key ) );
 				if ( ( vopt.n() > 0 ) || ( vopt.n_lower() > 0 ) ) {
-					//					mpi_safe_std_err("ERROR: No values specified for multi-valued option -"
-					// + key.id() + " requiring one or more values" );
-					//std_exit_wrapper( EXIT_FAILURE );
 					throw( excn::EXCN_Msg_Exception( "ERROR: Multiple values specified for multi-valued option -"
 							+ key.id() + " requiring one or more values" ) );
 				}
@@ -1106,20 +1066,15 @@ void OptionCollection::load_option_from_file(
 	{
 		using ObjexxFCL::is_double;
 
-		bool error( false );
 		if ( is_double( suffix( key.id() ) ) ) {
-			mpi_safe_std_err("ERROR: Options with numeric identifiers are not allowed: -" + key.id() );
-			error = true;
+			throw( excn::EXCN_Msg_Exception("ERROR: Options with numeric identifiers are not allowed: -" + key.id() ));
 		}
 		if ( is_double( suffix( key.identifier() ) ) ) {
-			mpi_safe_std_err("ERROR: Options with numeric identifiers are not allowed: -" + key.id() );
-			error = true;
+			throw( excn::EXCN_Msg_Exception("ERROR: Options with numeric identifiers are not allowed: -" + key.id() ));
 		}
 		if ( is_double( suffix( key.code() ) ) ) {
-			mpi_safe_std_err("ERROR: Options with numeric identifiers are not allowed: -" + key.id() );
-			error = true;
+			throw( excn::EXCN_Msg_Exception("ERROR: Options with numeric identifiers are not allowed: -" + key.id() ));
 		}
-		if ( error ) std_exit_wrapper( EXIT_FAILURE );
 		//not called during option parsing --- keep hard exit
 	}
 
@@ -1130,20 +1085,15 @@ void OptionCollection::load_option_from_file(
 	{
 		using ObjexxFCL::is_double;
 
-		bool error( false );
 		if ( is_double( suffix( option.id() ) ) ) {
-			mpi_safe_std_err("ERROR: Options with numeric identifiers are not allowed: -" + option.id() );
-			error = true;
+			throw( excn::EXCN_Msg_Exception("ERROR: Options with numeric identifiers are not allowed: -" + option.id() ));
 		}
 		if ( is_double( suffix( option.identifier() ) ) ) {
-			mpi_safe_std_err("ERROR: Options with numeric identifiers are not allowed: -" + option.id() );
-			error = true;
+			throw( excn::EXCN_Msg_Exception("ERROR: Options with numeric identifiers are not allowed: -" + option.id() ));
 		}
 		if ( is_double( suffix( option.code() ) ) ) {
-			mpi_safe_std_err("ERROR: Options with numeric identifiers are not allowed: -" + option.id() );
-			error = true;
+			throw( excn::EXCN_Msg_Exception("ERROR: Options with numeric identifiers are not allowed: -" + option.id() ));
 		}
-		if ( error ) std_exit_wrapper( EXIT_FAILURE );
 	}
 
 
@@ -1173,10 +1123,7 @@ void OptionCollection::load_option_from_file(
 				if ( OptionKeys::has( tid ) ) { // Valid option identifier
 					if ( ! kid.empty() ) { // Already found a match
 						if ( tid != kid ) { // Different id match
-							mpi_safe_std_err("WARNING: Specified option -" + key_string
-							 + " resolved to option -" + kid
-							 + " not option -" + tid
-							 + " in command line context -" + cid );
+							throw( excn::EXCN_Msg_Exception( "WARNING: Specified option -" + key_string + " resolved to option -" + kid + " not option -" + tid + " in command line context -" + cid ) );
 						}
 					} else { // Assign the matched id
 						kid = tid;
@@ -1228,9 +1175,6 @@ void OptionCollection::load_option_from_file(
 					too_many_choices_error += (" " + possible_matches[i]);
 				}
 				throw ( excn::EXCN_Msg_Exception( too_many_choices_error ) );
-// 				mpi_safe_std_err("ERROR: Unique best command line context option match not found for -"
-// 				 + key_string );
-// 				std_exit_wrapper( EXIT_FAILURE );
 			}
 		}
 
@@ -1240,13 +1184,6 @@ void OptionCollection::load_option_from_file(
 			} else {
 				throw ( excn::EXCN_Msg_Exception( "Option matching -" + key_string + " not found in command line context -" + cid ) );
 			}
-			//mpi_safe_std_err("ERROR: Option matching -" + key_string);
-			//			if ( cid.empty() ) {
-			//mpi_safe_std_err(" not found in command line top-level context" );
-			//} else {
-			//	mpi_safe_std_err(" not found in command line context -" + cid );
-			//}
-			//std_exit_wrapper( EXIT_FAILURE );
 		}
 
 		return kid;
@@ -1281,9 +1218,6 @@ void OptionCollection::load_option_from_file(
 		if ( kid.empty() ) { // No such option
 			throw( excn::EXCN_Msg_Exception( "Option matching -" + key_string
 					+ " not found in indented @file context -" + cid ) );
-			//mpi_safe_std_err("ERROR: Option matching -" + key_string
-			// + " not found in indented @file context -" + cid );
-			//std_exit_wrapper( EXIT_FAILURE );
 		}
 
 		return kid;
