@@ -11797,6 +11797,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 0</dd><br>
 </dl>
 <dl>
+<dt><b>-max_failures</b> \<Integer\><dt>
+<dd>how many failures to tolerate at each iteration before quitting</dd><br>
+<dd>Default: 1</dd><br>
+</dl>
+<dl>
 <dt><b>-print_reports</b> \<Boolean\><dt>
 <dd>print reports to text file?</dd><br>
 <dd>Default: false</dd><br>

@@ -65,6 +65,10 @@ main( int argc, char * argv [] )
 //	bool iterate = true;
 	core::Size it = 1;
 	core::Size const ncycles = option[ cp::ncycles ];
+	core::Size const max_failures = option[ cp::max_failures ];
+
+	// How many failures at a given level to tolerate before failing
+	core::Size current_failures( 0 );
 
 	core::pose::Pose out_pose;
 	bool not_finished( true );
@@ -108,11 +112,19 @@ main( int argc, char * argv [] )
 			old_energy = new_energy;
 			in_pose = out_pose;
 			it++;
+			current_failures = 0;
 		} else {
-			TR << "Rejecting attempted mutation - finished!" << std::endl;
+			current_failures++;
+			TR << "Rejecting attempted mutation!" << std::endl;
 		}
 
-		not_finished = ( ncycles == 0 ? improved : it <= ncycles );
+
+		bool done_improving( (current_failures >= max_failures) && !improved );
+
+		// if the requested ncycles is 0, quit as soon as improvement stops.  If ncycles
+		// is set at a non-zero value, quit either after improvement stops or the number of
+		// cycles has been hit.
+		not_finished = ( ncycles == 0 ? !done_improving : (it <= ncycles && !done_improving) );
 	}
 	out_pose.dump_pdb( option[ cp::output ] );
 }

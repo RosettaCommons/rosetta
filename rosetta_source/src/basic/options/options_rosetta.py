@@ -4755,6 +4755,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
                         Option( 'minimizer_score_fxn', 'String', desc="score function for initial minimization", default='score12_full'),
                         Option( 'output', 'String', desc="file where we want to dump the final pose",default='final_mutant.pdb'),
                         Option( 'ncycles', 'Integer', desc="how many cycles to run refinement for",default='0'),
+                        Option( 'max_failures', 'Integer', desc="how many failures to tolerate at each iteration before quitting",default='1'),
                         Option( 'print_reports', 'Boolean', desc="print reports to text file?",default='false' ),
                         Option( 'vipReportFile', 'String', desc="File to print reports to", default='reports.txt' ),
                         Option( 'exclude_file', 'String', desc="Optional input file to specify positions that should not be mutated", default='cp_excludes' ),

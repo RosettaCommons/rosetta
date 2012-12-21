@@ -30,6 +30,7 @@ namespace cp { extern RealOptionKey const minimizer_tol; }
 namespace cp { extern StringOptionKey const minimizer_score_fxn; }
 namespace cp { extern StringOptionKey const output; }
 namespace cp { extern IntegerOptionKey const ncycles; }
+namespace cp { extern IntegerOptionKey const max_failures; }
 namespace cp { extern BooleanOptionKey const print_reports; }
 namespace cp { extern StringOptionKey const vipReportFile; }
 namespace cp { extern StringOptionKey const exclude_file; }

@@ -458,6 +458,7 @@ namespace cp { RealOptionKey const minimizer_tol( "cp:minimizer_tol" );  }
 namespace cp { StringOptionKey const minimizer_score_fxn( "cp:minimizer_score_fxn" );  }
 namespace cp { StringOptionKey const output( "cp:output" );  }
 namespace cp { IntegerOptionKey const ncycles( "cp:ncycles" );  }
+namespace cp { IntegerOptionKey const max_failures( "cp:max_failures" );  }
 namespace cp { BooleanOptionKey const print_reports( "cp:print_reports" );  }
 namespace cp { StringOptionKey const vipReportFile( "cp:vipReportFile" );  }
 namespace cp { StringOptionKey const exclude_file( "cp:exclude_file" );  }

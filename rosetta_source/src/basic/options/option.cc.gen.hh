@@ -2431,6 +2431,7 @@ option.add( basic::options::OptionKeys::cp::minimizer_tol, "tolerance for minimi
 option.add( basic::options::OptionKeys::cp::minimizer_score_fxn, "score function for initial minimization" ).def("score12_full");
 option.add( basic::options::OptionKeys::cp::output, "file where we want to dump the final pose" ).def("final_mutant.pdb");
 option.add( basic::options::OptionKeys::cp::ncycles, "how many cycles to run refinement for" ).def(0);
+option.add( basic::options::OptionKeys::cp::max_failures, "how many failures to tolerate at each iteration before quitting" ).def(1);
 option.add( basic::options::OptionKeys::cp::print_reports, "print reports to text file?" ).def(false);
 option.add( basic::options::OptionKeys::cp::vipReportFile, "File to print reports to" ).def("reports.txt");
 option.add( basic::options::OptionKeys::cp::exclude_file, "Optional input file to specify positions that should not be mutated" ).def("cp_excludes");
