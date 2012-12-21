@@ -1,0 +1,24 @@
+<dock_design>
+	<TASKOPERATIONS>
+		<RestrictIdentitiesAtAlignedPositions name=keep source_pdb="template.pdb" resnums=137,139/>
+		<RestrictIdentitiesAtAlignedPositions name=hold source_pdb="template.pdb" resnums=184/>
+	</TASKOPERATIONS>
+	<SCOREFXNS>
+  	<sc12_w_correction weights=score12_w_corrections/>
+  	<score12_chainbreak weights=score12_w_corrections>
+	    <Reweight scoretype=chainbreak weight=1/>
+		</score12_chainbreak>
+	</SCOREFXNS>
+	<FILTERS>
+	  <ScoreType name=chainbreak_val scorefxn=score12_chainbreak score_type=chainbreak threshold=15/>
+	</FILTERS>
+	<MOVERS>
+		<Splice name=splice1 loop_pdb_source="%%source%%" source_pdb="%%source%%" design_task_operations=keep,hold loop_dbase_file_name="torsion.db" scorefxn=sc12_w_correction ccd=1 res_move=7 randomize_cut=1 from_res=160 to_res=172 splice_filter=chainbreak_val rms_cutoff=6.5 template_file="template.pdb"/>
+	  <Splice name=splice2 loop_pdb_source="%%source%%" source_pdb="%%source%%" loop_dbase_file_name="torsion.db" scorefxn=sc12_w_correction ccd=1 res_move=5 randomize_cut=1 from_res=210 to_res=219 rms_cutoff=6.5 splice_filter=chainbreak_val template_file="template.pdb"/>
+
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover=splice1/>
+		<Add mover=splice2/>
+	</PROTOCOLS>
+</dock_design>
