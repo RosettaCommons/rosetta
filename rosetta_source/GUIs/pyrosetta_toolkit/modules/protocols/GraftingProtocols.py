@@ -100,10 +100,10 @@ class GraftMoverWindow(ProtocolBaseClass):
         self.button_begin = Button(self.main, text = "Run Protocol", command = lambda:self.run_graft())
         
         #Options
-        self.label_cycles = Label(text = "Cycles")
-        self.entry_cycles = Entry(textvariable = self.cycles)
+        self.label_cycles = Label(self.main, text = "Cycles")
+        self.entry_cycles = Entry(self.main, textvariable = self.cycles)
         self.entry_cycles.config(width=7)
-        self.label_graft_method = Label(text = "Method")
+        self.label_graft_method = Label(self.main, text = "Method")
         self.optionmenu_method = OptionMenu(self.main, self.graft_type, *self.graft_types)
         self.optionmenu_method.config(width=7)
         self.checkbutton_randomize = Checkbutton(self.main, text="Randomize flexible residues before protocol?", variable = self.randomize_first)
@@ -143,7 +143,6 @@ class GraftMoverWindow(ProtocolBaseClass):
     
     def graft_method_callback(self, name, index, mode):
         varValue = self.graft_type.get()
-        print "\n"
         if varValue == "Default":
             print "Using Default method as used in AnchoredPDBCreator application"
             print "This uses 1 CCD arm that includes the insert.  Insert will move in cartesian space to close the loop."
