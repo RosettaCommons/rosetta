@@ -1,0 +1,35 @@
+<dock_design>
+	<TASKOPERATIONS>
+    <OperateOnCertainResidues name=nocharges_in_core>
+      <RestrictAbsentCanonicalAASRLT aas="AFGILMNPQSTVWY"/>
+      <ProteinCore/>
+    </OperateOnCertainResidues>
+    <RestrictToAlignedSegments name=restrict chain=1>
+      <a source_pdb="%%source%%" start_res=24 stop_res=41/>
+      <b source_pdb="%%source%%" start_res=52 stop_res=59/>
+      <c source_pdb="%%source%%" start_res=93 stop_res=106/>
+      <d source_pdb="%%source%%" start_res=134 stop_res=143/>
+      <e source_pdb="%%source%%" start_res=159 stop_res=172/>
+      <f source_pdb="%%source%%" start_res=209 stop_res=221/>
+      <d_support1 source_pdb="%%source%%" start_res=184 stop_res=184/>
+      <d_support2 source_pdb="%%source%%" start_res=186 stop_res=186/>
+    </RestrictToAlignedSegments>
+	</TASKOPERATIONS>
+	<SCOREFXNS>
+  	<sc12_w_correction weights=score12_w_corrections/>
+  	<score12_chainbreak weights=score12_w_corrections>
+	    <Reweight scoretype=chainbreak weight=1/>
+		</score12_chainbreak>
+	</SCOREFXNS>
+	<FILTERS>
+	  <ScoreType name=chainbreak_val scorefxn=score12_chainbreak score_type=chainbreak threshold=15/>
+	</FILTERS>
+	<MOVERS>
+    <Splice name=splice1 scorefxn=sc12_w_correction torsion_database="torsion.db" dbase_iterate=1 ccd=0 res_move=5 randomize_cut=0 delta_lengths=-1,-2,-3,-4,0,1,2,3,4 equal_length=0 design=1 template_file="%%source%%" design_task_operations=restrict,nocharges_in_core/>
+    <Splice name=splice2 scorefxn=sc12_w_correction torsion_database="torsion.db" dbase_iterate=1 ccd=0 res_move=5 randomize_cut=0 delta_lengths=-1,-2,-3,-4,0,1,2,3,4 equal_length=0 design=1 template_file="%%source%%" design_task_operations=restrict,nocharges_in_core/>
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover=splice1/>
+		<Add mover=splice2/>
+	</PROTOCOLS>
+</dock_design>
