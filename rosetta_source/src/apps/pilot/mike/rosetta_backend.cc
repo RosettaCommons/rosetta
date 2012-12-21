@@ -19,6 +19,7 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
+#include <core/svn_version.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/import_pose/pose_stream/util.hh>
@@ -333,9 +334,11 @@ class RosettaJob {
       }
 
       if( data == std::string("[]") ){
-        std::cout << "No work on serer" << std::endl;
+        std::cout << "No work on server" << std::endl;
         return false;
       }
+
+      output_capture_clear();
 
       // break down the input data
       //std::cout <<  data << std::endl;
@@ -345,8 +348,12 @@ class RosettaJob {
       reader.parse( data, values);
 
       std::string payload = values.get("payload","").asString();
-      taskname_ = values.get("name","defaulttaskname").asString();
+      taskname_ = values.get("name","").asString();
 
+      if( taskname_ == "" ){
+        std::cout << "Error connecting to server (server didn't reply with JSON object or taskname was not set) " << std::endl;
+        return false;
+      }
 
       Json::Value payload_values;
       Json::Reader payload_reader;
@@ -354,9 +361,10 @@ class RosettaJob {
 
       hash_      = payload_values.get("hash","").asString();
       key_       = payload_values.get("key","").asString();
+      user_id_   = payload_values.get("user_id","").asString();
       operation_ = payload_values.get("operation","").asString();
 
-      std::cout << "NEW JOB: Hash: " << hash_ << " KEY: " << key_ << " TASKNAME: " << taskname_ << std::endl;
+      std::cout << "NEW JOB: Hash: " << hash_ << " KEY: " << key_ << " USER: " << user_id_ << " TASKNAME: " << taskname_ << std::endl;
       std::string job_data_string = payload_values.get("job_data","").asString();
       //std::cout << "Inputdata: " << job_data_string << std::endl;
 
@@ -374,38 +382,47 @@ class RosettaJob {
       Json::Value pdbdata = job_data_.get("pdbdata","");
       std::string pdbdata_string = pdbdata.asString();
 
-
+      output_capture_clear();
+      output_capture_start();
+      
       // create the pose
       try {
         core::import_pose::pose_from_pdbstring( inputpose_, pdbdata_string );
+        
+        // Load any files that were given as part of this job.
+        load_new_set_of_virtual_files(  job_data_.get("user_files","") );
+
+        // Load any flags that were given as part of this job.
+        std::cout << "Initializing options: " << command_ << std::endl;
+
+        if ( job_data_.isMember("user_flags") ){
+          load_new_set_of_user_flags( job_data_.get("user_flags","[]") );
+        }
       }
       catch ( utility::excn::EXCN_Base& excn ) {
-				excn.show( std::cerr );
+				excn.show( TR.Error );
         // return error or empty pose
-        outputpose_ = inputpose_;
         return_error_to_server( server_info );
         return false;
       }
-      // since a null operation would leave the pose unchanged:
-      outputpose_ = inputpose_;
-
-
-      // Load any files that were given as part of this job.
-      load_new_set_of_virtual_files(  job_data_.get("user_files","") );
-
-      // Load any flags that were given as part of this job.
-      std::cout << "Initializing options: " << command_ << std::endl;
-
-      if ( job_data_.isMember("user_flags") ){
-        load_new_set_of_user_flags( job_data_.get("user_flags","[]") );
+      catch ( std::string err ){ 
+				TR.Error << err << std::endl;
+        // return error or empty pose
+        return_error_to_server( server_info );
+        return false;
       }
-
+      outputpose_ = inputpose_; 
+      // since a null operation would leave the pose unchanged:
+      error_ = 0;
       initialized_ = true;
-      
       return true;
     }
 
     bool return_error_to_server( const ServerInfo & server_info ){
+      std::cout << __FILE__ << " " << __LINE__ << std::endl; 
+      // stop stdout capturing
+      output_capture_stop();
+      
       // do some basic measurements
       Json::Value energies;
       energies[ "score" ] = 0;
@@ -417,12 +434,18 @@ class RosettaJob {
       // set the output values
       root["parental_key"] = Json::Value( key_ );   // the key and hash become parental_  key and hash
       root["parental_hash"] = Json::Value( hash_ ); // so we can keep track of the geneaology of structures
+      root["user_id"] = Json::Value( user_id_ ); // so we can keep track of the geneaology of structures
       root["operation"] = Json::Value( operation_ ); // so we can keep track of the geneaology of structures
       root["taskname"] = Json::Value( taskname_ ); // so we can keep track of the geneaology of structures
       root["pdbdata"] = Json::Value( "" ); // the PDB data itself of course
       root["workerinfo"] = Json::Value(  "Rosetta Backend 0.1" );
+      root["stderr"] = Json::Value( tracer_output_stream_.str() ); 
+      std::cout << "STDERROR:" <<  root["stderr"] << std::endl;
       root["energies"] = energies;
+      root["error"] =  Json::Value(1);
+      root["cputime"] =  Json::Value(0);
 
+      output_capture_clear();
       // add energy info etc other goodies here
 
       Json::FastWriter writer;
@@ -439,6 +462,7 @@ class RosettaJob {
 
     bool return_results_to_server( const ServerInfo & server_info ){
 
+      std::cout << __FILE__ << " " << __LINE__ << std::endl; 
       // do some basic measurements
       Json::Value energies;
 	    core::scoring::ScoreFunctionOP fascorefxn = core::scoring::getScoreFunction();
@@ -451,8 +475,15 @@ class RosettaJob {
       // Now send back results to server.
       std::stringstream pdbdatastream;
       outputpose_.dump_pdb( pdbdatastream );
-
-      outputpose_.dump_pdb( "output.pdb" );
+        
+      // DEBUG CODE
+      std::ofstream ofile("b4.pdb"); 
+      inputpose_.dump_pdb( ofile );
+      ofile.close();
+      std::ofstream ofile2("af.pdb"); 
+      outputpose_.dump_pdb( ofile2 );
+      ofile2.close(); 
+      // ENDOF DEBUG CODE
 
       // assemble the json structure needed.
       Json::Value root;
@@ -460,12 +491,23 @@ class RosettaJob {
       // set the output values
       root["parental_key"] = Json::Value( key_ );   // the key and hash become parental_  key and hash
       root["parental_hash"] = Json::Value( hash_ ); // so we can keep track of the geneaology of structures
+      root["user_id"] = Json::Value( user_id_ ); // so we can keep track of the geneaology of structures
       root["operation"] = Json::Value( operation_ ); // so we can keep track of the geneaology of structures
       std::cout << "Finished TaskName: " << taskname_ << std::endl;
       root["taskname"] = Json::Value( taskname_ ); // so we can keep track of the geneaology of structures
       root["pdbdata"] = Json::Value( pdbdatastream.str() ); // the PDB data itself of course
-      root["workerinfo"] = Json::Value(  "Rosetta Backend 0.1" );
-      root["energies"] = energies;
+      root["error"] = Json::Value(error_);
+      if( error_ ){ 
+        root["pdbdata"] =  Json::Value("");  // if there was a fatal error dont return a pdb (to save space)
+      }
+
+      std::stringstream rosetta_version;
+      rosetta_version << "Mini-Rosetta version " << core::minirosetta_svn_version() << " from " << core::minirosetta_svn_url();
+
+      root["workerinfo"] = Json::Value( rosetta_version.str() ); 
+      root["stderr"] = Json::Value( tracer_output_stream_.str() ); // stderr output for debugging
+      root["energies"] = energies;                                 // rosetta energy values
+      root["cputime"] =  Json::Value(Json::Int64(endtime_ - starttime_));
 
       // add energy info etc other goodies here
 
@@ -485,47 +527,71 @@ class RosettaJob {
     }
 
 
+    
 
 
     void run(){
       using namespace basic::options;
       using namespace basic::options::OptionKeys;
 
+      // start capturing Tracer outputs
+      output_capture_start();
+      starttime_ = time(NULL);
 
-      std::cout << "Executing: " << command_ << std::endl;
-      TR << "Executing: " << command_ << std::endl;
-
-      if( command_ == "score" ){
+      try{
+        std::cout << "Executing: " << command_ << std::endl;
+        TR << "Executing: " << command_ << std::endl;
+        if( command_ == "score" ){
+        }
+        if( command_ == "relax" ){
+          protocols::moves::MoverOP protocol = protocols::relax::generate_relax_from_cmd();
+          protocol->apply( outputpose_ );
+        }
+        if( command_ == "loophash" ){
+          TR << "LOOPHASH!!  " << rosetta_script_ << std::endl;
+          protocols::loophash::LoopHashRelaxProtocolOP lh_protocol = new protocols::loophash::LoopHashRelaxProtocol( loop_hash_library );
+          lh_protocol->manual_call( outputpose_ );
+        }
+        if( command_ == "enzdes" ){
+        }
+        if( command_ == "xmlscript" ){
+          utility::Inline_File_Provider *provider = utility::Inline_File_Provider::get_instance();
+          provider->add_input_file( "script.xml", xmlscript_ );
+          protocols::jd2::DockDesignParser ddp;
+          protocols::jd2::JobCOP job;
+          protocols::moves::MoverOP protocol;
+          ddp.generate_mover_from_pose( job, outputpose_ , protocol, true, "script.xml" );
+          protocol->apply( outputpose_ );
+        }
+      } 
+      catch( utility::excn::EXCN_Msg_Exception e ){
+        TR << e.msg() << std::endl;
+        error_ = 1;
       }
-      if( command_ == "relax" ){
-        protocols::moves::MoverOP protocol = protocols::relax::generate_relax_from_cmd();
-        protocol->apply( outputpose_ );
+      catch(...) {
+        TR << "UNKNOWN ERROR" << std::endl;
+        error_ = 1;
       }
-      if( command_ == "loophash" ){
-        TR << "LOOPHASH!!  " << rosetta_script_ << std::endl;
-        protocols::loophash::LoopHashRelaxProtocolOP lh_protocol = new protocols::loophash::LoopHashRelaxProtocol( loop_hash_library );
-        lh_protocol->manual_call( outputpose_ );
-      }
-      if( command_ == "enzdes" ){
-
-      }
-      if( command_ == "xmlscript" ){
-
-        utility::Inline_File_Provider *provider = utility::Inline_File_Provider::get_instance();
-        provider->add_input_file( "script.xml", xmlscript_ );
-
-        protocols::jd2::DockDesignParser ddp;
-
-        protocols::jd2::JobCOP job;
-        protocols::moves::MoverOP protocol;
-
-        ddp.generate_mover_from_pose( job, outputpose_ , protocol, true, "script.xml" );
-
-        protocol->apply( outputpose_ );
-      }
+      
+      // stop stdout capturing
+      output_capture_stop();
+      endtime_ = time(NULL);
     }
 
  private:
+
+  void output_capture_start(){
+      basic::set_new_final_channel( &tracer_output_stream_ );
+  }
+
+  void output_capture_stop(){
+      basic::set_default_final_channel();
+  }
+
+  void output_capture_clear(){
+    tracer_output_stream_.str(std::string());
+  }
+
 
   void load_new_set_of_user_flags(  const Json::Value &json_user_flags ){
     std::vector < std::string > user_flags;
@@ -557,12 +623,12 @@ class RosettaJob {
     }
   }
 
-
+  // input stuff (coming from the server)
   core::pose::Pose inputpose_;
-  core::pose::Pose outputpose_;
   std::string taskname_;
   std::string hash_;
   std::string key_;
+  std::string user_id_;
   std::string operation_;
   Json::Value job_data_;
 
@@ -571,7 +637,14 @@ class RosettaJob {
   std::string xmlscript_;
   bool initialized_;
 
+  // output stuff
+  core::pose::Pose outputpose_;
+  int              error_; 
+  std::stringstream tracer_output_stream_;
+  long             starttime_;
+  long             endtime_;
 
+  
 };
 
 class RosettaBackend {
@@ -600,15 +673,13 @@ class RosettaBackend {
           core::Real waittime =  std::min( (double)10.0f, 0.5f* pow( (float)1.3, (float) wait_count )); // in seconds
 
           // HACK!
-          waittime = 1.5;
+          waittime =  5;
 
           std::cout << "No work. Waiting " << waittime << " seconds before retrying." << std::endl;
           sleep( waittime );
           wait_count ++;
         };
-
-
-        // execute the run
+        
         newjob.run();
 
         // now return the results to the server
@@ -640,6 +711,28 @@ main( int argc, char * argv [] )
 
  	// initialize core
  	devel::init(argc, argv);
+
+  evaluation::PoseEvaluatorsOP evaluators_( new protocols::evaluation::PoseEvaluators() );
+  evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluators_);
+
+  // initialize all the protocols
+  // these are slow so only do them once at start up not when the job is requested for lower latency.
+	if( option[lh::db_path].user() ){
+    utility::vector1 < core::Size > loop_sizes = option[lh::loopsizes]();
+    loop_hash_library = new LoopHashLibrary( loop_sizes );
+    loop_hash_library->load_db();
+  }
+
+  // set up the application server information package
+  ServerInfo server( option[rbe::server_url](), option[rbe::server_port](), option[rbe::poll_frequency ]() );
+  std::cout << "server: " << server.url_gettask() << std::endl;
+  RosettaBackend backend( server, argc, argv );
+
+
+  backend.run();
+
+ 	return 0;
+}
 
 //  std::cout << "-rbe:server_url " << option[rbe::server_url]() << std::endl;
 //  std::cout << "-rbe:server_port " << option[rbe::server_port]() << std::endl;
@@ -733,26 +826,3 @@ main( int argc, char * argv [] )
 //  protocol->apply( pose );
 //
 //  return 0;
-
-  evaluation::PoseEvaluatorsOP evaluators_( new protocols::evaluation::PoseEvaluators() );
-  evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluators_);
-
-  // initialize all the protocols
-  // these are slow so only do them once at start up not when the job is requested for lower latency.
-	if( option[lh::db_path].user() ){
-    utility::vector1 < core::Size > loop_sizes = option[lh::loopsizes]();
-    loop_hash_library = new LoopHashLibrary( loop_sizes );
-    loop_hash_library->load_db();
-  }
-
-  // set up the application server information package
-  ServerInfo server( option[rbe::server_url](), option[rbe::server_port](), option[rbe::poll_frequency ]() );
-  std::cout << "server: " << server.url_gettask() << std::endl;
-  RosettaBackend backend( server, argc, argv );
-
-
-  backend.run();
-
- 	return 0;
-}
-
