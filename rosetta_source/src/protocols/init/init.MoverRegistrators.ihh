@@ -121,6 +121,11 @@ static MoverRegistrator< loops::loop_mover::refine::LoopMover_Refine_BackrubCrea
 static MoverRegistrator< loops::loop_mover::refine::LoopMover_Refine_CCDCreator > reg_LoopMover_Refine_CCDCreator;
 static MoverRegistrator< loops::loop_mover::refine::LoopMover_Refine_KICCreator > reg_LoopMover_Refine_KIC;
 
+static MoverRegistrator< loops::loop_mover::refine::LoopRefineInnerCycleContainerCreator > reg_LoopRefineInnerCycleContainer;
+static MoverRegistrator< loops::loop_mover::refine::RepackTrialCreator > reg_RepackTrialCreator;
+static MoverRegistrator< loops::loop_mover::refine::ShearMinCCDTrialCreator > reg_ShearMinCCDTrial;
+static MoverRegistrator< loops::loop_mover::refine::SmallMinCCDTrialCreator > reg_SmallMinCCDTrial;
+
 static MoverRegistrator< match::MatcherMoverCreator > reg_MatcherMoverCreator;
 
 static MoverRegistrator< motifs::MotifDnaPackerCreator > reg_MotifDnaPackerCreator;

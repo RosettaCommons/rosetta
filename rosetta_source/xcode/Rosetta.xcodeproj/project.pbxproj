@@ -873,6 +873,12 @@
 		BCD9D699E59D92B9A522862D /* RNA_TorsionPotential.cc in Sources */ = {isa = PBXBuildFile; fileRef = 09B192A8599FD7DD66C29077 /* RNA_TorsionPotential.cc */; };
 		95B32015FBC624285EEAC655 /* RNA_Util.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6AB1CDDDBFA5F1E94FC173D3 /* RNA_Util.cc */; };
 		4C48D56632F563573C3EE0BF /* RNA_VDW_Energy.cc in Sources */ = {isa = PBXBuildFile; fileRef = 411EA66240092D9ECD9916BE /* RNA_VDW_Energy.cc */; };
+		00646DA0A995FBAB9783E25E /* RNA_CS_MagneticAnisotropy.cc in Sources */ = {isa = PBXBuildFile; fileRef = 192C75BC2DFAE09E156435C0 /* RNA_CS_MagneticAnisotropy.cc */; };
+		1FE96ADFBE8B9438896CDDAB /* RNA_CS_Parameters.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3E5A2761072456D0FEFF745F /* RNA_CS_Parameters.cc */; };
+		2A66A403B81FA675453F05CF /* RNA_CS_RingCurrent.cc in Sources */ = {isa = PBXBuildFile; fileRef = 48AB4B13B2B875B28131D3AF /* RNA_CS_RingCurrent.cc */; };
+		B840EAF185C7288815D1E08B /* RNA_CS_Util.cc in Sources */ = {isa = PBXBuildFile; fileRef = FE524FB225C7BA5BB5F42F7A /* RNA_CS_Util.cc */; };
+		0E74091777DD1208F13D9CFA /* RNA_ChemicalShiftEnergy.cc in Sources */ = {isa = PBXBuildFile; fileRef = 77D794A7ED854C9D3B7B0C96 /* RNA_ChemicalShiftEnergy.cc */; };
+		57BCADBCBFF9691FB7C660B7 /* RNA_ChemicalShiftPotential.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9A424F6F9FEDA80FED0EAEEA /* RNA_ChemicalShiftPotential.cc */; };
 		C3CACF4E24C2617C9A823479 /* FastSAXSEnergy.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6AE1C2757EE0195ECCB40D21 /* FastSAXSEnergy.cc */; };
 		0BFA0A819F7B1D7CDE479BC6 /* FormFactor.cc in Sources */ = {isa = PBXBuildFile; fileRef = 84CEE62780CCADAF72367D14 /* FormFactor.cc */; };
 		62C901941593D05CD80634EF /* FormFactorManager.cc in Sources */ = {isa = PBXBuildFile; fileRef = CABB9D742471F05D6A09F265 /* FormFactorManager.cc */; };
@@ -1492,6 +1498,12 @@
 		DE48B7226A0D470636AFDCEC /* LoopMover_Backrub.cc in Sources */ = {isa = PBXBuildFile; fileRef = A80942A3C105CA6CB4D0BDF4 /* LoopMover_Backrub.cc */; };
 		CEA7EEA550AFA4C07A2C6163 /* LoopMover_CCD.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3F3A6E57BE9BE9489A43A03D /* LoopMover_CCD.cc */; };
 		9DC88B996EA8B1CDEA1AE597 /* LoopMover_KIC.cc in Sources */ = {isa = PBXBuildFile; fileRef = 64590095EFB8F196497DC29F /* LoopMover_KIC.cc */; };
+		AB2741570AC1FB3BCEC3689B /* LoopRefineInnerCycle.cc in Sources */ = {isa = PBXBuildFile; fileRef = 902EBAF579D4A8CA42526DDA /* LoopRefineInnerCycle.cc */; };
+		6451DECD9EB5DDCD6E24C90B /* LoopRefineInnerCycleContainer.cc in Sources */ = {isa = PBXBuildFile; fileRef = D3623BD827036B10469E835B /* LoopRefineInnerCycleContainer.cc */; };
+		24E530D157F16F3946F672B0 /* LoopRefineInnerCycleFactory.cc in Sources */ = {isa = PBXBuildFile; fileRef = A10063F3FC37F6B03AEDC86A /* LoopRefineInnerCycleFactory.cc */; };
+		242584809347C4E30FDB0EA0 /* RepackTrial.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1DC5903A6118030DE66753FC /* RepackTrial.cc */; };
+		A7071B0CE425776D8926E31B /* ShearMinCCDTrial.cc in Sources */ = {isa = PBXBuildFile; fileRef = D7D90965833F415B04FF65C9 /* ShearMinCCDTrial.cc */; };
+		83303B1D42BB75BFA3ED7F35 /* SmallMinCCDTrial.cc in Sources */ = {isa = PBXBuildFile; fileRef = B857B33891F06D515C787D98 /* SmallMinCCDTrial.cc */; };
 		6040AA12CEB66439F6C00849 /* LoopsDatabaseDefiner.cc in Sources */ = {isa = PBXBuildFile; fileRef = B5EBF1AF610B237D912BEB5E /* LoopsDatabaseDefiner.cc */; };
 		3A229FD63256774503122245 /* LoopsDatabaseDefinerCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 792770BA63824EB3E4EC4C0B /* LoopsDatabaseDefinerCreator.cc */; };
 		BBB19074FA7255D09979A9BB /* LoopsDefinerFactory.cc in Sources */ = {isa = PBXBuildFile; fileRef = 882009DD316FC133F827ECBF /* LoopsDefinerFactory.cc */; };
@@ -9771,6 +9783,20 @@
 		D32A1BE32F16E34BF103253C /* RNA_VDW_Energy.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_VDW_Energy.fwd.hh; path = ../src/core/scoring/rna/RNA_VDW_Energy.fwd.hh; sourceTree = SOURCE_ROOT; };
 		B571FDB506DACE9E859AA177 /* RNA_VDW_Energy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_VDW_Energy.hh; path = ../src/core/scoring/rna/RNA_VDW_Energy.hh; sourceTree = SOURCE_ROOT; };
 		1FB0E76456A27BC4269F7A36 /* RNA_VDW_EnergyCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_VDW_EnergyCreator.hh; path = ../src/core/scoring/rna/RNA_VDW_EnergyCreator.hh; sourceTree = SOURCE_ROOT; };
+		192C75BC2DFAE09E156435C0 /* RNA_CS_MagneticAnisotropy.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RNA_CS_MagneticAnisotropy.cc; path = ../src/core/scoring/rna/chemical_shift/RNA_CS_MagneticAnisotropy.cc; sourceTree = SOURCE_ROOT; };
+		318948D7163CDF7AE602A454 /* RNA_CS_MagneticAnisotropy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_CS_MagneticAnisotropy.hh; path = ../src/core/scoring/rna/chemical_shift/RNA_CS_MagneticAnisotropy.hh; sourceTree = SOURCE_ROOT; };
+		3E5A2761072456D0FEFF745F /* RNA_CS_Parameters.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RNA_CS_Parameters.cc; path = ../src/core/scoring/rna/chemical_shift/RNA_CS_Parameters.cc; sourceTree = SOURCE_ROOT; };
+		E1BAB0FDEDC8D55C4FD3E3FC /* RNA_CS_Parameters.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_CS_Parameters.hh; path = ../src/core/scoring/rna/chemical_shift/RNA_CS_Parameters.hh; sourceTree = SOURCE_ROOT; };
+		48AB4B13B2B875B28131D3AF /* RNA_CS_RingCurrent.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RNA_CS_RingCurrent.cc; path = ../src/core/scoring/rna/chemical_shift/RNA_CS_RingCurrent.cc; sourceTree = SOURCE_ROOT; };
+		21202BBC39BEE935300A5AC8 /* RNA_CS_RingCurrent.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_CS_RingCurrent.hh; path = ../src/core/scoring/rna/chemical_shift/RNA_CS_RingCurrent.hh; sourceTree = SOURCE_ROOT; };
+		FE524FB225C7BA5BB5F42F7A /* RNA_CS_Util.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RNA_CS_Util.cc; path = ../src/core/scoring/rna/chemical_shift/RNA_CS_Util.cc; sourceTree = SOURCE_ROOT; };
+		792C64CA3CAD7EB069C2018F /* RNA_CS_Util.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_CS_Util.hh; path = ../src/core/scoring/rna/chemical_shift/RNA_CS_Util.hh; sourceTree = SOURCE_ROOT; };
+		77D794A7ED854C9D3B7B0C96 /* RNA_ChemicalShiftEnergy.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RNA_ChemicalShiftEnergy.cc; path = ../src/core/scoring/rna/chemical_shift/RNA_ChemicalShiftEnergy.cc; sourceTree = SOURCE_ROOT; };
+		BFDFE917228AEEA5C436B500 /* RNA_ChemicalShiftEnergy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_ChemicalShiftEnergy.hh; path = ../src/core/scoring/rna/chemical_shift/RNA_ChemicalShiftEnergy.hh; sourceTree = SOURCE_ROOT; };
+		597883C5357DA53C18993EEE /* RNA_ChemicalShiftEnergyCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_ChemicalShiftEnergyCreator.hh; path = ../src/core/scoring/rna/chemical_shift/RNA_ChemicalShiftEnergyCreator.hh; sourceTree = SOURCE_ROOT; };
+		9A424F6F9FEDA80FED0EAEEA /* RNA_ChemicalShiftPotential.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RNA_ChemicalShiftPotential.cc; path = ../src/core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.cc; sourceTree = SOURCE_ROOT; };
+		EE0886324650EC48CA5FBADC /* RNA_ChemicalShiftPotential.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_ChemicalShiftPotential.fwd.hh; path = ../src/core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.fwd.hh; sourceTree = SOURCE_ROOT; };
+		DE778078EE1F5F382A6D1687 /* RNA_ChemicalShiftPotential.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_ChemicalShiftPotential.hh; path = ../src/core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.hh; sourceTree = SOURCE_ROOT; };
 		7BBFA4AC4DA1F3DAD32D114A /* DistanceHistogram.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DistanceHistogram.fwd.hh; path = ../src/core/scoring/saxs/DistanceHistogram.fwd.hh; sourceTree = SOURCE_ROOT; };
 		4E6FEA127B721104FAE58F8A /* DistanceHistogram.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DistanceHistogram.hh; path = ../src/core/scoring/saxs/DistanceHistogram.hh; sourceTree = SOURCE_ROOT; };
 		6AE1C2757EE0195ECCB40D21 /* FastSAXSEnergy.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FastSAXSEnergy.cc; path = ../src/core/scoring/saxs/FastSAXSEnergy.cc; sourceTree = SOURCE_ROOT; };
@@ -11691,6 +11717,28 @@
 		E8C8571A1E87CC5FAEF5CFB6 /* LoopMover_KIC.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopMover_KIC.fwd.hh; path = ../src/protocols/loops/loop_mover/refine/LoopMover_KIC.fwd.hh; sourceTree = SOURCE_ROOT; };
 		FF793A0D8B029ED9CCB4E6AD /* LoopMover_KIC.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopMover_KIC.hh; path = ../src/protocols/loops/loop_mover/refine/LoopMover_KIC.hh; sourceTree = SOURCE_ROOT; };
 		EC7EB974AF41BB450A356F92 /* LoopMover_KICCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopMover_KICCreator.hh; path = ../src/protocols/loops/loop_mover/refine/LoopMover_KICCreator.hh; sourceTree = SOURCE_ROOT; };
+		902EBAF579D4A8CA42526DDA /* LoopRefineInnerCycle.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LoopRefineInnerCycle.cc; path = ../src/protocols/loops/loop_mover/refine/LoopRefineInnerCycle.cc; sourceTree = SOURCE_ROOT; };
+		9C77BCB3BA7F8C9F1685525B /* LoopRefineInnerCycle.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopRefineInnerCycle.fwd.hh; path = ../src/protocols/loops/loop_mover/refine/LoopRefineInnerCycle.fwd.hh; sourceTree = SOURCE_ROOT; };
+		55C85EF7DB167C6B8EE86317 /* LoopRefineInnerCycle.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopRefineInnerCycle.hh; path = ../src/protocols/loops/loop_mover/refine/LoopRefineInnerCycle.hh; sourceTree = SOURCE_ROOT; };
+		D3623BD827036B10469E835B /* LoopRefineInnerCycleContainer.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LoopRefineInnerCycleContainer.cc; path = ../src/protocols/loops/loop_mover/refine/LoopRefineInnerCycleContainer.cc; sourceTree = SOURCE_ROOT; };
+		355BE1302AC4442C8A80EBD8 /* LoopRefineInnerCycleContainer.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopRefineInnerCycleContainer.fwd.hh; path = ../src/protocols/loops/loop_mover/refine/LoopRefineInnerCycleContainer.fwd.hh; sourceTree = SOURCE_ROOT; };
+		3770F29B2B1CA2CED75CF143 /* LoopRefineInnerCycleContainer.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopRefineInnerCycleContainer.hh; path = ../src/protocols/loops/loop_mover/refine/LoopRefineInnerCycleContainer.hh; sourceTree = SOURCE_ROOT; };
+		1F91626C3ED51DC081982A01 /* LoopRefineInnerCycleContainerCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopRefineInnerCycleContainerCreator.hh; path = ../src/protocols/loops/loop_mover/refine/LoopRefineInnerCycleContainerCreator.hh; sourceTree = SOURCE_ROOT; };
+		A10063F3FC37F6B03AEDC86A /* LoopRefineInnerCycleFactory.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LoopRefineInnerCycleFactory.cc; path = ../src/protocols/loops/loop_mover/refine/LoopRefineInnerCycleFactory.cc; sourceTree = SOURCE_ROOT; };
+		B9CC84B155306E7B6E02DD8C /* LoopRefineInnerCycleFactory.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopRefineInnerCycleFactory.fwd.hh; path = ../src/protocols/loops/loop_mover/refine/LoopRefineInnerCycleFactory.fwd.hh; sourceTree = SOURCE_ROOT; };
+		D67260D1CA595F7B9336BFBC /* LoopRefineInnerCycleFactory.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopRefineInnerCycleFactory.hh; path = ../src/protocols/loops/loop_mover/refine/LoopRefineInnerCycleFactory.hh; sourceTree = SOURCE_ROOT; };
+		1DC5903A6118030DE66753FC /* RepackTrial.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RepackTrial.cc; path = ../src/protocols/loops/loop_mover/refine/RepackTrial.cc; sourceTree = SOURCE_ROOT; };
+		2244F3C2274EAD3423E47678 /* RepackTrial.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RepackTrial.fwd.hh; path = ../src/protocols/loops/loop_mover/refine/RepackTrial.fwd.hh; sourceTree = SOURCE_ROOT; };
+		5677CB5863B20ED61EEF4168 /* RepackTrial.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RepackTrial.hh; path = ../src/protocols/loops/loop_mover/refine/RepackTrial.hh; sourceTree = SOURCE_ROOT; };
+		95F7A3614E6881C6829D18F6 /* RepackTrialCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RepackTrialCreator.hh; path = ../src/protocols/loops/loop_mover/refine/RepackTrialCreator.hh; sourceTree = SOURCE_ROOT; };
+		D7D90965833F415B04FF65C9 /* ShearMinCCDTrial.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ShearMinCCDTrial.cc; path = ../src/protocols/loops/loop_mover/refine/ShearMinCCDTrial.cc; sourceTree = SOURCE_ROOT; };
+		6856A552D3BA839980035D76 /* ShearMinCCDTrial.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ShearMinCCDTrial.fwd.hh; path = ../src/protocols/loops/loop_mover/refine/ShearMinCCDTrial.fwd.hh; sourceTree = SOURCE_ROOT; };
+		432878B5D8E90296619537B1 /* ShearMinCCDTrial.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ShearMinCCDTrial.hh; path = ../src/protocols/loops/loop_mover/refine/ShearMinCCDTrial.hh; sourceTree = SOURCE_ROOT; };
+		04A4FC96E1125778AEADE101 /* ShearMinCCDTrialCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ShearMinCCDTrialCreator.hh; path = ../src/protocols/loops/loop_mover/refine/ShearMinCCDTrialCreator.hh; sourceTree = SOURCE_ROOT; };
+		B857B33891F06D515C787D98 /* SmallMinCCDTrial.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SmallMinCCDTrial.cc; path = ../src/protocols/loops/loop_mover/refine/SmallMinCCDTrial.cc; sourceTree = SOURCE_ROOT; };
+		14FD79A2AEBFCE9142C1103E /* SmallMinCCDTrial.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SmallMinCCDTrial.fwd.hh; path = ../src/protocols/loops/loop_mover/refine/SmallMinCCDTrial.fwd.hh; sourceTree = SOURCE_ROOT; };
+		AED9EBC63FCACE99C9B8BC7E /* SmallMinCCDTrial.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SmallMinCCDTrial.hh; path = ../src/protocols/loops/loop_mover/refine/SmallMinCCDTrial.hh; sourceTree = SOURCE_ROOT; };
+		CDB02BB7287D9B0C48898C84 /* SmallMinCCDTrialCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SmallMinCCDTrialCreator.hh; path = ../src/protocols/loops/loop_mover/refine/SmallMinCCDTrialCreator.hh; sourceTree = SOURCE_ROOT; };
 		B5EBF1AF610B237D912BEB5E /* LoopsDatabaseDefiner.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LoopsDatabaseDefiner.cc; path = ../src/protocols/loops/loops_definers/LoopsDatabaseDefiner.cc; sourceTree = SOURCE_ROOT; };
 		230A15684466EAB72132F3BE /* LoopsDatabaseDefiner.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopsDatabaseDefiner.fwd.hh; path = ../src/protocols/loops/loops_definers/LoopsDatabaseDefiner.fwd.hh; sourceTree = SOURCE_ROOT; };
 		53688332866E76C2772E18BA /* LoopsDatabaseDefiner.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopsDatabaseDefiner.hh; path = ../src/protocols/loops/loops_definers/LoopsDatabaseDefiner.hh; sourceTree = SOURCE_ROOT; };
@@ -18913,6 +18961,7 @@
 		5850B51959826B76CF6ACCB0 /* rna */ = {
 			isa = PBXGroup;
 			children = (
+				9581B8E8E7C1ED742EA006AF /* chemical_shift */,
 				620C8A1585BEFA6F499E095D /* Gaussian_parameter.hh */,
 				D404127729B9D21F1CAD35D1 /* RG_Energy_RNA.cc */,
 				15B0734C1A4EB01888B39315 /* RG_Energy_RNA.hh */,
@@ -18996,6 +19045,28 @@
 			);
 			name = rna;
 			path = ../src/core/scoring/rna/;
+			sourceTree = SOURCE_ROOT;
+		};
+		9581B8E8E7C1ED742EA006AF /* chemical_shift */ = {
+			isa = PBXGroup;
+			children = (
+				192C75BC2DFAE09E156435C0 /* RNA_CS_MagneticAnisotropy.cc */,
+				318948D7163CDF7AE602A454 /* RNA_CS_MagneticAnisotropy.hh */,
+				3E5A2761072456D0FEFF745F /* RNA_CS_Parameters.cc */,
+				E1BAB0FDEDC8D55C4FD3E3FC /* RNA_CS_Parameters.hh */,
+				48AB4B13B2B875B28131D3AF /* RNA_CS_RingCurrent.cc */,
+				21202BBC39BEE935300A5AC8 /* RNA_CS_RingCurrent.hh */,
+				FE524FB225C7BA5BB5F42F7A /* RNA_CS_Util.cc */,
+				792C64CA3CAD7EB069C2018F /* RNA_CS_Util.hh */,
+				77D794A7ED854C9D3B7B0C96 /* RNA_ChemicalShiftEnergy.cc */,
+				BFDFE917228AEEA5C436B500 /* RNA_ChemicalShiftEnergy.hh */,
+				597883C5357DA53C18993EEE /* RNA_ChemicalShiftEnergyCreator.hh */,
+				9A424F6F9FEDA80FED0EAEEA /* RNA_ChemicalShiftPotential.cc */,
+				EE0886324650EC48CA5FBADC /* RNA_ChemicalShiftPotential.fwd.hh */,
+				DE778078EE1F5F382A6D1687 /* RNA_ChemicalShiftPotential.hh */,
+			);
+			name = chemical_shift;
+			path = ../src/core/scoring/rna/chemical_shift/;
 			sourceTree = SOURCE_ROOT;
 		};
 		0925F664A32126E72A1108BB /* saxs */ = {
@@ -21781,6 +21852,28 @@
 				E8C8571A1E87CC5FAEF5CFB6 /* LoopMover_KIC.fwd.hh */,
 				FF793A0D8B029ED9CCB4E6AD /* LoopMover_KIC.hh */,
 				EC7EB974AF41BB450A356F92 /* LoopMover_KICCreator.hh */,
+				902EBAF579D4A8CA42526DDA /* LoopRefineInnerCycle.cc */,
+				9C77BCB3BA7F8C9F1685525B /* LoopRefineInnerCycle.fwd.hh */,
+				55C85EF7DB167C6B8EE86317 /* LoopRefineInnerCycle.hh */,
+				D3623BD827036B10469E835B /* LoopRefineInnerCycleContainer.cc */,
+				355BE1302AC4442C8A80EBD8 /* LoopRefineInnerCycleContainer.fwd.hh */,
+				3770F29B2B1CA2CED75CF143 /* LoopRefineInnerCycleContainer.hh */,
+				1F91626C3ED51DC081982A01 /* LoopRefineInnerCycleContainerCreator.hh */,
+				A10063F3FC37F6B03AEDC86A /* LoopRefineInnerCycleFactory.cc */,
+				B9CC84B155306E7B6E02DD8C /* LoopRefineInnerCycleFactory.fwd.hh */,
+				D67260D1CA595F7B9336BFBC /* LoopRefineInnerCycleFactory.hh */,
+				1DC5903A6118030DE66753FC /* RepackTrial.cc */,
+				2244F3C2274EAD3423E47678 /* RepackTrial.fwd.hh */,
+				5677CB5863B20ED61EEF4168 /* RepackTrial.hh */,
+				95F7A3614E6881C6829D18F6 /* RepackTrialCreator.hh */,
+				D7D90965833F415B04FF65C9 /* ShearMinCCDTrial.cc */,
+				6856A552D3BA839980035D76 /* ShearMinCCDTrial.fwd.hh */,
+				432878B5D8E90296619537B1 /* ShearMinCCDTrial.hh */,
+				04A4FC96E1125778AEADE101 /* ShearMinCCDTrialCreator.hh */,
+				B857B33891F06D515C787D98 /* SmallMinCCDTrial.cc */,
+				14FD79A2AEBFCE9142C1103E /* SmallMinCCDTrial.fwd.hh */,
+				AED9EBC63FCACE99C9B8BC7E /* SmallMinCCDTrial.hh */,
+				CDB02BB7287D9B0C48898C84 /* SmallMinCCDTrialCreator.hh */,
 			);
 			name = refine;
 			path = ../src/protocols/loops/loop_mover/refine/;
@@ -28089,6 +28182,12 @@
 				DE48B7226A0D470636AFDCEC /* LoopMover_Backrub.cc in Sources */,
 				CEA7EEA550AFA4C07A2C6163 /* LoopMover_CCD.cc in Sources */,
 				9DC88B996EA8B1CDEA1AE597 /* LoopMover_KIC.cc in Sources */,
+				AB2741570AC1FB3BCEC3689B /* LoopRefineInnerCycle.cc in Sources */,
+				6451DECD9EB5DDCD6E24C90B /* LoopRefineInnerCycleContainer.cc in Sources */,
+				24E530D157F16F3946F672B0 /* LoopRefineInnerCycleFactory.cc in Sources */,
+				242584809347C4E30FDB0EA0 /* RepackTrial.cc in Sources */,
+				A7071B0CE425776D8926E31B /* ShearMinCCDTrial.cc in Sources */,
+				83303B1D42BB75BFA3ED7F35 /* SmallMinCCDTrial.cc in Sources */,
 				6040AA12CEB66439F6C00849 /* LoopsDatabaseDefiner.cc in Sources */,
 				3A229FD63256774503122245 /* LoopsDatabaseDefinerCreator.cc in Sources */,
 				BBB19074FA7255D09979A9BB /* LoopsDefinerFactory.cc in Sources */,
@@ -30116,6 +30215,12 @@
 				BCD9D699E59D92B9A522862D /* RNA_TorsionPotential.cc in Sources */,
 				95B32015FBC624285EEAC655 /* RNA_Util.cc in Sources */,
 				4C48D56632F563573C3EE0BF /* RNA_VDW_Energy.cc in Sources */,
+				00646DA0A995FBAB9783E25E /* RNA_CS_MagneticAnisotropy.cc in Sources */,
+				1FE96ADFBE8B9438896CDDAB /* RNA_CS_Parameters.cc in Sources */,
+				2A66A403B81FA675453F05CF /* RNA_CS_RingCurrent.cc in Sources */,
+				B840EAF185C7288815D1E08B /* RNA_CS_Util.cc in Sources */,
+				0E74091777DD1208F13D9CFA /* RNA_ChemicalShiftEnergy.cc in Sources */,
+				57BCADBCBFF9691FB7C660B7 /* RNA_ChemicalShiftPotential.cc in Sources */,
 				C3CACF4E24C2617C9A823479 /* FastSAXSEnergy.cc in Sources */,
 				0BFA0A819F7B1D7CDE479BC6 /* FormFactor.cc in Sources */,
 				62C901941593D05CD80634EF /* FormFactorManager.cc in Sources */,

@@ -627,11 +627,11 @@ void add_cutpoint_variants(
  		bool added_cutpoint_variant = false;
 
 		//flo may 09: cutpoint and terminus variant types are currently incompatible, so check for presence
-		if ( pose.residue( cutpoint ).is_polymer() && !( pose.residue( cutpoint ).is_upper_terminus() ) ) {
+		if ( pose.residue( cutpoint ).is_protein() && !( pose.residue( cutpoint ).is_upper_terminus() ) ) {
 			core::pose::add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, cutpoint );
 			added_cutpoint_variant = true;
 		}
-		if ( pose.residue( cutpoint+1 ).is_polymer() && !( pose.residue( cutpoint+1 ).is_lower_terminus() ) ) {
+		if ( pose.residue( cutpoint+1 ).is_protein() && !( pose.residue( cutpoint+1 ).is_lower_terminus() ) ) {
 			core::pose::add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, cutpoint+1 );
 			added_cutpoint_variant = true;
 		}

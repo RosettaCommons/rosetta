@@ -214,6 +214,12 @@ sources = {
 	    "LoopMover_Backrub",
 	    "LoopMover_CCD",
 	    "LoopMover_KIC",
+			"LoopRefineInnerCycle",
+			"LoopRefineInnerCycleFactory",
+			"LoopRefineInnerCycleContainer",
+			"RepackTrial",
+			"ShearMinCCDTrial",
+			"SmallMinCCDTrial",
 	],
 	"protocols/qsar": [
 		"qsarMap",

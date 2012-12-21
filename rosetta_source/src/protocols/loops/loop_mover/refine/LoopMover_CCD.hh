@@ -21,6 +21,7 @@
 #include <core/types.hh>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/kinematics/FoldTree.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
@@ -32,6 +33,14 @@
 #include <utility/tag/Tag.fwd.hh>
 
 #include <utility/vector1.hh>
+
+// Added by BDW during refactoring.  These headers should be removed when refactoring is complete.
+#include <protocols/moves/MonteCarlo.fwd.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
+#include <core/optimization/AtomTreeMinimizer.fwd.hh>
+#include <core/optimization/MinimizerOptions.fwd.hh>
+
+
 
 ///////////////////////////////////////////////////////////////////////////////
 namespace protocols {
@@ -86,10 +95,13 @@ public:
 	void move_map( core::kinematics::MoveMapOP mm );
 	protocols::loops::LoopsCOP get_loops() const;
 	void set_flank_residue_min(bool value) {flank_residue_min_ = value;} // by JQX
+	bool flank_residue_min() const { return flank_residue_min_; }
 	friend std::ostream &operator<< ( std::ostream &os, LoopMover_Refine_CCD const &mover );
 
-protected:
-	void read_options();
+
+	core::Size inner_cycles() const { return inner_cycles_; }
+	core::Size current_cycle_number() const { return current_cycle_number_; }
+	core::Size repack_period() const { return repack_period_; }
 
 	/// @brief setup an appropriate movemap for the given loops
 	/// @param[in] loops The loops to model.
@@ -104,20 +116,46 @@ protected:
 		core::kinematics::MoveMapOP & movemap
 	);
 
+protected:
+	void read_options();
+
 	core::pack::task::TaskFactoryOP task_factory_;
 	bool redesign_loop_;
     virtual basic::Tracer & tr() const;
 
+// This private block was added by BDW during refactoring
+private:
+	core::scoring::ScoreFunctionOP get_new_ramping_scorefxn();
+	core::scoring::ScoreFunctionOP ramping_scorefxn();
+
+	void setup_foldtree_and_add_cutpoint_variants( core::pose::Pose & pose );
+
+	core::pack::task::PackerTaskOP get_packer_task( core::pose::Pose const & pose );
+
+	void increase_chainbreak_weight_and_update_monte_carlo(
+		Size iteration_number,
+		core::scoring::ScoreFunctionOP local_scorefxn,
+		protocols::moves::MonteCarlo & mc,
+		core::pose::Pose & pose
+	);
+	
+	void debugging_output( core::pose::Pose & pose );
+
 private:
 	// parameters with local defaults
 	// Overriden by options if specified by user (do not use option defaults), or via setter methods
-	core::Size outer_cycles_, max_inner_cycles_, repack_period_;
-	core::Real temp_initial_, temp_final_;
 	bool packing_isolated_to_active_loops_;
 	bool set_fold_tree_from_loops_;
-	core::kinematics::MoveMapOP move_map_;
+	bool user_defined_move_map_;
 	bool flank_residue_min_; //JQX
-
+	bool debug_;
+	bool repack_neighbors_;
+	core::Size outer_cycles_, max_inner_cycles_, inner_cycles_, current_cycle_number_, repack_period_;
+	core::Real temp_initial_, temp_final_;
+	
+	core::kinematics::FoldTreeOP original_fold_tree_;
+	core::kinematics::MoveMapOP move_map_;
+	core::scoring::ScoreFunctionOP ramping_scorefxn_;
 }; // LoopMover_Refine_CCD
 
 } //namespace refine

@@ -15,6 +15,7 @@
 #ifndef INCLUDED_protocols_loops_loop_mover_refine_LoopMover_CCD_fwd_hh
 #define INCLUDED_protocols_loops_loop_mover_refine_LoopMover_CCD_fwd_hh
 
+#include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
@@ -28,6 +29,8 @@ class LoopMover_Refine_CCD;
 typedef utility::pointer::owning_ptr< LoopMover_Refine_CCD > LoopMover_Refine_CCDOP;
 typedef utility::pointer::owning_ptr< LoopMover_Refine_CCD const > LoopMover_Refine_CCDCOP;
 
+typedef utility::pointer::access_ptr< LoopMover_Refine_CCD > LoopMover_Refine_CCDAP;
+typedef utility::pointer::access_ptr< LoopMover_Refine_CCD const > LoopMover_Refine_CCDCAP;
 } //namespace refine
 } //namespace loop_mover
 } //namespace loops

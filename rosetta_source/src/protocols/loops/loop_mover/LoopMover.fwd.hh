@@ -15,6 +15,7 @@
 #ifndef INCLUDED_protocols_loops_loop_mover_LoopMover_fwd_hh
 #define INCLUDED_protocols_loops_loop_mover_LoopMover_fwd_hh
 
+#include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols{
@@ -27,6 +28,8 @@ class LoopMover;
 typedef utility::pointer::owning_ptr< LoopMover > LoopMoverOP;
 typedef utility::pointer::owning_ptr< LoopMover const > LoopMoverCOP;
 
+typedef utility::pointer::access_ptr< LoopMover > LoopMoverAP;
+typedef utility::pointer::access_ptr< LoopMover const > LoopMoverCAP;
 
 class MultiLoopMover;
 
