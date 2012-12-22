@@ -33,7 +33,9 @@ class LowResLoopModelingProtocols(ProtocolBaseClass):
           """
           LoopMover_Perturb_CCD for Low Resolution Loop Modeling
           """
-          
+          print "Please cite: Wang C, Bradley P, Baker D (2007). Protein-protein docking with backbone flexibility. J. Mol. Biol. 373, 503."
+          print "As well as: Canutescu A, Dunbrack R., Jr (2003) Cyclic coordinate descent: A robotics algorithm for protein loop closure. Protein Sci. 12, 963."
+          print "Additional options can be set using the options system.  Symmetry is not supported at this time."
           result = tkMessageBox.askyesno(title="Continue?", message="Centroid scorefunction should be set before proceeding (cen_std/score4L recommended).  Proceed?")
           if not result: return
           
@@ -69,6 +71,8 @@ class LowResLoopModelingProtocols(ProtocolBaseClass):
           """
           LoopMover_Perturb_KIC for Low Resolution Loop Modeling
           """
+          print "Please cite: Mandell DJ, Coutsias EA, Kortemme T. (2009). Sub-angstrom accuracy in protein loop reconstruction by robotics-inspired conformational sampling. Nature Methods 6(8):551-2."
+          print "Additional options can be set using the options system.  Symmetry is not supported at this time."
           result = tkMessageBox.askyesno(title="Continue?", message="Centroid scorefunction should be set before proceeding (cen_std/score4L recommended).  Proceed?")
           if not result: return
           

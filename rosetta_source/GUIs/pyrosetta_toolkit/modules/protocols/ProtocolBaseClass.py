@@ -77,9 +77,6 @@ class ProtocolBaseClass:
                     
             #Run the protocol
             while not job_complete:
-                print "1"
-                print "Total running jobs: "+repr(total_running_jobs)
-                print "Total workers waiting: "+repr(len(workers)-total_running_jobs)
                 
                 time.sleep(5)
                 for worker in workers:
@@ -92,14 +89,14 @@ class ProtocolBaseClass:
                         
                         workers.pop(workers.index(worker)); #If the job is done, pop it.
                         total_running_jobs-=1
+                        print "Total running jobs: "+repr(total_running_jobs)
+                        print "Total workers waiting: "+repr(len(workers)-total_running_jobs)
                         
                 if len(workers)==0:
                     job_complete=True
                     break
                 
-                print "2"
-                print "Total running jobs: "+repr(total_running_jobs)
-                print "Total workers waiting: "+repr(len(workers)-total_running_jobs)
+
                 
                 if total_running_jobs<total_allowed_jobs:
                     for worker in workers:
@@ -110,12 +107,15 @@ class ProtocolBaseClass:
                             except AssertionError:
                                 continue
                             total_running_jobs+=1
+                            print "Total running jobs: "+repr(total_running_jobs)
+                            print "Total workers waiting: "+repr(len(workers)-total_running_jobs)
                             if total_running_jobs>=total_allowed_jobs: break
             
                 if total_running_jobs==0:
                     job_complete=True
                         
-                
+            while len(multiprocessing.active_children()) != 0: time.sleep(1)
+            
         else:
             for i in range(1, self.output_class.rounds.get()+1):
                 print "Round "+repr(i)
@@ -123,7 +123,7 @@ class ProtocolBaseClass:
                 print "Start: "+ repr(start_energy_score)+"\n"        
                 print "End: "+ repr(self.score_class.score(self.pose))
         
-        time.sleep(5); #So that the children can finish output
+        #time.sleep(5); #So that children can finish output
         self.output_class.terminal_output.set(0); #Reset output to textbox
         
         print "NOTE: If > 1 decoy has been created, original decoy is still loaded. "
@@ -148,6 +148,13 @@ class ProtocolBaseClass:
             #print "Round "+repr(x)
             mover.apply(p)
         p.dump_pdb(outputname)
+        
+        score_tag = ".fasc"
+        if not p.is_fullatom():
+            score_tag = ".sc"
+
+        scorefile = self.pdb_name + score_tag
+        output_scorefile(p, self.input_class.pdb_path.get(), outputname, scorefile, self.score_class.score, self.output_class.decoys.get(), self.pose)
         print "Start: " +repr(start)
         print "End: " +repr(self.score_class.score(p))
         if self.output_class.decoys.get()==1:

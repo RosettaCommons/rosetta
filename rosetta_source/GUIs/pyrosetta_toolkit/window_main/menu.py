@@ -35,6 +35,7 @@ from modules.protocols.DesignProtocols import DesignProtocols
 from modules.protocols.LowResLoopModelingProtocols import LowResLoopModelingProtocols
 from modules.protocols.HighResLoopModelingProtocols import HighResLoopModelingProtocols
 from modules.protocols.GraftingProtocols import GraftMoverWindow
+from modules.protocols.AnalysisProtocols import AnalysisProtocols
 
 from window_modules.clean_pdb.FixPDBWindow import FixPDBWindow
 from rosetta_flag_file_builder.RosettaFlagFileBuilder import RosettaFlagFileBuilder
@@ -129,7 +130,7 @@ class Menus():
 	self.analysis_menu.add_command(label = "Interface Analyzer", command=lambda: analysis_tools.analyze_interface(self.toolkit.pose, self.toolkit.score_class.score))
 	self.analysis_menu.add_command(label = "Packing Analyzer", command = lambda: analysis_tools.analyze_packing(self.toolkit.pose))
 	self.analysis_menu.add_command(label = "Loops Analyzer", command = lambda: analysis_tools.analyze_loops(self.toolkit.pose, self.toolkit.input_class.loops_as_strings))
-	self.analysis_menu.add_command(label = "VIP Analyzer", foreground='red', command = lambda: analysis_tools.analyze_vip(self.toolkit.pose, self.toolkit.score_class.score, self.toolkit.pwd))
+	self.analysis_menu.add_command(label = "VIP Analyzer", command = lambda: AnalysisProtocols(self.toolkit.pose, self.toolkit.score_class, self.toolkit.input_class, self.toolkit.output_class).analyze_vip())
 	self.advanced_menu.add_cascade(label = "Analysis", menu = self.analysis_menu)
 	
 	###Design###
@@ -169,7 +170,7 @@ class Menus():
 	
 	self.protocols_menu = Menu(self.main_menu, tearoff=0)
 
-	self.protocols_menu.add_command(label = "Enable MPI Mode", foreground = 'red')
+	#self.protocols_menu.add_command(label = "Enable MPI Mode", foreground = 'red')
 
 	self.protocols_menu.add_separator()
 	
@@ -184,15 +185,14 @@ class Menus():
 	self.design_protocols = Menu(self.main_menu, tearoff=0)
 	self.design_protocols.add_command(label = "FixedBB", command = lambda: self.design_class.packDesign())
 	self.design_protocols.add_command(label = "Grafting", command = lambda:self.show_graftmover_window())
-	#self.design_protocols.add_command(label = "Grafting", foreground='red')
-	self.design_protocols.add_command(label = "Remodel", foreground='red')
+	#self.design_protocols.add_command(label = "Remodel", foreground='red')
 	
 	#Docking
 	
 	self.docking_protocols = Menu(self.main_menu, tearoff=0)
 	self.docking_protocols.add_command(label = "Low Resolution", command = lambda: self.docking_class.low_res_dock())
 	self.docking_protocols.add_command(label = "High Resolution", command = lambda: self.docking_class.high_res_dock())
-	self.docking_protocols.add_command(label = "Ligand", foreground='red')
+	#self.docking_protocols.add_command(label = "Ligand", foreground='red')
 	
 	#Loop Modeling
 
@@ -218,16 +218,23 @@ class Menus():
 	self.servers.add_command(label = "Interface Alanine Scan", command = lambda: webbrowser.open("http://robetta.bakerlab.org/alascansubmit.jsp"))
 	self.servers.add_command(label = "DNA Interface Scan", command = lambda: webbrowser.open("http://robetta.bakerlab.org/dnainterfacescansubmit.jsp"))
 	
+	self.rna_protocols = Menu(self.main_menu, tearoff=0)
+	
+	self.dna_protocols = Menu(self.main_menu, tearoff=0)
+	
 	self.general_protocols.add_cascade(label = "Web Servers", menu = self.servers)
 	self.general_protocols.add_separator()
-	self.general_protocols.add_command(label = "Ab Initio", foreground='red')
-	self.general_protocols.add_command(label = "Homology Modeling", foreground='red')
+	#self.general_protocols.add_cascade(label = "RNA", menu = self.rna_protocols)
+	#self.general_protocols.add_cascade(label = "DNA", menu = self.dna_protocols)
+	
+	#self.general_protocols.add_command(label = "Ab Initio", foreground='red')
+	#self.general_protocols.add_command(label = "Homology Modeling", foreground='red')
 	self.protocols_menu.add_cascade(label = "General", menu = self.general_protocols)
 	self.protocols_menu.add_separator()
 	self.protocols_menu.add_cascade(label = "Loop Modeling", menu = self.loop_modeling_protocols)
 	self.protocols_menu.add_cascade(label = "Docking", menu = self.docking_protocols)
 	self.protocols_menu.add_cascade(label = "Design", menu = self.design_protocols)
-	
+
 	
 	self.main_menu.add_cascade(label = "Protocols", menu=self.protocols_menu)
 
@@ -283,6 +290,8 @@ class Menus():
 	self.help_menu=Menu(self.main_menu, tearoff=0)
 	self.help_menu.add_command(label="About", command=lambda: help_tools.about())
 	self.help_menu.add_command(label = "License", command = lambda: help_tools.show_license())
+	self.help_menu.add_separator()
+	self.help_menu.add_command(label = "Region Selection", command = lambda: help_tools.region_selection())
 	self.help_menu.add_separator()
 	self.help_menu.add_command(label="Rosetta Manual", command = lambda: webbrowser.open("http://www.rosettacommons.org/manual_guide"))
 	self.help_menu.add_command(label="Rosetta Glossary", command=lambda: help_tools.print_glossary())

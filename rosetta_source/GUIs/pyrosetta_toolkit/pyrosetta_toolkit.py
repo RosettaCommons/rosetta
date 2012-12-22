@@ -78,7 +78,7 @@ class main_window:
       
       self.textbox_frame = FrameTk(self._tk_, bd=3, relief=GROOVE)
       outfont = tkFont.Font(family="Helvetica", size=11)
-      self.output_textbox= Text(self.textbox_frame,wrap="word", height=7,width=103,font = outfont)
+      self.output_textbox= Text(self.textbox_frame,wrap="word", height=8,width=113,font = outfont)
       
       self.old_stdout = sys.stdout
       

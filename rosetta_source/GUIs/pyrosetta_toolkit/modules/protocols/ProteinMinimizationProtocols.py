@@ -14,6 +14,7 @@
 from rosetta import *
 from rosetta.basic.options import get_string_option
 from rosetta.basic.options import get_real_option
+from rosetta.basic.options import get_boolean_option
 
 #Python Imports
 import os
@@ -36,21 +37,25 @@ class ProteinMinimizationProtocols(ProtocolBaseClass):
         """
         Relaxes the pose using either Fast Relax or Classic Relax
         If Classic is anything other then 0, then Fast Relax occurs.
+        NOTE: RelaxProtocolBase DOES read from options system, so coordinate costraints will work.  Symmetry will not.
         """
+        print "This application was created and documented by Mike Tyka, et al."
+        print "For more options such as coordinate constraints, please use the options system.  Symmetry is not supported at this time."
+        
         classic=int(classic)
         self.score_class.score.set_weight(chainbreak, 100)
         print self.score_class.score(self.pose)
         if classic==0:
             Rel=ClassicRelax(self.score_class.score)
             if movemap:
-                ClassicRelax.set_movemap(movemap)
+                Rel.set_movemap(movemap)
             self.run_protocol(Rel)
         else:
             Rel=FastRelax(self.score_class.score)
             if movemap:
-                FastRelax.set_movemap(movemap)
+                Rel.set_movemap(movemap)
             self.run_protocol(Rel)
-                
+        
         self.score_class.score.set_weight(chainbreak, 0)
 
     def RelaxBB(self, classic):

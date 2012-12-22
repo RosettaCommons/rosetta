@@ -54,7 +54,7 @@ class DockingProtocols(ProtocolBaseClass):
         to_dock = to_dock.upper()
         if not to_dock: return
         if self.score_class.ScorePatch.get()!="docking":
-            result = tkMessageBox.askokcancel(title="Continue?", message="Docking patch not set in scorefunction. Continue?")
+            result = tkMessageBox.askokcancel(title="Continue?", message="Docking patch not set in scorefunction (use standard as main weights). Continue?")
             if not result:return
         dock_mover = DockMCMProtocol()
         dock_mover.set_scorefxn(self.score_class.score)

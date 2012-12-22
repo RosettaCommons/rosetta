@@ -64,6 +64,7 @@ class DesignProtocols(ProtocolBaseClass):
             
         
         print "Please cite the many references included for Fixed Backbone Design in the Rosetta Manual."
+        print "Further options such as annealing can be set using the options system.  Symmetry is not supported at this time."
         time.sleep(5)
         self.run_protocol(s_mover)
     

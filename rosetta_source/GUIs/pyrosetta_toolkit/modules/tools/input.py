@@ -29,7 +29,7 @@ from window_main import global_variables
 
 def tk_get_directory():
     """
-    Loads a Folder through the tk File Dialog
+    Loads a Folder through the tk File Dialog.  Uses and Sets current directory.
     """
 
     dir_name = tkFileDialog.askdirectory(initialdir=global_variables.current_directory, title='Pick a directory')
@@ -42,7 +42,7 @@ def tk_get_directory():
 
 def tk_get_file():
     """
-    Loads a File through the tk File Dialog
+    Loads a File through the tk File Dialog. Uses and Sets current directory.
     """
     filename = tkFileDialog.askopenfilename(initialdir=global_variables.current_directory, title='Pick a file')
     if not filename:
@@ -51,30 +51,6 @@ def tk_get_file():
     global_variables.current_directory = os.path.dirname(filename)
     print filename
     return filename
-
-def load_pdb(file):
-    """
-    Loads a PDB into a pose
-    """
-    print file
-    p = Pose()
-    pose_from_pdb(p, file)
-    return p
-
-def load_loop_file(pose, filename):
-    """
-    Loads the loop.  Doesn't work.
-    """
-    INFILE = open(filename, 'r')
-    loops_as_strings = []
-    for line in INFILE:
-        lineSP=line.split()
-        start_pdb = pose.pdb_info().pose2pdb(int(lineSP[1]))
-        end_pdb   = pose.pdb_info().pose2pdb(int(lineSP[2]))
-        string = repr(start_pdb[0])+":"+repr(end_pdb[0])+":"+start_pdb[1]
-        loops_as_strings.append(string)
-    INFILE.close()
-    return loops_as_strings
 
 def load_vicinity(p, lisloop, vaccinity):
     """

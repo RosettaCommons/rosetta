@@ -483,74 +483,85 @@ def etable_atom_pair_energies(atom1, atom2, sfxn):
 
     return lj_atr, lj_rep, solv
 
+def output_scorefile(pose, pdb_name, current_name, scorefilepath, \
+                 scorefxn, nstruct, native_pose=None, additional_decoy_info=None):
+    """
+    Moved from PyJobDistributor (Jared Adolf-Bryfogle)
+    Creates a scorefile if none exists, or appends the current one.
+    Calculates and writes CA_rmsd if native pose is given,
+    as well as any additional decoy info
+    """
+    if not os.path.exists(scorefilepath):
+        with open(scorefilepath, 'w') as f:
+            f.write("pdb name: " + pdb_name + "     nstruct: " +
+                    str(nstruct) + '\n')
 
+    score = scorefxn(pose)	 # Calculates total score.
+    score_line = pose.energies().total_energies().weighted_string_of(scorefxn.weights())
+    output_line = "filename: " + current_name + " total_score: " + str(round(score, 2))
+    
+    # Calculates rmsd if native pose is defined.
+    if native_pose:
+        rmsd = CA_rmsd(native_pose, pose)
+        output_line = output_line + " rmsd: " + str(round(rmsd, 2))
+
+    with open(scorefilepath, 'a') as f:
+        if additional_decoy_info:
+            f.write(output_line + ' ' + score_line + ' '+additional_decoy_info + '\n')  
+        else:
+            f.write(output_line + ' ' + score_line + '\n')
+            
 # New classes.
 class PyJobDistributor:
-	def __init__(self, pdb_name, nstruct, scorefxn):
-		self.pdb_name = pdb_name
-		self.nstruct = nstruct
-		self.current_num = 0		      # Current decoy number
-		self.current_name = " "		      # Current decoy name
-		self.job_complete = False	      # Job status
-		self.scorefxn = scorefxn	      # Used for final score calculation
-		self.native_pose = None		      # Used for rmsd calculation
-		self.additional_decoy_info = ' '  # Used for any additional decoy
-		                                  # information you want stored
-		self.start_decoy()		          # Initializes the job distributor
+    def __init__(self, pdb_name, nstruct, scorefxn):
+        self.pdb_name = pdb_name
+        self.nstruct = nstruct
+        self.current_num = 0		      # Current decoy number
+        self.current_name = " "		      # Current decoy name
+        self.job_complete = False	      # Job status
+        self.scorefxn = scorefxn	      # Used for final score calculation
+        self.native_pose = None		      # Used for rmsd calculation
+        self.additional_decoy_info = None     # Used for any additional decoy
+                                               # information you want stored
+        self.start_decoy()		      # Initializes the job distributor
 
-	def start_decoy(self):
-		if self.job_complete:
-			return
-		i = 1
-		file_exists = True
-		while (file_exists and i <= self.nstruct):
-			current_name = self.pdb_name + "_" + str(i) + ".pdb"
-			if not os.path.exists(current_name):
-				current_name_temp = current_name + ".in_progress"
-				if not os.path.exists(current_name_temp):
-					file_exists = False	 # If such a file is not found, i is
-					                     # the current decoy #.
-					with open(current_name_temp, 'w') as f:
-					    f.write("This decoy is in progress.")
-					self.current_name = current_name
-			i += 1
-		self.current_num = i - 1
-		if file_exists:
-			self.job_complete = True
+    def start_decoy(self):
+        if self.job_complete:
+            return
+        i = 1
+        file_exists = True
+        while (file_exists and i <= self.nstruct):
+            current_name = self.pdb_name + "_" + str(i) + ".pdb"
+            if not os.path.exists(current_name):
+                current_name_temp = current_name + ".in_progress"
+                if not os.path.exists(current_name_temp):
+                    file_exists = False	 # If such a file is not found, i is
+                                         # the current decoy #.
+                    with open(current_name_temp, 'w') as f:
+                        f.write("This decoy is in progress.")
+                    self.current_name = current_name
+            i += 1
+        self.current_num = i - 1
+        if file_exists:
+            self.job_complete = True
 
-	def output_decoy(self, pose):
-		current_name_temp = self.current_name + ".in_progress"
-		if not os.path.exists(current_name_temp):
-			return
+    def output_decoy(self, pose):
+        current_name_temp = self.current_name + ".in_progress"
+        if not os.path.exists(current_name_temp):
+            return
 
-		dump_pdb(pose, self.current_name)  # Outputs pdb file.
-		os.remove(current_name_temp)
+        dump_pdb(pose, self.current_name)  # Outputs pdb file.
+        os.remove(current_name_temp)
 
-		score_tag = ".fasc"
-		if not pose.is_fullatom():
-			score_tag = ".sc"
+        score_tag = ".fasc"
+        if not pose.is_fullatom():
+            score_tag = ".sc"
 
-		scorefile = self.pdb_name + score_tag
-		if not os.path.exists(scorefile):
-			with open(scorefile, 'w') as f:
-			    f.write("pdb name: " + self.pdb_name + "     nstruct: " +
-			            str(self.nstruct) + '\n')
+        scorefile = self.pdb_name + score_tag
+        output_scorefile(pose, self.pdb_name, self.current_name, scorefile, self.scorefxn, \
+                     self.nstruct, self.native_pose, self.additional_decoy_info)
 
-		score = self.scorefxn(pose)	 # Calculates total score.
-		score_line = pose.energies().total_energies().weighted_string_of(
-		                                               self.scorefxn.weights())
-		output_line = "filename: " + self.current_name + " total_score: " + \
-		                                                   str(round(score, 2))
-        # Calculates rmsd if native pose is defined.
-		if self.native_pose is not None:
-			rmsd = CA_rmsd(self.native_pose, pose)
-			output_line = output_line + " rmsd: " + str(round(rmsd, 2))
-
-		with open(scorefile, 'a') as f:
-		    f.write(output_line + ' ' + score_line +
-		               self.additional_decoy_info + '\n')  # Outputs scorefile.
-
-		self.start_decoy()
+        self.start_decoy()
 
 
 ###############################################################################

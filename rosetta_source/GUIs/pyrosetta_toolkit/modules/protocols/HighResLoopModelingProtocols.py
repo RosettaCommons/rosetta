@@ -29,6 +29,10 @@ class HighResLoopModelingProtocols(ProtocolBaseClass):
         """
         Uses LoopMover_Refine_CCD as High Res Mover
         """
+        
+        print "Please cite: Wang C, Bradley P, Baker D (2007). Protein-protein docking with backbone flexibility. J. Mol. Biol. 373, 503."
+        print "As well as: Canutescu A, Dunbrack R., Jr (2003) Cyclic coordinate descent: A robotics algorithm for protein loop closure. Protein Sci. 12, 963."
+        print "Additional options can be set using the options system.  Symmetry is not supported at this time."
         movemap=MoveMap()
         ft = self.pose.fold_tree(); ft_o = FoldTree()
         ft_o.assign(ft)
@@ -48,7 +52,9 @@ class HighResLoopModelingProtocols(ProtocolBaseClass):
         """
         Uses LoopMover_Refine_KIC as High Res Mover
         """
-
+        print "Please cite: Mandell DJ, Coutsias EA, Kortemme T. (2009). Sub-angstrom accuracy in protein loop reconstruction by robotics-inspired conformational sampling. Nature Methods 6(8):551-2."
+        print "Additional options can be set using the options system.  Symmetry is not supported at this time."
+        
         movemap=MoveMap()
         ft = self.pose.fold_tree(); ft_o = FoldTree()
         ft_o.assign(ft)

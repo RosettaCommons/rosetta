@@ -14,6 +14,7 @@
 from rosetta import *
 from rosetta.basic.options import get_string_option
 from rosetta.basic.options import get_real_option
+from rosetta.basic.options import get_boolean_option
 
 #Python Imports
 from shutil import rmtree
@@ -61,7 +62,11 @@ class LoopMinimizationProtocols(ProtocolBaseClass):
         Classic and Fast Relax for the loop.  Uses the Movemap from this class.
         ClassicRelax=0; FastRelax=1 for classic setting
         If Movemap is give, the self.input_class.loops_as_strings does not matter...
+        NOTE: RelaxProtocolBase DOES read from options system, so coordinate costraints will work.  Symmetry will not.
         """
+        print "This application was created and documented by Mike Tyka, et al."
+        print "For more options such as coordinate constraints, please use the options system.  Symmetry is not supported at this time."
+        
         classic=int(classic)
 
         if movemap ==0:

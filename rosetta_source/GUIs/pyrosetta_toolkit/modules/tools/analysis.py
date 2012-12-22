@@ -25,7 +25,6 @@ import os.path
 
 #Toolkit Imports
 from rosetta.protocols.analysis import *
-from rosetta.protocols.vip import *
 import loops as loop_tools
 from window_main import global_variables
 
@@ -149,58 +148,6 @@ def analyze_loops(p, loops_as_strings):
     loops_object = loop_tools.InitializeLoops(p, loops_as_strings)
     loop_mover = LoopAnalyzerMover(loops_object, True)
     loop_mover.apply(p)
-
-def analyze_vip(p, scorefxn):
-    """
-    Uses VIP mover to get Mutational information.
-    """
-    vip_mover = VIP_Mover()
-    vip_mover.set_initial_pose(p)
-    old_energy = scorefxn(p)
-    print "\nThis is going to take some time...."
-    print "This code uses the RosettaHoles approach to identify problematic buried cavities, and suggests a set of mutations that are predicted to improve stability as determined by improvements to the RosettaHoles and Rosetta fullatom energy scores."
-    print "NOTE: For full options, please see the Rosetta application."
-    print "Please see Borgo, B., Havranek, J.J. (2012), 'Automated selection of stabilizing mutations in designed and natural proteins', Proc. Natl. Acad. Sci. USA, v.109(5) pp.1494-99."
-    time.sleep(6)
-    if (tkMessageBox.askyesno(message="Continue?")):
-        pass
-    else:
-        return
-    cycles = tkSimpleDialog.askinteger(title = "Cycles", prompt="Please enter max cycles", initialvalue=rosetta.core.get_integer_option('cp:ncycles'))
-    
-    # Rewritten in python From VIP.cc so the same behavior is met.  Just an interface through PyRosetta to the application code.
-    not_finished=True
-    improved = False
-    i=1
-    while (not_finished):
-
-        vip_mover.apply()
-        out = vip_mover.get_final_pose()
-        print "Comparing new energy " + repr(scorefxn(out)) + " with old energy " + repr(old_energy)
-        if (old_energy>scorefxn(out)):
-            improved = True
-        else:
-            improved = False
-            
-        if(improved):
-            for j in range(1, p.total_residue()+1):
-                if( out.residue(j).name() != p.residue(j).name() ):
-                    position = out.pdb_info().number(j)
-                    pdb_chain = out.pdb_info().chain(j)
-                    print "Accepting mutation at position "+repr(pdb_position)+" chain "+pdb_chain +" from " +p.residue(j).name() +" to " +out.residue(j).name()
-            old_energy = scorefxn(out)
-        
-        i+=1
-        if cycles==0:not_finished=improved
-        else:not_finished=(i<=cycles)
-    
-    
-    if (tkMessageBox.askyesno(message="Output PDB?")):
-        filename = tkFileDialog.asksaveasfilename(initialdir=global_variables.current_directory)
-        global_variables.current_directory= os.path.dirname(filename)
-        if not filename: return
-        out.dump_pdb(filename)
-        print "Output PDB Saved..."
         
 #### Rotamers ####
     """
