@@ -53,12 +53,12 @@ void LoopRefineInnerCycleFactory::setup_known_types()
 	loop_refine_inner_cycle_name_to_string_.resize( number_of_loop_refine_inner_cycle_names );
 
 	// Individual LoopRefineInnerCycles
-	loop_refine_inner_cycle_name_to_string_[ SmallMinCCDTrial ] = make_vector1< string >( "SmallMinCCDTrial" );
-	loop_refine_inner_cycle_name_to_string_[ ShearMinCCDTrial ] = make_vector1< string >( "ShearMinCCDTrial" );
-	loop_refine_inner_cycle_name_to_string_[ SmallMinCCDTrial ] = make_vector1< string >( "RepackTrial" );
+	loop_refine_inner_cycle_name_to_string_[ IC_SmallMinCCDTrial ] = make_vector1< string >( "SmallMinCCDTrial" );
+	loop_refine_inner_cycle_name_to_string_[ IC_ShearMinCCDTrial ] = make_vector1< string >( "ShearMinCCDTrial" );
+	loop_refine_inner_cycle_name_to_string_[ IC_SmallMinCCDTrial ] = make_vector1< string >( "RepackTrial" );
 
 	// Pre-made algorithms
-	loop_refine_inner_cycle_name_to_string_[ RefineCCDStandard ] = make_vector1< string >(
+	loop_refine_inner_cycle_name_to_string_[ IC_RefineCCDStandard ] = make_vector1< string >(
 		"SmallMinCCDTrial", "ShearMinCCDTrial", "RepackTrial" );
 }
 

@@ -310,7 +310,7 @@ void LoopMover_Refine_CCD::apply( core::pose::Pose & pose )
 	setup_movemap( pose, *loops(), pack_task->repacking_residues(), move_map_ );
 	
 	LoopRefineInnerCycleOP inner_cycle = LoopRefineInnerCycleFactory::get_instance()->create_inner_cycle(
-			RefineCCDStandard,
+			IC_RefineCCDStandard,
 			this,
 			mc,
 			ramping_scorefxn(),

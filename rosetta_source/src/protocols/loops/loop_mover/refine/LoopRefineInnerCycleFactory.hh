@@ -40,15 +40,16 @@ namespace loops {
 namespace loop_mover {
 namespace refine {
 
+// Prefix all entries in this enum with "IC_" (InnerCycle) to avoid confusion with class names
 enum LoopRefineInnerCycleName {
 	// Individual LoopRefineInnerCycles
-	SmallMinCCDTrial = 1,
-	ShearMinCCDTrial,
-	RepackTrial,
+	IC_SmallMinCCDTrial = 1,
+	IC_ShearMinCCDTrial,
+	IC_RepackTrial,
 
 	// Pre-made algorithms
-	RefineCCDStandard,
-	number_of_loop_refine_inner_cycle_names = RefineCCDStandard
+	IC_RefineCCDStandard,
+	number_of_loop_refine_inner_cycle_names = IC_RefineCCDStandard
 };
 
 /// Create LoopMover Reporters
