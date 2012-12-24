@@ -188,12 +188,12 @@ rna_denovo_test()
 	bool const relax_structure = option[ relax_rna ];
 	bool const is_allow_bulge = option[ allow_bulge ];
 
-	protocols::rna::RNA_DeNovoProtocol rna_de_novo_protocol( nstruct,
-																													 silent_file,
-																													 heat_structure,
-																													 minimize_structure,
-																													 relax_structure,
-																													 is_allow_bulge );
+    protocols::rna::RNA_DeNovoProtocol rna_de_novo_protocol( nstruct,
+                                                             silent_file,
+                                                             heat_structure,
+                                                             minimize_structure, 
+                                                             relax_structure,
+                                                             is_allow_bulge );
 
 	if (native_exists) rna_de_novo_protocol.set_native_pose( native_pose_OP );
 	if ( option[ cycles ].user() )	rna_de_novo_protocol.set_monte_carlo_cycles( option[ cycles ]() );
