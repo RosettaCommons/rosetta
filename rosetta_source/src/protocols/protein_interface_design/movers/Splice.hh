@@ -119,6 +119,8 @@ public:
 	core::Size res_move() const{ return res_move_; }
 	void randomize_cut( bool const r ){ randomize_cut_ = r; }
 	bool randomize_cut() const{ return randomize_cut_; }
+	void cut_secondarystruc( bool const r){ cut_secondarystruc_ =r; }
+	bool cut_secondarystruc() const{ return cut_secondarystruc_; }
 	core::pack::task::TaskFactoryOP task_factory() const;
 	void task_factory( core::pack::task::TaskFactoryOP tf );
 	core::pack::task::TaskFactoryOP design_task_factory() const;
@@ -188,6 +190,7 @@ private:
 	core::Real rms_cutoff_; //dflt 99999; after splicing, checks the average displacement of Ca atoms in the source and target segments. Failure leads to mover failure and no output
 	core::Size res_move_; //dflt 4; how many residues to allow to move during ccd
 	bool randomize_cut_; //dflt false; true: place cut in a randomly chosen loop residue, if available. false: place cut at loop's end
+	bool cut_secondarystruc_; //dflt false; true: allows placing the cut within secondary structures
 	core::pack::task::TaskFactoryOP task_factory_; // dflt NULL; Another access point to setting which residues to splice. This works at present only with one segment, so you set designable residues and Splice will then determine the first and last residues among these and splice that section out.
 	core::pack::task::TaskFactoryOP design_task_factory_; // dflt NULL; a task_factory used to restrict design during splicing. A 'good' idea for this is to define the aligned segments through RestrictToAlignedSegments and send those to this task_factory. During splicing, this task_factory will be used to restrict the design operations in addition to what DesignAroundOperation determines as the designable residues. So, by applying the user-defined RestrictToAlignedSegments as well as dao, you get design on the spliced segment + its vicinity in other aligned segments, and repack in a slightly larger shell.
 	std::string torsion_database_fname_; //dflt ""; set to true in order to read directly from a torsion database

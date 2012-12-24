@@ -108,6 +108,7 @@ Splice::Splice() :
 	rms_cutoff_( 999999 ),
 	res_move_( 4 ),
 	randomize_cut_( false ),
+	cut_secondarystruc_( false ),
 	task_factory_( NULL ),
 	design_task_factory_( NULL ),
 	torsion_database_fname_( "" ),
@@ -454,7 +455,7 @@ Splice::apply( core::pose::Pose & pose )
 		loop_positions_in_source.clear();
 		TR<<"DSSP of source segment: ";
 		for( core::Size i = nearest_to_from; i <= std::min( nearest_to_to, to_res() - from_res() + nearest_to_from ); ++i ){
-			if( dssp.get_dssp_secstruct( i ) == 'L' )
+			if( dssp.get_dssp_secstruct( i ) == 'L' || cut_secondarystruc() ) // allow site for cutting if it's either in a loop or if cutting secondary structure is allowed
 				loop_positions_in_source.push_back( i );
 			TR<<dssp.get_dssp_secstruct( i );
 		}
@@ -765,6 +766,8 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 	res_move( tag->getOption< core::Size >( "res_move", 4 ) );
 	randomize_cut( tag->getOption< bool >( "randomize_cut", false ) );
 	runtime_assert( ( tag->hasOption( "randomize_cut" ) && tag->hasOption( "source_pose" ) ) || !tag->hasOption( "source_pose" ) );
+  cut_secondarystruc( tag->getOption< bool >( "cut_secondarystruc", false ) );
+//	runtime_assert( (tag->hasOption( "cut_secondarystruc ") && tag->hasOption( "randomize_cut" )) || !tag->hasOption( "cut_secondarystruc" ) );
 	template_file( tag->getOption< std::string >( "template_file", "" ) );
 	equal_length( tag->getOption< bool >( "equal_length", false ) );
 	poly_ala( tag->getOption< bool >( "thread_ala", true ) );
@@ -852,7 +855,7 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 		}// fi Segments
 	}//foreach sub_tag
 
-	TR<<"from_res: "<<from_res()<<" to_res: "<<to_res()<<" dbase_iterate: "<<dbase_iterate()<<" randomize_cut: "<<randomize_cut()<<" source_pdb: "<<source_pdb()<<" ccd: "<<ccd()<<" rms_cutoff: "<<rms_cutoff()<<" res_move: "<<res_move()<<" template_file: "<<template_file()<<" checkpointing_file: "<<checkpointing_file_<<" loop_dbase_file_name: "<<loop_dbase_file_name_<<" loop_pdb_source: "<<loop_pdb_source()<<" mover_tag: "<<mover_tag_<<std::endl;
+	TR<<"from_res: "<<from_res()<<" to_res: "<<to_res()<<" dbase_iterate: "<<dbase_iterate()<<" randomize_cut: "<<randomize_cut()<<" cut_secondarystruc: "<<cut_secondarystruc()<<" source_pdb: "<<source_pdb()<<" ccd: "<<ccd()<<" rms_cutoff: "<<rms_cutoff()<<" res_move: "<<res_move()<<" template_file: "<<template_file()<<" checkpointing_file: "<<checkpointing_file_<<" loop_dbase_file_name: "<<loop_dbase_file_name_<<" loop_pdb_source: "<<loop_pdb_source()<<" mover_tag: "<<mover_tag_<<std::endl;
 }
 
 protocols::moves::MoverOP
