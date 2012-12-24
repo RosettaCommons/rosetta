@@ -2869,80 +2869,80 @@ principal_angle_degrees( T const & angle )
 
 	}
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	void
-	get_default_allowed_bulge_res(
-		utility::vector1< core::Size > & allow_bulge_res_list,
-		core::pose::Pose const & pose,
-		bool const verbose){
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    void
+    get_default_allowed_bulge_res(
+        utility::vector1< core::Size > & allow_bulge_res_list,
+        core::pose::Pose const & pose,
+        bool const verbose){
 
-		if(allow_bulge_res_list.size()!=0){
-			utility_exit_with_message( "allow_bulge_res_list.size()!=0" );
-		}
+        if(allow_bulge_res_list.size()!=0){
+            utility_exit_with_message( "allow_bulge_res_list.size()!=0" );
+        }
 
-		if(verbose){
-			std::cout << "allow_bulge_res_list.size()==0!" << std::endl;
-			std::cout << "getting default_allowed_bulge_res!" << std::endl;
-		}
-
-
-
-		for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
-
-			//exclude edge residues:
-			if(seq_num == 1) continue;
-
-			if(seq_num == pose.total_residue()) continue;
-
-			bool Is_cutpoint_closed=false;
-
-			bool Is_cutpoint_lower = pose.residue( seq_num ).has_variant_type( 
-									 						 chemical::CUTPOINT_LOWER );
-
-			bool Is_cutpoint_upper = pose.residue( seq_num ).has_variant_type( 
-								     					 chemical::CUTPOINT_UPPER );
-
-			bool near_cutpoint_closed= Is_cutpoint_lower || Is_cutpoint_upper;
-
-			bool near_cutpoint = pose.fold_tree().is_cutpoint( seq_num ) || 
-								 					 pose.fold_tree().is_cutpoint( seq_num - 1 );
+        if(verbose){
+            std::cout << "allow_bulge_res_list.size()==0, ";
+            std::cout << "Getting default_allowed_bulge_res!" << std::endl;
+        }
 
 
-			bool near_cutpoint_open = near_cutpoint || !near_cutpoint_closed;
-			
-			if( near_cutpoint_open ) continue;
 
-			allow_bulge_res_list.push_back(seq_num);
+    for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
 
-		}
+        //exclude edge residues:
+        if(seq_num == 1) continue;
 
-	}
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        if(seq_num == pose.total_residue()) continue;
 
+        bool Is_cutpoint_closed=false;
 
-	core::Size
-	virtualize_bulges(core::pose::Pose & input_pose,
-										utility::vector1< core::Size > const & in_allow_bulge_res_list,
-										core::scoring::ScoreFunctionOP const & scorefxn,
-										std::string const & tag,
-										bool const allow_pre_virtualize,
-										bool const allow_consecutive_bulges,
-										bool const verbose){
+        bool Is_cutpoint_lower = pose.residue( seq_num ).has_variant_type( 
+                                 chemical::CUTPOINT_LOWER );
 
-		using namespace core::pose;
-		using namespace core::scoring;
-		using namespace ObjexxFCL;
+        bool Is_cutpoint_upper = pose.residue( seq_num ).has_variant_type( 
+                                 chemical::CUTPOINT_UPPER );
+
+        bool near_cutpoint_closed= Is_cutpoint_lower || Is_cutpoint_upper;
+
+        bool near_cutpoint = pose.fold_tree().is_cutpoint( seq_num ) || 
+                             pose.fold_tree().is_cutpoint( seq_num - 1 );
 
 
-		Size const total_res=input_pose.total_residue();
+        bool near_cutpoint_open = near_cutpoint && !near_cutpoint_closed;
 
-		Real const rna_bulge_bonus=( scorefxn->get_weight(rna_bulge) )*10;
+        if( near_cutpoint_open ) continue;
 
-		utility::vector1< core::Size > allow_bulge_res_list = in_allow_bulge_res_list;
+        allow_bulge_res_list.push_back(seq_num);
 
-		if(allow_bulge_res_list.size()==0){
-				get_default_allowed_bulge_res(allow_bulge_res_list, input_pose, verbose);
-		}
+    }
+
+    }
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    core::Size
+    virtualize_bulges(core::pose::Pose & input_pose,
+        utility::vector1< core::Size > const & in_allow_bulge_res_list,
+        core::scoring::ScoreFunctionOP const & scorefxn,
+        std::string const & tag,
+        bool const allow_pre_virtualize,
+        bool const allow_consecutive_bulges,
+        bool const verbose){
+
+        using namespace core::pose;
+        using namespace core::scoring;
+        using namespace ObjexxFCL;
+
+
+        Size const total_res=input_pose.total_residue();
+
+        Real const rna_bulge_bonus=( scorefxn->get_weight(rna_bulge) )*10;
+
+        utility::vector1< core::Size > allow_bulge_res_list = in_allow_bulge_res_list;
+
+        if(allow_bulge_res_list.size()==0){
+            get_default_allowed_bulge_res(allow_bulge_res_list, input_pose, verbose);
+        }
 
 
 		if(verbose){

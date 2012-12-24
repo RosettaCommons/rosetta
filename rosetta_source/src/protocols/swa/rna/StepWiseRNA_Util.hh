@@ -389,18 +389,18 @@ setup_simple_fold_tree(core::pose::Pose & pose);
 
 void
 get_atom_coordinates(
-	utility::vector1< std::pair< core::id::AtomID, 
-	numeric::xyzVector<core::Real> > > & xyz_list,
-	core::Size const & seq_num,
-	core::conformation::Residue const & rsd_at_origin,
-	core::kinematics::Stub const & moving_res_base_stub);
+    utility::vector1< std::pair< core::id::AtomID,
+    numeric::xyzVector<core::Real> > > & xyz_list,
+    core::Size const & seq_num,
+    core::conformation::Residue const & rsd_at_origin,
+    core::kinematics::Stub const & moving_res_base_stub);
 
 
 void
 import_pose_from_silent_file(
-	core::pose::Pose & import_pose, 
-	std::string const & silent_file, 
-	std::string const & input_tag);
+    core::pose::Pose & import_pose,
+    std::string const & silent_file,
+    std::string const & input_tag);
 
 
 std::string
@@ -408,41 +408,41 @@ path_basename(std::string const full_path);
 
 bool
 Is_residues_in_contact(
-	core::Size const & res_ONE, 
-	core::pose::Pose const & pose_ONE,
-	core::Size const & res_TWO, 
-	core::pose::Pose const & pose_TWO, 
-	core::Real const atom_atom_overlap_dist_cutoff, 
-	core::Size const num_atom_contacts_cutoff, 
-	bool const verbose=false);
+    core::Size const & res_ONE, 
+    core::pose::Pose const & pose_ONE,
+    core::Size const & res_TWO, 
+    core::pose::Pose const & pose_TWO, 
+    core::Real const atom_atom_overlap_dist_cutoff, 
+    core::Size const num_atom_contacts_cutoff, 
+    bool const verbose=false);
 
 void
 set_CCD_torsions_to_zero(
-	core::pose::Pose & pose, 
-	core::Size const five_prime_res);
+    core::pose::Pose & pose, 
+    core::Size const five_prime_res);
 
 void
 get_default_allowed_bulge_res(
-	utility::vector1< core::Size > & allow_bulge_res_list,
-	core::pose::Pose const & pose,
-	bool const verbose);
+    utility::vector1< core::Size > & allow_bulge_res_list,
+    core::pose::Pose const & pose,
+    bool const verbose);
 
 core::Size
 virtualize_bulges(core::pose::Pose & input_pose,
-	utility::vector1< core::Size > const & in_allow_bulge_res_list,
-	core::scoring::ScoreFunctionOP const & scorefxn,
-	std::string const & tag,
-	bool const allow_pre_virtualize,
-	bool const allow_consecutive_bulges,
-	bool const verbose);
+    utility::vector1< core::Size > const & in_allow_bulge_res_list,
+    core::scoring::ScoreFunctionOP const & scorefxn,
+    std::string const & tag,
+    bool const allow_pre_virtualize,
+    bool const allow_consecutive_bulges,
+    bool const verbose);
 
 std::string
 get_tag_from_pdb_filename(std::string const pdb_filename);
 
 void
 move_jump_atom_to_base(
-	core::kinematics::FoldTree & fold_tree, 
-	std::string const & working_sequence);
+    core::kinematics::FoldTree & fold_tree, 
+    std::string const & working_sequence);
 
 void
 print_JobParameters_info(StepWiseRNA_JobParametersOP const & JP, std::string const JP_name, bool const Is_simple_full_length_JP=false);
@@ -473,11 +473,12 @@ print_ribose_pucker_state(std::string const tag, PuckerState const pucker_state)
 
 
 void
-initialize_common_scorefxns(core::scoring::ScoreFunctionOP const & scorefxn,
-												  core::scoring::ScoreFunctionOP & sampling_scorefxn,
-												  core::scoring::ScoreFunctionOP & atr_rep_screening_scorefxn,
-												  core::scoring::ScoreFunctionOP & chainbreak_scorefxn,
-												  core::scoring::ScoreFunctionOP & o2star_pack_scorefxn);
+initialize_common_scorefxns(
+    core::scoring::ScoreFunctionOP const & scorefxn,
+    core::scoring::ScoreFunctionOP & sampling_scorefxn,
+    core::scoring::ScoreFunctionOP & atr_rep_screening_scorefxn,
+    core::scoring::ScoreFunctionOP & chainbreak_scorefxn,
+    core::scoring::ScoreFunctionOP & o2star_pack_scorefxn);
 
 
 void
