@@ -93,13 +93,13 @@ Rotates::parse_my_tag(
 )
 {
 	if ( tag->getName() != "Rotates" ){
-		utility_exit_with_message("This should be impossible");
+		throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible");
 	}
-	if ( ! tag->hasOption("distribution") ) utility_exit_with_message("'Rotates' mover requires 'distribution' tag");
-	if ( ! tag->hasOption("degrees") ) utility_exit_with_message("'Rotates' mover requires 'degrees' tag");
-	if ( ! tag->hasOption("cycles") ) utility_exit_with_message("'Rotates' mover requires 'cycles' tag");
-	if( tag->hasOption("chain") && tag->hasOption("chains") ) utility_exit_with_message("'Rotates' mover cannot have both a 'chain' and a 'chains' tag");
-	if( ! (tag->hasOption("chain") || tag->hasOption("chains") ) ) utility_exit_with_message("'Rotates' mover requires either a 'chain' or a 'chains' tag");
+	if ( ! tag->hasOption("distribution") ) throw utility::excn::EXCN_RosettaScriptsOption("'Rotates' mover requires 'distribution' tag");
+	if ( ! tag->hasOption("degrees") ) throw utility::excn::EXCN_RosettaScriptsOption("'Rotates' mover requires 'degrees' tag");
+	if ( ! tag->hasOption("cycles") ) throw utility::excn::EXCN_RosettaScriptsOption("'Rotates' mover requires 'cycles' tag");
+	if( tag->hasOption("chain") && tag->hasOption("chains") ) throw utility::excn::EXCN_RosettaScriptsOption("'Rotates' mover cannot have both a 'chain' and a 'chains' tag");
+	if( ! (tag->hasOption("chain") || tag->hasOption("chains") ) ) throw utility::excn::EXCN_RosettaScriptsOption("'Rotates' mover requires either a 'chain' or a 'chains' tag");
 
 	utility::vector1<std::string> chain_strs;
 	if( tag->hasOption("chain")){

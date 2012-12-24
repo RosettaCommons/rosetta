@@ -35,6 +35,7 @@
 #include <string>
 
 
+#include <utility/excn/Exceptions.hh>
 namespace protocols {
 namespace loops {
 namespace loops_definers {

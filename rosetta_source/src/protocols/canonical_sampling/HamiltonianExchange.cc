@@ -182,7 +182,7 @@ HamiltonianExchange::parse_my_tag(
 ) {
 	Parent::parse_my_tag( tag, data, filters, movers, pose );
 	if ( !successfully_initialized_ ) {
-		utility_exit_with_message( "Initialization of HamiltonianExchange Module failed! " );
+		throw utility::excn::EXCN_RosettaScriptsOption( "Initialization of HamiltonianExchange Module failed! " );
 	}
 }
 

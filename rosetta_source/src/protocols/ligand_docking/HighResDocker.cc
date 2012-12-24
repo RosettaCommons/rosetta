@@ -147,22 +147,22 @@ HighResDocker::parse_my_tag(
 )
 {
 	if ( tag->getName() != "HighResDocker" ){
-		utility_exit_with_message("This should be impossible");
+		throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible");
 	}
 
 	// cycles and repack_every_Nth
-	if ( ! tag->hasOption("cycles") ) utility_exit_with_message("'HighResDocker' mover requires cycles tag");
-	if ( ! tag->hasOption("repack_every_Nth") ) utility_exit_with_message("'HighResDocker' mover requires repack_every_Nth tag");
+	if ( ! tag->hasOption("cycles") ) throw utility::excn::EXCN_RosettaScriptsOption("'HighResDocker' mover requires cycles tag");
+	if ( ! tag->hasOption("repack_every_Nth") ) throw utility::excn::EXCN_RosettaScriptsOption("'HighResDocker' mover requires repack_every_Nth tag");
 	num_cycles_= tag->getOption<core::Size>("cycles");
 	repack_every_Nth_= tag->getOption<core::Size>("repack_every_Nth");
 
 	/// Score Function ///
-	if ( ! tag->hasOption("scorefxn") ) utility_exit_with_message("'HighResDocker' requires 'scorefxn' tag");
+	if ( ! tag->hasOption("scorefxn") ) throw utility::excn::EXCN_RosettaScriptsOption("'HighResDocker' requires 'scorefxn' tag");
 	std::string scorefxn_name= tag->getOption<std::string>("scorefxn");
 	score_fxn_= datamap.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name);
 
 	/// MoveMapBuilder///
-	if ( ! tag->hasOption("movemap_builder") ) utility_exit_with_message("'HighResDocker' requires 'movemap_builder' tag");
+	if ( ! tag->hasOption("movemap_builder") ) throw utility::excn::EXCN_RosettaScriptsOption("'HighResDocker' requires 'movemap_builder' tag");
 	std::string movemap_builder_name= tag->getOption<std::string>("movemap_builder");
 	movemap_builder_= datamap.get< MoveMapBuilder * >( "movemap_builders", movemap_builder_name);
 

@@ -161,11 +161,11 @@ ResidueVicinityRCG::parse_my_tag( TagPtr const tag,
 	RemodelConstraintGenerator::parse_my_tag( tag, data, filters, movers, pose );
 	lstart( tag->getOption< core::Size >( "lstart", lstart_ ) );
 	if ( lstart_ == 0 ) {
-		utility_exit_with_message("lstart must be specified in ResidueVicinityCstGenerator mover");
+		throw utility::excn::EXCN_RosettaScriptsOption("lstart must be specified in ResidueVicinityCstGenerator mover");
 	}
 	lstop( tag->getOption< core::Size >( "lstart", lstop_ ) );
 	if ( lstop_ == 0 ) {
-		utility_exit_with_message("lstop must be specified in ResidueVicinityCstGenerator mover");
+		throw utility::excn::EXCN_RosettaScriptsOption("lstop must be specified in ResidueVicinityCstGenerator mover");
 	}
 }
 

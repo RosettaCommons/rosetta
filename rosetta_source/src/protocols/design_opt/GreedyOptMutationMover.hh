@@ -28,6 +28,7 @@
 
 #include <protocols/filters/Filter.hh>
 
+#include <utility/excn/Exceptions.hh>
 namespace protocols {
 namespace design_opt{
 

@@ -441,7 +441,7 @@ CloseFold::parse_my_tag(
 	}
 
 	if( !tag->hasOption("fragments"))
-		utility_exit_with_message("need to supply fragments...currently still not accessing the general fragment pool" );
+		throw utility::excn::EXCN_RosettaScriptsOption("need to supply fragments...currently still not accessing the general fragment pool" );
 
 	//adding the LoopOP to the data map
 	loops_ = new protocols::loops::Loops();

@@ -69,12 +69,12 @@ qsarMover::parse_my_tag(
 		core::pose::Pose const & /*pose*/
 )
 {
-	if ( tag->getName() != "qsarMover" ) utility_exit_with_message("This should be impossible");
+	if ( tag->getName() != "qsarMover" ) throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible");
 
-	if ( ! tag->hasOption("chain") ) utility_exit_with_message("'qsar' mover requires chain tag");
+	if ( ! tag->hasOption("chain") ) throw utility::excn::EXCN_RosettaScriptsOption("'qsar' mover requires chain tag");
 	chain_= tag->getOption<std::string>("chain");
 
-	if ( ! tag->hasOption("grids") ) utility_exit_with_message("'qsarMover' requires grids tag");
+	if ( ! tag->hasOption("grids") ) throw utility::excn::EXCN_RosettaScriptsOption("'qsarMover' requires grids tag");
 
 	std::string grids_string= tag->getOption<std::string>("grids");
 	utility::vector1<std::string> grid_strings(utility::string_split(grids_string, ','));

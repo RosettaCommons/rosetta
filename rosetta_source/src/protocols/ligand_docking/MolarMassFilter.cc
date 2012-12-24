@@ -65,7 +65,7 @@ MolarMassFilter::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves:
 		return;
 	}
 	if ( ! (tag->hasOption("chain") && tag->hasOption("mass_limit") ) ){
-		utility_exit_with_message("MolarMass filter needs a 'chain' and an 'mass_limit' option");
+		throw utility::excn::EXCN_RosettaScriptsOption("MolarMass filter needs a 'chain' and an 'mass_limit' option");
 	}
 	chain_ = tag->getOption<std::string>("chain");
 	mass_limit_ = tag->getOption<core::Size>("mass_limit");

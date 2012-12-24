@@ -362,7 +362,7 @@ SidechainMCMover::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves
 			if ( data.has( "task_operations", *t_o_key ) ) {
 				new_task_factory->push_back( data.get< core::pack::task::operation::TaskOperation* >( "task_operations", *t_o_key ) );
 			} else {
-				utility_exit_with_message("TaskOperation " + *t_o_key + " not found in protocols::moves::DataMap.");
+				throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + *t_o_key + " not found in protocols::moves::DataMap.");
 			}
 		}
 

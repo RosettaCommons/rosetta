@@ -38,6 +38,7 @@
 
 
 
+#include <utility/excn/Exceptions.hh>
 namespace protocols {
 namespace rotamer_recovery {
 

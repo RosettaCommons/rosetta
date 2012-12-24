@@ -215,12 +215,12 @@ void ddG::parse_my_tag(
 
 	if(tag->hasOption("chains") && symmetry_)
 	{
-		utility_exit_with_message("you cannot specify multiple chains and use symmetry mode in the ddG mover at the same time right now. Sorry");
+		throw utility::excn::EXCN_RosettaScriptsOption("you cannot specify multiple chains and use symmetry mode in the ddG mover at the same time right now. Sorry");
 	}
 
 	if( ( tag->hasOption("chain_num") || tag->hasOption("chain_name") ) && tag->hasOption("jump"))
 	{
-		utility_exit_with_message("you can specify either chains or jump in the ddG mover, but not both");
+		throw utility::excn::EXCN_RosettaScriptsOption("you can specify either chains or jump in the ddG mover, but not both");
 	}
 
 	if(tag->hasOption("chain_num"))
@@ -239,7 +239,7 @@ void ddG::parse_my_tag(
 
 	if(std::find(chain_ids_.begin(),chain_ids_.end(),1) != chain_ids_.end())
 	{
-		utility_exit_with_message("You can't move the first chain.  Moving chain 2 is the same as moving chain 1, so do that instead.");
+		throw utility::excn::EXCN_RosettaScriptsOption("You can't move the first chain.  Moving chain 2 is the same as moving chain 1, so do that instead.");
 	}
 
 	// Construct score function.

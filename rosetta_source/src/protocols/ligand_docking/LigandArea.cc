@@ -49,10 +49,10 @@ LigandArea::~LigandArea() {}
 void LigandArea::parse_my_tag(
 	utility::tag::TagPtr const tag
 ){
-	if ( ! tag->hasOption("chain") ) utility_exit_with_message("'LigandArea' requires 'chain' tag");
+	if ( ! tag->hasOption("chain") ) throw utility::excn::EXCN_RosettaScriptsOption("'LigandArea' requires 'chain' tag");
 	chain_= tag->getOption<char>("chain");
 
-	if ( ! tag->hasOption("cutoff") ) utility_exit_with_message("'LigandArea' requires 'cutoff' tag");
+	if ( ! tag->hasOption("cutoff") ) throw utility::excn::EXCN_RosettaScriptsOption("'LigandArea' requires 'cutoff' tag");
 	cutoff_= tag->getOption<core::Real>("cutoff");
 
 	if ( tag->hasOption("Calpha_restraints") )
@@ -67,12 +67,12 @@ void LigandArea::parse_my_tag(
 	if(tag->getOption<std::string>("add_nbr_radius") == "true")
 		add_nbr_radius_= true;
 	else if(tag->getOption<std::string>("add_nbr_radius") != "false")
-		utility_exit_with_message("'add_nbr_radius' option is true or false");
+		throw utility::excn::EXCN_RosettaScriptsOption("'add_nbr_radius' option is true or false");
 
 	if(tag->getOption<std::string>("all_atom_mode") == "true")
 		all_atom_mode_= true;
 	else if(tag->getOption<std::string>("all_atom_mode") != "false")
-		utility_exit_with_message("'all_atom_mode' option is true or false");
+		throw utility::excn::EXCN_RosettaScriptsOption("'all_atom_mode' option is true or false");
 
 	if ( tag->hasOption("high_res_angstroms") )
 		high_res_angstroms_= tag->getOption<float>("high_res_angstroms");

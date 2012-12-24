@@ -20,7 +20,7 @@
 // AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 // AUTO-REMOVED #include <protocols/filters/Filter.hh>
 
-#include <utility/exit.hh> // runtime_assert, utility_exit_with_message
+#include <utility/exit.hh> // runtime_assert, throw utility::excn::EXCN_RosettaScriptsOption
 #include <utility/tag/Tag.hh>
 
 #include <utility/vector0.hh>
@@ -59,7 +59,7 @@ TempInterpolatorBaseOP
 TempInterpolatorFactory::new_tempInterpolator( utility::tag::TagPtr const tag, core::Size n_levels )
 {
 	if ( !tag->hasOption( "curve" ) ){
-		utility_exit_with_message("Error: interpolation curve type required !" );
+		throw utility::excn::EXCN_RosettaScriptsOption("Error: interpolation curve type required !" );
 	}
 	std::string curve = tag->getOption< std::string >( "curve" );
 	if ( curve == "const" ) {
@@ -72,7 +72,7 @@ TempInterpolatorFactory::new_tempInterpolator( utility::tag::TagPtr const tag, c
 			return new TempInterpolator( n_levels, start, end, curve );
 		}
 		else {
-			utility_exit_with_message( "Error: start and end value must be given for linear and expotential interpolation !" );
+			throw utility::excn::EXCN_RosettaScriptsOption( "Error: start and end value must be given for linear and expotential interpolation !" );
 		}
 	}
 }

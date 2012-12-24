@@ -110,7 +110,7 @@ SpecificResiduesNearInterfaceFilter::parse_my_tag(
 	Pose const & )
 {
 	if(!tag->hasOption("task_operations" )){
-		utility_exit_with_message(
+		throw utility::excn::EXCN_RosettaScriptsOption(
 			"Please specify a task operation for the residues that should be near the other chain.");
 	}
 	task_factory(parse_task_operations( tag, data ));

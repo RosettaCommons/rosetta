@@ -34,6 +34,7 @@
 
 #include <vector>
 
+#include <utility/excn/Exceptions.hh>
 namespace protocols {
 namespace simple_moves {
 

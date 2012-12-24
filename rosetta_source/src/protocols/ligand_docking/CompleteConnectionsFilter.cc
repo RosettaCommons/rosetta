@@ -67,7 +67,7 @@ CompleteConnectionsFilter::parse_my_tag( utility::tag::TagPtr const tag, protoco
 		return;
 	}
 	if ( ! tag->hasOption("chain") ){
-		utility_exit_with_message("CompleteConnections filter needs a 'chain' option");
+		throw utility::excn::EXCN_RosettaScriptsOption("CompleteConnections filter needs a 'chain' option");
 	}
 	chain_ = tag->getOption<std::string>("chain");
 }

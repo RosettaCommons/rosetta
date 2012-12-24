@@ -18,7 +18,7 @@
 // AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 // AUTO-REMOVED #include <protocols/filters/Filter.hh>
 
-#include <utility/exit.hh> // runtime_assert, utility_exit_with_message
+#include <utility/exit.hh> // runtime_assert, throw utility::excn::EXCN_RosettaScriptsOption
 #include <utility/tag/Tag.hh>
 
 #include <utility/vector0.hh>
@@ -65,13 +65,13 @@ MoverFactory::factory_register( MoverCreatorOP creator )
 	runtime_assert( creator );
 	std::string const mover_type( creator->keyname() );
 	if ( mover_type == "UNDEFINED NAME" ) {
-		utility_exit_with_message("Can't map derived Mover with undefined type name.");
+		throw utility::excn::EXCN_RosettaScriptsOption("Can't map derived Mover with undefined type name.");
 	}
 	if( forbidden_names_.find( mover_type ) != forbidden_names_.end() ){
-		utility_exit_with_message("Name "+mover_type+" is not an allowed mover name, probably because it has historical meaning.");
+		throw utility::excn::EXCN_RosettaScriptsOption("Name "+mover_type+" is not an allowed mover name, probably because it has historical meaning.");
 	}
 	if ( mover_creator_map_.find( mover_type ) != mover_creator_map_.end() ) {
-		utility_exit_with_message("MoverFactory::factory_register already has a mover creator with name \"" + mover_type + "\".  Conflicting Mover names" );
+		throw utility::excn::EXCN_RosettaScriptsOption("MoverFactory::factory_register already has a mover creator with name \"" + mover_type + "\".  Conflicting Mover names" );
 	}
 	mover_creator_map_[ mover_type ] = creator;
 }
@@ -84,7 +84,7 @@ MoverFactory::newMover(	std::string const & mover_type )
 	MoverMap::const_iterator iter( mover_creator_map_.find( mover_type ) );
 	if ( iter != mover_creator_map_.end() ) {
 		if ( ! iter->second ) {
-			utility_exit_with_message( "Error: MoverCreatorOP prototype for " + mover_type + " is NULL!" );
+			throw utility::excn::EXCN_RosettaScriptsOption( "Error: MoverCreatorOP prototype for " + mover_type + " is NULL!" );
 		}
 		// use of cloning method would be faithful to pre-initialized prototypes
 		//return iter->second->clone();
@@ -96,7 +96,7 @@ MoverFactory::newMover(	std::string const & mover_type )
 		for( MoverMap::const_iterator mover_it = mover_creator_map_.begin(); mover_it != mover_creator_map_.end(); ++mover_it )
 			TR<<mover_it->first<<", ";
 		TR<<std::endl;
-		utility_exit_with_message( mover_type + " is not known to the MoverFactory. Was it registered via a MoverRegistrator in one of the init.cc files (devel/init.cc or protocols/init.cc)?" );
+		throw utility::excn::EXCN_RosettaScriptsOption( mover_type + " is not known to the MoverFactory. Was it registered via a MoverRegistrator in one of the init.cc files (devel/init.cc or protocols/init.cc)?" );
 		return NULL;
 	}
 }

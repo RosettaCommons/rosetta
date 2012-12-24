@@ -181,7 +181,7 @@ void ResidueGridScoresFeatures::parse_my_tag(
 {
 	if(!tag->hasOption("chain"))
 	{
-		utility_exit_with_message("The ResidueGridScoresFeatures reporter requires a Chain tag");
+		throw utility::excn::EXCN_RosettaScriptsOption("The ResidueGridScoresFeatures reporter requires a Chain tag");
 
 	}
 

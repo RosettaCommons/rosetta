@@ -608,7 +608,7 @@ HBondFeatures::parse_my_tag(
 			<< "The " << type_name() << " reporter requires a 'scorefxn' tag:" << endl
 			<< endl
 			<< "    <feature name=" << type_name() <<" scorefxn=(name_of_score_function) />" << endl;
-		utility_exit_with_message(error_msg.str());
+		throw utility::excn::EXCN_RosettaScriptsOption(error_msg.str());
 	}
 
 	string const definition_type(
@@ -624,7 +624,7 @@ HBondFeatures::parse_my_tag(
 			<< "Available hbond definition types are:" << endl
 			<< "	'energy' => A polar-polar contact is an hbond when energy is below the definition_threshold." << endl
 			<< "  'AHdist' => A polar-polar contact is an hbond when the Acceptor-Hydrogen distance is less than the definition_threshold." << endl;
-		utility_exit_with_message(error_msg.str());
+		throw utility::excn::EXCN_RosettaScriptsOption(error_msg.str());
 	}
 
 	definition_threshold_ =

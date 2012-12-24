@@ -1453,7 +1453,7 @@ InterfaceAnalyzerMover::parse_my_tag(
 
 	if (tag->hasOption("jump") && tag->hasOption("fixedchains"))
     {
-    	utility_exit_with_message("Jump and fixedchains are mutually exclusive. Use either jump or fixedchains");
+    	throw utility::excn::EXCN_RosettaScriptsOption("Jump and fixedchains are mutually exclusive. Use either jump or fixedchains");
     }
 	if (tag->hasOption("fixedchains"))
     {

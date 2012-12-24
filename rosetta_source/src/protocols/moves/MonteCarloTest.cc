@@ -105,7 +105,7 @@ MonteCarloTest::parse_my_tag( TagPtr const tag, DataMap &, Filters_map const &, 
 	std::string const mc_name( tag->getOption< std::string >( "MC_name" ) );
 	Movers_map::const_iterator find_mover( movers.find( mc_name ) );
 	if( find_mover == movers.end() )
-		utility_exit_with_message( "MC mover not found by MonteCarloTest" );
+		throw utility::excn::EXCN_RosettaScriptsOption( "MC mover not found by MonteCarloTest" );
 
 	set_MC( dynamic_cast< GenericMonteCarloMover * >( find_mover->second() ) );
 	Pose temp_pose( pose );

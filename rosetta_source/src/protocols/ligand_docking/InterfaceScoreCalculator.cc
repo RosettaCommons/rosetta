@@ -119,15 +119,15 @@ InterfaceScoreCalculator::parse_my_tag(
 )
 {
 	if ( tag->getName() != "InterfaceScoreCalculator" ){
-		utility_exit_with_message("This should be impossible");
+		throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible");
 	}
-	if ( ! tag->hasOption("chains") ) utility_exit_with_message("'InterfaceScoreCalculator' requires 'chains' tag (comma separated chains to dock)");
+	if ( ! tag->hasOption("chains") ) throw utility::excn::EXCN_RosettaScriptsOption("'InterfaceScoreCalculator' requires 'chains' tag (comma separated chains to dock)");
 
 	std::string const chains_str = tag->getOption<std::string>("chains");
 	chains_= utility::string_split(chains_str, ',');
 
 	/// Score Function ///
-	if ( ! tag->hasOption("scorefxn") ) utility_exit_with_message("'HighResDocker' requires 'scorefxn' tag");
+	if ( ! tag->hasOption("scorefxn") ) throw utility::excn::EXCN_RosettaScriptsOption("'HighResDocker' requires 'scorefxn' tag");
 	std::string scorefxn_name= tag->getOption<std::string>("scorefxn");
 	score_fxn_= datamap.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name);
 	assert(score_fxn_);

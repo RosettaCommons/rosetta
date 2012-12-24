@@ -68,7 +68,7 @@ LoopsFileDefiner::parse_my_tag(
 ) {
 
 	if(!tag->hasOption("name")){
-		utility_exit_with_message(
+		throw utility::excn::EXCN_RosettaScriptsOption(
 			"Unable to create unnamed LoopsDefiner (type: LoopsFile)" );
 	}
 	string const loops_name(tag->getOption<string>("name"));
@@ -80,7 +80,7 @@ LoopsFileDefiner::parse_my_tag(
 	} else {
 		stringstream err_msg;
 		err_msg << "Tag with name '" << loops_name << "' does not have the expected 'filename' field." << endl;
-		utility_exit_with_message(err_msg.str());
+		throw utility::excn::EXCN_RosettaScriptsOption(err_msg.str());
 	}
 
 	LoopsFileIO loops_file_io;

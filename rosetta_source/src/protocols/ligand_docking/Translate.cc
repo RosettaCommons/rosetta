@@ -116,13 +116,13 @@ Translate::parse_my_tag(
 )
 {
 	if ( tag->getName() != "Translate" ){
-		utility_exit_with_message("This should be impossible");
+		throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible");
 	}
-	if ( ! tag->hasOption("chain") ) utility_exit_with_message("'Translate' mover requires chain tag");
-	if ( ! tag->hasOption("distribution") ) utility_exit_with_message("'Translate' mover requires distribution tag");
-	if ( ! tag->hasOption("angstroms") ) utility_exit_with_message("'Translate' mover requires angstroms tag");
-	if ( ! tag->hasOption("cycles") ) utility_exit_with_message("'Translate' mover requires cycles tag");
-	//if ( ! tag->hasOption("force") ) utility_exit_with_message("'Translate' mover requires force tag"); optional. default is don't force, meaning ligand stays put if it can't find somewhere to go.
+	if ( ! tag->hasOption("chain") ) throw utility::excn::EXCN_RosettaScriptsOption("'Translate' mover requires chain tag");
+	if ( ! tag->hasOption("distribution") ) throw utility::excn::EXCN_RosettaScriptsOption("'Translate' mover requires distribution tag");
+	if ( ! tag->hasOption("angstroms") ) throw utility::excn::EXCN_RosettaScriptsOption("'Translate' mover requires angstroms tag");
+	if ( ! tag->hasOption("cycles") ) throw utility::excn::EXCN_RosettaScriptsOption("'Translate' mover requires cycles tag");
+	//if ( ! tag->hasOption("force") ) throw utility::excn::EXCN_RosettaScriptsOption("'Translate' mover requires force tag"); optional. default is don't force, meaning ligand stays put if it can't find somewhere to go.
 
 	std::string chain = tag->getOption<std::string>("chain");
 	translate_info_.chain_id = core::pose::get_chain_id_from_chain(chain, pose);
@@ -136,7 +136,7 @@ Translate::parse_my_tag(
 		if(tag->getOption<std::string>("force") == "true")
 			translate_info_.force= true;
 		else if(tag->getOption<std::string>("force") != "false")
-			utility_exit_with_message("'force' option is true or false");
+			throw utility::excn::EXCN_RosettaScriptsOption("'force' option is true or false");
 	}
 
 	if ( tag->hasOption("tag_along_chains") ){

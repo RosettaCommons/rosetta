@@ -173,13 +173,13 @@ FavorSequenceProfile::parse_my_tag( utility::tag::TagPtr const tag, protocols::m
 	if( tag->hasOption("pdbname") ) ++num_struct;
 
 	if( ! num_struct &&  ! tag->hasOption("pssm") ) {
-		utility_exit_with_message("Must set one of 'pssm', 'use_native', 'use_fasta', 'use_starting', 'use_current', or 'pdbname' in FavorSequenceProfile");
+		throw utility::excn::EXCN_RosettaScriptsOption("Must set one of 'pssm', 'use_native', 'use_fasta', 'use_starting', 'use_current', or 'pdbname' in FavorSequenceProfile");
 	}
 	if( num_struct && tag->hasOption("pssm") ) {
-		utility_exit_with_message("Cannot set both 'pssm' and one of 'use_native', 'use_fasta', 'use_starting', 'use_current', or 'pdbname' in FavorSequenceProfile");
+		throw utility::excn::EXCN_RosettaScriptsOption("Cannot set both 'pssm' and one of 'use_native', 'use_fasta', 'use_starting', 'use_current', or 'pdbname' in FavorSequenceProfile");
 	}
 	if( num_struct > 1 ) {
-		utility_exit_with_message("Can only set one of 'use_native', 'use_fasta', 'use_starting', 'use_current', or 'pdbname' in FavorSequenceProfile");
+		throw utility::excn::EXCN_RosettaScriptsOption("Can only set one of 'use_native', 'use_fasta', 'use_starting', 'use_current', or 'pdbname' in FavorSequenceProfile");
 	}
 	if( tag->hasOption("matrix") && tag->hasOption("pssm")  ) {
 		TR.Warning << "WARNING In option matrix not used with pssm specification." << std::endl;

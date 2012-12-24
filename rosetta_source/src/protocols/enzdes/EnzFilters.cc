@@ -814,7 +814,7 @@ void
 EnzdesScorefileFilter::parse_my_tag( utility::tag::TagPtr const tag , protocols::moves::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
 	if ( tag->hasOption("requirements") ) reqfile_name_ =  tag->getOption<std::string>( "requirements","" );
-	else utility_exit_with_message("For EnzdesScorefileFilter, a requirements file needs to be specified in the tag.");
+	else throw utility::excn::EXCN_RosettaScriptsOption("For EnzdesScorefileFilter, a requirements file needs to be specified in the tag.");
 
 	this->initialize_value_evaluators_from_file( reqfile_name_ );
 }

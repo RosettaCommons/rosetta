@@ -158,7 +158,7 @@ RotamerRecoveryFeatures::parse_my_tag(
 
 	if(tag->hasOption("mover") || tag->hasOption("mover_name")){
 		if(tag->hasOption("reference_name")){
-			utility_exit_with_message(
+			throw utility::excn::EXCN_RosettaScriptsOption(
 				"Both 'mover_name' and 'reference_name' were supplied. "
 				"Please specify at most one to indicate which protocols should "
 				"be used to run RotamerRecovery.");
@@ -170,14 +170,14 @@ RotamerRecoveryFeatures::parse_my_tag(
 		protocol_ = new RRProtocolMover(mover);
 	} else if(tag->hasOption("reference_name")){
 		if(tag->hasOption("mover")){
-			utility_exit_with_message(
+			throw utility::excn::EXCN_RosettaScriptsOption(
 				"Both 'mover' and 'reference_name' were supplied. "
 				"Please specify at most one to indicate which protocols "
 				"should be used to run RotamerRecovery.");
 		}
 
 		if(tag->hasOption("mover_name")){
-			utility_exit_with_message(
+			throw utility::excn::EXCN_RosettaScriptsOption(
 				"Both 'mover_name' and 'reference_name' were supplied. "
 				"Please specify at most one to indicate which protocols "
 				"should be used to run RotamerRecovery.");
@@ -186,7 +186,7 @@ RotamerRecoveryFeatures::parse_my_tag(
 		if(tag->hasOption("protocol") &&
 			!tag->getOption<string>("protocol").compare(
 				"RRProtocolReferenceStructure")){
-			utility_exit_with_message(
+			throw utility::excn::EXCN_RosettaScriptsOption(
 				"Specifying 'reference_name' is only compatible with the "
 				"'RRProtocolReferenceStructure' protocol.");
 		}
@@ -199,11 +199,11 @@ RotamerRecoveryFeatures::parse_my_tag(
 		string const & protocol_name(tag->getOption<string>(
 				"protocol", "RRProtocolMinPack"));
 		if(!protocol_name.compare("RRProtocolMover")){
-			utility_exit_with_message(
+			throw utility::excn::EXCN_RosettaScriptsOption(
 				"Please specify 'mover_name' with the 'RRProtocolMover' "
 				"rotamer recovery protocol.");
 		} else if(!protocol_name.compare("RRProtocolReferenceStructure")){
-			utility_exit_with_message(
+			throw utility::excn::EXCN_RosettaScriptsOption(
 				"Please specify 'reference_name' with 'RRProtocolReferenceStructure' "
 				"rotamer recovery protocol.");
 		} else {

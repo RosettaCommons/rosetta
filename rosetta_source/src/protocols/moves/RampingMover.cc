@@ -219,13 +219,13 @@ RampingMover::parse_my_tag(
 {
 
 	if(!tag->hasOption("outer_cycles")) {
-		utility_exit_with_message("You must specify the option outer_cycles in RampingMover");
+		throw utility::excn::EXCN_RosettaScriptsOption("You must specify the option outer_cycles in RampingMover");
 	}
 	if(!tag->hasOption("inner_cycles")) {
-		utility_exit_with_message("You must specify the option inner_cycles in RampingMover");
+		throw utility::excn::EXCN_RosettaScriptsOption("You must specify the option inner_cycles in RampingMover");
 	}
 	if(!tag->hasOption("mover")) {
-		utility_exit_with_message("You must specify the option mover in RampingMover");
+		throw utility::excn::EXCN_RosettaScriptsOption("You must specify the option mover in RampingMover");
 	}
 	
 	//Get options values out of the tag
@@ -236,7 +236,7 @@ RampingMover::parse_my_tag(
 
 	core::scoring::ScoreFunctionOP sfxn( protocols::rosetta_scripts::parse_score_function( tag, datamap ) );
 	if ( sfxn == 0 ) {
-		utility_exit_with_message("scorefxn required to create a RampingMover");
+		throw utility::excn::EXCN_RosettaScriptsOption("scorefxn required to create a RampingMover");
 	}
 	scorefxn_ = sfxn;
 
@@ -244,7 +244,7 @@ RampingMover::parse_my_tag(
     //get the mover to ramp out of the movemap
 	Movers_map::const_iterator find_mover(movers.find(mover_name));
 	if(find_mover == movers.end()) {
-		utility_exit_with_message("cannot find "+mover_name+" in mover map.");
+		throw utility::excn::EXCN_RosettaScriptsOption("cannot find "+mover_name+" in mover map.");
 	}
 	mover_ = find_mover->second;
 	
@@ -266,16 +266,16 @@ RampingMover::parse_my_tag(
 
 		// 1st: Make sure all the required options have been provided.
 		if(!tag->hasOption("start_weight")) {
-			utility_exit_with_message("One-weight ramping mode: you must specify the option start_weight in RampingMover");
+			throw utility::excn::EXCN_RosettaScriptsOption("One-weight ramping mode: you must specify the option start_weight in RampingMover");
 		}
 		if(!tag->hasOption("end_weight")) {
-			utility_exit_with_message("One-weight ramping mode: you must specify the option end_weight in RampingMover");
+			throw utility::excn::EXCN_RosettaScriptsOption("One-weight ramping mode: you must specify the option end_weight in RampingMover");
 		}
 		if(!tag->hasOption("score_type")) {
-			utility_exit_with_message("One-weight ramping mode: you must specify the option score_type in RampingMover");
+			throw utility::excn::EXCN_RosettaScriptsOption("One-weight ramping mode: you must specify the option score_type in RampingMover");
 		}
 		if(!tag->hasOption("ramp_func")) {
-			  utility_exit_with_message("One-weight ramping mode: you must specify the option ramp_func in RampingMover");
+			  throw utility::excn::EXCN_RosettaScriptsOption("One-weight ramping mode: you must specify the option ramp_func in RampingMover");
 		}
 		ramp_one_weight_ = true;
 
@@ -291,7 +291,7 @@ RampingMover::parse_my_tag(
 
 		//set up the score type
 		if ( ! core::scoring::ScoreTypeManager::is_score_type( score_type ) ) {
-			utility_exit_with_message( "The value for option score_type \"" + score_type + "\" is not a valid name for a score_type" );
+			throw utility::excn::EXCN_RosettaScriptsOption( "The value for option score_type \"" + score_type + "\" is not a valid name for a score_type" );
 		}
 		score_type_ = core::scoring::ScoreTypeManager::score_type_from_name(score_type);
 		ramping_funcs_for_weights_[score_type_] = instantiate_rampfunc( ramping_func, tag );
@@ -301,7 +301,7 @@ RampingMover::parse_my_tag(
 		if( tag->hasOption("unramped_weights_from_sfxn")) {
 			std::string const scorefxn_key( tag->getOption<std::string>("unramped_weights_from_sfxn") );
 			if ( ! datamap.has( "scorefxns", scorefxn_key ) ) {
-				utility_exit_with_message("ScoreFunction " + scorefxn_key + " not found in DataMap.");
+				throw utility::excn::EXCN_RosettaScriptsOption("ScoreFunction " + scorefxn_key + " not found in DataMap.");
 			}
 			core::scoring::ScoreFunctionCOP sfxn = datamap.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_key );
 			start_weights_ = end_weights_ = sfxn->weights();
@@ -316,16 +316,16 @@ RampingMover::parse_my_tag(
 				rampterm_it!=rampterm_it_end; ++rampterm_it ) {
 			TagPtr const tag_ptr = *rampterm_it;
 			if ( ! tag_ptr->hasOption("score_type") ) {
-				utility_exit_with_message("Ramping mover Add statement requires the score_type option");
+				throw utility::excn::EXCN_RosettaScriptsOption("Ramping mover Add statement requires the score_type option");
 			}
 			if ( ! tag_ptr->hasOption("start_weight") ) {
-				utility_exit_with_message("Ramping mover Add statement requires the start_weight option");
+				throw utility::excn::EXCN_RosettaScriptsOption("Ramping mover Add statement requires the start_weight option");
 			}
 			if ( ! tag_ptr->hasOption("end_weight") ) {
-				utility_exit_with_message("Ramping mover Add statement requires the end_weight option");
+				throw utility::excn::EXCN_RosettaScriptsOption("Ramping mover Add statement requires the end_weight option");
 			}
 			if ( ! tag_ptr->hasOption("ramp_func") ) {
-				utility_exit_with_message("Ramping mover Add statement requires the ramp_func option");
+				throw utility::excn::EXCN_RosettaScriptsOption("Ramping mover Add statement requires the ramp_func option");
 			}
 			core::Real start_weight(tag_ptr->getOption<core::Real>("start_weight"));
 			core::Real end_weight(tag_ptr->getOption<core::Real>("end_weight"));
@@ -334,7 +334,7 @@ RampingMover::parse_my_tag(
 
 			//read the score type
 			if ( ! core::scoring::ScoreTypeManager::is_score_type( score_type ) ) {
-				utility_exit_with_message( "The value for option score_type \"" + score_type + "\" is not a valid name for a score_type" );
+				throw utility::excn::EXCN_RosettaScriptsOption( "The value for option score_type \"" + score_type + "\" is not a valid name for a score_type" );
 			}
 			core::scoring::ScoreType st = core::scoring::ScoreTypeManager::score_type_from_name(score_type);
 			start_weights_[ st ] = start_weight;

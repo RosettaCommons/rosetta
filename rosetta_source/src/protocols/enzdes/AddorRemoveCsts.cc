@@ -148,7 +148,7 @@ AddOrRemoveMatchCsts::parse_my_tag( utility::tag::TagPtr const tag, protocols::m
 	else if( cst_instruction == "add_pregenerated") cst_action_ = ADD_PREGENERATED;
 	else if( cst_instruction == "remove" ) cst_action_ = REMOVE;
 	else{
-		utility_exit_with_message("Illegal or no value for cst_instruction in xml tag given. Has to be either 'add_new', 'add_pregenerated', or 'remove'.");
+		throw utility::excn::EXCN_RosettaScriptsOption("Illegal or no value for cst_instruction in xml tag given. Has to be either 'add_new', 'add_pregenerated', or 'remove'.");
 	}
 
 	keep_covalent_ = tag->getOption<bool>( "keep_covalent", 0 );

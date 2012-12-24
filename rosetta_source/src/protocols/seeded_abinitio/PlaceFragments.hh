@@ -25,6 +25,7 @@
 #include <utility/vector1.hh>
 #include <boost/unordered/unordered_map.hpp>
 
+#include <utility/excn/Exceptions.hh>
 namespace protocols {
 namespace seeded_abinitio {
 

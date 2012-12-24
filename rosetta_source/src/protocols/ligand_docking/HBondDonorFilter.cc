@@ -62,7 +62,7 @@ HBondDonorFilter::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves
 		return;
 	}
 	if ( ! (tag->hasOption("chain") && tag->hasOption("hbond_donor_limit") ) ){
-		utility_exit_with_message("HBondDonor filter needs a 'chain' and an 'hbond_donor_limit' option");
+		throw utility::excn::EXCN_RosettaScriptsOption("HBondDonor filter needs a 'chain' and an 'hbond_donor_limit' option");
 	}
 	chain_ = tag->getOption<std::string>("chain");
 	hbond_donor_limit_ = tag->getOption<core::Size>("hbond_donor_limit");

@@ -95,7 +95,7 @@ InteractionScoreFilter::parse_my_tag( utility::tag::TagPtr const tag, protocols:
 	jump( tag->getOption< core::Size >( "jump", 1 ));
 
 	if( !pose.is_fullatom() )
-		utility_exit_with_message( "ERROR: it doesn't make sense to calculate the interaction score on low-res pose since in I_sc=bound-A-B, A&B are constant.\n It is totally a waste of time" );
+		throw utility::excn::EXCN_RosettaScriptsOption( "ERROR: it doesn't make sense to calculate the interaction score on low-res pose since in I_sc=bound-A-B, A&B are constant.\n It is totally a waste of time" );
 
 	TR<<"InterfaceScoreFilter with lower threshold of "<<lower_threshold_<<" and jump "<<jump()<<'\n';
 	TR.flush();

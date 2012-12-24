@@ -126,12 +126,12 @@ Rotate::parse_my_tag(
 )
 {
 	if ( tag->getName() != "Rotate" ){
-		utility_exit_with_message("This should be impossible");
+		throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible");
 	}
-	if ( ! tag->hasOption("chain") ) utility_exit_with_message("'Rotate' mover requires 'chain' tag");
-	if ( ! tag->hasOption("distribution") ) utility_exit_with_message("'Rotate' mover requires 'distribution' tag");
-	if ( ! tag->hasOption("degrees") ) utility_exit_with_message("'Rotate' mover requires 'degrees' tag");
-	if ( ! tag->hasOption("cycles") ) utility_exit_with_message("'Rotate' mover requires 'cycles' tag");
+	if ( ! tag->hasOption("chain") ) throw utility::excn::EXCN_RosettaScriptsOption("'Rotate' mover requires 'chain' tag");
+	if ( ! tag->hasOption("distribution") ) throw utility::excn::EXCN_RosettaScriptsOption("'Rotate' mover requires 'distribution' tag");
+	if ( ! tag->hasOption("degrees") ) throw utility::excn::EXCN_RosettaScriptsOption("'Rotate' mover requires 'degrees' tag");
+	if ( ! tag->hasOption("cycles") ) throw utility::excn::EXCN_RosettaScriptsOption("'Rotate' mover requires 'cycles' tag");
 
 	rotate_info_.chain = tag->getOption<std::string>("chain");
 	rotate_info_.chain_id= core::pose::get_chain_id_from_chain(rotate_info_.chain, pose);

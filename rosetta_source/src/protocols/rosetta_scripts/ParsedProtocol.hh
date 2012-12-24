@@ -35,6 +35,7 @@
 
 #include <utility/vector1.hh>
 
+#include <utility/excn/Exceptions.hh>
 namespace protocols {
 namespace rosetta_scripts {
 

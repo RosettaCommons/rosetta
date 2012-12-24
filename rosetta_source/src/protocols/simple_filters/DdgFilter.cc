@@ -146,7 +146,7 @@ DdgFilter::parse_my_tag( utility::tag::TagPtr const tag,
 	}
 
 	if( repeats() > 1 && !repack() )
-		utility_exit_with_message( "ERROR: it doesn't make sense to have repeats if repack is false, since the values converge very well." );
+		throw utility::excn::EXCN_RosettaScriptsOption( "ERROR: it doesn't make sense to have repeats if repack is false, since the values converge very well." );
 
 	if ( symmetry_ )
 		TR<<"ddg filter with threshold "<< ddg_threshold_<<" repeats="<<repeats()<<" and scorefxn "<<scorefxn_name<<" with symmetry " <<std::endl;

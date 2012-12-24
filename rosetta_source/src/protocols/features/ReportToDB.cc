@@ -324,15 +324,15 @@ ReportToDB::parse_my_tag(
 	Pose const & pose )
 {
 	if(tag->hasOption("db")){
-		utility_exit_with_message("The 'db' tag has been deprecated. Please use 'database_name' instead.");
+		throw utility::excn::EXCN_RosettaScriptsOption("The 'db' tag has been deprecated. Please use 'database_name' instead.");
 	}
 
 	if(tag->hasOption("db_mode")){
-		utility_exit_with_message("The 'database_mode' tag has been deprecated. Please use 'database_mode' instead.");
+		throw utility::excn::EXCN_RosettaScriptsOption("The 'database_mode' tag has been deprecated. Please use 'database_mode' instead.");
 	}
 
 	if(tag->hasOption("separate_db_per_mpi_process")){
-		utility_exit_with_message("The 'parse_separate_db_per_mpi_process' tag has been deprecated. Please use 'database_parse_separate_db_per_mpi_process' instead.");
+		throw utility::excn::EXCN_RosettaScriptsOption("The 'parse_separate_db_per_mpi_process' tag has been deprecated. Please use 'database_parse_separate_db_per_mpi_process' instead.");
 	}
 
 	// Name of output features database:
@@ -395,7 +395,7 @@ ReportToDB::parse_my_tag(
 		if(feature_tag->getName() != "feature"){
 			TR.Error << "Please include only tags with name 'feature' as subtags of ReportToDB" << endl;
 			TR.Error << "Tag with name '" << feature_tag->getName() << "' is invalid" << endl;
-			utility_exit();
+			throw utility::excn::EXCN_RosettaScriptsOption("");
 		}
 
 		FeaturesReporterOP features_reporter(

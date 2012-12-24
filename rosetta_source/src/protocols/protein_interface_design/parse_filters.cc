@@ -67,7 +67,7 @@ ScoreTypeFilter::parse_my_tag( TagPtr const tag, DataMap & data, Filters_map con
 	std::string const scorefxn_name( tag->getOption<string>( "scorefxn", "score12" ) );
 	scorefxn_ = new ScoreFunction( *(data.get< ScoreFunction * >( "scorefxns", scorefxn_name )) );
 	score_type_ = core::scoring::score_type_from_name( tag->getOption<string>( "score_type", "total_score" ) );
-	if( ! tag->hasOption( "threshold" ) ) utility_exit_with_message("Must specify 'threshold' for ScoreTypeFilter.");
+	if( ! tag->hasOption( "threshold" ) ) throw utility::excn::EXCN_RosettaScriptsOption("Must specify 'threshold' for ScoreTypeFilter.");
 	score_type_threshold_ = tag->getOption<core::Real>( "threshold" );
 
 	TR<<"ScoreType filter for score_type "<<score_type_<<" with threshold "<<score_type_threshold_<<std::endl;
@@ -82,7 +82,7 @@ InterfaceSasaFilter::parse_my_tag( TagPtr const tag, DataMap &, Filters_map cons
 	polar_ = tag->getOption<bool>( "polar", false );
 	runtime_assert( !hydrophobic_ || !polar_ );
 	if( jump() != 1 && ( polar_ || hydrophobic_ ) )
-		utility_exit_with_message( "ERROR: presently, only total sasa is supported across a jump other than 1. Remove polar and hydrophobic flags and try again." );
+		throw utility::excn::EXCN_RosettaScriptsOption( "ERROR: presently, only total sasa is supported across a jump other than 1. Remove polar and hydrophobic flags and try again." );
 
 	TR<<"SasaFilter with lower threshold of "<<lower_threshold_<<" Ang^2 and jump "<<jump()<<'\n';
 	if( hydrophobic_ )
@@ -168,7 +168,7 @@ DdgFilter::parse_my_tag( TagPtr const tag, DataMap & data, Filters_map const & ,
 	symmetry_ = tag->getOption<bool>( "symmetry", 0 );
 
 	if( repeats() > 1 && !repack() )
-		utility_exit_with_message( "ERROR: it doesn't make sense to have repeats if repack is false, since the values converge very well." );
+		throw utility::excn::EXCN_RosettaScriptsOption( "ERROR: it doesn't make sense to have repeats if repack is false, since the values converge very well." );
 
 	if ( symmetry_ )
 		TR<<"ddg filter with threshold "<< ddg_threshold_<<" repeats="<<repeats()<<" and scorefxn "<<scorefxn_name<<" with symmetry " <<std::endl;

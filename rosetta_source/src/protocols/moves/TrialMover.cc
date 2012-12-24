@@ -78,11 +78,11 @@ void MonteCarloUtil::parse_my_tag(
 {
 	if(!tag->hasOption("mode"))
 	{
-		utility_exit_with_message("you must specify option mode in MonteCarloUtil");
+		throw utility::excn::EXCN_RosettaScriptsOption("you must specify option mode in MonteCarloUtil");
 	}
 	if(!tag->hasOption("montecarlo"))
 	{
-		utility_exit_with_message("you must specify the option montecarlo in MonteCarloUtil");
+		throw utility::excn::EXCN_RosettaScriptsOption("you must specify the option montecarlo in MonteCarloUtil");
 	}
 	
 	mode_ = tag->getOption<std::string>("mode");
@@ -90,7 +90,7 @@ void MonteCarloUtil::parse_my_tag(
 	
 	if(mode_ != "reset" && mode_ != "recover_low")
 	{
-		utility_exit_with_message("the option mode must be set to either reset or recover_low in MonteCarloUtil");
+		throw utility::excn::EXCN_RosettaScriptsOption("the option mode must be set to either reset or recover_low in MonteCarloUtil");
 	}
 	
 	mc_ = *data.get<protocols::moves::MonteCarlo*>( "montecarlos",mc_name);
@@ -235,17 +235,17 @@ void TrialMover::parse_my_tag(
 	// 1. MonteCarlo object's name
 	std::string const mc_name( tag->getOption< std::string > ( "montecarlo", "" ));
 	if ( mc_name == "" ) {
-		utility_exit_with_message( "TrialMover requires the 'montecarlo' option which was not provided" );
+		throw utility::excn::EXCN_RosettaScriptsOption( "TrialMover requires the 'montecarlo' option which was not provided" );
 	}
 
 	// 2. Mover
 	std::string const movername( tag->getOption< std::string > ( "mover", "" ));
 	if ( movername == "" ) {
-		utility_exit_with_message( "TrialMover requires the 'mover' option which was not provided" );	
+		throw utility::excn::EXCN_RosettaScriptsOption( "TrialMover requires the 'mover' option which was not provided" );	
 	}
 	Movers_map::const_iterator  find_mover ( movers.find( movername ));
 	if( find_mover == movers.end() && movername != "" ) {
-		utility_exit_with_message( "TrialMover was not able to find the mover named '" + movername + "' in the Movers_map" );
+		throw utility::excn::EXCN_RosettaScriptsOption( "TrialMover was not able to find the mover named '" + movername + "' in the Movers_map" );
 	}
 	mover_ = find_mover->second;
 	mc_ = *data.get< protocols::moves::MonteCarlo * >( "montecarlos", mc_name );
@@ -253,7 +253,7 @@ void TrialMover::parse_my_tag(
 	// 3. stats_type.
 	std::string const statstype( tag->getOption< std::string > ( "keep_stats", "no_stats" ));
 	if ( statstype != "no_stats" && statstype != "accept_reject" && statstype != "all_stats" ) {
-		utility_exit_with_message( "TrialMover keep_stats may only be given the values:\n'no_stats', 'accept_reject', and 'all_stats'.\nRead value '" + statstype + "'" );
+		throw utility::excn::EXCN_RosettaScriptsOption( "TrialMover keep_stats may only be given the values:\n'no_stats', 'accept_reject', and 'all_stats'.\nRead value '" + statstype + "'" );
 	}
 	if ( statstype == "no_stats" ) {
 		stats_type_ = no_stats;

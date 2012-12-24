@@ -37,6 +37,7 @@
 #include <numeric/MultiDimensionalHistogram.fwd.hh>
 
 
+#include <utility/excn/Exceptions.hh>
 namespace protocols {
 namespace backrub {
 

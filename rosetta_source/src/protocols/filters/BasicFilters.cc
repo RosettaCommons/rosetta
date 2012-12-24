@@ -281,7 +281,7 @@ CompoundFilter::parse_my_tag(
 		else if( operation == "ANDNOT" ) filter_pair.second = ANDNOT;
 		else if( operation == "NOT" ) filter_pair.second = NOT;
 		else {
-			utility_exit_with_message( "Error: Boolean operation in tag is undefined." );
+			throw utility::excn::EXCN_RosettaScriptsOption( "Error: Boolean operation in tag is undefined." );
 		}
 		std::string const filter_name( cmp_tag_ptr->getOption<std::string>( "filter_name" ) );
 
@@ -376,7 +376,7 @@ CombinedFilter::parse_my_tag(
 		}
 		else {
 			TR.Warning<<"***WARNING WARNING! Filter " << filter_name << " defined for CombinedValue not found in filter_list!!!! ***"<<std::endl;
-			utility_exit_with_message("Filter "+filter_name+" not found in filter list.");
+			throw utility::excn::EXCN_RosettaScriptsOption("Filter "+filter_name+" not found in filter list.");
 		}
 		filterlist_.push_back( FilterWeightPair(filter, weight) );
 	}
@@ -586,7 +586,7 @@ IfThenFilter::parse_my_tag(
 		if( tagname == "IF" || tagname == "ELIF" ){
 			if( ! tag_ptr->hasOption("testfilter") )  {
 				TR.Error << "In IfThenFilter, If and ELIF require a tesfilter option." << std::endl;
-				utility_exit_with_message("In IfThenFilter, If and ELIF require a tesfilter option.");
+				throw utility::excn::EXCN_RosettaScriptsOption("In IfThenFilter, If and ELIF require a tesfilter option.");
 			}
 			FilterOP testfilter = protocols::rosetta_scripts::parse_filter( tag_ptr->getOption<std::string>( "testfilter" ), filters);
 			bool inverttest = tag_ptr->getOption< bool >( "inverttest", false );
@@ -596,7 +596,7 @@ IfThenFilter::parse_my_tag(
 		} else {
 			TR.Error << "Unknown subtag name in IfThenFilter: " << tagname << std::endl;
 			TR.Error << "   Acceptable values are:   IF   ELIF   ELSE" << std::endl;
-			utility_exit_with_message("Unknown subtag name in IfThenFilter: " + tagname );
+			throw utility::excn::EXCN_RosettaScriptsOption("Unknown subtag name in IfThenFilter: " + tagname );
 		}
 	}
 	TR << "IfThenFilter defined with " << iffilters_.size() << " conditions and "

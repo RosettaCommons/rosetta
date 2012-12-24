@@ -94,32 +94,32 @@ InterfaceBindingEnergyDensityFilter::parse_my_tag(
 )
 {
 	if ( ! tag->hasOption("sasa_filter") ) {
-		utility_exit_with_message( "InterfaceBindingEnergyDensityFilter requires the sasa_filter option" );
+		throw utility::excn::EXCN_RosettaScriptsOption( "InterfaceBindingEnergyDensityFilter requires the sasa_filter option" );
 	}
 	if ( ! tag->hasOption("ddG_filter") ) {
-		utility_exit_with_message( "InterfaceBindingEnergyDensityFilter requires the ddG_filter option" );
+		throw utility::excn::EXCN_RosettaScriptsOption( "InterfaceBindingEnergyDensityFilter requires the ddG_filter option" );
 	}
 
 	std::string sasa_filter_name = tag->getOption< std::string> ("sasa_filter");
 	filters::Filters_map::const_iterator sasaiter = filters_map.find( sasa_filter_name );
 	if ( sasaiter == filters_map.end() ) {
-		utility_exit_with_message( "Could not locate requested sasa_filter with name " + sasa_filter_name + " in the Filters_map." );
+		throw utility::excn::EXCN_RosettaScriptsOption( "Could not locate requested sasa_filter with name " + sasa_filter_name + " in the Filters_map." );
 	}
 	filters::FilterOP sasafilter_baseptr = sasaiter->second;
 	sasa_filter_ = dynamic_cast< InterfaceSasaFilter * > ( sasafilter_baseptr() );
 	if ( ! sasa_filter_ ) {
-		utility_exit_with_message( "Dynamic cast of filter " + sasa_filter_name + " to type InterfaceSasaFilter failed" );
+		throw utility::excn::EXCN_RosettaScriptsOption( "Dynamic cast of filter " + sasa_filter_name + " to type InterfaceSasaFilter failed" );
 	}
 
 	std::string ddG_filter_name = tag->getOption< std::string> ("ddG_filter");
 	filters::Filters_map::const_iterator ddGiter = filters_map.find( ddG_filter_name );
 	if ( ddGiter == filters_map.end() ) {
-		utility_exit_with_message( "Could not locate requested ddG_filter with name " + ddG_filter_name + " in the Filters_map." );
+		throw utility::excn::EXCN_RosettaScriptsOption( "Could not locate requested ddG_filter with name " + ddG_filter_name + " in the Filters_map." );
 	}
 	filters::FilterOP ddGfilter_baseptr = ddGiter->second;
 	ddG_filter_ = dynamic_cast< DdgFilter * > ( ddGfilter_baseptr() );
 	if ( ! ddG_filter_ ) {
-		utility_exit_with_message( "Dynamic cast of filter " + ddG_filter_name + " to type DdgFilter failed" );
+		throw utility::excn::EXCN_RosettaScriptsOption( "Dynamic cast of filter " + ddG_filter_name + " to type DdgFilter failed" );
 	}
 
 	upper_threshold_ = tag->getOption< core::Real > ("threshold", -0.015 );

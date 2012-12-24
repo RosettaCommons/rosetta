@@ -495,7 +495,7 @@ PlaceFragments::parse_my_tag( 	TagPtr const tag,
 	fsize_ = tag->getOption < core::Size >("frag_length", 6 );
 	ss_ = tag->getOption<std::string>( "secstr", "" );
 	if( tag->!hasOption("secstr") || !hasOption("fragments") )
-	   utility_exit_with_message("either need to specify secondary structure or supply fragements!!");
+	   throw utility::excn::EXCN_RosettaScriptsOption("either need to specify secondary structure or supply fragements!!");
        
     // option for amino acid sequence not yet specified
     use_seq_ = false
@@ -523,7 +523,7 @@ PlaceFragments::parse_my_tag( 	TagPtr const tag,
 		   		seed_vector_.push_back( seedpair );	
  	   		}//end seeds
             else {
-                utility_exit_with_message("need to either specify a stub residue or a seed/segment");
+                throw utility::excn::EXCN_RosettaScriptsOption("need to either specify a stub residue or a seed/segment");
             }
     	}//end b-tags
 	}   
@@ -533,7 +533,7 @@ PlaceFragments::parse_my_tag( 	TagPtr const tag,
     std::string const mover_name( tag->getOption< std::string >( "mover", "null" ) );
     protocols::moves::Movers_map::const_iterator mover_it( movers.find( mover_name ) );
     if( mover_it == movers.end() )
-       utility_exit_with_message( "mover "+ mover_name+" not found" );
+       throw utility::excn::EXCN_RosettaScriptsOption( "mover "+ mover_name+" not found" );
 	mover_ = mover_it->second ;
     
     /// get filters

@@ -544,7 +544,7 @@ void ProteinInterfaceMultiStateDesignMover::parse_my_tag(
 	if ( datamap.has( "scorefxns", scorefxn_key ) ) {
 		scorefxn_ = datamap.get< ScoreFunction * >( "scorefxns", scorefxn_key );
 	} else {
-		utility_exit_with_message("ScoreFunction " + scorefxn_key + " not found in DataMap.");
+		throw utility::excn::EXCN_RosettaScriptsOption("ScoreFunction " + scorefxn_key + " not found in DataMap.");
 	}
 
 	TaskFactoryCOP tf = protocols::rosetta_scripts::parse_task_operations( tag, datamap );
@@ -564,7 +564,7 @@ void ProteinInterfaceMultiStateDesignMover::parse_my_tag(
 	foreach( TagPtr const btag, branch_tags ){
 		if( unfolded_ || unbound_ ){
 			TR<<"ERROR: If you specify additional pdb files as states, it is assumed that those would have different energies than the starting pdb. As such, comparison of energies across different states is automatically done by grounding each pdb file to its starting 'best-score design' and comparing energy differences from that state. The energies of unbound and unfolded states then become tricky to interpret. You can use anchor_offset to get much of the effect of these additional states. Or, ask Sarel."<<std::endl;
-			utility_exit();
+			throw utility::excn::EXCN_RosettaScriptsOption("");
 		}
 		std::string const fname( btag->getOption< std::string >( "pdb" ) );
 		bool const unbound( btag->getOption< bool >( "unbound", 0 ) );
@@ -587,7 +587,7 @@ void ProteinInterfaceMultiStateDesignMover::parse_my_tag(
 			at_least_one_negative_state = true;
 		}
 		else
-			utility_exit_with_message( "Name "+btag->getName()+" is not recognized in ProteinInterfaceMultistateDesign::parse_my_tag." );
+			throw utility::excn::EXCN_RosettaScriptsOption( "Name "+btag->getName()+" is not recognized in ProteinInterfaceMultistateDesign::parse_my_tag." );
 		compare_energy_to_ground_state_ = true;
 	}
 	runtime_assert( at_least_one_negative_state );

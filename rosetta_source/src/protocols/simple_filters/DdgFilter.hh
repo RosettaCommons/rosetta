@@ -25,6 +25,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/task/TaskFactory.hh>
 
+#include <utility/excn/Exceptions.hh>
 namespace protocols {
 namespace simple_filters {
 

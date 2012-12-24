@@ -36,6 +36,7 @@
 //// C++ headers
 #include <string>
 
+#include <utility/excn/Exceptions.hh>
 namespace protocols {
 namespace filters {
 

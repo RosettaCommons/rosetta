@@ -104,7 +104,7 @@ MoveMapBuilder::parse_my_tag(
 		if(tag->getOption<std::string>("minimize_water") == "true")
 			minimize_water_= true;
 		else if(tag->getOption<std::string>("minimize_water") != "false")
-			utility_exit_with_message("'minimize_water' option is true or false");
+			throw utility::excn::EXCN_RosettaScriptsOption("'minimize_water' option is true or false");
 	}
 }
 

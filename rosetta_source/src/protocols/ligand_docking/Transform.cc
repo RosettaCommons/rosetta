@@ -113,14 +113,14 @@ void Transform::parse_my_tag
 {
 	if ( tag->getName() != "Transform" )
 	{
-		utility_exit_with_message("This should be impossible");
+		throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible");
 	}
-	if ( ! tag->hasOption("chain") ) utility_exit_with_message("'Transform' mover requires chain tag");
-	if ( ! tag->hasOption("move_distance") ) utility_exit_with_message("'Transform' mover requires move_distance tag");
-	if (! tag->hasOption("box_size") ) utility_exit_with_message("'Transform' mover requires box_size tag");
-	if ( ! tag->hasOption("angle") ) utility_exit_with_message("'Transform' mover requires angle tag");
-	if ( ! tag->hasOption("cycles") ) utility_exit_with_message("'Transform' mover requires cycles tag");
-	if (!tag->hasOption("temperature")) utility_exit_with_message("'Transform' mover requires temperature tag");
+	if ( ! tag->hasOption("chain") ) throw utility::excn::EXCN_RosettaScriptsOption("'Transform' mover requires chain tag");
+	if ( ! tag->hasOption("move_distance") ) throw utility::excn::EXCN_RosettaScriptsOption("'Transform' mover requires move_distance tag");
+	if (! tag->hasOption("box_size") ) throw utility::excn::EXCN_RosettaScriptsOption("'Transform' mover requires box_size tag");
+	if ( ! tag->hasOption("angle") ) throw utility::excn::EXCN_RosettaScriptsOption("'Transform' mover requires angle tag");
+	if ( ! tag->hasOption("cycles") ) throw utility::excn::EXCN_RosettaScriptsOption("'Transform' mover requires cycles tag");
+	if (!tag->hasOption("temperature")) throw utility::excn::EXCN_RosettaScriptsOption("'Transform' mover requires temperature tag");
 
 
 	transform_info_.chain = tag->getOption<std::string>("chain");

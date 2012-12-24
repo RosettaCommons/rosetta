@@ -263,7 +263,7 @@ FragQualCalculator::parse_my_tag(
 	if ( data.has( "fragsets", fset_string ) ) {
 		frag_ = data.get< FragSet* >( "fragsets", fset_string );
 	} else {
-		utility_exit_with_message("fragsets " + fset_string + " not found in DataMap.");
+		throw utility::excn::EXCN_RosettaScriptsOption("fragsets " + fset_string + " not found in DataMap.");
 	}
 
  	verbose_ = tag->getOption<bool>( "verbose", 0 );

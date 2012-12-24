@@ -91,7 +91,7 @@ LoopsDatabaseDefiner::parse_my_tag(
 	string const type(tag->getName());
 
 	if(!tag->hasOption("name")){
-		utility_exit_with_message(
+		throw utility::excn::EXCN_RosettaScriptsOption(
 			"Unable to create unnamed LoopsDefiner (type: " + type + ")" );
 	}
 	string const loops_name(tag->getOption<string>("name"));

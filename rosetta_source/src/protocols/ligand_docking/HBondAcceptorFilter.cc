@@ -62,7 +62,7 @@ HBondAcceptorFilter::parse_my_tag( utility::tag::TagPtr const tag, protocols::mo
 		return;
 	}
 	if ( ! (tag->hasOption("chain") && tag->hasOption("hbond_acceptor_limit") ) ){
-		utility_exit_with_message("HBondAcceptor filter needs a 'chain' and an 'hbond_acceptor_limit' option");
+		throw utility::excn::EXCN_RosettaScriptsOption("HBondAcceptor filter needs a 'chain' and an 'hbond_acceptor_limit' option");
 	}
 	chain_ = tag->getOption<std::string>("chain");
 	hbond_acceptor_limit_ = tag->getOption<core::Size>("hbond_acceptor_limit");

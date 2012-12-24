@@ -289,7 +289,7 @@ MetropolisHastingsMover::parse_my_tag(
 			protocols::moves::Movers_map::const_iterator mover_iter( movers.find( mover_name ) );
 			if ( mover_iter == movers.end() ) {
 				TR << "Mover not found for XML tag:\n" << subtag << std::endl;
-				utility_exit();
+				throw utility::excn::EXCN_RosettaScriptsOption("");
 			}
 			mover = mover_iter->second;
 		} else { //generate new mover
@@ -309,7 +309,7 @@ MetropolisHastingsMover::parse_my_tag(
 			//it might also be a tempering module...
 			if ( temp_controller ) { // it is a temperature controller
 				if ( tempering_ ) {
-					utility_exit_with_message( "cannot define two TemperatureControllers" );
+					throw utility::excn::EXCN_RosettaScriptsOption( "cannot define two TemperatureControllers" );
 				}
 				set_tempering( temp_controller );
 			} else {  //no just an plain old observer
@@ -317,7 +317,7 @@ MetropolisHastingsMover::parse_my_tag(
 			}
 		} else { //its something different
 			TR << "Mover is not a ThermodynamicMover or ThermodynamicObserver for XML tag:\n" << subtag << std::endl;
-			utility_exit();
+			throw utility::excn::EXCN_RosettaScriptsOption("");
 		}
 	}
 }

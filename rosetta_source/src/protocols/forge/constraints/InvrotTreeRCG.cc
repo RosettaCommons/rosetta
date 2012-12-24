@@ -96,7 +96,7 @@ InvrotTreeRCG::parse_my_tag( TagPtr const tag,
 	//in case we'ref folding up around a ligand
 	std::string cstfilename = tag->getOption<std::string>( "cstfile", "" );
 	if ( cstfilename == "" ) {
-		utility_exit_with_message( "XML tag for invrot tree does not contain a cstfile option... this will probably fail when the InvrotTreeCstGenerator mover runs." );
+		throw utility::excn::EXCN_RosettaScriptsOption( "XML tag for invrot tree does not contain a cstfile option... this will probably fail when the InvrotTreeCstGenerator mover runs." );
 	}
 	set_cstfile( cstfilename );
 

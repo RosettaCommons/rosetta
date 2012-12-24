@@ -138,7 +138,7 @@ void ContactMap::parse_my_tag(TagPtr const tag, moves::DataMap &,
       reset_count_ = false;  
     }
 	else {
-		if (reset_count_tag != "true") utility_exit_with_message("'reset_count' option must be true or false");
+		if (reset_count_tag != "true") throw utility::excn::EXCN_RosettaScriptsOption("'reset_count' option must be true or false");
 		reset_count_ =true;
 	}
 
@@ -149,7 +149,7 @@ void ContactMap::parse_my_tag(TagPtr const tag, moves::DataMap &,
 	std::string row_format_tag = tag->getOption<std::string>("row_format", "false");
 	if(row_format_tag == "true") row_format_ = true ;
 	else {
-		if (row_format_tag != "false") utility_exit_with_message("'row_format' option must be true or false");
+		if (row_format_tag != "false") throw utility::excn::EXCN_RosettaScriptsOption("'row_format' option must be true or false");
 		row_format_ =false;
 	}
 

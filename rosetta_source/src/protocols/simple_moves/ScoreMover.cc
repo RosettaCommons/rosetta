@@ -214,7 +214,7 @@ void ScoreMover::parse_my_tag(
 		if ( datamap.has( "scorefxns", scorefxn_key ) ) {
 			score_function_ = datamap.get< ScoreFunction* >( "scorefxns", scorefxn_key );
 		} else {
-			utility_exit_with_message("ScoreFunction " + scorefxn_key + " not found in protocols::moves::DataMap.");
+			throw utility::excn::EXCN_RosettaScriptsOption("ScoreFunction " + scorefxn_key + " not found in protocols::moves::DataMap.");
 		}
 	}
 

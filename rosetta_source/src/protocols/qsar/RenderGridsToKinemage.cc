@@ -148,19 +148,19 @@ void RenderGridsToKinemage::parse_my_tag(utility::tag::TagPtr const tag,
 
 	if(!tag->hasOption("grid_name"))
 	{
-		utility_exit_with_message("RenderGridsToKinemage requires the'grid name' option");
+		throw utility::excn::EXCN_RosettaScriptsOption("RenderGridsToKinemage requires the'grid name' option");
 	}
 
 	grid_name_ = tag->getOption<std::string>("grid_name");
 	grid_ = utility::pointer::dynamic_pointer_cast<scoring_grid::SingleGrid,scoring_grid::GridBase>(scoring_grid::GridManager::get_instance()->get_grid(grid_name_) );
 	if( ! grid_ )
 	{
-		utility_exit_with_message("RenderGridsToKinemage is currently unable to output the contents of a metagrid.  Sorry.");
+		throw utility::excn::EXCN_RosettaScriptsOption("RenderGridsToKinemage is currently unable to output the contents of a metagrid.  Sorry.");
 	}
 
 	if(!tag->hasOption("file_name"))
 	{
-		utility_exit_with_message("RenderGridsToKinemage requires the 'file_name' option");
+		throw utility::excn::EXCN_RosettaScriptsOption("RenderGridsToKinemage requires the 'file_name' option");
 	}
 	filename_ = tag->getOption<std::string>("file_name");
 
@@ -174,7 +174,7 @@ void RenderGridsToKinemage::parse_my_tag(utility::tag::TagPtr const tag,
 
 		}else
 		{
-			utility_exit_with_message("To use RenderGridsToKinemage you must specify color for a 1 color grid plot, "
+			throw utility::excn::EXCN_RosettaScriptsOption("To use RenderGridsToKinemage you must specify color for a 1 color grid plot, "
 				"high_color and low_color for a two color gradient, or high_color, low_color and "
 				"zero_color for a three color gradient centered at zero");
 		}
@@ -194,7 +194,7 @@ void RenderGridsToKinemage::parse_my_tag(utility::tag::TagPtr const tag,
 		high_color_ = numeric::comma_seperated_string_to_xyz<core::Real>(tag->getOption<std::string>("high_color"));
 	}else
 	{
-		utility_exit_with_message("To use RenderGridsToKinemage you must specify color for a 1 color grid plot, "
+		throw utility::excn::EXCN_RosettaScriptsOption("To use RenderGridsToKinemage you must specify color for a 1 color grid plot, "
 			"high_color and low_color for a two color gradient, or high_color, low_color and "
 			"zero_color for a three color gradient centered at zero");
 	}

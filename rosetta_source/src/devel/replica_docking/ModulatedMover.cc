@@ -87,7 +87,7 @@ ModulatedMover::parse_my_tag(
   protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "tempering", "null" ), movers );
   tempering_ = dynamic_cast< protocols::canonical_sampling::HamiltonianExchange* >( mover() );
   if ( !tempering_ ) {
-    utility_exit_with_message( "ModulatedMover requires an tempering argument" );
+    throw utility::excn::EXCN_RosettaScriptsOption( "ModulatedMover requires an tempering argument" );
   }
   n_temp_levels_ = tempering_->n_temp_levels();
   if ( tag->hasOption( "type" ) ) {
@@ -124,11 +124,11 @@ ModulatedMover::parse_my_tag(
     using namespace protocols::canonical_sampling;
     MoverOP new_mover( MoverFactory::get_instance()->newMover( mover_tag, data_map, filters, movers, pose ) );
     if ( !new_mover ) {
-      utility_exit_with_message( "you suck" );
+      throw utility::excn::EXCN_RosettaScriptsOption( "you suck" );
     }
     ThermodynamicMoverOP th_mover( dynamic_cast<ThermodynamicMover*>( new_mover.get() ) );
     if ( !th_mover) {
-      utility_exit_with_message( "you still suck: Class "+mover_name_+"is not a ThermodynamicMover" );
+      throw utility::excn::EXCN_RosettaScriptsOption( "you still suck: Class "+mover_name_+"is not a ThermodynamicMover" );
     }
     movers_.push_back( th_mover ); //
   } // end of for ( temp_level )

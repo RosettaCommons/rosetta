@@ -545,7 +545,7 @@ GreedyOptMutationMover::parse_my_tag( utility::tag::TagPtr const tag,
 	std::string const filter_name( tag->getOption< std::string >( "filter", "true_filter" ) );
 	protocols::filters::Filters_map::const_iterator filter_it( filters.find( filter_name ) );
 	if( filter_it == filters.end() )
-		utility_exit_with_message( "Filter "+filter_name+" not found" );
+		throw utility::excn::EXCN_RosettaScriptsOption( "Filter "+filter_name+" not found" );
 	filter( filter_it->second );
 	//get filters to reset each time a mutation is accepted. For instance, reset the baseline value of delta filters to be the best pose.
 	utility::vector1< std::string > delta_filter_names;
@@ -561,7 +561,7 @@ GreedyOptMutationMover::parse_my_tag( utility::tag::TagPtr const tag,
 	std::string const relax_mover_name( tag->getOption< std::string >( "relax_mover", "null" ) );
 	protocols::moves::Movers_map::const_iterator mover_it( movers.find( relax_mover_name ) );
 	if( mover_it == movers.end() )
-		utility_exit_with_message( "Relax mover "+relax_mover_name+" not found" );
+		throw utility::excn::EXCN_RosettaScriptsOption( "Relax mover "+relax_mover_name+" not found" );
 	relax_mover( mover_it->second );
 	//should mutations be allowed around the tested/introduced point mutation, if so, what shell radius
 	design_shell_ = tag->getOption< core::Real >( "design_shell", -1.0 );

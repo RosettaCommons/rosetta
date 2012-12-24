@@ -273,7 +273,7 @@ ParsedProtocol::parse_my_tag(
 
 	mode_=tag->getOption<string>("mode", "sequence");
 	if(mode_ != "sequence" && mode_ != "random_order" && mode_ != "single_random"){
-		utility_exit_with_message("Error: mode must be sequence, random_order, or single_random");
+		throw utility::excn::EXCN_RosettaScriptsOption("Error: mode must be sequence, random_order, or single_random");
 	}
 
 	utility::vector0< TagPtr > const dd_tags( tag->getTags() );

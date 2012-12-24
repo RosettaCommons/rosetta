@@ -24,6 +24,7 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
 
+#include <utility/excn/Exceptions.hh>
 namespace devel {
 namespace replica_docking {
 

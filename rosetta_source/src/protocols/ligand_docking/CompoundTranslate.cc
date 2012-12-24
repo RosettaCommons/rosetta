@@ -101,13 +101,13 @@ CompoundTranslate::parse_my_tag(
 )
 {
 	if ( tag->getName() != "CompoundTranslate" ){
-		utility_exit_with_message("This should be impossible");
+		throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible");
 	}
 	if ( ! tag->hasOption("randomize_order")){
-		utility_exit_with_message("CompoundTranslate needs a 'randomize_order' option");
+		throw utility::excn::EXCN_RosettaScriptsOption("CompoundTranslate needs a 'randomize_order' option");
 	}
 	if ( ! tag->hasOption("allow_overlap")){
-		utility_exit_with_message("CompoundTranslate needs an 'allow_overlap' option");
+		throw utility::excn::EXCN_RosettaScriptsOption("CompoundTranslate needs an 'allow_overlap' option");
 	}
 	{// parsing randomize_order tag
 		std::string allow_overlap_string= tag->getOption<std::string>("randomize_order");
@@ -115,7 +115,7 @@ CompoundTranslate::parse_my_tag(
 			randomize_order_= true;
 		else if(allow_overlap_string == "false" || allow_overlap_string == "False")
 			randomize_order_= false;
-		else utility_exit_with_message("'randomize_order' option takes arguments 'true' or 'false'");
+		else throw utility::excn::EXCN_RosettaScriptsOption("'randomize_order' option takes arguments 'true' or 'false'");
 	}
 	{// parsing allow_overlap tag
 		std::string allow_overlap_string= tag->getOption<std::string>("allow_overlap");
@@ -123,7 +123,7 @@ CompoundTranslate::parse_my_tag(
 			allow_overlap_= true;
 		else if(allow_overlap_string == "false" || allow_overlap_string == "False")
 			allow_overlap_= false;
-		else utility_exit_with_message("'allow_overlap' option takes arguments 'true' or 'false'");
+		else throw utility::excn::EXCN_RosettaScriptsOption("'allow_overlap' option takes arguments 'true' or 'false'");
 	}
 
 	foreach(utility::tag::TagPtr tag, tag->getTags()){
@@ -134,10 +134,10 @@ CompoundTranslate::parse_my_tag(
 			translates_.push_back(translate);
 		}
 		else if( name == "Translates"){
-			if ( ! tag->hasOption("chain") ) utility_exit_with_message("'Translates' mover requires chain tag");
-			if ( ! tag->hasOption("distribution") ) utility_exit_with_message("'Translates' mover requires distribution tag");
-			if ( ! tag->hasOption("angstroms") ) utility_exit_with_message("'Translates' mover requires angstroms tag");
-			if ( ! tag->hasOption("cycles") ) utility_exit_with_message("'Translates' mover requires cycles tag");
+			if ( ! tag->hasOption("chain") ) throw utility::excn::EXCN_RosettaScriptsOption("'Translates' mover requires chain tag");
+			if ( ! tag->hasOption("distribution") ) throw utility::excn::EXCN_RosettaScriptsOption("'Translates' mover requires distribution tag");
+			if ( ! tag->hasOption("angstroms") ) throw utility::excn::EXCN_RosettaScriptsOption("'Translates' mover requires angstroms tag");
+			if ( ! tag->hasOption("cycles") ) throw utility::excn::EXCN_RosettaScriptsOption("'Translates' mover requires cycles tag");
 
 			std::string const chain = tag->getOption<std::string>("chain");
 			utility::vector1<core::Size> chain_ids = core::pose::get_chain_ids_from_chain(chain, pose);
@@ -154,13 +154,13 @@ CompoundTranslate::parse_my_tag(
 					if(tag->getOption<std::string>("force") == "true")
 						translate_info.force= true;
 					else if(tag->getOption<std::string>("force") != "false")
-						utility_exit_with_message("'force' option is true or false");
+						throw utility::excn::EXCN_RosettaScriptsOption("'force' option is true or false");
 				}
 				translates_.push_back(new Translate(translate_info));
 			}
 		}
 		else{
-			utility_exit_with_message("CompoundTranslate only takes Translate or Translates child tags");
+			throw utility::excn::EXCN_RosettaScriptsOption("CompoundTranslate only takes Translate or Translates child tags");
 		}
 	}
 }

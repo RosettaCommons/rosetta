@@ -143,16 +143,16 @@ void AtomicDistanceFilter::parse_my_tag( utility::tag::TagPtr const tag,
 
 	if (residue1_ == 0) {
 		TR << "Residue number "<<res1<<" not found in pose."<<std::endl;
-		utility_exit_with_message("Residue number not found. Check xml file");
+		throw utility::excn::EXCN_RosettaScriptsOption("Residue number not found. Check xml file");
 	}
 	if (residue2_ == 0) {
 		TR << "Residue number "<<res2<<" not found in pose."<<std::endl;
-		utility_exit_with_message("Residue number not found. Check xml file");
+		throw utility::excn::EXCN_RosettaScriptsOption("Residue number not found. Check xml file");
 	}
 
 	if( tag->hasOption( "atomtype1" ) ) {
 		if( tag->hasOption( "atomname1" ) ) {
-			utility_exit_with_message("Can't set both atomname1 and atomtype1. Check xml file");
+			throw utility::excn::EXCN_RosettaScriptsOption("Can't set both atomname1 and atomtype1. Check xml file");
 		}
 		atomdesg1_ = tag->getOption< std::string >( "atomtype1" );
 		astype1_ = true;
@@ -164,7 +164,7 @@ void AtomicDistanceFilter::parse_my_tag( utility::tag::TagPtr const tag,
 
 	if( tag->hasOption( "atomtype2" ) ) {
 		if( tag->hasOption( "atomname2" ) ) {
-			utility_exit_with_message("Can't set both atomname2 and atomtype2. Check xml file");
+			throw utility::excn::EXCN_RosettaScriptsOption("Can't set both atomname2 and atomtype2. Check xml file");
 		}
 		atomdesg2_ = tag->getOption< std::string >( "atomtype2" );
 		astype2_ = true;

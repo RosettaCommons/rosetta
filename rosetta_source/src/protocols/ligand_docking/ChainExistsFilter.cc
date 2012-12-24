@@ -57,7 +57,7 @@ ChainExistsFilter::parse_my_tag( utility::tag::TagPtr const tag, protocols::move
 		return;
 	}
 	if ( ! tag->hasOption("chain")){
-		utility_exit_with_message("ChainExists filter needs a 'chain' option");
+		throw utility::excn::EXCN_RosettaScriptsOption("ChainExists filter needs a 'chain' option");
 	}
 	chain_ = tag->getOption<std::string>("chain");
 }

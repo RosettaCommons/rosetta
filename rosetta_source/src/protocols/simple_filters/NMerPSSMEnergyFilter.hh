@@ -26,6 +26,7 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/scoring/methods/NMerPSSMEnergy.hh>
 
+#include <utility/excn/Exceptions.hh>
 namespace protocols {
 namespace simple_filters {
 

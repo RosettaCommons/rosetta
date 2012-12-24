@@ -137,7 +137,7 @@ void ModifyVariantTypeMover::parse_my_tag(
 	if (add_target_types_.size() == 0 && remove_target_types_.size() == 0)
 	{
 		TR.Error << "Must specify add_type and/or remove_type type in ModifyVariantTypeMover." << std::endl;
-		utility_exit_with_message("Must specify add_type and/or remove_type type in ModifyVariantTypeMover.");
+		throw utility::excn::EXCN_RosettaScriptsOption("Must specify add_type and/or remove_type type in ModifyVariantTypeMover.");
 	}
 
   task_factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data );

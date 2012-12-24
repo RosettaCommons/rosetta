@@ -79,7 +79,7 @@ SavePoseMover::parse_my_tag( TagPtr const tag, protocols::moves::DataMap & data_
 		reference_pose_ = saved_reference_pose(tag,data_map );
 	}
 
-	else utility_exit_with_message("Need to specify name under which to save pose.");
+	else throw utility::excn::EXCN_RosettaScriptsOption("Need to specify name under which to save pose.");
 	
 	if( tag->hasOption( "pdb_file" ) ){
 		std::string const template_pdb_fname( tag->getOption< std::string >( "pdb_file" ));

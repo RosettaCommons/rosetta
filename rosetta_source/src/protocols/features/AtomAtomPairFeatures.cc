@@ -206,7 +206,7 @@ AtomAtomPairFeatures::parse_my_tag(
 	max_dist_ = tag->getOption<Real>("max_dist", 10.0);
 	nbins_ = tag->getOption<Size>("nbins", 15);
 	if(nbins_ < 1){
-		utility_exit_with_message("The parameter 'nbins' must be an integer greater than 0.");
+		throw utility::excn::EXCN_RosettaScriptsOption("The parameter 'nbins' must be an integer greater than 0.");
 	}
 }
 

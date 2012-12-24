@@ -21,6 +21,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <list>
 
+#include <utility/excn/Exceptions.hh>
 namespace protocols {
 namespace filters {
 

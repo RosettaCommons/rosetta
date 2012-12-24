@@ -33,6 +33,7 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 
+#include <utility/excn/Exceptions.hh>
 namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {

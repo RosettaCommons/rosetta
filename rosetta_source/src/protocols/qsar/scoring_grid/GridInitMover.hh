@@ -20,6 +20,7 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/kinematics/Jump.fwd.hh>
 
+#include <utility/excn/Exceptions.hh>
 namespace protocols {
 namespace qsar {
 namespace scoring_grid {

@@ -111,9 +111,9 @@ StartFrom::parse_my_tag(
 )
 {
 	if ( tag->getName() != "StartFrom" ){
-		utility_exit_with_message("This should be impossible");
+		throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible");
 	}
-	if ( ! tag->hasOption("chain") ) utility_exit_with_message("'StartFrom' mover requires chain tag");
+	if ( ! tag->hasOption("chain") ) throw utility::excn::EXCN_RosettaScriptsOption("'StartFrom' mover requires chain tag");
 
 	chain_ = tag->getOption<std::string>("chain");
 
@@ -124,9 +124,9 @@ StartFrom::parse_my_tag(
 
 		} else if( name == "Coordinates")
 		{
-			if ( ! child_tag->hasOption("x") ) utility_exit_with_message("'StartFrom' mover Coordinates tag requires 'x' coordinates option");
-			if ( ! child_tag->hasOption("y") ) utility_exit_with_message("'StartFrom' mover Coordinates tag requires 'y' coordinates option");
-			if ( ! child_tag->hasOption("z") ) utility_exit_with_message("'StartFrom' mover Coordinates tag requires 'z' coordinates option");
+			if ( ! child_tag->hasOption("x") ) throw utility::excn::EXCN_RosettaScriptsOption("'StartFrom' mover Coordinates tag requires 'x' coordinates option");
+			if ( ! child_tag->hasOption("y") ) throw utility::excn::EXCN_RosettaScriptsOption("'StartFrom' mover Coordinates tag requires 'y' coordinates option");
+			if ( ! child_tag->hasOption("z") ) throw utility::excn::EXCN_RosettaScriptsOption("'StartFrom' mover Coordinates tag requires 'z' coordinates option");
 
 			std::string pdb_tag = "default";
 			if(child_tag->hasOption("pdb_tag"))
@@ -143,7 +143,7 @@ StartFrom::parse_my_tag(
 			coords(v,pdb_tag);
 		}else if(name == "File")
 		{
-			if(!child_tag->hasOption("filename")) utility_exit_with_message("'StartFrom' mover File tag requires 'filename' coordinates option");
+			if(!child_tag->hasOption("filename")) throw utility::excn::EXCN_RosettaScriptsOption("'StartFrom' mover File tag requires 'filename' coordinates option");
 			parse_startfrom_file(child_tag->getOption<std::string>("filename"));
 
 		}

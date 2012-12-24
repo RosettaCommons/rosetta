@@ -93,7 +93,7 @@ void ExtendedPoseMover::parse_my_tag(const utility::tag::TagPtr tag,
                                      const core::pose::Pose&) {
   // required options
   if (!tag->hasOption("sequence"))
-    utility_exit_with_message("Failed to specify required option `sequence`");
+    throw utility::excn::EXCN_RosettaScriptsOption("Failed to specify required option `sequence`");
 
   sequence(tag->getOption<string>("sequence"));
 

@@ -62,7 +62,7 @@ AtomCountFilter::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves:
 		return;
 	}
 	if ( ! (tag->hasOption("chain") && tag->hasOption("atom_limit") ) ){
-		utility_exit_with_message("AtomCount filter needs a 'chain' and an 'atom_limit' option");
+		throw utility::excn::EXCN_RosettaScriptsOption("AtomCount filter needs a 'chain' and an 'atom_limit' option");
 	}
 	chain_ = tag->getOption<std::string>("chain");
 	atom_limit_ = tag->getOption<core::Size>("atom_limit");
