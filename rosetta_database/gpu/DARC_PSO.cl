@@ -1,39 +1,36 @@
 __kernel void Check_for_intersection(
-                                     __global const float4 *rays,
-                                     __global const float4 *atoms,
+                                     __global float4 *rays,
+                                     __global float4 *atoms,
                                      __global float *ray_scores,
                                      const unsigned int NUM_ATOMS,
-                                     __global float *weights
+                                     __global float *weights,
+                                     const unsigned int NUM_RAYS
                                      )
 {
   const int large_dist = 999.0;
   int rayID = get_global_id(0);
+  if(rayID>=NUM_RAYS) return;
   unsigned int atomID;
   float dirX, dirY, dirZ;
-  float distance, smallest;
-  float4 ray;
+  float min_intersect_SQ, best_rho_sq;
+  float4 ray = rays[rayID];
   //scoring variables
   float missing_point_weight = weights[0];
   float steric_weight = weights[1];
   float extra_point_weight = weights[2];
   int NUM_PARTICLES = (int)weights[3];
   //quadratic setup starts for ray
-  ray = rays[rayID];
   dirX = large_dist*sin(ray.x)*cos(ray.y);
   dirY = large_dist*sin(ray.x)*sin(ray.y);
   dirZ = large_dist*cos(ray.x);
   // setup our quadratic equation
   float a = (dirX*dirX) + (dirY*dirY) + (dirZ*dirZ);
-
   for(int particleID = 0; particleID < NUM_PARTICLES; particleID++){
     //ray_score array: 0-99,999 particle 1, 100,000-199,999 particle 2, etc
-    int ray_score_ID = (particleID*100000+rayID);
-    distance = 9999.;
-    smallest = 9999.;
-    float dist_deviation = 0;
-    int atom_ID_start = particleID*NUM_ATOMS;
-    int atom_ID_stop = (particleID+1)*NUM_ATOMS;
-    for(atomID = atom_ID_start; atomID < atom_ID_stop; atomID ++) {
+    int ray_score_ID = (particleID*7596+rayID);
+    best_rho_sq = 9999.;
+    for(atomID = particleID*NUM_ATOMS; atomID < (particleID+1)*NUM_ATOMS; atomID ++) {
+      min_intersect_SQ = 9999.;
       //quadratic setup starts for atom
       float4 atom = atoms[atomID];
       float b = 2.0 * ( (dirX*(-atom.x)) + (dirY*(-atom.y)) + (dirZ*(-atom.z)) );
@@ -52,24 +49,27 @@ __kernel void Check_for_intersection(
         float y2 = mu2 * dirY;
         float z2 = mu2 * dirZ;
         float dist2_sq = x2*x2 + y2*y2 + z2*z2;
-        if(dist1_sq < dist2_sq)
-          distance = sqrt(dist1_sq);
-        if(dist2_sq < dist1_sq)
-          distance = sqrt(dist2_sq);
+        if(dist2_sq < dist1_sq) min_intersect_SQ = dist2_sq;
+        if(dist1_sq < dist2_sq) min_intersect_SQ = dist1_sq;
       }
-      if(distance<smallest) smallest = distance;
+      if(min_intersect_SQ<best_rho_sq) best_rho_sq = min_intersect_SQ;
+    }
+    
+    float plaid_rho = 9999.;
+    if(best_rho_sq<9998.){
+      plaid_rho = sqrt(best_rho_sq);
     }
     ray_scores[ray_score_ID] = 0.0;
-    if ( (ray.z > 0.001) && (smallest > 9998.0) ) {
+    if ( (plaid_rho > 9998.0) && (ray.z > 0.001) ) {
       ray_scores[ray_score_ID] = missing_point_weight;
     }
-    if ( (ray.z < 0.001) && (smallest < 9999.0) ) {
+    if ( (plaid_rho < 9999.0) && (ray.z < 0.001) ) {
       ray_scores[ray_score_ID] = extra_point_weight;
     }
-    if ( (ray.z > 0.001) && (smallest < 9999.0) ) {
-      dist_deviation = smallest - ray.z;
-      if (dist_deviation < 0){
-        dist_deviation = (ray.z - smallest)*steric_weight;
+    if ( (plaid_rho < 9999.0) && (ray.z > 0.001) ) {
+      float dist_deviation = plaid_rho - ray.z;
+      if (dist_deviation < 0.0){
+        dist_deviation = (ray.z - plaid_rho)*steric_weight;
       }
       ray_scores[ray_score_ID] = dist_deviation;
     }
@@ -77,23 +77,21 @@ __kernel void Check_for_intersection(
 }
 __kernel void Get_scores(
                          __global float *ray_scores,
-                         __global float4 *particle_scores,
-                         const unsigned int NUM_RAYS
+                         __global float *particle_scores,
+                         const unsigned int NUM_RAYS,
+                         const unsigned int num_particles
                          )
 {
   int particleID = get_global_id(0);
-  particle_scores[particleID].x = 0;
-  particle_scores[particleID].y = 0;
-  int start = particleID*100000;
-  int stop = start + NUM_RAYS;
+  if(particleID>=num_particles) return;
   int ray_score_ID;
   float score = 0;
   int num = 0;
-  for(ray_score_ID=start; ray_score_ID<stop; ray_score_ID++){
+  for(ray_score_ID=(particleID*NUM_RAYS); ray_score_ID<((particleID*NUM_RAYS)+NUM_RAYS); ray_score_ID++){
     if(ray_scores[ray_score_ID]>0){
-      score = score + ray_scores[ray_score_ID];
+        score = score + ray_scores[ray_score_ID];
       num = num + 1;
     }
   }
-  particle_scores[particleID].z = score/num;
+  particle_scores[particleID] = score/num;
 }
