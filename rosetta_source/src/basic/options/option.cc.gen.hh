@@ -657,10 +657,10 @@ option.add( basic::options::OptionKeys::resample::silent, "a silent file for dec
 option.add( basic::options::OptionKeys::resample::tag, "which decoy to select from silent file " ).def("");
 option.add( basic::options::OptionKeys::resample::stage1, "if true restart after stage1, otherwise after stage2 " ).def(false);
 option.add( basic::options::OptionKeys::resample::stage2, "if true restart after stage1, otherwise after stage2 " ).def(false);
+option.add( basic::options::OptionKeys::resample::jumps, "if true restart after stage1, otherwise after stage2 " ).def(false);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::resample::jumps, "if true restart after stage1, otherwise after stage2 " ).def(false);
-option.add( basic::options::OptionKeys::resample::min_max_start_seq_sep, "range of (random) start values for seq-separation" ).def(0);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::resample::min_max_start_seq_sep, "range of (random) start values for seq-separation" ).def(0);
 option.add( basic::options::OptionKeys::loopfcst::loopfcst, "loopfcst option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::loopfcst::coord_cst_weight, "use coord constraints for template" ).def(0.0);
 option.add( basic::options::OptionKeys::loopfcst::coord_cst_all_atom, "use coord constraints on all atoms and not just CA" ).def(false);
@@ -1313,11 +1313,11 @@ option.add( basic::options::OptionKeys::lh::fragpdb::bin, "list of bin keys" ).d
 option.add( basic::options::OptionKeys::lh::symfragrm::symfragrm, "symfragrm option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::lh::symfragrm::pdblist, "list of pdbs to be processed" );
 option.add( basic::options::OptionKeys::rbe::rbe, "rbe option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::rbe::server_url, "serverurl for rosetta backend" );
+option.add( basic::options::OptionKeys::rbe::server_port, "port for rosetta backend" ).def("80");
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::rbe::server_url, "serverurl for rosetta backend" );
-option.add( basic::options::OptionKeys::rbe::server_port, "port for rosetta backend" ).def("80");
-option.add( basic::options::OptionKeys::rbe::poll_frequency, "No description" ).def(1.0);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::rbe::poll_frequency, "No description" ).def(1.0);
 option.add( basic::options::OptionKeys::blivens::blivens, "blivens option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::blivens::disulfide_scorer::disulfide_scorer, "disulfide_scorer option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::blivens::disulfide_scorer::nds_prob, "The probability of scoring a non-disulfide pair" ).def(0.0);
@@ -1501,6 +1501,7 @@ option.add( basic::options::OptionKeys::motifs::clear_bprots, "whether or not to
 option.add( basic::options::OptionKeys::motifs::rots2add, "number of rotamers to add to design from the MotifSearch for each amino acid type" ).lower(1).def(100);
 option.add( basic::options::OptionKeys::motifs::restrict_to_wt, "restrict the motif search to finding motifs of the same amino acid as the starting pose, for homology modeling" ).def(true);
 option.add( basic::options::OptionKeys::motifs::rerun_motifsearch, "setting the MotifSearch to run again, using the rotamers in the build position, most likely to change stringency or amino acid type on a second run" ).def(true);
+option.add( basic::options::OptionKeys::motifs::no_rotamer_bump, "skip the bump check when making the rotamers that will be tested for motif interactions, makes code much slower, but it is advised to increase the max_rotbump_energy to at least 10.0 instead of the default of 5.0 if bump_check is being used" ).def(false);
 option.add( basic::options::OptionKeys::motifs::ligand_motif_sphere, "option to specify radius of motif search around ligand" ).def(6.0);
 option.add( basic::options::OptionKeys::constraints::constraints, "constraints option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::constraints::CA_tether, "default CA tether for harmonic constraints" ).def(2.0);
@@ -1535,6 +1536,7 @@ option.add( basic::options::OptionKeys::constraints::skip_redundant_width, "radi
 option.add( basic::options::OptionKeys::constraints::increase_constraints, "Multiplicative factor applied to constraints. Not widely supported yet." ).def(1.0);
 option.add( basic::options::OptionKeys::dna::dna, "dna option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::dna::specificity::specificity, "specificity option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::dna::specificity::exclude_dna_dna, "No description" ).def(true);
 option.add( basic::options::OptionKeys::dna::specificity::params, "vector of real-valued params" );
 option.add( basic::options::OptionKeys::dna::specificity::frag_files, "files to collect frags from" );
 option.add( basic::options::OptionKeys::dna::specificity::exclude_bb_sc_hbonds, "No description" ).def(false);
@@ -1969,10 +1971,10 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_seconda
 option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
+option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
-option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_pdb, "PDB file from which to draw constraints" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrbmoves, "number of rigid-body moves" ).def(100);
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrboutercycles, "number of rigid-body moves" ).def(5);

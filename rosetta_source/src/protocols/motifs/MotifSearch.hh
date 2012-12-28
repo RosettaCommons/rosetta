@@ -173,7 +173,8 @@ public:
 		Real const & z2,
 		Real const & d1,
 		Size const & rlevel,
-		bool const bpdata
+		bool const bpdata,
+		bool const bump_check
 	);
 
 	void
@@ -235,6 +236,7 @@ private:
 	Size rots2add_;
 	bool restrict_to_wt_;
 	bool rerun_motifsearch_;
+	bool bump_check_;
 
 };
 

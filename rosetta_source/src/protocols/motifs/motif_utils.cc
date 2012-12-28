@@ -1181,7 +1181,8 @@ build_rotamers_lite(
 	core::pose::Pose & pose,
 	core::Size const rotamer_build_position,
 	utility::vector1< bool > aa_info,
-	core::Size const ex_
+	core::Size const ex_,
+	bool bump_check
 )
 {
 	using namespace core::pack::rotamer_set;
@@ -1200,7 +1201,7 @@ build_rotamers_lite(
 	scorefxn.set_weight( fa_rep, 1.00 );
 
 	PackerTaskOP task = TaskFactory::create_packer_task( pose );
-	task->set_bump_check( false );
+	task->set_bump_check( bump_check );
 	task->temporarily_fix_everything();
 	task->temporarily_set_pack_residue( rotamer_build_position, true );
 

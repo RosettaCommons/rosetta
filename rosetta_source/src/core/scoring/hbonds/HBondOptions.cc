@@ -28,6 +28,7 @@
 // Package Headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh> //pba
+#include <basic/options/keys/dna.OptionKeys.gen.hh> //sthyme
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/membrane.OptionKeys.gen.hh> //pba
 
@@ -64,6 +65,7 @@ HBondOptions::HBondOptions( std::string params_db_tag ):
 		option[OptionKeys::membrane::Mhbond_depth].user()){
 		Mbhbond_ = option[OptionKeys::membrane::Mhbond_depth];//pba
 	}
+	exclude_DNA_DNA_ = option[OptionKeys::dna::specificity::exclude_dna_dna]; // adding because this parameter should absolutely be false for any structure with DNA in it and it doesn't seem to be read in via the weights file method, so now it's an option - sthyme
 	use_incorrect_deriv_ = option[OptionKeys::corrections::score::use_incorrect_hbond_deriv];
 	use_sp2_chi_penalty_ = option[OptionKeys::corrections::score::hb_sp2_chipen ];
 	bb_donor_acceptor_check_ = ! option[ OptionKeys::score::hbond_disable_bbsc_exclusion_rule ];
@@ -98,6 +100,7 @@ HBondOptions::HBondOptions():
 		option[OptionKeys::membrane::Mhbond_depth].user()){
 		Mbhbond_ = option[OptionKeys::membrane::Mhbond_depth];//pba
 	}
+	exclude_DNA_DNA_ = option[OptionKeys::dna::specificity::exclude_dna_dna]; // adding because this parameter should absolutely be false for any structure with DNA in it and it doesn't seem to be read in via the weights file method, so now it's an option - sthyme
 	use_incorrect_deriv_ = option[OptionKeys::corrections::score::use_incorrect_hbond_deriv];
 	use_sp2_chi_penalty_ = option[OptionKeys::corrections::score::hb_sp2_chipen ];
 	bb_donor_acceptor_check_ = ! option[ OptionKeys::score::hbond_disable_bbsc_exclusion_rule ];

@@ -3102,6 +3102,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'rots2add', 'Integer', default = '100', lower = '1', desc = 'number of rotamers to add to design from the MotifSearch for each amino acid type'),
 		Option( 'restrict_to_wt', 'Boolean', default = 'true', desc = 'restrict the motif search to finding motifs of the same amino acid as the starting pose, for homology modeling'),
 		Option( 'rerun_motifsearch', 'Boolean', default = 'true', desc = 'setting the MotifSearch to run again, using the rotamers in the build position, most likely to change stringency or amino acid type on a second run'),
+		Option( 'no_rotamer_bump', 'Boolean', default = 'false', desc = 'skip the bump check when making the rotamers that will be tested for motif interactions, makes code much slower, but it is advised to increase the max_rotbump_energy to at least 10.0 instead of the default of 5.0 if bump_check is being used'),
 		Option('ligand_motif_sphere','Real', default = '6.0',
 			desc="option to specify radius of motif search around ligand"),
 	), #motifs
@@ -3144,6 +3145,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 	Option_Group( 'dna',
 		Option_Group( 'specificity',
+			Option( 'exclude_dna_dna', 'Boolean', default='true'),
 			Option( 'params', 'RealVector', desc="vector of real-valued params"),
 			Option( 'frag_files', 'FileVector', desc="files to collect frags from" ),
 			Option( 'exclude_bb_sc_hbonds', 'Boolean', default='false'),

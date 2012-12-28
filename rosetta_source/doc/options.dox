@@ -7259,6 +7259,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: true</dd><br>
 </dl>
 <dl>
+<dt><b>-no_rotamer_bump</b> \<Boolean\><dt>
+<dd>skip the bump check when making the rotamers that will be tested for motif interactions, makes code much slower, but it is advised to increase the max_rotbump_energy to at least 10.0 instead of the default of 5.0 if bump_check is being used</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-ligand_motif_sphere</b> \<Real\><dt>
 <dd>option to specify radius of motif search around ligand</dd><br>
 <dd>Default: 6.0</dd><br>
@@ -7427,6 +7432,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-specificity</b> \<Boolean\><dt>
 <dd>specificity option group</dd><br>
+</dl>
+<dl>
+<dt><b>-exclude_dna_dna</b> \<Boolean\><dt>
+<dd>No description</dd><br>
+<dd>Default: true</dd><br>
 </dl>
 <dl>
 <dt><b>-params</b> \<RealVector\><dt>

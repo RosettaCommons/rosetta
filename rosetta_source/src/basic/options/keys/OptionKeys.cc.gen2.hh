@@ -1,5 +1,3 @@
-namespace rbe { StringOptionKey const server_url( "rbe:server_url" );  }
-namespace rbe { StringOptionKey const server_port( "rbe:server_port" );  }
 namespace rbe { RealOptionKey const poll_frequency( "rbe:poll_frequency" );  }
 namespace blivens { BooleanOptionKey const blivens( "blivens" );  }
 namespace blivens { namespace disulfide_scorer { BooleanOptionKey const disulfide_scorer( "blivens:disulfide_scorer" );  } }
@@ -184,6 +182,7 @@ namespace motifs { BooleanOptionKey const clear_bprots( "motifs:clear_bprots" );
 namespace motifs { IntegerOptionKey const rots2add( "motifs:rots2add" );  }
 namespace motifs { BooleanOptionKey const restrict_to_wt( "motifs:restrict_to_wt" );  }
 namespace motifs { BooleanOptionKey const rerun_motifsearch( "motifs:rerun_motifsearch" );  }
+namespace motifs { BooleanOptionKey const no_rotamer_bump( "motifs:no_rotamer_bump" );  }
 namespace motifs { RealOptionKey const ligand_motif_sphere( "motifs:ligand_motif_sphere" );  }
 namespace constraints { BooleanOptionKey const constraints( "constraints" );  }
 namespace constraints { RealOptionKey const CA_tether( "constraints:CA_tether" );  }
@@ -218,6 +217,7 @@ namespace constraints { IntegerOptionKey const skip_redundant_width( "constraint
 namespace constraints { RealOptionKey const increase_constraints( "constraints:increase_constraints" );  }
 namespace dna { BooleanOptionKey const dna( "dna" );  }
 namespace dna { namespace specificity { BooleanOptionKey const specificity( "dna:specificity" );  } }
+namespace dna { namespace specificity { BooleanOptionKey const exclude_dna_dna( "dna:specificity:exclude_dna_dna" );  } }
 namespace dna { namespace specificity { RealVectorOptionKey const params( "dna:specificity:params" );  } }
 namespace dna { namespace specificity { FileVectorOptionKey const frag_files( "dna:specificity:frag_files" );  } }
 namespace dna { namespace specificity { BooleanOptionKey const exclude_bb_sc_hbonds( "dna:specificity:exclude_bb_sc_hbonds" );  } }
@@ -652,3 +652,4 @@ namespace DenovoProteinDesign { BooleanOptionKey const create_from_secondary_str
 namespace RBSegmentRelax { BooleanOptionKey const RBSegmentRelax( "RBSegmentRelax" );  }
 namespace RBSegmentRelax { FileOptionKey const input_pdb( "RBSegmentRelax:input_pdb" );  }
 namespace RBSegmentRelax { FileOptionKey const rb_file( "RBSegmentRelax:rb_file" );  }
+namespace RBSegmentRelax { RealOptionKey const cst_wt( "RBSegmentRelax:cst_wt" );  }

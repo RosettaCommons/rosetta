@@ -130,6 +130,7 @@ MotifSearch::operator = ( MotifSearch const & src )
 		rots2add_ = src.rots2add_;
 		restrict_to_wt_ = src.restrict_to_wt_;
 		rerun_motifsearch_ = src.rerun_motifsearch_;
+		bump_check_ = src.bump_check_;
 	}
 	return *this;
 }
@@ -292,7 +293,7 @@ MotifSearch::incorporate_motifs(
 			for( Size i(1); i <= core::chemical::num_canonical_aas; ++i ) {
 				utility::vector1< bool > aa_info( core::chemical::num_canonical_aas, false );
 				aa_info[i] = true;
-				core::pack::rotamer_set::RotamerSetOP rotset = build_rotamers_lite( posecopy, seqpos, aa_info, rot_level_ );
+				core::pack::rotamer_set::RotamerSetOP rotset = build_rotamers_lite( posecopy, seqpos, aa_info, rot_level_, bump_check_ );
 				rotamer_sets[i] = rotset;
 			}
 		} else {
@@ -985,7 +986,8 @@ MotifSearch::override_option_input(
 	Real const & z2,
 	Real const & d1,
 	Size const & rlevel,
-	bool const bpdata
+	bool const bpdata,
+	bool const bump_check
 )
 {
 	ztest_cutoff_1_ = z1;
@@ -995,6 +997,7 @@ MotifSearch::override_option_input(
 	dtest_cutoff_ = d1;
 	rot_level_ = rlevel;
 	bpdata_ = bpdata;
+	bump_check_ = bump_check;
 }
 
 void
@@ -1072,6 +1075,12 @@ MotifSearch::init_options()
 	} else {
 		rerun_motifsearch_ = false;
 	}
+	if( (basic::options::option[ basic::options::OptionKeys::motifs::no_rotamer_bump ]).user() ) {
+		bump_check_ = false;
+	} else {
+		bump_check_ = true;
+	}
+
 
 }
 

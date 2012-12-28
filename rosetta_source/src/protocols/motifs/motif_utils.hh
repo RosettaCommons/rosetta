@@ -242,7 +242,8 @@ build_rotamers_lite(
 	core::pose::Pose & pose,
 	core::Size const rotamer_build_position,
 	utility::vector1< bool > aa_info,
-	core::Size const ex_
+	core::Size const ex_,
+	bool bump_check = true
 );
 
 } // namespace motifs

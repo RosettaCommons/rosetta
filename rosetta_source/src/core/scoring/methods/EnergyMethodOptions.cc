@@ -23,6 +23,7 @@
 
 // Utility headers
 #include <basic/options/option.hh>
+#include <basic/options/keys/dna.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/database/sql_utils.hh>
 #include <basic/database/schema_generator/PrimaryKey.hh>
@@ -76,6 +77,7 @@ void EnergyMethodOptions::initialize_from_options() {
 	hackelec_min_dis_ = basic::options::option[basic::options::OptionKeys::score::hackelec_min_dis ]();
 	hackelec_die_ = basic::options::option[ basic::options::OptionKeys::score::hackelec_die ]();
 	hackelec_no_dis_dep_die_ = basic::options::option[ basic::options::OptionKeys::score::hackelec_r_option ]();
+	exclude_DNA_DNA_ = basic::options::option[basic::options::OptionKeys::dna::specificity::exclude_dna_dna]; // adding because this parameter should absolutely be false for any structure with DNA in it and it doesn't seem to be read in via the weights file method, so now it's an option - sthyme
 }
 
 /// copy constructor
@@ -225,27 +227,27 @@ EnergyMethodOptions::hbond_options( hbonds::HBondOptions const & opts ) {
 	hbond_options_ = new hbonds::HBondOptions( opts );
 }
 
-std::string const & 
+std::string const &
 EnergyMethodOptions::pb_bound_tag() const {
 	return pb_bound_tag_;
 }
-std::string & 
+std::string &
 EnergyMethodOptions::pb_bound_tag() {
 	return pb_bound_tag_;
 }
-void 
+void
 EnergyMethodOptions::pb_bound_tag( std::string const & tag ) {
 	 pb_bound_tag_ = tag;
 }
-std::string const & 
+std::string const &
 EnergyMethodOptions::pb_unbound_tag() const {
 	return pb_unbound_tag_;
 }
-std::string & 
+std::string &
 EnergyMethodOptions::pb_unbound_tag() {
 	return pb_unbound_tag_;
 }
-void 
+void
 EnergyMethodOptions::pb_unbound_tag( std::string const & tag ) {
 	pb_unbound_tag_ = tag;
 }

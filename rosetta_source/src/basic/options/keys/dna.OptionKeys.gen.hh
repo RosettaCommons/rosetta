@@ -23,6 +23,7 @@ namespace OptionKeys {
 
 namespace dna { extern BooleanOptionKey const dna; }
 namespace dna { namespace specificity { extern BooleanOptionKey const specificity; } }
+namespace dna { namespace specificity { extern BooleanOptionKey const exclude_dna_dna; } }
 namespace dna { namespace specificity { extern RealVectorOptionKey const params; } }
 namespace dna { namespace specificity { extern FileVectorOptionKey const frag_files; } }
 namespace dna { namespace specificity { extern BooleanOptionKey const exclude_bb_sc_hbonds; } }
