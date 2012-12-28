@@ -24,6 +24,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 
 namespace protocols {
 namespace simple_filters {
@@ -100,6 +101,12 @@ public:
 		core::Size value
 	);
 
+	utility::vector1< std::string >
+	res_types() const;
+
+	void
+	res_types( utility::vector1< std::string > const & res_type );
+
 	bool
 	enable_min_residue_count() const;
 
@@ -108,12 +115,20 @@ public:
 		bool value
 	);
 
+	///@brief Checks whether a residue type is present in the provided residue type set, and if so, adds it to res_types_
+	bool
+	add_residue_type_by_name(
+	  core::chemical::ResidueTypeSet const & res_type_set,
+    std::string const & res_type_input
+  );
+
+
 private:
 	core::Size max_residue_count_;
 	bool enable_max_residue_count_;
 	core::Size min_residue_count_;
 	bool enable_min_residue_count_;
-
+	utility::vector1< std::string > res_types_;
 };
 
 }
