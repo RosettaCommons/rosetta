@@ -646,10 +646,10 @@ namespace chemical_shift {
 
 			//Consistency_check
 			if(text_line_list[2]!=text_line_list[3]){
-				utility_exit_with_message("text_line_list[1]=("+ text_line_list[1] +")!=("+ text_line_list[2] +")=text_line_list[2]");
+				utility_exit_with_message("text_line_list[2]=("+ text_line_list[2] +")!=("+ text_line_list[3] +")=text_line_list[3]");
 			}
 
-			Size const seq_num=string_to_int(text_line_list[2]);
+			Size const seq_num=string_to_int(text_line_list[3]);
 
 
 			chemical::AA res_aa=get_res_aa_from_BASE_name(text_line_list[4], text_line);
