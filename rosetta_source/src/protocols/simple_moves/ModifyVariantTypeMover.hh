@@ -60,8 +60,8 @@ public:
 
 private:
   core::pack::task::TaskFactoryOP task_factory_;
-	std::vector<std::string> add_target_types_;
-	std::vector<std::string> remove_target_types_;
+	utility::vector1<std::string> add_target_types_;
+	utility::vector1<std::string> remove_target_types_;
 };
 
 } // moves

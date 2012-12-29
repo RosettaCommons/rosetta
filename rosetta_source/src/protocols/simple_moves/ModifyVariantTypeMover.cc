@@ -40,6 +40,7 @@
 // C++ Headers
 #include <iostream>
 #include <utility/vector1.hh>
+#include <utility/string_util.hh>
 
 #include <boost/algorithm/string.hpp>
 #include <boost/foreach.hpp>
@@ -129,10 +130,12 @@ void ModifyVariantTypeMover::parse_my_tag(
 	remove_target_types_.clear();
 
 	std::string add_type_value = tag->getOption< std::string >( "add_type", "");
-	boost::split(add_target_types_, add_type_value, boost::is_any_of(","));
+	//boost::split(add_target_types_, add_type_value, boost::is_any_of(","));
+	add_target_types_ = utility::string_split<std::string>(add_type_value,',',std::string());
 
 	std::string remove_type_value = tag->getOption< std::string >( "remove_type", "");
-	boost::split(remove_target_types_, remove_type_value, boost::is_any_of(","));
+	//boost::split(remove_target_types_, remove_type_value, boost::is_any_of(","));
+	remove_target_types_ = utility::string_split<std::string>(remove_type_value,',',std::string());
 
 	if (add_target_types_.size() == 0 && remove_target_types_.size() == 0)
 	{

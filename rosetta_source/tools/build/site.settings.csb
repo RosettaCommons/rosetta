@@ -20,7 +20,7 @@ settings = {
     "user" : {
         "prepends" : {
         	"include_path" : ["/sb/meiler/Linux2/noarch/mysql/5.1.48/include/mysql/",],
-		    "library_path" : [ "/sb/meiler/Linux2/x86_64/lib",],
+		"library_path" : [ "/sb/meiler/Linux2/x86_64/lib",],
 	},
         "appends" : {
             # Uncomment the line below and the "import os" line above
@@ -29,13 +29,15 @@ settings = {
 
             # Uncomment the line below to begin building the "devel" project too.
             #"projects": { "src" : [ "devel", ], },
+			"defines" : ["__USE_XOPEN2K8"],
         },
         "overrides" : {
-		"cxx" : "distcc g++",
-		"cc" : "distcc gcc",
+		"cxx" : "distcc  g++",
+		"cc" : "distcc  gcc",
 		"ENV" : os.environ,        
 	},
         "removes" : {
         },
     }
 }
+

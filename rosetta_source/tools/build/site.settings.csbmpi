@@ -22,14 +22,19 @@ settings = {
     "user" : {
         "prepends" : {
            "include_path" : [
+		   		"/sb/meiler/Linux2/noarch/mysql/5.1.48/include/mysql/",
 				"/blue/csb/apps/mpich2/Linux2/1.1/x86_64/include",
 				],
            "library_path" : [ 
 				"/blue/csb/apps/mpich2/Linux2/1.1/x86_64/lib",
-				"/blue/meilerlab/apps/Linux2/x86_64/lib"],
+				"/blue/meilerlab/apps/Linux2/x86_64/lib",
+				"/sb/meiler/Linux2/x86_64/lib",],
+			"flags" : {
+				"link" : ["Wl,-rpath=/sb/meiler/Linux2/x86_64/lib"]
+			}
         },
         "appends" : {
-            "defines"    : [ "MPICH_IGNORE_CXX_SEEK" ],        
+            "defines"    : [ "MPICH_IGNORE_CXX_SEEK","__USE_XOPEN2K8" ],        
             # Uncomment the line below and the "import os" line above
             # to let SCons find ICC (assuming it's on your PATH already)
             #"program_path"  : os.environ["PATH"].split(":"),
