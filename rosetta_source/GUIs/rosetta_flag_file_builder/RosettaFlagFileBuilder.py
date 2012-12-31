@@ -23,11 +23,6 @@ import tools
 import webbrowser
 import sys
 
-#Append Python Path
-p = os.path.split(os.path.abspath(__file__))[0]
-p2 = p.split("/"); p2.pop()
-sys.path.append("/".join(p2)+'/pyrosetta_toolkit'); #Allows use of pyrosetta_toolkit modules and windows.
-
 #Tkinter Imports
 from Tkinter import *
 import tkMessageBox
@@ -257,8 +252,8 @@ class RosettaFlagFileBuilder():
         app = os.path.split(apppath)[1].split('.')[0]
         app = app.replace("#", "")
         for p in self.appDOC:
-            if app==p:
-                app = self.appDOC[p]["AppName"]
+            if app==self.appDOC[p]["AppName"]:
+                app = p
             
         print app
         for stuff in configSP:

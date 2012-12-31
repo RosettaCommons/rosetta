@@ -657,10 +657,10 @@ option.add( basic::options::OptionKeys::resample::silent, "a silent file for dec
 option.add( basic::options::OptionKeys::resample::tag, "which decoy to select from silent file " ).def("");
 option.add( basic::options::OptionKeys::resample::stage1, "if true restart after stage1, otherwise after stage2 " ).def(false);
 option.add( basic::options::OptionKeys::resample::stage2, "if true restart after stage1, otherwise after stage2 " ).def(false);
-option.add( basic::options::OptionKeys::resample::jumps, "if true restart after stage1, otherwise after stage2 " ).def(false);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::resample::min_max_start_seq_sep, "range of (random) start values for seq-separation" ).def(0);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::resample::jumps, "if true restart after stage1, otherwise after stage2 " ).def(false);
+option.add( basic::options::OptionKeys::resample::min_max_start_seq_sep, "range of (random) start values for seq-separation" ).def(0);
 option.add( basic::options::OptionKeys::loopfcst::loopfcst, "loopfcst option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::loopfcst::coord_cst_weight, "use coord constraints for template" ).def(0.0);
 option.add( basic::options::OptionKeys::loopfcst::coord_cst_all_atom, "use coord constraints on all atoms and not just CA" ).def(false);
@@ -1108,13 +1108,10 @@ option.add( basic::options::OptionKeys::relax::filter_stage2_end, "FArelax score
 option.add( basic::options::OptionKeys::relax::centroid::centroid, "centroid option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::relax::centroid::weights, "Weights to use for centroid minimization" ).def("score4_smooth_cen_relax");
 option.add( basic::options::OptionKeys::relax::centroid::ramp_vdw, "Ramp up the VDW weight" ).def(true);
-option.add( basic::options::OptionKeys::relax::centroid::ramp_rama, "Ramp up the rama/rama2b" ).def(false);
+option.add( basic::options::OptionKeys::relax::centroid::ramp_rama, "Ramp up the rama/rama2b weight" ).def(false);
 option.add( basic::options::OptionKeys::relax::centroid::parameters, "Database file for ramp/min parameter" ).def("sampling/cen_relax/default_relax_parameters.txt");
-option.add( basic::options::OptionKeys::relax::centroid::centroid_only_mode, "Only use centroid throughout entire protocol.  Nessessary if passing centroid PDB from cmd line" ).def(false);
-option.add( basic::options::OptionKeys::relax::centroid::do_inter_repacks, "Do an intermittent repack at end of each repeat.  Use this energy for MonteCarlo." ).def(false);
-option.add( basic::options::OptionKeys::relax::centroid::do_final_min_fa, "Do an all atom minimization before return of pose" ).def(true);
-option.add( basic::options::OptionKeys::relax::centroid::do_final_repack, "Repack SideChains after switching back to fa_representation" ).def(true);
-option.add( basic::options::OptionKeys::relax::centroid::do_final_min_sc, "Minimize the sidechains after Repack (can go off rotamer)" ).def(true);
+option.add( basic::options::OptionKeys::relax::centroid::do_final_repack, "Repack sidechains in movemap after protocol if given a fullatom structure" ).def(false);
+option.add( basic::options::OptionKeys::relax::centroid::increase_vdw_radii, "Increase BB vdw radii" ).def(false);
 option.add( basic::options::OptionKeys::enzdes::enzdes, "enzdes option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::enzdes::checkpoint, "write/read checkpoint files to the desired filename." ).def("");
 option.add( basic::options::OptionKeys::enzdes::enz_score, "prevent repacking in enzyme design calculation" ).def(false);
@@ -1315,10 +1312,10 @@ option.add( basic::options::OptionKeys::lh::symfragrm::pdblist, "list of pdbs to
 option.add( basic::options::OptionKeys::rbe::rbe, "rbe option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::rbe::server_url, "serverurl for rosetta backend" );
 option.add( basic::options::OptionKeys::rbe::server_port, "port for rosetta backend" ).def("80");
+option.add( basic::options::OptionKeys::rbe::poll_frequency, "No description" ).def(1.0);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::rbe::poll_frequency, "No description" ).def(1.0);
-option.add( basic::options::OptionKeys::blivens::blivens, "blivens option group" ).legal(true).def(true);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::blivens::blivens, "blivens option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::blivens::disulfide_scorer::disulfide_scorer, "disulfide_scorer option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::blivens::disulfide_scorer::nds_prob, "The probability of scoring a non-disulfide pair" ).def(0.0);
 option.add( basic::options::OptionKeys::blivens::disulfide_scorer::cys_prob, "The probability of outputing a pair of non-disulf cysteines. Default to nds_prob" ).def(-1.0);

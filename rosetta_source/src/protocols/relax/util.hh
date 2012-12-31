@@ -7,11 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file relax_initialization_protocols
-/// @brief initialization protocols for relax
-/// @detailed
-///	  Contains currently: Relax Baseclass, ClassicRelax Stage 1,2,3, ClassicRelax
-///
+/// @file /protocols/relax/util.hh
+/// @brief initialization protocols for relax and utility functions
 ///
 /// @author Mike Tyka
 
@@ -21,6 +18,7 @@
 // AUTO-REMOVED #include <core/scoring/MembraneTopology.fwd.hh> //pba
 
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <protocols/relax/RelaxProtocolBase.fwd.hh>
@@ -30,12 +28,14 @@
 
 //// C++ headers
 
-
 namespace protocols {
 namespace relax {
 
-//pba  read in membrane topology
+///@brief (pba)  read in membrane topology
 void setup_membrane_topology( core::pose::Pose & pose, std::string spanfile );
+
+///@brief Make DNA Rigid in movemap if found in pose
+void make_dna_rigid(core::pose::Pose & pose, core::kinematics::MoveMap & mm);
 
 void relax_pose( core::pose::Pose& pose, core::scoring::ScoreFunctionOP scorefxn, std::string const& tag );
 

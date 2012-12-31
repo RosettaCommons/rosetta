@@ -46,10 +46,7 @@ class AnalysisProtocols(ProtocolBaseClass):
         print "Please see Borgo, B., Havranek, J.J. (2012), 'Automated selection of stabilizing mutations in designed and natural proteins', Proc. Natl. Acad. Sci. USA, v.109(5) pp.1494-99."
         message = "This is going to take some time....and will modify the current pose if not outputting >1 decoys"
         tkMessageBox.showinfo(title = 'note', message = message)
-        if (tkMessageBox.askyesno(message="Continue?")):
-            pass
-        else:
-            return
+        if not (tkMessageBox.askyesno(message="Continue?")): return
         cycles = tkSimpleDialog.askinteger(title = "Cycles", prompt="Please enter max cycles (0 indicates that the protocol will run until favorable mutations are found)", initialvalue=get_integer_option('cp:ncycles'))
         
         VIP = VIP_Wrapper(vip_mover, self.score_class.score, cycles)

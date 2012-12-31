@@ -9,31 +9,27 @@
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
 /// @file protocols/relax/CentroidRelax.hh
-/// @brief Centroid-based relax, using Frank Dimaio's updated centroid stats
+/// @brief Centroid-based relax, using Frank Dimaio's updated centroid statistics
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #ifndef INCLUDED_protocols_relax_CENTROIDRELAX_HH
 #define	INCLUDED_protocols_relax_CENTROIDRELAX_HH
 
 
-//Core
+//Core Headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/kinematics/MoveMap.hh>
-//Protocols
 
+//Protocol Headers
 #include <protocols/relax/RelaxProtocolBase.hh>
-#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/moves/Mover.hh>
 
-//Basic
+//Utility Headers
 #include <utility/vector1.hh>
 
-//Unoptimized, not completely tested class.  In development.
 namespace protocols{
     namespace relax{
         using namespace core::scoring;
@@ -46,99 +42,90 @@ namespace protocols{
         using core::pose::Pose;
         using utility::vector1;
            
-        
+///@brief Relax a pose using Frank Dimaio's smooth centroid statistics.
+///Currently under optimization.
+///
+///@details Minimize a centroid representation of a pose. Ramp VDW/Rama or both.  
+///
+///Repack sidechains if given a fullatom structure (default).  May tweak structure by up to ~2.5 A without constraints.  
+///Use custom constraints or coordinate constraints through relax options for best results.
+///Using starting coordinate constraints, structure is tweaked by ~.3/.4 A
+///Use increased VDW radii option for bb to improve bb-geometry when not using constraints
+///
+///
 class CentroidRelax : public RelaxProtocolBase {
 public:
     CentroidRelax();
     CentroidRelax(MoveMapOP mm);
     CentroidRelax(MoveMapOP mm, ScoreFunctionOP cen_scorefxn_in);
         
-        //Specific functions for Mover...
+    //Specific functions for Mover...
     virtual ~CentroidRelax();
     
     virtual string get_name() const;
-        //virtual bool reinitialize_for_new_input() const;
-        //virtual bool reinitialize_for_each_job() const;
+
     virtual protocols::moves::MoverOP clone() const;
-    
-    //Yes, I like options...Though their interactions are getting confusing...
-    
-    void set_rounds(Size rounds);
-    ///@brief sets to use Rama2b instead of Rama
-    void set_use_rama2b(bool use);
-    void set_ramp_rama(bool use);
-    void set_ramp_vdw(bool use);
-    void set_score_function(ScoreFunctionOP cen_score);
-    void set_fa_score_function(ScoreFunctionOP fa_score);
-    //void set_packer_task(PackerTaskOP task);
-    
-    void set_min_type(string min);
-    void set_cartesian(bool cart);
-    void set_final_min_fullatom(bool min);
-    void set_final_min_sidechains(bool min);
-    void set_final_repack_sidechains(bool repack);
-    
-    ///@brief Load the default parameters from the default file.
-    void set_default_parameters();
-    ///@brief Nessessary if you pass a centroid rep and centroid only mode is false.
-    void set_recover_sidechains_mover(ReturnSidechainMoverOP recover_sc);
-    
-    
-    ///@brief Switch to full atom mode during final step, doing any repacking/minimization. 
-    void set_return_full_atom_from_centroid(bool fa_ret = false);
-    ///@brief Sets the Mover to only do centroid-based operations, returning a centroid representation
-    void set_centroid_only_mode(bool cen_only=false);
-    
-    ///@brief controls whether to repack side chains intermittently during protocol(Using that the fa_scorefxn_ score). If centroid only mode is false
-    void set_repack_intermittent(bool use);
     
     void set_defaults();
     
-    ///@brief Makes DNA Rigid exactly like FastRelax.
-    void makeDnaRigid(Pose & pose);
+    void set_rounds(Size rounds);
+    
+    ///@brief use larger VDW radii for atoms - bb for now - default True (Courtesy of Frank Dimaio)
+    void set_use_increased_vdw_radii(bool use);
+    
+    ///@brief Sets to use Rama2b instead of Rama - default True
+    void set_use_rama2b(bool use);
+    
+    ///@brief Ramp Rama according to centroid relax parameters
+    void set_ramp_rama(bool use);
+    
+    ///@brief Ramp VDW according to centroid relax parameters
+    void set_ramp_vdw(bool use);
+    
+    ///@brief Sets main scorefunction used for centroid minimization.
+    void set_score_function(ScoreFunctionOP cen_score);
+    
+    ///@brief Sets fullatom scorefunction - only used for scoring the full atom pose before and after protocol.
+    void set_fa_score_function(ScoreFunctionOP fa_score);
+
+    ///@brief Sets the minimizer type.
+    void set_min_type(string min);
+    
+    ///@brief Sets to use the cartesian minimizer.
+    void set_cartesian(bool cart);
+    
+    ///@brief If a fullatom pose is passed, should we repack sidechains according to movemap?
+    void do_final_repack(bool repack_sc);
+    
     ///@brief Applies the protocol, See notes
+    ///
+    ///@details Setting ramp_rama and ramp_vdw to false switches to the BASIC protocol 
+    /// which is rounds of the centroid minmover
     virtual void apply( Pose & pose );
-    //Notes:
-        //Pass centroid with default settings: Will give error
-        //Pass centroid with set_final_min_sidechains and set_final_repack_sidechains false: Will run and return Centroid
-        //Pass centroid + set_centroid_only mode: Pose returned is centroid
-        //Pass centroid + set recover_sidechains_mover: Pose returned is centroid
-        //Pass centroid + set recover_sidechains_mover + set fa_return: Pose returned is FA
-        
-        //Pass full_atom: will return full_atom structure.
-        //Pass full_atom + set_centroid_only mode: Pose returned is centroid
-    
-        //Setting ramp_rama and ramp_vdw to false switches to the BASIC protocol which is rounds of centroid minmover
-    
-    
-    
+
 private:
-    void initialize_objects();
-    //@brief used internally to setup extra stuff for movemap.
-    void setup_class_movemap(Pose & pose);
-    void movemap_to_taskfactory(Pose & pose, PackerTaskOP task);
     
+    ///@brief Load the default parameters from the default file.
+    void read_default_parameters();
+    
+    ///@brief used internally to setup extra stuff for movemap.
+    void setup_class_movemap_and_constraints(Pose & pose);
+    
+    ///@brief increase VDW radii for backbone to help geometry and decrease rmsd
+    void setup_increased_vdw_radii();
+    
+    bool use_increased_vdw_radii_;
     bool ramp_rama_;
     bool ramp_vdw_;
     Size rounds_;
-    bool repack_intermittent_; //Do an intermittent repack of the SC true in movemap
     bool cartesian_mode_;
-    bool final_min_fa_; //Minimize full atom structure @end, before repack and sc_min
-    bool final_min_sc_; //Minimize Sidechains after repack @end.
-    bool final_repack_sc_;  //Rpack at end?
-    bool centroid_only_mode_; //Never switch to FA for anything
-    bool fa_return_; //Return FA if recover_sc is set
-    bool constrain_to_original_coords_;
-    
-    ScoreFunctionOP scorefxn_;
+    bool repack_sc_;
+    ScoreFunctionOP cen_scorefxn_;
     ScoreFunctionOP fa_scorefxn_;
-    SwitchResidueTypeSetMoverOP to_fa_;
-    SwitchResidueTypeSetMoverOP to_cen_;
-    ReturnSidechainMoverOP recover_sc_;
-    bool sc_recoverable_;
     MoveMapOP movemap_;
     ScoreType rama_type_;
     
+    ///@brief Container for ramp settings
     struct parameters{
         vector1< Real > vdw_params;
         vector1< Real > rama_params;

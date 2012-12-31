@@ -138,79 +138,76 @@ endrepeat
 
 
 */
-
+//Project Headers
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/relax/Ramady.hh>
 #include <protocols/relax/FastRelaxCreator.hh>
-#include <protocols/moves/DataMap.hh>
-#include <protocols/rosetta_scripts/util.hh>
+#include <protocols/relax/util.hh>
 
-
+//Core Headers
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/util.hh>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/relax.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
-#include <basic/Tracer.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/symmetry/util.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
+#include <core/util/SwitchResidueTypeSet.hh>
+
+//Protocol Headers
+#include <protocols/moves/DataMap.hh>
+#include <protocols/rosetta_scripts/util.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <utility/excn/Exceptions.hh>
 #include <protocols/elscripts/util.hh>
-
-#ifdef GL_GRAPHICS
-#include <protocols/viewer/viewers.hh>
-#endif
-
 #include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
-
-//symmetry
-#include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
-
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
-#include <utility/tag/Tag.hh>
 
+//Basic Headers
+#include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/evaluation.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
+#include <basic/Tracer.hh>
 
+//Utility Headers
+#include <utility/tag/Tag.hh>
+#include <utility/string_util.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 #include <numeric/random/random.fwd.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh>
 
-#if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
-#endif
-
-
-#ifdef BOINC_GRAPHICS
-#include <protocols/boinc/boinc.hh>
-#endif
-
-
-#include <core/util/SwitchResidueTypeSet.hh>
-#include <utility/string_util.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
+//C++ Headers
 #include <fstream>
 
 
 
+#ifdef GL_GRAPHICS
+#include <protocols/viewer/viewers.hh>
+#endif
+
+#if defined(WIN32) || defined(__CYGWIN__)
+	#include <ctime>
+#endif
+
+#ifdef BOINC_GRAPHICS
+#include <protocols/boinc/boinc.hh>
+#endif
 
 using basic::T;
 using basic::Error;
@@ -533,7 +530,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 	// the "constrain to coordinates" codes will wanna mess witht the movemap..
 	core::kinematics::MoveMapOP local_movemap = get_movemap()->clone();
 	initialize_movemap( pose, *local_movemap );
-	makeDnaRigid(pose,local_movemap);
+	make_dna_rigid(pose,*local_movemap);
 	set_movemap(local_movemap);
 
 	// Deal with constraint options and add coodrinate constraints for all or parts of the structure.

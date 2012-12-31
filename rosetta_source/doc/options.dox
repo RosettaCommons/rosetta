@@ -5327,7 +5327,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-ramp_rama</b> \<Boolean\><dt>
-<dd>Ramp up the rama/rama2b</dd><br>
+<dd>Ramp up the rama/rama2b weight</dd><br>
 <dd>Default: false</dd><br>
 </dl>
 <dl>
@@ -5336,29 +5336,14 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: "sampling/cen_relax/default_relax_parameters.txt"</dd><br>
 </dl>
 <dl>
-<dt><b>-centroid_only_mode</b> \<Boolean\><dt>
-<dd>Only use centroid throughout entire protocol.  Nessessary if passing centroid PDB from cmd line</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-do_inter_repacks</b> \<Boolean\><dt>
-<dd>Do an intermittent repack at end of each repeat.  Use this energy for MonteCarlo.</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-do_final_min_fa</b> \<Boolean\><dt>
-<dd>Do an all atom minimization before return of pose</dd><br>
-<dd>Default: true</dd><br>
-</dl>
-<dl>
 <dt><b>-do_final_repack</b> \<Boolean\><dt>
-<dd>Repack SideChains after switching back to fa_representation</dd><br>
-<dd>Default: true</dd><br>
+<dd>Repack sidechains in movemap after protocol if given a fullatom structure</dd><br>
+<dd>Default: false</dd><br>
 </dl>
 <dl>
-<dt><b>-do_final_min_sc</b> \<Boolean\><dt>
-<dd>Minimize the sidechains after Repack (can go off rotamer)</dd><br>
-<dd>Default: true</dd><br>
+<dt><b>-increase_vdw_radii</b> \<Boolean\><dt>
+<dd>Increase BB vdw radii</dd><br>
+<dd>Default: false</dd><br>
 </dl>
  </li>
 <li><h2>enzdes</h2>

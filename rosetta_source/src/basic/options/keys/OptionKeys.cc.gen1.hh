@@ -1,3 +1,4 @@
+namespace resample { BooleanOptionKey const jumps( "resample:jumps" );  }
 namespace resample { RealVectorOptionKey const min_max_start_seq_sep( "resample:min_max_start_seq_sep" );  }
 namespace loopfcst { BooleanOptionKey const loopfcst( "loopfcst" );  }
 namespace loopfcst { RealOptionKey const coord_cst_weight( "loopfcst:coord_cst_weight" );  }
@@ -448,11 +449,8 @@ namespace relax { namespace centroid { StringOptionKey const weights( "relax:cen
 namespace relax { namespace centroid { BooleanOptionKey const ramp_vdw( "relax:centroid:ramp_vdw" );  } }
 namespace relax { namespace centroid { BooleanOptionKey const ramp_rama( "relax:centroid:ramp_rama" );  } }
 namespace relax { namespace centroid { StringOptionKey const parameters( "relax:centroid:parameters" );  } }
-namespace relax { namespace centroid { BooleanOptionKey const centroid_only_mode( "relax:centroid:centroid_only_mode" );  } }
-namespace relax { namespace centroid { BooleanOptionKey const do_inter_repacks( "relax:centroid:do_inter_repacks" );  } }
-namespace relax { namespace centroid { BooleanOptionKey const do_final_min_fa( "relax:centroid:do_final_min_fa" );  } }
 namespace relax { namespace centroid { BooleanOptionKey const do_final_repack( "relax:centroid:do_final_repack" );  } }
-namespace relax { namespace centroid { BooleanOptionKey const do_final_min_sc( "relax:centroid:do_final_min_sc" );  } }
+namespace relax { namespace centroid { BooleanOptionKey const increase_vdw_radii( "relax:centroid:increase_vdw_radii" );  } }
 namespace enzdes { BooleanOptionKey const enzdes( "enzdes" );  }
 namespace enzdes { StringOptionKey const checkpoint( "enzdes:checkpoint" );  }
 namespace enzdes { BooleanOptionKey const enz_score( "enzdes:enz_score" );  }
@@ -653,3 +651,4 @@ namespace lh { namespace symfragrm { FileVectorOptionKey const pdblist( "lh:symf
 namespace rbe { BooleanOptionKey const rbe( "rbe" );  }
 namespace rbe { StringOptionKey const server_url( "rbe:server_url" );  }
 namespace rbe { StringOptionKey const server_port( "rbe:server_port" );  }
+namespace rbe { RealOptionKey const poll_frequency( "rbe:poll_frequency" );  }

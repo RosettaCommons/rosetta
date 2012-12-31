@@ -82,11 +82,8 @@ namespace relax { namespace centroid { extern StringOptionKey const weights; } }
 namespace relax { namespace centroid { extern BooleanOptionKey const ramp_vdw; } }
 namespace relax { namespace centroid { extern BooleanOptionKey const ramp_rama; } }
 namespace relax { namespace centroid { extern StringOptionKey const parameters; } }
-namespace relax { namespace centroid { extern BooleanOptionKey const centroid_only_mode; } }
-namespace relax { namespace centroid { extern BooleanOptionKey const do_inter_repacks; } }
-namespace relax { namespace centroid { extern BooleanOptionKey const do_final_min_fa; } }
 namespace relax { namespace centroid { extern BooleanOptionKey const do_final_repack; } }
-namespace relax { namespace centroid { extern BooleanOptionKey const do_final_min_sc; } }
+namespace relax { namespace centroid { extern BooleanOptionKey const increase_vdw_radii; } }
 
 } // namespace OptionKeys
 } // namespace options

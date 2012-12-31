@@ -17,7 +17,7 @@
 #include <protocols/grafting/GraftMoverBase.hh>
 #include <protocols/moves/Mover.hh>
 
-//Core
+//Core Headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -33,7 +33,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
 
-//Protocols
+//Protocol Headers
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
@@ -46,7 +46,7 @@
 #include <protocols/loops/FoldTreeFromLoopsWrapper.hh>
 #include <protocols/moves/MonteCarlo.hh>
 
-//Options
+//Option Headers
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 

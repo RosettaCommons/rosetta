@@ -32,6 +32,8 @@ namespace grafting {
 	using namespace core::pose;
 	using protocols::loops::Loop;
 	using core::kinematics::MoveMapOP;
+	using core::kinematics::MoveMap;
+	
 ///@brief Base class for GraftMovers.  Created for simplicity and control for C++ programmer, as well as PyRosetta user.
 ///
 /// Feel free to add.
@@ -99,7 +101,7 @@ protected:
 	///@brief combines the two main movemaps to use after the insertion.
 	///@details Pose piece must be set.
 	MoveMapOP 
-    combine_movemaps(MoveMapOP & scaffold_mm, MoveMapOP & insert_mm);
+    combine_movemaps(MoveMap const & scaffold_mm, MoveMap const & insert_mm);
 	
 	/// @brief deletes overhang residues of the pose piece set.
 	/// Recommended use is within apply method

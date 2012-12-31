@@ -7,44 +7,45 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file relax_protocols
-/// @brief protocols that are specific to relax
+/// @file /protocols/relax/util.cc
+/// @brief initialization protocols for relax and utility functions
 /// @detailed
 /// @author Mike Tyka, Monica Berrondo
 /// @author Roland A. Pache
 
+//Project Headers
+#include <protocols/relax/util.hh>
 
+//Core Headers
+#include <core/pose/Pose.hh>
+#include <core/pose/datacache/CacheableDataType.hh> //pba
+#include <core/scoring/MembraneTopology.hh> //pba
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/constraints/util.hh>
+#include <core/scoring/electron_density/util.hh>
+#include <core/kinematics/MoveMap.hh>
+#include <core/conformation/Residue.hh>
+
+//Protocol Headers
 #include <protocols/relax/RelaxProtocolBase.hh>
 #include <protocols/relax/ClassicRelax.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/relax/MiniRelax.hh>
 #include <protocols/relax/CentroidRelax.hh>
-#include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
-#include <core/scoring/MembraneTopology.hh> //pba
+//Basic Headers
 #include <basic/datacache/BasicDataCache.hh> //pba
-#include <core/pose/datacache/CacheableDataType.hh> //pba
-
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-
-#include <core/scoring/constraints/util.hh>
-#include <core/scoring/electron_density/util.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/SuperimposeMover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/ConstraintSetMover.hh>
-
-
 #include <basic/options/option.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/Tracer.hh>
 
-// AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
-// AUTO-REMOVED #include <protocols/electron_density/util.hh>
+//Utility Headers
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh>
@@ -52,12 +53,6 @@
 #ifdef BOINC_GRAPHICS
 #include <protocols/boinc/boinc.hh>
 #endif
-
-#include <basic/Tracer.hh>
-
-#include <protocols/relax/util.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 using basic::T;
 using basic::Error;
@@ -126,6 +121,18 @@ void setup_membrane_topology( pose::Pose & pose, std::string spanfile ) {
   pose.data().set( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY, topologyOP );
   core::scoring::MembraneTopology & topology=*( static_cast< core::scoring::MembraneTopology * >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY )() ));
   topology.initialize(spanfile);
+}
+
+void make_dna_rigid( pose::Pose & pose, core::kinematics::MoveMap & mm){
+	using namespace core::conformation;
+	//if DNA present set so it doesn't move
+	for ( core::Size i=1; i<=pose.total_residue() ; ++i )      {
+	    if( pose.residue(i).is_DNA()){
+		//TR << "turning off DNA bb and chi move" << std::endl;
+		mm.set_bb( i, false );
+		mm.set_chi( i, false );
+	    }
+	}
 }
 
 void relax_pose( pose::Pose& pose, core::scoring::ScoreFunctionOP scorefxn, std::string const& tag ) {

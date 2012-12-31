@@ -11,11 +11,11 @@
 /// @brief   Base class for GraftMovers
 /// @author  Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
-// Unit headers
+//Unit headers
 #include <protocols/grafting/GraftMoverBase.hh>
 #include <protocols/moves/Mover.hh>
 
-// Core headers
+//Core headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/conformation/Conformation.hh>
@@ -32,17 +32,17 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
 
-//Protocols
+//Protocol Headers
 #include <protocols/toolbox/pose_manipulation.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/util.hh>
 
 
-// Basic headers
+//Basic Headers
 #include <basic/Tracer.hh>
 
-// Utility headers
+//Utility Headers
 #include <utility/PyAssert.hh>
 #include <protocols/grafting/util.hh>
 
@@ -63,6 +63,7 @@ using core::id::AtomID_Map;
 using core::pose::initialize_atomid_map;
 using protocols::loops::Loop;
 using core::kinematics::MoveMapOP;
+using core::kinematics::MoveMap;
 
 GraftMoverBase::GraftMoverBase(Size start, Size end, std::string mover_name):
 	moves::Mover(mover_name),
@@ -196,7 +197,7 @@ GraftMoverBase::superimpose_overhangs_heavy(Pose const & pose, bool ca_only, boo
 }
 
 MoveMapOP
-GraftMoverBase::combine_movemaps(MoveMapOP& scaffold_mm, MoveMapOP& insert_mm){
+GraftMoverBase::combine_movemaps(MoveMap const & scaffold_mm, MoveMap const & insert_mm){
 	using namespace core::kinematics;
 	MoveMapOP mm = new MoveMap();
     TR<<"Combining movemaps"<<std::endl;
@@ -208,7 +209,7 @@ GraftMoverBase::combine_movemaps(MoveMapOP& scaffold_mm, MoveMapOP& insert_mm){
 	//Assert that a piece is set.
 	
 	//Copy Nterminal MoveMapTorsionIDs
-	for (MoveMapTorsionID_Map::const_iterator it=scaffold_mm->movemap_torsion_id_begin(), it_end=scaffold_mm->movemap_torsion_id_end(); it !=it_end; ++it){
+	for (MoveMapTorsionID_Map::const_iterator it=scaffold_mm.movemap_torsion_id_begin(), it_end=scaffold_mm.movemap_torsion_id_end(); it !=it_end; ++it){
 	    //Scaffold to new MM
 	    if (it->first.first<=start_){
 		MoveMapTorsionID new_id = MoveMapTorsionID(it->first.first, it->first.second);
@@ -217,7 +218,7 @@ GraftMoverBase::combine_movemaps(MoveMapOP& scaffold_mm, MoveMapOP& insert_mm){
 	}
     
 	//Set insert residues
-	for (MoveMapTorsionID_Map::const_iterator it=insert_mm->movemap_torsion_id_begin(), it_end=insert_mm->movemap_torsion_id_end(); it !=it_end; ++it){
+	for (MoveMapTorsionID_Map::const_iterator it=insert_mm.movemap_torsion_id_begin(), it_end=insert_mm.movemap_torsion_id_end(); it !=it_end; ++it){
 	    //Add from start_
 	    Size new_resnum = start_ + it->first.first;
 	    MoveMapTorsionID new_id = MoveMapTorsionID(new_resnum, it->first.second);
@@ -226,7 +227,7 @@ GraftMoverBase::combine_movemaps(MoveMapOP& scaffold_mm, MoveMapOP& insert_mm){
 	
 	//Set Cterminal residues after insert. We may have a deletion then an insertion that we need to change the numbers for.
 	Size deleted_residues = original_end_-start_-1;
-	for (MoveMapTorsionID_Map::const_iterator it=scaffold_mm->movemap_torsion_id_begin(), it_end=scaffold_mm->movemap_torsion_id_end(); it !=it_end; ++it){
+	for (MoveMapTorsionID_Map::const_iterator it=scaffold_mm.movemap_torsion_id_begin(), it_end=scaffold_mm.movemap_torsion_id_end(); it !=it_end; ++it){
 	    //Check if residue exists in movemap.  Copy that info no matter what it is to the new movemap.
 	    if (it->first.first >=original_end_) {
 	    //Add insertion length
@@ -288,13 +289,13 @@ GraftMoverBase::perturb_backbone_for_test(Pose& pose, core::kinematics::MoveMapO
 void
 GraftMoverBase::setup_movemap_and_regions(Pose & pose){
     if (!use_default_movemap_){
-        movemap_ = combine_movemaps(scaffold_movemap_, insert_movemap_);
+        movemap_ = combine_movemaps(*scaffold_movemap_, *insert_movemap_);
         set_regions_from_movemap(pose);
 	
     }
     else{
     	set_regions_from_flexibility();
-        set_default_movemap();
+	    set_default_movemap();
     }
 
     PyAssert((Nter_loop_start_!=Cter_loop_end_), "Start and end of remodeling region the same.  Please check movemap");
