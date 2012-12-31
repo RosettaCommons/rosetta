@@ -47,7 +47,7 @@ namespace protocols{
 ///
 ///@details Minimize a centroid representation of a pose. Ramp VDW/Rama or both.  
 ///
-///Repack sidechains if given a fullatom structure (default).  May tweak structure by up to ~2.5 A without constraints.  
+///May tweak structure by up to ~2.5 A without constraints.  
 ///Use custom constraints or coordinate constraints through relax options for best results.
 ///Using starting coordinate constraints, structure is tweaked by ~.3/.4 A
 ///Use increased VDW radii option for bb to improve bb-geometry when not using constraints

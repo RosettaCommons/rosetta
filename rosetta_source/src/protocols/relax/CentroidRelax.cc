@@ -259,9 +259,6 @@ namespace relax {
 	}
 	
 	
-	
-        
-	TR<<"Constraints Set for FA Pose"<<std::endl;
         //Get the rama_weight.  If it's rama2b, get that.
         Real rama_weight = cen_scorefxn_->get_weight(rama);
         if (rama_weight==0){
@@ -279,7 +276,6 @@ namespace relax {
         
 
         
-        TR <<"MinMover Initialized"<<std::endl;
         
         MonteCarloOP cen_mc;
         
@@ -311,7 +307,6 @@ namespace relax {
 	    
         }
         
-        TR << "MonteCarlo Initialized"<<std::endl;
 	
         setup_class_movemap_and_constraints(pose);
 	

@@ -58,7 +58,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer tr("protocols.relax");
+static basic::Tracer TR("protocols.relax");
 
 using namespace core;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -106,7 +106,7 @@ generate_relax_from_cmd( bool NULL_if_no_flag ) {
 	} else {
 		// default relax should be a quick sequence relax
 		if ( NULL_if_no_flag ){
-			tr.Debug << "no relax protocol specified at command line" << std::endl;
+			TR.Debug << "no relax protocol specified at command line" << std::endl;
 			return NULL;
 		}
 		protocol = new FastRelax( scorefxn );
@@ -128,7 +128,7 @@ void make_dna_rigid( pose::Pose & pose, core::kinematics::MoveMap & mm){
 	//if DNA present set so it doesn't move
 	for ( core::Size i=1; i<=pose.total_residue() ; ++i )      {
 	    if( pose.residue(i).is_DNA()){
-		//TR << "turning off DNA bb and chi move" << std::endl;
+		TR << "turning off DNA bb and chi move" << std::endl;
 		mm.set_bb( i, false );
 		mm.set_chi( i, false );
 	    }
