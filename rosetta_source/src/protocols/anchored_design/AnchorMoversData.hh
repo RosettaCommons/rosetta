@@ -61,9 +61,9 @@ public:
 
 	///@brief constructor takes an anchor and loop object and sets up internals reasonably; options boolean is optionally optional.  If you use this constructor, you will need to later manually give fragments to the AnchorMoversData object or use one of its fragments functions to determine what type of fragments to use.
 	AnchorMoversData(
-									 protocols::anchored_design::AnchorCOP anchor,
-									 protocols::loops::Loops const & loops,
-									 bool const options=false
+		protocols::anchored_design::AnchorCOP anchor,
+		protocols::loops::Loops const & loops,
+		bool const options=false
 	);
 
 	///@brief constructor takes a pose to generate its own internals (also using the option system)

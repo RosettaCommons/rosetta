@@ -9,7 +9,7 @@
 
 /// @file   protocols/toolbox/task_operations/RestrictOperationsBase.hh
 /// @brief  Base class for PoseMetricCalculator-using TaskOperations
-/// @author Steven Lewis smlewi@unc.edu
+/// @author Steven Lewis smlewi@gmail.com
 
 #ifndef INCLUDED_protocols_toolbox_task_operations_RestrictOperationsBase_hh
 #define INCLUDED_protocols_toolbox_task_operations_RestrictOperationsBase_hh
@@ -21,16 +21,6 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
-
-// Utility Headers
-// AUTO-REMOVED #include <core/types.hh>
-// AUTO-REMOVED #include <utility/vector1_bool.hh>
-
-// C++ Headers
-// AUTO-REMOVED #include <string>
-
-#include <utility/vector1.hh>
-
 
 namespace protocols {
 namespace toolbox {
@@ -58,10 +48,10 @@ protected:
 	///@brief this is the only real function - it takes a calculator name and calculation, and a PackerTask-compatible vector, and flips booleans in the vector according to the calculator
 	void
 	run_calculator(
-								 core::pose::Pose const & pose,
-								 std::string const & calculator,
-								 std::string const & calculation,
-								 utility::vector1_bool & residues ) const;
+		core::pose::Pose const & pose,
+		std::string const & calculator,
+		std::string const & calculation,
+		utility::vector1_bool & residues ) const;
 };
 
 } //namespace protocols

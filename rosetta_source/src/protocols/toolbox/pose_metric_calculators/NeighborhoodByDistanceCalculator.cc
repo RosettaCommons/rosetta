@@ -22,6 +22,8 @@
 #include <core/conformation/PointGraph.hh>
 #include <core/conformation/find_neighbors.hh>
 #include <core/graph/Graph.hh>
+#include <core/conformation/PointGraphData.hh>
+#include <core/graph/UpperEdgeGraph.hh>
 
 //Utility headers
 #include <basic/options/option.hh>
@@ -33,13 +35,7 @@
 
 // option key includes
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
-
-//Auto Headers
-#include <core/conformation/PointGraphData.hh>
-#include <core/graph/UpperEdgeGraph.hh>
-#include <utility/vector1.hh>
 #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
-
 
 static basic::Tracer TR("protocols.toolbox.PoseMetricCalculators.NeighborhoodByDistanceCalculator");
 using basic::Error;

@@ -23,6 +23,9 @@
 
 #include <core/conformation/PointGraph.hh>
 #include <core/conformation/find_neighbors.hh>
+#include <core/conformation/PointGraphData.hh>
+
+#include <core/graph/UpperEdgeGraph.hh>
 
 //Utility headers
 //#include <basic/options/option.hh>
@@ -32,15 +35,7 @@
 #include <utility/string_util.hh>
 
 // option key includes
-
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
-
-#include <core/conformation/PointGraphData.hh>
-#include <core/graph/UpperEdgeGraph.hh>
-#include <utility/vector1.hh>
-
-
-
 
 //C++ headers
 //#include <set>

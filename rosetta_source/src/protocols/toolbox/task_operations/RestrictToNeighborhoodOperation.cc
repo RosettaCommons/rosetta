@@ -9,7 +9,7 @@
 
 /// @file   protocols/toolbox/task_operations/RestrictToNeighborhoodOperation.cc
 /// @brief  TaskOperation class that finds a neighborhood and leaves it mobile in the PackerTask
-/// @author Steven Lewis smlewi@unc.edu
+/// @author Steven Lewis smlewi@gmail.com
 
 // Unit Headers
 #include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperation.hh>
@@ -19,21 +19,20 @@
 #include <core/pose/Pose.hh>
 
 #include <core/pack/task/PackerTask.hh>
+
 #include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
+
 #include <core/pose/metrics/CalculatorFactory.hh>
-// AUTO-REMOVED #include <basic/MetricValue.hh>
 
 // Utility Headers
 #include <core/types.hh>
 #include <utility/vector1_bool.hh>
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
+#include <utility/excn/Exceptions.hh>
 
 // C++ Headers
 #include <set>
-
-#include <utility/vector1.hh>
-
 
 using basic::Error;
 using basic::Warning;
@@ -62,6 +61,55 @@ RestrictToNeighborhoodOperation::RestrictToNeighborhoodOperation( std::set< core
 	make_calculator( central_residues );
 }
 
+RestrictToNeighborhoodOperation::RestrictToNeighborhoodOperation( std::set< core::Size > const & central_residues, core::Real const dist_cutoff )
+	: parent(), calculator_name_("")
+{
+	make_calculator( central_residues, dist_cutoff );
+}
+
+RestrictToNeighborhoodOperation::~RestrictToNeighborhoodOperation() {}
+
+///@details be warned if you use clone that you'll not get a new interface calculator
+core::pack::task::operation::TaskOperationOP RestrictToNeighborhoodOperation::clone() const
+{
+	return new RestrictToNeighborhoodOperation( *this );
+}
+
+RestrictToNeighborhoodOperation::RestrictToNeighborhoodOperation( RestrictToNeighborhoodOperation const & rhs) :
+	parent(rhs)
+{
+	*this = rhs;
+}
+
+///@brief assignment operator
+RestrictToNeighborhoodOperation & RestrictToNeighborhoodOperation::operator=(
+	RestrictToNeighborhoodOperation const & rhs ){
+
+	//abort self-assignment
+	if (this == &rhs) return *this;
+
+	calculator_name_ = rhs.get_calculator_name();
+
+	return *this;
+}
+
+///@details private helper function to make calculator - runs in the ctor
+void RestrictToNeighborhoodOperation::make_calculator(
+	std::set< core::Size > const & central_residues,
+	core::Real dist_cutoff
+) {
+	make_name( central_residues );
+
+	using namespace core::pose::metrics;
+	if( CalculatorFactory::Instance().check_calculator_exists( calculator_name_ ) ){
+		Warning() << "In RestrictToNeighborhoodOperation, calculator " << calculator_name_
+							<< " already exists, this is hopefully correct for your purposes" << std::endl;
+	} else {
+	using protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator;
+	CalculatorFactory::Instance().register_calculator( calculator_name_, new NeighborhoodByDistanceCalculator( central_residues, dist_cutoff ) );
+	}
+}
+
 ///@details private helper function to make calculator - runs in the ctor
 void RestrictToNeighborhoodOperation::make_calculator( std::set< core::Size > const & central_residues ) {
 	make_name( central_residues );
@@ -86,20 +134,6 @@ void RestrictToNeighborhoodOperation::make_name( std::set< core::Size > const & 
 
 }
 
-RestrictToNeighborhoodOperation::~RestrictToNeighborhoodOperation() {}
-
-core::pack::task::operation::TaskOperationOP
-RestrictToNeighborhoodOperationCreator::create_task_operation() const
-{
-	return new RestrictToNeighborhoodOperation;
-}
-
-///@details be warned if you use clone that you'll not get a new interface calculator
-core::pack::task::operation::TaskOperationOP RestrictToNeighborhoodOperation::clone() const
-{
-	return new RestrictToNeighborhoodOperation( *this );
-}
-
 void
 RestrictToNeighborhoodOperation::apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const
 {
@@ -107,10 +141,60 @@ RestrictToNeighborhoodOperation::apply( core::pose::Pose const & pose, core::pac
  	//vector for filling packertask
  	utility::vector1_bool repack(pose.total_residue(), false);
 
+	//this is in the parent class, RestrictOperationsBase
 	run_calculator(pose, calculator_name_, "neighbors", repack);
 
  	task.restrict_to_residues(repack);
 
+	return;
+}
+
+//utility function for get_central_residues and get_distance_cutoff
+protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculatorCOP
+RestrictToNeighborhoodOperation::get_calculator() const {
+	using namespace core::pose::metrics;
+	if( !CalculatorFactory::Instance().check_calculator_exists( calculator_name_ ) ){
+		throw utility::excn::EXCN_Msg_Exception("In RestrictToNeighborhoodOperation get_calculator, calculator " + calculator_name_ + " does not exist");
+	}
+
+	using protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculatorCOP;
+	using protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator;
+
+	assert( dynamic_cast< NeighborhoodByDistanceCalculator const * > (CalculatorFactory::Instance().retrieve_calculator(calculator_name_).get()));
+
+	NeighborhoodByDistanceCalculatorCOP calculator(
+		static_cast< NeighborhoodByDistanceCalculator const * >
+		(CalculatorFactory::Instance().retrieve_calculator(calculator_name_).get()));
+
+	return calculator;
+}
+
+std::set< core::Size > const & RestrictToNeighborhoodOperation::get_central_residues() const {
+	return get_calculator()->central_residues();
+}
+
+core::Real RestrictToNeighborhoodOperation::get_distance_cutoff() const {
+	return get_calculator()->dist_cutoff();
+}
+
+///@brief reskin of normal make_calculator
+void  RestrictToNeighborhoodOperation::set_neighborhood_parameters(
+	SizeSet const & central_residues,
+	core::Real dist_cutoff )
+{
+	make_calculator(central_residues, dist_cutoff);
+}
+
+///@brief reskin of normal make_calculator
+void  RestrictToNeighborhoodOperation::set_neighborhood_parameters( SizeSet const & central_residues )
+{
+	make_calculator(central_residues);
+}
+
+core::pack::task::operation::TaskOperationOP
+RestrictToNeighborhoodOperationCreator::create_task_operation() const
+{
+	return new RestrictToNeighborhoodOperation;
 }
 
 } //namespace protocols

@@ -30,13 +30,7 @@
 #include <set>
 
 // option key includes
-
 #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
-
-#include <utility/vector1.hh>
-
-
-
 
 namespace protocols{
 namespace toolbox {
@@ -50,8 +44,8 @@ public:
 
   ///@brief central_residue is the residue whose neighbors we find
   NeighborsByDistanceCalculator(
-															 core::Size central_residue,
-															 core::Real dist_cutoff = basic::options::option[basic::options::OptionKeys::pose_metrics::neighbor_by_distance_cutoff]
+		core::Size central_residue,
+		core::Real dist_cutoff = basic::options::option[basic::options::OptionKeys::pose_metrics::neighbor_by_distance_cutoff]
 	);
 
 	NeighborsByDistanceCalculator( NeighborsByDistanceCalculator const & calculator );

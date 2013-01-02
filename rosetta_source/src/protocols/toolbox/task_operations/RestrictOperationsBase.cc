@@ -9,15 +9,13 @@
 
 /// @file   protocols/toolbox/task_operations/RestrictOperationsBase.cc
 /// @brief  Base class for PoseMetricCalculator-using TaskOperations
-/// @author Steven Lewis smlewi@unc.edu
+/// @author Steven Lewis smlewi@gmail.com
 
 // Unit Headers
 #include <protocols/toolbox/task_operations/RestrictOperationsBase.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>
-
-//#include <core/pack/task/PackerTask.hh>
 
 #include <basic/MetricValue.hh>
 
@@ -31,9 +29,6 @@
 
 #include <utility/vector1.hh>
 
-
-//using basic::Error;
-//using basic::Warning;
 //static basic::Tracer TR( "protocols.toolbox.TaskOperations.RestrictOperationsBase" );
 
 namespace protocols {
@@ -46,10 +41,10 @@ RestrictOperationsBase::~RestrictOperationsBase() {}
 
 void
 RestrictOperationsBase::run_calculator(
-																			 core::pose::Pose const & pose,
-																			 std::string const & calculator,
-																			 std::string const & calculation,
-																			 utility::vector1_bool & residues ) const
+	core::pose::Pose const & pose,
+	std::string const & calculator,
+	std::string const & calculation,
+	utility::vector1_bool & residues ) const
 {
 	runtime_assert(residues.size() == pose.total_residue());
 
