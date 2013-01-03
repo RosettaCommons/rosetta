@@ -90,7 +90,7 @@ ResidueCountFilter::parse_my_tag(
 	}
 
 	if(tag->hasOption("residue_types")){
-		std::string const res_type_str( tag->getOption< std::string >("residue_types") );
+		std::string const res_type_str( tag->getOption< std::string >("residue_types", "") );
 		utility::vector1< std::string > const res_type_vec( utility::string_split( res_type_str, ',' ) );
 		TR << "Residue types specified: " << res_type_vec << std::endl;
 		// get the residue type set from the first residue of the input pose
