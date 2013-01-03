@@ -166,7 +166,7 @@ PointMutScanDriver::~PointMutScanDriver() {
 ///
 void PointMutScanDriver::go() {
 
-	clock_t entire_starttime;
+	clock_t entire_starttime(0);
 	if ( MPI_rank_ == 0 ) {
 		// time the protocol, doesn't include the time spent reading in input structures.
 		entire_starttime = clock();
