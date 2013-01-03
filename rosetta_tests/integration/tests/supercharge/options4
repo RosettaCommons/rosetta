@@ -5,6 +5,6 @@
 -ignore_unrecognized_res
 
 -AvNAPSA_positive
--surface_definition_atom_neighbor_cutoff 120
+-surface_atom_cutoff 120
 
 -out:path outpath

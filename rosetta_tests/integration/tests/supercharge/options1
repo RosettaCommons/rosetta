@@ -4,7 +4,7 @@
 -jd2:no_output
 -ignore_unrecognized_res
 
--surface_definition_residue_neighbor_cutoff 16
+-surface_residue_cutoff 16
 -include_arg
 -include_lys
 -refweight_arg -1.98
@@ -13,8 +13,8 @@
 -dont_mutate_correct_charge true
 -dont_mutate_hbonded_sidechains true
 -nstruct 2
--compare_energies
--only_compare_mutated_residues
+-compare_residue_energies_all false
+-compare_residue_energies_mut true
 
 -resfile resfile
 

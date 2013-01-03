@@ -4,13 +4,13 @@
 -jd2:no_output
 -ignore_unrecognized_res
 
--surface_definition_atom_neighbor_cutoff 100
--pre_packminpack true
+-surface_atom_cutoff 100
+-pre_packminpack false
 -include_asp
 -include_glu
 -refweight_asp -0.6
 -refweight_glu -0.8
--target_net_charge -14
+-target_net_charge -20
 
 -dont_mutate_glyprocys true
 -dont_mutate_correct_charge true

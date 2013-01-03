@@ -114,10 +114,10 @@ basic::options::BooleanOptionKey const AvNAPSA_negative("AvNAPSA_negative");
 basic::options::IntegerOptionKey const target_net_charge("target_net_charge");
 
 //AvNAPSA-mode or Rosetta-mode
-basic::options::IntegerOptionKey const surface_definition_atom_neighbor_cutoff("surface_definition_atom_neighbor_cutoff"); // if target_net_charge is specified, the AvNAPSA cutoff is ignored
+basic::options::IntegerOptionKey const surface_atom_cutoff("surface_atom_cutoff"); // if target_net_charge is specified, the AvNAPSA cutoff is ignored
 
 //Rosetta-mode (these will be ignored if AvNAPSA mode is on via AvNAPSA_positive or AvNAPSA_negative)
-basic::options::IntegerOptionKey const surface_definition_residue_neighbor_cutoff("surface_definition_residue_neighbor_cutoff"); //for choosing surface residues, cannot be done in AvNAPSA mode
+basic::options::IntegerOptionKey const surface_residue_cutoff("surface_residue_cutoff"); //for choosing surface residues, cannot be done in AvNAPSA mode
 basic::options::BooleanOptionKey const include_arg("include_arg");
 basic::options::BooleanOptionKey const include_lys("include_lys");
 basic::options::BooleanOptionKey const include_asp("include_asp");
@@ -133,8 +133,8 @@ basic::options::BooleanOptionKey const pre_packminpack("pre_packminpack"); // tr
 basic::options::IntegerOptionKey const nstruct("nstruct"); // custom nstruct, not used in AvNAPSA mode bc that sequence is deterministic
 
 //AvNAPSA-mode or Rosetta-mode
-basic::options::BooleanOptionKey const compare_energies("compare_energies");
-basic::options::BooleanOptionKey const only_compare_mutated_residues("only_compare_mutated_residues");
+basic::options::BooleanOptionKey const compare_residue_energies_all("compare_residue_energies_all");
+basic::options::BooleanOptionKey const compare_residue_energies_mut("compare_residue_energies_mut");
 
 //Note: either mode will read a user input resfile, but be sure to use ALLAA as the default, because NATAA default will make the surface residues undesignable.  Either mode will make a second resfile with NATAA as default.
 
@@ -152,12 +152,21 @@ public:
   void
   apply( Pose & pose ) {
 		using namespace basic::options;
-
 		out_path_ = basic::options::option[ OptionKeys::out::path::path ]();
+
+		//check for chain ID
+		char chain = pose.pdb_info()->chain(1);
+		if(chain == ' ') {
+			TR << "chain is whitespace, setting chain ID to 'A' " << std::endl;
+			for(Size i=1; i<=pose.total_residue(); ++i) {
+				pose.pdb_info()->chain(i, 'A');
+			}
+		}
+
 
 
 		//If the target net charge is -10, current net charge is -4, need to perform positive-supercharging
-		if( option[local::target_net_charge].user() ) {
+		if( option[local::target_net_charge].value() != 999 ) {
 
 			int current_net_charge = get_net_charge( pose );
 			int target_net_charge = option[local::target_net_charge];
@@ -216,7 +225,7 @@ public:
 			design_supercharge( starting_pose, pose ); // sets reference energies, designs the surface, outputs with an informative name
 		}
 
-		if(option[local::compare_energies] ) {
+		if(option[local::compare_residue_energies_all] || option[local::compare_residue_energies_mut]) {
 			energy_comparison( native, pose );
 		}
 
@@ -315,10 +324,10 @@ public:
 		std::stringstream pymol_avnapsa_residues;
 		utility::vector1< Size > residues_to_mutate; //will be appended either to acheive correct charge or based on AvNAPSA value cutoff
 
-		if( ! basic::options::option[local::target_net_charge].user() ) {
-			largest_mutated_AvNAPSA_ = (Size) basic::options::option[local::surface_definition_atom_neighbor_cutoff]; // no specified net charge, largest AvNAPSA allowed equals the cutoff.  This value is used to name output PDBs.
+		if( basic::options::option[local::target_net_charge].value() == 999 ) {
+			largest_mutated_AvNAPSA_ = (Size) basic::options::option[local::surface_atom_cutoff]; // no specified net charge, largest AvNAPSA allowed equals the cutoff.  This value is used to name output PDBs.
 			for( Size i(1); i <= AvNAPSA_values_.size(); ++i) {
-				if( AvNAPSA_values_[i] < basic::options::option[local::surface_definition_atom_neighbor_cutoff] && AvNAPSA_values_[i] != 9999 ) {
+				if( AvNAPSA_values_[i] < basic::options::option[local::surface_atom_cutoff] && AvNAPSA_values_[i] != 9999 ) {
 					residues_to_mutate.push_back( i );
 					TR << "Mutate " << i << std::endl;
 				}
@@ -547,7 +556,7 @@ public:
 	void set_surface( Pose const & pose ){
 
 		//define surface by residue neighbors
-		if( ! basic::options::option[local::surface_definition_atom_neighbor_cutoff].user() ) {
+		if( ! basic::options::option[local::surface_atom_cutoff].user() ) {
 			// registering the calculators (in this way will not allow nstruct > 1)
 			Size biggest_calc(0);
 			std::string const calc_stem("nbr_dist_calc_");
@@ -577,7 +586,7 @@ public:
 
 				//TR << "residue " << i << " num_neighbors " << num_n.value() << std::endl;
 
-				if( num_n.value() <= core::Size(basic::options::option[local::surface_definition_residue_neighbor_cutoff].value())) {
+				if( num_n.value() <= core::Size(basic::options::option[local::surface_residue_cutoff].value())) {
 					TR << "adding " << i << " to surface set" << std::endl;
 					surface_res_.insert(i);
 				}
@@ -631,7 +640,7 @@ public:
 				TR << "AvNAPSA score for residue " << i << "  " << avnapsa_value << std::endl;
 
 				for(Size i(1); i<= AvNAPSA_values_.size(); ++i) {
-					if(AvNAPSA_values_[i] <= basic::options::option[local::surface_definition_atom_neighbor_cutoff]) { //every residue has an AvNAPSA value, so i equals residue number
+					if(AvNAPSA_values_[i] <= basic::options::option[local::surface_atom_cutoff]) { //every residue has an AvNAPSA value, so i equals residue number
 						surface_res_.insert(i);
 					}
 				}
@@ -819,7 +828,7 @@ public:
 
 
 		//if a target net charge is given as an option, iterate between packrot and incrementing refweights until target charge is acheived
-		if( option[local::target_net_charge].user() ) {
+		if( option[local::target_net_charge].value() != 999 ) {
 
 			int net_charge_target = option[local::target_net_charge];
 			int charge_diff = abs( get_net_charge(pose) - net_charge_target );
@@ -948,7 +957,7 @@ public:
 		std::stringstream ss_i;
 		std::string i_string;
 
-		if( ! option[local::target_net_charge].user() ) {
+		if( option[local::target_net_charge].value() == 999 ) {
 
 			Size nstruct = (Size) option[local::nstruct].value();
 			for( Size i=1; i <= nstruct; ++i ) {
@@ -1253,7 +1262,7 @@ public:
 			std::string pose_name3 = pose.residue(ii).name3();
 
 			bool is_mutation( native_name3 != pose_name3);
-			bool is_mutation_option( basic::options::option[local::only_compare_mutated_residues] );
+			bool is_mutation_option( basic::options::option[local::compare_residue_energies_mut] && !basic::options::option[local::compare_residue_energies_all] );
 
 			//TR << "comparing residue " << ii << " " << native_name3 << " " << pose_name3 << " mutation? " << is_mutation << " mutation_option " << is_mutation_option << std::endl;
 
@@ -1352,10 +1361,12 @@ public:
 		TR << sum_ref         <<  std::setprecision(4) << std::fixed << " ";
 		TR << std::endl;
 
+		TR << pose.pdb_info()->name() << " score_terms: total fa_atr fa_rep fa_sol fa_intra_rep pro_close fa_pair hbond_sr_bb hbond_lr_bb hbond_bb_sc hbond_sc dslf_ss_dst dslf_cs_ang dslf_ss_dih dslf_ca_dih rama omega fa_dun p_aa_pp ref" << std::endl;
+
 		return;
   }
 
-	//fa_atr fa_rep fa_sol fa_intra_rep pro_close fa_pair hbond_sr_bb hbond_lr_bb hbond_bb_sc hbond_sc dslf_ss_dst dslf_cs_ang dslf_ss_dih dslf_ca_dih rama omega fa_dun p_aa_pp ref total
+	//total fa_atr fa_rep fa_sol fa_intra_rep pro_close fa_pair hbond_sr_bb hbond_lr_bb hbond_bb_sc hbond_sc dslf_ss_dst dslf_cs_ang dslf_ss_dih dslf_ca_dih rama omega fa_dun p_aa_pp ref
 
 
 
@@ -1382,10 +1393,10 @@ int main( int argc, char* argv[] )
 	using basic::options::option;
 	option.add( local::AvNAPSA_positive, "AvNAPSA positive supercharge").def(false);
 	option.add( local::AvNAPSA_negative, "AvNAPSA negative supercharge").def(false);
-	option.add( local::target_net_charge, "target net charge").def(0);
-	option.add( local::surface_definition_atom_neighbor_cutoff, "AvNAPSA neighbor atom cutoff").def(100); // this is how AvNAPSA defines surface, can be used in the Rosetta approach
+	option.add( local::target_net_charge, "target net charge").def(999); //Sentinal value of 999 is used to check if this option is user-active.
+	option.add( local::surface_atom_cutoff, "AvNAPSA neighbor atom cutoff").def(100); // this is how AvNAPSA defines surface, can be used in the Rosetta approach
 
-	option.add( local::surface_definition_residue_neighbor_cutoff, "cutoff for surface residues ( <= # is surface)" ).def(16);
+	option.add( local::surface_residue_cutoff, "cutoff for surface residues ( <= # is surface)" ).def(16);
 	option.add( local::include_arg, "include arg in supercharge design").def(false);
 	option.add( local::include_lys, "include lys in supercharge design").def(false);
 	option.add( local::include_asp, "include asp in supercharge design").def(false);
@@ -1401,8 +1412,8 @@ int main( int argc, char* argv[] )
 
 	option.add( local::nstruct, "local nstruct").def(1);
 
-	option.add( local::compare_energies, "compare energy terms for all residues").def(false);
-	option.add( local::only_compare_mutated_residues, "mutated residues only").def(false);
+	option.add( local::compare_residue_energies_all, "compare energy terms for all residues").def(false);
+	option.add( local::compare_residue_energies_mut, "compare energy terms for mutated residues only").def(true);
 
 	devel::init(argc, argv);
 
