@@ -71,6 +71,7 @@
 
 
 // C++ Headers
+#include <utility/excn/Exceptions.hh>
 #include <sstream>
 
 

@@ -62,6 +62,7 @@
 #include <ObjexxFCL/format.hh>
 
 // C++ Headers
+#include <utility/excn/Exceptions.hh>
 #include <cmath>
 
 

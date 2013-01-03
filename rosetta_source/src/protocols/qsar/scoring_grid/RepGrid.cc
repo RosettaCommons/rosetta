@@ -19,6 +19,7 @@
 #include <basic/Tracer.hh>
 
 #include <core/pose/Pose.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/vector0.hh>
 
 

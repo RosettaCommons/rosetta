@@ -47,6 +47,7 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
+#include <utility/excn/Exceptions.hh>
 #include <protocols/simple_moves/DesignRepackMover.hh>
 
 

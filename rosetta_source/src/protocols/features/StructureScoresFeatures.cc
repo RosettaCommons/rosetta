@@ -55,6 +55,7 @@
 #include <string>
 
 #include <core/scoring/ScoreFunction.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/vector0.hh>
 
 

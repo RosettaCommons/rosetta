@@ -34,6 +34,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
 #include <ObjexxFCL/FArray1D.hh>
+#include <utility/excn/Exceptions.hh>
 #include <ObjexxFCL/format.hh>
 
 namespace protocols {

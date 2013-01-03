@@ -19,6 +19,7 @@
 #include <core/pose/util.hh>
 #include <core/kinematics/Jump.hh>
 
+#include <utility/excn/Exceptions.hh>
 #include <utility/tag/Tag.hh>
 
 namespace protocols {

@@ -35,6 +35,7 @@
 #include <core/chemical/ChemicalManager.fwd.hh>
 //Auto Headers
 #include <protocols/simple_filters/ScoreTypeFilter.hh>
+#include <utility/excn/Exceptions.hh>
 #include <protocols/elscripts/util.hh>
 
 

@@ -27,6 +27,7 @@
 
 #include <utility/tools/make_vector.hh>
 
+#include <utility/excn/Exceptions.hh>
 #include <core/pose/util.hh>
 
 namespace protocols {

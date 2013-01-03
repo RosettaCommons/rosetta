@@ -44,6 +44,7 @@
 #include <utility/vector0.hh>
 
 //Auto Headers
+#include <utility/excn/Exceptions.hh>
 #include <core/conformation/Conformation.hh>
 
 namespace protocols {

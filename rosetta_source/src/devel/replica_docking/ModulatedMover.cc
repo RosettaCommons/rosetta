@@ -22,6 +22,7 @@
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
+#include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 
 

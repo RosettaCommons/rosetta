@@ -35,6 +35,7 @@
 
 //Auto Headers
 #include <core/conformation/Residue.hh>
+#include <utility/excn/Exceptions.hh>
 #include <core/kinematics/Jump.hh>
 
 namespace protocols {

@@ -30,6 +30,7 @@
 
 // C++ Headers
 #include <string>
+#include <utility/excn/Exceptions.hh>
 #include <sstream>
 
 /// Macros are not properly caught and passed along by my #inclusion

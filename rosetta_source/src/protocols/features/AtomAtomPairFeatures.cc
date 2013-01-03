@@ -51,6 +51,7 @@
 
 // C++ Headers
 #include <algorithm>
+#include <utility/excn/Exceptions.hh>
 #include <map>
 
 namespace protocols{

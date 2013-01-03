@@ -34,6 +34,7 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/tag/Tag.hh>
 
 

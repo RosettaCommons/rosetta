@@ -25,6 +25,7 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer tr("devel.replica_docking.TempInterpolatorFactory");

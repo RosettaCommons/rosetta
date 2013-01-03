@@ -43,6 +43,7 @@
 #include <utility/string_util.hh>
 
 #include <boost/algorithm/string.hpp>
+#include <utility/excn/Exceptions.hh>
 #include <boost/foreach.hpp>
 
 

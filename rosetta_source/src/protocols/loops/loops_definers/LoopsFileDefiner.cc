@@ -24,6 +24,7 @@
 
 // C++ Headers
 #include <string>
+#include <utility/excn/Exceptions.hh>
 #include <sstream>
 
 

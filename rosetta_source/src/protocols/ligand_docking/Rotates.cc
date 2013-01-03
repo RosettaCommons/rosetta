@@ -30,6 +30,7 @@
 
 #include <algorithm>
 
+#include <utility/excn/Exceptions.hh>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 

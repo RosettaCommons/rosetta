@@ -72,6 +72,7 @@
 
 // C++ Headers
 #include <cmath>
+#include <utility/excn/Exceptions.hh>
 #include <algorithm>
 
 

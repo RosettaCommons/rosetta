@@ -45,6 +45,7 @@
 
 // C++ Headers
 #include <cmath>
+#include <utility/excn/Exceptions.hh>
 #include <sstream>
 
 namespace protocols{

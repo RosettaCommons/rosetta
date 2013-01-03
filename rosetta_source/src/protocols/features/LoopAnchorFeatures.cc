@@ -44,6 +44,7 @@
 #include <cppdb/frontend.h>
 
 // C++ Headers
+#include <utility/excn/Exceptions.hh>
 #include <sstream>
 
 namespace protocols{

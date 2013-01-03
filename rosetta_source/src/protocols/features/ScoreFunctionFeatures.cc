@@ -51,6 +51,7 @@
 
 // C++ Headers
 #include <sstream>
+#include <utility/excn/Exceptions.hh>
 #include <string>
 
 

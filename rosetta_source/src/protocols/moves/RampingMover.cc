@@ -32,6 +32,7 @@
 
 // tracer
 #include <basic/Tracer.hh>
+#include <utility/excn/Exceptions.hh>
 #include <complex>
 
 using basic::T;

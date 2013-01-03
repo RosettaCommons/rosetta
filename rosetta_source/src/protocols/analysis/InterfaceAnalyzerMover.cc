@@ -94,6 +94,7 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
+#include <utility/excn/Exceptions.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 using basic::T;
 using basic::Error;

@@ -54,6 +54,7 @@
 #include <numeric/MultiDimensionalHistogram.hh>
 
 //Auto Headers
+#include <utility/excn/Exceptions.hh>
 #include <core/id/TorsionID_Range.hh>
 
 // C++ Headers

@@ -39,6 +39,7 @@
 // C++ Headers
 #include <sstream>
 
+#include <utility/excn/Exceptions.hh>
 #include <utility/vector0.hh>
 
 

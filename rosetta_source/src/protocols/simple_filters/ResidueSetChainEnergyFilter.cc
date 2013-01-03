@@ -36,6 +36,7 @@
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/conformation/Conformation.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <utility/excn/Exceptions.hh>
 #include <core/pose/selection.hh>
 
 namespace protocols{

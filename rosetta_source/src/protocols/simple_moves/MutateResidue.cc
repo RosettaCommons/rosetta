@@ -34,6 +34,7 @@
 #include <basic/Tracer.hh>
 #include <core/kinematics/Jump.hh>
 #include <utility/vector0.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 
 

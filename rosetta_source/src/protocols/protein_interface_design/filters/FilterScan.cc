@@ -53,6 +53,7 @@
 #include <ObjexxFCL/format.hh>
 
 //Auto Headers
+#include <utility/excn/Exceptions.hh>
 #include <basic/options/keys/OptionKeys.hh>
 
 namespace protocols {

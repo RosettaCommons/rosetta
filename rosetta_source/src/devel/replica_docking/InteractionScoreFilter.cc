@@ -28,6 +28,7 @@
 #include <utility/vector1.hh>
 
 // Project Headers
+#include <utility/excn/Exceptions.hh>
 #include <core/types.hh>
 
 namespace devel {

@@ -74,6 +74,7 @@
 //util
 #include <utility/vector1.hh>
 #include <set>
+#include <utility/excn/Exceptions.hh>
 #include <boost/foreach.hpp>
 
 #define foreach BOOST_FOREACH

@@ -39,6 +39,7 @@
 
 #include <core/chemical/ResidueType.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/vector0.hh>
 
 

@@ -31,6 +31,7 @@
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 
+#include <utility/excn/Exceptions.hh>
 #include <boost/foreach.hpp>
 
 //Auto Headers

@@ -62,6 +62,7 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
+#include <utility/excn/Exceptions.hh>
 #include <basic/options/option.hh>
 
 // C++ Headers

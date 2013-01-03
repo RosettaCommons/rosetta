@@ -98,6 +98,7 @@ RotamerRecoveryMoverCreator::mover_name()
 //Auto Headers
 #include <core/kinematics/Jump.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/vector0.hh>
 
 //using std::ios::app;

@@ -35,6 +35,7 @@
 #include <numeric/xyz.functions.hh>
 #include <numeric/trig.functions.hh>
 
+#include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer tr( "devel.replica_docking.ThermodynamicRigidBodyMover" );

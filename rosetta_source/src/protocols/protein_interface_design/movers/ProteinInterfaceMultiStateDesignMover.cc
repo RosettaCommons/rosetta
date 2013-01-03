@@ -61,6 +61,7 @@
 #include <ObjexxFCL/format.hh>
 
 //Auto Headers
+#include <utility/excn/Exceptions.hh>
 #include <protocols/simple_filters/EnergyPerResidueFilter.hh>
 
 

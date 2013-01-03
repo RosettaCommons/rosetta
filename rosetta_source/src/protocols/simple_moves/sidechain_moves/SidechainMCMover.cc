@@ -61,6 +61,7 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
+#include <utility/excn/Exceptions.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 
 #ifdef WIN_PYROSETTA

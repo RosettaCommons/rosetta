@@ -33,6 +33,7 @@
 #include <core/pose/symmetry/util.hh>
 
 // Project Headers
+#include <utility/excn/Exceptions.hh>
 #include <core/types.hh>
 
 

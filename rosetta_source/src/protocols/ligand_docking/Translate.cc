@@ -39,6 +39,7 @@
 #define foreach BOOST_FOREACH
 
 //Auto Headers
+#include <utility/excn/Exceptions.hh>
 #include <core/pose/Pose.hh>
 using basic::T;
 using basic::Error;

@@ -69,6 +69,7 @@
 #include <algorithm>
 
 //Auto Headers
+#include <utility/excn/Exceptions.hh>
 #include <boost/functional/hash.hpp>
 
 namespace protocols {

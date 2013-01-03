@@ -32,6 +32,7 @@
 
 //utility headers
 #include <utility/tag/Tag.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 
 static basic::Tracer tr( "protocols.forge.remodel.ResidueVicinityRCG" );

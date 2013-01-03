@@ -25,6 +25,7 @@
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/exit.hh>
 
 //Auto Headers

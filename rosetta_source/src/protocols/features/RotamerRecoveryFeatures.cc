@@ -48,6 +48,7 @@
 
 //Auto Headers
 #include <core/pack/task/operation/TaskOperations.fwd.hh>
+#include <utility/excn/Exceptions.hh>
 #include <protocols/rotamer_recovery/RRComparer.hh>
 
 

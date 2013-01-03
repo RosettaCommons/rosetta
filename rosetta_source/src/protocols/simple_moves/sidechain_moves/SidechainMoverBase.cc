@@ -59,6 +59,7 @@
 // C++ Headers
 #include <sstream>
 #include <fstream>
+#include <utility/excn/Exceptions.hh>
 #include <utility/fixedsizearray1.hh>
 using namespace core;
 using namespace core::pose;

@@ -45,6 +45,7 @@
 
 // cmd-line options
 #include <basic/options/option_macros.hh>
+#include <utility/excn/Exceptions.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 
 static basic::Tracer tr("protocols.docking.DockSetupMover");

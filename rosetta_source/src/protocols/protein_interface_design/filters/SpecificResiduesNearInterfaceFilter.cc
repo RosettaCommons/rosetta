@@ -27,6 +27,7 @@
 #include <core/pack/task/PackerTask.hh>
 
 // C++ Headers
+#include <utility/excn/Exceptions.hh>
 #include <sstream>
 
 namespace protocols {

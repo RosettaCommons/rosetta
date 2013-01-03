@@ -27,6 +27,7 @@
 #include <numeric/xyz.functions.hh>
 #include <numeric/color_util.hh>
 
+#include <utility/excn/Exceptions.hh>
 #include <iostream>
 
 

@@ -31,6 +31,7 @@
 
 //Auto Headers
 #include <utility/vector0.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 
 

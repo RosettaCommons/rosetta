@@ -44,6 +44,7 @@
 #include <boost/foreach.hpp>
 
 //Auto Headers
+#include <utility/excn/Exceptions.hh>
 #include <core/conformation/Conformation.hh>
 #define foreach BOOST_FOREACH
 

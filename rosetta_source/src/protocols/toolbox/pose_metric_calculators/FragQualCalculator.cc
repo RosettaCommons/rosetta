@@ -47,6 +47,7 @@
 #include <utility/vector0.hh>
 
 //Auto Headers
+#include <utility/excn/Exceptions.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 
 

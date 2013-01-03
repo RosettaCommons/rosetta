@@ -30,6 +30,7 @@
 // utility headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 
 

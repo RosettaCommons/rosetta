@@ -43,6 +43,7 @@
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 
+#include <utility/excn/Exceptions.hh>
 #include <fstream>
 
 using basic::T;

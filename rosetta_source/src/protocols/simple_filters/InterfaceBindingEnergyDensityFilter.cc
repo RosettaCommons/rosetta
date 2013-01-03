@@ -35,6 +35,7 @@
 #include <utility/tag/Tag.hh>
 
 // Basic headers
+#include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 
 namespace protocols {
