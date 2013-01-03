@@ -54,8 +54,8 @@ ResidueCountFilter::ResidueCountFilter(
 	max_residue_count_(src.max_residue_count_),
 	enable_max_residue_count_(src.enable_max_residue_count_),
 	min_residue_count_(src.min_residue_count_),
-	res_types_( src.res_types_ ),
-	enable_min_residue_count_(src.enable_min_residue_count_)
+	enable_min_residue_count_(src.enable_min_residue_count_),
+	res_types_( src.res_types_ )
 {}
 
 ResidueCountFilter::~ResidueCountFilter() {}
