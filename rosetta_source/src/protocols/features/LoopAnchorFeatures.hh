@@ -25,7 +25,6 @@
 // Utility Headers
 #include <numeric/HomogeneousTransform.fwd.hh>
 
-#include <utility/excn/Exceptions.hh>
 namespace protocols{
 namespace features{
 

@@ -28,7 +28,6 @@
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 
-#include <utility/excn/Exceptions.hh>
 namespace protocols {
 namespace rigid {
 

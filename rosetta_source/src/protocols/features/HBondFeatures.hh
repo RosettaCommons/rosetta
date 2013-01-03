@@ -40,7 +40,6 @@
 // C++ Headers
 #include <string>
 
-#include <utility/excn/Exceptions.hh>
 namespace protocols{
 namespace features{
 

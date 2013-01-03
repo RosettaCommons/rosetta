@@ -33,7 +33,6 @@
 
 ///////////////////////////////////////////////////////////////////////
 
-#include <utility/excn/Exceptions.hh>
 namespace protocols {
 namespace ligand_docking {
 

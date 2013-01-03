@@ -26,7 +26,6 @@
 #include <utility/tag/Tag.fwd.hh>
 
 
-#include <utility/excn/Exceptions.hh>
 namespace protocols {
 namespace qsar {
 

@@ -44,7 +44,6 @@
 #include <numeric/random/random.fwd.hh>
 
 
-#include <utility/excn/Exceptions.hh>
 namespace protocols {
 namespace simple_moves {
 namespace sidechain_moves {

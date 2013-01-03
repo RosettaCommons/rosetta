@@ -44,7 +44,6 @@
 
 // C++ headers
 
-#include <utility/excn/Exceptions.hh>
 namespace protocols {
 namespace docking {
 

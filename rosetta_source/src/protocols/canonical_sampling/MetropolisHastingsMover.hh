@@ -38,7 +38,6 @@
 #endif
 
 
-#include <utility/excn/Exceptions.hh>
 namespace protocols {
 namespace canonical_sampling {
 

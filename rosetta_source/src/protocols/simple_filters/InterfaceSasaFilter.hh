@@ -24,7 +24,6 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 
-#include <utility/excn/Exceptions.hh>
 namespace protocols {
 namespace simple_filters {
 

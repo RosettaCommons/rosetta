@@ -53,7 +53,6 @@
 #endif
 
 
-#include <utility/excn/Exceptions.hh>
 namespace protocols {
 namespace simple_moves {
 namespace sidechain_moves {

@@ -29,7 +29,6 @@
 
 // #include <protocols/protein_interface_design/design_utils.hh>
 
-#include <utility/excn/Exceptions.hh>
 namespace protocols {
 namespace simple_moves {
 

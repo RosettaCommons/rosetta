@@ -27,7 +27,6 @@
 
 // Unit headers
 
-#include <utility/excn/Exceptions.hh>
 namespace protocols {
 namespace protein_interface_design{
 namespace filters {

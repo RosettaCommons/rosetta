@@ -19,7 +19,6 @@
 #include <utility/vector1.hh>
 
 
-#include <utility/excn/Exceptions.hh>
 namespace protocols {
 namespace qsar {
 namespace scoring_grid {
