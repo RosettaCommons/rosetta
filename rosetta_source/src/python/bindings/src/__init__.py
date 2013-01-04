@@ -259,7 +259,7 @@ def MPIJobDistributor(nstruct, fun):
 
 
 def version():
-    return "PyRosetta 3.0 [Rosetta-3.4.r" + __version__ + \
+    return "PyRosetta 3.4.0 [Rosetta-3.4.r" + __version__ + \
            "] retrieved from: %s" % rosetta.core.minirosetta_svn_url() + \
            "\n(C) Copyright Rosetta Commons Member Institutions." + \
            "\nCreated in JHU by Sergey Lyskov and PyRosetta Team.\n"
