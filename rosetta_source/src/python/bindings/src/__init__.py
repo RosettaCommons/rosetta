@@ -259,7 +259,7 @@ def MPIJobDistributor(nstruct, fun):
 
 
 def version():
-    return "PyRosetta 2.012 [Rosetta-3.4.r" + __version__ + \
+    return "PyRosetta 3.0 [Rosetta-3.4.r" + __version__ + \
            "] retrieved from: %s" % rosetta.core.minirosetta_svn_url() + \
            "\n(C) Copyright Rosetta Commons Member Institutions." + \
            "\nCreated in JHU by Sergey Lyskov and PyRosetta Team.\n"
@@ -499,7 +499,7 @@ def output_scorefile(pose, pdb_name, current_name, scorefilepath, \
     score = scorefxn(pose)	 # Calculates total score.
     score_line = pose.energies().total_energies().weighted_string_of(scorefxn.weights())
     output_line = "filename: " + current_name + " total_score: " + str(round(score, 2))
-    
+
     # Calculates rmsd if native pose is defined.
     if native_pose:
         rmsd = CA_rmsd(native_pose, pose)
@@ -507,10 +507,10 @@ def output_scorefile(pose, pdb_name, current_name, scorefilepath, \
 
     with open(scorefilepath, 'a') as f:
         if additional_decoy_info:
-            f.write(output_line + ' ' + score_line + ' '+additional_decoy_info + '\n')  
+            f.write(output_line + ' ' + score_line + ' '+additional_decoy_info + '\n')
         else:
             f.write(output_line + ' ' + score_line + '\n')
-            
+
 # New classes.
 class PyJobDistributor:
     def __init__(self, pdb_name, nstruct, scorefxn):
