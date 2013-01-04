@@ -74,6 +74,7 @@ SwitchChainOrderMover::apply( Pose & pose )
 	positions_in_new_pose.clear();
 	foreach( char const chaini, chain_order() ){
 		core::Size const chain( chaini - '0' );
+		runtime_assert( chain > 0 && chain <= conf.num_chains() );
 		core::Size const chain_begin( conf.chain_begin( chain ) );
 		core::Size const chain_end(   conf.chain_end(   chain ) );
 
