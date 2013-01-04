@@ -122,7 +122,25 @@ BatchFeatures::report_features(
 		<< "\tname '" << name << "'" << std::endl
 		<< "\tdescription '" << description << "'" << std::endl;
 
-	std::string insert_string("INSERT INTO batches (batch_id, protocol_id, name, description) VALUES (?,?,?,?);");
+
+	//INSERT OR IGNORE probably isnt the best way of dealing with this but i was getting a stupid race condition with MPI before
+	//better designs encouraged.
+	std::string insert_string;
+	switch(db_session->get_db_mode())
+	{
+	case utility::sql_database::DatabaseMode::sqlite3:
+		insert_string = "INSERT OR IGNORE INTO batches (batch_id, protocol_id, name, description) VALUES (?,?,?,?);";
+		break;
+	case utility::sql_database::DatabaseMode::mysql:
+	case utility::sql_database::DatabaseMode::postgres:
+		insert_string = "INSERT IGNORE INTO batches (batch_id, protocol_id, name, description) VALUES (?,?,?,?);";
+		break;
+	default:
+		utility_exit_with_message(
+			"Unrecognized database mode: '" +
+			name_from_database_mode(db_session->get_db_mode()) + "'");
+		break;
+	}
 	cppdb::statement insert_statement = basic::database::safely_prepare_statement(insert_string,db_session);
 	insert_statement.bind(1,batch_id);
 	insert_statement.bind(2,protocol_id);

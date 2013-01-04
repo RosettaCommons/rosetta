@@ -27,7 +27,7 @@ namespace message_listening {
 static basic::Tracer TR("basic.message_listening.DbMoverMessageListener");
 
 DbMoverMessageListener::DbMoverMessageListener():
-protocol_id_(0)
+max_batch_id_(0),protocol_id_(0)
 {
 	if( basic::options::option[basic::options::OptionKeys::out::database_protocol_id].user() ){
 		protocol_id_ = basic::options::option[basic::options::OptionKeys::out::database_protocol_id];
@@ -44,7 +44,7 @@ DbMoverMessageListener::request(
 	if(protocol_id_==0){need_slave_data=true;}
 
 	if(!batch_ids_.count( identifier )){
-		Size max_batch_id(0);
+		Size max_batch_id = max_batch_id_;
 		for(
 			std::map< std::string, numeric::Size >::const_iterator
 				i = batch_ids_.begin(), ie = batch_ids_.end();
@@ -52,6 +52,7 @@ DbMoverMessageListener::request(
 			max_batch_id = std::max(max_batch_id, i->second);
 		}
 		batch_ids_[identifier] = max_batch_id + 1;
+		max_batch_id_ = max_batch_id;
 	}
 	return_data = utility::to_string(protocol_id_) + " " + utility::to_string(batch_ids_[identifier]);
 	return need_slave_data;

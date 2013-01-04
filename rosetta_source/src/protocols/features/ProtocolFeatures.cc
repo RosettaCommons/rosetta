@@ -191,7 +191,8 @@ ProtocolFeatures::report_features(
 	if(protocol_id) {
 		return protocol_id;
 	} else {
-		return insert_statement.sequence_last("protocols_protocol_id_seq");
+		core::Size protocol_id = insert_statement.sequence_last("protocols_protocol_id_seq");
+		return protocol_id;
 	}
 }
 

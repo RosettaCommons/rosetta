@@ -63,7 +63,7 @@ DbText::print(
 				return "VARCHAR(" + size_string + ")";
 			}
 			else{
-				return "VARCHAR";
+				return "TEXT";
 			}
 			break;
 		case utility::sql_database::DatabaseMode::postgres:

@@ -26,6 +26,7 @@
 #include <protocols/jd2/util.hh>
 #include <basic/message_listening/MessageListenerFactory.hh>
 #include <basic/message_listening/MessageListener.hh>
+#include <basic/message_listening/DbMoverMessageListener.hh>
 #include <basic/message_listening/util.hh>
 
 #include <basic/Tracer.hh>
@@ -36,6 +37,7 @@
 #include <utility/string_util.hh>
 #include <utility/mpi_util.hh>
 #include <utility/exit.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 #include <cppdb/frontend.h>
 #include <cppdb/errors.h>
@@ -106,6 +108,25 @@ get_protocol_and_batch_id(
 	//are the head node, don't try to message yourself, just access the listener directly
 
 	string listener_data="";
+	//Set the max_batch_id if necessary.
+	if(rank == 0)
+	{
+		DbMoverMessageListenerOP listener(utility::pointer::dynamic_pointer_cast<DbMoverMessageListener,MessageListener>(MessageListenerFactory::get_instance()->get_listener(DATABASE_PROTOCOL_AND_BATCH_ID_TAG)));
+		if(!listener->max_batch_id_set())
+		{
+			std::string select_max = "SELECT MAX(batch_id) FROM batches;";
+			cppdb::statement stmt(basic::database::safely_prepare_statement(select_max,db_session));
+			cppdb::result res(basic::database::safely_read_from_database(stmt));
+
+			Size max_batch_id(0);
+			while(res.next())
+			{
+				res >> max_batch_id;
+			}
+			listener->set_max_batch_id(max_batch_id);
+
+		}
+	}
 
 	if(rank != 0) {
 		listener_data = request_data_from_head_node(DATABASE_PROTOCOL_AND_BATCH_ID_TAG, identifier);
@@ -144,7 +165,7 @@ get_protocol_and_batch_id(
 		}
 
 		TR
-			<< "Initilize the protocol_id='" << protocol_id << "' "
+			<< "Initialize the protocol_id='" << protocol_id << "' "
 			<< "and tell it to the head node." << std::endl;
 
 		if(rank != 0) {
@@ -158,8 +179,9 @@ get_protocol_and_batch_id(
 		}
 
 	}
-
+	TR << "done with protocol" <<std::endl;
 	// setup the batch_id
+
 	try {
 		batch_features->report_features(batch_id, protocol_id, identifier, "", db_session);
 	} catch (cppdb_error error){
@@ -193,7 +215,18 @@ get_protocol_and_batch_id(
 	if(!static_batch_id_map_.count(identifier)){
 		TR << "Initializing batch table" << endl;
 
+
+		std::string select_max = "SELECT MAX(batch_id) FROM batches;";
+		cppdb::statement stmt(basic::database::safely_prepare_statement(select_max,db_session));
+		cppdb::result res(basic::database::safely_read_from_database(stmt));
+
 		Size max_batch_id(0);
+		while(res.next())
+		{
+			res >> max_batch_id;
+		}
+
+
 		for(
 			std::map< std::string, Size >::const_iterator
 				i = static_batch_id_map_.begin(), ie = static_batch_id_map_.end();

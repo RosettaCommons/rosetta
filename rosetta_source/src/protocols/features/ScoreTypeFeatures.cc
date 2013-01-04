@@ -187,6 +187,7 @@ ScoreTypeFeatures::insert_score_type_rows(
 		utility_exit_with_message(
 			"Unrecognized database mode: '" +
 			name_from_database_mode(db_session->get_db_mode()) + "'");
+		break;
 	}
 
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
