@@ -40,7 +40,7 @@ class OutputFrame(Frame):
         self.button_Out=Button(self, text="Choose", command=lambda: self.output_class.outdir.set(input_tools.tk_get_directory()))
         self.entry_Outname = Entry(self, textvariable = self.output_class.outname)
         self.check_button_auto_write = Checkbutton(self, text="Write after protocol?", variable = self.output_class.auto_write)
-        self.button_dump_pose = Button(self, text="Write Current Pose", command=lambda: output_tools.dumpPDB(self.toolkit.pose, self.output_class.outdir.get() + "/" + self.output_class.outname.get(), self.toolkit.score_class.score))
+        self.button_dump_pose = Button(self, text="Write Current Pose", command=lambda: output_tools.dumpPDB(self.toolkit.pose, self.toolkit.native_pose, self.output_class.outdir.get() + "/" + self.output_class.outname.get(), self.toolkit.score_class.score))
 
 
         

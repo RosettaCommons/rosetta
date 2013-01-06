@@ -78,9 +78,9 @@ class SQLPDB:
             
             l = 1
             if read_header:
-                cur.execute("CREATE TABLE IF NOT EXISTS header(id INT PRIMARY KEY, pdbID TEXT, modelID TEXT, method TEXT, resolution REAL, species TEXT, engineered TEXT, protein TEXT)")
+                cur.execute("CREATE TABLE IF NOT EXISTS header(id integer PRIMARY KEY, pdbID TEXT, modelID TEXT, method TEXT, resolution REAL, species TEXT, engineered TEXT, protein TEXT)")
             if not header_only:
-                cur.execute("CREATE TABLE IF NOT EXISTS pdb(l INT PRIMARY KEY, pdbID TEXT, modelID TEXT, strucID INT, type TEXT, atomNum INT, atomName TEXT, altLoc TEXT, residue TEXT, chain TEXT, resNum INT, icode TEXT, x REAL, y REAL, z REAL, occupancy REAL, bfactor REAL)")
+                cur.execute("CREATE TABLE IF NOT EXISTS pdb(l integer PRIMARY KEY, pdbID TEXT, modelID TEXT, strucID INT, type TEXT, atomNum INT, atomName TEXT, altLoc TEXT, residue TEXT, chain TEXT, resNum INT, icode TEXT, x REAL, y REAL, z REAL, occupancy REAL, bfactor REAL)")
             print "Tables created.  Loading "+self.pdbID+" data into table."
             for line in FILE:
                 line = line.strip()

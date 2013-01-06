@@ -28,6 +28,8 @@ import tkSimpleDialog
 #Toolkit Imports
 from window_main import global_variables
 from modules.RegionalScoring import RegionalScoring
+from modules.Region import Region
+from modules.Region import Regions
 from modules.tools import input as input_tools
 from window_modules.clean_pdb.FixPDBWindow import FixPDBWindow
 from window_modules.options_system.OptionSystemManager import OptionSystemManager
@@ -43,6 +45,7 @@ class GUIInput:
         self.loop_chain=StringVar(); #Chain of Loop
         self.loop_sequence=StringVar(); #Sequence in Entry
         self.loops_as_strings = []; #Array of Loops: start:end:chain
+        self.regions = Regions(); #This will replace loops_as_strings
         self.loops = Loops()
         
         self.param_pathlist_file = ""; #Path to a file which lists paths to all params to use.  One on each line
@@ -57,11 +60,11 @@ class GUIInput:
         self.pdb_url = "http://www.rcsb.org/pdb/files"
 #### POSE INPUT ####
 
-    def choose_load_pose(self):
+    def choose_load_pose(self, message="Load Pose"):
         """
         Loads a Pose through the tk File Dialog
         """
-        infilename = tkFileDialog.askopenfilename(initialdir=global_variables.current_directory, title='Pick a file')
+        infilename = tkFileDialog.askopenfilename(initialdir=global_variables.current_directory, title=message)
         if not infilename:return
         
         global_variables.current_directory= os.path.dirname(infilename)

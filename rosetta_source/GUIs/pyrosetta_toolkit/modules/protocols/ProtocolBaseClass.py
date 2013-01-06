@@ -36,7 +36,6 @@ class ProtocolBaseClass:
         self.input_class = input_class
         self.output_class = output_class
         
-        self.py_jd = PyJobDistributor(output_class.outdir.get()+"/"+output_class.outname.get(), output_class.decoys, score_class.score)
         #self.workers Pool of workers.  Added to class at run_protocol.
         
     def run_protocol(self, mover):
@@ -51,13 +50,12 @@ class ProtocolBaseClass:
         #    if not master.is_alive: self.output_class.terminal_output.set(0)
         #    return
         
-        self.py_jd.nstruct = self.output_class.decoys.get()
-        self.py_jd.scorefxn = self.score_class.score
         self.pdb_name = self.output_class.outdir.get()+"/"+self.output_class.outname.get()
         start_energy_score = self.score_class.score(self.pose)
+        
         self.output_class.terminal_output.set(1); #Redirect to stdout. For multiprocessing and major Rosetta output.
-
         if self.output_class.auto_write.get():
+            
             #Multiprocessing is done manually due to mover being unpicklable - Hence no Queue or Pool objects.
             #First, we have an array of jobs:
             workers = []
@@ -85,7 +83,8 @@ class ProtocolBaseClass:
                         #print "Worker is alive"
                         #total_running_jobs+=1; #Increment total_running_jobs
                     elif os.path.exists(self.pdb_name+"_"+worker.name+".pdb"):
-                        print "%s.exitcode = %s" %(worker.name, worker.exitcode)
+                        if not worker.exitcode==0:
+                            print "%s.exitcode = %s" %(worker.name, worker.exitcode)
                         
                         workers.pop(workers.index(worker)); #If the job is done, pop it.
                         total_running_jobs-=1
@@ -123,9 +122,7 @@ class ProtocolBaseClass:
                 print "Start: "+ repr(start_energy_score)+"\n"        
                 print "End: "+ repr(self.score_class.score(self.pose))
         
-        #time.sleep(5); #So that children can finish output
         self.output_class.terminal_output.set(0); #Reset output to textbox
-        
         print "NOTE: If > 1 decoy has been created, original decoy is still loaded. "
         print "Job Complete."
         

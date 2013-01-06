@@ -49,6 +49,13 @@ class definitions():
             if tripletSP[2]==one_letter_code:
                 return tripletSP[1]
     
+    def get_all_one_letter_codes(self):
+        one_letter_codes = []
+        for triplet in self.restype_info["All"]:
+            tripletSP = triplet.split(":")
+            one_letter_codes.append(tripletSP[2])
+        return sorted(one_letter_codes)
+    
     def set_residue_info(self):
         self.restype_info["Charged"]=("Lysine:LYS:K",
                              "Arginine:ARG:R"

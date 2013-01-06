@@ -243,7 +243,9 @@ class RosettaFlagFileBuilder():
         Load a rosetta cmd config file.
         """
         
-        FILE = tkFileDialog.askopenfile(initialdir = self.defaultdir)
+        filepath = tkFileDialog.askopenfilename(initialdir = self.defaultdir)
+        if not filepath:return
+        FILE = open('r', filepath)
         config = FILE.read()
         config = config.strip()
         #Parse config, take out database and app type. Set curselection to app type.

@@ -13,11 +13,13 @@
 #Rosetta Imports
 from rosetta import *
 from rosetta.basic.options import get_string_option
-
+from rosetta.basic.options import get_boolean_option
+from rosetta.core.pack.task.operation import *
 #from rosetta.protocols.forge.remodel import *
 
 #Python Imports
 import time
+import os
 
 #Tkinter Imports
 from Tkinter import *
@@ -32,41 +34,70 @@ from window_main import global_variables
 class DesignProtocols(ProtocolBaseClass):
     def __init__(self, pose, score_class, input_class, output_class):
         ProtocolBaseClass.__init__(self, pose, score_class, input_class, output_class)
-        
-    def packDesign(self, resFile=False):
+    
+    def setupPackDesign(self, main):
         """
         Follows fixbb.cc to allow most user defined options within the GUI.
-        Limitations: No symmetry.  Annealers should work fine through the options system.
+        Limitations: No symmetry.  Annealers should work fine through the options system. Stochastic pack results in segfault.
+        UI due to major TKinter bug on my mac.
+        """
+        if self.pose.total_residue()==0:print "Please load a pose."; return
+        def packDesign():
+            resfile = tkFileDialog.askopenfilename(initialdir = global_variables.current_directory, title="Open Resfile..")
+            if not resfile:return
+            global_variables.current_directory = os.path.dirname(resfile)
+            mover = DesignWrapper(self.score_class.score, resfile)
+            mover.min_sc = min_sc.get()
+            mover.min_pack = min_pack.get()
+            mover.stochastic_pack = stochastic_pack.get()
+            
+            print "Please cite the many references included for Fixed Backbone Design in the Rosetta Manual."
+            print "Further options such as annealing use the options system.  Symmetry, min_pack and stochastic_min are not supported at this time."
+            time.sleep(5)
+            
+            self.run_protocol(mover)
+            
+        top_level = Toplevel(main)
+        min_sc = IntVar(); min_sc.set(False)
+        min_pack = IntVar(); min_pack.set(False)
+        stochastic_pack = IntVar(); stochastic_pack.set(False)
+        
+        label_sc = Label(top_level, text = "Do minimization of side chains after rotamer packing")
+        label_pack = Label(top_level, text = "Pack and minimize sidechains simultaneously (slower)")
+        label_stoch = Label(top_level, text = "Pack using a continuous sidechains rotamer library")
+        
+        check_sc = Checkbutton(top_level, text="-minimize_sidechains", variable = min_sc)
+        check_pack = Checkbutton(top_level, text = "-min_pack", variable = min_pack)
+        check_stoch = Checkbutton(top_level, text = "-stochastic_pack", variable = stochastic_pack)
+        
+        button_go = Button(top_level, text = "Run Protocol", command = lambda: packDesign())
+        label_sc.grid(row=0, column=1, sticky=W); check_sc.grid(row = 0, column=0, sticky=W)
+        label_pack.grid(row=1, column=1, sticky=W); check_pack.grid(row=1, column=0, sticky=W)
+        #label_stoch.grid(row=2, column=1, sticky=W); check_stoch.grid(row=2, column=0, sticky=W); stochastic_pack currently does not work for some reason in python.
+        
+        button_go.grid(row=3, column=0, columnspan=2, sticky=W+E)
+        
+    def packDesign(self, resfile=False):
+        """
+        #Follows fixbb.cc to allow most user defined options within the GUI.
+        #Limitations: No symmetry.  Annealers should work fine through the options system.
+        Use setupPackDesign for more options.
         """
         
         if not resfile:
             resfile = tkFileDialog.askopenfilename(initialdir = global_variables.current_directory, title="Open Resfile..")
             if not resfile:return
-        
-        task = TaskFactory.create_packer_task(self.pose)
-        parse_resfile(self.pose, task, resFile)
-        s_mover = SequenceMover()
-        result = tkMessageBox.askyesno(title='-min_pack', message="Pack and minimize sidechains simultaneously?")
-        if result:
-            design_mover = MinPackMover(self.score_class.score, task)
-            s_mover.add_mover(design_mover)
-        else:
-            design_mover = PackRotamersMover(self.score_class.score, task)
-            s_mover.add_mover(design_mover)
-        
-        result = tkMessageBox.askyesno(title='-minimize_sidecahins', message="Do minimization of side chains after rotamer packing (slower)")
-        
-        if result:
-            mm = MoveMap(); #Empty movemap
-            min_mover = MinMover(mm, self.score_class.score, get_string_option('run:min_type'), 0.01, True)
-            task_min_mover = TaskAwareMinMover(min_mover, task)
-            s_mover.add_mover(task_min_mover)
+            global_variables.current_directory = os.path.dirname(resfile)
             
+        #Can't ask more then 1 dialog in a row on the macbookpro I am using.  So screw it.  Using setupPackDesign instead
+        #tkMessageBox.askyesno(title="-min_pack", message="Pack and minimize sidechains simultaneously?")
         
+
         print "Please cite the many references included for Fixed Backbone Design in the Rosetta Manual."
-        print "Further options such as annealing can be set using the options system.  Symmetry is not supported at this time."
+        print "Further options such as annealing use the options system.  Symmetry, min_pack and stochastic_min are not supported at this time."
         time.sleep(5)
-        self.run_protocol(s_mover)
+        
+        self.run_protocol(mover)
     
     def remodel(self, blueprint=False):
         """
@@ -138,3 +169,54 @@ class DesignProtocols(ProtocolBaseClass):
                 
         return task
 
+class DesignWrapper:
+    """
+    Wrapper to re-init tasks for resfile if multiple rounds are given.
+    """
+    def __init__(self, score, resfile):
+        self.score = score
+        self.resfile = resfile
+        self.min_pack = False
+        self.min_sc = False
+        self.stochastic_pack = False
+        
+        """
+        try:
+            self.min_pack = get_boolean_option('fixbb:minimize_sidechains')
+            self.min_sc = get_boolean_option('fixbb:min_pack')
+            self.stochastic_pack = get_boolean_option('fixbb:stochastic_pack')
+        except PyRosettaException:
+            pass
+        """
+    def set_minimize_sidechains(self):
+        self.min_sc = True
+        
+    def apply(self, pose):
+        task = TaskFactory()
+        task.push_back(InitializeFromCommandline())
+        task.push_back(ReadResfile(self.resfile))
+
+        s_mover = SequenceMover()
+        
+        if self.min_pack or self.stochastic_pack:
+            design_mover = MinPackMover()
+            design_mover.task_factory(task)
+            design_mover.score_function(self.score)
+            #Stochastic Packing is resulting in segfault.  Use dun10 anyway for this.
+            #if self.stochastic_pack:
+                #design_mover.stochastic_pack(True)
+            s_mover.add_mover(design_mover)
+        else:
+            design_mover = PackRotamersMover()
+            design_mover.task_factory(task)
+            design_mover.score_function(self.score)
+            s_mover.add_mover(design_mover)
+        
+        
+        if self.min_sc:
+            mm = MoveMap(); #Empty movemap
+            min_mover = MinMover(mm, self.score, get_string_option('run:min_type'), 0.01, True)
+            task_min_mover = TaskAwareMinMover(min_mover, task)
+            s_mover.add_mover(task_min_mover)
+            
+        s_mover.apply(pose)

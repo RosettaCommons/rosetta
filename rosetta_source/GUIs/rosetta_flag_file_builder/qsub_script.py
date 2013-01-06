@@ -139,9 +139,7 @@ def main(args):
     (options, args) = parser.parse_args(args=args[1:])
 
     if not os.path.exists(options.config):
-
-        print "Config path wonky. "+options.config+" Please correct."
-        os.abort()
+        sys.exit("Config path wonky. "+options.config+" Please correct.")
     setup_paths(options.qsubtemp, options.tempscripts, options.jobname)
     FILE = open(options.config, 'r')
     config = []
@@ -153,9 +151,9 @@ def main(args):
     #Check to make sure executable and database option is set.
     exec_database=""; #First line of file.  Has executable and -database option present.
     if not re.search('#', config[0]):
-        print "First line of file must have full path to executable after #"
-        print "RosettaProtocolBuilder adds this line.  Please add the line (either with # or without) and run the program again."
-        os.abort()
+
+        sys.exit("First line of file must have full path to executable after #\n" \
+                 +"RosettaProtocolBuilder adds this line.  Please add the line (either with # or without) and run the program again.")
         
     else:
         if re.search("#", config[0]):

@@ -23,6 +23,7 @@ import tkMessageBox
 import tkSimpleDialog
 
 #Toolkit Imports
+from modules.Region import Region
 from modules.tools import sequence as sequence_tools
 from modules.tools import input as input_tools
 
@@ -103,16 +104,28 @@ class InputFrame(Frame):
             self.addLoop()
             
     def addLoop(self):
+        
+        #Current
         looFull = self.input_class.loop_start.get()+ ":"+ self.input_class.loop_end.get()+":"+self.input_class.loop_chain.get().upper()
         self.input_class.loops_as_strings.append(looFull)
         self.loops_listbox.insert(END, looFull)
         #print self.toolkit.input_class.loops_as_strings
         
+        #Replacement of loops_as_strings
+        region = Region(self.input_class.loop_chain.get().upper(), int(self.input_class.loop_start.get()), int(self.input_class.loop_end.get()))
+        self.input_class.regions.add_region(region)
+        
     def remLoop(self):
-
+        
+        #Current
         self.input_class.loops_as_strings.remove(self.loops_listbox.get(self.loops_listbox.curselection()))
+        
+        #Replacement of loops_as_string
+        region_string = self.loops_listbox.get(self.loops_listbox.curselection())
+
+        self.input_class.regions.remove_region(region_string)
+        
         self.loops_listbox.delete(self.loops_listbox.curselection())
-        #print self.toolkit.input_class.loops_as_strings
         
     def location(self):
         """

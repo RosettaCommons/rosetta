@@ -13,11 +13,13 @@
 #Python Imports
 import os
 import webbrowser
+import time
 
 #Tkinter Imports
 from Tkinter import *
 import tkSimpleDialog
 import tkFileDialog
+import tkMessageBox
 
 #Module Imports
 from modules.tools import output as output_tools
@@ -29,7 +31,7 @@ from modules import help as help_tools
 from modules.tools import input as input_tools
 from modules import calibur
 from modules.ScoreAnalysis import ScoreAnalysis
-
+from modules.DesignBreakdown import DesignBreakdown
 from modules.protocols.DockingProtocols import DockingProtocols
 from modules.protocols.DesignProtocols import DesignProtocols
 from modules.protocols.LowResLoopModelingProtocols import LowResLoopModelingProtocols
@@ -183,7 +185,7 @@ class Menus():
 	#Design
 	
 	self.design_protocols = Menu(self.main_menu, tearoff=0)
-	self.design_protocols.add_command(label = "FixedBB", command = lambda: self.design_class.packDesign())
+	self.design_protocols.add_command(label = "FixedBB", command = lambda: self.design_class.setupPackDesign(self.main))
 	self.design_protocols.add_command(label = "Grafting", command = lambda:self.show_graftmover_window())
 	#self.design_protocols.add_command(label = "Remodel", foreground='red')
 	
@@ -268,7 +270,7 @@ class Menus():
 	self.sequence_menu.add_command(label = "Output FASTA for Each PDB", command = lambda: output_tools.save_FASTA_PDBLIST(self.toolkit.input_class.PDBLIST.get(), False))
 	self.sequence_menu.add_command(label = "Output FASTA for Each Region", command = lambda: output_tools.save_FASTA_PDBLIST(self.toolkit.input_class.PDBLIST.get(), False, self.toolkit.input_class.loops_as_strings))
 	#If you need this, you know how to program: self.sequence_menu.add_command(label = "Output LOOP file for each PDB", command = lambda: output_tools.save_LOOP_PDBLIST(self.toolkit.input_class.PDBLIST.get()))
-	self.sequence_menu.add_command(label = "Output Design Breakdown for each Loop", foreground='red')
+	self.sequence_menu.add_command(label = "Use FASTA for design statistics", command = lambda: self.run_design_breakdown())
 	self.pdblist_tools_menu.add_cascade(label = "Sequence Analysis", menu=self.sequence_menu)
 	self.pdblist_tools_menu.add_separator()
 	self.pdblist_tools_menu.add_command(label = "Create PDBList", command = lambda: self.toolkit.input_class.PDBLIST.set(output_tools.make_PDBLIST()))
@@ -323,6 +325,37 @@ class Menus():
 	global_variables.current_directory = os.path.dirname(filename)
 	self.score_analyzer.set_filepath(filename)
 
+#These are bullshit.
+    def get_path(self, string):
+	path = tkFileDialog.askopenfilename(title=string,initialdir = global_variables.current_directory)
+	return path
+    
+    def run_design_breakdown(self):
+	
+	#Super huge bug in Tkinter, which is not allowing multiple dialog boxes to be called in succession. ~jadolfbr
+	#Jan 2013 MacBookPro~2010 OS 10.6, Python 2.6.
+	
+	if self.toolkit.pose.total_residue()==0:
+	    print "Please load a pose for reference."
+	    return
+	
+	fasta_path = self.get_path("FASTA Path")
+	if not fasta_path:return
+	global_variables.current_directory = os.path.dirname(fasta_path)
+	outpath = os.path.dirname(fasta_path)+"/RESULTS"
+	
+
+	    
+	#else:
+	    #answer = tkMessageBox.askokcancel(title = "Current", message = "Using current pose as reference.  Continue?")
+	    #if not answer: return
+	reference_path=self.toolkit.input_class.pdb_path.get()
+	if not reference_path:return
+	#native = tkMessageBox.askyesno(title="Native", message="Use pose as Native?")
+		    
+	breakdown = DesignBreakdown(fasta_path, reference_path,  outpath)
+	breakdown.run_outputs()
+	
 #### WINDOWS ##### (ADD NEW WINDOWS TO THIS THAT NEED TO BE SET UP) #######
     def show_graftmover_window(self):
 	grafter = GraftMoverWindow(self.toolkit.pose, self.toolkit.score_class, self.toolkit.input_class, self.toolkit.output_class)

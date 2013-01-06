@@ -36,7 +36,8 @@ class OptionSystemManager:
         self.opts = []
         self.args = rosetta.utility.vector1_string()
         self.find_rosetta_database()
-        self.basic_options = ["app", "-database", self.database, "-ex1", "-ex2aro", "-run:seed_offset 1000"]
+        #These are expanded options from what PyRosetta __init__ has.
+        self.basic_options = ["app", "-database", self.database, "-ex1", "-ex2", "-use_bicubic_interpolation", "-run:seed_offset 1000"]
         self.extra_options = []
         self.pwd = self.location()[0]
         
@@ -50,11 +51,13 @@ class OptionSystemManager:
         self.common_options = [
             'Enter Custom:',
             '-dun10',
-            '-ex2',
-            '-use_bicubic_interpolation',
+            #'-ex2',
+            #'-use_bicubic_interpolation',
             '-ignore_unrecognized_res',
             '-out:file:silent',
-            '-relax:constrain_relax_to_start_coords'
+            '-relax:constrain_relax_to_start_coords',
+            #'-fixbb:minimize_sidechains',
+            #'-fixbb:min_pack'
         ]
 
         self.common_option = StringVar(); self.common_option.set(self.common_options[0])

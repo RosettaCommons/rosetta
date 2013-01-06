@@ -254,6 +254,7 @@ class GraftMover:
 
 if __name__ == '__main__':
     main = Tk()
+    rosetta.int()
     grafter = GraftMoverWindow()
     grafter.setTk(main)
     grafter.shoTk(0, 0)

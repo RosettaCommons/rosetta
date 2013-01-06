@@ -1,2 +1,2 @@
-SCORE=standard
-PATCH=score12
+SCORE=score12prime
+PATCH=

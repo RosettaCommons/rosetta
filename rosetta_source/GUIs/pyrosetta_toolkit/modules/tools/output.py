@@ -35,15 +35,16 @@ from modules.tools import loops as loop_tools
 from window_main import global_variables
 from modules.definitions import restype_definitions
 
-def dumpPDB(p, file, score):
+def dumpPDB(p, native_pose, file, score):
     """
     Dumps the pose using the Py Job Distributor
     """
     jd=PyJobDistributor(file, 100000, score); #This number is high so that it outputs a pose even if one with the name already exists...
     #native_pose = Pose()
     #pose_from_pdb(native_pose, infile)
-    #jd.native_pose=native_pose
+    jd.native_pose=native_pose
     jd.output_decoy(p)
+    os.remove(jd.current_name+".in_progress")
     print "Pose written to directory..."
     
 def showPose(p, observer):
@@ -566,7 +567,7 @@ def save_FASTA_PDBLIST(pdblist_path, outfilename=False, loops_as_strings=False):
     """
     If outfilename is False, will ask for a filename
     Goes through each member of PDBLIST
-    Uses pyrosetta, much slower...Could use my PDB class...
+    Uses pyrosetta to get sequence.
     """
     if not outfilename:
         outfilename = tkFileDialog.asksaveasfilename(initialdir = global_variables.current_directory, title="Output FASTA to...")
