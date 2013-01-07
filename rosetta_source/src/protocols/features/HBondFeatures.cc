@@ -181,8 +181,8 @@ HBondFeatures::write_hbond_chem_types_table_schema(
 	using namespace basic::database::schema_generator;
 	using boost::assign::list_of;
 
-	Column chem_type("chem_type", new DbText());
-	Column label("label", new DbText());
+	Column chem_type("chem_type", new DbText(255));
+	Column label("label", new DbText(255));
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(chem_type);
@@ -249,7 +249,7 @@ HBondFeatures::write_hbond_sites_table_schema(
 	Column chain("chain", new DbInteger());
 	Column resType("resType", new DbText());
 	Column atmType("atmType", new DbText());
-	Column HBChemType("HBChemType", new DbText());
+	Column HBChemType("HBChemType", new DbText(255));
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);

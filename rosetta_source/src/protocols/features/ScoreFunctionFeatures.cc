@@ -134,7 +134,7 @@ ScoreFunctionFeatures::write_score_function_weights_table_schema(
 	using namespace basic::database::schema_generator;
 
 	Column batch_id("batch_id", new DbInteger(), true);
-	Column score_function_name("score_function_name", new DbText(), true);
+	Column score_function_name("score_function_name", new DbText(255), true);
 	Column score_type_id("score_type_id", new DbInteger(), true);
 	Column weight("weight", new DbReal(), true);
 

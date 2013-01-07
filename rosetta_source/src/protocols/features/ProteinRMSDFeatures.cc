@@ -120,7 +120,7 @@ ProteinRMSDFeatures::write_protein_rmsd_table_schema(
 	using namespace basic::database::schema_generator;
 
 	Column struct_id("struct_id", new DbUUID());
-	Column reference_tag("reference_tag", new DbText());
+	Column reference_tag("reference_tag", new DbText(255));
 	Column protein_CA("protein_CA", new DbReal());
 	Column protein_CA_or_CB("protein_CA_or_CB", new DbReal());
 	Column protein_backbone("protein_backbone", new DbReal());
