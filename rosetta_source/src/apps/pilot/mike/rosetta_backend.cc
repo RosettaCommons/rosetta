@@ -79,6 +79,7 @@
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector1.hh>
 #include <utility/inline_file_provider.hh>
+#include <numeric/random/random.hh>
 
 #include <curl/curl.h>
 #include "json/json.h"
@@ -89,6 +90,7 @@
 
 
 static basic::Tracer TR("main");
+static numeric::random::RandomGenerator RG(7293464);
 
 class CurlGet {
  public:
@@ -538,6 +540,7 @@ class RosettaJob {
       output_capture_start();
       starttime_ = time(NULL);
 
+      std::cerr << "RANDOM CHECK: " << RG.uniform() << std::endl; 
       try{
         std::cout << "Executing: " << command_ << std::endl;
         TR << "Executing: " << command_ << std::endl;
@@ -681,9 +684,23 @@ class RosettaBackend {
         };
         
         newjob.run();
+        
+        std::cerr << "Returning results to server (mainloop)" << std::endl;
 
         // now return the results to the server
-        newjob.return_results_to_server( serverinfo_ );
+        try {
+          newjob.return_results_to_server( serverinfo_ );
+        }
+        catch ( utility::excn::EXCN_Base& excn ) {
+          excn.show( TR.Error );
+          // return error or empty pose
+          newjob.return_error_to_server( serverinfo_ );
+        }
+        catch ( std::string err ){ 
+          TR.Error << err << std::endl;
+          // return error or empty pose
+          newjob.return_error_to_server( serverinfo_ );
+        }
       } while (true);
 
     };
