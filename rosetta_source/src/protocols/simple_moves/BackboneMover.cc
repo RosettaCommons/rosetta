@@ -29,7 +29,8 @@
 #include <basic/basic.hh>
 #include <core/id/DOF_ID_Range.hh>
 #include <numeric/NumericTraits.hh>
-
+//symmetry
+#include <core/pose/symmetry/util.hh>
 // Random number generator
 #include <numeric/random/random.hh>
 #include <utility/tag/Tag.hh>
@@ -172,6 +173,17 @@ void BackboneMover::apply( core::pose::Pose & pose )
 {
 	// clear everything to start from clean
 	clear();
+
+	//what if symmetry input
+	// will not run for now, can change this to true if symmetry desired
+	// potential problem with incoming modified symmetric movemaps, this will
+	// reset any changes to the input movemap
+	if(false){
+		if ( core::pose::symmetry::is_symmetric( pose )  )  {
+			//TR << "Pose is symmetric, making backbone movemap symmetric."<< std::endl;
+			core::pose::symmetry::make_symmetric_movemap( pose, *movemap_);
+		}
+	}
 
 	// currently secstruct is not implemented and returns 'L' for all residues
 	setup_list( pose );
