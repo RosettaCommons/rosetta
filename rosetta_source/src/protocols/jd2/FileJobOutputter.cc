@@ -75,8 +75,8 @@ protocols::jd2::FileJobOutputter::FileJobOutputter() : parent(), write_scorefile
 		//path
 		if ( option[ out::path::score ].user() ) {
 			outfile.path( option[ out::path::score ]().path() );
+		  outfile.vol( option[ out::path::score ]().vol() );
 		} else outfile.path( default_path.path() );
-		outfile.vol( option[ out::path::score ]().vol() );
 		// determine the extension based on fullatom or centroid; this logic is usually wrong but .sc is okay anyway
 		if( option[ out::file::fullatom ] ) {
 			outfile.ext( ".fasc" );
