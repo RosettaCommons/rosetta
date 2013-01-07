@@ -251,17 +251,4 @@ class GraftMover:
         elif self.repack_connection_and_insert:
             self.grafter.repack_connection_and_residues_in_movemap_and_piece(pose, self.fa_scorefxn)
         
-
-if __name__ == '__main__':
-    main = Tk()
-    rosetta.int()
-    grafter = GraftMoverWindow()
-    grafter.setTk(main)
-    grafter.shoTk(0, 0)
-    main.mainloop()
-        
-        
-        
-        
-        
         

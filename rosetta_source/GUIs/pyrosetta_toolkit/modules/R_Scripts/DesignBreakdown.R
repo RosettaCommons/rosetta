@@ -13,7 +13,7 @@
 #Args are: Database_In, Output_directory
 
 #Database Columns Required: 
- #region, type (design or native), rosetta_position, pdb_position(ex: 24L), aa, prob
+ #region, type (design or reference), rosetta_position, pdb_position(ex: 24L), aa, prob
 
 #Requirements:
 require(RSQLite)
@@ -62,15 +62,15 @@ for (r in regions$region){
 		df = data.frame(region=r, pdb_position=position)
 		prob = dbGetQuery(con, sql, df)
 
-		sql<-"SELECT aa FROM design_data WHERE type='native' and region=? and pdb_position=?"
-		native_aa = dbGetQuery(con, sql, df)
+		sql<-"SELECT aa FROM design_data WHERE type='reference' and region=? and pdb_position=?"
+		reference_aa = dbGetQuery(con, sql, df)
 
-		aa = native_aa$aa[1]
+		aa = reference_aa$aa[1]
 		
 		#I think blue looks great.  If you want something else, change it here.
 		barplot(prob$prob, names.arg=aminos$aa, density=prob$prob*100, col='blue')
-		title(main=position, xlab=paste('AA (Native: ',aa, ')'), ylab='Percent Observed', font.main=2, cex.main=1.6, cex.lab=1.2)
-		#legend('topright', legend = c(paste('Native:', aa)), box.col='blue', text.col='blue')
+		title(main=position, xlab=paste('AA (reference: ',aa, ')'), ylab='Percent Observed', font.main=2, cex.main=1.6, cex.lab=1.2)
+		#legend('topright', legend = c(paste('reference:', aa)), box.col='blue', text.col='blue')
 		
 		
 
