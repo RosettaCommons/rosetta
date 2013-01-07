@@ -404,20 +404,44 @@ FilterScanFilter::parse_my_tag( utility::tag::TagPtr const tag,
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	std::string const triage_filter_name( tag->getOption< std::string >( "triage_filter", "true_filter" ) );
 	protocols::filters::Filters_map::const_iterator triage_filter_it( filters.find( triage_filter_name ) );
+
+	//These #ifdefs are a terrible hack to work around a compiler bug in mpicxx. sorry
+#ifdef USEMPI
+	if( triage_filter_it == filters.end() )
+		utility_exit_with_message( "Triage filter "+triage_filter_name+" not found" );
+#endif
+#ifndef USEMPI
 	if( triage_filter_it == filters.end() )
 		throw utility::excn::EXCN_RosettaScriptsOption( "Triage filter "+triage_filter_name+" not found" );
+#endif
 
 	triage_filter( triage_filter_it->second );
 
 	std::string const filter_name( tag->getOption< std::string >( "filter", "true_filter" ) );
 	protocols::filters::Filters_map::const_iterator filter_it( filters.find( filter_name ) );
+
+#ifdef USEMPI
+	if( filter_it == filters.end() )
+		utility_exit_with_message( "Filter "+filter_name+" not found" );
+#endif
+#ifndef USEMPI
 	if( filter_it == filters.end() )
 		throw utility::excn::EXCN_RosettaScriptsOption( "Filter "+filter_name+" not found" );
+#endif
+
 	filter( filter_it->second );
 	std::string const relax_mover_name( tag->getOption< std::string >( "relax_mover", "null" ) );
 	protocols::moves::Movers_map::const_iterator mover_it( movers.find( relax_mover_name ) );
+
+#ifdef USEMPI
+	if( mover_it == movers.end() )
+		utility_exit_with_message( "Relax mover "+relax_mover_name+" not found" );
+#endif
+#ifndef USEMPI
 	if( mover_it == movers.end() )
 		throw utility::excn::EXCN_RosettaScriptsOption( "Relax mover "+relax_mover_name+" not found" );
+#endif
+
 	relax_mover( mover_it->second );
 
 	delta( tag->getOption< bool >( "delta", false ) );
