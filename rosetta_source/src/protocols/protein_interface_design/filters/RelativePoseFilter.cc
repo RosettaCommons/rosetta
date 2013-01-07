@@ -165,7 +165,8 @@ RelativePoseFilter::thread_seq( core::pose::Pose const & p ) const{
 			}
 		}
 		TR<<std::endl;
-		TR<<"baseline: "<<baseline_val()<<std::endl;
+		if( baseline() )
+			TR<<"baseline: "<<baseline_val()<<std::endl;
 		foreach( core::Size const d, diffs )
 			dao->include_residue( d );
 		using namespace core::pack::task;
@@ -263,7 +264,7 @@ RelativePoseFilter::parse_my_tag( utility::tag::TagPtr const tag,
 	std::string pose_fname ("");
 	bool use_native ( tag->getOption< bool >( "use_native_pdb", false ));
 	if (use_native)	pose( core::import_pose::pose_from_pdb(basic::options::option[ basic::options::OptionKeys::in::file::native ], false));
-	
+
 	if ( tag->hasOption( "pdb_name" ) ) {
 			pose_fname = tag->getOption< std::string >( "pdb_name" );
 			pose( core::import_pose::pose_from_pdb( pose_fname, false /*read foldtree*/ ) );
