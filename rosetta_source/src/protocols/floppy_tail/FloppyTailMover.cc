@@ -218,10 +218,10 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 		utility_exit_with_message("option in::file::movemap not compatible with options flexible_chain, flexible_stop_resnum, flexible_chain, short_tail_fraction, or short_tail off.  This is because a manually-defined movemap overrides these options.");
 	} else {
 		//handle user-defined movemap from file or from function; reverse-convert into start_ and stop_
-        if (!movemap_){
-            movemap_ = new core::kinematics::MoveMap;
-            movemap_->init_from_file(option[in::file::movemap].value());
-        }
+		if (!movemap_){
+			movemap_ = new core::kinematics::MoveMap;
+			movemap_->init_from_file(option[in::file::movemap].value());
+		}
 		movemap_lesstail_ = new core::kinematics::MoveMap(*movemap_);
 
 		//calculate effective start_ and stop_.  This may be less efficient than the MoveMap's iterators, but it is vastly simpler, less likely to be buggy, and not a performace concern.

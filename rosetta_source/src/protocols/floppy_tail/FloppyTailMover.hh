@@ -52,11 +52,11 @@ public:
 	virtual ~FloppyTailMover();
     
     ///@brief set the movemap instead of initializing it from cmd-line
-    virtual void set_movemap(core::kinematics::MoveMapOP const movemap);
+	virtual void set_movemap(core::kinematics::MoveMapOP const movemap);
     
-    virtual void set_fa_scorefxn(core::scoring::ScoreFunctionOP const fa_scorefxn);
+	virtual void set_fa_scorefxn(core::scoring::ScoreFunctionOP const fa_scorefxn);
     
-    virtual void set_cen_scorefxn(core::scoring::ScoreFunctionOP const cen_scorefunction);
+	virtual void set_cen_scorefxn(core::scoring::ScoreFunctionOP const cen_scorefunction);
     
 	virtual void apply( core::pose::Pose & pose );
 
