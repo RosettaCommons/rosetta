@@ -162,6 +162,19 @@ FloppyTailMover & FloppyTailMover::operator=( FloppyTailMover const & rhs ){
 
 	return *this;
 }
+
+void FloppyTailMover::set_movemap(core::kinematics::MoveMapOP const movemap){
+    movemap_ = movemap->clone();
+}
+
+void FloppyTailMover::set_fa_scorefxn(core::scoring::ScoreFunctionOP const fa_scorefxn){
+    fullatom_scorefunction_=fa_scorefxn->clone();
+}
+
+void FloppyTailMover::set_cen_scorefxn(core::scoring::ScoreFunctionOP const cen_scorefxn){
+    centroid_scorefunction_=cen_scorefxn->clone();
+}
+
 ///@brief init_on_new_input system allows for initializing these details the first time apply() is called.  the job distributor will reinitialize the whole mover when the input changes (a freshly constructed mover, which will re-run this on first apply().
 void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 	init_for_input_yet_ = true;
@@ -170,7 +183,7 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if(!option[in::file::movemap].user()){
+	if(!option[in::file::movemap].user() and !movemap_){
 		//original code: read from command line options
 		char const chain(option[FloppyTail::flexible_chain].value()[0]); //just take the first one
 		start_ = pose.pdb_info()->pdb2pose().find(chain, option[FloppyTail::flexible_start_resnum].value());
@@ -204,9 +217,11 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 		option[FloppyTail::short_tail::short_tail_off].user() ) {
 		utility_exit_with_message("option in::file::movemap not compatible with options flexible_chain, flexible_stop_resnum, flexible_chain, short_tail_fraction, or short_tail off.  This is because a manually-defined movemap overrides these options.");
 	} else {
-		//handle user-defined movemap from file; reverse-convert into start_ and stop_
-		movemap_ = new core::kinematics::MoveMap;
-		movemap_->init_from_file(option[in::file::movemap].value());
+		//handle user-defined movemap from file or from function; reverse-convert into start_ and stop_
+        if (!movemap_){
+            movemap_ = new core::kinematics::MoveMap;
+            movemap_->init_from_file(option[in::file::movemap].value());
+        }
 		movemap_lesstail_ = new core::kinematics::MoveMap(*movemap_);
 
 		//calculate effective start_ and stop_.  This may be less efficient than the MoveMap's iterators, but it is vastly simpler, less likely to be buggy, and not a performace concern.
