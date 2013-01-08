@@ -110,6 +110,7 @@ If there are any special input file types, describe them here.
 
 -------------------Options, AvNAPSA and Rosetta modes:-------------------
 
+target_net_charge_active  BOOL def(false);  // supercharge will mutate the surface to achieve the target net charge value (below).  Boolean control for ROSIE implementation (instead of .user() )
 target_net_charge  SIGNED_INT def(0);  //AvNAPSA: Residue positions are mutated one at a time from most exposed to least exposed until the target net charge is achieved.  Rosetta: reference energies of Arg/Lys/Asp/Glu are incremented until PackRotamers gives the target net charge.
 
 

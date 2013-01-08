@@ -111,6 +111,7 @@ namespace local{
 basic::options::BooleanOptionKey const AvNAPSA_positive("AvNAPSA_positive");
 basic::options::BooleanOptionKey const AvNAPSA_negative("AvNAPSA_negative");
 
+basic::options::BooleanOptionKey const target_net_charge_active("target_net_charge_active"); //ideally I'd use .user() to see if the option is active, but implementation on the ROSIE server requires this separate flag
 basic::options::IntegerOptionKey const target_net_charge("target_net_charge");
 
 //AvNAPSA-mode or Rosetta-mode
@@ -166,7 +167,7 @@ public:
 
 
 		//If the target net charge is -10, current net charge is -4, need to perform positive-supercharging
-		if( option[local::target_net_charge].value() != 999 ) {
+		if( option[local::target_net_charge_active] ) {
 
 			int current_net_charge = get_net_charge( pose );
 			int target_net_charge = option[local::target_net_charge];
@@ -175,7 +176,7 @@ public:
 			if( delta_charge < 0 ) {
 
 				if( !option[local::include_asp] && !option[local::include_glu] && !option[local::AvNAPSA_negative] ) {
-					TR << "Current charge: " << current_net_charge << ".  Target charge: " << target_net_charge << ".  Protocol cannot add negative charge with current options" << std::endl;
+					TR << "Current charge: " << current_net_charge << ".  Target charge: " << target_net_charge << ".  Incompatible user inputs.  Cannot add negative charge with current options.  Try using the flags include_asp include_glu (Rosetta-mode) or AvNAPSA_negative (AvNAPSA-mode)." << std::endl;
 					set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
 					return;
 				}
@@ -183,14 +184,14 @@ public:
 
 			else if( delta_charge > 0 ) {
 				if( !option[local::include_arg] && !option[local::include_lys] && !option[local::AvNAPSA_positive] ) {
-					TR << "Current charge: " << current_net_charge << ".  Target charge: " << target_net_charge << ".  Protocol cannot add positive charge with current options" << std::endl;
+					TR << "Current charge: " << current_net_charge << ".  Target charge: " << target_net_charge << ".  Incompatible user inputs.  Cannot add positive charge with current options.  Try using the flags include_arg include_lys (Rosetta-mode) or AvNAPSA_positive (AvNAPSA-mode)." << std::endl;
 					set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
 					return;
 				}
 			}
 
 			else if(delta_charge == 0) {
-				TR << "Current charge: " << current_net_charge << ".  Target charge: " << target_net_charge << ".  No supercharging necessary." << std::endl;
+				TR << "Current charge: " << current_net_charge << ".  Target charge: " << target_net_charge << ".  Current charge equals target charge, no supercharging necessary." << std::endl;
 				set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
 				return;
 			}
@@ -324,7 +325,7 @@ public:
 		std::stringstream pymol_avnapsa_residues;
 		utility::vector1< Size > residues_to_mutate; //will be appended either to acheive correct charge or based on AvNAPSA value cutoff
 
-		if( basic::options::option[local::target_net_charge].value() == 999 ) {
+		if( basic::options::option[local::target_net_charge_active] ) {
 			largest_mutated_AvNAPSA_ = (Size) basic::options::option[local::surface_atom_cutoff]; // no specified net charge, largest AvNAPSA allowed equals the cutoff.  This value is used to name output PDBs.
 			for( Size i(1); i <= AvNAPSA_values_.size(); ++i) {
 				if( AvNAPSA_values_[i] < basic::options::option[local::surface_atom_cutoff] && AvNAPSA_values_[i] != 9999 ) {
@@ -828,7 +829,7 @@ public:
 
 
 		//if a target net charge is given as an option, iterate between packrot and incrementing refweights until target charge is acheived
-		if( option[local::target_net_charge].value() != 999 ) {
+		if( option[local::target_net_charge_active] ) {
 
 			int net_charge_target = option[local::target_net_charge];
 			int charge_diff = abs( get_net_charge(pose) - net_charge_target );
@@ -957,7 +958,7 @@ public:
 		std::stringstream ss_i;
 		std::string i_string;
 
-		if( option[local::target_net_charge].value() == 999 ) {
+		if( option[local::target_net_charge_active] ) {
 
 			Size nstruct = (Size) option[local::nstruct].value();
 			for( Size i=1; i <= nstruct; ++i ) {
@@ -1393,10 +1394,13 @@ int main( int argc, char* argv[] )
 	using basic::options::option;
 	option.add( local::AvNAPSA_positive, "AvNAPSA positive supercharge").def(false);
 	option.add( local::AvNAPSA_negative, "AvNAPSA negative supercharge").def(false);
-	option.add( local::target_net_charge, "target net charge").def(999); //Sentinal value of 999 is used to check if this option is user-active.
-	option.add( local::surface_atom_cutoff, "AvNAPSA neighbor atom cutoff").def(100); // this is how AvNAPSA defines surface, can be used in the Rosetta approach
 
+	option.add( local::target_net_charge_active, "target net charge active").def(false);
+	option.add( local::target_net_charge, "target net charge").def(0);
+
+	option.add( local::surface_atom_cutoff, "AvNAPSA neighbor atom cutoff").def(120); // this is how AvNAPSA defines surface, can be used in the Rosetta approach
 	option.add( local::surface_residue_cutoff, "cutoff for surface residues ( <= # is surface)" ).def(16);
+
 	option.add( local::include_arg, "include arg in supercharge design").def(false);
 	option.add( local::include_lys, "include lys in supercharge design").def(false);
 	option.add( local::include_asp, "include asp in supercharge design").def(false);
