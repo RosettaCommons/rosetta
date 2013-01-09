@@ -20,7 +20,7 @@
 /// This thing I am doing here is a nasty little hack, but I want to test some private methods.
 #define private public
 	#include <protocols/features/BetaTurnDetectionFeatures.hh>
-#define private private
+#undef private
 
 // Utility headers
 #include <utility/excn/Exceptions.hh>

@@ -63,7 +63,7 @@ public:
 	
 	virtual
 	core::Real
-	calculate( core::pose::Pose const & p ) { return 1.0; };
+	calculate( core::pose::Pose const & /* p */ ) { return 1.0; };
 
 };
 

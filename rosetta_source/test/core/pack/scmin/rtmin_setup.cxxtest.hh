@@ -689,7 +689,7 @@ public:
 			scoring::ScoreFunctionOP sfxn = scoring::getScoreFunction();
 			core::import_pose::pose_from_pdb( orig_pose, "core/pack/" + pdbs[ ii ] );
 			(*sfxn)( orig_pose );
-			clock_t start_time = clock();
+			//clock_t start_time = clock();
 			for ( core::Size jj = 1; jj <= niterations; ++jj ) {
 				pose::Pose copy_pose( orig_pose );
 				//pack::task::PackerTaskOP task
@@ -700,7 +700,7 @@ public:
 				//rtmin.rtmin( copy_pose, *sfxn, task );
 				rtmin_run( copy_pose, sfxn );
 			}
-			clock_t stop_time = clock();
+			//clock_t stop_time = clock();
 			//std::cout << "RTMIN TIMING: " << pdbs[ii] << " nres " << orig_pose.total_residue() << " avg time: " << ((double) stop_time - start_time ) / ( niterations * CLOCKS_PER_SEC ) << std::endl;
 		}
 

@@ -131,7 +131,8 @@ public:
     emopts->hbond_options().decompose_bb_hb_into_pair_energies( true );
     sfxn->set_energy_method_options( *emopts );
 
-		core::Real const initial_score = (*sfxn)( pose ); // score the pose first;
+		//core::Real const initial_score = (*sfxn)( pose ); // score the pose first;
+		(*sfxn)( pose ); // score the pose first;
 		sfxn->setup_for_packing( pose, task->repacking_residues(), task->designing_residues() );
 		GraphOP packer_neighbor_graph = create_packer_graph( pose, *sfxn, task );
 

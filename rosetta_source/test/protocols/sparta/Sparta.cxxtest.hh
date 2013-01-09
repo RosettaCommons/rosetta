@@ -59,8 +59,10 @@ public:
 		using std::string;
 		string const pdb_fn( "protocols/sparta/SAM-T08-server_TS3.pdb" );
 		string const cs_fn ( "protocols/sparta/17280_trim.tab" );
-		Real const sparta_score( calc_sparta_score(pdb_fn,cs_fn) );
 
+		calc_sparta_score(pdb_fn,cs_fn);
+
+		//Real const sparta_score( calc_sparta_score(pdb_fn,cs_fn) );
 		//std::cout << sparta_score << std::endl;
 	}
 

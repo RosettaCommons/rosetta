@@ -322,7 +322,7 @@ public:
 		Real step = 1e-2;
 		Real range = ana_lj_energy.atomic_interaction_cutoff();
 		Size nsteps = Size( range / step ) + 1;
-		Real d2;
+		//Real d2;
 
 		Real offset = 0; //1e-5;
 		for ( Size ii = 1; ii <= etable.n_atomtypes(); ++ii ) {
@@ -386,7 +386,7 @@ public:
 		Real range = tab_lj_energy.atomic_interaction_cutoff();
 		Size nsteps = Size( range / step ) + 1;
 		Real d2;
-		int const OCbb_idx = etable.atom_set()->atom_type_index("OCbb");
+		//int const OCbb_idx = etable.atom_set()->atom_type_index("OCbb");
 		int const Hha_idx = etable.atom_set()->atom_type_index("Hha" );
 		int const HREPS_idx = etable.atom_set()->atom_type_index("HREPS" );
 

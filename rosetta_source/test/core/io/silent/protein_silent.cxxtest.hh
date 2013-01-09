@@ -368,7 +368,7 @@ void test_save_and_restore_centroid() {
 
 		// configuration information for tests
 		double const RMS_ERROR( 1e-3 );
-		double const CHI_ERROR( 1e-2 );
+		//double const CHI_ERROR( 1e-2 );
 		double const BB_ERROR ( 1e-2 );
 		std::string const silent_outfile( "test.silent_centroid.out" );
 		pose::Pose restored_pose;

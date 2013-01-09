@@ -138,7 +138,8 @@ public:
     sfxn->set_energy_method_options( *emopts );
 
 		pose.add_constraint( new core::scoring::constraints::AtomPairConstraint( core::id::AtomID( 4, 11 ), core::id::AtomID( 4, 12 ), new core::scoring::constraints::HarmonicFunc( 5.0, 1.0 )));
-		core::Real const initial_score = (*sfxn)( pose ); // score the pose first;
+		//core::Real const initial_score = (*sfxn)( pose ); // score the pose first;
+		(*sfxn)( pose ); // score the pose first;
 		sfxn->setup_for_packing( pose, task->repacking_residues(), task->designing_residues() );
 		GraphOP packer_neighbor_graph = create_packer_graph( pose, *sfxn, task );
 

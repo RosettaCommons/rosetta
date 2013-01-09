@@ -58,8 +58,8 @@ using utility::vector1;
 
 class NonlocalUtilTest : public CxxTest::TestSuite {
  public:
-  static const int MIN_CHUNK_SZ = 7;
-  static const int MAX_CHUNK_SZ = 28;
+  static const core::Size MIN_CHUNK_SZ = 7;
+  static const core::Size MAX_CHUNK_SZ = 28;
   vector1<SequenceAlignment> alignments_;
   Loops regions;
 
@@ -91,7 +91,7 @@ class NonlocalUtilTest : public CxxTest::TestSuite {
 
     protocols::nonlocal::limit_chunk_size(MIN_CHUNK_SZ, MAX_CHUNK_SZ, unaligned);
     for (Loops::const_iterator i = unaligned->begin(); i != unaligned->end(); ++i) {
-      const Loop& loop = *i;
+      //const Loop& loop = *i;
       TS_ASSERT(i->length() >= MIN_CHUNK_SZ);
       TS_ASSERT(i->length() <= MAX_CHUNK_SZ);
     }
