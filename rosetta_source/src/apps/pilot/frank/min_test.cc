@@ -103,8 +103,8 @@ public:
 		mm.set_bb  ( true );
 		mm.set_chi ( true );
 		mm.set_jump( true );
-		mm.set( core::id::THETA, option[ OptionKeys::relax::minimize_mainchain_bond_angles ]() );
-		mm.set( core::id::D, option[ OptionKeys::relax::minimize_mainchain_bond_lengths ]() );
+		mm.set( core::id::THETA, option[ OptionKeys::relax::minimize_bond_angles ]() );
+		mm.set( core::id::D, option[ OptionKeys::relax::minimize_bond_lengths ]() );
 	
 		if ( option[ OptionKeys::relax::jump_move ].user() )
 			mm.set_jump( option[ OptionKeys::relax::jump_move ]() );

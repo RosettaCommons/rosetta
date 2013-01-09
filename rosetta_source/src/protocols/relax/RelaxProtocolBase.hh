@@ -70,13 +70,13 @@ public:
 
 	void minimize_bond_lengths( bool setting );
 	void minimize_bond_angles( bool setting );
-	void minimize_mainchain_bond_lengths( bool setting );
-	void minimize_mainchain_bond_angles( bool setting );
+	void minimize_bondlength_subset( int setting );
+	void minimize_bondangle_subset( int setting );
 
 	bool minimize_bond_lengths() const;
 	bool minimize_bond_angles() const;
-	bool minimize_mainchain_bond_lengths() const;
-	bool minimize_mainchain_bond_angles() const;
+	int minimize_bondlength_subset() const;
+	int minimize_bondangle_subset() const;
 
 	bool constrain_relax_to_native_coords() const {  return    constrain_relax_to_native_coords_;}
 	bool constrain_relax_to_start_coords() const {  return     constrain_relax_to_start_coords_;}
@@ -149,8 +149,8 @@ private:  // Essentially MoveMap settings
 
 	bool minimize_bond_lengths_;
 	bool minimize_bond_angles_;
-	bool minimize_mainchain_bond_lengths_;
-	bool minimize_mainchain_bond_angles_;
+	int minimize_bondangle_subset_;
+	int minimize_bondlength_subset_;
 
 protected:  // Constraint settings
 

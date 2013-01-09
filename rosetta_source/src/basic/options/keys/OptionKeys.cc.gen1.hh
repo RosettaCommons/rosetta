@@ -413,8 +413,8 @@ namespace relax { BooleanOptionKey const chi_move( "relax:chi_move" );  }
 namespace relax { BooleanOptionKey const jump_move( "relax:jump_move" );  }
 namespace relax { BooleanOptionKey const minimize_bond_lengths( "relax:minimize_bond_lengths" );  }
 namespace relax { BooleanOptionKey const minimize_bond_angles( "relax:minimize_bond_angles" );  }
-namespace relax { BooleanOptionKey const minimize_mainchain_bond_lengths( "relax:minimize_mainchain_bond_lengths" );  }
-namespace relax { BooleanOptionKey const minimize_mainchain_bond_angles( "relax:minimize_mainchain_bond_angles" );  }
+namespace relax { IntegerOptionKey const minimize_bondlength_subset( "relax:minimize_bondlength_subset" );  }
+namespace relax { IntegerOptionKey const minimize_bondangle_subset( "relax:minimize_bondangle_subset" );  }
 namespace relax { StringOptionKey const min_type( "relax:min_type" );  }
 namespace relax { BooleanOptionKey const cartesian( "relax:cartesian" );  }
 namespace relax { RealOptionKey const chainbreak_weight( "relax:chainbreak_weight" );  }

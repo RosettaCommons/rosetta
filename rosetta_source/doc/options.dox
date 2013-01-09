@@ -5158,14 +5158,14 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
-<dt><b>-minimize_mainchain_bond_lengths</b> \<Boolean\><dt>
-<dd>Free bond length DOFs for mainchain heavy atoms</dd><br>
-<dd>Default: false</dd><br>
+<dt><b>-minimize_bondlength_subset</b> \<Integer\><dt>
+<dd>Minimize only a subset of bondlengths 0 Default  all bondlengths 1          backbone only 2          sidechain only 3          CA only (Ca-C,Ca-N and Ca-Cb)</dd><br>
+<dd>Default: 0</dd><br>
 </dl>
 <dl>
-<dt><b>-minimize_mainchain_bond_angles</b> \<Boolean\><dt>
-<dd>Free bond angle DOFs for mainchain heavy atoms</dd><br>
-<dd>Default: false</dd><br>
+<dt><b>-minimize_bondangle_subset</b> \<Integer\><dt>
+<dd>Minimize only a subset of bondlengths 0 Default  all bondangles 1          backbone only 2          sidechain only 3          tau only 4          Ca-Cb only</dd><br>
+<dd>Default: 0</dd><br>
 </dl>
 <dl>
 <dt><b>-min_type</b> \<String\><dt>

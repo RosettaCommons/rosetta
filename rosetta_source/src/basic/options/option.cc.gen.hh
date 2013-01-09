@@ -1074,8 +1074,8 @@ option.add( basic::options::OptionKeys::relax::chi_move, "allow sidechain to mov
 option.add( basic::options::OptionKeys::relax::jump_move, "allow jump to move during relax" ).def(false);
 option.add( basic::options::OptionKeys::relax::minimize_bond_lengths, "Free bond length DOFs during relax for all atoms" ).def(false);
 option.add( basic::options::OptionKeys::relax::minimize_bond_angles, "Free bond angle DOFs during relax for all atoms" ).def(false);
-option.add( basic::options::OptionKeys::relax::minimize_mainchain_bond_lengths, "Free bond length DOFs for mainchain heavy atoms" ).def(false);
-option.add( basic::options::OptionKeys::relax::minimize_mainchain_bond_angles, "Free bond angle DOFs for mainchain heavy atoms" ).def(false);
+option.add( basic::options::OptionKeys::relax::minimize_bondlength_subset, "Minimize only a subset of bondlengths 0 Default  all bondlengths 1          backbone only 2          sidechain only 3          CA only (Ca-C,Ca-N and Ca-Cb)" ).legal(0).legal(1).legal(2).legal(3).def(0);
+option.add( basic::options::OptionKeys::relax::minimize_bondangle_subset, "Minimize only a subset of bondlengths 0 Default  all bondangles 1          backbone only 2          sidechain only 3          tau only 4          Ca-Cb only" ).legal(0).legal(1).legal(2).legal(3).legal(4).def(0);
 option.add( basic::options::OptionKeys::relax::min_type, "minimizer to use during relax." ).def("dfpmin_armijo_nonmonotone");
 option.add( basic::options::OptionKeys::relax::cartesian, "Use Cartesian minimizer" ).def(false);
 option.add( basic::options::OptionKeys::relax::chainbreak_weight, "chainbreak weight" ).def(0.0);

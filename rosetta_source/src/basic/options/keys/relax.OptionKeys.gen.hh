@@ -46,8 +46,8 @@ namespace relax { extern BooleanOptionKey const chi_move; }
 namespace relax { extern BooleanOptionKey const jump_move; }
 namespace relax { extern BooleanOptionKey const minimize_bond_lengths; }
 namespace relax { extern BooleanOptionKey const minimize_bond_angles; }
-namespace relax { extern BooleanOptionKey const minimize_mainchain_bond_lengths; }
-namespace relax { extern BooleanOptionKey const minimize_mainchain_bond_angles; }
+namespace relax { extern IntegerOptionKey const minimize_bondlength_subset; }
+namespace relax { extern IntegerOptionKey const minimize_bondangle_subset; }
 namespace relax { extern StringOptionKey const min_type; }
 namespace relax { extern BooleanOptionKey const cartesian; }
 namespace relax { extern RealOptionKey const chainbreak_weight; }

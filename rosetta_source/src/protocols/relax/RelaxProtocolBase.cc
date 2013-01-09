@@ -125,38 +125,92 @@ void RelaxProtocolBase::initialize_movemap(
 {
 	using namespace core::id;
 	if ( minimize_bond_lengths_ ) {
-		movemap.set( core::id::D, true );
-	} else if ( minimize_mainchain_bond_lengths_ ) {
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-			core::chemical::AtomIndices const & ii_mainchain_atoms( pose.residue(ii).mainchain_atoms() );
-			for ( Size jj = 1; jj <= ii_mainchain_atoms.size(); ++jj ) {
-				if ( jj == 1 ) {
-					if ( ii > 1 && pose.residue(ii).is_bonded( ii-1 ) && !pose.residue(ii).has_variant_type("CUTPOINT_UPPER")) {
+		// 0 Default  all bondlengths
+		// 1          backbone only
+		// 2          sidechain only
+		// 3          CA only (Ca-C,Ca-N and Ca-Cb)
+
+		if (minimize_bondlength_subset_ == 0) {
+			movemap.set( core::id::D, true );
+		} else if ( minimize_bondlength_subset_ == 1) {
+			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+				core::chemical::AtomIndices const & ii_mainchain_atoms( pose.residue(ii).mainchain_atoms() );
+				for ( Size jj = 1; jj <= ii_mainchain_atoms.size(); ++jj ) {
+					//if ( jj == 1 ) {
+					//	if ( ii > 1 && pose.residue(ii).is_bonded( ii-1 ) && !pose.residue(ii).has_variant_type("CUTPOINT_UPPER")) {
+					//		movemap.set( DOF_ID( AtomID( ii_mainchain_atoms[ jj ], ii ), core::id::D ), true );
+					//	}
+					//} else {
 						movemap.set( DOF_ID( AtomID( ii_mainchain_atoms[ jj ], ii ), core::id::D ), true );
-					}
-				} else {
-					movemap.set( DOF_ID( AtomID( ii_mainchain_atoms[ jj ], ii ), core::id::D ), true );
+					//}
 				}
+			}
+		} else if ( minimize_bondlength_subset_ == 2) {
+			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+				core::conformation::Residue const &res_i = pose.residue(ii);
+				for ( Size jj = 1; jj <= res_i.natoms(); ++jj ) {
+					if (res_i.atom_is_backbone(jj)) continue;
+					movemap.set( DOF_ID( AtomID( jj, ii ), core::id::D ), true );
+				}
+			}
+		} else if ( minimize_bondlength_subset_ == 3) {
+			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+				core::conformation::Residue const &res_i = pose.residue(ii);
+				if (res_i.type().has_atom_name( " C  "))
+					movemap.set( DOF_ID( AtomID( res_i.atom_index(" C  "), ii ), core::id::D ), true );
+				if (res_i.type().has_atom_name( " CA "))
+					movemap.set( DOF_ID( AtomID( res_i.atom_index(" CA "), ii ), core::id::D ), true );
+				if (res_i.type().has_atom_name( " CB "))
+					movemap.set( DOF_ID( AtomID( res_i.atom_index(" CB "), ii ), core::id::D ), true );
 			}
 		}
 	}
 
 	if ( minimize_bond_angles_ ) {
-		movemap.set( core::id::THETA, true );
-	} else if ( minimize_mainchain_bond_angles_ ) {
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-			core::chemical::AtomIndices const & ii_mainchain_atoms( pose.residue(ii).mainchain_atoms() );
-			for ( Size jj = 1; jj <= ii_mainchain_atoms.size(); ++jj ) {
-				if ( jj == 1 ) {
-					if ( ii > 1 && pose.residue(ii).is_bonded( ii-1 ) && !pose.residue(ii).has_variant_type("CUTPOINT_UPPER")) {
+
+
+		// 0 Default  all bondangles
+		// 1          backbone only
+		// 2          sidechain only
+		// 3          tau only
+		// 4          Ca-Cb only
+		if (minimize_bondangle_subset_ == 0) {
+			movemap.set( core::id::THETA, true );
+		} else if ( minimize_bondangle_subset_ == 1) {
+			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+				core::chemical::AtomIndices const & ii_mainchain_atoms( pose.residue(ii).mainchain_atoms() );
+				for ( Size jj = 1; jj <= ii_mainchain_atoms.size(); ++jj ) {
+					//if ( jj == 1 || jj == 2 ) {  //fpd  add jj==2
+					//	if ( ii > 1 && pose.residue(ii).is_bonded( ii-1 ) && !pose.residue(ii).has_variant_type("CUTPOINT_UPPER")) {
+					//		movemap.set( DOF_ID( AtomID( ii_mainchain_atoms[ jj ], ii ), core::id::THETA ), true );
+					//	}
+					//} else {
 						movemap.set( DOF_ID( AtomID( ii_mainchain_atoms[ jj ], ii ), core::id::THETA ), true );
-					}
-				} else {
-					movemap.set( DOF_ID( AtomID( ii_mainchain_atoms[ jj ], ii ), core::id::THETA ), true );
+					//}
 				}
 			}
+		} else if ( minimize_bondangle_subset_ == 2) {
+			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+				core::conformation::Residue const &res_i = pose.residue(ii);
+				for ( Size jj = 1; jj <= res_i.natoms(); ++jj ) {
+					if (res_i.atom_is_backbone(jj)) continue;
+					movemap.set( DOF_ID( AtomID( jj, ii ), core::id::THETA ), true );
+				}
+			}
+		} else if ( minimize_bondangle_subset_ == 3) {
+			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+				core::conformation::Residue const &res_i = pose.residue(ii);
+				if (res_i.type().has_atom_name( " C  "))
+					movemap.set( DOF_ID( AtomID( res_i.atom_index(" C  "), ii ), core::id::THETA ), true );
+			}
+		} else if ( minimize_bondangle_subset_ == 4) {
+			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+				core::conformation::Residue const &res_i = pose.residue(ii);
+				if (res_i.type().has_atom_name( " CB "))
+					movemap.set( DOF_ID( AtomID( res_i.atom_index(" CB "), ii ), core::id::THETA ), true );
+			}
 		}
-	}
+ 	}
 
 }
 
@@ -188,15 +242,15 @@ void RelaxProtocolBase::set_default_minimization_settings(){
 	using namespace basic::options::OptionKeys;
 	minimize_bond_lengths_ = option[ OptionKeys::relax::minimize_bond_lengths ]();
 	minimize_bond_angles_ = option[ OptionKeys::relax::minimize_bond_angles ]();
-	minimize_mainchain_bond_lengths_ = option[ OptionKeys::relax::minimize_mainchain_bond_lengths ]();
-	minimize_mainchain_bond_angles_  = option[ OptionKeys::relax::minimize_mainchain_bond_angles ]();
+	minimize_bondlength_subset_ = option[ OptionKeys::relax::minimize_bondlength_subset ]();
+	minimize_bondangle_subset_  = option[ OptionKeys::relax::minimize_bondangle_subset ]();
 
 	//fpd extras
 	cartesian_ = option[ OptionKeys::relax::cartesian ]();
 	if ( option[ OptionKeys::relax::min_type ].user() )
 		min_type_ = option[ OptionKeys::relax::min_type ]();
-	else if (cartesian_)
-		min_type_ = "lbfgs_armijo_nonmonotone";  // default is different for cartesian minimization
+	else if (cartesian_ || minimize_bond_lengths_ || minimize_bond_angles_)
+		min_type_ = "lbfgs_armijo_nonmonotone";  // default is different for cartesian/fbal minimization
 }
 
 void RelaxProtocolBase::set_default_coordinate_settings(){
@@ -241,13 +295,13 @@ void RelaxProtocolBase::set_task_factory( core::pack::task::TaskFactoryOP taskf 
 
 void RelaxProtocolBase::minimize_bond_lengths( bool setting ) { minimize_bond_lengths_ = setting; }
 void RelaxProtocolBase::minimize_bond_angles( bool setting ) { minimize_bond_angles_ = setting; }
-void RelaxProtocolBase::minimize_mainchain_bond_lengths( bool setting ) { minimize_mainchain_bond_lengths_ = setting; }
-void RelaxProtocolBase::minimize_mainchain_bond_angles( bool setting ) { minimize_mainchain_bond_angles_ = setting; }
+void RelaxProtocolBase::minimize_bondangle_subset( int setting ) { minimize_bondangle_subset_ = setting; }
+void RelaxProtocolBase::minimize_bondlength_subset( int setting ) { minimize_bondlength_subset_ = setting; }
 
 bool RelaxProtocolBase::minimize_bond_lengths() const { return minimize_bond_lengths_;}
 bool RelaxProtocolBase::minimize_bond_angles() const { return minimize_bond_angles_;}
-bool RelaxProtocolBase::minimize_mainchain_bond_lengths() const { return minimize_mainchain_bond_lengths_;}
-bool RelaxProtocolBase::minimize_mainchain_bond_angles() const { return minimize_mainchain_bond_angles_;}
+int RelaxProtocolBase::minimize_bondlength_subset() const { return minimize_bondlength_subset_;}
+int RelaxProtocolBase::minimize_bondangle_subset() const { return minimize_bondangle_subset_;}
 
 void RelaxProtocolBase::register_options()
 {
@@ -261,8 +315,8 @@ void RelaxProtocolBase::register_options()
 
 	option.add_relevant( OptionKeys::relax::minimize_bond_lengths );
 	option.add_relevant( OptionKeys::relax::minimize_bond_angles );
-	option.add_relevant( OptionKeys::relax::minimize_mainchain_bond_lengths );
-	option.add_relevant( OptionKeys::relax::minimize_mainchain_bond_angles );
+	option.add_relevant( OptionKeys::relax::minimize_bondlength_subset );
+	option.add_relevant( OptionKeys::relax::minimize_bondlength_subset );
 
 }
 

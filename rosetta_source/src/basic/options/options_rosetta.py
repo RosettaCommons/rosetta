@@ -2143,9 +2143,21 @@ Options = Option_Group( '',
 		Option( 'jump_move', 'Boolean', default='false', desc='allow jump to move during relax'),
 		Option( 'minimize_bond_lengths',          'Boolean', default='false', desc='Free bond length DOFs during relax for all atoms' ),
 		Option( 'minimize_bond_angles',           'Boolean', default='false', desc='Free bond angle DOFs during relax for all atoms' ),
-		Option( 'minimize_mainchain_bond_lengths', 'Boolean', default='false', desc='Free bond length DOFs for mainchain heavy atoms' ),
-		Option( 'minimize_mainchain_bond_angles',  'Boolean', default='false', desc='Free bond angle DOFs for mainchain heavy atoms' ),
-
+		Option( 'minimize_bondlength_subset', 'Integer', legal=[ '0', '1', '2', '3'], default='0',
+ 				desc="Minimize only a subset of bondlengths \
+0 Default  all bondlengths \
+1          backbone only \
+2          sidechain only \
+3          CA only (Ca-C,Ca-N and Ca-Cb)",
+			),
+		Option( 'minimize_bondangle_subset', 'Integer', legal=[ '0', '1', '2', '3', '4'], default='0',
+ 				desc="Minimize only a subset of bondlengths \
+0 Default  all bondangles \
+1          backbone only \
+2          sidechain only \
+3          tau only \
+4          Ca-Cb only",
+			),
 		## Use an alternate minimizer
 		Option( 'min_type', 'String', default = 'dfpmin_armijo_nonmonotone', desc = 'minimizer to use during relax.'),
 		Option( 'cartesian', 'Boolean', default='false', desc='Use Cartesian minimizer' ),
