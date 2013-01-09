@@ -436,9 +436,10 @@ insert_point_mut_filter_vals(
 	pair< AA, vector1< Real > > aa_vals_pair( pair< AA, vector1< Real > >( aa, vals ) );
 	//first check if we've assigned anything for seqpos
 	//if we have, just append this aa,vals pair onto that seqpos' data
-	bool inserted( false );
+	bool new_pos( true ); // It's a new position unless we find it
 	for( Size iseq = 1; iseq <= seqpos_aa_vals_vec.size(); ++iseq ){
 		if( seqpos == seqpos_aa_vals_vec[ iseq ].first ){
+			new_pos = false;
 			bool replaced( false );
 			//we need to check if we already have vals for this seqpos,aa in our data
 			for( core::Size iaa = 1; iaa <= seqpos_aa_vals_vec[ iseq ].second.size(); ++iaa ){ 
@@ -451,13 +452,12 @@ insert_point_mut_filter_vals(
 			//dont append new data if we're just replacing
 			if( replaced ) break;
 			seqpos_aa_vals_vec[ iseq ].second.push_back( aa_vals_pair );
-			inserted = true;
 			break;
 		}
 	}
 	//if this is the first instance of data at seqpos,
 	//create a 1-element vector and add to the ptmut data
-	if( !inserted ){
+	if( new_pos ){
 		vector1< pair< AA, vector1< Real > > > aa_vals_vec( 1, aa_vals_pair );
 		seqpos_aa_vals_vec.push_back( pair< Size, vector1< pair< AA, vector1< Real > > > >( seqpos, aa_vals_vec ) );
 	}
