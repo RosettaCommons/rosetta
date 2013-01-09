@@ -29,8 +29,8 @@ class OptionSystemManager:
         Interacts with the rosetta options system by re-initing every time.
         To get and set options That do not have to be always present use:
         (These will be lost when protocols are run as protocols need to reinitialize rosetta if run on multiple processors)
-        rosetta.basic.options.get_datatype_option('string_without_-')
-        rosetta.basic.options.set_datatype_option('string_without_-', value)
+        rosetta.basic.options.get_datatype_option('string_without-')
+        rosetta.basic.options.set_datatype_option('string_without-', value)
         Else: use OptionSystemManager.add_option('string')
         """
         self.opts = []
@@ -96,13 +96,16 @@ class OptionSystemManager:
         self.clear_button.grid(row=r+2, column=c+2, columnspan=2, sticky=W+E)
         self.clear_current_button.grid(row = r+3, column=c+2, columnspan = 2, sticky=W+E)
     
+    def print_current_options(self):
+        print " ".join(self.opts)
+        
     def add_option(self, option_string):
         """
         Used to add an option outside of the GUI.
         """
         self.common_option.set(option_string)
         self.extend()
-        
+            
     def common_option_disable(self, name, index, mode):
         """
         Callback for common_option.  If not set to enter custom, disables option entry.
@@ -220,6 +223,8 @@ class OptionSystemManager:
             self.extend_options(self.common_option.get())
             
     def extend_options(self, string):
+        if not string[0]=='-':string = "-"+string
+        
         self.opts.append(string)
         opts = [string]
         self.extra_options.append(string)

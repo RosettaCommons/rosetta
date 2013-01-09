@@ -109,10 +109,23 @@ class InputFrame(Frame):
         looFull = self.input_class.loop_start.get()+ ":"+ self.input_class.loop_end.get()+":"+self.input_class.loop_chain.get().upper()
         self.input_class.loops_as_strings.append(looFull)
         self.loops_listbox.insert(END, looFull)
-        #print self.toolkit.input_class.loops_as_strings
         
+        start = looFull.split(":")[0]; end = looFull.split(":")[1]
         #Replacement of loops_as_strings
-        region = Region(self.input_class.loop_chain.get().upper(), int(self.input_class.loop_start.get()), int(self.input_class.loop_end.get()))
+        
+        #Chain
+        if (start == "" and end==""):
+            region = Region(self.input_class.loop_chain.get().upper(), None, None)
+        #Nter
+        elif start=="":
+            region = Region(self.input_class.loop_chain.get().upper(), None, int(end))
+        #Cter
+        elif end=="":
+            region = Region(self.input_class.loop_chain.get().upper(), int(start), None)
+        #Loop
+        else: 
+            region = Region(self.input_class.loop_chain.get().upper(), int(start), int(end))
+            
         self.input_class.regions.add_region(region)
         
     def remLoop(self):

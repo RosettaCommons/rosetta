@@ -7,7 +7,7 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 ## @file   /GUIs/pyrosetta_toolkit/modules/tools/loops.py
-## @brief  general loop functions for the toolkit
+## @brief  general loop functions for the toolkit - Most of these will be replaced by functions with the Region and Regions classes.
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 

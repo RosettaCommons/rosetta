@@ -10,19 +10,22 @@
 ## @brief  general functions for the toolkit
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
-
+#Rosetta Imports
 from rosetta import *
-import tkFileDialog
-import tkMessageBox
-import tkSimpleDialog
-from Tkinter import Listbox
+
+#Python Imports
 import os
 import math
 import re
 from sys import platform
 from shutil import rmtree
 import time
-#rosetta.init()
+
+#Tkinter Imports
+import tkFileDialog
+import tkMessageBox
+import tkSimpleDialog
+from Tkinter import Listbox
 
 pwd = os.getcwd()
 

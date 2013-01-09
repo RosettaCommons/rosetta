@@ -58,6 +58,7 @@ class DesignProtocols(ProtocolBaseClass):
             self.run_protocol(mover)
             
         top_level = Toplevel(main)
+        top_level.title("Fixbb Design Setup")
         min_sc = IntVar(); min_sc.set(False)
         min_pack = IntVar(); min_pack.set(False)
         stochastic_pack = IntVar(); stochastic_pack.set(False)

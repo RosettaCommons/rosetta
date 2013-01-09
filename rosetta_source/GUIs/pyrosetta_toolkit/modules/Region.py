@@ -12,6 +12,9 @@
 #Rosetta Imports
 from rosetta import *
 
+#Python Imports
+import re
+
 class Region:
     """
     This is a PDB numbering based region class.  Its primary purpose is to make dealing with regions/selections through the GUI and code more intuitive.
@@ -28,11 +31,20 @@ class Region:
         Give chain and end,   and the region is a N-Terminal tail
         """
         
-        self.region = repr(start)+":"+repr(end)+":"+chain
+        
         self.start = start
         self.end = end
         self.chain = chain
-    
+        
+        if not self.start and not self.end:
+            self.region = ":"+":"+chain.upper()
+        elif not self.start:
+            self.region = ":"+repr(end)+":"+chain.upper()
+        elif not self.end:
+            self.region = repr(start)+":"+":"+chain.upper()
+        else:
+            self.region = repr(start)+":"+repr(end)+":"+chain.upper()
+        
     def set_Loop_for_region(self, pose, cutpoint):
         #if not self.get_region_type()=='loop':
             #return
@@ -41,6 +53,14 @@ class Region:
     def get_loop(self):
         if not self.loop: return
         return self.loop
+    
+    def get_movemap(self, pose):
+        movemap = MoveMap()
+        for i in range(self.get_rosetta_start(pose), self.get_rosetta_end(pose)+1):
+            movemap.set_bb(i, True)
+            movemap.set_chi(i, True)
+        return movemap
+    
     def get_region(self):
         return self.region
     def get_region_type(self):
@@ -68,7 +88,7 @@ class Region:
         if self.get_region_type()=='nter':
             #First residue of the chain - Would be useful to have pdb_info() be able to return this.
             for resnum in range(1, pose.total_residue()+1):
-                chain = pose.chain(resnum)
+                chain = pose.pdb_info().chain(pose.chain(resnum))
                 if chain == self.chain:
                     return resnum
                 else:
@@ -81,7 +101,7 @@ class Region:
             #Last residue of the chain - Would be useful to have pdb_info() be able to return this.
             resnum = pose.total_residue()
             while resnum !=1:
-                chain = pose.chain(resnum)
+                chain = pose.pdb_info().chain(pose.chain(resnum))
                 if chain == self.chain:
                     return resnum
                 else:
@@ -123,6 +143,9 @@ class Regions:
     def get_regions(self):
         return self.regions
     
+    def get_num_regions(self):
+        return len(self.regions)
+        
     def get_regions_of_type(self, type):
         regions = []
         for region in self.regions:
@@ -159,6 +182,57 @@ class Regions:
     def get_loop_regions(self):
         return self.get_regions_of_type('loop')
         
+    def get_movemap(self, pose, include_only_regions=False):
+        """
+        Create a movemap where bb and sc are on from the regions in the region object.
+        """
+        regions = self.regions
+        movemap = MoveMap()
+        
+        if not self.regions:
+            for i in range(1, pose.total_residue()+1):
+                movemap.set_bb(i, True)
+                movemap.set_chi(i, True)
+            return movemap
+        
+        if include_only_regions:
+            regions = self.get_regions_of_types(include_only_regions)
+        
+        for region in regions:
+            print region
+            start = region.get_rosetta_start(pose)
+            print start
+            end = region.get_rosetta_end(pose)
+            print end
+            for i in range(start, end+1):
+                movemap.set_bb(i, True)
+                movemap.set_chi(i, True)
+        return movemap
+    
+    def get_packer_task(self, pose, include_only_regions = False):
+        """
+        Create a packer task for repacking.
+        """
+        regions = self.regions
+        packer_task=standard_packer_task(pose)
+        packer_task.restrict_to_repacking()
+        
+        
+        if self.regions:    
+            packer_task.temporarily_fix_everything()
+        else:
+            return packer_task
+            
+        if include_only_regions:
+            regions = self.get_regions_of_types(include_only_regions)
+        
+        for region in regions:
+            start = region.get_rosetta_start(pose)
+            end = region.get_rosetta_end(pose)
+            for i in range(start, end+1):
+                packer_task.temporarily_set_pack_residue(i, True)
+        return packer_task
+    
     #Loop/Region integration:
     def get_Loops_from_regions(self):
         """

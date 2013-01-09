@@ -25,7 +25,7 @@ class GUIOutput:
         self.processors = IntVar(); self.processors.set(1); # We will only use more if the user sets more to use.
         self.toolkit = toolkit;
         self.outdir = StringVar(); self.outdir.set(global_variables.current_directory)
-        self.outname = StringVar(); self.outname.set("0")
+        self.outname = StringVar();
         self.decoys=IntVar(); self.decoys.set(0)
         self.rounds=IntVar(); self.rounds.set(1)
         self.VarLoopSeq = StringVar(); #Sequence of the particular region just queried.

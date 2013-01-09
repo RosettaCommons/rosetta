@@ -38,6 +38,8 @@ from modules.protocols.LowResLoopModelingProtocols import LowResLoopModelingProt
 from modules.protocols.HighResLoopModelingProtocols import HighResLoopModelingProtocols
 from modules.protocols.GraftingProtocols import GraftMoverWindow
 from modules.protocols.AnalysisProtocols import AnalysisProtocols
+from modules.protocols.FloppyTailProtocol import FloppyTailProtocol
+from modules.protocols.MinimizationProtocols import MinimizationProtocols
 
 from window_modules.clean_pdb.FixPDBWindow import FixPDBWindow
 from rosetta_flag_file_builder.RosettaFlagFileBuilder import RosettaFlagFileBuilder
@@ -48,7 +50,7 @@ import global_variables
 class Menus():
     def __init__(self, main, toolkit):
 	self.main = main
-	self.toolkit = toolkit
+	self.toolkit = toolkit; #Need to figure out how to tell Python what this 'toolkit' is so IDEs can make sense out of it!
 	self.main_menu=Menu(self.main)
 	self.score_analyzer = ScoreAnalysis(); #Needs to exist as instance due to holding data from load data.  Eventually these functions can go into it's own window.
 
@@ -142,7 +144,8 @@ class Menus():
 	#self.design_menu.add_command(label="Structure Editing and Grafting", foreground='red')
 	self.advanced_menu.add_cascade(label = "Design", menu=self.design_menu)
 	self.advanced_menu.add_separator()
-	self.advanced_menu.add_command(label ="Enable Constraints", command = lambda: input_tools.add_constraints_to_pose_and_scorefunction(self.toolkit.pose, self.toolkit.score_class.score))
+	self.advanced_menu.add_command(label ="Enable Constraints", command = lambda: self.toolkit.input_class.constraint_file_path.set(\
+				    input_tools.add_constraints_to_pose_and_scorefunction(self.toolkit.pose, self.toolkit.score_class.score)))
 	#self.advanced_menu.add_command(label ="Enable Symmetry", foreground='red')
 	
 	###NonStandard###
@@ -181,6 +184,8 @@ class Menus():
 	self.docking_class = DockingProtocols(self.toolkit.pose, self.toolkit.score_class, self.toolkit.input_class, self.toolkit.output_class)
 	self.low_res_loop_modeling_class = LowResLoopModelingProtocols(self.toolkit.pose, self.toolkit.score_class, self.toolkit.input_class, self.toolkit.output_class)
 	self.high_res_loop_modeling_class = HighResLoopModelingProtocols(self.toolkit.pose, self.toolkit.score_class, self.toolkit.input_class, self.toolkit.output_class)
+	self.floppy_tail_class = FloppyTailProtocol(self.toolkit.pose, self.toolkit.score_class, self.toolkit.input_class, self.toolkit.output_class)
+	self.minimize_class = MinimizationProtocols(self.toolkit.pose, self.toolkit.score_class, self.toolkit.input_class, self.toolkit.output_class)
 	
 	#Design
 	
@@ -208,6 +213,19 @@ class Menus():
 	self.loop_modeling_protocols.add_cascade(label = "Low Resolution", menu = self.loop_modeling_protocols_low)
 	self.loop_modeling_protocols.add_cascade(label = "High Resolution", menu = self.loop_modeling_protocols_high)
 	
+	#Minimization.  Just so it's here too.
+	self.minimization_protocols = Menu(self.main_menu, tearoff=0)
+	self.minimization_protocols.add_command(label = "RePack Rotamers", command = lambda:self.minimize_class.optimize_rotamers())
+	self.minimization_protocols.add_command(label = "RePack Rotamers (SCWRL)", command = lambda:self.minimize_class.SCWRL())
+	self.minimization_protocols.add_separator()
+	self.minimization_protocols.add_command(label = "Minimize Structure", command = lambda:self.minimize_class.minimize())
+	self.minimization_protocols.add_command(label = "Minimize Backbone", command = lambda:self.minimize_class.minimize(False, False, True))
+	self.minimization_protocols.add_command(label = "Minimize Sidechains", command = lambda:self.minimize_class.minimize(False, False, False, True))
+	self.minimization_protocols.add_separator()
+	self.minimization_protocols.add_command(label = "Relax Structure", command = lambda:self.minimize_class.relax(1))
+	self.minimization_protocols.add_command(label = "Relax Backbone", command = lambda:self.minimize_class.relax(1, False, True))
+	self.minimization_protocols.add_command(label = "Relax Sidechains", command = lambda:self.minimize_class.relax(1, False, False, True))
+	
 	#General Modeling (Homology/Abinitio)
 	self.general_protocols = Menu(self.main_menu, tearoff=0)
 	self.servers = Menu(self.main_menu, tearoff = 0); #Because why not?
@@ -228,15 +246,17 @@ class Menus():
 	self.general_protocols.add_separator()
 	#self.general_protocols.add_cascade(label = "RNA", menu = self.rna_protocols)
 	#self.general_protocols.add_cascade(label = "DNA", menu = self.dna_protocols)
-	
+	self.general_protocols.add_command(label = "FloppyTail", command=lambda: self.floppy_tail_class.setup_protocol(self.main))
 	#self.general_protocols.add_command(label = "Ab Initio", foreground='red')
 	#self.general_protocols.add_command(label = "Homology Modeling", foreground='red')
 	self.protocols_menu.add_cascade(label = "General", menu = self.general_protocols)
 	self.protocols_menu.add_separator()
+	
 	self.protocols_menu.add_cascade(label = "Loop Modeling", menu = self.loop_modeling_protocols)
 	self.protocols_menu.add_cascade(label = "Docking", menu = self.docking_protocols)
 	self.protocols_menu.add_cascade(label = "Design", menu = self.design_protocols)
-
+	#self.protocols_menu.add_separator()
+	self.protocols_menu.add_cascade(label = "Minimization", menu=self.minimization_protocols)
 	
 	self.main_menu.add_cascade(label = "Protocols", menu=self.protocols_menu)
 
@@ -309,7 +329,12 @@ class Menus():
 	self.help_desmut_menu.add_command(label = "Relative Mutability", command=lambda: help_tools.mutRM())
 	self.help_desmut_menu.add_command(label = "Surface Probability", command=lambda: help_tools.mutSP())
 	self.help_menu.add_cascade(label="Mutability Data", menu=self.help_desmut_menu)
-	
+	self.help_menu.add_separator()
+	self.help_menu_scwrl = Menu(self.main_menu, tearoff=0)
+	self.help_menu_scwrl.add_command(label = "Download", command = lambda: webbrowser.open("http://dunbrack.fccc.edu/scwrl4/SCWRL4.php"))
+	self.help_menu_scwrl.add_command(label = "Install", command = lambda: webbrowser.open("http://dunbrack.fccc.edu/scwrl4/SCWRL4.php#installation"))
+	self.help_menu_scwrl.add_command(label = "GUI Install", command = lambda: help_tools.scwrl())
+	self.help_menu.add_cascade(label = "SCWRL", menu=self.help_menu_scwrl)
 	self.main_menu.add_cascade(label="Help", menu=self.help_menu)
 
 

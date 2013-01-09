@@ -18,8 +18,7 @@ from Tkinter import *
 from Tkinter import Frame as TkFrame
 
 #Toolkit Imports
-from modules.protocols.LoopMinimizationProtocols import LoopMinimizationProtocols
-from modules.protocols.ProteinMinimizationProtocols import ProteinMinimizationProtocols
+from modules.protocols.MinimizationProtocols import MinimizationProtocols
 from modules.tools import output as output_tools
 
 
@@ -30,39 +29,31 @@ class QuickProtocolsFrame(TkFrame):
         self.output_class = output_class
         TkFrame.__init__(self, main, **options)
         
-        self.loopCommand = StringVar()
-        self.loopCommand.set("Relax Loop(s)") ; #Default loop command
-        
-        self.fullCommand = StringVar()
-        self.fullCommand.set("Relax All"); #Default full command
+        self.min_cmd = StringVar()
+        self.min_cmd.set("Optimize Rotamers") ; #Default loop command
         
         self.fast_relax_bool=StringVar(); self.fast_relax_bool.set(1)#Fast Relax check_button_ckbox
         self.randomize_loops_bool=StringVar(); #Random Loop check_button_ckbox
         self.set_options_menus()
         
         #Will change when protocols are re-organized.
-        self.loop_protocols = LoopMinimizationProtocols(self.toolkit.pose, self.toolkit.score_class, self.toolkit.input_class, self.output_class)
-        self.full_protocols = ProteinMinimizationProtocols(self.toolkit.pose, self.toolkit.score_class, self.toolkit.input_class, self.output_class)
+        self.min_protocols = MinimizationProtocols(self.toolkit.pose, self.toolkit.score_class, self.toolkit.input_class, self.output_class)
 
         self.create_GUI_objects()
         self.grid_GUI_objects()
         
     def set_options_menus(self):
         
-        self.LoopMinOPTIONS = {
-            "Relax Loop(s)":lambda: self.loop_protocols.RelaxLoop(self.fast_relax_bool.get()),
-            #"Backrub Loop(s)":self.loop_protocols.LoopBackrubRef(),
-            "Minimize Loop(s)":lambda: self.loop_protocols.classicMinLoop(),
-            "Optimize Loop Rotamers":lambda: self.loop_protocols.optimizeRotLoop(),
-            "Optimize Loop Rotamers (SCWRL)":lambda: self.loop_protocols.SCWRL()
-        }
-        
-        self.FullMinOPTIONS = {
-            "Relax All":lambda: self.full_protocols.Relax(self.fast_relax_bool.get()),
-            #"Backrub All"lambda: self.full_protocols.Backrub(self.rounds_entry.get())
-            "Minimize All":lambda: self.full_protocols.classicMin(),
-            "Optimize All Rotamers":lambda: self.full_protocols.optimizeRot(),
-            "Optimize All Rotamers (SCWRL)":lambda: self.full_protocols.SCWRL()
+        self.minOPTIONS = {
+            "Optimize Rotamers":lambda: self.min_protocols.optimize_rotamers(),
+            "Optimize Rotamers (SCWRL)":lambda: self.min_protocols.SCWRL(),
+            "Minimize Structure":lambda: self.min_protocols.minimize(),
+            "Minimize BB":lambda:self.min_protocols.minimize(False, False, True),
+            "Minimize SC":lambda:self.min_protocols.minimize(False, False, False, True),
+            "Relax Structure":lambda: self.min_protocols.relax(self.fast_relax_bool.get()),
+            "Relax BB":lambda:self.min_protocols.relax(self.fast_relax_bool.get(), False, True),
+            "Relax SC":lambda:self.min_protocols.relax(self.fast_relax_bool.get(), False, False, True),
+
         }
         
     def create_GUI_objects(self):
@@ -76,10 +67,9 @@ class QuickProtocolsFrame(TkFrame):
         #self.rounds_entry.set(1)
         self.decoy_label=Label(self, text="Decoys Desired")
         self.rounds_label=Label(self, text="Rounds Desired")
-        self.loops_min_options = OptionMenu(self, self.loopCommand, *(sorted(self.LoopMinOPTIONS)))
-        self.full_min_options =  OptionMenu(self, self.fullCommand, *(sorted(self.FullMinOPTIONS)))
-        self.kickloops_min_options = Button(self, text = "Minimize Region(s)", command = lambda: self.kickMinimizationLoop())
-        self.kickfull_min_options =  Button(self, text = "Minimize PDB", command = lambda: self.kickMinimizationFull())
+        self.min_options = OptionMenu(self, self.min_cmd, *(sorted(self.minOPTIONS)))
+        #self.full_min_options =  OptionMenu(self, self.fullCommand, *(sorted(self.FullMinOPTIONS)))
+        self.kickmin_options = Button(self, text = "Run Protocol", command = lambda: self.kick_min_cmd())
         
     def grid_GUI_objects(self):
         """
@@ -88,30 +78,22 @@ class QuickProtocolsFrame(TkFrame):
         """
         r = 0; c=0;
         #self.label_quick_min.grid(row=r, column=c, columnspan=2, pady=15)
-        self.decoy_entry.grid(row=r+3, column=c); self.decoy_label.grid(row=r+3, column=c+1)
-        self.rounds_entry.grid(row=r+4, column=c, sticky=W+E); self.rounds_label.grid(row=r+4, column=c+1)
-        self.fastrelax_button.grid(row=r+5, column=c, columnspan = 2)
+        self.decoy_entry.grid(row=r+2, column=c); self.decoy_label.grid(row=r+2, column=c+1)
+        self.rounds_entry.grid(row=r+3, column=c, sticky=W+E); self.rounds_label.grid(row=r+3, column=c+1)
+        self.fastrelax_button.grid(row=r+4, column=c, columnspan = 2)
         
         
         #Minimization
-        self.loops_min_options.grid(row=r+1, column = c, sticky=W+E); self.full_min_options.grid(row=r+2, column=c, sticky=W+E)
-        self.kickloops_min_options.grid(row=r+1, column=c+1, sticky=W+E); self.kickfull_min_options.grid(row=r+2, column=c+1, sticky=W+E)
+        self.min_options.grid(row=r+1, column = c, sticky=W+E); 
+        self.kickmin_options.grid(row=r+1, column=c+1, sticky=W+E);
 
-    def kickMinimizationLoop(self):
+    def kick_min_cmd(self):
         """
         This kicks the minimization of the loop.
         """
-        func = self.LoopMinOPTIONS[self.loopCommand.get()]
+        func = self.minOPTIONS[self.min_cmd.get()]
         func()
         return
     
-    def kickMinimizationFull(self):
-        """
-        This kicks the minimization of the protein.
-        """
-        func = self.FullMinOPTIONS[self.fullCommand.get()]
-        func()
-        
-        return
             
     

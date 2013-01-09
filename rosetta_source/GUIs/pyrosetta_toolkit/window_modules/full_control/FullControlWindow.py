@@ -29,7 +29,7 @@ from modules.definitions.restype_definitions import *
 from modules.tools import general_tools
 from modules.tools import protocols as protocol_tools
 from modules.protocols.DesignProtocols import DesignProtocols
-from modules.protocols.LoopMinimizationProtocols import LoopMinimizationProtocols
+from modules.protocols.MinimizationProtocols import MinimizationProtocols
 from modules.RegionalScoring import *
 from window_modules.ligand_ncaa_ptm_manager.ligand_ncaa_ptm_manager import ligand_ncaa_ptm_manager
 
@@ -43,7 +43,7 @@ class FullControlWindow():
 	#Main classes
 	self.pose = pose
 	self.design_protocols = DesignProtocols(self.pose, ScoreObject, input_class, output_class)
-	self.loop_protocols = LoopMinimizationProtocols(self.pose, ScoreObject, input_class, output_class)
+	self.loop_protocols = MinimizationProtocols(self.pose, ScoreObject, input_class, output_class)
 	self.residue_definitions = definitions(); #Defines all residue type information.
 	self.score_object = ScoreObject
 	self.variant_manager = ligand_ncaa_ptm_manager(input_class, ScoreObject, pose)
@@ -275,7 +275,7 @@ class FullControlWindow():
 	Relaxes the given residue
 	"""
 
-	self.loop_protocols.RelaxLoop(1, [self.resnum.get()+":"+self.resnum.get()+":"+self.chain.get()], 1)
+	self.loop_protocols.relax(1, [self.resnum.get()+":"+self.resnum.get()+":"+self.chain.get()], 1)
 	self.shoInfo(self.resnum.get(), self.chain.get())
 
     def relax_residue_neighbors(self, bbonly=False):

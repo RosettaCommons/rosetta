@@ -6,8 +6,8 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-## @file   /GUIs/pyrosetta_toolkit/modules/protocols/loop_minimization.py
-## @brief  main loop minimization protocols
+## @file   /GUIs/pyrosetta_toolkit/modules/protocols/MinimizationProtocols.py
+## @brief  main minimization protocols, works with Regions class
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #Rosetta Imports
@@ -28,7 +28,7 @@ from modules.tools import output as ouput_tools
 from modules.tools import sequence as sequence_tools
 from ProtocolBaseClass import ProtocolBaseClass
 
-class LoopMinimizationProtocols(ProtocolBaseClass):        
+class MinimizationProtocols(ProtocolBaseClass):        
     def __init__(self, pose, score_class, input_class, output_class):
         ProtocolBaseClass.__init__(self, pose, score_class, input_class, output_class)
 
@@ -37,8 +37,8 @@ class LoopMinimizationProtocols(ProtocolBaseClass):
     def __exit__(self):
         self.score_class.score.set_weight(chainbreak, 0)
         
-#classicMinLoop
-    def classicMinLoop(self, tolerance=False, movemap=False):
+#minimize
+    def minimize(self, tolerance=False, movemap=False, bb_only=False, sc_only=False):
         """
         This is the classic MinMover, with option run:min_type defining the minimization type, and run_tolerance defining the tolerance.
         Not actually defining a loop, only regions in the movemap
@@ -46,18 +46,23 @@ class LoopMinimizationProtocols(ProtocolBaseClass):
         """
 
         if not movemap:
-            movemap=MoveMap()
-            movemap = loop_tools.loopMovemap(self.pose, movemap, self.input_class.loops_as_strings)
+            movemap = self.input_class.regions.get_movemap(self.pose)
         if not tolerance:
             tolerance = get_real_option('run:min_tolerance')
+        
+        if bb_only:
+            movemap.set_chi(False)
+        if sc_only:
+            movemap.set_bb(False)
+            
         self.score_class.score.set_weight(chainbreak, 100); #Makes sure loop/domain does not break!
         minmover=MinMover(movemap, self.score_class.score, get_string_option('run:min_type'), tolerance, True)
         self.run_protocol(minmover)
             
         self.score_class.score.set_weight(chainbreak, 0)
 
-#RelaxLoop    
-    def RelaxLoop(self, classic, movemap = 0):
+#relax    
+    def relax(self, classic, movemap = False, bb_only=False, sc_only=False):
         """
         Classic and Fast Relax for the loop.  Uses the Movemap from this class.
         ClassicRelax=0; FastRelax=1 for classic setting
@@ -69,10 +74,14 @@ class LoopMinimizationProtocols(ProtocolBaseClass):
         
         classic=int(classic)
 
-        if movemap ==0:
-            movemap = MoveMap()
-            movemap = loop_tools.loopMovemap(self.pose, movemap, self.input_class.loops_as_strings)
-
+        if not movemap:
+            movemap = self.input_class.regions.get_movemap(self.pose)
+            
+        if bb_only:
+            movemap.set_chi(False)
+        if sc_only:
+            movemap.set_bb(False)
+            
         self.score_class.score.set_weight(chainbreak, 100)
         
         if classic==0:
@@ -114,24 +123,21 @@ class LoopMinimizationProtocols(ProtocolBaseClass):
         self.score_class.score.set_weight(chainbreak, 0)
         print "Relax Complete"
         
-    def relaxLoopBBonly(self, classic, movemap = 0):
+    def relax_bb_only(self, classic, movemap = 0):
         """
         Relaxes a given loop.  Only BB.
         """
         movemap = MoveMap()
         movemap = loop_tools.loopBBMovemap(self.pose, movemap, self.input_class.loops_as_strings)
-        self.RelaxLoop(rounds, movemap)
+        self.relax(rounds, movemap)
         
 
-    def optimizeRotLoop(self):
+    def optimize_rotamers(self):
         """
-        Optomizes Loop Rotamers using the PackRotamersMover
+        Optimizes Loop Rotamers using the PackRotamersMover
         """
-
-        packer_task=standard_packer_task(self.pose)
-        packer_task.restrict_to_repacking()
-        packer_task.temporarily_fix_everything()
-        packer_task = loop_tools.loopChiPacker(self.pose, packer_task, self.input_class.loops_as_strings)
+        
+        packer_task = self.input_class.regions.get_packer_task(self.pose)
         pack_mover=PackRotamersMover(self.score_class.score, packer_task)
         print packer_task
         self.run_protocol(pack_mover)
@@ -166,7 +172,8 @@ class LoopMinimizationProtocols(ProtocolBaseClass):
     def SCWRL(self, seqFile=0):
         """
         This uses Scwrl4 to rebuild sidechains of only regions specified.
-        Scwrl4 should be in the scwrl/[platform] directory.
+        Scwrl4 directory should be in the scwrl/[platform] directory.
+        Does not work with multiprocessing
         """
         rounds = self.output_class.rounds.get()
         print self.score_class.score(self.pose)
@@ -180,23 +187,30 @@ class LoopMinimizationProtocols(ProtocolBaseClass):
             print "Platform Unknown....Returning...."
         else:
             #name = p.pdb_info().name()
-            if not os.path.exists(pwd+"/Scwrl/"+plat+"/Scwrl4"):
+            if not os.path.exists(pwd+"/scwrl/"+plat+"/Scwrl4"):
                 print "SCWRL not compiled.  Please install scwrl to use scwrl features. (/SCWRL/platform)"
                 return
             tempdir = pwd + "/temp"
             if not os.path.exists:
                 os.mkdir(tempdir)
-
             if seqFile==0:
                 for i in range(0, rounds):
                     print "Rounds: "+repr(i)
                     self.pose.dump_pdb(tempdir+"/temp.pdb")
                     filein = tempdir+"/temp.pdb"
                     #Gets info for loops, writes a sequence file, loads it into Scwrl.
-                    fileout = tempdir + "/seqtemp.seq"
-                    output_tools.saveSeqFile(self.pose, fileout, self.input_class.loops_as_strings)
-                    print pwd+"/Scwrl/"+plat+"/Scwrl4 -i "+filein+" -s "+fileout+" -0 "+"-o "+tempdir+"/new_temp.pdb"
-                    os.system(pwd+"/Scwrl/"+plat+"/Scwrl4 -i "+filein+" -s "+fileout+" -0 "+"-o "+tempdir+"/new_temp.pdb")
+                    scwrl_cmd = ""
+                    if self.input_class.regions:
+                        fileout = tempdir + "/seqtemp.seq"
+                        output_tools.saveSeqFile(self.pose, fileout, self.input_class.loops_as_strings)
+                        scwrl_cmd = pwd+"/scwrl/"+plat+"/Scwrl4 -i "+filein+" -s "+fileout+" -0 "+"-o "+tempdir+"/new_temp.pdb"
+
+                    else:
+                        scwrl_cmd =  pwd+"/Scwrl/"+plat+"/Scwrl4 -i "+filein+" -o "+tempdir+"/new_temp.pdb"
+                    
+                    print scwrl_cmd
+                    os.system(scwrl_cmd)
+                        
                     x = Pose()
                     pose_from_pdb(x, (tempdir+"/new_temp.pdb"))
                     self.pose.assign(x)
@@ -208,7 +222,7 @@ class LoopMinimizationProtocols(ProtocolBaseClass):
                     print "Rounds: "+repr(i)
                     self.pose.dump_pdb(tempdir+"/temp.pdb")
                     filein = tempdir+"/temp.pdb"
-                    os.system(pwd+"/Scwrl/"+plat+"/Scwrl4 -i "+filein+" -s "+seqFile+" -0 "+"-o "+tempdir+"/new_temp.pdb")
+                    os.system(pwd+"/scwrl/"+plat+"/Scwrl4 -i "+filein+" -s "+seqFile+" -0 "+"-o "+tempdir+"/new_temp.pdb")
                     x = Pose()
                     pose_from_pdb(x, (tempdir+"/new_temp.pdb"))
                     self.pose.assign(x)

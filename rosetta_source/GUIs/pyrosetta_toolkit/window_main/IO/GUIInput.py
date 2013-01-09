@@ -48,6 +48,7 @@ class GUIInput:
         self.regions = Regions(); #This will replace loops_as_strings
         self.loops = Loops()
         
+        self.constraint_file_path = ""; #Path to constraint file if loaded through GUI (Not options system).
         self.param_pathlist_file = ""; #Path to a file which lists paths to all params to use.  One on each line
         self.param_paths = []; #Array of parameter paths.
         self.loaded_paths = [];  #Since something about loading a new residuetypeset is global, with horrible exception handling, WE need to keep track of it.

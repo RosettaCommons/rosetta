@@ -84,6 +84,8 @@ class main_window:
       
       self.output_class.terminal_output.trace_variable('w', self.output_tracer)
       self.output_class.terminal_output.set(0)
+      
+      self.input_class.options_manager.print_current_options()
       print "For additional protocol options, please use the Option System Manager.\n"
       print "Please see RosettaCommons for full documentation and references for all protocols and tools utilized in the GUI\n"
       

@@ -71,3 +71,10 @@ def print_glossary():
 *clustering = in this case, grouping models with similar structure together \n \
 *comparative model = a protein model where the primary sequence from one protein (target) is placed, or threaded, onto the three dimensional coordinates of a protein of known structure (template)language (binary)"
     tkMessageBox.showinfo(title="Rosetta Glossary from Nature Protocols Paper. Written by Stephanie Hirst DeLuca", message=message)
+    
+    
+def scwrl():
+    message = "To use SCWRL with the GUI, please copy compiled/installed scwrl directory (Scwrl4) pyrosetta_toolit/scwrl/[my_platform]"
+    tkMessageBox.showinfo(title="SCWRL Info", message=message)
+    
+    
