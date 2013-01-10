@@ -183,7 +183,7 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if(!option[in::file::movemap].user() and !movemap_){
+	if(!option[in::file::movemap].user() && !movemap_){
 		//original code: read from command line options
 		char const chain(option[FloppyTail::flexible_chain].value()[0]); //just take the first one
 		start_ = pose.pdb_info()->pdb2pose().find(chain, option[FloppyTail::flexible_start_resnum].value());
