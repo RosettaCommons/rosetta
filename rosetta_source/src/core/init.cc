@@ -27,6 +27,7 @@
 #include <core/types.hh>
 #include <basic/options/option.hh>
 #include <utility/basic_sys_util.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/io/izstream.hh>
 #include <basic/Tracer.hh>
 #include <basic/prof.hh>
@@ -924,49 +925,58 @@ init_profiling(){
 /// @brief Init basic core systems: options system, random system.
 void init(int argc, char * argv [])
 {
-	//Initialize MPI
-	init_mpi(argc, argv);
+	try{
+    //Initialize MPI
+    init_mpi(argc, argv);
 
-	//The options system manages command line options
-	init_options(argc, argv);
+    //The options system manages command line options
+    init_options(argc, argv);
 
-	//Tracers control output to std::cout and std::cerr
-	init_tracers();
+    //Tracers control output to std::cout and std::cerr
+    init_tracers();
 
-	//Initialize the latest and greatest score function parameters
-	init_score_function_corrections();
+    //Initialize the latest and greatest score function parameters
+    init_score_function_corrections();
 
-	//Choose to output source version control information?
-	init_source_revision();
+    //Choose to output source version control information?
+    init_source_revision();
 
-	//Setup basic search paths
-	init_paths();
+    //Setup basic search paths
+    init_paths();
 
-	//Check for deprecated flags specified by the user and output error messages if necessary
-	check_deprecated_flags();
+    //Check for deprecated flags specified by the user and output error messages if necessary
+    check_deprecated_flags();
 
-	//Describe the application execution command
-	report_application_command(argc, argv);
+    //Describe the application execution command
+    report_application_command(argc, argv);
 
-	//Initalize random number generators
-	init_random_number_generators();
+    //Initalize random number generators
+    init_random_number_generators();
 
-	//Choose to randomly delay execution to desyncronize parallel execution
-	random_delay();
+    //Choose to randomly delay execution to desyncronize parallel execution
+    random_delay();
 
-	//Locate rosetta_database
-	locate_rosetta_database();
+    //Locate rosetta_database
+    locate_rosetta_database();
 
 #ifdef BOINC
-	std::cerr << "Initialization complete. " << std::endl;
+    std::cerr << "Initialization complete. " << std::endl;
 #endif
 
-	//Profiling measures execution performance
-	init_profiling();
+    //Profiling measures execution performance
+    init_profiling();
 
-	// help out user...
-	if  ( argc == 1 )  TR << std::endl << "USEFUL TIP: Type -help to get the options for this Rosetta executable." << std::endl << std::endl;
+    // help out user...
+    if  ( argc == 1 )  TR << std::endl << "USEFUL TIP: Type -help to get the options for this Rosetta executable." << std::endl << std::endl;
 
+  }
+  // Catch any Rosetta exceptions
+  catch( utility::excn::EXCN_Msg_Exception &e){
+    // print the error message to standard error
+    e.show( std::cerr );
+    // and rethrow to make sure we quit (or give caller opportunity to clean up or catch)
+    throw;
+  }
 }
 
 
