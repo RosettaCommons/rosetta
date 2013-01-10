@@ -146,9 +146,9 @@ public:
 		Size const pos
 	) const;
 
-	// Make atom integers for this motif
-	virtual void
-	generate_atom_ints();
+	// Make atom integers for this motif, unused as of now, may want in future
+	//virtual void
+	//generate_atom_ints();
 
 	virtual core::pack::rotamer_set::RotamerSetOP
 	build_rotamers(

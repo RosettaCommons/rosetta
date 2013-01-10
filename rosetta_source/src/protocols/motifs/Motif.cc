@@ -384,10 +384,10 @@ Motif::apply_check(
 ) const
 {
 		if ( pose.residue(pos).is_DNA() )
-    {         
+    {
 				return(
                utility::trimmed_compare(  protocols::dna::dna_full_name3(pose.residue( pos ).name3()), restype_name1_ ) ||
-               utility::trimmed_compare(  protocols::dna::dna_full_name3(pose.residue( pos ).name3()), restype_name2_ ) 
+               utility::trimmed_compare(  protocols::dna::dna_full_name3(pose.residue( pos ).name3()), restype_name2_ )
                );
     }
 	return( utility::trimmed_compare( pose.residue( pos ).name3(), restype_name1_ ) ||
@@ -415,6 +415,9 @@ Motif::Motif(
 		res2_atom2_name_ = res2_atom2;
 		res2_atom3_name_ = res2_atom3;
 */
+
+/*
+//Wasn't using this function, may want to put back in future.
 void
 Motif::generate_atom_ints(
 )
@@ -438,6 +441,7 @@ Motif::generate_atom_ints(
  mt << " res2: " << res2_atom1_int_ << ", " << res2_atom2_int_ << ", " << res2_atom3_int_ << std::endl;
 	return;
 }
+*/
 
 void
 Motif::store_remark(

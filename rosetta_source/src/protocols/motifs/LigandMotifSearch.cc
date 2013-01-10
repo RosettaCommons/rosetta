@@ -528,7 +528,6 @@ LigandMotifSearch::incorporate_motifs(
 			 motifcop_itr != end_itr; ++motifcop_itr ) {
 
 		protocols::motifs::MotifCOP motifcop( *motifcop_itr );
-		//motifcop.generate_atom_ints();
 		int motif_atom1_int(motifcop->res2_atom1_int());
 		int motif_atom2_int(motifcop->res2_atom2_int());
 		int motif_atom3_int(motifcop->res2_atom3_int());
@@ -611,7 +610,9 @@ LigandMotifSearch::incorporate_motifs(
 			for( Size i(1); i <= core::chemical::num_canonical_aas; ++i ) {
 				utility::vector1< bool > aa_info( core::chemical::num_canonical_aas, false );
 				aa_info[i] = true;
-				core::pack::rotamer_set::RotamerSetOP rotset = build_rotamers_lite( posecopy, seqpos, aa_info, rot_level_ );
+				bool bump_yes( true );
+				//need to make this an option
+				core::pack::rotamer_set::RotamerSetOP rotset = build_rotamers_lite( posecopy, seqpos, aa_info, rot_level_, bump_yes );
 				rotamer_sets[i] = rotset;
 			}
 		} else {
