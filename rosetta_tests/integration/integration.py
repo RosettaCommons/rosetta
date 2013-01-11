@@ -163,6 +163,11 @@ rm -r ref/; ./integration.py    # create reference results using only default se
       default="",
       help="For testing relational databases: the name of the user. (default: '')",
     )
+    parser.add_option("--unordered",
+      action="store_true",
+      help="Do not order tests by expected runtime prior to launching. (default is to order)",
+    )
+
 
     (options, args) = parser.parse_args(args=argv)
     global Options;  Options = options
@@ -223,6 +228,9 @@ rm -r ref/; ./integration.py    # create reference results using only default se
         tests = args
     else:
         tests = [ d for d in os.listdir("tests") if not d.startswith(".") and path.isdir(path.join("tests", d)) ]
+
+    if not options.unordered:
+        tests = order_tests(tests)
 
     if not options.compareonly:
         queue = Queue()
@@ -449,6 +457,30 @@ def makeBriefResults(results):
 def wrapNewLine(s):
     r = ''
 
+#
+# Order tests based on decreasing expected runtime. Unknown tests get run first.
+# Expected runtime is taken from the file "runtimes" in the current directory.
+# (It's just an old version of the integration.py output.)
+#
+def order_tests(tests):
+    try:
+        f = open('runtimes','r')
+    except Exception:
+        return tests #Any problems? Just skip ordering
+    try:
+        times = {}
+        for line in f:
+            line = line.split()
+            if len(line) > 5 and line[0] == "Finished" and line[4] == "seconds":
+                times[ line[1] ] = int(line[3])
+        #Decorate, sort, undecorate (A side effect is we'll alphabetize any missing tests)
+        ordered = [ ( times.get(test, 9999), test ) for test in tests ]
+        ordered.sort(reverse=True)
+        return [ test for (time, test) in ordered ]
+    finally:
+        f.close()
+
+    return tests #If for some reason we get here
 
 # -------------------------------------
 def execute(message, command_line, return_=False, untilSuccesses=False, print_output=True, verbose=True):
