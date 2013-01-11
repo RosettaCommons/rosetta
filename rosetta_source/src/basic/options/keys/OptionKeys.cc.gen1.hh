@@ -1,3 +1,5 @@
+namespace resample { BooleanOptionKey const stage1( "resample:stage1" );  }
+namespace resample { BooleanOptionKey const stage2( "resample:stage2" );  }
 namespace resample { BooleanOptionKey const jumps( "resample:jumps" );  }
 namespace resample { RealVectorOptionKey const min_max_start_seq_sep( "resample:min_max_start_seq_sep" );  }
 namespace loopfcst { BooleanOptionKey const loopfcst( "loopfcst" );  }
@@ -650,5 +652,3 @@ namespace lh { namespace symfragrm { BooleanOptionKey const symfragrm( "lh:symfr
 namespace lh { namespace symfragrm { FileVectorOptionKey const pdblist( "lh:symfragrm:pdblist" );  } }
 namespace rbe { BooleanOptionKey const rbe( "rbe" );  }
 namespace rbe { StringOptionKey const server_url( "rbe:server_url" );  }
-namespace rbe { StringOptionKey const server_port( "rbe:server_port" );  }
-namespace rbe { RealOptionKey const poll_frequency( "rbe:poll_frequency" );  }

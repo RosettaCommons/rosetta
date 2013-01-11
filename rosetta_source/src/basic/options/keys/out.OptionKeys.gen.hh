@@ -27,6 +27,7 @@ namespace out { extern IntegerOptionKey const nstruct; }
 namespace out { extern IntegerOptionKey const shuffle_nstruct; }
 namespace out { extern StringOptionKey const prefix; }
 namespace out { extern StringOptionKey const suffix; }
+namespace out { extern StringOptionKey const force_output_name; }
 namespace out { extern BooleanOptionKey const no_nstruct_label; }
 namespace out { extern BooleanOptionKey const pdb_gz; }
 namespace out { extern BooleanOptionKey const pdb; }

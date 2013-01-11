@@ -462,6 +462,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: -1</dd><br>
 </dl>
 <dl>
+<dt><b>-silent_select_range_mul</b> \<Integer\><dt>
+<dd>Select a blocksize multiplier. This param pasically multiplies -silent_select_range_start. E.g. when set to, say, 5, -silent_select_range_start 0,1,2,3,4 will result in decoys being read starting from 0,5,10,15,20</dd><br>
+<dd>Default: 1</dd><br>
+</dl>
+<dl>
 <dt><b>-silent_select_range_len</b> \<Integer\><dt>
 <dd>Select a ranged subset of decoys from every silent-file read. start at this decoy.</dd><br>
 <dd>Default: 1</dd><br>
@@ -768,6 +773,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-suffix</b> \<String\><dt>
 <dd>Suffix for output structure names</dd><br>
 <dd>Default: ""</dd><br>
+</dl>
+<dl>
+<dt><b>-force_output_name</b> \<String\><dt>
+<dd>Force output name to be this. Needed for some cluster environments.</dd><br>
 </dl>
 <dl>
 <dt><b>-no_nstruct_label</b> \<Boolean\><dt>

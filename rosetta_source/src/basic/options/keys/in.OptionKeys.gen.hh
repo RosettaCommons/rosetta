@@ -103,6 +103,7 @@ namespace in { namespace file { extern BooleanOptionKey const silent_read_throug
 namespace in { namespace file { extern StringOptionKey const silent_score_prefix; } }
 namespace in { namespace file { extern IntegerOptionKey const silent_select_random; } }
 namespace in { namespace file { extern IntegerOptionKey const silent_select_range_start; } }
+namespace in { namespace file { extern IntegerOptionKey const silent_select_range_mul; } }
 namespace in { namespace file { extern IntegerOptionKey const silent_select_range_len; } }
 namespace in { namespace file { extern BooleanOptionKey const skip_failed_simulations; } }
 namespace in { namespace file { extern StringVectorOptionKey const silent_scores_wanted; } }

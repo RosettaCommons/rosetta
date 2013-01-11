@@ -456,8 +456,10 @@ SilentFileData::_read_file(
 	if ( option[ in::file::silent_select_range_start ]() >= 0 ) {
 
     // get start index and limit to size of silent file (all_tags.size() ) by wrapping around (rather then by throwing an error)
-    core::Size range_start = option[ in::file::silent_select_range_start ]() % all_tags.size();
-    core::Size range_end   = range_start + option[ in::file::silent_select_range_len ]();
+    int range_start = ( option[ in::file::silent_select_range_start ]() *
+                        option[ in::file::silent_select_range_mul ] ) 
+                      % all_tags.size();
+    int range_end   = range_start + option[ in::file::silent_select_range_len ]();
 
     // setting in::file::silent_select_range_len to -1 means run to the end.
     if( option[ in::file::silent_select_range_len ]() < 0 ) range_end = all_tags.size();

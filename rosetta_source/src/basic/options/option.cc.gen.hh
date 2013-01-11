@@ -103,6 +103,7 @@ option.add( basic::options::OptionKeys::in::file::silent_read_through_errors, "w
 option.add( basic::options::OptionKeys::in::file::silent_score_prefix, "Prefix that is appended to all scores read in from a silent-file" ).def("");
 option.add( basic::options::OptionKeys::in::file::silent_select_random, "Select a random subset of this number of decoys from every silent-file read" ).def(0);
 option.add( basic::options::OptionKeys::in::file::silent_select_range_start, "Select a ranged subset of decoys from every silent-file read. start at this decoy." ).def(-1);
+option.add( basic::options::OptionKeys::in::file::silent_select_range_mul, "Select a blocksize multiplier. This param pasically multiplies -silent_select_range_start. E.g. when set to, say, 5, -silent_select_range_start 0,1,2,3,4 will result in decoys being read starting from 0,5,10,15,20" ).def(1);
 option.add( basic::options::OptionKeys::in::file::silent_select_range_len, "Select a ranged subset of decoys from every silent-file read. start at this decoy." ).def(1);
 option.add( basic::options::OptionKeys::in::file::skip_failed_simulations, "Ignore failed simulations (prefixed by W_) during silent file input. Existing behavior is preserved by default." ).def(false);
 option.add( basic::options::OptionKeys::in::file::silent_scores_wanted, "Only put these silent-scores into the Pose." );
@@ -169,6 +170,7 @@ option.add( basic::options::OptionKeys::out::nstruct, "Number of times to proces
 option.add( basic::options::OptionKeys::out::shuffle_nstruct, "total number of decoys to produce" ).def(1);
 option.add( basic::options::OptionKeys::out::prefix, "Prefix for output structure names, like old -series code" ).def("");
 option.add( basic::options::OptionKeys::out::suffix, "Suffix for output structure names" ).def("");
+option.add( basic::options::OptionKeys::out::force_output_name, "Force output name to be this. Needed for some cluster environments." );
 option.add( basic::options::OptionKeys::out::no_nstruct_label, "Do not tag the first output structure with _0001" ).def(false);
 option.add( basic::options::OptionKeys::out::pdb_gz, "Compress (gzip) output pdbs" ).def(false);
 option.add( basic::options::OptionKeys::out::pdb, "Output PDBs" ).def(false);
@@ -655,11 +657,11 @@ option.add( basic::options::OptionKeys::fold_cst::ramp_coord_cst, "ramp coord cs
 option.add( basic::options::OptionKeys::resample::resample, "resample option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::resample::silent, "a silent file for decoys to restart sampling from " ).def("");
 option.add( basic::options::OptionKeys::resample::tag, "which decoy to select from silent file " ).def("");
-option.add( basic::options::OptionKeys::resample::stage1, "if true restart after stage1, otherwise after stage2 " ).def(false);
-option.add( basic::options::OptionKeys::resample::stage2, "if true restart after stage1, otherwise after stage2 " ).def(false);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::resample::jumps, "if true restart after stage1, otherwise after stage2 " ).def(false);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::resample::stage1, "if true restart after stage1, otherwise after stage2 " ).def(false);
+option.add( basic::options::OptionKeys::resample::stage2, "if true restart after stage1, otherwise after stage2 " ).def(false);
+option.add( basic::options::OptionKeys::resample::jumps, "if true restart after stage1, otherwise after stage2 " ).def(false);
 option.add( basic::options::OptionKeys::resample::min_max_start_seq_sep, "range of (random) start values for seq-separation" ).def(0);
 option.add( basic::options::OptionKeys::loopfcst::loopfcst, "loopfcst option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::loopfcst::coord_cst_weight, "use coord constraints for template" ).def(0.0);
@@ -1311,11 +1313,11 @@ option.add( basic::options::OptionKeys::lh::symfragrm::symfragrm, "symfragrm opt
 option.add( basic::options::OptionKeys::lh::symfragrm::pdblist, "list of pdbs to be processed" );
 option.add( basic::options::OptionKeys::rbe::rbe, "rbe option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::rbe::server_url, "serverurl for rosetta backend" );
-option.add( basic::options::OptionKeys::rbe::server_port, "port for rosetta backend" ).def("80");
-option.add( basic::options::OptionKeys::rbe::poll_frequency, "No description" ).def(1.0);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::blivens::blivens, "blivens option group" ).legal(true).def(true);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::rbe::server_port, "port for rosetta backend" ).def("80");
+option.add( basic::options::OptionKeys::rbe::poll_frequency, "No description" ).def(1.0);
+option.add( basic::options::OptionKeys::blivens::blivens, "blivens option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::blivens::disulfide_scorer::disulfide_scorer, "disulfide_scorer option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::blivens::disulfide_scorer::nds_prob, "The probability of scoring a non-disulfide pair" ).def(0.0);
 option.add( basic::options::OptionKeys::blivens::disulfide_scorer::cys_prob, "The probability of outputing a pair of non-disulf cysteines. Default to nds_prob" ).def(-1.0);
@@ -1967,11 +1969,11 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_templat
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
-option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
-option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
+option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
+option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_pdb, "PDB file from which to draw constraints" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrbmoves, "number of rigid-body moves" ).def(100);
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrboutercycles, "number of rigid-body moves" ).def(5);

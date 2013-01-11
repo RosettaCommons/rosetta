@@ -98,6 +98,7 @@ namespace in { namespace file { BooleanOptionKey const silent_read_through_error
 namespace in { namespace file { StringOptionKey const silent_score_prefix( "in:file:silent_score_prefix" );  } }
 namespace in { namespace file { IntegerOptionKey const silent_select_random( "in:file:silent_select_random" );  } }
 namespace in { namespace file { IntegerOptionKey const silent_select_range_start( "in:file:silent_select_range_start" );  } }
+namespace in { namespace file { IntegerOptionKey const silent_select_range_mul( "in:file:silent_select_range_mul" );  } }
 namespace in { namespace file { IntegerOptionKey const silent_select_range_len( "in:file:silent_select_range_len" );  } }
 namespace in { namespace file { BooleanOptionKey const skip_failed_simulations( "in:file:skip_failed_simulations" );  } }
 namespace in { namespace file { StringVectorOptionKey const silent_scores_wanted( "in:file:silent_scores_wanted" );  } }
@@ -164,6 +165,7 @@ namespace out { IntegerOptionKey const nstruct( "out:nstruct" );  }
 namespace out { IntegerOptionKey const shuffle_nstruct( "out:shuffle_nstruct" );  }
 namespace out { StringOptionKey const prefix( "out:prefix" );  }
 namespace out { StringOptionKey const suffix( "out:suffix" );  }
+namespace out { StringOptionKey const force_output_name( "out:force_output_name" );  }
 namespace out { BooleanOptionKey const no_nstruct_label( "out:no_nstruct_label" );  }
 namespace out { BooleanOptionKey const pdb_gz( "out:pdb_gz" );  }
 namespace out { BooleanOptionKey const pdb( "out:pdb" );  }
@@ -650,5 +652,3 @@ namespace fold_cst { BooleanOptionKey const ramp_coord_cst( "fold_cst:ramp_coord
 namespace resample { BooleanOptionKey const resample( "resample" );  }
 namespace resample { FileOptionKey const silent( "resample:silent" );  }
 namespace resample { StringOptionKey const tag( "resample:tag" );  }
-namespace resample { BooleanOptionKey const stage1( "resample:stage1" );  }
-namespace resample { BooleanOptionKey const stage2( "resample:stage2" );  }
