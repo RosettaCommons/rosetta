@@ -44,7 +44,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/sql_database/types.hh>
 #include <utility/vector0.hh>
-
+#include <utility/excn/Exceptions.hh>
 
 static basic::Tracer TR( "protocols.RosettaScripts.util" );
 
@@ -88,7 +88,7 @@ parse_task_operations( std::string const task_list, protocols::moves::DataMap co
       new_task_factory->push_back( data.get< TaskOperation * >( "task_operations", *t_o_key ) );
 			TR<<*t_o_key<<' ';
     } else {
-      utility_exit_with_message("TaskOperation " + *t_o_key + " not found in DataMap.");
+      throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + *t_o_key + " not found in DataMap.");
     }
   }
 	TR<<std::endl;
@@ -134,7 +134,7 @@ parse_task_operations( utility::tag::TagPtr const tag, protocols::moves::DataMap
       TR<<*t_o_key<<' ';
     }
     else {
-      utility_exit_with_message("TaskOperation " + *t_o_key + " not found in DataMap.");
+      throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + *t_o_key + " not found in DataMap.");
     }
   }
   TR<<std::endl;
@@ -157,7 +157,7 @@ get_task_operations( utility::tag::TagPtr const tag, protocols::moves::DataMap c
 			if ( data.has( "task_operations", *t_o_key ) ) {
 				task_operations.push_back( data.get< TaskOperation* >( "task_operations", *t_o_key ) );
 			} else {
-				utility_exit_with_message("TaskOperation " + *t_o_key + " not found in DataMap.");
+				throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + *t_o_key + " not found in DataMap.");
 			}
 		}
 	}
@@ -173,7 +173,7 @@ parse_score_function( utility::tag::TagPtr const tag, protocols::moves::DataMap 
 {
 	std::string const scorefxn_key( tag->getOption<std::string>("scorefxn", dflt_key ) );
 	if ( ! data.has( "scorefxns", scorefxn_key ) ) {
-		utility_exit_with_message("ScoreFunction " + scorefxn_key + " not found in DataMap.");
+		throw utility::excn::EXCN_RosettaScriptsOption("ScoreFunction " + scorefxn_key + " not found in DataMap.");
 	}
 	return data.get< ScoreFunction* >( "scorefxns", scorefxn_key );
 }
@@ -316,7 +316,7 @@ parse_movemap( utility::tag::TagPtr const in_tag, core::pose::Pose const & pose,
 
 	if( (*tag_it)->hasOption( "name" ) ){
 		TR<<"ERROR in "<<*tag_it<<'\n';
-		utility_exit_with_message( "Tag called with option name but this option is not available to this mover. Note that FastRelax cannot work with a prespecified movemap b/c its movemap is parsed at apply time. Sorry." );
+		throw utility::excn::EXCN_RosettaScriptsOption("Tag called with option name but this option is not available to this mover. Note that FastRelax cannot work with a prespecified movemap b/c its movemap is parsed at apply time. Sorry." );
 	}
 	if( tag_it == branch_tags.end() ) return;
 
@@ -327,7 +327,7 @@ protocols::filters::FilterOP
 parse_filter( std::string const filter_name, protocols::filters::Filters_map const & filters ){
   protocols::filters::Filters_map::const_iterator filter_it( filters.find( filter_name ) );
   if( filter_it == filters.end() )
-    utility_exit_with_message( "Filter "+filter_name+" not found" );
+    throw utility::excn::EXCN_RosettaScriptsOption( "Filter "+filter_name+" not found" );
   return filter_it->second;
 }
 
@@ -335,16 +335,16 @@ protocols::moves::MoverOP
 parse_mover( std::string const mover_name, protocols::moves::Movers_map const & movers ){
   protocols::moves::Movers_map::const_iterator mover_it( movers.find( mover_name ) );
   if( mover_it == movers.end() )
-    utility_exit_with_message( "Mover "+mover_name+" not found" );
+    throw utility::excn::EXCN_RosettaScriptsOption("Mover "+mover_name+" not found" );
   return mover_it->second;
 }
 
 /// @brief utility function for parsing xyzVector
 numeric::xyzVector< core::Real >
 parse_xyz_vector( utility::tag::TagPtr const xyz_vector_tag ){
-	if ( ! xyz_vector_tag->hasOption("x") ) utility_exit_with_message("xyz_vector requires 'x' coordinates option");
-	if ( ! xyz_vector_tag->hasOption("y") ) utility_exit_with_message("xyz_vector requires 'y' coordinates option");
-	if ( ! xyz_vector_tag->hasOption("z") ) utility_exit_with_message("xyz_vector requires 'z' coordinates option");
+	if ( ! xyz_vector_tag->hasOption("x") ) throw utility::excn::EXCN_RosettaScriptsOption("xyz_vector requires 'x' coordinates option");
+	if ( ! xyz_vector_tag->hasOption("y") ) throw utility::excn::EXCN_RosettaScriptsOption("xyz_vector requires 'y' coordinates option");
+	if ( ! xyz_vector_tag->hasOption("z") ) throw utility::excn::EXCN_RosettaScriptsOption("xyz_vector requires 'z' coordinates option");
 
 	numeric::xyzVector< core::Real > xyz_v (
 		xyz_vector_tag->getOption<core::Real>("x"),
