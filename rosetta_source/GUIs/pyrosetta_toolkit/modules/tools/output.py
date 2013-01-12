@@ -35,17 +35,20 @@ from modules.tools import loops as loop_tools
 from window_main import global_variables
 from modules.definitions import restype_definitions
 
-def dumpPDB(p, native_pose, file, score):
+def dumpPDB(p, native_pose, filepath, score, overwrite=False):
     """
     Dumps the pose using the Py Job Distributor
     """
-    jd=PyJobDistributor(file, 100000, score); #This number is high so that it outputs a pose even if one with the name already exists...
-    #native_pose = Pose()
-    #pose_from_pdb(native_pose, infile)
-    jd.native_pose=native_pose
-    jd.output_decoy(p)
-    os.remove(jd.current_name+".in_progress")
-    print "Pose written to directory..."
+    if not overwrite:
+        jd=PyJobDistributor(filepath, 100000, score); #This number is high so that it outputs a pose even if one with the name already exists...
+        #native_pose = Pose()
+        #pose_from_pdb(native_pose, infile)
+        jd.native_pose=native_pose
+        jd.output_decoy(p)
+        os.remove(jd.current_name+".in_progress")
+    else:
+        native_pose.dump_pdb(filepath+".pdb")
+    print "Pose written to "+os.path.dirname(filepath)
     
 def showPose(p, observer):
     
@@ -273,7 +276,7 @@ def make_PDBLIST(directory=""):
     Later realize could have used find command...
     """
     if directory=="":
-        directory = tkFileDialog.askdirectory(initialdir = global_variables.current_directory)
+        directory = tkFileDialog.askdirectory(title = "Choose directory with PDB files", initialdir = global_variables.current_directory)
         if not directory: return
         global_variables.current_directory=directory
     
@@ -282,6 +285,10 @@ def make_PDBLIST(directory=""):
     FILES = os.listdir(directory)
     NEWFILE = open(directory+"/PDBLIST.txt", 'w')
     filenum=1
+    if len(FILES)<=1:
+        print "No PDBs found.  Returning."
+        return
+    
     for name in FILES:
         match = True; #Assumes true.  If 
         for pattern in containsSP:
@@ -561,6 +568,7 @@ def save_FASTA(pose, base_name, outfilename = False, loops_as_strings = False ):
         OUTFILE.write(">"+base_name+"\n")
         OUTFILE.write(seq+"\n")
     OUTFILE.close()
+    print "FASTA written."
     return
 
 def save_FASTA_PDBLIST(pdblist_path, outfilename=False, loops_as_strings=False):
@@ -672,6 +680,10 @@ def save_param_path_list(array_of_paths):
     """
     Saves a file of paths.
     """
+    if not array_of_paths:
+        print "No extra params enabled."
+        return
+    
     outfilename = tkFileDialog.asksaveasfilename(initialdir = global_variables.current_directory, title="Output Parm pathList to...")
     if not outfilename:return
     global_variables.current_directory = os.path.dirname(outfilename)

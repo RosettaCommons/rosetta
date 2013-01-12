@@ -75,7 +75,7 @@ class SetupRosettaPaths(tkSimpleDialog.Dialog):
         self.sourceButton = Button(self.main, text = "Choose Path", command = lambda: self.source.set(tkFileDialog.askdirectory(initialdir = self.pwd, title = "Choose rosetta_source Directory")))
         #self.fragmentButton = Button(self.main, text = "Choose Path", command = lambda:self.fragmentpicker.set(tkFileDialog.askdirectory(initialdir=self.pwd, title="Choose Fragment Picker Directory")))
         #SAVE
-        self.saveButton = Button(self.main, text = "Load Settings", command = lambda: self.loadSettings(self.database.get(), self.applications.get()))
+        self.saveButton = Button(self.main, text = "Load Settings", command = lambda: self.loadSettings())
         
         
         #Sets up menu.
@@ -119,6 +119,7 @@ class SetupRosettaPaths(tkSimpleDialog.Dialog):
         Loads settings from an alternative location, saves rosettasettings.txt.
         """
         f = tkFileDialog.askopenfilename(initialdir=self.pwd)
+        if not f:return
         FILE = open(f, 'r')
         for line in FILE:
             FILE = open(f, 'r')
@@ -145,17 +146,36 @@ class SetupRosettaPaths(tkSimpleDialog.Dialog):
         FILE.close()
         
     def checkPaths(self):
+        """
+        This is now hardcoded for where RosettaPathSetup Resides.  Update this if the file is moved.
+        First check Settings file.  If those paths not found, will try to use relative paths.
+        """
         self.result = True
+        
         if not os.path.exists(self.database.get()):
-            self.database.set("NA")
-            self.result = False
+            print "Using relative path for database"
+            self.database.set(self.get_relative_path(self.pwd, 4)+'/rosetta_database')
+            if not os.path.exists(self.database.get()):
+                self.database.set("NA")
+                self.result = False
         if not os.path.exists(self.applications.get()):
-            self.applications.set("NA")
-            self.result = False
+            print "Using relative path for applications"
+            self.applications.set(self.get_relative_path(self.pwd, 3)+'/bin')
+            if not os.path.exists(self.applications.get()):
+                self.applications.set("NA")
+                self.result = False
         if not os.path.exists(self.source.get()):
-            self.source.set("NA")
-            self.result = False
+            print "Using relative path for source"
+            self.source.set(self.get_relative_path(self.pwd, 3))
+            if not os.path.exists(self.source.get()):
+                self.source.set("NA")
+                self.result = False
         return
+    
+    def get_relative_path(self, path, num_back):
+        pathSP = path.split("/")
+        directories = len(pathSP)
+        return "/".join(pathSP[:(directories-num_back)])
         
 if __name__ == '__main__':
     MainWindow = Tk()

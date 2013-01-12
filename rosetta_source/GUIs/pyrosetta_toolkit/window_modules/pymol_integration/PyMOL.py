@@ -68,7 +68,7 @@ class AdvancedPyMOL():
     def makeWindow(self, row, column, main, ScoreObject):
 
 	self.main = main
-	self.main.title("Advanced PyMOL Visualization")
+	self.main.title("PyMOL Visualization")
 	try :
 	    print self.pose.pdb_info().name()
 	except AttributeError:
@@ -80,17 +80,29 @@ class AdvancedPyMOL():
 	self.viewlabel_ = Label(self.main, text="View Options")
 	self.scorelabel_ = Label(self.main, text="Score Terms")
 	self.viewList = Listbox(self.main)
+        self.view_scroll = Scrollbar(self.main)
+        self.viewList.config(yscrollcommand=self.view_scroll.set); self.view_scroll.config(command = self.viewList.yview)
+        
 	self.scoreList = Listbox(self.main)
+        self.score_scroll = Scrollbar(self.main)
+        self.scoreList.config(yscrollcommand = self.score_scroll.set); self.score_scroll.config(command = self.scoreList.yview)
+        
 	self.sendbutton_ = Button(self.main, text = "Send Pose", command = lambda: self.SendPose(self.viewList.get(self.viewList.curselection())))
 	self.sendnewbutton_ = Button(self.main, text = "Send New Pose", command = lambda: self.SendNewPose())
-	self.autocheck_button_ck = Checkbutton(self.main, text = "Send Poses as new Objects", variable = self.auto_send)
+	self.autosend_new_checkbutton = Checkbutton(self.main, text = "Send Poses as new Objects", variable = self.auto_send)
 	self.label_energies_checkbutton = Checkbutton(self.main, text = "Label Energies", variable = self.send_label)
 	
 	### Grid ###
-	self.viewlabel_.grid(row = row+1, column=column, padx=5); self.scorelabel_.grid(row = row+1, column = column+2)
-	self.viewList.grid(row = row+2, column=column, padx=5); self.scoreList.grid(row = row+2, column = column+2)
-	self.sendbutton_.grid(row = row+4, column = column+1, sticky=W+E); self.sendnewbutton_.grid(row = row+3, column = column+1, sticky=W+E); self.autocheck_button_ck.grid(row = row, column=column+2)
-	self.label_energies_checkbutton.grid(row=row, column=column, sticky=W+E)
+        self.label_energies_checkbutton.grid(row=row, column=column, sticky=W)
+        self.autosend_new_checkbutton.grid(row = row+1, column=column, sticky=W)
+	self.viewlabel_.grid(row = row+2, column=column, padx=5); 
+	self.viewList.grid(row = row+3, column=column, padx=5);self.view_scroll.grid(row=row+3, column=column+1, sticky=N+S);
+        self.scorelabel_.grid(row = row+4, column = column)
+        self.scoreList.grid(row = row+5, column = column);self.score_scroll.grid(row=row+5, column=column+1, sticky=N+S)
+        
+        
+	#self.sendbutton_.grid(row = row+4, column = column+1, sticky=W+E); self.sendnewbutton_.grid(row = row+3, column = column+1, sticky=W+E); 
+	
 	
 	for option in sorted(self.pymol_functions):
 	    self.viewList.insert(END, option)

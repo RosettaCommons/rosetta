@@ -76,9 +76,12 @@ class main_window:
 
    ### TextBox ###
       
-      self.textbox_frame = FrameTk(self._tk_, bd=3, relief=GROOVE)
+      self.textbox_frame = Frame(self._tk_, bd=3, relief=GROOVE)
       outfont = tkFont.Font(family="Helvetica", size=11)
       self.output_textbox= Text(self.textbox_frame,wrap="word", height=8,width=113,font = outfont)
+      self.output_scrollbar = Scrollbar(self.textbox_frame)
+      self.output_textbox.configure(yscrollcommand = self.output_scrollbar.set)
+      self.output_scrollbar.configure(command = self.output_textbox.yview)
       
       self.old_stdout = sys.stdout
       
@@ -86,6 +89,9 @@ class main_window:
       self.output_class.terminal_output.set(0)
       
       self.input_class.options_manager.print_current_options()
+      
+      
+      print "\nRegion Selection Tips: N-terminus -> Omit start; C-terminus -> Omit end; Chain -> Omit start + end"
       print "For additional protocol options, please use the Option System Manager.\n"
       print "Please see RosettaCommons for full documentation and references for all protocols and tools utilized in the GUI\n"
       
@@ -97,11 +103,30 @@ class main_window:
       self.input_class = GUIInput(self)
       self.output_class = GUIOutput(self)
       
+      ####Sequence#####
+      self.sequence_output = Entry(self._tk_, textvariable = self.input_class.loop_sequence)
+      self.seq_scroll = Scrollbar(self._tk_, orient=HORIZONTAL, command=self.__scrollHandler)
+      
+      ####Sequence#####
       self.score_class = ScoreFxnControl(); #Main Score Function Object. Holds Score.  Controls switching scorefunctions, etc.
       self.pymol_class = AdvancedPyMOL(self.pose); #PyMOL Object for advanced visualization.
       self.fullcontrol_class = FullControlWindow(self.score_class, self.pose, self.input_class, self.output_class); #Handles full control of protein.  This way, everything is saved...which is sorta cool.
       
-
+   def __scrollHandler(self, *L):
+        """
+        Handles scrolling of entry.
+        CODE: http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/entry-scrolling.html
+        """
+        try:
+            op, howMany = L[0], L[1]
+        except IndexError:
+            return
+        
+        if op =='scroll':
+            units = L[2]
+            self.sequence_output.xview_scroll(howMany, units)
+        elif op=='moveto':
+            self.sequence_output.xview_moveto(howMany)
       
    def _initialize_Frames(self):
       """
@@ -136,8 +161,13 @@ class main_window:
       
       
       ### Text Output ###
-      self.output_textbox.grid(column=0, row = 9, rowspan=2, columnspan=3,sticky=W+E)
-      self.textbox_frame.grid(column=0, row=9, rowspan=2,  columnspan=3, sticky=W+E, pady=3, padx=6)
+      self.seq_scroll.grid(column=0, row=9, columnspan=3, sticky=W+E)
+      self.sequence_output.grid(column=0, row=10, columnspan=3, sticky=W+E)
+      self.sequence_output['xscrollcommand']=self.seq_scroll.set
+      self.output_textbox.grid(column=0, row = 11, rowspan=2, columnspan=3,sticky=W+E)
+      self.output_scrollbar.grid(column=3, row=11, rowspan=2, sticky=E+N+S)
+      self.textbox_frame.grid(column=0, row=11, rowspan=2,  columnspan=3, sticky=W+E, pady=3, padx=6)
+      
       #self.Photo.grid(row = 0, column = 2, rowspan=4)
       
       """
@@ -155,6 +185,8 @@ class main_window:
    def run(self):
       self._tk_.title("PyRosetta Toolkit")
       self.show_gui()
+      self._tk_.grid_columnconfigure(ALL, weight=1)
+      #self._tk_.grid_rowconfigure(ALL, weight=1)
       self._tk_.mainloop()
       
    def redirect_stdout_to_textbox(self):
@@ -168,8 +200,9 @@ class main_window:
       
       
    def write(self, text):
-      self.output_textbox.insert(1.0, text)
-
+      self.output_textbox.insert(END, text)
+      self.output_textbox.yview(END)
+      
    def output_tracer(self, name, index, mode):
       """
       Controls where stdout goes.  Textbox or Terminal.

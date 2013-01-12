@@ -85,6 +85,10 @@ class Region:
     
     #Rosetta Getters
     def get_rosetta_start(self, pose):
+        if not rosetta.core.pose.has_chain(self.chain, pose):
+            print "Chain not found in PDB"
+            return
+        
         if self.get_region_type()=='nter':
             #First residue of the chain - Would be useful to have pdb_info() be able to return this.
             for resnum in range(1, pose.total_residue()+1):
@@ -97,6 +101,10 @@ class Region:
             return pose.pdb_info().pdb2pose(self.chain, self.start)
         
     def get_rosetta_end(self, pose):
+        if not rosetta.core.pose.has_chain(self.chain, pose):
+            print "Chain not found in PDB"
+            return
+        
         if self.get_region_type()=='cter':
             #Last residue of the chain - Would be useful to have pdb_info() be able to return this.
             resnum = pose.total_residue()

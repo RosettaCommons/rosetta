@@ -40,7 +40,8 @@ class OutputFrame(Frame):
         self.button_Out=Button(self, text="Choose", command=lambda: self.output_class.outdir.set(input_tools.tk_get_directory()))
         self.entry_Outname = Entry(self, textvariable = self.output_class.outname)
         self.check_button_auto_write = Checkbutton(self, text="Write after protocol?", variable = self.output_class.auto_write)
-        self.button_dump_pose = Button(self, text="Write Current Pose", command=lambda: output_tools.dumpPDB(self.toolkit.pose, self.toolkit.native_pose, self.output_class.outdir.get() + "/" + self.output_class.outname.get(), self.toolkit.score_class.score))
+        self.check_button_overwrite = Checkbutton(self, text="Overwrite", variable=self.output_class.overwrite)
+        self.button_dump_pose = Button(self, text="Write Current Pose", command=lambda: output_tools.dumpPDB(self.toolkit.pose, self.toolkit.native_pose, self.output_class.outdir.get() + "/" + self.output_class.outname.get(), self.toolkit.score_class.score, self.output_class.overwrite.get()))
 
 
         
@@ -50,6 +51,7 @@ class OutputFrame(Frame):
         self.label_output_name.grid(row=2, column=0, sticky=W)
         self.button_Out.grid(row=1, column=1, sticky=W+E)
         self.entry_Outname.grid(row=2, column=1)
-        self.button_dump_pose.grid(row=3, column=1)
         
-        self.check_button_auto_write.grid(row=3, column=0)
+        
+        self.check_button_overwrite.grid(row=3, column=0, sticky=W); self.check_button_auto_write.grid(row=3, column=1, sticky=W)
+        self.button_dump_pose.grid(row=4, column=1, columnspan=2, sticky=W+E)

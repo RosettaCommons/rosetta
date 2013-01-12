@@ -112,6 +112,7 @@ class FullControlWindow():
 
 	self.main = main
 	self.main.title("Full Control")
+	self.main.grid_columnconfigure(ALL, weight=1)
 	self.entry_Res = Entry(self.main, textvariable=self.resnum, justify=CENTER)
 	self.entry_Cha = Entry(self.main, textvariable=self.chain, justify=CENTER)
 	self.entry_Nam = Entry(self.main, textvariable=self.restype_var, justify=CENTER)
@@ -127,7 +128,7 @@ class FullControlWindow():
 	self.label_Phi = Label(self.main, text="Phi")
 	self.label_Psi = Label(self.main, text="Psi")
 	self.label_Ome = Label(self.main, text="Omega")
-	self.button_Delta = Button(self.main, text = "Delta", command=lambda: self.pose.assign(protocol_tools.bbMover(self.pose, int(self.resnum.get()), self.chain.get(), float(self.PhiVar.get()), float(self.PsiVar.get()), float(self.OmeVar.get()))))
+	self.button_Delta = Button(self.main, text = "Change Dihedrals", command=lambda: self.pose.assign(protocol_tools.bbMover(self.pose, int(self.resnum.get()), self.chain.get(), float(self.PhiVar.get()), float(self.PsiVar.get()), float(self.OmeVar.get()))))
 	self.label_rotamer_probability = Label(self.main, text = "Aprox Rotamer Probability")
 	self.label_rotamer_energy = Label(self.main, text = "Rotamer Energy")
 	self.entry_rotamer_probability = Label(self.main, textvariable=self.rotamer_probabilty, justify=CENTER, relief=SUNKEN)
@@ -180,7 +181,8 @@ class FullControlWindow():
 	self.variant_listbox.bind("<ButtonRelease-1>", lambda event: self.show_variant_info())
 	self.variant_listbox.bind("<Double-Button-1>", lambda event: self.mutate_to_variant())
 	self.listbox_energy_terms.bind("<Double-Button-1>", lambda event: self.get_residue_energy(self.listbox_energy_terms.get(self.listbox_energy_terms.curselection())))
-
+	self.main.grid_columnconfigure(ALL, weight=1)
+	
     #### Quick Min ####
 	self.button_relax_residue.grid(row=r+17, column=c+2, sticky= W+E)
 	self.button_backrub_residue.grid(row=r+17, column=c, sticky= W+E)

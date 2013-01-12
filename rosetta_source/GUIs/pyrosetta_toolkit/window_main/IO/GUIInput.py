@@ -48,7 +48,7 @@ class GUIInput:
         self.regions = Regions(); #This will replace loops_as_strings
         self.loops = Loops()
         
-        self.constraint_file_path = ""; #Path to constraint file if loaded through GUI (Not options system).
+        self.constraint_file_path = StringVar(); #Path to constraint file if loaded through GUI (Not options system).
         self.param_pathlist_file = ""; #Path to a file which lists paths to all params to use.  One on each line
         self.param_paths = []; #Array of parameter paths.
         self.loaded_paths = [];  #Since something about loading a new residuetypeset is global, with horrible exception handling, WE need to keep track of it.
@@ -96,6 +96,21 @@ class GUIInput:
         print "PDB saved to pyrosetta_toolkit/PDBs"
         cleaner = FixPDBWindow(self, self.toolkit.score_class, self.toolkit.pose, fetched_pdb)
         cleaner.runfixPDBWindow(self.toolkit._tk_, 0, 0)
+    
+    def select_pose_then_launch_fixpdb(self):
+        """
+        This way of loading a pose asks the user to open a PDB, then launches the fixPDBWindow as per Labonte's suggestion.
+        """
+        
+        infilename = tkFileDialog.askopenfilename(initialdir=global_variables.current_directory, title="Select PDB file")
+        if not infilename:return
+        
+        global_variables.current_directory= os.path.dirname(infilename)
+        print global_variables.current_directory
+        cleaner = FixPDBWindow(self, self.toolkit.score_class, self.toolkit.pose, infilename)
+        cleaner.cleaned_pdb_path.set(infilename)
+        cleaner.runfixPDBWindow(self.toolkit._tk_, 0, 0)
+        cleaner.enable_load()
         
     def load_pose(self, path):
         """
@@ -117,6 +132,7 @@ class GUIInput:
         self.toolkit.output_class.outname.set(pdbname)
         self.toolkit.output_class.outdir.set(os.path.dirname(self.pdb_path.get()))
         self.toolkit.DesignDic = dict()
+        self.loop_sequence.set(self.toolkit.pose.sequence())
     
     def return_loaded_pose(self, path):
         """

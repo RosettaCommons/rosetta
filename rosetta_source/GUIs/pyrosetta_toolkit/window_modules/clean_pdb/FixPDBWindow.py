@@ -71,25 +71,25 @@ class FixPDBWindow:
           c = Column
           """
           self.defaultdir = os.getcwd(); #Needs to get this from toolkit...
-          fixWindow = Toplevel(m)
-          fixWindow.title("Setup PDBs for Rosetta")
-
+          self.main = Toplevel(m)
+          self.main.title("Setup PDBs for Rosetta")
+          self.main.grid_columnconfigure(0, weight=1)
           #remove_hetatm_var, remove_alternates_var, change_occupancies_var = 1
           #fixDictionary = dict()
-          self.pathEntry = Entry(fixWindow, textvariable=self.PDBlistPath)
-          self.pathbutton_ = Button(fixWindow, text = "PDBLIST or PDB", command = lambda: self.PDBlistPath.set(self.getfile()))
+          self.pathEntry = Entry(self.main, textvariable=self.PDBlistPath)
+          self.pathbutton_ = Button(self.main, text = "PDBLIST or PDB", command = lambda: self.PDBlistPath.set(self.getfile()))
           
-          self.remH20 = Checkbutton(fixWindow, variable = self.remove_waters_var, text = "Remove Water")
-          self.remHet = Checkbutton(fixWindow, variable=self.remove_hetatm_var, text = "Remove HETATM")
+          self.remH20 = Checkbutton(self.main, variable = self.remove_waters_var, text = "Remove Water")
+          self.remHet = Checkbutton(self.main, variable=self.remove_hetatm_var, text = "Remove HETATM")
           
-          self.remAlt = Checkbutton(fixWindow, variable = self.remove_alternates_var, text = "Renumber all chains + incorporate insertions")
-          self.chaOcc = Checkbutton(fixWindow, variable = self.change_occupancies_var, text = "Change occupancies to 1")
-          self.check_unrecognized_button=Checkbutton(fixWindow, variable = self.check_rosetta_var, text="Check for Rosetta unrecognized/off residue types")
-          self.replace_res_and_atoms_button=Checkbutton(fixWindow, variable = self.replace_res_and_atoms_var, text = "Replace known unrecognized residues and atoms")
-          self.gobutton_ = Button(fixWindow, text = "GO", command = lambda: self.runFixPDB())
-          self.loadbutton = Button(fixWindow, text = "Load Cleaned PDB", command = lambda: self.load_cleaned_pdb())
+          self.remAlt = Checkbutton(self.main, variable = self.remove_alternates_var, text = "Renumber all chains + incorporate insertions")
+          self.chaOcc = Checkbutton(self.main, variable = self.change_occupancies_var, text = "Change occupancies to 1")
+          self.check_unrecognized_button=Checkbutton(self.main, variable = self.check_rosetta_var, text="Check for Rosetta unrecognized/off residue types")
+          self.replace_res_and_atoms_button=Checkbutton(self.main, variable = self.replace_res_and_atoms_var, text = "Replace known unrecognized residues and atoms")
+          self.gobutton_ = Button(self.main, text = "Clean", command = lambda: self.runFixPDB())
+          self.loadbutton = Button(self.main, text = "Load PDB", command = lambda: self.load_cleaned_pdb())
           #This may need to change to use __init__, but hopefully not.
-          self.ignore_unrecognized = Button(fixWindow, text = "Set -ignore_unrecognized_res option", command = lambda: self.input_class.options_manager.add_option('-ignore_unrecognized_res'))
+          self.ignore_unrecognized = Button(self.main, text = "Set -ignore_unrecognized_res option", command = lambda: self.input_class.options_manager.add_option('-ignore_unrecognized_res'))
           self.pathEntry.grid(row = r, column=c)
           self.pathbutton_.grid(row=r, column = c+1)
           self.remH20.grid(row=r, column=c+2, sticky=W)
@@ -103,6 +103,12 @@ class FixPDBWindow:
           
           self.loadbutton.config(state=DISABLED)
           self.ignore_unrecognized.grid(row=r+7, column=c, columnspan=3, sticky=W+E)
+     
+     def enable_load(self):
+          """
+          Enables the load button.
+          """
+          self.loadbutton.config(state=NORMAL)
           
      def get_recognized_aa(self):
           """
@@ -138,9 +144,8 @@ class FixPDBWindow:
           for aa in ["DA", "DT", "DG", "DC", "WAT", "TP3"]: self.on_by_default_aa.append(aa)
           
           
-     def load_cleaned_pdb(self):
+     def load_cleaned_pdb(self, pdbpath=False):
          
-          
           #Any unrecognized - Warn - Rosetta may be unable to recognize these
           self.ignore_unrecognized_option_set = get_boolean_option('in:ignore_unrecognized_res')
           keep_going = True
@@ -168,7 +173,8 @@ class FixPDBWindow:
                          pass
                
           self.input_class.load_pose(self.cleaned_pdb_path.get())
-     
+          self.main.destroy()
+          
      def runFixPDB(self):
           """
           Runs the fixpdbprotocol

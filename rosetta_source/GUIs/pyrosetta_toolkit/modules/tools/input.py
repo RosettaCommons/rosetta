@@ -107,6 +107,9 @@ def add_constraints_to_pose_and_scorefunction(pose, score, default_weight = 1.0,
     Adds constraint from file to pose and score.  Sets all constraint_types to 1.0.
     Can pass an array of constraint_types.
     """
+    if pose.total_residue()==0:
+        print "Please load a pose."
+        return ""
     if not constraint_types:
         constraint_types = [atom_pair_constraint, angle_constraint, dihedral_constraint, coordinate_constraint, constant_constraint]
     

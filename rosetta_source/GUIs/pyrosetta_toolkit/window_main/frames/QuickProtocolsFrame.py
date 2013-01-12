@@ -64,9 +64,12 @@ class QuickProtocolsFrame(TkFrame):
         
         self.decoy_entry=Entry(self, textvariable=self.output_class.decoys, justify=CENTER)
         self.rounds_entry=Entry(self, textvariable=self.output_class.rounds, relief=SUNKEN, justify=CENTER)
+        self.processors_entry = Entry(self, textvariable=self.output_class.processors, justify=CENTER, relief=SUNKEN)
         #self.rounds_entry.set(1)
-        self.decoy_label=Label(self, text="Decoys Desired")
-        self.rounds_label=Label(self, text="Rounds Desired")
+        self.general_label = Label(self, text = "General Protocol Options")
+        self.decoy_label=Label(self, text="Decoys")
+        self.rounds_label=Label(self, text="Rounds")
+        self.processors_label = Label(self, text="Processors")
         self.min_options = OptionMenu(self, self.min_cmd, *(sorted(self.minOPTIONS)))
         #self.full_min_options =  OptionMenu(self, self.fullCommand, *(sorted(self.FullMinOPTIONS)))
         self.kickmin_options = Button(self, text = "Run Protocol", command = lambda: self.kick_min_cmd())
@@ -78,9 +81,12 @@ class QuickProtocolsFrame(TkFrame):
         """
         r = 0; c=0;
         #self.label_quick_min.grid(row=r, column=c, columnspan=2, pady=15)
-        self.decoy_entry.grid(row=r+2, column=c); self.decoy_label.grid(row=r+2, column=c+1)
-        self.rounds_entry.grid(row=r+3, column=c, sticky=W+E); self.rounds_label.grid(row=r+3, column=c+1)
-        self.fastrelax_button.grid(row=r+4, column=c, columnspan = 2)
+        self.general_label.grid(row=r+2, column=c, columnspan=2, sticky=W+E)
+        self.processors_entry.grid(row=r+3, column=c); self.processors_label.grid(row=r+3, column=c+1, sticky=W)
+        self.decoy_entry.grid(row=r+4, column=c); self.decoy_label.grid(row=r+4, column=c+1, sticky=W)
+        self.rounds_entry.grid(row=r+5, column=c, sticky=W+E); self.rounds_label.grid(row=r+5, column=c+1, sticky=W)
+        
+        self.fastrelax_button.grid(row=r+6, column=c, columnspan = 2)
         
         
         #Minimization

@@ -77,22 +77,32 @@ class ScoreFxnControl():
         self.main.config(menu=self.MenBar)
         
         self.TypeLabel = Label(self.main, text = "Score Type")
-        self.PatchLabel = Label(self.main, text = "Patches")
-        self.NonzeroLabel = Label(self.main, text = "NonZero Terms").grid(row = 10, column = 0)
-        self.ZeroLabel = Label(self.main, text = "Zero Terms").grid(row = 10, column = 1)
         self.ScoreTypeListbox = Listbox(self.main, width=30, height = 18)
+        self.ScoreTypeScroll = Scrollbar(self.main)
+        self.ScoreTypeListbox.config(yscrollcommand=self.ScoreTypeScroll.set); self.ScoreTypeScroll.config(command=self.ScoreTypeListbox.yview)
+        
+        self.PatchLabel = Label(self.main, text = "Patches")
         self.ScorePatchListbox = Listbox(self.main, width=30, height = 18)
+        self.ScorePatchScroll = Scrollbar(self.main)
+        self.ScorePatchListbox.config(yscrollcommand=self.ScorePatchScroll.set); self.ScorePatchScroll.config(command = self.ScorePatchListbox.yview)
+        
+        self.NonzeroLabel = Label(self.main, text = "NonZero Terms (Double click to change)")
         self.NonzeroListbox = Listbox(self.main, width=30, height = 18)
-        self.NonzeroListbox.grid(row = 11, column = 0)
+        self.NonzeroScroll = Scrollbar(self.main)
+        self.NonzeroListbox.config(yscrollcommand=self.NonzeroScroll.set); self.NonzeroScroll.config(command = self.NonzeroListbox.yview)
+        
+        self.ZeroLabel = Label(self.main, text = "Zero Terms (Double click to add)")
         self.ZeroListbox = Listbox(self.main, width=30, height = 18)
-        self.ZeroListbox.grid(row = 11, column = 1)
+        self.ZeroScroll = Scrollbar(self.main)
+        self.ZeroListbox.config(yscrollcommand=self.ZeroScroll.set); self.ZeroScroll.config(command = self.ZeroListbox.yview)
+        
         #Showing Score Selected:
         self.ShoTypeLabel = Label(self.main, textvariable = self.ScoreType)
         self.ShoPatchLabel = Label(self.main, textvariable = self.ScorePatch)
         
         
         #First Actions after selected:
-        self.CommandButton = Button(self.main, text = "Command: ", command = lambda: self.scoreOption(self.ScoreOptionsdef.get()))
+        self.CommandButton = Button(self.main, text = "Score Pose", command = lambda: self.scoreOption("Score Pose"))
         self.ScoreOptions = OptionMenu(self.main, self.ScoreOptionsdef, *self.OPTIONS)
         self.RemovePatchButton = Button(self.main, text = "Remove Patch", command = lambda: self.removePatch())
         self.ScoreTypeListbox.bind("<Double-Button-1>", lambda event: self.updateScore())
@@ -100,14 +110,20 @@ class ScoreFxnControl():
         self.NonzeroListbox.bind("<Double-Button-1>", lambda event: self.changeWeight(self.NonzeroListbox))
         self.ZeroListbox.bind("<Double-Button-1>", lambda event: self.changeWeight(self.ZeroListbox))
         
-        #Showing the components:
-        #self.E11 = Entry(self.main, justify=CENTER); self.E12 = Entry(self.main, justify=CENTER)
-        self.TypeLabel.grid(row = 0, column=c+0); self.PatchLabel.grid(row=r+0, column=c+1)
-        self.ScoreTypeListbox.grid(row=r+1, column=c+0, rowspan=6); self.ScorePatchListbox.grid(row=r+1, column=c+1, rowspan=6)
-        self.ShoTypeLabel.grid(row=r+7, column=c+0); self.ShoPatchLabel.grid(row=r+7, column=c+1)
-        self.CommandButton.grid(row=r+8, column=c+0, sticky=W+E); self.ScoreOptions.grid(row=r+8, column=c+1, sticky = W+E)
-        self.RemovePatchButton.grid(row=r+9, column=c+0, columnspan = 2)
         
+        #ShoTk
+        self.TypeLabel.grid(row = r+0, column=c+0); self.PatchLabel.grid(row=r+0, column=c+2)
+        self.ScoreTypeListbox.grid(row=r+1, column=c+0, rowspan=6); self.ScoreTypeScroll.grid(row=r+1, column=c+1, rowspan=6, sticky=E+N+S)
+        self.ScorePatchListbox.grid(row=r+1, column=c+2, rowspan=6); self.ScorePatchScroll.grid(row=r+1, column=c+3, rowspan=6, sticky=E+N+S)
+        
+        self.ShoTypeLabel.grid(row=r+7, column=c+0); self.ShoPatchLabel.grid(row=r+7, column=c+2)
+        self.CommandButton.grid(row=r+8, column=c+0, columnspan = 4, sticky=W+E);
+        #self.ScoreOptions.grid(row=r+8, column=c+1, sticky = W+E)
+        self.RemovePatchButton.grid(row=r+9, column=c+0, columnspan = 4, sticky=W+E)
+        
+        self.NonzeroLabel.grid(row=r+10, column=c+0);self.ZeroLabel.grid(row=r+10, column=c+2)
+        self.NonzeroListbox.grid(row = r+11, column = c+0); self.NonzeroScroll.grid(row=r+11, column=c+1, sticky=E+N+S)
+        self.ZeroListbox.grid(row = r+11, column = c+2); self.ZeroScroll.grid(row=r+11, column=c+3, sticky=E+N+S)
     #This Gets all of the score types from PyRosetta Database
         self.populateScoreList()
         self.updateScoreandTerms()
@@ -178,7 +194,6 @@ class ScoreFxnControl():
         for term in sorted(zeroList):
             self.ZeroListbox.insert(END, term)
     def scoreOption(self, Option):
-        print "Score Function Set to: "+self.ScoreType.get()+" and "+self.ScorePatch.get()
         if Option=="Set ScoreFunction":
             if self.ScorePatch.get() == "None":
                 self.score = create_score_function(self.ScoreType.get())

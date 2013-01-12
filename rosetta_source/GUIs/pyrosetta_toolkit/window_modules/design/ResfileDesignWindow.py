@@ -29,6 +29,7 @@ class ResfileDesignWindow:
     def __init__(self, main, DesignDic, pose):
         self.main=main
         self.main.title("Design Toolbox")
+        
         self.pwd = self.location()[0]
         self.DesignDic = DesignDic; #Main dictionary for saving the resfile info. Can be empty upon construction of window.
         #current and design are labeled opposite . need to fix.
@@ -110,7 +111,7 @@ class ResfileDesignWindow:
         self.listbox_current_designs.bind("<Double-Button-1>", lambda event: self.remove_from_current_designs_callback(self.listbox_current_designs))
         #Photo
         self.Photo.grid(row =12, column = 6, rowspan=5)
-    
+        self.main.grid_columnconfigure(ALL, weight=1)
 #### GUI FUNCTIONS ####
 
     #### 'CALLBACKS' ####

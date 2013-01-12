@@ -46,6 +46,8 @@ class RosettaFlagFileBuilder():
     def __init__ (self, main):
         main.title("Rosetta Flag File Builder")
         self.main = main
+        self.main.grid_columnconfigure(0, weight=1)
+        
         self.pwd = (self.location())[0]
         self.defaultdir = tools.loaddefaultdir(self.pwd)
 
@@ -563,11 +565,8 @@ class RosettaFlagFileBuilder():
         
         setup_window = RosettaPathSetup.SetupRosettaPaths(self.main)
         if not setup_window.result:
-            print "Please check paths and try again..."
-            second_setup_window = RosettaPathSetup.SetupRosettaPaths(self.main)
-            if not second_setup_window.result:
-                print "Directories are still wrong...exiting..."
-                exit()
+            #print "Please check paths and try again..."
+            self.main.destroy()
 
         self.database_directory = StringVar()
         self.application_directory = StringVar()

@@ -46,9 +46,14 @@ from rosetta_flag_file_builder.RosettaFlagFileBuilder import RosettaFlagFileBuil
 from window_modules.design.ResfileDesignWindow import ResfileDesignWindow
 from window_modules.ligand_ncaa_ptm_manager.ligand_ncaa_ptm_manager import ligand_ncaa_ptm_manager
 import global_variables
+#from pyrosetta_toolkit import pyrosetta_toolkit
 
 class Menus():
     def __init__(self, main, toolkit):
+	"""
+	@main: Tk
+	@toolkit: pyrosetta_toolkit
+	"""
 	self.main = main
 	self.toolkit = toolkit; #Need to figure out how to tell Python what this 'toolkit' is so IDEs can make sense out of it!
 	self.main_menu=Menu(self.main)
@@ -62,6 +67,8 @@ class Menus():
 
 
 	self._set_file_menu()
+	self._set_options_menu()
+	self._set_visualization_menu()
 	self._set_advanced_menu()
 	self._set_protocols_menu()
 	self._set_pdblist_menu()
@@ -96,31 +103,41 @@ class Menus():
 	self.export_menu.add_separator()
 	self.export_menu.add_command(label="Param PathList File", command = lambda: output_tools.save_param_path_list(self.toolkit.input_class.param_paths))
 	self.export_menu.add_separator()
-	self.export_menu.add_command(label = "FASTA (Pose)", command=lambda: output_tools.save_FASTA(self.toolkit.pose, self.toolkit.outname.get(), False ))
-	self.export_menu.add_command(label = "FASTA (Loops)", command = lambda: output_tools.save_FASTA(self.toolkit.pose, self.toolkit.outname.get(), False, self.toolkit.input_class.loops_as_strings))
+	self.export_menu.add_command(label = "FASTA (Pose)", command=lambda: output_tools.save_FASTA(self.toolkit.pose, self.toolkit.output_class.outname.get(), False ))
+	self.export_menu.add_command(label = "FASTA (Loops)", command = lambda: output_tools.save_FASTA(self.toolkit.pose, self.toolkit.output_class.outname.get(), False, self.toolkit.input_class.loops_as_strings))
 	#self.export_menu.add_command(label="Save Database")
 	#self.export_menu.add_command(label="Save loops as new PDBs")
 
     #### File Menu ####
 	self.file_menu=Menu(self.main_menu, tearoff=0)
 	
-	self.file_menu.add_command(label="Load PDB", command=lambda: self.toolkit.input_class.choose_load_pose())
+	self.file_menu.add_command(label="Load PDB", command=lambda: self.toolkit.input_class.select_pose_then_launch_fixpdb())
 	self.file_menu.add_command(label="Fetch PDB", command = lambda: self.toolkit.input_class.fetch_pdb())
-	self.file_menu.add_command(label="Load PDBList", command=lambda: self.toolkit.input_class.set_PDBLIST())
+	self.file_menu.add_separator()
 	self.file_menu.add_cascade(label="Import", menu=self.import_menu)
 	self.file_menu.add_cascade(label="Export", menu=self.export_menu)
 	self.file_menu.add_separator()
-	self.file_menu.add_command(label = "Set processors to use", command = lambda: self.toolkit.output_class.processors.set(tkSimpleDialog.askinteger(title="Processesors", prompt="Please set the number of processess you wish to create for protocol runs.", initialvalue=self.toolkit.output_class.processors.get())))
-	self.file_menu.add_checkbutton(label="Set Pymol Observer", variable=self.toolkit.pymol_class.auto_send) #this option should be set only once.
-	self.file_menu.add_command(label = "Show Pose in PyMOL", command = lambda: self.toolkit.pymol_class.pymover.apply(self.toolkit.pose))
-	self.file_menu.add_separator()
-	self.file_menu.add_command(label="Configure Option System",command = lambda: self.show_OptionsSystemManager())
 	self.file_menu.add_command(label ="Setup PDB for Rosetta", command=lambda: self.show_fxpdb_window())
-	self.main_menu.add_cascade(label="File", menu=self.file_menu)
-	self.file_menu.add_separator()
-	self.file_menu.add_checkbutton(label="Set Output to Terminal", variable = self.toolkit.output_class.terminal_output)
-	self.file_menu.add_command(label= "Rosetta Command-Line Creator", command = lambda: self.show_RosettaProtocolBuilder())
 
+	self.file_menu.add_command(label= "Rosetta Flag File Builder", command = lambda: self.show_RosettaProtocolBuilder())
+	self.main_menu.add_cascade(label="File", menu=self.file_menu)
+    def _set_options_menu(self):
+	self.options_menu = Menu(self.main_menu, tearoff=0)
+	self.options_menu.add_command(label="Configure Option System",command = lambda: self.show_OptionsSystemManager())
+	self.options_menu.add_command(label="ScoreFunction Control and Creation", command =lambda: self.toolkit.score_class.makeWindow(Toplevel(self.main), self.toolkit.pose))
+	self.options_menu.add_separator()
+	self.options_menu.add_command(label = "Set processors to use", command = lambda: self.toolkit.output_class.processors.set(tkSimpleDialog.askinteger(title="Processesors", prompt= "Please set the number of processess you wish to create for protocol runs.", initialvalue=self.toolkit.output_class.processors.get())))
+	self.options_menu.add_checkbutton(label="Set Output to Terminal", variable = self.toolkit.output_class.terminal_output)
+	self.main_menu.add_cascade(label="Options", menu=self.options_menu)
+	
+    def _set_visualization_menu(self):
+	self.vis_menu = Menu(self.main_menu, tearoff=0)
+	self.vis_menu.add_command(label = "Show Pose in PyMOL", command = lambda: self.toolkit.pymol_class.pymover.apply(self.toolkit.pose))
+	self.vis_menu.add_checkbutton(label="Set Pymol Observer", variable=self.toolkit.pymol_class.auto_send) #this option should be set only once.
+	self.vis_menu.add_separator()
+	self.vis_menu.add_command(label="Advanced PyMOL Visualization", command=lambda: self.toolkit.pymol_class.makeWindow(0, 0, Toplevel(self.main), self.toolkit.score_class))
+	self.main_menu.add_cascade(label="Visualization", menu=self.vis_menu)
+	
     def _set_advanced_menu(self):
 	"""
 	Sets the advanced control menu
@@ -144,7 +161,7 @@ class Menus():
 	#self.design_menu.add_command(label="Structure Editing and Grafting", foreground='red')
 	self.advanced_menu.add_cascade(label = "Design", menu=self.design_menu)
 	self.advanced_menu.add_separator()
-	self.advanced_menu.add_command(label ="Enable Constraints", command = lambda: self.toolkit.input_class.constraint_file_path.set(\
+	self.advanced_menu.add_command(label ="Add Constraints", command = lambda: self.toolkit.input_class.constraint_file_path.set(\
 				    input_tools.add_constraints_to_pose_and_scorefunction(self.toolkit.pose, self.toolkit.score_class.score)))
 	#self.advanced_menu.add_command(label ="Enable Symmetry", foreground='red')
 	
@@ -159,10 +176,9 @@ class Menus():
 	
 	self.advanced_menu.add_cascade(label ="Enable NCAA/PTM/Ligands", menu=self.non_standard_menu)
 	self.advanced_menu.add_separator()
-	self.advanced_menu.add_command(label="PyMOL Visualization", command=lambda: self.toolkit.pymol_class.makeWindow(0, 0, Toplevel(self.main), self.toolkit.score_class))
-	self.advanced_menu.add_command(label="ScoreFunction Control and Creation", command =lambda: self.toolkit.score_class.makeWindow(Toplevel(self.main), self.toolkit.pose))
+	
+	
 	self.advanced_menu.add_command(label="Per Residue Control and Analysis", command=lambda: self.toolkit.fullcontrol_class.makeWindow(Toplevel(self.main)))
-	self.advanced_menu.add_separator()
 	#self.advanced_menu.add_command(label="Extract PDB from SQLite3 DB", command = lambda: output_tools.extract_pdb_from_sqlite3db())
 	#self.advanced_menu.add_command(label="Interactive Terminal", foreground='red',command = lambda: self.show_IpythonWindow())
 	#self.advanced_menu.add_command(label="Jump into Session", foreground='red', command = lambda: embed())
@@ -267,6 +283,10 @@ class Menus():
 
 	self.pdblist_tools_menu = Menu(self.main_menu, tearoff=0)
 	#There are scripts in RosettaTools that do this welll...
+	self.pdblist_tools_menu.add_command(label = "Load PDBList", command=lambda: self.toolkit.input_class.set_PDBLIST())
+	self.pdblist_tools_menu.add_command(label = "Create PDBList + Load", command = lambda: self.toolkit.input_class.PDBLIST.set(output_tools.make_PDBLIST()))
+	self.pdblist_tools_menu.add_command(label = "Create PDBList Recursively + Load", command = lambda: self.toolkit.input_class.PDBLIST.set(output_tools.make_PDBLIST_recursively()))
+	self.pdblist_tools_menu.add_separator()
 	self.score_menu = Menu(self.main_menu, tearoff=0)
 	self.score_menu.add_command(label = "Rescore PDBList", command = lambda: output_tools.score_PDBLIST(self.toolkit.input_class.PDBLIST.get(), self.toolkit.score_class.score, False, self.toolkit.output_class))
 	self.score_menu.add_command(label = "Load Scores", command = lambda: self.load_scores_for_score_analysis())
@@ -293,16 +313,14 @@ class Menus():
 	self.sequence_menu.add_command(label = "Use FASTA for design statistics", command = lambda: self.run_design_breakdown())
 	self.pdblist_tools_menu.add_cascade(label = "Sequence Analysis", menu=self.sequence_menu)
 	self.pdblist_tools_menu.add_separator()
-	self.pdblist_tools_menu.add_command(label = "Create PDBList", command = lambda: self.toolkit.input_class.PDBLIST.set(output_tools.make_PDBLIST()))
-	self.pdblist_tools_menu.add_command(label = "Create PDBList Recursively", command = lambda: self.toolkit.input_class.PDBLIST.set(output_tools.make_PDBLIST_recursively()))
-	self.pdblist_tools_menu.add_separator()
-	self.pdblist_tools_menu.add_command(label = "Cluster PDBList using Calibur", foreground='red')
+	
+	#self.pdblist_tools_menu.add_command(label = "Cluster PDBList using Calibur", foreground='red')
 	#self.pdblist_tools_menu.add_command(label = "Convert PDBList to SQLite3 DB", command = lambda: output_tools.convert_PDBLIST_to_sqlite3db(self.toolkit.input_class.PDBLIST.get()))
 	#self.pdblist_tools_menu.add_command(label = "Extract PDBList from SQLite3 DB", command = lambda: output_tools.extract_pdbs_from_sqlite3db(self.toolkit.input_class.PDBLIST.get()))
 	#self.pdblist_tools_menu.add_separator()
 	self.pdblist_tools_menu.add_command(label = "Rename All PDBs Recursively + Copy to Outpath", command = lambda: output_tools.rename_and_save(self.toolkit.input_class.PDBLIST.get()))
 
-	self.main_menu.add_cascade(label = "PDBList Tools", menu=self.pdblist_tools_menu)
+	self.main_menu.add_cascade(label = "PDBLists", menu=self.pdblist_tools_menu)
 
     def _set_help_menu(self):
 	"""

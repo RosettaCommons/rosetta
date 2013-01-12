@@ -119,9 +119,11 @@ class ProtocolBaseClass:
             for i in range(1, self.output_class.rounds.get()+1):
                 print "Round "+repr(i)
                 mover.apply(self.pose)
-                print "Start: "+ repr(start_energy_score)+"\n"        
-                print "End: "+ repr(self.score_class.score(self.pose))
-        
+                self.output_class.terminal_output.set(0); #Reset output to textbox
+                print "Start: "+ repr(start_energy_score)+" REU"        
+                print "End: "+ repr(self.score_class.score(self.pose))+" REU"
+                self.output_class.terminal_output.set(1); #Reset output to terminal
+                
         self.output_class.terminal_output.set(0); #Reset output to textbox
         print "NOTE: If > 1 decoy has been created, original decoy is still loaded. "
         print "Job Complete."
@@ -152,8 +154,8 @@ class ProtocolBaseClass:
 
         scorefile = self.pdb_name + score_tag
         output_scorefile(p, self.input_class.pdb_path.get(), outputname, scorefile, self.score_class.score, self.output_class.decoys.get(), self.pose)
-        print "Start: " +repr(start)
-        print "End: " +repr(self.score_class.score(p))
+        print "Start: " +repr(start)+" REU"
+        print "End: " +repr(self.score_class.score(p))+" REU"
         if self.output_class.decoys.get()==1:
             self.pose.assign(p)
             

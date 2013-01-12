@@ -29,6 +29,10 @@ def return_residue_array( p, loop_string):
     
     residue_array = []
     loop_stringSP = loop_string.split(":")
+    if not rosetta.core.pose.has_chain(loop_stringSP[2], p):
+        print "Chain not found in PDB"
+        return
+    
     if (loop_stringSP[0] == "" and loop_stringSP[1]==""):
         #print "Getting Sequence for Chain:"
         for i in range(1, (p.total_residue())):

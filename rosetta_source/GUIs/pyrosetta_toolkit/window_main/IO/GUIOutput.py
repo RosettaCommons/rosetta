@@ -29,8 +29,8 @@ class GUIOutput:
         self.decoys=IntVar(); self.decoys.set(0)
         self.rounds=IntVar(); self.rounds.set(1)
         self.VarLoopSeq = StringVar(); #Sequence of the particular region just queried.
-        self.auto_write = IntVar(); self.auto_write.set(0) ; #Auto Save pose after protocol?
-
+        self.auto_write = IntVar(); self.auto_write.set(False) ; #Auto Save pose after protocol?
+        self.overwrite = IntVar(); self.overwrite.set(False); #Overwrite PDBs?
         self.terminal_output = IntVar(); #Tracer to redirect stdout or not.  Tracer code is in PyRosetta Toolkit.py 0 is textbox, 1 is stdout.
 
         

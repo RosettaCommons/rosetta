@@ -13,6 +13,9 @@
 #Rosetta Imports
 from rosetta import *
 
+#Python Imports
+import os
+
 #Tkinter Imports
 from Tkinter import *
 from Tkinter import Frame as TkFrame
@@ -22,7 +25,7 @@ import tkFileDialog
 from modules.tools import analysis as analysis_tools
 from modules.tools import input as input_tools
 from modules.tools import loops as loop_tools
-
+from window_main import global_variables
 
 class SimpleAnalysisFrame(TkFrame):
     def __init__(self, main, toolkit, **options):
@@ -92,7 +95,9 @@ class SimpleAnalysisFrame(TkFrame):
     
     def rmsd_load_pose(self):
         self.rmsdP = Pose()
-        f = tkFileDialog.askopenfilename(initialdir=self.toolkit.current_directory.get(), title='Choose PDB')
+        f = tkFileDialog.askopenfilename(initialdir=global_variables.current_directory, title='Choose PDB')
+        if not f:return
+        global_variables.current_directory = os.path.dirname(f)
         pose_from_pdb(self.rmsdP, f)
         print "Pose to compare loaded..."
         return
@@ -107,7 +112,7 @@ class SimpleAnalysisFrame(TkFrame):
             e = self.toolkit.input_class.regional_scoring_class.ret_loop_energy(chain, int(start), int(end))
             print "Total Region energy: %.3f REU"%e
             
-            n_e = self.toolkit.input_class.ScoreBaseObject.ret_loop_neighbor_energy(chain, int(start), int(end))
+            n_e = self.toolkit.input_class.regional_scoring_class.ret_loop_neighbor_energy(chain, int(start), int(end))
             print "Total Neighbor (ci_2b) Interaction energy: %.3f REU"%n_e
     
     def print_full_energy(self):
