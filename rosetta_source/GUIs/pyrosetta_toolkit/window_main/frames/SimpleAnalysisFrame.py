@@ -109,17 +109,17 @@ class SimpleAnalysisFrame(TkFrame):
             start_chain = self.toolkit.pose.pdb_info().pose2pdb(residue_array[0])
             start = start_chain.split()[0]; chain = start_chain.split()[1]
             end = self.toolkit.pose.pdb_info().pose2pdb(residue_array[-1]).split()[0]
-            e = self.toolkit.input_class.regional_scoring_class.ret_loop_energy(chain, int(start), int(end))
+            e = self.toolkit.input_class.regional_score_class.ret_loop_energy(chain, int(start), int(end))
             print "Total Region energy: %.3f REU"%e
             
-            n_e = self.toolkit.input_class.regional_scoring_class.ret_loop_neighbor_energy(chain, int(start), int(end))
+            n_e = self.toolkit.input_class.regional_score_class.ret_loop_neighbor_energy(chain, int(start), int(end))
             print "Total Neighbor (ci_2b) Interaction energy: %.3f REU"%n_e
     
     def print_full_energy(self):
         self.toolkit.score_class.score.show(self.toolkit.pose)
         
     def print_hbonds(self):
-        n = self.toolkit.input_class.regional_scoring_class.ret_n_hbonds()
+        n = self.toolkit.input_class.regional_score_class.ret_n_hbonds()
         print "Num Hbonds: "+repr(n)
 
             

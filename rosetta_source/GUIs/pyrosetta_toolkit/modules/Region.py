@@ -89,7 +89,7 @@ class Region:
             print "Chain not found in PDB"
             return
         
-        if self.get_region_type()=='nter':
+        if ((self.get_region_type()=='nter') or (self.get_region_type()=='chain')):
             #First residue of the chain - Would be useful to have pdb_info() be able to return this.
             for resnum in range(1, pose.total_residue()+1):
                 chain = pose.pdb_info().chain(pose.chain(resnum))
@@ -105,7 +105,7 @@ class Region:
             print "Chain not found in PDB"
             return
         
-        if self.get_region_type()=='cter':
+        if (self.get_region_type()=='cter') or (self.get_region_type()=='chain'):
             #Last residue of the chain - Would be useful to have pdb_info() be able to return this.
             resnum = pose.total_residue()
             while resnum !=1:

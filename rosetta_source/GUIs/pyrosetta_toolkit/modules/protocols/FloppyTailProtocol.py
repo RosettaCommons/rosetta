@@ -21,11 +21,14 @@ from rosetta.basic.options import set_string_vector_option
 #Python Imports
 import os
 import time
-from ttk import *
 
 #Tkinter Imports
 from Tkinter import *
-import ttk
+try:
+    import ttk
+except ImportError:
+    pass
+
 import tkMessageBox
 import tkFileDialog
 
@@ -80,7 +83,7 @@ class FloppyTailProtocol(ProtocolBaseClass):
         self.check_c_root = Checkbutton(self.main, text = "-FloppyTail:C_root", variable=self.c_root)
         self.label_c_root = Label(self.main, text = "Reroot the fold_tree to the C-terminus. Use if you have an N-Terminal tail")
         self.check_linear = Checkbutton(self.main, text = "-FloppyTail:force_linear_fold_tree", variable = self.linear)
-        self.label_linear = Label(self.main, text = "Force a linear fold tree.  Used in combination with C_root and reordering the chains in your input PDB to ensure you get exactly the right kinematics")
+        self.label_linear = Label(self.main, text = "Force a linear fold tree.Use C_root and reordering the chains in your input PDB to ensure correct kinematics")
         
         self.entry_perturb = Entry(self.main, textvariable=self.perturb_cycles, justify=CENTER)
         self.entry_refine = Entry(self.main, textvariable=self.refine_cycles, justify=CENTER)
@@ -88,7 +91,13 @@ class FloppyTailProtocol(ProtocolBaseClass):
         self.label_perturb = Label(self.main, text = "Perturbation phase cycles (-FloppyTail:perturb_cycles)")
         self.label_refine = Label(self.main, text = "Refinement phase cycles (-FloppyTail:refine_cycles)")
         self.label_refine_repack = Label(self.main, text = "Refinement phase cycles repack every __ cycles (-FloppyTail:refine_repack_cycles)")
-        self.sep = ttk.Separator(self.main, orient=HORIZONTAL)
+        
+        #Python less then 2.7 does not have ttk it looks like
+        try:
+            self.sep = ttk.Separator(self.main, orient=HORIZONTAL)
+        except NameError:
+            pass
+        
         self.label_resfile = Label(self.main, text = "Optional Resfile")
         self.label_fragment = Label(self.main, text = "Optional Fragfile (Len3)")
         #self.entry_resfile = Entry(self.main, textvariable=self.resfile)
@@ -107,7 +116,11 @@ class FloppyTailProtocol(ProtocolBaseClass):
         self.entry_perturb.grid(row=4, column=0); self.label_perturb.grid(row=4, column=1, sticky=W)
         self.entry_refine.grid(row=5, column=0); self.label_refine.grid(row=5, column=1, sticky=W)
         self.entry_refine_repack.grid(row=6, column=0); self.label_refine_repack.grid(row=6, column=1, sticky=W)
-        self.sep.grid(row=7, column=0, sticky=W+E, pady=4)
+        try:
+            self.sep.grid(row=7, column=0, sticky=W+E, pady=4)
+        except AttributeError:
+            pass
+        
         self.button_resfile.grid(row=8, column=0, sticky=W+E); self.label_resfile.grid(row=8, column=1, sticky=W)
         self.button_fragment.grid(row=9, column=0, sticky=W+E); self.label_fragment.grid(row=9, column=1, sticky=W)
         

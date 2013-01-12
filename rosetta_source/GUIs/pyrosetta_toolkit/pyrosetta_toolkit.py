@@ -56,6 +56,8 @@ from window_modules.pymol_integration.PyMOL import AdvancedPyMOL
 from window_modules.scorefunction.ScoreFxnControl import ScoreFxnControl
 from window_modules.full_control.FullControlWindow import FullControlWindow
 
+from modules.Region import Region
+
 class main_window:
    def __init__(self):
       """
@@ -104,14 +106,53 @@ class main_window:
       self.output_class = GUIOutput(self)
       
       ####Sequence#####
+      self.num_string = StringVar()
+      self.input_class.loop_sequence.trace_variable('w', self.clear_num_string_on_new_input)
       self.sequence_output = Entry(self._tk_, textvariable = self.input_class.loop_sequence)
+      #self.sequence_output.bind('<FocusIn>', self.print_numbering)
+      self.sequence_output.bind('<ButtonRelease-1>', self.print_numbering)
+      self.sequence_output.bind('<KeyRelease>', self.print_numbering)
       self.seq_scroll = Scrollbar(self._tk_, orient=HORIZONTAL, command=self.__scrollHandler)
-      
+      self.num_label = Label(self._tk_, textvariable = self.num_string, justify=CENTER)
       ####Sequence#####
       self.score_class = ScoreFxnControl(); #Main Score Function Object. Holds Score.  Controls switching scorefunctions, etc.
       self.pymol_class = AdvancedPyMOL(self.pose); #PyMOL Object for advanced visualization.
       self.fullcontrol_class = FullControlWindow(self.score_class, self.pose, self.input_class, self.output_class); #Handles full control of protein.  This way, everything is saved...which is sorta cool.
+   
+   def clear_num_string_on_new_input(self, name, index, mode):
+      self.num_string.set("")
       
+   def print_numbering(self, event):
+      if not self.pose.total_residue():return
+      #print self.sequence_output.index(INSERT)
+      rosetta_num=0
+      pdb_num=""
+      if self.pose.total_residue()==len(self.input_class.loop_sequence.get()):
+         rosetta_num = self.sequence_output.index(INSERT)
+         pdb_num = self.pose.pdb_info().pose2pdb(rosetta_num)
+         #print self.num_string
+         
+      else:
+         looFull = self.input_class.loop_start.get()+ ":"+ self.input_class.loop_end.get()+":"+self.input_class.loop_chain.get().upper()
+         start = looFull.split(":")[0]; end = looFull.split(":")[1]
+        
+            #Chain
+         if (start == "" and end==""):
+            region = Region(self.input_class.loop_chain.get().upper(), None, None)
+            #Nter
+         elif start=="":
+            region = Region(self.input_class.loop_chain.get().upper(), None, int(end))
+            #Cter
+         elif end=="":
+            region = Region(self.input_class.loop_chain.get().upper(), int(start), None)
+            #Loop
+         else:
+            region = Region(self.input_class.loop_chain.get().upper(), int(start), int(end))
+         rosetta_num = region.get_rosetta_start(self.pose)+self.sequence_output.index(INSERT)
+         pdb_num = self.pose.pdb_info().pose2pdb(rosetta_num)
+      self.num_string.set(pdb_num+' - '+repr(rosetta_num))
+         #print num_string
+         
    def __scrollHandler(self, *L):
         """
         Handles scrolling of entry.
@@ -161,6 +202,7 @@ class main_window:
       
       
       ### Text Output ###
+      self.num_label.grid(column=0, row=8, columnspan=2, pady=2, padx=2)
       self.seq_scroll.grid(column=0, row=9, columnspan=3, sticky=W+E)
       self.sequence_output.grid(column=0, row=10, columnspan=3, sticky=W+E)
       self.sequence_output['xscrollcommand']=self.seq_scroll.set

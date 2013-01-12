@@ -126,8 +126,8 @@ class GUIInput:
 
         print self.toolkit.pose
         self.toolkit.pymol_class.SendNewPose()
-        self.regional_scoring_class = RegionalScoring(self.toolkit.pose, self.toolkit.score_class.score);
-        pdbname = os.path.basename(path)
+        self.regional_score_class = RegionalScoring(self.toolkit.pose, self.toolkit.score_class.score);
+        pdbname = os.path.basename(self.pdb_path.get())
         pdbname = pdbname.split(".")[0]
         self.toolkit.output_class.outname.set(pdbname)
         self.toolkit.output_class.outdir.set(os.path.dirname(self.pdb_path.get()))

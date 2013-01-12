@@ -84,7 +84,7 @@ class QuickProtocolsFrame(TkFrame):
         self.general_label.grid(row=r+2, column=c, columnspan=2, sticky=W+E)
         self.processors_entry.grid(row=r+3, column=c); self.processors_label.grid(row=r+3, column=c+1, sticky=W)
         self.decoy_entry.grid(row=r+4, column=c); self.decoy_label.grid(row=r+4, column=c+1, sticky=W)
-        self.rounds_entry.grid(row=r+5, column=c, sticky=W+E); self.rounds_label.grid(row=r+5, column=c+1, sticky=W)
+        self.rounds_entry.grid(row=r+5, column=c); self.rounds_label.grid(row=r+5, column=c+1, sticky=W)
         
         self.fastrelax_button.grid(row=r+6, column=c, columnspan = 2)
         

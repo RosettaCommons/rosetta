@@ -14,12 +14,12 @@
 from rosetta import *
 
 #Python Imports
-from Tkinter import *
 import glob
 from os import environ as env
 from os import path
 
 #Tkinter Imports
+from Tkinter import *
 import tkFileDialog
 import tkMessageBox
 import tkSimpleDialog
@@ -27,6 +27,10 @@ import tkSimpleDialog
 #Toolkit Imports
 from modules.tools import output as output_tools
 from window_main import global_variables
+#from modules.RegionaScoring import *
+
+
+
 
 class ScoreFxnControl():
     """
