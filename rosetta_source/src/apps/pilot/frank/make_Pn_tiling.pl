@@ -20,48 +20,56 @@ require "matrix.pm";
 ###############################################################################
 
 if ($#ARGV < 0) {
+	print STDERR "Wallpaper symmdef file generation. Makes a wallpaper symmdef file from a point symmetric or wallpaper symmetric complex.\n";
+	print STDERR "Supported symmetries:\n";
+	print STDERR "       p2g  (input C2)                        p4   (input C4)\n";
+	print STDERR "       c2m  (input D2)                        p4g  (input C4, with -z)\n";
+	print STDERR "       p3   (input C3)                        p4m  (input D4)\n";
+	print STDERR "       p31m (input C3 or D3, with -z)         p6   (input C6)\n";
+	print STDERR "       p3m1 (input D3)                        p6m  (input D6)\n";
 	print STDERR "usage: $0 [options]\n";
 	print STDERR "example:   $0 -a A -i B C -x 22.6 -r 12.0 -p mystructure.pdb\n";
 	print STDERR "options: \n";
-	print STDERR "    -p <string> : Input PDB file (one of -b or -p _must_ be given)\n";
-	print STDERR "    -r <real>   : [default 8.0] the max CA-CA distance between two interacting chains\n";
+	print STDERR "    -p <string> : Input PDB file\n";
 	print STDERR "    -x <real>   : [default 100.0] distance between pt symm groups\n";
 	print STDERR "    -a <char>   : [default A] the chain ID of the main chain\n";
-	print STDERR "    -i <char>   : [default B] the chain IDs of a point-group chain\n";
+	print STDERR "    -i <char>   : [default B] the chain IDs of point-group chain(s) (C2,C3,C4,C6 or D2,D3,D4,D6)\n";
 	print STDERR "    -j <char>   : [default none] the chain IDs of a lattice chain\n";
+	print STDERR "    -z          : IF -j IS NOT GIVEN, enable alternate wallpaper group from point symmetry\n";
+	print STDERR "                :    P31m from C3/D3 or P4g from C4\n";
 	print STDERR "    -f          : [default false] fast distance checking\n";
 	exit -1;
 }
 
 my $pdbfile;
-my $interact_dist = 8.0;  # min interaction distance
 my $ptgp_sep = 100.0;  # min interaction distance
 my $primary_chain = 'A';
-my $secondary_chain = 'B';
+my @secondary_chains = ('B');
 my $lattice_chain = '';
 my $fastDistCheck = 0;
+my $mirroredGroupFlag = 0;
 
 ## parse options (do this by hand since Getopt does not handle this well)
 my $inlinefull = (join ' ',@ARGV)." ";
 my @suboptions = split /(-[a-z|A-Z] )/, $inlinefull;
 for ( my $i=0; $i<=$#suboptions; $i++ ) {
-	if ($suboptions[$i] eq "-r " && defined $suboptions[$i+1] && $suboptions[$i+1] !~ /^-[a-z|A-Z]/) {
-		$interact_dist = int( $suboptions[++$i] );
-	} elsif ($suboptions[$i] eq "-x " && defined $suboptions[$i+1] && $suboptions[$i+1] !~ /^-[a-z|A-Z]/) {
+	if ($suboptions[$i] eq "-x " && defined $suboptions[$i+1] && $suboptions[$i+1] !~ /^-[a-z|A-Z]/) {
 		$ptgp_sep = ( $suboptions[++$i] );
 		$ptgp_sep =~ s/\s*(\S+)\s*/$1/;
 	} elsif ($suboptions[$i] eq "-a " && defined $suboptions[$i+1] && $suboptions[$i+1] !~ /^-[a-z|A-Z]/) {
 		$primary_chain = $suboptions[++$i];
 		$primary_chain =~ s/\s*(\S+)\s*/$1/;
 	} elsif ($suboptions[$i] eq "-i " && defined $suboptions[$i+1] && $suboptions[$i+1] !~ /^-[a-z|A-Z]/) {
-		$secondary_chain = $suboptions[++$i];
-		$secondary_chain =~ s/\s*(\S+)\s*/$1/;
+		@secondary_chains = split /[, ]/,$suboptions[++$i];
 	} elsif ($suboptions[$i] eq "-j " && defined $suboptions[$i+1] && $suboptions[$i+1] !~ /^-[a-z|A-Z]/) {
 		$lattice_chain = $suboptions[++$i];
 		$lattice_chain =~ s/\s*(\S+)\s*/$1/;
 	} elsif ($suboptions[$i] eq "-p " && defined $suboptions[$i+1] && $suboptions[$i+1] !~ /^-[a-z|A-Z]/) {
 		$pdbfile = $suboptions[++$i];
 		$pdbfile =~ s/\s*(\S+)\s*/$1/;
+	} elsif ($suboptions[$i] =~ /^-z/ ) {
+		$mirroredGroupFlag = 1;
+		die "-z option unimplemented!";
 	} elsif ($suboptions[$i] =~ /^-f/ ) {
 		$fastDistCheck = 1;
 		print STDERR "Fast distance checking enabled.\n";
@@ -74,8 +82,10 @@ for ( my $i=0; $i<=$#suboptions; $i++ ) {
 if ($primary_chain eq '_') {
 	$primary_chain = ' ';
 }
-if ($secondary_chain eq '_') {
-	$secondary_chain = ' ';
+foreach my $i (0..$#secondary_chains) {
+	if ($secondary_chains[$i] eq '_') {
+		$secondary_chains[$i] = ' ';
+	}
 }
 
 
@@ -130,461 +140,477 @@ foreach my $i ( 0..scalar( @{ $chains{ $primary_chain } })-1 ) {
 }
 my $monomerRadius = sqrt( $maxDist2 );
 
-## make sure 2ary lattice chains are defined
-my @sec_chain_ids = split( ':', $secondary_chain );
-if ( ! defined $chains{ $sec_chain_ids[0] } ) {
-	die "Chain $secondary_chain not in input!\n";
+my $Dsymm=0;
+if ($#secondary_chains > 0) { $Dsymm = 1; }
+if ($#secondary_chains > 1) { die "Too many secondary chains specified!\n"; }
+
+## make sure 2ary & lattice chains are defined
+foreach my $i (0..$#secondary_chains) {
+	my @sec_chain_ids = split( ':', $secondary_chains[$i] );
+	if ( ! defined $chains{ $sec_chain_ids[0] } ) {
+		die "Chain ".$sec_chain_ids[0]." not in input!\n";
+	}
+	if (scalar( @{ $chains{ $primary_chain } } ) != scalar( @{ $chains{ $sec_chain_ids[0] } } ) ) {
+		print STDERR "ERROR! chains '$primary_chain' and '".$sec_chain_ids[0]."' have different residue counts! (".
+		             scalar( @{ $chains{ $primary_chain } } )." vs ".scalar( @{ $chains{ $sec_chain_ids[0] } } ).")\n";
+		die "Chain length mismatch!\n";
+	}
 }
 if ( $lattice_chain ne '' && !defined $chains{ $lattice_chain } ) {
 	die "Chain $lattice_chain not in input!\n";
 }
-
-## count # of CA atoms
-## TO DO: dont require this; compute optimal superposition (farm this to mammoth?)
-if (scalar( @{ $chains{ $primary_chain } } ) != scalar( @{ $chains{ $sec_chain_ids[0] } } ) ) {
-	print STDERR "ERROR! chains '$primary_chain' and '$secondary_chain' have different residue counts! (".
-	             scalar( @{ $chains{ $primary_chain } } )." vs ".scalar( @{ $chains{ $sec_chain_ids[0] } } ).")\n";
-	die "Chain length mismatch!\n";
-}
 if ( $lattice_chain ne '' &&
      scalar( @{ $chains{ $primary_chain } } ) != scalar( @{ $chains{ $lattice_chain } } ) ) {
-	print STDERR "ERROR! chains '$primary_chain' and '$secondary_chain' have different residue counts! (".
-	             scalar( @{ $chains{ $primary_chain } } )." vs ".scalar( @{ $chains{ $sec_chain_ids[0] } } ).")\n";
+	print STDERR "ERROR! chains '$primary_chain' and '$lattice_chain' have different residue counts! (".
+	             scalar( @{ $chains{ $primary_chain } } )." vs ".scalar( @{ $chains{ $lattice_chain } } ).")\n";
 	die "Chain length mismatch!\n";
 }
 
+my (@Qs, @COMs, @sym_orders, @secondary_chains_filt);
 
-## get superposition A->B
-my ($R,$rmsd, $COM_i, $COM_ij) = rms_align( $chains{ $primary_chain } , $chains{ $sec_chain_ids[0] } );
-my $delCOM = vsub ($COM_i, $COM_0);
+## get symmetric transformations
+foreach my $i (0..$#secondary_chains) {
+	my @sec_chain_ids = split( ':', $secondary_chains[$i] );
+	my ($R,$rmsd, $COM_i, $COM_ij) = rms_align( $chains{ $primary_chain } , $chains{ $sec_chain_ids[0] } );
+	my $delCOM = vsub ($COM_i, $COM_0);
+	my ($X,$Y,$Z,$W)=R2quat($R);
+	my $omega = acos(abs($W));
+	my $symm_order = int(PI/$omega + 0.5);
+	if ($#sec_chain_ids > 0) { $symm_order = $sec_chain_ids[1]; }
 
-my ($X,$Y,$Z,$W)=R2quat($R);
-my $Worig = $W;
-my $Wmult = 1;
-if ($W < 0) { $W = -$W; $Wmult = -1; }
-my $omega = acos($W);
-my $symm_order = int(PI/$omega + 0.5);
+	my $Wmult=1;
+	if ($W<0) { $Wmult=-1; }
+	my $newW = -$Wmult*cos( PI/$symm_order );
+	my $S = sqrt ( (1-$newW*$newW)/($X*$X+$Y*$Y+$Z*$Z) );
 
-# optionally ... allow input to 'force' a symmetric order
-# note that this may result is a system quite far from the input system
-if ($#sec_chain_ids > 0) {
-	$symm_order = $sec_chain_ids[1];
-}
-print STDERR "Found ".$symm_order."-fold symmetric complex at chain ".$sec_chain_ids[0]."\n";
-if ($symm_order != 3 && $symm_order != 4 && $symm_order != 6) {
-	die "Symmetric order must equal 3,4, or 6!\n";
-}
-
-my $outer_symm_order = $symm_order;
-if ($symm_order == 3) {
-	$outer_symm_order = 3;
+	push @secondary_chains_filt, $sec_chain_ids[0];
+	push @sym_orders, $symm_order;
+	push @Qs, [$X*$S , $Y*$S, $Z*$S, $newW];
+	push @COMs, $delCOM;
 }
 
+# expand D symmetries in proper order
+if ($Dsymm && ($sym_orders[ 0 ] == 2 && $sym_orders[ 1 ] != 2) ) {
+	my $temp;
+	$temp = $Qs[1]; $Qs[1] = $Qs[0]; $Qs[0] = $temp;
+	$temp = $COMs[1]; $COMs[1] = $COMs[0]; $COMs[0] = $temp;
+	$temp = $sym_orders[1]; $sym_orders[1] = $sym_orders[0]; $sym_orders[0] = $temp;
+	$temp = $secondary_chains_filt[1]; $secondary_chains_filt[1] = $secondary_chains_filt[0]; $secondary_chains_filt[0] = $temp;
+}
 
-# now make perfectly symmetrical version of superposition
-my $newW = -$Wmult *cos( PI/$symm_order );
-my $S = sqrt ( (1-$newW*$newW)/($X*$X+$Y*$Y+$Z*$Z) );
-my $newQ = [$X*$S , $Y*$S, $Z*$S, $newW];
-my $newR = quat2R( $newQ->[0], $newQ->[1], $newQ->[2], $newQ->[3] );
+# sanity check
+if ($sym_orders[ 0 ] != 2 && $sym_orders[ 0 ] != 3 && $sym_orders[ 0 ] != 4 && $sym_orders[ 0 ] != 6 ) {
+	die "Point symmetry of input structure must be of order 2,3,4 or 6 (detected ".$sym_orders[ 0 ].")\n";
+}
 
-my $outerW = -$Wmult *cos( PI/$outer_symm_order );
-my $S = sqrt ( (1-$outerW*$outerW)/($X*$X+$Y*$Y+$Z*$Z) );
-my $outerQ = [$X*$S , $Y*$S, $Z*$S, $outerW];
+# outerR
+my $outer_sym_order = $sym_orders[ 0 ];
+my $symm_group_name;
+
+# P2gg,C2mm
+if ($sym_orders[ 0 ] == 2) {
+	if ($Dsymm==1) { $symm_group_name="c2m"; }
+	else { $symm_group_name="p2g"; }
+	$outer_sym_order = 4;
+}
+
+# P3, P3m1, and P31m from D3
+if ($sym_orders[ 0 ] == 3) {
+	if ($Dsymm==1 || $mirroredGroupFlag == 0) { $outer_sym_order = 6; }
+	if ($Dsymm==1) { $symm_group_name="p3m1"; }
+	elsif ($mirroredGroupFlag == 1) { $symm_group_name="p31m"; }
+	else { $symm_group_name="p3"; }
+}
+
+if ($sym_orders[ 0 ] == 4) {
+	if ($Dsymm==1) { $symm_group_name="p4m"; } 
+	elsif ($mirroredGroupFlag == 1) { $symm_group_name="p4g"; }
+	else { $symm_group_name="p4"; }
+}
+
+if ($sym_orders[ 0 ] == 6) {
+	if ($Dsymm==1) { $symm_group_name="p6m"; } else { $symm_group_name="p6"; }
+}
+print STDERR "Building $symm_group_name lattice!\n";
+
+###
+### PROPERTIES
+my ($mirroredGroup,$moveInPlane) = (0,0);
+if ($symm_group_name=="c2m" || $symm_group_name=="p2g") { $moveInPlane = 1; }
+if ($symm_group_name=="p2g" || $symm_group_name=="p31m" || $symm_group_name=="p4g") { $mirroredGroup = 1; }
+if ($mirroredGroupFlag == 1 && $mirroredGroup==0) {
+	print STDERR "Warning: -z flag not applicable for this point group.  Ignoring!\n";
+}
+
+# correct transformations
+my $COM_pointgp = [0,0,0];
+my $COM_Ccomplex = [0,0,0];
+
+##  A->B0
+if ($Dsymm == 0) {
+	my $newR = quat2R( $Qs[0]->[0], $Qs[0]->[1], $Qs[0]->[2], $Qs[0]->[3] );
+	my $err_pos = [0,0,0];
+	my $R_i = [ [1,0,0], [0,1,0], [0,0,1] ];
+	foreach my $j (1..$sym_orders[0]) {
+		$err_pos = vadd( $err_pos, mapply( $R_i,$COMs[0] ) );
+		$R_i = mmult($newR, $R_i);
+	}
+	$COMs[0] = vsub( $COMs[0] , [ $err_pos->[0]/$sym_orders[0] , $err_pos->[1]/$sym_orders[0] , $err_pos->[2]/$sym_orders[0] ] );
+
+	$err_pos = [0,0,0];
+	$R_i = [ [1,0,0], [0,1,0], [0,0,1] ];
+	foreach my $j (1..$sym_orders[0]) {
+		$err_pos = vadd( $err_pos, mapply( $R_i,$COMs[0] ) );
+		$COM_pointgp = vadd( $COM_pointgp, $err_pos );
+		$R_i = mmult($newR, $R_i);
+	}
+	$COM_pointgp = vscale( 1.0/$sym_orders[0], $COM_pointgp );
+	$COM_pointgp = vadd( $COM_0, $COM_pointgp );
+
+	# add "noop" symmops
+	push @secondary_chains_filt, '';
+	push @sym_orders, 1;
+	push @Qs, [0,0,0,1];
+	push @COMs, [0,0,0];
+} elsif ($Dsymm == 1) {
+	my $X = [ $Qs[0]->[0],  $Qs[0]->[1],  $Qs[0]->[2] ];
+	my $Y = [ $Qs[1]->[0],  $Qs[1]->[1],  $Qs[1]->[2] ];
+	normalize($X); normalize($Y);
+	my $Xtgt = vsub( $X , vscale(dot($X,$Y),$Y) );
+	my $Ytgt = vsub( $Y , vscale(dot($X,$Y),$X) );
+	normalize( $Xtgt ); normalize( $Ytgt );
+
+	my $X0 = [ ($X->[0]+$Xtgt->[0])/2 , ($X->[1]+$Xtgt->[1])/2 , ($X->[2]+$Xtgt->[2])/2 ];
+	my $Y0 = [ ($Y->[0]+$Ytgt->[0])/2 , ($Y->[1]+$Ytgt->[1])/2 , ($Y->[2]+$Ytgt->[2])/2 ];
+	my $W_x = $Qs[0]->[3];
+	my $W_y = $Qs[1]->[3];
+	my $S_x = sqrt ( (1-$W_x*$W_x)/vnorm2($X0) );
+	my $S_y = sqrt ( (1-$W_y*$W_y)/vnorm2($Y0) );
+
+	$Qs[0] = [ $X0->[0]*$S_x , $X0->[1]*$S_x, $X0->[2]*$S_x, $W_x];
+	$Qs[1] = [ $Y0->[0]*$S_y , $Y0->[1]*$S_y, $Y0->[2]*$S_y, $W_y];
+
+	# fix gp 1 transform
+	my $err_pos = [0,0,0];
+	my $R_i = [ [1,0,0], [0,1,0], [0,0,1] ];
+	my $newR = quat2R( $Qs[0]->[0], $Qs[0]->[1], $Qs[0]->[2], $Qs[0]->[3] );
+	foreach my $j (1..$sym_orders[0]) {
+		$err_pos = vadd( $err_pos, mapply( $R_i,$COMs[0] ) );
+		$R_i = mmult($newR, $R_i);
+	}
+	#print STDERR "   err_trans(1) = ".vnorm( $err_pos )."\n";
+	$COMs[0] = vsub( $COMs[0] , [ $err_pos->[0]/$sym_orders[0] , $err_pos->[1]/$sym_orders[0] , $err_pos->[2]/$sym_orders[0] ] );
+
+	# corrected CoM of C complex
+	$err_pos = [0,0,0];
+	$R_i = [ [1,0,0], [0,1,0], [0,0,1] ];
+	foreach my $j (0..$sym_orders[0]-1) {
+		$err_pos = vadd( $err_pos, mapply( $R_i,$COMs[0] ) );
+		$COM_Ccomplex = vadd( $COM_Ccomplex, $err_pos );
+		$R_i = mmult($newR, $R_i);
+	}
+	$COM_Ccomplex = vscale( 1.0/$sym_orders[0], $COM_Ccomplex );
+
+	# fix gp 2 transform
+	$err_pos = [0,0,0];
+	$R_i = [ [1,0,0], [0,1,0], [0,0,1] ];
+	$newR = quat2R( $Qs[1]->[0], $Qs[1]->[1], $Qs[1]->[2], $Qs[1]->[3] );
+	my $com_secondary = vadd( $COMs[1], mapply( $newR , $COM_Ccomplex ) );
+
+	my $newDelCOM = vsub ( $com_secondary , $COM_Ccomplex );
+
+	foreach my $j (1..$sym_orders[1]) {
+		$err_pos = vadd( $err_pos, mapply( $R_i, $newDelCOM ) );
+		$R_i = mmult($newR, $R_i);
+	}
+	my $axis_proj_i =  [ $Qs[0]->[0],  $Qs[0]->[1],  $Qs[0]->[2] ];
+	normalize( $axis_proj_i );
+	my $del_COM_inplane = vsub( $newDelCOM , vscale(dot($newDelCOM,$axis_proj_i),$axis_proj_i) );
+	$err_pos = vscale( $sym_orders[1] , $del_COM_inplane );
+
+	#print STDERR "   err_trans(2) = ".vnorm( $err_pos )."\n";
+	$COMs[1] = vsub( $COMs[1] , [ $err_pos->[0]/$sym_orders[1] , $err_pos->[1]/$sym_orders[1] , $err_pos->[2]/$sym_orders[1] ] );
+
+	$err_pos = [0,0,0];
+	$R_i = [ [1,0,0], [0,1,0], [0,0,1] ];
+	foreach my $j (1..$sym_orders[1]) {
+		$err_pos = vadd( $err_pos, mapply( $R_i, $newDelCOM ) );
+		$COM_pointgp = vadd( $COM_pointgp, $err_pos );
+		$R_i = mmult($newR, $R_i);
+	}
+	$COM_pointgp = vscale( 1.0/$sym_orders[1], $COM_pointgp );
+	$COM_pointgp = vadd( $COM_Ccomplex, $COM_pointgp );
+	$COM_pointgp = vadd( $COM_0, $COM_pointgp );
+}
+my $outerW = cos( PI/$outer_sym_order );
+my $S = sqrt ( (1-$outerW*$outerW)/($Qs[0]->[0]*$Qs[0]->[0] + $Qs[0]->[1]*$Qs[0]->[1] + $Qs[0]->[2]*$Qs[0]->[2]) );
+my $outerQ = [$Qs[0]->[0]*$S , $Qs[0]->[1]*$S, $Qs[0]->[2]*$S, $outerW];
 my $outerR = quat2R( $outerQ->[0], $outerQ->[1], $outerQ->[2], $outerQ->[3] );
 
-
-# symmetrize delCOM
-my $err_pos = [0,0,0];
-my $R_i = [ [1,0,0], [0,1,0], [0,0,1] ];
-foreach my $j (1..$symm_order) {
-	$err_pos = vadd( $err_pos, mapply( $R_i,$delCOM ) );
-	$R_i = mmult($newR, $R_i);
-}
-$delCOM = vsub( $delCOM , [ $err_pos->[0]/$symm_order , $err_pos->[1]/$symm_order , $err_pos->[2]/$symm_order ] );
-
-# get the COM of the complex
-my $sum_pos = [0,0,0];
-my $curr_pos = deep_copy( $COM_0 );
-$R_i = [ [1,0,0], [0,1,0], [0,0,1] ];
-foreach my $j (1..$symm_order) {
-	$curr_pos = vadd( $curr_pos, mapply( $R_i,$delCOM ) );
-	$sum_pos = vadd( $sum_pos, $curr_pos );
-	$R_i = mmult($newR, $R_i);
-}
-$sum_pos = vscale( 1/$symm_order , $sum_pos );
-
-## get translation A->G
+## get translation A->C
 my $delCOM_lattice;
 if ( $lattice_chain ne '' ) {
 	my ($R_lattice,$rmsd, $COM_i, $COM_ij) = rms_align( $chains{ $primary_chain } , $chains{ $lattice_chain } );
-	$delCOM_lattice = vsub ($COM_i, $COM_0);
-	if (!is_identity($R_lattice)) {
-		print STDERR "     ".$R_lattice->[0][0].",".$R_lattice->[0][1].",".$R_lattice->[0][2]."\n";
-		print STDERR " R = ".$R_lattice->[1][0].",".$R_lattice->[1][1].",".$R_lattice->[1][2]."\n";
-		print STDERR "     ".$R_lattice->[2][0].",".$R_lattice->[2][1].",".$R_lattice->[2][2]."\n";
-		die "Lattice symmetry ($primary_chain,$lattice_chain) must not have rotation!\n";  ##?? recover from this instead?
-	}
-	$ptgp_sep = vnorm( $delCOM_lattice );
+ 	$delCOM_lattice = vsub ($COM_i, $COM_0);
+ 	if (!is_identity($R_lattice)) {
+ 		print STDERR "     ".$R_lattice->[0][0].",".$R_lattice->[0][1].",".$R_lattice->[0][2]."\n";
+ 		print STDERR " R = ".$R_lattice->[1][0].",".$R_lattice->[1][1].",".$R_lattice->[1][2]."\n";
+ 		print STDERR "     ".$R_lattice->[2][0].",".$R_lattice->[2][1].",".$R_lattice->[2][2]."\n";
+ 		die "Lattice symmetry ($primary_chain,$lattice_chain) must not have rotation!\n";  ##?? recover from this instead?
+ 	}
+
+	## correct this to be perpendicular to pointgroup symmaxis
+	my $axis_proj_i =  [ $Qs[0]->[0],  $Qs[0]->[1],  $Qs[0]->[2] ];
+	normalize( $axis_proj_i );
+	$delCOM_lattice = vsub( $delCOM_lattice , vscale(dot($delCOM_lattice,$axis_proj_i),$axis_proj_i) );
+ 	$ptgp_sep = vnorm( $delCOM_lattice );
 } else {
-	# no lattice chain defined; pick a random direction
-	$delCOM_lattice = vsub($COM_0, $sum_pos);
-	normalize( $delCOM_lattice );
-	$delCOM_lattice = vscale( $ptgp_sep, $delCOM_lattice );
+ 	$delCOM_lattice = vsub($COM_0, $COM_pointgp);   # point towards the first subunit
+
+	## correct this to be perpendicular to pointgroup symmaxis
+	my $axis_proj_i =  [ $Qs[0]->[0],  $Qs[0]->[1],  $Qs[0]->[2] ];
+	normalize( $axis_proj_i );
+	$delCOM_lattice = vsub( $delCOM_lattice , vscale(dot($delCOM_lattice,$axis_proj_i),$axis_proj_i) );
+ 	normalize( $delCOM_lattice );
+
+ 	$delCOM_lattice = vscale( $ptgp_sep, $delCOM_lattice );
 }
-
-print STDERR "delCOM_lattice = ".$delCOM_lattice->[0].",".$delCOM_lattice->[1].",".$delCOM_lattice->[2]."\n";
-
 
 ## newR, adj_newDelCOM contain rot,trans
 ## compute for all subunits
 my %Rs;
 my %Ts;
 my %ptgps;
-
-$ptgps{"0"} = $sum_pos; # com of cplx
+$ptgps{0} = $COM_pointgp; # com of cplx
 
 ## 1: expand point group 0
-my $R_i = deep_copy( $R_0 );
+my $R_i = [[1,0,0],[0,1,0],[0,0,1]];
 my $T_i = deep_copy( $COM_0 );
-foreach my $i (1..$symm_order) {
-	my $id = "0_".$i;
-
-	$Rs{ $id } = $R_i;
-	$Ts{ $id } = $T_i;
-
-	$T_i = vadd( $T_i, mapply( $R_i,$delCOM ) );
-	$R_i = mmult($newR, $R_i);
+my $R0 = quat2R( $Qs[0]->[0], $Qs[0]->[1], $Qs[0]->[2], $Qs[0]->[3] );
+my $R1 = quat2R( $Qs[1]->[0], $Qs[1]->[1], $Qs[1]->[2], $Qs[1]->[3] );
+foreach my $i (1..$sym_orders[1]) {
+	foreach my $j (1..$sym_orders[0]) {
+		my $id = "0_".$j."_".$i;
+		$Rs{ $id } = $R_i;
+		$Ts{ $id } = $T_i;
+		$T_i = vadd( $T_i, mapply( $R_i,$COMs[0] ) );
+		$R_i = mmult($R_i, $R0);
+	}
+	$T_i = vadd( $COM_0, $COMs[1] );
+	$R_i = deep_copy($R1);
 }
+
 
 ## 2: expand lattice groups
-$R_i = deep_copy( $R_0 );
-$T_i = vadd( $sum_pos , $delCOM_lattice );
-foreach my $i (1..$outer_symm_order) {
+$R_i = [[1,0,0],[0,1,0],[0,0,1]];
+$T_i = vadd( $COM_pointgp , $delCOM_lattice );
+foreach my $i (1..$outer_sym_order) {
 	$ptgps{$i} = $T_i;
-
 	$R_i = mmult($outerR, $R_i);
-	$T_i = vadd( $sum_pos, mapply( $R_i,$delCOM_lattice ) );
+	$T_i = vadd( $COM_pointgp, mapply( $R_i,$delCOM_lattice ) );
 }
+
 
 ## 3: expand point gps of lattice groups
-foreach my $j (1..$outer_symm_order) {
-	foreach my $i (1..$symm_order) {
-		my $id  = $j."_".$i;
-		$Rs{ $id } = $Rs{ "0_".$i };
-		$Ts{ $id } = vadd( $ptgps{$j} , vsub( $Ts{ "0_".$i } , $ptgps{0}) );
-	}
-}
-
-
-## dist checks
-## first-pass filter throws out monomers very far from the primary
-my $counter = 0;
-my %excludeinterface = ();
-foreach my $j (0..$outer_symm_order) {
-	foreach my $i (1..$symm_order) {
-		my $id  = $j."_".$i;
-		my $delXY = vsub( $COM_0,$Ts{$id} );
-		my $dist2XY = vnorm2( $delXY );
-
-		if ( sqrt($dist2XY) > 2*$monomerRadius + $interact_dist ) {
-			print STDERR " [$counter] Excluding interface '".$id."'\n";
-			$excludeinterface{ $id } = $counter++;
+my $latticeR = [[1,0,0],[0,1,0],[0,0,1]];
+if ($mirroredGroup) { $latticeR = [[1,0,0],[0,-1,0],[0,0,-1]]; }
+foreach my $k (1..$outer_sym_order) {
+	foreach my $i (1..$sym_orders[1]) {
+		foreach my $j (1..$sym_orders[0]) {
+			my $id = $k."_".$j."_".$i;
+			$Rs{ $id } = mmult( $latticeR, $Rs{ "0_".$j."_".$i } );
+			$Ts{ $id } = vadd( $ptgps{$k} , mapply( $latticeR,  vsub( $Ts{ "0_".$j."_".$i } , $ptgps{0}) ) );
 		}
 	}
 }
 
-my %symminterface = ();
-$counter = 0;
-if ($fastDistCheck == 1) {
-	foreach my $j (0..$outer_symm_order) {
-		foreach my $i (1..$symm_order) {
-			my $id  = $j."_".$i;
-			next if (defined $excludeinterface{ $id });
-
-			# we have a hit! tag NCS copy $id as a symmetic interface
-			print STDERR " Adding interface '".$id."'\n";
-			$symminterface{ $id } = $counter++;
-		}
-	}
-} else {
-	#print "COM = ".$COM_0->[0].",".$COM_0->[1].",".$COM_0->[2]."\n";
-	foreach my $X_i ( @{ $chains{ $primary_chain } } ) {
-		foreach my $Y_i (  @{ $chains{ $primary_chain } } ) {
-			foreach my $j (0..$outer_symm_order) {
-				foreach my $i (1..$symm_order) {
-					my $id  = $j."_".$i;
-					next if (defined $symminterface{ $id });
-					next if (defined $excludeinterface{ $id });
-	
-					#   x_i = R_i * (x_0 - COM_0) + COM_i
-					#   The rms function already ofsets x_0 by -COM_0
-					my $rX_i = vadd( $X_i , $COM_0 );
-					my $rY_j = vadd( mapply($Rs{$id}, $Y_i) , $Ts{$id} );
-					my $delXY = vsub( $rY_j,$rX_i );
-					my $dist2XY = vnorm2( $delXY );
-
-					if ($dist2XY < $interact_dist*$interact_dist) {
-						# we have a hit! tag NCS copy $id as a symmetic interface
-						print STDERR " Adding interface '".$id."'\n";
-						$symminterface{ $id } = $counter++;
-					}
-				}
-			}
-		}
-	}
-}
 
 ##
 # find the equation for the energy of the complex
 # first find the 1->n interfaces that come in pairs
-my @syminterfaces = sort { $symminterface{$a} <=> $symminterface{$b} } keys %symminterface;
-
-# the energy equation ...
+my @syminterfaces = keys %Rs;
 my %energy_counter;
 foreach my $interface (@syminterfaces) {
 	$energy_counter{ $interface } = 1;
 }
 # delete self-interface(???)
-delete ($energy_counter{ $syminterfaces[0] });
-
-####
-####  This appears to be calculated incorrectly for certain orientations
-####  For now compute every interface energy in Rosetta
-####  This will lead to a slowdown in Rosetta but it is not clear how significant
-####
-# OUTER1: foreach my $i (1..$#syminterfaces) {
-# 	next if (!defined  $energy_counter{ $syminterfaces[$i] } );
-# 
-# 	my $R_i = $Rs{$syminterfaces[$i]};
-# 	my $T_i = vsub( $Ts{$syminterfaces[$i]} , $COM_0 );
-# 
-# 	foreach my $j ($i+1..$#syminterfaces) {
-# 		my $R_j = $Rs{$syminterfaces[$j]};
-# 		my $T_j = vsub( $Ts{$syminterfaces[$j]} , $COM_0 );
-# 
-# 		# if transform i is the inverse of transform j we have our (i,j) pair
-# 		if ( is_inverse( $R_i,$T_i, $R_j,$T_j ) ) {
-# 			$energy_counter{ $syminterfaces[$i] } = 2;
-# 			delete ($energy_counter{ $syminterfaces[$j] });
-# 			next OUTER1;
-# 		}
-# 	}
-# }
-#######################################
-#######################################
-#######################################
-
-
+delete ($energy_counter{ "0_1_1" });
+ 
 ## symm file gen
-# symmetry_name c4
-# E = 2*VRT2
-# anchor_residue 17
 my $symmname = $pdbfile;
 $symmname =~ s/\.pdb$//;
-$symmname = $symmname."_P".$symm_order;
+$symmname = $symmname."__".$symm_group_name;
 print "symmetry_name $symmname\n";
-print "E = 1*VRT".$syminterfaces[0]."_base";
-foreach my $complex (sort { $symminterface{$a} <=> $symminterface{$b} } keys %energy_counter) {
-	print " + ".$energy_counter{$complex}."*(VRT".$syminterfaces[0]."_base".":VRT".$complex."_base".")";
+print "E = 1*VRT0_1_1";
+foreach my $complex (keys %energy_counter) {
+	print " + ".$energy_counter{$complex}."*(VRT0_1_1:VRT".$complex.")";
 }
 print "\n";
-print "anchor_residue $minRes\n";
+print "anchor_residue COM\n";
 
-#######################################
-######
 ######   XYZ
-######
-#######################################
 print "virtual_coordinates_start\n";
 print "xyz VRT0  ".
-			sprintf("%.4f,%.4f,%.4f", 1, 0, 0)."  ".
-			sprintf("%.4f,%.4f,%.4f", 0, 1, 0)."  ".
-			sprintf("%.4f,%.4f,%.4f", $sum_pos->[0]+1, $sum_pos->[1], $sum_pos->[2])."\n";
+			sprintf("%.6f,%.6f,%.6f", 1, 0, 0)."  ".
+			sprintf("%.6f,%.6f,%.6f", 0, 1, 0)."  ".
+			sprintf("%.6f,%.6f,%.6f", $COM_pointgp->[0]+1, $COM_pointgp->[1], $COM_pointgp->[2])."\n";
 
-#subunits of first pt_gp
-foreach my $i (1..$symm_order) {
-	my $id = "0_".$i;
-	my $id_sibling = "0_".($i+1);
-	if ($i == $symm_order) { $id_sibling = "0_1"; }
-	my $parent_com = $sum_pos;
+# master transformation
+my ($masterX, $masterY, $masterZ);
+$masterZ = [ $Qs[0]->[0],  $Qs[0]->[1],  $Qs[0]->[2] ];
+normalize( $masterZ );
+$masterY = vsub( $Ts{ "0_2_1" } , $Ts{ "0_1_1" } );
+normalize( $masterY );
+$masterX = cross( $masterY , $masterZ );
+normalize( $masterX );
 
-	# x points from origin to parent CoM
-	my $myX = vsub( $parent_com , $Ts{ $id } );
-	my $myY = vsub( $Ts{ $id_sibling } , $Ts{ $id } );
-	#my $myZ = mapply( $Rs{ $id }, [0,0,1]);
-	#my $myY = cross( $myZ, $myX );
-	# y in pt-gp plane
-
-	normalize( $myX );
-	$myY = vsub( $myY , vscale(dot($myY, $myX), $myX) );
-	normalize( $myY );
-
-	print "xyz VRT$id  ".
-				sprintf("%.4f,%.4f,%.4f", $myX->[0], $myX->[1], $myX->[2])."  ".
-				sprintf("%.4f,%.4f,%.4f", $myY->[0], $myY->[1], $myY->[2])."  ".
-				sprintf("%.4f,%.4f,%.4f", $parent_com->[0], $parent_com->[1], $parent_com->[2])."\n";
-	if ($i == 1) {
-		print "xyz VRT0"."_ctrl  ".
-					sprintf("%.4f,%.4f,%.4f", $myX->[0], $myX->[1], $myX->[2])."  ".
-					sprintf("%.4f,%.4f,%.4f", $myY->[0], $myY->[1], $myY->[2])."  ".
-					sprintf("%.4f,%.4f,%.4f", $parent_com->[0], $parent_com->[1], $parent_com->[2])."\n";
-	}
-	print "xyz VRT$id"."_base  ".
-				sprintf("%.4f,%.4f,%.4f", $myX->[0], $myX->[1], $myX->[2])."  ".
-				sprintf("%.4f,%.4f,%.4f", $myY->[0], $myY->[1], $myY->[2])."  ".
-				sprintf("%.4f,%.4f,%.4f", $Ts{ $id }->[0], $Ts{ $id }->[1], $Ts{ $id }->[2])."\n";
-}
-
-
-foreach my $i (1..$outer_symm_order) {
-	my $id_sibling = ($i+1);
-	if ($i == $symm_order) { $id_sibling = 1; }
-
-	# pointing to each point group
-	my $parent_com = $sum_pos;
-	my $myX = vsub( $ptgps{0} , $ptgps{$i} );
-	my $myY = vsub( $ptgps{$id_sibling} , $ptgps{$i} );
-	normalize( $myX );
-	$myY = vsub( $myY , vscale(dot($myY, $myX), $myX) );
-	normalize( $myY );
-	print "xyz VRT$i"."_dir  ".
-				sprintf("%.4f,%.4f,%.4f", $myX->[0], $myX->[1], $myX->[2])."  ".
-				sprintf("%.4f,%.4f,%.4f", $myY->[0], $myY->[1], $myY->[2])."  ".
-				sprintf("%.4f,%.4f,%.4f", $parent_com->[0], $parent_com->[1], $parent_com->[2])."\n";
-
-	# redirect each point group
-	if ($outer_symm_order > $symm_order) {
-		my $id = "0_1";
-		$id_sibling = "0_2";
-		my $myX = vsub( $parent_com , $Ts{ $id } );
-		my $myY = vsub( $Ts{ $id_sibling } , $Ts{ $id } );
-		normalize( $myX );
-		$myY = vsub( $myY , vscale(dot($myY, $myX), $myX) );
-		normalize( $myY );
-	}
-	print "xyz VRT$i"."_redir  ".
-				sprintf("%.4f,%.4f,%.4f", $myX->[0], $myX->[1], $myX->[2])."  ".
-				sprintf("%.4f,%.4f,%.4f", $myY->[0], $myY->[1], $myY->[2])."  ".
-				sprintf("%.4f,%.4f,%.4f", $parent_com->[0], $parent_com->[1], $parent_com->[2])."\n";
-}
-
-#coms of each pt_gp
-foreach my $j (1..$outer_symm_order) {
-	#my $T_global = vsub( $Ts{"0_".$j}, $sum_pos);
-	#normalize( $T_global );
-	#$T_global = vscale( $ptgp_sep, $T_global );
-	my $parent_com = $ptgps{$j}; #vadd( $sum_pos, $T_global );
-
-	foreach my $i (1..$symm_order) {
-		my $id = $j."_".$i;
-		my $id_sibling = $j."_".($i+1);
-		if ($i == $symm_order) { $id_sibling = $j."_1"; }
+# central point group
+foreach my $i (1..$sym_orders[1]) {
+	foreach my $j (1..$sym_orders[0]) {
+		my $id = "0_".$j."_".$i;
 
 		# x points from origin to parent CoM
-		my $myX = vsub( $parent_com , $Ts{ $id } );
-		#my $myZ = mapply( $Rs{ $id }, [0,0,1]);
-		#my $myY = cross( $myZ, $myX );
-		# y in pt-gp plane
-		normalize( $myX );
-		my $myY = vsub( $Ts{ $id_sibling } , $Ts{ $id } );
-	
-		$myY = vsub( $myY , vscale(dot($myY, $myX), $myX) );
-		normalize( $myY );
+		my $myX = mapply( $Rs{ $id } , $masterX );
+		my $myY = mapply( $Rs{ $id } , $masterY );
 
-		print "xyz VRT$id  ".
-					sprintf("%.4f,%.4f,%.4f", $myX->[0], $myX->[1], $myX->[2])."  ".
-					sprintf("%.4f,%.4f,%.4f", $myY->[0], $myY->[1], $myY->[2])."  ".
-					sprintf("%.4f,%.4f,%.4f", $parent_com->[0], $parent_com->[1], $parent_com->[2])."\n";
-		if ( $i == 1 ) {
-			print "xyz VRT$j"."_ctrl  ".
-						sprintf("%.4f,%.4f,%.4f", $myX->[0], $myX->[1], $myX->[2])."  ".
-						sprintf("%.4f,%.4f,%.4f", $myY->[0], $myY->[1], $myY->[2])."  ".
-						sprintf("%.4f,%.4f,%.4f", $parent_com->[0], $parent_com->[1], $parent_com->[2])."\n";
+		if ($i == 1 && $j == 1) {
+			print "xyz VRT0"."_ctrl  ".
+						sprintf("%.6f,%.6f,%.6f", $myX->[0], $myX->[1], $myX->[2])."  ".
+						sprintf("%.6f,%.6f,%.6f", $myY->[0], $myY->[1], $myY->[2])."  ".
+						sprintf("%.6f,%.6f,%.6f", $COM_pointgp->[0], $COM_pointgp->[1], $COM_pointgp->[2])."\n";
 		}
-		print "xyz VRT$id"."_base  ".
-					sprintf("%.4f,%.4f,%.4f", $myX->[0], $myX->[1], $myX->[2])."  ".
-					sprintf("%.4f,%.4f,%.4f", $myY->[0], $myY->[1], $myY->[2])."  ".
-					sprintf("%.4f,%.4f,%.4f", $Ts{ $id }->[0], $Ts{ $id }->[1], $Ts{ $id }->[2])."\n";
+		print "xyz VRT$id  ".
+					sprintf("%.6f,%.6f,%.6f", $myX->[0], $myX->[1], $myX->[2])."  ".
+					sprintf("%.6f,%.6f,%.6f", $myY->[0], $myY->[1], $myY->[2])."  ".
+					sprintf("%.6f,%.6f,%.6f", $COM_pointgp->[0], $COM_pointgp->[1], $COM_pointgp->[2])."\n";
+	}
+}
+
+# redirection layer to outer point groups
+foreach my $i (1..$outer_sym_order) {
+	my $id_sibling = ($i+1);
+	if ($i == $outer_sym_order) { $id_sibling = 1; }
+
+	# pointing to each point group
+	my $parent_com = $COM_pointgp;
+	my $myZ = $masterZ;
+	my $myX = vsub( $ptgps{0} , $ptgps{$i} );
+	normalize( $myX );
+	my $myY = cross( $myZ, $myX );
+	normalize( $myY );
+	print "xyz VRT$i"."_outer  ".
+				sprintf("%.6f,%.6f,%.6f", $myX->[0], $myX->[1], $myX->[2])."  ".
+				sprintf("%.6f,%.6f,%.6f", $myY->[0], $myY->[1], $myY->[2])."  ".
+				sprintf("%.6f,%.6f,%.6f", $parent_com->[0], $parent_com->[1], $parent_com->[2])."\n";
+
+	$parent_com = $ptgps{$i};
+	print "xyz VRT$i"."_redir  ".
+				sprintf("%.6f,%.6f,%.6f", $myX->[0], $myX->[1], $myX->[2])."  ".
+				sprintf("%.6f,%.6f,%.6f", $myY->[0], $myY->[1], $myY->[2])."  ".
+				sprintf("%.6f,%.6f,%.6f", $parent_com->[0], $parent_com->[1], $parent_com->[2])."\n";
+
+
+	my $myX = mapply( $Rs{ "0_1_1" } , $masterX );
+	my $myY = mapply( $Rs{ "0_1_1" } , $masterY );
+	print "xyz VRT$i"."_ctrl  ".
+				sprintf("%.6f,%.6f,%.6f", $myX->[0], $myX->[1], $myX->[2])."  ".
+				sprintf("%.6f,%.6f,%.6f", $myY->[0], $myY->[1], $myY->[2])."  ".
+				sprintf("%.6f,%.6f,%.6f", $parent_com->[0], $parent_com->[1], $parent_com->[2])."\n";
+}
+
+
+# finally expand outer point groups
+foreach my $k (1..$outer_sym_order) {
+ 	my $parent_com = $ptgps{$k};
+ 
+	foreach my $i (1..$sym_orders[1]) {
+		foreach my $j (1..$sym_orders[0]) {
+			my $id = $k."_".$j."_".$i;
+			my $id_sibling = $k."_".($j+1)."_".$i;
+			if ($j == $sym_orders[0]) { $id_sibling = $k."_1_$i"; }
+	
+			# x points from origin to parent CoM
+			my $myX = mapply( $Rs{ $id } , $masterX );
+			my $myY = mapply( $Rs{ $id } , $masterY );
+	
+			normalize( $myX );
+			$myY = vsub( $myY , vscale(dot($myY, $myX), $myX) );
+			normalize( $myY );
+		
+			print "xyz VRT$id  ".
+						sprintf("%.6f,%.6f,%.6f", $myX->[0], $myX->[1], $myX->[2])."  ".
+						sprintf("%.6f,%.6f,%.6f", $myY->[0], $myY->[1], $myY->[2])."  ".
+						sprintf("%.6f,%.6f,%.6f", $parent_com->[0], $parent_com->[1], $parent_com->[2])."\n";
+		}
 	}
 }
 print "virtual_coordinates_stop\n";
 
-
-#######################################
-######
 ######   connect
-######
-#######################################
-print "connect_virtual JUMP0 VRT0 VRT0_ctrl\n";  # root jump
-print "connect_virtual JUMP0_1 VRT0_ctrl VRT0_1\n";  # root jump
-foreach my $j (1..$symm_order) {
-	my $id = "0_".$j;
-	if ($j != 1) {
-		print "connect_virtual JUMP".$id." VRT0_1 VRT$id"."\n";
-	}
-	print "connect_virtual JUMP".$id."_to_com VRT$id VRT$id"."_base"."\n";
-	if (exists $symminterface{$id}) {
-		print "connect_virtual JUMP".$id."_to_subunit VRT$id"."_base SUBUNIT"."\n";
+print "connect_virtual JUMP0 VRT0 VRT0_ctrl\n";
+print "connect_virtual JUMP0_1_1 VRT0_ctrl VRT0_1_1\n";
+
+# central point group
+foreach my $i (1..$sym_orders[1]) {
+	foreach my $j (1..$sym_orders[0]) {
+		my $id = "0_".$j."_".$i;
+		if ($j != 1 || $i != 1) {
+			print "connect_virtual JUMP".$id." VRT0_1_1 VRT$id"."\n";
+		}
+		print "connect_virtual JUMP".$id."_to_subunit VRT$id"." SUBUNIT"."\n";
 	}
 }
 
-foreach my $j (1..$outer_symm_order) {
-	my $id1 = $j."_1";
-	#print "connect_virtual JUMP".$j." VRT$id VRT$id1"."\n";
-	print "connect_virtual JUMP$j"."_to_dir  VRT0_ctrl VRT$j"."_dir"."\n";
-	print "connect_virtual JUMP$j"."_to_redir VRT$j"."_dir VRT$j"."_redir"."\n";
-	print "connect_virtual JUMP$j"."_to_ctrl VRT$j"."_redir VRT$j"."_ctrl"."\n";
-	print "connect_virtual JUMP$id1 VRT$j"."_ctrl VRT$id1\n";  # root jump
-	foreach my $i (1..$symm_order) {
-		my $id = $j."_".$i;
-		if ($i != 1) {
-			print "connect_virtual JUMP".$id." VRT".$j."_1 VRT$id"."\n";
-		}
-		print "connect_virtual JUMP".$id."_to_com VRT$id VRT$id"."_base"."\n";
-		if (exists $symminterface{$id}) {
-			print "connect_virtual JUMP".$id."_to_subunit VRT$id"."_base SUBUNIT"."\n";
+# outer point groups
+foreach my $k (1..$outer_sym_order) {
+	my $id1 = $k."_1_1";
+	print "connect_virtual JUMP$k"."_to_outer  VRT0_ctrl VRT$k"."_outer"."\n";
+	print "connect_virtual JUMP$k"."_to_redir VRT$k"."_outer VRT$k"."_redir"."\n";
+	print "connect_virtual JUMP$k"."_to_ctrl VRT$k"."_redir VRT$k"."_ctrl"."\n";
+	print "connect_virtual JUMP$id1 VRT$k"."_ctrl VRT$id1\n";
+
+	foreach my $i (1..$sym_orders[1]) {
+		foreach my $j (1..$sym_orders[0]) {
+			my $id = $k."_".$j."_".$i;
+			if ($j != 1 || $i != 1) {
+				print "connect_virtual JUMP".$id." VRT".$k."_1_1 VRT$id"."\n";
+			}
+			print "connect_virtual JUMP".$id."_to_subunit VRT$id"." SUBUNIT"."\n";
 		}
 	}
 }
 
 ## dofs
-print "set_dof JUMP1_to_ctrl x($ptgp_sep)\n";
-print "set_dof JUMP0_1 angle_z\n";
-print "set_dof JUMP0_1_to_com x\n";
-print "set_dof JUMP0_1_to_subunit angle_x angle_y angle_z\n";
+print "set_dof JUMP0_1_1 angle_z\n";    # spin
+print "set_dof JUMP1_to_redir x($ptgp_sep)\n";   # lattice spacing
 
-
-## jumpgroup between pointgroups
+## jumpgroups
 print "set_jump_group JUMPGROUP1 ";
-foreach my $j (1..$outer_symm_order) {
-	print "JUMP$j"."_to_ctrl ";
+foreach my $k (1..$outer_sym_order) {
+	print "JUMP$k"."_to_redir ";
 }
 print "\n";
 
 print "set_jump_group JUMPGROUP2 ";
-foreach my $j (0..$outer_symm_order) {
-	my $id1 = $j."_1";
+foreach my $k (0..$outer_sym_order) {
+	my $id1 = $k."_1_1";
 	print "JUMP$id1 ";
 }
 print "\n";
 
-## jumpgroups to com, subunit
 print "set_jump_group JUMPGROUP3 ";
-foreach my $j (0..$outer_symm_order) {
-	foreach my $i (1..$symm_order) {
-		my $id = $j."_".$i;
-		print "JUMP$id"."_to_com ";
+foreach my $k (0..$outer_sym_order) {
+	foreach my $i (1..$sym_orders[1]) {
+		foreach my $j (1..$sym_orders[0]) {
+			my $id = $k."_".$j."_".$i;
+			print "JUMP$id"."_to_subunit ";
+		}
 	}
 }
 print "\n";
-print "set_jump_group JUMPGROUP4 ";
-foreach my $j (0..$outer_symm_order) {
-	foreach my $i (1..$symm_order) {
-		my $id = $j."_".$i;
-		if (exists $symminterface{$id}) { print "JUMP$id"."_to_subunit " };
-	}
-}
-print "\n";
+
+
+
 
 ########################################
 ## write output pdb
@@ -592,59 +618,47 @@ print "\n";
 my $outpdb = $pdbfile;
 my $outmon = $pdbfile;
 my $outmdl = $pdbfile;
-my $outkin = $pdbfile;
-
-my $suffix = "_model_$primary_chain"."$secondary_chain";
-$suffix =~ s/://g;
 
 if ($outpdb =~ /\.pdb$/) {
 	$outpdb =~ s/\.pdb$/_symm.pdb/;
-	$outmdl =~ s/\.pdb$/$suffix.pdb/;
 	$outmon =~ s/\.pdb$/_INPUT.pdb/;
 } else {
 	$outpdb = $outpdb."_symm.pdb";
-	$outmdl = $outpdb."_model.pdb";
 	$outmon = $outmon."_INPUT.pdb";
 }
 open (OUTPDB, ">$outpdb");
 open (OUTMON, ">$outmon");
-open (OUTMDL, ">$outmdl");
 
 my $chnidx = 0;
 my $chains = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
-foreach my $j (0..$outer_symm_order) {
-	foreach my $i (1..$symm_order) {
-		my $id  = $j."_".$i;
-
-		foreach my $line (@filebuf) {
-			my $linecopy = $line;
-
-			my $X = [substr ($line, 30, 8),substr ($line, 38, 8),substr ($line, 46, 8)];
-			my $X_0 = vsub($X,$COM_0);
-			my $rX = vadd( mapply($Rs{$id}, $X_0) , $Ts{$id} );
-
-			substr ($linecopy, 30, 8) = sprintf ("%8.3f", $rX->[0]);
-			substr ($linecopy, 38, 8) = sprintf ("%8.3f", $rX->[1]);
-			substr ($linecopy, 46, 8) = sprintf ("%8.3f", $rX->[2]);
-			substr ($linecopy, 21, 1) = substr ($chains, $chnidx, 1);
-
-			print OUTPDB $linecopy."\n";
-
-			if (defined $symminterface{ $id }) {
-				print OUTMDL $linecopy."\n";
+foreach my $k (0..$outer_sym_order) {
+	foreach my $i (1..$sym_orders[1]) {
+		foreach my $j (1..$sym_orders[0]) {
+			my $id = $k."_".$j."_".$i;
+	
+			foreach my $line (@filebuf) {
+				my $linecopy = $line;
+	
+				my $X = [substr ($line, 30, 8),substr ($line, 38, 8),substr ($line, 46, 8)];
+				my $X_0 = vsub($X,$COM_0);
+				my $rX = vadd( mapply($Rs{$id}, $X_0) , $Ts{$id} );
+	
+				substr ($linecopy, 30, 8) = sprintf ("%8.3f", $rX->[0]);
+				substr ($linecopy, 38, 8) = sprintf ("%8.3f", $rX->[1]);
+				substr ($linecopy, 46, 8) = sprintf ("%8.3f", $rX->[2]);
+				substr ($linecopy, 21, 1) = substr ($chains, $chnidx, 1);
+	
+				print OUTPDB $linecopy."\n";
 			}
+	
+			print OUTPDB "TER   \n";
+			#print STDERR "Writing interface ".$id." as chain ".substr ($chains, $chnidx, 1)."\n";
+			$chnidx++;
 		}
-
-		print OUTPDB "TER   \n";
-		if (defined $symminterface{ $id }) {
-			print OUTMDL "TER   \n";
-		}
-		print STDERR "Writing interface ".$id." as chain ".substr ($chains, $chnidx, 1)."\n";
-		$chnidx++;
 	}
 }
 
-######################################
+
 foreach my $line (@filebuf) {
 	my $linecopy = $line;
 
