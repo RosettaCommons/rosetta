@@ -65,6 +65,9 @@ sources = {
         "sql_database" : [
         	"DatabaseSessionManagerTests",
 	],
+	"tag" : [
+ 		"Tag",
+	],
 
 }
 include_path = [ "#external/cxxtest", "#" ]

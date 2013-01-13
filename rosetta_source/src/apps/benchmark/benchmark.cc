@@ -26,6 +26,8 @@
 
 #include <apps/benchmark/benchmark.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 // AUTO-REMOVED #include <time.h>
 #include <fstream>
 
@@ -71,6 +73,9 @@ DockingBenchmark_high DockingHigh("protocols.docking.DockingHighRes");
 
 #include <apps/benchmark/pdb_io.bench.hh>
 PDB_IOBenchmark PDB_IO_("core.import_pose.pose_from_pdbstring");
+
+#include <apps/benchmark/xml_parsing.bench.hh>
+XMLParseBenchmark XMLParseBenchmark_("utility_tag_Tag_Create");
 
 // option key includes
 
@@ -230,60 +235,64 @@ int command_line_argc; char ** command_line_argv;
 
 int main( int argc, char *argv[])
 {
-	command_line_argc=argc; command_line_argv=argv;
-	real_command_line_argc=argc; real_command_line_argv=argv;
+	try{
+		command_line_argc=argc; command_line_argv=argv;
+		real_command_line_argc=argc; real_command_line_argv=argv;
 
-	using namespace core;
-	using namespace basic::options::OptionKeys;
-
-
-	NEW_OPT(run::benchmark_scale, "Amount to scale number of cycles to repeate each test", 1 );
-	NEW_OPT(run::run_one_benchmark, "Run just a single performance benchmark", "" );
-	basic::options::option.add_relevant(run::benchmark_scale);
-	basic::options::option.add_relevant(run::run_one_benchmark);
-	basic::options::option.add_relevant(in::path::database);
-
-	devel::init(argc, argv);
-
-	//TR << "DB:"  << basic::options::option[ in::path::database ]() << "\n";
-
-	chemical::ResidueTypeSetCAP residue_set
-		( chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD ) );
-
-	//TR << "Specified()=" << basic::options::option[ run::benchmark_scale ].user() << "\n";
-	//TR << "Legal" << basic::options::option[ run::benchmark_scale ].legal() << "\n";
-	//TR << "Active:" << basic::options::option[ run::benchmark_scale ].user() << "\n";
-	//TR << "native:"  << basic::options::option[ james::native ]() << "\n";
-	//TR << "DB:"  << basic::options::option[ in::path::database ]() << "\n";
-	Real scale = basic::options::option[ run::benchmark_scale ]();
+		using namespace core;
+		using namespace basic::options::OptionKeys;
 
 
-	TR << "Mini Benchmark started! Scale factor: " << scale << " -------------" << std::endl;
+		NEW_OPT(run::benchmark_scale, "Amount to scale number of cycles to repeate each test", 1 );
+		NEW_OPT(run::run_one_benchmark, "Run just a single performance benchmark", "" );
+		basic::options::option.add_relevant(run::benchmark_scale);
+		basic::options::option.add_relevant(run::run_one_benchmark);
+		basic::options::option.add_relevant(in::path::database);
 
-	//TR << "CLOCKS_PER_SEC:" << CLOCKS_PER_SEC << "\n";
+		devel::init(argc, argv);
 
-	std::string report;
-	if(basic::options::option[ run::run_one_benchmark ].user()){
-		std::string const & name(basic::options::option[ run::run_one_benchmark ]());
-		Benchmark::executeOneBenchmark(name, scale);
-		report = Benchmark::getOneReport(name);
-	} else {
-		Benchmark::executeAllBenchmarks(scale);
-		report = Benchmark::getReport();
+		//TR << "DB:"  << basic::options::option[ in::path::database ]() << "\n";
+
+		chemical::ResidueTypeSetCAP residue_set
+			( chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD ) );
+
+		//TR << "Specified()=" << basic::options::option[ run::benchmark_scale ].user() << "\n";
+		//TR << "Legal" << basic::options::option[ run::benchmark_scale ].legal() << "\n";
+		//TR << "Active:" << basic::options::option[ run::benchmark_scale ].user() << "\n";
+		//TR << "native:"  << basic::options::option[ james::native ]() << "\n";
+		//TR << "DB:"  << basic::options::option[ in::path::database ]() << "\n";
+		Real scale = basic::options::option[ run::benchmark_scale ]();
+
+
+		TR << "Mini Benchmark started! Scale factor: " << scale << " -------------" << std::endl;
+
+		//TR << "CLOCKS_PER_SEC:" << CLOCKS_PER_SEC << "\n";
+
+		std::string report;
+		if(basic::options::option[ run::run_one_benchmark ].user()){
+			std::string const & name(basic::options::option[ run::run_one_benchmark ]());
+			Benchmark::executeOneBenchmark(name, scale);
+			report = Benchmark::getOneReport(name);
+		} else {
+			Benchmark::executeAllBenchmarks(scale);
+			report = Benchmark::getReport();
+		}
+
+		TR << "Results:" << std::endl << report;  TR.flush();
+
+		/// Now, saving report to a file
+		std::ofstream file(results_filename, std::ios::out | std::ios::binary);
+		if(!file) {
+			Error() << "Benchmark:: Unable to open file:" << results_filename << " for writing!!!" << std::endl;
+			return 1;
+		}
+		file << report;
+
+		file.close();
+
+		TR << "Mini Benchmark ended.   --------------------------------" << std::endl;
+	} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
 	}
-
-	TR << "Results:" << std::endl << report;  TR.flush();
-
-	/// Now, saving report to a file
-	std::ofstream file(results_filename, std::ios::out | std::ios::binary);
-	if(!file) {
-		Error() << "Benchmark:: Unable to open file:" << results_filename << " for writing!!!" << std::endl;
-		return 1;
-	}
-	file << report;
-
-	file.close();
-
-	TR << "Mini Benchmark ended.   --------------------------------" << std::endl;
 	return 0;
 }

@@ -28,19 +28,39 @@
 ///
 ///  EBNF for a simple xml-like language:
 ///  -----------------------------------
+///  top              := !xml_schema_tag misc* tag misc*
+///  xml_schema_tag   := <?xml (char - '?')* '?>'
+///  misc             := comment_tag | (char - '<')
+///  comment_tag      := '<!--' ((char - '-') | ('-' (char - '-')))* '-->'
 ///  tag              := leaf_tag | branch_tag
-///  leaf_tag         := '<' name_and_options '/>'
-///  branch_tag       := '<' name_and_options '>' tag* '</' name '>'
-///  name_and_options := name option*
-///  option           := name '=' name
+///  leaf_tag         := '<' name options* '/>'
+///  option           := name '=' ( name | quote )
 ///  name             := (alnum | '_' | '-' | '.' | '*' | ',' )+
+///  quote            := '"' (alnum - '"')* '"'
+///  branch_tag       := '<' name options* '>' ( tag | misc )* '</' name '>'
 ///  *whitespace allowed between all tokens
 ///
 ///  Less complex than XML, also: no need to quote options,
 ///  and text outside of tags is ignored. Implemented with
 ///  the boost spirit library.
 ///
+///
+/// To debug the schema:
+/// 1) uncomment this:
+///
+/// #define BOOST_SPIRIT_DEBUG
+///
+/// 2) add in the definition function below
+///
+/// BOOST_SPIRIT_DEBUG_NODE(rule_name);
+///
+/// for each rule defined.
+///
+/// NOTE: As of r53105, Rosetta doesn't compile with line 162 in boost_1_46_1/boost/spirit/home/debug/debug_node.hpp when BOOST_SPIRIT_DEBUG is enabled.
+///
 /// @author Paul Murphy
+/// @author (schema modified by Matthew O'Meara)
+
 #include <utility/tag/Tag.hh>
 
 #include <iostream>
@@ -54,6 +74,7 @@
 #include <boost/spirit/include/phoenix1_binders.hpp>
 #include <boost/spirit/include/phoenix1_casts.hpp>
 #include <utility/exit.hh>
+#include <utility/excn/Exceptions.hh>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 
@@ -266,49 +287,76 @@ struct tag_grammar : public grammar<tag_grammar,tag_closure::context_t> {
 	struct definition {
 
 		rule<Scanner> top;
-
-		rule<Scanner,string_closure::context_t> name;
-		rule<Scanner,string_closure::context_t> quote;
-		rule<Scanner,string_closure::context_t> name_or_quote;
-
-		rule<Scanner,option_closure::context_t> option;
-		rule<Scanner,options_closure::context_t> options;
+		rule<Scanner> xml_schema_tag;
+		rule<Scanner> misc;
+		rule<Scanner> comment_tag;
+		rule<Scanner,tag_closure::context_t> tag;
+		rule<Scanner,name_and_options_closure::context_t> leaf_tag;
 		rule<Scanner,name_and_options_closure::context_t> name_and_options;
+		rule<Scanner,string_closure::context_t> name;
+		rule<Scanner,options_closure::context_t> options;
+		rule<Scanner,option_closure::context_t> option;
+		rule<Scanner,string_closure::context_t> name_or_quote;
+		rule<Scanner,string_closure::context_t> quote;
+		rule<Scanner,tag_closure::context_t> branch_tag;
 		rule<Scanner,name_and_options_closure::context_t> open_tag;
 		rule<Scanner,string_closure::context_t> close_tag;
-		rule<Scanner,name_and_options_closure::context_t> leaf_tag;
-		rule<Scanner,tag_closure::context_t> branch_tag;
-		rule<Scanner,tag_closure::context_t> tag;
 
 		definition( tag_grammar const& self) {
-			top = tag[ self.value = arg1 ];
+
+			top
+				= !xml_schema_tag >> *misc >> tag[ self.value = arg1 ] >> *misc
+				| self.error_report_p;
+
+			xml_schema_tag = str_p("<?xml") >> *~ch_p('?') >> str_p("?>");
+
+			misc = ( ~ch_p('<') | comment_tag );
+
+			comment_tag =
+				str_p("<!--") >>
+				*( ~ch_p('-') | ( ch_p('-') >> ~ch_p('-') ) ) >>
+				str_p("-->");
+
+			tag
+				= leaf_tag[ bind(set_name_and_options)(tag.value,arg1) ]
+				| branch_tag[ tag.value = arg1 ];
+
+
+			leaf_tag =
+				ch_p('<') >> *space_p >>
+				name_and_options[ leaf_tag.value = arg1 ] >>
+				ch_p('/') >> *space_p >> ch_p('>');
+
+			name_and_options = name[ bind( &name_and_options_value_type::first )( name_and_options.value ) = arg1 ] >> *space_p >> options[ bind( &name_and_options_value_type::second)(name_and_options.value) = arg1 ] >> *space_p;
 
 			name = (+(alnum_p | ch_p('_') | ch_p(':') | ch_p('-') | ch_p('.') | ch_p('*') | ch_p(',') ))[ name.value = construct_<string>(arg1,arg2) ];
-
-			quote = ch_p('"') >> (*~ch_p('"'))[ quote.value = construct_<string>(arg1,arg2) ] >> ch_p('"') >> *space_p;
-
-			name_or_quote = name[name_or_quote.value = arg1 ] | quote[name_or_quote.value = arg1 ];
-
-			option  = name[ bind( &option_value_type::first)(option.value) = arg1 ] >> *space_p >> ch_p('=') >> *space_p >> name_or_quote[ bind( &option_value_type::second)(option.value) = arg1 ] >> *space_p;
 
 			typedef pair< options_value_type::iterator,bool> (options_value_type::*insert_t)( pair<const string,string> const&);
 			insert_t ins = &options_value_type::insert;
 			options = *option[bind( ins )( options.value, arg1 ) ]; // without the typedef, C++ can't figure out the type of &::insert since it is templatized
 
-			name_and_options = name[ bind( &name_and_options_value_type::first )( name_and_options.value ) = arg1 ] >> *space_p >> options[ bind( &name_and_options_value_type::second)(name_and_options.value) = arg1 ] >> *space_p;
+			option  = name[ bind( &option_value_type::first)(option.value) = arg1 ] >> *space_p >> ch_p('=') >> *space_p >> name_or_quote[ bind( &option_value_type::second)(option.value) = arg1 ] >> *space_p;
 
-			open_tag = ch_p('<') >> *space_p >> name_and_options[ open_tag.value = arg1 ] >> ch_p('>') >> *space_p;
-			leaf_tag = ch_p('<') >> *space_p >> name_and_options[ leaf_tag.value = arg1 ] >> ch_p('/') >> *space_p >> ch_p('>') >> *space_p;
+			name_or_quote = name[name_or_quote.value = arg1 ] | quote[name_or_quote.value = arg1 ];
 
-			close_tag = ch_p('<') >> *space_p >> ch_p('/') >> *space_p >> name[ close_tag.value = arg1 ] >> *space_p >> ch_p('>') >> *space_p;
+			quote = ch_p('"') >> (*~ch_p('"'))[ quote.value = construct_<string>(arg1,arg2) ] >> ch_p('"') >> *space_p;
 
-			branch_tag
-				= open_tag[ bind(set_name_and_options)(branch_tag.value,arg1) ] >> *space_p >> *tag[ bind(add_tag)(branch_tag.value,arg1) ] >> *space_p >>  close_tag[ bind(assert_matching_tag_names)(branch_tag.value,arg1) ] >> *space_p;
 
-			tag
-				= leaf_tag[ bind(set_name_and_options)(tag.value,arg1) ]
-				| branch_tag[ tag.value = arg1 ]
-				| self.error_report_p ;
+			branch_tag =
+				open_tag[ bind(set_name_and_options)(branch_tag.value,arg1) ] >>
+				*( tag[ bind(add_tag)(branch_tag.value,arg1) ] | misc ) >>
+				close_tag[ bind(assert_matching_tag_names)(branch_tag.value,arg1) ];
+
+			open_tag =
+				ch_p('<') >> *space_p >>
+				name_and_options[ open_tag.value = arg1 ] >>
+				ch_p('>');
+
+			close_tag =
+				ch_p('<') >> *space_p >>
+				ch_p('/') >> *space_p >>
+				name[ close_tag.value = arg1 ] >> *space_p >>
+				ch_p('>');
 
 		} // definition
 
@@ -331,6 +379,11 @@ void print_error( ostream& out, string const& str, file_position const& lc ) {
 			line_end = str.find('\n',line_begin);
 		}
 	}
+
+	if( line_end == std::string::npos ){
+		line_end = str.size();
+	}
+
 
 	if( line_begin < str.size() ) {
 		out << "Tag::read - parse error - file:" << lc.file << " line:" << lc.line << " column:" << lc.column << " - ";
@@ -360,35 +413,7 @@ void print_error( ostream& out, string const& str, file_position const& lc ) {
 
 void Tag::read(std::istream& in ) {
 	string str;
-	string line;
-	while( getline( in, line ) ){ // get rid of anything but the internal most < > statement on each line. This allows for writing comments in xml files
-		//There are two other kinds of lines we need to ignore, <?xml ?> lines represent the xml encoding header
-		// and <!-- --> lines represent real xml comments.
-
-		platform::Size const header_begin( line.find("<?xml"));
-		platform::Size const header_end((line.find("?>")));
-		if(header_begin != line.npos && header_end != line.npos){
-			continue;
-		}
-
-		platform::Size const comment_begin(line.find("<!--"));
-		platform::Size const comment_end(line.find("-->"));
-		if(comment_begin != line.npos && comment_end != line.npos) {
-			continue;
-		}
-
-		platform::Size const bra( line.find_last_of( "<" ) );
-		platform::Size const ket( line.find_first_of(  ">" ) - bra + 1);
-
-		if( bra != line.npos && ket != line.npos ){
-			str.append( line.substr( bra, ket ) );
-			str.push_back( '\n' );
-		}
-
-
-
-
-	}
+	while( in.peek() != EOF ) str.push_back(in.get());
 
 	typedef position_iterator<char const*> iterator_t;
 	iterator_t begin(str.c_str(), str.c_str() + str.size(), "istream"); // is this remotely correct?
@@ -399,15 +424,16 @@ void Tag::read(std::istream& in ) {
 	tag_grammar g;
 	bool full = parse(begin, end, g[ var(tag) = arg1 ] ).full;
 
-	if( full ) {
+	if( tag && full ) {
 		*this = *tag;
 	} else {
-		std::cerr << "Tag::read - parse error, printing backtrace.\n" << endl;
+		stringstream err_msg;
+		err_msg << "Tag::read - parse error, printing backtrace.\n" << endl;
 		for( size_t k = 0; k < g.errors.size(); ++k ) {
-			print_error(std::cerr,str,g.errors[k]);
+			print_error(err_msg,str,g.errors[k]);
 		}
 
-		runtime_assert( false );
+		throw utility::excn::EXCN_BadInput( err_msg.str() );
 	}
 
 } // read
