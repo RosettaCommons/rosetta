@@ -32,6 +32,9 @@ from modules.protocols.DesignProtocols import DesignProtocols
 from modules.protocols.MinimizationProtocols import MinimizationProtocols
 from modules.RegionalScoring import *
 from window_modules.ligand_ncaa_ptm_manager.ligand_ncaa_ptm_manager import ligand_ncaa_ptm_manager
+from window_modules.scorefunction.ScoreFxnControl import ScoreFxnControl
+#from window_main.IO.GUIInput import GUIInput
+#from window_main.IO.GUIOutput import GUIOutput
 
 class FullControlWindow():
     """
@@ -65,6 +68,11 @@ class FullControlWindow():
 
 	self.variant = StringVar()
 	self.variant_map = dict(); # [string variant]:[string names]
+        
+        #Ignore this.  It is for Komodo autocomplete
+        if 0:
+            self.score_object = ScoreFxnControl()
+
     def __exit__(self):
 	exit()
 

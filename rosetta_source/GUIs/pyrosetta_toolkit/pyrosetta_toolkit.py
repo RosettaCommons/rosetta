@@ -14,7 +14,7 @@
 
 #Rosetta Imports
 from rosetta import *
-from modules import tools
+
 import functools
 
 #Python Imports
@@ -43,6 +43,7 @@ import tkSimpleDialog
 import tkFont
 
 #Toolkit Imports
+from modules import tools
 from window_main.menu import *
 from window_main import global_variables
 from window_main.frames.InputFrame import InputFrame
@@ -107,8 +108,8 @@ class main_window:
       
       ####Sequence#####
       self.num_string = StringVar()
-      self.input_class.loop_sequence.trace_variable('w', self.clear_num_string_on_new_input)
-      self.sequence_output = Entry(self._tk_, textvariable = self.input_class.loop_sequence)
+      self.input_class.region_sequence.trace_variable('w', self.clear_num_string_on_new_input)
+      self.sequence_output = Entry(self._tk_, textvariable = self.input_class.region_sequence)
       #self.sequence_output.bind('<FocusIn>', self.print_numbering)
       self.sequence_output.bind('<ButtonRelease-1>', self.print_numbering)
       self.sequence_output.bind('<KeyRelease>', self.print_numbering)
@@ -127,31 +128,17 @@ class main_window:
       #print self.sequence_output.index(INSERT)
       rosetta_num=0
       pdb_num=""
-      if self.pose.total_residue()==len(self.input_class.loop_sequence.get()):
+      if self.pose.total_residue()==len(self.input_class.region_sequence.get()):
          rosetta_num = self.sequence_output.index(INSERT)
          pdb_num = self.pose.pdb_info().pose2pdb(rosetta_num)
          #print self.num_string
          
       else:
-         looFull = self.input_class.loop_start.get()+ ":"+ self.input_class.loop_end.get()+":"+self.input_class.loop_chain.get().upper()
-         start = looFull.split(":")[0]; end = looFull.split(":")[1]
-        
-            #Chain
-         if (start == "" and end==""):
-            region = Region(self.input_class.loop_chain.get().upper(), None, None)
-            #Nter
-         elif start=="":
-            region = Region(self.input_class.loop_chain.get().upper(), None, int(end))
-            #Cter
-         elif end=="":
-            region = Region(self.input_class.loop_chain.get().upper(), int(start), None)
-            #Loop
-         else:
-            region = Region(self.input_class.loop_chain.get().upper(), int(start), int(end))
+         region = self.input_class.return_region_from_entry()
          rosetta_num = region.get_rosetta_start(self.pose)+self.sequence_output.index(INSERT)
          pdb_num = self.pose.pdb_info().pose2pdb(rosetta_num)
+         
       self.num_string.set(pdb_num+' - '+repr(rosetta_num))
-         #print num_string
          
    def __scrollHandler(self, *L):
         """

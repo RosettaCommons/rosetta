@@ -26,8 +26,8 @@ import tkSimpleDialog
 from modules.Region import Region
 from modules.tools import sequence as sequence_tools
 from modules.tools import input as input_tools
-
-
+#from pyrosetta_toolkit import main_window
+from window_main.IO.GUIInput import GUIInput
 
 class InputFrame(Frame):
     
@@ -41,7 +41,12 @@ class InputFrame(Frame):
         self.create_GUI_objects()
         self.grid_GUI_objects()
 
-        
+        #Ignore this.  It is for Komodo Autocomplete.
+        if 0:
+            self.main = Tk()
+            #self.toolkit = main_window()
+            self.input_class = GUIInput()
+            
     def create_GUI_objects(self):
         
         ############## LOOPS ##############
@@ -54,17 +59,16 @@ class InputFrame(Frame):
         self.loops_listbox = Listbox(self)
         self.loops_scroll = Scrollbar(self)
         self.loops_listbox.config(yscrollcommand = self.loops_scroll.set); self.loops_scroll.config(command = self.loops_listbox.yview)
-        self.StartLoopEntry=Entry(self, textvariable=self.input_class.loop_start)
-        self.EndLoopEntry=Entry(self, textvariable=self.input_class.loop_end)
-        self.ChainIDEntry=Entry(self, textvariable=self.input_class.loop_chain)
+        self.StartLoopEntry=Entry(self, textvariable=self.input_class.region_start)
+        self.EndLoopEntry=Entry(self, textvariable=self.input_class.region_end)
+        self.ChainIDEntry=Entry(self, textvariable=self.input_class.region_chain)
         ##################################
         
         
         ############ SEQUENCE ############
         
-        self.ShoSeqButton = Button(self, text="Show Sequence", command=lambda: self.input_class.loop_sequence.set(sequence_tools.get_sequence(self.toolkit.pose, self.input_class.loop_start.get()+":"+self.input_class.loop_end.get()+":"+self.input_class.loop_chain.get().upper())))
-        self.entry_LoopSeq = Entry(self, textvariable=self.input_class.loop_sequence, justify=CENTER)
-        
+        self.ShoSeqButton = Button(self, text="Show Sequence", command=lambda: self.input_class.region_sequence.set(sequence_tools.get_sequence(self.toolkit.pose, self.input_class.region_start.get()+":"+self.input_class.region_end.get()+":"+self.input_class.region_chain.get().upper())))
+
         ##################################
         
         
@@ -93,15 +97,9 @@ class InputFrame(Frame):
         
         
         ########### SEQUENCE ###########
-        #self.seq_scroll.grid(row=11, column=2, sticky=S+E+W)
         self.ShoSeqButton.grid(row=19, column=2, sticky=E+W)
-        #self.entry_LoopSeq.grid(row=12, column=2)
-        
         ################################
         
-        
-        ########### PYMOL ##############
-
         self.Photo.grid(row=22, column=2, rowspan=6, columnspan=1, sticky=W+E, padx=3)
         
 
@@ -111,40 +109,31 @@ class InputFrame(Frame):
         loops_as_strings = self.input_class.load_loop()
         for loop_string in loops_as_strings:
             loop_stringSP = loop_string.split(":")
-            self.input_class.loop_start.set(loop_stringSP[0])
-            self.input_class.loop_end.set(loop_stringSP[1])
-            self.input_class.loop_chain.set(loop_stringSP[2])
+            self.input_class.region_start.set(loop_stringSP[0])
+            self.input_class.region_end.set(loop_stringSP[1])
+            self.input_class.region_chain.set(loop_stringSP[2])
             self.addLoop()
-            
+    
+
+    
     def addLoop(self):
+        """
+        Adds region to loop_string and regions.
+        Sets GUIInput to have a region variable to indicate last added/current region.
+        """
         
         #Current
-        looFull = self.input_class.loop_start.get()+ ":"+ self.input_class.loop_end.get()+":"+self.input_class.loop_chain.get().upper()
-        if not self.toolkit.pose.total_residue()==0:
-            seq = sequence_tools.get_sequence(self.toolkit.pose, self.input_class.loop_start.get()+":"+self.input_class.loop_end.get()+":"+self.input_class.loop_chain.get().upper())
-            if seq!="I":
-                self.input_class.loop_sequence.set(seq)
-            else:
-                return
+        if not self.input_class.region_chain.get():return
+        
+        looFull = self.input_class.region_start.get()+ ":"+ self.input_class.region_end.get()+":"+self.input_class.region_chain.get().upper()
+
         self.input_class.loops_as_strings.append(looFull)
         self.loops_listbox.insert(END, looFull)
         
-        start = looFull.split(":")[0]; end = looFull.split(":")[1]
-        #Replacement of loops_as_strings
-        
-        #Chain
-        if (start == "" and end==""):
-            region = Region(self.input_class.loop_chain.get().upper(), None, None)
-        #Nter
-        elif start=="":
-            region = Region(self.input_class.loop_chain.get().upper(), None, int(end))
-        #Cter
-        elif end=="":
-            region = Region(self.input_class.loop_chain.get().upper(), int(start), None)
-        #Loop
-        else: 
-            region = Region(self.input_class.loop_chain.get().upper(), int(start), int(end))
-            
+        region = self.input_class.return_region_from_entry()
+        if not self.toolkit.pose.total_residue()==0:
+            self.input_class.region_sequence.set(region.get_sequence(self.input_class.pose))
+        self.input_class.region = region    
         self.input_class.regions.add_region(region)
         
     def remLoop(self):

@@ -33,18 +33,20 @@ from modules.Region import Regions
 from modules.tools import input as input_tools
 from window_modules.clean_pdb.FixPDBWindow import FixPDBWindow
 from window_modules.options_system.OptionSystemManager import OptionSystemManager
+#from pyrosetta_toolkit import main_window
 
 class GUIInput:
     def __init__(self, toolkit):
         self.toolkit = toolkit; #Basically an AP of the toolkit
+        self.pose = self.toolkit.pose
         self.pdb_path = StringVar(); self.pdb_path.set("0");
         self.PDBLIST = StringVar(); self.PDBLIST.set("")
         
-        self.loop_start=StringVar(); #Start of Loop
-        self.loop_end=StringVar(); #End of Loop
-        self.loop_chain=StringVar(); #Chain of Loop
-        self.loop_sequence=StringVar(); #Sequence in Entry
-        self.loops_as_strings = []; #Array of Loops: start:end:chain
+        self.region_start=StringVar(); #Start of Region
+        self.region_end=StringVar(); #End of Region
+        self.region_chain=StringVar(); #Chain of Region
+        self.region_sequence=StringVar(); #Sequence in Entry
+        self.loops_as_strings = []; #Array of Regions: start:end:chain
         self.regions = Regions(); #This will replace loops_as_strings
         self.loops = Loops()
         
@@ -59,6 +61,8 @@ class GUIInput:
         self.options_manager= OptionSystemManager(); #This is due to Protocols needing Rosetta to be reinitialized without loosing already set options -  to set the seed up before multiprocessing runs!
         
         self.pdb_url = "http://www.rcsb.org/pdb/files"
+        #if 0: self.toolkit = main_window()
+        
 #### POSE INPUT ####
 
     def choose_load_pose(self, message="Load Pose"):
@@ -132,7 +136,7 @@ class GUIInput:
         self.toolkit.output_class.outname.set(pdbname)
         self.toolkit.output_class.outdir.set(os.path.dirname(self.pdb_path.get()))
         self.toolkit.DesignDic = dict()
-        self.loop_sequence.set(self.toolkit.pose.sequence())
+        self.region_sequence.set(self.toolkit.pose.sequence())
     
     def return_loaded_pose(self, path):
         """
@@ -198,4 +202,29 @@ class GUIInput:
             loops_as_strings.append(loop_string)
         FILE.close()
         return loops_as_strings
-            
+
+###Region Selection####
+
+    def return_region_from_entry(self):
+        """
+        Returns a region of the currently set region parameters in the region entry boxes.
+        """
+        if not self.region_chain.get():return
+        looFull = self.region_start.get()+ ":"+ self.region_end.get()+":"+self.region_chain.get().upper()
+        start = looFull.split(":")[0]; end = looFull.split(":")[1]
+        
+         #Chain
+        if (start == "" and end==""):
+            region = Region(self.region_chain.get().upper(), None, None)
+        #Nter
+        elif start=="":
+            region = Region(self.region_chain.get().upper(), None, int(end))
+        #Cter
+        elif end=="":
+            region = Region(self.region_chain.get().upper(), int(start), None)
+        #Loop
+        else: 
+            region = Region(self.region_chain.get().upper(), int(start), int(end))
+        
+        
+        return region        

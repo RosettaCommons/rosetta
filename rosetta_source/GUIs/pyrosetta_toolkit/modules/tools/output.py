@@ -47,7 +47,15 @@ def dumpPDB(p, native_pose, filepath, score, overwrite=False):
         jd.output_decoy(p)
         os.remove(jd.current_name+".in_progress")
     else:
-        native_pose.dump_pdb(filepath+".pdb")
+        print "Removing .fasc + .pdb with same output name."
+        
+        if os.path.exists(filepath+".fasc"):
+            os.remove(filepath+".fasc")
+        if os.path.exists(filepath+"_1.pdb"):
+            os.remove(filepath+"_1.pdb")
+        native_pose.dump_pdb(filepath+"_1.pdb")
+        output_scorefile(p, filepath, filepath+"_1.pdb", filepath+".fasc", score, 1, native_pose)
+        
     print "Pose written to "+os.path.dirname(filepath)
     
 def showPose(p, observer):

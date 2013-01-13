@@ -27,7 +27,7 @@ import tkSimpleDialog
 #Toolkit Imports
 from modules.tools import output as output_tools
 from window_main import global_variables
-#from modules.RegionaScoring import *
+#from modules.RegionalScoring import *
 
 
 

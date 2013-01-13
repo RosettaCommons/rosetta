@@ -21,7 +21,8 @@ from Tkinter import Frame as TkFrame
 from modules.protocols.MinimizationProtocols import MinimizationProtocols
 from modules.tools import output as output_tools
 
-
+#from pyrosetta_toolkit import main_window
+from window_main.IO.GUIOutput import GUIOutput
 
 class QuickProtocolsFrame(TkFrame):
     def __init__(self, main, toolkit, output_class, **options):
@@ -42,6 +43,12 @@ class QuickProtocolsFrame(TkFrame):
         self.create_GUI_objects()
         self.grid_GUI_objects()
         
+        #Ignore this. It is for Komodo autocomplete.
+        if 0:
+            self.main = Tk()
+            #self.toolkit = main_window()
+            self.output_class = GUIOutput()
+            
     def set_options_menus(self):
         
         self.minOPTIONS = {

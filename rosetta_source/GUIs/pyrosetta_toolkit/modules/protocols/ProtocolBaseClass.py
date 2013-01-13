@@ -27,6 +27,9 @@ import os.path
 
 
 #Toolkit Imports
+#from window_main.IO.GUIInput import GUIInput
+from window_main.IO.GUIOutput import GUIOutput
+from window_modules.scorefunction.ScoreFxnControl import ScoreFxnControl
 
 class ProtocolBaseClass:
     def __init__(self, pose, score_class, input_class, output_class):
@@ -36,7 +39,12 @@ class ProtocolBaseClass:
         self.input_class = input_class
         self.output_class = output_class
         
-        #self.workers Pool of workers.  Added to class at run_protocol.
+        #Ignore these.  These are a trick to hint Komodo IDE about what types each of these variables are. And it fucking works!!!!!!!! Hallelujah!!!
+        #They never actually run!
+        if 0:
+            #self.input_class = GUIInput()
+            self.output_class = GUIOutput()
+            self.score_class = ScoreFxnControl()
         
     def run_protocol(self, mover):
         """
@@ -68,11 +76,14 @@ class ProtocolBaseClass:
             total_running_jobs = 0
             job_complete=False
             
-            #Check if any PDB's already exist:
+            #Check if any PDB's already exist.  Delete them or pop the workers depending on the overwrite option:
             for worker in workers:
                 if os.path.exists(self.pdb_name+"_"+worker.name+".pdb"):
-                    workers.pop(workers.index(worker))
-                    
+                    if self.output_class.overwrite.get():
+                        os.remove(self.pdb_name+"_"+worker.name+".pdb")
+                    else:
+                        workers.pop(workers.index(worker))
+                        
             #Run the protocol
             while not job_complete:
                 

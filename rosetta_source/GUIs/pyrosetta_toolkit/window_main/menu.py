@@ -46,7 +46,7 @@ from rosetta_flag_file_builder.RosettaFlagFileBuilder import RosettaFlagFileBuil
 from window_modules.design.ResfileDesignWindow import ResfileDesignWindow
 from window_modules.ligand_ncaa_ptm_manager.ligand_ncaa_ptm_manager import ligand_ncaa_ptm_manager
 import global_variables
-#from pyrosetta_toolkit import pyrosetta_toolkit
+from pyrosetta_toolkit import main_window
 
 class Menus():
     def __init__(self, main, toolkit):
@@ -58,7 +58,11 @@ class Menus():
 	self.toolkit = toolkit; #Need to figure out how to tell Python what this 'toolkit' is so IDEs can make sense out of it!
 	self.main_menu=Menu(self.main)
 	self.score_analyzer = ScoreAnalysis(); #Needs to exist as instance due to holding data from load data.  Eventually these functions can go into it's own window.
-
+	
+	#Ignore tese.  It allows komodo to understand what these variables are!
+	if 0:
+	    self.main = Tk()
+	    self.toolkit = main_window()
 
     def setTk(self):
 	"""
@@ -80,7 +84,6 @@ class Menus():
 	"""
 
 	self.main.config(menu=self.main_menu)
-	
     def _set_file_menu(self):
 	"""
 	Sets import, export, and main File menu

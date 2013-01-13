@@ -41,7 +41,7 @@ class GraftMoverWindow(ProtocolBaseClass):
     def __init__(self, pose, score_class, input_class, output_class):
         ProtocolBaseClass.__init__(self, pose, score_class, input_class, output_class)
         self.insert_start = StringVar(); self.insert_end = StringVar(); self.insert_chain = StringVar();
-        self.scaffold_start = input_class.loop_start; self.scaffold_end = input_class.loop_end; self.scaffold_chain = input_class.loop_chain;
+        self.scaffold_start = input_class.region_start; self.scaffold_end = input_class.region_end; self.scaffold_chain = input_class.region_chain;
         self.insert_nter_flex = IntVar(); self.insert_cter_flex = IntVar();
         self.scaffold_nter_flex = IntVar(); self.scaffold_cter_flex = IntVar();
         self.scaffold_nter_flex.set(2); self.scaffold_cter_flex.set(2)

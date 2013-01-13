@@ -9,15 +9,21 @@
 ## @brief  Main window and controller of PyMol integration accross the GUI
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
+#Rosetta Imports
 from rosetta import *
-from Tkinter import *
+
+#Python Imports
 import glob
+import os
+
+#Tkinter Imports
+from Tkinter import *
 import tkFileDialog
 import tkMessageBox
 import tkSimpleDialog
-import os
 
-
+#Tookit Imports
+#from window_modules.scorefunction.ScoreFxnControl import ScoreFxnControl
 
 class AdvancedPyMOL():
     """
@@ -76,7 +82,12 @@ class AdvancedPyMOL():
 	    return
 	    
 	self.ScoreObject = ScoreObject; self.score = self.ScoreObject.score
-
+	
+	#For Komodo Autocomplete only:
+	#if 0:
+	    #self.main = Tk()
+	    #self.ScoreObject = ScoreFxnControl()
+	    
 	self.viewlabel_ = Label(self.main, text="View Options")
 	self.scorelabel_ = Label(self.main, text="Score Terms")
 	self.viewList = Listbox(self.main)

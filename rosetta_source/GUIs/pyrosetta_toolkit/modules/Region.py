@@ -123,11 +123,11 @@ class Region:
     
     def get_sequence(self, pose):
         if self.get_region_type()=='chain':
-            c = pose.chain()
+            c = rosetta.core.pose.get_chain_id_from_chain(self.chain, pose)
             return pose.chain_sequence(c)
         else:
             sequence = pose.sequence()
-            return sequence[self.get_rosetta_start(pose)-1:self.get_rosetta_end(pose)-1]
+            return sequence[self.get_rosetta_start(pose)-1:self.get_rosetta_end(pose)]
             
 class Regions:
     """

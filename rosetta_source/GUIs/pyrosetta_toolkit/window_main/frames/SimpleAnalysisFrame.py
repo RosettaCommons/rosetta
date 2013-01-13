@@ -25,7 +25,8 @@ import tkFileDialog
 from modules.tools import analysis as analysis_tools
 from modules.tools import input as input_tools
 from modules.tools import loops as loop_tools
-from window_main import global_variables
+#from window_main import global_variables
+#from pyrosetta_toolkit import main_window
 
 class SimpleAnalysisFrame(TkFrame):
     def __init__(self, main, toolkit, **options):
@@ -61,6 +62,11 @@ class SimpleAnalysisFrame(TkFrame):
         self.create_GUI_objects()
         self.grid_GUI_objects()
         
+        #Ignore this.  It is for Komodo autocomplete.
+        #if 0:
+            #self.main = Tk()
+            #self.toolkit = main_window()
+            
     def create_GUI_objects(self):
         #self.label_widget=Label(self, text="Basic Analysis", font=("Arial"))
         self.option_menu_basic = OptionMenu(self, self.basicOPT, *(sorted(self.basicOPTIONS)))

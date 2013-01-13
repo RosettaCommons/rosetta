@@ -22,6 +22,9 @@ from modules.tools import input as input_tools
 from modules.tools import output as output_tools
 from modules.tools import sequence as sequence_tools
 
+#from pyrosetta_toolkit import main_window
+from window_main.IO import GUIOutput
+
 class OutputFrame(Frame):
     def __init__(self, main, toolkit, output_class, **options):
         #Initialize frame, which becomes master instead of main - Which is why we use self in making the GUI components
@@ -33,6 +36,13 @@ class OutputFrame(Frame):
         self.create_GUI_objects()
         self.grid_GUI_objects()
         
+        #Ignore this.  It is for Komodo Autocomplete.
+        if 0:
+            self.main = Tk()
+            #self.toolkit = main_window()
+            self.output_class = GUIOutput()
+            
+            
     def create_GUI_objects(self):
         #self.label_output_options = Label(self, text="Output Options", font=("Arial"))
         self.label_output_path = Label(self, text="Decoy Output Path:")

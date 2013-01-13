@@ -30,6 +30,8 @@ from modules.tools import output as output_tools
 from modules.protocols.DesignProtocols import DesignProtocols
 from modules.tools import input as input_tools
 from modules.tools import general_tools as gen_tools
+from window_modules.scorefunction.ScoreFxnControl import ScoreFxnControl
+#from window_main.IO.GUIInput import GUIInput
 
 class ligand_ncaa_ptm_manager:
     """
@@ -40,6 +42,12 @@ class ligand_ncaa_ptm_manager:
         self.pose = pose
         self.input_class = input_class
         self.score_class = score_class
+        
+        #Ignore this.  It is for Komodo autocomplete
+        if 0:
+            #self.input_class = GUIInput() Cannot check import - some cyclical dependancy issue.
+            self.score_class = ScoreFxnControl()
+            
         self.param_paths = []; #[array path string]
         self.patch_directory = os.environ['PYROSETTA_DATABASE']+'/chemical/residue_type_sets/fa_standard/patches'
         self.params_directory = os.environ['PYROSETTA_DATABASE']+'/chemical/residue_type_sets/fa_standard/residue_types'
