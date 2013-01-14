@@ -69,7 +69,6 @@ for ( my $i=0; $i<=$#suboptions; $i++ ) {
 		$pdbfile =~ s/\s*(\S+)\s*/$1/;
 	} elsif ($suboptions[$i] =~ /^-z/ ) {
 		$mirroredGroupFlag = 1;
-		die "-z option unimplemented!";
 	} elsif ($suboptions[$i] =~ /^-f/ ) {
 		$fastDistCheck = 1;
 		print STDERR "Fast distance checking enabled.\n";
@@ -413,13 +412,20 @@ foreach my $i (1..$outer_sym_order) {
 
 ## 3: expand point gps of lattice groups
 my $latticeR = [[1,0,0],[0,1,0],[0,0,1]];
-if ($mirroredGroup) { $latticeR = [[1,0,0],[0,-1,0],[0,0,-1]]; }
+if ($mirroredGroup) {
+	my $X_l = vsub( $ptgps{1} , $ptgps{0} );
+	my $W_l = cos( PI/2 );
+	my $S_l = sqrt ( (1-$W_l*$W_l)/vnorm2($X_l) );
+	$latticeR = quat2R( $S_l*$X_l->[0], $S_l*$X_l->[1], $S_l*$X_l->[2], $W_l );
+}
 foreach my $k (1..$outer_sym_order) {
 	foreach my $i (1..$sym_orders[1]) {
 		foreach my $j (1..$sym_orders[0]) {
 			my $id = $k."_".$j."_".$i;
-			$Rs{ $id } = mmult( $latticeR, $Rs{ "0_".$j."_".$i } );
-			$Ts{ $id } = vadd( $ptgps{$k} , mapply( $latticeR,  vsub( $Ts{ "0_".$j."_".$i } , $ptgps{0}) ) );
+			my $R_ij = $Rs{ "0_".$j."_".$i };
+			$Rs{ $id } = mmult($R_ij, $latticeR );
+			my $toffset = vsub( $Ts{ "0_".$j."_".$i } , $ptgps{0});
+			$Ts{ $id } = vadd( $ptgps{$k} , $toffset );
 		}
 	}
 }
@@ -486,6 +492,9 @@ foreach my $i (1..$sym_orders[1]) {
 	}
 }
 
+
+my ($latticeX,$latticeY,$latticeZ) = ($masterX,$masterY,$masterZ);  # shallow copy is fine
+
 # redirection layer to outer point groups
 foreach my $i (1..$outer_sym_order) {
 	my $id_sibling = ($i+1);
@@ -493,7 +502,7 @@ foreach my $i (1..$outer_sym_order) {
 
 	# pointing to each point group
 	my $parent_com = $COM_pointgp;
-	my $myZ = $masterZ;
+	my $myZ = $latticeZ;
 	my $myX = vsub( $ptgps{0} , $ptgps{$i} );
 	normalize( $myX );
 	my $myY = cross( $myZ, $myX );
@@ -510,8 +519,8 @@ foreach my $i (1..$outer_sym_order) {
 				sprintf("%.6f,%.6f,%.6f", $parent_com->[0], $parent_com->[1], $parent_com->[2])."\n";
 
 
-	my $myX = mapply( $Rs{ "0_1_1" } , $masterX );
-	my $myY = mapply( $Rs{ "0_1_1" } , $masterY );
+	my $myX = mapply( $Rs{ $i."_1_1" } , $latticeX );
+	my $myY = mapply( $Rs{ $i."_1_1" } , $latticeY );
 	print "xyz VRT$i"."_ctrl  ".
 				sprintf("%.6f,%.6f,%.6f", $myX->[0], $myX->[1], $myX->[2])."  ".
 				sprintf("%.6f,%.6f,%.6f", $myY->[0], $myY->[1], $myY->[2])."  ".
@@ -526,12 +535,10 @@ foreach my $k (1..$outer_sym_order) {
 	foreach my $i (1..$sym_orders[1]) {
 		foreach my $j (1..$sym_orders[0]) {
 			my $id = $k."_".$j."_".$i;
-			my $id_sibling = $k."_".($j+1)."_".$i;
-			if ($j == $sym_orders[0]) { $id_sibling = $k."_1_$i"; }
-	
+
 			# x points from origin to parent CoM
-			my $myX = mapply( $Rs{ $id } , $masterX );
-			my $myY = mapply( $Rs{ $id } , $masterY );
+			my $myX = mapply( $Rs{ $id } , $latticeX );
+			my $myY = mapply( $Rs{ $id } , $latticeY );
 	
 			normalize( $myX );
 			$myY = vsub( $myY , vscale(dot($myY, $myX), $myX) );
@@ -581,7 +588,7 @@ foreach my $k (1..$outer_sym_order) {
 }
 
 ## dofs
-print "set_dof JUMP0_1_1 angle_z\n";    # spin
+print "set_dof JUMP0_1_1 angle_z(0:360)\n";    # spin
 print "set_dof JUMP1_to_redir x($ptgp_sep)\n";   # lattice spacing
 
 ## jumpgroups
