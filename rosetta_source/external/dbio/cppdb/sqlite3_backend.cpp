@@ -254,7 +254,7 @@ namespace cppdb {
 				std::ostringstream ss;
 				std::copy(v.begin(), v.end(), std::ostream_iterator<const unsigned char>(ss));
 				std::string tmp = ss.str();
-				check_bind(sqlite3_bind_text(st_,col,tmp.c_str(),tmp.size(),SQLITE_TRANSIENT));
+				check_bind(sqlite3_bind_blob(st_,col,tmp.c_str(),tmp.size(),SQLITE_TRANSIENT));
 			}
 			virtual void bind(int col,std::string const &v) 
 			{
