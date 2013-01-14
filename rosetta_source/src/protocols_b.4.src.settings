@@ -60,6 +60,7 @@ sources = {
 		"BackboneDB",
 		"FastGapMover",
 		"LocalInserter",
+		"LoopHashDiversifier",
 		"LoopHashLibrary",
 		"LoopHashMap",
 		"LoopHashMoverWrapper",

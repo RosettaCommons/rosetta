@@ -11,70 +11,72 @@
 /// @brief
 /// @author Mike Tyka
 
-
-
 #ifndef INCLUDED_protocols_loophash_LocalInserter_hh
 #define INCLUDED_protocols_loophash_LocalInserter_hh
 
+//Unit
 #include <protocols/loophash/LocalInserter.fwd.hh>
 
+//Core
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/loophash/BackboneDB.hh>
-
 #include <core/scoring/ScoreFunction.hh>
 #include <core/optimization/MinimizerOptions.hh>
+
+//Protocols
+#include <protocols/loophash/BackboneDB.hh>
+
+//Utility
 #include <utility/pointer/ReferenceCount.hh>
+
+//C++
 #include <string>
 #include <vector>
 
 #include <utility/vector1.hh>
 
-
 namespace protocols {
 namespace loophash {
 
-
-
-
-
 // @brief Manages the insertion of an arbitrary length of backbone in a local manner
-class LocalInserter : public utility::pointer::ReferenceCount  {
+class LocalInserter : public utility::pointer::ReferenceCount	{
 public:
+
 	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~LocalInserter();
-  LocalInserter(){
-  }
+	
+	LocalInserter(){
+	}
 
-  virtual
-  core::Real
-  make_local_bb_change(
-    core::pose::Pose &start_pose,
-    const core::pose::Pose &original_pose,
-    const protocols::loophash::BackboneSegment &new_bs,
-    core::Size res_pos
-  ) = 0;
+	virtual
+	core::Real
+	make_local_bb_change(
+		core::pose::Pose &start_pose,
+		const core::pose::Pose &original_pose,
+		const protocols::loophash::BackboneSegment &new_bs,
+		core::Size res_pos
+	) = 0;
 
 	// closes gaps between ir and jr
-  virtual
-  core::Real
-  make_local_bb_change_close_gaps(
-    core::pose::Pose &start_pose,
-    const core::pose::Pose &original_pose,
-    const protocols::loophash::BackboneSegment &new_bs,
-    core::Size res_pos
-  ) = 0;
+	virtual
+	core::Real
+	make_local_bb_change_close_gaps(
+		core::pose::Pose &start_pose,
+		const core::pose::Pose &original_pose,
+		const protocols::loophash::BackboneSegment &new_bs,
+		core::Size res_pos
+	) = 0;
 	
 	// closes many gaps outside of ir and jr
 	// will die if gap exists between ir and jr
-  virtual
-  core::Real
-  make_local_bb_change_include_cut(
-    core::pose::Pose &start_pose,
-    const core::pose::Pose &original_pose,
-    const protocols::loophash::BackboneSegment &new_bs,
-    core::Size res_pos
-  ) = 0;
+	virtual
+	core::Real
+	make_local_bb_change_include_cut(
+		core::pose::Pose &start_pose,
+		const core::pose::Pose &original_pose,
+		const protocols::loophash::BackboneSegment &new_bs,
+		core::Size res_pos
+	) = 0;
 
 private:
 
@@ -83,51 +85,64 @@ private:
 // @brief
 class LocalInserter_SimpleMin : public LocalInserter{
 public:
-  LocalInserter_SimpleMin():
-      LocalInserter(),
-      options_( "dfpmin", 0.2, true , false ),
-      options2_( "dfpmin", 0.02,true , false )
-  {
-    set_default_score_functions();
-  }
+	LocalInserter_SimpleMin():
+		LocalInserter(),
+		options_( "dfpmin", 0.2, true , false ),
+		options2_( "dfpmin", 0.02,true , false )
+	{
+		set_default_score_functions();
+	}
+	
+	///@brief set the score function for the first round of minimization
+	///during a loophash insert
+	void
+	scorefxn_rama_cst(
+		core::scoring::ScoreFunction scorefxn
+	);
+	
+	///@brief set the score function for the second round of minimization
+	///during a loophash insert
+	void
+	scorefxn_cen_cst(
+		core::scoring::ScoreFunction scorefxn
+	);
 
+	virtual
+	core::Real
+	make_local_bb_change(
+		core::pose::Pose &start_pose,
+		const core::pose::Pose &original_pose,
+		const protocols::loophash::BackboneSegment &new_bs,
+		core::Size res_pos
+	);
 
-  virtual
-  core::Real
-  make_local_bb_change(
-    core::pose::Pose &start_pose,
-    const core::pose::Pose &original_pose,
-    const protocols::loophash::BackboneSegment &new_bs,
-    core::Size res_pos
-  );
+	virtual
+	core::Real
+	make_local_bb_change_close_gaps(
+		core::pose::Pose &start_pose,
+		const core::pose::Pose &original_pose,
+		const protocols::loophash::BackboneSegment &new_bs,
+		core::Size res_pos
+	);
 
-  virtual
-  core::Real
-  make_local_bb_change_close_gaps(
-    core::pose::Pose &start_pose,
-    const core::pose::Pose &original_pose,
-    const protocols::loophash::BackboneSegment &new_bs,
-    core::Size res_pos
-  );
-
-  virtual
-  core::Real
-  make_local_bb_change_include_cut(
-    core::pose::Pose &start_pose,
-    const core::pose::Pose &original_pose,
-    const protocols::loophash::BackboneSegment &new_bs,
-    core::Size res_pos
-  );
+	virtual
+	core::Real
+	make_local_bb_change_include_cut(
+		core::pose::Pose &start_pose,
+		const core::pose::Pose &original_pose,
+		const protocols::loophash::BackboneSegment &new_bs,
+		core::Size res_pos
+	);
 
 private:
-  // setup scorefunctions for
-  void set_default_score_functions();
+	// setup scorefunctions for
+	void set_default_score_functions();
 
-  // the scorefunctions themselves
-  core::scoring::ScoreFunction scorefxn_rama_cst_;
-  core::optimization::MinimizerOptions options_;
+	// the scorefunctions themselves
+	core::scoring::ScoreFunction scorefxn_rama_cst_;
+	core::optimization::MinimizerOptions options_;
 
-  core::scoring::ScoreFunction scorefxn_cen_cst_;
+	core::scoring::ScoreFunction scorefxn_cen_cst_;
 	core::optimization::MinimizerOptions options2_;
 };
 

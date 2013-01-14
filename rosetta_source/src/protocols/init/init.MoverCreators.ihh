@@ -105,6 +105,7 @@
 #include <protocols/loop_build/LoopMover_SlidingWindowCreator.hh>
 
 #include <protocols/loophash/LoopHashMoverWrapperCreator.hh>
+#include <protocols/loophash/LoopHashDiversifierCreator.hh>
 
 #include <protocols/loops/FoldTreeFromLoopsWrapperCreator.hh>
 #include <protocols/loops/LoopMoverFactory.hh>
