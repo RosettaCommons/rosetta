@@ -50,6 +50,12 @@ class GUIInput:
         self.regions = Regions(); #This will replace loops_as_strings
         self.loops = Loops()
         
+        #These are set if a user selects a residue from the sequence
+        self.residue_string = StringVar(); #String that is displayed when individual reside is selected
+        self.residue_resnum = StringVar();
+        self.residue_rosetta_resnum = StringVar();
+        self.residue_chain = StringVar()
+        
         self.constraint_file_path = StringVar(); #Path to constraint file if loaded through GUI (Not options system).
         self.param_pathlist_file = ""; #Path to a file which lists paths to all params to use.  One on each line
         self.param_paths = []; #Array of parameter paths.
@@ -204,7 +210,15 @@ class GUIInput:
         return loops_as_strings
 
 ###Region Selection####
-
+    def set_residue_of_interest(self, resnum, chain, rosetta_resnum):
+        """
+        Sets current individual residue information.
+        All Strings.
+        """
+        self.residue_resnum.set(resnum)
+        self.residue_chain.set(chain)
+        self.residue_rosetta_resnum.set(rosetta_resnum)
+        
     def return_region_from_entry(self):
         """
         Returns a region of the currently set region parameters in the region entry boxes.

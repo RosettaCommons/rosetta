@@ -45,6 +45,7 @@ from window_modules.clean_pdb.FixPDBWindow import FixPDBWindow
 from rosetta_flag_file_builder.RosettaFlagFileBuilder import RosettaFlagFileBuilder
 from window_modules.design.ResfileDesignWindow import ResfileDesignWindow
 from window_modules.ligand_ncaa_ptm_manager.ligand_ncaa_ptm_manager import ligand_ncaa_ptm_manager
+from window_modules.full_control.FullControlWindow import FullControlWindow
 import global_variables
 from pyrosetta_toolkit import main_window
 
@@ -181,7 +182,7 @@ class Menus():
 	self.advanced_menu.add_separator()
 	
 	
-	self.advanced_menu.add_command(label="Per Residue Control and Analysis", command=lambda: self.toolkit.fullcontrol_class.makeWindow(Toplevel(self.main)))
+	self.advanced_menu.add_command(label="Per Residue Control and Analysis", command=lambda: self.show_fullcontrol_window())
 	#self.advanced_menu.add_command(label="Extract PDB from SQLite3 DB", command = lambda: output_tools.extract_pdb_from_sqlite3db())
 	#self.advanced_menu.add_command(label="Interactive Terminal", foreground='red',command = lambda: self.show_IpythonWindow())
 	#self.advanced_menu.add_command(label="Jump into Session", foreground='red', command = lambda: embed())
@@ -403,6 +404,10 @@ class Menus():
 	breakdown.run_outputs()
 	
 #### WINDOWS ##### (ADD NEW WINDOWS TO THIS THAT NEED TO BE SET UP) #######
+    def show_fullcontrol_window(self):
+	self.fullcontrol_class = FullControlWindow(self.toolkit.score_class, self.toolkit.pose, self.toolkit.input_class, self.toolkit.output_class);
+	self.fullcontrol_class.show_window(Toplevel(self.main), 0, 0)
+	
     def show_graftmover_window(self):
 	grafter = GraftMoverWindow(self.toolkit.pose, self.toolkit.score_class, self.toolkit.input_class, self.toolkit.output_class)
 	top_level_tk = Toplevel(self.main)

@@ -55,7 +55,6 @@ from window_main.IO.GUIOutput import GUIOutput
 
 from window_modules.pymol_integration.PyMOL import AdvancedPyMOL
 from window_modules.scorefunction.ScoreFxnControl import ScoreFxnControl
-from window_modules.full_control.FullControlWindow import FullControlWindow
 
 from modules.Region import Region
 
@@ -107,21 +106,22 @@ class main_window:
       self.output_class = GUIOutput(self)
       
       ####Sequence#####
-      self.num_string = StringVar()
+      self.residue_string = StringVar()
       self.input_class.region_sequence.trace_variable('w', self.clear_num_string_on_new_input)
       self.sequence_output = Entry(self._tk_, textvariable = self.input_class.region_sequence)
       #self.sequence_output.bind('<FocusIn>', self.print_numbering)
       self.sequence_output.bind('<ButtonRelease-1>', self.print_numbering)
       self.sequence_output.bind('<KeyRelease>', self.print_numbering)
       self.seq_scroll = Scrollbar(self._tk_, orient=HORIZONTAL, command=self.__scrollHandler)
-      self.num_label = Label(self._tk_, textvariable = self.num_string, justify=CENTER)
+      self.num_label = Label(self._tk_, textvariable = self.residue_string, justify=CENTER)
       ####Sequence#####
       self.score_class = ScoreFxnControl(); #Main Score Function Object. Holds Score.  Controls switching scorefunctions, etc.
       self.pymol_class = AdvancedPyMOL(self.pose); #PyMOL Object for advanced visualization.
-      self.fullcontrol_class = FullControlWindow(self.score_class, self.pose, self.input_class, self.output_class); #Handles full control of protein.  This way, everything is saved...which is sorta cool.
-   
+      
+      
    def clear_num_string_on_new_input(self, name, index, mode):
-      self.num_string.set("")
+      self.residue_string.set("")
+      self.input_class.set_residue_of_interest("", "", "")
       
    def print_numbering(self, event):
       if not self.pose.total_residue():return
@@ -129,7 +129,7 @@ class main_window:
       rosetta_num=0
       pdb_num=""
       if self.pose.total_residue()==len(self.input_class.region_sequence.get()):
-         rosetta_num = self.sequence_output.index(INSERT)
+         rosetta_num = 1+self.sequence_output.index(INSERT)
          pdb_num = self.pose.pdb_info().pose2pdb(rosetta_num)
          #print self.num_string
          
@@ -137,9 +137,13 @@ class main_window:
          region = self.input_class.return_region_from_entry()
          rosetta_num = region.get_rosetta_start(self.pose)+self.sequence_output.index(INSERT)
          pdb_num = self.pose.pdb_info().pose2pdb(rosetta_num)
-         
-      self.num_string.set(pdb_num+' - '+repr(rosetta_num))
-         
+      
+      pdbSP = pdb_num.split()
+      self.input_class.set_residue_of_interest(pdbSP[0], pdbSP[1], repr(rosetta_num))
+      self.input_class.residue_string.set(pdb_num+' - '+repr(rosetta_num))
+      self.residue_string.set(pdb_num+' - '+repr(rosetta_num))
+      #self.fullcontrol_class.shoInfo(pdbSP[0], pdbSP[1])
+      
    def __scrollHandler(self, *L):
         """
         Handles scrolling of entry.

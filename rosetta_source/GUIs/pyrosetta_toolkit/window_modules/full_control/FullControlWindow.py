@@ -45,6 +45,7 @@ class FullControlWindow():
 
 	#Main classes
 	self.pose = pose
+	self.input_class = input_class
 	self.design_protocols = DesignProtocols(self.pose, ScoreObject, input_class, output_class)
 	self.loop_protocols = MinimizationProtocols(self.pose, ScoreObject, input_class, output_class)
 	self.residue_definitions = definitions(); #Defines all residue type information.
@@ -53,8 +54,10 @@ class FullControlWindow():
 
 
 	#GUI variables
-	self.resnum = StringVar();
+	self.resnum = StringVar()
 	self.chain = StringVar()
+	
+	
 	self.PhiVar = StringVar(); #phi string
 	self.PsiVar = StringVar(); #psi string
 	self.OmeVar = StringVar(); #omega string
@@ -69,18 +72,26 @@ class FullControlWindow():
 	self.variant = StringVar()
 	self.variant_map = dict(); # [string variant]:[string names]
         
+	
         #Ignore this.  It is for Komodo autocomplete
         if 0:
             self.score_object = ScoreFxnControl()
-
+	    self.input_class = GUIInput()
+		
     def __exit__(self):
 	exit()
 
     def shoInfo(self, res, chain):
+	if self.pose.total_residue()==0:return
+	if not res:return
+	if not chain:return
+	
 	self.populate_restype_listbox()
+	self.score_base = RegionalScoring(self.pose, self.score_object.score); #Happens every time just in case the user selects a dif scorefunction
 	try:
 	    res = self.pose.pdb_info().pdb2pose(chain, int(res))
 	    self.restype_var.set(self.pose.residue(res).name()); #Exception comes from this! Segfualts on .psi etc.  This needs to be first.
+	    self.input_class.residue_rosetta_resnum.set(repr(res))
 	except PyRosettaException:
 	    print "Residue does not exist in PDB.."
 	    return
@@ -102,8 +113,8 @@ class FullControlWindow():
 	self.resnum.set(res)
 	self.shoInfo(res, chain)
 
-    def makeWindow(self, main, r=0, c=0):
-
+    def show_window(self, main, r=0, c=0):
+	
 	try :
 	    print self.pose.pdb_info().name()
 	except AttributeError:
@@ -116,8 +127,7 @@ class FullControlWindow():
 	except PyRosettaException:
 	    print "Please Load a pose"
 	    return
-
-
+	
 	self.main = main
 	self.main.title("Full Control")
 	self.main.grid_columnconfigure(ALL, weight=1)
@@ -165,6 +175,7 @@ class FullControlWindow():
 	self.listbox_energy_terms = Listbox(self.main)
 
 
+
     #### GRID ####
 	self.entry_Res.grid(row=r+5, column=c+0); self.entry_Cha.grid(row=r+5, column=c+1); self.entry_Nam.grid(row=r+5, column=c+2)
 	self.label_residue.grid(row=r+6, column=c+0); self.label_chain.grid(row=r+6, column=c+1); self.label_restype.grid(row=r+6,column=c+2)
@@ -201,7 +212,24 @@ class FullControlWindow():
 	#Populating the Listboxes:
 	self.populate_restype_listbox()
 	self.populate_variant_listbox()
-
+	
+	#These are to hook up the sub window with the sequence entry from the main window.
+	self.main_resnum = self.input_class.residue_resnum
+	self.main_chain = self.input_class.residue_chain
+	self.main_resnum.trace_variable('w', self.resnum_callback)
+	self.main_chain.trace_variable('w', self.resnum_callback)
+	self.resnum.set(self.main_resnum.get())
+	self.chain.set(self.main_chain.get())
+	self.shoInfo(self.main_resnum.get(), self.main_chain.get())
+    
+    def resnum_callback(self, name, index, mode):
+	"""
+	This is to update GUI upon a new resnum selected from main window.
+	"""
+	self.shoInfo(self.main_resnum.get(), self.main_chain.get())
+	self.resnum.set(self.main_resnum.get())
+	self.chain.set(self.main_chain.get())
+	
     def get_residue_energy(self, type_weight_string):
 	self.last_type_string_selected = type_weight_string
 	type_string = type_weight_string.split(";")[0]

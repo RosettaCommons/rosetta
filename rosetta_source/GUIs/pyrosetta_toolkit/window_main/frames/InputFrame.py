@@ -67,7 +67,7 @@ class InputFrame(Frame):
         
         ############ SEQUENCE ############
         
-        self.ShoSeqButton = Button(self, text="Show Sequence", command=lambda: self.input_class.region_sequence.set(sequence_tools.get_sequence(self.toolkit.pose, self.input_class.region_start.get()+":"+self.input_class.region_end.get()+":"+self.input_class.region_chain.get().upper())))
+        self.ShoSeqButton = Button(self, text="Show Sequence", command=lambda: self.show_sequence())
 
         ##################################
         
@@ -86,6 +86,7 @@ class InputFrame(Frame):
         #self.label_Loop.grid(row=11, column=0, columnspan=2, pady=15)
         
         self.loops_listbox.bind("<Double-Button-1>", lambda event: self.remLoop())
+        self.loops_listbox.bind('<ButtonRelease-1>', lambda event: self.insert_region())
         self.StartLoopLabel.grid(row=16, column=0); self.StartLoopEntry.grid(row=16, column=2)
         self.EndLoopLabel.grid(row=17, column=0); self.EndLoopEntry.grid(row=17, column=2)
         self.ChainIDLabel.grid(row=18, column=0); self.ChainIDEntry.grid(row=18, column=2)
@@ -105,6 +106,16 @@ class InputFrame(Frame):
 
 
 #### LOOPS ####
+    def insert_region(self):
+        try:
+            region_string = self.loops_listbox.get(self.loops_listbox.curselection())
+            regionSP = region_string.split(":")
+            self.input_class.region_start.set(regionSP[0])
+            self.input_class.region_end.set(regionSP[1])
+            self.input_class.region_chain.set(regionSP[2])
+        except TclError:
+            pass
+        
     def load_loop(self):
         loops_as_strings = self.input_class.load_loop()
         for loop_string in loops_as_strings:
@@ -135,7 +146,16 @@ class InputFrame(Frame):
             self.input_class.region_sequence.set(region.get_sequence(self.input_class.pose))
         self.input_class.region = region    
         self.input_class.regions.add_region(region)
+    
+    def show_sequence(self):
+        if self.input_class.pose.total_residue()==0:return
         
+        if not self.input_class.region_chain.get():
+            self.input_class.region_sequence.set(self.input_class.pose.sequence())
+        else:
+            region = self.input_class.return_region_from_entry()
+            self.input_class.region_sequence.set(region.get_sequence(self.input_class.pose))
+            
     def remLoop(self):
         try:
             #Current
