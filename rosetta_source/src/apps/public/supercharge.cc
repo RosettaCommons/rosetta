@@ -325,7 +325,7 @@ public:
 		std::stringstream pymol_avnapsa_residues;
 		utility::vector1< Size > residues_to_mutate; //will be appended either to acheive correct charge or based on AvNAPSA value cutoff
 
-		if( basic::options::option[local::target_net_charge_active] ) {
+		if( ! basic::options::option[local::target_net_charge_active] ) {
 			largest_mutated_AvNAPSA_ = (Size) basic::options::option[local::surface_atom_cutoff]; // no specified net charge, largest AvNAPSA allowed equals the cutoff.  This value is used to name output PDBs.
 			for( Size i(1); i <= AvNAPSA_values_.size(); ++i) {
 				if( AvNAPSA_values_[i] < basic::options::option[local::surface_atom_cutoff] && AvNAPSA_values_[i] != 9999 ) {
@@ -958,7 +958,7 @@ public:
 		std::stringstream ss_i;
 		std::string i_string;
 
-		if( option[local::target_net_charge_active] ) {
+		if( ! option[local::target_net_charge_active] ) {
 
 			Size nstruct = (Size) option[local::nstruct].value();
 			for( Size i=1; i <= nstruct; ++i ) {
