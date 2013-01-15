@@ -157,5 +157,9 @@ class AdvancedPyMOL():
 	self.pnum = self.pnum+1
 	Newname = os.path.basename(self.pose.pdb_info().name()).split("_")[0]+"_"+repr(self.pnum)
 	self.pose.pdb_info().name(Newname)
-	self.pymover.apply(self.pose)
+        try:
+            self.pymover.apply(self.pose)
+        except PyRosettaException:
+            print "Could not send pose to pymol."
+            return
 	return

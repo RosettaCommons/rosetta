@@ -92,7 +92,7 @@ class Region:
         if ((self.get_region_type()=='nter') or (self.get_region_type()=='chain')):
             #First residue of the chain - Would be useful to have pdb_info() be able to return this.
             for resnum in range(1, pose.total_residue()+1):
-                chain = pose.pdb_info().chain(pose.chain(resnum))
+                chain = pose.pdb_info().chain(resnum)
                 if chain == self.chain:
                     return resnum
                 else:
@@ -109,13 +109,15 @@ class Region:
             #Last residue of the chain - Would be useful to have pdb_info() be able to return this.
             resnum = pose.total_residue()
             while resnum !=1:
-                chain = pose.pdb_info().chain(pose.chain(resnum))
+                chain = pose.pdb_info().chain(resnum)
+                #print repr(resnum); print chain; print "Should Be: "+self.chain
                 if chain == self.chain:
                     return resnum
                 else:
                     resnum-=1
                     continue
-        return pose.pdb_info().pdb2pose(self.chain, self.end)
+        else:
+            return pose.pdb_info().pdb2pose(self.chain, self.end)
         
     #Useful functions
     def get_length(self, pose):
@@ -207,7 +209,7 @@ class Regions:
             regions = self.get_regions_of_types(include_only_regions)
         
         for region in regions:
-            print region
+            print region.get_region()
             start = region.get_rosetta_start(pose)
             print start
             end = region.get_rosetta_end(pose)

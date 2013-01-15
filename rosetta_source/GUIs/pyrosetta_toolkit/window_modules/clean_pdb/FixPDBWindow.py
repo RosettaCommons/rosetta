@@ -86,7 +86,7 @@ class FixPDBWindow:
           self.chaOcc = Checkbutton(self.main, variable = self.change_occupancies_var, text = "Change occupancies to 1")
           self.check_unrecognized_button=Checkbutton(self.main, variable = self.check_rosetta_var, text="Check for Rosetta unrecognized/off residue types")
           self.replace_res_and_atoms_button=Checkbutton(self.main, variable = self.replace_res_and_atoms_var, text = "Replace known unrecognized residues and atoms")
-          self.gobutton_ = Button(self.main, text = "Clean", command = lambda: self.runFixPDB())
+          self.gobutton_ = Button(self.main, text = "Clean/Analyze", command = lambda: self.runFixPDB())
           self.loadbutton = Button(self.main, text = "Load PDB", command = lambda: self.load_cleaned_pdb())
           #This may need to change to use __init__, but hopefully not.
           self.ignore_unrecognized = Button(self.main, text = "Set -ignore_unrecognized_res option", command = lambda: self.input_class.options_manager.add_option('-ignore_unrecognized_res'))
@@ -123,7 +123,7 @@ class FixPDBWindow:
                self.recognized_aa.append(param.three_letter_name.get())
                
           #Residues Rosetta CAN recognize
-          for aa in ["DA", "DT", "DG", "DC", "WAT", "TP3"]: self.recognized_aa.append(aa)
+          for aa in ["WAT", "TP3"]: self.recognized_aa.append(aa)
           
      def get_on_by_default_aa(self):
           """
@@ -218,9 +218,11 @@ class FixPDBWindow:
           self.clean_pdb = PythonPDB(filename)
           pdb_map = self.clean_pdb.get_pdb_map()
           
+          #Reset these.
+          self.unrecognized_aa=[]
+          self.off_by_default_aa=[]
           
           if self.replace_res_and_atoms_var.get():
-               print "Attempting to change residue names, atom names, and water"
                self.clean_pdb.clean_PDB()
                
           if self.remove_hetatm_var.get():
@@ -253,20 +255,19 @@ class FixPDBWindow:
                print "Checking for unrecognized residues"
                self.check_for_unrecognized_aa(self.clean_pdb.get_pdb_map())
                
-               print "Checking for off-by-default residues"
                self.check_for_rosetta_off_aa(self.clean_pdb.get_pdb_map())
                
                if not self.unrecognized_aa and not self.off_by_default_aa:
                     print "PDB has no unrecognized aa, and all ncaa found are on by default!"
                     return
-          
+               print "\n"
                FILE = open(outdir+"/"+pdbname.split(".")[0]+"_rosetta_check_log.txt", 'w')
                FILE.write("#unrecognized\n")
                unique = dict()
                for aa in self.unrecognized_aa: unique[aa]=0
                
                if unique:
-                    print "unrecognized: "+repr(sorted(unique))
+                    print ", ".join(sorted(unique))+" Residues will be unrecognized by Rosetta.  Please rename or remove."
                for aa in sorted(unique):
                     FILE.write(aa+"\n")
                
@@ -275,7 +276,7 @@ class FixPDBWindow:
                for aa in self.off_by_default_aa: unique[aa]=0
                
                if unique:
-                    print "off-by-default: "+repr(sorted(unique))
+                    print ", ".join(sorted(unique))+" Residues are off-by-default in Rosetta.  Please enable or remove."
                for aa in sorted(unique):
                     FILE.write(aa+"\n")
                FILE.close
@@ -291,14 +292,15 @@ class FixPDBWindow:
           Checks pdb_map for any residues that are unrecognized by any param/patch file.
           Appends self.unrecognized_aa
           """
-          
           for num in pdb_map:
                found=False
+               
                for aa in self.recognized_aa:
                     if aa==pdb_map[num]["three_letter_code"]:
                          found=True
                          break
-               if not found:        
+               if not found:
+                    print '-'+pdb_map[num]["three_letter_code"] +" Unrecognized @ "+pdb_map[num]["chain"]+' '+pdb_map[num]["residue_number"]+'-'
                     self.unrecognized_aa.append(pdb_map[num]["three_letter_code"])
                     
      

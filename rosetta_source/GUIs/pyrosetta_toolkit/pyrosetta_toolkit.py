@@ -130,13 +130,20 @@ class main_window:
       pdb_num=""
       if self.pose.total_residue()==len(self.input_class.region_sequence.get()):
          rosetta_num = 1+self.sequence_output.index(INSERT)
-         pdb_num = self.pose.pdb_info().pose2pdb(rosetta_num)
+         try:
+            pdb_num = self.pose.pdb_info().pose2pdb(rosetta_num)
+         except PyRosettaException:
+            #Catches the the LAST index
+            return
          #print self.num_string
          
       else:
          region = self.input_class.return_region_from_entry()
          rosetta_num = region.get_rosetta_start(self.pose)+self.sequence_output.index(INSERT)
-         pdb_num = self.pose.pdb_info().pose2pdb(rosetta_num)
+         try:
+            pdb_num = self.pose.pdb_info().pose2pdb(rosetta_num)
+         except PyRosettaException:
+            return
       
       pdbSP = pdb_num.split()
       self.input_class.set_residue_of_interest(pdbSP[0], pdbSP[1], repr(rosetta_num))

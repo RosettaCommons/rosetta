@@ -40,11 +40,11 @@ class MinimizationProtocols(ProtocolBaseClass):
 #minimize
     def minimize(self, tolerance=False, movemap=False, bb_only=False, sc_only=False):
         """
-        This is the classic MinMover, with option run:min_type defining the minimization type, and run_tolerance defining the tolerance.
+        This is the classic MinMover, with option relax:min_type defining the minimization type. Tolerance is set to .01
         Not actually defining a loop, only regions in the movemap
         May have a problem if using Centroid....
         """
-
+        
         if not movemap:
             movemap = self.input_class.regions.get_movemap(self.pose)
         if not tolerance:
@@ -54,9 +54,12 @@ class MinimizationProtocols(ProtocolBaseClass):
             movemap.set_chi(False)
         if sc_only:
             movemap.set_bb(False)
-            
+        
+        #print "run:min_tolerance: "+repr(tolerance)
+        print "relax:min_type: "+get_string_option('relax:min_type')
+        print "tolerance: .01"
         self.score_class.score.set_weight(chainbreak, 100); #Makes sure loop/domain does not break!
-        minmover=MinMover(movemap, self.score_class.score, get_string_option('run:min_type'), tolerance, True)
+        minmover=MinMover(movemap, self.score_class.score, get_string_option('relax:min_type'), .01, True)
         self.run_protocol(minmover)
             
         self.score_class.score.set_weight(chainbreak, 0)

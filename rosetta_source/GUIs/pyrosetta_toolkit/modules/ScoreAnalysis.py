@@ -60,9 +60,9 @@ class ScoreAnalysis:
         """
         if re.search(".txt", self.filepath):
             self.read_PDBList(self.filepath)
-        elif re.search(".fasc", filepath):
+        elif re.search(".fasc", self.filepath):
             self.read_FASC(self.filepath)
-        elif re.search(".sc", filepath):
+        elif re.search(".sc", self.filepath):
             self.read_SC(self.filepath)
         else:
             print "Could not read filetype"
@@ -222,9 +222,9 @@ class ScoreAnalysis:
         
     def read_FASC(self, filepath):
         FILE = open(filepath, 'r')
-        for line in file:
+        for line in FILE:
             lineSP = line.strip().split()
-            if lineSP[0]=="filename":
+            if lineSP[0]=="filename:":
                 fullpath = lineSP[1]
                 total_score = float(lineSP[3])
                 self.score_map[total_score]=fullpath
@@ -236,7 +236,7 @@ class ScoreAnalysis:
     def read_SC(self, filepath):
         FILE = open(filepath, 'r')
         print "Assuming PDB's are within the same path as the score file."
-        for line in file:
+        for line in FILE:
             lineSP = line.strip().split()
             if lineSP[1]=="score":
                 continue

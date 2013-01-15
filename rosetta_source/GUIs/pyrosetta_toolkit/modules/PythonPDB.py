@@ -236,8 +236,22 @@ class PythonPDB:
         Oh What fun. ;)
         Magic Numbers?: (6,5,4,3,1,4,8,8,8,4,5);
         """
+        #Here we fix the formating of atom name.
+        atom_name = self.pdb_map[line_num]['atom_name']
+        if len(atom_name)==1:
+            atom_name=' '+atom_name+'  '
+        elif len(atom_name)==2:
+            atom_name=' '+atom_name+' '
+        elif len(atom_name)==3:
+            atom_name=' '+atom_name
+        elif len(atom_name)==4:
+            atom_name=atom_name
+        else:
+            print "Atom Name missing.  Inserting spaces."
+            atom_name = '    '
+            
         #Create the PDB line.
-        line = (self.pdb_map[line_num]['id']).ljust(6)+             (self.pdb_map[line_num]['atom_number']).rjust(5)+"  "+   (self.pdb_map[line_num]['atom_name']).ljust(3)+ \
+        line = (self.pdb_map[line_num]['id']).ljust(6)+             (self.pdb_map[line_num]['atom_number']).rjust(5)+" "+ atom_name+ \
                (self.pdb_map[line_num]['alternate_location'])+      ((self.pdb_map[line_num]['three_letter_code']).rjust(3)).ljust(4)+  (self.pdb_map[line_num]['chain'])+             \
                (self.pdb_map[line_num]['residue_number']).rjust(4)+ (self.pdb_map[line_num]['i_code']) +                                              \
                (self.pdb_map[line_num]['x']).rjust(11)+             (self.pdb_map[line_num]['y']).rjust(8)+                  (self.pdb_map[line_num]['z']).rjust(8) +   \
@@ -305,15 +319,35 @@ class PythonPDB:
         NOT gaurenteed, but SHOULD work ok.
         """
         
-        RESIDUES_aliased = False; WATER_aliased=False; IONS_aliased=False#Keeps track of if a HSD or TIP residue is found (So that its not constantly printing)
-        waters = []; #List of keys that have waters
+        self.RESIDUES_aliased = False; self.WATER_aliased=False; self.IONS_aliased=False; self.DNA_aliased = False
         
+        waters = []; #List of keys that have waters
+        print "Attempting to change residue names, atom names, and water"
         for key in self.pdb_map:
-            
-            
+            #print self.pdb_map[key]["three_letter_code"]
+            def alias_dna():
+                if self.pdb_map[key]["three_letter_code"]=="DA":
+                    self.DNA_aliased=True
+                    self.pdb_map[key]["three_letter_code"]="A"
+                    
+                elif self.pdb_map[key]["three_letter_code"]=="DT":
+                    self.DNA_aliased=True
+                    self.pdb_map[key]["three_letter_code"]="T"
+                    
+                elif self.pdb_map[key]["three_letter_code"]=="DC":
+                    self.DNA_aliased=True
+                    self.pdb_map[key]["three_letter_code"]="C"
+                    
+                elif self.pdb_map[key]["three_letter_code"]=="DG":
+                    self.DNA_aliased=True
+                    self.pdb_map[key]["three_letter_code"]="G"
+                    
+                else:
+                    return
+                
             def alias_water():
                 if self.pdb_map[key]["three_letter_code"] in ["HOH", "TIP3", "WAT", "TIP5"]:
-                    WATER_aliased=True
+                    self.WATER_aliased=True
                     self.pdb_map[key]["three_letter_code"]="TP3"; #IO_STRING for TP3 is WAT...Buy still reads TP#?
                     self.pdb_map[key]["id"]="HETATM"
                     waters.append(key)
@@ -325,7 +359,7 @@ class PythonPDB:
                     
             def alias_residues():
                 if self.pdb_map[key]["three_letter_code"] == "HSD":
-                    RESIDUES_aliased = True
+                    self.RESIDUES_aliased = True
                     self.pdb_map[key]["three_letter_code"]="HIS"
                     
             def alias_atoms():
@@ -364,24 +398,25 @@ class PythonPDB:
             #Unnessessary, but organized.
             alias_water()
             #alias_ions()
-            alias_residues()
+            #alias_residues()
             alias_atoms()
-            
+            alias_dna()
             
         #Removes Waters. Keeps Ions.
         #for key in waters:
             #self.pdb_map.pop(key)
             
         #Outputs what was found:
-        if RESIDUES_aliased:
+        if self.RESIDUES_aliased:
             print "Residues Changed"
             
-        if WATER_aliased:
-            print "Water found...changed to TP3. "
-            print "Remove to increase calculation time."
+        if self.WATER_aliased:
+            print "Water found...changed to TP3. Remove to decrease calculation time."
             
-        if IONS_aliased:
+        if self.IONS_aliased:
             print "Ions found.  Most are able to be read into Rosetta"
-            
+        
+        if self.DNA_aliased:
+            print "DNA found, changed to single letter code."
         
         
