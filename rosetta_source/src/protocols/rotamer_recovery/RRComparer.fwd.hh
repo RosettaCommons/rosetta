@@ -28,6 +28,10 @@ class RRComparerRotBins;
 typedef utility::pointer::owning_ptr< RRComparerRotBins > RRComparerRotBinsOP;
 typedef utility::pointer::owning_ptr< RRComparerRotBins const > RRComparerRotBinsCOP;
 
+class RRComparerChiDiff;
+typedef utility::pointer::owning_ptr< RRComparerChiDiff > RRComparerChiDiffOP;
+typedef utility::pointer::owning_ptr< RRComparerChiDiff const > RRComparerChiDiffCOP;
+
 
 }//rotamer_recovery
 }//protocols
