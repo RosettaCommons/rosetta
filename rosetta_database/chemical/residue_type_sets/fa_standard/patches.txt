@@ -22,6 +22,9 @@ patches/CtermConnect.txt
 ##added by steven combs November 11 2010
 #patches/sc_orbitals.txt
 
+# Added by David P. Nannemann 29 Nov 2012
+patches/PtermProteinFull.txt
+
 
 ## The following were added by Andy M. Chen in June 2009
 ##   for post-translational modifications
@@ -57,7 +60,7 @@ patches/C_methylamidated.txt
 
 ## patches for the MakeRotLib protocol
 patches/MethylatedProteinCterm.txt
-patches/ActeylatedProteinNterm.txt
+patches/AcetylatedProteinNterm.txt
 
 ## carbohydrate patches
 patches/carbohydrates/lower_terminus.txt

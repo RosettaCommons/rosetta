@@ -35,7 +35,9 @@ FileDataOptions::~FileDataOptions() {}
 
 void FileDataOptions::parse_my_tag( utility::tag::TagPtr tag )
 {
-	set_check_if_residues_are_termini( tag->getOption< bool >( "termini", 0 ));
+	//set_check_if_residues_are_termini( tag->getOption< std::string >( "termini", "ALL" ));
+	set_check_if_residues_are_Ntermini( tag->getOption< std::string >( "Ntermini", "ALL" ));
+	set_check_if_residues_are_Ctermini( tag->getOption< std::string >( "Ctermini", "ALL" ));
 	set_exit_if_missing_heavy_atoms( tag->getOption< bool >( "exit_if_missing_heavy_atoms", 0 ));
 	set_ignore_unrecognized_res( tag->getOption< bool >( "ignore_unrecognized_res", 0 ));
 	set_ignore_waters( tag->getOption< bool >( "ignore_waters", 0 ));
@@ -54,7 +56,9 @@ std::string FileDataOptions::type() const { return "file_data_options"; }
 
 
 // accessors
-bool FileDataOptions::check_if_residues_are_termini() const { return check_if_residues_are_termini_; }
+//std::string FileDataOptions::check_if_residues_are_termini() const { return check_if_residues_are_termini_; }
+std::string FileDataOptions::check_if_residues_are_Ntermini() const { return check_if_residues_are_Ntermini_; }
+std::string FileDataOptions::check_if_residues_are_Ctermini() const { return check_if_residues_are_Ctermini_; }
 bool FileDataOptions::exit_if_missing_heavy_atoms() const { return exit_if_missing_heavy_atoms_; }
 bool FileDataOptions::ignore_unrecognized_res() const { return ignore_unrecognized_res_; }
 bool FileDataOptions::ignore_waters() const { return ignore_waters_; }
@@ -67,8 +71,12 @@ bool FileDataOptions::remember_unrecognized_water() const { return remember_unre
 std::string const & FileDataOptions::chains_whose_residues_are_separate_chemical_entities() const { return chains_whose_residues_are_separate_chemical_entities_; }
 
 // mutators
-void FileDataOptions::set_check_if_residues_are_termini( bool check_if_residues_are_termini )
-{ check_if_residues_are_termini_ = check_if_residues_are_termini; }
+//void FileDataOptions::set_check_if_residues_are_termini( std::string check_if_residues_are_termini )
+//{ check_if_residues_are_termini_ = check_if_residues_are_termini; }
+void FileDataOptions::set_check_if_residues_are_Ntermini( std::string check_if_residues_are_Ntermini )
+{ check_if_residues_are_Ntermini_ = check_if_residues_are_Ntermini; }
+void FileDataOptions::set_check_if_residues_are_Ctermini( std::string check_if_residues_are_Ctermini )
+{ check_if_residues_are_Ctermini_ = check_if_residues_are_Ctermini; }
 
 void FileDataOptions::set_exit_if_missing_heavy_atoms( bool exit_if_missing_heavy_atoms )
 { exit_if_missing_heavy_atoms_ = exit_if_missing_heavy_atoms; }
@@ -106,7 +114,9 @@ void FileDataOptions::init_from_options()
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	
-	set_check_if_residues_are_termini( option[ in::termini ].value());
+	//set_check_if_residues_are_termini( option[ in::termini ].value());
+	set_check_if_residues_are_Ntermini( option[ in::Ntermini ].value());
+	set_check_if_residues_are_Ctermini( option[ in::Ctermini ].value());
 	set_exit_if_missing_heavy_atoms( option[ run::exit_if_missing_heavy_atoms ].value());
 	set_ignore_unrecognized_res( option[ in::ignore_unrecognized_res ]());
 	set_ignore_waters( option[ in::ignore_waters ]());

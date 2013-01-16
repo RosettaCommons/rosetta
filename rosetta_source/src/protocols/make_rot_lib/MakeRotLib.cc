@@ -325,10 +325,10 @@ init_rotamers_centroids
 	// create full_aa_name
 	std::string patch;
 	if ( is_peptoid ) { // use this patch if we want peptoids
-		patch = "_p:ActeylatedNtermDimethylatedCtermPeptoidFull";
+		patch = "_p:AcetylatedNtermDimethylatedCtermPeptoidFull";
 		std::cout << "Making a PEPTOID rotamer library..." << std::endl;
 	} else { // use this patch if protein
-		patch = "_p:MethylatedCtermProteinFull_p:ActylatedNtermProteinFull";
+		patch = "_p:MethylatedCtermProteinFull_p:AcetylatedNtermProteinFull";
 		std::cout << "Making a PROTEIN rotamer library..." << std::endl;
 	}
 

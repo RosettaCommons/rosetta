@@ -218,7 +218,7 @@ public:
 	apply( ResidueType & rsd ) const
 	{
 		rsd.add_property( property_ );
-		//std::cout << "AddProperty::apply: " << property_ << std::endl;
+		//TR_PatchOperations.Debug << "AddProperty::apply: " << property_ << std::endl;
 		return false;
 	}
 
@@ -300,6 +300,31 @@ private:
 	std::string atom2_;
 	std::string atom3_;
 	std::string atom4_;
+};
+
+class AddProtonChi : public PatchOperation {
+public:
+
+	/// constructor
+	AddProtonChi(
+		Size const & chino_in, utility::vector1<core::Real> const & samples, utility::vector1<core::Real> const & extrasamples
+	):
+		chino_( chino_in ), samples_(samples), extrasamples_(extrasamples)
+	{}
+
+	/// add a proton chi angle
+	bool
+	apply( ResidueType & rsd ) const
+	{
+		rsd.set_proton_chi( chino_, samples_, extrasamples_ );
+		return false;
+	}
+
+private:
+	/// atoms between which a chi angle is added
+	Size chino_;
+	utility::vector1<core::Real> samples_;
+	utility::vector1<core::Real> extrasamples_;
 };
 
 
@@ -443,7 +468,7 @@ public:
 				rsd.has( atom1_ ) << ' ' << atom2_ << ' ' << rsd.has( atom2_ ) << std::endl;
 			return true; // failure
 		} else {
-			//std::cout << "AddBond::apply: " << atom1_ << ' ' << atom2_ << std::endl;
+			//TR_PatchOperations.Debug << "AddBond::apply: " << atom1_ << ' ' << atom2_ << std::endl;
 			rsd.add_bond( atom1_, atom2_ );
 		}
 		return false;

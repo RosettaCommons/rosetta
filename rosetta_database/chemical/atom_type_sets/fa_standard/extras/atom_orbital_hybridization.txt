@@ -21,6 +21,7 @@ CAbb    0                         0              0
 CObb    2                         1              0.7 
 OCbb    2                         2              0.6
 Phos    0                         0              0
+Pbb     0                         0              0    # copied from Phos
 Hpol    0                         0              0
 Hapo    0                         0              0
 Haro    0                         0              0

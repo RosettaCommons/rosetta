@@ -144,7 +144,7 @@ read_topology_file(
 	if ( !data.good() ) {
 		utility_exit_with_message("Cannot open file '"+filename+"'");
 	}
-	return read_topology_file(data,atom_types,elements,mm_atom_types,orbital_atom_types,rsd_type_set);
+	return read_topology_file(data, atom_types, elements, mm_atom_types, orbital_atom_types, rsd_type_set);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

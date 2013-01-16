@@ -87,8 +87,8 @@ VariantType const DIMETHYLATION( "DIMETHYLATION" );
 VariantType const TRIMETHYLATION( "TRIMETHYLATION" );
 VariantType const DIIODINATION( "DIIODINATION" );
 
-/// @brief Actyleated N-terminus cap, written for creating amino acid dipeptides for NCAA rotamer libraries
-VariantType const ACTYLATED_NTERMINUS( "ACTYLATED_NTERMINUS" );
+/// @brief Acetylated N-terminus cap, written for creating amino acid dipeptides for NCAA rotamer libraries
+VariantType const ACETYLATED_NTERMINUS( "ACETYLATED_NTERMINUS" );
 /// @brief Methylated C-terminus cap, written for creating amino acid dipeptides for NCAA rotamer libraries
 VariantType const METHYLATED_CTERMINUS( "METHYLATED_CTERMINUS" );
 VariantType const SC_ORBITALS("SC_ORBITALS");

@@ -60,10 +60,10 @@ extern VariantType const DIMETHYLATION;
 extern VariantType const TRIMETHYLATION;
 extern VariantType const DIIODINATION;
 
-extern VariantType const ACTYLATED_NTERMINUS;
+extern VariantType const ACETYLATED_NTERMINUS;
 extern VariantType const METHYLATED_CTERMINUS;
 
-// this has different geometry/atoms then ACTYLATED_NTERMINUS above:
+// this has different geometry/atoms then ACETYLATED_NTERMINUS above:
 extern VariantType const N_ACETYLATION;
 // this is distinct from METHYLATED_CTERMINUS above:
 extern VariantType const C_METHYLAMIDATION;

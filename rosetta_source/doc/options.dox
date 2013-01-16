@@ -97,9 +97,14 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Input option group</dd><br>
 </dl>
 <dl>
-<dt><b>-termini</b> \<Boolean\><dt>
-<dd>Put full N and C termini on input structures</dd><br>
-<dd>Default: true</dd><br>
+<dt><b>-Ntermini</b> \<String\><dt>
+<dd>Put full N termini on pose</dd><br>
+<dd>Default: "ALL"</dd><br>
+</dl>
+<dl>
+<dt><b>-Ctermini</b> \<String\><dt>
+<dd>Put full C termini on pose</dd><br>
+<dd>Default: "ALL"</dd><br>
 </dl>
 <dl>
 <dt><b>-ignore_unrecognized_res</b> \<Boolean\><dt>

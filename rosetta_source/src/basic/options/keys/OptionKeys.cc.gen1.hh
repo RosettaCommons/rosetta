@@ -652,3 +652,4 @@ namespace lh { namespace symfragrm { BooleanOptionKey const symfragrm( "lh:symfr
 namespace lh { namespace symfragrm { FileVectorOptionKey const pdblist( "lh:symfragrm:pdblist" );  } }
 namespace rbe { BooleanOptionKey const rbe( "rbe" );  }
 namespace rbe { StringOptionKey const server_url( "rbe:server_url" );  }
+namespace rbe { StringOptionKey const server_port( "rbe:server_port" );  }

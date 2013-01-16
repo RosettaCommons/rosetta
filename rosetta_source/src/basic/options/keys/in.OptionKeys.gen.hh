@@ -22,7 +22,8 @@ namespace options {
 namespace OptionKeys {
 
 namespace in { extern BooleanOptionKey const in; }
-namespace in { extern BooleanOptionKey const termini; }
+namespace in { extern StringOptionKey const Ntermini; }
+namespace in { extern StringOptionKey const Ctermini; }
 namespace in { extern BooleanOptionKey const ignore_unrecognized_res; }
 namespace in { extern BooleanOptionKey const ignore_waters; }
 namespace in { extern BooleanOptionKey const add_orbitals; }

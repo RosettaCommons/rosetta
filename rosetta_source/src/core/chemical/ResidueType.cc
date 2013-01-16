@@ -153,7 +153,7 @@ ResidueType::ResidueType(
 	is_terminus_( false ),
 	is_lower_terminus_( false ),
 	is_upper_terminus_( false ),
-	is_actylated_nterminus_( false ),
+	is_acetylated_nterminus_( false ),
 	is_methylated_cterminus_( false ),
 	is_coarse_( false ), //currently for coarse_RNA only
 	is_adduct_( false ),
@@ -868,12 +868,20 @@ ResidueType::add_property( std::string const & property )
 	} else if ( property == "UPPER_TERMINUS" ) {
 		is_terminus_ = true;
 		is_upper_terminus_ = true;
+	} else if ( property == "PHOSPHONATE" ) {
+		is_polymer_ = true;
+		is_phosphonate_ = true;
+	} else if ( property == "PHOSPHONATE_UPPER" ) {
+		is_terminus_ = true;
+		is_upper_terminus_ = true;
+		is_phosphonate_ = true;
+		is_phosphonate_upper_ = true;
 	} else if ( property == "TERMINUS" ) {
 		is_terminus_ = true;
-	} else if ( property == "ACTYLATED_NTERMINUS" ) {
+	} else if ( property == "ACETYLATED_NTERMINUS" ) {
 		is_terminus_ = true;
 		is_lower_terminus_ = true;
-		is_actylated_nterminus_ = true;
+		is_acetylated_nterminus_ = true;
 	} else if ( property == "METHYLATED_CTERMINUS" ) {
 		is_terminus_ = true;
 		is_upper_terminus_ = true;
@@ -943,8 +951,12 @@ ResidueType::delete_property( std::string const & property )
 		is_upper_terminus_ = false;
 	} else if ( property == "TERMINUS" ) {
 		is_terminus_ = false;
-	} else if ( property == "ACTYLATED_NTERMINUS" ) {
-		is_actylated_nterminus_ = false;
+	} else if ( property == "PHOSPHONATE" ) {
+		is_phosphonate_ = false;
+	} else if ( property == "PHOSPHONATE_UPPER" ) {
+		is_phosphonate_upper_ = false;
+	} else if ( property == "ACETYLATED_NTERMINUS" ) {
+		is_acetylated_nterminus_ = false;
 	} else if ( property == "METHYLATED_CTERMINUS" ) {
 		is_methylated_cterminus_ = false;
 	} else {
@@ -1856,7 +1868,7 @@ ResidueType::set_icoor(
 	Size const atomno( id.atomno() );
 	switch ( id.type() ) {
 	case ICoorAtomID::INTERNAL:
-		if ( atoms_.size() < atomno ) utility_exit_with_message("ResidueType:: shoudnt get here!");//icoor_.resize(atomno);
+		if ( atoms_.size() < atomno ) utility_exit_with_message("ResidueType:: shouldn't get here!");//icoor_.resize(atomno);
 		atoms_[ atomno ].icoor( ic );
 		// update atom_base?
 		if ( ( stub_atom1 != atm ) && has( stub_atom1 ) &&

@@ -140,6 +140,25 @@ patch_operation_from_patch_file_line( std::string const & line ) {
 		return new AddChi( chino, atom1, atom2, atom3, atom4 );
 		//Added by Andy M. Chen in June 2009
 		//    This is needed for PTM's, which often result in one or more extra chi angles
+	} else if ( tag == "ADD_PROTON_CHI") {
+		Size chino, nsamples, nextra_samples;
+		std::string dummy;
+		l >> chino;
+		l >> dummy; // should be "SAMPLES"
+		l >> nsamples;
+		utility::vector1< Real > samples( nsamples );
+		for ( Size ii = 1; ii <= nsamples; ++ii ) {
+			l >> samples[ ii ];
+		}
+		l >> dummy; // should be "EXTRA"
+		l >> nextra_samples;
+		utility::vector1< Real > extra_samples( nextra_samples );
+		for ( Size ii = 1; ii <= nextra_samples; ++ii ) {
+			l >> extra_samples[ ii ];
+		}
+		if ( l.fail() ) return 0;
+		return new AddProtonChi( chino, samples, extra_samples );
+
 	} else if ( tag == "REDEFINE_CHI" ) {
 		l >> chino >> atom1 >> atom2 >> atom3 >> atom4;
 		if ( l.fail() ) return 0;

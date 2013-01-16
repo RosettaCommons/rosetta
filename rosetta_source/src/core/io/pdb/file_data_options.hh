@@ -45,7 +45,9 @@ public:
 	std::string type() const;
 
 	// accessors
-	bool check_if_residues_are_termini() const;
+	//std::string check_if_residues_are_termini() const;
+	std::string check_if_residues_are_Ntermini() const;
+	std::string check_if_residues_are_Ctermini() const;
 	bool exit_if_missing_heavy_atoms() const;
 	bool ignore_unrecognized_res() const;
 	bool ignore_waters() const;
@@ -58,7 +60,9 @@ public:
 	std::string const & chains_whose_residues_are_separate_chemical_entities() const;
 
 	// mutators
-	void set_check_if_residues_are_termini( bool check_if_residues_are_termini );
+	//void set_check_if_residues_are_termini( std::string check_if_residues_are_termini );
+	void set_check_if_residues_are_Ntermini( std::string check_if_residues_are_Ntermini );
+	void set_check_if_residues_are_Ctermini( std::string check_if_residues_are_Ctermini );
 	void set_exit_if_missing_heavy_atoms( bool exit_if_missing_heavy_atoms );
 	void set_ignore_unrecognized_res( bool ignore_unrecognized_res );
 	void set_ignore_waters( bool ignore_waters );
@@ -75,7 +79,9 @@ private:
 	void init_from_options();
 
 private:
-	bool check_if_residues_are_termini_; //termini
+	//std::string check_if_residues_are_termini_; // DEFAULT "ALL" chains. String of 1-letter chains to apply termini to
+	std::string check_if_residues_are_Ntermini_; // DEFAULT "ALL" chains. String of 1-letter chains to apply termini to
+	std::string check_if_residues_are_Ctermini_; // DEFAULT "ALL" chains. String of 1-letter chains to apply termini to
 	bool exit_if_missing_heavy_atoms_;
 	bool ignore_unrecognized_res_;
 	bool ignore_waters_;

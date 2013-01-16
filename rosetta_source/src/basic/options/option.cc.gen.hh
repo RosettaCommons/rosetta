@@ -22,7 +22,8 @@ option.add( basic::options::OptionKeys::rigid::stages, "Number of stages over wh
 option.add( basic::options::OptionKeys::rigid::temperature, "Monte Carlo temperature" ).def(2.0);
 option.add( basic::options::OptionKeys::rigid::translation, "Translation magnitude" ).def(0.5);
 option.add( basic::options::OptionKeys::in::in, "Input option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::in::termini, "Put full N and C termini on input structures" ).def(true);
+option.add( basic::options::OptionKeys::in::Ntermini, "Put full N termini on pose" ).def("ALL");
+option.add( basic::options::OptionKeys::in::Ctermini, "Put full C termini on pose" ).def("ALL");
 option.add( basic::options::OptionKeys::in::ignore_unrecognized_res, "Do not abort if unknown residues are found in PDB file;  instead, ignore them. Note this implies -in:ignore_waters" ).def(false);
 option.add( basic::options::OptionKeys::in::ignore_waters, "Do not abort if HOH water residues are found in PDB file;  instead, ignore them." ).def(false);
 option.add( basic::options::OptionKeys::in::add_orbitals, "Will add orbitals to residues only. Does not include orbitals to ligands. Done through params file reading." ).def(false);
@@ -1313,10 +1314,10 @@ option.add( basic::options::OptionKeys::lh::symfragrm::symfragrm, "symfragrm opt
 option.add( basic::options::OptionKeys::lh::symfragrm::pdblist, "list of pdbs to be processed" );
 option.add( basic::options::OptionKeys::rbe::rbe, "rbe option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::rbe::server_url, "serverurl for rosetta backend" );
+option.add( basic::options::OptionKeys::rbe::server_port, "port for rosetta backend" ).def("80");
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::rbe::server_port, "port for rosetta backend" ).def("80");
-option.add( basic::options::OptionKeys::rbe::poll_frequency, "No description" ).def(1.0);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::rbe::poll_frequency, "No description" ).def(1.0);
 option.add( basic::options::OptionKeys::blivens::blivens, "blivens option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::blivens::disulfide_scorer::disulfide_scorer, "disulfide_scorer option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::blivens::disulfide_scorer::nds_prob, "The probability of scoring a non-disulfide pair" ).def(0.0);
@@ -1969,11 +1970,11 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_templat
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
+option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
+option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
-option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
-option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_pdb, "PDB file from which to draw constraints" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrbmoves, "number of rigid-body moves" ).def(100);
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrboutercycles, "number of rigid-body moves" ).def(5);

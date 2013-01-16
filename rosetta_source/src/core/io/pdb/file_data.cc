@@ -863,6 +863,13 @@ build_pose_as_is1(
 	std::string::const_iterator const entities_begin = chains_whose_residues_are_separate_chemical_entities.begin();
 	std::string::const_iterator const entities_end = chains_whose_residues_are_separate_chemical_entities.end();
 
+	std::string chains_to_check_if_Ntermini= options.check_if_residues_are_Ntermini() ;
+	std::string::const_iterator const check_Ntermini_begin = chains_to_check_if_Ntermini.begin();
+	std::string::const_iterator const check_Ntermini_end = chains_to_check_if_Ntermini.end();
+	std::string chains_to_check_if_Ctermini= options.check_if_residues_are_Ctermini() ;
+	std::string::const_iterator const check_Ctermini_begin = chains_to_check_if_Ctermini.begin();
+	std::string::const_iterator const check_Ctermini_end = chains_to_check_if_Ctermini.end();
+
 	//mjo do not add residue by bond if the last residue was not
 	//recognized
 	bool last_residue_was_recognized(true);
@@ -881,6 +888,10 @@ build_pose_as_is1(
 				rinfo.terCount == rinfos[i-1].terCount && !separate_chemical_entity);
 		bool const same_chain_next = ( i < nres_pdb && chainID == rinfos[i+1].chainID &&
 				rinfo.terCount == rinfos[i+1].terCount && !separate_chemical_entity);
+		bool const check_Ntermini_for_this_chain = ("ALL" == chains_to_check_if_Ntermini) ?
+				true : find(check_Ntermini_begin, check_Ntermini_end, chainID ) ==  check_Ntermini_end;
+		bool const check_Ctermini_for_this_chain = ("ALL" == chains_to_check_if_Ctermini) ?
+				true : find(check_Ctermini_begin, check_Ctermini_end, chainID ) ==  check_Ctermini_end;
 
 		// Determine polymer information: termini, branch points, etc.
 		bool const is_branch_point = fd.links.count(resid);  // if found in the links map
@@ -889,8 +900,8 @@ build_pose_as_is1(
 			branch_lower_termini.push_back(fd.links[resid].resID2_);
 		}
 		bool const is_branch_lower_terminus = branch_lower_termini.contains(resid);
-		bool const is_lower_terminus( i == 1 || rinfos.empty() || (!same_chain_prev && !is_branch_lower_terminus) );
-		bool const is_upper_terminus( i == nres_pdb || !same_chain_next );
+		bool const is_lower_terminus( ( i == 1 || rinfos.empty() || (!same_chain_prev && !is_branch_lower_terminus) ) && check_Ntermini_for_this_chain );
+		bool const is_upper_terminus( ( i == nres_pdb || !same_chain_next ) && check_Ctermini_for_this_chain );
 
 		TR.Debug << "Residue " << i << std::endl;
 		if (is_lower_terminus) {
@@ -923,36 +934,47 @@ build_pose_as_is1(
 		// try to minimize atoms missing from xyz
 		Size best_index(0), best_rsd_missing( 99999 ), best_xyz_missing( 99999 );
 
+
 		for ( Size j=1; j<= rsd_type_list.size(); ++j ) {
 			ResidueType const & rsd_type( *(rsd_type_list[j]) );
 			bool const is_polymer( rsd_type.is_polymer() ); // need an example residue type, though this will
 			// remain fixed for all residue_types with the same name3
 
+			//TR.Debug << rsd_type.name() << " is_polymer " << is_polymer << std::endl;
+			//TR.Debug << rsd_type.name() << " is_lower_terminus " << rsd_type.has_variant_type( LOWER_TERMINUS ) << std::endl;
+			//TR.Debug << rsd_type.name() << " is_upper_terminus " << rsd_type.has_variant_type( UPPER_TERMINUS ) << std::endl;
+
 			// only take the desired variants
 			if ( is_polymer && ( is_lower_terminus != rsd_type.has_variant_type( LOWER_TERMINUS ) ||
 					is_upper_terminus != rsd_type.has_variant_type( UPPER_TERMINUS )) ) {
 				TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
+				//TR.Debug << "because a polymer and not a terminus" << std::endl;
 				continue;
 			}
 			if (is_polymer && (is_branch_point != rsd_type.has_variant_type(BRANCH_POINT))) {
 				TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
+				//TR.Debug << "because a polymer and not a branchpoint" << std::endl;
 				continue;
 			}
 			if (is_polymer && (is_branch_lower_terminus != rsd_type.has_variant_type(BRANCH_LOWER_TERMINUS))) {
 				TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
+				//TR.Debug << "because a polymer and not a branch lower terminus" << std::endl;
 				continue;
 			}
 			if ( rsd_type.aa() == aa_cys && rsd_type.has_variant_type( DISULFIDE ) && pdb_name != "CYD" ) {
 				TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
+				//TR.Debug << "because CYS and is disulfide and not CYD" << std::endl;
 				continue;
 			}
 			if ( !options.keep_input_protonation_state() &&
 				( rsd_type.has_variant_type( PROTONATED ) || rsd_type.has_variant_type( DEPROTONATED ) )){
 				TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
+				//TR.Debug << "because of protonation state" << std::endl;
 				continue;
 			}
 			if (rsd_type.is_carbohydrate() && residue_type_base_name(rsd_type) != fd.carbohydrate_residue_type_base_names[resid]) {
 				TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
+				//TR.Debug << "because is carbohydrate" << std::endl;
 				continue;
 			}
 
@@ -1055,7 +1077,7 @@ build_pose_as_is1(
 		if (!old_nres) /*first residue?*/ {
 			pose.append_residue_by_bond( *new_rsd );
 		} else {
-			if (is_lower_terminus ||
+			if ( ( is_lower_terminus || !check_Ntermini_for_this_chain ) ||
 					is_branch_lower_terminus ||
 					!new_rsd->is_polymer() ||
 					!pose.residue_type(old_nres).is_polymer() ||
@@ -1071,7 +1093,7 @@ build_pose_as_is1(
 
 
 		// update the pose-internal chain label if necessary
-		if ( (is_lower_terminus || is_branch_lower_terminus) && pose.total_residue() > 1 ) {
+		if ( ( ( is_lower_terminus || !check_Ntermini_for_this_chain ) || is_branch_lower_terminus) && pose.total_residue() > 1 ) {
 			pose.conformation().insert_chain_ending( pose.total_residue() - 1 );
 		}
 
@@ -1081,27 +1103,37 @@ build_pose_as_is1(
 
 	// Check termini status of newly created pose residues.
 	// Will this ever happen? ~ Labonte
-	if( options.check_if_residues_are_termini() ) {
-		Size const nres( pose.total_residue() );
-		for ( Size i=1; i<= nres; ++i ) {
-			//Residue const & rsd( pose.residue( i ) ); // THIS WAS A BAD BUG
-			if ( !pose.residue_type(i).is_polymer() ) continue;
-			if ( !pose.residue_type(i).is_lower_terminus() &&
-					( i == 1 ||
-					!pose.residue_type( i-1 ).is_polymer() ||
-					(pose.residue_type( i-1 ).is_upper_terminus() &&
-							!pose.residue_type( i ).has_variant_type(BRANCH_LOWER_TERMINUS)) ) ) {
-				TR << "Adding undetected lower terminus type to residue " << i << std::endl;
-				core::pose::add_lower_terminus_type_to_pose_residue( pose, i );
-			}
-			if ( !pose.residue_type(i).is_upper_terminus() &&
-					( i == nres ||
-					!pose.residue_type(i+1).is_polymer() ||
-					pose.residue_type(i+1).is_lower_terminus() ||
-					pose.residue_type(i+1).has_variant_type(BRANCH_LOWER_TERMINUS)) ) {
-				TR << "Adding undetected upper terminus type to residue " << i << std::endl;
-				core::pose::add_upper_terminus_type_to_pose_residue( pose, i );
-			}
+
+	Size const nres( pose.total_residue() );
+	for ( Size i=1; i<= nres; ++i ) {
+		ResidueInformation const & rinfo = rinfos[i];
+		char chainID = rinfo.chainID;
+
+		bool const check_Ntermini_for_this_chain = ("ALL" == chains_to_check_if_Ntermini) ?
+					true : find(check_Ntermini_begin, check_Ntermini_end, chainID ) ==  check_Ntermini_end;
+		bool const check_Ctermini_for_this_chain = ("ALL" == chains_to_check_if_Ctermini) ?
+					true : find(check_Ctermini_begin, check_Ctermini_end, chainID ) ==  check_Ctermini_end;
+
+		if ( !check_Ntermini_for_this_chain ) continue;
+		if ( !check_Ctermini_for_this_chain ) continue;
+
+		//Residue const & rsd( pose.residue( i ) ); // THIS WAS A BAD BUG
+		if ( !pose.residue_type(i).is_polymer() ) continue;
+		if ( !pose.residue_type(i).is_lower_terminus() &&
+				( i == 1 ||
+				!pose.residue_type( i-1 ).is_polymer() ||
+				(pose.residue_type( i-1 ).is_upper_terminus() &&
+						!pose.residue_type( i ).has_variant_type(BRANCH_LOWER_TERMINUS)) ) ) {
+			TR << "Adding undetected lower terminus type to residue " << i << std::endl;
+			core::pose::add_lower_terminus_type_to_pose_residue( pose, i );
+		}
+		if ( !pose.residue_type(i).is_upper_terminus() &&
+				( i == nres ||
+				!pose.residue_type(i+1).is_polymer() ||
+				pose.residue_type(i+1).is_lower_terminus() ||
+				pose.residue_type(i+1).has_variant_type(BRANCH_LOWER_TERMINUS)) ) {
+			TR << "Adding undetected upper terminus type to residue " << i << std::endl;
+			core::pose::add_upper_terminus_type_to_pose_residue( pose, i );
 		}
 	}
 
@@ -1144,7 +1176,7 @@ build_pose_as_is1(
 	utility::vector1< int > pdb_numbering;
 	//sml chain char
 	utility::vector1< char > pdb_chains, insertion_codes;
-	Size const nres( pose.total_residue() );
+	//Size const nres( pose.total_residue() );
 	for ( Size i(1); i <= nres; ++i ) {
 		ResidueInformation const & rinfo = rinfos[pose_to_rinfo[i]];
 		std::string resid( rinfo.resid.substr(0,4) );

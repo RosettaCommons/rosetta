@@ -21,6 +21,7 @@ CAbb      2.1285
 CObb      1.8900
 OCbb      1.4400
 Phos      2.0425
+Pbb       2.0425  # copied from Phos
 Hpol      0.5400
 Hapo      1.0800
 Haro      1.0800

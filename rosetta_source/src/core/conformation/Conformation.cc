@@ -2066,7 +2066,7 @@ Conformation::backbone_torsion_angle_atoms(
 	assert( torsion >= 1 && torsion <= ntorsions );
 
 	// this is hacky
-	if( rsd.has_variant_type( chemical::ACTYLATED_NTERMINUS ) && rsd.has_variant_type( chemical::METHYLATED_CTERMINUS ) ) {
+	if( rsd.has_variant_type( chemical::ACETYLATED_NTERMINUS ) && rsd.has_variant_type( chemical::METHYLATED_CTERMINUS ) ) {
 		// set all id rsds to seqpos since they are all in the same residue
 		id1.rsd() = id2.rsd() = id3.rsd() = id4.rsd() = seqpos;
 
@@ -2112,7 +2112,7 @@ Conformation::backbone_torsion_angle_atoms(
 			if ( rsd.has_variant_type( chemical::CUTPOINT_UPPER ) ) {
 				id1.rsd() = seqpos;
 				id1.atomno() = rsd.atom_index( "OVU1" );
-			} else if ( rsd.has_variant_type( chemical::ACTYLATED_NTERMINUS ) ) {
+			} else if ( rsd.has_variant_type( chemical::ACETYLATED_NTERMINUS ) ) {
 				id1.rsd() = seqpos;
 				id1.atomno() = rsd.atom_index( "CO" );
 			}	else if ( rsd.has_variant_type( "N_ACETYLATION" ) ) {

@@ -1252,11 +1252,11 @@ public:
 		return is_upper_terminus_;
 	}
 
-	/// @brief is actylated n terminus
+	/// @brief is acetylated n terminus
 	bool
-	is_actylated_nterminus() const
+	is_acetylated_nterminus() const
 	{
-		return is_actylated_nterminus_;
+		return is_acetylated_nterminus_;
 	}
 
 	/// @brief is methylated c terminus
@@ -1957,7 +1957,9 @@ private:
 	bool is_terminus_; // last or first residue in a chain; set to TRUE during terminus patching
 	bool is_lower_terminus_; // first residue in a chain; set to TRUE during terminus patching
 	bool is_upper_terminus_; // last residue in a chain; set to TRUE during terminus patching
-	bool is_actylated_nterminus_;
+	bool is_phosphonate_; // amino phosphonic acid instead of amino carboxylic acid
+	bool is_phosphonate_upper_;
+	bool is_acetylated_nterminus_;
 	bool is_methylated_cterminus_;
 	bool is_coarse_; //currently for coarse_RNA only
 	bool is_adduct_;

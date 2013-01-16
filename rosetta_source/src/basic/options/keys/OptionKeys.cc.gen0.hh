@@ -17,7 +17,8 @@ namespace rigid { IntegerOptionKey const stages( "rigid:stages" );  }
 namespace rigid { RealOptionKey const temperature( "rigid:temperature" );  }
 namespace rigid { RealOptionKey const translation( "rigid:translation" );  }
 namespace in { BooleanOptionKey const in( "in" );  }
-namespace in { BooleanOptionKey const termini( "in:termini" );  }
+namespace in { StringOptionKey const Ntermini( "in:Ntermini" );  }
+namespace in { StringOptionKey const Ctermini( "in:Ctermini" );  }
 namespace in { BooleanOptionKey const ignore_unrecognized_res( "in:ignore_unrecognized_res" );  }
 namespace in { BooleanOptionKey const ignore_waters( "in:ignore_waters" );  }
 namespace in { BooleanOptionKey const add_orbitals( "in:add_orbitals" );  }
