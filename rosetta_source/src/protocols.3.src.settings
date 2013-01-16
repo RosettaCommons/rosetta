@@ -578,6 +578,7 @@ sources = {
 		"SetIGTypeOperation",
 		"ThreadSequenceOperation",
 		"SelectBySASAOperation",
+		"RestrictNativeResiduesOperation",
 	],
 }
 include_path = [
