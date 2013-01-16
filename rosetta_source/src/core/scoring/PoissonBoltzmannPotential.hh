@@ -18,7 +18,6 @@
 #include <core/scoring/PoissonBoltzmannPotential.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
-// Utility headers
 #include <ObjexxFCL/FArray3D.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
@@ -30,6 +29,7 @@
 #include <utility/file/PathName.hh>
 
 #include <map>
+#include <vector>
 
 namespace core {
 namespace scoring {
@@ -91,7 +91,6 @@ public:
 	void solve_pb( core::pose::Pose const & pose, 
 								 std::string const & state_tag,
 								 std::map<std::string, bool> const & is_residue_charged_by_name );
-
 private:
 	numeric::xyzMatrix< core::Real > i2c_, c2i_;
 	numeric::xyzVector< core::Real > lower_bound_;
@@ -110,7 +109,12 @@ private:
 			core::pose::Pose const & pose) const;
 
 	/// Read & load the APBS results
+#ifdef LINK_APBS_LIB
+	void load_potential( const double grid_meta[],
+											 const double pot[] );
+#else
 	void load_APBS_potential();
+#endif
 
 	/// Write out .pqr
 	void write_pqr( core::pose::Pose const & pose,

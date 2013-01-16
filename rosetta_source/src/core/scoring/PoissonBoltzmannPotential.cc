@@ -27,6 +27,7 @@
 
 // Unit Headers
 #include <core/scoring/PoissonBoltzmannPotential.hh>
+#include <core/scoring/APBSWrapper.hh>
 
 // Package Headers
 #include <core/scoring/electron_density/util.hh>
@@ -53,6 +54,7 @@
 
 #include <core/chemical/AtomType.hh>
 #include <utility/vector1.hh>
+#include <vector>
 
 // option key includes
 
@@ -122,11 +124,110 @@ PB::eval_PB_energy_residue(
 
 }
 
-/// Force loading potential from the user given file
+//============================================================================
+#ifdef LINK_APBS_LIB 1  // APBS libraries are linked
+
+void
+PB::solve_pb( core::pose::Pose const & pose,
+							std::string const & tag, 
+							std::map<std::string, bool> const &charged_residues ) 
+{
+	APBSWrapper apbs(pose, charged_residues);
+	APBSResultCOP result = 0;
+
+	result = apbs.exec();
+
+  if( result == 0 ) {
+		TR << "APBS failed!  Terminating the program..." << std::endl;
+		TR.flush();
+		runtime_assert(false);
+  }
+	TR << "Solved PB. Loading potential..." << std::endl;
+	const double * meta = result->grid_meta;
+	const double * data = &(result->grid_data[0][0]);
+	load_potential(meta, data);
+}
+void
+PB::load_potential(const double grid_meta[],
+									 const double pot[]) {
+	int nx = grid_meta[1];
+	int ny = grid_meta[2];
+	int nz = grid_meta[3];
+  n_grid_[0] = nx;
+  n_grid_[1] = ny;
+  n_grid_[2] = nz;
+  grid_spacing_[0] = grid_meta[4];
+  grid_spacing_[1] = grid_meta[5];
+  grid_spacing_[2] = grid_meta[6];
+  //double centx = grid_meta[7];
+  //double centy = grid_meta[8];
+  //double centz = grid_meta[9];
+  lower_bound_[0] = grid_meta[10];
+  lower_bound_[1] = grid_meta[11];
+  lower_bound_[2] = grid_meta[12];
+
+	i2c_ = numeric::xyzMatrix <core::Real>::rows(
+																							 grid_spacing_[0],0.,0.,
+																							 0.,grid_spacing_[1],0.,
+																							 0.,0.,grid_spacing_[2]);
+	c2i_ = numeric::xyzMatrix <core::Real>::rows(
+																							 1./grid_spacing_[0],0.,0.,
+																							 0.,1./grid_spacing_[1],0.,
+																							 0.,0.,1./grid_spacing_[2]);
+
+	potential_.dimension(nx, ny, nz);
+
+  double cap =  basic::options::option[ basic::options::OptionKeys::pb_potential::potential_cap ];
+
+	int icol=0;
+	int u;
+	int lines = 0;
+
+	//using namespace ObjexxFCL::fmt;
+	//std::ofstream ofs("mytest.pqr");
+	//ofs << "object 1 class gridpositions counts " << nx << " " << ny << " " << nz << std::endl;
+	//ofs << "origin " << lower_bound_[0] << " " << lower_bound_[1] << " " << lower_bound_[2] << std::endl;
+	//ofs << "object 3 array type double rank 0 items " << nx*ny*nz << " data follows" << std::endl;
+	for (int i=1; i<=nx; i++) {
+		for (int j=1; j<=ny; j++) {
+			for (int k=1; k<=nz; k++) {
+				u = (k-1)*(nx)*(ny)+(j-1)*(nx)+(i-1);
+				/*
+				ofs << E(12,6,pot[u]) << " ";
+				icol++;
+				if (icol == 3) {
+				    icol = 0;
+						lines++;
+						//printf("\n");
+						ofs << std::endl;
+				}
+				*/
+				if( pot[u] > cap ){
+					potential_(i,j,k) = cap;
+				}
+				else if( pot[u] < -cap ) {
+					potential_(i,j,k) = -cap;
+				}
+				else{
+					potential_(i,j,k) = pot[u];
+				}
+			}
+		}
+	}
+	//ofs.close();
+	TR << "PB potential is successfully loaded." << std::endl;
+
+	idx2cart(n_grid_, upper_bound_);
+	TR << "Convertion of PB potential to Certesian coordinates is completed" << std::endl;
+}
+
+#else  // APBS libraries are not linked.  Use system call.
+
 void
 PB::solve_pb( core::pose::Pose const & pose, 
 							std::string const & tag, 
-							std::map<std::string, bool> const & is_residue_charged_by_name ) {
+							std::map<std::string, bool> const &charged_residues ) 
+{
 
 	if (basic::options::option[basic::options::OptionKeys::pb_potential::apbs_path].user()) {
 		apbs_path_ = basic::options::option[basic::options::OptionKeys::pb_potential::apbs_path];
@@ -137,10 +238,10 @@ PB::solve_pb( core::pose::Pose const & pose,
 	pqr_filename_ = tag + APBS_PQR_EXT;
 	dx_filename_ = tag + APBS_DX_EXT;
 
-	write_pqr(pose, is_residue_charged_by_name );
+	write_pqr(pose, charged_residues );
 	write_config(pose);
 	std::string command_line(apbs_path_ + " " + config_filename_);
-	system(command_line.c_str());
+	int ret = system(command_line.c_str());
 
 	// Check if APBS succeeded.  If not, get out.
 	std::ifstream dxstream(dx_filename_.c_str());
@@ -154,7 +255,88 @@ PB::solve_pb( core::pose::Pose const & pose,
 	// load the result
 	load_APBS_potential();
 }
+void
+PB::load_APBS_potential()
+{
+	utility::io::izstream p_stream( dx_filename_ );
+  runtime_assert(p_stream);
 
+	std::string line;
+	while (p_stream) {
+		//	# Comments
+		char first_char = p_stream.peek();
+		if ( first_char == '#' ) {
+			p_stream.getline( line );
+			continue;
+		}
+
+		//object 1 class gridpositions counts nx ny nz
+		std::string buff;
+		for (Size i=0;i<5;++i) p_stream >> buff;
+		p_stream >> n_grid_[0] >> n_grid_[1] >> n_grid_[2];
+
+		//origin xmin ymin zmin
+		p_stream >> buff;
+		p_stream >> lower_bound_[0];
+		p_stream >> lower_bound_[1];
+		p_stream >> lower_bound_[2];
+
+		//delta hx 0.0 0.0found
+		//delta 0.0 hy 0.0
+		//delta 0.0 0.0 hz
+
+		p_stream >> buff >> grid_spacing_[0] >> buff >> buff;
+		p_stream >> buff >> buff >> grid_spacing_[1] >> buff;
+		p_stream >> buff >> buff >> buff >> grid_spacing_[2];
+		i2c_ = numeric::xyzMatrix <core::Real>::rows(
+													 grid_spacing_[0],0.,0.,
+													 0.,grid_spacing_[1],0.,
+													 0.,0.,grid_spacing_[2]);
+		c2i_ = numeric::xyzMatrix <core::Real>::rows(
+													 1./grid_spacing_[0],0.,0.,
+													 0.,1./grid_spacing_[1],0.,
+													 0.,0.,1./grid_spacing_[2]);
+
+		//object 2 class gridconnections counts nx ny nz
+		//object 3 class array type double rank 0 items n data follows
+		p_stream.getline( line );
+		p_stream.getline( line );
+		p_stream.getline( line );
+
+		//u(0,0,0) u(0,0,1) u(0,0,2)
+		potential_.dimension(n_grid_[0],n_grid_[1],n_grid_[2]);
+
+		for (int i=1; i<=potential_.u1(); i++)
+			for (int j=1; j<=potential_.u2(); j++)
+				for (int k=1; k<=potential_.u3(); k++) {
+					p_stream >> buff;
+					potential_(i,j,k) = atof(buff.c_str());
+					if (potential_(i,j,k) > basic::options::option[ basic::options::OptionKeys::pb_potential::potential_cap ]) {
+						potential_(i,j,k) = basic::options::option[ basic::options::OptionKeys::pb_potential::potential_cap ];
+					}
+					if (potential_(i,j,k) < -basic::options::option[ basic::options::OptionKeys::pb_potential::potential_cap ]) {
+						potential_(i,j,k) = -basic::options::option[ basic::options::OptionKeys::pb_potential::potential_cap ];
+					}
+				}
+		break;
+	}
+
+
+	TR << "PB potential is successfully loaded from: " << dx_filename_ << std::endl;
+
+	idx2cart(n_grid_, upper_bound_);
+	TR << "Convertion of PB potential to Certesian coordinates is completed" << std::endl;
+
+	//attribute "dep" string "positions"
+	//object "regular positions regular connections" class field
+	//component "positions" value 1
+	//component "connections" value 2
+	//component "data" value 3
+
+}
+
+#endif // LINK_APBS_LIB
+//==============================================================================
 void
 PB::write_pqr( core::pose::Pose const & pose,
 							 std::map<std::string, bool> const & is_residue_charged_by_name_) const {
@@ -322,85 +504,6 @@ PB::write_config (core::pose::Pose const & pose) const {
 
 	TR << config_filename_ << " is successfully written." << std::endl;
 }
-	
-void
-PB::load_APBS_potential()
-{
-	utility::io::izstream p_stream( dx_filename_ );
-  runtime_assert(p_stream);
 
-	std::string line;
-	while (p_stream) {
-		//	# Comments
-		char first_char = p_stream.peek();
-		if ( first_char == '#' ) {
-			p_stream.getline( line );
-			continue;
-		}
-
-		//object 1 class gridpositions counts nx ny nz
-		std::string buff;
-		for (Size i=0;i<5;++i) p_stream >> buff;
-		p_stream >> n_grid_[0] >> n_grid_[1] >> n_grid_[2];
-
-		//origin xmin ymin zmin
-		p_stream >> buff;
-		p_stream >> lower_bound_[0];
-		p_stream >> lower_bound_[1];
-		p_stream >> lower_bound_[2];
-
-		//delta hx 0.0 0.0found
-		//delta 0.0 hy 0.0
-		//delta 0.0 0.0 hz
-
-		p_stream >> buff >> grid_spacing_[0] >> buff >> buff;
-		p_stream >> buff >> buff >> grid_spacing_[1] >> buff;
-		p_stream >> buff >> buff >> buff >> grid_spacing_[2];
-		i2c_ = numeric::xyzMatrix <core::Real>::rows(
-													 grid_spacing_[0],0.,0.,
-													 0.,grid_spacing_[1],0.,
-													 0.,0.,grid_spacing_[2]);
-		c2i_ = numeric::xyzMatrix <core::Real>::rows(
-													 1./grid_spacing_[0],0.,0.,
-													 0.,1./grid_spacing_[1],0.,
-													 0.,0.,1./grid_spacing_[2]);
-
-		//object 2 class gridconnections counts nx ny nz
-		//object 3 class array type double rank 0 items n data follows
-		p_stream.getline( line );
-		p_stream.getline( line );
-		p_stream.getline( line );
-
-		//u(0,0,0) u(0,0,1) u(0,0,2)
-		potential_.dimension(n_grid_[0],n_grid_[1],n_grid_[2]);
-
-		for (int i=1; i<=potential_.u1(); i++)
-			for (int j=1; j<=potential_.u2(); j++)
-				for (int k=1; k<=potential_.u3(); k++) {
-					p_stream >> buff;
-					potential_(i,j,k) = atof(buff.c_str());
-					if (potential_(i,j,k) > basic::options::option[ basic::options::OptionKeys::pb_potential::potential_cap ]) {
-						potential_(i,j,k) = basic::options::option[ basic::options::OptionKeys::pb_potential::potential_cap ];
-					}
-					if (potential_(i,j,k) < -basic::options::option[ basic::options::OptionKeys::pb_potential::potential_cap ]) {
-						potential_(i,j,k) = -basic::options::option[ basic::options::OptionKeys::pb_potential::potential_cap ];
-					}
-				}
-		break;
-	}
-
-
-	TR << "PB potential is successfully loaded from: " << dx_filename_ << std::endl;
-
-	idx2cart(n_grid_, upper_bound_);
-	TR << "Convertion of PB potential to Certesian coordinates is completed" << std::endl;
-
-	//attribute "dep" string "positions"
-	//object "regular positions regular connections" class field
-	//component "positions" value 1
-	//component "connections" value 2
-	//component "data" value 3
-
-}
 }
 }

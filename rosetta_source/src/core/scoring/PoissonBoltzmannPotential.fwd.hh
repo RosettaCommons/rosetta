@@ -26,8 +26,6 @@ typedef utility::pointer::owning_ptr< PoissonBoltzmannPotential > PoissonBoltzma
 typedef utility::pointer::owning_ptr< PoissonBoltzmannPotential const > PoissonBoltzmannPotentialCOP;
 typedef utility::pointer::access_ptr< PoissonBoltzmannPotential > PoissonBoltzmannPotentialAP;
 typedef utility::pointer::access_ptr< PoissonBoltzmannPotential const > PoissonBoltzmannPotentialCAP;
-	//template <typename Key, typename Val> class HashTable;
-	//typedef HashTable< std::string, bool > HashTable_str_bool;
 }
 }
 

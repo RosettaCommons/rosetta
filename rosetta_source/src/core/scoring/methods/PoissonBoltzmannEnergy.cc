@@ -208,6 +208,8 @@ PoissonBoltzmannEnergy::setup_for_scoring(
 	const Size atom_index = 2;  // alpha carbon
 	if( prev_pose == 0 ) {
 		TR << "No cached pose for state: " << energy_state << std::endl;
+		//		poisson_boltzmann_potential_->solve_pb(pose, energy_state, charged_residues_);
+
 		poisson_boltzmann_potential_->solve_pb(pose, energy_state, charged_residues_);
 	}
 	else if( !protein_position_equal_within( pose, *prev_pose, atom_index, epsilon_ ) ) {

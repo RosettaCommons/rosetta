@@ -741,6 +741,13 @@ settings = {
         },
     },
 
+    "gcc, linux, apbs" : {
+	"appends" : {
+		"defines" : [ "LINK_APBS_LIB" ],
+		"libraries" : [ "iapbs", "apbs_routines", "apbs_generic", "apbs_mg", "apbs_pmgc", "maloc" ],
+	},
+    },
+
     "gcc, gprof" : {
         "appends" : {
             "flags" : {

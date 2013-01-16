@@ -87,6 +87,7 @@ sources = {
 		"util",
 	],
 	"core/scoring": [
+		"APBSWrapper",
 		"AtomVDW",
 		"CenHBPotential",
 		"ContextGraph",
