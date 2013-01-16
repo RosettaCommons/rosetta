@@ -37,7 +37,7 @@ if ($#ARGV < 0) {
 	print STDERR "    -j <char>   : [default none] the chain IDs of a lattice chain\n";
 	print STDERR "    -z          : IF -j IS NOT GIVEN, enable alternate wallpaper group from point symmetry\n";
 	print STDERR "                :    P31m from C3/D3 or P4g from C4\n";
-	print STDERR "    -f          : [default false] fast distance checking\n";
+	print STDERR "    -q          : [default false] don't output PDBs\n";
 	exit -1;
 }
 
@@ -46,7 +46,7 @@ my $ptgp_sep = 100.0;  # min interaction distance
 my $primary_chain = 'A';
 my @secondary_chains = ('B');
 my $lattice_chain = '';
-my $fastDistCheck = 0;
+my $quietMode = 0;
 my $mirroredGroupFlag = 0;
 
 ## parse options (do this by hand since Getopt does not handle this well)
@@ -69,9 +69,9 @@ for ( my $i=0; $i<=$#suboptions; $i++ ) {
 		$pdbfile =~ s/\s*(\S+)\s*/$1/;
 	} elsif ($suboptions[$i] =~ /^-z/ ) {
 		$mirroredGroupFlag = 1;
-	} elsif ($suboptions[$i] =~ /^-f/ ) {
-		$fastDistCheck = 1;
-		print STDERR "Fast distance checking enabled.\n";
+	} elsif ($suboptions[$i] =~ /^-q/ ) {
+		$quietMode = 1;
+		print STDERR "Not outputting PDBs.\n";
 	} elsif (length($suboptions[$i]) > 0) {
 		print STDERR "Error parsing command line while at '".$suboptions[$i]."'\n";
 	}
@@ -234,12 +234,15 @@ print STDERR "Building $symm_group_name lattice!\n";
 
 ###
 ### PROPERTIES
-my ($mirroredGroup,$moveInPlane) = (0,0);
-if ($symm_group_name=="c2m" || $symm_group_name=="p2g") { $moveInPlane = 1; }
-if ($symm_group_name=="p2g" || $symm_group_name=="p31m" || $symm_group_name=="p4g") { $mirroredGroup = 1; }
+my ($mirroredGroup,$moveInPlane,$latticeRotation) = (0,0,0);
+if ($symm_group_name eq "c2m" || $symm_group_name eq "p2g") { $moveInPlane = 1; $latticeRotation = PI/2; }
+if ($symm_group_name eq "p2g" || $symm_group_name eq "p31m" || $symm_group_name eq "p4g") { $mirroredGroup = 1; }
 if ($mirroredGroupFlag == 1 && $mirroredGroup==0) {
 	print STDERR "Warning: -z flag not applicable for this point group.  Ignoring!\n";
 }
+print STDERR "mirroredGroup = $mirroredGroup\n";
+print STDERR "moveInPlane = $moveInPlane\n";
+print STDERR "latticeRotation = $latticeRotation\n";
 
 # correct transformations
 my $COM_pointgp = [0,0,0];
@@ -375,8 +378,9 @@ if ( $lattice_chain ne '' ) {
  	$delCOM_lattice = vscale( $ptgp_sep, $delCOM_lattice );
 }
 
-## newR, adj_newDelCOM contain rot,trans
-## compute for all subunits
+###
+###  compute the individual symmops
+###
 my %Rs;
 my %Ts;
 my %ptgps;
@@ -399,6 +403,14 @@ foreach my $i (1..$sym_orders[1]) {
 	$R_i = deep_copy($R1);
 }
 
+# "master" coordinate frame defined by central ring
+my ($masterX, $masterY, $masterZ);
+$masterZ = [ $Qs[0]->[0],  $Qs[0]->[1],  $Qs[0]->[2] ];
+normalize( $masterZ );
+$masterY = vsub( $Ts{ "0_2_1" } , $Ts{ "0_1_1" } );
+normalize( $masterY );
+$masterX = cross( $masterY , $masterZ );
+normalize( $masterX );
 
 ## 2: expand lattice groups
 $R_i = [[1,0,0],[0,1,0],[0,0,1]];
@@ -412,19 +424,31 @@ foreach my $i (1..$outer_sym_order) {
 
 ## 3: expand point gps of lattice groups
 my $latticeR = [[1,0,0],[0,1,0],[0,0,1]];
-if ($mirroredGroup) {
+my $localLatticeR = [[1,0,0],[0,1,0],[0,0,1]];
+if ($mirroredGroup == 1) {
 	my $X_l = vsub( $ptgps{1} , $ptgps{0} );
 	my $W_l = cos( PI/2 );
 	my $S_l = sqrt ( (1-$W_l*$W_l)/vnorm2($X_l) );
-	$latticeR = quat2R( $S_l*$X_l->[0], $S_l*$X_l->[1], $S_l*$X_l->[2], $W_l );
+	my $latticeR_i = quat2R( $S_l*$X_l->[0], $S_l*$X_l->[1], $S_l*$X_l->[2], $W_l );
+	$latticeR = mmult( $latticeR_i, $latticeR );
 }
+
+if ($latticeRotation > 0) {
+	my $X_l = deep_copy( $masterZ );
+	my $W_l = cos( $latticeRotation/2 );
+	my $S_l = sqrt ( (1-$W_l*$W_l)/vnorm2($X_l) );
+	my $latticeR_i = quat2R( $S_l*$X_l->[0], $S_l*$X_l->[1], $S_l*$X_l->[2], $W_l );
+	$latticeR = mmult( $latticeR_i, $latticeR );
+	$localLatticeR = quat2R( 0,0,sqrt(1-$W_l*$W_l), $W_l );
+}
+
 foreach my $k (1..$outer_sym_order) {
 	foreach my $i (1..$sym_orders[1]) {
 		foreach my $j (1..$sym_orders[0]) {
 			my $id = $k."_".$j."_".$i;
 			my $R_ij = $Rs{ "0_".$j."_".$i };
 			$Rs{ $id } = mmult($R_ij, $latticeR );
-			my $toffset = vsub( $Ts{ "0_".$j."_".$i } , $ptgps{0});
+			my $toffset = mapply( $localLatticeR, vsub( $Ts{ "0_".$j."_".$i } , $ptgps{0}) );
 			$Ts{ $id } = vadd( $ptgps{$k} , $toffset );
 		}
 	}
@@ -447,7 +471,7 @@ my $symmname = $pdbfile;
 $symmname =~ s/\.pdb$//;
 $symmname = $symmname."__".$symm_group_name;
 print "symmetry_name $symmname\n";
-print "E = 1*VRT0_1_1";
+print "E = 2*VRT0_1_1";
 foreach my $complex (keys %energy_counter) {
 	print " + ".$energy_counter{$complex}."*(VRT0_1_1:VRT".$complex.")";
 }
@@ -460,15 +484,6 @@ print "xyz VRT0  ".
 			sprintf("%.6f,%.6f,%.6f", 1, 0, 0)."  ".
 			sprintf("%.6f,%.6f,%.6f", 0, 1, 0)."  ".
 			sprintf("%.6f,%.6f,%.6f", $COM_pointgp->[0]+1, $COM_pointgp->[1], $COM_pointgp->[2])."\n";
-
-# master transformation
-my ($masterX, $masterY, $masterZ);
-$masterZ = [ $Qs[0]->[0],  $Qs[0]->[1],  $Qs[0]->[2] ];
-normalize( $masterZ );
-$masterY = vsub( $Ts{ "0_2_1" } , $Ts{ "0_1_1" } );
-normalize( $masterY );
-$masterX = cross( $masterY , $masterZ );
-normalize( $masterX );
 
 # central point group
 foreach my $i (1..$sym_orders[1]) {
@@ -493,7 +508,10 @@ foreach my $i (1..$sym_orders[1]) {
 }
 
 
-my ($latticeX,$latticeY,$latticeZ) = ($masterX,$masterY,$masterZ);  # shallow copy is fine
+my $latticeX = mapply( $localLatticeR, $masterX );
+my $latticeY = mapply( $localLatticeR, $masterY );
+my $latticeZ = mapply( $localLatticeR, $masterZ );
+
 
 # redirection layer to outer point groups
 foreach my $i (1..$outer_sym_order) {
@@ -502,7 +520,12 @@ foreach my $i (1..$outer_sym_order) {
 
 	# pointing to each point group
 	my $parent_com = $COM_pointgp;
-	my $myZ = $latticeZ;
+	my $myZ = $masterZ;
+
+	if (($moveInPlane==1) && (($i % 2) == 0)) {
+		$myZ = [-$masterZ->[0],-$masterZ->[1],-$masterZ->[2]];
+	}
+
 	my $myX = vsub( $ptgps{0} , $ptgps{$i} );
 	normalize( $myX );
 	my $myY = cross( $myZ, $myX );
@@ -518,9 +541,8 @@ foreach my $i (1..$outer_sym_order) {
 				sprintf("%.6f,%.6f,%.6f", $myY->[0], $myY->[1], $myY->[2])."  ".
 				sprintf("%.6f,%.6f,%.6f", $parent_com->[0], $parent_com->[1], $parent_com->[2])."\n";
 
-
-	my $myX = mapply( $Rs{ $i."_1_1" } , $latticeX );
-	my $myY = mapply( $Rs{ $i."_1_1" } , $latticeY );
+	my $myX = mapply( $Rs{ $i."_1_1" } , $masterX );
+	my $myY = mapply( $Rs{ $i."_1_1" } , $masterY );
 	print "xyz VRT$i"."_ctrl  ".
 				sprintf("%.6f,%.6f,%.6f", $myX->[0], $myX->[1], $myX->[2])."  ".
 				sprintf("%.6f,%.6f,%.6f", $myY->[0], $myY->[1], $myY->[2])."  ".
@@ -537,13 +559,13 @@ foreach my $k (1..$outer_sym_order) {
 			my $id = $k."_".$j."_".$i;
 
 			# x points from origin to parent CoM
-			my $myX = mapply( $Rs{ $id } , $latticeX );
-			my $myY = mapply( $Rs{ $id } , $latticeY );
+			my $myX = mapply( $Rs{ $id } , $masterX );
+			my $myY = mapply( $Rs{ $id } , $masterY );
 	
 			normalize( $myX );
 			$myY = vsub( $myY , vscale(dot($myY, $myX), $myX) );
 			normalize( $myY );
-		
+
 			print "xyz VRT$id  ".
 						sprintf("%.6f,%.6f,%.6f", $myX->[0], $myX->[1], $myX->[2])."  ".
 						sprintf("%.6f,%.6f,%.6f", $myY->[0], $myY->[1], $myY->[2])."  ".
@@ -589,9 +611,12 @@ foreach my $k (1..$outer_sym_order) {
 
 ## dofs
 print "set_dof JUMP0_1_1 angle_z(0:360)\n";    # spin
-print "set_dof JUMP1_to_redir x($ptgp_sep)\n";   # lattice spacing
+if ($moveInPlane==1) {
+ 	print "set_dof JUMP1_to_redir x(20) y(20)\n";   # lattice spacing
+} else {
+	print "set_dof JUMP1_to_redir x($ptgp_sep)\n";   # lattice spacing
+}
 
-## jumpgroups
 print "set_jump_group JUMPGROUP1 ";
 foreach my $k (1..$outer_sym_order) {
 	print "JUMP$k"."_to_redir ";
@@ -616,65 +641,68 @@ foreach my $k (0..$outer_sym_order) {
 }
 print "\n";
 
-
-
-
-########################################
-## write output pdb
-########################################
-my $outpdb = $pdbfile;
-my $outmon = $pdbfile;
-my $outmdl = $pdbfile;
-
-if ($outpdb =~ /\.pdb$/) {
-	$outpdb =~ s/\.pdb$/_symm.pdb/;
-	$outmon =~ s/\.pdb$/_INPUT.pdb/;
-} else {
-	$outpdb = $outpdb."_symm.pdb";
-	$outmon = $outmon."_INPUT.pdb";
+if ($moveInPlane == 1) {
+	print "slide_type RANDOM\n";   # multi-dim slide moves
 }
-open (OUTPDB, ">$outpdb");
-open (OUTMON, ">$outmon");
 
-my $chnidx = 0;
-my $chains = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
-foreach my $k (0..$outer_sym_order) {
-	foreach my $i (1..$sym_orders[1]) {
-		foreach my $j (1..$sym_orders[0]) {
-			my $id = $k."_".$j."_".$i;
+if ($quietMode != 1) {
+	########################################
+	## write output pdb
+	########################################
+	my $outpdb = $pdbfile;
+	my $outmon = $pdbfile;
+	my $outmdl = $pdbfile;
 	
-			foreach my $line (@filebuf) {
-				my $linecopy = $line;
+	if ($outpdb =~ /\.pdb$/) {
+		$outpdb =~ s/\.pdb$/_symm.pdb/;
+		$outmon =~ s/\.pdb$/_INPUT.pdb/;
+	} else {
+		$outpdb = $outpdb."_symm.pdb";
+		$outmon = $outmon."_INPUT.pdb";
+	}
+	open (OUTPDB, ">$outpdb");
+	open (OUTMON, ">$outmon");
 	
-				my $X = [substr ($line, 30, 8),substr ($line, 38, 8),substr ($line, 46, 8)];
-				my $X_0 = vsub($X,$COM_0);
-				my $rX = vadd( mapply($Rs{$id}, $X_0) , $Ts{$id} );
-	
-				substr ($linecopy, 30, 8) = sprintf ("%8.3f", $rX->[0]);
-				substr ($linecopy, 38, 8) = sprintf ("%8.3f", $rX->[1]);
-				substr ($linecopy, 46, 8) = sprintf ("%8.3f", $rX->[2]);
-				substr ($linecopy, 21, 1) = substr ($chains, $chnidx, 1);
-	
-				print OUTPDB $linecopy."\n";
+	my $chnidx = 0;
+	my $chains = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
+	foreach my $k (0..$outer_sym_order) {
+		foreach my $i (1..$sym_orders[1]) {
+			foreach my $j (1..$sym_orders[0]) {
+				my $id = $k."_".$j."_".$i;
+		
+				foreach my $line (@filebuf) {
+					my $linecopy = $line;
+		
+					my $X = [substr ($line, 30, 8),substr ($line, 38, 8),substr ($line, 46, 8)];
+					my $X_0 = vsub($X,$COM_0);
+					my $rX = vadd( mapply($Rs{$id}, $X_0) , $Ts{$id} );
+		
+					substr ($linecopy, 30, 8) = sprintf ("%8.3f", $rX->[0]);
+					substr ($linecopy, 38, 8) = sprintf ("%8.3f", $rX->[1]);
+					substr ($linecopy, 46, 8) = sprintf ("%8.3f", $rX->[2]);
+					substr ($linecopy, 21, 1) = substr ($chains, $chnidx, 1);
+		
+					print OUTPDB $linecopy."\n";
+				}
+		
+				print OUTPDB "TER   \n";
+				#print STDERR "Writing interface ".$id." as chain ".substr ($chains, $chnidx, 1)."\n";
+				$chnidx++;
 			}
-	
-			print OUTPDB "TER   \n";
-			#print STDERR "Writing interface ".$id." as chain ".substr ($chains, $chnidx, 1)."\n";
-			$chnidx++;
 		}
 	}
-}
-
-
-foreach my $line (@filebuf) {
-	my $linecopy = $line;
-
-	my $X = [substr ($line, 30, 8),substr ($line, 38, 8),substr ($line, 46, 8)];
-
-	substr ($linecopy, 30, 8) = sprintf ("%8.3f", $X->[0]);
-	substr ($linecopy, 38, 8) = sprintf ("%8.3f", $X->[1]);
-	substr ($linecopy, 46, 8) = sprintf ("%8.3f", $X->[2]);
-	substr ($linecopy, 21, 1) = "A";
-
-	print OUTMON $linecopy."\n";
+	
+	
+	foreach my $line (@filebuf) {
+		my $linecopy = $line;
+	
+		my $X = [substr ($line, 30, 8),substr ($line, 38, 8),substr ($line, 46, 8)];
+	
+		substr ($linecopy, 30, 8) = sprintf ("%8.3f", $X->[0]);
+		substr ($linecopy, 38, 8) = sprintf ("%8.3f", $X->[1]);
+		substr ($linecopy, 46, 8) = sprintf ("%8.3f", $X->[2]);
+		substr ($linecopy, 21, 1) = "A";
+	
+		print OUTMON $linecopy."\n";
+	}
 }
