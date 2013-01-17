@@ -391,6 +391,7 @@ sources = {
 		"test_CarbohydrateInfo"
 	],
 	"pilot/lemmon" : [
+		"undirected_graph"
 	],
 	"pilot/lin" : [
 		#"SymmSilentFile",
