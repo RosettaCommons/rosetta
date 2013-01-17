@@ -308,6 +308,7 @@ class ServerInfo {
    const std::string url_gettask()   const { return full_url() + "/task/get";      };
    const std::string url_putresult() const { return full_url() + "/structure/put"; };
    const std::string full_url() const { return server_url_ + ":" + server_port_; }
+   const core::Real poll_frequency() const { return poll_frequency_; }
  private:
    std::string server_url_;
    std::string server_port_;
@@ -368,7 +369,7 @@ class RosettaJob {
 
       std::cout << "NEW JOB: Hash: " << hash_ << " KEY: " << key_ << " USER: " << user_id_ << " TASKNAME: " << taskname_ << std::endl;
       std::string job_data_string = payload_values.get("job_data","").asString();
-      //std::cout << "Inputdata: " << job_data_string << std::endl;
+      // std::cout << "Inputdata: " << job_data_string << std::endl;
 
       Json::Reader job_data_reader;
       job_data_reader.parse( job_data_string , job_data_);
@@ -399,6 +400,12 @@ class RosettaJob {
 
         if ( job_data_.isMember("user_flags") ){
           load_new_set_of_user_flags( job_data_.get("user_flags","[]") );
+        }
+       
+        if ( job_data_.isMember("flags_file") ){
+          std::string flags_file = job_data_.get("flags_file","").asString();
+          std::cerr << "HERE:" << flags_file << std::endl; 
+          load_user_flag_file( flags_file );
         }
       }
       catch ( utility::excn::EXCN_Base& excn ) {
@@ -595,6 +602,11 @@ class RosettaJob {
     tracer_output_stream_.str(std::string());
   }
 
+  void load_user_flag_file( const std::string &flags_file ){
+    std::stringstream options_file;
+    options_file << flags_file << std::endl; // ensure the last line has a CR/lF at the end. 
+    basic::options::option.load_options_from_stream( options_file );
+  }
 
   void load_new_set_of_user_flags(  const Json::Value &json_user_flags ){
     std::vector < std::string > user_flags;
@@ -676,7 +688,7 @@ class RosettaBackend {
           core::Real waittime =  std::min( (double)10.0f, 0.5f* pow( (float)1.3, (float) wait_count )); // in seconds
 
           // HACK!
-          waittime =  5;
+          waittime =  serverinfo_.poll_frequency();
 
           std::cout << "No work. Waiting " << waittime << " seconds before retrying." << std::endl;
           sleep( waittime );
