@@ -8,6 +8,17 @@
 #
 # Local edits were made to fit Rosetta's needs.
 #
+# Edits are...:
+#  - iapbs/apbsdrv_() takes two extra arguments
+#    double apbsgrid_meta[9] and double apbsgrid_data**.
+#    These are to return grid data, such as potential
+#    distribution, in memory, avoiding traditional
+#    file I/O.
+#  - <here>/include/iapbs/iapbs.h
+#    The path and the header file are pre-made
+#    for easier use of the iapbs (apbs interface).
+#    It merely aggregates header include stmts
+#    in a proper order.
 #
 # NOTE:
 # The developer version (that is, the copy off GIT)
