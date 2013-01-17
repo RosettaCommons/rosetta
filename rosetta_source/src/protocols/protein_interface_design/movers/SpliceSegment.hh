@@ -49,9 +49,15 @@ class SpliceSegment : public utility::pointer::ReferenceCount
 		core::sequence::SequenceProfileOP pdb_profile( std::string const pdb_name ); // return a sequence profile according to a pdb file name
 		core::sequence::SequenceProfileOP sequence_profile( std::string const profile_name ); // return a sequence profile according to a profile name
 	private:
-		std::map< std::string, core::sequence::SequenceProfileOP > sequence_profile_;
-		std::map< std::string, std::string > pdb_to_profile_map_;
+		std::map< std::string/*L1.1*/, core::sequence::SequenceProfileOP > sequence_profile_;
+		std::map< std::string/*1y32*/, std::string/*L1.1*/ > pdb_to_profile_map_;
 };
+
+/* pose comments
+segment_L1 1y32
+segment_FR2 1x9q
+segment_L2 1jxw
+*/
 
 core::sequence::SequenceProfileOP concatenate_profiles( utility::vector1< core::sequence::SequenceProfileOP > const profiles ); // utility function to generate a single concatenated profile from a vector of profiles
 
