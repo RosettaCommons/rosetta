@@ -58,6 +58,7 @@ public:
 	void relax_mover( protocols::moves::MoverOP const mover );
 	core::pose::PoseOP pose() const;
 	void pose( core::pose::PoseOP p );
+	void pdb_name( std::string const pdb_name ); // sets pose( ) function above with the pdb parameter
 	std::string dump_pose_fname() const;
 	void dump_pose_fname( std::string const s );
 

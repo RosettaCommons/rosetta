@@ -249,6 +249,12 @@ RelativePoseFilter::report( std::ostream & out, core::pose::Pose const & ) const
 	out<<"Dummy: All reports are dummy for this filter. Only report_sm is defined"<<std::endl;
 }
 
+void
+RelativePoseFilter::pdb_name( std::string const pdb_name ){
+	pose( core::import_pose::pose_from_pdb( pdb_name, false /*read foldtree*/ ) );
+}
+
+
 /// alignment is expecting X1:Y1,X2:Y2,X3:Y3... where X is the protein on disk (target) and Y is the active structure (starting structure). When no alignment is given it is implied that the poses are trivially aligned 1..nres
 /// Feb2012 added option to align entire chains: A:B,D:C. Notice that no testing is made to ensure correct lengths etc., simply aligns from the start to end of the chains sequentially.
 void
@@ -267,7 +273,7 @@ RelativePoseFilter::parse_my_tag( utility::tag::TagPtr const tag,
 
 	if ( tag->hasOption( "pdb_name" ) ) {
 			pose_fname = tag->getOption< std::string >( "pdb_name" );
-			pose( core::import_pose::pose_from_pdb( pose_fname, false /*read foldtree*/ ) );
+			pdb_name( pose_fname );
 	}
 	if( tag->hasOption( "symmetry_definition" ) ){
 		symmetry_definition_ = tag->getOption< std::string >( "symmetry_definition", "" );
