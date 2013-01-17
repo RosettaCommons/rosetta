@@ -20,6 +20,7 @@ sources = {
 		"AtomTypeDatabaseIO",
 		"AtomTypeSet",
 		"automorphism",
+		"Bond",
 		"ChemicalManager",
 		"Element",
 		"ElementSet",
