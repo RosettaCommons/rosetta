@@ -234,8 +234,12 @@ print STDERR "Building $symm_group_name lattice!\n";
 
 ###
 ### PROPERTIES
-my ($mirroredGroup,$moveInPlane,$latticeRotation) = (0,0,0);
-if ($symm_group_name eq "c2m" || $symm_group_name eq "p2g") { $moveInPlane = 1; $latticeRotation = PI/2; }
+my ($mirroredGroup,$moveInPlane,$latticeRotation,$secondShell) = (0,0,0,0);
+if ($symm_group_name eq "c2m" || $symm_group_name eq "p2g") { 
+	$moveInPlane = 1;
+	$secondShell = 1;
+	$latticeRotation = PI/2;
+}
 if ($symm_group_name eq "p2g" || $symm_group_name eq "p31m" || $symm_group_name eq "p4g") { $mirroredGroup = 1; }
 if ($mirroredGroupFlag == 1 && $mirroredGroup==0) {
 	print STDERR "Warning: -z flag not applicable for this point group.  Ignoring!\n";
@@ -454,6 +458,26 @@ foreach my $k (1..$outer_sym_order) {
 	}
 }
 
+## 4: second shell lattice groups for c2m and p2g ... always a translation only
+if ($secondShell == 1) {
+	$ptgps{12} = vadd( vsub( $ptgps{1}, $ptgps{0} ) , ( $ptgps{2}) );
+	$ptgps{23} = vadd( vsub( $ptgps{2}, $ptgps{0} ) , ( $ptgps{3}) );
+	$ptgps{34} = vadd( vsub( $ptgps{3}, $ptgps{0} ) , ( $ptgps{4}) );
+	$ptgps{41} = vadd( vsub( $ptgps{4}, $ptgps{0} ) , ( $ptgps{1}) );
+
+	foreach my $k (12,23,34,41) {
+		foreach my $i (1..$sym_orders[1]) {
+			foreach my $j (1..$sym_orders[0]) {
+				my $id = $k."_".$j."_".$i;
+				my $R_ij = 
+				$Rs{ $id } = $Rs{ "0_".$j."_".$i };
+				$Ts{ $id } = vadd( $ptgps{$k} , vsub( $Ts{ "0_".$j."_".$i } , $ptgps{0}) );
+			}
+		}
+	}
+
+}
+
 
 ##
 # find the equation for the energy of the complex
@@ -513,44 +537,143 @@ my $latticeY = mapply( $localLatticeR, $masterY );
 my $latticeZ = mapply( $localLatticeR, $masterZ );
 
 
-# redirection layer to outer point groups
-foreach my $i (1..$outer_sym_order) {
-	my $id_sibling = ($i+1);
-	if ($i == $outer_sym_order) { $id_sibling = 1; }
 
-	# pointing to each point group
-	my $parent_com = $COM_pointgp;
+# redirection to second shell
+if ($secondShell == 1) {
 	my $myZ = $masterZ;
-
-	if (($moveInPlane==1) && (($i % 2) == 0)) {
-		$myZ = [-$masterZ->[0],-$masterZ->[1],-$masterZ->[2]];
+	foreach my $i (12,23,34,41) {
+		# pointing to each point group
+		my $parent_com = $COM_pointgp;
+	
+		my $myX = vsub( $ptgps{0} , $ptgps{$i} );
+		normalize( $myX );
+		my $myY = cross( $myZ, $myX );
+		normalize( $myY );
+		print "xyz VRT$i"."_outer  ".
+					sprintf("%.6f,%.6f,%.6f", $myX->[0], $myX->[1], $myX->[2])."  ".
+					sprintf("%.6f,%.6f,%.6f", $myY->[0], $myY->[1], $myY->[2])."  ".
+					sprintf("%.6f,%.6f,%.6f", $parent_com->[0], $parent_com->[1], $parent_com->[2])."\n";
+	
+		$parent_com = vscale( 0.5, vadd( $ptgps{0}, $ptgps{$i}) );
+		print "xyz VRT$i"."_redir_inner  ".
+					sprintf("%.6f,%.6f,%.6f", $myX->[0], $myX->[1], $myX->[2])."  ".
+					sprintf("%.6f,%.6f,%.6f", $myY->[0], $myY->[1], $myY->[2])."  ".
+					sprintf("%.6f,%.6f,%.6f", $parent_com->[0], $parent_com->[1], $parent_com->[2])."\n";
+	
+		$parent_com = $ptgps{$i};
+		print "xyz VRT$i"."_redir_outer  ".
+					sprintf("%.6f,%.6f,%.6f", $myX->[0], $myX->[1], $myX->[2])."  ".
+					sprintf("%.6f,%.6f,%.6f", $myY->[0], $myY->[1], $myY->[2])."  ".
+					sprintf("%.6f,%.6f,%.6f", $parent_com->[0], $parent_com->[1], $parent_com->[2])."\n";
 	}
 
-	my $myX = vsub( $ptgps{0} , $ptgps{$i} );
-	normalize( $myX );
-	my $myY = cross( $myZ, $myX );
-	normalize( $myY );
-	print "xyz VRT$i"."_outer  ".
-				sprintf("%.6f,%.6f,%.6f", $myX->[0], $myX->[1], $myX->[2])."  ".
-				sprintf("%.6f,%.6f,%.6f", $myY->[0], $myY->[1], $myY->[2])."  ".
-				sprintf("%.6f,%.6f,%.6f", $parent_com->[0], $parent_com->[1], $parent_com->[2])."\n";
+	# connect 12->1,2
+	{
+		my $parent_com = vscale( 0.5, vadd( $ptgps{0}, $ptgps{12}) );
+		my $myX = vsub( $ptgps{1} , $parent_com ); normalize( $myX );
+		my $myY = cross( $myZ, $myX ); normalize( $myY );
+		print "xyz VRT12_redir_to_VRT1  ".
+					sprintf("%.6f,%.6f,%.6f", $myX->[0], $myX->[1], $myX->[2])."  ".
+					sprintf("%.6f,%.6f,%.6f", $myY->[0], $myY->[1], $myY->[2])."  ".
+					sprintf("%.6f,%.6f,%.6f", $parent_com->[0], $parent_com->[1], $parent_com->[2])."\n";
 
-	$parent_com = $ptgps{$i};
-	print "xyz VRT$i"."_redir  ".
-				sprintf("%.6f,%.6f,%.6f", $myX->[0], $myX->[1], $myX->[2])."  ".
-				sprintf("%.6f,%.6f,%.6f", $myY->[0], $myY->[1], $myY->[2])."  ".
-				sprintf("%.6f,%.6f,%.6f", $parent_com->[0], $parent_com->[1], $parent_com->[2])."\n";
+		print "xyz VRT1_redir  ".
+					sprintf("%.6f,%.6f,%.6f", $myX->[0], $myX->[1], $myX->[2])."  ".
+					sprintf("%.6f,%.6f,%.6f", $myY->[0], $myY->[1], $myY->[2])."  ".
+					sprintf("%.6f,%.6f,%.6f", $ptgps{1}->[0], $ptgps{1}->[1], $ptgps{1}->[2])."\n";
 
-	my $myX = mapply( $Rs{ $i."_1_1" } , $masterX );
-	my $myY = mapply( $Rs{ $i."_1_1" } , $masterY );
-	print "xyz VRT$i"."_ctrl  ".
-				sprintf("%.6f,%.6f,%.6f", $myX->[0], $myX->[1], $myX->[2])."  ".
-				sprintf("%.6f,%.6f,%.6f", $myY->[0], $myY->[1], $myY->[2])."  ".
-				sprintf("%.6f,%.6f,%.6f", $parent_com->[0], $parent_com->[1], $parent_com->[2])."\n";
+		$myX = vsub( $ptgps{2} , $parent_com ); normalize( $myX );
+		$myY = cross( $myZ, $myX ); normalize( $myY );
+		print "xyz VRT12_redir_to_VRT2  ".
+					sprintf("%.6f,%.6f,%.6f", $myX->[0], $myX->[1], $myX->[2])."  ".
+					sprintf("%.6f,%.6f,%.6f", $myY->[0], $myY->[1], $myY->[2])."  ".
+					sprintf("%.6f,%.6f,%.6f", $parent_com->[0], $parent_com->[1], $parent_com->[2])."\n";
+
+		print "xyz VRT2_redir  ".
+					sprintf("%.6f,%.6f,%.6f", $myX->[0], $myX->[1], $myX->[2])."  ".
+					sprintf("%.6f,%.6f,%.6f", $myY->[0], $myY->[1], $myY->[2])."  ".
+					sprintf("%.6f,%.6f,%.6f", $ptgps{2}->[0], $ptgps{2}->[1], $ptgps{2}->[2])."\n";
+	}
+
+	# connect 34->3,4
+	{
+		my $parent_com = vscale( 0.5, vadd( $ptgps{0}, $ptgps{34}) );
+		my $myX = vsub( $ptgps{3} , $parent_com ); normalize( $myX );
+		my $myY = cross( $myZ, $myX ); normalize( $myY );
+		print "xyz VRT34_redir_to_VRT3  ".
+					sprintf("%.6f,%.6f,%.6f", $myX->[0], $myX->[1], $myX->[2])."  ".
+					sprintf("%.6f,%.6f,%.6f", $myY->[0], $myY->[1], $myY->[2])."  ".
+					sprintf("%.6f,%.6f,%.6f", $parent_com->[0], $parent_com->[1], $parent_com->[2])."\n";
+
+		print "xyz VRT3_redir  ".
+					sprintf("%.6f,%.6f,%.6f", $myX->[0], $myX->[1], $myX->[2])."  ".
+					sprintf("%.6f,%.6f,%.6f", $myY->[0], $myY->[1], $myY->[2])."  ".
+					sprintf("%.6f,%.6f,%.6f", $ptgps{3}->[0], $ptgps{3}->[1], $ptgps{3}->[2])."\n";
+
+
+		$myX = vsub( $ptgps{4} , $parent_com ); normalize( $myX );
+		$myY = cross( $myZ, $myX ); normalize( $myY );
+		print "xyz VRT34_redir_to_VRT4  ".
+					sprintf("%.6f,%.6f,%.6f", $myX->[0], $myX->[1], $myX->[2])."  ".
+					sprintf("%.6f,%.6f,%.6f", $myY->[0], $myY->[1], $myY->[2])."  ".
+					sprintf("%.6f,%.6f,%.6f", $parent_com->[0], $parent_com->[1], $parent_com->[2])."\n";
+
+		print "xyz VRT4_redir  ".
+					sprintf("%.6f,%.6f,%.6f", $myX->[0], $myX->[1], $myX->[2])."  ".
+					sprintf("%.6f,%.6f,%.6f", $myY->[0], $myY->[1], $myY->[2])."  ".
+					sprintf("%.6f,%.6f,%.6f", $ptgps{4}->[0], $ptgps{4}->[1], $ptgps{4}->[2])."\n";
+	}
+
+	foreach my $i (1,2,3,4,12,23,34,41) {
+		my $parent_com = $ptgps{$i};
+		my $myX = mapply( $Rs{ $i."_1_1" } , $masterX );
+		my $myY = mapply( $Rs{ $i."_1_1" } , $masterY );
+		print "xyz VRT$i"."_ctrl  ".
+					sprintf("%.6f,%.6f,%.6f", $myX->[0], $myX->[1], $myX->[2])."  ".
+					sprintf("%.6f,%.6f,%.6f", $myY->[0], $myY->[1], $myY->[2])."  ".
+					sprintf("%.6f,%.6f,%.6f", $parent_com->[0], $parent_com->[1], $parent_com->[2])."\n";
+	}
+
+
+} else {
+	# redirection layer to outer point groups
+	foreach my $i (1..$outer_sym_order) {
+		# pointing to each point group
+		my $parent_com = $COM_pointgp;
+		my $myZ = $masterZ;
+	
+		if (($moveInPlane==1) && (($i % 2) == 0)) {
+			$myZ = [-$masterZ->[0],-$masterZ->[1],-$masterZ->[2]];
+		}
+	
+		my $myX = vsub( $ptgps{0} , $ptgps{$i} );
+		normalize( $myX );
+		my $myY = cross( $myZ, $myX );
+		normalize( $myY );
+		print "xyz VRT$i"."_outer  ".
+					sprintf("%.6f,%.6f,%.6f", $myX->[0], $myX->[1], $myX->[2])."  ".
+					sprintf("%.6f,%.6f,%.6f", $myY->[0], $myY->[1], $myY->[2])."  ".
+					sprintf("%.6f,%.6f,%.6f", $parent_com->[0], $parent_com->[1], $parent_com->[2])."\n";
+	
+		$parent_com = $ptgps{$i};
+		print "xyz VRT$i"."_redir  ".
+					sprintf("%.6f,%.6f,%.6f", $myX->[0], $myX->[1], $myX->[2])."  ".
+					sprintf("%.6f,%.6f,%.6f", $myY->[0], $myY->[1], $myY->[2])."  ".
+					sprintf("%.6f,%.6f,%.6f", $parent_com->[0], $parent_com->[1], $parent_com->[2])."\n";
+	
+		my $myX = mapply( $Rs{ $i."_1_1" } , $masterX );
+		my $myY = mapply( $Rs{ $i."_1_1" } , $masterY );
+		print "xyz VRT$i"."_ctrl  ".
+					sprintf("%.6f,%.6f,%.6f", $myX->[0], $myX->[1], $myX->[2])."  ".
+					sprintf("%.6f,%.6f,%.6f", $myY->[0], $myY->[1], $myY->[2])."  ".
+					sprintf("%.6f,%.6f,%.6f", $parent_com->[0], $parent_com->[1], $parent_com->[2])."\n";
+	}
 }
 
 
-# finally expand outer point groups
+##
+## finally expand outer point groups
+##
 foreach my $k (1..$outer_sym_order) {
  	my $parent_com = $ptgps{$k};
  
@@ -573,6 +696,34 @@ foreach my $k (1..$outer_sym_order) {
 		}
 	}
 }
+
+
+if ($secondShell == 1) {
+	foreach my $k (12,23,34,41) {
+		my $parent_com = $ptgps{$k};
+	 
+		foreach my $i (1..$sym_orders[1]) {
+			foreach my $j (1..$sym_orders[0]) {
+				my $id = $k."_".$j."_".$i;
+	
+				# x points from origin to parent CoM
+				my $myX = mapply( $Rs{ $id } , $masterX );
+				my $myY = mapply( $Rs{ $id } , $masterY );
+		
+				normalize( $myX );
+				$myY = vsub( $myY , vscale(dot($myY, $myX), $myX) );
+				normalize( $myY );
+	
+				print "xyz VRT$id  ".
+							sprintf("%.6f,%.6f,%.6f", $myX->[0], $myX->[1], $myX->[2])."  ".
+							sprintf("%.6f,%.6f,%.6f", $myY->[0], $myY->[1], $myY->[2])."  ".
+							sprintf("%.6f,%.6f,%.6f", $parent_com->[0], $parent_com->[1], $parent_com->[2])."\n";
+			}
+		}
+	}
+}
+
+
 print "virtual_coordinates_stop\n";
 
 ######   connect
@@ -591,42 +742,103 @@ foreach my $i (1..$sym_orders[1]) {
 }
 
 # outer point groups
-foreach my $k (1..$outer_sym_order) {
-	my $id1 = $k."_1_1";
-	print "connect_virtual JUMP$k"."_to_outer  VRT0_ctrl VRT$k"."_outer"."\n";
-	print "connect_virtual JUMP$k"."_to_redir VRT$k"."_outer VRT$k"."_redir"."\n";
-	print "connect_virtual JUMP$k"."_to_ctrl VRT$k"."_redir VRT$k"."_ctrl"."\n";
-	print "connect_virtual JUMP$id1 VRT$k"."_ctrl VRT$id1\n";
+if ($secondShell == 1) {
+	foreach my $k (12,23,34,41) {
+		my $id1 = $k."_1_1";
+		print "connect_virtual JUMP$k"."_to_outer  VRT0_ctrl VRT$k"."_outer"."\n";
+		print "connect_virtual JUMP$k"."_to_redir_inner VRT$k"."_outer VRT$k"."_redir_inner"."\n";
+		print "connect_virtual JUMP$k"."_to_redir_outer VRT$k"."_redir_inner VRT$k"."_redir_outer"."\n";
+		print "connect_virtual JUMP$k"."_to_ctrl VRT$k"."_redir_outer VRT$k"."_ctrl"."\n";
+		print "connect_virtual JUMP$id1 VRT$k"."_ctrl VRT$id1\n";
+	}
 
-	foreach my $i (1..$sym_orders[1]) {
-		foreach my $j (1..$sym_orders[0]) {
-			my $id = $k."_".$j."_".$i;
-			if ($j != 1 || $i != 1) {
-				print "connect_virtual JUMP".$id." VRT".$k."_1_1 VRT$id"."\n";
+	print "connect_virtual JUMP12_to_redir1 VRT12_redir_inner VRT12_redir_to_VRT1"."\n";
+	print "connect_virtual JUMP12_to_redir2 VRT12_redir_inner VRT12_redir_to_VRT2"."\n";
+	print "connect_virtual JUMP34_to_redir3 VRT34_redir_inner VRT34_redir_to_VRT3"."\n";
+	print "connect_virtual JUMP34_to_redir4 VRT34_redir_inner VRT34_redir_to_VRT4"."\n";
+	print "connect_virtual JUMP1_to_redir VRT12_redir_to_VRT1 VRT1_redir"."\n";
+	print "connect_virtual JUMP2_to_redir VRT12_redir_to_VRT2 VRT2_redir"."\n";
+	print "connect_virtual JUMP3_to_redir VRT34_redir_to_VRT3 VRT3_redir"."\n";
+	print "connect_virtual JUMP4_to_redir VRT34_redir_to_VRT4 VRT4_redir"."\n";
+	print "connect_virtual JUMP1_to_ctrl VRT1_redir VRT1_ctrl"."\n";
+	print "connect_virtual JUMP2_to_ctrl VRT2_redir VRT2_ctrl"."\n";
+	print "connect_virtual JUMP3_to_ctrl VRT3_redir VRT3_ctrl"."\n";
+	print "connect_virtual JUMP4_to_ctrl VRT4_redir VRT4_ctrl"."\n";
+	print "connect_virtual JUMP1_1_1 VRT1_ctrl VRT1_1_1\n";
+	print "connect_virtual JUMP2_1_1 VRT2_ctrl VRT2_1_1\n";
+	print "connect_virtual JUMP3_1_1 VRT3_ctrl VRT3_1_1\n";
+	print "connect_virtual JUMP4_1_1 VRT4_ctrl VRT4_1_1\n";
+
+
+	foreach my $k (1,2,3,4,12,23,34,41) {
+		foreach my $i (1..$sym_orders[1]) {
+			foreach my $j (1..$sym_orders[0]) {
+				my $id = $k."_".$j."_".$i;
+				if ($j != 1 || $i != 1) {
+					print "connect_virtual JUMP".$id." VRT".$k."_1_1 VRT$id"."\n";
+				}
+				print "connect_virtual JUMP".$id."_to_subunit VRT$id"." SUBUNIT"."\n";
 			}
-			print "connect_virtual JUMP".$id."_to_subunit VRT$id"." SUBUNIT"."\n";
+		}
+	}
+
+} else {
+	foreach my $k (1..$outer_sym_order) {
+		my $id1 = $k."_1_1";
+		print "connect_virtual JUMP$k"."_to_outer  VRT0_ctrl VRT$k"."_outer"."\n";
+		print "connect_virtual JUMP$k"."_to_redir VRT$k"."_outer VRT$k"."_redir"."\n";
+		print "connect_virtual JUMP$k"."_to_ctrl VRT$k"."_redir VRT$k"."_ctrl"."\n";
+		print "connect_virtual JUMP$id1 VRT$k"."_ctrl VRT$id1\n";
+	
+		foreach my $i (1..$sym_orders[1]) {
+			foreach my $j (1..$sym_orders[0]) {
+				my $id = $k."_".$j."_".$i;
+				if ($j != 1 || $i != 1) {
+					print "connect_virtual JUMP".$id." VRT".$k."_1_1 VRT$id"."\n";
+				}
+				print "connect_virtual JUMP".$id."_to_subunit VRT$id"." SUBUNIT"."\n";
+			}
 		}
 	}
 }
 
+
 ## dofs
 print "set_dof JUMP0_1_1 angle_z(0:360)\n";    # spin
-if ($moveInPlane==1) {
- 	print "set_dof JUMP1_to_redir x(20) y(20)\n";   # lattice spacing
+
+if ($secondShell == 1) {
+	print "set_dof JUMP12_to_redir_inner x($ptgp_sep)\n";
+	print "set_dof JUMP23_to_redir_inner x($ptgp_sep)\n";
+
+	# along x
+	print "set_jump_group JUMPGROUP0 ";
+	print "JUMP12_to_redir_inner JUMP12_to_redir_outer:2 JUMP34_to_redir_inner JUMP34_to_redir_outer:2\n";
+
+	# along y
+	print "set_jump_group JUMPGROUP1 ";
+	print "JUMP23_to_redir_inner JUMP23_to_redir_outer:2 JUMP41_to_redir_inner JUMP41_to_redir_outer:2 ";
+	print "JUMP1_to_redir JUMP2_to_redir JUMP3_to_redir JUMP4_to_redir\n";
+
 } else {
 	print "set_dof JUMP1_to_redir x($ptgp_sep)\n";   # lattice spacing
-}
 
-print "set_jump_group JUMPGROUP1 ";
-foreach my $k (1..$outer_sym_order) {
-	print "JUMP$k"."_to_redir ";
+	print "set_jump_group JUMPGROUP1 ";
+	foreach my $k (1..$outer_sym_order) {
+		print "JUMP$k"."_to_redir ";
+	}
+	print "\n";
 }
-print "\n";
 
 print "set_jump_group JUMPGROUP2 ";
 foreach my $k (0..$outer_sym_order) {
 	my $id1 = $k."_1_1";
 	print "JUMP$id1 ";
+}
+if ($secondShell == 1) {
+	foreach my $k (12,23,34,41) {
+		my $id1 = $k."_1_1";
+		print "JUMP$id1 ";
+	}
 }
 print "\n";
 
@@ -636,6 +848,16 @@ foreach my $k (0..$outer_sym_order) {
 		foreach my $j (1..$sym_orders[0]) {
 			my $id = $k."_".$j."_".$i;
 			print "JUMP$id"."_to_subunit ";
+		}
+	}
+}
+if ($secondShell == 1) {
+	foreach my $k (12,23,34,41) {
+		foreach my $i (1..$sym_orders[1]) {
+			foreach my $j (1..$sym_orders[0]) {
+				my $id = $k."_".$j."_".$i;
+				print "JUMP$id"."_to_subunit ";
+			}
 		}
 	}
 }
@@ -686,13 +908,39 @@ if ($quietMode != 1) {
 				}
 		
 				print OUTPDB "TER   \n";
-				#print STDERR "Writing interface ".$id." as chain ".substr ($chains, $chnidx, 1)."\n";
 				$chnidx++;
 			}
 		}
 	}
 	
-	
+	if ($secondShell == 1) {
+		foreach my $k (12,23,34,41) {
+			foreach my $i (1..$sym_orders[1]) {
+				foreach my $j (1..$sym_orders[0]) {
+					my $id = $k."_".$j."_".$i;
+			
+					foreach my $line (@filebuf) {
+						my $linecopy = $line;
+			
+						my $X = [substr ($line, 30, 8),substr ($line, 38, 8),substr ($line, 46, 8)];
+						my $X_0 = vsub($X,$COM_0);
+						my $rX = vadd( mapply($Rs{$id}, $X_0) , $Ts{$id} );
+			
+						substr ($linecopy, 30, 8) = sprintf ("%8.3f", $rX->[0]);
+						substr ($linecopy, 38, 8) = sprintf ("%8.3f", $rX->[1]);
+						substr ($linecopy, 46, 8) = sprintf ("%8.3f", $rX->[2]);
+						substr ($linecopy, 21, 1) = substr ($chains, $chnidx, 1);
+			
+						print OUTPDB $linecopy."\n";
+					}
+			
+					print OUTPDB "TER   \n";
+					$chnidx++;
+				}
+			}
+		}
+	}
+
 	foreach my $line (@filebuf) {
 		my $linecopy = $line;
 	
