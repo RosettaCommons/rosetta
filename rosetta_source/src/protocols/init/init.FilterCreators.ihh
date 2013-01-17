@@ -20,6 +20,7 @@
 #include <protocols/filters/CalculatorFilterCreator.hh>
 #include <protocols/filters/ContingentFilterCreator.hh>
 #include <protocols/filters/ReplicateFilterCreator.hh>
+#include <protocols/filters/RelativePoseFilterCreator.hh>
 #include <protocols/filters/TimeFilterCreator.hh>
 
 #include <protocols/fldsgn/filters/CoreDunbrackFilterCreator.hh>
@@ -51,7 +52,6 @@
 #include <protocols/protein_interface_design/filters/FilterScanCreator.hh>
 #include <protocols/protein_interface_design/filters/HbondsToResidueFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/InterfaceHolesFilterCreator.hh>
-#include <protocols/protein_interface_design/filters/RelativePoseFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/RelativeSegmentFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/RmsdFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/SequenceRecoveryFilterCreator.hh>

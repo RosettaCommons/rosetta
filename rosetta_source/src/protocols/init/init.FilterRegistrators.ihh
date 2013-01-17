@@ -36,6 +36,7 @@ static FilterRegistrator< protocols::filters::MoveBeforeFilterCreator > reg_Move
 static FilterRegistrator< protocols::filters::ReplicateFilterCreator > reg_ReplicateFilterCreator;
 static FilterRegistrator< protocols::filters::StochasticFilterCreator > reg_StochasticFilterCreator;
 static FilterRegistrator< protocols::filters::TimeFilterCreator > reg_TimeFilterCreator;
+static FilterRegistrator< protocols::filters::RelativePoseFilterCreator > reg_RelativePoseFilterCreator;
 
 static FilterRegistrator< protocols::fldsgn::filters::CoreDunbrackFilterCreator > reg_CoreDunbrackFilterCreator;
 static FilterRegistrator< protocols::fldsgn::filters::FragQualFilterCreator > reg_FragQualFilterCreator;
@@ -66,7 +67,6 @@ static FilterRegistrator< protocols::protein_interface_design::filters::Disulfid
 static FilterRegistrator< protocols::protein_interface_design::filters::FilterScanFilterCreator > reg_FilterScanFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::HbondsToResidueFilterCreator > reg_HbondsToResidueFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::InterfaceHolesFilterCreator > reg_InterfaceHolesFilterCreator;
-static FilterRegistrator< protocols::protein_interface_design::filters::RelativePoseFilterCreator > reg_RelativePoseFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::RelativeSegmentFilterCreator > reg_RelativeSegmentFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::RmsdFilterCreator > reg_RmsdFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::SequenceRecoveryFilterCreator > reg_SequenceRecoveryFilterCreator;

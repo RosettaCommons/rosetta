@@ -11,8 +11,8 @@
 /// @brief  FilterCreators for the RelativePoseFilter
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocols_protein_interface_design_filters_RelativePoseFilterCreator_hh
-#define INCLUDED_protocols_protein_interface_design_filters_RelativePoseFilterCreator_hh
+#ifndef INCLUDED_protocols_filters_RelativePoseFilterCreator_hh
+#define INCLUDED_protocols_filters_RelativePoseFilterCreator_hh
 
 // Package Headers
 #include <protocols/filters/FilterCreator.hh>
@@ -24,7 +24,6 @@
 #include <string>
 
 namespace protocols {
-namespace protein_interface_design {
 namespace filters {
 
 class RelativePoseFilterCreator : public protocols::filters::FilterCreator
@@ -36,7 +35,6 @@ public:
 
 
 } //namespace filters
-} //namespace protein_interface_design
 } //namespace protocols
 
 #endif

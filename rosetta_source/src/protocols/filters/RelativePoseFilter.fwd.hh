@@ -12,15 +12,14 @@
 /// @author  Sarel Fleishman sarelf@uw.edu
 
 
-#ifndef INCLUDED_protocols_protein_interface_design_filters_RelativePoseFilter_fwd_hh
-#define INCLUDED_protocols_protein_interface_design_filters_RelativePoseFilter_fwd_hh
+#ifndef INCLUDED_protocols_filters_RelativePoseFilter_fwd_hh
+#define INCLUDED_protocols_filters_RelativePoseFilter_fwd_hh
 
 
 // Utility headers
 #include <utility/pointer/owning_ptr.fwd.hh>
 
 namespace protocols {
-namespace protein_interface_design{
 namespace filters {
 
 // Forward
@@ -31,7 +30,6 @@ typedef utility::pointer::owning_ptr< RelativePoseFilter >  RelativePoseFilterOP
 typedef utility::pointer::owning_ptr< RelativePoseFilter const >  RelativePoseFilterCOP;
 
 } // namespace filters
-} //namespace protein_interface_design
 } // namespace protocols
 
 #endif

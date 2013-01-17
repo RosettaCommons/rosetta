@@ -11,8 +11,8 @@
 /// @brief Computes a filter's value on a pose that is modified from one that is read from disk. Useful for computing values for the same sequence across many structures.
 /// @author Sarel Fleishman (sarelf@uw.edu)
 
-#ifndef INCLUDED_protocols_protein_interface_design_filters_RelativePoseFilter_hh
-#define INCLUDED_protocols_protein_interface_design_filters_RelativePoseFilter_hh
+#ifndef INCLUDED_protocols_filters_RelativePoseFilter_hh
+#define INCLUDED_protocols_filters_RelativePoseFilter_hh
 
 
 // Project Headers
@@ -21,7 +21,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <core/conformation/symmetry/SymmData.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
-#include <protocols/protein_interface_design/filters/RelativePoseFilter.fwd.hh>
+#include <protocols/filters/RelativePoseFilter.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <utility/vector1.hh>
@@ -29,7 +29,6 @@
 // Unit headers
 
 namespace protocols {
-namespace protein_interface_design{
 namespace filters {
 
 class RelativePoseFilter : public protocols::filters::Filter
@@ -103,7 +102,6 @@ private:
 };
 
 } // filters
-} //protein_interface_design
 } // protocols
 
 #endif //INCLUDED_protocols_Filters_RelativePoseFilter_HH_

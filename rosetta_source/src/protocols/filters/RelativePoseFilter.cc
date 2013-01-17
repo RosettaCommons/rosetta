@@ -8,8 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @author Sarel Fleishman (sarelf@uw.edu)
-#include <protocols/protein_interface_design/filters/RelativePoseFilter.hh>
-#include <protocols/protein_interface_design/filters/RelativePoseFilterCreator.hh>
+#include <protocols/filters/RelativePoseFilter.hh>
+#include <protocols/filters/RelativePoseFilterCreator.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/pack_rotamers.hh>
@@ -47,10 +47,9 @@
 
 
 namespace protocols {
-namespace protein_interface_design{
 namespace filters {
 
-static basic::Tracer TR( "protocols.protein_interface_design.filters.RelativePoseFilter" );
+static basic::Tracer TR( "protocols.filters.RelativePoseFilter" );
 
 ///@brief default ctor
 RelativePoseFilter::RelativePoseFilter() :
@@ -428,5 +427,4 @@ void
 RelativePoseFilter::rtmin( bool const b ){ rtmin_ = b; }
 
 } // filters
-} // protein_interface_design
 } // protocols

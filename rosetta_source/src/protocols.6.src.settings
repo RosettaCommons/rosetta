@@ -114,7 +114,6 @@ sources = {
 		"FilterScan",
 		"HbondsToResidueFilter",
 		"InterfaceHolesFilter",
-		"RelativePoseFilter",
 		"RelativeSegmentFilter",
 		"RmsdFilter",
 		"SequenceRecoveryFilter",
