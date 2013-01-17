@@ -273,6 +273,8 @@ public:
 	void saved_trial_number_file( std::string const );
 	core::Size load_trial_number_from_checkpoint( core::pose::Pose & );
 	void save_trial_number_to_checkpoint( core::Size const i ) const;
+	void reset_baselines( bool const r ){ reset_baselines_ = r; };
+	bool reset_baselines() const{ return reset_baselines_; }
 private:
 	/// @brief evalute pose by ScoreFunctionOP or FilterOP
 	Real scoring( Pose & pose );
@@ -389,6 +391,7 @@ private:
 	std::string saved_trial_number_file_; // dflt ""; if specified checkpoints the current trial number and recovers from it
 	utility::pointer::owning_ptr< DataMapObj< std::string > > mover_tag_; /// dflt NULL; this is used by the called movers to set a certain tag. If saved_accept_file_name_ is set, then at exit the tag coming from the chosen mover is written to disk as, <saved_accept_file_name>.mover_tag. To work, mover_tag_ must be exposed to the movers being called.
 	std::string user_defined_mover_name_; // dflt ""; the mover being called by GenericMC. Used to add values to the poses DataCache.
+	bool reset_baselines_; ///dflt true; reset the filters' baseline at trial=1?
 };
 
 } // namespace moves

@@ -181,6 +181,7 @@ Operator::compute(
 		val = -99999999.999;
 	foreach( protocols::filters::FilterOP f, filters() ){
 		core::Real const filter_val( f()->report_sm( pose ) );
+		TR<<"Filter "<<f()->get_type()<<" return "<<filter_val<<std::endl;
 		if( operation() == SUM || operation() == NORMALIZED_SUM )
 			val += filter_val;
 		if( operation() == PRODUCT )
@@ -197,9 +198,10 @@ Operator::compute(
 	if( operation() == NORMALIZED_SUM )
 		val /= (core::Real) filters().size();
 	if( negate() )
-		return( -1.0 * val );
-	else
-  	return( val );
+		val = -1.0 * val;
+
+	TR<<"Operator returns "<<val<<std::endl;
+	return( val );
 }
 
 utility::vector1< protocols::filters::FilterOP >

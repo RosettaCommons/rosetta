@@ -110,7 +110,8 @@ GenericMonteCarloMover::GenericMonteCarloMover():
 	adaptation_period_( 0 ),
 	saved_accept_file_name_( "" ),
 	saved_trial_number_file_( "" ),
-	mover_tag_( NULL )
+	mover_tag_( NULL ),
+	reset_baselines_( true )
 {
   initialize();
 }
@@ -139,7 +140,8 @@ GenericMonteCarloMover::GenericMonteCarloMover(
 	last_accepted_pose_( NULL ),
 	lowest_score_pose_( NULL ),
 	saved_accept_file_name_( "" ),
-	mover_tag_( NULL )
+	mover_tag_( NULL ),
+	reset_baselines_( true )
 {
   initialize();
 }
@@ -168,7 +170,8 @@ GenericMonteCarloMover::GenericMonteCarloMover(
 	rank_by_filter_(1),
 	boltz_rank_( false ),
 	saved_accept_file_name_( "" ),
-	mover_tag_( NULL )
+	mover_tag_( NULL ),
+	reset_baselines_( true )
 {
   initialize();
 }
@@ -620,34 +623,36 @@ GenericMonteCarloMover::load_trial_number_from_checkpoint( core::pose::Pose & po
 		else
 			TR<<"File containing mover_tag "<<fname<<" not found. Not loading movertag from checkpoint"<<std::endl;
 	}
+	if( reset_baselines() ){
 	/// see if any subfilters need to be reset
-	bool call_reset( false );
-	using namespace protocols::filters;
-	foreach( FilterOP filter, filters_ ){
-		if( filter->get_type() == "Operator" ){
-				TR<<"Resetting Operator filter's baseline"<<std::endl;
-				OperatorOP operator_filter( dynamic_cast< Operator * >( filter() ) );
-				operator_filter->reset_baseline( pose, trial != 1/*if trial>1, attempt to read the baselines from checkpointing files. Otherwise, don't use the checkpointing files*/ );
-				call_reset = true;
-		}// fi Operator
-		else if( filter->get_type() == "CompoundStatement" ){ /// User defined filters with confidence!=1 in RosettaScripts are all CompoundFilter, so poke inside...
-			CompoundFilterOP comp_filt_op( dynamic_cast< CompoundFilter * >( filter() ) );
-			runtime_assert( comp_filt_op );
-			for( CompoundFilter::CompoundStatement::iterator cs_it = comp_filt_op->begin(); cs_it != comp_filt_op->end(); ++cs_it ){
-				FilterOP filt( cs_it->first );
-				if( filt->get_type() == "Operator" ){
+		bool call_reset( false );
+		using namespace protocols::filters;
+		foreach( FilterOP filter, filters_ ){
+			if( filter->get_type() == "Operator" ){
 					TR<<"Resetting Operator filter's baseline"<<std::endl;
-					OperatorOP operator_filter( dynamic_cast< Operator * >( filt() ) );
+					OperatorOP operator_filter( dynamic_cast< Operator * >( filter() ) );
 					operator_filter->reset_baseline( pose, trial != 1/*if trial>1, attempt to read the baselines from checkpointing files. Otherwise, don't use the checkpointing files*/ );
 					call_reset = true;
-				}// fi Operator
-			}// for cs_it
-		}//elseif CompoundStatement
-	} //foreach
-	if( call_reset ){
-		TR<<"Resetting Boltzmann's accepted values, in case filters have changed during loading"<<std::endl;
-		reset( pose );// this is called to reset the boltzmann scores with the new baselines
-	}
+			}// fi Operator
+			else if( filter->get_type() == "CompoundStatement" ){ /// User defined filters with confidence!=1 in RosettaScripts are all CompoundFilter, so poke inside...
+				CompoundFilterOP comp_filt_op( dynamic_cast< CompoundFilter * >( filter() ) );
+				runtime_assert( comp_filt_op );
+				for( CompoundFilter::CompoundStatement::iterator cs_it = comp_filt_op->begin(); cs_it != comp_filt_op->end(); ++cs_it ){
+					FilterOP filt( cs_it->first );
+					if( filt->get_type() == "Operator" ){
+						TR<<"Resetting Operator filter's baseline"<<std::endl;
+						OperatorOP operator_filter( dynamic_cast< Operator * >( filt() ) );
+						operator_filter->reset_baseline( pose, trial != 1/*if trial>1, attempt to read the baselines from checkpointing files. Otherwise, don't use the checkpointing files*/ );
+						call_reset = true;
+					}// fi Operator
+				}// for cs_it
+			}//elseif CompoundStatement
+		} //foreach
+		if( call_reset ){
+			TR<<"Resetting Boltzmann's accepted values, in case filters have changed during loading"<<std::endl;
+			reset( pose );// this is called to reset the boltzmann scores with the new baselines
+		}
+	}/// fi reset_baselines
 	return trial;
 }
 
@@ -933,6 +938,7 @@ GenericMonteCarloMover::parse_my_tag( TagPtr const tag, DataMap & data, Filters_
 	saved_trial_number_file_ = tag->getOption< std::string >( "saved_trial_number_file", "" );
 	if( tag->hasOption( "mover_tag" ) )
 		mover_tag_ = protocols::moves::get_set_from_datamap< DataMapObj< std::string > >( "tags", tag->getOption< std::string >( "mover_tag" ), data );
+	reset_baselines( tag->getOption< bool >( "reset_baselines", true ) );
   initialize();
 }
 
