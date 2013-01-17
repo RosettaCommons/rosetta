@@ -1,0 +1,167 @@
+debug: Input string:
+read
+ mol pqr ion.pqr
+end
+
+elec name elec
+mg-manual
+dime 33 33 33
+grid 0.500 0.500 0.500
+# nlev 4
+gcent mol 1
+ion charge 1.000 conc 0.150 radius 2.000
+ion charge -1.000 conc 0.150 radius 2.000
+pdie 2.000 
+sdie 78.540
+srad 1.400
+swin 0.300
+temp 298.150
+sdens 10.000
+mol 1
+chgm spl2
+lpbe
+bcfl sdh
+srfm spl2
+calcenergy comps
+calcforce comps
+end
+
+apolar name npolar
+bconc 0.0
+press 0.0
+dpos 0.2
+mol 1
+srfm sacc
+grid 0.2 0.2 0.2
+gamma 0.105
+srad 1.400
+swin 0.300
+temp 298.150
+sdens 10.000
+calcenergy total
+calcforce comps
+end
+
+
+quit
+
+Parsed input string.
+Preparing to run 2 PBE calculations.
+----------------------------------------
+CALCULATION #1 (elec): MULTIGRID
+  Setting up problem...
+  Using cubic spline charge discretization.
+  Grid dimensions: 33 x 33 x 33
+  Grid spacings: 0.500 x 0.500 x 0.500
+  Grid lengths: 16.000 x 16.000 x 16.000
+  Grid center: (4.681, 3.930, -0.620)
+  Multigrid levels: 4
+  Molecule ID: 1
+  Linearized traditional PBE
+  Single Debye-Huckel sphere boundary conditions
+  2 ion species (0.150 M ionic strength):
+    2.000 A-radius, 1.000 e-charge, 0.150 M concentration
+    2.000 A-radius, -1.000 e-charge, 0.150 M concentration
+  Solute dielectric: 2.000
+  Solvent dielectric: 78.540
+  Using spline-based surface definition;window = 0.300
+  Temperature:  298.150 K
+  Electrostatic energies will be calculated
+  All-atom solvent forces will be calculated
+----------------------------------------
+CALCULATION #2 (npolar): APOLAR
+----------------------------------------
+Final memory usage:  0.001 MB total, 8.548 MB high water
+Reading parameter file apbs-forces.in                                                                  
+ Reading PQR file ...
+Mol. dimensions:    6.386   4.868   5.895
+ Grid dime not specified, calculating ...
+ Grid values: 
+fglen:   26.386  24.868  25.895
+cglen:   26.386  24.868  25.895
+dime:   33  33  33
+grid:    0.500   0.500   0.500
+Required memory (in MB):      6.854
+ PQR file (x, y, z, charge, radius):
+   1   3.555   3.970  -0.000  -0.416   1.824
+   2   2.733   4.556  -0.000   0.272   0.600
+   3   4.853   4.614  -0.000   0.034   1.908
+   4   5.408   4.316   0.890   0.082   1.387
+   5   5.661   4.221  -1.232  -0.182   1.908
+   6   5.123   4.521  -2.131   0.060   1.487
+   7   6.630   4.719  -1.206   0.060   1.487
+   8   5.809   3.141  -1.241   0.060   1.487
+ i_param:
+calc_type   0
+nlev   4
+cmeth   1
+ccmeth   1
+fcmeth   1
+chgm   1
+nonlin   0
+bcfl   1
+srfm   2
+calcenergy   2
+calcforce   2
+wpot   0
+wchg   0
+wsmol   0
+wkappa   0
+wdiel   0
+watompot   0
+rpot   0
+0   0
+calcnpforce   2
+calcnpenergy   1
+nion   2
+rchg   0
+rkappa   0
+rdiel   0
+ r_param:
+pdie   2.000
+ main.f: apbs return code:            0
+esenergy (kJ/mol):   150.87575187
+npenergy (kJ/mol):    22.80602401
+esenergy (kcal/mol):    36.06017001
+npenergy (kcal/mol):     5.45077054
+ main: Comps force on atoms kJ/(mol/A)
+qf      1 -100.4724   58.1885   52.3243
+ib      1    0.0001    0.0002   -0.0000
+db      1    8.5933   -2.7703   -0.8096
+ptot    1  -91.8790   55.4183   51.5147
+np      1  -19.8928   -0.5630    8.0697
+qf      2   46.1796   -8.7075   17.0234
+ib      2    0.0000   -0.0000   -0.0000
+db      2    0.5063   -0.0500    0.0853
+ptot    2   46.6859   -8.7576   17.1088
+np      2    0.0000    0.0000    0.0000
+qf      3   -2.4839   -1.3039   -1.7577
+ib      3    0.0000   -0.0000   -0.0000
+db      3    0.3743    0.0605    0.0245
+ptot    3   -2.1095   -1.2434   -1.7332
+np      3   -2.1733   29.0435   18.5720
+qf      4    0.0668   -2.8020   -0.3688
+ib      4   -0.0000    0.0000   -0.0000
+db      4   -0.2285    0.1256   -0.2530
+ptot    4   -0.1617   -2.6763   -0.6218
+np      4    8.9754    3.5060   25.9446
+qf      5    2.7359   -6.4653  -13.0038
+ib      5    0.0000    0.0000    0.0000
+db      5    0.2067    0.1140   -0.0001
+ptot    5    2.9426   -6.3513  -13.0039
+np      5   22.7211   -0.9879  -25.4872
+qf      6    1.3953   -0.4304    4.2771
+ib      6    0.0000    0.0000    0.0000
+db      6    0.1597   -0.0123    0.0304
+ptot    6    1.5551   -0.4426    4.3075
+np      6   -2.1068    6.4709  -25.4320
+qf      7   -5.0496   -3.5711   -0.6205
+ib      7   -0.0000   -0.0000   -0.0000
+db      7   -0.0482   -0.0206   -0.0013
+ptot    7   -5.0978   -3.5917   -0.6218
+np      7   23.6262    8.7281   -7.9757
+qf      8   -0.4488    5.5509   -0.3663
+ib      8    0.0000    0.0001    0.0000
+db      8    0.1843    0.1042   -0.1108
+ptot    8   -0.2646    5.6551   -0.4771
+np      8   12.7913  -21.5194   -9.1796

@@ -1,0 +1,15 @@
+Reading parameter file mol1-manual.in                                                                  
+ Reading PQR file ...
+Mol. dimensions:   68.682  69.075  70.346
+ Grid dime not specified, calculating ...
+ Grid values: 
+fglen:   88.682  89.075  90.346
+cglen:  116.759 117.428 119.588
+dime:   97  97  97
+grid:    0.833   0.833   0.833
+Required memory (in MB):    174.079
+ main.f: apbs return code:            0
+esenergy (kJ/mol): 97225.64819670
+npenergy (kJ/mol):  1784.67746843
+esenergy (kcal/mol): 23237.48753397
+npenergy (kcal/mol):   426.54815056

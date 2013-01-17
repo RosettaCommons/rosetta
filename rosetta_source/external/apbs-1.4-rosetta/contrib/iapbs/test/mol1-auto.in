@@ -1,0 +1,19 @@
+&apbs
+ apbs_debug=0,
+ cglen = 90., 90., 90.,
+ fglen = 80., 80., 80.,
+ dime = 97, 97, 97,
+ calc_type = 1,
+ cmeth=1,
+ bcfl=1,
+ srfm=2,
+ chgm=1,
+ pdie=2.0,
+ sdie=78.54,
+ nion=2,
+ ionq  = 1.0, -1.0,
+ ionc  = 0.15, 0.15,
+ ionrr = 2.0, 2.0,
+ calcenergy=2, calcforce=2, calcnpenergy=1, calcnpforce=2
+ pqr = 'mol1.pqr',
+&end

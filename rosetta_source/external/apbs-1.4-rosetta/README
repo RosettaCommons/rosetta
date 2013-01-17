@@ -1,0 +1,55 @@
+#################################################################
+#
+# README for locally modified *developer* version of 
+# APBS/iAPBS r1.4 off the GIT repo as of 1/17/2013.
+#
+# git://git.code.sf.net/p/apbs/code
+#
+#
+# Local edits were made to fit Rosetta's needs.
+#
+#
+# NOTE:
+# The developer version (that is, the copy off GIT)
+# is different from the official source distribution off
+# sourceforge.  The developer version comes with
+# cmake files set to build the interface iAPBS among other
+# controls.
+#
+# Author: Sachko Honda (honda@apl.washington.edu)
+# Date:   1/17/2013
+#
+#################################################################
+
+
+Run make.sh to get all necessary librareies and interfaces built
+ and installed in to <here>/lib and <here>/include,
+where <here> is replaced by the directory in which this README is found.
+
+All librarie are built as static libraries (i.e. archives of object files), 
+which makes it easier for you.  But, if you would like to build shared versions,
+ modified the macro "BUILD_SHARED_LIBS" passed to cmake
+from make.sh to "on" like this:
+
+-DBUILD_SHARED_LIBS=ON
+
+Also, you can build debug version by setting "on" the "ENABLE_DEBUG" macro 
+passed to cmake in make.sh.
+
+-DENABLE_DEBUG
+
+
+In your app, include the header:
+
+#include <iapbs/iapbs.h>
+
+
+To link your app to the APBS/iAPBS (APBS with C API), set linker flags 
+and compiler flags like this:
+
+P=/path/to/<here>
+g++ myapp.cpp -o myapp -I${P}/include -I${P}/include/apbs -I${P}/include/maloc ${P}/src \
+${P}/lib/libipbs.a ${P}/lib/libapbs_routines.a ${P}/lib/libapbs_mg.a \
+${P}/lib/libapbs_generic.a ${P}/lib/libapbs_pmgc.a ${P}/lib/libmalloc.a \
+-lz
+

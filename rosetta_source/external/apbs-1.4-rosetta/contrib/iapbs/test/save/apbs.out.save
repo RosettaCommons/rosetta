@@ -1,0 +1,15 @@
+Reading parameter file apbs.in                                                                         
+ Reading PQR file ...
+Mol. dimensions:    8.118  10.679   5.995
+ Grid dime not specified, calculating ...
+ Grid values: 
+fglen:   28.118  30.679  25.995
+cglen:   28.118  30.679  25.995
+dime:   33  33  33
+grid:    0.500   0.500   0.500
+Required memory (in MB):      6.854
+ main.f: apbs return code:            0
+esenergy (kJ/mol):  1028.30373190
+npenergy (kJ/mol):    39.77620684
+esenergy (kcal/mol):   245.77048952
+npenergy (kcal/mol):     9.50674156

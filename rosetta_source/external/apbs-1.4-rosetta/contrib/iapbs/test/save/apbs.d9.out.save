@@ -1,0 +1,152 @@
+debug: Input string:
+read
+ mol pqr ion.pqr
+end
+
+elec name elec
+mg-manual
+dime 33 33 33
+grid 0.500 0.500 0.500
+# nlev 4
+gcent mol 1
+ion charge 1.000 conc 0.150 radius 2.000
+ion charge -1.000 conc 0.150 radius 2.000
+pdie 2.000 
+sdie 78.540
+srad 1.400
+swin 0.300
+temp 298.150
+sdens 10.000
+mol 1
+chgm spl2
+lpbe
+bcfl sdh
+srfm spl2
+calcenergy total
+calcforce no
+end
+
+apolar name npolar
+bconc 0.0
+press 0.0
+dpos 0.2
+mol 1
+srfm sacc
+grid 0.2 0.2 0.2
+gamma 0.105
+srad 1.400
+swin 0.300
+temp 298.150
+sdens 10.000
+calcenergy total
+calcforce no
+end
+
+print elecEnergy elec end
+print apolEnergy npolar end
+
+quit
+
+Parsed input string.
+Preparing to run 2 PBE calculations.
+----------------------------------------
+CALCULATION #1 (elec): MULTIGRID
+  Setting up problem...
+  Using cubic spline charge discretization.
+  Grid dimensions: 33 x 33 x 33
+  Grid spacings: 0.500 x 0.500 x 0.500
+  Grid lengths: 16.000 x 16.000 x 16.000
+  Grid center: (4.112, 4.824, -0.620)
+  Multigrid levels: 4
+  Molecule ID: 1
+  Linearized traditional PBE
+  Single Debye-Huckel sphere boundary conditions
+  2 ion species (0.150 M ionic strength):
+    2.000 A-radius, 1.000 e-charge, 0.150 M concentration
+    2.000 A-radius, -1.000 e-charge, 0.150 M concentration
+  Solute dielectric: 2.000
+  Solvent dielectric: 78.540
+  Using spline-based surface definition;window = 0.300
+  Temperature:  298.150 K
+  Electrostatic energies will be calculated
+Cleaning 0 pmg memory segment
+----------------------------------------
+CALCULATION #2 (npolar): APOLAR
+energyAPOL: 3.977620684234E+01
+----------------------------------------
+PRINT STATEMENTS
+
+print energy 1 (elec) end
+  Local net energy (PE 0) = 1.028303731899E+03 kJ/mol
+  Global net ELEC energy = 1.028303731899E+03 kJ/mol
+
+print APOL energy 1 (npolar) end
+  Global net APOL energy = 3.977620684234E+01 kJ/mol
+----------------------------------------
+Final memory usage:  0.001 MB total, 8.678 MB high water
+Reading parameter file apbs.d9.in                                                                      
+ Reading PQR file ...
+Mol. dimensions:    8.118  10.679   5.995
+ Grid dime not specified, calculating ...
+ Grid values: 
+fglen:   28.118  30.679  25.995
+cglen:   28.118  30.679  25.995
+dime:   33  33  33
+grid:    0.500   0.500   0.500
+Required memory (in MB):      6.854
+ PQR file (x, y, z, charge, radius):
+   1   2.000   1.000  -0.000   0.112   1.487
+   2   2.000   2.090   0.000  -0.366   1.908
+   3   1.486   2.454   0.890   0.112   1.487
+   4   1.486   2.454  -0.890   0.112   1.487
+   5   3.427   2.641  -0.000   0.597   1.908
+   6   4.391   1.877  -0.000  -0.568   1.661
+   7   3.555   3.970  -0.000  -0.416   1.824
+   8   2.733   4.556  -0.000   0.272   0.600
+   9   4.853   4.614  -0.000   0.034   1.908
+  10   5.408   4.316   0.890   0.082   1.387
+  11   5.661   4.221  -1.232  -0.182   1.908
+  12   5.123   4.521  -2.131   0.060   1.487
+  13   6.630   4.719  -1.206   0.060   1.487
+  14   5.809   3.141  -1.241   0.060   1.487
+  15   4.713   6.129   0.000   0.597   1.908
+  16   3.601   6.653   0.000  -0.568   1.661
+  17   5.846   6.835   0.000  -0.416   1.824
+  18   6.737   6.359  -0.000   0.272   0.600
+  19   5.846   8.284   0.000  -0.149   1.908
+  20   4.819   8.648   0.000   0.098   1.387
+  21   6.360   8.648   0.890   0.098   1.387
+  22   6.360   8.648  -0.890   0.098   1.387
+ i_param:
+calc_type   0
+nlev   4
+cmeth   1
+ccmeth   1
+fcmeth   1
+chgm   1
+nonlin   0
+bcfl   1
+srfm   2
+calcenergy   1
+calcforce   0
+wpot   0
+wchg   0
+wsmol   0
+wkappa   0
+wdiel   0
+watompot   0
+rpot   0
+0   0
+calcnpforce   0
+calcnpenergy   1
+nion   2
+rchg   0
+rkappa   0
+rdiel   0
+ r_param:
+pdie   2.000
+ main.f: apbs return code:            0
+esenergy (kJ/mol):  1028.30373190
+npenergy (kJ/mol):    39.77620684
+esenergy (kcal/mol):   245.77048952
+npenergy (kcal/mol):     9.50674156

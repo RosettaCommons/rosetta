@@ -1,0 +1,17 @@
+&apbs
+ apbs_debug=0,
+ grid=0.8334, 0.8334, 0.8334,
+ calc_type = 0,
+ cmeth=1,
+ bcfl=1,
+ srfm=2,
+ chgm=1,
+ pdie=2.0,
+ sdie=78.54,
+ nion=2,
+ ionq  = 1.0, -1.0,
+ ionc  = 0.15, 0.15,
+ ionrr = 2.0, 2.0,
+ calcforce=2, calcenergy=2, calcnpenergy=1, calcnpforce=2
+ pqr = 'mol1.pqr',
+&end

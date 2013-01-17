@@ -1,0 +1,1 @@
+This is a direct port of the Holst group PMG software package (http://www.fetk.org/codes/pmg/index.html) from FORTRAN to C.  Please see the PMG-README.txt file for more information and citation references.
