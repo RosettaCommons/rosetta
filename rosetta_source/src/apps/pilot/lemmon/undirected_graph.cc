@@ -29,7 +29,7 @@
 /// @author Gordon Lemmon (glemmon@gmail.com)
 
 #include <boost/graph/undirected_graph.hpp>
-#include <ostream>
+#include <iostream>
 
 struct Atom{
 	int i;
@@ -49,11 +49,11 @@ struct Bond{
 	Bond(int i, char a, bool b):i(i),a(a),b(b){};
 };
 
-std::ostream & operator<<(std::ostream& os, Atom a){os << a.i << " " << a.a << " " << a.b; return os; };
-std::ostream & operator<<(std::ostream& os, Bond b){os << b.i << " " << b.a << " " << b.b; return os; };
+std::ostream & operator<<(std::ostream& os, Atom a){os << a.i << " " << a.a << " " << a.b; return os; }
+std::ostream & operator<<(std::ostream& os, Bond b){os << b.i << " " << b.a << " " << b.b; return os; }
 
 //////////////////////////////////////////////////////////////////////////////
-int main(int argc, char* argv[])
+int main()
 {
 	typedef boost::undirected_graph<
 			Atom, // struct with properties of a node
@@ -70,6 +70,8 @@ int main(int argc, char* argv[])
 	Graph::vertex_index_type v1_index = boost::get_vertex_index(v1, g);
 	Graph::vertex_index_type v2_index = boost::get_vertex_index(v2, g);
 	Graph::vertex_index_type v3_index = boost::get_vertex_index(v3, g);
+
+	std::cout << "num_vertices: " << g.num_vertices() << ", num_edges: " << g.num_edges() << std::endl;
 
 	typedef std::pair<Graph::edge_descriptor, bool> EdgeBoolPair;
 	EdgeBoolPair ebp1= g.add_edge(v1, v2, Bond() );
