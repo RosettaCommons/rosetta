@@ -2448,8 +2448,8 @@ option.add( basic::options::OptionKeys::optimization::optimization, "optimizatio
 option.add( basic::options::OptionKeys::optimization::default_max_cycles, "max cycles for MinimizerOptions" ).def(2000);
 option.add( basic::options::OptionKeys::optimization::armijo_min_stepsize, "min stepsize in armijo minimizer" ).def(1e-8);
 option.add( basic::options::OptionKeys::optimization::lbfgs_M, "number of corrections to approximate the inverse hessian matrix." ).def(64);
-option.add( basic::options::OptionKeys::optimization::scale_d, "max cycles for MinimizerOptions" ).def(100);
-option.add( basic::options::OptionKeys::optimization::scale_theta, "max cycles for MinimizerOptions" ).def(10);
+option.add( basic::options::OptionKeys::optimization::scale_d, "max cycles for MinimizerOptions" ).def(1);
+option.add( basic::options::OptionKeys::optimization::scale_theta, "max cycles for MinimizerOptions" ).def(1);
 option.add( basic::options::OptionKeys::optimization::scale_rb, "max cycles for MinimizerOptions" ).def(10);
 option.add( basic::options::OptionKeys::optimization::scale_rbangle, "max cycles for MinimizerOptions" ).def(1);
 option.add( basic::options::OptionKeys::optimization::scmin_nonideal, "Do we allow sidechain nonideality during scmin (e.g. rtmin and min_pack)" ).def(false);
