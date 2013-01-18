@@ -41,6 +41,9 @@ namespace basic {
 
 
 extern std::ostream *final_channel;
+void set_new_final_channel( std::ostream *new_final_channel );
+void set_default_final_channel();
+
 
 /// @brief
 /// Priority levels for T() and Tracer object, modeled on the log4j project and its offspring.
