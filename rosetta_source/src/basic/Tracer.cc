@@ -368,14 +368,12 @@ bool Tracer::calculate_tracer_level(utility::vector1<std::string> const & v, std
 /// name on each line if the print_channel_name flag is set.
 template <class out_stream>
 void Tracer::prepend_channel_name( out_stream & sout, std::string const &str){
-	static long firsttime = time(NULL);
 	if ( tracer_options_.print_channel_name ){
 		std::string s = str;
 		begining_of_the_line_ = true;
 		for (size_t i=0; i<s.size(); i++) {
 			if ( begining_of_the_line_ ) {
 				sout << channel_ << ": ";
-				sout << " t:" << time(NULL) - firsttime << " ";
 #ifdef USEMPI
 				sout << "(" << mpi_rank_ << ") ";
 #endif
