@@ -54,76 +54,25 @@ StoreCompoundTaskMover::StoreCompoundTaskMover() {}
 // @brief destructor
 StoreCompoundTaskMover::~StoreCompoundTaskMover() {}
 
-void
-StoreCompoundTaskMover::clear()
-{
-	compound_task_.clear();
-}
+void StoreCompoundTaskMover::task_clear() { compound_task_.clear(); }
+StoreCompoundTaskMover::task_iterator StoreCompoundTaskMover::task_begin() { return( compound_task_.begin() ); }
+StoreCompoundTaskMover::const_task_iterator StoreCompoundTaskMover::task_begin() const { return( compound_task_.begin() ); }
+StoreCompoundTaskMover::task_iterator StoreCompoundTaskMover::task_end() { return( compound_task_.end() ); }
+StoreCompoundTaskMover::const_task_iterator StoreCompoundTaskMover::task_end() const { return( compound_task_.end() ); }
 
-StoreCompoundTaskMover::iterator
-StoreCompoundTaskMover::begin()
-{
-	return( compound_task_.begin() );
-}
-StoreCompoundTaskMover::const_iterator
-StoreCompoundTaskMover::begin() const
-{
-	return( compound_task_.begin() );
-}
+void StoreCompoundTaskMover::factory_clear() { compound_factory_.clear(); }
+StoreCompoundTaskMover::factory_iterator StoreCompoundTaskMover::factory_begin() { return( compound_factory_.begin() ); }
+StoreCompoundTaskMover::const_factory_iterator StoreCompoundTaskMover::factory_begin() const { return( compound_factory_.begin() ); }
+StoreCompoundTaskMover::factory_iterator StoreCompoundTaskMover::factory_end() { return( compound_factory_.end() ); }
+StoreCompoundTaskMover::const_factory_iterator StoreCompoundTaskMover::factory_end() const { return( compound_factory_.end() ); }
 
-StoreCompoundTaskMover::iterator
-StoreCompoundTaskMover::end()
-{
-	return( compound_task_.end() );
-}
-
-StoreCompoundTaskMover::const_iterator
-StoreCompoundTaskMover::end() const
-{
-	return( compound_task_.end() );
-}
-
-void
-StoreCompoundTaskMover::invert( bool const inv )
-{
-	invert_ = inv;
-}
-
-void
-StoreCompoundTaskMover::verbose( bool const verb )
-{
-	verbose_ = verb;
-}
-
-void
-StoreCompoundTaskMover::overwrite( bool const ow )
-{
-	overwrite_ = ow;
-}
-
-void
-StoreCompoundTaskMover::task_name( std::string const tn )
-{
-	task_name_ = tn;
-}
-
-void
-StoreCompoundTaskMover::mode( std::string const md )
-{
-	mode_ = md;
-}
-
-void
-StoreCompoundTaskMover::true_behavior( std::string const tb )
-{
-	true_behavior_ = tb;
-}
-
-void
-StoreCompoundTaskMover::false_behavior( std::string const fb )
-{
-	false_behavior_ = fb;
-}
+void StoreCompoundTaskMover::invert( bool const inv ) { invert_ = inv; }
+void StoreCompoundTaskMover::verbose( bool const verb ) { verbose_ = verb; }
+void StoreCompoundTaskMover::overwrite( bool const ow ) { overwrite_ = ow; }
+void StoreCompoundTaskMover::task_name( std::string const tn ) { task_name_ = tn; }
+void StoreCompoundTaskMover::mode( std::string const md ) { mode_ = md; }
+void StoreCompoundTaskMover::true_behavior( std::string const tb ) { true_behavior_ = tb; } 
+void StoreCompoundTaskMover::false_behavior( std::string const fb ) { false_behavior_ = fb; }
 
 void
 StoreCompoundTaskMover::CompoundPackableTask( core::Size & total_residue, core::pack::task::PackerTaskOP & task)
@@ -133,7 +82,7 @@ StoreCompoundTaskMover::CompoundPackableTask( core::Size & total_residue, core::
 
 		bool value( true );
 
-		for( StoreCompoundTaskMover::const_iterator it=compound_task_.begin(); it!=compound_task_.end(); ++it ) {
+		for( StoreCompoundTaskMover::const_task_iterator it=compound_task_.begin(); it!=compound_task_.end(); ++it ) {
 			if( it - compound_task_.begin() == 0 ){
 				// first logical op may only be NOT
 				// ANDNOT and ORNOT are also treated as NOT (with a warning)
@@ -192,7 +141,7 @@ StoreCompoundTaskMover::CompoundDesignableTask( core::Size & total_residue, core
 
 		bool value( true );
 
-		for( StoreCompoundTaskMover::const_iterator it=compound_task_.begin(); it!=compound_task_.end(); ++it ) {
+		for( StoreCompoundTaskMover::const_task_iterator it=compound_task_.begin(); it!=compound_task_.end(); ++it ) {
 			if( it - compound_task_.begin() == 0 ){
 				// first logical op may only be NOT
 				// ANDNOT and ORNOT are also treated as NOT (with a warning)
@@ -247,6 +196,7 @@ void
 StoreCompoundTaskMover::apply( core::pose::Pose & pose )
 {
 
+	// Only consider the residues in the asymmetric unit if the pose is symmetric
 	core::Size total_residue;
 	if(core::pose::symmetry::is_symmetric( pose )) { 
 		core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
@@ -255,6 +205,19 @@ StoreCompoundTaskMover::apply( core::pose::Pose & pose )
 		total_residue = pose.total_residue(); 
 	}
 
+	// Loop over the task factory, boolean operation pairs, apply the task operations to the pose, and store these new task, operator pairs
+	// Note: This is performed here rather than in the parse_my_tag function so that the PackerTask is created using the pose present at
+	// runtime rather than during parsing.
+	for( StoreCompoundTaskMover::const_factory_iterator it=compound_factory_.begin(); it!=compound_factory_.end(); ++it ) {
+		std::pair< core::pack::task::PackerTaskOP, boolean_operations > task_pair;
+		task_pair.second = it->second;
+		core::pack::task::PackerTaskOP new_packer_task = it->first->create_task_and_apply_taskoperations( pose );
+		task_pair.first = new_packer_task->clone(); //clone?
+		runtime_assert( new_packer_task );
+		compound_task_.push_back( task_pair );
+	}
+
+	// Create blank task to be modified to yield the new compound task.
 	core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose );
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
@@ -332,19 +295,20 @@ StoreCompoundTaskMover::parse_my_tag( TagPtr const tag, protocols::moves::DataMa
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	/// Loop through all user-provided subtags (ex. < AND task_name="bbi" />) and put these into a 
-	/// vector of (PackerTaskOP, boolean_operation) pairs.
+	/// vector of (TaskFactoryOP, boolean_operation) pairs.
+	/// Note: Do not apply tasks to pose until runtime
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	foreach(TagPtr cmp_tag_ptr, tag->getTags() ){
 		std::string const operation( cmp_tag_ptr->getName() );
-		std::pair< core::pack::task::PackerTaskOP, boolean_operations > task_pair;
-		if( operation == "AND" ) task_pair.second = AND;
-		else if( operation == "OR" ) task_pair.second = OR;
-		else if( operation == "XOR" ) task_pair.second = XOR;
-		else if( operation == "NOR" ) task_pair.second = NOR;
-		else if( operation == "NAND" ) task_pair.second = NAND;
-		else if( operation == "ORNOT" ) task_pair.second = ORNOT;
-		else if( operation == "ANDNOT" ) task_pair.second = ANDNOT;
-		else if( operation == "NOT" ) task_pair.second = NOT;
+		std::pair< core::pack::task::TaskFactoryOP, boolean_operations > factory_pair;
+		if( operation == "AND" ) factory_pair.second = AND;
+		else if( operation == "OR" ) factory_pair.second = OR;
+		else if( operation == "XOR" ) factory_pair.second = XOR;
+		else if( operation == "NOR" ) factory_pair.second = NOR;
+		else if( operation == "NAND" ) factory_pair.second = NAND;
+		else if( operation == "ORNOT" ) factory_pair.second = ORNOT;
+		else if( operation == "ANDNOT" ) factory_pair.second = ANDNOT;
+		else if( operation == "NOT" ) factory_pair.second = NOT;
 		else {
 			throw utility::excn::EXCN_RosettaScriptsOption( "Error: Boolean operation in tag is undefined." );
 		}
@@ -363,10 +327,9 @@ StoreCompoundTaskMover::parse_my_tag( TagPtr const tag, protocols::moves::DataMa
       	utility_exit_with_message("TaskOperation " + *t_o_key + " not found in DataMap.");
     	}
   	}
-		core::pack::task::PackerTaskOP new_packer_task = new_task_factory->create_task_and_apply_taskoperations( pose );
-		task_pair.first = new_packer_task->clone(); //clone?
-		runtime_assert( new_packer_task );
-		compound_task_.push_back( task_pair );
+		factory_pair.first = new_task_factory->clone(); //clone?
+		runtime_assert( new_task_factory );
+		compound_factory_.push_back( factory_pair );
 	}
 }
 

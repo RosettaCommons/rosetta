@@ -21,6 +21,7 @@
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 
 namespace devel {
@@ -31,8 +32,12 @@ class StoreCompoundTaskMover : public protocols::moves::Mover {
 public:
 
 	typedef std::vector< std::pair< core::pack::task::PackerTaskOP, boolean_operations > > CompoundTask;
-	typedef CompoundTask::iterator iterator;
-	typedef CompoundTask::const_iterator const_iterator;
+	typedef CompoundTask::iterator task_iterator;
+	typedef CompoundTask::const_iterator const_task_iterator;
+
+	typedef std::vector< std::pair< core::pack::task::TaskFactoryOP, boolean_operations > > CompoundFactory;
+	typedef CompoundFactory::iterator factory_iterator;
+	typedef CompoundFactory::const_iterator const_factory_iterator;
 
 	StoreCompoundTaskMover();
 	~StoreCompoundTaskMover();
@@ -47,11 +52,16 @@ public:
 	protocols::moves::MoverOP clone() const;
 	protocols::moves::MoverOP fresh_instance() const;
 
-	void clear();
-	iterator begin();
-	const_iterator begin() const;
-	iterator end();
-	const_iterator end() const;
+	void task_clear();
+	task_iterator task_begin();
+	const_task_iterator task_begin() const;
+	task_iterator task_end();
+	const_task_iterator task_end() const;
+	void factory_clear();
+	factory_iterator factory_begin();
+	const_factory_iterator factory_begin() const;
+	factory_iterator factory_end();
+	const_factory_iterator factory_end() const;
 	void task_name( std::string const tn );
 	void mode( std::string const md );
 	void true_behavior( std::string const tb );
@@ -71,6 +81,7 @@ public:
 
 private:
 	CompoundTask compound_task_;
+	CompoundFactory compound_factory_;
 	std::string task_name_;
 	std::string mode_;
 	std::string true_behavior_;
