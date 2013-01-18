@@ -37,8 +37,7 @@ Run make.sh to get all necessary librareies and interfaces built
  and installed in to <here>/lib and <here>/include,
 where <here> is replaced by the directory in which this README is found.
 
-All librarie are built as static libraries (i.e. archives of object files), 
-which makes it easier for you.  But, if you would like to build shared versions,
+All librarie are built as shared libraries.  To switch building to static,
  modified the macro "BUILD_SHARED_LIBS" passed to cmake
 from make.sh to "on" like this:
 
