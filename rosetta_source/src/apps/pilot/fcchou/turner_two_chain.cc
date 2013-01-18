@@ -808,8 +808,8 @@ MC_run () {
 	for (Size id = 1; id <= kT_id_max; ++id) {
 		Real const kT = kTs[id];
 		std::ostringstream oss;
-		oss << out_prefix << '_' << std::fixed << std::setprecision(2) << kT << ".binout";
-		std::ofstream out (oss.str().c_str(), std::ios::out | std::ios::binary);
+		oss << out_prefix << '_' << std::fixed << std::setprecision(2) << kT << ".bin.gz";
+		utility::io::ozstream out (oss.str().c_str(), std::ios::out | std::ios::binary);
 		Size const data_dim_2 = data_list[id].size() / data_dim_1;
 		//std::cout << data_dim_2 << ' ' << data_dim_1 << ' ' << data_list[id].size() << ' ' << sizeof(Size) << std::endl;
 		out.write( (const char*) &data_dim_2, sizeof(Size) );
