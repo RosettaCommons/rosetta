@@ -101,13 +101,15 @@ Membrane_FAEmbed::allocate_appropriate_memory(pose::Pose const & pose) const
   fa_proj_deriv_.resize( nres );
   fa_depth_.resize( nres );
 
+  // Tryptophan is the largest...
+  static Size const MAX_AMINOACID_SIZE = 15; ///Todo Fix this Hack. Membrane Design failed because these vectors are presized assuming residue atom count remains constant
   for ( Size i = 1; i <= nres; ++i ) {
-     Size const i_nheavy( pose.residue( i ).nheavyatoms() );
-     fa_proj_[i].resize( i_nheavy );
-     fa_proj_coord_[i].resize( i_nheavy );
-     fa_proj_deriv_[i].resize( i_nheavy );
-     fa_depth_[i].resize( i_nheavy );
-     for ( Size j = 1; j <= i_nheavy; ++j ) {
+     Size const max_size = std::max( MAX_AMINOACID_SIZE, pose.residue( i ).nheavyatoms() ); // in case of ligands or NCAAs
+     fa_proj_[i].resize( max_size );
+     fa_proj_coord_[i].resize( max_size );
+     fa_proj_deriv_[i].resize( max_size );
+     fa_depth_[i].resize( max_size);
+     for ( Size j = 1; j <= max_size; ++j ) {
          fa_proj_[i][j] = 0.0;
          fa_proj_coord_[i][j].assign(0.0,0.0,0.0);
          fa_proj_deriv_[i][j] = 0.0;
