@@ -109,6 +109,7 @@ sources = {
 		"GetRBDOFValues",
 		"MutationsFilter",
 		"StoreCombinedStoredTasksMover",
+		"StoreCompoundTaskMover",
         ],
 	"devel/metal_interface": [
 		"ZincHeterodimerMover",
