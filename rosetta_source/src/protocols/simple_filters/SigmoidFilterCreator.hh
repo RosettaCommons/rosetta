@@ -7,27 +7,34 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/moves/MonteCarloRecoverMonteCarloRecoverCreator.hh
-///@brief This class will create instances of Mover MonteCarloRecover for the MoverFactory
-///@author Andrew Leaver-Fay via code_writer.py (aleaverfay@gmail.com)
+/// @file   protocols/simple_filters/SigmoidFilterCreator.hh
+/// @brief  FilterCreators for the SigmoidFilter
 
-#ifndef INCLUDED_protocols_moves_MonteCarloRecoverCreator_hh
-#define INCLUDED_protocols_moves_MonteCarloRecoverCreator_hh
 
-#include <protocols/moves/MoverCreator.hh>
+
+#ifndef INCLUDED_protocols_simple_filters_SigmoidFilterCreator_hh
+#define INCLUDED_protocols_simple_filters_SigmoidFilterCreator_hh
+
+// Package Headers
+#include <protocols/filters/FilterCreator.hh>
+
+// Utility Headers
+#include <utility/pointer/ReferenceCount.hh>
+
+// c++ headers
+#include <string>
 
 namespace protocols {
-namespace moves {
+namespace simple_filters {
 
-class MonteCarloRecoverCreator : public protocols::moves::MoverCreator {
+class SigmoidFilterCreator : public protocols::filters::FilterCreator
+{
 public:
-	virtual moves::MoverOP create_mover() const;
+	virtual protocols::filters::FilterOP create_filter() const;
 	virtual std::string keyname() const;
-	static std::string mover_name();
 };
 
 }
 }
 
 #endif
-

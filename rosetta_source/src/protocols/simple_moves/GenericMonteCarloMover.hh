@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/moves/GenericMonteCarloMover.hh
+/// @file src/protocols/simple_moves/GenericMonteCarloMover.hh
 /// @brief perform a given mover and sample structures by MonteCarlo
 /// @detailed The "score" evaluation of pose during MC after applying mover is done by
 /// ither FilterOP that can do report_sm() or ScoreFunctionOP you gave.
@@ -15,12 +15,13 @@
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef INCLUDED_protocols_moves_GenericMonteCarloMover_hh
-#define INCLUDED_protocols_moves_GenericMonteCarloMover_hh
+#ifndef INCLUDED_protocols_simple_moves_GenericMonteCarloMover_hh
+#define INCLUDED_protocols_simple_moves_GenericMonteCarloMover_hh
 
 // Unit header
-#include <protocols/moves/GenericMonteCarloMover.fwd.hh>
+#include <protocols/simple_moves/GenericMonteCarloMover.fwd.hh>
 #include <protocols/moves/DataMapObj.hh>
+#include <protocols/moves/MonteCarloStatus.hh>
 
 // C/C++ headers
 #include <string>
@@ -43,11 +44,12 @@
 
 // Package headers
 #include <protocols/moves/DataMap.fwd.hh>
-#include <protocols/moves/MonteCarloStatus.hh>
 #include <protocols/moves/Mover.hh>
 
 namespace protocols {
-namespace moves {
+namespace simple_moves {
+
+using namespace protocols::moves;
 
 /// @brief Trigger API definition
 typedef boost::function<bool(core::Size,
@@ -384,17 +386,17 @@ private:
 	/// @brief Collection of function callbacks
 	boost::unordered_map<Size, GenericMonteCarloMoverTrigger> triggers_;
 	protocols::filters::FilterOP stopping_condition_; //dflt false_filter; use this to stop an MC trajectory before maxtrials_ (if filter evaluates to true)
-	utility::pointer::owning_ptr< DataMapObj< bool > > mover_stopping_condition_; // dflt NULL; if the mover defined a stopping condition on the datamap then this assumes the mover's value. In this way, the Mover can tell GenericMC to stop execution, e.g., if it has iterated over all internal possibilities
+	utility::pointer::owning_ptr< protocols::moves::DataMapObj< bool > > mover_stopping_condition_; // dflt NULL; if the mover defined a stopping condition on the datamap then this assumes the mover's value. In this way, the Mover can tell GenericMC to stop execution, e.g., if it has iterated over all internal possibilities
 	bool adaptive_movers_; //dflt false; change the mover probabilities according to the accept rates?; only works if the mover is a ParsedProtocol type with mode=single_random
 	core::Size adaptation_period_; /// dflt max( 10, trials/10 ); only works with adaptive; how often should the run probabilities be adapted?
 	std::string saved_accept_file_name_; // dflt ""; if a file name is specified, after each accept a pdb file is dumped to disk. This is useful for checkpointing
 	std::string saved_trial_number_file_; // dflt ""; if specified checkpoints the current trial number and recovers from it
-	utility::pointer::owning_ptr< DataMapObj< std::string > > mover_tag_; /// dflt NULL; this is used by the called movers to set a certain tag. If saved_accept_file_name_ is set, then at exit the tag coming from the chosen mover is written to disk as, <saved_accept_file_name>.mover_tag. To work, mover_tag_ must be exposed to the movers being called.
+	utility::pointer::owning_ptr< protocols::moves::DataMapObj< std::string > > mover_tag_; /// dflt NULL; this is used by the called movers to set a certain tag. If saved_accept_file_name_ is set, then at exit the tag coming from the chosen mover is written to disk as, <saved_accept_file_name>.mover_tag. To work, mover_tag_ must be exposed to the movers being called.
 	std::string user_defined_mover_name_; // dflt ""; the mover being called by GenericMC. Used to add values to the poses DataCache.
 	bool reset_baselines_; ///dflt true; reset the filters' baseline at trial=1?
 };
 
-} // namespace moves
+} // namespace simple_moves
 } // namespace protocols
 
 #endif

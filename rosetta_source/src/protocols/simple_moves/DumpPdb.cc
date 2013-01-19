@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/protein_interface_design/movers/DumpPdb.cc
+/// @file protocols/moves/DumpPdb.cc
 /// @brief
 /// @author Sarel Fleishman (sarelf@u.washington.edu), Jacob Corn (jecorn@u.washington.edu)
 
 // Unit headers
-#include <protocols/protein_interface_design/movers/DumpPdb.hh>
-#include <protocols/protein_interface_design/movers/DumpPdbCreator.hh>
+#include <protocols/simple_moves/DumpPdb.hh>
+#include <protocols/simple_moves/DumpPdbCreator.hh>
 
 
 #include <core/pose/Pose.hh>
@@ -27,15 +27,14 @@
 
 
 namespace protocols {
-namespace protein_interface_design {
-namespace movers {
+namespace simple_moves {
 
 using namespace core;
 using namespace std;
 using namespace core::scoring;
 using namespace protocols::moves;
 
-static basic::Tracer TR( "protocols.protein_interface_design.movers.DumpPdb" );
+static basic::Tracer TR( "protocols.simple_moves.DumpPdb" );
 
 std::string
 DumpPdbCreator::keyname() const
@@ -96,6 +95,5 @@ DumpPdb::get_name() const {
 	return DumpPdbCreator::mover_name();
 }
 
-} //movers
-} //protein_interface_design
+} //simple_moves
 } //protocols

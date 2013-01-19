@@ -16,8 +16,8 @@
 
 
 // Unit Headers
-#include <protocols/moves/GenericMonteCarloMover.hh>
-#include <protocols/moves/GenericMonteCarloMoverCreator.hh>
+#include <protocols/simple_moves/GenericMonteCarloMover.hh>
+#include <protocols/simple_moves/GenericMonteCarloMoverCreator.hh>
 #include <protocols/moves/DataMapObj.hh>
 #include <protocols/moves/DataMap.hh>
 
@@ -57,17 +57,17 @@
 #include <utility/io/izstream.hh>
 #include <sstream>
 #include <core/pose/util.hh>
-#include <protocols/filters/OperatorFilter.hh>
+#include <protocols/simple_filters/OperatorFilter.hh>
 #include <protocols/filters/BasicFilters.hh>
 
-static basic::Tracer TR("protocols.moves.GenericMonteCarloMover");
-static basic::Tracer TR_energies("protocols.moves.GenericMonteCarloMover.individual_energies");
+static basic::Tracer TR("protocols.simple_moves.GenericMonteCarloMover");
+static basic::Tracer TR_energies("protocols.simple_moves.GenericMonteCarloMover.individual_energies");
 static numeric::random::RandomGenerator mc_RG(61452); // <- Magic number, do not change it!!!
 
 using namespace core;
 
 namespace protocols {
-namespace moves {
+namespace simple_moves {
 
 using namespace ObjexxFCL::fmt;
 
@@ -627,6 +627,7 @@ GenericMonteCarloMover::load_trial_number_from_checkpoint( core::pose::Pose & po
 	/// see if any subfilters need to be reset
 		bool call_reset( false );
 		using namespace protocols::filters;
+		using namespace protocols::simple_filters;
 		foreach( FilterOP filter, filters_ ){
 			if( filter->get_type() == "Operator" ){
 					TR<<"Resetting Operator filter's baseline"<<std::endl;
@@ -721,7 +722,7 @@ GenericMonteCarloMover::apply( Pose & pose )
 
   PoseOP initial_pose = new Pose( pose );
 	reset( pose ); //(re)initialize MC statistics
-  MoverStatus ms( FAIL_RETRY );
+  protocols::moves::MoverStatus ms( FAIL_RETRY );
 	core::Size accept( 0 ), reject( 0 );
 	using namespace protocols::rosetta_scripts;
 	ParsedProtocolOP mover_pp( dynamic_cast< ParsedProtocol * >( mover_() ) );
@@ -826,7 +827,7 @@ GenericMonteCarloMover::get_name() const {
 
 /// @brief parse xml file
 void
-GenericMonteCarloMover::parse_my_tag( TagPtr const tag, DataMap & data, Filters_map const &filters, Movers_map const &movers, Pose const & )
+GenericMonteCarloMover::parse_my_tag( TagPtr const tag, protocols::moves::DataMap & data, Filters_map const &filters, Movers_map const &movers, Pose const & )
 {
 	//using core::pack::task::operation::TaskOperation;
 	//using core::pack::task::TaskFactoryOP;
@@ -842,7 +843,7 @@ GenericMonteCarloMover::parse_my_tag( TagPtr const tag, DataMap & data, Filters_
 	String const  user_defined_mover_name_( tag->getOption< String >( "mover_name" ,""));
 	if( data.has( "stopping_condition", user_defined_mover_name_ ) ){
 		TR<<user_defined_mover_name_<<" defines its own stopping condition, and GenericMC will respect this stopping condition"<<std::endl;
-		mover_stopping_condition_ = data.get< DataMapObj< bool > * >( "stopping_condition", user_defined_mover_name_ );
+		mover_stopping_condition_ = data.get< protocols::moves::DataMapObj< bool > * >( "stopping_condition", user_defined_mover_name_ );
 	}
 
 	String const filter_name( tag->getOption< String >( "filter_name", "true_filter" ) );
@@ -937,7 +938,7 @@ GenericMonteCarloMover::parse_my_tag( TagPtr const tag, DataMap & data, Filters_
 	saved_accept_file_name_ = tag->getOption< std::string >( "saved_accept_file_name", "" );
 	saved_trial_number_file_ = tag->getOption< std::string >( "saved_trial_number_file", "" );
 	if( tag->hasOption( "mover_tag" ) )
-		mover_tag_ = protocols::moves::get_set_from_datamap< DataMapObj< std::string > >( "tags", tag->getOption< std::string >( "mover_tag" ), data );
+		mover_tag_ = protocols::moves::get_set_from_datamap< protocols::moves::DataMapObj< std::string > >( "tags", tag->getOption< std::string >( "mover_tag" ), data );
 	reset_baselines( tag->getOption< bool >( "reset_baselines", true ) );
   initialize();
 }
@@ -945,7 +946,7 @@ GenericMonteCarloMover::parse_my_tag( TagPtr const tag, DataMap & data, Filters_
 ///@brief parse "task_operations" XML option
 void GenericMonteCarloMover::parse_task_operations(
 	TagPtr const tag,
-	DataMap const & datamap,
+	protocols::moves::DataMap const & datamap,
 	Filters_map const &,
 	Movers_map const &
 )
@@ -1025,5 +1026,5 @@ void
 GenericMonteCarloMover::saved_trial_number_file( std::string const s ){
 	saved_trial_number_file_ = s;
 }
-} // ns moves
+} // ns simple_moves
 } // ns protocols

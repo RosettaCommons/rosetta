@@ -131,7 +131,6 @@ sources = {
 		"DesignMinimizeHbonds",
 		"DisulfideMover",
 		"DockAndRetrieveSidechains",
-		"DumpPdb",
 		"FavorNativeResiduePreCycle",
 		"FavorNonNativeResiduePreCycle",
 		"HotspotDisjointedFoldTreeMover",

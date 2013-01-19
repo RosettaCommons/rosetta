@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/filters/RelativePoseFilter.hh
+/// @file protocols/simple_filters/RelativePoseFilter.hh
 /// @brief Computes a filter's value on a pose that is modified from one that is read from disk. Useful for computing values for the same sequence across many structures.
 /// @author Sarel Fleishman (sarelf@uw.edu)
 
-#ifndef INCLUDED_protocols_filters_RelativePoseFilter_hh
-#define INCLUDED_protocols_filters_RelativePoseFilter_hh
+#ifndef INCLUDED_protocols_simple_filters_RelativePoseFilter_hh
+#define INCLUDED_protocols_simple_filters_RelativePoseFilter_hh
 
 
 // Project Headers
@@ -21,7 +21,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <core/conformation/symmetry/SymmData.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
-#include <protocols/filters/RelativePoseFilter.fwd.hh>
+#include <protocols/simple_filters/RelativePoseFilter.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <utility/vector1.hh>
@@ -29,7 +29,7 @@
 // Unit headers
 
 namespace protocols {
-namespace filters {
+namespace simple_filters {
 
 class RelativePoseFilter : public protocols::filters::Filter
 {
@@ -101,8 +101,8 @@ private:
 	bool rtmin_; //dflt false; after repacking the substituted residues, should we also rtmin?
 };
 
-} // filters
+} // simple_filters
 } // protocols
 
-#endif //INCLUDED_protocols_Filters_RelativePoseFilter_HH_
+#endif //INCLUDED_protocols_simple_filters_RelativePoseFilter_HH_
 

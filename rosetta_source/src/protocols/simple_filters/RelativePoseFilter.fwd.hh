@@ -7,25 +7,29 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @brief
-/// @author Sarel Fleishman (sarelf@uw.edu)
+/// @file   protocols/protein_interface_design/simple_filters/RelativePoseFilter.fwd.hh
+/// @brief  forward declaration for RelativePoseFilter
+/// @author  Sarel Fleishman sarelf@uw.edu
 
-#ifndef INCLUDED_protocols_moves_MonteCarloRecover_fwd_hh
-#define INCLUDED_protocols_moves_MonteCarloRecover_fwd_hh
+
+#ifndef INCLUDED_protocols_simple_filters_RelativePoseFilter_fwd_hh
+#define INCLUDED_protocols_simple_filters_RelativePoseFilter_fwd_hh
 
 
 // Utility headers
 #include <utility/pointer/owning_ptr.fwd.hh>
 
 namespace protocols {
-namespace moves {
+namespace simple_filters {
 
-class MonteCarloRecover;
-typedef utility::pointer::owning_ptr< MonteCarloRecover >  MonteCarloRecoverOP;
-typedef utility::pointer::owning_ptr< MonteCarloRecover const >  MonteCarloRecoverCOP;
+// Forward
+class RelativePoseFilter;
 
+// Types
+typedef utility::pointer::owning_ptr< RelativePoseFilter >  RelativePoseFilterOP;
+typedef utility::pointer::owning_ptr< RelativePoseFilter const >  RelativePoseFilterCOP;
 
-} // namespace moves
+} // namespace simple_filters
 } // namespace protocols
 
 #endif

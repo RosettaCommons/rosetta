@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/filters/OperatorFilter.hh
+/// @file protocols/simple_filters/OperatorFilter.hh
 
-#ifndef INCLUDED_protocols_filters_OperatorFilter_hh
-#define INCLUDED_protocols_filters_OperatorFilter_hh
+#ifndef INCLUDED_protocols_simple_filters_OperatorFilter_hh
+#define INCLUDED_protocols_simple_filters_OperatorFilter_hh
 
 //unit headers
-#include <protocols/filters/OperatorFilter.fwd.hh>
+#include <protocols/simple_filters/OperatorFilter.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -23,7 +23,7 @@
 #include <protocols/moves/Mover.fwd.hh>
 
 namespace protocols {
-namespace filters {
+namespace simple_filters {
 
 enum Operation { SUM, PRODUCT, NORMALIZED_SUM, MAX, MIN, SUBTRACT, ABS, BOOLEAN_OR/*x+y-xy*/ };
 ///@brief simply take a list of filters and combine them using the operation above
@@ -53,11 +53,18 @@ class Operator : public filters::Filter
 		void operation( Operation const o ){ operation_ = o; }
 		void negate( bool const b ){ negate_ = b; }
 		bool negate() const{ return negate_; }
+		utility::vector1< std::string > relative_pose_names() { return relative_pose_names_; }
+		void relative_pose_names( utility::vector1< std::string > const s ){ relative_pose_names_ = s; }
+		bool multi_relative() const { return multi_relative_; }
+		void multi_relative( bool const m ){ multi_relative_ = m; }
+		void modify_relative_filters_pdb_names();
   private:
     utility::vector1< protocols::filters::FilterOP > filters_;
 		Operation operation_; // dflt PRODUCT
 		core::Real threshold_; // dflt 0
 		bool negate_; // dflt false; in optimization, useful to get values between -1 - 0 rather than 0-1
+		utility::vector1< std::string > relative_pose_names_; // dflt ""; see below
+		bool multi_relative_; //dflt false; if true, searches all of the filters for RelativePoseFilters, replicates them to as many different file names as are listed in relative_pose_names_. Useful in case there are many different states that are all taken into consideration using the same operator
 };
 }
 }

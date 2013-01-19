@@ -7,31 +7,34 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/protein_interface_design/movers/DumpPdbCreator.hh
-/// @brief  Declaration of the MoverCreator class for the DumpPdb
+/// @file   protocols/protein_interface_design/simple_filters/RelativePoseFilterCreator.hh
+/// @brief  FilterCreators for the RelativePoseFilter
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocols_protein_interface_design_movers_DumpPdbCreator_hh
-#define INCLUDED_protocols_protein_interface_design_movers_DumpPdbCreator_hh
+#ifndef INCLUDED_protocols_simple_filters_RelativePoseFilterCreator_hh
+#define INCLUDED_protocols_simple_filters_RelativePoseFilterCreator_hh
 
-// Project headers
-#include <protocols/moves/MoverCreator.hh>
+// Package Headers
+#include <protocols/filters/FilterCreator.hh>
+
+// Utility Headers
+#include <utility/pointer/ReferenceCount.hh>
+
+// c++ headers
+#include <string>
 
 namespace protocols {
-namespace protein_interface_design {
-namespace movers {
+namespace simple_filters {
 
-class DumpPdbCreator : public moves::MoverCreator
+class RelativePoseFilterCreator : public protocols::filters::FilterCreator
 {
 public:
-	virtual moves::MoverOP create_mover() const;
+	virtual protocols::filters::FilterOP create_filter() const;
 	virtual std::string keyname() const;
-	static  std::string mover_name();
-
 };
 
-}
-}
-}
+
+} //namespace filters
+} //namespace protocols
 
 #endif

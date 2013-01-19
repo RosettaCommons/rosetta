@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/moves/MonteCarloRecover.hh
+/// @file src/protocols/simple_moves/MonteCarloRecover.hh
 /// @author Sarel Fleishman (sarelf@uw.edu)
 
 #ifndef INCLUDED_protocols_moves_MonteCarloRecover_hh
 #define INCLUDED_protocols_moves_MonteCarloRecover_hh
 
 // Unit Headers
-#include <protocols/moves/MonteCarloRecover.fwd.hh>
-#include <protocols/moves/GenericMonteCarloMover.fwd.hh>
+#include <protocols/simple_moves/MonteCarloRecover.fwd.hh>
+#include <protocols/simple_moves/GenericMonteCarloMover.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -34,7 +34,7 @@
 
 
 namespace protocols {
-namespace moves {
+namespace simple_moves {
 
 class MonteCarloRecover : public protocols::moves::Mover {
 public:
@@ -48,6 +48,7 @@ public:
 	typedef protocols::moves::DataMap DataMap;
 	typedef protocols::filters::Filters_map Filters_map;
 	typedef protocols::moves::Movers_map Movers_map;
+	typedef protocols::moves::MoverOP MoverOP;
 
 
 public:	// constructor/destructor
@@ -92,7 +93,7 @@ private: // data
 	GenericMonteCarloMoverOP MC_mover_;
 };
 
-} // namespace moves
+} // namespace simple_moves
 } // namespace protocols
 
 #endif

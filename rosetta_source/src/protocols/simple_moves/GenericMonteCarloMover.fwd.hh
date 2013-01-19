@@ -7,25 +7,27 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
+/// @file ./src/protocols/fldsgn/StateFilter.fwd.hh
 /// @brief
-/// @author Sarel Fleishman (sarelf@uw.edu)
+/// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 
-#ifndef INCLUDED_protocols_moves_MonteCarloTest_fwd_hh
-#define INCLUDED_protocols_moves_MonteCarloTest_fwd_hh
+#ifndef INCLUDED_protocols_simple_moves_GenericMonteCarloMover_fwd_hh
+#define INCLUDED_protocols_simple_moves_GenericMonteCarloMover_fwd_hh
 
 
 // Utility headers
+// AUTO-REMOVED #include <utility/pointer/access_ptr.fwd.hh>
 #include <utility/pointer/owning_ptr.fwd.hh>
 
 namespace protocols {
-namespace moves {
+namespace simple_moves {
 
-class MonteCarloTest;
-typedef utility::pointer::owning_ptr< MonteCarloTest >  MonteCarloTestOP;
-typedef utility::pointer::owning_ptr< MonteCarloTest const >  MonteCarloTestCOP;
+class GenericMonteCarloMover;
+typedef utility::pointer::owning_ptr< GenericMonteCarloMover >  GenericMonteCarloMoverOP;
+typedef utility::pointer::owning_ptr< GenericMonteCarloMover const >  GenericMonteCarloMoverCOP;
 
 
-} // namespace moves
+} // namespace simple_moves
 } // namespace protocols
 
 #endif

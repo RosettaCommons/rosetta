@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/moves/MonteCarloRecover.cc
+/// @file src/protocols/simple_moves/MonteCarloTest.cc
 /// @author Sarel Fleishman (sarelf@uw.edu)
 
 
 // Unit Headers
-#include <protocols/moves/MonteCarloRecover.hh>
-#include <protocols/moves/MonteCarloRecoverCreator.hh>
-#include <protocols/moves/GenericMonteCarloMover.hh>
+#include <protocols/simple_moves/MonteCarloTest.hh>
+#include <protocols/simple_moves/MonteCarloTestCreator.hh>
+#include <protocols/simple_moves/GenericMonteCarloMover.hh>
 
 // Package Headers
 
@@ -23,6 +23,7 @@
 #include <basic/Tracer.hh>
 // AUTO-REMOVED #include <protocols/filters/Filter.hh>
 #include <protocols/moves/Mover.hh>
+
 // Parser headers
 #include <protocols/moves/DataMap.fwd.hh>
 #include <utility/tag/Tag.hh>
@@ -36,103 +37,89 @@
 
 //// C++ headers
 
-static basic::Tracer TR("protocols.moves.MonteCarloRecover");
+static basic::Tracer TR("protocols.simple_moves.MonteCarloTest");
 
 using namespace core;
 
 namespace protocols {
-namespace moves {
+namespace simple_moves {
 
 std::string
-MonteCarloRecoverCreator::keyname() const
+MonteCarloTestCreator::keyname() const
 {
-	return MonteCarloRecoverCreator::mover_name();
+	return MonteCarloTestCreator::mover_name();
 }
 
 protocols::moves::MoverOP
-MonteCarloRecoverCreator::create_mover() const {
-	return new MonteCarloRecover;
+MonteCarloTestCreator::create_mover() const {
+	return new MonteCarloTest;
 }
 
 std::string
-MonteCarloRecoverCreator::mover_name()
+MonteCarloTestCreator::mover_name()
 {
-	return "MonteCarloRecover";
+	return "MonteCarloTest";
 }
 
 std::string
-MonteCarloRecover::get_name() const {
-	  return MonteCarloRecoverCreator::mover_name();
+MonteCarloTest::get_name() const {
+	  return MonteCarloTestCreator::mover_name();
 }
 
 
 /// @brief default constructor
-MonteCarloRecover::MonteCarloRecover():
-	Mover("MonteCarloRecover"),
-	recover_low_( true ),
+MonteCarloTest::MonteCarloTest():
+	Mover("MonteCarloTest"),
 	MC_mover_( NULL )
 {
 }
 
 /// @brief destructor
-MonteCarloRecover::~MonteCarloRecover(){}
+MonteCarloTest::~MonteCarloTest(){}
 
 /// @brief clone this object
 MoverOP
-MonteCarloRecover::clone() const
+MonteCarloTest::clone() const
 {
-	return new MonteCarloRecover( *this );
+	return new MonteCarloTest( *this );
 }
 
 /// @brief create this type of object
 MoverOP
-MonteCarloRecover::fresh_instance() const
+MonteCarloTest::fresh_instance() const
 {
-	return new MonteCarloRecover();
+	return new MonteCarloTest();
 }
 
 GenericMonteCarloMoverOP
-MonteCarloRecover::get_MC() const{
+MonteCarloTest::get_MC() const{
 	return( MC_mover_ );
 }
 
 void
-MonteCarloRecover::set_MC( GenericMonteCarloMoverOP mc ){
+MonteCarloTest::set_MC( GenericMonteCarloMoverOP mc ){
 	MC_mover_ = mc;
 }
 
 void
-MonteCarloRecover::parse_my_tag( TagPtr const tag, DataMap &, Filters_map const &, Movers_map const &movers, Pose const & pose ){
+MonteCarloTest::parse_my_tag( TagPtr const tag, DataMap &, Filters_map const &, Movers_map const &movers, Pose const & pose ){
 	std::string const mc_name( tag->getOption< std::string >( "MC_name" ) );
 	Movers_map::const_iterator find_mover( movers.find( mc_name ) );
 	if( find_mover == movers.end() )
-		throw utility::excn::EXCN_RosettaScriptsOption( "MC mover not found by MonteCarloRecover" );
+		throw utility::excn::EXCN_RosettaScriptsOption( "MC mover not found by MonteCarloTest" );
 
 	set_MC( dynamic_cast< GenericMonteCarloMover * >( find_mover->second() ) );
-	recover_low( tag->getOption< bool >( "recover_low", true ) );
 	Pose temp_pose( pose );
 	get_MC()->initialize();
 	get_MC()->reset( temp_pose );
-	TR<<"Setting MonteCarloRecover with mover "<<mc_name<<" and recover_low set to "<<recover_low()<<std::endl;
+	TR<<"Setting MonteCarlo container with mover "<<mc_name<<std::endl;
 }
 
 void
-MonteCarloRecover::apply( core::pose::Pose & pose ){
-	if( recover_low() )
-		MC_mover_->recover_low( pose );
-	else
-		pose = *(MC_mover_->last_accepted_pose());
+MonteCarloTest::apply( core::pose::Pose & pose ){
+	bool const accept( MC_mover_->boltzmann( pose ) );
+	TR<<"MC mover accept="<<accept<<std::endl;
 }
 
-bool
-MonteCarloRecover::recover_low() const{
-	return( recover_low_ );
-}
-
-void
-MonteCarloRecover::recover_low( bool const recover ){
-	recover_low_ = recover;
-}
-
-} // ns moves
+} // ns simple_moves
 } // ns protocols

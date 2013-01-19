@@ -7,17 +7,17 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/moves/GenericMonteCarloMoverGenericMonteCarloMoverCreator.hh
+///@file protocols/simple_moves/GenericMonteCarloMoverGenericMonteCarloMoverCreator.hh
 ///@brief This class will create instances of Mover GenericMonteCarloMover for the MoverFactory
 ///@author Andrew Leaver-Fay via code_writer.py (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocols_moves_GenericMonteCarloMoverCreator_hh
-#define INCLUDED_protocols_moves_GenericMonteCarloMoverCreator_hh
+#ifndef INCLUDED_protocols_simple_moves_GenericMonteCarloMoverCreator_hh
+#define INCLUDED_protocols_simple_moves_GenericMonteCarloMoverCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 
 namespace protocols {
-namespace moves {
+namespace simple_moves {
 
 class GenericMonteCarloMoverCreator : public protocols::moves::MoverCreator {
 public:

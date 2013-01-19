@@ -7,30 +7,23 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
+/// @file   protocols/simple_filters/SigmoidFilter.fwd.hh
 /// @brief
-/// @author
 
-#ifndef INCLUDED_protocols_moves_MonteCarloStatus_hh
-#define INCLUDED_protocols_moves_MonteCarloStatus_hh
+#ifndef INCLUDED_protocols_simple_filters_SigmoidFilter_fwd_hh
+#define INCLUDED_protocols_simple_filters_SigmoidFilter_fwd_hh
+
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
-namespace moves {
+namespace simple_filters {
 
-// 	mc_accepted
-// 		3 = accepted:score beat low score and last_accepted score
-// 		2 = accepted:score beat last_accepted score
-// 		1 = thermally accepted: score worse than last_accepted score
-// 		0 = not accepted
-typedef enum {
-	MCA_accepted_score_beat_low=3,
-	MCA_accepted_score_beat_last=2,
-	MCA_accepted_thermally=1,
-	MCA_rejected=0
-} MCA; // mc_accepted state
+class Sigmoid;
 
-} // simple_moves
-} // protocols
+typedef utility::pointer::owning_ptr< Sigmoid > SigmoidOP;
+typedef utility::pointer::owning_ptr< Sigmoid const > SigmoidCOP;
 
+}
+}
 
 #endif

@@ -126,12 +126,12 @@
 #include <protocols/motifs/MotifDnaPackerCreator.hh>
 
 #include <protocols/moves/DsspMoverCreator.hh>
-#include <protocols/moves/GenericMonteCarloMoverCreator.hh>
+#include <protocols/simple_moves/GenericMonteCarloMoverCreator.hh>
 #include <protocols/moves/IfMoverCreator.hh>
 #include <protocols/moves/MoverContainerCreator.hh>
 #include <protocols/moves/IteratedConvergenceMoverCreator.hh>
-#include <protocols/moves/MonteCarloRecoverCreator.hh>
-#include <protocols/moves/MonteCarloTestCreator.hh>
+#include <protocols/simple_moves/MonteCarloRecoverCreator.hh>
+#include <protocols/simple_moves/MonteCarloTestCreator.hh>
 #include <protocols/moves/RampingMoverCreator.hh>
 #include <protocols/nonlocal/SingleFragmentMoverCreator.hh>
 
@@ -145,7 +145,7 @@
 #include <protocols/protein_interface_design/movers/DesignMinimizeHbondsCreator.hh>
 #include <protocols/protein_interface_design/movers/DisulfideMoverCreator.hh>
 #include <protocols/protein_interface_design/movers/DockAndRetrieveSidechainsCreator.hh>
-#include <protocols/protein_interface_design/movers/DumpPdbCreator.hh>
+#include <protocols/simple_moves/DumpPdbCreator.hh>
 #include <protocols/protein_interface_design/movers/FavorNativeResiduePreCycleCreator.hh>
 #include <protocols/protein_interface_design/movers/FavorNonNativeResiduePreCycleCreator.hh>
 #include <protocols/protein_interface_design/movers/HotspotDisjointedFoldTreeMoverCreator.hh>

@@ -8,8 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @author Sarel Fleishman (sarelf@uw.edu)
-#include <protocols/filters/RelativePoseFilter.hh>
-#include <protocols/filters/RelativePoseFilterCreator.hh>
+#include <protocols/simple_filters/RelativePoseFilter.hh>
+#include <protocols/simple_filters/RelativePoseFilterCreator.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/pack_rotamers.hh>
@@ -32,7 +32,7 @@
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 #include <utility/string_util.hh>
-#include <protocols/protein_interface_design/movers/DumpPdb.hh>
+#include <protocols/simple_moves/DumpPdb.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmData.hh>
 #include <core/conformation/symmetry/SymmDataFactory.hh>
@@ -47,9 +47,9 @@
 
 
 namespace protocols {
-namespace filters {
+namespace simple_filters {
 
-static basic::Tracer TR( "protocols.filters.RelativePoseFilter" );
+static basic::Tracer TR( "protocols.simple_filters.RelativePoseFilter" );
 
 ///@brief default ctor
 RelativePoseFilter::RelativePoseFilter() :
@@ -221,7 +221,7 @@ RelativePoseFilter::compute( core::pose::Pose const & p ) const{
 	core::pose::PoseOP threaded_pose( thread_seq( p ) );
 	core::Real const filter_val( filter()->report_sm( *threaded_pose ) );
 	if( dump_pose_fname() != "" ){
-		protocols::protein_interface_design::movers::DumpPdb dump( dump_pose_fname() );
+		protocols::simple_moves::DumpPdb dump( dump_pose_fname() );
 		dump.set_scorefxn( scorefxn() );
 		dump.apply( *threaded_pose );
 	}
@@ -426,5 +426,5 @@ RelativePoseFilter::rtmin() const{ return rtmin_; }
 void
 RelativePoseFilter::rtmin( bool const b ){ rtmin_ = b; }
 
-} // filters
+} // simple_filters
 } // protocols

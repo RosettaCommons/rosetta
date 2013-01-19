@@ -7,19 +7,19 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/moves/MonteCarloTest.hh
+/// @file src/protocols/simple_moves/MonteCarloTest.hh
 /// @brief perform a given mover and sample structures by MonteCarlo
 /// @detailed The "score" evaluation of pose during MC after applying mover is done by
 /// ither FilterOP that can do report_sm() or ScoreFunctionOP you gave.
 /// By setting sample_type_ to high, you can also sample the pose that have higher score.
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 
-#ifndef INCLUDED_protocols_moves_MonteCarloTest_hh
-#define INCLUDED_protocols_moves_MonteCarloTest_hh
+#ifndef INCLUDED_protocols_simple_moves_MonteCarloTest_hh
+#define INCLUDED_protocols_simple_moves_MonteCarloTest_hh
 
 // Unit Headers
-#include <protocols/moves/MonteCarloTest.fwd.hh>
-#include <protocols/moves/GenericMonteCarloMover.fwd.hh>
+#include <protocols/simple_moves/MonteCarloTest.fwd.hh>
+#include <protocols/simple_moves/GenericMonteCarloMover.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -38,7 +38,7 @@
 
 
 namespace protocols {
-namespace moves {
+namespace simple_moves {
 
 class MonteCarloTest : public protocols::moves::Mover {
 public:
@@ -52,6 +52,7 @@ public:
 	typedef protocols::moves::DataMap DataMap;
 	typedef protocols::filters::Filters_map Filters_map;
 	typedef protocols::moves::Movers_map Movers_map;
+	typedef protocols::moves::MoverOP MoverOP;
 
 
 public:	// constructor/destructor
@@ -96,7 +97,7 @@ private: // data
 	GenericMonteCarloMoverOP MC_mover_;
 };
 
-} // namespace moves
+} // namespace simple_moves
 } // namespace protocols
 
 #endif

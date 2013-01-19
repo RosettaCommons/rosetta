@@ -7,34 +7,29 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/protein_interface_design/filters/RelativePoseFilterCreator.hh
-/// @brief  FilterCreators for the RelativePoseFilter
+/// @file   protocols/moves/DumpPdbCreator.hh
+/// @brief  Declaration of the MoverCreator class for the DumpPdb
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocols_filters_RelativePoseFilterCreator_hh
-#define INCLUDED_protocols_filters_RelativePoseFilterCreator_hh
+#ifndef INCLUDED_protocols_simple_moves_DumpPdbCreator_hh
+#define INCLUDED_protocols_simple_moves_DumpPdbCreator_hh
 
-// Package Headers
-#include <protocols/filters/FilterCreator.hh>
-
-// Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
-
-// c++ headers
-#include <string>
+// Project headers
+#include <protocols/moves/MoverCreator.hh>
 
 namespace protocols {
-namespace filters {
+namespace simple_moves {
 
-class RelativePoseFilterCreator : public protocols::filters::FilterCreator
+class DumpPdbCreator : public moves::MoverCreator
 {
 public:
-	virtual protocols::filters::FilterOP create_filter() const;
+	virtual moves::MoverOP create_mover() const;
 	virtual std::string keyname() const;
+	static  std::string mover_name();
+
 };
 
-
-} //namespace filters
-} //namespace protocols
+}
+}
 
 #endif

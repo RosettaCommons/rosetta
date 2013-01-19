@@ -7,15 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/filters/OperatorFilter.cc
+/// @file protocols/simple_filters/OperatorFilter.cc
 /// @brief
 /// @author Gabi Pszolla & Sarel Fleishman
 
 
 //Unit Headers
-#include <protocols/filters/OperatorFilter.hh>
-#include <protocols/filters/OperatorFilterCreator.hh>
-#include <protocols/filters/SigmoidFilter.hh>
+#include <protocols/simple_filters/OperatorFilter.hh>
+#include <protocols/simple_filters/OperatorFilterCreator.hh>
+#include <protocols/simple_filters/RelativePoseFilter.hh>
+#include <protocols/simple_filters/SigmoidFilter.hh>
 #include <utility/tag/Tag.hh>
 //Project Headers
 #include <basic/Tracer.hh>
@@ -26,9 +27,10 @@
 #include <utility/string_util.hh>
 #include <protocols/filters/BasicFilters.hh>
 namespace protocols{
-namespace filters {
+namespace simple_filters {
 
-static basic::Tracer TR( "protocols.filters.Operator" );
+static basic::Tracer TR( "protocols.simple_filters.Operator" );
+using namespace protocols::filters;
 
 protocols::filters::FilterOP
 OperatorFilterCreator::create_filter() const { return new Operator; }
@@ -50,7 +52,7 @@ Operator::~Operator() {}
 
 void
 Operator::reset_baseline( core::pose::Pose const & pose, bool const attempt_read_from_checkpoint ){
-	foreach( FilterOP filter, filters() ){
+	foreach( protocols::filters::FilterOP filter, filters() ){
 		if( filter->get_type() == "Sigmoid" ){
 			SigmoidOP sigmoid_filter( dynamic_cast< Sigmoid * >( filter() ) );
 			runtime_assert( sigmoid_filter );
@@ -66,7 +68,7 @@ Operator::reset_baseline( core::pose::Pose const & pose, bool const attempt_read
 		else if( filter->get_type() == "CompoundStatement" ){///all RosettaScripts user-defined filters with confidence!=1 are compoundstatements
 		  CompoundFilterOP comp_filt_op( dynamic_cast< CompoundFilter * >( filter() ) );
 		  runtime_assert( comp_filt_op );
-		  for( CompoundFilter::CompoundStatement::iterator cs_it = comp_filt_op->begin(); cs_it != comp_filt_op->end(); ++cs_it ){
+		  for( protocols::filters::CompoundFilter::CompoundStatement::iterator cs_it = comp_filt_op->begin(); cs_it != comp_filt_op->end(); ++cs_it ){
 		     protocols::filters::FilterOP f( cs_it->first );
 				if( f->get_type() == "Sigmoid" ){
 					SigmoidOP sigmoid_filter( dynamic_cast< Sigmoid * >( f() ) );
@@ -84,6 +86,35 @@ Operator::reset_baseline( core::pose::Pose const & pose, bool const attempt_read
 		}//elseif CompoundStatement
 	}//foreach
 }
+
+void
+Operator::modify_relative_filters_pdb_names(){
+	utility::vector1< FilterOP > erase_filters;
+	erase_filters.clear();
+	foreach( FilterOP filter, filters_ ){
+		if( filter->get_type() == "Sigmoid" ){
+			SigmoidOP sigmoid_filter( dynamic_cast< Sigmoid * >( filter() ) );
+			runtime_assert( sigmoid_filter );
+			if( sigmoid_filter->filter()->get_type() == "RelativePose" ){
+				TR<<"Replicating and changing RelativePose's filter pdb fname. File names: ";
+				foreach( std::string const fname, relative_pose_names_ ){
+					SigmoidOP new_sigmoid( *sigmoid_filter );
+					RelativePoseFilterOP relative_pose( dynamic_cast< RelativePoseFilter * >( new_sigmoid->filter()() ) );
+					runtime_assert( relative_pose );
+					relative_pose->pdb_name( fname );
+					add_filter( new_sigmoid );
+					TR<<fname<<", ";
+				}
+				TR<<std::endl;
+				erase_filters.push_back( filter );
+			}
+		}
+	}
+	foreach( FilterOP erase_f, erase_filters ){
+		filters_.erase( std::find( filters_.begin(), filters_.end(), erase_f ) );
+	}
+}
+
 
 void
 Operator::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap &, filters::Filters_map const &filters, moves::Movers_map const &, core::pose::Pose const & )
@@ -119,7 +150,13 @@ Operator::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap &, filter
 		utility_exit_with_message( "Operation "+op+" requested, but the number of filters provided is different than 2. I only know how to "+op+" one filter from another" );
 	if( operation() == ABS && filters_.size() != 1 )
 		utility_exit_with_message( "Operation ABS requested, but the number of filters provided is different than 1. I only know how to take the absolute value of one filter" );
-	TR<<" using operator "<<op<<std::endl;
+	multi_relative( tag->getOption< bool >( "multi_relative", false ) );
+	if( multi_relative() ){
+		TR<<"multi_relative is set. Duplicating filters to include relative_pose_names."<<std::endl;
+		relative_pose_names_ = utility::string_split( tag->getOption< std::string >( "relative_pose_names" ), ',' );
+		modify_relative_filters_pdb_names();
+	}
+	TR<<" using operator "<<op<<" with "<< filters_.size()<<" filters "<<std::endl;
 }
 
 bool

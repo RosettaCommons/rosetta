@@ -7,11 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/protein_interface_design/movers/DumpPdb.hh
+/// @file protocols/simple_moves/DumpPdb.hh
 /// @author Sarel Fleishman (sarelf@u.washington.edu), Jacob Corn (jecorn@u.washington.edu)
 
-#ifndef INCLUDED_protocols_protein_interface_design_movers_DumpPdb_hh
-#define INCLUDED_protocols_protein_interface_design_movers_DumpPdb_hh
+#ifndef INCLUDED_protocols_simple_moves_DumpPdb_hh
+#define INCLUDED_protocols_simple_moves_DumpPdb_hh
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -25,8 +25,7 @@
 
 
 namespace protocols {
-namespace protein_interface_design {
-namespace movers {
+namespace simple_moves {
 
 /// @brief what you think
 /// this can now be assimilated into DumpPdbMover
@@ -51,9 +50,8 @@ private:
 };
 
 
-} // movers
-} // protein_interface_design
+} // simple_moves
 } // protocols
 
 
-#endif /*INCLUDED_protocols_protein_interface_design_movers_DumpPdb_HH*/
+#endif /*INCLUDED_protocols_moves_DumpPdb_HH*/
