@@ -1191,15 +1191,40 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 2.0</dd><br>
 </dl>
 <dl>
-<dt><b>-print_eggshell</b> \<Boolean\><dt>
-<dd>print the eggshell points into a PDB file</dd><br>
+<dt><b>-print_grid</b> \<Boolean\><dt>
+<dd>print the grid points into a PDB file</dd><br>
 <dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-extend_eggshell</b> \<Boolean\><dt>
+<dd>Extend the eggshell points</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-extend_eggshell_dist</b> \<Real\><dt>
+<dd>Distance to extend eggshell</dd><br>
+<dd>Default: 1</dd><br>
+</dl>
+<dl>
+<dt><b>-extra_eggshell_dist</b> \<Real\><dt>
+<dd>Distance to extend extra eggshell points</dd><br>
+<dd>Default: 5</dd><br>
+</dl>
+<dl>
+<dt><b>-reduce_rays</b> \<Boolean\><dt>
+<dd>reduce no. of rays by rounding and removing duplicate xyz coordinates</dd><br>
+<dd>Default: true</dd><br>
 </dl>
  </li>
 <li><h2>fingerprint</h2>
 <dl>
 <dt><b>-fingerprint</b> \<Boolean\><dt>
 <dd>fingerprint option group</dd><br>
+</dl>
+<dl>
+<dt><b>-print_eggshell</b> \<Boolean\><dt>
+<dd>print the eggshell points into a PDB file</dd><br>
+<dd>Default: false</dd><br>
 </dl>
 <dl>
 <dt><b>-atom_radius_scale</b> \<Real\><dt>
@@ -1220,6 +1245,26 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-dist_cut_off</b> \<Real\><dt>
 <dd>set cut_off distance to add packing weight</dd><br>
 <dd>Default: 5</dd><br>
+</dl>
+<dl>
+<dt><b>-include_hydrogens</b> \<Boolean\><dt>
+<dd>include hydrogen atoms for fingerprint</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-use_DARC_gpu</b> \<Boolean\><dt>
+<dd>use GPU when computing DARC score</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-square_score</b> \<Boolean\><dt>
+<dd>square the terms in DARC scoring function</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-set_origin</b> \<Integer\><dt>
+<dd>option to set orgin: 0 to choose origin based on R(rugedness) value, 1 for protein_center, 2 for eggshell_bottom, 3 for vector form eggshell_plane closest to protein_center, 4 for vector form eggshell_plane distant to protein_center</dd><br>
+<dd>Default: 0</dd><br>
 </dl>
  </li>
 <li><h2>docking</h2>
@@ -11885,12 +11930,12 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-scale_d</b> \<Real\><dt>
 <dd>max cycles for MinimizerOptions</dd><br>
-<dd>Default: 100</dd><br>
+<dd>Default: 1</dd><br>
 </dl>
 <dl>
 <dt><b>-scale_theta</b> \<Real\><dt>
 <dd>max cycles for MinimizerOptions</dd><br>
-<dd>Default: 10</dd><br>
+<dd>Default: 1</dd><br>
 </dl>
 <dl>
 <dt><b>-scale_rb</b> \<Real\><dt>

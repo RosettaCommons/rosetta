@@ -255,12 +255,21 @@ option.add( basic::options::OptionKeys::pocket_grid::pocket_surface_score, "Scor
 option.add( basic::options::OptionKeys::pocket_grid::pocket_surface_dist, "Distance to consider pocket surface" ).def(2.5);
 option.add( basic::options::OptionKeys::pocket_grid::pocket_buried_score, "Score given to deeply buried pocket points" ).def(5.0);
 option.add( basic::options::OptionKeys::pocket_grid::pocket_buried_dist, "Distance to consider pocket buried" ).def(2.0);
-option.add( basic::options::OptionKeys::pocket_grid::print_eggshell, "print the eggshell points into a PDB file" ).def(false);
+option.add( basic::options::OptionKeys::pocket_grid::print_grid, "print the grid points into a PDB file" ).def(false);
+option.add( basic::options::OptionKeys::pocket_grid::extend_eggshell, "Extend the eggshell points" ).def(false);
+option.add( basic::options::OptionKeys::pocket_grid::extend_eggshell_dist, "Distance to extend eggshell" ).def(1);
+option.add( basic::options::OptionKeys::pocket_grid::extra_eggshell_dist, "Distance to extend extra eggshell points" ).def(5);
+option.add( basic::options::OptionKeys::pocket_grid::reduce_rays, "reduce no. of rays by rounding and removing duplicate xyz coordinates" ).def(true);
 option.add( basic::options::OptionKeys::fingerprint::fingerprint, "fingerprint option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::fingerprint::print_eggshell, "print the eggshell points into a PDB file" ).def(false);
 option.add( basic::options::OptionKeys::fingerprint::atom_radius_scale, "Scale to shrink the radius of atom" ).def(0.9);
 option.add( basic::options::OptionKeys::fingerprint::atom_radius_buffer, "Value to subtract from all atomic radii, to match PocketGrid buffer thickness" ).def(1.0);
 option.add( basic::options::OptionKeys::fingerprint::packing_weight, "Add weight to rho large deviation" ).def(1);
 option.add( basic::options::OptionKeys::fingerprint::dist_cut_off, "set cut_off distance to add packing weight" ).def(5);
+option.add( basic::options::OptionKeys::fingerprint::include_hydrogens, "include hydrogen atoms for fingerprint" ).def(false);
+option.add( basic::options::OptionKeys::fingerprint::use_DARC_gpu, "use GPU when computing DARC score" ).def(false);
+option.add( basic::options::OptionKeys::fingerprint::square_score, "square the terms in DARC scoring function" ).def(false);
+option.add( basic::options::OptionKeys::fingerprint::set_origin, "option to set orgin: 0 to choose origin based on R(rugedness) value, 1 for protein_center, 2 for eggshell_bottom, 3 for vector form eggshell_plane closest to protein_center, 4 for vector form eggshell_plane distant to protein_center" ).def(0);
 option.add( basic::options::OptionKeys::docking::kick_relax, "Add relax step at the end of symmetric docking" ).def(false);
 option.add( basic::options::OptionKeys::docking::docking, "Docking option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::docking::view, "Decide whether to use the viewer (graphical) or not" ).def(false);
@@ -651,16 +660,16 @@ option.add( basic::options::OptionKeys::fold_cst::reramp_start_cstweight, "drop 
 option.add( basic::options::OptionKeys::fold_cst::reramp_iterations, "do X loops of annealing cycles" ).def(1);
 option.add( basic::options::OptionKeys::fold_cst::skip_on_noviolation_in_stage1, "if constraints report no violations --- skip cycles" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::stage1_ramp_cst_cycle_factor, "spend x*<standard cycles> on each step of sequence separation" ).def(0.25);
-option.add( basic::options::OptionKeys::fold_cst::stage2_constraint_threshold, "stop runs that violate this threshold at end of stage2" ).def(0);
+
+}
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::stage2_constraint_threshold, "stop runs that violate this threshold at end of stage2" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::ignore_sequence_seperation, "usually constraints are switched on according to their separation in the fold-tree" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::no_recover_low_at_constraint_switch, "dont recover low when max_seq_sep is increased" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::ramp_coord_cst, "ramp coord csts just like chainbreak-weights during fold-cst" ).def(false);
 option.add( basic::options::OptionKeys::resample::resample, "resample option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::resample::silent, "a silent file for decoys to restart sampling from " ).def("");
 option.add( basic::options::OptionKeys::resample::tag, "which decoy to select from silent file " ).def("");
-
-}
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::resample::stage1, "if true restart after stage1, otherwise after stage2 " ).def(false);
+option.add( basic::options::OptionKeys::resample::stage1, "if true restart after stage1, otherwise after stage2 " ).def(false);
 option.add( basic::options::OptionKeys::resample::stage2, "if true restart after stage1, otherwise after stage2 " ).def(false);
 option.add( basic::options::OptionKeys::resample::jumps, "if true restart after stage1, otherwise after stage2 " ).def(false);
 option.add( basic::options::OptionKeys::resample::min_max_start_seq_sep, "range of (random) start values for seq-separation" ).def(0);
@@ -1310,14 +1319,14 @@ option.add( basic::options::OptionKeys::lh::fragpdb::fragpdb, "fragpdb option gr
 option.add( basic::options::OptionKeys::lh::fragpdb::out_path, "Path where pdbs are saved" ).def("");
 option.add( basic::options::OptionKeys::lh::fragpdb::indexoffset, "list of index offset pairs" ).def(-1);
 option.add( basic::options::OptionKeys::lh::fragpdb::bin, "list of bin keys" ).def(utility::vector1<std::string>());
-option.add( basic::options::OptionKeys::lh::symfragrm::symfragrm, "symfragrm option group" ).legal(true).def(true);
+
+}
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::symfragrm::symfragrm, "symfragrm option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::lh::symfragrm::pdblist, "list of pdbs to be processed" );
 option.add( basic::options::OptionKeys::rbe::rbe, "rbe option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::rbe::server_url, "serverurl for rosetta backend" );
 option.add( basic::options::OptionKeys::rbe::server_port, "port for rosetta backend" ).def("80");
-
-}
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::rbe::poll_frequency, "No description" ).def(1.0);
+option.add( basic::options::OptionKeys::rbe::poll_frequency, "No description" ).def(1.0);
 option.add( basic::options::OptionKeys::blivens::blivens, "blivens option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::blivens::disulfide_scorer::disulfide_scorer, "disulfide_scorer option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::blivens::disulfide_scorer::nds_prob, "The probability of scoring a non-disulfide pair" ).def(0.0);
@@ -1969,12 +1978,12 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topolo
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
-option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
-option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
+option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
+option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
+option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_pdb, "PDB file from which to draw constraints" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrbmoves, "number of rigid-body moves" ).def(100);
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrboutercycles, "number of rigid-body moves" ).def(5);

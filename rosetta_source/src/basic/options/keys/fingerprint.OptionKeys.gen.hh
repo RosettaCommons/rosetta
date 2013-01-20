@@ -22,10 +22,15 @@ namespace options {
 namespace OptionKeys {
 
 namespace fingerprint { extern BooleanOptionKey const fingerprint; }
+namespace fingerprint { extern BooleanOptionKey const print_eggshell; }
 namespace fingerprint { extern RealOptionKey const atom_radius_scale; }
 namespace fingerprint { extern RealOptionKey const atom_radius_buffer; }
 namespace fingerprint { extern RealOptionKey const packing_weight; }
 namespace fingerprint { extern RealOptionKey const dist_cut_off; }
+namespace fingerprint { extern BooleanOptionKey const include_hydrogens; }
+namespace fingerprint { extern BooleanOptionKey const use_DARC_gpu; }
+namespace fingerprint { extern BooleanOptionKey const square_score; }
+namespace fingerprint { extern IntegerOptionKey const set_origin; }
 
 } // namespace OptionKeys
 } // namespace options

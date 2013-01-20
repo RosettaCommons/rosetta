@@ -44,7 +44,11 @@ namespace pocket_grid { extern RealOptionKey const pocket_surface_score; }
 namespace pocket_grid { extern RealOptionKey const pocket_surface_dist; }
 namespace pocket_grid { extern RealOptionKey const pocket_buried_score; }
 namespace pocket_grid { extern RealOptionKey const pocket_buried_dist; }
-namespace pocket_grid { extern BooleanOptionKey const print_eggshell; }
+namespace pocket_grid { extern BooleanOptionKey const print_grid; }
+namespace pocket_grid { extern BooleanOptionKey const extend_eggshell; }
+namespace pocket_grid { extern RealOptionKey const extend_eggshell_dist; }
+namespace pocket_grid { extern RealOptionKey const extra_eggshell_dist; }
+namespace pocket_grid { extern BooleanOptionKey const reduce_rays; }
 
 } // namespace OptionKeys
 } // namespace options

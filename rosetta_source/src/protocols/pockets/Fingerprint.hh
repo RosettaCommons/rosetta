@@ -16,146 +16,241 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 #include <protocols/pockets/Fingerprint.fwd.hh>
-// AUTO-REMOVED #include <protocols/pockets/FingerprintMultifunc.fwd.hh>
 #include <protocols/pockets/PocketGrid.fwd.hh>
+#include <protocols/pockets/FingerprintMultifunc.hh>
+#include <protocols/pockets/DarcParticleSwarmMinimizer.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-
+#include <core/conformation/Residue.hh>
 #include <numeric/constants.hh>
 #include <numeric/xyzVector.hh>
 #include <utility/vector1_bool.hh>
 #include <list>
 #include <cmath>
-
+#include <iostream>
 #include <utility/vector1.hh>
+#include <basic/gpu/GPU.hh>
 
-
-
+#define NUMBER_OF_PARTICLES 200
+#define ATOMS_ARRAY 20000
+#define RAY_SCORE_ARRAY 2500000
+#define MAX_NUM_RAYS 100000
 
 namespace protocols {
 namespace pockets {
 
-typedef struct {
-	core::Real phi;
-	core::Real psi;
-	core::Real rho;
-} spherical_coor_triplet;
+  typedef struct {
+    // note: these are in radians
+    core::Real phi;
+    core::Real psi;
+    core::Real rho;
+  } spherical_coor_triplet;
 
-class FingerprintBase : public utility::pointer::ReferenceCount {
+  typedef struct {
+    core::Real dDist_dv1;
+    core::Real dDist_dv2;
+    core::Real dDist_dv3;
+    core::Real dDist_dv4;
+    core::Real dDist_dv5;
+    core::Real dDist_dv6;
+  } ray_distance_derivs;
 
-	friend class FingerprintMultifunc;
+  class FingerprintBase : public utility::pointer::ReferenceCount {
 
-public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~FingerprintBase();
+    friend class FingerprintMultifunc;
+    friend class DarcParticleSwarmMinimizer;
 
-  FingerprintBase();
+  public:
 
-  void print_to_file(std::string const & output_filename) const;
-  //void print_to_file(std::string const & output_filename, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset) const;
+    FingerprintBase();
 
-  void print_to_pdb(std::string const & output_pdbname) const;
-  void print_to_pdb(std::string const & output_pdbname, numeric::xyzVector<core::Real> const & translation ) const;
+    void print_to_file(std::string const & output_filename) const;
+    //void print_to_file(std::string const & output_filename, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset) const;
 
-	// const accessor functions
-	numeric::xyzVector<core::Real> origin() const { return origin_; };
+    void print_to_pdb(std::string const & output_pdbname) const;
 
-	numeric::xyzVector<core::Real> CoM() const { return CoM_; };
+    void print_to_pdb(std::string const & output_pdbname, numeric::xyzVector<core::Real> const & translation ) const;
 
-	std::list< spherical_coor_triplet > const & triplet_fingerprint_data() const { return triplet_fingerprint_data_; };
+    // const accessor functions
+    numeric::xyzVector<core::Real> origin() const { return origin_; };
 
-	// CHEAT!!
-	void CHEAT_CoM( numeric::xyzVector<core::Real> const & inp_CoM ) { CoM_ = inp_CoM; };
+    numeric::xyzVector<core::Real> CoM() const { return CoM_; };
 
-protected:
-	numeric::xyzVector<core::Real> origin_;
-	std::list< spherical_coor_triplet > triplet_fingerprint_data_;
-	numeric::xyzVector<core::Real> CoM_;
+    std::list< spherical_coor_triplet > const & triplet_fingerprint_data() const { return triplet_fingerprint_data_; };
 
-};
+    // CHEAT!!
+    void CHEAT_CoM( numeric::xyzVector<core::Real> const & inp_CoM ) { CoM_ = inp_CoM; };
 
-class NonPlaidFingerprint : public FingerprintBase {
-public:
-  NonPlaidFingerprint() {};
+  protected:
+    numeric::xyzVector<core::Real> origin_;
+    std::list< spherical_coor_triplet > triplet_fingerprint_data_;
+    numeric::xyzVector<core::Real> CoM_;
 
-  void setup_from_PocketGrid( core::pose::Pose const & protein_pose, PocketGrid const & pocket_grid );
+    ///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+    virtual ~FingerprintBase();
 
-  void setup_from_EggshellGrid( core::pose::Pose const & protein_pose, EggshellGrid const & pocket_grid );
+  };
 
-  void trim_based_on_known_ligand( core::pose::Pose const & known_ligand_pose );
+  class NonPlaidFingerprint : public FingerprintBase {
+  public:
+    NonPlaidFingerprint() {};
 
-  void setup_from_file(std::string const & input_filename);
+    std::list< numeric::xyzVector<core::Real> > egg_and_ext_list_;
+    std::list< numeric::xyzVector<core::Real> > eggshell_list_;
+    std::list< numeric::xyzVector<core::Real> > extshell_list_;
 
-  void setup_from_PlaidFingerprint( PlaidFingerprint const & pfp );
+    void setup_from_PocketGrid( core::pose::Pose const & protein_pose, PocketGrid const & pocket_grid );
 
+    void setup_from_PocketGrid( core::pose::Pose const & protein_pose, PocketGrid const & pocket_grid, PocketGrid const & grid_for_extshell );
 
+    void setup_from_EggshellGrid();
 
-};
+    void write_eggshell_to_pdb_file( std::string const & output_eggshell_name ) const;
 
-class PlaidFingerprint : public FingerprintBase {
+#ifdef USEOPENCL
+    void setup_gpu( core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight, int & num_particles, PlaidFingerprint & pf );
 
-	friend class FingerprintMultifunc;
+    void free_gpu();
 
-public:
+    void setup_gpu_rays();
+#endif
 
+    void setup_from_eggshell_pdb_file( std::string const & input_filename);
 
-  PlaidFingerprint( core::pose::Pose const & input_pose, FingerprintBase const & fp );
+    void trim_based_on_known_ligand( core::pose::Pose const & known_ligand_pose );
 
-	core::Real Find_Intersect(core::Real const & phiAngle, core::Real const & psiAngle, core::Real const & atomX, core::Real const & atomY, core::Real const & atomZ, core::Real const & atom_radius, core::Real const & desired_rho );
+    void setup_from_eggshell_triplet_file(std::string const & input_filename);
 
-	core::Real find_optimal_rotation( FingerprintBase const & fp, core::Real const & angle_increment, core::Real & optimal_angle1, core::Real & optimal_angle2, core::Real & optimal_angle3, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight );
+    void setup_from_PlaidFingerprint( PlaidFingerprint const & pfp );
 
-	core::Real find_optimal_rotation( FingerprintBase const & fp, core::Real const & angle_increment, core::Real & optimal_angle1, core::Real & optimal_angle2, core::Real & optimal_angle3, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight, numeric::xyzVector<core::Real> const & no_CoM_offset );
+    void set_origin ( core::pose::Pose const & protein_pose, std::list< numeric::xyzVector<core::Real> > const & egg_and_extra_shell );
 
-	core::Real search_random_poses( FingerprintBase const & fp, core::Size const & num_pose_search, core::Real & optimal_angle1, core::Real & optimal_angle2, core::Real & optimal_angle3, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight );
+    void set_origin_from_option_( core::pose::Pose const & protein_pose, std::list< numeric::xyzVector<core::Real> > const & egg_and_extra_shell, Size const & set_origin_option );
 
-	core::Real search_random_poses( FingerprintBase const & fp, core::Size const & num_pose_search, core::Real & optimal_angle1, core::Real & optimal_angle2, core::Real & optimal_angle3, core::Real const & missing_point_weight, core::Real const & steric_weight,  core::Real const & extra_point_weight, numeric::xyzVector<core::Real> const & no_CoM_offset );
+    void set_origin_away_from_protein_center ( core::pose::Pose const & protein_pose );
 
+    void set_origin_away_from_eggshell( std::list< numeric::xyzVector<core::Real> > const & egg_and_extra_shell, core::pose::Pose const & protein_pose );
 
-	core::Real fp_compare( FingerprintBase const & fp, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight ) const;
-	void dump_oriented_pose_and_fp_to_pdb( std::string const & pose_filename, std::string const & fp_filename, FingerprintBase const & fp, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset );
+    void set_origin_away_from_eggshell_plane( std::list< numeric::xyzVector<core::Real> > const & egg_and_extra_shell, core::pose::Pose const & protein_pose, Size const & set_origin_option );
 
-	void dump_oriented_pose_and_fp_to_pdb( std::string const & pose_filename, std::string const & fp_filename, FingerprintBase const & fp, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, utility::vector1<core::Real> const & original_pocket_angle_transform );
+    core::Real get_Rvalue (core::pose::Pose const & protein_pose, std::list< numeric::xyzVector<core::Real> > const & egg_and_extra_shell, Size const & set_origin_option);
 
-	void dump_oriented_pose_and_fp_to_pdb( std::string const & pose_filename, std::string const & fp_filename, FingerprintBase const & fp, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, utility::vector1<core::Real> const & original_pocket_angle_transform, numeric::xyzVector<core::Real> const & CoM_offset );
+    numeric::xyzVector<core::Real> calculate_protein_CoM( core::pose::Pose const & protein_pose);
 
-	core::pose::Pose get_oriented_pose( FingerprintBase const & fp, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, utility::vector1<core::Real> const & original_pocket_angle_transform, numeric::xyzVector<core::Real> const & CoM_offset );
+    std::list< numeric::xyzVector<core::Real> > combine_xyz_lists (std::list< numeric::xyzVector<core::Real> > const & xyz_list_1 , std::list< numeric::xyzVector<core::Real> > const & xyz_list_2);
 
-	core::Real rmsd( core::pose::Pose const & original_pose,  core::pose::Pose const & oriented_pose );
+#ifdef USEOPENCL
+    basic::gpu::GPU gpu_;
+    cl_mem gpu_rays_, gpu_atoms_, gpu_ray_scores_, gpu_particle_scores_, gpu_weights_, gpu_atom_maxmin_phipsi_;
+    int gpu_num_rays_, gpu_num_atoms_, gpu_num_particles_;
+    float ray_scores_[RAY_SCORE_ARRAY], particle_scores_[NUMBER_OF_PARTICLES];
+#endif
+    typedef struct {
+      float x, y, z, w;
+    } float4;
+    float4 atom_[ATOMS_ARRAY];
+    float4 atom_maxmin_phipsi_[ATOMS_ARRAY];
+    float4 ligand_maxmin_phipsi_[NUMBER_OF_PARTICLES];
 
-	void move_origin(numeric::xyzVector<core::Real> const & new_origin );
+  };
 
+  class PlaidFingerprint : public FingerprintBase {
 
-private:
-	PlaidFingerprint(); // no default constructor
+    friend class FingerprintMultifunc;
+    friend class DarcParticleSwarmMinimizer;
 
-	core::pose::Pose pose_;
+  public:
 
-	void build_from_pose_( FingerprintBase const & fp);
+    PlaidFingerprint( core::pose::Pose const & input_pose, FingerprintBase & fp );
 
-	void build_from_pose_( FingerprintBase const & fp, numeric::xyzVector<core::Real> const & CoM_offset, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset);
+    core::Real find_optimal_rotation( FingerprintBase & fp, core::Real const & angle_increment, core::Real & optimal_angle1, core::Real & optimal_angle2, core::Real & optimal_angle3, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight );
 
-	void apply_rotation_offset_to_pose_( core::pose::Pose & pose, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset ) const;
+    core::Real find_optimal_rotation( FingerprintBase & fp, core::Real const & angle_increment, core::Real & optimal_angle1, core::Real & optimal_angle2, core::Real & optimal_angle3, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight, numeric::xyzVector<core::Real> const & no_CoM_offset );
 
-};
+    core::Real search_random_poses( FingerprintBase & fp, core::Size const & num_pose_search, core::Real & optimal_angle1, core::Real & optimal_angle2, core::Real & optimal_angle3, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight );
 
-void correct_phi_psi( core::Real & phi, core::Real & psi );
+    core::Real search_random_poses( FingerprintBase & fp, core::Size const & num_pose_search, core::Real & optimal_angle1, core::Real & optimal_angle2, core::Real & optimal_angle3, core::Real const & missing_point_weight, core::Real const & steric_weight,  core::Real const & extra_point_weight, numeric::xyzVector<core::Real> const & no_CoM_offset );
 
-inline void convert_cartesian_to_spherical_coor_triplet( numeric::xyzVector<core::Real> const & coord, spherical_coor_triplet & triplet ){
-	triplet.rho = sqrt((coord.x()*coord.x())+(coord.y()*coord.y())+(coord.z()*coord.z()));
-	triplet.phi = acos(coord.z()/triplet.rho)*(1/numeric::constants::f::pi_over_180) ;
-	triplet.psi = atan2((coord.y()),(coord.x()))*(1/numeric::constants::f::pi_over_180);
-}
+    core::Real fp_compare( FingerprintBase & fp, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight ) const;
 
-inline void convert_spherical_coor_triplet_to_cartesian( spherical_coor_triplet const & triplet, numeric::xyzVector<core::Real> & coord ) {
-	coord.x() = triplet.rho*sin(triplet.phi*numeric::constants::f::pi_over_180)*cos(triplet.psi*numeric::constants::f::pi_over_180);
-	coord.y() = triplet.rho*sin(triplet.phi*numeric::constants::f::pi_over_180)*sin(triplet.psi*numeric::constants::f::pi_over_180);
-	coord.z() = triplet.rho*cos(triplet.phi*numeric::constants::f::pi_over_180);
-}
+    void fp_compare_deriv( FingerprintBase & fp, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight, core::Real & dE_dx, core::Real & dE_dy, core::Real & dE_dz, core::Real & dE_dv4, core::Real & dE_dv5, core::Real & dE_dv6 ) const;
 
+    void dump_oriented_pose_and_fp_to_pdb( std::string const & pose_filename, std::string const & fp_filename, FingerprintBase & fp, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset );
+
+    void dump_oriented_pose_and_fp_to_pdb( std::string const & pose_filename, std::string const & fp_filename, FingerprintBase & fp, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, utility::vector1<core::Real> const & original_pocket_angle_transform );
+
+    void dump_oriented_pose_and_fp_to_pdb( std::string const & pose_filename, std::string const & fp_filename, FingerprintBase & fp, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset,  numeric::xyzVector<core::Real> const & CoM_offset );
+
+    void dump_oriented_pose_and_fp_to_pdb( std::string const & pose_filename, std::string const & fp_filename, FingerprintBase & fp, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, utility::vector1<core::Real> const & original_pocket_angle_transform, numeric::xyzVector<core::Real> const & CoM_offset );
+
+    core::pose::Pose get_oriented_pose( FingerprintBase & fp, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, numeric::xyzVector<core::Real> const & CoM_offset );
+
+    core::pose::Pose get_oriented_pose( FingerprintBase & fp, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, utility::vector1<core::Real> const & original_pocket_angle_transform, numeric::xyzVector<core::Real> const & CoM_offset );
+
+    core::Real rmsd( core::pose::Pose const & original_pose,  core::pose::Pose const & oriented_pose );
+
+    //	void move_origin(numeric::xyzVector<core::Real> const & new_origin );
+
+    numeric::xyzVector<core::Real> calculate_ligand_CoM( core::pose::Pose const & ligand_pose );
+
+    core::pose::Pose & pose() { return pose_; };
+    core::Size compute_ligand_resnum( core::pose::Pose const & pose ) const;
+    core::Size compute_ligand_resnum() const { return compute_ligand_resnum(pose_); };
+    core::Size compute_ligand_natoms( core::pose::Pose const & pose ) const;
+    core::Size compute_ligand_natoms() const { return compute_ligand_natoms(pose_); };
+
+  private:
+    PlaidFingerprint(); // no default constructor
+
+    core::pose::Pose pose_;
+
+    // derivatives are optionally filled by build_from_pose_ , used in fp_compare_deriv
+    std::list< ray_distance_derivs > derivs_of_ray_distances_; // note: refers to rays in the same order as the triplet data
+
+    void move_ligand_and_update_rhos_(FingerprintBase & fp, numeric::xyzVector<core::Real> const & CoM_offset, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, bool const update_derivatives = false ) {
+      core::conformation::ResidueCOP ligand_rsd = move_ligand_( fp, CoM_offset, angle1_offset, angle2_offset, angle3_offset );
+      update_rhos_( fp, ligand_rsd, update_derivatives );
+    }
+
+    void update_rhos_( FingerprintBase & fp, core::conformation::ResidueCOP curr_ligand_rsd, bool const update_derivatives = false );
+
+    core::conformation::ResidueCOP move_ligand_( FingerprintBase & fp, numeric::xyzVector<core::Real> const & CoM_offset, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset );
+
+    void apply_rotation_offset_to_pose_( core::pose::Pose & pose, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset ) const;
+
+  };
+
+  //void correct_phi_psi( core::Real & phi, core::Real & psi );
+
+  inline void convert_cartesian_to_spherical_coor_triplet( numeric::xyzVector<core::Real> const & coord, spherical_coor_triplet & triplet ){
+    core::Real const triplet_rho = sqrt((coord.x()*coord.x())+(coord.y()*coord.y())+(coord.z()*coord.z()));
+    triplet.rho = triplet_rho;
+    triplet.phi = acos(coord.z()/triplet_rho);
+    triplet.psi = atan2((coord.y()),(coord.x()));
+  }
+
+  inline void convert_spherical_coor_triplet_to_cartesian( spherical_coor_triplet const & triplet, numeric::xyzVector<core::Real> & coord ) {
+    core::Real const triplet_phi = triplet.phi;
+    core::Real const triplet_psi = triplet.psi;
+    core::Real const triplet_rho = triplet.rho;
+    core::Real const rho_times_sin_triplet_phi = triplet_rho*sin(triplet_phi);
+    coord.x() = rho_times_sin_triplet_phi*cos(triplet_psi);
+    coord.y() = rho_times_sin_triplet_phi*sin(triplet_psi);
+    coord.z() = triplet_rho*cos(triplet_phi);
+  }
+
+  // helper functions to compute derivatives
+  double dD_dv1(const double,const double,const double,const double,const double,const double,const double,const double,const double,const double) ;
+  double dD_dv2(const double,const double,const double,const double,const double,const double,const double,const double,const double,const double) ;
+  double dD_dv3(const double,const double,const double,const double,const double,const double,const double,const double,const double,const double) ;
+  double dD_dv4(const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double) ;
+  double dD_dv5(const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double) ;
+  double dD_dv6(const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double,const double) ;
+
+  // another helper function
+  core::Real Find_Closest_Intersect_SQ(core::Real const & phiAngle, core::Real const & psiAngle, core::Real const & atomX, core::Real const & atomY, core::Real const & atomZ, core::Real const & atom_radius );
 
 }//pockets
 }//protocols
-
 
 #endif

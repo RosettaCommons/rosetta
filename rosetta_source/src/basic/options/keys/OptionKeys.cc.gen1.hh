@@ -1,3 +1,10 @@
+namespace fold_cst { RealOptionKey const stage2_constraint_threshold( "fold_cst:stage2_constraint_threshold" );  }
+namespace fold_cst { BooleanOptionKey const ignore_sequence_seperation( "fold_cst:ignore_sequence_seperation" );  }
+namespace fold_cst { BooleanOptionKey const no_recover_low_at_constraint_switch( "fold_cst:no_recover_low_at_constraint_switch" );  }
+namespace fold_cst { BooleanOptionKey const ramp_coord_cst( "fold_cst:ramp_coord_cst" );  }
+namespace resample { BooleanOptionKey const resample( "resample" );  }
+namespace resample { FileOptionKey const silent( "resample:silent" );  }
+namespace resample { StringOptionKey const tag( "resample:tag" );  }
 namespace resample { BooleanOptionKey const stage1( "resample:stage1" );  }
 namespace resample { BooleanOptionKey const stage2( "resample:stage2" );  }
 namespace resample { BooleanOptionKey const jumps( "resample:jumps" );  }
@@ -648,8 +655,3 @@ namespace lh { namespace fragpdb { BooleanOptionKey const fragpdb( "lh:fragpdb" 
 namespace lh { namespace fragpdb { StringOptionKey const out_path( "lh:fragpdb:out_path" );  } }
 namespace lh { namespace fragpdb { IntegerVectorOptionKey const indexoffset( "lh:fragpdb:indexoffset" );  } }
 namespace lh { namespace fragpdb { StringVectorOptionKey const bin( "lh:fragpdb:bin" );  } }
-namespace lh { namespace symfragrm { BooleanOptionKey const symfragrm( "lh:symfragrm" );  } }
-namespace lh { namespace symfragrm { FileVectorOptionKey const pdblist( "lh:symfragrm:pdblist" );  } }
-namespace rbe { BooleanOptionKey const rbe( "rbe" );  }
-namespace rbe { StringOptionKey const server_url( "rbe:server_url" );  }
-namespace rbe { StringOptionKey const server_port( "rbe:server_port" );  }

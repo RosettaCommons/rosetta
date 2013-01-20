@@ -78,6 +78,10 @@ sources = {
 		"super_aln",
 		"validate_silent",
 	],
+        "public/darc": [
+                "DARC",
+                "make_ray_files",
+        ],
 	"public/ddg": [
 		"ddg_monomer",
 		"minimize_with_cst",

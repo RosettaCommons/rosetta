@@ -11,6 +11,29 @@
 /// @brief  protocols::pockets::Fingerprint functions
 /// @author Ragul Gowthaman
 
+// Protocol Headers
+#include <numeric/constants.hh>
+#include <protocols/pockets/Fingerprint.hh>
+#include <protocols/pockets/PocketGrid.hh>
+
+// Core Headers
+#include <core/pose/Pose.hh>
+#include <core/id/AtomID_Map.hh>
+#include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
+#include <core/chemical/AtomType.hh>
+#include <core/types.hh>
+#include <numeric/xyz.functions.hh>
+#include <numeric/xyzMatrix.hh>
+#include <numeric/conversions.hh>
+#include <utility/io/ozstream.hh>
+
+// Utility Headers
+#include <basic/options/option.hh>
+#include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/keys/fingerprint.OptionKeys.gen.hh>
+#include <basic/database/open.hh>
+
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -20,36 +43,10 @@
 #include <cmath>
 #include <map>
 
-// Protocol Headers
-#include <numeric/constants.hh>
-#include <protocols/pockets/Fingerprint.hh>
-#include <protocols/pockets/PocketGrid.hh>
-// AUTO-REMOVED #include <core/init.hh>
-
-// Core Headers
-
-#include <basic/options/option.hh>
-#include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/fingerprint.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-#include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
-#include <core/id/AtomID_Map.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/types.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyzMatrix.hh>
-#include <numeric/conversions.hh>
-
 #include <utility/vector1.hh>
 
 //Auto Headers
 #include <numeric/random/random.fwd.hh>
-
-
-// Utility Headers
 
 using namespace core;
 using namespace core::scoring;
@@ -59,698 +56,1638 @@ using namespace std;
 namespace protocols {
 namespace pockets {
 
-/// @details Auto-generated virtual destructor
-FingerprintBase::~FingerprintBase() {}
-
 FingerprintBase::FingerprintBase () :
 	ReferenceCount()
 {
-	origin_.zero();
-	CoM_.zero();
+  origin_.zero();
+  CoM_.zero();
 }
 
-
+/// @details Auto-generated virtual destructor
+FingerprintBase::~FingerprintBase() {}
 
 void FingerprintBase::print_to_file(std::string const & output_filename) const {
 
-	std::filebuf f1;
-	f1.open (output_filename.c_str(), std::ios::out);
-	std::ostream os1(&f1);
-	std::string f1_info;
-	std::stringstream f1_tmp;
+  utility::io::ozstream out_stream;
+  out_stream.open(output_filename, std::ios::out);
+  out_stream<<"/ORI/"<<std::fixed<<std::setprecision(2)<< origin_.x() << "\t" <<std::fixed<<std::setprecision(2)<< origin_.y() << "\t"<<std::fixed<<std::setprecision(3)<< origin_.z() <<std::endl;
+  out_stream<<"/COM/"<<std::fixed<<std::setprecision(2)<< CoM_.x() << "\t" <<std::fixed<<std::setprecision(2)<< CoM_.y() << "\t"<<std::fixed<<std::setprecision(3)<< CoM_.z() <<std::endl;
+  for (std::list<spherical_coor_triplet>::const_iterator fi = triplet_fingerprint_data_.begin(); fi != triplet_fingerprint_data_.end(); ++fi) {
+    out_stream<<std::fixed<<std::setprecision(2)<< fi->phi << "\t" <<std::fixed<<std::setprecision(2)<<fi->psi << "\t"<<std::fixed<<std::setprecision(3)<< fi->rho <<std::endl;
+  }
+  out_stream.close();
+  out_stream.clear();
 
-	f1_tmp<<"//"<<std::fixed<<std::setprecision(2)<< origin_.x() << "\t" <<std::fixed<<std::setprecision(2)<< origin_.y() << "\t"<<std::fixed<<std::setprecision(3)<< origin_.z() <<std::endl;
-	f1_info += f1_tmp.str();
-	f1_tmp.str(std::string());
-
-	for (std::list<spherical_coor_triplet>::const_iterator fi = triplet_fingerprint_data_.begin(); fi != triplet_fingerprint_data_.end(); ++fi) {
-		f1_tmp<<std::fixed<<std::setprecision(2)<< fi->phi << "\t" <<std::fixed<<std::setprecision(2)<<fi->psi << "\t"<<std::fixed<<std::setprecision(3)<< fi->rho <<std::endl;
-		f1_info += f1_tmp.str();
-		f1_tmp.str(std::string());
-	}
-	os1<<f1_info;
-	f1.close();
-
-	return;
+  return;
 }
-
 
 void FingerprintBase::print_to_pdb(std::string const & output_pdbname) const {
-	numeric::xyzVector<core::Real> no_translation(0.);
-	print_to_pdb( output_pdbname, no_translation );
+  numeric::xyzVector<core::Real> no_translation(0.);
+  print_to_pdb( output_pdbname, no_translation );
 }
-
 
 void FingerprintBase::print_to_pdb(std::string const & output_pdbname, numeric::xyzVector<core::Real> const & translation) const {
 
-	std::filebuf f2;
-	f2.open (output_pdbname.c_str(), std::ios::out);
-	std::ostream os2(&f2);
-	std::string f2_info;
-	std::stringstream f2_tmp;
-	f2_tmp<<"HETATM   "<<std::setw(2)<<1<<"  C   ORI X   0    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<origin_.x()+translation.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<origin_.y()+translation.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<origin_.z()+translation.z()<<std::endl;
-	f2_tmp<<"HETATM   "<<std::setw(2)<<1<<"  C   COM X   0    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.x()+translation.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.y()+translation.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.z()+translation.z()<<std::endl;
-	f2_info += f2_tmp.str();
-	f2_tmp.str(std::string());
-	for (std::list<spherical_coor_triplet>::const_iterator pd = triplet_fingerprint_data_.begin(); pd != triplet_fingerprint_data_.end(); ++pd) {
-		numeric::xyzVector<core::Real> new_coor;
-		convert_spherical_coor_triplet_to_cartesian( *pd, new_coor );
+  utility::io::ozstream out_stream;
+  out_stream.open(output_pdbname, std::ios::out);
 
-		new_coor += origin_;
-		f2_tmp<<"HETATM   "<<std::setw(2)<<1<<"  C   MAP A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<new_coor.x()+translation.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<new_coor.y()+translation.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<new_coor.z()+translation.z()<<std::endl;
-		f2_info += f2_tmp.str();
-		f2_tmp.str(std::string());
-	}
+  out_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   ORI X   0    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<origin_.x()+translation.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<origin_.y()+translation.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<origin_.z()+translation.z()<<std::endl;
+  out_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   COM X   0    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.x()+translation.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.y()+translation.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.z()+translation.z()<<std::endl;
+  for (std::list<spherical_coor_triplet>::const_iterator pd = triplet_fingerprint_data_.begin(); pd != triplet_fingerprint_data_.end(); ++pd) {
+    numeric::xyzVector<core::Real> new_coor;
+    convert_spherical_coor_triplet_to_cartesian( *pd, new_coor );
+    new_coor += origin_;
+    out_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   MAP A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<new_coor.x()+translation.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<new_coor.y()+translation.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<new_coor.z()+translation.z()<<std::endl;
+  }
 
-	os2<<f2_info;
-	f2.close();
+  out_stream.close();
+  out_stream.clear();
 
-	return;
+  return;
 }
 
 void NonPlaidFingerprint::setup_from_PlaidFingerprint( PlaidFingerprint const & pfp ) {
-	origin_ = pfp.origin();
-	triplet_fingerprint_data_.resize(pfp.triplet_fingerprint_data().size());
-	std::copy (pfp.triplet_fingerprint_data().begin(),pfp.triplet_fingerprint_data().end(), triplet_fingerprint_data_.begin());
-	return;
+  origin_ = pfp.origin();
+  triplet_fingerprint_data_.resize(pfp.triplet_fingerprint_data().size());
+  std::copy (pfp.triplet_fingerprint_data().begin(),pfp.triplet_fingerprint_data().end(), triplet_fingerprint_data_.begin());
+  return;
 }
 
-
+//use same grid for both egg and ext shell
 void NonPlaidFingerprint::setup_from_PocketGrid( core::pose::Pose const & protein_pose, PocketGrid const & pocket_grid ) {
-	EggshellGrid esg(pocket_grid);
-	setup_from_EggshellGrid( protein_pose, esg );
-	return;
+
+  PocketGrid grid_for_extshell = pocket_grid;
+  setup_from_PocketGrid(protein_pose, pocket_grid, grid_for_extshell);
+
+  return;
 }
 
+void NonPlaidFingerprint::setup_from_PocketGrid( core::pose::Pose const & protein_pose, PocketGrid const & pocket_grid, PocketGrid const & grid_for_extshell ) {
+  EggshellGrid egg_sg(pocket_grid);
+  eggshell_list_ = egg_sg.eggshell_coord_list();
+  EggshellGrid ext_sg(grid_for_extshell, eggshell_list_);
+  extshell_list_ = ext_sg.extra_coord_list();
 
-void NonPlaidFingerprint::setup_from_EggshellGrid( core::pose::Pose const & protein_pose, EggshellGrid const & eggshell_grid ) {
+  //combine eggshell & extra coord list into a single list
+  egg_and_ext_list_.clear();
+  egg_and_ext_list_ = combine_xyz_lists(eggshell_list_ , extshell_list_);
 
-	// set CoM_ to the pocket CoM
-	CoM_ = eggshell_grid.pocket_CoM();
+  //set CoM_ to the eggshell CoM
+  CoM_ = egg_sg.eggshell_CoM_;
 
-	// set origin_ to the protein CoM, then	move origin_ 30Angstrom away from protein center
-	origin_.zero();
-	core::Size total_atoms(0);
-	for ( int j = 1, resnum = protein_pose.total_residue(); j <= resnum; ++j ) {
-		conformation::Residue const & curr_rsd = protein_pose.residue(j);
-		if ( curr_rsd.is_protein() ) {
-			for(Size i = 1, i_end = curr_rsd.nheavyatoms(); i <= i_end; ++i) {
-				origin_.x() += curr_rsd.atom(i).xyz()(1);
-				origin_.y() += curr_rsd.atom(i).xyz()(2);
-				origin_.z() += curr_rsd.atom(i).xyz()(3);
-				total_atoms++;
-			}
-		}
-	}
-	origin_ /= total_atoms;
-	numeric::xyzVector<core::Real> temp_vec(0.);
-	temp_vec = origin_ - eggshell_grid.pocket_CoM();
-	core::Real temp_vec_magnitude = sqrt(temp_vec.x()*temp_vec.x() + temp_vec.y()*temp_vec.y() + temp_vec.z()*temp_vec.z());
-	core::Real set_mag = 30/temp_vec_magnitude;
-	temp_vec = temp_vec * set_mag;
-	origin_ = temp_vec + eggshell_grid.pocket_CoM();
+  //set origin
+  set_origin( protein_pose, egg_and_ext_list_);
 
-	// convert from cartesian eggshell to spherical coors
-	triplet_fingerprint_data_.clear();
+  setup_from_EggshellGrid();
+
+  return;
+}
+
+void NonPlaidFingerprint::write_eggshell_to_pdb_file( std::string const & output_eggshell_name ) const {
+
+  utility::io::ozstream outPDB_stream;
+  outPDB_stream.open(output_eggshell_name, std::ios::out);
+  outPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   ORI A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<origin_.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<origin_.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<origin_.z()<<std::endl;
+  outPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   COM A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.z()<<std::endl;
+  for (std::list< numeric::xyzVector<core::Real> >::const_iterator pd = eggshell_list_.begin(); pd != eggshell_list_.end(); ++pd) {
+    outPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   EGG A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd->x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd->y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd->z()<<std::endl;
+  }
+  for (std::list< numeric::xyzVector<core::Real> >::const_iterator pd = extshell_list_.begin(); pd != extshell_list_.end(); ++pd) {
+    outPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  O   EXT B   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd->x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd->y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd->z()<<std::endl;
+  }
+  outPDB_stream.close();
+  outPDB_stream.clear();
+
+}
+
+void NonPlaidFingerprint::set_origin( core::pose::Pose const & protein_pose, std::list< numeric::xyzVector<core::Real> > const & egg_and_extra_shell ) {
+  using namespace basic::options;
+  int origin_option = option[ OptionKeys::fingerprint::set_origin ];
+  Size best_origin_option(0);
+  if (origin_option == 0){
+    //choose best origin by finding the lowest R (ruggedness) value from different origin position
+    core::Real best_R(999.);
+    for(Size set_origin_option = 1; set_origin_option < 4; ++set_origin_option){
+      core::Real new_R = get_Rvalue( protein_pose, egg_and_extra_shell, set_origin_option );
+      //std::cout << "set_origin_option " << set_origin_option << " new_Rvalue " << new_R << std::endl;
+      if ( new_R < best_R ) {
+	best_R = new_R;
+	best_origin_option = set_origin_option;
+      }
+    }
+    //std::cout << "best_origin_option " << best_origin_option << " best_Rvalue " << best_R << std::endl;
+  } else {
+    best_origin_option = origin_option;
+  }
+  set_origin_from_option_( protein_pose, egg_and_extra_shell, best_origin_option );
+
+}
+
+core::Real NonPlaidFingerprint::get_Rvalue( core::pose::Pose const & protein_pose, std::list< numeric::xyzVector<core::Real> > const & egg_and_extra_shell, Size const & set_origin_option ) {
+
+  set_origin_from_option_( protein_pose, egg_and_extra_shell, set_origin_option );
+
+  core::Real min_rho_difference(0.);
+  core::Size num_points(0);
+  for (std::list< numeric::xyzVector<core::Real> >::const_iterator pt1 = egg_and_extra_shell.begin(); pt1 != egg_and_extra_shell.end(); ++pt1) {
+    numeric::xyzVector< core::Real > eggshell_point1 = *pt1 - origin_;
+    spherical_coor_triplet triplet1;
+    convert_cartesian_to_spherical_coor_triplet( eggshell_point1, triplet1 );
+    core::Real min_angle(999.);
+    spherical_coor_triplet triplet2;
+    for (std::list< numeric::xyzVector<core::Real> >::const_iterator pt2 = egg_and_extra_shell.begin(); pt2 != egg_and_extra_shell.end(); ++pt2) {
+      if ( pt1 == pt2 ) continue;
+      core::Real const curr_angle = std::abs(cos_of( *pt1, *pt2 ));
+      if(curr_angle < min_angle){
+	min_angle = curr_angle;
+	numeric::xyzVector< core::Real > eggshell_point2 = *pt2 - origin_;
+	convert_cartesian_to_spherical_coor_triplet( eggshell_point2, triplet2 );
+      }
+    }
+    min_rho_difference += std::abs( triplet1.rho - triplet2.rho );
+    num_points++;
+  }
+  return min_rho_difference / num_points;
+}
+
+void NonPlaidFingerprint::set_origin_from_option_( core::pose::Pose const & protein_pose, std::list< numeric::xyzVector<core::Real> > const & egg_and_extra_shell, Size const & set_origin_option ) {
+
+  if (set_origin_option == 1){
+    set_origin_away_from_protein_center(protein_pose);
+    //std::cout<< " ORIGIN1 "<<origin_.x()<<" "<<origin_.y()<<" "<<origin_.z()<<std::endl;
+  } else if (set_origin_option == 2){
+    set_origin_away_from_eggshell(egg_and_extra_shell, protein_pose);
+    //std::cout<< " ORIGIN2 "<<origin_.x()<<" "<<origin_.y()<<" "<<origin_.z()<<std::endl;
+  } else if (set_origin_option == 3){
+    set_origin_away_from_eggshell_plane(egg_and_extra_shell, protein_pose, set_origin_option);
+    //std::cout<< " ORIGIN3 "<<origin_.x()<<" "<<origin_.y()<<" "<<origin_.z()<<std::endl;
+  } else if (set_origin_option == 4){
+    set_origin_away_from_eggshell_plane(egg_and_extra_shell, protein_pose, set_origin_option);
+    //std::cout<< " ORIGIN4 "<<origin_.x()<<" "<<origin_.y()<<" "<<origin_.z()<<std::endl;
+  } else {
+    std::cout<<"Error, wrong option for set_origin" << std::endl;
+    exit(1);
+  }
+  return;
+}
+
+void NonPlaidFingerprint::setup_from_EggshellGrid() {
+
+  // convert from cartesian eggshell to spherical coors
+  triplet_fingerprint_data_.clear();
+  spherical_coor_triplet new_triplet;
+
+  Size num_int_points = 0;//This is only used when gpu is enabled
+  for (std::list< numeric::xyzVector<core::Real> >::const_iterator pd = eggshell_list_.begin(); pd != eggshell_list_.end(); ++pd) {
+    convert_cartesian_to_spherical_coor_triplet( *pd - origin_, new_triplet );
+    triplet_fingerprint_data_.push_back(new_triplet);
+    num_int_points=num_int_points+1;
+  }
+
+  Size num_ext_points = 0;//This is only used when gpu is enabled
+  for (std::list< numeric::xyzVector<core::Real> >::const_iterator pd = extshell_list_.begin(); pd != extshell_list_.end(); ++pd) {
+    convert_cartesian_to_spherical_coor_triplet( *pd - origin_, new_triplet );
+    new_triplet.rho = 0.;
+    triplet_fingerprint_data_.push_back(new_triplet);
+    num_ext_points=num_ext_points+1;
+  }
+
+#ifdef USEOPENCL
+  gpu_num_rays_ = num_int_points + num_ext_points;
+  setup_gpu_rays();
+#endif
+
+  /*
+	std::list< spherical_coor_triplet > temp_egg_triplet;
+
 	spherical_coor_triplet new_triplet;
+	numeric::xyzVector<core::Real> new_coord;
+	temp_egg_triplet.clear();
+
+
 	for (std::list< numeric::xyzVector<core::Real> >::const_iterator pd = eggshell_grid.eggshell_coord_list().begin(); pd != eggshell_grid.eggshell_coord_list().end(); ++pd) {
 		convert_cartesian_to_spherical_coor_triplet( *pd - origin_, new_triplet );
-		triplet_fingerprint_data_.push_back(new_triplet);
+		temp_egg_triplet.push_back(new_triplet);
 	}
-
+	std::list< spherical_coor_triplet > temp_ext_triplet = temp_egg_triplet;
+	temp_ext_triplet.clear();
 	for (std::list< numeric::xyzVector<core::Real> >::const_iterator pd = eggshell_grid.extra_coord_list().begin(); pd != eggshell_grid.extra_coord_list().end(); ++pd) {
 		convert_cartesian_to_spherical_coor_triplet( *pd - origin_, new_triplet );
-		new_triplet.rho = 0.;
-		triplet_fingerprint_data_.push_back(new_triplet);
+		temp_ext_triplet.push_back(new_triplet);
 	}
 
-	return;
+	//filter phi psi
+	for (std::list<spherical_coor_triplet>::const_iterator aa = temp_egg_triplet.begin(); aa != temp_egg_triplet.end(); ++aa) {
+		for (std::list<spherical_coor_triplet>::iterator bb = temp_ext_triplet.begin(); bb != temp_ext_triplet.end();) {
+      if( (aa->phi == bb->phi) && (aa->psi == bb->psi) ) {
+				std::cout<<"found "<<std::endl;
+        bb = temp_ext_triplet.erase(bb);
+      }
+      else {
+        ++bb;
+      }
+		}
+  }
+
+	eggshell_list_.clear();
+	extshell_list_.clear();
+	for (std::list<spherical_coor_triplet>::iterator aa = temp_egg_triplet.begin(); aa != temp_egg_triplet.end(); ++aa) {
+		convert_spherical_coor_triplet_to_cartesian( *aa, new_coord );
+		eggshell_list_.push_back(new_coord+origin_);
+	}
+	for (std::list<spherical_coor_triplet>::iterator bb = temp_ext_triplet.begin(); bb != temp_ext_triplet.end(); ++bb) {
+		convert_spherical_coor_triplet_to_cartesian( *bb, new_coord );
+		extshell_list_.push_back(new_coord+origin_);
+	}
+	triplet_fingerprint_data_.clear();
+	triplet_fingerprint_data_ = temp_egg_triplet;
+	for (std::list<spherical_coor_triplet>::iterator bb = temp_ext_triplet.begin(); bb != temp_ext_triplet.end(); ++bb) {
+		bb->rho = 0.;
+		triplet_fingerprint_data_.push_back(*bb);
+	}
+	*/
+
+  return;
+}
+
+#ifdef USEOPENCL
+void NonPlaidFingerprint::setup_gpu( core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight, int & num_particles, PlaidFingerprint & pf ) {
+  // GPU Initalization
+  if(gpu_.use()) {
+
+    float weights[4];
+    weights[0] = missing_point_weight;
+    weights[1] = steric_weight;
+    weights[2] = extra_point_weight;
+    weights[3] = num_particles;
+    // Allocate persistent memory for rays
+    gpu_weights_ = gpu_.AllocateMemory(sizeof(*weights) * 4);
+    // Copy ray data to GPU memory
+    gpu_.WriteData(gpu_weights_, weights, sizeof(*weights) * 4);
+
+    gpu_atoms_ = gpu_.AllocateMemory(sizeof(*atom_) * ATOMS_ARRAY);
+
+    if(!gpu_ray_scores_) {
+      // Allocate GPU memory for distances (results)
+      gpu_ray_scores_ = gpu_.AllocateMemory(sizeof(*ray_scores_) * RAY_SCORE_ARRAY);
+    }
+
+    if(!gpu_particle_scores_) {
+      // Allocate GPU memory for distances (results)
+      gpu_particle_scores_ = gpu_.AllocateMemory(sizeof(*particle_scores_) * NUMBER_OF_PARTICLES);
+    }
+
+    std::string fn = basic::database::full_name("gpu/DARC_PSO.cl");
+    if(!gpu_.RegisterProgram(fn.c_str())) {
+      std::cout << "Failed to load CL kernel." << std::endl;
+      exit(1);
+    }
+
+    gpu_num_atoms_ = pf.compute_ligand_natoms();
+    gpu_num_particles_ = num_particles;
+
+    cl_kernel kernel1 = gpu_.BuildKernel("Check_for_intersection");
+    gpu_.setKernelArg(kernel1, 0, sizeof(gpu_rays_), &gpu_rays_);
+    gpu_.setKernelArg(kernel1, 1, sizeof(gpu_atoms_), &gpu_atoms_);
+    gpu_.setKernelArg(kernel1, 2, sizeof(gpu_ray_scores_), &gpu_ray_scores_);
+    gpu_.setKernelArg(kernel1, 3, sizeof(gpu_num_atoms_), &gpu_num_atoms_);
+    gpu_.setKernelArg(kernel1, 4, sizeof(gpu_weights_), &gpu_weights_);
+    gpu_.setKernelArg(kernel1, 5, sizeof(gpu_num_rays_), &gpu_num_rays_);
+
+    cl_kernel kernel2 = gpu_.BuildKernel("Get_scores");
+    gpu_.setKernelArg(kernel2, 0, sizeof(gpu_ray_scores_), &gpu_ray_scores_);
+    gpu_.setKernelArg(kernel2, 1, sizeof(gpu_particle_scores_), &gpu_particle_scores_);
+    gpu_.setKernelArg(kernel2, 2, sizeof(gpu_num_rays_), &gpu_num_rays_);
+    gpu_.setKernelArg(kernel2, 3, sizeof(gpu_num_particles_), &gpu_num_particles_);
+
+  }
+}
+
+void NonPlaidFingerprint::free_gpu(){
+  if(gpu_.use()) {
+    if(gpu_rays_) gpu_.Free(gpu_rays_);
+    if(gpu_atoms_) gpu_.Free(gpu_atoms_);
+    if(gpu_ray_scores_) gpu_.Free(gpu_ray_scores_);
+    if(gpu_particle_scores_) gpu_.Free(gpu_particle_scores_);
+    if(gpu_weights_) gpu_.Free(gpu_weights_);
+  }
+}
+
+void NonPlaidFingerprint::setup_gpu_rays() {
+
+  if(gpu_.use()) {
+    if(gpu_num_rays_>MAX_NUM_RAYS){
+      std::cout << "Too many pocket points" << std::endl;
+      exit(2);
+    }
+
+    gpu_rays_ = NULL;
+    gpu_atoms_ = NULL;
+    gpu_ray_scores_ = NULL;
+    gpu_particle_scores_ = NULL;
+    gpu_weights_ = NULL;
+    gpu_.profiling(0);
+    gpu_.Init();
+
+    basic::gpu::float4 rays[MAX_NUM_RAYS];
+
+    Size i = 0;
+    for (std::list<spherical_coor_triplet>::const_iterator fi = triplet_fingerprint_data_.begin(); fi != triplet_fingerprint_data_.end(); ++fi) {
+      rays[i].x = fi->phi;
+      rays[i].y = fi->psi;
+      rays[i].z = fi->rho;
+      ++i;
+    }
+
+    // Allocate persistent memory for rays
+    gpu_rays_ = gpu_.AllocateMemory(sizeof(*rays) * MAX_NUM_RAYS);
+
+    // Copy ray data to GPU memory
+    gpu_.WriteData(gpu_rays_, rays, sizeof(*rays) * gpu_num_rays_);
+  }
+
+  return;
+}
+#endif
+
+void NonPlaidFingerprint::setup_from_eggshell_pdb_file(std::string const & input_filename) {
+
+  ifstream inFile(input_filename.c_str());
+  if (!inFile) {
+    std::cout<< "Can't open input file " << input_filename << std::endl;
+    exit(1);
+  }
+
+  std::list< numeric::xyzVector<core::Real> > temp_eggshell_coord_list;
+  std::list< numeric::xyzVector<core::Real> > temp_extra_coord_list;
+  std::list< numeric::xyzVector<core::Real> > egg_and_extra_coord_list;
+  temp_eggshell_coord_list.clear();
+  temp_extra_coord_list.clear();
+  egg_and_extra_coord_list.clear();
+
+  std::string line;
+  std::string name;
+  std::string chainID;
+  std::string restype;
+
+  numeric::xyzVector<core::Real> eggshell_CoM;
+  core::Size comcounter = 0;
+  core::Size oricounter = 0;
+
+  while (std::getline(inFile, line)) {
+    name = line.substr(0,6);
+    chainID = line.substr(21,1);
+    restype = line.substr(17,3);
+
+    numeric::xyzVector<core::Real> pdb_coord;
+    std::string Xstring, Ystring, Zstring;
+
+    if (name=="END") break;
+    else if ((name=="HETATM")&&(restype=="ORI"))
+      {
+	Xstring = line.substr(30,8);
+	origin_.x() = atof(Xstring.c_str());
+	Ystring = line.substr(38,8);
+	origin_.y() = atof(Ystring.c_str());
+	Zstring = line.substr(46,8);
+	origin_.z() = atof(Zstring.c_str());
+	oricounter++;
+      }
+    else if ((name=="HETATM")&&(restype=="COM"))
+      {
+	Xstring = line.substr(30,8);
+	CoM_.x() = atof(Xstring.c_str());
+	Ystring = line.substr(38,8);
+	CoM_.y() = atof(Ystring.c_str());
+	Zstring = line.substr(46,8);
+	CoM_.z() = atof(Zstring.c_str());
+	comcounter++;
+      }
+    else if ((name=="HETATM")&&(restype=="EGG"))
+      {
+	Xstring = line.substr(30,8);
+	pdb_coord.x() = atof(Xstring.c_str());
+	Ystring = line.substr(38,8);
+	pdb_coord.y() = atof(Ystring.c_str());
+	Zstring = line.substr(46,8);
+	pdb_coord.z() = atof(Zstring.c_str());
+	temp_eggshell_coord_list.push_back(pdb_coord);
+      }
+    else if ((name=="HETATM")&&(restype=="EXT"))
+      {
+	Xstring = line.substr(30,8);
+	pdb_coord.x() = atof(Xstring.c_str());
+	Ystring = line.substr(38,8);
+	pdb_coord.y() = atof(Ystring.c_str());
+	Zstring = line.substr(46,8);
+	pdb_coord.z() = atof(Zstring.c_str());
+	temp_extra_coord_list.push_back(pdb_coord);
+      }
+  }
+  inFile.close();
+
+  if ( (oricounter == 0) || (comcounter == 0) ){
+    std::cout<<"Error, No ORIGIN or CoM value specified in input Eggshell file" << std::endl;
+    exit(1);
+  } else if ( (oricounter > 1) || (comcounter >1) ){
+    std::cout<<"Error, More than one ORIGIN or CoM value specified in input Eggshell file" << std::endl;
+    exit(1);
+  }
+
+  // convert from cartesian_coord to spherical coors
+  spherical_coor_triplet new_triplet;
+  triplet_fingerprint_data_.clear();
+
+  for (std::list< numeric::xyzVector<core::Real> >::const_iterator pd = temp_eggshell_coord_list.begin(); pd != temp_eggshell_coord_list.end(); ++pd) {
+    convert_cartesian_to_spherical_coor_triplet( *pd - origin_, new_triplet );
+    triplet_fingerprint_data_.push_back(new_triplet);
+  }
+
+  for (std::list< numeric::xyzVector<core::Real> >::const_iterator pd = temp_extra_coord_list.begin(); pd != temp_extra_coord_list.end(); ++pd) {
+    convert_cartesian_to_spherical_coor_triplet( *pd - origin_, new_triplet );
+    new_triplet.rho = 0.;
+    triplet_fingerprint_data_.push_back(new_triplet);
+  }
+
+  return;
+}
+
+void NonPlaidFingerprint::setup_from_eggshell_triplet_file(std::string const & input_filename) {
+
+  //input_file should contain a line starting with "/COM/" for CoM values
+  //input_file should contain a line starting with "/ORI/" for ORIGIN values
+  //input_file should contain 3 tab separated columns for the triplet
+
+  ifstream inFile(input_filename.c_str());
+
+  if (!inFile) {
+    std::cout<< "Can't open input file " << input_filename << std::endl;
+    exit(1);
+  }
+
+  std::string lineread;
+  std::string Line;
+  std::string Field;
+
+  spherical_coor_triplet new_triplet;
+  triplet_fingerprint_data_.clear();
+
+#ifdef USEOPENCL
+  gpu_num_rays_ = 0;
+#endif
+
+  while (std::getline(inFile, lineread)) {
+
+    std::stringstream sss(lineread);
+    std::string Pock_string_phi, Pock_string_psi, Pock_string_rho;
+    core::Real Pock_real_phi, Pock_real_psi, Pock_real_rho;
+
+    //parse ORIGIN values from line starting with "/ORI/"
+    if (lineread[0] == '/' && lineread[1] == 'O' && lineread[2] == 'R' && lineread[3] == 'I' && lineread[4] == '/') {
+      lineread.erase(0,5);
+      std::stringstream ori_line(lineread);
+      std::getline(ori_line, Pock_string_phi, '\t');
+      origin_.x() = atof(Pock_string_phi.c_str());
+      std::getline(ori_line, Pock_string_psi, '\t');
+      origin_.y() = atof(Pock_string_psi.c_str());
+      std::getline(ori_line, Pock_string_rho, '\t');
+      origin_.z() = atof(Pock_string_rho.c_str());
+      //std::cout<<"setup from triplet file : "<< " " <<origin_.x()<<" "<<origin_.y()<<" "<<origin_.z()<<std::endl;
+      continue;
+    }
+    //parse CoM values from line starting with "/COM/"
+    if (lineread[0] == '/' && lineread[1] == 'C' && lineread[2] == 'O' && lineread[3] == 'M' && lineread[4] == '/') {
+      lineread.erase(0,5);
+      std::stringstream com_line(lineread);
+      std::getline(com_line, Pock_string_phi, '\t');
+      CoM_.x() = atof(Pock_string_phi.c_str());
+      std::getline(com_line, Pock_string_psi, '\t');
+      CoM_.y() = atof(Pock_string_psi.c_str());
+      std::getline(com_line, Pock_string_rho, '\t');
+      CoM_.z() = atof(Pock_string_rho.c_str());
+      //std::cout<<"setup from triplet file : "<< " " <<CoM_.x()<<" "<<CoM_.y()<<" "<<CoM_.z()<<std::endl;
+      continue;
+    }
+
+    std::getline(sss, Pock_string_phi, '\t');
+    Pock_real_phi = atof(Pock_string_phi.c_str());
+    std::getline(sss, Pock_string_psi, '\t');
+    Pock_real_psi = atof(Pock_string_psi.c_str());
+    std::getline(sss, Pock_string_rho, '\t');
+    Pock_real_rho = atof(Pock_string_rho.c_str());
+
+    new_triplet.phi = Pock_real_phi;
+    new_triplet.psi = Pock_real_psi;
+    new_triplet.rho = Pock_real_rho;
+    triplet_fingerprint_data_.push_back(new_triplet);
+#ifdef USEOPENCL
+    gpu_num_rays_ = gpu_num_rays_ + 1;
+#endif
+  }
+  inFile.close();
+
+#ifdef USEOPENCL
+  setup_gpu_rays();
+#endif
+
+  return;
 }
 
 void NonPlaidFingerprint::trim_based_on_known_ligand(core::pose::Pose const & known_ligand_pose){
 
-	protocols::pockets::PlaidFingerprint known_pf( known_ligand_pose, *this );
-	std::list< spherical_coor_triplet > triplet_trim_data;
-	for (std::list<spherical_coor_triplet>::const_iterator pro = triplet_fingerprint_data_.begin(),
-				lig = known_pf.triplet_fingerprint_data().begin();
-			pro != triplet_fingerprint_data_.end() && lig != known_pf.triplet_fingerprint_data().end();
-			++pro, ++lig) {
-		assert( std::abs( pro->phi - lig->phi ) < 0.001 );
-		assert( std::abs( pro->psi - lig->psi ) < 0.001 );
-		if (lig->rho < 0.001) continue;
-		triplet_trim_data.push_back(*pro);
-	}
-	triplet_fingerprint_data_.clear();
-	triplet_fingerprint_data_ = triplet_trim_data;
+  protocols::pockets::PlaidFingerprint known_pf( known_ligand_pose, *this );
+  std::list< spherical_coor_triplet > triplet_trim_data;
+  for (std::list<spherical_coor_triplet>::const_iterator pro = triplet_fingerprint_data_.begin(), lig = known_pf.triplet_fingerprint_data().begin(); pro != triplet_fingerprint_data_.end(), lig != known_pf.triplet_fingerprint_data().end(); ++pro, ++lig) {
+
+    //jk note: these are no longer necessarily true, since we alter the Plaid one by shifting up/down by 2*pi
+    //these are useful asserts though, it's worth thinking about how to make them valid again...
+    //assert( std::abs( pro->phi - lig->phi ) < 0.001 );
+    //assert( std::abs( pro->psi - lig->psi ) < 0.001 );
+
+    if ( ( pro->rho > 0.001 ) && ( lig->rho < 0.001 ) ) continue;
+    triplet_trim_data.push_back(*pro);
+
+  }
+  triplet_fingerprint_data_.clear();
+  triplet_fingerprint_data_ = triplet_trim_data;
+
+  //DUMP TRIMED_EGGSHELL TO A PDB FILE
+  utility::io::ozstream outPDB_stream;
+  outPDB_stream.open("trim_eggshell.pdb", std::ios::out);
+  outPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   ORI A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<origin_.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<origin_.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<origin_.z()<<std::endl;
+  outPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   COM B   2    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.z()<<std::endl;
+  for (std::list<spherical_coor_triplet>::const_iterator pd = triplet_fingerprint_data_.begin(); pd != triplet_fingerprint_data_.end(); ++pd) {
+    numeric::xyzVector<core::Real> new_coor;
+    convert_spherical_coor_triplet_to_cartesian( *pd, new_coor );
+    new_coor += origin_;
+    outPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   EGG C   3    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<new_coor.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<new_coor.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<new_coor.z()<<std::endl;
+  }
+  outPDB_stream.close();
+  outPDB_stream.clear();
+
+  return;
 }
 
-void NonPlaidFingerprint::setup_from_file(std::string const & input_filename) {
+void NonPlaidFingerprint::set_origin_away_from_eggshell_plane( std::list< numeric::xyzVector<core::Real> > const & egg_and_extra_shell, core::pose::Pose const & protein_pose, Size const & set_origin_option ) {
 
-	ifstream inFile(input_filename.c_str());
+  origin_.zero();
 
-	if (!inFile) {
-		std::cout<< "Can't open input file " << input_filename << std::endl;
-		exit(1);
-	}
+  core::Real A11(0.), A12(0.), A13(0.), A22(0.), A23(0.), b1(0.), b2(0.), b3(0.);
+  for (std::list< numeric::xyzVector<core::Real> >::const_iterator pd = egg_and_extra_shell.begin(); pd != egg_and_extra_shell.end(); ++pd) {
+    A11 += pd->x()*pd->x();
+    A12 += pd->x()*pd->y();
+    A13 += pd->x();
+    A22 += pd->y()*pd->y();
+    A23 += pd->y();
+    b1 += pd->x()*pd->z();
+    b2 += pd->y()*pd->z();
+    b3 += pd->z();
+  }
 
-	std::string lineread;
-	std::string Line;
-	std::string Field;
+  numeric::xyzMatrix<core::Real> A;
+  A(1,1)=A11;
+  A(1,2)=A12;
+  A(2,1)=A12;
+  A(1,3)=A13;
+  A(3,1)=A13;
+  A(2,2)=A22;
+  A(2,3)=A23;
+  A(3,2)=A23;
+  A(3,3)=egg_and_extra_shell.size();
+  numeric::xyzVector<core::Real> b;
+  b(1)=b1;
+  b(2)=b2;
+  b(3)=b3;
 
-	spherical_coor_triplet new_triplet;
-	std::list<spherical_coor_triplet>::iterator it;
-	triplet_fingerprint_data_.clear();
+  numeric::xyzVector<core::Real> soln = inverse(A) * b;
+  core::Real best_fit_a = soln.x();
+  core::Real best_fit_b = soln.y();
+  core::Real best_fit_c = soln.z();
 
-	while (std::getline(inFile, lineread)) {
+  // best fit plane has the equation z = best_fit_a * x + best_fit_b * y + best_fit_c
 
-		std::stringstream sss(lineread);
-		std::string Pock_string_phi, Pock_string_psi, Pock_string_rho;
-		core::Real Pock_real_phi, Pock_real_psi, Pock_real_rho;
+  // RAGUL TEST
+  numeric::xyzVector<core::Real> plane_coord;
+  std::list< numeric::xyzVector<core::Real> > plane_coord_list;
 
-		//parse COM values from line starting with "//"
-		if (lineread[0] == '/' && lineread[1] == '/') {
-			lineread.erase(0,2);
-			std::stringstream com_line(lineread);
-			std::getline(com_line, Pock_string_phi, '\t');
-			origin_.x() = atof(Pock_string_phi.c_str());
-			std::getline(com_line, Pock_string_psi, '\t');
-			origin_.y() = atof(Pock_string_psi.c_str());
-			std::getline(com_line, Pock_string_rho, '\t');
-			origin_.z() = atof(Pock_string_rho.c_str());
-			//std::cout<<"setupfromfile"<< " " <<origin_.x()<<" "<<origin_.y()<<" "<<origin_.z()<<std::endl;
-				continue;
-		}
+  for (std::list< numeric::xyzVector<core::Real> >::const_iterator pdebug = egg_and_extra_shell.begin(); pdebug != egg_and_extra_shell.end(); ++pdebug) {
+    plane_coord.x() = pdebug->x();
+    plane_coord.y() = pdebug->y();
+    plane_coord.z() = best_fit_a * pdebug->x() + best_fit_b * pdebug->y() + best_fit_c;
+    plane_coord_list.push_back(plane_coord);
+  }
 
-		std::getline(sss, Pock_string_phi, '\t');
-		Pock_real_phi = atof(Pock_string_phi.c_str());
-		std::getline(sss, Pock_string_psi, '\t');
-		Pock_real_psi = atof(Pock_string_psi.c_str());
-		std::getline(sss, Pock_string_rho, '\t');
-		Pock_real_rho = atof(Pock_string_rho.c_str());
+  //plane_CoM is the same as eggshell_CoM
+  numeric::xyzVector<core::Real> plane_CoM(0.);
+  plane_CoM = CoM_;
 
-		new_triplet.phi = Pock_real_phi;
-		new_triplet.psi = Pock_real_psi;
-		new_triplet.rho = Pock_real_rho;
-		triplet_fingerprint_data_.push_back(new_triplet);
+  //cross product of two vectors that lies on the plane gives a vector perpendicular to the plane
+  numeric::xyzVector<core::Real> plane_normal(0.);
+  plane_normal = cross_product( (plane_coord_list.front() - plane_CoM ), (plane_coord_list.back() - plane_CoM ) );
+  // set plane_normal to have length 30 A
+  plane_normal.normalize(30.);
 
-	}
-	inFile.close();
-	return;
+  numeric::xyzVector<core::Real> temp_origin1 = plane_CoM + plane_normal;
+  numeric::xyzVector<core::Real> temp_origin2 = plane_CoM - plane_normal;
+  numeric::xyzVector<core::Real> closest_origin(0.);
+  numeric::xyzVector<core::Real> distant_origin(0.);
+
+  //calculate distance b/w protein_CoM and +/- origin and choose the shortest
+  numeric::xyzVector<core::Real> protein_CoM = calculate_protein_CoM(protein_pose);
+  if(	protein_CoM.distance(temp_origin1) > protein_CoM.distance(temp_origin2) ) {
+    closest_origin = temp_origin2;
+    distant_origin = temp_origin1;
+  } else {
+    closest_origin = temp_origin1;
+    distant_origin = temp_origin2;
+  }
+
+  if (set_origin_option == 3){
+    origin_ = closest_origin;
+  } else if (set_origin_option == 4){
+    origin_ = distant_origin;
+  }
+
+	//DUMP EGGSHELL_GRID(plane) TO A PDB FILE
+	/*
+	utility::io::ozstream outPDB_stream;
+  outPDB_stream.open("plane.pdb", std::ios::out);
+	for (std::list< numeric::xyzVector<core::Real> >::const_iterator pd = plane_coord_list.begin(); pd != plane_coord_list.end(); ++pd) {
+    outPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   PLN A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd->x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd->y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pd->z()<<std::endl;
+  }
+	outPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   COM C   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<plane_CoM.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<plane_CoM.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<plane_CoM.z()<<std::endl;
+	//outPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   ORA A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<temp_origin1.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<temp_origin1.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<temp_origin1.z()<<std::endl;
+	//outPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   ORB B   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<temp_origin2.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<temp_origin2.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<temp_origin2.z()<<std::endl;
+	outPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   ORI C   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<origin_.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<origin_.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<origin_.z()<<std::endl;
+  outPDB_stream.close();
+  outPDB_stream.clear();
+	*/
+	//END printing plane.pdb
+
+  return;
+
+}
+
+void NonPlaidFingerprint::set_origin_away_from_eggshell(std::list< numeric::xyzVector<core::Real> > const & egg_and_extra_shell, core::pose::Pose const & protein_pose ) {
+
+  // set origin_ 30 A below the eggshell
+  origin_.zero();
+  numeric::xyzVector<core::Real> temp_vec(0.);
+  for (std::list< numeric::xyzVector<core::Real> >::const_iterator pd = egg_and_extra_shell.begin(); pd != egg_and_extra_shell.end(); ++pd) {
+    temp_vec += (CoM_ - *pd);
+  }
+  temp_vec.normalize(30.);
+
+  numeric::xyzVector<core::Real> temp_origin1 = CoM_ + temp_vec;
+  numeric::xyzVector<core::Real> temp_origin2 = CoM_ - temp_vec;
+  numeric::xyzVector<core::Real> closest_origin(0.);
+  numeric::xyzVector<core::Real> distant_origin(0.);
+
+  //calculate distance b/w protein_CoM and +/- origin and choose the shortest
+  numeric::xyzVector<core::Real> protein_CoM = calculate_protein_CoM(protein_pose);
+  if(	protein_CoM.distance(temp_origin1) > protein_CoM.distance(temp_origin2) ) {
+    closest_origin = temp_origin2;
+    distant_origin = temp_origin1;
+  } else {
+    closest_origin = temp_origin1;
+    distant_origin = temp_origin2;
+  }
+  origin_ = closest_origin;
+
+  return;
 }
 
 
-PlaidFingerprint::PlaidFingerprint( core::pose::Pose const & input_pose, FingerprintBase const & fp ) :
+void NonPlaidFingerprint::set_origin_away_from_protein_center(core::pose::Pose const & protein_pose) {
+
+  // set origin_ to the protein CoM, then	move origin_ 30Angstrom away from protein center
+  origin_ = calculate_protein_CoM(protein_pose);
+  numeric::xyzVector<core::Real> temp_vec(0.);
+  temp_vec = origin_ - CoM_;
+  temp_vec.normalize(30.);
+  origin_ = temp_vec + CoM_;
+  return;
+}
+
+numeric::xyzVector<core::Real> NonPlaidFingerprint::calculate_protein_CoM(core::pose::Pose const & protein_pose) {
+
+  numeric::xyzVector<core::Real> protein_com(0.);
+  core::Size total_atoms(0);
+  for ( int j = 1, resnum = protein_pose.total_residue(); j <= resnum; ++j ) {
+    core::conformation::Residue const & curr_rsd = protein_pose.residue(j);
+    if ( curr_rsd.is_protein() ) {
+      for(Size i = 1, i_end = curr_rsd.nheavyatoms(); i <= i_end; ++i) {
+        protein_com.x() += curr_rsd.atom(i).xyz()(1);
+        protein_com.y() += curr_rsd.atom(i).xyz()(2);
+	protein_com.z() += curr_rsd.atom(i).xyz()(3);
+        total_atoms++;
+      }
+    }
+  }
+  protein_com /= total_atoms;
+  return protein_com;
+
+}
+
+PlaidFingerprint::PlaidFingerprint( core::pose::Pose const & input_pose, FingerprintBase & fp ) :
 		FingerprintBase(),
 		pose_(input_pose)
 {
 
-	core::Size lig_res_num = 0;
-	for ( int j = 1, resnum = pose_.total_residue(); j <= resnum; ++j ) {
-		if (!pose_.residue(j).is_protein()){
-			lig_res_num = j;
-			break;
-		}
-	}
+  //calculate ligand center of mass
+  numeric::xyzVector<core::Real> ligand_CoM = calculate_ligand_CoM(pose_);
 
-	if (lig_res_num == 0){
-		std::cout<<"Error, no ligand for PlaidFingerprint" << std::endl;
-		exit(1);
-	}
+  // move pose_ such that ligand CoM is at the pocket center of mass
+  numeric::xyzMatrix<core::Real> I_mat;
+  I_mat.to_identity();
+  pose_.apply_transform_Rx_plus_v(I_mat, fp.CoM() - ligand_CoM);
 
-	numeric::xyzVector<core::Real> ligand_CoM(0.);
-	conformation::Residue const & curr_rsd = pose_.conformation().residue(lig_res_num);
-	for(Size i = 1, i_end = curr_rsd.nheavyatoms(); i <= i_end; ++i) {
-		ligand_CoM.x() += curr_rsd.atom(i).xyz()(1);
-		ligand_CoM.y() += curr_rsd.atom(i).xyz()(2);
-		ligand_CoM.z() += curr_rsd.atom(i).xyz()(3);
-	}
-	ligand_CoM /= curr_rsd.nheavyatoms();
+  core::Size const lig_res_num = compute_ligand_resnum();
+  //	core::Size const ligand_natoms = compute_ligand_natoms();
+  core::conformation::ResidueCOP ligand_rsd = new core::conformation::Residue( pose_.conformation().residue(lig_res_num) );
 
-	// move pose_ such that ligand CoM is at the pocket center of mass
-	numeric::xyzMatrix<core::Real> I_mat;
-	I_mat.to_identity();
-	pose_.apply_transform_Rx_plus_v(I_mat, fp.CoM() - ligand_CoM);
-
-	build_from_pose_(fp);
+  numeric::xyzVector<core::Real> no_CoM_offset(0.);
+  move_ligand_(fp,no_CoM_offset,0,0,0);
+  update_rhos_(fp, ligand_rsd);
 }
 
 void PlaidFingerprint::apply_rotation_offset_to_pose_( core::pose::Pose & pose, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset ) const {
 
-	core::Size lig_res_num = 0;
-	for ( int j = 1, resnum = pose.total_residue(); j <= resnum; ++j ) {
-		if (!pose.residue(j).is_protein()){
-			lig_res_num = j;
-			break;
-		}
-	}
+  //calculate_ligand_CoM function not working here (const )!!
+  //numeric::xyzVector<core::Real> ligand_CoM = calculate_ligand_CoM(pose);
 
-	if (lig_res_num == 0){
-		std::cout<<"Error, no ligand for PlaidFingerprint" << std::endl;
-		exit(1);
-	}
+  core::Size lig_res_num = compute_ligand_resnum(pose);
+  numeric::xyzVector<core::Real> ligand_CoM(0.);
+  core::conformation::Residue const & curr_rsd = pose.conformation().residue(lig_res_num);
+  core::Size ligand_total_atoms = compute_ligand_natoms(pose);
+  for(Size i = 1, i_end = ligand_total_atoms; i <= i_end; ++i) {
+    ligand_CoM.x() += curr_rsd.atom(i).xyz()(1);
+    ligand_CoM.y() += curr_rsd.atom(i).xyz()(2);
+    ligand_CoM.z() += curr_rsd.atom(i).xyz()(3);
+  }
+  ligand_CoM /= ligand_total_atoms;
 
-	numeric::xyzVector<core::Real> ligand_CoM(0.);
-	conformation::Residue const & curr_rsd = pose.conformation().residue(lig_res_num);
-	for(Size i = 1, i_end = curr_rsd.nheavyatoms(); i <= i_end; ++i) {
-		ligand_CoM.x() += curr_rsd.atom(i).xyz()(1);
-		ligand_CoM.y() += curr_rsd.atom(i).xyz()(2);
-		ligand_CoM.z() += curr_rsd.atom(i).xyz()(3);
-	}
-	ligand_CoM /= curr_rsd.nheavyatoms();
+  // move pose such that ligand CoM is at the origin
+  numeric::xyzMatrix<core::Real> I_mat;
+  I_mat.to_identity();
+  pose.apply_transform_Rx_plus_v(I_mat, -ligand_CoM);
 
-	// move pose such that ligand CoM is at the origin
-	numeric::xyzMatrix<core::Real> I_mat;
-	I_mat.to_identity();
-	pose.apply_transform_Rx_plus_v(I_mat, -ligand_CoM);
+  numeric::xyzMatrix<core::Real> x_rot_mat( numeric::x_rotation_matrix_radians(angle1_offset) );
+  numeric::xyzMatrix<core::Real> y_rot_mat( numeric::y_rotation_matrix_radians(angle2_offset) );
+  numeric::xyzMatrix<core::Real> z_rot_mat( numeric::z_rotation_matrix_radians(angle3_offset) );
+  numeric::xyzMatrix<core::Real> tot_rot_mat = z_rot_mat * y_rot_mat * x_rot_mat;
+  core::Vector v(0,0,0);
+  pose.apply_transform_Rx_plus_v(tot_rot_mat, v);
 
-	numeric::xyzMatrix<core::Real> x_rot_mat( numeric::x_rotation_matrix_degrees(angle1_offset) );
-	numeric::xyzMatrix<core::Real> y_rot_mat( numeric::y_rotation_matrix_degrees(angle2_offset) );
-	numeric::xyzMatrix<core::Real> z_rot_mat( numeric::z_rotation_matrix_degrees(angle3_offset) );
-	numeric::xyzMatrix<core::Real> tot_rot_mat = z_rot_mat * y_rot_mat * x_rot_mat;
-	core::Vector v(0,0,0);
-	pose.apply_transform_Rx_plus_v(tot_rot_mat, v);
-
-	// move pose back to original ligand CoM
-	pose.apply_transform_Rx_plus_v(I_mat, ligand_CoM);
+  // move pose back to original ligand CoM
+  pose.apply_transform_Rx_plus_v(I_mat, ligand_CoM);
 
 }
 
-void PlaidFingerprint::build_from_pose_(FingerprintBase const & fp){
-	numeric::xyzVector<core::Real> no_CoM_offset(0.);
-	build_from_pose_( fp, no_CoM_offset, 0., 0., 0. );
+core::Size PlaidFingerprint::compute_ligand_resnum( core::pose::Pose const & pose ) const {
+  core::Size lig_res_num = 0;
+  for ( int j = 1, resnum = pose.total_residue(); j <= resnum; ++j ) {
+    if (!pose.residue(j).is_protein()){
+      lig_res_num = j;
+      break;
+    }
+  }
+  if (lig_res_num == 0){
+    std::cout<<"Error, no ligand for PlaidFingerprint" << std::endl;
+    exit(1);
+  }
+  return lig_res_num;
 }
 
-void PlaidFingerprint::build_from_pose_(FingerprintBase const & fp, numeric::xyzVector<core::Real> const & CoM_offset, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset) {
+core::Size PlaidFingerprint::compute_ligand_natoms( core::pose::Pose const & pose ) const {
+  core::Size lig_res_num = compute_ligand_resnum(pose);
+  core::conformation::Residue const & curr_rsd = pose.conformation().residue(lig_res_num);
+  core::Size ligand_total_atoms;
+  using namespace basic::options;
+  if (option[ OptionKeys::fingerprint::include_hydrogens ]()){
+    ligand_total_atoms = curr_rsd.natoms();
+  } else {
+    ligand_total_atoms = curr_rsd.nheavyatoms();
+  }
+  return ligand_total_atoms;
+}
+
+core::conformation::ResidueCOP PlaidFingerprint::move_ligand_( FingerprintBase & fp, numeric::xyzVector<core::Real> const & CoM_offset, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset ) {
+
+  core::pose::Pose tmp_pose = pose_;
+
+  apply_rotation_offset_to_pose_( tmp_pose, angle1_offset, angle2_offset, angle3_offset );
+
+  // set the fingerprint CoM to be the ligand CoM, then apply offset as needed
+  CoM_ = calculate_ligand_CoM(tmp_pose);
+  // jk note: this next step of setting the origins to match is unnecessary as written, because given current implementation CoM_ and fp.CoM() are the same
+  // jk is there a case when this isn't true, or is this leftover from an old approach??
+  origin_ = fp.origin() + CoM_ - fp.CoM();
+  origin_ += CoM_offset;
+
+  core::Size const lig_res_num = compute_ligand_resnum(tmp_pose);
+  //	core::Size const ligand_natoms = compute_ligand_natoms(tmp_pose);
+  core::conformation::ResidueCOP ligand_rsd = new core::conformation::Residue( tmp_pose.conformation().residue(lig_res_num) );
+
+  return ligand_rsd;
+
+}
+
+void PlaidFingerprint::update_rhos_(FingerprintBase & fp, core::conformation::ResidueCOP curr_ligand_rsd, bool const update_derivatives ) {
 
   using namespace basic::options;
-	core::Real const radius_scale = option[ OptionKeys::fingerprint::atom_radius_scale ];
-	core::Real const atom_buffer = option[ OptionKeys::fingerprint::atom_radius_buffer ];
+  core::Real const radius_scale = option[ OptionKeys::fingerprint::atom_radius_scale ];
+  core::Real const atom_buffer = option[ OptionKeys::fingerprint::atom_radius_buffer ];
 
-	triplet_fingerprint_data_.clear();
+  triplet_fingerprint_data_.clear();
 
-	core::pose::Pose tmp_pose = pose_;
+  core::Size const ligand_natoms = compute_ligand_natoms();
 
-	apply_rotation_offset_to_pose_( tmp_pose, angle1_offset, angle2_offset, angle3_offset );
+  // compute the max and min possible phi and psi for each atom, store these in 4 arrays
+  // also compute the overall max and min possible for the whole ligand
+  utility::vector1<core::Real> atom_max_phi( ligand_natoms );
+  utility::vector1<core::Real> atom_max_psi( ligand_natoms );
+  utility::vector1<core::Real> atom_min_phi( ligand_natoms );
+  utility::vector1<core::Real> atom_min_psi( ligand_natoms );
 
-	core::Size lig_res_num = 0;
-	for ( int j = 1, resnum = tmp_pose.total_residue(); j <= resnum; ++j ) {
-		if (!tmp_pose.residue(j).is_protein()){
-			lig_res_num = j;
-			break;
-		}
-	}
+  utility::vector1< core::Real > atomX( ligand_natoms );
+  utility::vector1< core::Real > atomY( ligand_natoms );
+  utility::vector1< core::Real > atomZ( ligand_natoms );
+  utility::vector1<core::Real> atom_radius( ligand_natoms );
 
-	if (lig_res_num == 0){
-		std::cout<<"Error, no ligand for PlaidFingerprint" << std::endl;
-		exit(1);
-	}
+  core::Real max_phi( -999. );
+  core::Real max_psi( -999. );
+  core::Real min_phi( 999. );
+  core::Real min_psi( 999. );
 
-	CoM_.zero();
-	conformation::Residue const & curr_rsd = tmp_pose.conformation().residue(lig_res_num);
-	for(Size i = 1, i_end = curr_rsd.nheavyatoms(); i <= i_end; ++i) {
-		CoM_.x() += curr_rsd.atom(i).xyz()(1);
-		CoM_.y() += curr_rsd.atom(i).xyz()(2);
-		CoM_.z() += curr_rsd.atom(i).xyz()(3);
-	}
-	CoM_ /= curr_rsd.nheavyatoms();
+  for (Size i = 1, i_end = ligand_natoms; i <= i_end; ++i) {
 
-	// set the fingerprint CoM to be the ligand CoM, then apply offset as needed
-	origin_ = fp.origin() + CoM_ - fp.CoM();
-	origin_ += CoM_offset;
+    numeric::xyzVector<core::Real> this_atomcoors = curr_ligand_rsd->atom(i).xyz() - origin_;
+    core::Real const this_atom_radius = ( curr_ligand_rsd->atom_type(i).lj_radius() - atom_buffer ) * radius_scale;
 
-	for (std::list<spherical_coor_triplet>::const_iterator ni = fp.triplet_fingerprint_data().begin(); ni != fp.triplet_fingerprint_data().end(); ++ni) {
+    // find the atom center (in spherical coors)
+    spherical_coor_triplet atom_center;
+    convert_cartesian_to_spherical_coor_triplet( this_atomcoors, atom_center );
 
-		spherical_coor_triplet new_triplet;
-		new_triplet.psi = ni->psi;
-		new_triplet.phi = ni->phi;
-		//core::Real desired_rho = ni->rho;
+    core::Real const tmp_atomx=this_atomcoors.x();
+    core::Real const tmp_atomy=this_atomcoors.y();
+    core::Real const tmp_atomz=this_atomcoors.z();
 
-		// look for best_rho instead of max_rho
+    // find the max/min angular phi displacement that will intersect the atom
+    // project atom onto the z-axis (ie. set x and y coors to zero) to calculate this for phi
+    core::Real curr_max_phi( 999 );
+    core::Real curr_min_phi( -999 );
+    if ( std::abs(tmp_atomz) > 0.00001 ) {
+      core::Real const inside_phi_asin = this_atom_radius / tmp_atomz;
+      if ( std::abs(inside_phi_asin) < 1. ) {
+	core::Real const max_angular_displacement_phi = std::abs( asin( inside_phi_asin ) );
+	curr_max_phi = atom_center.phi + max_angular_displacement_phi;
+	curr_min_phi = atom_center.phi - max_angular_displacement_phi;
+      }
+    }
 
-		core::Real atomX,atomY,atomZ,atom_radius;
-		// NOTE: THIS DEPENDS ON WHETHER ORIGIN IS INSIDE OR OUTSIDE THE PROTEIN!!!
-		core::Real best_rho(999.);
-		//core::Real best_diff(999.);
+    // find the max/min angular psi displacement that will intersect the atom
+    // project atom onto the x-y plane (ie. set the z coor to zero) to calculate this for psi
+    core::Real curr_max_psi( 999 );
+    core::Real curr_min_psi( -999 );
+    if ( ( std::abs(tmp_atomx) > 0.00001 ) || ( std::abs(tmp_atomx) > 0.00001 ) ) {
+      core::Real const inside_psi_asin = this_atom_radius / sqrt( (tmp_atomx*tmp_atomx) + (tmp_atomy*tmp_atomy) );
+      if ( std::abs(inside_psi_asin) < 1. ) {
+	core::Real const max_angular_displacement_psi = std::abs( asin( inside_psi_asin ) );
+	curr_max_psi = atom_center.psi + max_angular_displacement_psi;
+	curr_min_psi = atom_center.psi - max_angular_displacement_psi;
+      }
+    }
 
-		for(Size i = 1, i_end = curr_rsd.nheavyatoms(); i <= i_end; ++i) {
-			atomX = 0;  atomY = 0;   atomZ = 0;   atom_radius = 0;
-			atomX = curr_rsd.atom(i).xyz()(1)-origin_.x();
-			atomY = curr_rsd.atom(i).xyz()(2)-origin_.y();
-			atomZ = curr_rsd.atom(i).xyz()(3)-origin_.z();
-			//atom radius * "radius_scale" to shrink a little to match with protein surface
-			atom_radius = ( curr_rsd.atom_type(i).lj_radius() - atom_buffer ) * radius_scale;
-			if ( atom_radius < 0.001 ) continue;
+    if ( curr_max_phi > max_phi ) max_phi = curr_max_phi;
+    if ( curr_max_psi > max_psi ) max_psi = curr_max_psi;
+    if ( curr_min_phi < min_phi ) min_phi = curr_min_phi;
+    if ( curr_min_psi < min_psi ) min_psi = curr_min_psi;
+    atom_max_phi.at(i) = curr_max_phi;
+    atom_max_psi.at(i) = curr_max_psi;
+    atom_min_phi.at(i) = curr_min_phi;
+    atom_min_psi.at(i) = curr_min_psi;
+    atomX.at(i) = this_atomcoors.x();
+    atomY.at(i) = this_atomcoors.y();
+    atomZ.at(i) = this_atomcoors.z();
+    atom_radius.at(i) = this_atom_radius;
 
-			//			core::Real const intersect = Find_Intersect(ni->phi,ni->psi,atomX,atomY,atomZ,atom_radius,desired_rho);
-			//			core::Real const intersect_diff = std::abs(intersect - desired_rho);
-			//			if ( intersect_diff < best_diff ) {
-			//				best_rho = intersect;
-			//				best_diff = intersect_diff;
-			//			}
+  }
 
-			// for now, set best_rho to be the max rho (instead of best match)
-			//			core::Real const max_intersect = Find_Intersect(ni->phi,ni->psi,atomX,atomY,atomZ,atom_radius,49.);
-			//			if ( max_intersect > best_rho ) {
-			//				best_rho = max_intersect;
-			//			}
+  derivs_of_ray_distances_.clear();
 
-			// for now, set best_rho to be the max rho (instead of best match)
-			// NOTE: THIS DEPENDS ON WHETHER ORIGIN IS INSIDE OR OUTSIDE THE PROTEIN!!!
-			core::Real const min_intersect = Find_Intersect(ni->phi,ni->psi,atomX,atomY,atomZ,atom_radius,0.);
-			if ( ( std::abs(min_intersect) > 0.00001 ) && ( min_intersect < best_rho ) ) {
-				best_rho = min_intersect;
+  //float orig_cpu_total_dist = 0.;
+  //Size orig_cpu_total_num = 0;
+  //Size orig_cpu_num_evaluations = 0;
+  for (std::list<spherical_coor_triplet>::const_iterator ni = fp.triplet_fingerprint_data().begin(); ni != fp.triplet_fingerprint_data().end(); ++ni) {
+
+    core::Real curr_phi = ni->phi;
+    core::Real curr_psi = ni->psi;
+    // if the current phi and/or psi is outside the overall max/min, set best_rho to zero and jumpout (ie. ray misses the ligand)
+    core::Real best_rho_sq(9999.);
+    core::Size best_intersecting_atom(0);
+    for (Size i = 1, i_end = ligand_natoms; i <= i_end; ++i) {
+
+      if ( atom_radius.at(i) < 0.001 ) continue;
+
+      while ( curr_phi < atom_min_phi.at(i) ) {
+	curr_phi += numeric::constants::r::pi_2;
+      }
+      while ( curr_phi > atom_max_phi.at(i) ) {
+	curr_phi -= numeric::constants::r::pi_2;
+      }
+      while ( curr_psi < atom_min_psi.at(i) ) {
+	curr_psi += numeric::constants::r::pi_2;
+      }
+      while ( curr_psi > atom_max_psi.at(i) ) {
+	curr_psi -= numeric::constants::r::pi_2;
+      }
+      if ( curr_phi < atom_min_phi.at(i) ) continue;
+      if ( curr_psi < atom_min_psi.at(i) ) continue;
+      if ( curr_phi > atom_max_phi.at(i) ) continue;
+      if ( curr_psi > atom_max_psi.at(i) ) continue;
+
+      core::Real const min_intersect_SQ = Find_Closest_Intersect_SQ(curr_phi,curr_psi,atomX.at(i),atomY.at(i),atomZ.at(i),atom_radius.at(i));
+      //++orig_cpu_num_evaluations;
+
+      if ( min_intersect_SQ < best_rho_sq ) {
+	best_rho_sq = min_intersect_SQ;
+	best_intersecting_atom = i;
+      }
+    }
+
+    spherical_coor_triplet new_triplet;
+    new_triplet.phi = curr_phi;
+    new_triplet.psi = curr_psi;
+
+    if ( best_rho_sq < 9998. ) {
+      new_triplet.rho = sqrt(best_rho_sq);
+      //orig_cpu_total_dist += sqrt(best_rho_sq);
+      //++orig_cpu_total_num;
+    } else {
+      new_triplet.rho = 0.;
+    }
+    triplet_fingerprint_data_.push_back(new_triplet);
+
+    if ( update_derivatives ) {
+      std::cout<<"DARC derivatives are currently commented out...." << std::endl;
+      exit(1);
+    }
+
+		/*
+
+		if ( update_derivatives ) {
+
+			ray_distance_derivs new_deriv_set;
+
+			// compute derivatives only if the ray hits both pocket and ligand - otherwise derivative is zero
+			if ( (ni->rho > 0.001) && (new_triplet.rho > 0.001) ) {
+
+				//   (x0,y0,z0) = the coordinates of the "origin" point from which all rays originate, called P0
+				core::Real const x0 = origin_.x();
+				core::Real const y0 = origin_.y();
+				core::Real const z0 = origin_.z();
+
+				//   (x2,y2,z2) = the coordinates of the pocket point that intersects the ray whose derivative we are calculating, called P2
+				numeric::xyzVector<core::Real> fp_coord;
+				convert_spherical_coor_triplet_to_cartesian( *ni, fp_coord );
+				fp_coord += origin_;
+				core::Real const x2 = fp_coord.x();
+				core::Real const y2 = fp_coord.y();
+				core::Real const z2 = fp_coord.z();
+
+				//   (x3,y3,z3) = the coordinates of the center of the atom that is intersecting the ray, called P3
+				// note: can't use atomX / atomY / atomZ, since these are relative to the origin
+				numeric::xyzVector<core::Real> best_atom_coors = curr_rsd.atom(best_intersecting_atom).xyz();
+				core::Real const x3 = best_atom_coors.x();
+				core::Real const y3 = best_atom_coors.y();
+				core::Real const z3 = best_atom_coors.z();
+
+				//   (xc,yc,zc) = the coordinates of the center of mass of the ligand BEFORE it has been moved into the current pose, called Pc
+				// note: before moving ligand, the ligand CoM (in pose_) is at fp.CoM() - this happens in the PlaidFingerprint constructor
+				core::Real const xc = fp.CoM().x();
+				core::Real const yc = fp.CoM().y();
+				core::Real const zc = fp.CoM().z();
+
+				//   (xs,ys,zs) = the coordinates of the center of the atom that is intersecting the ray BEFORE it has been moved into the current pose, called Ps
+				conformation::Residue const & ligand_res_before_rotation = pose_.conformation().residue(lig_res_num);
+				numeric::xyzVector<core::Real> atom_before_rotation = ligand_res_before_rotation.atom(best_intersecting_atom).xyz();
+				core::Real const xs = atom_before_rotation.x();
+				core::Real const ys = atom_before_rotation.y();
+				core::Real const zs = atom_before_rotation.z();
+
+				//   r = the radius of the atom that is intersecting the ray
+				core::Real const r = atom_radius.at(best_intersecting_atom);
+
+				new_deriv_set.dDist_dv1 = dD_dv1(x0,x2,x3,y0,y2,y3,z0,z2,z3,r);
+				new_deriv_set.dDist_dv2 = dD_dv2(x0,x2,x3,y0,y2,y3,z0,z2,z3,r);
+				new_deriv_set.dDist_dv3 = dD_dv3(x0,x2,x3,y0,y2,y3,z0,z2,z3,r);
+				new_deriv_set.dDist_dv4 = dD_dv4(x0,x2,x3,y0,y2,y3,z0,z2,z3,r,angle1_offset,angle2_offset,angle3_offset,xc,xs,yc,ys,zc,zs);
+				new_deriv_set.dDist_dv5 = dD_dv5(x0,x2,x3,y0,y2,y3,z0,z2,z3,r,angle1_offset,angle2_offset,angle3_offset,xc,xs,yc,ys,zc,zs);
+				new_deriv_set.dDist_dv6 = dD_dv6(x0,x2,x3,y0,y2,y3,z0,z2,z3,r,angle1_offset,angle2_offset,angle3_offset,xc,xs,yc,ys,zc,zs);
+
+			} else {
+
+				// set derivatives to zero if there's no intersection with the ligand or pocket
+				new_deriv_set.dDist_dv1 = 0.;
+				new_deriv_set.dDist_dv2 = 0.;
+				new_deriv_set.dDist_dv3 = 0.;
+				new_deriv_set.dDist_dv4 = 0.;
+				new_deriv_set.dDist_dv5 = 0.;
+				new_deriv_set.dDist_dv6 = 0.;
+
 			}
 
+			derivs_of_ray_distances_.push_back(new_deriv_set);
+
 		}
+		*/
 
-		if ( best_rho > 998. ) {
-			best_rho = 0.;
-		}
+  }
 
-		new_triplet.rho = best_rho;
-		triplet_fingerprint_data_.push_back(new_triplet);
-
-	}
+	//	cout << "ORIG_CPU TOTAL DISTANCE: " << orig_cpu_total_dist << std::endl;
+	//	cout << "ORIG_CPU TOTAL NUM: " << orig_cpu_total_num << std::endl;
+	//	cout << "ORIG_CPU NUM INTERSECTION EVALUATIONS: " << orig_cpu_num_evaluations << std::endl;
 
 }
 
-core::Real PlaidFingerprint::Find_Intersect(core::Real const & phiAngle, core::Real const & psiAngle, core::Real const & atomX, core::Real const & atomY, core::Real const & atomZ, core::Real const & atom_radius, core::Real const & desired_rho){
 
-	core::Real const large_dist(999.);
-	core::Real dirX,dirY,dirZ,dot_direction;
+core::Real PlaidFingerprint::fp_compare( FingerprintBase & fp, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight ) const {
 
-	//Define line with two points: (dirX,dirY,dirZ) and Origin (0,0,0)
-	//compute (dirX,dirY,dirZ) from phi/psi with randon large_dist, relative to Origin
-	//Reference: http://local.wasp.uwa.edu.au/~pbourke/geometry/sphereline/
-	dirX = large_dist*sin(phiAngle*(numeric::constants::f::pi_over_180))*cos(psiAngle*(numeric::constants::f::pi_over_180));
-	dirY = large_dist*sin(phiAngle*(numeric::constants::f::pi_over_180))*sin(psiAngle*(numeric::constants::f::pi_over_180));
-	dirZ = large_dist*cos(phiAngle*(numeric::constants::f::pi_over_180));
+  core::Real Total_score = 0;
+  core::Size num_rays = 0;
+  using namespace basic::options;
+  bool square  = option[ OptionKeys::fingerprint::square_score ]();
 
-	// figure out whether vector points towards atom or away from atom
-	dot_direction = (dirX*atomX) + (dirY*atomY) + (dirZ*atomZ);
-	if ( dot_direction < 0.0 ){
-		//      std::cout <<phiAngle<<" "<<psiAngle<< " Selected direction points away from atom" << std::endl;
-		return 0.;
-	}
+  for (std::list<spherical_coor_triplet>::const_iterator pi = fp.triplet_fingerprint_data().begin(), li = triplet_fingerprint_data_.begin(); pi != fp.triplet_fingerprint_data().end(), li != triplet_fingerprint_data_.end(); ++pi, ++li) {
 
-	// setup our quadratic equation
-	core::Real const a = (dirX*dirX) + (dirY*dirY) + (dirZ*dirZ);
-	core::Real const b = 2.0 * ( (dirX*(-atomX)) + (dirY*(-atomY)) + (dirZ*(-atomZ)) );
-	core::Real const c = atomX*atomX + atomY*atomY + atomZ*atomZ - (atom_radius * atom_radius);
+    // jk note: these are no longer necessarily true, since we alter the Plaid one by shifting up/down by 2*pi
+    // these are useful asserts though, it's worth thinking about how to make them valid again...
+    // assert( std::abs( pi->phi - li->phi ) < 0.001 );
+    // assert( std::abs( pi->psi - li->psi ) < 0.001 );
 
-	// test for intersection
-	core::Real const inside_sqrt = b * b - 4 * a * c;
+    if ( (li->rho < 0.001) && (pi->rho < 0.001) ) {
+      continue;
+    } else if (li->rho < 0.001) {
+      Total_score += missing_point_weight;
+    } else if (pi->rho < 0.001 ) {
+      Total_score += extra_point_weight;
+    } else {
+      core::Real dist_deviation = std::abs( pi->rho - li->rho );
+      if (square){
+	if (li->rho > pi->rho) dist_deviation *= dist_deviation;
+	if (li->rho < pi->rho) dist_deviation *= (dist_deviation * steric_weight);
+      }
+      else if (!square) {
+	if (li->rho > pi->rho) dist_deviation = dist_deviation;
+	if (li->rho < pi->rho) dist_deviation = (dist_deviation * steric_weight);
+      }
+      Total_score += dist_deviation;
+    }
+    num_rays++;
+  }
+  //	if ( num_rays < 25 ) return 999.;
+  return (Total_score/num_rays);
+}
 
-	if ( std::abs(inside_sqrt) < 0.00001 ) {
-		//      std::cout << "Line is tangent to atom\n" << std::endl;
-		core::Real const mu = -b / ( 2 * a);
-		core::Real const x = mu *dirX;
-		core::Real const y = mu *dirY;
-		core::Real const z = mu *dirZ;
-		core::Real const dist = sqrt( x*x + y*y + z*z );
-		return dist;
-		//      std::cout <<phiAngle<< " " << psiAngle<< " "<< "Tangent at     " << x << " " << y << " " << z << std::endl;
-		//             std::cout << "Distance from Origin is " << dist << std::endl;
-	} else if ( inside_sqrt < 0 ) {
-		//             std::cout <<phiAngle<<" " <<psiAngle<< " " << "No Intersection" << std::endl;
-		return 0.;
-	} else {
-		//              std::cout << "Line intersects atom\n" << std::endl;
-		core::Real const mu1 = -(b-sqrt(inside_sqrt)) / ( 2 * a);
-		core::Real const mu2 = -(b+sqrt(inside_sqrt)) / ( 2 * a);
-		core::Real const x1 =  mu1 * dirX;
-		core::Real const y1 =  mu1 * dirY;
-		core::Real const z1 =  mu1 * dirZ;
-		core::Real const dist1 = sqrt( x1*x1 + y1*y1 + z1*z1 );
-		core::Real const x2 = mu2 * dirX;
-		core::Real const y2 = mu2 * dirY;
-		core::Real const z2 = mu2 * dirZ;
-		core::Real const dist2 = sqrt( x2*x2 + y2*y2 + z2*z2 );
+void PlaidFingerprint::fp_compare_deriv( FingerprintBase & fp, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight, core::Real & dE_dx, core::Real & dE_dy, core::Real & dE_dz, core::Real & dE_dv4, core::Real & dE_dv5, core::Real & dE_dv6 ) const {
 
-		core::Real const diff1 = std::abs( dist1 - desired_rho );
-		core::Real const diff2 = std::abs( dist2 - desired_rho );
+  dE_dx = 0.; dE_dy = 0.; dE_dz = 0.; dE_dv4 = 0.; dE_dv5 = 0.; dE_dv6 = 0.;
 
-		if ( diff2 < diff1 ) {
-			return dist2;
-		}
-		return dist1;
-	}
-	return 0.;
+  if ( derivs_of_ray_distances_.size() < 2 ) {
+    std::cout<<"Error, fingerprint derivatives have not been computed" << std::endl;
+    exit(1);
+  }
+  assert( derivs_of_ray_distances_.size() == fp.triplet_fingerprint_data().size() );
+
+  core::Real Total_score = 0;
+  core::Real Differentiable_score = 0;
+  core::Size num_rays = 0;
+  std::list<ray_distance_derivs>::const_iterator di = derivs_of_ray_distances_.begin();
+  for (std::list<spherical_coor_triplet>::const_iterator pi = fp.triplet_fingerprint_data().begin(), li = triplet_fingerprint_data_.begin(); pi != fp.triplet_fingerprint_data().end(), li != triplet_fingerprint_data_.end(), di != derivs_of_ray_distances_.end(); ++pi, ++li, ++di) {
+    assert( std::abs( pi->phi - li->phi ) < 0.001 );
+    assert( std::abs( pi->psi - li->psi ) < 0.001 );
+
+    if ( (li->rho < 0.001) && (pi->rho < 0.001) ) {
+      continue;
+    } else if (li->rho < 0.001) {
+      Total_score += missing_point_weight;
+    } else if (pi->rho < 0.001 ) {
+      Total_score += extra_point_weight;
+    } else {
+      core::Real dist_deviation = std::abs( pi->rho - li->rho );
+      // derivative is zero except in the case where the ray hits BOTH ligand and pocket
+      // (ie. "missing point" and "extra point" scores don't contribute to the derivatives)
+      if (li->rho > pi->rho) {
+	dE_dx += di->dDist_dv1;
+	dE_dy += di->dDist_dv2;
+	dE_dz += di->dDist_dv3;
+	dE_dv4 += di->dDist_dv4;
+	dE_dv5 += di->dDist_dv5;
+	dE_dv6 += di->dDist_dv6;
+      } else {
+	dist_deviation *= steric_weight;
+	dE_dx += steric_weight * di->dDist_dv1;
+	dE_dy += steric_weight * di->dDist_dv2;
+	dE_dz += steric_weight * di->dDist_dv3;
+	dE_dv4 += steric_weight * di->dDist_dv4;
+	dE_dv5 += steric_weight * di->dDist_dv5;
+	dE_dv6 += steric_weight * di->dDist_dv6;
+      }
+      Total_score += dist_deviation;
+      Differentiable_score += dist_deviation;
+    }
+
+    num_rays++;
+  }
+
+  dE_dx /= num_rays;
+  dE_dy /= num_rays;
+  dE_dz /= num_rays;
+  dE_dv4 /= num_rays;
+  dE_dv5 /= num_rays;
+  dE_dv6 /= num_rays;
+  Total_score /= num_rays;
+  Differentiable_score /= num_rays;
+
+  std::cout<<"DARC score while computing derivatives: " << Total_score << std::endl;
+  //	std::cout<<"DARC score while computing derivatives are total: " << Total_score << " and differentiable part " << Differentiable_score << std::endl;
+  //	std::cout<<"Derivatives are " << dE_dx << " , " << dE_dy << " , " << dE_dz << " , " << dE_dv4 << " , " << dE_dv5 << " , " << dE_dv6 << std::endl;
+
+  return;
+
+}
+
+core::Real PlaidFingerprint::search_random_poses( FingerprintBase & fp, core::Size const & num_pose_search, core::Real & optimal_angle1, core::Real & optimal_angle2, core::Real & optimal_angle3, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight ) {
+
+  numeric::xyzVector<core::Real> no_CoM_offset(0.);
+  return search_random_poses( fp, num_pose_search, optimal_angle1, optimal_angle2, optimal_angle3, missing_point_weight, steric_weight, extra_point_weight, no_CoM_offset);
 }
 
 
-core::Real PlaidFingerprint::fp_compare( FingerprintBase const & fp, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight ) const {
+core::Real PlaidFingerprint::search_random_poses( FingerprintBase & fp, core::Size const & num_pose_search, core::Real & optimal_angle1, core::Real & optimal_angle2, core::Real & optimal_angle3, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight, numeric::xyzVector<core::Real> const & CoM_offset ) {
 
-	core::Real Total_score = 0;
-	core::Size num_points = 0;
+  core::Real best_score = std::numeric_limits<core::Real>::max();
 
-	for (std::list<spherical_coor_triplet>::const_iterator pi = fp.triplet_fingerprint_data().begin(),
-				li = triplet_fingerprint_data_.begin();
-			pi != fp.triplet_fingerprint_data().end() && li != triplet_fingerprint_data_.end();
-			++pi, ++li) {
-		assert( std::abs( pi->phi - li->phi ) < 0.001 );
-		assert( std::abs( pi->psi - li->psi ) < 0.001 );
+  for (core::Size j = 0; j < num_pose_search; ++j ){
+    core::Real curr_angle1 = (int) (numeric::random::uniform() *359.999);
+    core::Real curr_angle2 = (int) (numeric::random::uniform() *359.999);
+    core::Real curr_angle3 = (int) (numeric::random::uniform() *359.999);
 
-		if ( (li->rho < 0.001) && (pi->rho < 0.001) ) {
-			continue;
-		} else if (li->rho < 0.001) {
-			Total_score += missing_point_weight;
-		} else if (pi->rho < 0.001 ) {
-			Total_score += extra_point_weight;
-		} else {
-			core::Real dist_deviation = std::abs( pi->rho - li->rho );
-			if (li->rho > pi->rho) dist_deviation *= dist_deviation;
-			if (li->rho < pi->rho) dist_deviation *= steric_weight;
-			//if ((li->rho < pi->rho) && (dist_deviation > 0.5)) dist_deviation *= steric_weight;
-
-			Total_score += dist_deviation;
-		}
-		num_points++;
-	}
-	//	if ( num_points < 25 ) return 999.;
-	return (Total_score/num_points);
+    move_ligand_and_update_rhos_( fp, CoM_offset, curr_angle1, curr_angle2, curr_angle3 );
+    core::Real curr_score = fp_compare( fp, missing_point_weight, steric_weight, extra_point_weight );
+    //std::cout<<"curr_score "<<curr_score<< " " << curr_phi << " " <<curr_psi << std::endl;
+    if ( curr_score < best_score ) {
+      best_score = curr_score;
+      optimal_angle1 = curr_angle1;
+      optimal_angle2 = curr_angle2;
+      optimal_angle3 = curr_angle3;
+      //std::cout<<"best_score "<<curr_score<< " " << curr_phi << " " <<curr_psi << std::endl;
+    }
+  }
+  return best_score;
 }
 
-
-core::Real PlaidFingerprint::search_random_poses( FingerprintBase const & fp, core::Size const & num_pose_search, core::Real & optimal_angle1, core::Real & optimal_angle2, core::Real & optimal_angle3, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight ) {
-
-	numeric::xyzVector<core::Real> no_CoM_offset(0.);
-	return search_random_poses( fp, num_pose_search, optimal_angle1, optimal_angle2, optimal_angle3, missing_point_weight, steric_weight, extra_point_weight, no_CoM_offset);
+core::Real PlaidFingerprint::find_optimal_rotation( FingerprintBase & fp, core::Real const & angle_increment, core::Real & optimal_angle1, core::Real & optimal_angle2, core::Real & optimal_angle3, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight ) {
+  numeric::xyzVector<core::Real> no_CoM_offset(0.);
+  return find_optimal_rotation( fp, angle_increment, optimal_angle1, optimal_angle2, optimal_angle3, missing_point_weight, steric_weight, extra_point_weight, no_CoM_offset);
 }
 
+core::Real PlaidFingerprint::find_optimal_rotation( FingerprintBase & fp, core::Real const & angle_increment, core::Real & optimal_angle1, core::Real & optimal_angle2, core::Real & optimal_angle3, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight, numeric::xyzVector<core::Real> const & CoM_offset ) {
 
-core::Real PlaidFingerprint::search_random_poses( FingerprintBase const & fp, core::Size const & num_pose_search, core::Real & optimal_angle1, core::Real & optimal_angle2, core::Real & optimal_angle3, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight, numeric::xyzVector<core::Real> const & CoM_offset ) {
+  core::Real best_score = std::numeric_limits<core::Real>::max();
+  core::Size num_steps = core::Size ( 360. / angle_increment );
 
-	core::Real best_score = std::numeric_limits<core::Real>::max();
-
-	for (core::Size j = 0; j < num_pose_search; ++j ){
-		core::Real curr_angle1 = (int) (numeric::random::uniform() *359.999);
-		core::Real curr_angle2 = (int) (numeric::random::uniform() *359.999);
-		core::Real curr_angle3 = (int) (numeric::random::uniform() *359.999);
-
-		build_from_pose_( fp, CoM_offset, curr_angle1, curr_angle2, curr_angle3 );
-		core::Real curr_score = fp_compare( fp, missing_point_weight, steric_weight, extra_point_weight );
-			//std::cout<<"curr_score "<<curr_score<< " " << curr_phi << " " <<curr_psi << std::endl;
-		if ( curr_score < best_score ) {
-			best_score = curr_score;
-			optimal_angle1 = curr_angle1;
-			optimal_angle2 = curr_angle2;
-			optimal_angle3 = curr_angle3;
-			//std::cout<<"best_score "<<curr_score<< " " << curr_phi << " " <<curr_psi << std::endl;
-		}
-	}
-	return best_score;
-}
-
-core::Real PlaidFingerprint::find_optimal_rotation( FingerprintBase const & fp, core::Real const & angle_increment, core::Real & optimal_angle1, core::Real & optimal_angle2, core::Real & optimal_angle3, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight ) {
-	numeric::xyzVector<core::Real> no_CoM_offset(0.);
-	return find_optimal_rotation( fp, angle_increment, optimal_angle1, optimal_angle2, optimal_angle3, missing_point_weight, steric_weight, extra_point_weight, no_CoM_offset);
-}
-
-core::Real PlaidFingerprint::find_optimal_rotation( FingerprintBase const & fp, core::Real const & angle_increment, core::Real & optimal_angle1, core::Real & optimal_angle2, core::Real & optimal_angle3, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight, numeric::xyzVector<core::Real> const & CoM_offset ) {
-
-	core::Real best_score = std::numeric_limits<core::Real>::max();
-	core::Size num_steps = core::Size ( 360. / angle_increment );
-
-	core::Real curr_angle1=0.;
+  core::Real curr_angle1=0.;
   for (core::Size i = 0; i < num_steps; ++i ){
-		core::Real curr_angle2=0.;
-		for (core::Size j = 0; j < num_steps; ++j ){
-			core::Real curr_angle3=0.;
+    core::Real curr_angle2=0.;
+    for (core::Size j = 0; j < num_steps; ++j ){
+      core::Real curr_angle3=0.;
 
-			for (core::Size k = 0; k < num_steps; ++k ){
-				build_from_pose_( fp, CoM_offset, curr_angle1, curr_angle2, curr_angle3 );
-				core::Real curr_score = fp_compare( fp, missing_point_weight, steric_weight, extra_point_weight );
-				//			std::cout<<"curr_score "<<curr_score<< " " << curr_phi << " " <<curr_psi << std::endl;
-				if ( curr_score < best_score ) {
-					best_score = curr_score;
-					optimal_angle1 = curr_angle1;
-					optimal_angle2 = curr_angle2;
-					optimal_angle3 = curr_angle3;
-					//				std::cout<<"best_score "<<curr_score<< " " << curr_phi << " " <<curr_psi << std::endl;
-				}
-				curr_angle3 += angle_increment;
-			}
-			curr_angle2 += angle_increment;
-		}
-		curr_angle1 += angle_increment;
+      for (core::Size k = 0; k < num_steps; ++k ){
+	move_ligand_and_update_rhos_( fp, CoM_offset, curr_angle1, curr_angle2, curr_angle3 );
+	core::Real curr_score = fp_compare( fp, missing_point_weight, steric_weight, extra_point_weight );
+	//			std::cout<<"curr_score "<<curr_score<< " " << curr_phi << " " <<curr_psi << std::endl;
+	if ( curr_score < best_score ) {
+	  best_score = curr_score;
+	  optimal_angle1 = curr_angle1;
+	  optimal_angle2 = curr_angle2;
+	  optimal_angle3 = curr_angle3;
+	  //				std::cout<<"best_score "<<curr_score<< " " << curr_phi << " " <<curr_psi << std::endl;
 	}
+	curr_angle3 += angle_increment;
+      }
+      curr_angle2 += angle_increment;
+    }
+    curr_angle1 += angle_increment;
+  }
 
-	return best_score;
+  return best_score;
 }
 
-void PlaidFingerprint::dump_oriented_pose_and_fp_to_pdb( std::string const & pose_filename, std::string const & fp_filename, FingerprintBase const & fp, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset ) {
+void PlaidFingerprint::dump_oriented_pose_and_fp_to_pdb( std::string const & pose_filename, std::string const & fp_filename, FingerprintBase & fp, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset ) {
 
-	utility::vector1<core::Real> original_pocket_angle_transform(3, 0.);
-	numeric::xyzVector<core::Real> no_CoM_offset(0.);
-	dump_oriented_pose_and_fp_to_pdb(pose_filename, fp_filename, fp, angle1_offset, angle2_offset, angle3_offset, original_pocket_angle_transform, no_CoM_offset );
-
-}
-
-void PlaidFingerprint::dump_oriented_pose_and_fp_to_pdb( std::string const & pose_filename, std::string const & fp_filename, FingerprintBase const & fp, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, utility::vector1<core::Real> const & original_pocket_angle_transform ) {
-
-	numeric::xyzVector<core::Real> no_CoM_offset(0.);
-	dump_oriented_pose_and_fp_to_pdb(pose_filename, fp_filename, fp, angle1_offset, angle2_offset, angle3_offset, original_pocket_angle_transform, no_CoM_offset );
+  utility::vector1<core::Real> original_pocket_angle_transform(3, 0.);
+  numeric::xyzVector<core::Real> no_CoM_offset(0.);
+  dump_oriented_pose_and_fp_to_pdb(pose_filename, fp_filename, fp, angle1_offset, angle2_offset, angle3_offset, original_pocket_angle_transform, no_CoM_offset );
 
 }
 
+void PlaidFingerprint::dump_oriented_pose_and_fp_to_pdb( std::string const & pose_filename, std::string const & fp_filename, FingerprintBase & fp, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, numeric::xyzVector<core::Real> const & CoM_offset ) {
 
-void PlaidFingerprint::dump_oriented_pose_and_fp_to_pdb( std::string const & pose_filename, std::string const & fp_filename, FingerprintBase const & fp, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, utility::vector1<core::Real> const & original_pocket_angle_transform, numeric::xyzVector<core::Real> const & CoM_offset  ) {
+  utility::vector1<core::Real> original_pocket_angle_transform(3, 0.);
+  dump_oriented_pose_and_fp_to_pdb(pose_filename, fp_filename, fp, angle1_offset, angle2_offset, angle3_offset, original_pocket_angle_transform, CoM_offset );
 
-	build_from_pose_( fp, CoM_offset, angle1_offset, angle2_offset, angle3_offset);
+}
 
-	core::pose::Pose tmp_pose = pose_;
- 	apply_rotation_offset_to_pose_( tmp_pose, angle1_offset, angle2_offset, angle3_offset );
+void PlaidFingerprint::dump_oriented_pose_and_fp_to_pdb( std::string const & pose_filename, std::string const & fp_filename, FingerprintBase & fp, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, utility::vector1<core::Real> const & original_pocket_angle_transform ) {
 
-	numeric::xyzMatrix<core::Real> bestx_rot_mat( numeric::x_rotation_matrix_degrees( original_pocket_angle_transform[1] ) );
-	numeric::xyzMatrix<core::Real> besty_rot_mat( numeric::y_rotation_matrix_degrees( original_pocket_angle_transform[2] ) );
-	numeric::xyzMatrix<core::Real> bestz_rot_mat( numeric::z_rotation_matrix_degrees( original_pocket_angle_transform[3] ) );
-	numeric::xyzMatrix<core::Real> best_mat = bestz_rot_mat * besty_rot_mat * bestx_rot_mat;
-	numeric::xyzMatrix<core::Real> inverse_best_mat = numeric::inverse(best_mat);
-	core::Vector v(0,0,0);
+  numeric::xyzVector<core::Real> no_CoM_offset(0.);
+  dump_oriented_pose_and_fp_to_pdb(pose_filename, fp_filename, fp, angle1_offset, angle2_offset, angle3_offset, original_pocket_angle_transform, no_CoM_offset );
+
+}
+
+
+void PlaidFingerprint::dump_oriented_pose_and_fp_to_pdb( std::string const & pose_filename, std::string const & fp_filename, FingerprintBase & fp, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, utility::vector1<core::Real> const & original_pocket_angle_transform, numeric::xyzVector<core::Real> const & CoM_offset  ) {
+
+  move_ligand_and_update_rhos_( fp, CoM_offset, angle1_offset, angle2_offset, angle3_offset);
+
+  core::pose::Pose tmp_pose = pose_;
+  apply_rotation_offset_to_pose_( tmp_pose, angle1_offset, angle2_offset, angle3_offset );
+
+  numeric::xyzMatrix<core::Real> bestx_rot_mat( numeric::x_rotation_matrix_radians( original_pocket_angle_transform[1] ) );
+  numeric::xyzMatrix<core::Real> besty_rot_mat( numeric::y_rotation_matrix_radians( original_pocket_angle_transform[2] ) );
+  numeric::xyzMatrix<core::Real> bestz_rot_mat( numeric::z_rotation_matrix_radians( original_pocket_angle_transform[3] ) );
+  numeric::xyzMatrix<core::Real> best_mat = bestz_rot_mat * besty_rot_mat * bestx_rot_mat;
+  numeric::xyzMatrix<core::Real> inverse_best_mat = numeric::inverse(best_mat);
+  core::Vector v(0,0,0);
   tmp_pose.apply_transform_Rx_plus_v(inverse_best_mat, v);
 
-	numeric::xyzVector<core::Real> back_to_FingerprintBase_origin = fp.origin() - origin_;
+  numeric::xyzVector<core::Real> back_to_FingerprintBase_origin = fp.origin() - origin_;
 
-	print_to_pdb( fp_filename, back_to_FingerprintBase_origin );
+  print_to_pdb( fp_filename, back_to_FingerprintBase_origin );
 
-	std::filebuf f3;
-	f3.open (pose_filename.c_str(), std::ios::out);
-	std::ostream os3(&f3);
-	std::string f3_info;
-	std::stringstream f3_tmp;
-	f3_tmp<<"HETATM   "<<std::setw(2)<<1<<"  C   ORI X   0    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<fp.origin().x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<fp.origin().y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<fp.origin().z()<<std::endl;
-	f3_tmp<<"HETATM   "<<std::setw(2)<<1<<"  C   COM X   0    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.x()+back_to_FingerprintBase_origin.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.y()+back_to_FingerprintBase_origin.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.z()+back_to_FingerprintBase_origin.z()<<std::endl;
+  utility::io::ozstream out_stream;
+  out_stream.open(pose_filename, std::ios::out);
 
-f3_info += f3_tmp.str();
-	f3_tmp.str(std::string());
-	core::Size lig_res_num = 0;
-	for ( int j = 1, resnum = tmp_pose.total_residue(); j <= resnum; ++j ) {
-		if (!tmp_pose.residue(j).is_protein()){
-			lig_res_num = j;
-			break;
-		}
-	}
+  out_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   ORI X   0    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<fp.origin().x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<fp.origin().y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<fp.origin().z()<<std::endl;
+  out_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   COM X   0    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.x()+back_to_FingerprintBase_origin.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.y()+back_to_FingerprintBase_origin.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.z()+back_to_FingerprintBase_origin.z()<<std::endl;
 
-	conformation::Residue const & curr_rsd = tmp_pose.conformation().residue(lig_res_num);
-	for(Size i = 1, i_end = curr_rsd.nheavyatoms(); i <= i_end; ++i) {
-		//f3_tmp<<"HETATM   "<<std::setw(2)<<1<<"  C   MAP A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<curr_rsd.atom(i).xyz()(1) <<std::setw(8)<<std::fixed<<std::setprecision(3)<< curr_rsd.atom(i).xyz()(2) <<std::setw(8)<<std::fixed<<std::setprecision(3)<<curr_rsd.atom(i).xyz()(3) <<std::endl;
-		f3_tmp<<"HETATM   "<<std::setw(2)<<1<<"  C   MAP A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<curr_rsd.atom(i).xyz()(1)+back_to_FingerprintBase_origin.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<< curr_rsd.atom(i).xyz()(2)+back_to_FingerprintBase_origin.y() <<std::setw(8)<<std::fixed<<std::setprecision(3)<<curr_rsd.atom(i).xyz()(3)+back_to_FingerprintBase_origin.z() <<std::endl;
-		f3_info += f3_tmp.str();
-		f3_tmp.str(std::string());
-	}
-	os3<<f3_info;
-	f3.close();
+  core::Size lig_res_num = compute_ligand_resnum( tmp_pose );
+
+  core::conformation::Residue const & curr_rsd = tmp_pose.conformation().residue(lig_res_num);
+  for(Size i = 1, i_end = curr_rsd.natoms(); i <= i_end; ++i) {
+    //out_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   MAP A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<curr_rsd.atom(i).xyz()(1) <<std::setw(8)<<std::fixed<<std::setprecision(3)<< curr_rsd.atom(i).xyz()(2) <<std::setw(8)<<std::fixed<<std::setprecision(3)<<curr_rsd.atom(i).xyz()(3) <<std::endl;
+    out_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   MAP A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<curr_rsd.atom(i).xyz()(1)+back_to_FingerprintBase_origin.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<< curr_rsd.atom(i).xyz()(2)+back_to_FingerprintBase_origin.y() <<std::setw(8)<<std::fixed<<std::setprecision(3)<<curr_rsd.atom(i).xyz()(3)+back_to_FingerprintBase_origin.z() <<std::endl;
+  }
+
+  out_stream.close();
+  out_stream.clear();
+
 }
 
-core::pose::Pose PlaidFingerprint::get_oriented_pose( FingerprintBase const & fp, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, utility::vector1<core::Real> const & original_pocket_angle_transform, numeric::xyzVector<core::Real> const & CoM_offset  ) {
 
-	build_from_pose_( fp, CoM_offset, angle1_offset, angle2_offset, angle3_offset);
+core::pose::Pose PlaidFingerprint::get_oriented_pose( FingerprintBase &fp , core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, numeric::xyzVector<core::Real> const & CoM_offset ) {
 
-	core::pose::Pose tmp_pose = pose_;
- 	apply_rotation_offset_to_pose_( tmp_pose, angle1_offset, angle2_offset, angle3_offset );
+  utility::vector1<core::Real> original_pocket_angle_transform(3, 0.);
+  core::pose::Pose oriented_pose = get_oriented_pose( fp, angle1_offset, angle2_offset, angle3_offset, original_pocket_angle_transform, CoM_offset );
+  return oriented_pose;
+}
 
-	numeric::xyzMatrix<core::Real> bestx_rot_mat( numeric::x_rotation_matrix_degrees( original_pocket_angle_transform[1] ) );
-	numeric::xyzMatrix<core::Real> besty_rot_mat( numeric::y_rotation_matrix_degrees( original_pocket_angle_transform[2] ) );
-	numeric::xyzMatrix<core::Real> bestz_rot_mat( numeric::z_rotation_matrix_degrees( original_pocket_angle_transform[3] ) );
-	numeric::xyzMatrix<core::Real> best_mat = bestz_rot_mat * besty_rot_mat * bestx_rot_mat;
-	numeric::xyzMatrix<core::Real> inverse_best_mat = numeric::inverse(best_mat);
-	core::Vector v(0,0,0);
+core::pose::Pose PlaidFingerprint::get_oriented_pose( FingerprintBase & fp, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, utility::vector1<core::Real> const & original_pocket_angle_transform, numeric::xyzVector<core::Real> const & CoM_offset  ) {
+
+  move_ligand_and_update_rhos_( fp, CoM_offset, angle1_offset, angle2_offset, angle3_offset);
+
+  core::pose::Pose tmp_pose = pose_;
+  apply_rotation_offset_to_pose_( tmp_pose, angle1_offset, angle2_offset, angle3_offset );
+
+  numeric::xyzMatrix<core::Real> bestx_rot_mat( numeric::x_rotation_matrix_radians( original_pocket_angle_transform[1] ) );
+  numeric::xyzMatrix<core::Real> besty_rot_mat( numeric::y_rotation_matrix_radians( original_pocket_angle_transform[2] ) );
+  numeric::xyzMatrix<core::Real> bestz_rot_mat( numeric::z_rotation_matrix_radians( original_pocket_angle_transform[3] ) );
+  numeric::xyzMatrix<core::Real> best_mat = bestz_rot_mat * besty_rot_mat * bestx_rot_mat;
+  numeric::xyzMatrix<core::Real> inverse_best_mat = numeric::inverse(best_mat);
+  core::Vector v(0,0,0);
   tmp_pose.apply_transform_Rx_plus_v(inverse_best_mat, v);
 
 
-	// move pose such that ligand CoM is at the origin
-	numeric::xyzMatrix<core::Real> I_mat;
-	I_mat.to_identity();
-	numeric::xyzVector<core::Real> back_to_FingerprintBase_origin = fp.origin() - origin_;
-	tmp_pose.apply_transform_Rx_plus_v(I_mat, back_to_FingerprintBase_origin);
+  // move pose such that ligand CoM is at the origin
+  numeric::xyzMatrix<core::Real> I_mat;
+  I_mat.to_identity();
+  numeric::xyzVector<core::Real> back_to_FingerprintBase_origin = fp.origin() - origin_;
+  tmp_pose.apply_transform_Rx_plus_v(I_mat, back_to_FingerprintBase_origin);
 
-	return tmp_pose;
+  return tmp_pose;
 
 }
 
+numeric::xyzVector<core::Real> PlaidFingerprint::calculate_ligand_CoM(core::pose::Pose const & ligand_pose) {
+
+  core::Size lig_res_num = compute_ligand_resnum( ligand_pose );
+  numeric::xyzVector<core::Real> ligand_com(0.);
+  core::conformation::Residue const & curr_rsd = ligand_pose.conformation().residue(lig_res_num);
+  core::Size ligand_total_atoms = compute_ligand_natoms( ligand_pose );
+  for(Size i = 1, i_end = ligand_total_atoms; i <= i_end; ++i) {
+    ligand_com.x() += curr_rsd.atom(i).xyz()(1);
+    ligand_com.y() += curr_rsd.atom(i).xyz()(2);
+    ligand_com.z() += curr_rsd.atom(i).xyz()(3);
+  }
+  ligand_com /= ligand_total_atoms;
+
+  return ligand_com;
+}
 
 core::Real PlaidFingerprint::rmsd(core::pose::Pose const & original_pose, core::pose::Pose const & oriented_pose) {
 
-	core::Size lig_res_num = 0;
-	for ( int j = 1, resnum = original_pose.total_residue(); j <= resnum; ++j ) {
-		if (!original_pose.residue(j).is_protein()){
-			lig_res_num = j;
-			break;
-		}
-	}
+  core::Size lig_res_num = compute_ligand_resnum( original_pose );
 
-	if (lig_res_num == 0){
-		std::cout<<"Error, no ligand for RMSD Calculation" << std::endl;
-		exit(1);
-	}
+  core::conformation::Residue const & pose1_rsd = original_pose.conformation().residue(lig_res_num);
+  core::conformation::Residue const & pose2_rsd = oriented_pose.conformation().residue(lig_res_num);
 
-	conformation::Residue const & pose1_rsd = original_pose.conformation().residue(lig_res_num);
-	conformation::Residue const & pose2_rsd = oriented_pose.conformation().residue(lig_res_num);
-
-	core::Real rmsd, dist_sum(0.);
-	for(Size i = 1, i_end = pose1_rsd.nheavyatoms(); i <= i_end; ++i) {
-		core::Real x_dist =  ( (pose1_rsd.atom(i).xyz()(1) - pose2_rsd.atom(i).xyz()(1)) * (pose1_rsd.atom(i).xyz()(1) - pose2_rsd.atom(i).xyz()(1)) );
-		core::Real y_dist =  ( (pose1_rsd.atom(i).xyz()(2) - pose2_rsd.atom(i).xyz()(2)) * (pose1_rsd.atom(i).xyz()(2) - pose2_rsd.atom(i).xyz()(2)) );
-		core::Real z_dist =  ( (pose1_rsd.atom(i).xyz()(3) - pose2_rsd.atom(i).xyz()(3)) * (pose1_rsd.atom(i).xyz()(3) - pose2_rsd.atom(i).xyz()(3)) );
-		dist_sum += x_dist + y_dist + z_dist;
-	}
-	rmsd = sqrt(dist_sum/pose1_rsd.nheavyatoms());
-	return rmsd;
+  core::Real rmsd, dist_sum(0.);
+  for(Size i = 1, i_end = pose1_rsd.nheavyatoms(); i <= i_end; ++i) {
+    core::Real x_dist =  ( (pose1_rsd.atom(i).xyz()(1) - pose2_rsd.atom(i).xyz()(1)) * (pose1_rsd.atom(i).xyz()(1) - pose2_rsd.atom(i).xyz()(1)) );
+    core::Real y_dist =  ( (pose1_rsd.atom(i).xyz()(2) - pose2_rsd.atom(i).xyz()(2)) * (pose1_rsd.atom(i).xyz()(2) - pose2_rsd.atom(i).xyz()(2)) );
+    core::Real z_dist =  ( (pose1_rsd.atom(i).xyz()(3) - pose2_rsd.atom(i).xyz()(3)) * (pose1_rsd.atom(i).xyz()(3) - pose2_rsd.atom(i).xyz()(3)) );
+    dist_sum += x_dist + y_dist + z_dist;
+  }
+  rmsd = sqrt(dist_sum/pose1_rsd.nheavyatoms());
+  return rmsd;
 
 }
 
 
-void PlaidFingerprint::move_origin( numeric::xyzVector<core::Real> const & new_origin ){
+// note: not used
+//void PlaidFingerprint::move_origin( numeric::xyzVector<core::Real> const & new_origin ){
+//	numeric::xyzVector<core::Real> fp_coor;
+//  for (std::list<spherical_coor_triplet>::iterator pd = triplet_fingerprint_data_.begin(); pd != triplet_fingerprint_data_.end(); ++pd) {
+//		// find cartesian coors relative to old origin
+//		convert_spherical_coor_triplet_to_cartesian( *pd, fp_coor );
+//		// move cartesian coors from old origin to new origin
+//    fp_coor += origin_ - new_origin;
+//		// convert from cartesian coors to polar
+//		convert_cartesian_to_spherical_coor_triplet( fp_coor, *pd );
+//	}
+//	origin_ = new_origin;
+//}
 
-	numeric::xyzVector<core::Real> fp_coor;
-  for (std::list<spherical_coor_triplet>::iterator pd = triplet_fingerprint_data_.begin(); pd != triplet_fingerprint_data_.end(); ++pd) {
-		// find cartesian coors relative to old origin
-		convert_spherical_coor_triplet_to_cartesian( *pd, fp_coor );
-		// move cartesian coors from old origin to new origin
-    fp_coor += origin_ - new_origin;
-		// convert from cartesian coors to polar
-		convert_cartesian_to_spherical_coor_triplet( fp_coor, *pd );
-	}
-	origin_ = new_origin;
+
+
+// note: not used, also deprecated because we now express all angles in radians
+//void correct_phi_psi( core::Real & phi, core::Real & psi ){
+//	while ( phi < 0. ) {
+//		phi *= -1.;
+//		psi += 180.;
+//	}
+//	while ( phi > 360. ) {
+//		phi -= 360.;
+//	}
+//	while ( phi > 180. ) {
+//		phi = 360. - phi;
+//		psi += 180.;
+//	}
+//	while ( psi < -180. ) psi += 360.;
+//	while ( psi > 180. ) psi -= 360.;
+//}
+
+
+
+/* DEFINITIONS for the following code:
+   (x0,y0,z0) = the coordinates of the "origin" point from which all rays originate, called P0
+   (x2,y2,z2) = the coordinates of the pocket point that intersects the ray whose derivative we are calculating, called P2
+   (x3,y3,z3) = the coordinates of the center of the atom that is intersecting the ray, called P3
+   (xc,yc,zc) = the coordinates of the center of mass of the ligand BEFORE it has been moved into the current pose, called Pc
+   (xs,ys,zs) = the coordinates of the center of the atom that is intersecting the ray BEFORE it has been moved into the current pose, called Ps
+   r          = the radius of the atom that is intersecting the ray
+   v1         = variable that determines how much we translate the ligand's center of mass in the x direction, x component of translation vector called V13
+   v2         = variable that determines how much we translate the ligand's center of mass in the y direction, y component of translation vector called V13
+   v3         = variable that determines how much we translate the ligand's center of mass in the z direction, z component of translation vector called V13
+   v4         = variable that determines the angle of rotation about the x axis, called rotation matrix A4
+   v5         = variable that determines the angle of rotation about the y axis, called rotation matrix A5
+   v6         = variable that determines the angle of rotation about the z axis, called rotation matrix A6
+   (a,b,c)    = (x2-x0,y2-y0,z2-z0) is the directional vector for the ray, called Pd = P2 -P0
+*/
+/* ASSUMPTIONS for the following code:
+   rotations are applied to the starting vector in the order: x first, y second, z third
+   the coordinate basis has been chosen such that the NEGATIVE BRANCH of the solution for the intersection of the ray with the sphere is ALWAYS the correct one
+   P0, P2, PC, PS and r are all constants
+   we calculate P3 from the following equation:
+   P3 = A6.A5.A4.(Ps-Pc) + Pc + V13
+   which implies that v1-v6 are the only variables which influence P3
+   ALL ANGLES ARE IN RADIANS
+*/
+
+/* the function dD_dv1 calculates the value of the partial derivative of the distance, D, with respect to the variable v1 */
+double dD_dv1(const double x0,const double x2,const double x3,const double y0,const double y2,const double y3,const double z0,const double z2,const double z3,const double r){
+
+  double u ; // paremeter that determines the point of intersection between the ray and the sphere
+  double xI; // x coordinate for the intersection point
+  double yI; // y coordinate for the intersection point
+  double zI; // z coordinate for the intersection point
+  double d ; // current distance between PI and P2
+
+  double du_dx3 ; // derivative of u with respect to x3
+  double Q ; // constant which multiplies the derivative du_dx3 to obtain dD_dv1
+
+  // calculate directional vector
+  const double a = x2-x0;
+  const double b = y2-y0;
+  const double c = z2-z0;
+
+  // calculate paremter that determines intersection point between the line and the sphere
+  u =(-(a*x0) + a*x3 - b*y0 + b*y3 - c*z0 - sqrt(4.0*(a*(x0 - x3) + b*(y0 - y3) + c*(z0 - z3))*(a*(x0 - x3) + b*(y0 - y3) + c*(z0 - z3)) - 4.0*(a*a + b*b + c*c)*(-r*r + (x0 - x3)*(x0-x3) + (y0 - y3)*(y0 - y3) + (z0 - z3)*(z0 - z3)))/2.0 + c*z3)/(a*a + b*b + c*c);
+
+  // calculate xI, yI and zI
+  xI = x0+a*u ;
+  yI = y0+b*u ;
+  zI = z0+c*u ;
+
+  // calculate current distance
+  d = sqrt((xI-x2)*(xI-x2)+(yI-y2)*(yI-y2)+(zI-z2)*(zI-z2)) ;
+
+  // claculate Q
+  Q = (a*(xI-x2)+b*(yI-y2)+c*(zI-z2))/d ;
+  //cout << "simple version:\n" << (xI-x2)/d << endl ;
+
+  // calculate the derivative du_dx3
+  du_dx3 = (a + (2.0*(b*b*(-x0 + x3) + a*b*(y0 - y3) + c*(c*(-x0 + x3) + a*(z0 - z3))))/sqrt(4.0*(a*(x0 - x3) + b*(y0 - y3) + c*(z0 - z3))*(a*(x0 - x3) + b*(y0 - y3) + c*(z0 - z3)) - 4.0*(a*a + b*b + c*c)*(-r*r + (x0 - x3)*(x0-x3) + (y0 - y3)*(y0 - y3) + (z0 - z3)*(z0 - z3))))/(a*a + b*b + c*c) ;
+
+  // cout << "complex version:\n" << Q*du_dx3 << endl ;
+  return Q * du_dx3 ;
+}
+
+/* the function dD_dv2 calculates the value of the partial derivative of the distance, D, with respect to the variable v2 */
+double dD_dv2(const double x0,const double x2,const double x3,const double y0,const double y2,const double y3,const double z0,const double z2,const double z3,const double r){
+
+  double u ; // paremeter that determines the point of intersection between the ray and the sphere
+  double xI; // x coordinate for the intersection point
+  double yI; // y coordinate for the intersection point
+  double zI; // z coordinate for the intersection point
+  double d ; // current distance between PI and P2
+
+  double du_dy3 ; // derivative of u with respect to y3
+  double Q ; // constant which multiplies the derivative du_dy3 to obtain dD_dv2
+
+  // calculate directional vector
+  const double a = x2-x0;
+  const double b = y2-y0;
+  const double c = z2-z0;
+
+  // calculate paremter that determines intersection point between the line and the sphere
+  u = (-(a*x0) + a*x3 - b*y0 + b*y3 - c*z0 - sqrt(4.0*(a*(x0 - x3) + b*(y0 - y3) + c*(z0 - z3))*(a*(x0 - x3) + b*(y0 - y3) + c*(z0 - z3)) - 4.0*(a*a + b*b + c*c)*(-r*r + (x0 - x3)*(x0-x3) + (y0 - y3)*(y0 - y3) + (z0 - z3)*(z0 - z3)))/2.0 + c*z3)/(a*a + b*b + c*c);
+
+  // calculate xI, yI and zI
+  xI = x0+a*u ;
+  yI = y0+b*u ;
+  zI = z0+c*u ;
+
+  // calculate current distance
+  d = sqrt((xI-x2)*(xI-x2)+(yI-y2)*(yI-y2)+(zI-z2)*(zI-z2)) ;
+
+  // claculate Q
+  Q = (a*(xI-x2)+b*(yI-y2)+c*(zI-z2))/d ;
+
+  // calculate the derivative du_dx3
+  du_dy3 = (b - (2.0*(a*b*(-x0 + x3) + a*a*(y0 - y3) + c*(c*(y0 - y3) + b*(-z0 + z3))))/sqrt(4.0*(a*(x0 - x3) + b*(y0 - y3) + c*(z0 - z3))*(a*(x0 - x3) + b*(y0 - y3) + c*(z0 - z3)) - 4.0*(a*a + b*b + c*c)*(-r*r + (x0 - x3)*(x0-x3) + (y0 - y3)*(y0 - y3) + (z0 - z3)*(z0 - z3))))/(a*a + b*b + c*c) ;
+
+  return Q * du_dy3 ;
+}
+
+/* the function dD_dv3 calculates the value of the partial derivative of the distance, D, with respect to the variable v3 */
+double dD_dv3(const double x0,const double x2,const double x3,const double y0,const double y2,const double y3,const double z0,const double z2,const double z3,const double r){
+
+  double u ; // paremeter that determines the point of intersection between the ray and the sphere
+  double xI; // x coordinate for the intersection point
+  double yI; // y coordinate for the intersection point
+  double zI; // z coordinate for the intersection point
+  double d ; // current distance between PI and P2
+
+  double du_dz3 ; // derivative of u with respect to z3
+  double Q ; // constant which multiplies the derivative du_dz3 to obtain dD_dv3
+
+  // calculate directional vector
+  const double a = x2-x0;
+  const double b = y2-y0;
+  const double c = z2-z0;
+
+  // calculate paremter that determines intersection point between the line and the sphere
+  u = (-(a*x0) + a*x3 - b*y0 + b*y3 - c*z0 - sqrt(4.0*(a*(x0 - x3) + b*(y0 - y3) + c*(z0 - z3))*(a*(x0 - x3) + b*(y0 - y3) + c*(z0 - z3)) - 4.0*(a*a + b*b + c*c)*(-r*r + (x0 - x3)*(x0-x3) + (y0 - y3)*(y0 - y3) + (z0 - z3)*(z0 - z3)))/2.0 + c*z3)/(a*a + b*b + c*c);
+
+  // calculate xI, yI and zI
+  xI = x0+a*u ;
+  yI = y0+b*u ;
+  zI = z0+c*u ;
+
+  // calculate current distance
+  d = sqrt((xI-x2)*(xI-x2)+(yI-y2)*(yI-y2)+(zI-z2)*(zI-z2)) ;
+
+  // claculate Q
+  Q = (a*(xI-x2)+b*(yI-y2)+c*(zI-z2))/d ;
+
+  // calculate the derivative du_dx3
+  du_dz3 = (c + (2.0*(a*c*(x0 - x3) + a*a*(-z0 + z3) + b*(c*(y0 - y3) + b*(-z0 + z3))))/sqrt(4.0*(a*(x0 - x3) + b*(y0 - y3) + c*(z0 - z3))*(a*(x0 - x3) + b*(y0 - y3) + c*(z0 - z3)) - 4.0*(a*a + b*b + c*c)*(-r*r + (x0 - x3)*(x0-x3) + (y0 - y3)*(y0 - y3) + (z0 - z3)*(z0 - z3))))/(a*a + b*b + c*c);
+
+  return Q * du_dz3 ;
+}
+
+/* the function dD_dv4 calculates the value of the partial derivative of the distance, D, with respect to the variable v4 */
+double dD_dv4(const double x0,const double x2,const double x3,const double y0,const double y2,const double y3,const double z0,const double z2,const double z3,const double r,const double v4,const double v5,const double v6,const double ,const double ,const double yc,const double ys,const double zc,const double zs) {
+
+  double dx3_dv4 ; // derivative of x3 with respect to v4
+  double dy3_dv4 ; // derivative of y3 with respect to v4
+  double dz3_dv4 ; // derivative of y3 with respect to v4
+
+  // calculate derivatives for P3
+  dx3_dv4 = (-zc + zs)*(-(cos(v6)*sin(v4)*sin(v5)) + cos(v4)*sin(v6)) + (-yc + ys)*(cos(v4)*cos(v6)*sin(v5) + sin(v4)*sin(v6));
+  dy3_dv4 = (-yc + ys)*(-(cos(v6)*sin(v4)) + cos(v4)*sin(v5)*sin(v6)) + (-zc + zs)*(-(cos(v4)*cos(v6)) - sin(v4)*sin(v5)*sin(v6)) ;
+  dz3_dv4 = (-yc + ys)*cos(v4)*cos(v5) - (-zc + zs)*cos(v5)*sin(v4) ;
+
+  return dD_dv1(x0,x2,x3,y0,y2,y3,z0,z2,z3,r)*dx3_dv4 + dD_dv2(x0,x2,x3,y0,y2,y3,z0,z2,z3,r)*dy3_dv4 + dD_dv3(x0,x2,x3,y0,y2,y3,z0,z2,z3,r)*dz3_dv4 ;
+}
+
+/* the function dD_dv5 calculates the value of the partial derivative of the distance, D, with respect to the variable v5 */
+double dD_dv5(const double x0,const double x2,const double x3,const double y0,const double y2,const double y3,const double z0,const double z2,const double z3,const double r,const double v4,const double v5,const double v6,const double xc,const double xs,const double yc,const double ys,const double zc,const double zs) {
+
+  double dx3_dv5 ; // derivative of x3 with respect to v5
+  double dy3_dv5 ; // derivative of y3 with respect to v5
+  double dz3_dv5 ; // derivative of y3 with respect to v5
+
+  // calculate derivatives for P3
+  dx3_dv5 = (-zc + zs)*cos(v4)*cos(v5)*cos(v6) + (-yc + ys)*cos(v5)*cos(v6)*sin(v4) - (-xc + xs)*cos(v6)*sin(v5) ;
+  dy3_dv5 = (-zc + zs)*cos(v4)*cos(v5)*sin(v6) + (-yc + ys)*cos(v5)*sin(v4)*sin(v6) - (-xc + xs)*sin(v5)*sin(v6) ;
+  dz3_dv5 = (xc - xs)*cos(v5) - (-zc + zs)*cos(v4)*sin(v5) - (-yc + ys)*sin(v4)*sin(v5) ;
+
+  return dD_dv1(x0,x2,x3,y0,y2,y3,z0,z2,z3,r)*dx3_dv5 + dD_dv2(x0,x2,x3,y0,y2,y3,z0,z2,z3,r)*dy3_dv5 + dD_dv3(x0,x2,x3,y0,y2,y3,z0,z2,z3,r)*dz3_dv5 ;
+}
+
+/* the function dD_dv6 calculates the value of the partial derivative of the distance, D, with respect to the variable v6 */
+double dD_dv6(const double x0,const double x2,const double x3,const double y0,const double y2,const double y3,const double z0,const double z2,const double z3,const double r,const double v4,const double v5,const double v6,const double xc,const double xs,const double yc,const double ys,const double zc,const double zs) {
+
+  double dx3_dv6 ; // derivative of x3 with respect to v6
+  double dy3_dv6 ; // derivative of y3 with respect to v6
+  double dz3_dv6 ; // derivative of y3 with respect to v6
+
+  // calculate derivatives for P3
+  dx3_dv6 = (xc - xs)*cos(v5)*sin(v6) + (-zc + zs)*(cos(v6)*sin(v4) - cos(v4)*sin(v5)*sin(v6)) + (-yc + ys)*(-(cos(v4)*cos(v6)) - sin(v4)*sin(v5)*sin(v6)) ;
+  dy3_dv6 = (-xc + xs)*cos(v5)*cos(v6) + (-yc + ys)*(cos(v6)*sin(v4)*sin(v5) - cos(v4)*sin(v6)) + (-zc + zs)*(cos(v4)*cos(v6)*sin(v5) + sin(v4)*sin(v6)) ;
+  dz3_dv6 = 0.0 ;
+
+  return dD_dv1(x0,x2,x3,y0,y2,y3,z0,z2,z3,r)*dx3_dv6 + dD_dv2(x0,x2,x3,y0,y2,y3,z0,z2,z3,r)*dy3_dv6 + dD_dv3(x0,x2,x3,y0,y2,y3,z0,z2,z3,r)*dz3_dv6 ;
 }
 
 
-void correct_phi_psi( core::Real & phi, core::Real & psi ){
+core::Real Find_Closest_Intersect_SQ(core::Real const & phiAngle, core::Real const & psiAngle, core::Real const & atomX, core::Real const & atomY, core::Real const & atomZ, core::Real const & atom_radius){
 
-	while ( phi < 0. ) {
-		phi *= -1.;
-		psi += 180.;
-	}
-	while ( phi > 360. ) {
-		phi -= 360.;
-	}
-	while ( phi > 180. ) {
-		phi = 360. - phi;
-		psi += 180.;
-	}
-	while ( psi < -180. ) psi += 360.;
-	while ( psi > 180. ) psi -= 360.;
+  // note: phi/psi are in radians
+
+  core::Real const large_dist(999.);
+  core::Real dirX,dirY,dirZ;
+  //compute (dirX,dirY,dirZ) from phi/psi with random large_dist, relative to Origin
+  //Reference: http://paulbourke.net/geometry/sphereline/
+  dirX = large_dist*sin(phiAngle)*cos(psiAngle);
+  dirY = large_dist*sin(phiAngle)*sin(psiAngle);
+  dirZ = large_dist*cos(phiAngle);
+
+  // setup our quadratic equation
+  core::Real const a = (dirX*dirX) + (dirY*dirY) + (dirZ*dirZ);
+  core::Real const b = 2.0 * ( (dirX*(-atomX)) + (dirY*(-atomY)) + (dirZ*(-atomZ)) );
+  core::Real const c = atomX*atomX + atomY*atomY + atomZ*atomZ - (atom_radius * atom_radius);
+
+  // test for intersection
+  core::Real const inside_sqrt = ( b * b ) - ( 4. * a * c );
+
+  if ( inside_sqrt > 0. ) {
+    //              std::cout << "Line intersects atom\n" << std::endl;
+    core::Real const inside = sqrt(inside_sqrt);
+    core::Real const mu1 = -(b-inside) / ( 2. * a);
+    core::Real const x1 =  mu1 * dirX;
+    core::Real const y1 =  mu1 * dirY;
+    core::Real const z1 =  mu1 * dirZ;
+    core::Real const dist1_sq = x1*x1 + y1*y1 + z1*z1;
+    core::Real const mu2 = -(b+inside) / ( 2. * a);
+    core::Real const x2 = mu2 * dirX;
+    core::Real const y2 = mu2 * dirY;
+    core::Real const z2 = mu2 * dirZ;
+    core::Real const dist2_sq = x2*x2 + y2*y2 + z2*z2;
+    if ( dist2_sq < dist1_sq ) {
+      return dist2_sq;
+    }
+    return dist1_sq;
+  }
+  //             std::cout <<phiAngle<<" " <<psiAngle<< " " << "No Intersection" << std::endl;
+  return 9999.;
+}
+
+std::list<numeric::xyzVector<core::Real> > NonPlaidFingerprint::combine_xyz_lists(std::list< numeric::xyzVector<core::Real> > const & xyz_list_1, std::list< numeric::xyzVector<core::Real> > const & xyz_list_2 ) {
+
+  std::list<numeric::xyzVector<core::Real> > combined_list;
+  combined_list.clear();
+  for (std::list< numeric::xyzVector<core::Real> >::const_iterator pd = xyz_list_1.begin(); pd != xyz_list_1.end(); ++pd) {
+    combined_list.push_back(*pd);
+  }
+  for (std::list< numeric::xyzVector<core::Real> >::const_iterator pd = xyz_list_2.begin(); pd != xyz_list_2.end(); ++pd) {
+    combined_list.push_back(*pd);
+  }
+  return combined_list;
 }
 
 } // Pockets

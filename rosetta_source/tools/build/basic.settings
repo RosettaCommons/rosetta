@@ -688,9 +688,9 @@ settings = {
 
     "gcc, opencl" : {
         "appends" : {
-            "include_path"  : [ "/usr/local/cuda/include", ],
+            "include_path"  : [ "/opt/AMDAPP/include", "/opt/AMDAPP/include/CL", "/opt/AMDAPP/lib/x86", "/opt/AMDAPP/lib/x86_64", ],
             "libraries"     : [ "OpenCL" ],
-            "library_path"  : [ "/usr/local/cuda/lib64", "/usr/local/cuda/lib", ],
+            "library_path"  : [ "/opt/AMDAPP/lib/x86_64", ],
             "defines"       : [ "USEOPENCL" ],
         },
     },

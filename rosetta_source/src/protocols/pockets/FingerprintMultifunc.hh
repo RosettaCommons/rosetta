@@ -35,7 +35,7 @@ public: // Creation
 
 	// c-tor
 	FingerprintMultifunc(
-		NonPlaidFingerprint const & nfp_in,
+		NonPlaidFingerprint & nfp_in,
 		PlaidFingerprint & pfp_in,
 		core::Real const & missing_point_weight,
 		core::Real const & steric_weight,
@@ -58,7 +58,7 @@ public: // Methods
 	// dfunc
 	virtual
 	void
-	dfunc( core::optimization::Multivec const & , core::optimization::Multivec & ) const;
+	dfunc( core::optimization::Multivec const & vars, core::optimization::Multivec & dE_dvars ) const;
 
 	using core::optimization::Multifunc::dump;
 
@@ -69,7 +69,7 @@ public: // Methods
 
 private:
 
-  NonPlaidFingerprint const & nfp_;
+  NonPlaidFingerprint & nfp_;
   PlaidFingerprint & pfp_;
 	core::Real missing_pt_;
 	core::Real steric_;

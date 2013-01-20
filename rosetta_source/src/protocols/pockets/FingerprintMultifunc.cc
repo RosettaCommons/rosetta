@@ -22,7 +22,7 @@ namespace protocols{
 namespace pockets {
 
 FingerprintMultifunc::FingerprintMultifunc(
-	NonPlaidFingerprint const & nfp_in,
+	NonPlaidFingerprint & nfp_in,
 	PlaidFingerprint & pfp_in,
 	core::Real const & missing_point_weight,
 	core::Real const & steric_weight,
@@ -41,20 +41,30 @@ FingerprintMultifunc::operator ()( core::optimization::Multivec const & vars ) c
 	origin_offset.x() = vars[1];
 	origin_offset.y() = vars[2];
 	origin_offset.z() = vars[3];
-	//	core::Real low_rho_weight = vars[7];
-	//	core::Real high_steric_weight = vars[8];
 
-	//	pfp_.build_from_pose_( nfp_, origin_offset, vars[4] / numeric::constants::f::pi_over_180, vars[5] / numeric::constants::f::pi_over_180, vars[6] / numeric::constants::f::pi_over_180 );
-	pfp_.build_from_pose_( nfp_, origin_offset, vars[4], vars[5], vars[6] );
+	pfp_.move_ligand_and_update_rhos_( nfp_, origin_offset, vars[4], vars[5], vars[6] );
 	core::Real const score = pfp_.fp_compare( nfp_, missing_pt_, steric_, extra_pt_ );
 	return score;
 }
 
 void
-FingerprintMultifunc::dfunc( core::optimization::Multivec const & , core::optimization::Multivec & ) const
+FingerprintMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimization::Multivec & dE_dvars ) const
 {
-	std::cout<< "Can't compute derivates of FingerprintMultifunc" << std::endl;
-	exit(1);
+
+	//	std::cout<< "Can't compute derivates of FingerprintMultifunc" << std::endl;
+	//	exit(1);
+
+	numeric::xyzVector<core::Real> origin_offset;
+	origin_offset.x() = vars[1];
+	origin_offset.y() = vars[2];
+	origin_offset.z() = vars[3];
+
+	pfp_.move_ligand_and_update_rhos_( nfp_, origin_offset, vars[4], vars[5], vars[6] );
+
+	pfp_.fp_compare_deriv( nfp_, missing_pt_, steric_, extra_pt_, dE_dvars[1], dE_dvars[2], dE_dvars[3], dE_dvars[4], dE_dvars[5], dE_dvars[6] );
+
+	return;
+
 }
 
 /// @details Useful debugging code that can be re-enabled by changing the boolean

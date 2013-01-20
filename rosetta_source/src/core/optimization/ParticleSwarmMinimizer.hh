@@ -67,6 +67,19 @@ public:
 		return fitness_;
 	}
 
+	Real set_score(Real & new_score)
+	{
+		// Reverse the sign: for normal multifunc, lower is better
+		// For historical reasons, the code maximizes the "fitness"
+		fitness_ = -new_score;
+		if( ! best_valid_ || fitness_pbest_ < fitness_ ) {
+			best_valid_ = true;
+			pbest_ = p_; // make a copy
+			fitness_pbest_ = fitness_;
+		}
+		return fitness_;
+	}
+
 	/// @brief Make sure that all arrays are large enough -- prevents index-out-of-bound errors.
 	void ensure_size(Size minsize)
 	{
@@ -129,7 +142,12 @@ public:
 	void run(Size num_cycles, Multifunc & f_fitness, ParticleOPs & particles);
 	void print_particles( ParticleOPs & particles, std::string header );
 
+protected:
+
+	virtual void score_all_particles(Multifunc & f_fitness, ParticleOPs & particles);
+
 private:
+
 	Size size_; //< number of degrees of freedom
 	Real C_inertia_start_;
 	Real C_inertia_end_;

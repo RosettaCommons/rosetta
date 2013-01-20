@@ -138,9 +138,7 @@ void ParticleSwarmMinimizer::run(Size num_cycles, Multifunc & f_fitness, Particl
 		Real const frac_done = Real(cycle) / Real(num_cycles > 1 ? num_cycles-1 : 1);
 		Real const C_inertia = (1.0-frac_done)*C_inertia_start_ + frac_done*C_inertia_end_;
 		// score everyone and update p(ersonal)best
-		for(Size i = 1; i <= N; ++i) {
-			particles[i]->score(f_fitness);
-		}
+		score_all_particles(f_fitness,particles);
 		//
 		// TODO: apply local optimization to best particle in the swarm
 		//
@@ -239,11 +237,17 @@ void ParticleSwarmMinimizer::run(Size num_cycles, Multifunc & f_fitness, Particl
 	}
 
 	// score everyone and update p(ersonal)best one last time
+	score_all_particles(f_fitness,particles);
+	// sort by fitness, fitest ones first
+	std::sort(particles.begin(), particles.end(), cmp_particles);
+}
+
+
+void ParticleSwarmMinimizer::score_all_particles(Multifunc & f_fitness, ParticleOPs & particles) {
+	Size const N = particles.size();
 	for(Size i = 1; i <= N; ++i) {
 		particles[i]->score(f_fitness);
 	}
-	// sort by fitness, fitest ones first
-	std::sort(particles.begin(), particles.end(), cmp_particles);
 }
 
 
