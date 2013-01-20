@@ -900,6 +900,9 @@ Splice::read_torsion_database(){
   }
   std::string line;
   while( getline( data, line ) ) {
+		utility::vector1< std::string > const elements_in_line( utility::string_split( line, ' ' ) );
+		if( elements_in_line.size() % 4 != 0 )
+			utility_exit_with_message( "While reading torsion database "+torsion_database_fname_+" found a line where the number of elements is not divisible by 4. This likely stems from an error in the database:\n" + line );
     std::istringstream line_stream( line );
 		ResidueBBDofs bbdof_entry;
 		bbdof_entry.clear();
