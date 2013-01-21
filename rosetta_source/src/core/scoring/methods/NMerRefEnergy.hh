@@ -9,7 +9,7 @@
 
 /// @file   core/scoring/methods/NMerRefEnergy.hh
 /// @brief  Reference energy method declaration
-/// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
+/// @author Chris King
 
 
 #ifndef INCLUDED_core_scoring_methods_NMerRefEnergy_hh
@@ -92,13 +92,18 @@ public:
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
 
 
+	//methods to init from outside (for filter construction)
+	void nmer_length( Size const nmer_length );
+	void initialize_from_options();
+
 private:
 	std::map< std::string, core::Real > nmer_ref_energies_;
 	core::Size nmer_length_;
-	core::Size nmer_nterm_;
 	core::Size nmer_cterm_;
 
-	void read_nmer_energy_table();
+	void read_nmer_table( std::string const ref_fname );
+	void read_nmer_table_list( std::string const ref_list_fname );
+	void read_nmer_tables_from_options();
 	virtual
 	core::Size version() const;
 };
