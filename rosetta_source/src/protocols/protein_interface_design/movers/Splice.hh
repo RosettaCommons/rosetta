@@ -172,7 +172,7 @@ public:
 /// Splice changes the backbone of the current pose and the following methods deal with dynamically constructing a
 /// sequence profile for the current backbone choices.
 	void read_splice_segments( std::string const segment_type, std::string const segment_name, std::string const file_name );
-	core::sequence::SequenceProfileOP generate_sequence_profile();
+	core::sequence::SequenceProfileOP generate_sequence_profile(core::pose::Pose & pose);
 	void load_pdb_segments_from_pose_comments( core::pose::Pose  const  & p); // get the segment names for those segments that are constant in this splice function
 	void modify_pdb_segments_with_current_segment( std::string const pdb_name ); // set the current segment name
 	void add_sequence_constraints( core::pose::Pose & pose ); // add SequenceProfileConstraints based on the sequence profile

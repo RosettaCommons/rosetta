@@ -220,6 +220,7 @@ option.add( basic::options::OptionKeys::out::file::design_contrast, "output list
 option.add( basic::options::OptionKeys::out::file::dont_rewrite_dunbrack_database, "disables the default behavior of rewriting the dunrack library in binary format if a binary version is not found" );
 option.add( basic::options::OptionKeys::out::file::renumber_pdb, "use Rosetta residue numbering and arbitrary chain labels in pdb output" ).def(false);
 option.add( basic::options::OptionKeys::out::file::pdb_parents, "If the pose contains a comment named template print this as a REMARK in the pdb file" ).def(false);
+option.add( basic::options::OptionKeys::out::file::pdb_comments, "If the pose contains any comment print it as a COMMENT in the pdb file" ).def(true);
 option.add( basic::options::OptionKeys::out::file::per_chain_renumbering, "when used in conjunction with renumber_pdb, restarts residue numbering at each chain" ).def(false);
 option.add( basic::options::OptionKeys::out::file::residue_type_set, "ResidueTypeSet for output files" ).def("fa_standard");
 option.add( basic::options::OptionKeys::out::file::frag_prefix, "Prefix for fragment output" ).def("default.frags");
@@ -787,9 +788,9 @@ option.add( basic::options::OptionKeys::score::NV_table, "Location of path to po
 option.add( basic::options::OptionKeys::score::disable_orientation_dependent_rna_ch_o_bonds, "Do not use orientation-dependent potential for RNA carbon hydrogen bonds" ).def(false);
 option.add( basic::options::OptionKeys::score::rna_torsion_potential, "In RNA torsion calculation, directory containing 1D torsional potentials" ).def("BLAHBLAHBLAH");
 option.add( basic::options::OptionKeys::score::rna_torsion_skip_chainbreak, "Don't score RNA torsions located at the chain_breaks (aside from the ones that will be closed)" ).def(true);
-option.add( basic::options::OptionKeys::score::rna_chemical_shift_exp_data, "rna_chemical_shift_exp_data" ).def("");
-option.add( basic::options::OptionKeys::score::rna_chemical_shift_H5_prime_mode, "rna_chemical_shift_H5_prime_mode" ).def("");
-option.add( basic::options::OptionKeys::score::rna_chemical_shift_include_res, "rna_chemical_shift_include_res" );
+option.add( basic::options::OptionKeys::score::rna_chemical_shift_exp_data, "rna_chemical_shift_exp_data" ).def(""); 
+option.add( basic::options::OptionKeys::score::rna_chemical_shift_H5_prime_mode, "rna_chemical_shift_H5_prime_mode" ).def(""); 
+option.add( basic::options::OptionKeys::score::rna_chemical_shift_include_res, "rna_chemical_shift_include_res" ); 
 option.add( basic::options::OptionKeys::score::use_2prime_OH_potential, "Use torsional potential for RNA 2prime OH." ).def(true);
 option.add( basic::options::OptionKeys::score::include_neighbor_base_stacks, "In RNA score calculation, include stacks between i,i+1" ).def(false);
 option.add( basic::options::OptionKeys::score::find_neighbors_3dgrid, "Use a 3D lookup table for doing neighbor calculations.  For spherical, well-distributed conformations, O(N) neighbor detection instead of general O(NlgN)" ).def(false);
@@ -1318,9 +1319,8 @@ option.add( basic::options::OptionKeys::lh::create_db, "Make database with this 
 option.add( basic::options::OptionKeys::lh::sample_weight_file, "Holds the initial per residue sample weights" );
 option.add( basic::options::OptionKeys::lh::fragpdb::fragpdb, "fragpdb option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::lh::fragpdb::out_path, "Path where pdbs are saved" ).def("");
-option.add( basic::options::OptionKeys::lh::fragpdb::indexoffset, "list of index offset pairs" ).def(-1);
-
 }
+
 inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::fragpdb::bin, "list of bin keys" ).def(utility::vector1<std::string>());
 option.add( basic::options::OptionKeys::lh::symfragrm::symfragrm, "symfragrm option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::lh::symfragrm::pdblist, "list of pdbs to be processed" );
@@ -1975,11 +1975,9 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::optimize_loops, "do
 option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file, "has fasta file format - describes secondary structure of desired target with H/C/E" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
-option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
-option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
-option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
-
 }
+
+
 inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
@@ -2458,8 +2456,8 @@ option.add( basic::options::OptionKeys::optimization::optimization, "optimizatio
 option.add( basic::options::OptionKeys::optimization::default_max_cycles, "max cycles for MinimizerOptions" ).def(2000);
 option.add( basic::options::OptionKeys::optimization::armijo_min_stepsize, "min stepsize in armijo minimizer" ).def(1e-8);
 option.add( basic::options::OptionKeys::optimization::lbfgs_M, "number of corrections to approximate the inverse hessian matrix." ).def(64);
-option.add( basic::options::OptionKeys::optimization::scale_d, "max cycles for MinimizerOptions" ).def(1);
-option.add( basic::options::OptionKeys::optimization::scale_theta, "max cycles for MinimizerOptions" ).def(1);
+option.add( basic::options::OptionKeys::optimization::scale_d, "max cycles for MinimizerOptions" ).def(100);
+option.add( basic::options::OptionKeys::optimization::scale_theta, "max cycles for MinimizerOptions" ).def(10);
 option.add( basic::options::OptionKeys::optimization::scale_rb, "max cycles for MinimizerOptions" ).def(10);
 option.add( basic::options::OptionKeys::optimization::scale_rbangle, "max cycles for MinimizerOptions" ).def(1);
 option.add( basic::options::OptionKeys::optimization::scmin_nonideal, "Do we allow sidechain nonideality during scmin (e.g. rtmin and min_pack)" ).def(false);
@@ -2635,7 +2633,7 @@ option.add( basic::options::OptionKeys::pb_potential::revamp_near_chain, "Scale 
 option.add( basic::options::OptionKeys::pb_potential::apbs_path, "Path to the APBS (Adaptive Poisson-Boltzmann Solver) executable" );
 option.add( basic::options::OptionKeys::pb_potential::potential_cap, "Cap for PB potential input" ).def(20.0);
 option.add( basic::options::OptionKeys::pb_potential::epsilon, "Tolerance in A.  When a charged atom moves byond this tolerance, the PDE is resolved." ).def(2.0);
-
+ 
 }
 
 inline void add_all_rosetta_options( utility::options::OptionCollection &option ) { add_rosetta_options_0(option); add_rosetta_options_1(option); add_rosetta_options_2(option); add_rosetta_options_3(option); }

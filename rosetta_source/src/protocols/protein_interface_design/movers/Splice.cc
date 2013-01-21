@@ -70,7 +70,14 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/SequenceProfileConstraint.hh>
 #include <core/sequence/SequenceProfile.hh>
-
+//////////////////////////////////////////////////
+#include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh> // for option[ out::file::silent  ] and etc.
+#include <basic/options/keys/in.OptionKeys.gen.hh> // for option[ in::file::tags ] and etc.
+#include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/option_macros.hh>
+///////////////////////////////////////////////////
 #include <fstream>
 #include <ctime>
 namespace protocols {
@@ -141,6 +148,10 @@ Splice::Splice() :
 	pdb_segments_.clear();
 	end_dbase_subset_ = new protocols::moves::DataMapObj< bool >;
 	end_dbase_subset_->obj = false;
+	
+	//Tell the JD to output comments
+	
+	basic::options::option[ basic::options::OptionKeys::out::file::pdb_comments ].value(true);
 }
 
 Splice::~Splice() {}
@@ -591,6 +602,7 @@ Splice::apply( core::pose::Pose & pose )
 //	( *scorefxn() ) ( pose );
 //	pose.update_residue_neighbors();
 	if( use_sequence_profiles_ )
+		TR<<"!!!!!!!!!!!!!!adding sequence constraints!!!!!!!!!!!!!!\n";
 		add_sequence_constraints( pose );
 	if( ccd() ){
 		using namespace protocols::loops;
@@ -824,6 +836,8 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 	loop_pdb_source( tag->getOption< std::string >( "loop_pdb_source", "" ) );
 
 	utility::vector1< TagPtr > const sub_tags( tag->getTags() );
+	
+		
 	foreach( TagPtr const sub_tag, sub_tags ){
 		if( sub_tag->getName() == "Segments" ){
 			use_sequence_profiles_ = true;
@@ -832,30 +846,45 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 			TR<<"reading segments in splice "<<tag->getName()<<std::endl;
 /* e.g.,
 <Splice name=splice_L2...
-  <Segments current_segment=L2>
-		<L1 pdb_profile_match="pdb_profile_match.L1" profiles="L1.1:config/L1.1.pssm,L1.2:config/L1.2.pssm"/>
-		<L2 pdb_profile_match="pdb_profile_match.L2" profiles="L2.1:config/L2.2.pssm,L2.2:config/L2.2.pssm"/>
-	</Segments>
+  <Segments current_segment=L1>
+				<L1 pdb_profile_match="pdb_profile_match.L1" profiles="L1:L1.pssm"/>
+				<L2 pdb_profile_match="pdb_profile_match.L2" profiles="L2:L2.pssm"/>
+				<L3 pdb_profile_match="pdb_profile_match.L3" profiles="L3:L3.pssm"/>
+				<Frm1 pdb_profile_match="pdb_profile_match.Frm1" profiles="Frm1:frm1.pssm"/>
+				<Frm2 pdb_profile_match="pdb_profile_match.Frm2" profiles="Frm2:frm2.pssm"/>
+				<Frm3 pdb_profile_match="pdb_profile_match.Frm3" profiles="Frm3:frm3.pssm"/>
+                <Frm4 pdb_profile_match="pdb_profile_match.Frm4" profiles="Frm4:frm4.pssm"/>
+			</Segments>
 </Splice>
 */
 			utility::vector1< TagPtr > const segment_tags( sub_tag->getTags() );
 			foreach( TagPtr const segment_tag, segment_tags ){
-				std::string const segment_name( segment_tag->getName() );
-				std::string const pdb_profile_match( segment_tag->getOption< std::string >( "pdb_profile_match" ) );
+				std::string const segment_name( segment_tag->getName() );//get name of segment from xml
+				std::string const pdb_profile_match( segment_tag->getOption< std::string >( "pdb_profile_match" ) ); // get name of pdb profile match, this file contains all the matching between pdb name and sub segment name, i.e L1.1,L1.2 etc
 				std::string const profiles_str( segment_tag->getOption< std::string >( "profiles" ) );
   			StringVec const profile_name_pairs( utility::string_split( profiles_str, ',' ) );
 				SpliceSegmentOP splice_segment( new SpliceSegment );
+				//TR<<"Now working on segment:"<<segment_name<<"\n";
 				foreach( std::string const s, profile_name_pairs ){
 					StringVec const profile_name_file_name( utility::string_split( s, ':' ) );
+					TR<<"         line 855       "<<"pssm file:"<<profile_name_file_name[ 2 ]<<",segment name:"<<profile_name_file_name[ 1 ]<<std::endl;
+					
 					splice_segment->read_profile( profile_name_file_name[ 2 ], profile_name_file_name[ 1 ] );
+					
 				}
 				splice_segment->read_pdb_profile( pdb_profile_match );
+				
+				
+				
+				
 				splice_segments_.insert( std::pair< std::string, SpliceSegmentOP >( segment_name, splice_segment ) );
 			}//foreach segment_tag
 		}// fi Segments
 	}//foreach sub_tag
-
-	TR<<"from_res: "<<from_res()<<" to_res: "<<to_res()<<" dbase_iterate: "<<dbase_iterate()<<" randomize_cut: "<<randomize_cut()<<" cut_secondarystruc: "<<cut_secondarystruc()<<" source_pdb: "<<source_pdb()<<" ccd: "<<ccd()<<" rms_cutoff: "<<rms_cutoff()<<" res_move: "<<res_move()<<" template_file: "<<template_file()<<" checkpointing_file: "<<checkpointing_file_<<" loop_dbase_file_name: "<<loop_dbase_file_name_<<" loop_pdb_source: "<<loop_pdb_source()<<" mover_tag: "<<mover_tag_<<" torsion_database: "<<torsion_database_fname_<<std::endl;
+	//test splice_segments_
+	//Add accosiation from pose comments field to splice_segments_
+			
+	TR<<"from_res: "<<from_res()<<" to_res: "<<to_res()<<" dbase_iterate: "<<dbase_iterate()<<" randomize_cut: "<<randomize_cut()<<" cut_secondarystruc: "<<cut_secondarystruc()<<" source_pdb: "<<source_pdb()<<" ccd: "<<ccd()<<" rms_cutoff: "<<rms_cutoff()<<" res_move: "<<res_move()<<" template_file: "<<template_file()<<" checkpointing_file: "<<checkpointing_file_<<" loop_dbase_file_name: "<<loop_dbase_file_name_<<" loop_pdb_source: "<<loop_pdb_source()<<" mover_tag: "<<mover_tag_<<std::endl;
 }
 
 protocols::moves::MoverOP
@@ -1082,16 +1111,41 @@ Splice::read_splice_segments( std::string const segment_type, std::string const 
 }
 
 core::sequence::SequenceProfileOP
-Splice::generate_sequence_profile(){
+Splice::generate_sequence_profile(core::pose::Pose & pose){
 	using namespace core::sequence;
 	using namespace std;
 
 	utility::vector1< SequenceProfileOP > profile_vector;
-	profile_vector.clear();
+	profile_vector.clear(); //this vector holds all the pdb segment profiless
+		
+  using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	std::string pdb_tag= option[ in::file::s ]()[1] ;
+	TR<<pdb_tag<<std::endl;//file name of -s pdb file
+	pose.read_comment_pdb(pdb_tag); //read comments from pdb file
+	
+	std::string tempPDBname = source_pdb_.substr(0, source_pdb_.size()-4);//cut file name extension from pdb file
+	TR<<"!!!!!!!!!the currnet segment is: "<<segment_type_<<" and the source pdb is "<<tempPDBname<<std::endl;
+	core::pose::add_comment(pose,"segment_"+segment_type_,tempPDBname);//change correct association between current loop and pdb file
+	load_pdb_segments_from_pose_comments(pose); // get segment name and pdb accosiation from comments in pdb file
+	TR<<"!!!!!!!!!the size of pdb segments is: "<<pdb_segments_.size()<<std::endl;
 	runtime_assert( pdb_segments_.size() );
+// TR<<pdb_segments_.size()<<std::endl;
+//  TR<<pdb_segments_[ "L1" ]<<std::endl;
+	TR<<"Line 1125 now using PDB_SEGMENTS"<<std::endl;
 	for( map< string, string >::const_iterator i = pdb_segments_.begin(); i != pdb_segments_.end(); ++i ){
 		std::string const segment_type( i->first );
+		TR<<segment_type<<std::endl;
 		std::string const pdb_name( i->second );
+		TR<<pdb_name<<std::endl;
+		TR<<"Testing pdb_segments: the segment name is: "<<segment_type<<" and the profile is: "<<splice_segments_[ segment_type ]->pdb_profile(pdb_name)<<"\n";
+		//TR<<"looking at splice_segments_:"<<splice_segments_[ segment_type ]->pdb_profile()<<std::endl;
+	
+		//test that all profiles are present
+//		for( map<string, SpliceSegmentOP >::const_iterator i = splice_segments_.begin(); i != splice_segments_.end(); ++i ){
+//		TR<<i->second->pdb_profile(pdb_name)<<std::endl;
+//		}
+		TR<<"line 1138 test that we are filling profile_vector: "<< segment_type<<" "<<pdb_name<<" "<< splice_segments_[ segment_type ] <<"\n";
 		profile_vector.push_back( splice_segments_[ segment_type ]->pdb_profile( pdb_name ) );
 	}
 	return concatenate_profiles( profile_vector );
@@ -1101,15 +1155,22 @@ void
 Splice::load_pdb_segments_from_pose_comments( core::pose::Pose const & pose ){
 	using namespace std;
 	map< string, string > const comments = core::pose::get_all_comments( pose );
+	TR<<"The size of comments is: "<<comments.size()<<std::endl;	
+	core::Size j = 1; //for testing
   for( std::map< string, string >::const_iterator i = comments.begin(); i != comments.end(); ++i ){
+		TR<<"the size of j is: "<<j<<std::endl;	
 		std::string const key( i->first );
+		TR<<"the size of j after i->first is: "<<j<<std::endl;	
 		std::string const val( i->second );
+		TR<<"the size of j after i->second is: "<<j<<std::endl;	
 		if( key.substr( 0, 7 ) != "segment" )/// the expected format is segment_??, where we're interested in ??
 			continue;
 		std::string const short_key( key.substr(8, 1000 ) );
 		pdb_segments_[ short_key ] = val;
-		TR<<"recording segment/pdb pair: "<<short_key<<'/'<<val<<std::endl;
+		TR<<"recording segment/pdb pair: "<<short_key<<'/'<<val<<std::endl;	
+		++j;
 	}
+	TR<<"aksdjflasjdflkajsd;flkjasdlfkjasd"<<std::endl;
 }
 
 void
@@ -1122,6 +1183,7 @@ utility::vector1< core::Size >
 find_residues_on_chain1_outside_interface( core::pose::Pose const & pose ){
 	using namespace protocols::toolbox::task_operations;
 	ProteinInterfaceDesignOperationOP pido;
+	//TR<<"test pido @line 1163 "<<pose<<pose<<"\n"; 
 	pido->repack_chain1( true );
 	pido->design_chain1( true );
 	pido->repack_chain2( false );
@@ -1153,18 +1215,29 @@ Splice::add_sequence_constraints( core::pose::Pose & pose ){
 	TR<<"Removed a total of "<<cst_num<<" sequence constraints."<<std::endl;
 	TR<<"After removal the total number of constraints is: "<<pose.constraint_set()->get_all_constraints().size()<<std::endl;
 /// then impose new sequence constraints
-	core::sequence::SequenceProfileCOP seqprof( generate_sequence_profile() );
+	core::sequence::SequenceProfileCOP seqprof( generate_sequence_profile(pose) );
 	TR<<"Chain length/seqprof size: "<<pose.conformation().chain_end( 1 ) - pose.conformation().chain_begin( 1 ) + 1<<", "<<seqprof->size()<<std::endl;
 	runtime_assert( seqprof->size() == pose.conformation().chain_end( 1 ) - pose.conformation().chain_begin( 1 ) + 1 );
 	cst_num = 0;
-
+	
 	TR<<"Upweighting sequence constraint for residues: ";
+	if (pose.conformation().num_chains() == 1){//If pose has only one chain (no ligand) than all residues are weighted the same
+		for( core::Size seqpos = pose.conformation().chain_begin( 1 ); seqpos <= pose.conformation().chain_end( 1 ); ++seqpos ) {
+		TR<<"Now adding constraint to aa: "<<seqpos<<pose.aa(seqpos)<<"\n";
+		SequenceProfileConstraintOP spc( new SequenceProfileConstraint( pose, seqpos, seqprof ) );
+		//spc->weight( 1000 );
+		pose.add_constraint( spc );
+		}
+		ConstraintCOPs constraints( pose.constraint_set()->get_all_constraints() );
+		TR<<"Total number of constraints at End: "<<constraints.size()<<std::endl;
+	}
+	else{ //if pose has two chains than thee is also a ligand therefore we weight antibody rediues accrding to distance from ligand
 	utility::vector1< core::Size > const upweighted_residues( find_residues_on_chain1_outside_interface( pose ) );
-  for( core::Size seqpos = pose.conformation().chain_begin( 1 ); seqpos <= pose.conformation().chain_end( 1 ); ++seqpos ){
+    for( core::Size seqpos = pose.conformation().chain_begin( 1 ); seqpos <= pose.conformation().chain_end( 1 ); ++seqpos ){
 		using namespace core::scoring::constraints;
 		SequenceProfileConstraintOP spc( new SequenceProfileConstraint( pose, seqpos, seqprof ) );
 		if( std::find( upweighted_residues.begin(), upweighted_residues.end(), seqpos ) != upweighted_residues.end() ){
-			spc->weight( profile_weight_away_from_interface() );
+			spc->weight( profile_weight_away_from_interface());
 			TR<<seqpos<<",";
 		}
 		TR<<std::endl;
@@ -1173,7 +1246,7 @@ Splice::add_sequence_constraints( core::pose::Pose & pose ){
 	}
 	TR<<"Added a total of "<<cst_num<<" sequence constraints."<<std::endl;
 	TR<<"Now the pose has a total of "<<pose.constraint_set()->get_all_constraints().size()<<" constraints"<<std::endl;
-
+}
 /// just checking that the scorefxn has upweighted res_type_constraint
 	core::Real const score_weight( scorefxn()->get_weight( core::scoring::res_type_constraint ) );
 	TR<<"res_type_constraint weight is set to "<<score_weight<<std::endl;

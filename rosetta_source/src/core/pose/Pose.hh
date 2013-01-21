@@ -99,6 +99,7 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/signals/BufferedSignalHub.hh>
 #include <utility/vector1.fwd.hh>
+#include <utility/io/izstream.hh>
 
 // Numeric headers
 #include <numeric/xyzMatrix.fwd.hh>
@@ -382,6 +383,8 @@ public:
 
 	void
 	constraint_set( ConstraintSetOP );
+	
+
 
 	void transfer_constraint_set( const pose::Pose &pose );
 
@@ -1327,7 +1330,13 @@ public:
 
 
 	/// @brief Export pose data to the PDB file  <file_name>,
+	/// print comments to file
+	void
+	dump_comment_pdb( std::string const & file_name, std::string const & tag="1" );
+	/// @brief Export pose data to the PDB file  <file_name>,
 	/// add some score output
+	void
+	read_comment_pdb(std::string const & file_name, std::string const & tag="1");
 	void
 	dump_scored_pdb( std::string const & file_name, scoring::ScoreFunction const & scorefxn, std::string const & tag="1" );
 

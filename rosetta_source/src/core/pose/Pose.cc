@@ -22,6 +22,7 @@
 #include <core/pose/datacache/CacheableObserverType.hh>
 #include <core/pose/datacache/ObserverCache.hh>
 
+
 // Project headers
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
@@ -82,6 +83,7 @@
 
 namespace core {
 namespace pose {
+
 
 /// @details default init function
 void Pose::init(void)
@@ -1287,10 +1289,59 @@ Pose::clear()
 bool
 Pose::dump_pdb(std::string const &file_name, std::string const & tag) const
 {
+	
 	return core::io::pdb::FileData::dump_pdb(*this, file_name, tag);
 }
+/// @brief  Dump a pdbfile with comments.
+void
+Pose::dump_comment_pdb(
+	std::string const &file_name,
+	std::string const & tag
+) {
+	
+	std::ofstream out( file_name.c_str() );
+	core::io::pdb::FileData::dump_pdb( *this, out, tag );
+	// verbose output
+	out << "END\n";
+	std::string secstruct;
+	out << "##Begin comments##" << std::endl;
+	using namespace std;
+	map< string, string > const comments = core::pose::get_all_comments(*this);
+	for( std::map< string, string >::const_iterator i = comments.begin(); i != comments.end(); ++i ){
+		out << i->first<<" "<<i->second << '\n';
+	}
+	out << "##End comments##" << std::endl;
+	out.close();
+}
 
+
+/// @brief  Reads the comments from the pdb file and adds it into comments
+void
+Pose::read_comment_pdb(
+	std::string const &file_name,
+	std::string const & tag
+) {	
+	utility::io::izstream data(file_name);
+  if ( !data ) {
+		utility_exit();
+  }
+  std::string line;
+  while( getline( data, line ) ) {
+  	if( line != "##Begin comments##")
+			continue;
+			getline( data, line );
+		while (line != "##End comments##"){
+			//TR<<line<<std::endl;
+			std::string const key;
+			std::string const value;
+			utility::vector1<std::string> comment_line(utility::string_split(line,' '));
+			core::pose::add_comment(*this,comment_line[1],comment_line[2]);
+			getline( data, line );
+	}
+}
+}
 /// @brief  Dump a pdbfile with some score info at the end.
+
 void
 Pose::dump_scored_pdb(
 	std::string const &file_name,
@@ -1314,6 +1365,8 @@ Pose::dump_scored_pdb(
 	for ( Size i=1; i<= total_residue(); ++i ) {
 		out << "RSD_WTD: " << i << ' ' << this->energies().residue_total_energies( i ).weighted_string_of( wts ) << '\n';
 	}
+	
+	
 	scorefxn.show( out );
 	out.close();
 }
