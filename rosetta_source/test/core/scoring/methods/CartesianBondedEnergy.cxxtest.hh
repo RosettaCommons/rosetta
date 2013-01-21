@@ -21,6 +21,8 @@
 
 // Package Headers
 #include <core/scoring/methods/EnergyMethodOptions.hh>
+#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueType.hh>
 #include <test/util/pose_funcs.hh>
 #include <test/util/deriv_funcs.hh>
 #include <test/core/init_util.hh>
@@ -29,6 +31,7 @@
 //Auto Headers
 #include <utility/vector1.hh>
 
+#include <basic/Tracer.hh>
 
 // --------------- Test Class --------------- //
 
@@ -39,6 +42,8 @@ using namespace core::kinematics;
 using namespace core::pose;
 using namespace core::scoring;
 using namespace core::scoring::methods;
+
+static basic::Tracer TR("core.scoring.methods.CartesianBondedEnergy.cxxtest");
 
 class CartesianBondedEnergyTests : public CxxTest::TestSuite {
 
@@ -204,7 +209,58 @@ class CartesianBondedEnergyTests : public CxxTest::TestSuite {
 
 	}
 
+	void fail_test_create_parameters_for_restype()
+	{
+		core::chemical::ResidueTypeSetCAP rs;
+		std::string rss = core::chemical::FA_STANDARD;
 
+		EnergyMethodOptions opts;
+		core::Real cartbonded_len;
+		core::Real cartbonded_ang;
+		core::Real cartbonded_tors;
+		core::Real cartbonded_proton;
+		core::Real cartbonded_improper;
+		opts.get_cartesian_bonded_parameters(
+			cartbonded_len,
+			cartbonded_ang,
+			cartbonded_tors,
+			cartbonded_proton ,
+			cartbonded_improper );
+		IdealParametersDatabase ipd(
+			cartbonded_len,
+			cartbonded_ang,
+			cartbonded_tors,
+			cartbonded_proton ,
+			cartbonded_improper );
+
+		rs = core::chemical::ChemicalManager::get_instance()->residue_type_set(rss);
+		for(
+			core::chemical::ResidueTypeSet::const_residue_iterator
+				t=rs->all_residues_begin(), te=rs->all_residues_end();
+			t != te; ++t
+		) {
+			TR << t->second->name() << std::endl;
+			{
+				bool prepro(true);
+				core::scoring::methods::ResidueCartBondedParameters const & rcbp(
+					ipd.parameters_for_restype(*(t->second), prepro));
+				rcbp.bb_N_index();
+				rcbp.bb_CA_index();
+				rcbp.bb_O_index();
+				rcbp.bb_H_index();
+			}
+
+			{
+				bool prepro(false);
+				core::scoring::methods::ResidueCartBondedParameters const & rcbp(
+					ipd.parameters_for_restype(*(t->second), prepro));
+				rcbp.bb_N_index();
+				rcbp.bb_CA_index();
+				rcbp.bb_O_index();
+				rcbp.bb_H_index();
+			}
+		}
+	}
 
 };
 
