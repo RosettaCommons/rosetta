@@ -27,6 +27,7 @@
 #include <protocols/rotamer_recovery/RRReporterSQLite.hh>
 #include <protocols/rotamer_recovery/RRProtocolMover.hh>
 #include <protocols/rotamer_recovery/RRProtocolReferenceStructure.hh>
+#include <protocols/rotamer_recovery/RRProtocolRTMin.hh>
 
 
 // Project Headers
@@ -212,6 +213,18 @@ RotamerRecoveryFeatures::parse_my_tag(
 		}
 	}
 
+	//mjo if there are many options to be passed to the components,
+	//consider passing the tag to the components themselves to do their
+	//own tag parsing
+	if(protocol_->get_name() == "RRProtocolRTMin"){
+		if(tag->hasOption("nonideal")){
+			static_cast<rotamer_recovery::RRProtocolRTMin &>(*protocol_).set_nonideal(tag->getOption<bool>("nonideal"));
+		}
+		if(tag->hasOption("cartesian")){
+			static_cast<rotamer_recovery::RRProtocolRTMin &>(*protocol_).set_cartesian(tag->getOption<bool>("cartesian"));
+		}
+	}
+
 	string const & comparer_name(tag->getOption<string>(
 			"comparer", "RRComparerAutomorphicRMSD"));
 	comparer_ = factory->get_rotamer_recovery_comparer(comparer_name);
@@ -240,7 +253,8 @@ RotamerRecoveryFeatures::report_features(
 	RotamerRecovery rotamer_recovery(protocol_, comparer_, reporter);
 
 	Pose pose=pose_in;
-	scfxn_->setup_for_scoring(pose);
+	(*scfxn_)(pose);
+	//scfxn_->setup_for_scoring(pose);
 
 	if(task_factory_ == 0){
 		task_factory_ = new TaskFactory();

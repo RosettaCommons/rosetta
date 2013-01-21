@@ -227,7 +227,54 @@ RTMin::rtmin(
 				mingraph.add_edge( iires, jjres ); // add edges, but don't bother calling setup_for_minimization yet
 			}
 		}
+
+		// LR2B neighbor graphs may not coincide with the
+		// packer_neighbor_graph. Make the background nodes the union of
+		// the background nodes from the packer_neighbor_graph and the
+		// background nodes for each LR2B neighbor graph
+		for ( ScoreFunction::LR_2B_MethodIterator
+				iter = scfxn.long_range_energies_begin(),
+				iter_end = scfxn.long_range_energies_end();
+				iter != iter_end; ++iter ) {
+
+			if ( (*iter)->minimize_in_whole_structure_context( pose ) ) continue;
+
+			LREnergyContainerCOP lrec = pose.energies().long_range_container( (*iter)->long_range_type() );
+			if ( !lrec || lrec->empty() ) continue;
+
+			EnergyMap dummy_emap;
+
+			// Potentially O(N) operation...
+			for ( ResidueNeighborConstIteratorOP
+					rni = lrec->const_neighbor_iterator_begin( iires ), // traverse both upper and lower neighbors
+					rniend = lrec->const_neighbor_iterator_end( iires );
+					(*rni) != (*rniend); ++(*rni) ) {
+				Size const r1 = rni->lower_neighbor_id();
+				Size const r2 = rni->upper_neighbor_id();
+				Size const jjres = ( r1 == iires ? r2 : r1 );
+				bool const res_moving_wrt_eachother( true );
+
+				if ( ! bgres[ jjres ] && ! input_task->being_packed( jjres )) {
+					inactive_neighbors.push_back( jjres );
+					residue_is_inactive_neighbor[ jjres ] = true;
+					bgres[ jjres ] = new Residue( pose.residue( jjres ) );
+					scminmap->set_natoms_for_residue( jjres, bgres[ jjres ]->natoms() );
+					/// Do setup_for_minimizing for background nodes once and leave them alone for
+					/// the rest of the trajectory
+					scfxn.setup_for_minimizing_for_node(
+						* mingraph.get_minimization_node( jjres ), pose.residue( jjres ),
+						*scminmap, pose, false, emap_dummy );
+				}
+				if ( ! input_task->being_packed( jjres ) || iires < jjres ) {
+					if(!mingraph.get_edge_exists(iires, jjres)){
+						mingraph.add_edge( iires, jjres ); // add edges, but don't bother calling setup_for_minimization yet
+					}
+				}
+			}
+		}
+
 	}
+
 
 	input_task->set_bump_check( false );
 	input_task->or_include_current( true );

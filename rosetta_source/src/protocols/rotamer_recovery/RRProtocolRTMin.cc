@@ -19,13 +19,10 @@
 
 // Platform Headers
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueType.hh>
 #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/pack/rtmin.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/graph/Graph.hh>
@@ -37,10 +34,12 @@
 
 // C++ Headers
 #include <string>
+#include <sstream>
 
 //Auto Headers
 #include <utility/vector1.hh>
 using std::string;
+using std::stringstream;
 using core::Size;
 using core::pack::RTMin;
 using core::pack::task::PackerTask;
@@ -55,9 +54,15 @@ namespace rotamer_recovery {
 
 static Tracer TR("protocol.moves.RRProtocolRTMin");
 
-RRProtocolRTMin::RRProtocolRTMin() {}
+RRProtocolRTMin::RRProtocolRTMin() :
+	nonideal_(false),
+	cartesian_(false)
+{}
 
-RRProtocolRTMin::RRProtocolRTMin(RRProtocolRTMin const & ) {}
+RRProtocolRTMin::RRProtocolRTMin(RRProtocolRTMin const & src) :
+	nonideal_(src.nonideal_),
+	cartesian_(src.cartesian_)
+{}
 
 RRProtocolRTMin::~RRProtocolRTMin() {}
 
@@ -68,9 +73,36 @@ RRProtocolRTMin::get_name() const {
 
 string
 RRProtocolRTMin::get_parameters() const {
-	return "";
+	stringstream params;
+	params
+		<< "nonideal:" << get_nonideal()
+		<< ",cartesian:" << get_cartesian();
+	return params.str();
 }
 
+void
+RRProtocolRTMin::set_nonideal(
+	bool setting
+) {
+	nonideal_ = setting;
+}
+
+bool
+RRProtocolRTMin::get_nonideal() const {
+	return nonideal_;
+}
+
+void
+RRProtocolRTMin::set_cartesian(
+	bool setting
+) {
+	cartesian_ = setting;
+}
+
+bool
+RRProtocolRTMin::get_cartesian() const {
+	return cartesian_;
+}
 
 /// @details For each residue, minimize it, and measure the rotamer
 /// compared to where it started
@@ -91,6 +123,8 @@ RRProtocolRTMin::run(
 	core::graph::GraphOP packer_neighbor_graph = core::pack::create_packer_graph( pose, score_function, one_res_task );
 
 	RTMin rtmin;
+	rtmin.set_nonideal(nonideal_);
+	rtmin.set_cartesian(cartesian_);
 
 	// I don't know if rtmin looks at more than pack_residue(..)
 	one_res_task->temporarily_fix_everything();

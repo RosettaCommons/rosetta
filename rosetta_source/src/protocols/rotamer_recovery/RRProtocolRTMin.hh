@@ -51,12 +51,30 @@ public: // public interface
 	get_parameters() const;
 
 	void
+	set_nonideal(
+		bool setting);
+
+	bool
+	get_nonideal() const;
+
+	void
+	set_cartesian(
+		bool setting);
+
+	bool
+	get_cartesian() const;
+
+	void
 	run(
 		RRComparerOP comparer,
 		RRReporterOP reporter,
 		core::pose::Pose const & pose,
 		core::scoring::ScoreFunction const & score_function,
 		core::pack::task::PackerTask const & packer_task);
+
+private:
+	bool nonideal_;
+	bool cartesian_;
 };
 
 } // namespace
