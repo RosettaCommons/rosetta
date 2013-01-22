@@ -27,7 +27,6 @@ from rosetta_py.io.mdl_molfile import *
 from rosetta_py.utility.rankorder import argmin, order
 from rosetta_py.utility import r3
 
-
 # Features from Python 2.5 that we want to use:
 try: any
 except:
@@ -805,7 +804,7 @@ def dijkstra(start, nodes, nbr, dist): #{{{
     return [ shortest[node][DIST] for node in nodes ]
 #}}}
 def write_ligand_kinemage(f, molfile): #{{{
-    if not isinstance(f, file): f = open(f, 'w')
+    if not isinstance(f, file): f = gz_open(f, 'w')
     f.write("@text\n")
     f.write("View this file with KiNG or Mage from http://kinemage.biochem.duke.edu\n")
     f.write("@kinemage 1\n")
@@ -882,7 +881,7 @@ def write_param_file(f, molfile, name, frag_id, base_confs, max_confs, amino_aci
     '''
     close_file = False
     if not isinstance(f, file):
-        f = open(f, 'w')
+        f = gz_open(f, 'w')
         close_file = True
     if frag_id == 1 and len(name) > 2: name = "%3.3s" % name
     else: name = "%2.2s%1i" % (name, frag_id)
@@ -1044,7 +1043,7 @@ def write_ligand_pdb(f, molfile_tmpl, molfile_xyz, resname, ctr=None, chain_id='
     while the actual XYZ coordinates are taken from molfile_xyz.
     resname provides the first two characters of the residue name.
     f may be a file name or file handle.'''
-    if not isinstance(f, file): f = open(f, 'w')
+    if not isinstance(f, file): f = gz_open(f, 'w')
     # If ctr is set, make it an offset vector for recentering ligands
     if ctr is not None:
         curr_ctr = r3.centroid([a for a in molfile_xyz.atoms if not a.is_H])
@@ -1287,16 +1286,17 @@ and for visualizing exactly what was done to the ligand.
     # There's a very strong order dependence to these function calls:
     # many depend on atom/bond variables set by earlier calls.
     infile_lc = infile.lower()
-    if infile_lc.endswith(".mol2"):
+    if infile_lc.endswith(".mol2") or infile_lc.endswith(".mol2.gz"):
         molfiles = list(read_tripos_mol2(infile, do_find_rings=False))
-    elif infile_lc.endswith(".mol") or infile_lc.endswith(".mdl") or infile_lc.endswith(".sdf"):
+    elif infile_lc.endswith(".mol") or infile_lc.endswith(".mdl") or infile_lc.endswith(".sdf") or \
+			infile_lc.endswith(".mol.gz") or infile_lc.endswith(".mdl.gz") or infile_lc.endswith(".sdf.gz"):
         molfiles = list(read_mdl_sdf(infile, do_find_rings=False))
     else:
         print "Unrecognized file type, must be .mol/.sdf or .mol2!"
         return 6
     # Add additional M_____ control records, if any specified.
     if options.m_ctrl is not None:
-        m_ctrl = open(options.m_ctrl,'r')
+        m_ctrl = gz_open(options.m_ctrl,'r')
         try:
             footer = m_ctrl.readlines()
         finally:

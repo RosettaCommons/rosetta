@@ -18,10 +18,19 @@ See the official specification at http://tripos.com/data/support/mol2.pdf
 Author: Ian W. Davis
 '''
 
-import sys, math, copy
+import sys, math, copy, gzip
+
 
 try: set
 except: from sets import Set as set
+
+#open file normally or with gzip depending on the file extension
+def gz_open(file,mode):
+    extension = file.split(".")[-1]
+    if extension == "gz":
+        return gzip.open(file,mode)
+    else:
+        return open(file,mode)
 
 '''Dictionary of Rosetta atom names to plausible PDB atom names (element only)'''
 rosetta_to_pdb_names = {'CNH2':' C  ', 'COO ':' C  ', 'CH1 ':' C  ',
@@ -195,7 +204,7 @@ def file_or_filename(func):
     '''A decorator for functions that interchangably take a file or filename as their first argument.'''
     def g(f, *args, **kwargs):
         if isinstance(f, str):
-            f = open(f, 'rU')
+            f = gz_open(f, 'r')
             ret = func(f, *args, **kwargs)
             #f.close()
             # Can't close files when we do it like this,
@@ -216,7 +225,7 @@ def read_mdl_molfile(f, do_find_rings=True):
 
     f may be a file name or file handle.'''
     if isinstance(f, str):
-        f = open(f, 'rU')
+        f = gz_open(f, 'r')
         ret = read_mdl_molfile(f)
         f.close()
         return ret
@@ -270,7 +279,7 @@ def write_mdl_molfile(f, molfile):
 
     f may be a file name or file handle.'''
     if isinstance(f, str):
-        f = open(f, 'w')
+        f = gz_open(f, 'w')
         write_mdl_molfile(f, molfile)
         f.close()
         return
@@ -318,7 +327,7 @@ def write_mdl_sdf(f, molfiles):
 
     f may be a file name or file handle.'''
     if isinstance(f, str):
-        f = open(f, 'w')
+        f = gz_open(f, 'w')
         write_mdl_sdf(f, molfiles)
         f.close()
         return
@@ -430,7 +439,7 @@ def write_tripos_mol2(f, molfiles):
 
     This function doesn't preserve everything, notably substructure records and amide bond types.'''
     if isinstance(f, str):
-        f = open(f, 'w')
+        f = gz_open(f, 'w')
         write_tripos_mol2(f, molfiles)
         f.close()
         return
