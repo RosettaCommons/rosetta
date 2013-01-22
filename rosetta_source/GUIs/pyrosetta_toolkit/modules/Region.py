@@ -209,14 +209,13 @@ class Regions:
             regions = self.get_regions_of_types(include_only_regions)
         
         for region in regions:
-            print region.get_region()
+            #print region.get_region()
             start = region.get_rosetta_start(pose)
-            print start
             end = region.get_rosetta_end(pose)
-            print end
             for i in range(start, end+1):
                 movemap.set_bb(i, True)
                 movemap.set_chi(i, True)
+        print movemap
         return movemap
     
     def get_packer_task(self, pose, include_only_regions = False):

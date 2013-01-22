@@ -94,7 +94,7 @@ class ProtocolBaseClass:
                         #print "Worker is alive"
                         #total_running_jobs+=1; #Increment total_running_jobs
                     elif os.path.exists(self.pdb_name+"_"+worker.name+".pdb"):
-                        if not worker.exitcode==0:
+                        if worker.exitcode!=0:
                             print "%s.exitcode = %s" %(worker.name, worker.exitcode)
                         
                         workers.pop(workers.index(worker)); #If the job is done, pop it.

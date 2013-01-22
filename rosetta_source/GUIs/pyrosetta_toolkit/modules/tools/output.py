@@ -444,7 +444,7 @@ def rescore_single_pdb(path, scorefunction, manager_dict):
     else:
         return
     
-def score_PDBLIST(pdblist_path, score, multiprocess=False, output_class=False):
+def score_PDBLIST(pdblist_path, score, output_class):
     """
     Outputs a simple pdb vs score for simple analysis.
     if pdblist_path=False, a dialog box opens.
@@ -461,7 +461,7 @@ def score_PDBLIST(pdblist_path, score, multiprocess=False, output_class=False):
     SCORED_PDBLIST = open(os.path.dirname(pdblist_path)+"/SCORED_PDBLIST.txt", 'w')
     
     processors = output_class.processors.get()
-    if multiprocess:
+    if processors==1:
         for path in PDBLIST:
             path = path.strip()
             print path
@@ -477,7 +477,7 @@ def score_PDBLIST(pdblist_path, score, multiprocess=False, output_class=False):
         PDBLIST.close()
         SCORED_PDBLIST.close()
         
-    #Multiprocessing - Actually slower for small PDB's.
+    #Multiprocessing - Slower for extremely small PDBs, great for large ones.
     else:
         output_class.terminal_output.set(1)
         manager = multiprocessing.Manager()
@@ -509,7 +509,8 @@ def score_PDBLIST(pdblist_path, score, multiprocess=False, output_class=False):
                     pass
                     #There is no code for worker hasn't started yet that I can figure out.  So, something else needs to check it!
                 elif result_map[worker.name]!="NA":
-                    print "%s.exitcode = %s" %(worker.name, worker.exitcode)
+                    if worker.exitcode!=0:
+                        print "%s.exitcode = %s" %(worker.name, worker.exitcode)
                     
                     workers.pop(workers.index(worker)); #If the job is done, pop it.
                     total_running_jobs-=1
@@ -528,6 +529,8 @@ def score_PDBLIST(pdblist_path, score, multiprocess=False, output_class=False):
                             worker.start()
                         except AssertionError:
                             continue
+                        print "Total running jobs: "+repr(total_running_jobs)
+                        print "Total workers waiting: "+repr(len(workers)-total_running_jobs)
                         total_running_jobs+=1
                         if total_running_jobs>=total_allowed_jobs: break
         

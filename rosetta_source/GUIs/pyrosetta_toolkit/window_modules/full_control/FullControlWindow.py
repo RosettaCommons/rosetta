@@ -87,7 +87,11 @@ class FullControlWindow():
 	if not chain:return
 	
 	self.populate_restype_listbox()
-	self.score_base = RegionalScoring(self.pose, self.score_object.score); #Happens every time just in case the user selects a dif scorefunction
+	self.regional_scoring = RegionalScoring(self.pose, self.score_object.score); #Happens every time just in case the user selects a dif scorefunction
+	
+	#Much exception handling to make sure no errors are thrown for particular residues, numbering inconsistancies, DNA/ligands
+	
+	#Numbering Check
 	try:
 	    res = self.pose.pdb_info().pdb2pose(chain, int(res))
 	    self.restype_var.set(self.pose.residue(res).name()); #Exception comes from this! Segfualts on .psi etc.  This needs to be first.
@@ -95,11 +99,23 @@ class FullControlWindow():
 	except PyRosettaException:
 	    print "Residue does not exist in PDB.."
 	    return
-	self.PhiVar.set("%.3f"%self.pose.phi(res)); self.PsiVar.set("%.3f"%self.pose.psi(res)); self.OmeVar.set("%.3f"%self.pose.omega(res))
-	self.rotamer_energy.set("%.3f REU"%analysis_tools.return_energy(self.pose, res))
-	self.rotamer_probabilty.set("%.3f"%analysis_tools.return_probability(self.pose, res))
+	
+	#BackBone Check
+	try:
+	    self.PhiVar.set("%.3f"%self.pose.phi(res)); self.PsiVar.set("%.3f"%self.pose.psi(res)); self.OmeVar.set("%.3f"%self.pose.omega(res))
+	except PyRosettaException:
+	    print "Residue does not have phi, psi or omega"
+	    
+	
+	#Rotamer Check
+	try:
+	    self.rotamer_energy.set("%.3f REU"%analysis_tools.return_energy(self.pose, res))
+	    self.rotamer_probabilty.set("%.3f"%analysis_tools.return_probability(self.pose, res))
+	except PyRosettaException:
+	    print "Residue does not have a rotamer energy"
+	    
 	#Calculate Total Energy.
-	self.residue_energy_total.set("%.3f REU"%self.score_base.ret_total_weighted_residue_energy(res))
+	self.residue_energy_total.set("%.3f REU"%self.regional_scoring.ret_total_weighted_residue_energy(res))
 	if not self.eterm_type.get()=="Residue Energy: ":
 	    #get_residue_energy function should split so it accepts the energy type directly.
 	    self.get_residue_energy(self.last_type_string_selected)
@@ -122,7 +138,7 @@ class FullControlWindow():
 	    return
 
 	try:
-	    self.score_base = RegionalScoring(self.pose, self.score_object.score)
+	    self.regional_scoring = RegionalScoring(self.pose, self.score_object.score)
 
 	except PyRosettaException:
 	    print "Please Load a pose"
@@ -237,8 +253,10 @@ class FullControlWindow():
 	res = int(self.resnum.get())
 	chain = self.chain.get()
 	posenum = self.pose.pdb_info().pdb2pose(chain, res)
-	emap = self.score_base.ret_residue_energy(posenum)
-	e = weight*emap[self.score_base.fa_terms[type_string]]
+	emap = self.regional_scoring.ret_residue_energy(posenum)
+	
+	#e = weight*emap[self.regional_scoring.fa_terms[type_string]]
+	e = weight*emap[rosetta.core.scoring.score_type_from_name(type_string)]
 	self.eterm_type.set(type_string)
 	self.residue_energy_of_Eterm.set("%.3f REU"%e)
 

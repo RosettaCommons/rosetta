@@ -12,7 +12,7 @@
 
 #Rosetta Imports
 from rosetta import *
-
+from rosetta.core.scoring import ScoreType
 #Python Imports
 import os
 
@@ -36,10 +36,12 @@ class SimpleAnalysisFrame(TkFrame):
         self.basicOPT.set("Basic Analysis")
         self.basicOPTIONS = {
             "Score FA Energies":lambda:self.print_full_energy(),
-            "Score Loops":lambda: self.score_loops(),
-            #"Analyze Interface":"",
+            #"Score Loops":lambda: self.score_loops(),
+            "Score Overall":lambda:self.print_energy(),
             #"Score Loop Residues"
-            "Number of H-bonds":lambda: self.print_hbonds()
+            "Print Pose info":lambda:self.print_pose(),
+            "Print Option info":lambda:self.print_option_info(),
+            "Total Hydrogen Bonds":lambda: self.print_hbonds()
 
         }
         
@@ -122,11 +124,41 @@ class SimpleAnalysisFrame(TkFrame):
             print "Total Neighbor (ci_2b) Interaction energy: %.3f REU"%n_e
     
     def print_full_energy(self):
+        if self.toolkit.pose.total_residue()==0:return
+        """
+        if self.toolkit.output_class.terminal_output.get():
+            self.toolkit.score_class.score.show(self.toolkit.pose)
+        else:
+            self.show_energies()
+        """
         self.toolkit.score_class.score.show(self.toolkit.pose)
+        print "Printed to Terminal"
+        #self.toolkit.score_class.score.show(self.toolkit.TR, self.toolkit.pose); No Go.  sys.stdout also does not work.
+    
+    def show_energies(self):
+        """
+        Currently, string inputted into textbox is uneven.  Not using till this is fixed.
+        """
+        if self.toolkit.pose.total_residue()==0:return
+        out = self.toolkit.input_class.regional_score_class.ret_energy_string()
+        print out
+        
+    def print_energy(self):
+        if self.toolkit.pose.total_residue()==0:return
+        
+        score = self.toolkit.score_class.score(self.toolkit.pose)
+        print "%.3f REU"%score
+    
+    def print_pose(self):
+        print self.toolkit.pose
+    
+    def print_option_info(self):
+        self.toolkit.input_class.options_manager.print_current_options()
         
     def print_hbonds(self):
+        if self.toolkit.pose.total_residue()==0:return
         n = self.toolkit.input_class.regional_score_class.ret_n_hbonds()
-        print "Num Hbonds: "+repr(n)
+        print "Detected Hydrogen bonds: "+repr(n)
 
             
 

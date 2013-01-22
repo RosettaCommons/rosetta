@@ -7,12 +7,12 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 ## @file   /GUIs/pyrosetta_toolkit/modules/RegionalScoring.py
-## @brief  Class/Functions for Regional Scoring and term Switching
+## @brief  Class/Functions for Regional Scoring, term switching, and weight/scoretype functions
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #Rosetta Imports
 from rosetta import *
-
+from rosetta.core.scoring import ScoreType
 
 class RegionalScoring():
     def __init__(self, pose, scorefxn):
@@ -21,6 +21,7 @@ class RegionalScoring():
         Not used as a container class.
         Also for switching scoreterms (rama->rama2b, pair->hack_elec, etc.)
         Some functions may eventually be ported to C++ Rosetta if they are deemed useful enough.
+        Not for General Use.
         """
         
         self.pose = pose
@@ -33,28 +34,6 @@ class RegionalScoring():
         self.cd_hbond_terms = ["hbond_sr_bb", "hbond_lr_bb", "hbond_sc", "hbond_bb_sc"]
         self.disulfide_terms= ["dslf_ss_dst", "dslf_cs_ang", "dslf_ss_dih", "dslf_ca_dih"]
         self.rama_terms = ["rama", "p_aa_pp"] #Could put omega on here too!
-        
-        self.fa_terms = {
-            "fa_atr"     :fa_atr,
-            "fa_rep"     :fa_rep,
-            "fa_sol"     :fa_sol,
-            "fa_intra_rep":fa_intra_rep,
-            "fa_pair"    :fa_pair,
-            "pro_close"  :pro_close,
-            "omega"      :omega,
-            "fa_dun"     :fa_dun,
-            "ref"        :ref,
-            "hbond_sr_bb":hbond_sr_bb,
-            "hbond_lr_bb":hbond_lr_bb,
-            "hbond_sc"   :hbond_sc,
-            "hbond_bb_sc":hbond_bb_sc,
-            "rama"       :rama,
-            "p_aa_pp"    :p_aa_pp,
-            "dslf_ss_dst":dslf_ss_dst,
-            "dslf_cs_ang":dslf_cs_ang,
-            "dslf_ss_dih":dslf_ss_dih,
-            "dslf_ca_dih":dslf_ca_dih
-        }
         
     def ret_pose_number(self, chain, resNum):
         """
@@ -192,7 +171,27 @@ class RegionalScoring():
         rosetta.core.scoring.hbonds.fill_hbond_set(self.pose, False, set)
         return set.nhbonds()
         
-    
+    def ret_energy_string(self):
+        """
+        Recreates ScoreFunctions Show method to use return a string with output.  Used for insertion into textboxes.
+        However, unsolved problem is that the spaces with textbox font size makes each line uneven.
+        """
+        self.score(self.pose)
+        out =    "------------------------------------------------------------\n"
+        out=out+ " Scores                       Weight   Raw Score Wghtd.Score\n"
+        out=out+ "------------------------------------------------------------\n"
+        sum_weighted=0.0;
+        self.updateweights()
+        for type in self.scoretypes:
+            if ( self.weights[ type ] != 0.0 ):
+                out=out+ ' ' +  rosetta.core.scoring.name_from_score_type(type).ljust(24,) +(" %.3f"%self.weights[ type ]).ljust(9)+"   "
+                out=out+ ("%.3f"%self.pose.energies().total_energies()[ type ]).ljust(9)+ "   "
+                out=out+ ("%.3f"%(self.weights[ type ] * self.pose.energies().total_energies()[ type ] )).ljust(9)+"\n"
+                sum_weighted += self.weights[ type ] * self.pose.energies().total_energies()[ type ]
+        
+        out = out+ "---------------------------------------------------\n"
+        out = out+ " Total weighted score:                    %.3f\n"%sum_weighted
+        return out
     
 #### Switches ####
     

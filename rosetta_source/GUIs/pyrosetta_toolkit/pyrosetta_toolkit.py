@@ -282,8 +282,8 @@ class MainTracer(rosetta.basic.PyTracer):
 if __name__ == '__main__':
    rosetta.init()
    main_window_class = main_window()
-   TR = MainTracer(main_window_class.output_textbox)
-   rosetta.basic.Tracer.set_ios_hook(TR, rosetta.basic.Tracer.get_AllChannels_string(), False)
+   main_window_class.TR = MainTracer(main_window_class.output_textbox)
+   rosetta.basic.Tracer.set_ios_hook(main_window_class.TR, rosetta.basic.Tracer.get_AllChannels_string(), False)
    #rosetta.init(extra_options="-mute all")
    
    main_window_class.run()

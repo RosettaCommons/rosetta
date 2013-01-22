@@ -103,7 +103,7 @@ class ligand_ncaa_ptm_manager:
         print os.environ['PYROSETTA_DATABASE']+'/chemical/residue_type_sets/fa_standard/patches.txt'
         print os.environ['PYROSETTA_DATABASE']+'/chemical/residue_type_sets/fa_standard/residue_types.txt'
         print "It is recommended to switch at least the statistical residue-based pair potential to the coulumbic atom-based hack_elec potential"
-        print "This may increase run time, but not by much.  "
+        print "This may increase run time, especially for larger selections"
         #print "In preliminary results, it has also been shown to increase rotamer recovery for cannonical AA's (unpublished/Dunbrack Lab)"
         #print "To add a variant type to a pose, use the Per Residue Control in the advanced menu."
         self.main = main
