@@ -50,7 +50,6 @@ sources = {
 		"packstat",
 		"relax",
 		"sequence_tolerance",
-		"supercharge",
 		"SymDock",
 		"vip",
 	],
@@ -92,6 +91,7 @@ sources = {
 		"pmut_scan_parallel",
 		"sequence_recovery",
 		"beta_peptide_modeling",
+		"supercharge",
 	],
 	"public/docking": [
 		"docking_prepack_protocol",

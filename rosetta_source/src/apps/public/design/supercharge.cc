@@ -98,7 +98,7 @@
 using basic::Error;
 using basic::Warning;
 using basic::T;
-static basic::Tracer TR("apps.pilot.bder.supercharge");
+static basic::Tracer TR("apps.public.design.supercharge");
 
 using namespace core;
 typedef core::pose::Pose Pose;
