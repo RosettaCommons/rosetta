@@ -1,0 +1,11 @@
+-in
+	-file
+		-s inputs/1HXW_input.pdb
+		-native inputs/1HXW_native.pdb
+		-extra_res_fa inputs/Ritona.params
+-packing
+	-ex1
+	-ex1aro
+	-ex2
+-mute core.util.prof ## dont show timing info
+-mute core.io.database
