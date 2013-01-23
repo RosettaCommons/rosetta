@@ -43,8 +43,10 @@
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 #include <protocols/rigid/RigidBodyMover.hh>
+#include <protocols/jd2/JobDistributor.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/jd2/Job.hh>
 #include <utility/vector0.hh>
 #include <core/pose/symmetry/util.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
@@ -59,7 +61,7 @@ namespace protocols {
 namespace design_opt {
 
 static basic::Tracer TR( "protocols.design_opt.GreedyOptMutationMover" );
-static numeric::random::RandomGenerator RG( 2718 );
+static numeric::random::RandomGenerator RG( 27188 );
 using namespace core;
 using namespace chemical;
 using utility::vector1;
@@ -69,81 +71,54 @@ using std::pair;
 GreedyOptMutationMover::GreedyOptMutationMover() :
 	Mover( GreedyOptMutationMoverCreator::mover_name() ),
 	task_factory_( NULL ),
+//	filters_( NULL ), /* how set default vecgtor of NULLs? */
+//	sample_type_( "low" ),
 	scorefxn_( NULL ),
 	relax_mover_( NULL ),
-	filter_( NULL ),
-	filter_delta_( 0 ),
-	sample_type_( "low" ),
 	dump_pdb_( false ),
 	dump_table_( false ),
-	diversify_lvl_( 1 ),
+	parallel_( false ),
 	stopping_condition_( NULL ),
   stop_before_condition_( false ),
   skip_best_check_( false ),
-	rtmin_( false ),
-	parallel_( false ),
-	shuffle_order_( false )
-{
-	if( sample_type_ == "high" ){
-		flip_sign_ = Real( -1 );
-	}else if( sample_type_ == "low" ){
-		flip_sign_ = Real( 1 );
-	}else{
-		TR << "WARNING: the sample type, " << sample_type_ << ", is not defined. Use \'high\' or \'low\'." << std::endl;
-		runtime_assert( false );
-  }
-	//filter_delta should always be a scalar!
-	if( filter_delta_ < Real( 0. ) ) filter_delta_ = ( Real( -1 ) * filter_delta_ );
-	//default diversity to all 20 aa's if specified filter_delta but did not spec diversify_lvl
-	if( filter_delta_ != Real( 0. ) && diversify_lvl_ == Size( 1 ) ) diversify_lvl_ = 20;
-}
+  rtmin_( false ),
+  shuffle_order_( false ),
+	nstruct_iter_( 1 )
+{}
 
 //full ctor
 GreedyOptMutationMover::GreedyOptMutationMover(
 	core::pack::task::TaskFactoryOP task_factory,
 	core::scoring::ScoreFunctionOP scorefxn,
 	protocols::moves::MoverOP relax_mover,
-	protocols::filters::FilterOP filter,
-	core::Real filter_delta,
-	std::string sample_type,
+	vector1< protocols::filters::FilterOP > filters,
+	vector1< std::string > sample_types,
+	vector1< core::Real > filter_deltas,
 	bool dump_pdb,
 	bool dump_table,
+	bool parallel,
   bool stop_before_condition,
   bool skip_best_check,
-	bool rtmin,
-	bool parallel,
-	bool shuffle_order,
-	core::Size diversify_lvl,
+  bool rtmin,
+  bool shuffle_order,
 	protocols::filters::FilterOP stopping_condition
 ) :
 	Mover( GreedyOptMutationMoverCreator::mover_name() )
 {
 	task_factory_ = task_factory;
+	filters_ = filters;
 	relax_mover_ = relax_mover;
-	filter_ = filter;
-	filter_delta_ = filter_delta;
 	scorefxn_ = scorefxn;
-	sample_type_ = sample_type;
-	diversify_lvl_ = diversify_lvl;
+	sample_types_ = sample_types;
 	dump_pdb_ = dump_pdb;
 	dump_table_ = dump_table;
+	parallel_ = parallel;
   stop_before_condition_ = stop_before_condition;
   skip_best_check_ = skip_best_check;
-	rtmin_ = rtmin;
-	parallel_ = parallel;
-	shuffle_order_ = shuffle_order;
+  rtmin_ = rtmin;
+  shuffle_order_ = shuffle_order;
 	stopping_condition_ = stopping_condition;
-
-	if( sample_type_ == "high" ){
-		flip_sign_ = Real( -1 );
-	}else if( sample_type_ == "low" ){
-		flip_sign_ = Real( 1 );
-	}else{
-		TR << "WARNING: the sample type, " << sample_type_ << ", is not defined. Use \'high\' or \'low\'." << std::endl;
-		runtime_assert( false );
-  }
-	//filter_delta should always be a scalar!
-	if( filter_delta_ < Real( 0. ) ) filter_delta_ = ( Real( -1 ) * filter_delta_ );
+	nstruct_iter_ = 1;
 }
 
 //destruction!
@@ -191,22 +166,13 @@ GreedyOptMutationMover::relax_mover() const{
 }
 
 void
-GreedyOptMutationMover::filter( protocols::filters::FilterOP filter ){
-	filter_ = filter;
+GreedyOptMutationMover::filters( vector1< protocols::filters::FilterOP > filters ){
+	filters_ = filters;
 	clear_cached_data();
 }
 
-protocols::filters::FilterOP GreedyOptMutationMover::filter() const{
-	return filter_;
-}
-
-void
-GreedyOptMutationMover::filter_delta( Real filter_delta ){
-	filter_delta_ = filter_delta;
-}
-
-Real GreedyOptMutationMover::filter_delta() const{
-	return filter_delta_;
+vector1< protocols::filters::FilterOP > GreedyOptMutationMover::filters() const{
+	return filters_;
 }
 
 void
@@ -235,13 +201,13 @@ GreedyOptMutationMover::dump_pdb() const{
 
 void
 GreedyOptMutationMover::dump_table( bool const dump_table ){
-	dump_table_ = dump_table;
+  dump_table_ = dump_table;
 	clear_cached_data();
 }
 
 bool
 GreedyOptMutationMover::dump_table() const{
-	return dump_table_;
+  return dump_table_;
 }
 
 void
@@ -264,35 +230,52 @@ GreedyOptMutationMover::skip_best_check() const{
   return skip_best_check_;
 }
 
-utility::vector1< protocols::simple_filters::DeltaFilterOP > 
-GreedyOptMutationMover::delta_filters() const { 
-	return reset_delta_filters_; 
+void
+GreedyOptMutationMover::rtmin( bool const b ){
+  rtmin_ = b;
 }
 
-void 
-GreedyOptMutationMover::delta_filters( utility::vector1< protocols::simple_filters::DeltaFilterOP > const d ){ 
-	reset_delta_filters_ = d; 
+bool
+GreedyOptMutationMover::rtmin() const{ return rtmin_; }
+
+void
+GreedyOptMutationMover::shuffle_order( bool const b ){
+  shuffle_order_ = b;
+}
+
+bool
+GreedyOptMutationMover::shuffle_order() const{ return shuffle_order_; }
+
+utility::vector1< protocols::simple_filters::DeltaFilterOP > 
+GreedyOptMutationMover::delta_filters() const { 
+  return reset_delta_filters_; 
 }
 
 void
-GreedyOptMutationMover::sample_type( std::string const sample_type ){
-  sample_type_ = sample_type;
+GreedyOptMutationMover::delta_filters( utility::vector1< protocols::simple_filters::DeltaFilterOP > const d ){
+  reset_delta_filters_ = d;
+}
+
+void
+GreedyOptMutationMover::sample_types( vector1< std::string > const sample_types ){
+  sample_types_ = sample_types;
 	clear_cached_data();
 }
 
-std::string
-GreedyOptMutationMover::sample_type() const{
-  return sample_type_;
+vector1< std::string >
+GreedyOptMutationMover::sample_types() const{
+  return sample_types_;
 }
 
 void
-GreedyOptMutationMover::diversify_lvl( core::Size const diversify_lvl ){
-  diversify_lvl_ = diversify_lvl;
+GreedyOptMutationMover::filter_deltas( vector1< core::Real > const filter_deltas ){
+  filter_deltas_ = filter_deltas;
+	clear_cached_data();
 }
 
-core::Size
-GreedyOptMutationMover::diversify_lvl() const{
-  return diversify_lvl_;
+vector1< core::Real >
+GreedyOptMutationMover::filter_deltas() const{
+  return filter_deltas_;
 }
 
 void
@@ -307,80 +290,55 @@ GreedyOptMutationMover::scorefxn() const{
 }
 
 void
-GreedyOptMutationMover::rtmin( bool const b ){
-	rtmin_ = b;
+GreedyOptMutationMover::parallel( bool const parallel ){
+  parallel_ = parallel;
 }
 
 bool
-GreedyOptMutationMover::rtmin() const{ return rtmin_; }
-
-void
-GreedyOptMutationMover::parallel( bool const b ){
-	parallel_ = b;
-}
-
-bool
-GreedyOptMutationMover::parallel() const{ return parallel_; }
-
-void
-GreedyOptMutationMover::shuffle_order( bool const b ){
-	shuffle_order_ = b;
-}
-
-bool
-GreedyOptMutationMover::shuffle_order() const{ return shuffle_order_; }
-
-void
-GreedyOptMutationMover::dump_scoring_table( std::string filename, core::pose::Pose const & ref_pose ) const{
-  utility::io::ozstream outtable(filename, std::ios::out | std::ios::app ); // Append if logfile already exists.
-	if( outtable ){
-		for( core::Size ii(1); ii <= seqpos_aa_val_vec_.size(); ++ii) {
-			core::Size pos( seqpos_aa_val_vec_[ii].first );
-			utility::vector1< std::pair< core::chemical::AA, core::Real > > const & aa_pairs( seqpos_aa_val_vec_[ii].second );
-			outtable << pos ;
-			if( ref_pose.pdb_info() ) {
-				outtable << " (" << ref_pose.pdb_info()->pose2pdb(pos) << ")";
-			}
-			outtable << '\t';
-			for( core::Size jj(1); jj <= aa_pairs.size(); ++jj ) {
-				outtable << aa_pairs[jj].first << ((ref_pose.aa(pos) == aa_pairs[jj].first)?"*:":":") << aa_pairs[jj].second << " ";
-			}
-			outtable << std::endl;
-		}
-		outtable << std::endl; // Blank line at end to seperate.
-	} else {
-		TR.Warning << "WARNING: Unable to open file " << filename << " for writing GreedyOptMutationMover table output." << std::endl;
-	}
-  outtable.close();
+GreedyOptMutationMover::parallel() const{
+  return parallel_;
 }
 
 //utility funxns for comparing values in sort
 bool
 cmp_pair_by_second(
-	pair< AA, Real > const pair1,
-	pair< AA, Real > const pair2 )
+  pair< Size, Real > const pair1,
+  pair< Size, Real > const pair2 )
 {
-	return pair1.second < pair2.second;
+  return pair1.second < pair2.second;
+}
+
+bool
+cmp_pair_by_first_vec_val(
+	pair< AA, vector1< Real > > const pair1,
+	pair< AA, vector1< Real > > const pair2 )
+{
+	return pair1.second[ 1 ] < pair2.second[ 1 ];
 }
 
 bool
 cmp_pair_vec_by_first_vec_val(
-  pair< Size, vector1< pair< AA, Real > > > const pair1,
-  pair< Size, vector1< pair< AA, Real > > > const pair2 )
+  pair< Size, vector1< pair< AA, vector1< Real > > > > const pair1,
+  pair< Size, vector1< pair< AA, vector1< Real > > > > const pair2 )
 {
-  return pair1.second[ 1 ].second < pair2.second[ 1 ].second;
+  return pair1.second[ 1 ].second[ 1 ] < pair2.second[ 1 ].second[ 1 ];
 }
 
 void
 GreedyOptMutationMover::clear_cached_data(){
-  seqpos_aa_val_vec_.clear();
-  ref_pose_.clear();
+	seqpos_aa_vals_vec_.clear();
+	pfront_poses_.clear();
+	pfront_poses_filter_vals_.clear();
+	pfront_poses_filter_ranks_.clear();
+	ref_pose_.clear();
 }
 
 //TODO: this should also compare fold trees
 bool
-GreedyOptMutationMover::pose_coords_are_same( core::pose::Pose const & pose1, core::pose::Pose const & pose2 )
-{
+GreedyOptMutationMover::pose_coords_are_same(
+	core::pose::Pose const & pose1,
+	core::pose::Pose const & pose2
+){
 	//first check for all restype match, also checks same number res
 	if( !pose1.conformation().sequence_matches( pose2.conformation() ) ) return false;
 	//then check for all coords identical
@@ -394,13 +352,152 @@ GreedyOptMutationMover::pose_coords_are_same( core::pose::Pose const & pose1, co
 			if( rsd1.xyz( ii ).x() != rsd2.xyz( ii ).x() ) return false;
 			if( rsd1.xyz( ii ).y() != rsd2.xyz( ii ).y() ) return false;
 			if( rsd1.xyz( ii ).z() != rsd2.xyz( ii ).z() ) return false;
-		}
-	}
+		}    
+	}    
 	return true;
 }
 
 void
-GreedyOptMutationMover::apply(core::pose::Pose & pose )
+GreedyOptMutationMover::calc_pfront_poses_filter_ranks(){
+	//(re)init ranks w/ bogus zero data
+	pfront_poses_filter_ranks_ = vector1< vector1< Size > >( pfront_poses_filter_vals_.size(),
+			vector1< Size >( pfront_poses_filter_vals_[ 1 ].size(), Size( 0 ) ) );
+	//for each filter type
+	for( Size ifilt = 1; ifilt <= pfront_poses_filter_vals_[ 1 ].size(); ++ifilt ){
+		//copy all this filter vals into a vector of pair< index, val >
+		vector1< pair< Size, Real > > filter_index_vals;
+		for( Size ipose = 1; ipose <= pfront_poses_filter_vals_.size(); ++ipose ){
+			filter_index_vals.push_back( pair< Size, Real >( ipose, pfront_poses_filter_vals_[ ipose ][ ifilt ] ) );
+		}
+		//and sort by value
+		std::sort( filter_index_vals.begin(), filter_index_vals.end(), cmp_pair_by_second );
+		//now can get rank and index
+		for( Size rank = 1; rank <= filter_index_vals.size(); ++rank ){
+			Size ipose( filter_index_vals[ rank ].first );
+			pfront_poses_filter_ranks_[ ipose ][ ifilt ] = rank;	
+		}
+	}
+}
+
+//Yes, I'm aware this is the slowest and simplest implementation of pareto front
+// identification, but this needs to be finished 2 days ago
+// and this calc is hardly the rate limiting step with a bunch of repacking and filter evals
+//calc_single_pos_pareto_front
+//takes a set (vec1) of coords
+//populates boolean vector w/ is_pareto?
+void
+calc_pareto_front(
+	vector1< vector1< Real > > const & coords,
+	vector1< bool > & is_pfront
+){
+	assert( coords.size() == is_pfront.size() );
+	//n coords, d dimensions
+	Size n( coords.size() );
+	Size d( coords[ 1 ].size() );
+	//for each point
+	for( Size i = 1; i <= n; ++i ){
+		bool is_dom( false );
+		//check if strictly dominated by another point
+		for( Size j = 1; j <= n; ++j ){
+			if( j == i ) continue;
+			is_dom = true;
+			bool is_equal = true;
+			for( Size k = 1; k <= d; ++k ){
+				//check for same coords
+				is_equal = is_equal && ( coords[ i ][ k ] == coords[ j ][ k ] );
+				//i not dominated by j if less in any dimension
+				if( coords[ i ][ k ] < coords[ j ][ k ] ){
+					is_dom = false;
+					break;
+				}
+			}
+			if( is_equal ) is_dom = false;
+			if( is_dom ) break;
+		}
+		if( is_dom ) is_pfront[ i ] = false;
+		else is_pfront[ i ] = true;
+	}
+}
+
+//removes seqpos aa/vals from set that are not pareto optimal
+//TODO: keep nonpareto points that are within filter_delta of nearest pareto point
+void
+GreedyOptMutationMover::filter_seqpos_pareto_opt_ptmuts(){
+	for( Size iseq = 1; iseq <= seqpos_aa_vals_vec_.size(); ++iseq ){
+		vector1< bool > is_pfront( seqpos_aa_vals_vec_[ iseq ].second.size(), false );
+		vector1< vector1< Real > > vals;
+		//get a vec of vecs from the data
+		for( Size i = 1; i <= seqpos_aa_vals_vec_[ iseq ].second.size(); ++i ){
+			vals.push_back( seqpos_aa_vals_vec_[ iseq ].second[ i ].second );
+		}
+		//get is_pareto bool vec
+		calc_pareto_front( vals, is_pfront );
+		//find points within filter_delta of pareto points
+		
+		vector1< bool > is_pfront_nbr( seqpos_aa_vals_vec_[ iseq ].second.size(), false );
+		//replace aa/vals vector with pareto opt only
+		vector1< pair< AA, vector1< Real > > > pfront_aa_vals;
+		for( Size iaa = 1; iaa <= seqpos_aa_vals_vec_[ iseq ].second.size(); ++iaa ){
+			if( is_pfront[ iaa ] ) pfront_aa_vals.push_back( seqpos_aa_vals_vec_[ iseq ].second[ iaa ] );
+		}
+		seqpos_aa_vals_vec_[ iseq ].second = pfront_aa_vals;
+	}
+}
+
+//filters a pose vec for pareto opt only
+void
+filter_pareto_opt_poses(
+	vector1< pose::Pose > & poses,
+	vector1< vector1< Real > > & vals
+){
+	//get is_pareto bool vec
+	vector1< bool > is_pfront( poses.size(), false );
+	calc_pareto_front( vals, is_pfront );
+	//remove entries that are not pareto
+	vector1< pose::Pose > pfront_poses;
+	vector1< vector1< Real > > pfront_vals;
+	for( Size ipose = 1; ipose <= poses.size(); ++ipose ){
+		if( is_pfront[ ipose ] ){
+			pfront_poses.push_back( poses[ ipose ] );
+			pfront_vals.push_back( vals[ ipose ] );
+		}
+	}
+	poses = pfront_poses;
+	vals = pfront_vals;
+}
+
+//this should be in PointMutCalc
+void
+GreedyOptMutationMover::dump_scoring_table( std::string filename, core::pose::Pose const & ref_pose ) const{
+  utility::io::ozstream outtable(filename, std::ios::out | std::ios::app ); // Append if logfile already exists.
+  if( outtable ){
+    for( core::Size ii(1); ii <= seqpos_aa_vals_vec_.size(); ++ii) {
+      core::Size pos( seqpos_aa_vals_vec_[ii].first );
+      utility::vector1< std::pair< core::chemical::AA, utility::vector1< core::Real > > > const & aa_pairs( seqpos_aa_vals_vec_[ii].second );
+      outtable << pos ;
+      if( ref_pose.pdb_info() ) { 
+        outtable << " (" << ref_pose.pdb_info()->pose2pdb(pos) << ")";
+      }   
+      outtable << '\t';
+      for( core::Size jj(1); jj <= aa_pairs.size(); ++jj ) { 
+        outtable << aa_pairs[jj].first << ((ref_pose.aa(pos) == aa_pairs[jj].first)?"*:":":");
+				for( core::Size kk( 1 ); kk <= aa_pairs[ jj ].second.size(); ++kk ){
+					outtable << aa_pairs[jj].second[ kk ] << ":";
+				}
+        outtable << " ";
+      }   
+      outtable << std::endl;
+    }   
+    outtable << std::endl; // Blank line at end to seperate.
+  } else {
+    TR.Warning << "WARNING: Unable to open file " << filename << " for writing GreedyOptMutationMover table output." << std::endl;
+  }
+  outtable.close();
+}
+
+
+void
+GreedyOptMutationMover::apply( core::pose::Pose & pose )
 {
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
@@ -409,127 +506,187 @@ GreedyOptMutationMover::apply(core::pose::Pose & pose )
 	//store input pose
 	core::pose::Pose start_pose( pose );
 	design_opt::PointMutationCalculatorOP ptmut_calc( new design_opt::PointMutationCalculator(
-				task_factory(), scorefxn(), relax_mover(), filter(), sample_type(), dump_pdb(), rtmin(), parallel() ) );
-	ptmut_calc->set_design_shell( design_shell_ );
-	ptmut_calc->set_repack_shell( repack_shell_ );
+				task_factory(), scorefxn(), relax_mover(), filters(), sample_types(), dump_pdb(), false, parallel() ) );
 
 	//create vec of pairs of seqpos, vector of AA/val pairs that pass input filter
-	//only calc the ptmut data and sort once per pose, not at every nstruct iteration
-	//but how will we know if that data is still valid? what if the backbone has moved?
+	//then combine them into a pareto opt pose set
+	//only calc the ptmut data and pareto set once per pose, not at every nstruct iteration
+	//but how will we know if that data is still valid? what if the pose has chnged?
 	//the best answer is to store the pose passed to apply in a private variable (ref_pose_)
-	//and only calc and sort if ref_pose_ is still undef or doesnt match apply pose
-	if( ref_pose_.empty() || !pose_coords_are_same( start_pose, ref_pose_ ) ){
-		//clear cached data
+	//and only calc if ref_pose_ is still undef or doesnt match apply pose
+	//also recalc if pareto pose set is empty
+	if( pfront_poses_.empty() || ref_pose_.empty() || !pose_coords_are_same( start_pose, ref_pose_ ) ){
+		//reset our private data
 		clear_cached_data();
 		//and (re)set ref_pose_ to this pose
 		ref_pose_ = start_pose;
-		//get the point mut values
-		ptmut_calc->calc_point_mut_filters( start_pose, seqpos_aa_val_vec_ );
 
-		//this part sorts the seqpos/aa/val data
-		//first over each seqpos by aa val, then over all seqpos by best aa val
-		for( Size ivec = 1; ivec <= seqpos_aa_val_vec_.size(); ++ivec ){
-			//skip if aa/vals vector is empty
-			if( seqpos_aa_val_vec_[ ivec ].second.empty() ) continue;
-			//sort aa/vals in incr val order
-			std::sort( seqpos_aa_val_vec_[ ivec ].second.begin(),
-					seqpos_aa_val_vec_[ ivec ].second.end(), cmp_pair_by_second );
+		//get the point mut values
+		ptmut_calc->calc_point_mut_filters( start_pose, seqpos_aa_vals_vec_ );
+		if( seqpos_aa_vals_vec_.size() < 1 ){
+			utility_exit_with_message( "ERROR: No acceptable mutations found. All possible mutations failed at least one filter!" );
 		}
-		//now sort seqpos_aa_val_vec_ by *first* (lowest) val in each seqpos vector, low to high
+		//this part sorts the seqpos/aa/val data so that we init with something good (1st)
+		//first over each seqpos by aa val, then over all seqpos by best aa val
+		for( Size ivec = 1; ivec <= seqpos_aa_vals_vec_.size(); ++ivec ){
+			//skip if aa/vals vector is empty
+			if( seqpos_aa_vals_vec_[ ivec ].second.empty() ) continue;
+			//sort aa/vals in incr val order
+			std::sort( seqpos_aa_vals_vec_[ ivec ].second.begin(),
+					seqpos_aa_vals_vec_[ ivec ].second.end(), cmp_pair_by_first_vec_val );
+		}
+		//now sort seqpos_aa_vals_vec_ by *first* (lowest) val in each seqpos vector, low to high
 		//uses cmp_pair_vec_by_first_vec_val to sort based on second val in
 		//first pair element of vector in pair( size, vec( pair ) )
-		std::sort( seqpos_aa_val_vec_.begin(), seqpos_aa_val_vec_.end(), cmp_pair_vec_by_first_vec_val );
+		std::sort( seqpos_aa_vals_vec_.begin(), seqpos_aa_vals_vec_.end(), cmp_pair_vec_by_first_vec_val );
 
-		//finally, dump table to file, if requested.
-		if( dump_table() ){
-			std::string fname( "GreedyOptTable" );
-			if( protocols::jd2::jd2_used() ){
-				fname += "_" + protocols::jd2::current_output_name();
-			}
-			fname += ".tab";
-			dump_scoring_table( fname, start_pose );
+    //finally, dump table to file, if requested.
+    if( dump_table() ){
+      std::string fname( "GreedyOptTable" );
+      if( protocols::jd2::jd2_used() ){
+        fname += "_" + protocols::jd2::current_output_name();
+      }   
+      fname += ".tab";
+      dump_scoring_table( fname, start_pose );
+    }   
+
+		//this part gets rid of ptmuts that are not pareto opt
+		filter_seqpos_pareto_opt_ptmuts();
+
+		  //now randomize the sequence position order?
+		if( shuffle_order() ){
+			numeric::random::random_permutation( seqpos_aa_vals_vec_.begin(), seqpos_aa_vals_vec_.end(), RG );
+			TR<<"Combining shuffled mutations… " << std::endl;
 		}
-	}
+		else TR<<"Combining sorted mutations… " << std::endl;
 
-	//now randomize the sequence position order?
-	if( shuffle_order() ){
-		numeric::random::random_permutation( seqpos_aa_val_vec_.begin(), seqpos_aa_val_vec_.end(), RG );
-		TR<<"Combining shuffled independently optimal mutations… " << std::endl;
-	}
-	else TR<<"Combining sorted independently optimal mutations… " << std::endl;
-	//reset pose to original, init starting filter val
-	//must use same relax mover before scoring so comparison is fair!
-	pose = start_pose;
-	relax_mover()->apply( pose );
-	Real best_val( flip_sign_ * filter()->report_sm( pose ) );
-	pose::Pose best_pose( pose );
-	//now try the best AA at each position, in order
-	for( Size iseq = 1; iseq <= seqpos_aa_val_vec_.size(); ++iseq ){
-		pose = best_pose;
-		//the seqpos index is the first part of the pair
-		Size seqpos( seqpos_aa_val_vec_[ iseq ].first );
-		//the best aa is the first part of the first element of the aa/val vector
-		AA target_aa( seqpos_aa_val_vec_[ iseq ].second[ 1 ].first );
+		//init pareto opt poses with first mutations for now
+		//TODO: is there a better way to init?
+		Size iseq_init( 1 );
+		//the resi index is the first part of the pair
+		Size resi_init( seqpos_aa_vals_vec_[ iseq_init ].first );
+		for( Size iaa = 1; iaa <= seqpos_aa_vals_vec_[ iseq_init ].second.size(); ++iaa ){
+			AA target_aa( seqpos_aa_vals_vec_[ iseq_init ].second[ iaa ].first );
+			pose::Pose new_pose( start_pose );
+			ptmut_calc->mutate_and_relax( new_pose, resi_init, target_aa );
+			//dont need to eval filters because we already know they passed because are in the table
+			pfront_poses_.push_back( new_pose );
+		}
 
-		//allow stochastic sampling of suboptimal restypes
-		if( diversify_lvl() > 1 ){
-			//smaller of user-def lvl and actual size of vector
-			Size max_diversify_lvl( std::min( diversify_lvl_, seqpos_aa_val_vec_[ iseq ].second.size() ) );
-			//ifdef filter_delta, redef max div lvl for this seqpos
-			if( filter_delta() != Real( 0. ) ){
-				Real best_val( seqpos_aa_val_vec_[ iseq ].second[ 1 ].second );
-				for( Size iaa = 2; iaa <= max_diversify_lvl; ++iaa ){
-					Real val( seqpos_aa_val_vec_[ iseq ].second[ iaa ].second );
-					//if this aa is worse than filter_delta break out
-					if( val - best_val > filter_delta() ) break;
-					//else set max to this one
-					else max_diversify_lvl = iaa;
+		//now try to combine pareto opt mutations
+		for( Size iseq = 2; iseq <= seqpos_aa_vals_vec_.size(); ++iseq ){
+			//create new pose vec to hold all combinations
+			vector1< pose::Pose > new_poses;
+			vector1< vector1< Real > > new_poses_filter_vals;
+			//the resi index is the first part of the pair
+			Size seqpos( seqpos_aa_vals_vec_[ iseq ].first );
+			TR << "Combining " << pfront_poses_.size() << " structures with mutations at residue " << seqpos << std::endl;
+			//over each current pfront pose
+			//pfront_poses_ contains all the current poses
+			for( Size ipose = 1; ipose <= pfront_poses_.size(); ++ipose ){
+				//over all aa's at seqpos
+				for( Size iaa = 1; iaa <= seqpos_aa_vals_vec_[ iseq ].second.size(); ++iaa ){
+					//inside this double loop, all pfront_poses_ are combined with all muts at this position
+					AA target_aa( seqpos_aa_vals_vec_[ iseq ].second[ iaa ].first );
+					pose::Pose new_pose( pfront_poses_[ ipose ] );
+
+					bool filter_pass;
+					vector1< Real > vals;
+					ptmut_calc->mutate_and_relax( new_pose, seqpos, target_aa );
+					ptmut_calc->eval_filters( new_pose, filter_pass, vals );
+					//only check this guy for pareto if passes
+					if( !filter_pass ) continue;
+
+					new_poses.push_back( new_pose );
+					new_poses_filter_vals.push_back( vals );
 				}
 			}
-			TR << "Randomly choosing 1 of " << max_diversify_lvl << " allowed mutations at residue " << seqpos << std::endl;
-			Size aa_rank( static_cast< Size >( RG.uniform() * max_diversify_lvl + 1 ) );
-			target_aa = seqpos_aa_val_vec_[ iseq ].second[ aa_rank ].first;
+//			TR << "Generated " << new_poses.size() << " new poses from mutations at residue "
+//					<< seqpos << ". Filtering... " << std::endl;
+
+			//only update pfront poses if we found any new ones, else just skip this position,
+			//	because we know our current pose does pass all the filters
+			if( new_poses.size() < 1 ){
+				TR << "Unable to generate any new poses that pass all filters at position " << iseq << std::endl;
+				continue;
+			}
+
+			//end optimization if *any* of the new pareto poses trips the stopping_condition
+			bool stop( false );
+			for( Size ipose = 1; ipose <= new_poses.size(); ++ipose ){
+				pose::Pose new_pose( new_poses[ ipose ] );
+				if( stopping_condition() && stopping_condition()->apply( new_pose ) ){
+					stop = true;
+					if( !stop_before_condition() ) TR<<"Stopping condition evaluates to true. Stopping early and acceptingn the last mutation: "<<
+							start_pose.residue( seqpos ).name1() << seqpos << new_pose.residue( seqpos ).name1() << std::endl;
+					else TR<<"Stopping condition evaluates to true. Stopping early and rejecting the last mutation."
+							<< start_pose.residue( seqpos ).name1() << seqpos << new_pose.residue( seqpos ).name1() << std::endl;
+					break;
+				}
+			}
+
+			if( stop && stop_before_condition() ) break;
+      //if forcing new mutations, then reset pose cache and filter just the new guys
+			if( skip_best_check() ){
+				pfront_poses_ = new_poses;
+				pfront_poses_filter_vals_ = new_poses_filter_vals;
+			} else{
+      //default: add the new poses to the pose cache then pareto filter
+				for( Size ipose = 1; ipose <= new_poses.size(); ++ipose ){
+					pfront_poses_.push_back( new_poses[ ipose ] );
+					pfront_poses_filter_vals_.push_back( new_poses_filter_vals[ ipose ] );
+				}
+			}
+
+      //filter new_poses for the pareto opt set
+      filter_pareto_opt_poses( pfront_poses_, pfront_poses_filter_vals_ );
+
+			//break out if we've reached our stopping condition
+			if( stop ) break;
+
+			//Optionally reset baseline for Delta Filters (useful so that the mutations are still evaluated on an individual basis, in the context of the current best pose).
+			foreach( protocols::simple_filters::DeltaFilterOP const delta_filter, reset_delta_filters_ ){
+				std::string const fname( delta_filter->get_user_defined_name() );
+				core::Real const fbaseline( delta_filter->filter()->report_sm( pose ) );
+				delta_filter->baseline( fbaseline );
+				delta_filter->ref_baseline( fbaseline );
+				TR<<"Reset baseline for DeltaFilter "<<fname<<" to "<<fbaseline<<std::endl;
+			}
 		}
+		TR << "Generated  " << pfront_poses_.size() << " final structures" << std::endl;
+		calc_pfront_poses_filter_ranks();
+	}
+	//assign the apply pose to the next pfront_pose 
+	Size pfront_pose_iter( ( nstruct_iter_ - 1 ) % pfront_poses_.size() + 1 );
+	pose = pfront_poses_[ pfront_pose_iter ];
+	//print out filter vals for this pose
+	TR << "Structure " << nstruct_iter_ << " filter values: ";
+	for( Size ival = 1; ival <= pfront_poses_filter_vals_[ pfront_pose_iter ].size(); ++ival ){
+		TR << " " << filters()[ ival ]->get_user_defined_name() << ": "
+				<< pfront_poses_filter_vals_[ pfront_pose_iter ][ ival ];
+	}
+	TR << std::endl;
+	TR << "Structure " << nstruct_iter_ << " filter ranks: ";
+	for( Size ival = 1; ival <= pfront_poses_filter_ranks_[ pfront_pose_iter ].size(); ++ival ){
+		TR << " " << filters()[ ival ]->get_user_defined_name() << ": "
+				<< pfront_poses_filter_ranks_[ pfront_pose_iter ][ ival ];
+	}
+	TR << std::endl;
+	TR.flush();
 
-		//dont need to make a "mutation" if target_aa is same as original aa
-		if( target_aa == pose.residue( seqpos ).type().aa() ) continue;
+	//increment pose iterator to get new pfront_pose at nstruct+1
+	nstruct_iter_ += 1;
+}
 
-		//then check if passes input filter, bail out if it doesn't
-		bool filter_pass;
-		vector1< Real > vals;
-		ptmut_calc->mutate_and_relax( pose, seqpos, target_aa );
-		ptmut_calc->eval_filters( pose, filter_pass, vals );
-		Real const val( vals[ 1 ] );
 
-    if( !filter_pass ) continue;
-    //score mutation, reset best_pose, best val if is lower
-    if( val > best_val && !skip_best_check() ){
-      TR << "Mutation " << start_pose.residue( seqpos ).name1() << seqpos << pose.residue( seqpos ).name1() << " rejected. Current best value is "<< best_val << std::endl;
-      continue;
-    }
-    if( stopping_condition() && stopping_condition()->apply( pose ) ){
-      if( !stop_before_condition() ) {
-        TR<<"Stopping condition evaluates to true. Stopping early and accepting the last mutation: "<< start_pose.residue( seqpos ).name1() << seqpos << pose.residue( seqpos ).name1() << std::endl;
-        return;
-      } else {
-        TR<<"Stopping condition evaluates to true. Stopping early and rejecting the last mutation."<< start_pose.residue( seqpos ).name1() << seqpos << pose.residue( seqpos ).name1() << std::endl;
-        break;
-      }
-    }
-    TR << "Mutation " << start_pose.residue( seqpos ).name1() << seqpos << pose.residue( seqpos ).name1() << " accepted. New best value is "<< val << std::endl;
-    best_val = val;
-    best_pose = pose;
-    //Optionally reset baseline for Delta Filters (useful so that the mutations are still evaluated on an individual basis, in the context of the current best pose).
-    foreach( protocols::simple_filters::DeltaFilterOP const delta_filter, reset_delta_filters_ ){
-      std::string const fname( delta_filter->get_user_defined_name() );
-      core::Real const fbaseline( delta_filter->filter()->report_sm( pose ) );
-      delta_filter->baseline( fbaseline );
-      delta_filter->ref_baseline( fbaseline );
-      TR<<"Reset baseline for DeltaFilter "<<fname<<" to "<<fbaseline<<std::endl;
-    }
-  }
-//recover best pose after last step
-pose = best_pose;
+void
+GreedyOptMutationMover::add_filter( protocols::filters::FilterOP filter, std::string const sample_type, core::Real filter_delta )
+{
+	//filter_delta should always be a scalar!
+	if( filter_delta < Real( 0. ) ) filter_delta = -1 * filter_delta;
+  filters_.push_back( filter );
+  sample_types_.push_back( sample_type );
+  filter_deltas_.push_back( filter_delta );
 }
 
 //parse rosetta scripts tags
@@ -542,62 +699,84 @@ GreedyOptMutationMover::parse_my_tag( utility::tag::TagPtr const tag,
 {
 	TR << "GreedyOptMutationMover"<<std::endl;
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
-	//load filter
-	std::string const filter_name( tag->getOption< std::string >( "filter", "true_filter" ) );
-	protocols::filters::Filters_map::const_iterator filter_it( filters.find( filter_name ) );
-	if( filter_it == filters.end() )
-		throw utility::excn::EXCN_RosettaScriptsOption( "Filter "+filter_name+" not found" );
-	filter( filter_it->second );
-	//get filters to reset each time a mutation is accepted. For instance, reset the baseline value of delta filters to be the best pose.
-	utility::vector1< std::string > delta_filter_names;
-	delta_filter_names.clear();
-  if( tag->hasOption( "reset_delta_filters" ) ){
-		delta_filter_names = utility::string_split( tag->getOption< std::string >( "reset_delta_filters" ), ',' );
-		foreach( std::string const fname, delta_filter_names ){
-			reset_delta_filters_.push_back( dynamic_cast< protocols::simple_filters::DeltaFilter * >( protocols::rosetta_scripts::parse_filter( fname, filters )() ) );
-      TR<<"The baseline for Delta Filter "<<fname<<" will be reset upon each accepted mutation"<<std::endl;
-    }
-  }
 	//load relax mover
 	std::string const relax_mover_name( tag->getOption< std::string >( "relax_mover", "null" ) );
 	protocols::moves::Movers_map::const_iterator mover_it( movers.find( relax_mover_name ) );
 	if( mover_it == movers.end() )
 		throw utility::excn::EXCN_RosettaScriptsOption( "Relax mover "+relax_mover_name+" not found" );
 	relax_mover( mover_it->second );
-	//should mutations be allowed around the tested/introduced point mutation, if so, what shell radius
-	design_shell_ = tag->getOption< core::Real >( "design_shell", -1.0 );
-	//repack which radius after mutating
-	repack_shell_ = tag->getOption< core::Real >( "repack_shell", 8.0 );
-	//load sample_type
-	sample_type( tag->getOption< std::string >( "sample_type", "low" ) );
-	//load diversify_lvl
-	diversify_lvl( tag->getOption< core::Size >( "diversify_lvl", core::Size( 1 ) ) );
-	//load filter_delta
-	filter_delta( tag->getOption< core::Real >( "filter_delta", core::Real( 0. ) ) );
-	//filter_delta should always be a scalar!
-	if( filter_delta() < Real( 0. ) ) filter_delta( -1 * filter_delta() );
-	//default diversity to all 20 aa's if specified filter_delta but did not spec diversify_lvl
-	if( filter_delta() != Real( 0. ) && diversify_lvl() == Size( 1 ) ) diversify_lvl( 20 );
 	//load scorefxn
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
-  //stop mover once the stopping_condition is reached and do not accept the last mutation (ie, reject the mutation that set the stopping_condition to true)
-  stop_before_condition( tag->getOption< bool >( "stop_before_condition", false ) );
-  //accept mutations during the combining stage as long as they pass the filter(s), regardless of whether or not the value is the best so far.
-  skip_best_check( tag->getOption< bool >( "skip_best_check", false ) );	
 	//load dump_pdb
 	dump_pdb( tag->getOption< bool >( "dump_pdb", false ) );
 	//load dump_table
 	dump_table( tag->getOption< bool >( "dump_table", false ) );
-	rtmin( tag->getOption< bool >( "rtmin", false ) );
 	parallel( tag->getOption< bool >( "parallel", false ) );
-	//load shuffle_order
-	shuffle_order( tag->getOption< bool >( "shuffle_order", false ) );
 	if( tag->hasOption( "stopping_condition" ) ){
 		std::string const stopping_filter_name( tag->getOption< std::string >( "stopping_condition" ) );
 		stopping_condition( protocols::rosetta_scripts::parse_filter( stopping_filter_name, filters ) );
 		TR<<"Defined stopping condition "<<stopping_filter_name<<std::endl;
 	}
+
+	//load multiple filters from branch tags
+  utility::vector1< utility::tag::TagPtr > const branch_tags( tag->getTags() );
+  foreach( utility::tag::TagPtr const btag, branch_tags ){
+    if( btag->getName() == "Filters" ){
+      utility::vector1< utility::tag::TagPtr > const filters_tags( btag->getTags() );
+      foreach( utility::tag::TagPtr const ftag, filters_tags ){
+        std::string const filter_name( ftag->getOption< std::string >( "filter_name" ) );
+        Filters_map::const_iterator find_filt( filters.find( filter_name ));
+        if( find_filt == filters.end() ) {
+          TR.Error << "Error !! filter not found in map: \n" << tag << std::endl;
+          runtime_assert( find_filt != filters.end() );
+        }
+        std::string const samp_type( ftag->getOption< std::string >( "sample_type", "low" ));
+				core::Real filter_delta( tag->getOption< core::Real >( "filter_delta", core::Real( 0. ) ) );
+				add_filter( find_filt->second->clone(), samp_type, filter_delta );
+      } //foreach ftag
+    }// fi Filters
+    else
+      throw utility::excn::EXCN_RosettaScriptsOption( "tag name " + btag->getName() + " unrecognized." );
+  }//foreach btag
+	//load single filter
+	{
+		std::string const filter_name( tag->getOption< std::string >( "filter", "true_filter" ) );
+		if( filter_name != "true_filter" || filters_.size() < 1 ){
+			protocols::filters::Filters_map::const_iterator find_filt( filters.find( filter_name ) );
+			if( find_filt == filters.end() )
+				throw utility::excn::EXCN_RosettaScriptsOption( "Filter "+filter_name+" not found" );
+			std::string const samp_type( tag->getOption< std::string >( "sample_type", "low" ) );
+			core::Real filter_delta( tag->getOption< core::Real >( "filter_delta", core::Real( 0. ) ) );
+			//only add the default dummy filter if we dont have any others, allows user to define filters in branch tags only
+			add_filter( find_filt->second->clone(), samp_type, filter_delta );
+		}
+	}
+
+  //get filters to reset each time a mutation is accepted. For instance, reset the baseline value of delta filters to be the best pose.
+  utility::vector1< std::string > delta_filter_names;
+  delta_filter_names.clear();
+  if( tag->hasOption( "reset_delta_filters" ) ){
+    delta_filter_names = utility::string_split( tag->getOption< std::string >( "reset_delta_filters" ), ',' );
+    foreach( std::string const fname, delta_filter_names ){
+      reset_delta_filters_.push_back( dynamic_cast< protocols::simple_filters::DeltaFilter * >( protocols::rosetta_scripts::parse_filter( fname, filters )() ) );
+      TR<<"The baseline for Delta Filter "<<fname<<" will be reset upon each accepted mutation"<<std::endl;
+    }
+  }
+  //should mutations be allowed around the tested/introduced point mutation, if so, what shell radius
+  design_shell_ = tag->getOption< core::Real >( "design_shell", -1.0 );
+  //repack which radius after mutating
+  repack_shell_ = tag->getOption< core::Real >( "repack_shell", 8.0 );
+  //stop mover once the stopping_condition is reached and do not accept the last mutation (ie, reject the mutation that set the stopping_condition to true)
+  stop_before_condition( tag->getOption< bool >( "stop_before_condition", false ) );
+  //accept mutations during the combining stage as long as they pass the filter(s), regardless of whether or not the value is the best so far.
+  skip_best_check( tag->getOption< bool >( "skip_best_check", false ) );
+  rtmin( tag->getOption< bool >( "rtmin", false ) );
+  //load shuffle_order
+  shuffle_order( tag->getOption< bool >( "shuffle_order", false ) );
+
+
 }
+
 
 } // moves
 } // protocols
