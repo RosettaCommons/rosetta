@@ -515,14 +515,14 @@ int main( int argc, char * argv [] ) {
     core::Real rmsd_value = pf.rmsd(original_pose, oriented_pose);
     std::cout<<"RMSD ["<<tag<<"]:"<<rmsd_value<<std::endl;
     std::string rmsd_file = "rmsd.out";
-    ofstream RMSDfile(rmsd_file.c_str(), ofstream::app);
-    RMSDfile <<rmsd_value<<"\n";
-    RMSDfile.close();
+    //ofstream RMSDfile(rmsd_file.c_str(), ofstream::app);
+    //RMSDfile <<rmsd_value<<"\n";
+    //RMSDfile.close();
     //print protein-ligand complex into a pdb file
     if (option[ print_output_complex ]()){
       protein_pose.append_residue_by_jump(oriented_pose.residue( 1 ), protein_pose.total_residue(),"", "",  true);
       protein_pose.dump_pdb(complex_filename);
-    }
+      }
   }else {
     std::cout<<"ERROR! : Wrong optimization_method "<<std::endl;
     }

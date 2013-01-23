@@ -526,7 +526,7 @@ sources = {
 		# "ragul_fingerprint_test",
 		#"ragul_minimize",
 		#"ragul_darc_minimize",
-		"ragul_darc_run",
+		#"ragul_darc_run",
 		"ragul_darc_score",
 		#"ragul_test_darc_run",
 		#"ragul_test_darc_score",
