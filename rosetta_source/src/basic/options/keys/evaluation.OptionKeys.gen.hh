@@ -56,6 +56,7 @@ namespace evaluation { extern FileVectorOptionKey const rdc_target; }
 namespace evaluation { extern BooleanOptionKey const symmetric_rmsd; }
 namespace evaluation { extern StringVectorOptionKey const rdc_column; }
 namespace evaluation { extern StringVectorOptionKey const rdc; }
+namespace evaluation { extern StringOptionKey const built_in_rdc; }
 namespace evaluation { extern BooleanOptionKey const jump_nr; }
 namespace evaluation { extern IntegerVectorOptionKey const score_exclude_res; }
 namespace evaluation { extern IntegerOptionKey const score_sscore_short_helix; }

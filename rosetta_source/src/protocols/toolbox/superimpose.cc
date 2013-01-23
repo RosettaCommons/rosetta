@@ -251,7 +251,7 @@ void dump_as_pdb( std::string filename, Size n, FArray2_double& x,  FArray1D_dou
 }
 
 
-void fit_centered_coords( Size natoms, FArray1_double const& weights, FArray2_double& ref_coords, FArray2_double& coords, Matrix &R ) {
+void fit_centered_coords( Size natoms, FArray1_double const& weights, FArray2_double const& ref_coords, FArray2_double& coords, Matrix &R ) {
   rvec* xgmx;
   rvec* xrefgmx;
   Real* weights_gmx;

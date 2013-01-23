@@ -142,7 +142,7 @@ public:
 	virtual void generate_batch() = 0;
 
 	///@brief add structure to Archive.. return false if structure is rejected.
-	virtual bool add_structure( core::io::silent::SilentStructOP orig_from_batch );
+	virtual bool add_structure( core::io::silent::SilentStructOP orig_from_batch, Batch const& );
 
 	///@brief how many structures should be in archive .. varies from decoys().size() in startup phase.
 	core::Size nstruct() const { return nstruct_; };
@@ -198,7 +198,9 @@ protected:
 	virtual void count_structure( Batch const& batch, bool accepted  );
 	void count_removed_structures( core::Size n_removed );
 
-
+	void set_max_nstruct( core::Size setting ) {
+		max_nstruct_ = setting;
+	}
 
 	///@brief call to insert structure at position given by iterator
 	void add_structure_at_position( SilentStructs::iterator iss, core::io::silent::SilentStructOP new_decoy );
@@ -228,7 +230,7 @@ class DebugArchive : public ArchiveBase {
 public:
 	DebugArchive( ArchiveManagerAP ptr );
 
-	virtual bool add_structure( core::io::silent::SilentStructOP );
+	virtual bool add_structure( core::io::silent::SilentStructOP, Batch const& );
 
 	virtual bool finished() const { return ct_batches_ > 4; };
 	//	virtual bool ready_for_batch() const { return !finished() && (ct_batches_ < 3 || decoys().size() > 200); };

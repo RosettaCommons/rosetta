@@ -80,14 +80,21 @@ public:
   void calibrate( DecoyIterator const& begin, DecoyIterator const& end );
    //  void calibrate( core::io::silent::SilentFileData const& decoys );
 
+#if 0
   core::scoring::constraints::ConstraintSetOP generate_constraints( core::pose::Pose const& pose, bool centroid = false, core::Size min_seq_separation = 2 ) const;
+#endif
 
   void generate_fa_and_cen_constraints(
 	core::scoring::constraints::ConstraintSetOP fa_set,
 	core::scoring::constraints::ConstraintSetOP cen_set,
 	core::pose::Pose const& pose,
 	core::pose::Pose const& centroid_pose,
-	core::Size min_seq_separation
+	core::Size min_seq_separation,
+	core::Size min_quali,
+	core::Size max_quali,
+	core::Real padding = 0.0,
+	bool ignore_elimination_candidates = true,
+	bool elimination_candidates = false
   ) const;
 
   PeakAssignmentResidueMap const& assignments() const {
@@ -105,7 +112,7 @@ public:
   core::Size count_assignments() const;
   void delete_diagonal_peaks();
   void update_peak_volumina();
-  void network_analysis();
+  void network_analysis( ResonanceList const& );
   void set_trivial_decoy_compatibility_score();
   CrossPeaks const& peaks() const { return peaks_; }
   const_iterator begin() const { return peaks_.begin(); }

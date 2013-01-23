@@ -552,6 +552,14 @@ ArchiveManager::jobs_completed() {// core::Size batch_id, bool final, core::Size
 			tr.Debug << "add " << tags_to_read.size() << " structures to archive " << std::endl;
 
 			PROF_START( basic::ARCHIVE_EVAL_DECOYS );
+
+			{ //now update our batch information so that this is already known in read_structures
+				Batch& batch( batches_[ batch_id ] );
+				batch.set_decoys_returned( tags_in_file.size() );
+				if ( final ) {
+					batch.mark_as_finished();
+				}
+			}
 			//read structures and add to archive
 			theArchive_->read_structures( sfd, batch );
 			PROF_STOP( basic::ARCHIVE_EVAL_DECOYS );

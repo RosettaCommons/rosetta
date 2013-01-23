@@ -484,6 +484,7 @@ option.add( basic::options::OptionKeys::evaluation::rdc_target, "[vector] as rms
 option.add( basic::options::OptionKeys::evaluation::symmetric_rmsd, "calculate the rmsd symmetrically by checking all chain orderings" );
 option.add( basic::options::OptionKeys::evaluation::rdc_column, "[vector] column names for rdc_select" );
 option.add( basic::options::OptionKeys::evaluation::rdc, "[vector] rdc-files and column names for RDC calculation" );
+option.add( basic::options::OptionKeys::evaluation::built_in_rdc, "evaluate rdc from -in:file:rdc with standard score function and store under column xxx" );
 option.add( basic::options::OptionKeys::evaluation::jump_nr, "adds the JumpNrEvaluator for the nrjumps column" ).def(false);
 option.add( basic::options::OptionKeys::evaluation::score_exclude_res, "Calculates a select_score column based on all residues not excluded by the command line vector" );
 option.add( basic::options::OptionKeys::evaluation::score_sscore_short_helix, "defines the maximum length of a helix that is not scored if it terminates a loop" ).def(5);
@@ -659,10 +660,10 @@ option.add( basic::options::OptionKeys::fold_cst::reramp_cst_cycles, "in stage2 
 option.add( basic::options::OptionKeys::fold_cst::reramp_start_cstweight, "drop cst_weight to this value and ramp to 1.0 in stage2 -- needs reramp_cst_cycles > 0" ).def(0.01);
 option.add( basic::options::OptionKeys::fold_cst::reramp_iterations, "do X loops of annealing cycles" ).def(1);
 option.add( basic::options::OptionKeys::fold_cst::skip_on_noviolation_in_stage1, "if constraints report no violations --- skip cycles" ).def(false);
-option.add( basic::options::OptionKeys::fold_cst::stage1_ramp_cst_cycle_factor, "spend x*<standard cycles> on each step of sequence separation" ).def(0.25);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::stage2_constraint_threshold, "stop runs that violate this threshold at end of stage2" ).def(0);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::stage1_ramp_cst_cycle_factor, "spend x*<standard cycles> on each step of sequence separation" ).def(0.25);
+option.add( basic::options::OptionKeys::fold_cst::stage2_constraint_threshold, "stop runs that violate this threshold at end of stage2" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::ignore_sequence_seperation, "usually constraints are switched on according to their separation in the fold-tree" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::no_recover_low_at_constraint_switch, "dont recover low when max_seq_sep is increased" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::ramp_coord_cst, "ramp coord csts just like chainbreak-weights during fold-cst" ).def(false);

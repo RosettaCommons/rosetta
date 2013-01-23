@@ -148,7 +148,7 @@ void IterativeFullatom::generate_batch() {
 
 	//start new batch
 	Batch& batch( manager().start_new_batch() );
-	tr.Info << "\ngenerate batch from " <<name() << " " << batch.batch() << "\n";
+	tr.Info << "\ngenerate batch from " << name() << " " << batch.batch() << "\n";
 	mem_tr << "IterativeFullatom::generate_batch " << stage() << " " << batch.batch() << std::endl;
 	batch.set_intermediate_structs( false );
 

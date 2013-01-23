@@ -24,6 +24,7 @@
 
 // C++ headers
 #include <string>
+#include <cmath>
 #include <iostream>
 
 namespace protocols {
@@ -55,6 +56,7 @@ public:
 
   core::Real operator() ( core::Real freq ) const {
 		if ( !is_folded( freq ) ) return freq;
+		//e	return std::fmod( freq-start_, window_ ) + start_;   //modulus does not necessarily work right with negative values
     while( is_folded_down( freq ) ) { freq+=window_; }
     while( is_folded_up( freq ) ) { freq-=window_; }
     assert( !is_folded( freq ) );
@@ -62,7 +64,7 @@ public:
   }
 
 	bool is_folded() const {
-		return window_ > 0.1;
+		return window_ > 0; //< BOGUS_SW-1;
 	}
 
 	void show( std::ostream& os ) const {

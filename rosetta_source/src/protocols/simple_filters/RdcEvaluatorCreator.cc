@@ -95,7 +95,9 @@ void RdcEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eval )
 			eval.add_evaluation( new simple_filters::SelectRDC_Evaluator( empty_selection, column, fname ) );
 		} // iterate over tripletts in option -rmsd
 	}
-
+	if ( option[ OptionKeys::evaluation::built_in_rdc ].user() ) {
+		eval.add_evaluation( new simple_filters::RDC_Evaluator(option[ OptionKeys::evaluation::built_in_rdc ]()) );
+	} // iterate over tripletts in option -rmsd
 }
 
 std::string RdcEvaluatorCreator::type_name() const {

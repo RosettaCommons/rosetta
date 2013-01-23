@@ -20,6 +20,7 @@
 #include <protocols/noesy_assign/CrossPeak.hh>
 #include <protocols/noesy_assign/CrossPeakInfo.hh>
 #include <protocols/noesy_assign/ResonanceList.hh>
+#include <protocols/noesy_assign/PeakAssignmentParameters.hh>
 
 // Package Headers
 #include <protocols/noesy_assign/Exceptions.hh>
@@ -92,6 +93,14 @@ Size const TOL_LABEL( 3 );
 
 void PeakFileFormat::write_peak( std::ostream& os, Size ct, CrossPeak const& cp ) const {
 	std::ostringstream line_end;
+	using namespace ObjexxFCL::fmt;
+	line_end << " | ";
+	line_end << F( 5, 2, cp.cumulative_peak_volume() ) << " "
+					 << F( 5, 2, cp.probability() ) << " "
+					 << I( 3, (int)cp.quality_class() ) << " "
+		       << A( 15, cp.quality_class_str() ) << " "
+					 << F( 5, 2, cp.smallest_native_violation() ) << " ";
+
 	line_end << " #d " << cp.distance_bound();
 	if ( cp.eliminated( false /*recompute*/, true /*do_not_compute*/) ) line_end << " #eliminated: " << cp.elimination_reason();
 
@@ -134,7 +143,11 @@ void PeakFileFormat::write_header( std::ostream& os ) {
   std::string cyana_str;
   for ( Size ct = 1; ct <= atom_names.size(); ct++ ) {
     os << "#INAME " << ct << " " << atom_names[ ct ] << std::endl;
-    cyana_str += atom_names[ ct ];
+		if ( atom_names[ ct ].size()>1 ) {
+			cyana_str += "["+atom_names[ct]+"]";
+		}	else {
+			cyana_str += atom_names[ ct ];
+		}
   }
 	if ( info1_->fold_proton_resonance().is_folded() ) {
 		os << "#FOLD "<< dim << " " << info1_->fold_proton_resonance().start() << " " << info1_->fold_proton_resonance().end() << std::endl;
@@ -149,7 +162,7 @@ void PeakFileFormat::write_header( std::ostream& os ) {
 	if ( info2_->fold_label_resonance().is_folded() ) {
 		os << "#FOLD "<< 2 << " " << info2_->fold_label_resonance().start() << " " << info2_->fold_label_resonance().end() << std::endl;
 	}
-
+	os << "#MAX_NOE_DIST " << info1_->max_noe_distance() << std::endl;
   os << "#CYANAFORMAT " << cyana_str << std::endl;
   os << "#TOLERANCE ";
   for ( Size ct = 1; ct <= tolerances.size(); ct++ ) {
@@ -159,12 +172,12 @@ void PeakFileFormat::write_header( std::ostream& os ) {
 }
 
 bool PeakFileFormat::compatible_with_current_format( CrossPeak const& cp ) const {
-  return ( *info1_ == cp.info_struct( 1 ) && *info2_ == cp.info_struct( 2 ) );
+  return ( *info1_ == cp.info( 1 ) && *info2_ == cp.info( 2 ) );
 }
 
 void PeakFileFormat::set_format_from_peak( CrossPeak const& cp ) {
-  info1_ = new CrossPeakInfo( cp.info_struct( 1 ) );
-  info2_ = new CrossPeakInfo( cp.info_struct( 2 ) );
+  info1_ = new CrossPeakInfo( cp.info( 1 ) );
+  info2_ = new CrossPeakInfo( cp.info( 2 ) );
   col2proton_.clear();
   col2islabel_.clear();
 
@@ -198,15 +211,19 @@ void PeakFileFormat::read_header( std::istream& is, std::string& next_line ) {
 	column_labels_.clear();
 	info1_ = info2_ = NULL;
 	using namespace ObjexxFCL;
+	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
   Size dim( 0 );
   utility::vector1< std::string > atom_names;
   utility::vector1< core::Real > tolerances;
 	utility::vector1< core::Real > fold_starts( 4, 0);
 	utility::vector1< core::Real > fold_ends( 4, 0);
 
+	Real max_noe_dist( params.calibration_max_noe_dist_ );
+
 	bool HN_column_labels( false ); //true if we find a HC or HN ( instead of h vs H )
   std::string line;
 	std::string cyana_string("none");
+	bool simnoesy( false );
   while ( true ) {
     std::istringstream line_stream;
 		if ( next_line.size() ) {
@@ -255,22 +272,37 @@ void PeakFileFormat::read_header( std::istream& is, std::string& next_line ) {
 			if ( name == "1H" ) name = "HN";
 			if ( name == "C13" || name == "13C" ) name = "C";
 			if ( name == "N15" || name == "15N" ) name = "N";
+			if ( name == "SIM" ) name = "NC";
+			if ( name == "sim" ) name = "nc";
+			if ( name == "CN" ) name = "NC" ;
+			if ( name == "cn" ) name = "nc" ;
       if ( atom_names.size() < index ) {
 				tr.Error << "only " << dim << "D  format; but " << index << " index found in #INAME line " << line << std::endl;
 				continue;
       }
+			if ( name == "nc" || name =="NC" ) { simnoesy = true; }
 			if ( atom_names[ index ] != "" ) tr.Warning << "found index" << index << "in two different #INAME lines "<< std::endl;
       atom_names[ index ] = name;
     } else if ( tag == "#CYANAFORMAT" ) {
 			line_stream >> cyana_string;
-		} else if ( tag == "#FOLD" ) {
+	// 	} else if (tag == "#SIMNOESY") {
+// 			simnoesy = true;
+		}	else if ( tag == "#FOLD" ) {
 			Size fold_dim;
-			Size start;
-			Size end;
+			Real start;
+			Real end;
 			line_stream >> fold_dim >> start >> end;
 			fold_starts[ fold_dim ]=start;
 			fold_ends[ fold_dim ]=end;
-    } else if ( tag == "#TOLERANCE" ) {
+		} else if ( tag == "#IGNORE_NEGATIVE_INTENSITY" ) {
+			set_ignore_negative_intensity();
+		} else if ( tag == "#MAX_NOE_DIST" ) {
+			if ( max_noe_dist < 0.01 ) {
+				tr.Warning << "MAX_NOE_DIST flag in peak-file ignored because of 0.0 in -noesy::calibration::max_noe_dist" << std::endl;
+			} else {
+				line_stream >> max_noe_dist;
+			}
+		} else if ( tag == "#TOLERANCE" ) {
       for ( Size i = 1; i <= dim; i++ ) {
 				core::Real val;
 				line_stream >> val;
@@ -310,6 +342,7 @@ void PeakFileFormat::read_header( std::istream& is, std::string& next_line ) {
 	}
   for ( Size i = 1; i<=dim; i++ ) {
 		if ( HN_column_labels && cyana_string != "none" ) {
+			if ( simnoesy ) throw utility::excn::EXCN_BadInput("cannot use HN for protons when SimNOESY ( i.e., NC for label atom name");
 			atom_names[ i ]=cyana_string[ i-1 ];
 		}
     if ( atom_names[ i ] == "h"
@@ -319,7 +352,7 @@ void PeakFileFormat::read_header( std::istream& is, std::string& next_line ) {
       col2proton_[ i ] = 2;
 			if ( tolerances[ i ]==0.0 ) tolerances[ i ]=default_tolerance_h;
       if ( !info2_ ) {
-				info2_ = new CrossPeakInfo( uppercased( atom_names[ i ] ), "", tolerances[ i ], 0.0 );
+				info2_ = new CrossPeakInfo( uppercased( atom_names[ i ] ), "", max_noe_dist, tolerances[ i ], 0.0 );
       } else {
 				info2_->set_proton( uppercased( atom_names[ i ] ), tolerances[ i ] );
       }
@@ -328,25 +361,25 @@ void PeakFileFormat::read_header( std::istream& is, std::string& next_line ) {
 			if ( HN_column_labels ) atom_names[ i ] = "h";
 			if ( tolerances[ i ]==0.0 ) tolerances[ i ]=default_tolerance_H;
       if ( !info1_ ) {
-				info1_ = new CrossPeakInfo( atom_names[ i ], "", tolerances[ i ], 0.0 );
+				info1_ = new CrossPeakInfo( atom_names[ i ], "", max_noe_dist, tolerances[ i ], 0.0 );
       } else {
 				info1_->set_proton( atom_names[ i ], tolerances[ i ] );
       }
-    } else if ( atom_names[ i ] == "c" || atom_names[ i ] == "n" ) {
+    } else if ( atom_names[ i ] == "c" || atom_names[ i ] == "n" || atom_names[ i ] == "nc" ) {
       col2proton_[ i ] = 2;
       col2islabel_[ i ] = true;
 			if ( tolerances[ i ]==0.0 ) tolerances[ i ]=	option[ noesy_weights::tolerances ][ TOL_LABEL ];
       if ( !info2_ ) {
-				info2_ = new CrossPeakInfo( "", uppercased( atom_names[ i ] ), 0.0, tolerances[ i ] );
+				info2_ = new CrossPeakInfo( "", uppercased( atom_names[ i ] ), max_noe_dist, 0.0, tolerances[ i ] );
       } else {
 				info2_->set_label( uppercased( atom_names[ i ] ), tolerances[ i ] );
       }
-    } else if ( atom_names[ i ] == "C" || atom_names[ i ] == "N" ) {
+    } else if ( atom_names[ i ] == "C" || atom_names[ i ] == "N" || atom_names[ i ] == "NC"  ) {
       col2proton_[ i ] = 1;
       col2islabel_[ i ] = true;
 			if ( tolerances[ i ]==0.0 ) tolerances[ i ]=	option[ noesy_weights::tolerances ][ TOL_LABEL ];
       if ( !info1_ ) {
-				info1_ = new CrossPeakInfo( "", atom_names[ i ], 0.0, tolerances[ i ] );
+				info1_ = new CrossPeakInfo( "", atom_names[ i ], max_noe_dist, 0.0, tolerances[ i ] );
       } else {
 				info1_->set_label( atom_names[ i ], tolerances[ i ] );
       }
@@ -588,7 +621,7 @@ void PeakFileFormat::read_assignments( std::istream& is, std::istream& rest_is, 
 
 void PeakFileFormat::write_assignment_indent( std::ostream& os, CrossPeak const& cp ) const {
 	os << std::endl << "                                                                ";
-	if ( cp.has_label( 1 ) && cp.has_label( 2 ) ) os << "                 ";
+	if ( cp.has_label( 1 ) && cp.has_label( 2 ) ) os << "         ";
 }
 
 void PeakFileFormat::write_assignment( std::ostream& os, PeakAssignment const& pa ) const {
@@ -644,8 +677,8 @@ void PeakFileFormat::write_assignments( std::ostream& os, CrossPeak const& cp, s
 				write_assignment( os, **it );
 				write_assignment_stats( os, **it );
 			}
+			if ( assignments_written == 1 )	os << line_end;
 		}
-		if ( assignments_written == 1 )	os << line_end;
 	}
 	if ( assignments_written == 0 ) write_nil_assignment( os );
 }

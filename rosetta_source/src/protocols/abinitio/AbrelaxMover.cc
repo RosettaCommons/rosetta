@@ -351,12 +351,17 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 	if ( relax_protocol() || b_return_unrelaxed_fullatom_ ) {
 		tr << "AbrelaxMover: switch to fullatom" << std::endl;
 		jd2::get_current_job()->add_string_real_pair( "prefa_centroid_score", 	((sampling_protocol()->current_scorefxn())( pose ) ) );
+		tr.Info << "prefa_centroid_score:\n ";
+		(sampling_protocol()->current_scorefxn()).show( tr.Info, pose );
+		tr.Info << std::endl;
 		core::scoring::ScoreFunctionOP clean_score3( core::scoring::ScoreFunctionFactory::create_score_function( "score3" ) );
 		clean_score3->set_weight( scoring::linear_chainbreak, 1.33 );
 		clean_score3->set_weight( scoring::overlap_chainbreak, 1.0 );
-		clean_score3->set_weight( scoring::chainbreak, 1.0 );
+		//		clean_score3->set_weight( scoring::chainbreak, 1.0 );
 		jd2::get_current_job()->add_string_real_pair( "prefa_clean_score3", ((*clean_score3)(pose)) );
-
+		tr.Info << "prefa_clean_score3:\n ";
+		clean_score3->show( tr.Info, pose );
+		tr.Info << std::endl;
 		topology_broker()->switch_to_fullatom( pose );
 
 		// we're now in fullatom mode - so upate the score function.
@@ -422,6 +427,7 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 	if ( !b_return_unrelaxed_fullatom_ ) (*last_scorefxn)( pose );
 
 	basic::mem_tr << "AbrelaxMover::apply end" << std::endl;
+	basic::show_time( tr,  "AbrelaxMover: finished ..."+jd2::current_batch()+" "+jd2::current_output_name() );
 }
 
 std::string AbrelaxMover::get_name() const {

@@ -62,6 +62,7 @@
 #include <protocols/frag_picker/scores/ProfileScoreStructL1.hh>
 #include <protocols/frag_picker/scores/FragmentCrmsdResDepth.hh>
 
+#include <basic/Tracer.hh>
 
 #include <utility/io/izstream.hh>
 
@@ -73,6 +74,7 @@
 #include <protocols/frag_picker/CommonFragmentComparators.hh>
 #include <utility/vector1.hh>
 
+static basic::Tracer tr("protocols.frag_picker.FragmentScoreManager");
 
 namespace protocols {
 namespace frag_picker {
@@ -175,13 +177,13 @@ void FragmentScoreManager::describe_fragments(utility::vector1<std::pair<
 		std::ostream& out) {
 
 	using namespace ObjexxFCL::fmt;
-
+	if ( pairs.size() == 0 ) return;
 	bool if_quota = false;
 	if( pairs[1].second->get_quota_score() < 999.98 ) if_quota = true;
-        out << "#" << RJ(10, "query_pos ");
-        out << RJ(10, "vall_pos ");
+	out << "#" << RJ(10, "query_pos ");
+	out << RJ(10, "vall_pos ");
 	out << RJ(6, "pdbid");
-        out << " c ss ";
+	out << " c ss ";
 	utility::vector1<Size> w(scores_.size()+4);
 	for (Size i = 1; i <= scores_.size(); i++) {
 		w[i] = width_.find(scores_[i])->second;
@@ -199,7 +201,10 @@ void FragmentScoreManager::describe_fragments(utility::vector1<std::pair<
 	    out << "  TOTAL  FRAG_ID"<<std::endl;
 	}
 	for (Size iF = 1; iF <= pairs.size(); ++iF) {
-
+		if ( !pairs[iF].first || !pairs[iF].second ) {
+			tr.Warning << "final_frag candidate " << iF << " is corrupted. skipping... " << std::endl;
+			continue;
+		}
 		FragmentCandidateOP fr = pairs[iF].first;
 		FragmentScoreMapOP sc = pairs[iF].second;
 		VallResidueOP r = fr->get_residue(1);

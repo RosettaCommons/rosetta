@@ -420,6 +420,7 @@ bool keep_constraint( ConstraintCOP cst, bool redundant, ObjexxFCL::FArray2D_int
 
 void skip_redundant_constraints( ConstraintCOPs& in, Size total_residue, Size influence_width ) {
 	if ( influence_width == 0 ) return;
+	--influence_width; //1 means now same residue
 	tr.Info << " skip redundant constraints... starting with " << in.size() << " constraints" << std::endl;
 	using namespace scoring::constraints;
 	utility::vector1< ConstraintCOP > out;
@@ -479,6 +480,17 @@ void skip_redundant_constraints( ConstraintCOPs& in, Size total_residue, Size in
 	}
 	tr.Info << "remaining non-redundant constraints " << in.size() << std::endl;
 }
+
+void drop_constraints( ConstraintCOPs& in, core::Real drop_rate ) {
+	utility::vector1< ConstraintCOP > out;
+	for (	utility::vector1< ConstraintCOP >::const_iterator it = in.begin(); it != in.end(); ++it ) {
+		if ( RG.uniform() >= drop_rate ) {
+			out.push_back( *it );
+		}
+	}
+	in = out;
+}
+
 
 } // namespace constraints
 } // namespace scoring

@@ -18,7 +18,7 @@
 // Unit Headers
 #include <protocols/noesy_assign/Resonance.hh>
 #include <protocols/noesy_assign/ResonanceList.hh>
-
+#include <protocols/noesy_assign/FloatingResonance.hh>
 
 
 // Package Headers
@@ -28,10 +28,11 @@
 
 // Project Headers
 #include <core/chemical/AA.hh>
+#include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.hh>
 
 // Utility headers
 #include <ObjexxFCL/format.hh>
-
+#include <utility/string_util.hh>
 // #include <utility/exit.hh>
 // #include <utility/excn/Exceptions.hh>
 // #include <utility/vector1.fwd.hh>
@@ -48,9 +49,9 @@
 #include <cstdlib>
 #include <string>
 #include <deque>
-
+#include <sstream>
 #include <utility/vector1.hh>
-
+#include <boost/tokenizer.hpp>
 
 
 static basic::Tracer tr("protocols.noesy_assign.resonances");
@@ -91,14 +92,16 @@ core::chemical::AA ResonanceList::aa_from_resid( core::Size resi ) const {
 	  QB   1.00
 		CD  13.00
 */
-void process_last_resonances( std::deque< Resonance >& last_resonances, bool drain=false ) {
+void process_last_resonances( std::deque< ResonanceOP >& last_resonances, bool drain=false ) {
 
-  std::string combine_name;
-  Resonance first_res = last_resonances.front();
+
+  ResonanceOP first_res = last_resonances.front();
   last_resonances.pop_front();
-
+	first_res->combine( last_resonances, drain );
+	last_resonances.push_front( first_res );
+	/*
 	//is this a HB1, HG1 or a 1HG2 type of name ?
-  bool single_char ( first_res.name().size() == 3 );
+  bool single_char ( first_res->name().size() == 3 );
 
 	//do we have enough protons for a QQX type of combined atom. (2 methyl groups... )
   bool double_methyl( last_resonances.size() == 6 );
@@ -107,38 +110,41 @@ void process_last_resonances( std::deque< Resonance >& last_resonances, bool dra
   Size str_cmp_length( 1 );
 
   std::string pseudo_letter( "Q" ); //default, single methyl group, proton
-  if ( first_res.name().substr(0,1)=="C" ) pseudo_letter = "C"; //not default, we don't have a proton
-	if ( first_res.name().substr(0,1)=="Q" ) pseudo_letter = "QQ"; //not default, this is a double-methyl...
+  if ( first_res->name().substr(0,1)=="C" ) pseudo_letter = "C"; //not default, we don't have a proton
+	if ( first_res->name().substr(0,1)=="Q" ) pseudo_letter = "QQ"; //not default, this is a double-methyl...
 	//if the two protons stuffed into the ambiguity queue are, .e.g, QG1 + QG2 --> QQG
 
+	core::Real intensity_sum( first_res->intensity() );
 	// construct combined atom name, QX, QQX
 	if ( single_char ) { 	//things like HB1+HB2 or QG1+QG2
-    combine_name=pseudo_letter+first_res.name().substr(1,1);
+    combine_name=pseudo_letter+first_res->name().substr(1,1);
   } else if ( double_methyl ) { //-->QQX
-    combine_name=pseudo_letter+pseudo_letter+first_res.name().substr(1,1);
+    combine_name=pseudo_letter+pseudo_letter+first_res->name().substr(1,1);
   } else { // HG11+HG12+HG13 --> QG1
-    combine_name=pseudo_letter+first_res.name().substr(1,2);
+    combine_name=pseudo_letter+first_res->name().substr(1,2);
     str_cmp_length=2;
   }
 
 	//now figure out, how many atoms can be combined...
 	Size limit( drain ? 0 : 1 ); //should we go to the very end, or leave last atom behind...
   while( last_resonances.size() > limit ) {//check others
-    if ( first_res.name().substr( 1, str_cmp_length ) == last_resonances.front().name().substr( 1, str_cmp_length ) ) {
+    if ( first_res->name().substr( 1, str_cmp_length ) == last_resonances.front()->name().substr( 1, str_cmp_length ) ) {
+			intensity_sum+=last_resonances.front()->intensity();
 			last_resonances.pop_front();
 		} else { //could not combine...
-			combine_name = first_res.name();
+			combine_name = first_res->name();
 			break;
 		}
   } //now replace front of deque with the combined atom
-  last_resonances.push_front( Resonance( first_res.label(), first_res.freq(), first_res.error(), core::id::NamedAtomID( combine_name, first_res.resid() ), first_res.aa() ) );
+  last_resonances.push_front( new Resonance( first_res->label(), first_res->freq(), first_res->error(), core::id::NamedAtomID( combine_name, first_res->resid() ), first_res->aa(), intensity_sum ) );
+	*/
 }
 
 void ResonanceList::read_from_stream( std::istream& is ) {
   using namespace core::chemical; //for AA
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
   std::string line;
-  std::deque< Resonance > last_resonances;
+  std::deque< ResonanceOP > last_resonances;
   while( getline( is, line ) ) {
     core::Size label;
     core::Real freq;
@@ -185,6 +191,50 @@ void ResonanceList::read_from_stream( std::istream& is ) {
     } else { //optional field was not present... use the pre-supplied fasta-sequence
 		  aa = aa_from_resid( resn );
 		}
+		line_stream >> aa_name; //1-letter
+
+		Real intensity( 1.0 );
+		line_stream >> intensity;
+		if ( !line_stream ) { //option field intensity present ?
+			intensity=1.0;
+		}
+
+		std::string fl_tag;
+		line_stream >> fl_tag;
+		typedef std::set< core::Size > FloatList;
+		FloatList floats;
+		if ( line_stream ) {
+			if ( fl_tag[0]!='#' && fl_tag[0]!='[' ) {
+				throw utility::excn::EXCN_BadInput( "did not recognize item " +fl_tag + " in line " + line );
+			} else {
+				std::stringstream float_info;
+				fl_tag[0]=' ';
+				bool closed( false );
+				if ( fl_tag[ fl_tag.size()-1 ]==']' ) {
+						fl_tag.replace( fl_tag.size()-1, 1, " ");
+						closed = true;
+				}
+				float_info << fl_tag;
+				while ( line_stream && !closed ) {
+					line_stream >> fl_tag;
+					if ( fl_tag[ fl_tag.size()-1 ]==']' ) {
+						fl_tag.replace( fl_tag.size()-1, 1, " ");
+						closed = true;
+					}
+					float_info << fl_tag;
+				}
+				if ( !closed ) {
+					throw utility::excn::EXCN_BadInput( "expect closing ] in line " + line );
+				}
+				char cstr[100];
+				while ( float_info.getline(cstr, 50, ',' ) ) {
+					tr.Debug << "add " << cstr << " to float group for resonance " << label << std::endl;
+					floats.insert( utility::string2int( cstr ));
+					tr.Debug << floats.size() << std::endl;
+				}
+			}
+		}
+
 
 		// replace some names...
 		if ( name == "HN" ) name ="H";
@@ -199,18 +249,23 @@ void ResonanceList::read_from_stream( std::istream& is ) {
 		if ( aa == aa_ile && name == "HG2" ) name = "QG2";
 		if ( aa == aa_ile && name == "HD1" ) name = "QD1";
 
+		ResonanceOP save_resonance( new Resonance( label, freq, error, core::id::NamedAtomID( name, resn ), aa, intensity ) );
+		if ( floats.size() ) {
+			save_resonance = new FloatingResonance( *save_resonance, floats, this );
+		}
+
 		// before assigning to Resonance List put it in DEQUE (push_back), maybe it will get combined with next resonance...
-    last_resonances.push_back( Resonance( label, freq, error, core::id::NamedAtomID( name, resn ), aa ) );
-    if ( freq != last_resonances.front().freq() ) { ///if we have just read a new frequency we need to finalize what is in the DEQUE
+    last_resonances.push_back( save_resonance );
+    if ( freq != last_resonances.front()->freq() ) { ///if we have just read a new frequency we need to finalize what is in the DEQUE
       if ( last_resonances.size() > 2 ) process_last_resonances( last_resonances ); //just 2 --> 1 old freq and 1 new freq
-      map_[ last_resonances.front().label() ] = last_resonances.front(); ///assign most forward value in our DEQUE
+      map_[ last_resonances.front()->label() ] = last_resonances.front(); ///assign most forward value in our DEQUE
       last_resonances.pop_front(); ///remove the just-assigned value
     }
   }
 
 	//still unprocessed data in DEQUE ?
   if ( last_resonances.size() > 1 ) process_last_resonances( last_resonances, true /*drain*/ );
-  map_[ last_resonances.front().label() ]= last_resonances.front();
+  map_[ last_resonances.front()->label() ]= last_resonances.front();
 
 	//ASSERT: we have captured everything...
   runtime_assert( last_resonances.size() == 1 );
@@ -222,18 +277,35 @@ void ResonanceList::read_from_stream( std::istream& is ) {
 
 	//post-process input...
 	update_residue_map();
+
+	//fix intensities...
+	if ( params.ignore_resonancefile_intensities_ ) {
+		for ( ResonanceIDs::const_iterator it = map_.begin(); it != map_.end(); ++it ) {
+			using core::scoring::constraints::parse_NMR_name;
+			core::scoring::constraints::NamedAtoms atoms;
+			parse_NMR_name( it->second->name(), it->second->resid(), it->second->aa(), atoms );
+			it->second->set_intensity( atoms.size() );
+		}
+	}
+
+	//fix floating assignments...
+	for ( ResonanceIDs::const_iterator it = map_.begin(); it != map_.end(); ++it ) {
+
+	}
+
 }
 
 ///@brief write ResonanceList to stream
 void ResonanceList::write_to_stream( std::ostream& os   ) const {
   for ( ResonanceIDs::const_iterator it = map_.begin(); it != map_.end(); ++it ) {
-    runtime_assert( it->first == it->second.label() );
-    it->second.write_to_stream( os );
+    runtime_assert( it->first == it->second->label() );
     if ( sequence_.size() ) {
-      using namespace core::chemical; //for AA
-			AA aa( aa_from_resid( it->second.resid() ) );
-      os << " " << name_from_aa( aa ) << " " << oneletter_code_from_aa( aa );
-    }
+			using namespace core::chemical; //for AA
+			AA aa( aa_from_resid( it->second->resid() ) );
+			it->second->write_to_stream( os, aa );
+		} else {
+			it->second->write_to_stream( os );
+		}
     os << std::endl;
   }
 }
@@ -263,13 +335,13 @@ void ResonanceList::write_talos_format( std::ostream& os, bool backbone_only ) c
 
 	///write resonances
   for ( ResonanceIDs::const_iterator it = map_.begin(); it != map_.end(); ++it ) {
-    runtime_assert( it->first == it->second.label() );
-		if ( sequence_.size() < it->second.resid() ) {
-			tr.Error << " no sequence information for residue " << it->second.resid() << std::endl;
+    runtime_assert( it->first == it->second->label() );
+		if ( sequence_.size() < it->second->resid() ) {
+			tr.Error << " no sequence information for residue " << it->second->resid() << std::endl;
 			utility_exit_with_message( "sequence information required for all residues to write TALOS format -- use -in:file:fasta" );
 		}
 		using namespace core::chemical; //for AA
-		std::string atom( it->second.name() );
+		std::string atom( it->second->name() );
 
 		//are we backbone
 		bool const is_backbone( //backbone im Sinne von SPARTA
@@ -282,11 +354,11 @@ void ResonanceList::write_talos_format( std::ostream& os, bool backbone_only ) c
 			if ( atom=="1HA" ) atom="HA3";
 			if ( atom=="2HA" ) atom="HA2";
 			if ( atom=="3HA" ) atom="HA1";
-			AA aa( aa_from_resid( it->second.resid() ) );
-			os << ObjexxFCL::fmt::RJ( 5, it->second.resid() ) << " ";
+			AA aa( aa_from_resid( it->second->resid() ) );
+			os << ObjexxFCL::fmt::RJ( 5, it->second->resid() ) << " ";
 			os << oneletter_code_from_aa( aa ) << " ";
 			os << ObjexxFCL::fmt::RJ( 3, atom=="H" ? "HN" : atom ) << " ";
-			os << ObjexxFCL::fmt::F( 7, 3, it->second.freq() ) << std::endl;
+			os << ObjexxFCL::fmt::F( 7, 3, it->second->freq() ) << std::endl;
 		}
 	}
 	os << std::endl;
@@ -299,11 +371,11 @@ Resonance const& ResonanceList::operator[] ( core::id::NamedAtomID const& atom )
 	if ( it_res != by_resid_.end() ) {
 		Resonances const& reso_list( it_res->second );
 		for ( Resonances::const_iterator it = reso_list.begin(); it != reso_list.end(); ++it ) {
-			if ( it->atom() == atom ) return *it;
+			if ( (*it)->atom() == atom ) return **it;
 		}
 	}
 	throw EXCN_UnknownResonance( atom, "can't find atom ");
-  return map_.begin()->second; //to make compiler happy
+  return *(map_.begin()->second); //to make compiler happy
 }
 
 ///retrieve Resonance ---  throws EXCN_UnknonwResonance if atom not found
@@ -312,15 +384,15 @@ Resonance const& ResonanceList::operator[] ( core::Size key ) const {
   if ( iter == map_.end() ) {
     throw EXCN_UnknownResonance( id::BOGUS_NAMED_ATOM_ID, "can't find resonance " + ObjexxFCL::string_of( key ) );
   }
-  return iter->second;
+  return *(iter->second);
 }
 
 ///create map with all resonances sorted by residue number
 void ResonanceList::update_residue_map() {
 	by_resid_.clear();
 	for ( ResonanceIDs::const_iterator it = map_.begin(); it != map_.end(); ++it ) {
-    runtime_assert( it->first == it->second.label() );
-		by_resid_[ it->second.resid() ].push_back( it->second );
+    runtime_assert( it->first == it->second->label() );
+		by_resid_[ it->second->resid() ].push_back( it->second );
 	}
 }
 

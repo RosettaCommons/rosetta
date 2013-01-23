@@ -64,12 +64,16 @@ ResidueMap (typedef) is a map from residue number to a vector of Resonances.
 class ResonanceList : public utility::pointer::ReferenceCount {
 
 public:
-	typedef utility::vector1< Resonance > Resonances;
+	typedef utility::vector1< ResonanceOP > Resonances;
 
 private:
 	typedef std::map< core::Size, Resonances > ResidueMap;
-  typedef std::map< core::Size, Resonance > ResonanceIDs;
+  typedef std::map< core::Size, ResonanceOP > ResonanceIDs;
 
+	ResonanceList( ResonanceList const& a )://private copy-c'stor to avoid that FloatingResonances have out-dated pointers.
+		utility::pointer::ReferenceCount(a) //make compiler happy
+	{};
+	ResonanceList& operator=( ResonanceList const& ) { return *this; };
 public:
 	///@brief Constructor
   ResonanceList( std::string const& sequence );
@@ -121,7 +125,7 @@ public:
 
 protected:
 	///@brief retrieve a Resonance by ResonanceID  --- no error checking
-  Resonance const& operator[] ( core::Size key ) { return map_[ key ]; };
+  Resonance const& operator[] ( core::Size key ) { return *map_[ key ]; };
 
 	///@brief sort Resonances by residue number and store in by_resid_
 	void update_residue_map();

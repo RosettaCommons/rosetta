@@ -205,7 +205,7 @@ void
 SilentTrajectoryRecorder::observe_after_metropolis(
 	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 )
-{
+{ ///this is only for tracer output !
 	protocols::moves::MonteCarlo const& mc( *(metropolis_hastings_mover.monte_carlo()) );
 	Pose const& pose( mc.last_accepted_pose() );
 	if (step_count() % std::max(stride(),(core::Size)500) == 0) {

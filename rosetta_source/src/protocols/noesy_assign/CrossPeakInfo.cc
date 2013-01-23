@@ -46,6 +46,8 @@
 #include <string>
 
 #include <utility/vector1.hh>
+// Third-party Headers
+#include <boost/functional/hash.hpp>
 
 
 
@@ -72,7 +74,15 @@ void CrossPeakInfo::show( std::ostream& os ) const {
 	fold_proton_resonance_.show( os );
 	os << "LABEL: ";
 	fold_label_resonance_.show( os );
+	os << "MAX_NOE_DIST: " << max_noe_distance_;
 }
+
+void CrossPeakInfo::set_filename( std::string filename ) {
+	filename_ = filename;
+	exp_hash_ = boost::hash_value( filename );
+}
+
+
 
 std::ostream& operator<< ( std::ostream& os, CrossPeakInfo const& cpi ) {
 	cpi.show( os );
@@ -82,7 +92,7 @@ std::ostream& operator<< ( std::ostream& os, CrossPeakInfo const& cpi ) {
 
 std::string CrossPeakInfo::label_atom_name( std::string const& proton_name, core::chemical::AA aa ) const {
   using namespace core::chemical; //for AA
-  if ( label_atom_type_ == "N" ) {
+  if ( label_atom_type_ == "N" or label_atom_type_ == "NC" ) {
     if ( aa == aa_arg ) {
       if ( proton_name == "HE" ) return "NE";
       if ( proton_name.substr(0,2) == "HH" ) return "N"+proton_name.substr(1,2); //HH11 HH12 HH21 HH22
@@ -103,7 +113,7 @@ std::string CrossPeakInfo::label_atom_name( std::string const& proton_name, core
   } // atom type is "N"
 
   std::string name;
-  if ( label_atom_type_ == "C" ) {
+  if ( label_atom_type_ == "C" or label_atom_type_ == "NC" ) {
 		if ( proton_name[ 0 ] == 'Q' && proton_name[ 1 ] == 'Q' ) { //QQX
 			name = "C" + proton_name.substr(2,1);
 			return name;

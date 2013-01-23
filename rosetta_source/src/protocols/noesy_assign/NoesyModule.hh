@@ -66,17 +66,21 @@ public:
 
   ///@brief assign NOE data, use models provided by DecoyIterator for scoring and restraint exclusion, if cycle=0 read cycle from cmd-line
   template< class DecoyIterator >
-  void assign( DecoyIterator const& begin, DecoyIterator const& end, core::Size cycle = 0 );
+  void assign( DecoyIterator const& begin, DecoyIterator const& end );
 
   ///@brief same as above, but decoy file will be determined from commandline and read directly
-  void assign ( core::Size cycle = 0 );
+  void assign ();
 
   ///@brief after assignment --> create appropriate constraints
   void generate_constraint_files(
       core::pose::Pose const& pose,
       std::string const& cst_fa_file,
       std::string const& cst_centroid_file,
-      core::Size min_seq_separation
+      core::Size min_seq_separation,
+      core::Size min_quali = 0,
+      core::Size max_quali = 4,
+      bool ignore_elimination_candidates = true,
+      bool elimination_candidates = false
   ) const;
 
   ///@brief write assignments into peak-file...
@@ -95,6 +99,8 @@ public:
   ///@brief return resonance assignments (prot-file)
   ResonanceList const& resonances() const { return *main_resonances_; }
 
+  void add_dist_viol_to_assignments( core::pose::Pose native_pose);
+
 private:
 
   ///@brief return all input files
@@ -104,6 +110,7 @@ private:
   ///@brief private data, peak-list and master-resonances (sometimes different resonances for different peak-lists, thus the name)
   CrossPeakListOP crosspeaks_;
   ResonanceListOP main_resonances_;
+
 };
 
 }

@@ -170,28 +170,35 @@ utility::vector1<FragmentCandidateOP> read_fragment_candidates(
 
 /// @brief Prints fragment data, the output can be directly loaded to minirosetta
 void FragmentCandidate::print_fragment(std::ostream& out, scores::FragmentScoreMapOP sc, scores::FragmentScoreManagerOP ms) {
-
-		using namespace basic::options;
-		using namespace basic::options::OptionKeys;
-		bool if_ca_in_output = false;
-		//bool score_in_output = false;
-		if (option[frags::write_ca_coordinates].user())
-			if_ca_in_output = option[frags::write_ca_coordinates]();
-		// optionally add the total score as a comment line.
-		// code for reading this score is in src/core/fragment/ConstantLengthFragSet.cc
-		if (option[frags::write_scores].user() && option[frags::write_scores]() && sc && ms)
-			out << "# score " << F(9,3, ms->total_score(sc)) << std::endl;
-		for (Size i = 1; i <= fragmentLength_; ++i) {
-			VallResidueOP r = get_residue(i);
-			char aa_upper( toupper(r->aa()) );
-			out << " " << get_pdb_id() << " " << get_chain_id() << " " << I(5,r->resi())
-					<<" " << aa_upper << " " << r->ss() << F(9, 3, r->phi())
-					<< F(9, 3, r->psi()) << F(9, 3, r->omega());
-			if (if_ca_in_output)
-				out << F(9, 3,r->x()) << F(9, 3, r->y()) << F(9, 3, r->z());
-			out << std::endl;
-		}
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	bool if_ca_in_output = false;
+	//bool score_in_output = false;
+	if ( option[frags::write_ca_coordinates].user() ) {
+		//		std::cerr << "pf 2" << std::endl;
+		if_ca_in_output = option[frags::write_ca_coordinates]();
 	}
+	// optionally add the total score as a comment line.
+	// code for reading this score is in src/core/fragment/ConstantLengthFragSet.cc
+	if (option[frags::write_scores].user() && option[frags::write_scores]() && sc && ms) {
+		out << "# score " << F(9,3, ms->total_score(sc)) << std::endl;
+	}
+	for ( Size i = 1; i <= fragmentLength_; ++i ) {
+		//		std::cerr << "pf 4 " << i << std::endl;
+		VallResidueOP r = get_residue(i);
+		if ( !r ) continue;
+		//		std::cerr << "pf 5 " << i << std::endl;
+		char aa_upper( toupper(r->aa()) );
+		out << " " << get_pdb_id() << " " << get_chain_id() << " " << I(5,r->resi())
+				<<" " << aa_upper << " " << r->ss() << F(9, 3, r->phi())
+				<< F(9, 3, r->psi()) << F(9, 3, r->omega());
+		if ( if_ca_in_output ) {
+			out << F(9, 3,r->x()) << F(9, 3, r->y()) << F(9, 3, r->z());
+		}
+		out << std::endl;
+	}
+}
+
 
 /* To be used in the nearest future...
 ConstantLengthFragSet FragmentCandidate::create_frag_set(utility::vector1<std::pair<

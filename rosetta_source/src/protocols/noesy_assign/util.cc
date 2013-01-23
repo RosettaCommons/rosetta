@@ -16,13 +16,10 @@
 /// @author Oliver Lange
 
 // Unit Headers
-//#include <protocols/noesy_assign/PeakAssignment.hh>
-// AUTO-REMOVED #include <protocols/noesy_assign/CrossPeakList.hh>
-
-// AUTO-REMOVED #include <protocols/noesy_assign/ResonanceList.hh>
 
 // Package Headers
-//#include <protocols/noesy_assign/Exceptions.hh>
+#include <protocols/noesy_assign/CovalentCompliance.hh>
+
 
 // Project Headers
 #include <core/id/NamedAtomID.hh>
@@ -66,71 +63,9 @@ namespace noesy_assign {
 
 using namespace core;
 
-bool covalent_compliance( core::id::NamedAtomID const& _atom1, core::id::NamedAtomID const& _atom2 ) {
-	bool flip = _atom1.rsd() > _atom2.rsd();
-	core::id::NamedAtomID const& atom1( flip ? _atom2 : _atom1 );
-	core::id::NamedAtomID const& atom2( flip ? _atom1 : _atom2 );
-  //, core::pose::Pose const& pose, Real dmax ) {
-
-  //compute upper distances for atoms less than 2 torsions apart.
-  //if residues are not sequential this we will not happen
-  if ( atom2.rsd() - atom1.rsd() > 1 ) return false;
-
-  if ( atom1.rsd() != atom2.rsd() ) { //sequential --- only Ha - H
-    if ( atom1.atom() == "HA" && atom2.atom() == "H" ) {
-      return true;
-    }
-    //no more sequential cases
-    return false;
-  }
-
-	///change Oct 12 2010: intra-residue is always true
-	return true;
-
-  //intra-residue
-  if ( atom1.atom() == "H" || atom2.atom() == "H" ) {
-    if ( atom1.atom() == "HA" || atom2.atom() == "HA" ) { // H - HA or HA-H
-      return true;
-    }
-    if ( atom1.atom() == "HB" || atom2.atom() == "HB" || atom1.atom() == "QB" || atom2.atom() == "QB" ) { // H-HB or HB-H
-			return true;
-    }
-    return false; // H- HX (HX not HA,HB ) that will be more than two torsion angles
-  }
-
-  if ( atom1.atom() == "HA" || atom2.atom() == "HA" ) {
-    return true; // for now assume any HA-HX connection is close enough...
-  }
-
-	//both protons are not on backbone (call this good enough... ).
-	if ( atom1.atom() != "H" && atom1.atom().find("A") == std::string::npos && atom2.atom() != "H" && atom2.atom().find("A") == std::string::npos ) {
-		return true;
-	}
-
-	//two torsions between HA and HG
-	if ( atom1.atom().find("A") != std::string::npos && atom2.atom().find("G") != std::string::npos ) return true;
-	if ( atom2.atom().find("A") != std::string::npos && atom1.atom().find("G") != std::string::npos ) return true;
-
-
-
-  return false;
-  //now what to do with QB, QG, etc. treat as one of the H with same name...
-  // heavy atoms as main dimensions ( some of paolos data sets? )
-
-  //translate QB, QG, QD into HA, HB, HD, etc
-  //	AmbiguousNMRDistanceConstraint translator( atom1, atom2, pose, NULL );
-  //	AtomID num_atom1( translator.atom( 1 ) );
-  //	AtomID num_atom2( translator.atom( translator.natoms( 1 )+1 ) );
-
-  //how to find torsion angles between two atoms?
-  //okay we are definitely intra-residue... (if we just look at protons... )
-  //i guess one can take highest atom number and work up the atom-tree until number is lower or equal than the target.
-  // if it is to low go down some other branch...
-
-  //this is highly complicated.. and will not yield to much benefit. the local structure of decoys
-  // should be pretty good and we will see those NOEs recommended from there.
+bool covalent_compliance( core::id::NamedAtomID const& atom1, core::id::NamedAtomID const& atom2 ) {
+	return CovalentCompliance::get_instance()->is_compliant( atom1, atom2 );
 }
-
 // core::Real compute_RPF_score( CrossPeakList const& cpl, pose::Pose const& pose, core::Real  ) {
 
 //   Real model_sum_dist( 0 );

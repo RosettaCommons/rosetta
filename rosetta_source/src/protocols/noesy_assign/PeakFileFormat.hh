@@ -109,6 +109,14 @@ public:
     min_VC_to_write_=setting;
   }
 
+  bool ignore_negative_intensity() const {
+    return ignore_negative_intensity_;
+  }
+
+  void set_ignore_negative_intensity( bool setting = true ) {
+     ignore_negative_intensity_ = setting;
+  }
+
 protected:
   CrossPeakInfoOP info1_;
   CrossPeakInfoOP info2_;
@@ -118,7 +126,7 @@ private:
   bool ignore_assignments_;
   core::Real min_VC_to_write_;
   bool write_only_highest_VC_;
-
+  bool ignore_negative_intensity_;
   //  virtual void write_header( std::ostream& );
 };
 

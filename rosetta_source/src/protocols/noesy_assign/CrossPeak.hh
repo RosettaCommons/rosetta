@@ -96,6 +96,16 @@ public:
     EL_MAXASSIGN
   };
 
+  enum QualityClass {
+    HI_UNAMBIG = 0,
+    HI_NEAR_UNAMBIG,
+    HI_AMBIG,
+    MED_AMBIG,
+    UNAMBIG_MED_PROB,
+    BAD_LOW_PROB,
+    MAX_CLASS
+  };
+
   CrossPeak( Spin const&, Spin const&, core::Real strength );
   CrossPeak();
   virtual ~CrossPeak();
@@ -109,6 +119,7 @@ public:
 
   Spin const& proton( core::Size i ) const { return i>=2 ? proton2_ : proton1_ ; }
   Spin& proton( core::Size i ) { return i>=2 ? proton2_ : proton1_ ; }
+  bool has_proton( core::Size ) const;
 
   ///@brief flat access to spins in [ a, b, h(a), h(b) ] order
   Spin const& spin( core::Size i ) const { return i>2 ? label( i-2 ) : proton( i ); }
@@ -117,6 +128,20 @@ public:
   core::Size dimension() const { return has_label( 1 ) ? ( has_label( 2 ) ? 4 : 3 ) : 2; }
   ///@brief expect res_ids in order: spin1, spin2, label1, label2
   virtual void add_full_assignment( core::Size res_ids[] );
+
+  FoldResonance const& folder( core::Size i ) {
+    if ( i==1 ) {
+      return info1_->fold_proton_resonance();
+    } else if ( i==2 ) {
+      return info2_->fold_proton_resonance();
+    } else if ( i==3 ) {
+      return info1_->fold_label_resonance();
+    } else if ( i==4 ) {
+      return info2_->fold_label_resonance();
+    };
+    runtime_assert( false );
+    return UNFOLDED_; //to make compiler happy
+  }
 
   core::Real fold_resonance( core::Real freq, core::Size i /*dim*/ ) {
     // dim = 1, 2 are the protons
@@ -164,15 +189,33 @@ public:
     cumulative_peak_volume_ = setting;
   }
 
+  ///@brief the largest volume contribution (normalized) any of the assignments has
+  core::Real max_volume_contribution() const;
+
+  core::Real probability() const;
+
   void set_eliminated_due_to_dist_violations( bool setting ) {
     if ( eliminated_due_to_dist_violations_ && !setting ) eliminated_ = NOT_ELIMINATED; //remove elimination if this is not longer violated
     eliminated_due_to_dist_violations_ = setting;
     eliminated_ = ( setting ) ? EL_DISTVIOL : eliminated_;
   }
+
+  void set_elimination_candidate( bool setting = true ) {
+    elimination_candidate_ = setting;
+  }
+
+  void set_elimination_comment( std::string const& str ) {
+    elimination_comment_ = str;
+  }
+
+  bool is_elimination_candidate() {
+    return elimination_candidate_;
+  }
+
   ///@brief returns true if this peak is to be ignored due to points (i)-(iv) on p215 of JMB 2002, 319,209-227
   /// do_not_compute ... for outputter that does not want to change state...
   bool eliminated( bool recompute = false, bool do_not_compute = false ) const;
-  std::string const& elimination_reason() const;
+  std::string elimination_reason() const;
 
   core::Size min_seq_separation_residue_assignment( core::Real volume_threshold ) const;
 
@@ -183,9 +226,11 @@ public:
        core::pose::Pose const& pose,
        core::pose::Pose const& centroid_pose,
        core::Size normalization,
+       core::Real padding = 0.0,
        bool fa_only = false
   ) const;
 
+#if 0
   core::scoring::constraints::ConstraintOP
   create_constraint(
     core::pose::Pose const& pose,
@@ -198,6 +243,7 @@ public:
     core::pose::Pose const& centroid_pose,
     core::Size normalization = 1
   ) const;
+#endif
 //   ///@brief number of assigned protons
 //   core::Size n_assigned() const { runtime_assert( proton1_.n_assigned() == proton2_.n_assigned() ); return proton1_.n_assigned(); }
 
@@ -224,16 +270,23 @@ public:
   const_iterator end() const { return assignments_.end(); }
 
   core::Real distance_bound() const { return distance_bound_; }
-
+  void nudge_distance_bound( core::Real offset );
   core::Size peak_id() const { return peak_id_; };
 
   std::string const& filename() const { return info1_->filename(); }
+  size_t exp_hash() const { return info1_->exp_hash(); }
+
+  bool same_peak( CrossPeak const & other ) const {
+    return peak_id() == other.peak_id() && exp_hash() == other.exp_hash();
+  }
 
   void set_peak_id( core::Size val ) {
     peak_id_ = val;
   }
 
-  CrossPeakInfo const& info_struct( core::Size i ) const { return i>=2 ? *info2_ : *info1_; }
+  //  CrossPeakInfo const& info_struct( core::Size i ) const { return i>=2 ? *info2_ : *info1_; }
+  CrossPeakInfo const& info( core::Size i ) const { return i>=2 ? *info2_ : *info1_; }
+
   void set_info( core::Size i, CrossPeakInfoCOP info  ) { if ( i<2 ) info1_=info; else info2_=info; }
 
   void calibrate( PeakCalibrator const&, CalibrationTypeCumulator& calibration_types );
@@ -252,16 +305,20 @@ public:
     runtime_assert( false );
     return 0.0;
   }
+
   bool is4D() const {
     return has_label( 1 ) && has_label( 2 ) && (info1_->label_tolerance() < 10) && (info1_->proton_tolerance() <10)
       && (info2_->label_tolerance() <10) && (info2_->proton_tolerance() <10);
   }
+
   void print_peak_info( std::ostream& ) const;
   //  core::Size assignment( core::Size nr ) const;
-
+  QualityClass quality_class() const;
+  std::string quality_class_str() const;
+  core::Real smallest_native_violation() const;
 private:
 
-
+  FoldResonance UNFOLDED_; //dummy folder
   PeakAssignments assignments_;
   ResonanceListOP resonances_;
   CrossPeakInfoCOP info1_, info2_;
@@ -273,6 +330,8 @@ private:
   core::Real distance_bound_; //b -- computed after calibration...
   mutable EliminationReason eliminated_;
   bool eliminated_due_to_dist_violations_;//Mviol, dcut
+  bool elimination_candidate_;
+  std::string elimination_comment_;
 
 protected:
   static std::set< core::id::NamedAtomID > unknown_resonances_;

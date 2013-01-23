@@ -43,7 +43,7 @@ VarianceStatisticsArchive::VarianceStatisticsArchive( std::string name )
 }
 
 
-bool VarianceStatisticsArchive::add_evaluated_structure( core::io::silent::SilentStructOP evaluated_decoy ) {
+bool VarianceStatisticsArchive::add_evaluated_structure( core::io::silent::SilentStructOP evaluated_decoy, Batch const& ) {
 	if ( decoys().size() < nstruct() ) {
 		tr.Debug << "added " << evaluated_decoy->decoy_tag() << " to " << name() << std::endl;
 		decoys().insert( decoys().begin(), evaluated_decoy );

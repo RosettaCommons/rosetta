@@ -27,7 +27,7 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.hh>
-
+#include <utility/exit.hh>
 
 namespace protocols {
 namespace frag_picker {
@@ -63,6 +63,8 @@ public:
 
 	/// @brief  returns i-th residue form this chunk. The first residue has index 1
 	inline VallResidueOP at(Size index) const {
+		runtime_assert( index <= residues_.size() );
+		runtime_assert( index >= 1 );
 		return residues_.at(index);
 	}
 

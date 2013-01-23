@@ -78,6 +78,7 @@ OPT_1GRP_KEY( File, rigid, out )
 OPT_1GRP_KEY( Real, rigid, cutoff )
 OPT_1GRP_KEY( Integer, rigid, min_gap )
 OPT_1GRP_KEY( File, rigid, in )
+OPT_1GRP_KEY( Boolean, calc, rmsd )
 
 void register_options() {
 	using namespace basic::options;
@@ -94,6 +95,7 @@ void register_options() {
 	NEW_OPT( rigid::out, "write a RIGID definition", "rigid.loops" );
 	NEW_OPT( rigid::cutoff, "residues with less then loop_cutoff will go into RIGID definition", 2 );
 	NEW_OPT( rigid::min_gap, "don't have less then min_gap residues between rigid regions", 5 );
+	NEW_OPT( calc::rmsd, "calculate RMSD from mean, and average pairwise RMSD", false);
 }
 
 // Forward
@@ -180,6 +182,18 @@ Size superimpose( DecoySetEvaluation& eval, utility::vector1< Real >& rmsf_resul
 	return icenter;
 }
 
+core::Real round( core::Real d, core::Size digits ) {
+	for ( Size i=1; i<=digits; ++i ) {
+		d*=10;
+	}
+	d = floor( d + 0.5 );
+	for ( Size i=1; i<=digits; ++i ) {
+		d/=10;
+	}
+	return d;
+}
+
+
 void run() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -199,7 +213,11 @@ void run() {
 	//superposition...
 	utility::vector1< Real > rmsf_result;
 	Size icenter=0;
-	if ( option[ rmsf::out ].user() || option[ rigid::out ].user() || option[ out::pdb ] )	{//output rmsf file
+	if ( option[ rmsf::out ].user()
+		|| option[ rigid::out ].user()
+		|| option[ out::pdb ].user()
+		|| option[ calc::rmsd ].user()
+	) {//output rmsf file
 		icenter=superimpose( rmsf_tool->eval_, rmsf_result, weights );
 	}
 
@@ -247,6 +265,47 @@ void run() {
 		}
 	}
 
+	//calculate RMSD from mean
+	if ( option[ calc::rmsd ]() ) {
+		Real const cutoff ( option[ rigid::cutoff ] );
+		tr.Info << "make rigid with cutoff " << cutoff << " and calculate RMSD" << std::endl;
+		FArray1D_double weights( rmsf_tool->eval_.n_atoms(), 0.0 );
+		//get weights 0 or 1 for residues that take part in RMSD calculation
+		Size ct( 0 );
+		loops::Loops rigid;
+		for ( Size i=1; i<=rmsf_result.size(); ++i ) {
+			if ( rmsf_result[ i ]<cutoff && input_weights( i ) > 0 ) {
+				rigid.add_loop( loops::Loop(  i, i ), option[ rigid::min_gap ]() );
+				weights(i)=1.0;
+				++ct;
+			}
+		}
+		tr.Info << "computer RMSD on ";
+		rigid.write_loops_to_stream( tr.Info, "RIGID" );
+		tr.Info << std::endl;
+
+		FArray2D_double average_structure( 3, rmsf_tool->eval_.n_atoms(), 0.0 );
+		rmsf_tool->eval_.compute_average_structure( average_structure );
+		Real mean_rmsd( 0.0 );
+		for ( Size n=1; n<=rmsf_tool->eval_.n_decoys(); n++ ) {
+			FArray2D_double xx( FArray2P_double( rmsf_tool->eval_.coords()(1, 1, n), 3, rmsf_tool->eval_.n_atoms() ) ); //, 3, rmsf_tool->eval_.n_atoms() );
+			mean_rmsd+=1.0/rmsf_tool->eval_.n_decoys()*
+				rmsf_tool->eval_.rmsd( weights, average_structure, xx );
+		}
+		tr.Info << "number of atoms from " <<rmsf_tool->eval_.n_atoms() << " for mean RMSD: " << ct << std::endl;
+		tr.Info << "mean RMSD to average structure: " << round(mean_rmsd,2) << std::endl;
+		Size ct_pairs( 0 );
+		Real rmsd_pairs( 0.0 );
+		for ( Size n=1; n<=rmsf_tool->eval_.n_decoys(); n++ ) {
+			for ( Size m=n+1; m<=rmsf_tool->eval_.n_decoys(); m++ ) {
+				++ct_pairs;
+				FArray2D_double xx1( FArray2P_double( rmsf_tool->eval_.coords()(1, 1, n), 3, rmsf_tool->eval_.n_atoms() ) ); //, 3, rmsf_tool->eval_.n_atoms() );
+				FArray2D_double xx2( FArray2P_double( rmsf_tool->eval_.coords()(1, 1, m), 3, rmsf_tool->eval_.n_atoms() ) ); //, 3, rmsf_tool->eval_.n_atoms() );
+				rmsd_pairs+=rmsf_tool->eval_.rmsd( weights, xx1, xx2 );
+			}
+		}
+		tr.Info << "mean pairwise RMSD: " << round(rmsd_pairs/ct_pairs,2) << std::endl;
+	}
 	return;
 }
 

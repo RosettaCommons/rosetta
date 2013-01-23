@@ -18,7 +18,7 @@
 #include <protocols/noesy_assign/PeakAssignment.fwd.hh>
 
 // Package Headers
-#include <protocols/noesy_assign/CrossPeak.fwd.hh>
+#include <protocols/noesy_assign/CrossPeak.hh>
 #include <protocols/noesy_assign/ResonanceList.hh>
 #include <protocols/noesy_assign/Resonance.hh>
 
@@ -41,6 +41,7 @@
 #include <string>
 // AUTO-REMOVED #include <list>
 #include <map>
+#include <iostream>
 
 #include <core/scoring/constraints/Func.hh>
 
@@ -71,6 +72,15 @@ public:
     return select == 1 ? resonance1_ : resonance2_;
   }
 
+	bool has_label( core::Size select ) const {
+		return  crosspeak_->has_label( select );
+	}
+
+	bool has_proton( core::Size select ) const {
+		return  crosspeak_->has_proton( select );
+	}
+
+
 	///@brief return resonance_id, i.e., pointer into Resonance list that will resolve in assigned atom
   core::Size label_resonance_id( core::Size select ) const;
 
@@ -100,9 +110,7 @@ public:
     return crosspeak_.get() == other.crosspeak_.get() && spin_id( 1 ) == other.spin_id( 1 ) && spin_id( 2 ) == other.spin_id( 2 );
   }
 
-  bool is_symmetric_partner_of( PeakAssignment const& other ) const {
-    return resonance_id( 1 ) == other.resonance_id( 2 ) && resonance_id( 2 ) == other.resonance_id( 1 );
-  }
+  bool is_symmetric_partner_of( PeakAssignment const& other ) const;
 
 	ResonanceList const& resonances() const; //can't inline due to circularity
   //void invalidate_assignment();
@@ -111,12 +119,24 @@ public:
   CrossPeak const& crosspeak() const { return *crosspeak_; }
 
   //core::Size assignment_index() const { return assignment_index_; }
-	void set_symmetry( bool setting = true ) {
+	void set_symmetry( core::Real setting = 0 ) {
 		symmetry_compliance_ = setting;
 	}
 
-	void set_network_anchoring( core::Real setting, core::Real reswise_setting ) {
+	core::Real symmetry_compliance() const {
+		return symmetry_compliance_;
+	}
+
+	core::Real chemshift_compliance() const {
+		return chemshift_overlap_; //Ck
+	}
+
+	void set_network_anchoring( core::Real setting ) {
 		network_anchoring_ = setting;
+		//		network_anchoring_per_residue_ = reswise_setting;
+	}
+
+	void set_network_anchoring_per_residue( core::Real reswise_setting ) {
 		network_anchoring_per_residue_ = reswise_setting;
 	}
 
@@ -145,7 +165,17 @@ public:
 	///@brief only correct if peak_volumes have been update in CrossPeaks.
 	core::Real normalized_peak_volume() const;
 
+	void show( std::ostream& os ) const;
+
 	void dump_weights( std::ostream& os ) const;
+
+	void set_native_distance_viol( core::Real setting ) {
+		native_distance_viol_= setting;
+	}
+	core::Real native_distance_viol() {
+		return native_distance_viol_;
+	}
+
 private:
 	void update_resonances_from_peak();
 
@@ -158,13 +188,16 @@ private:
 
   // should these live in inherited class or in PeakAssignmentWeights ?
   core::Real chemshift_overlap_; //Ck
-  bool symmetry_compliance_; //Tk
+	core::Real symmetry_compliance_; //Tk
   bool covalent_compliance_; //Ok
   core::Real decoy_compatibility_; //Dk
   core::Real network_anchoring_; //Nk
 	core::Real network_anchoring_per_residue_; //N_{AB}
+	core::Real native_distance_viol_;
 
 };
+
+std::ostream& operator<<( std::ostream& os, PeakAssignment const& pa );
 
 extern PeakAssignment const BOGUS_ASSIGNMENT;
 

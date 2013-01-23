@@ -71,6 +71,7 @@ ConstraintClaimer::ConstraintClaimer() :
 	bFullatom_( false ),
 	bCmdFlag_( false ),
 	combine_ratio_( 1 ),
+	drop_random_rate_( 0.0 ),
 	skip_redundant_( false ),
 	skip_redundant_width_( 1 ),
 	filter_weight_( 0.0 ),
@@ -85,6 +86,7 @@ ConstraintClaimer::ConstraintClaimer( std::string filename, std::string tag ) :
 	bFullatom_( false ),
 	bCmdFlag_( false ),
 	combine_ratio_( 1 ),
+	drop_random_rate_( 0 ),
 	skip_redundant_( false ),
 	skip_redundant_width_( 1 ),
 	filter_weight_( 0.0 ),
@@ -99,6 +101,7 @@ ConstraintClaimer::ConstraintClaimer( bool CmdFlag, bool centroid, bool fullatom
 		bFullatom_( fullatom ),
 		bCmdFlag_( CmdFlag ),
 		combine_ratio_( 1 ),
+		drop_random_rate_( 0 ),
 		skip_redundant_( false ),
 		skip_redundant_width_( 1 ),
 		filter_weight_( 0.0 ),
@@ -196,6 +199,7 @@ void ConstraintClaimer::add_constraints( core::pose::Pose& pose ) const {
 
 	scoring::constraints::ConstraintCOPs added_constraints = constraints_->get_all_constraints();
 	if ( skip_redundant_ ) scoring::constraints::skip_redundant_constraints( added_constraints, pose.total_residue(), skip_redundant_width_ );
+	if ( drop_random_rate_ > 0.0 ) scoring::constraints::drop_constraints( added_constraints, drop_random_rate_ );
 
 	kinematics::ShortestPathInFoldTree sp( pose.fold_tree() );
 	scoring::constraints::choose_effective_sequence_separation( sp, added_constraints );
@@ -224,6 +228,8 @@ bool ConstraintClaimer::read_tag( std::string tag, std::istream& is ) {
 		bCmdFlag_ = true;
 	} else if ( tag == "COMBINE_RATIO" ) {
 		is >> combine_ratio_;
+	} else if ( tag == "DROP_RANDOM_RATE" ) {
+		is >> drop_random_rate_;
 	} else if ( tag == "FILTER_WEIGHT" ) {
 		is >> filter_weight_;
 	} else if ( tag == "FILTER_NAME" ) {

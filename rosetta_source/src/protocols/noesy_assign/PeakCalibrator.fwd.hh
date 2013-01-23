@@ -36,6 +36,12 @@ enum CALIBRATION_ATOM_TYPE {
     MAX_TYPE //keep last
 };
 
+//previously
+/* BACKBONE
+	 SIDECHAIN
+	 METHYL
+*/
+
 typedef std::bitset< MAX_TYPE > CalibrationTypeCumulator;
 //enum CALIBRATION_ATOM_TYPE;
 // Types

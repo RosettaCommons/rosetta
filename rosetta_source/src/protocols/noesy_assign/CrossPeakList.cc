@@ -24,6 +24,7 @@
 #include <protocols/noesy_assign/PeakCalibrator.hh>
 #include <protocols/noesy_assign/ResonanceList.hh>
 #include <protocols/noesy_assign/PeakFileFormat.hh>
+
 // AUTO-REMOVED #include <protocols/noesy_assign/DistanceScoreMover.hh>
 
 // Project Headers
@@ -119,8 +120,12 @@ void CrossPeakList::read_from_stream( std::istream& is, PeakFileFormat& input_ad
 			cp->set_resonances( resonances );
 			input_adaptor.write_peak( tr.Debug, cp->peak_id(), *cp );
 			tr.Debug << std::endl;
-			if ( cp->volume() <= 0 ) {
-				tr.Warning << "ignored peak: zero or negative peak intensity for peak " << cp->peak_id() << std::endl;
+			if ( std::abs( cp->volume() ) < 0.1 ) {
+				tr.Warning << "ignored peak: zero intensity for peak " << cp->peak_id() << std::endl;
+				continue;
+			}
+			if ( cp->volume() < 0 && input_adaptor.ignore_negative_intensity() ) {
+				tr.Warning << "ignored peak [#IGNORE_NEGATIVE_INTENSITY]: negative intensity for peak " << cp->peak_id() << std::endl;
 				continue;
 			}
 			peaks_.push_back( cp );
@@ -245,22 +250,24 @@ void CrossPeakList::update_symmetry_score() {
 	tr.Info << " symmetry score " << std::endl;
 	if ( !assignments_ ) update_assignment_list();
 	runtime_assert( assignments_ );
-	assignments().check_for_symmetric_peaks( *this );
+	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
+	Real const min_sym_cont( params.min_contribution_symmetric_peaks_ );
+	assignments().check_for_symmetric_peaks( *this, min_sym_cont < 0.99 );
 }
 
-void CrossPeakList::network_analysis() {
+void CrossPeakList::network_analysis( ResonanceList const& resonances ) {
 	tr.Info << " network analysis ... " << std::endl;
 	if ( !assignments_ ) update_assignment_list();
 	runtime_assert( assignments_ );
-	Size n_assignments( count_assignments() );
-	update_peak_volumina();
-	assignments_->network_analysis( n_assignments );
-	update_peak_volumina();
-
- 	assignments_->network_analysis( n_assignments );
- 	update_peak_volumina();
- 	assignments_->network_analysis( n_assignments );
- 	update_peak_volumina();
+	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
+	if ( params.network_mode_ == "orig" ) {
+		Size n_assignments( count_assignments() );
+		assignments_->network_analysis( n_assignments );
+	} else if ( params.network_mode_ == "clean" ) {
+		assignments_->network_analysis2( resonances );
+	} else {
+		utility_exit_with_message(" network mode " + params.network_mode_ + " is unknown " );
+	}
 }
 
 void CrossPeakList::eliminate_spurious_peaks() {
@@ -287,7 +294,12 @@ void CrossPeakList::generate_fa_and_cen_constraints(
 		 core::scoring::constraints::ConstraintSetOP cen_set,
 		 core::pose::Pose const& pose,
 		 core::pose::Pose const& centroid_pose,
-		 core::Size min_seq_separation
+		 core::Size min_seq_separation,
+		 core::Size min_quali,
+		 core::Size max_quali,
+		 core::Real padding,
+		 bool ignore_elimination_candidates, /*default = true */
+		 bool elimination_candidates /* default = false */
 ) const {
 	//count for normalization:
 	core::Size ct( 0 );
@@ -295,16 +307,26 @@ void CrossPeakList::generate_fa_and_cen_constraints(
 		if ( (*it)->eliminated() ) continue;
 		if ( (*it)->min_seq_separation_residue_assignment( 0.1 ) < min_seq_separation ) continue; //ignore peaks that have confident intra-residue assignment
 		//		if ( !(*it)->has_inter_residue_assignment( resonances(), 0.1 ) ) continue; //ignore peaks that have confident intra-residue assignment
+		if ( max_quali+1 < CrossPeak::MAX_CLASS ) {
+			Size const quality( (*it)->quality_class() );
+			if ( quality < min_quali || quality > max_quali ) continue;
+		}
 		++ct;
 	}
-
 	for ( CrossPeakList::const_iterator it = begin(); it != end(); ++it ) {
 		if ( (*it)->eliminated() ) continue;
 		if ( (*it)->min_seq_separation_residue_assignment( 0.1 ) < min_seq_separation ) continue; //ignore peaks that have confident intra-residue assignment
+		if ( max_quali+1 < CrossPeak::MAX_CLASS ) {
+			Size const quality( (*it)->quality_class() );
+			if ( quality < min_quali || quality > max_quali ) continue;
+		}
+		if ( !ignore_elimination_candidates ) {
+			if ( (*it)->is_elimination_candidate() != elimination_candidates ) continue;
+		}
 		try {
 			core::scoring::constraints::ConstraintOP fa_cst;
 			core::scoring::constraints::ConstraintOP cen_cst;
-			(*it)->create_fa_and_cen_constraint( fa_cst, cen_cst, pose, centroid_pose, ct );
+			(*it)->create_fa_and_cen_constraint( fa_cst, cen_cst, pose, centroid_pose, ct, padding );
 			runtime_assert( fa_cst && cen_cst );
 			fa_set->add_constraint( fa_cst );
 			cen_set->add_constraint( cen_cst );
@@ -318,12 +340,11 @@ void CrossPeakList::generate_fa_and_cen_constraints(
 			tr.Info << " residue-type in centroid_pose: " << centroid_pose.residue_type( excn.atom().rsd() ).name3() << " " << excn.atom().rsd() << std::endl;
 			tr.Debug << " with these atoms ";
 			centroid_pose.residue_type( excn.atom().rsd() ).show_all_atom_names( tr.Debug );
-
-				}
+		}
 	}
 }
 
-
+#if 0
 core::scoring::constraints::ConstraintSetOP CrossPeakList::generate_constraints( core::pose::Pose const& pose, bool centroid, core::Size min_seq_separation ) const {
 	using namespace core::scoring::constraints;
 	ConstraintSetOP cstset = new ConstraintSet;
@@ -365,6 +386,7 @@ core::scoring::constraints::ConstraintSetOP CrossPeakList::generate_constraints(
 	}
 	return cstset;
 }
+#endif
 
 }
 }

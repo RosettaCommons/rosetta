@@ -20,25 +20,25 @@
 
 // Unit Headers
 #include <protocols/noesy_assign/NoesyModule.hh>
-//o a;kdfj h hd dd <-- what is this?
+
 // Package Headers
 #include <protocols/noesy_assign/ResonanceList.hh>
 #include <protocols/noesy_assign/PeakFileFormat.hh>
 #include <protocols/noesy_assign/PeakAssignmentParameters.hh>
 #include <protocols/noesy_assign/PeakAssignmentResidueMap.hh>
 #include <protocols/noesy_assign/PeakFileFormat_Sparky.hh>
-//#include <devel/noesy_assign/DistanceScoreMover.hh>
+#include <protocols/noesy_assign/CovalentCompliance.hh>
 
 // Project Headers
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.hh> // REQUIRED FOR WINDOWS
 
 // for switching residue type set to centroid
 #include <core/pose/Pose.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
-
 #include <core/chemical/ChemicalManager.fwd.hh>
+#include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.hh>
+#include <core/scoring/constraints/BoundConstraint.hh>
 
 // Utility headers
 #include <utility/io/izstream.hh>
@@ -61,6 +61,7 @@ OPT_2GRP_KEY( FileVector, noesy, in, peaks )
 OPT_2GRP_KEY( FileVector, noesy, in, peak_resonance_pairs )
 OPT_2GRP_KEY( Boolean, noesy, in, use_assignments )
 OPT_2GRP_KEY( File, noesy, in, decoys )
+OPT_2GRP_KEY( File, noesy, in, local_dist_table )
 
 OPT_2GRP_KEY( File, noesy, out, resonances )
 OPT_2GRP_KEY( File, noesy, out, peaks )
@@ -70,6 +71,7 @@ OPT_2GRP_KEY( Boolean, noesy, out, separate_peak_files )
 OPT_2GRP_KEY( Boolean, noesy, out, unambiguous )
 OPT_2GRP_KEY( String, noesy, out, format )
 OPT_2GRP_KEY( Real, noesy, out, minVC )
+OPT_2GRP_KEY( Real, noesy, out, padding )
 
 OPT_1GRP_KEY( Boolean, noesy, no_decoys )
 
@@ -105,6 +107,7 @@ void protocols::noesy_assign::NoesyModule::register_options() {
 	NEW_OPT( noesy::in::peak_resonance_pairs, "pairs of files that belong together: cc.peaks cc.prot ilv.peaks ilv.prot", "" );
   NEW_OPT( noesy::in::use_assignments, "when reading peaks the already existing assignments are not ignored", false );
   NEW_OPT( noesy::in::decoys, "silent file with decoys used for 3D structural compatibility test", "" );
+	NEW_OPT( noesy::in::local_dist_table, "file with distances determined for instances with FragToAtomDist ", "" );
 
 	NEW_OPT( noesy::out::resonances, "the parsed resonances file with translated atom names etc.", "cs_out.dat" );
   NEW_OPT( noesy::out::peaks, "the parsed peaks file with assignments", "NOE_out.dat" );
@@ -114,13 +117,8 @@ void protocols::noesy_assign::NoesyModule::register_options() {
 	NEW_OPT( noesy::out::unambiguous, "write only the assignment with hightest VC", false );
 	NEW_OPT( noesy::out::minVC, "write only assignments that contribute more than X to the peak-volume", 0.0 );
 	NEW_OPT( noesy::out::format, "write as xeasy or sparky file", "xeasy" );
+	NEW_OPT( noesy::out::padding, "add padding of X Angstrom to final constraints", 0.0 );
   NEW_OPT( noesy::no_decoys, "check comp. with decoys", false );
-
-	//   NEW_OPT( noesy::no_symm, "check comp. with decoys", false );
-	//   NEW_OPT( noesy::no_cs, "check comp. with decoys", false );
-	//   NEW_OPT( noesy::no_upper, "check upper", false );
-	//   NEW_OPT( noesy::no_remove_diagonal, "", false );
-	//   NEW_OPT( noesy::no_calibrate, "don't calibrate the NOE distance bound", false );
 
 }
 
@@ -162,40 +160,40 @@ void NoesyModule::reset() {
 ///read peak- and resonance files
 void NoesyModule::read_input_files() {
 	basic::ProfileThis doit( basic::NOESY_ASSIGN_READ_INPUT );
-
+	using namespace basic::options;
 	//read resonances
-	if ( basic::options::option[ basic::options::OptionKeys::noesy::in::resonances ].user() ) {
-		utility::io::izstream input_file( basic::options::option[ basic::options::OptionKeys::noesy::in::resonances ]() );
-		utility::io::ozstream output_file( basic::options::option[ basic::options::OptionKeys::noesy::out::resonances ]() );
+	if ( option[ OptionKeys::noesy::in::resonances ].user() ) {
+		utility::io::izstream input_file( option[ OptionKeys::noesy::in::resonances ]() );
+		utility::io::ozstream output_file( option[ OptionKeys::noesy::out::resonances ]() );
 		if ( input_file.good() ) {
 			main_resonances_->read_from_stream( input_file );
 			main_resonances_->write_to_stream( output_file );
-			if ( basic::options::option[ basic::options::OptionKeys::noesy::out::talos ].user() ) {
-				utility::io::ozstream talos_file( basic::options::option[ basic::options::OptionKeys::noesy::out::talos ]() );
+			if ( option[ OptionKeys::noesy::out::talos ].user() ) {
+				utility::io::ozstream talos_file( option[ OptionKeys::noesy::out::talos ]() );
 				main_resonances_->write_talos_format( talos_file, true /*backbone only*/ );
 			}
 		} else {
 			tr.Error << "cannot read " << input_file << std::endl;
-			throw utility::excn::EXCN_FileNotFound( basic::options::option[ basic::options::OptionKeys::noesy::in::resonances ]() );
+			throw utility::excn::EXCN_FileNotFound( option[ OptionKeys::noesy::in::resonances ]() );
 		}
 	}
 
   { //scope
 		//read peak lists
 		crosspeaks_ = new CrossPeakList();
-		Size nfiles( basic::options::option[ basic::options::OptionKeys::noesy::in::peaks ]().size() );
+		Size nfiles( option[ OptionKeys::noesy::in::peaks ]().size() );
 
 		//loop-all files: read one file at a time
 		for ( core::Size ifile = 1; ifile <= nfiles; ++ifile ) {  //as many as there are files
-			std::string file( basic::options::option[ basic::options::OptionKeys::noesy::in::peaks ]()[ ifile ] );
+			std::string file( option[ OptionKeys::noesy::in::peaks ]()[ ifile ] );
 			utility::io::izstream input_file( file );
 			if ( input_file.good() ) {
 				if ( main_resonances_->size() < 1 ) {
 					throw utility::excn::EXCN_BadInput( "attempt to read Peak-Files with option -noesy:in:peaks without a global resonance file: -noesy:in:resonances" );
 				}
 				PeakFileFormat_xeasy format;
-				format.set_filename( basic::options::option[ basic::options::OptionKeys::noesy::in::peaks ]()[ ifile ].base() );
-				format.set_ignore_assignments( !basic::options::option[ basic::options::OptionKeys::noesy::in::use_assignments ]() );
+				format.set_filename( option[ OptionKeys::noesy::in::peaks ]()[ ifile ].base() );
+				format.set_ignore_assignments( !option[ OptionKeys::noesy::in::use_assignments ]() );
 				tr.Info << "reading " << file << "... " << std::endl;
 				crosspeaks_->read_from_stream( input_file, format, main_resonances_ );
 			} else {
@@ -205,26 +203,26 @@ void NoesyModule::read_input_files() {
 	} // scope end
 
 	//specific resonances for a given peak-file
-	if ( basic::options::option[ basic::options::OptionKeys::noesy::in::peak_resonance_pairs ].user() ) { //scope
-		Size n_pair_files(  basic::options::option[ basic::options::OptionKeys::noesy::in::peak_resonance_pairs ]().size() );
+	if ( option[ OptionKeys::noesy::in::peak_resonance_pairs ].user() ) { //scope
+		Size n_pair_files(  option[ OptionKeys::noesy::in::peak_resonance_pairs ]().size() );
 		if ( n_pair_files % 2 != 0 ) {
 			throw utility::excn::EXCN_BadInput( "odd number of entries in option -noesy:in:peak_resonance_pairs, always provide pairs of files  <*.peaks> <*.prot>" );
 		}
 		for ( core::Size ifile = 1; ifile <= n_pair_files; ifile += 2 ) {
 			ResonanceListOP resonances = new ResonanceList( main_resonances_->sequence() );
-			utility::io::izstream res_input_file( basic::options::option[ basic::options::OptionKeys::noesy::in::peak_resonance_pairs ]()[ ifile+1 ] );
+			utility::io::izstream res_input_file( option[ OptionKeys::noesy::in::peak_resonance_pairs ]()[ ifile+1 ] );
 			if ( res_input_file.good() ) {
 				resonances->read_from_stream( res_input_file );
 			} else {
 				tr.Error << "cannot read " << res_input_file << std::endl;
-				throw utility::excn::EXCN_FileNotFound( basic::options::option[ basic::options::OptionKeys::noesy::in::resonances ]() );
+				throw utility::excn::EXCN_FileNotFound( option[ OptionKeys::noesy::in::resonances ]() );
 			}
-			std::string file( basic::options::option[ basic::options::OptionKeys::noesy::in::peak_resonance_pairs ]()[ ifile ] );
+			std::string file( option[ OptionKeys::noesy::in::peak_resonance_pairs ]()[ ifile ] );
 			utility::io::izstream input_file( file );
 			if ( input_file.good() ) {
 				PeakFileFormat_xeasy format;
-				format.set_filename( basic::options::option[ basic::options::OptionKeys::noesy::in::peak_resonance_pairs ]()[ ifile ].base() );
-				format.set_ignore_assignments( ! basic::options::option[ basic::options::OptionKeys::noesy::in::use_assignments ]() );
+				format.set_filename( option[ OptionKeys::noesy::in::peak_resonance_pairs ]()[ ifile ].base() );
+				format.set_ignore_assignments( ! option[ OptionKeys::noesy::in::use_assignments ]() );
 				tr.Info << "reading " << file << "... " << std::endl;
 				crosspeaks_->read_from_stream( input_file, format, resonances );
 			} else {
@@ -232,25 +230,44 @@ void NoesyModule::read_input_files() {
 			}
 		}
 	} // scope end
+
+	if ( option[ OptionKeys::noesy::in::local_dist_table ].user() ) {
+		CovalentCompliance::get_nonconst_instance()->load_dist_table( option[ OptionKeys::noesy::in::local_dist_table ]() );
+	}
+}
+
+void NoesyModule::add_dist_viol_to_assignments( core::pose::Pose native_pose) {
+	using namespace core::scoring::constraints;
+	for ( CrossPeakList::iterator it = crosspeaks_->begin(); it != crosspeaks_->end(); ++it ) {
+		if ( (*it)->eliminated() ) continue;
+		if ( (*it)->min_seq_separation_residue_assignment( 0.1 ) < 1 ) continue;
+		for ( CrossPeak::iterator ait = (*it)->begin(); ait != (*it)->end(); ++ait ) {
+			FuncOP func( new BoundFunc(1.5,	(*it)->distance_bound(), 1, "NOE Peak " ) );
+			AmbiguousNMRDistanceConstraintOP new_cst( (*ait)->create_constraint( native_pose, func ) );
+			(*ait)->set_native_distance_viol( new_cst->score( native_pose ) );
+		}
+	}
 }
 
 ///@brief write peak assignments into peak-file (sparky, cyana)
 void NoesyModule::write_assignments( std::string file_name ) {
+	using namespace basic::options;
+
 	ProfileThis doit( NOESY_ASSIGN_WRITE_ASSIGNMENTS );
 	if ( file_name == "use_cmd_line" ) {
-		file_name = basic::options::option[ basic::options::OptionKeys::noesy::out::peaks ]();
+		file_name = option[ OptionKeys::noesy::out::peaks ]();
 	}
 	PeakFileFormatOP format;
-	std::string const format_str( basic::options::option[ basic::options::OptionKeys::noesy::out::format ]() );
+	std::string const format_str( option[ OptionKeys::noesy::out::format ]() );
 	if ( format_str == "xeasy" ) {
 		format = new PeakFileFormat_xeasy( main_resonances_ );
 	} else if ( format_str == "sparky" ) {
 		format = new PeakFileFormat_Sparky( main_resonances_ );
 	} else utility_exit_with_message( "NOE_data output format "+format_str+" is not known! ");
-	format->set_write_atom_names( basic::options::option[ basic::options::OptionKeys::noesy::out::names ]() );
-	format->set_write_only_highest_VC( basic::options::option[ basic::options::OptionKeys::noesy::out::unambiguous ]() );
-	format->set_min_VC_to_write( basic::options::option[ basic::options::OptionKeys::noesy::out::minVC ]() );
-	if ( basic::options::option[ basic::options::OptionKeys::noesy::out::separate_peak_files ]() ) {
+	format->set_write_atom_names( option[ OptionKeys::noesy::out::names ]() );
+	format->set_write_only_highest_VC( option[ OptionKeys::noesy::out::unambiguous ]() );
+	format->set_min_VC_to_write( option[ OptionKeys::noesy::out::minVC ]() );
+	if ( option[ OptionKeys::noesy::out::separate_peak_files ]() ) {
 		crosspeaks_->write_peak_files( file_name, *format );
 	} else {
 		utility::io::ozstream output_file( file_name );
@@ -259,7 +276,7 @@ void NoesyModule::write_assignments( std::string file_name ) {
 }
 
 ///@brief assign peaks ( no explicit decoys - wrapper )
-void NoesyModule::assign( Size cycle ) {
+void NoesyModule::assign() {
   using namespace basic::options;
   using namespace OptionKeys;
 
@@ -284,7 +301,7 @@ void NoesyModule::assign( Size cycle ) {
 			utility_exit_with_message( str.str() );
 		}
 	}
-  assign( sfd.begin(), sfd.end(), cycle );
+  assign( sfd.begin(), sfd.end() );
 }
 
 ///@brief generate constraint files from assignments
@@ -292,19 +309,37 @@ void NoesyModule::generate_constraint_files(
 	 core::pose::Pose const& pose,
 	 std::string const& cst_fa_file,
 	 std::string const& cst_centroid_file,
-   core::Size min_seq_separation
+   core::Size min_seq_separation,
+	 core::Size min_quali,
+	 core::Size max_quali,
+	 bool ignore_elimination_candidates, /*default = true*/
+	 bool elimination_candidates /*default = false */
 ) const {
 
 	PROF_START( NOESY_ASSIGN_GEN_CST );
 
 	using namespace core::scoring::constraints;
+	using namespace basic::options;
+  using namespace OptionKeys;
+
   core::pose::Pose centroid_pose = pose;
 	core::util::switch_to_residue_type_set( centroid_pose, core::chemical::CENTROID );
 
 	ConstraintSetOP cstset = new ConstraintSet;
 	ConstraintSetOP centroid_cstset = new ConstraintSet;
 	tr.Info << "generate constraints..." << std::endl;
-	crosspeaks_->generate_fa_and_cen_constraints( cstset, centroid_cstset, pose, centroid_pose, min_seq_separation );
+	crosspeaks_->generate_fa_and_cen_constraints(
+	   	 cstset,
+			 centroid_cstset,
+			 pose,
+			 centroid_pose,
+			 min_seq_separation,
+			 min_quali,
+			 max_quali,
+			 option[ noesy::out::padding ](),
+			 ignore_elimination_candidates,
+			 elimination_candidates
+	);
 
 	PROF_STOP( NOESY_ASSIGN_GEN_CST );
 

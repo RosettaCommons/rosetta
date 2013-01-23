@@ -55,7 +55,7 @@ void superimpose(
 void fit_centered_coords(
      core::Size natoms,
      ObjexxFCL::FArray1_double const& weights,
-     ObjexxFCL::FArray2_double& ref_coords,
+     ObjexxFCL::FArray2_double const& ref_coords,
      ObjexxFCL::FArray2_double& coords,
      Matrix &R
 );

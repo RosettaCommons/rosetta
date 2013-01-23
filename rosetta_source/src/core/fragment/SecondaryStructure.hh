@@ -104,7 +104,7 @@ public:
 
 	///@brief sets secondary structure probabilities at a given position
 	void set_fractions(core::Size pos, core::Real helix_fraction,
-			core::Real sheet_fraction, core::Real loop_fraction) {
+		core::Real sheet_fraction, core::Real loop_fraction, core::Real confidence=0) {
 		runtime_assert( pos <= total_residue_ );
 
 		core::Real s = helix_fraction + loop_fraction + sheet_fraction;
@@ -115,6 +115,7 @@ public:
 
 		loop_fraction_(pos) = (float)loop_fraction;
 		strand_fraction_(pos) = (float) sheet_fraction;
+		confidence_(pos)= (float) confidence;
 	}
 
 	///@brief return loop fraction - FArray

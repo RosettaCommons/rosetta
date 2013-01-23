@@ -81,6 +81,12 @@ RamaScore::SetupRamaTables()
 		ss_weight[2] = query_ss_->strand_fraction(i);
 		ss_weight[3] = query_ss_->loop_fraction(i);
 
+		if ( ( ss_weight[1] + ss_weight[2] + ss_weight[3]) == 0) {
+			ss_weight[1] = 1.0;
+			ss_weight[2] = 1.0;
+			ss_weight[3] = 1.0;
+		}
+
 		ss_types[1] = "H";
 		ss_types[2] = "E";
 		ss_types[3] = "L";

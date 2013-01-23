@@ -479,6 +479,7 @@ namespace evaluation { FileVectorOptionKey const rdc_target( "evaluation:rdc_tar
 namespace evaluation { BooleanOptionKey const symmetric_rmsd( "evaluation:symmetric_rmsd" );  }
 namespace evaluation { StringVectorOptionKey const rdc_column( "evaluation:rdc_column" );  }
 namespace evaluation { StringVectorOptionKey const rdc( "evaluation:rdc" );  }
+namespace evaluation { StringOptionKey const built_in_rdc( "evaluation:built_in_rdc" );  }
 namespace evaluation { BooleanOptionKey const jump_nr( "evaluation:jump_nr" );  }
 namespace evaluation { IntegerVectorOptionKey const score_exclude_res( "evaluation:score_exclude_res" );  }
 namespace evaluation { IntegerOptionKey const score_sscore_short_helix( "evaluation:score_sscore_short_helix" );  }
@@ -654,4 +655,3 @@ namespace fold_cst { IntegerOptionKey const reramp_cst_cycles( "fold_cst:reramp_
 namespace fold_cst { RealOptionKey const reramp_start_cstweight( "fold_cst:reramp_start_cstweight" );  }
 namespace fold_cst { IntegerOptionKey const reramp_iterations( "fold_cst:reramp_iterations" );  }
 namespace fold_cst { BooleanOptionKey const skip_on_noviolation_in_stage1( "fold_cst:skip_on_noviolation_in_stage1" );  }
-namespace fold_cst { RealOptionKey const stage1_ramp_cst_cycle_factor( "fold_cst:stage1_ramp_cst_cycle_factor" );  }

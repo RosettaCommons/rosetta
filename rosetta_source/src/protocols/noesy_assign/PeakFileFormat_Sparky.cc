@@ -83,8 +83,8 @@ void PeakFileFormat_Sparky::write_peak( std::ostream& os, Size ct, CrossPeak con
 }
 
 void PeakFileFormat_Sparky::set_format_from_peak( CrossPeak const& cp ) {
-  info1_ = new CrossPeakInfo( cp.info_struct( 1 ) );
-  info2_ = new CrossPeakInfo( cp.info_struct( 2 ) );
+  info1_ = new CrossPeakInfo( cp.info( 1 ) );
+  info2_ = new CrossPeakInfo( cp.info( 2 ) );
   col2proton_.clear();
   col2islabel_.clear();
 

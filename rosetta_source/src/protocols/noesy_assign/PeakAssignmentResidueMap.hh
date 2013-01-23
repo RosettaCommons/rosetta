@@ -78,13 +78,15 @@ public:
   void remove( PeakAssignment const& );
 
   ///@brief invalidate non symmetric peaks
-  void check_for_symmetric_peaks( CrossPeakList& );
+  void check_for_symmetric_peaks( CrossPeakList&, bool accumulate_symmetry );
 
   ///@brief remove all ambiguous assignments to i,i+1 CrossPeaks.
-  void invalidate_competitors_to_sequential_NOE( CrossPeakList& );
+
+	//commented out 9/10/12 because the only relevant action within the subroutine is commented out already
+  //void invalidate_competitors_to_sequential_NOE( CrossPeakList& );
 
 	void network_analysis( Size n_total_assignments );
-
+	void network_analysis2( ResonanceList const& resonances );
   ///@brief get list of PeakAssignments for pair of residues --- throws Exception
   PeakAssignments const& assignments( core::Size resi, core::Size resj ) const;
   PeakAssignments& assignments( core::Size resi, core::Size resj );

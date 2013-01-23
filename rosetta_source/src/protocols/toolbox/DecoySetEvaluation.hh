@@ -149,6 +149,11 @@ public:
 
 	void rmsf( ObjexxFCL::FArray1_double& result );
 
+	core::Real rmsd(
+									ObjexxFCL::FArray1_double const& weights,
+									ObjexxFCL::FArray2_double& xx_ref,
+									ObjexxFCL::FArray2_double& xx
+	) const;
 	//returns the index of the structure used as reference  (icenter)
 	core::Size wRMSD( core::Real sigma2, core::Real tolerance, ObjexxFCL::FArray1_double& weights );
 

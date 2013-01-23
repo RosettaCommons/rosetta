@@ -46,7 +46,7 @@
 #include <utility/vector1.hh>
 
 
-static basic::Tracer tr("protocols.noesy_assign.assignment");
+static basic::Tracer tr("protocols.noesy_assign.assignments");
 
 namespace protocols {
 namespace noesy_assign {
@@ -60,11 +60,12 @@ PeakAssignment::PeakAssignment( CrossPeakAP const& cp, core::Size assign_spin1, 
     spin_assign_index1_( assign_spin1 ),
     spin_assign_index2_( assign_spin2 ),
 		chemshift_overlap_( 1.0 ),
-		symmetry_compliance_( false ),
+		symmetry_compliance_( 0 ),
 		covalent_compliance_( false ),
 		decoy_compatibility_( 1.0 ),
 		network_anchoring_( 1.0 ),
-		network_anchoring_per_residue_( 200 ) //so we are not eliminated by default
+		network_anchoring_per_residue_( 200 ), //so we are not eliminated by default
+		native_distance_viol_( -1 )
 {
 	if ( cp )  update_resonances_from_peak();
 }
@@ -76,22 +77,23 @@ ResonanceList const& PeakAssignment::resonances() const {
 void PeakAssignment::dump_weights( std::ostream& os ) const {
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
 	using namespace ObjexxFCL::fmt;
-	os << F( 5, 3, chemshift_overlap_ ) << " "
-		 << F( 5, 3, symmetry_compliance_ ? params.symmetry_compliance_weight_ : 1.0 ) << " "
-		 << F( 5, 3, covalent_compliance_ ? params.covalent_compliance_weight_ : 1.0 ) << " "
-		 << F( 5, 3, decoy_compatibility_ ) << " "
-		 << F( 5, 3, network_anchoring_ ) << " "
-		 << F( 5, 3, network_anchoring_per_residue_ ) << " ";
+	os << F( 5, 2, chemshift_overlap_ ) << " "
+		 << F( 5, 2, std::max( symmetry_compliance_*params.symmetry_compliance_weight_, 1.0 ) ) << " "
+		 << F( 5, 2, covalent_compliance_ ? params.covalent_compliance_weight_ : 1.0 ) << " "
+		 << F( 5, 2, decoy_compatibility_ ) << " "
+		 << F( 5, 2, network_anchoring_ ) << " "
+		 << F( 5, 2, network_anchoring_per_residue_ ) << " ";
+	os << F( 5, 2, native_distance_viol_ ) << " ";
 }
 
 Real PeakAssignment::peak_volume() const {
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
 	return chemshift_overlap_
 		* std::min( params.smax_,
-			( symmetry_compliance_ ? params.symmetry_compliance_weight_ : 1.0 )
+			std::max( symmetry_compliance_*params.symmetry_compliance_weight_, 1.0 )
 			* ( covalent_compliance_ ? params.covalent_compliance_weight_ : 1.0 )
 			* network_anchoring_ )
-		* decoy_compatibility_;
+			* decoy_compatibility_;
 }
 
 Real PeakAssignment::normalized_peak_volume() const {
@@ -111,8 +113,9 @@ void PeakAssignment::update_chemshiftscore_from_peak() {
 	for ( Size d=1; d<=crosspeak_->dimension(); d++ ) {
 		CrossPeak::Spin const& spin( crosspeak_->spin( d ) );
 		Resonance const& assigned_resonance( resonances()[ spin.assignment( spin_id( d>2 ? d-2 : d ) ) ] );
-		Real diff( spin.freq()-crosspeak_->fold_resonance( assigned_resonance.freq(), d ) );
-		Real s( diff/weight/std::max( crosspeak_->tolerance( d ), assigned_resonance.tolerance() ) );
+		Real s = 1.0/weight*assigned_resonance.pmatch( spin.freq(), crosspeak_->tolerance( d ), crosspeak_->folder( d ) );
+		//		Real diff( spin.freq()-crosspeak_->fold_resonance( assigned_resonance.freq(), d ) );
+		//		Real s( diff/weight/std::max( crosspeak_->tolerance( d ), assigned_resonance.tolerance() ) );
 		sum += s*s;
 	}
 	chemshift_overlap_ = exp( -0.5*sum );
@@ -134,7 +137,7 @@ PeakAssignment::NmrConstraintOP PeakAssignment::create_constraint(
 	core::id::NamedAtomID const& atom1( atom( flip ? 2 : 1 ) );
 	core::id::NamedAtomID const& atom2( atom( flip ? 1 : 2 ) );
 
-	tr.Debug << "create constraint for atom: " << atom1 << " " << atom2 << " from res_id: "
+	tr.Debug << "create constraint for atom: " << atom1 << " " << atom2 << " from resonances id: "
 					 << resonance_id( 1 ) << " " << resonance_id( 2 ) << std::endl;
 
 	using namespace core::scoring::constraints;
@@ -158,6 +161,62 @@ core::Size PeakAssignment::label_resonance_id( core::Size select ) const {
 
 PeakAssignment const BOGUS_ASSIGNMENT( NULL, 0, 0 );
 
+bool PeakAssignment::is_symmetric_partner_of( PeakAssignment const& other ) const {
+	bool match=true;
+
+	//because I also allow now the peaks that have not turned around residue numbers we have to exclude assignments with the same peak
+	if ( crosspeak_->same_peak( *other.crosspeak_ ) ) {
+		tr.Debug << " SAME ";
+		return false;
+	}
+	for ( Size select = 1; select <=2 && match; ++select ) {
+		core::Size self = select;
+		core::Size partner = select % 2 + 1;
+		if ( has_label( self ) && other.has_label( partner ) ) {
+			match = match && label_resonance_id( self ) == other.label_resonance_id( partner );
+		}
+		//		if ( has_proton( self ) && other.has_proton( partner ) ) {
+		match = match && resonance_id( self ) == other.resonance_id( partner );
+		//		} else {
+		//			match = match && label_atom_
+	}
+	//	return match;
+	//we also have to match 1-1 and 2-2 since this can be the case when comparing
+	// CHH and CCH spectra.
+	if ( crosspeak_->exp_hash() == other.crosspeak().exp_hash() ) return match;
+	if ( match ) return true;
+	match = true;
+	for ( Size select = 1; select <=2 && match; ++select ) {
+		core::Size self = select;
+		core::Size partner = select;
+		if ( has_label( self ) && other.has_label( partner ) ) {
+			match = match && label_resonance_id( self ) == other.label_resonance_id( partner );
+		}
+		//		if ( has_proton( self ) && other.has_proton( partner ) ) {
+			match = match && resonance_id( self ) == other.resonance_id( partner );
+			//		}
+	}
+	return match;
+	//	return resonance_id( 1 ) == other.resonance_id( 2 ) && resonance_id( 2 ) == other.resonance_id( 1 );
+}
+
+void PeakAssignment::show( std::ostream& os ) const {
+	for ( Size select =1; select <= 2; ++select ) {
+		if ( has_proton( select ) ) {
+			os << atom( select ) << "   ";
+		} else {
+			os << "[ " << atom( select ) << "] ";
+		}
+		if ( has_label( select ) ) {
+			os << label_atom( select ) << "   ";
+		}
+	}
+}
+
+std::ostream& operator<<( std::ostream& os, PeakAssignment const& pa ) {
+	pa.show( os );
+	return os;
+}
 
 // void PeakAssignment::invalidate_assignment() {
 //   if ( crosspeak_ ) crosspeak_->invalidate_assignment( assignment_index_ );

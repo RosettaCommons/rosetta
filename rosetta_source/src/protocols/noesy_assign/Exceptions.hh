@@ -57,6 +57,7 @@ public:
 
 	core::id::NamedAtomID const& atom() { return atom_; }
 	virtual void show( std::ostream& os ) const {
+		utility::excn::EXCN_Msg_Exception::show( os );
 		os << "Resonance for atom " << atom_ << " not found ";
 	}
 private:

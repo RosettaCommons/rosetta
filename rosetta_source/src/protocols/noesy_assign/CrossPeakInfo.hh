@@ -48,11 +48,14 @@ namespace noesy_assign {
 ///@brief shared information about CrossPeak (one for each proton dimension)
 class CrossPeakInfo : public utility::pointer::ReferenceCount {
 public:
+
 	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~CrossPeakInfo();
-  CrossPeakInfo( std::string const& proton, std::string const& label, core::Real proton_tolerance, core::Real label_tolerance = 0.0 ) :
+  CrossPeakInfo( std::string const& proton, std::string const& label, core::Real max_noe_distance, core::Real proton_tolerance, core::Real label_tolerance ) :
+
     proton_atom_name_( proton ),
     label_atom_type_( label ),
+		max_noe_distance_( max_noe_distance ),
     proton_tolerance_( proton_tolerance ),
     label_tolerance_( label_tolerance )
   {}
@@ -83,13 +86,19 @@ public:
       && cpi.label_tolerance_ == label_tolerance_;
   }
 
-  void set_filename( std::string filename ) {
-    filename_ = filename;
-  }
+  void set_filename( std::string filename );
 
   std::string const& filename() const {
     return filename_;
   }
+
+	core::Real max_noe_distance() const {
+		return max_noe_distance_;
+	}
+
+	size_t exp_hash() const {
+		return exp_hash_;
+	}
 
   void show( std::ostream& ) const;
 
@@ -107,11 +116,14 @@ public:
 private:
   std::string proton_atom_name_;
   std::string label_atom_type_;
+	core::Real max_noe_distance_;
   core::Real proton_tolerance_;
   core::Real label_tolerance_;
   std::string filename_;
+	size_t exp_hash_;
   FoldResonance fold_label_resonance_;
   FoldResonance fold_proton_resonance_; //this is probably nonsense but for completeness...
+
 };
 
 std::ostream& operator<< ( std::ostream&, CrossPeakInfo const& );

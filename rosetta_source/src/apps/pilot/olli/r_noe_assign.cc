@@ -22,7 +22,7 @@
 #include <devel/init.hh>
 
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+#include <core/import_pose/import_pose.hh>
 // AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
 
 // AUTO-REMOVED #include <core/fragment/FragSet.hh>
@@ -88,6 +88,9 @@ OPT_2GRP_KEY( File, noesy, out, cst )
 
 //OPT_1GRP_KEY( Boolean, iterative, assign_noes )
 OPT_2GRP_KEY( Integer, noesy, out, min_seq_sep )
+OPT_2GRP_KEY( Boolean, noesy, out, split )
+OPT_2GRP_KEY( Integer, noesy, out, worst_prob_class )
+
 //OPT_1GRP_KEY( Real, iterative, centroid_before_quickrelax_weight )
 //OPT_1GRP_KEY( Real, iterative, fullatom_after_quickrelax_weight )
 
@@ -104,6 +107,7 @@ void register_options() {
 //	OPT( in::file::s );
 // 	OPT( in::file::silent );
 	OPT( in::file::fasta );
+	OPT( in::file::native );
 // 	//NEW_OPT( s, "structure", "native.pdb" );
  	NEW_OPT( noesy::out::cst, "write constraints", "assigned.cst" );
 	NEW_OPT( noesy::out::min_seq_sep, "do not write constraints from peaks that have any residue pair less than sep. assigned", 2 );
@@ -126,6 +130,8 @@ void register_options() {
 // 	NEW_OPT( no_calibrate, "don't calibrate the NOE distance bound", false );
 //	NEW_OPT( iterative::fullatom_after_quickrelax_weight, "[IGNORED] just to make cyana_test happy", 1.0);
 //	NEW_OPT( iterative::centroid_before_quickrelax_weight, "[IGNORED] just to make cyana_test happy", 1.0);
+	NEW_OPT( noesy::out::worst_prob_class, "write only restraints with class X and better [default: write all]", 5 );
+	NEW_OPT( noesy::out::split, "write a separate file with the good (classes 0, 1, 2) restraints", false  );
 }
 
 void run_old() {
@@ -306,10 +312,11 @@ void run_old() {
 
 void run() {
 	using namespace protocols::noesy_assign;
+	using namespace basic::options;
 
 	std::string fasta_sequence;
-	if ( basic::options::option[ basic::options::OptionKeys::in::file::fasta ].user() ) {
-		fasta_sequence = core::sequence::read_fasta_file( basic::options::option[ basic::options::OptionKeys::in::file::fasta ]()[1] )[1]->sequence();
+	if ( option[ OptionKeys::in::file::fasta ].user() ) {
+		fasta_sequence = core::sequence::read_fasta_file( option[ OptionKeys::in::file::fasta ]()[1] )[1]->sequence();
 		tr.Info << "read fasta sequence: " << fasta_sequence.size() << " residues\n"  << fasta_sequence << std::endl;
 	}
 
@@ -320,7 +327,7 @@ void run() {
 	nm.assign();
 
  	core::pose::Pose pose;
-// 	core::import_pose::pose_from_pdb( pose, basic::options::option[ options::OptionKeys::in::file::s ]()[ 1 ] );
+// 	core::import_pose::pose_from_pdb( pose, option[ options::OptionKeys::in::file::s ]()[ 1 ] );
 
 	core::pose::make_pose_from_sequence(
 		pose,
@@ -328,11 +335,27 @@ void run() {
 		chemical::FA_STANDARD
 	);
 
-	std::string cst_file( basic::options::option[ basic::options::OptionKeys::noesy::out::cst ]() );
+	std::string cst_file( option[ OptionKeys::noesy::out::cst ]() );
 	std::string cst_centroid_file( cst_file + ".centroid");
+	std::string best_cst_file( cst_file + ".good");
+	std::string best_cst_centroid_file( best_cst_file + ".centroid");
 
-	nm.generate_constraint_files( pose, cst_file, cst_centroid_file,
-		basic::options::option[ basic::options::OptionKeys::noesy::out::min_seq_sep ]() );
+	if ( option[ OptionKeys::noesy::out::split ] ) {
+		nm.generate_constraint_files( pose, best_cst_file, best_cst_centroid_file,
+			option[ OptionKeys::noesy::out::min_seq_sep ](), 0, 2 );
+		nm.generate_constraint_files( pose, cst_file, cst_centroid_file,
+			option[ OptionKeys::noesy::out::min_seq_sep ](), 3, option[ OptionKeys::noesy::out::worst_prob_class ]() );
+	} else {
+		nm.generate_constraint_files( pose, cst_file, cst_centroid_file,
+			option[ OptionKeys::noesy::out::min_seq_sep ](), 0, option[ OptionKeys::noesy::out::worst_prob_class ]() );
+	}
+
+
+	if ( option[ OptionKeys::in::file::native ].user() ) {
+		core::pose::Pose native_pose;
+		core::import_pose::pose_from_pdb( native_pose, option[ OptionKeys::in::file::native ]() );
+		nm.add_dist_viol_to_assignments(native_pose);
+	}
 
 	nm.write_assignments();
 

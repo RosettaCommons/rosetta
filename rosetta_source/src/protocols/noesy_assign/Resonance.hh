@@ -15,32 +15,23 @@
 
 
 // Unit Headers
-//#include <devel/NoesyAssign/ResonanceList.fwd.hh>
-#include <core/types.hh>
+#include <protocols/noesy_assign/Resonance.fwd.hh>
 
 // Package Headers
-#include <core/id/NamedAtomID.hh>
+#include <protocols/noesy_assign/FoldResonance.fwd.hh>
 #include <protocols/noesy_assign/PeakCalibrator.fwd.hh>
 
 // Project Headers
+#include <utility/pointer/ReferenceCount.hh>
 #include <core/chemical/AA.hh>
+#include <core/types.hh>
+#include <core/id/NamedAtomID.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/exit.hh>
-// #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 
-//Auto Headers
-//#include <utility/pointer/ReferenceCount.hh>
-// #include <numeric/numeric.functions.hh>
-// #include <basic/prof.hh>
-//#include <basic/Tracer.hh>
-// #include <basic/options/option.hh>
-// #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
-// #include <basic/options/keys/run.OptionKeys.gen.hh>
-//#include <basic/options/keys/templates.OptionKeys.gen.hh>
-
 //// C++ headers
+#include <deque>
 
 namespace protocols {
 namespace noesy_assign {
@@ -49,14 +40,20 @@ Resonance combines resonanceID (label), chemical shift (freq), tolerance (error)
 (provided accessor methods of "Resonance": label, atom, resid, name, freq, error, tolerance, calibration_atom_type )
 */
 
-class Resonance {
+class Resonance : public utility::pointer::ReferenceCount {
 public:
   Resonance();
-  Resonance( core::Size label, core::Real freq, core::Real error, core::id::NamedAtomID id, core::chemical::AA );
+  Resonance( core::Size label, core::Real freq, core::Real error, core::id::NamedAtomID const& id, core::chemical::AA, core::Real intensity = 1.0 );
   ~Resonance();
 
+	virtual ResonanceOP clone() {
+		return new Resonance( *this );
+	}
+
 	///@brief output
-  void write_to_stream( std::ostream& ) const;
+  virtual void write_to_stream( std::ostream& ) const;
+
+	virtual void write_to_stream( std::ostream&, core::chemical::AA aa ) const;
 
 	///@brief ResonanceID
   core::Size label() const { return label_; }
@@ -65,22 +62,43 @@ public:
   core::id::NamedAtomID const& atom() const { return atom_; }
   core::Size resid() const { return atom_.rsd(); }
   std::string const& name() const { return atom_.atom(); }
-
+	bool is_proton() const { return is_proton_; }
 	///@brief resonance frequency (chemical shift)
   core::Real freq() const { return freq_; }
 	core::Real error() const { return error_; }
 	core::Real tolerance() const { return error_; }
+
+	///@brief Resonance matches the given cross-peaks frequency
+	bool match( core::Real freq, core::Real error, FoldResonance const& folder ) const {
+		return pmatch( freq, error, folder ) <= 1.0;
+	}
+
+	virtual core::Real pmatch(  core::Real freq, core::Real error, FoldResonance const& folder ) const;
+
+	void combine( std::deque< ResonanceOP >& last_resonances, bool drain );
+
 	core::chemical::AA aa() const { return aa_; }
+	///@brief in ILV-labelled proteins, the both LV methyls are labelled randomly with 50% probability,
+	/// whereas I delta methyls are labelled 100%
+	core::Real intensity() const { return intensity_; }
+	void set_intensity( core::Real setting ) {
+		intensity_ = setting;
+	}
 
 	///@brief classification for calibration... e.g., Backbone, sidechain, etc..
 	CALIBRATION_ATOM_TYPE calibration_atom_type() const { return calibration_atom_type_; }
 
+	core::Real _pmatch(  core::Real freq, core::Real error, FoldResonance const& folder ) const;
+
 private:
+	void _write_to_stream( std::ostream& ) const;
   core::Size label_;
   core::Real freq_;
   core::Real error_;
+	bool is_proton_;
   core::id::NamedAtomID atom_;
 	core::chemical::AA aa_;
+	core::Real intensity_;
 	CALIBRATION_ATOM_TYPE calibration_atom_type_;
 };
 

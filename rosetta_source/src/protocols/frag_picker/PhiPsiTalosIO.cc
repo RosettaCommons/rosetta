@@ -112,14 +112,12 @@ void PhiPsiTalosIO::read(std::string const & file_name) {
 				line_stream >> res_id >> aa >> phi >> psi >> d_phi >> d_psi >> dist
 										>> s2 >> count >> cs_count >> cls;
 			}
+			data_format_ = " %4d %s %8.3f %8.3f %8.3f %8.3f %8.3f %5.3f %2d %s";
 			//this adds sequence twice		sequence_ += aa;
-
-			boost::tuple<Size, char, Real, Real, Real, Real, Real, Real, Size,
-					std::string> t(res_id, aa, phi, psi, d_phi, d_psi, dist,
+			typedef boost::tuple<Size, char, Real,Real, Real, Real, Real, Real, Size, std::string> PhiPsiTalosLineEntry;
+			PhiPsiTalosLineEntry 	t(res_id, aa, phi, psi, d_phi, d_psi, dist,
 					s2, count, cls);
-			entries_.insert(std::pair<Size, boost::tuple<Size, char, Real,
-					Real, Real, Real, Real, Real, Size, std::string> >(res_id,
-					t));
+			entries_.insert(std::pair<Size, PhiPsiTalosLineEntry > ( res_id,	t) );
 			if (last_residue_index_ < res_id)
 				last_residue_index_ = res_id;
 		}

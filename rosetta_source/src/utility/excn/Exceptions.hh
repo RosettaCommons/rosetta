@@ -63,6 +63,9 @@ public:
 	EXCN_Msg_Exception( std::string const& msg ) : msg_( msg ) {};
 	virtual void show( std::ostream& ) const;
 	virtual std::string const msg() const { return msg_; };
+	virtual void add_msg( std::string const& str ) {
+		msg_ = msg_+"\n"+str;
+	}
 protected:
 	EXCN_Msg_Exception() {};
 private:

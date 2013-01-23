@@ -43,7 +43,7 @@
 
 // C++ headers
 #include <string>
-
+#include <basic/prof.hh>
 // ObjexxFCL headers
 #include <ObjexxFCL/string.functions.hh>
 #include <utility/string_util.hh>
@@ -313,8 +313,8 @@ MPIFileBufJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 			MPI_Test(&request, &flag, &status);
 		}
 		if ( flag == 0 ) { //timeout
-			utility_exit_with_message("quick exit from job-distributor due to flag jd2::XXX and timeout of "+
-				utility::to_string( MPI_Wtime()-timeout )+" seconds" );
+			utility_exit_with_message("quick exit from job-distributor due to flag jd2::mpi_nowait_for_remaining_jobs and timeout of "+
+				utility::to_string( MPI_Wtime()-timeout )+" seconds\n"+"increase time-out by using -jd2:mpi_timeout_factor" );
 		}
 		Size slave_rank( status.MPI_SOURCE );
 		Size const msg_tag ( mpi_buf[ 0 ] );
@@ -364,7 +364,7 @@ MPIFileBufJobDistributor::master_get_new_job_id()
   JobOutputterOP outputter = job_outputter();
 
 	core::Size next_job_to_assign = current_job_id() + 1;
-
+	basic::show_time( tr,  "assign job "+ObjexxFCL::string_of(next_job_to_assign)+" batch: "+ObjexxFCL::lead_zero_string_of( current_batch_id(),5 ) );
 	//increase job-id until a new job is found
 	while( next_job_to_assign <= jobs.size()) {
 		if ( jobs[ next_job_to_assign ]->bad() ) { //don't start jobs with known bad input

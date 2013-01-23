@@ -79,7 +79,7 @@ public:
 
 	///@brief add decoy to Archive
 	///@detail evaluate decoy and call add_evaluated_structure
-	virtual bool add_evaluated_structure( core::io::silent::SilentStructOP from_batch );
+	virtual bool add_evaluated_structure( core::io::silent::SilentStructOP from_batch, Batch const& );
 
 	///@brief overloaded that we can sort the pool after reading
 	virtual bool restore_from_file();

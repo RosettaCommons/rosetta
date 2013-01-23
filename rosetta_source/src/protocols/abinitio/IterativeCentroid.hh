@@ -69,8 +69,12 @@ public:
 		IterativeBase( "centroid_pool" ),
 		fullatom_pool_ptr_( fullatom_pool_ptr ) {};
 
-	virtual void gen_evaluation_output( jd2::archive::Batch& batch, bool fullatom = false );
+	virtual void gen_diversity_pool( jd2::archive::Batch& batch, bool fullatom = false );
 
+	virtual void update_noesy_filter_files(
+		 std::string const& current,
+		 bool fullatom
+	);
 private:
 	IterativeFullatom* fullatom_pool_ptr_;
 };

@@ -197,13 +197,13 @@ void DistanceScoreMover::apply( pose::Pose& pose ) {
 			if ( !( *constraint_it )) {
 				dist=0;
 				invd6=0;
- 				tr.Trace << "PeakAssignment " << (*it)->peak_id() << " " << " assignment: " << ct_assignments << " "
- 								 << (*ait)->resonance_id( 1 ) << " " << (*ait)->resonance_id( 2 )
- 								 << " has invalid constraint assign 0" << std::endl;
+ 				//tr.Trace << "PeakAssignment " << (*it)->peak_id() << " " << " assignment: " << ct_assignments << " "
+ 				//				 << (*ait)->resonance_id( 1 ) << " " << (*ait)->resonance_id( 2 )
+ 				//				 << " has invalid constraint assign 0" << std::endl;
 			} else {
-				{ basic::ProfileThis doit( basic::NOESY_ASSIGN_DIST_CST_EVAL );
-					dist = (*constraint_it)->dist( pose );
-				}
+				//				{ basic::ProfileThis doit( basic::NOESY_ASSIGN_DIST_CST_EVAL );
+				dist = (*constraint_it)->dist( pose );
+					//				}
 				//				tr.Trace << " dist: " << dist << std::endl;
 				Real invd = 1.0/dist;
 				Real invd3 = invd*invd*invd;
@@ -239,16 +239,17 @@ void DistanceScoreMover::apply( pose::Pose& pose ) {
 			//d_ak,bk is distance of individual PeakAssignment (computed in for-loop above --> dist_buf[] ).
 			ct_assignments = 1;
 			for ( CrossPeak::iterator ait = (*it)->begin(); ait != (*it)->end(); ++ait, ++ct_assignments ) {
-				if ( dist_buf[ ct_assignments ] == 0 ) {
-										tr.Trace << "Crosspeak: " << (*it)->peak_id() << " assignment " << ct_assignments << " has zero dist_buf " << std::endl;
-				}
+				//				if ( dist_buf[ ct_assignments ] == 0 ) {
+				//										tr.Trace << "Crosspeak: " << (*it)->peak_id() << " assignment " << ct_assignments << " has zero dist_buf " << std::endl;
+				//				}
 				if ( dist_buf[ ct_assignments ] ) {
-					tr.Trace << " dist_buf " << dist_buf[ ct_assignments ] << " over " << sum_dist << " is " << dist_buf[ ct_assignments ]/sum_dist << std::endl;
+					//					tr.Trace << " dist_buf " << dist_buf[ ct_assignments ] << " over " << sum_dist << " is " << dist_buf[ ct_assignments ]/sum_dist << std::endl;
+					//	runtime_assert( (*ait)->decoy_compatibility() < 0.01 ); -- ah it is not 0 because we go through the different decoys and sum up!
 					(*ait)->set_decoy_compatibility( (*ait)->decoy_compatibility() + pow( dist_buf[ ct_assignments ]/sum_dist, -final_dist_power_) );
 				}
 				if ( (*ait)->decoy_compatibility() == 0 ) {
-					tr.Trace <<" oh shit no compatiblity... " << (*it)->peak_id() << std::endl;
-					tr.Trace << ct_assignments << " " << dist_buf[ct_assignments] << " " << sum_dist << " " << dist_buf[ ct_assignments ]/sum_dist << " " << pow( dist_buf[ ct_assignments ]/sum_dist, -final_dist_power_) << std::endl;
+					//					tr.Trace <<" oh shit no compatiblity... " << (*it)->peak_id() << std::endl;
+					//					tr.Trace << ct_assignments << " " << dist_buf[ct_assignments] << " " << sum_dist << " " << dist_buf[ ct_assignments ]/sum_dist << " " << pow( dist_buf[ ct_assignments ]/sum_dist, -final_dist_power_) << std::endl;
 				}
 			} ///... divide by M (aka count_decoys_ ) in finalize_scoring
 		}

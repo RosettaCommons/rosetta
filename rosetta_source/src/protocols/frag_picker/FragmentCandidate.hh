@@ -72,6 +72,8 @@ public:
 	/// @brief returns a given residue from this fragment
 	/// @detailed the irgument is in the range [1,fragmentLength]
 	inline VallResidueOP get_residue(Size whichOne) const {
+		runtime_assert( chunk_ );
+		runtime_assert( whichOne >= 1 && whichOne <= fragmentLength_ );
 		return chunk_->at(whichOne + vallResidueIndex_ - 1);
 	}
 

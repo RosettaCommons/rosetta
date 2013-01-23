@@ -22,6 +22,7 @@
 // AUTO-REMOVED #include <utility/pointer/ReferenceCount.hh>
 
 #include <iosfwd>
+#include <utility/vector1.hh>
 
 
 //// C++ headers
@@ -37,15 +38,16 @@ private:
 
 public:
   static void register_options();
-  void set_options_from_cmdline();
   static void set_cycle( core::Size );
   void show( std::ostream& ) const;
   void show_on_tracer() const;
   static PeakAssignmentParameters const* get_instance();
   static PeakAssignmentParameters * get_nonconst_instance();
+  static void reset();
 private:
+  void set_options_from_cmdline( core::Size cycle = 0 );
   static PeakAssignmentParameters* instance_;
-  static core::Size cycle_selector_;
+  core::Size cycle_selector_;
 
 public:
   /* maybe make all options const
@@ -59,6 +61,7 @@ public:
   //cycle independent
   core::Real chemshift_overlap_weight_; //Gamma, eq. (4)
   bool ignore_resonancefile_tolerances_;
+  bool ignore_resonancefile_intensities_;
   //  core::Real dmax_; //unused
   core::Real vmin_;
   core::Real vmax_;
@@ -69,8 +72,9 @@ public:
   //cycle dependent
   core::Real symmetry_compliance_weight_; //T, eq. (5)
   core::Real covalent_compliance_weight_; //O
-  core::Real decoy_compatibility_exponent_; //eta, eq. (6)
+  //obsolet  core::Real decoy_compatibility_exponent_; //eta, eq. (6)
 
+  core::Real min_contribution_symmetric_peaks_;
   core::Real smax_;
   core::Real dcut_;
   core::Real dcalibrate_;
@@ -78,9 +82,14 @@ public:
   bool use_local_distviol_;
   core::Real local_distviol_range_; //how many (in percent) decoys at both ends of the range are ignored to calculate max_extension
   core::Real local_distviol_global_buffer_;
+  core::Real local_distviol_global_factor_;
+  core::Real local_distviol_cutoff_;
+  core::Real local_distviol_cutoff_buffer_;
+
   core::Real network_reswise_min_; //N_bar_min
   core::Real network_atom_min_; //N_min per atom
   core::Real calibration_target_;
+  bool calibration_ignore_eliminated_peaks_;
   bool atom_dependent_calibration_;
   core::Real min_volume_; //minimum volume contribution
 
@@ -90,7 +99,23 @@ public:
   bool network_use_all_covalent_atoms_;
   bool network_include_reverse_dir_;
   bool network_allow_same_residue_connect_;
+  std::string network_mode_;
   bool map_to_cen_atom_;
+
+  core::Real calibration_convergence_;
+  core::Real calibration_max_noe_dist_;
+  core::Real calibration_stop_nudging_;
+  core::Real calibration_start_nudging_;
+  core::Real calibration_max_nudging_;
+  bool calibration_eliminate_;
+  bool calibration_use_median_;
+  core::Size calibration_cycles_;
+
+  utility::vector1<core::Real> prob_sigmoid_tau_;
+  utility::vector1<core::Real> prob_sigmoid_m_;
+  utility::vector1<core::Real> prob_sigmoid_w_;
+  utility::vector1<core::Real> prob_level_;
+
 };
 
 }

@@ -91,6 +91,7 @@ EvaluatedArchive::~EvaluatedArchive() {}
 
 EvaluatedArchive::EvaluatedArchive()
 	: scorefxn_( NULL ),
+		scores_are_clean_( true ),
 		b_evaluate_incoming_decoys_( !basic::options::option[ basic::options::OptionKeys::iterative::evaluate_only_on_slaves ]() ) ///yields bottleneck on BG
 {
 	runtime_assert( options_registered_ );
@@ -101,6 +102,7 @@ EvaluatedArchive::EvaluatedArchive()
 EvaluatedArchive::EvaluatedArchive( ArchiveManagerAP ptr )
 	: ArchiveBase( ptr ),
 		scorefxn_( NULL ),
+		scores_are_clean_( true ),
 		b_evaluate_incoming_decoys_( !basic::options::option[ basic::options::OptionKeys::iterative::evaluate_only_on_slaves ]() ) ///yields bottleneck on BG
 {
 	runtime_assert( options_registered_ );
@@ -112,11 +114,11 @@ void EvaluatedArchive::start_evaluation_timer() const {
 	tr.Trace << "start evaluation" << std::endl;
 }
 
-bool EvaluatedArchive::add_structure( core::io::silent::SilentStructOP from_batch ) {
+bool EvaluatedArchive::add_structure( core::io::silent::SilentStructOP from_batch, Batch const& batch ) {
 	using namespace basic::options;
 	tr.Info << "add structure" << std::endl;
 	core::io::silent::SilentStructOP evaluated_decoy = evaluate_silent_struct( from_batch );
-	bool added( add_evaluated_structure( evaluated_decoy ) );
+	bool added( add_evaluated_structure( evaluated_decoy, batch ) );
 	return added;
 }
 
@@ -125,7 +127,7 @@ void EvaluatedArchive::score( pose::Pose & pose ) const {
 	scorefxn()( pose );
 }
 
-bool EvaluatedArchive::add_evaluated_structure( core::io::silent::SilentStructOP evaluated_decoy ) {
+bool EvaluatedArchive::add_evaluated_structure( core::io::silent::SilentStructOP evaluated_decoy, Batch const& ) {
 	//get score
 	Real new_decoy_score ( select_score( evaluated_decoy ) );
 	if ( numeric::isnan( new_decoy_score ) ) return false;
@@ -295,6 +297,7 @@ void EvaluatedArchive::save_to_file( std::string suffix ) {
 bool EvaluatedArchive::restore_from_file() {
 	bool b_have_restored = Parent::restore_from_file();
 	sort();
+	scores_are_clean_ = false;
 	return b_have_restored;
 }
 

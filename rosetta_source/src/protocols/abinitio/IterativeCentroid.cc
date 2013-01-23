@@ -101,9 +101,17 @@ namespace protocols {
 namespace abinitio {
 using namespace jd2::archive;
 
-void IterativeCentroid::gen_evaluation_output( jd2::archive::Batch& batch, bool fullatom ) {
-	if ( fullatom ) fullatom_pool_ptr_->gen_evaluation_output( batch, fullatom );
-	else Parent::gen_evaluation_output( batch, fullatom );
+void IterativeCentroid::gen_diversity_pool( jd2::archive::Batch& batch, bool fullatom ) {
+	if ( fullatom ) fullatom_pool_ptr_->gen_diversity_pool( batch, fullatom );
+	else Parent::gen_diversity_pool( batch, fullatom );
+}
+
+void IterativeCentroid::update_noesy_filter_files(
+    std::string const& current,
+		 bool fullatom
+) {
+	fullatom_pool_ptr_->update_noesy_filter_files( current, fullatom );
+	Parent::update_noesy_filter_files( current, fullatom );
 }
 
 } //abinitio

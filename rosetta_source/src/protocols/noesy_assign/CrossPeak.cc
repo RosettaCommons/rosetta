@@ -30,7 +30,8 @@
 #include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
 // Utility headers
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
+
+#include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 // AUTO-REMOVED #include <utility/string_util.hh>
@@ -87,14 +88,16 @@ CrossPeak::CrossPeak( Spin const& sp1, Spin const& sp2, Real strength ) :
 	cumulative_peak_volume_( 1.0 ),
 	distance_bound_( 100 ), //what would be a good initial value? -1 ?
 	eliminated_( NOT_ELIMINATED ),
-	eliminated_due_to_dist_violations_( false )
+	eliminated_due_to_dist_violations_( false ),
+	elimination_candidate_( false )
 {}
 
 CrossPeak::CrossPeak() :
 	cumulative_peak_volume_( 1.0 ),
 	distance_bound_( 100 ),
 	eliminated_( NOT_ELIMINATED ),
-	eliminated_due_to_dist_violations_( false )
+	eliminated_due_to_dist_violations_( false ),
+	elimination_candidate_( false )
 {}
 
 CrossPeak::~CrossPeak() {}
@@ -115,6 +118,9 @@ void CrossPeak::add_full_assignment( Size res_ids[] ) {
 	//then make PeakAssignment() and add to assignments_
 }
 
+bool CrossPeak::has_proton( core::Size select ) const {
+	return info( select ).proton_tolerance() < 99;
+}
 
 ///@brief find all possible assignments based on chemical shifts and tolerances
 void CrossPeak::find_assignments( ) {
@@ -140,8 +146,8 @@ void CrossPeak::find_assignments( ) {
 void CrossPeak::print_peak_info( std::ostream& os ) const {
 	os << "peak: " << peak_id() << " ";
 	for ( Size i = 1; i<=2 ; i++ ) {
-		os << info_struct( i ).main_atom();
-		if ( info_struct( i ).has_label() ) os << "-" << info_struct( i ).label_atom_type();
+		os << info( i ).main_atom();
+		if ( info( i ).has_label() ) os << "-" << info( i ).label_atom_type();
 		if ( i == 1 ) os << " <-> ";
 	}
 }
@@ -150,9 +156,10 @@ void CrossPeak::print_peak_info( std::ostream& os ) const {
 void CrossPeak::assign_spin( Size iproton ) {
   //base-class: disregard label
   Real const my_freq( proton( iproton ).freq() );
-  Real const my_tolerance( info_struct( iproton ).proton_tolerance() );
+  Real const my_tolerance( info( iproton ).proton_tolerance() );
   for ( ResonanceList::const_iterator it = resonances().begin(); it != resonances().end(); ++it )  {
-    if ( std::abs( fold_resonance( it->second.freq(), iproton ) - my_freq ) < std::max( my_tolerance, it->second.error() ) ) {
+		//    if ( std::abs( fold_resonance( it->second->freq(), iproton ) - my_freq ) < std::max( my_tolerance, it->second->error() ) ) {
+		if ( it->second->match( my_freq, my_tolerance, folder( iproton ) ) ) {
       proton( iproton ).add_assignment( it->first );
     }
   }
@@ -184,6 +191,7 @@ CrossPeak::create_fa_and_cen_constraint(
 			pose::Pose const& pose,
 			pose::Pose const& centroid_pose,
 			core::Size normalization,
+			core::Real padding,
 			bool fa_only
 ) const {
 	core::Size const round_digits( 2 );
@@ -192,7 +200,7 @@ CrossPeak::create_fa_and_cen_constraint(
 	core::Real inv_weight( sqrt( 1.0*normalization )/params.cst_strength_ );
 
 	FuncOP func( new BoundFunc(1.5,
-			round(distance_bound(),round_digits),
+			round(distance_bound()+padding,round_digits),
 			round(inv_weight,round_digits),
 			  "automatic NOE Peak "+ObjexxFCL::string_of( peak_id() )+" "+filename()+" Volume: "+ObjexxFCL::string_of( volume() )
 			)
@@ -202,12 +210,23 @@ CrossPeak::create_fa_and_cen_constraint(
 	using namespace basic::options::OptionKeys;
 	bool const map_to_CEN( params.map_to_cen_atom_ );
 	//	tr.Debug << "MAPPING TO " << ( map_to_CEN ? "CEN-ATOM" : "C-BETA" ) << std::endl;
+
+	QualityClass const qc( quality_class() );
+	Real min_vc = params.min_volume_;
+	if ( qc == HI_NEAR_UNAMBIG ) {
+		min_vc = std::max( min_vc, 0.1 );
+	}
+
 	Size ct_ambiguous( 0 );
 	PeakAssignments::const_iterator first_valid = end();
 	for ( PeakAssignments::const_iterator it = begin(); it != end(); ++it ) {
-		if ( (*it)->normalized_peak_volume() <= params.min_volume_ ) continue; //not enough contribution
+		if ( (*it)->normalized_peak_volume() <= min_vc ) continue; //not enough contribution
 		if ( !ct_ambiguous ) first_valid = it;
 		++ct_ambiguous;
+	}
+
+	if ( qc == HI_NEAR_UNAMBIG || qc == HI_UNAMBIG ) {
+		runtime_assert( ct_ambiguous < 2 );
 	}
 
 	if ( ct_ambiguous > 1 ) {
@@ -226,7 +245,7 @@ CrossPeak::create_fa_and_cen_constraint(
 		core::Size max_maps=0;
 		// add individual constraints --- their potential does not matter ... it is ignored in evaluation...
 		for ( PeakAssignments::const_iterator it = first_valid; it != end(); ++it ) {
-			if ( (*it)->normalized_peak_volume() <= params.min_volume_ ) continue; //not enough contribution
+			if ( (*it)->normalized_peak_volume() <= min_vc ) continue; //not enough contribution
 			AmbiguousNMRDistanceConstraintOP new_cst( (*it)->create_constraint( pose ) );
 			my_fa_cst->add_individual_constraint( new_cst );
 			fa_cst = my_fa_cst;
@@ -286,6 +305,108 @@ CrossPeak::create_fa_and_cen_constraint(
 	}
 }
 
+Real sigmoid( Real x, Real tau, Real m, int sign = 1 ) {
+	if ( sign > 0 ) {
+    return 1.0/(1+exp(-1.0/tau*5.0*(x-m)));
+	}
+	return 1.0-1./(1+exp(-1.0/tau*5.0*(x-m)));
+}
+
+core::Real CrossPeak::probability() const {
+	Real max_vc_cs( 0.0 );
+	Real max_vc_sym( 0.0 );
+	Real max_vc( 0.0 );
+	Real const overall_vc( cumulative_peak_volume() );
+	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
+	for ( const_iterator ait = begin(); ait != end(); ++ait ) {
+		if ( max_vc < (*ait)->normalized_peak_volume() ) {
+			max_vc = (*ait)->normalized_peak_volume();
+			max_vc_sym = (*ait)->symmetry_compliance();
+			max_vc_cs = (*ait)->chemshift_compliance();
+		}
+	}
+	utility::vector1< Real > const& w( params.prob_sigmoid_w_ );
+	utility::vector1< Real > const& tau( params.prob_sigmoid_tau_ );
+	utility::vector1< Real > const& m( params.prob_sigmoid_m_ );
+	Real s[6];
+	s[1] = sigmoid( max_vc_cs, tau[1], m[1], 1);
+	s[2] = sigmoid( max_vc_sym, tau[2], m[2], 1);
+	s[3] = -sigmoid( max_vc_sym, tau[3], m[3], -1);
+	s[4] = sigmoid( max_vc, tau[4], m[4], 1 );
+	s[5] = -sigmoid( overall_vc, tau[5], m[5], -1 );
+	return (w[1]*s[1]+w[2]*s[2]+w[3]*s[3]+w[4]*s[4]+w[5]*s[5]+0.4)/1.6;
+}
+
+Real CrossPeak::smallest_native_violation() const {
+	Real viol( 100000 );
+	QualityClass pclass( quality_class() );
+	for ( const_iterator ait = begin(); ait != end(); ++ait ) {
+		Real const vc( (*ait)->normalized_peak_volume() );
+		if ( pclass==HI_UNAMBIG && vc < 0.1 ) continue;
+		if ( pclass<=MED_AMBIG && vc < 0.01 ) continue;
+		if ( viol > (*ait)->native_distance_viol() ) viol=(*ait)->native_distance_viol();
+	}
+	return viol;
+}
+
+std::string CrossPeak::quality_class_str() const {
+	char const strings[][50] = {"HI_UNAMBIG", "HI_NEAR_UNAMBIG", "HI_AMBIG", "MED_AMBIG", "MED_UNAMBIG", "LOW_AMBIG" };
+	return strings[ quality_class() ];
+}
+
+CrossPeak::QualityClass CrossPeak::quality_class() const {
+	Size count_vc_0p1( 0 );
+	Size count_vc_0p01( 0 );
+	for ( const_iterator ait = begin(); ait != end(); ++ait ) {
+		Real const vc( (*ait)->normalized_peak_volume() );
+		if ( vc > 0.1 ) ++count_vc_0p1;
+		if ( vc > 0.01 ) ++count_vc_0p01;
+	}
+	enum ProbClass {
+		HI = 0,
+		MED,
+		LOW
+	};
+
+	Real const prob( probability() );
+	ProbClass pclass;
+	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
+	if ( prob > params.prob_level_[1] ) {
+		pclass = HI;
+	} else if ( prob > params.prob_level_[2] ) {
+		pclass = MED;
+	} else {
+		pclass = LOW;
+	}
+
+	if ( pclass == HI ) {
+		if ( count_vc_0p01 == 1 ) {
+			return HI_UNAMBIG;
+		} else if ( count_vc_0p1 == 1 ) {
+			return HI_NEAR_UNAMBIG;
+		} else {
+			return HI_AMBIG;
+		}
+	} else if ( pclass == MED ) {
+		if ( count_vc_0p1 == 1 || count_vc_0p01 == 1 ) {
+			return UNAMBIG_MED_PROB;
+		}
+		return MED_AMBIG;
+	} else {
+		return BAD_LOW_PROB;
+	}
+
+}
+
+core::Real CrossPeak::max_volume_contribution() const {
+	Real max_volume( 0.0 );
+	for ( const_iterator ait = begin(); ait != end(); ++ait ) {
+		max_volume= std::max( max_volume, (*ait)->normalized_peak_volume() );
+	}
+	return max_volume;
+}
+
+#if 0
 core::scoring::constraints::ConstraintOP
 CrossPeak::create_constraint( pose::Pose const& pose, core::Size normalization ) const {
 
@@ -354,6 +475,7 @@ CrossPeak::create_centroid_constraint(
 // 	} else { //not ambiguous
 // 	}
 }
+#endif
 
 ///@brief do we have a inter residue assignment with at least volume_threshold contribution ?
 Size CrossPeak::min_seq_separation_residue_assignment( Real volume_threshold ) const {
@@ -368,13 +490,13 @@ Size CrossPeak::min_seq_separation_residue_assignment( Real volume_threshold ) c
 	return min_seq;
 }
 
-std::string const& CrossPeak::elimination_reason() const {
+std::string CrossPeak::elimination_reason() const {
 	static std::string const str_distviol( "DistViol" );
 	static std::string const str_network( "Network" );
 	static std::string const str_minvol( "MinPeakVol");
 	static std::string const str_maxassign( "MaxAssign");
 	static std::string const empty_str( "" );
-	if ( eliminated_ == EL_DISTVIOL ) return str_distviol;
+	if ( eliminated_ == EL_DISTVIOL ) return str_distviol + " " + elimination_comment_;
 	if ( eliminated_ == EL_NETWORK ) return str_network;
 	if ( eliminated_ == EL_MINPEAKVOL ) return str_minvol;
 	if ( eliminated_ == EL_MAXASSIGN ) return str_maxassign;
@@ -432,6 +554,10 @@ core::Size CrossPeak::n_Vmin_assignments() {
 	return ct;
 }
 
+void CrossPeak::nudge_distance_bound( core::Real offset ) {
+	distance_bound_ += offset;
+}
+
 void CrossPeak::calibrate( PeakCalibrator const& calibrator, PeakCalibrator::TypeCumulator& calibration_types ) {
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
 	Real sum( 0.0 );
@@ -445,11 +571,19 @@ void CrossPeak::calibrate( PeakCalibrator const& calibrator, PeakCalibrator::Typ
 		calibration_types.set( type2 );
 		Real const cal( sqrt( calibrator( type1 ) * calibrator( type2 ) ) );
 		Real vol( (*it)->normalized_peak_volume() );
-		sum += (vol > params.min_volume_ ? vol : 0 ) / cal;
+		Real int_factor(1.0);
+		int_factor*=resonances()[ (*it)->resonance_id( 1 ) ].intensity();
+		int_factor*=resonances()[ (*it)->resonance_id( 2 ) ].intensity();
+		sum += (vol > params.min_volume_ ? vol : 0 ) / cal / int_factor;
 		ct += vol > params.min_volume_;
 	}
 	if ( ct > 0 )	distance_bound_ = pow( sum*volume_, -1.0/6.0 );
 	else distance_bound_ = 0.0;
+
+	core::Real max_dist( info( 1 ).max_noe_distance() );
+	if ( max_dist > 0.01 ) {
+		distance_bound_ = std::min( distance_bound_, max_dist );
+	}
 }
 
 ///@brief assign protons ass pre-determined
@@ -468,28 +602,29 @@ void CrossPeak3D::assign_labelled_spin( Size iproton ) {
   runtime_assert( has_label( iproton ));
   Real const my_freq( proton( iproton ).freq() );
   Real const my_label_freq( label( iproton ).freq() );
-  Real const my_tolerance( info_struct( iproton ).proton_tolerance() );
-  Real const my_label_tolerance( info_struct( iproton ).label_tolerance() );
+  Real const my_tolerance( info( iproton ).proton_tolerance() );
+  Real const my_label_tolerance( info( iproton ).label_tolerance() );
 
 
 	/// if we have pseudo 4D spectrum we speed things up a bit by filtering out non-protons here
 	if ( my_tolerance > 99 ) {
 		for ( ResonanceList::const_iterator it = resonances().begin(); it != resonances().end(); ++it )  {
-			if ( std::abs( fold_resonance( it->second.freq(), iproton + 2 ) - my_label_freq ) < std::max( my_label_tolerance, it->second.error() ) ) {
+			//			if ( std::abs( fold_resonance( it->second->freq(), iproton + 2 ) - my_label_freq ) < std::max( my_label_tolerance, it->second->error() ) ) {
+			if ( it->second->match( my_label_freq, my_label_tolerance, folder( iproton+2 ) ) ) {
 				//now find all proton-resonances that are bound to this label atom
-				core::Size resid( it->second.resid() );
-				std::string const& label_name( it->second.name() );
+				core::Size resid( it->second->resid() );
+				std::string const& label_name( it->second->name() );
 				ResonanceList::Resonances const& residue_list( resonances().resonances_at_residue( resid ) );
 				for ( ResonanceList::Resonances::const_iterator rit = residue_list.begin(); rit != residue_list.end(); ++rit ) {
-					if ( rit->name()[ 0 ]=='Q' || rit->name().find("H") != std::string::npos ) {
-						//						tr.Debug << "resid: " << resid<< " test label: " << label_name << " with proton " << rit->name() << std::endl;
+					if ( (*rit)->name()[ 0 ]=='Q' || (*rit)->name().find("H") != std::string::npos ) {
+						//						tr.Debug << "resid: " << resid<< " test label: " << label_name << " with proton " << (*rit)->name() << std::endl;
 						try {
-							std::string possible_label( info_struct( iproton ).
-								label_atom_name( rit->name(), resonances().aa_from_resid( resid ) ) );
+							std::string possible_label( info( iproton ).
+								label_atom_name( (*rit)->name(), resonances().aa_from_resid( resid ) ) );
 							//tr.Debug << "found possible label " << possible_label << std::endl;
 							if ( possible_label == label_name ) {
 								label( iproton ).add_assignment( it->first );
-								proton( iproton ).add_assignment( rit->label() );
+								proton( iproton ).add_assignment( (*rit)->label() );
 								//we have found a proton that can be attached to our label
 							}
 						} catch ( EXCN_UnknownAtomname& exception ) {
@@ -503,15 +638,17 @@ void CrossPeak3D::assign_labelled_spin( Size iproton ) {
 		for ( ResonanceList::const_iterator it = resonances().begin(); it != resonances().end(); ++it )  {
 
 			/// if we have pseudo 4D spectrum we speed things up a bit by filtering out non-protons here
-			//			if ( my_tolerance > 99 && ( it->second.freq() > 13.0 && info_struct( iproton ).main_atom() == "H" ) ) continue;
+			//			if ( my_tolerance > 99 && ( it->second->freq() > 13.0 && info( iproton ).main_atom() == "H" ) ) continue;
 
-			if ( std::abs( fold_resonance( it->second.freq(), iproton ) - my_freq ) < std::max( my_tolerance, it->second.tolerance() ) ) {
-				Size resid( it->second.atom().rsd() );
+			//	if ( std::abs( fold_resonance( it->second->freq(), iproton ) - my_freq ) < std::max( my_tolerance, it->second->tolerance() ) ) {
+			if ( it->second->match( my_freq, my_tolerance, folder( iproton ) ) ) {
+				Size resid( it->second->atom().rsd() );
 				//maybe also map resonance by resid?
 				try {
-					id::NamedAtomID atomID( info_struct( iproton ).label_atom_name( it->second.atom().atom(), resonances().aa_from_resid( resid ) ), resid );
+					id::NamedAtomID atomID( info( iproton ).label_atom_name( it->second->atom().atom(), resonances().aa_from_resid( resid ) ), resid );
 					Resonance const& label_reso ( resonances()[ atomID ] );
-					if ( std::abs( fold_resonance( label_reso.freq(), iproton+2 ) - my_label_freq ) < my_label_tolerance ) {
+					//					if ( std::abs( fold_resonance( label_reso.freq(), iproton+2 ) - my_label_freq ) < my_label_tolerance ) {
+					if ( label_reso.match( my_label_freq, my_label_tolerance, folder( iproton+2 ) ) ) {
 						proton( iproton ).add_assignment( it->first );
 						label( iproton ).add_assignment( label_reso.label() );
 					}
@@ -519,12 +656,12 @@ void CrossPeak3D::assign_labelled_spin( Size iproton ) {
 					if ( !unknown_resonances_.count( exception.atom() ) ) {
 						unknown_resonances_.insert( exception.atom() );
 						exception.show( tr.Warning );
-						tr.Warning << " as label for atom " << it->second.atom().atom() << " " <<  resonances().aa_from_resid( resid ) << std::endl;
+						tr.Warning << " as label for atom " << it->second->atom().atom() << " " <<  resonances().aa_from_resid( resid ) << std::endl;
 					//				if ( tr.Debug.visible() ) exception.show( tr.Debug );
 					}
 					continue; //if no label is known we don't assign this proton
 				} catch ( EXCN_UnknownAtomname& exception ) { //this happens if we try to assign a proton that can't have a label: i.e., a H in a HCH spectrum
-					//tr_labels.Trace << "cannot find label atom for resid: " + it->second.atom().atom() + " " + ObjexxFCL::string_of( resid ) + " --- ignore proton assignment" << std::endl;
+					//tr_labels.Trace << "cannot find label atom for resid: " + it->second->atom().atom() + " " + ObjexxFCL::string_of( resid ) + " --- ignore proton assignment" << std::endl;
 					//if ( tr.Debug.visible() ) exception.show( tr.Debug );
 					continue;
 				}

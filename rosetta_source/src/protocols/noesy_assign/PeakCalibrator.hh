@@ -47,7 +47,7 @@
 
 #include <protocols/noesy_assign/PeakCalibrator.fwd.hh>
 #include <utility/vector1.hh>
-
+#include <list>
 
 namespace protocols {
 namespace noesy_assign {
@@ -96,12 +96,14 @@ protected:
 private:
   core::Size max_type_direct_;
   core::Real accumulated_target_[ MAX_TYPE ];
+  typedef std::list< core::Real > TargetValues;
+  TargetValues target_values_[ MAX_TYPE ];
   core::Size accumulated_count_[ MAX_TYPE ];
 
   core::Real calibration_constant_[ MAX_TYPE ];
   core::Real calibration_constant_lows_[ MAX_TYPE ];
   core::Real calibration_constant_highs_[ MAX_TYPE ];
-
+  core::Size max_type_;
   //  core::Real Q_backbone_;
   //core::Real Q_methyl_;
   //core::Real Q_nonmethyl_sidechain_;

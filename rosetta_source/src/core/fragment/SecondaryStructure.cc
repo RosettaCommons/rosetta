@@ -261,7 +261,7 @@ void SecondaryStructure::read_psipred_ss2( std::istream& data ) {
 	Size total_reserved( 500 );
 	loop_fraction_.dimension( total_reserved, 0.0 );
 	strand_fraction_.dimension( total_reserved, 0.0 );
-
+  Size last_pos(0);
   while ( getline( data, line ) ) {
 		if ( line.size() == 0 ) continue;
 		if ( line[ 0 ] == '#' ) continue;
@@ -272,6 +272,7 @@ void SecondaryStructure::read_psipred_ss2( std::istream& data ) {
 		core::Real ef,hf,lf;
     line_stream >> pos >> aa >> secstruct_letter >> lf >> hf >> ef;
 
+		//fill up missing residues until pos with 0.33 0.33 0.33 probabilities:
     if ( line_stream.fail() ) {
       tr.Warning << "parse error: " << line << std::endl;
       continue;
@@ -287,6 +288,11 @@ void SecondaryStructure::read_psipred_ss2( std::istream& data ) {
 			loop_fraction_.redimension( total_reserved );
 			strand_fraction_.redimension( total_reserved );
 		}
+		for ( last_pos = last_pos+1; last_pos<pos; last_pos++ ) {
+			loop_fraction_( last_pos ) = 1.0/3;
+			strand_fraction_( last_pos ) = 1.0/3;
+		}
+
 		if ( total_residue_ < pos ) total_residue_ = pos;
 		loop_fraction_( pos ) = lf;
 		strand_fraction_( pos ) = ef;
@@ -296,6 +302,7 @@ void SecondaryStructure::read_psipred_ss2( std::istream& data ) {
 								 << pos << " H ( read ) = " << hf << " 1.0-L-E ( expected ) "
 								 << helix_fraction( pos ) << std::endl;
 		}
+		last_pos = pos;
 	}
 
 	tr.flush();
@@ -351,7 +358,7 @@ void SecondaryStructure::read_talos_ss( std::istream& data ) {
 	loop_fraction_.dimension( total_reserved, 0.0 );
 	strand_fraction_.dimension( total_reserved, 0.0 );
 	confidence_.dimension( total_reserved, 0.0 );
-
+	Size last_pos( 0 );
   while ( getline( data, line ) ) {
 		if ( line.size() == 0 ) continue;
 		if ( line[ 0 ] == '#' ) continue;
@@ -389,6 +396,10 @@ void SecondaryStructure::read_talos_ss( std::istream& data ) {
 			tr.Warning << "inconsistency in secondary structure file at position "
 								 << pos << " H ( read ) = " << hf << " 1.0-L-E ( expected ) "
 								 << helix_fraction( pos ) << std::endl;
+		}
+		for ( last_pos = last_pos+1; last_pos<pos; last_pos++ ) {
+			loop_fraction_( last_pos ) = 1.0/3;
+			strand_fraction_( last_pos ) = 1.0/3;
 		}
 	}
 

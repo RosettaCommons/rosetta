@@ -141,7 +141,6 @@ JumpRotamerSidechainMover::make_chi_move(
 	utility::vector1< Real > rot_probs;
 	Real normalize;
 	bool is_tempered( std::abs( temperature() - 1.0 ) > 0.01 );
-	tr << "temperature() in jr is " << temperature() << std::endl;
 	if ( is_tempered ) {
 		compute_tempered_rotamer_probabilities( rotamers, temperature(), rot_probs, normalize );
 	}
@@ -150,14 +149,14 @@ JumpRotamerSidechainMover::make_chi_move(
  	Size rotnum;
 	Real rand = RG.uniform();
 	//if ( rand <=0 ){
-	//tr << "RG.uniform is " << rand << std::endl;}
+	//tr.Debug << "RG.uniform is " << rand << std::endl;}
 	Real const inv_nrot( 1.0/rotamers.size() );
 	Real rot_prob_normalize (0);
 	runtime_assert( !is_tempered );
 	for ( rotnum=1; rotnum <=rotamers.size() &&rand > 0; ++rotnum ) {
 		rot_prob_normalize+=rotamers [rotnum].probability();
 	}
-	//tr << "rot_prob_normalized is" << rot_prob_normalize << std::endl;
+	//tr.Debug << "rot_prob_normalized is" << rot_prob_normalize << std::endl;
 	for ( rotnum=1; rotnum <= rotamers.size() && rand > 0; ++rotnum ) {
 		if ( sample_rotwells_unif_ ) {
 			rand -= inv_nrot; //pick any rotamer with uniform probability

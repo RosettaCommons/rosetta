@@ -45,7 +45,7 @@ void BestTotalScoreSelector::select_fragments(
 			<< input_candidates.size() << " candidates" << std::endl;
 
 	output_selection = input_candidates;
-	if ( n > input_candidates.size() ) {
+	if ( n > output_selection.size() ) {
 		return;
 	}
 	std::sort( output_selection.begin(), output_selection.end(), comparator_ );

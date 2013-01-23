@@ -75,14 +75,13 @@ public:
 
 	///@brief add decoy to Archive
 	///@detail evaluate decoy and call add_evaluated_structure
-	virtual bool add_structure( core::io::silent::SilentStructOP from_batch );
+	virtual bool add_structure( core::io::silent::SilentStructOP from_batch, Batch const& );
 
 	///@brief  compute score according to select_weights --- this can contain any evaluator columns
 	core::Real select_score( core::io::silent::SilentStructOP evaluated_decoy );
 
 	///@brief set common evaluators: eg. ConstraintEvaluator if -cst_file is present
 	void setup_default_evaluators();
-
 
 	///@brief overloaded that we can sort the pool after reading
 	virtual bool restore_from_file();
@@ -103,7 +102,7 @@ public:
 	core::io::silent::SilentStructOP evaluate_silent_struct( core::io::silent::SilentStructOP from_batch ) const;
 
 	///@brief add an evaluated decoy to Archive (i.e, evaluated_decoy = evaluate( some_decoy ) );
-	virtual bool add_evaluated_structure( core::io::silent::SilentStructOP evaluated_decoy );
+	virtual bool add_evaluated_structure( core::io::silent::SilentStructOP evaluated_decoy, Batch const& );
 
 	///@brief specify if decoys are evaluated on the master or (non-local i.e., on the individual slave nodes)
 	bool evaluate_local() const {
@@ -172,8 +171,6 @@ private:
 	///@brief re-sort decoys based on select_score
 	void sort();
 
-
-
 	///@brief scorefxn_ for evaluate( SilentStruct, Pose const& )
 	core::scoring::ScoreFunctionOP scorefxn_;
 
@@ -191,14 +188,12 @@ private:
 	///@brief local evaluation or is evaluation outsourced to slave nodes?
 	bool b_evaluate_incoming_decoys_;
 
-
 	///@brief keep track whether our options have been registered at start up
 	static bool options_registered_;
 
 	mutable time_t start_eval_time_;
 
 	VarianceStatisticsArchiveOP variance_archive_;
-
 };
 
 

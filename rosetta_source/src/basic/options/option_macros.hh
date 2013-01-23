@@ -183,6 +183,18 @@
   basic::options::option.add( basic::options::OptionKeys::akey , help ).def( adef ).def( adef2 ).def(adef3).def(adef4).def(adef5).def(adef6).def(adef7); \
   OPT( akey )
 
+#define NEW_OPT8(akey,help,adef,adef2,adef3,adef4,adef5,adef6,adef7,adef8)		\
+  basic::options::option.add( basic::options::OptionKeys::akey , help ).def( adef ).def( adef2 ).def(adef3).def(adef4).def(adef5).def(adef6).def(adef7).def(adef8); \
+  OPT( akey )
+
+#define NEW_OPT9(akey,help,adef,adef2,adef3,adef4,adef5,adef6,adef7,adef8,adef9)	\
+  basic::options::option.add( basic::options::OptionKeys::akey , help ).def( adef ).def( adef2 ).def(adef3).def(adef4).def(adef5).def(adef6).def(adef7).def(adef8).def(adef9); \
+  OPT( akey )
+
+#define NEW_OPT10(akey,help,adef,adef2,adef3,adef4,adef5,adef6,adef7,adef8,adef9,adef10) \
+  basic::options::option.add( basic::options::OptionKeys::akey , help ).def( adef ).def( adef2 ).def(adef3).def(adef4).def(adef5).def(adef6).def(adef7).def(adef8).def(adef9).def(adef10); \
+  OPT( akey )
+
 #define OPT_KEY( type, key )					       \
   namespace basic { 	namespace options {	namespace OptionKeys {	\
 	basic::options::type##OptionKey const key( #key );		\

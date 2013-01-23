@@ -166,6 +166,7 @@ OPT_1GRP_KEY( Real, iterative, fullatom_after_quickrelax_weight )
 OPT_1GRP_KEY( Integer, iterative, limit_decoys_for_noe_assign )
 OPT_1GRP_KEY( Boolean, iterative, centroid_quickrelax )
 OPT_1GRP_KEY( String, iterative, super_quick_relax_protocol )
+OPT_1GRP_KEY( String, iterative, super_quick_relax_patch )
 OPT_1GRP_KEY( Integer, iterative, skip_redundant_constraints )
 OPT_1GRP_KEY( String, iterative, initial_noe_auto_assign_csts )
 OPT_1GRP_KEY( Integer, iterative, delay_noesy_reassign )
@@ -176,6 +177,14 @@ OPT_1GRP_KEY( Integer, iterative, recompute_beta_Naccept )
 OPT_1GRP_KEY( String, iterative, flags_fullatom )
 OPT_1GRP_KEY( Boolean, iterative, force_topology_resampling )
 OPT_2GRP_KEY( Boolean, iterative, normalize, sampling )
+OPT_1GRP_KEY( Boolean, iterative, update_noesy_filter_cst )
+OPT_1GRP_KEY( Boolean, iterative, never_update_noesy_filter_cst )
+
+OPT_1GRP_KEY( Boolean, iterative, split_autoNOE_restraints )
+OPT_1GRP_KEY( Real, iterative, randomize_elimination_candidates )
+
+OPT_1GRP_KEY( File, iterative, refine_auto_noe_flags )
+OPT_1GRP_KEY( FileVector, iterative, staged_auto_noe_flags )
 
 std::string const NOESY_CST_FILE_NAME("noe_auto_assign.cst");
 
@@ -223,6 +232,7 @@ void protocols::abinitio::IterativeBase::register_options() {
 		NEW_OPT( iterative::cenpool_chemicalshift_weight, "weight to apply to chemical shifts in centroid pool rescoring", 5 );
 		NEW_OPT( iterative::chemicalshift_column, "column name of the ChemicalShiftEvaluator used for chemical shift rescoring -- allows to have inactive shifts in score", "chem_shift" );
 		NEW_OPT( iterative::super_quick_relax_protocol, "provide a sequence file for super quick relax ", "none" );
+		NEW_OPT( iterative::super_quick_relax_patch, "provide a patch file for use during super quick relax ", "none" );
 		NEW_OPT( iterative::centroid_before_quickrelax_weight, "add the centroid score of the decoy before it went into the <super_quick_relax> with this weight " , 1.0 );
 		NEW_OPT( iterative::fullatom_after_quickrelax_weight, "add the centroid score of the decoy before it went into the <super_quick_relax> with this weight " , 0.0 );
 		NEW_OPT( iterative::limit_decoys_for_noe_assign, "only use X first decoys for NOE assigment... ", 30 );
@@ -239,6 +249,16 @@ void protocols::abinitio::IterativeBase::register_options() {
 		NEW_OPT( iterative::flags_fullatom, "point to flag-file to read flags for fullatom-refinement and loop-closing specify e.g., as ../flags_fullatom ","");
 		NEW_OPT( iterative::normalize::sampling,
 			"dynamically determined score-variation will be used for patching the sampling stage scores", false );
+		NEW_OPT( iterative::update_noesy_filter_cst, "update noesy filter restraints (used for pool selection) as often as possible", false );
+		NEW_OPT( iterative::never_update_noesy_filter_cst, "never update noesy filter restraints (used for pool selection) not even once for fullatom stage", false );
+		NEW_OPT( iterative::refine_auto_noe_flags, "file with extra flags to modify NOESY-Module behavior in refinement phase (stage5+ )", "" );
+
+		NEW_OPT8( iterative::staged_auto_noe_flags, "files with extra flags for each RASREC stage, say NONE for no option file", "NONE", "NONE", "NONE", "NONE", "NONE", "NONE", "NONE", "NONE" );
+
+		NEW_OPT( iterative::split_autoNOE_restraints, "split the generated restraints into HI and MED accuracy class and use restraint combination only on the 2nd class", false );
+		NEW_OPT( iterative::randomize_elimination_candidates, "put the elimination candidates into extra restraint file and only randomly activate them", 0 );
+
+
 
 		options_registered_ = true;
 	}
@@ -327,15 +347,18 @@ bool decide_on_beta_jumping_from_frags() {
 	FragSetOP frags_s = FragmentIO( option[ OptionKeys::abinitio::number_3mer_frags ]()	).read_data( option[ in::file::frag3 ] );
 	core::fragment::SecondaryStructure ss_def( *frags_s, true /*no JustUseCentralResidue */ );
 	Size ct_E( 0 );
+	Size ct_H( 0 );
 	for ( Size i=1; i<=ss_def.total_residue(); ++i ) {
 		if ( ss_def.strand_fraction( i ) > 0.7 ) ++ct_E;
+		if ( ss_def.helix_fraction( i ) > 0.7 ) ++ct_H;
 	}
 	mem_tr << "fragments loaded for ss-prediction" << std::endl;
 	//less than 15% strands and less than 40 residues in total and we skip jumping...
 	bDoBetaJumping = true;
-	if ( (ct_E*1.0)/(ss_def.total_residue()*1.0) < 0.15 && ct_E < 40 ) {
+	if ( ct_E < 0.1*ct_H && ct_E < 40 ) {
 		tr.Info << "skip beta-jumping since mostly alpha-helical protein" << std::endl;
 		tr.Info << "only " << (ct_E*1.0)/(ss_def.total_residue()*1.0)*100 << "% of residues display significant strand-character" << std::endl;
+		tr.Info << "whereas " << (ct_H*1.0)/(ss_def.total_residue()*1.0)*100 << "% of residues display significant helix-character" << std::endl;
 		bDoBetaJumping = false;
 	}
 	if ( !bDoBetaJumping && option[ OptionKeys::iterative::force_topology_resampling ]() ) {
@@ -373,16 +396,21 @@ IterativeBase::IterativeBase(std::string name_in )
 		bCombineNoesyCst_( true ),
 		super_quick_relax_of_centroids_( option[ iterative::centroid_quickrelax ]() ),
 		use_dynamic_weights_for_sampling_( option[ iterative::normalize::sampling ]() ),
+		delay_noesy_reassign_( option[ iterative::delay_noesy_reassign ]() ),
 		rdc_data_( NULL ),
 		cst_data_( NULL ),
-		cst_fa_data_( NULL )
+		cst_fa_data_( NULL ),
+		vanilla_options_( basic::options::option )
 {
+	never_switched_noe_filter_=true;
 	warn_obsolete_flags();
 	basic::show_time_on_cerr = true;
+
 	using namespace ObjexxFCL;
 	mem_tr << "IterativeBase CStor-Start" << std::endl;
 	//changes for debug mode
 	if ( option[ run::test_cycles ] || option[ run::dry_run ] ) {
+		delay_noesy_reassign_ = 50;
 		//		min_structures_for_accept_statistics_ = 20;
 	}
 
@@ -427,7 +455,10 @@ IterativeBase::IterativeBase(std::string name_in )
 		target_sequence_ = core::sequence::read_fasta_file( option[ in::file::fasta ]()[1] )[1]->sequence();
 		if ( reference_pose_ ) {
 			if ( reference_pose_->sequence()!=target_sequence_ ) {
-				utility_exit_with_message("target sequence and sequence of native pose -in:file:native are inconsistent! ");
+				std::string msg("target sequence and sequence of native pose -in:file:native are inconsistent! ");
+				msg+="\nNATIVE: "+reference_pose_->sequence();
+				msg+="\nFASTA : "+target_sequence_;
+				utility_exit_with_message(msg);
 			}
 		}
 	} else {
@@ -459,27 +490,26 @@ void IterativeBase::initialize() {
 	fix_chainbreak_patch( scorefxn, cen_score_patch() );
 
 	set_scorefxn( scorefxn );
+	set_overall_cstfilter_weight( scorefxn->get_weight( scoring::atom_pair_constraint ) );
+	set_weight( "atom_pair_constraint", 0 ); //this is now done via FILTER mechanism of ConstraintClaimer only !
+	scorefxn->set_weight( scoring::atom_pair_constraint, 0 );
 
 	// --- setup pool-evaluation
 	if ( evaluate_local() ) {
 		set_weight( "score", 1.0 );
 		//setup constraint-evaluation for filter-cst from the ConstraintClaimers ( -broker:setup )
 	///@brief set scorefxn used for evaluation
-		set_weight( "atom_pair_constraint", 0 ); //this is now done via FILTER mechanism of ConstraintClaimer only !
-		set_overall_cstfilter_weight( scorefxn->get_weight( scoring::atom_pair_constraint ) );
 		setup_filter_cst( overall_cstfilter_weight() );
-		scorefxn->set_weight( scoring::atom_pair_constraint, 0 );
-
 		//		set_weight( "prefa_clean_score3", option[ iterative::centroid_before_quickrelax_weight ]() );
 		add_evaluation( new simple_filters::RDC_Evaluator("rdc"), scorefxn->get_weight( scoring::rdc ) );
 		scorefxn->set_weight( scoring::rdc, 0 );
-
-		set_scorefxn( scorefxn );
 	} else {
 		set_weight( "score", 0.0 ); //don't use score that comes back --- but the score_final thing
 		set_weight( "score_final", 1.0 );
+		set_weight( "rdc_filt", scorefxn->get_weight( scoring::rdc ) );
+		scorefxn->set_weight( scoring::rdc, 0 );
 	}
-
+	set_scorefxn( scorefxn );
 	//will setup autoNOE module if cmd-line options activated -- might set super_quick_relax_of_centroids_ to true.
 	setup_autoNOE();
 
@@ -510,7 +540,6 @@ void IterativeBase::initialize() {
 
 	//start stage-end controller
 	test_for_stage_end();
-
 	mem_tr << "IterativeBase CStor-End" << std::endl;
 }
 
@@ -535,15 +564,19 @@ void IterativeBase::idle() {
 		//if we take out the compute_cores() we should still trigger a rescore() to get the new score-variations...
 	}
 
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
 	//if we are in remote-evaluation mode we want to switch the noesy-filter restraints once after stage3
 	if ( !evaluate_local()
+		&& option[ iterative::update_noesy_filter_cst ]()
 		&& stage_ >= STAGE2_RESAMPLING
 		&& noesy_assign::NoesyModule::cmdline_options_activated()
-		&& !never_switched_noe_filter_
+		&& never_switched_noe_filter_
 		&& decoys().begin() != decoys().end()
 	) {
 		basic::show_time( tr,  "non-local scoring replace noesy_filter constraints: start..." );
-		never_switched_noe_filter_=true;
+		never_switched_noe_filter_=false;
 		replace_noesy_filter_constraints();
 		basic::show_time( tr,  "non-local scoring replace noesy_filter constraints: done! ");
 	}
@@ -619,14 +652,42 @@ void IterativeBase::increment_stage() {
 }
 
 /// ------------------------ end stage control
+///@detail rescore and sort archive
+void  IterativeBase::rescore() {
+  Parent::rescore();
+  if ( hedge_archive_ ) {
+    hedge_archive_->set_evaluators( evaluators(), weights() );
+		hedge_archive_->set_weights( weights() );
+    hedge_archive_->set_scorefxn( scorefxn().clone() );
+    hedge_archive_->rescore();
+  }
+}
+
+
+void IterativeBase::collect_hedge_structures( core::io::silent::SilentStructOP evaluated_decoy, Batch const& batch ) {
+	if ( !evaluate_local() ) return;
+	if ( !hedge_archive_ ) {
+		hedge_archive_ = new HedgeArchive( name()+"_hedge" );
+		hedge_archive_->initialize();
+		hedge_archive_->set_evaluators( evaluators(), weights() );
+	}
+	hedge_archive_->add_evaluated_structure( evaluated_decoy, batch );
+}
 
 ///@brief overload to check for pool_convergence data in incoming decoys
-bool IterativeBase::add_structure( core::io::silent::SilentStructOP from_batch ) {
+bool IterativeBase::add_structure( core::io::silent::SilentStructOP from_batch, Batch const& batch ) {
 	core::io::silent::SilentStructOP evaluated_decoy = evaluate_silent_struct( from_batch );
+	if ( decoys().size() == 0 ) {
+		first_batch_this_stage_ = batch.id();
+	}
 
+	if ( stage_ < CEN2FULLATOM || ( stage_ == CEN2FULLATOM && batch.id() < first_batch_this_stage_ ) ) {
+		select_score( evaluated_decoy ); //make sure that _archive_select_score_ is there
+		collect_hedge_structures( evaluated_decoy, batch );
+	}
 	//comes without pool-convergence ? nothing to do
 	if ( !from_batch->has_energy( "pool_converged_tag" ) || min_diversity_list_[ stage() ] == 0 ) {
-		return Parent::add_evaluated_structure( evaluated_decoy );
+		return Parent::add_evaluated_structure( evaluated_decoy, batch );
 	}
 
 	//okay, let's look at the rmsd to closest structure
@@ -634,7 +695,7 @@ bool IterativeBase::add_structure( core::io::silent::SilentStructOP from_batch )
 	Real const rmsd_to_pool( from_batch->get_energy( "pool_converged_rmsd" ) );
 
 	if ( rmsd_to_pool > min_diversity_list_[ stage() ] ) { //structure is sufficiently different -- add via score
-		return Parent::add_evaluated_structure( evaluated_decoy );
+		return Parent::add_evaluated_structure( evaluated_decoy, batch );
 	} else { //structure is close in RMSD to one of archive
 		std::string const tag( from_batch->get_string_value( "pool_converged_tag" ) );
 
@@ -647,7 +708,7 @@ bool IterativeBase::add_structure( core::io::silent::SilentStructOP from_batch )
 		if ( it == decoys().end() ) {
 			//can't find tag ... (might be that we are close to a centroid structure and now add to fullatom pool ).
 			//                    might be that we have swapped away the original structure
-			return Parent::add_evaluated_structure( evaluated_decoy );
+			return Parent::add_evaluated_structure( evaluated_decoy, batch );
 		}
 
 		//improved score ?
@@ -667,7 +728,7 @@ bool IterativeBase::add_structure( core::io::silent::SilentStructOP from_batch )
 								 << " ratio " << delta_score/delta_max << std::endl;
 				if ( delta_score/delta_max < -0.05 ) {
 					decoys().erase( it );
-					return Parent::add_evaluated_structure( evaluated_decoy );
+					return Parent::add_evaluated_structure( evaluated_decoy, batch );
 				} else {
 					tr.Debug << "swap declined because score-improvement below 5% of total spread" << std::endl;
 					return false;
@@ -697,55 +758,62 @@ void IterativeBase::generate_batch() {
 	basic::show_time( tr,  "generate_batch" );
 	//initialize batch
 	mem_tr << "IterativeBase::start_new_batch " << std::endl;
-	Batch& batch( manager().start_new_batch() );
-	mem_tr << "IterativeBase::generate_batch " << stage_ << " " << batch.batch() << std::endl;
-	tr.Info << "\ngenerate batch from " <<name() << " " << batch.batch() << std::endl;
+	{
+		Batch& batch( manager().start_new_batch() );
+		mem_tr << "IterativeBase::generate_batch " << stage_ << " " << batch.batch() << std::endl;
+		tr.Info << "\ngenerate batch from " <<name() << " " << batch.batch() << std::endl;
 
-	//want intermediate structures from abinitio runs
-	batch.set_intermediate_structs();
+		//want intermediate structures from abinitio runs
+		batch.set_intermediate_structs();
 
-	// --- run some of the gen_X methods to generate the type of run we want
-	gen_noe_assignments( batch );
+		// --- run some of the gen_X methods to generate the type of run we want
+		gen_noe_assignments( batch );
 
-	// first 2 stages: enumerate pairings
-	if ( (int) stage_ < (int) PURE_TOPO_RESAMPLING ) gen_enumerate_pairings( batch );
+		// first 2 stages: enumerate pairings
+		if ( (int) stage_ < (int) PURE_TOPO_RESAMPLING ) gen_enumerate_pairings( batch );
 
-	// beta-sheet-topologies
-	if ( stage_ == TOPO_RESAMPLING || stage_ == PURE_TOPO_RESAMPLING || stage_ == NOESY_PHASEII_TOPO ) gen_resample_topologies( batch );
+		// beta-sheet-topologies
+		if ( stage_ == TOPO_RESAMPLING || stage_ == PURE_TOPO_RESAMPLING || stage_ == NOESY_PHASEII_TOPO ) gen_resample_topologies( batch );
 
-	// reuse fragments and restart from stage2 structures
-	if ( stage_ == STAGE2_RESAMPLING || stage_ == NOESY_PHASEII_S2_RESAMPLING ) {
-		gen_resample_stage2( batch );
+		// reuse fragments and restart from stage2 structures
+		if ( stage_ == STAGE2_RESAMPLING || stage_ == NOESY_PHASEII_S2_RESAMPLING ) {
+			gen_resample_stage2( batch );
+		}
+
+		if ( stage_ >= STAGE2_RESAMPLING ) {
+			gen_resample_fragments( batch );
+		}
+
+		bool result_is_fullatom = false;
+		// close loops - fullatom relax
+		if ( stage_ == CEN2FULLATOM ) {
+			gen_cen2fullatom( batch );
+			//	gen_resample_fragments( batch );
+			batch.set_intermediate_structs( false ); //otherwise the intermediate (centroid) structures will be scored by score_13_envhb
+			result_is_fullatom = true;
+		}
+		mem_tr.Debug << "before evaluation output" << std::endl;
+		//finalize batch
+		gen_evaluation_output( batch, result_is_fullatom );
+		gen_dynamic_patches( batch );
+		mem_tr.Debug << "evaluation output" << std::endl;
+
+		basic::show_time( tr,  "finalize batch..." );
+		test_broker_settings( batch );
+		manager().finalize_batch( batch );
+		basic::show_time( tr,  "finalized batch" );
+
+		tr.Info << std::endl;
+		// don't want to reset counters too often... if we run out of steam the QUEUE EMPTY pathway will make sure that we do more runs
+
+		mem_tr << "IterativeBase::generated_batch " << std::endl;
+		//now it is best time to do this... JobQueue is definitely filled up....
+		reassign_noesy_data( batch );
 	}
-
-	if ( stage_ >= STAGE2_RESAMPLING ) {
-		gen_resample_fragments( batch );
-	}
-
-	bool result_is_fullatom = false;
-	// close loops - fullatom relax
-	if ( stage_ == CEN2FULLATOM ) {
-		gen_cen2fullatom( batch );
-		//	gen_resample_fragments( batch );
-		batch.set_intermediate_structs( false ); //otherwise the intermediate (centroid) structures will be scored by score_13_envhb
-		result_is_fullatom = true;
-	}
-	mem_tr.Debug << "before evaluation output" << std::endl;
-	//finalize batch
-	gen_evaluation_output( batch, result_is_fullatom );
-	gen_dynamic_patches( batch );
-	mem_tr.Debug << "evaluation output" << std::endl;
-
-	basic::show_time( tr,  "finalize batch..." );
-	test_broker_settings( batch );
-	manager().finalize_batch( batch );
-	basic::show_time( tr,  "finalized batch" );
-
-
 	//add extra batch if we have "safety_hatch"
 	///SWITCHED THIS OFF TEMPORARILY !!!
-	std::cerr << "saftey hatch is switched off due to maintainence reasons" << std::endl;
-	if ( stage_ == CEN2FULLATOM && false && option [ iterative::safety_hatch_scorecut ].user() ) {
+	//	std::cerr << "saftey hatch is switched off due to maintainence reasons" << std::endl;
+	if ( stage_ == CEN2FULLATOM && option [ iterative::safety_hatch_scorecut ].user() ) {
 		basic::show_time( tr,  "generate safety_hatch" );
 		mem_tr.Debug << "make safety hatch..." << std::endl;
 		Batch& harvest_batch( manager().start_new_batch() );
@@ -757,19 +825,12 @@ void IterativeBase::generate_batch() {
 
 		harvest_batch.set_intermediate_structs( false ); //otherwise the intermediate (centroid) structures will be scored by score_13_envhb
 		gen_evaluation_output( harvest_batch, true /*fullatom*/ );
-		gen_dynamic_patches( batch );
+		gen_dynamic_patches( harvest_batch );
 		basic::show_time( tr,  "finalize safety_hatch... ");
-		test_broker_settings( batch );
+		test_broker_settings( harvest_batch );
 		manager().finalize_batch( harvest_batch );
 		basic::show_time( tr,  "finalized safety_hatch" );
 	}
-
-	tr.Info << std::endl;
-	// don't want to reset counters too often... if we run out of steam the QUEUE EMPTY pathway will make sure that we do more runs
-
-	mem_tr << "IterativeBase::generated_batch " << std::endl;
-	//now it is best time to do this... JobQueue is definitely filled up....
-	reassign_noesy_data( batch );
 }
 
 /// ============================================================================
@@ -847,6 +908,7 @@ void IterativeBase::gen_dynamic_patches( jd2::archive::Batch& batch ) {
 
 
 void IterativeBase::gen_evaluation_output( Batch& batch, bool fullatom ) {
+	tr.Info << "gen_evaluation_output in " << name() << std::endl;
 	utility::io::ozstream flags( batch.flag_file(), std::ios::app );
 	flags << "-evaluation:jump_nr" << std::endl; //add JumpNrEvaluator
 
@@ -869,6 +931,7 @@ void IterativeBase::gen_evaluation_output( Batch& batch, bool fullatom ) {
 			flags << "-evaluation:extra_score_patch " << option[ iterative::fa_score_patch ]() << std::endl;
 		}
 	}
+	flags << "-evaluation:built_in_rdc rdc_filt" << std::endl;
 
 	//setup relax sequence protocol for super-quick relax
 	if ( super_quick_relax_of_centroids_ ) {
@@ -886,6 +949,12 @@ void IterativeBase::gen_evaluation_output( Batch& batch, bool fullatom ) {
 			}
 			flags << "-relax:sequence" << std::endl;
 			flags << "-out:user_tag centroid" << std::endl;
+			//			utility::io::ozstream patch_file( batch.dir()+"/super_quick_relax.patch" );
+			//			patch_file << "atom_pair_constraint = 0.1" << std::endl;
+			//			patch_file << "rdc = 0.1" << std::endl;
+			if ( option[ iterative::super_quick_relax_patch ].user() ) {
+				flags << "-score:patch " << option[ iterative::super_quick_relax_patch ]() << std::endl;
+			}
 		} else { //!fullatom
 			flags << "-out:user_tag fullatom" << std::endl;
 		}
@@ -893,57 +962,54 @@ void IterativeBase::gen_evaluation_output( Batch& batch, bool fullatom ) {
 
 	//NOESY FILTER Restraints
 	if ( noesy_assign::NoesyModule::cmdline_options_activated() ) {
-		if ( first_noesy_cst_file_ == "n/a" ) {
-			if ( super_quick_relax_of_centroids_ ) {
-				first_noesy_cst_file_ = current_noesy_sampling_file_+".filter";
-			} else {
-				first_noesy_cst_file_ = current_noesy_sampling_file_+".filter.centroid";
-			}
-		}
-		if ( fullatom && first_noesy_fa_cst_file_ == "n/a" ) {
-			first_noesy_fa_cst_file_ = current_noesy_sampling_file_+".filter";
-		}
+		update_noesy_filter_files( current_noesy_sampling_file_, fullatom );
+
 		flags << "-evaluation::constraints " << ( fullatom ? first_noesy_fa_cst_file_ : first_noesy_cst_file_ ) << std::endl;
 		flags << "-evaluation::constraints_column " << ( evaluate_local() ? "noesy_autoassign_cst_worker" : "noesy_autoassign_cst" ) << std::endl;
 	}
 
 	//compute pool_convergence_XXX ?
 	if ( min_diversity_list_[ stage() ] > 0 ) {
-
-		//copy pool to '<batch>/pool.in'
-		io::silent::SilentFileData sfd;
-		for ( SilentStructs::const_iterator it = decoys().begin(); it != decoys().end(); ++it ) {
-			sfd.add_structure( *it ); //not a copy, only adds OP to sfd
-		}
-		sfd.write_all( batch.dir()+"/pool.in" );
-
-		//empty pool -- write empty file for score-column consistency
-		if ( sfd.size() == 0 ) {
-			// write a pool anyway so that we have the tags in the returning structures and don't mess
-			// up the columns in the pool decoys.out file... not crucial but makes post-analysis with scripts easier.
-			utility::io::ozstream empty_pool_file( batch.dir()+"/pool.in" );
-			empty_pool_file << "REMARK no structure in pool " << std::endl;
-		}
-
-		//setup flags for min-divergence-pool: ----------------
-
-		//common flags
-		flags << "-mc:known_structures " << batch.dir() << "/pool.in" << std::endl;
-		flags << "-mc:max_rmsd_against_known_structures " << std::max( 0.0, min_diversity_list_[ stage() ] - 0.25 ) << std::endl;
-
-		//exclude residues from RMSD that are flexible anyhow
-		if ( basic::options::option[ basic::options::OptionKeys::in::replonly_residues ].user() ) {
-			flags << "-mc:excluded_residues_from_rmsd ";
-			utility::vector1<Size> replonly_rsd = basic::options::option[ basic::options::OptionKeys::in::replonly_residues ]();
-			for ( utility::vector1<Size>::const_iterator it = replonly_rsd.begin(); it != replonly_rsd.end(); ++it ) {
-				flags << " "<< *it;
-			}
-			flags << std::endl;
-		}
+		gen_diversity_pool( batch, fullatom );
 	} //setup of min-divergence pool
-
 } //gen_evaluation
 
+
+void IterativeBase::gen_diversity_pool( jd2::archive::Batch& batch, bool ) {
+
+	utility::io::ozstream flags( batch.flag_file(), std::ios::app );
+
+	//copy pool to '<batch>/pool.in'
+	io::silent::SilentFileData sfd;
+	for ( SilentStructs::const_iterator it = decoys().begin(); it != decoys().end(); ++it ) {
+		sfd.add_structure( *it ); //not a copy, only adds OP to sfd
+	}
+	sfd.write_all( batch.dir()+"/pool.in" );
+
+	//empty pool -- write empty file for score-column consistency
+	if ( sfd.size() == 0 ) {
+		// write a pool anyway so that we have the tags in the returning structures and don't mess
+		// up the columns in the pool decoys.out file... not crucial but makes post-analysis with scripts easier.
+		utility::io::ozstream empty_pool_file( batch.dir()+"/pool.in" );
+		empty_pool_file << "REMARK no structure in pool " << std::endl;
+	}
+
+	//setup flags for min-divergence-pool: ----------------
+
+	//common flags
+	flags << "-mc:known_structures " << batch.dir() << "/pool.in" << std::endl;
+	flags << "-mc:max_rmsd_against_known_structures " << std::max( 0.0, min_diversity_list_[ stage() ] - 0.25 ) << std::endl;
+
+	//exclude residues from RMSD that are flexible anyhow
+	if ( basic::options::option[ basic::options::OptionKeys::in::replonly_residues ].user() ) {
+		flags << "-mc:excluded_residues_from_rmsd ";
+		utility::vector1<Size> replonly_rsd = basic::options::option[ basic::options::OptionKeys::in::replonly_residues ]();
+		for ( utility::vector1<Size>::const_iterator it = replonly_rsd.begin(); it != replonly_rsd.end(); ++it ) {
+			flags << " "<< *it;
+		}
+		flags << std::endl;
+	}
+}
 ///@brief in the comp. modelling protocol the topo-resampling stage might also contain a RigidChunkClaimer...
 /// provide start-structures for this as -in:file:silent
 void IterativeBase::gen_start_structures( Batch& /*batch*/ ) {
@@ -1175,16 +1241,43 @@ void IterativeBase::gen_resample_fragments( Batch& batch ) {
 	mem_tr << "IterativeBase::gen_resample_fragments end" << std::endl;
 }
 
+void IterativeBase::update_noesy_filter_files(
+		std::string const& current,
+		bool fullatom
+) {
+	current_noesy_sampling_file_ = current;
+	if ( first_noesy_cst_file_ == "n/a" ) {
+		if ( super_quick_relax_of_centroids_ ) {
+			first_noesy_cst_file_ = current_noesy_sampling_file_+".filter";
+		} else {
+			first_noesy_cst_file_ = current_noesy_sampling_file_+".filter.centroid";
+		}
+	}
+	if ( fullatom && first_noesy_fa_cst_file_ == "n/a" ) {
+		if ( option[ iterative::never_update_noesy_filter_cst ]() ) {
+			first_noesy_fa_cst_file_ = first_noesy_cst_file_.substr(0,first_noesy_cst_file_.find(".centroid"));
+		} else {
+			first_noesy_fa_cst_file_ = current_noesy_sampling_file_+".filter";
+		}
+	}
+	tr.Info << "update_noesy_filter_files for " << name() << std::endl;
+	tr.Info << "STATUS now: ";
+	save_status( tr.Info );
+	tr.Info << std::endl;
+}
+
 //generate ConstraintClaimer files for NOE restraints
 void IterativeBase::gen_noe_assignments( Batch& batch ) {
+	tr.Info << "gen_noe_assignments in " << name() << std::endl;
 	if ( !noesy_assign::NoesyModule::cmdline_options_activated() ) return;
 	bool bCombine( bCombineNoesyCst_ );
 	mem_tr << "IterativeBase::gen_noe_assignments start" << std::endl;
 
-
+	/* OBSOLETED by update_noesy_filter_files
 	//if just started IterativeFullatom we are in a new instance and the first_noesy_cst_file and
 	// the current_noesy_sampling_file_ are not set .. go through backward through past batches and take first (i.e., youngest) file.
 	if ( batch.id() > 1 && stage() > CEN2FULLATOM && first_noesy_cst_file_ == "n/a"  ) {
+		tr.Info << "Figure out current NOESY CST File by going backwards from " << batch.id() << std::endl;
 		for ( Size back = batch.id() - 1; back >= 1; --back ) {
 			Batch last_batch( back );
 			runtime_assert( last_batch.id() < batch.id() );
@@ -1192,31 +1285,93 @@ void IterativeBase::gen_noe_assignments( Batch& batch ) {
 			if ( utility::file::file_exists( current_noesy_sampling_file_ ) ) break;
 			current_noesy_sampling_file_ = option[ iterative::initial_noe_auto_assign_csts ]();
 		}
+		//		if ( option[ iterative::update_noesy_filter_cst ]() ) {
+		first_noesy_cst_file_ = current_noesy_sampling_file_+".filter";
 		first_noesy_fa_cst_file_ = current_noesy_sampling_file_+".filter";
+			//} else {
+			//first_noesy_cst_file_ = option[ iterative::initial_noe_auto_assign_csts ]()+".filter";
+			//first_noesy_fa_cst_file_ = option[ iterative::initial_noe_auto_assign_csts ]()+".filter";
+			//}
 	}
-
+	*/
 	//
 	std::string cst_file( current_noesy_sampling_file_ );
+	std::string best_cst_file( cst_file + ".good");
 	std::string cst_centroid_file( cst_file + ".centroid");
+	std::string best_cst_centroid_file( best_cst_file + ".centroid");
 
 	//make broker files with FULL-ATOM and CENTROID CLaimers
 	utility::io::ozstream broker( batch.broker_file(), std::ios::app );
-	if ( stage() >= CEN2FULLATOM ) { //don't add constraints in early stages... slows down super-quick relax to much...
+	bool bSplitted( option[ iterative::split_autoNOE_restraints ]() );
+
+	std::string drop_candidates( cst_file + ".drop" );
+	std::string drop_candidates_centroid( drop_candidates + ".centroid" );
+
+	using namespace utility::file; //for file_exists
+	bool bRandomRestraints( option[ iterative::randomize_elimination_candidates ] > 0.0 && file_exists( drop_candidates ) );
+
+
+	if ( stage() >= CEN2FULLATOM ) { //don't add fa constraints in early stages... slows down super-quick relax to much...
+		if ( bSplitted ) {
+			broker << "\nCLAIMER ConstraintClaimer \n"
+						 << "CST_FILE " << best_cst_file << "\n"
+						 << "NO_CENTROID\n"
+						 << "FULLATOM\n"
+						 << "SKIP_REDUNDANT "<<option[ iterative::skip_redundant_constraints ]() << "\n";
+			broker << "COMBINE_RATIO 1" << std::endl;
+			broker << "END_CLAIMER\n" << std::endl;
+		}
 		broker << "\nCLAIMER ConstraintClaimer \n"
 					 << "CST_FILE " << cst_file << "\n"
 					 << "NO_CENTROID\n"
 					 << "FULLATOM\n"
 					 << "SKIP_REDUNDANT "<<option[ iterative::skip_redundant_constraints ]() << "\n";
-		if ( bCombine ) broker << "COMBINE_RATIO " << basic::options::option[ basic::options::OptionKeys::constraints::combine ]() << "\n";
+		if ( bCombine || bSplitted ) {
+			broker << "COMBINE_RATIO " << option[ basic::options::OptionKeys::constraints::combine ]() << std::endl;
+		}
+		broker << "END_CLAIMER\n" << std::endl;
+		if ( bRandomRestraints ) {
+			broker << "\nCLAIMER ConstraintClaimer \n"
+						 << "CST_FILE " << drop_candidates << "\n"
+						 << "NO_CENTROID\n"
+						 << "FULLATOM\n"
+						 << "DROP_RANDOM_RATE " << option[ iterative::randomize_elimination_candidates ]() << "\n"
+						 << "SKIP_REDUNDANT "<<option[ iterative::skip_redundant_constraints ]() << "\n";
+			if ( bCombine || bSplitted ) {
+				broker << "COMBINE_RATIO " << option[ basic::options::OptionKeys::constraints::combine ]() << std::endl;
+			}
+			broker << "END_CLAIMER\n" << std::endl;
+		} //bRandom
+	}
+	//	if ( bCombine ) broker << "COMBINE_RATIO " << basic::options::option[ basic::options::OptionKeys::constraints::combine ]() << "\n";
+	if ( bSplitted ) {
+		broker << "\nCLAIMER ConstraintClaimer \n"
+					 << "CST_FILE " << best_cst_centroid_file << "\n"
+					 << "CENTROID\n"
+					 << "SKIP_REDUNDANT "<<option[ iterative::skip_redundant_constraints ]() << "\n";
+		broker << "COMBINE_RATIO 1" << std::endl;
 		broker << "END_CLAIMER\n" << std::endl;
 	}
-
 	broker << "\nCLAIMER ConstraintClaimer \n"
 				 << "CST_FILE " << cst_centroid_file << "\n"
 				 << "CENTROID\n"
 				 << "SKIP_REDUNDANT "<<option[ iterative::skip_redundant_constraints ]() << "\n";
-	if ( bCombine ) broker << "COMBINE_RATIO " << basic::options::option[ basic::options::OptionKeys::constraints::combine ]() << "\n";
+	if ( bCombine || bSplitted ) {
+		broker << "COMBINE_RATIO " << option[ basic::options::OptionKeys::constraints::combine ]() << std::endl;
+	}
 	broker << "END_CLAIMER\n" << std::endl;
+
+	if ( bRandomRestraints ) {
+			broker << "\nCLAIMER ConstraintClaimer \n"
+						 << "CST_FILE " << drop_candidates_centroid << "\n"
+						 << "CENTROID\n"
+						 << "DROP_RANDOM_RATE " << option[ iterative::randomize_elimination_candidates ]() << "\n"
+						 << "SKIP_REDUNDANT "<<option[ iterative::skip_redundant_constraints ]() << "\n";
+			if ( bCombine || bSplitted ) {
+				broker << "COMBINE_RATIO " << option[ basic::options::OptionKeys::constraints::combine ]() << std::endl;
+			}
+			broker << "END_CLAIMER\n" << std::endl;
+	} //bRandom
 
 	mem_tr << "IterativeBase::gen_noe_assignments end" << std::endl;
 }
@@ -1252,19 +1407,13 @@ void IterativeBase::gen_cen2fullatom( Batch& batch ) {
 
 }
 
-void IterativeBase::gen_cen2fullatom_non_pool_decoys( Batch& batch ) {
+
+void IterativeBase::collect_hedgeing_decoys_from_batches(
+   Batch const& batch,
+	 core::io::silent::SilentStructOPs& start_decoys,
+	 Real score_cut_per_batch
+) {
 	using namespace core::io::silent;
-	utility::io::ozstream broker( batch.broker_file(), std::ios::app );
-	broker << "\nUSE_INPUT_POSE\n"
-				 << "CLAIMER StartStructClaimer\n"
-				 << "END_CLAIMER\n\n"
-				 << "CLAIMER JumpClaimer\n"
-				 << "END_CLAIMER\n\n" << std::endl;
-
-
-	utility::io::ozstream flags( batch.flag_file(), std::ios::app );
-	flags << "-abinitio::skip_stages 1 2 3 4" << std::endl;
-	add_fullatom_flags( batch );
 
 	//count total decoys
 	Size total( 0 );
@@ -1274,14 +1423,9 @@ void IterativeBase::gen_cen2fullatom_non_pool_decoys( Batch& batch ) {
 		total += it->decoys_returned();
 		tr.Debug << "harvest old decoys for safety hatch: batch " << it->id() << " " << it->decoys_returned() << " " << total << std::endl;
 	}
-
 	basic::show_time( tr,  "generate safety_hatch: counted total decoys" );
 
-	Real score_cut_per_batch( option[ OptionKeys::iterative::safety_hatch_scorecut ] );
-	//now go thru batches and select percentage_per_batch structures randomly from the pool created by score_cut_per_batch...
-	//use score_final for this ? or can we use EvaluatedArchive methods to get a reasonable score ???
-	//ACHTUNG:  need also to know final centroid batch id...
-	SilentStructOPs start_decoys;
+
 	for ( ArchiveManager::BatchList::const_iterator it = manager().batches().begin(); it != manager().batches().end(); ++it ) {
 		Real percentage_per_batch( 1.0*batch.nstruct() / (1.0*total) );
 		if ( it->id() >= first_fullatom_batch_ ) break;
@@ -1290,7 +1434,7 @@ void IterativeBase::gen_cen2fullatom_non_pool_decoys( Batch& batch ) {
 		//		it->silent_out();
 		basic::show_time( tr,  "generate safety_hatch: access batch "+it->batch() );
 		SilentFileData sfd;
-			std::list< std::pair< core::Real, SilentStructOP > > score_cut_decoys;
+		std::list< std::pair< core::Real, SilentStructOP > > score_cut_decoys;
 		Size ct( 0 );
 		tr.Debug << "read and score decoys in " << it->silent_out() << "..." << std::endl;
 		sfd.read_file( it->silent_out() );
@@ -1335,6 +1479,34 @@ void IterativeBase::gen_cen2fullatom_non_pool_decoys( Batch& batch ) {
 		}
 	}
 	basic::show_time( tr,  "generate safety_hatch: done collecting");
+}
+
+void IterativeBase::gen_cen2fullatom_non_pool_decoys( Batch& batch ) {
+	using namespace core::io::silent;
+	utility::io::ozstream broker( batch.broker_file(), std::ios::app );
+	broker << "\nUSE_INPUT_POSE\n"
+				 << "CLAIMER StartStructClaimer\n"
+				 << "END_CLAIMER\n\n"
+				 << "CLAIMER JumpClaimer\n"
+				 << "END_CLAIMER\n\n" << std::endl;
+
+
+	utility::io::ozstream flags( batch.flag_file(), std::ios::app );
+	flags << "-abinitio::skip_stages 1 2 3 4" << std::endl;
+	add_fullatom_flags( batch );
+
+
+	//now go thru batches and select percentage_per_batch structures randomly from the pool created by score_cut_per_batch...
+	//use score_final for this ? or can we use EvaluatedArchive methods to get a reasonable score ???
+	//ACHTUNG:  need also to know final centroid batch id...
+	SilentStructOPs start_decoys;
+	Real score_cut_per_batch( option[ OptionKeys::iterative::safety_hatch_scorecut ] );
+	if ( !hedge_archive_ ) {
+		collect_hedgeing_decoys_from_batches( batch, start_decoys, score_cut_per_batch );
+	} else {
+		hedge_archive_->collect( batch, start_decoys );
+	}
+
 	if ( start_decoys.size() ) {
 		batch.set_has_silent_in();
 		core::io::silent::SilentFileData sfd;
@@ -1357,14 +1529,16 @@ void IterativeBase::gen_cen2fullatom_non_pool_decoys( Batch& batch ) {
 
 void IterativeBase::reassign_noesy_data( Batch& batch ) {
 	if ( !noesy_assign::NoesyModule::cmdline_options_activated() ) return;
-	if ( batch.id() == 1 || ( total_proposed() < (Size) option[ iterative::delay_noesy_reassign ]() ) ) return; //don't do this at very beginning
+	Size const n_decoys( option[ iterative::limit_decoys_for_noe_assign ] );
+	if ( batch.id() == 1 || ( total_proposed() < delay_noesy_reassign_ && stage() < CEN2FULLATOM )
+		|| ( stage() >= CEN2FULLATOM && total_proposed() < 2*n_decoys ) ) return; //don't do this at very beginning
 	//this takes a while... make sure that backedup version of archive is up-to-date
 	manager().save_archive();
 
 	mem_tr << "IterativeBase reassign_noesy_data start" << std::endl;
 
 	SilentStructs calibration_decoys;
-	Size const n_decoys( option[ iterative::limit_decoys_for_noe_assign ] );
+
 	std::ostringstream hash_string;
 	hash_string << "NO_POOL " << std::endl;
 
@@ -1388,22 +1562,45 @@ void IterativeBase::reassign_noesy_data( Batch& batch ) {
 	}
 	noesy_assign_hash_ = hash_val;
 
-	//initialize noesy-module
-	if ( !noesy_module_ ) {
-		noesy_module_ = new protocols::noesy_assign::NoesyModule( target_sequence_ );
-	} else {
-		noesy_module_->reset();
-	}
 
 	//manipulate params if we have some "SCHEME"
-	noesy_assign::PeakAssignmentParameters& params( *noesy_assign::PeakAssignmentParameters::get_nonconst_instance() );
-	std::string scheme( option[ iterative::auto_assign_scheme ]() );
-	if ( stage() > STAGE2_RESAMPLING ) {
-		params.set_cycle( 7 );
-		params.use_local_distviol_ = true;
-		//params.calibrate= calibrate on converged regions only
+
+	bool use_hardwired_phaseII_params( false );
+	option=vanilla_options_;
+	std::string const& option_file( option[ iterative::staged_auto_noe_flags ][ stage() ] );
+	if ( option_file != "NONE" ) {
+		tr.Info << "Loading Auto-NOE options for stage " << stage() << " from @" << option_file << std::endl;
+		using utility::file::file_exists;
+		if ( !file_exists( option_file ) ) {
+			utility_exit_with_message( "couldn't find flag-file "+option_file );
+		}
+		option.load_options_from_file( option_file );
+	} else {
+		tr.Info << "No stage specific Auto-NOE option file found for stage" << stage() << std::endl;
+		if ( stage() > STAGE2_RESAMPLING ) {
+			if ( option[ iterative::refine_auto_noe_flags ].user() ) {
+				using utility::file::file_exists;
+				if ( !file_exists( option[ iterative::refine_auto_noe_flags ]()  ) ) {
+					utility_exit_with_message( "couldn't find flag-file "+std::string(option[ iterative::refine_auto_noe_flags ]()) );
+				}
+
+				basic::options::option.load_options_from_file( option[ iterative::refine_auto_noe_flags ] );
+			} else {
+				use_hardwired_phaseII_params = true;
+			}
+		}
 	}
 
+	noesy_assign::PeakAssignmentParameters::reset(); //re-read cmd-line options
+	noesy_assign::PeakAssignmentParameters& params( *noesy_assign::PeakAssignmentParameters::get_nonconst_instance() );
+
+	if ( use_hardwired_phaseII_params ) {
+		tr.Info << "Use hardwired phaseII params for NoesyModule " << std::endl;
+		params.set_cycle( 7 );
+		params.use_local_distviol_ = true;
+	}
+
+	std::string scheme( option[ iterative::auto_assign_scheme ]() );
 	if ( scheme == "CONST" ) {
 		tr.Info << " reassign NOESY data with cmd-line settings " << std::endl;
 		bCombineNoesyCst_ = stage() <= STAGE2_RESAMPLING;
@@ -1422,6 +1619,13 @@ void IterativeBase::reassign_noesy_data( Batch& batch ) {
 		utility_exit_with_message("unknown auto_assign_scheme for NOESY data: choose ADAPT1 or CONST" + scheme);
 	}
 
+	//initialize noesy-module
+	if ( !noesy_module_ ) {
+		noesy_module_ = new protocols::noesy_assign::NoesyModule( target_sequence_ );
+	} else {
+		noesy_module_->reset();
+	}
+
 	//dump params on tracer and in README file
 	params.show_on_tracer();
 	{
@@ -1434,7 +1638,8 @@ void IterativeBase::reassign_noesy_data( Batch& batch ) {
 		utility::DereferenceIterator< SilentStructs >( calibration_decoys.begin() ),
 		utility::DereferenceIterator< SilentStructs >( calibration_decoys.end() )
 	);
-
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
 	//make constraints
 	core::pose::Pose aPose; 	//make a pose to make constraint-files
@@ -1445,8 +1650,28 @@ void IterativeBase::reassign_noesy_data( Batch& batch ) {
 	);
 	std::string cst_file( batch.dir()+"/"+NOESY_CST_FILE_NAME ); //cst-file names
 	std::string cst_centroid_file( cst_file + ".centroid");
-	noesy_module_->generate_constraint_files( aPose, cst_file, cst_centroid_file, 5 ); //generate constraints
-	noesy_module_->generate_constraint_files( aPose, cst_file+".filter", cst_file+".filter.centroid", 2 );
+	std::string best_cst_file( cst_file + ".good");
+	std::string best_cst_centroid_file( best_cst_file + ".centroid");
+
+	if ( reference_pose_ ) {
+		noesy_module_->add_dist_viol_to_assignments( *reference_pose_ );
+	}
+	bool bSplitted( option[ iterative::split_autoNOE_restraints ] );
+	bool bRandomRestraints( option[ iterative::randomize_elimination_candidates ] > 0.0 );
+	if ( bSplitted ) {
+		noesy_module_->generate_constraint_files( aPose, best_cst_file, best_cst_centroid_file, 5, 0, 2 ); //generate constraints
+		noesy_module_->generate_constraint_files( aPose, cst_file, cst_centroid_file, 5, 3, 4 ); //generate constraints
+	} else {
+		noesy_module_->generate_constraint_files( aPose, cst_file, cst_centroid_file, 5, 0, 5, !bRandomRestraints ); //generate constraints
+	}
+	noesy_module_->generate_constraint_files( aPose, cst_file+".filter", cst_file+".filter.centroid", 2, 0, 5 );
+
+	std::string drop_candidates( cst_file + ".drop" );
+	std::string drop_candidates_centroid( drop_candidates + ".centroid" );
+
+	if ( bRandomRestraints ) {
+		noesy_module_->generate_constraint_files( aPose, drop_candidates, drop_candidates_centroid, 5, 0, 5, !bRandomRestraints, true );
+	}
 
 	//write NOE_out.dat
 	noesy_module_->write_assignments( batch.dir()+"/NOE_out.dat" );
@@ -1455,7 +1680,7 @@ void IterativeBase::reassign_noesy_data( Batch& batch ) {
 	current_noesy_sampling_file_ = cst_file;
 
 	//switch out filter constraints --- if evaluate-local() otherwise we do this only once ( triggered from idle() )
-	if ( evaluate_local() ) { //change filter restraints if we are local-evaluators
+	if ( evaluate_local() && option[ iterative::update_noesy_filter_cst ]() ) { //change filter restraints if we are local-evaluators
 		topology_broker::ConstraintClaimerOP cst =
 			new topology_broker::ConstraintClaimer( current_noesy_sampling_file_+".filter", "noesy_autoassign_cst" );
 		cst->set_combine_ratio( bCombineNoesyCst_ ? 2 : 1 );
@@ -1524,19 +1749,14 @@ void IterativeBase::guess_pairings_from_secondary_structure(
 
 //this is called for non-local evaluation to switch-out the filter restraints once after stage3.
 //this causes cancelling of batches and other shit, that is the reason why called rarely/once
+//is not called if switching is deactivated
 void IterativeBase::replace_noesy_filter_constraints() {
-
+	tr.Info << "replacing NOE filter constraints" << std::endl;
 	//are we full-atom ?
 	pose::Pose pose;
 	(*decoys().begin())->fill_pose( pose );
 	bool const fullatom( pose.is_fullatom() );
-	if ( fullatom ) first_noesy_fa_cst_file_ = current_noesy_sampling_file_+".filter";
-
-	if ( super_quick_relax_of_centroids_ ) {
-		first_noesy_cst_file_ = current_noesy_sampling_file_+".filter";
-	} else {
-		first_noesy_cst_file_ = current_noesy_sampling_file_+".filter.centroid";
-	}
+	update_noesy_filter_files( current_noesy_sampling_file_, fullatom );
 
 	// this needs work in EvaluatedArchive to make sure the right constraint files are used...
 	if ( noesy_assign::NoesyModule::cmdline_options_activated() ) {
@@ -1764,6 +1984,10 @@ void IterativeBase::add_core_evaluator( loops::Loops const& core, std::string co
 
 void IterativeBase::restore_status( std::istream& is ) {
 	Parent::restore_status( is );
+	if ( evaluate_local() ) {
+		hedge_archive_ = new HedgeArchive( name()+"_hedge" );
+		hedge_archive_->restore_from_file();
+	}
 	int bla; std::string tag;
 	is >> tag >> bla;
 	runtime_assert( tag == "IterationStage:" );
@@ -1800,6 +2024,7 @@ void IterativeBase::restore_status( std::istream& is ) {
 	if ( is.good() && tag == "NOESY_CURRENT_CST:" ) {
 		is >> current_noesy_sampling_file_;
 	}
+	update_noesy_filter_files( current_noesy_sampling_file_, false );
 	if ( evaluate_local() && current_noesy_sampling_file_ != "n/a" ) { //change filter restraints if we are local-evaluators
 		topology_broker::ConstraintClaimerOP cst =
 			new topology_broker::ConstraintClaimer( current_noesy_sampling_file_+".filter", "noesy_autoassign_cst" );
@@ -1815,6 +2040,7 @@ void IterativeBase::restore_status( std::istream& is ) {
 
 void IterativeBase::save_status( std::ostream& os ) const {
 	Parent::save_status( os );
+	if ( hedge_archive_ ) hedge_archive_->save_to_file();
 	os << "IterationStage: " << stage_;
 	os << "   first_batch_this_stage: " << first_batch_this_stage_;
 	os << "   first_fullatom_batch: " << first_fullatom_batch_;

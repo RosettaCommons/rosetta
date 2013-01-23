@@ -86,6 +86,7 @@ public:
 	core::Real filter_weight() const { return filter_weight_; }
 	std::string const& filter_name() const { return filter_name_; }
 	core::Size combine_ratio() const { return combine_ratio_; }
+	core::Real drop_random_rate() const { return drop_random_rate_; }
 	std::string const& tag() const { return tag_; }
 
 	void set_cst_file( std::string const& );
@@ -94,6 +95,7 @@ public:
 	void set_skip_redundant( core::Size setting );
 	void set_combine_ratio( core::Size setting );
 	void set_filter_weight( core::Real weight );
+	void set_drop_random_rate( core::Real setting );
 private:
 	std::string filename_, fa_filename_;
 	std::string cst_filename_;
@@ -118,6 +120,8 @@ private:
 	///@brief combine constraints randomly into Ambiguous Constraints
 	core::Size combine_ratio_;  //default 1: no constraint combination
 
+	///@brief drop restraints with this rate randomly -- default 0 -- no dropping
+	core::Real drop_random_rate_;
 
 	///@brief at most one constraint per residue pair ( does not look at bounds... )
 	bool skip_redundant_;

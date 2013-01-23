@@ -49,7 +49,7 @@
 #include <string>
 // AUTO-REMOVED #include <ctime>
 // AUTO-REMOVED #include <math.h>
-
+#include <basic/prof.hh>
 //Auto Headers
 #include <utility/vector1.hh>
 
@@ -342,6 +342,7 @@ void MPIArchiveJobDistributor::_notify_archive() {
 	int flag( 1 );
 	if ( !notify_first ) { //if not first time, make sure last message has been received already...
 		notification_tracer.Debug << "test MPI-Send completion of last JOB_COMPLETION ( batch_" << notify_buf[ 1 ] << " ) message...";
+		basic::show_time( tr,  "try to send JOB_COMPLETION" );
 		MPI_Status status;
 		MPI_Test( &notify_request, &flag, &status ); //has last communication succeeded ? --- buffer is free again.
 		int flag2;
@@ -352,6 +353,7 @@ void MPIArchiveJobDistributor::_notify_archive() {
 		//okay ready to send next message
 		CompletionMessage const& msg(	pending_notifications_.front() );
 		notification_tracer.Debug << "send out JOB_COMPLETION " << msg.batch_id << std::endl;
+		basic::show_time( tr,  "send JOB_COMPLETION" );
 		//		int notify_buf[ 6 ];
 		notify_buf[ 0 ] = msg.msg_tag;//JOB_COMPLETION, QUEUE_EMPTY;
 		notify_buf[ 1 ] = msg.batch_id;
@@ -363,6 +365,7 @@ void MPIArchiveJobDistributor::_notify_archive() {
 		pending_notifications_.pop_front();
 				notify_first = false;
 	}
+	basic::show_time( tr,  "finished _notify_archive" );
 #endif
 	PROF_STOP( basic::MPI_NOTIFY_ARCHIVE );
 }

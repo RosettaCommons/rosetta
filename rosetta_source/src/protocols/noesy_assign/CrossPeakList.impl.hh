@@ -105,15 +105,17 @@ void CrossPeakList::calibrate( DecoyIterator const& begin, DecoyIterator const& 
   static basic::Tracer tr("protocols.noesy_assign.crosspeaks");
 
   PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
-  bool structure_independent_calibration( params.calibration_target_ >= 1.0 || begin == end );
+  bool const structure_independent_calibration( params.calibration_target_ > 1.0 || begin == end );
+  bool const elimination( params.calibration_eliminate_ && begin != end );
 
   if ( structure_independent_calibration ) {
     tr.Info << "structure independent calibration..."<<std::endl;
     PeakCalibratorMap calibrators( *this, new StructureIndependentPeakCalibrator );
     calibrators.set_target_and_tolerance( params.calibration_target_, 0.1 );
     calibrators.do_calibration();
-    return;
-  } else {
+  };
+
+  if ( !structure_independent_calibration || elimination ) {
     typedef utility::vector1< pose::PoseOP > Poses;
     Poses pose_cache;
     for ( DecoyIterator iss = begin; iss != end; ++iss ) {
@@ -123,12 +125,17 @@ void CrossPeakList::calibrate( DecoyIterator const& begin, DecoyIterator const& 
       jumps.remove_chainbreaks( *pose );
       pose_cache.push_back( pose );
     }
-    tr.Info << "structure dependent calibration..."<<std::endl;
-    PeakCalibratorMap calibrators( *this, new StructureDependentPeakCalibrator( pose_cache, params.dcalibrate_ ) );
-    calibrators.set_target_and_tolerance( params.calibration_target_, 0.005 );
-    calibrators.do_calibration();
-    calibrators.eliminate_violated_constraints();
-    return;
+
+    for ( Size cycles( params.calibration_cycles_ ); cycles >= 1; --cycles ) {
+      PeakCalibratorMap calibrators( *this, new StructureDependentPeakCalibrator( pose_cache, params.dcalibrate_ ) );
+      if ( !structure_independent_calibration ) {
+	tr.Info << "structure dependent calibration..."<<std::endl;
+	calibrators.set_target_and_tolerance( params.calibration_target_, 0.005 );
+	calibrators.do_calibration();
+      }
+      tr.Info << "structure dependent elimination and nudging ..."<< std::endl;
+      calibrators.eliminate_violated_constraints(); //here also the nudging happens...
+    }
   }
 }
 

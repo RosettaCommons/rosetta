@@ -188,7 +188,7 @@ void ArchiveBase::read_structures( core::io::silent::SilentFileData& sfd, Batch 
 		(*it)->add_comment( TAG_IN_FILE, tag );
 		(*it)->add_comment( SOURCE_FILE, batch.silent_out() );
 
-		bool accept = add_structure( *it );
+		bool accept = add_structure( *it, batch );
 		count_structure( batch, accept );
 		accepted_ct += accept ? 1 : 0;
 	}
@@ -199,7 +199,7 @@ void ArchiveBase::read_structures( core::io::silent::SilentFileData& sfd, Batch 
 	tr.Trace << "now there are " << decoys().size() << " decoys in archive " << std::endl;
 }
 
-bool ArchiveBase::add_structure( core::io::silent::SilentStructOP new_decoy ) {
+bool ArchiveBase::add_structure( core::io::silent::SilentStructOP new_decoy, Batch const& ) {
 	add_structure_at_position( decoys_.begin(), new_decoy );
 	return true;
 }
@@ -377,7 +377,7 @@ void DebugArchive::restore_status( std::istream& in ) {
 	}
 }
 
-bool DebugArchive::add_structure( core::io::silent::SilentStructOP decoy ) {
+bool DebugArchive::add_structure( core::io::silent::SilentStructOP decoy, Batch const& ) {
 	if ( decoys().size() < 100 ) {
 		decoys().push_back( decoy ); //of course this can't remain as simple as this.
 	} else {

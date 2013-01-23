@@ -106,18 +106,19 @@ using namespace basic::options::OptionKeys;
 //boost::mutex picker_mutex;
 //#endif
 
-static basic::Tracer trPicker("protocols.frag_picker.FragmentPicker");
+static basic::Tracer tr("protocols.frag_picker.FragmentPicker");
 
 FragmentPicker::~FragmentPicker() {}
 
 void FragmentPicker::bounded_protocol() {
+	tr.Info << "pick fragments using bounded protocol..." << std::endl;
 	pick_candidates();
 	save_fragments();
 }
 
 void FragmentPicker::quota_protocol() {
 	using namespace ObjexxFCL;
-
+	tr.Info << "pick fragments using quota protocol..." << std::endl;
 	pick_candidates();
 
 	const bool skip_merge = (candidates_sinks_.size() == 1) ? true : false;
@@ -155,12 +156,12 @@ void FragmentPicker::quota_protocol() {
 
 void FragmentPicker::keep_all_protocol() {
 	using namespace ObjexxFCL;
-
+	tr.Info << "pick fragments using keep-all protocol..." << std::endl;
 	// memory usage makes the following options impractical
 	if (max_threads_ > 1)
-		trPicker.Warning << "Ignoring -j option for keep_all_protocol" << std::endl;
+		tr.Warning << "Ignoring -j option for keep_all_protocol" << std::endl;
 	if (option[frags::nonlocal_pairs].user())
-		trPicker.Warning << "Ignoring -nonlocal_pairs option for keep_all_protocol" << std::endl;
+		tr.Warning << "Ignoring -nonlocal_pairs option for keep_all_protocol" << std::endl;
 
 	CompareTotalScore comparator(get_score_manager());
 	for (Size iFragSize = 1; iFragSize <= frag_sizes_.size(); ++iFragSize) { // Loop over various sizes of fragments
@@ -200,14 +201,14 @@ void FragmentPicker::keep_all_protocol() {
 			if (option[frags::describe_fragments].user()) {
 				get_score_manager()->describe_fragments(out, out_file);
 			}
-			trPicker.Info << "Collected candidates of size "<<fragment_size<<" at pos"<<qPos<<std::endl;
+			tr.Info << "Collected candidates of size "<<fragment_size<<" at pos"<<qPos<<std::endl;
 			storage->clear();
-			trPicker.Debug<< storage->count_candidates()<<" candidates left in a sink after flushing"<<std::endl;
+			tr.Debug<< storage->count_candidates()<<" candidates left in a sink after flushing"<<std::endl;
 		}
 		output.close();
 		out_file.close();
 	}
-	trPicker.Info<<std::endl;
+	tr.Info<<std::endl;
 }
 
 
@@ -547,7 +548,7 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 
 	// atom pair constraints?
   if (option[constraints::cst_file].user()) {
-    trPicker.Info << "Reading constraints from: "
+    tr.Info << "Reading constraints from: "
         << option[constraints::cst_file]()[1] << std::endl;
 		// initialize
 		atom_pair_constraint_contact_map_.resize(size_of_query());
@@ -574,7 +575,7 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 			}
 			data >> tag;
 			if (data.fail()) {
-				trPicker.Debug << option[constraints::cst_file]()[1]
+				tr.Debug << option[constraints::cst_file]()[1]
 					<< " end of file reached" << std::endl;
 				break;
 			}
@@ -582,7 +583,7 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 				std::string name1, name2, func_type;
 				Size id1, id2;
 				data >> name1 >> id1 >> name2 >> id2 >> func_type;
-				trPicker.Debug << "read: " << name1 << " " << id1
+				tr.Debug << "read: " << name1 << " " << id1
 					<< " " << name2 << " " << id2 << " func: " << func_type
 					<< std::endl;
 				if (id1 <= size_of_query() && id2 <= size_of_query()) {
@@ -592,7 +593,7 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 				}
 			}
 		}
-		trPicker.Info << n_constr << " constraints loaded from a file" << std::endl;
+		tr.Info << n_constr << " constraints loaded from a file" << std::endl;
   }
 
 
@@ -602,8 +603,8 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 	if (option[ in::file::alignment ].user()) {
 		utility::vector1<core::sequence::SequenceAlignment> alns =
 			core::sequence::read_aln( option[ cm::aln_format ](), option[ in::file::alignment ]()[1] );
-		trPicker.Info << "Input alignment used to skip aligned positions: " << std::endl;
-		trPicker.Info << alns[1] << std::endl;
+		tr.Info << "Input alignment used to skip aligned positions: " << std::endl;
+		tr.Info << alns[1] << std::endl;
 		Size const query_idx( 1 );
 		Size const templ_idx( 2 );
 		Size nres = size_of_query();
@@ -659,7 +660,7 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 	utility::vector1<utility::vector1<nonlocal::NonlocalPairOP> > thread_pairs(max_threads_);
 #ifdef USE_BOOST_THREAD
 	boost::thread_group threads;
-	trPicker.super_mute(true); // lets suppress tracer output when running multi threads
+	tr.super_mute(true); // lets suppress tracer output when running multi threads
 	for (Size j = 1; j <= max_threads_; ++j) {
 		if (qPosi_to_run[j].size() > 0) {
 			std::cout << "thread: " << j << " - " << qPosi_to_run[j].size() << " positions -";
@@ -670,7 +671,7 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 		}
 	}
 	threads.join_all();
-	trPicker.super_mute(false);
+	tr.super_mute(false);
 #else
 	// single thread
 	nonlocal_pairs_at_positions( qPosi_to_run[1], fragment_size, skip_position, fragment_set, thread_pairs[1] );
@@ -749,7 +750,7 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 							"_" << qPosi << "_" << qPosj << "_" <<  // fragment query positions
 							thread_pairs[j][k]->get_candidate_i().first->get_residue(1)->resi() << "_" << thread_pairs[j][k]->get_candidate_j().first->get_residue(1)->resi(); // fragment template positions
 					if (!pose::is_ideal_pose(pose)) {
-						trPicker.Warning << "skipping " << tag.str() << ": non-ideal pose from VALL" << std::endl;
+						tr.Warning << "skipping " << tag.str() << ": non-ideal pose from VALL" << std::endl;
 						continue;
 					}
 
@@ -970,9 +971,9 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 
 	time_t time_end = time(NULL);
 
-	trPicker.Info << "... done.  Processed " << query_positions_.size() << " positions.  Time elapsed: "
+	tr.Info << "... done.  Processed " << query_positions_.size() << " positions.  Time elapsed: "
 		<< (time_end - time_start) << " seconds." << std::endl;
-	trPicker.flush();
+	tr.flush();
 
 	option[frags::write_ca_coordinates].value(orig_opt);
 }
@@ -1009,8 +1010,8 @@ void FragmentPicker::pick_candidates() {
 
 	PROF_START( basic::FRAGMENTPICKING );
 
-	trPicker.Info << "Picking candidates..." << std::endl;
-	trPicker.flush();
+	tr.Info << "Picking candidates..." << std::endl;
+	tr.flush();
 
 	time_t time_start = time(NULL);
 
@@ -1032,7 +1033,7 @@ void FragmentPicker::pick_candidates() {
 			if (chunks_to_run[thread].size() >= chunks_per_thread && thread < max_threads_) ++thread;
 		}
 		boost::thread_group threads;
-		trPicker.super_mute(true); // lets suppress tracer output when running multi threads
+		tr.super_mute(true); // lets suppress tracer output when running multi threads
 		for (Size j = 1; j <= max_threads_; ++j) {
 			if (chunks_to_run[j].size() > 0) {
 				std::cout << "thread: " << j << " - " << chunks_to_run[j].size() << " chunks" << std::endl;
@@ -1040,12 +1041,12 @@ void FragmentPicker::pick_candidates() {
 			}
 		}
 		threads.join_all();
-		trPicker.super_mute(false);
+		tr.super_mute(false);
 
 		time_t time_end = time(NULL);
-		trPicker.Info << "... done.  Processed " << chunks_->size() << " chunks.  Time elapsed: "
+		tr.Info << "... done.  Processed " << chunks_->size() << " chunks.  Time elapsed: "
 			<< (time_end - time_start) << " seconds." << std::endl;
-		trPicker.flush();
+		tr.flush();
 
 		PROF_STOP( basic::FRAGMENTPICKING );
 
@@ -1058,7 +1059,7 @@ void FragmentPicker::pick_candidates() {
 	for (Size i = 1; i <= chunks_->size(); i++) { // loop over provided chunks
 		VallChunkOP chunk = chunks_->at(i); // For each chunk from a provider...
 		if (!is_valid_chunk( chunk )) continue;
-		trPicker.Debug << "Processing sequence from vall: " << chunk->get_sequence() << std::endl;
+		tr.Trace << "Processing sequence from vall: " << chunk->get_sequence() << std::endl;
 
 		// cache the new chunk
 		scores_[1]->do_caching(chunk);
@@ -1069,7 +1070,7 @@ void FragmentPicker::pick_candidates() {
 
 			Size maxqpos = size_of_query() - fragment_size + 1;
 			CandidatesCollectorOP sink = candidates_sinks_[1][fragment_size];
-			trPicker.Debug << "Picking fragments of size "<<fragment_size<<
+			tr.Trace << "Picking fragments of size "<<fragment_size<<
 				" at "<<query_positions_.size()<<" query positions"<<std::endl;
 			for (Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos) { // loop over positions in a query
 				Size iPos = query_positions_[iqpos];
@@ -1086,16 +1087,15 @@ void FragmentPicker::pick_candidates() {
 			} // all query positions done
 		} // all fragment sizes done
 		scores_[1]->clean_up();
-		trPicker.Debug << chunk->get_pdb_id() << " done" << std::endl;
-		if( (i*100) % chunks_->size() == 0 ) trPicker.Info << (i*100) / chunks_->size()
-				<< "% done at "<<chunk->get_pdb_id()<< std::endl;
-		trPicker.flush();
+		tr.Trace << chunk->get_pdb_id() << " done" << std::endl;
+		if ( (i*100) % (chunks_->size()/100*100) == 0 ) tr.Info << (i*100) / chunks_->size()
+									<< "% done at "<< chunk->get_pdb_id() << std::endl;
 	} // all chunks done
 
 	time_t time_end = time(NULL);
-	trPicker.Info << "... done.  Processed " << chunks_->size() << " chunks.  Time elapsed: "
+	tr.Info << "... done.  Processed " << chunks_->size() << " chunks.  Time elapsed: "
 		<< (time_end - time_start) << " seconds." << std::endl;
-	trPicker.flush();
+	tr.flush();
 
 	PROF_STOP( basic::FRAGMENTPICKING );
 }
@@ -1113,13 +1113,13 @@ double FragmentPicker::total_score(scores::FragmentScoreMapOP f, Size index) {
 
 
 void FragmentPicker::read_ss_files(utility::vector1<std::string> sec_str_input) {
-	trPicker.Debug << sec_str_input.size() / 2 << " secondary structure assignment(s):\n";
+	tr.Debug << sec_str_input.size() / 2 << " secondary structure assignment(s):\n";
 	for (Size i = 1; i <= sec_str_input.size(); i += 2) {
-		trPicker.Debug << i / 2 << " " << sec_str_input[i]
+		tr.Debug << i / 2 << " " << sec_str_input[i]
 			<< " file will be loaded under \"" << sec_str_input[i + 1] << "\" name\n";
 		read_ss_file(sec_str_input[i], sec_str_input[i + 1]);
 	}
-	trPicker.Debug << std::endl;
+	tr.Debug << std::endl;
 }
 
 void FragmentPicker::read_ss_file(std::string const & file_name,
@@ -1172,6 +1172,11 @@ void FragmentPicker::read_talos_ss(std::string const & file_name,
 	core::fragment::SecondaryStructureOP ss_profile =
 			new core::fragment::SecondaryStructure();
 	ss_profile->read_talos_ss(file_name);
+	//TALOS files can be shortened if there is no data at end of sequence. Fill up with 1/3 1/3 1/3 propensities until end is reached
+	ss_profile->extend(query_profile_->length());
+	for ( Size pos = ss_profile->total_residue()+1; pos <= query_profile_->length(); pos++ ) {
+		ss_profile->set_fractions( pos, 1.0/3.0, 1.0/3.0, 1.0/3.0, 0.0 );
+	}
 
 	std::string query_ss_as_string;
 	for (Size i = 1; i <= ss_profile->total_residue(); i++)
@@ -1258,7 +1263,9 @@ void FragmentPicker::add_query_ss(std::string query_secondary,
 
 void FragmentPicker::save_fragments() {
 	using namespace ObjexxFCL;
+	tr.Info << "Saving Fragments..." << std::endl;
 	const bool skip_merge = (candidates_sinks_.size() == 1) ? true : false;
+	tr.Debug << "skip_merge: " << ( skip_merge ? "true" : "false" ) << std::endl;
 	for (Size iFragSize = 1; iFragSize <= frag_sizes_.size(); ++iFragSize) { // Loop over various sizes of fragments
 		Size fragment_size = frag_sizes_[iFragSize];
 		Size maxqpos = size_of_query() - fragment_size + 1;
@@ -1268,6 +1275,7 @@ void FragmentPicker::save_fragments() {
 		for (Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos) {
 			Size qPos = query_positions_[iqpos];
 			if ( qPos > maxqpos) continue;
+			tr.Debug << "saving " << fragment_size << "mers for position..." << qPos << std::endl;
 			if (!skip_merge) {  // merge candidates
 				for (Size i=1;i<=candidates_sinks_.size();++i)
 					candidates_sink_[fragment_size]->insert(qPos, candidates_sinks_[i][fragment_size]);
@@ -1278,15 +1286,17 @@ void FragmentPicker::save_fragments() {
 			} else {
 				in = candidates_sink_[fragment_size]->get_candidates(qPos);
 			}
-			if(in.size() == 0) continue;
+			if ( in.size() == 0 ) continue;
 			selector_->select_fragments(in, out);
 			final_fragments[qPos] = out;
 		}
+		tr.Debug << "call output_fragments now: " << std::endl;
 		output_fragments( fragment_size, final_fragments );
 		if (skip_merge) {
-			candidates_sinks_[1][fragment_size]->print_report(trPicker.Info, get_score_manager());
+			//			tr.Debug << "write report..." << std::endl;
+			//		candidates_sinks_[1][fragment_size]->print_report(tr.Info, get_score_manager());
 		} else {
-			candidates_sink_[fragment_size]->print_report(trPicker.Info, get_score_manager());
+			//			candidates_sink_[fragment_size]->print_report(tr.Info, get_score_manager());
 		}
 	}
 }
@@ -1324,9 +1334,9 @@ void FragmentPicker::save_candidates() {
 			}
 		}
 		if (skip_merge) {
-			candidates_sinks_[1][fragment_size]->print_report(trPicker.Debug, get_score_manager());
+			candidates_sinks_[1][fragment_size]->print_report(tr.Debug, get_score_manager());
 		} else {
-			candidates_sink_[fragment_size]->print_report(trPicker.Debug, get_score_manager());
+			candidates_sink_[fragment_size]->print_report(tr.Debug, get_score_manager());
 		}
 		output.close();
 	}
@@ -1340,7 +1350,7 @@ void FragmentPicker::pick_candidates(Size i_pos,Size frag_len) {
 		VallChunkOP chunk = chunks_->at(i); // For each chunk from a provider...
 		if (!is_valid_chunk( frag_len, chunk )) continue;
 
-		trPicker.Debug << "Processing sequence from vall: " << chunk->get_sequence() << std::endl;
+		tr.Trace << "Processing sequence from vall: " << chunk->get_sequence() << std::endl;
 
 		CandidatesCollectorOP sink = candidates_sinks_[1][frag_len];
 
@@ -1353,10 +1363,10 @@ void FragmentPicker::pick_candidates(Size i_pos,Size frag_len) {
 				sink->add(p);
 			}
 		} // All chunk locations done
-		trPicker.Debug << chunk->get_pdb_id() << " done" << std::endl;
-		trPicker.Debug << sink->count_candidates()<<" candidates stored at pos. "
+		tr.Trace << chunk->get_pdb_id() << " done" << std::endl;
+		tr.Trace << sink->count_candidates()<<" candidates stored at pos. "
 				<<i_pos<<", "<<sink->count_candidates()<<" in total"<< std::endl;
-		trPicker.flush();
+		tr.flush();
 	} // all chunks done
 }
 
@@ -1378,32 +1388,32 @@ void FragmentPicker::parse_command_line() {
 	//## -------- setup query profile
 	if (option[in::file::checkpoint].user()) {
 		core::sequence::SequenceProfileOP q_prof(new core::sequence::SequenceProfile);
-		trPicker.Info << "reading a query profile from: "
+		tr.Info << "reading a query profile from: "
 			<< option[in::file::checkpoint]() << std::endl;
 		q_prof->read_from_checkpoint(option[in::file::checkpoint]());
 		set_query_seq(q_prof);
-		trPicker.Info << "picking fragments for query profile: "
+		tr.Info << "picking fragments for query profile: "
 			<< get_query_seq_string() << std::endl;
 	}
 	if (option[in::file::pssm].user()) {
 		core::sequence::SequenceProfileOP q_prof(new core::sequence::SequenceProfile);
-		trPicker.Info << "reading a query profile from: "
+		tr.Info << "reading a query profile from: "
 			<< option[in::file::pssm]()[1] << std::endl;
 		q_prof->read_from_file(option[in::file::pssm]()[1] );
 		q_prof->convert_profile_to_probs(1.0); // was previously implicit in read_from_file()
 		set_query_seq(q_prof);
-		trPicker.Info << "picking fragments for query profile: "
+		tr.Info << "picking fragments for query profile: "
 			<< get_query_seq_string() << std::endl;
 	}
 
 	//Fasta file trumps sequence profile as far as query_seq_string_ is concerned
 	if (option[in::file::fasta].user()) {
 		std::string q_seq = core::sequence::read_fasta_file(option[in::file::fasta]()[1])[1]->sequence();
-		trPicker.Info << "reading a query sequence from: "
+		tr.Info << "reading a query sequence from: "
 			<< option[in::file::fasta]()[1] << std::endl;
 
 		set_query_seq(q_seq);
-		trPicker.Info << "picking fragments for query sequence: "
+		tr.Info << "picking fragments for query sequence: "
 			<< get_query_seq_string() << std::endl;
 	}
 
@@ -1428,16 +1438,16 @@ void FragmentPicker::parse_command_line() {
 		AllowPdbIdFilterOP allow = new AllowPdbIdFilter();
 		allow->load_pdb_id_from_file(option[frags::allowed_pdb]());
 		add_chunk_filter(allow);
-		trPicker.Info << "Allowed PDB chains:\n";
-		allow->show_pdb_ids(trPicker.Info);
+		tr.Info << "Allowed PDB chains:\n";
+		allow->show_pdb_ids(tr.Info);
 	}
 
 	if (option[frags::denied_pdb].user()) {
 		DenyPdbIdFilterOP deny = new DenyPdbIdFilter();
 		deny->load_pdb_id_from_file(option[frags::denied_pdb]());
 		add_chunk_filter(deny);
-		trPicker.Info << "Excluded PDBs:\n";
-		deny->show_pdb_ids(trPicker.Info);
+		tr.Info << "Excluded PDBs:\n";
+		deny->show_pdb_ids(tr.Info);
 	}
 
 	// ##--------- setup VALL
@@ -1460,13 +1470,13 @@ void FragmentPicker::parse_command_line() {
 		frag_sizes_.push_back(3);
 		frag_sizes_.push_back(9);
 	}
-	trPicker.Info << "Will pick fragments of size:";
+	tr.Info << "Will pick fragments of size:";
 	for (Size i = 1; i <= frag_sizes_.size(); ++i)
-		trPicker.Info << frag_sizes_[i] << " ";
-	trPicker.Info << std::endl;
+		tr.Info << frag_sizes_[i] << " ";
+	tr.Info << std::endl;
 
 	//---------- setup scoring scheme
-	trPicker.Info << "Creating fragment scoring scheme" << std::endl;
+	tr.Info << "Creating fragment scoring scheme" << std::endl;
 	if (option[frags::scoring::config].user()) {
 		// todo:  the create scores method should be improved so the score files aren't read more than once -dk
 		for (Size i = 1; i <= scores_.size(); ++i)
@@ -1479,7 +1489,7 @@ void FragmentPicker::parse_command_line() {
 
 	if (n_frags_ > n_candidates_) n_candidates_ = n_frags_;
 
-	trPicker.Info << "Picking " << n_frags_ << " fragments based on "
+	tr.Info << "Picking " << n_frags_ << " fragments based on "
 		<< n_candidates_ << " candidates" << std::endl;
 
 	//-------- this comparator is used both for collecting and selecting fragments
@@ -1487,7 +1497,7 @@ void FragmentPicker::parse_command_line() {
 	CompareTotalScore comparator(get_score_manager());
 
 	//---------- setup scoring scheme for the selection step
-	trPicker.Info << "Creating fragment scoring scheme for the selection step" << std::endl;
+	tr.Info << "Creating fragment scoring scheme for the selection step" << std::endl;
 	FragmentScoreManagerOP selection_scoring;
 	if (option[frags::picking::selecting_scorefxn].user()) {
 		selection_scoring  = new FragmentScoreManager();
@@ -1509,7 +1519,7 @@ void FragmentPicker::parse_command_line() {
 			for (Size i = 1; i <= frag_sizes_.size(); ++i) {
 				CandidatesCollectorOP collector = new GrabAllCollector(size_of_query());
 				set_candidates_collector(frag_sizes_[i], collector);
-				trPicker.Info << "Collector for fragment size: " << frag_sizes_[i] << " set to: GrabAllCollector" << std::endl;
+				tr.Info << "Collector for fragment size: " << frag_sizes_[i] << " set to: GrabAllCollector" << std::endl;
 			}
 		} else {
 			for (Size i = 1; i <= frag_sizes_.size(); ++i) {
@@ -1518,7 +1528,7 @@ void FragmentPicker::parse_command_line() {
 						comparator,get_score_manager()->count_components());
 					set_candidates_collector(frag_sizes_[i], collector, j);
 				}
-				trPicker.Info << "Collector for fragment size: " << frag_sizes_[i] << " set to: BoundedCollector" << std::endl;
+				tr.Info << "Collector for fragment size: " << frag_sizes_[i] << " set to: BoundedCollector" << std::endl;
 			}
 		}
 		//-------- Selecting fragments from candidates
@@ -1526,14 +1536,14 @@ void FragmentPicker::parse_command_line() {
 		std::string type = option[frags::picking::selecting_rule]();
 		if (type.compare("BestTotalScoreSelector")==0) {
 			selector_ = new BestTotalScoreSelector(n_frags_, selection_scoring);
-			trPicker.Info << "Fragment selector: BestTotalScoreSelector"
+			tr.Info << "Fragment selector: BestTotalScoreSelector"
 					<< std::endl;
 		} else {
 				utility_exit_with_message("[ERROR]: unknown fragment selecting rule: " + type + "!");
 		}
 			} else {
 		selector_ = new BestTotalScoreSelector(n_frags_, selection_scoring);
-		trPicker.Info << "Fragment selector: BestTotalScoreSelector" << std::endl;
+		tr.Info << "Fragment selector: BestTotalScoreSelector" << std::endl;
 					}*/
 	}
 	// # ---------- output file prefix:
@@ -1567,8 +1577,8 @@ void FragmentPicker::parse_command_line() {
 	}
 	contacts_dist_cutoff_squared_ = max_dist*max_dist;
 
-	show_scoring_methods(trPicker);
-	trPicker << std::endl;
+	show_scoring_methods(tr);
+	tr << std::endl;
 }
 
 void FragmentPicker::set_up_ss_abego_quota() {
@@ -1617,11 +1627,11 @@ void FragmentPicker::set_up_ss_abego_quota() {
 		}
 	}
 
-	trPicker.Debug<<"Scoring scheme for ABEGO_SS quota pool sorting is:";
+	tr.Debug<<"Scoring scheme for ABEGO_SS quota pool sorting is:";
 	for(Size l=1;l<=weights.size();l++) {
-			trPicker.Debug<<"\n\t"<<components[l]<<"\t"<<weights[l];
+			tr.Debug<<"\n\t"<<components[l]<<"\t"<<weights[l];
 	}
-	trPicker.Debug<<std::endl;
+	tr.Debug<<std::endl;
 	Size buffer_factor = 5;
 	for(Size f=1;f<=frag_sizes_.size();f++) {
 		for (Size j = 0; j <= max_threads_; ++j) { // 0 for the merged collector
@@ -1631,7 +1641,7 @@ void FragmentPicker::set_up_ss_abego_quota() {
 		Size middle = frag_sizes_[f] / 2 + 1;
 		assert( size_of_query() == q_config.size() ); // Test if the abego-ss table has the same size as the query sequence
 		for(Size j=1;j<=size_of_query()-frag_sizes_[f]+1;j++) {
-			trPicker.Debug<<"Creating "<<q_config.n_columns()<<" quota pools at pos "<<j<<std::endl;
+			tr.Debug<<"Creating "<<q_config.n_columns()<<" quota pools at pos "<<j<<std::endl;
 			for(Size i=1;i<=q_config.n_columns();i++) {
 				Real prob = q_config.probability(j+middle-1,i);
 				for (Size k = 0; k <= max_threads_; ++k) {  // 0 for the merged collector
@@ -1719,7 +1729,7 @@ void FragmentPicker::set_up_quota_nnmake_style() {
 				if( ! q_config.is_valid_quota_pool_name( name ) ) continue;
 				components[2] = i;
 				weights[2] = scoring_weights[sr->get_id()];
-				trPicker.Warning<<"RamaScore with ID "<<sr->get_id()<<" named "<<name<<
+				tr.Warning<<"RamaScore with ID "<<sr->get_id()<<" named "<<name<<
 					" has been attached to its quota pool with weight "<<weights[2]<<std::endl;
 			}
 		}
@@ -1744,7 +1754,7 @@ void FragmentPicker::set_up_quota_nnmake_style() {
 				weights[1] = scoring_weights[ss->get_id()];
 				Size size = (Size)(q_config.get_fraction( name ) * n_candidates_);
 				if( size == 0 ) {
-					trPicker.Warning<<"Config file couldn't provide quota fraction for the pool named "
+					tr.Warning<<"Config file couldn't provide quota fraction for the pool named "
 						<<name<<". Skipping the pool"<<std::endl;
 					continue;
 				}
@@ -1799,10 +1809,10 @@ Size QuotaDebug::max_pools() {
 }
 
 void QuotaDebug::write_summary() {
-	trPicker<< "Quota report: difference between the total expected and total picked foreach pool"<<std::endl;
-	trPicker<< "This table is for first "<<nFrags_<<" fragments"<<std::endl;
-	trPicker<< "Negative value says that was picked more that expected."<<std::endl;
-	trPicker<< this->str()<<std::endl;
+	tr<< "Quota report: difference between the total expected and total picked foreach pool"<<std::endl;
+	tr<< "This table is for first "<<nFrags_<<" fragments"<<std::endl;
+	tr<< "Negative value says that was picked more that expected."<<std::endl;
+	tr<< this->str()<<std::endl;
 	this->str("");
 }
 
@@ -1928,7 +1938,7 @@ bool FragmentPicker::is_valid_chunk( VallChunkOP chunk ) {
 	bool flag = true;
 	for (Size iFilter = 1; iFilter <= filters_.size(); iFilter++) {
 		if ((flag = filters_[iFilter]->test_chunk(chunk)) == false) {
-			trPicker.Debug << "Chunk: " << chunk->get_pdb_id()
+			tr.Debug << "Chunk: " << chunk->get_pdb_id()
 				<< " didn't pass a filter" << std::endl;
 			break;
 		}
@@ -1965,27 +1975,38 @@ void FragmentPicker::output_fragments( Size const fragment_size, utility::vector
 
 	FragmentScoreManagerOP ms = get_score_manager();
 	Size maxqpos = size_of_query() - fragment_size + 1;
-	for (Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos) {
+	for ( Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos ) {
 		Size qPos = query_positions_[iqpos];
 		if ( qPos > maxqpos) continue;
+		//		std::cerr << "h1 " << qPos << std::endl;
 		output_file << "position: " << I(12, qPos) << " neighbors:   " << I(10, final_fragments[qPos].size()) << std::endl << std::endl;
 		for (Size fi = 1; fi <= final_fragments[qPos].size(); ++fi) {
 			if (option[frags::write_sequence_only]()) {
 				final_fragments[qPos][fi].first->print_fragment_seq(output_file);
 			} else {
+				if ( !final_fragments[qPos][fi].first || !final_fragments[qPos][fi].second ) {
+					tr.Warning << "final_frag candidate " << fi << " at position " << qPos << " is corrupted. skipping... " << std::endl;
+					continue;
+				}
 				final_fragments[qPos][fi].first->print_fragment(output_file, final_fragments[qPos][fi].second, ms);
 			}
 			output_file << std::endl;
 		}
-		if( ms->if_late_scoring_for_zeros() )  {
-			for (Size fi = 1; fi <= final_fragments[qPos].size(); ++fi)
+		if ( ms->if_late_scoring_for_zeros() )  {
+			//			std::cerr << "h3" << std::endl;
+			for ( Size fi = 1; fi <= final_fragments[qPos].size(); ++fi ) {
+				if ( !final_fragments[qPos][fi].first || !final_fragments[qPos][fi].second ) {
+					tr.Warning << "final_frag candidate " << fi << " at position " << qPos << " is corrupted. skipping... " << std::endl;
+					continue;
+				}
 				ms->score_zero_scores(final_fragments[qPos][fi].first,final_fragments[qPos][fi].second);
+			}
 		}
-		if (option[frags::describe_fragments].user())
+		if ( option[frags::describe_fragments].user() ) {
+			//			std::cerr << "h4" << std::endl;
 			ms->describe_fragments(final_fragments[qPos], output_info_file);
+		}
 	}
-
-	//		storage->print_report(trPicker.Debug, ms);
 	output_file.close();
 	output_info_file.close();
 

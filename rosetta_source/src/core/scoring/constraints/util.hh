@@ -133,6 +133,7 @@ void combine_constraints(
 
 ///@brief have at most one constraint per residue pair...
 void skip_redundant_constraints( ConstraintCOPs& in, core::Size total_residue, core::Size influence_width = 1 );
+void drop_constraints( ConstraintCOPs& in, core::Real drop_rate );
 
 } // namespace constraints
 } // namespace scoring

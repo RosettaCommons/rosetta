@@ -96,11 +96,290 @@ inline bool is_aromatic( pose::Pose const& pose, core::Size res ) {
 		|| pose.residue_type( res ).aa() == aa_trp ;
 }
 
+bool is_aromatic( core::chemical::AA aa ) {
+	using core::chemical::AA;
+	using namespace core::chemical;
+	return ( aa == aa_trp || aa == aa_phe || aa == aa_tyr || aa == aa_his );
+}
+
+void parse_NMR_name( std::string name, core::Size res, core::chemical::AA aa, NamedAtoms& atoms ) {
+	using core::chemical::AA;
+	using namespace core::chemical;
+	using core::id::NamedAtomID;
+	///now fix all the problems with atomnames:
+	if ( (name.substr(0,2) == "QA" || name == "HA") && ( aa == aa_gly )) {
+		atoms.push_back( NamedAtomID( "1HA", res ) );
+		atoms.push_back( NamedAtomID( "2HA", res ) );
+	} else if ( ( name == "QB" || name == "HB" ) && (
+																								 aa == aa_ala
+																								 || aa == aa_leu
+																								 || aa == aa_ser
+																								 || aa == aa_asn
+																								 || aa == aa_gln
+																								 || aa == aa_pro
+																								 || aa == aa_lys
+																								 || aa == aa_cys
+																								 || aa == aa_asp
+																								 || aa == aa_glu
+																								 || aa == aa_arg
+																								 || aa == aa_tyr
+																								 || aa == aa_phe
+																								 || aa == aa_trp
+																								 || aa == aa_his
+																								 || aa == aa_met ) ) {
+		atoms.push_back( NamedAtomID( "1HB", res ) );
+		atoms.push_back( NamedAtomID( "2HB", res ) );
+		if ( aa == aa_ala ) atoms.push_back( NamedAtomID( "3HB", res ) );
+	} else if ( ( name == "QD1" ||  name == "HD1" ) && (
+																											aa == aa_ile
+																											|| aa == aa_leu )) {
+		atoms.push_back( NamedAtomID( "1HD1", res ) );
+		atoms.push_back( NamedAtomID( "2HD1", res ) );
+		atoms.push_back( NamedAtomID( "3HD1", res ) );
+	} else if ( ( name == "QD2" || name == "HD2" ) && (
+																										 aa == aa_leu
+																										 ||aa == aa_asn )) {
+		atoms.push_back( NamedAtomID( "1HD2", res ) );
+		atoms.push_back( NamedAtomID( "2HD2", res ) );
+		if ( aa == aa_leu ) atoms.push_back( NamedAtomID( "3HD2", res ) );
+	} else if ( ( name == "QQD" || name == "QD" ) && aa == aa_leu ) {
+		atoms.push_back( NamedAtomID( "1HD2", res ) );
+		atoms.push_back( NamedAtomID( "2HD2", res ) );
+		atoms.push_back( NamedAtomID( "3HD2", res ) );
+		atoms.push_back( NamedAtomID( "1HD1", res ) );
+		atoms.push_back( NamedAtomID( "2HD1", res ) );
+		atoms.push_back( NamedAtomID( "3HD1", res ) );
+	} else if ( ( name == "QD" || name == "HD" ) && (
+																									 aa == aa_pro
+																									 || aa == aa_lys
+																									 || aa == aa_arg
+																									 || aa == aa_tyr
+																									 || aa == aa_phe
+																									 || aa == aa_his ) ) {
+		if ( aa == aa_arg || aa == aa_lys || aa == aa_pro ) {
+			atoms.push_back( NamedAtomID( "1HD", res ) );
+			atoms.push_back( NamedAtomID( "2HD", res ) );
+		} else { // tyr, phe, his (his doesn't get down here... )
+			atoms.push_back( NamedAtomID( "HD1", res ) );
+			atoms.push_back( NamedAtomID( "HD2", res ) );
+		}
+	} else if ( ( name == "QE" || name == "HE" ) && (
+																									 aa == aa_tyr
+																									 || aa == aa_phe
+																									 || aa == aa_trp
+																									 || aa == aa_met
+																									 || aa == aa_lys ) ){
+		if ( aa == aa_phe || aa == aa_tyr ) {
+			atoms.push_back( NamedAtomID( "HE1", res ) );
+			atoms.push_back( NamedAtomID( "HE2", res ) );
+		}	else if ( aa == aa_trp ) {
+			atoms.push_back( NamedAtomID( "HE1", res ) );
+			atoms.push_back( NamedAtomID( "HE3", res ) );
+		} else if ( aa == aa_met || aa == aa_lys ) { //MET LYS
+			atoms.push_back( NamedAtomID( "1HE", res ) );
+			atoms.push_back( NamedAtomID( "2HE", res ) );
+			if ( aa == aa_met ) {
+				atoms.push_back( NamedAtomID( "3HE", res ) );
+			}
+		} //QE MET LYS
+	}  else if ( ( name == "QG" || name == "HG" ) && (
+																									 aa == aa_met
+																									 || aa == aa_gln
+																									 || aa == aa_pro
+																									 || aa == aa_lys
+																									 || aa == aa_glu
+																									 || aa == aa_arg )) {
+		atoms.push_back( NamedAtomID( "1HG", res ) );
+		atoms.push_back( NamedAtomID( "2HG", res ) );
+		//		atoms.push_back( NamedAtomID( "3HE", res ) );
+	} else if (( name == "QG2" || name == "HG2" ) && (
+																									 aa == aa_ile
+																									 || aa == aa_thr
+																									 || aa == aa_val ) ) {
+		atoms.push_back( NamedAtomID( "1HG2", res ) );
+		atoms.push_back( NamedAtomID( "2HG2", res ) );
+		atoms.push_back( NamedAtomID( "3HG2", res ) );
+	} else if ( ( name == "QQG" || name == "HG" ) && (
+																										aa == aa_ile
+																										|| aa == aa_val ) ) {
+		atoms.push_back( NamedAtomID( "1HG2", res ) );
+		atoms.push_back( NamedAtomID( "2HG2", res ) );
+		atoms.push_back( NamedAtomID( "3HG2", res ) );
+		atoms.push_back( NamedAtomID( "1HG1", res ) );
+		atoms.push_back( NamedAtomID( "2HG1", res ) );
+		if ( aa != aa_ile ) atoms.push_back( NamedAtomID( "3HG1", res ) );
+	} else if (( name == "QG1" || name == "HG1" ) && (
+																									 aa == aa_ile
+																									 || aa == aa_val ) ) {
+		atoms.push_back( NamedAtomID( "1HG1", res ) );
+		atoms.push_back( NamedAtomID( "2HG1", res ) );
+		if ( aa != aa_ile ) atoms.push_back( NamedAtomID( "3HG1", res ) );
+	} else if (( name == "QE2" || name == "HE2" || name =="HE" ) && aa == aa_gln ) {
+		atoms.push_back( NamedAtomID( "1HE2", res ) );
+		atoms.push_back( NamedAtomID( "2HE2", res ) );
+	} else if (( name == "HZ" || name == "QZ" ) && ( aa == aa_trp || aa == aa_lys ) ) {
+		if ( aa == aa_lys ) {
+			atoms.push_back( NamedAtomID( "1HZ", res ) );
+			atoms.push_back( NamedAtomID( "2HZ", res ) );
+			atoms.push_back( NamedAtomID( "3HZ", res ) );
+		} else { //aa==trp
+			atoms.push_back( NamedAtomID( "HZ2", res ) );
+			atoms.push_back( NamedAtomID( "HZ3", res ) );
+		}
+	} else 	if ( name == "HB1" ) {
+		atoms.push_back( NamedAtomID( "1HB", res ) );
+	} else 	if ( name == "HB2" ) {
+		atoms.push_back( NamedAtomID( "2HB", res ) );
+	} else 	if ( name == "HB3" ) {
+		if (  aa != aa_ala ) {
+			atoms.push_back( NamedAtomID( "1HB", res ) ); //yeah they call it 2HB and 3HB...
+		} else {
+			atoms.push_back( NamedAtomID( "3HB", res ) );
+		}
+	}	else 	if ( name == "HD1" && !is_aromatic( aa ) ) {
+		atoms.push_back( NamedAtomID( "1HD", res ) );
+	} else 	if ( name == "HD2" && !is_aromatic( aa ) ) {
+		atoms.push_back( NamedAtomID( "2HD", res ) );
+	} else 	if ( name == "HD3" ) { //LYS, PRO, ARG  no other has HD3
+		atoms.push_back( NamedAtomID( "1HD", res ) );
+
+	} else 	if ( name == "HG1" && aa != aa_thr ) {
+		atoms.push_back( NamedAtomID( "1HG", res ) );
+	} else 	if ( name == "HG2" ) {
+		atoms.push_back( NamedAtomID( "2HG", res ) );
+	} else 	if ( name == "HG3" ) { //GLU, ARG, GLN, MET
+		atoms.push_back( NamedAtomID( "1HG", res ) );
+
+	} else 	if ( name == "HA1" ) {
+		atoms.push_back( NamedAtomID( "1HA", res ) );
+	} else 	if ( name == "HA2" ) {
+		atoms.push_back( NamedAtomID( "2HA", res ) );
+	} else 	if ( name == "HA3" ) { //GLY
+		atoms.push_back( NamedAtomID( "1HA", res ) );
+
+	} else 	if ( name == "HZ1" && aa == aa_lys ) {
+		atoms.push_back( NamedAtomID( "1HZ", res ) );
+	} else 	if ( name == "HZ2" && aa == aa_lys ) {
+		atoms.push_back( NamedAtomID( "2HZ", res ) );
+	} else 	if ( name == "HZ3" && aa == aa_lys ) {
+		atoms.push_back( NamedAtomID( "3HZ", res ) );
+	}
+	else if (( name == "HE1" || name == "HE2" || name=="HE3" ) && !is_aromatic( aa ) ) //trp and similar is already done
+		{
+			if ( ( name == "HE3" && aa != aa_met ) || name == "HE1" ) {
+				atoms.push_back( NamedAtomID( "1HE", res ) ); //e.g. LYS
+			} else if ( name == "HE2" ) {
+				atoms.push_back( NamedAtomID( "2HE", res ) );
+				//	atoms.push_back( id::AtomID( pose.residue_type(res).atom_index(name.substr(2,1)+name.substr(0,2)), res ) );
+			} else if ( name == "HE3" ) {
+				atoms.push_back( NamedAtomID( "3HE", res ) );
+			}
+		}
+
+	else if ( name == "HD11" ) {
+		atoms.push_back( NamedAtomID( "1HD1", res ) );
+	} else if ( name == "HD12" ) {
+		atoms.push_back( NamedAtomID( "2HD1", res ) );
+	} else 	if ( name == "HD13" ) {
+		atoms.push_back( NamedAtomID( "3HD1", res ) );
+	} else 	if ( name == "HD21" ) {
+		atoms.push_back( NamedAtomID( "1HD2", res ) );
+	} else if ( name == "HD22" ) {
+		atoms.push_back( NamedAtomID( "2HD2", res ) );
+	} else 	if ( name == "HD23" ) {
+		atoms.push_back( NamedAtomID( "3HD2", res ) );
+	} else 	if ( name == "HG11" ) {
+		atoms.push_back( NamedAtomID( "1HG1", res ) );
+	} else 	if ( name == "HG12" ) {
+		atoms.push_back( NamedAtomID( "2HG1", res ) );
+	} else if ( name == "HG13" ) {
+		if ( aa == aa_ile ) {
+			atoms.push_back( NamedAtomID( "1HG1", res ) );
+		} else {
+			atoms.push_back( NamedAtomID( "3HG1", res ) );
+		}
+	} else 	if ( name == "HG21" ) {
+		atoms.push_back( NamedAtomID( "1HG2", res ) );
+	} else 	if ( name == "HG22" ) {
+		atoms.push_back( NamedAtomID( "2HG2", res ) );
+	} else if ( name == "HG23" ) {
+		atoms.push_back( NamedAtomID( "3HG2", res ) );
+	} else if ( name == "HE11" ) {
+		atoms.push_back( NamedAtomID( "1HE1", res ) );
+	} else if ( name == "HE12" ) {
+		atoms.push_back( NamedAtomID( "2HE1", res ) );
+	} else if ( name == "HE13" ) {
+		atoms.push_back( NamedAtomID( "3HE1", res ) );
+	} else if ( name == "HE21" ) {
+		atoms.push_back( NamedAtomID( "1HE2", res ) );
+	} else if ( name == "HE22" ) {
+		atoms.push_back( NamedAtomID( "2HE2", res ) );
+	} else if ( name == "HH11" ) {
+		atoms.push_back( NamedAtomID( "1HH1", res ) );
+	} else if ( name == "HH12" ) {
+		atoms.push_back( NamedAtomID( "2HH1", res ) );
+	} else if ( name == "HH21" ) {
+		atoms.push_back( NamedAtomID( "1HH2", res ) );
+	} else if ( name == "HH22" ) {
+		atoms.push_back( NamedAtomID( "2HH2", res ) );
+	} else if ( (name == "HH1" || name == "QH1" ) && aa == aa_arg ) {
+		atoms.push_back( NamedAtomID( "1HH1", res ) );
+		atoms.push_back( NamedAtomID( "2HH1", res ) );
+	} else if ( (name == "HH2" || name == "QH2" ) && aa == aa_arg ) {
+		atoms.push_back( NamedAtomID( "1HH2", res ) );
+		atoms.push_back( NamedAtomID( "2HH2", res ) );
+	} else if ( (name == "HH" || name == "QQH" ) && aa == aa_arg ) {
+		atoms.push_back( NamedAtomID( "1HH1", res ) );
+		atoms.push_back( NamedAtomID( "2HH1", res ) );
+		atoms.push_back( NamedAtomID( "1HH2", res ) );
+		atoms.push_back( NamedAtomID( "2HH2", res ) );
+	} else {
+		atoms.push_back( NamedAtomID( name, res ) );
+	}
+}
+
+
 void parse_NMR_name( std::string name, core::Size res, AmbiguousNMRDistanceConstraint::Atoms& atoms, core::pose::Pose const& pose ) {
 	using core::chemical::AA;
 	using namespace core::chemical;
 	using core::id::NamedAtomID;
 	using core::pose::named_atom_id_to_atom_id;
+	runtime_assert( res >= 1 || res <= pose.total_residue() );
+	AA const aa( pose.residue_type( res ).aa() );
+
+	if ( ( name.substr(0,2) == "HD" ) && aa == aa_his ) {
+		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "CD2", res ), pose ) );
+		return;
+	}
+	if ( ( name.substr(0,2) == "HE" ) && aa == aa_his ) {
+		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "CE1", res ), pose ) );
+		return;
+	}
+
+	///now fix terminus problems
+	if ( name == "H" && res == 1 && pose.is_fullatom() ) {
+		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "1H", res ), pose ) );
+		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "2H", res ), pose ) );
+		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "3H", res ), pose ) );
+		return;
+	}
+
+	NamedAtoms named_atoms;
+	parse_NMR_name( name, res, aa, named_atoms );
+
+	for ( NamedAtoms::const_iterator it= named_atoms.begin(); it!=named_atoms.end(); ++it ) {
+		atoms.push_back( named_atom_id_to_atom_id( *it, pose ) );
+	}
+	while ( atoms.size() && !atoms.back().valid() ) atoms.pop_back();
+}
+
+
+void parse_NMR_name_old( std::string name, core::Size res, AmbiguousNMRDistanceConstraint::Atoms& atoms, core::pose::Pose const& pose ) {
+	using core::chemical::AA;
+	using namespace core::chemical;
+	using core::id::NamedAtomID;
+	using core::pose::named_atom_id_to_atom_id;
+	runtime_assert( res >= 1 || res <= pose.total_residue() );
 	AA const aa( pose.residue_type( res ).aa() );
 	//tr.Debug << "[ERROR]: name is " << name << " res " << res << " and name " << pose.residue( res ).name3() << std::endl;
 	//use named_atom_id_to_atom_id because it can throw an exception if atoms are missing instead of hard-exit...

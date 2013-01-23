@@ -25,9 +25,9 @@
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
 #include <core/id/AtomID.hh>
-// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
+#include <core/id/NamedAtomID.hh>
+#include <core/chemical/AA.hh>
 
-#include <core/id/NamedAtomID.fwd.hh>
 #include <utility/vector1.hh>
 
 
@@ -209,6 +209,9 @@ protected:
 	Atoms atoms1_, atoms2_;
 	FuncOP func_;
 }; // class AmbiguousNMRDistanceConstraint
+
+typedef utility::vector1< core::id::NamedAtomID > NamedAtoms;
+void parse_NMR_name( std::string name, core::Size res, core::chemical::AA aa, NamedAtoms& );
 
 } // constraints
 } // scoring

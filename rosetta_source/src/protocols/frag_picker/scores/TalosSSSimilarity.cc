@@ -168,11 +168,19 @@ TalosSSSimilarity::TalosSSSimilarity(Size priority, Real lowest_acceptable_value
 			//prow[2] = 1 - E_mult_*query_prediction->strand_fraction(i);
 			//prow[3] = 1 - L_mult_*query_prediction->loop_fraction(i);
 
-			Real hf = query_prediction->helix_fraction(i);
-			Real sf = query_prediction->strand_fraction(i);
-			Real lf = query_prediction->loop_fraction(i);
-
-			Real confidence = query_prediction->confidence(i);
+			Real hf;
+			Real sf;
+			Real lf;
+			Real confidence;
+			if ( i<=query_prediction->total_residue() ) {
+				hf = query_prediction->helix_fraction(i);
+				sf = query_prediction->strand_fraction(i);
+				lf = query_prediction->loop_fraction(i);
+				confidence = query_prediction->confidence(i);
+			} else {
+				hf = sf = lf = 1.0/3.0;
+				confidence = 0.0;
+			}
 
 			Real average( (hf+sf+lf)/ 3.0 );
 			Real sdev( sqrt( (pow(hf-average,2) + pow(sf-average,2) + pow(lf-average,2))/3.0 ) );

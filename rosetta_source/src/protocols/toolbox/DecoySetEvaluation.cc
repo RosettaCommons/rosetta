@@ -212,6 +212,23 @@ void DecoySetEvaluation::set_weights( ObjexxFCL::FArray1_double const& weights )
 	for ( Size i=1; i<=n_atoms_; ++i ) weights_( i ) = weights( i );
 }
 
+core::Real  DecoySetEvaluation::rmsd( FArray1_double const& weights, FArray2_double& xx_ref, FArray2_double& xx ) const {
+	FArray1D_double transvec( 3 );
+	reset_x( n_atoms_, xx_ref, weights, transvec );
+	reset_x( n_atoms_, xx, weights, transvec );
+	Matrix R;
+	//	FArray2P_double xx_ref( coords_( 1, 1, n ), 3, n_atoms_ ); //proxy array provides view to coords_
+	fit_centered_coords( n_atoms_, weights, xx_ref, xx, R );
+	Real rmsd( 0.0 );
+	Real invn( 1.0/n_atoms() );
+	for ( Size n = 1; n <= n_atoms(); n++) {
+		for ( Size d = 1; d<=3; ++d ) {
+			rmsd += ( xx( d, n ) -  xx_ref( d, n ) ) * ( xx( d, n ) - xx_ref( d, n ) ) * invn * weights_( n );
+		}
+	}
+	return rmsd = sqrt( rmsd );
+}
+
 void DecoySetEvaluation::superimpose( FArray1_double const& weights, Size icenter ) {
 	if ( n_decoys() == 0 ) return;
 	FArray2P_double xx_ref( coords_( 1, 1, icenter ), 3, n_atoms_ ); //proxy array provides view to coords_

@@ -1194,6 +1194,7 @@ Options = Option_Group( '',
 
     Option( 'rdc_column', 'StringVector', desc='[vector] column names for rdc_select'),
 		Option( 'rdc','StringVector', desc='[vector] rdc-files and column names for RDC calculation'),
+		Option( 'built_in_rdc','String', desc='evaluate rdc from -in:file:rdc with standard score function and store under column xxx'),
     Option( 'jump_nr', 'Boolean', desc='adds the JumpNrEvaluator for the nrjumps column', default='false' ),
 		Option( 'score_exclude_res', 'IntegerVector', desc="Calculates a select_score column based on all residues not excluded by the command line vector" ),
 		Option( 'score_sscore_short_helix', 'Integer', desc='defines the maximum length of a helix that is not scored if it terminates a loop', default='5' ),

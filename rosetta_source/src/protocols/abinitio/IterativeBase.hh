@@ -19,7 +19,7 @@
 // Package Headers
 #include <protocols/jd2/archive/NormalizedEvaluatedArchive.hh>
 #include <protocols/jd2/archive/ArchiveManager.fwd.hh>
-
+#include <protocols/abinitio/HedgeArchive.hh>
 
 // Project Headers
 #include <protocols/abinitio/PairingStatistics.fwd.hh>
@@ -30,7 +30,10 @@
 // AUTO-REMOVED #include <core/io/silent/SilentStruct.fwd.hh>
 // AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
 #include <core/fragment/FragSet.fwd.hh>
-// AUTO-REMOVED #include <protocols/noesy_assign/NoesyModule.hh>
+
+
+#include <utility/options/OptionCollection.hh>
+
 
 // Utility headers
 //for dynamic patching
@@ -103,12 +106,12 @@ public:
 
 	///@brief while waiting for jobs to finish
   virtual void idle();
-
+	virtual void rescore();
 	virtual void save_status( std::ostream& ) const;
 	virtual void restore_status( std::istream& );
 
 	///@brief overloaded to handel special convergence check 'pool_converged_rmsd'
-	virtual bool add_structure( core::io::silent::SilentStructOP );
+	virtual bool add_structure( core::io::silent::SilentStructOP, jd2::archive::Batch const& );
 
 	///@brief setup JumpNrEvaluator
 	void setup_default_evaluators();
@@ -121,8 +124,16 @@ public:
 	// cen2fullatom-stage ( stage5 )
 	virtual void gen_evaluation_output( jd2::archive::Batch& batch, bool fullatom = false );
 
+	// overload by IterativeCentroid for rerouting to fullatom archive
+	virtual void gen_diversity_pool( jd2::archive::Batch&, bool fullatom = false );
+
 	// cen2fullatom-stage ( stage5 )
 	virtual void gen_dynamic_patches( jd2::archive::Batch& batch );
+
+	virtual void update_noesy_filter_files(
+    std::string const& current,
+		bool fullatom
+	);
 
 	// ///@brief need to get these from the IterativeCentroid to IterativeFullatom at end of stage5 ;
 // 	std::string const& first_noesy_fa_cst_file() const { return first_noesy_fa_cst_file_; }
@@ -144,6 +155,11 @@ protected:
 	void gen_resample_fragments( jd2::archive::Batch& batch );
 	void gen_cen2fullatom( jd2::archive::Batch& batch );
 	void gen_cen2fullatom_non_pool_decoys( jd2::archive::Batch& batch );
+	void collect_hedgeing_decoys_from_batches(
+				 jd2::archive::Batch const& batch,
+				 core::io::silent::SilentStructOPs& start_decoys,
+				 core::Real score_cut_per_batch
+	);
 	void add_fullatom_flags( jd2::archive::Batch& batch );
 
 	/// actually run the assignment machinery (only after batch is started to keep archive from hogging the queue... )
@@ -221,8 +237,10 @@ protected:
 
 	void test_broker_settings( jd2::archive::Batch const& batch );
 	void setup_filter_cst( core::Real weight );
+
 private:
 
+	void collect_hedge_structures( core::io::silent::SilentStructOP evaluated_decoy, jd2::archive::Batch const& batch );
 	///@brief score a pose with Pool-Scoring function (adds necessary data to pose (RDC, constraints,  etc ) )
 	virtual void score( core::pose::Pose& pose ) const;
 
@@ -237,7 +255,7 @@ private:
 	///@brief necessary steps to go to next stage... e.g., saving snapshot of archive
 	void increment_stage();
 
-	void read_noisy_assing_data_from_last_batch();
+	//	void read_noisy_assign_data_from_last_batch();
 
 	void replace_noesy_filter_constraints();
 	void rescore_nonlocal_archive();
@@ -330,11 +348,17 @@ private:
 	///@brief use the score_variations from EvaluatedArchive to determine new sampling weights
 	bool use_dynamic_weights_for_sampling_;
 
+	core::Size delay_noesy_reassign_;
+
+	HedgeArchiveOP hedge_archive_;
 	///@brief cache some of the experimental data so we don't reload from file for each evaluation
 	mutable core::scoring::ResidualDipolarCouplingOP rdc_data_; //need to cache this to avoid reading RDC file each time...
 	mutable core::scoring::constraints::ConstraintSetOP cst_data_;
 	mutable core::scoring::constraints::ConstraintSetOP cst_fa_data_;
 	/// ------------------ register cmdline options ---------------------------
+
+	utility::options::OptionCollection const vanilla_options_; //options before stage-dpd auto-noe-options were added
+
 
 private:
 	static bool options_registered_;
