@@ -3995,12 +3995,16 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>nmer ref energies database filename</dd><br>
 </dl>
 <dl>
+<dt><b>-nmer_ref_energies_list</b> \<String\><dt>
+<dd>list of nmer ref energies database filenames</dd><br>
+</dl>
+<dl>
 <dt><b>-nmer_pssm</b> \<String\><dt>
 <dd>nmer pssm database filename</dd><br>
 </dl>
 <dl>
 <dt><b>-nmer_pssm_list</b> \<String\><dt>
-<dd>nmer pssm database filename</dd><br>
+<dd>list of nmer pssm database filenames</dd><br>
 </dl>
 <dl>
 <dt><b>-nmer_pssm_scorecut</b> \<Real\><dt>
