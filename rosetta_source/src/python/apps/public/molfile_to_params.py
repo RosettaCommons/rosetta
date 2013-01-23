@@ -1055,6 +1055,9 @@ def write_ligand_pdb(f, molfile_tmpl, molfile_xyz, resname, ctr=None, chain_id='
     for frag_id in frag_ids:
         ai = index_atoms(molfile_tmpl.atoms) # 1-based index
         atoms = [a for a in molfile_tmpl.atoms if a.fragment_id == frag_id]
+        
+        #loop through atoms and make sure the atoms are in the right order before outputting anything
+        #this will avoid the possibility of writing half a conformer and then dying
         for atom_tmpl in atoms:
             atom_xyz = molfile_xyz.atoms[ ai[atom_tmpl]-1 ]
             # Somewhere between version 2.2.1 and 2.3.1, Omega started writing the atoms for
@@ -1063,7 +1066,12 @@ def write_ligand_pdb(f, molfile_tmpl, molfile_xyz, resname, ctr=None, chain_id='
             # This totally screws the output of this script, as all the PDB rotamers have atoms in the wrong places.
             # This check will catch the problem sometimes, though obviously not always:
             if atom_tmpl.elem != atom_xyz.elem and not atom_tmpl.is_virtual:
+                f.write("TER"+(" "*77)+"\n")
+                f.close()
                 raise ValueError("Atom order mismatch between first and subsequent conformer: %i    %s    %s" % (ai[atom_tmpl], atom_tmpl, atom_xyz))
+        
+        for atom_tmpl in atoms:
+            atom_xyz = molfile_xyz.atoms[ ai[atom_tmpl]-1 ]
             xyz = r3.add(atom_xyz, ctr)
             atom_num += 1
             if len(frag_ids) == 1 and len(resname) > 2:
@@ -1118,7 +1126,14 @@ def write_all_files(m, molfiles, num_frags, options, suffix=""): #{{{
                 return 4
             else:
                 # m is used for names, molfile is used for XYZ
-                write_ligand_pdb(pdb_file, m, molfile, options.name, options.center)
+                try:
+                    write_ligand_pdb(pdb_file, m, molfile, options.name, options.center)
+                except ValueError as e:
+                    if options.skip_bad_conformers:
+                        print "Skipping Bad Conformers:",e
+                        os.remove(pdb_file)
+                    else:
+                        sys.exit(e)   
                 print "Wrote PDB file %s" % pdb_file
     if num_frags > 1:
         for i in range(num_frags):
@@ -1256,6 +1271,11 @@ and for visualizing exactly what was done to the ligand.
         help="assign mm atom types as VIRT, rather than X",
         action="store_true"
     )
+    parser.add_option("--skip-bad-conformers",
+        default=False,
+        dest="skip_bad_conformers",
+        help="If a conformer has atoms in the wrong order, skip it and continue rather than dying",
+        action="store_true")
     
     (options, args) = parser.parse_args(args=argv)
     if options.pdb is None: options.pdb = options.name
