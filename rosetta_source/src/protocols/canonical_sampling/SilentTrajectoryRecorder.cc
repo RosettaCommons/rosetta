@@ -152,7 +152,8 @@ SilentTrajectoryRecorder::restart_simulation(
 
 	std::string filename( metropolis_hastings_mover.output_file_name(file_name(), cumulate_jobs(), cumulate_replicas()) );
 	utility::file::FileName jd2_filename( jd2::current_output_filename() );
-	std::string physical_filename( jd2_filename.base()+"_"+filename );
+	utility::file::FileName physical_filename( jd2_filename );
+	physical_filename.base( jd2_filename.base()+"_"+filename );
 
 	//check existence of file
 	temp_level = 1;
@@ -165,9 +166,10 @@ SilentTrajectoryRecorder::restart_simulation(
 	std::ostringstream replica_id_str;
 	replica_id_str << std::setw(3) << std::setfill('0') << jd2::current_replica();
 	std::string tag = jd2::current_output_name()+"_"+replica_id_str.str();
-
+	tr.Info << "tag to match: " << tag << std::endl;
 	utility::vector1< std::string > matched_tags_in_file;
 	bool found = sfd.matched_tags( tag, "last", matched_tags_in_file );
+	tr.Info << "if matched_tags?: " << found << std::endl;
 	if ( found ) {
 		sfd.read_file( sfd.filename(), matched_tags_in_file );
 		runtime_assert( sfd.size() == 1 );
@@ -177,14 +179,17 @@ SilentTrajectoryRecorder::restart_simulation(
 		pose.add_constraints( csts ); // recover cst from the copy
 
 		std::string decoy_tag=matched_tags_in_file.front();
+		tr.Info << "decoy_tag matched: " << decoy_tag << std::endl;
 		Size ind=decoy_tag.find_last_of( '_' );
 		cycle = utility::string2int(decoy_tag.substr( ind+1 ) )*stride();
+		tr.Info << "cycle number got from the decoy_tag: " << cycle << std::endl;
 		if ( sfd.begin()->has_energy( "temp_level" ) ) {
 			temp_level = (Size) sfd.begin()->get_energy( "temp_level" );
 		}
 		if ( sfd.begin()->has_energy( "temperature" )) {
 			temperature = sfd.begin()->get_energy( "temperature" );
 		}
+		tr.Info << "temp_level: " << temp_level << std::endl;
 		sfd.begin()->print_scores( tr.Info );
 	}
 	return found;
