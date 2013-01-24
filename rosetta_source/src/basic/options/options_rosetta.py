@@ -384,6 +384,7 @@ Options = Option_Group( '',
 			default="0" ),
 
 		Option( 'chname', 'Boolean', desc="Add Tracer chanel names to output", default="true" ),
+		Option( 'chtimestamp', 'Boolean', desc="Add timestamp to tracer channel name", default="false" ),
 		Option( 'dry_run', 'Boolean', desc="If set ComparingTracer will not generate any asserts, and save all Tracer output to a file", default="false" ),
 		Option( 'mpi_tracer_to_file', 'String', desc="MPI ONLY: Redirect all tracer output to this file with '_<mpi_rank>' appened as a suffix", default="tracer.out" ),
 		Option( 'user_tag', 'String', desc="add this tag to structure tags: e.g., a process id", default=""),

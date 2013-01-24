@@ -191,6 +191,7 @@ option.add( basic::options::OptionKeys::out::level, "Level of Tracer output, any
 option.add( basic::options::OptionKeys::out::levels, "Specified hierarchical mute levels for individual channels in following format: -levels all:300 core.pose:500. Numeric values could be substituted with mute level names like: debug, info, error etc. Please note that all:<num> is synonymous to -level:<num>" );
 option.add( basic::options::OptionKeys::out::std_IO_exit_error_code, "Specify error code that will be used to exit if std::IO error detected.This is useful if you want to detect situations like: Rosetta output wasredirected to a file but disk got full etc. Default value is 0 which mean that error detection code is turned off." ).def(0);
 option.add( basic::options::OptionKeys::out::chname, "Add Tracer chanel names to output" ).def(true);
+option.add( basic::options::OptionKeys::out::chtimestamp, "Add timestamp to tracer channel name" ).def(false);
 option.add( basic::options::OptionKeys::out::dry_run, "If set ComparingTracer will not generate any asserts, and save all Tracer output to a file" ).def(false);
 option.add( basic::options::OptionKeys::out::mpi_tracer_to_file, "MPI ONLY: Redirect all tracer output to this file with '_<mpi_rank>' appened as a suffix" ).def("tracer.out");
 option.add( basic::options::OptionKeys::out::user_tag, "add this tag to structure tags: e.g., a process id" ).def("");
@@ -1321,10 +1322,10 @@ option.add( basic::options::OptionKeys::lh::sample_weight_file, "Holds the initi
 option.add( basic::options::OptionKeys::lh::fragpdb::fragpdb, "fragpdb option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::lh::fragpdb::out_path, "Path where pdbs are saved" ).def("");
 option.add( basic::options::OptionKeys::lh::fragpdb::indexoffset, "list of index offset pairs" ).def(-1);
+option.add( basic::options::OptionKeys::lh::fragpdb::bin, "list of bin keys" ).def(utility::vector1<std::string>());
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::fragpdb::bin, "list of bin keys" ).def(utility::vector1<std::string>());
-option.add( basic::options::OptionKeys::lh::symfragrm::symfragrm, "symfragrm option group" ).legal(true).def(true);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::symfragrm::symfragrm, "symfragrm option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::lh::symfragrm::pdblist, "list of pdbs to be processed" );
 option.add( basic::options::OptionKeys::rbe::rbe, "rbe option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::rbe::server_url, "serverurl for rosetta backend" );
@@ -1981,11 +1982,11 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequen
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
+option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
-option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_pdb, "PDB file from which to draw constraints" ).def("--");

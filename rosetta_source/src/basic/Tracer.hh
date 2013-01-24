@@ -123,6 +123,9 @@ struct TracerOptions
 	/// @brief should channel name be printed during the IO?
 	bool print_channel_name;
 
+	/// @brief should a timestamp be added to the channel name?
+	bool timestamp;
+
 	/// @brief list of muted channels
 	utility::vector1<std::string> muted;
 

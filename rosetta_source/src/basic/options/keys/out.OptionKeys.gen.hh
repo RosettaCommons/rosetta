@@ -47,6 +47,7 @@ namespace out { extern IntegerOptionKey const level; }
 namespace out { extern StringVectorOptionKey const levels; }
 namespace out { extern IntegerOptionKey const std_IO_exit_error_code; }
 namespace out { extern BooleanOptionKey const chname; }
+namespace out { extern BooleanOptionKey const chtimestamp; }
 namespace out { extern BooleanOptionKey const dry_run; }
 namespace out { extern StringOptionKey const mpi_tracer_to_file; }
 namespace out { extern StringOptionKey const user_tag; }

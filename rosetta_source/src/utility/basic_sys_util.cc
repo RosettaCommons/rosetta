@@ -102,5 +102,29 @@ timestamp()
 	return timestamp.str();
 }
 
+/// @brief Generate timestamp string, short format
+std::string
+timestamp_short()
+{
+	using std::ostringstream;
+	using std::setw;
+	using std::time;
+	using std::time_t;
+	using std::tm;
+
+	time_t currentTime = time( 0 );
+	struct tm * now = std::localtime( &currentTime );
+
+	ostringstream timestamp;
+	timestamp << std::setfill('0')
+	 << setw( 4 ) << ( now->tm_year + 1900 )
+	 << setw( 2 ) << ( now->tm_mon + 1 )
+	 << setw( 2 ) << ( now->tm_mday )
+	 << setw( 2 ) << ( now->tm_hour )
+	 << setw( 2 ) << ( now->tm_min )
+	 << setw( 2 ) << ( now->tm_sec );
+
+	return timestamp.str();
+}
 
 } // namespace utility

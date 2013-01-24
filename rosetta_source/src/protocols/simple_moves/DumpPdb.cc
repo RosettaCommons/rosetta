@@ -22,9 +22,12 @@
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
+#include <utility/basic_sys_util.hh>
 
+#ifdef USEMPI
+#include <utility/mpi_util.hh>
+#include <utility/string_util.hh>
+#endif
 
 namespace protocols {
 namespace simple_moves {
@@ -56,22 +59,32 @@ DumpPdbCreator::mover_name()
 DumpPdb::DumpPdb():
 	protocols::moves::Mover( DumpPdbCreator::mover_name() ),
 	fname_("dump.pdb"),
-	scorefxn_(0)
+	scorefxn_(0),
+	addtime_(false)
 {}
 
 DumpPdb::DumpPdb( std::string const fname ) :
 	protocols::moves::Mover( DumpPdbCreator::mover_name() ),
   fname_(fname),
-	scorefxn_(0)
+	scorefxn_(0),
+	addtime_(false)
 {}
 
 DumpPdb::~DumpPdb() {}
 
 void DumpPdb::apply( core::pose::Pose & pose ) {
+	std::string name( fname_ );
+	if ( addtime_ ) {
+#ifdef USEMPI
+		name += "_" + utility::to_string(utility::mpi_rank()); 
+#endif
+		name += "_" + utility::timestamp_short() + ".pdb";
+		TR << "Dumping PDB " << name << std::endl;
+	}
 	if ( scorefxn_ ) {
-		pose.dump_scored_pdb( fname_, *scorefxn_ );
+		pose.dump_scored_pdb( name, *scorefxn_ );
 	}	else {
-		pose.dump_pdb( fname_ );
+		pose.dump_pdb( name );
 	}
 }
 
@@ -85,6 +98,8 @@ DumpPdb::parse_my_tag( TagPtr const tag, DataMap & data, protocols::filters::Fil
 	if ( tag->hasOption("scorefxn") ) {
 		scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data );
 	}
+
+	tag_time( tag->getOption<bool>( "tag_time", false ) );
 	TR<<"dump pdb\n";
 	TR<<"WARNING: DEFINED DUMP_PDB MOVER. THIS IS USUALLY ONLY GOOD FOR DEBUGGING.\n";
 	TR<<"with filename "<<fname_<<std::endl;

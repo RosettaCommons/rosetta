@@ -35,6 +35,9 @@ sys_sleep( double const seconds );
 std::string
 timestamp();
 
+/// @brief Generate timestamp string, short format
+std::string
+timestamp_short();
 
 } // namespace utility
 

@@ -42,11 +42,15 @@ public:
 	}
 	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new DumpPdb ); }
 	void set_scorefxn( core::scoring::ScoreFunctionOP scorefxn);
+	void tag_time(bool setting) { addtime_ = setting; }
+	bool tag_time() const { return addtime_; }
 	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 private:
 	std::string fname_;
 	/// @brief Dump a scored pdb?
 	core::scoring::ScoreFunctionOP scorefxn_;
+	/// @brief Add timing information to filename?
+	bool addtime_;
 };
 
 

@@ -872,6 +872,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: true</dd><br>
 </dl>
 <dl>
+<dt><b>-chtimestamp</b> \<Boolean\><dt>
+<dd>Add timestamp to tracer channel name</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-dry_run</b> \<Boolean\><dt>
 <dd>If set ComparingTracer will not generate any asserts, and save all Tracer output to a file</dd><br>
 <dd>Default: false</dd><br>

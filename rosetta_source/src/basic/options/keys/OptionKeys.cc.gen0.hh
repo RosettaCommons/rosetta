@@ -186,6 +186,7 @@ namespace out { IntegerOptionKey const level( "out:level" );  }
 namespace out { StringVectorOptionKey const levels( "out:levels" );  }
 namespace out { IntegerOptionKey const std_IO_exit_error_code( "out:std_IO_exit_error_code" );  }
 namespace out { BooleanOptionKey const chname( "out:chname" );  }
+namespace out { BooleanOptionKey const chtimestamp( "out:chtimestamp" );  }
 namespace out { BooleanOptionKey const dry_run( "out:dry_run" );  }
 namespace out { StringOptionKey const mpi_tracer_to_file( "out:mpi_tracer_to_file" );  }
 namespace out { StringOptionKey const user_tag( "out:user_tag" );  }

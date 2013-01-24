@@ -555,6 +555,7 @@ init_tracers(){
 	if( option[ out::level  ].active() ) TO.level   = option[ out::level ]();
 	if( option[ out::levels ].active() ) TO.levels  = option[ out::levels ]();
 	if( option[ out::chname ].active() ) TO.print_channel_name = option[ out::chname ]();
+	if( option[ out::chtimestamp ].active() ) TO.timestamp = option[ out::chtimestamp ]();
 
 	// Adding Tracer::flush_all_tracers to list of exit-callbacks so all tracer output got flush out when utility_exit is used.
 	utility::add_exit_callback(basic::Tracer::flush_all_tracers);

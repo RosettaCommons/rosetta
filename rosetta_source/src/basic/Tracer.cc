@@ -24,6 +24,7 @@
 //#include <basic/options/keys/OptionKeys.hh>
 
 #include <utility/string_util.hh>
+#include <utility/basic_sys_util.hh>
 #include <utility/tools/make_vector.hh>
 
 #include <iostream>
@@ -377,7 +378,9 @@ void Tracer::prepend_channel_name( out_stream & sout, std::string const &str){
 #ifdef USEMPI
 				sout << "(" << mpi_rank_ << ") ";
 #endif
-      
+				if ( tracer_options_.timestamp ) {
+					sout << utility::timestamp() << " ";
+				}
 				begining_of_the_line_ = false;
 			}
 			sout << s[i];
