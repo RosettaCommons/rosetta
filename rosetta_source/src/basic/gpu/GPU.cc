@@ -149,8 +149,8 @@ const char *GPU::errstr(int errorCode)
 			return "CL_INVALID_GLOBAL_WORK_SIZE";
 		case CL_SUCCESS:
 			return "(No error)";
-		case CL_PLATFORM_NOT_FOUND_KHR:
-			return "CL_PLATFORM_NOT_FOUND_KHR";
+			//case CL_PLATFORM_NOT_FOUND_KHR:
+			//return "CL_PLATFORM_NOT_FOUND_KHR";
 		default:
 			return "Unknown OpenCL error";
 	}
