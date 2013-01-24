@@ -97,11 +97,11 @@ public:// mutator
 	void jump_id( Size const & jump_id );
 	void quick( Size const & quick );
 	void verbose( Size const & verbose );
-	//Undefinded, commenting out to fix PyRosetta build void residues1( std::string const & str );
-	//Undefinded, commenting out to fix PyRosetta build void residues2( std::string const & str );
+	void multicomp( bool multicomp );
 	void sym_dof_name( std::string const & sym_dof_name );
 
 	std::string sym_dof_name() const;
+	bool multicomp( ) const;
 
 public:// parser
 
@@ -141,6 +141,9 @@ private:
 	utility::vector1<core::Size> residues1_;
 	utility::vector1<core::Size> residues2_;
 	bool write_int_area_;
+
+	// symmetry-specific
+	bool multicomp_;
 	std::string sym_dof_name_;
 
 };

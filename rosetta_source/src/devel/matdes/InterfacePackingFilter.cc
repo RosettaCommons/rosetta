@@ -79,6 +79,10 @@ InterfacePackingFilter::sym_dof_names() const{
 	return sym_dof_names_;
 }
 
+bool InterfacePackingFilter::multicomp() const {
+	return multicomp_;
+}
+
 void
 InterfacePackingFilter::distance_cutoff( core::Real const d ){
 	distance_cutoff_ = d;
@@ -103,6 +107,12 @@ void
 InterfacePackingFilter::sym_dof_names( std::string const s ){
 	sym_dof_names_ = s;
 }
+
+void
+InterfacePackingFilter::multicomp( bool const mcomp ) {
+	multicomp_ = mcomp;
+}
+
 
 bool
 InterfacePackingFilter::apply(core::pose::Pose const & pose ) const
@@ -131,75 +141,126 @@ InterfacePackingFilter::compute( core::pose::Pose const & pose ) const{
 	utility::vector1<core::Size> sub_pose_resis, neighbor_resis;
 	core::Size count = 0; Real if_score = 0;
 	utility::vector1<std::string> sym_dof_name_list;
-	std::string sym_dof_name;
 
-	sym_dof_name_list = utility::string_split( sym_dof_names_ , ',' );
-
-	for (Size i = 1; i <= sym_dof_name_list.size(); i++) {
-
-		sym_dof_name = sym_dof_name_list[i];
-
-		if (sym_dof_name == "") {
-			utility_exit_with_message("The required argument, sym_dof_names, for the InterfacePackingFilter was not set properly.");
-		}
-
-		int	sym_aware_jump_id = core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_name );
-		ObjexxFCL::FArray1D_bool is_upstream ( pose.total_residue(), false );
-		pose.fold_tree().partition_by_jump( sym_aware_jump_id, is_upstream );
-		sub_pose_resis = devel::matdes::get_neighbor_sub_resis(pose, contact_dist_, sym_dof_name);
-		core::io::pdb::pose_from_pose(sub_pose, pose, sub_pose_resis);
-		//pose.dump_pdb("pose_" + protocols::jd2::JobDistributor::get_instance()->current_output_name() + ".pdb");
-		//sub_pose.dump_pdb("sub_pose_" + protocols::jd2::JobDistributor::get_instance()->current_output_name() + ".pdb");
-	 	core::scoring::packing::HolesResult hr(core::scoring::packing::compute_holes_score(sub_pose, hp));
-		TR << "computed_holes" << std::endl;
-
-		Size nres_monomer = 0;
-		bool start = true;
-		for (Size i=1; i<=symm_info->num_independent_residues(); ++i) {
-			if ( is_upstream(i) ) continue;
-			if ( start ) monomer_lower_bound = i;
-			start = false;
-			nres_monomer++;
-		}
-		TR << "nres_monomer: " << nres_monomer << " for sym_dof_name: " << sym_dof_name << std::endl;
-
-		for(Size r=1; r<=sub_pose_resis.size(); r++) {
-			if (monomer_lower_bound == sub_pose_resis[r]) { 
-				base = r;
-				break;
-			}
-			TR.Debug << "r: " << r << " sub_pose_resi: " << sub_pose_resis[r] << std::endl;
-		}
-		TR.Debug << "base residue of monomer: " << base << std::endl; 
- 
-		for (core::Size sir=base; sir<=base+nres_monomer-1; sir++) {
-			ir = sub_pose_resis[sir];
-			for (core::Size ia = 1; ia<=pose.residue(ir).nheavyatoms(); ia++) {
-				bool contact = false;
-				for (core::Size sjr=1; sjr<=sub_pose_resis.size(); sjr++) {
-					jr = sub_pose_resis[sjr];
-					if ( !is_upstream(jr) ) continue; 
-					for (core::Size ja = 1; ja<=pose.residue(jr).nheavyatoms(); ja++) {
-						if (pose.residue(ir).xyz(ia).distance_squared(pose.residue(jr).xyz(ja)) <= cutoff2)  {
-							contact = true;
-							break; // ja
-						}
-					} // ja
-					if (contact == true) {
-						TR.Debug << "ir: " << ir << " jr: " << jr << std::endl;
-						break;
-					}
-				} // jr
-				if (contact == true) {
-					count++;
-					if_score += hr.atom_scores[core::id::AtomID(ia, sir)];
-					TR.Debug << "count: " << count << " atom_score: " << hr.atom_scores[core::id::AtomID(ia, sir)] << " if_score: " << if_score << std::endl;
-				}
-			} // ia
-		} // ir
+  // Partition pose according to specified jump and symmetry information
+	Size nsubposes=1;
+	utility::vector1<Size> sym_aware_jump_ids;
+	if ( multicomp_ ) {
+		runtime_assert( sym_dof_names_ != "" );
+		sym_dof_name_list = utility::string_split( sym_dof_names_ , ',' );
+		nsubposes = sym_dof_name_list.size();
+		TR.Debug << "nsubposes: " << nsubposes << std::endl;
+	} else if (sym_dof_names_ != "") {
+		// expand system along provided DOFs
+		sym_dof_name_list = utility::string_split( sym_dof_names_ , ',' );
+		for (Size j = 1; j <= sym_dof_name_list.size(); j++)
+			sym_aware_jump_ids.push_back( core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_name_list[j] ) );
+	} else {
+		// if we're symmetric and not multicomponent, expand along all slide DOFs
+		Size nslidedofs = core::pose::symmetry::symmetry_info(pose)->num_slidablejumps();
+		TR.Debug << "#slidable jumps: " << nslidedofs << std::endl;
+		for (Size j = 1; j <= nslidedofs; j++)
+			sym_aware_jump_ids.push_back( core::pose::symmetry::get_sym_aware_jump_num(pose, j ) );
 	}
-		TR << "final if_score / count = " << if_score << " / " << count << " = " << (if_score / (Real)count) << std::endl;
-		return if_score / (Real)count;
+
+	for (Size i = 1; i <= nsubposes; i++) {
+		ObjexxFCL::FArray1D_bool is_upstream ( pose.total_residue(), false );
+		if ( multicomp_ ) {
+			TR.Debug << "computing neighbors for sym_dof_name " << sym_dof_name_list[i] << std::endl;
+			int sym_aware_jump_id;
+			sym_aware_jump_id = core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_name_list[i] );
+			pose.fold_tree().partition_by_jump( sym_aware_jump_id, is_upstream );
+			sub_pose_resis = devel::matdes::get_neighbor_sub_resis(pose, contact_dist_, sym_dof_name_list[i]);
+			core::io::pdb::pose_from_pose(sub_pose, pose, sub_pose_resis);
+
+			//pose.dump_pdb("pose_" + protocols::jd2::JobDistributor::get_instance()->current_output_name() + ".pdb");
+			//sub_pose.dump_pdb("sub_pose_" + protocols::jd2::JobDistributor::get_instance()->current_output_name() + ".pdb");
+	
+			core::scoring::packing::HolesResult hr(core::scoring::packing::compute_holes_score(sub_pose, hp));
+			TR << "computed_holes" << std::endl;
+	
+			Size nres_monomer = 0;
+			bool start = true;
+			for (Size j=1; j<=symm_info->num_independent_residues(); ++j) {
+				if ( is_upstream(j) ) continue;
+				if ( start ) monomer_lower_bound = j;
+				start = false;
+				nres_monomer++;
+			}
+			TR << "nres_monomer: " << nres_monomer << " for sym_dof_name: " << sym_dof_name_list[i] << std::endl;
+	
+			for(Size r=1; r<=sub_pose_resis.size(); r++) {
+				if (monomer_lower_bound == sub_pose_resis[r]) { 
+					base = r;
+					break;
+				}
+				TR.Debug << "r: " << r << " sub_pose_resi: " << sub_pose_resis[r] << std::endl;
+			}
+			TR.Debug << "base residue of monomer: " << base << std::endl; 
+	 
+ 			for (core::Size sir=base; sir<=base+nres_monomer-1; sir++) {
+				ir = sub_pose_resis[sir];
+				for (core::Size ia = 1; ia<=pose.residue(ir).nheavyatoms(); ia++) {
+					bool contact = false;
+					for (core::Size sjr=1; sjr<=sub_pose_resis.size(); sjr++) {
+						jr = sub_pose_resis[sjr];
+						if ( !is_upstream(jr) ) continue; 
+						for (core::Size ja = 1; ja<=pose.residue(jr).nheavyatoms(); ja++) {
+							if (pose.residue(ir).xyz(ia).distance_squared(pose.residue(jr).xyz(ja)) <= cutoff2)  {
+								contact = true;
+								break; // ja
+							}
+						} // ja
+						if (contact == true) {
+							TR.Debug << "ir: " << ir << " jr: " << jr << std::endl;
+							break;
+						}
+					} // jr
+					if (contact == true) {
+						count++;
+						if_score += hr.atom_scores[core::id::AtomID(ia, sir)];
+						TR.Debug << "count: " << count << " atom_score: " << hr.atom_scores[core::id::AtomID(ia, sir)] << " if_score: " << if_score << std::endl;
+					}
+				} // ia
+			} // ir
+	 	} else {
+			core::pose::symmetry::partition_by_symm_jumps( sym_aware_jump_ids, pose.fold_tree(), core::pose::symmetry::symmetry_info(pose), is_upstream );
+			utility::vector1<Size> intra_subs;
+			Size nres_monomer = symm_info->num_independent_residues();
+			for (int i=1; i<=symm_info->subunits(); ++i)
+				if (is_upstream( (i-1)*nres_monomer + 1 )) intra_subs.push_back(i);
+			sub_pose = get_neighbor_subs (pose, intra_subs);
+
+			core::scoring::packing::HolesResult hr(core::scoring::packing::compute_holes_score(sub_pose, hp));
+			for (core::Size ir=1; ir<=nres_monomer; ir++) {
+				//if (is_upstream(ir)) continue;
+				for (core::Size ia = 1; ia<=pose.residue(ir).nheavyatoms(); ia++) {
+					bool contact = false;
+					for (core::Size jr=1; jr<=pose.total_residue(); jr++) {
+						if (is_upstream(jr)) continue;
+						for (core::Size ja = 1; ja<=pose.residue(jr).nheavyatoms(); ja++) {
+							if (pose.residue(ir).xyz(ia).distance_squared(pose.residue(jr).xyz(ja)) <= cutoff2)  {
+								contact = true;
+								break ;
+							}
+						}
+						if (contact == true) {
+							TR.Debug << "ir: " << ir << " jr: " << jr << std::endl;
+							break;
+						}
+					}
+					if (contact) {
+						count++;
+						if_score += hr.atom_scores[core::id::AtomID(ia, ir)];
+						TR.Debug << "count: " << count << " atom_score: " << hr.atom_scores[core::id::AtomID(ia, ir)] << " if_score: " << if_score << std::endl;
+					}
+				}
+			}
+		}
+	}
+
+	TR << "final if_score / count = " << if_score << " / " << count << " = " << (if_score / (Real)count) << std::endl;
+	return if_score / (Real)count;
 }
 
 core::Real
@@ -228,6 +289,7 @@ InterfacePackingFilter::parse_my_tag( utility::tag::TagPtr const tag,
 	lower_threshold( tag->getOption< core::Real >( "lower_cutoff", -5 ) );
 	upper_threshold( tag->getOption< core::Real >( "upper_cutoff", 5 ) );
 	sym_dof_names( tag->getOption< std::string >( "sym_dof_names", "" ) );
+	multicomp( tag->getOption< bool >("multicomp", 0) );
 	TR<<"with options lower_threshold: "<<lower_threshold()<<", upper_threshold: "<<upper_threshold()<<", distance_cutoff: "<<distance_cutoff()<<"contact_dist: "<<contact_dist()<<"sym_dof_names: "<<sym_dof_names()<<std::endl;
 }
 

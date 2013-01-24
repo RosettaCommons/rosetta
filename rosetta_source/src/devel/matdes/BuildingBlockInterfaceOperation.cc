@@ -49,14 +49,15 @@ BuildingBlockInterfaceOperationCreator::create_task_operation() const
 }
 
 
-BuildingBlockInterfaceOperation::BuildingBlockInterfaceOperation( core::Size nsub_bblock, std::string sym_dof_names, core::Real contact_dist /* = 10*/, core::Real bblock_dist /*= 5 */, core::Real fa_rep_cut /* = 3.0 */, bool filter_intrabb, bool intrabb_only ):
+BuildingBlockInterfaceOperation::BuildingBlockInterfaceOperation( core::Size nsub_bblock, std::string sym_dof_names, core::Real contact_dist /* = 10*/, core::Real bblock_dist /*= 5 */, core::Real fa_rep_cut /* = 3.0 */, bool filter_intrabb, bool intrabb_only, bool multicomponent ):
 	nsub_bblock_(nsub_bblock),
 	sym_dof_names_(sym_dof_names),
 	contact_dist_(contact_dist),
 	bblock_dist_(bblock_dist),
 	fa_rep_cut_(fa_rep_cut),
 	filter_intrabb_(filter_intrabb),
-	intrabb_only_(intrabb_only)
+	intrabb_only_(intrabb_only),
+	multicomponent_(multicomponent)
 {}
 
 BuildingBlockInterfaceOperation::~BuildingBlockInterfaceOperation() {}
@@ -87,7 +88,8 @@ BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pac
 	}
 
 	Sizes intra_subs1, intra_subs2;
-	if( sym_dof_name_list.size() == 2) {
+	if( multicomponent_ ) {
+		runtime_assert (sym_dof_name_list.size() == 2);  //fpd  multicomponent code assumes this holds
 		intra_subs1 = get_jump_name_to_subunits(pose,sym_dof_name_list[1]);
 		intra_subs2 = get_jump_name_to_subunits(pose,sym_dof_name_list[2]);
 	}
@@ -108,12 +110,12 @@ BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pac
 		std::string atom_i = (pose.residue(ir).name3() == "GLY") ? "CA" : "CB";
 		for(Size jr=1; jr<=sym_info->num_total_residues_without_pseudo(); jr++) {
 			std::string atom_j = (pose.residue(jr).name3() == "GLY") ? "CA" : "CB";
+
 			//If one component, then check for clashes between all residues in primary subunit and subunits with indices > nsub_bb
-			if( sym_dof_name_list.size() == 1 ) {
-      	if ( sym_info->subunit_index(jr) <= nsub_bblock_ ) continue;
-			}
+			if( !multicomponent_ && sym_info->subunit_index(jr) <= nsub_bblock_ ) continue;
+
 			//If two component, then check for clashes between all residues in primary subunitA and other building blocks, and all resis in primary subB and other building blocks. 
-			else if( sym_dof_name_list.size() == 2 ) {
+			if( multicomponent_ ) {
 				Sizes const & isubs( get_component_of_residue(pose,ir)=='A'?intra_subs1:intra_subs2);
 				if (find(comp_chains.begin(),comp_chains.end(),pose.chain(jr))==comp_chains.end()) {
 					if (get_component_of_residue(pose,jr)=='A') {
@@ -125,9 +127,8 @@ BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pac
 					}
 				}	
 				if(get_component_of_residue(pose,ir)==get_component_of_residue(pose,jr)&&find(isubs.begin(),isubs.end(),sym_info->subunit_index(jr))!=isubs.end()) continue;
-			} else {
-				utility_exit_with_message("BBi currently only works for 1 or 2 component symmetries");
 			}
+
 			if(pose.residue(ir).xyz(atom_i).distance_squared(pose.residue(jr).xyz(atom_j)) <= contact_dist_sq) {
 				design_pos.push_back(ir);
 				TR.Debug << ir << std::endl;
@@ -154,15 +155,16 @@ BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pac
 			TR.Debug << "Filtering: Checking resi: " << ir << std::endl;
 			contact = true;
 			for(Size jr=1; jr<=sym_info->num_total_residues_without_pseudo(); jr++) {
-				if( sym_dof_name_list.size() == 1 ) {
+				if( !multicomponent_ ) {
 					if(sym_info->subunit_index(ir) > nsub_bblock_ || sym_info->subunit_index(jr) > nsub_bblock_) continue;
-				}
-				else if( sym_dof_name_list.size() == 2 ) {
+				}	else {
 					Sizes const & intra_subs(get_component_of_residue(pose,ir)=='A'?intra_subs1:intra_subs2);
 					if(get_component_of_residue(pose,ir)!=get_component_of_residue(pose,jr)) continue;
 					if(find(intra_subs.begin(), intra_subs.end(), sym_info->subunit_index(jr)) == intra_subs.end()) continue;
 				}
+
 				if(sym_info->subunit_index(jr) == 1) continue;
+
 				for(Size ia = 1; ia<=pose.residue(ir).nheavyatoms(); ia++) {
 					for(Size ja = 1; ja<=pose.residue(jr).nheavyatoms(); ja++) {
 						if(pose.residue(ir).xyz(ia).distance_squared(pose.residue(jr).xyz(ja)) <= bblock_dist_sq)	{
@@ -214,6 +216,7 @@ BuildingBlockInterfaceOperation::parse_tag( TagPtr tag )
 	fa_rep_cut_ = tag->getOption<core::Real>("fa_rep_cut", 3.0);
 	filter_intrabb_ = tag->getOption< bool >("filter_intrabb", 1);
 	intrabb_only_ = tag->getOption< bool >("intrabb_only", 0);
+	multicomponent_ = tag->getOption< bool >("multicomp", 0);
 }
 
 void

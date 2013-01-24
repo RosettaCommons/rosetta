@@ -198,7 +198,7 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 
 	// Divide residues into partitions based on filter mode
 	utility::vector1<core::Size> residue_partition;
-	core::Size target_jump;
+	utility::vector1<core::Size> target_jumps;
 
 	if (filter_mode_ == ALL)
 	{
@@ -224,14 +224,24 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 
 		// Lookup symmetry-aware jump identifier
 		if ( sym_dof_name_ != "" ) {
-			target_jump = core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_name_ );
+			target_jumps.push_back( core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_name_ ) );
+		} else if (!symmetric) {
+			target_jumps.push_back( jump_ );
 		} else {
-			target_jump = core::pose::symmetry::get_sym_aware_jump_num( pose, jump_ );
+			// all slidable jumps
+			Size nslidedofs = core::pose::symmetry::symmetry_info(pose)->num_slidablejumps();
+			for (Size j = 1; j <= nslidedofs; j++)
+				target_jumps.push_back( core::pose::symmetry::get_sym_aware_jump_num(pose, j ) );
 		}
 
 		// Partition pose by jump
 		ObjexxFCL::FArray1D<bool> jump_partition ( pose.total_residue(), false );
-		pose.fold_tree().partition_by_jump( target_jump, jump_partition );
+		if (!symmetric) {
+			pose.fold_tree().partition_by_jump( target_jumps[1], jump_partition );
+		} else {
+			core::pose::symmetry::partition_by_symm_jumps( target_jumps, pose.fold_tree(),
+				core::pose::symmetry::symmetry_info(pose), jump_partition );
+		}
 
 		for (core::Size i = 1; i <= pose.total_residue(); ++i)
 		{
@@ -397,14 +407,14 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 			// Calculate sasa across the specified jump
 			protocols::simple_filters::InterfaceSasaFilter sasa_filter;
 
-			TR.Debug << "Adding jump to sasa filter: " << target_jump << std::endl;
+			TR.Debug << "Adding jump to sasa filter: " << target_jumps[1] << std::endl;
 			if ( symmetric && (sym_dof_name_ != ""))
 			{
 				sasa_filter.sym_dof_names(sym_dof_name_);
 			}
 			else
 			{
-				sasa_filter.jump(target_jump);
+				sasa_filter.jumps(target_jumps);
 			}
 			interface_sasa = sasa_filter.compute(pose);
 		}

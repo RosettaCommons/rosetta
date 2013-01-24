@@ -797,6 +797,67 @@ set_asymm_unit_fold_tree( core::pose::Pose &p, kinematics::FoldTree const &f) {
 	core::conformation::symmetry::set_asymm_unit_fold_tree( p.conformation(), f );
 }
 
+// symmetry-aware version of FoldTree::partition_by_jump().  Accepts multiple jumps.
+//  "floodfills" from root, not crossing any of the input jumps
+void
+partition_by_symm_jumps(
+	utility::vector1< int > jump_numbers,
+	core::kinematics::FoldTree const & ft,
+	conformation::symmetry::SymmetryInfoCOP symm_info,
+	ObjexxFCL::FArray1D_bool & partner1
+) {
+	using namespace core::kinematics;
+
+	// expand jumps to include jump clones
+	Size njumps = jump_numbers.size();
+	for (int i=1; i<=njumps; ++i) {
+		utility::vector1< Size > clones_i = symm_info->jump_clones( jump_numbers[i] );
+		for (int j=1; j<= clones_i.size(); ++j) {
+			jump_numbers.push_back( clones_i[j] );
+		}
+	}
+
+	//int const pos1( ft.root() );
+	int pos1;
+	for (int i=1; i<=symm_info->num_total_residues_without_pseudo(); ++i) {
+		if (symm_info->bb_is_independent(i)) {
+			pos1 = i;
+			break;
+		}
+	}
+
+	partner1 = false;
+	partner1( pos1 ) = true;
+
+	bool new_member ( true );
+	std::vector< Edge >::const_iterator it_begin( ft.begin() );
+	std::vector< Edge >::const_iterator it_end  ( ft.end() );
+
+	while ( new_member ) {     // keep adding new members
+		new_member = false;
+		for ( std::vector< Edge >::const_iterator it = it_begin; it != it_end; ++it ) {
+			if ( std::find ( jump_numbers.begin(), jump_numbers.end(), it->label() ) != jump_numbers.end() ) continue;
+
+			int const start( std::min( it->start(), it->stop() ) );
+			int const stop ( std::max( it->start(), it->stop() ) );
+			if ( (partner1( start ) && !partner1( stop )) ||
+				(partner1( stop ) && !partner1( start )) ) {
+				new_member = true;
+				if ( it->is_polymer() ) {
+					// all the residues
+					for ( int i=start; i<= stop; ++i ) {
+						partner1( i ) = true;
+					}
+				} else {
+					// just the vertices
+					partner1( start ) = true;
+					partner1( stop ) = true;
+				}
+			}
+		}
+	}
+}
+
 
 // find symmetry axis
 // returns <0,0,0> if:
@@ -817,7 +878,7 @@ get_symm_axis( core::pose::Pose & pose ) {
 			base = i;
 			break;
 		}
-		}
+	}
 
 	// find clones
 	utility::vector1< core::Size > base_clones = symm_info->bb_clones( base );
@@ -931,8 +992,8 @@ sealed_symmetric_fold_tree( core::pose::Pose & pose ) {
 }
 
 // @brief given a symmetric pose and a jump number, get_sym_aware_jump_num
-// translates the jump number into the corresponding SymDof so that the
-// symmetric pose can moved moved appropriately.
+//   translates the jump number into the corresponding SymDof so that the
+//   symmetric pose can moved moved appropriately.
 int
 get_sym_aware_jump_num ( core::pose::Pose const & pose, int jump_num ) {
 	using namespace core::conformation::symmetry;
@@ -941,19 +1002,19 @@ get_sym_aware_jump_num ( core::pose::Pose const & pose, int jump_num ) {
 		SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
 		std::map<Size,SymDof> dofs = sym_info->get_dofs();
 		sym_jump = 0;
-		for(std::map<Size,SymDof>::iterator i = dofs.begin(); i != dofs.end(); i++) {
-			//fpd if slide moves are not allowed on this jump, then skip it
-			if (!i->second.allow_dof(1) && !i->second.allow_dof(2) && !i->second.allow_dof(3)) continue;
+		Size jump_counter = 0;
 
-			Size jump_num = i->first;
-			if (sym_jump == 0) {
-				sym_jump = jump_num;
-			} else {
-				utility_exit_with_message("Multiple symmetric DOFs found! You might need to specify a sym_dof_name=(&string) instead of jump=(&Size)");
+		for(std::map<Size,SymDof>::iterator i = dofs.begin(); i != dofs.end(); i++) {
+			//fpd  if slide moves are not allowed on this jump, then skip it
+			if (!i->second.allow_dof(1) && !i->second.allow_dof(2) && !i->second.allow_dof(3)) continue;
+			if (++jump_counter == jump_num) {
+				sym_jump = i->first;
+				break;
 			}
 		}
 		if (sym_jump == 0) {
-			utility_exit_with_message("No sym_dofs found!");
+			TR.Error << "Failed to find sym_dof with index " << jump_num << std::endl;
+			utility_exit_with_message("Symmetric slide DOF "" not found!");
 		}
 	}
 	return sym_jump;

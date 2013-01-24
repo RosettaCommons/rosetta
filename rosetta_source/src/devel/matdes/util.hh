@@ -23,6 +23,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
+#include <ObjexxFCL/FArray1D.hh>
 
 // STL headers
 #include <set>

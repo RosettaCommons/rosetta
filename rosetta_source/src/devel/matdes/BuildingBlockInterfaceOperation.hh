@@ -35,7 +35,15 @@ namespace matdes {
 
 class BuildingBlockInterfaceOperation : public core::pack::task::operation::TaskOperation {
 public:
-	BuildingBlockInterfaceOperation( core::Size nsub_bblock = 1, std::string sym_dof_names  = "", core::Real contact_dist = 10, core::Real bblock_dist = 5, core::Real fa_rep_cut = 3.0, bool filter_intrabb = 1, bool intrabb_only = 0 );
+	BuildingBlockInterfaceOperation(
+		core::Size nsub_bblock = 1,
+		std::string sym_dof_names  = "",
+		core::Real contact_dist = 10,
+		core::Real bblock_dist = 5,
+		core::Real fa_rep_cut = 3.0,
+		bool filter_intrabb = true,
+		bool intrabb_only = false,
+		bool multicomponent = false );
 
 	virtual ~BuildingBlockInterfaceOperation();
 
@@ -57,6 +65,7 @@ private:
 	core::Real fa_rep_cut_;
 	bool filter_intrabb_;
 	bool intrabb_only_;
+	bool multicomponent_;
 };
 
 } //namespace matdes 

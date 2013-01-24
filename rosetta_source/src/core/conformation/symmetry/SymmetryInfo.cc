@@ -1402,6 +1402,15 @@ SymmetryInfo::set_jump_name(Size jnum, std::string jname) {
 	dofname2jnum_[jname] = jnum;
 }
 
+Size
+SymmetryInfo::num_slidablejumps() const {
+	Size retval = 0;
+	for(std::map<Size,SymDof>::const_iterator i = dofs_.begin(); i != dofs_.end(); i++) {
+		if (i->second.allow_dof(1) || i->second.allow_dof(2) || i->second.allow_dof(3)) retval++;
+	}
+	return retval;
+}
+
 utility::vector1<char> const &
 SymmetryInfo::get_components() const {
 	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");

@@ -271,10 +271,21 @@ InterfaceSasaFilter::compute( core::pose::Pose const & pose ) const {
 		sym_aware_jump_ids.insert(core::pose::symmetry::sym_dof_jump_num( split_pose, sym_dof_names_[i] ));
 	}
 
-	for (Size i = 1; i <= jumps_.size(); i++)
+	bool symm = core::pose::symmetry::is_symmetric( pose );
+	if (!symm)
 	{
-		TR.Debug << "getting sym_aware_jump_id from " << jumps_[i] << std::endl;
-		sym_aware_jump_ids.insert(core::pose::symmetry::get_sym_aware_jump_num( split_pose, jumps_[i] ));
+		for (Size i = 1; i <= jumps_.size(); i++)
+		{
+			TR.Debug << "getting sym_aware_jump_id from " << jumps_[i] << std::endl;
+			sym_aware_jump_ids.insert(jumps_[i]);
+		}
+	}
+	else
+	{
+		// all slidable jumps
+		Size nslidedofs = core::pose::symmetry::symmetry_info(pose)->num_slidablejumps();
+		for (Size j = 1; j <= nslidedofs; j++)
+			sym_aware_jump_ids.insert( core::pose::symmetry::get_sym_aware_jump_num(pose, j ) );
 	}
 
 	runtime_assert( !sym_aware_jump_ids.empty() );
@@ -303,7 +314,7 @@ InterfaceSasaFilter::compute( core::pose::Pose const & pose ) const {
 
 		if( core::pose::symmetry::is_symmetric( pose ))
 		{
-
+			//fpd  this logic is not correct for lattice symmetries
 			core::conformation::symmetry::SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
 			core::Real const buried_sasa( (unbound_sasa - bound_sasa) /(sym_info->subunits()));
 

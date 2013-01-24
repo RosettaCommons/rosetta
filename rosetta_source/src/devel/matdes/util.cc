@@ -191,6 +191,7 @@ pick_design_position(core::pose::Pose const & pose, Size nsub_bblock, Real conta
 
 // Figure out which chains touch chain A, and return those chains
 // Should we also change this function to include intra_subs, like the get_neighbor_sub_resis function?
+//fpd  ^^ it now does this
 core::pose::Pose
 get_neighbor_subs (Pose const &pose_in, utility::vector1<Size> intra_subs) {
 	//fpd we need to first score the pose
@@ -202,10 +203,23 @@ get_neighbor_subs (Pose const &pose_in, utility::vector1<Size> intra_subs) {
   Pose sub_pose;
   core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
   Size nres_monomer = symm_info->num_independent_residues();
-  sub_pose.append_residue_by_jump(pose.residue(1),1);
-  for (Size i=2; i<=nres_monomer; ++i) {
-    sub_pose.append_residue_by_bond(pose.residue(i));
-  }
+
+	// add base subunit
+	//sub_pose.append_residue_by_jump(pose.residue(1),1);
+	//for (Size i=2; i<=nres_monomer; ++i) {
+	//	sub_pose.append_residue_by_bond(pose.residue(i));
+	//}
+
+	// add all base subunits
+  for (Size i=1; i<=symm_info->subunits(); ++i) {
+		if (std::find(intra_subs.begin(), intra_subs.end(), i) == intra_subs.end()) continue;
+		Size start = (i-1)*nres_monomer;
+		sub_pose.append_residue_by_jump(pose.residue(start+1),sub_pose.n_residue());
+  	for (Size ir=2; ir<=nres_monomer; ir++) {
+			sub_pose.append_residue_by_bond(pose.residue(ir+start));
+  	}
+	}
+
   for (Size i=1; i<=symm_info->subunits(); ++i) {
     if (std::find(intra_subs.begin(), intra_subs.end(), i) != intra_subs.end()) continue;
     bool contact = false;
@@ -231,7 +245,6 @@ get_neighbor_subs (Pose const &pose_in, utility::vector1<Size> intra_subs) {
 
 utility::vector1<Size> 
 get_neighbor_sub_resis (Pose const &pose_in, Real contact_dist, std::string sym_dof_name) {
-
 	using namespace basic;
 	using namespace core::conformation::symmetry;
 	using namespace core::pose::symmetry;

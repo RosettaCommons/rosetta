@@ -19,6 +19,8 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
+#include <core/conformation/Residue.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/scoring/sc/ShapeComplementarityCalculator.hh>
 
 // Utility headers
@@ -57,7 +59,8 @@ ShapeComplementarityFilter::ShapeComplementarityFilter():
 	verbose_( false ),
 	residues1_( ),
 	residues2_( ),
-	sym_dof_name_("")
+	sym_dof_name_(""),
+	multicomp_(false)
 {}
 
 
@@ -95,6 +98,8 @@ void ShapeComplementarityFilter::quick( Size const & quick ) { quick_ = quick; }
 void ShapeComplementarityFilter::verbose( Size const & verbose ) { verbose_ = verbose; }
 void ShapeComplementarityFilter::sym_dof_name( std::string const & sym_dof_name ) { sym_dof_name_ = sym_dof_name; }
 std::string ShapeComplementarityFilter::sym_dof_name() const { return sym_dof_name_; }
+void ShapeComplementarityFilter::multicomp( bool multicomp ) { multicomp_ = multicomp; }
+bool ShapeComplementarityFilter::multicomp() const { return multicomp_; }
 
 /// @brief
 core::Size ShapeComplementarityFilter::compute( Pose const & pose ) const
@@ -108,7 +113,10 @@ core::Size ShapeComplementarityFilter::compute( Pose const & pose ) const
 		scc_.settings.density = 5.0;
 	scc_.Reset();
 
-	if(!residues1_.empty() && !residues2_.empty()) {
+	bool symm = core::pose::symmetry::is_symmetric( pose );
+	Real nsubs_scalefactor = 1.0;
+
+	if (!residues1_.empty() && !residues2_.empty()) {
 		for(utility::vector1<Size>::const_iterator r = residues1_.begin();
 			r != residues1_.end(); ++r)
 				scc_.AddResidue(0, pose.residue(*r));
@@ -120,18 +128,54 @@ core::Size ShapeComplementarityFilter::compute( Pose const & pose ) const
 		if(!scc_.Calc())
 			return 0;
 
-	} else {
-		int sym_aware_jump_id = 0;
-		if ( sym_dof_name() != "" ) {
-			sym_aware_jump_id = core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_name() );
-		} else {
-			sym_aware_jump_id = core::pose::symmetry::get_sym_aware_jump_num( pose, jump_id_ );
-		}
-		tr << "Using jump_id " << sym_aware_jump_id << " to partition pose" << std::endl;
-		if(!scc_.Calc( pose, sym_aware_jump_id ))
-			return 0;
-	}
+	} else if (!symm) {
 
+		if(!scc_.Calc( pose, jump_id_ ))
+			return 0;
+
+	} else {
+		if ( multicomp_ ) {
+			// MULTI COMPONENT SYMM
+			int sym_aware_jump_id = 0;
+			runtime_assert( sym_dof_name() != "" );
+			sym_aware_jump_id = core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_name() );
+
+			tr << "Using jump_id " << sym_aware_jump_id << " to partition pose" << std::endl;
+			if(!scc_.Calc( pose, sym_aware_jump_id ))
+				return 0;
+
+			utility::vector1<Size> subs = core::pose::symmetry::get_jump_name_to_subunits( pose, sym_dof_name() );	
+			nsubs_scalefactor = (Real) subs.size() ;
+		} else {
+			// SINGLE COMPONENT SYMM
+			ObjexxFCL::FArray1D_bool is_upstream ( pose.total_residue(), false );
+			utility::vector1<Size> sym_aware_jump_ids;
+
+			if ( sym_dof_name() != "" ) {
+				sym_aware_jump_ids.push_back( core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_name() ) );
+			} else {
+				// all slidable jumps
+				Size nslidedofs = core::pose::symmetry::symmetry_info(pose)->num_slidablejumps();
+				for (Size j = 1; j <= nslidedofs; j++)
+					sym_aware_jump_ids.push_back( core::pose::symmetry::get_sym_aware_jump_num(pose, j ) );
+			}
+
+			// partition & fill residueX_ vectors
+			core::pose::symmetry::partition_by_symm_jumps( sym_aware_jump_ids, pose.fold_tree(), core::pose::symmetry::symmetry_info(pose), is_upstream );
+			Size nupstream=0;
+			for (int i=1; i<=pose.total_residue(); ++i) {
+				if (pose.residue(i).aa() == core::chemical::aa_vrt) continue;
+				scc_.AddResidue(is_upstream(i)?0:1, pose.residue(i));
+				if (is_upstream(i)) nupstream++;
+			}
+			// scalefactor
+			nsubs_scalefactor = (Real)( nupstream / core::pose::symmetry::symmetry_info(pose)->get_nres_subunit() );
+			
+			if(!scc_.Calc())
+				return 0;
+		}
+	}
+	
 	core::scoring::sc::RESULTS const &r = scc_.GetResults();
 	if(verbose_) {
 
@@ -170,14 +214,9 @@ core::Size ShapeComplementarityFilter::compute( Pose const & pose ) const
 
 	tr << "Shape complementarity: " << r.sc << std::endl;
 	tr << "Interface area: " << r.area << std::endl;
-	if ( ( sym_dof_name() != "" ) && basic::options::option[basic::options::OptionKeys::matdes::num_subs_building_block].user() )
-		utility_exit_with_message("Shape complementarity filter currently works properly for one component symmetries only if the command line option num_subs_building_block is set and a symdofname is not passed.");
-	if ( sym_dof_name() != "" )	{
-		utility::vector1<Size> subs = core::pose::symmetry::get_jump_name_to_subunits( pose, sym_dof_name() );	
-		tr << "Area per monomer: " << ( (core::Real) r.area / subs.size() ) << std::endl ;
+	if ( nsubs_scalefactor != 1) {
+		tr << "Area per monomer: " << ( (core::Real) r.area / nsubs_scalefactor ) << std::endl ;
 	}
-	if ( basic::options::option[basic::options::OptionKeys::matdes::num_subs_building_block].user() )
-		tr << "Area per monomer: " << ( (core::Real) r.area / basic::options::option[basic::options::OptionKeys::matdes::num_subs_building_block]() ) << std::endl;
 	tr << "Interface seperation: " << r.distance << std::endl;
 
 	return 1;
@@ -196,15 +235,31 @@ core::Real ShapeComplementarityFilter::report_sm( Pose const & pose ) const
 			protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
 			std::string column_header = this->get_user_defined_name() + "_int_area";
 			core::Real int_area = scc_.GetResults().area ;
-			if ( ( sym_dof_name() != "" ) && basic::options::option[basic::options::OptionKeys::matdes::num_subs_building_block].user() )
-				utility_exit_with_message("Shape complementarity filter currently works properly for one component symmetries only if the command line option num_subs_building_block is set and a symdofname is not passed.");
-			if ( sym_dof_name() != "" )	{
-				utility::vector1<Size> subs = core::pose::symmetry::get_jump_name_to_subunits( pose, sym_dof_name() );	
-				int_area = int_area / subs.size() ;
+
+			// symmetric scalefactor
+			if (core::pose::symmetry::is_symmetric( pose )) {
+				if ( multicomp_ ) {
+					utility::vector1<Size> subs = core::pose::symmetry::get_jump_name_to_subunits( pose, sym_dof_name() );	
+					int_area /= (Real) subs.size() ;
+				} else {
+					ObjexxFCL::FArray1D_bool is_upstream ( pose.total_residue(), false );
+					utility::vector1<Size> sym_aware_jump_ids;
+					if ( sym_dof_name() != "" ) {
+						sym_aware_jump_ids.push_back( core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_name() ) );
+					} else {
+						Size nslidedofs = core::pose::symmetry::symmetry_info(pose)->num_slidablejumps();
+						for (Size j = 1; j <= nslidedofs; j++) sym_aware_jump_ids.push_back( core::pose::symmetry::get_sym_aware_jump_num(pose, j ) );
+					}
+					core::pose::symmetry::partition_by_symm_jumps( sym_aware_jump_ids, pose.fold_tree(), core::pose::symmetry::symmetry_info(pose), is_upstream );
+					Size nupstream=0;
+					for (int i=1; i<=pose.total_residue(); ++i) {
+						if (pose.residue(i).aa() == core::chemical::aa_vrt) continue;
+						if (is_upstream(i)) nupstream++;
+					}
+					int_area /= (Real)( nupstream / core::pose::symmetry::symmetry_info(pose)->get_nres_subunit() );
+				}
 			}
-			if ( basic::options::option[basic::options::OptionKeys::matdes::num_subs_building_block].user() )
-				int_area = int_area / basic::options::option[basic::options::OptionKeys::matdes::num_subs_building_block]();
-			job->add_string_real_pair(column_header, int_area);
+			job->add_string_real_pair(column_header, int_area );
 		}
 		return scc_.GetResults().sc;
 	}
@@ -254,6 +309,7 @@ ShapeComplementarityFilter::parse_my_tag(
 	jump_id_ = tag->getOption<Size>( "jump", 1 );
 	write_int_area_ = tag->getOption<bool>( "write_int_area", false );
 	sym_dof_name(tag->getOption<std::string>( "sym_dof_name", "" ));
+	multicomp( tag->getOption< bool >("multicomp", 0) );
 
 	if(tag->hasOption("residues1")) {
 		residues1_ = core::pose::get_resnum_list(tag, "residues1", pose);
@@ -288,6 +344,7 @@ ShapeComplementarityFilter::parse_my_tag(
 			tr.Info << "Using Jump ID " << jump_id_ << " to define surfaces." << std::endl;
 	}
 }
+
 void ShapeComplementarityFilter::parse_def( utility::lua::LuaObject const & def,
 		utility::lua::LuaObject const & /*score_fxns*/,
 		utility::lua::LuaObject const & /*tasks*/ ) {

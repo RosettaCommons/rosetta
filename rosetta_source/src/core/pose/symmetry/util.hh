@@ -26,8 +26,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/PDBInfo.fwd.hh>
 #include <core/types.hh>
-
-// AUTO-REMOVED #include <utility/vector1.hh>
+#include <ObjexxFCL/FArray1D.hh>
 
 #include <utility/vector1.hh>
 #include <string>
@@ -126,6 +125,15 @@ symmetrize_fold_tree( core::pose::Pose const &p, kinematics::FoldTree &f );
 
 void
 set_asymm_unit_fold_tree( core::pose::Pose &p, kinematics::FoldTree const &f);
+
+// symmetry-aware version of FoldTree::partition_by_jump().  Accepts multiple jumps.
+void
+partition_by_symm_jumps(
+	utility::vector1< int > jump_numbers,
+	core::kinematics::FoldTree const & ft,
+	conformation::symmetry::SymmetryInfoCOP symm_info,
+	ObjexxFCL::FArray1D_bool &partner1 );
+
 
 // make a residue mask (like that used to restrict residues to repack) symmetric
 void

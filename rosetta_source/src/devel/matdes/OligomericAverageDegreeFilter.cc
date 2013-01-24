@@ -23,6 +23,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Conformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
 
 // Utility headers
 #include <utility/vector1.fwd.hh>
@@ -126,34 +127,46 @@ core::Real OligomericAverageDegreeFilter::compute( Pose const & pose, bool const
   core::pack::task::PackerTaskCOP packer_task( task_factory()->create_task_and_apply_taskoperations( pose ) );
 
   // Partition pose according to specified jump and symmetry information
-
-	Size nsubposes = 1;
-	if ( sym_dof_names_ != "" ) {
+	Size nsubposes=1;
+	utility::vector1<Size> sym_aware_jump_ids;
+	if ( multicomp_ ) {
+		runtime_assert( sym_dof_names_ != "" );
 		sym_dof_name_list = utility::string_split( sym_dof_names_ , ',' );
 		nsubposes = sym_dof_name_list.size();
 		TR.Debug << "nsubposes: " << nsubposes << std::endl;
+	} else if (sym_dof_names_ != "") {
+		// expand system along provided DOFs
+		sym_dof_name_list = utility::string_split( sym_dof_names_ , ',' );
+		for (Size j = 1; j <= sym_dof_name_list.size(); j++)
+			sym_aware_jump_ids.push_back( core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_name_list[j] ) );
+	} else {
+		// if we're symmetric and not multicomponent, expand along all slide DOFs
+		Size nslidedofs = core::pose::symmetry::symmetry_info(pose)->num_slidablejumps();
+		TR.Debug << "#slidable jumps: " << nslidedofs << std::endl;
+		for (Size j = 1; j <= nslidedofs; j++)
+			sym_aware_jump_ids.push_back( core::pose::symmetry::get_sym_aware_jump_num(pose, j ) );
 	}
 
   core::Size count_residues( 0 );
   core::Size count_neighbors( 0 );
+
 	for (Size i = 1; i <= nsubposes; i++) {
-		int sym_aware_jump_id;
-		if ( sym_dof_names() != "" ) {
-			TR.Debug << "computing neighbors for sym_dof_name " << sym_dof_name_list[i] << std::endl;
-			sym_aware_jump_id = core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_name_list[i] );
-  	} else {
-			sym_aware_jump_id = core::pose::symmetry::get_sym_aware_jump_num(pose, jump_id() );
-		}
 		ObjexxFCL::FArray1D_bool is_upstream ( pose.total_residue(), false );
-		pose.fold_tree().partition_by_jump( sym_aware_jump_id, is_upstream );
+		if ( multicomp_ ) {
+			TR.Debug << "computing neighbors for sym_dof_name " << sym_dof_name_list[i] << std::endl;
+			int sym_aware_jump_id;
+			sym_aware_jump_id = core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_name_list[i] );
+			pose.fold_tree().partition_by_jump( sym_aware_jump_id, is_upstream );
+  	} else {
+			core::pose::symmetry::partition_by_symm_jumps( sym_aware_jump_ids, pose.fold_tree(), core::pose::symmetry::symmetry_info(pose), is_upstream );
+		}
 
 		// Count neighbors in the sub_pose
-		for( core::Size resi=1; resi<=pose.total_residue(); ++resi ){
+		for( core::Size resi=1; resi<=pose.total_residue(); ++resi ) {
 			if(pose.residue_type(resi).aa() == core::chemical::aa_vrt) continue;
 			if( packer_task->being_packed( resi ) ){
-				//if ( is_upstream(resi) ) { utility_exit_with_message("Your packable residues are upstream of the jump you defined! Check your TaskOperation or your jump."); }
 				bool which_side = is_upstream(resi);  //fpd  designable residues may be upstream ... that's ok as long as we're separated
-				if ( multicomp() && (which_side != false) ) continue; 
+				if ( multicomp() && (which_side != false) ) continue;
 				++count_residues;
 				TR.Debug << "resi: " << resi << std::endl;
 				core::Size resi_neighbors( 0 );
@@ -171,13 +184,12 @@ core::Real OligomericAverageDegreeFilter::compute( Pose const & pose, bool const
 					 	}
 					}
 				}
-			if ( verbose ) { TR << "Connectivity of " << res_target.name3() << resi << " is " << resi_neighbors << std::endl; }
-			if ( write ) { write_to_pdb( resi, res_target.name3(), resi_neighbors ); }
+				if ( verbose ) { TR << "Connectivity of " << res_target.name3() << resi << " is " << resi_neighbors << std::endl; }
+				if ( write ) { write_to_pdb( resi, res_target.name3(), resi_neighbors ); }
 			}
 		}
 	}
   return( (core::Real) count_neighbors / count_residues );
-
 } // compute
 
 void OligomericAverageDegreeFilter::write_to_pdb( core::Size const residue, std::string const residue_name, core::Size const neighbors ) const
