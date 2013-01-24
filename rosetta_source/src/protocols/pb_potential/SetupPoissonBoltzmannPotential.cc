@@ -202,8 +202,8 @@ SetupPB::parse_my_tag( utility::tag::TagPtr const tag,
 		core::scoring::ScoreFunction * scorefxn = data_map.get<core::scoring::ScoreFunction*>("scorefxns", scorefxn_name);
 		TR << "Scorefxn weigths: " << scorefxn->serialize_weights() << std::endl;
 		if( scorefxn->get_weight(core::scoring::PB_elec) == 0. ){
-			TR << "PB_elec term is required.  Not found in the scorefxn.  Terminating the program..." << std::endl;
-			TR.flush();
+			TR.Error << "PB_elec term is required.  Not found in the scorefxn.  Terminating the program..." << std::endl;
+			TR.Error.flush();
 runtime_assert(false);
 		}
 	}

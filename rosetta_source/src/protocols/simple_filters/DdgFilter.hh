@@ -31,13 +31,14 @@ namespace simple_filters {
 class DdgFilter : public filters::Filter
 {
 public:
-	/// step size used to translate pose, default 100.
+	/// Distance in A to separate the molecules away from bound-state.
 	/// NOTES by Sachko Honda: This value used to be hard coded to 1000 for unbound poses,
   /// whereas the default 100 was used for bounded.
 	/// The choice of value 1000 was arbitrary by the original author.
 	/// The value is now reduced to 100 in order to help the PDE solver (APBS)
-	/// from blowing up.
-	const static core::Real STEP_SIZE;
+	/// from blowing up, by default, but can be a user-defined value via RosettaScript option
+	/// or command-line option.
+	const static core::Real DEFAULT_TRANSLATION_DISTANCE;
 
 	DdgFilter();
 	DdgFilter( core::Real const ddg_threshold, 
@@ -91,6 +92,9 @@ private:
 
 	/// is PB enabled?
 	bool pb_enabled_;
+
+	/// translation distance in A
+	core::Real translate_by_;
 };
 
 

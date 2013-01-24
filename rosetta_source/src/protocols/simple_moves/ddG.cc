@@ -103,7 +103,7 @@ using namespace core;
 using namespace protocols::simple_moves;
 using namespace core::scoring;
 
-const Real ddG::STEP_SIZE = 100.0;
+const Real ddG::DEFAULT_TRANSLATION_DISTANCE = 100.0; // A
 
 ddG::ddG() :
 		simple_moves::DesignRepackMover(ddGCreator::mover_name()),
@@ -118,7 +118,8 @@ ddG::ddG() :
 		use_custom_task_(false),
 		repack_bound_(true),
 		relax_bound_(false),
-		pb_enabled_(false)
+		pb_enabled_(false),
+		translate_by_(DEFAULT_TRANSLATION_DISTANCE)
 {
 	bound_energies_.clear();
 	unbound_energies_.clear();
@@ -141,7 +142,8 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 		use_custom_task_(false),
 		repack_bound_(true),
 		relax_bound_(false),
-		pb_enabled_(false)
+		pb_enabled_(false),
+		translate_by_(DEFAULT_TRANSLATION_DISTANCE)
 {
 	scorefxn_ = new core::scoring::ScoreFunction( *scorefxn_in );
 
@@ -177,7 +179,8 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 		use_custom_task_(false),
 		repack_bound_(true),
 		relax_bound_(false),
-		pb_enabled_(false)
+		pb_enabled_(false),
+		translate_by_(DEFAULT_TRANSLATION_DISTANCE)
 {
 	scorefxn_ = new core::scoring::ScoreFunction( *scorefxn_in );
 	chain_ids_ = chain_ids;
@@ -213,6 +216,7 @@ void ddG::parse_my_tag(
 	use_custom_task( tag->hasOption("task_operations") );
 	repack_bound_ = tag->getOption<bool>("repack_bound",1);
 	relax_bound_ = tag->getOption<bool>("relax_bound",0);
+	translate_by_ = tag->getOption<int>("translate_by", DEFAULT_TRANSLATION_DISTANCE);
 
 	if(tag->hasOption("chains") && symmetry_)
 	{
@@ -251,11 +255,16 @@ void ddG::parse_my_tag(
 	if( scorefxn_->get_weight(core::scoring::PB_elec) != 0.) {
 		// Set this to PB enabled
 		pb_enabled_ = true;
-		TR << "PB enabled" << std::endl;
+		TR << "PB enabled.  Translation distance = " << translate_by_ << " A" << std::endl;
+		if( translate_by_ > DEFAULT_TRANSLATION_DISTANCE ) {
+			TR.Warning << "Translation distance may be too large for PB-enabled scoring.  Consider 100 (default) if you run out of memory: " << translate_by_ << std::endl;
+			TR.Warning.flush();
+		}
 	}
 	else{
 		pb_enabled_ = false;
 	}
+	TR.flush();
 }
 
 ddG::~ddG() {}
@@ -501,7 +510,7 @@ ddG::calculate( pose::Pose const & pose_original )
 			core::Size current_jump_id = core::pose::get_jump_id_from_chain_id(current_chain_id,pose);
 			rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose, current_jump_id) );
 			// Commented by honda: APBS blows up grid > 500.  Just use the default just like bound-state.			
-			translate->step_size( STEP_SIZE );
+			translate->step_size( translate_by_ );
 			translate->trans_axis(translation_axis);
 			translate->apply( pose );
 		}
@@ -510,7 +519,7 @@ ddG::calculate( pose::Pose const & pose_original )
 		rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose, rb_jump_ ) );
 
 		// Commented by honda: APBS blows up grid > 500.  Just use the default just like bound-state.
-		translate->step_size( STEP_SIZE );
+		translate->step_size( translate_by_ );
 		translate->apply( pose );
 	}
 
@@ -612,7 +621,7 @@ ddG::symm_ddG( pose::Pose & pose_original )
 	if( pb_enabled_ ) cached_data->set_energy_state( emoptions.pb_unbound_tag() );
 
 	rigid::RigidBodyDofSeqTransMoverOP translate( new rigid::RigidBodyDofSeqTransMover( dofs ) );
-	translate->step_size( STEP_SIZE );
+	translate->step_size( translate_by_ );
 	translate->apply( pose );
 	pack::symmetric_pack_rotamers( pose, *scorefxn_, task_ );
 	if( relax_mover() )
@@ -690,14 +699,14 @@ ddG::no_repack_ddG(Pose & pose_original)
 			core::Size current_jump_id = core::pose::get_jump_id_from_chain_id(current_chain_id,pose);
 			rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose, current_jump_id) );
 			translate->trans_axis(translation_axis);
-			translate->step_size( STEP_SIZE );
+			translate->step_size( translate_by_ );
 			translate->apply( pose );
 		}
 
 	}else
 	{
 		rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose,rb_jump_ ) );
-		translate->step_size( STEP_SIZE );
+		translate->step_size( translate_by_ );
 		translate->apply( pose );
 	}
 

@@ -7078,6 +7078,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>specifies the weight-files to be used in calculations</dd><br>
 <dd>Default: "ddg.wts"</dd><br>
 </dl>
+<dl>
+<dt><b>-translate_by</b> \<Integer\><dt>
+<dd>specify the distance in Angstrom that takes to move away when unbounded.  Should keep it around 100 when this protocol is used in conjunction with the Poisson-Boltzmann potential score-term.</dd><br>
+</dl>
  </li>
 <li><h2>murphp</h2>
 <dl>

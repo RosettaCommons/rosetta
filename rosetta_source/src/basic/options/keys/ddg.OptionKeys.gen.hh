@@ -73,6 +73,7 @@ namespace ddg { extern StringOptionKey const out; }
 namespace ddg { extern BooleanOptionKey const debug_output; }
 namespace ddg { extern BooleanOptionKey const dump_pdbs; }
 namespace ddg { extern StringOptionKey const weight_file; }
+namespace ddg { extern IntegerOptionKey const translate_by; }
 
 } // namespace OptionKeys
 } // namespace options

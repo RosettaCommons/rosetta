@@ -3072,6 +3072,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option('debug_output', 'Boolean', default='false',desc='specify whether or not to write a whole bunch of debug statements to standard out'),
 		Option('dump_pdbs','Boolean',default='true',desc='specify whether or not to dump repacked wild-type and mutant pdbs'),
 		Option('weight_file', 'String', default='ddg.wts',desc='specifies the weight-files to be used in calculations'),
+Option('translate_by', 'Integer', desc='specify the distance in Angstrom that takes to move away when unbounded.  Should keep it around 100 when this protocol is used in conjunction with the Poisson-Boltzmann potential score-term.'),
 
 	),
 

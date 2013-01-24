@@ -1466,6 +1466,7 @@ option.add( basic::options::OptionKeys::ddg::out, "create output file of predict
 option.add( basic::options::OptionKeys::ddg::debug_output, "specify whether or not to write a whole bunch of debug statements to standard out" ).def(false);
 option.add( basic::options::OptionKeys::ddg::dump_pdbs, "specify whether or not to dump repacked wild-type and mutant pdbs" ).def(true);
 option.add( basic::options::OptionKeys::ddg::weight_file, "specifies the weight-files to be used in calculations" ).def("ddg.wts");
+option.add( basic::options::OptionKeys::ddg::translate_by, "specify the distance in Angstrom that takes to move away when unbounded.  Should keep it around 100 when this protocol is used in conjunction with the Poisson-Boltzmann potential score-term." );
 option.add( basic::options::OptionKeys::murphp::murphp, "murphp option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::murphp::inv_kin_lig_loop_design_filename, "input filename to be used for inv_kin_lig_loop_design" );
 option.add( basic::options::OptionKeys::motifs::motifs, "motifs option group" ).legal(true).def(true);
@@ -1980,10 +1981,10 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topolo
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
+option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_pdb, "PDB file from which to draw constraints" ).def("--");

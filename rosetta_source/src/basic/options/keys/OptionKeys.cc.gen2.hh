@@ -141,6 +141,7 @@ namespace ddg { StringOptionKey const out( "ddg:out" );  }
 namespace ddg { BooleanOptionKey const debug_output( "ddg:debug_output" );  }
 namespace ddg { BooleanOptionKey const dump_pdbs( "ddg:dump_pdbs" );  }
 namespace ddg { StringOptionKey const weight_file( "ddg:weight_file" );  }
+namespace ddg { IntegerOptionKey const translate_by( "ddg:translate_by" );  }
 namespace murphp { BooleanOptionKey const murphp( "murphp" );  }
 namespace murphp { StringOptionKey const inv_kin_lig_loop_design_filename( "murphp:inv_kin_lig_loop_design_filename" );  }
 namespace motifs { BooleanOptionKey const motifs( "motifs" );  }
@@ -655,4 +656,3 @@ namespace DenovoProteinDesign { BooleanOptionKey const use_template_topology( "D
 namespace DenovoProteinDesign { FileOptionKey const create_from_template_pdb( "DenovoProteinDesign:create_from_template_pdb" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const create_from_secondary_structure( "DenovoProteinDesign:create_from_secondary_structure" );  }
 namespace RBSegmentRelax { BooleanOptionKey const RBSegmentRelax( "RBSegmentRelax" );  }
-namespace RBSegmentRelax { FileOptionKey const input_pdb( "RBSegmentRelax:input_pdb" );  }

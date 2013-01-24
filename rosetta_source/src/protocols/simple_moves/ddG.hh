@@ -45,13 +45,14 @@ public:
 	typedef core::scoring::ScoreType ScoreType;
 	typedef core::pose::Pose Pose;
 
-	/// step size used to translate pose, default 100.
+	/// Distance in A to separate the molecules away from bound-state.
 	/// NOTES by Sachko Honda: This value used to be hard coded to 1000 for unbound poses,
   /// whereas the default 100 was used for bounded.
 	/// The choice of value 1000 was arbitrary by the original author.
 	/// The value is now reduced to 100 in order to help the PDE solver (APBS)
-	/// from blowing up.
-	static const Real STEP_SIZE;
+	/// from blowing up, by default, but can be a user-defined value via RosettaScript option
+	/// or command-line option.
+	static const Real DEFAULT_TRANSLATION_DISTANCE;
 
 public :
 	ddG();
@@ -112,10 +113,12 @@ private :
 
 	/// info carrier for poisson-boltzmann potential energy computation
 	core::scoring::methods::PBLifetimeCacheOP pb_cached_data_;
-	/// step size for translating unbound pose.  the default size may be too large or too small for some applications.
-	Real trans_step_size_;
+
 	/// true when PB potential is part of scorefxn
 	bool pb_enabled_;
+
+	/// distance in A to separate moledules
+	Real translate_by_;
 };
 
 } // movers
