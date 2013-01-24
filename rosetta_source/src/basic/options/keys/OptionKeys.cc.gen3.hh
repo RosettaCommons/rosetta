@@ -1,6 +1,3 @@
-namespace DenovoProteinDesign { BooleanOptionKey const create_from_secondary_structure( "DenovoProteinDesign:create_from_secondary_structure" );  }
-namespace RBSegmentRelax { BooleanOptionKey const RBSegmentRelax( "RBSegmentRelax" );  }
-namespace RBSegmentRelax { FileOptionKey const input_pdb( "RBSegmentRelax:input_pdb" );  }
 namespace RBSegmentRelax { FileOptionKey const rb_file( "RBSegmentRelax:rb_file" );  }
 namespace RBSegmentRelax { RealOptionKey const cst_wt( "RBSegmentRelax:cst_wt" );  }
 namespace RBSegmentRelax { RealOptionKey const cst_width( "RBSegmentRelax:cst_width" );  }
@@ -654,3 +651,5 @@ namespace pb_potential { IntegerVectorOptionKey const revamp_near_chain( "pb_pot
 namespace pb_potential { StringOptionKey const apbs_path( "pb_potential:apbs_path" );  }
 namespace pb_potential { RealOptionKey const potential_cap( "pb_potential:potential_cap" );  }
 namespace pb_potential { RealOptionKey const epsilon( "pb_potential:epsilon" );  }
+namespace pb_potential { IntegerOptionKey const apbs_debug( "pb_potential:apbs_debug" );  }
+namespace pb_potential { BooleanOptionKey const calcenergy( "pb_potential:calcenergy" );  }

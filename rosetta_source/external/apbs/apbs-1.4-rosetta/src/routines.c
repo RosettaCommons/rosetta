@@ -2669,7 +2669,7 @@ VPUBLIC int printEnergy(Vcom *com,
         ltenergy = Vunit_kb * (1e-3) * Vunit_Na *
         nosh->calc[calcid]->pbeparm->temp * totEnergy[calcid];
     } else {
-        Vnm_tprint( 2, "  Didn't calculate energy in Calculation \
+//        Vnm_tprint( 2, "  Didn't calculate energy in Calculation \
 #%d\n", calcid+1);
         return 0;
     }
@@ -2734,7 +2734,7 @@ VPUBLIC int printElecEnergy(Vcom *com,
         ltenergy = Vunit_kb * (1e-3) * Vunit_Na *
         nosh->calc[calcid]->pbeparm->temp * totEnergy[calcid];
     } else {
-        Vnm_tprint( 2, "  Didn't calculate energy in Calculation \
+//        Vnm_tprint( 2, "  Didn't calculate energy in Calculation \
 #%d\n", calcid+1);
         return 0;
     }
@@ -2799,7 +2799,7 @@ VPUBLIC int printApolEnergy(NOsh *nosh,
     if (apolparm->calcenergy == ACE_TOTAL) {
         gtenergy = ((apolparm->gamma*apolparm->sasa) + (apolparm->press*apolparm->sav) + (apolparm->wcaEnergy));
     } else {
-        Vnm_tprint( 2, "  Didn't calculate energy in Calculation #%d\n", calcid+1);
+//        Vnm_tprint( 2, "  Didn't calculate energy in Calculation #%d\n", calcid+1);
         return 0;
     }
     for (iarg=1; iarg<nosh->printnarg[iprint]; iarg++) {

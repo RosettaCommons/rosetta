@@ -28,6 +28,8 @@ namespace pb_potential { extern IntegerVectorOptionKey const revamp_near_chain; 
 namespace pb_potential { extern StringOptionKey const apbs_path; }
 namespace pb_potential { extern RealOptionKey const potential_cap; }
 namespace pb_potential { extern RealOptionKey const epsilon; }
+namespace pb_potential { extern IntegerOptionKey const apbs_debug; }
+namespace pb_potential { extern BooleanOptionKey const calcenergy; }
 
 } // namespace OptionKeys
 } // namespace options

@@ -125,24 +125,31 @@ PB::eval_PB_energy_residue(
 }
 
 //============================================================================
-#ifdef LINK_APBS_LIB 1  // APBS libraries are linked
+#ifdef LINK_APBS_LIB   // APBS libraries are linked
 
 void
 PB::solve_pb( core::pose::Pose const & pose,
 							std::string const & tag, 
 							std::map<std::string, bool> const &charged_residues ) 
 {
-	APBSWrapper apbs(pose, charged_residues);
+	config_filename_ = tag + APBS_CONFIG_EXT;
+	pqr_filename_ = tag + APBS_PQR_EXT;
+	dx_filename_ = tag + APBS_DX_EXT;
+
+	int apbs_dbg = basic::options::option[ basic::options::OptionKeys::pb_potential::apbs_debug ];
+	bool calcenergy = basic::options::option[ basic::options::OptionKeys::pb_potential::calcenergy ];
+	APBSWrapper apbs(pose, charged_residues, apbs_dbg, calcenergy);
+
 	APBSResultCOP result = 0;
 
 	result = apbs.exec();
 
   if( result == 0 ) {
-		TR << "APBS failed!  Terminating the program..." << std::endl;
+		TR.Error << "APBS failed!  Terminating the program..." << std::endl;
 		TR.flush();
 		runtime_assert(false);
   }
-	TR << "Solved PB. Loading potential..." << std::endl;
+	TR.Debug << "Solved PB. Loading potential..." << std::endl;
 	const double * meta = result->grid_meta;
 	const double * data = &(result->grid_data[0][0]);
 	load_potential(meta, data);
@@ -182,9 +189,8 @@ PB::load_potential(const double grid_meta[],
 	int icol=0;
 	int u;
 	int lines = 0;
-
 	//using namespace ObjexxFCL::fmt;
-	//std::ofstream ofs("mytest.pqr");
+	//std::ofstream ofs(dx_filename_.c_str());
 	//ofs << "object 1 class gridpositions counts " << nx << " " << ny << " " << nz << std::endl;
 	//ofs << "origin " << lower_bound_[0] << " " << lower_bound_[1] << " " << lower_bound_[2] << std::endl;
 	//ofs << "object 3 array type double rank 0 items " << nx*ny*nz << " data follows" << std::endl;
@@ -192,16 +198,13 @@ PB::load_potential(const double grid_meta[],
 		for (int j=1; j<=ny; j++) {
 			for (int k=1; k<=nz; k++) {
 				u = (k-1)*(nx)*(ny)+(j-1)*(nx)+(i-1);
-				/*
-				ofs << E(12,6,pot[u]) << " ";
+				//ofs << E(12,6,pot[u]) << " ";
 				icol++;
 				if (icol == 3) {
 				    icol = 0;
 						lines++;
-						//printf("\n");
-						ofs << std::endl;
+						//ofs << std::endl;
 				}
-				*/
 				if( pot[u] > cap ){
 					potential_(i,j,k) = cap;
 				}
@@ -215,7 +218,7 @@ PB::load_potential(const double grid_meta[],
 		}
 	}
 	//ofs.close();
-	TR << "PB potential is successfully loaded." << std::endl;
+	TR.Debug << "PB potential is successfully loaded." << std::endl;
 
 	idx2cart(n_grid_, upper_bound_);
 	TR << "Convertion of PB potential to Certesian coordinates is completed" << std::endl;

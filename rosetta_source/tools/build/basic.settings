@@ -676,6 +676,20 @@ settings = {
         },
     },
 
+    "gcc, apbs" : {
+
+        "appends" : {
+		"defines" : [ "LINK_APBS_LIB" ],
+		"libraries" : [ "iapbs", "apbs_routines", "apbs_generic", "apbs_mg", "apbs_pmgc", "maloc" ],
+                "library_path" : [ "/home/honda/dvlp/dump/apbs/apbs-1.4-rosetta/lib" ],
+                "include_path" : [ "/home/honda/dvlp/dump/apbs/apbs-1.4-rosetta/include" ,
+                                   "/home/honda/dvlp/dump/apbs/apbs-1.4-rosetta/include/iapbs",
+                                   "/home/honda/dvlp/dump/apbs/apbs-1.4-rosetta/include/maloc",
+                                   "/home/honda/dvlp/dump/apbs/apbs-1.4-rosetta/src",
+                                 ],
+        },
+    },
+
     "gcc, 4.3, mpi" : {
         "appends" : {
             "defines"       : [ "USEMPI" ],
@@ -739,13 +753,6 @@ settings = {
                 "link" : [ "static" ],
             },
         },
-    },
-
-    "gcc, linux, apbs" : {
-	"appends" : {
-		"defines" : [ "LINK_APBS_LIB" ],
-		"libraries" : [ "iapbs", "apbs_routines", "apbs_generic", "apbs_mg", "apbs_pmgc", "maloc" ],
-	},
     },
 
     "gcc, gprof" : {

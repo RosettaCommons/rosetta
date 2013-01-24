@@ -40,7 +40,8 @@ class APBSWrapper : public utility::pointer::ReferenceCount {
   APBSResultOP result;
 public:
   APBSWrapper(pose::Pose const & pose,
-							std::map<std::string, bool> const & charged_residues);
+	      std::map<std::string, bool> const & charged_residues,
+              int dbg, bool calcenergy);
   virtual ~APBSWrapper();
 	APBSResultCOP exec();
 private:
@@ -149,7 +150,7 @@ public:
 		double * raw_array();
 	};
 
-	APBSConfig(pose::Pose const & pose, int natoms);
+	APBSConfig(pose::Pose const & pose, int natoms, int dbg, bool calcenergy);
 	virtual ~APBSConfig();
 	
 	// APBS debug level
@@ -181,6 +182,8 @@ public:
 	double ofrac; // parallel only 
 	I_PARAM i_param;
 	R_PARAM r_param;
+
+	bool calcenergy;  // calculate energy?
 
 }; // end of APBSConfig
 

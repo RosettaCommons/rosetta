@@ -32,16 +32,16 @@
 #
 #################################################################
 
-
+<Build>
 Run make.sh to get all necessary librareies and interfaces built
  and installed in to <here>/lib and <here>/include,
 where <here> is replaced by the directory in which this README is found.
 
 All librarie are built as shared libraries.  To switch building to static,
  modified the macro "BUILD_SHARED_LIBS" passed to cmake
-from make.sh to "on" like this:
+from make.sh to "OFF" like this:
 
--DBUILD_SHARED_LIBS=ON
+-DBUILD_SHARED_LIBS=OFF
 
 Also, you can build debug version by setting "on" the "ENABLE_DEBUG" macro 
 passed to cmake in make.sh.
@@ -49,17 +49,29 @@ passed to cmake in make.sh.
 -DENABLE_DEBUG
 
 
+<Include from App>
 In your app, include the header:
 
 #include <iapbs/iapbs.h>
 
-
-To link your app to the APBS/iAPBS (APBS with C API), set linker flags 
+<Link>
+To link your app to the shared APBS/iAPBS (APBS with C API) libs, set linker flags 
 and compiler flags like this:
 
-P=/path/to/<here>
-g++ myapp.cpp -o myapp -I${P}/include -I${P}/include/apbs -I${P}/include/maloc ${P}/src \
+P=/path/to/here
+
+Then call g++:
+g++ myapp.cpp -o myapp -I${P}/include -I${P}/include/iapbs -I${P}/include/maloc ${P}/src \
+-L${P}/lib \
+-liapbs -lapbs_routines -lapbs_mg \
+-lapbs_generic -lapbs_pmgc -lmalloc \
+-lz
+
+
+To link against static libs:
+g++ myapp.cpp -o myapp -I${P}/include -I${P}/include/iapbs -I${P}/include/maloc ${P}/src \
 ${P}/lib/libipbs.a ${P}/lib/libapbs_routines.a ${P}/lib/libapbs_mg.a \
 ${P}/lib/libapbs_generic.a ${P}/lib/libapbs_pmgc.a ${P}/lib/libmalloc.a \
 -lz
+
 

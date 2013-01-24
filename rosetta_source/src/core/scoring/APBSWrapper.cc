@@ -44,14 +44,15 @@ APBSWrapper::~APBSWrapper()
 }
 
 APBSWrapper::APBSWrapper(core::pose::Pose const & pose,
-	      std::map<std::string, bool> const & charged_residues)
-//: config( new APBSConfig )
+	      std::map<std::string, bool> const & charged_residues,
+	      int dbg,
+	      bool calcenergy)
 {
 
 		int natoms = count_atoms(pose);
 		pqr = new PQR(pose, natoms, charged_residues);
     TR << "PQR data is prepared." << std::endl;
-		config = new APBSConfig(pose, natoms);
+		config = new APBSConfig(pose, natoms, dbg, calcenergy);
 		TR << "APBS config is prepared." << std::endl;
 		result = new APBSResult(config->nsims, config->natoms, config->dime, 
 														config->i_param.calcforce,
@@ -296,15 +297,16 @@ double * APBSConfig::R_PARAM::raw_array()
 	return array;
 }
 
-APBSConfig::APBSConfig(core::pose::Pose const & pose, int natomsIn) 
+APBSConfig::APBSConfig(core::pose::Pose const & pose, int natomsIn, int dbgIn, bool calcenergyIn) 
 	:
-	dbg(0),
+	dbg(dbgIn),
 	nsims(1),
 	natoms(natomsIn),
 	cfac(1.7),
 	fadd(20),
 	space(0.5),
-	ofrac(0.)
+	ofrac(0.),
+	calcenergy(calcenergyIn)
 {
 	ionq[0] = 1; ionq[1] = -1, ionq[2] = 2; ionq[3] = -2;
 	ionc[0] = .15; ionc[1] = .15, ionc[2] = 0; ionc[3] = 0;

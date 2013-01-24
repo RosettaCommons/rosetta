@@ -3,7 +3,6 @@ P=`pwd`
 #export APBS_PREFIX=${P}/apbs-1.4-dev
 export APBS_SRC=${P}
 export APBS_PREFIX=${P}
-
 export MCSH_HOME=/dev/null
 	
 # get the source
@@ -20,6 +19,7 @@ cmake -DCMAKE_INSTALL_PREFIX:PATH=${APBS_PREFIX} -DENABLE_QUIET=ON \
 -DBUILD_SHARED_LIBS=ON ..
 
 make
-
+mkdir -p ${APBS_SRC}/include/apbs
 cp ${APBS_SRC}/src/routines.h ${APBS_SRC}/include/apbs
+mkdir -p ${APBS_SRC}/include/iapbs
 cp ${APBS_SRC}/contrib/iapbs/src/apbs_driver.h ${APBS_SRC}/include/iapbs

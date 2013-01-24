@@ -23,6 +23,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/methods/Methods.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
@@ -189,7 +190,7 @@ PoissonBoltzmannEnergy::setup_for_scoring(
 		TR << "]" << std::endl;
 	}
 	
-
+	core::scoring::methods::EnergyMethodOptions emoptions = scorefxn.energy_method_options();
 	std::string energy_state = cached_data->get_energy_state();
 
 	if( energy_state == "" ) {
@@ -212,9 +213,14 @@ PoissonBoltzmannEnergy::setup_for_scoring(
 
 		poisson_boltzmann_potential_->solve_pb(pose, energy_state, charged_residues_);
 	}
-	else if( !protein_position_equal_within( pose, *prev_pose, atom_index, epsilon_ ) ) {
-		TR << "Atoms (" << atom_index << ") in charged chains moved more than " << epsilon_ << "A" << std::endl; 
-		poisson_boltzmann_potential_->solve_pb(pose, energy_state, charged_residues_);
+	else {
+		// re-evaluate only for bound-state.
+		if( energy_state != emoptions.pb_unbound_tag() ) {
+	 		if( !protein_position_equal_within( pose, *prev_pose, atom_index, epsilon_ ) ) {
+				TR << "Atoms (" << atom_index << ") in charged chains moved more than " << epsilon_ << "A" << std::endl; 
+				poisson_boltzmann_potential_->solve_pb(pose, energy_state, charged_residues_);
+			}
+		}
 	}
 
 	// Update teh cache

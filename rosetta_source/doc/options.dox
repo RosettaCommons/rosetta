@@ -12782,5 +12782,15 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Tolerance in A.  When a charged atom moves byond this tolerance, the PDE is resolved.</dd><br>
 <dd>Default: 2.0</dd><br>
 </dl>
+<dl>
+<dt><b>-apbs_debug</b> \<Integer\><dt>
+<dd>APBS debug level [0-6]</dd><br>
+<dd>Default: 2</dd><br>
+</dl>
+<dl>
+<dt><b>-calcenergy</b> \<Boolean\><dt>
+<dd>Calculate energy?</dd><br>
+<dd>Default: false</dd><br>
+</dl>
 </ul>
  */

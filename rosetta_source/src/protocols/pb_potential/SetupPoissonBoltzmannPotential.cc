@@ -124,21 +124,13 @@ SetupPB::parse_my_tag( utility::tag::TagPtr const tag,
 			    protocols::filters::Filters_map const & filters_map,
 			    protocols::moves::Movers_map const & movers_map,
 			    core::pose::Pose const & pose ) {
-
-	//---------------------------
-	// Required tags
-	// NOTE by honda:
-	// ...but check for now...
-	//---------------------------
-
-	std::string apbs_path;
-  if( tag->hasOption( "apbs_path" ) ) {
+	// This param is required when the app is NOT linked against the apbs libraries.
+	// Validate only when it is a requirement, but register in any way.
+	std::string apbs_path;  // path to the apbs executable.
+	if( tag->hasOption( "apbs_path" ) ) {
 		apbs_path = tag->getOption<std::string>("apbs_path");
-	}
-	else{
-		TR << "No user defined APBS path.  Default to: " <<  DEFAULT_APBS_PATH << std::endl;
-		apbs_path = DEFAULT_APBS_PATH;
-	}
+	}	
+#ifdef LINK_APBS_LIBS
 	std::ifstream apbsstream( apbs_path.c_str() );
 	if( !apbsstream.good() ){
 		TR << "APBS not found.  Check the path: " << apbs_path << std::endl;
@@ -146,9 +138,8 @@ SetupPB::parse_my_tag( utility::tag::TagPtr const tag,
 		runtime_assert(false);
 	}
 	apbsstream.close();
-
+#endif
 	basic::options::option[basic::options::OptionKeys::pb_potential::apbs_path](apbs_path);
-
 
 	utility::vector1<Size> charged_chains;
   if( tag->hasOption( "charged_chains" )) {
@@ -181,6 +172,7 @@ SetupPB::parse_my_tag( utility::tag::TagPtr const tag,
 
 	bool sidechain_only;
 	if( tag->hasOption("sidechain_only") ) {
+		sidechain_only = tag->getOption<bool>( "sidechain_only" );
 		basic::options::option[basic::options::OptionKeys::pb_potential::sidechain_only]( sidechain_only ); 
 	}
 
@@ -189,7 +181,16 @@ SetupPB::parse_my_tag( utility::tag::TagPtr const tag,
 		epsilon = tag->getOption<core::Real>( "epsilon" );
 		basic::options::option[basic::options::OptionKeys::pb_potential::epsilon]( epsilon );
 	}
-
+	bool calcenergy;
+	if( tag->hasOption("calcenergy") ) {
+		calcenergy = tag->getOption<bool>( "calcenergy" );
+		basic::options::option[basic::options::OptionKeys::pb_potential::calcenergy]( calcenergy );
+	}
+	int apbs_debug;
+	if( tag->hasOption("apbs_debug") ) {
+		apbs_debug = tag->getOption<int>( "apbs_debug" );
+		basic::options::option[basic::options::OptionKeys::pb_potential::apbs_debug]( apbs_debug );
+	}
 	//-------------------------------------------------------------------------
 	// Initialize DDG for pre-scoring, which compute bound & unbound energies.
 	//-------------------------------------------------------------------------
