@@ -170,6 +170,7 @@ namespace score { RealOptionKey const hackelec_min_dis( "score:hackelec_min_dis"
 namespace score { RealOptionKey const hackelec_max_dis( "score:hackelec_max_dis" );  }
 namespace score { RealOptionKey const hackelec_die( "score:hackelec_die" );  }
 namespace score { BooleanOptionKey const hackelec_r_option( "score:hackelec_r_option" );  }
+namespace score { BooleanOptionKey const smooth_hack_elec( "score:smooth_hack_elec" );  }
 namespace score { StringOptionKey const nmer_ref_energies( "score:nmer_ref_energies" );  }
 namespace score { StringOptionKey const nmer_ref_energies_list( "score:nmer_ref_energies_list" );  }
 namespace score { StringOptionKey const nmer_pssm( "score:nmer_pssm" );  }
@@ -655,4 +656,3 @@ namespace lh { FileOptionKey const sample_weight_file( "lh:sample_weight_file" )
 namespace lh { namespace fragpdb { BooleanOptionKey const fragpdb( "lh:fragpdb" );  } }
 namespace lh { namespace fragpdb { StringOptionKey const out_path( "lh:fragpdb:out_path" );  } }
 namespace lh { namespace fragpdb { IntegerVectorOptionKey const indexoffset( "lh:fragpdb:indexoffset" );  } }
-namespace lh { namespace fragpdb { StringVectorOptionKey const bin( "lh:fragpdb:bin" );  } }

@@ -104,11 +104,11 @@ public:
 
 		TR << "Distance : " << pose.residue(1).xyz(pose.residue(1).atom_index("CB")).distance(pose.residue(2).xyz(pose.residue(2).atom_index("CB"))) << std::endl;
 		TS_ASSERT_DELTA( hackelec.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
-																												 pose.residue(2).xyz(pose.residue(2).atom_index("CB") ), -0.18 ), 0.012438172, TOL ); // CB-CB sits at 5.56174
+			pose.residue(2).xyz(pose.residue(2).atom_index("CB") ), -0.18 ), 0.012438172, TOL ); // CB-CB sits at 5.56174
 		TS_ASSERT_DELTA( hackelec.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
-																												 pose.residue(2).xyz(pose.residue(2).atom_index("CA") ), 0.07 ), -0.011777133, TOL ); // CB-CA at 4.49784 (no count pair)
+			pose.residue(2).xyz(pose.residue(2).atom_index("CA") ), 0.07 ), -0.011777133, TOL ); // CB-CA at 4.49784 (no count pair)
 		TS_ASSERT_DELTA( hackelec.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("C") ), 0.51,
-																												 pose.residue(2).xyz(pose.residue(2).atom_index("N") ), -0.47 ), -3.273503647, TOL ); // C-N at 1.29914 (no count pair)
+			pose.residue(2).xyz(pose.residue(2).atom_index("N") ), -0.47 ), -3.273503647, TOL ); // C-N at 1.29914 (no count pair)
 
 		hackelec.residue_pair_energy( pose.residue(1), pose.residue(2), pose, sfxn, emap );
 		// Value calculated for 1.5/7.0 min/max, die=10r,
@@ -176,11 +176,11 @@ public:
 		EnergyMap emap;
 
 		TS_ASSERT_DELTA( hackelec.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
-																												 pose.residue(2).xyz(pose.residue(2).atom_index("CB") ), -0.18 ), 0, TOL ); // CB-CB sits at 5.56174
+			pose.residue(2).xyz(pose.residue(2).atom_index("CB") ), -0.18 ), 0, TOL ); // CB-CB sits at 5.56174
 		TS_ASSERT_DELTA( hackelec.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
-																												 pose.residue(2).xyz(pose.residue(2).atom_index("CA") ), 0.07 ), -0.016609716, TOL ); // CB-CA at 4.49784 (no count pair)
+			pose.residue(2).xyz(pose.residue(2).atom_index("CA") ), 0.07 ), -0.016609716, TOL ); // CB-CA at 4.49784 (no count pair)
 		TS_ASSERT_DELTA( hackelec.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("C") ), 0.51,
-																												 pose.residue(2).xyz(pose.residue(2).atom_index("N") ), -0.47 ), -7.939624349, TOL ); // C-N at 1.29914 (no count pair)
+			pose.residue(2).xyz(pose.residue(2).atom_index("N") ), -0.47 ), -7.939624349, TOL ); // C-N at 1.29914 (no count pair)
 
 		hackelec.residue_pair_energy( pose.residue(1), pose.residue(2), pose, sfxn, emap );
 		// Value calculated for 1.5/5.5 min/max, die=4r,
@@ -212,11 +212,11 @@ public:
 		EnergyMap emap;
 
 		TS_ASSERT_DELTA( hackelec.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
-																												 pose.residue(2).xyz(pose.residue(2).atom_index("CB") ), -0.18 ), 0, TOL ); // CB-CB sits at 5.56174
+			pose.residue(2).xyz(pose.residue(2).atom_index("CB") ), -0.18 ), 0, TOL ); // CB-CB sits at 5.56174
 		TS_ASSERT_DELTA( hackelec.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
-																												 pose.residue(2).xyz(pose.residue(2).atom_index("CA") ), 0.07 ), -0.016439276, TOL ); // CB-CA at 4.49784 (no count pair)
+			pose.residue(2).xyz(pose.residue(2).atom_index("CA") ), 0.07 ), -0.016439276, TOL ); // CB-CA at 4.49784 (no count pair)
 		TS_ASSERT_DELTA( hackelec.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("C") ), 0.51,
-																												 pose.residue(2).xyz(pose.residue(2).atom_index("N") ), -0.47 ), -3.742965764, TOL ); // C-N at 1.29914 (no count pair)
+			pose.residue(2).xyz(pose.residue(2).atom_index("N") ), -0.47 ), -3.742965764, TOL ); // C-N at 1.29914 (no count pair)
 
 		hackelec.residue_pair_energy( pose.residue(1), pose.residue(2), pose, sfxn, emap );
 		// Value calculated for 1.5/5.5 min/max, die=10 (no r dependance),
@@ -237,6 +237,69 @@ public:
 
 		Pose pose = pdb1ubq5to13_pose();
 		ScoreFunction sfxn;
+		sfxn.set_weight( hack_elec, 0.75 );
+
+		kinematics::MoveMap movemap;
+		movemap.set_bb( true );
+		movemap.set_chi( true );
+
+		AtomDerivValidator adv( pose, sfxn, movemap );
+
+		/// This call runs a numeric deriv check on all the free dofs in the system and makes sure
+		/// that the analytic norm matches the numeric norm to 1e-3.
+		adv.simple_deriv_check( true, 1e-6 );
+
+	}
+
+	/// @brief Smoothed hack-elec derivative check.
+	/// Setup for minimization using a move map that says "minimize all bb and sc torsions"
+	/// Make sure that start_score matches start_func.
+	void test_hackelec_deriv_check_w_full_torsional_flexibility_smoothed()
+	{
+		using namespace core;
+		using namespace core::pose;
+		using namespace core::scoring;
+		using namespace core::scoring::methods;
+		using namespace core::optimization;
+
+		Pose pose = pdb1ubq5to13_pose();
+		methods::EnergyMethodOptions options;
+		options.smooth_hack_elec( true );
+
+		ScoreFunction sfxn;
+		sfxn.set_energy_method_options( options );
+		sfxn.set_weight( hack_elec, 0.75 );
+
+		kinematics::MoveMap movemap;
+		movemap.set_bb( true );
+		movemap.set_chi( true );
+
+		AtomDerivValidator adv( pose, sfxn, movemap );
+
+		/// This call runs a numeric deriv check on all the free dofs in the system and makes sure
+		/// that the analytic norm matches the numeric norm to 1e-3.
+		adv.simple_deriv_check( true, 1e-6 );
+
+	}
+
+	/// @brief Smoothed hack-elec derivative check.
+	/// Setup for minimization using a move map that says "minimize all bb and sc torsions"
+	/// Make sure that start_score matches start_func.
+	void test_hackelec_deriv_check_w_full_torsional_flexibility_smoothed_wo_ddd()
+	{
+		using namespace core;
+		using namespace core::pose;
+		using namespace core::scoring;
+		using namespace core::scoring::methods;
+		using namespace core::optimization;
+
+		Pose pose = pdb1ubq5to13_pose();
+		methods::EnergyMethodOptions options;
+		options.smooth_hack_elec( true );
+		options.hackelec_no_dis_dep_die( true );
+
+		ScoreFunction sfxn;
+		sfxn.set_energy_method_options( options );
 		sfxn.set_weight( hack_elec, 0.75 );
 
 		kinematics::MoveMap movemap;

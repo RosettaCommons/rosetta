@@ -3995,6 +3995,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-smooth_hack_elec</b> \<Boolean\><dt>
+<dd>Smooth the discontinuities in the hackelec energy function using a sigmoidal term</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-nmer_ref_energies</b> \<String\><dt>
 <dd>nmer ref energies database filename</dd><br>
 </dl>

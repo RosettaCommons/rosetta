@@ -440,6 +440,9 @@ private:
 		EtableParamsOnePair const & p
 	) const;
 
+public:
+
+	static
 	inline
 	Real
 	eval_spline(
@@ -447,8 +450,9 @@ private:
 		Real const xlo,
 		Real const xhi,
 		SplineParameters const & sp
-	) const;
+	);
 
+	static
 	inline
 	Real
 	spline_deriv(
@@ -456,8 +460,9 @@ private:
 		Real const xlo,
 		Real const xhi,
 		SplineParameters const & sp
-	) const;
+	);
 
+	static
 	inline
 	Real
 	eval_spline(
@@ -467,8 +472,9 @@ private:
 		Real const width,
 		Real const invwidth,
 		SplineParameters const & sp
-	) const;
+	);
 
+	static
 	inline
 	Real
 	spline_deriv(
@@ -478,7 +484,9 @@ private:
 		Real const width,
 		Real const invwidth,
 		SplineParameters const & sp
-	) const;
+	);
+
+private:
 
 	void
 	output_etable(
@@ -1074,7 +1082,7 @@ Etable::eval_spline(
 	Real const xlo,
 	Real const xhi,
 	SplineParameters const & sp
-) const
+)
 {
 	assert( x >= xlo && x <= xhi );
 	Real width = xhi - xlo;
@@ -1088,7 +1096,7 @@ Etable::spline_deriv(
 	Real const xlo,
 	Real const xhi,
 	SplineParameters const & sp
-) const
+)
 {
 	assert( x >= xlo && x <= xhi );
 	Real width = xhi - xlo;
@@ -1104,7 +1112,7 @@ Etable::eval_spline(
 	Real const width,
 	Real const invwidth,
 	SplineParameters const & sp
-) const
+)
 {
 	Real a = ( xhi - x ) * invwidth;
 	Real b = ( x - xlo ) * invwidth;
@@ -1120,7 +1128,7 @@ Etable::spline_deriv(
 	Real const width,
 	Real const invwidth,
 	SplineParameters const & sp
-) const
+)
 {
 	Real a = ( xhi - x ) * invwidth;
 	Real b = ( x - xlo ) * invwidth;

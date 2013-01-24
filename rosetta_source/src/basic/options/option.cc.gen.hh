@@ -835,6 +835,7 @@ option.add( basic::options::OptionKeys::score::hackelec_min_dis, "changes the mi
 option.add( basic::options::OptionKeys::score::hackelec_max_dis, "changes the maximum distance cut-off for hack-elec energy" ).def(5.5);
 option.add( basic::options::OptionKeys::score::hackelec_die, "changes the dielectric constant for hack-elec energy" ).def(10.0);
 option.add( basic::options::OptionKeys::score::hackelec_r_option, "changes the dielectric from distance dependent to distance independent" ).def(false);
+option.add( basic::options::OptionKeys::score::smooth_hack_elec, "Smooth the discontinuities in the hackelec energy function using a sigmoidal term" ).def(false);
 option.add( basic::options::OptionKeys::score::nmer_ref_energies, "nmer ref energies database filename" );
 option.add( basic::options::OptionKeys::score::nmer_ref_energies_list, "list of nmer ref energies database filenames" );
 option.add( basic::options::OptionKeys::score::nmer_pssm, "nmer pssm database filename" );
@@ -1320,10 +1321,10 @@ option.add( basic::options::OptionKeys::lh::sample_weight_file, "Holds the initi
 option.add( basic::options::OptionKeys::lh::fragpdb::fragpdb, "fragpdb option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::lh::fragpdb::out_path, "Path where pdbs are saved" ).def("");
 option.add( basic::options::OptionKeys::lh::fragpdb::indexoffset, "list of index offset pairs" ).def(-1);
-option.add( basic::options::OptionKeys::lh::fragpdb::bin, "list of bin keys" ).def(utility::vector1<std::string>());
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::symfragrm::symfragrm, "symfragrm option group" ).legal(true).def(true);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::fragpdb::bin, "list of bin keys" ).def(utility::vector1<std::string>());
+option.add( basic::options::OptionKeys::lh::symfragrm::symfragrm, "symfragrm option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::lh::symfragrm::pdblist, "list of pdbs to be processed" );
 option.add( basic::options::OptionKeys::rbe::rbe, "rbe option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::rbe::server_url, "serverurl for rosetta backend" );
@@ -1980,10 +1981,10 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequen
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
-option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);

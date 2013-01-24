@@ -28,6 +28,7 @@
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <core/scoring/trie/RotamerTrieBase.fwd.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
+#include <core/scoring/etable/Etable.hh>
 
 #include <core/scoring/trie/TrieCountPairBase.fwd.hh>
 
@@ -468,6 +469,37 @@ private:
 	Real min_dis_;
 	Real min_dis2_;
 
+	bool smooth_hack_elec_; // use sigmoidal functions to eliminate derivative discontinuities?
+	//Real low_fade_start_;
+	//Real low_fade_end_;
+	//Real high_fade_start_;
+	//Real high_fade_end_;
+	//Real low_fade_start2_;
+	//Real low_fade_end2_;
+	//Real high_fade_start2_;
+	//Real high_fade_end2_;
+	//Real low_fade_K_;
+	//Real low_fade_d0_;
+	//Real high_fade_K_;
+	//Real high_fade_d0_;
+
+	Real low_poly_start_;
+	Real low_poly_start2_;
+	Real low_poly_end_;
+	Real low_poly_end2_;
+	etable::SplineParameters low_poly_;
+	Real low_poly_width_;
+	Real low_poly_invwidth_;
+
+	Real hi_poly_start_;
+	Real hi_poly_start2_;
+	Real hi_poly_end_;
+	Real hi_poly_end2_;
+	etable::SplineParameters hi_poly_;
+	Real hi_poly_width_;
+	Real hi_poly_invwidth_;
+
+
 	Real die_;
 	bool no_dis_dep_die_;
 
@@ -511,6 +543,9 @@ HackElecEnergy::eval_atom_atom_hack_elecE(
 	return eval_atom_atom_hack_elecE(i_xyz, i_charge, j_xyz, j_charge, d2);
 }
 
+/// @brief Use a polynomial to smooth the transition between the
+/// regions in which the score is changing and the regions
+/// in which the score is held constant.
 inline
 Real
 HackElecEnergy::eval_atom_atom_hack_elecE(
@@ -525,11 +560,17 @@ HackElecEnergy::eval_atom_atom_hack_elecE(
 
 	if ( d2 > max_dis2_ ) {
 		return 0.0;
-	}
-	if ( d2 < min_dis2_ ) {
+	} else if ( d2 < low_poly_start2_ ) {
 		return i_charge * j_charge * min_dis_score_;
-	}
-	if ( no_dis_dep_die_ ) {
+	} else if ( d2 < low_poly_end2_ ) {
+		return i_charge * j_charge * etable::Etable::eval_spline(
+			std::sqrt( d2 ), low_poly_start_, low_poly_end_,
+			low_poly_width_, low_poly_invwidth_, low_poly_ );
+	} else if ( d2 > hi_poly_start2_ ) {
+		return i_charge * j_charge * etable::Etable::eval_spline(
+			std::sqrt( d2 ), hi_poly_start_, hi_poly_end_,
+			hi_poly_width_, hi_poly_invwidth_, hi_poly_ );
+	} else if ( no_dis_dep_die_ ) {
 		return i_charge * j_charge * ( C1_ / std::sqrt(d2) - C2_ );
 	} else {
 		return i_charge * j_charge * ( C1_ / d2 - C2_ );
@@ -547,12 +588,26 @@ HackElecEnergy::eval_dhack_elecE_dr_over_r(
 ) const
 {
 	if ( dis2 > max_dis2_ ) return 0.0;
-	else if ( dis2 < min_dis2_ ) return 0.0; // flat in this region
+	else if ( dis2 < low_poly_start2_ ) return 0.0; // flat in this region
 
-	if ( no_dis_dep_die_ ) {
-		return dEfac_ * q1 * q2 / ( dis2 * std::sqrt(dis2) ) ;
+	Real q1q2 = q1*q2;
+
+	if ( dis2 > low_poly_end2_ && dis2 < hi_poly_start2_ ) {
+		if ( no_dis_dep_die_ ) {
+			return dEfac_ * q1q2 / ( dis2 * std::sqrt(dis2) ) ;
+		} else {
+			return dEfac_ * q1q2 / ( dis2 * dis2 );
+		}
+	} else if ( dis2 < low_poly_end2_ ) {
+		Real d = std::sqrt( dis2 );
+		return etable::Etable::spline_deriv(
+			d, low_poly_start_, low_poly_end_,
+			low_poly_width_, low_poly_invwidth_, low_poly_ ) * q1q2 / d;
 	} else {
-		return dEfac_ * q1 * q2 / ( dis2 * dis2 );
+		Real d = std::sqrt( dis2 );
+		return etable::Etable::spline_deriv(
+			d, hi_poly_start_, hi_poly_end_,
+			hi_poly_width_, hi_poly_invwidth_, hi_poly_ ) * q1q2 / d;
 	}
 }
 

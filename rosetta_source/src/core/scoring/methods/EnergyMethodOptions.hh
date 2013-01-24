@@ -136,6 +136,12 @@ public:
 	void
 	hackelec_no_dis_dep_die( bool setting );
 
+	bool
+	smooth_hack_elec() const;
+
+	void
+	smooth_hack_elec( bool setting );
+
 	///
 	bool
 	exclude_DNA_DNA() const;
@@ -303,6 +309,7 @@ private:
 	core::Real hackelec_min_dis_;
 	core::Real hackelec_die_;
 	bool hackelec_no_dis_dep_die_;
+	bool smooth_hack_elec_;
 	bool exclude_DNA_DNA_;
 	hbonds::HBondOptionsOP hbond_options_;
 	core::Size cst_max_seq_sep_;

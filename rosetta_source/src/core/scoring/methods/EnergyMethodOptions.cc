@@ -55,6 +55,7 @@ EnergyMethodOptions::EnergyMethodOptions():
 	hackelec_min_dis_(1.5),
 	hackelec_die_(10.0),
 	hackelec_no_dis_dep_die_(false),
+	smooth_hack_elec_( false ),
 	exclude_DNA_DNA_(true), // rosetta++ default
 	hbond_options_(new hbonds::HBondOptions()),
 	cst_max_seq_sep_(core::SZ_MAX),
@@ -77,12 +78,14 @@ void EnergyMethodOptions::initialize_from_options() {
 	hackelec_min_dis_ = basic::options::option[basic::options::OptionKeys::score::hackelec_min_dis ]();
 	hackelec_die_ = basic::options::option[ basic::options::OptionKeys::score::hackelec_die ]();
 	hackelec_no_dis_dep_die_ = basic::options::option[ basic::options::OptionKeys::score::hackelec_r_option ]();
+	smooth_hack_elec_ = basic::options::option[ basic::options::OptionKeys::score::smooth_hack_elec ]();
 	exclude_DNA_DNA_ = basic::options::option[basic::options::OptionKeys::dna::specificity::exclude_dna_dna]; // adding because this parameter should absolutely be false for any structure with DNA in it and it doesn't seem to be read in via the weights file method, so now it's an option - sthyme
 }
 
 /// copy constructor
 EnergyMethodOptions::EnergyMethodOptions(EnergyMethodOptions const & src)
-	: ReferenceCount( src ) {
+	: ReferenceCount( src )
+{
 	*this = src;
 }
 
@@ -104,6 +107,7 @@ EnergyMethodOptions::operator=(EnergyMethodOptions const & src) {
 		hackelec_min_dis_ = src.hackelec_min_dis_;
 		hackelec_die_ = src.hackelec_die_;
 		hackelec_no_dis_dep_die_ = src.hackelec_no_dis_dep_die_;
+		smooth_hack_elec_ = src.smooth_hack_elec_;
 		exclude_DNA_DNA_ = src.exclude_DNA_DNA_;
 		hbond_options_ = new hbonds::HBondOptions( *(src.hbond_options_) );
 		cst_max_seq_sep_ = src.cst_max_seq_sep_;
@@ -199,6 +203,18 @@ void
 EnergyMethodOptions::hackelec_no_dis_dep_die( bool const setting ) {
 	hackelec_no_dis_dep_die_ = setting;
 }
+
+bool
+EnergyMethodOptions::smooth_hack_elec() const {
+	return smooth_hack_elec_;
+}
+
+void
+EnergyMethodOptions::smooth_hack_elec( bool setting )
+{
+	smooth_hack_elec_ = setting;
+}
+
 
 bool
 EnergyMethodOptions::exclude_DNA_DNA() const {
@@ -364,6 +380,7 @@ operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 		( a.hackelec_min_dis_ == b.hackelec_min_dis_ ) &&
 		( a.hackelec_die_ == b.hackelec_die_ ) &&
 		( a.hackelec_no_dis_dep_die_ == b.hackelec_no_dis_dep_die_ ) &&
+		( a.smooth_hack_elec_ == b.smooth_hack_elec_ ) &&
 		( a.exclude_DNA_DNA_ == b.exclude_DNA_DNA_ ) &&
 		( * (a.hbond_options_) == * (b.hbond_options_) ) &&
 		( a.cst_max_seq_sep_ == b.cst_max_seq_sep_ ) &&
@@ -407,6 +424,7 @@ EnergyMethodOptions::show( std::ostream & out ) const {
 	out << "EnergyMethodOptions::show: hackelec_die: " << hackelec_die_ << std::endl;
 	out << "EnergyMethodOptions::show: hackelec_no_dis_dep_die: "
 			<< (hackelec_no_dis_dep_die_ ? "true" : "false") << std::endl;
+	out << "EnergyMethodOptions::show: smooth_hack_elec: " << ( smooth_hack_elec_ ? "true" : "false" ) << std::endl;
 	out << "EnergyMethodOptions::show: exclude_DNA_DNA: "
 			<< (exclude_DNA_DNA_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: cst_max_seq_sep: " << cst_max_seq_sep_ << std::endl;

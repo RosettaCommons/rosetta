@@ -58,20 +58,20 @@
 #include <core/conformation/RotamerSetBase.hh>
 
 // Utility headers
-
-#include <basic/options/option.hh>
+#include <utility/vector1.hh>
 
 // Numeric headers
-
 #include <numeric/xyzVector.hh>
+#include <numeric/interpolation/spline/SplineGenerator.hh>
+#include <numeric/interpolation/spline/SimpleInterpolator.hh>
+
+// Basic headers
+#include <basic/Tracer.hh>
 
 // option key includes
-
+#include <basic/options/option.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
-
-#include <utility/vector1.hh>
-#include <basic/Tracer.hh>
 
 static basic::Tracer TR("core.scoring.hackelec.HackElecEnergy");
 
@@ -126,12 +126,15 @@ HackElecEnergy::HackElecEnergy( methods::EnergyMethodOptions const & options ):
 	parent( new HackElecEnergyCreator ),
 	max_dis_( options.hackelec_max_dis() ),
 	min_dis_( options.hackelec_min_dis() ),
+	smooth_hack_elec_( options.smooth_hack_elec() ),
 	die_( options.hackelec_die() ),
 	no_dis_dep_die_( options.hackelec_no_dis_dep_die() ),
 	exclude_protein_protein_( options.exclude_protein_protein_hack_elec() ),
 	exclude_monomer_( options.exclude_monomer_hack_elec() ),
 	exclude_DNA_DNA_( options.exclude_DNA_DNA() )
-{ initialize(); }
+{
+	initialize();
+}
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -139,12 +142,15 @@ HackElecEnergy::HackElecEnergy( HackElecEnergy const & src ):
 	parent( src ),
 	max_dis_( src.max_dis_ ),
 	min_dis_( src.min_dis_ ),
+	smooth_hack_elec_( src.smooth_hack_elec_ ),
 	die_( src.die_ ),
 	no_dis_dep_die_( src.no_dis_dep_die_ ),
 	exclude_protein_protein_( src.exclude_protein_protein_ ),
 	exclude_monomer_( src.exclude_monomer_ ),
 	exclude_DNA_DNA_( src.exclude_DNA_DNA_ )
-{ initialize(); }
+{
+	initialize();
+}
 
 
 void
@@ -161,7 +167,7 @@ HackElecEnergy::initialize() {
 	//no_dis_dep_die_ = false;
 
 	C0_ = 322.0637 ;
-  C1_ = C0_ / die_ ;
+	C1_ = C0_ / die_ ;
 	if( no_dis_dep_die_ ) {
 		C2_ = C1_ / max_dis_ ;
 		min_dis_score_ = C1_ / min_dis_ - C2_ ;
@@ -171,7 +177,97 @@ HackElecEnergy::initialize() {
 		min_dis_score_ = C1_ / min_dis2_ - C2_ ;
 		dEfac_ = -2.0 * C0_ / die_ ;
 	}
-	////////////////////////////////////////////////////////////////////////////
+
+	if ( smooth_hack_elec_ ) {
+
+
+		low_poly_start_ = min_dis_ - 0.25;
+		low_poly_end_   = min_dis_ + 0.25;
+		low_poly_start2_ = low_poly_start_ * low_poly_start_;
+		low_poly_end2_   = low_poly_end_ * low_poly_end_;
+		low_poly_width_ = low_poly_end_ - low_poly_start_;
+		low_poly_invwidth_ = 1.0 / low_poly_width_;
+
+		// scope low polynomial
+		{
+			using namespace numeric::interpolation::spline;
+			Real low_poly_end_score(0.0), low_poly_end_deriv(0.0);
+			if ( no_dis_dep_die_ ) {
+				low_poly_end_score = C1_ / low_poly_end_ - C2_;
+				low_poly_end_deriv = -1 * C1_ / low_poly_end2_ ;
+
+			} else {
+				low_poly_end_score = C1_ / low_poly_end2_ - C2_;
+				low_poly_end_deriv = -2 * C1_ / ( low_poly_end2_ * low_poly_end_ );
+			}
+			SplineGenerator gen_low_poly(
+				low_poly_start_, min_dis_score_, 0,
+				low_poly_end_, low_poly_end_score, low_poly_end_deriv );
+			InterpolatorOP interp_low( gen_low_poly.get_interpolator() );
+			SimpleInterpolatorOP sinterp_low = dynamic_cast< SimpleInterpolator * > (interp_low() );
+			if ( ! sinterp_low ) {
+				utility_exit_with_message( "Hack Elec created non-simple-interpolator in initialize()" );
+			}
+			low_poly_.ylo  = sinterp_low->y()[ 1 ];
+			low_poly_.yhi  = sinterp_low->y()[ 2 ];
+			low_poly_.y2lo = sinterp_low->ddy()[ 1 ];
+			low_poly_.y2hi = sinterp_low->ddy()[ 2 ];
+		}
+
+		hi_poly_start_    = max_dis_ - 1.0;
+		hi_poly_end_      = max_dis_;
+		hi_poly_start2_   = hi_poly_start_ * hi_poly_start_;
+		hi_poly_end2_     = hi_poly_end_ * hi_poly_end_;
+		hi_poly_width_    = hi_poly_end_ - hi_poly_start_;
+		hi_poly_invwidth_ = 1.0 / hi_poly_width_;
+
+		// scope hi polynomial
+		{
+			using namespace numeric::interpolation::spline;
+			Real hi_poly_start_score(0.0), hi_poly_start_deriv(0.0);
+			if ( no_dis_dep_die_ ) {
+				hi_poly_start_score = C1_ / hi_poly_start_ - C2_;
+				hi_poly_start_deriv = -1 * C1_ / hi_poly_start2_ ;
+
+			} else {
+				hi_poly_start_score = C1_ / hi_poly_start2_ - C2_;
+				hi_poly_start_deriv = -2 * C1_ / ( hi_poly_start2_ * hi_poly_start_ );
+			}
+
+			SplineGenerator gen_hi_poly(
+				hi_poly_start_, hi_poly_start_score, hi_poly_start_deriv,
+				hi_poly_end_, 0, 0 );
+			InterpolatorOP interp_hi( gen_hi_poly.get_interpolator() );
+			SimpleInterpolatorOP sinterp_hi = dynamic_cast< SimpleInterpolator * > (interp_hi() );
+			if ( ! sinterp_hi ) {
+				utility_exit_with_message( "Hack Elec created non-simple-interpolator in initialize()" );
+			}
+			hi_poly_.ylo  = sinterp_hi->y()[ 1 ];
+			hi_poly_.yhi  = sinterp_hi->y()[ 2 ];
+			hi_poly_.y2lo = sinterp_hi->ddy()[ 1 ];
+			hi_poly_.y2hi = sinterp_hi->ddy()[ 2 ];
+		}
+	} else {
+		low_poly_start_ = min_dis_;     low_poly_start2_ = std::pow( low_poly_start_, 2 );
+		low_poly_end_   = min_dis_ / 2; low_poly_end2_   = std::pow( low_poly_end_, 2 );
+		hi_poly_start_  = max_dis_;     hi_poly_start2_  = std::pow( hi_poly_start_, 2 );
+		low_poly_width_ = 0; low_poly_invwidth_ = 0;
+		hi_poly_width_ = 0; hi_poly_invwidth_ = 0;
+	}
+
+
+	//low_fade_start_ = min_dis_;
+	//low_fade_start2_ = low_fade_start_ * low_fade_start_;
+	//low_fade_end_ = min_dis_ + 0.75;
+	//low_fade_end2_ = low_fade_end_ * low_fade_end_;
+	//low_fade_d0_ = min_dis_ + 0.25;
+	//low_fade_K_ = 16;
+	//high_fade_start_ = max_dis_ - 1.0;
+	//high_fade_start2_ = high_fade_start_ * high_fade_start_;
+	//high_fade_end_ = max_dis_;
+	//high_fade_end2_ = high_fade_end_ * high_fade_end_;
+	//high_fade_K_ = -12;
+	//high_fade_d0_ = max_dis_ - 0.25;
 
 }
 
