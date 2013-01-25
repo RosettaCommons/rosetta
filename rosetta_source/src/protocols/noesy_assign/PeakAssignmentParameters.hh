@@ -16,16 +16,14 @@
 
 // Project Headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/id/NamedAtomID.fwd.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/pointer/ReferenceCount.hh>
-
-#include <iosfwd>
 #include <utility/vector1.hh>
 
-
 //// C++ headers
+#include <iostream>
+#include <iosfwd>
+#include <string>
 
 namespace protocols {
 namespace noesy_assign {
