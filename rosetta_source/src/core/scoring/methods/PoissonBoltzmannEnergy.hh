@@ -45,14 +45,23 @@ public:
 	basic::datacache::CacheableDataOP clone() const;
 	void set_charged_residues_map( const std::map<std::string, bool> & charged_residues_map );
 	void set_energy_state( const std::string& energy_state );
-	void set_pose( const std::string& energy_state, const core::pose::Pose & pose );
+	void set_pose( const std::string& energy_state, const core::pose::Pose& pose );
+	void set_pbp( const std::string& energy_state, core::scoring::PoissonBoltzmannPotentialOP pb );
+	void set_conformational_data( const std::string& energy_state,
+																const core::pose::Pose& pose,
+																core::scoring::PoissonBoltzmannPotentialOP pb );
+
+	bool has_cache( const std::string& energy_state ) const;
+
 	std::map<std::string, bool> & get_charged_residues_map();
 	const std::string & get_energy_state() const;
-	core::pose::PoseCOP & get_pose( const std::string& energy_state );
+	core::pose::PoseCOP get_pose( const std::string& energy_state );
+	core::scoring::PoissonBoltzmannPotentialOP get_pbp( const std::string& energy_state );
 	
 private:
 	std::map<std::string, bool> charged_residues_map_;
-	std::map<std::string, core::pose::PoseCOP> poses_by_state_;
+	std::map<std::string, core::pose::PoseCOP> pose_by_state_;
+	std::map<std::string, core::scoring::PoissonBoltzmannPotentialOP> pb_by_state_;
 	std::string energy_state_;
 };
 

@@ -55,6 +55,7 @@
 #include <core/chemical/AtomType.hh>
 #include <utility/vector1.hh>
 #include <vector>
+#include <ctime>
 
 // option key includes
 
@@ -80,7 +81,8 @@ PB::PoissonBoltzmannPotential()
 	:config_filename_("Unknown.in"),
 	 pqr_filename_("Unknown.pqr"),
 	 dx_filename_("Unknown.dx"),
-	 apbs_path_(DEFAULT_APBS_PATH)
+	 apbs_path_(DEFAULT_APBS_PATH),
+	 calcenergy_(false)
 {
 }
 
@@ -132,13 +134,17 @@ PB::solve_pb( core::pose::Pose const & pose,
 							std::string const & tag, 
 							std::map<std::string, bool> const &charged_residues ) 
 {
+	using namespace std;
+	time_t begin;
+	time(&begin);
+
 	config_filename_ = tag + APBS_CONFIG_EXT;
 	pqr_filename_ = tag + APBS_PQR_EXT;
 	dx_filename_ = tag + APBS_DX_EXT;
 
 	int apbs_dbg = basic::options::option[ basic::options::OptionKeys::pb_potential::apbs_debug ];
-	bool calcenergy = basic::options::option[ basic::options::OptionKeys::pb_potential::calcenergy ];
-	APBSWrapper apbs(pose, charged_residues, apbs_dbg, calcenergy);
+	calcenergy_ = basic::options::option[ basic::options::OptionKeys::pb_potential::calcenergy ];
+	APBSWrapper apbs(pose, charged_residues, apbs_dbg, calcenergy_);
 
 	APBSResultCOP result = 0;
 
@@ -153,6 +159,10 @@ PB::solve_pb( core::pose::Pose const & pose,
 	const double * meta = result->grid_meta;
 	const double * data = &(result->grid_data[0][0]);
 	load_potential(meta, data);
+
+	time_t end;
+	time(&end);
+	TR << "PB took " << end-begin << " seconds" << std::endl;
 }
 void
 PB::load_potential(const double grid_meta[],
@@ -231,10 +241,15 @@ PB::solve_pb( core::pose::Pose const & pose,
 							std::string const & tag, 
 							std::map<std::string, bool> const &charged_residues ) 
 {
+	using namespace std;
+	time_t begin;
+	time(&begin);
 
 	if (basic::options::option[basic::options::OptionKeys::pb_potential::apbs_path].user()) {
 		apbs_path_ = basic::options::option[basic::options::OptionKeys::pb_potential::apbs_path];
 	}
+
+	calcenergy_ = basic::options::option[ basic::options::OptionKeys::pb_potential::calcenergy ];
 
 	// Generate filenames based on the given tag.
 	config_filename_ = tag + APBS_CONFIG_EXT;
@@ -257,6 +272,10 @@ PB::solve_pb( core::pose::Pose const & pose,
 
 	// load the result
 	load_APBS_potential();
+
+	time_t end;
+	time(&end);
+	TR << "PB took " << end-begin << " seconds" << std::endl;
 }
 void
 PB::load_APBS_potential()
@@ -489,7 +508,7 @@ PB::write_config (core::pose::Pose const & pose) const {
 	config_ostr << "gamma 0.105      # Surface tension parameter for apolar forces (in kJ/mol/A^2)" << std::endl;
 	config_ostr << "# only used for force calculations, so we don't care, but" << std::endl;
 	config_ostr << "# it's always required, and 0.105 is the default" << std::endl;
-	config_ostr << "calcenergy no    # Energy I/O to stdout" << std::endl;
+	config_ostr << "calcenergy " << (calcenergy_? "yes" : "no") << "    # Energy I/O to stdout" << std::endl;
 	config_ostr << "#  0 => don't write out energy" << std::endl;
 	config_ostr << "#  1 => write out total energy" << std::endl;
 	config_ostr << "#  2 => write out total energy and all" << std::endl;

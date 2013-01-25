@@ -76,9 +76,12 @@ PBLifetimeCache::set_energy_state( const std::string& energy_state )
 	energy_state_ = energy_state;
 }
 void 
-PBLifetimeCache::set_pose( const std::string& energy_state, const core::pose::Pose & pose)
+PBLifetimeCache::set_conformational_data( const std::string& energy_state, 
+																					const core::pose::Pose & pose,
+																					PoissonBoltzmannPotentialOP pbp )
 {
-	poses_by_state_[energy_state] = new core::pose::Pose(pose);
+	pose_by_state_[energy_state] = new core::pose::Pose(pose);
+	pb_by_state_[energy_state] = pbp;
 }
 std::map<std::string, bool> & 
 PBLifetimeCache::get_charged_residues_map()
@@ -90,7 +93,8 @@ PBLifetimeCache::get_energy_state() const
 {
 	return energy_state_;
 }
-core::pose::PoseCOP & 
+
+core::pose::PoseCOP 
 PBLifetimeCache::get_pose( const std::string& energy_state )
 {
 	//TR << "Looking for cached pose for state \"" << energy_state << "\" in PBLifetimeCache " << "{ ";
@@ -99,7 +103,18 @@ PBLifetimeCache::get_pose( const std::string& energy_state )
 	//  TR << "(key=" << itr->first << ": val=" << itr->second->pdb_info()->name() << "), ";
 	//}
 	//TR << " }" << std::endl;
-	return poses_by_state_[energy_state];
+	return pose_by_state_[energy_state];
+}
+PoissonBoltzmannPotentialOP
+PBLifetimeCache::get_pbp( const std::string& energy_state )
+{
+		return pb_by_state_[energy_state];
+}
+
+bool
+PBLifetimeCache::has_cache( const std::string& energy_state ) const
+{
+	return pb_by_state_.count(energy_state) && pose_by_state_.count( energy_state);
 }
 //*****************************************************************
 //
@@ -131,8 +146,9 @@ PoissonBoltzmannEnergyCreator::score_types_for_method() const {
 PoissonBoltzmannEnergy::PoissonBoltzmannEnergy() :
 	parent( new PoissonBoltzmannEnergyCreator ),
 	fixed_residue_(1),
-	epsilon_(2.0),
-	poisson_boltzmann_potential_( new scoring::PoissonBoltzmannPotential )
+	epsilon_(2.0)
+	//,
+	//poisson_boltzmann_potential_( new scoring::PoissonBoltzmannPotential )
 
 {
 	if(  basic::options::option[basic::options::OptionKeys::pb_potential::epsilon].user() ) {
@@ -176,7 +192,7 @@ PoissonBoltzmannEnergy::setup_for_scoring(
 		utility::vector1<int> charged_chains
 			= basic::options::option[basic::options::OptionKeys::pb_potential::charged_chains];
 		std::map<std::string, bool> charged_residues;
-		TR.Debug << "Charged residues: [ ";
+		TR << "Charged residues: [ ";
 		for ( Size i=1; i<= pose.total_residue(); ++i ) {
 			core::conformation::Residue const & rsd( pose.residue(i) );
 			bool residue_charged = false;
@@ -198,38 +214,45 @@ PoissonBoltzmannEnergy::setup_for_scoring(
 	}
 	TR << "Energy state: \"" << energy_state << "\" for scorefxn: " << scorefxn.get_name() << std::endl;
 	
-	// Solve the solvant energy state.
-	// Use cache if the pose hasn't changed.  Grab one that matches in state.
-	core::pose::PoseCOP prev_pose = cached_data->get_pose( energy_state );
-	if( prev_pose != 0 ){
-		TR << "Found cached pose for state: " << energy_state << std::endl;
-	}
-	// 
-	// Recompute the distribution if the fold has changed.
 	const Size atom_index = 2;  // alpha carbon
-	if( prev_pose == 0 ) {
-		TR << "No cached pose for state: " << energy_state << std::endl;
-		//		poisson_boltzmann_potential_->solve_pb(pose, energy_state, charged_residues_);
 
-		poisson_boltzmann_potential_->solve_pb(pose, energy_state, charged_residues_);
-	}
-	else {
+	//
+	// Solve PB
+	//
+	// use cached data if the bound comformation hasn't changed.
+	if( cached_data->has_cache( energy_state ) ) {
+		core::pose::PoseCOP prev_pose = cached_data->get_pose( energy_state );
+
+		// switch to the state's pb
+		poisson_boltzmann_potential_ = cached_data->get_pbp(energy_state);
+		assert(poisson_bolzmann_potential_ != 0);
+
+		TR << "Found cached pose for state: " << energy_state << std::endl;
+
 		// re-evaluate only for bound-state.
-		if( energy_state != emoptions.pb_unbound_tag() ) {
+		if( energy_state == emoptions.pb_bound_tag() ) {
+
 	 		if( !protein_position_equal_within( pose, *prev_pose, atom_index, epsilon_ ) ) {
-				TR << "Atoms (" << atom_index << ") in charged chains moved more than " << epsilon_ << "A" << std::endl; 
+				TR << "Atoms (" << atom_index << ") in charged chains moved more than " ;
+				TR << epsilon_ << "A" << std::endl; 
 				poisson_boltzmann_potential_->solve_pb(pose, energy_state, charged_residues_);
 			}
 		}
 	}
+	else{
+		TR << "No cached pose for state: " << energy_state << std::endl;
+		poisson_boltzmann_potential_ = new PoissonBoltzmannPotential();
+		poisson_boltzmann_potential_->solve_pb(pose, energy_state, charged_residues_);
+	}
 
-	// Update teh cache
-	cached_data->set_pose( energy_state, pose );
+	
+	// Update the cache
+	cached_data->set_conformational_data( energy_state, pose, poisson_boltzmann_potential_ );
 
 	// make sure the root of the FoldTree is a virtual atom and is followed by a jump
 	// if not, emit warning
 	//kinematics::Edge const &root_edge ( *pose.fold_tree().begin() );
-	//int virt_res_idx = root_edge.start();
+	//int virt_res_idx = root_ede.start();
 	//conformation::Residue const &root_res( pose.residue( virt_res_idx ) );
 	
 	//pose_is_proper = true;

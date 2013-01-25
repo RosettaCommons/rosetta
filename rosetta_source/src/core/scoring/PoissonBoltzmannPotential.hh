@@ -103,6 +103,7 @@ private:
 	std::string pqr_filename_;
 	std::string dx_filename_;
 	std::string apbs_path_;  // full path name to the APBS executable: e.g. /usr/bin/apbs.exe
+	bool calcenergy_;
 
 	/// Prepare ABPS - generate .in and .pqr
 	void write_config (
