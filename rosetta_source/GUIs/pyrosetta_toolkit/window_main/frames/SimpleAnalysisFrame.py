@@ -25,7 +25,7 @@ import tkFileDialog
 from modules.tools import analysis as analysis_tools
 from modules.tools import input as input_tools
 from modules.tools import loops as loop_tools
-#from window_main import global_variables
+from window_main import global_variables
 #from pyrosetta_toolkit import main_window
 
 class SimpleAnalysisFrame(TkFrame):

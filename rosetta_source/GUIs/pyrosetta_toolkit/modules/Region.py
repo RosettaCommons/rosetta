@@ -215,7 +215,6 @@ class Regions:
             for i in range(start, end+1):
                 movemap.set_bb(i, True)
                 movemap.set_chi(i, True)
-        print movemap
         return movemap
     
     def get_packer_task(self, pose, include_only_regions = False):

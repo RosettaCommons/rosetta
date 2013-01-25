@@ -86,7 +86,8 @@ class FullControlWindow():
 	if not res:return
 	if not chain:return
 	
-	self.populate_restype_listbox()
+	#self.populate_restype_listbox()
+	self.populate_energy_term_listbox()
 	self.regional_scoring = RegionalScoring(self.pose, self.score_object.score); #Happens every time just in case the user selects a dif scorefunction
 	
 	#Much exception handling to make sure no errors are thrown for particular residues, numbering inconsistancies, DNA/ligands
@@ -171,7 +172,7 @@ class FullControlWindow():
 	self.slider_psi = Scale(self.main, from_=-180, to=180, orient=HORIZONTAL, variable = self.PsiVar)
 
 
-    #### Quick Protocols ####
+	#### Quick Protocols ####
 	self.button_relax_residue = Button(self.main, text = "Relax Residue", command=lambda: self.relax_residue())
 	self.button_backrub_residue= Button(self.main, text = "Backrub Residue", state=DISABLED)
 	self.button_relax_residue_and_neighbors=Button(self.main, text= "Relax X-Res-X", command = lambda: self.relax_residue_neighbors(False))
@@ -192,7 +193,7 @@ class FullControlWindow():
 
 
 
-    #### GRID ####
+	#### GRID ####
 	self.entry_Res.grid(row=r+5, column=c+0); self.entry_Cha.grid(row=r+5, column=c+1); self.entry_Nam.grid(row=r+5, column=c+2)
 	self.label_residue.grid(row=r+6, column=c+0); self.label_chain.grid(row=r+6, column=c+1); self.label_restype.grid(row=r+6,column=c+2)
 	self.button_previous_residue.grid(row=r+7, column=c+0); self.button_Get.grid(row=r+7, column=c+1, sticky=W+E); self.button_next_residue.grid(row=r+7, column=c+2)
@@ -203,7 +204,7 @@ class FullControlWindow():
 	self.entry_rotamer_probability.grid(row=r+12, column=c+0); self.entry_rotamer_energy.grid(row=r+12, column=c+2)
 	self.label_rotamer_probability.grid(row=r+13, column=c+0); self.label_rotamer_energy.grid(row=r+13, column=c+2)
 
-    #### Mutagenesis, Repacking, Residue Energies ####
+	#### Mutagenesis, Repacking, Residue Energies ####
 	self.button_full_design.grid(row=r+13, column=c+1)
 	self.button_Pack.grid(row=r+15, column=c+1)
 	self.listbox_mutate_restypes.grid(row=r+17, column=c+1, rowspan=6)
@@ -218,7 +219,7 @@ class FullControlWindow():
 	self.listbox_energy_terms.bind("<Double-Button-1>", lambda event: self.get_residue_energy(self.listbox_energy_terms.get(self.listbox_energy_terms.curselection())))
 	self.main.grid_columnconfigure(ALL, weight=1)
 	
-    #### Quick Min ####
+	#### Quick Min ####
 	self.button_relax_residue.grid(row=r+17, column=c+2, sticky= W+E)
 	self.button_backrub_residue.grid(row=r+17, column=c, sticky= W+E)
 	self.button_relax_residue_and_neighbors.grid(row=r+18, column=c+2, sticky= W+E)
@@ -227,6 +228,7 @@ class FullControlWindow():
 
 	#Populating the Listboxes:
 	self.populate_restype_listbox()
+	self.populate_energy_term_listbox()
 	self.populate_variant_listbox()
 	
 	#These are to hook up the sub window with the sequence entry from the main window.
@@ -261,15 +263,18 @@ class FullControlWindow():
 	self.residue_energy_of_Eterm.set("%.3f REU"%e)
 
     def populate_restype_listbox(self):
+	self.listbox_mutate_restypes.delete(0, END)
+	for type in self.residue_definitions.restype_info["All"]:
+	    self.listbox_mutate_restypes.insert(END, type)
+    
+    def populate_energy_term_listbox(self):
 	self.listbox_energy_terms.delete(0, END)
+	
 	(zeroscores, nonzeroscores) = self.score_object.scoreOption("Breakdown ScoreFxn")
 	for type in nonzeroscores:
 	    self.listbox_energy_terms.insert(END, type)
 	    #For now, I will show this.  Later, I will use an object to hold all Residue and Design/CDR info.  Useful in the future.
-
-	for type in self.residue_definitions.restype_info["All"]:
-	    self.listbox_mutate_restypes.insert(END, type)
-
+    
     def populate_variant_listbox(self):
 	self.variant_listbox.delete(0, END)
 

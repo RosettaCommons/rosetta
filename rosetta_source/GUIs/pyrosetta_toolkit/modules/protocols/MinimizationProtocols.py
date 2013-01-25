@@ -142,7 +142,6 @@ class MinimizationProtocols(ProtocolBaseClass):
         
         packer_task = self.input_class.regions.get_packer_task(self.pose)
         pack_mover=PackRotamersMover(self.score_class.score, packer_task)
-        print packer_task
         self.run_protocol(pack_mover)
     
 #LoopBackrubRef    

@@ -178,6 +178,7 @@ class GraftMoverWindow(ProtocolBaseClass):
         global_variables.current_directory = os.path.dirname(filename)
         self.from_pose = self.input_class.return_loaded_pose(filename)
         print self.from_pose
+        print "Donor pose loaded..."
         
     def run_graft(self):
         anchor_start = self.pose.pdb_info().pdb2pose(self.scaffold_chain.get(), int(self.scaffold_start.get()))
@@ -225,6 +226,7 @@ class GraftMoverWindow(ProtocolBaseClass):
         new_graftmover.set_repack_connection_and_insert(self.repack_connection_and_piece.get(), self.score_class.score)
         
         self.run_protocol(new_graftmover)
+        self.main.destroy()
         
 class GraftMover:
     """

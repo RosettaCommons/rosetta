@@ -103,7 +103,8 @@ class ligand_ncaa_ptm_manager:
         print os.environ['PYROSETTA_DATABASE']+'/chemical/residue_type_sets/fa_standard/patches.txt'
         print os.environ['PYROSETTA_DATABASE']+'/chemical/residue_type_sets/fa_standard/residue_types.txt'
         print "It is recommended to switch at least the statistical residue-based pair potential to the coulumbic atom-based hack_elec potential"
-        print "This may increase run time, especially for larger selections"
+        print "Please consider using the mm_std scorefunction for more complex NCAA"
+        print "Note that this may increase run time, especially for larger selections"
         #print "In preliminary results, it has also been shown to increase rotamer recovery for cannonical AA's (unpublished/Dunbrack Lab)"
         #print "To add a variant type to a pose, use the Per Residue Control in the advanced menu."
         self.main = main
@@ -127,10 +128,12 @@ class ligand_ncaa_ptm_manager:
         
         
         self.e_function_label = Label(self.main, text = "Energy Function Optimization", font=tkFont.Font(weight='bold', size=13))
-        self.electrostatics_label = Label(self.main, text = "Electrostatic", )
+        self.electrostatics_label = Label(self.main, text = "Electrostatic")
         self.switch_pair_to_elec_button=Button(self.main, text = "statistical -> columbic", command = lambda: self.set_hack_elec(True))
         self.switch_elec_to_pair_button=Button(self.main, text = "statistical <- columbic", command = lambda: self.set_hack_elec(False))
-    
+        
+        self.scorefunction_label = Label(self.main, text = "ScoreFunction")
+        self.switch_to_mm_std_button = Button(self.main, text = "Molecular Mechanics Based: mm_std", command = lambda: self.set_mm_std())
         self.current_main_selection.set(self.selections[0])
         
         #Photo.  This is for Jason Labonte, for his help in understanding how Rosetta works with NCAA/Patches
@@ -149,7 +152,7 @@ class ligand_ncaa_ptm_manager:
         self.mutate_button.grid(row=r+3, column=c+3)
         self.reload_pdb_button.grid(row=r+4, column=c+3);
         
-        self.Photo.grid(row=7, column=c+3, rowspan=9, sticky=W+E, padx=10)
+        self.Photo.grid(row=10, column=c+3, rowspan=9, sticky=W+E, padx=10)
         self.show_name.grid(row=r+8, column=c+1, columnspan=2)
         self.label_variant.grid(row=r+9, column=c+1); self.label_three_letter.grid(row=r+9, column=c+2)
         
@@ -166,6 +169,10 @@ class ligand_ncaa_ptm_manager:
         self.switch_pair_to_elec_button.grid(row=r+15, column=c+1, columnspan=2)
         self.switch_elec_to_pair_button.grid(row=r+16, column=c+1, columnspan=2)
 
+        self.scorefunction_label.grid(row=r+17, column=c+1, columnspan=2, pady=5)
+        self.switch_to_mm_std_button.grid(row=r+18, column=c+1, columnspan=2)
+        
+        
 ### 'Public' Getter and Setters ###
 
     def get_prop(self):
@@ -272,7 +279,14 @@ class ligand_ncaa_ptm_manager:
             os.remove(global_variables.current_directory+"/temp_resfile.txt")
             print self.score_class.score(self.pose)
             print "Position mutated + Packed"
-            
+    
+    def set_mm_std(self):
+        """
+        Sets the mm_std scorefunction.
+        """
+        self.score_class.set_scorefunction('mm_std')
+        print "Please cite:  P. Douglas Renfrew, Eun Jung Choi, Brian Kuhlman, 'Using Noncanonical Amino Acids in Computational Protein-Peptide Interface Design' (2011) PLoS One."
+    
     def set_prop(self, prop):
         """
         Sets the current propertyclass, whether it be param or patch

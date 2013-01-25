@@ -75,6 +75,7 @@ def showPose(p, observer):
 def save_loop_file(p, loops_as_strings, ask_info=True):
     """
     Saves a Rosetta Loop file.  Also asks to discard residues or not.
+    Migrate to use Regions.
     """
     if not p.total_residue():
         print "\n No pose loaded...\n"
@@ -99,7 +100,11 @@ def save_loop_file(p, loops_as_strings, ask_info=True):
     
     FILE = open(outfilename, 'w')
     for loop_string in loops_as_strings:
+        
         loop_stringSP = loop_string.split(":")
+        if (not loop_stringSP[0] or not loop_stringSP[1]):
+            print "Skipping chain or termini"
+            continue
         start = p.pdb_info().pdb2pose(loop_stringSP[2], int(loop_stringSP[0]))
         end = p.pdb_info().pdb2pose(loop_stringSP[2], int(loop_stringSP[1]))
 
@@ -215,7 +220,6 @@ def createSeqFile(p, newList):
         return
     
     seq = p.sequence()
-    print seq
     seq = seq.lower()
     
     #This is to seperate the string so that we can change the elements of each part.
@@ -235,16 +239,24 @@ def createSeqFile(p, newList):
     return seq
     
 
-def saveSeqFile(p, fileout, loops_as_strings):
+def saveSeqFile(p, fileout=None, loops_as_strings=None):
+    """
+    Saves a scwrl seq file.  Needs to be more robust to account for all Seths changes ( some NCAA, carbohydrates) when it is eventually released.
+    Needs to migrate to use region class.
+    """
     if not p.total_residue():
         print "\n No pose loaded...\n"
         return
-    
+    if not fileout:
+        fileout = tkFileDialog.asksaveasfilename(initialdir=global_variables.current_directory)
+    if not fileout:return
+    global_variables.current_directory = os.path.dirname(fileout)
     newList = loop_tools.loopArea(p, loops_as_strings)
     seq = createSeqFile(p, newList)
     FILE = open(fileout, 'w')
     FILE.write(seq+"\n")
     FILE.close()
+    print "Seq file saved.."
     return
 
 
@@ -260,9 +272,10 @@ def save_basic_blueprint(p, output=True):
     
     out_string = ""
     define = restype_definitions.definitions()
+    seq = p.sequence()
     for i in range(1, p.total_residue()+1):
         pdb_num = p.pdb_info().number(i)
-        single_letter_code = define.get_one_letter_from_three(p.residue(i).name())
+        single_letter_code = seq[i-1]
         out_string = out_string+repr(pdb_num)+" "+single_letter_code+" . NATRO\n"
     
     if output:
@@ -280,7 +293,7 @@ def save_basic_blueprint(p, output=True):
 ############PDBLIST TOOLS##########################
 def make_PDBLIST(directory=""):
     """
-    Makes a list of PDB's from a directory.  Does not walk directory.  This can be an option later.
+    Makes a list of PDB's from a directory.  Does not walk directory. 
     Later realize could have used find command...
     """
     if directory=="":
@@ -288,15 +301,16 @@ def make_PDBLIST(directory=""):
         if not directory: return
         global_variables.current_directory=directory
     
-    contains = tkSimpleDialog.askstring(title="Contains...", prompt="Separate mutliple matches by a coma...", initialvalue=".pdb,")
+    contains = tkSimpleDialog.askstring(title="Contains...", prompt="Separate mutliple match criteria by a coma...", initialvalue=".pdb")
     containsSP = contains.split(",")
     FILES = os.listdir(directory)
-    NEWFILE = open(directory+"/PDBLIST.txt", 'w')
+    
     filenum=1
     if len(FILES)<=1:
         print "No PDBs found.  Returning."
         return
     
+    matches = []
     for name in FILES:
         match = True; #Assumes true.  If 
         for pattern in containsSP:
@@ -308,14 +322,21 @@ def make_PDBLIST(directory=""):
                 continue
             
         if match:
-            print "File "+repr(filenum)+":"+name
+            print "File "+repr(filenum)+": "+name
             p = os.path.join(directory, name)
             filenum+=1
-            NEWFILE.write(p+"\n")
-                
-    print "File saved as 'PDBLIST.txt' in directory specified."
-    NEWFILE.close()
-    return directory+"/PDBLIST.txt"
+            matches.append(p)
+    
+    if matches:
+        NEWFILE = open(directory+"/PDBLIST.txt", 'w')
+        for match in matches:
+            NEWFILE.write(match+"\n")
+        NEWFILE.close()
+        print "File saved as 'PDBLIST.txt' in directory specified."
+        return directory+"/PDBLIST.txt"
+    else:
+        print "No matches found.."
+        return None
 
 def make_PDBLIST_recursively(directory=""):
     if directory=="":
@@ -323,10 +344,11 @@ def make_PDBLIST_recursively(directory=""):
         if not directory: return
         global_variables.current_directory=directory
     
-    contains = tkSimpleDialog.askstring(title="Contains...", prompt="Separate mutliple matches by a coma...", initialvalue=".pdb,")
+    contains = tkSimpleDialog.askstring(title="Contains...", prompt="Separate mutliple match criteria by a coma...", initialvalue=".pdb,")
     NEWFILE = open(directory+"/PDBLIST_RECURSIVE.txt", 'w')
     filenum = 1
     containsSP = contains.split(",")
+    matches = []
     for root, dirs, files in os.walk(directory, topdown=True):
         #print "Root" + root
         for f in files:
@@ -342,11 +364,19 @@ def make_PDBLIST_recursively(directory=""):
             if match:
                 print "File "+repr(filenum)+":"+f
                 p = os.path.join(root, f)
+                matches.append(p)
                 filenum+=1
-                NEWFILE.write(p+"\n")
-    NEWFILE.close()
-    print "File saved as 'PDBLIST.txt' in directory specified."
-    return directory+"/PDBLIST_RECURSIVE.txt"
+    
+    if matches:
+        NEWFILE = open(directory+"/PDBLIST.txt", 'w')
+        for match in matches:
+            NEWFILE.write(match+"\n")
+        NEWFILE.close()
+        print "File saved as 'PDBLIST.txt' in directory specified."
+        return directory+"/PDBLIST.txt"
+    else:
+        print "No matches found.."
+        return None
 
 def return_rosetta_numbering(loops_as_strings):
     for string in loops_as_strings:
@@ -648,38 +678,40 @@ def exportPDBSCORE(score):
 def output_molfile_to_params():
     """
     Uses molfile to params in pyrosetta bindings to convert.
+    Maybe should be converted to a window for more options.
     """
     
-    print "Using molfile_to_params.py script located in pyrosetta/toolbox/molfile2params written by Ian W Davis.  For more options, please see script."
+    print "Using molfile_to_params.py script located in pyrosetta/toolbox/molfile2params written by Ian W Davis.  For more options, please use script."
     script_path = os.environ["PYROSETTA"]+"/toolbox/molfile2params/molfile_to_params.py"
     
     if not os.path.exists(script_path):
         print "Untarring script"
         extract_path = os.environ["PYROSETTA"]+"/toolbox"
         tar_path = extract_path+"/molfile2params.tar.gz"
-        tfile = tarfile.open(tar_path)
-        if tarfile.is_tarfile(tfile):
+        
+        if tarfile.is_tarfile(tar_path):
+            tfile = tarfile.open(tar_path)
             tfile.extractall(extract_path)
         else:
             print "Could not extract tar file."
             return
     
-    mdl_file = tkFileDialog.askopenfilename(initialdir = global_variables.current_directory, title = "Open MDL file")
+    mdl_file = tkFileDialog.askopenfilename(initialdir = global_variables.current_directory, title = "Open MDL, MOL, MOL2, or SDF file")
     if not mdl_file:return
     global_variables.current_directory=os.path.dirname(mdl_file)
     
     output_kinemage = tkMessageBox.askyesno(title = "kinemage", message="Output kinemage file for ligand visualization?")
     
-    options = " "
+    options = " "+mdl_file+" "
     if output_kinemage:
         options = options+"-k "
     
-    outdir = os.path.dirname(mdl_file)+os.path.basename(mdl_file).split(".")[0]
+    outdir = os.path.dirname(mdl_file)+"/"+os.path.basename(mdl_file).split(".")[0]
     if not os.path.exists(outdir): os.mkdir(outdir)
     
     prefix = outdir+"/"+os.path.basename(mdl_file).split(".")[0]
     
-    options = options +"-c "+"-p "+prefix
+    options = options +"-c --clobber "+"-p "+prefix
     
     print "Running molfile_to_params with these options: "+options
     os.system("python "+script_path+options)

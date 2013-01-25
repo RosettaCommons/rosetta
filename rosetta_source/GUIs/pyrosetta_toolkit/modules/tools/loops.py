@@ -134,10 +134,11 @@ def setLoopBreak( p, start, end, chain, cut):
     print p
     return p
 
-def loopArea( p, loops_as_strings, rosetta=1):
+def loopArea( p, loops_as_strings, rosetta_num=True):
     """
-    Takes in the raw Loops List, Returns a new loop list of list.  List of residue_arrays for each loop(rosetta=1) or regular of res:chain array(rosetta=0)
+    Takes in the raw Loops List, Returns a new loop list of list.  List of residue_arrays for each loop(rosetta_num True) or regular of res:chain array(rosetta_num False)
     Used for creating a sequence file for scwrl.
+    Flagged for Refactoring
     """
     
     newList = []
@@ -145,9 +146,9 @@ def loopArea( p, loops_as_strings, rosetta=1):
         residue_array = return_residue_array(p, loop_string)
         newList.append(residue_array)
   
-    if rosetta == 1:
+    if rosetta_num:
         return newList
-    if rosetta == 0:
+    else:
         fulllist = [] #FullList - List of residues res:chain
         for lists in newList:
             for res in lists:

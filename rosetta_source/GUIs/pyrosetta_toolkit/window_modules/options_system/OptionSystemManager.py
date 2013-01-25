@@ -96,6 +96,8 @@ class OptionSystemManager:
         self.clear_button.grid(row=r+2, column=c+2, columnspan=2, sticky=W+E)
         self.clear_current_button.grid(row = r+3, column=c+2, columnspan = 2, sticky=W+E)
     
+        print "Note: Enabling dun10 requires reloading the current pose to take effect."
+        
     def print_current_options(self):
         print "Options:  "+" ".join(self.opts)
         

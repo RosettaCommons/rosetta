@@ -56,8 +56,11 @@ class DesignProtocols(ProtocolBaseClass):
             time.sleep(5)
             
             self.run_protocol(mover)
+            self.main.destroy()
             
         top_level = Toplevel(main)
+        self.main = top_level
+        
         top_level.title("Fixbb Design Setup")
         min_sc = IntVar(); min_sc.set(False)
         min_pack = IntVar(); min_pack.set(False)

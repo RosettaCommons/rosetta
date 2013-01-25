@@ -38,9 +38,9 @@ class FixPDBWindow:
           self.input_class = input_class
           
           self.ncaa_manager = ligand_ncaa_ptm_manager(input_class, score_class, pose)
-          self.PDBlistPath = StringVar()
+          self.PDB_or_list_path = StringVar()
           if starting_file_path:
-               self.PDBlistPath.set(starting_file_path)
+               self.PDB_or_list_path.set(starting_file_path)
 
           #These control fixonepdb protocol.  (Go button)
           self.remove_hetatm_var= IntVar(); self.remove_alternates_var = IntVar(); self.change_occupancies_var=IntVar()
@@ -76,8 +76,8 @@ class FixPDBWindow:
           self.main.grid_columnconfigure(0, weight=1)
           #remove_hetatm_var, remove_alternates_var, change_occupancies_var = 1
           #fixDictionary = dict()
-          self.pathEntry = Entry(self.main, textvariable=self.PDBlistPath)
-          self.pathbutton_ = Button(self.main, text = "PDBLIST or PDB", command = lambda: self.PDBlistPath.set(self.getfile()))
+          self.pathEntry = Entry(self.main, textvariable=self.PDB_or_list_path)
+          self.pathbutton_ = Button(self.main, text = "PDBLIST or PDB", command = lambda: self.self.PDB_or_list_path.set(self.getfile()))
           
           self.remH20 = Checkbutton(self.main, variable = self.remove_waters_var, text = "Remove Water")
           self.remHet = Checkbutton(self.main, variable=self.remove_hetatm_var, text = "Remove HETATM")
@@ -179,8 +179,8 @@ class FixPDBWindow:
           """
           Runs the fixpdbprotocol
           """
-          print self.PDBlistPath.get()
-          filename = self.PDBlistPath.get()
+          print self.PDB_or_list_path.get()
+          filename = self.PDB_or_list_path.get()
           """
           outdirectory = tkFileDialog.askdirectory(title = "Output DIR", initialdir = global_variables.current_directory)
           if not outdirectory: return
@@ -198,7 +198,7 @@ class FixPDBWindow:
                self.loadbutton.config(state=NORMAL)
                
           elif re.search(".txt", filename):
-               print "Fixing All PDBs in list.."
+               print "\nFixing All PDBs in list.."
                LIST = open(filename, 'r')
                for pdbpath in LIST:
                     pdbpath = pdbpath.rstrip()
@@ -206,7 +206,7 @@ class FixPDBWindow:
                     self.fixonepdb(pdbpath, outdirectory, True)
                self.loadbutton.config(state=DISABLED)
                LIST.close()
-               print "PDBs Fixed..."
+               print "\nAll PDBs Fixed...Output to CLEANED directory"
           else:
                print "Please choose a .pdb or .txt file..."
                return
@@ -327,6 +327,6 @@ class FixPDBWindow:
           """
           simply gets a filename...Nessessary for Tkinter Unfortunately.
           """
-          filepath = tkFileDialog.askopenfilename(initialdir = self.defaultdir)
+          filepath = tkFileDialog.askopenfilename(initialdir = global_variables.current_directory)
           global_variables.current_directory = os.path.dirname(filepath)
           return filepath

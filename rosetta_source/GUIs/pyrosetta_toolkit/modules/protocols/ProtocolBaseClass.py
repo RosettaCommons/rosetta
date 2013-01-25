@@ -62,14 +62,14 @@ class ProtocolBaseClass:
         start_energy_score = self.score_class.score(self.pose)
         
         self.output_class.terminal_output.set(1); #Redirect to stdout. For multiprocessing and major Rosetta output.
-        if self.output_class.auto_write.get():
+        if self.output_class.processors.get()>1:
             
             #Multiprocessing is done manually due to mover being unpicklable - Hence no Queue or Pool objects.
             #First, we have an array of jobs:
             workers = []
             for i in range(1, self.output_class.decoys.get()+1):
-                outname = self.pdb_name+"_decoy_"+repr(i)+".pdb"
-                worker = Process(name = "decoy_"+repr(i), target=self._run_mover, args=(mover, outname))
+                outname = self.pdb_name+repr(i)+".pdb"
+                worker = Process(name = repr(i), target=self._run_mover, args=(mover, outname))
                 workers.append(worker)
             total_allowed_jobs = self.output_class.processors.get()
             print "Total allowed jobs: "+repr(total_allowed_jobs)
@@ -81,8 +81,10 @@ class ProtocolBaseClass:
                 if os.path.exists(self.pdb_name+"_"+worker.name+".pdb"):
                     if self.output_class.overwrite.get():
                         os.remove(self.pdb_name+"_"+worker.name+".pdb")
+                        print "Overwriting "+self.pdb_name+"_"+worker.name+".pdb"
                     else:
                         workers.pop(workers.index(worker))
+                        print self.pdb_name+"_"+worker.name+".pdb already exists.  Skipping.  "
                         
             #Run the protocol
             while not job_complete:
@@ -127,18 +129,37 @@ class ProtocolBaseClass:
             while len(multiprocessing.active_children()) != 0: time.sleep(1)
             
         else:
+            
             for i in range(1, self.output_class.rounds.get()+1):
-                print "Round "+repr(i)
+                
                 mover.apply(self.pose)
-                self.output_class.terminal_output.set(0); #Reset output to textbox
-                print "Start: "+ repr(start_energy_score)+" REU"        
-                print "End: "+ repr(self.score_class.score(self.pose))+" REU"
-                self.output_class.terminal_output.set(1); #Reset output to terminal
+                if self.output_class.rounds.get()>1:
+                            
+                    print "Round"+repr(i)+": "+ repr(self.score_class.score(self.pose))+" REU"
+                    
+            print "Start: "+ repr(start_energy_score)+" REU"
+            print "End: "+repr(self.score_class.score(self.pose))+" REU"
+            
+            #Here we output the decoy if the user wishes, overwriting if nessessary.
+            if self.output_class.decoys.get()==1:
+                
+                outpath = self.pdb_name+"_1.pdb"
+                if os.path.exists(outpath):
+                    if self.output_class.overwrite.get():
+                        os.remove(outpath)
+                        self.output_pose(self.pose, outpath)
+                        print "PDB exists.  Overwriting."
+                    else:
+                        print "PDB exists.  Skipping output."
+                else:
+                    self.output_pose(self.pose, outpath)
+                print "Setting decoy as current pose."    
                 
         self.output_class.terminal_output.set(0); #Reset output to textbox
-        print "NOTE: If > 1 decoy has been created, original decoy is still loaded. "
-        print "Job Complete."
-        
+        if self.output_class.decoys.get()>1:
+            print "Original decoy still loaded."
+            
+        print "Job Complete.  Any decoys written to output directory."
         return
     
         
@@ -157,6 +178,17 @@ class ProtocolBaseClass:
         for x in range(1, self.output_class.rounds.get()+1):
             #print "Round "+repr(x)
             mover.apply(p)
+        
+        self.output_pose(p, outputname)
+        
+        print "Start: " +repr(start)+" REU"
+        print "End: " +repr(self.score_class.score(p))+" REU"    
+            
+            
+    def output_pose(self, p, outputname):
+        """
+        Output pose function for ProtocolBaseClass.
+        """
         p.dump_pdb(outputname)
         
         score_tag = ".fasc"
@@ -165,9 +197,3 @@ class ProtocolBaseClass:
 
         scorefile = self.pdb_name + score_tag
         output_scorefile(p, self.input_class.pdb_path.get(), outputname, scorefile, self.score_class.score, self.output_class.decoys.get(), self.pose)
-        print "Start: " +repr(start)+" REU"
-        print "End: " +repr(self.score_class.score(p))+" REU"
-        if self.output_class.decoys.get()==1:
-            self.pose.assign(p)
-            
-            

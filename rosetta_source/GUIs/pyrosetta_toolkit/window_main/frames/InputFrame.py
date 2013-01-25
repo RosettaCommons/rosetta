@@ -118,6 +118,7 @@ class InputFrame(Frame):
         
     def load_loop(self):
         loops_as_strings = self.input_class.load_loop()
+        if not loops_as_string:return
         for loop_string in loops_as_strings:
             loop_stringSP = loop_string.split(":")
             self.input_class.region_start.set(loop_stringSP[0])

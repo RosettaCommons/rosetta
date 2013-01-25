@@ -47,13 +47,16 @@ def rmsd(native, p, loops_as_strings, ca_only = False, all_atom=False):
     rms = ""
     if ca_only:
         rms = CA_rmsd(native, p)
-        print "\nCA RMSD %.3f"%rms
+        print "C-Alpha:"
+        print "%.3f RMSD"%rms
     elif all_atom:
         rms = all_atom_rmsd(native, p)
-        print "\nAll Atom RMSD %.3f"%rms
+        print "All Atom:"
+        print "%.3f RMSD"%rms
     else:
         rms = bb_rmsd(native, p)
-        print "\nBB RMSD %.3f"%rms
+        print "Backbone:"
+        print "%.3f RMSD"%rms
         
     #if start !=0 and end!=0:
     #    start = p.pdb_info().pdb2pose(chain, int(start)); end = p.pdb_info().pdb2pose(chain, int(end))
@@ -77,11 +80,13 @@ def rmsd(native, p, loops_as_strings, ca_only = False, all_atom=False):
             all_rosetta_loops.add_loop(rosetta_loop)
             
             lrms = loop_rmsd(p, native, single_loops, ca_only, bb_only)
-            print "\n"+loop_string+" RMSD %.3f"%lrms
+            print "Region "+loop_string
+            print "%.3f RMSD"%lrms
             loop_rmsd_map[loop_string]=lrms
         lrms = loop_rmsd(p, native, all_rosetta_loops, ca_only, bb_only)
         loop_rmsd_map["total"]=lrms
-        print "\nALL Loop RMSD:%.3f"%lrms
+        print "Regions Average: "
+        print "%.3f RMSD"%lrms
         
     return rms, loop_rmsd_map
 

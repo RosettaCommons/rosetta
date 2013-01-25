@@ -10,10 +10,6 @@
 ## @brief  Main window for settup up Rosetta config files.
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
-
-
-
-
 #Python Imports
 import pickle
 import os
@@ -228,7 +224,10 @@ class RosettaFlagFileBuilder():
     
         if not app:return
         if not save_as_temp:
-            FILE = tkFileDialog.asksaveasfile(initialdir = self.defaultdir)
+            filename = tkFileDialog.asksaveasfilename(initialdir = self.defaultdir)
+            if not filename:return
+            self.defaultdir = os.path.dirname(filename)
+            FILE = open(filename, 'w')
         else:
 
             FILE = open(self.pwd+"/temp_settings_"+app+".txt", 'w')
@@ -243,35 +242,45 @@ class RosettaFlagFileBuilder():
     def loadConfiguration(self):
         """
         Load a rosetta cmd config file.
+        If the first line in the file is #[my_application_path], then we set everything in the window to this application.
         """
         
         filepath = tkFileDialog.askopenfilename(initialdir = self.defaultdir)
         if not filepath:return
-        FILE = open('r', filepath)
+        self.defaultdir = os.path.dirname(filepath)
+        
+        FILE = open(filepath, 'r')
         config = FILE.read()
         config = config.strip()
         #Parse config, take out database and app type. Set curselection to app type.
         configSP = config.split("\n")
         apppath = configSP[0]; configSP.pop(0)
-        app = os.path.split(apppath)[1].split('.')[0]
-        app = app.replace("#", "")
-        for p in self.appDOC:
-            if app==self.appDOC[p]["AppName"]:
-                app = p
+        if re.search("#", apppath):
             
-        print app
-        for stuff in configSP:
-            if re.search("database", stuff):
-                ind = configSP.index(stuff)
+            app = os.path.split(apppath)[1].split('.')[0]
+        
+            app = app.replace("#", "")
+            
+            app_found = False
+            for p in self.appDOC:
+                if app==self.appDOC[p]["AppName"]:
+                    app = p
+                    app_found=True
+            
+            print app
+            
+            if app_found:
+                self.listbox_applications.selection_set(self.array_of_applications.index(app))
+                self.__populate_option_menu__(app)
+            
+        for option in configSP:
+            if re.search("database", option):
+                ind = configSP.index(option)
                 configSP.pop(ind)
                 break
         config = "\n".join(configSP)
         
-        
-        #set curselection to app type:
-        self.listbox_applications.selection_set(self.array_of_applications.index(app))
-        #self.listbox_applications.selection_set()
-        self.__populate_option_menu__(app)
+        self.textbox_cmd_options.delete(1.0, END)
         self.textbox_cmd_options.insert(1.0, config)
         return
     
@@ -317,7 +326,7 @@ class RosettaFlagFileBuilder():
         if self.info_type.get()=="currated":
             varValue = varValue.upper()
         try:
-            #Quick fix as placeholder.
+            #Quick fix.
             if self.info_type.get()=="app":
                 self.__show_app_help_options__()
             else:
@@ -328,6 +337,9 @@ class RosettaFlagFileBuilder():
             pass
         
     def __path_builder_callback__(self, name, index, mode):
+        """
+        Callback for path_builder checkbox
+        """
         varValue = self.path_builder_check.get()
         if self.path_builder_check.get()==0:
             self.delPathBuilder()
@@ -336,7 +348,7 @@ class RosettaFlagFileBuilder():
     
     def __doc_type_callback__(self, name, index, mode):
         """
-        Callback for the info type - currated, doxygen info, options_rosetta, etc.
+        Callback for the info type variable, set through the menu - currated, doxygen info, options_rosetta, etc.
         """
         varValue = self.info_type.get()
         if varValue == "currated":
@@ -633,6 +645,8 @@ class RosettaFlagFileBuilder():
             
     def getRoot(self):
         root = tkFileDialog.askdirectory(initialdir = self.defaultdir)
+        if not root:return ""
+        self.defaultdir=root
         return root
     
     #These do not correspond to where the position is, but they should.
@@ -644,6 +658,9 @@ class RosettaFlagFileBuilder():
         
     def insertSearch(self):
         filepath = tkFileDialog.askopenfilename(initialdir = self.defaultdir)
+        if not filepath:return
+        self.defaultdir = os.path.dirname(filepath)
+        
         self.textbox_cmd_options.insert("1.end", " "+filepath)
             
     def shoClusterSetup(self):
@@ -657,12 +674,13 @@ class RosettaFlagFileBuilder():
 
     def makeList(self):
         """
-        Makes a list of PDB's from a directory.  Does not walk directory.  This can be an option later.
+        Makes a list of PDB's from a directory. Use PyRosetta Toolkit for that.
         """
         
         directory = tkFileDialog.askdirectory(initialdir = self.defaultdir)
-        if directory ==None:
-            return
+        if not directory:return
+        self.defaultdir=directory
+        
         FILES = os.listdir(directory)
         NEWFILE = open(directory+"/PDBLIST.txt", 'w')
         for names in FILES:
@@ -674,32 +692,6 @@ class RosettaFlagFileBuilder():
         print "File saved as 'PDBLIST.txt' in directory specified."
         NEWFILE.close()
         return
-    
-    def makeRecursiveList(self, directory):
-        """
-        Makes a list of PDB's from a directory.  Walks Directory
-        DOES NOT WORK>
-        """
-        directory = tkFileDialog.askdirectory(initialdir = self.defaultdir)
-        filenum = 1
-        if contains=="all":
-            contains = ""
-        #print outFolder
-        AllFiles = []
-        for root, dirs, files in os.walk(inFolder, topdown=True):
-            #print "Root" + root
-            for f in files:
-                if re.search(contains, f):
-                    print "File_"+repr(filenum)+"_"+f
-                    p = os.path.join(root, f)
-                    AllFiles.append(p)
-        
-    def getfile(self):
-        """
-        simply gets a filename...wish I could do this within the command syntax of tkinter...
-        """
-        filepath = tkFileDialog.askopenfilename(initialdir = self.defaultdir)
-        return filepath
     
     def location(self):
         """

@@ -7,7 +7,7 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 ## @file   /GUIs/pyrosetta_toolkit/window_modules/scorefunction/ScoreFxnControl.py
-## @brief  Scorefunction window.  Holds current scorefunction accross GUI.  
+## @brief  Scorefunction window.  Holds current scorefunction accross GUI.  Use to set scorefunction permanently
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #Rosetta Imports
@@ -36,6 +36,8 @@ class ScoreFxnControl():
     """
     This is the class where you can pick from any of rosetta's energy functions and classes, as well as edit them on the fly, save them, and load
     custom built ones.  Useful for testing new scorefunctions.
+    Use this class to set the scorefunction globally.
+    Needs a bit of refactoring.
     """
     
     def __init__(self):
@@ -128,9 +130,24 @@ class ScoreFxnControl():
         self.NonzeroLabel.grid(row=r+10, column=c+0);self.ZeroLabel.grid(row=r+10, column=c+2)
         self.NonzeroListbox.grid(row = r+11, column = c+0); self.NonzeroScroll.grid(row=r+11, column=c+1, sticky=E+N+S)
         self.ZeroListbox.grid(row = r+11, column = c+2); self.ZeroScroll.grid(row=r+11, column=c+3, sticky=E+N+S)
-    #This Gets all of the score types from PyRosetta Database
+        
+        #This Gets all of the score types from PyRosetta Database
         self.populateScoreList()
         self.updateScoreandTerms()
+    
+    
+    
+    ###Public Methods###
+    def set_scorefunction(self, name, patch=None):
+        self.ScoreType.set(name)
+        self.ScorePatch.set(patch)
+        self.scoreOption("Set ScoreFunction")
+        
+        #Check if window has been run and is running somewhere
+        try:
+            self.updateScoreandTerms()
+        except AttributeError:
+            return
         
     def readDefaults(self):
         """
@@ -149,12 +166,14 @@ class ScoreFxnControl():
         DEFAULT.close()
         print self.ScoreType.get()
         print self.ScorePatch.get()
+        
     def setDefaults(self):
         self.ScoreType.set(self.defaultDic["SCORE"])
         if self.defaultDic.has_key("PATCH"):
             self.ScorePatch.set(self.defaultDic["PATCH"])
         if self.defaultDic.has_key("WD"):
             self.wd.set(self.defaultDic["WD"])
+            
     def saveDefaults(self):
         """
         Saves text with default settings.
@@ -197,6 +216,7 @@ class ScoreFxnControl():
         
         for term in sorted(zeroList):
             self.ZeroListbox.insert(END, term)
+            
     def scoreOption(self, Option):
         if Option=="Set ScoreFunction":
             if self.ScorePatch.get() == "None":
@@ -271,13 +291,9 @@ class ScoreFxnControl():
                 data[0].append(xPiece); data[1].append(yPiece)
             plotting.generalPlot().BarPlot(data, "Function", "Weight", "Score Function Breakdown: "+self.ScoreType.get()+" "+self.ScorePatch.get(), Settings)
             return
-        elif Option=="Graph 2 ScoreFxn":
-            pass
-        elif Option=="Edit ScoreFunction":
-            pass
+        else:
+            return
         
-        elif Option=="Add score term":
-            pass
     def updateScore(self):
         self.ScoreType.set(self.ScoreTypeListbox.get(self.ScoreTypeListbox.curselection()))
         self.scoreOption("Set ScoreFunction")
@@ -357,7 +373,7 @@ class ScoreFxnControl():
         
     def updateScoreandTerms(self):
         """
-        Updates Term listboxes, and sets the score to the stringvariables scorepatch and scoretype
+        Updates Term listboxes.
         """
         #self.scoreOption("Set ScoreFunction")
         self.zero, self.nonzero = self.scoreOption("Breakdown ScoreFxn")
@@ -371,6 +387,7 @@ class ScoreFxnControl():
         
         SCOREFILE = open(env["PYROSETTA_DATABASE"] +"/scoring/weights/"+self.ScoreType.get()+".wts")
         self.refLine = SCOREFILE.readline()
+        
     def location(self):
         """
         Allows the script to be self-aware of it's path.

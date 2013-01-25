@@ -162,6 +162,7 @@ class FloppyTailProtocol(ProtocolBaseClass):
         
         
         self.run_protocol(mover)
+        self.main.destroy()
         
     def get_and_set_resfile(self):
         self.resfile.set(tkFileDialog.askopenfilename(title="Resfile", initialdir = global_variables.current_directory))

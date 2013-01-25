@@ -93,13 +93,13 @@ class Menus():
       #### Import ####
 	self.import_menu = Menu(self.main_menu, tearoff=0)
 	self.import_menu.add_command(label="Param PathList File", command = lambda: self.toolkit.input_class.load_param_list())
-	self.import_menu.add_command(label="Rosetta Loop File", command = lambda: self.toolkit.input_class.load_loop())
+	self.import_menu.add_command(label="Rosetta Loop File", command = lambda: self.toolkit.input_frame.load_loop())
 	#self.import_menu.add_command(label="Rosetta Resfile", command = lambda: input_tools.load_resfile())
 
 
       #### Export ####
 	self.export_menu = Menu(self.main_menu, tearoff=0)
-	self.export_menu.add_command(label="SCWRL seq File", command=lambda: self.save_SCWRL_sequence_file())
+	self.export_menu.add_command(label="SCWRL seq File", command=lambda: output_tools.saveSeqFile(self.toolkit.pose, None, self.toolkit.input_class.loops_as_strings))
 	self.export_menu.add_separator()
 	self.export_menu.add_command(label="Rosetta Loop File", command = lambda: output_tools.save_loop_file(self.toolkit.pose, self.toolkit.input_class.loops_as_strings))
 	self.export_menu.add_command(label="Rosetta Basic ResFile", command = lambda: output_tools.save_basic_resfile(self.toolkit.pose))
@@ -257,7 +257,7 @@ class Menus():
 	self.servers.add_command(label = "Fragments", command = lambda: webbrowser.open("http://robetta.bakerlab.org/fragmentsubmit.jsp"))
 	self.servers.add_command(label = "Interface Alanine Scan", command = lambda: webbrowser.open("http://robetta.bakerlab.org/alascansubmit.jsp"))
 	self.servers.add_command(label = "DNA Interface Scan", command = lambda: webbrowser.open("http://robetta.bakerlab.org/dnainterfacescansubmit.jsp"))
-	
+	self.servers.add_command(label = "Scaffold Select", command = lambda: webbrowser.open("http://rosettadesign.med.unc.edu/scaffold/"))
 	self.rna_protocols = Menu(self.main_menu, tearoff=0)
 	
 	self.dna_protocols = Menu(self.main_menu, tearoff=0)
@@ -336,6 +336,7 @@ class Menus():
 	self.help_menu.add_command(label = "License", command = lambda: help_tools.show_license())
 	self.help_menu.add_separator()
 	self.help_menu.add_command(label = "Region Selection", command = lambda: help_tools.region_selection())
+	self.help_menu.add_command(label = "PyMOL Setup", command = lambda:webbrowser.open("http://www.pyrosetta.org/pymol_mover-tutorial"))
 	self.help_menu.add_separator()
 	self.help_menu.add_command(label="Rosetta Manual", command = lambda: webbrowser.open("http://www.rosettacommons.org/manual_guide"))
 	self.help_menu.add_command(label="Rosetta Glossary", command=lambda: help_tools.print_glossary())
