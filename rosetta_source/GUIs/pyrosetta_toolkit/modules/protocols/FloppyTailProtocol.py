@@ -17,6 +17,7 @@ from rosetta.basic.options import set_integer_option
 from rosetta.basic.options import set_boolean_option
 from rosetta.basic.options import set_file_vector_option
 from rosetta.basic.options import set_string_vector_option
+from rosetta.basic.options import set_string_option
 
 #Python Imports
 import os
@@ -132,12 +133,12 @@ class FloppyTailProtocol(ProtocolBaseClass):
             set_boolean_option('FloppyTail:force_linear_fold_tree', True)
         if self.c_root.get():
             set_boolean_option('FloppyTail:C_root', True)
-        if self.set_constraints.get() and self.input_class.constraint_file_path:
-            set_string_vector_option('constraints:cst_file', rosetta.Vector1(self.input_class.constraint_file_path))
+        if (self.set_constraints.get() and self.input_class.constraint_file_path.get()):
+            set_string_vector_option('constraints:cst_file', rosetta.Vector1(self.input_class.constraint_file_path.get()))
         if self.resfile.get():
             set_file_vector_option('packing:resfile', rosetta.Vector1(self.resfile.get()))
         if self.frag3.get():
-            set_string_option('in:file:frag3', rosetta.Vector1(self.frag3.get()))
+            set_string_option('in:file:frag3', self.frag3.get())
         set_boolean_option('packing:repack_only', self.repack_only.get())
         set_integer_option('FloppyTail:perturb_cycles', self.perturb_cycles.get())
         set_integer_option('FloppyTail:refine_cycles', self.refine_cycles.get())
