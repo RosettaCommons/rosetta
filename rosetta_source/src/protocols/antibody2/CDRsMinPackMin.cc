@@ -59,20 +59,6 @@ using namespace core;
 namespace protocols {
 namespace antibody2 {
 
-// default constructor
-CDRsMinPackMin::CDRsMinPackMin() :
-	Mover(),
-	sc_min_( false ),
-	rt_min_( false ),
-	cen_cst_( 0.0 ),
-	high_cst_( 0.0 ),
-	benchmark_( false ),
-	min_type_( "" ),
-	Temperature_( 0.0 ),
-	min_tolerance_( 0.0 )
-{
-	user_defined_ = false;
-}
 
 
 CDRsMinPackMin::CDRsMinPackMin(AntibodyInfoOP antibody_info) : Mover()
@@ -112,6 +98,7 @@ void CDRsMinPackMin::init(){
 	benchmark_ = false;
 	sc_min_ = false;
 	rt_min_ = false;
+	turnoff_minimization_ = false;
 
 	min_type_ = "dfpmin_armijo_nonmonotone";
 	Temperature_ = 0.8;
@@ -174,7 +161,7 @@ void CDRsMinPackMin::finalize_setup( pose::Pose & pose )
 
 	// 2. all_cdr_min_moves
 	simple_moves::MinMoverOP  all_cdr_min_moves = new simple_moves::MinMover( allcdr_map_,loop_scorefxn_highres_, min_type_, min_tolerance_, true );
-	cdr_sequence_move_ -> add_mover(all_cdr_min_moves);
+	if (!turnoff_minimization_ ) cdr_sequence_move_ -> add_mover(all_cdr_min_moves);
 
 
 

@@ -75,6 +75,9 @@ public:
 	void set_h3_stem_graft(bool h3_stem_graft){
 		h3_no_stem_graft_=h3_stem_graft;
 	}
+	void set_packonly_after_graft (bool setting){
+		packonly_after_graft_ = setting;
+	}
 	void set_camelid( bool camelid ) {
 		camelid_ = camelid;
 	}
@@ -116,6 +119,7 @@ private:
 	bool graft_l1_, graft_l2_, graft_l3_;
 	bool graft_h1_, graft_h2_, graft_h3_;
 	bool h3_no_stem_graft_;
+	bool packonly_after_graft_;
 	bool camelid_;
 	bool camelid_constraints_;
     bool sc_min_;

@@ -381,6 +381,7 @@ namespace antibody { StringOptionKey const h2_template( "antibody:h2_template" )
 namespace antibody { BooleanOptionKey const graft_h3( "antibody:graft_h3" );  }
 namespace antibody { StringOptionKey const h3_template( "antibody:h3_template" );  }
 namespace antibody { BooleanOptionKey const h3_no_stem_graft( "antibody:h3_no_stem_graft" );  }
+namespace antibody { BooleanOptionKey const packonly_after_graft( "antibody:packonly_after_graft" );  }
 namespace antibody { BooleanOptionKey const model_h3( "antibody:model_h3" );  }
 namespace antibody { BooleanOptionKey const snugfit( "antibody:snugfit" );  }
 namespace antibody { BooleanOptionKey const refine_h3( "antibody:refine_h3" );  }

@@ -104,6 +104,7 @@ void GraftCDRLoopsProtocol::set_default()
 	graft_h2_  = false;
 	graft_h3_  = false;
 	h3_no_stem_graft_=false;
+	packonly_after_graft_=false;
 	benchmark_ = false;
 	camelid_   = false;
 	camelid_constraints_ = false;
@@ -158,6 +159,8 @@ void GraftCDRLoopsProtocol::init_from_options() {
                 set_graft_h3( option[ OptionKeys::antibody::graft_h3 ]() );
 	if ( option[ OptionKeys::antibody::h3_no_stem_graft ].user()  )
 		set_h3_stem_graft( option[ OptionKeys::antibody::h3_no_stem_graft ]()  );
+	if ( option[ OptionKeys::antibody::packonly_after_graft ].user()  )
+		set_packonly_after_graft( option[ OptionKeys::antibody::packonly_after_graft ]()  );
 	if ( option[ OptionKeys::antibody::camelid ].user() )
                 set_camelid( option[ OptionKeys::antibody::camelid ]() );
 	if ( option[ OptionKeys::antibody::camelid_constraints ].user() )
@@ -283,6 +286,7 @@ void GraftCDRLoopsProtocol::finalize_setup( pose::Pose & frame_pose ) {
         // the tf_ include all the residues, the movemap is to use the deafult one in CDRsMinPackMin, which is the CDRs
         cdrs_min_pack_min->set_sc_min(sc_min_);
         cdrs_min_pack_min->set_sc_min(rt_min_);
+		cdrs_min_pack_min -> set_turnoff_minimization(packonly_after_graft_);
     
     graft_sequence_->add_mover(cdrs_min_pack_min);
     

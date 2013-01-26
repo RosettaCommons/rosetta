@@ -42,9 +42,6 @@ namespace antibody2 {
 class CDRsMinPackMin: public moves::Mover {
 public:
 
-	// default constructor
-	CDRsMinPackMin();
-
 	CDRsMinPackMin(AntibodyInfoOP antibody_info);
 
 	CDRsMinPackMin(
@@ -66,6 +63,9 @@ public:
 	// simple inline setters
 	void set_sc_min (bool scmin) {sc_min_ = scmin ;}
 	void set_rt_min (bool rtmin) {rt_min_ = rtmin ;}
+	void set_turnoff_minimization(bool setting) {
+		turnoff_minimization_=setting;
+	}
 
 	void show( std::ostream & out=std::cout );
 	friend std::ostream & operator<<(std::ostream& out, const CDRsMinPackMin & ab_m_2 );
@@ -74,7 +74,7 @@ public:
 private:
 	bool sc_min_;
 	bool rt_min_;
-
+	bool turnoff_minimization_;
 	/// @brief refine H3 only
 	core::Real cen_cst_, high_cst_;
 

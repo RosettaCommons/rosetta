@@ -11479,6 +11479,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-packonly_after_graft</b> \<Boolean\><dt>
+<dd>Only do packing after grafting, do not do minimization</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-model_h3</b> \<Boolean\><dt>
 <dd>Model CDR H3 from scratch using fragments</dd><br>
 <dd>Default: false</dd><br>

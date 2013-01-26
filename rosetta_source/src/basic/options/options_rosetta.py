@@ -4537,6 +4537,10 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 			desc='Graft CDR H3 from template, use stem to superimpose, but do not copy the stem',
 			default='false'
 			),
+		Option( 'packonly_after_graft', 'Boolean',
+			desc='Only do packing after grafting, do not do minimization',
+			default='false'
+			),
 		Option( 'model_h3', 'Boolean',
 			desc='Model CDR H3 from scratch using fragments',
 			default='false'

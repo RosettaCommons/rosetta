@@ -2369,6 +2369,7 @@ option.add( basic::options::OptionKeys::antibody::h2_template, "Choose specified
 option.add( basic::options::OptionKeys::antibody::graft_h3, "Graft CDR H3 from template" ).def(false);
 option.add( basic::options::OptionKeys::antibody::h3_template, "Choose specified template for CDR H3 grafting" ).def("h3.pdb");
 option.add( basic::options::OptionKeys::antibody::h3_no_stem_graft, "Graft CDR H3 from template, use stem to superimpose, but do not copy the stem" ).def(false);
+option.add( basic::options::OptionKeys::antibody::packonly_after_graft, "Only do packing after grafting, do not do minimization" ).def(false);
 option.add( basic::options::OptionKeys::antibody::model_h3, "Model CDR H3 from scratch using fragments" ).def(false);
 option.add( basic::options::OptionKeys::antibody::snugfit, "Adjust relative orientation of VL-VH" ).def(false);
 option.add( basic::options::OptionKeys::antibody::refine_h3, "Refine CDR H3 in high resolution" ).def(true);
