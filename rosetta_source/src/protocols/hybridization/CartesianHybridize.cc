@@ -599,7 +599,10 @@ sampler:
 				utility::vector1<core::Real> max_residuals(3,0);
 				utility::vector1<int> max_poses(4,-1);
 				for (int i=1; i<(int)n_prot_res; ++i) {
-					if (pose.fold_tree().is_cutpoint(i+1)) {
+					if (!pose.residue_type(i).is_protein()){
+						residuals[i] = -1;
+					}
+					else if (pose.fold_tree().is_cutpoint(i+1)) {
 						residuals[i] = -1;
 					} else {
 						numeric::xyzVector< core::Real > c0 , n1;
