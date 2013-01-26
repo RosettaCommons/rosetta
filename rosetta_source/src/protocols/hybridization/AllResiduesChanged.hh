@@ -60,10 +60,12 @@ private:
   }
 
   void set_initial_pose( const core::pose::Pose & pose ) {
+	  initial_phis.resize(pose.total_residue());
+	  initial_psis.resize(pose.total_residue());
     for ( unsigned int i = 1; i <= pose.total_residue(); ++i ) {
       if ( ! pose.residue(i).is_protein() ) continue;
-      initial_phis.push_back( pose.phi(i) );
-      initial_psis.push_back( pose.psi(i) );
+		initial_phis[i] = pose.phi(i);
+		initial_psis[i] = pose.psi(i);
     }
 
     original_sequence_ = pose.sequence();

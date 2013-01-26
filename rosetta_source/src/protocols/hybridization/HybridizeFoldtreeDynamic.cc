@@ -70,6 +70,11 @@ utility::vector1 < core::Size > HybridizeFoldtreeDynamic::decide_cuts(core::pose
 	// cutpoints in the middle of the loop
 	// cut number is the residue before the cut
 	std::string cut_point_decision = "middle_L";
+	
+	using utility::vector1;
+	vector1<core::Size> cuts_orig;
+	vector1<std::pair<core::Size, core::Size> > jumps_orig;
+	jumps_and_cuts_from_foldtree(initial_asymm_foldtree_, jumps_orig, cuts_orig);
 
 	utility::vector1<bool> cut_options(n_residues, true);
 
@@ -90,6 +95,17 @@ utility::vector1 < core::Size > HybridizeFoldtreeDynamic::decide_cuts(core::pose
 			cut = loop_start;
 		}
 		else {
+			// if there is a cut in the original foldtree (in multi-chain cases), use that cut
+			bool cut_found = false;
+			for (core::Size i_cut_old = 1; i_cut_old <= cuts_orig.size(); ++i_cut_old) {
+				if (cuts_orig[i_cut_old] >= loop_start && cuts_orig[i_cut_old] <= loop_end) {
+					cut = cuts_orig[i_cut_old];
+					TR.Debug << "Respect the input cut position: " << cut << std::endl;
+					cut_found = true;
+					break;
+				}
+			}
+			if (! cut_found) {
 			if ( cut_point_decision == "middle") {
 				cut = (loop_start + loop_end ) /2;
 			}
@@ -142,6 +158,7 @@ utility::vector1 < core::Size > HybridizeFoldtreeDynamic::decide_cuts(core::pose
 			}
 			else {
 				utility_exit_with_message("do not know how to make cut points");
+			}
 			}
 		}
 		cut_positions.push_back(cut);
@@ -224,6 +241,13 @@ void HybridizeFoldtreeDynamic::initialize(
 	num_protein_residues_ = pose.total_residue();
 	saved_n_residue_ = pose.total_residue();
 	saved_ft_ = pose.conformation().fold_tree();
+
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
+		initial_asymm_foldtree_ = core::conformation::symmetry::get_asymm_unit_fold_tree( pose.conformation() );
+	}
+	else {
+		initial_asymm_foldtree_ = pose.conformation().fold_tree();
+	}
 
 	// strand pairings
 	// initialize pairings data
@@ -331,18 +355,14 @@ void HybridizeFoldtreeDynamic::reset(
 }
 
 // stolen from protocols::forge::methods::jumps_and_cuts_from_pose
-void HybridizeFoldtreeDynamic::jumps_and_cuts_from_pose( core::pose::Pose & pose,
-		utility::vector1< std::pair< core::Size, core::Size > > & jumps,
-		utility::vector1< core::Size > & cuts) {
-
-	core::kinematics::FoldTree f_orig = pose.fold_tree();
-
-	for ( core::Size i = 1; i<= f_orig.num_jump(); ++i ) {
-		core::Size down ( f_orig.downstream_jump_residue(i) );
-		core::Size up ( f_orig.upstream_jump_residue(i) );
-		jumps.push_back( std::pair<int,int>( down, up ) );
+void HybridizeFoldtreeDynamic::jumps_and_cuts_from_foldtree( core::kinematics::FoldTree & ft, utility::vector1< std::pair< core::Size, core::Size > > & jumps, utility::vector1< core::Size > & cuts) {
+	
+	for ( core::Size i = 1; i<= ft.num_jump(); ++i ) {
+		core::Size down ( ft.downstream_jump_residue(i) );
+		core::Size up ( ft.upstream_jump_residue(i) );
+		jumps.push_back( std::pair<core::Size,core::Size>( down, up ) );
 	}
-	cuts =  f_orig.cutpoints();
+	cuts =  ft.cutpoints();
 }
 
 void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
@@ -370,25 +390,37 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 	vector1<std::pair<Size, Size> > jumps_old;
 	core::Size last_chunk_residue(chunks_[chunks_.num_loop()].stop());
 
-	if (!use_symm) {
-		jumps_and_cuts_from_pose(pose, jumps_old, cuts_old);
-		for (Size i = 1; i <= jumps_old.size(); ++i) {
-			if (jumps_old[i].first == jump_root) continue;
-			if (jumps_old[i].second == jump_root) continue;
+	//if (!use_symm) {
+	//if ( ! initial_asymm_foldtree_.is_simple_tree() ) {
+	
+	jumps_and_cuts_from_foldtree(initial_asymm_foldtree_, jumps_old, cuts_old);
+	
+	for (Size i = 1; i <= jumps_old.size(); ++i) {
+		//if (jumps_old[i].first == jump_root) continue; // no need to skip this any more
+		//if (jumps_old[i].second == jump_root) continue;
 
-			if ( jumps_old[i].first > last_chunk_residue && jumps_old[i].first <= num_nonvirt_residues_) {
-				jumps.push_back(std::make_pair(jump_root, jumps_old[i].first));
-			}
-			else if ( jumps_old[i].second > last_chunk_residue && jumps_old[i].first <= num_nonvirt_residues_) {
-				jumps.push_back(std::make_pair(jump_root, jumps_old[i].second));
-			}
+		if ( jumps_old[i].first > last_chunk_residue && jumps_old[i].first <= num_nonvirt_residues_) {
+			jumps.push_back(std::make_pair(jump_root, jumps_old[i].first));
+			TR.Debug << "Adding additional jump: " << jump_root << jumps_old[i].first << std::endl;
 		}
-		for (Size i = 1; i <= cuts_old.size(); ++i) {
-			if ( cuts_old[i] > last_chunk_residue && cuts_old[i] < num_nonvirt_residues_) {
-				cuts.push_back(cuts_old[i]);
-			}
+		else if ( jumps_old[i].second > last_chunk_residue && jumps_old[i].second <= num_nonvirt_residues_) {
+			jumps.push_back(std::make_pair(jump_root, jumps_old[i].second));
+			TR.Debug << "Adding additional jump: " << jump_root << jumps_old[i].second << std::endl;
 		}
 	}
+	for (Size i = 1; i <= cuts_old.size(); ++i) {
+		if ( cuts_old[i] > last_chunk_residue && cuts_old[i] <= num_nonvirt_residues_) {
+			cuts.push_back(cuts_old[i]);
+			TR.Debug << "Adding additional cut: " << cuts_old[i] << std::endl;
+		}
+	}
+	if (!use_symm) {
+		if (initial_asymm_foldtree_.nres() > last_chunk_residue && initial_asymm_foldtree_.nres() <= num_nonvirt_residues_) {
+			cuts.push_back(initial_asymm_foldtree_.nres());
+			TR.Debug << "Adding a cut on the last residue: " << initial_asymm_foldtree_.nres() << std::endl;
+		}
+	}
+	//}
 
 	// add root jumps and cuts for chunks that should be rooted to the star fold tree
 	//   these should be chunks from a template or if none exist, the first strand pair chunk
@@ -398,20 +430,20 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 		root_chunk_indices.insert(1);
 	}
 	std::set<core::Size>::iterator set_iter;
-  for (Size i = 1; i <= chunks_.num_loop(); ++i) {
-    const Loop& chunk = chunks_[i];
-    const Size cut_point  = chunk.stop();
-    const Size jump_point = anchor_positions_[i];
-
-    Size j_root = num_nonvirt_residues_+1;
-    if (use_symm && i>1) j_root = anchor_positions_[1];
-
-		TR << "Adding chunk cut: " << cut_point << std::endl;
-    cuts.push_back(cut_point);
-
+	for (Size i = 1; i <= chunks_.num_loop(); ++i) {
+		const Loop& chunk = chunks_[i];
+		const Size cut_point  = chunk.stop();
+		const Size jump_point = anchor_positions_[i];
+		
+		Size j_root = num_nonvirt_residues_+1;
+		if (use_symm && i>1) j_root = anchor_positions_[1];
+		
+		TR.Debug << "Adding chunk cut: " << cut_point << std::endl;
+		cuts.push_back(cut_point);
+		
 		if (root_chunk_indices.count(i)) {
 			rooted_chunk_indices_.insert(i);
-			TR << "Adding root jump: " << j_root << " " << jump_point << std::endl;
+			TR.Debug << "Adding root jump: " << j_root << " " << jump_point << std::endl;
 			jumps.push_back(std::make_pair(j_root, jump_point));
 		}
 	}
@@ -459,7 +491,7 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 				// remove cut of rooted chunk
 				TR << "Removing root cut: " << chunks_[*set_iter].stop() << std::endl;
 				remove_cut( chunks_[*set_iter].stop(), cuts );
-				TR << "Adding floating pair chunk cut: " << chunks_[up_index].stop() << std::endl;
+				TR.Debug << "Adding floating pair chunk cut: " << chunks_[up_index].stop() << std::endl;
 				cuts.push_back(chunks_[up_index].stop());
 				rooted_chunk_indices.insert(up_index);
 				add_overlapping_pair_chunks( up_index, cuts, jumps, rooted_chunk_indices );
@@ -488,7 +520,7 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 					// remove cut of rooted chunk
 					TR << "Removing root cut: " << chunks_[*set_iter].stop() << std::endl;
 					remove_cut( chunks_[*set_iter].stop(), cuts );
-					TR << "Adding floating pair chunk cut: " << chunks_[up_index].stop() << std::endl;
+					TR.Debug << "Adding floating pair chunk cut: " << chunks_[up_index].stop() << std::endl;
 					cuts.push_back(chunks_[up_index].stop());
 					rooted_chunk_indices.insert(up_index);
 					add_overlapping_pair_chunks( up_index, cuts, jumps, rooted_chunk_indices );
@@ -515,7 +547,10 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 
 	// Remember to include the original cutpoint at the end of the chain
 	// (before the virtual residue)
-	cuts.push_back(num_nonvirt_residues_);
+	// TR << "Adding the last cut: " << num_nonvirt_residues_ << std::endl;
+	// cuts.push_back(num_nonvirt_residues_);
+
+	TR.Debug << "jump size: " << jumps.size() << " cut size: " << cuts.size() << std::endl;
 
 	ObjexxFCL::FArray2D_int ft_jumps(2, jumps.size());
 	for (Size i = 1; i <= jumps.size(); ++i) {
@@ -610,8 +645,6 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 			if (updated) TR << "joined continuous rooted peptide edges: " << tree << std::endl;
 		}
 	} // strand pairings
-
-
 
 	if (!status) {
 		utility_exit_with_message("HybridizeFoldtreeDynamic: failed to build fold tree from cuts and jumps");

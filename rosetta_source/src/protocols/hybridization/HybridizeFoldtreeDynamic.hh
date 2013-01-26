@@ -60,9 +60,8 @@ private:
 	void set_core_chunks(const protocols::loops::Loops & chunks);
 
 	// fold tree
-	void jumps_and_cuts_from_pose( core::pose::Pose & pose,
-			utility::vector1< std::pair<core::Size, core::Size > > & jumps,
-			utility::vector1< core::Size > & cuts);
+	//void jumps_and_cuts_from_pose( core::pose::Pose & pose, utility::vector1< std::pair<int, int > > & jumps, utility::vector1< int > & cuts);
+	void jumps_and_cuts_from_foldtree( core::kinematics::FoldTree & foldtree, utility::vector1< std::pair<core::Size, core::Size > > & jumps, utility::vector1< core::Size > & cuts);
 
 	// cutpoints selection logic
 	utility::vector1 < core::Size > decide_cuts(core::pose::Pose & pose, core::Size n_residues);
@@ -110,6 +109,7 @@ private:
 	core::Size num_protein_residues_;
 
 	// backup original info
+	core::kinematics::FoldTree initial_asymm_foldtree_;
 	core::kinematics::FoldTree saved_ft_;
 	core::Size saved_n_residue_;
 
