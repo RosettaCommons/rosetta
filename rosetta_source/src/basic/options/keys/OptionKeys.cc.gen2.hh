@@ -636,6 +636,7 @@ namespace FloppyTail { BooleanOptionKey const publication( "FloppyTail:publicati
 namespace FloppyTail { BooleanOptionKey const C_root( "FloppyTail:C_root" );  }
 namespace FloppyTail { BooleanOptionKey const force_linear_fold_tree( "FloppyTail:force_linear_fold_tree" );  }
 namespace FloppyTail { BooleanOptionKey const debug( "FloppyTail:debug" );  }
+namespace FloppyTail { StringOptionKey const cen_weights( "FloppyTail:cen_weights" );  }
 namespace FloppyTail { BooleanOptionKey const perturb_show( "FloppyTail:perturb_show" );  }
 namespace FloppyTail { IntegerOptionKey const perturb_cycles( "FloppyTail:perturb_cycles" );  }
 namespace FloppyTail { RealOptionKey const perturb_temp( "FloppyTail:perturb_temp" );  }
@@ -656,4 +657,3 @@ namespace DenovoProteinDesign { BooleanOptionKey const use_template_topology( "D
 namespace DenovoProteinDesign { FileOptionKey const create_from_template_pdb( "DenovoProteinDesign:create_from_template_pdb" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const create_from_secondary_structure( "DenovoProteinDesign:create_from_secondary_structure" );  }
 namespace RBSegmentRelax { BooleanOptionKey const RBSegmentRelax( "RBSegmentRelax" );  }
-namespace RBSegmentRelax { FileOptionKey const input_pdb( "RBSegmentRelax:input_pdb" );  }

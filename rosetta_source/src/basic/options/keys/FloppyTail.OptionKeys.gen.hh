@@ -34,6 +34,7 @@ namespace FloppyTail { extern BooleanOptionKey const publication; }
 namespace FloppyTail { extern BooleanOptionKey const C_root; }
 namespace FloppyTail { extern BooleanOptionKey const force_linear_fold_tree; }
 namespace FloppyTail { extern BooleanOptionKey const debug; }
+namespace FloppyTail { extern StringOptionKey const cen_weights; }
 namespace FloppyTail { extern BooleanOptionKey const perturb_show; }
 namespace FloppyTail { extern IntegerOptionKey const perturb_cycles; }
 namespace FloppyTail { extern RealOptionKey const perturb_temp; }

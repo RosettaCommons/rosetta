@@ -9554,6 +9554,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-cen_weights</b> \<String\><dt>
+<dd>Use a different/custom scorefunction for centroid step</dd><br>
+</dl>
+<dl>
 <dt><b>-perturb_show</b> \<Boolean\><dt>
 <dd>dump perturbed centroid pdbs as well as final results</dd><br>
 <dd>Default: false</dd><br>

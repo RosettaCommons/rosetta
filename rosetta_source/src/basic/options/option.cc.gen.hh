@@ -1963,6 +1963,7 @@ option.add( basic::options::OptionKeys::FloppyTail::publication, "output statist
 option.add( basic::options::OptionKeys::FloppyTail::C_root, "Reroot the fold_tree to the C-terminus.  If your flexible region is N-terminal, or closer to the first half of the pose, this will speed computation." ).def(false);
 option.add( basic::options::OptionKeys::FloppyTail::force_linear_fold_tree, "Force a linear fold tree.  Used in combination with C_root and reordering the chains in your input PDB to ensure you get exactly the right kinematics" ).def(false);
 option.add( basic::options::OptionKeys::FloppyTail::debug, "debug mode (extra checks and pdb dumps)" ).def(false);
+option.add( basic::options::OptionKeys::FloppyTail::cen_weights, "Use a different/custom scorefunction for centroid step" );
 option.add( basic::options::OptionKeys::FloppyTail::perturb_show, "dump perturbed centroid pdbs as well as final results" ).def(false);
 option.add( basic::options::OptionKeys::FloppyTail::perturb_cycles, "perturbation phase runs for <input> cycles" ).def(5);
 option.add( basic::options::OptionKeys::FloppyTail::perturb_temp, "perturbation phase temperature for monte carlo" ).def(0.8);
@@ -1983,10 +1984,10 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topolo
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
+option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_pdb, "PDB file from which to draw constraints" ).def("--");

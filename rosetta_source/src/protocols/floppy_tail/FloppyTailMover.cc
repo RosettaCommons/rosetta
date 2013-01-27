@@ -106,7 +106,7 @@ FloppyTailMover::FloppyTailMover() :
 
 	//this should be per-input, not in the ctor, if multiple frags files
 	if (basic::options::option[ basic::options::OptionKeys::in::file::frag3].user()){
-		fragset3mer_ = new core::fragment::ConstantLengthFragSet( 3 );
+        fragset3mer_ = new core::fragment::ConstantLengthFragSet( 3 );
 		fragset3mer_->read_fragment_file( basic::options::option[ basic::options::OptionKeys::in::file::frag3].value() );
 	}
 
@@ -114,15 +114,21 @@ FloppyTailMover::FloppyTailMover() :
 
 	//set up centroid scorefunction
 	using namespace core::scoring;
-	centroid_scorefunction_ = new ScoreFunction;
-	centroid_scorefunction_->set_weight( env,         1.0 );
-	centroid_scorefunction_->set_weight( cbeta,       1.0 );
-	centroid_scorefunction_->set_weight( vdw,         1.0 );
-	centroid_scorefunction_->set_weight( pair, (pair_off ? 0.0 : 1.0) ); //no pair term experiment - not for general use
-	centroid_scorefunction_->set_weight( cenpack,     1.0 );
-	centroid_scorefunction_->set_weight( rama,        1.0 );
-	centroid_scorefunction_->set_weight( hbond_lr_bb, 1.0 );
-	centroid_scorefunction_->set_weight( hbond_sr_bb, 1.0 );
+    if (basic::options::option[ basic::options::OptionKeys::FloppyTail::cen_weights].user()){
+        centroid_scorefunction_ = ScoreFunctionFactory::create_score_function(basic::options::option[ basic::options::OptionKeys::FloppyTail::cen_weights].value());
+    }
+    else{
+        centroid_scorefunction_ = new ScoreFunction;
+        centroid_scorefunction_->set_weight( env,         1.0 );
+        centroid_scorefunction_->set_weight( cbeta,       1.0 );
+        centroid_scorefunction_->set_weight( vdw,         1.0 );
+        centroid_scorefunction_->set_weight( pair, (pair_off ? 0.0 : 1.0) ); //no pair term experiment - not for general use
+        centroid_scorefunction_->set_weight( cenpack,     1.0 );
+        centroid_scorefunction_->set_weight( rama,        1.0 );
+        centroid_scorefunction_->set_weight( hbond_lr_bb, 1.0 );
+        centroid_scorefunction_->set_weight( hbond_sr_bb, 1.0 );
+    }
+    
 	core::scoring::constraints::add_constraints_from_cmdline_to_scorefxn( *centroid_scorefunction_ ); //protected if(option) internally
 	TR << "Using centroid scorefunction\n" << *centroid_scorefunction_;
 
@@ -130,8 +136,7 @@ FloppyTailMover::FloppyTailMover() :
 	fullatom_scorefunction_ = getScoreFunction();
 	core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *fullatom_scorefunction_ ); //protected if(option) internally
 	if( pair_off ) fullatom_scorefunction_->set_weight( fa_pair, 0.0 ); //not for general use
-	TR << "Using fullatom scorefunction (STANDARD_WTS, SCORE12_PATCH), pair may be modified\n"
-	<< *fullatom_scorefunction_;
+	TR << "Using fullatom scorefunction\n"<< *fullatom_scorefunction_;
 
 }
 

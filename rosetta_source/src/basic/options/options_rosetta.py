@@ -3983,6 +3983,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 		Option( 'C_root', 'Boolean', desc='Reroot the fold_tree to the C-terminus.  If your flexible region is N-terminal, or closer to the first half of the pose, this will speed computation.', default='false'),
 		Option( 'force_linear_fold_tree', 'Boolean', desc='Force a linear fold tree.  Used in combination with C_root and reordering the chains in your input PDB to ensure you get exactly the right kinematics', default='false'),
 		Option( 'debug', 'Boolean', desc='debug mode (extra checks and pdb dumps)', default='false' ),
+		Option( 'cen_weights', 'String', desc = 'Use a different/custom scorefunction for centroid step'),
     Option( 'perturb_show', 'Boolean', desc='dump perturbed centroid pdbs as well as final results', default='false' ),
     Option( 'perturb_cycles', 'Integer', desc='perturbation phase runs for <input> cycles', default = '5' ),
     Option( 'perturb_temp', 'Real', desc='perturbation phase temperature for monte carlo', default = '0.8' ),
