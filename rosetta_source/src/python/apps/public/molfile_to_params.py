@@ -1145,6 +1145,28 @@ def write_all_files(m, molfiles, num_frags, options, suffix=""): #{{{
             else:
                 write_fragment_mol2(mol2_file, m, i+1)
                 print "Wrote mol2 file %s" % mol2_file
+    
+    if options.extra_torsion_output:
+        tor_file = "%s%s.tors" % (options.pdb, suffix)
+        f = open(tor_file,'w')
+        def expand_atoms_by_one_bond(bonds, atoms):
+            atoms_current = [a for a in atoms]
+            for b in bonds:
+                if b.a1 in atoms_current or b.a2 in atoms_current:
+                    if b.a1 not in atoms: atoms.append(b.a1)
+                    if b.a2 not in atoms: atoms.append(b.a2)
+        for b in m.bonds:
+            if (b.order == Bond.DOUBLE and b.a1.elem in ["C"]) or (b.order == Bond.AROMATIC):
+
+                conjugated_atoms = [b.a1, b.a2]
+                expand_atoms_by_one_bond(m.bonds,conjugated_atoms)
+                expand_atoms_by_one_bond(m.bonds,conjugated_atoms)
+
+                for i in range(2,len(conjugated_atoms)):
+                    for j in range(i+1,len(conjugated_atoms)):
+                        f.write("%s %s %s %s %s  0  80  2\n"%(options.name, conjugated_atoms[i].name, b.a1.name, b.a2.name, conjugated_atoms[j].name))
+        f.close()
+        
     return 0
 #}}}
 def main(argv): #{{{
@@ -1249,6 +1271,11 @@ and for visualizing exactly what was done to the ligand.
         default=False,
         action="store_true",
         help="skip writing .pdb files (for debugging)"
+    )
+    parser.add_option("--extra_torsion_output",
+        default=False,
+        action="store_true",
+        help="writing additional torsion files"
     )
     parser.add_option("--keep-names",
         default=False,
