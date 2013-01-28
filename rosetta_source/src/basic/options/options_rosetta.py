@@ -4594,6 +4594,14 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 			desc='Choose a refine method to refine a loop in centroid mode',
 			default='refine_kic'
 			),
+		Option( 'constrain_cter', 'Boolean',
+			desc='The option to turn on/off the cterminal constrain penalty in loop scoring function',
+			default='false'
+			),
+		Option( 'constrain_vlvh_qq', 'Boolean',
+			desc='The option to turn on/off the VL-VH QQ H-bond in docking scoring function',
+			default='false'
+			),
 		Option( 'snug_loops', 'Boolean',
 			desc='Allow CDR loop backbone flexibility during minimization',
 			default='false'

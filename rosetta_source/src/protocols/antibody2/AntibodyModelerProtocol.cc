@@ -124,6 +124,9 @@ void AntibodyModelerProtocol::set_default()
 	camelid_   = false;
 	camelid_constraints_ = false;
     use_csts_ = false;
+	constrain_vlvh_qq_ = false;
+	constrain_cter_ = false;
+	
     cst_weight_ = 0.0;
     cen_cst_ = 10.0;
     high_cst_ = 100.0; // if changed here, please change at the end of AntibodyModeler as well
@@ -152,6 +155,8 @@ void AntibodyModelerProtocol::register_options()
     option.add_relevant( OptionKeys::run::benchmark );
 	option.add_relevant( OptionKeys::constraints::cst_weight );
     option.add_relevant( OptionKeys::constraints::cst_file );
+	option.add_relevant( OptionKeys::antibody::constrain_vlvh_qq );
+	option.add_relevant( OptionKeys::antibody::constrain_cter );
 	option.add_relevant( OptionKeys::in::file::native );
     option.add_relevant( OptionKeys::antibody::refine_h3 );
     option.add_relevant( OptionKeys::antibody::h3_filter );
@@ -190,6 +195,8 @@ void AntibodyModelerProtocol::init_from_options()
     if ( option[ OptionKeys::antibody::cter_insert ].user() ){
         set_CterInsert( option[ OptionKeys::antibody::cter_insert ]() );
     }
+	
+	
     if ( option[ OptionKeys::antibody::h3_filter ].user() ) {
         set_H3Filter ( option[ OptionKeys::antibody::h3_filter ]() );
     }
@@ -207,6 +214,12 @@ void AntibodyModelerProtocol::init_from_options()
 	}
     if ( option[ OptionKeys::constraints::cst_file].user() ){
         set_use_constraints( option[ OptionKeys::constraints::cst_file ].user() ); // .user here??
+    }
+	if ( option[ OptionKeys::antibody::constrain_cter ].user() ){
+        set_constrain_cter( option[ OptionKeys::antibody::constrain_cter ]() );
+    }
+	if ( option[ OptionKeys::antibody::constrain_vlvh_qq ].user() ){
+        set_constrain_vlvh_qq( option[ OptionKeys::antibody::constrain_vlvh_qq ]() );
     }
     if ( option[ OptionKeys::antibody::sc_min ].user() ) {
         set_sc_min( option[ OptionKeys::antibody::sc_min ]() );
@@ -257,18 +270,21 @@ AntibodyModelerProtocol::setup_objects() {
     dock_scorefxn_highres_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
         dock_scorefxn_highres_->set_weight( core::scoring::chainbreak, 1.0 );
         dock_scorefxn_highres_->set_weight( core::scoring::overlap_chainbreak, 10./3. );
+		if(constrain_vlvh_qq_){
+			dock_scorefxn_highres_->set_weight( scoring::atom_pair_constraint, cst_weight_ );
+		}
     loop_scorefxn_centroid_ = scoring::ScoreFunctionFactory::create_score_function( "cen_std", "score4L" );
         loop_scorefxn_centroid_->set_weight( scoring::chainbreak, 10./3. );
         //loop_scorefxn_centroid_->set_weight( scoring::atom_pair_constraint, cen_cst_ );
     loop_scorefxn_highres_ = scoring::ScoreFunctionFactory::create_score_function("standard", "score12" );
         loop_scorefxn_highres_->set_weight( scoring::chainbreak, 1.0 );
         loop_scorefxn_highres_->set_weight( scoring::overlap_chainbreak, 10./3. );
-        //loop_scorefxn_highres_->set_weight( scoring::atom_pair_constraint, high_cst_ );
-        loop_scorefxn_highres_->set_weight(scoring::dihedral_constraint, 1.0);
-    
+		if(constrain_cter_){
+			loop_scorefxn_highres_->set_weight(scoring::dihedral_constraint, cst_weight_);
+		}
 }
     
-void AntibodyModelerProtocol::sync_objects_with_flags() 
+void AntibodyModelerProtocol::sync_objects_with_flags()
 {
 	using namespace protocols::moves;
 	flags_and_objects_are_in_sync_ = true;
@@ -363,8 +379,8 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 		display_constraint_residues( pose );
 		return;
 	}
-    
-    
+
+
     // Step 1: model the cdr h3 in centroid mode
     // JQX notes: pay attention to the way it treats the stems when extending the loop
     if(model_h3_){ 
@@ -434,16 +450,25 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
     loops::remove_cutpoint_variants( pose, true );
 	loops::add_cutpoint_variants( pose );
     
-    // add scores to map for outputting constraint score
+    // Final score (with constraints) before jd2 output the results
+	if(constrain_vlvh_qq_){
+		loop_scorefxn_highres_->set_weight( scoring::atom_pair_constraint, cst_weight_ );
+	}
 	( *loop_scorefxn_highres_ )( pose );
     
-	Real constraint_score = pose.energies().total_energies()[ core::scoring::atom_pair_constraint ];
+	
+	
+	// the specific constraint terms for output in the log file
+	Real atom_pair_constraint_score = pose.energies().total_energies()[ core::scoring::atom_pair_constraint ];
+	Real dihedral_constraint_score = pose.energies().total_energies()[ core::scoring::dihedral_constraint ];
 
-	// removing constraint score
-	loop_scorefxn_highres_->set_weight( core::scoring::atom_pair_constraint, 0.00 );
-	// add scores to map for output
-	TR<< "Final Score = "<< ( *loop_scorefxn_highres_ )( pose ) << std::endl;
+	TR<< " 		atom_pair_constraint_score= "<<atom_pair_constraint_score<<std::endl;
+	TR<< "      dihedral_constraint_score= "<<dihedral_constraint_score<<std::endl;
 
+	
+	
+	
+	
 	job->add_string_real_pair("H3_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(h3) ));
 	job->add_string_real_pair("H2_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(h2) ));
 	job->add_string_real_pair("H1_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(h1) ));
@@ -452,7 +477,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 		job->add_string_real_pair("L2_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(l2) ));
 		job->add_string_real_pair("L1_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(l1) ));
 	}
-	job->add_string_real_pair("AF_constraint", constraint_score);
+	//job->add_string_real_pair("AP_constraint", atom_pair_constraint_score);
 	job->add_string_real_pair("VL_VH_angle", vl_vh_packing_angle( pose, ab_info_ ));
 
 	set_last_move_status( protocols::moves::MS_SUCCESS );   
@@ -476,7 +501,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
     
     
 
-void AntibodyModelerProtocol::display_constraint_residues( core::pose::Pose & pose ) 
+void AntibodyModelerProtocol::display_constraint_residues( core::pose::Pose & pose )
 {
 
     // Detecting di-sulfide bond

@@ -49,6 +49,8 @@ namespace antibody { extern BooleanOptionKey const bad_nter; }
 namespace antibody { extern StringOptionKey const remodel; }
 namespace antibody { extern StringOptionKey const refine; }
 namespace antibody { extern StringOptionKey const centroid_refine; }
+namespace antibody { extern BooleanOptionKey const constrain_cter; }
+namespace antibody { extern BooleanOptionKey const constrain_vlvh_qq; }
 namespace antibody { extern BooleanOptionKey const snug_loops; }
 namespace antibody { extern FileOptionKey const input_fv; }
 namespace antibody { extern BooleanOptionKey const camelid; }

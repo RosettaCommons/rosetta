@@ -662,10 +662,10 @@ option.add( basic::options::OptionKeys::fold_cst::reramp_start_cstweight, "drop 
 option.add( basic::options::OptionKeys::fold_cst::reramp_iterations, "do X loops of annealing cycles" ).def(1);
 option.add( basic::options::OptionKeys::fold_cst::skip_on_noviolation_in_stage1, "if constraints report no violations --- skip cycles" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::stage1_ramp_cst_cycle_factor, "spend x*<standard cycles> on each step of sequence separation" ).def(0.25);
+option.add( basic::options::OptionKeys::fold_cst::stage2_constraint_threshold, "stop runs that violate this threshold at end of stage2" ).def(0);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::stage2_constraint_threshold, "stop runs that violate this threshold at end of stage2" ).def(0);
-option.add( basic::options::OptionKeys::fold_cst::ignore_sequence_seperation, "usually constraints are switched on according to their separation in the fold-tree" ).def(false);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::ignore_sequence_seperation, "usually constraints are switched on according to their separation in the fold-tree" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::no_recover_low_at_constraint_switch, "dont recover low when max_seq_sep is increased" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::ramp_coord_cst, "ramp coord csts just like chainbreak-weights during fold-cst" ).def(false);
 option.add( basic::options::OptionKeys::resample::resample, "resample option group" ).legal(true).def(true);
@@ -1323,11 +1323,11 @@ option.add( basic::options::OptionKeys::lh::fragpdb::fragpdb, "fragpdb option gr
 option.add( basic::options::OptionKeys::lh::fragpdb::out_path, "Path where pdbs are saved" ).def("");
 option.add( basic::options::OptionKeys::lh::fragpdb::indexoffset, "list of index offset pairs" ).def(-1);
 option.add( basic::options::OptionKeys::lh::fragpdb::bin, "list of bin keys" ).def(utility::vector1<std::string>());
+option.add( basic::options::OptionKeys::lh::symfragrm::symfragrm, "symfragrm option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::lh::symfragrm::pdblist, "list of pdbs to be processed" );
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::symfragrm::symfragrm, "symfragrm option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::lh::symfragrm::pdblist, "list of pdbs to be processed" );
-option.add( basic::options::OptionKeys::rbe::rbe, "rbe option group" ).legal(true).def(true);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::rbe::rbe, "rbe option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::rbe::server_url, "serverurl for rosetta backend" );
 option.add( basic::options::OptionKeys::rbe::server_port, "port for rosetta backend" ).def("80");
 option.add( basic::options::OptionKeys::rbe::poll_frequency, "No description" ).def(1.0);
@@ -1984,12 +1984,12 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topolo
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
-
-}
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
+option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
-option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);
+
+}
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_pdb, "PDB file from which to draw constraints" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrbmoves, "number of rigid-body moves" ).def(100);
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrboutercycles, "number of rigid-body moves" ).def(5);
@@ -2384,6 +2384,8 @@ option.add( basic::options::OptionKeys::antibody::bad_nter, "the n-terminal is b
 option.add( basic::options::OptionKeys::antibody::remodel, "Choose a perturb method to model H3 in centroid mode" ).def("legacy_perturb_ccd");
 option.add( basic::options::OptionKeys::antibody::refine, "Choose a refine method to model H3 in high-resol model" ).def("legacy_perturb_ccd");
 option.add( basic::options::OptionKeys::antibody::centroid_refine, "Choose a refine method to refine a loop in centroid mode" ).def("refine_kic");
+option.add( basic::options::OptionKeys::antibody::constrain_cter, "The option to turn on/off the cterminal constrain penalty in loop scoring function" ).def(false);
+option.add( basic::options::OptionKeys::antibody::constrain_vlvh_qq, "The option to turn on/off the VL-VH QQ H-bond in docking scoring function" ).def(false);
 option.add( basic::options::OptionKeys::antibody::snug_loops, "Allow CDR loop backbone flexibility during minimization" ).def(false);
 option.add( basic::options::OptionKeys::antibody::input_fv, "input antibody variable (Fv) region" ).def("FR02.pdb");
 option.add( basic::options::OptionKeys::antibody::camelid, "Camelid input with only heavy (VH) chain" ).def(false);

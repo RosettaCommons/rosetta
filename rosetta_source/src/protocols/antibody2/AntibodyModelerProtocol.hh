@@ -102,6 +102,12 @@ public:
     void set_use_constraints(bool const use_csts){
         use_csts_ = use_csts;
     }
+	void set_constrain_cter(bool const setting){
+		constrain_cter_ = setting;
+	}
+	void set_constrain_vlvh_qq(bool const setting){
+		constrain_vlvh_qq_ = setting;
+	}
     void set_flank_residue_size(core::Real const flank_residue_size) {
         flank_residue_size_ = flank_residue_size;
     }
@@ -139,6 +145,7 @@ private:
     core::Real cen_cst_, high_cst_;
     bool bad_nter_;
     bool use_csts_;
+	bool constrain_vlvh_qq_, constrain_cter_;
     
 	// Benchmark mode for shorter_cycles
 	bool benchmark_;

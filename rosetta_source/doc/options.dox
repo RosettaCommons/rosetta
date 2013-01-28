@@ -11553,6 +11553,16 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: "refine_kic"</dd><br>
 </dl>
 <dl>
+<dt><b>-constrain_cter</b> \<Boolean\><dt>
+<dd>The option to turn on/off the cterminal constrain penalty in loop scoring function</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-constrain_vlvh_qq</b> \<Boolean\><dt>
+<dd>The option to turn on/off the VL-VH QQ H-bond in docking scoring function</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-snug_loops</b> \<Boolean\><dt>
 <dd>Allow CDR loop backbone flexibility during minimization</dd><br>
 <dd>Default: false</dd><br>
