@@ -103,7 +103,7 @@ void CDRsMinPackMin::init(){
 	min_type_ = "dfpmin_armijo_nonmonotone";
 	Temperature_ = 0.8;
 	min_tolerance_ = 0.1;
-
+	update_rounds_ = 0;
 
 	if (!user_defined_){
 		tf_ = NULL;
@@ -115,7 +115,7 @@ void CDRsMinPackMin::init(){
 		loop_scorefxn_highres_->set_weight( core::scoring::overlap_chainbreak, 10. / 3. );
 	}
 
-	cdr_sequence_move_ = new moves::SequenceMover();
+	
 
 
 }
@@ -129,6 +129,8 @@ void CDRsMinPackMin::finalize_setup( pose::Pose & pose )
 	using namespace protocols::toolbox::task_operations;
 	using namespace protocols::moves;
 
+	cdr_sequence_move_ = new moves::SequenceMover();
+	
 	// **************** FoldTree ****************
 	pose.fold_tree( * ab_info_->get_FoldTree_AllCDRs(pose)  );
 	TR<<pose.fold_tree()<<std::endl;
@@ -141,18 +143,30 @@ void CDRsMinPackMin::finalize_setup( pose::Pose & pose )
 	( *loop_scorefxn_highres_ )( pose );
 
 	//**************** MoveMap ****************
-	if(!allcdr_map_){
+	if(!allcdr_map_){ // use this if, because sometimes a user may input a movemap at the beginning
 		allcdr_map_ = new kinematics::MoveMap();
 		*allcdr_map_=ab_info_->get_MoveMap_for_Loops(pose, *ab_info_->get_AllCDRs_in_loopsop(), false, true, 10.0);
+	}
+	else{
+		if(update_rounds_ > 0 ){
+			allcdr_map_->clear();
+			*allcdr_map_=ab_info_->get_MoveMap_for_Loops(pose, *ab_info_->get_AllCDRs_in_loopsop(), false, true, 10.0);
+		}
 	}
 
 
 	//**************** TaskFactory ****************
-	if(!tf_){
+	if(!tf_){ //use this if, because sometimes a user may input a taskfactory at the beginning
 		tf_ = ab_info_->get_TaskFactory_AllCDRs(pose);
 
 	  	//core::pack::task::PackerTaskOP my_task2(tf_->create_task_and_apply_taskoperations(pose));
 	  	//TR<<*my_task2<<std::endl; //exit(-1);
+	}
+	else{
+		if(update_rounds_ > 0){
+			tf_->clear();
+			tf_ = ab_info_->get_TaskFactory_AllCDRs(pose);
+		}
 	}
 
 	// 1. rotamer_trial
@@ -198,6 +212,8 @@ void CDRsMinPackMin::finalize_setup( pose::Pose & pose )
 void CDRsMinPackMin::apply( pose::Pose & pose ) {
 	finalize_setup(pose);
 	cdr_sequence_move_ -> apply(pose);
+	update_rounds_++;
+
 }
 
 

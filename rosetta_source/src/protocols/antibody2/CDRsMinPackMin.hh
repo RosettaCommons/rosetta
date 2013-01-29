@@ -35,7 +35,7 @@
 #include <protocols/antibody2/RefineBetaBarrel.fwd.hh>
 #include <utility/vector1.hh>
 
-
+using namespace core;
 namespace protocols {
 namespace antibody2 {
 
@@ -80,6 +80,8 @@ private:
 
 	// Benchmark mode for shorter_cycles
 	bool benchmark_;
+	core::Size update_rounds_;
+	//to update the task factory and movemap auto-ly
 
 	void finalize_setup( core::pose::Pose & pose );
 	void init();   
