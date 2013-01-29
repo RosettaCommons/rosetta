@@ -13,7 +13,7 @@
 @page AnchoredDesign Documentation for AnchoredDesign application
 
 @section metadata Metadata
-Code and documentation by Steven Lewis smlewi@gmail.com.  This document was last updated 6/24/11 by Steven Lewis.  The PI was Brian Kuhlman, bkuhlman@email.unc.edu.
+Code and documentation by Steven Lewis smlewi@gmail.com.  This document was last updated 1/29/13 by Steven Lewis.  The PI was Brian Kuhlman, bkuhlman@email.unc.edu.
 
 
 @section examples Examples
@@ -149,6 +149,15 @@ In this particular example, position 29 is clearly problematic: the peptide bond
 
 Finally, InterfaceAnalyzer puts results at the end of the PDB file as well; read about it here: @ref InterfaceAnalyzer_doc.  Again, throw out models with poor interfaces as determined by InterfaceAnalyzer.
 
+@section testing_mode Options for testing/debugging/experimental modes
+These modes are not suggested for public use.
+
+@li -delete_interface_native_sidechains (boolean, default false): This option removes the native sidechains near the interface of the input by repacking without -use_input_sc.  -use_input_sc is generally recommended for AnchoredDesign to retain minimzed rotamers; this forgetting step is useful when benchmarking to prevent unwanted information leaking in from the starting complex.
+@li -RMSD_only_this (file): This option takes a path to a second input structure.  AnchoredDesign skips its modification steps and just does its terminal RMSD comparisons (against this structure).
+@li -super_secret_fixed_interface_mode (boolean, default false): This option activates a mode with an altered FoldTree that does not anchor the interface.  Functionally it allows for "normal" redesign of interface loops (something the loop design executable does not do; although RosettaScripts does).
+@li -randomize_input_sequence (boolean, default false): This option randomizes the input sequence of the designable positions to something within their resfile-defined mutational range.  It forces HIS_D over HIS to prevent double-occurrence of HIS; all allowed canonical and noncanonical residues are weighted equally (unless you have noncanonicals that pretend to be histidine.)  Useful because even with the loop extension mode, the centroid scorefunction's rama term will "know" what a loop of the input sequence should look like even without sidechains.  AnchoredDesign normally only touches sequence after centroid mode, which may be too late to prevent unwanted recovery of a native loop/structure.
+
 @section changelog Changes since last release
-Rosetta 3.3 is the first release.
+Rosetta 3.3 is the first release.  Benchmarking modes were added for 3.4 (I think?).  Various testing options were created by the time of 3.5.
+
 */

@@ -1906,7 +1906,7 @@ option.add( basic::options::OptionKeys::AnchoredDesign::allow_anchor_repack, "al
 option.add( basic::options::OptionKeys::AnchoredDesign::vary_cutpoints, "vary loop cutpoints.  Picks new cutpoints at start of each nstruct" ).def(false);
 option.add( basic::options::OptionKeys::AnchoredDesign::no_frags, "use no fragments.  Overrides passing an old-style fragment file.  Skips new-style fragment generation." ).def(false);
 option.add( basic::options::OptionKeys::AnchoredDesign::debug, "debug mode (extra checks and pdb dumps)" ).def(false);
-option.add( basic::options::OptionKeys::AnchoredDesign::show_extended, "dump pre-perturb PDB to check if loop torsions are extended" ).def(false);
+option.add( basic::options::OptionKeys::AnchoredDesign::show_extended, "dump pre-perturb PDB to check if loop torsions are extended and/or sequence is fuzzed; debugging only" ).def(false);
 option.add( basic::options::OptionKeys::AnchoredDesign::refine_only, "refine only mode (skip perturbation step)" ).def(false);
 option.add( basic::options::OptionKeys::AnchoredDesign::perturb_show, "dump perturbed centroid pdbs as well as final results" ).def(false);
 option.add( basic::options::OptionKeys::AnchoredDesign::perturb_cycles, "perturbation phase runs for <input> cycles" ).def(5);
@@ -1934,6 +1934,7 @@ option.add( basic::options::OptionKeys::AnchoredDesign::testing::delete_interfac
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::RMSD_only_this, "Perform only RMSD calculations without modifying input.  Only used for re-running metrics during benchmarking/debugging." );
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::anchor_noise_constraints_mode, "Hold the anchor loosely (via constraints), not rigidly.  Automatically generate the constraints from the starting pose.  Mildly randomize the anchor's placement before modeling (up to 1 angstrom in x,y,z from initial placement.)  Only compatible with single-residue anchors.  Used to meet a reviewer's commentary." ).def(false);
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::super_secret_fixed_interface_mode, "hold the anchor-containing loop fixed.  Currently in testing." ).def(false);
+option.add( basic::options::OptionKeys::AnchoredDesign::testing::randomize_input_sequence, "randomizes the input sequence by packing with a null scorefunction; uses the AnchoredDesign-specified packer task (obeys resfile, etc)." ).def(false);
 option.add( basic::options::OptionKeys::chemically_conjugated_docking::chemically_conjugated_docking, "chemically_conjugated_docking option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::chemically_conjugated_docking::UBQpdb, "ubiquitin structure, or the structure for the attached thing that is moving" ).def("1UBQ.pdb");
 option.add( basic::options::OptionKeys::chemically_conjugated_docking::E2pdb, "E2 structure, or the structure of the thing that is attached to (has cysteine) and does not move; should be one chain" ).def("2OB4.pdb");
@@ -1986,10 +1987,10 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_seconda
 option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
-option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
+option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_pdb, "PDB file from which to draw constraints" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrbmoves, "number of rigid-body moves" ).def(100);
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrboutercycles, "number of rigid-body moves" ).def(5);

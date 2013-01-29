@@ -9263,7 +9263,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-show_extended</b> \<Boolean\><dt>
-<dd>dump pre-perturb PDB to check if loop torsions are extended</dd><br>
+<dd>dump pre-perturb PDB to check if loop torsions are extended and/or sequence is fuzzed; debugging only</dd><br>
 <dd>Default: false</dd><br>
 </dl>
 <dl>
@@ -9402,6 +9402,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-super_secret_fixed_interface_mode</b> \<Boolean\><dt>
 <dd>hold the anchor-containing loop fixed.  Currently in testing.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-randomize_input_sequence</b> \<Boolean\><dt>
+<dd>randomizes the input sequence by packing with a null scorefunction; uses the AnchoredDesign-specified packer task (obeys resfile, etc).</dd><br>
 <dd>Default: false</dd><br>
 </dl>
  </li>

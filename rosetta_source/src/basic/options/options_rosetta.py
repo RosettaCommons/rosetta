@@ -3914,7 +3914,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
                Option( 'vary_cutpoints', 'Boolean', desc='vary loop cutpoints.  Picks new cutpoints at start of each nstruct', default='false'),
                Option( 'no_frags', 'Boolean', desc='use no fragments.  Overrides passing an old-style fragment file.  Skips new-style fragment generation.', default='false'),
                Option( 'debug', 'Boolean', desc='debug mode (extra checks and pdb dumps)', default='false' ),
-               Option( 'show_extended', 'Boolean', desc='dump pre-perturb PDB to check if loop torsions are extended', default='false' ),
+               Option( 'show_extended', 'Boolean', desc='dump pre-perturb PDB to check if loop torsions are extended and/or sequence is fuzzed; debugging only', default='false' ),
                Option( 'refine_only', 'Boolean', desc='refine only mode (skip perturbation step)', default='false' ),
                Option( 'perturb_show', 'Boolean', desc='dump perturbed centroid pdbs as well as final results', default='false' ),
                Option( 'perturb_cycles', 'Integer', desc='perturbation phase runs for <input> cycles', default = '5' ),
@@ -3944,6 +3944,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 								 Option( 'RMSD_only_this', 'File', desc='Perform only RMSD calculations without modifying input.  Only used for re-running metrics during benchmarking/debugging.'),
 								 Option( 'anchor_noise_constraints_mode', 'Boolean', desc='Hold the anchor loosely (via constraints), not rigidly.  Automatically generate the constraints from the starting pose.  Mildly randomize the anchor\'s placement before modeling (up to 1 angstrom in x,y,z from initial placement.)  Only compatible with single-residue anchors.  Used to meet a reviewer\'s commentary.', default = 'false'),
 								 Option( 'super_secret_fixed_interface_mode', 'Boolean', desc='hold the anchor-containing loop fixed.  Currently in testing.', default = 'false'),
+								 Option( 'randomize_input_sequence', 'Boolean', desc='randomizes the input sequence by packing with a null scorefunction; uses the AnchoredDesign-specified packer task (obeys resfile, etc).', default = 'false'),
 							 ), #closes subgroup testing
   ), #closes option group AnchoredDesign
 

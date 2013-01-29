@@ -605,6 +605,7 @@ namespace AnchoredDesign { namespace testing { BooleanOptionKey const delete_int
 namespace AnchoredDesign { namespace testing { FileOptionKey const RMSD_only_this( "AnchoredDesign:testing:RMSD_only_this" );  } }
 namespace AnchoredDesign { namespace testing { BooleanOptionKey const anchor_noise_constraints_mode( "AnchoredDesign:testing:anchor_noise_constraints_mode" );  } }
 namespace AnchoredDesign { namespace testing { BooleanOptionKey const super_secret_fixed_interface_mode( "AnchoredDesign:testing:super_secret_fixed_interface_mode" );  } }
+namespace AnchoredDesign { namespace testing { BooleanOptionKey const randomize_input_sequence( "AnchoredDesign:testing:randomize_input_sequence" );  } }
 namespace chemically_conjugated_docking { BooleanOptionKey const chemically_conjugated_docking( "chemically_conjugated_docking" );  }
 namespace chemically_conjugated_docking { FileOptionKey const UBQpdb( "chemically_conjugated_docking:UBQpdb" );  }
 namespace chemically_conjugated_docking { FileOptionKey const E2pdb( "chemically_conjugated_docking:E2pdb" );  }
@@ -657,4 +658,3 @@ namespace DenovoProteinDesign { BooleanOptionKey const create_from_secondary_str
 namespace RBSegmentRelax { BooleanOptionKey const RBSegmentRelax( "RBSegmentRelax" );  }
 namespace RBSegmentRelax { FileOptionKey const input_pdb( "RBSegmentRelax:input_pdb" );  }
 namespace RBSegmentRelax { FileOptionKey const rb_file( "RBSegmentRelax:rb_file" );  }
-namespace RBSegmentRelax { RealOptionKey const cst_wt( "RBSegmentRelax:cst_wt" );  }

@@ -55,6 +55,7 @@ namespace AnchoredDesign { namespace testing { extern BooleanOptionKey const del
 namespace AnchoredDesign { namespace testing { extern FileOptionKey const RMSD_only_this; } }
 namespace AnchoredDesign { namespace testing { extern BooleanOptionKey const anchor_noise_constraints_mode; } }
 namespace AnchoredDesign { namespace testing { extern BooleanOptionKey const super_secret_fixed_interface_mode; } }
+namespace AnchoredDesign { namespace testing { extern BooleanOptionKey const randomize_input_sequence; } }
 
 } // namespace OptionKeys
 } // namespace options

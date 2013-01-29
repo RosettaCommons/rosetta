@@ -73,6 +73,9 @@ public:
 	///@brief calculate RMSD if desired; protected internally
 	void calculate_rmsd( core::pose::Pose const & pose, core::pose::PoseCOP start_pose );
 
+	///@brief randomize the input loop sequence.  Useful if you have reason to believe the starting loop sequence is biasing to a particular unwanted structure in centroid mode.  Acts only on designable positions.
+	void randomize_input_sequence( core::pose::Pose & pose ) const;
+
 	///@brief This function repacks the interface with use_input_sc forcibly off for benchmarking purposes.
 	void delete_interface_native_sidechains( core::pose::Pose & pose ) const;
 
@@ -88,6 +91,8 @@ public:
 	bool get_delete_interface_native_sidechains() const;
 	///@brief show_extended demonstrates that the code really forgets the input structure
 	bool get_show_extended() const;
+	///@brief randomize_input_sequence to complement loop extension in forgetting the input
+	bool get_randomize_input_sequence() const;
 	///@brief pick a different cutpoint than the input; useful when you want to sample cutpoints
 	bool get_vary_cutpoints() const;
 	///@brief skip the perturbation step - useful when you already have a good structure
@@ -109,6 +114,8 @@ public:
 	void set_delete_interface_native_sidechains(bool const delete_interface_native_sidechains);
 	///@brief show_extended demonstrates that the code really forsets the input structure
 	void set_show_extended(bool const show_extended);
+	///@brief randomize_input_sequence to complement loop extension in forgetting the input
+	void set_randomize_input_sequence(bool const randomize_input_sequence);
 	///@brief pick a different cutpoint than the input; useful when you want to sample cutpoints
 	void set_vary_cutpoints(bool const vary_cutpoints);
 	///@brief skip the perturbation step - useful when you already have a good structure
@@ -145,6 +152,8 @@ private:
 	bool delete_interface_native_sidechains_;
 	///@brief show_extended demonstrates that the code really forgets the input structure
 	bool show_extended_;
+	///@brief randomize_input_sequence to complement loop extension in forgetting the input
+	bool randomize_input_sequence_;
 	//regular mode options
 	///@brief pick a different cutpoint than the input; useful when you want to sample cutpoints
 	bool vary_cutpoints_;

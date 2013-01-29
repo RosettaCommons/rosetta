@@ -23,6 +23,8 @@
 
 // Project Headers
 #include <core/conformation/Conformation.hh>
+#include <core/conformation/Residue.hh>
+#include <core/conformation/ResidueFactory.hh>
 
 #include <core/fragment/FragSet.hh>
 
@@ -37,7 +39,7 @@
 
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.hh>
 
 //needed for a benchmarking thing
 #include <protocols/toolbox/task_operations/RestrictByCalculatorsOperation.hh>
@@ -174,6 +176,7 @@ AnchoredDesignMover::AnchoredDesignMover( protocols::anchored_design::AnchorMove
 	RMSD_only_this_(EMPTY_STRING),
 	delete_interface_native_sidechains_(false),
 	show_extended_(false),
+	randomize_input_sequence_(false),
 	vary_cutpoints_(false),
 	refine_only_(false),
 	filter_score_(std::numeric_limits<core::Real>::max()),
@@ -196,6 +199,7 @@ AnchoredDesignMover::AnchoredDesignMover() :
 	RMSD_only_this_(EMPTY_STRING),
 	delete_interface_native_sidechains_(false),
 	show_extended_(false),
+	randomize_input_sequence_(false),
 	vary_cutpoints_(false),
 	refine_only_(false),
 	filter_score_(std::numeric_limits<core::Real>::max()),
@@ -231,6 +235,7 @@ AnchoredDesignMover & AnchoredDesignMover::operator=( AnchoredDesignMover const 
 	RMSD_only_this_ = rhs.get_RMSD_only_this();
 	delete_interface_native_sidechains_ = rhs.get_delete_interface_native_sidechains();
 	show_extended_ = rhs.get_show_extended();
+	randomize_input_sequence_ = rhs.get_randomize_input_sequence();
 	vary_cutpoints_ = rhs.get_vary_cutpoints();
 	refine_only_ = rhs.get_refine_only();
 	filter_score_ = rhs.get_filter_score();
@@ -287,18 +292,26 @@ void AnchoredDesignMover::apply( core::pose::Pose & pose )
 		start_pose = RMSD_only_this_pose_;
 	} else { //if RMSD_only_this is active, we skip all the meat steps
 
-		if( delete_interface_native_sidechains_ ){
-			delete_interface_native_sidechains(pose);
-		}
 
 		//pre-processing
 		interface_->pick_new_cutpoints(vary_cutpoints_); //verifies that cutpoints are legal w/r/t anchor; chooses new ones if not; picks new random ones if bool is true
 		set_fold_tree_and_cutpoints( pose );
 		forget_initial_loops( pose ); //checks loop object is_extended internally
 
+		if( randomize_input_sequence_ ) randomize_input_sequence(pose);
+		if( delete_interface_native_sidechains_ ) delete_interface_native_sidechains(pose);
+
 		if( interface_->get_anchor_noise_constraints_mode() ){
 			interface_->anchor_noise_constraints_setup(pose);
 			perturb_anchor(pose);
+		}
+
+		if( show_extended_
+			|| randomize_input_sequence_
+			|| delete_interface_native_sidechains_
+			|| interface_->get_anchor_noise_constraints_mode()){
+			using namespace protocols::jd2;
+			JobDistributor::get_instance()->job_outputter()->other_pose(JobDistributor::get_instance()->current_job(), pose, "preprocessed");
 		}
 
 		//processing
@@ -423,6 +436,93 @@ AnchoredDesignMover::calculate_rmsd( core::pose::Pose const & pose, core::pose::
 		}
 
 	}
+	return;
+}
+
+///@details This is crazy.  Sometimes loop redesign is overly biased by the starting loop sequence, because the centroid phase won't change the sequence, and the rama term may remember the conformation to well due to sequence preferences.  This restricts sampling.  So, this function creates a random sequence in the designable positions, based on what the design PackerTask thinks they can become.  This code special cases histidine (to avoid double-allowing histidine, based on its two protonations).
+void AnchoredDesignMover::randomize_input_sequence(core::pose::Pose & pose ) const {
+
+	T_design << "entering randomize_input_sequence" << std::endl;
+
+	//Get copy of "right" PackerTask
+	core::pack::task::PackerTaskCOP oldtask(interface_->get_task(pose));
+
+	//there isn't much we can do to use the old task due to accumulation of status; also (and more importantly) using a task to pack is ruined by uneven numbers of rotamers (arginine would be favored over glycine).
+
+	core::Size const nres(pose.total_residue());
+	for(core::Size i(1); i<=nres; ++i){ //for all positions
+		//if this position is designable, do something
+		using core::pack::task::ResidueLevelTask;
+		ResidueLevelTask const & rlt(oldtask->residue_task(i));
+		if(rlt.being_designed()){
+			//get the list
+			ResidueLevelTask::ResidueTypeCOPList types(rlt.allowed_residue_types());
+
+			//print possibilities before histidine check
+			T_design << "before HIS/D check, position " << i;
+
+			for( ResidueLevelTask::ResidueTypeCOPListIter
+						 allowed_iter = types.begin(),
+						 allowed_end = types.end();
+					 allowed_iter != allowed_end;  ++allowed_iter ) {
+				T_design << " " << (*allowed_iter)->name();// << std::endl;
+			}
+			T_design << std::endl;
+
+			//sweep for histidines
+			core::Size num_histidines(0); //count histidines we find; if more than 2 explode
+			core::chemical::ResidueTypeCOP histidine; //store the most recent histidine we find as we go
+			for( ResidueLevelTask::ResidueTypeCOPListIter
+							allowed_iter = types.begin(),
+							iter_next = types.begin(),
+							allowed_end = types.end();
+						allowed_iter != allowed_end;  /* no increment: deletion + iterator incrementing = segfault! */ ) {
+				iter_next = allowed_iter;
+				++iter_next;
+
+				if ((*allowed_iter)->aa() == core::chemical::aa_his) { //we only want to look at histidines
+					++num_histidines;
+					histidine=*allowed_iter;
+					types.erase( allowed_iter );
+				}
+				allowed_iter = iter_next;
+			}//histidine removal scan
+			if( num_histidines > 0 && num_histidines < 3 ){
+				types.push_back(histidine); //if we removed 1 or 2
+			} else if ( num_histidines < 3 ) {
+				utility_exit_with_message("removed more than 2 histidines in AnchoredDesign::randomize_input_sequence, something is wrong");
+			}
+
+			//print possibilities after histidine check
+			T_design << "after HIS/D check, position " << i;
+
+			for( ResidueLevelTask::ResidueTypeCOPListIter
+						 allowed_iter = types.begin(),
+						 allowed_end = types.end();
+					 allowed_iter != allowed_end;  ++allowed_iter ) {
+				T_design << " " << (*allowed_iter)->name();
+			}
+			T_design << std::endl;
+
+			//now that that's out of the way, pick a ResidueType at random
+			core::Size const num_types(types.size());
+			core::Size const chosen_type_index(RG.random_range(1, num_types));
+			ResidueLevelTask::ResidueTypeCOPListIter iter = types.begin();
+			for(core::Size add(1); add<chosen_type_index; ++add) ++iter;
+			core::chemical::ResidueTypeCOP chosen_type(*iter);
+
+			T_design << "chose at position " << i << chosen_type->name() << std::endl;
+			T_design << "chose at position " << i << chosen_type->name() << std::endl;
+
+			//do a replace_replace with the chosen type
+			using namespace core::conformation;
+			ResidueCOP new_residue(ResidueFactory::create_residue( *chosen_type, pose.residue(i), pose.conformation()));
+			pose.replace_residue(i, *new_residue, true);
+
+		}//if being designed
+		//if not being designed, do nothing
+	}//for all residues
+
 	return;
 }
 
@@ -689,12 +789,6 @@ void AnchoredDesignMover::forget_initial_loops( core::pose::Pose & pose ){
 		}//if loop is extended
 	}//for each loop
 
-	//debugging - use in structure prediction benchmark
-	if(	show_extended_ ){
-		using namespace protocols::jd2;
-		JobDistributor::get_instance()->job_outputter()->other_pose(JobDistributor::get_instance()->current_job(), pose, "extended_before_run");
-	}
-
 	return;
 }
 
@@ -708,6 +802,8 @@ std::string const & AnchoredDesignMover::get_RMSD_only_this() const {return RMSD
 bool AnchoredDesignMover::get_delete_interface_native_sidechains() const {return delete_interface_native_sidechains_;}
 ///@brief show_extended demonstrates that the code really forgets the input structure
 bool AnchoredDesignMover::get_show_extended() const {return show_extended_;}
+///@brief randomize_input_sequence to complement loop extension in forgetting the input
+bool AnchoredDesignMover::get_randomize_input_sequence() const {return randomize_input_sequence_;}
 ///@brief pick a different cutpoint than the input; useful when you want to sample cutpoints
 bool AnchoredDesignMover::get_vary_cutpoints() const {return vary_cutpoints_;}
 ///@brief skip the perturbation step - useful when you already have a good structure
@@ -729,6 +825,8 @@ void AnchoredDesignMover::set_RMSD_only_this(std::string const & RMSD_only_this)
 void AnchoredDesignMover::set_delete_interface_native_sidechains(bool const delete_interface_native_sidechains) { delete_interface_native_sidechains_ = delete_interface_native_sidechains;}
 ///@brief show_extended demonstrates that the code really forsets the input structure
 void AnchoredDesignMover::set_show_extended(bool const show_extended) { show_extended_ = show_extended;}
+///@brief randomize_input_sequence to complement loop extension in forgetting the input
+void AnchoredDesignMover::set_randomize_input_sequence(bool const randomize_input_sequence) { randomize_input_sequence_ = randomize_input_sequence;}
 ///@brief pick a different cutpoint than the input { _ = ;} useful when you want to sample cutpoints
 void AnchoredDesignMover::set_vary_cutpoints(bool const vary_cutpoints) { vary_cutpoints_ = vary_cutpoints;}
 ///@brief skip the perturbation step - useful when you already have a good structure
@@ -766,6 +864,9 @@ void AnchoredDesignMover::read_options(){
 
 	//bool show_extended_;
 	show_extended_ = option[show_extended].value();
+
+	//bool randomize_input_sequence_;
+	randomize_input_sequence_ = option[ testing::randomize_input_sequence ].value();
 
 	//bool vary_cutpoints_;
 	vary_cutpoints_ = option[ vary_cutpoints ].value();
