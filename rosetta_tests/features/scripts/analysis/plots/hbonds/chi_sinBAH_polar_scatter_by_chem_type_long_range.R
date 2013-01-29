@@ -15,6 +15,8 @@ brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
 run=function(self, sample_sources, output_dir, output_formats){
 
+source("scripts/analysis/plots/hbonds/hbond_geo_dim_scales.R")
+
 d_ply(sample_sources, .variables=("sample_source"), function(sample_source){
   ss <- sample_source[1,"sample_source"]
 
@@ -48,6 +50,11 @@ d_ply(sample_sources, .variables=("sample_source"), function(sample_source){
 	  don_atoms.struct_id = hbond.struct_id AND don_atoms.site_id = hbond.don_id AND
   	acc_atoms.struct_id = hbond.struct_id AND acc_atoms.site_id = hbond.acc_id;"
   f <- query_sample_sources(sample_source, sele)
+
+	f <- na.omit(f, method="r")
+
+	f$acc_chem_type_name <- acc_chem_type_name_linear(f$acc_chem_type)
+	f$don_chem_type_name <- don_chem_type_name_linear(f$don_chem_type)
 
 	normalize <- function(xin,yin,zin) {
 		len = sqrt(xin*xin+yin*yin+zin*zin)
@@ -108,34 +115,51 @@ d_ply(sample_sources, .variables=("sample_source"), function(sample_source){
     capx = 2*sin(acos(cosBAH)/2)*cos(chi),
     capy = 2*sin(acos(cosBAH)/2)*sin(chi))
 
-  sub_f <- ddply(f, .variables=c("don_chem_type", "acc_chem_type"),
+  sub_f <- ddply(f, .variables=c("don_chem_type_name", "acc_chem_type_name"),
     function(df){sample_rows(df, 5000)})
 
   plot_id = "hbond_sinBAH_eq_polar_scatter_by_chem_type_long_range"
   ggplot(data=sub_f) + theme_bw() +
 		polar_equal_area_grids_bw(bgcolor="#00007F") +
     geom_point(aes(x=capx, y=capy), size=.4, alpha=.5) +
-    facet_grid(acc_chem_type ~ don_chem_type) +
+    facet_grid(acc_chem_type_name ~ don_chem_type_name) +
     opts(title = paste("Hydrogen Bonds chi vs sinBAH Angles by Chemical Type with Sequence Separation > 5\nEqual Coordinate Projection   Sample Source: ", ss, sep="")) +
     scale_x_continuous('2*sin(BAH/2) * cos(CHI)', breaks=c(-1, 0, 1)) +
     scale_y_continuous('2*sin(BAH/2) * sin(CHI)', breaks=c(-1, 0, 1))
   save_plots(self, plot_id, sample_source, output_dir, output_formats)
+
+	ddply(f, .(acc_chem_type_name, don_chem_type_name), function(df){
+		don_chem_type <- as.character(df$don_chem_type[1])
+		acc_chem_type <- as.character(df$acc_chem_type[1])
+		don_chem_type_name <- as.character(df$don_chem_type_name[1])
+		acc_chem_type_name <- as.character(df$acc_chem_type_name[1])
+
+		plot_id = paste("hbond_sinBAH_eq_polar_scatter_long_range", don_chem_type, acc_chem_type, ss, sep="_")
+  	ggplot(data=df) + theme_bw() +
+			polar_equal_area_grids_bw(bgcolor="#00007F") +
+  	  geom_point(aes(x=capx, y=capy), size=.4, alpha=.5) +
+  	  opts(title = paste("Hydrogen Bonds chi vs sinBAH Angles ", don_chem_type_name, acc_chem_type_name, " with Sequence Separation > 5\nEqual Coordinate Projection   Sample Source: ", ss, sep="")) +
+  	  scale_x_continuous('', breaks=c(-1, 0, 1)) +
+  	  scale_y_continuous('', breaks=c(-1, 0, 1))
+  	save_plots(self, plot_id, sample_source, output_dir, output_formats)
+	})
+
 
   #orthographic projection
   f <- transform(f,
     capx = sin(acos(cosBAH))*cos(chi),
     capy = sin(acos(cosBAH))*sin(chi))
 
-  sub_f <- ddply(f, .variables=c("don_chem_type", "acc_chem_type"),
+  sub_f <- ddply(f, .variables=c("don_chem_type_name", "acc_chem_type_name"),
     function(df){sample_rows(df, 5000)})
 
-  plot_id = "hbond_sinBAH_ortho_polar_scatter_by_chem_type_long_range"
+  plot_id = paste("hbond_sinBAH_ortho_polar_scatter_by_chem_type_long_range", ss, sep="_")
   ggplot(data=sub_f) + theme_bw() +
     geom_point(aes(x=capx, y=capy), size=.5, alpha=.4) +
-    facet_grid(acc_chem_type ~ don_chem_type) +
+    facet_grid(acc_chem_type_name ~ don_chem_type_name) +
     opts(title = paste("Hydrogen Bonds chi vs sinBAH Angles by Chemical Type with Sequence Separation > 5\nOrthographic Projection   Sample Source: ", ss, sep="")) +
-    scale_x_continuous('sin(BAH) * cos(CHI)', breaks=c(-1, 0, 1)) +
-    scale_y_continuous('sin(BAH) * sin(CHI)', breaks=c(-1, 0, 1))
+    scale_x_continuous('', breaks=c(-1, 0, 1)) +
+    scale_y_continuous('', breaks=c(-1, 0, 1))
   save_plots(self, plot_id, sample_source, output_dir, output_formats)
 
 })

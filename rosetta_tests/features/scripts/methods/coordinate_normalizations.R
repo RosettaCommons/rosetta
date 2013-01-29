@@ -10,13 +10,24 @@ require(proto)
 
 radial_3d_normalization <- function(x){ 1/(x^2*sum(1/x^2))}
 
-conical_3d_normalization <- function(x){1*abs(cos(x))}
-
+conical_3d_normalization <- function(x){(1/sin(x))*1/sum(1/(sin(x)))}
 
 uniform_normalization <- function(x){ rep(1/length(x),length(x)) }
 
 
 no_normalization <- function(x) rep(1,length(x))
+
+
+
+
+primary_modes_radial_3d_norm_diff <- function(a, b) {
+	primary_modes_diff(a, b, weight_fun=radial_3d_normalization)
+}
+
+primary_modes_conical_3d_norm_diff <- function(a, b) {
+	primary_modes_diff(a, b, weight_fun=radial_3d_normalization)
+}
+
 
 
 #Adapted from

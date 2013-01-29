@@ -42,18 +42,19 @@ f$don_chem_type_name <- don_chem_type_name_linear(f$don_chem_type)
 f$acc_chem_type_name <- acc_chem_type_name_linear(f$acc_chem_type)
 f <- na.omit(f, method="r")
 
+
 f$AHD <- acos(f$cosAHD)
 
-#AHD goes from 0 to 1, where 1 is linear since there is significant
-#density at 1, to accurately model a discontinuity, reflect the data
-#across the right boundary, in computing the density esitmation
+#AHD goes from 0 to pi/2, where 0 is linear. Since there is significant
+#density at 0, to accurately model a discontinuity, reflect the data
+#across the left boundary, in computing the density esitmation
 dens <- estimate_density_1d_reflect_boundary(
 	data=f,
 	ids = c("sample_source", "acc_chem_type_name", "don_chem_type_name"),
 	variable = "AHD",
-	reflect_right=TRUE,
-	right_boundary=1,
-	conical_3d_normalization,
+	reflect_left=TRUE,
+	left_boundary=0,
+	weight_fun=conical_3d_normalization,
 	adjust=.5)
 
 plot_id = "hbond_AHD_chem_type"

@@ -21,18 +21,38 @@ two_sided_ttest <- function(a, b){
     p.value = z$p.value)
 }
 
-kolmogorov_smirnov_test <- function(a, b){
+kolmogorov_smirnov_test_boot <- function(a, b){
   tryCatch({
     z <- ks.boot(a, b)
-  }, error=function(e) return(
-    data.frame(
-      statistic_name = "kolmogorov_smirnov_D",
-      statistic = NA,
-      p.value = NA)))
+  }, error=function(e) {
+		print(paste("Error: ks.boot failed with the followinng error", e, sep="", collapse=""))
+		return(
+			data.frame(
+				statistic_name = "kolmogorov_smirnov_D",
+				statistic = NA,
+				p.value = NA))
+	})
   data.frame(
     statistic_name = "kolmogorov_smirnov_D",
     statistic = z$ks$statistic,
     p.value = z$ks$p.value)
+}
+
+kolmogorov_smirnov_test <- function(a, b){
+  tryCatch({
+    z <- ks.test(a, b, exact=F)
+  }, error=function(e) {
+		print(paste("Error: ks.test failed with the followinng error", e, sep="", collapse=""))
+		return(
+			data.frame(
+				statistic_name = "kolmogorov_smirnov_D",
+				statistic = NA,
+				p.value = NA))
+	})
+  data.frame(
+    statistic_name = "kolmogorov_smirnov_D",
+    statistic = z$statistic,
+    p.value = NA)
 }
 
 histogram_kl_divergence <- function(a, b, nbins=50){
@@ -113,12 +133,12 @@ earth_mover_distance_L1 <- function(a, b){
 
 
 
-# Evaluate a two sample tests between different classes of samples
-# conditional on distinct groups of identifying variables.
-#   The class.vars is used to identify the classes of the samples
-#   The id.vars is used to split the classes in to comparison groups
 comparison_statistics <- function(
-	f, id.vars, measure.vars, comp_fun){
+	sample_sources,
+	f,
+	id.vars,
+	measure.vars,
+	comp_funs){
 
 	for(var in id.vars){
 		if( !(var %in% names(f))){
@@ -132,16 +152,96 @@ comparison_statistics <- function(
 		}
 	}
 
-  ddply(f, .variables = id.vars, function(sub_f){
-    ddply(sub_f, c("ref_sample_source" = "sample_source"), function(ref_f){
-      ddply(sub_f, c("new_sample_source" = "sample_source"), function(new_f){
-				if(as.numeric(new_f$sample_source[1]) <= as.numeric(ref_f$sample_source[1])) {
-					return(data.frame())
-				}
-        comp_fun(ref_f[,measure.vars], new_f[,measure.vars])
-      })
-    })
-  })
+	if(!is.character(comp_funs)){
+		stop("The parameter comp_funs should be a vector of the names of comparison functions.")
+	}
+
+	# Compute a data.frame 'stat' with the following columns
+	#   <id.vars>
+	#   ref_sample_source
+	#   new_sample_source
+	#   statistic_name
+	#   statistic
+  #   p.value
+
+	if(!("reference" %in% names(sample_sources))){
+		stop("The provided sample_sources data.frame must have a boolean column 'reference' indicating which sample source comparisons should be made.
+
+This is usually done by adding this information to the analysis_configuration. For example:
+{
+    \"sample_source_comparisons\" : [
+        {
+            \"sample_sources\" : [
+                {
+                    \"database_path\" : \"native_features.db3\",
+                    \"id\" : \"Native\",
+                    \"reference\" : true
+		            },
+                {
+                    \"database_path\" : \"decoy_features.db3\",
+                    \"id\" : \"Decoy\",
+                    \"reference\" : false
+		            }
+            ],
+            \"analysis_scripts\" : [ ... ],
+            \"output_formats\" : [ ... ]
+	      }
+}\n")
+	}
+
+	ref_sample_sources <- as.character(
+		sample_sources[sample_sources$reference,"sample_source"])
+	new_sample_sources <- as.character(
+		sample_sources[!sample_sources$reference,"sample_source"])
+
+	if(length(ref_sample_sources) == 0){
+		cat("WARNING: No 'reference sample sample sources were specified.\n")
+  }
+
+	if(length(new_sample_sources) == 0){
+		cat("WARNING: No non-reference sample sample sources were specified.\n")
+  }
+
+  cat("Comparing sample_sources:
+	ref: ", paste(ref_sample_sources, collapse=", "), "
+	new: ", paste(new_sample_sources, collapse=", "), "\n", sep="")
+
+	# since there are usually more groups of id.vars than sample
+	# sources, make id.vars the outer loop
+  stats <- ddply(f, .variables = id.vars, function(sub_f){
+		cat(
+			"Grouping by these columns: ('",
+			paste(lapply(sub_f[1,id.vars], as.character), collapse="', '"),
+			"') ... ", sep="")
+
+		timing <- system.time({
+    	z <- ddply(
+				sub_f[sub_f$sample_source %in% ref_sample_sources,],
+				c("ref_sample_source" = "sample_source"), function(ref_f){
+
+				ddply(
+					sub_f[sub_f$sample_source %in% new_sample_sources,],
+					c("new_sample_source" = "sample_source"), function(new_f){
+
+					ldply(comp_funs, function(comp_fun){
+						get(comp_fun)(ref_f[,measure.vars], new_f[,measure.vars])
+					}) # comp_fun
+    	  }) # ref_f
+    	}) # new_f
+		}) # timing
+		cat(as.character(round(timing[3],2)), "s\n", sep="")
+		z
+  }) # sub_f
+
+	if(length(id.vars) > 0){
+		cast_formula <- as.formula(
+			paste(
+				paste(id.vars, collapse=" + "),
+				"ref_sample_source + new_sample_source ~ statistic_name", sep=" + "))
+	} else {
+		cast_formula <- ref_sample_source + new_sample_source ~ statistic_name
+	}
+	cast(stats, cast_formula, value="statistic")
 }
 
 # Evaluate a two sample tests between different classes of samples
@@ -201,35 +301,3 @@ cross_validate_statistics <- function(
     })
   })
 }
-
-
-# EXAMPLE USAGE  (work in progress)
-#
-#small_f <- sample_rows(f, 1000)
-#comps <- rbind(
-#  stats(f, "sample_source", c("don_chem_type", "acc_chem_type"), "ADdist", two_sided_ttest)
-#  stats(f, "sample_source", c("don_chem_type", "acc_chem_type"), "ADdist", kolmogorov_smirnov_test)
-#)
-#
-#comps[comps$ref_sample_source != comps$new_sample_source,]
-#tt <- comps[comps$ref_sample_source != comps$new_sample_source,]
-#
-#system.time(z <- stats(f, "sample_source", c("don_chem_type", "acc_chem_type"), "ADdist", kolmogorov_smirnov_test))
-#ks <- z[comps$ref_sample_source != comps$new_sample_source,]
-#
-#tt_vs_tt_sc12_sc12c <- data.frame(
-#  don_chem_type    = tt[tt$ref_sample_source == "top4400_1108_apltest4c" & tt$new_sample_source =="t4400_1108_sc12", "don_chem_type"],
-#  acc_chem_type    = tt[tt$ref_sample_source == "top4400_1108_apltest4c" & tt$new_sample_source =="t4400_1108_sc12", "acc_chem_type"],
-#  tt.p.value.sc12  = tt[tt$ref_sample_source == "top4400_1108_apltest4c" & tt$new_sample_source =="t4400_1108_sc12", "p.value"],
-#  tt.p.value.sc12c = tt[tt$ref_sample_source == "top4400_1108_apltest4c" & tt$new_sample_source == "t4400_sc12corr", "p.value"])
-#qplot(data=tt_vs_tt_sc12_sc12c, x = interaction(don_chem_type, acc_chem_type), y=tt.p.value.sc12c/tt.p.value.sc12, geom="bar", log="y") + coord_flip()
-#ggsave("/tmp/tt_vs_tt_sc12_sc12c.png", height=15, width=7)
-#
-#df <- rbind(tt, ks)
-#
-#plot_id <- "ADdist_compare_tt_ks"
-#p <- ggplot(df[df$ref_sample_source == "top4400_1108_apltest4c" & df$new_sample_source != "top4400_1108_apltest4c",]) + theme_bw() +
-#  geom_bar(aes(x=interaction(don_chem_type, acc_chem_type), y=statistic, fill=log(p.value))) +
-#  coord_flip() +
-#  facet_grid(statistic_name ~ new_sample_source)
-#ggsave("/tmp/tt_vs_tt_sc12_sc12c.png", height=30, width=7)

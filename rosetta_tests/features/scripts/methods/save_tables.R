@@ -27,8 +27,10 @@ save_tables <- function(
 	sample_sources,
 	output_dir,
 	output_formats,
+	table_title=NULL,
 	...
 ) {
+	extra_args <- list(...)
 	tryCatch(table_id, error=function(e){
 		stop(paste(
 			"ERROR: Unable to save the table because ",
@@ -85,15 +87,45 @@ save_tables <- function(
 		date <- date_code()
 		fname <- paste(table_id, date, sep="_")
 		full_path <- file.path(full_output_dir, paste(fname, fmt$extension, sep=""))
-		type <- substring(fmt$extension, 2)
-		cat("Saving Table of type ", type, ": ", full_path, sep="")
+		extension <- substring(fmt$extension, 2)
+		cat("Saving Table with extension ", extension, ": ", full_path, sep="")
 		timing <- system.time({
 			tryCatch({
-				print(xtable(
-					table),
-					file=full_path,
-					type=type,
-					...)
+				if(as.character(fmt$id) == "output_latex_sideways_table"){
+					cat("\\usepackage{booktabs}\n\\usepackage{rotating}\n", file=full_path)
+					print(xtable(
+						table, ...),
+						file=full_path,
+						type="latex",
+						append=TRUE,
+						booktabs=TRUE,
+						floating.environment="sidewaystable*",
+						...)
+				} else if(as.character(fmt$id) == "output_latex_table"){
+					cat("\\usepackage{booktabs}\n", file=full_path)
+					print(xtable(
+						table, ...),
+						file=full_path,
+						type="latex",
+						append=TRUE,
+						booktabs=TRUE,
+						...)
+				} else if(as.character(fmt$id) == "output_html"){
+					cat(table_css_header(), file=full_path)
+
+					print(xtable(
+						table, ...),
+						file=full_path,
+						type=extension,
+						append=TRUE,
+						html.table.attributes="border=0",
+						...)
+				} else if(as.character(fmt$id) == "output_csv"){
+					write.csv(
+						x=table,
+						file=full_path,
+						row.names=FALSE)
+				}
 			}, error=function(e){
 				cat("\n")
 				cat(paste(
@@ -106,3 +138,44 @@ save_tables <- function(
 }
 
 
+table_css_header <- function()
+	"
+<head>
+<style type=\"text/css\">
+{
+	font-family: \"Helvetica\", \"Lucida Sans Unicode\", \"Lucida Grande\", Sans-Serif;
+	font-size: 10px;
+	background: #fff;
+	margin: 45px;
+	width: 480px;
+	border-collapse: collapse;
+	text-align: left;
+}
+
+
+th {
+	font-family: \"Helvetica\", \"Lucida Sans Unicode\", \"Lucida Grande\", Sans-Serif;
+	font-size: 12px;
+	font-weight: normal;
+	color: #036;
+	padding-top:10px;
+	padding-bottom:2px;
+	padding-right:8px;
+	padding-left:8px;
+	border-bottom: 2px solid #6678b1;
+}
+
+
+td {
+	font-size: 12px;
+	border-bottom: 1px solid #ccc;
+	color: #336;
+	padding: 4px 6px;
+}
+
+tbody tr:hover td {
+	color: #009;
+}
+</style>
+<head>
+"

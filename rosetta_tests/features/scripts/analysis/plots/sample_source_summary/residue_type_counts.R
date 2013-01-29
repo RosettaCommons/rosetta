@@ -19,12 +19,23 @@ run=function(self, sample_sources, output_dir, output_formats){
 
 sele <- "
 SELECT
-  name3 AS res_type,
-  count(res_type) AS count
+	res.name3 AS res_type,
+	CASE
+		WHEN res_protein.property IS NULL THEN 'not_protein'
+		ELSE 'protein' END AS is_protein,
+  count(res.res_type) AS count
 FROM
-  residues
+  residues AS res,
+	residue_pdb_confidence AS res_conf
+	LEFT JOIN residue_type_property AS res_protein ON
+		res_protein.residue_type_set_name = 'fa_standard' AND
+		res_protein.residue_type_name = res.res_type AND
+		res_protein.property = 'PROTEIN'
+WHERE
+	res_conf.struct_id = res.struct_id AND
+	res_conf.residue_number = res.resNum
 GROUP BY
-  res_type;"
+	res.name3;"
 
 f <-  query_sample_sources(sample_sources, sele)
 
@@ -32,9 +43,35 @@ plot_id <- "residue_type_counts"
 p <- ggplot(data=f) + theme_bw() +
 	geom_bar(aes(x=res_type, y=count, fill=sample_source), position="dodge") +
 	coord_flip() +
-	opts(title = "Residue Types") +
+	ggtitle("Residue Type Counts (B-Fact < 30)") +
 	labs(x = "Residue Type", y = "Count")
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+
+table_id <- "residue_types_counts"
+save_tables(
+	self,
+	f,
+	plot_id,
+	sample_sources, output_dir, output_formats,
+	caption="Residue Type Counts (B-Fact < 30)", caption.placement="top")
+
+table_id <- "protein_residue_types_counts"
+save_tables(
+	self,
+	f[as.character(f$is_protein) == 'protein',],
+	plot_id,
+	sample_sources, output_dir, output_formats,
+	caption="Protein Residue Type Counts (B-Fact < 30)", caption.placement="top")
+
+table_id <- "non_protein_residue_types_counts"
+save_tables(
+	self,
+	f[as.character(f$is_protein) == 'protein',],
+	plot_id,
+	sample_sources, output_dir, output_formats,
+	caption="Protein Residue Type Counts (B-Fact < 30)", caption.placement="top")
+
+
 
 })) # end FeaturesAnalysis

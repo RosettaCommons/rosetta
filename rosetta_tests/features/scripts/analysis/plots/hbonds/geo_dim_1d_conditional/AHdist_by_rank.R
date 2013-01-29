@@ -109,5 +109,20 @@ ggplot(d, aes(colour=sample_source, group=sample_source)) + plot_parts +
   opts(title = "HBonds A-H Distance, Donor Rank=1, B-Factor < 30\nnormalized for equal weight per unit distance")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
+f1 <- f[f$accRank==1,]
+plot_id <- "hbond_AHdist_accRank_is_1"
+d <- estimate_density_1d(f1, c("sample_source"), "AHdist", radial_3d_normalization)
+ggplot(d, aes(colour=sample_source, group=sample_source)) + plot_parts +
+  opts(title = "HBonds A-H Distance, Primary HBond at Bifuracted Acceptor, B-Factor < 30\nnormalized for equal weight per unit distance")
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+
+f1 <- f[f$accRank==1,]
+plot_id <- "hbond_AHdist_chem_type_accRank_is_1"
+d <- estimate_density_1d(f1, c("sample_source", "acc_chem_type", "acc_chem_type"), "AHdist", radial_3d_normalization)
+ggplot(d, aes(colour=sample_source, group=sample_source)) + plot_parts +
+  facet_grid( don_chem_type ~ acc_chem_type) +
+  opts(title = "HBonds A-H Distance, Acceptor Rank=1, B-Factor < 30\nnormalized for equal weight per unit distance")
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+
 
 })) # end FeaturesAnalysis

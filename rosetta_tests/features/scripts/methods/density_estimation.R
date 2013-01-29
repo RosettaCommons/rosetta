@@ -162,16 +162,20 @@ estimate_density_1d_reflect_boundary <-function(
 	}
 	extended_factor <- 1
 
+	# Do the density estimation on the covering variable but apply the
+	# weight funtion to the original variable
+	data$covering_variable <- data[,variable]
+
 	if(reflect_left==TRUE){
 		data_lower <- data
-		data_lower[,variable] <- 2*left_boundary - data[,variable]
+		data_lower$covering_variable <- 2*left_boundary - data[,variable]
 		data <- rbind(data, data_lower)
 		extended_factor = extended_factor + 1
 	}
 
 	if(reflect_right==TRUE){
 		data_upper <- data
-		data_upper[,variable] <- 2*right_boundary - data[,variable]
+		data_upper$covering_variable <- 2*right_boundary - data[,variable]
 		data <- rbind(data, data_upper)
 		extended_factor = extended_factor + 1
 	}
@@ -185,7 +189,7 @@ estimate_density_1d_reflect_boundary <-function(
     } else {
       weights <- weight_fun(factor_df[,variable])
 			d <- density(
-				x=factor_df[,variable],
+				x=factor_df$covering_variable,
 				adjust=adjust,
 				weights=weights,
 				n=n_pts*extended_factor,

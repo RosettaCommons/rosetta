@@ -47,10 +47,87 @@ plot_id <- "dssp_content"
 ggplot(data=f) + theme_bw() +
 	geom_bar(aes(x=sample_source, y=fraction, fill=sample_source)) +
 	facet_wrap(~dssp_description, ncol=1) +
-	opts(title = "Secondary Structure Content") +
+	ggtitle("Secondary Structure Content") +
 	coord_flip() +
-	opts(legend.position="none") +
-        labs(y="Fraction of All Residues in Each Sample Source")
+	theme(legend.position="none") +
+	labs(y="Fraction of All Residues in Each Sample Source")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+
+################
+
+
+######################
+
+sele <- "
+SELECT
+	code.label AS dssp,
+  count(*) AS count
+FROM
+	residue_secondary_structure AS ss,
+	dssp_codes AS code,
+	residue_pdb_confidence AS res_conf
+WHERE
+	res_conf.struct_id = ss.struct_id AND
+	res_conf.residue_number = ss.resNum AND
+	code.code = ss.dssp
+GROUP BY
+  ss.dssp
+ORDER BY
+	count;"
+
+f <-  query_sample_sources(sample_sources, sele)
+
+plot_id <- "secondary_structure_counts"
+p <- ggplot(data=f) + theme_bw() +
+	geom_bar(aes(x=dssp, y=count, fill=sample_source), position="dodge") +
+	coord_flip() +
+	ggtitle("DSSP Counts") +
+	labs(x = "DSSP Code", y = "Count")
+
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+
+table_id <- "secondary_structure_counts"
+save_tables(
+	self,
+	f,
+	table_id,
+	sample_sources, output_dir, output_formats,
+	caption="DSSP Counts", caption.placement="top")
+
+######################
+
+sele <- "
+SELECT
+	res.name3 AS res_type,
+	code.label AS dssp,
+  count(*) AS count
+FROM
+	residues AS res,
+	residue_secondary_structure AS ss,
+	dssp_codes AS code,
+	residue_pdb_confidence AS res_conf
+WHERE
+	ss.struct_id = res.struct_id AND
+	ss.resNum = res.resNum AND
+	res_conf.struct_id = res.struct_id AND
+	res_conf.residue_number = res.resNum AND
+	code.code = ss.dssp
+GROUP BY
+  res.name3, ss.dssp
+ORDER BY
+	count;"
+
+f <-  query_sample_sources(sample_sources, sele)
+
+t <- cast(f, sample_source + res_type ~ dssp, value="count")
+table_id <- "secondary_structure_residue_counts"
+save_tables(
+	self,
+	t,
+	table_id,
+	sample_sources, output_dir, output_formats,
+	caption="DSSP by Residue Counts", caption.placement="top")
+
+
 
 })) # end FeaturesAnalysis

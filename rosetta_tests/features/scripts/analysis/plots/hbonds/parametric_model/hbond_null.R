@@ -15,7 +15,7 @@ brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
 run=function(self, sample_sources, output_dir, output_formats){
 
-n_pts=10000
+n_pts=1000000
 
 n_pts_ball=integer(n_pts * 6/pi) # fraction of volume in ball
 
@@ -87,21 +87,24 @@ plotmatrix(data=null.ball[,c("x", "y", "z")]) + theme_bw() +
 	coord_equal(ratio=1)
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
-
+n_pts <- 1000000
 gaussian.ball <- data.frame(x=rnorm(n_pts),y=rnorm(n_pts), z=rnorm(n_pts))
 
-null.sphere<-transform(null.ball,
+null.sphere<-transform(gaussian.ball,
   x=(x/sqrt(x^2+y^2+z^2)),
   y=(y/sqrt(x^2+y^2+z^2)),
   z=(z/sqrt(x^2+y^2+z^2)))
 
 null.sphere$id <- "spherical_null"
+null.sphere$angle <- pi - acos(null.sphere$x)
+null.sphere <- null.sphere[null.sphere$angle < pi/2,]
 dens <- estimate_density_1d(
   data = null.sphere,
   id=c("id"),
-  variable = "x")
+  variable = "angle",
+	weight_fun=conical_3d_normalization)
 
-plot_id = "hbond_cosAHD_spherical_null_model"
+plot_id = "hbond_AHD_spherical_null_model"
 ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y)) +
 	geom_indicator(aes(indicator=counts)) +

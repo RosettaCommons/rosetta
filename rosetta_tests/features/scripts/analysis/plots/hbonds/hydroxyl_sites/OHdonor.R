@@ -47,15 +47,13 @@ dens <- estimate_density_1d(
   weight_fun = radial_3d_normalization)
 
 p <- ggplot(data=dens) + theme_bw() +
-	geom_line(aes(x=x, y=y, colour=sample_source)) +
+	geom_line(aes(x=x, y=y, colour=sample_source), size=1.5) +
 	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	opts(title = "Hydroxyl Donor Hydrogen Bonds A-H Distance\n(normalized for equal weight per unit distance)") +
-	scale_y_continuous(
-		"Feature Density",
-		limits=c(0,2.9), breaks=0:2) +
+	scale_y_continuous("Feature Density") +
 	scale_x_continuous(
 		expression(paste('Acceptor -- Hydrogen Distance (', ring(A), ')')),
-		limits=c(1.4,2.7), breaks=c(1.6, 1.9, 2.2, 2.6))
+		limits=c(1.4,2.3), breaks=c(1.6, 1.8, 2.0, 2.2))
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -65,8 +63,8 @@ dens <- estimate_density_1d(
   ids = c("sample_source"),
   variable = "cosBAH")
 p <- ggplot(data=dens) + theme_bw() +
-	geom_line(aes(aes(x=acos(x)*180/pi, y=y, colour=sample_source)) +
-	geom_indicator(indicator=counts, colour=sample_source, group=sample_source)) +
+	geom_line(aes(x=acos(x)*180/pi, y=y, colour=sample_source)) +
+	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	opts(title = "Hydroxyl Donor Hydrogen Bonds BAH Angle \n(normalized for equal weight per unit distance)") +
 	labs(x=expression(paste('Base -- Acceptor -- Hydrogen (degrees)')),
 	     y="Feature Density")
@@ -88,7 +86,7 @@ p <- ggplot(data=dens) + theme_bw() +
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id <- "OHdonor_chi_all_acceptor_types"
-dens <- estimate_density_1d_wrap(
+dens <- estimate_density_1d_logspline(
   data = all_geom,
   ids = c("sample_source"),
   variable = "chi")
@@ -111,13 +109,13 @@ dens <- estimate_density_1d(
   variable = "AHdist",
   weight_fun = radial_3d_normalization)
 p <- ggplot(data=dens) + theme_bw() +
-	geom_line(aes(x=x, y=y, colour=sample_source)) +
+	geom_line(aes(x=x, y=y, colour=sample_source), size=1.5) +
 	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	opts(title = "Hydroxyl Donor Hydrogen Bonds A-H Distance to Sidechain Acceptors\n(normalized for equal weight per unit distance)") +
-	scale_y_continuous("Feature Density", limits=c(0,2.9), breaks=0:2) +
+	scale_y_continuous("Feature Density") +
 	scale_x_continuous(
 		expression(paste('Acceptor -- Proton Distance (', ring(A), ')')),
-		limits=c(1.4,2.7), breaks=c(1.6, 1.9, 2.2, 2.6))
+		limits=c(1.4,2.4), breaks=c(1.6, 1.8, 2.0, 2.2))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id <- "OHdonor_cosBAH_sidechain_acceptor_types"

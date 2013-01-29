@@ -93,13 +93,13 @@ f <- f[order(f$res_type, f$sample_source),]
 #make recovery values two digit numbers
 f[,c(4,5,6,7)] <- round(colwise(as.numeric)(f[,c(4,5,6,7)]),2)
 
-cat("\n")
-cat("Recovery of Chi Angle Rotamers after applying MinPack by Residue type, BFactor < 30\n")
-print(xtable(f),
-	caption.placement="top",
-	type="html",
-	include.rownames = FALSE,
-	html.table.attributes="border=0")
+
+table_id <- "rotamer_recovery_summary"
+table_title <- "Recovery of Chi Angle Rotamers after applying MinPack by Residue type, BFactor < 30\n"
+save_tables(self,
+	f, table_id,
+	sample_sources, output_dir, output_formats,
+	caption=table_title, caption.placement="top")
 
 
 })) # end FeaturesAnalysis

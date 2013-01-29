@@ -324,6 +324,16 @@ summarize_configuration <- function(
 initialize_sample_sources <- function(ss_cmp){
 	sample_sources <- ldply(ss_cmp$sample_sources, function(ss){
 
+		if(is.na(ss$id) || is.null(ss$id) || length(ss$id) == 0){
+			stop(paste(
+				"ERROR: The 'id' for the sample source is empty.", sep=""))
+		}
+
+		if(is.na(ss$id) || is.null(ss$id) || length(ss$database_path) == 0){
+			stop(paste(
+				"ERROR: The 'database_path' for sample source '", ss$id, "' is empty.", sep=""))
+		}
+
 		if(substr(ss$database_path,1,1) == "/"){
 			database_path <- ss$database_path
 		} else {
@@ -527,7 +537,7 @@ l_ply(configuration$sample_source_comparisons, function(ss_cmp){
 		sample_source_output_dir,
 		output_formats)
 
-	generate_webpages(opt, sample_source_output_dir)
+	#generate_webpages(opt, sample_source_output_dir)
 
 })
 

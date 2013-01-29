@@ -48,7 +48,6 @@ feature_reporter_dependencies = c("HBondFeatures"),
 
 run=function(self, sample_sources, output_dir, output_formats){
 
-print(getwd())
 source("scripts/analysis/plots/hbonds/hbond_geo_dim_scales.R")
 
 sele <- "
@@ -84,19 +83,8 @@ f <- transform(f,
 # This shouldn't happend, but if it does get rid of them
 f <- f[f$ADdist < 5,]
 
-# Order the plots better and give more descriptive labels
-f$don_chem_type <- factor(f$don_chem_type,
-	levels = c("hbdon_IMD", "hbdon_IME", "hbdon_GDE", "hbdon_GDH",
-		"hbdon_AHX", "hbdon_HXL", "hbdon_IND", "hbdon_AMO", "hbdon_CXA", "hbdon_PBA"),
-	labels = c("dIMD: h", "dIME: h", "dGDE: r", "dGDH: r",
-		"dAHX: y", "dHXL: s,t", "dIND: w", "dAMO: k", "dCXA: n,q", "dPBA: bb"))
-
-# Order the plots better and give more descriptive labels
-f$acc_chem_type <- factor(f$acc_chem_type,
-	levels = c("hbacc_IMD", "hbacc_IME", "hbacc_AHX", "hbacc_HXL",
-		"hbacc_CXA", "hbacc_CXL", "hbacc_PBA"),
-	labels = c("aIMD: h", "aIME: h", "aAHX: y", "aHXL: s,t",
-		"aCXA: n,q", "aCXL: d,e", "aPBA: bb"))
+f$don_chem_type_name <- don_chem_type_name_linear(f$don_chem_type)
+f$acc_chem_type_name <- acc_chem_type_name_linear(f$acc_chem_type)
 
 f <- na.omit(f, method="r")
 
@@ -105,7 +93,7 @@ f <- na.omit(f, method="r")
 # normalization. This corrects for the fact that there is more volume
 # in a spherical shell at a farther distance then a closer distance.
 dens <- estimate_density_1d(f,
-	c("don_chem_type", "acc_chem_type", "sample_source"),
+	c("sample_source", "don_chem_type_name", "acc_chem_type_name"),
 	"ADdist", radial_3d_normalization)
 
 # Generate a lattice of density plots for each donor and acceptor type
@@ -113,8 +101,8 @@ plot_id <- "hbond_ADdist_chem_type"
 p <- ggplot(dens) + theme_bw() +
 	geom_line(aes(x, y, colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
-	facet_grid(don_chem_type ~ acc_chem_type) +
-	opts(title = "Hydrogen Bond A-D Distance by Chemical Type, B-Factor < 30\n(normalized for equal volume per unit distance)") +
+	facet_grid(don_chem_type_name ~ acc_chem_type_name) +
+	ggtitle("H-Bond A-D Distance by Chemical Type, B-Factor < 30\n(normalized for equal volume per unit distance)") +
 	scale_x_ADdist +
 	scale_y_continuous("FeatureDensity", limits=c(0,8.5), breaks=c(1,3,5,7))
 if(nrow(sample_sources) <= 3){
@@ -123,5 +111,20 @@ if(nrow(sample_sources) <= 3){
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
+
+#summary_stats <- compute_summary_statistics_1d(f,
+#	c("sample_source", "don_chem_type_name", "acc_chem_type_name"),
+#	"ADdist", radial_3d_normalization, c("primary_mode", "count")
+#
+#comp_stats <- compute_comparison_statistics_1d(self, f, sample_sources,
+#	c("don_chem_type_name", "acc_chem_type_name"),
+#	"ADdist", c("primary_mode_diff", "two_sided_ttest", "kolmogorov_smirnov_test")
+#
+#table_id <- "hbond_ADdist_chem_type_comp_stats"
+#table_title <- "H-Bond A-D Distance by Chemical Type, B-Factor < 30 Comparison Statistics"
+#save_tables(self, f, table_id, output_dir, output_formats,
+#	caption=table_title, caption.placement="top")
+#
+#save_stats(self, "hbond_ADdist_chem_type", output_dir, output_formats, comp_stats)
 
 })) # end FeaturesAnalysis

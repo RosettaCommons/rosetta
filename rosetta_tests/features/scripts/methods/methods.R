@@ -87,7 +87,8 @@ query_sample_sources <- function(
 		df
 	})
 	if(nrow(features)==0){
-		cat("WARNING: Query returned no rows.\n")
+		cat("WARNING: The following query returned no rows:\n")
+		cat(sele)
 	}
 	for(col in names(features)){
 		if(is.character(features[,col])){
@@ -152,6 +153,11 @@ In the returned data.frame the there will be the following columns:
 		df
 	})
 	dbDisconnect(con)
+
+	if(nrow(features)==0){
+		cat("WARNING: The following query returned no rows:\n")
+		cat(sele)
+	}
 
 	for(col in names(features)){
 		if(is.character(features[,col])){

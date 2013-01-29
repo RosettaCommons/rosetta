@@ -29,18 +29,39 @@ SELECT
 	count(*) AS count
 FROM
 	hbond_heavy_sites AS don,
-	hbond_heavy_sites AS acc
+	hbond_heavy_sites AS acc,
+	residue_pdb_confidence AS res_b
 WHERE
 	don.struct_id = acc.struct_id AND
 	don.residue_number = acc.residue_number AND
 	don.is_donor = 1 AND
-	acc.is_donor = 0
+	acc.is_donor = 0 AND
+	don.struct_id = res_b.struct_id AND don.residue_number = res_b.residue_number AND
+	res_b.max_temperature < 30
 GROUP BY
 	don.res_type, don_satisfied, acc_satisfied, buried, don_chem_type, acc_chem_type;"
 f <- query_sample_sources(sample_sources, sele)
+f <- f[f$count > 100,]
 
 print(summary(f))
-f <- f[f$count > 100,]
+table_id <- "hb_chem_type_don_acc_satisfaction_all"
+save_tables(
+	self,
+	f,
+	table_id, sample_sources, output_dir, output_formats)
+
+table_id <- "hb_chem_type_don_acc_satisfaction_sc"
+save_tables(
+	self,
+	f[f$don_chem_type != "hbdon_PBA" & f$acc_chem_type != "hbacc_PBA",],
+	table_id, sample_sources, output_dir, output_formats)
+
+table_id <- "hb_chem_type_don_acc_satisfaction_buried_sc"
+save_tables(
+	self,
+	f[f$don_chem_type != "hbdon_PBA" & f$acc_chem_type != "hbacc_PBA" & f$buried == "Buried",],
+	table_id, sample_sources, output_dir, output_formats)
+
 
 plot_parts <- list(
 	theme_bw(),
@@ -101,10 +122,13 @@ SELECT
 	site.HBChemType AS chem_type,
 	count(*) AS count
 FROM
-	hbond_heavy_sites AS site
+	residue_pdb_confidence AS res_b
+	hbond_heavy_sites AS site,
 WHERE
 	site.HBChemType != 'hbdon_PBA' AND
-	site.HBChemType != 'hbacc_PBA'
+	site.HBChemType != 'hbacc_PBA' AND
+	site.struct_id = res_b.struct_id AND site.residue_number = res_b.residue_number AND
+	res_b.max_temperature < 30
 GROUP BY
 	satisfied, buried, chem_type;"
 f <- query_sample_sources(sample_sources, sele)
@@ -121,14 +145,32 @@ save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
 
+
+
 #####################################
 table_id <- "hb_chem_type_fraction_satisfied"
 p_sat <- ddply(f, .(chem_type_name, buried, sample_source), function(df){
 	data.frame(
+		n_sat = sum(df[df$satisfied == "Sat", "count"]),
 		p_sat = sum(df[df$satisfied == "Sat", "count"])/sum(df$count))
 })
+
+
+n_sat_wide <- cast(p_sat, buried + chem_type_name ~ sample_source, value.var=n_sat, value="n_sat")
+z <- names(n_sat_wide)
+names(n_sat_wide) <- c(
+	"buried", "chem_type_name",
+	paste("#(Sat) ", z[!(z %in% c("buried", "chem_type_name"))], collapse=""))
+
 p_sat_wide <- cast(p_sat, buried + chem_type_name ~ sample_source, value.var=p_sat, value="p_sat")
-save_tables(self, p_sat_wide, table_id, sample_sources, output_dir, output_formats)
+z <- names(p_sat_wide)
+names(p_sat_wide) <- c(
+	"buried", "chem_type_name",
+	paste("P(Sat) ", z[!(z %in% c("buried", "chem_type_name"))], collapse=""))
+
+
+sat_wide <- merge(n_sat_wide, p_sat_wide)
+save_tables(self, sat_wide, table_id, sample_sources, output_dir, output_formats)
 
 
 
