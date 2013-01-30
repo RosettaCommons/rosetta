@@ -29,7 +29,7 @@ using core::Size;
 void 
 delete_region(Pose & pose, Size const start, Size const end);
         
-///@brief Returns a region of the pose as a new pose. Has a simple foldtree.
+///@brief Returns a region of the pose including start and end as a new pose. Has a simple foldtree.
 Pose 
 return_region(Pose & pose, Size const start, Size const end);
     
@@ -40,6 +40,8 @@ replace_region(Pose const & from_pose, Pose const & to_pose, Size const from_pos
 ///@author Steven Lewis smlewi@gmail.com
 ///@brief inserts one pose into another pose, returning the product as a new value. 
 ///@details Nter->Cter. Coordinates and dihedrals of insert are unchanged.
+///@details Begins insertion AFTER insert point.
+
 Pose
 insert_pose_into_pose(Pose const & scaffold_pose, Pose const & insert_pose, Size const insert_point, Size const insert_point_end);
     

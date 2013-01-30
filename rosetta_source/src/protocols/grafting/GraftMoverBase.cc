@@ -191,7 +191,7 @@ GraftMoverBase::superimpose_overhangs_heavy(Pose const & pose, bool ca_only, boo
 	core::Real rms(superimpose_pose(piece_, pose, atoms_to_superimpose));
 
 	if (!silence_rms){
-		TR << "Superposition of overhangs: "<<rms<<std::endl;
+		TR << "RMS of piece from starting position to current: "<<rms<<std::endl;
 	}
 	return;
 }
