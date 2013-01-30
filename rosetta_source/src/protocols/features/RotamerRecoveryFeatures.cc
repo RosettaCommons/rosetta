@@ -229,7 +229,7 @@ RotamerRecoveryFeatures::parse_my_tag(
 			"comparer", "RRComparerAutomorphicRMSD"));
 	comparer_ = factory->get_rotamer_recovery_comparer(comparer_name);
 
-	if(tag->hasOption("recovery_theshold")){
+	if(tag->hasOption("recovery_threshold")){
 		comparer_->set_recovery_threshold(tag->getOption<Real>("recovery_threshold"));
 	}
 
