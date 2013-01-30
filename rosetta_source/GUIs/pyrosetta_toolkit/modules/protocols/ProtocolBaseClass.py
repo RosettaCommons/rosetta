@@ -68,7 +68,7 @@ class ProtocolBaseClass:
             #First, we have an array of jobs:
             workers = []
             for i in range(1, self.output_class.decoys.get()+1):
-                outname = self.pdb_name+repr(i)+".pdb"
+                outname = self.pdb_name+"_"+repr(i)+".pdb"
                 worker = Process(name = repr(i), target=self._run_mover, args=(mover, outname))
                 workers.append(worker)
             total_allowed_jobs = self.output_class.processors.get()
