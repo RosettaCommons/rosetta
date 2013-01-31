@@ -57,7 +57,7 @@ class PythonPDB:
                 self.pdb_map[i]=dict()
                 
             self.pdb_map[i]["id"]=line[0:6].strip()
-            self.pdb_map[i]["atom_number"]=line[6:11].strip();     self.pdb_map[i]["atom_name"] = line[11:16].strip()
+            self.pdb_map[i]["atom_number"]=line[6:11].strip();     self.pdb_map[i]["atom_name"] = line[12:16]
             self.pdb_map[i]["alternate_location"]=line[16];        self.pdb_map[i]["three_letter_code"] = line[17:21].strip()
             self.pdb_map[i]["chain"] = line[21].strip();           self.pdb_map[i]["residue_number"]= line[22:26].strip()
             self.pdb_map[i]["i_code"] = line[26];                  self.pdb_map[i]["x"] = line[27:38].strip()
@@ -236,11 +236,16 @@ class PythonPDB:
         Oh What fun. ;)
         Magic Numbers?: (6,5,4,3,1,4,8,8,8,4,5);
         """
-        #Here we fix the formating of atom name.
+        
+        
+        #Here we fix the formating of atom name. If we stripped the atom name.
+        """
         atom_name = self.pdb_map[line_num]['atom_name']
         if len(atom_name)==1:
             atom_name=' '+atom_name+'  '
         elif len(atom_name)==2:
+            #Note that 2 letter elements like CA (calcium) differ from CA (C-Alpha)
+            #If calcium, would go @column 13.  if C-Alpha, column 14.
             atom_name=' '+atom_name+' '
         elif len(atom_name)==3:
             atom_name=' '+atom_name
@@ -249,9 +254,10 @@ class PythonPDB:
         else:
             print "Atom Name missing.  Inserting spaces."
             atom_name = '    '
-            
+        """
+        
         #Create the PDB line.
-        line = (self.pdb_map[line_num]['id']).ljust(6)+             (self.pdb_map[line_num]['atom_number']).rjust(5)+" "+ atom_name+ \
+        line = (self.pdb_map[line_num]['id']).ljust(6)+             (self.pdb_map[line_num]['atom_number']).rjust(5)+" "+ self.pdb_map[line_num]['atom_name']+ \
                (self.pdb_map[line_num]['alternate_location'])+      ((self.pdb_map[line_num]['three_letter_code']).rjust(3)).ljust(4)+  (self.pdb_map[line_num]['chain'])+             \
                (self.pdb_map[line_num]['residue_number']).rjust(4)+ (self.pdb_map[line_num]['i_code']) +                                              \
                (self.pdb_map[line_num]['x']).rjust(11)+             (self.pdb_map[line_num]['y']).rjust(8)+                  (self.pdb_map[line_num]['z']).rjust(8) +   \
