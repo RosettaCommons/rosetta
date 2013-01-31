@@ -18,6 +18,7 @@
 
 //Unit Headers
 #include <protocols/grafting/GraftMoverBase.hh>
+#include <protocols/grafting/AnchoredGraftMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 //Core
 #include <core/pose/Pose.hh>
