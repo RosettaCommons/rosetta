@@ -611,19 +611,15 @@ IdealParametersDatabase::lookup_bondangle_buildideal(
 	if (atm1 > 0) {
 		x = newres->atom( atm1 ).xyz();
 	} else {
-		x = newres->residue_connection( -atm1 ).icoor().build( restype );
+		x = newres->upper_connect().icoor().build( restype );
 	}
 
-	if (atm2 > 0) {
-		y = newres->atom( atm2 ).xyz();
-	} else {
-		y = newres->residue_connection( -atm2 ).icoor().build( restype );
-	}
+	y = newres->atom( atm2 ).xyz();
 
 	if (atm3 > 0) {
 		z = newres->atom( atm3 ).xyz();
 	} else {
-		z = newres->residue_connection( -atm3 ).icoor().build( restype );
+		z = newres->lower_connect().icoor().build( restype );
 	}
 
 	theta0 = numeric::angle_radians ( x,y,z );
@@ -678,13 +674,13 @@ IdealParametersDatabase::lookup_bondlength_buildideal(
 	if (atm1 > 0) {
 		x = newres->atom( atm1 ).xyz();
 	} else {
-		x = newres->residue_connection( -atm1 ).icoor().build( restype );
+		x = newres->upper_connect().icoor().build( restype );
 	}
 
 	if (atm2 > 0) {
 		y = newres->atom( atm2 ).xyz();
 	} else {
-		y = newres->residue_connection( -atm2 ).icoor().build( restype );
+		y = newres->lower_connect().icoor().build( restype );
 	}
 
 	d0 = (x-y).length();
@@ -1239,7 +1235,7 @@ IdealParametersDatabase::create_parameters_for_restype(
 	
 			std::string atm1,atm2;
 			core::Size rt1,rt2;
-			if (i==1) { atm1="C";  atm2="N";  rt1 = -1*((int)rsd_type.lower_connect_id()); rt2 = rsd_type.atom_index(" N  ");}
+			if (i==1) { atm1="C";  atm2="N";  rt1 = 0; rt2 = rsd_type.atom_index(" N  ");}
 			if (i==2) { atm1="N";  atm2="CA"; rt1 = rsd_type.atom_index(" N  "); rt2 = rsd_type.atom_index(" CA "); }
 			if (i==3) { atm1="CA"; atm2="CB"; rt1 = rsd_type.atom_index(" CA "); rt2 = rsd_type.atom_index(" CB "); }
 			if (i==4) { atm1="CA"; atm2="C";  rt1 = rsd_type.atom_index(" CA "); rt2 = rsd_type.atom_index(" C  "); }
@@ -1260,13 +1256,13 @@ IdealParametersDatabase::create_parameters_for_restype(
 	
 			std::string atm1,atm2,atm3;
 			core::Size rt1,rt2,rt3;
-			if (i==1) { atm1="C";  atm2="N";  atm3="CA"; rt1=-1*((int)rsd_type.lower_connect_id());  rt2=rsd_type.atom_index(" N  "); rt3=rsd_type.atom_index(" CA ");}
+			if (i==1) { atm1="C";  atm2="N";  atm3="CA"; rt1=0;  rt2=rsd_type.atom_index(" N  "); rt3=rsd_type.atom_index(" CA ");}
 			if (i==2) { atm1="N";  atm2="CA"; atm3="CB"; rt1=rsd_type.atom_index(" N  "); rt2=rsd_type.atom_index(" CA "); rt3=rsd_type.atom_index(" CB "); }
 			if (i==3) { atm1="N";  atm2="CA"; atm3="C";  rt1=rsd_type.atom_index(" N  "); rt2=rsd_type.atom_index(" CA "); rt3=rsd_type.atom_index(" C  "); }
 			if (i==4) { atm1="CB"; atm2="CA"; atm3="C";  rt1=rsd_type.atom_index(" CB "); rt2=rsd_type.atom_index(" CA "); rt3=rsd_type.atom_index(" C  "); }
 			if (i==5) { atm1="CA"; atm2="C";  atm3="O";  rt1=rsd_type.atom_index(" CA "); rt2=rsd_type.atom_index(" C  "); rt3=rsd_type.atom_index(" O  "); }
-			if (i==6) { atm1="CA"; atm2="C";  atm3="N";  rt1=rsd_type.atom_index(" CA "); rt2=rsd_type.atom_index(" C  "); rt3=-1*((int)rsd_type.upper_connect_id()); }
-			if (i==7) { atm1="O";  atm2="C";  atm3="N";  rt1=rsd_type.atom_index(" O  "); rt2=rsd_type.atom_index(" C  "); rt3=-1*((int)rsd_type.upper_connect_id()); }
+			if (i==6) { atm1="CA"; atm2="C";  atm3="N";  rt1=rsd_type.atom_index(" CA "); rt2=rsd_type.atom_index(" C  "); rt3=0; }
+			if (i==7) { atm1="O";  atm2="C";  atm3="N";  rt1=rsd_type.atom_index(" O  "); rt2=rsd_type.atom_index(" C  "); rt3=0; }
 	
 			ResidueCartBondedParameters::Size3 ids;
 			ids[1] = rt1; ids[2] = rt2; ids[3] = rt3;
