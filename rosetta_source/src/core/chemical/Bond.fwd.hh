@@ -7,32 +7,29 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/chemical/Atom.fwd.hh
+/// @file   core/chemical/Bond.fwd.hh
 /// @author Phil Bradley
 
 
-#ifndef INCLUDED_core_chemical_Atom_fwd_hh
-#define INCLUDED_core_chemical_Atom_fwd_hh
+#ifndef INCLUDED_core_chemical_Bond_fwd_hh
+#define INCLUDED_core_chemical_Bond_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/access_ptr.hh>
 #include <utility/vector1.fwd.hh>
 
 namespace core {
 namespace chemical {
 
-struct Atom;
+struct Bond;
 
-typedef  utility::pointer::owning_ptr< Atom >  AtomOP;
-typedef  utility::pointer::owning_ptr< Atom const >  AtomCOP;
-typedef  utility::pointer::access_ptr< Atom >  AtomAP;
-typedef  utility::vector1< AtomOP >  AtomOPs;
-typedef  utility::vector1< AtomCOP >  AtomCOPs;
-typedef  utility::vector1< AtomAP >  AtomAPs;
+//typedef  utility::pointer::owning_ptr< Bond >  BondOP;
+//typedef  utility::pointer::owning_ptr< Bond const >  BondCOP;
+//typedef  utility::vector1< BondOP >  BondOPs;
+//typedef  utility::vector1< BondCOP >  BondCOPs;
 
 } // chemical
 } // core
 
 
 
-#endif // INCLUDED_core_chemical_Atom_FWD_HH
+#endif // INCLUDED_core_chemical_Bond_FWD_HH

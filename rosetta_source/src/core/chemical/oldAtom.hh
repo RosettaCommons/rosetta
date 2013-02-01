@@ -6,67 +6,49 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
-//////////////////////////////////////////////////////////////////////
-/// @begin Atom
-///
-/// @brief
-/// A class for defining chemical atoms, with properties specific to a ResidueType, not conformation info
-/// specific to a Residue. Conformation info goes in conformation::Atom. AtomTypes are not ResidueType specific.
-///
-///
-///
-///
-/// @author
-/// Gordon Lemmon
-///
-/////////////////////////////////////////////////////////////////////////
 
+/// @file   core/chemical/Atom.hh
+/// @brief  Energy graph class declaration
+/// @author Andrew Leaver-Fay (leaverfa@email.unc.edu)
 
 #ifndef INCLUDED_core_chemical_Atom_hh
 #define INCLUDED_core_chemical_Atom_hh
 
-
-// Unit headers
+// Unit Headers
 #include <core/chemical/Atom.fwd.hh>
 #include <core/chemical/AtomICoor.hh>
-#include <core/types.hh>
+
+// Project Headers
+//#include <core/chemical/EnergyMap.hh>
+#include <core/graph/Graph.hh>
+#include <core/graph/ArrayPool.hh>
+//#include <core/chemical/ScoreType.hh>
 #include <numeric/xyzVector.hh>
-
-// Package headers
-#include <core/chemical/types.hh>
-
 // Utility headers
-#include <utility/vector1_bool.hh>
+#include <utility/pointer/ReferenceCount.hh>
 
-// C++ headers
-#include <string>
+#include <utility/vector1.hh>
+
+
 
 namespace core {
 namespace chemical {
 
-/// @brief basic chemical atom
-///
-/// @details name, element, certain properties and parameters from .params file
-///
-class Atom {
+/// Class Atom holds the result of a domainmap update from the
+/// Conformation object held by a pose; if the internal degrees of freedom
+/// for a residue (corresponding to a node in this graph) have changed
+/// (and are marked with color "0" in the domainmap), then the Atom
+/// object will hold that information for the ScoringFunction to retrieve
+class Atom : public graph::Node
+{
+public:
+	typedef graph::Node parent;
 
 public:
-
-	/// @brief Construct a new atom type with its name and element.
-	///
-	/// @details All its properties are unset by default.
-	///
-	Atom():
-			name_(""),
-			mm_name_(""),
-			atom_type_index_(0),
-			mm_atom_type_index_(0),
-			charge_(0),
-			ideal_xyz_(),
-			icoor_()
-	{}
-
+	Atom( graph::Graph * owner, Size index );
 	Atom(
+			Graph * owner,
+			Size index,
 			std::string const & name_in,
 		//	std::string const type_name,
 			std::string const mm_name,
@@ -74,45 +56,15 @@ public:
 			Size const mm_atom_type_index,
 			Real const charge,
 			Vector const ideal_xyz,
-			AtomICoor const icoor = AtomICoor()
+			AtomICoor const icoor
 
-	):
-		name_( name_in ),
-		//type_name_(type_name),
-		mm_name_(mm_name),
-		atom_type_index_(atom_type_index),
-		mm_atom_type_index_(mm_atom_type_index),
-		charge_(charge),
-		ideal_xyz_(ideal_xyz),
-		icoor_(icoor)
-	{}
+	);
+	virtual ~Atom();
+	virtual void copy_from( parent const * source );
 
-	Atom(Atom const & src) :
-		name_( src.name_ ),
-		//type_name_(src.type_name),
-		mm_name_(src.mm_name_),
-		atom_type_index_(src.atom_type_index_),
-		mm_atom_type_index_(src.mm_atom_type_index_),
-		charge_(src.charge_),
-		ideal_xyz_(src.ideal_xyz_),
-		icoor_(src.icoor_)
-	{}
-
-	void
-	print( std::ostream & out ) const;
-
-	friend
-	std::ostream &
-	operator<< ( std::ostream & out, Atom const & atom);
-
-	bool operator==(Atom const & atom) const{
-		return	name_== atom.name_ &&
-				mm_name_ == atom.mm_name_ &&
-				atom_type_index_ == atom.atom_type_index_ &&
-				mm_atom_type_index_ == atom.mm_atom_type_index_ &&
-				charge_ == atom.charge_ &&
-				ideal_xyz_ == atom.ideal_xyz_;
-	}
+	virtual void print() const;
+	virtual Size count_static_memory() const;
+	virtual Size count_dynamic_memory() const;
 
 // Const Getters
 	std::string const& name() const { return name_; };
@@ -135,8 +87,9 @@ public:
 	void ideal_xyz( Vector const & ideal_xyz) { ideal_xyz_= ideal_xyz; };
 	void icoor( AtomICoor const & icoor) { icoor_ = icoor; };
 
-	// data
+
 private:
+
 	// Primary data
 	std::string name_;
 	//std::string const type_name_;
@@ -151,12 +104,11 @@ private:
 	Real charge_;
 	Vector ideal_xyz_;
 	AtomICoor icoor_;
+
 };
 
+} //namespace chemical
+} //namespace core
 
-} // chemical
-} // core
+#endif
 
-
-
-#endif // INCLUDED_core_chemical_Atom_HH

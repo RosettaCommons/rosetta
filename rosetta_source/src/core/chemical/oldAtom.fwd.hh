@@ -8,31 +8,22 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/chemical/Atom.fwd.hh
-/// @author Phil Bradley
-
+/// @brief  Energy graph class forward declaration
+/// @author Andrew Leaver-Fay (leaverfa@email.unc.edu)
 
 #ifndef INCLUDED_core_chemical_Atom_fwd_hh
 #define INCLUDED_core_chemical_Atom_fwd_hh
 
+//Utility headers
+//too bad we can't use owning_ptr.fwd.hh
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/access_ptr.hh>
-#include <utility/vector1.fwd.hh>
 
 namespace core {
 namespace chemical {
 
-struct Atom;
+class Atom;
 
-typedef  utility::pointer::owning_ptr< Atom >  AtomOP;
-typedef  utility::pointer::owning_ptr< Atom const >  AtomCOP;
-typedef  utility::pointer::access_ptr< Atom >  AtomAP;
-typedef  utility::vector1< AtomOP >  AtomOPs;
-typedef  utility::vector1< AtomCOP >  AtomCOPs;
-typedef  utility::vector1< AtomAP >  AtomAPs;
+} //namespace chemical
+} //namespace core
 
-} // chemical
-} // core
-
-
-
-#endif // INCLUDED_core_chemical_Atom_FWD_HH
+#endif

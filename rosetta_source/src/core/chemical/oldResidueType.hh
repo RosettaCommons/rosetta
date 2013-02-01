@@ -51,19 +51,16 @@
 #ifndef INCLUDED_core_chemical_ResidueType_hh
 #define INCLUDED_core_chemical_ResidueType_hh
 
-//#include <boost/graph/adjacency_list.hpp> // Use this one instead of undirected graph to switch from storage of nodes and edges from list to a container of your choice.
-#include <boost/graph/undirected_graph.hpp>
 
 // Unit headers
 #include <core/chemical/ResidueType.fwd.hh>
 // Package headers
-#include <core/chemical/Atom.hh>
+#include <core/chemical/Atom.fwd.hh>
 #include <core/chemical/AtomICoor.hh>
 #include <core/chemical/AtomType.fwd.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/Adduct.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
-#include <core/chemical/Bond.hh>
 #include <core/chemical/ElementSet.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/MMAtomType.fwd.hh>
@@ -164,24 +161,6 @@ class ResidueType : public utility::pointer::ReferenceCount {
 
 public:
 
-	typedef boost::undirected_graph<
-			Atom, // struct with properties of a node
-			Bond // struct with properties of an edge
-			/*,ResidueType*/
-	> ResidueGraph;
-
-	typedef ResidueGraph::vertex_descriptor VD;
-	typedef utility::vector1< VD > VDs;
-
-	typedef boost::graph_traits<ResidueGraph>::vertex_iterator VIter;
-	typedef boost::graph_traits<ResidueGraph>::edge_iterator EIter;
-	typedef std::pair<VIter, VIter> VIterPair;
-
-	typedef std::map< std::string, VD > NameVDMap;
-	typedef std::pair<std::string, VD> NameVDPair;
-	typedef std::pair<NameVDMap::iterator, bool> NameVDInserted;
-
-
 	/// @brief destructor
 	virtual
 	~ResidueType();
@@ -200,7 +179,6 @@ public:
 //		CSDAtomTypeSetCAP csd_atom_types kwk commenting out csd atom types until they have been fully implemented
 	);
 
-	ResidueType(ResidueType const & residue_type);
 
 	/// @brief make a copy
 	ResidueTypeOP
@@ -234,9 +212,8 @@ public:
 	{
 		return atom_types_;
 	}
-//private: // For refactoring
+
 	Atom & atom(Size const atom_index);
-//public:
 	Atom const & atom(Size const atom_index) const;
 	Atom & atom(std::string const & atom_name);
 	Atom const & atom(std::string const & atom_name) const;
@@ -257,7 +234,7 @@ public:
 	Size
 	natoms() const
 	{
-		return graph_.num_vertices();
+		return natoms_;
 	}
 
 	/// @brief number of heavy atoms
@@ -494,7 +471,7 @@ public:
 	bool
 	has( std::string const & atom_name ) const
 	{
-		return atom_graph_index_.find(atom_name) != atom_graph_index_.end();
+		return ( atom_index_.find( atom_name ) != atom_index_.end() );
 	}
 
 	/// @brief get index of an atom's base atom
@@ -535,7 +512,7 @@ public:
 	Size
 	first_sidechain_atom() const
 	{
-		return ( ( n_backbone_heavyatoms_ == nheavyatoms_ ) ? natoms() + 1 : n_backbone_heavyatoms_ + 1 );
+		return ( ( n_backbone_heavyatoms_ == nheavyatoms_ ) ? natoms_ + 1 : n_backbone_heavyatoms_ + 1 );
 	}
 
 
@@ -553,7 +530,7 @@ public:
 	atom_is_backbone( Size const atomno ) const
 	{
 		assert( finalized_ );
-		assert( atomno <= natoms() );
+		assert( atomno <= natoms_ );
  		return ( ( atomno <= n_backbone_heavyatoms_ ) ||
  						 ( atomno > nheavyatoms_ && atomno < first_sidechain_hydrogen_ ) );
 	}
@@ -564,7 +541,7 @@ public:
 	atom_is_hydrogen( Size const atomno ) const
 	{
 		assert( finalized_ );
-		assert( atomno <= natoms() );
+		assert( atomno <= natoms_ );
 		return atomno > nheavyatoms_;
 	}
 
@@ -867,12 +844,15 @@ public:
 		std::string const & count_pair_special*/
 	);
 
-	void
-	add_atom(Atom const & atom);
 
 	/// @brief flag an atom for deletion by adding its index to the delete_atom_ list
 	void
-	delete_atom( std::string const & name );
+	delete_atom( std::string const & name )
+	{
+		finalized_ = false;
+		assert( has( name ) );
+		delete_atoms_.push_back( atom_index( name ) );
+	}
 
 	/// @brief set atom type
 	void
@@ -1272,11 +1252,11 @@ public:
 		return is_upper_terminus_;
 	}
 
-	/// @brief is acetylated n terminus
+	/// @brief is actylated n terminus
 	bool
-	is_acetylated_nterminus() const
+	is_actylated_nterminus() const
 	{
-		return is_acetylated_nterminus_;
+		return is_actylated_nterminus_;
 	}
 
 	/// @brief is methylated c terminus
@@ -1725,9 +1705,6 @@ private:
 	void
 	setup_atom_ordering( AtomIndices & old2new );
 
-	///// GRAPH FUNCTION to provide backward compatibility ////////
-	void order_atoms();
-
 	/// reorder primary data in ResidueType given the old2new map, called by finalize()
 	void
 	reorder_primary_data( AtomIndices const & old2new );
@@ -1807,7 +1784,7 @@ private:
 		 WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
 
 	**/
-	ResidueGraph graph_; // Stores Atoms and Bonds as Nodes and Edges. First as duplicate material, then on its own.
+	utility::vector1< Atom* > atoms_;
 	utility::vector1< Orbital > orbitals_;
 
 	//////////////////////////////////////////////////////////////////
@@ -1931,10 +1908,7 @@ private:
 	utility::vector1< utility::vector1< int > > path_distance_;
 
 	/// atom index lookup by atom name string
-	NameVDMap atom_graph_index_;
-
-	/// Legacy/backward compatability device holds an ordered list of nodes' indices
-	VDs ordered_atoms_; // Position in the vector represents Atom in "ordered arrangement"
+	std::map< std::string, int > atom_index_;
 
 	/// atom index lookup by atom name string
 	std::map< std::string, int > orbitals_index_;
@@ -1983,9 +1957,7 @@ private:
 	bool is_terminus_; // last or first residue in a chain; set to TRUE during terminus patching
 	bool is_lower_terminus_; // first residue in a chain; set to TRUE during terminus patching
 	bool is_upper_terminus_; // last residue in a chain; set to TRUE during terminus patching
-	bool is_phosphonate_; // amino phosphonic acid instead of amino carboxylic acid
-	bool is_phosphonate_upper_;
-	bool is_acetylated_nterminus_;
+	bool is_actylated_nterminus_;
 	bool is_methylated_cterminus_;
 	bool is_coarse_; //currently for coarse_RNA only
 	bool is_adduct_;
