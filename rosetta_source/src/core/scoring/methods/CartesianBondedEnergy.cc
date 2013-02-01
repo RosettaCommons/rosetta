@@ -1239,7 +1239,7 @@ IdealParametersDatabase::create_parameters_for_restype(
 	
 			std::string atm1,atm2;
 			core::Size rt1,rt2;
-			if (i==1) { atm1="C";  atm2="N";  rt1 = 0;                           rt2 = rsd_type.atom_index(" N  ");}
+			if (i==1) { atm1="C";  atm2="N";  rt1 = -1*((int)rsd_type.lower_connect_id()); rt2 = rsd_type.atom_index(" N  ");}
 			if (i==2) { atm1="N";  atm2="CA"; rt1 = rsd_type.atom_index(" N  "); rt2 = rsd_type.atom_index(" CA "); }
 			if (i==3) { atm1="CA"; atm2="CB"; rt1 = rsd_type.atom_index(" CA "); rt2 = rsd_type.atom_index(" CB "); }
 			if (i==4) { atm1="CA"; atm2="C";  rt1 = rsd_type.atom_index(" CA "); rt2 = rsd_type.atom_index(" C  "); }
@@ -1260,20 +1260,19 @@ IdealParametersDatabase::create_parameters_for_restype(
 	
 			std::string atm1,atm2,atm3;
 			core::Size rt1,rt2,rt3;
-			if (i==1) { atm1="C";  atm2="N";  atm3="CA"; rt1=0;                           rt2=rsd_type.atom_index(" N  "); rt3=rsd_type.atom_index(" CA ");}
+			if (i==1) { atm1="C";  atm2="N";  atm3="CA"; rt1=-1*((int)rsd_type.lower_connect_id());  rt2=rsd_type.atom_index(" N  "); rt3=rsd_type.atom_index(" CA ");}
 			if (i==2) { atm1="N";  atm2="CA"; atm3="CB"; rt1=rsd_type.atom_index(" N  "); rt2=rsd_type.atom_index(" CA "); rt3=rsd_type.atom_index(" CB "); }
 			if (i==3) { atm1="N";  atm2="CA"; atm3="C";  rt1=rsd_type.atom_index(" N  "); rt2=rsd_type.atom_index(" CA "); rt3=rsd_type.atom_index(" C  "); }
 			if (i==4) { atm1="CB"; atm2="CA"; atm3="C";  rt1=rsd_type.atom_index(" CB "); rt2=rsd_type.atom_index(" CA "); rt3=rsd_type.atom_index(" C  "); }
 			if (i==5) { atm1="CA"; atm2="C";  atm3="O";  rt1=rsd_type.atom_index(" CA "); rt2=rsd_type.atom_index(" C  "); rt3=rsd_type.atom_index(" O  "); }
-			if (i==6) { atm1="CA"; atm2="C";  atm3="N";  rt1=rsd_type.atom_index(" CA "); rt2=rsd_type.atom_index(" C  "); rt3=0; }
-			if (i==7) { atm1="O";  atm2="C";  atm3="N";  rt1=rsd_type.atom_index(" O  "); rt2=rsd_type.atom_index(" C  "); rt3=0; }
+			if (i==6) { atm1="CA"; atm2="C";  atm3="N";  rt1=rsd_type.atom_index(" CA "); rt2=rsd_type.atom_index(" C  "); rt3=-1*((int)rsd_type.upper_connect_id()); }
+			if (i==7) { atm1="O";  atm2="C";  atm3="N";  rt1=rsd_type.atom_index(" O  "); rt2=rsd_type.atom_index(" C  "); rt3=-1*((int)rsd_type.upper_connect_id()); }
 	
 			ResidueCartBondedParameters::Size3 ids;
 			ids[1] = rt1; ids[2] = rt2; ids[3] = rt3;
 	
 			CartBondedParametersCOP ang_params = lookup_angle(rsd_type, prepro, atm1,atm2,atm3, rt1,rt2,rt3 );
 			restype_params->add_bbdep_angle_parameter( ids, ang_params );
-	
 		}
 	}
 
