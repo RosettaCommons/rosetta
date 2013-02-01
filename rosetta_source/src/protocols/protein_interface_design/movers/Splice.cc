@@ -132,7 +132,8 @@ Splice::Splice() :
 	splice_filter_( NULL ),
 	use_sequence_profiles_( false ),
 	segment_type_( "" ),
-	profile_weight_away_from_interface_( 1.0 )
+	profile_weight_away_from_interface_( 1.0 ),
+	restrict_to_repacking_chain2_( true )
 {
 	torsion_database_.clear();
 	delta_lengths_.clear();
@@ -545,9 +546,11 @@ Splice::apply( core::pose::Pose & pose )
 	else
 		tf = new TaskFactory( *design_task_factory() );
 
-	for( core::Size i = 2; i <= pose.conformation().num_chains(); ++i ){
-		TR<<"Restricting chain "<<i<<" to repacking only"<<std::endl;
-		tf->push_back( new protocols::toolbox::task_operations::RestrictChainToRepackingOperation( i ) );
+	if( restrict_to_repacking_chain2() ){
+		for( core::Size i = 2; i <= pose.conformation().num_chains(); ++i ){
+			TR<<"Restricting chain "<<i<<" to repacking only"<<std::endl;
+			tf->push_back( new protocols::toolbox::task_operations::RestrictChainToRepackingOperation( i ) );
+		}
 	}
 
 	tf->push_back( new operation::InitializeFromCommandline );
@@ -608,6 +611,7 @@ Splice::apply( core::pose::Pose & pose )
 		core::kinematics::MoveMapOP mm;
 		mm = new core::kinematics::MoveMap;
 		mm->set_chi( false ); mm->set_bb( false ); mm->set_jump( false );
+		mm->set_jump( 2, true ); /// 1Feb13 for cases in which the we're splicing in the presence of a ligand
 	/// First look for disulfides. Those should never be moved.
 		core::Size disulfn( 0 ), disulfc( 0 );
 		for( core::Size i = from_res() - 3; i <= from_res(); ++i ){
@@ -855,7 +859,8 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 		}// fi Segments
 	}//foreach sub_tag
 
-	TR<<"from_res: "<<from_res()<<" to_res: "<<to_res()<<" dbase_iterate: "<<dbase_iterate()<<" randomize_cut: "<<randomize_cut()<<" cut_secondarystruc: "<<cut_secondarystruc()<<" source_pdb: "<<source_pdb()<<" ccd: "<<ccd()<<" rms_cutoff: "<<rms_cutoff()<<" res_move: "<<res_move()<<" template_file: "<<template_file()<<" checkpointing_file: "<<checkpointing_file_<<" loop_dbase_file_name: "<<loop_dbase_file_name_<<" loop_pdb_source: "<<loop_pdb_source()<<" mover_tag: "<<mover_tag_<<" torsion_database: "<<torsion_database_fname_<<std::endl;
+	restrict_to_repacking_chain2( tag->getOption< bool >( "restrict_to_repacking_chain2", true ) );
+	TR<<"from_res: "<<from_res()<<" to_res: "<<to_res()<<" dbase_iterate: "<<dbase_iterate()<<" randomize_cut: "<<randomize_cut()<<" cut_secondarystruc: "<<cut_secondarystruc()<<" source_pdb: "<<source_pdb()<<" ccd: "<<ccd()<<" rms_cutoff: "<<rms_cutoff()<<" res_move: "<<res_move()<<" template_file: "<<template_file()<<" checkpointing_file: "<<checkpointing_file_<<" loop_dbase_file_name: "<<loop_dbase_file_name_<<" loop_pdb_source: "<<loop_pdb_source()<<" mover_tag: "<<mover_tag_<<" torsion_database: "<<torsion_database_fname_<<" restrict_to_repacking_chain2: "<<restrict_to_repacking_chain2()<<std::endl;
 }
 
 protocols::moves::MoverOP

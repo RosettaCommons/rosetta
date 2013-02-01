@@ -178,6 +178,8 @@ public:
 	void add_sequence_constraints( core::pose::Pose & pose ); // add SequenceProfileConstraints based on the sequence profile
 	void profile_weight_away_from_interface( core::Real const p );
 	core::Real profile_weight_away_from_interface() const;
+	bool restrict_to_repacking_chain2() const{ return restrict_to_repacking_chain2_; }
+	void restrict_to_repacking_chain2( bool const r ){ restrict_to_repacking_chain2_ = r; }
 
 private:
 	void save_values(); // call at beginning of apply. Used to keep the from_res/to_res values, which might be changed by apply during a run
@@ -223,6 +225,7 @@ private:
 	std::map< std::string, SpliceSegmentOP > splice_segments_; // stores sequence profiles for all possible segments (this doesn't change during a run), e.g., L1, ...; L2, ....
 	std::map< std::string/*which segment (L1,L2...)*/, std::string/*pdb name*/ > pdb_segments_; // which pdb file did each segment in the current pose come from (used to build the current profile). This uses the pose comment structure to retain the information through successive applies
 	core::Real profile_weight_away_from_interface_; //dflt 1.0; you can define a different weight outside an 8A shell around the partner protein. This should typically be set higher than 1.0, implying that the sequence profile carries a larger weight away from the functional site
+	bool restrict_to_repacking_chain2_; // dflt true; if false, does two-sided design during splice
 };
 
 
