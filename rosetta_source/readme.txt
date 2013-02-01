@@ -103,8 +103,8 @@ libs)
     python test/run.py
         Build and run unit tests. (Note the sources must be built first.)
 
-    scons -j3
-        Parallelize build into 3 threads (faster on multiproc. machine)
+    scons -j4
+        Parallelize build into 4 threads (faster on multiproc. machine)
 
     python external/scons-local/scons.py
         Use the version of scons that is distributed with mini
