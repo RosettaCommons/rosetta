@@ -700,6 +700,16 @@ write_additional_pdb_data(
 			out << "REMARK PARENT    " << value.substr(0,5) << std::endl;
 		}
 	}
+		if ( basic::options::option[ OptionKeys::out::file::pdb_comments]() ) {
+	 	                        out << "##Begin comments##" << std::endl;
+	 	                        using namespace std;
+	 	                        map< string, string > const comments = core::pose::get_all_comments(pose);
+	 	                        for( std::map< string, string >::const_iterator i = comments.begin(); i != comments.end(); ++i ){
+	 	                                out << i->first<<" "<<i->second << std::endl;
+	 	                        }
+	 	                        out << "##End comments##" << std::endl;
+	 }
+
 	if(basic::options::option[ basic::options::OptionKeys::out::file::output_orbitals]){
 		static std::string const chains( " ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890" );
 		for(core::Size i=1; i <=pose.n_residue(); ++i){

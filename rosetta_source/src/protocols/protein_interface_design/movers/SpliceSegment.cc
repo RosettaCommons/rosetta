@@ -52,6 +52,7 @@ SpliceSegment::read_profile( string const file_name, string const segment_name )
 
 SequenceProfileOP
 SpliceSegment::get_profile( std::string const segment_name ){
+	
 	return sequence_profile_[ segment_name ];
 }
 
@@ -63,6 +64,8 @@ SpliceSegment::add_pdb_profile_pair( std::string const pdb, string const profile
 /// @brief this is the most useful method, returning the sequence profile according to a pdb file name
 SequenceProfileOP
 SpliceSegment::pdb_profile( std::string const pdb_name ){
+	//TR<<"size of sequence_Profile_ is:"<<sequence_profile_.size()<<std::endl;
+	//TR<<"pdb to profile map is:"<<pdb_name<<":"<<pdb_to_profile_map_[pdb_name]<<std::endl;
 	return sequence_profile_[ pdb_to_profile_map_[ pdb_name ] ];
 }
 
@@ -94,15 +97,15 @@ SpliceSegment::read_pdb_profile( std::string const file_name ){
 		utility_exit_with_message( "File not found " + file_name );
 	TR<<"Loading pdb profile pairs from file "<<file_name<<std::endl;
 	string line;
-	getline( data, line );
-	if( line.length() > 2 )
-		utility_exit_with_message( "pdb/profile file empty or corrupted "+file_name );
+	while (getline( data, line )){
 	istringstream line_stream( line );
 	while( !line_stream.eof() ){
 		std::string pdb, profile;
 		line_stream >> pdb >> profile;
 		pdb_to_profile_map_.insert( pair< string, string >( pdb, profile ) );
+		//TR<<"Loading pdb-profile pair: "<<pdb<<" "<<profile<<"\n";
 	}
+ }
 }
 
 } //movers

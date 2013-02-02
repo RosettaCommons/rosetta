@@ -216,6 +216,7 @@ namespace out { namespace file { FileOptionKey const design_contrast( "out:file:
 namespace out { namespace file { BooleanOptionKey const dont_rewrite_dunbrack_database( "out:file:dont_rewrite_dunbrack_database" );  } }
 namespace out { namespace file { BooleanOptionKey const renumber_pdb( "out:file:renumber_pdb" );  } }
 namespace out { namespace file { BooleanOptionKey const pdb_parents( "out:file:pdb_parents" );  } }
+namespace out { namespace file { BooleanOptionKey const pdb_comments( "out:file:pdb_comments" );  } } 
 namespace out { namespace file { BooleanOptionKey const per_chain_renumbering( "out:file:per_chain_renumbering" );  } }
 namespace out { namespace file { StringOptionKey const residue_type_set( "out:file:residue_type_set" );  } }
 namespace out { namespace file { StringOptionKey const frag_prefix( "out:file:frag_prefix" );  } }

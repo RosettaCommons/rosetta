@@ -77,6 +77,7 @@ namespace out { namespace file { extern FileOptionKey const design_contrast; } }
 namespace out { namespace file { extern BooleanOptionKey const dont_rewrite_dunbrack_database; } }
 namespace out { namespace file { extern BooleanOptionKey const renumber_pdb; } }
 namespace out { namespace file { extern BooleanOptionKey const pdb_parents; } }
+namespace out { namespace file { extern BooleanOptionKey const pdb_comments; } } 
 namespace out { namespace file { extern BooleanOptionKey const per_chain_renumbering; } }
 namespace out { namespace file { extern StringOptionKey const residue_type_set; } }
 namespace out { namespace file { extern StringOptionKey const frag_prefix; } }

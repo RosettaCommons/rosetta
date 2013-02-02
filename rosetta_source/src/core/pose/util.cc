@@ -400,6 +400,32 @@ void addVirtualResAsRoot( core::pose::Pose & pose ) {
 	massSum /= nAtms;
 	return addVirtualResAsRoot(massSum, pose);
 }
+/// @brief  Reads the comments from the pdb file and adds it into comments
+void
+read_comment_pdb(
+	std::string const &file_name,
+	core::pose::Pose & pose
+) {	
+	utility::io::izstream data(file_name);
+  if ( !data ) {
+		TR<<"ERROR! PDB SCAFOLD NAME NOT FOUND!!"<<std::endl;
+		utility_exit();
+  }
+  std::string line;
+  while( getline( data, line ) ) {
+  	if( line != "##Begin comments##")
+			continue;
+			getline( data, line );
+		while (line != "##End comments##"){
+			TR<<"Teting read comments! :"<<line<<std::endl;
+			std::string const key;
+			std::string const value;
+			utility::vector1<std::string> comment_line(utility::string_split(line,' '));
+			core::pose::add_comment(pose,comment_line[1],comment_line[2]);
+			getline( data, line );
+	}
+}
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 bool getPoseExtraScores(

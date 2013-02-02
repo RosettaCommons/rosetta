@@ -272,7 +272,11 @@ bool compare_binary_protein_silent_struct(
 	Pose const & rhs);
 
 
-
+/// @brief  Reads the comments from the pdb file and adds it into comments
+void read_comment_pdb(
+	std::string const &file_name,
+	core::pose::Pose  & pose
+);
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 ///@brief A very useful function that copies degrees of freedom from one pose to another. res_map defines how to map residue numbers from the large pose to the smaller "scratch" pose.
 ///@author rhiju, 2009.

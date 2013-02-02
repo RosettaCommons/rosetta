@@ -220,6 +220,7 @@ option.add( basic::options::OptionKeys::out::file::weight_silent_scores, "weight
 option.add( basic::options::OptionKeys::out::file::design_contrast, "output list comparing design sequence to native sequence" ).def("redesign");
 option.add( basic::options::OptionKeys::out::file::dont_rewrite_dunbrack_database, "disables the default behavior of rewriting the dunrack library in binary format if a binary version is not found" );
 option.add( basic::options::OptionKeys::out::file::renumber_pdb, "use Rosetta residue numbering and arbitrary chain labels in pdb output" ).def(false);
+option.add( basic::options::OptionKeys::out::file::pdb_comments, "If the pose contains any comment print it as a COMMENT in the pdb file" ).def(false); 
 option.add( basic::options::OptionKeys::out::file::pdb_parents, "If the pose contains a comment named template print this as a REMARK in the pdb file" ).def(false);
 option.add( basic::options::OptionKeys::out::file::per_chain_renumbering, "when used in conjunction with renumber_pdb, restarts residue numbering at each chain" ).def(false);
 option.add( basic::options::OptionKeys::out::file::residue_type_set, "ResidueTypeSet for output files" ).def("fa_standard");
