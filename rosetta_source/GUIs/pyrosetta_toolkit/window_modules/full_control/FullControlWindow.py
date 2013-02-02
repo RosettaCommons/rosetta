@@ -130,7 +130,7 @@ class FullControlWindow():
 	self.resnum.set(res)
 	self.shoInfo(res, chain)
 
-    def show_window(self, main, r=0, c=0):
+    def show_window(self, master, r=0, c=0):
 	
 	try :
 	    print self.pose.pdb_info().name()
@@ -145,7 +145,8 @@ class FullControlWindow():
 	    print "Please Load a pose"
 	    return
 	
-	self.main = main
+    
+	self.main = Toplevel(master); #This is to prevent Ghosting of windows.
 	self.main.title("Full Control")
 	self.main.grid_columnconfigure(ALL, weight=1)
 	self.entry_Res = Entry(self.main, textvariable=self.resnum, justify=CENTER)

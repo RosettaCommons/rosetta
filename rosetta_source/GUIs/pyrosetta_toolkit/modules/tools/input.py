@@ -35,7 +35,7 @@ def tk_get_directory():
     dir_name = tkFileDialog.askdirectory(initialdir=global_variables.current_directory, title='Pick a directory')
     
     if not dir_name:
-        return      
+        return None
     print dir_name
     global_variables.current_directory = dir_name
     return dir_name

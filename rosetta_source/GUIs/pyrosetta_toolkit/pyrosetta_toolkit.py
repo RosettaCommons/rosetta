@@ -138,7 +138,7 @@ class main_window:
          #print self.num_string
          
       else:
-         region = self.input_class.return_region_from_entry()
+         region = self.input_frame.return_region_from_entry()
          rosetta_num = region.get_rosetta_start(self.pose)+self.sequence_output.index(INSERT)
          try:
             pdb_num = self.pose.pdb_info().pose2pdb(rosetta_num)
@@ -149,6 +149,10 @@ class main_window:
       self.input_class.set_residue_of_interest(pdbSP[0], pdbSP[1], repr(rosetta_num))
       self.input_class.residue_string.set(pdb_num+' - '+repr(rosetta_num))
       self.residue_string.set(pdb_num+' - '+repr(rosetta_num))
+      self.input_class.residue_rosetta_resnum.set(repr(rosetta_num))
+      
+      if self.pymol_class.auto_send_residue_colors.get():
+         self.pymol_class.color_residue(int(rosetta_num))
       #self.fullcontrol_class.shoInfo(pdbSP[0], pdbSP[1])
       
    def __scrollHandler(self, *L):

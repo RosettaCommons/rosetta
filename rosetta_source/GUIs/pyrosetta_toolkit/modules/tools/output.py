@@ -72,7 +72,7 @@ def showPose(p, observer):
     #obs.pymol.apply(p)
     return p
     
-def save_loop_file(p, loops_as_strings, ask_info=True):
+def save_loop_file(p, regions, ask_info=True):
     """
     Saves a Rosetta Loop file.  Also asks to discard residues or not.
     Migrate to use Regions.
@@ -81,7 +81,7 @@ def save_loop_file(p, loops_as_strings, ask_info=True):
         print "\n No pose loaded...\n"
         return
     
-    if not loops_as_strings:
+    if not regions:
         print "\n No loops to save...\n"
         return
 
@@ -99,15 +99,10 @@ def save_loop_file(p, loops_as_strings, ask_info=True):
     global_variables.current_directory=os.path.dirname(outfilename)
     
     FILE = open(outfilename, 'w')
-    for loop_string in loops_as_strings:
+    for region in regions:
         
-        loop_stringSP = loop_string.split(":")
-        if (not loop_stringSP[0] or not loop_stringSP[1]):
-            print "Skipping chain or termini"
-            continue
-        start = p.pdb_info().pdb2pose(loop_stringSP[2], int(loop_stringSP[0]))
-        end = p.pdb_info().pdb2pose(loop_stringSP[2], int(loop_stringSP[1]))
-
+        start = region.get_rosetta_start(p)
+        end = region.get_rosetta_end(p)
         #This asks the user for each loop what he/she would like to do in terms of cutpoints.  Default= somewhere near the middle.
         if ask_cut_points:
             cutpoint_known = False
@@ -583,7 +578,7 @@ def convert_PDBLIST_to_rosetta_db(current_directory):
 
 #### FASTA OUTPUT ####
 
-def save_FASTA(pose, base_name, outfilename = False, loops_as_strings = False ):
+def save_FASTA(pose, base_name, outfilename = False, regions = False ):
     """
     If outfilename is False, will ask for a directory using current_directory.
     If loops_as_strings is given, output FASTA of loops.
@@ -598,10 +593,12 @@ def save_FASTA(pose, base_name, outfilename = False, loops_as_strings = False ):
         if not outfilename: return
         global_variables.current_directory = os.path.dirname(outfilename)
     OUTFILE = open(outfilename, 'w')
-    if loops_as_strings:
-        for loop_string in loops_as_strings:
-            seq = sequence.get_sequence(pose, loop_string)
-            header = ">"+base_name+" "+loop_string
+    if regions:
+        for region in regions:
+            if not region.region_exists(pose):continue
+            else:
+                seq = region.get_sequence(pose)
+            header = ">"+base_name+" "+region.get_region_string()
             OUTFILE.write(header+"\n")
             OUTFILE.write(seq+"\n")
     else:
@@ -612,7 +609,7 @@ def save_FASTA(pose, base_name, outfilename = False, loops_as_strings = False ):
     print "FASTA written."
     return
 
-def save_FASTA_PDBLIST(pdblist_path, outfilename=False, loops_as_strings=False):
+def save_FASTA_PDBLIST(pdblist_path, outfilename=False, regions=False):
     """
     If outfilename is False, will ask for a filename
     Goes through each member of PDBLIST
@@ -636,10 +633,11 @@ def save_FASTA_PDBLIST(pdblist_path, outfilename=False, loops_as_strings=False):
         except PyRosettaException:
             print "Could not load.. "+pdbID+"..Continueing.."
             continue
-        if loops_as_strings:
-            for loop_string in loops_as_strings:
-                seq = sequence.get_sequence(pose, loop_string)
-                header = ">"+pdbID+" "+loop_string+" "+pdbpath
+        if regions:
+            for region in regions:
+                if not region.region_exists(pose):continue
+                seq = region.get_sequence(pose)
+                header = ">"+pdbID+" "+region.get_region_string()+" "+pdbpath
                 OUTFILE.write(header+"\n")
                 OUTFILE.write(seq+"\n")
         else:

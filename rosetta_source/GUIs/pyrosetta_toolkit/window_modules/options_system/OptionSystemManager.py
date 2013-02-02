@@ -156,6 +156,7 @@ class OptionSystemManager:
     def load_settings(self, path):
         if path != self.pwd+"/settings.txt":
             path = tkFileDialog.askopenfilename(initialdir=self.current_directory, title='Option Settings')
+            if not path:return
         if not os.path.exists(path):
             print "No settings to load..."
             return

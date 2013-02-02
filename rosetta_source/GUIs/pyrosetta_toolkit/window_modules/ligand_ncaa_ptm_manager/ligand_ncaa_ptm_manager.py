@@ -129,10 +129,10 @@ class ligand_ncaa_ptm_manager:
         
         self.e_function_label = Label(self.main, text = "Energy Function Optimization", font=tkFont.Font(weight='bold', size=13))
         self.electrostatics_label = Label(self.main, text = "Electrostatic")
-        self.switch_pair_to_elec_button=Button(self.main, text = "statistical -> columbic", command = lambda: self.set_hack_elec(True))
-        self.switch_elec_to_pair_button=Button(self.main, text = "statistical <- columbic", command = lambda: self.set_hack_elec(False))
+        self.switch_pair_to_elec_button=Button(self.main, text = "statistical -> coulombic", command = lambda: self.set_hack_elec(True))
+        self.switch_elec_to_pair_button=Button(self.main, text = "statistical <- coulombic", command = lambda: self.set_hack_elec(False))
         
-        self.scorefunction_label = Label(self.main, text = "ScoreFunction")
+        self.scorefunction_label = Label(self.main, text = "Score Function")
         self.switch_to_mm_std_button = Button(self.main, text = "Molecular Mechanics Based: mm_std", command = lambda: self.set_mm_std())
         self.current_main_selection.set(self.selections[0])
         

@@ -29,6 +29,8 @@ class Region:
         Give only a chain, and the region is a chain.
         Give chain and start, and the region is a C-Terminal tail
         Give chain and end,   and the region is a N-Terminal tail
+        These designations are mainly for cutpoint + Foldtree related things.
+        **Please use self.check_if_region_exists(pose) before using the region.
         """
         
         
@@ -44,11 +46,28 @@ class Region:
             self.region = repr(start)+":"+":"+chain.upper()
         else:
             self.region = repr(start)+":"+repr(end)+":"+chain.upper()
+    
+    def region_exists(self, pose):
+        """
+        Checks if the region exists for the given Pose.
+        Returns True or False
+        """
+        if not rosetta.core.pose.has_chain(self.chain, pose):
+            print "Chain not found in PDB"
+            return False
         
+        try:
+            self.get_rosetta_start(pose)
+            self.get_rosetta_end(pose)
+        except PyRosettaException:
+            return False
+        
+        return True
+    
     def set_Loop_for_region(self, pose, cutpoint):
         #if not self.get_region_type()=='loop':
             #return
-        self.loop = Loop(self.get_rosetta_start(), self.get_rosetta_end(), cutpoint)
+        self.loop = Loop(self.get_rosetta_start(pose), self.get_rosetta_end(pose), cutpoint)
         
     def get_loop(self):
         if not self.loop: return
@@ -63,6 +82,10 @@ class Region:
     
     def get_region(self):
         return self.region
+    
+    def get_region_string(self):
+        return self.region
+    
     def get_region_type(self):
         if not self.start and not self.end:
             return "chain"
@@ -85,9 +108,6 @@ class Region:
     
     #Rosetta Getters
     def get_rosetta_start(self, pose):
-        if not rosetta.core.pose.has_chain(self.chain, pose):
-            print "Chain not found in PDB"
-            return
         
         if ((self.get_region_type()=='nter') or (self.get_region_type()=='chain')):
             #First residue of the chain - Would be useful to have pdb_info() be able to return this.
@@ -101,10 +121,7 @@ class Region:
             return pose.pdb_info().pdb2pose(self.chain, self.start)
         
     def get_rosetta_end(self, pose):
-        if not rosetta.core.pose.has_chain(self.chain, pose):
-            print "Chain not found in PDB"
-            return
-        
+
         if (self.get_region_type()=='cter') or (self.get_region_type()=='chain'):
             #Last residue of the chain - Would be useful to have pdb_info() be able to return this.
             resnum = pose.total_residue()
@@ -134,11 +151,37 @@ class Region:
 class Regions:
     """
     This class is analogous to the Loops class in Rosetta.
+    Iterable.
     Like the Region class, may eventually be ported to C++.
     """
     
     def __init__(self):
         self.regions = []
+        self.current = 0
+    def __iter__(self):
+        return self
+    
+    def __len__(self):
+        return len(self.regions)
+        
+    def __nonzero__(self):
+        if len(self.regions)>0:
+            return True
+        else:
+            return False
+    
+
+    
+    def next(self):
+        if self.current >= len(self.regions):
+            raise StopIteration
+        else:
+            region = self.regions[self.current]
+            self.current+=1
+            return region
+            
+    def iterkeys(self):
+        return self
     
     def add_region(self, region_object):
         self.regions.append(region_object)
@@ -239,6 +282,7 @@ class Regions:
             end = region.get_rosetta_end(pose)
             for i in range(start, end+1):
                 packer_task.temporarily_set_pack_residue(i, True)
+        print packer_task
         return packer_task
     
     #Loop/Region integration:

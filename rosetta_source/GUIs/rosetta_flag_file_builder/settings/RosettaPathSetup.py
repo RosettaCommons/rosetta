@@ -51,7 +51,7 @@ class SetupRosettaPaths(tkSimpleDialog.Dialog):
             FILE.close()
             
         #Check each:
-        self.checkPaths()
+        self.checkPaths(False); #False sets self.result to False.
         
         
         self.main = main
@@ -145,12 +145,12 @@ class SetupRosettaPaths(tkSimpleDialog.Dialog):
         print "Settings Saved..."
         FILE.close()
         
-    def checkPaths(self):
+    def checkPaths(self, result=True):
         """
         This is now hardcoded for where RosettaPathSetup Resides.  Update this if the file is moved.
         First check Settings file.  If those paths not found, will try to use relative paths.
         """
-        self.result = True
+        self.result = result
         
         if not os.path.exists(self.database.get()):
             print "Using relative path for database"
@@ -170,6 +170,7 @@ class SetupRosettaPaths(tkSimpleDialog.Dialog):
             if not os.path.exists(self.source.get()):
                 self.source.set("NA")
                 self.result = False
+        
         return
     
     def get_relative_path(self, path, num_back):

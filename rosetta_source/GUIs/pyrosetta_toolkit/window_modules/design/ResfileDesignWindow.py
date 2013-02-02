@@ -130,6 +130,8 @@ class ResfileDesignWindow:
         else:
             res = self.current_residueFull[0] +":"+self.current_chain.get()
             #print res
+            if not self.pose.total_residue():
+                return
             
             resType = self.pose.pdb_info().pdb2pose(self.current_chain.get(), int(self.current_residue.get()))
             try:
@@ -185,6 +187,9 @@ class ResfileDesignWindow:
         """
         What happens when you add a residue type to the design.  Updates other listboxes, etc.
         """
+        
+        if not self.check_for_residue_existance():
+            return
         
         self.current_chainFull = self.current_residue.get().split(":")
         if len(self.current_chainFull) > 1:
@@ -350,7 +355,39 @@ class ResfileDesignWindow:
             check_button_ckList.delete(0, END)
             for residues in self.DesignDic[res]:
                 check_button_ckList.insert(END, residues)
-                
+    
+    def check_for_residue_existance(self):
+        """
+        Checks to make sure residue/residues exist before adding to the residue checkbox.
+        Returns False if something is wrong.
+        """
+        if not self.pose.total_residue():
+            print "No pose Loaded."
+            return False
+        
+        if not self.current_chain.get() or self.current_residue.get():
+            return False
+        
+        current_region = self.current_residue.get().split(":")
+        if len(current_region)>1:
+            ResStart = int(current_region[0]); ResEnd = int(self.current_region[1])
+        
+            try:
+                self.pose.pdb_info().pdb2pose(self.current_chain.get(), ResStart)
+                self.pose.pdb_info().pdb2pose(self.current_chain.get(), ResEnd)
+            except PyRosettaException:
+                print "Region not found in pose"
+                return False
+        else:
+            try:
+                self.pose.pdb_info().pdb2pose(self.current_chain.get(), int(self.current_residue.get()))
+            except PyRosettaException:
+                print "Residue not found in pose"
+                return False
+        
+        #If everythig is good then:
+        return True
+    
     def updateInfo(self, ListTypesFull):
         Restype = ListTypesFull.get(ListTypesFull.curselection())
         typefull = Restype.split(":")

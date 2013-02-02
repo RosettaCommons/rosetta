@@ -575,11 +575,14 @@ class RosettaFlagFileBuilder():
         Load Rosetta settings text file.
         """
         
-        setup_window = RosettaPathSetup.SetupRosettaPaths(self.main)
+        setup_window = RosettaPathSetup.SetupRosettaPaths(self.main) 
         if not setup_window.result:
             #print "Please check paths and try again..."
+            self.result = False
             self.main.destroy()
-
+            
+        else:
+            self.result = True
         self.database_directory = StringVar()
         self.application_directory = StringVar()
         self.source_directory = StringVar()
@@ -707,7 +710,9 @@ if __name__ == '__main__':
     MainWindow = Tk()
     MainWindow.title("Window to Rosetta")
     SetupWindow = RosettaFlagFileBuilder(MainWindow)
-    SetupWindow.setTk()
+    if not SetupWindow.result:
+        sys.exit()
+    SetupWindow.setTk("Paths not found or canceled")
     SetupWindow.shoTk(0, 0)
     SetupWindow.setMenu(MainWindow)
     MainWindow.mainloop()

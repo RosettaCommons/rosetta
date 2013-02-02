@@ -13,6 +13,7 @@
 
 #Tkinter Imports
 from Tkinter import *
+import tkSimpleDialog
 
 #Toolkit Imports
 from window_main import global_variables
@@ -22,8 +23,11 @@ class GUIOutput:
         """
         Clas responsible for managing output variables of the GUI.
         """
-        self.processors = IntVar(); self.processors.set(1); # We will only use more if the user sets more to use.
         self.toolkit = toolkit;
+        self.processors = IntVar(); self.processors.set(1); # We will only use more if the user sets more to use.
+        self.use_boltzmann = IntVar(); self.use_boltzmann.set(True)
+        self.recover_low = IntVar(); self.recover_low.set(True)
+        self.kT = 1.0; #Main KT used for rounds
         self.outdir = StringVar(); self.outdir.set(global_variables.current_directory)
         self.outname = StringVar();
         self.decoys=IntVar(); self.decoys.set(0)
@@ -64,3 +68,12 @@ class GUIOutput:
             self.auto_write.set(1)
         elif not varValue:
             self.auto_write.set(0)
+            
+    
+    
+######### Functions that cannot be put in output_tools, as they set a variable within this class. ################
+    def set_temperature(self):
+        self.kT = tkSimpleDialog.askfloat(title="kT", prompt="Set Temperature", initialvalue=self.kT)
+        
+        
+        

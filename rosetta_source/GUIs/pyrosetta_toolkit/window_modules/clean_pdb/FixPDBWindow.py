@@ -77,7 +77,7 @@ class FixPDBWindow:
           #remove_hetatm_var, remove_alternates_var, change_occupancies_var = 1
           #fixDictionary = dict()
           self.pathEntry = Entry(self.main, textvariable=self.PDB_or_list_path)
-          self.pathbutton_ = Button(self.main, text = "PDBLIST or PDB", command = lambda: self.self.PDB_or_list_path.set(self.getfile()))
+          self.pathbutton_ = Button(self.main, text = "PDBLIST or PDB", command = lambda: self.PDB_or_list_path.set(self.getfile()))
           
           self.remH20 = Checkbutton(self.main, variable = self.remove_waters_var, text = "Remove Water")
           self.remHet = Checkbutton(self.main, variable=self.remove_hetatm_var, text = "Remove HETATM")

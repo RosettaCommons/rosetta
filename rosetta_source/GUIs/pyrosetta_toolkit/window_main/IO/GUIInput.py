@@ -21,6 +21,7 @@ import os.path
 import re
 
 #Tkinter Imports
+from Tkinter import *
 from Tkinter import StringVar
 import tkFileDialog
 import tkSimpleDialog
@@ -69,7 +70,14 @@ class GUIInput:
         self.pdb_url = "http://www.rcsb.org/pdb/files"
         #if 0: self.toolkit = main_window()
         
-#### POSE INPUT ####
+        
+        
+        
+        
+        
+        
+        
+######### Functions that cannot be put in input_tools or do not belong in the main frame, as they set a variable within this class. ################
 
     def choose_load_pose(self, message="Load Pose"):
         """
@@ -125,9 +133,17 @@ class GUIInput:
     def load_pose(self, path):
         """
         Load a pose into the toolkit.pose variable.  Setup nessessary variables/etc for objects and window objects of the toolkit.  Can have NCAA that have been enabled.
+        Please use this when loading the main pose into the toolkit.
         """
         self.pdb_path.set(path)
         print self.pdb_path.get()
+        
+        #Turn off PyMOL Observer if on - It will try to update on new pose.
+        observer_on = self.toolkit.pymol_class.auto_send.get()
+        if observer_on:
+            self.toolkit.pymol_class.auto_send.set(False)
+            
+        #Load Pose
         if self.nonstandard_ResidueTypeSet:
             self.toolkit.pose.assign(pose_from_pdb(self.nonstandard_ResidueTypeSet, path))
         else:
@@ -135,15 +151,31 @@ class GUIInput:
         self.toolkit.native_pose.assign(self.toolkit.pose); #Set native pose for RMSD.
 
         print self.toolkit.pose
+        
+        #Reinitialize PyMOL
         self.toolkit.pymol_class.SendNewPose()
+        if observer_on:
+            self.toolkit.pymol_class.auto_send.set(True)
+            
         self.regional_score_class = RegionalScoring(self.toolkit.pose, self.toolkit.score_class.score);
+        
+        #Reinitialize Output
         pdbname = os.path.basename(self.pdb_path.get())
         pdbname = pdbname.split(".")[0]
         self.toolkit.output_class.outname.set(pdbname)
         self.toolkit.output_class.outdir.set(os.path.dirname(self.pdb_path.get()))
-        self.toolkit.DesignDic = dict()
+        
+        
+
+        
+        #Reinitialize Sequence + Regions
+        self.reinit_regions_on_new_pose()
         self.region_sequence.set(self.toolkit.pose.sequence())
-    
+        self.residue_rosetta_resnum.set("")
+        
+        #Reinitialize Design
+        self.toolkit.DesignDic = dict()
+        
     def return_loaded_pose(self, path):
         """
         Load and return a pose.  Can have NCAA that have been enabled.
@@ -209,7 +241,24 @@ class GUIInput:
         FILE.close()
         return loops_as_strings
 
-###Region Selection####
+    def reinit_regions_on_new_pose(self):
+        if not self.regions:return #If regions not yet set
+        for region in self.regions:
+            if not region.region_exists(self.pose):
+                loop_string = region.get_region_string()
+                self.loops_as_strings.remove(loop_string)
+                self.regions.remove_region(loop_string)
+            else:
+                loop_string = region.get_region_string()
+                print loop_string +" found in new Pose"
+        
+        #Here is where we have to actually interact with the frame.
+        
+        self.toolkit.input_frame.loops_listbox.delete(0, END)
+        
+        for loop_string in self.loops_as_strings:
+            self.toolkit.input_frame.loops_listbox.insert(END, loop_string)
+###Region Setting + Residue Setting ####
     def set_residue_of_interest(self, resnum, chain, rosetta_resnum):
         """
         Sets current individual residue information.
@@ -218,27 +267,4 @@ class GUIInput:
         self.residue_resnum.set(resnum)
         self.residue_chain.set(chain)
         self.residue_rosetta_resnum.set(rosetta_resnum)
-        
-    def return_region_from_entry(self):
-        """
-        Returns a region of the currently set region parameters in the region entry boxes.
-        """
-        if not self.region_chain.get():return
-        looFull = self.region_start.get()+ ":"+ self.region_end.get()+":"+self.region_chain.get().upper()
-        start = looFull.split(":")[0]; end = looFull.split(":")[1]
-        
-         #Chain
-        if (start == "" and end==""):
-            region = Region(self.region_chain.get().upper(), None, None)
-        #Nter
-        elif start=="":
-            region = Region(self.region_chain.get().upper(), None, int(end))
-        #Cter
-        elif end=="":
-            region = Region(self.region_chain.get().upper(), int(start), None)
-        #Loop
-        else: 
-            region = Region(self.region_chain.get().upper(), int(start), int(end))
-        
-        
-        return region        
+           

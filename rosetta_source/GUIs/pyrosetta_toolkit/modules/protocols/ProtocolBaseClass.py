@@ -129,14 +129,24 @@ class ProtocolBaseClass:
             while len(multiprocessing.active_children()) != 0: time.sleep(1)
             
         else:
-            
+            mc = MonteCarlo(self.pose, self.score_class.score, self.output_class.kT)
             for i in range(1, self.output_class.rounds.get()+1):
                 
                 mover.apply(self.pose)
-                if self.output_class.rounds.get()>1:
-                            
-                    print "Round"+repr(i)+": "+ repr(self.score_class.score(self.pose))+" REU"
+                if self.output_class.use_boltzmann.get():
+                    if mc.boltzmann(self.pose):
+                        print "MC: Pose Accepted"                  
                     
+                    
+                if self.output_class.rounds.get()>1:
+   
+                    print "Round"+repr(i)+": "+ repr(self.score_class.score(self.pose))+" REU"
+            
+            if self.output_class.recover_low.get():
+                mc.recover_low(self.pose)
+            
+            mc.show_scores()
+            mc.show_counters()
             print "Start: "+ repr(start_energy_score)+" REU"
             print "End: "+repr(self.score_class.score(self.pose))+" REU"
             
@@ -175,10 +185,16 @@ class ProtocolBaseClass:
         p.assign(self.pose)
         print outputname
         start = self.score_class.score(p)
+        mc = MonteCarlo(p, self.score_class.score, self.output_class.kT)
         for x in range(1, self.output_class.rounds.get()+1):
-            #print "Round "+repr(x)
+            if self.output_class.use_boltzmann.get():
+                if mc.boltzmann(p):
+                    print "MC: Pose Accepted"
             mover.apply(p)
         
+        if self.output_class.recover_low.get():
+            mc.recover_low(p)
+            
         self.output_pose(p, outputname)
         
         print "Start: " +repr(start)+" REU"

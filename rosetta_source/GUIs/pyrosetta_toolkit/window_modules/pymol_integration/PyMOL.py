@@ -33,18 +33,32 @@ class AdvancedPyMOL():
 
     def __init__(self, pose):
 	"""
-	This object should handle all pymol stuff across the board eventually.
+	This class handles all PyMOL integration with the GUI.  
 	"""
 
 	self.auto_send = IntVar()
-	self.auto_send.set(0)
+	self.auto_send.set(False)
+        
+        self.keep_history=IntVar()
+        self.keep_history.set(True)
+        
+        self.send_energies = IntVar()
+        self.send_energies.set(False)
+        
 	self.pymover = PyMOL_Mover()
 	self.pymover.keep_history(True)
 	self.observer = PyMOL_Observer()
-	self.observer.pymol.keep_history(True)
-	self.observer.pymol.update_energy(True)
-	#Trace this - Add observer when the value changes, or remove the observer when nessessary.
+	self.observer.pymol.keep_history(self.keep_history.get())
+	self.observer.pymol.update_energy(self.send_energies.get())
+	
+        #Tracers for PyMOL Observer.
 	self.auto_send.trace_variable('w', self.auto_change_observer)
+        self.keep_history.trace_variable('w', self.auto_change_keep_observer_history)
+        self.send_energies.trace_variable('w', self.auto_change_send_observer_energies)
+        
+        self.auto_send_region_colors = IntVar(); self.auto_send_region_colors.set(False)
+        self.auto_send_residue_colors = IntVar(); self.auto_send_residue_colors.set(False)
+        
 	self.pnum = 0
 	self.pose = pose
 	self.send_label = IntVar();
@@ -60,7 +74,7 @@ class AdvancedPyMOL():
 	"View Foldtree Diagram":lambda: self.pymover.view_foldtree_diagram(self.pose)
 	#"View MoveMap": lambda: self.pymover.send_movemap(self.pose)
 	}
-	
+        
     def auto_change_observer(self, name, index, mode):
 	varValue = self.auto_send.get()
 	if not self.auto_send.get():
@@ -70,7 +84,25 @@ class AdvancedPyMOL():
 	else:
 	    print "Added observer"
 	    self.observer.add_observer(self.pose)
-	    
+    
+    def auto_change_keep_observer_history(self, name, index, mode):
+        varValue = self.keep_history.get()
+        if not self.keep_history.get():
+            print "Not keeping history"
+            self.observer.pymol.keep_history(False)
+        else:
+            print "Keeping history"
+            self.observer.pymol.keep_history(True)
+    
+    def auto_change_send_observer_energies(self, name, index, mode):
+        varValue = self.send_energies.get()
+        if not self.send_energies.get():
+            print "Not sending energies"
+            self.observer.pymol.update_energy(False)
+        else:
+            print "Sending energies. Slightly slower updating in PyMOL."
+            self.observer.pymol.update_energy(True)
+            
     def makeWindow(self, row, column, main, ScoreObject):
 
 	self.main = main
@@ -124,6 +156,8 @@ class AdvancedPyMOL():
 
 	self.viewList.bind("<Double-Button-1>", lambda event: self.SendPose(self.viewList.get(self.viewList.curselection())))
 	self.scoreList.bind("<Double-Button-1>", lambda event: self.SendEPose(self.scoreList.get(self.scoreList.curselection())))
+    
+#### Pose Sending #### 
     def SendPose(self, option):
 	"""
 	Sends pose according to option. Will Fix as callback.
@@ -163,3 +197,23 @@ class AdvancedPyMOL():
             print "Could not send pose to pymol."
             return
 	return
+    
+#### Coloring Functions ####
+    def color_residue(self, rosetta_resnum, color="magenta", all_other="blue"):
+        """
+        Colors residue using PyMol Mover send energies.  I don't know how to *not* color the other residues.
+        """
+        color_map = dict()
+        color_map[rosetta_resnum]=color
+        self.pymover.send_colors(self.pose, color_map, all_other)
+    
+    def color_region(self, resnum_start, resnum_end, color="magenta", all_other="blue"):
+        color_map = dict()
+        for i in range(resnum_start, resnum_end+1):
+            color_map[i]=color
+        
+        self.pymover.send_colors(self.pose, color_map, all_other)
+        
+    def color_regions(self, regions, color="magenta", all_other="blue"):
+        movemap = regions.get_movemap(self.pose)
+        self.pymover.send_movemap(self.pose, movemap, all_other)

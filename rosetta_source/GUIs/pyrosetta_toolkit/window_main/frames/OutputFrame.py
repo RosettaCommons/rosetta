@@ -47,7 +47,7 @@ class OutputFrame(Frame):
         #self.label_output_options = Label(self, text="Output Options", font=("Arial"))
         self.label_output_path = Label(self, text="Decoy Output Path:")
         self.label_output_name = Label(self, text="Decoy Output Name:")
-        self.button_Out=Button(self, text="Choose", command=lambda: self.output_class.outdir.set(input_tools.tk_get_directory()))
+        self.button_Out=Button(self, text="Choose", command=lambda: self.choose_set_output_dir())
         self.entry_Outname = Entry(self, textvariable = self.output_class.outname)
         self.check_button_auto_write = Checkbutton(self, text="Write after protocol?", variable = self.output_class.auto_write)
         self.check_button_overwrite = Checkbutton(self, text="Overwrite", variable=self.output_class.overwrite)
@@ -65,3 +65,8 @@ class OutputFrame(Frame):
         
         self.check_button_overwrite.grid(row=3, column=0, sticky=W); self.check_button_auto_write.grid(row=3, column=1, sticky=W)
         self.button_dump_pose.grid(row=4, column=1, columnspan=2, sticky=W+E)
+    
+    def choose_set_output_dir(self):
+        outdir = input_tools.tk_get_directory()
+        if not outdir: return
+        self.output_class.outdir.set(outdir)

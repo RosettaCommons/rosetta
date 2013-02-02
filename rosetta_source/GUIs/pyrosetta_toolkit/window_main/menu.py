@@ -101,14 +101,14 @@ class Menus():
 	self.export_menu = Menu(self.main_menu, tearoff=0)
 	self.export_menu.add_command(label="SCWRL seq File", command=lambda: output_tools.saveSeqFile(self.toolkit.pose, None, self.toolkit.input_class.loops_as_strings))
 	self.export_menu.add_separator()
-	self.export_menu.add_command(label="Rosetta Loop File", command = lambda: output_tools.save_loop_file(self.toolkit.pose, self.toolkit.input_class.loops_as_strings))
+	self.export_menu.add_command(label="Rosetta Loop File", command = lambda: output_tools.save_loop_file(self.toolkit.pose, self.toolkit.input_class.regions))
 	self.export_menu.add_command(label="Rosetta Basic ResFile", command = lambda: output_tools.save_basic_resfile(self.toolkit.pose))
 	self.export_menu.add_command(label="Rosetta Basic Blueprint File", command = lambda: output_tools.save_basic_blueprint(self.toolkit.pose))
 	self.export_menu.add_separator()
 	self.export_menu.add_command(label="Param PathList File", command = lambda: output_tools.save_param_path_list(self.toolkit.input_class.param_paths))
 	self.export_menu.add_separator()
 	self.export_menu.add_command(label = "FASTA (Pose)", command=lambda: output_tools.save_FASTA(self.toolkit.pose, self.toolkit.output_class.outname.get(), False ))
-	self.export_menu.add_command(label = "FASTA (Loops)", command = lambda: output_tools.save_FASTA(self.toolkit.pose, self.toolkit.output_class.outname.get(), False, self.toolkit.input_class.loops_as_strings))
+	self.export_menu.add_command(label = "FASTA (Loops)", command = lambda: output_tools.save_FASTA(self.toolkit.pose, self.toolkit.output_class.outname.get(), False, self.toolkit.input_class.regions))
 	#self.export_menu.add_command(label="Save Database")
 	#self.export_menu.add_command(label="Save loops as new PDBs")
 
@@ -127,19 +127,48 @@ class Menus():
 	self.main_menu.add_cascade(label="File", menu=self.file_menu)
     def _set_options_menu(self):
 	self.options_menu = Menu(self.main_menu, tearoff=0)
+	
+	self.rounds_options_menu=Menu(self.main_menu, tearoff=0)
+	
+	#Could be it's own window in the future.
+	self.rounds_options_menu.add_command(label = "Set processors to use", command = lambda: self.toolkit.output_class.processors.set(tkSimpleDialog.askinteger(title="Processesors", prompt= "Please set the number of processess you wish to create for protocol runs.", initialvalue=self.toolkit.output_class.processors.get())))
+	self.rounds_options_menu.add_checkbutton(label = "Use Boltzmann criterion each round", variable=self.toolkit.output_class.use_boltzmann)
+	self.rounds_options_menu.add_command(label = "Set Temperature", command = lambda: self.toolkit.output_class.set_temperature())
+	self.rounds_options_menu.add_checkbutton(label = "Recover lowest energy from all rounds", variable = self.toolkit.output_class.recover_low)
 	self.options_menu.add_command(label="Configure Option System",command = lambda: self.show_OptionsSystemManager())
-	self.options_menu.add_command(label="ScoreFunction Control and Creation", command =lambda: self.toolkit.score_class.makeWindow(Toplevel(self.main), self.toolkit.pose))
+	self.options_menu.add_command(label="Configure Score Function", command =lambda: self.toolkit.score_class.makeWindow(Toplevel(self.main), self.toolkit.pose))
+	self.options_menu.add_cascade(label="Set General Protocol Options", menu = self.rounds_options_menu)
 	self.options_menu.add_separator()
-	self.options_menu.add_command(label = "Set processors to use", command = lambda: self.toolkit.output_class.processors.set(tkSimpleDialog.askinteger(title="Processesors", prompt= "Please set the number of processess you wish to create for protocol runs.", initialvalue=self.toolkit.output_class.processors.get())))
-	self.options_menu.add_checkbutton(label="Set Output to Terminal", variable = self.toolkit.output_class.terminal_output)
+
+	self.options_menu.add_checkbutton(label="Set output to terminal", variable = self.toolkit.output_class.terminal_output)
+
+	
 	self.main_menu.add_cascade(label="Options", menu=self.options_menu)
 	
     def _set_visualization_menu(self):
 	self.vis_menu = Menu(self.main_menu, tearoff=0)
 	self.vis_menu.add_command(label = "Show Pose in PyMOL", command = lambda: self.toolkit.pymol_class.pymover.apply(self.toolkit.pose))
-	self.vis_menu.add_checkbutton(label="Set Pymol Observer", variable=self.toolkit.pymol_class.auto_send) #this option should be set only once.
+	#self.vis_menu.add_command(label = "Show current regions")
+	self.vis_menu.add_command(label = "Show current region", command = lambda: self.toolkit.input_frame.color_region_from_entry())
+	self.vis_menu.add_command(label = "Show current residue", command = lambda: self.toolkit.input_frame.color_residue())
+	
+	self.vis_observer_menu = Menu(self.main_menu, tearoff=0)
+	self.vis_observer_menu.add_checkbutton(label="Set Pymol Observer", variable=self.toolkit.pymol_class.auto_send) 
+	self.vis_observer_menu.add_separator()
+	self.vis_observer_menu.add_checkbutton(label="Send as new states", variable=self.toolkit.pymol_class.keep_history)
+	self.vis_observer_menu.add_checkbutton(label="Send energies", variable=self.toolkit.pymol_class.send_energies)
+	
+	
+	
 	self.vis_menu.add_separator()
+
+	self.vis_menu.add_checkbutton(label = "Color current region on addition", variable=self.toolkit.pymol_class.auto_send_region_colors)
+	self.vis_menu.add_checkbutton(label = "Color current residue on selection", variable = self.toolkit.pymol_class.auto_send_residue_colors)
+	
+	self.vis_menu.add_separator()
+	self.vis_menu.add_cascade(label = "PyMol Observer", menu=self.vis_observer_menu)
 	self.vis_menu.add_command(label="Advanced PyMOL Visualization", command=lambda: self.toolkit.pymol_class.makeWindow(0, 0, Toplevel(self.main), self.toolkit.score_class))
+	
 	self.main_menu.add_cascade(label="Visualization", menu=self.vis_menu)
 	
     def _set_advanced_menu(self):
@@ -312,7 +341,7 @@ class Menus():
 
 	self.sequence_menu = Menu(self.main_menu, tearoff=0)
 	self.sequence_menu.add_command(label = "Output FASTA for Each PDB", command = lambda: output_tools.save_FASTA_PDBLIST(self.toolkit.input_class.PDBLIST.get(), False))
-	self.sequence_menu.add_command(label = "Output FASTA for Each Region", command = lambda: output_tools.save_FASTA_PDBLIST(self.toolkit.input_class.PDBLIST.get(), False, self.toolkit.input_class.loops_as_strings))
+	self.sequence_menu.add_command(label = "Output FASTA for Each Region", command = lambda: output_tools.save_FASTA_PDBLIST(self.toolkit.input_class.PDBLIST.get(), False, self.toolkit.input_class.regions))
 	#If you need this, you know how to program: self.sequence_menu.add_command(label = "Output LOOP file for each PDB", command = lambda: output_tools.save_LOOP_PDBLIST(self.toolkit.input_class.PDBLIST.get()))
 	self.sequence_menu.add_command(label = "Use FASTA for design statistics", command = lambda: self.run_design_breakdown())
 	self.pdblist_tools_menu.add_cascade(label = "Sequence Analysis", menu=self.sequence_menu)
@@ -407,7 +436,7 @@ class Menus():
 #### WINDOWS ##### (ADD NEW WINDOWS TO THIS THAT NEED TO BE SET UP) #######
     def show_fullcontrol_window(self):
 	self.fullcontrol_class = FullControlWindow(self.toolkit.score_class, self.toolkit.pose, self.toolkit.input_class, self.toolkit.output_class);
-	self.fullcontrol_class.show_window(Toplevel(self.main), 0, 0)
+	self.fullcontrol_class.show_window(self.main, 0, 0)
 	
     def show_graftmover_window(self):
 	grafter = GraftMoverWindow(self.toolkit.pose, self.toolkit.score_class, self.toolkit.input_class, self.toolkit.output_class)
@@ -452,6 +481,7 @@ class Menus():
 
 	top_level_tk = Toplevel(self.main)
 	rosetta_protocol_builder = RosettaFlagFileBuilder(top_level_tk)
+	if not rosetta_protocol_builder.result:return
 	rosetta_protocol_builder.setTk()
 	rosetta_protocol_builder.shoTk(0, 0)
 	rosetta_protocol_builder.setMenu(top_level_tk)
