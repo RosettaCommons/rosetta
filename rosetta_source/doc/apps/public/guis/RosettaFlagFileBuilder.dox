@@ -13,8 +13,7 @@
 @page RosettaFlagFileBuilder Documentation for the Rosetta Flag File Builder GUI
 
 @section metadata Metadata
-@section metadata Metadata
-This document was last updated December 2012, by Jared Adolf-Bryfogle <jadolfbr@gmail.com>.
+This document was last updated January 2013, by Jared Adolf-Bryfogle <jadolfbr@gmail.com>.
 The PI for this application is Roland Dunbrack <Roland.Dunbrack@fccc.edu>
 
 The application was developed by:
@@ -22,57 +21,48 @@ The application was developed by:
 
 @section code_demos Code and Demo
 The code is available in rosetta_source/GUIs/RosettaFlagBuilder
-To run the GUI use ./RosettaFlagBuilder.py in the code directory.
+To run the GUI use ./RosettaFlagBuilder.py in the code directory or launch it from the PyRosetta Toolkit.
+This GUI does not require PyRosetta, but does requre Rosetta binaries to be compiled.
 
 The DoxygenParser class is available in rosetta_source/GUIs/pyrosetta_toolkit/modules
 
 @section refs References
-Refs in Publication
+PloSOne RosettaCON2012 Collection
 
 @section purpose Purpose
 The purpose of this GUI is to help running, exploring, and building flag files for Rosetta applications.
-It is useful for exploring both documentation and available options and default settings of the many Rosetta applications.
+It is useful for exploring both documentation, available options, and default settings of the many Rosetta applications.
 
 @section algorithm Algorithm
 This GUI parses Rosetta Doxygen documentation and the -help flag for each application.
 
 @limits Limitations
-
 This application attempts to help in formatting a Rosetta flag file and exploring documentation.  However, numerous applications have special formatting for Doxygen documention, including embeded HTML.
-Efforts are under way to standardize and better parse the formatting, but please refer to rosettacommons for full production runs.
+Efforts are under way to standardize and better parse the formatting, but please always refer to rosettacommons for full production runs.  Multiprocessing is not currently implemented.
 
 @modes Modes
+The flag file is interactively built using the textbox in the middle of the UI.  Adding an option, copies it into this box.  Descriptions of options and documentation sections are shown in the textbox to the right.
 
-@subsection main_window Main Window
-
-@subsection path_builder Path Builder
-
-@subsection qsub_gui Qsub Cluster Setup GUI
-
-
-@section inputs Input Files
-If there are any special input file types, describe them here.
-@li Common file types (loop file, fragment files, etc) will be described in a common place; link to those documents with the ATref command.
-@li Uncommon and app-specific file types should be described here.
-@li Link to (or at least give paths to) examples of each from your integration test/demo.
-@li Mention what you expect the input structure to be: if it's loop modeling, does the loop need to be present, or will it build from scratch?  If it's ligand binding, does there need to be a copy of the ligand in the input structure?
 
 @section tips Tips
-To get all available options given to a particular app, choose Repopulate->x
-This overwhelms the Tk GUI, but can be useful if you want to go off the beaten path. For an individual app that is selected, you can click x.
-QsubClusterSetup app works on all apps.  However, running Rosetta in MPI mode is recommended over using batch processing using Qsub.  If you can get MPI to work on your cluster, use it instead.
-QsubClusterSetup is made to be applicable to all apps and all clusters.  If you find it does not work for yours, please report it on the bugtracker.
+Use pathbuilder checkbox to select items from directories for insertion into the flag file textbox.
 
+Repopulate:
+ Repopulate->Manually Curated For general options, such as input, output, packing, etc.
 
-Describe how to get the best use out of the protocol.  Does it not require constraints, but work better with them?  Do you need to remember -ex1 -ex2 to get much out of it?
+ Repopulate->All Available Options To get all available options given a particular app (using -help). This overwhelms the Tk GUI, but can be useful if you want to go off the beaten path.
 
+Cluster:
+ QsubClusterSetup app works on all apps, and can be run from the GUI or by itself (python QsubClusterSetup.py).  However, running Rosetta in MPI mode is recommended over using batch processing using Qsub.  If you can get MPI to work on your cluster, use it instead where possible.
+
+ QsubClusterSetup is made to be applicable to all apps and all clusters.  If you find it does not work for yours, please report it on the bugtracker.
+ 
+ To run qsub without the GUI, use qsub_script.py within the GUI's directory.
+
+ Use the PyRosetta Toolkit GUI to fix the directory structure resulting from a qsub run (PDBList menu->Rename all PDBs recursively and copy to output path)
+ 
+ 
 @section outputs Expected Outputs
-What does your protocol produce?  Usually it will be just a PDB and a scorefile, but note if there should be more.  Note what the normal exit status of the protocol is (for example, "You'll see the jd2 x jobs completed in y seconds message if successfully completed".)
-
-@section postprocess Post Processing
-What post processing steps are typical?  Are score vs RMSD plots useful?  Are structures clustered (if so, give a command line)?  Is it obvious when either the application has succeeded or if it has failed (e.g. if the protocol makes predictions like "This is the docked conformation of proteins A and B").  In the case of designs, how should designs be selected?
-
-@section new_stuff New things since last release
-If you've made improvements, note them here.
+Writing a Flag file will put one option on each line.  It will automatically insert the database path specified, and the first line of the file will be the full path to the Rosetta application.  Note that this line is ignored by Rosetta, but required for running using the QsubClusterSetup window that can be launched using this GUI, or run independently on a cluster.  
 
 */

@@ -1,0 +1,355 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html  lang="en" >
+<head>
+<title>PyRosetta Toolkit - RosettaWiki</title>
+<meta name="KEYWORDS" content="PyRosetta Toolkit" />
+<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+<meta name="robots" content="index,follow" />
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel='stylesheet' type='text/css' media='print' href='/stylesheets/wikiprintable.css' />
+<script type="text/javascript" src="/stylesheets/wikibits.js"></script>
+<style type='text/css'>
+/*/*/
+@import "/stylesheets/wikistandard.css";
+a.new, #quickbar a.new { color: #CC2200; }
+#quickbar { position: absolute; top: 4px; left: 4px; border-right: 1px solid gray; }
+#article { margin-left: 152px; margin-right: 4px; }
+
+/* */
+</style>
+</head>
+
+<body bgcolor='#FFFFFF' onload=''>
+
+<div id='content'>
+<div id='topbar'>
+<table border='0' cellspacing='0' width='98%'>
+<tr>
+<td width='152' rowspan='1'>&nbsp;</td><td class="top" align='left' valign='top'>
+<a href="/index.php/Main_Page" title ="Main Page">Main Page</a> |
+<a href="/index.php/Special:Recentchanges" title ="Special:Recentchanges">Recent changes</a> |
+<a href="/index.php?title=PyRosetta_Toolkit&amp;action=edit" title ="PyRosetta Toolkit">Edit this page</a> |
+<a href="/index.php?title=PyRosetta_Toolkit&amp;action=history" title ="PyRosetta Toolkit">Page history</a><p class='subtitle'><a href="/index.php?title=PyRosetta_Toolkit&amp;printable=yes">Printable version</a> | <a href="/index.php/RosettaWiki:General_disclaimer" title ="RosettaWiki:General disclaimer">Disclaimers</a></p>
+</td>
+<td class="top" valign='top' align='right' nowrap='nowrap'>Not logged in
+<br /><a href="/index.php?title=Special:Userlogin&amp;returnto=PyRosetta_Toolkit" title ="Special:Userlogin">Log in</a> | <a href="/index.php/Help:Contents" title ="Help:Contents">Help</a>
+<br /><form name="search" class="inline" method="post" action="/index.php/Special:Search">
+<input type="text" name="search" size="19" value="" />
+<input type="submit" name="go" value="Go" />&nbsp;<input type="submit" name="fulltext" value="Search" />
+</form></td></tr>
+</table>
+</div>
+
+<div id='article'>
+<h1 class="pagetitle">PyRosetta Toolkit</h1><p class='subtitle'>From RosettaWiki</p>
+<p>Language: Python/Tkinter
+</p>
+<table border="0" id="toc"><tr id="toctitle"><td align="center">
+<b>Table of contents</b> <script type="text/javascript">showTocToggle("show","hide")</script></td></tr><tr id="tocinside"><td>
+<div class="tocline"><a href="#Contact:">1 Contact:</a><br /></div>
+<div class="tocline"><a href="#Intentions">2 Intentions</a><br /></div>
+<div class="tocline"><a href="#Code_Information">3 Code Information</a><br /></div>
+<div class="tocline"><a href="#Tkinter_Resources.2FOverview">4 Tkinter Resources/Overview</a><br /></div>
+<div class="tocline"><a href="#Adding_to_the_code">5 Adding to the code</a><br /></div>
+<div class="tocline"><a href="#Use_.2F_Tutorial">6 Use / Tutorial</a><br /></div>
+</td></tr></table>
+<div class="editsection" style="float:right;margin-left:5px;">[<a href="/index.php?title=PyRosetta_Toolkit&amp;action=edit&amp;section=1" title ="PyRosetta Toolkit">edit</a>]</div><a name="Contact:"></a><h2> Contact: </h2>
+<p>Jared Adolf-Bryfogle <br />
+jadolfbr@gmail.com <br />
+</p>
+<div class="editsection" style="float:right;margin-left:5px;">[<a href="/index.php?title=PyRosetta_Toolkit&amp;action=edit&amp;section=2" title ="PyRosetta Toolkit">edit</a>]</div><a name="Intentions"></a><h2> Intentions </h2>
+<p>Interactive Modeling, multiprocessing protocols, file export, Rosetta setup, exploration, useful Rosetta functions and analysis. Please feel free to add whatever you feel is useful to users and developers alike.  For more information, please refer to the doxygen documentation and paper from the RosettaCon2012 Collection.
+</p>
+<div class="editsection" style="float:right;margin-left:5px;">[<a href="/index.php?title=PyRosetta_Toolkit&amp;action=edit&amp;section=3" title ="PyRosetta Toolkit">edit</a>]</div><a name="Code_Information"></a><h2> Code Information </h2> 
+<dl><dd>=== Organization: ===
+</dd></dl>
+<ul><li><em>/toolkit/pyrosetta_toolkit.py</em>
+<ul><li>This is the main class responsible for building the window and holding global variables.  It adds /toolkit to the python PATH variable.  It also sets and shows each piece of the main window. It holds 4 main objects.  The pymol_class, score_class, input_class, and output_class.  It also holds access to the fullcontrol_class, which is the full control window.  It also holds a the current pose, but references of this pose are passed around freely.
+</li></ul>
+</li></ul>
+<ul><li><em>/toolkit/window_main/</em>
+<ul><li>Currently, all classes in window_main accept an instance of the toolkit class itself.  If this were C++, they would be accepting an access pointer to it!
+</li><li><em>/toolkit/window_main/frames</em> The main window is now made up of 4 Frames.  These custom frames inherit from Tkinter 'Frame' class.  If you would like to add to the main window, follow the code here.  
+</li><li>There are 4 frames: InputFrame (which handles region selection), OutputFrame, SimpleAnalysisFrame and the QuickProtocolsFrame.  Each frame deals with building each part of the window.  They are not container classes, and should not hold any important variables that the rest of the GUI may hold. 
+</li><li><em>/toolkit/window_main/IO</em> There are two classes that reside here: GUIInput and GUIOutput.  These classes are almost the lifeblood of the GUI.  Instances of these are named input_class and output_class respectively and reside in the main toolkit class as mentioned above.  They hold variables, classes, and any callback functions.  They can also have some functions that require access to many of the GUIs classes or the toolkit itself.  These two classes are passed all around the GUI. Functions such as loading a pose, fetching from the RCSB, or loading a Loop file into the region selection InputFrame reside here.  These are functions that cannot be placed in toolkit/modules/tools.
+</li><li><em>/toolkit/window_main/menu.py</em>: Here is the main menu for the program.  It has some of it's own functions at the bottom.
+</li><li><em>/toolkit/window_main/global_variables.py</em>:  The global variable current_directory is held here.  Any module that imports this file can access and set global_variables.current_directory.  It's a nice python trick.
+</li></ul>
+</li></ul>
+<ul><li><em>toolkit/SCWRL/</em>
+<ul><li>For those of you who use SCWRL, install a copy here to use it during modeling.  
+</li></ul>
+</li></ul>
+<ul><li><em>toolkit/window_modules/</em>
+<ul><li>'Here are all the windows that get launched.  All are objects with an __init__ function, and a setTk and shoTk function.  The setTk functions to create the Tk objects, while the shoTk grids them onto the screen.  Keeping these separate keeps code maintenance easier.  If you want a new window, put it in here.  If it has any other dependencies, help the user set them up, and use try: while importing
+</li></ul>
+</li></ul>
+<ul><li><em>toolkit/modules</em>
+<ul><li>Here are classes that are useful to the GUI.  T  If you have a kick ass class, put it here!
+</li><li><em>toolkit/modules/protocols</em>&nbsp;:  Here are the protocols that I have used in the toolkit.  Each protocol class inherits from ProtocolBaseClass. To run your protocol, setup the mover and use self.run_protocol(my_mover).  This will setup the multiprocessing run, read output options from output_class, and generally run your protocol.  New protocols should go here.   
+</li><li><em>toolkit/modules/tools</em>&nbsp;: These are mostly functions due to Tk's incessant need for functions instead of TCL/TK where you could write a few lines of code right in the command:lambda function.  We'll get to that later.  Needless to say, if you want to use Tk, everything needs to be a function.  Tools are basically collections of functions used by various classes around the GUI.
+</li><li><em>toolkit/modules/definitions</em>&nbsp;: Here is where you should put any large pieces of information you need to access.  I have one file in there for design that defines resfile types as well as all the biochemical info for design.
+</li></ul>
+</li></ul>
+<dl><dd>=== Global Variables ===
+</dd></dl>
+<ul><li><strong>How window_main modules work</strong>
+<ul><li>window_main/IO holds most of the relevant variables.  Pass input_class or output_class, or specific variables from those around.  
+</li></ul>
+</li></ul>
+<ul><li><strong>Toolkit Variables</strong>
+<ul><li><em>toolkit.pose</em>&nbsp;: Here is the pose that is loaded.  A reference is passed throughout the GUI.
+</li><li><em>toolkit.native_pose</em>&nbsp;: This is set upon loading the pose, and is mainly used for RMSD, but can be used for other protocols and analysis as well.
+</li><li><em>toolkit.current_directory</em>&nbsp;: Here is the directory that is set when loading a pose.  Other functions may set it, as it controls the initial directory in a tKFileDialog window.
+</li><li>toolkit.score_class.score&nbsp;: Here is the current score function that is set.  I have a feeling you may need it...
+</li><li>toolkit.pymol_class&nbsp;: Here is where the lovely PyMOL Observer and PyMOL Mover objects are held as pymol_class.pyobserver and pymol_class.pymover respectively.  A callback is set to the observe pymol checkbox to add and remove an observer as need be.  If you want to control it, pass your class/function this object.
+</li></ul>
+</li></ul>
+<ul><li><strong>input_class Variables</strong>
+<ul><li><em>toolkit.input_class.filename</em>&nbsp;: Filename of the PDB loaded.  Passed to PyMOL and the output main window. 
+</li><li><em>toolkit.input_class.loops_as_strings</em>&nbsp;: This is an array of regions specified in the input part [ 24:42:L,&nbsp;::A, ] etc.
+</li><li><em>toolkit.output_class.terminal_output</em>&nbsp;: Here is the IntVar variable set with a callback that controls the terminal window redirect.  0 for textbox, 1 for terminal. 
+</li><li><em>toolkit.input_class.options_manager</em>: This is the options window that pops up. Besides that, it holds currently set options so that they can be re initialised when a protocol is run on multiple processors.  If you want to enable a variable permanently, use input_class.options_manager.add_option(option_string_with_-).  Otherwise, use rosetta.basic.options.set_sometype_option('option', value)
+</li><li><em>toolkit.input_class.</em>
+</li></ul>
+</li><li><strong>output_class Variables</strong>
+<ul><li><em>toolkit.output_class.outdir</em>&nbsp;: Directory specified in output section of the GUI.  Default is whereever the pose was loaded from.
+</li><li><em>toolkit.output_class.outname</em>&nbsp;: Name of Output.  JD2 uses this for outputting after a protocol.  Variable is actually set in the output part of the main window.
+</li></ul>
+</li></ul>
+<div class="editsection" style="float:right;margin-left:5px;">[<a href="/index.php?title=PyRosetta_Toolkit&amp;action=edit&amp;section=4" title ="PyRosetta Toolkit">edit</a>]</div><a name="Tkinter_Resources.2FOverview"></a><h2>Tkinter Resources/Overview </h2>
+<dl><dd>=== Resources ===
+</dd><dd><a href='http://wiki.python.org/moin/TkInter' class='external' title="http://wiki.python.org/moin/TkInter">Description</a><span class='urlexpansion'> (<i>http://wiki.python.org/moin/TkInter</i>)</span>
+</dd><dd><a href='http://www.pythonware.com/library/tkinter/introduction/' class='external' title="http://www.pythonware.com/library/tkinter/introduction/">Start Here </a><span class='urlexpansion'> (<i>http://www.pythonware.com/library/tkinter/introduction/</i>)</span>
+</dd><dd><a href='http://sebsauvage.net/python/gui/' class='external' title="http://sebsauvage.net/python/gui/">Nice Tutorial</a><span class='urlexpansion'> (<i>http://sebsauvage.net/python/gui/</i>)</span>
+</dd><dd><a href='http://infohost.nmt.edu/tcc/help/pubs/tkinter/' class='external' title="http://infohost.nmt.edu/tcc/help/pubs/tkinter/">Advanced</a><span class='urlexpansion'> (<i>http://infohost.nmt.edu/tcc/help/pubs/tkinter/</i>)</span>
+</dd><dd><a href='http://www.amazon.com/Python-Tkinter-Programming-Grayson-Ph-D/dp/1884777813' class='external' title="http://www.amazon.com/Python-Tkinter-Programming-Grayson-Ph-D/dp/1884777813">Complex. Book. Complete Tkinter guide.</a><span class='urlexpansion'> (<i>http://www.amazon.com/Python-Tkinter-Programming-Grayson-Ph-D/dp/1884777813</i>)</span>
+</dd></dl>
+<dl><dd>=== Basic Program ===
+</dd></dl>
+<dl><dd>=== Useful Functions ===
+</dd></dl>
+<dl><dd><dl><dd> <code > import tkFileDialog </code >
+</dd><dd> <code > import tkSimpleDialog </code >
+</dd><dd> <code > import tkMessageBox </code >
+</dd></dl>
+</dd></dl>
+<dl><dd><dl><dd> <code > filename = tkFileDialog.askopenfilename(title="", message="", initialdir=global_variables.current_directory) </code >
+</dd><dd> <code > filename = tkFileDialog.asksaveasfilename() </code >
+</dd></dl>
+</dd></dl>
+<dl><dd><dl><dd> <code > my_float = tkSimpleDialog.askfloat(title="float", prompt="Please enter...", initialvalue=10.0) </code >
+</dd><dd> <code > my_integer = tkSimpleDialog.askinteger </code >
+</dd><dd> <code > my_string =  tkSimpleDialog.askstring </code >
+</dd></dl>
+</dd></dl>
+<dl><dd><dl><dd> <code > result = tkMessageBox.askyesno(prompt = "proceed?") </code >
+</dd></dl>
+</dd></dl>
+<p><br />
+</p>
+<dl><dd>=== Tips ===
+</dd></dl>
+<ul><li><ul><li>Use command:lambda self.my_func when using buttons or menu items.
+</li></ul>
+</li></ul>
+<ul><li><ul><li>Check if a user hit cancel (Makes result NoneType) after a prompt: <code > if not result:return </code >
+</li></ul>
+</li></ul>
+<ul><li><ul><li>Set the current_directory after a user has chosen to save or load something <code > global_variables.current_directory=os.path.dirname(just_opened_path) </code >
+</li></ul>
+</li></ul>
+<ul><li><ul><li>If using any sort of multiprocessing where random numbers are used, use <code > input_class.options_manager.re_init() </code > on each processor to generate a new seed for that particular instance.
+</li></ul>
+</li></ul>
+<div class="editsection" style="float:right;margin-left:5px;">[<a href="/index.php?title=PyRosetta_Toolkit&amp;action=edit&amp;section=5" title ="PyRosetta Toolkit">edit</a>]</div><a name="Adding_to_the_code"></a><h2> Adding to the code </h2>
+<dl><dd>=== Main Window ===
+</dd></dl>
+<ul><li><em>/toolkit/pyrosetta_toolkit.py</em>
+</li><li><em>/toolkit/window_main</em>
+<ul><li>If you want to add another section to the main window, put the file in /window_main.  It should have three main functions, and inherit from the Tkinter Frame class.
+<ul><li><strong>def __init__(self, main, toolkit, **options):</strong>
+<ul><li>The default constructor should take a main tk, an instance of the toolkit itself, and **options, which denotes the ability to pass Frame options to the object.
+</li><li>Within the constructor, this needs to be defined: Frame.__init__(self, main, **options)
+</li></ul>
+</li><li><strong>create_GUI_objects(self):</strong>
+<ul><li>Here, you want to initialize your Tk objects.  optionMenu's, Buttons, etc.  Set any callbacks in the __init__ function.  You should pass self instead of self.main in construction of each GUI object
+</li></ul>
+</li><li><strong>grid_GUI_objects(self)::</strong>
+<ul><li>This should grid the window.  Note that this grid is independant of the grid in pyrosetta_toolkit.py  This allows you and developers to move the subcomponents of the main_window around, without changing your design, or doing it manually. 
+</li></ul>
+</li><li><strong>toolkit.sho_gui</strong>
+<ul><li>Here, you want to call your main window.  You can initialize it in any of the _x functions or add your own.  Your create and grid functions should be placed here. 
+</li></ul>
+</li></ul>
+</li></ul>
+</li></ul>
+<dl><dd>=== Menu Items ===
+</dd></dl>
+<ul><li><em>/toolkit/window_main/menu.py</em>
+<ul><li>Here, we add commands or draw new windows.  Surprisingly, this is pretty simple syntax.  First, find the menu item you want to add to.
+</li><li><em>Adding Commands</em>&nbsp;: menu.add_command(label = "Cool function", command = lambda: func)  Thats it!
+</li></ul>
+</li></ul>
+<dl><dd>=== Windows ===
+</dd></dl>
+<ul><li><em>Adding Windows</em>&nbsp;: 
+<ul><li><em>The File:</em> Add the file(s) to window_modules.  Follow the guide in window_main, as you should have both a setTk and a shoTk window, but you don't necessarily have to for this one.  If you read the book, windows can get pretty complicated, so do whatever you need!  window_modules/rosetta_tools/RosettaSetup.py has an example of a dialog window if you need it, but the possibilities really are quite awesome.
+</li><li><em>The code:</em> This is a little more complicated.  You need to add a function to menu.py which initializes your window (if you havn't in the main toolkit class), and then call your setTk and shoTk functions if you have them.  the main should use this syntax: x = Toplevel(self.main).  This draws a new window.  Set your command, and voila - your new window!  Tk can be a pain in the ass, but it is as simple as it gets.
+</li></ul>
+</li></ul>
+<dl><dd>=== Existing Code ===
+</dd></dl>
+<ul><li>By now, you should have an idea of where to put what, and how to add the majority of things.  If you have questions, email me and I can help.
+</li></ul>
+<p><br />
+</p>
+<div class="editsection" style="float:right;margin-left:5px;">[<a href="/index.php?title=PyRosetta_Toolkit&amp;action=edit&amp;section=6" title ="PyRosetta Toolkit">edit</a>]</div><a name="Use_.2F_Tutorial"></a><h2> Use / Tutorial </h2>
+<dl><dd><strong>Install PyRosetta.</strong>
+</dd></dl>
+<p>Copy the code from pyrosetta/SetPyRosettaEnvironment.sh to your .bashrc (linux) or .bash_profile (mac).  Give the full path where it says PYROSETTA=
+Source this.  Useful to add a shortcut to pyrosetta/ipython.py in your profile.
+</p>
+<dl><dd><strong>Setup PyMOL.</strong>
+</dd></dl>
+<p>There is an awesome file you can put in your $HOME directory called .pymolrc . There is a file: <a href='http://www.pyrosetta.org/pymol_mover-tutorial' class='external' title="http://www.pyrosetta.org/pymol mover-tutorial">PyMOLPyRosettaServer.py</a><span class='urlexpansion'> (<i>http://www.pyrosetta.org/pymol_mover-tutorial</i>)</span>.  Add this command to your .pymolrc 'run path_to_pyrosetta/PyMOLPyRosettaServer.py'  This enables the connection to run every time you open PyMOL, and the GUI is heavily integrated to use this awesome PyRosetta feature.
+</p>
+<dl><dd><strong>Run the GUI.</strong>
+</dd></dl>
+<p>cd into rosetta_source/GUIs/pyrosetta_toolkit.  Type 'python pyrosetta_toolkit.py'
+If sqlite3 has a problem loading, reinstall python with sqlite3.  To do this, usually all you have to do is install sqlite3 and reinstall python.  It may be more complex sometimes, so google it, and you'll find a ton of information.
+</p>
+<dl><dd><strong>Load a PDB.</strong>
+</dd></dl>
+<p>There are two things you can load right off the bat.  A PDB or a PDBLIST.  Lets cover the PDB first. Load a PDB from the file menu.
+</p><p>Once the PDB is loaded into PyRosetta, you have a few choices.  First, the outdirectory is auto set to the directory you loaded the PDB from, as well as the outname is the name of the PDB.  
+</p><p><em>CODE: toolkit/window_main/input.py</em>
+</p>
+<dl><dd><strong>Check out PYMOL.</strong>
+</dd></dl>
+<p>So, lets take a look at the protein first.  Open PyMol if you havn't already.  Click the show in PyMOL button located in the file menu.  This sends coordinates to PyMOL.  If you want to watch different protocols each time the protein is scored, use the PyMOL Observer checkbox.  Be warned, that this can slow the protocol down considerably.  Note that each time the protein is scored, it will create another frame in pymol.  This can be used as a snapshot to save anything you model, or any designs you make.
+</p><p><em>CODE: toolkit/window_modules/PyMOL</em>
+</p>
+<dl><dd><strong>REALLY check out PyMOL.</strong>
+</dd></dl>
+<p>Click the advanced tab.  Here are a few cool, hopefully useful things.  One is the PyMol Visualization window.  Click this.  Now, double click the 'view residue energy' to send energy colors to pymol.  Now, explore your protein with the energy components on the right.  More options on the left should work as well such as observing all hydrogen bonds.
+</p><p><em>CODE: toolkit/window_modules/PyMOL</em>
+</p>
+<dl><dd><strong>Set your Options.</strong>
+</dd></dl>
+<p>In the advanced tab, we can select options for Rosetta, so go nuts!  There are a few common ones, but use the entry box to add your own, and click add option to change the options for this current session.  Click save defaults to have it loaded the next time you load the toolkit.
+</p><p><em>CODE: toolkit/window_modules/options_system</em>
+</p>
+<dl><dd><strong>Set your ScoreFunction.</strong>
+</dd></dl>
+<p>Once again, in the advanced tab, click the ScoreFxn Control button.  Here you can change the scorefunction, and also edit individual score terms using the bottom half.  Double clicking either the score function or patch sets it for this current session.  Double Clicking on a term on the bottom left allows you to change the weight on it, double clicking on a term in the bottom right allows you to change the weight from zero to anything.  
+</p><p>Note that this window has it's own menu.  You can do a few things, including saving a new scorefunction, or setting a particular score:patch combo as the default.
+</p><p><em>CODE: toolkit/window_modules/scorefunction</em>
+</p>
+<dl><dd><strong>Use some Simple Analysis.</strong>
+</dd></dl>
+<p>Back to the main window, we we have some simple analysis, for quickly looking at your pose.  On the left, we have some basic analysis options, while on the right are the full suite of RMSD tools.  Yay rms_util!!! 
+</p><p>Take a look, score your pose.  At loading the pose, the native pose is set.  This is NATIVE RMSD.  Lets do some loop min.  
+</p><p><em>CODE: toolkit/window_main/simple_analysis.py</em>
+</p><p>Note some analysis movers (Interface, PackStat, VIP, Loop) are now available in the advanced tab.
+</p>
+<dl><dd><strong>Set some regions.</strong>
+</dd></dl>
+<p>On the left bottom, you can select a region.  You have start, end, and chain.   All of that pose.pdb_info().pdb2pose(start, end, chain) happens in the background, so the GUI is made to work specifically with PDB numbering.  You can specify a loop, a residue, a chain, and a termini.  To add use the add region.  This will go into the listbox on the left.  To remove a region, simply double click on the entry. 
+</p><p>Ok, so how do we specify more then a loop?
+</p><p>Termini - Specify only the end and chain for Nter floppy tail and and beginning and chain for Cter. <br />
+Chain - Specify only the chain. <br />
+Residue - Give the same value for start and end. <br />
+</p><p><em>CODE: toolkit/window_main/input.py</em>
+</p>
+<dl><dd><strong>Protocols</strong>
+</dd></dl>
+<p>On the bottom right we have some quick protocols.  These are meant mostly for modeling, as we all know we need as many processors as possible to do most of our hardcore work.  Currently, these are broken down into full protocols and regional protocols.  Click the right button to relax the loop.  If you want to save the PDB afterward, in the upper right there is a write after protocol button.  Clicking this will use the job distributor to write the PDB after the protocol.  Now we can use the RMSD analysis to get back info on each loop, total, and an average of all loops. 
+</p><p>Note that the chainbreak score is set to 100 for minimization.
+</p><p><br />
+Additionally is the protocols tab in the menu.  Here you can specify the number of processors you wish to use, as well as run a few other protocols, and open up a web browser to many different webservers from the Rosetta community.
+</p><p><em>CODE: toolkit/window_main/quick_min.py</em> <br />
+<em>CODE: toolkit/modules/protocols</em>
+</p><p><br />
+</p>
+<dl><dd><strong>SCWRL</strong>
+</dd></dl>
+<p>Since I am in Roland Dunbrack's lab, I integrated SCWRL into the GUI.  If you want the MOST accurate packing of sidechains shown in the literature, that's where you would use SCWRL.  To get it working in the GUI, cd into the SCWRL directory, go [ <a href="http://dunbrack.fccc.edu/scwrl4/" class='external' title="http://dunbrack.fccc.edu/scwrl4/">http://dunbrack.fccc.edu/scwrl4/</a> here ]  to download the specific OS version you need, and install it in the given directory.  Now you can use the pack (SCWRL) option to pack your chain, loop, residue, etc. just like you did before.  Or, you could output a SCWRL sequence file from the export menu.  This is a file with the full sequence of the protein and the residues to be repacked in CAPS. 
+</p><p><em>CODE: toolkit/SCWRL/</em> <br />
+<em>CODE: toolkit/modules/protocols</em>
+</p>
+<dl><dd><strong>Design Window</strong>
+</dd></dl>
+<p>Clicking the protein design menu option and then the design file toolbox opens an interactive way to make Resfiles.  I find it's much easier to use this then by hand.  Specify a residue, and you are given some biochemical values.  These are old, but remain heavily used.  If you don't know what they are, read about them through the help menu.  Once you choose a residue, the first listbox on the left changes.  It has info on the conserved residues to make specifying these easier.  Exploring the listbox populates the second listbox.  
+Three types are available - individual residues, ALL, and ALL+Self.  Double clicking these will populate the last listbox.  These are the current residues you have set for design for each residue. Double clicking any residue in the final listbox will remove it from your design.  You can click next residue to then modify the next one.  Finally, instead of one residue you can specify a region like this 23:42 and then add a residue to the design.  All of these will be set.  Chains and termini are not currently implemented.
+You can then save a resfile, clear it, or clear everything for a specific residue.  Loading a new pose resets the dictionary of designs.
+</p><p>Adding NCAA's to this window is in the works.
+</p><p><em>CODE: toolbox/modules/definitions/restype_definitions.py</em> <br />
+<em>CODE: toolbox/window_modules/design_window/resfile_design.py</em>
+</p>
+<dl><dd><strong>Full Control Window</strong>
+</dd></dl>
+<p>Sometimes, you just want to design single residues, pack single residues, or even modify the dihedral angles of specific residues to make a model, or get something (like a termini) ready for Rosetta.  You also may be interested in rotamer probabilities and energies of a particular residue. Here is where this window comes into play.  It is located in the Advanced tab of the menu.  After specifying a residue, you can first change the dihedrals using the entry box or the slider. No changes are made until you click the delta button.
+Double clicking a residue type in the middle listbox will mutate that particular residue using one of the PyRosetta convenience functions.  On the right, you can then repack the residue, or relax it, or relax that  residue and it's neighbors.  Note that in this situation, the backrub move would be pretty awesome, and I will be implementing it in the future.  
+You can also observe individual energies terms of the residue by clicking one of the terms in the bottom listbox.  This grabs the terms using the ScoreFxn object as before, and IS weighted!  This can be useful if your looking for a design that lowers a specific energy term.  I know, very specific, but sometimes, just what you need!  Clicking the next residue or previous residue will update all energies and probabilities in this window including the energy term set.
+</p><p>You can also add variants to your pose here.  Yay phosphorylations!
+</p><p><em>CODE: toolbox/window_modules/full_control/FullControl.py</em> <br />
+<em>CODE: toolbox/window_module/scorefunction/ScoreFxnControl.py</em>
+</p>
+<dl><dd><strong>PDBLIST Functions</strong>
+</dd></dl>
+<p>Last of the major functions I have had the time to implement are the PDBLIST functions.  I do all of my work with PDBLIST of full paths.  Makes things easier, and having the full paths means I can work with them in multiple places and multiple scripts.  Some users and modelers on the other hand, might not have the knowledge to really work with these or even make one.  This is for them, and when I'm feeling a bit lazy, honestly.  You can specify a PDBLIST in the input part of the main window.  You can also create one in the menu.  It will create a file called PDBLIST.txt in the directory specified and set the filenmane as this.  Few things you can do now.  In the ScoreFxn window, you can rescore all the files and output a file with PATH&nbsp;: SCORE.  Next I want to integrate the score filters for users.  In the menu, you can output a FASTA file for each PDB, or even for the region specified, which is kinda nice for sequence Logos, etc.  You will be able to use calibur in a few weeks, and right now, you can convert all of the PDB's to an SQLITE3 DB.  This is basically a way to store a large number of PDB's for analysis, etc.  Note that it is not the Rosetta DB structure, it is my own.  Will have the option to convert them the Rosetta way in the future.  Not sure how to do the conversion in PyRosetta yet.  
+</p><p><em>CODE: toolbox/modules/tools</em> <br />
+<em>CODE: toolbox/modules/calibur.py</em> <br />
+<em>CODE: toolbox/modules/PDB.py</em>
+</p>
+<dl><dd><strong>Rosetta Tools Window</strong>
+</dd></dl>
+<p>In the Rosetta Tools window is the GUI that I built, independent of this program and PyRosetta.  It has a if __name__=__main__ function, so you can run it by itself if you feel inclined.  It's intent was to be an interactive way to create Rosetta options files, since I can't remember names, and I kept forgetting options for the many Rosetta apps that I use.  In addition, I wanted a GUI for modelers in my lab to use Rosetta, since for some reason they are a bit scared of the command line.  Next, I wanted it to be run on the cluster, so I could quickly set up a Rosetta run at 3 am.  <br />
+<em>Current Implementation:</em> If you open the window and click the repopulate menu item, there are 4 options.  2 are implemented.  The first is what opens when you opened the window, a manually curated list of options, descriptions, and documentation.  This was a year ago, before I knew about Doxygen.  Second option repopulating option is ALL.  This stands for ALL options of each program found in the app directory specified.  It runs the -help function of each app, writes a file, and parses that file as neatly as I could.  So much information, but sometimes, you want it all.  You can return the info for just the specific app selected in the help menu.  After repopulating, or even when you open the window, you can choose an app, and the options are listed.  Clicking the add_option, will add that the textbox at the bottom.  You can edit this.  Clicking showpath builder will allow you to look for files, add names, etc.  This options file can be saved/loaded/and run.  On the right is the documentation of each app, since I am constantly on rosettacommons re-reading the documentation every time I start using new apps. <br /> 
+You can explore it, but I need to parse Doxygen to get all the info.  
+Next, we have the cluster part.  This is supposed to be used for all apps, as the ones that don't use JD2 can be frustrating to set up for the cluster.  It currently is setup for our cluster, and it will be more generalized soon.
+</p>
+<dl><dd><strong>Help Menu</strong>
+</dd></dl>
+<p>Here are a few things and links useful to users and you guys.  The license, about functions, etc.  If something in the GUI is less then explanatory, please let me know and we can add it to the help menu.
+</p><p><em>CODE: toolbox/modules/help.py</em>
+</p>
+<div class="printfooter">
+<p>Retrieved from "<a href="https://wiki.rosettacommons.org:443/index.php/PyRosetta_Toolkit">https://wiki.rosettacommons.org:443/index.php/PyRosetta_Toolkit</a>"</p>
+
+<p>This page has been accessed 164 times. This page was last modified 22:29, 14 Dec 2012. </p>
+</div>
+
+</div><br style="clear:both" />
+
+<div id='footer'><table border="0" cellspacing="0"><tr><td width='152' rowspan='1'>&nbsp;</td><td class='bottom' align='left' valign='top'><strong><a href="/index.php?title=PyRosetta_Toolkit&amp;action=edit" title ="PyRosetta Toolkit">Edit this page</a></strong> |
+<a href="/index.php?title=Talk:PyRosetta_Toolkit&amp;action=edit" class="new" title ="Talk:PyRosetta Toolkit">Discuss this page</a> |
+<a href="/index.php?title=PyRosetta_Toolkit&amp;action=history" title ="PyRosetta Toolkit">Page history</a> |
+<a href="/index.php?title=Special:Whatlinkshere&amp;target=PyRosetta_Toolkit" title ="Special:Whatlinkshere">What links here</a> |
+<a href="/index.php?title=Special:Recentchangeslinked&amp;target=PyRosetta_Toolkit" title ="Special:Recentchangeslinked">Related changes</a><br />
+
+<br /><a href="/index.php/Main_Page" title ="Main Page">Main Page</a> | <a href="/index.php/RosettaWiki:About" title ="RosettaWiki:About">About RosettaWiki</a> | <a href="/index.php/Special:Recentchanges" title ="Special:Recentchanges">Recent changes</a> | <form name="search" class="inline" method="post" action="/index.php/Special:Search">
+<input type="text" name="search" size="19" value="" />
+<input type="submit" name="go" value="Go" />&nbsp;<input type="submit" name="fulltext" value="Search" />
+</form><br /><span id="pagestats">This page has been accessed 164 times. This page was last modified 22:29, 14 Dec 2012. </span></td></tr></table>
+</div>
+</div>
+
+<div id='quickbar'>
+<a href="/index.php/Main_Page"><img src="/stylesheets/images/wiki.png" alt="[Main Page]" /></a>
+<hr class='sep' /><a href="/index.php/Main_Page" title ="Main Page">Main Page</a>
+<br /><a href="/index.php/Special:Recentchanges" title ="Special:Recentchanges">Recent changes</a>
+<br /><a href="/index.php/Special:Randompage" title ="Special:Randompage">Random page</a>
+<br /><a href="/index.php/Current_events" title ="Current events">Current events</a>
+<br /><hr class='sep' /><strong><a href="/index.php?title=PyRosetta_Toolkit&amp;action=edit" title ="PyRosetta Toolkit">Edit this page</a></strong>
+<br /><a href="/index.php?title=Talk:PyRosetta_Toolkit&amp;action=edit" class="new" title ="Talk:PyRosetta Toolkit">Discuss this page</a>
+<br /><a href="/index.php?title=PyRosetta_Toolkit&amp;action=history" title ="PyRosetta Toolkit">Page history</a>
+<br /><a href="/index.php?title=Special:Whatlinkshere&amp;target=PyRosetta_Toolkit" title ="Special:Whatlinkshere">What links here</a>
+<br /><a href="/index.php?title=Special:Recentchangeslinked&amp;target=PyRosetta_Toolkit" title ="Special:Recentchangeslinked">Related changes</a>
+<br /><hr class='sep' /><a href="/index.php/Special:Specialpages" title ="Special:Specialpages">Special pages</a>
+<br /><a href="/index.php/RosettaWiki:Bug_reports" title ="RosettaWiki:Bug reports">Bug reports</a>
+<br /></div>
+<!-- Served by plug in 0.13 secs. -->
+</body></html>
