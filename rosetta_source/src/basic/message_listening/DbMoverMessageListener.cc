@@ -27,7 +27,7 @@ namespace message_listening {
 static basic::Tracer TR("basic.message_listening.DbMoverMessageListener");
 
 DbMoverMessageListener::DbMoverMessageListener():
-max_batch_id_(0),protocol_id_(0)
+initialized_(false),max_batch_id_(0),protocol_id_(0)
 {
 	if( basic::options::option[basic::options::OptionKeys::out::database_protocol_id].user() ){
 		protocol_id_ = basic::options::option[basic::options::OptionKeys::out::database_protocol_id];
