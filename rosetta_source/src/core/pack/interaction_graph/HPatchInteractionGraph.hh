@@ -47,14 +47,14 @@
 //Utility Headers
 // AUTO-REMOVED #include <numeric/xyzVector.io.hh>
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/vector1.functions.hh>  // to get arg_max
+#include <utility/vector1.functions.hh>  // needed to get arg_max - DO NOT AUTO-REMOVE!
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/string_util.hh>
+#include <utility/string_util.hh> // needed to get trim - DO NOT AUTOREMOVE!
 
 //ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray1.io.hh>
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
+#include <ObjexxFCL/FArray1.io.hh> // needed to stream operator of FArray1Dint, line 4738 - DO NOT AUTOREMOVE!
+#include <ObjexxFCL/format.hh> // needed for I() - DO NOT AUTOREMOVE!
 
 //C++ Headers
 #include <vector>
@@ -1414,6 +1414,7 @@ Real HPatchNode< V, E, G >::consider_alternate_state() {
 
 	// self_and_bg_dots_for_states has the RotamerDots object for a state, with the overlap counts set for all BG nodes
 	// that overlap with that state
+	//runtime_assert_msg( alt_state_dots_matches_current_state_dots_, "alt_state_dots and current_state_dots do not match for FC node " + ObjexxFCL::fmt::I( 3, parent::get_node_index() ) ); // causes crash in pmut_scan run
 	assert( alt_state_dots_matches_current_state_dots_ );
 	alt_state_dots_matches_current_state_dots_ = false;
 
@@ -1516,6 +1517,7 @@ Real HPatchNode< V, E, G >::update_state_for_neighbors_substitution (
 	utility::vector1< utility::vector1< bool > > & atom_atom_overlaps_cache
 )
 {
+
 	get_hpatch_owner()->register_fc_node_affected_by_rotsub( parent::get_node_index() );
 	parent::set_alternate_state( parent::get_current_state() );
 
@@ -1534,6 +1536,7 @@ Real HPatchNode< V, E, G >::update_state_for_neighbors_substitution (
 #endif
 
 	// everything has to start from the current state. then we'll update the alt state to be correct.
+	//runtime_assert_msg( alt_state_dots_matches_current_state_dots_, "alt_state_dots and current_state_dots do not match for FC node " + ObjexxFCL::fmt::I( 3, parent::get_node_index() ) ); // causes crash in pmut_scan run
 	assert( alt_state_dots_matches_current_state_dots_ );
 	/// APL -- this should be unnecessary
 	/// APL TEMP alt_state_rotamer_dots_ = current_state_rotamer_dots_;
@@ -1636,7 +1639,7 @@ void HPatchNode< V, E, G >::reset_alt_state_dots() {
 		alt_state_exp_hphobes_ = curr_state_exp_hphobes_;
 		alt_state_dots_matches_current_state_dots_ = true;
 #ifdef FILE_DEBUG
-		TR_NODE << "reset_alt_state_dots(): alt state dots set equal to current state dots." << std::endl;
+		TR_NODE << "reset_alt_state_dots(): node " << parent::get_node_index() << " alt state dots set equal to current state dots." << std::endl;
 #endif
 	}
 
@@ -2107,7 +2110,7 @@ void HPatchBackgroundNode< V, E, G >::reset_alt_state_dots() {
 		alt_state_exp_hphobes_ = curr_state_exp_hphobes_;
 		alt_state_dots_matches_current_state_dots_ = true;
 #ifdef FILE_DEBUG
-		TR_BGNODE << "reset_alt_state_dots(): alt state rotamer dots set equal to current state rotamer dots." << std::endl;
+		TR_BGNODE << "reset_alt_state_dots(): node " << parent::get_node_index() << " alt state rotamer dots set equal to current state rotamer dots." << std::endl;
 #endif
 	}
 
@@ -3577,7 +3580,7 @@ void HPatchInteractionGraph< V, E, G >::blanket_assign_state_0() {
 
 	for ( Size ii = 1; ii <= (Size)parent::get_num_nodes(); ++ii ) {
 #ifdef FILE_DEBUG
-		TR_HIG << "blanket_assign_state_0() calling assign_zero_state() on node " << ii << std::endl;
+		TR_HIG << "blanket_assign_state_0() calling assign_zero_state() on node " << ii << " of " << (Size)parent::get_num_nodes() << std::endl;
 #endif
 		get_hpatch_node( ii )->assign_zero_state();
 	}
@@ -3586,17 +3589,39 @@ void HPatchInteractionGraph< V, E, G >::blanket_assign_state_0() {
 	// instead of calling update_internal, just reset the cached energy values to zero. the values should already be
 	// at zero because they are default init'd by the constructor to be 0, but the unit tests re-use the same IG and
 	// just call prep_for_simA() and this method to reinit the IG.
-
-	// Was total_energy_alternate_state_assignment_ intended below as well? ~Labonte
-	total_energy_current_state_assignment_ = /*total_energy_current_state_assignment_ =*/ 0.0;
+	total_energy_current_state_assignment_ = total_energy_alternate_state_assignment_ = 0.0;
 	hpatch_energy_current_state_assignment_ = hpatch_energy_alternate_state_assignment_ = 0.0;
 
 	/// set all nodes as participating in a rotamer substitution if any node's state is 0 (unassigned)
 	some_node_in_state_0_ = true;
+	fc_nodes_near_rotsub_.resize( (Size)parent::get_num_nodes() );
+	bg_nodes_near_rotsub_.resize( (Size)parent::get_num_background_nodes() );
+	
 	for ( Size ii = 1; ii <= fc_nodes_near_rotsub_.size(); ++ii ) { fc_nodes_near_rotsub_[ ii ] = ii; }
-	std::fill( fc_nodes_near_rotsub_bool_.begin(), fc_nodes_near_rotsub_bool_.end(), true );
+	for ( Size ii = 1; ii <= fc_nodes_near_rotsub_bool_.size(); ++ii ) { fc_nodes_near_rotsub_bool_[ ii ] = true; }
+
+#ifdef FILE_DEBUG
+		TR_HIG << "blanket_assign_state_0() reset fc_nodes_near_rotsub_ to [ ";
+		for ( Size ii = 1; ii <= fc_nodes_near_rotsub_.size(); ++ii ) { TR_HIG << fc_nodes_near_rotsub_[ ii ] << ", "; }
+		TR_HIG << "]" << std::endl;
+
+		TR_HIG << "blanket_assign_state_0() reset fc_nodes_near_rotsub_bool_ to [ ";
+		for ( Size ii = 1; ii <= fc_nodes_near_rotsub_bool_.size(); ++ii ) { TR_HIG << fc_nodes_near_rotsub_bool_[ ii ] << ", "; }
+		TR_HIG << "]" << std::endl;
+#endif
+
 	for ( Size ii = 1; ii <= bg_nodes_near_rotsub_.size(); ++ii ) { bg_nodes_near_rotsub_[ ii ] = ii; }
-	std::fill( bg_nodes_near_rotsub_bool_.begin(), bg_nodes_near_rotsub_bool_.end(), true );
+	for ( Size ii = 1; ii <= bg_nodes_near_rotsub_bool_.size(); ++ii ) { bg_nodes_near_rotsub_bool_[ ii ] = true; }
+
+#ifdef FILE_DEBUG
+		TR_HIG << "blanket_assign_state_0() reset bg_nodes_near_rotsub_ to [ ";
+		for ( Size ii = 1; ii <= bg_nodes_near_rotsub_.size(); ++ii ) { TR_HIG << bg_nodes_near_rotsub_[ ii ] << ", "; }
+		TR_HIG << "]" << std::endl;
+
+		TR_HIG << "blanket_assign_state_0() reset bg_nodes_near_rotsub_bool_ to [ ";
+		for ( Size ii = 1; ii <= bg_nodes_near_rotsub_bool_.size(); ++ii ) { TR_HIG << bg_nodes_near_rotsub_bool_[ ii ] << ", "; }
+		TR_HIG << "]" << std::endl;
+#endif
 
 }
 
@@ -3745,7 +3770,6 @@ void HPatchInteractionGraph< V, E, G >::set_errorfull_deltaE_threshold( core::Pa
 	// leave this inside since it's debugging output
 	HPatchInteractionGraph< V, E, G >::print_hpatch_avoidance_stats();
 #endif
-	HPatchInteractionGraph< V, E, G >::print_hpatch_avoidance_stats();
 
 	HPatchInteractionGraph< V, E, G >::reset_hpatch_avoidance_stats();
 	deltaE_threshold_for_avoiding_hpatch_calcs_ = deltaE;
@@ -3824,16 +3848,14 @@ void HPatchInteractionGraph< V, E, G >::reset_hpatch_avoidance_stats() {
 template < typename V, typename E, typename G >
 void HPatchInteractionGraph< V, E, G >::consider_substitution( int node_ind, int new_state, core::PackerEnergy & delta_energy, core::PackerEnergy & prev_energy_for_node ) {
 
-	//std::cerr << "Considering substitution at node " << node_ind << std::endl;
-
-	reset_from_previous_deltaHpatch_comp();
-
 #ifdef FILE_DEBUG
 	TR_HIG << "---" << std::endl;
 	TR_HIG << "consider_substitution(): trying new state " << new_state << " ("
 		<< get_hpatch_node( node_ind )->get_rotamer( new_state )->name() << ") on node/molten res " << node_ind << " (wt: "
 		<< pose().residue( rotamer_sets().moltenres_2_resid( node_ind ) ).name3() << " " << rotamer_sets().moltenres_2_resid( node_ind ) << ") " << std::endl;
 #endif
+
+	reset_from_previous_deltaHpatch_comp();
 
 	++num_state_substitutions_considered_;
 
@@ -3885,20 +3907,43 @@ core::PackerEnergy HPatchInteractionGraph< V, E, G >::calculate_hpatch_deltaE() 
 	}
 #endif
 
+#ifdef FILE_DEBUG
+	// on the very first consider sub call after all nodes get an assigned state, the some_node_in_state_0_ variable will still be true.
+	// that's because it's value doesn't change until after the calculate_alt_state_hpatch_score() function call below. so we'll miss out
+	// on which nodes/bgnodes will be affected by the very first substitution.  that's ok.
+	if ( ! some_node_in_state_0_ ) {
+		TR_HIG << "calculate_hpatch_deltaE(): FC nodes affected by substitution currently being considered include: ";
+		for ( Size ii = 1; ii <= fc_nodes_near_rotsub_.size(); ++ii ) { TR_HIG << fc_nodes_near_rotsub_[ ii ] << " "; } TR_HIG << std::endl;
+
+		TR_HIG << "calculate_hpatch_deltaE(): BG nodes affected by substitution currently being considered include: ";
+		for ( Size ii = 1; ii <= bg_nodes_near_rotsub_.size(); ++ii ) { TR_HIG << bg_nodes_near_rotsub_[ ii ] << " "; } TR_HIG << std::endl;
+
+		TR_HIG.flush();
+	}
+#endif
+
 	// determine the new patch score given the updated sasa information
 	hpatch_energy_alternate_state_assignment_ = calculate_alt_state_hpatch_score();
 	core::PackerEnergy hpatch_deltaE = hpatch_energy_alternate_state_assignment_ - hpatch_energy_current_state_assignment_;
 #ifdef FILE_DEBUG
-	TR_HIG << "hpatchE current state: " << hpatch_energy_current_state_assignment_
+	TR_HIG << "calculate_hpatch_deltaE(): hpatchE current state: " << hpatch_energy_current_state_assignment_
 		<< ", alt state: " << hpatch_energy_alternate_state_assignment_ << ", hpatch deltaE: " << hpatch_deltaE << std::endl;
 #endif
 
 	return hpatch_deltaE;
 }
 
+
+///
+/// @begin HPatchInteractionGraph< V, E, G >:: register_fc_node_in_state0()
+/// 
+/// @detailed
+/// Initialized to true in the constructor, and also set to true after a call to blanket_assign_state0.  After all nodes
+/// get assigned a state, then this boolean is set to false.  It is used to reduce the number of operations that are performed
+/// when annealing is just beginning. Functionality added by Andrew - best commenting I can do. -RJ
+///
 template < typename V, typename E, typename G >
-void HPatchInteractionGraph< V, E, G >:: register_fc_node_in_state0()
-{
+void HPatchInteractionGraph< V, E, G >:: register_fc_node_in_state0() {
 	some_node_in_state_0_ = true;
 }
 
@@ -3912,18 +3957,50 @@ void HPatchInteractionGraph< V, E, G >:: register_fc_node_in_state0()
 ///
 template < typename V, typename E, typename G >
 void HPatchInteractionGraph< V, E, G >::register_fc_node_affected_by_rotsub( int fc_node_ind ) {
-	if ( ! fc_nodes_near_rotsub_bool_[ fc_node_ind ] ) {
+
+//#ifdef FILE_DEBUG
+	//TR_HIG << "register_fc_node_affected_by_rotsub(): node " << fc_node_ind << " registered as being affected by substitution being considered." << std::endl;
+//#endif
+
+	// not sure this conditional makes sense. why would we ever have a first class node try to register themselves twice with the IG?  if the IG is
+	// keeping track of nodes/bgnodes correctly, a single FC node should only ever get a chance to call this method one time. also, because fc_nodes_near_rotsub_bool_
+	// is reset to true for all positions in the blanket_assign_state_0() call, we potentially neglect to add some FC nodes to the fc_nodes_near_rotsub_ vector
+	// because the value is already true.  that's bad. -ronj
+	// 2/5/2013:  if you don't comment out the conditional below (and the analogous one in the function after this one), the IG begins to fail when multiple
+	// packing runs are used (e.g. in pmut_scan_scan protocol).  however, if you do comment them out, some of the unit tests begin to fail.  need to update the 
+	// unit tests with a more appropriate test. or figure out why the unit tests fail when they are commented out and fix the IG. 
+	
+	//if ( ! fc_nodes_near_rotsub_bool_[ fc_node_ind ] ) {
 		fc_nodes_near_rotsub_.push_back( fc_node_ind );
 		fc_nodes_near_rotsub_bool_[ fc_node_ind ] = true;
-	}
+	//}
+
+	// we instead could place an if statement above that says if any node is in the unassigned state, then don't bother updating either of these vectors. but 
+	// as these functions (this one and the one below) get called millions of times, better not to stick an if statement that only applies during the beginning of
+	// annealing smack-dab in the middle of them.  the implication of this, though, is that after the first consider-substitution-that-happens-once-every-node-goes-into
+	// the-assigned-state (regardless of whether it gets committed or not), the fc_nodes_near_rotsub_ vectors will have duplicate values in them (lots of duplicates,
+	// potentially).  that's because they will be getting values added to them while the annealer slowly gets all the nodes to assigned states. The multi cool annealer 
+	// will reach this very quickly as it force inits all nodes to assigned states. the standard fixbb annealer could take a long time to reach assigned states for every
+	// node.  after the first substitutions processing is done, the IG will reset after that sub consideration.  in there, it will iterate through these vectors and reset
+	// the nodes and bgnodes.  it will visit some nodes and bgnodes more than once, but at the beginning of the reset...() function calls in nodes and bgnodes, there's 
+	// a check for whether anything needs to be done.  after the first visit, repeat visits to nodes/bgnodes won't require much runtime.  I'm thinking this expense that
+	// occurs only once when the IG become fully assigned is better than having two extra if statements in this function and the one below (which get called millions
+	// of times).  the only real way to know would be to check runtimes of a couple design runs, but I don't feel like doing that. so I'm going with taking out the if
+	// statements and accepting the one-time cost that occurs once the IG is fully assigned. crossing my fingers. -ronj
+	// 
+
 }
 
 template < typename V, typename E, typename G >
 void HPatchInteractionGraph< V, E, G >::register_bg_node_affected_by_rotsub( int bg_node_ind ) {
-	if ( ! bg_nodes_near_rotsub_bool_[ bg_node_ind ] ) {
+
+//#ifdef FILE_DEBUG
+	//TR_HIG << "register_bg_node_affected_by_rotsub(): bgnode " << bg_node_ind << " registered as being affected by substitution being considered." << std::endl;
+//#endif
+	//if ( ! bg_nodes_near_rotsub_bool_[ bg_node_ind ] ) {
 		bg_nodes_near_rotsub_.push_back( bg_node_ind );
 		bg_nodes_near_rotsub_bool_[ bg_node_ind ] = true;
-	}
+	//}
 }
 
 
@@ -4092,8 +4169,14 @@ Real HPatchInteractionGraph< V, E, G >::calculate_alt_state_hpatch_score() {
 
 	// any_vertex_state_unassigned() is an O(N) operation -- only perform this check if a few times
 	// at the beginning of simA
-	if ( some_node_in_state_0_ && parent::any_vertex_state_unassigned() )
+	if ( some_node_in_state_0_ && parent::any_vertex_state_unassigned() ) {
+#ifdef FILE_DEBUG
+		if ( some_node_in_state_0_ ) {
+			TR_HIG << "calculate_alt_state_hpatch_score(): some_node_in_state_0_ is true. returning 0.0." << std::endl;
+		}
+#endif
 		return 0.0; // don't bother running union-find if any of the nodes are still unassigned
+	}
 
 	some_node_in_state_0_ = false;
 
@@ -4275,6 +4358,7 @@ Real HPatchInteractionGraph< V, E, G >::calculate_alt_state_hpatch_score() {
 
 #ifdef FILE_DEBUG
 	TR_HIG << "calculate_alt_state_hpatch_score(): iterating over first-class edges" << std::endl;
+	TR_HIG.flush();
 #endif
 
 	//
@@ -4355,6 +4439,7 @@ Real HPatchInteractionGraph< V, E, G >::calculate_alt_state_hpatch_score() {
 
 #ifdef FILE_DEBUG
 	TR_HIG << "calculate_alt_state_hpatch_score(): iterating over background edges" << std::endl;
+	TR_HIG.flush();
 #endif
 
 	//
@@ -4542,15 +4627,16 @@ Real HPatchInteractionGraph< V, E, G >::calculate_alt_state_hpatch_score() {
 			}
 
 			Real score = 0.0;
-			if ( patch_area > scoring::SurfacePotential::MAX_HPATCH_AREA ) {
-				score = hpatch_score_weight_ * scoring::SurfacePotential::MAX_HPATCH_SCORE;
+			if ( patch_area > pack::interaction_graph::SurfacePotential::MAX_HPATCH_AREA ) {
+				score = hpatch_score_weight_ * pack::interaction_graph::SurfacePotential::MAX_HPATCH_SCORE;
 			} else {
-				score = hpatch_score_weight_ * scoring::SurfacePotential::get_instance()->hpatch_score( patch_area );
+				score = hpatch_score_weight_ * pack::interaction_graph::SurfacePotential::get_instance()->hpatch_score( patch_area );
 			}
 			TR_HIG << "], patch_area: " << patch_area << ", score: " << score << std::endl;
 
 		}
 		TR_HIG << std::endl;
+		TR_HIG.flush();
 #endif
 
 	return total_alt_state_hpatch_score;
@@ -4618,13 +4704,21 @@ void HPatchInteractionGraph< V, E, G >::reset_from_previous_deltaHpatch_comp() {
 	///if ( some_node_in_state_0_ ) return;
 
 #ifdef FILE_DEBUG
-	TR_HIG << "reset_from_previous_deltaHpatch_comp: calling reset_alt_state_dots on all FC nodes." << std::endl;
+	if ( ! some_node_in_state_0_ ) {
+		TR_HIG << "reset_from_previous_deltaHpatch_comp: calling reset_alt_state_dots on all FC nodes." << std::endl;
+		TR_HIG << "reset_from_previous_deltaHpatch_comp: FC nodes affected by substitution previously considered include: ";
+		for ( Size ii = 1; ii <= fc_nodes_near_rotsub_.size(); ++ii ) { TR_HIG << fc_nodes_near_rotsub_[ ii ] << " "; } TR_HIG << std::endl;
+	} else {
+		TR_HIG << "reset_from_previous_deltaHpatch_comp: unnecessary because not all nodes are in an assigned state." << std::endl;
+	}
 #endif
+
 	for ( Size ii = 1; ii <= fc_nodes_near_rotsub_.size(); ++ii ) {
 		Size const ii_fc_node = fc_nodes_near_rotsub_[ ii ];
 		assert( fc_nodes_near_rotsub_bool_[ ii_fc_node ] );
 		get_hpatch_node( ii_fc_node )->reset_alt_state_dots();
 	}
+
 	if ( ! some_node_in_state_0_ ) {
 		for ( Size ii = 1; ii <= fc_nodes_near_rotsub_.size(); ++ii ) {
 			Size const ii_fc_node = fc_nodes_near_rotsub_[ ii ];
@@ -4634,13 +4728,21 @@ void HPatchInteractionGraph< V, E, G >::reset_from_previous_deltaHpatch_comp() {
 	}
 
 #ifdef FILE_DEBUG
-	TR_HIG << "reset_from_previous_deltaHpatch_comp: calling reset_alt_state_dots on all BG nodes." << std::endl;
+	if ( ! some_node_in_state_0_ ) {
+		TR_HIG << "reset_from_previous_deltaHpatch_comp: calling reset_alt_state_dots on all BG nodes." << std::endl;
+		TR_HIG << "reset_from_previous_deltaHpatch_comp: BG nodes affected by substitution previously considered include: ";
+		for ( Size ii = 1; ii <= bg_nodes_near_rotsub_.size(); ++ii ) { TR_HIG << bg_nodes_near_rotsub_[ ii ] << " "; } TR_HIG << std::endl;
+	} else {
+		TR_HIG << "reset_from_previous_deltaHpatch_comp: unnecessary because not all nodes are in an assigned state." << std::endl;
+	}
 #endif
+
 	for ( Size ii = 1; ii <= bg_nodes_near_rotsub_.size(); ++ii ) {
 		Size const ii_bg_node = bg_nodes_near_rotsub_[ ii ];
 		assert( bg_nodes_near_rotsub_bool_[ ii_bg_node ] );
 		get_hpatch_bg_node( ii_bg_node )->reset_alt_state_dots();
 	}
+
 	if ( ! some_node_in_state_0_ ) {
 		for ( Size ii = 1; ii <= bg_nodes_near_rotsub_.size(); ++ii ) {
 			Size const ii_bg_node = bg_nodes_near_rotsub_[ ii ];
