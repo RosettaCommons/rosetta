@@ -241,6 +241,9 @@ if ($symm_group_name eq "c2m" || $symm_group_name eq "p2g") {
 	$latticeRotation = PI/2;
 }
 if ($symm_group_name eq "p2g" || $symm_group_name eq "p31m" || $symm_group_name eq "p4g") { $mirroredGroup = 1; }
+
+#if ($symm_group_name eq "p4m" || $symm_group_name eq "p3m1" || $symm_group_name eq "p6m") { $mirroredGroup = 1; } #fpd
+
 if ($mirroredGroupFlag == 1 && $mirroredGroup==0) {
 	print STDERR "Warning: -z flag not applicable for this point group.  Ignoring!\n";
 }
@@ -804,7 +807,11 @@ if ($secondShell == 1) {
 
 
 ## dofs
-print "set_dof JUMP0_1_1 angle_z(0:360)\n";    # spin
+if ($mirroredGroup == 1) {
+	print "set_dof JUMP0_1_1 angle_z(0:360) z\n";    # spin
+} else {
+	print "set_dof JUMP0_1_1 angle_z(0:360)\n";    # spin
+}
 
 if ($secondShell == 1) {
 	print "set_dof JUMP12_to_redir_inner x($ptgp_sep)\n";
@@ -863,9 +870,14 @@ if ($secondShell == 1) {
 }
 print "\n";
 
-if ($moveInPlane == 1) {
-	print "slide_type RANDOM\n";   # multi-dim slide moves
-}
+if ($mirroredGroup == 1) {
+	print "slide_type ORDERED_SEQUENTIAL\n";
+	if ($moveInPlane == 1) {
+		print "slide_order JUMP12_to_redir_inner JUMP23_to_redir_inner\n";
+	} else {
+		print "slide_order JUMP1_to_redir\n";
+	}
+} 
 
 if ($quietMode != 1) {
 	########################################
