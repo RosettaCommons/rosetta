@@ -64,7 +64,7 @@ def write_jobscript(outpath, scriptPath, jobname, i, config):
     
     JOBSCRIPT = open(scriptPath, 'w')
     JOBSCRIPT.write('#PBS -l nodes=1:ppn=1\n')
-    JOBSCRIPT.write('mkdir /scratch')
+    JOBSCRIPT.write('mkdir /scratch\n')
     JOBSCRIPT.write('mkdir /scratch/'+jobname+'_'+repr(i)+'\n')
     JOBSCRIPT.write('cd /scratch/'+jobname+'_'+repr(i)+'\n')
     prot = " ".join(config)
@@ -164,11 +164,11 @@ def main(args):
     
     
     #Remove and parse anything we need from the config file.
-    flags_to_remove = ['#', '-out:nstruct', '-constant_seed', '-jran', '-nstruct']
+    flags_to_remove = ['#', 'out:path', '-out:nstruct', '-constant_seed', '-jran', '-nstruct']
     outpath = None;
     for option in config:
         if re.search('-out:path', option):
-            outpath = option.split()[0]
+            outpath = option.split()[1]
             ind = config.index(option)
             config.pop(ind)
             if not os.path.exists(output):os.mkdir(outpath)
