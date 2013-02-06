@@ -103,7 +103,7 @@ class QsubSettings():
         else:
             FILE = open(self.pwd+self.path_file_name)
             for line in FILE:
-                line.strip()
+                line = line.strip()
                 lineSP = line.split()
                 if lineSP[0]=="QSUB":
                     self.qsub_path.set(lineSP[1])
@@ -117,11 +117,11 @@ class QsubSettings():
         if not os.path.exists(self.pwd+self.queue_file_name):
             
             print "No queue list to laod.  Please set queue."
-            self.QUEUE_LIST.append(" ")
+            self.QUEUE_LIST.append("")
         else:
             FILE = open(self.pwd+self.queue_file_name)
             for line in FILE:
-                line.strip()
+                line = line.strip()
                 self.QUEUE_LIST.append(line)
             FILE.close()
     
@@ -145,11 +145,14 @@ class QsubSettings():
         FILE = open(self.pwd+self.path_file_name, 'w')
         FILE.write("QSUB\t"+self.qsub_path.get()+"\n")
         FILE.write("MAUI_SHOWQ\t"+self.maui_showq_path.get()+"\n")
-        FILE.close()
+        FILE.write("QSUBOUTPUT\t"+self.qsub_temp.get()+"\n")
+	FILE.write("TEMPSCRIPT\t"+self.tempscripts.get()+"\n")
+	FILE.close()
         
         FILE = open(self.pwd+self.queue_file_name, "w")
         for queue in self.QUEUE_LIST:
-            FILE.write(queue)
+            if queue:
+		FILE.write(queue+"\n")
         FILE.close()
         print "Settings Saved.."
         

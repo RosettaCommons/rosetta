@@ -128,7 +128,7 @@ class QsubClusterSetup():
         """
         checks all Q available...
         """
-        os.system(self.settings.maui_showq_path)
+        os.system(self.settings.maui_showq_path.get())
         
     def runScript(self, repeat=False):
         """
