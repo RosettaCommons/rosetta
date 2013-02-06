@@ -145,11 +145,11 @@ SuperimposeMover::apply( Pose & pose ) {
 	TR << "ref_start: "<< ref_start << " ref_end " << ref_end <<std::endl;
 	TR << "target_start: "<< target_start << " target_end " << target_end <<std::endl;
 	runtime_assert(ref_start > 0 && ref_start < ref_end && ref_end <= pose.total_residue()); 
-	runtime_assert_msg(ref_end - ref_start == target_end - target_start, "segments to superimpose have different lenghts!");
+	runtime_assert_msg(ref_end - ref_start == target_end - target_start, "segments to superimpose have different lengths!");
 
 	if ( ref_pose_->total_residue() == pose.total_residue() ) {
-		//core::Real rms  = superimpose( pose, *ref_pose_, ref_start, ref_end, target_start, target_end );
-		//TR << "Rms to reference: " << rms << std::endl;
+		core::Real rms  = superimpose( pose, *ref_pose_, ref_start, ref_end, target_start, target_end );
+		TR << "Rms to reference: " << rms << std::endl;
 	}
 }
 
