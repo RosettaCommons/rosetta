@@ -45,8 +45,8 @@ public:
 	basic::datacache::CacheableDataOP clone() const;
 	void set_charged_residues_map( const std::map<std::string, bool> & charged_residues_map );
 	void set_energy_state( const std::string& energy_state );
-	void set_pose( const std::string& energy_state, const core::pose::Pose& pose );
-	void set_pbp( const std::string& energy_state, core::scoring::PoissonBoltzmannPotentialOP pb );
+	// Undefined, commenting out to fix PyRosetta build  void set_pose( const std::string& energy_state, const core::pose::Pose& pose );
+	// Undefined, commenting out to fix PyRosetta build  void set_pbp( const std::string& energy_state, core::scoring::PoissonBoltzmannPotentialOP pb );
 	void set_conformational_data( const std::string& energy_state,
 																const core::pose::Pose& pose,
 																core::scoring::PoissonBoltzmannPotentialOP pb );
@@ -57,7 +57,7 @@ public:
 	const std::string & get_energy_state() const;
 	core::pose::PoseCOP get_pose( const std::string& energy_state );
 	core::scoring::PoissonBoltzmannPotentialOP get_pbp( const std::string& energy_state );
-	
+
 private:
 	std::map<std::string, bool> charged_residues_map_;
 	std::map<std::string, core::pose::PoseCOP> pose_by_state_;
@@ -96,7 +96,7 @@ public:
 											 Size res1,
 											 Size res2
 											 ) const;
-	
+
 	virtual void setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
 
 	Real
@@ -149,7 +149,7 @@ public:
 	/// be maintained by class Energies
 	virtual
 	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const;
-	
+
 /////////////////////////////////////////////////////////////////////////////
 // data
 /////////////////////////////////////////////////////////////////////////////
@@ -167,8 +167,8 @@ private:
 	/// @param atom_num The atom number
 	/// @param tol   Tolerable distance in Angstrom, >= 0.A
 	///
-	bool protein_position_equal_within( pose::Pose const & pose1, 
-																			pose::Pose const & pose2, 
+	bool protein_position_equal_within( pose::Pose const & pose1,
+																			pose::Pose const & pose2,
 																			Size atom_num,
 																			Real tolA) const;
 
