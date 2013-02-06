@@ -25,7 +25,7 @@
 #if !defined(BOOST_MULTI_INDEX_DISABLE_SERIALIZATION)
 #include <boost/archive/archive_exception.hpp>
 #include <boost/serialization/access.hpp>
-#include <boost/throw_exception.hpp> 
+#include <boost/throw_exception.hpp>
 #endif
 
 namespace boost{
@@ -49,26 +49,30 @@ protected:
       50331653ul, 100663319ul, 201326611ul, 402653189ul, 805306457ul,
       1610612741ul, 3221225473ul,
 
-#if ((((ULONG_MAX>>16)>>16)>>16)>>15)==0 /* unsigned long less than 64 bits */
-      4294967291ul
+#ifdef PYROSETTA
+	4294967291ul
 #else
-      /* obtained with aid from
-       *   http://javaboutique.internet.com/prime_numb/
-       *   http://www.rsok.com/~jrm/next_ten_primes.html
-       * and verified with
-       *   http://www.alpertron.com.ar/ECM.HTM
-       */
+	#if ((((ULONG_MAX>>16)>>16)>>16)>>15)==0 /* unsigned long less than 64 bits */
+		  4294967291ul
+	#else
+		  /* obtained with aid from
+		   *   http://javaboutique.internet.com/prime_numb/
+		   *   http://www.rsok.com/~jrm/next_ten_primes.html
+		   * and verified with
+		   *   http://www.alpertron.com.ar/ECM.HTM
+		   */
 
-      6442450939ul, 12884901893ul, 25769803751ul, 51539607551ul,
-      103079215111ul, 206158430209ul, 412316860441ul, 824633720831ul,
-      1649267441651ul, 3298534883309ul, 6597069766657ul, 13194139533299ul,
-      26388279066623ul, 52776558133303ul, 105553116266489ul, 211106232532969ul,
-      422212465066001ul, 844424930131963ul, 1688849860263953ul,
-      3377699720527861ul, 6755399441055731ul, 13510798882111483ul,
-      27021597764222939ul, 54043195528445957ul, 108086391056891903ul,
-      216172782113783843ul, 432345564227567621ul, 864691128455135207ul,
-      1729382256910270481ul, 3458764513820540933ul, 6917529027641081903ul,
-      13835058055282163729ul, 18446744073709551557ul
+		  6442450939ul, 12884901893ul, 25769803751ul, 51539607551ul,
+		  103079215111ul, 206158430209ul, 412316860441ul, 824633720831ul,
+		  1649267441651ul, 3298534883309ul, 6597069766657ul, 13194139533299ul,
+		  26388279066623ul, 52776558133303ul, 105553116266489ul, 211106232532969ul,
+		  422212465066001ul, 844424930131963ul, 1688849860263953ul,
+		  3377699720527861ul, 6755399441055731ul, 13510798882111483ul,
+		  27021597764222939ul, 54043195528445957ul, 108086391056891903ul,
+		  216172782113783843ul, 432345564227567621ul, 864691128455135207ul,
+		  1729382256910270481ul, 3458764513820540933ul, 6917529027641081903ul,
+		  13835058055282163729ul, 18446744073709551557ul
+	#endif
 #endif
 
     };
@@ -151,7 +155,7 @@ private:
 
 #if !defined(BOOST_MULTI_INDEX_DISABLE_SERIALIZATION)
   friend class boost::serialization::access;
-  
+
   /* bucket_arrays do not emit any kind of serialization info. They are
    * fed to Boost.Serialization as hashed index iterators need to track
    * them during serialization.
