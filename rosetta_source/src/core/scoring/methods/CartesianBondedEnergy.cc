@@ -1607,7 +1607,7 @@ CartesianBondedEnergy::eval_intraresidue_dof_derivative(
 			dmu_dtor = len_params.dmu_dpsi(phi,psi);
 		}
 		if (linear_bonded_potential_ && std::fabs(d - mu)>1) {
-			dscore_dmu = -K * ((d - mu)>0 ? 1:-1);
+			dscore_dmu = -K * ((d - mu)>0 ? 0.5 : -0.5);
 		} else {
 			dscore_dmu = -K * (d - mu);
 		}
@@ -1665,7 +1665,7 @@ CartesianBondedEnergy::eval_intraresidue_dof_derivative(
 			dmu_dtor = ang_params.dmu_dpsi(phi,psi);
 		}
 		if (linear_bonded_potential_ && std::fabs(angle - mu)>1) {
-			dscore_dmu = -K * ((angle - mu)>0 ? 1:-1);
+			dscore_dmu = -K * ((angle - mu)>0 ? 0.5 : -0.5);
 		} else {
 			dscore_dmu = -K * (angle - mu);
 		}
@@ -1726,7 +1726,7 @@ CartesianBondedEnergy::eval_intraresidue_dof_derivative(
 			dmu_dtor = len_params->dmu_dpsi(phi,psi);
 		}
 		if (linear_bonded_potential_ && std::fabs(d - mu)>1) {
-			dscore_dmu = -K * ((d - mu)>0 ? 1:-1);
+			dscore_dmu = -K * ((d - mu)>0 ? 0.5 : -0.5);
 		} else {
 			dscore_dmu = -K * (d - mu);
 		}
@@ -1789,7 +1789,7 @@ CartesianBondedEnergy::eval_intraresidue_dof_derivative(
 			dmu_dtor = ang_params->dmu_dpsi(phi,psi);
 		}
 		if (linear_bonded_potential_ && std::fabs(angle - mu)>1) {
-			dscore_dmu = -K * ((angle - mu)>0 ? 1:-1);
+			dscore_dmu = -K * ((angle - mu)>0 ? 0.5 : -0.5);
 		} else {
 			dscore_dmu = -K * (angle - mu);
 		}
@@ -2566,7 +2566,7 @@ CartesianBondedEnergy::eval_singleres_torsion_derivatives(
 		Real del_phi = basic::subtract_radian_angles(angle, phi0);
 		if (phi_step>0) del_phi = basic::periodic_range( del_phi, phi_step );
 		if (linear_bonded_potential_ && std::fabs(del_phi)>1) {
-			dE_dphi = weight * Kphi * (del_phi>0? 1 : -1);
+			dE_dphi = weight * Kphi * (del_phi>0? 0.5 : -0.5);
 		} else {
 			dE_dphi = weight * Kphi * del_phi;
 		}
@@ -2621,7 +2621,7 @@ CartesianBondedEnergy::eval_singleres_angle_derivatives(
 
 		numeric::deriv::angle_p1_deriv( rsd.xyz( rt1 ), rsd.xyz( rt2 ), rsd.xyz( rt3 ), theta, f1, f2 );
 		if (linear_bonded_potential_ && std::fabs(theta - theta0)>1) {
-			dE_dtheta = weight * Ktheta * ((theta > theta0)>0? 1 : -1);
+			dE_dtheta = weight * Ktheta * ((theta > theta0)>0? 0.5 : -0.5);
 		} else {
 			dE_dtheta = weight * Ktheta * (theta - theta0);
 		}
@@ -2668,7 +2668,7 @@ CartesianBondedEnergy::eval_singleres_length_derivatives(
 
 		numeric::deriv::distance_f1_f2_deriv( rsd.xyz( rt1 ), rsd.xyz( rt2 ), d, f1, f2 );
 		if (linear_bonded_potential_ && std::fabs(d - d0)>1) {
-			dE_dd = weight * Kd * ((d - d0)>0? 1 : -1);
+			dE_dd = weight * Kd * ((d - d0)>0? 0.5 : -0.5);
 		} else {
 			dE_dd = weight * Kd * (d - d0);
 		}
@@ -2713,7 +2713,7 @@ CartesianBondedEnergy::eval_singleres_improper_torsions_derivatives(
 		Real del_phi = basic::subtract_radian_angles(phi, phi0);
 		del_phi = basic::periodic_range( del_phi, phi_step );
 		if (linear_bonded_potential_ && std::fabs(del_phi)>1) {
-			dE_dphi = weight * Kphi * (del_phi>0? 1 : -1);
+			dE_dphi = weight * Kphi * (del_phi>0? 0.5 : -0.5);
 		} else {
 			dE_dphi = weight * Kphi * del_phi;
 		}
@@ -2779,7 +2779,7 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd1(
 			numeric::deriv::angle_p1_deriv(
 			   rsd1.xyz( res1_lower_atomno ), rsd1.xyz( resconn_atomno1 ), rsd2.xyz( resconn_atomno2 ), theta, f1, f2 );
 			if (linear_bonded_potential_ && std::fabs(theta - theta0)>1) {
-				dE_dtheta = (weights[ cart_bonded_angle ] + weights[ cart_bonded ]) * Ktheta * ((theta - theta0)>0? 1 : -1);
+				dE_dtheta = (weights[ cart_bonded_angle ] + weights[ cart_bonded ]) * Ktheta * ((theta - theta0)>0? 0.5 : -0.5);
 			} else {
 				dE_dtheta = (weights[ cart_bonded_angle ] + weights[ cart_bonded ]) * Ktheta * (theta - theta0);
 			}
@@ -2840,7 +2840,7 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd1(
 				numeric::deriv::angle_p1_deriv(
 					rsd1.xyz( res1_lower_atomno ), rsd1.xyz( resconn_atomno1 ), rsd2.xyz( resconn_atomno2 ), theta, f1, f2 );
 				if (linear_bonded_potential_ && std::fabs(theta - theta0)>1)
-					dE_dtheta = (weights[ cart_bonded_angle ] + weights[ cart_bonded ]) * Ktheta * ((theta - theta0)>0? 1 : -1);
+					dE_dtheta = (weights[ cart_bonded_angle ] + weights[ cart_bonded ]) * Ktheta * ((theta - theta0)>0? 0.5 : -0.5);
 				else
 					dE_dtheta = (weights[ cart_bonded_angle ] + weights[ cart_bonded ]) * Ktheta * (theta - theta0);
 				r1_atom_derivs[ res1_lower_atomno ].f1() += dE_dtheta * f1;
@@ -2896,7 +2896,7 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd2(
 			numeric::deriv::angle_p1_deriv(
 				rsd2.xyz( res2_lower_atomno ), rsd2.xyz( resconn_atomno2 ), rsd1.xyz( resconn_atomno1 ), theta, f1, f2 );
 			if ( linear_bonded_potential_ && std::fabs(theta - theta0)>1 ) {
-				dE_dtheta = (weights[ cart_bonded_angle ] + weights[ cart_bonded ]) * Ktheta * ((theta - theta0)>0? 1 : -1);
+				dE_dtheta = (weights[ cart_bonded_angle ] + weights[ cart_bonded ]) * Ktheta * ((theta - theta0)>0? 0.5 : -0.5);
 			} else {
 				dE_dtheta = (weights[ cart_bonded_angle ] + weights[ cart_bonded ]) * Ktheta * (theta - theta0);
 			}
@@ -2952,7 +2952,7 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd2(
 				numeric::deriv::angle_p1_deriv(
 					rsd2.xyz( res2_lower_atomno ), rsd2.xyz( resconn_atomno2 ), rsd1.xyz( resconn_atomno1 ), theta, f1, f2 );
 				if (linear_bonded_potential_ && std::fabs(theta - theta0)>1)
-					dE_dtheta = (weights[ cart_bonded_angle ] + weights[ cart_bonded ]) * Ktheta * ((theta - theta0)>0? 1 : -1);
+					dE_dtheta = (weights[ cart_bonded_angle ] + weights[ cart_bonded ]) * Ktheta * ((theta - theta0)>0? 0.5 : -0.5);
 				else
 					dE_dtheta = (weights[ cart_bonded_angle ] + weights[ cart_bonded ]) * Ktheta * (theta - theta0);
 				r2_atom_derivs[ res2_lower_atomno ].f1() += dE_dtheta * f1;
@@ -3008,7 +3008,7 @@ CartesianBondedEnergy::eval_interresidue_bond_length_derivs(
 
 		numeric::deriv::distance_f1_f2_deriv( rsd2.xyz( r2at ), rsd1.xyz( r1at ), d, f1, f2 );
 		if (linear_bonded_potential_ && std::fabs(d - d0)>1) {
-			dE_dd = (weights[ cart_bonded_length ] + weights[ cart_bonded ]) * Kd * ((d - d0)>0? 1 : -1);
+			dE_dd = (weights[ cart_bonded_length ] + weights[ cart_bonded ]) * Kd * ((d - d0)>0? 0.5 : -0.5);
 		} else {
 			dE_dd = (weights[ cart_bonded_length ] + weights[ cart_bonded ]) * Kd * (d - d0);
 		}
@@ -3050,7 +3050,7 @@ CartesianBondedEnergy::eval_interresidue_bond_length_derivs(
 
 			numeric::deriv::distance_f1_f2_deriv( rsd2.xyz( resconn_atomno2 ), rsd1.xyz( resconn_atomno1 ), d, f1, f2 );
 			if (linear_bonded_potential_ && std::fabs(d - d0)>1)
-				dE_dd = (weights[ cart_bonded_length ] + weights[ cart_bonded ]) * Kd * ((d - d0)>0? 1 : -1);
+				dE_dd = (weights[ cart_bonded_length ] + weights[ cart_bonded ]) * Kd * ((d - d0)>0? 0.5 : -0.5);
 			else
 				dE_dd = (weights[ cart_bonded_length ] + weights[ cart_bonded ]) * Kd * (d - d0);
 			r2_atom_derivs[ resconn_atomno2 ].f1() += dE_dd * f1;
@@ -3104,7 +3104,7 @@ CartesianBondedEnergy::eval_improper_torsion_derivatives(
 			Real del_phi = basic::subtract_radian_angles(phi, phi0);
 			del_phi = basic::periodic_range( del_phi, phi_step );
 			if (linear_bonded_potential_ && std::fabs(del_phi)>1) {
-				dE_dphi = weight * Kphi * (del_phi>0? 1 : -1);
+				dE_dphi = weight * Kphi * (del_phi>0? 0.5 : -0.5);
 			} else {
 				dE_dphi = weight * Kphi * del_phi;
 			}
@@ -3152,7 +3152,7 @@ CartesianBondedEnergy::eval_improper_torsion_derivatives(
 			Real del_phi = basic::subtract_radian_angles(phi, phi0);
 			del_phi = basic::periodic_range( del_phi, phi_step );
 			if (linear_bonded_potential_ && std::fabs(del_phi)>1) {
-				dE_dphi = (weights[ cart_bonded_torsion ] + weights[ cart_bonded ]) * Kphi * (del_phi>0? 1 : -1);
+				dE_dphi = (weights[ cart_bonded_torsion ] + weights[ cart_bonded ]) * Kphi * (del_phi>0? 0.5 : -0.5);
 			} else {
 				dE_dphi = (weights[ cart_bonded_torsion ] + weights[ cart_bonded ]) * Kphi * del_phi;
 			}
