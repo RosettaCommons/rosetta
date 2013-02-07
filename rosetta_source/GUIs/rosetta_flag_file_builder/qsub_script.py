@@ -64,15 +64,14 @@ def write_jobscript(outpath, scriptPath, jobname, i, config):
     
     JOBSCRIPT = open(scriptPath, 'w')
     JOBSCRIPT.write('#PBS -l nodes=1:ppn=1\n')
-    JOBSCRIPT.write('mkdir /scratch\n')
-    JOBSCRIPT.write('mkdir /scratch/'+jobname+'_'+repr(i)+'\n')
-    JOBSCRIPT.write('cd /scratch/'+jobname+'_'+repr(i)+'\n')
+    JOBSCRIPT.write('mkdir /rosetta_scratch\n')
+    JOBSCRIPT.write('mkdir /rosetta_scratch/'+jobname+'_'+repr(i)+'\n')
+    JOBSCRIPT.write('cd /rosetta_scratch/'+jobname+'_'+repr(i)+'\n')
     prot = " ".join(config)
     JOBSCRIPT.write(prot+'\n')
-    JOBSCRIPT.write('mkdir '+outpath+'\n')
     JOBSCRIPT.write('mkdir '+outpath+'/raw'+'\n')
-    JOBSCRIPT.write('cp -r /scratch/'+jobname+'_'+repr(i)+' '+outpath+'/raw'+'\n')
-    JOBSCRIPT.write('rm -r /scratch/'+jobname+'_'+repr(i)+'\n')
+    JOBSCRIPT.write('cp -r /rosetta_scratch/'+jobname+'_'+repr(i)+' '+outpath+'/raw'+'\n')
+    JOBSCRIPT.write('rm -r /rosetta_scratch/'+jobname+'_'+repr(i)+'\n')
     JOBSCRIPT.close()
     
 def main(args):
@@ -143,8 +142,12 @@ def main(args):
     setup_paths(options.qsubtemp, options.tempscripts, options.jobname)
     FILE = open(options.config, 'r')
     config = []
+    config.append(FILE.readline())
     for line in FILE:
-        line = line.rstrip()
+        
+        line = line.strip("\n")
+        if re.search("#", line):
+            continue
         config.append(line)
     FILE.close()
 
@@ -157,22 +160,25 @@ def main(args):
         
     else:
         if re.search("#", config[0]):
-            exec_database = config[0]
+            exec_database = config[0].strip()
             exec_database = exec_database.replace("#","")
             config[0]=exec_database
             #config.pop(0)
     
-    
     #Remove and parse anything we need from the config file.
-    flags_to_remove = ['#', 'out:path', '-out:nstruct', '-constant_seed', '-jran', '-nstruct']
-    outpath = None;
+    flags_to_remove = ['#', '-out:nstruct', 'out::nstruct', '-constant_seed', '-jran', '-nstruct']
+    outpath = None
     for option in config:
-        if re.search('-out:path', option):
+        print option
+        if re.search('-out:path', option) or re.search('-out::path', option):
             outpath = option.split()[1]
+            print "OUTPATH: "+outpath
             ind = config.index(option)
             config.pop(ind)
-            if not os.path.exists(output):os.mkdir(outpath)
+            if not os.path.exists(outpath):os.mkdir(outpath)
             continue
+        
+    for option in config:
         #Places to get info back out  
         #Remove anything in the list from our config array.
         for flag in flags_to_remove:
@@ -222,10 +228,12 @@ def main(args):
                 suff = str(i)
                 base_config.append('-in:file:s '+pdbPATH+' -run:constant_seed -run:jran '+jran)
                 write_jobscript(new_outpath, scriptname, pdb_jobname, x, base_config)
-                print 'Kicking Job number '+repr(x)+'_'+name
+                
                 offset = offset+10
-                run = options.qsub+'-d '+options.qsubtemp+'/'+rootjob+' -N '+pdb_jobname+' -V -q '+options.queue+' '+scriptname
-                if not options.debug:
+                run = options.qsub+' -d '+options.qsubtemp+'/'+rootjob+' -N '+pdb_jobname+' -V -q '+options.queue+' '+scriptname
+                if options.debug:
+                    print 'Kicking Job number '+repr(x)+'_'+name
+                    print "COMMAND: "+run
                     os.system(run)
                 x+=1
         
@@ -233,17 +241,18 @@ def main(args):
 
         for i in range(1, options.jobs+1):
             base_config = list(config); #Create NEW list, NOT a reference to the old one.
-            print config
             scriptname = options.tempscripts+'/'+options.jobname+'/'+options.jobname+'_'+repr(i)+'.in'
             jran = str(1000000+offset)
             base_config.append('-constant_seed -jran '+jran+"\n")
             
             write_jobscript(outpath, scriptname, options.jobname, i, base_config)
             
-            print 'Kicking Job number '+repr(i)
+            
             offset = offset+10
-            run = options.qsub+'-d '+options.qsubtemp+'/'+options.jobname+' -N '+options.jobname+' -V -q '+options.queue+' '+scriptname
-            if not options.debug:
+            run = options.qsub+' -d '+options.qsubtemp+'/'+options.jobname+' -N '+options.jobname+' -V -q '+options.queue+' '+scriptname
+            if options.debug:
+                print 'Kicking Job number '+repr(i)
+                print "COMMAND: "+run
                 os.system(run)
 
 if __name__ == '__main__': main(sys.argv)

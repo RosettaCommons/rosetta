@@ -150,8 +150,9 @@ class QsubClusterSetup():
             args.append("--stru "+self.struc_per_job.get())
             args.append("--qsub "+self.settings.qsub_path.get())
             args.append("--queue "+self.queue.get())
-            args.append("--jobname "+self.jobname.get())
-            args.append("--debug")
+            if self.jobname.get():
+                args.append("--jobname "+self.jobname.get())
+            #args.append("--debug")
             
             if self.settings.qsub_temp.get():
                 args.append("--qsubtemp "+self.settings.qsub_temp.get())
