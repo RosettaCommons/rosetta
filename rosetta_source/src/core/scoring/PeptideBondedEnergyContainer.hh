@@ -227,13 +227,14 @@ public:
 		return new PeptideBondedEnergyContainer( *this );
 	}
 
-	PeptideBondedEnergyContainer( Size const size_in, utility::vector1< ScoreType > const score_type_in ):
+	PeptideBondedEnergyContainer( Size const size_in, utility::vector1< ScoreType > const score_type_in, Size offset_in=0 ):
 		size_( size_in ),
+		offset_( offset_in ),
 		score_types_( score_type_in ),
-		computed_( size_in, false )
+		computed_( size_in+offset_in, false )
 	{
 		int nscoretypes = score_type_in.size();
-		tables_.resize( size_in, utility::vector1< core::Real >(nscoretypes,0) );
+		tables_.resize( size_in+offset_in, utility::vector1< core::Real >(nscoretypes,0) );
 	}
 
 	virtual
@@ -243,13 +244,14 @@ public:
 
 	virtual
 	void
-	set_num_nodes( Size size_in ) {
+	set_num_nodes( Size size_in, Size offset_in=0 ) {
 		size_ = size_in;
+		offset_ = offset_in;
 		int nscoretypes = score_types_.size();
 		tables_.clear();
-		tables_.resize( size_in, utility::vector1< core::Real >(nscoretypes,0) );
+		tables_.resize( size_+offset_, utility::vector1< core::Real >(nscoretypes,0) );
 		computed_.clear();
-		computed_.resize( size_,  false );
+		computed_.resize( size_+offset_,  false );
 	}
 
 	Size
@@ -260,25 +262,28 @@ public:
 	virtual
 	ResidueNeighborConstIteratorOP
 	const_neighbor_iterator_begin( int resid ) const {
-		int beginat = std::min( resid-1, (int)size_+1 );
-		if (resid==1) beginat = 2;
-		if (resid>(int)size_) beginat = 1; // sometimes arises in symmetry
+		int beginat = std::min( resid-1, (int)(offset_+size_+1) );
+		if (resid==(int)(offset_+1)) beginat = offset_+2;
+		if (resid<=(int)(offset_)) beginat = 1; // sometimes arises in symmetry
+		if (resid> (int)(offset_+size_)) beginat = 1; // sometimes arises in symmetry
 		return new PeptideBondedNeighborConstIterator( resid, beginat, score_types_, &tables_, &computed_ );
 	}
 
 	virtual
 	ResidueNeighborConstIteratorOP
 	const_neighbor_iterator_end( int resid ) const {
-		int endat = std::min( resid+2, (int)size_+1 );
-		if (resid>(int)size_) endat = 1; // sometimes arises in symmetry
+		int endat = std::min( resid+2, (int)(offset_+size_+1) );
+		if (resid<=(int)(offset_)) endat = 1; // sometimes arises in symmetry
+		if (resid>(int)(offset_+size_)) endat = 1; // sometimes arises in symmetry
 		return new PeptideBondedNeighborConstIterator( resid, endat, score_types_, &tables_, &computed_ );
 	}
 
 	virtual
 	ResidueNeighborConstIteratorOP
 	const_upper_neighbor_iterator_begin( int resid ) const {
-		int beginat = std::min( resid+1, (int)size_+1 );
-		if (resid>(int)size_) beginat = 1; // sometimes arises in symmetry
+		int beginat = std::min( resid+1, (int)(offset_+size_+1) );
+		if (resid<=(int)(offset_)) beginat = 1; // sometimes arises in symmetry
+		if (resid> (int)(offset_+size_)) beginat = 1; // sometimes arises in symmetry
 		return new PeptideBondedNeighborConstIterator( resid, beginat, score_types_, &tables_, &computed_ );
 	}
 
@@ -292,17 +297,19 @@ public:
 	virtual
 	ResidueNeighborIteratorOP
 	neighbor_iterator_begin( int resid ) {
-		int beginat = std::min( resid-1, (int)size_+1 );
-		if (resid==1) beginat = 2;
-		if (resid>(int)size_) beginat = 1; // sometimes arises in symmetry
+		int beginat = std::min( resid-1, (int)(offset_+size_+1) );
+		if (resid==(int)(offset_+1)) beginat = offset_+2;
+		if (resid<=(int)(offset_)) beginat = 1; // sometimes arises in symmetry
+		if (resid> (int)(offset_+size_)) beginat = 1; // sometimes arises in symmetry
 		return new PeptideBondedNeighborIterator( resid, beginat, score_types_, &tables_, &computed_ );
 	}
 
 	virtual
 	ResidueNeighborIteratorOP
 	neighbor_iterator_end( int resid ) {
-		int endat = std::min( resid+2, (int)size_+1 );
-		if (resid>(int)size_) endat = 1; // sometimes arises in symmetry
+		int endat = std::min( resid+2, (int)(offset_+size_+1) );
+		if (resid<=(int)(offset_)) endat = 1; // sometimes arises in symmetry
+		if (resid>(int)(offset_+size_)) endat = 1; // sometimes arises in symmetry
 		return new PeptideBondedNeighborIterator( resid, endat, score_types_, &tables_, &computed_ );
  	}
 
@@ -310,8 +317,9 @@ public:
 	ResidueNeighborIteratorOP
 	upper_neighbor_iterator_begin( int resid )
 	{
-		int beginat = std::min( resid+1, (int)size_+1 );
-		if (resid>(int)size_) beginat = 1; // sometimes arises in symmetry
+		int beginat = std::min( resid+1, (int)(offset_+size_+1) );
+		if (resid<=(int)(offset_)) beginat = 1; // sometimes arises in symmetry
+		if (resid> (int)(offset_+size_)) beginat = 1; // sometimes arises in symmetry
 		return new PeptideBondedNeighborIterator( resid, beginat, score_types_, &tables_, &computed_ );
 	}
 
@@ -322,7 +330,7 @@ public:
 	}
 
 private:
-	Size size_;
+	Size size_, offset_;
 	utility::vector1< ScoreType > score_types_;
 	utility::vector1< utility::vector1< Real > > tables_;
 	utility::vector1< bool > computed_;

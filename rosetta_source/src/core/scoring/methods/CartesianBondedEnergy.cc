@@ -1422,16 +1422,20 @@ CartesianBondedEnergy::setup_for_scoring(
 	}
 
 	if ( create_new_lre_container ) {
-		Size nres = pose.total_residue();
-		if( core::pose::symmetry::is_symmetric(pose) )
-			nres = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
-		TR << "Creating new peptide-bonded energy container (" << nres << ")" << std::endl;
+		Size nres = pose.total_residue(), offset=0;
+		if( core::pose::symmetry::is_symmetric(pose) ) {
+			core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
+			nres = symm_info->num_independent_residues();
+			for (; offset<symm_info->num_total_residues_without_pseudo() && !symm_info->bb_is_independent(offset+1);
+			     ++offset);
+		}
+		TR << "Creating new peptide-bonded energy container (" << nres << "+" << offset << ")" << std::endl;
 		utility::vector1< ScoreType > s_types;
 		s_types.push_back( cart_bonded );
 		s_types.push_back( cart_bonded_angle );
 		s_types.push_back( cart_bonded_length );
 		s_types.push_back( cart_bonded_torsion );
-		LREnergyContainerOP new_dec = new PeptideBondedEnergyContainer( nres, s_types );
+		LREnergyContainerOP new_dec = new PeptideBondedEnergyContainer( nres, s_types, offset );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 }
