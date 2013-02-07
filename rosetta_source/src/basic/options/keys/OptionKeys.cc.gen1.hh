@@ -1,3 +1,4 @@
+namespace fold_cst { RealOptionKey const stage2_constraint_threshold( "fold_cst:stage2_constraint_threshold" );  }
 namespace fold_cst { BooleanOptionKey const ignore_sequence_seperation( "fold_cst:ignore_sequence_seperation" );  }
 namespace fold_cst { BooleanOptionKey const no_recover_low_at_constraint_switch( "fold_cst:no_recover_low_at_constraint_switch" );  }
 namespace fold_cst { BooleanOptionKey const ramp_coord_cst( "fold_cst:ramp_coord_cst" );  }
@@ -207,6 +208,7 @@ namespace corrections { namespace score { BooleanOptionKey const dun_normsd( "co
 namespace corrections { namespace chemical { BooleanOptionKey const chemical( "corrections:chemical" );  } }
 namespace corrections { namespace chemical { BooleanOptionKey const icoor_05_2009( "corrections:chemical:icoor_05_2009" );  } }
 namespace corrections { namespace chemical { BooleanOptionKey const parse_charge( "corrections:chemical:parse_charge" );  } }
+namespace corrections { namespace chemical { BooleanOptionKey const expand_st_chi2sampling( "corrections:chemical:expand_st_chi2sampling" );  } }
 namespace willmatch { BooleanOptionKey const willmatch( "willmatch" );  }
 namespace willmatch { RealOptionKey const arg_dun_th( "willmatch:arg_dun_th" );  }
 namespace willmatch { RealOptionKey const asp_dun_th( "willmatch:asp_dun_th" );  }
@@ -656,5 +658,3 @@ namespace lh { namespace fragpdb { BooleanOptionKey const fragpdb( "lh:fragpdb" 
 namespace lh { namespace fragpdb { StringOptionKey const out_path( "lh:fragpdb:out_path" );  } }
 namespace lh { namespace fragpdb { IntegerVectorOptionKey const indexoffset( "lh:fragpdb:indexoffset" );  } }
 namespace lh { namespace fragpdb { StringVectorOptionKey const bin( "lh:fragpdb:bin" );  } }
-namespace lh { namespace symfragrm { BooleanOptionKey const symfragrm( "lh:symfragrm" );  } }
-namespace lh { namespace symfragrm { FileVectorOptionKey const pdblist( "lh:symfragrm:pdblist" );  } }

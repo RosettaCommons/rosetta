@@ -420,7 +420,8 @@ Options = Option_Group( '',
 			Option( 'residue_type_set', 'String', desc = 'ResidueTypeSet for output files', default = 'fa_standard' ),
 			Option( 'frag_prefix', 'String', desc = 'Prefix for fragment output', default = 'default.frags' ),
 			Option( 'output_torsions', 'Boolean', default = 'false', desc = 'Output phi psi and omega torsions in the PDB output if the pose is ideal'),
-		    Option('force_nonideal_structure','Boolean',desc="Force ResidueConformationFeatures to treat the structure as nonideal.  If you know all your structures are non-ideal this decreases pose output time",default='true')
+			Option( 'pdb_comments', 'Boolean', default = 'false', desc = 'Gideon, please add a line here documenting this option, and always remember to commit changes to options_rosetta.py when you commit.'),
+			Option('force_nonideal_structure','Boolean',desc="Force ResidueConformationFeatures to treat the structure as nonideal.  If you know all your structures are non-ideal this decreases pose output time",default='true')
 
         ), # file
 
@@ -1890,6 +1891,7 @@ Options = Option_Group( '',
 		Option_Group( 'chemical',
 			Option( 'icoor_05_2009', 'Boolean', desc="New set of idealized coordinates for full atom, 05-2009" ),
 			Option( 'parse_charge', 'Boolean', desc="Use PARSE charge set." ),
+			Option( 'expand_st_chi2sampling', 'Boolean', desc="Ugly temporary hack.  Expand the chi2 sampling for serine and threonine in the fa_standard residue type set so that samples are taken every 20 degrees (instead of every 60 degrees.  This will soon be changed in the SER and THR params files themselves."),
 		),
 	),
 

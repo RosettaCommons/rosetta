@@ -52,6 +52,7 @@ namespace corrections { namespace score { extern BooleanOptionKey const dun_norm
 namespace corrections { namespace chemical { extern BooleanOptionKey const chemical; } }
 namespace corrections { namespace chemical { extern BooleanOptionKey const icoor_05_2009; } }
 namespace corrections { namespace chemical { extern BooleanOptionKey const parse_charge; } }
+namespace corrections { namespace chemical { extern BooleanOptionKey const expand_st_chi2sampling; } }
 
 } // namespace OptionKeys
 } // namespace options

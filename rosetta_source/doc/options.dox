@@ -1041,6 +1041,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-pdb_comments</b> \<Boolean\><dt>
+<dd>Gideon, please add a line here documenting this option, and always remember to commit changes to options_rosetta.py when you commit.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-force_nonideal_structure</b> \<Boolean\><dt>
 <dd>Force ResidueConformationFeatures to treat the structure as nonideal.  If you know all your structures are non-ideal this decreases pose output time</dd><br>
 <dd>Default: true</dd><br>
@@ -4175,6 +4180,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-parse_charge</b> \<Boolean\><dt>
 <dd>Use PARSE charge set.</dd><br>
+</dl>
+<dl>
+<dt><b>-expand_st_chi2sampling</b> \<Boolean\><dt>
+<dd>Ugly temporary hack.  Expand the chi2 sampling for serine and threonine in the fa_standard residue type set so that samples are taken every 20 degrees (instead of every 60 degrees.  This will soon be changed in the SER and THR params files themselves.</dd><br>
 </dl>
  </li>
 <li><h2>willmatch</h2>

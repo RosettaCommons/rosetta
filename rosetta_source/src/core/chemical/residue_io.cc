@@ -16,8 +16,10 @@
 
 
 // Rosetta headers
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueSupport.hh>
 
 #include <core/chemical/Atom.hh>
@@ -322,6 +324,19 @@ read_topology_file(
 			utility::vector1< Real > extra_samples( nextra_samples );
 			for ( Size ii = 1; ii <= nextra_samples; ++ii ) {
 				l >> extra_samples[ ii ];
+			}
+			if ( basic::options::option[ basic::options::OptionKeys::corrections::chemical::expand_st_chi2sampling ]
+					&& (rsd->aa() == aa_ser || rsd->aa() == aa_thr )
+					&& rsd_type_set->name() == FA_STANDARD ) {
+				// ugly, temporary hack. change the sampling for serine and threonine chi2 sampling
+				// so that proton chi rotamers are sampled ever 20 degrees
+				tr << "Expanding chi2 sampling for amino acid " << rsd->aa() << std::endl;
+				utility::vector1< Real > st_expanded_samples( 18, 0 );
+				for ( Size ii = 1; ii <= 18; ++ii ) {
+					st_expanded_samples[ ii ] = (ii-1) * 20;
+				}
+				samples = st_expanded_samples;
+				extra_samples.resize(0);
 			}
 			rsd->set_proton_chi( chino, samples, extra_samples );
 

@@ -4,3 +4,4 @@
 -ms:pop_size 100
 -ms:fraction_by_recombination 0.02
 -ignore_unrecognized_res
+-mute core.pack.annealer.MultiCoolAnnealer

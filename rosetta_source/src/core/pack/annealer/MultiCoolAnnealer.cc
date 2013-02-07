@@ -35,6 +35,7 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <basic/Tracer.hh>
 
 //Auto Headers
 #include <core/pack/rotamer_set/FixbbRotamerSets.hh>
@@ -47,6 +48,8 @@ static numeric::random::RandomGenerator mca_RG(42411); // <- Magic number, do no
 namespace core {
 namespace pack {
 namespace annealer {
+
+static basic::Tracer TR( "core.pack.annealer.MultiCoolAnnealer" );
 
 using namespace ObjexxFCL;
 using namespace pack::interaction_graph;
@@ -156,6 +159,9 @@ void MultiCoolAnnealer::run()
 
 
 	ig_->prepare_for_simulated_annealing();
+
+  TR << "IG after prepare_for_simulated_annealing: " << ig_->getTotalMemoryUsage() << " bytes" << std::endl;
+
 	ig_->blanket_assign_state_0();
 
 	//--------------------------------------------------------------------

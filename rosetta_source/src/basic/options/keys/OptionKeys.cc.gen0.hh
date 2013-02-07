@@ -216,11 +216,11 @@ namespace out { namespace file { FileOptionKey const design_contrast( "out:file:
 namespace out { namespace file { BooleanOptionKey const dont_rewrite_dunbrack_database( "out:file:dont_rewrite_dunbrack_database" );  } }
 namespace out { namespace file { BooleanOptionKey const renumber_pdb( "out:file:renumber_pdb" );  } }
 namespace out { namespace file { BooleanOptionKey const pdb_parents( "out:file:pdb_parents" );  } }
-namespace out { namespace file { BooleanOptionKey const pdb_comments( "out:file:pdb_comments" );  } } 
 namespace out { namespace file { BooleanOptionKey const per_chain_renumbering( "out:file:per_chain_renumbering" );  } }
 namespace out { namespace file { StringOptionKey const residue_type_set( "out:file:residue_type_set" );  } }
 namespace out { namespace file { StringOptionKey const frag_prefix( "out:file:frag_prefix" );  } }
 namespace out { namespace file { BooleanOptionKey const output_torsions( "out:file:output_torsions" );  } }
+namespace out { namespace file { BooleanOptionKey const pdb_comments( "out:file:pdb_comments" );  } }
 namespace out { namespace file { BooleanOptionKey const force_nonideal_structure( "out:file:force_nonideal_structure" );  } }
 namespace out { namespace path { PathOptionKey const all( "out:path:all" );  } }
 namespace out { namespace path { PathOptionKey const path( "out:path" );  } }
@@ -658,4 +658,3 @@ namespace fold_cst { RealOptionKey const reramp_start_cstweight( "fold_cst:reram
 namespace fold_cst { IntegerOptionKey const reramp_iterations( "fold_cst:reramp_iterations" );  }
 namespace fold_cst { BooleanOptionKey const skip_on_noviolation_in_stage1( "fold_cst:skip_on_noviolation_in_stage1" );  }
 namespace fold_cst { RealOptionKey const stage1_ramp_cst_cycle_factor( "fold_cst:stage1_ramp_cst_cycle_factor" );  }
-namespace fold_cst { RealOptionKey const stage2_constraint_threshold( "fold_cst:stage2_constraint_threshold" );  }

@@ -220,12 +220,12 @@ option.add( basic::options::OptionKeys::out::file::weight_silent_scores, "weight
 option.add( basic::options::OptionKeys::out::file::design_contrast, "output list comparing design sequence to native sequence" ).def("redesign");
 option.add( basic::options::OptionKeys::out::file::dont_rewrite_dunbrack_database, "disables the default behavior of rewriting the dunrack library in binary format if a binary version is not found" );
 option.add( basic::options::OptionKeys::out::file::renumber_pdb, "use Rosetta residue numbering and arbitrary chain labels in pdb output" ).def(false);
-option.add( basic::options::OptionKeys::out::file::pdb_comments, "If the pose contains any comment print it as a COMMENT in the pdb file" ).def(false); 
 option.add( basic::options::OptionKeys::out::file::pdb_parents, "If the pose contains a comment named template print this as a REMARK in the pdb file" ).def(false);
 option.add( basic::options::OptionKeys::out::file::per_chain_renumbering, "when used in conjunction with renumber_pdb, restarts residue numbering at each chain" ).def(false);
 option.add( basic::options::OptionKeys::out::file::residue_type_set, "ResidueTypeSet for output files" ).def("fa_standard");
 option.add( basic::options::OptionKeys::out::file::frag_prefix, "Prefix for fragment output" ).def("default.frags");
 option.add( basic::options::OptionKeys::out::file::output_torsions, "Output phi psi and omega torsions in the PDB output if the pose is ideal" ).def(false);
+option.add( basic::options::OptionKeys::out::file::pdb_comments, "Gideon, please add a line here documenting this option, and always remember to commit changes to options_rosetta.py when you commit." ).def(false);
 option.add( basic::options::OptionKeys::out::file::force_nonideal_structure, "Force ResidueConformationFeatures to treat the structure as nonideal.  If you know all your structures are non-ideal this decreases pose output time" ).def(true);
 option.add( basic::options::OptionKeys::out::path::all, "Default file output path" ).def(".");
 option.add( basic::options::OptionKeys::out::path::path, "Default file output path" ).def(".");
@@ -663,10 +663,10 @@ option.add( basic::options::OptionKeys::fold_cst::reramp_start_cstweight, "drop 
 option.add( basic::options::OptionKeys::fold_cst::reramp_iterations, "do X loops of annealing cycles" ).def(1);
 option.add( basic::options::OptionKeys::fold_cst::skip_on_noviolation_in_stage1, "if constraints report no violations --- skip cycles" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::stage1_ramp_cst_cycle_factor, "spend x*<standard cycles> on each step of sequence separation" ).def(0.25);
-option.add( basic::options::OptionKeys::fold_cst::stage2_constraint_threshold, "stop runs that violate this threshold at end of stage2" ).def(0);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::ignore_sequence_seperation, "usually constraints are switched on according to their separation in the fold-tree" ).def(false);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::stage2_constraint_threshold, "stop runs that violate this threshold at end of stage2" ).def(0);
+option.add( basic::options::OptionKeys::fold_cst::ignore_sequence_seperation, "usually constraints are switched on according to their separation in the fold-tree" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::no_recover_low_at_constraint_switch, "dont recover low when max_seq_sep is increased" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::ramp_coord_cst, "ramp coord csts just like chainbreak-weights during fold-cst" ).def(false);
 option.add( basic::options::OptionKeys::resample::resample, "resample option group" ).legal(true).def(true);
@@ -875,6 +875,7 @@ option.add( basic::options::OptionKeys::corrections::score::dun_normsd, "Use hei
 option.add( basic::options::OptionKeys::corrections::chemical::chemical, "chemical option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::corrections::chemical::icoor_05_2009, "New set of idealized coordinates for full atom, 05-2009" );
 option.add( basic::options::OptionKeys::corrections::chemical::parse_charge, "Use PARSE charge set." );
+option.add( basic::options::OptionKeys::corrections::chemical::expand_st_chi2sampling, "Ugly temporary hack.  Expand the chi2 sampling for serine and threonine in the fa_standard residue type set so that samples are taken every 20 degrees (instead of every 60 degrees.  This will soon be changed in the SER and THR params files themselves." );
 option.add( basic::options::OptionKeys::willmatch::willmatch, "willmatch option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::willmatch::arg_dun_th, "fa_dun thresh for ARG" ).def(16.0);
 option.add( basic::options::OptionKeys::willmatch::asp_dun_th, "fa_dun thresh for ASP" ).def(8.0);
@@ -1324,11 +1325,11 @@ option.add( basic::options::OptionKeys::lh::fragpdb::fragpdb, "fragpdb option gr
 option.add( basic::options::OptionKeys::lh::fragpdb::out_path, "Path where pdbs are saved" ).def("");
 option.add( basic::options::OptionKeys::lh::fragpdb::indexoffset, "list of index offset pairs" ).def(-1);
 option.add( basic::options::OptionKeys::lh::fragpdb::bin, "list of bin keys" ).def(utility::vector1<std::string>());
-option.add( basic::options::OptionKeys::lh::symfragrm::symfragrm, "symfragrm option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::lh::symfragrm::pdblist, "list of pdbs to be processed" );
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::rbe::rbe, "rbe option group" ).legal(true).def(true);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::symfragrm::symfragrm, "symfragrm option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::lh::symfragrm::pdblist, "list of pdbs to be processed" );
+option.add( basic::options::OptionKeys::rbe::rbe, "rbe option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::rbe::server_url, "serverurl for rosetta backend" );
 option.add( basic::options::OptionKeys::rbe::server_port, "port for rosetta backend" ).def("80");
 option.add( basic::options::OptionKeys::rbe::poll_frequency, "No description" ).def(1.0);
@@ -1986,11 +1987,11 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topolo
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
-option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
+option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
+option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_pdb, "PDB file from which to draw constraints" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrbmoves, "number of rigid-body moves" ).def(100);

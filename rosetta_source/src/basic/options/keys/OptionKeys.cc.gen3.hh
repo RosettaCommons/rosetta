@@ -1,3 +1,5 @@
+namespace RBSegmentRelax { FileOptionKey const input_pdb( "RBSegmentRelax:input_pdb" );  }
+namespace RBSegmentRelax { FileOptionKey const rb_file( "RBSegmentRelax:rb_file" );  }
 namespace RBSegmentRelax { RealOptionKey const cst_wt( "RBSegmentRelax:cst_wt" );  }
 namespace RBSegmentRelax { RealOptionKey const cst_width( "RBSegmentRelax:cst_width" );  }
 namespace RBSegmentRelax { StringOptionKey const cst_pdb( "RBSegmentRelax:cst_pdb" );  }
