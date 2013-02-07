@@ -17,9 +17,10 @@ from optparse import OptionParser, IndentedHelpFormatter
 
 """
 Script that Coincides/Works with with RosettaProtocolBuilder and QsubClusterSetup.
+Uses multiple_processes_writing_to_one_directory to make life easier
 To use outside of these GUI's:
 1) First line of config: Full path to executable to run. Specify after # symbol.
-2) -database flag.  Full path to rosetta_database
+2) -database flag in file.  Full path to rosetta_database
 3) Any command-line options.  Checkout optparse for a full description.
 """
 
@@ -63,24 +64,19 @@ def write_jobscript(outpath, scriptPath, jobname, i, config):
     """
     
     JOBSCRIPT = open(scriptPath, 'w')
-    JOBSCRIPT.write('#PBS -l nodes=1:ppn=1\n')
-    JOBSCRIPT.write('mkdir /rosetta_scratch\n')
-    JOBSCRIPT.write('mkdir /rosetta_scratch/'+jobname+'_'+repr(i)+'\n')
-    JOBSCRIPT.write('cd /rosetta_scratch/'+jobname+'_'+repr(i)+'\n')
+    JOBSCRIPT.write('#PBS')
+    JOBSCRIPT.write('cd '+outpath+'\n')
     prot = " ".join(config)
     JOBSCRIPT.write(prot+'\n')
-    JOBSCRIPT.write('mkdir '+outpath+'/raw'+'\n')
-    JOBSCRIPT.write('cp -r /rosetta_scratch/'+jobname+'_'+repr(i)+' '+outpath+'/raw'+'\n')
-    JOBSCRIPT.write('rm -r /rosetta_scratch/'+jobname+'_'+repr(i)+'\n')
     JOBSCRIPT.close()
     
 def main(args):
     """
     OVERVIEW: Main function.  Parses from OptParse for backwards compatability.  Reads a config file, usually specified by the @ symbol.
-    Creates a shell script for each job that will run.  Shell script will make a directory called /scratch (and /scratch/jobname).  Cd into it, and run Rosetta.
-    After the run, It will copy all files into whatever is specified in -out:path (or ./RESULTS if not given), then delete /scratch/jobname
-    NOTE: Will Create a /RAW directory for each job that needs to run.  This is because of JD1.
-    NOTE: Use functions in main pyrosetta_toolkit GUI to combine these files, or your own script.
+    Adds an iterating constant seed for each run.  Adds multiple_processes_writing_to_one_directory to config.
+    Creates a shell script for each job that will run.  Will CD into outpath in just in case it needs to (JD1)
+    If no -out:path:pdb is given, will use pwd/RESULTS/jobname + create the directory.
+    Shell script will be called by qsub for each job.  
     """
     
     pwd = location()
@@ -96,7 +92,7 @@ def main(args):
     parser.add_option("--stru",
         type="int",
         default=1,
-        help = "Number of structure per job"
+        help = "Number of structures per job"
     )
     parser.add_option("--qsub",
         default="usr/local/bin/qsub",
@@ -126,7 +122,7 @@ def main(args):
     parser.add_option(
         "--pdb_list",
         default="",
-        help = "List of PDBs to repeat on.  Replaces in:file:pdb.  (Very) Useful for testing protocols."
+        help = "List of PDBs to repeat on.  Replaces in:file:pdb.  Useful for testing protocols."
     )
     parser.add_option(
         "--debug",
@@ -173,8 +169,6 @@ def main(args):
         if re.search('-out:path', option) or re.search('-out::path', option):
             outpath = option.split()[1]
             print "OUTPATH: "+outpath
-            ind = config.index(option)
-            config.pop(ind)
             if not os.path.exists(outpath):os.mkdir(outpath)
             continue
         
@@ -193,6 +187,7 @@ def main(args):
             os.mkdir(pwd+'/RESULTS')
         if not os.path.exists(pwd+'/RESULTS/'+options.jobname):
             os.mkdir(pwd+'/RESULTS/'+options.jobname)
+        config.append('-out:path:pdb '+outpath)
     #-mpi_tracer_to_file [a_file_stem]
     
     
@@ -200,6 +195,7 @@ def main(args):
     #Main Writing of Shell scripts.
     print "Removed Flags.  Created Results directory."
     config.append('-out:nstruct '+repr(options.stru))
+    config.append('-multiple_processes_writing_to_one_directory')
     
     pdbList = []
     offset = options.offset

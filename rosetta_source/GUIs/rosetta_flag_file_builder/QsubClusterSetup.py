@@ -7,7 +7,7 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 ## @file   /GUIs/pyrosetta_toolkit/window_modules/rosetta_tools/QsubClusterSetup.py
-## @brief  Window for running rosetta JD1 executables on a cluster using QSUB.  
+## @brief  Window for running rosetta executables on a cluster using QSUB.  
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 from Tkinter import *
@@ -24,7 +24,7 @@ class QsubClusterSetup():
     """
     This class is used to make it easier to run Jobs on a cluster using qsub.  Use the functions in pyrosetta toolkit to combine resultant directories and rename.
     If you know your application is JD2, use MPIClusterSetup.
-    Can run by itself.
+    Can run by itself. Use SSH -X to set X11 display forwarding in order to use the window on the cluster.
     """
     
     def __init__(self):
@@ -42,7 +42,8 @@ class QsubClusterSetup():
         
         self.settings = QsubSettings.QsubSettings()
         self.QUEUEMETHOD = self.settings.QUEUE_LIST; #Various Queues for the cluster to use.
-        
+        if self.QUEUEMETHOD:
+            self.queue.set(self.QUEUEMETHOD[0])
     def shoWindow(self, main, row, column):
         """
         Sets Tk variables and shows the main window.
