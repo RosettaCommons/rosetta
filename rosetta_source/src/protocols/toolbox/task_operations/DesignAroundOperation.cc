@@ -64,6 +64,7 @@ DesignAroundOperation::DesignAroundOperation() :
 	design_shell_( 8.0 ),
 	repack_shell_( 8.0 ),
 	allow_design_( true ),
+	resnums_allow_design_( true ),
 	string_resnums_( "" )
 {
 	resid_.clear();
@@ -103,7 +104,7 @@ DesignAroundOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 		bool allow_packing( false );
 		foreach( core::Size const res, focus_residues ){ // don't change anything for focus residues
 			if( i == res ){
-				allow_design_res = true;
+				if( resnums_allow_design() ) allow_design_res = true;
 				break;
 			}
 		}
@@ -161,6 +162,7 @@ DesignAroundOperation::parse_tag( TagPtr tag )
 	string_resnums_ = tag->getOption< std::string >( "resnums" );// these are kept in memory until the pose is available (at apply time)
   design_shell( tag->getOption< core::Real >( "design_shell", 8.0 ) );
 	allow_design( tag->getOption< bool >( "allow_design", 1 ) );
+	resnums_allow_design( tag->getOption< bool >( "resnums_allow_design", 1 ) );
 	repack_shell( tag->getOption< core::Real >( "repack_shell", 8.0 ));
 	runtime_assert( design_shell() <= repack_shell() );
 	TR<<"repack_shell = "<<repack_shell()<<" design shell = "<<design_shell()<<std::endl;
@@ -178,6 +180,7 @@ void DesignAroundOperation::parse_def( utility::lua::LuaObject const & def ) {
 	}
 	design_shell( def["design_shell"] ? def["design_shell"].to<core::Real>() : 8.0 );
 	allow_design( def["allow_design"] ? def["allow_design"].to<bool>() : true );
+	resnums_allow_design( def["resnums_allow_design"] ? def["resnums_allow_design"].to<bool>() : true );
 	repack_shell( def["repack_shell"] ? def["repack_shell"].to<core::Real>() : 8.0 );
 	runtime_assert( design_shell() <= repack_shell() );
 	TR<<"repack_shell = "<<repack_shell()<<" design shell = "<<design_shell()<<std::endl;

@@ -70,9 +70,12 @@ public:
 
 	void allow_design( bool const a ){ allow_design_ = a; }
 	bool allow_design() const{ return allow_design_; }
+	void resnums_allow_design( bool const a ){ resnums_allow_design_ = a; }
+	bool resnums_allow_design() const{ return resnums_allow_design_; }
 private:
 	core::Real design_shell_, repack_shell_; //dflt 8 and 8
 	bool allow_design_; //dflt true
+	bool resnums_allow_design_; //dflt true
 	std::set< core::Size > resid_; // accessible at all times
 	std::string string_resnums_; // this can only be parsed at apply time, when the pose is available
 };
