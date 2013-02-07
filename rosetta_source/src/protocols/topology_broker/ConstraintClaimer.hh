@@ -95,7 +95,7 @@ public:
 	void set_skip_redundant( core::Size setting );
 	void set_combine_ratio( core::Size setting );
 	void set_filter_weight( core::Real weight );
-	void set_drop_random_rate( core::Real setting );
+	// Undefined, commenting out to fix PyRosetta build  void set_drop_random_rate( core::Real setting );
 private:
 	std::string filename_, fa_filename_;
 	std::string cst_filename_;

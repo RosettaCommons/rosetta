@@ -867,8 +867,7 @@ public:
 		std::string const & count_pair_special*/
 	);
 
-	void
-	add_atom(Atom const & atom);
+	// Undefined, commenting out to fix PyRosetta build  void add_atom(Atom const & atom);
 
 	/// @brief flag an atom for deletion by adding its index to the delete_atom_ list
 	void
