@@ -7,21 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file KICLoopCloserCreator.hh
+/// @file IterativeLoophashLoopInserterCreator.hh
 ///
 /// @brief
 /// @author Tim Jacobs
 
-#ifndef INCLUDED_devel_loop_creation_KICLoopCloserCreator_HH
-#define INCLUDED_devel_loop_creation_KICLoopCloserCreator_HH
+//#ifndef INCLUDED_protocols_loophash_IterativeLoophashLoopInserterCreator_HH
+//#define INCLUDED_protocols_loophash_IterativeLoophashLoopInserterCreator_HH
+#ifndef INCLUDED_devel_loop_creation_IterativeLoophashLoopInserterCreator_HH
+#define INCLUDED_devel_loop_creation_IterativeLoophashLoopInserterCreator_HH
 
 // Project headers
 #include <protocols/moves/MoverCreator.hh>
 
+//namespace protocols {
+//namespace loophash {
 namespace devel {
 namespace loop_creation {
 
-class KICLoopCloserCreator : public protocols::moves::MoverCreator
+class IterativeLoophashLoopInserterCreator : public protocols::moves::MoverCreator
 {
 public:
 	virtual protocols::moves::MoverOP create_mover() const;
@@ -31,5 +35,7 @@ public:
 
 } //loop creation
 } //devel
+//} //protocols
+//} //loophash
 
 #endif

@@ -1064,6 +1064,60 @@ ccd_moves(
 
 }
 
+//Pulling out the deviation calculations from fast_ccd_closure, returns a pair of Reals containing forward and backward deviations
+std::pair<core::Real, core::Real>
+get_deviation(
+	core::pose::Pose const & pose,
+	int const cutpoint
+){
+	Real const bond_angle1( pose.residue( cutpoint ).upper_connect().icoor().theta() );// CA-C=N bond angle
+	Real const bond_angle2( pose.residue( cutpoint+1 ).lower_connect().icoor().theta() ); // C=N-CA bond angle
+	Real const bond_length( pose.residue( cutpoint+1 ).lower_connect().icoor().d() ); // C=N distance
+	
+	int const n2c = { 1 }; // must be 1 and -1 (below) for proper incrementing in loops
+	int const c2n = { -1 };
+	
+	Size const nbb( pose.residue( cutpoint ).mainchain_atoms().size() );
+	
+	vector1< vector1< Vector > > coords;
+	vector1< vector1< Real > > torsions;
+	load_coords_and_torsions( pose, coords, torsions );
+	
+	Matrix F,M;
+	
+	// forward_deviation:
+	int direction = n2c;
+	for ( int i = 1; i <= 3; ++i ) {
+		F.col( i, coords[ cutpoint + 1 ][ i ] );
+	}
+	get_overlap_pos( coords, torsions, cutpoint, direction, bond_angle1, bond_length, bond_angle2, M );
+
+	core::Real forward_deviation = 0.0;
+	for ( int i = 1; i <= 3; ++i ) {
+		for ( int j = 1; j <= 3; ++j ) {
+			forward_deviation += numeric::square( M(j,i) - F(j,i) );
+		}
+	}
+	forward_deviation = sqrt( forward_deviation / 3 );
+
+	// backward_deviation:
+	direction = c2n;
+	for ( int i = 1; i <= 3; ++i ) {
+		F.col( i, coords[ cutpoint     ][ nbb - 3 + i ] );
+	}
+	get_overlap_pos( coords, torsions, cutpoint, direction, bond_angle1, bond_length, bond_angle2, M );
+
+	core::Real backward_deviation = 0.0;
+	for ( int i = 1; i <= 3; ++i ) {
+		for ( int j = 1; j <= 3; ++j ) {
+			backward_deviation += numeric::square( M(j,i) - F(j,i) );
+		}
+	}
+	backward_deviation = sqrt( backward_deviation / 3 );
+	
+	return std::make_pair(forward_deviation, backward_deviation);
+}
+
 } // namespace ccd
 } // namespace loop_closure
 } // namespace loops

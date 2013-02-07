@@ -15,4 +15,5 @@
 #include <basic/resource_manager/ResourceOptionsRegistrator.hh>
 
 #include <basic/database/DatabaseSessionOptionsCreator.hh>
+#include <protocols/loophash/LoopHashLibraryOptionsCreator.hh>
 #include <protocols/loops/LoopsFileOptionsCreator.hh>

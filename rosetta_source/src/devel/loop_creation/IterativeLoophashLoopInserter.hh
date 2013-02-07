@@ -7,46 +7,38 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file KICLoopCloser.hh
+/// @file LoophashIterativeLoophashLoopInserter.hh
 ///
 /// @brief
 /// @author Tim Jacobs
 
 
-#ifndef INCLUDED_devel_loop_creation_KICLoopCloser_HH
-#define INCLUDED_devel_loop_creation_KICLoopCloser_HH
+#ifndef INCLUDED_protocols_loophash_IterativeLoophashLoopInserter_HH
+#define INCLUDED_protocols_loophash_IterativeLoophashLoopInserter_HH
 
 //Unit
-#include <devel/loop_creation/LoopCloser.hh>
+#include <devel/loop_creation/LoophashLoopInserter.hh>
 
-//protocols
-#include <protocols/loops/Loop.hh>
+//Protocols
+#include <protocols/loophash/LoopHashLibrary.hh>
+#include <protocols/loophash/LoopHashSampler.hh>
+#include <protocols/loops/Loop.fwd.hh>
 
+
+//namespace protocols {
+//namespace loophash {
 namespace devel {
 namespace loop_creation {
-
-class KICLoopCloser : public LoopCloser
+	
+class IterativeLoophashLoopInserter : public devel::loop_creation::LoophashLoopInserter
 {
 public:
 
-	///@brief default constructor
-	KICLoopCloser();
-	
-	///@brief explicit constructor
-//	CCDLoopCloser(
-//		core::Size max_closure_attempts,
-//		bool prevent_nonloop_modifications,
-//		core::Size max_ccd_moves_per_closure_attempt,
-//		core::Real max_rama_score_increase,
-//		core::Real max_total_delta_helix,
-//		core::Real max_total_delta_strand,
-//		core::Real max_total_delta_loop,
-//		core::Real tolerance
-//	);
+	IterativeLoophashLoopInserter();
 	
 	protocols::moves::MoverOP
 	clone() const;
-
+	
 	protocols::moves::MoverOP
 	fresh_instance() const;
 		
@@ -54,9 +46,10 @@ public:
 	get_name() const;
 	
 	void
-	apply ( core::pose::Pose & );
+	apply(
+		core::pose::Pose & pose
+	);
 	
-	///@brief parse tag for use in RosettaScripts
 	void
 	parse_my_tag(
 		utility::tag::TagPtr const tag,
@@ -66,16 +59,14 @@ public:
 		core::pose::Pose const & pose
 	);
 	
-	void
-	prepare_fold_tree(
-		core::pose::Pose & pose
-	);
-
 private:
-	bool prevent_nonloop_changes_;
+	core::Real max_closure_deviation_;
+	core::Real max_insertions_;
 };
 
-} //loop_creation
+} //loop creation
 } //devel
+//} //protocols
+//} //loophash
 
 #endif

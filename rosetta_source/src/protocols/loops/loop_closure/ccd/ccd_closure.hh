@@ -58,6 +58,12 @@ ccd_moves(
 	int const cutpoint
 );
 
+std::pair<core::Real, core::Real>
+get_deviation(
+	core::pose::Pose const & pose,
+	int const cutpoint
+);
+	
 } // namespace ccd
 } // namespace loop_closure
 } // namespace loops

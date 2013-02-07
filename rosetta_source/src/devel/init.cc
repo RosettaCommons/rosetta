@@ -28,6 +28,8 @@
 //mover creators
 #include <devel/enzdes/EnzdesRemodelMoverCreator.hh>
 #include <devel/loop_creation/LoopCreationMoverCreator.hh>
+#include <devel/loop_creation/LoophashLoopInserterCreator.hh>
+#include <devel/loop_creation/IterativeLoophashLoopInserterCreator.hh>
 #include <devel/loop_creation/CCDLoopCloserCreator.hh>
 #include <devel/loop_creation/FragmentLoopInserterCreator.hh>
 #include <devel/matdes/SymmetrizerMoverCreator.hh>
@@ -86,6 +88,8 @@ protocols::moves::MoverRegistrator< znhash::LoadZnCoordNumHbondCalculatorMoverCr
 static protocols::moves::MoverRegistrator< devel::loop_creation::LoopCreationMoverCreator > reg_LoopCreationMoverCreator;
 static protocols::moves::MoverRegistrator< devel::loop_creation::FragmentLoopInserterCreator > reg_FragmentLoopInserterCreator;
 static protocols::moves::MoverRegistrator< devel::loop_creation::CCDLoopCloserCreator > reg_CCDLoopCloserCreator;
+static protocols::moves::MoverRegistrator< devel::loop_creation::LoophashLoopInserterCreator > reg_LoophashLoopInserterCreator;
+static protocols::moves::MoverRegistrator< devel::loop_creation::IterativeLoophashLoopInserterCreator > reg_IterativeLoophashLoopInserterCreator;
 static protocols::moves::MoverRegistrator< devel::matdes::SymmetrizerMoverCreator > reg_SymmetrizerMoverCreator;
 static protocols::moves::MoverRegistrator< devel::matdes::TaskAwareSymMinMoverCreator > reg_TaskAwareSymMinMoverCreator;
 static protocols::moves::MoverRegistrator< devel::matdes::StoreTaskMoverCreator > reg_StoreTaskMoverCreator;

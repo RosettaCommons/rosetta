@@ -66,13 +66,43 @@ CCDLoopCloserCreator::mover_name()
 //****END CREATOR METHODS****//
 
 	
+///@brief default constructor
 CCDLoopCloser::CCDLoopCloser():
-max_closure_attempts_(10),
-max_ccd_moves_per_closure_attempt_(10000)
+	max_closure_attempts_(10),
+	prevent_nonloop_modifications_(true),
+	max_ccd_moves_per_closure_attempt_(10000),
+	max_rama_score_increase_( 2.0 ),
+	max_total_delta_helix_( 15 ),
+	max_total_delta_strand_( 15 ),
+	max_total_delta_loop_( 15 ),
+	tolerance_( 0.01 )
 {
 	init();
 }
 
+///@brief explicit constructor
+CCDLoopCloser::CCDLoopCloser(
+	core::Size max_closure_attempts,
+	bool prevent_nonloop_modifications,
+	core::Size max_ccd_moves_per_closure_attempt,
+	core::Real max_rama_score_increase,
+	core::Real max_total_delta_helix,
+	core::Real max_total_delta_strand,
+	core::Real max_total_delta_loop,
+	core::Real tolerance
+):
+	max_closure_attempts_(max_closure_attempts),
+	prevent_nonloop_modifications_(prevent_nonloop_modifications),
+	max_ccd_moves_per_closure_attempt_(max_ccd_moves_per_closure_attempt),
+	max_rama_score_increase_(max_rama_score_increase),
+	max_total_delta_helix_(max_total_delta_helix),
+	max_total_delta_strand_(max_total_delta_strand),
+	max_total_delta_loop_(max_total_delta_loop),
+	tolerance_(tolerance)
+{
+	init();
+}
+	
 protocols::moves::MoverOP
 CCDLoopCloser::clone() const {
 	return( protocols::moves::MoverOP( new CCDLoopCloser( *this ) ) );
@@ -89,17 +119,14 @@ CCDLoopCloser::get_name() const {
 	
 void
 CCDLoopCloser::init(){
-	prevent_nonloop_modifications(true);
-	clash_calculator_ = new protocols::toolbox::pose_metric_calculators::ClashCountCalculator(2.0);
-	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "clash_calculator", clash_calculator_ );
 }
 
 void
 CCDLoopCloser::apply(
 	core::pose::Pose & pose
 ){
-
 	using namespace core;
+	success_=false;
 
 	core::kinematics::FoldTree saved_ft = pose.fold_tree();
 	if(prevent_nonloop_modifications())
@@ -107,11 +134,6 @@ CCDLoopCloser::apply(
 		prepare_fold_tree(pose);
 	}
 	
-	
-	basic::MetricValue<core::Size> bb_clash_metric;
-	clash_calculator_->get("bb", bb_clash_metric, pose);
-	core::Size starting_clashes=bb_clash_metric.value();
-	TR << "Number of BB clashes in input pose: " << starting_clashes << std::endl;
 		
 	protocols::loops::add_single_cutpoint_variant(pose, loop());
 	
@@ -130,15 +152,9 @@ CCDLoopCloser::apply(
 	TR.Debug << "CCD residues: " << loop().start() << " " << loop().stop() << std::endl;
 	TR.Debug << "CCD cutpoint: " << loop().cut() << std::endl;
 	
-	//MAKE THESE PARAMETERS
-	core::Real max_rama_score_increase_( 2.0 ),
-		max_total_delta_helix_( 15 ),
-		max_total_delta_strand_( 15 ),
-		max_total_delta_loop( 15 ),
-		tolerance_( 0.01 );
-	
 	//output variable for fast_ccd_closure
-	core::Real forward_deviation_, backward_deviation_, torsion_delta_, rama_delta_;
+	core::Real forward_deviation, backward_deviation, torsion_delta, rama_delta;
+	
 	core::pose::Pose saved_pose = pose;
 	for(core::Size i=1; i<=max_closure_attempts_; ++i)
 	{
@@ -154,28 +170,41 @@ CCDLoopCloser::apply(
 			max_rama_score_increase_,
 			max_total_delta_helix_,
 			max_total_delta_strand_,
-			max_total_delta_loop,
-			forward_deviation_,
-			backward_deviation_,
-			torsion_delta_,
-			rama_delta_
+			max_total_delta_loop_,
+			forward_deviation,
+			backward_deviation,
+			torsion_delta,
+			rama_delta
 		);
 		
 		TR.Debug << "Loop closure attempt " << i << " returned in " << num_moves_needed << " iterations (max of "
 			<< max_ccd_moves_per_closure_attempt_ << ")" << std::endl;
 			
-		TR.Debug << "torsion rmsd: " << torsion_delta_ << std::endl;
-		TR.Debug << "rama delta: " << rama_delta_ << std::endl;
-		TR.Debug << "forward deviation: " << forward_deviation_ << std::endl;
-		TR.Debug << "backward deviation: " << backward_deviation_ << std::endl;
+		TR.Debug << "torsion rmsd: " << torsion_delta << std::endl;
+		TR.Debug << "rama delta: " << rama_delta << std::endl;
+		TR.Debug << "forward deviation: " << forward_deviation << std::endl;
+		TR.Debug << "backward deviation: " << backward_deviation << std::endl;
+		
+			
 	
-		if(forward_deviation_ < 0.1 || backward_deviation_ < 0.1)
+		if(forward_deviation < 0.1 && backward_deviation < 0.1)
 		{
-			//check for clashes
+			//Calculator for backbone clash detection
+			core::pose::metrics::PoseMetricCalculatorOP clash_calculator =
+				new protocols::toolbox::pose_metric_calculators::ClashCountCalculator(2.0);
+			core::pose::metrics::CalculatorFactory::Instance().register_calculator( "clash_calculator", clash_calculator );
+			
+			basic::MetricValue<core::Size> bb_clash_metric;
+			clash_calculator->get("bb", bb_clash_metric, pose);
+			core::Size starting_clashes=bb_clash_metric.value();
+			TR << "Number of BB clashes in input pose: " << starting_clashes << std::endl;
+	
 			basic::MetricValue<core::Size> loop_clash_metric;
-			clash_calculator_->get("bb", loop_clash_metric, pose);
+			clash_calculator->get("bb", loop_clash_metric, pose);
 			core::Size loop_clashes = loop_clash_metric.value() - starting_clashes;
 			TR << "Number of BB clashes from loop: " << loop_clashes << std::endl;
+			
+			core::pose::metrics::CalculatorFactory::Instance().remove_calculator("clash_calculator");
 			if(loop_clashes == 0)
 			{
 				pose.fold_tree(saved_ft);
@@ -219,10 +248,31 @@ CCDLoopCloser::parse_my_tag(
 	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & pose
 ){
-	prevent_nonloop_modifications(tag->getOption< bool >("prevent_nonloop_modifications", true));
+	using namespace core;
 	
-	max_ccd_moves_per_closure_attempt_ = tag->getOption< core::Size >("max_ccd_moves_per_closure_attempt", 10000);
-	max_closure_attempts_ = tag->getOption< core::Size >("max_closure_attempts", 10);
+	if(tag->hasOption("prevent_nonloop_modification"))
+		prevent_nonloop_modifications_ = tag->getOption< bool >("prevent_nonloop_modifications");
+	
+	if(tag->hasOption("max_ccd_moves_per_closure_attempt"))
+		max_ccd_moves_per_closure_attempt_ = tag->getOption< Size >("max_ccd_moves_per_closure_attempt");
+		
+	if(tag->hasOption("max_closure_attempts"))
+		max_closure_attempts_ = tag->getOption< Size >("max_closure_attempts");
+		
+	if(tag->hasOption("max_rama_score_increase"))
+		max_rama_score_increase_ = tag->getOption< Real >("max_rama_score_increase");
+		
+	if(tag->hasOption("max_total_delta_helix"))
+		max_total_delta_helix_ = tag->getOption< Real >("max_total_delta_helix");
+		
+	if(tag->hasOption("max_total_delta_strand"))
+		max_total_delta_strand_ = tag->getOption< Real >("max_total_delta_strand");
+		
+	if(tag->hasOption("max_total_delta_loop"))
+		max_total_delta_loop_ = tag->getOption< Real >("max_total_delta_loop");
+		
+	if(tag->hasOption("tolerance"))
+		tolerance_ = tag->getOption< Real >("tolerance");
 }
 
 } //loop creation

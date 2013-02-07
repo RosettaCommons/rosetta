@@ -158,6 +158,7 @@ LoopHashDiversifier::LoopHashDiversifier(
 	max_radius_(max_radius),
 	max_struct_(max_struct),
 	num_iterations_(num_iterations),
+	num_try_div_(num_try_div),
 	ideal_( ideal ),
 	filter_by_phipsi_( filter_by_phipsi ),
 	cenfilter_( cenfilter ),
@@ -331,10 +332,11 @@ LoopHashDiversifier::get_name() const {
 }
 	
 void
-LoopHashDiversifier::parse_my_tag( TagPtr const tag,
+LoopHashDiversifier::parse_my_tag(
+	TagPtr const tag,
 	DataMap & data,
 	protocols::filters::Filters_map const &filters,
-	Movers_map const &movers,
+	Movers_map const & /*movers*/,
 	Pose const & pose
 ){
 	num_iterations_ = tag->getOption< Real >( "num_iterations", 100 );

@@ -69,12 +69,14 @@ sources = {
 		"Protocol",
 		"ResID",
 	],
-	"devel/loop_creation/": [
+	"devel/loop_creation": [
 		"CCDLoopCloser",
 		"FragmentLoopInserter",
+		"IterativeLoophashLoopInserter",
 		#"KICLoopCloser",
 		"LoopCreationMover",
 		"LoopCloser",
+		"LoophashLoopInserter",
 		"LoopInserter",
 	],
 	"devel/loop_extend": [

@@ -30,6 +30,7 @@
 
 //Core
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
@@ -132,13 +133,19 @@ FragmentLoopInserter::apply(
 	using namespace core;
 	
 	//Sanity checks
-	if(loop_anchor()<=0 || loop_anchor()>pose.total_residue())
+	if(loop_anchor()<=0 || loop_anchor()>pose.total_residue()-1)
 	{
 		std::stringstream err;
 		err << "Loop anchor " << loop_anchor() << " is invalid" << std::endl;
 		utility_exit_with_message(err.str());
 	}
 	
+	//Remove variants from anchor positions
+	pose::remove_upper_terminus_type_from_pose_residue(pose, loop_anchor());
+	pose::remove_lower_terminus_type_from_pose_residue(pose, loop_anchor()+1);
+	
+	//Check to see if we already have fragments for this anchor, if we do, build a random one,
+	//if we don't, try to find some.
 	utility::vector1<fragment::FragDataCOP> & low_rms_frags=anchor_frags_[loop_anchor()];
 	
 	if(low_rms_frags.size()==0){
@@ -413,16 +420,8 @@ FragmentLoopInserter::parse_my_tag(
 ){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	
-	/***********REQUIRED OPTIONS************/
-	if(tag->hasOption("loop_anchor")){
-		loop_anchor_ =
-			tag->getOption<core::Size>("loop_anchor");
-	}
-	else{
-		utility_exit_with_message("You must specify the loop anchor to use for loop insertion with the 'loop_anchor' tag");
-	}
-	
+
+	parse_loop_anchor(tag);
 	
 	//Maximum RMSD of torsion angles to flanking residues
 	if(tag->hasOption("max_rms")){

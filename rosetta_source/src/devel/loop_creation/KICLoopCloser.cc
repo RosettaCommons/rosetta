@@ -30,6 +30,7 @@
 
 //protocols
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
+#include <protocols/loops/loop_closure/kinematic_closure/KinematicPerturber.hh>
 
 //basic
 #include <basic/Tracer.hh>
@@ -42,54 +43,93 @@ namespace loop_creation {
 
 static basic::Tracer TR( "devel.loop_creation.KICLoopCloser" );
 
-KICLoopCloserCreator::KICLoopCloserCreator() {}
-KICLoopCloserCreator::~KICLoopCloserCreator() {}
-LoopCloserOP KICLoopCloserCreator::create_loop_closer() const {
+//****CREATOR METHODS****//
+std::string
+KICLoopCloserCreator::keyname() const
+{
+	return KICLoopCloserCreator::mover_name();
+}
+
+protocols::moves::MoverOP
+KICLoopCloserCreator::create_mover() const {
 	return new KICLoopCloser;
 }
 
-std::string KICLoopCloserCreator::closer_name() const {
+std::string
+KICLoopCloserCreator::mover_name()
+{
+	return "KICLoopCloser";
+}
+
+//****END CREATOR METHODS****//
+///@brief default constructor
+KICLoopCloser::KICLoopCloser():
+	prevent_nonloop_changes_(true)
+//	max_closure_attempts_(10),
+//	prevent_nonloop_modifications_(true),
+//	max_KIC_moves_per_closure_attempt_(10000),
+//	max_rama_score_increase_( 2.0 ),
+//	max_total_delta_helix_( 15 ),
+//	max_total_delta_strand_( 15 ),
+//	max_total_delta_loop_( 15 ),
+//	tolerance_( 0.01 )
+{}
+
+///@brief explicit constructor
+//KICLoopCloser::KICLoopCloser(
+//	core::Size max_closure_attempts,
+//	bool prevent_nonloop_modifications,
+//	core::Size max_KIC_moves_per_closure_attempt,
+//	core::Real max_rama_score_increase,
+//	core::Real max_total_delta_helix,
+//	core::Real max_total_delta_strand,
+//	core::Real max_total_delta_loop,
+//	core::Real tolerance
+//):
+//	max_closure_attempts_(max_closure_attempts),
+//	prevent_nonloop_modifications_(prevent_nonloop_modifications),
+//	max_KIC_moves_per_closure_attempt_(max_KIC_moves_per_closure_attempt),
+//	max_rama_score_increase_(max_rama_score_increase),
+//	max_total_delta_helix_(max_total_delta_helix),
+//	max_total_delta_strand_(max_total_delta_strand),
+//	max_total_delta_loop_(max_total_delta_loop),
+//	tolerance_(tolerance)
+//{
+//	init();
+//}
+	
+protocols::moves::MoverOP
+KICLoopCloser::clone() const {
+	return( protocols::moves::MoverOP( new KICLoopCloser( *this ) ) );
+}
+protocols::moves::MoverOP
+KICLoopCloser::fresh_instance() const {
+	return protocols::moves::MoverOP( new KICLoopCloser );
+}
+	
+std::string
+KICLoopCloser::get_name() const {
 	return "KICLoopCloser";
 }
 	
-KICLoopCloser::KICLoopCloser():
-prevent_nonloop_changes_(true)
-{}
-
-bool
-KICLoopCloser::close_loop(
-	core::pose::Pose & pose,
-	protocols::loops::Loop loop
+	
+void
+KICLoopCloser::apply(
+	core::pose::Pose & pose
 ){
-
-	//prepare special foldtree
-	core::kinematics::FoldTree saved_ft = pose.fold_tree();
-	if(prevent_nonloop_changes_)
-	{
-		core::kinematics::FoldTree new_ft;
-		new_ft.add_edge(1, loop.start()-1, core::kinematics::Edge::PEPTIDE);
-		new_ft.add_edge(1, loop.start(), 1);
-//		new_ft.add_edge(loop.start(), loop.stop()+1, core::kinematics::Edge::PEPTIDE);
-//		new_ft.add_edge(1, loop.stop()+2, 2);
-//		new_ft.add_edge(loop.stop()+2, pose.total_residue(), core::kinematics::Edge::PEPTIDE);
-		new_ft.add_edge(loop.start(), pose.total_residue(), core::kinematics::Edge::PEPTIDE);
-		if(!new_ft.check_fold_tree())
-		{
-			utility_exit_with_message("Bad fold tree created by KICLoopCloser. File a bug!");
-		}
-		
-		TR.Debug << "Foldtree to prevent downstream propogation: " <<  new_ft << std::endl;
-		pose.fold_tree(new_ft);
-	}
-
-	protocols::loops::loop_closure::kinematic_closure::KinematicMoverOP kic_mover =
-		new protocols::loops::loop_closure::kinematic_closure::KinematicMover();
-	kic_mover->set_idealize_loop_first(false);
+	success_=false;
+	
+	protocols::loops::loop_closure::kinematic_closure::KinematicMover kic_mover;
+	protocols::loops::loop_closure::kinematic_closure::KinematicPerturberOP kic_perturber =
+		new protocols::loops::loop_closure::kinematic_closure::NullKinematicPerturber(&kic_mover);
+	kic_mover.set_perturber(kic_perturber);
+	
+	kic_mover.set_idealize_loop_first(true);
 //	kic_mover->set_sample_nonpivot_torsions(false);
 
-	core::Size n_pivot = loop.start();
-	core::Size c_pivot = loop.stop()+1;
-	core::Size middle_pivot = numeric::random::random_range(loop.start()+1, loop.stop()-1);
+	core::Size n_pivot = loop().start();
+	core::Size c_pivot = loop().stop();
+	core::Size middle_pivot = numeric::random::random_range(n_pivot+1, c_pivot-1);
 	TR << "Using following pivot residues for KIC: " <<  n_pivot << ", " <<
 		middle_pivot << ", " << c_pivot << std::endl;
 		
@@ -99,18 +139,16 @@ KICLoopCloser::close_loop(
 	TR << "c_pivot+1: " << pose.residue(c_pivot+1).atom("CA").xyz() << std::endl;
 	TR << "middle_pivot: " << pose.residue(middle_pivot).atom("CA").xyz() << std::endl;
 
-	core::conformation::Residue const & res=pose.residue(loop.cut());
-	core::conformation::Residue const & next_res=pose.residue(loop.cut()+1);
+	core::conformation::Residue const & res=pose.residue(loop().cut());
+	core::conformation::Residue const & next_res=pose.residue(loop().cut()+1);
 	core::Real dist_squared = res.atom( res.upper_connect_atom() ).xyz().distance_squared(next_res.atom( next_res.lower_connect_atom() ).xyz());
 	TR << "pre_KIC_broken distance: " << dist_squared << std::endl;
 
 	//loop through all pivots here and check which one perturbs bb the least
-	kic_mover->set_pivots(n_pivot, middle_pivot, c_pivot);
-	kic_mover->apply(pose);
+	kic_mover.set_pivots(n_pivot, middle_pivot, c_pivot);
+	kic_mover.apply(pose);
 
-	//restore the saved fold tree
-	pose.fold_tree(saved_ft);
-	if(kic_mover->last_move_succeeded())
+	if(kic_mover.last_move_succeeded())
 	{
 		TR << "n_pivot-1: " << pose.residue(n_pivot-1).atom("CA").xyz() << std::endl;
 		TR << "n_pivot: " << pose.residue(n_pivot).atom("CA").xyz() << std::endl;
@@ -118,13 +156,12 @@ KICLoopCloser::close_loop(
 		TR << "c_pivot+1: " << pose.residue(c_pivot+1).atom("CA").xyz() << std::endl;
 		TR << "middle_pivot: " << pose.residue(middle_pivot).atom("CA").xyz() << std::endl;
 	
-		core::conformation::Residue const & post_res=pose.residue(loop.cut());
-		core::conformation::Residue const & post_next_res=pose.residue(loop.cut()+1);
+		core::conformation::Residue const & post_res=pose.residue(loop().cut());
+		core::conformation::Residue const & post_next_res=pose.residue(loop().cut()+1);
 		core::Real post_dist_squared = post_res.atom( post_res.upper_connect_atom() ).xyz().distance_squared(post_next_res.atom( post_next_res.lower_connect_atom() ).xyz());
 		TR << "post_KIC_broken distance: " << post_dist_squared << std::endl;
-		return true;
+		success_=true;
 	}
-	return false;
 }
 
 ///@brief parse tag for use in RosettaScripts

@@ -50,6 +50,8 @@ public:
 		LoopInserterOP loop_inserter,
 		LoopCloserOP loop_closer,
 		core::Size num_iterations,
+		core::Size num_insertions,
+		bool refine,
 		bool design_loops,
 		bool include_neighbors,
 		bool minimize_loops
@@ -66,6 +68,12 @@ public:
 	void
 	apply(
 		core::pose::Pose & pose
+	);
+	
+	void
+	copy_last_loop_to_new_anchor(
+		core::pose::Pose & pose,
+		core::Size new_anchor
 	);
 	
 	///@brief design and minimize the loop region
@@ -118,8 +126,13 @@ private:
 	//Loop filter
 	protocols::filters::FilterOP loop_filter_;
 
-	//Number of rounds of inserter->close->refine
-	core::Size num_iterations_;
+	//If a particular iteration fails to produce a closed loop, how many times should we retry?
+	core::Size num_insertions_;
+	
+	core::Size closures_per_insertion_;
+	
+	//Should any refinement steps be done (master bool, without this, no packing/minimization at all)
+	bool refine_;
 
 	//Should the loops be designed before evaluation?
 	bool design_loops_;
@@ -130,13 +143,15 @@ private:
 	//Should the loops be minimized before evaluation?
 	bool minimize_loops_;
 	
-	protocols::simple_moves::PackRotamersMoverOP pack_mover_;
-	protocols::simple_moves::TaskAwareMinMoverOP min_mover_;
-	
-	
+	//The most recently created loop
 	protocols::loops::Loop last_created_loop_;
 	
-	core::Size calc_counter_;
+	//To send to loop inserter
+	core::Size loop_anchor_;
+
+	//DEBUG
+	bool dump_pdbs_;
+	
 };
 
 } //loop creation

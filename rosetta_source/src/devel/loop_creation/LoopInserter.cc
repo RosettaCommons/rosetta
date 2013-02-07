@@ -15,6 +15,12 @@
 //Unit
 #include <devel/loop_creation/LoopInserter.hh>
 
+//Utility
+#include <utility/tag/Tag.hh>
+
+//C++
+#include <set>
+
 namespace devel {
 namespace loop_creation {
 
@@ -29,10 +35,36 @@ LoopInserter::loop_anchor() const{
 }
 
 void
+LoopInserter::modified_range(
+	core::Size res_begin,
+	core::Size res_end
+){
+	modified_range_=std::make_pair(res_begin, res_end);
+}
+	
+std::pair<core::Size, core::Size>
+LoopInserter::modified_range() const{
+	return modified_range_;
+}
+
+void
 LoopInserter::loop_anchor(
 	core::Size loop_anchor
 ){
 	loop_anchor_=loop_anchor;
+}
+
+void
+LoopInserter::parse_loop_anchor(
+	utility::tag::TagPtr const tag
+){
+	if(tag->hasOption("loop_anchor")){
+		loop_anchor_ =
+			tag->getOption<core::Size>("loop_anchor");
+	}
+//	else{
+//		utility_exit_with_message("You must specify the loop anchor to use for loop insertion with the 'loop_anchor' tag");
+//	}
 }
 	
 } //loop creation

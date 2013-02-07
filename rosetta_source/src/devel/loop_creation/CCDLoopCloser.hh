@@ -31,7 +31,20 @@ class CCDLoopCloser : public LoopCloser
 {
 public:
 
+	///@brief default constructor
 	CCDLoopCloser();
+	
+	///@brief explicit constructor
+	CCDLoopCloser(
+		core::Size max_closure_attempts,
+		bool prevent_nonloop_modifications,
+		core::Size max_ccd_moves_per_closure_attempt,
+		core::Real max_rama_score_increase,
+		core::Real max_total_delta_helix,
+		core::Real max_total_delta_strand,
+		core::Real max_total_delta_loop,
+		core::Real tolerance
+	);
 	
 	protocols::moves::MoverOP
 	clone() const;
@@ -64,9 +77,23 @@ public:
 	);
 	
 private:
+
+	//Max number of CCD calls to make before giving up
 	core::Size max_closure_attempts_;
+	
+	//Should we set up a fold tree that prevents modification outside the loop region?
+	bool prevent_nonloop_modifications_;
+	
+	//Number of CCD moves per call to CCD closure
 	core::Size max_ccd_moves_per_closure_attempt_;
-	core::pose::metrics::PoseMetricCalculatorOP clash_calculator_;
+	
+	
+	//Inputs to ccd
+	core::Real max_rama_score_increase_;
+	core::Real max_total_delta_helix_;
+	core::Real max_total_delta_strand_;
+	core::Real max_total_delta_loop_;
+	core::Real tolerance_;
 };
 
 } //loop creation
