@@ -12,5 +12,7 @@
 -edensity:mapfile inputs/1afo_8A.mrc
 -edensity:mapreso 8.0
 -edensity:grid_spacing 4.0
--edensity:sliding_window_wt 0.5
--edensity:sliding_window 3
+-edensity:fastdens_wt 10.0
+-edensity:score_symm_complex true
+-default_max_cycles 50
+

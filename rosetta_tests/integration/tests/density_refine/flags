@@ -11,4 +11,6 @@
 -edensity:mapfile inputs/1onc_8A.mrc
 -edensity:mapreso 8.0
 -edensity:grid_spacing 4.0
--edensity:whole_structure_allatom_wt 0.05
+-edensity:fastdens_wt 10.0
+-default_max_cycles 50
+

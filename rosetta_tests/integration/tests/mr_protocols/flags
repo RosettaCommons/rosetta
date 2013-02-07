@@ -13,8 +13,8 @@
 -edensity:mapreso 12.0
 -edensity:grid_spacing 6.0
 -edensity:mapfile inputs/2qo4.PHASER.1_2mFo-DFc.ccp4
--edensity::sliding_window_wt 0.1
--edensity::sliding_window 5
+-edensity::fastdens_wt 10.0
+-default_max_cycles 50
 -cm::aln_format grishin
 -MR::max_gaplength_to_model 4
 -out:nstruct 1
