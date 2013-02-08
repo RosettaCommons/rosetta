@@ -225,7 +225,7 @@ option.add( basic::options::OptionKeys::out::file::per_chain_renumbering, "when 
 option.add( basic::options::OptionKeys::out::file::residue_type_set, "ResidueTypeSet for output files" ).def("fa_standard");
 option.add( basic::options::OptionKeys::out::file::frag_prefix, "Prefix for fragment output" ).def("default.frags");
 option.add( basic::options::OptionKeys::out::file::output_torsions, "Output phi psi and omega torsions in the PDB output if the pose is ideal" ).def(false);
-option.add( basic::options::OptionKeys::out::file::pdb_comments, "Gideon, please add a line here documenting this option, and always remember to commit changes to options_rosetta.py when you commit." ).def(false);
+option.add( basic::options::OptionKeys::out::file::pdb_comments, "If the pose contains any comment print it as a COMMENT in the pdb file" ).def(false);
 option.add( basic::options::OptionKeys::out::file::force_nonideal_structure, "Force ResidueConformationFeatures to treat the structure as nonideal.  If you know all your structures are non-ideal this decreases pose output time" ).def(true);
 option.add( basic::options::OptionKeys::out::path::all, "Default file output path" ).def(".");
 option.add( basic::options::OptionKeys::out::path::path, "Default file output path" ).def(".");
@@ -663,10 +663,10 @@ option.add( basic::options::OptionKeys::fold_cst::reramp_start_cstweight, "drop 
 option.add( basic::options::OptionKeys::fold_cst::reramp_iterations, "do X loops of annealing cycles" ).def(1);
 option.add( basic::options::OptionKeys::fold_cst::skip_on_noviolation_in_stage1, "if constraints report no violations --- skip cycles" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::stage1_ramp_cst_cycle_factor, "spend x*<standard cycles> on each step of sequence separation" ).def(0.25);
+option.add( basic::options::OptionKeys::fold_cst::stage2_constraint_threshold, "stop runs that violate this threshold at end of stage2" ).def(0);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::stage2_constraint_threshold, "stop runs that violate this threshold at end of stage2" ).def(0);
-option.add( basic::options::OptionKeys::fold_cst::ignore_sequence_seperation, "usually constraints are switched on according to their separation in the fold-tree" ).def(false);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::ignore_sequence_seperation, "usually constraints are switched on according to their separation in the fold-tree" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::no_recover_low_at_constraint_switch, "dont recover low when max_seq_sep is increased" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::ramp_coord_cst, "ramp coord csts just like chainbreak-weights during fold-cst" ).def(false);
 option.add( basic::options::OptionKeys::resample::resample, "resample option group" ).legal(true).def(true);
@@ -868,8 +868,10 @@ option.add( basic::options::OptionKeys::corrections::score::lj_hbond_hdis, "Lenn
 option.add( basic::options::OptionKeys::corrections::score::lj_hbond_OH_donor_dis, "Lennard Jones sigma value for O in OH donor groups.  Classically it has been 3.0 but the average distances from crystal structurs is 2.6 (momeara)" ).def(3.0);
 option.add( basic::options::OptionKeys::corrections::score::score12prime, "Whenever getScoreFunction() would have returned the ScoreFunction from standard.wts + score12.wts_patch, instead return a revised score12 (score12prime) with reference energies optimized with optE for sequence profile recovery" ).def(false);
 option.add( basic::options::OptionKeys::corrections::score::hb_sp2_BAH180_rise, "The rise from -0.5 for the BAH=180 value for the additive chi/BAH sp2 potential" ).def(0.75);
+option.add( basic::options::OptionKeys::corrections::score::hb_sp2_outer_width, "The width between the peak when CHI=0 and BAH=120 to when the BAH is at a maximum (Units: pi * radians. E.g. 1/3 means the turn off hbonding when BAH < 60, larger values mean a wider potential). Use 0.357 in conjunction with the hb_energy_fade flag." ).def(0.33333);
 option.add( basic::options::OptionKeys::corrections::score::hb_sp2_chipen, "Experimental term for hydrogen bonds to sp2 acceptors: penalizes out-of-plane geometry by 67%" ).def(false);
 option.add( basic::options::OptionKeys::corrections::score::hbond_measure_sp3acc_BAH_from_hvy, "If true, then the BAH angle for sp3 (aka hydroxyl) acceptors is measured donor-hydrogen--acceptor-heavyatom--heavyatom-base instead of donor-hydrogen--accptor-heavyatom--hydroxyl-hydrogen" ).def(false);
+option.add( basic::options::OptionKeys::corrections::score::hb_fade_energy, "Rather than having a strict cutoff of hbond definition at 0, fade the energy smoothly in the range [-0.1, 0.1]. This is necessary to prevent a discontinuity in the derivative when E=0 that arise because of the additive form of the hbond function." ).def(false);
 option.add( basic::options::OptionKeys::corrections::score::use_bicubic_interpolation, "Instead of using bilinear interpolation to evaluate the Ramachandran, P_AA_pp and Dunbrack potentials, use bicubic interpolation.  Avoids pile-ups at the grid boundaries where discontinuities in the derivatives frustrate the minimizer" ).def(false);
 option.add( basic::options::OptionKeys::corrections::score::dun_normsd, "Use height-normalized guassian distributions to model p(chi|phi,psi) instead of height-unnormalized gaussians" ).def(false);
 option.add( basic::options::OptionKeys::corrections::chemical::chemical, "chemical option group" ).legal(true).def(true);
@@ -1987,10 +1989,10 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topolo
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
-option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_pdb, "PDB file from which to draw constraints" ).def("--");

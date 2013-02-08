@@ -57,7 +57,9 @@ HBondOptions::HBondOptions( std::string params_db_tag ):
 	use_incorrect_deriv_( true ),
 	use_sp2_chi_penalty_( false ),
 	sp2_BAH180_rise_( 0.75 ),
+	sp2_outer_width_( 1.0/3.0 ),
 	measure_sp3acc_BAH_from_hvy_( false ),
+	fade_energy_( false ),
 	Mbhbond_( false ) //pba
 {
 	using namespace basic::options;
@@ -70,7 +72,14 @@ HBondOptions::HBondOptions( std::string params_db_tag ):
 	use_sp2_chi_penalty_ = option[OptionKeys::corrections::score::hb_sp2_chipen ];
 	bb_donor_acceptor_check_ = ! option[ OptionKeys::score::hbond_disable_bbsc_exclusion_rule ];
 	sp2_BAH180_rise_ = option[ OptionKeys::corrections::score::hb_sp2_BAH180_rise ];
+
+	if (option.has(OptionKeys::corrections::score::hb_sp2_outer_width) &&
+		option[OptionKeys::corrections::score::hb_sp2_outer_width].user()){
+		sp2_outer_width_ = option[ OptionKeys::corrections::score::hb_sp2_outer_width ];
+	}
+
 	measure_sp3acc_BAH_from_hvy_ = option[ OptionKeys::corrections::score::hbond_measure_sp3acc_BAH_from_hvy ];
+	fade_energy_ = option[ OptionKeys::corrections::score::hb_fade_energy ];
 }
 
 
@@ -88,7 +97,9 @@ HBondOptions::HBondOptions():
 	use_incorrect_deriv_( false ),
 	use_sp2_chi_penalty_( false ),
 	sp2_BAH180_rise_( 0.75 ),
+	sp2_outer_width_( 1.0/3.0 ),
 	measure_sp3acc_BAH_from_hvy_( false ),
+	fade_energy_( false ),
 	Mbhbond_( false ) //pba
 {
 	using namespace basic::options;
@@ -105,7 +116,14 @@ HBondOptions::HBondOptions():
 	use_sp2_chi_penalty_ = option[OptionKeys::corrections::score::hb_sp2_chipen ];
 	bb_donor_acceptor_check_ = ! option[ OptionKeys::score::hbond_disable_bbsc_exclusion_rule ];
 	sp2_BAH180_rise_ = option[ OptionKeys::corrections::score::hb_sp2_BAH180_rise ];
+
+	if (option.has(OptionKeys::corrections::score::hb_sp2_outer_width) &&
+		option[OptionKeys::corrections::score::hb_sp2_outer_width].user()){
+		sp2_outer_width_ = option[ OptionKeys::corrections::score::hb_sp2_outer_width ];
+	}
+
 	measure_sp3acc_BAH_from_hvy_ = option[ OptionKeys::corrections::score::hbond_measure_sp3acc_BAH_from_hvy ];
+	fade_energy_ = option[ OptionKeys::corrections::score::hb_fade_energy ];
 }
 
 /// copy constructor
@@ -133,7 +151,9 @@ HBondOptions::operator=( HBondOptions const & src )
 	use_incorrect_deriv_ = src.use_incorrect_deriv_;
 	use_sp2_chi_penalty_ = src.use_sp2_chi_penalty_;
 	sp2_BAH180_rise_ = src.sp2_BAH180_rise_;
+	sp2_outer_width_ = src.sp2_outer_width_;
 	measure_sp3acc_BAH_from_hvy_ = src.measure_sp3acc_BAH_from_hvy_;
+	fade_energy_ = src.fade_energy_;
 	Mbhbond_ = src.Mbhbond_; //pba
 	return *this;
 }
@@ -308,8 +328,14 @@ void HBondOptions::use_sp2_chi_penalty( bool setting )
 Real HBondOptions::sp2_BAH180_rise() const { return sp2_BAH180_rise_; }
 void HBondOptions::sp2_BAH180_rise( Real setting ) { sp2_BAH180_rise_ = setting; }
 
+Real HBondOptions::sp2_outer_width() const { return sp2_outer_width_; }
+void HBondOptions::sp2_outer_width( Real setting ) { sp2_outer_width_ = setting; }
+
 bool HBondOptions::measure_sp3acc_BAH_from_hvy() const { return measure_sp3acc_BAH_from_hvy_; }
 void HBondOptions::measure_sp3acc_BAH_from_hvy( bool setting ) { measure_sp3acc_BAH_from_hvy_ = setting; }
+
+bool HBondOptions::fade_energy() const { return fade_energy_; }
+void HBondOptions::fade_energy( bool setting ) { fade_energy_ = setting; }
 
 
 bool
@@ -327,7 +353,9 @@ operator==( HBondOptions const & a, HBondOptions const & b )
 		( a.use_incorrect_deriv_ == b.use_incorrect_deriv_ ) &&
 		( a.use_sp2_chi_penalty_ == b.use_sp2_chi_penalty_ ) &&
 		( a.sp2_BAH180_rise_ == b.sp2_BAH180_rise_ ) &&
+		( a.sp2_outer_width_ == b.sp2_outer_width_ ) &&
 		( a.measure_sp3acc_BAH_from_hvy_ == b.measure_sp3acc_BAH_from_hvy_ ) &&
+		( a.fade_energy_ == b.fade_energy_ ) &&
 		( a.Mbhbond_ == b.Mbhbond_ ) ); //pba
 }
 
@@ -371,8 +399,12 @@ HBondOptions::show( std::ostream & out ) const
 		<<( use_sp2_chi_penalty_ ? "true" : "false" ) << std::endl;
 	out <<"HBondOptions::show: sp2_BAH180_rise_: "
 		<< sp2_BAH180_rise_ << std::endl;
+	out <<"HBondOptions::show: sp2_outer_width_: "
+		<< sp2_outer_width_ << std::endl;
 	out <<"HBondOptions::show: measure_sp3acc_BAH_from_hvy_: "
 		<<( measure_sp3acc_BAH_from_hvy_ ? "true" : "false" ) << std::endl;
+	out <<"HBondOptions::show: fade_energy_: "
+		<< fade_energy_ << std::endl;
 	out <<"HBondOptions::show: Mbhbond: "
 		<<( Mbhbond_ ? "true" : "false " ) << std::endl; //pba
 }

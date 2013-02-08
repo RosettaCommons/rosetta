@@ -42,7 +42,7 @@
 
 //Auto Headers
 #include <core/scoring/hbonds/HBondOptions.hh>
-
+#include <numeric/constants.hh>
 
 using namespace core;
   using namespace conformation;
@@ -60,22 +60,13 @@ public:
   void setUp() {
 		core_init();
 
-		// acceptor proton distance
-		AHdis_step = .4;
-
-		// -cos(180-theta), where theta is defined by Tanja K.
-		xD_step = .2;
-
-		// cos(180-phi), where phi is defined by Tanja K.
-		xH_step = .2;
-
 	}
 
 	void tearDown(){}
 
 	// Classic hbond types
 
-//	void test_hbond_compute_energy()
+//	void dont_test_hbond_compute_energy()
 //  {
 //		test::UTracer UT("core/scoring/hbonds/hbond_compute_energy.u");
 //
@@ -113,38 +104,117 @@ public:
 //		}
 //	}
 
+
 	void test_hbond_compute_energy2()
 	{
 		//To debug at full precision set:
-		//std::cout.precision(16);
+		//UT.precision(16);
 		HBondDatabaseCOP database(HBondDatabase::get_database());
 		HBondOptions hboptions;
 
 		test::UTracer UT("core/scoring/hbonds/hbond_compute_energy.u");
-		Real dummy_chi( 0.0 );
 		bool dummy_chipenalty( false );
 		HBGeoDimType AHD_geometric_dimension;
 		Real energy, dE_dr, dE_dxD, dE_dxH;
+		Size i(0);
 		for ( Size ii = 1; ii <= hbdon_MAX; ++ii ) {
 			for ( Size jj = 1; jj <= hbacc_MAX; ++jj ) {
 				for ( Size kk = 1; kk <= seq_sep_MAX; ++kk ) {
 					HBEvalTuple hbt = HBEvalTuple( HBDonChemType(ii), HBAccChemType(jj), HBSeqSep(kk) );
 					if ( hbt.eval_type() == 0 ) continue;
-					for (Real AHdis = MIN_R; AHdis <MAX_R; AHdis += AHdis_step){
-						for (Real xD = MIN_xD; xD < MAX_xD; xD += xD_step){
-							for (Real xH = MIN_xH; xH < MAX_xH; xH += xH_step){
-								hbond_compute_energy( *database, hboptions, hbt,
-									AHdis, xD, xH, dummy_chi, energy,
-									dummy_chipenalty, AHD_geometric_dimension, dE_dr, dE_dxD, dE_dxH);
-								if( energy < 0){
-									UT << ii << "\t" << jj << "\t" << kk << "\t" << hbt.eval_type() << "\t" << AHdis << "\t" << xD << "\t" << xH << "\t";
-									UT << energy << "\t" << dE_dr << "\t" << dE_dxD << "\t" << dE_dxH << "\n";
+					for (Real AHdis = MIN_R; AHdis <MAX_R; AHdis += .8){
+						for (Real xD = MIN_xD; xD <= MAX_xD; xD += .5){
+							for (Real xH = MIN_xH; xH <= MAX_xH; xH += .5){
+								for (Real chi = 0; chi < numeric::constants::d::pi_2; chi += numeric::constants::d::pi_over_2){
+									hbond_compute_energy( *database, hboptions, hbt,
+										AHdis, xD, xH, chi, energy,
+										dummy_chipenalty, AHD_geometric_dimension, dE_dr, dE_dxD, dE_dxH);
+									if( energy < 0){
+										UT << i << "\t" << ii << "\t" << jj << "\t" << kk << "\t" << hbt.eval_type() << "\t" << AHdis << "\t" << xD << "\t" << xH << "\t" << chi << "\t";
+										UT << energy << "\t" << dE_dr << "\t" << dE_dxD << "\t" << dE_dxH << std::endl;
+									}
+									i++;
 								}
 							}
 						}
 					}
 				}
 			}
+		}
+	}
+
+	void test_hbond_compute_energy_sp2()
+	{
+		//To debug at full precision set:
+		//std::cout.precision(16);
+		HBondDatabaseCOP database(HBondDatabase::get_database("sp2_params"));
+
+
+		HBondOptions hboptions;
+		hboptions.use_sp2_chi_penalty(true);
+
+		test::UTracer UT("core/scoring/hbonds/hbond_compute_energy_sp2.u");
+		bool chipenalty;
+		HBGeoDimType AHD_geometric_dimension;
+		Real energy, dE_dr, dE_dxD, dE_dxH, dE_dBAH, dE_dchi;
+		Size i(0);
+		HBEvalTuple hbt = HBEvalTuple( hbdon_PBA, hbacc_PBA, seq_sep_other );
+		Real xD(.9);
+		for (Real AHdis = 1.7; AHdis <= 1.9; AHdis += .2){
+			for (Real xH = MIN_xH; xH < MAX_xH; xH += .4){
+				for (Real chi = 0.0; chi < numeric::constants::d::pi_2; chi += numeric::constants::d::pi_over_3){
+					hbond_compute_energy( *database, hboptions, hbt,
+						AHdis, xD, xH, chi, energy,
+						chipenalty, AHD_geometric_dimension, dE_dr, dE_dxD, dE_dxH, dE_dBAH, dE_dchi);
+					if( energy < 0){
+						UT << i << "\t" << hbt.eval_type() << "\t" << AHdis << "\t" << xD << "\t" << xH << "\t" << chi << "\t";
+						UT << energy << "\t" << dE_dr << "\t" << dE_dxD << "\t" << dE_dxH << "\t" << dE_dBAH << "\t" << dE_dchi << std::endl;
+					}
+					i++;
+				}
+			}
+		}
+	}
+
+	void test_specific_instance() {
+
+		HBondDatabaseCOP database(HBondDatabase::get_database("sp2_params"));
+
+
+		HBondOptions hboptions;
+		hboptions.use_sp2_chi_penalty(true);
+
+		bool dummy_chipenalty;
+		HBGeoDimType AHD_geometric_dimension;
+		Real energy, dE_dr, dE_dxD, dE_dxH, dE_dBAH, dE_dchi;
+		HBEvalTuple hbt = HBEvalTuple( hbdon_PBA, hbacc_PBA, seq_sep_other );
+
+		test::UTracer UT("core/scoring/hbonds/hbond_compute_energy_sp2_specific_cases.u");
+		{
+			Real AHdis(1.7), xD(1.0), xH(0.36), chi(0);
+
+			hbond_compute_energy( *database, hboptions, hbt,
+				AHdis, xD, xH, chi, energy,
+				dummy_chipenalty, AHD_geometric_dimension, dE_dr, dE_dxD, dE_dxH, dE_dBAH, dE_dchi);
+			UT << "\t" << hbt.eval_type() << "\t" << AHdis << "\t" << xD << "\t" << xH << "\t" << chi << "\t";
+			UT << energy << "\t" << dE_dr << "\t" << dE_dxD << "\t" << dE_dxH << "\t" << dE_dBAH << "\t" << dE_dchi << std::endl;
+		}
+
+		{
+			Real AHdis(1.7), xD(.9), xH(-0.07), chi(0.03);
+			hbond_compute_energy( *database, hboptions, hbt,
+				AHdis, xD, xH, chi, energy,
+				dummy_chipenalty, AHD_geometric_dimension, dE_dr, dE_dxD, dE_dxH, dE_dBAH, dE_dchi);
+			UT << "\t" << hbt.eval_type() << "\t" << AHdis << "\t" << xD << "\t" << xH << "\t" << chi << "\t";
+			UT << energy << "\t" << dE_dr << "\t" << dE_dxD << "\t" << dE_dxH << "\t" << dE_dBAH << "\t" << dE_dchi << std::endl;
+		}
+		{
+			Real AHdis(1.7), xD(.9), xH(-0.07), chi(0.04);
+			hbond_compute_energy( *database, hboptions, hbt,
+				AHdis, xD, xH, chi, energy,
+				dummy_chipenalty, AHD_geometric_dimension, dE_dr, dE_dxD, dE_dxH, dE_dBAH, dE_dchi);
+			UT << "\t" << hbt.eval_type() << "\t" << AHdis << "\t" << xD << "\t" << xH << "\t" << chi << "\t";
+			UT << energy << "\t" << dE_dr << "\t" << dE_dxD << "\t" << dE_dxH << "\t" << dE_dBAH << "\t" << dE_dchi << std::endl;
 		}
 	}
 
@@ -203,13 +273,13 @@ public:
 	// This test might exceed the time limit and get killed...
 
 //	void do_for_each_type(
-//												HBSeqSep const seq_sep,
-//												Residue const & don_rsd,
-//												Size const & datm,
-//												Residue const & acc_rsd,
-//												Size const & aatm,
-//												test::UTracer & UT // write output here
-//												){
+//		HBSeqSep const seq_sep,
+//		Residue const & don_rsd,
+//		Size const & datm,
+//		Residue const & acc_rsd,
+//		Size const & aatm,
+//		test::UTracer & UT // write output here
+//	){
 //		HBDonChemType don_chem_type( get_hb_don_chem_type(datm, don_rsd));
 //		HBAccChemType acc_chem_type( get_hb_acc_chem_type(aatm, acc_rsd));
 //		HBEvalType hbe(HBEval_lookup( don_chem_type, acc_chem_type, seq_sep));
@@ -230,7 +300,7 @@ public:
 //
 //
 //
-//	void test_hbond_non_geometric(){
+//	void dont_test_hbond_non_geometric(){
 //		using namespace chemical;
 //		test::UTracer UT("core/scoring/hbonds/hbond_non_geometric.u");
 //
@@ -367,14 +437,4 @@ public:
 private:
 
 	Real TOLERATED_ERROR;
-
-	// acceptor proton distance
-	Real AHdis_step;
-
-	// -cos(180-theta), where theta is defined by Tanja K.
-	Real xD_step;
-
-	// cos(180-phi, where phi is defined by Tanja K.
-	Real xH_step;
-
 };

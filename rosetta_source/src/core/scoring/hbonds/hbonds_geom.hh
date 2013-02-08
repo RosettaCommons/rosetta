@@ -106,6 +106,43 @@ hbond_compute_energy(
 	Real & dchipen_dchi = DUMMY_DERIV
 );
 
+///@brief Fade the energy smoothly to zero over the energy range [-0.1, 0.1]
+inline
+void
+fade_energy(
+	HBondOptions const & hbondoptions,
+	Real & energy,
+	Real & dE_dr = DUMMY_DERIV,
+	Real & dE_dxD = DUMMY_DERIV,
+	Real & dE_dxH = DUMMY_DERIV,
+	Real & dE_dBAH = DUMMY_DERIV,
+	Real & dE_dchi = DUMMY_DERIV
+);
+
+
+inline
+void
+bah_chi_compute_energy_sp2(
+	Real const d,
+	Real const m,
+	Real const l,
+	Real const xH,
+	Real const chi,
+	Real & energy,
+	Real & dE_dBAH,
+	Real & dE_dchi
+);
+
+inline
+void
+bah_chi_compute_energy_sp3(
+	Real const /*xH*/,
+	Real const chi,
+	Real & energy,
+	Real & dE_dBAH,
+	Real & dE_dchi
+);
+
 /// @brief Evaluate the hydrogen bond energy and derivatives after having first calculated
 /// the HD and BA *u*nit vectors
 void

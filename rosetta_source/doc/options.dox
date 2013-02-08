@@ -1042,7 +1042,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-pdb_comments</b> \<Boolean\><dt>
-<dd>Gideon, please add a line here documenting this option, and always remember to commit changes to options_rosetta.py when you commit.</dd><br>
+<dd>If the pose contains any comment print it as a COMMENT in the pdb file</dd><br>
 <dd>Default: false</dd><br>
 </dl>
 <dl>
@@ -4148,6 +4148,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 0.75</dd><br>
 </dl>
 <dl>
+<dt><b>-hb_sp2_outer_width</b> \<Real\><dt>
+<dd>The width between the peak when CHI=0 and BAH=120 to when the BAH is at a maximum (Units: pi * radians. E.g. 1/3 means the turn off hbonding when BAH < 60, larger values mean a wider potential). Use 0.357 in conjunction with the hb_energy_fade flag.</dd><br>
+<dd>Default: 0.33333</dd><br>
+</dl>
+<dl>
 <dt><b>-hb_sp2_chipen</b> \<Boolean\><dt>
 <dd>Experimental term for hydrogen bonds to sp2 acceptors: penalizes out-of-plane geometry by 67%</dd><br>
 <dd>Default: false</dd><br>
@@ -4155,6 +4160,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-hbond_measure_sp3acc_BAH_from_hvy</b> \<Boolean\><dt>
 <dd>If true, then the BAH angle for sp3 (aka hydroxyl) acceptors is measured donor-hydrogen--acceptor-heavyatom--heavyatom-base instead of donor-hydrogen--accptor-heavyatom--hydroxyl-hydrogen</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-hb_fade_energy</b> \<Boolean\><dt>
+<dd>Rather than having a strict cutoff of hbond definition at 0, fade the energy smoothly in the range [-0.1, 0.1]. This is necessary to prevent a discontinuity in the derivative when E=0 that arise because of the additive form of the hbond function.</dd><br>
 <dd>Default: false</dd><br>
 </dl>
 <dl>

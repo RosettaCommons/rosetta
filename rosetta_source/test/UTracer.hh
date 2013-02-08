@@ -51,7 +51,7 @@ public:
 		file_ = nfi;
 
 		if( !file_original_.good() ) {
-			std::string m( "Unable to open file: " + file_name + " for reading!\n" );
+			std::string m( "Unable to open file: " + file_name + " for reading!\nPlease verify that it has been added to the 'testinputfiles' block in appropriate rosetta_source/test/<LIBRARY>.test.settings file\n" );
 			TS_FAIL( m );
 			error_ = true;
 		}

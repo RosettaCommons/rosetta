@@ -160,10 +160,28 @@ public:
 	Real sp2_BAH180_rise() const;
 	void sp2_BAH180_rise( Real setting );
 
-	/// When calculating the BAH angle for sp3 hybridized acceptors: true: the angle should be measured
+	/// @brief Parameter for the sp2 potential that dictates the width
+	/// between the peak when CHI=0 and BAH=120 to when the BAH is at a
+	/// maximum (Units: pi * radians. E.g. 1/3 means the turn off
+	/// hbonding when BAH < 60, larger values mean a wider potential).
+	/// -corrections:score:hb_sp2_outer_width
+	/// Default: 0.357
+	Real sp2_outer_width() const;
+	void sp2_outer_width( Real setting );
+
+	/// @brief When calculating the BAH angle for sp3 hybridized acceptors: true: the angle should be measured
 	/// from the heavy-atom base (CB for S/T); false: from the base-2 atom (HG for S/T).
 	bool measure_sp3acc_BAH_from_hvy() const;
 	void measure_sp3acc_BAH_from_hvy( bool setting );
+
+	/// @brief Rather than having a strict cutoff of hbond definition at
+	/// 0, fade the energy smoothly in the range [-0.1, 0.1]. This is
+	/// necessary to prevent a discontinuity in the derivative when E=0
+	/// that arise because of the additive form of the hbond function.
+	/// -corrections:score:hb_fade_energy
+	/// Default: false
+	bool fade_energy() const;
+	void fade_energy( bool setting );
 
 	friend
 	bool
@@ -195,7 +213,9 @@ private:
 	bool use_incorrect_deriv_;
 	bool use_sp2_chi_penalty_;
 	Real sp2_BAH180_rise_;
+	Real sp2_outer_width_;
 	bool measure_sp3acc_BAH_from_hvy_;
+	bool fade_energy_;
 	bool Mbhbond_; //pba
 };
 

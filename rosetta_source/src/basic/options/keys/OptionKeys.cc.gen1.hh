@@ -1,4 +1,3 @@
-namespace fold_cst { RealOptionKey const stage2_constraint_threshold( "fold_cst:stage2_constraint_threshold" );  }
 namespace fold_cst { BooleanOptionKey const ignore_sequence_seperation( "fold_cst:ignore_sequence_seperation" );  }
 namespace fold_cst { BooleanOptionKey const no_recover_low_at_constraint_switch( "fold_cst:no_recover_low_at_constraint_switch" );  }
 namespace fold_cst { BooleanOptionKey const ramp_coord_cst( "fold_cst:ramp_coord_cst" );  }
@@ -201,8 +200,10 @@ namespace corrections { namespace score { RealOptionKey const lj_hbond_hdis( "co
 namespace corrections { namespace score { RealOptionKey const lj_hbond_OH_donor_dis( "corrections:score:lj_hbond_OH_donor_dis" );  } }
 namespace corrections { namespace score { BooleanOptionKey const score12prime( "corrections:score:score12prime" );  } }
 namespace corrections { namespace score { RealOptionKey const hb_sp2_BAH180_rise( "corrections:score:hb_sp2_BAH180_rise" );  } }
+namespace corrections { namespace score { RealOptionKey const hb_sp2_outer_width( "corrections:score:hb_sp2_outer_width" );  } }
 namespace corrections { namespace score { BooleanOptionKey const hb_sp2_chipen( "corrections:score:hb_sp2_chipen" );  } }
 namespace corrections { namespace score { BooleanOptionKey const hbond_measure_sp3acc_BAH_from_hvy( "corrections:score:hbond_measure_sp3acc_BAH_from_hvy" );  } }
+namespace corrections { namespace score { BooleanOptionKey const hb_fade_energy( "corrections:score:hb_fade_energy" );  } }
 namespace corrections { namespace score { BooleanOptionKey const use_bicubic_interpolation( "corrections:score:use_bicubic_interpolation" );  } }
 namespace corrections { namespace score { BooleanOptionKey const dun_normsd( "corrections:score:dun_normsd" );  } }
 namespace corrections { namespace chemical { BooleanOptionKey const chemical( "corrections:chemical" );  } }
