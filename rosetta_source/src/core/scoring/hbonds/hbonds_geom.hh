@@ -119,7 +119,6 @@ hbond_compute_energy(
 inline
 void
 fade_energy(
-	HBondOptions const & hbondoptions,
 	Real & energy,
 	Real & dE_dr = DUMMY_DERIV,
 	Real & dE_dxD = DUMMY_DERIV,
@@ -127,7 +126,17 @@ fade_energy(
 	Real & dE_dBAH = DUMMY_DERIV,
 	Real & dE_dchi = DUMMY_DERIV
 ) {
-	if(hbondoptions.fade_energy() && energy > -0.1) {
+	if(energy > 0.1L){
+		energy = 0;
+		if(&dE_dxH != &DUMMY_DERIV){
+			dE_dr  = 0;
+			dE_dxD = 0;
+			dE_dxH = 0;
+			dE_dBAH = 0;
+			dE_dchi = 0;
+		}
+	} else if (energy > -0.1L){
+		energy = -0.025 + 0.5*energy - 2.5*energy*energy;
 		if(&dE_dxH != &DUMMY_DERIV){
 			dE_dr  *= 5*(0.1-energy);
 			dE_dxD *= 5*(0.1-energy);
@@ -135,7 +144,6 @@ fade_energy(
 			dE_dBAH *= 5*(0.1-energy);
 			dE_dchi *= 5*(0.1-energy);
 		}
-		energy = -0.025 + 0.5*energy - 2.5*energy*energy;
 	}
 }
 

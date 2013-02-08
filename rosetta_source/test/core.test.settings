@@ -178,6 +178,7 @@ sources = {
                 "HBondDatabaseTest",
                 "HBondDerivTest",
                 "HBondEnergy",
+                "HBondsFadeEnergy",
                 "HBonds",
                 "HBondsForDemos",
                 "polynomial",

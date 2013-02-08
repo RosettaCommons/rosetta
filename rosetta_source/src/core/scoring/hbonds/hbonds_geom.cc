@@ -665,7 +665,9 @@ hbond_compute_energy(
 
 	// NOTE: if any deriv parameter omitted, we don't compute derivatives.
 	if (&dE_dxH == &DUMMY_DERIV) {
-		fade_energy(hbondoptions, energy);
+		if(hbondoptions.fade_energy()){
+			fade_energy(energy);
+		}
 		return;
 	}
 
@@ -682,7 +684,9 @@ hbond_compute_energy(
 
 	dE_dxH = dFxH*(Pr*FxD + FLr*PLxD + FSr*PSxD) + FxD*(FSr*dPSxH + FLr*dPLxH);
 
-	fade_energy(hbondoptions, energy, dE_dr, dE_dxD, dE_dxH, dE_dBAH, dE_dchi);
+	if(hbondoptions.fade_energy()){
+		fade_energy(energy, dE_dr, dE_dxD, dE_dxH, dE_dBAH, dE_dchi);
+	}
 
 }
 
