@@ -20,7 +20,7 @@
 namespace core {
 namespace chemical {
 
-struct Bond;
+class Bond;
 
 //typedef  utility::pointer::owning_ptr< Bond >  BondOP;
 //typedef  utility::pointer::owning_ptr< Bond const >  BondCOP;

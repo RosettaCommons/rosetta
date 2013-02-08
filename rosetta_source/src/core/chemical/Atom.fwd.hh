@@ -21,7 +21,7 @@
 namespace core {
 namespace chemical {
 
-struct Atom;
+class Atom;
 
 typedef  utility::pointer::owning_ptr< Atom >  AtomOP;
 typedef  utility::pointer::owning_ptr< Atom const >  AtomCOP;
