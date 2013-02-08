@@ -342,10 +342,7 @@ void HybridizeFoldtreeDynamic::get_core_chunk_index_from_position( core::Size co
 
 
 
-void HybridizeFoldtreeDynamic::reset(
-									 core::pose::Pose & pose
-									 ) {
-
+void HybridizeFoldtreeDynamic::reset( core::pose::Pose & pose ) {
 	if (pose.total_residue() > saved_n_residue_) {
 		pose.conformation().delete_residue_range_slow(saved_n_residue_+1, pose.total_residue());
 	}

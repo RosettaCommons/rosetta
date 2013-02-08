@@ -136,6 +136,12 @@ void generate_centroid_constraints(
 		utility::vector1 < core::Real > /*template_weights*/,
 		std::set< core::Size > ignore_res )
 {
+	core::conformation::symmetry::SymmetryInfoCOP symm_info;
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
+		core::conformation::symmetry::SymmetricConformation & SymmConf (
+			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
+		symm_info = SymmConf.Symmetry_Info();
+	}
 
 	core::Size MINSEQSEP = 8;
 	core::Real MAXDIST = 12.0;
@@ -172,11 +178,18 @@ void generate_centroid_constraints(
 							ignore_res.count(templates[i]->pdb_info()->number(k)) ) continue;
 				core::Real dist = templates[i]->residue(j).xyz(2).distance( templates[i]->residue(k).xyz(2) );
 				if ( dist <= MAXDIST ) {
+					core::Size resid_j = templates[i]->pdb_info()->number(j);
+					core::Size resid_k = templates[i]->pdb_info()->number(k);
+
+					if (symm_info && !symm_info->bb_is_independent( resid_j ) )
+						resid_j = symm_info->bb_follows( resid_j );
+					if (symm_info && !symm_info->bb_is_independent( resid_k ) )
+						resid_k = symm_info->bb_follows( resid_k );
+
+std::cerr << "Add CST: " << resid_j << ".2 to " << resid_k << ".2" << std::endl;
 					pose.add_constraint(
-						new AtomPairConstraint( core::id::AtomID(2,templates[i]->pdb_info()->number(j)),
-						                        core::id::AtomID(2,templates[i]->pdb_info()->number(k)),
+						new AtomPairConstraint( core::id::AtomID(2,resid_j), core::id::AtomID(2,resid_k),
 							new ScalarWeightedFunc( 1.0, new SOGFunc( dist, COORDDEV )  )
-							//new ScalarWeightedFunc( template_weights[i], new SOGFunc( dist, COORDDEV )  )
 						)
 					);
 				}
@@ -211,48 +224,64 @@ void add_strand_pairs_cst(core::pose::Pose & pose, utility::vector1< std::pair< 
 }
 
 void add_non_protein_cst(core::pose::Pose & pose, core::Real const cst_weight) {
-	core::Size n_prot_res = pose.total_residue();
-	while (!pose.residue(n_prot_res).is_protein()) n_prot_res--;
-	core::Size n_nonvirt = pose.total_residue();
-	while (!pose.residue(n_prot_res).is_protein()) n_nonvirt--;
+	//symmetry
+	core::conformation::symmetry::SymmetryInfoCOP symm_info;
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
+		core::conformation::symmetry::SymmetricConformation & SymmConf (
+			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
+		symm_info = SymmConf.Symmetry_Info();
+	}
 
-	core::Real MAXDIST = 15.0;
+	core::Real MAXDIST = 12.0;
 	core::Real COORDDEV = 3.0;
-	// constraint between protein and substrate
-	for (Size ires=1; ires<=n_prot_res; ++ires) {
-		if ( ! pose.residue_type(ires).has("CA") ) continue;
-		core::Size iatom = pose.residue_type(ires).atom_index("CA");
 
-		for (Size jres=n_prot_res+1; jres<=n_nonvirt; ++jres) {
+	// constraints protein<->substrate
+	for (Size ires=1; ires<=pose.total_residue(); ++ires) {
+		if (!pose.residue(ires).is_protein()) continue;
+		if (symm_info && !symm_info->bb_is_independent(ires)) continue;
+
+		core::Size iatom;
+		if (pose.residue(ires).aa() == core::chemical::aa_gly) {
+			iatom = pose.residue_type(ires).atom_index(" CA ");
+		} else {
+			iatom = pose.residue_type(ires).atom_index(" CB ");
+		}
+
+		for (Size jres=1; jres<=pose.total_residue(); ++jres) {
+			if (pose.residue(jres).is_protein() || pose.residue(jres).aa() == core::chemical::aa_vrt) continue;
+			if (symm_info && !symm_info->bb_is_independent(jres)) continue;
+
 			for (Size jatom=1; jatom<=pose.residue(jres).nheavyatoms(); ++jatom) {
 				core::Real dist = pose.residue(ires).xyz(iatom).distance( pose.residue(jres).xyz(jatom) );
 				if ( dist <= MAXDIST ) {
 					pose.add_constraint(
-										new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(iatom,ires),
-																						   core::id::AtomID(jatom,jres),
-																						   new core::scoring::constraints::ScalarWeightedFunc( cst_weight, new core::scoring::constraints::SOGFunc( dist, COORDDEV )  )
-																						   )
-										);
+						new core::scoring::constraints::AtomPairConstraint(
+							core::id::AtomID(iatom,ires), core::id::AtomID(jatom,jres),
+							new core::scoring::constraints::ScalarWeightedFunc( cst_weight, new core::scoring::constraints::SOGFunc( dist, COORDDEV ) ) ) );
 				}
 			}
 		}
 	}
 
-	// constraint within substrate
-	for (Size ires=n_prot_res+1; ires<=n_nonvirt; ++ires) {
-		for (Size iatom=1; iatom<=pose.residue(ires).nheavyatoms(); ++iatom) {
+	MAXDIST = 12.0;
+	COORDDEV = 1.0;
 
-			for (Size jres=ires; jres<=n_nonvirt; ++jres) {
+	// constraints within substrate
+	for (Size ires=1; ires<=pose.total_residue(); ++ires) {
+		if (pose.residue(ires).is_protein() || pose.residue(ires).aa() == core::chemical::aa_vrt) continue;
+		if (symm_info && !symm_info->bb_is_independent(ires)) continue;
+		for (Size iatom=1; iatom<=pose.residue(ires).nheavyatoms(); ++iatom) {
+			for (Size jres=1; jres<=pose.total_residue(); ++jres) {
+				if (pose.residue(jres).is_protein() || pose.residue(jres).aa() == core::chemical::aa_vrt) continue;
+				if (symm_info && !symm_info->bb_is_independent(jres)) continue;
 				for (Size jatom=1; jatom<=pose.residue(jres).nheavyatoms(); ++jatom) {
-					if ( ires == jres && iatom >= jatom) continue;
+					if ( ires == jres && iatom <= jatom) continue;
 					core::Real dist = pose.residue(ires).xyz(iatom).distance( pose.residue(jres).xyz(jatom) );
 					if ( dist <= MAXDIST ) {
 						pose.add_constraint(
-											new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(iatom,ires),
-																							   core::id::AtomID(jatom,jres),
-																							   new core::scoring::constraints::ScalarWeightedFunc( cst_weight, new core::scoring::constraints::SOGFunc( dist, COORDDEV )  )
-																							   )
-											);
+							new core::scoring::constraints::AtomPairConstraint(
+								core::id::AtomID(iatom,ires), core::id::AtomID(jatom,jres),
+								new core::scoring::constraints::ScalarWeightedFunc( cst_weight, new core::scoring::constraints::SOGFunc( dist, COORDDEV ) ) ) );
 					}
 				}
 			}

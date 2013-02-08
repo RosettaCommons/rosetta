@@ -657,13 +657,6 @@ utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_for_small_
 
 void FoldTreeHybridize::restore_original_foldtree(core::pose::Pose & pose) {
 	foldtree_mover_.reset(pose);
-	/*
-	if (pose.total_residue() > orig_n_residue_) {
-		pose.conformation().delete_residue_range_slow(orig_n_residue_+1, pose.total_residue());
-	}
-	protocols::loops::remove_cutpoint_variants( pose );
-	pose.conformation().fold_tree( orig_ft_ );
-	*/
 }
 
 void
@@ -1177,9 +1170,11 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 
 	// setup constraints
 	//  note: ignore pairings residues (strand pairings templates) for auto generated constraints
-	setup_centroid_constraints( pose, template_poses_, template_wts_, cst_file_, get_pairings_residues() );
-	if (add_hetatm_)
-		add_non_protein_cst(pose, hetatm_cst_weight_);
+	if ( scorefxn_->get_weight( core::scoring::atom_pair_constraint ) != 0 ) {
+		setup_centroid_constraints( pose, template_poses_, template_wts_, cst_file_, get_pairings_residues() );
+		if (add_hetatm_)
+			add_non_protein_cst(pose, hetatm_cst_weight_);
+	}
 
 	// Initialize the structure
 	bool use_random_template = false;

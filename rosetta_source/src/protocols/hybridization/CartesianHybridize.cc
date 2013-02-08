@@ -206,7 +206,6 @@ CartesianHybridize::init() {
 void
 CartesianHybridize::set_scorefunction(core::scoring::ScoreFunctionOP scorefxn_in) {
 	lowres_scorefxn_ = scorefxn_in->clone();
-
 	min_scorefxn_ = scorefxn_in->clone();
 
 	//bonds_scorefxn_ = new core::scoring::symmetry::SymmetricScoreFunction();
@@ -451,37 +450,19 @@ CartesianHybridize::apply( Pose & pose ) {
 	TR << "RUNNING FOR " << NMACROCYCLES << " MACROCYCLES" << std::endl;
 
 	Pose pose_in = pose;
+
 	core::Size nres = pose.total_residue();
-	if (pose.residue(nres).aa() == core::chemical::aa_vrt) nres--;
+	core::conformation::symmetry::SymmetryInfoCOP symm_info;
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
+		core::conformation::symmetry::SymmetricConformation & SymmConf (
+			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
+		symm_info = SymmConf.Symmetry_Info();
+		nres = symm_info->num_independent_residues();
+	}
+	while (pose.residue(nres).aa() == core::chemical::aa_vrt) nres--;
+
 	core::Size n_prot_res = pose.total_residue();
 	while (!pose.residue(n_prot_res).is_protein()) n_prot_res--;
-
-
-	for (Size ires=n_prot_res+1; ires<=pose.total_residue(); ++ires) {
-		mm.set_bb (ires, false);
-		mm.set_chi(ires, false);
-
-		core::Real MAXDIST = 15.0;
-		core::Real COORDDEV = 3.0;
-
-		for (Size iatom=1; iatom<=pose.residue(ires).nheavyatoms(); ++iatom) {
-
-			for (Size jres=ires; jres<=pose.total_residue(); ++jres) {
-				for (Size jatom=1; jatom<=pose.residue(jres).nheavyatoms(); ++jatom) {
-					if ( ires == jres && iatom >= jatom) continue;
-					core::Real dist = pose.residue(ires).xyz(iatom).distance( pose.residue(jres).xyz(jatom) );
-					if ( dist <= MAXDIST ) {
-						pose.add_constraint(
-											new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(iatom,ires),
-																   core::id::AtomID(jatom,jres),
-																   new core::scoring::constraints::ScalarWeightedFunc( 5., new core::scoring::constraints::SOGFunc( dist, COORDDEV )  )
-																   )
-											);
-					}
-				}
-			}
-		}
-	}
 
 	// 10% of the time, skip moves in the global frame
 	bool no_ns_moves = no_global_frame_; // (numeric::random::uniform() <= 0.1);
@@ -601,8 +582,7 @@ sampler:
 				for (int i=1; i<(int)n_prot_res; ++i) {
 					if (!pose.residue_type(i).is_protein()){
 						residuals[i] = -1;
-					}
-					else if (pose.fold_tree().is_cutpoint(i+1)) {
+					} else if (pose.fold_tree().is_cutpoint(i+1)) {
 						residuals[i] = -1;
 					} else {
 						numeric::xyzVector< core::Real > c0 , n1;
