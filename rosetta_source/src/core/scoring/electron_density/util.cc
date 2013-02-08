@@ -68,6 +68,17 @@ core::Real interp_spline(
 	return retval;
 }
 
+/// @brief spline interpolation with periodic boundaries
+numeric::xyzVector<core::Real> interp_dspline(
+                         ObjexxFCL::FArray3D< double > & coeffs ,
+                         numeric::xyzVector< core::Real > const & idxX ) {
+	int dims[3] = { coeffs.u3(), coeffs.u2(), coeffs.u1() };
+	core::Real pt[3] = { idxX[2]-1.0 , idxX[1]-1.0, idxX[0]-1.0 };
+	core::Real grad[3] = { 0,0,0 };
+	SplineInterp::grad3(&grad[0], &coeffs[0], dims, pt, 3);
+	return numeric::xyzVector<core::Real>(grad[2],grad[1],grad[0]);
+}
+
 void spline_coeffs(
            ObjexxFCL::FArray3D< double > & data ,
            ObjexxFCL::FArray3D< double > & coeffs) {

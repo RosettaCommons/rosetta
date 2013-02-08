@@ -419,7 +419,6 @@ private:
 
 	// (fast scoring) precomputed rhocrhoo, d_rhocrhoo
 	ObjexxFCL::FArray3D< double > fastdens_score;
-	ObjexxFCL::FArray3D< double > fastdens_dscoredx, fastdens_dscoredy, fastdens_dscoredz;
 	numeric::xyzVector< int > fastgrid;           // grid & origin
 	numeric::xyzVector< core::Real > fastorigin;  // for resampled maps
 

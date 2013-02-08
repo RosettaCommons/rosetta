@@ -33,8 +33,6 @@
 #include <basic/options/option.hh>
 #include <core/scoring/electron_density/xray_scattering.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <core/conformation/PointGraph.hh>
-// AUTO-REMOVED #include <core/conformation/find_neighbors.hh>
 
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
@@ -42,8 +40,6 @@
 #include <numeric/xyzVector.io.hh>
 #include <numeric/statistics.functions.hh>
 #include <numeric/fourier/FFT.hh>
-
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 //
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
@@ -171,8 +167,6 @@ ElectronDensity &getDensityMap_legacy() {
 		TR << "Loading Density Map" << std::endl;
 		if (!basic::options::option[ basic::options::OptionKeys::edensity::mapfile ].user()) {
 			TR.Warning << "[ Warning ] No density map specified." << std::endl;
-			//TR << "[ ERROR ] Density map score will not be used.\n";
-			//exit(1);
 		} else {
 			std::string mapfile = basic::options::option[ basic::options::OptionKeys::edensity::mapfile ]();
 			core::Real mapreso = basic::options::option[ basic::options::OptionKeys::edensity::mapreso ]();
@@ -183,8 +177,6 @@ ElectronDensity &getDensityMap_legacy() {
 
 			if (!map_loaded) {
 				TR << "[ ERROR ] Error loading density map named '" << mapfile << "'" << std::endl;
-				//TR << "[ ERROR ] Density map score will not be used.\n";
-				exit(1);
 			}
 		}
 	}
@@ -192,7 +184,6 @@ ElectronDensity &getDensityMap_legacy() {
 #ifdef GL_GRAPHICS
 	pthread_mutex_unlock(&density_map_db_mut_);
 #endif
-
 
 	return theDensityMap;
 }
@@ -216,7 +207,6 @@ ElectronDensity::ElectronDensity( utility::vector1< core::pose::PoseOP > poses, 
 	for (core::Size n=1; n<=nposes; ++n) {
 		core::pose::Pose &pose = *(poses[n]);
 		int nres = pose.total_residue();
-		//core::Real nCoM=0;
 
 		for (int i=1 ; i<=nres; ++i) {
 			conformation::Residue const &rsd_i (pose.residue(i));
@@ -962,20 +952,18 @@ core::Real ElectronDensity::matchPose(
 		if ( scoring_mask_.find(i) != scoring_mask_.end() ) continue;
 
 		// symm
-		if (isSymm && !symmInfo->bb_is_independent(i) && !remapSymm) {  // should this be fa_...??
+		if (isSymm && !symmInfo->bb_is_independent(i) && !remapSymm) {
 			continue; // only score the independent monomer
 		}
 
 		int nheavyatoms = rsd_i.nheavyatoms();
-		//int nheavyatoms = rsd_i.last_backbone_atom();
-
 		atm_idx[i].resize(nheavyatoms);
 		rho_dx_pt[i].resize(nheavyatoms);
 		rho_dx_mask[i].resize(nheavyatoms);
 		rho_dx_atm[i].resize(nheavyatoms);
 
 		for (int j=1 ; j<=nheavyatoms; ++j) {
-			conformation::Atom const &atm_i( rsd_i.atom(j) ); //(pose.residue(i).atom("CA"));
+			conformation::Atom const &atm_i( rsd_i.atom(j) );
 
 			chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
 			std::string elt_i = atom_type_set[ rsd_i.atom_type_index( j ) ].element();
@@ -1034,13 +1022,7 @@ core::Real ElectronDensity::matchPose(
 						core::Real d2 = (cart_del_ij).length_squared();
 
 						if (d2 <= (ATOM_MASK+ATOM_MASK_PADDING)*(ATOM_MASK+ATOM_MASK_PADDING)) {
-							// v1 ... just use this it's way faster
 							core::Real atm = C*exp(-k*d2);
-							// v2 ... is this ok for non-orthogonal???
-							//core::Real atm = C*a*exp(-k)*grid[0]*grid[1]*grid[2]*
-							//	( (errf( cart_del_ij[0]+0.5/grid[0] )-errf( cart_del_ij[0]-0.5/grid[0] ))*
-							//	  (errf( cart_del_ij[1]+0.5/grid[1] )-errf( cart_del_ij[1]-0.5/grid[1] ))*
-							//	  (errf( cart_del_ij[2]+0.5/grid[2] )-errf( cart_del_ij[2]-0.5/grid[2] ))  );
 							core::Real sigmoid_msk = exp( d2 - (ATOM_MASK)*(ATOM_MASK)  );
 							core::Real inv_msk = 1/(1+sigmoid_msk);
 
@@ -1165,10 +1147,6 @@ core::Real ElectronDensity::matchPose(
 			}
 		}
 	}
-	// >> debugging <<
-	//ElectronDensity(rho_calc, 2.0).writeMRC( "rho_calc.mrc" );
-	//ElectronDensity(inv_rho_mask, 2.0).writeMRC( "rho_mask_inv.mrc" );
-	//std::cerr << "ElectronDensity::matchPose() returning CC = " << CC_i << "   vol = " << vol_i << std::endl;
 
 	return CC_i;
 }
@@ -1184,16 +1162,6 @@ numeric::xyzVector<core::Real> ElectronDensity::delt_cart(
 		while (delt_fracX[i] < -0.5) delt_fracX[i]+=1.0;
 	}
 	delt_cart = f2c*delt_fracX;
-
-	//using namespace ObjexxFCL::fmt;
-	//TR << F(8,3,delt_fracX.x()) << F(8,3,delt_fracX.y()) << F(8,3,delt_fracX.z());
-	//TR << F(8,3,delt_cart.x()) << F(8,3,delt_cart.y()) << F(8,3,delt_cart.z()) << std::endl;
-
-	//TR << delt_fracX << std::endl;
-	//TR << f2c.row_x() << std::endl;
-	//TR << f2c.row_y() << std::endl;
-	//TR << f2c.row_z() << std::endl;
-	//TR << delt_cart<< std::endl;
 
 	return delt_cart;
 }
@@ -1249,8 +1217,6 @@ numeric::xyzVector<core::Real> ElectronDensity::get_cart_unitCell(
 ///      compute if not already computed
 ///      returns pointers to FArray
 utility::vector1< ObjexxFCL::FArray3D< std::complex<double> > * > ElectronDensity::getFdrhoc( OneGaussianScattering S ) {
-	// x0 = mod(X+cryst(1)/2,cryst(1))-cryst(1)/2;
-	// drhox = 4*C*k*(x0).*exp( -k*( x0.^2 ) );
 	int atmid = S.a();
 	std::map< int,ObjexxFCL::FArray3D< std::complex<double> > >::const_iterator itx = Fdrhoc_dx.find( atmid );
 
@@ -1315,17 +1281,22 @@ void ElectronDensity::setup_fastscoring_first_time(core::pose::Pose const &pose)
 	// oversample rho_obs
 	ObjexxFCL::FArray3D< double > rho_obs_oversample;
 
-	fastgrid[0] = findSampling( 2*grid[0], MINMULT[0] );
-	fastgrid[1] = findSampling( 2*grid[1], MINMULT[1] );
-	fastgrid[2] = findSampling( 2*grid[2], MINMULT[2] );
+	// uncomment to oversample
+	// fastgrid[0] = findSampling( 2*grid[0], MINMULT[0] );
+	// fastgrid[1] = findSampling( 2*grid[1], MINMULT[1] );
+	// fastgrid[2] = findSampling( 2*grid[2], MINMULT[2] );
+	// 
+	// fastorigin[0] = fastgrid[0]*origin[0] / ((core::Real)grid[0]);
+	// fastorigin[1] = fastgrid[1]*origin[1] / ((core::Real)grid[1]);
+	// fastorigin[2] = fastgrid[2]*origin[2] / ((core::Real)grid[2]);
+	// 
+	// resample( density, rho_obs_oversample, fastgrid );
+	// TR << "Oversample " << density.u1() << "x" << density.u2() << "x" << density.u3() << " to "
+	// 										<< rho_obs_oversample.u1() << "x" << rho_obs_oversample.u2() << "x" << rho_obs_oversample.u3() << std::endl;
 
-	fastorigin[0] = fastgrid[0]*origin[0] / ((core::Real)grid[0]);
-	fastorigin[1] = fastgrid[1]*origin[1] / ((core::Real)grid[1]);
-	fastorigin[2] = fastgrid[2]*origin[2] / ((core::Real)grid[2]);
-
-	resample( density, rho_obs_oversample, fastgrid );
-	TR << "Resizing " << density.u1() << "x" << density.u2() << "x" << density.u3() << " to "
-										<< rho_obs_oversample.u1() << "x" << rho_obs_oversample.u2() << "x" << rho_obs_oversample.u3() << std::endl;
+	//fpd  don't oversample
+	fastgrid = grid;
+	rho_obs_oversample = density;
 
 	// convolute with calculated density
 	ObjexxFCL::FArray3D< double > rhoc, drhoc_dx, drhoc_dy, drhoc_dz;
@@ -1346,9 +1317,6 @@ void ElectronDensity::setup_fastscoring_first_time(core::pose::Pose const &pose)
 	//core::Real grid_scale = (V*nres) / ((core::Real)(natms*fastgrid[0]*fastgrid[1]*fastgrid[2]));
 
 	rhoc.dimension(fastgrid[0], fastgrid[1], fastgrid[2]);
-	drhoc_dx.dimension(fastgrid[0], fastgrid[1], fastgrid[2]);
-	drhoc_dy.dimension(fastgrid[0], fastgrid[1], fastgrid[2]);
-	drhoc_dz.dimension(fastgrid[0], fastgrid[1], fastgrid[2]);
 	for (int z=1; z<=(int)fastgrid[2]; ++z) {
 		if (z < (int)fastgrid[2]/2)
 			del_ij[2] = ((core::Real)z - 1.0) / fastgrid[2];
@@ -1369,9 +1337,6 @@ void ElectronDensity::setup_fastscoring_first_time(core::pose::Pose const &pose)
 				core::Real d2 = (cart_del_ij).length_squared();
 
 				rhoc(x,y,z) = exp(-k*d2);
-				drhoc_dx(x,y,z) = -cart_del_ij[0] * 2*k*exp( -k*d2 );
-				drhoc_dy(x,y,z) = -cart_del_ij[1] * 2*k*exp( -k*d2 );
-				drhoc_dz(x,y,z) = -cart_del_ij[2] * 2*k*exp( -k*d2 );
 			}
 		}
 	}
@@ -1381,24 +1346,15 @@ void ElectronDensity::setup_fastscoring_first_time(core::pose::Pose const &pose)
 	// ffts
 	numeric::fourier::fft3(rho_obs_oversample, Frhoo);
 	numeric::fourier::fft3(rhoc, Frhoc);
-	numeric::fourier::fft3(drhoc_dx, Fdrhoc_dx);
-	numeric::fourier::fft3(drhoc_dy, Fdrhoc_dy);
-	numeric::fourier::fft3(drhoc_dz, Fdrhoc_dz);
 
 	// convolute
 	for (int i=1; i<=rho_obs_oversample.u1(); i++)
 	for (int j=1; j<=rho_obs_oversample.u2(); j++)
 	for (int k=1; k<=rho_obs_oversample.u3(); k++) {
 		Frhoc(i,j,k)     *= ( Frhoo(i,j,k) );
-		Fdrhoc_dx(i,j,k) *= ( Frhoo(i,j,k) );
-		Fdrhoc_dy(i,j,k) *= ( Frhoo(i,j,k) );
-		Fdrhoc_dz(i,j,k) *= ( Frhoo(i,j,k) );
 	}
 
 	numeric::fourier::ifft3( Frhoc , fastdens_score );
-	numeric::fourier::ifft3( Fdrhoc_dx , fastdens_dscoredx );
-	numeric::fourier::ifft3( Fdrhoc_dy , fastdens_dscoredy );
-	numeric::fourier::ifft3( Fdrhoc_dz , fastdens_dscoredz );
 
 	// scale 'fastdens_score' so that the best score is nres/natms
 	// worst is -nres/natms
@@ -1415,25 +1371,17 @@ void ElectronDensity::setup_fastscoring_first_time(core::pose::Pose const &pose)
 	for (int j=1; j<=rho_obs_oversample.u2(); j++)
 	for (int k=1; k<=rho_obs_oversample.u3(); k++) {
 		fastdens_score(i,j,k) = ( fastdens_score(i,j,k) - mu ) / sigma;
-		fastdens_dscoredx(i,j,k) = ( fastdens_dscoredx(i,j,k)  ) / sigma;
-		fastdens_dscoredy(i,j,k) = ( fastdens_dscoredy(i,j,k)  ) / sigma;
-		fastdens_dscoredz(i,j,k) = ( fastdens_dscoredz(i,j,k)  ) / sigma;
 	}
 
 	if (basic::options::option[ basic::options::OptionKeys::edensity::debug ]()) {
 		ElectronDensity(rho_obs_oversample,1.0, numeric::xyzVector< core::Real >(0,0,0), false ).writeMRC( "fastdens_rhoobs.mrc");
 		ElectronDensity(fastdens_score,1.0, numeric::xyzVector< core::Real >(0,0,0), false ).writeMRC( "fastdens_score.mrc");
-		ElectronDensity(fastdens_dscoredx,1.0, numeric::xyzVector< core::Real >(0,0,0), false ).writeMRC( "fastdens_dscoredx.mrc");
-		ElectronDensity(fastdens_dscoredy,1.0, numeric::xyzVector< core::Real >(0,0,0), false ).writeMRC( "fastdens_dscoredy.mrc");
-		ElectronDensity(fastdens_dscoredz,1.0, numeric::xyzVector< core::Real >(0,0,0), false ).writeMRC( "fastdens_dscoredz.mrc");
 	}
 
 	// spline coeffs
 	ObjexxFCL::FArray3D< double > temp_coeffs;
-	spline_coeffs( fastdens_score, temp_coeffs); fastdens_score = temp_coeffs;
-	spline_coeffs( fastdens_dscoredx, temp_coeffs); fastdens_dscoredx = temp_coeffs;
-	spline_coeffs( fastdens_dscoredy, temp_coeffs); fastdens_dscoredy = temp_coeffs;
-	spline_coeffs( fastdens_dscoredz, temp_coeffs); fastdens_dscoredz = temp_coeffs;
+	spline_coeffs( fastdens_score, temp_coeffs);
+	fastdens_score = temp_coeffs;
 }
 
 
@@ -2551,7 +2499,7 @@ core::Real ElectronDensity::matchRes(
 
 	// symmetry
 	bool isSymm = (symmInfo.get() != NULL);
-	bool remapSymm = basic::options::option[ basic::options::OptionKeys::edensity::score_symm_complex ]();
+	bool remapSymm = remap_symm_;
 
 	// symm
 	if (isSymm && !symmInfo->bb_is_independent(resid) && !remapSymm) return 0.0; // only score monomer
@@ -2970,8 +2918,6 @@ void ElectronDensity::dCCdx_fastRes(
 	if ( fastdens_score.u1()*fastdens_score.u2()*fastdens_score.u3() == 0 )
 		setup_fastscoring_first_time(pose);
 
-	dCCdX[0] = dCCdX[1] = dCCdX[2] = 0;
-
 	if ( scoring_mask_.find(resid) != scoring_mask_.end() ) return;
 	if ( pose.residue(resid).aa() == core::chemical::aa_vrt ) return;
 
@@ -2980,9 +2926,11 @@ void ElectronDensity::dCCdx_fastRes(
 	                                          fracX[0]*fastgrid[0] - fastorigin[0] + 1,
 	                                          fracX[1]*fastgrid[1] - fastorigin[1] + 1,
 	                                          fracX[2]*fastgrid[2] - fastorigin[2] + 1);
-	dCCdX[0] = interp_spline( fastdens_dscoredx , idxX );
-	dCCdX[1] = interp_spline( fastdens_dscoredy , idxX );
-	dCCdX[2] = interp_spline( fastdens_dscoredz , idxX );
+
+	numeric::xyzVector<core::Real> dCCdX_grid = interp_dspline( fastdens_score , idxX );
+	dCCdX[0] = dCCdX_grid[0]*c2f(1,1)*fastgrid[0] + dCCdX_grid[1]*c2f(2,1)*fastgrid[1] + dCCdX_grid[2]*c2f(3,1)*fastgrid[2];
+	dCCdX[1] = dCCdX_grid[0]*c2f(1,2)*fastgrid[0] + dCCdX_grid[1]*c2f(2,2)*fastgrid[1] + dCCdX_grid[2]*c2f(3,2)*fastgrid[2];
+	dCCdX[2] = dCCdX_grid[0]*c2f(1,3)*fastgrid[0] + dCCdX_grid[1]*c2f(2,3)*fastgrid[1] + dCCdX_grid[2]*c2f(3,3)*fastgrid[2];
 
 	if (ExactDerivatives) {
 		numeric::xyzVector<core::Real> dCCdX1 = dCCdX;

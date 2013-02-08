@@ -74,8 +74,13 @@ core::Real interp_linear(
 }
 
 /// @brief spline interpolation with periodic boundaries
-core::Real interp_spline( ObjexxFCL::FArray3D< double > & coeffs ,
-                          numeric::xyzVector<core::Real> const & idxX );
+core::Real
+interp_spline( ObjexxFCL::FArray3D< double > & coeffs ,
+               numeric::xyzVector<core::Real> const & idxX );
+
+numeric::xyzVector<core::Real>
+interp_dspline( ObjexxFCL::FArray3D< double > & coeffs ,
+                numeric::xyzVector<core::Real> const & idxX );
 
 /// @brief precompute spline coefficients (float array => double coeffs)
 void spline_coeffs( ObjexxFCL::FArray3D< double > &data, ObjexxFCL::FArray3D< double > & coeffs);

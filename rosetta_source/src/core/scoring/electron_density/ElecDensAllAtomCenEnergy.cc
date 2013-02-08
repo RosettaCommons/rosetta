@@ -121,7 +121,6 @@ ElecDensAllAtomCenEnergy::defines_residue_pair_energy(
 
 void
 ElecDensAllAtomCenEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & /* sf */) const {
-	if (!pose.is_fullatom()) return;
 	core::conformation::symmetry::SymmetryInfoCOP symminfo(0);
 	if (core::pose::symmetry::is_symmetric(pose)) {
 		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation()).Symmetry_Info();
@@ -188,10 +187,9 @@ ElecDensAllAtomCenEnergy::setup_for_scoring(
 	}
 
 	// do the actual matching here; split scores among individual residues
-	//utility::vector1< conformation::ResidueCAP > reses = pose.conformation().const_residues();
 	structure_score = core::scoring::electron_density::getDensityMap().matchPose( pose, symminfo , false );
 
-	// # of NON-VRT residues
+	// # of scored residues
 	nreses = 0;
 	for (int i=1; i<=(int)pose.total_residue(); ++i)
 		if (pose.residue(i).aa() != core::chemical::aa_vrt)
@@ -267,7 +265,7 @@ ElecDensAllAtomCenEnergy::eval_atom_derivative(
 
 	// derivatives only defined for (non-VRT) heavyatoms
 	if (!pose_is_proper) return;
-	if (!pose.is_fullatom()) return;
+	//if (!pose.is_fullatom()) return;
 
 	// if (hydrogen) return
 	if ( pose.residue(resid).aa() != core::chemical::aa_vrt && !pose.residue(resid).atom_type(atmid).is_heavyatom() ) return;
@@ -421,34 +419,49 @@ ElecDensAllAtomCenEnergy::eval_atom_derivative(
 		} else { // NON-VRT
 			if (! symminfo->bb_is_independent( resid ) ) return;
 
- 			utility::vector1< Size > myClones = symminfo->bb_clones(resid);
- 			for (int i=0; i<=(int)myClones.size(); ++i) {
- 				numeric::xyzVector<core::Real> X_i = (i==0) ? X : pose.xyz( id::AtomID( atmid, myClones[i] ) );
- 				core::scoring::electron_density::getDensityMap().dCCdx_aacen( atmid, (i==0) ? resid : myClones[i], X_i, pose, dCCdx );
-
-				// get R
-				if (remapSymm)
+			if (remapSymm) {
+				utility::vector1< Size > myClones = symminfo->bb_clones(resid);
+				for (int i=0; i<=(int)myClones.size(); ++i) {
+					numeric::xyzVector<core::Real> X_i = (i==0) ? X : pose.xyz( id::AtomID( atmid, myClones[i] ) );
+					core::scoring::electron_density::getDensityMap().dCCdx_aacen( atmid, (i==0) ? resid : myClones[i], X_i, pose, dCCdx );
 					core::scoring::electron_density::getDensityMap().get_R( symminfo->subunit_index( (i==0) ? resid : myClones[i] ), R );
-
- 				Real CC = structure_score;
- 				Real z_CC = CC / 0.1;
- 				Real p_null = 0.5 * errfc( z_CC/sqrt(2.0) );
-
- 				// divide by the number of subunits since rosetta will scale up later (??)
- 				numeric::xyzVector< core::Real > dEdx = 0.5 * ( 1.0 / p_null ) *
- 					(-2.0/sqrt(M_PI)) *
+	
+					Real CC = structure_score;
+					Real z_CC = CC / 0.1;
+					Real p_null = 0.5 * errfc( z_CC/sqrt(2.0) );
+					numeric::xyzVector< core::Real > dEdx = 0.5 * ( 1.0 / p_null ) *
+						(-2.0/sqrt(M_PI)) *
+						exp(-SQ( z_CC/sqrt(2.0) )) *
+						1/sqrt(0.02) *
+						nreses * R * dCCdx / ((core::Real)nsubunits);
+	
+					numeric::xyzVector<core::Real> atom_x = X; //X_i;
+					numeric::xyzVector<core::Real> const f2( dEdx );
+					numeric::xyzVector<core::Real> atom_y = -f2 + atom_x;
+					Vector const f1( atom_x.cross( atom_y ) );
+	
+					F1 += weights[ elec_dens_whole_structure_allatom ] * f1;
+					F2 += weights[ elec_dens_whole_structure_allatom ] * f2;
+				}
+			} else {
+				Real CC = structure_score;
+				Real z_CC = CC / 0.1;
+				Real p_null = 0.5 * errfc( z_CC/sqrt(2.0) );
+		
+				core::scoring::electron_density::getDensityMap().dCCdx_aacen( atmid, resid, X, pose, dCCdx );
+				numeric::xyzVector< core::Real > dEdx = ( 1.0 / p_null ) *
+					0.5 *
+					(-2.0/sqrt(M_PI)) *
 					exp(-SQ( z_CC/sqrt(2.0) )) *
- 					1/sqrt(0.02) *
- 					nreses * R * dCCdx / ((core::Real)nsubunits);
-
-				numeric::xyzVector<core::Real> atom_x = X; //X_i;
+					1/sqrt(0.02) *
+					nreses *
+					dCCdx / ((core::Real)nsubunits);
+		
+				numeric::xyzVector<core::Real> atom_x = X;
 				numeric::xyzVector<core::Real> const f2( dEdx );
-				numeric::xyzVector<core::Real> atom_y = -f2 + atom_x;
+				numeric::xyzVector<core::Real> atom_y = -f2 + atom_x;   // a "fake" atom in the direcion of the gradient
 				Vector const f1( atom_x.cross( atom_y ) );
-
-				//if ( atmid==2)
-				//	std::cerr << "at res " << resid
-				//	          << " f1=" << f1 << " f2=" << f2 << std::endl;
+		
 				F1 += weights[ elec_dens_whole_structure_allatom ] * f1;
 				F2 += weights[ elec_dens_whole_structure_allatom ] * f2;
 			}
@@ -458,14 +471,11 @@ ElecDensAllAtomCenEnergy::eval_atom_derivative(
 		// ASYMMETRIC CASE
 		//////////////////////
 
-		// the derivative of edens _score_ as a function of dCC/dx
 		Real CC = structure_score;
 		Real z_CC = CC / 0.1;
 		Real p_null = 0.5 * errfc( z_CC/sqrt(2.0) );
 
 		core::scoring::electron_density::getDensityMap().dCCdx_aacen( atmid, resid, X, pose, dCCdx );
-
-		// divide by the number of subunits since rosetta will scale up later (??)
 		numeric::xyzVector< core::Real > dEdx = ( 1.0 / p_null ) *
 			0.5 *
 			(-2.0/sqrt(M_PI)) *

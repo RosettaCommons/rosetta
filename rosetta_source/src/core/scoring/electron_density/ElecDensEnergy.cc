@@ -235,32 +235,29 @@ ElecDensEnergy::residue_pair_energy(
 ) const {
 	using namespace numeric::statistics;
 
-	if (!pose_is_proper) {
-		return;
-	}
+	bool remapSymm = basic::options::option[ basic::options::OptionKeys::edensity::score_symm_complex ]();
+	if (!pose_is_proper) return;
 	if (rsd1.aa() != core::chemical::aa_vrt && rsd2.aa() != core::chemical::aa_vrt) return;
 	if (rsd1.aa() == core::chemical::aa_vrt && rsd2.aa() == core::chemical::aa_vrt) return;
 
 	conformation::Residue const &rsd (rsd1.aa() == core::chemical::aa_vrt? rsd2 : rsd1 );
 	Size r = rsd.seqpos();
 
-	// grab symminfo (if defined) from the pose
 	core::conformation::symmetry::SymmetryInfoCOP symminfo=NULL;
 	core::Size nsubunits = 1;
 	if (core::pose::symmetry::is_symmetric(pose)) {
 		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation()).Symmetry_Info();
 		nsubunits = symminfo->subunits();
-
 		if (! symminfo->bb_is_independent( r ) ) return;
 	}
 
 	core::Real cc = core::scoring::electron_density::getDensityMap().matchRes(r, rsd, pose, symminfo, false );
 	Real z_CC = cc / 0.1;
 	Real p_null = 0.5 * errfc( z_CC/sqrt(2.0) );
-	Real edensScore = log ( p_null ) / ((core::Real)nsubunits);
+	Real edensScore = log ( p_null );
 
-	// if we're symmetric, add contributions from all copies
-	if (symminfo) {
+	if (symminfo && remapSymm) {
+		edensScore /= ((core::Real)nsubunits);
 		utility::vector1< core::Size > bbclones = symminfo->bb_clones( r );
 		for (int i=1; i<=(int)bbclones.size(); ++i) {
 			cc = core::scoring::electron_density::getDensityMap().matchRes(
@@ -293,7 +290,7 @@ ElecDensEnergy::eval_atom_derivative(
 	int atmid = id.atomno();
 
 	if (!pose_is_proper) return;
-	if (!pose.is_fullatom()) return;
+	//if (!pose.is_fullatom()) return;
 
 	// if (hydrogen) return
 	if ( pose.residue(resid).aa() != core::chemical::aa_vrt && !pose.residue(resid).atom_type(atmid).is_heavyatom() ) return;
@@ -443,37 +440,53 @@ ElecDensEnergy::eval_atom_derivative(
 		} else { // NON-VRT
 			if (! symminfo->bb_is_independent( resid ) ) return;
 
- 			utility::vector1< Size > myClones = symminfo->bb_clones(resid);
- 			for (int i=0; i<=(int)myClones.size(); ++i) {
- 				numeric::xyzVector<core::Real> X_i = (i==0) ? X : pose.xyz( id::AtomID( atmid, myClones[i] ) );
-				//core::scoring::electron_density::getDensityMap().dCCdx_res(
-				//                 atmid, (i==0) ? resid : myClones[i], X_i, dummyAtmList, dummyAtmList, dCCdx );
-				core::scoring::electron_density::getDensityMap().dCCdx_res(
-				                   atmid, (i==0)?resid:myClones[i], X_i, pose.residue((i==0)?resid:myClones[i]), pose, dCCdx );
-
-				// get R
-				if (remapSymm)
+			if (remapSymm) {
+				utility::vector1< Size > myClones = symminfo->bb_clones(resid);
+				for (int i=0; i<=(int)myClones.size(); ++i) {
+					numeric::xyzVector<core::Real> X_i = (i==0) ? X : pose.xyz( id::AtomID( atmid, myClones[i] ) );
+					core::scoring::electron_density::getDensityMap().dCCdx_res(
+														 atmid, (i==0)?resid:myClones[i], X_i, pose.residue((i==0)?resid:myClones[i]), pose, dCCdx );
+	
+					// get R
 					core::scoring::electron_density::getDensityMap().get_R( symminfo->subunit_index( (i==0) ? resid : myClones[i] ), R );
-
- 				Real CC = core::scoring::electron_density::getDensityMap().getCachedScore( (i==0) ? resid : myClones[i] );
- 				Real z_CC = CC / 0.1;
- 				Real p_null = 0.5 * errfc( z_CC/sqrt(2.0) );
-
- 				// divide by the number of subunits since rosetta will scale up later (??)
- 				numeric::xyzVector< core::Real > dEdx = 0.5 * ( 1.0 / p_null ) *
- 					(-2.0/sqrt(M_PI)) *
-					exp(-SQ( z_CC/sqrt(2.0) )) *
- 					1/sqrt(0.02) *
- 					R * dCCdx / ((core::Real)nsubunits);
-
-				numeric::xyzVector<core::Real> atom_x = X; //X_i;
+	
+					Real CC = core::scoring::electron_density::getDensityMap().getCachedScore( (i==0) ? resid : myClones[i] );
+					Real z_CC = CC / 0.1;
+					Real p_null = 0.5 * errfc( z_CC/sqrt(2.0) );
+	
+					// divide by the number of subunits since SymmetricScoreFunction will scale up later
+					numeric::xyzVector< core::Real > dEdx = 0.5 * ( 1.0 / p_null ) *
+						(-2.0/sqrt(M_PI)) *
+						exp(-SQ( z_CC/sqrt(2.0) )) *
+						1/sqrt(0.02) *
+						R * dCCdx / ((core::Real)nsubunits);
+	
+					numeric::xyzVector<core::Real> atom_x = X;
+					numeric::xyzVector<core::Real> const f2( dEdx );
+					numeric::xyzVector<core::Real> atom_y = -f2 + atom_x;
+					Vector const f1( atom_x.cross( atom_y ) );
+	
+					F1 += weights[ elec_dens_window ] * f1;
+					F2 += weights[ elec_dens_window ] * f2;
+				}
+			} else {
+				Real CC = core::scoring::electron_density::getDensityMap().getCachedScore( resid );
+				Real z_CC = CC / 0.1;
+				Real p_null = 0.5 * errfc( z_CC/sqrt(2.0) );
+		
+				core::scoring::electron_density::getDensityMap().dCCdx_res( atmid, resid, X, pose.residue(resid), pose, dCCdx );
+				numeric::xyzVector< core::Real > dEdx = ( 1.0 / p_null ) *
+																						0.5 *
+																						(-2.0/sqrt(M_PI)) *
+																						exp(-SQ( z_CC/sqrt(2.0) )) *
+																						1/sqrt(0.02) *
+																						dCCdx;
+		
+				numeric::xyzVector<core::Real> atom_x = X;
 				numeric::xyzVector<core::Real> const f2( dEdx );
-				numeric::xyzVector<core::Real> atom_y = -f2 + atom_x;
+				numeric::xyzVector<core::Real> atom_y = -f2 + atom_x;   // a "fake" atom in the direcion of the gradient
 				Vector const f1( atom_x.cross( atom_y ) );
-
-				//if ( atmid==2)
-				//	std::cerr << "at res " << resid
-				//	          << " f1=" << f1 << " f2=" << f2 << std::endl;
+		
 				F1 += weights[ elec_dens_window ] * f1;
 				F2 += weights[ elec_dens_window ] * f2;
 			}
@@ -484,8 +497,6 @@ ElecDensEnergy::eval_atom_derivative(
 		//////////////////////
 		if ( pose.residue(resid).aa() == core::chemical::aa_vrt) return;
 
-
-		// the derivative of edens _score_ as a function of dCC/dx
 		Real CC = core::scoring::electron_density::getDensityMap().getCachedScore( resid );
 		Real z_CC = CC / 0.1;
 		Real p_null = 0.5 * errfc( z_CC/sqrt(2.0) );

@@ -287,6 +287,7 @@ int grad3(double grad[3], double *Bcoeff, int dims[3], double X[3], int degree) 
 	int idx[3][6];
 	int i,j,k, pt, dim, gradDim;
 
+	double wtP[6], wtM[6];
 
 	// compute interpolation indexes
 	for (gradDim=0; gradDim<3; gradDim++) {
@@ -298,16 +299,13 @@ int grad3(double grad[3], double *Bcoeff, int dims[3], double X[3], int degree) 
 			// compute the interpolation weights
 			if (dim == gradDim) {
 				switch (degree) {
+					// to do: other orders
 					case 3L:
 						w = X[dim] - (double)idx[dim][1];
-						wt[dim][2] = 3.0 / 4.0 - w * w;
-						wt[dim][3] = (1.0 / 2.0) * (w - wt[dim][2] + 1.0);
-						wt[dim][1] = 1.0 - wt[dim][2] - wt[dim][3];
-
-						// fprintf(stderr, "*** % 10.4f ::: %10.4f   %10.4f   %10.4f\n", w, wt[dim][1], wt[dim][2], wt[dim][3]);
-						wt[dim][0]  =            - wt[dim][1];
-						wt[dim][1]  = wt[dim][1] - wt[dim][2];
-						wt[dim][2]  = wt[dim][2] - wt[dim][3];
+						wt[dim][3] = (1.0 / 2.0) * w * w;
+						wt[dim][0] = (w - 1.0/2.0) - wt[dim][3];
+						wt[dim][2] = 1.0 + wt[dim][0] - 2.0 * wt[dim][3];
+						wt[dim][1] = - wt[dim][0] - wt[dim][2] - wt[dim][3];
 						break;
 					default:
 						std::cerr << "Invalid spline degree\n";
@@ -379,8 +377,6 @@ int grad3(double grad[3], double *Bcoeff, int dims[3], double X[3], int degree) 
 
 		grad[gradDim] = 0.0;
 		for (i = 0; i <= degree; i++) {  // x
-			// fprintf(stderr, "%10.4f   %10.4f   %10.4f\n", wt[0][i], wt[1][i], wt[2][i]);
-
 			sum_jk = 0.0;
 			for (j = 0; j <= degree; j++) {  // y
 				sum_k = 0.0;
