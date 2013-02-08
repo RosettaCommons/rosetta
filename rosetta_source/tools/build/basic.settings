@@ -1201,8 +1201,8 @@ settings = {
 				    "flags" : {
                 # We don't use any C -- but if we did would it really
                 # be C99?  Are there portability issues?
-                "cc"        : [ "std=c99" ],
-                "cxx"       : [ "std=c++98" ],
+                "cc"        : [ "std=c99", "isystem external/boost_1_46_1/" ],
+                "cxx"       : [ "std=c++98", "isystem external/boost_1_46_1/" ],
                 "compile"   : [ "pipe", "ffor-scope" ],
                 # By default, warn as much as possible.
                 "warn"      : [ "W", "Wall", "pedantic", "Wno-long-long" ],

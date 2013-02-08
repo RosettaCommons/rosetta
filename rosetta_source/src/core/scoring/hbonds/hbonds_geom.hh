@@ -15,20 +15,20 @@
 #define INCLUDED_core_scoring_hbonds_hbonds_geom_hh
 
 // Package headers
-#include <core/scoring/hbonds/types.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/hbtrie/HBAtom.hh>
+#include <core/scoring/DerivVectorPair.fwd.hh>
+
 #include <core/scoring/hbonds/HBEvalTuple.hh>
 #include <core/scoring/hbonds/HBondDatabase.fwd.hh>
-#include <core/scoring/hbonds/HBondOptions.fwd.hh>
-#include <core/scoring/DerivVectorPair.fwd.hh>
+#include <core/scoring/hbonds/HBondOptions.hh>
+#include <core/scoring/hbonds/types.hh>
+#include <core/scoring/hbonds/hbtrie/HBAtom.fwd.hh>
 
 // Project headers
 #include <core/chemical/types.hh>
 #include <core/conformation/Residue.fwd.hh>
 
-#include <core/scoring/hbonds/hbtrie/HBAtom.fwd.hh>
 
+#include <numeric/constants.hh>
 
 
 
@@ -107,6 +107,15 @@ hbond_compute_energy(
 );
 
 ///@brief Fade the energy smoothly to zero over the energy range [-0.1, 0.1]
+///@detail Because of the additive functional form, in order to make
+///derivative continuous at the boundary of definition, we fade the
+///energy function smoothly to zero.
+///
+/// Check that f(x) = -0.025 + 0.5x - 2.5x^2 satisfies
+///     f(-.1) = -0.025 +   0.5*(-.1) - 2.5*(-.1)^2 = -.1
+///     f( .1) = -0.025 +    0.5*(.1) -  2.5*(.1)^2 = 0
+///    f'(-.1) =  0.5   - 2.5*2*(-.1)               = 1
+///     f'(.1) =  0.5   -  2.5*2*(.1)               = 0
 inline
 void
 fade_energy(
@@ -117,9 +126,90 @@ fade_energy(
 	Real & dE_dxH = DUMMY_DERIV,
 	Real & dE_dBAH = DUMMY_DERIV,
 	Real & dE_dchi = DUMMY_DERIV
-);
+) {
+	if(hbondoptions.fade_energy() && energy > -0.1) {
+		if(&dE_dxH != &DUMMY_DERIV){
+			dE_dr  *= 5*(0.1-energy);
+			dE_dxD *= 5*(0.1-energy);
+			dE_dxH *= 5*(0.1-energy);
+			dE_dBAH *= 5*(0.1-energy);
+			dE_dchi *= 5*(0.1-energy);
+		}
+		energy = -0.025 + 0.5*energy - 2.5*energy*energy;
+	}
+}
 
 
+//////////////////////////////////////////////////////////////////////////////
+///@begin bah_chi_compute_energy_sp2
+///
+///@brief
+///Evaluate the Base-Acceptor-Hydrogen angle and Base-Acceptor
+///torsion portion of the hydrogen bond energy and derivatives
+///
+///@details
+/// Formula #11
+///
+/// F (chi=0 or chi=pi)               | G (chi=pi/2 or chi=3*pi/2)  |
+///------\                   /--------|-----\_              _/------|-  m - 0.5
+///|      \                 /         |       \_          _/        |-  1
+///m       \               /          |         \_      _/          |
+///|        \     /-\     /        ---|           \----/            |-  d - 0.5
+///|_    |   \___/   \___/         _d_|                             |_  -0.5
+///      |<-l->|                      |                             |
+///      |     |<-BAH=2pi/3
+///      |
+///      |<-BAh=2pi/3 - l
+////
+///
+///BAH := Base-Acceptor-Hydrogen interior Angle
+///       BAH=pi when linear and BAH=pi/2 when perpendicular
+///
+///chi :  Torsion angle defined by ABase2-Base-Acceptor-Hydrogen
+///       The Sp2 orbials are in the ABase2-Base-Acceptor plane
+///       For Backbone acceptors ABase2=C-alpha
+///
+///  d := distance from minimum value of -0.5 at BAH=120 to BAH=180 in f
+///       defined by HBondOptions::sp2_BAH180_rise() which is set by
+///       -corrections:score:hb_sp2_BAH180_rise flag and
+///       defaults to 0.75
+///
+///  m := distance from minimum to maximum values of f
+///       must rise high enough so that
+///           E_fade_max = maxBAH_CHI + minAHD + minAHdist
+///                (0.1) = m + (minBAH_CHI) + (-0.5) + (-0.5)
+///                   m  = 1.6
+///  l := period/2 of the BAH=120 to BAH=60 piece of F
+///       emperically fit to be 0.357
+///
+///  F := d/2 * cos(3(pi-BAH) + d/2 - 0.5                        BAH > 2pi/3
+///       m/2 * cos(pi - (2pi/3 - BAH)/l) + m/2 - 0.5    2pi/3 > BAH > pi(2/3 - l)
+///       m-0.5                                    pi(2/3 - l) > BAH
+///
+///  G := d - 0.5                                                BAH > 2pi/3
+///       (m-d)/2 * cos(pi - (2pi/3 - BAH)/l) + (m-d)/2 + d + 0.5
+///                                                      2pi/3 > BAH > pi(2/3 - l)
+///       m-0.5                                    pi(2/3 - l) > BAH
+///
+///
+///  H := inteprolate smoothly betwen F and G going around chi
+///       (cos(2*chi) + 1)/2
+///
+///  E := Energy for BAH/CHI term
+///       H*F + (1-H)*G
+///
+/// dE/dchi := dH/dchi*f - dH/dchi*g
+///          = -sin(2*chi)*F + sin(2*chi)*G
+///
+/// dE/dBAH := H*dF/dBAH + (1-H)*dG/dBAH
+///
+/// dF/dBAH := 3 * d/2 * sin(3(pi-BAH))                           BAH > 2pi/3
+///            m/2 * -1/l * sin(pi - (2pi/3 - BAH)/l)     2pi/3 > BAH > pi(2/3 - l)
+///            0                                    pi(2/3 - l) > BAH
+///
+/// dG/dBAH := 0                                                  BAH > 2pi/3
+///            (m-d)/2 * -1/l * sin(pi - (2pi/3 - BAH)/)  2pi/3 > BAH > pi(2/3 - l)
+///            0                                    pi(2/3 - l) > BAH
 inline
 void
 bah_chi_compute_energy_sp2(
@@ -131,7 +221,46 @@ bah_chi_compute_energy_sp2(
 	Real & energy,
 	Real & dE_dBAH,
 	Real & dE_dchi
-);
+) {
+	using std::cos;
+	using std::sin;
+	using numeric::constants::d::pi;
+
+	Real const PI_minus_BAH( acos(xH) );
+	Real const BAH = pi - ( PI_minus_BAH );
+
+	Real const  H((cos(2*chi) + 1) * 0.5);
+	Real F(0), G(0);
+
+	if ( BAH >= pi * 2/3 ) {
+		F = d/2 * cos(3 * PI_minus_BAH) + d/2 - 0.5;
+		G = d - 0.5;
+	} else if ( BAH >= pi * (2/3 - l)) {
+		Real const outer_rise(cos(pi - (pi*2/3 -  BAH)/l));
+		F = m/2 * outer_rise + m/2 - 0.5;
+		G = (m - d)/2 * outer_rise + (m - d)/2 + d - 0.5;
+	} else {
+		F = m-0.5;
+		G = m-0.5;
+	}
+
+	energy += H*F + (1-H)*G;
+
+	if(&dE_dchi != &DUMMY_DERIV){
+		Real const dH_dchi(-1 * sin(2*chi));
+		Real dF_dBAH(0), dG_dBAH(0);
+		if ( BAH >= pi * 2/3 ) {
+			dF_dBAH = 3 * d/2 * sin(3 * PI_minus_BAH);
+		} else if ( BAH >= pi * (2/3 - l)) {
+			Real const d_outer_rise_dBAH( -1/l * sin(pi - (2*pi/3 - BAH)/l) );
+			dF_dBAH = m/2 * d_outer_rise_dBAH;
+			dG_dBAH = (m - d)/2 * d_outer_rise_dBAH;
+		}
+		dE_dchi = F*dH_dchi - G*dH_dchi;
+		dE_dBAH = H*dF_dBAH + (1-H)*dG_dBAH;
+	}
+}
+
 
 inline
 void
@@ -141,7 +270,18 @@ bah_chi_compute_energy_sp3(
 	Real & energy,
 	Real & dE_dBAH,
 	Real & dE_dchi
-);
+) {
+	// just add in a penalty directly to the energy sum; the chi-penalty
+	// is only multiplied in for the sp2 term.
+	Real const max_penalty = 0.25;
+	Real cos2ChiShifted = max_penalty * ( 1 + std::cos(chi)) / 2;
+	energy += cos2ChiShifted;
+
+	if(&dE_dBAH != &DUMMY_DERIV){
+		dE_dchi = -1 * max_penalty * std::sin(chi)/2;
+	}
+}
+
 
 /// @brief Evaluate the hydrogen bond energy and derivatives after having first calculated
 /// the HD and BA *u*nit vectors
