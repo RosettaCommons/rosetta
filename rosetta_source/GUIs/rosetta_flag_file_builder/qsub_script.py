@@ -13,6 +13,7 @@
 import os
 import sys
 import re
+import time
 from optparse import OptionParser, IndentedHelpFormatter
 
 """
@@ -228,6 +229,7 @@ def main(args):
                 offset = offset+10
                 run = options.qsub+' -d '+options.qsubtemp+'/'+rootjob+' -N '+pdb_jobname+' -V -q '+options.queue+' '+scriptname
                 if options.debug:
+                    time.sleep(5)
                     print 'Kicking Job number '+repr(x)+'_'+name
                     print "COMMAND: "+run
                     os.system(run)
@@ -247,6 +249,7 @@ def main(args):
             offset = offset+10
             run = options.qsub+' -d '+options.qsubtemp+'/'+options.jobname+' -N '+options.jobname+' -V -q '+options.queue+' '+scriptname
             if options.debug:
+                time.sleep(5)
                 print 'Kicking Job number '+repr(i)
                 print "COMMAND: "+run
                 os.system(run)
