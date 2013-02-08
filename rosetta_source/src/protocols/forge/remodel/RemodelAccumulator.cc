@@ -66,7 +66,7 @@ RemodelAccumulator::RemodelAccumulator(){
 }
 
 /// @brief value constructor
-RemodelAccumulator::RemodelAccumulator(WorkingRemodelSet & working_model){
+RemodelAccumulator::RemodelAccumulator( RemodelWorkingSet & working_model){
 	//check clustering info
 	cluster_switch_ = basic::options::option[basic::options::OptionKeys::remodel::use_clusters];
 

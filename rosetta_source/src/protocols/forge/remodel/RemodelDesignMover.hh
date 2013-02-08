@@ -47,7 +47,7 @@ public: // typedefs
 	typedef core::pack::task::PackerTask PackerTask;
 	typedef protocols::moves::MoverOP MoverOP;
 	typedef protocols::forge::remodel::RemodelData RemodelData;
-	typedef protocols::forge::remodel::WorkingRemodelSet RemodelWorkingSet;
+	typedef protocols::forge::remodel::RemodelWorkingSet RemodelWorkingSet;
 
 
 public: //constructor/destructor
@@ -67,9 +67,15 @@ public: // virtual constructors
 	virtual
 	MoverOP fresh_instance() const;
 
-public: // options
 
-public:
+public: // accessors
+
+	core::pack::task::PackerTaskOP &  task();
+	void scorefunction(ScoreFunctionOP const & sfxn);
+	//MoveMap const & movemap() const;
+	//PackerTask const & packertask() const;
+
+public: // options
 
 	void mode1_packertask(Pose & pose); // auto loop only
 	void mode2_packertask(Pose & pose); // auto loop with design neighbor
@@ -83,11 +89,14 @@ public:
 
 	void set_state( std::string state_tag );
 
-	bool find_disulfides_in_the_neighborhood(Pose & pose, utility::vector1<std::pair<Size, Size> > & disulf_partners);
-	void make_disulfide(Pose & pose, utility::vector1<std::pair<Size, Size> > & disulf_partners, core::kinematics::MoveMapOP mm);
+	bool find_disulfides_in_the_neighborhood( Pose & pose, utility::vector1<std::pair<Size, Size> > & disulf_partners );
+	void make_disulfide( Pose & pose, utility::vector1<std::pair<Size, Size> > & disulf_partners, core::kinematics::MoveMapOP mm );
 
-	virtual void apply( Pose & pose);
+	virtual void apply( Pose & pose );
 	virtual std::string get_name() const;
+	
+private:
+	void run_calculator( core::pose::Pose const & pose, std::string const & calculator, std::string const & calculation, utility::vector1_bool & residues );
 
 private: // data
 
@@ -99,17 +108,6 @@ private: // data
 //	PackerTaskOP packer_task_;
 	ScoreFunctionOP score_fxn_;
 //	MoveMap move_map_;
-
-public: // accessors
-
-	core::pack::task::PackerTaskOP &  task();
-
-
-	void scorefunction(ScoreFunctionOP const & sfxn);
-
-//	MoveMap const & movemap() const;
-
-//	PackerTask const & packertask() const;
 
 };
 

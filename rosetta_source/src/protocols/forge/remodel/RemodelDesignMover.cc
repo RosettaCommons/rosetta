@@ -13,37 +13,6 @@
 /// @author Yih-En Andrew Ban (yab@u.washington.edu)
 /// @author Possu Huang (possu@u.washington.edu)
 
-// unit headers
-#include <protocols/forge/remodel/RemodelDesignMover.hh>
-// AUTO-REMOVED #include <protocols/forge/remodel/RemodelMover.hh>
-#include <protocols/forge/remodel/RemodelRotamerLinks.hh>
-#include <protocols/forge/methods/util.hh>
-
-// package headers
-
-// project headers
-#include <basic/Tracer.hh>
-#include <basic/MetricValue.hh>
-#include <core/conformation/Residue.hh>
-#include <core/scoring/disulfides/DisulfideMatchingPotential.hh>
-#include <core/util/disulfide_util.hh>
-#include <core/conformation/util.hh>
-
-#include <core/scoring/ScoreFunction.hh>
-#include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/pose/metrics/CalculatorFactory.hh>
-#include <core/pack/pack_rotamers.hh>
-#include <core/pack/rotamer_set/RotamerLinks.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/remodel.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/packing.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask_.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
-// AUTO-REMOVED #include <protocols/toolbox/task_operations/RestrictOperationsBase.hh>
-#include <core/pack/task/ResfileReader.hh>
-// AUTO-REMOVED #include <protocols/forge/build/BuildInstruction.hh> // REQUIRED FOR WINDOWS
 
 // numeric headers
 #include <numeric/random/random.hh>
@@ -51,8 +20,28 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+#include <basic/Tracer.hh>
+#include <basic/MetricValue.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/remodel.OptionKeys.gen.hh>
 
-// boost headers
+#include <core/conformation/util.hh>
+#include <core/conformation/Residue.hh>
+#include <core/kinematics/MoveMap.hh>
+#include <core/pose/metrics/CalculatorFactory.hh>
+#include <core/pack/pack_rotamers.hh>
+#include <core/pack/rotamer_set/RotamerLinks.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/ResfileReader.hh>
+#include <core/scoring/disulfides/DisulfideMatchingPotential.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/util/disulfide_util.hh>
+
+// unit headers
+#include <protocols/forge/remodel/RemodelDesignMover.hh>
+#include <protocols/forge/remodel/RemodelRotamerLinks.hh>
+#include <protocols/forge/methods/util.hh>
+#include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
 
 // C++ headers
 
@@ -71,88 +60,139 @@ static numeric::random::RandomGenerator RG( 2342342 ); // magic number, don't ch
 
 // @brief default constructor
 RemodelDesignMover::RemodelDesignMover(){
-// has to reinitialize state before apply
+	// has to reinitialize state before apply
 	state_.clear();
 }
 
 /// @brief value constructor
-RemodelDesignMover::RemodelDesignMover(RemodelData const & remodel_data, RemodelWorkingSet const & working_model, ScoreFunctionOP const & sfxn)
-{
+RemodelDesignMover::RemodelDesignMover( RemodelData const & remodel_data, RemodelWorkingSet const & working_model, ScoreFunctionOP const & sfxn ) {
+
 	using namespace basic::options;
 	using core::pose::metrics::CalculatorFactory;
 	using protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator;
 
-  remodel_data_ = remodel_data;
+	remodel_data_ = remodel_data;
 	working_model_ = working_model;
 	archived_starting_task_ = working_model.task;
 	score_fxn_ = sfxn->clone();
 
-  // setup calculators
-  CalculatorFactory::Instance().remove_calculator( "neighborhood_calc" );
+	// setup calculators
+	CalculatorFactory::Instance().remove_calculator( "neighborhood_calc" );
 
-	std::set< core:: Size > und_pos;
+	std::set< Size > und_pos;
 
-  std::set< core::Size > uup = working_model.manager.union_of_intervals_containing_undefined_positions();
+	std::set< core::Size > uup = working_model.manager.union_of_intervals_containing_undefined_positions();
+	//for ( std::set<core::Size>::iterator i = uup.begin(); i!=uup.end(); i++){
+	//	TR << *i <<  " UUP in DesignMover" <<  std::endl;
+	//}
 
-	if (option[ OptionKeys::remodel::repeat_structure].user()){
-		Size repeatCount = option[ OptionKeys::remodel::repeat_structure];
-		for (Size rep = 0; rep < repeatCount ; rep++){
-			for (std::set< core::Size >::iterator it = uup.begin(); it != uup.end(); ++it){
+	if ( option[ OptionKeys::remodel::repeat_structure ].user() ) {
+		Size repeatCount = option[ OptionKeys::remodel::repeat_structure ];
+		for ( Size rep = 0; rep < repeatCount ; rep++ ) {
+			for ( std::set< Size >::iterator it = uup.begin(); it != uup.end(); ++it ) {
 			//DEBUG
-			//	std::cout << *it + remodel_data.blueprint.size()*rep << std::endl;
-			//	std::cout << "manger size"  << working_model.manager.union_of_intervals_containing_undefined_positions().size() <<  std::endl;
-			//	std::cout << *it  << std::endl;
+				//std::cout << *it + remodel_data.blueprint.size()*rep << std::endl;
+				//std::cout << "manger size"  << working_model.manager.union_of_intervals_containing_undefined_positions().size() <<  std::endl;
+				//std::cout << *it  << std::endl;
 				if ( !(*it+remodel_data.blueprint.size()*rep > (remodel_data.blueprint.size()*repeatCount)) ){ //Extrapolation of positions shouldn't go beyond the length of pose
 					und_pos.insert(*it + remodel_data.blueprint.size()*rep);
 				}
 			}
 		}
-	}
-	else {
+
+	} else {
 		und_pos = working_model.manager.union_of_intervals_containing_undefined_positions();
 	}
 
+	TR << "Creating NeighborhoodByDistanceCalculator using und_pos: [ ";
+	for ( std::set< Size >::iterator itr = und_pos.begin(); itr != und_pos.end(); itr++ ) {
+		TR << *itr << " ";
+	}
+	TR << "]" << std::endl;
 
-  CalculatorFactory::Instance().register_calculator(
-    "neighborhood_calc",
-    new NeighborhoodByDistanceCalculator( und_pos )
-  );
+	if ( und_pos.empty() ) {
+		TR << "Warning: union_of_intervals_containing_undefined_positions() returned empty set. NeighborhoodByDistanceCalculator could return undefined results." << std::endl;
+	}
+
+	CalculatorFactory::Instance().register_calculator( "neighborhood_calc", new NeighborhoodByDistanceCalculator( und_pos ) );
 
 }
-/// @brief copy constructor
 
 /// @brief default destructor
-  RemodelDesignMover::~RemodelDesignMover(){}
+RemodelDesignMover::~RemodelDesignMover(){}
 
 /// @brief clone this object
-  RemodelDesignMover::MoverOP RemodelDesignMover::clone() const {
+RemodelDesignMover::MoverOP RemodelDesignMover::clone() const {
   return new RemodelDesignMover( *this );
 }
 
-
 /// @brief create this type of object
-  RemodelDesignMover::MoverOP RemodelDesignMover::fresh_instance() const {
+RemodelDesignMover::MoverOP RemodelDesignMover::fresh_instance() const {
   return new RemodelDesignMover();
 }
 
-void RemodelDesignMover::apply( Pose & pose )
-{
+/// @brief packer task accessor
+core::pack::task::PackerTaskOP & RemodelDesignMover::task(){
+	return working_model_.task;
+}
+
+/// @brief score function setter
+void RemodelDesignMover::scorefunction( ScoreFunctionOP const & sfxn ) {
+	score_fxn_ = sfxn->clone();
+}
+
+std::string RemodelDesignMover::get_name() const {
+	return "RemodelDesignMover";
+}
+
+bool RemodelDesignMover::check_state() {
+	if (state_.empty()) {
+		return false;
+		TR << "state tag not set " << std::endl;
+	} else {
+		TR << "Design Mover state: " << state_ << std::endl;
+		return true;
+	}
+}
+
+void RemodelDesignMover::set_state( std::string state_tag ){
+	state_ = state_tag;
+	// reset the task
+	working_model_.task = archived_starting_task_;
+}
+
+
+
+///
+/// @begin RemodelDesignMover::apply
+///
+/// @brief
+/// Apply method for Mover.
+/// Checks value of option -remodel::design::no_design
+/// -remodel::design::find_neighbors
+/// -remodel::design::design_neigbors
+/// -remodel::design::skip_partial
+///
+void RemodelDesignMover::apply( Pose & pose ) {
+
 	using namespace basic::options;
-  if ( basic::options::option[basic::options::OptionKeys::remodel::design::no_design].user() ){
+
+	if ( option[ OptionKeys::remodel::design::no_design ].user() ) {
 		TR << "bypassing design due to invokation of -no_design" << std::endl;
 		return;
 	}
 
-
 	// make decision as to which mode to apply
 	bool manual = remodel_data_.has_design_info_;
-	bool neighbor = basic::options::option[basic::options::OptionKeys::remodel::design::find_neighbors].user();
-	bool design = basic::options::option[basic::options::OptionKeys::remodel::design::design_neighbors].user();
+	bool neighbor = option[ OptionKeys::remodel::design::find_neighbors ].user();
+	bool design = option[ OptionKeys::remodel::design::design_neighbors ].user();
 
-	if (!check_state()){
+	if ( !check_state() ) {
 		basic::Error() << "check_state failed, has to set_state first " << std::endl;
 	}
 
+	// based on the values of the variables manual, neighbor and design, figure out which "mode" of design we're doing
+	// and call the appropriate packertask function
 	if ( manual ){
 		if (neighbor){
 			if (design){
@@ -175,15 +215,14 @@ void RemodelDesignMover::apply( Pose & pose )
 		}
 	}
 
-	if (option[ OptionKeys::remodel::repeat_structure].user()){
+	if ( option[ OptionKeys::remodel::repeat_structure ].user() ) {
 		//try turning off bumpcheck
-    //TR << "bumpcheck off" << std::endl;
-    working_model_.task->set_bump_check(true);
+		//TR << "bumpcheck off" << std::endl;
+		working_model_.task->set_bump_check( true );
 
-
-		//make rotamer links
-		RemodelRotamerLinksOP  linkOP = new RemodelRotamerLinks;
-		linkOP->apply(pose, *working_model_.task);
+		// make rotamer links
+		RemodelRotamerLinksOP linkOP = new RemodelRotamerLinks;
+		linkOP->apply( pose, *working_model_.task );
 	}
 
 	if (!strcmp(state_.c_str(), "stage")){
@@ -229,49 +268,25 @@ void RemodelDesignMover::apply( Pose & pose )
 //	core::pack::pack_rotamers(pose, *scorefxn , TF->create_packer_task(pose));
 }
 
-std::string
-RemodelDesignMover::get_name() const {
-	return "RemodelDesignMover";
-}
 
-bool RemodelDesignMover::check_state(){
-	if (state_.empty()) {
-		return false;
-		TR << "state tag not set " << std::endl;
-	} else {
-		TR << "Design Mover State: " << state_ << std::endl;
-		return true;
+void RemodelDesignMover::run_calculator( core::pose::Pose const & pose, std::string const & calculator, std::string const & calculation, utility::vector1_bool & residues ) {
+
+	runtime_assert( residues.size() == pose.total_residue() );
+
+	// find the set of residues
+	typedef std::set< core::Size > SizeSet;
+	basic::MetricValue< SizeSet > mv_sizeset;
+	pose.metric( calculator, calculation, mv_sizeset );
+	SizeSet const & sizeset( mv_sizeset.value() );
+	//TR << "runCalculator " << std::endl;
+
+	// insert this into the vector
+	for( SizeSet::const_iterator it(sizeset.begin()), end(sizeset.end()) ; it != end; ++it ) {
+		//TR << *it <<  " debug run_calc " << std::endl;
+		residues[*it] = true;
 	}
-}
 
-void RemodelDesignMover::set_state( std::string state_tag ){
-		state_ = state_tag;
-		//reset the task
-		working_model_.task = archived_starting_task_;
-}
-
-
-void
-run_calculator(
-									core::pose::Pose const & pose,
-									std::string const & calculator,
-									std::string const & calculation,
-									utility::vector1_bool & residues )
-{
-  runtime_assert(residues.size() == pose.total_residue());
-
-  //find the set of residues
-  typedef std::set< core::Size > SizeSet;
-  basic::MetricValue< SizeSet > mv_sizeset;
-  pose.metric(calculator, calculation, mv_sizeset);
-  SizeSet const & sizeset(mv_sizeset.value());
-	//TR << "runCAlculator " << std::endl;
-  //insert this into the vector
-  for(SizeSet::const_iterator it(sizeset.begin()), end(sizeset.end()) ; it != end; ++it){
-    //TR << *it <<  " debug run_calc " << std::endl;
-    residues[*it] = true;  }
-
-  return;
+	return;
 }
 
 void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskOP &task, bool core, bool boundary, bool surface){
@@ -515,11 +530,11 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 	core::Energy  match_r;
 	core::Energy  match_rt;
 
-//initialize default
+	// initialize default
 	Size landingRangeStart = 1;
 	Size landingRangeStop = pose.total_residue();
 
-//alternatively via blueprint
+	// alternatively via blueprint
 	if (remodel_data_.disulfLandingRange.size() != 0){
 		landingRangeStart = remodel_data_.disulfLandingRange[0];
 		landingRangeStop = remodel_data_.disulfLandingRange[1];
@@ -534,89 +549,106 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 
 
 	TR << "FINDING DISULF" << std::endl;
-	utility::vector1_bool modeled_clusters(pose.total_residue(), false);
-	utility::vector1_bool residue_clusters(pose.total_residue(), false);
-	utility::vector1<Size> cen_res;
-	utility::vector1<Size> nbr_res;
-	run_calculator(pose, "neighborhood_calc", "neighbors", residue_clusters);
-	run_calculator(pose, "neighborhood_calc", "central_residues", modeled_clusters);
+	utility::vector1< bool > modeled_clusters( pose.total_residue(), false );
+	utility::vector1< bool > residue_clusters( pose.total_residue(), false );
+	run_calculator( pose, "neighborhood_calc", "neighbors", residue_clusters );
+	run_calculator( pose, "neighborhood_calc", "central_residues", modeled_clusters );
 
-//manual overwrite of the disulfide mobile range
-	if (remodel_data_.disulfMobileRange.size() != 0){
+	TR << "residue_clusters: [ ";
+	for ( Size ii = 1; ii <= residue_clusters.size(); ++ii ) {
+		if ( residue_clusters[ ii ] == true ) {
+			TR << ii << " ";
+		}
+	}
+	TR << "]" << std::endl;
 
+	TR << "modeled_clusters: [ ";
+	for ( Size ii = 1; ii <= modeled_clusters.size(); ++ii ) {
+		if ( modeled_clusters[ ii ] == true ) {
+			TR << ii << " ";
+		}
+	}
+	TR << "]" << std::endl;
+	
+	// manual overwrite of the disulfide mobile range
+	if ( remodel_data_.disulfMobileRange.size() != 0 ) {
 		Size i = 1;
-
-		for (utility::vector1_bool::iterator itr=modeled_clusters.begin(), end=modeled_clusters.end();  itr !=end; itr++){
+		for ( utility::vector1_bool::iterator itr = modeled_clusters.begin(); itr != modeled_clusters.end(); itr++) {
 
 			*itr = false;
-
-			if ( i == remodel_data_.disulfMobileRange[0] ){
-				*itr=true;
+			if ( i == remodel_data_.disulfMobileRange[0] ) {
+				*itr = true;
 				TR << "Use disulf mobile range start: " << i << std::endl;
-			}
-			else if (i > remodel_data_.disulfMobileRange[0] && i < remodel_data_.disulfMobileRange[1]){
-        *itr=true;
+		 	} else if ( i > remodel_data_.disulfMobileRange[0] && i < remodel_data_.disulfMobileRange[1] ) {
+				*itr = true;
 			}
 			else if ( i == remodel_data_.disulfMobileRange[1] ){
-				*itr=true;
+				*itr = true;
 				TR << "Use disulf mobile range stop: " << i << std::endl;
 			}
 			i++;
 		}
+	} else {
+		TR << "RemodelData disulfMobileRange not overwritten because it was not initialized previously." << std::endl;
 	}
 
-//debug
-	Size i=1;
-	for (utility::vector1_bool::iterator itr=modeled_clusters.begin(), end=modeled_clusters.end();  itr !=end; itr++){
-	//TR << *itr<< std::endl;
-//		if (modeled_clusters[i] == 0 && residue_clusters[i] == 1) {
-		if ( residue_clusters[i] == 1) {
-	//		TR << "neighbor " << i <<  std::endl;
-			nbr_res.push_back(i);
+	// figure out which positions are "central" positions - I presume these are positions from which DS bonds can emanate.
+	// then figure out which positions are not "central" but still "modeled". I assume these are the disulfide landing range
+	// positions.
+	utility::vector1<Size> cen_res;
+	utility::vector1<Size> nbr_res;
+	for ( Size ii = 1; ii <= modeled_clusters.size(); ++ii ) {
+		if ( modeled_clusters[ ii ] == 1 ) {
+			TR << "central " << ii <<  std::endl;
+			cen_res.push_back( ii );
 		}
-		if (modeled_clusters[i] == 1){
-	//		TR << "central " << i <<  std::endl;
-			cen_res.push_back(i);
+		if ( modeled_clusters[ ii ] == 0 && residue_clusters[ ii ] == 1 ) {
+			TR << "neighbor " << ii <<  std::endl;
+			nbr_res.push_back( ii );
 		}
-	i++;
 	}
+	
 	TR << "central residues: ";
-	for (utility::vector1<Size>::iterator itr = cen_res.begin(), end=cen_res.end(); itr!=end; itr++){
+	for ( utility::vector1<Size>::iterator itr = cen_res.begin(), end=cen_res.end(); itr!=end; itr++ ) {
 		TR << *itr << ",";
 	}
 	TR << std::endl;
 
 	TR << "neighbor residues: ";
-	for (utility::vector1<Size>::iterator itr = nbr_res.begin(), end=nbr_res.end(); itr!=end; itr++){
+	for ( utility::vector1<Size>::iterator itr = nbr_res.begin(), end=nbr_res.end(); itr!=end; itr++ ) {
 		TR <<  *itr << ",";
 	}
 	TR << std::endl;
 
-	for (utility::vector1<Size>::iterator itr = cen_res.begin(), end=cen_res.end(); itr!=end; itr++){
-		for (utility::vector1<Size>::iterator itr2 = nbr_res.begin(), end2=nbr_res.end(); itr2!=end2 ; itr2++){
-			//TR << "DISULF " <<  *itr << "x" << *itr2 << std::endl;
-			//disance check
-			if (pose.residue(*itr).aa() != aa_gly && pose.residue(*itr2).aa() != aa_gly){
-			//TR << "DISULF " <<  *itr << "x" << *itr2 << std::endl;
-			Real dist = pose.residue(*itr).xyz("CB").distance_squared(pose.residue(*itr2).xyz("CB"));
-			if (dist > 25){
-			//TR << "TOO FAR " << dist << std::endl;
-				}
-				else {
-					disulfPot.score_disulfide(pose.residue(*itr), pose.residue(*itr2), match_t, match_r, match_rt);
-					//TR << "match_t " << match_t << std::endl;
-					//TR << "match_r " << match_r << std::endl;
-					int seqGap = (int)*itr2-(int)*itr;
-					if (match_rt < option[OptionKeys::remodel::match_rt_limit] && std::abs(seqGap)>1 && (*itr2) <= landingRangeStop && (*itr2) >= landingRangeStart){
-					TR << "DISULF possible " << dist << std::endl;
-					TR << "DISULF " <<  *itr << "x" << *itr2 << std::endl;
-					TR << "match_rt " << match_rt << std::endl;
-						std::pair<Size, Size> temp_pair;
-						temp_pair = std::make_pair(*itr, *itr2);
-						disulf_partners.push_back(temp_pair);
+	for ( utility::vector1<Size>::iterator itr = cen_res.begin(), end=cen_res.end(); itr!=end; itr++ ) {
+		for ( utility::vector1<Size>::iterator itr2 = nbr_res.begin(), end2=nbr_res.end(); itr2!=end2 ; itr2++ ) {
+			TR << "DISULF trying disulfide between " << *itr << " and " << *itr2 << std::endl;
+			// distance check
+			if ( pose.residue(*itr).aa() != aa_gly && pose.residue(*itr2).aa() != aa_gly ) {
+				//TR << "DISULF " <<  *itr << "x" << *itr2 << std::endl;
+
+				Real dist_squared = pose.residue(*itr).xyz("CB").distance_squared(pose.residue(*itr2).xyz("CB"));
+				if ( dist_squared > 25 ) {
+					TR << "DISULF \tTOO FAR. CB-CB distance squared: " << dist_squared << std::endl;
+
+				} else {
+					disulfPot.score_disulfide( pose.residue(*itr), pose.residue(*itr2), match_t, match_r, match_rt );
+					TR << "DISULF \tmatch_t: " << match_t << ", match_r: " << match_r << ", match_rt: " << match_rt << std::endl;
+					int seqGap = (int)*itr2 - (int)*itr;
+					if ( match_rt < option[OptionKeys::remodel::match_rt_limit] && std::abs( seqGap ) > 1 && (*itr2) <= landingRangeStop && (*itr2) >= landingRangeStart ) {
+						TR << "DISULF possible " << dist_squared << std::endl;
+						TR << "DISULF " <<  *itr << "x" << *itr2 << std::endl;
+						TR << "match_rt " << match_rt << std::endl;
+						std::pair< Size, Size > temp_pair;
+						temp_pair = std::make_pair( *itr, *itr2 );
+						disulf_partners.push_back( temp_pair );
 						pass = 1;
+					} else {
+						TR << "DISULF \tFailed match_rt_limit check." << std::endl;
 					}
 				}
+			} else {
+				TR << "DISULF \tFailed glycine check. Cysteines cannot replace glycine positions in the native pose." << std::endl;
 			}
 		}
 	}
@@ -760,15 +792,6 @@ void RemodelDesignMover::mode6_packertask(Pose & pose){ // manual with auto repa
 		}
 	}
 }
-core::pack::task::PackerTaskOP &
-RemodelDesignMover::task(){
-	return working_model_.task;
-}
-
-void RemodelDesignMover::scorefunction( ScoreFunctionOP const & sfxn) {
-	score_fxn_ = sfxn->clone();
-}
-
 
 
 

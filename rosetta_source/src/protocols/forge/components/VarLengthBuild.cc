@@ -527,9 +527,8 @@ VarLengthBuild::get_name() const {
 
 /// @brief run centroid level protocol on given Pose
 /// @return true if regions modeled within tolerances, false otherwise
-bool VarLengthBuild::centroid_build(
-	Pose & pose
-) {
+bool VarLengthBuild::centroid_build( Pose & pose ) {
+
 	using core::fragment::picking_old::FragmentLibraryManager;
 	using core::kinematics::MoveMap;
 	using protocols::loops::Loop;
@@ -727,7 +726,7 @@ bool VarLengthBuild::centroid_build(
 
 	if ( (!ignore_cmdline_enzdes_cstfile_) && basic::options::option[basic::options::OptionKeys::enzdes::cstfile].user() ){
 
-    protocols::forge::remodel::RemodelEnzdesCstModuleOP cstOP = new protocols::forge::remodel::RemodelEnzdesCstModule(remodel_data_);
+		protocols::forge::remodel::RemodelEnzdesCstModuleOP cstOP = new protocols::forge::remodel::RemodelEnzdesCstModule(remodel_data_);
 
 		//safety
 		pose.remove_constraints();
@@ -736,11 +735,11 @@ bool VarLengthBuild::centroid_build(
 		//wipe out observer too
 		pose.observer_cache().set( core::pose::datacache::CacheableObserverType::ENZDES_OBSERVER, NULL , false);
 
-    //RemodelEnzdesCstModule cst(remodel_data);
-    cstOP->use_backbone_only_blocks();
-    cstOP->apply(pose);
-    cstOP->enable_constraint_scoreterms(sfx_);
-  }
+		//RemodelEnzdesCstModule cst(remodel_data);
+		cstOP->use_backbone_only_blocks();
+		cstOP->apply(pose);
+		cstOP->enable_constraint_scoreterms(sfx_);
+	}
 
 	if (basic::options::option[ basic::options::OptionKeys::constraints::cst_file ].user()){
 				//safety
@@ -777,6 +776,7 @@ bool VarLengthBuild::centroid_build(
 	for ( Loops::const_iterator l = loops->begin(), le = loops->end(); l != le && cbreaks_pass; ++l ) {
 		if ( l->cut() > 0 ) {
 			Real const c = linear_chainbreak( pose, l->cut() );
+			TR << "centroid_build: loop: " << l->start() << "-" << l->stop() << ", final chainbreak = " << c << ", max_linear_chainbreak_: " << max_linear_chainbreak_ << std::endl;
 			TR << "centroid_build: final chainbreak at " << l->cut() << " = " << c << " max tolerance " << max_linear_chainbreak_ <<  std::endl;
 			cbreaks_pass = c <= max_linear_chainbreak_;
 		}

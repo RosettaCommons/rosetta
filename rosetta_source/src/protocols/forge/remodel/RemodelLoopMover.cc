@@ -65,6 +65,11 @@
 #include <core/scoring/constraints/ResidueTypeLinkingConstraint.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
 
+// only needed for intermediate output
+//#include <protocols/jd2/JobDistributor.hh>
+//#include <protocols/jd2/JobOutputter.hh>
+//#include <protocols/jd2/Job.hh>
+
 // numeric headers
 #include <numeric/random/random.hh>
 #include <numeric/random/random_permutation.hh>
@@ -78,7 +83,6 @@
 #include <sstream>
 #include <utility>
 
-#include <protocols/jd2/JobDistributor.fwd.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
@@ -934,15 +938,17 @@ void RemodelLoopMover::repeat_propagation( //utility function
 }
 
 
-/// @brief apply defined moves to given Pose
-/// @remarks Sets protocols::moves::MS_SUCCESS upon successful closure of
-///  all loops, otherwise sets protocols::moves::FAIL_RETRY.
+///
+/// @begin RemodelLoopMover::apply
+///
+/// @remarks Sets protocols::moves::MS_SUCCESS upon successful closure of all loops, otherwise sets protocols::moves::FAIL_RETRY.
+///
 void RemodelLoopMover::apply( Pose & pose ) {
 
-  using namespace basic::options;
-  using namespace core::scoring::constraints;
+	using namespace basic::options;
+	using namespace core;
 	using core::kinematics::FoldTree;
-	using protocols::jd2::JobDistributor;
+	//using protocols::jd2::JobDistributor;
 	using protocols::forge::methods::fold_tree_from_pose;
 
 	// archive
@@ -950,53 +956,52 @@ void RemodelLoopMover::apply( Pose & pose ) {
 	//std::cout << "archived foldtree " << archive_ft << std::endl;
 
 	FoldTree sealed_ft;
-	if (core::pose::symmetry::is_symmetric(pose) ) {
-		sealed_ft = core::pose::symmetry::sealed_symmetric_fold_tree( pose );
+	if ( pose::symmetry::is_symmetric(pose) ) {
+		sealed_ft = pose::symmetry::sealed_symmetric_fold_tree( pose );
 	} else {
-			sealed_ft = fold_tree_from_pose( pose, pose.fold_tree().root(), MoveMap() ); // used during structure accumulation
+		sealed_ft = fold_tree_from_pose( pose, pose.fold_tree().root(), MoveMap() ); // used during structure accumulation
 	}
-	if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
-			repeat_generation_with_additional_residue(pose, repeat_pose_);
 
-			//take care of constraints:
+	if ( option[ OptionKeys::remodel::repeat_structure ].user() ) {
+		repeat_generation_with_additional_residue(pose, repeat_pose_);
 
-			//user defined constraint from file, make sure to do this first as it
-			//replaces cst object in pose and that wipes out everything already set.
+		// take care of constraints:
 
-			//only use this type of cst file in this case
-			if (basic::options::option[ OptionKeys::constraints::cst_file ].user()){
+		// user defined constraint from file, make sure to do this first as it
+		// replaces cst object in pose and that wipes out everything already set.
 
-				protocols::simple_moves::ConstraintSetMoverOP repeat_constraint = new protocols::simple_moves::ConstraintSetMover();
-				repeat_constraint->apply( repeat_pose_ );
+		// only use this type of cst file in this case
+		if ( option[ OptionKeys::constraints::cst_file ].user() ) {
+			protocols::simple_moves::ConstraintSetMoverOP repeat_constraint = new protocols::simple_moves::ConstraintSetMover();
+			repeat_constraint->apply( repeat_pose_ );
+		}
+
+		/*// ResidueTypeLinkingConstraints
+		Size repeat_number = option[ OptionKeys::remodel::repeat_structure ];
+		Real bonus = 10;
+		//std::cout << "RESIDUETYPELINKING CST" << std::endl;
+		Size segment_length = ( repeat_pose_.n_residue() ) / repeat_number;
+		for ( Size rep = 1; rep < repeat_number; rep++ ) { // from 1 since first segment don't need self-linking
+			for ( Size res = 1; res <= segment_length; res++ ) {
+				repeat_pose_.add_constraint( new scoring::constraints::ResidueTypeLinkingConstraint( repeat_pose_, res, res+(segment_length*rep), bonus ) );
+				//std::cout << res << " " << res+(segment_length*rep) << std::endl;
 			}
-/*
-			// ResidueTypeLinkingConstraints
-			Size repeat_number = basic::options::option[ OptionKeys::remodel::repeat_structure];
-			Real bonus = 10;
-			//std::cout << "RESIDUETYPELINKING CST" << std::endl;
-		  Size segment_length = (repeat_pose_.n_residue())/repeat_number;
-		  for (Size rep = 1; rep < repeat_number; rep++ ){ // from 1 since first segment don't need self-linking
-			  for (Size res = 1; res <= segment_length; res++){
-					 repeat_pose_.add_constraint( new ResidueTypeLinkingConstraint(repeat_pose_, res, res+(segment_length*rep), bonus));
-	//				std::cout << res << " " << res+(segment_length*rep) << std::endl;
-			  }
-		  }
-			*/
-/*
-			std::stringstream templateRangeSS;
-			templateRangeSS << "1-" << segment_length;
+		}*/
 
-			//Dihedral (NCS) Constraints
-			//std::cout << "NCS CST" << std::endl;
-			protocols::simple_moves::symmetry::SetupNCSMover setup_ncs;
-		  for (Size rep = 1; rep < repeat_number; rep++){ // from 1 since first segment don't need self-linking
-				std::stringstream targetSS;
-				targetSS << 1+(segment_length*rep) << "-" << segment_length + (segment_length*rep);
-		//		std::cout << templateRangeSS.str() << " " << targetSS.str() << std::endl;
+		/*std::stringstream templateRangeSS;
+		templateRangeSS << "1-" << segment_length;
 
-					setup_ncs.add_group(templateRangeSS.str(), targetSS.str());
-		  }
-*/
+		// Dihedral (NCS) Constraints
+		//std::cout << "NCS CST" << std::endl;
+		protocols::simple_moves::symmetry::SetupNCSMover setup_ncs;
+		for (Size rep = 1; rep < repeat_number; rep++){ // from 1 since first segment don't need self-linking
+			std::stringstream targetSS;
+			targetSS << 1+(segment_length*rep) << "-" << segment_length + (segment_length*rep);
+			//std::cout << templateRangeSS.str() << " " << targetSS.str() << std::endl;
+
+			setup_ncs.add_group(templateRangeSS.str(), targetSS.str());
+		}*/
+
 
 /*   If want cyclize peptide in frag insertion, uncomment here.  But in
  *   practice, it seems to screw up more than helping.  So currently do
@@ -1026,12 +1031,12 @@ void RemodelLoopMover::apply( Pose & pose ) {
 	// mark linear chainbreak in scoring function; this will be incremented
 	// within simultaneous and independent stages
 	ScoreFunctionOP sfxOP = sfx_;
-	sfxOP->set_weight( core::scoring::linear_chainbreak, 0.0 );
+	sfxOP->set_weight( scoring::linear_chainbreak, 0.0 );
 
 	//REPEAT TEST
-	if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
-		sfxOP->set_weight(core::scoring::atom_pair_constraint, 1.0 * basic::options::option[ OptionKeys::remodel::repeat_structure] );
-		}
+	if ( option[ OptionKeys::remodel::repeat_structure].user() ) {
+		sfxOP->set_weight( scoring::atom_pair_constraint, 1.0 * option[ OptionKeys::remodel::repeat_structure] );
+	}
 
 	// randomize loops
 	if( randomize_loops_ ) {
@@ -1044,10 +1049,10 @@ void RemodelLoopMover::apply( Pose & pose ) {
 	// setup monte carlo
 	Real const temp = temperature_;
 	MonteCarlo mc( *sfxOP, temp ); // init without pose
-	if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
-				repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
-				(*sfxOP)(repeat_pose_);
-	      mc.reset(repeat_pose_);
+	if ( option[ OptionKeys::remodel::repeat_structure].user() ) {
+		repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
+		(*sfxOP)(repeat_pose_);
+		mc.reset(repeat_pose_);
 	}
 	else {
 			mc.reset(pose);
@@ -1056,6 +1061,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 
 
 	for ( Size attempt = 1; attempt <= allowed_closure_attempts_; ++attempt ) {
+
 		TR << "* closure_attempt " << attempt << std::endl;
 
 		// reset score function at the beginning of each attempt
@@ -1080,22 +1086,22 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		// check to see if all loops closed, if so rescore w/out chainbreak
 		// and store in accumulator
 		if ( check_closure_criteria( pose ) ) {
-			//make a pointer copy for storage, for REPEATs, store only the monomer
-			//pose
+			// make a pointer copy for storage, for REPEATs, store only the monomer pose
 			PoseOP pose_prime = new Pose( pose );
 			pose_prime->fold_tree( sealed_ft );
 
-			//this is for scoring in repeat context
-			if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
-					repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
-					(*sfxOP)(repeat_pose_);
+			// this is for scoring in repeat context
+			if ( option[ OptionKeys::remodel::repeat_structure].user() ) {
+				repeat_propagation( pose, repeat_pose_, option[ OptionKeys::remodel::repeat_structure] );
+				(*sfxOP)(repeat_pose_);
 
-					//this has to be set because when copying to pose_prime, it lost the
-					//first phi angle
-					pose_prime->set_phi(1, repeat_pose_.phi(1));
+				//this has to be set because when copying to pose_prime, it lost the
+				//first phi angle
+				pose_prime->set_phi(1, repeat_pose_.phi(1));
 
-					accumulator.insert( std::make_pair( repeat_pose_.energies().total_energy(), pose_prime ) );
-			}	else {
+				accumulator.insert( std::make_pair( repeat_pose_.energies().total_energy(), pose_prime ) );
+
+			} else {
 				(*sfxOP)( *pose_prime );
 				accumulator.insert( std::make_pair( pose_prime->energies().total_energy(), pose_prime ) );
 			}
@@ -1103,52 +1109,50 @@ void RemodelLoopMover::apply( Pose & pose ) {
 			// now randomize the loops again for a new starting point
 			if ( attempt < allowed_closure_attempts_ ) {
 				randomize_stage( pose );
-				if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
-					repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
+				if ( option[ OptionKeys::remodel::repeat_structure].user() ) {
+					repeat_propagation( pose, repeat_pose_, option[ OptionKeys::remodel::repeat_structure] );
 					(*sfxOP)(repeat_pose_);
 					mc.reset( repeat_pose_ );
 				} else{
-						mc.reset( pose);
+					mc.reset( pose);
 				}
 			}
+
 		} else {
 			// Still broken, so perform a random smallest-mer insertion into each
 			// loop before cycling again, otherwise too easy for the trajectory to
 			// get trapped.
 
 			insert_random_smallestmer_per_loop( pose, true );
-			if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
-				repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
-					(*sfxOP)(repeat_pose_);
+			if ( option[ OptionKeys::remodel::repeat_structure].user() ) {
+				repeat_propagation(pose, repeat_pose_, option[ OptionKeys::remodel::repeat_structure] );
+				(*sfxOP)(repeat_pose_);
 				mc.reset( repeat_pose_ );
 			} else{
 				mc.reset( pose);
 			}
 		}
 
-//		std::ostringstream ss;
-//		ss << "rlm." << attempt << ".";
-//		JobDistributor::get_instance()->job_outputter()->other_pose(
-//			JobDistributor::get_instance()->current_job(),
-//			pose,
-//			ss.str()
-//		);
+		//std::ostringstream ss;
+		//ss << "rlm." << attempt << ".";
+		//JobDistributor::get_instance()->job_outputter()->other_pose( JobDistributor::get_instance()->current_job(), pose, ss.str() );
 	}
 
 	TR << "* " << accumulator.size() << " / " << allowed_closure_attempts_ << "   closed / attempts " << std::endl;
 
 	// return the best structure if available, otherwise mark failure
 	if ( !accumulator.empty() ) {
-		if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
-				pose = *( accumulator.begin()->second );
-				repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
-				(*sfxOP)(repeat_pose_);
-				pose = repeat_pose_;
+		if ( option[ OptionKeys::remodel::repeat_structure].user() ) {
+			pose = *( accumulator.begin()->second );
+			repeat_propagation(pose, repeat_pose_, option[ OptionKeys::remodel::repeat_structure] );
+			(*sfxOP)(repeat_pose_);
+			pose = repeat_pose_;
 		} else {
 			pose = *( accumulator.begin()->second );
 		}
 
 		set_last_move_status( protocols::moves::MS_SUCCESS );
+
 	} else {
 
 		// if use bypass_closure flag, all failure is passed as success.  the
@@ -1180,10 +1184,10 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		}
 	}
 
-	if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+	if ( option[ OptionKeys::remodel::repeat_structure].user() ) {
 		//do nothing?
 	} else {
-	// set original topology
+		// set original topology
 		pose.fold_tree( archive_ft );
 	}
 
@@ -1194,9 +1198,16 @@ RemodelLoopMover::get_name() const {
 	return "RemodelLoopMover";
 }
 
-/// @brief randomize loops
+///
+/// @begin RemodelLoopMover::randomize_stage
+///
+/// @brief
+/// randomize loops
+///
 void RemodelLoopMover::randomize_stage( Pose & pose ) {
 
+	using namespace basic::options;
+	using namespace core;
 	using core::kinematics::FoldTree;
 
 	TR << "** randomize_stage" << std::endl;
@@ -1210,7 +1221,7 @@ void RemodelLoopMover::randomize_stage( Pose & pose ) {
 	enforce_false_movemap( movemap );
 
 	// set appropriate topology
-	if ( 	keep_input_foldtree_ ){
+	if ( keep_input_foldtree_ ) {
 	}
 	else {
 		if ( core::pose::symmetry::is_symmetric( pose ) ) {
@@ -1808,10 +1819,11 @@ void RemodelLoopMover::simultaneous_stage(
 	Real const cbreak_increment
 )
 {
+	using namespace basic::options;
+	using namespace core;
 	using core::kinematics::FoldTree;
 
- 	using namespace basic::options;
-  using namespace OptionKeys::remodel;
+	using namespace OptionKeys::remodel;
 	using protocols::loops::add_cutpoint_variants;
 	using protocols::loops::loop_closure::ccd::ccd_moves;
 	using protocols::loops::remove_cutpoint_variants;
@@ -1836,9 +1848,8 @@ void RemodelLoopMover::simultaneous_stage(
     }
   }
 */
-  loops::LoopsOP loops_to_model = new loops::Loops(*loops_);
+	loops::LoopsOP loops_to_model = new loops::Loops(*loops_);
 	TR << "   n_loops = " << loops_to_model->size() << std::endl;
-
 	if ( loops_to_model->size() == 0 ) { // nothing to do...
 		return;
 	}
@@ -1855,9 +1866,7 @@ void RemodelLoopMover::simultaneous_stage(
 */
 	//TR << "starting foldtree in SIMU stage " << pose.fold_tree() << std::endl;
 
-	// Create fragment movers for each loop for each fragment set.  We want
-	// to allow an equal probability of movement per-loop, rather than
-	// per-residue.
+	// Create fragment movers for each loop for each fragment set.  We want to allow an equal probability of movement per-loop, rather than per-residue.
 	FragmentMoverOPs frag_movers = create_per_loop_fragment_movers( loops_to_model );
 	assert( !frag_movers.empty() );
 
@@ -1865,12 +1874,12 @@ void RemodelLoopMover::simultaneous_stage(
 	if ( keep_input_foldtree_ ){
 	}
 	else {
-		if ( core::pose::symmetry::is_symmetric( pose ) ) {
-			core::kinematics::FoldTree f_new;
+		if ( pose::symmetry::is_symmetric( pose ) ) {
+			kinematics::FoldTree f_new;
 			protocols::loops::fold_tree_from_loops( pose, *loops_to_model, f_new );
 			pose.fold_tree( f_new );
 		} else {
-		pose.fold_tree( protocols::forge::methods::fold_tree_from_loops( pose, *loops_to_model ) );
+			pose.fold_tree( protocols::forge::methods::fold_tree_from_loops( pose, *loops_to_model ) );
 		}
 	}
 
@@ -1878,14 +1887,14 @@ void RemodelLoopMover::simultaneous_stage(
 	if (pose.num_jump() >0){
 		add_cutpoint_variants( pose );
 	}
-	if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
-		repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
+	if ( option[ OptionKeys::remodel::repeat_structure ].user() ) {
+		repeat_propagation( pose, repeat_pose_, option[ OptionKeys::remodel::repeat_structure ] );
 			if (repeat_pose_.num_jump()>0){
 				add_cutpoint_variants( repeat_pose_ );
 			}
 		mc.reset(repeat_pose_);
-	}	else{
-	mc.reset( pose );
+	} else {
+		mc.reset( pose );
 	}
 
 	// setup master movemap covering all loops -- used only for tracking purposes
@@ -1905,28 +1914,24 @@ void RemodelLoopMover::simultaneous_stage(
 
 	// simul frag + ccd_move
 	for ( Size outer = 1; outer <= max_outer_cycles; ++outer ) {
+
 		// increment the chainbreak weight
 		ScoreFunctionOP sfxOP = mc.score_function().clone();
-		sfxOP->set_weight(
-			core::scoring::linear_chainbreak,
-			sfxOP->get_weight( core::scoring::linear_chainbreak ) + cbreak_increment
-		);
-
-		if (option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user()){
-			sfxOP->set_weight( core::scoring::linear_chainbreak, 0);
+		sfxOP->set_weight( scoring::linear_chainbreak, sfxOP->get_weight( scoring::linear_chainbreak ) + cbreak_increment );
+		if ( option[ OptionKeys::remodel::RemodelLoopMover::bypass_closure ].user() ) {
+			sfxOP->set_weight( scoring::linear_chainbreak, 0 );
 		}
 		if (option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide].user()){
 		//	sfxOP->set_weight( core::scoring::linear_chainbreak, 0);
 			sfxOP->set_weight( core::scoring::atom_pair_constraint, 0);//ramping from 0
 		}
 
-
 		mc.score_function( *sfxOP );
 
 		// recover low
-		if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+		if ( option[ OptionKeys::remodel::repeat_structure].user() ) {
 			Size copy_size =0;
-		  if (basic::options::option[ OptionKeys::remodel::repeat_structure] == 1){
+			if ( option[ OptionKeys::remodel::repeat_structure ] == 1 ) {
 				copy_size = pose.total_residue()-1;
 			} else {
 				copy_size = pose.total_residue();
@@ -2028,6 +2033,7 @@ void RemodelLoopMover::simultaneous_stage(
 		remove_cutpoint_variants( repeat_pose_ );
 		remove_cutpoint_variants( pose );
 	}	else {
+		TR << "\n";
 		mc.score_function().show( TR, pose );
 		TR << std::endl;
 		mc.show_state();
@@ -2282,6 +2288,7 @@ void RemodelLoopMover::independent_stage(
 			remove_cutpoint_variants( repeat_pose_ );
 	//	repeat_pose_.dump_scored_pdb("checkRepeat2.pdb", mc.score_function());
 		}	else {
+			TR << "\n";
 			mc.score_function().show( TR, pose );
 		}
 
@@ -2349,6 +2356,7 @@ void RemodelLoopMover::boost_closure_stage(
 
 	TR << "   n_loops = " << loops_to_model->size() << std::endl;
 	if ( loops_to_model->size() == 0 ) { // nothing to do...
+		TR << "   no loops to work on with boost_closure. returning." << std::endl;
 		return;
 	}
 
@@ -2522,6 +2530,7 @@ void RemodelLoopMover::boost_closure_stage(
 		remove_cutpoint_variants( repeat_pose_ );
 	//	repeat_pose_.dump_scored_pdb("checkRepeat3.pdb", mc.score_function());
 		}	else {
+			TR << "\n";
 			mc.score_function().show( TR, pose );
 		}
 

@@ -7,28 +7,35 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   sandbox
-/// @brief  apps/pilot/yab/ufv.cc
+/// @file   apps/public/remodel.cc
 /// @author Yih-En Andrew Ban (yab@u.washington.edu)
+/// @author Possu Huang
 
 // project headers
-#include <devel/init.hh>
-#include <devel/init.hh>
-#include <core/chemical/ChemicalManager.hh>
-
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/ufv.OptionKeys.gen.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
+#include <basic/Tracer.hh>
+
+// utility headers
+#include <utility/file/FileName.hh>
+#include <utility/io/izstream.hh>
+#include <utility/options/keys/OptionKey.hh>
+
+#include <core/chemical/ChemicalManager.hh>
+#include <core/io/pdb/pose_io.hh>
+#include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/annotated_sequence.hh>
+#include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/io/pdb/pose_io.hh>
-#include <basic/Tracer.hh>
+
 #include <protocols/forge/build/ConnectRight.hh>
 #include <protocols/forge/build/RelativeConnectRight.hh>
 #include <protocols/forge/build/RelativeSequencePosition.hh>
@@ -36,18 +43,13 @@
 #include <protocols/forge/build/SegmentRebuild.hh>
 #include <protocols/forge/components/BDR.hh>
 #include <protocols/forge/remodel/RemodelMover.hh>
-#include <protocols/simple_filters/PoseMetricEvaluator.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobOutputter.hh>
-#include <core/scoring/dssp/Dssp.hh>
+#include <protocols/simple_filters/PoseMetricEvaluator.hh>
 #include <protocols/viewer/viewers.hh>
-
 #include <protocols/moves/PyMolMover.hh>
 
-// utility headers
-#include <utility/file/FileName.hh>
-#include <utility/io/izstream.hh>
-#include <utility/options/keys/OptionKey.hh>
+#include <devel/init.hh>
 
 // boost headers
 #include <boost/lexical_cast.hpp>
@@ -58,40 +60,101 @@
 #include <string>
 #include <vector>
 
-//Auto Headers
-#include <core/import_pose/import_pose.hh>
-#include <core/pose/annotated_sequence.hh>
 
+using namespace basic::options;
+using namespace basic::options::OptionKeys;
+using namespace core;
 
-
-// using
-using utility::options::OptionKey;
-
-
-// typedefs
 typedef std::string String;
 typedef std::vector< OptionKey const * > KeyVec;
 
+static basic::Tracer TR( "apps.public.remodel" );
 
-// static
-static basic::Tracer TR( "apps.pilot.possu.remodel" );
+
+std::string usage_string;
+
+///
+/// @begin init_usage_prompt
+///
+/// @brief
+/// the usage prompt that gets printed when the user doesn't enter any arguments or uses the -h flag since the application
+/// specific help Rosetta bring up with the -help flag is, in fact, not helpful.
+///
+void init_usage_prompt( std::string exe ) {
+
+	// place the prompt up here so that it gets updated easily; global this way, but that's ok
+	std::stringstream usage_stream;
+	usage_stream
+			<< "Usage: " << exe
+			<< "\n"
+			<< "\n\t-database path/to/rosetta/database"
+			<< "\n\t-s pdb | -silent silent_file                        read in input PDB file or silent file"
+			<< "\n\t-pdb_gz | -silent_gz                                compress output PDB or silent files"
+			<< "\n"
+			<< "\n\t-remodel:blueprint blueprint_file                   blueprint file which explains how to run remodel"
+			<< "\n"
+			<< "\n\t-remodel::num_trajectory                            number of build trajectories to run (default: 10)"
+			<< "\n\t-remodel::dr_cycles <int>                           number of design/refine cycles to run (default: 3)"
+			<< "\n"
+			<< "\n\t-remodel::quick_and_dirty                           only do fragment sampling; bypass refinement of final structures which is slow. useful in early stages of design when one wants to sample different loop lengths to find appropriate setup (default: false)"
+			<< "\n"
+			<< "\n\t-remodel::bypass_fragments                          skip creation of fragments for remodelling; do refinement only. no extensions or deletions are honored in the blueprint (default: false)"
+			<< "\n\t-remodel::use_blueprint_sequence                    find fragments which have the same amino acid sequence and secondary structure as what is specified in the second column of the blueprint file (default: false)"
+			<< "\n\t-remodel::use_same_length_fragments                 harvest fragments that match the length of the segment being rebuilt (default: true)"
+			<< "\n"
+			<< "\n\t-remodel::build_disulf                              use Remodel to find residue pairs - between the \"build\" and \"landing\" residues - which would make good disulfide bonds (default: false)"
+			<< "\n\t-remodel::match_rt_limit <float>                    the score cutoff to use for determining how closely a potential disulfide must match observed disulfide distributions (default: 0.4)"
+			<< "\n\t-remodel::disulf_landing_range <range>              the range within which Remodel attempts to find disulfides for positions in the \"build\" region (default: none)"
+			<< "\n"
+			<< "\n\t-remodel::use_pose_relax                            add fast relax to the refinement stage (instead of the default minimization step), but use constraints in a similar way (default: false)"
+			<< "\n\t-remodel::run_confirmation                          use kinematic loop closure algorithm for build confirmation (default: false)"
+			<< "\n\t-remodel::swap_refine_confirm_protocols             swap protocols used for refinement and confirmation test; i.e. use kinematic loop closure instead of CCD closure (default: false)"
+			<< "\n\t-remodel::repeat_structure                          build identical repeats this many times (default: 1)"
+			<< "\n"
+			<< "\n\t-symmetry::symmetry_definition                      text file describing symmetry setup (default: none)"
+			<< "\n"
+			<< "\n\t-enzdes::cstfile                                    enzyme design constraints file"
+			<< "\n\t-remodel::cstfilter                                 threshold to put on the atom_pair_constraint score type filter during the centroid build phase refinement (default: 10)"
+			<< "\n"
+			<< "\n\t-remodel::domainFusion::insert_segment_from_pdb     segment PDB file to be inserted into the input structure"
+			<< "\n"
+			<< "\n\t-remodel::checkpoint                                turns on checkpointing, for use in preemptive scheduling environments. writes out the best pdbs collected after each design step. (default: false)"
+			<< "\n\t-remodel::use_clusters                              specifies whether to perform clustering during structure aggregation (default: false)"
+			<< "\n\t-remodel::save_top                                  the number of final lowest scoring pdbs to keep (default: 5)"
+			<< "\n"
+			<< "\n\t-remodel::generic_aa <letter>                       residue type to use as placeholder during centroid phase (default: V)"
+			<< "\n\t-remodel::cen_sfxn                                  score function to be used for centroid phase building (default: remodel_cen)"
+			<< "\n\t-remodel::cen_minimize                              centroid minimization after fragment building (default: false)"
+			<< "\n"
+			<< "\n\t-run::chain <letter>                                chain id of the chain to remodel, if a multichain structure is given (default: -)"
+			<< "\n"
+			<< "\n\t[-overwrite]"
+			<< "\n\t[-ignore_unrecognized_res]"
+			<< "\n\t[-mute core.io core.conformation core.pack core.scoring]"
+			
+			<< "\n\nPlease see the Rosetta Remodel documentation in the Rosetta Manual for more information, including a list of all available options."
+			<< "\nhttp://www.rosettacommons.org/manual_guide"
+
+			<< "\n\n";
+	usage_string = usage_stream.str();
+
+}
+
 
 void fill_required_options( KeyVec & keys ) {
+
 	using namespace basic::options::OptionKeys;
 
 	keys.push_back( &in::path::database );
-
 	keys.push_back( &out::nstruct );
-
 	keys.push_back( &run::max_retry_job );
-
 	keys.push_back( &pose_metrics::neighbor_by_distance_cutoff );
 }
 
 
 void fill_optional_options( KeyVec & keys ) {
-	using namespace basic::options::OptionKeys;
 
+	using namespace basic::options::OptionKeys;
 
 	keys.push_back( &in::file::s );
 	keys.push_back( &in::file::silent );
@@ -215,7 +278,6 @@ core::Size load_loops_from_file(
 	using protocols::forge::build::Interval;
 	using protocols::forge::build::SegmentRebuild;
 	using std::istringstream;
-	typedef std::string String;
 
 	utility::io::izstream in( filename );
 
@@ -386,7 +448,8 @@ void setup_segment_insert( protocols::forge::components::BDR & bdr ) {
 }
 
 
-void * graphics_main( void * ) {
+void* graphics_main( void* ) {
+
 	using namespace basic::options::OptionKeys;
 	using core::Size;
 	using basic::options::option;
@@ -467,9 +530,9 @@ void * graphics_main( void * ) {
 //rmdl->fullatom_scorefunction( core::scoring::ScoreFunctionFactory::create_score_function( fullatom_sfx, fullatom_sfx_patch ) );
 
 	// resfile only if requested
-	if ( option[ packing::resfile ].user() ) {
+//	if ( option[ packing::resfile ].user() ) {
 //		bdr->resfile( option[ packing::resfile ].value().at( 1 ) );
-	}
+//	}
 
 //#if defined GL_GRAPHICS
 //	core::pose::Pose pose;
@@ -495,8 +558,15 @@ void * graphics_main( void * ) {
 
 
 int main( int argc, char * argv [] ) {
-	using namespace basic::options::OptionKeys;
-	using basic::options::option;
+
+	// check to see if no flags or the -h flag were specified.
+	// can't use the option remodel::help because options don't get init'd until after devel::init. use argc/argv instead.
+	//if ( !( option[ remodel::help ].active() ) ) {
+	if ( argc == 1 || ( argc > 1 && strcmp(argv[ 1 ], "-h") == 0 ) ) {
+		init_usage_prompt( argv[0] );
+		std::cout << usage_string;
+		exit(0);
+	}
 
 	// track options
 	//KeyVec required_options;
@@ -511,7 +581,6 @@ int main( int argc, char * argv [] ) {
 
 	// initialize rosetta
 	devel::init( argc, argv );
-	devel::init(argc, argv);
 
 	// check required options are specified
 //	if ( !check_required_options( required_options ) ) {
@@ -523,7 +592,10 @@ int main( int argc, char * argv [] ) {
 //		return 1;
 //	}
 
+	// viewer_main() just calls graphics_main with the parameter NULL and returns 0
 	protocols::viewer::viewer_main( graphics_main );
 
 	return 0;
 }
+
+

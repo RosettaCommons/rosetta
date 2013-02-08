@@ -49,6 +49,7 @@ sources = {
 		"minimize",
 		"packstat",
 		"relax",
+		"remodel",
 		"sequence_tolerance",
 		"SymDock",
 		"vip",

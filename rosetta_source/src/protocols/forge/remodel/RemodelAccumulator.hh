@@ -57,7 +57,7 @@ public: //constructor/destructor
 	RemodelAccumulator();
 
 	//RemodelAccumulator(RemodelData remodeldata);
-	RemodelAccumulator(WorkingRemodelSet & working_model);
+	RemodelAccumulator(RemodelWorkingSet & working_model);
 
 	virtual
 	~RemodelAccumulator();
@@ -87,7 +87,7 @@ private: // data
 	bool cluster_switch_;  // check cluster radius for on/off state.  0 radius is no clustering
 
 	//RemodelData remodel_data_; // design mode determined in here
-	WorkingRemodelSet working_model_;
+	RemodelWorkingSet working_model_;
 	//PackerTask packer_task_;
 	ScoreFunctionOP sfxn_;
 	//MoveMap move_map_;

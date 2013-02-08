@@ -78,7 +78,7 @@ public: // typedefs
 	typedef protocols::forge::components::VarLengthBuildOP VarLengthBuildOP;
 	typedef protocols::forge::components::VarLengthBuild VarLengthBuild;
 	typedef protocols::forge::remodel::RemodelData RemodelData;
-	typedef protocols::forge::remodel::WorkingRemodelSet RemodelWorkingSet;
+	typedef protocols::forge::remodel::RemodelWorkingSet RemodelWorkingSet;
 
 	/// @brief A pair storing a instruction's original interval and a string
 	///  denoting the sequence during design.
@@ -427,7 +427,7 @@ private: // data
 
 
 	/// @brief use sequence biased fragments when building the loop? (default false)
-///	bool use_sequence_bias_;
+	///bool use_sequence_bias_;
 
 
 	/// @brief the maximum allowed linear chainbreak (default 0.07)
@@ -469,49 +469,49 @@ private: // data
 
 
 struct instruction_flags {
-  Size num_trajectory;
-  Size num_report ;
-  Size num_frag_moves;
-  bool nojumps_;
-  bool automatic_;
-  bool use_bp_seq_; // use blueprint sequence for fragment picking
-  bool randomize_equiv_frag_; // randomize identical scoring fragments, otherwise will get the same top 'n' fragments each time
-  bool has_ligand_;
-  bool no_repack_;
-  bool fast_build_;
-  bool backrub_;
-  bool help_;
-  bool checkpoint_;
-  bool rigid_min_;
-  bool no_design_;
-  bool no_frags_;
-  bool matchingFrags_;
-  bool use_ccd_refine_;
-  bool pose_relax_;
-  bool allow_chi_during_relax_;
-  bool pose_frag_moves_;
-  bool dsspSS_;
-  bool inserting_pdb_;
-  bool neighbor_design_;
-  bool rank_by_bsasa_;
-  bool neighbor_repack_;
-  bool skip_ccd_moves_;
-  bool rigid_segment_in_refinement_;
-  bool staged_manual_design_;
-  bool use_ccd_trim_;
-  Real ccd_cutoff_;
+	Size num_trajectory;
+	Size num_report ;
+	Size num_frag_moves;
+	bool nojumps_;
+	bool automatic_;
+	bool use_bp_seq_; // use blueprint sequence for fragment picking
+	bool randomize_equiv_frag_; // randomize identical scoring fragments, otherwise will get the same top 'n' fragments each time
+	bool has_ligand_;
+	bool no_repack_;
+	bool fast_build_;
+	bool backrub_;
+	bool help_;
+	bool checkpoint_;
+	bool rigid_min_;
+	bool no_design_;
+	bool no_frags_;
+	bool matchingFrags_;
+	bool use_ccd_refine_;
+	bool pose_relax_;
+	bool allow_chi_during_relax_;
+	bool pose_frag_moves_;
+	bool dsspSS_;
+	bool inserting_pdb_;
+	bool neighbor_design_;
+	bool rank_by_bsasa_;
+	bool neighbor_repack_;
+	bool skip_ccd_moves_;
+	bool rigid_segment_in_refinement_;
+	bool staged_manual_design_;
+	bool use_ccd_trim_;
+	Real ccd_cutoff_;
 
 	/// @brief use full-mer fragments when building the loop? (default false)
 	bool use_fullmer_;
 
-  // added by Nobu
-  bool silent_;
-  bool output_fragfiles_;
-  bool read_fragfiles_;
+	// added by Nobu
+	bool silent_;
+	bool output_fragfiles_;
+	bool read_fragfiles_;
 
-  String cstfile_;
-  String insert_pdb_;
-  String prefix_;
+	String cstfile_;
+	String insert_pdb_;
+	String prefix_;
 };
 
 private: // per-stage movers
@@ -526,11 +526,7 @@ private: // per-stage movers
 
 public: // parser
 
-	virtual void parse_my_tag( TagPtr const tag,
-														 DataMap & data,
-														 Filters_map const &,
-														 Movers_map const &,
-														 Pose const & );
+	virtual void parse_my_tag( TagPtr const tag, DataMap & data, Filters_map const &, Movers_map const &, Pose const & );
 
 };
 

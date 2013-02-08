@@ -516,7 +516,6 @@ sources = {
 		#"zf_relax", # /* Phil Bradley,Documentation Location,Demo Location */
 	],
 	"pilot/possu" : [
-		#"remodel",
 	],
 
 	# Q ######################################################################

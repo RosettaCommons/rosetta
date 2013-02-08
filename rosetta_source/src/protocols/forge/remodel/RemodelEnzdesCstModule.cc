@@ -85,7 +85,7 @@ bool not_packed = true;
 
 				TR << "replace sidechain" << std::endl;
 
-	 WorkingRemodelSet working_model;
+	 RemodelWorkingSet working_model;
 	 working_model.workingSetGen(pose, remodel_data_);
 
 if (not_packed){

@@ -7,94 +7,107 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
+/// @file   protocols/forge/remodel/RemodelData.hh
+/// @brief
+/// @author Possu Huang (possu@u.washington.edu)
+/// @author Yih-En Andrew Ban (yab@u.washington.edu)
+
 #ifndef INCLUDED_protocols_forge_remodel_RemodelData_hh
 #define INCLUDED_protocols_forge_remodel_RemodelData_hh
 
+#include <utility/vector1.hh>
 
-#include <protocols/loops/Loops.hh>
+#include <ObjexxFCL/FArray1D.fwd.hh>
+
 #include <core/pose/Pose.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/chemical/AA.hh>
 
-#include <ObjexxFCL/FArray1D.fwd.hh>
+#include <protocols/loops/Loops.hh>
 
-#include <utility/vector1.hh>
+// C++ headers
+#include <vector>
+
+namespace protocols {
+namespace forge {
+namespace remodel {
+
+struct LineObject {
+	int index;
+	int original_index;
+	std::string resname;
+	std::string sstype;
+	std::string design_type;
+	bool isDesignable;
+	bool has_constraints;
+	std::vector< std::string > constraint_definition;
+	std::vector< core::chemical::AA > aminoAcidList;
+};
+
+// this class stores information in the blueprint file
+class RemodelData {
+
+public:
+
+	//constructor
+	RemodelData();
+
+	void getLoopsToBuildFromFile( std::string filename );
+	
+	void splitString( std::string str, std::string delim, std::vector< std::string > & results );
+	
+	void updateWithDsspAssignment( ObjexxFCL::FArray1D_char & dsspSS );
+
+	void collectInsertionPose();
+
+	void translateDSSP_ABEGO(std::string & ss, std::string & abego);
 
 
+	protocols::loops::Loops loops_to_build;
+	std::string sequence;
 
-namespace protocols{
-namespace forge{
-namespace remodel{
+	// need this for "." switch to find remodel regions
+	std::string ss;
 
-       struct LineObject
-        {
-          int index;
-          int original_index;
-          std::string resname;
-          std::string sstype;
-          std::string design_type;
-          bool isDesignable;
-				  bool has_constraints;
-					std::vector<std::string> constraint_definition;
-          std::vector<core::chemical::AA> aminoAcidList;
-        };
+	std::string abego;
 
-		// this class stores information in the blueprint file
-        class RemodelData
-        {
-        public:
+	// merge the dssp assignment with ss string, exclude ".",
+	// gets the final dssp_updated_ss for fragment pick
+	std::string dssp_updated_ss;
 
-					//constructor
-						RemodelData();
+	// 1 is fully auto
+	// 2 is semi-auto (only design rebuilt and no neighbors),
+	// 3 is manual which require resfile like assignments
+	bool has_design_info_; //essential
 
-            protocols::loops::Loops loops_to_build;
-            std::string sequence;
+	int pdb_start;
+	int pdb_stop;
 
-            // need this for "." switch to find remodel regions
-						std::string ss;
+	int design_mode; // maybe defunct
 
-						std::string abego;
+	bool auto_design; // maybe defunct
+	bool design_neighbor; // maybe defunct
 
-            // merge the dssp assignment with ss string, exclude ".",
-						// gets the final dssp_updated_ss for fragment pick
-						std::string dssp_updated_ss;
+	core::kinematics::MoveMap natro_movemap_;
 
-            // 1 is fully auto, 2 is semi-auto (only design rebuilt and no neighbors,
-						// 3 is manual which require resfile like assignments
-						bool has_design_info_; //essential
+	std::vector< protocols::forge::remodel::LineObject > blueprint;
 
-						int pdb_start;
-						int pdb_stop;
+	std::vector<core::Size> disulfMobileRange;
+	std::vector<core::Size> disulfLandingRange;
 
-						int design_mode; // maybe defunct
+	std::string parsed_string_for_resfile;
+	// insertion related variables below. these vars only used when domain insertion is being done with remodel.
+	core::pose::Pose insertPose;
+	int insertionSize;
+	std::string insertionSS;
+						
+	float total_chain_break_score;
 
-						bool auto_design; // maybe defunct
-						bool design_neighbor; // maybe defunct
+};
 
-						core::kinematics::MoveMap natro_movemap_;
 
-            std::vector<protocols::forge::remodel::LineObject> blueprint;
-
-            std::vector<core::Size> disulfMobileRange;
-            std::vector<core::Size> disulfLandingRange;
-
-						std::string parsed_string_for_resfile;
-
-						//insertion related below
-            core::pose::Pose insertPose;
-            int insertionSize;
-            std::string insertionSS;
-
-            float total_chain_break_score;
-						void translateDSSP_ABEGO(std::string & ss, std::string & abego);
-						void getLoopsToBuildFromFile(std::string filename);
-            void splitString(std::string str, std::string delim, std::vector<std::string> & results);
-            void updateWithDsspAssignment(ObjexxFCL::FArray1D_char & dsspSS);
-
-            void collectInsertionPose();
-        };
-}
-}
-}
+} // remodel
+} // forge
+} // protocols
 
 #endif

@@ -49,4 +49,4 @@ typedef utility::pointer::access_ptr< RemodelMover const > RemodelMover_CAP;
 } // namespace protocols
 
 
-#endif /* INCLUDED_protocols_forge_components_RemodelMover_FWD_HH */
+#endif /* INCLUDED_protocols_forge_remodel_RemodelMover_fwd_hh */
