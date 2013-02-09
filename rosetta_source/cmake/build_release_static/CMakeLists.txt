@@ -4,7 +4,12 @@ INCLUDE(../build/build.pre.cmake)
 INCLUDE(../build/external.static.cmake)
 
 ADD_DEFINITIONS(-DNDEBUG)
+ADD_DEFINITIONS(-DEXIT_THROWS_EXCEPTION)
 SET(COMPILE_FLAGS "-pipe -w -O2")
+ADD_DEFINITIONS(-pipe)
+ADD_DEFINITIONS(-O2)
+ADD_DEFINITIONS(-s)
+ADD_DEFINITIONS(-w)
 
 SET( LIBRARIES
 	ObjexxFCL utility numeric basic
@@ -74,9 +79,13 @@ SET(LINK_ALL_LIBS ${LINK_STATIC_LIBS} ${LINK_DYNAMIC_LIBS} ${TRAILING_STATIC})
 ### loophash_createfiltereddb 
 SET(BINARIES
     ../../src/apps/pilot/mike/loophash.cc
+    ../../src/apps/pilot/mike/batchrelax.cc
     ../../src/apps/public/boinc/minirosetta.cc
 		../../src/apps/public/idealize_jd2.cc
 		../../src/apps/public/relax.cc
+		../../src/apps/public/analysis/score_jd2.cc
+    ../../src/apps/public/extract_pdbs.cc
+    ../../src/apps/public/rosetta_scripts/rosetta_scripts.cc
 )
 
 FOREACH(BINARY ${BINARIES})
