@@ -27,6 +27,7 @@
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <protocols/moves/DataMapObj.hh>
 #include <core/sequence/SequenceProfile.fwd.hh>
+#include <protocols/toolbox/task_operations/SeqprofConsensusOperation.fwd.hh>
 
 namespace protocols {
 namespace protein_interface_design {
@@ -180,6 +181,8 @@ public:
 	core::Real profile_weight_away_from_interface() const;
 	bool restrict_to_repacking_chain2() const{ return restrict_to_repacking_chain2_; }
 	void restrict_to_repacking_chain2( bool const r ){ restrict_to_repacking_chain2_ = r; }
+	void seqprof_taskop( protocols::toolbox::task_operations::SeqprofConsensusOperationOP op );
+	protocols::toolbox::task_operations::SeqprofConsensusOperationOP seqprof_taskop() const;
 
 private:
 	void save_values(); // call at beginning of apply. Used to keep the from_res/to_res values, which might be changed by apply during a run
@@ -226,6 +229,7 @@ private:
 	std::map< std::string/*which segment (L1,L2...)*/, std::string/*pdb name*/ > pdb_segments_; // which pdb file did each segment in the current pose come from (used to build the current profile). This uses the pose comment structure to retain the information through successive applies
 	core::Real profile_weight_away_from_interface_; //dflt 1.0; you can define a different weight outside an 8A shell around the partner protein. This should typically be set higher than 1.0, implying that the sequence profile carries a larger weight away from the functional site
 	bool restrict_to_repacking_chain2_; // dflt true; if false, does two-sided design during splice
+	protocols::toolbox::task_operations::SeqprofConsensusOperationOP seqprof_taskop_; // dflt NULL; if set to a previously declared taskoperation, splice will modify this taskop's sequence profile as it's modifying its own sequence profile, thereby allowing design to be restricted to identities specified by the sequence profile
 };
 
 

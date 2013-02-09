@@ -9,7 +9,7 @@
 
 /// @file protocols/protein_interface_design/movers/Splice.cc
 /// @brief
-/// @author Sarel Fleishman (sarelf@u.washington.edu)
+/// @author Sarel Fleishman (sarel@weizmann.ac.il)
 
 // Unit headers
 #include <protocols/protein_interface_design/movers/Splice.hh>
@@ -58,6 +58,7 @@
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
 #include <protocols/toolbox/task_operations/ProteinInterfaceDesignOperation.hh>
 #include <protocols/toolbox/task_operations/ThreadSequenceOperation.hh>
+#include <protocols/toolbox/task_operations/SeqprofConsensusOperation.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_CCD.hh>
 #include <numeric/xyzVector.hh>
 #include <protocols/loops/FoldTreeFromLoopsWrapper.hh>
@@ -141,7 +142,8 @@ Splice::Splice() :
 	use_sequence_profiles_( false ),
 	segment_type_( "" ),
 	profile_weight_away_from_interface_( 1.0 ),
-	restrict_to_repacking_chain2_( true )
+	restrict_to_repacking_chain2_( true ),
+	seqprof_taskop_( NULL )
 {
 	torsion_database_.clear();
 	delta_lengths_.clear();
@@ -152,12 +154,12 @@ Splice::Splice() :
 	end_dbase_subset_->obj = false;
 	basic::options::option[ basic::options::OptionKeys::out::file::pdb_comments ].value(true);
 }
-	
+
 	//Tell the JD to output comments
 
 
 
-utility::vector1< std::string > segment_names_ordered;//This vector will hold the segment names by order so when the segments are concatented into a single profile it is done by user defined order	
+utility::vector1< std::string > segment_names_ordered;//This vector will hold the segment names by order so when the segments are concatented into a single profile it is done by user defined order
 
 Splice::~Splice() {}
 
@@ -617,7 +619,7 @@ if( restrict_to_repacking_chain2() ){
 	if( use_sequence_profiles_ )
 		TR<<"!!!!!!!!!!!!!!adding sequence constraints!!!!!!!!!!!!!!\n"<<std::endl;
 		add_sequence_constraints( pose );
-		
+
 	if( ccd() ){
 		using namespace protocols::loops;
 		Loop loop( std::max( (core::Size) 2, from_res() - 6 )/*start*/, std::min( pose.total_residue()-1, to_res() + 6 )/*stop*/, cut_site/*cut*/ );
@@ -851,7 +853,7 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 	loop_pdb_source( tag->getOption< std::string >( "loop_pdb_source", "" ) );
 
 	utility::vector1< TagPtr > const sub_tags( tag->getTags() );
-	
+
 	segment_names_ordered.clear(); //This string vector hold all the segment names inserted bythe user to ensure that the sequence profile is built according to tthe user
 	foreach( TagPtr const sub_tag, sub_tags ){
 		if( sub_tag->getName() == "Segments" ){
@@ -883,28 +885,28 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 				foreach( std::string const s, profile_name_pairs ){
 					StringVec const profile_name_file_name( utility::string_split( s, ':' ) );
 					TR<<"         line 855       "<<"pssm file:"<<profile_name_file_name[ 2 ]<<",segment name:"<<profile_name_file_name[ 1 ]<<std::endl;
-					
+
 					splice_segment->read_profile( profile_name_file_name[ 2 ], profile_name_file_name[ 1 ] );
-					
+
 				}
 				splice_segment->read_pdb_profile( pdb_profile_match );
-				
-				
-				
+
+
+
 				TR<<"line 886"<<"the segment name is: "<<segment_name<<std::endl;
 				splice_segments_.insert( std::pair< std::string, SpliceSegmentOP >( segment_name, splice_segment ) );
 				segment_names_ordered.push_back(segment_name);
 			}//foreach segment_tag
 		}// fi Segments
 	}//foreach sub_tag
-	//test splice_segments_
-	//Add accosiation from pose comments field to splice_segments_
-	
-	//test all the pslice segments
-	TR<<"Testing the splice segment data struture after filling it at line 895"<<std::endl;
-	
-		restrict_to_repacking_chain2( tag->getOption< bool >( "restrict_to_repacking_chain2", true ) );
-	TR<<"from_res: "<<from_res()<<" to_res: "<<to_res()<<" dbase_iterate: "<<dbase_iterate()<<" randomize_cut: "<<randomize_cut()<<" cut_secondarystruc: "<<cut_secondarystruc()<<" source_pdb: "<<source_pdb()<<" ccd: "<<ccd()<<" rms_cutoff: "<<rms_cutoff()<<" res_move: "<<res_move()<<" template_file: "<<template_file()<<" checkpointing_file: "<<checkpointing_file_<<" loop_dbase_file_name: "<<loop_dbase_file_name_<<" loop_pdb_source: "<<loop_pdb_source()<<" mover_tag: "<<mover_tag_<<std::endl;
+	restrict_to_repacking_chain2( tag->getOption< bool >( "restrict_to_repacking_chain2", true ) );
+
+	if( tag->hasOption( "seqprof_taskoperation" ) ){
+		seqprof_taskop( protocols::moves::get_set_from_datamap< protocols::toolbox::task_operations::SeqprofConsensusOperation >( "task_operations", tag->getOption< std::string > ("seqprof_taskoperation" ), data ) );
+		TR<<"Splice will modify the seqprof_taskoperation to the current set of segments"<<std::endl;
+	}
+
+	TR<<"from_res: "<<from_res()<<" to_res: "<<to_res()<<" dbase_iterate: "<<dbase_iterate()<<" randomize_cut: "<<randomize_cut()<<" cut_secondarystruc: "<<cut_secondarystruc()<<" source_pdb: "<<source_pdb()<<" ccd: "<<ccd()<<" rms_cutoff: "<<rms_cutoff()<<" res_move: "<<res_move()<<" template_file: "<<template_file()<<" checkpointing_file: "<<checkpointing_file_<<" loop_dbase_file_name: "<<loop_dbase_file_name_<<" loop_pdb_source: "<<loop_pdb_source()<<" mover_tag: "<<mover_tag_<<" torsion_database: "<<torsion_database_fname_<<" restrict_to_repacking_chain2: "<<restrict_to_repacking_chain2()<<std::endl;
 }
 
 protocols::moves::MoverOP
@@ -1174,24 +1176,24 @@ return concatenate_profiles( profile_vector );
 void
 Splice::load_pdb_segments_from_pose_comments( core::pose::Pose const & pose ){
 	if(use_sequence_profiles_){
-	//If we are using sequence profiles then the condition is true and function can run	
-	
+	//If we are using sequence profiles then the condition is true and function can run
+
 	using namespace std;
 	TR<<"PRINT THIS LINE BEFORE CALLING GET ALL COMMENTS AT LINE 1157"<<std::endl;
 	map< string, string > const comments = core::pose::get_all_comments( pose );
-	TR<<"The size of comments is: "<<comments.size()<<std::endl;	
+	TR<<"The size of comments is: "<<comments.size()<<std::endl;
 	core::Size j = 1; //for testing
   for( std::map< string, string >::const_iterator i = comments.begin(); i != comments.end(); ++i ){
-		TR<<"the size of j is: "<<j<<std::endl;	
+		TR<<"the size of j is: "<<j<<std::endl;
 		std::string const key( i->first );
-		TR<<"the size of j after i->first is: "<<j<<std::endl;	
+		TR<<"the size of j after i->first is: "<<j<<std::endl;
 		std::string const val( i->second );
-		TR<<"the size of j after i->second is: "<<j<<std::endl;	
+		TR<<"the size of j after i->second is: "<<j<<std::endl;
 		if( key.substr( 0, 7 ) != "segment" )/// the expected format is segment_??, where we're interested in ??
 			continue;
 		std::string const short_key( key.substr(8, 1000 ) );
 		pdb_segments_[ short_key ] = val;
-		TR<<"recording segment/pdb pair: "<<short_key<<'/'<<val<<std::endl;	
+		TR<<"recording segment/pdb pair: "<<short_key<<'/'<<val<<std::endl;
 		++j;
 	}
 }
@@ -1207,7 +1209,7 @@ utility::vector1< core::Size >
 find_residues_on_chain1_outside_interface( core::pose::Pose const & pose ){
 	using namespace protocols::toolbox::task_operations;
 	ProteinInterfaceDesignOperationOP pido;
-	//TR<<"test pido @line 1163 "<<pose<<pose<<"\n"; 
+	//TR<<"test pido @line 1163 "<<pose<<pose<<"\n";
 	pido->repack_chain1( true );
 	pido->design_chain1( true );
 	pido->repack_chain2( false );
@@ -1240,11 +1242,15 @@ if(use_sequence_profiles_){
 	TR<<"Removed a total of "<<cst_num<<" sequence constraints."<<std::endl;
 	TR<<"After removal the total number of constraints is: "<<pose.constraint_set()->get_all_constraints().size()<<std::endl;
 /// then impose new sequence constraints
-	core::sequence::SequenceProfileCOP seqprof( generate_sequence_profile(pose) );
+	core::sequence::SequenceProfileOP seqprof( generate_sequence_profile(pose) );
 	TR<<"Chain length/seqprof size: "<<pose.conformation().chain_end( 1 ) - pose.conformation().chain_begin( 1 ) + 1<<", "<<seqprof->size()<<std::endl;
 	runtime_assert( seqprof->size() == pose.conformation().chain_end( 1 ) - pose.conformation().chain_begin( 1 ) + 1 );
 	cst_num = 0;
-	
+	if( seqprof_taskop()() != NULL ){
+		TR<<"Modifying the sequence profile task operation to match the current sequence profile"<<std::endl;
+		seqprof_taskop()->set_seqprof( seqprof );
+	}
+
 	TR<<"Upweighting sequence constraint for residues: ";
 	if (pose.conformation().num_chains() == 1){//If pose has only one chain (no ligand) than all residues are weighted the same
 		for( core::Size seqpos = pose.conformation().chain_begin( 1 ); seqpos <= pose.conformation().chain_end( 1 ); ++seqpos ) {
@@ -1289,6 +1295,16 @@ Splice::profile_weight_away_from_interface() const{
 void
 Splice::profile_weight_away_from_interface( core::Real const p ){
 	profile_weight_away_from_interface_ = p;
+}
+
+void
+Splice::seqprof_taskop( protocols::toolbox::task_operations::SeqprofConsensusOperationOP op ){
+	seqprof_taskop_ = op;
+}
+
+protocols::toolbox::task_operations::SeqprofConsensusOperationOP
+Splice::seqprof_taskop() const{
+	return seqprof_taskop_;
 }
 
 } //movers
