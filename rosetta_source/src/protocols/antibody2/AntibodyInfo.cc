@@ -209,43 +209,91 @@ void AntibodyInfo::setup_FrameWorkInfo( pose::Pose const & pose ) {
 
     FrameWork frmwk;
 	vector1<FrameWork> Lfr, Hfr;
-
-	if(is_Camelid() == false ){
-		if (! pose.pdb_info()->pdb2pose('L', 5)) {
-			throw excn::EXCN_Msg_Exception( "L chain 5th residues missing, framework definition failed!!! " );
-		}
-		if (! pose.pdb_info()->pdb2pose('L', 105)) {
-			throw excn::EXCN_Msg_Exception( "L chain 105th residues missing, framework definition failed!!! " );
-		}
-	}
-	if (! pose.pdb_info()->pdb2pose('H', 5)) {
-		throw excn::EXCN_Msg_Exception( "H chain 5th residues missing, framework definition failed!!! " );
-	}
-	if (! pose.pdb_info()->pdb2pose('H', 110)) {
-		throw excn::EXCN_Msg_Exception( "H chain 110th residues missing, framework definition failed!!! " );
-	}
 	
-	
+    core::Size H_begin_pos_num = 0;
+    core::Size H_end_pos_num = 0;
+    core::Size L_begin_pos_num = 0;
+    core::Size L_end_pos_num = 0;
+    
+    if(is_Camelid() == true ){
+        H_begin_pos_num=pose.conformation().chain_begin(1);
+        H_end_pos_num=pose.conformation().chain_end(1);
+    }
+    else{
+        L_begin_pos_num=pose.conformation().chain_begin(1);
+        L_end_pos_num=pose.conformation().chain_end(1);
+        H_begin_pos_num=pose.conformation().chain_begin(2);
+        H_end_pos_num=pose.conformation().chain_end(2);
+        
+        
+        if (  L_begin_pos_num   >=    pose.pdb_info()->pdb2pose('L',23)   )  {
+            throw excn::EXCN_Msg_Exception( "L chain 1st residue starting after L 23, framework definition failed!!! " );
+        }
+        if (  L_end_pos_num     <=    pose.pdb_info()->pdb2pose('L', 97)    ) {
+            throw excn::EXCN_Msg_Exception( "L chain last residue ending before L 97, framework definition failed!!! " );
+        }
+    }
+    
+    
+    if (    H_begin_pos_num    >=     pose.pdb_info()->pdb2pose('H', 26 )      ) {
+        throw excn::EXCN_Msg_Exception( "H chain 1st residue starting after H 26, framework definition failed!!! " );
+    }
+    
+    if (    H_end_pos_num      <=     pose.pdb_info()->pdb2pose('H', 103)      ) {
+        throw excn::EXCN_Msg_Exception( "H chain last residue ending before H 103, framework definition failed!!! " );
+    }
+    
+        
 	switch (numbering_scheme_) {
 	case Aroop:
 		if(! is_camelid_){
 			frmwk.chain_name='L';
+			if(   L_begin_pos_num <= pose.pdb_info()->pdb2pose('L',5)      ){ // <= 5
 			frmwk.start=pose.pdb_info()->pdb2pose('L',5); frmwk.stop=pose.pdb_info()->pdb2pose('L',6);  Lfr.push_back(frmwk);
+			}
+			else if (     L_begin_pos_num   <=    pose.pdb_info()->pdb2pose('L',6)        ){  // 5 <= x <= 6
+			frmwk.start=L_begin_pos_num; frmwk.stop=pose.pdb_info()->pdb2pose('L',6);  Lfr.push_back(frmwk);
+			}
+			if(   L_begin_pos_num   <=    pose.pdb_info()->pdb2pose('L',10)      ){  // <= 10
 			frmwk.start=pose.pdb_info()->pdb2pose('L',10);frmwk.stop=pose.pdb_info()->pdb2pose('L',23); Lfr.push_back(frmwk);
+			}
+			else if (   L_begin_pos_num   <=    pose.pdb_info()->pdb2pose('L',23)           ) {  //  10 <= x <=23
+			frmwk.start=L_begin_pos_num;frmwk.stop=pose.pdb_info()->pdb2pose('L',23); Lfr.push_back(frmwk);
+			}
 			frmwk.start=pose.pdb_info()->pdb2pose('L',35);frmwk.stop=pose.pdb_info()->pdb2pose('L',38); Lfr.push_back(frmwk);
 			frmwk.start=pose.pdb_info()->pdb2pose('L',45);frmwk.stop=pose.pdb_info()->pdb2pose('L',49); Lfr.push_back(frmwk);
 			frmwk.start=pose.pdb_info()->pdb2pose('L',57);frmwk.stop=pose.pdb_info()->pdb2pose('L',66); Lfr.push_back(frmwk);
 			frmwk.start=pose.pdb_info()->pdb2pose('L',71);frmwk.stop=pose.pdb_info()->pdb2pose('L',88); Lfr.push_back(frmwk);
+			if (   L_end_pos_num   >=    pose.pdb_info()->pdb2pose('L',105)      ){
 			frmwk.start=pose.pdb_info()->pdb2pose('L',98);frmwk.stop=pose.pdb_info()->pdb2pose('L',105);Lfr.push_back(frmwk);
+			}
+			else{
+			frmwk.start=pose.pdb_info()->pdb2pose('L',98);frmwk.stop=L_end_pos_num; Lfr.push_back(frmwk);
+			}
 		}
 
 		frmwk.chain_name='H';
+		if(   H_begin_pos_num   <=    pose.pdb_info()->pdb2pose('H',5)      ){  // <= 5
 		frmwk.start=pose.pdb_info()->pdb2pose('H',5);  frmwk.stop=pose.pdb_info()->pdb2pose('H',6);  Hfr.push_back(frmwk);
+		}
+		else if (   H_begin_pos_num   <=    pose.pdb_info()->pdb2pose('H',6)      ){  // 5 <= x <= 6
+		frmwk.start=H_begin_pos_num;  frmwk.stop=pose.pdb_info()->pdb2pose('H',6);  Hfr.push_back(frmwk);
+		}
+		if(   H_begin_pos_num   <=    pose.pdb_info()->pdb2pose('H',10)      ){  // <= 10
 		frmwk.start=pose.pdb_info()->pdb2pose('H',10); frmwk.stop=pose.pdb_info()->pdb2pose('H',25); Hfr.push_back(frmwk);
+		}
+		else if(   H_begin_pos_num   <=    pose.pdb_info()->pdb2pose('H',25)      ){  //  10 <= x <=25
+		frmwk.start=H_begin_pos_num;  frmwk.stop=pose.pdb_info()->pdb2pose('H',25);  Hfr.push_back(frmwk);
+		}
 		frmwk.start=pose.pdb_info()->pdb2pose('H',36); frmwk.stop=pose.pdb_info()->pdb2pose('H',39); Hfr.push_back(frmwk);
 		frmwk.start=pose.pdb_info()->pdb2pose('H',46); frmwk.stop=pose.pdb_info()->pdb2pose('H',49); Hfr.push_back(frmwk);
 		frmwk.start=pose.pdb_info()->pdb2pose('H',66); frmwk.stop=pose.pdb_info()->pdb2pose('H',94); Hfr.push_back(frmwk);
+		if(   H_end_pos_num >=  pose.pdb_info()->pdb2pose('H',110)         ) {
 		frmwk.start=pose.pdb_info()->pdb2pose('H',103);frmwk.stop=pose.pdb_info()->pdb2pose('H',110);Hfr.push_back(frmwk);
+		}
+		else{
+		frmwk.start=pose.pdb_info()->pdb2pose('H',103);frmwk.stop=H_end_pos_num; Hfr.push_back(frmwk);
+		}
 		break;
 	case Chothia:
 		break;
