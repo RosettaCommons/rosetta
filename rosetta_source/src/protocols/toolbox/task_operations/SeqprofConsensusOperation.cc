@@ -148,9 +148,13 @@ SeqprofConsensusOperation::parse_tag( TagPtr tag )
 {
 	if( tag->hasOption("filename") ){
 		seqprof_filename_ = tag->getOption< String >( "filename" );
+		tr<<"Loading seqprof from a file named: "<<seqprof_filename_<<std::endl;
 		core::sequence::SequenceProfileOP seqprof = new core::sequence::SequenceProfile( seqprof_filename_ );
 		seqprof->convert_profile_to_probs(); // was previously implicit in from-filename constructor
 		seqprof_ = seqprof;
+	}
+	else{
+		tr<<"Seqprof not loaded. Expecting another mover/filter to provide a sequence profile..."<<std::endl;
 	}
 	if( tag->hasOption("min_aa_probability") ) min_aa_probability_ = tag->getOption< Real >("min_aa_probability" );
 	if( tag->hasOption("probability_larger_than_current") ) prob_larger_current_ = tag->getOption< bool >("probability_larger_than_current");
@@ -165,7 +169,7 @@ SeqprofConsensusOperation::seqprof() const
 }
 
 void
-SeqprofConsensusOperation::set_seqprof( core::sequence::SequenceProfileCOP seqprof, bool reweight )
+SeqprofConsensusOperation::set_seqprof( core::sequence::SequenceProfileOP seqprof, bool reweight )
 {
 	if ( reweight ) {
 		core::sequence::SequenceProfileOP reweightedprof = new core::sequence::SequenceProfile( *seqprof );
