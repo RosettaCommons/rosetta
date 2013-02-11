@@ -12,27 +12,52 @@
 /// @brief
 /// @author Jianqing Xu (xubest@gmail.com)
 
+// Project Headers
 #include <protocols/antibody2/AntibodyInfo.hh>
-#include <protocols/antibody2/AntibodyUtil.hh>
-#include <protocols/rigid/RB_geometry.hh>
-#include <protocols/loops/loops_main.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+
+// Core Headers
+#include <core/scoring/constraints/ConstraintIO.hh>
+#include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 #include <core/pose/util.tmpl.hh>
-#include <basic/Tracer.hh>
+
+// Protocol Headers
+#include <protocols/antibody2/AntibodyUtil.hh>
+#include <protocols/rigid/RB_geometry.hh>
+#include <protocols/loops/loops_main.hh>
+#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+#include <protocols/simple_moves/ConstraintSetMover.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/format.hh>
 
 // Utility headers
+#include <utility/exit.hh>
+#include <utility/io/izstream.hh>
 #include <utility/excn/Exceptions.hh>
+#include <utility/file/FileName.hh>
+#include <utility/file/file_sys_util.hh>
 
+//Options
+#include <basic/options/option.hh>
+#include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 
+// Basic headers
+#include <numeric/NumericTraits.hh>
+#include <basic/Tracer.hh>
+#include <basic/database/open.hh>
+#include <math.h>
+
+// Boost headers
+#include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/lexical_cast.hpp>
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -302,6 +327,8 @@ void AntibodyInfo::setup_FrameWorkInfo( pose::Pose const & pose ) {
 	case Enhanced_Chothia:
 		break;
 	case AHO:
+		break;
+	case Modified_AHO:
 		break;
 	case IMGT:
 		break;
@@ -580,8 +607,152 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type_new_rule( pose::Pose 
     << "Kink: " << kinked_H3 << " Extended: " << extended_H3 << std::endl;
 } // detect_regular_CDR_H3_stem_type()
 
+
+std::pair <std::string, Real>
+AntibodyInfo::get_CDR_cluster(pose::Pose const & pose, AntibodyCDRNameEnum const & cdr_name){
+	using std::string;
+	using std::map;
+	using core::Size;
+	using core::Real;
 	
+	string cdr;
+	Size length;
+	string cluster;
+	string type;
+	string fullcluster;
+	string ss;
+	string phis;
+	string psis;
+	string omegas;
+	Real PI = numeric::NumericTraits<Real>::pi();
+            
+	string const path = "sampling/antibodies/cluster_center_dihedrals.txt";
+            
+            
+	Size cdr_length = get_CDR_length(cdr_name);
+	loops::Loop loop = get_CDR_loop(cdr_name);
+	Size start = loop.start();
+	
+	//Get current cdr phi, psi, omega Once.
+	utility::io::izstream clus_stream;
+	basic::database::open(clus_stream, path);
+	map <string, vector1< Real > > pose_angles;
+	string model_ss;
+	Real cis_cutoff = 90.00;
+	for (Size resnum = start; resnum<=(start+cdr_length-1); resnum++){
+		pose_angles["phi"].push_back(pose.phi(resnum));
+		pose_angles["psi"].push_back(pose.psi(resnum));
+		//Pythonic way of doing it, may need to change.
+		if (std::abs(pose.omega(resnum))>=cis_cutoff){
+			model_ss = model_ss+"T";
+		}
+		else{
+			model_ss = model_ss+"C";
+		}
+	}
+	
+	TR <<"CDR: "<<get_CDR_Name(cdr_name)<<" "<<cdr_length<<" "<<model_ss<<std::endl;
+            
+	map <Real, string > k_distances_to_cluster;
+	vector1< Real > k_distances;
+	Size line_count = 0;
+	bool cluster_found = false;
+	while ( ! clus_stream.eof() ){
+		//TR << "Reading file..line"<<line_count<<std::endl;
+		++line_count;
+		clus_stream >> cdr >> length >> cluster >> type >> fullcluster >> ss >> phis >> psis >> omegas;
+		//Should I do the measuring here, or actually put the data in ram, then go through the data?
+		//TR << cdr <<" "<<length<<" "<<ss<<std::endl;
+		if (cdr==get_CDR_Name(cdr_name) && length==cdr_length && ss==model_ss){
+			cluster_found=true;
+			Real k_distance_to_cluster=0.0;
+			//Calculate, add into cluster_distances.
+			map <string, vector1 <string> > cluster_angles; 
+   
+			boost::split(cluster_angles["phi"], phis, boost::is_any_of(","));
+			boost::split(cluster_angles["psi"], psis, boost::is_any_of(","));
+			//boost::split(cluster_angles["omega"], omegas, boost::is_any_of(":"));
+                    
+			//Calculate:
+			for (Size i=1; i<=cdr_length; i++){
+				//Need to convert angles to positive values for now.
+				std::istringstream phi_stream(cluster_angles["phi"][i]);
+				std::istringstream psi_stream(cluster_angles["psi"][i]);
+				Real phi; Real psi;
+				phi_stream >> phi;
+				psi_stream >> psi;
+                        
+				Real phi_d = (2 * (1- cos ((pose_angles["phi"][i]-phi)*PI/180)));
+				Real psi_d = (2 * (1- cos ((pose_angles["psi"][i]-psi)*PI/180)));
+				k_distance_to_cluster = k_distance_to_cluster+phi_d+psi_d;
+                        
+			}
+			k_distances_to_cluster[k_distance_to_cluster]=fullcluster;
+			k_distances.push_back(k_distance_to_cluster);
+		}
+		else {
+			continue;
+		}      
+		
+	}//End while Loop
+            
+	clus_stream.close();
+	
+	///Take the minimum distance as the cluster.
+	std::pair<string, Real> result;
+	
+	if (! cluster_found){
+		TR <<"Cluster not found for CDR "<<get_CDR_Name(cdr_name)<<std::endl;
+		result = std::make_pair("NA", 10000);
+		return result;
+	}      
+	else{
+		//Get minimum and set cluster.
+		Real d = k_distances[1];
+		for (Size i=2; i<k_distances.size(); i++){
+			if (k_distances[i]<d){
+				d = k_distances[i];
+			}
+		}
+		string found_cluster = k_distances_to_cluster[d];
+		TR << get_CDR_Name(cdr_name) <<" cluster found as " << found_cluster << " at k_distance: " << d <<std::endl;
+		//TR <<"Setting this as closest cluster, as no cutoff is yet set. PLEASE manually compare structures.  " <<std::endl;
+		result = std::make_pair(found_cluster, d);
+		return result;
+	}
+}
     
+Size
+AntibodyInfo::get_CDR_length(AntibodyCDRNameEnum const & cdr_name){
+	loops::Loop cdr_loop = get_CDR_loop(cdr_name);
+	Size l = cdr_loop.stop()-cdr_loop.start()+1;
+	return l;
+}
+
+
+void
+AntibodyInfo::set_harmonic_constraint(pose::Pose & pose, 
+							std::string cluster_type){
+	
+	using namespace protocols::simple_moves;
+    using namespace basic::options;
+	
+	if (cluster_type=="NA"){return;}
+	std::string path = "sampling/antibody_design/CONSTRAINTS/CircularHarmonic/";
+	std::string extension = ".txt";
+	std::string specific_path = path + cluster_type + extension;
+	std::string fname = option[ OptionKeys::in::path::database ](1).name() + specific_path;
+	if( !utility::file::file_exists(fname)){
+		TR<< "Fname "<<fname<<" Does not exist.  No constraint will be added."<<std::endl;
+		return;
+	}
+		
+	TR<< "Fname "<<fname<<std::endl;
+	ConstraintSetMoverOP cst_mover = new ConstraintSetMover();
+	cst_mover->constraint_file(fname);
+	cst_mover->apply(pose);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 ///                                                                          ///
 ///				provide fold tree utilities for various purpose              ///
@@ -1094,10 +1265,25 @@ vector1< vector1<Size> > AntibodyInfo::get_CDR_NumberingInfo(AntibodyNumberingEn
     }
     //**********************************************************************************
     //  AHO Numbering                                                                  *
-    //    citation:
+    //    A. Honegger & A. Plückthun. (2001) J. Mol. Biol, 309 (2001)657-670
     //**********************************************************************************
     else if(numbering_scheme == AHO){
     }
+    //**********************************************************************************
+    //  Modified Honegger-Plückthun (Aho) Numbering                                                                   *
+    //    North, B., A. Lehmann, et al. (2011). JMB 406(2): 228-256. (Not described in paper)
+    //**********************************************************************************
+	else if(numbering_scheme == Modified_AHO){
+        // Heavy Chain
+        start.push_back(24); stop.push_back(42);  //h1
+        start.push_back(57); stop.push_back(69);  //h2
+        start.push_back(107); stop.push_back(138); //h3
+        // Light Chain
+        start.push_back(24); stop.push_back(42);  //l1
+        start.push_back(57); stop.push_back(72);  //l2
+        start.push_back(107); stop.push_back(138);  //l3
+		// VL-VH packing angle residues?
+	}
     //**********************************************************************************
     //  IMGT Numbering                                                                 *
     //    citation:
@@ -1105,7 +1291,7 @@ vector1< vector1<Size> > AntibodyInfo::get_CDR_NumberingInfo(AntibodyNumberingEn
     else if(numbering_scheme == IMGT){
     }
     else{
-        throw excn::EXCN_Msg_Exception("the numbering schemes can only be 'Aroop','Chothia','Kabat', 'Enhanced_Chothia', 'AHO', 'IMGT' !!!!!! ");
+        throw excn::EXCN_Msg_Exception("the numbering schemes can only be 'Aroop','Chothia','Kabat', 'Enhanced_Chothia', 'AHO', Modified_AHO'IMGT' !!!!!! ");
     }
 	
 	local_numbering_info.push_back(start);
@@ -1483,6 +1669,7 @@ vector1<std::string> const & AntibodyInfo::get_string_numbering_scheme(void)  {
 		string_numbering_scheme->push_back("Kabat");
 		string_numbering_scheme->push_back("Enhanced_Chothia");
 		string_numbering_scheme->push_back("AHO");
+		string_numbering_scheme->push_back("Modified_AHO");
 		string_numbering_scheme->push_back("IMGT");
 	}
 	return *string_numbering_scheme;
