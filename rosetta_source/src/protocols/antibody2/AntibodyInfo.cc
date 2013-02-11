@@ -1282,7 +1282,12 @@ vector1< vector1<Size> > AntibodyInfo::get_CDR_NumberingInfo(AntibodyNumberingEn
         start.push_back(24); stop.push_back(42);  //l1
         start.push_back(57); stop.push_back(72);  //l2
         start.push_back(107); stop.push_back(138);  //l3
-		// VL-VH packing angle residues?
+		
+		// VL-VH packing angle residues - Yes our scheme rocks. Look at the symmetry!
+		pack_angle_start.push_back(43); pack_angle_stop.push_back(46);  //VL
+		pack_angle_start.push_back(103); pack_angle_stop.push_back(106);  //VL
+		pack_angle_start.push_back(43); pack_angle_stop.push_back(46);  //VH
+		pack_angle_start.push_back(103); pack_angle_stop.push_back(106);  //VH
 	}
     //**********************************************************************************
     //  IMGT Numbering                                                                 *
@@ -1291,7 +1296,7 @@ vector1< vector1<Size> > AntibodyInfo::get_CDR_NumberingInfo(AntibodyNumberingEn
     else if(numbering_scheme == IMGT){
     }
     else{
-        throw excn::EXCN_Msg_Exception("the numbering schemes can only be 'Aroop','Chothia','Kabat', 'Enhanced_Chothia', 'AHO', Modified_AHO'IMGT' !!!!!! ");
+        throw excn::EXCN_Msg_Exception("the numbering schemes can only be 'Aroop','Chothia','Kabat', 'Enhanced_Chothia', 'AHO', Modified_AHO', 'IMGT' !!!!!! ");
     }
 	
 	local_numbering_info.push_back(start);
