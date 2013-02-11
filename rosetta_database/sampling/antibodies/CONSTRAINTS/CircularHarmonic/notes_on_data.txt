@@ -1,0 +1,14 @@
+Added by Jared Adolf-Bryfogle jadolfbr@gmail.com (Jan 2013)
+Data used to create constraints based on an SQLITE3 antibody database of the PDB from June 2012.
+
+3168 CDR sequences
+
+2.8 A res cutoff
+.3 R factor cutoff
+Non-Redundant by sequence of CDRs per CHAIN
+-CDRs thrown out if a chain did not have all three CDRS!
+
+Reduncancy by:
+  ->Lowest Resolution
+   ->Lowest R
+    ->Highest Chain Length
