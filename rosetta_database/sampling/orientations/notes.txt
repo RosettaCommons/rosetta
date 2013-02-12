@@ -1,31 +1,494 @@
 http://charles.karney.info/orientation/
 
- 	name	   	N	   	α (°)	   	c	   	δ	   	σ	   	download
-c48u1		   24		 62.80		 1.57514		 0.70000		 0.00		quat grid euler
-c600v		   60	     44.48		 1.44480						quat euler
-c48u9		   216		 38.45		 3.38698		 0.41422		 0.00		quat grid euler
-c48n9		   216		 36.47		 2.89689		 0.26091		 7.00		quat grid euler
-c600vc         360		 27.78		 2.15246						quat euler
-c600vec        720		 22.25		 2.22117						quat euler
-c48u27         648		 20.83		 1.64091		 0.33582		 0.00		quat grid euler
-c48u83        1992		 16.29		 2.42065		 0.25970		 0.00		quat grid euler
-c48u157       3768		 14.49		 3.22614		 0.20710		 0.00		quat grid euler
-c48u181       4344		 12.29		 2.27013		 0.19415		 0.00		quat grid euler
-c48u309       7416		 10.07		 2.13338		 0.15846		 0.00		quat grid euler
-c48n309       7416		 9.72		 1.91567		 0.15167		 1.86		quat grid euler
-c48u519       12456		 9.05		 2.60257		 0.13807		 0.00		quat grid
-c48u527       12648		 8.43		 2.13318		 0.13229		 0.00		quat grid
-c48n527       12648		 8.17		 1.94334		 0.12599		 1.86		quat grid
-c48u815       19560		 7.40		 2.23719		 0.11607		 0.00		quat grid
-c48u1153     27672		 6.60		 2.23735		 0.10330		 0.00		quat grid
-c48u1201     28824		 6.48		 2.20918		 0.09999		 0.00		quat grid
-c48u1641     39384		 5.75		 2.10646		 0.08993		 0.00		quat grid
-c48u2219     53256		 5.27		 2.20117		 0.08249		 0.00		quat grid
-c48u2867     68808		 5.24		 2.79649		 0.07531		 0.00		quat grid
-c48u2947     70728		 4.71		 2.07843		 0.07359		 0.00		quat grid
-c48u3733     89592		 4.37		 2.11197		 0.06836		 0.00		quat grid
-c48u4701     112824		 4.22		 2.39041		 0.06372		 0.00		quat grid
-c48u4749     113976		 4.00		 2.05300		 0.06248		 0.00		quat grid
-c48u5879     141096		 3.74		 2.07325		 0.05837		 0.00		quat grid
-c48u7111     170664		 3.53		 2.11481		 0.05514		 0.00		quat grid
-c48u8649     207576		 3.26		 2.02898		 0.05094		 0.00		quat grid
+name                N            α (°)          c                δ              σ       download
+c48u1              24            62.80       1.57514         0.70000         0.00       quat grid euler
+c600v              60            44.48       1.44480                                    quat euler
+c48u9              216           38.45       3.38698         0.41422         0.00       quat grid euler
+c48n9              216           36.47       2.89689         0.26091         7.00       quat grid euler
+c600vc             360           27.78       2.15246                                    quat euler
+c600vec            720           22.25       2.22117                                    quat euler
+c48u27             648           20.83       1.64091         0.33582         0.00       quat grid euler
+c48u83            1992           16.29       2.42065         0.25970         0.00       quat grid euler
+c48u157           3768           14.49       3.22614         0.20710         0.00       quat grid euler
+c48u181           4344           12.29       2.27013         0.19415         0.00       quat grid euler
+c48u309           7416           10.07       2.13338         0.15846         0.00       quat grid euler
+c48n309           7416           9.72        1.91567         0.15167         1.86       quat grid euler
+c48u519           12456          9.05        2.60257         0.13807         0.00       quat grid
+c48u527           12648          8.43        2.13318         0.13229         0.00       quat grid
+c48n527           12648          8.17        1.94334         0.12599         1.86       quat grid
+c48u815           19560          7.40        2.23719         0.11607         0.00       quat grid
+c48u1153         27672           6.60        2.23735         0.10330         0.00       quat grid
+c48u1201         28824           6.48        2.20918         0.09999         0.00       quat grid
+c48u1641         39384           5.75        2.10646         0.08993         0.00       quat grid
+c48u2219         53256           5.27        2.20117         0.08249         0.00       quat grid
+c48u2867         68808           5.24        2.79649         0.07531         0.00       quat grid
+c48u2947         70728           4.71        2.07843         0.07359         0.00       quat grid
+c48u3733         89592           4.37        2.11197         0.06836         0.00       quat grid
+c48u4701         112824          4.22        2.39041         0.06372         0.00       quat grid
+c48u4749         113976          4.00        2.05300         0.06248         0.00       quat grid
+c48u5879         141096          3.74        2.07325         0.05837         0.00       quat grid
+c48u7111         170664          3.53        2.11481         0.05514         0.00       quat grid
+c48u8649         207576          3.26        2.02898         0.05094         0.00       quat grid
+c48u10305        247320          3.102       2.08130         0.048456        2/41.2973      grid
+c48u12083        289992          3.096       2.42678         0.046023               grid
+c48u12251        294024          2.903       2.02950         0.045354        2s/18.2657     grid
+c48u14251        342024          2.767       2.04269         0.043215        2/46.2973      grid
+c48u16533        396792          2.655       2.09385         0.041421        2/48.2973      grid
+c48u19181        460344          2.497       2.02149         0.039000        2s/21.2450     grid
+c48u21863        524712          2.403       2.05419         0.037534        2/53.2973      grid
+c48u25039        600936          2.282       2.01458         0.035641        2s/23.2450     grid
+c48u28329        679896          2.197       2.03407         0.034313        2/58.2973      grid
+c48u31793        763032          2.162       2.17361         0.033137               grid
+c48u32081        769944          2.116       2.05852         0.032786               grid
+c48u35851        860424          2.024       2.01113         0.031601        2/63.2973      grid
+c48u40003        960072          1.962       2.04420         0.030633        2/65.2973      grid
+c48u44709        1073016         1.877       2.00081         0.029307        2s/28.2657     grid
+c48u49397        1185528         1.822       2.02304         0.028453        2/70.2973      grid
+c48u54799        1315176         1.753       1.99776         0.027370        2s/30.2657     grid
+c48u60279        1446696         1.701       2.00892         0.026563        2/75.2973      grid
+c48u65985        1583640         1.657       2.03291         0.025876        2/77.2973      grid
+c48u72521        1740504         1.596       1.99529         0.024918        2s/33.2450     grid
+c48u79099        1898376         1.557       2.01914         0.024303        2/82.2973      grid
+c48u86451        2074824         1.505       1.99648         0.023504        2s/35.2450     grid
+c48u93701        2248824         1.467       2.00411         0.022911        2/87.2973      grid
+c48u101477       2435448         1.447       2.07920         0.022389               grid
+c48u101917       2446008         1.444       2.07768         0.022222               grid
+c48u110143       2643432         1.388       1.99316         0.021669        2/92.2973      grid
+c48u118647       2847528         1.358       2.01352         0.021210        2/94.2973      grid
+c48u128249       3077976         1.318       1.98655         0.020574        2s/40.2657     grid
+c48u137809       3307416         1.290       2.00301         0.020142        2/99.2973      grid
+c48u148395       3561480         1.255       1.98744         0.019600        2s/42.2657     grid
+c48u158763       3810312         1.228       1.99130         0.019176        2/104.2973     grid
+c48u169757       4074168         1.205       2.01122         0.018815        2/106.2973     grid
+c48u181909       4365816         1.173       1.98631         0.018310        2s/45.2450     grid
+c48u193767       4650408         1.151       2.00013         0.017970        2/111.2973     grid
+c48u207023       4968552         1.123       1.98553         0.017535        2s/47.2450     grid
+c48u220121       5282904         1.102       1.99143         0.017197        2/116.2973     grid
+c48u233569       5605656         1.083       2.00765         0.016906        2/118.2973     grid
+c48u248571       5965704         1.056       1.98203         0.016488        2/121.2973     grid
+c48u263339       6320136         1.039       1.99944         0.016221        2/123.2973     grid
+c48u279565       6709560         1.015       1.98032         0.015850        2s/52.2657     grid
+c48u295333       7087992         0.999       1.99038         0.015589        2/128.2973     grid
+c48u312831       7507944         0.978       1.97997         0.015266        2s/54.2657     grid
+c48u330023       7920552         0.961       1.98309         0.015004        2/133.2973     grid
+c48u347617       8342808         0.947       1.99747         0.014782        2/135.2973     grid
+c48u367113       8810712         0.927       1.97956         0.014472        2s/57.2450     grid
+c48u386211       9269064         0.913       1.99027         0.014255        2/140.2973     grid
+c48u407099       9770376         0.896       1.98011         0.013983        2s/59.2450     grid
+c48u427333       10255992        0.882       1.98284         0.013765        2/145.2973     grid
+c48u448437       10762488        0.870       1.99711         0.013578        2/147.2973     grid
+c48u471503       11316072        0.852       1.97662         0.013307        2/150.2973     grid
+c48u493799       11851176        0.841       1.98949         0.013132        2/152.2973     grid
+c48u518377       12441048        0.826       1.97564         0.012891        2s/64.2657     grid
+c48u542361       13016664        0.814       1.98354         0.012715        2/157.2973     grid
+c48u566819       13603656        0.814       2.06674         0.012551               grid
+c48u568499       13643976        0.807       2.02337         0.012499               grid
+c48u593755       14250120        0.789       1.97681         0.012323        2/162.2973     grid
+c48u619981       14879544        0.780       1.98967         0.012173        2/164.2973     grid
+c48u648549       15565176        0.766       1.97599         0.011964        2s/69.2450     grid
+c48u676103       16226472        0.757       1.98293         0.011813        2/169.2973     grid
+c48u706351       16952424        0.747       1.98930         0.011627        2s/71.2450     grid
+c48u735777       17658648        0.735       1.97798         0.011475        2/174.2973     grid
+c48u765729       18377496        0.727       1.98881         0.011344        2/176.2973     grid
+c48u798587       19166088        0.715       1.97265         0.011155        2/179.2973     grid
+c48u830491       19931784        0.707       1.98390         0.011032        2/181.2973     grid
+c48u865149       20763576        0.696       1.97317         0.010863        2s/76.2657     grid
+c48u898517       21564408        0.688       1.97768         0.010735        2/186.2973     grid
+c48u932999       22391976        0.683       2.01538         0.010620               grid
+c48u970447       23290728        0.670       1.97320         0.010455        2/191.2973     grid
+c48u1006449      24154776        0.663       1.98364         0.010347        2/193.2973     grid
+c48u1045817      25099608        0.653       1.97289         0.010197        2s/81.2450     grid
+c48u1083955      26014920        0.646       1.97878         0.010086        2/198.2973     grid
+
+
+for grid files:
+
+// Expand an orientation set expressed as a set of grids into a set of
+// explicit orientations.
+//
+// Written by Charles Karney
+// Copyright (c) 2006 Sarnoff Corporation. All rights reserved.
+//
+// For more information, see
+//
+//    http://charles.karney.info/orientation/
+//
+// Compile with, e.g.,
+//
+//    g++ -O2 -o ExpandSet ExpandSet.cpp
+//
+// Run with
+//
+//   ./ExpandSet [-e] < grid-file > orientation-file
+//
+// If -e is specified, the orientations are written as Euler angles,
+// otherwise they are written as quaternions.  Format of the grid file:
+//
+//     Any number of initial comment lines beginning with #
+//     A line containing "format grid"
+//     A line containing: delta sigma ntot ncell nent maxrad coverage
+//     nent lines containing: k l m weight radius mult
+//
+// Here k >= l >= m >= 0.  delta and sigma are used to define the grid.
+// ntot is the total number of orientations, ncell = ntot/24 is the
+// number of orientations per cell of the 48-cell.  maxrad is the
+// covering radius of the set and radius is the radius of the Voronoi
+// cell.  Both are measured in degrees.  coverage is the coverage of the
+// set, i.e., how much overlap there is when caps of radius maxrad are
+// placed at each point; coverage = 1 means no overlap.
+//
+// For each triplet, [k l m], generate mult distinct permutations by
+// changing the order and the signs of the elements.  Each [k l m] is
+// converted to a point in a truncated cube [x y z] =
+// [pind(k/2,delta,sigma) pind(l/2,delta,sigma) pind(m/2,delta,sigma)]
+// Each [x y z] is converted to a unit quaternion via p = [1 x y z]; q =
+// p/|p| to give ncell orientations.  Finally, the 24 rotational cube
+// symmetries are applied to the results to yield ntot = orientations.
+// The weights are normalized such that sum mult weight = sum mult =
+// ncell
+
+// Format of the orientation file
+//
+//     Any number of initial comment lines beginning with #
+//     A line containing "format quaternion" or "format euler"
+//     A line containing: ntot maxrad coverage
+//     ntot lines containing: q0 q1 q2 q3 weight # for quaternions
+//     ntot lines containing: alpha beta gamma weight # for euler.
+//
+// The weights are normalized such that sum weight = ntot.
+
+#include <cassert>
+#include <vector>
+#include <iostream>
+#include <iomanip>
+#include <cmath>
+#include <string>
+
+namespace {
+  char rcsid[] = "$Id: ExpandSet.cpp 6126 2006-04-04 12:32:09Z ckarney $";
+}
+
+// Windows doesn't define M_PI in the standard header?
+#if !defined(M_PI)
+#define M_PI 3.1415926535897932384626433832795028841971694
+#endif
+
+using namespace std;
+
+// Minimal quaternion class
+class Quaternion {
+public:
+  double w, x, y, z;
+  Quaternion(double ww = 1, double xx = 0, double yy = 0, double zz = 0)
+    : w(ww)
+    , x(xx)
+    , y(yy)
+    , z(zz) {}
+  void Normalize() {
+    double t = w*w + x*x + y*y + z*z;
+    assert(t > 0);
+    t = 1/sqrt(t);
+    w *= t;
+    x *= t;
+    y *= t;
+    z *= t;
+    return;
+  }
+  void Canonicalize() {
+    Normalize();
+    // Make first biggest element positive
+    double mag = w;
+    if (abs(x) > abs(mag))
+      mag = x;
+    if (abs(y) > abs(mag))
+      mag = y;
+    if (abs(z) > abs(mag))
+      mag = z;
+    if (mag < 0) {
+      w *= -1;
+      x *= -1;
+      y *= -1;
+      z *= -1;
+    }
+    return;
+  }
+  // a.Times(b) returns a * b
+  Quaternion Times(const Quaternion& q) const {
+    double
+      mw = w*q.w - x*q.x - y*q.y - z*q.z,
+      mx = w*q.x + x*q.w + y*q.z - z*q.y,
+      my = w*q.y + y*q.w + z*q.x - x*q.z,
+      mz = w*q.z + z*q.w + x*q.y - y*q.x;
+    return Quaternion(mw, mx, my, mz);
+  }
+  void Print(ostream& s) const;
+  void PrintEuler(ostream& s) const;
+};
+
+// Class to hold a set of orientations and weights
+class PackSet {
+public:
+  Quaternion Orientation(size_t i) const {
+    return m_v[i];
+  }
+  double Weight(size_t i) const {
+    return m_w[i];
+  }
+  size_t Number() const {
+    return m_v.size();
+  }
+  void Add(const Quaternion& q, double w = 1) {
+    Quaternion v(q);
+    v.Canonicalize();
+    m_v.push_back(v);
+    m_w.push_back(w);
+  }
+  void Clear() {
+    m_v.clear();
+    m_w.clear();
+  }
+  void Print(ostream& s, bool euler = false, size_t prec = 6) const {
+    for (size_t i = 0; i < Number(); ++i) {
+      if (euler)
+    m_v[i].PrintEuler(s);
+      else
+    m_v[i].Print(s);
+      s << " " << fixed << setprecision(prec) << setw(prec + 2) << m_w[i] << endl;
+    }
+  }
+private:
+  vector<Quaternion> m_v;
+  vector<double> m_w;
+};
+
+// The triple of grid indices
+class Triple {
+public:
+  int a, b, c;
+  Triple(int aa, int bb, int cc)
+    : a(aa)
+    , b(bb)
+    , c(cc) {}
+};
+
+// Generate the permutations and sign changes for a Triple.
+class Permute {
+public:
+  Permute(Triple x) {
+    assert(x.a >= x.b && x.b >= x.c && x.c >= 0);
+    m_arr.push_back(x);
+    size_t n = 1;
+    // Do the sign changes
+    if (x.a != 0) {
+      for (size_t i = 0; i < n; ++i)
+    m_arr.push_back(Triple(-m_arr[i].a, m_arr[i].b, m_arr[i].c));
+      n *= 2;
+    }
+    if (x.b != 0) {
+      for (size_t i = 0; i < n; ++i)
+    m_arr.push_back(Triple(m_arr[i].a, -m_arr[i].b, m_arr[i].c));
+      n *= 2;
+    }
+    if (x.c != 0) {
+      for (size_t i = 0; i < n; ++i)
+    m_arr.push_back(Triple(m_arr[i].a, m_arr[i].b, -m_arr[i].c));
+      n *= 2;
+    }
+    if (x.a == x.b && x.b == x.c)
+      return;
+    // With at least two distinct indices we can rotate the set thru 3
+    // permuations.
+    for (size_t i = 0; i < n; ++i) {
+      m_arr.push_back(Triple(m_arr[i].b, m_arr[i].c, m_arr[i].a));
+      m_arr.push_back(Triple(m_arr[i].c, m_arr[i].a, m_arr[i].b));
+    }
+    n *= 3;
+    if (x.a == x.b || x.b == x.c)
+      return;
+    // With three distinct indices we can in addition interchange the
+    // first two indices (to yield all 6 permutations of 3 indices).
+    for (size_t i = 0; i < n; ++i) {
+      m_arr.push_back(Triple(m_arr[i].b, m_arr[i].a, m_arr[i].c));
+    }
+    n *= 2;
+  }
+  size_t Number() const {
+    return m_arr.size();
+  }
+  Triple Member(size_t i) const {
+    return m_arr[i];
+  }
+private:
+  vector<Triple> m_arr;
+};
+
+// The rotational symmetries of the cube.  (Not normalized, since
+// PackSet.Add does this.)
+static double CubeSyms[24][4] = {
+  {1, 0, 0, 0},
+  // 180 deg rotations about 3 axes
+  {0, 1, 0, 0},
+  {0, 0, 1, 0},
+  {0, 0, 0, 1},
+  // +/- 120 degree rotations about 4 leading diagonals
+  {1, 1, 1, 1},
+  {1, 1, 1,-1},
+  {1, 1,-1, 1},
+  {1, 1,-1,-1},
+  {1,-1, 1, 1},
+  {1,-1, 1,-1},
+  {1,-1,-1, 1},
+  {1,-1,-1,-1},
+  // +/- 90 degree rotations about 3 axes
+  {1, 1, 0, 0},
+  {1,-1, 0, 0},
+  {1, 0, 1, 0},
+  {1, 0,-1, 0},
+  {1, 0, 0, 1},
+  {1, 0, 0,-1},
+  // 180 degree rotations about 6 face diagonals
+  {0, 1, 1, 0},
+  {0, 1,-1, 0},
+  {0, 1, 0, 1},
+  {0, 1, 0,-1},
+  {0, 0, 1, 1},
+  {0, 0, 1,-1},
+};
+
+// Convert from index to position.  The sinh scaling tries to compensate
+// for the bunching up that occurs when [1 x y z] is projected onto the
+// unit sphere.
+double pind(double ind, double delta, double sigma) {
+  return (sigma == 0) ? ind * delta : sinh(sigma * ind * delta) / sigma;
+}
+
+int main(int argc, char* argv[], char*[]) {
+  bool euler = false;
+  if (argc > 1 && string(argv[1]) == "-e")
+    euler = true;
+  assert(cin.good());
+  string line;
+  while (cin.peek() == '#') {
+    getline(cin, line);
+    cout << line << endl;
+  }
+  assert(cin.good());
+  getline(cin, line);
+  assert(line == "format grid");
+  cout << "format " << (euler ? "euler" : "quaternion") << endl;
+  double delta, sigma, maxrad, coverage;
+  size_t ncell, ntot, nent;
+  cin >> delta >> sigma >> ntot >> ncell >> nent >> maxrad >> coverage;
+  // Use extra digit of precision with weights and radii.  This also
+  // triggers a memory minimizing expansion.
+  const bool fine = delta < 0.05;
+  cout << ntot << " " << fixed
+       << setprecision(fine ? 3 : 2) << maxrad << " "
+       << setprecision(5) << coverage << endl;
+  PackSet s;
+  size_t ncell1 = 0;
+  for (size_t n = 0; n < nent; ++n) {
+    int k, l, m;
+    size_t mult;
+    double r, w;
+    assert(cin.good());
+    cin >> k >> l >> m >> w >> r >> mult;
+    Permute p(Triple(k, l, m));
+    assert(mult == p.Number());
+    for (size_t i = 0; i < mult; ++i) {
+      Triple t = p.Member(i);
+      s.Add(Quaternion(1.0,
+               pind(0.5 * t.a, delta, sigma),
+               pind(0.5 * t.b, delta, sigma),
+               pind(0.5 * t.c, delta, sigma)),
+        w);
+    }
+    ncell1 += mult;
+    if (fine) {
+      // Skip n = 0; that's already included.
+      for (size_t n = 1; n < 24; ++n) {
+    Quaternion q(CubeSyms[n][0], CubeSyms[n][1],
+             CubeSyms[n][2], CubeSyms[n][3]);
+    for (size_t i = 0; i < mult; ++i)
+      s.Add(q.Times(s.Orientation(i)), s.Weight(i));
+      }
+      s.Print(cout, euler, fine ? 7 : 6);
+      s.Clear();
+    }
+  }
+  assert(cin.good());
+  assert(ncell1 == ncell);
+  if (!fine) {
+    size_t nc = s.Number();
+    assert(nc == ncell);
+    for (size_t n = 1; n < 24; ++n) {
+      Quaternion q(CubeSyms[n][0], CubeSyms[n][1],
+           CubeSyms[n][2], CubeSyms[n][3]);
+      for (size_t i = 0; i < nc; ++i)
+    s.Add(q.Times(s.Orientation(i)), s.Weight(i));
+    }
+    assert(s.Number() == ntot);
+    s.Print(cout, euler, fine ? 7 : 6);
+    s.Clear();
+  }
+  return 0;
+}
+
+void Quaternion::Print(ostream& s) const {
+  s << fixed << setprecision(9) << setw(12) << w << " ";
+  s << setw(12) << x << " ";
+  s << setw(12) << y << " ";
+  s << setw(12) << z;
+}
+
+void Quaternion::PrintEuler(ostream& s) const {
+  // Print out orientation as a set of Euler angles, following the
+  // convention given in
+  //
+  //    http://www.mhl.soton.ac.uk/research/help/Euler/index.html
+  //
+  // Rotation by Euler angles [a,b,c] is defined as rotation by c about
+  // z axis, followed by rotation by b about y axis. followed by
+  // rotation by a about z axis (again).
+  //
+  // Convert to rotation matrix (assume quaternion is already
+  // normalized)
+  double
+    // m00 = 1 - 2*y*y - 2*z*z,
+    m01 =     2*x*y - 2*z*w,
+    m02 =     2*x*z + 2*y*w,
+    // m10 =     2*x*y + 2*z*w,
+    m11 = 1 - 2*x*x - 2*z*z,
+    m12 =     2*y*z - 2*x*w,
+    m20 =     2*x*z - 2*y*w,
+    m21 =     2*y*z + 2*x*w,
+    m22 = 1 - 2*x*x - 2*y*y;
+  // Taken from Ken Shoemake, "Euler Angle Conversion", Graphics Gems
+  // IV, Academic 1994.
+  //
+  //    http://vered.rose.utoronto.ca/people/david_dir/GEMS/GEMS.html
+  double sy = sqrt(m02*m02 + m12*m12);
+  //  double sy = sqrt(m10*m10 + m20*m20);
+  double a,  b, c;
+  b = atan2(sy, m22);
+  if (sy > 16 * numeric_limits<double>::epsilon()) {
+    a = atan2(m12, m02);
+    c = atan2(m21, -m20);
+  } else {
+    a = atan2(-m01, m11);
+    c = 0;
+  }
+  s << fixed << setprecision(9) << setw(12) << a << " "
+    << setw(12) << b << " " << setw(12) << c;
+
+#if !defined(NDEBUG)
+  // Sanity check.  Convert from Euler angles back to a quaternion, q
+  Quaternion q = Quaternion(cos(a/2), 0, 0, sin(a/2)). // a about z
+    Times(Quaternion(cos(b/2), 0, sin(b/2), 0). // b about y
+      Times(Quaternion(cos(c/2), 0, 0, sin(c/2)))); // c about z
+  // and check that q is parallel to *this.
+  double t = abs(q.w * w + q.x * x + q.y * y + q.z * z);
+  assert(t > 1 - 16 * numeric_limits<double>::epsilon());
+#endif
+}
+
