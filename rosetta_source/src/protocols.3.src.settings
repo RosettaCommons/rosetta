@@ -394,6 +394,7 @@ sources = {
 	"protocols/simple_moves": [
 		"AddCavitiesMover",
 		"AddConstraintsToCurrentConformationMover",
+		"AddJobPairData",
 		"ModifyVariantTypeMover",
 		"BackboneMover",
 		"BBConRotMover",

@@ -1,0 +1,12 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+	</SCOREFXNS>
+	<MOVERS>
+		<AddJobPairData name="stringstring" value_type="string" key="stringstringkey" value="foo"/>
+		<AddJobPairData name="stringreal" value_type="real" key="stringrealkey" value="0.5"/>
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover_name="stringstring"/>
+		<Add mover_name="stringreal"/>
+	</PROTOCOLS>
+</ROSETTASCRIPTS>

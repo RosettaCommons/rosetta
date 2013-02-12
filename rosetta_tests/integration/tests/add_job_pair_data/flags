@@ -1,0 +1,10 @@
+-run
+ -constant_seed
+ -rng mt19937
+ -no_scorefile
+-in
+ -file
+  -s 1ubi.pdb.gz
+-out
+ -pdb
+-parser:protocol add_data.xml
