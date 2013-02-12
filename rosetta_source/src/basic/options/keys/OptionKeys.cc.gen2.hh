@@ -1,5 +1,3 @@
-namespace lh { namespace symfragrm { BooleanOptionKey const symfragrm( "lh:symfragrm" );  } }
-namespace lh { namespace symfragrm { FileVectorOptionKey const pdblist( "lh:symfragrm:pdblist" );  } }
 namespace rbe { BooleanOptionKey const rbe( "rbe" );  }
 namespace rbe { StringOptionKey const server_url( "rbe:server_url" );  }
 namespace rbe { StringOptionKey const server_port( "rbe:server_port" );  }
@@ -461,6 +459,7 @@ namespace loops { BooleanOptionKey const fix_ca_bond_angles( "loops:fix_ca_bond_
 namespace loops { BooleanOptionKey const kic_use_linear_chainbreak( "loops:kic_use_linear_chainbreak" );  }
 namespace loops { BooleanOptionKey const sample_omega_at_pre_prolines( "loops:sample_omega_at_pre_prolines" );  }
 namespace loops { BooleanOptionKey const allow_omega_move( "loops:allow_omega_move" );  }
+namespace loops { BooleanOptionKey const kic_with_cartmin( "loops:kic_with_cartmin" );  }
 namespace loops { BooleanOptionKey const allow_takeoff_torsion_move( "loops:allow_takeoff_torsion_move" );  }
 namespace loops { IntegerOptionKey const extend_length( "loops:extend_length" );  }
 namespace loops { IntegerOptionKey const outer_cycles( "loops:outer_cycles" );  }
@@ -481,10 +480,12 @@ namespace loops { StringOptionKey const restrict_kic_sampling_to_torsion_string(
 namespace loops { BooleanOptionKey const derive_torsion_string_from_native_pose( "loops:derive_torsion_string_from_native_pose" );  }
 namespace loops { BooleanOptionKey const always_remodel_full_loop( "loops:always_remodel_full_loop" );  }
 namespace loops { BooleanOptionKey const taboo_sampling( "loops:taboo_sampling" );  }
+namespace loops { BooleanOptionKey const taboo_in_fa( "loops:taboo_in_fa" );  }
 namespace loops { BooleanOptionKey const ramp_fa_rep( "loops:ramp_fa_rep" );  }
 namespace loops { BooleanOptionKey const ramp_rama( "loops:ramp_rama" );  }
 namespace loops { BooleanOptionKey const kic_rama2b( "loops:kic_rama2b" );  }
 namespace loops { BooleanOptionKey const kic_no_centroid_min( "loops:kic_no_centroid_min" );  }
+namespace loops { BooleanOptionKey const kic_leave_centroid_after_initial_closure( "loops:kic_leave_centroid_after_initial_closure" );  }
 namespace loops { BooleanOptionKey const kic_repack_neighbors_only( "loops:kic_repack_neighbors_only" );  }
 namespace loops { BooleanOptionKey const legacy_kic( "loops:legacy_kic" );  }
 namespace loops { BooleanOptionKey const alternative_closure_protocol( "loops:alternative_closure_protocol" );  }

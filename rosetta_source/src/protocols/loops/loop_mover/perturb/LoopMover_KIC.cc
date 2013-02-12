@@ -37,8 +37,10 @@
 #include <core/id/TorsionID.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
+//#include <core/optimization/AtomTreeMinimizer.hh>
+//#include <core/optimization/CartesianMinimizer.hh> // AS Feb 6, 2013 -- actually we might not need this and can also remove the other two minimizer headers, if the MinMover can take care of it all?
+//#include <core/optimization/MinimizerOptions.hh>
+#include <protocols/simple_moves/MinMover.hh> // AS FEb 6, 2013 -- rerouting minimization to include cartmin
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
@@ -47,7 +49,8 @@
 #include <core/pose/symmetry/util.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
-#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
+//#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
+#include <protocols/simple_moves/symmetry/SymMinMover.hh>
 
 // AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
 // AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
@@ -191,7 +194,7 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 	using namespace basic::options;
 
 	//bool const verbose( true );
-	bool const local_debug( false );
+	bool const local_debug( false ); 
 	bool const local_movie( false );
 
 	core::pose::Pose native_pose;
@@ -260,6 +263,7 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 	}
 
 	// minimizer
+	/*
 	AtomTreeMinimizerOP minimizer;
 	float const dummy_tol( 0.001 ); // linmin sets tol internally
 	bool const use_nblist( false ), deriv_check( false ); // true ); // false );
@@ -269,6 +273,32 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 	} else {
 		minimizer = new core::optimization::AtomTreeMinimizer;
 	}
+	*/
+	// AS Feb 6 2013: rewriting the minimizer section to use the MinMover, which allows seamless integration of cartesian minimization
+	protocols::simple_moves::MinMoverOP min_mover;
+	MoveMapOP mm_one_loop_OP = new core::kinematics::MoveMap( mm_one_loop ); // it appears we need a move map OP to do this... 
+
+	const std::string min_type = "linmin";
+	core::Real dummy_tol( 0.001 ); // linmin sets tol internally -- MinMover doesn't accept const input... 
+	bool use_nblist( false ), deriv_check( false ), use_cartmin ( option[ OptionKeys::loops::kic_with_cartmin ]() ); // true ); // false );
+	if ( use_cartmin ) runtime_assert( scorefxn()->get_weight( core::scoring::cart_bonded ) > 1e-3 ); // AS -- actually I'm not sure if this makes any sense in centroid... ask Frank?
+	if ( core::pose::symmetry::is_symmetric( pose ) )  {
+		min_mover = new simple_moves::symmetry::SymMinMover( mm_one_loop_OP, scorefxn(), min_type, dummy_tol, use_nblist, deriv_check );
+		//min_mover = new simple_moves::symmetry::SymMinMover(); 
+	} else {
+		min_mover = new protocols::simple_moves::MinMover( mm_one_loop_OP, scorefxn(), min_type, dummy_tol, use_nblist, deriv_check );
+		//min_mover = new protocols::simple_moves::MinMover(); // version above doesn't work, but setting all one by one does.. try again with scorefxn() w/o the star though
+	}
+	/*
+	min_mover->movemap( mm_one_loop_OP );
+	min_mover->score_function( scorefxn() );
+	min_mover->min_type( min_type );
+	min_mover->tolerance( dummy_tol );
+	min_mover->nb_list( use_nblist );
+	min_mover->deriv_check( deriv_check );
+	 */
+	min_mover->cartesian( use_cartmin );
+	
 
 	// show temps
 	tr() << "remodel init temp: " << init_temp << std::endl;
@@ -372,6 +402,12 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 				set_last_move_status(protocols::moves::MS_SUCCESS);
 				tr() << "initial kinematic perturbation complete" << std::endl;
 				myKinematicMover.set_idealize_loop_first( false ); // now the loop is idealized
+				
+				// AS Jan 4, 2013: adding option to leave centroid mode directly after successful initial closure
+				if ( option[ OptionKeys::loops::kic_leave_centroid_after_initial_closure ]() ) {
+					return loop_mover::Success;
+				}
+				
 				break;
 			}
 			nits++;
@@ -387,7 +423,15 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 			return loop_mover::CriticalFailure;
 		}
 		( *scorefxn() )(pose);
-		minimizer->run( pose, mm_one_loop, *scorefxn(), options );
+		//minimizer->run( pose, mm_one_loop, *scorefxn(), options );
+		
+		if ( local_debug ) // AS
+			tr() << " minimization next " << std::endl;
+		
+		min_mover->score_function( *scorefxn() ); // at the moment this doesn't change, but if we ever implemented ramp it would
+		min_mover->apply( pose ); // the other options were already registered in setup
+		
+		
 		tr() << "loop rmsd after initial kinematic perturbation:" << loop_rmsd( pose, native_pose, one_loop_loops ) << std::endl;
 
 	}
@@ -481,7 +525,15 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 					core::pose::symmetry::make_symmetric_movemap( pose, mm_one_loop );
 				}
 				( *scorefxn() )(pose);
-				minimizer->run( pose, mm_one_loop, *scorefxn(), options );
+				//minimizer->run( pose, mm_one_loop, *scorefxn(), options );
+				
+				if ( local_debug ) // AS
+					tr() << " minimization next " << std::endl;
+
+				
+				min_mover->score_function( *scorefxn() );
+				min_mover->apply( pose ); // the other options were already registered in setup
+
 				std::string move_type = "kinematic_perturb";
 				bool accepted = mc.boltzmann( pose, move_type );
 				if (accepted) {
@@ -506,6 +558,7 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 			}
 		} // inner_cycles
 	} // outer_cycles
+	
 	if ( recover_low_ ) {
 		pose = mc.lowest_score_pose();
 	}

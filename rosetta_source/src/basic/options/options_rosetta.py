@@ -3643,6 +3643,10 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 			desc='Allow loop omega to minimize during loop modeling',
 			legal=['true','false'], default='false'
 		),
+                Option( 'kic_with_cartmin', 'Boolean',
+                        desc="Use cartesian minimization in KIC loop modeling",
+                        legal=['true', 'false'], default='false'
+                ),
 		Option( 'allow_takeoff_torsion_move', 'Boolean',
 			desc='Allow takeoff phi/psi to move during loop modeling',
 			legal=['true','false'], default='false'
@@ -3720,9 +3724,13 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 			default = 'false'
 		),
 		Option( 'taboo_sampling', 'Boolean',
-			desc='enhance diversity in KIC sampling by pre-generating different torsion bins and sampling within those -- currently perturb stage only',
+			desc='enhance diversity in KIC sampling by pre-generating different torsion bins and sampling within those -- this flag activates Taboo sampling in the perturb stage',
 			default = 'false'
 		),
+                Option( 'taboo_in_fa', 'Boolean',
+                        desc='enhance diversity in KIC sampling by pre-generating different torsion bins and sampling within those -- this flag activates Taboo sampling in the first half of the full-atom stage; use in combination with -loops:taboo_sampling or -kic_leave_centroid_after_initial_closure',
+                        default = 'false'
+                ),
 		Option( 'ramp_fa_rep', 'Boolean',
 			desc='ramp the weight of fa_rep over outer cycles in refinement',
 			default = 'false'
@@ -3739,6 +3747,10 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 			desc='don\'t minimize in centroid mode during KIC perturb',
 			default = 'false'
 		),
+                Option( 'kic_leave_centroid_after_initial_closure', 'Boolean',
+                        desc="only use centroid mode for initial loop closure -- all further loop closures will be performed in full-atom",
+                        default = 'false'
+                ),
 		Option( 'kic_repack_neighbors_only', 'Boolean',
 			desc='select neigbors for repacking via the residue-dependent NBR_RADIUS, not via a generic threshold (WARNING: this overrides any setting in -loops:neighbor_dist)',
             default='false'

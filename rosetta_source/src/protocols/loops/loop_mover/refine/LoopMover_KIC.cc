@@ -36,8 +36,10 @@
 #include <core/id/TorsionID.hh>
 // AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
+//#include <core/optimization/AtomTreeMinimizer.hh>
+//#include <core/optimization/MinimizerOptions.hh>
+#include <protocols/simple_moves/MinMover.hh> // AS FEb 6, 2013 -- rerouting minimization to include cartmin
+
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <core/scoring/Energies.hh>
@@ -46,7 +48,8 @@
 #include <core/pose/symmetry/util.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
-#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
+//#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
+#include <protocols/simple_moves/symmetry/SymMinMover.hh>
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -281,15 +284,27 @@ void LoopMover_Refine_KIC::apply(
 	float temperature = init_temp;
 	protocols::moves::MonteCarlo mc( pose, *local_scorefxn, temperature );
 
-	// minimizer
- 	AtomTreeMinimizerOP minimizer;
- 	MinimizerOptions options( "dfpmin", 0.001, true /*use_nblist*/, false /*deriv_check*/ );
- 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
- 		minimizer = new core::optimization::symmetry::SymAtomTreeMinimizer;
- 	} else {
- 		minimizer = new core::optimization::AtomTreeMinimizer;
- 	}
+	// AS Feb 6 2013: rewriting the minimizer section to use the MinMover, which allows seamless integration of cartesian minimization
+	protocols::simple_moves::MinMoverOP min_mover;
+	
+	const std::string min_type = "dfpmin";
+	core::Real dummy_tol( 0.001 ); 
+	bool use_nblist( true ), deriv_check( false ), use_cartmin ( option[ OptionKeys::loops::kic_with_cartmin ]() ); // true ); // false );
+	if ( use_cartmin ) runtime_assert( min_scorefxn->get_weight( core::scoring::cart_bonded ) > 1e-3 ); 
+	if ( core::pose::symmetry::is_symmetric( pose ) )  {
+		min_mover = new simple_moves::symmetry::SymMinMover(); 
+	} else {
+		min_mover = new protocols::simple_moves::MinMover();
+	}
+	min_mover->score_function( min_scorefxn );
+	min_mover->min_type( min_type );
+	min_mover->tolerance( dummy_tol );
+	min_mover->nb_list( use_nblist );
+	min_mover->deriv_check( deriv_check );
+	min_mover->cartesian( use_cartmin );
 
+	
+	
 	// show temps
 	tr() << "refine init temp: " << init_temp << std::endl;
 	tr() << "refine final temp: " << final_temp << std::endl;
@@ -334,7 +349,6 @@ void LoopMover_Refine_KIC::apply(
 	loop_closure::kinematic_closure::KinematicMover myKinematicMover;
 
 	// AS Oct 3, 2012: create appropriate perturber here, depending on input flags
-	// note that there currently is no taboo sampling in refinement, only in the perturb stage
 	if (option[ OptionKeys::loops::vicinity_sampling ]()) {
 		loop_closure::kinematic_closure::VicinitySamplingKinematicPerturberOP perturber =
 		new loop_closure::kinematic_closure::VicinitySamplingKinematicPerturber( &myKinematicMover );
@@ -351,6 +365,17 @@ void LoopMover_Refine_KIC::apply(
 		
 		loop_closure::kinematic_closure::TorsionRestrictedKinematicPerturberOP perturber = new loop_closure::kinematic_closure::TorsionRestrictedKinematicPerturber ( &myKinematicMover, torsion_bins );
 		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() ); // to make the code cleaner this should really be a generic function, even though some classes may not use it
+		myKinematicMover.set_perturber( perturber );
+	} else if ( basic::options::option[ basic::options::OptionKeys::loops::kic_rama2b ]() && basic::options::option[ basic::options::OptionKeys::loops::taboo_in_fa ]() ) {  // TabooSampling with rama2b (neighbor-dependent phi/psi lookup) -- note that Taboo Sampling will only be active during the first half of the full-atom stage, after that we follow the energy landscape / Monte Carlo
+		loop_closure::kinematic_closure::NeighborDependentTabooSamplingKinematicPerturberOP 
+		perturber =
+        new loop_closure::kinematic_closure::NeighborDependentTabooSamplingKinematicPerturber( &myKinematicMover );
+		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
+		myKinematicMover.set_perturber( perturber );
+	} else if ( basic::options::option[ basic::options::OptionKeys::loops::taboo_in_fa ] ) { // TabooSampling (std rama) -- note that Taboo Sampling will only be active during the first half of the full-atom stage, after that we follow the energy landscape / Monte Carlo
+		loop_closure::kinematic_closure::TabooSamplingKinematicPerturberOP perturber = new loop_closure::kinematic_closure::TabooSamplingKinematicPerturber ( &myKinematicMover );
+		
+		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() ); 
 		myKinematicMover.set_perturber( perturber );
 	} else if ( basic::options::option[ basic::options::OptionKeys::loops::kic_rama2b ]() ) { // neighbor-dependent phi/psi selection
 		loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturberOP 
@@ -423,7 +448,11 @@ void LoopMover_Refine_KIC::apply(
 	kinematics::MoveMap mm_all_loops; // DJM tmp
 	loops_set_move_map( pose, *loops(), fix_natsc_, mm_all_loops, neighbor_dist_);
 	if(flank_residue_min_){add_loop_flank_residues_bb_to_movemap(*loops(), mm_all_loops); } // added by JQX
-	minimizer->run( pose, mm_all_loops, *min_scorefxn, options ); // DJM tmp
+	MoveMapOP mm_all_loops_OP = new kinematics::MoveMap( mm_all_loops ); // AS, required for using MinMover
+	min_mover->movemap( mm_all_loops_OP );
+	min_mover->score_function( min_scorefxn ); // AS: needs to be adapted in case we ramp any weights (or does this happen automatically through pointers?)
+	//	minimizer->run( pose, mm_all_loops, *min_scorefxn, options ); // DJM tmp
+	min_mover->apply( pose );
 	mc.boltzmann( pose, move_type );
 	mc.show_scores();
 	if ( redesign_loop_ ) {
@@ -482,6 +511,22 @@ void LoopMover_Refine_KIC::apply(
 		}
 		
 		
+		// more than 50% done? -> switch off Taboo Sampling (if applicable)
+		if ( i > outer_cycles/2 && option[ OptionKeys::loops::taboo_in_fa ]() ) {
+			// if rama2b is active, generate a new rama2b perturber, otherwise use a standard torsion sampling perturber
+			if ( basic::options::option[ basic::options::OptionKeys::loops::kic_rama2b ]() ) { // neighbor-dependent phi/psi selection
+				loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturberOP 
+				perturber =
+				new loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturber( &myKinematicMover );
+				perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
+				myKinematicMover.set_perturber( perturber );        
+			} else { // standard KIC
+				loop_closure::kinematic_closure::TorsionSamplingKinematicPerturberOP perturber =
+				new loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber( &myKinematicMover );
+				perturber->set_vary_ca_bond_angles(  ! option[OptionKeys::loops::fix_ca_bond_angles ]()  );
+				myKinematicMover.set_perturber( perturber );
+			}
+		}
 
 		
 		mc.score_function( *local_scorefxn );
@@ -522,6 +567,7 @@ void LoopMover_Refine_KIC::apply(
 			
 			// get the movemap for minimization and allowed side-chains for rottrials for this loop
 			kinematics::MoveMap cur_mm = move_maps[ loop_ind ];
+			MoveMapOP cur_mm_OP = new kinematics::MoveMap( cur_mm );
 			utility::vector1<bool> cur_allow_sc_move = allow_sc_vectors[ loop_ind ];
 			rottrials_packer_task->restrict_to_residues( cur_allow_sc_move );
 
@@ -601,10 +647,10 @@ void LoopMover_Refine_KIC::apply(
 								//     in the symmetric case ... am looking into this
 								loops_set_move_map( pose, *loops(), fix_natsc_, mm_all_loops, neighbor_dist_ );
 								if(flank_residue_min_){add_loop_flank_residues_bb_to_movemap(*loops(), mm_all_loops); } // added by JQX
-								minimizer->run( pose, mm_all_loops, *min_scorefxn, options );
-							} else {
-								minimizer->run( pose, mm_all_loops, *min_scorefxn, options );
 							}
+							min_mover->movemap( mm_all_loops_OP ); // will symmetry changes automatically be transferred through the pointer?
+							min_mover->score_function( min_scorefxn ); 
+							min_mover->apply( pose );
 						}
 						
 						std::string move_type;
@@ -629,14 +675,9 @@ void LoopMover_Refine_KIC::apply(
 					
 					
 					// AS: for non-legacy-KIC one might consider putting this into an ELSE branch -- however, min_after_repack_ defaults to false, in which case we wouldn't have minimization here, which could strongly affect the likelihood of acceptance
-					if ( core::pose::symmetry::is_symmetric( pose ) )  {
-						//fpd  minimizing with the reduced movemap seems to cause occasional problems
-						//     in the symmetric case ... am looking into this
-						minimizer->run( pose, cur_mm, *min_scorefxn, options );
-					} else {
-						//minimizer->run( pose, mm_all_loops, *min_scorefxn, options );
-						minimizer->run( pose, cur_mm, *min_scorefxn, options );
-					}
+					min_mover->movemap( cur_mm_OP );
+					min_mover->score_function( min_scorefxn );
+					min_mover->apply( pose );
 
 					// test for acceptance
 					std::stringstream k_trial;
@@ -703,10 +744,10 @@ void LoopMover_Refine_KIC::apply(
 							//     in the symmetric case ... am looking into this
 							loops_set_move_map( pose, *loops(), fix_natsc_, mm_all_loops, neighbor_dist_ );
 							if(flank_residue_min_){add_loop_flank_residues_bb_to_movemap(*loops(), mm_all_loops); } // added by JQX
-							minimizer->run( pose, mm_all_loops, *min_scorefxn, options );
-						} else {
-							minimizer->run( pose, mm_all_loops, *min_scorefxn, options );
 						}
+						min_mover->movemap( mm_all_loops_OP );
+						min_mover->score_function( min_scorefxn );
+						min_mover->apply( pose );
 					}
 
 					std::string move_type;

@@ -664,10 +664,10 @@ option.add( basic::options::OptionKeys::fold_cst::reramp_iterations, "do X loops
 option.add( basic::options::OptionKeys::fold_cst::skip_on_noviolation_in_stage1, "if constraints report no violations --- skip cycles" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::stage1_ramp_cst_cycle_factor, "spend x*<standard cycles> on each step of sequence separation" ).def(0.25);
 option.add( basic::options::OptionKeys::fold_cst::stage2_constraint_threshold, "stop runs that violate this threshold at end of stage2" ).def(0);
+option.add( basic::options::OptionKeys::fold_cst::ignore_sequence_seperation, "usually constraints are switched on according to their separation in the fold-tree" ).def(false);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::ignore_sequence_seperation, "usually constraints are switched on according to their separation in the fold-tree" ).def(false);
-option.add( basic::options::OptionKeys::fold_cst::no_recover_low_at_constraint_switch, "dont recover low when max_seq_sep is increased" ).def(false);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::no_recover_low_at_constraint_switch, "dont recover low when max_seq_sep is increased" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::ramp_coord_cst, "ramp coord csts just like chainbreak-weights during fold-cst" ).def(false);
 option.add( basic::options::OptionKeys::resample::resample, "resample option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::resample::silent, "a silent file for decoys to restart sampling from " ).def("");
@@ -1327,11 +1327,11 @@ option.add( basic::options::OptionKeys::lh::fragpdb::fragpdb, "fragpdb option gr
 option.add( basic::options::OptionKeys::lh::fragpdb::out_path, "Path where pdbs are saved" ).def("");
 option.add( basic::options::OptionKeys::lh::fragpdb::indexoffset, "list of index offset pairs" ).def(-1);
 option.add( basic::options::OptionKeys::lh::fragpdb::bin, "list of bin keys" ).def(utility::vector1<std::string>());
+option.add( basic::options::OptionKeys::lh::symfragrm::symfragrm, "symfragrm option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::lh::symfragrm::pdblist, "list of pdbs to be processed" );
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::symfragrm::symfragrm, "symfragrm option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::lh::symfragrm::pdblist, "list of pdbs to be processed" );
-option.add( basic::options::OptionKeys::rbe::rbe, "rbe option group" ).legal(true).def(true);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::rbe::rbe, "rbe option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::rbe::server_url, "serverurl for rosetta backend" );
 option.add( basic::options::OptionKeys::rbe::server_port, "port for rosetta backend" ).def("80");
 option.add( basic::options::OptionKeys::rbe::poll_frequency, "No description" ).def(1.0);
@@ -1792,6 +1792,7 @@ option.add( basic::options::OptionKeys::loops::fix_ca_bond_angles, "Freezes N-CA
 option.add( basic::options::OptionKeys::loops::kic_use_linear_chainbreak, "Use linear_chainbreak instead of (harmonic) chainbreak in KIC loop sampling" ).legal(true).legal(false).def(false);
 option.add( basic::options::OptionKeys::loops::sample_omega_at_pre_prolines, "Sample omega in KIC loop sampling" ).legal(true).legal(false).def(false);
 option.add( basic::options::OptionKeys::loops::allow_omega_move, "Allow loop omega to minimize during loop modeling" ).legal(true).legal(false).def(false);
+option.add( basic::options::OptionKeys::loops::kic_with_cartmin, "Use cartesian minimization in KIC loop modeling" ).legal(true).legal(false).def(false);
 option.add( basic::options::OptionKeys::loops::allow_takeoff_torsion_move, "Allow takeoff phi/psi to move during loop modeling" ).legal(true).legal(false).def(false);
 option.add( basic::options::OptionKeys::loops::extend_length, "Number of alanine residues to append after cutpoint in loopextend app" ).lower(0).def(0);
 option.add( basic::options::OptionKeys::loops::outer_cycles, "outer cycles in fullatom loop refinement" ).lower(1).def(3);
@@ -1811,11 +1812,13 @@ option.add( basic::options::OptionKeys::loops::kic_bump_overlap_factor, "allow s
 option.add( basic::options::OptionKeys::loops::restrict_kic_sampling_to_torsion_string, "restrict kinematic loop closure sampling to the phi/psi angles specified in the torsion string" ).def("");
 option.add( basic::options::OptionKeys::loops::derive_torsion_string_from_native_pose, "apply torsion-restricted sampling, and derive the torsion string from the native [or, if not provided, starting] structure" ).def(false);
 option.add( basic::options::OptionKeys::loops::always_remodel_full_loop, "always remodel the full loop segment (i.e. the outer pivots are always loop start & end) -- currently this only applies to the perturb stage -- EXPERIMENTAL" ).def(false);
-option.add( basic::options::OptionKeys::loops::taboo_sampling, "enhance diversity in KIC sampling by pre-generating different torsion bins and sampling within those -- currently perturb stage only" ).def(false);
+option.add( basic::options::OptionKeys::loops::taboo_sampling, "enhance diversity in KIC sampling by pre-generating different torsion bins and sampling within those -- this flag activates Taboo sampling in the perturb stage" ).def(false);
+option.add( basic::options::OptionKeys::loops::taboo_in_fa, "enhance diversity in KIC sampling by pre-generating different torsion bins and sampling within those -- this flag activates Taboo sampling in the first half of the full-atom stage; use in combination with -loops:taboo_sampling or -kic_leave_centroid_after_initial_closure" ).def(false);
 option.add( basic::options::OptionKeys::loops::ramp_fa_rep, "ramp the weight of fa_rep over outer cycles in refinement" ).def(false);
 option.add( basic::options::OptionKeys::loops::ramp_rama, "ramp the weight of rama over outer cycles in refinement" ).def(false);
 option.add( basic::options::OptionKeys::loops::kic_rama2b, "use neighbor-dependent Ramachandran distributions in random torsion angle sampling" ).def(false);
 option.add( basic::options::OptionKeys::loops::kic_no_centroid_min, "don't minimize in centroid mode during KIC perturb" ).def(false);
+option.add( basic::options::OptionKeys::loops::kic_leave_centroid_after_initial_closure, "only use centroid mode for initial loop closure -- all further loop closures will be performed in full-atom" ).def(false);
 option.add( basic::options::OptionKeys::loops::kic_repack_neighbors_only, "select neigbors for repacking via the residue-dependent NBR_RADIUS, not via a generic threshold (WARNING: this overrides any setting in -loops:neighbor_dist)" ).def(false);
 option.add( basic::options::OptionKeys::loops::legacy_kic, "always select the start pivot first and then the end pivot -- biases towards sampling the C-terminal part of the loop more" ).def(true);
 option.add( basic::options::OptionKeys::loops::alternative_closure_protocol, "use WidthFirstSliding..." ).def(false);

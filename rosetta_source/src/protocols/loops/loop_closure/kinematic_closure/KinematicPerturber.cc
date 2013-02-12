@@ -648,7 +648,7 @@ namespace protocols {
 				: KinematicPerturber(),
 				vary_ca_bond_angles_(false),
 				sample_omega_for_pre_prolines_( basic::options::option[ basic::options::OptionKeys::loops::sample_omega_at_pre_prolines ]() ),
-				num_strings_(100000), // large numbers could be inefficient here if there are lots of design steps (which invalidate the current torsion strings & taboo map) -- however, generation of the random strings seems to be very fast
+				num_strings_(1000), // large numbers could be inefficient here if there are lots of design steps (which invalidate the current torsion strings & taboo map) -- however, generation of the random strings seems to be very fast
 				rama_( core::scoring::ScoringManager::get_instance()->get_Ramachandran() )
 				{ set_kinmover( kinmover_in ); 
 				}	

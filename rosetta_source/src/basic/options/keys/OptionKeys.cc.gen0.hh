@@ -659,3 +659,4 @@ namespace fold_cst { IntegerOptionKey const reramp_iterations( "fold_cst:reramp_
 namespace fold_cst { BooleanOptionKey const skip_on_noviolation_in_stage1( "fold_cst:skip_on_noviolation_in_stage1" );  }
 namespace fold_cst { RealOptionKey const stage1_ramp_cst_cycle_factor( "fold_cst:stage1_ramp_cst_cycle_factor" );  }
 namespace fold_cst { RealOptionKey const stage2_constraint_threshold( "fold_cst:stage2_constraint_threshold" );  }
+namespace fold_cst { BooleanOptionKey const ignore_sequence_seperation( "fold_cst:ignore_sequence_seperation" );  }

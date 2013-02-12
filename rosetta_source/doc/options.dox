@@ -8691,6 +8691,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-kic_with_cartmin</b> \<Boolean\><dt>
+<dd>Use cartesian minimization in KIC loop modeling</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-allow_takeoff_torsion_move</b> \<Boolean\><dt>
 <dd>Allow takeoff phi/psi to move during loop modeling</dd><br>
 <dd>Default: false</dd><br>
@@ -8793,7 +8798,12 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-taboo_sampling</b> \<Boolean\><dt>
-<dd>enhance diversity in KIC sampling by pre-generating different torsion bins and sampling within those -- currently perturb stage only</dd><br>
+<dd>enhance diversity in KIC sampling by pre-generating different torsion bins and sampling within those -- this flag activates Taboo sampling in the perturb stage</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-taboo_in_fa</b> \<Boolean\><dt>
+<dd>enhance diversity in KIC sampling by pre-generating different torsion bins and sampling within those -- this flag activates Taboo sampling in the first half of the full-atom stage; use in combination with -loops:taboo_sampling or -kic_leave_centroid_after_initial_closure</dd><br>
 <dd>Default: false</dd><br>
 </dl>
 <dl>
@@ -8814,6 +8824,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-kic_no_centroid_min</b> \<Boolean\><dt>
 <dd>don't minimize in centroid mode during KIC perturb</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-kic_leave_centroid_after_initial_closure</b> \<Boolean\><dt>
+<dd>only use centroid mode for initial loop closure -- all further loop closures will be performed in full-atom</dd><br>
 <dd>Default: false</dd><br>
 </dl>
 <dl>

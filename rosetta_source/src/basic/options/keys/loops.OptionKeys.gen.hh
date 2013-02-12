@@ -79,6 +79,7 @@ namespace loops { extern BooleanOptionKey const fix_ca_bond_angles; }
 namespace loops { extern BooleanOptionKey const kic_use_linear_chainbreak; }
 namespace loops { extern BooleanOptionKey const sample_omega_at_pre_prolines; }
 namespace loops { extern BooleanOptionKey const allow_omega_move; }
+namespace loops { extern BooleanOptionKey const kic_with_cartmin; }
 namespace loops { extern BooleanOptionKey const allow_takeoff_torsion_move; }
 namespace loops { extern IntegerOptionKey const extend_length; }
 namespace loops { extern IntegerOptionKey const outer_cycles; }
@@ -99,10 +100,12 @@ namespace loops { extern StringOptionKey const restrict_kic_sampling_to_torsion_
 namespace loops { extern BooleanOptionKey const derive_torsion_string_from_native_pose; }
 namespace loops { extern BooleanOptionKey const always_remodel_full_loop; }
 namespace loops { extern BooleanOptionKey const taboo_sampling; }
+namespace loops { extern BooleanOptionKey const taboo_in_fa; }
 namespace loops { extern BooleanOptionKey const ramp_fa_rep; }
 namespace loops { extern BooleanOptionKey const ramp_rama; }
 namespace loops { extern BooleanOptionKey const kic_rama2b; }
 namespace loops { extern BooleanOptionKey const kic_no_centroid_min; }
+namespace loops { extern BooleanOptionKey const kic_leave_centroid_after_initial_closure; }
 namespace loops { extern BooleanOptionKey const kic_repack_neighbors_only; }
 namespace loops { extern BooleanOptionKey const legacy_kic; }
 namespace loops { extern BooleanOptionKey const alternative_closure_protocol; }
