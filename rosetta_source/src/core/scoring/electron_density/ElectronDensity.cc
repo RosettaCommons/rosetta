@@ -1296,6 +1296,7 @@ void ElectronDensity::setup_fastscoring_first_time(core::pose::Pose const &pose)
 
 	//fpd  don't oversample
 	fastgrid = grid;
+	fastorigin = origin;
 	rho_obs_oversample = density;
 
 	// convolute with calculated density
@@ -2891,10 +2892,15 @@ ElectronDensity::matchResFast(
 	numeric::xyzVector< core::Real > fracX, idxX;
 	for (Size i=1; i<=rsd.nheavyatoms(); ++i) {
 		fracX = c2f*rsd.atom(i).xyz();
+		
+		idxX[0] = pos_mod (fracX[0]*fastgrid[0] - fastorigin[0] + 1 , (double)fastgrid[0]);
+		idxX[1] = pos_mod (fracX[1]*fastgrid[1] - fastorigin[1] + 1 , (double)fastgrid[1]);
+		idxX[2] = pos_mod (fracX[2]*fastgrid[2] - fastorigin[2] + 1 , (double)fastgrid[2]);
 		idxX = numeric::xyzVector<core::Real>( fracX[0]*fastgrid[0] - fastorigin[0] + 1,
 		                                       fracX[1]*fastgrid[1] - fastorigin[1] + 1,
 		                                       fracX[2]*fastgrid[2] - fastorigin[2] + 1);
-		score += interp_spline( fastdens_score , idxX );
+		core::Real score_i = interp_spline( fastdens_score , idxX );
+		score += score_i;
 	}
 
 	return score;
@@ -2922,10 +2928,10 @@ void ElectronDensity::dCCdx_fastRes(
 	if ( pose.residue(resid).aa() == core::chemical::aa_vrt ) return;
 
 	numeric::xyzVector<core::Real> fracX = c2f*X;
-	numeric::xyzVector<core::Real> idxX = numeric::xyzVector<core::Real>(
-	                                          fracX[0]*fastgrid[0] - fastorigin[0] + 1,
-	                                          fracX[1]*fastgrid[1] - fastorigin[1] + 1,
-	                                          fracX[2]*fastgrid[2] - fastorigin[2] + 1);
+	numeric::xyzVector<core::Real> idxX;
+	idxX[0] = pos_mod (fracX[0]*fastgrid[0] - fastorigin[0] + 1 , (double)fastgrid[0]);
+	idxX[1] = pos_mod (fracX[1]*fastgrid[1] - fastorigin[1] + 1 , (double)fastgrid[1]);
+	idxX[2] = pos_mod (fracX[2]*fastgrid[2] - fastorigin[2] + 1 , (double)fastgrid[2]);
 
 	numeric::xyzVector<core::Real> dCCdX_grid = interp_dspline( fastdens_score , idxX );
 	dCCdX[0] = dCCdX_grid[0]*c2f(1,1)*fastgrid[0] + dCCdX_grid[1]*c2f(2,1)*fastgrid[1] + dCCdX_grid[2]*c2f(3,1)*fastgrid[2];
