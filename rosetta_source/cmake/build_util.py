@@ -34,9 +34,6 @@ def list_project_files(path_to_mini, project_name):
 		if project_name == 'pilot_apps' or project_name == 'apps':
 			full_path = path_to_project + '/apps/' + '/' + dir
 
-		hdrfiles = os.listdir(full_path)
-		hdrfiles = [hdrfile for hdrfile in hdrfiles if hdrfile.endswith('.hh') or hdrfile.endswith('.h')]
-
 		old_srcfiles = srcfiles
 		srcfiles = []
 		for srcfile in old_srcfiles:
@@ -48,6 +45,14 @@ def list_project_files(path_to_mini, project_name):
 				srcfiles.append(srcfile + '.c')
 			else:
 				raise RuntimeError('Nonexistant source file: ' + full_path + srcfile)
+
+		if not os.path.exists(full_path):
+			# Git ignores empty directories, so if there aren't any headers or source files the listdir() below may choke.
+			# A missing directory where something was expected should error out above.
+			continue
+
+		hdrfiles = os.listdir(full_path)
+		hdrfiles = [hdrfile for hdrfile in hdrfiles if hdrfile.endswith('.hh') or hdrfile.endswith('.h')]
 
 		dirfiles = sorted(hdrfiles + srcfiles)
 		project_files.append((dir, dirfiles))
