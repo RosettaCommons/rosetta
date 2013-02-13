@@ -13,6 +13,7 @@
 #include <protocols/qsar/scoring_grid/GridManager.hh>
 #include <protocols/qsar/scoring_grid/SingleGrid.hh>
 #include <protocols/qsar/scoring_grid/GridFactory.hh>
+#include <protocols/qsar/scoring_grid/ScoreNormalization.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/qsar/qsarMap.hh>
 
@@ -71,7 +72,7 @@ void GridManager::reset()
 	qsar_map_ = 0;
 	initialized_ = false;
 	chain_ = 'X';
-	normalized_ = false;
+	norm_function_ = 0;
 }
 
 GridManager::GridManager() :
@@ -81,15 +82,10 @@ GridManager::GridManager() :
 	qsar_map_(0),
 	initialized_(false),
 	chain_('X'),
-	normalized_(false)
+	norm_function_(0)
 {
 	grid_map_.clear();
 	score_map_.clear();
-}
-
-void GridManager::set_normalized(bool normalized)
-{
-	normalized_ = normalized;
 }
 
 void GridManager::set_width(core::Real width)
@@ -100,6 +96,11 @@ void GridManager::set_width(core::Real width)
 void GridManager::set_resolution(core::Real resolution)
 {
 	resolution_=resolution;
+}
+
+void GridManager::set_normalization_function(std::string norm_function_name)
+{
+	norm_function_ = get_score_normalization_function(norm_function_name);
 }
 
 void GridManager::set_chain(char chain)
@@ -180,11 +181,15 @@ core::Real GridManager::total_score(core::conformation::Residue const & residue)
 		score_map_.insert(new_score);
 	}
 
-	if(normalized_)
+	if(norm_function_)
 	{
-		return total_score/static_cast<core::Real>(residue.natoms());
+		core::Real normalized_score = (*norm_function_)(total_score,residue);
+		GridManagerTracer << "Score normalized from " << total_score << " to "<< normalized_score << std::endl;
+		return normalized_score;
+	}else
+	{
+		return total_score;
 	}
-	return total_score;
 }
 
 
@@ -214,18 +219,15 @@ core::Real GridManager::total_score(core::pose::Pose const & pose, core::Size co
 		score_map_.insert(new_score);
 	}
 
-	if(normalized_)
+	if(norm_function_)
 	{
-		core::Size n_atoms = 0;
-		for(core::Size i = 1; i < residue_vector.size();++i)
-		{
-			n_atoms += residue_vector[i]->natoms();
-		}
-		return total_score/static_cast<core::Real>(n_atoms);
+		core::Real normalized_score = (*norm_function_)(total_score,residue_vector);
+		GridManagerTracer << "Score normalized from " << total_score << " to "<< normalized_score << std::endl;
+		return normalized_score;
+	}else
+	{
+		return total_score;
 	}
-
-	return total_score;
-
 }
 
 

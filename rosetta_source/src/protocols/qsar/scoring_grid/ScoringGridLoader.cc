@@ -23,13 +23,13 @@
 
 // Utility headers
 #include <utility/tag/Tag.hh>
+#include <utility/excn/Exceptions.hh>
 
 // Boost Headers
 #include <boost/foreach.hpp>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-
 #define foreach BOOST_FOREACH
 
 namespace protocols {
@@ -69,9 +69,10 @@ void ScoringGridLoader::load_data(
 		grid_manager->set_chain(tag->getOption<char>("ligand_chain"));
 	}
 
-	if(tag->hasOption("normalized"))
+	if(tag->hasOption("normalize_mode"))
 	{
-		grid_manager->set_normalized(tag->getOption<bool>("normalized"));
+		std::string normalize_mode = tag->getOption<std::string>("normalize_mode");
+		grid_manager->set_normalization_function(normalize_mode);
 	}
 
 	/// Add grids to the scoring grid manager

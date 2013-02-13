@@ -19,6 +19,7 @@
 #include <protocols/jd2/Job.fwd.hh>
 #include <protocols/qsar/qsarMap.fwd.hh>
 #include <protocols/qsar/scoring_grid/GridBase.fwd.hh>
+#include <protocols/qsar/scoring_grid/ScoreNormalization.fwd.hh>
 
 #include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>
@@ -47,12 +48,12 @@ public:
 	static GridManager* get_instance();
 	///@brief reset GridManager to the default settings
 	void reset();
-	///@brief should grid scores be normalized?
-	void set_normalized(bool normalized);
 	///@brief set width (must be done before initialization)
 	void set_width(core::Real width);
 	///@brief set resolution (must be done before initialization)
 	void set_resolution(core::Real resolution);
+	///@brief set normalization function
+	void set_normalization_function(std::string norm_function_name);
 	///@brief set ligand chain (must be done before initialization)
 	void set_chain(char chain);
 	///@brief make a new grid from grid tag, and insert it into the grid manager
@@ -104,6 +105,8 @@ private:
 	void deserialize(utility::json_spirit::mArray data);
 
 private:
+
+
 	static GridManager * instance_;
 
 	std::map<std::string,GridMap> grid_map_cache_;
@@ -118,7 +121,8 @@ private:
 	qsar::qsarMapOP qsar_map_;
 	bool initialized_;
 	char chain_;
-	bool normalized_;
+	ScoreNormalizationOP norm_function_;
+
 };
 
 }
