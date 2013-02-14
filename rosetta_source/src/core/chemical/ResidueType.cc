@@ -501,7 +501,7 @@ ResidueType::residue_connection( Size const i )
 AtomType const &
 ResidueType::atom_type( Size const atomno ) const
 {
-	PyAssert((atomno > 0) && (atomno <= graph_.num_vertices()), "ResidueType::atom_type( Size const atomno ): atomno is not in this ResidueType!");
+    //PyAssert((atomno > 0) && (atomno <= graph_.num_vertices()), "ResidueType::atom_type( Size const atomno ): atomno is not in this ResidueType!");
 	//assert( (atomno > 0) && (atomno <= graph_.num_vertices()) );
 	return ( *atom_types_ )[ graph_[ ordered_atoms_[atomno] ].atom_type_index() ];
 }
@@ -510,7 +510,7 @@ ResidueType::atom_type( Size const atomno ) const
 std::string const &
 ResidueType::atom_name( Size const index ) const
 {
-	PyAssert((index > 0) && (index <= graph_.num_vertices()), "ResidueType::atom_name( Size const index ): index is not in this ResidueType!");
+    //PyAssert((index > 0) && (index <= graph_.num_vertices()), "ResidueType::atom_name( Size const index ): index is not in this ResidueType!");
 	return graph_[ ordered_atoms_[index] ].name();
 }
 
