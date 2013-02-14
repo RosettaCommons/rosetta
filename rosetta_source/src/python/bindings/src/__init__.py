@@ -35,6 +35,7 @@ import basic.resource_manager
 
 import core
 import core.graph
+import core.chemical
 import core.chemical.orbitals
 import core.scoring
 import core.scoring.methods
@@ -60,7 +61,6 @@ import protocols.docking
 import protocols.init
 
 import rosetta.utility.file
-import rosetta.core.chemical
 import rosetta.core.graph
 import rosetta.core.conformation
 import rosetta.core.id
@@ -199,6 +199,7 @@ def init(*args, **kargs):
 
     if not args:
         args = ["app", "-database", database, "-ex1", "-ex2aro"]
+        #args = ["app", "-database", database,]
     else:
         args = list(args)
 

@@ -502,6 +502,7 @@ AtomType const &
 ResidueType::atom_type( Size const atomno ) const
 {
 	PyAssert((atomno > 0) && (atomno <= graph_.num_vertices()), "ResidueType::atom_type( Size const atomno ): atomno is not in this ResidueType!");
+	//assert( (atomno > 0) && (atomno <= graph_.num_vertices()) );
 	return ( *atom_types_ )[ graph_[ ordered_atoms_[atomno] ].atom_type_index() ];
 }
 

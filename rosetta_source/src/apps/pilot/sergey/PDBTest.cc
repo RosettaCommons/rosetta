@@ -165,8 +165,8 @@ int main( int argc, char * argv [] )
 
 	{
 		core::pose::Pose pose;
-		//core::import_pose::pose_from_pdb(pose, "src/python/bindings/test/data/test_in.pdb");
-		core::import_pose::pose_from_pdb(pose, "test_in.pdb");
+		core::import_pose::pose_from_pdb(pose, "src/python/bindings/test/data/test_in.pdb");
+		//core::import_pose::pose_from_pdb(pose, "test_in.pdb");
 
 		//core::scoring::ScoreFunction scorefxn;
 		core::scoring::ScoreFunctionOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function("standard");

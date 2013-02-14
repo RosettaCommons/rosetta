@@ -1197,6 +1197,12 @@ def sortObjects(l):
 
                 if isinstance(l[i], CppFunction) and isinstance(l[j], CppEnum): swap(i, j); f = True; break
 
+                if isinstance(l[i], CppClass) and isinstance(l[j], CppClass): # some special cases (default parameter bechavor)
+                    #print l[i].getChildrenContext(), l[j].getChildrenContext()
+                    if l[i].getChildrenContext()=='::core::chemical::Atom::' and l[j].getChildrenContext()=='::core::chemical::AtomICoor::': swap(i, j); f = True; break 
+                     
+
+
 
 def wrapModule(name, name_spaces, context, relevant_files_list, max_funcion_size, by_hand_beginning='', by_hand_ending=''):
     ''' Template for creating one module, and wrapping each elelemnts... (each elements must have .wrap)
