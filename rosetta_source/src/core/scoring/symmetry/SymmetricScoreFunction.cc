@@ -276,20 +276,22 @@ SymmetricScoreFunction::setup_for_minimizing(
 			domain_map( node1 ) != domain_map( node2 ) );
 
 		Real edge_weight = symm_info.score_multiply( node1, node2 );
+		Real edge_dweight = symm_info.deriv_multiply( node1, node2 );
 		if ( edge_weight != 0.0 ) {
-
 			MinimizationEdge & minedge( static_cast< MinimizationEdge & > (**edge_iter) );
 			setup_for_minimizing_sr2b_enmeths_for_minedge(
 				pose.residue( node1 ), pose.residue( node2 ),
 				minedge, min_map, pose, res_moving_wrt_eachother, true,
 				static_cast< EnergyEdge const * > (*ee_edge_iter), fixed_energies, edge_weight );
 			minedge.weight( edge_weight );
+			minedge.dweight( edge_dweight );
 		} else {
 			MinimizationEdge & minedge( static_cast< MinimizationEdge & > (**dedge_iter) );
 			setup_for_minimizing_sr2b_enmeths_for_minedge(
 				pose.residue( node1 ), pose.residue( node2 ),
 				minedge, min_map, pose, res_moving_wrt_eachother, false,
 				static_cast< EnergyEdge const * > (*ee_edge_iter), fixed_energies ); // edge weight of 1
+			minedge.dweight( edge_dweight );
 		}
 	}
 
@@ -325,6 +327,7 @@ SymmetricScoreFunction::setup_for_minimizing(
 					domain_map( ii ) != domain_map( jj ) );
 
 				Real edge_weight = symm_info.score_multiply( ii, jj );
+				Real edge_dweight = symm_info.deriv_multiply( ii, jj );
 				if ( edge_weight != 0.0 ) {
 					// adjust/add the edge to the scoring graph
 					setup_for_lr2benmeth_minimization_for_respair(

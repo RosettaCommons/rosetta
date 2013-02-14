@@ -191,15 +191,13 @@ public:
 	Size interface_number( Size const res1, Size const res2 ) const;
 
 	// score multiply factors
-	Size score_multiply( Size const res1, Size const res2 ) const;
+	Real score_multiply( Size const res1, Size const res2 ) const;
+	Real deriv_multiply( Size const res1, Size const res2 ) const;
 	void set_score_multiply_from_subunit_factors( utility::vector1< Size > const & score_multiply_vector_subunit, Size const nres_subunit, Size const n_subunits );
 	void set_score_multiply( Size const res, Size const factor );
 	bool get_use_symmetry() const;
 
 	void set_use_symmetry( bool setting );  //fpd  used in silent file reading(?)
-
-	bool cp_weighting_during_minimization() const;
-	void set_cp_weighting_during_minimization( bool setting );
 
 	SymSlideInfo get_slide_info() const;
 
@@ -269,11 +267,7 @@ private:
 		ar & score_multiply_factor_;
 		ar & dofs_;
 		ar & use_symmetry_;
-		ar & cp_weighting_during_minimization_;
 		ar & slide_info_;
-		//ar & jnum2name_;
-		//ar & name2jnum_;	
-
 	}
 #endif
 
@@ -302,8 +296,11 @@ private:
 	// store the number of interfaces
 	Size interfaces_;
 
-	//Store score multiplication factors
+	// score multiplication factors
 	utility::vector1< Size > score_multiply_;
+
+	// intra/inter subunit reweighing factors
+	Real reweight_symm_interactions_;
 
 	// total number of subunits in the entire symm complex (not just those in the model)
 	// read in the 'E =' line in the symm definition file
@@ -314,9 +311,6 @@ private:
 
 	//  Toggle use of symmetry
 	bool use_symmetry_;
-
-	// Toggle use of count pair weighting in scoring during minimization
-	bool cp_weighting_during_minimization_;
 
 	// Slide info
 	SymSlideInfo slide_info_;

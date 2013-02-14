@@ -29,6 +29,9 @@
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
+
 // C++ headers
 #include <cassert>
 #include <iostream>
@@ -51,7 +54,11 @@ namespace core {
 namespace conformation {
 namespace symmetry {
 
-SymmetryInfo::SymmetryInfo() { use_symmetry_ = false; score_multiply_factor_ = 1; }
+SymmetryInfo::SymmetryInfo() { 
+	use_symmetry_ = false;
+	score_multiply_factor_ = 1;
+	reweight_symm_interactions_ = basic::options::option[ basic::options::OptionKeys::symmetry::reweight_symm_interactions ]();
+}
 SymmetryInfo::~SymmetryInfo() {}
 
 
@@ -70,6 +77,8 @@ bool SymmetryInfo::operator!=( SymmetryInfo const & s )
 
 SymmetryInfo::SymmetryInfo( SymmData const & symm_data, Size const nres_subunit, Size const njump_subunit )
 {
+	reweight_symm_interactions_ = basic::options::option[ basic::options::OptionKeys::symmetry::reweight_symm_interactions ]();
+
 	Size joff = njump_subunit*symm_data.get_subunits();
 	std::map<std::string,Size> const & name2num = symm_data.get_jump_string_to_jump_num();
 	for(std::map<std::string,Size>::const_iterator i = name2num.begin(); i != name2num.end(); ++i) {
@@ -89,8 +98,10 @@ SymmetryInfo::SymmetryInfo( SymmData const & symm_data, Size const nres_subunit,
 			symm_data.get_score_multiply_subunit(), symm_data.get_slide_info(),
 			symm_data.get_interfaces() );
 	}
-	if(symm_data.get_num_components()==1) TR       << *this << std::endl;
-	else                                  TR.Debug << *this << std::endl;
+	//if(symm_data.get_num_components()==1)
+	//	TR       << *this << std::endl;
+	//else
+		TR.Debug << *this << std::endl;
 }
 
 SymmetryInfo::SymmetryInfo(
@@ -131,6 +142,8 @@ SymmetryInfo::initialize(
 	std::string const & type
 )
 {
+	reweight_symm_interactions_ = basic::options::option[ basic::options::OptionKeys::symmetry::reweight_symm_interactions ]();
+
 	nres_monomer_ = nres_monomer;
 
 	// set number of interfaces
@@ -143,8 +156,6 @@ SymmetryInfo::initialize(
 	dofs_ = dofs;
 	// set use symmetry
 	use_symmetry_ = true;
-	// set cp_weighting_during_minimization_ to false
-	cp_weighting_during_minimization_ = false;
 	// slide info
 	slide_info_ = slide_info;
 	// store type
@@ -308,8 +319,6 @@ SymmetryInfo::initialize(
 	dofs_ = dofs;
 	// set use symmetry
 	use_symmetry_ = true;
-	// set cp_weighting_during_minimization_ to false
-	cp_weighting_during_minimization_ = false;
 	// slide info
 	slide_info_ = slide_info;
 	// store type
@@ -614,7 +623,6 @@ std::istream& operator>> ( std::istream & s, SymmetryInfo & symminfo )
 	Size num_dof, num_score_multiply;
 
 	symminfo.set_use_symmetry(true);
-	symminfo.set_cp_weighting_during_minimization(false);
 
 	s >> tag ;
 	if ( tag != "SYMMETRY_INFO" || s.fail() ) {
@@ -948,13 +956,6 @@ SymmetryInfo::num_virtuals() const
 		return npseudo_;
 }
 
-// bool
-// SymmetryInfo::scoring_residue(Size residue ) const
-// {
-// 	if ( score_multiply( residue ) == 0 ) return false;
-// 	return true;
-// }
-
 SymmetryInfo::Clones const &
 SymmetryInfo::bb_clones( Size const seqpos ) const
 {
@@ -1151,22 +1152,39 @@ SymmetryInfo::set_dofs( std::map< Size, SymDof > const & dofs )
 	dofs_ = dofs;
 }
 
-Size
+Real
 SymmetryInfo::score_multiply( Size const res1, Size const res2 ) const
 {
-	assert ( res1 <= score_multiply_.size() && res2 <= score_multiply_.size() );
-	assert ( res1 <= score_multiply_.size() && res2 <= score_multiply_.size() );
-
-	//fpd  if one of the reses is a symm vrt
-	//fpd     return score_multiply_[i] if the other is in scoring subunit
-	//fpd     return 0 otherwise (since these terms can't be properly minimized)
-	//fpd  this fixes problems with coordinate constraints
+	bool bb1ind = bb_is_independent(res1);
+	bool bb2ind = bb_is_independent(res2);
 	if ( res1 > num_total_residues_without_pseudo() ) {
-		return ( bb_is_independent(res2) ) ? score_multiply_[res2] : 0;
+		return ( bb2ind ) ? reweight_symm_interactions_*score_multiply_[res2] : 0;
 	} else if  (res2 > num_total_residues_without_pseudo() ) {
-		return ( bb_is_independent(res1) ) ? score_multiply_[res1] : 0;
+		return ( bb1ind ) ? reweight_symm_interactions_*score_multiply_[res1] : 0;
+	} else if (bb1ind) {
+		return (bb2ind?1:reweight_symm_interactions_)*score_multiply_[res2];
+	} else if (bb2ind) {
+		return reweight_symm_interactions_*score_multiply_[res1];
 	} else {
-		return score_multiply_[ ( bb_is_independent(res1) ) ? res2 : res1 ];
+		return 0;
+	}
+}
+
+Real
+SymmetryInfo::deriv_multiply( Size const res1, Size const res2 ) const
+{
+	bool bb1ind = bb_is_independent(res1);
+	bool bb2ind = bb_is_independent(res2);
+	if ( res1 > num_total_residues_without_pseudo() ) {
+		return ( bb2ind ) ? 1 : 0;
+	} else if ( res2 > num_total_residues_without_pseudo() ) {
+		return ( bb1ind ) ? 1 : 0;
+	} else if ( bb1ind && bb2ind ) {
+		return 1.0;
+	} else if ( bb1ind || bb2ind ) {
+		return reweight_symm_interactions_;
+	} else {
+		return 0.0;
 	}
 }
 
@@ -1216,18 +1234,6 @@ bool
 SymmetryInfo::get_use_symmetry() const
 {
 	return use_symmetry_;
-}
-
-bool
-SymmetryInfo::cp_weighting_during_minimization() const
-{
-	return cp_weighting_during_minimization_;
-}
-
-void
-SymmetryInfo::set_cp_weighting_during_minimization( bool setting )
-{
-  cp_weighting_during_minimization_ = setting;
 }
 
 SymSlideInfo

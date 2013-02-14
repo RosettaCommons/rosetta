@@ -2547,7 +2547,8 @@ ScoreFunction::setup_for_lr2benmeth_minimization_for_respair(
 	bool accumulate_fixed_energies,
 	ResidueNeighborConstIteratorOP rni,
 	EnergyMap & fixed_energies,
-	Real const edge_weight
+	Real const edge_weight,
+	Real const edge_dweight
 ) const
 {
 	Size const seqpos1( res1.seqpos() );
@@ -2564,6 +2565,7 @@ ScoreFunction::setup_for_lr2benmeth_minimization_for_respair(
 
 		minedge->add_twobody_enmeth( lr2benergy, res1, res2, pose, res_moving_wrt_eachother );
 		minedge->weight( edge_weight );
+		minedge->dweight( edge_dweight );
 	} else if ( accumulate_fixed_energies ) {
 
 		/// Even if edge_weight != 1.0, don't scale the energies stored in the residue-neighbor-iterator,

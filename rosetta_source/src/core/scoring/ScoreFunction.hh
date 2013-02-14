@@ -440,7 +440,7 @@ public:
 		bool accumulate_fixed_energies,
 		EnergyEdge const * energy_edge,
 		EnergyMap & fixed_energies,
-		Real const edge_weight = 1.0
+		Real const edge_weight = 1.0  //fpd this is unused so I am not adding 'edge_dweight' parameter
 	) const;
 
 	/// @brief Initialize an edge in the MinimizationGraph with a particular long-range two body
@@ -456,7 +456,8 @@ public:
 		bool accumulate_fixed_energies,
 		ResidueNeighborConstIteratorOP rni,
 		EnergyMap & fixed_energies,
-		Real const edge_weight = 1.0
+		Real const edge_weight = 1.0,
+		Real const edge_dweight = 1.0
 	) const;
 
 	/// @brief For external scorers: Let the energy methods prepare for

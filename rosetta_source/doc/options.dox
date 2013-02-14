@@ -10944,6 +10944,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Text file describing symmetry setup</dd><br>
 </dl>
 <dl>
+<dt><b>-reweight_symm_interactions</b> \<Real\><dt>
+<dd>Scale intersubunit interactions by a specified weight</dd><br>
+<dd>Default: 1.0</dd><br>
+</dl>
+<dl>
 <dt><b>-initialize_rigid_body_dofs</b> \<Boolean\><dt>
 <dd>Initialize the RB dofs from the symmetry definition file?</dd><br>
 <dd>Default: false</dd><br>

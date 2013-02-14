@@ -226,33 +226,6 @@ class SymmData : public utility::pointer::ReferenceCount
 	SymSlideInfo const &
 	get_slide_info() const;
 
-	core::Real
-	get_cell_a() const;
-
-	core::Real
-	get_cell_b() const;
-
-	core::Real
-	get_cell_c() const;
-
-	core::Real
-	get_cell_alfa() const;
-
-	core::Real
-	get_cell_beta() const;
-
-	core::Real
-	get_cell_gamma() const;
-
-	// Set functions
-	//void
-	//set_nres_subunit(
-		//Size nres_subunit );
-
-	//void
-  //set_njump_subunit(
-    //Size njump_subunit );
-
 	void
 	set_symmetry_name(
 	  std::string symm_name );
@@ -291,29 +264,6 @@ class SymmData : public utility::pointer::ReferenceCount
 	void
 	set_symm_transforms(
 		std::vector< std::vector< std::string> > symm_transforms );
-
-	void
-	set_cell_a(
-		core::Real cell_a	);
-
-	void
-	set_cell_b(
-		core::Real cell_b );
-
-	void
-	set_cell_c(
-		core::Real cell_c );
-
-	void
-	set_cell_alfa(
-		core::Real cell_alfa );
-
-	void
-	set_cell_beta(
-	core::Real cell_beta );
-
-	void
-	get_cell_gamma( core::Real cell_gamma );
 
 	utility::vector1<char> const & get_components() const;
 	std::map<std::string,char> const & get_subunit_name_to_component() const;

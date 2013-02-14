@@ -78,7 +78,7 @@ void MinimizationNode::copy_from( parent const * source )
 	sfs_req_2benmeths_ = mn_source.sfs_req_2benmeths_;
 	sfd_req_2benmeths_ = mn_source.sfd_req_2benmeths_;
 	weight_ = mn_source.weight_;
-
+	dweight_ = mn_source.dweight_;
 }
 
 Size MinimizationNode::count_static_memory() const
@@ -418,7 +418,8 @@ MinimizationEdge::MinimizationEdge(
 	Size n2
 ) :
 	parent( owner, n1, n2 ),
-	weight_( 1.0 )
+	weight_( 1.0 ),
+	dweight_( 1.0 )
 {}
 
 MinimizationEdge::MinimizationEdge(
@@ -427,7 +428,8 @@ MinimizationEdge::MinimizationEdge(
 )
 :
 	parent( owner, example_edge.get_first_node_ind(), example_edge.get_second_node_ind() ),
-	weight_( 1.0 )
+	weight_( 1.0 ),
+	dweight_( 1.0 )
 {
 	copy_from( & example_edge );
 }
@@ -455,6 +457,7 @@ void MinimizationEdge::copy_from( parent const * source )
 	sfs_req_2benmeths_ = minedge.sfs_req_2benmeths_;
 	sfd_req_2benmeths_ = minedge.sfd_req_2benmeths_;
 	weight_ = minedge.weight_;
+	dweight_ = minedge.dweight_;
 }
 
 
@@ -1015,6 +1018,34 @@ eval_atom_derivatives_for_minedge(
 		(*iter)->eval_residue_pair_derivatives(
 			res1, res2, res1_min_data, res2_min_data, min_edge.res_pair_min_data(),
 			pose, respair_weights, r1atom_derivs, r2atom_derivs );
+	}
+}
+
+void
+eval_weighted_atom_derivatives_for_minedge(
+	MinimizationEdge const & min_edge,
+	conformation::Residue const & res1,
+	conformation::Residue const & res2,
+	ResSingleMinimizationData const & res1_min_data,
+	ResSingleMinimizationData const & res2_min_data,
+	pose::Pose const & pose,
+	EnergyMap const & respair_weights,
+	utility::vector1< DerivVectorPair > & r1atom_derivs,
+	utility::vector1< DerivVectorPair > & r2atom_derivs
+)
+{
+	//fpd rather then change eval_residue_pair_derivatives interface
+	//    we will just modify the energymap
+	EnergyMap respair_weight_new = respair_weights;
+	respair_weight_new *= min_edge.dweight();
+
+	for ( MinimizationEdge::TwoBodyEnergiesIterator
+			iter = min_edge.active_2benmeths_begin(),
+			iter_end = min_edge.active_2benmeths_end();
+			iter != iter_end; ++iter ) {
+		(*iter)->eval_residue_pair_derivatives(
+			res1, res2, res1_min_data, res2_min_data, min_edge.res_pair_min_data(),
+			pose, respair_weight_new, r1atom_derivs, r2atom_derivs );
 	}
 }
 

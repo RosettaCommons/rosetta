@@ -2260,6 +2260,7 @@ option.add( basic::options::OptionKeys::fold_from_loops::output_centroid, "outpu
 option.add( basic::options::OptionKeys::fold_from_loops::add_cst_loop, "add CA csts of motif to constraint set" ).def(false);
 option.add( basic::options::OptionKeys::symmetry::symmetry, "symmetry option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::symmetry::symmetry_definition, "Text file describing symmetry setup" );
+option.add( basic::options::OptionKeys::symmetry::reweight_symm_interactions, "Scale intersubunit interactions by a specified weight" ).def(1.0);
 option.add( basic::options::OptionKeys::symmetry::initialize_rigid_body_dofs, "Initialize the RB dofs from the symmetry definition file?" ).def(false);
 option.add( basic::options::OptionKeys::symmetry::perturb_rigid_body_dofs, "(As in docking) Do a small perturbation of the symmetric DOFs: -perturb_rigid_body_dofs ANGSTROMS DEGREES" ).n(2);
 option.add( basic::options::OptionKeys::symmetry::symmetric_rmsd, "calculate the rmsd symmetrically by checking all chain orderings" );

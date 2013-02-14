@@ -263,6 +263,7 @@ namespace fold_from_loops { BooleanOptionKey const output_centroid( "fold_from_l
 namespace fold_from_loops { BooleanOptionKey const add_cst_loop( "fold_from_loops:add_cst_loop" );  }
 namespace symmetry { BooleanOptionKey const symmetry( "symmetry" );  }
 namespace symmetry { StringOptionKey const symmetry_definition( "symmetry:symmetry_definition" );  }
+namespace symmetry { RealOptionKey const reweight_symm_interactions( "symmetry:reweight_symm_interactions" );  }
 namespace symmetry { BooleanOptionKey const initialize_rigid_body_dofs( "symmetry:initialize_rigid_body_dofs" );  }
 namespace symmetry { RealVectorOptionKey const perturb_rigid_body_dofs( "symmetry:perturb_rigid_body_dofs" );  }
 namespace symmetry { BooleanOptionKey const symmetric_rmsd( "symmetry:symmetric_rmsd" );  }

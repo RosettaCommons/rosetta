@@ -110,6 +110,8 @@ public:
 
 	Real weight() const { return weight_; }
 	void weight( Real setting ) { weight_ = setting; }
+	Real dweight() const { return dweight_; }
+	void dweight( Real setting ) { dweight_ = setting; }
 
 private:
 	void add_active_1benmeth_std( OneBodyEnergyCOP enmeth );
@@ -202,7 +204,7 @@ private:
 	// two-body energy methods that require a setup-for-derivatives (sfs) opportunity
 	TwoBodyEnergies sfd_req_2benmeths_;
 
-	Real weight_;
+	Real weight_,dweight_;
 };
 
 /// Class MinimizationEdge holds ResPairMinimizationData for a certain pair
@@ -301,6 +303,10 @@ public:
 	/// @brief Set the weight for an edge
 	void weight( Real setting ) { weight_ = setting; }
 
+	// weights to be used during minization
+	Real dweight() const { return dweight_; }
+	void dweight( Real setting ) { dweight_ = setting; }
+
 protected:
 	/// Downcasts
 
@@ -346,7 +352,7 @@ private:
 	// this residue pair
 	TwoBodyEnergies sfd_req_2benmeths_;
 
-	Real weight_;
+	Real weight_, dweight_;
 
 };
 
@@ -509,6 +515,19 @@ eval_res_onebody_energies_for_minnode(
 
 void
 eval_atom_derivatives_for_minedge(
+	MinimizationEdge const & min_edge,
+	conformation::Residue const & res1,
+	conformation::Residue const & res2,
+	ResSingleMinimizationData const & res1_min_data,
+	ResSingleMinimizationData const & res2_min_data,
+	pose::Pose const & pose,
+	EnergyMap const & respair_weights,
+	utility::vector1< DerivVectorPair > & r1atom_derivs,
+	utility::vector1< DerivVectorPair > & r2atom_derivs
+);
+
+void
+eval_weighted_atom_derivatives_for_minedge(
 	MinimizationEdge const & min_edge,
 	conformation::Residue const & res1,
 	conformation::Residue const & res2,

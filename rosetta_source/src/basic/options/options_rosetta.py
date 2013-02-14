@@ -4317,15 +4317,16 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 	),
 
 	# symmetry options
-    Option_Group( 'symmetry',
-        Option( 'symmetry_definition','String', desc="Text file describing symmetry setup",default=None),
-        Option( 'initialize_rigid_body_dofs','Boolean', desc="Initialize the RB dofs from the symmetry definition file?",default='false'),
-        Option( 'perturb_rigid_body_dofs','RealVector',
+	Option_Group( 'symmetry',
+		Option( 'symmetry_definition','String', desc="Text file describing symmetry setup",default=None),
+		Option( 'reweight_symm_interactions','Real', desc="Scale intersubunit interactions by a specified weight",default='1.0'),
+		Option( 'initialize_rigid_body_dofs','Boolean', desc="Initialize the RB dofs from the symmetry definition file?",default='false'),
+		Option( 'perturb_rigid_body_dofs','RealVector',
            desc='(As in docking) Do a small perturbation of the symmetric DOFs: -perturb_rigid_body_dofs ANGSTROMS DEGREES',
            n='2'
 		    ),
-			Option( 'symmetric_rmsd', 'Boolean', desc='calculate the rmsd symmetrically by checking all chain orderings'),
-    ),
+		Option( 'symmetric_rmsd', 'Boolean', desc='calculate the rmsd symmetrically by checking all chain orderings'),
+	),
 	Option_Group( 'fold_and_dock',
 		Option( 'move_anchor_points','Boolean', desc="move the anchor points that define symmetric coordinate system during symmetry fragment insertion", default='false'),
 		Option( 'set_anchor_at_closest_point','Boolean', desc="set the anchor points that define symmetric coordinate system to the nearest point between two consecutive chains during fragment insertion", default='false'),

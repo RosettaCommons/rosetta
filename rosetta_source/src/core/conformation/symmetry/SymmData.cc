@@ -80,13 +80,7 @@ SymmData::SymmData() :
 	score_subunit_( 1 ),
 	anchor_residue_( "1" ),
 	recenter_( false ),
-	root_( 1 ),
-	cell_a_(0),
-	cell_b_(0),
-	cell_c_(0),
-	cell_alfa_(0),
-	cell_beta_(0),
-	cell_gamma_(0)
+	root_( 1 )
 {}
 
 // @define: constructor
@@ -100,13 +94,7 @@ SymmData::SymmData( Size, Size ) :
 	score_subunit_( 1 ),
 	anchor_residue_( "1" ),
 	recenter_( false ),
-	root_( 1 ),
-	cell_a_(0),
-	cell_b_(0),
-	cell_c_(0),
-	cell_alfa_(0),
-	cell_beta_(0),
-	cell_gamma_(0)
+	root_( 1 )
 {}
 
 
@@ -144,12 +132,6 @@ SymmData::SymmData( SymmData const & src ) :
 	score_multiply_subunit_( src.score_multiply_subunit_ ),
 	include_subunit_( src.include_subunit_ ),
 	output_subunit_( src.output_subunit_ ),
-	cell_a_(src.cell_a_),
-	cell_b_(src.cell_b_),
-	cell_c_(src.cell_c_),
-	cell_alfa_(src.cell_alfa_),
-	cell_beta_(src.cell_beta_),
-	cell_gamma_(src.cell_gamma_),
 	components_(src.components_),
 	name2component_(src.name2component_),
 	jname2components_(src.jname2components_),
@@ -339,57 +321,6 @@ SymmData::get_slide_info() const
 	return slide_info_;
 }
 
-core::Real
-SymmData::get_cell_a() const
-{
-	return cell_a_;
-}
-
-core::Real
-SymmData::get_cell_b() const
-{
-  return cell_b_;
-}
-
-core::Real
-SymmData::get_cell_c() const
-{
-  return cell_c_;
-}
-
-core::Real
-SymmData::get_cell_alfa() const
-{
-  return cell_alfa_;
-}
-
-core::Real
-SymmData::get_cell_beta() const
-{
-  return cell_beta_;
-}
-
-core::Real
-SymmData::get_cell_gamma() const
-{
-  return cell_gamma_;
-}
-
-// Set functions
-//void
-//SymmData::set_nres_subunit(
-	//Size nres_subunit )
-//{
-	//nres_subunit_ = nres_subunit;
-//}
-
-//void
-//SymmData::set_njump_subunit(
-	//Size njump_subunit )
-//{
-	//njump_subunit_ = njump_subunit;
-//}
-
 void
 SymmData::set_symmetry_name(
   string symm_name )
@@ -457,147 +388,8 @@ SymmData::set_symm_transforms(
 	symm_transforms_ = symm_transforms;
 }
 
-void
-SymmData::set_cell_a(
-	core::Real cell_a	)
-{
-	cell_a_ = cell_a;
-}
-
-void
-SymmData::set_cell_b(
-	core::Real cell_b )
-{
-	cell_b_ = cell_b;
-}
-
-void
-SymmData::set_cell_c(
-	core::Real cell_c )
-{
-	cell_c_ = cell_c;
-}
-
-void
-SymmData::set_cell_alfa(
-	core::Real cell_alfa )
-{
-  cell_alfa_ = cell_alfa;
-}
-
-void
-SymmData::set_cell_beta(
-core::Real cell_beta )
-{
-  cell_beta_ = cell_beta;
-}
-
-void
-SymmData::get_cell_gamma(
-	core::Real cell_gamma )
-{
-  cell_gamma_ = cell_gamma;
-}
-
-
 // @define: destructor
 SymmData::~SymmData(){}
-
-// @define: This function can read symmetry info from a pdb file. It stores all relevant data
-// but can't do anything useful with it yet...
-void
-SymmData::read_symmetry_info_from_pdb(
-	string filename
-)
-{
-	std::ifstream infile( filename.c_str() );
-
-	if (!infile.good()) {
-		utility_exit_with_message( "[ERROR] Error opening pdb file for symmetry extraction '" + filename + "'" );
-	}
-	string line;
-	int linecount( 0 );
-	int start_symm_matrices( 0 );
-	bool row1_found( false ), row2_found( false ), row3_found( false );
-	numeric::xyzMatrix < Real > smtry_rot;
-	numeric::xyzMatrix < Real > smtry_trans;
-	vector< numeric::xyzMatrix < Real > > smtry_rot_matrices;
-	vector< numeric::xyzMatrix < Real > > smtry_trans_matrices;
-	while( getline(infile,line) ) {
-		linecount++;
-		vector1< string > tokens ( utility::split( line ) );
-
-		if( tokens.size() > 0 ) {
-			if ( tokens[1] == "REMARK" && tokens[2] == "290" ) {
-				if ( tokens.size() > 7 && tokens[6] == "SPACE" && tokens[7] == "GROUP:" )
-				{
-					string symmetry_name = "";
-					for (Size i=8; i<= tokens.size(); ++i ){
-						symmetry_name += tokens[i];
-						symmetry_name += " ";
-					}
-				}
-				if ( tokens[3] == "SYMOP" ){
-					start_symm_matrices = linecount + 2;
-				}
-				vector1< vector1< string> > matrices;
-				vector1< string> split_vector;
-				if ( linecount >= start_symm_matrices ){
-					split_vector = utility::string_split( tokens[4], ',' );
-					if ( split_vector.size() == 3 ){
-							matrices.push_back( split_vector );
-					}
-				}
-// 				for (int i=0; i< matrices.size(); i++){
-// 					for ( int j=0; j< matrices[i].size(); ++j){
-// 						std::cout << matrices[i][j]<<",";
-// 					}
-// 					std::cout << endl;
-// 				}
-				Vector row1, row2,row3, rowa, rowb, rowc;
-				if ( tokens[3] == "SMTRY1" ){
-					row1 = Vector ( static_cast<core::Real>( std::atof( tokens[5].c_str() ) ),
-					                static_cast<core::Real>( std::atof( tokens[6].c_str() ) ),
-					                static_cast<core::Real>( std::atof( tokens[7].c_str() ) ) );
-					rowa = Vector ( static_cast<core::Real>( std::atof( tokens[8].c_str() ) ),
-					                0.0, 0.0 );
-					row1_found = true;
-				}
-				if ( tokens[3] == "SMTRY2" ){
-					row2 = Vector ( static_cast<core::Real>( std::atof( tokens[5].c_str() ) ),
-					                static_cast<core::Real>( std::atof( tokens[6].c_str() ) ),
-					                static_cast<core::Real>( std::atof( tokens[7].c_str() ) ) );
-					rowb = Vector ( 0.0, static_cast<core::Real>( std::atof( tokens[8].c_str() ) ),
-					                0.0 );
-					row2_found = true;
-				}
-				if ( tokens[3] == "SMTRY3" ){
-					row3 = Vector ( static_cast<core::Real>( std::atof( tokens[5].c_str() ) ),
-					                static_cast<core::Real>( std::atof( tokens[6].c_str() ) ),
-					                static_cast<core::Real>( std::atof( tokens[7].c_str() ) ) );
-					rowc = Vector ( 0.0, 0.0, static_cast<core::Real>( std::atof( tokens[8].c_str() ) ) );
-					row3_found = true;
-				}
-				if ( row1_found && row2_found && row3_found ){
-					smtry_rot = Matrix::rows( row1, row2, row3 );
-					smtry_trans = Matrix::rows( rowa, rowb, rowc );
-					smtry_rot_matrices.push_back( smtry_rot );
-					smtry_trans_matrices.push_back( smtry_trans );
-					row1_found = row2_found = row3_found = false;
-				}
-			} // End REMARK 290
-			if ( tokens[1] == "CRYST1" && tokens.size() > 7){
-				cell_a_ = static_cast<core::Real>( std::atof( tokens[2].c_str() ) );
-				cell_b_ = static_cast<core::Real>( std::atof( tokens[3].c_str() ) );
-				cell_c_ = static_cast<core::Real>( std::atof( tokens[4].c_str() ) );
-				cell_alfa_ = static_cast<core::Real>( std::atof( tokens[5].c_str() ) );
-				cell_beta_ = static_cast<core::Real>( std::atof( tokens[6].c_str() ) );
-				cell_gamma_ = static_cast<core::Real>( std::atof( tokens[7].c_str() ) );
-			}
-		}
-	}
-
-}
 
 // @details: Parse symmetry information from a textfile. This function fills all data necessary to generate a
 // symmetrical system, score it and move it.
@@ -1725,12 +1517,6 @@ operator==(
 	  a.output_subunit_.begin(),
 	  a.output_subunit_.end(),
 	  b.output_subunit_.begin()) ||
-	(a.cell_a_ != b.cell_a_) ||
-	(a.cell_b_ != b.cell_b_) ||
-	(a.cell_c_ != b.cell_c_) ||
-	(a.cell_alfa_ != b.cell_alfa_) ||
-	(a.cell_beta_ != b.cell_beta_) ||
-	(a.cell_gamma_ != b.cell_gamma_) ||
 	!std::equal(
 	  a.components_.begin(),
 	  a.components_.end(),
