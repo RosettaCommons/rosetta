@@ -1366,8 +1366,6 @@ void RemodelLoopMover::loophash_stage(
 
 	Pose const constantPose(pose); //needed this because get_rt function for loophash doesn't honor the cut positions needed to build the loop.
 
-	utility::vector1< std::string > filter_target = basic::options::option[ OptionKeys::remodel::lh_filter_string];
-
 	// setup loops
 	loops::LoopsOP loops_to_model = new loops::Loops();
 
@@ -1386,7 +1384,9 @@ void RemodelLoopMover::loophash_stage(
 
 	// if filter is used, make sure the number of strings specified agree with
 	// num loops.
+	utility::vector1< std::string > filter_target;
 	if (basic::options::option[ OptionKeys::remodel::lh_filter_string].user()){
+		filter_target = basic::options::option[ OptionKeys::remodel::lh_filter_string ];
 		runtime_assert(filter_target.size() == loops_to_model->size());
 	}
 
@@ -1655,6 +1655,7 @@ void RemodelLoopMover::loophash_stage(
 			//for ( Size inner = 1; inner <= 1; ++inner ) {
 
 			// fragments
+			if( basic::options::option[ OptionKeys::remodel::lh_filter_string ].user() ) {
 			for ( std::vector< BackboneSegment >::iterator i = bs_vec_.begin(), ie = bs_vec_.end(); i != ie; ++i) {
 			//if ( loop.is_terminal( pose ) || RG.uniform() * n_standard_cycles > ( outer + simultaneous_cycles() ) || pose.fold_tree().num_cutpoint() == 0 ) {
 
@@ -1774,6 +1775,7 @@ void RemodelLoopMover::loophash_stage(
 
 			} // inner_cycles hashed loops
 			TR << "Sec struc filtered fragment count = " << lh_frag_count << std::endl;
+			}
 		} // outer_cycles
 
 		// recover low
