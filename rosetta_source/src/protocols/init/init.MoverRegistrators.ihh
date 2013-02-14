@@ -194,6 +194,7 @@ static MoverRegistrator<qsar::scoring_grid::GridInitMoverCreator>  reg_GridInitM
 static MoverRegistrator< relax::FastRelaxCreator> reg_FastRelaxCreator;
 
 static MoverRegistrator< rigid::RigidBodyPerturbNoCenterMoverCreator > reg_RigidBodyPerturbNoCenterMoverCreator;
+static MoverRegistrator< rigid::RigidBodyTransMoverCreator > reg_RigidBodyTransMoverCreator;
 static MoverRegistrator< rigid::RollMoverCreator > reg_RollMoverCreator;
 
 static MoverRegistrator< rosetta_scripts::ParsedProtocolCreator > reg_ParsedProtocolCreator;

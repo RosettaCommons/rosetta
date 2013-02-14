@@ -16,6 +16,7 @@
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
 #include <test/UTracer.hh>
+#include <test/util/rosettascripts.hh>
 
 // Unit header
 #include <protocols/rigid/RigidBodyMover.hh>
@@ -357,6 +358,32 @@ public:
 		pose.dump_pdb(UT);
 
 	}//end test_RigidBodyTransMover
+
+	///@brief test parsing RigidBodyTransMover
+	void test_RigidBodyTransMover_parse() {
+
+		////////////////////////RBmover///////////////////////////////////////////////
+		using protocols::rigid::RigidBodyTransMoverOP;
+		using protocols::rigid::RigidBodyTransMover;
+
+		RigidBodyTransMoverOP RB_mover = new RigidBodyTransMover();
+
+		DataMap data;
+		Filters_map filters;
+		Movers_map movers;
+		TagPtr tag = tagptr_from_string("<RigidBodyTransMover name=trans distance=1 jump=1/>\n");
+		RB_mover->parse_my_tag( tag, data, filters, movers, pose );
+
+		/////////////////////////run
+		RB_mover->apply(pose);
+		test::UTracer UT("protocols/rigid/RigidBodyTransMover.pdb");
+		UT.abs_tolerance(0.003);
+		UT << std::endl;
+		pose.dump_pdb(UT);
+
+	}//end test_RigidBodyTransMover_parse()
+
+
 
 	///@brief test a RigidBodyTransMover
 	//void test_RigidBodyUniformSphereTransMover() {

@@ -682,9 +682,7 @@ RigidBodyTransMover::RigidBodyTransMover(
 {
 	moves::Mover::type( "RigidBodyTrans" );
 	step_size_ = 1.0;
-	core::Vector upstream_dummy, downstream_dummy;
-	protocols::geometry::centroids_by_jump(pose_in, rb_jump_in, upstream_dummy, downstream_dummy );
-	trans_axis_ = downstream_dummy - upstream_dummy;
+	trans_axis_ = centroid_axis(pose_in);
 }
 
 RigidBodyTransMover::RigidBodyTransMover( RigidBodyTransMover const & src ) :
@@ -696,18 +694,64 @@ RigidBodyTransMover::RigidBodyTransMover( RigidBodyTransMover const & src ) :
 
 RigidBodyTransMover::~RigidBodyTransMover() {}
 
+core::Vector RigidBodyTransMover::centroid_axis(core::pose::Pose const & pose_in) const
+{
+  core::Vector upstream_dummy, downstream_dummy;
+  protocols::geometry::centroids_by_jump(pose_in, rb_jump(), upstream_dummy, downstream_dummy );
+  return downstream_dummy - upstream_dummy;
+}
+
 void RigidBodyTransMover::apply( core::pose::Pose & pose )
 {
+	core::Vector axis( trans_axis_ );
+	if ( axis.is_zero() ) {
+		axis = centroid_axis(pose);
+	}
 	core::kinematics::Jump flexible_jump = pose.jump( rb_jump_ );
 		TRBM << "Translate: " << "Jump (before): " << flexible_jump << std::endl;
 	core::kinematics::Stub upstream_stub = pose.conformation().upstream_jump_stub( rb_jump_ );
-	flexible_jump.translation_along_axis( upstream_stub, trans_axis_, step_size_ );
+	flexible_jump.translation_along_axis( upstream_stub, axis, step_size_ );
 		TRBM << "Translate: " << "Jump (after):  " << flexible_jump << std::endl;
 	pose.set_jump( rb_jump_, flexible_jump );
 }
 
 std::string
 RigidBodyTransMover::get_name() const {
+	return "RigidBodyTransMover";
+}
+
+void RigidBodyTransMover::parse_my_tag( utility::tag::TagPtr const tag,
+		protocols::moves::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const & )
+{
+	step_size( tag->getOption< core::Real >( "distance", 1.0 ) );
+	rb_jump( tag->getOption< int >( "jump", 1 ) );
+	core::Vector axis( tag->getOption< core::Real >( "x", 0.0 ), tag->getOption< core::Real >( "y", 0.0 ), tag->getOption< core::Real >( "z", 0.0 ));
+	trans_axis( axis );
+}
+
+moves::MoverOP RigidBodyTransMover::clone() const {
+	return new RigidBodyTransMover(*this);
+}
+
+moves::MoverOP RigidBodyTransMover::fresh_instance() const {
+	return new RigidBodyTransMover;
+}
+
+std::string
+RigidBodyTransMoverCreator::keyname() const {
+	return RigidBodyTransMoverCreator::mover_name();
+}
+
+protocols::moves::MoverOP
+RigidBodyTransMoverCreator::create_mover() const {
+	return new RigidBodyTransMover;
+}
+
+std::string
+RigidBodyTransMoverCreator::mover_name() {
 	return "RigidBodyTransMover";
 }
 

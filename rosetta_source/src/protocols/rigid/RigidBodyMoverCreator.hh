@@ -20,6 +20,12 @@
 namespace protocols {
 namespace rigid {
 
+class RigidBodyTransMoverCreator : public protocols::moves::MoverCreator {
+public:
+	virtual moves::MoverOP create_mover() const;
+	virtual std::string keyname() const;
+	static std::string mover_name();
+};
 
 class RigidBodyPerturbNoCenterMoverCreator : public protocols::moves::MoverCreator {
 public:

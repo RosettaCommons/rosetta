@@ -376,9 +376,9 @@ public:
 		int const rb_jump_in=1
 	);
 
-	RigidBodyTransMover( RigidBodyTransMover const & src );
 	virtual ~RigidBodyTransMover();
 
+	RigidBodyTransMover( RigidBodyTransMover const & src );
 	core::Vector & trans_axis() { return trans_axis_; }
 	core::Vector trans_axis() const { return trans_axis_; }
 	void trans_axis( core::Vector trans_axis_in ) { trans_axis_ = trans_axis_in; }
@@ -389,12 +389,21 @@ public:
 	virtual std::string get_name() const;
 	friend std::ostream &operator<< ( std::ostream &os, RigidBodyTransMover const &mover );
 
+	void parse_my_tag( utility::tag::TagPtr const tag,
+			protocols::moves::DataMap &,
+			protocols::filters::Filters_map const &,
+			protocols::moves::Movers_map const &,
+			core::pose::Pose const &);
+	protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP fresh_instance() const;
+
 private:
+	core::Vector centroid_axis(core::pose::Pose const & pose_in) const;
+
 	core::Real step_size_;
 	core::Vector trans_axis_;
 
 };
-
 
 /// @brief Rigid-body move that evenly samples the space within a sphere
 class UniformSphereTransMover : public RigidBodyMover {
