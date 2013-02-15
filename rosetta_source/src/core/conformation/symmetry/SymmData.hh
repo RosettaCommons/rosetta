@@ -118,10 +118,6 @@ class SymmData : public utility::pointer::ReferenceCount
 
 	public:
 	void
-	read_symmetry_info_from_pdb(
-		std::string filename
-	);
-	void
 	read_symmetry_data_from_file(
 		std::string filename
 	);
