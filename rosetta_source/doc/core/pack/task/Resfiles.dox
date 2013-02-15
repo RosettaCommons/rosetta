@@ -147,8 +147,8 @@ the PackerTask class.
  - APOLAR ............... allow only canonical non polar amino acids
  - NOTAA <list of AAs> .. disallow only the specified amino acids ( use one letter codes, undelimited like ACFYRT )
  - PIKAA <list of AAs> .. allow only the specified amino acids ( use one letter codes, undelimited like ACFYRT )
- - NATAA ................ allow only the natural amino acid
- - NATRO ................ preserve the input rotamer (do not pack at all)
+ - NATAA ................ allow only the native amino acid (NATive Amino Acid) - repack without design
+ - NATRO ................ preserve the input rotamer (do not pack at all) (NATive ROtamer)
  - EMPTY ................ disallow all canonical amino acids ( for use with non canonicals )
  - NC <ResidueTypeName> . allow the specific possibly non canonical residue type; one residue type per NC command
 @endcode
@@ -179,7 +179,7 @@ start
 @subsection Commands for controlling conformational freedom:
 
 @code
- - NATRO  ...................................... fix natural rotamer ( fix identity and conformation )
+ - NATRO  ...................................... fix NATive ROtamer ( fix identity and conformation )
  - EX (ARO) <chi-id> ( LEVEL <sample level> ) .. ( see below for detailed description
  - EX_CUTOFF <num-neighbors>  .................. about how to specify EX commands )
  - USE_INPUT_SC ................................ include native rotamer
