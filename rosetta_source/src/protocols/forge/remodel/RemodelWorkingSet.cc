@@ -466,6 +466,10 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 			headNew = data.blueprint[ idFront-1 ].index;
 			tailNew = data.blueprint[ idBack-1 ].index;
 		}
+    // Sachko on 02/14/2013
+    // "tail" is set to 0 if that position did not exist in the first place, that is to insert a new atom.
+    // So, here is a quick & dirty, hack, for now.
+    tail = tail<=0? head+1 : tail;
 
 		//int gap = idBack - idFront +1;
 		int gap = segmentStorageVector[i].residues.back() - segmentStorageVector[i].residues.front() + 1;
