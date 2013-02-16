@@ -52,6 +52,7 @@
 #include <protocols/features/SaltBridgeFeatures.hh>
 #include <protocols/features/StructureFeatures.hh>
 #include <protocols/features/StructureScoresFeatures.hh>
+#include <protocols/features/strand_assembly/SandwichFeatures.hh>
 #include <protocols/features/strand_assembly/StrandBundleFeatures.hh>
 #include <protocols/features/UnrecognizedAtomFeatures.hh>
 
@@ -133,6 +134,7 @@ public:
 		features_reporters_.push_back(new SaltBridgeFeatures());
 		features_reporters_.push_back(new StructureFeatures());
 		features_reporters_.push_back(new StructureScoresFeatures(score_function_));
+    features_reporters_.push_back(new strand_assembly::SandwichFeatures());
     features_reporters_.push_back(new strand_assembly::StrandBundleFeatures());
 		features_reporters_.push_back(new UnrecognizedAtomFeatures());
 

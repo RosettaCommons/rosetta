@@ -38,8 +38,7 @@
 			Multi-Body
 			<feature name=GeometricSolvationFeatures/>
 			<feature name=HelixBundleFeatures/>
-			<feature name=SandwichFeatures/>
-			<feature name=StrandBundleFeatures/>
+			feature name=StrandBundleFeatures/>
 			<feature name=PairFeatures/>
 			<feature name=PoseConformationFeatures/>
 			<feature name=RadiusOfGyrationFeatures/>

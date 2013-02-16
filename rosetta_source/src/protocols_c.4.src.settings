@@ -114,9 +114,12 @@ sources = {
 	],
 
 	"protocols/features/strand_assembly": [
-		"StrandBundleFeatures",
-		"StrandBundleFeaturesCreator",
-		"StrandFragment",
+		"SandwichFeatures",
+		"SandwichFeaturesCreator",
+		"SandwichFragment",
+                "StrandBundleFeatures",
+                "StrandBundleFeaturesCreator",
+                "StrandFragment",
 	],
 	"protocols/rotamer_recovery": [
 		"RotamerRecovery",

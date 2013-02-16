@@ -22,14 +22,31 @@ namespace options {
 namespace OptionKeys {
 
 namespace strand_assembly { extern BooleanOptionKey const strand_assembly; }
+namespace strand_assembly { extern IntegerOptionKey const min_num_strands_to_deal; }
+namespace strand_assembly { extern IntegerOptionKey const max_num_strands_to_deal; }
+namespace strand_assembly { extern BooleanOptionKey const extract_native_only; }
+namespace strand_assembly { extern BooleanOptionKey const extract_sandwich; }
 namespace strand_assembly { extern IntegerOptionKey const min_strand_size; }
 namespace strand_assembly { extern IntegerOptionKey const max_strand_size; }
+namespace strand_assembly { extern RealOptionKey const min_CA_CA_dis; }
+namespace strand_assembly { extern RealOptionKey const max_CA_CA_dis; }
 namespace strand_assembly { extern RealOptionKey const min_O_N_dis; }
 namespace strand_assembly { extern RealOptionKey const max_O_N_dis; }
+namespace strand_assembly { extern RealOptionKey const min_C_O_N_angle; }
 namespace strand_assembly { extern RealOptionKey const min_sheet_dis; }
 namespace strand_assembly { extern RealOptionKey const max_sheet_dis; }
 namespace strand_assembly { extern RealOptionKey const min_sheet_torsion; }
 namespace strand_assembly { extern RealOptionKey const max_sheet_torsion; }
+namespace strand_assembly { extern RealOptionKey const min_sheet_torsion_cen_res; }
+namespace strand_assembly { extern RealOptionKey const max_sheet_torsion_cen_res; }
+namespace strand_assembly { extern RealOptionKey const min_sheet_angle; }
+namespace strand_assembly { extern RealOptionKey const max_sheet_angle; }
+namespace strand_assembly { extern RealOptionKey const min_inter_sheet_dis_CA_CA; }
+namespace strand_assembly { extern RealOptionKey const max_inter_sheet_dis_CA_CA; }
+namespace strand_assembly { extern RealOptionKey const min_shortest_dis_sidechain_inter_sheet; }
+namespace strand_assembly { extern BooleanOptionKey const write_chain_B_resnum; }
+namespace strand_assembly { extern BooleanOptionKey const write_phi_psi; }
+namespace strand_assembly { extern IntegerOptionKey const max_num_sw_per_pdb; }
 
 } // namespace OptionKeys
 } // namespace options

@@ -57,5 +57,6 @@
 #include <protocols/features/BatchFeaturesCreator.hh>
 #include <protocols/features/helixAssembly/HelixBundleFeaturesCreator.hh>
 #include <protocols/features/helixAssembly/ConcurrencyTestCreator.hh>
+#include <protocols/features/strand_assembly/SandwichFeaturesCreator.hh>
 #include <protocols/features/strand_assembly/StrandBundleFeaturesCreator.hh>
 #include <protocols/features/ResidueGridScoresFeaturesCreator.hh>

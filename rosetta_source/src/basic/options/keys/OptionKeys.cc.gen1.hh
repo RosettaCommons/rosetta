@@ -1,7 +1,3 @@
-namespace fold_cst { BooleanOptionKey const no_recover_low_at_constraint_switch( "fold_cst:no_recover_low_at_constraint_switch" );  }
-namespace fold_cst { BooleanOptionKey const ramp_coord_cst( "fold_cst:ramp_coord_cst" );  }
-namespace resample { BooleanOptionKey const resample( "resample" );  }
-namespace resample { FileOptionKey const silent( "resample:silent" );  }
 namespace resample { StringOptionKey const tag( "resample:tag" );  }
 namespace resample { BooleanOptionKey const stage1( "resample:stage1" );  }
 namespace resample { BooleanOptionKey const stage2( "resample:stage2" );  }
@@ -660,3 +656,11 @@ namespace lh { namespace fragpdb { StringOptionKey const out_path( "lh:fragpdb:o
 namespace lh { namespace fragpdb { IntegerVectorOptionKey const indexoffset( "lh:fragpdb:indexoffset" );  } }
 namespace lh { namespace fragpdb { StringVectorOptionKey const bin( "lh:fragpdb:bin" );  } }
 namespace lh { namespace symfragrm { BooleanOptionKey const symfragrm( "lh:symfragrm" );  } }
+namespace lh { namespace symfragrm { FileVectorOptionKey const pdblist( "lh:symfragrm:pdblist" );  } }
+namespace rbe { BooleanOptionKey const rbe( "rbe" );  }
+namespace rbe { StringOptionKey const server_url( "rbe:server_url" );  }
+namespace rbe { StringOptionKey const server_port( "rbe:server_port" );  }
+namespace rbe { RealOptionKey const poll_frequency( "rbe:poll_frequency" );  }
+namespace blivens { BooleanOptionKey const blivens( "blivens" );  }
+namespace blivens { namespace disulfide_scorer { BooleanOptionKey const disulfide_scorer( "blivens:disulfide_scorer" );  } }
+namespace blivens { namespace disulfide_scorer { RealOptionKey const nds_prob( "blivens:disulfide_scorer:nds_prob" );  } }
