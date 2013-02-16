@@ -611,19 +611,20 @@ ResidueType::add_atom(
 void
 ResidueType::delete_atom( std::string const & name )
 {
-	finalized_ = false;
 	assert( has( name ) );
-	delete_atoms_.push_back( atom_index( name ) );
+	delete_atom( atom_index(name) );
+}
 
-	/// Graph ///
-	NameVDMap::iterator found = atom_graph_index_.find(name); // In C++11, must use const_iter
-	assert(found != atom_graph_index_.end());
-	VD const vd = found->second;
-	assert(vd);
+/// @brief flag an atom for deletion by adding its index to the delete_atom_ list
+void
+ResidueType::delete_atom( Size const index )
+{
+	finalized_ = false;
+	delete_atoms_.push_back( index );
 
+	VD const vd = ordered_atoms_[index];
 	graph_.clear_vertex(vd);
 	graph_.remove_vertex(vd);
-	//atom_graph_index_.erase(found);
 }
 
 /// @brief set atom type
@@ -1470,18 +1471,23 @@ ResidueType::reorder_primary_data(
 	}
 
 	// actcoord_atoms_
-	assert( n_actcoord_atoms_ == actcoord_atoms_.size() );
-	for ( Size i=1; i<= actcoord_atoms_.size(); ++i ) {
-		actcoord_atoms_[i] = old2new[ actcoord_atoms_[i] ];
+	AtomIndices const old_actcoord_atoms = actcoord_atoms_;
+	actcoord_atoms_.clear();
+	//assert( n_actcoord_atoms_ == actcoord_atoms_.size() );
+	for ( Size i=1; i<= old_actcoord_atoms.size(); ++i ) {
+		Size new_index =  old2new[ old_actcoord_atoms[i]];
+		if(new_index) actcoord_atoms_.push_back(new_index); // if atom hasn't been deleted
 	}
 
 	// nbr_atom_
-	nbr_atom_ = old2new[ nbr_atom_ ];
+	nbr_atom_ = nbr_atom_ ? old2new[ nbr_atom_ ] : nbr_atom_;
+
 
 	/////////////////////////////////////////////////////////////////////////////
 	// add additional reordering statements here for new data that you've added
 	// to  ResidueType  that's sensitive to atom order
 
+	///TODO fix this problem: deleting atoms can invalidate these residue_connections_
 	for ( Size i=1; i<= residue_connections_.size(); ++i ) {
 		residue_connections_[i].atomno( old2new[ residue_connections_[i].atomno() ] );
 		AtomICoor new_icoor = residue_connections_[i].icoor();

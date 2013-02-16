@@ -74,6 +74,9 @@ DockingBenchmark_high DockingHigh("protocols.docking.DockingHighRes");
 #include <apps/benchmark/pdb_io.bench.hh>
 PDB_IOBenchmark PDB_IO_("core.import_pose.pose_from_pdbstring");
 
+#include <apps/benchmark/ResidueType.bench.hh>
+ResidueTypeBenchmark ResidueType_("core.chemical.ResidueType");
+
 #include <apps/benchmark/xml_parsing.bench.hh>
 XMLParseBenchmark XMLParseBenchmark_("utility_tag_Tag_Create");
 

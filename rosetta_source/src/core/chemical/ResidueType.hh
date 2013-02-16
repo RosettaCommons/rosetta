@@ -873,6 +873,9 @@ public:
 	void
 	delete_atom( std::string const & name );
 
+	void
+	delete_atom( Size const index );
+
 	/// @brief set atom type
 	void
 	set_atom_type(
