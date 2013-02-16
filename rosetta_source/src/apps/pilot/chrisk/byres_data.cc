@@ -43,6 +43,7 @@
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/constants.hh>
 #include <core/scoring/Energies.hh>
+#include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
@@ -87,7 +88,7 @@
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/geometry/RB_geometry.hh>
+#include <protocols/rigid/RB_geometry.hh>
 #include <protocols/electron_density/util.hh>
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
 
@@ -95,11 +96,11 @@
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <protocols/toolbox/pose_metric_calculators/MetricValueGetter.hh>
 #include <basic/MetricValue.hh>
-#include <protocols/toolbox/pose_metric_calculators/SasaCalculator.hh>
+#include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/NumberWaterHBondsCalculator.hh>
+//#include <protocols/toolbox/pose_metric_calculators/NumberWaterHBondsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/SemiExplicitWaterUnsatisfiedPolarsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/ExplicitWaterUnsatisfiedPolarsCalculator.hh>
+//#include <protocols/toolbox/pose_metric_calculators/ExplicitWaterUnsatisfiedPolarsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 //#include <protocols/toolbox/pose_metric_calculators/SemiExplicitWaterUnsatisfiedHBondsCalculator.hh>
 //#include <protocols/toolbox/pose_metric_calculators/ExplicitWaterUnsatisfiedHBondsCalculator.hh>
@@ -162,6 +163,7 @@ namespace byres_data
   basic::options::IntegerOptionKey nloop_hbscan( "byres_data:nloop_hbscan" );
 }
 
+/*
 //need special function for water, has nor base2
 //assuming O=1, H=4,5 for TP5 water
 Stub
@@ -178,7 +180,7 @@ build_water_frame(
 	Vector const & Hxyz( rsd.atom( atm ).xyz() );
 	Vector const & Dxyz( rsd.atom( base ).xyz() );
 	Vector const & DBxyz( rsd.atom( base2 ).xyz() );
-	return Stub(Hxyz /*center*/, Hxyz, Hxyz - Dxyz, Dxyz - DBxyz);
+	return Stub(Hxyz Hxyz, Hxyz - Dxyz, Dxyz - DBxyz);
 } 
 
 //return acc_base --> hydrogen angle close to ideal
@@ -216,8 +218,7 @@ build_donor_frame(
 	Vector const & Hxyz( rsd.atom( hatm ).xyz() );
 	Vector const & Dxyz( rsd.atom(rsd.atom_base( hatm )).xyz());
 	Vector const & DBxyz( rsd.atom(rsd.atom_base(rsd.atom_base(hatm))).xyz());
-	//return Stub(Hxyz /*center*/, Hxyz, Hxyz - Dxyz, Dxyz - DBxyz);
-	return Stub(Hxyz /*center*/, Hxyz, Dxyz, DBxyz);
+	return Stub(Hxyz Hxyz, Dxyz, DBxyz);
 } 
 
 Stub
@@ -298,6 +299,7 @@ append_rsd_by_kinematic_hbond_jump_near_atom(
 	Real AHdist_min(MIN_R), AHdist_max(MAX_R); Size AHdist_steps(steps);
 	Real cosBAH_min(MIN_xH), cosBAH_max(MAX_xH); Size cosBAH_steps(steps);
 	Real cosAHD_min(MIN_xD), cosAHD_max(MAX_xD); Size cosAHD_steps(steps);
+	core::Real const MIN_xC = 0.;
 	core::Real const MAX_xC = { numeric::constants::d::pi_2 }; // chi cutoff
 	Real chi_min(MIN_xC), chi_max(MAX_xC); Size chi_steps(steps);
 
@@ -523,6 +525,7 @@ pose.dump_pdb( "tor.pdb" );
 //	pose.dump_pdb( "qqq." + string_of( seqpos ) + "." + string_of( atomno ) + ".pdb" );
 
 }
+*/
 
 //check for clashes based on atom distances
 //only check atoms in AtomID vector
@@ -560,6 +563,7 @@ fast_clash_check(
 	return false;
 }
 
+/*
 void
 append_water_by_hbond_jump_near_atom(
 	pose::Pose pose,
@@ -599,7 +603,7 @@ append_water_by_hbond_jump_near_atom(
 		acc_pos = new_seqpos;
 		aatm = new_atomno;
 		wat_is_acc = true;
-	}
+}
 	//or water is donor
 	else if( new_rsd.atom_type( new_atomno ).is_polar_hydrogen() &&
 		rsd.atom_type( atomno ).is_acceptor() ){
@@ -905,26 +909,10 @@ solvate_residue(
 		}
 	}
 
-	/*
-	//then the rest?
-	for( Size iatom = 1; iatom <= rsd.natoms(); ++iatom ){
-		Size n_wat( 0 );
-		//only polar atoms for now...
-		if( !( rsd.atom_type( iatom ).is_polar_hydrogen() ||
-			rsd.atom_type( iatom ).is_acceptor() ) ){ continue; }
-
-		//try a few times to append water molecules
-		for( Size i_mc = 1; i_mc <= max_attempt_per_atom; ++i_mc ){	
-			if( n_wat >= max_wat_per_atom ) break;
-			//append water molecule from iatom to water oxygen (atom 2)
-			append_rsd_by_jump_near_atom( pose, seqpos, iatom, *wat_rsd, 2, min_dist, shell_cutoff );
-			if( mc->boltzmann( pose ) ) ++n_wat;
-		}
-	}
-	*/
 	//reset fa_sol back to normal
 	scorefxn->set_weight( fa_sol, fa_sol_wt );
 }
+*/
 
 
 //set occupancy and bfactor data from native pose into pose
@@ -1772,6 +1760,7 @@ byres_analysis(
 	Size nres( pose.total_residue() );
 
 	//solvate all polar groups?
+/*
 	if( option[ byres_data::solvate ] ){
 //debug
 		for( Size seqpos = 1; seqpos <= nres; ++seqpos ){
@@ -1779,34 +1768,35 @@ byres_analysis(
 		}
 		pose.dump_scored_pdb( pdbname + ".solv.pdb", *scorefxn );
 	}
+*/
 
 	// do pose_metric_calculators?
 	basic::MetricValue< Size > all_bur_unsat_polars;
 	basic::MetricValue< Size > all_solv_unsat_polars;
-	basic::MetricValue< Size > all_exsolv_unsat_polars;
+//	basic::MetricValue< Size > all_exsolv_unsat_polars;
 	basic::MetricValue< vector1< Size > > res_bur_unsat_polars;
-	basic::MetricValue< vector1< Size > > res_exsolv_unsat_polars;
+//	basic::MetricValue< vector1< Size > > res_exsolv_unsat_polars;
 	basic::MetricValue< vector1< Size > > res_solv_unsat_polars;
 	basic::MetricValue< vector1< Real > > res_semiex_score;
 	basic::MetricValue<id::AtomID_Map< bool > > atom_bur_unsat_polars;
 	basic::MetricValue<id::AtomID_Map< bool > > atom_semiex_unsat_polars;
-	basic::MetricValue<id::AtomID_Map< bool > > atom_exsolv_unsat_polars;
+//	basic::MetricValue<id::AtomID_Map< bool > > atom_exsolv_unsat_polars;
 	basic::MetricValue<id::AtomID_Map< Real > > atom_semiex_score;
 	basic::MetricValue<id::AtomID_Map< Real > > atom_sasa;
 	basic::MetricValue<id::AtomID_Map< Size > > atom_hbonds;
-	basic::MetricValue<id::AtomID_Map< Size > > atom_water_hbonds;
+//	basic::MetricValue<id::AtomID_Map< Size > > atom_water_hbonds;
 
 	pose.metric( "num_hbonds", "atom_Hbonds", atom_hbonds );
-	pose.metric( "num_water_hbonds", "atom_Hbonds", atom_water_hbonds );
+//	pose.metric( "num_water_hbonds", "atom_Hbonds", atom_water_hbonds );
 	pose.metric( "sasa", "atom_sasa", atom_sasa );
 
 	pose.metric( "bur_unsat_polars", "all_bur_unsat_polars", all_bur_unsat_polars );
 	pose.metric( "bur_unsat_polars", "residue_bur_unsat_polars", res_bur_unsat_polars );
 	pose.metric( "bur_unsat_polars", "atom_bur_unsat", atom_bur_unsat_polars );
 
-	pose.metric( "exsolv_unsat_polars", "all_unsat_polars", all_exsolv_unsat_polars );
-	pose.metric( "exsolv_unsat_polars", "residue_unsat_polars", res_exsolv_unsat_polars );
-	pose.metric( "exsolv_unsat_polars", "atom_unsat", atom_exsolv_unsat_polars );
+//	pose.metric( "exsolv_unsat_polars", "all_unsat_polars", all_exsolv_unsat_polars );
+//	pose.metric( "exsolv_unsat_polars", "residue_unsat_polars", res_exsolv_unsat_polars );
+//	pose.metric( "exsolv_unsat_polars", "atom_unsat", atom_exsolv_unsat_polars );
 
 	if( option[ byres_data::solv_unsat_calc ] ){
 		pose.metric( "solv_unsat_polars", "all_unsat_polars", all_solv_unsat_polars );
@@ -1846,7 +1836,7 @@ byres_analysis(
 				//			TR_unsat << "seqpos\t" << seqpos << "\tatom\t" << rsd.atom_name( iatom ) << "\t";
 				//			TR_unsat << "wat_hbonds\t" << atom_water_hbonds.value()[ id ] << "\t";
 				atom_ss->add_energy( "hbonds", static_cast< Real >( atom_hbonds.value()[ id ] ) );
-				atom_ss->add_energy( "wat_hbonds", static_cast< Real >( atom_water_hbonds.value()[ id ] ) );
+//				atom_ss->add_energy( "wat_hbonds", static_cast< Real >( atom_water_hbonds.value()[ id ] ) );
 				//need to sum attached H's for donors
 				Real this_sasa( atom_sasa.value()[ id ] );
 				for( Size hcount = rsd.type().attached_H_begin( iatom );
@@ -1857,7 +1847,7 @@ byres_analysis(
 				Real atom_lk_burial( get_atom_lk_burial( pose, scorefxn, seqpos, iatom ) );
 				atom_ss->add_energy( "atom_lk_burial", atom_lk_burial );
 				atom_ss->add_energy( "bur_unsat", static_cast< Real >( atom_bur_unsat_polars.value()[ id ] ) );
-				atom_ss->add_energy( "exsolv_unsat", static_cast< Real >( atom_exsolv_unsat_polars.value()[ id ] ) );
+//				atom_ss->add_energy( "exsolv_unsat", static_cast< Real >( atom_exsolv_unsat_polars.value()[ id ] ) );
 
 				//iter thru atom's hbonds
 				Real hbond_prot_prot( 0.0 );
@@ -1904,8 +1894,8 @@ byres_analysis(
 
 				Real hbond_total_ref( hbond_prot_prot + hbond_prot_water_ref );
 				atom_ss->add_energy( "hbond_prot-prot", hbond_prot_prot );
-				atom_ss->add_energy( "hbond_prot-water", hbond_prot_water );
-				atom_ss->add_energy( "hbond_prot-water-ref", hbond_prot_water_ref );
+//				atom_ss->add_energy( "hbond_prot-water", hbond_prot_water );
+//				atom_ss->add_energy( "hbond_prot-water-ref", hbond_prot_water_ref );
 				atom_ss->add_energy( "hbond_total-ref", hbond_total_ref );
 				if( option[ byres_data::solv_unsat_calc ] ){
 					atom_ss->add_energy( "semiex_unsat", static_cast< Real >( atom_semiex_unsat_polars.value()[ id ] ) );
@@ -1939,7 +1929,7 @@ byres_analysis(
 
 			//now calculator vals
 			res_ss->add_energy( "bur_unsat_polars", res_bur_unsat_polars.value()[ seqpos ] );
-			res_ss->add_energy( "exsolv_unsat_polars", res_exsolv_unsat_polars.value()[ seqpos ] );
+//			res_ss->add_energy( "exsolv_unsat_polars", res_exsolv_unsat_polars.value()[ seqpos ] );
 			if( option[ byres_data::solv_unsat_calc ] ){
 					res_ss->add_energy( "solv_unsat_polars", res_solv_unsat_polars.value()[ seqpos ] );
 			}
@@ -2006,15 +1996,15 @@ register_calcs()
 	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
 	core::pose::metrics::PoseMetricCalculatorOP num_hbonds_calculator = new protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator();
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "num_hbonds", num_hbonds_calculator );
-	core::pose::metrics::PoseMetricCalculatorOP num_water_hbonds_calculator = new protocols::toolbox::pose_metric_calculators::NumberWaterHBondsCalculator();
-	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "num_water_hbonds", num_water_hbonds_calculator );
-	core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new protocols::toolbox::pose_metric_calculators::SasaCalculator();
+//	core::pose::metrics::PoseMetricCalculatorOP num_water_hbonds_calculator = new protocols::toolbox::pose_metric_calculators::NumberWaterHBondsCalculator();
+//	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "num_water_hbonds", num_water_hbonds_calculator );
+	core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculator();
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
 
 	core::pose::metrics::PoseMetricCalculatorOP bur_unsat_calculator = new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator( "sasa", "num_hbonds" );
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "bur_unsat_polars", bur_unsat_calculator );
-	core::pose::metrics::PoseMetricCalculatorOP exsolv_unsat_calculator = new protocols::toolbox::pose_metric_calculators::ExplicitWaterUnsatisfiedPolarsCalculator("num_hbonds" );
-	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "exsolv_unsat_polars", exsolv_unsat_calculator );
+//	core::pose::metrics::PoseMetricCalculatorOP exsolv_unsat_calculator = new protocols::toolbox::pose_metric_calculators::ExplicitWaterUnsatisfiedPolarsCalculator( scorefxn );
+//	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "exsolv_unsat_polars", exsolv_unsat_calculator );
 	if( option[ byres_data::solv_unsat_calc ] ){
 		core::pose::metrics::PoseMetricCalculatorOP solv_unsat_calculator = new protocols::toolbox::pose_metric_calculators::SemiExplicitWaterUnsatisfiedPolarsCalculator("num_hbonds", scorefxn );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( "solv_unsat_polars", solv_unsat_calculator );
