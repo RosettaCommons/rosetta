@@ -354,7 +354,7 @@ IdealParametersDatabase::init(
 			tuple = boost::make_tuple( name3, atom3, atom2, atom1 );
 			bondangles_indep_.insert( std::make_pair( tuple, params_i) );
 		}
-		TR << "Read " << bondangles_indep_.size() << " bb-independent lengths." << std::endl;
+		TR << "Read " << bondangles_indep_.size() << " bb-independent angles." << std::endl;
 	}
 
 	{
@@ -366,11 +366,42 @@ IdealParametersDatabase::init(
 			tuple = boost::make_tuple( name3, atom1, atom2, atom3, atom4 );
 			CartBondedParametersOP params_i = new BBIndepCartBondedParameters(mu_d, K_d, period);
 			torsions_indep_.insert( std::make_pair( tuple, params_i) );
-			tuple = boost::make_tuple( name3, atom4, atom3, atom2, atom1 );
-			torsions_indep_.insert( std::make_pair( tuple, params_i) );
+			//tuple = boost::make_tuple( name3, atom4, atom3, atom2, atom1 );
+			//torsions_indep_.insert( std::make_pair( tuple, params_i) );
 		}
-		TR << "Read " << torsions_indep_.size() << " bb-independent lengths." << std::endl;
+		TR << "Read " << torsions_indep_.size() << " bb-independent torsions." << std::endl;
 	}
+
+	// Added by hpark
+	if ( basic::options::option[ basic::options::OptionKeys::score::extra_improper_file ].user() )
+		{
+
+			std::string extra_file( basic::options::option[ basic::options::OptionKeys::score::extra_improper_file ]().c_str() );
+			atm_name_quad tuple;
+			std::string line;
+			Size const size_before = torsions_indep_.size();
+
+			utility::io::izstream instream( extra_file );
+
+			if ( !instream.good() ) {
+				utility_exit_with_message( "Unable to open file: " + extra_file + '\n' );
+			}
+
+			while (getline( instream, line) ) {
+				std::istringstream l( line );
+				l >> name3 >> atom1 >> atom2 >> atom3 >> atom4 >> mu_d >> K_d >> period;
+				tuple = boost::make_tuple( name3, atom1, atom2, atom3, atom4 );
+				CartBondedParametersOP params_i = new BBIndepCartBondedParameters(mu_d, K_d, period);
+				torsions_indep_.insert( std::make_pair( tuple, params_i) );
+
+				// Read only once since we are iterating over parameters now!
+				//tuple = boost::make_tuple( name3, atom4, atom3, atom2, atom1 );
+				//torsions_indep_.insert( std::make_pair( tuple, params_i) );
+			}
+			TR << "Read " << torsions_indep_.size() - size_before << " bb-independent torsions from extra_improperfile ";
+			TR << extra_file << std::endl;
+
+		}
 
 	if (!bbdep_bond_params_) return;
 
@@ -1118,6 +1149,39 @@ IdealParametersDatabase::create_parameters_for_restype(
 {
 	ResidueCartBondedParametersOP restype_params = new ResidueCartBondedParameters;
 
+	// Iter over parameters - this would be fast enough as far as parameter size is small enough
+
+	for( boost::unordered_map<atm_name_quad,CartBondedParametersOP>::iterator b_it =
+				 torsions_indep_.begin(); b_it != torsions_indep_.end(); ++b_it ){
+
+		atm_name_quad const &tuple( b_it->first );
+
+		// Skip if residue type is neither wildcard nor given residue type
+		// Is there better way of taking care of patched residues like "Gly_p:XXXX" ?
+		//if( !(tuple.get<0>().compare("*") == 0 || rsd_type.name().compare( 0, 3, tuple.get<0>() ) == 0 )) continue;
+		if( rsd_type.name().compare( 0, 3, tuple.get<0>() ) != 0 ) continue;
+
+		CartBondedParametersCOP tor_params = b_it->second;
+
+		// Also skip if any atom does not exist 
+		if( !rsd_type.has( tuple.get<1>() ) || !rsd_type.has( tuple.get<2>() ) || 
+				!rsd_type.has( tuple.get<3>() ) || !rsd_type.has( tuple.get<4>() ) ) continue;
+
+		TR.Debug << "Scan torsion: " << rsd_type.name() << " ";
+		TR.Debug << tuple.get<0>() << " " << tuple.get<1>() << " ";
+		TR.Debug << tuple.get<2>() << " "<< tuple.get<3>() << " "<< tuple.get<4>() << " ";
+		TR.Debug << std::endl;
+
+		ResidueCartBondedParameters::Size4 ids;
+		ids[1] = rsd_type.atom_index( tuple.get<1>() );
+		ids[2] = rsd_type.atom_index( tuple.get<2>() );
+		ids[3] = rsd_type.atom_index( tuple.get<3>() );
+		ids[4] = rsd_type.atom_index( tuple.get<4>() );
+
+		restype_params->add_torsion_parameter( ids, tor_params );
+	}
+
+	/*
 	for ( Size dihe = 1; dihe <= rsd_type.ndihe(); ++dihe ){
 		// get ResidueType ints
 		Size rt1 = ( rsd_type.dihedral( dihe ) ).key1();
@@ -1139,6 +1203,7 @@ IdealParametersDatabase::create_parameters_for_restype(
 
 		restype_params->add_torsion_parameter( ids, tor_params );
 	}
+	*/
 
 	// for each angle in the residue
 	for ( Size bondang = 1; bondang <= rsd_type.num_bondangles(); ++bondang ) {
@@ -1184,6 +1249,7 @@ IdealParametersDatabase::create_parameters_for_restype(
 		}
 	}
 
+	/*
 	// improper torsions
 	{
 		using namespace core::chemical;
@@ -1216,6 +1282,7 @@ IdealParametersDatabase::create_parameters_for_restype(
 			}
 		}
 	}
+	*/
 
 	/// Keep track of the bond angles and lengths that are used in the backbone dependent calculations
 

@@ -143,6 +143,7 @@ namespace score { StringOptionKey const fa_custom_pair_distance_file( "score:fa_
 namespace score { RealOptionKey const disulf_matching_probe( "score:disulf_matching_probe" );  }
 namespace score { RealVectorOptionKey const bonded_params( "score:bonded_params" );  }
 namespace score { StringOptionKey const bonded_params_dir( "score:bonded_params_dir" );  }
+namespace score { StringOptionKey const extra_improper_file( "score:extra_improper_file" );  }
 namespace score { RealOptionKey const pro_close_planar_constraint( "score:pro_close_planar_constraint" );  }
 namespace score { BooleanOptionKey const linear_bonded_potential( "score:linear_bonded_potential" );  }
 namespace score { BooleanOptionKey const geom_sol_correct_acceptor_base( "score:geom_sol_correct_acceptor_base" );  }
@@ -659,4 +660,3 @@ namespace lh { namespace fragpdb { StringOptionKey const out_path( "lh:fragpdb:o
 namespace lh { namespace fragpdb { IntegerVectorOptionKey const indexoffset( "lh:fragpdb:indexoffset" );  } }
 namespace lh { namespace fragpdb { StringVectorOptionKey const bin( "lh:fragpdb:bin" );  } }
 namespace lh { namespace symfragrm { BooleanOptionKey const symfragrm( "lh:symfragrm" );  } }
-namespace lh { namespace symfragrm { FileVectorOptionKey const pdblist( "lh:symfragrm:pdblist" );  } }

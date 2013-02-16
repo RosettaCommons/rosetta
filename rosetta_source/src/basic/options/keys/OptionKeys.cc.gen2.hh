@@ -1,3 +1,4 @@
+namespace lh { namespace symfragrm { FileVectorOptionKey const pdblist( "lh:symfragrm:pdblist" );  } }
 namespace rbe { BooleanOptionKey const rbe( "rbe" );  }
 namespace rbe { StringOptionKey const server_url( "rbe:server_url" );  }
 namespace rbe { StringOptionKey const server_port( "rbe:server_port" );  }
@@ -659,4 +660,3 @@ namespace DenovoProteinDesign { BooleanOptionKey const use_template_topology( "D
 namespace DenovoProteinDesign { FileOptionKey const create_from_template_pdb( "DenovoProteinDesign:create_from_template_pdb" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const create_from_secondary_structure( "DenovoProteinDesign:create_from_secondary_structure" );  }
 namespace RBSegmentRelax { BooleanOptionKey const RBSegmentRelax( "RBSegmentRelax" );  }
-namespace RBSegmentRelax { FileOptionKey const input_pdb( "RBSegmentRelax:input_pdb" );  }

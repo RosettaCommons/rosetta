@@ -812,6 +812,7 @@ option.add( basic::options::OptionKeys::score::fa_custom_pair_distance_file, "Na
 option.add( basic::options::OptionKeys::score::disulf_matching_probe, "Size of probe to use in disulfide matching score" ).def(2.5);
 option.add( basic::options::OptionKeys::score::bonded_params, "Default spring constants for bonded parameters [length,angle,torsion,proton-torsion,improper-torsion]" );
 option.add( basic::options::OptionKeys::score::bonded_params_dir, "Spring constants for bonded parameters [length,angle,torsion,proton-torsion,improper-torsion]" ).def("scoring/score_functions/bondlength_bondangle");
+option.add( basic::options::OptionKeys::score::extra_improper_file, "Add extra parameters for improper torsions" );
 option.add( basic::options::OptionKeys::score::pro_close_planar_constraint, "stdev of CD,N,CA,prevC trigonal planar constraint in pro_close energy method" ).def(0.1);
 option.add( basic::options::OptionKeys::score::linear_bonded_potential, "use linear (instead of quadratic) bonded potential" ).def(false);
 option.add( basic::options::OptionKeys::score::geom_sol_correct_acceptor_base, "Fixed definition of base atom for acceptors to match hbonds_geom" ).def(false);
@@ -1328,10 +1329,10 @@ option.add( basic::options::OptionKeys::lh::fragpdb::out_path, "Path where pdbs 
 option.add( basic::options::OptionKeys::lh::fragpdb::indexoffset, "list of index offset pairs" ).def(-1);
 option.add( basic::options::OptionKeys::lh::fragpdb::bin, "list of bin keys" ).def(utility::vector1<std::string>());
 option.add( basic::options::OptionKeys::lh::symfragrm::symfragrm, "symfragrm option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::lh::symfragrm::pdblist, "list of pdbs to be processed" );
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::rbe::rbe, "rbe option group" ).legal(true).def(true);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::symfragrm::pdblist, "list of pdbs to be processed" );
+option.add( basic::options::OptionKeys::rbe::rbe, "rbe option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::rbe::server_url, "serverurl for rosetta backend" );
 option.add( basic::options::OptionKeys::rbe::server_port, "port for rosetta backend" ).def("80");
 option.add( basic::options::OptionKeys::rbe::poll_frequency, "No description" ).def(1.0);
@@ -1992,10 +1993,10 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topolo
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
+option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_pdb, "PDB file from which to draw constraints" ).def("--");
