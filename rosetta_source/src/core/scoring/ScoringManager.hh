@@ -191,6 +191,10 @@ public:
 	//get_NCAARotamerLibrary( chemical::ResidueType const & rsd_type );
 
 	///
+	bool
+	has_energy_method( ScoreType t ) const;
+
+	///
 	methods::EnergyMethodOP
 	energy_method( ScoreType const & t, methods::EnergyMethodOptions const & options ) const;
 

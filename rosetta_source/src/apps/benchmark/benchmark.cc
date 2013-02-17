@@ -46,6 +46,8 @@ const char results_filename[] = "_performance_";
 #include <apps/benchmark/score.bench.hh>
 ScoreBenchmark Score_("core.scoring.Score");
 
+#include <apps/benchmark/ScoreEach.bench.hh>
+
 #include <apps/benchmark/SmallMover.bench.hh>
 SmallMoverBenchmark SmallMover_("protocols.moves.SmallMover");
 
@@ -95,8 +97,6 @@ XMLParseBenchmark XMLParseBenchmark_("utility_tag_Tag_Create");
 using basic::T;
 using basic::Error;
 using basic::Warning;
-
-static basic::Tracer TR("benchmark");
 
 using namespace core;
 

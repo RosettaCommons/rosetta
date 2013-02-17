@@ -31,7 +31,7 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
-
+#include <sstream>
 
 
 namespace core {
@@ -101,7 +101,12 @@ TableLookupEtableEnergy::setup_for_scoring_( pose::Pose const &pose, scoring::Sc
 {
 	if (pose.total_residue()) {
 		if ( pose.residue(1).type().atom_type_set_ptr() != etable().atom_set() ) {
-			utility_exit_with_message( "Illegal attempt to score with non-identical atom set between pose and etable " );
+			std::stringstream err_msg;
+			err_msg
+				<< "Illegal attempt to score with non-identical atom set between pose and etable" << std::endl
+				<< "	pose   atom_type_set: '" << pose.residue(1).type().atom_type_set_ptr()->name() << "'" << std::endl
+				<< "	etable atom_type_set: '" << etable().atom_set()->name() << "'" << std::endl;
+			utility_exit_with_message( err_msg.str());
 		}
 	}
 }

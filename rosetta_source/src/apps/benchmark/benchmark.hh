@@ -21,6 +21,9 @@
 #include <vector>
 #include <string>
 
+static basic::Tracer TR("benchmark");
+
+
 class Benchmark
 {
 public:

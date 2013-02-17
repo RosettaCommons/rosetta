@@ -79,7 +79,7 @@
 
 #include <core/scoring/methods/EnergyMethod.hh>
 #include <utility/vector1.hh>
-
+#include <utility/excn/Exceptions.hh>
 
 namespace core {
 namespace scoring {
@@ -811,6 +811,25 @@ ScoringManager::get_NCAARotamerLibrary( chemical::ResidueType const & rsd_type )
 	return ( ncaa_rotlibs_.find( aa_name3 )->second)();
 }*/
 
+/// @details Test if there is an EnergyMethod class defined for a
+/// given score type.
+bool
+ScoringManager::has_energy_method(
+	ScoreType score_type
+) const {
+	if ( score_type > n_score_types ) {
+		return false;
+	}
+
+	if ( score_type == python ) return false;
+
+	if ( method_creator_map_[score_type] == 0 ) {
+		return false;
+	}
+
+	return true;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 /// @details When a ScoreFunction the weight for a particular ScoreType set from 0
@@ -846,7 +865,7 @@ ScoringManager::energy_method(
 	if ( score_type == python ) return 0; /// python special case; this could now be changed...
 
 	if ( method_creator_map_[ score_type ] == 0 ) {
-		utility_exit_with_message( "Requested ScoreType " + utility::to_string( score_type ) + " does not have a registered EnergyMethodCreator." );
+		throw utility::excn::EXCN_Msg_Exception( "Requested ScoreType '" + utility::to_string( score_type ) + "' does not have a registered EnergyMethodCreator." );
 	}
 
 	return method_creator_map_[ score_type ]->create_energy_method( options );
