@@ -617,7 +617,7 @@ if( restrict_to_repacking_chain2() ){
 //	( *scorefxn() ) ( pose );
 //	pose.update_residue_neighbors();
 	if( use_sequence_profiles_ )
-		TR<<"!!!!!!!!!!!!!!adding sequence constraints!!!!!!!!!!!!!!\n"<<std::endl;
+		TR<<"NOW ADDING SEQUENCE CONSTRAINTS"<<std::endl;
 		add_sequence_constraints( pose );
 
 	if( ccd() ){
@@ -1143,12 +1143,27 @@ using namespace std;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 std::string pdb_tag= option[ in::file::s ]()[1] ;
-TR<<"(line 1139) The scafold file name is :"<<pdb_tag<<std::endl;//file name of -s pdb file
+TR<<" The scafold file name is :"<<pdb_tag<<std::endl;//file name of -s pdb file
 core::pose::read_comment_pdb(pdb_tag,pose); //read comments from pdb file
 map< string, string > const comments = core::pose::get_all_comments( pose );
-runtime_assert( comments.size() );
-
-std::string tempPDBname = source_pdb_.substr(0, source_pdb_.size()-4);//cut file name extension from pdb file
+if (comments.size()<3 ){
+	utility_exit_with_message("Please check commetns field in the pdb file (header= ##begin comments##), could not find any comments");
+	}
+	
+// Remove directory if present.
+// Do this before extension removal incase directory has a period character.
+const size_t last_slash_idx = source_pdb_.find_last_of("\\/");
+if (std::string::npos != last_slash_idx)
+{
+    source_pdb_.erase(0, last_slash_idx + 1);
+}
+// Remove extension if present.
+const size_t period_idx = source_pdb_.rfind('.');
+if (std::string::npos != period_idx)
+{
+    source_pdb_.erase(period_idx);
+}
+std::string tempPDBname = source_pdb_;//cut file name extension from pdb file
 //	TR<<"!!!!!!!!!the currnet segment is: "<<segment_type_<<" and the source pdb is "<<tempPDBname<<std::endl;
 core::pose::add_comment(pose,"segment_"+segment_type_,tempPDBname);//change correct association between current loop and pdb file
 load_pdb_segments_from_pose_comments(pose); // get segment name and pdb accosiation from comments in pdb file
@@ -1166,10 +1181,13 @@ utility::vector1< SequenceProfileOP > profile_vector;
 profile_vector.clear(); //this vector holds all the pdb segment profiless
 
 foreach( std::string const segment_type, segment_names_ordered ){ //<- Start of PDB segment iterator
+	if (splice_segments_[ segment_type ]->pdb_profile(pdb_segments_[segment_type])==0){
+		utility_exit_with_message(" could not find the pdb file corresponding to segment "+segment_type+" the pdb name entered was: "+ pdb_segments_[segment_type]+ ", please check the pdb_profile_match file \n");
+	}
 	profile_vector.push_back( splice_segments_[ segment_type ]->pdb_profile( pdb_segments_[segment_type] ));
 } // <- End of PDB segment iterator
-TR<<"Just before we go to concatenate_profiles I want to make sure that the size of the profile vector is correct: "<<profile_vector.size()<<std::endl;
-return concatenate_profiles( profile_vector );
+TR<<"The size of the profile vector is: "<<profile_vector.size()<<std::endl;
+return concatenate_profiles( profile_vector,segment_names_ordered );
 }
 }
 
@@ -1179,16 +1197,15 @@ Splice::load_pdb_segments_from_pose_comments( core::pose::Pose const & pose ){
 	//If we are using sequence profiles then the condition is true and function can run
 
 	using namespace std;
-	TR<<"PRINT THIS LINE BEFORE CALLING GET ALL COMMENTS AT LINE 1157"<<std::endl;
 	map< string, string > const comments = core::pose::get_all_comments( pose );
-	TR<<"The size of comments is: "<<comments.size()<<std::endl;
+	TR<<"The size of comments is: "<<comments.size()<<std::endl; 
 	core::Size j = 1; //for testing
   for( std::map< string, string >::const_iterator i = comments.begin(); i != comments.end(); ++i ){
-		TR<<"the size of j is: "<<j<<std::endl;
+		//TR<<"the size of j is: "<<j<<std::endl;
 		std::string const key( i->first );
-		TR<<"the size of j after i->first is: "<<j<<std::endl;
+		//TR<<"the size of j after i->first is: "<<j<<std::endl;
 		std::string const val( i->second );
-		TR<<"the size of j after i->second is: "<<j<<std::endl;
+		//TR<<"the size of j after i->second is: "<<j<<std::endl;
 		if( key.substr( 0, 7 ) != "segment" )/// the expected format is segment_??, where we're interested in ??
 			continue;
 		std::string const short_key( key.substr(8, 1000 ) );
@@ -1243,8 +1260,8 @@ if(use_sequence_profiles_){
 	TR<<"After removal the total number of constraints is: "<<pose.constraint_set()->get_all_constraints().size()<<std::endl;
 /// then impose new sequence constraints
 	core::sequence::SequenceProfileOP seqprof( generate_sequence_profile(pose) );
-	TR<<"Chain length/seqprof size: "<<pose.conformation().chain_end( 1 ) - pose.conformation().chain_begin( 1 ) + 1<<", "<<seqprof->size()<<std::endl;
-	runtime_assert( seqprof->size() == pose.conformation().chain_end( 1 ) - pose.conformation().chain_begin( 1 ) + 1 );
+	TR<<"Chain length/seqprof size: "<<pose.conformation().chain_end( 1 ) - pose.conformation().chain_begin( 1 ) + 1<<", "<<seqprof->size()-1<<std::endl;
+	runtime_assert( seqprof->size()-1 == pose.conformation().chain_end( 1 ) - pose.conformation().chain_begin( 1 ) + 1 ); //Please note that the minus 1 after seqprof size is because seqprof size is always +1 to the actual size. Do not chnage this!!
 	cst_num = 0;
 	if( seqprof_taskop()() != NULL ){
 		TR<<"Modifying the sequence profile task operation to match the current sequence profile"<<std::endl;
@@ -1255,7 +1272,7 @@ if(use_sequence_profiles_){
 	if (pose.conformation().num_chains() == 1){//If pose has only one chain (no ligand) than all residues are weighted the same
 		for( core::Size seqpos = pose.conformation().chain_begin( 1 ); seqpos <= pose.conformation().chain_end( 1 ); ++seqpos ) {
 		TR<<"Now adding constraint to aa: "<<seqpos<<pose.aa(seqpos)<<std::endl;
-		TR<<"The sequence profile fow for that residue is: "<<seqprof->prof_row(seqpos)<<std::endl;
+		TR<<"The sequence profile row for that residue is: "<<seqprof->prof_row(seqpos)<<std::endl;
 		SequenceProfileConstraintOP spc( new SequenceProfileConstraint( pose, seqpos, seqprof ) );
 		//spc->weight( 1000 );
 		pose.add_constraint( spc );

@@ -59,7 +59,7 @@ segment_FR2 1x9q
 segment_L2 1jxw
 */
 
-core::sequence::SequenceProfileOP concatenate_profiles( utility::vector1< core::sequence::SequenceProfileOP > const profiles ); // utility function to generate a single concatenated profile from a vector of profiles
+core::sequence::SequenceProfileOP concatenate_profiles( utility::vector1< core::sequence::SequenceProfileOP > const profiles, utility::vector1< std::string > segment_names_ordered ); // utility function to generate a single concatenated profile from a vector of profiles
 
 } // movers
 } // protein_interface_design
