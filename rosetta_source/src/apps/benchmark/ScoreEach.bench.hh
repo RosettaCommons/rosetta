@@ -10,8 +10,12 @@
 
 /// @file   rosetta/benchmark/score.bench.cc
 ///
-/// @brief  Scoring benchmark
-/// @author Sergey Lyskov
+/// @brief  Scoring Each benchmark
+/// @author Matthew O'Meara (mattjomeara@gmail.com)
+
+#ifndef INCLUDED_apps_benchmark_ScoreEach_bench_hh
+#define INCLUDED_apps_benchmark_ScoreEach_bench_hh
+
 
 #include <apps/benchmark/benchmark.hh>
 
@@ -27,29 +31,40 @@
 
 class ScoreEachBenchmark : public Benchmark
 {
-public:
-	pose::Pose pose;
 
+public:
 	ScoreEachBenchmark(
 		std::string name,
 		core::scoring::ScoreType score_type,
 		Size base_scale_factor
 	) :
 		Benchmark(name),
+		pose_(),
 		score_type_(score_type),
 		base_scale_factor_(base_scale_factor),
 		scorefxn_(),
 		setup_successful_(false)
 	{};
 
+
+	virtual
+	void
+	set_scorefxn(
+		core::scoring::ScoreFunctionOP scorefxn
+	) {
+		scorefxn_ = scorefxn;
+	}
+
 	virtual void setUp() {
-		core::import_pose::pose_from_pdb(pose, "test_in.pdb");
-		scorefxn_ = new core::scoring::ScoreFunction();
+		core::import_pose::pose_from_pdb(pose_, "test_in.pdb");
+		if(!scorefxn_){
+			scorefxn_ = new core::scoring::ScoreFunction();
+		}
 		try{
 			// do this once in case there are one time setup requirements
 			scorefxn_->set_weight(score_type_, 1);
-			scorefxn_->score(pose);
-			pose.energies().clear();
+			scorefxn_->score(pose_);
+			pose_.energies().clear();
 			scorefxn_->set_weight(score_type_, 0);
 			setup_successful_ = true;
 		} catch (utility::excn::EXCN_Base& excn){
@@ -73,8 +88,8 @@ public:
 		try{
 			for(int i=0; i < base_scale_factor_*scaleFactor; i++) {
 				scorefxn_->set_weight(score_type_, 1);
-				scorefxn_->score(pose);
-				pose.energies().clear();
+				scorefxn_->score(pose_);
+				pose_.energies().clear();
 				scorefxn_->set_weight(score_type_, 0);
 			}
 		} catch (utility::excn::EXCN_Base& excn){
@@ -90,6 +105,8 @@ public:
 	virtual void tearDown() {};
 
 private:
+	pose::Pose pose_;
+
 	core::scoring::ScoreType score_type_;
 	core::Size base_scale_factor_;
 	core::scoring::ScoreFunctionOP scorefxn_;
@@ -193,3 +210,5 @@ ScoreEachBenchmark Score_DFIRE_("core.scoring.Score_10x_DFIRE",DFIRE,10);
 ScoreEachBenchmark Score_pack_stat_("core.scoring.Score_10x_pack_stat",pack_stat,10);
 ScoreEachBenchmark Score_fa_cust_pair_dist_("core.scoring.Score_10x_fa_cust_pair_dist",fa_cust_pair_dist,10);
 ScoreEachBenchmark Score_occ_sol_exact_("core.scoring.Score_10x_occ_sol_exact",occ_sol_exact,10);
+
+#endif // include guard

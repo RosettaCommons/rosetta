@@ -47,6 +47,7 @@ const char results_filename[] = "_performance_";
 ScoreBenchmark Score_("core.scoring.Score");
 
 #include <apps/benchmark/ScoreEach.bench.hh>
+#include <apps/benchmark/ScoreAnalyticEtable.bench.hh>
 
 #include <apps/benchmark/SmallMover.bench.hh>
 SmallMoverBenchmark SmallMover_("protocols.moves.SmallMover");
