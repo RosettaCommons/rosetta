@@ -13,9 +13,11 @@
 /// @brief
 /// @author Sergey Lyskov
 
+#include <apps/benchmark/benchmark.hh>
+
+
 #include <core/chemical/ChemicalManager.hh>
 #include <core/scoring/Energies.hh>
-#include <basic/Tracer.hh>
 #include <devel/init.hh>
 #include <core/types.hh>
 
@@ -23,8 +25,6 @@
 #include <basic/options/option_macros.hh>
 
 #include <numeric/random/random.hh>
-
-#include <apps/benchmark/benchmark.hh>
 
 #include <utility/excn/Exceptions.hh>
 

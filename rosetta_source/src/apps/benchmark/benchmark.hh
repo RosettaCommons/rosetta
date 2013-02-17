@@ -17,7 +17,7 @@
 #define INCLUDED_apps_benchmark_benchmark_hh
 
 #include <core/types.hh>
-
+#include <basic/Tracer.hh>
 #include <vector>
 #include <string>
 
