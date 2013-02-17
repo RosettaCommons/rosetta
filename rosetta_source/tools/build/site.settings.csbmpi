@@ -23,10 +23,10 @@ settings = {
         "prepends" : {
            "include_path" : [
 		   		"/sb/meiler/Linux2/noarch/mysql/5.1.48/include/mysql/",
-				"/blue/csb/apps/mpich2/Linux2/1.1/x86_64/include",
+				"/blue/csb/apps/mpich2/Linux2/1.4.1p1/x86_64/include",
 				],
            "library_path" : [ 
-				"/blue/csb/apps/mpich2/Linux2/1.1/x86_64/lib",
+				"/blue/csb/apps/mpich2/Linux2/1.4.1p1/x86_64/lib",
 				"/blue/meilerlab/apps/Linux2/x86_64/lib",
 				"/sb/meiler/Linux2/x86_64/lib",],
 			"flags" : {
@@ -46,8 +46,8 @@ settings = {
               },
         },
         "overrides" : {
-		"cxx": "/blue/csb/apps/mpich2/Linux2/1.1/x86_64/bin/mpicxx",
-		"cc": "/blue/csb/apps/mpich2/Linux2/1.1/x86_64/bin/mpicc",    
+		"cxx": "/blue/csb/apps/mpich2/Linux2/1.4.1p1/x86_64/bin/mpicxx",
+		"cc": "/blue/csb/apps/mpich2/Linux2/1.4.1p1/x86_64/bin/mpicc",    
         },
         "removes" : {
           "flags" : {
