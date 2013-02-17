@@ -28,7 +28,6 @@
 
 #include <utility/excn/Exceptions.hh>
 
-// AUTO-REMOVED #include <time.h>
 #include <fstream>
 
 #if  !defined(WINDOWS) && !defined(WIN32)

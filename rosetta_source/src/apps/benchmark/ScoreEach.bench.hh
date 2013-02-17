@@ -18,7 +18,7 @@
 
 
 #include <apps/benchmark/benchmark.hh>
-
+#include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -27,7 +27,9 @@
 #include <core/scoring/Energies.hh>
 
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
+
 
 class ScoreEachBenchmark : public Benchmark
 {
@@ -36,7 +38,7 @@ public:
 	ScoreEachBenchmark(
 		std::string name,
 		core::scoring::ScoreType score_type,
-		Size base_scale_factor
+		core::Size base_scale_factor
 	) :
 		Benchmark(name),
 		pose_(),
@@ -84,7 +86,7 @@ public:
 			return;
 		}
 
-		scoring::ScoreFunction scorefxn;
+		core::scoring::ScoreFunction scorefxn;
 		try{
 			for(int i=0; i < base_scale_factor_*scaleFactor; i++) {
 				scorefxn_->set_weight(score_type_, 1);
@@ -105,7 +107,7 @@ public:
 	virtual void tearDown() {};
 
 private:
-	pose::Pose pose_;
+	core::pose::Pose pose_;
 
 	core::scoring::ScoreType score_type_;
 	core::Size base_scale_factor_;

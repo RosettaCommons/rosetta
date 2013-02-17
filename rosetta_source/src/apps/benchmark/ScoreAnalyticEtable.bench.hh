@@ -23,7 +23,7 @@ public:
 	ScoreAnalyticEtableBenchmark(
 		std::string name,
 		core::scoring::ScoreType score_type,
-		Size base_scale_factor
+		core::Size base_scale_factor
 	) :
 		ScoreEachBenchmark(name, score_type, base_scale_factor)
 	{}
