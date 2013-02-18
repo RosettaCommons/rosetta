@@ -29,6 +29,10 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/sequence/SequenceProfile.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/SequenceProfileConstraint.hh>
+#include <core/sequence/SequenceProfile.hh>
 
 #include <core/io/ddg/PositionDdGInfo.hh>
 
@@ -40,9 +44,11 @@
 #include <string>
 
 #include <utility/vector0.hh>
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 
-static basic::Tracer tr("protocols.toolbox.tas_operations.SeqprofConsensusOperation");
+static basic::Tracer tr("protocols.toolbox.task_operations.SeqprofConsensusOperation");
 
 namespace protocols{
 namespace toolbox{
@@ -58,12 +64,15 @@ SeqprofConsensusOperationCreator::create_task_operation() const
 /// @brief default constructor
 SeqprofConsensusOperation::SeqprofConsensusOperation():
 	TaskOperation(),
-	seqprof_filename_( basic::options::option[ basic::options::OptionKeys::in::file::pssm ][1] ),
 	seqprof_(NULL),
 	min_aa_probability_(0.0),
 	prob_larger_current_(true),
 	ignore_pose_profile_length_mismatch_(false)
 {
+	if( basic::options::option[ basic::options::OptionKeys::in::file::pssm ].user() )
+		seqprof_filename_ = basic::options::option[ basic::options::OptionKeys::in::file::pssm ][1];
+	else
+		seqprof_filename_ = "";
 	if( utility::file::file_exists( seqprof_filename_ ) ){
 		core::sequence::SequenceProfileOP seqprof = new core::sequence::SequenceProfile( seqprof_filename_ );
 		seqprof->convert_profile_to_probs(); // was previously implicit in from-filename constructor
@@ -95,7 +104,30 @@ SeqprofConsensusOperation::clone() const {
 void
 SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 {
-	if( !seqprof_) utility_exit_with_message("No sequence profile set. option -in:file:pssm not specified? no filename in tag specified?");
+	using namespace core::scoring::constraints;
+	using namespace core::sequence;
+
+	SequenceProfileOP seqprof = seqprof_;
+	if( !seqprof ){
+		seqprof = new core::sequence::SequenceProfile;
+		tr<<"Sequence profile was not set until now. Attempting to read sequence profile from the pose's sequenceprofile constraints..."<<std::endl;
+		 ConstraintCOPs constraints( pose.constraint_set()->get_all_constraints() );
+		 tr.Debug<<"Total number of constraints in pose: "<<constraints.size()<<std::endl;
+		 core::Size cst_num( 0 );
+		 foreach( ConstraintCOP const c, constraints ){
+		   if( c->type() == "SequenceProfile" ){
+				 SequenceProfileConstraintCOP seqprof_cst( dynamic_cast< SequenceProfileConstraint const * >( c() ) );
+				 runtime_assert( seqprof_cst );
+				 core::Size const seqpos( seqprof_cst->seqpos() );
+				 SequenceProfileCOP seqprof_pos( seqprof_cst->sequence_profile() );
+				 seqprof->prof_row( seqprof_pos->profile()[ seqpos ], seqpos );
+		     cst_num++;
+		   }
+		 }
+		 tr<<"Added "<<cst_num<<" sequence profile positions to seqprof, taken from the pose's SequenceProfile constraints"<<std::endl;
+	}
+	if( !seqprof )
+		utility_exit_with_message("No sequence profile set. option -in:file:pssm not specified? no filename in tag specified? Sequence profile constraints not added to pose by other movers/filters?");
 
 	core::Size asymmetric_unit_res( pose.total_residue() );
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
@@ -104,12 +136,14 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
     asymmetric_unit_res = SymmConf.Symmetry_Info()->num_independent_residues();
 		task.request_symmetrize_by_intersection();
   }
-	core::Size last_res (asymmetric_unit_res <= seqprof_->profile().size() ? pose.total_residue() : seqprof_->profile().size() );
+	core::Size last_res (asymmetric_unit_res <= seqprof->profile().size() ? pose.total_residue() : seqprof->profile().size() );
+	tr.Debug<<"Allowing the following identities:\n";
 	for( core::Size i = 1; i <= last_res; ++i){
+		tr.Debug<<"At position "<<i<<": ";
 
 		if( !pose.residue_type( i ).is_protein() ) continue;
 		//std::cout << "SCO at pos " << i << " allows the following residues: ";
-		utility::vector1< Real > const & pos_profile( (seqprof_->profile())[ i ] );
+		utility::vector1< Real > const & pos_profile( (seqprof->profile())[ i ] );
 		utility::vector1< bool > keep_aas( core::chemical::num_canonical_aas, false );
 		core::Real current_prob( pos_profile[ pose.residue_type(i).aa() ] );
 
@@ -122,7 +156,10 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 				else	keep_aas[ aa ] = true;
 				//std::cout << " " << static_cast<core::chemical::AA>(aa) << " prob=" << prob << ", ";
 			}
+			if( keep_aas[ aa ] )
+				tr.Debug<<core::chemical::oneletter_code_from_aa( static_cast< core::chemical::AA >( aa ) );
 		}
+		tr.Debug<<std::endl;
 		keep_aas[  pose.residue_type(i).aa() ] = true; //current always allowed
 		//std::cout << " native " << pose.residue_type(i).aa() << " prob=" << native_prob << "." << std::endl;
 
