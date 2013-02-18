@@ -326,7 +326,9 @@ void NonPlaidFingerprint::setup_gpu( core::Real const & missing_point_weight, co
     gpu_.WriteData(gpu_weights_, weights, sizeof(*weights) * 4);
 
     gpu_atoms_ = gpu_.AllocateMemory(sizeof(*atom_) * ATOMS_ARRAY);
+    //gpu_atom_maxmin_phipsi_ = gpu_.AllocateMemory(sizeof(*atom_maxmin_phipsi_) * ATOMS_ARRAY);//PHIPSI
 
+    //float rayscores[RAY_SCORE_ARRAY];
     if(!gpu_ray_scores_) {
       // Allocate GPU memory for distances (results)
       gpu_ray_scores_ = gpu_.AllocateMemory(sizeof(*ray_scores_) * RAY_SCORE_ARRAY);
@@ -337,7 +339,8 @@ void NonPlaidFingerprint::setup_gpu( core::Real const & missing_point_weight, co
       gpu_particle_scores_ = gpu_.AllocateMemory(sizeof(*particle_scores_) * NUMBER_OF_PARTICLES);
     }
 
-    std::string fn = basic::database::full_name("gpu/DARC_PSO.cl");
+    //std::string fn = basic::database::full_name("gpu/DARC_PSO_PHIPSI.cl");//PHIPSI
+    std::string fn = basic::database::full_name("gpu/DARC_PSO.cl");//No PHIPSI
     if(!gpu_.RegisterProgram(fn.c_str())) {
       std::cout << "Failed to load CL kernel." << std::endl;
       exit(1);
@@ -353,6 +356,8 @@ void NonPlaidFingerprint::setup_gpu( core::Real const & missing_point_weight, co
     gpu_.setKernelArg(kernel1, 3, sizeof(gpu_num_atoms_), &gpu_num_atoms_);
     gpu_.setKernelArg(kernel1, 4, sizeof(gpu_weights_), &gpu_weights_);
     gpu_.setKernelArg(kernel1, 5, sizeof(gpu_num_rays_), &gpu_num_rays_);
+
+    //gpu_.setKernelArg(kernel1, 6, sizeof(gpu_atom_maxmin_phipsi_), &gpu_atom_maxmin_phipsi_);//PHIPSI
 
     cl_kernel kernel2 = gpu_.BuildKernel("Get_scores");
     gpu_.setKernelArg(kernel2, 0, sizeof(gpu_ray_scores_), &gpu_ray_scores_);
