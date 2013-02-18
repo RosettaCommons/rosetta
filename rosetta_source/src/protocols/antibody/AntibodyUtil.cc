@@ -388,7 +388,7 @@ bool CDR_H3_cter_filter(const pose::Pose & pose_in, AntibodyInfoOP ab_info)
     
     TR <<  "Utility: Checking Kink/Extended CDR H3 Base Angle" << std::endl;
     
-    if(ab_info->is_Camelid() ){ return( true ); }
+    if(ab_info->is_camelid() ){ return( true ); }
     
     // Values read from plot in reference paper. Fig 1 on Page 3
     // Values adjusted to match data from antibody training set

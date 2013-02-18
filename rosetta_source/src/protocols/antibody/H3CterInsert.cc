@@ -216,7 +216,7 @@ std::string H3CterInsert::get_name() const {
     Size cdr_h3_size = (     ab_info_->get_CDR_loop(h3).stop() - ab_info_->get_CDR_loop(h3).start()  ) + 1;
     
     TR<<"cdr_h3_size="<<cdr_h3_size<<std::endl;
-    utility::vector1< char > aa_1name = ab_info_->get_CDR_Sequence_with_Stem(h3,2,2);
+    utility::vector1< char > aa_1name = ab_info_->get_CDR_sequence_with_stem(h3,2,2);
 
     TR<<"aa_1name.size()="<<aa_1name.size()<<std::endl;
     
@@ -238,7 +238,7 @@ std::string H3CterInsert::get_name() const {
             
 
     // file is read in from where other contraints are supposed to exist
-    if( ab_info_->is_Camelid() ){
+    if( ab_info_->is_camelid() ){
         H3_ter_library_filename_ = path+"camelid_H3_CTERM";
     }
     else{
@@ -267,7 +267,7 @@ std::string H3CterInsert::get_name() const {
     std::string base_type;
             
     Size pdb_H3_length = cdr_h3_size;
-    Size h3_base_frag_size( ab_info_->is_Camelid() ? 6 : 4 );
+    Size h3_base_frag_size( ab_info_->is_camelid() ? 6 : 4 );
     
     bool end_not_reached(true);
     while(end_not_reached){
@@ -306,7 +306,7 @@ std::string H3CterInsert::get_name() const {
         
         
         //regular antibody
-        if( ab_info_->is_Camelid() == false) {
+        if( ab_info_->is_camelid() == false) {
             if( is_kinked && base_type == "KINK" ){
                 base_match = true;
             }
@@ -332,7 +332,7 @@ std::string H3CterInsert::get_name() const {
         
         
         //camelid antibody
-        if( ab_info_->is_Camelid() && end_not_reached && base_match ){
+        if( ab_info_->is_camelid() && end_not_reached && base_match ){
 
             H3_base_library_.push_back( f );
         }

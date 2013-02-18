@@ -9,10 +9,12 @@
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
 /// @file protocols/antibody/AntibodyInfo.cc
-/// @brief
+/// @brief Class for getting antibody-specific objects and information
 /// @author Jianqing Xu (xubest@gmail.com)
+/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 // Project Headers
+#include <protocols/antibody/AntibodyEnum.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
 
 // Core Headers
@@ -42,6 +44,7 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/file/FileName.hh>
 #include <utility/file/file_sys_util.hh>
+#include <utility/vector1.hh>
 
 //Options
 #include <basic/options/option.hh>
@@ -71,19 +74,18 @@ namespace antibody{
 	
     
 AntibodyInfo::AntibodyInfo( pose::Pose const & pose,
-						   AntibodyNumberingEnum const & numbering_scheme,
+						   AntibodyNumberingSchemeEnum const & numbering_scheme,
 						   bool const & cdr_pdb_numbered) {
-    set_default();
+	set_default();
 	
-    numbering_scheme_ = numbering_scheme;
+	numbering_scheme_ = numbering_scheme;
 	cdr_pdb_numbered_ = cdr_pdb_numbered;
 	
-    identify_antibody(pose);
-    
+	identify_antibody(pose);
 	init(pose);
 }
 
-
+AntibodyInfo::~AntibodyInfo(){}
     
 void AntibodyInfo::set_default()
 {
@@ -94,6 +96,193 @@ void AntibodyInfo::set_default()
     numbering_scheme_ = Aroop;
 }
 
+void AntibodyInfo::init(pose::Pose const & pose){
+    
+	if(is_camelid_) total_cdr_loops_ = camelid_last_loop;
+	else            total_cdr_loops_ = num_cdr_loops;
+	
+	setup_numbering_info_for_scheme(numbering_scheme_);
+
+	setup_CDRsInfo(pose) ;
+
+	setup_FrameWorkInfo(pose) ;
+
+	setup_VL_VH_packing_angle( pose );
+
+	predict_H3_base_type( pose );
+
+}
+
+void AntibodyInfo::setup_numbering_info_for_scheme(AntibodyNumberingSchemeEnum const & numbering_scheme) {
+    
+
+	// define local variables
+	//vector1<int> start, stop, pack_angle_start, pack_angle_stop;
+	//vector1< vector1<int> > local_numbering_info;
+
+	// doesn't hurt to clear all the contents, no matter they are empty or not
+	//start.clear(); stop.clear(); pack_angle_start.clear(); pack_angle_stop.clear();
+	//for (Size i=1;i<=local_numbering_info.size(); ++i){
+		//local_numbering_info[i].clear();
+	//}
+	//local_numbering_info.clear();
+    
+	//Resizing to populate with cdr numbering information.
+	//start.resize(num_cdr_loops);
+	//stop.resize(num_cdr_loops);
+	
+	
+	
+	//////////////////////////////////////////////////////////////////////
+	///Feb 2013-
+	///Refactored by Jared Adolf-Bryfogle to use Enums and hold the information rather then creating the vectors
+	// every time this function was called.
+	// Old code is left for reference.
+	
+	
+	//Setup the vector
+
+	//TODO: Move this for loop setup stuff to a separate function and then
+	//      it can be done in one line:
+	//      AntibodyNumbering(num_cdr_loops, vector1< core::Size >(AntibodyNumberingEnum_total, 0))
+	//      This wasn't done here because it requires knowing the internal
+	//      structure of the AntibodyNumbering typedef, which is not stylish.
+	//CDRs
+	cdr_numbering_.resize(num_cdr_loops);
+	for (core::Size i =1; i <= num_cdr_loops; ++i){
+		cdr_numbering_[i].resize(AntibodyNumberingEnum_total);
+	}
+	
+	//PackingAngleNumbers
+	packing_angle_numbering_.resize(PackingAngleEnum_total);
+	for (core::Size i=1; i <= PackingAngleEnum_total; ++i){
+		packing_angle_numbering_[i].resize(AntibodyNumberingEnum_total);
+	}
+	
+	
+	//**********************************************************************************
+	//  Aroop Numbering                                                                *
+	//    citation:
+	//**********************************************************************************
+	if(numbering_scheme == Aroop ){
+		
+
+		//First and last residue number of each cdr
+		cdr_numbering_[h1][start] = 26;   cdr_numbering_[h1][stop] = 35;
+		cdr_numbering_[h2][start] = 50;   cdr_numbering_[h2][stop] = 65;
+		cdr_numbering_[h3][start] = 95;   cdr_numbering_[h3][stop] = 102;
+		
+		
+		cdr_numbering_[l1][start] = 24;    cdr_numbering_[l1][stop] = 34;
+		cdr_numbering_[l2][start] = 50;    cdr_numbering_[l2][stop] = 56;
+		cdr_numbering_[l3][start] =  89;   cdr_numbering_[l3][stop] = 97;
+		
+		// VL-VH packing angle residues
+		packing_angle_numbering_[VL_sheet_1][start] = 35;
+		packing_angle_numbering_[VL_sheet_1][stop] = 38;
+		packing_angle_numbering_[VL_sheet_2][start] = 85;
+		packing_angle_numbering_[VL_sheet_2][stop] = 88;
+		
+		packing_angle_numbering_[VH_sheet_1][start] = 36;
+		packing_angle_numbering_[VH_sheet_1][stop] = 39;
+		packing_angle_numbering_[VH_sheet_2][start] = 89;
+		packing_angle_numbering_[VH_sheet_2][stop] = 92; 
+	}
+	//**********************************************************************************
+	//  Chothia Numbering                                                              *
+	//    citation: 
+	//**********************************************************************************
+	else if(numbering_scheme == Chothia ){
+		
+		//First and last residue number of each cdr
+		cdr_numbering_[l1][start] = 24;     cdr_numbering_[l1][stop] = 34;
+		cdr_numbering_[l2][start] = 50;     cdr_numbering_[l2][stop] = 56;
+		cdr_numbering_[l3][start] =  89;    cdr_numbering_[l3][stop] = 97;
+		
+		cdr_numbering_[h1][start] = 26;    cdr_numbering_[h1][stop] = 32;
+		cdr_numbering_[h2][start] = 52;    cdr_numbering_[h2][stop] = 56;
+		cdr_numbering_[h3][start] = 95;    cdr_numbering_[h3][stop] = 102;
+		
+		// VL-VH packing angle residues
+		packing_angle_numbering_[VL_sheet_1][start] = 35;
+		packing_angle_numbering_[VL_sheet_1][stop] = 38;
+		packing_angle_numbering_[VL_sheet_2][start] = 85;
+		packing_angle_numbering_[VL_sheet_2][stop] = 88;
+		
+		packing_angle_numbering_[VH_sheet_1][start] = 36;
+		packing_angle_numbering_[VH_sheet_1][stop] = 39;
+		packing_angle_numbering_[VH_sheet_2][start] = 89;
+		packing_angle_numbering_[VH_sheet_2][stop] = 92; 
+		
+		// VL-VH packing angle residues
+		//pack_angle_start.push_back(35); pack_angle_stop.push_back(38);  //VL
+		//pack_angle_start.push_back(85); pack_angle_stop.push_back(88);  //VL
+		//pack_angle_start.push_back(36); pack_angle_stop.push_back(39);  //VH
+		//pack_angle_start.push_back(89); pack_angle_stop.push_back(92);  //VH
+	}
+
+	//**********************************************************************************
+	//  Kabat Numbering                                                                *
+	//    citation:
+	//**********************************************************************************
+	else if(numbering_scheme == Kabat ){
+	}
+	//**********************************************************************************
+	//  Enhanced_Chothia Numbering                                                     *
+	//    Abhinandan, K.R. and Martin, A.C.R. (2008) Immunology, 45, 3832-3839.        *
+	//**********************************************************************************
+	else if(numbering_scheme == Enhanced_Chothia){
+	}
+	//**********************************************************************************
+	//  AHO Numbering                                                                  *
+	//    A. Honegger & A. Plückthun. (2001) J. Mol. Biol, 309 (2001)657-670
+	//**********************************************************************************
+	else if(numbering_scheme == AHO){
+	}
+	//**********************************************************************************
+	//  Modified Honegger-Plückthun (Aho) Numbering                                                                   *
+	//    North, B., A. Lehmann, et al. (2011). JMB 406(2): 228-256. (Not described in paper)
+	//**********************************************************************************
+	else if(numbering_scheme == Modified_AHO){
+
+		//First and last residue number of each cdr
+		cdr_numbering_[l1][start] = 24;     cdr_numbering_[l1][stop] = 42;
+		cdr_numbering_[l2][start] = 57;     cdr_numbering_[l2][stop] = 72;
+		cdr_numbering_[l3][start] =  107;  cdr_numbering_[l3][stop] = 138;
+		
+		cdr_numbering_[h1][start] = 24;    cdr_numbering_[h1][stop] = 42;
+		cdr_numbering_[h2][start] = 57;    cdr_numbering_[h2][stop] = 69;
+		cdr_numbering_[h3][start] = 107;  cdr_numbering_[h3][stop] = 138;
+		
+
+		
+		// VL-VH packing angle residues - Look at the symmetry!
+		packing_angle_numbering_[VL_sheet_1][start] = 43;   
+		packing_angle_numbering_[VL_sheet_1][stop] = 46; 
+		packing_angle_numbering_[VL_sheet_2][start] = 103; 
+		packing_angle_numbering_[VL_sheet_2][stop] = 106; 
+		
+		packing_angle_numbering_[VH_sheet_1][start] = 43;  
+		packing_angle_numbering_[VH_sheet_1][stop] = 46;  
+		packing_angle_numbering_[VH_sheet_2][start] = 103;
+		packing_angle_numbering_[VH_sheet_2][stop] = 106; 
+	}
+    //**********************************************************************************
+    //  IMGT Numbering                                                                 *
+    //    citation:
+    //**********************************************************************************
+    else if(numbering_scheme == IMGT){
+    }
+    else{
+        throw excn::EXCN_Msg_Exception("the numbering schemes can only be 'Aroop','Chothia','Kabat', 'Enhanced_Chothia', 'AHO', Modified_AHO', 'IMGT' !!!!!! ");
+    }
+
+	//local_numbering_info.push_back(start);
+	//local_numbering_info.push_back(stop);
+	//local_numbering_info.push_back(pack_angle_start);
+	//local_numbering_info.push_back(pack_angle_stop);
+	//return local_numbering_info;
+}
 
 void AntibodyInfo::identify_antibody(pose::Pose const & pose){
     
@@ -150,22 +339,6 @@ void AntibodyInfo::identify_antibody(pose::Pose const & pose){
 	
 }
 
-
-void AntibodyInfo::init(pose::Pose const & pose){
-    
-    if(is_camelid_) total_cdr_loops_ = camelid_last_loop;
-    else            total_cdr_loops_ = num_cdr_loops;
-    
-    setup_CDRsInfo(pose) ;
-    
-    setup_FrameWorkInfo(pose) ;
-    
-	setup_VL_VH_packing_angle( pose );
-	
-    predict_H3_base_type( pose );
-}
-
-
     
 /// TODO: 
 // JQX:
@@ -183,19 +356,17 @@ void AntibodyInfo::setup_CDRsInfo( pose::Pose const & pose ) {
 	for (Size i=1;i<=3;++i) { Chain_IDs_for_CDRs.push_back('H'); } // HEAVY chain first
     for (Size i=1;i<=3;++i) { Chain_IDs_for_CDRs.push_back('L'); } // light
 	
-	vector1< vector1<int> > cdr_numbering_info = get_CDR_NumberingInfo(numbering_scheme_);
-
     int loop_start_in_pose, loop_stop_in_pose, cut_position ;
     loopsop_having_allcdrs_ = new loops::Loops();
     
-    for (AntibodyCDRNameEnum i=start_cdr_loop; i<=total_cdr_loops_; i=AntibodyCDRNameEnum(i+1) ){
-        loop_start_in_pose = pose.pdb_info()->pdb2pose( Chain_IDs_for_CDRs[i], cdr_numbering_info[Begin][i]);
+    for (AntibodyCDRNameEnum i=start_cdr_loop; i<=total_cdr_loops_; ++i ){
+        loop_start_in_pose = pose.pdb_info()->pdb2pose( Chain_IDs_for_CDRs[i], cdr_numbering_[i][start]);
         if(i != h3 ){
-            loop_stop_in_pose= pose.pdb_info()->pdb2pose( Chain_IDs_for_CDRs[i], cdr_numbering_info[End][i]);
+            loop_stop_in_pose= pose.pdb_info()->pdb2pose( Chain_IDs_for_CDRs[i], cdr_numbering_[i][stop]);
             cut_position = (loop_stop_in_pose - loop_start_in_pose +1) /2 + loop_start_in_pose;
         }
         else{
-            loop_stop_in_pose  = pose.pdb_info()->pdb2pose( Chain_IDs_for_CDRs[i], cdr_numbering_info[End][i]+1 );
+            loop_stop_in_pose  = pose.pdb_info()->pdb2pose( Chain_IDs_for_CDRs[i], cdr_numbering_[i][stop]+1 );
             loop_stop_in_pose -=1;
             // JQX:
             // One should always see 95-102 as the positions for your H3 in your FR02.pdb, but as a matter of fact,
@@ -240,7 +411,7 @@ void AntibodyInfo::setup_FrameWorkInfo( pose::Pose const & pose ) {
     core::Size L_begin_pos_num = 0;
     core::Size L_end_pos_num = 0;
     
-    if(is_Camelid() == true ){
+    if(is_camelid() == true ){
         H_begin_pos_num=pose.conformation().chain_begin(1);
         H_end_pos_num=pose.conformation().chain_end(1);
     }
@@ -349,16 +520,17 @@ void AntibodyInfo::setup_FrameWorkInfo( pose::Pose const & pose ) {
 void AntibodyInfo::setup_VL_VH_packing_angle( pose::Pose const & pose ) {
 	
 	vector1<char> Chain_IDs_for_packing_angle;
-	for (Size i=1;i<=2;++i) { Chain_IDs_for_packing_angle.push_back('L'); } // VL
-    for (Size i=1;i<=2;++i) { Chain_IDs_for_packing_angle.push_back('H'); } // VH
-	
-	vector1< vector1< Size > > packing_angle_numbering_info = get_CDR_NumberingInfo(numbering_scheme_);
+	Chain_IDs_for_packing_angle.resize(PackingAngleEnum_total);
+	Chain_IDs_for_packing_angle[VL_sheet_1] = 'L';
+	Chain_IDs_for_packing_angle[VL_sheet_2] = 'L';
+	Chain_IDs_for_packing_angle[VH_sheet_1] = 'H';
+	Chain_IDs_for_packing_angle[VH_sheet_2] = 'H';
 	
 	Size packing_angle_start_in_pose, packing_angle_stop_in_pose;
 	
-	for (Size i=1; i<=4; ++i){
-		packing_angle_start_in_pose = pose.pdb_info()->pdb2pose( Chain_IDs_for_packing_angle[i], packing_angle_numbering_info[Pack_Angle_Begin][i]);
-		packing_angle_stop_in_pose = pose.pdb_info()->pdb2pose( Chain_IDs_for_packing_angle[i], packing_angle_numbering_info[Pack_Angle_End][i]);
+	for (Size i=1; i<=PackingAngleEnum_total; ++i){
+		packing_angle_start_in_pose = pose.pdb_info()->pdb2pose( Chain_IDs_for_packing_angle[i], packing_angle_numbering_[i][start]);
+		packing_angle_stop_in_pose = pose.pdb_info()->pdb2pose( Chain_IDs_for_packing_angle[i], packing_angle_numbering_[i][stop]);
 		for (Size j=packing_angle_start_in_pose; j<=packing_angle_stop_in_pose; j++){
 			packing_angle_residues_.push_back( j );
 		}
@@ -609,7 +781,7 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type_new_rule( pose::Pose 
 
 
 std::pair <std::string, Real>
-AntibodyInfo::get_CDR_cluster(pose::Pose const & pose, AntibodyCDRNameEnum const & cdr_name){
+AntibodyInfo::get_CDR_cluster(pose::Pose const & pose, AntibodyCDRNameEnum const & cdr_name) const {
 	using std::string;
 	using std::map;
 	using core::Size;
@@ -723,7 +895,7 @@ AntibodyInfo::get_CDR_cluster(pose::Pose const & pose, AntibodyCDRNameEnum const
 }
     
 Size
-AntibodyInfo::get_CDR_length(AntibodyCDRNameEnum const & cdr_name){
+AntibodyInfo::get_CDR_length(AntibodyCDRNameEnum const & cdr_name) const {
 	loops::Loop cdr_loop = get_CDR_loop(cdr_name);
 	Size l = cdr_loop.stop()-cdr_loop.start()+1;
 	return l;
@@ -732,10 +904,10 @@ AntibodyInfo::get_CDR_length(AntibodyCDRNameEnum const & cdr_name){
 
 void
 AntibodyInfo::set_harmonic_constraint(pose::Pose & pose, 
-							std::string cluster_type){
+							std::string cluster_type) const {
 	
 	using namespace protocols::simple_moves;
-    using namespace basic::options;
+	using namespace basic::options;
 	
 	if (cluster_type=="NA"){return;}
 	std::string path = "sampling/antibody_design/CONSTRAINTS/CircularHarmonic/";
@@ -822,7 +994,7 @@ kinematics::FoldTreeCOP AntibodyInfo::get_FoldTree_AllCDRs (pose::Pose const & p
 ///
 /// @last_modified 07/13/2010
 ///////////////////////////////////////////////////////////////////////////
-kinematics::FoldTreeCOP AntibodyInfo::get_FoldTree_AllCDRs_LHDock( pose::Pose & pose ) const {
+kinematics::FoldTreeCOP AntibodyInfo::get_FoldTree_AllCDRs_LHDock( pose::Pose const & pose ) const {
        
 	using namespace kinematics;
         
@@ -1154,7 +1326,7 @@ kinematics::MoveMap AntibodyInfo::get_MoveMap_for_LoopsandDock(pose::Pose const 
     
 
 //JQX: doesn't matter only antibody or antibody-antigen complex, just include CDRs and their neighbors
-pack::task::TaskFactoryOP AntibodyInfo::get_TaskFactory_AllCDRs(pose::Pose  & pose)  const{
+pack::task::TaskFactoryOP AntibodyInfo::get_TaskFactory_AllCDRs(pose::Pose & pose)  const{
 	
 	vector1< bool> sc_is_packable( pose.total_residue(), false );
 	select_loop_residues( pose, *loopsop_having_allcdrs_, true/*include_neighbors*/, sc_is_packable);
@@ -1181,7 +1353,7 @@ pack::task::TaskFactoryOP AntibodyInfo::get_TaskFactory_AllCDRs(pose::Pose  & po
 	return tf;
 }
     
-pack::task::TaskFactoryOP AntibodyInfo::get_TaskFactory_OneCDR(pose::Pose  & pose, AntibodyCDRNameEnum const & cdr_name)  const{
+pack::task::TaskFactoryOP AntibodyInfo::get_TaskFactory_OneCDR(pose::Pose & pose, AntibodyCDRNameEnum const & cdr_name)  const{
 	vector1< bool> sc_is_packable( pose.total_residue(), false );
 	
 	select_loop_residues( pose, *get_CDR_in_loopsop(cdr_name), true/*include_neighbors*/, sc_is_packable);
@@ -1193,130 +1365,10 @@ pack::task::TaskFactoryOP AntibodyInfo::get_TaskFactory_OneCDR(pose::Pose  & pos
 	
 	return tf;
 }
-    
-// JQX:: assuming Aroop numbering for now
-vector1< vector1<Size> > AntibodyInfo::get_CDR_NumberingInfo(AntibodyNumberingEnum const & numbering_scheme) const {
-    
-
-    // definte local variables
-    vector1<int> start, stop, pack_angle_start, pack_angle_stop;
-    vector1< vector1<int> > local_numbering_info;
-
-    // doesn't hurt to clear all the contents, no matter they are empty or not
-    start.clear(); stop.clear(); pack_angle_start.clear(); pack_angle_stop.clear();
-    for (Size i=1;i<=local_numbering_info.size(); ++i){
-        local_numbering_info[i].clear();
-    }
-    local_numbering_info.clear();
-        
-    
-    // JQX: always make the heavy chain first, so that one can always use enum names
-    
-    //**********************************************************************************
-    //  Aroop Numbering                                                                *
-    //    citation:
-    //**********************************************************************************
-    if(numbering_scheme == Aroop ){
-        // Heavy Chain
-        start.push_back(26); stop.push_back(35);  //h1
-        start.push_back(50); stop.push_back(65);  //h2
-        start.push_back(95); stop.push_back(102); //h3
-        // Light Chain
-        start.push_back(24); stop.push_back(34);  //l1
-        start.push_back(50); stop.push_back(56);  //l2
-        start.push_back(89); stop.push_back(97);  //l3
-		// VL-VH packing angle residues
-		pack_angle_start.push_back(35); pack_angle_stop.push_back(38);  //VL
-		pack_angle_start.push_back(85); pack_angle_stop.push_back(88);  //VL
-		pack_angle_start.push_back(36); pack_angle_stop.push_back(39);  //VH
-		pack_angle_start.push_back(89); pack_angle_stop.push_back(92);  //VH
-    }
-    //**********************************************************************************
-    //  Chothia Numbering                                                              *
-    //    citation: 
-    //**********************************************************************************
-    else if(numbering_scheme == Chothia ){
-        // Heavy Chain
-        start.push_back(26); stop.push_back(32);  //h1
-        start.push_back(52); stop.push_back(56);  //h2
-        start.push_back(95); stop.push_back(102); //h3
-        // Light Chain
-        start.push_back(24); stop.push_back(34);  //l1
-        start.push_back(50); stop.push_back(56);  //l2
-        start.push_back(89); stop.push_back(97);  //l3
-		// VL-VH packing angle residues
-		pack_angle_start.push_back(35); pack_angle_stop.push_back(38);  //VL
-		pack_angle_start.push_back(85); pack_angle_stop.push_back(88);  //VL
-		pack_angle_start.push_back(36); pack_angle_stop.push_back(39);  //VH
-		pack_angle_start.push_back(89); pack_angle_stop.push_back(92);  //VH
-    }
-
-    //**********************************************************************************
-    //  Kabat Numbering                                                                *
-    //    citation:
-    //**********************************************************************************
-    else if(numbering_scheme == Kabat ){
-    }
-    //**********************************************************************************
-    //  Enhanced_Chothia Numbering                                                     *
-    //    Abhinandan, K.R. and Martin, A.C.R. (2008) Immunology, 45, 3832-3839.        *
-    //**********************************************************************************
-    else if(numbering_scheme == Enhanced_Chothia){
-    }
-    //**********************************************************************************
-    //  AHO Numbering                                                                  *
-    //    A. Honegger & A. Plückthun. (2001) J. Mol. Biol, 309 (2001)657-670
-    //**********************************************************************************
-    else if(numbering_scheme == AHO){
-    }
-    //**********************************************************************************
-    //  Modified Honegger-Plückthun (Aho) Numbering                                                                   *
-    //    North, B., A. Lehmann, et al. (2011). JMB 406(2): 228-256. (Not described in paper)
-    //**********************************************************************************
-	else if(numbering_scheme == Modified_AHO){
-        // Heavy Chain
-        start.push_back(24); stop.push_back(42);  //h1
-        start.push_back(57); stop.push_back(69);  //h2
-        start.push_back(107); stop.push_back(138); //h3
-        // Light Chain
-        start.push_back(24); stop.push_back(42);  //l1
-        start.push_back(57); stop.push_back(72);  //l2
-        start.push_back(107); stop.push_back(138);  //l3
-		
-		// VL-VH packing angle residues - Yes our scheme rocks. Look at the symmetry!
-		pack_angle_start.push_back(43); pack_angle_stop.push_back(46);  //VL
-		pack_angle_start.push_back(103); pack_angle_stop.push_back(106);  //VL
-		pack_angle_start.push_back(43); pack_angle_stop.push_back(46);  //VH
-		pack_angle_start.push_back(103); pack_angle_stop.push_back(106);  //VH
-	}
-    //**********************************************************************************
-    //  IMGT Numbering                                                                 *
-    //    citation:
-    //**********************************************************************************
-    else if(numbering_scheme == IMGT){
-    }
-    else{
-        throw excn::EXCN_Msg_Exception("the numbering schemes can only be 'Aroop','Chothia','Kabat', 'Enhanced_Chothia', 'AHO', Modified_AHO', 'IMGT' !!!!!! ");
-    }
-	
-	local_numbering_info.push_back(start);
-	local_numbering_info.push_back(stop);
-	local_numbering_info.push_back(pack_angle_start);
-	local_numbering_info.push_back(pack_angle_stop);
-	return local_numbering_info;
-}
-
-    
-
-
-
-
-
-    
-    
+     
 /// TODO:
 //JQX: make Daisuke's code compatible with my code
-//
+//JAB: Expand using HMMER antibody/cdr identification 
 	
 ///////////////////////////////////////////////////////////////////////////
 /// @author: Daisuke Kuroda (dkuroda1981@gmail.com) 06/18/2012
@@ -1628,7 +1680,7 @@ void AntibodyInfo::identify_CDR_from_a_sequence(std::string const & querychain){
     
 
 
-vector1<char> AntibodyInfo::get_CDR_Sequence_with_Stem(AntibodyCDRNameEnum const & cdr_name,
+vector1<char> AntibodyInfo::get_CDR_sequence_with_stem(AntibodyCDRNameEnum const & cdr_name,
 													   Size left_stem ,
 													   Size right_stem ) const {
 	vector1<char> sequence;
@@ -1737,7 +1789,7 @@ std::ostream & operator<<(std::ostream& out, const AntibodyInfo & ab_info )  {
 	out << line_marker << space( 74 ) << line_marker << std::endl;
 	
 	out << line_marker << "             Antibody Type:";
-	if(ab_info.is_Camelid()){ out << "  Camelid Antibody"<< std::endl;}
+	if(ab_info.is_camelid()){ out << "  Camelid Antibody"<< std::endl;}
 	else                    { out << "  Regular Antibody"<< std::endl;}
 	
 	out << line_marker << " Predict H3 Cterminus Base:";
@@ -1748,8 +1800,8 @@ std::ostream & operator<<(std::ostream& out, const AntibodyInfo & ab_info )  {
 		out << line_marker << " "+ab_info.get_CDR_Name(i)+" info: "<<std::endl;
 		out << line_marker << "           length:  "<< ab_info.get_CDR_loop(i).length() <<std::endl;
 		out << line_marker << "         sequence:  ";
-		for (Size j=1;j<=ab_info.get_CDR_Sequence_with_Stem(i,0,0).size();++j) {
-			out << ab_info.get_CDR_Sequence_with_Stem(i,0,0)[j] ;
+		for (Size j=1;j<=ab_info.get_CDR_sequence_with_stem(i,0,0).size();++j) {
+			out << ab_info.get_CDR_sequence_with_stem(i,0,0)[j] ;
 		}
 		out <<std::endl;
 		out << line_marker << "        loop_info:  "<< ab_info.get_CDR_loop(i)<<std::endl;

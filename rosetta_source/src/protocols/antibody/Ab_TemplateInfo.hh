@@ -28,7 +28,7 @@ namespace protocols {
 namespace antibody {
 using namespace core;
 
-/// antibody definition
+/// @brief Specifically for AntibodyModeling protocol templates. Not for general use.
 class Ab_TemplateInfo  : public utility::pointer::ReferenceCount {
 
 public:

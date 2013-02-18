@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/antibody/AntibodyUtil.hh
-/// @brief
+/// @brief Utility functions for the Antibody namespace
 /// @author Jianqing Xu (xubest@gmail.com)
 
 #ifndef INCLUDED_protocols_antibody_AntibodyUtil_hh
@@ -31,82 +31,75 @@ using namespace core;
 ///////////////////////////////////////////////////////////////////////////////
 namespace protocols {
 namespace antibody {
-void simple_one_loop_fold_tree(
-                                   core::pose::Pose & pose,
-                                   loops::Loop const & loop);
+	
+void
+simple_one_loop_fold_tree(
+	core::pose::Pose & pose,
+	loops::Loop const & loop);
     
-    
-    
-    
-void simple_fold_tree(
-                          core::pose::Pose & pose_in,
-                          core::Size jumppoint1,
-                          core::Size cutpoint,
-                          core::Size jumppoint2);
-    
-    
-    
+void
+simple_fold_tree(
+	core::pose::Pose & pose_in,
+	core::Size jumppoint1,
+	core::Size cutpoint,
+	core::Size jumppoint2);
 
-    
-    
+/// @brief align current Fv to native.Fv
+void
+align_to_native( core::pose::Pose & pose, 
+	core::pose::Pose & native_pose,
+	AntibodyInfoOP ab_info,
+	AntibodyInfoOP native_ab_info);
 
+bool 
+CDR_H3_filter_legacy_code_with_old_rule(
+	const core::pose::Pose & pose_in,
+	loops::Loop & input_loop,
+	bool is_camelid);
     
-    
-bool CDR_H3_filter_legacy_code_with_old_rule(
-                       const core::pose::Pose & pose_in,
-                       loops::Loop & input_loop,
-                       bool is_camelid);
-    
-bool CDR_H3_cter_filter(
-                       const core::pose::Pose & pose_in,
-                       AntibodyInfoOP ab_info);
-    
-core::pack::task::TaskFactoryOP setup_packer_task( core::pose::Pose & pose_in);
+bool 
+CDR_H3_cter_filter(
+	const core::pose::Pose & pose_in,
+	AntibodyInfoOP ab_info);
 
-/*    void dle_extreme_repack(pose::Pose & pose_in,
-                            int repack_cycles,
-                            ObjexxFCL::FArray1D_bool & allow_repack,
-                            bool rt_min,
-                            bool rotamer_trials,
-                            bool force_one_repack,
-                            bool use_unbounds);
-  */  
+core::Real
+global_loop_rmsd ( const core::pose::Pose & pose_in, 
+	const core::pose::Pose & native_pose, 
+	loops::LoopsOP current_loop );
+
+/// @brief calculates the VH_VL packing angle from 2 sheet definitions on each chain from ab_info.
+core::Real
+vl_vh_packing_angle ( const core::pose::Pose & pose_in, AntibodyInfoOP ab_info );
+
+/// @brief Very specific packertask,
+/// @details Ubound rotamer options, repack only, protein only, no disulfides.
+core::pack::task::TaskFactoryOP
+setup_packer_task( core::pose::Pose & pose_in);
 
 /// @brief return false if any cdr cutpoint is broken
-bool cutpoints_separation( core::pose::Pose & pose, AntibodyInfoOP & antibody_info );
+bool
+cutpoints_separation( core::pose::Pose & pose, AntibodyInfoOP & antibody_info );
     
-    
-    
-    
-// Compute the separation at the cutpoint. The N-C distance of the
-// peptide bond which should be formed at the cutpoint. A closed loop is
-// assumed to have a gap < 1.9 Ang
-core::Real cutpoint_separation(core::pose::Pose & pose_in, Size cutpoint);
+/// @details Compute the separation at the cutpoint. The N-C distance of the
+///   peptide bond which should be formed at the cutpoint. A closed loop is
+///   assumed to have a gap < 1.9 Ang
+core::Real
+cutpoint_separation(core::pose::Pose & pose_in, Size cutpoint);
 
-    
-    
-    
-core::Real global_loop_rmsd ( const core::pose::Pose & pose_in, 
-                              const core::pose::Pose & native_pose, 
-                              loops::LoopsOP current_loop );
+/*    void dle_extreme_repack(pose::Pose & pose_in,
+	int repack_cycles,
+	ObjexxFCL::FArray1D_bool & allow_repack,
+	bool rt_min,
+	bool rotamer_trials,
+	bool force_one_repack,
+	bool use_unbounds);
+  */  
 
-core::Real vl_vh_packing_angle ( const core::pose::Pose & pose_in, AntibodyInfoOP ab_info );
-    
-    
-    
-/// align current Fv to native.Fv
-void align_to_native( core::pose::Pose & pose, 
-                      core::pose::Pose & native_pose,
-                      AntibodyInfoOP ab_info,
-                      AntibodyInfoOP native_ab_info
-                     );
-    
-    
 } //namespace antibody
 } //namespace protocols
 
 
-#endif //INCLUDED_protocols_loops_AntibodyUtil_HH
+#endif //INCLUDED_protocols_antibody_AntibodyUtil_HH
 
 
 
