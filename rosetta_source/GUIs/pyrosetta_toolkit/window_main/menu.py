@@ -42,12 +42,24 @@ from modules.protocols.FloppyTailProtocol import FloppyTailProtocol
 from modules.protocols.MinimizationProtocols import MinimizationProtocols
 
 from window_modules.clean_pdb.FixPDBWindow import FixPDBWindow
-from rosetta_flag_file_builder.RosettaFlagFileBuilder import RosettaFlagFileBuilder
+
+
 from window_modules.design.ResfileDesignWindow import ResfileDesignWindow
 from window_modules.ligand_ncaa_ptm_manager.ligand_ncaa_ptm_manager import ligand_ncaa_ptm_manager
 from window_modules.full_control.FullControlWindow import FullControlWindow
 import global_variables
 from pyrosetta_toolkit import main_window
+
+
+#### Import of other GUIs in rosetta_source.  Nessessary check for eventual inclusion into PyRosetta Binaries.
+flag_file_builder_import = True
+try:
+    from rosetta_flag_file_builder.RosettaFlagFileBuilder import RosettaFlagFileBuilder
+except ImportError:
+    flag_file_builder_import = False
+####
+
+
 
 class Menus():
     def __init__(self, main, toolkit):
@@ -122,8 +134,11 @@ class Menus():
 	self.file_menu.add_cascade(label="Export", menu=self.export_menu)
 	self.file_menu.add_separator()
 	self.file_menu.add_command(label ="Setup PDB for Rosetta", command=lambda: self.show_fxpdb_window())
-
-	self.file_menu.add_command(label= "Rosetta Flag File Builder", command = lambda: self.show_RosettaProtocolBuilder())
+	
+	## Note:  There is no disable for menu items.  Which is why we either show the item or not, instead of disabling it.
+	if flag_file_builder_import:
+	    self.file_menu.add_command(label= "Rosetta Flag File Builder", command = lambda: self.show_RosettaProtocolBuilder())
+	
 	self.main_menu.add_cascade(label="File", menu=self.file_menu)
     def _set_options_menu(self):
 	self.options_menu = Menu(self.main_menu, tearoff=0)
