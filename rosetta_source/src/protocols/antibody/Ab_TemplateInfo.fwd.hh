@@ -7,31 +7,32 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/apps/pilot/jianqing/snugdock.cc
-/// @brief
+/// @file protocls/antibody/Ab_TemplateInfo.fwd.hh
+/// @brief grafts a cdr onto the template of an antibody framework
+/// @detailed
 /// @author Jianqing Xu (xubest@gmail.com)
-/// @author Brian D. Weitzner (brian.weitzner@gmail.com)
+
+
+#ifndef INCLUDED_protocols_antibody_Ab_TemplateInfo_fwd_hh
+#define INCLUDED_protocols_antibody_Ab_TemplateInfo_fwd_hh
+
+
+#include <utility/pointer/owning_ptr.hh>
+
+namespace protocols {
+namespace antibody {
+
+// Forward
+class Ab_TemplateInfo;
+    
+typedef utility::pointer::owning_ptr< Ab_TemplateInfo > Ab_TemplateInfoOP;
+typedef utility::pointer::owning_ptr< Ab_TemplateInfo const > Ab_TemplateInfoCOP;
+        
+} // antibody
+} // protocols
+
+#endif
 
 
 
-#include <protocols/antibody/SnugDockProtocol.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/util.hh>
 
-#include <devel/init.hh>
-
-int
-main( int argc, char * argv [] )
-{
-	using namespace protocols::antibody;
-	using namespace protocols::jd2;
-
-	SnugDockProtocol::register_options();
-	protocols::jd2::register_options();
-
-	// initialize core
-	devel::init(argc, argv);
-
-	SnugDockProtocolOP snugdock = new SnugDockProtocol;
-	JobDistributor::get_instance()->go( snugdock );
-}

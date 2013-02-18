@@ -18,7 +18,7 @@
 #include <basic/Tracer.hh>
 #include <devel/init.hh>
 
-#include <protocols/antibody/Ubiquitin_E2C_Modeler.hh>
+#include <protocols/antibody_legacy/Ubiquitin_E2C_Modeler.hh>
 #include <protocols/moves/Mover.hh>
 
 ////////////////////////////////////////////////////////

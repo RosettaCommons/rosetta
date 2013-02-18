@@ -23,7 +23,7 @@
 #include <basic/Tracer.hh>
 #include <devel/init.hh>
 
-#include <protocols/antibody/AntibodyModeler.hh>
+#include <protocols/antibody_legacy/AntibodyModeler.hh>
 #include <protocols/moves/Mover.hh>
 
 #include <utility/vector1.hh>
@@ -45,7 +45,7 @@ main( int argc, char * argv [] )
 	// initialize core
 	devel::init( argc, argv );
 
-	MoverOP RosettaAntibody = new antibody::AntibodyModeler( );
+	MoverOP RosettaAntibody = new antibody_legacy::AntibodyModeler( );
 	// protocols::jd2::JobDistributor::get_instance()->go( RosettaAntibody );
 	protocols::jobdist::main_plain_mover( *RosettaAntibody );
 

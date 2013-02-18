@@ -7,31 +7,22 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/apps/pilot/jianqing/snugdock.cc
+/// @file protocols/antibody/GraftOneCDRLoop.fwd.hh
 /// @brief
 /// @author Jianqing Xu (xubest@gmail.com)
-/// @author Brian D. Weitzner (brian.weitzner@gmail.com)
 
+#ifndef INCLUDED_protocols_antibody_GraftOneCDRLoop_fwd_hh
+#define INCLUDED_protocols_antibody_GraftOneCDRLoop_fwd_hh
 
+#include <utility/pointer/owning_ptr.hh>
 
-#include <protocols/antibody/SnugDockProtocol.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/util.hh>
+namespace protocols {
+namespace antibody {
 
-#include <devel/init.hh>
+class GraftOneCDRLoop;
+typedef utility::pointer::owning_ptr< GraftOneCDRLoop > GraftOneCDRLoopOP;
+typedef utility::pointer::owning_ptr<const GraftOneCDRLoop> GraftOneCDRLoopCOP;
+} // antibody
+} // protocols
 
-int
-main( int argc, char * argv [] )
-{
-	using namespace protocols::antibody;
-	using namespace protocols::jd2;
-
-	SnugDockProtocol::register_options();
-	protocols::jd2::register_options();
-
-	// initialize core
-	devel::init(argc, argv);
-
-	SnugDockProtocolOP snugdock = new SnugDockProtocol;
-	JobDistributor::get_instance()->go( snugdock );
-}
+#endif

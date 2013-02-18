@@ -10,14 +10,14 @@
 ########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
 sources = {
-	"protocols/antibody": [
+	"protocols/antibody_legacy": [
 		"AntibodyClass",
 		"AntibodyModeler",
 		"CDRH3Modeler",
 		"GraftMover",
 		"Ubiquitin_E2C_Modeler",
 	],
-	"protocols/antibody2": [
+	"protocols/antibody": [
                 "Ab_TemplateInfo",
                 "AntibodyInfo",
                 "GraftCDRLoopsProtocol",

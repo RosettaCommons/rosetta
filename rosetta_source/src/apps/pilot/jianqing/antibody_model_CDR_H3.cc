@@ -14,7 +14,7 @@
 
 
 
-#include <protocols/antibody2/AntibodyModelerProtocol.hh>
+#include <protocols/antibody/AntibodyModelerProtocol.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
 
@@ -31,14 +31,14 @@
 #include <basic/Tracer.hh>
 
 
-static basic::Tracer TR("protocols.antibody2");
+static basic::Tracer TR("protocols.antibody");
 
 
 int
 main( int argc, char * argv [] )
 {
 	using namespace basic::options;
-	using namespace protocols::antibody2;
+	using namespace protocols::antibody;
 	using namespace protocols::jd2;
 
 	AntibodyModelerProtocol::register_options();
