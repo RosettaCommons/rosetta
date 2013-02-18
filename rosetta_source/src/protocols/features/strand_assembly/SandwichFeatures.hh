@@ -8,7 +8,7 @@
 // (c) for more information, see http://www.rosettacommons.org. questions about this can be
 // (c) addressed to university of washington uw techtransfer, email: license@u.washington.edu.
 
-/// @file strandBundleFeatures.hh
+/// @file SandwichFeatures.hh
 /// @brief
 /// @author Doo Nam Kim (started with Tim Jacobs' code)
 
@@ -68,11 +68,10 @@ public:
 	virtual
 	core::Size
 	report_features(
-					//core::pose::Pose & pose, // dropped 'const' for dssp info addition
-					core::pose::Pose const & pose,
-					utility::vector1<bool> const & relevant_residues,
-					boost::uuids::uuid struct_id,
-					utility::sql_database::sessionOP db_session);
+		core::pose::Pose const & pose, //core::pose::Pose & pose, // dropped 'const' for dssp info addition
+		utility::vector1<bool> const & relevant_residues,
+		boost::uuids::uuid struct_id,
+		utility::sql_database::sessionOP db_session);
 
 	utility::vector1<SandwichFragment>
 	get_full_strands(
@@ -141,8 +140,7 @@ public:
 								core::Size res_i_2,
 								core::Size res_j_0,
 								core::Size res_j_1,
-								core::Size res_j_2
-								);
+								core::Size res_j_2);
 
 	bool
 	see_whether_sheets_can_be_combined(
@@ -166,12 +164,6 @@ public:
 							  core::Size sheet_id,
 							  core::Size antiparallel);
 
-
-	core::Size
-	get_num_sheets(
-				   boost::uuids::uuid struct_id,
-				   utility::sql_database::sessionOP db_session);
-		
 	core::Size	
 	get_sheet_antiparallel_info(
 								boost::uuids::uuid struct_id,
@@ -191,11 +183,6 @@ public:
 					SandwichFragment strand_i,
 					SandwichFragment strand_j,
 					bool antiparalell);
-
-	utility::vector1<core::Size>
-	get_full_sheets(
-					 boost::uuids::uuid struct_id,
-					 utility::sql_database::sessionOP db_session);
 
 	bool
 	see_whether_sheet_is_antiparallel(

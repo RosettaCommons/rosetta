@@ -34,10 +34,8 @@ class StrandFragment{
 
 public:
 
-	StrandFragment(core::Size strand_graph_id);
 	StrandFragment(core::Size start, core::Size end);
 	StrandFragment(core::Size beta_selected_segments_id, core::Size start, core::Size end);
-	StrandFragment(core::Size dummy, core::Size strand_pairs_id, core::Size beta_selected_segments_id_i, core::Size beta_selected_segments_id_j);
 	
 	StrandFragment();
 	~StrandFragment();
@@ -52,9 +50,7 @@ public:
 	core::Size get_j() const;
 	
 	core::Size get_size() const;
-	bool get_direction() const;
 	void set_pdb_source(std::string pdb_source_);
-	void set_direction(bool direction);
 
 private:
 

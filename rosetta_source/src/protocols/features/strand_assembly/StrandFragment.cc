@@ -33,7 +33,6 @@ namespace strand_assembly {
 StrandFragment::StrandFragment()
 {}
 
-
 // 2 parameters
 StrandFragment::StrandFragment(core::Size start, core::Size end):
 start_(start),
@@ -46,20 +45,10 @@ StrandFragment::StrandFragment(core::Size beta_selected_segments_id, core::Size 
 id_(beta_selected_segments_id),
 start_(start),
 end_(end),
-beta_id_i_(start),
-beta_id_j_(end),
+beta_id_i_(start), //beta_selected_segments_id_i
+beta_id_j_(end), //beta_selected_segments_id_j
 pdb_source_("")
 {}
-
-// ******************** do not erase this comment (work with above 3 parameters	format) ***************
-/*
-StrandFragment::StrandFragment(core::Size strand_pairs_id, core::Size beta_selected_segments_id_i, core::Size beta_selected_segments_id_j):
-id_(strand_pairs_id),
-beta_id_i_(beta_selected_segments_id_i),
-beta_id_j_(beta_selected_segments_id_j),
-pdb_source_("")
-{}*/
-// ******************** do not erase this comment ***************
 
 StrandFragment::~StrandFragment(){}
 	

@@ -76,13 +76,6 @@ public:
 
 	utility::vector1<StrandFragment> get_strand_from_bss_id(boost::uuids::uuid struct_id, utility::sql_database::sessionOP db_session, core::Size bss_id);
 	
-	utility::vector1<StrandFragment> get_i_strand_from_full_strand_pairs(boost::uuids::uuid struct_id, utility::sql_database::sessionOP db_session);
-	utility::vector1<StrandFragment> get_j_strand_from_full_strand_pairs(boost::uuids::uuid struct_id, utility::sql_database::sessionOP db_session);
-	
-	utility::vector1<StrandFragment> get_strand_graph_near_id_from_res_start_end(boost::uuids::uuid struct_id, utility::sql_database::sessionOP db_session, core::Size res_start, core::Size res_end);
-
-	utility::vector1<StrandFragment> get_strand_pairs_graph_id_from_strand_graph_id(boost::uuids::uuid struct_id, utility::sql_database::sessionOP db_session, core::Size given_strand_graph_id_1, core::Size given_strand_graph_id_2);
-	
 	bool find_antiparallel	(core::pose::Pose const & pose, StrandFragment strand_i, StrandFragment strand_j);
 	bool find_parallel	(core::pose::Pose const & pose, StrandFragment strand_i, StrandFragment strand_j);
 
@@ -162,11 +155,13 @@ public:
 		StrandFragment strand_jj_i,
 		StrandFragment strand_jj_j);
 	
-	core::Real shortest_dis_sidechain	(core::pose::Pose const & pose, StrandFragment strand_i, StrandFragment strand_j);	
-	core::Real get_shortest_among_4	(core::Real val_shortest_dis_sidechain_1,
-										 core::Real val_shortest_dis_sidechain_2,
-										 core::Real val_shortest_dis_sidechain_3,
-										 core::Real val_shortest_dis_sidechain_4);	
+	core::Real shortest_dis_sidechain	(core::pose::Pose const & pose, StrandFragment strand_i, StrandFragment strand_j);
+	
+	core::Real get_shortest_among_4	(
+		core::Real val_shortest_dis_sidechain_1,
+		core::Real val_shortest_dis_sidechain_2,
+		core::Real val_shortest_dis_sidechain_3,
+		core::Real val_shortest_dis_sidechain_4);	
 	
 	core::Real sheet_dis_by_terminals	(core::pose::Pose const & pose, StrandFragment strand_i, StrandFragment strand_j);
 	
