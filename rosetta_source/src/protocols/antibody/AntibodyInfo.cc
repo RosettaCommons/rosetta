@@ -354,42 +354,41 @@ void AntibodyInfo::setup_CDRsInfo( pose::Pose const & pose ) {
 	
 	vector1<char> Chain_IDs_for_CDRs;
 	for (Size i=1;i<=3;++i) { Chain_IDs_for_CDRs.push_back('H'); } // HEAVY chain first
-    for (Size i=1;i<=3;++i) { Chain_IDs_for_CDRs.push_back('L'); } // light
+	for (Size i=1;i<=3;++i) { Chain_IDs_for_CDRs.push_back('L'); } // light
 	
-    int loop_start_in_pose, loop_stop_in_pose, cut_position ;
-    loopsop_having_allcdrs_ = new loops::Loops();
+	int loop_start_in_pose, loop_stop_in_pose, cut_position ;
+	loopsop_having_allcdrs_ = new loops::Loops();
     
-    for (AntibodyCDRNameEnum i=start_cdr_loop; i<=total_cdr_loops_; ++i ){
-        loop_start_in_pose = pose.pdb_info()->pdb2pose( Chain_IDs_for_CDRs[i], cdr_numbering_[i][start]);
-        if(i != h3 ){
-            loop_stop_in_pose= pose.pdb_info()->pdb2pose( Chain_IDs_for_CDRs[i], cdr_numbering_[i][stop]);
-            cut_position = (loop_stop_in_pose - loop_start_in_pose +1) /2 + loop_start_in_pose;
-        }
-        else{
-            loop_stop_in_pose  = pose.pdb_info()->pdb2pose( Chain_IDs_for_CDRs[i], cdr_numbering_[i][stop]+1 );
-            loop_stop_in_pose -=1;
-            // JQX:
-            // One should always see 95-102 as the positions for your H3 in your FR02.pdb, but as a matter of fact,
-            // the antibody script just copied h3.pdb (heavy atoms) into the FR02.pdb, sometimes one sees the stop
-            // postition pdb number 98, not 102, if the h3.pdb is short. Therefore, one useing the pdb number 102 to
-            // define h3 fails!
-            // But in FR02.pdb, you always see 103, because 103 is on the framework. The idea is to find the pose number
-            // of PDB number 103, then minus 1 will give you the last residue of h3.
-            cut_position = (loop_start_in_pose +1 ) ;
-            // JQX:
-            // why this is different compared to other cuts of other loops?
-            // Aroop seems did this in his old R3 code, CHECK LATER !!!
-        }
+	for (Size i=start_cdr_loop; i<=total_cdr_loops_; ++i ){
+		loop_start_in_pose = pose.pdb_info()->pdb2pose( Chain_IDs_for_CDRs[i], cdr_numbering_[i][start]);
+		if(i != h3 ){
+			loop_stop_in_pose= pose.pdb_info()->pdb2pose( Chain_IDs_for_CDRs[i], cdr_numbering_[i][stop]);
+			cut_position = (loop_stop_in_pose - loop_start_in_pose +1) /2 + loop_start_in_pose;
+		}
+		else{
+			loop_stop_in_pose  = pose.pdb_info()->pdb2pose( Chain_IDs_for_CDRs[i], cdr_numbering_[i][stop]+1 );
+			loop_stop_in_pose -=1;
+			// JQX:
+			// One should always see 95-102 as the positions for your H3 in your FR02.pdb, but as a matter of fact,
+			// the antibody script just copied h3.pdb (heavy atoms) into the FR02.pdb, sometimes one sees the stop
+			// postition pdb number 98, not 102, if the h3.pdb is short. Therefore, one useing the pdb number 102 to
+			// define h3 fails!
+			// of PDB number 103, then minus 1 will give you the last residue of h3.
+			cut_position = (loop_start_in_pose +1 ) ;
+			// JQX:
+			// why this is different compared to other cuts of other loops?
+			// Aroop seems did this in his old R3 code, CHECK LATER !!!
+		}
             
-        loops::Loop  one_loop(loop_start_in_pose, loop_stop_in_pose, cut_position);
-        loops::LoopsOP one_loops = new loops::Loops(); one_loops->add_loop(one_loop);
+		loops::Loop  one_loop(loop_start_in_pose, loop_stop_in_pose, cut_position);
+		loops::LoopsOP one_loops = new loops::Loops(); one_loops->add_loop(one_loop);
     
-        // make a "LoopsOP" object, in which each "Loop" was saved
-        loopsop_having_allcdrs_->add_loop(one_loop);
+		// make a "LoopsOP" object, in which each "Loop" was saved
+		loopsop_having_allcdrs_->add_loop(one_loop);
         
-        // make a "vector1" of "LoopsOP" object, each "LoopsOP" has one "Loop" object
-        vector1_loopsop_having_cdr_.push_back(one_loops);
-    }
+		// make a "vector1" of "LoopsOP" object, each "LoopsOP" has one "Loop" object
+		vector1_loopsop_having_cdr_.push_back(one_loops);
+	}
     
                                             /// FIXME:  ***********************
 	loopsop_having_allcdrs_->sequential_order(); /// TODO: kind of dangerous here
