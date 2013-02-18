@@ -190,9 +190,9 @@ sources = {
 		"protein_interface_design",
 	],
 
-#	"qsar" : [
-#		"qsarMap",
-#	],
+	"qsar/scoring_grid" : [
+		"ScoreNormalization",
+	],
 
 	"rigid" : [
 		"RigidBodyMover",

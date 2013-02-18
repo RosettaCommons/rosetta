@@ -24,6 +24,7 @@ ScoreNormalizationOP get_score_normalization_function(std::string norm_tag)
 	if(norm_tag == "HeavyAtomNormalization") return new HeavyAtomNormalization;
 	if(norm_tag == "AllAtomNormalization") return new AllAtomNormalization;
 	if(norm_tag == "ChiAngleNormalization") return new ChiAngleNormalization;
+	if(norm_tag == "MolecularWeightNormalization") return new MolecularWeightNormalization;
 
 	throw utility::excn::EXCN_RosettaScriptsOption(norm_tag+" is not a valid Score Normalization method");
 	return NULL;
@@ -32,7 +33,7 @@ ScoreNormalizationOP get_score_normalization_function(std::string norm_tag)
 core::Real HeavyAtomNormalization::operator()(core::Real const & input_score, core::conformation::ResidueCOPs residues)
 {
 	core::Size n_atoms = 0;
-	for(core::Size i = 1; i < residues.size();++i)
+	for(core::Size i = 1; i <= residues.size();++i)
 	{
 		n_atoms += residues[i]->nheavyatoms();
 	}
@@ -48,7 +49,7 @@ core::Real HeavyAtomNormalization::operator()(core::Real const & input_score, co
 core::Real AllAtomNormalization::operator()(core::Real const & input_score, core::conformation::ResidueCOPs residues)
 {
 	core::Size n_atoms = 0;
-	for(core::Size i = 1; i < residues.size();++i)
+	for(core::Size i = 1; i <= residues.size();++i)
 	{
 		n_atoms += residues[i]->natoms();
 	}
@@ -64,7 +65,7 @@ core::Real AllAtomNormalization::operator()(core::Real const & input_score, core
 core::Real ChiAngleNormalization::operator()(core::Real const & input_score, core::conformation::ResidueCOPs residues)
 {
 	core::Size n_chi = 0;
-	for(core::Size i = 1; i < residues.size();++i)
+	for(core::Size i = 1; i <= residues.size();++i)
 	{
 		n_chi += residues[i]->nchi();
 	}
@@ -77,8 +78,27 @@ core::Real ChiAngleNormalization::operator()(core::Real const & input_score, cor
 
 core::Real ChiAngleNormalization::operator()(core::Real const & input_score, core::conformation::Residue const & residue)
 {
-	return input_score/static_cast<core::Real>(residue.nchi());
+	if(residue.nchi() > 0)
+		return input_score/static_cast<core::Real>(residue.nchi());
+	else
+		return input_score;
 }
+
+core::Real MolecularWeightNormalization::operator()(core::Real const & input_score, core::conformation::ResidueCOPs residues)
+{
+	core::Real total_mass = 0.0;
+	for(core::Size i = 1; i <= residues.size(); ++i)
+	{
+		total_mass += residues[i]->type().molar_mass();
+	}
+	return input_score/total_mass;
+}
+
+core::Real MolecularWeightNormalization::operator()(core::Real const & input_score, core::conformation::Residue const & residue)
+{
+	return input_score/residue.type().molar_mass();
+}
+
 
 }
 }

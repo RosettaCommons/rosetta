@@ -69,4 +69,12 @@ class StringUtilTests : public CxxTest::TestSuite {
 
 		TS_ASSERT_EQUALS(contents, result.str());
 	}
+
+	void test_string_to_sha1() {
+		std::string test_string = "hello world";
+		std::string real_hash = "2aae6c35c94fcfb415dbe95f408b9ce91ee846ed";
+
+		std::string test_hash = utility::string_to_sha1(test_string);
+		TS_ASSERT_EQUALS(real_hash,test_hash);
+	}
 };

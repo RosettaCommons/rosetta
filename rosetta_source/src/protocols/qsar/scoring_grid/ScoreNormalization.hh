@@ -19,6 +19,8 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
+#include <string>
+
 namespace protocols {
 namespace qsar {
 namespace scoring_grid {
@@ -29,6 +31,7 @@ class ScoreNormalization : public utility::pointer::ReferenceCount {
 public:
 	ScoreNormalization() {};
 	virtual ~ScoreNormalization() {};
+	virtual std::string get_name() = 0;
 	virtual core::Real operator()(core::Real const & input_score, core::conformation::ResidueCOPs residues) = 0;
 	virtual core::Real operator()(core::Real const & input_score, core::conformation::Residue const & residue) = 0;
 private:
@@ -39,6 +42,12 @@ class HeavyAtomNormalization : public ScoreNormalization {
 public:
 	HeavyAtomNormalization() {};
 	virtual ~HeavyAtomNormalization() {};
+
+	virtual std::string get_name()
+	{
+		return "HeavyAtomNormalization";
+	}
+
 	virtual core::Real operator()(core::Real const & input_score, core::conformation::ResidueCOPs residues);
 	virtual core::Real operator()(core::Real const & input_score, core::conformation::Residue const & residue);
 private:
@@ -49,6 +58,12 @@ class AllAtomNormalization : public ScoreNormalization {
 public:
 	AllAtomNormalization() {};
 	virtual ~AllAtomNormalization() {};
+
+	virtual std::string get_name()
+	{
+		return "AllAtomNormalization";
+	}
+
 	virtual core::Real operator()(core::Real const & input_score, core::conformation::ResidueCOPs residues);
 	virtual core::Real operator()(core::Real const & input_score, core::conformation::Residue const & residue);
 private:
@@ -59,10 +74,32 @@ class ChiAngleNormalization : public ScoreNormalization {
 public:
 	ChiAngleNormalization() {};
 	virtual ~ChiAngleNormalization() {};
+
+	virtual std::string get_name()
+	{
+		return "ChiAngleNormalization";
+	}
+
 	virtual core::Real operator()(core::Real const & input_score, core::conformation::ResidueCOPs residues);
 	virtual core::Real operator()(core::Real const & input_score, core::conformation::Residue const & residue);
 private:
 	ChiAngleNormalization(ChiAngleNormalization const & src);
+};
+
+class MolecularWeightNormalization : public ScoreNormalization {
+public:
+	MolecularWeightNormalization() {};
+	virtual ~MolecularWeightNormalization() {};
+
+	virtual std::string get_name()
+	{
+		return "MolecularWeightNormalization";
+	}
+
+	virtual core::Real operator()(core::Real const & input_score, core::conformation::ResidueCOPs residues);
+	virtual core::Real operator()(core::Real const & input_score, core::conformation::Residue const & residue);
+private:
+	MolecularWeightNormalization(ChiAngleNormalization const & src);
 };
 
 }
