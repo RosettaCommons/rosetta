@@ -580,8 +580,8 @@ if( restrict_to_repacking_chain2() ){
 	tf->push_back( new operation::NoRepackDisulfides );
 	tf->push_back( tso );
 	DesignAroundOperationOP dao = new DesignAroundOperation;
-	dao->design_shell( (design_task_factory()() == NULL ? 0.0 : 4.0 ) ); // threaded sequence operation needs to design, and will restrict design to the loop, unless design_task_factory is defined, in which case a larger shell can be defined
-	dao->repack_shell( 6.0 );
+	dao->design_shell( (design_task_factory()() == NULL ? 0.0 : 6.0 ) ); // threaded sequence operation needs to design, and will restrict design to the loop, unless design_task_factory is defined, in which case a larger shell can be defined
+	dao->repack_shell( 7.0 );
 	for( core::Size i = from_res() - 1; i <= from_res() + total_residue_new + 1; ++i ){
 		if( !pose.residue( i ).has_variant_type( DISULFIDE ) )
 			dao->include_residue( i );
