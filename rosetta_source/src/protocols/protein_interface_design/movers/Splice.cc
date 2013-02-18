@@ -160,6 +160,7 @@ Splice::Splice() :
 
 
 utility::vector1< std::string > segment_names_ordered;//This vector will hold the segment names by order so when the segments are concatented into a single profile it is done by user defined order
+std::string dofs_pdb_name; //This variable hold the name of the pdb in the torsion db
 
 Splice::~Splice() {}
 
@@ -412,6 +413,7 @@ Splice::apply( core::pose::Pose & pose )
 			return;
 		dofs = torsion_database_[ dbase_entry ];
 		std::string const source_pdb_name( dofs.source_pdb() );
+		dofs_pdb_name = source_pdb_name;
 		if( use_sequence_profiles_ ){
 			load_pdb_segments_from_pose_comments( pose );
 			modify_pdb_segments_with_current_segment( source_pdb_name );
@@ -1150,7 +1152,16 @@ if (comments.size()<3 ){
 	utility_exit_with_message("Please check commetns field in the pdb file (header= ##begin comments##), could not find any comments");
 	}
 ///This code will cut the source pdb file name and extract the four letter code 
-std::string tempPDBname = source_pdb_;//
+std::string tempPDBname;
+if (torsion_database_fname_!=""){
+	TR<<"Torsion data base filename is: "<<torsion_database_fname_<<std::endl;
+	tempPDBname = dofs_pdb_name;
+	TR<<"tempPDBname: "<<tempPDBname<<std::endl;
+	
+}
+else {
+	tempPDBname = source_pdb_;//
+}
 // Remove directory if present.
 // Do this before extension removal incase directory has a period character.
 const size_t last_slash_idx = tempPDBname.find_last_of("\\/");
@@ -1165,7 +1176,7 @@ if (std::string::npos != period_idx)
     tempPDBname.erase(period_idx);
 }
 ///End of segment
-//	TR<<"!!!!!!!!!the currnet segment is: "<<segment_type_<<" and the source pdb is "<<tempPDBname<<std::endl;
+	TR<<"!!!!!!!!!the currnet segment is: "<<segment_type_<<" and the source pdb is "<<tempPDBname<<std::endl;
 core::pose::add_comment(pose,"segment_"+segment_type_,tempPDBname);//change correct association between current loop and pdb file
 load_pdb_segments_from_pose_comments(pose); // get segment name and pdb accosiation from comments in pdb file
 //	TR<<"!!!!!!!!!the size of pdb segments is: "<<pdb_segments_.size()<<std::endl;
