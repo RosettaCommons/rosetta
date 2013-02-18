@@ -159,7 +159,7 @@ Splice::Splice() :
 
 
 
-utility::vector1< std::string > segment_names_ordered;//This vector will hold the segment names by order so when the segments are concatented into a single profile it is done by user defined order
+utility::vector1< std::string > segment_names_ordered_;//This vector will hold the segment names by order so when the segments are concatented into a single profile it is done by user defined order
 std::string dofs_pdb_name; //This variable hold the name of the pdb in the torsion db
 
 Splice::~Splice() {}
@@ -856,7 +856,7 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 
 	utility::vector1< TagPtr > const sub_tags( tag->getTags() );
 
-	segment_names_ordered.clear(); //This string vector hold all the segment names inserted bythe user to ensure that the sequence profile is built according to tthe user
+	segment_names_ordered_.clear(); //This string vector hold all the segment names inserted bythe user to ensure that the sequence profile is built according to tthe user
 	foreach( TagPtr const sub_tag, sub_tags ){
 		if( sub_tag->getName() == "Segments" ){
 			use_sequence_profiles_ = true;
@@ -897,7 +897,7 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 
 				TR<<"line 886"<<"the segment name is: "<<segment_name<<std::endl;
 				splice_segments_.insert( std::pair< std::string, SpliceSegmentOP >( segment_name, splice_segment ) );
-				segment_names_ordered.push_back(segment_name);
+				segment_names_ordered_.push_back(segment_name);
 			}//foreach segment_tag
 		}// fi Segments
 	}//foreach sub_tag
@@ -1192,14 +1192,14 @@ utility::vector1< SequenceProfileOP > profile_vector;
 
 profile_vector.clear(); //this vector holds all the pdb segment profiless
 
-foreach( std::string const segment_type, segment_names_ordered ){ //<- Start of PDB segment iterator
+foreach( std::string const segment_type, segment_names_ordered_ ){ //<- Start of PDB segment iterator
 	if (splice_segments_[ segment_type ]->pdb_profile(pdb_segments_[segment_type])==0){
 		utility_exit_with_message(" could not find the pdb file corresponding to segment "+segment_type+" the pdb name entered was: "+ pdb_segments_[segment_type]+ ", please check the pdb_profile_match file \n");
 	}
 	profile_vector.push_back( splice_segments_[ segment_type ]->pdb_profile( pdb_segments_[segment_type] ));
 } // <- End of PDB segment iterator
 TR<<"The size of the profile vector is: "<<profile_vector.size()<<std::endl;
-return concatenate_profiles( profile_vector,segment_names_ordered );
+return concatenate_profiles( profile_vector,segment_names_ordered_ );
 }
 }
 

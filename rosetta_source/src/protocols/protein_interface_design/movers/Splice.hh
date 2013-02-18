@@ -104,6 +104,7 @@ public:
 	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new Splice ); }
 		void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	virtual ~Splice();
+	
 	void from_res( core::Size const f ){ from_res_ = f; }
 	core::Size from_res() const { return from_res_; }
 	void to_res( core::Size const t ){ to_res_ = t; }
@@ -126,7 +127,10 @@ public:
 	void task_factory( core::pack::task::TaskFactoryOP tf );
 	core::pack::task::TaskFactoryOP design_task_factory() const;
 	void design_task_factory( core::pack::task::TaskFactoryOP tf );
-
+	void set_segment_names_ordered (utility::vector1< std::string > SegNameOrder){segment_names_ordered_ = SegNameOrder;} //setter for segment_name_ordered
+	utility::vector1< std::string > get_segment_names_ordered() const {return segment_names_ordered_;} //getter for segment_name_ordered
+	void set_dofs_pdb_name (std::string dofsPDBname) {dofs_pdb_name=dofsPDBname;}
+	std::string get_dofs_pdb_name() const {return dofs_pdb_name;}
 	std::string torsion_database_fname() const{ return torsion_database_fname_; }
 	void torsion_database_fname( std::string const d ){ torsion_database_fname_ = d; }
 	core::Size database_entry()const {return database_entry_; }
@@ -187,7 +191,8 @@ public:
 private:
 	void save_values(); // call at beginning of apply. Used to keep the from_res/to_res values, which might be changed by apply during a run
 	void retrieve_values(); // call at end of apply
-
+	utility::vector1< std::string > segment_names_ordered_;//This vector will hold the segment names by order so when the segments are concatented into a single profile it is done by user defined order
+	std::string dofs_pdb_name; //This variable hold the name of the pdb in the torsion db
 	core::Size from_res_, to_res_, saved_from_res_, saved_to_res_;
 	std::string source_pdb_;
 	bool ccd_;//dflt true; do ccd?
