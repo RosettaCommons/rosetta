@@ -268,7 +268,8 @@ void SequenceProfile::profile(
 }
 
 void SequenceProfile::prof_row( utility::vector1< Real > const & new_prof_row, core::Size pos ) {
-	profile_.resize(pos+1);
+	if( profile_.size() <= pos )
+		profile_.resize(pos+1);
 	profile_[pos] = new_prof_row;
 }
 
