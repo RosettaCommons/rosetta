@@ -582,8 +582,8 @@ if( restrict_to_repacking_chain2() ){
 	tf->push_back( new operation::NoRepackDisulfides );
 	tf->push_back( tso );
 	DesignAroundOperationOP dao = new DesignAroundOperation;
-	dao->design_shell( (design_task_factory()() == NULL ? 0.0 : 6.0 ) ); // threaded sequence operation needs to design, and will restrict design to the loop, unless design_task_factory is defined, in which case a larger shell can be defined
-	dao->repack_shell( 7.0 );
+	dao->design_shell( (design_task_factory()() == NULL ? 0.0 : 5.0 ) ); // threaded sequence operation needs to design, and will restrict design to the loop, unless design_task_factory is defined, in which case a larger shell can be defined
+	dao->repack_shell( 6.5 );
 	for( core::Size i = from_res() - 1; i <= from_res() + total_residue_new + 1; ++i ){
 		if( !pose.residue( i ).has_variant_type( DISULFIDE ) )
 			dao->include_residue( i );
@@ -1151,13 +1151,13 @@ map< string, string > const comments = core::pose::get_all_comments( pose );
 if (comments.size()<3 ){
 	utility_exit_with_message("Please check commetns field in the pdb file (header= ##begin comments##), could not find any comments");
 	}
-///This code will cut the source pdb file name and extract the four letter code 
+///This code will cut the source pdb file name and extract the four letter code
 std::string tempPDBname;
 if (torsion_database_fname_!=""){
 	TR<<"Torsion data base filename is: "<<torsion_database_fname_<<std::endl;
 	tempPDBname = dofs_pdb_name;
 	TR<<"tempPDBname: "<<tempPDBname<<std::endl;
-	
+
 }
 else {
 	tempPDBname = source_pdb_;//
@@ -1210,7 +1210,7 @@ Splice::load_pdb_segments_from_pose_comments( core::pose::Pose const & pose ){
 
 	using namespace std;
 	map< string, string > const comments = core::pose::get_all_comments( pose );
-	TR<<"The size of comments is: "<<comments.size()<<std::endl; 
+	TR<<"The size of comments is: "<<comments.size()<<std::endl;
 	core::Size j = 1; //for testing
   for( std::map< string, string >::const_iterator i = comments.begin(); i != comments.end(); ++i ){
 		//TR<<"the size of j is: "<<j<<std::endl;
