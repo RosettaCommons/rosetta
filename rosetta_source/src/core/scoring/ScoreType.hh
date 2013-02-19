@@ -276,6 +276,7 @@ enum ScoreType {
 	fa_dun_semi,
 	dna_chi,
 	p_aa_pp,
+	p_aa_pp_offset,
 	yhh_planarity,
 	h2o_intra,
 	ref,
@@ -354,6 +355,9 @@ enum ScoreType {
 	overlap_chainbreak,
 	distance_chainbreak,
 	dof_constraint,
+
+	rama2b_offset,
+	omega2b_offset,
 
 	cart_bonded,  // cartesian bonded potential
 	cart_bonded_angle,  // cartesian bonded potential

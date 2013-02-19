@@ -29,6 +29,7 @@
 //#include <core/pack/dunbrack/RotamerLibrary.hh>
 //#include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.hh>
 //#include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.tmpl.hh>
+#include <core/scoring/Rama2BOffset.hh>
 #include <core/scoring/Ramachandran.hh>
 #include <core/scoring/Ramachandran2B.hh>
 #include <core/scoring/OmegaTether.hh>
@@ -108,6 +109,7 @@ ScoringManager::ScoringManager() :
 	pairE_potential_( 0 ),
 	rama_( 0 ),
 	rama2b_( 0 ),
+	rama2bo_( 0 ),
 	omega_( 0 ),
 	env_pair_potential_( 0 ),
 	smooth_env_pair_potential_( 0 ),
@@ -414,6 +416,17 @@ ScoringManager::get_Ramachandran2B() const
 		rama2b_ =  new Ramachandran2B;
 	}
 	return *rama2b_;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+Rama2BOffset const &
+ScoringManager::get_Rama2BOffset() const
+{
+	if ( rama2bo_ == 0 )
+	{
+		rama2bo_ =  new Rama2BOffset;
+	}
+	return *rama2bo_;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -24,6 +24,7 @@
 #include <core/scoring/dna/DNABFormPotential.fwd.hh>
 #include <core/scoring/dna/DNATorsionPotential.fwd.hh>
 #include <core/scoring/dna/DirectReadoutPotential.fwd.hh>
+#include <core/scoring/Rama2BOffset.fwd.hh>
 #include <core/scoring/Ramachandran.fwd.hh>
 #include <core/scoring/Ramachandran2B.fwd.hh>
 #include <core/scoring/OmegaTether.fwd.hh>
@@ -110,6 +111,8 @@ public:
 	dna::DNA_BasePotential const & get_DNA_BasePotential() const;
 
 	///RotamerLibrary & get_RotamerLibrary() const;
+
+	Rama2BOffset const & get_Rama2BOffset() const;
 
 	Ramachandran2B const & get_Ramachandran2B() const;
 
@@ -243,6 +246,7 @@ private:
 	//mutable RotamerLibrary * rotamer_Library_;
 	mutable RamachandranOP rama_;
 	mutable Ramachandran2BOP rama2b_;
+	mutable Rama2BOffsetOP rama2bo_;
 	mutable OmegaTetherOP omega_;
 	mutable EnvPairPotentialOP env_pair_potential_;
 	mutable SmoothEnvPairPotentialOP smooth_env_pair_potential_;
