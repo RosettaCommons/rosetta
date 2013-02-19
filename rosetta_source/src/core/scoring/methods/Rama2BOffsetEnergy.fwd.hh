@@ -21,18 +21,6 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-class ResidueCartBondedParameters;
-typedef  utility::pointer::access_ptr< ResidueCartBondedParameters > ResidueCartBondedParametersAP;
-typedef  utility::pointer::access_ptr< ResidueCartBondedParameters const > ResidueCartBondedParametersCAP;
-typedef  utility::pointer::owning_ptr< ResidueCartBondedParameters > ResidueCartBondedParametersOP;
-typedef  utility::pointer::owning_ptr< ResidueCartBondedParameters const > ResidueCartBondedParametersCOP;
-
-class IdealParametersDatabase;
-typedef  utility::pointer::access_ptr< IdealParametersDatabase > IdealParametersDatabaseAP;
-typedef  utility::pointer::access_ptr< IdealParametersDatabase const > IdealParametersDatabaseCAP;
-typedef  utility::pointer::owning_ptr< IdealParametersDatabase > IdealParametersDatabaseOP;
-typedef  utility::pointer::owning_ptr< IdealParametersDatabase const > IdealParametersDatabaseCOP;
-
 class Rama2BOffsetEnergy;
 typedef  utility::pointer::access_ptr< Rama2BOffsetEnergy > Rama2BOffsetEnergyAP;
 typedef  utility::pointer::access_ptr< Rama2BOffsetEnergy const > Rama2BOffsetEnergyCAP;
