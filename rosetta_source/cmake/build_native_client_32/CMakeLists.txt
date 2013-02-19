@@ -23,7 +23,7 @@ ADD_DEFINITIONS(-DUSE_FILE_PROVIDER)
 ADD_DEFINITIONS(-DEXIT_THROWS_EXCEPTION)
 ADD_DEFINITIONS(-O2)
 ADD_DEFINITIONS(-s)
-ADD_DEFINITIONS(-m64)
+ADD_DEFINITIONS(-m32)
 ADD_DEFINITIONS(-MMD)
 ADD_DEFINITIONS(-pthread)
 ADD_DEFINITIONS(-Wno-long-long)
@@ -128,8 +128,8 @@ SET(LINK_ALL_LIBS ${LINK_STATIC_LIBS} ) # ${LINK_DYNAMIC_LIBS} ${TRAILING_STATIC
 ### Change dynamic linker from default /lib/ld64.so.1 to /lib64/ld-2.5.so,
 ### since that file doesn't exist and path is hardcoded
 
-SET(CMAKE_C_LINK_FLAGS "-Wl,-as-needed  -m64 -pthread " )
-SET(CMAKE_CXX_LINK_FLAGS "-Wl,-as-needed  -m64 -pthread " )
+SET(CMAKE_C_LINK_FLAGS "-Wl,-as-needed  -m32 -pthread " )
+SET(CMAKE_CXX_LINK_FLAGS "-Wl,-as-needed  -m32 -pthread " )
 
 
 ##### Top level binaries
