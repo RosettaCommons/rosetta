@@ -2822,7 +2822,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'db_prefix', 'String', default = 'loopdb', desc='stem for loop database' ),
 		Option( 'loopsizes', 'IntegerVector', default = ['10','15','20'] , desc='Which loopsizes to use' ),
 		Option( 'num_partitions', 'Integer', default = '1', desc='Number of partitions to split the database into'),
-		Option( 'db_path', 'Path', default = '', desc = 'Path to database' ),
+		Option( 'db_path', 'Path', default = '', desc = 'Path to the directory containing the loophash database.  The database (file) name must be backbone.db.' ),
 		Option( 'exclude_homo', 'Boolean', default = 'false', desc = 'Use a homolog exclusion filter' ),
 		Option( 'bss', 'Boolean', default = 'false', desc = 'Use BinaryProteinSilentStruct instead of ProteinSilentStruct (needed for nonideal)' ),
 		Option( 'refstruct', 'String', default = '', desc = 'File with a target reference structure' ),
@@ -3468,6 +3468,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 	),
 
 	Option_Group( 'loops',
+
 		Option( 'loops', 'Boolean', desc='loop modeling option group', legal=['true','false'], default='true'),
 		Option( 'cen_weights', 'String', desc='ScoreFunction weights file for centroid phase of loop-modeling', default = 'cen_std' ),
 		Option( 'cen_patch', 'String', desc='ScoreFunction patch for for centroid phase of loop-modeling', default = 'score4L', ),
@@ -3853,6 +3854,8 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 		Option('refine_design_iterations','Integer',
 			desc='iterations of refine and design', default='1'
 		),
+		Option_Group( 'loop_closure' ),
+			Option( 'loop_insertion', 'String', desc="String of chain names with the size of loops in between when a loop to be inserted.  e.g. 'AB6CDE' to insert a loop between chain B and C.  Chain names are assumed to start with A and continue B, C, D, and so on.  Names in PDB are ignored."),
 	), # Option_Group( 'loops' )
 
 	Option_Group( 'assembly',

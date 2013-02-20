@@ -189,6 +189,9 @@ sources = {
 		"KinematicPerturber",
 		"KinematicWrapper",
 	],
+	"protocols/loops/loop_closure/loophash" : [
+		"LoopHashLoopClosureMover",
+	],
 	"protocols/loops/loops_definers": [
 		"LoopsDatabaseDefiner",
 		"LoopsDatabaseDefinerCreator",

@@ -120,6 +120,7 @@
 #include <protocols/loops/loop_mover/refine/RepackTrialCreator.hh>
 #include <protocols/loops/loop_mover/refine/ShearMinCCDTrialCreator.hh>
 #include <protocols/loops/loop_mover/refine/SmallMinCCDTrialCreator.hh>
+#include <protocols/loops/loop_closure/loophash/LoopHashLoopClosureMoverCreator.hh>
 
 #include <protocols/match/MatcherMoverCreator.hh>
 

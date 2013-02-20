@@ -1,5 +1,3 @@
-namespace blivens { namespace disulfide_scorer { RealOptionKey const cys_prob( "blivens:disulfide_scorer:cys_prob" );  } }
-namespace blivens { StringOptionKey const score_type( "blivens:score_type" );  }
 namespace krassk { BooleanOptionKey const krassk( "krassk" );  }
 namespace krassk { IntegerOptionKey const left_tail( "krassk:left_tail" );  }
 namespace krassk { IntegerOptionKey const right_tail( "krassk:right_tail" );  }
@@ -517,6 +515,8 @@ namespace loops { BooleanOptionKey const no_looprebuild( "loops:no_looprebuild" 
 namespace loops { BooleanOptionKey const allow_lig_move( "loops:allow_lig_move" );  }
 namespace loops { FileOptionKey const keep_natro( "loops:keep_natro" );  }
 namespace loops { IntegerOptionKey const refine_design_iterations( "loops:refine_design_iterations" );  }
+namespace loops { namespace loop_closure { BooleanOptionKey const loop_closure( "loops:loop_closure" );  } }
+namespace loops { StringOptionKey const loop_insertion( "loops:loop_insertion" );  }
 namespace assembly { BooleanOptionKey const assembly( "assembly" );  }
 namespace assembly { FileOptionKey const pdb1( "assembly:pdb1" );  }
 namespace assembly { FileOptionKey const pdb2( "assembly:pdb2" );  }
@@ -664,3 +664,4 @@ namespace RBSegmentRelax { BooleanOptionKey const skip_fragment_moves( "RBSegmen
 namespace RBSegmentRelax { BooleanOptionKey const skip_seqshift_moves( "RBSegmentRelax:skip_seqshift_moves" );  }
 namespace RBSegmentRelax { BooleanOptionKey const skip_rb_moves( "RBSegmentRelax:skip_rb_moves" );  }
 namespace RBSegmentRelax { RealVectorOptionKey const helical_movement_params( "RBSegmentRelax:helical_movement_params" );  }
+namespace RBSegmentRelax { RealVectorOptionKey const strand_movement_params( "RBSegmentRelax:strand_movement_params" );  }

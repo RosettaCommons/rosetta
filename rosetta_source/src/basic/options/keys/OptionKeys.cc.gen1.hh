@@ -1,4 +1,3 @@
-namespace resample { StringOptionKey const tag( "resample:tag" );  }
 namespace resample { BooleanOptionKey const stage1( "resample:stage1" );  }
 namespace resample { BooleanOptionKey const stage2( "resample:stage2" );  }
 namespace resample { BooleanOptionKey const jumps( "resample:jumps" );  }
@@ -664,3 +663,5 @@ namespace rbe { RealOptionKey const poll_frequency( "rbe:poll_frequency" );  }
 namespace blivens { BooleanOptionKey const blivens( "blivens" );  }
 namespace blivens { namespace disulfide_scorer { BooleanOptionKey const disulfide_scorer( "blivens:disulfide_scorer" );  } }
 namespace blivens { namespace disulfide_scorer { RealOptionKey const nds_prob( "blivens:disulfide_scorer:nds_prob" );  } }
+namespace blivens { namespace disulfide_scorer { RealOptionKey const cys_prob( "blivens:disulfide_scorer:cys_prob" );  } }
+namespace blivens { StringOptionKey const score_type( "blivens:score_type" );  }
