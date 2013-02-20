@@ -23,10 +23,12 @@ namespace scoring {
 
 class PeptideBondedNeighborIterator;
 typedef utility::pointer::owning_ptr< PeptideBondedNeighborIterator > PeptideBondedNeighborIteratorOP;
+typedef utility::pointer::owning_ptr< const PeptideBondedNeighborIterator > PeptideBondedNeighborIteratorCOP;
 
 
 class PeptideBondedEnergyContainer;
 typedef utility::pointer::owning_ptr< PeptideBondedEnergyContainer > PeptideBondedEnergyContainerOP;
+typedef utility::pointer::owning_ptr< const PeptideBondedEnergyContainer > PeptideBondedEnergyContainerCOP;
 
 } // namespace scoring
 } // namespace core
