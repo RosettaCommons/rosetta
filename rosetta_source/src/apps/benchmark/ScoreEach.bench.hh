@@ -208,7 +208,6 @@ ScoreEachBenchmark Score_hpatch_("core.scoring.Score_100x_hpatch",hpatch,100);
 
 // very slow 10x
 ScoreEachBenchmark Score_gb_elec_("core.scoring.Score_10x_gb_elec",gb_elec,10);
-ScoreEachBenchmark Score_DFIRE_("core.scoring.Score_10x_DFIRE",DFIRE,10);
 ScoreEachBenchmark Score_pack_stat_("core.scoring.Score_10x_pack_stat",pack_stat,10);
 ScoreEachBenchmark Score_fa_cust_pair_dist_("core.scoring.Score_10x_fa_cust_pair_dist",fa_cust_pair_dist,10);
 ScoreEachBenchmark Score_occ_sol_exact_("core.scoring.Score_10x_occ_sol_exact",occ_sol_exact,10);
