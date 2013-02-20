@@ -39,6 +39,9 @@ sources = {
 		"SSFeature",
 		"TorsionFeature",
 	],
+        "protocols/denovo_design/filters": [
+                "ExposedHydrophobicsFilter",
+        ],
 	"protocols/domain_assembly": [
 		"AddAssemblyConstraints",
 		"AssembleLinkerMover",
