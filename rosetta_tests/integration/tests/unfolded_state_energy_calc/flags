@@ -1,4 +1,4 @@
--s ../jd2test/1UBQ.pdb
+-s 1UBQ.pdb.gz
 -ignore_unrecognized_res
 -residue_name NVL
 -mute all
