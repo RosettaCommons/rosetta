@@ -57,6 +57,7 @@ namespace symmetry {
 SymmetryInfo::SymmetryInfo() { 
 	use_symmetry_ = false;
 	score_multiply_factor_ = 1;
+	last_indep_residue_ = 0;
 	reweight_symm_interactions_ = basic::options::option[ basic::options::OptionKeys::symmetry::reweight_symm_interactions ]();
 }
 SymmetryInfo::~SymmetryInfo() {}
@@ -78,6 +79,7 @@ bool SymmetryInfo::operator!=( SymmetryInfo const & s )
 SymmetryInfo::SymmetryInfo( SymmData const & symm_data, Size const nres_subunit, Size const njump_subunit )
 {
 	reweight_symm_interactions_ = basic::options::option[ basic::options::OptionKeys::symmetry::reweight_symm_interactions ]();
+	last_indep_residue_ = 0;
 
 	Size joff = njump_subunit*symm_data.get_subunits();
 	std::map<std::string,Size> const & name2num = symm_data.get_jump_string_to_jump_num();
@@ -252,6 +254,11 @@ SymmetryInfo::initialize(
 		utility_exit();
 	}
 
+	// last_independent_residue
+	for ( Size i=1; i <=num_total_residues_without_pseudo(); ++i )
+		if ( bb_is_independent(i) )
+			last_indep_residue_ = i;
+
 	update_score_multiply_factor();
 }
 
@@ -368,6 +375,11 @@ SymmetryInfo::initialize(
 		}
 		//jump_clones_.insert( std::make_pair( it->first + N*njump_monomer, clones ) );
 	}
+
+	// last_independent_residue
+	for ( Size i=1; i <=num_total_residues_without_pseudo(); ++i )
+		if ( bb_is_independent(i) )
+			last_indep_residue_ = i;
 
 	// compute the score_multiply_factor
 	update_score_multiply_factor();
@@ -700,6 +712,11 @@ std::istream& operator>> ( std::istream & s, SymmetryInfo & symminfo )
 			s.setstate( std::ios_base::failbit );
 			return s;
 		}
+
+		// last_independent_residue
+		for ( Size i=1; i <=symminfo.num_total_residues_without_pseudo(); ++i )
+			if ( symminfo.bb_is_independent(i) )
+				symminfo.last_indep_residue_ = i;
 	}
 
 	return s;
@@ -886,6 +903,11 @@ SymmetryInfo::independent_residues() const
 			residues.push_back(false);
   }
   return residues;
+}
+
+Size
+SymmetryInfo::last_independent_residue() const {
+	return last_indep_residue_;
 }
 
 Size

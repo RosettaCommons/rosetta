@@ -153,6 +153,7 @@ public:
 	Size num_total_residues_without_pseudo() const;
 	Size num_interfaces() const;
 	Size num_virtuals() const;
+	Size last_independent_residue() const;
 
 	Size get_nres_subunit() const;  //fpd same as num_independent_residues?
 	Size get_njumps_subunit() const;
@@ -291,6 +292,7 @@ private:
 	Size scoring_subunit_;
 	Size npseudo_;
 	Size njump_monomer_;
+	Size last_indep_residue_;
 	std::string type_;
 
 	// store the number of interfaces
