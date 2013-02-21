@@ -19,6 +19,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/UltraLightResidue.hh>
 
 #include <utility/tag/Tag.hh>
 
@@ -98,6 +99,39 @@ void SolvationMetaGrid::refresh(core::pose::Pose const & pose, core::Vector cons
 
 void SolvationMetaGrid::parse_my_tag(utility::tag::TagPtr const /*tag*/)
 {
+}
+
+core::Real SolvationMetaGrid::score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP qsar_map)
+{
+	core::Real total_score = 0.0;
+	for(core::Size atom_index = 1; atom_index <= residue.natoms();++atom_index)
+	{
+		//core::Vector const & coords = residue.xyz(atom_index);
+		core::conformation::Atom current_atom(residue.residue()->atom(atom_index));
+		std::map<core::ShortSize,SingleGridOP>::iterator grid_iterator(grid_map_.find(current_atom.type()));
+		if(grid_iterator == grid_map_.end())
+		{
+			utility_exit_with_message("Ligands must be parameterized with the FA_STANDARD atom type set for use in the SolvationMetaGrid");
+		}
+
+		SingleGridOP current_grid = grid_iterator->second;
+		total_score += current_grid->get_point(residue[atom_index]);
+	}
+
+	return total_score;
+}
+
+core::Real SolvationMetaGrid::atom_score(core::conformation::UltraLightResidue const & residue, core::Size atomno, qsarMapOP qsar_map)
+{
+	core::conformation::Atom current_atom(residue.residue()->atom(atomno));
+	std::map<core::ShortSize,SingleGridOP>::iterator grid_iterator(grid_map_.find(current_atom.type()));
+	if(grid_iterator == grid_map_.end())
+	{
+		utility_exit_with_message("Ligands must be parameterized with the FA_STANDARD atom type set for use in the SolvationMetaGrid");
+	}
+
+	SingleGridOP current_grid = grid_iterator->second;
+	return  current_grid->get_point(residue[atomno]);
 }
 
 core::Real SolvationMetaGrid::score(core::conformation::Residue const & residue, core::Real const /*max_score*/, qsarMapOP)
@@ -188,6 +222,18 @@ void SolvationMetaGrid::deserialize(utility::json_spirit::mObject data)
 		grid->deserialize(grid_pair[1].get_obj());
 		grid_map_[atom_type] = grid;
 	}
+}
+
+bool SolvationMetaGrid::is_in_grid(core::conformation::UltraLightResidue const & residue)
+{
+	for(std::map<core::ShortSize,SingleGridOP>::iterator it = grid_map_.begin();it != grid_map_.end();++it)
+	{
+		if(!it->second->is_in_grid(residue))
+		{
+			return false;
+		}
+	}
+	return true;
 }
 
 bool SolvationMetaGrid::is_in_grid(core::conformation::Residue const & residue)

@@ -37,6 +37,11 @@ public:
 
 	void parse_my_tag(utility::tag::TagPtr const tag);
 
+	/// @brief return the current score of an UltraLightResidue using the current grid
+	virtual core::Real score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP qsar_map);
+	/// @brief return the current score of an atom using the current grid
+	virtual core::Real atom_score(core::conformation::UltraLightResidue const & residue, core::Size atomno, qsarMapOP qsar_map);
+
 	virtual core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map);
 	/// @brief return the current score of an atom using the current grid
 	virtual core::Real atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP qsar_map);

@@ -18,7 +18,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/conformation/Residue.hh>
-
+#include <core/conformation/UltraLightResidue.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tools/make_vector.hh>
 #include <utility/json_spirit/json_spirit_value.h>
@@ -195,6 +195,38 @@ void ChargeGrid::parse_my_tag(utility::tag::TagPtr const /*tag*/)
 
 }
     
+
+core::Real ChargeGrid::score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP)
+{
+    core::Real score = 0.0;
+    for(core::Size atom_index = 1; atom_index <= residue.natoms() && score < max_score; ++atom_index )
+	{
+		core::Vector const & atom_coord(residue[atom_index]);
+		if(this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()))
+		{
+            core::Real protein_charge = this->get_point(atom_coord.x(),atom_coord.y(),atom_coord.z());
+
+
+
+			score += protein_charge*residue.residue()->atomic_charge(atom_index);
+		}
+	}
+	return score;
+}
+
+core::Real ChargeGrid::atom_score(core::conformation::UltraLightResidue const & residue, core::Size atomno, qsarMapOP)
+{
+	core::Vector const & atom_coord(residue[atomno]);
+	if(this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()))
+	{
+		core::Real protein_charge = this->get_point(atom_coord.x(),atom_coord.y(),atom_coord.z());
+		return protein_charge*residue.residue()->atomic_charge(atomno);
+	}else
+	{
+		return 0;
+	}
+}
+
 core::Real ChargeGrid::score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP /*qsar_map*/)
 {
     core::Real score = 0.0;

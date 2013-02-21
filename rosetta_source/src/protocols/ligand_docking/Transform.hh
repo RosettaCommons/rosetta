@@ -17,6 +17,7 @@
 #include <protocols/ligand_docking/Transform.fwd.hh>
 
 #include <core/conformation/Residue.fwd.hh>
+#include <core/conformation/UltraLightResidue.fwd.hh>
 #include <core/kinematics/Jump.fwd.hh>
 
 #include <utility/vector1.hh>
@@ -25,11 +26,6 @@
 namespace protocols {
 namespace ligand_docking {
 
-enum MoveType
-{
-	conformerMove,
-	transformMove
-};
 
 struct Transform_info{ // including default values
 
@@ -74,24 +70,8 @@ public:
 	virtual void apply(core::pose::Pose & pose);
 
 private:
-	utility::vector1<std::pair<core::SSize,core::kinematics::Jump> > transform_ligand(core::pose::Pose & pose);
-	core::Size change_conformer(core::pose::Pose & pose, core::Size const & seqpos);
-
-	void revert_conformer(
-		core::pose::Pose & pose,
-		core::Size const & conformer_index,
-		core::Size const & seqpos);
-
-	void revert_jumps(
-		core::pose::Pose & pose,
-		utility::vector1<std::pair<core::SSize,core::kinematics::Jump> > const & jumps);
-
-	void revert_move(
-		core::pose::Pose & pose,
-		MoveType const & move_type,
-		core::Size const & conformer_index,
-		core::Size const & seqpos,
-		utility::vector1<std::pair<core::SSize,core::kinematics::Jump> > const & jumps);
+	void transform_ligand(core::conformation::UltraLightResidue & residue);
+	void change_conformer(core::conformation::UltraLightResidue & residue);
 
 private:
 	//qsar::scoring_grid::GridManagerOP grid_manager_;

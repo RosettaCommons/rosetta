@@ -16,6 +16,7 @@
 
 #include <core/id/AtomID.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/UltraLightResidue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/AtomType.hh>
@@ -118,6 +119,45 @@ void VdwGrid::refresh(core::pose::Pose const & pose, core::Vector const & center
 VdwGrid::~VdwGrid()
 {
 
+}
+
+core::Real VdwGrid::score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP qsar_map)
+{
+	core::Real score = 0.0;
+
+	for(core::Size atom_index = 1; atom_index <= residue.natoms() && score < max_score; ++atom_index )
+	{
+		core::Vector const & atom_coord(residue[atom_index]);
+		core::Real const & radius(residue.residue()->atom_type(atom_index).lj_radius());
+		if(this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()))
+		{
+			core::Real max_radius = this->get_point(atom_coord.x(),atom_coord.y(),atom_coord.z());
+			core::Real spline_score = 0.0;
+			core::Real spline_score_deriv = 0.0;
+
+			lj_spline_->interpolate(max_radius-radius,spline_score,spline_score_deriv);
+
+			score += spline_score;
+		}
+	}
+	return score;
+}
+
+core::Real VdwGrid::atom_score(core::conformation::UltraLightResidue const & residue, core::Size atomno, qsarMapOP qsar_map)
+{
+	core::Vector const & atom_coord(residue[atomno]);
+	core::Real const & radius(residue.residue()->atom_type(atomno).lj_radius());
+	if(this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()))
+	{
+		core::Real max_radius = this->get_point(atom_coord.x(),atom_coord.y(),atom_coord.z());
+		core::Real spline_score = 0.0;
+		core::Real spline_score_deriv = 0.0;
+
+		lj_spline_->interpolate(max_radius-radius,spline_score,spline_score_deriv);
+
+		return spline_score;
+	}
+	return 0;
 }
 
 core::Real VdwGrid::score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP )

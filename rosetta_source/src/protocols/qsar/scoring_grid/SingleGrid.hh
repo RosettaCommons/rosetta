@@ -88,12 +88,18 @@ public:
 	core::Vector get_pdb_coords(int x, int y, int z);
 	/// @brief get the pdb coordinates based on grid point coordinates
 	core::Vector get_pdb_coords(core::grid::CartGrid<core::Real>::GridPt gridpt);
+	/// @brief return the current score of an UltraLightResidue using the current grid
+	virtual core::Real score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP qsar_map);
+	/// @brief return the current score of an atom using the current grid
+	virtual core::Real atom_score(core::conformation::UltraLightResidue const & residue, core::Size atomno, qsarMapOP qsar_map);
 	/// @brief return the current score of a residue using the current grid
 	virtual core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map);
 	/// @brief return the current score of an atom using the current grid
 	virtual core::Real atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP qsar_map);
 	void grid_to_kin(utility::io::ozstream & out, core::Real min_val, core::Real max_val, core::Size stride);
 	//void grid_rotamer_trials(core::pose::Pose &  pose, core::Size residue_id, int const min_score);
+	/// @brief check to see if residue is in grid
+	virtual bool is_in_grid(core::conformation::UltraLightResidue const & residue);
     /// @brief check to see if residue is in grid
     virtual bool is_in_grid(core::conformation::Residue const & residue);
 

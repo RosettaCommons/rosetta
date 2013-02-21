@@ -19,6 +19,7 @@
 
 #include <core/pose/util.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/UltraLightResidue.hh>
 #include <basic/Tracer.hh>
 
 #include <basic/options/option.hh>
@@ -159,6 +160,39 @@ utility::vector1<std::string> GridManager::get_grid_names()
 	return grid_names;
 }
 
+core::Real GridManager::total_score(core::conformation::UltraLightResidue const & residue)
+{
+	score_map_.clear();
+
+	core::Real total_score =0.0;
+	const core::Real max_score = 9999.0;
+	std::map<std::string,GridBaseOP>::iterator map_iterator(grid_map_.begin());
+	for(;map_iterator != grid_map_.end();++map_iterator)
+	{
+		core::Real component_score =0;
+		GridBaseOP current_grid(*map_iterator->second);
+
+		//for(core::Size atom_index = 1; atom_index <= residue.nheavyatoms();++atom_index)
+		//{
+		core::Real current_score(current_grid->score(residue,max_score,qsar_map_));
+		component_score += current_score;
+		//}
+		total_score += component_score;
+		std::pair<std::string, core::Real> new_score(current_grid->get_type(),component_score);
+		score_map_.insert(new_score);
+	}
+
+	if(norm_function_)
+	{
+		core::Real normalized_score = (*norm_function_)(total_score,*residue.residue());
+		GridManagerTracer.Trace << "Score normalized from " << total_score << " to "<< normalized_score << std::endl;
+		return normalized_score;
+	}else
+	{
+		return total_score;
+	}
+}
+
 core::Real GridManager::total_score(core::conformation::Residue const & residue)
 {
 	score_map_.clear();
@@ -184,7 +218,7 @@ core::Real GridManager::total_score(core::conformation::Residue const & residue)
 	if(norm_function_)
 	{
 		core::Real normalized_score = (*norm_function_)(total_score,residue);
-		GridManagerTracer << "Score normalized from " << total_score << " to "<< normalized_score << std::endl;
+		GridManagerTracer.Trace << "Score normalized from " << total_score << " to "<< normalized_score << std::endl;
 		return normalized_score;
 	}else
 	{
@@ -222,7 +256,7 @@ core::Real GridManager::total_score(core::pose::Pose const & pose, core::Size co
 	if(norm_function_)
 	{
 		core::Real normalized_score = (*norm_function_)(total_score,residue_vector);
-		GridManagerTracer << "Score normalized from " << total_score << " to "<< normalized_score << std::endl;
+		GridManagerTracer.Trace << "Score normalized from " << total_score << " to "<< normalized_score << std::endl;
 		return normalized_score;
 	}else
 	{
@@ -442,7 +476,21 @@ void GridManager::deserialize(utility::json_spirit::mArray data)
 		grid_map_[grid_name] = grid;
 	}
 }
-    
+
+bool GridManager::is_in_grid(core::conformation::UltraLightResidue const & residue)
+{
+    std::map<std::string,GridBaseOP>::iterator map_iterator(grid_map_.begin());
+    for(;map_iterator != grid_map_.end();++map_iterator)
+    {
+        GridBaseOP current_grid(*map_iterator->second);
+        if(!current_grid->is_in_grid(residue))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 bool GridManager::is_in_grid(core::conformation::Residue const & residue)
 {
     std::map<std::string,GridBaseOP>::iterator map_iterator(grid_map_.begin());

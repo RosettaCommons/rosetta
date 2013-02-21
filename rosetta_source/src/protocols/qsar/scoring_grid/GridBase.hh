@@ -18,6 +18,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
+#include <core/conformation/UltraLightResidue.fwd.hh>
 #include <utility/json_spirit/json_spirit_value.h>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/Tag.fwd.hh>
@@ -41,6 +42,11 @@ public:
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center)=0;
 	/// @setup a grid based on RosettaScripts input
 	virtual void parse_my_tag(utility::tag::TagPtr const tag)=0;
+
+	/// @brief return the current scoer of an UltraLightResidue using the current grid
+	virtual core::Real score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP qsar_map) = 0;
+	/// @brief return the current score of an atom using the current grid
+	virtual core::Real atom_score(core::conformation::UltraLightResidue const & residue, core::Size atomno, qsarMapOP qsar_map) = 0;
 	/// @brief return the current score of a residue using the current grid
 	virtual core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map) = 0;
 	/// @brief return the current score of an atom using the current grid
@@ -55,6 +61,8 @@ public:
 	virtual utility::json_spirit::Value serialize() = 0;
 	/// @brief deserialize a json spirit Value into a GridBase object
 	virtual void deserialize(utility::json_spirit::mObject data) = 0;
+    /// @brief determine if all residue atoms are in a grid
+    virtual bool is_in_grid(core::conformation::UltraLightResidue const & residue) =0;
     /// @brief determine if all residue atoms are in a grid
     virtual bool is_in_grid(core::conformation::Residue const & residue) =0;
 };

@@ -80,6 +80,7 @@ sources = {
 		"ResidueMatcher",
 		"RotamerSetBase",
 		"util",
+		"UltraLightResidue"
 	],
 	"core/conformation/orbitals": [
 		"OrbitalXYZCoords",

@@ -23,6 +23,7 @@
 
 #include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>
+#include <core/conformation/UltraLightResidue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <utility/vector1.hh>
@@ -69,6 +70,8 @@ public:
 	///@brief get a list of grid names
 	utility::vector1<std::string> get_grid_names();
 	///@brief return the total score of a residue on the grid
+	core::Real total_score(core::conformation::UltraLightResidue const & residue);
+	///@brief return the total score of a residue on the grid
 	core::Real total_score(core::conformation::Residue const & residue);
 	///@brief return the total score of a chain on the grid
 	core::Real total_score(core::pose::Pose const & pose, core::Size const chain_id);
@@ -90,6 +93,8 @@ public:
 	void append_cached_scores(jd2::JobOP job);
 	///@brief write all grids out using the BRIX format
 	void write_grids(std::string prefix);
+    ///@brief check to see if all atoms in the ligand are in the grid
+    bool is_in_grid(core::conformation::UltraLightResidue const & residue);
     ///@brief check to see if all atoms in the ligand are in the grid
     bool is_in_grid(core::conformation::Residue const & residue);
 

@@ -7,6 +7,7 @@
 #include <protocols/qsar/scoring_grid/HbdGridCreator.hh>
 
 #include <core/conformation/Residue.hh>
+#include <core/conformation/UltraLightResidue.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/id/AtomID.hh>
 #include <core/pose/Pose.hh>
@@ -130,12 +131,48 @@ void HbdGrid::refresh(core::pose::Pose const & pose, core::Vector const & center
 	refresh(pose,center);
 }
 
+core::Real HbdGrid::score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP qsar_map)
+{
+	core::Real score = 0.0;
+	//GridBaseTracer << "map size is: " << qsar_map->size() <<std::endl;
+	for(core::Size atom_index = 1; atom_index <= residue.natoms() && score < max_score; ++atom_index)
+	{
+		core::Vector const & atom_coord(residue[atom_index]);
+		if(this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()))
+		{
+			core::chemical::AtomType atom_type(residue.residue()->atom_type(atom_index));
+			if(atom_type.is_acceptor())
+			{
+				core::Real grid_value = this->get_point(atom_coord.x(),atom_coord.y(),atom_coord.z());
+				score += grid_value;
+			}
+
+		}
+	}
+
+	return score;
+}
+
+core::Real HbdGrid::atom_score(core::conformation::UltraLightResidue const & residue, core::Size atomno, qsarMapOP qsar_map)
+{
+	core::Vector const & atom_coord(residue[atomno]);
+	if(this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()))
+	{
+		core::chemical::AtomType atom_type(residue.residue()->atom_type(atomno));
+		if(atom_type.is_acceptor())
+		{
+			core::Real grid_value = this->get_point(atom_coord.x(),atom_coord.y(),atom_coord.z());
+			return grid_value;
+		}
+	}
+	return 0;
+}
 
 core::Real HbdGrid::score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP )
 {
 	core::Real score = 0.0;
 	//GridBaseTracer << "map size is: " << qsar_map->size() <<std::endl;
-	for(core::Size atom_index = 1; atom_index <= residue.nheavyatoms() && score < max_score; ++atom_index)
+	for(core::Size atom_index = 1; atom_index <= residue.natoms() && score < max_score; ++atom_index)
 	{
 		core::Vector const & atom_coord(residue.xyz(atom_index));
 		if(this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()))

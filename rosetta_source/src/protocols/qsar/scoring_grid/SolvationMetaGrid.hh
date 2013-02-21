@@ -40,6 +40,10 @@ public:
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center);
 	/// @setup a grid based on RosettaScripts input
 	virtual void parse_my_tag(utility::tag::TagPtr const tag);
+	/// @brief return the current score of an UltraLightResidue using the current grid
+	virtual core::Real score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP qsar_map);
+	/// @brief return the current score of an atom using the current grid
+	virtual core::Real atom_score(core::conformation::UltraLightResidue const & residue, core::Size atomno, qsarMapOP qsar_map);
 	/// @brief return the current score of a residue using the current grid
 	virtual core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map);
 	/// @brief return the current score of an atom using the current grid
@@ -54,6 +58,8 @@ public:
 	virtual utility::json_spirit::Value serialize();
 	/// @brief deserialize a json spirit Value into a GridBase object
 	virtual void deserialize(utility::json_spirit::mObject data);
+    /// @brief determine if all residue atoms are in a grid
+    virtual bool is_in_grid(core::conformation::UltraLightResidue const & residue);
     /// @brief determine if all residue atoms are in a grid
     virtual bool is_in_grid(core::conformation::Residue const & residue);
 private:

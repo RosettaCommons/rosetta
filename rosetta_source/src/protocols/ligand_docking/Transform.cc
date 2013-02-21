@@ -23,6 +23,7 @@
 
 #include <core/conformation/Conformation.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/conformation/UltraLightResidue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/kinematics/Jump.hh>
@@ -154,18 +155,10 @@ void Transform::apply(core::pose::Pose & pose)
 
 	core::Real last_score(10000.0);
 
-	utility::vector1<std::pair<core::SSize,core::kinematics::Jump> > last_jumps;
-	for(core::Size jump_number = 1; jump_number <= pose.num_jump();++jump_number)
-	{
-		last_jumps.push_back(std::make_pair(jump_number,pose.jump(jump_number)));
-	}
-	core::Size last_conformer = 1;
-	MoveType last_move;
-    
     core::Real best_score(last_score);
     core::pose::Pose best_pose(pose);
     core::pose::Pose starting_pose(pose);
-    
+    core::conformation::UltraLightResidue best_ligand(&pose.residue(begin));
 
 	core::Real temperature = transform_info_.temperature;
 	core::Vector original_center(original_residue.xyz(original_residue.nbr_atom()));
@@ -185,12 +178,11 @@ void Transform::apply(core::pose::Pose & pose)
 		last_score = 10000.0;
 		core::Size cycle = 1;
 		bool not_converged = true;
+		core::conformation::UltraLightResidue ligand_residue(&pose.residue(begin));
+		core::conformation::UltraLightResidue last_accepted_ligand_residue(ligand_residue);
 		while(not_converged)
 		{
 
-			utility::vector1<std::pair<core::SSize,core::kinematics::Jump> >new_jumps = last_jumps;
-			core::Size new_conformer = last_conformer;
-			MoveType new_move;
 
 			if(optimize_until_score_is_negative_)
 			{
@@ -213,59 +205,49 @@ void Transform::apply(core::pose::Pose & pose)
 			{
 				if(RG.uniform() >= 0.5)
 				{
-					new_jumps = transform_ligand(pose);
-					new_move = transformMove;
+					transform_ligand(ligand_residue);
 				}else
 				{
-					new_conformer = change_conformer(pose,begin);
-					new_move = conformerMove;
+					change_conformer(ligand_residue);
 				}
 			}else
 			{
-				new_jumps = transform_ligand(pose);
-				new_move = transformMove;
+				transform_ligand(ligand_residue);
 			}
-			//delete residue;
-			core::conformation::ResidueCOP residue(&pose.residue(begin));
-
 			//The score is meaningless if any atoms are outside of the grid
-			if(!grid_manager->is_in_grid(*residue)) //Reject the pose
+			if(!grid_manager->is_in_grid(ligand_residue)) //Reject the pose
 			{
-				revert_move(pose,new_move,new_conformer,begin,new_jumps);
+				ligand_residue = last_accepted_ligand_residue;
 				rejected_moves++;
 				//transform_tracer.Trace << "probability: " << probability << " rejected (out of grid)"<<std::endl;
 				continue;
 			}
 
-			core::Real current_score = grid_manager->total_score(*residue);
+			core::Real current_score = grid_manager->total_score(ligand_residue);
 			core::Real const boltz_factor((last_score-current_score)/temperature);
 			core::Real const probability = std::exp( boltz_factor ) ;
-			core::Vector new_center(residue->xyz(residue->nbr_atom()));
+			core::Vector new_center(ligand_residue.center());
 
 			if(new_center.distance(original_center) > transform_info_.box_size) //Reject the new pose
 			{
-				revert_move(pose,last_move,last_conformer,begin,last_jumps);
+				ligand_residue = last_accepted_ligand_residue;
 				rejected_moves++;
 
 			}else if(probability < 1 && RG.uniform() >= probability)  //reject the new pose
 			{
-				revert_move(pose,last_move,last_conformer,begin,last_jumps);
+				ligand_residue = last_accepted_ligand_residue;
 				rejected_moves++;
 
 			}else if(probability < 1)  // Accept the new pose
 			{
 				last_score = current_score;
-				last_jumps = new_jumps;
-				last_conformer = new_conformer;
-				last_move = new_move;
+				last_accepted_ligand_residue = ligand_residue;
 				accepted_moves++;
 
 			}else  //Accept the new pose
 			{
 				last_score = current_score;
-				last_jumps = new_jumps;
-				last_conformer = new_conformer;
-				last_move = new_move;
+				last_accepted_ligand_residue = ligand_residue;
 				accepted_moves++;
 
 			}
@@ -273,7 +255,7 @@ void Transform::apply(core::pose::Pose & pose)
 			if(last_score < best_score)
 			{
 				best_score = last_score;
-				best_pose = pose;
+				best_ligand = last_accepted_ligand_residue;
 				transform_tracer << "accepting new pose" << std::endl;
 			}else
 			{
@@ -283,88 +265,44 @@ void Transform::apply(core::pose::Pose & pose)
 		}
 
 		transform_tracer <<"percent acceptance: "<< accepted_moves << " " << (core::Real)accepted_moves/(core::Real)rejected_moves <<" " << rejected_moves <<std::endl;
-
-		pose = best_pose;
+		best_ligand.update_conformation(best_pose.conformation());
 	}
-
+	pose = best_pose;
 
 }
 
-utility::vector1<std::pair<core::SSize,core::kinematics::Jump> > Transform::transform_ligand(core::pose::Pose & pose)
+void Transform::transform_ligand(core::conformation::UltraLightResidue & residue)
 {
 	if(transform_info_.angle ==0 && transform_info_.move_distance == 0)
 	{
 		transform_tracer <<"WARNING: angle and distance are both 0.  Transform will do nothing" <<std::endl;
+		return;
 	}
 
-	protocols::rigid::RigidBodyMoverOP mover;
-	mover = new protocols::rigid::RigidBodyPerturbMover(transform_info_.jump_id,transform_info_.angle,transform_info_.move_distance);
-	mover->apply(pose);
-	pose.update_actcoords();
+	core::Vector translation(
+		transform_info_.move_distance*RG.gaussian(),
+		transform_info_.move_distance*RG.gaussian(),
+		transform_info_.move_distance*RG.gaussian());
 
-	utility::vector1<std::pair<core::SSize,core::kinematics::Jump> > jump_archive;
-	for(core::Size jump_number = 1; jump_number <= pose.num_jump();++jump_number)
-	{
-		jump_archive.push_back(std::make_pair(jump_number,pose.jump(jump_number)));
-	}
-	return jump_archive;
+	numeric::xyzMatrix<core::Real> rotation(
+		numeric::z_rotation_matrix_degrees( transform_info_.angle*RG.gaussian() ) * (
+			numeric::y_rotation_matrix_degrees( transform_info_.angle*RG.gaussian() ) *
+			numeric::x_rotation_matrix_degrees( transform_info_.angle*RG.gaussian() ) ));
+
+	residue.transform(rotation,translation);
 }
 
-core::Size Transform::change_conformer(core::pose::Pose & pose, core::Size const & seqpos)
+void Transform::change_conformer(core::conformation::UltraLightResidue & residue)
 {
 	assert(ligand_conformers_.size());
 	core::Size index_to_select = RG.random_range(1,ligand_conformers_.size());
-	core::conformation::ResidueOP new_residue = ligand_conformers_[index_to_select];
-	pose.conformation().replace_residue(seqpos,*new_residue,false );
-	pose.update_actcoords();
-	return index_to_select;
-}
-
-
-
-
-void Transform::revert_conformer(
-	core::pose::Pose & pose,
-	core::Size const & conformer_index,
-	core::Size const & seqpos)
-{
-
-	core::conformation::ResidueOP new_residue = ligand_conformers_[conformer_index];
-	pose.conformation().replace_residue(seqpos,*new_residue,false );
-	pose.update_actcoords();
+	//get center before overwriting
+	core::Vector center(residue.center());
+	residue = core::conformation::UltraLightResidue(ligand_conformers_[index_to_select]);
+	//slide new conformation back to original center point
+	residue.slide(center);
 
 }
-
-void Transform::revert_jumps(
-	core::pose::Pose & pose,
-	utility::vector1<std::pair<core::SSize,core::kinematics::Jump> > const & jumps)
-{
-	assert(jumps.size() == pose.num_jump());
-
-	utility::vector1<std::pair<core::SSize,core::kinematics::Jump> >::const_iterator jump_it;
-	for(jump_it = jumps.begin();jump_it != jumps.end();++jump_it)
-	{
-		pose.set_jump(jump_it->first,jump_it->second);
-	}
-	pose.update_actcoords();
-}
-
-void Transform::revert_move(
-	core::pose::Pose & pose,
-	MoveType const & move_type,
-	core::Size const & conformer_index,
-	core::Size const & seqpos,
-	utility::vector1<std::pair<core::SSize,core::kinematics::Jump> > const & jumps)
-{
-	if(move_type == conformerMove)
-	{
-		revert_conformer(pose,conformer_index,seqpos);
-	}else if(move_type == transformMove)
-	{
-		revert_jumps(pose,jumps);
-	}
-}
-
 
 }
 }

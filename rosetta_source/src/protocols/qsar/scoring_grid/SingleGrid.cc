@@ -13,6 +13,7 @@
 #include <protocols/qsar/scoring_grid/SingleGrid.hh>
 
 #include <core/conformation/Residue.hh>
+#include <core/conformation/UltraLightResidue.hh>
 #include <core/grid/CartGrid.hh>
 #include <core/pose/util.hh>
 #include <core/conformation/Conformation.hh>
@@ -171,11 +172,50 @@ core::Vector SingleGrid::get_pdb_coords(core::grid::CartGrid<core::Real>::GridPt
 	return grid_.coords(gridpt);
 }
 
+core::Real SingleGrid::score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP)
+{
+	core::Real score = 0.0;
+	//GridBaseTracer << "map size is: " << qsar_map->size() <<std::endl;
+	for(core::Size atom_index = 1; atom_index <= residue.natoms() && score < max_score;++atom_index)
+	{
+		//TODO qsar map is broken, comment it out until it works right
+		//qsarPointOP qsar_info(qsar_map->get_point(atom_index,type_));
+
+		//if(qsar_info != 0)
+		//{
+		core::Vector const & atom = residue[atom_index];
+		if(grid_.is_in_grid(atom.x(),atom.y(), atom.z()))
+		{
+
+			core::Real grid_score = grid_.getValue(atom.x(),atom.y(),atom.z());
+
+			score = score+ grid_score; //*qsar_info->get_value();
+		}
+		//}
+
+	}
+	return score;
+}
+
+core::Real SingleGrid::atom_score(core::conformation::UltraLightResidue const & residue, core::Size atomno, qsarMapOP)
+{
+	core::Vector const & atom = residue[atomno];
+	if(grid_.is_in_grid(atom.x(),atom.y(), atom.z()))
+	{
+
+		core::Real grid_score = grid_.getValue(atom.x(),atom.y(),atom.z());
+		return grid_score;
+	}else
+	{
+		return 0;
+	}
+}
+
 core::Real SingleGrid::score(core::conformation::Residue const & residue, core::Real const max_score,qsarMapOP /*qsar_map*/)
 {
 	core::Real score = 0.0;
 	//GridBaseTracer << "map size is: " << qsar_map->size() <<std::endl;
-	for(core::Size atom_index = 1; atom_index <= residue.nheavyatoms() && score < max_score;++atom_index)
+	for(core::Size atom_index = 1; atom_index <= residue.natoms() && score < max_score;++atom_index)
 	{
 		//TODO qsar map is broken, comment it out until it works right
 		//qsarPointOP qsar_info(qsar_map->get_point(atom_index,type_));
@@ -269,6 +309,19 @@ void SingleGrid::grid_to_kin(utility::io::ozstream & out, core::Real min_val, co
 	}
 }
     
+
+bool SingleGrid::is_in_grid(core::conformation::UltraLightResidue const & residue)
+{
+    for(core::Size atom_index = 1; atom_index <= residue.natoms();++atom_index)
+    {
+        core::Vector atom_coords = residue[atom_index];
+        if(!grid_.is_in_grid(atom_coords.x(), atom_coords.y(), atom_coords.z()))
+        {
+            return false;
+        }
+    }
+    return true;
+}
 
 bool SingleGrid::is_in_grid(core::conformation::Residue const & residue)
 {
