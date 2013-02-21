@@ -880,7 +880,7 @@ SymmetricScoreFunction::intersubunit_hbond_energy(
 				TR.Warning << "Warning: energy from unexpected HB type ignored " << hbond.eval_type() << std::endl;
 				break;
 		}
-		Size factor (0);
+		Real factor (0.0);
 
 		// get the score factor for this edge
 		factor = symm_info->score_multiply( hbond.don_res() , hbond.acc_res() );
@@ -1014,7 +1014,7 @@ SymmetricScoreFunction::correct_finalize_score( pose::Pose & pose ) const
 	SymmetricConformation & SymmConf (
 		dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
-	Size const factor ( symm_info->score_multiply_factor() - 1 );
+	Real const factor ( symm_info->score_multiply_factor() - 1 );
 
 	if ( ! pose.energies().use_nblist() ) {
 		/// apl mod -- hbonds now calculate bb/bb hbonds during residue_pair_energy_ext, so this is no longer necessary during minimization
