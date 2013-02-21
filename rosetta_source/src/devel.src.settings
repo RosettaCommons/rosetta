@@ -12,7 +12,7 @@
 sources = {
 	"devel": [
 		"init",
-                "init.release",
+                #"init.release",
 	],
 	"devel/cartesian_frags": [
 		"CartesianFragment",
