@@ -20,6 +20,16 @@
 namespace core {
 namespace chemical {
 
+enum BondName
+{
+	UnknownBond=0,
+	SingleBond=1,
+	DoubleBond=2,
+	TripleBond=3,
+	AromaticBond=4,
+	OrbitalBond=5
+};
+
 class Bond;
 
 //typedef  utility::pointer::owning_ptr< Bond >  BondOP;

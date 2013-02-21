@@ -40,14 +40,14 @@ namespace chemical {
 class Bond {
 
 public:
-	Bond(): distance_(0), bond_name_(0){}
-	Bond(Real d, int name): distance_(d), bond_name_(name){}
+	Bond(): distance_(0), bond_name_(BondName()){}
+	Bond(Real d, BondName name): distance_(d), bond_name_(name){}
 
 // Setters
 	void distance(Real distance){
 		distance_ = distance;
 	}
-	void bond_name(int bond_name){
+	void bond_name(BondName bond_name){
 		bond_name_ = bond_name;
 	}
 
@@ -55,7 +55,7 @@ public:
 	Real distance(){
 		return distance_;
 	}
-	int bond_name(){
+	BondName bond_name(){
 		return bond_name_;
 	}
 
@@ -67,7 +67,7 @@ public:
 private:
 
 	Real distance_;
-	int bond_name_; // this is an enum defined in ResidueType.fwd.hh
+	BondName bond_name_; // this is an enum defined in ResidueType.fwd.hh
 };
 
 

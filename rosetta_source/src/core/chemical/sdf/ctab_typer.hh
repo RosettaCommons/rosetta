@@ -20,6 +20,7 @@
 #include <map>
 #include <vector>
 #include <core/chemical/sdf/ctab_typer.fwd.hh>
+#include <core/chemical/Bond.fwd.hh>
 // AUTO-REMOVED #include <core/chemical/ResidueType.hh>
 #include <utility/vector1.hh>
 

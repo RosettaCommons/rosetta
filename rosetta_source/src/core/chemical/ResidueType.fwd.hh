@@ -48,16 +48,6 @@ typedef  utility::vector1< ResidueTypeCOP >  ResidueTypeCOPs;
 typedef utility::vector1< Size > AtomIndices;
 typedef utility::vector1<Size> OrbitalIndices;
 
-enum BondName
-{
-	UnknownBond=0,
-	SingleBond=1,
-	DoubleBond=2,
-	TripleBond=3,
-	AromaticBond=4,
-	OrbitalBond=5
-};
-
 } // chemical
 } // core
 
