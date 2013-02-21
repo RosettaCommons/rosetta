@@ -1,0 +1,4 @@
+-lh:loopsizes 15
+-in:file:s S_00001_0000001_0_0001.pdb 
+-in:file:native S_00001_0000001_0_0001.pdb
+
