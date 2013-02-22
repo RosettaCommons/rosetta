@@ -55,11 +55,22 @@ public:
 	virtual void apply( core::pose::Pose & input_pose );
 
 	virtual std::string get_name() const;
+	
+	///@brief Return the total score found from the last apply call
+	core::Real get_total_score() const;
+	core::Real get_max_rama() const;
+	core::Real get_max_omega() const;
+	core::Real get_max_pbond() const;
+	core::Real get_max_chainbreak() const;
 
+	///@brief Return the vector of chainbreak scores
+	utility::vector1<core::Real>
+	get_chainbreak_scores();
+	
 private:
 	///@brief places cutpoints in the loops, scores chainbreak, removes cutpoints
 	void calculate_all_chainbreaks( core::pose::Pose & pose );
-
+	
 	///@brief ctor helper: create scorefunction
 	void set_sf();
 
@@ -84,6 +95,12 @@ private:
 
 	///brief remember chainbreak scores
 	utility::vector1< core::Real > scores_;
+	
+	core::Real total_score_;
+	core::Real max_rama_;
+	core::Real max_chainbreak_;
+	core::Real max_omega_;
+	core::Real max_pbond_;
 
 }; //class LoopAnalyzerMover
 

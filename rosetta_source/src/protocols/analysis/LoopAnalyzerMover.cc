@@ -72,7 +72,16 @@ std::ostream & which_ostream( std::ostream & ost, std::ostream & oss, bool const
 //////////////////////////LoopAnalyzerMover////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 LoopAnalyzerMover::LoopAnalyzerMover( protocols::loops::Loops const & loops, bool const tracer ) :
-	Mover(), loops_(new protocols::loops::Loops(loops)), tracer_(tracer), sf_(NULL), chbreak_sf_(NULL)
+	Mover(),
+	loops_(new protocols::loops::Loops(loops)),
+	tracer_(tracer),
+	sf_(NULL),
+	chbreak_sf_(NULL),
+	total_score_(0),
+	max_rama_(-100000),
+	max_chainbreak_(-100000),
+	max_omega_(-100000),
+	max_pbond_(-100000)
 {
 	protocols::moves::Mover::type( "LoopAnalyzer" );
 	set_sf();
@@ -152,24 +161,32 @@ void LoopAnalyzerMover::apply( core::pose::Pose & input_pose )
 						<< std::setw(8) << std::setprecision(3) << emap[peptide_bond]
 						<< std::setw(9) << std::setprecision(3) << scores_[i]
 						<< std::setprecision(6) << std::endl;
+
 		total_rama += emap[rama];
+		max_rama_=std::max(max_rama_, emap[rama]);
+
 		total_omega += emap[omega];
+		max_omega_=std::max(max_omega_, emap[omega]);
+
 		total_peptide_bond += emap[peptide_bond];
+		max_pbond_=std::max(max_pbond_, emap[peptide_bond]);
+
 		total_chbreak += scores_[i];
+		max_chainbreak_=std::max(max_chainbreak_,scores_[i]);
 	}//for all loop positions
 
 	results << "total_rama " << total_rama << std::endl;
 	results << "total_omega " << total_omega << std::endl;
 	results << "total_peptide_bond " << total_peptide_bond << std::endl;
 	results << "total_chainbreak " << total_chbreak << std::endl;
-	core::Real const loop_total(total_rama + total_omega + total_peptide_bond + total_chbreak);
-	results << "total rama+omega+peptide bond+chainbreak " << loop_total << std::endl;
+	total_score_ = total_rama + total_omega + total_peptide_bond + total_chbreak;
+	results << "total rama+omega+peptide bond+chainbreak " << total_score_ << std::endl;
 
 
 	if(!tracer_){
 		protocols::jd2::JobDistributor::get_instance()->current_job()->add_string(results_oss.str());
 		//store the loop_total where jd2 silent file can get it
-		protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair("LAM_total", loop_total);
+		protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair("LAM_total", total_score_);
 	}
 
 	return;
@@ -178,6 +195,35 @@ void LoopAnalyzerMover::apply( core::pose::Pose & input_pose )
 std::string
 LoopAnalyzerMover::get_name() const {
 	return "LoopAnalyzerMover";
+}
+
+core::Real
+LoopAnalyzerMover::get_total_score() const{
+	return total_score_;
+}
+
+core::Real
+LoopAnalyzerMover::get_max_rama() const{
+	return max_rama_;
+}
+
+core::Real
+LoopAnalyzerMover::get_max_omega() const{
+	return max_omega_;
+}
+core::Real
+LoopAnalyzerMover::get_max_pbond() const{
+	return max_pbond_;
+}
+
+core::Real
+LoopAnalyzerMover::get_max_chainbreak() const{
+	return max_chainbreak_;
+}
+
+utility::vector1<core::Real>
+LoopAnalyzerMover::get_chainbreak_scores(){
+	return scores_;
 }
 
 void LoopAnalyzerMover::find_positions( core::pose::Pose const & pose ){
