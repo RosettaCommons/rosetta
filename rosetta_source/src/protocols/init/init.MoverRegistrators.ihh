@@ -127,8 +127,6 @@ static MoverRegistrator< loops::loop_mover::refine::RepackTrialCreator > reg_Rep
 static MoverRegistrator< loops::loop_mover::refine::ShearMinCCDTrialCreator > reg_ShearMinCCDTrial;
 static MoverRegistrator< loops::loop_mover::refine::SmallMinCCDTrialCreator > reg_SmallMinCCDTrial;
 
-static MoverRegistrator< loops::loop_closure::loophash::LoopHashLoopClosureMoverCreator > reg_LoopHashLoopClosureMoverCreator;
-
 static MoverRegistrator< match::MatcherMoverCreator > reg_MatcherMoverCreator;
 
 static MoverRegistrator< motifs::MotifDnaPackerCreator > reg_MotifDnaPackerCreator;

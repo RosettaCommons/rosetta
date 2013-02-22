@@ -4035,6 +4035,23 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 0.0</dd><br>
 </dl>
 <dl>
+<dt><b>-nmer_svm</b> \<String\><dt>
+<dd>nmer svm filename (libsvm)</dd><br>
+</dl>
+<dl>
+<dt><b>-nmer_svm_list</b> \<String\><dt>
+<dd>list of nmer svm filenames (libsvm)</dd><br>
+</dl>
+<dl>
+<dt><b>-nmer_svm_scorecut</b> \<Real\><dt>
+<dd>nmer svm scorecut gate for ignoring lowscore nmers</dd><br>
+<dd>Default: 0.0</dd><br>
+</dl>
+<dl>
+<dt><b>-nmer_svm_aa_matrix</b> \<String\><dt>
+<dd>nmer svm sequence encoding matrix filename</dd><br>
+</dl>
+<dl>
 <dt><b>-nmer_ref_seq_length</b> \<Integer\><dt>
 <dd>length of nmers in nmer_ref score</dd><br>
 <dd>Default: 9</dd><br>
@@ -6189,7 +6206,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-db_path</b> \<Path\><dt>
-<dd>Path to the directory containing the loophash database.  The database (file) name must be backbone.db.</dd><br>
+<dd>Path to database</dd><br>
 <dd>Default: ""</dd><br>
 </dl>
 <dl>
@@ -9023,18 +9040,6 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-refine_design_iterations</b> \<Integer\><dt>
 <dd>iterations of refine and design</dd><br>
 <dd>Default: 1</dd><br>
-</dl>
- </li>
-<li><h2>loops:loop_closure</h2>
-<dl>
-<dt><b>-loop_closure</b> \<Boolean\><dt>
-<dd>loop_closure option group</dd><br>
-</dl>
- </li>
-<li><h2>loops</h2>
-<dl>
-<dt><b>-loop_insertion</b> \<String\><dt>
-<dd>String of chain names with the size of loops in between when a loop to be inserted.  e.g. 'AB6CDE' to insert a loop between chain B and C.  Chain names are assumed to start with A and continue B, C, D, and so on.  Names in PDB are ignored.</dd><br>
 </dl>
  </li>
 <li><h2>assembly</h2>
