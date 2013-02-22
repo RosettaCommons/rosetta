@@ -49,8 +49,7 @@ public:
 	LoopCreationMover(
 		LoopInserterOP loop_inserter,
 		LoopCloserOP loop_closer,
-		core::Size num_iterations,
-		core::Size num_insertions,
+		core::Size attempts_per_anchor,
 		bool refine,
 		bool design_loops,
 		bool include_neighbors,
@@ -92,6 +91,13 @@ public:
 	
 	LoopCloserOP
 	loop_closer() const;
+
+	void
+	update_anchors(
+		utility::vector1<core::Size> & loop_anchors,
+		protocols::loops::Loop const & new_loop,
+		core::Size index_of_new_loop
+	);
 	
 //	LoopRefinerOP
 //	loop_refiner() const;
@@ -126,10 +132,9 @@ private:
 	//Loop filter
 	protocols::filters::FilterOP loop_filter_;
 
-	//If a particular iteration fails to produce a closed loop, how many times should we retry?
-	core::Size num_insertions_;
-	
-	core::Size closures_per_insertion_;
+	//If a particular insertion+closure step fails to produce a structure
+	//that passes the loop filter, how many times should we retry?
+	core::Size attempts_per_anchor_;
 	
 	//Should any refinement steps be done (master bool, without this, no packing/minimization at all)
 	bool refine_;
@@ -142,12 +147,16 @@ private:
 
 	//Should the loops be minimized before evaluation?
 	bool minimize_loops_;
+
+	//Filter using the loop analyzer mover
+	bool filter_by_lam_;
+	core::Real lam_score_cutoff_;
 	
 	//The most recently created loop
 	protocols::loops::Loop last_created_loop_;
 	
-	//To send to loop inserter
-	core::Size loop_anchor_;
+	//To close multiple loops. This overrides the loop anchor set by the loop inserter
+	utility::vector1<core::Size> loop_anchors_;
 
 	//DEBUG
 	bool dump_pdbs_;

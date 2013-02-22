@@ -71,11 +71,12 @@ CCDLoopCloser::CCDLoopCloser():
 	max_closure_attempts_(10),
 	prevent_nonloop_modifications_(true),
 	max_ccd_moves_per_closure_attempt_(10000),
+	tolerance_( 0.1 ),
 	max_rama_score_increase_( 2.0 ),
 	max_total_delta_helix_( 15 ),
 	max_total_delta_strand_( 15 ),
 	max_total_delta_loop_( 15 ),
-	tolerance_( 0.01 )
+	early_exit_cutoff_( 0.01 )
 {
 	init();
 }
@@ -85,20 +86,22 @@ CCDLoopCloser::CCDLoopCloser(
 	core::Size max_closure_attempts,
 	bool prevent_nonloop_modifications,
 	core::Size max_ccd_moves_per_closure_attempt,
+	core::Real tolerance,
 	core::Real max_rama_score_increase,
 	core::Real max_total_delta_helix,
 	core::Real max_total_delta_strand,
 	core::Real max_total_delta_loop,
-	core::Real tolerance
+	core::Real early_exit_cutoff
 ):
 	max_closure_attempts_(max_closure_attempts),
 	prevent_nonloop_modifications_(prevent_nonloop_modifications),
 	max_ccd_moves_per_closure_attempt_(max_ccd_moves_per_closure_attempt),
+	tolerance_(tolerance),
 	max_rama_score_increase_(max_rama_score_increase),
 	max_total_delta_helix_(max_total_delta_helix),
 	max_total_delta_strand_(max_total_delta_strand),
 	max_total_delta_loop_(max_total_delta_loop),
-	tolerance_(tolerance)
+	early_exit_cutoff_(early_exit_cutoff)
 {
 	init();
 }
@@ -165,7 +168,7 @@ CCDLoopCloser::apply(
 			loop().stop(),
 			loop().cut(),
 			max_ccd_moves_per_closure_attempt_,
-			tolerance_,
+			early_exit_cutoff_,
 			true/*rama_check*/,
 			max_rama_score_increase_,
 			max_total_delta_helix_,
@@ -187,7 +190,7 @@ CCDLoopCloser::apply(
 		
 			
 	
-		if(forward_deviation < 0.1 && backward_deviation < 0.1)
+		if(forward_deviation < tolerance_ && backward_deviation < tolerance_)
 		{
 			//Calculator for backbone clash detection
 			core::pose::metrics::PoseMetricCalculatorOP clash_calculator =
@@ -255,7 +258,10 @@ CCDLoopCloser::parse_my_tag(
 	
 	if(tag->hasOption("max_ccd_moves_per_closure_attempt"))
 		max_ccd_moves_per_closure_attempt_ = tag->getOption< Size >("max_ccd_moves_per_closure_attempt");
-		
+
+	if(tag->hasOption("tolerance"))
+		tolerance_ = tag->getOption< Real >("tolerance");
+
 	if(tag->hasOption("max_closure_attempts"))
 		max_closure_attempts_ = tag->getOption< Size >("max_closure_attempts");
 		
@@ -271,8 +277,8 @@ CCDLoopCloser::parse_my_tag(
 	if(tag->hasOption("max_total_delta_loop"))
 		max_total_delta_loop_ = tag->getOption< Real >("max_total_delta_loop");
 		
-	if(tag->hasOption("tolerance"))
-		tolerance_ = tag->getOption< Real >("tolerance");
+	if(tag->hasOption("early_exit_cutoff"))
+		early_exit_cutoff_ = tag->getOption< Real >("early_exit_cutoff");
 }
 
 } //loop creation

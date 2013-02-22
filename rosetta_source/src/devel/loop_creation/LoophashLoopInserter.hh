@@ -70,16 +70,6 @@ public:
 		core::Size max_fragment_size
 	);
 
-	std::pair<core::Size,core::Size>
-	find_random_fragment(
-		core::pose::Pose const & pose,
-		core::Size lh_fragment_begin,
-		core::Size lh_fragment_end
-//		core::Size min_fragment_size,
-//		core::Size max_fragment_size
-	);
-
-
 	///@brief get a random fragment length and fragment retrieval index from the given hash bucket.
 	std::pair<core::Size,core::Size>
 	get_random_fragment(

@@ -129,21 +129,20 @@ LoophashLoopInserter::init(
 
 	if(!lh_initialized_)
 	{
-//		if ( ResourceManager::get_instance()->has_resource("LoopHashLibrary") ) {
+		if ( ResourceManager::get_instance()->has_resource("LoopHashLibrary") ) {
 			TR << "Retrieving lh library from resource manager." << std::endl;
 			lh_library_ = get_resource<LoopHashLibrary>( "LoopHashLibrary" );
-//		}
-//		else{
-//			TR << "Initializing lh library" << std::endl;
-//			// initialize lhlibrary
-//			utility::vector1<core::Size> actual_lh_fragment_sizes(loop_sizes_.size());
-//			for(core::Size i=1; i<=loop_sizes_.size(); ++i)
-//			{
-//				actual_lh_fragment_sizes[i]=loop_sizes_[i]+(2*num_flanking_residues_to_match_);
-//			}
-//			lh_library_ = new LoopHashLibrary( actual_lh_fragment_sizes );
-//			lh_library_->load_mergeddb();
-//		}
+		}
+		else{
+			TR << "Initializing lh library from command line" << std::endl;
+			utility::vector1<core::Size> actual_lh_fragment_sizes(loop_sizes_.size());
+			for(core::Size i=1; i<=loop_sizes_.size(); ++i)
+			{
+				actual_lh_fragment_sizes[i]=loop_sizes_[i]+(2*num_flanking_residues_to_match_);
+			}
+			lh_library_ = new LoopHashLibrary( actual_lh_fragment_sizes );
+			lh_library_->load_mergeddb();
+		}
 		lh_initialized_=true;
 	}
 
@@ -189,13 +188,8 @@ LoophashLoopInserter::apply(
 		utility_exit_with_message(err.str());
 	}
 
-	
 	std::pair<core::Size, core::Size> random_fragment =
 		get_random_fragment(hash_buckets);
-
-//	turns out this doesn't speed things up very much
-//	std::pair<core::Size, core::Size> fast_random_fragment =
-//		find_random_fragment(pose, lh_fragment_begin, lh_fragment_end);
 
 	clock_t start_time = clock();
 	std::pair<core::Real,core::Real> deviations =
@@ -204,97 +198,6 @@ LoophashLoopInserter::apply(
 	TR.Debug << "Clocks - Build fragment in: " << build_time << std::endl;
 	
 	TR << "Deviations after initial loop insert: " << deviations.first << " " << deviations.second << std::endl;
-}
-
-///@brief return the first fragment we find that passes the filter
-std::pair<core::Size,core::Size>
-LoophashLoopInserter::find_random_fragment(
-	core::pose::Pose const & pose,
-	core::Size lh_fragment_begin,
-	core::Size lh_fragment_end
-//	core::Size min_fragment_size,
-//	core::Size max_fragment_size
-){
-	using namespace protocols::loophash;
-	clock_t start_time = clock();
-
-	core::pose::Pose centroid_pose = pose;
-	core::util::switch_to_residue_type_set( centroid_pose, core::chemical::CENTROID);
-	
-	//Collect backbone segments from the specified number of residues before and after the loop
-	//to be built
-	BackboneSegment pose_bs_1;
-	BackboneSegment pose_bs_2;
-	pose_bs_1.read_from_pose( centroid_pose, lh_fragment_begin, num_flanking_residues_to_match_-1 );
-	pose_bs_2.read_from_pose( centroid_pose, loop_anchor()+1, num_flanking_residues_to_match_-1 );
-	
-	numeric::geometry::hashing::Real6 loop_transform;
-	TR << "Getting transform from residues " << lh_fragment_begin << " and " << lh_fragment_end+1 << std::endl;
-	if(!get_rt_over_leap_without_foldtree_bs( centroid_pose, lh_fragment_begin, lh_fragment_end+1, loop_transform )){
-		utility_exit_with_message("Unable to find rigid body transform over jump");
-	}
-//	TR << "Max lh fragment size: " << max_fragment_size << std::endl;
-
-	std::vector<core::Size> hash_sizes = lh_library_->hash_sizes();
-	numeric::random::random_permutation(hash_sizes, RG);
-
-	for( core::Size i = 0; i < lh_library_->hash_sizes().size(); i++ )
-	{
-		core::Size loop_size = lh_library_->hash_sizes()[ i ];
-//		if(loop_size > max_fragment_size){ continue; }
-//		if(loop_size < min_fragment_size){ continue; }
-
-		LoopHashMap &hashmap = lh_library_->gethash( loop_size );
-		
-		std::vector<core::Size> leap_index_bucket;
-		hashmap.radial_lookup( max_lh_radius_, loop_transform, leap_index_bucket);
-		
-		TR.Debug << "radius, loop_size, lookup_size = " << max_lh_radius_ << ", " <<
-			loop_size << "," << leap_index_bucket.size() << std::endl;
-
-		numeric::random::random_permutation(leap_index_bucket, RG);
-
-		for(  std::vector<core::Size>::const_iterator it = leap_index_bucket.begin();
-			it != leap_index_bucket.end();
-			++it )
-		{
-			// Get the actual strucure index (not just the bin index)
-			core::Size retrieve_index = (core::Size) (*it);
-			LeapIndex cp = hashmap.get_peptide( retrieve_index );
-			
-			// Retrieve the backbone structure for the pre and post-loop segments
-			BackboneSegment new_bs_1;
-			BackboneSegment new_bs_2;
-			
-			//offset is angle-based, not residue based, hence the x3
-			core::Size bs_2_offset = cp.offset+(((loop_size-num_flanking_residues_to_match_)+1)*3);
-			
-			//subtract 1 from num_flanking_residues_to_match_ because the last residue will have undefined torsions
-			lh_library_->backbone_database().get_backbone_segment( cp.index, cp.offset,
-				num_flanking_residues_to_match_-1 , new_bs_1 );
-			lh_library_->backbone_database().get_backbone_segment( cp.index, bs_2_offset,
-				num_flanking_residues_to_match_-1, new_bs_2 );
-			
-			// Check the values against against any RMS limitations
-			core::Real bb_rms_1 = get_rmsd( pose_bs_1, new_bs_1 );
-			core::Real bb_rms_2 = get_rmsd( pose_bs_2, new_bs_2 );
-
-			if( (bb_rms_1 > min_torsion_rms_) && (bb_rms_1 < max_torsion_rms_ ) &&
-				(bb_rms_2 > min_torsion_rms_) && (bb_rms_2 < max_torsion_rms_ ) )
-			{
-				clock_t end_time = clock() - start_time;
-				TR << "Clocks - Found single fragment in time " << end_time << std::endl;
-				return std::make_pair(loop_size, *it);
-			}
-		}
-	}
-
-	std::stringstream err;
-	err << "No low-rsmd loops for transform from " << lh_fragment_begin << " to " << lh_fragment_end << std::endl;
-	utility_exit_with_message(err.str());
-
-	//no warnings
-	return std::make_pair(0,0);
 }
 
 ///@brief get a random fragment length and fragment retrieval index from the given hash bucket.
@@ -354,12 +257,18 @@ LoophashLoopInserter::find_fragments(
 	core::util::switch_to_residue_type_set( centroid_pose, core::chemical::CENTROID);
 	
 	//Collect backbone segments from the specified number of residues before and after the loop
-	//to be built
+	//to be built. Don't use the last residue before and after the jump because it will have an undefined
+	//psi (n-terminal pre-jump residue) or phi (c-terminal post-jump residue)
 	BackboneSegment pose_bs_1;
-	BackboneSegment pose_bs_2;
 	pose_bs_1.read_from_pose( centroid_pose, lh_fragment_begin, num_flanking_residues_to_match_-1 );
-	pose_bs_2.read_from_pose( centroid_pose, loop_anchor()+1, num_flanking_residues_to_match_-1 );
-	
+	TR << "Attemping to find fragments matching " << num_flanking_residues_to_match_-1
+		<< " pre-jump residues, starting at " << lh_fragment_begin << std::endl;
+
+	BackboneSegment pose_bs_2;
+	pose_bs_2.read_from_pose( centroid_pose, loop_anchor()+2, num_flanking_residues_to_match_-1 );
+	TR << "Attemping to find fragments matching " << num_flanking_residues_to_match_-1
+		<< " pre-jump residues, starting at " << loop_anchor()+2 << std::endl;
+
 	numeric::geometry::hashing::Real6 loop_transform;
 	TR << "Getting transform from residues " << lh_fragment_begin << " and " << lh_fragment_end+1 << std::endl;
 	if(!get_rt_over_leap_without_foldtree_bs( centroid_pose, lh_fragment_begin, lh_fragment_end+1, loop_transform )){
@@ -490,10 +399,9 @@ LoophashLoopInserter::build_loop(
 		++lh_fragment_end;
 	}
 
-	//Prevent Size wrap around (I hate sizes)
+	//Prevent Size wrap around
 	core::Size prepend_seqpos = loop_anchor()+loop_size-c_term_append_size+1;
-	if(loop_size-c_term_append_size > 0)
-	{
+	if(loop_size-c_term_append_size > 0){
 		for(core::Size i=loop_size-1; i>=loop_size-c_term_append_size; --i){
 			
 			char aa_char = sequence[seq_offset+i];

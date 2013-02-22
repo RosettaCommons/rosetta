@@ -34,6 +34,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
+#include <core/scoring/rms_util.hh>
 
 //Protocols
 #include <protocols/loops/Loop.hh>
@@ -60,6 +61,7 @@
 #include <devel/loop_creation/KICLoopCloser.hh>
 
 //Utility
+#include <utility/excn/Exceptions.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 #include <utility/vector0.hh>
@@ -106,13 +108,13 @@ LoopCreationMover::LoopCreationMover():
 	loop_inserter_(NULL),
 	loop_closer_(NULL),
 	loop_filter_(NULL),
-	num_insertions_(5),
-	closures_per_insertion_(10),
+	attempts_per_anchor_(1),
 	refine_(true),
 	design_loops_(false),
 	include_neighbors_(false),
 	minimize_loops_(true),
-	loop_anchor_(0),
+	filter_by_lam_(false),
+	lam_score_cutoff_(0),
 	dump_pdbs_(false)
 {
 	init();
@@ -122,8 +124,7 @@ LoopCreationMover::LoopCreationMover():
 LoopCreationMover::LoopCreationMover(
 	LoopInserterOP loop_inserter,
 	LoopCloserOP loop_closer,
-	core::Size num_insertions,
-	core::Size closures_per_insertion,
+	core::Size attempts_per_anchor,
 	bool refine,
 	bool design_loops,
 	bool include_neighbors,
@@ -132,12 +133,13 @@ LoopCreationMover::LoopCreationMover(
 	Mover("LoopCreationMover"),
 	loop_inserter_(loop_inserter),
 	loop_closer_(loop_closer),
-	num_insertions_(num_insertions),
-	closures_per_insertion_(closures_per_insertion),
+	attempts_per_anchor_(attempts_per_anchor),
 	refine_(refine),
 	design_loops_(design_loops),
 	include_neighbors_(include_neighbors),
-	minimize_loops_(minimize_loops)
+	minimize_loops_(minimize_loops),
+	filter_by_lam_(false),
+	dump_pdbs_(false)
 {
 	init();
 }
@@ -168,12 +170,6 @@ LoopCreationMover::get_last_created_loop() const
 	return last_created_loop_;
 }
 
-//Handy structure for passing around data accrued during loop creation
-struct loop_creation_data{
-	core::pose::Pose pose;
-	protocols::loops::Loop loop;
-};
-	
 //Attempt to build residues to connect residues anchor point to anchor point+1.
 //Do this num_iterations time and score each one that passes the loop filter.
 //Set the best scoring to the current pose.
@@ -203,57 +199,64 @@ LoopCreationMover::apply(
 	protocols::jd2::JobOP const job_me ( protocols::jd2::JobDistributor::get_instance()->current_job() );
 	std::string const job_name ( protocols::jd2::JobDistributor::get_instance()->job_outputter()->output_name(job_me) );
 
-	//If a loop anchor was set, pass it off to the inserter
-	if(loop_anchor_)
+	//If not loop anchors were given, get the single anchor from the loop inserter
+	if(loop_anchors_.size()==0)
 	{
-		loop_inserter_->loop_anchor(loop_anchor_);
+		//loop_inserter_->loop_anchor(loop_anchor_);
+		loop_anchors_.push_back(loop_inserter_->loop_anchor());
 	}
 	
-	bool loop_closed = false;
-	bool loop_passed = false;
 	protocols::loops::Loop created_loop;
 	
-	vector1<pair<Real, loop_creation_data> > loop_scores;
 	pose::Pose edit_pose;
-	for(Size j=1; j<=num_insertions_; ++j)
+	for(core::Size i=1; i<=loop_anchors_.size(); ++i)
 	{
-		edit_pose = pose;
-		
-		//Insert new loop residues
-		TR.Debug << "Atempting insertion " << j << " of " << num_insertions_ << std::endl;
-		clock_t start_time = clock();
-		loop_inserter_->apply(edit_pose);
-		clock_t insert_time = clock();
-		TR.Debug << "Clocks - loop inserter run " << j << " of " << num_insertions_
-			<< " - total time: " << insert_time - start_time << std::endl;
-		
-		created_loop = loop_inserter_->get_created_loop();
-		TR.Debug << "New loop: " << created_loop << endl;
+		bool loop_closed = false;
+		bool loop_passed = false;
+		pose::remove_upper_terminus_type_from_pose_residue(pose, loop_anchors_[i]);
+		pose::remove_lower_terminus_type_from_pose_residue(pose, loop_anchors_[i]+1);
 
-		//Save the inserted-only pose for input into loop closure
-		pose::Pose inserted_pose = edit_pose;
-
-		//DEBUG
-		if(dump_pdbs_){
-			std::stringstream filename;
-			filename << job_name << "_insertion_" << j << ".pdb";
-			inserted_pose.dump_pdb(filename.str());
-		}
-		//END DEBUG
-
-		for(Size k=1; k<=closures_per_insertion_; ++k)
+		loop_inserter_->loop_anchor(loop_anchors_[i]);
+		for(Size j=1; j<=attempts_per_anchor_; ++j)
 		{
-			edit_pose = inserted_pose;
+			//already succeeded for this anchor
+			if(loop_passed) break;
+
+			//copy pose to get a working copy
+			edit_pose = pose;
 			
+			//Insert new loop residues
+			TR << "Beginning loop creation attempt " << j << " of " << attempts_per_anchor_
+				<< ", for loop anchor " << i << " of " << loop_anchors_.size() << std::endl;
+
+			clock_t start_time = clock();
+			loop_inserter_->apply(edit_pose);
+			clock_t insert_time = clock() - start_time;
+			TR << "Clocks - loop inserter run " << j << " of " << attempts_per_anchor_
+				<< " - total time: " << insert_time << std::endl;
+
+			created_loop = loop_inserter_->get_created_loop();
+			TR.Debug << "New loop: " << created_loop << endl;
+
+			//DEBUG
+			if(dump_pdbs_){
+				std::stringstream filename;
+				filename << job_name << "_insertion_" << j << ".pdb";
+				edit_pose.dump_pdb(filename.str());
+			}
+			//END DEBUG
+
 			start_time = clock();
 			loop_closer_->loop(created_loop);
 			loop_closer_->apply(edit_pose);
-			clock_t closure_time = clock();
-			TR.Debug << "Clocks - loop closer run " << k << " of " << closures_per_insertion_
-				<< " - total time: " << closure_time - start_time << std::endl;
+			clock_t closure_time = clock() - start_time;
+			TR << "Clocks - loop closer run " << j << " of " << attempts_per_anchor_
+				<< " - total time: " << closure_time << std::endl;
+
 			if(loop_closer_->success())
 			{
-				TR.Debug << "Loop insertion " << j << ", closer iteration " << k << " succeeded" << std::endl;
+				loop_closed=true;
+				TR.Debug << "Loop insertion/closure " << j << " succeeded" << std::endl;
 
 				//ensure that a chemical bond exists now that we've closed the loop
 				edit_pose.conformation().declare_chemical_bond(created_loop.cut(), "C", created_loop.cut()+1,"N");
@@ -270,74 +273,110 @@ LoopCreationMover::apply(
 				//DEBUG
 				if(dump_pdbs_){
 					std::stringstream filename;
-					filename << job_name << "_insertion_" << j << "_closure_" << k << ".pdb";
+					filename << job_name << "_closure_" << j << ".pdb";
 					edit_pose.dump_pdb(filename.str());
 				}
 				//END DEBUG
 
-				loop_closed=true;
-				Real score=0.0;
 				if(refine_){
 					start_time = clock();
-					score = refine_loop(edit_pose, created_loop);
-					clock_t refine_time = clock();
-					TR.Debug << "Clocks - loop refinement completed in total time: " << refine_time - start_time << std::endl;
+					refine_loop(edit_pose, created_loop);
+					clock_t refine_time = clock()-start_time;
+					TR.Debug << "Clocks - loop refinement completed in total time: " << refine_time << std::endl;
 
 					//DEBUG
 					if(dump_pdbs_){
 						std::stringstream filename;
-						filename << job_name << "_insertion_" << j << "_closure_" << k << "_refined.pdb";
+						filename << job_name << "_creation_" << j << "_refined.pdb";
 						edit_pose.dump_pdb(filename.str());
 					}
 					//END DEBUG
 				}
 
-				loop_creation_data lcd;
-				lcd.pose = edit_pose;
-				lcd.loop = created_loop;
 				if(loop_filter_->apply(edit_pose))
 				{
-					loop_passed=true;
-					loop_scores.push_back(make_pair(score, lcd));
-			
-					TR.Debug << "Loop closure iteration " << k << ", of insertion " << j
-						<< ", completed succesfully with score: " << score << std::endl;
+
+					TR << "Running LoopAnalyzerMover for job: " << job_name
+						<< ", loop: " << created_loop << std::endl;
+
+					protocols::loops::Loops loops;
+					//loops.add_loop(last_created_loop_);
+					loops.add_loop(protocols::loops::Loop(loop_inserter_->modified_range().first, loop_inserter_->modified_range().second));
+					protocols::analysis::LoopAnalyzerMoverOP lam = new protocols::analysis::LoopAnalyzerMover(loops, true);
+					lam->apply(edit_pose);
+
+					core::Real total_loop_score = lam->get_total_score();
+					core::Real max_rama = lam->get_max_rama();
+					core::Real max_omega = lam->get_max_omega();
+					core::Real max_pbond = lam->get_max_pbond();
+					core::Real max_chainbreak = lam->get_max_chainbreak();
+
+					TR << "Total loop analyzer score: " << total_loop_score << std::endl;
+					TR << "LAM score cutoff: " << lam_score_cutoff_ << std::endl;
+					TR << "Max rama: " << max_rama << std::endl;
+					TR << "Max omega: " << max_omega << std::endl;
+					TR << "Max peptide bond: " << max_pbond << std::endl;
+					TR << "Max chainbreak: " << max_chainbreak << std::endl;
+
+					//Use the LoopAnalyzerMover to filter loops
+					if(filter_by_lam_){
+						if(total_loop_score <= lam_score_cutoff_){
+							loop_passed=true;
+							pose=edit_pose;
+							last_created_loop_=created_loop;
+							job_me->add_string_real_pair("total_loop_score", total_loop_score);
+							job_me->add_string_real_pair("max_loop_rama", max_rama);
+							job_me->add_string_real_pair("max_loop_omega", max_omega);
+							job_me->add_string_real_pair("max_loop_pbond", max_pbond);
+							job_me->add_string_real_pair("max_loop_chainbreak", max_chainbreak);
+						}
+					}
+					else{
+						//done with this anchor!
+						loop_passed=true;
+						pose=edit_pose;
+						last_created_loop_=created_loop;
+					}
 				}
 			}
 		}
-	}
-	if(!loop_closed)
+		if(!loop_closed)
+		{
+			stringstream err;
+			TR << "Unable to create a closed loop between residues "
+				<< loop_inserter_->loop_anchor() << " and " << loop_inserter_->loop_anchor()+1
+				<< ", consider longer loop lengths or a different LoopInserter and/or LoopCloser." << endl;
+//			set_last_move_status(protocols::moves::FAIL_RETRY);
+//			return;
+			utility_exit_with_message(err.str());
+		}
+		if(!loop_passed)
+		{
+			stringstream err;
+			TR << "No closed loops between residues "
+				<< loop_inserter_->loop_anchor() << " and " << loop_inserter_->loop_anchor()+1
+				<< " passed filters. Try relaxing filters." << endl;
+			utility_exit_with_message(err.str());
+//			set_last_move_status(protocols::moves::FAIL_RETRY);
+//			return;
+		}
+		
+		update_anchors(loop_anchors_, last_created_loop_, i);
+	}//loop anchors
+}
+
+///@brief update the loops to reflect
+///the position changes after an insertion
+void
+LoopCreationMover::update_anchors(
+	utility::vector1<core::Size> & loop_anchors,
+	protocols::loops::Loop const & new_loop,
+	core::Size index_of_new_loop
+){
+	for(core::Size i=index_of_new_loop+1; i<=loop_anchors.size(); ++i)
 	{
-		stringstream err;
-		TR << "Unable to create and close a loop between residues "
-			<< loop_inserter_->loop_anchor() << " and " << loop_inserter_->loop_anchor()+1
-			<< ", consider longer loop lengths or a different LoopInserter and/or LoopCloser." << endl;
-		utility_exit_with_message(err.str());
-//		set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
-//		return;
+		loop_anchors_[i]+=new_loop.size();
 	}
-	if(!loop_passed)
-	{
-		stringstream err;
-		TR << "No closed loops between residues "
-			<< loop_inserter_->loop_anchor() << " and " << loop_inserter_->loop_anchor()+1
-			<< " passed filters. Try relaxing filters." << endl;
-		utility_exit_with_message(err.str());
-//		set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
-//		return;
-	}
-	
-	sort(loop_scores.begin(), loop_scores.end(), utility::SortFirst<Real, loop_creation_data>());
-	loop_creation_data const & best_lcd = loop_scores[1].second;
-	TR << "Best loop from has a score of: " << loop_scores[1].first << std::endl;
-	
-	last_created_loop_=best_lcd.loop;
-	pose=best_lcd.pose;
-	
-	protocols::loops::Loops loops;
-	loops.add_loop(last_created_loop_);
-	protocols::analysis::LoopAnalyzerMoverOP la = new protocols::analysis::LoopAnalyzerMover(loops, true);
-	la->apply(pose);
 }
 
 void
@@ -347,73 +386,69 @@ LoopCreationMover::copy_last_loop_to_new_anchor(
 ){
 	using namespace core;
 	using namespace core::chemical;
-	
-	TR.Debug << "removing termini types" << std::endl;
+
+	TR.Debug << "Loop to copy: " << last_created_loop_ << std::endl;
 	pose::remove_upper_terminus_type_from_pose_residue(pose, new_anchor);
 	pose::remove_lower_terminus_type_from_pose_residue(pose, new_anchor+1);
 
 	core::Size old_anchor = loop_inserter_->loop_anchor();
-	core::Size old_cut = last_created_loop_.cut();
-	
-	TR.Debug << "Loop to copy: " << last_created_loop_ << std::endl;
-	
+
 	core::Size modifications_begin = loop_inserter_->modified_range().first;
 	core::Size mod_begin_offset = old_anchor-modifications_begin;
 	core::Size new_modifications_begin=new_anchor-mod_begin_offset;
-	
+
 	core::Size modifications_end = loop_inserter_->modified_range().second;
 	core::Size mod_end_offset = old_anchor-modifications_end;
 	core::Size new_modifications_end=new_anchor-mod_end_offset;
 	new_modifications_end-=last_created_loop_.size();
+
 	TR.Debug << "Old modifications range: " << modifications_begin << " " << modifications_end << std::endl;
+	TR.Debug << "New modification range " << new_modifications_begin << " " << new_modifications_end << std::endl;
+
+	core::Size modified_size = modifications_end-modifications_begin+1;
+	core::Size loop_size = last_created_loop_.size();
+	core::Size flanking_size = (modified_size-loop_size)/2;
+	TR.Debug << "Size of modified region " << modified_size << std::endl;
+	TR.Debug << "Size of loop region " << loop_size << std::endl;
+	TR.Debug << "Size of flanking region " << flanking_size << std::endl;
+	runtime_assert((flanking_size*2)+loop_size == modified_size);
+
+	core::pose::Pose loop_pose(pose, modifications_begin-1, modifications_end);
+
+	core::id::AtomID_Map< core::id::AtomID > atom_map;
+	atom_map.clear();
+	core::pose::initialize_atomid_map( atom_map, loop_pose, core::id::BOGUS_ATOM_ID );
+
+	core::id::AtomID const id1( pose.residue(new_modifications_begin-1).atom_index("CA"), new_modifications_begin-1);
+	core::id::AtomID const id2( loop_pose.residue(1).atom_index("CA"), 1);
+	atom_map[ id2 ] = id1;
 	
-	TR.Debug << "new mod begin " << new_modifications_begin << std::endl;
-	TR.Debug << "new mod end " << new_modifications_end << std::endl;
+	core::id::AtomID const id3( pose.residue(new_modifications_begin-1).atom_index("C"), new_modifications_begin-1);
+	core::id::AtomID const id4( loop_pose.residue(1).atom_index("C"), 1);
+	atom_map[ id4 ] = id3;
 	
-//	core::Size new_loop_start_offset = old_anchor-last_created_loop_.start();
-//	core::Size new_loop_start=new_anchor-new_loop_start_offset;
-//	TR.Debug << "new loop start " << new_loop_start << std::endl;
-	
-	protocols::loops::Loop extended_loop(new_modifications_begin, new_modifications_end, new_anchor);
-	protocols::loops::set_single_loop_fold_tree(pose, extended_loop);
-	
-	//copy the loop residues
-	core::Size anchor_pos = new_anchor;
-	for(core::Size i=last_created_loop_.start(); i<=last_created_loop_.cut(); ++i)
-	{
-		TR.Debug << "Append old resnum " << i << "(" << oneletter_code_from_aa(pose.aa(i))
-			<< ") to new anchor " << anchor_pos << "(" <<oneletter_code_from_aa(pose.aa(anchor_pos)) << ")" << std::endl;
-		pose.append_polymer_residue_after_seqpos(pose.residue(i), anchor_pos, true);
-		++anchor_pos;
-		TR.Debug << "Fold tree after attach: " << pose.fold_tree() << std::endl;
+	core::id::AtomID const id5( pose.residue(new_modifications_begin-1).atom_index("N"), new_modifications_begin-1);
+	core::id::AtomID const id6( loop_pose.residue(1).atom_index("N"), 1);
+	atom_map[ id6 ] = id5;
+
+	core::id::AtomID const id7( pose.residue(new_modifications_begin-1).atom_index("O"), new_modifications_begin-1);
+	core::id::AtomID const id8( loop_pose.residue(1).atom_index("O"), 1);
+	atom_map[ id8 ] = id7;
+
+	core::scoring::superimpose_pose(loop_pose, pose/*const*/, atom_map);
+	//loop_pose.dump_pdb("loop_pose_aligned.pdb");
+
+	for(core::Size i=0; i<modified_size; ++i){
+		if(i >= flanking_size && i < flanking_size+loop_size){
+			TR.Debug << "appending loop residue " << i+2 << " to residue " << new_modifications_begin+i-1 << std::endl;
+			pose.append_polymer_residue_after_seqpos(loop_pose.residue(i+2), new_modifications_begin+i-1, false);
+		}
+		else{
+			TR.Debug << "replacing residue " << new_modifications_begin+i << " with loop_pose residue " << i+2 << std::endl;
+			pose.replace_residue(new_modifications_begin+i, loop_pose.residue(i+2), false);
+		}
 	}
-	
-	++anchor_pos;
-	for(core::Size i=last_created_loop_.stop(); i>=last_created_loop_.cut()+1; --i)
-	{
-		TR.Debug << "Prepending old resnum " << i << "(" << oneletter_code_from_aa(pose.aa(i))
-			<< ") to new anchor " << anchor_pos << "(" <<oneletter_code_from_aa(pose.aa(anchor_pos)) << ")" << std::endl;
-		pose.prepend_polymer_residue_before_seqpos(pose.residue(i), anchor_pos, true);
-		TR.Debug << "Fold tree after prepend: " << pose.fold_tree() << std::endl;
-	}
-	
-	for(core::Size resnum=modifications_begin; resnum<=old_cut; ++resnum)
-	{
-		core::Size offset = old_anchor-resnum;
-		TR.Debug << "Copying torsions from " << resnum << " to " << new_anchor-offset << std::endl;
-		pose.set_phi( new_anchor-offset, pose.phi(resnum) );
-		pose.set_psi( new_anchor-offset, pose.psi(resnum) );
-		pose.set_omega( new_anchor-offset, pose.omega(resnum) );
-	}
-	for(core::Size resnum=modifications_end; resnum>=old_cut+1; --resnum)
-	{
-		core::Size offset = old_anchor-resnum;
-		TR.Debug << "Copying torsions from " << resnum << " to " << new_anchor-offset << std::endl;
-		pose.set_phi( new_anchor-offset, pose.phi(resnum) );
-		pose.set_psi( new_anchor-offset, pose.psi(resnum) );
-		pose.set_omega( new_anchor-offset, pose.omega(resnum) );
-	}
-//	pose.conformation().declare_chemical_bond(created_loop.cut(), "C", created_loop.cut()+1,"N");
+	//pose.dump_pdb("cloned_loop.pdb");
 }
 
 core::Real
@@ -495,15 +530,11 @@ LoopCreationMover::refine_loop(
 		protocols::loops::set_single_loop_fold_tree(pose, extended_loop);
 		
 		kinematics::MoveMapOP movemap = new kinematics::MoveMap;
-		for(core::Size i=loop.start(); i<=loop.stop(); ++i)
+		for(core::Size i=extended_loop.start(); i<=extended_loop.stop(); ++i)
 		{
 			movemap->set_bb(i, true);
 			movemap->set_chi(i, true);
 		}
-
-//		movemap->set_bb(true);
-//		movemap->set_chi(true);
-			
 		TR.Debug << "Movemap for minimization: " << *movemap << std::endl;
 			
 		protocols::simple_moves::MinMoverOP min_mover =
@@ -585,14 +616,10 @@ LoopCreationMover::parse_my_tag(
 		refine_ = tag->getOption<bool>("refine");
 	}
 	
-	if(tag->hasOption("num_insertions")){
-		num_insertions_ = tag->getOption< core::Size >("num_insertions");
+	if(tag->hasOption("attempts_per_anchor")){
+		attempts_per_anchor_ = tag->getOption< core::Size >("attempts_per_anchor");
 	}
-	
-	if(tag->hasOption("closures_per_insertion")){
-		closures_per_insertion_ = tag->getOption< core::Size >("closures_per_insertion");
-	}
-	
+
 	if(tag->hasOption("minimize_loops")){
 		minimize_loops_ = tag->getOption<bool>("minimize_loops");
 	}
@@ -605,9 +632,21 @@ LoopCreationMover::parse_my_tag(
 		include_neighbors_ = tag->getOption<bool>("include_neighbors");
 	}
 	
-	//Useful for setting loop anchor from loop creation mover
-	if(tag->hasOption("loop_anchor")){
-		loop_anchor_ = tag->getOption< core::Size >("loop_anchor");
+	if(tag->hasOption("loop_anchors"))
+	{
+		string const loop_anchors_string = tag->getOption<string>("loop_anchors");
+		utility::vector1<string> loop_anchor_strings=utility::string_split(loop_anchors_string, ',');
+		for(core::Size i=1; i<=loop_anchor_strings.size(); ++i)
+		{
+			loop_anchors_.push_back(utility::string2int(loop_anchor_strings[i]));
+		}
+	}
+
+	if(tag->hasOption("filter_by_lam")){
+		filter_by_lam_ = tag->getOption<bool>("filter_by_lam");
+	}
+	if(tag->hasOption("lam_score_cutoff")){
+		lam_score_cutoff_ = tag->getOption<core::Real>("lam_score_cutoff");
 	}
 }
 

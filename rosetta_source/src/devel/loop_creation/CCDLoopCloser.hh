@@ -39,11 +39,12 @@ public:
 		core::Size max_closure_attempts,
 		bool prevent_nonloop_modifications,
 		core::Size max_ccd_moves_per_closure_attempt,
+		core::Real tolerance,
 		core::Real max_rama_score_increase,
 		core::Real max_total_delta_helix,
 		core::Real max_total_delta_strand,
 		core::Real max_total_delta_loop,
-		core::Real tolerance
+		core::Real early_exit_cutoff
 	);
 	
 	protocols::moves::MoverOP
@@ -83,17 +84,19 @@ private:
 	
 	//Should we set up a fold tree that prevents modification outside the loop region?
 	bool prevent_nonloop_modifications_;
-	
+
 	//Number of CCD moves per call to CCD closure
 	core::Size max_ccd_moves_per_closure_attempt_;
-	
-	
+
+	//The threshold for whether or not we consider this loop closed
+	core::Real tolerance_;
+
 	//Inputs to ccd
 	core::Real max_rama_score_increase_;
 	core::Real max_total_delta_helix_;
 	core::Real max_total_delta_strand_;
 	core::Real max_total_delta_loop_;
-	core::Real tolerance_;
+	core::Real early_exit_cutoff_;
 };
 
 } //loop creation
