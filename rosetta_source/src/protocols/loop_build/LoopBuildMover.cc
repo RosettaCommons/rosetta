@@ -153,7 +153,8 @@ void LoopBuildMover::apply(core::pose::Pose & pose){
 
 			// if closure failed don't output
 			if ( remodel == "perturb_kic" ) {
-				if ( loop_relax_mover_.get_last_move_status() != protocols::moves::MS_SUCCESS ) {
+				set_last_move_status( loop_relax_mover_.get_last_move_status() );
+				if ( get_last_move_status() != protocols::moves::MS_SUCCESS ) {
 					TR << "Initial kinematic closure failed. Not outputting."
 							<< std::endl;
 					return;
