@@ -9,7 +9,7 @@
 -in
  -file
   -fullatom
-  -s ../../tests/inverse_rotamer_remodel/inputs/remtest_in.pdb
+  -s remtest_in.pdb
 #
 # Since the important output is the feature database,
 # ignore the job distributor output.
