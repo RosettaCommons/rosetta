@@ -108,6 +108,10 @@ namespace score { extern StringOptionKey const nmer_ref_energies_list; }
 namespace score { extern StringOptionKey const nmer_pssm; }
 namespace score { extern StringOptionKey const nmer_pssm_list; }
 namespace score { extern RealOptionKey const nmer_pssm_scorecut; }
+namespace score { extern StringOptionKey const nmer_svm; }
+namespace score { extern StringOptionKey const nmer_svm_list; }
+namespace score { extern RealOptionKey const nmer_svm_scorecut; }
+namespace score { extern StringOptionKey const nmer_svm_aa_matrix; }
 namespace score { extern IntegerOptionKey const nmer_ref_seq_length; }
 
 } // namespace OptionKeys

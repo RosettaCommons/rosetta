@@ -1,4 +1,3 @@
-namespace resample { BooleanOptionKey const stage1( "resample:stage1" );  }
 namespace resample { BooleanOptionKey const stage2( "resample:stage2" );  }
 namespace resample { BooleanOptionKey const jumps( "resample:jumps" );  }
 namespace resample { RealVectorOptionKey const min_max_start_seq_sep( "resample:min_max_start_seq_sep" );  }
@@ -170,6 +169,10 @@ namespace score { StringOptionKey const nmer_ref_energies_list( "score:nmer_ref_
 namespace score { StringOptionKey const nmer_pssm( "score:nmer_pssm" );  }
 namespace score { StringOptionKey const nmer_pssm_list( "score:nmer_pssm_list" );  }
 namespace score { RealOptionKey const nmer_pssm_scorecut( "score:nmer_pssm_scorecut" );  }
+namespace score { StringOptionKey const nmer_svm( "score:nmer_svm" );  }
+namespace score { StringOptionKey const nmer_svm_list( "score:nmer_svm_list" );  }
+namespace score { RealOptionKey const nmer_svm_scorecut( "score:nmer_svm_scorecut" );  }
+namespace score { StringOptionKey const nmer_svm_aa_matrix( "score:nmer_svm_aa_matrix" );  }
 namespace score { IntegerOptionKey const nmer_ref_seq_length( "score:nmer_ref_seq_length" );  }
 namespace corrections { BooleanOptionKey const corrections( "corrections" );  }
 namespace corrections { BooleanOptionKey const correct( "corrections:correct" );  }
@@ -663,5 +666,3 @@ namespace rbe { RealOptionKey const poll_frequency( "rbe:poll_frequency" );  }
 namespace blivens { BooleanOptionKey const blivens( "blivens" );  }
 namespace blivens { namespace disulfide_scorer { BooleanOptionKey const disulfide_scorer( "blivens:disulfide_scorer" );  } }
 namespace blivens { namespace disulfide_scorer { RealOptionKey const nds_prob( "blivens:disulfide_scorer:nds_prob" );  } }
-namespace blivens { namespace disulfide_scorer { RealOptionKey const cys_prob( "blivens:disulfide_scorer:cys_prob" );  } }
-namespace blivens { StringOptionKey const score_type( "blivens:score_type" );  }
