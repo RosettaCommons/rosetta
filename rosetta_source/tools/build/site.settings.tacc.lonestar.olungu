@@ -1,0 +1,39 @@
+# -*- mode:python;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+#
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+# To use this file, symlink tools/build/site.settings to this file (or copy this file to that location)
+
+# Settings here are added to the combined build settings, after all basic
+# settings, to allow you to override anything you need to.  They can in turn
+# be overriden by user settings and project settings respectively.
+#
+# Typically you want to prepend to one of the settings listed to expand your
+# paths, but you can also append, override, or remove settings.
+
+# JJG 2/18/2013:
+# These are settings for the lonestar cluster at lonestar.tacc.utexas.edu.
+# These settings are for compiling with gcc in ~/local/bin/mpiCC -- as found in olungu's directory
+# be sure to have the following set up in PATH:
+### export PATH=$HOME/bin:$HOME/local/bin:/usr/local/ncbi/blast/bin:/usr/bin:$PATH
+
+import os
+settings = {
+    "site" : {
+        "prepends" : {
+            "program_path" : os.environ["PATH"].split(":"),
+            #"include_path" : os.environ["INCLUDE"].split(":"),
+            "library_path" : os.environ["LD_LIBRARY_PATH"].split(":"),
+        },
+        "appends" : {
+        },
+        "overrides" : {
+        },
+        "removes" : {
+        },
+    },
+}
