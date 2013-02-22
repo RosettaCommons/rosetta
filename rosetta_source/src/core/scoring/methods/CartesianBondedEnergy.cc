@@ -1482,7 +1482,7 @@ CartesianBondedEnergy::setup_for_scoring(
 		PeptideBondedEnergyContainerOP dec( static_cast< PeptideBondedEnergyContainer * > ( lrc.get() ) );
 		Size nres = pose.total_residue();
 		if( core::pose::symmetry::is_symmetric(pose) )
-			nres = core::pose::symmetry::symmetry_info(pose)->last_independent_residue();
+			nres = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
 		if ( dec->size() != nres ) {
 			create_new_lre_container = true;
 		}
@@ -1491,15 +1491,18 @@ CartesianBondedEnergy::setup_for_scoring(
 	if ( create_new_lre_container ) {
 		Size nres = pose.total_residue(), offset=0;
 		if( core::pose::symmetry::is_symmetric(pose) ) {
-			nres = core::pose::symmetry::symmetry_info(pose)->last_independent_residue();
+			core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
+			nres = symm_info->num_independent_residues();
+			for (; offset<symm_info->num_total_residues_without_pseudo() && !symm_info->bb_is_independent(offset+1);
+			     ++offset);
 		}
-		TR << "Creating new peptide-bonded energy container (" << nres << ")" << std::endl;
+		TR << "Creating new peptide-bonded energy container (" << nres << "+" << offset << ")" << std::endl;
 		utility::vector1< ScoreType > s_types;
 		s_types.push_back( cart_bonded );
 		s_types.push_back( cart_bonded_angle );
 		s_types.push_back( cart_bonded_length );
 		s_types.push_back( cart_bonded_torsion );
-		LREnergyContainerOP new_dec = new PeptideBondedEnergyContainer( nres, s_types );
+		LREnergyContainerOP new_dec = new PeptideBondedEnergyContainer( nres, s_types, offset );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 }
@@ -1585,8 +1588,7 @@ CartesianBondedEnergy::eval_residue_pair_derivatives(
 
 	// cterm special case
 	Size nres = pose.total_residue();
-	if( core::pose::symmetry::is_symmetric(pose) )
-		nres = core::pose::symmetry::symmetry_info(pose)->last_independent_residue();
+	if( core::pose::symmetry::is_symmetric(pose) ) nres = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
 	if (rsd2.seqpos() == nres) {
 		eval_singleres_derivatives(rsd2, res2params, phi2, psi2, weights, r2_atom_derivs );
 	}
@@ -1935,8 +1937,7 @@ CartesianBondedEnergy::residue_pair_energy_sorted(
 	// last residue won't ever be rsd1, so we need to explicitly call eval_singleres for rsd2 if rsd2 is the
 	// last residue
 	Size nres = pose.total_residue();
-	if( core::pose::symmetry::is_symmetric(pose) )
-		nres = core::pose::symmetry::symmetry_info(pose)->last_independent_residue();
+	if( core::pose::symmetry::is_symmetric(pose) ) nres = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
 	if (rsd2.seqpos() == nres && rsd2.aa() != core::chemical::aa_vrt) {
 		// get one body component for the last residue
 		eval_singleres_energy(rsd2, rsd2params, phi2, psi2, pose, emap );
