@@ -1,5 +1,5 @@
--protein input/1T4E.pdb
--ligand input/DIZ_0001.fa.pdb
+-input_protein_file input/1T4E.pdb
+-input_ligand_file input/DIZ_0001.fa.pdb
 -extra_res_fa input/DIZ.fa.params
 -central_relax_pdb_num 61
 -num_particles 10

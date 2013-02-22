@@ -64,7 +64,6 @@ namespace pockets {
 
     FingerprintBase();
     virtual ~FingerprintBase();
-
     void print_to_file(std::string const & output_filename) const;
     //void print_to_file(std::string const & output_filename, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset) const;
 
