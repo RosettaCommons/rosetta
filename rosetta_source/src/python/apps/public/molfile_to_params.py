@@ -184,6 +184,18 @@ def check_aromaticity(bonds): #{{{
         print "  alternating single/double bonds (Kekule structure) won't cut it."
         print "  This warning does not apply to you if your molecule really isn't aromatic."
 #}}}
+def check_hydrogens(atoms): #{{{
+    '''Safety check for from PDB structures.
+    If you convert an X-ray structure of a ligand to a mol file, chances are it won't have hydrogens added.
+    This will probably mess up the parameters.'''
+    for a in atoms:
+        if "H" == a.elem:
+            return   # At least one hydrogen - we're probably fine.
+    print "WARNING:  structure does not contain any hydrogens"
+    print "  Hydrogens aren't automatically added. --"
+    print "  Check your PDB -> mol conversion program for hydrogen-addition options."
+    print "  This warning does not apply to you if your molecule shouldn't contain any hydrogens."
+#}}}
 def assign_rosetta_types(atoms): #{{{
     '''Assigns Rosetta atom types.
     Based on Rosetta++ ligand_ns.cc set_rosetta_atom_types().
@@ -1369,6 +1381,7 @@ and for visualizing exactly what was done to the ligand.
     for atom in m.atoms: atom.name = pdb_pad_atom_name(atom) # for output convenience
     check_bond_count(m.atoms)
     check_aromaticity(m.bonds)
+    check_hydrogens(m.atoms)
     assign_rosetta_types(m.atoms)
     assign_mm_types(m.atoms,options.mm_as_virt)
     assign_centroid_types(m.atoms)
