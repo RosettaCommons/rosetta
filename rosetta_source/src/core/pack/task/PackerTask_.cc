@@ -1397,6 +1397,14 @@ PackerTask_::update_commutative(
 	n_to_be_packed_up_to_date_ = false; /// <-- signal that n_to_be_packed will need to be updated
 
 	linmem_ig_ |= o.linmem_ig_;
+	if ( linmem_ig_history_size_at_default_ ) {
+		linmem_ig_history_size_at_default_ = o.linmem_ig_history_size_at_default_;
+		linmem_ig_history_size_ = o.linmem_ig_history_size_;
+	} else {
+		if ( linmem_ig_history_size_ > o.linmem_ig_history_size_ ) {
+			linmem_ig_history_size_ = o.linmem_ig_history_size_;
+		}
+	}
 	lazy_ig_ |= o.lazy_ig_;
 
 	double_lazy_ig_ |= o.double_lazy_ig_;
@@ -1469,6 +1477,8 @@ PackerTask_::PackerTask_(
 	n_to_be_packed_( nres_ ),
 	n_to_be_packed_up_to_date_( true ),
 	linmem_ig_( false ),
+	linmem_ig_history_size_at_default_( true ),
+	linmem_ig_history_size_( 10 ),
 	lazy_ig_( false ),
 	double_lazy_ig_( false ),
 	dlig_mem_limit_( 0 ),
@@ -1497,6 +1507,8 @@ PackerTask_::PackerTask_(
 	n_to_be_packed_( nres_ ),
 	n_to_be_packed_up_to_date_( true ),
 	linmem_ig_( false ),
+	linmem_ig_history_size_at_default_( true ),
+	linmem_ig_history_size_( 10 ),
 	lazy_ig_( false ),
 	double_lazy_ig_( false ),
 	dlig_mem_limit_( 0 ),
@@ -1730,6 +1742,22 @@ bool PackerTask_::linmem_ig() const
 	return linmem_ig_;
 }
 
+void PackerTask_::decrease_linmem_ig_history_size( Size setting )
+{
+	if ( linmem_ig_history_size_at_default_ ) {
+		linmem_ig_history_size_at_default_ = false;
+		linmem_ig_history_size_ = setting;
+	} else {
+		if ( setting < linmem_ig_history_size_ ) {
+			linmem_ig_history_size_ = setting;
+		}
+	}
+}
+
+Size PackerTask_::linmem_ig_history_size() const {
+	return linmem_ig_history_size_;
+}
+
 void PackerTask_::or_lazy_ig( bool setting )
 {
 	lazy_ig_ |= setting;
@@ -1891,6 +1919,7 @@ PackerTask_::initialize_from_command_line()
 
 	if ( option[ packing::linmem_ig ].user() && ! optimize_H_ ) {
 		or_linmem_ig( true );
+		decrease_linmem_ig_history_size( option[ packing::linmem_ig ] );
 	}
 	if ( option[ packing::lazy_ig ] && ! optimize_H_ ) {
 		or_lazy_ig( true );

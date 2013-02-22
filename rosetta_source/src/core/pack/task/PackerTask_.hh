@@ -647,6 +647,14 @@ public:
 	///@brief returns the linear-memory interaction graph flag
 	virtual bool linmem_ig() const;
 
+	///@brief Set the linear memory interaction graph's recent history size.  Default is 10.  It can be set
+	/// once to any value larger than 10, but any subsequent setting will only alter the size if it decreases
+	/// it.
+  virtual void decrease_linmem_ig_history_size( Size setting );
+
+	/// @brief Return the linear memory interaction graph's recent history size.
+  virtual Size linmem_ig_history_size() const;
+
 	/// @brief  if setting == true, turns on lazy interaction graph usage
 	/// NOTE: the linear memory interaction graph takes precedence over the LazyIG when
 	/// the InteractionGraphFactory examines the PackerTask.
@@ -934,6 +942,8 @@ private:
 
 	///@details linmem_ig overrides PDInteractionGraph
 	bool linmem_ig_;
+	bool linmem_ig_history_size_at_default_;
+	Size linmem_ig_history_size_;
 	///@details linmem_ig overrides LazyIG
 	bool lazy_ig_;
 

@@ -72,6 +72,7 @@ InteractionGraphFactory::create_interaction_graph(
 			SymmLinearMemoryInteractionGraphOP symlinmemig = new SymmLinearMemoryInteractionGraph( the_task.num_to_be_packed() );
 			symlinmemig->set_pose( pose );
 			symlinmemig->set_score_function( sfxn );
+			symlinmemig->set_recent_history_size( the_task.linmem_ig_history_size() );
 			return symlinmemig;
 		}
 
@@ -83,6 +84,7 @@ InteractionGraphFactory::create_interaction_graph(
 			lmsolig->set_score_function( sfxn );
 			lmsolig->set_rotamer_sets( rotsets );
 			lmsolig->set_surface_score_weight( surface_weight );
+			lmsolig->set_recent_history_size( the_task.linmem_ig_history_size() );
 			return lmsolig;
 		}
 
@@ -94,6 +96,7 @@ InteractionGraphFactory::create_interaction_graph(
 			lmhig->set_score_function( sfxn );
 			lmhig->set_rotamer_sets( rotsets );
 			lmhig->set_score_weight( hpatch_weight );
+			lmhig->set_recent_history_size( the_task.linmem_ig_history_size() );
 			return lmhig;
 		}
 
@@ -101,6 +104,7 @@ InteractionGraphFactory::create_interaction_graph(
 		LinearMemoryInteractionGraphOP lmig = new LinearMemoryInteractionGraph( the_task.num_to_be_packed() );
 		lmig->set_pose( pose );
 		lmig->set_score_function( sfxn );
+		lmig->set_recent_history_size( the_task.linmem_ig_history_size() );
 		return lmig;
 
 	} else if ( the_task.design_any() ) {

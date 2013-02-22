@@ -1233,6 +1233,7 @@ LinearMemoryInteractionGraph::LinearMemoryInteractionGraph(
 	total_energy_current_state_assignment_( 0.0 ),
 	total_energy_alternate_state_assignment_( 0.0 ),
 	node_considering_alt_state_( 0 ),
+	recent_history_size_( 10 ),
 	have_not_committed_last_substitution_( false )
 {
 }
@@ -1412,6 +1413,16 @@ LinearMemoryInteractionGraph::prepare_for_simulated_annealing()
 
 }
 
+void
+LinearMemoryInteractionGraph::set_recent_history_size( Size recent_history_size ) {
+	recent_history_size_ = recent_history_size;
+}
+
+Size
+LinearMemoryInteractionGraph::get_recent_history_size() const {
+	return recent_history_size_;
+}
+
 /*
 bool
 LinearMemoryInteractionGraph::build_sc_only_rotamer() const
@@ -1470,10 +1481,8 @@ LinearMemoryInteractionGraph::update_internal_energy_totals()
 void
 LinearMemoryInteractionGraph::set_recent_history_sizes()
 {
-	static int const LinMemIG_history_size( 10 ); //get_cmdline_history_size() -- put into packer task...
-
 	for (int ii = 1; ii <= get_num_nodes(); ++ii) {
-		get_linmem_node( ii )->set_recent_history_size( LinMemIG_history_size );
+		get_linmem_node( ii )->set_recent_history_size( recent_history_size_ );
 	}
 }
 

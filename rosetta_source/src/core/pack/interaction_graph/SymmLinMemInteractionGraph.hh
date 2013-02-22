@@ -323,6 +323,9 @@ public:
 	virtual core::PackerEnergy get_energy_sum_for_vertex_group( int group_id );
 	virtual void prepare_for_simulated_annealing();
 
+	void set_recent_history_size( Size recent_history_size );
+	Size get_recent_history_size() const;
+
 	//bool build_sc_only_rotamer() const;
 
 	virtual unsigned int count_static_memory() const;
@@ -358,6 +361,7 @@ private:
 	core::PackerEnergy total_energy_current_state_assignment_;
 	core::PackerEnergy total_energy_alternate_state_assignment_;
 	int node_considering_alt_state_;
+	int recent_history_size_;
 
 	bool have_not_committed_last_substitution_;
 

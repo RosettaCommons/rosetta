@@ -1082,6 +1082,7 @@ SymmLinearMemoryInteractionGraph::SymmLinearMemoryInteractionGraph(
 	total_energy_current_state_assignment_( 0.0 ),
 	total_energy_alternate_state_assignment_( 0.0 ),
 	node_considering_alt_state_( 0 ),
+	recent_history_size_( 10 ),
 	have_not_committed_last_substitution_( false )
 {
 }
@@ -1254,6 +1255,16 @@ SymmLinearMemoryInteractionGraph::prepare_for_simulated_annealing()
 
 }
 
+void
+SymmLinearMemoryInteractionGraph::set_recent_history_size( Size recent_history_size ) {
+	recent_history_size_ = recent_history_size;
+}
+
+Size
+SymmLinearMemoryInteractionGraph::get_recent_history_size() const {
+	return recent_history_size_;
+}
+
 unsigned int
 SymmLinearMemoryInteractionGraph::count_static_memory() const
 {
@@ -1304,10 +1315,8 @@ SymmLinearMemoryInteractionGraph::update_internal_energy_totals()
 void
 SymmLinearMemoryInteractionGraph::set_recent_history_sizes()
 {
-	static int const symmlinmemIG_history_size( 10 ); //get_cmdline_history_size() -- put into packer task...
-
 	for (int ii = 1; ii <= get_num_nodes(); ++ii ) {
-		get_symmlinmem_node( ii )->set_recent_history_size( symmlinmemIG_history_size );
+		get_symmlinmem_node( ii )->set_recent_history_size( recent_history_size_ );
 	}
 }
 
