@@ -29,7 +29,11 @@
 /// @author Gordon Lemmon (glemmon@gmail.com)
 
 #include <boost/graph/undirected_graph.hpp>
+#include <boost/graph/property_iter_range.hpp>
+#include <boost/graph/filtered_graph.hpp>
+//#include <boost/graph/graph_utility.hpp> // The print_graph function here is lame so I write my own
 #include <iostream>
+#include <utility/vector1.hh>
 
 struct Atom{
 	int i;
@@ -62,7 +66,9 @@ typedef boost::undirected_graph<
 		/*,ResidueType*/
 > Graph;
 
-typedef std::pair<Graph::edge_descriptor, bool> EdgeBoolPair;
+typedef Graph::vertex_descriptor VD;
+typedef Graph::edge_descriptor ED;
+typedef std::pair<ED, bool> EdgeBoolPair;
 typedef boost::graph_traits<Graph>::vertex_iterator VIter;
 typedef boost::graph_traits<Graph>::edge_iterator EIter;
 typedef std::pair<VIter, VIter> VIterPair;
@@ -72,22 +78,40 @@ typedef boost::graph_traits<Graph>::in_edge_iterator InEdgeIter;
 typedef std::pair<OutEdgeIter, OutEdgeIter> OutEdgeIterPair;
 typedef std::pair<InEdgeIter, InEdgeIter> InEdgeIterPair;
 
+// This is used as a predicate to make a filtered graph
+class AtomNumFilter{
+public:
+	AtomNumFilter(){}
+	AtomNumFilter(Graph& graph):graph_(&graph){}
+	bool operator()(VD const vd) const{
+		return (*graph_)[vd].i < 3;
+	};
+private:
+	Graph * graph_; // Cannot use a reference because 0-arg constructor needed by boost::iterators
+};
 
-void print_graph(Graph const & g){
+/// A better print function that works with any graph type
+template< typename graph_t >
+void print_graph(graph_t const & g){
+	typedef typename graph_t::vertex_descriptor vd_t;
+	typedef typename boost::graph_traits<graph_t>::vertex_iterator v_iter_t;
+
 	std::cout << "Iterate over all vertices" << std::endl;
-	for( VIterPair vp = boost::vertices(g); vp.first != vp.second; ++vp.first){
-		VIter v_iter= vp.first;
-		Graph::vertex_descriptor vd = *v_iter;
-		assert(vd);
+	for( std::pair<v_iter_t, v_iter_t> vp = boost::vertices(g); vp.first != vp.second; ++vp.first){
+		v_iter_t v_iter= vp.first;
+		vd_t vd = *v_iter;
 		Atom a = g[vd];
 		std::cout << vd << " " << a << std::endl;
 	}
 
 	std::cout << std::endl;
+
+	typedef typename graph_t::edge_descriptor ed_t;
+	typedef typename boost::graph_traits<graph_t>::edge_iterator e_iter_t;
 	std::cout << "Iterate over all edges" << std::endl;
-	for( EIterPair ep = boost::edges(g); ep.first != ep.second; ++ep.first){
-		EIter e_iter = ep.first;
-		Graph::edge_descriptor ed = *e_iter;
+	for( std::pair<e_iter_t, e_iter_t> ep = boost::edges(g); ep.first != ep.second; ++ep.first){
+		e_iter_t e_iter = ep.first;
+		ed_t ed = *e_iter;
 		assert( boost::source(ed, g) ); // source returns a vertex_descriptor
 		assert( boost::target(ed, g) ); // target returns a vertex_descriptor
 		Bond b = g[ed];
@@ -203,10 +227,56 @@ int main()
 		Bond b = g[ed];
 		std::cout << ed << " " << b << std::endl;
 	}
+	std::cout << std::endl;
+
+	std::cout << "Iterate over an atom property with property_map & graph access" << std::endl;
+	typedef boost::property_map<Graph, int Atom::*>::type AtomIntMap; // This works
+	AtomIntMap atom_int_map = boost::get(&Atom::i, g);
+	for( VIterPair vp = boost::vertices(g); vp.first != vp.second; ++vp.first){
+		VIter v_iter= vp.first;
+		VD vd = *v_iter;
+		int atom_int = atom_int_map[vd];
+		std::cout << vd << " " << atom_int << std::endl;
+	}
+	std::cout << std::endl;
+
+	///Figure out how to iterate over a map without a graph
+	std::cout << "Iterate over a vector of atom properties made from a property map (Doesn't work this way)" << std::endl;
+	std::vector<int> atom_ints(boost::num_vertices(g));
+	boost::make_property_map_iterator(atom_int_map, atom_ints.begin()); // This doesn't do anything!
+	for(
+			std::vector<int>::iterator begin = atom_ints.begin(), end = atom_ints.end();
+			begin != end;
+			++begin
+	){
+		std::cout << "Int: " << *begin << std::endl;
+	}
+	std::cout << std::endl;
+
+	std::cout << "Create a filtered graph" << std::endl;
+	typedef boost::filtered_graph<Graph, boost::keep_all, AtomNumFilter> AtomNumGraph;
+	AtomNumFilter atom_num_filter(g);
+	AtomNumGraph filtered_graph(g, boost::keep_all(), atom_num_filter); // holds a reference to g so it always returns what you need.
+	print_graph(filtered_graph);
 
 	/// Removing graph vertices MUST be preceeded by first removing their edges with clear_vertex
 	/// Otherwise serious problems may occur
+	std::cout << "Delete a vertex and print the removed vertex, demonstrating it still exists!" << std::endl;
 	g.clear_vertex(v1);
 	g.remove_vertex(v1);
 	std::cout << g[v1] << std::endl;
+	print_graph(g);
+	std::cout << std::endl;
+
+	std::cout << "The filtered graph stays up to date!" << std::endl;
+	print_graph(filtered_graph);
+	std::cout << std::endl;
+
+	std::cout << "Restore the deleted vertex and edge!" << std::endl;
+	g.add_vertex(g[v1]);
+	g.add_edge(v1, v2, Bond());
+	print_graph(g);
+	std::cout << "The filtered_graph stays up to date!" << std::endl;
+	print_graph(filtered_graph);
+
 }

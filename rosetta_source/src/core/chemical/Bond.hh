@@ -40,8 +40,9 @@ namespace chemical {
 class Bond {
 
 public:
-	Bond(): distance_(0), bond_name_(BondName()){}
-	Bond(Real d, BondName name): distance_(d), bond_name_(name){}
+
+	Bond(): distance_(0), bond_name_(BondName()), cut_bond_(false){}
+	Bond(Real d, BondName name, bool cut_bond = false): distance_(d), bond_name_(name), cut_bond_(cut_bond){}
 
 // Setters
 	void distance(Real distance){
@@ -50,6 +51,9 @@ public:
 	void bond_name(BondName bond_name){
 		bond_name_ = bond_name;
 	}
+	void cut_bond(bool cut_bond){
+		cut_bond_ = cut_bond;
+	}
 
 // Setters
 	Real distance(){
@@ -57,6 +61,9 @@ public:
 	}
 	BondName bond_name(){
 		return bond_name_;
+	}
+	bool cut_bond(){
+		return cut_bond_;
 	}
 
 	void print( std::ostream & out ) const;
@@ -68,6 +75,7 @@ private:
 
 	Real distance_;
 	BondName bond_name_; // this is an enum defined in ResidueType.fwd.hh
+	bool cut_bond_;
 };
 
 

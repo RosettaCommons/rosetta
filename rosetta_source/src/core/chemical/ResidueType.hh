@@ -51,19 +51,17 @@
 #ifndef INCLUDED_core_chemical_ResidueType_hh
 #define INCLUDED_core_chemical_ResidueType_hh
 
-//#include <boost/graph/adjacency_list.hpp> // Use this one instead of undirected graph to switch from storage of nodes and edges from list to a container of your choice.
-#include <boost/graph/undirected_graph.hpp>
+//#include <boost/graph/undirected_graph.hpp>
 
 // Unit headers
 #include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/ResidueGraphTypes.hh>
 // Package headers
-#include <core/chemical/Atom.hh>
 #include <core/chemical/AtomICoor.hh>
 #include <core/chemical/AtomType.fwd.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/Adduct.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
-#include <core/chemical/Bond.hh>
 #include <core/chemical/ElementSet.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/MMAtomType.fwd.hh>
@@ -74,15 +72,7 @@
 #include <core/chemical/rna/RNA_ResidueType.hh>
 // only compiles with the .hh below; anyone know why I can't use the .fwd.hh here? ~Labonte
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
 
-// Project headers
-//#include <core/chemical/CSDAtomTypeSet.hh>
-// Commented by inclean daemon #include <core/types.hh>
-///#include <core/pack/dunbrack/RotamerLibrary.fwd.hh>
-//XRW_B_T1
-//#include <core/coarse/Translator.fwd.hh>
-//XRW_E_T1
 
 
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
@@ -95,7 +85,6 @@
 #include <numeric/xyzVector.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/keys/Key2Tuple.hh>
 #include <utility/keys/Key4Tuple.hh>
@@ -159,28 +148,11 @@ Questions:
 
 **/
 
+// This is used as a predicate to make a filtered graph
 
 class ResidueType : public utility::pointer::ReferenceCount {
 
 public:
-
-	typedef boost::undirected_graph<
-			Atom, // struct with properties of a node
-			Bond // struct with properties of an edge
-			/*,ResidueType*/
-	> ResidueGraph;
-
-	typedef ResidueGraph::vertex_descriptor VD;
-	typedef utility::vector1< VD > VDs;
-
-	typedef boost::graph_traits<ResidueGraph>::vertex_iterator VIter;
-	typedef boost::graph_traits<ResidueGraph>::edge_iterator EIter;
-	typedef std::pair<VIter, VIter> VIterPair;
-
-	typedef std::map< std::string, VD > NameVDMap;
-	typedef std::pair<std::string, VD> NameVDPair;
-	typedef std::pair<NameVDMap::iterator, bool> NameVDInserted;
-
 
 	/// @brief destructor
 	virtual
@@ -341,22 +313,12 @@ public:
 
 	///@brief indicates how many heavyatom bonded neighbors an atom has
 	Size
-	number_bonded_heavyatoms( Size const atomno ) const
-	{
-		return bonded_neighbor_[ atomno ].size () - number_bonded_hydrogens( atomno );
-	}
+	number_bonded_heavyatoms( Size const atomno ) const;
 
-	/// @brief indices of the bonded neighbors for an atom
 	AtomIndices const &
-	bonded_neighbor( Size const atomno ) const
-	{
-		return bonded_neighbor_[ atomno ];
-	}
+	bonded_neighbor( Size const atomno ) const;
 
-	utility::vector1<BondName> const & bonded_neighbor_types(Size const atomno) const
-	{
-		return bonded_neighbor_type_[atomno];
-	}
+	utility::vector1<BondName> const & bonded_neighbor_types(Size const atomno) const;
 
 	/// @brief indices of the bonded neighbors for an atom
 	AtomIndices const &
@@ -369,7 +331,8 @@ public:
 	AtomIndices const &
 	nbrs( Size const atomno ) const
 	{
-		return bonded_neighbor_[ atomno ];
+		//return bonded_neighbor_[ atomno ];
+		return bonded_neighbor(atomno);
 	}
 
 	/// @brief indices of the atoms which are used to define a given chi angle (chino)

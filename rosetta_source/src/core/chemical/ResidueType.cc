@@ -531,6 +531,60 @@ ResidueType::abase2( Size const atomno ) const
 	return abase2_[ atomno ];
 }
 
+Size
+ResidueType::number_bonded_heavyatoms( Size const atomno ) const
+{
+	return bonded_neighbor_[ atomno ].size () - number_bonded_hydrogens( atomno );
+	/// Graph style
+	Size count = 0;
+	VD vd = ordered_atoms_[atomno];
+	for(OutEdgeIterPair ep = boost::out_edges(vd, graph_); ep.first != ep.second; ++ep.first){
+		OutEdgeIter e_iter= ep.first;
+		ED ed = *e_iter;
+		VD target = boost::target(ed, graph_);
+		AtomType const& at = (*atom_types_)[graph_[target].atom_type_index()];
+		if( at.is_heavyatom() ) ++count;
+	}
+	return count;
+}
+
+/// @brief indices of the bonded neighbors for an atom
+AtomIndices const &
+ResidueType::bonded_neighbor( Size const atomno ) const
+{
+	return bonded_neighbor_[ atomno ];
+	/// Graph style
+	VD vd = ordered_atoms_[atomno];
+	AtomIndices atoms;
+	for(OutEdgeIterPair ep = boost::out_edges(vd, graph_); ep.first != ep.second; ++ep.first){
+		OutEdgeIter e_iter= ep.first;
+		ED ed = *e_iter;
+		VD target = boost::target(ed, graph_);
+		for(Size i=1; i <= ordered_atoms_.size(); ++i){
+			if( ordered_atoms_[i] == target ) atoms.push_back( i );
+		}
+	}
+
+	assert(bonded_neighbor_[atomno] == atoms);
+	return bonded_neighbor_[ atomno ];
+}
+
+utility::vector1<BondName> const &
+ResidueType::bonded_neighbor_types(Size const atomno) const
+{
+	return bonded_neighbor_type_[atomno];
+	/// Graph style
+	utility::vector1<BondName> bond_names;
+	VD vd = ordered_atoms_[atomno];
+	for(OutEdgeIterPair ep = boost::out_edges(vd, graph_); ep.first != ep.second; ++ep.first){
+		OutEdgeIter e_iter= ep.first;
+		ResidueGraph::edge_descriptor ed = *e_iter;
+		Bond b = graph_[ed];
+		bond_names.push_back( b.bond_name() );
+	}
+	return bond_names;
+}
+
 
 /// @note this does not set xyz coordinates for the added atom
 void

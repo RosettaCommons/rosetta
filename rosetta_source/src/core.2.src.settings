@@ -37,6 +37,7 @@ sources = {
 		"ResidueLoaderOptions",
 		"ResidueSelector",
 		"ResidueSupport",
+		"ResidueGraphTypes",
 		"ResidueType",
 		"ResidueTypeSet",
 		"util",
