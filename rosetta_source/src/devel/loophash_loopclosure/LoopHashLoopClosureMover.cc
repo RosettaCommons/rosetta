@@ -174,10 +174,28 @@ void LoopHashLoopClosureMover::parse_my_tag(	utility::tag::TagPtr const tag,
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	// Instruction string: e.g.  A6BC6D for closing between A-B and C-D with 6 aa's.
-  // Currently, fixed loop length is supported.
-  std::string loop_insert_instruction = tag->getOption<std::string>("loop_insert");
-	std::string bpname = make_blueprint(pose, loop_insert_instruction);
+
+  // This mover has two modes of specifing loops: 1) by loop_insert string, 2) by blueprint file
+	if( tag->hasOption("loop_insert") && tag->hasOption("blueprint") ) {
+		TR.Error << "\"loop_insert\" and \"blueprint\" options are mutually exclusive." << std::endl;
+		exit(1);
+	}
+  std::string bpname;
+	if( tag->hasOption("loop_insert") ) {
+		// Instruction string: e.g.  A6BC6D for closing between A-B and C-D with 6 aa's.
+  	// Currently, fixed loop length is supported.
+  	std::string loop_insert_instruction = tag->getOption<std::string>("loop_insert");
+		bpname = make_blueprint(pose, loop_insert_instruction);
+		TR << "Use loop_insert string (and generate " << bpname << " blueprint file" << std::endl;
+	}
+	else if( tag->hasOption("blueprint") ) {
+		bpname = tag->getOption<std::string>("blueprint");
+		TR << "Use blueprint file: " << bpname << std::endl;
+	}
+	if( bpname == "" ) {
+		TR.Error << "You must specify either \"loop_insert\" string or blueprint!" << std::endl;
+		exit(1);
+	}
 	option[ OptionKeys::remodel::blueprint ]( bpname );
 
 	bool is_quick_and_dirty = tag->getOption<bool>("quick_and_dirty", true);
@@ -185,6 +203,9 @@ void LoopHashLoopClosureMover::parse_my_tag(	utility::tag::TagPtr const tag,
 
 	// Use hashloop always because this mover is all about it.
 	option[ remodel::RemodelLoopMover::use_loop_hash ]( true );
+
+	// Use sidechains from input
+	option[ packing::use_input_sc ]( true );
 
 	Size num_trajectory = tag->getOption<Size>("num_trajectory", 1);
 	option[ remodel::num_trajectory ]( num_trajectory );

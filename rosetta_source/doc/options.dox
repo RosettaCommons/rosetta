@@ -9047,11 +9047,13 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-loop_closure</b> \<Boolean\><dt>
 <dd>loop_closure option group</dd><br>
 </dl>
- </li>
-<li><h2>loops</h2>
 <dl>
 <dt><b>-loop_insert</b> \<String\><dt>
-<dd>List of chain names with loop sizes in between where loops are inserted.  e.g. A5B6CDE to insert a loop of size 5 in between A and B, and a loop of 6 between B and C.</dd><br>
+<dd>List of chain names with loop sizes in between where loops are inserted.  e.g. A5B6CDE to insert a loop of size 5 in between A and B, and a loop of 6 between B and C.  This optio value is overrided by blueprint if both are provided.</dd><br>
+</dl>
+<dl>
+<dt><b>-blueprint</b> \<String\><dt>
+<dd>path to a blueprint file specifying loops.  loop_insert is ignored if this specified. </dd><br>
 </dl>
  </li>
 <li><h2>assembly</h2>

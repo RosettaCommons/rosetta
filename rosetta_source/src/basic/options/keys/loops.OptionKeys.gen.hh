@@ -145,7 +145,8 @@ namespace loops { extern BooleanOptionKey const allow_lig_move; }
 namespace loops { extern FileOptionKey const keep_natro; }
 namespace loops { extern IntegerOptionKey const refine_design_iterations; }
 namespace loops { namespace loop_closure { extern BooleanOptionKey const loop_closure; } }
-namespace loops { extern StringOptionKey const loop_insert; }
+namespace loops { namespace loop_closure { extern StringOptionKey const loop_insert; } }
+namespace loops { namespace loop_closure { extern StringOptionKey const blueprint; } }
 
 } // namespace OptionKeys
 } // namespace options
