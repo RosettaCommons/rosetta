@@ -167,9 +167,9 @@ LoopHashLoopClosureMover::make_blueprint( const core::pose::Pose& pose, const st
 	return bpname;
 }
 void LoopHashLoopClosureMover::parse_my_tag(	utility::tag::TagPtr const tag,
-																protocols::moves::DataMap & data_map,
-	    	                        protocols::filters::Filters_map const & filters_map,
-  	    	                      protocols::moves::Movers_map const & movers_map,
+																protocols::moves::DataMap & ,
+	    	                        protocols::filters::Filters_map const & ,
+  	    	                      protocols::moves::Movers_map const &,
     	    	                    core::pose::Pose const & pose ) {
 
 	using namespace basic::options;

@@ -22,7 +22,7 @@ This document was written by Matthew O'Meara on 6/18/2008
 
 The hydrogen bond energy term identifies and scores hydrogen bonds.
 
-@secion hbevaltype HBEvalType
+@section hbevaltype HBEvalType
 
 Each hydrogen bond has an HBEvalType that identifies what type it is.
 All hydrogen bonds of a given type are treated in the same way.  If
