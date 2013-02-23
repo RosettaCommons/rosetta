@@ -31,6 +31,9 @@
 #include <boost/graph/undirected_graph.hpp>
 #include <boost/graph/property_iter_range.hpp>
 #include <boost/graph/filtered_graph.hpp>
+#include <boost/graph/named_function_params.hpp>
+#include <boost/graph/breadth_first_search.hpp>
+#include <boost/graph/dijkstra_shortest_paths.hpp>
 //#include <boost/graph/graph_utility.hpp> // The print_graph function here is lame so I write my own
 #include <iostream>
 #include <utility/vector1.hh>
@@ -67,6 +70,7 @@ typedef boost::undirected_graph<
 > Graph;
 
 typedef Graph::vertex_descriptor VD;
+typedef utility::vector1<VD> VDs;
 typedef Graph::edge_descriptor ED;
 typedef std::pair<ED, bool> EdgeBoolPair;
 typedef boost::graph_traits<Graph>::vertex_iterator VIter;
@@ -75,8 +79,10 @@ typedef std::pair<VIter, VIter> VIterPair;
 typedef std::pair<EIter, EIter> EIterPair;
 typedef boost::graph_traits<Graph>::out_edge_iterator OutEdgeIter;
 typedef boost::graph_traits<Graph>::in_edge_iterator InEdgeIter;
+typedef boost::graph_traits<Graph>::adjacency_iterator AdjacencyIter;
 typedef std::pair<OutEdgeIter, OutEdgeIter> OutEdgeIterPair;
 typedef std::pair<InEdgeIter, InEdgeIter> InEdgeIterPair;
+typedef std::pair<AdjacencyIter, AdjacencyIter> AdjacencyIterPair;
 
 // This is used as a predicate to make a filtered graph
 class AtomNumFilter{
@@ -88,6 +94,39 @@ public:
 	};
 private:
 	Graph * graph_; // Cannot use a reference because 0-arg constructor needed by boost::iterators
+};
+
+// This "visitor" is used with breadth first search
+class PathFinder:public boost::default_bfs_visitor {
+public:
+	PathFinder(VD vd_to_find, VDs & path):
+			found_(false), vd_to_find_(vd_to_find), path_(path) {
+		assert(path_.empty());// We will fill it
+	}
+	void discover_vertex(VD vd, Graph const & /*g*/)
+	{
+		if( found_ ) return; // short circuit the BFS
+		if( vd == vd_to_find_){
+			found_ = true;
+			calculate_path();
+		}
+	}
+	void tree_edge(ED ed, Graph const & g){ // invoked on edges as they become part of the search tree 
+		parents_[ boost::target(ed, g)] = boost::source(ed,g);
+	}
+private:
+	void calculate_path(){
+		VD current = vd_to_find_;
+		path_.push_back(current);
+		while( parents_.find( current ) != parents_.end()){
+			path_.push_back( parents_[current] );
+			current = parents_[current];
+		}
+	}
+	bool found_;
+	VD vd_to_find_;
+	std::map<VD, VD> parents_; // map of child to parent
+	VDs & path_;
 };
 
 /// A better print function that works with any graph type
@@ -123,20 +162,20 @@ void print_graph(graph_t const & g){
 void manual_copy(Graph const & g_old, Graph & g_new){
 	// Manual Copy
 	{
-		std::map<Graph::vertex_descriptor, Graph::vertex_descriptor> old_to_new;
+		std::map<VD, VD> old_to_new;
 		for( VIterPair vp = boost::vertices(g_old); vp.first != vp.second; ++vp.first){
 			VIter v_iter= vp.first;
-			Graph::vertex_descriptor v_old = *v_iter;
+			VD v_old = *v_iter;
 			Atom a = g_old[v_old];
-			Graph::vertex_descriptor v_new = g_new.add_vertex(a);
+			VD v_new = g_new.add_vertex(a);
 			old_to_new[v_old] = v_new;
 		}
 		for( EIterPair ep = boost::edges(g_old); ep.first != ep.second; ++ep.first){
 			EIter e_iter = ep.first;
-			Graph::edge_descriptor ed = *e_iter;
+			ED ed = *e_iter;
 			Bond b = g_old[ed];
-			Graph::vertex_descriptor source = old_to_new[ boost::source(ed, g_old) ]; /// Todo replace with safe find function
-			Graph::vertex_descriptor target = old_to_new[ boost::target(ed, g_old) ]; /// Todo replace with safe find function
+			VD source = old_to_new[ boost::source(ed, g_old) ]; /// Todo replace with safe find function
+			VD target = old_to_new[ boost::target(ed, g_old) ]; /// Todo replace with safe find function
 			assert(source);
 			assert(target);
 			g_new.add_edge( source, target, b);
@@ -150,10 +189,11 @@ void manual_copy(Graph const & g_old, Graph & g_new){
 int main()
 {
 	Graph g;
+
 	std::cout << "Setup a graph with 3 vertices and two edges" << std::endl;
-	Graph::vertex_descriptor v1 = g.add_vertex( Atom() );
-	Graph::vertex_descriptor v2 = g.add_vertex( Atom(2,'b',false) );
-	Graph::vertex_descriptor v3 = g.add_vertex( Atom(3,'c',true) );
+	VD v1 = g.add_vertex( Atom() );
+	VD v2 = g.add_vertex( Atom(2,'b',false) );
+	VD v3 = g.add_vertex( Atom(3,'c',true) );
 	assert(v1 && v2 && v3);
 	Graph::vertex_index_type v1_index = boost::get_vertex_index(v1, g);
 	Graph::vertex_index_type v2_index = boost::get_vertex_index(v2, g);
@@ -165,8 +205,8 @@ int main()
 	EdgeBoolPair ebp2= g.add_edge(v2, v3, Bond(5,'e',true) );
 	assert(ebp1.second);
 	assert(ebp2.second);
-	Graph::edge_descriptor e1 = ebp1.first;
-	Graph::edge_descriptor e2 = ebp2.first;
+	ED e1 = ebp1.first;
+	ED e2 = ebp2.first;
 
 	Graph::edge_index_type e1_index = boost::get_edge_index(e1, g);
 	Graph::edge_index_type e2_index = boost::get_edge_index(e2, g);
@@ -186,8 +226,8 @@ int main()
 	std::cout << std::endl;
 
 	std::cout << "Access the vertices connected to an edge"  << std::endl;
-	Graph::vertex_descriptor source = boost::source(e1, g);
-	Graph::vertex_descriptor target = boost::target(e1, g);
+	VD source = boost::source(e1, g);
+	VD target = boost::target(e1, g);
 	std::cout << "source: "<< g[source] << "; target: " << g[target] << std::endl;
 
 	std::cout << std::endl;
@@ -214,7 +254,7 @@ int main()
 	std::cout << "Iterate over out edges" << std::endl;
 	for(OutEdgeIterPair ep = boost::out_edges(v1, g); ep.first != ep.second; ++ep.first){
 		OutEdgeIter e_iter= ep.first;
-		Graph::edge_descriptor ed = *e_iter;
+		ED ed = *e_iter;
 		Bond b = g[ed];
 		std::cout << ed << " " << b << std::endl;
 	}
@@ -223,9 +263,18 @@ int main()
 	std::cout << "Iterate over in edges" << std::endl;
 	for( InEdgeIterPair ep = boost::in_edges(v1, g); ep.first != ep.second; ++ep.first){
 		InEdgeIter e_iter = ep.first;
-		Graph::edge_descriptor ed = *e_iter;
+		ED ed = *e_iter;
 		Bond b = g[ed];
 		std::cout << ed << " " << b << std::endl;
+	}
+	std::cout << std::endl;
+
+	std::cout << "Iterate over adjacent vertices" << std::endl;
+	for( AdjacencyIterPair ep = boost::adjacent_vertices(v2, g); ep.first != ep.second; ++ep.first){
+		AdjacencyIter adj_iter = ep.first;
+		VD vd = *adj_iter;
+		Atom a = g[vd];
+		std::cout << vd << " " << a << std::endl;
 	}
 	std::cout << std::endl;
 
@@ -241,18 +290,36 @@ int main()
 	std::cout << std::endl;
 
 	///Figure out how to iterate over a map without a graph
-	std::cout << "Iterate over a vector of atom properties made from a property map (Doesn't work this way)" << std::endl;
-	std::vector<int> atom_ints(boost::num_vertices(g));
-	boost::make_property_map_iterator(atom_int_map, atom_ints.begin()); // This doesn't do anything!
-	for(
-			std::vector<int>::iterator begin = atom_ints.begin(), end = atom_ints.end();
-			begin != end;
-			++begin
-	){
-		std::cout << "Int: " << *begin << std::endl;
-	}
-	std::cout << std::endl;
+//	std::cout << "Iterate over a vector of atom properties made from a property map (Doesn't work this way)" << std::endl;
+//	std::vector<int> atom_ints(boost::num_vertices(g));
+//	boost::make_property_map_iterator(atom_int_map, atom_ints.begin()); // This doesn't do anything!
+//	for(
+//			std::vector<int>::iterator begin = atom_ints.begin(), end = atom_ints.end();
+//			begin != end;
+//			++begin
+//	){
+//		std::cout << "Int: " << *begin << std::endl;
+//	}
+//	std::cout << std::endl;
 
+	////////////////////////////////////////////////////////////////////////////////////
+	std::cout << "Find shortest unweighted path. Use BFS and a custom visitor" << std::endl;
+	VDs path; // In order from v3 to v1 (child to parent)
+	PathFinder path_finder(v3, path);
+	boost::breadth_first_search(g, v1, visitor(path_finder));
+	for(
+			VDs::iterator iter = path.begin(),
+			end= path.end();
+			iter != end;
+			++iter
+	){
+		VD vd = *iter;
+		std::cout << vd << " ";
+		// Mark these as "mainchain" in ResidueType
+	}
+	std::cout << std::endl << std::endl;;
+
+	//////////////////////////////////////////////////////////////////////////////
 	std::cout << "Create a filtered graph" << std::endl;
 	typedef boost::filtered_graph<Graph, boost::keep_all, AtomNumFilter> AtomNumGraph;
 	AtomNumFilter atom_num_filter(g);
@@ -273,10 +340,21 @@ int main()
 	std::cout << std::endl;
 
 	std::cout << "Restore the deleted vertex and edge!" << std::endl;
-	g.add_vertex(g[v1]);
-	g.add_edge(v1, v2, Bond());
+	VD new_v1 = g.add_vertex(g[v1]);
+	g.add_edge(new_v1, v2, Bond());
 	print_graph(g);
 	std::cout << "The filtered_graph stays up to date!" << std::endl;
 	print_graph(filtered_graph);
+
+	/////// Find the shortest weighted path. Use Dijkstras...
+//	std::vector<VD> parents(boost::num_vertices(g));
+//	std::vector<int> distances(boost::num_vertices(g));
+//	boost::predecessor_map(&parents[0]).distance_map(&distances[0]);
+//	boost::dijkstra_shortest_paths(g, v1, boost::predecessor_map(&parents[0]).distance_map(&distances[0]));
+//
+//	std::cout << "distances and parents:" << std::endl;
+//	boost::graph_traits < Graph >::vertex_iterator vertexIterator, vend;
+//	std::cout << "distance(" << v3 << ") = " << distances[ v3 ] << ", ";
+//	std::cout << "parent(" << v3 << ") = " << parents[ v3 ] << std::endl;
 
 }

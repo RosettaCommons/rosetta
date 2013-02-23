@@ -552,7 +552,7 @@ ResidueType::number_bonded_heavyatoms( Size const atomno ) const
 AtomIndices const &
 ResidueType::bonded_neighbor( Size const atomno ) const
 {
-	return bonded_neighbor_[ atomno ];
+	//return bonded_neighbor_[ atomno ];
 	/// Graph style
 	VD vd = ordered_atoms_[atomno];
 	AtomIndices atoms;
@@ -572,7 +572,7 @@ ResidueType::bonded_neighbor( Size const atomno ) const
 utility::vector1<BondName> const &
 ResidueType::bonded_neighbor_types(Size const atomno) const
 {
-	return bonded_neighbor_type_[atomno];
+	//return bonded_neighbor_type_[atomno];
 	/// Graph style
 	utility::vector1<BondName> bond_names;
 	VD vd = ordered_atoms_[atomno];
@@ -582,7 +582,8 @@ ResidueType::bonded_neighbor_types(Size const atomno) const
 		Bond b = graph_[ed];
 		bond_names.push_back( b.bond_name() );
 	}
-	return bond_names;
+	assert( bond_names == bonded_neighbor_type_[atomno]);
+	return bonded_neighbor_type_[atomno];
 }
 
 
