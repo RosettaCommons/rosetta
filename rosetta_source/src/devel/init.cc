@@ -43,6 +43,7 @@
 #include <devel/replica_docking/ModulatedMoverCreator.hh>
 #include <devel/matdes/StoreCombinedStoredTasksMoverCreator.hh>
 #include <devel/matdes/StoreCompoundTaskMoverCreator.hh>
+#include <devel/loophash_loopclosure/LoopHashLoopClosureMoverCreator.hh>
 
 // Filter creators
 #include <devel/matdes/OligomericAverageDegreeFilterCreator.hh>
@@ -102,6 +103,7 @@ static protocols::moves::MoverRegistrator< replica_docking::ThermodynamicRigidBo
 static protocols::moves::MoverRegistrator< replica_docking::TempWeightedMetropolisHastingsMoverCreator > reg_TempWeightedMetropolisHastingsMoverCreator;
 static protocols::moves::MoverRegistrator< devel::matdes::StoreCombinedStoredTasksMoverCreator > reg_StoreCombinedStoredTasksMoverCreator;
 static protocols::moves::MoverRegistrator< devel::matdes::StoreCompoundTaskMoverCreator > reg_StoreCompoundTaskMoverCreator;
+static protocols::moves::MoverRegistrator< loophash_loopclosure::LoopHashLoopClosureMoverCreator > reg_LoopHashLoopClosureMoverCreator;
 
 // Task creators
 core::pack::task::operation::TaskOperationRegistrator< devel::znhash::DisableZnCoordinationResiduesTaskOpCreator > reg_DisableZnCoordinationResiduesTaskOpCreator;

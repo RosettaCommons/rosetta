@@ -9042,6 +9042,18 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 1</dd><br>
 </dl>
  </li>
+<li><h2>loops:loop_closure</h2>
+<dl>
+<dt><b>-loop_closure</b> \<Boolean\><dt>
+<dd>loop_closure option group</dd><br>
+</dl>
+ </li>
+<li><h2>loops</h2>
+<dl>
+<dt><b>-loop_insert</b> \<String\><dt>
+<dd>List of chain names with loop sizes in between where loops are inserted.  e.g. A5B6CDE to insert a loop of size 5 in between A and B, and a loop of 6 between B and C.</dd><br>
+</dl>
+ </li>
 <li><h2>assembly</h2>
 <dl>
 <dt><b>-assembly</b> \<Boolean\><dt>

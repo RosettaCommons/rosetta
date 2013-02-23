@@ -670,10 +670,10 @@ option.add( basic::options::OptionKeys::fold_cst::ramp_coord_cst, "ramp coord cs
 option.add( basic::options::OptionKeys::resample::resample, "resample option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::resample::silent, "a silent file for decoys to restart sampling from " ).def("");
 option.add( basic::options::OptionKeys::resample::tag, "which decoy to select from silent file " ).def("");
+option.add( basic::options::OptionKeys::resample::stage1, "if true restart after stage1, otherwise after stage2 " ).def(false);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::resample::stage1, "if true restart after stage1, otherwise after stage2 " ).def(false);
-option.add( basic::options::OptionKeys::resample::stage2, "if true restart after stage1, otherwise after stage2 " ).def(false);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::resample::stage2, "if true restart after stage1, otherwise after stage2 " ).def(false);
 option.add( basic::options::OptionKeys::resample::jumps, "if true restart after stage1, otherwise after stage2 " ).def(false);
 option.add( basic::options::OptionKeys::resample::min_max_start_seq_sep, "range of (random) start values for seq-separation" ).def(0);
 option.add( basic::options::OptionKeys::loopfcst::loopfcst, "loopfcst option group" ).legal(true).def(true);
@@ -1339,11 +1339,11 @@ option.add( basic::options::OptionKeys::rbe::server_url, "serverurl for rosetta 
 option.add( basic::options::OptionKeys::rbe::server_port, "port for rosetta backend" ).def("80");
 option.add( basic::options::OptionKeys::rbe::poll_frequency, "No description" ).def(1.0);
 option.add( basic::options::OptionKeys::blivens::blivens, "blivens option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::blivens::disulfide_scorer::disulfide_scorer, "disulfide_scorer option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::blivens::disulfide_scorer::nds_prob, "The probability of scoring a non-disulfide pair" ).def(0.0);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::blivens::disulfide_scorer::disulfide_scorer, "disulfide_scorer option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::blivens::disulfide_scorer::nds_prob, "The probability of scoring a non-disulfide pair" ).def(0.0);
-option.add( basic::options::OptionKeys::blivens::disulfide_scorer::cys_prob, "The probability of outputing a pair of non-disulf cysteines. Default to nds_prob" ).def(-1.0);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::blivens::disulfide_scorer::cys_prob, "The probability of outputing a pair of non-disulf cysteines. Default to nds_prob" ).def(-1.0);
 option.add( basic::options::OptionKeys::blivens::score_type, "The scoring type to use, eg for a filter." ).def("total_score");
 option.add( basic::options::OptionKeys::krassk::krassk, "krassk option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::krassk::left_tail, "No description" ).def(0);
@@ -1862,6 +1862,8 @@ option.add( basic::options::OptionKeys::loops::no_looprebuild, "do not rebuild l
 option.add( basic::options::OptionKeys::loops::allow_lig_move, "allow ligands to move during loop modeling" ).legal(true).legal(false).def(false);
 option.add( basic::options::OptionKeys::loops::keep_natro, "list of residues where the rotamers are kept fixed" ).def("keep_natro");
 option.add( basic::options::OptionKeys::loops::refine_design_iterations, "iterations of refine and design" ).def(1);
+option.add( basic::options::OptionKeys::loops::loop_closure::loop_closure, "loop_closure option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::loops::loop_insert, "List of chain names with loop sizes in between where loops are inserted.  e.g. A5B6CDE to insert a loop of size 5 in between A and B, and a loop of 6 between B and C." );
 option.add( basic::options::OptionKeys::assembly::assembly, "assembly option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::assembly::pdb1, "pdb1 file" );
 option.add( basic::options::OptionKeys::assembly::pdb2, "pdb2 file" );
@@ -2008,10 +2010,10 @@ option.add( basic::options::OptionKeys::RBSegmentRelax::rb_scorefxn, "number of 
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_fragment_moves, "omit fragment insertions (in SS elements)" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_seqshift_moves, "omit sequence shifting moves" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_rb_moves, "omit rigid-body moves" ).def(false);
+option.add( basic::options::OptionKeys::RBSegmentRelax::helical_movement_params, "helical-axis-rotation, helical-axis-translation, off-axis-rotation, off-axis-translation" ).def(utility::vector1<float>(4,0.0));
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::helical_movement_params, "helical-axis-rotation, helical-axis-translation, off-axis-rotation, off-axis-translation" ).def(utility::vector1<float>(4,0.0));
-option.add( basic::options::OptionKeys::RBSegmentRelax::strand_movement_params, "strand-in-plane-rotation, strand-in-plane-translation, out-of-plane-rotation, out-of-plane-translationn" ).def(utility::vector1<float>(4,0.0));
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::strand_movement_params, "strand-in-plane-rotation, strand-in-plane-translation, out-of-plane-rotation, out-of-plane-translationn" ).def(utility::vector1<float>(4,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::default_movement_params, "default-rotation, default-translation" ).def(utility::vector1<float>(2,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_seqwidth, "sequence width on constraints" ).def(0);
 option.add( basic::options::OptionKeys::edensity::edensity, "edensity option group" ).legal(true).def(true);

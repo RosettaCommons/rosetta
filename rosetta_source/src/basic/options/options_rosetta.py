@@ -3857,6 +3857,11 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 		Option('refine_design_iterations','Integer',
 			desc='iterations of refine and design', default='1'
 		),
+                Option_Group( 'loop_closure' ),
+                        Option( 'loop_insert', 'String',
+                        desc='List of chain names with loop sizes in between where loops are inserted.  e.g. A5B6CDE to insert a loop of size 5 in between A and B, and a loop of 6 between B and C.',
+                ),
+
 	), # Option_Group( 'loops' )
 
 	Option_Group( 'assembly',

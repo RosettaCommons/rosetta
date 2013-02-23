@@ -86,6 +86,9 @@ sources = {
 	"devel/loop_grids": [
 		"LoopGrid",
 	],
+	"devel/loophash_loopclosure": [
+		"LoopHashLoopClosureMover",
+	],
   "devel/matdes" : [
     "util",
 		"TaskAwareSymMinMover",
