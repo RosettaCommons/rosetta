@@ -33,6 +33,7 @@
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/AntibodyUtil.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
+#include <basic/database/open.hh>
 
 
 
@@ -200,8 +201,6 @@ std::string H3CterInsert::get_name() const {
 {
     using namespace fragment;
             
-    std::string const path = basic::options::option[ basic::options::OptionKeys::in::path::path ]()[1];
-            
     TR <<  "Reading CDR H3 C-ter Fragments" << std::endl;
   
     bool is_kinked = false;
@@ -239,10 +238,10 @@ std::string H3CterInsert::get_name() const {
 
     // file is read in from where other contraints are supposed to exist
     if( ab_info_->is_camelid() ){
-        H3_ter_library_filename_ = path+"camelid_H3_CTERM";
+	H3_ter_library_filename_ = basic::database::full_name( "sampling/antibodies/Fragments/camelid_H3_CTERM") ;
     }
     else{
-        H3_ter_library_filename_ = path+"H3_CTERM";
+	H3_ter_library_filename_ = basic::database::full_name( "sampling/antibodies/Fragments/H3_CTERM") ;
     }
             
     // Read the file defined by command line option
