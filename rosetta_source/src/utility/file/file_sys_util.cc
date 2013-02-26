@@ -86,29 +86,30 @@ rand_sleep()
 /// @brief Does File Exist?
 bool
 file_exists( std::string const & path )
-{ // NOTE: this is not entirely reliable, stat may fail also when a file does exist
-	#if defined USE_FILE_PROVIDER
-		utility::Inline_File_Provider *provider = utility::Inline_File_Provider::get_instance();
-		// if file exists in file_provider then this will be the one used. Thus return true - file exists.
+{
+    // NOTE: this is not entirely reliable, stat may fail also when a file does exist
+#if defined USE_FILE_PROVIDER
+    utility::Inline_File_Provider *provider = utility::Inline_File_Provider::get_instance();
+    // if file exists in file_provider then this will be the one used. Thus return true - file exists.
     if( provider->file_exists( path ) ) return true;
-	  //otherwise try and locate the file on the file system
-  #endif
+    //otherwise try and locate the file on the file system
+#endif
 
-	#ifdef _WIN32
-	    /*bool res = false;
-		std::fstream f;
-		f.open( path.c_str(), std::ios::in );
-		if( f.is_open() ) res = true;
-		f.close();
-		return res; */
+#ifdef _WIN32
+    /*bool res = false;
+    std::fstream f;
+    f.open( path.c_str(), std::ios::in );
+    if( f.is_open() ) res = true;
+    f.close();
+    return res; */
 
-		if( access(path.c_str(), 0) ) return false;
-		else return true;
+    if( access(path.c_str(), 0) ) return false;
+    else return true;
 
-	#else
-		struct stat buf;
-		return !stat( path.c_str(), &buf ); // stat() returns zero on success
-	#endif
+#else
+    struct stat buf;
+    return !stat( path.c_str(), &buf ); // stat() returns zero on success
+#endif
 }
 
 

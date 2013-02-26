@@ -37,6 +37,7 @@
 #include <utility/file/file_sys_util.hh>
 #include <utility/json_spirit/json_spirit_writer.h>
 #include <utility/json_spirit/json_spirit_reader.h>
+#include <utility/file/file_sys_util.hh>
 
 //STL headers
 #include <iostream>
@@ -317,7 +318,10 @@ void GridManager::update_grids(core::pose::Pose const & pose,  core::Vector cons
 	if(!grid_directory_active)
 	{
 		GridManagerTracer << "WARNING: option -qsar:grid_dir is not set.  Use this flag to specify a directory to store scoring grids.  This will save you a huge amount of time" <<std::endl;
-	}
+	}else if(!utility::file::file_exists(basic::options::option[basic::options::OptionKeys::qsar::grid_dir]()))
+    {
+        utility_exit_with_message(basic::options::option[basic::options::OptionKeys::qsar::grid_dir]()+" does not exist. specify a valid path with -qsar:grid_dir");
+    }
 
 	if(grid_cache_entry != grid_map_cache_.end()) //we've already seen this conformation, load the associated grid out of the map
 	{
