@@ -112,14 +112,14 @@ public:// virtual main operation
 	// @brief returns true if the given pose passes the filter, false otherwise.
 	// In this case, the test is whether the give pose is the topology we want.
 	virtual bool apply( Pose const & pose ) const;
-
-
+	virtual core::Real report_sm( Pose const & pose ) const;
+	virtual core::Size compute( Pose const & pose ) const;
 private:
 
 	String filtered_ss_;
-	
+
 	utility::vector1< String > filtered_abego_;
-	
+
 	bool use_abego_;
 
 };
