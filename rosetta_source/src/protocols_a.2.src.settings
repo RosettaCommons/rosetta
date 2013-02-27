@@ -48,6 +48,9 @@ sources = {
 		"ResFileOutputter",
 		"SilentFileOutputter",
 	],
+	"protocols/rpc": [
+		"rpc",
+	],
 	"protocols/wum": [
 		"DatabaseEntryWorkUnit",
 		"MoverList",
