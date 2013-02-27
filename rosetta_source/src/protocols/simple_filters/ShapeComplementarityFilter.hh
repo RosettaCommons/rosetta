@@ -99,6 +99,8 @@ public:// mutator
 	void verbose( Size const & verbose );
 	void multicomp( bool multicomp );
 	void sym_dof_name( std::string const & sym_dof_name );
+	void residues1( utility::vector1< core::Size > const & residues );
+	void residues2( utility::vector1< core::Size > const & residues );
 
 	std::string sym_dof_name() const;
 	bool multicomp( ) const;

@@ -41,6 +41,7 @@ sources = {
 	],
         "protocols/denovo_design/filters": [
                 "ExposedHydrophobicsFilter",
+                "SSShapeComplementarityFilter",
         ],
 	"protocols/domain_assembly": [
 		"AddAssemblyConstraints",

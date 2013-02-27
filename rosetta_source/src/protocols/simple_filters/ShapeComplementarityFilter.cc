@@ -100,6 +100,8 @@ void ShapeComplementarityFilter::sym_dof_name( std::string const & sym_dof_name 
 std::string ShapeComplementarityFilter::sym_dof_name() const { return sym_dof_name_; }
 void ShapeComplementarityFilter::multicomp( bool multicomp ) { multicomp_ = multicomp; }
 bool ShapeComplementarityFilter::multicomp() const { return multicomp_; }
+void ShapeComplementarityFilter::residues1( utility::vector1< core::Size > const & residues ) { residues1_ = residues; }
+void ShapeComplementarityFilter::residues2( utility::vector1< core::Size > const & residues ) { residues2_ = residues; }
 
 /// @brief
 core::Size ShapeComplementarityFilter::compute( Pose const & pose ) const
