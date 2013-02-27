@@ -43,9 +43,10 @@
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/match/Hit.fwd.hh>
 #include <protocols/moves/Mover.hh>
+#include <protocols/rpc/rpc.hh>
 #include <protocols/loophash/LoopHashRelaxProtocol.hh>
-#include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
+#include <utility/exit.hh>
 
 #include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -76,17 +77,17 @@
 #include <basic/options/keys/rbe.OptionKeys.gen.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 
-#include <core/import_pose/import_pose.hh>
+
+#include <utility/json_spirit/json_spirit_value.h>
+#include <utility/json_spirit/json_spirit_reader.h>
+#include <utility/json_spirit/json_spirit_writer.h>
+#include <utility/json_spirit/json_spirit_tools.hh>
+
 #include <utility/vector1.hh>
 #include <utility/inline_file_provider.hh>
 #include <numeric/random/random.hh>
 
 #include <curl/curl.h>
-#include "json/json.h"
-
-
-
-
 
 
 static basic::Tracer TR("main");
@@ -268,32 +269,6 @@ protocols::loophash::LoopHashLibraryOP loop_hash_library;
 
 
 
-void pose_energies_to_json( core::pose::Pose const & pose, Json::Value &root ) {
-  using namespace core::pose::datacache;
-
-  core::scoring::EnergyMap const emap = pose.energies().total_energies();
-	core::scoring::EnergyMap const wts  = pose.energies().weights();
-
-  core::scoring::EnergyMap::const_iterator emap_iter, wts_iter;
-	for ( emap_iter = emap.begin(), wts_iter = wts.begin();
-			emap_iter != emap.end() && wts_iter!= wts.end();
-			++emap_iter && ++wts_iter
-	) {
-
-		// only grab scores that have non-zero weights.
-		if ( *wts_iter != 0.0 ) {
-			core::scoring::ScoreType sc_type
-				= core::scoring::ScoreType( emap_iter - emap.begin() + 1 );
-			std::string name = core::scoring::name_from_score_type( sc_type );
-
-		  root[ name ] = Json::Value( (*emap_iter) * (*wts_iter) );
-
-		} // if ( *wts_iter != 0.0 )
-	} // for ( emap_iter ...)
-
-}
-
-
 
 class ServerInfo {
  public:
@@ -318,20 +293,22 @@ class ServerInfo {
 
 class RosettaJob {
  public:
-   RosettaJob (): initialized_(false)
+   RosettaJob( const ServerInfo &serverinfo ):
+    serverinfo_(serverinfo),
+    initialized_(false)
    {}
 
-   bool request_job_from_server( const ServerInfo & server_info )
+   bool request_job_from_server( )
    {
       runtime_assert( !initialized_ )
 
       CurlPost cg;
       std::string data;
-      std::cout << "URL: " << server_info.url_gettask() << std::endl;
+      std::cout << "URL: " << serverinfo_.url_gettask() << std::endl;
       try {
-        data = cg.post( server_info.url_gettask() , "", "lease_time=100"  );
+        data = cg.post( serverinfo_.url_gettask() , "", "lease_time=100"  );
       } catch ( std::string error ){
-        std::cerr << "ERROR(" << server_info.url_gettask() << std::endl;
+        std::cerr << "ERROR(" << serverinfo_.url_gettask() << std::endl;
         std::cerr << "):" << error << std::endl;
         return false;
       }
@@ -341,194 +318,131 @@ class RosettaJob {
         return false;
       }
 
-      output_capture_clear();
-
       // break down the input data
       //std::cout <<  data << std::endl;
-
-      Json::Value values;
-      Json::Reader reader;
-      reader.parse( data, values);
-
-      std::string payload = values.get("payload","").asString();
-      taskname_ = values.get("name","").asString();
-
-      if( taskname_ == "" ){
-        std::cout << "Error connecting to server (server didn't reply with JSON object or taskname was not set) " << std::endl;
-        return false;
+    
+      utility::json_spirit::mObject parsed_json; 
+      std::string payload;
+      try{
+        parsed_json = utility::json_spirit::read_mObject( data );
+        payload = get_string( parsed_json, "payload" );
+        taskname_ = get_string( parsed_json, "name" ); 
+      }
+      catch( utility::excn::EXCN_Msg_Exception &excn ){
+        TR.Error << "EXCEPTION: " << excn.msg() << std::endl; // print the exception message to the Error stream.
       }
 
-      Json::Value payload_values;
-      Json::Reader payload_reader;
-      reader.parse( payload, payload_values);
+      //std::cout << payload << std::endl;
+      utility::json_spirit::mObject parsed_payload; 
 
-      hash_      = payload_values.get("hash","").asString();
-      key_       = payload_values.get("key","").asString();
-      user_id_   = payload_values.get("user_id","").asString();
-      operation_ = payload_values.get("operation","").asString();
+      try{
+        parsed_payload  = utility::json_spirit::read_mObject( payload );
+      }
+      catch( utility::excn::EXCN_Msg_Exception &excn ){
+        std::cout << "Error extracting payload" << std::endl;
+        TR.Error << "EXCEPTION: " << excn.msg() << std::endl; // print the exception message to the Error stream.
+        return false; 
+      }
+
+      hash_      = get_string_or_empty( parsed_payload, "hash");
+      key_       = get_string_or_empty( parsed_payload, "key");
+      user_id_   = get_string_or_empty( parsed_payload, "user_id");
+      operation_ = get_string_or_empty( parsed_payload, "operation");
 
       std::cout << "NEW JOB: Hash: " << hash_ << " KEY: " << key_ << " USER: " << user_id_ << " TASKNAME: " << taskname_ << std::endl;
-      std::string job_data_string = payload_values.get("job_data","").asString();
-      // std::cout << "Inputdata: " << job_data_string << std::endl;
-
-      Json::Reader job_data_reader;
-      job_data_reader.parse( job_data_string , job_data_);
-
-      // extract the command name - this will be used to fork the code.
-      command_ = job_data_.get("command","").asString();
-      std::cout << "Rosetta command: " << command_ << std::endl;
-
-      xmlscript_ = job_data_.get("xmlscript","").asString();
-      std::cout << "XML script: " << xmlscript_ << std::endl;
-
-      // extract the pdbdata (the starting structure)
-      Json::Value pdbdata = job_data_.get("pdbdata","");
-      std::string pdbdata_string = pdbdata.asString();
-
-      output_capture_clear();
-      output_capture_start();
       
-      // create the pose
-      try {
-        core::import_pose::pose_from_pdbstring( inputpose_, pdbdata_string );
-        
-        // Load any files that were given as part of this job.
-        load_new_set_of_virtual_files(  job_data_.get("user_files","") );
+      std::string job_data_string;
+      try{
+        job_data_string = get_string( parsed_payload, "job_data" ); 
+      }
+      catch( utility::excn::EXCN_Msg_Exception &excn ){
+        std::cout << "Error connecting to server (server didn't reply with JSON object or taskname was not set) " << std::endl;
+        TR.Error << "EXCEPTION: " << excn.msg() << std::endl; // print the exception message to the Error stream.
+        return false; 
+      }
+      
+      //std::cout << "Inputdata: " << job_data_string << std::endl;
+      std::cout << "Inputdata: " << job_data_string.size() << " bytes received" << std::endl;
 
-        // Load any flags that were given as part of this job.
-        std::cout << "Initializing options: " << command_ << std::endl;
-
-        if ( job_data_.isMember("user_flags") ){
-          load_new_set_of_user_flags( job_data_.get("user_flags","[]") );
-        }
-       
-        if ( job_data_.isMember("flags_file") ){
-          std::string flags_file = job_data_.get("flags_file","").asString();
-          std::cerr << "HERE:" << flags_file << std::endl; 
-          load_user_flag_file( flags_file );
-        }
+      try{
+        rpc = new protocols::rpc::JSON_RPC( job_data_string, false );
+        // intrpret the actual RPC contents. 
       }
       catch ( utility::excn::EXCN_Base& excn ) {
-				excn.show( TR.Error );
-        // return error or empty pose
-        return_error_to_server( server_info );
+        return_results_to_server( true );
         return false;
       }
-      catch ( std::string err ){ 
-				TR.Error << err << std::endl;
-        // return error or empty pose
-        return_error_to_server( server_info );
-        return false;
-      }
-      outputpose_ = inputpose_; 
+      
       // since a null operation would leave the pose unchanged:
-      error_ = 0;
       initialized_ = true;
       return true;
     }
 
-    bool return_error_to_server( const ServerInfo & server_info ){
-      std::cout << __FILE__ << " " << __LINE__ << std::endl; 
-      // stop stdout capturing
-      output_capture_stop();
+
+    bool return_results_to_server( bool error = false ){
       
-      // do some basic measurements
-      Json::Value energies;
-      energies[ "score" ] = 0;
-      energies[ "irms" ] = 0;
+      utility::json_spirit::Object energies;  
+      utility::json_spirit::Object root;  
 
-      // assemble the json structure needed.
-      Json::Value root;
 
       // set the output values
-      root["parental_key"] = Json::Value( key_ );   // the key and hash become parental_  key and hash
-      root["parental_hash"] = Json::Value( hash_ ); // so we can keep track of the geneaology of structures
-      root["user_id"] = Json::Value( user_id_ ); // so we can keep track of the geneaology of structures
-      root["operation"] = Json::Value( operation_ ); // so we can keep track of the geneaology of structures
-      root["taskname"] = Json::Value( taskname_ ); // so we can keep track of the geneaology of structures
-      root["pdbdata"] = Json::Value( "" ); // the PDB data itself of course
-      root["workerinfo"] = Json::Value(  "Rosetta Backend 0.1" );
-      root["stderr"] = Json::Value( tracer_output_stream_.str() ); 
-      std::cout << "STDERROR:" <<  root["stderr"] << std::endl;
-      root["energies"] = energies;
-      root["error"] =  Json::Value(1);
-      root["cputime"] =  Json::Value(0);
-
-      output_capture_clear();
-      // add energy info etc other goodies here
-
-      Json::FastWriter writer;
-      std::string output_json = "output=" + writer.write( root );
-
-      CurlPost cg;
-      try {
-        std::string return_data = cg.post( server_info.url_putresult() , "", output_json );
-        std::cout << "POST " << server_info.url_putresult() << " : " << return_data << std::endl;
-      } catch ( std::string error ){
-        std::cerr << "ERROR returning results:" << error << std::endl;
-      }
-    }
-
-    bool return_results_to_server( const ServerInfo & server_info ){
-
-      std::cout << __FILE__ << " " << __LINE__ << std::endl; 
-      // do some basic measurements
-      Json::Value energies;
-	    core::scoring::ScoreFunctionOP fascorefxn = core::scoring::getScoreFunction();
-      energies[ "score" ] = (*fascorefxn)(outputpose_);
-      core::scoring::calpha_superimpose_pose( outputpose_, inputpose_ );
-      energies[ "irms" ] = core::scoring::rmsd_with_super(inputpose_, outputpose_  , core::scoring::is_protein_backbone_including_O );
-
-      pose_energies_to_json( outputpose_, energies );
-
-      // Now send back results to server.
-      std::stringstream pdbdatastream;
-      outputpose_.dump_pdb( pdbdatastream );
-        
-      // DEBUG CODE
-      std::ofstream ofile("b4.pdb"); 
-      inputpose_.dump_pdb( ofile );
-      ofile.close();
-      std::ofstream ofile2("af.pdb"); 
-      outputpose_.dump_pdb( ofile2 );
-      ofile2.close(); 
-      // ENDOF DEBUG CODE
-
-      // assemble the json structure needed.
-      Json::Value root;
-
-      // set the output values
-      root["parental_key"] = Json::Value( key_ );   // the key and hash become parental_  key and hash
-      root["parental_hash"] = Json::Value( hash_ ); // so we can keep track of the geneaology of structures
-      root["user_id"] = Json::Value( user_id_ ); // so we can keep track of the geneaology of structures
-      root["operation"] = Json::Value( operation_ ); // so we can keep track of the geneaology of structures
+      root.push_back( utility::json_spirit::Pair( "parental_key",  key_ ) );   // the key and hash become parental_  key and hash
+      root.push_back( utility::json_spirit::Pair( "parental_hash",  hash_ ) ); // so we can keep track of the geneaology of structures
+      root.push_back( utility::json_spirit::Pair( "user_id",  user_id_ ) ); // so we can keep track of the geneaology of structures
+      root.push_back( utility::json_spirit::Pair( "operation",  operation_ ) ); // so we can keep track of the geneaology of structures
       std::cout << "Finished TaskName: " << taskname_ << std::endl;
-      root["taskname"] = Json::Value( taskname_ ); // so we can keep track of the geneaology of structures
-      root["pdbdata"] = Json::Value( pdbdatastream.str() ); // the PDB data itself of course
-      root["error"] = Json::Value(error_);
-      if( error_ ){ 
-        root["pdbdata"] =  Json::Value("");  // if there was a fatal error dont return a pdb (to save space)
-      }
-
+      root.push_back( utility::json_spirit::Pair( "taskname",  taskname_ ) ); // so we can keep track of the geneaology of structures
       std::stringstream rosetta_version;
       rosetta_version << "Mini-Rosetta version " << core::minirosetta_svn_version() << " from " << core::minirosetta_svn_url();
+      root.push_back( utility::json_spirit::Pair( "workerinfo",  rosetta_version.str() ) ); 
+      
+      
+      if( !error ){ 
+        // do some basic measurements
+        
+        energies.push_back( utility::json_spirit::Pair( "score" ,  rpc->get_fa_score() ) ); 
+        energies.push_back( utility::json_spirit::Pair( "irms", rpc->get_irms() ) ); 
 
-      root["workerinfo"] = Json::Value( rosetta_version.str() ); 
-      root["stderr"] = Json::Value( tracer_output_stream_.str() ); // stderr output for debugging
-      root["energies"] = energies;                                 // rosetta energy values
-      root["cputime"] =  Json::Value(Json::Int64(endtime_ - starttime_));
+        protocols::rpc::pose_energies_to_json( rpc->outputpose(), energies );
+
+        // Now send back results to server.
+        std::stringstream pdbdatastream;
+        rpc->outputpose().dump_pdb( pdbdatastream );
+          
+        // DEBUG CODE
+//        std::ofstream ofile("b4.pdb"); 
+//        inputpose_.dump_pdb( ofile );
+//        ofile.close();
+//        std::ofstream ofile2("af.pdb"); 
+//        outputpose_.dump_pdb( ofile2 );
+//        ofile2.close(); 
+        // ENDOF DEBUG CODE
+      
+        root.push_back( utility::json_spirit::Pair( "pdbdata", pdbdatastream.str() ) ); // the PDB data itself of course
+        root.push_back( utility::json_spirit::Pair( "energies",  energies ) );                              // rosetta energy values
+        root.push_back( utility::json_spirit::Pair( "cputime", (int) rpc->runtime() ) );
+     
+     }else{
+
+        // set the output values
+        root.push_back( utility::json_spirit::Pair( "pdbdata",  "" ) ); // the PDB data itself of course
+        root.push_back( utility::json_spirit::Pair( "cputime",  0 ) );
+      }
+  
+       root.push_back( utility::json_spirit::Pair( "error",  0 ) );
+
+      std::cout << "STDERROR:" <<  rpc->tracer() << std::endl; 
+      root.push_back( utility::json_spirit::Pair( "stderr", rpc->tracer() ) ); // stderr output for debugging
 
       // add energy info etc other goodies here
-
-      Json::FastWriter writer;
-      std::string output_json = "output=" + writer.write( root );
-      //std::cout << writer.write( root ) << std::endl;
-      // now do a POST on the server to hand back the data.
-
+      std::stringstream sstr;
+      write( root, sstr );
+      std::string output_json = "output=" + sstr.str(); 
+      std::cout << output_json << std::endl;
       CurlPost cg;
       try {
-        std::string return_data = cg.post( server_info.url_putresult() , "", output_json );
-        std::cout << "POST " << server_info.url_putresult() << " : " << return_data << std::endl;
+        std::string return_data = cg.post( serverinfo_.url_putresult() , "", output_json );
+        std::cout << "POST " << serverinfo_.url_putresult() << " : " << return_data << std::endl;
       } catch ( std::string error ){
         std::cerr << "ERROR returning results:" << error << std::endl;
       }
@@ -536,107 +450,18 @@ class RosettaJob {
     }
 
 
-    
-
-
-    void run(){
-      using namespace basic::options;
-      using namespace basic::options::OptionKeys;
-
-      // start capturing Tracer outputs
-      output_capture_start();
-      starttime_ = time(NULL);
-
-      std::cerr << "RANDOM CHECK: " << RG.uniform() << std::endl; 
+    bool run_and_return_to_server(){
       try{
-        std::cout << "Executing: " << command_ << std::endl;
-        TR << "Executing: " << command_ << std::endl;
-        if( command_ == "score" ){
-        }
-        if( command_ == "relax" ){
-          protocols::moves::MoverOP protocol = protocols::relax::generate_relax_from_cmd();
-          protocol->apply( outputpose_ );
-        }
-        if( command_ == "loophash" ){
-          TR << "LOOPHASH!!  " << rosetta_script_ << std::endl;
-          protocols::loophash::LoopHashRelaxProtocolOP lh_protocol = new protocols::loophash::LoopHashRelaxProtocol( loop_hash_library );
-          lh_protocol->manual_call( outputpose_ );
-        }
-        if( command_ == "enzdes" ){
-        }
-        if( command_ == "xmlscript" ){
-          utility::Inline_File_Provider *provider = utility::Inline_File_Provider::get_instance();
-          provider->add_input_file( "script.xml", xmlscript_ );
-          protocols::jd2::DockDesignParser ddp;
-          protocols::jd2::JobCOP job;
-          protocols::moves::MoverOP protocol;
-          ddp.generate_mover_from_pose( job, outputpose_ , protocol, true, "script.xml" );
-          protocol->apply( outputpose_ );
-        }
-      } 
-      catch( utility::excn::EXCN_Msg_Exception e ){
-        TR << e.msg() << std::endl;
-        error_ = 1;
+        rpc->run();
       }
-      catch(...) {
-        TR << "UNKNOWN ERROR" << std::endl;
-        error_ = 1;
+      catch ( utility::excn::EXCN_Base& excn ) {
+        return_results_to_server( true );
+        return false;
       }
-      
-      // stop stdout capturing
-      output_capture_stop();
-      endtime_ = time(NULL);
+      return_results_to_server();
     }
 
  private:
-
-  void output_capture_start(){
-      basic::set_new_final_channel( &tracer_output_stream_ );
-  }
-
-  void output_capture_stop(){
-      basic::set_default_final_channel();
-  }
-
-  void output_capture_clear(){
-    tracer_output_stream_.str(std::string());
-  }
-
-  void load_user_flag_file( const std::string &flags_file ){
-    std::stringstream options_file;
-    options_file << flags_file << std::endl; // ensure the last line has a CR/lF at the end. 
-    basic::options::option.load_options_from_stream( options_file );
-  }
-
-  void load_new_set_of_user_flags(  const Json::Value &json_user_flags ){
-    std::vector < std::string > user_flags;
-
-    if( !json_user_flags.isObject() ){
-      std::cerr << "User_flags is not an object - flags not loaded";
-      throw 1;
-    }
- 
-    for( Json::Value::const_iterator it = json_user_flags.begin(); 
-         it != json_user_flags.end(); ++it ){
-      std::cout << it.memberName() << "   " << (*it)["value"].asString() << std::endl;
-      std::string new_flag(  std::string(it.memberName()) + " " + (*it)["value"].asString() );
-      user_flags.push_back( new_flag );
-      std::cout << "User flag conversion: " << new_flag << std::endl;
-    }
-
-    basic::options::option.load( user_flags, false);
-  }
-
-  void load_new_set_of_virtual_files( Json::Value newfiles, bool clear_previous = true ){
-    utility::Inline_File_Provider *provider = utility::Inline_File_Provider::get_instance();
-    if( clear_previous ) provider->clear_input_files();
-    for( int i=0; i < newfiles.size(); ++i ){
-      std::string filename = newfiles[i].get("filename","").asString();
-      std::string contents = newfiles[i].get("content","").asString();
-      TR << "Loading virtual file: " << filename << " " << contents.size() << " bytes" << std::endl;
-      provider->add_input_file( filename, contents );
-    }
-  }
 
   // input stuff (coming from the server)
   core::pose::Pose inputpose_;
@@ -645,26 +470,17 @@ class RosettaJob {
   std::string key_;
   std::string user_id_;
   std::string operation_;
-  Json::Value job_data_;
 
-  std::string rosetta_script_;
-  std::string command_;
-  std::string xmlscript_;
   bool initialized_;
 
-  // output stuff
-  core::pose::Pose outputpose_;
-  int              error_; 
-  std::stringstream tracer_output_stream_;
-  long             starttime_;
-  long             endtime_;
-
+  protocols::rpc::JSON_RPCOP rpc;
   
+  ServerInfo serverinfo_;
 };
 
 class RosettaBackend {
  public:
-    RosettaBackend( ServerInfo &serverinfo, int argc, char * argv [] ) :
+    RosettaBackend( const ServerInfo &serverinfo, int argc, char * argv [] ) :
       serverinfo_(serverinfo),
       argc_(argc),
       argv_(argv)
@@ -676,7 +492,8 @@ class RosettaBackend {
 
     void run(){
       do{
-        RosettaJob newjob;
+        RosettaJob newjob(serverinfo_);
+
         core::Size wait_count = 0;
 
         using namespace basic::options;
@@ -684,7 +501,7 @@ class RosettaBackend {
         utility::options::OptionCollection &option_collection  = initialize();
         option_collection.load( argc_, argv_, false);
 
-        while( !newjob.request_job_from_server( serverinfo_ ) ){
+        while( !newjob.request_job_from_server() ){
           core::Real waittime =  std::min( (double)10.0f, 0.5f* pow( (float)1.3, (float) wait_count )); // in seconds
 
           // HACK!
@@ -695,24 +512,11 @@ class RosettaBackend {
           wait_count ++;
         };
         
-        newjob.run();
+        newjob.run_and_return_to_server();
         
         std::cerr << "Returning results to server (mainloop)" << std::endl;
 
-        // now return the results to the server
-        try {
-          newjob.return_results_to_server( serverinfo_ );
-        }
-        catch ( utility::excn::EXCN_Base& excn ) {
-          excn.show( TR.Error );
-          // return error or empty pose
-          newjob.return_error_to_server( serverinfo_ );
-        }
-        catch ( std::string err ){ 
-          TR.Error << err << std::endl;
-          // return error or empty pose
-          newjob.return_error_to_server( serverinfo_ );
-        }
+
       } while (true);
 
     };
