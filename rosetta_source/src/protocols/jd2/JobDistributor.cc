@@ -61,7 +61,9 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
+#ifndef __native_client__
 #include <csignal>
+#endif 
 
 #ifdef WIN32
 #include <iterator>
@@ -876,7 +878,8 @@ void JobDistributor::jd2_signal_handler(int signal_)
 // /@details This will allow us to exit propely (clean up in_progress_files/tmp files if any).
 void JobDistributor::setup_system_signal_handler(void(*signal_fn)(int))
 {
-	// Soooo many way to kill... wait - there is no special signal for HS with SVD? - lame...
+#ifndef __native_client__
+  // Soooo many way to kill... wait - there is no special signal for HS with SVD? - lame...
 	signal(SIGINT, signal_fn);
 	signal(SIGABRT, signal_fn);
 	signal(SIGTERM, signal_fn);
@@ -885,17 +888,21 @@ void JobDistributor::setup_system_signal_handler(void(*signal_fn)(int))
 	signal(SIGKILL, signal_fn);
 	signal(SIGQUIT, signal_fn);
 #endif
+#endif
+
 }
 
 /// @details Set signal handler back to default state.
 void JobDistributor::remove_system_signal_handler()
 {
+#ifndef __native_client__
 	signal(SIGINT, SIG_DFL);
 	signal(SIGABRT, SIG_DFL);
 	signal(SIGTERM, SIG_DFL);
 #ifndef WIN32
 	signal(SIGKILL, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
+#endif
 #endif
 }
 

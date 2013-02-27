@@ -42,9 +42,11 @@
 
 // Boost Headers
 #include <boost/uuid/uuid.hpp>
+#ifndef __native_client__
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/lexical_cast.hpp>
+#endif
 
 // C++
 #include <string>
@@ -158,10 +160,11 @@ StructureFeatures::report_features(
 	string const & tag,
 	string const & input_tag
 ){
-
+	boost::uuids::uuid struct_id;
+#ifndef __native_client__
 	boost::uuids::basic_random_generator<numeric::random::RandomGenerator>
 		uuids_rng(numeric::random::RG);
-	boost::uuids::uuid struct_id = uuids_rng();
+	struct_id = uuids_rng();
 
 	InsertGenerator structures_insert("structures");
 	structures_insert.add_column("struct_id");
@@ -176,7 +179,7 @@ StructureFeatures::report_features(
 
 	structures_insert.add_row(utility::tools::make_vector(struct_id_data,batch_id_data,tag_data,input_tag_data));
 	structures_insert.write_to_database(db_session);
-
+#endif
 	return struct_id;
 }
 
@@ -227,6 +230,7 @@ StructureFeatures::load_tag(
 	boost::uuids::uuid struct_id,
 	Pose & pose) {
 
+#ifndef __native_client__
 	std::string statement_string =
 		"SELECT\n"
 		"	tag\n"
@@ -249,6 +253,8 @@ StructureFeatures::load_tag(
 	string tag;
 	res >> tag;
 	tag_into_pose(pose,tag);
+#endif
+
 }
 
 boost::uuids::uuid

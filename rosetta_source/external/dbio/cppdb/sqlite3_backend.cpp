@@ -33,10 +33,12 @@
 #include <string.h>
 #include <vector>
 
+#ifndef __native_client__
 // Boost Headers
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/uuid/uuid_generators.hpp>
+#endif 
 
 namespace cppdb {
 	namespace sqlite3_backend {
@@ -250,11 +252,13 @@ namespace cppdb {
 			}
 			virtual void bind(int col,boost::uuids::uuid const &v) 
 			{
+				#ifndef __native_client__
 				reset_stat();
 				std::ostringstream ss;
 				std::copy(v.begin(), v.end(), std::ostream_iterator<const unsigned char>(ss));
 				std::string tmp = ss.str();
 				check_bind(sqlite3_bind_blob(st_,col,tmp.c_str(),tmp.size(),SQLITE_TRANSIENT));
+			  #endif
 			}
 			virtual void bind(int col,std::string const &v) 
 			{
