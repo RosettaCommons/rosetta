@@ -52,6 +52,7 @@ sources = {
 		"json_spirit_reader",
 		"json_spirit_value",
 		"json_spirit_writer",
+		"json_spirit_tools",
 	],
 
 
