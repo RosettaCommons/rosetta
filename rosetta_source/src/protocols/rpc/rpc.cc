@@ -28,7 +28,6 @@
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/DockDesignParser.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/loophash/LoopHashRelaxProtocol.hh>
 #include <utility/excn/Exceptions.hh>
 
 #include <utility/assert.hh>
