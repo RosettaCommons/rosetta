@@ -36,6 +36,7 @@
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
 #include <utility/io/izstream.hh>
+#include <utility/file/file_sys_util.hh>
 
 #include <utility/json_spirit/json_spirit_reader.h>
 
@@ -233,10 +234,20 @@ void StartFrom::apply(core::pose::Pose & pose){
 
 void StartFrom::parse_startfrom_file(std::string filename)
 {
+    if(!utility::file::file_exists(filename))
+    {
+        utility_exit_with_message("cannot parse "+filename+" because it does not exist");
+    }
+    
 	utility::io::izstream infile;
 	infile.open(filename.c_str(),std::ifstream::in);
 	utility::json_spirit::mValue startfrom_data;
-	utility::json_spirit::read(infile,startfrom_data);
+    if(!utility::json_spirit::read(infile,startfrom_data))
+    {
+        infile.close();
+        utility_exit_with_message("cannot parse JSON in file "+ filename);
+    }
+
 	infile.close();
 
 	//The format is something like this:
