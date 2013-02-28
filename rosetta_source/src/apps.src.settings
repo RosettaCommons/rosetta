@@ -63,6 +63,8 @@ sources = {
 	],
 	"public/antibody": [
 		"antibody_mode",
+                "antibody_assemble_CDRs",
+                "antibody_model_CDR_H3",
 	],
 	"public/boinc": [
 		"minirosetta",
