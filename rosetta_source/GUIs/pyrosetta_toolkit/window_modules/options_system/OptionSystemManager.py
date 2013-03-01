@@ -58,8 +58,8 @@ class OptionSystemManager:
             '-relax:constrain_relax_to_start_coords',
             '-use_input_sc'
             '-add_orbitals',
-            -'-linmem_ig 20',
-            -'-double_lazy_ig'
+            '-linmem_ig 20',
+            '-double_lazy_ig'
             #'-fixbb:minimize_sidechains',
             #'-fixbb:min_pack'
         ]
