@@ -27,6 +27,13 @@ class NT:  # named tuple
 
 Jobs = []  # Global list of NameTuples  (pid, tag, start_time, out_dir,...)
 
+def write_runtimes(runtimes, dir):
+    import json
+    time_file = open(dir+'/runtimes.yaml', 'w')
+    json.dump(runtimes, time_file, sort_keys=True, indent=2)
+    time_file.close()
+
+
 
 def main(argv):
     '''
@@ -346,6 +353,7 @@ rm -r ref/; ./integration.py    # create reference results using only default se
 
         if options.yaml:
             f = file(options.yaml, 'w');  f.write("{total : %s, failed : 0, details : {}}" % len(tests));  f.close()
+        write_runtimes(runtimes, 'ref')
 
     else:
         diffs = 0
@@ -441,12 +449,9 @@ rm -r ref/; ./integration.py    # create reference results using only default se
             f.write("{total : %s, failed : %s, details : %s, brief : %s}" % (len(tests), diffs, results, brief) )
             f.close()
             '''
-
-    import json
-    time_file = open('new/runtimes.yaml', 'w')
-    json.dump(runtimes, time_file, sort_keys=True, indent=2)
-    time_file.close()
-
+        write_runtimes(runtimes, 'new')
+        from compare_times import compare_times
+        compare_times()
     return 0
 
 
