@@ -54,6 +54,8 @@
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/util.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/id/AtomID_Map.hh>
 #include <basic/MetricValue.hh>
 
@@ -127,7 +129,7 @@ SymUnsatHbondFilter::compute( core::pose::Pose const & pose, bool const & verb, 
 		core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
   	nres_asymmetric_unit = symm_info->num_independent_residues();
 	} else {
-	nres_asymmetric_unit = pose.n_residue();	
+		nres_asymmetric_unit = pose.n_residue();	
 	}
 
 	core::pose::Pose bound = pose;
@@ -150,14 +152,28 @@ SymUnsatHbondFilter::compute( core::pose::Pose const & pose, bool const & verb, 
 		translate->apply( unbound );
 	}
 
-//  Uncomment to verify that symmetric pose is being generated and unbound properly.
-//	bound.dump_pdb("bound.pdb");
-//	unbound.dump_pdb("unbound.pdb");
+	//  Uncomment to verify that symmetric pose is being generated and unbound properly.
+	//	bound.dump_pdb("bound.pdb");
+	//	unbound.dump_pdb("unbound.pdb");
 
+	//fpd we need to score pose here!!
+	core::scoring::ScoreFunctionOP scorehbond;
+	if (core::conformation::symmetry::is_symmetric( pose.conformation() )) {
+		scorehbond = new core::scoring::symmetry::SymmetricScoreFunction( );
+	} else {
+		scorehbond = new core::scoring::ScoreFunction( );
+	}
+	scorehbond->set_weight( core::scoring::hbond_lr_bb, 1.0 );
+	scorehbond->set_weight( core::scoring::hbond_sr_bb, 1.0 );
+	scorehbond->set_weight( core::scoring::hbond_bb_sc, 1.0 );
+	scorehbond->set_weight( core::scoring::hbond_sc, 1.0 );
+
+	(*scorehbond)(bound);
   core::pose::metrics::PoseMetricCalculatorOP unsat_calc_bound = new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("default", "default");
   basic::MetricValue< core::id::AtomID_Map<bool> > bound_Amap;
   unsat_calc_bound->get("atom_bur_unsat", bound_Amap, bound);
 
+	(*scorehbond)(unbound);
   core::pose::metrics::PoseMetricCalculatorOP unsat_calc_unbound = new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("default", "default");
   basic::MetricValue< core::id::AtomID_Map<bool> > unbound_Amap;
   unsat_calc_unbound->get("atom_bur_unsat", unbound_Amap, unbound);
