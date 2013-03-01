@@ -33,7 +33,7 @@ def wrapCStrig(s):
 class Option:
     def __init__(self, name=None, ctype=None, group=None, desc="No description", short="",
                  oldName="-",
-                 lower=None, upper=None, default=None, legal=None, n=None, n_lower=None, n_upper=None):
+                 lower=None, upper=None, default=None, legal=None, n=None, n_lower=None, n_upper=None, restrict_access=False):
 
         if ctype not in KnownTypes:
             print 'Unknow type:%s!!!' % ctype
@@ -45,6 +45,7 @@ class Option:
         self.ctype = ctype;  self.name = name;    self.group = group
         self.desc = desc;    self.short = short;  self.oldName = oldName
         self.lower = lower;  self.upper = upper;  self.default = default;  self.legal=legal
+        self.restrict_access = restrict_access;
         self.n = n;  self.n_lower = n_lower;  self.n_upper = n_upper
         # Wraping c-strings in "
         if ctype == 'String' or ctype == 'Path' or ctype == 'File' or \
@@ -97,7 +98,7 @@ class Option:
             else:
                 for d in self.default:
                     s+= '.def(' + d + ')'
-
+        if self.restrict_access: s+= '.restrict_access(true)'
         return s + ';\n'
 
 

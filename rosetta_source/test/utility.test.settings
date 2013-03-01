@@ -41,6 +41,9 @@ sources = {
 		"izstream",
 		"zipstream",
 	],
+       "options": [
+		"OptionCollection",
+	],
 	"keys" : [
 		"AutoKey",
 		"ClassKeyMap",

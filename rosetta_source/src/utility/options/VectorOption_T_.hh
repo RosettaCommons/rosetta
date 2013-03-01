@@ -150,6 +150,8 @@ protected: // Assignment
 	VectorOption_T_ &
 	operator =( VectorOption_T_ const & option )
 	{
+		Option::operator=(option);
+
 		if ( this != &option ) {
 			key_ = option.key_;
 			description_ = option.description_;

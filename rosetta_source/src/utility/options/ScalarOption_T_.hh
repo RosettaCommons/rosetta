@@ -138,6 +138,8 @@ protected: // Assignment
 	ScalarOption_T_ &
 	operator =( ScalarOption_T_ const & option )
 	{
+		Option::operator=(option);
+
 		if ( this != &option ) {
 			key_ = option.key_;
 			description_ = option.description_;

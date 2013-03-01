@@ -117,6 +117,23 @@ public: // Conversion
 		return *option_p_;
 	}
 
+	/// @brief Option conversion
+	inline
+	operator Option const *() const
+	{
+		runtime_assert( option_p_ );
+		return option_p_;
+	}
+
+
+	/// @brief Option conversion
+	inline
+	operator Option *()
+	{
+		runtime_assert( option_p_ );
+		return option_p_;
+	}
+
 
 public: // Methods
 

@@ -697,6 +697,7 @@ public: // Properties
 	BooleanOption const &
 	option( BooleanOptionKey const & key ) const
 	{
+
 		return operator []( key );
 	}
 
@@ -1030,7 +1031,9 @@ public: // Indexers
 	BooleanOption const &
 	operator []( BooleanOptionKey const & key ) const
 	{
-		return booleans_[ key ];
+		BooleanOption const & option( booleans_[ key ] );
+		option.check_restricted_access(true);
+		return option;
 	}
 
 
@@ -1039,7 +1042,9 @@ public: // Indexers
 	BooleanOption &
 	operator []( BooleanOptionKey const & key )
 	{
-		return booleans_[ key ];
+		BooleanOption & option( booleans_[ key ] );
+		option.check_restricted_access(true);
+		return option;
 	}
 
 
@@ -1048,7 +1053,9 @@ public: // Indexers
 	IntegerOption const &
 	operator []( IntegerOptionKey const & key ) const
 	{
-		return integers_[ key ];
+		IntegerOption const & option( integers_[ key ] );
+		option.check_restricted_access(true);
+		return option;
 	}
 
 
@@ -1057,7 +1064,9 @@ public: // Indexers
 	IntegerOption &
 	operator []( IntegerOptionKey const & key )
 	{
-		return integers_[ key ];
+		IntegerOption & option( integers_[ key ] );
+		option.check_restricted_access(true);
+		return option;
 	}
 
 
@@ -1066,7 +1075,9 @@ public: // Indexers
 	RealOption const &
 	operator []( RealOptionKey const & key ) const
 	{
-		return reals_[ key ];
+		RealOption const & option( reals_[ key ] );
+		option.check_restricted_access(true);
+		return option;
 	}
 
 
@@ -1075,7 +1086,9 @@ public: // Indexers
 	RealOption &
 	operator []( RealOptionKey const & key )
 	{
-		return reals_[ key ];
+		RealOption & option( reals_[ key ] );
+		option.check_restricted_access(true);
+		return option;
 	}
 
 
@@ -1084,7 +1097,9 @@ public: // Indexers
 	StringOption const &
 	operator []( StringOptionKey const & key ) const
 	{
-		return strings_[ key ];
+		StringOption const & option( strings_[ key ] );
+		option.check_restricted_access(true);
+		return option;
 	}
 
 
@@ -1093,7 +1108,9 @@ public: // Indexers
 	StringOption &
 	operator []( StringOptionKey const & key )
 	{
-		return strings_[ key ];
+		StringOption & option( strings_[ key ] );
+		option.check_restricted_access(true);
+		return option;
 	}
 
 
@@ -1102,7 +1119,9 @@ public: // Indexers
 	FileOption const &
 	operator []( FileOptionKey const & key ) const
 	{
-		return files_[ key ];
+		FileOption const & option( files_[ key ] );
+		option.check_restricted_access(true);
+		return option;
 	}
 
 
@@ -1111,7 +1130,9 @@ public: // Indexers
 	FileOption &
 	operator []( FileOptionKey const & key )
 	{
-		return files_[ key ];
+		FileOption & option( files_[ key ] );
+		option.check_restricted_access(true);
+		return option;
 	}
 
 
@@ -1120,7 +1141,9 @@ public: // Indexers
 	PathOption const &
 	operator []( PathOptionKey const & key ) const
 	{
-		return paths_[ key ];
+		PathOption const & option( paths_[ key ] );
+		option.check_restricted_access(true);
+		return option;
 	}
 
 
@@ -1129,7 +1152,9 @@ public: // Indexers
 	PathOption &
 	operator []( PathOptionKey const & key )
 	{
-		return paths_[ key ];
+		PathOption & option( paths_[ key ] );
+		option.check_restricted_access(true);
+		return option;
 	}
 
 
@@ -1138,7 +1163,9 @@ public: // Indexers
 	Option const &
 	operator []( AnyOptionKey const & key ) const
 	{
-		return anys_[ key ];
+		Option const & option( anys_[ key ] );
+		option.check_restricted_access(true);
+		return option;
 	}
 
 
@@ -1147,7 +1174,9 @@ public: // Indexers
 	Option &
 	operator []( AnyOptionKey const & key )
 	{
-		return anys_[ key ];
+		Option & option( anys_[ key ] );
+		option.check_restricted_access(true);
+		return option;
 	}
 
 
@@ -1157,7 +1186,10 @@ public: // Indexers
 	OptionType const &
 	operator []( AnyOptionKey const & key ) const
 	{
-		return utility::down_cast< OptionType const & >( anys_[ key ] );
+		OptionType const & option(
+			utility::down_cast< OptionType const & >( anys_[ key ] ));
+		option.check_restricted_access(true);
+		return option;
 	}
 
 
@@ -1167,7 +1199,10 @@ public: // Indexers
 	OptionType &
 	operator []( AnyOptionKey const & key )
 	{
-		return utility::down_cast< OptionType const & >( anys_[ key ] );
+		OptionType & option(
+			utility::down_cast< OptionType const & >( anys_[ key ] ));
+		option.check_restricted_access(true);
+		return option;
 	}
 
 
@@ -1176,7 +1211,9 @@ public: // Indexers
 	BooleanVectorOption const &
 	operator []( BooleanVectorOptionKey const & key ) const
 	{
-		return boolean_vectors_[ key ];
+		BooleanVectorOption const & option( boolean_vectors_[ key ] );
+		option.check_restricted_access(true);
+		return option;
 	}
 
 
@@ -1185,7 +1222,9 @@ public: // Indexers
 	BooleanVectorOption &
 	operator []( BooleanVectorOptionKey const & key )
 	{
-		return boolean_vectors_[ key ];
+		BooleanVectorOption & option( boolean_vectors_[ key ] );
+		option.check_restricted_access(true);
+		return option;
 	}
 
 
@@ -1194,7 +1233,9 @@ public: // Indexers
 	IntegerVectorOption const &
 	operator []( IntegerVectorOptionKey const & key ) const
 	{
-		return integer_vectors_[ key ];
+		IntegerVectorOption const & option( integer_vectors_[ key ] );
+		option.check_restricted_access(true);
+		return option;
 	}
 
 
@@ -1203,7 +1244,9 @@ public: // Indexers
 	IntegerVectorOption &
 	operator []( IntegerVectorOptionKey const & key )
 	{
-		return integer_vectors_[ key ];
+		IntegerVectorOption & option( integer_vectors_[ key ] );
+		option.check_restricted_access(true);
+		return option;
 	}
 
 
@@ -1212,7 +1255,9 @@ public: // Indexers
 	RealVectorOption const &
 	operator []( RealVectorOptionKey const & key ) const
 	{
-		return real_vectors_[ key ];
+		RealVectorOption const & option( real_vectors_[ key ] );
+		option.check_restricted_access(true);
+		return option;
 	}
 
 
@@ -1221,7 +1266,9 @@ public: // Indexers
 	RealVectorOption &
 	operator []( RealVectorOptionKey const & key )
 	{
-		return real_vectors_[ key ];
+		RealVectorOption & option( real_vectors_[ key ] );
+		option.check_restricted_access(true);
+		return option;
 	}
 
 
@@ -1230,7 +1277,9 @@ public: // Indexers
 	StringVectorOption const &
 	operator []( StringVectorOptionKey const & key ) const
 	{
-		return string_vectors_[ key ];
+		StringVectorOption const & option( string_vectors_[ key ] );
+		option.check_restricted_access(true);
+		return option;
 	}
 
 
@@ -1239,7 +1288,9 @@ public: // Indexers
 	StringVectorOption &
 	operator []( StringVectorOptionKey const & key )
 	{
-		return string_vectors_[ key ];
+		StringVectorOption & option( string_vectors_[ key ] );
+		option.check_restricted_access(true);
+		return option;
 	}
 
 
@@ -1248,7 +1299,9 @@ public: // Indexers
 	FileVectorOption const &
 	operator []( FileVectorOptionKey const & key ) const
 	{
-		return file_vectors_[ key ];
+		FileVectorOption const & option( file_vectors_[ key ] );
+		option.check_restricted_access(true);
+		return option;
 	}
 
 
@@ -1257,7 +1310,9 @@ public: // Indexers
 	FileVectorOption &
 	operator []( FileVectorOptionKey const & key )
 	{
-		return file_vectors_[ key ];
+		FileVectorOption & option( file_vectors_[ key ] );
+		option.check_restricted_access(true);
+		return option;
 	}
 
 
@@ -1266,7 +1321,9 @@ public: // Indexers
 	PathVectorOption const &
 	operator []( PathVectorOptionKey const & key ) const
 	{
-		return path_vectors_[ key ];
+		PathVectorOption const & option( path_vectors_[ key ] );
+		option.check_restricted_access(true);
+		return option;
 	}
 
 
@@ -1275,7 +1332,9 @@ public: // Indexers
 	PathVectorOption &
 	operator []( PathVectorOptionKey const & key )
 	{
-		return path_vectors_[ key ];
+		PathVectorOption & option( path_vectors_[ key ] );
+		option.check_restricted_access(true);
+		return option;
 	}
 
 
@@ -1284,7 +1343,9 @@ public: // Indexers
 	VectorOption const &
 	operator []( AnyVectorOptionKey const & key ) const
 	{
-		return any_vectors_[ key ];
+		VectorOption const & option( any_vectors_[ key ] );
+		option.check_restricted_access(true);
+		return option;
 	}
 
 
@@ -1293,7 +1354,9 @@ public: // Indexers
 	VectorOption &
 	operator []( AnyVectorOptionKey const & key )
 	{
-		return any_vectors_[ key ];
+		VectorOption & option( any_vectors_[ key ] );
+		option.check_restricted_access(true);
+		return option;
 	}
 
 
@@ -1303,7 +1366,10 @@ public: // Indexers
 	VectorOptionType const &
 	operator []( AnyVectorOptionKey const & key ) const
 	{
-		return utility::down_cast< VectorOptionType const & >( any_vectors_[ key ] );
+		VectorOptionType const & option(
+			utility::down_cast< VectorOptionType const & >( any_vectors_[ key ] ));
+		option.check_restricted_access(true);
+		return option;
 	}
 
 
@@ -1313,7 +1379,10 @@ public: // Indexers
 	VectorOptionType &
 	operator []( AnyVectorOptionKey const & key )
 	{
-		return utility::down_cast< VectorOptionType const & >( any_vectors_[ key ] );
+		VectorOptionType & option(
+			utility::down_cast< VectorOptionType const & >( any_vectors_[ key ] ));
+		option.check_restricted_access(true);
+		return option;
 	}
 
 
@@ -1324,43 +1393,59 @@ public: // Indexers
 	{
 		using utility::down_cast;
 		runtime_assert( all_.has( key ) );
+		Option const * option;
 		switch ( all_[ key ] ) {
 		case BOOLEAN_OPTION:
-			return booleans_[ down_cast< BooleanOptionKey const & >( key ) ];
+			option = &booleans_[ down_cast< BooleanOptionKey const & >( key ) ];
+			break;
 		case INTEGER_OPTION:
-			return integers_[ down_cast< IntegerOptionKey const & >( key ) ];
+			option = &integers_[ down_cast< IntegerOptionKey const & >( key ) ];
+			break;
 		case REAL_OPTION:
-			return reals_[ down_cast< RealOptionKey const & >( key ) ];
+			option = &reals_[ down_cast< RealOptionKey const & >( key ) ];
+			break;
 		case STRING_OPTION:
-			return strings_[ down_cast< StringOptionKey const & >( key ) ];
+			option = &strings_[ down_cast< StringOptionKey const & >( key ) ];
+			break;
 		case FILE_OPTION:
-			return files_[ down_cast< FileOptionKey const & >( key ) ];
+			option = &files_[ down_cast< FileOptionKey const & >( key ) ];
+			break;
 		case PATH_OPTION:
-			return paths_[ down_cast< PathOptionKey const & >( key ) ];
+			option = &paths_[ down_cast< PathOptionKey const & >( key ) ];
+			break;
 		case ANY_OPTION:
-			return anys_[ down_cast< AnyOptionKey const & >( key ) ];
+			option = anys_[ down_cast< AnyOptionKey const & >( key ) ];
+			break;
 		case BOOLEAN_VECTOR_OPTION:
-			return boolean_vectors_[ down_cast< BooleanVectorOptionKey const & >( key ) ];
+			option = &boolean_vectors_[ down_cast< BooleanVectorOptionKey const & >( key ) ];
+			break;
 		case INTEGER_VECTOR_OPTION:
-			return integer_vectors_[ down_cast< IntegerVectorOptionKey const & >( key ) ];
+			option = &integer_vectors_[ down_cast< IntegerVectorOptionKey const & >( key ) ];
+			break;
 		case REAL_VECTOR_OPTION:
-			return real_vectors_[ down_cast< RealVectorOptionKey const & >( key ) ];
+			option = &real_vectors_[ down_cast< RealVectorOptionKey const & >( key ) ];
+			break;
 		case STRING_VECTOR_OPTION:
-			return string_vectors_[ down_cast< StringVectorOptionKey const & >( key ) ];
+			option = &string_vectors_[ down_cast< StringVectorOptionKey const & >( key ) ];
+			break;
 		case FILE_VECTOR_OPTION:
-			return file_vectors_[ down_cast< FileVectorOptionKey const & >( key ) ];
+			option = &file_vectors_[ down_cast< FileVectorOptionKey const & >( key ) ];
+			break;
 		case PATH_VECTOR_OPTION:
-			return path_vectors_[ down_cast< PathVectorOptionKey const & >( key ) ];
+			option = &path_vectors_[ down_cast< PathVectorOptionKey const & >( key ) ];
+			break;
 		case ANY_VECTOR_OPTION:
-			return any_vectors_[ down_cast< AnyVectorOptionKey const & >( key ) ];
+			option = any_vectors_[ down_cast< AnyVectorOptionKey const & >( key ) ];
+			break;
 		default :
 			std::cerr << "Offending key is: " << all_[ key ] << "  " << (int)all_[ key ] << std::endl;
 			runtime_assert( false ); // Shouldn't get here
 			return *booleans_.begin(); // Keep compiler happy
 			break;
 		}
-		runtime_assert( false ); // Shouldn't get here
-		return *booleans_.begin(); // Keep compiler happy
+
+		option->check_restricted_access(true);
+		return *option;
 	}
 
 
@@ -1371,42 +1456,57 @@ public: // Indexers
 	{
 		using utility::down_cast;
 		runtime_assert( all_.has( key ) );
+		Option * option;
 		switch ( all_[ key ] ) {
 		case BOOLEAN_OPTION:
-			return booleans_[ down_cast< BooleanOptionKey const & >( key ) ];
+			option = &booleans_[ down_cast< BooleanOptionKey const & >( key ) ];
+			break;
 		case INTEGER_OPTION:
-			return integers_[ down_cast< IntegerOptionKey const & >( key ) ];
+			option = &integers_[ down_cast< IntegerOptionKey const & >( key ) ];
+			break;
 		case REAL_OPTION:
-			return reals_[ down_cast< RealOptionKey const & >( key ) ];
+			option = &reals_[ down_cast< RealOptionKey const & >( key ) ];
+			break;
 		case STRING_OPTION:
-			return strings_[ down_cast< StringOptionKey const & >( key ) ];
+			option = &strings_[ down_cast< StringOptionKey const & >( key ) ];
+			break;
 		case FILE_OPTION:
-			return files_[ down_cast< FileOptionKey const & >( key ) ];
+			option = &files_[ down_cast< FileOptionKey const & >( key ) ];
+			break;
 		case PATH_OPTION:
-			return paths_[ down_cast< PathOptionKey const & >( key ) ];
+			option = &paths_[ down_cast< PathOptionKey const & >( key ) ];
+			break;
 		case ANY_OPTION:
-			return anys_[ down_cast< AnyOptionKey const & >( key ) ];
+			option = anys_[ down_cast< AnyOptionKey const & >( key ) ];
+			break;
 		case BOOLEAN_VECTOR_OPTION:
-			return boolean_vectors_[ down_cast< BooleanVectorOptionKey const & >( key ) ];
+			option = &boolean_vectors_[ down_cast< BooleanVectorOptionKey const & >( key ) ];
+			break;
 		case INTEGER_VECTOR_OPTION:
-			return integer_vectors_[ down_cast< IntegerVectorOptionKey const & >( key ) ];
+			option = &integer_vectors_[ down_cast< IntegerVectorOptionKey const & >( key ) ];
+			break;
 		case REAL_VECTOR_OPTION:
-			return real_vectors_[ down_cast< RealVectorOptionKey const & >( key ) ];
+			option = &real_vectors_[ down_cast< RealVectorOptionKey const & >( key ) ];
+			break;
 		case STRING_VECTOR_OPTION:
-			return string_vectors_[ down_cast< StringVectorOptionKey const & >( key ) ];
+			option = &string_vectors_[ down_cast< StringVectorOptionKey const & >( key ) ];
+			break;
 		case FILE_VECTOR_OPTION:
-			return file_vectors_[ down_cast< FileVectorOptionKey const & >( key ) ];
+			option = &file_vectors_[ down_cast< FileVectorOptionKey const & >( key ) ];
+			break;
 		case PATH_VECTOR_OPTION:
-			return path_vectors_[ down_cast< PathVectorOptionKey const & >( key ) ];
+			option = &path_vectors_[ down_cast< PathVectorOptionKey const & >( key ) ];
+			break;
 		case ANY_VECTOR_OPTION:
-			return any_vectors_[ down_cast< AnyVectorOptionKey const & >( key ) ];
+			option = any_vectors_[ down_cast< AnyVectorOptionKey const & >( key ) ];
+			break;
 		default :
 			runtime_assert( false ); // Shouldn't get here
-			return *booleans_.begin(); // Keep compiler happy
+			option = &(*booleans_.begin()); // Keep compiler happy
 			break;
 		}
-		runtime_assert( false ); // Shouldn't get here
-		return *booleans_.begin(); // Keep compiler happy
+		option->check_restricted_access(true);
+		return *option;
 	}
 
 
@@ -1433,126 +1533,153 @@ public: // Indexers
 	/// @brief Option by BooleanOptionKey
 	inline
 	BooleanOption const &
-	operator ()( BooleanOptionKey const & key ) const
+	operator ()( BooleanOptionKey const & key, bool check_restricted_access=true ) const
 	{
-		return operator []( key );
+		BooleanOption const & option(booleans_[ key ]);
+		option.check_restricted_access(check_restricted_access);
+		return option;
 	}
 
 
 	/// @brief Option by BooleanOptionKey
 	inline
 	BooleanOption &
-	operator ()( BooleanOptionKey const & key )
+	operator ()( BooleanOptionKey const & key, bool check_restricted_access=true )
 	{
-		return operator []( key );
+		BooleanOption & option( booleans_[ key ]);
+		option.check_restricted_access(check_restricted_access);
+		return option;
 	}
 
 
 	/// @brief Option by IntegerOptionKey
 	inline
 	IntegerOption const &
-	operator ()( IntegerOptionKey const & key ) const
+	operator ()( IntegerOptionKey const & key, bool check_restricted_access=true ) const
 	{
-		return operator []( key );
+		IntegerOption const & option( integers_[ key ]);
+		option.check_restricted_access(check_restricted_access);
+		return option;
 	}
 
 
 	/// @brief Option by IntegerOptionKey
 	inline
 	IntegerOption &
-	operator ()( IntegerOptionKey const & key )
+	operator ()( IntegerOptionKey const & key, bool check_restricted_access=true )
 	{
-		return operator []( key );
+		IntegerOption & option( integers_[ key ]);
+		option.check_restricted_access(check_restricted_access);
+		return option;
 	}
 
 
 	/// @brief Option by RealOptionKey
 	inline
 	RealOption const &
-	operator ()( RealOptionKey const & key ) const
+	operator ()( RealOptionKey const & key, bool check_restricted_access=true ) const
 	{
-		return operator []( key );
+		RealOption const & option( reals_[ key ]);
+		option.check_restricted_access(check_restricted_access);
+		return option;
 	}
 
 
 	/// @brief Option by RealOptionKey
 	inline
 	RealOption &
-	operator ()( RealOptionKey const & key )
+	operator ()( RealOptionKey const & key, bool check_restricted_access=true )
 	{
-		return operator []( key );
+		RealOption & option( reals_[ key ]);
+		option.check_restricted_access(check_restricted_access);
+		return option;
 	}
-
 
 	/// @brief Option by StringOptionKey
 	inline
 	StringOption const &
-	operator ()( StringOptionKey const & key ) const
+	operator ()( StringOptionKey const & key, bool check_restricted_access=true ) const
 	{
-		return operator []( key );
+		StringOption const & option( strings_[ key ]);
+		option.check_restricted_access(check_restricted_access);
+		return option;
 	}
 
 
 	/// @brief Option by StringOptionKey
 	inline
 	StringOption &
-	operator ()( StringOptionKey const & key )
+	operator ()( StringOptionKey const & key, bool check_restricted_access=true )
 	{
-		return operator []( key );
+		StringOption & option( strings_[ key ]);
+		option.check_restricted_access(check_restricted_access);
+		return option;
 	}
 
 
 	/// @brief Option by FileOptionKey
 	inline
 	FileOption const &
-	operator ()( FileOptionKey const & key ) const
+	operator ()( FileOptionKey const & key, bool check_restricted_access=true ) const
 	{
-		return operator []( key );
+		FileOption const & option( files_[ key ]);
+		option.check_restricted_access(check_restricted_access);
+		return option;
 	}
 
 
 	/// @brief Option by FileOptionKey
 	inline
 	FileOption &
-	operator ()( FileOptionKey const & key )
+	operator ()( FileOptionKey const & key, bool check_restricted_access=true )
 	{
-		return operator []( key );
+		FileOption & option( files_[ key ]);
+		option.check_restricted_access(check_restricted_access);
+		return option;
 	}
 
 
 	/// @brief Option by PathOptionKey
 	inline
 	PathOption const &
-	operator ()( PathOptionKey const & key ) const
+	operator ()( PathOptionKey const & key, bool check_restricted_access=true ) const
 	{
-		return operator []( key );
+		PathOption const & option( paths_[ key ]);
+		option.check_restricted_access(check_restricted_access);
+		return option;
 	}
 
 
 	/// @brief Option by PathOptionKey
 	inline
 	PathOption &
-	operator ()( PathOptionKey const & key )
+	operator ()( PathOptionKey const & key, bool check_restricted_access=true )
 	{
-		return operator []( key );
+		PathOption & option( paths_[ key ]);
+		option.check_restricted_access(check_restricted_access);
+		return option;
 	}
 
 
 	/// @brief Option by AnyOptionKey
 	inline
 	Option const &
-	operator ()( AnyOptionKey const & key ) const
+	operator ()( AnyOptionKey const & key, bool check_restricted_access=true ) const
 	{
-		return operator []( key );
+		Option const & option( anys_[ key ]);
+		option.check_restricted_access(check_restricted_access);
+		return option;
 	}
 
 
 	/// @brief Option by AnyOptionKey
 	inline
 	Option &
-	operator ()( AnyOptionKey const & key )
+	operator ()( AnyOptionKey const & key, bool check_restricted_access=true )
 	{
-		return operator []( key );
+		Option & option( anys_[ key ]);
+		option.check_restricted_access(check_restricted_access);
+		return option;
 	}
 
 
@@ -1560,9 +1687,12 @@ public: // Indexers
 	template< typename OptionType >
 	inline
 	OptionType const &
-	operator ()( AnyOptionKey const & key ) const
+	operator ()( AnyOptionKey const & key, bool check_restricted_access=true ) const
 	{
-		return operator []< OptionType >( key );
+		OptionType const & option(
+			utility::down_cast< OptionType const & >( anys_[ key ] ));
+		option.check_restricted_access(check_restricted_access);
+		return option;
 	}
 
 
@@ -1570,135 +1700,166 @@ public: // Indexers
 	template< typename OptionType >
 	inline
 	OptionType &
-	operator ()( AnyOptionKey const & key )
+	operator ()( AnyOptionKey const & key, bool check_restricted_access=true )
 	{
-		return operator []< OptionType >( key );
+		OptionType & option(
+			utility::down_cast< OptionType const & >( anys_[ key ] ));
+		option.check_restricted_access(check_restricted_access);
+		return option;
 	}
 
 
 	/// @brief VectorOption by BooleanVectorOptionKey
 	inline
 	BooleanVectorOption const &
-	operator ()( BooleanVectorOptionKey const & key ) const
+	operator ()( BooleanVectorOptionKey const & key, bool check_restricted_access=true ) const
 	{
-		return operator []( key );
+		BooleanVectorOption const & option( boolean_vectors_[ key ]);
+		option.check_restricted_access(check_restricted_access);
+		return option;
 	}
 
 
 	/// @brief VectorOption by BooleanVectorOptionKey
 	inline
 	BooleanVectorOption &
-	operator ()( BooleanVectorOptionKey const & key )
+	operator ()( BooleanVectorOptionKey const & key, bool check_restricted_access=true )
 	{
-		return operator []( key );
+		BooleanVectorOption & option( boolean_vectors_[ key ]);
+		option.check_restricted_access(check_restricted_access);
+		return option;;
 	}
 
 
 	/// @brief VectorOption by IntegerVectorOptionKey
 	inline
 	IntegerVectorOption const &
-	operator ()( IntegerVectorOptionKey const & key ) const
+	operator ()( IntegerVectorOptionKey const & key, bool check_restricted_access=true ) const
 	{
-		return operator []( key );
+		IntegerVectorOption const & option( integer_vectors_[ key ]);
+		option.check_restricted_access(check_restricted_access);
+		return option;
 	}
 
 
 	/// @brief VectorOption by IntegerVectorOptionKey
 	inline
 	IntegerVectorOption &
-	operator ()( IntegerVectorOptionKey const & key )
+	operator ()( IntegerVectorOptionKey const & key, bool check_restricted_access=true )
 	{
-		return operator []( key );
+		IntegerVectorOption & option( integer_vectors_[ key ]);
+		option.check_restricted_access(check_restricted_access);
+		return option;
 	}
 
 
 	/// @brief VectorOption by RealVectorOptionKey
 	inline
 	RealVectorOption const &
-	operator ()( RealVectorOptionKey const & key ) const
+	operator ()( RealVectorOptionKey const & key, bool check_restricted_access=true ) const
 	{
-		return operator []( key );
+		RealVectorOption const & option( real_vectors_[ key ]);
+		option.check_restricted_access(check_restricted_access);
+		return option;
 	}
 
 
 	/// @brief VectorOption by RealVectorOptionKey
 	inline
 	RealVectorOption &
-	operator ()( RealVectorOptionKey const & key )
+	operator ()( RealVectorOptionKey const & key, bool check_restricted_access=true )
 	{
-		return operator []( key );
+		RealVectorOption & option( real_vectors_[ key ]);
+		option.check_restricted_access(check_restricted_access);
+		return option;
 	}
 
 
 	/// @brief VectorOption by StringVectorOptionKey
 	inline
 	StringVectorOption const &
-	operator ()( StringVectorOptionKey const & key ) const
+	operator ()( StringVectorOptionKey const & key, bool check_restricted_access=true ) const
 	{
-		return operator []( key );
+		StringVectorOption const & option( string_vectors_[ key ]);
+		option.check_restricted_access(check_restricted_access);
+		return option;
 	}
 
 
 	/// @brief VectorOption by StringVectorOptionKey
 	inline
 	StringVectorOption &
-	operator ()( StringVectorOptionKey const & key )
+	operator ()( StringVectorOptionKey const & key, bool check_restricted_access=true )
 	{
-		return operator []( key );
+		StringVectorOption & option( string_vectors_[ key ]);
+		option.check_restricted_access(check_restricted_access);
+		return option;
 	}
 
 
 	/// @brief VectorOption by FileVectorOptionKey
 	inline
 	FileVectorOption const &
-	operator ()( FileVectorOptionKey const & key ) const
+	operator ()( FileVectorOptionKey const & key, bool check_restricted_access=true ) const
 	{
-		return operator []( key );
+		FileVectorOption const & option( file_vectors_[ key ]);
+		option.check_restricted_access(check_restricted_access);
+		return option;
 	}
 
 
 	/// @brief VectorOption by FileVectorOptionKey
 	inline
 	FileVectorOption &
-	operator ()( FileVectorOptionKey const & key )
+	operator ()( FileVectorOptionKey const & key, bool check_restricted_access=true )
 	{
-		return operator []( key );
+		FileVectorOption & option( file_vectors_[ key ]);
+		option.check_restricted_access(check_restricted_access);
+		return option;
 	}
 
 
 	/// @brief VectorOption by PathVectorOptionKey
 	inline
 	PathVectorOption const &
-	operator ()( PathVectorOptionKey const & key ) const
+	operator ()( PathVectorOptionKey const & key, bool check_restricted_access=true ) const
 	{
-		return operator []( key );
+		PathVectorOption const & option( path_vectors_[ key ]);
+		option.check_restricted_access(check_restricted_access);
+		return option;
 	}
 
 
 	/// @brief VectorOption by PathVectorOptionKey
 	inline
 	PathVectorOption &
-	operator ()( PathVectorOptionKey const & key )
+	operator ()( PathVectorOptionKey const & key, bool check_restricted_access=true )
 	{
-		return operator []( key );
+		PathVectorOption & option( path_vectors_[ key ]);
+		option.check_restricted_access(check_restricted_access);
+		return option;
 	}
 
 
 	/// @brief VectorOption by AnyVectorOptionKey
 	inline
 	VectorOption const &
-	operator ()( AnyVectorOptionKey const & key ) const
+	operator ()( AnyVectorOptionKey const & key, bool check_restricted_access=true ) const
 	{
-		return operator []( key );
+		VectorOption const & option(any_vectors_[ key ] );
+		option.check_restricted_access(check_restricted_access);
+		return option;
 	}
 
 
 	/// @brief VectorOption by AnyVectorOptionKey
 	inline
 	VectorOption &
-	operator ()( AnyVectorOptionKey const & key )
+	operator ()( AnyVectorOptionKey const & key, bool check_restricted_access=true )
 	{
-		return operator []( key );
+		VectorOption & option( any_vectors_[ key ] );
+		option.check_restricted_access(check_restricted_access);
+		return option;
 	}
 
 
@@ -1706,9 +1867,12 @@ public: // Indexers
 	template< typename VectorOptionType >
 	inline
 	VectorOptionType const &
-	operator ()( AnyVectorOptionKey const & key ) const
+	operator ()( AnyVectorOptionKey const & key, bool check_restricted_access=true ) const
 	{
-		return operator []< VectorOptionType >( key );
+		VectorOptionType const & option(
+			utility::down_cast< VectorOptionType const & >( any_vectors_[ key ] ));
+		option.check_restricted_access(check_restricted_access);
+		return option;
 	}
 
 
@@ -1716,27 +1880,136 @@ public: // Indexers
 	template< typename VectorOptionType >
 	inline
 	VectorOptionType &
-	operator ()( AnyVectorOptionKey const & key )
+	operator ()( AnyVectorOptionKey const & key, bool check_restricted_access=true )
 	{
-		return operator []< VectorOptionType >( key );
+		VectorOptionType & option(
+			utility::down_cast< VectorOptionType & >( any_vectors_[ key ] ));
+		option.check_restricted_access(check_restricted_access);
+		return option;
 	}
 
 
 	/// @brief Option by OptionKey
 	inline
 	Option const &
-	operator ()( OptionKey const & key ) const
+	operator ()( OptionKey const & key, bool check_restricted_access=true ) const
 	{
-		return operator []( key );
+		using utility::down_cast;
+		runtime_assert( all_.has( key ) );
+		Option const * option;
+		switch ( all_[ key ] ) {
+		case BOOLEAN_OPTION:
+			option = &booleans_[ down_cast< BooleanOptionKey const & >( key ) ];
+			break;
+		case INTEGER_OPTION:
+			option = &integers_[ down_cast< IntegerOptionKey const & >( key ) ];
+			break;
+		case REAL_OPTION:
+			option = &reals_[ down_cast< RealOptionKey const & >( key ) ];
+			break;
+		case STRING_OPTION:
+			option = &strings_[ down_cast< StringOptionKey const & >( key ) ];
+			break;
+		case FILE_OPTION:
+			option = &files_[ down_cast< FileOptionKey const & >( key ) ];
+			break;
+		case PATH_OPTION:
+			option = &paths_[ down_cast< PathOptionKey const & >( key ) ];
+			break;
+		case ANY_OPTION:
+			option = anys_[ down_cast< AnyOptionKey const & >( key ) ];
+			break;
+		case BOOLEAN_VECTOR_OPTION:
+			option = &boolean_vectors_[ down_cast< BooleanVectorOptionKey const & >( key ) ];
+			break;
+		case INTEGER_VECTOR_OPTION:
+			option = &integer_vectors_[ down_cast< IntegerVectorOptionKey const & >( key ) ];
+			break;
+		case REAL_VECTOR_OPTION:
+			option = &real_vectors_[ down_cast< RealVectorOptionKey const & >( key ) ];
+			break;
+		case STRING_VECTOR_OPTION:
+			option = &string_vectors_[ down_cast< StringVectorOptionKey const & >( key ) ];
+			break;
+		case FILE_VECTOR_OPTION:
+			option = &file_vectors_[ down_cast< FileVectorOptionKey const & >( key ) ];
+			break;
+		case PATH_VECTOR_OPTION:
+			option = &path_vectors_[ down_cast< PathVectorOptionKey const & >( key ) ];
+			break;
+		case ANY_VECTOR_OPTION:
+			option = any_vectors_[ down_cast< AnyVectorOptionKey const & >( key ) ];
+			break;
+		default :
+			std::cerr << "Offending key is: " << all_[ key ] << "  " << (int)all_[ key ] << std::endl;
+			runtime_assert( false ); // Shouldn't get here
+			return *booleans_.begin(); // Keep compiler happy
+			break;
+		}
+
+		option->check_restricted_access(check_restricted_access);
+		return *option;
 	}
 
 
 	/// @brief Option by OptionKey
 	inline
 	Option &
-	operator ()( OptionKey const & key )
+	operator ()( OptionKey const & key, bool check_restricted_access=true )
 	{
-		return operator []( key );
+		using utility::down_cast;
+		runtime_assert( all_.has( key ) );
+		Option * option;
+		switch ( all_[ key ] ) {
+		case BOOLEAN_OPTION:
+			option = &booleans_[ down_cast< BooleanOptionKey const & >( key ) ];
+			break;
+		case INTEGER_OPTION:
+			option = &integers_[ down_cast< IntegerOptionKey const & >( key ) ];
+			break;
+		case REAL_OPTION:
+			option = &reals_[ down_cast< RealOptionKey const & >( key ) ];
+			break;
+		case STRING_OPTION:
+			option = &strings_[ down_cast< StringOptionKey const & >( key ) ];
+			break;
+		case FILE_OPTION:
+			option = &files_[ down_cast< FileOptionKey const & >( key ) ];
+			break;
+		case PATH_OPTION:
+			option = &paths_[ down_cast< PathOptionKey const & >( key ) ];
+			break;
+		case ANY_OPTION:
+			option = anys_[ down_cast< AnyOptionKey const & >( key ) ];
+			break;
+		case BOOLEAN_VECTOR_OPTION:
+			option = &boolean_vectors_[ down_cast< BooleanVectorOptionKey const & >( key ) ];
+			break;
+		case INTEGER_VECTOR_OPTION:
+			option = &integer_vectors_[ down_cast< IntegerVectorOptionKey const & >( key ) ];
+			break;
+		case REAL_VECTOR_OPTION:
+			option = &real_vectors_[ down_cast< RealVectorOptionKey const & >( key ) ];
+			break;
+		case STRING_VECTOR_OPTION:
+			option = &string_vectors_[ down_cast< StringVectorOptionKey const & >( key ) ];
+			break;
+		case FILE_VECTOR_OPTION:
+			option = &file_vectors_[ down_cast< FileVectorOptionKey const & >( key ) ];
+			break;
+		case PATH_VECTOR_OPTION:
+			option = &path_vectors_[ down_cast< PathVectorOptionKey const & >( key ) ];
+			break;
+		case ANY_VECTOR_OPTION:
+			option = any_vectors_[ down_cast< AnyVectorOptionKey const & >( key ) ];
+			break;
+		default :
+			runtime_assert( false ); // Shouldn't get here
+			option = &(*booleans_.begin()); // Keep compiler happy
+			break;
+		}
+		option->check_restricted_access(check_restricted_access);
+		return *option;
 	}
 
 
@@ -1744,9 +2017,10 @@ public: // Indexers
 	template< typename OptionType >
 	inline
 	OptionType const &
-	operator ()( OptionKey const & key ) const
+	operator ()( OptionKey const & key, bool check_restricted_access=true ) const
 	{
-		return operator []< OptionType >( key );
+		return utility::down_cast< OptionType const & >(
+			operator ()< OptionType >( key, check_restricted_access ));
 	}
 
 
@@ -1754,9 +2028,10 @@ public: // Indexers
 	template< typename OptionType >
 	inline
 	OptionType &
-	operator ()( OptionKey const & key )
+	operator ()( OptionKey const & key, bool check_restricted_access=true )
 	{
-		return operator []< OptionType >( key );
+		return utility::down_cast< OptionType & >(
+			operator ()< OptionType >( key, check_restricted_access ));
 	}
 
 

@@ -42,6 +42,9 @@ OPT_1GRP_KEY( String, run, run_one_benchmark )
 const char results_filename[] = "_performance_";
 
 // Initialize performance benchmark tests here:
+#include <apps/benchmark/OptionCollection.bench.hh>
+OptionCollectionBenchmark OptionCollection_("basic.options.OptionCollection");
+
 #include <apps/benchmark/score.bench.hh>
 ScoreBenchmark Score_("core.scoring.Score");
 

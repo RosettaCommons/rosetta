@@ -22,7 +22,7 @@
 
 // Package headers
 #include <utility/options/keys/OptionKey.hh>
-
+#include <utility/excn/Exceptions.hh>
 // C++ headers
 #include <cstddef>
 #include <string>
@@ -65,13 +65,17 @@ protected: // Creation
 
 	/// @brief Default constructor
 	inline
-	Option() :  been_accessed_(false)
+	Option() :
+		been_accessed_(false),
+		restricted_access_(false)
 	{}
 
 
 	/// @brief Copy constructor
 	inline
-	Option( Option const & ) :  been_accessed_(false)
+	Option( Option const & option) :
+		been_accessed_(false),
+		restricted_access_(option.restricted_access_)
 	{}
 
 
@@ -97,8 +101,12 @@ protected: // Assignment
 	/// @brief Copy assignment
 	inline
 	Option &
-	operator =( Option const & )
+	operator =( Option const & option )
 	{
+		if ( this != &option ){
+			been_accessed_ = option.been_accessed_;
+			restricted_access_ = option.restricted_access_;
+		}
 		return *this;
 	}
 
@@ -364,6 +372,36 @@ public: // Properties
 	/// @brief Return true if option value was anyhow accessed.
 	bool is_been_accessed() const { return been_accessed_; }
 
+	/// @brief Restrict direct access to option for general use.
+	/// @details In the past, protocols were able to access the values
+	/// of options in the option system directly. However this tied
+	/// protocol behavior tightly to setting specific options on the
+	/// command line, making it difficult to use Rosetta using other
+	/// workflows. Now, options are accessed through the resource
+	/// manager, which has control over which options are passed to
+	/// which protocols.
+	///
+	///   basic::resource_manager::ResourceManager::get_instance()->get_option(key);
+	///
+	/// To incrementally deprectate direct usage of options, an option
+	/// is set to have restricted access in basic/options/options_rosetta.py
+	///
+	Option &
+	restrict_access( bool setting ) {
+		restricted_access_ = setting;
+		return *this;
+	}
+
+	void
+	check_restricted_access (
+		bool do_check
+	) const {
+		if( restricted_access_ && do_check ){
+			throw utility::excn::EXCN_Msg_Exception(
+				"Attempting to access option '" + code() + "' that has restricted access. Please use 'basic::resource_manager::ResourceManager::get_instance()->get_option( " + code() + " );' instead.");
+		}
+	}
+
 public: // Comparison
 
 
@@ -386,6 +424,10 @@ private: // Private data members
 	///        Used to create option usage reports.
 	///        False by default, any access functions ie: user(), active(), value(), operator()() will set it to true.
 	mutable bool  been_accessed_;
+
+	/// @brief Is directly accessing this option deprecated in favor of
+	/// accessing it through the resource manager?
+	bool restricted_access_;
 
 }; // Option
 
