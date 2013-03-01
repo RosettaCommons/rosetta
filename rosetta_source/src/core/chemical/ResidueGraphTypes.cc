@@ -39,6 +39,11 @@ bool HeavyAtomWithPolarHydrogensFilter::operator()(VD const vd) const{
 	return false;
 }
 
+bool HeavyAtomAcceptorFilter::operator()(VD const vd) const{
+	return (*atom_types_)[ (*graph_)[vd].atom_type_index() ].is_acceptor();
+}
+
+
 }
 }
 ///////////////////////////////////////////////////////////////
