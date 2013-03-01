@@ -73,7 +73,7 @@ print(at_boundary)
 #		data=at_boundary,
 #		aes(indicator=at_boundary_string,
 #		group=sample_source, colour=sample_source)) +
-#	opts(title = paste(
+#	ggtitle(paste(
 #		"Min Distance From Grid Boundary; B-Factor < 30", sep=""),
 #		legend.position = "none") +
 #	scale_y_continuous("Feature Density") +
@@ -85,7 +85,7 @@ print(at_boundary)
 #	theme_bw() +
 #	geom_line(aes(x=x, y=y, colour=sample_source), size=1.5) +
 #	scale_y_continuous("Feature Density") +
-#	opts(legend.position=c(.8, .8)) +
+#	theme(legend.position=c(.8, .8)) +
 #	scale_colour_grey("Energy Function") +
 #	scale_x_continuous("Min Distance From Grid (degrees)", limits=c(0,.25)) +
 #save_plots(self, plot_id, sample_sources, output_dir, output_formats)
@@ -118,7 +118,7 @@ sub_f <- ddply(f, .(sample_source), function(df){
 #	geom_indicator(data=f,
 #		aes(indicator=counts, group=sample_source, colour=sample_source),
 #		xpos="left") +
-#	opts(title = "Min Distance From Grid Boundary, Quantile vs Quantile; B-Factor < 30") +
+#	ggtitle("Min Distance From Grid Boundary, Quantile vs Quantile; B-Factor < 30") +
 #	scale_x_continuous(
 #		expression(paste("Uniform Distribution Quantile (degrees)", sep="")),
 #		limits=c(0, 2.5)) +
@@ -133,7 +133,7 @@ ggplot() +
 	theme_bw() +
 	stat_qq(data=sub_f, aes(sample=off_grid, colour=sample_source),
 		geom="line", dist=q_theory, size=1.5) +
-	opts(
+	theme(
 		legend.position = c(.25,.8)) +
 	scale_colour_grey("Energy Function") +
 	scale_x_continuous("Uniform Distribution Quantile (degrees)",

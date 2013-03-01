@@ -38,7 +38,7 @@ plot_id <- "hbonds_num_by_acc_chem_type"
 ggplot(f, aes(acc_chem_type_name, log(acc_chem_type_count))) + theme_bw() +
   geom_line(aes(colour=sample_source, group=sample_source), size=.2) +
 	geom_point(aes(colour=sample_source), size=3) +
-  opts(title = "Number of HBonds by Acceptor Type") +
+  ggtitle("Number of HBonds by Acceptor Type") +
   labs(x="Acceptor Type", y="log(Counts)")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -66,7 +66,7 @@ plot_id <- "hbonds_num_by_don_chem_type"
 ggplot(f, aes(don_chem_type_name, log(don_chem_type_count))) + theme_bw() +
   geom_line(aes(colour=sample_source, group=sample_source), size=.2) +
 	geom_point(aes(colour=sample_source), size=3) +
-  opts(title = "Number of HBonds by Donor Type") +
+  ggtitle("Number of HBonds by Donor Type") +
   labs(x="Donor Type", y="log(Counts)")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -125,7 +125,7 @@ ggplot(f, aes(don_chem_type_name, log(bond_counts))) + theme_bw() +
   geom_line(aes(colour=sample_source, group=sample_source), size=.2) +
 	geom_point(aes(colour=sample_source), size=2) +
 	facet_wrap( ~ acc_chem_type_name) +
-  opts(title = "Number of HBonds by Donor and Acceptor Type") +
+  ggtitle("Number of HBonds by Donor and Acceptor Type") +
   labs(x="Donor Type", y="log(Counts)") +
 	coord_flip()
 
@@ -136,7 +136,7 @@ ggplot(f, aes(acc_chem_type_name, log(bond_counts))) + theme_bw() +
   geom_line(aes(colour=sample_source, group=sample_source), size=.2) +
 	geom_point(aes(colour=sample_source), size=2) +
 	facet_wrap( ~ don_chem_type_name) +
-  opts(title = "Number of HBonds by Acceptor and Donor Type") +
+  ggtitle("Number of HBonds by Acceptor and Donor Type") +
   labs(x="Acceptor Type", y="log(Counts)") +
 	coord_flip() +
 

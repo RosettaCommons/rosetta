@@ -60,11 +60,11 @@ ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y, colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_wrap(~acc_ss, ncol=3) +
-	opts(title = "Hydrogen Bonds CHI Angle for Backbone Acceptors and Sidechain Donors with Sequence Separation > 5\n BAH < 150d By Acceptor DSSP Secondary Structure Type") +
+	ggtitle("Hydrogen Bonds CHI Angle for Backbone Acceptors and Sidechain Donors with Sequence Separation > 5\n BAH < 150d By Acceptor DSSP Secondary Structure Type") +
 	scale_x_continuous('Acceptor Base -- Acceptor Torsion (degrees)', breaks=c(90,180,270)) +
 	scale_y_continuous('Feature Density') +
-	opts(legend.position=c(.7, .35)) +
-	opts(legend.justification=c("left", "top"))
+	theme(legend.position=c(.7, .35)) +
+	theme(legend.justification=c("left", "top"))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 

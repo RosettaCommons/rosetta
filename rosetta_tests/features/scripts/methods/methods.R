@@ -1,4 +1,4 @@
-# -*- tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+#-*- tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 # vi: set ts=2 noet:
 #
 # (c) Copyright Rosetta Commons Member Institutions.
@@ -174,14 +174,17 @@ In the returned data.frame the there will be the following columns:
 # Add a column to the data.frame called "counts" that for the total
 # number of rows in each group, where the groups are determined by
 # having the same values in the id.vars columns
-add_group_counts <- function(f, id.vars) {
-	ddply(f, id.vars, function(df) data.frame(counts=nrow(df)))
+group_counts <- function(f, id.vars) {
+	ddply(f, id.vars, function(df) {
+		df$counts = nrow(df)
+		df
+	})
 }
 
 # Add a column to the data.frame called "mean" that has the mean value
 # of the measure.var, where the groups are determined by having the
 # same values in the id.vars columns
-add_group_means <- function(f, id.vars, measure.var, precision=4) {
+group_means <- function(f, id.vars, measure.var, precision=4) {
 	ddply(f, id.vars, transform, mean = round(mean(names(f)[1])))
 }
 

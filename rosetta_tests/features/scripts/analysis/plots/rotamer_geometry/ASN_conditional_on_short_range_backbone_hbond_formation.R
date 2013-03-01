@@ -76,11 +76,11 @@ p <- ggplot(data=dens) +
 	geom_line(aes(x=x, y=y, colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_grid(sr_bb_hb ~ chi_angle) +
-	opts(title=paste("ASN chi angles by presense of +1/-1 SC-BB hbonds; BFact < 30", sep="")) +
+	ggtitle(("ASN chi angles by presense of +1/-1 SC-BB hbonds; BFact < 30", sep="")) +
 	scale_x_continuous("Dihedral Angle") +
 	scale_y_continuous("Feature Density") 
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)

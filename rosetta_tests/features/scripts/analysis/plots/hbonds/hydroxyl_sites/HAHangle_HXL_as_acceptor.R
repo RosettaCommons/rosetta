@@ -86,11 +86,11 @@ p <- ggplot(data=dens) + theme_bw() +
   geom_line(aes(x=180-acos(x)*180/pi, y=y, colour=sample_source)) +
   geom_indicator(aes(colour=sample_source, indicator=counts, group=sample_source)) +
   facet_wrap( ~ acc_chem_type) +
-  opts(title = "Hydrogen Bonds HAH Angle for Hydroxyl Acceptors, Measured from Coordinates\nB-Factors < 30; Sequence Separation > 5") +
+  ggtitle("Hydrogen Bonds HAH Angle for Hydroxyl Acceptors, Measured from Coordinates\nB-Factors < 30; Sequence Separation > 5") +
   scale_x_continuous(paste('Hydroxyl Hydrogen -- Acceptor -- Donor Hydrogen (degrees)')) +
   scale_y_continuous("FeatureDensity")
 if(nrow(sample_sources) <= 3){
-  p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+  p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -104,11 +104,11 @@ p <- ggplot(data=dens2) + theme_bw() +
   geom_line(aes(x=180-acos(x)*180/pi, y=y, colour=sample_source)) +
   geom_indicator(aes(colour=sample_source, indicator=counts, group=sample_source)) +
   facet_grid( don_chem_type ~ acc_chem_type) +
-  opts(title = "Hydrogen Bonds HAH Angle for Hydroxyl Acceptors, Measured from Coordinates\nB-Factors < 30; Sequence Separation > 5") +
+  ggtitle("Hydrogen Bonds HAH Angle for Hydroxyl Acceptors, Measured from Coordinates\nB-Factors < 30; Sequence Separation > 5") +
   scale_x_continuous(paste('Hydroxyl Hydrogen -- Acceptor -- Donor Hydrogen (degrees)')) +
   scale_y_continuous("FeatureDensity")
 if(nrow(sample_sources) <= 3){
-  p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+  p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 

@@ -87,11 +87,11 @@ l_ply(levels(dens$hybrid), function(hybrid){
 		geom_line(aes(x=x, y=y*1000, colour=sample_source)) +
 		geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 		facet_wrap( ~ don_chem_type) +
-		opts(title = paste("HBonds with Sequence Separation > 5 and", hybrid, "Acceptors: CHI Angle\n(Normalized for Equal Volume per Unit Distance)")) +
+		ggtitle(paste("HBonds with Sequence Separation > 5 and", hybrid, "Acceptors: CHI Angle\n(Normalized for Equal Volume per Unit Distance)")) +
 		scale_x_continuous('Acceptor Base -- Acceptor Torsion (degrees)', breaks=c(90,270)) +
 		scale_y_continuous('Feature Density') +
-		opts(legend.position=c(.58,.35)) +
-		opts(legend.justification=c("left", "top"))
+		theme(legend.position=c(.58,.35)) +
+		theme(legend.justification=c("left", "top"))
 	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 })
 
@@ -117,12 +117,12 @@ p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y*1000, colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_grid(don_chem_type ~ acc_chem_type) +
-	opts(title = "Hydrogen Bonds CHI Angle by Chemical Types with Sequence Separation > 5\n(normalized for equal volume per unit distance)") +
+	ggtitle("Hydrogen Bonds CHI Angle by Chemical Types with Sequence Separation > 5\n(normalized for equal volume per unit distance)") +
 	scale_x_continuous('Acceptor Base -- Acceptor Torsion (degrees)', breaks=c(90,270)) +
 	scale_y_continuous('Feature Density')
 
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)

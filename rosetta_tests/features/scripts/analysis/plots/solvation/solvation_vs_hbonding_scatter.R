@@ -40,7 +40,7 @@ plot_id <- "solvation_vs_hbonding_scatter"
 ggplot(data=f) + theme_bw() +
 	geom_point(aes(x=geometric_solvation, y=hbond_energy, colour=sample_source), size=.8) +
 	facet_wrap( ~ hb_chem_type) +
-	opts(title = "Geometric Solvation score vs HBonding score for Polar Sites") +
+	ggtitle("Geometric Solvation score vs HBonding score for Polar Sites") +
 	labs(x="Geometric Solvation Score",
 	     y="Hydrogen Bond Score") +
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)

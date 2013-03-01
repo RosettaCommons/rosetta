@@ -71,11 +71,11 @@ plot_id <- "rotamer_bin_counts_ASN_psi-120_phi110"
 p <- ggplot(data=zz) + theme_bw() +
 	geom_line(aes(x=rank, y=rot_bin_fraction, colour=sample_source)) +
 	facet_wrap(~res_type, scales="free") +
-	opts(title=paste("Rotamer Bin Counts ASN psi:-120 phi:110 +/- 10 degrees", sep="")) +
+	ggtitle(("Rotamer Bin Counts ASN psi:-120 phi:110 +/- 10 degrees", sep="")) +
 	scale_y_continuous("Rotamer Bin Density") +
 	scale_x_continuous("Rotamer Bin Rank")
 if(nrow(sample_sources) <= 3){
-  p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+  p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)

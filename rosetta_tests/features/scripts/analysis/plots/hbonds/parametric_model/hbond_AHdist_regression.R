@@ -132,7 +132,7 @@ by_chem_dens <- estimate_density_1d(
 #		method=nls, formula=y ~ morse_fn(x, d, a, r, m),
 #		start = list(d=7, a=1.8, r=1.97, m=-1), trace=TRUE) +
 #	geom_line(aes(x=x, y=-log(y), colour=don_chem_type), data=by_don_dens) +
-#	opts(title = "Hydrogen Bonds A-H Distance by Chemical Type\nnormalized for equal weight per unit distance") +
+#	ggtitle("Hydrogen Bonds A-H Distance by Chemical Type\nnormalized for equal weight per unit distance") +
 #	facet_wrap(~sample_source, ncol=1) +
 #	scale_y_continuous("-log(FeatureDensity)", limits=c(-2,5), breaks=((0:15)/2-2.5))
 #	scale_x_continuous(expression(paste('Acceptor -- Proton Distance (', ring(A), ')')), limits=c(1.5,2.6), breaks=c(1.6, 1.9, 2.2, 2.5))
@@ -189,7 +189,7 @@ dens.morse_fitted_standardized <- ddply(m.chem_type_standardized, c("sample_sour
 plot_id = "morse_potential_parameter_plotmatrix"
 plotmatrix(data=m.chem_type[,c("d", "a", "r", "m")], aes(colour=don_chem_type)) +
 	theme_bw() +
-	opts(title = "Parameters for Morse Potential fit to Hydrogen Bond AHdist Densities\nGrouped by Donor and Acceptor Chemical Types\nd*(1 + exp(-2*a*(x - r)) - 2*exp(-a*(x - r))) + m") +
+	ggtitle("Parameters for Morse Potential fit to Hydrogen Bond AHdist Densities\nGrouped by Donor and Acceptor Chemical Types\nd*(1 + exp(-2*a*(x - r)) - 2*exp(-a*(x - r))) + m") +
 	coord_equal(ratio=1)
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -200,7 +200,7 @@ a_ply(sample_sources, 1, function(sample_source){
 		geom_line(aes(x=x, y=-log(y) - neg_log_y_fitted)) +
 		geom_indicator(aes(indicator=counts)) +
 		facet_grid(don_chem_type ~ acc_chem_type) +
-		opts(title = paste("Hydrogen Bonds A-H Distance by Chemical Type\nnormalized for equal weight per unit distance  Sample Source:", sample_source$sample_source[1])) +
+		ggtitle(paste("Hydrogen Bonds A-H Distance by Chemical Type\nnormalized for equal weight per unit distance  Sample Source:", sample_source$sample_source[1])) +
 		labs(x=expression(paste('Acceptor -- Proton Distance (', ring(A), ')')),
 		     y="log(FeatureDensity + 1)") +
 		scale_y_continuous(limits=c(-5,10), breaks=c(0,10)) +
@@ -248,7 +248,7 @@ a_ply(sample_sources, 1, function(sample_source){
 		geom_line(aes(x, -log(y)*kT)) +
 		geom_indicator(aes(indicator=counts)) +
 		facet_grid(don_chem_type ~ acc_chem_type) +
-		opts(title = paste("Hydrogen Bonds A-H Distance by Chemical Type Fitted with Morse Function\nnormalized for equal weight per unit distance  Sample Source:", sample_source$sample_source[1])) +
+		ggtitle(paste("Hydrogen Bonds A-H Distance by Chemical Type Fitted with Morse Function\nnormalized for equal weight per unit distance  Sample Source:", sample_source$sample_source[1])) +
 		labs(x=expression(paste('Acceptor -- Proton Distance (', ring(A), ')')),
 		     y="log(FeatureDensity)") +
 		scale_y_continuous(limits=c(-.8,1.3)) +
@@ -262,7 +262,7 @@ a_ply(sample_sources, 1, function(sample_source){
 #	ggplot(dens) + theme_bw() +
 #		geom_line(aes(x, y, colour=sample_source)) +
 #		geom_indicator(aes(indicator=counts, colour=sample_source)) +
-#		opts(title = paste("HBond AHdist Fitted with Morse Function and Polynomial\nnormalized for equal weight per unit distance Donor:", don_chem_type, " Acceptor:", acc_chem_type, sep="")) +
+#		ggtitle(paste("HBond AHdist Fitted with Morse Function and Polynomial\nnormalized for equal weight per unit distance Donor:", don_chem_type, " Acceptor:", acc_chem_type, sep="")) +
 #		scale_x_continuous(expression(paste('Acceptor -- Proton Distance (', ring(A), ')')), limits=c(1.5,2.6), breaks=c(1.6, 1.9, 2.2, 2.5)) +
 #		scale_y_continuous("log(FeatureDensity)")
 #	save_plots(self, plot_id, sample_sources, output_dir, output_formats)

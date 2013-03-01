@@ -51,7 +51,7 @@ plot_id <- "hbond_cosAHD"
 ggplot(dens) + plot_parts +
   geom_line(aes(x=x, y=y, color=sample_source)) +
   geom_indicator(aes(indicator=counts, color=sample_source, group=sample_source)) +
-  opts(title = "Hydrogen Bonds cosAHD") +
+  ggtitle("Hydrogen Bonds cosAHD") +
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 

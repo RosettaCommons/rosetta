@@ -85,7 +85,7 @@ d_ply(f, .(variable), function(df){
 			aes(x=sample_source, y=value, color=sample_source),
 			outlier.size=.7) +
 		facet_wrap( ~ res_type, ncol=2) +
-		opts(
+		theme(
 #			title=paste("Rotamer ", chi, " Deviation", sep=""),
 			legend.position="none") +
 		scale_y_continuous("Normalized Angle Deviation", limits=c(-10, 10)) +

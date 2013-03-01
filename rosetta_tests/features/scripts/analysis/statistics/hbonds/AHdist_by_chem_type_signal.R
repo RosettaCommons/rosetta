@@ -70,13 +70,13 @@ d_ply(new_dens, .(sample_source), function(sub_dens){
 		geom_line(aes(x=x, y=log(y/ref_y)*ref_y, colour=sample_source)) +
 		geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 		facet_grid(don_chem_type ~ acc_chem_type) +
-		opts(title = paste("Hydrogen Bonds A-H Distance Signal Ratio by Chemical Type\nNormalized for equal weight per unit distance\nref_ss: ", ref_ss_id, " new_ss: ", new_ss_id, sep="")) +
+		ggtitle(paste("Hydrogen Bonds A-H Distance Signal Ratio by Chemical Type\nNormalized for equal weight per unit distance\nref_ss: ", ref_ss_id, " new_ss: ", new_ss_id, sep="")) +
 		scale_y_continuous("log(Signal)") +
 		scale_x_continuous(
 			expression(paste('Acceptor -- Proton Distance (', ring(A), ')')),
 			limits=c(1.4,2.7), breaks=c(1.6, 1.9, 2.2, 2.6))
 	if(nrow(sample_sources) <= 3){
-		p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+		p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 	}
 	ref_new_sample_sources = sample_sources[
 		sample_sources$sample_source == new_ss_id ||

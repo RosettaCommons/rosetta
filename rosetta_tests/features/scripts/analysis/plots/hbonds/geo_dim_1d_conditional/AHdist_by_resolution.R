@@ -11,9 +11,11 @@ check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "AHdist_by_resolution",
 author = "Matthew O'Meara",
-brief_description = "",
+brief_description = "This measures the H-Bond A-H distance conditional on the resolution. Note that currently there is no features reporter for resolution so it must be included after the fact.",
 feature_reporter_dependencies = c("HBondFeatures"),
 run=function(self, sample_sources, output_dir, output_formats){
+
+source("scripts/analysis/plots/hbonds/hbond_geo_dim_scales.R")
 
 sele <-"
 SELECT
@@ -37,21 +39,8 @@ WHERE
   hbond.acc_id = acc_site.site_id;"
 f <- query_sample_sources(sample_sources, sele)
 
-# This is deprecated please use the hbond_chem_types table for the lables instead
-# Order the plots better and give more descriptive labels
-f$don_chem_type <- factor(f$don_chem_type,
-	levels = c("hbdon_IMD", "hbdon_IME", "hbdon_GDE", "hbdon_GDH",
-		"hbdon_AHX", "hbdon_HXL", "hbdon_IND", "hbdon_AMO", "hbdon_CXA", "hbdon_PBA"),
-	labels = c("dIMD: h", "dIME: h", "dGDE: r", "dGDH: r",
-		"dAHX: y", "dHXL: s,t", "dIND: w", "dAMO: k", "dCXA: n,q", "dPBA: bb"))
-
-# This is deprecated please use the hbond_chem_types table for the lables instead
-# Order the plots better and give more descriptive labels
-f$acc_chem_type <- factor(f$acc_chem_type,
-	levels = c("hbacc_IMD", "hbacc_IME", "hbacc_AHX", "hbacc_HXL",
-		"hbacc_CXA", "hbacc_CXL", "hbacc_PBA"),
-	labels = c("aIMD: h", "aIME: h", "aAHX: y", "aHXL: s,t",
-		"aCXA: n,q", "aCXL: d,e", "aPBA: bb"))
+f$don_chem_type_name <- don_chem_type_name_linear(f$don_chem_type))
+f$acc_chem_type_name <- acc_chem_type_name_linear(f$acc_chem_type))
 
 f$resolution_q <-
   cut(f$resolution,
@@ -59,17 +48,17 @@ f$resolution_q <-
 
 
 dens <- estimate_density_1d(
-  f, c("resolution_q", "don_chem_type", "acc_chem_type"),
+  f, c("resolution_q", "don_chem_type_name", "acc_chem_type_name"),
   "AHdist", weight_fun = radial_3d_normalization)
 
 
 plot_id <- "AHdist_by_resolution"
 p <- ggplot(data=dens) + theme_bw() +
-	geom_line(aes(x=x, y=log(y+1), colour=resolution_q)) +
+	geom_line(aes(x=x, y=y, colour=resolution_q)) +
 	geom_indicator(aes(indicator=counts, colour=resolution_q, group=resolution_q)) +
-	facet_grid(don_chem_type ~ acc_chem_type) +
-	opts(title = "Hydrogen Bonds A-H Distance by Chemical Type by Resolution Quantiles\nnormalized for equal weight per unit distance") +
-	scale_y_continuous("log(FeatureDensity + 1)", limits=c(0,2.9), breaks=0:2) +
+	facet_grid(don_chem_type_name ~ acc_chem_type_name) +
+	ggtitle("Hydrogen Bonds A-H Distance by Chemical Type by Resolution Quantiles\nnormalized for equal weight per unit distance") +
+	scale_y_continuous("FeatureDensity", limits=c(0,2.9), breaks=0:2) +
 	scale_x_continuous(expression(paste('Acceptor -- Proton Distance (', ring(A), ')')), limits=c(1.4,2.7), breaks=c(1.6, 1.9, 2.2, 2.6))
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)

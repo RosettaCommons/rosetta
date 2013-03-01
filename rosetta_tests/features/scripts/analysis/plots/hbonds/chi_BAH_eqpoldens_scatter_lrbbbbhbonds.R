@@ -48,13 +48,13 @@ f_first <- ddply(
 
 plot_id = "chi_BAH_eqpoldens_and_scatter_lrbb"
 ggplot(data=f_first) + theme_bw() +
-	geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
+	theme(panel.background=element_rect(fill="#00007F", colour="#00007F")) +
 	stat_density2d(
 		aes(x=capx,y=capy, fill=..density..), geom="tile", contour=FALSE ) +
 	polar_equal_area_grids_bw() +
 	geom_indicator(aes(indicator=counts), color="white") +
 	geom_point( data=f_second,aes(x=capx,y=capy),colour="white",size=2) +
-	opts(title =
+	ggtitle(
 		paste("Hydrogen Bonds chi vs BAH Angles with Sequence Separation > 5\n",
 		"Backbone/Backbone Hydrogen Bonds, Equal Coordinate Projection\n",
 		"Reference (density) vs Test (white circles)", sep="")) +

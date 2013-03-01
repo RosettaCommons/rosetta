@@ -54,11 +54,11 @@ run=function(self, sample_sources, output_dir, output_formats){
 	
 	
 	ggplot(data=f_first) + theme_bw() +
-			geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
+			theme(panel.background=element_rect(fill="#00007F", colour="#00007F")) +
 			stat_density2d(
 					aes(x=capx, y=capy, fill=..density..), geom="tile", contour=FALSE ) +
 			polar_equal_area_grids_bw() +
-			opts(title =
+			ggtitle(
 							paste("Salt bridge chiBDHO vs DHO Angles with Sequence Separation > 5\n",
 									"Sidechain Donors to Sidechain sp2 Acceptors, Equal Coordinate Projection\n",
 									"LYS+ARG to ASP+GLU at 2.0A", sep="")) +

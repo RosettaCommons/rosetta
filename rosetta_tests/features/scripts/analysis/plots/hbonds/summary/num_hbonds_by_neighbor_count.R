@@ -77,10 +77,10 @@ p <- ggplot(f, aes(log(chem_type_count), chem_type_name)) + theme_bw() +
   geom_path(aes(colour=sample_source, group=sample_source), size=.2) +
 	geom_point(aes(colour=sample_source), size=3) +
 	facet_grid(site_type ~ solvent_exposure, scales="free_y", space="free") +
-  opts(title = "Number of HBonds by Neighbor Count") +
+  ggtitle("Number of HBonds by Neighbor Count") +
   labs(y="Chemical Type of Hydrogen Bond Site", x="log(Counts)")
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 

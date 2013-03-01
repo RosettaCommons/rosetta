@@ -79,7 +79,7 @@ d_ply(g, .(sample_source), function(sub_g){
 	sub_g <- ddply(sub_g, .(acc_rr), transform, counts=length(sample_source))
 	p <- ggplot(data=sub_g, aes(x=psi, y=rho)) + plot_parts +
 		facet_wrap( ~ acc_rr ) +
-		opts(title = paste("Salt Bridge LYS donor D/E acceptor, PSI vs RHO by Acceptor Rotamer Recovery\nB-Factor < 30 ss_id: ", ss_id,sep="")) +
+		ggtitle(paste("Salt Bridge LYS donor D/E acceptor, PSI vs RHO by Acceptor Rotamer Recovery\nB-Factor < 30 ss_id: ", ss_id,sep="")) +
 		scale_x_continuous("Angle Around Donor (Degrees)")
 	save_plots(self, plot_id, ss, output_dir, output_formats)
 })

@@ -20,7 +20,7 @@ make_output_formats_options_list <- function(output_formats){
 			dest=as.character(output_format$id),
 			help=paste("Generate output plots using the", output_format$id, "format.  [Default \"%default\"]"))
 	})
-}    
+}
 
 get_output_formats <- function(options, output_formats){
 	adply(output_formats, 1, function(output_format){
@@ -37,7 +37,7 @@ get_output_formats_from_comparison <- function(ss_cmp, output_formats){
 		if(of %in% output_formats$id){
 			return(output_formats[output_formats$id == of,])
 		} else {
-			stop(paste("ERROR: Output format '", of, "' specified in the configuration script is not recognized. Here are the available output formats: \n  ", paste(output_formats$id, collapse="\n  ")))
+			stop(paste("ERROR: Output format '", of, "' specified in the configuration script is not recognized. Here are the available output formats: \n  ", paste(output_formats$id, collapse="\n  ", sep="")))
 		}
 	})
 }

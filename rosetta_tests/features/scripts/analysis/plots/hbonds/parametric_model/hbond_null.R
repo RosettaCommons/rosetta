@@ -15,7 +15,7 @@ brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
 run=function(self, sample_sources, output_dir, output_formats){
 
-n_pts=1000000
+n_pts=100000
 
 n_pts_ball=integer(n_pts * 6/pi) # fraction of volume in ball
 
@@ -45,11 +45,11 @@ dens <- rbind(dens_raw, dens_normalized)
 
 plot_id = "3D_radial_length_null_model"
 ggplot(data=dens) + theme_bw() +
-	geom_line(aes(x=x, y=y, colour=normalization) +
+	geom_line(aes(x=x, y=y, colour=normalization)) +
 	geom_indicator(aes(indicator=counts, colour=normalization, group=normalization)) +
-	opts(title = "3D Radial Length null Model by Normalization.") +
+	ggtitle("3D Radial Length null Model by Normalization.") +
 	labs(x=expression(paste('Distance to Origin')),
-	     y="FeatureDensity"))
+	     y="FeatureDensity")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
@@ -83,11 +83,11 @@ plotmatrix <- function (data, mapping = aes(), colour = "black")
 
 plot_id = "3D_ball_null_model"
 plotmatrix(data=null.ball[,c("x", "y", "z")]) + theme_bw() +
-	opts(title = "3D Ball Null Model.") +
+	ggtitle("3D Ball Null Model.") +
 	coord_equal(ratio=1)
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
-n_pts <- 1000000
+n_pts <- 100000
 gaussian.ball <- data.frame(x=rnorm(n_pts),y=rnorm(n_pts), z=rnorm(n_pts))
 
 null.sphere<-transform(gaussian.ball,
@@ -108,10 +108,28 @@ plot_id = "hbond_AHD_spherical_null_model"
 ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y)) +
 	geom_indicator(aes(indicator=counts)) +
-	opts(title = "Cosine of spherical Angle Null Model") +
+	ggtitle("Cosine of spherical Angle Null Model") +
 	labs(x=expression(paste('Cosine(Central Angle)')),
 	     y="FeatureDensity")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+
+
+n_pts=100000
+null.cube <- data.frame(x=10*runif(n_pts)-5, y=10*runif(n_pts)-5, z=10*runif(n_pts)-5)
+
+null.ball <- transform(null.cube,
+	r=sqrt(x^2 + y^2 + z^2),
+	cosTHETA=z/sqrt(x^2 + y^2 + z^2))
+null.ball <- null.ball[null.ball$r < 5,]
+
+plot_id = "hbond_cosBAH_vs_r_cubed_spherical_null_model"
+ggplot(data=null.ball) + theme_bw() +
+	geom_point(aes(x=cosTHETA, y=r^3)) +
+	ggtitle("cosTHETA vs r^3 of Spherical Null Model") +
+	labs(x=expression(paste('Cos(THETA)')),
+	     y="r^3")
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+
 
 
 

@@ -180,13 +180,13 @@ p <- ggplot() + theme_bw() +
 	geom_indicator(data=dp, aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	geom_line(data=dap, aes(x=x, y=y, colour=sample_source)) +
 	geom_indicator(data=dap, aes(indicator=counts, colour=sample_source, group=sample_source, xpos="left")) +
-	opts(title = "O--HA atom atom distances involving beta-sheet residues\nnormalized for equal weight per unit distance\n(antiparallel-counts left, parallel-counts right)") +
+	ggtitle("O--HA atom atom distances involving beta-sheet residues\nnormalized for equal weight per unit distance\n(antiparallel-counts left, parallel-counts right)") +
 	scale_y_continuous("Feature Density") +
 	scale_x_continuous(expression(paste('O--HA Distances (', ring(A), ')')),
 		limit=c(1.9, 6), breaks=c(2, 3, 4, 5, 6))
 
 if(nrow(sample_sources) <= 3){
-  p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+  p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 

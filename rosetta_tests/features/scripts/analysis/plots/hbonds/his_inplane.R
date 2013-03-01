@@ -131,7 +131,7 @@ plot_id = "eta_his_CXL"
 ggplot(data=dens) + theme_bw() +
   geom_line(aes(x=x, y=y, colour=sample_source)) +
   geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
-  opts(title = "Hydrogen Bonds eta Angle HIS-Epsilon Donor to Charged Acceptor") +
+  ggtitle("Hydrogen Bonds eta Angle HIS-Epsilon Donor to Charged Acceptor") +
   scale_x_continuous('Acceptor -- Donor Torsion (degrees)') +
   scale_y_continuous('Feature Density')
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)

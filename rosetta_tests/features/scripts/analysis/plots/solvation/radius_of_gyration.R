@@ -32,7 +32,7 @@ f <- query_sample_sources(sample_sources, sele)
 plot_id <- "radius_of_gyration_scatter"
 ggplot(data=f) + theme_bw() +
   geom_point(aes(x=total_residue, y=radius_of_gyration, colour=sample_source)) +
-  opts(title = "Radius of Gyration by Number of Residues") +
+  ggtitle("Radius of Gyration by Number of Residues") +
   labs(y="Radius of Gyration", x="Number of Residues")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -46,7 +46,7 @@ plot_id <- "radius_of_gyration"
 ggplot(data=dens) + theme_bw() +
   geom_line(aes(x=x, y=y, color=sample_source)) +
   geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
-  opts(title = "Normalized Radius of Gyration") +
+  ggtitle("Normalized Radius of Gyration") +
   labs(x="Radius of Gyration / Number of Residues", y="Feature Density")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 

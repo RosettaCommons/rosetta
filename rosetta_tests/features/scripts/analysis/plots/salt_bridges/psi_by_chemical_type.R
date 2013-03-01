@@ -64,10 +64,10 @@ plot_parts <- list(
 plot_id <- "salt_bridge_psi"
 dens <- estimate_density_1d_wrap(f, c("sample_source"), "psi", xlim=c(-180, 180), adjust=.2)
 p <- ggplot(data=dens) + plot_parts +
-	opts(title = "Salt Bridge PSI, B-Factor < 30") +
+	ggtitle("Salt Bridge PSI, B-Factor < 30") +
 	scale_x_continuous("Angle Around Donor")
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -75,11 +75,11 @@ save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 plot_id <- "salt_bridge_psi_by_acc_type_don_res_type"
 dens <- estimate_density_1d_wrap(f, c("sample_source", "don_res_type", "acc_type"), "psi", xlim=c(-180, 180), adjust=.2)
 p <- ggplot(data=dens) + plot_parts +
-	opts(title = "Salt Bridge PSI, B-Factor < 30") +
+	ggtitle("Salt Bridge PSI, B-Factor < 30") +
 	facet_grid( acc_type ~ don_res_type ) +
 	scale_x_continuous("Angle Around Donor")
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -87,11 +87,11 @@ save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 plot_id <- "salt_bridge_psi_by_orbital_don_res_type"
 dens <- estimate_density_1d_wrap(f, c("sample_source", "don_res_type", "orbital"), "psi", xlim=c(-180, 180), adjust=.2)
 p <- ggplot(data=dens) + plot_parts +
-	opts(title = "Salt Bridge PSI, B-Factor < 30") +
+	ggtitle("Salt Bridge PSI, B-Factor < 30") +
 	facet_grid( orbital ~ don_res_type ) +
 	scale_x_continuous("Angle Around Donor")
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -99,33 +99,33 @@ save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 plot_id <- "salt_bridge_psi_by_acc_chem_type_don_res_type"
 dens <- estimate_density_1d_wrap(f, c("sample_source", "don_res_type", "acc_chem_type"), "psi", xlim=c(-180, 180), adjust=.2)
 p <- ggplot(data=dens) + plot_parts +
-	opts(title = "Salt Bridge PSI, B-Factor < 30") +
+	ggtitle("Salt Bridge PSI, B-Factor < 30") +
 	facet_grid( acc_chem_type ~ don_res_type ) +
 	scale_x_continuous("Angle Around Donor")
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id <- "salt_bridge_psi_by_orbital_acc_chem_type"
 dens <- estimate_density_1d_wrap(f, c("sample_source", "orbital", "acc_chem_type"), "psi", xlim=c(-180, 180), adjust=.2)
 p <- ggplot(data=dens) + plot_parts +
-	opts(title = "Salt Bridge PSI, B-Factor < 30") +
+	ggtitle("Salt Bridge PSI, B-Factor < 30") +
 	facet_grid( orbital ~ acc_chem_type ) +
 	scale_x_continuous("Angle Around Donor")
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id <- "salt_bridge_psi_by_seq_sep_don_res_type"
 dens <- estimate_density_1d(f, c("sample_source", "seq_sep", "don_res_type"), "psi", xlim=c(-180, 180), adjust=.2)
 p <- ggplot(data=dens) + plot_parts +
-	opts(title = "Salt Bridge PSI, B-Factor < 30") +
+	ggtitle("Salt Bridge PSI, B-Factor < 30") +
 	facet_grid( seq_sep ~ don_res_type ) +
 	scale_x_continuous("Angle Around Donor")
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 

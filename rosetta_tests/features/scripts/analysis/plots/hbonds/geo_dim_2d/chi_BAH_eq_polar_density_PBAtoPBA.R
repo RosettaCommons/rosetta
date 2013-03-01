@@ -58,11 +58,11 @@ d_ply(f, .(sample_source), function(sub_f){
 
 	plot_id = paste("chi_BAH_eq_polar_density_lr_bbbb", ss_id, sep="_")
 	ggplot(data=subset(sub_f, seq_sep='long')) + theme_bw() +
-		geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
+		theme(panel.background=element_rect(fill="#00007F", colour="#00007F")) +
 		stat_density2d(
 			aes(x=capx,y=capy, fill=..density..), geom="tile", contour=FALSE) +
 		geom_indicator(aes(indicator=counts), color="white") +
-		opts(title = paste("Hydrogen Bonds chi vs BAH Angles with Sequence Separation > 5\nBackbone/Backbone Hydrogen Bonds\nEqual Coordinate Projection   Sample Source: ", ss_id, sep="")) +
+		ggtitle(paste("Hydrogen Bonds chi vs BAH Angles with Sequence Separation > 5\nBackbone/Backbone Hydrogen Bonds\nEqual Coordinate Projection   Sample Source: ", ss_id, sep="")) +
 		scale_x_continuous(
 			'2*sin(BAH/2) * cos(CHI)', limits=capx_limits, breaks=c(-1, 0, 1)) +
 		scale_y_continuous(
@@ -78,12 +78,12 @@ d_ply(f, .(sample_source), function(sub_f){
 
 	plot_id = paste("chi_BAH_eq_polar_density_PBAtoPBA_by_sequence_separation", ss_id, sep="_")
 	ggplot(data=sub_f) + theme_bw() +
-		geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
+		theme(panel.background=element_rect(fill="#00007F", colour="#00007F")) +
 		stat_density2d(
 			aes(x=capx,y=capy, fill=..density..), geom="tile", contour=FALSE) +
 		geom_indicator(aes(indicator=counts), color="white") +
 		facet_wrap( ~ seq_sep) +
-		opts(title = paste("Hydrogen Bonds chi vs BAH Angles\nBackbone-Backbone Hydrogen Bonds by sequence separation\nEqual Coordinate Projection   Sample Source: ", ss_id, sep="")) +
+		ggtitle(paste("Hydrogen Bonds chi vs BAH Angles\nBackbone-Backbone Hydrogen Bonds by sequence separation\nEqual Coordinate Projection   Sample Source: ", ss_id, sep="")) +
 		scale_x_continuous(
 			'2*sin(BAH/2) * cos(CHI)', limits=capx_limits, breaks=c(-1, 0, 1)) +
 		scale_y_continuous(

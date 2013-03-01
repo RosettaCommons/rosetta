@@ -64,8 +64,6 @@ WHERE
 	acc.HBChemType = 'hbacc_CXL' AND
 	rr.struct_id = acc.struct_id AND rr.resNum = acc.resNum;"
 
-#ANALYZE;
-#
 #SELECT
 #	hb.struct_id,
 #	geo.AHdist, geo.cosBAH, geo.cosAHD, geo.chi,
@@ -119,12 +117,12 @@ dens <- estimate_density_1d(
 	"AHdist", weight_fun = radial_3d_normalization)
 
 p <- ggplot(data=dens) + plot_parts +
-	opts(title = "HBond A-H Distance for GLU by Donor Type, B-Factor < 30\nnormalized for equal weight per unit distance") +
+	ggtitle("HBond A-H Distance for GLU by Donor Type, B-Factor < 30\nnormalized for equal weight per unit distance") +
 	facet_wrap(~don_chem_type) +
 	scale_x_continuous(expression(paste('Acceptor -- Proton Distance (', ring(A), ')')), limits=c(1.4,2.7), breaks=c(1.6, 1.9, 2.2, 2.6))
 
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
@@ -136,12 +134,12 @@ dens <- estimate_density_1d(
 	"AHdist", weight_fun = radial_3d_normalization)
 
 p <- ggplot(data=dens) + plot_parts +
-	opts(title = "HBond A-H Distance for GLU by Sequence Separation, B-Factor < 30\nnormalized for equal weight per unit distance") +
+	ggtitle("HBond A-H Distance for GLU by Sequence Separation, B-Factor < 30\nnormalized for equal weight per unit distance") +
 	facet_wrap(~seq_sep) +
 	scale_x_continuous(expression(paste('Acceptor -- Proton Distance (', ring(A), ')')), limits=c(1.4,2.7), breaks=c(1.6, 1.9, 2.2, 2.6))
 
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
@@ -153,12 +151,12 @@ dens <- estimate_density_1d(
 	"AHdist", weight_fun = radial_3d_normalization)
 
 p <- ggplot(data=dens) + plot_parts +
-	opts(title = "HBond A-H Distance for GLU by Sequence Separation and Donor Type, B-Factor < 30\nnormalized for equal weight per unit distance") +
+	ggtitle("HBond A-H Distance for GLU by Sequence Separation and Donor Type, B-Factor < 30\nnormalized for equal weight per unit distance") +
 	facet_grid(seq_sep ~ don_chem_type) +
 	scale_x_continuous(expression(paste('Acceptor -- Proton Distance (', ring(A), ')')), limits=c(1.4,2.7), breaks=c(1.6, 1.9, 2.2, 2.6))
 
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)

@@ -143,7 +143,7 @@ p <- ggplot(evaluation_function) + theme_bw() +
 	geom_line(aes(x, y, size=type)) +
 	geom_indicator(aes(indicator=name), group=1) +
 	facet_grid(term ~ geo_dim, scales="free_x") +
-	opts(title=paste("Hydrogen Bond Evaluation Function: ", opt$don_chem_type, ", ", opt$acc_chem_type, ", ", opt$separation, "
+	ggtitle(paste("Hydrogen Bond Evaluation Function: ", opt$don_chem_type, ", ", opt$acc_chem_type, ", ", opt$separation, "
 1) evaluate each cell  2) multiply across  3) add results", sep="")) +
 	scale_x_continuous("Geometric Degree Of Freedom") +
 	scale_y_continuous("Energy Term", limit=c(-.7, 1.2)) +
@@ -179,7 +179,7 @@ summary(d)
 p <- ggplot(d) + theme_bw() +
 	geom_line(aes(x=AHdist, y=density)) +
 	geom_indicator(aes(indicator=interaction(paste("cosBAH=", cosBAH, sep=""), paste("cosAHD=", cosAHD, sep=""), sep=" "))) +
-	opts(title=paste("Evaluate HBond Energy Along the AHdist Dimension\n", opt$parameter_set, ",", opt$don_chem_type, ", ", opt$acc_chem_type, ", ", opt$separation, sep=""))
+	ggtitle(paste("Evaluate HBond Energy Along the AHdist Dimension\n", opt$parameter_set, ",", opt$don_chem_type, ", ", opt$acc_chem_type, ", ", opt$separation, sep=""))
 #        scale_x_continuous(limits=c(poly_params[1,2], poly_params[1,3]))
 ggsave(output_fname, height=8.3, width=10.8)
 
@@ -205,7 +205,7 @@ d <- adply(dofs, 1, function(d){
 p <- ggplot(d) + theme_bw() +
 	geom_line(aes(x=cosBAH, y=density)) +
   geom_indicator(aes(indicator=interaction(paste("AHdist=", AHdist, sep=""), paste("cosAHD=", cosAHD, sep=""), sep=" "))) +
-	opts(title=paste("Evaluate HBond Energy Along the cosBAH Dimension\n", opt$parameter_set, ",", opt$don_chem_type, ", ", opt$acc_chem_type, ", ", opt$separation, sep=""))
+	ggtitle(paste("Evaluate HBond Energy Along the cosBAH Dimension\n", opt$parameter_set, ",", opt$don_chem_type, ", ", opt$acc_chem_type, ", ", opt$separation, sep=""))
 ggsave(output_fname, height=8.3, width=10.8)
 
 
@@ -236,7 +236,7 @@ summary(d)
 p <- ggplot(d) + theme_bw() +
   geom_line(aes(x=cosAHD, y=density, color=AHdist)) +
   geom_indicator(aes(indicator=interaction(paste("AHdist=", AHdist, sep=""), paste("cosBAH=", cosBAH, sep=""), sep=" "))) +
-	opts(title=paste("Evaluate HBond Energy Along the cosAHD Dimension\n", opt$parameter_set, ",", opt$don_chem_type, ", ", opt$acc_chem_type, ", ", opt$separation, sep=""))
+	ggtitle(paste("Evaluate HBond Energy Along the cosAHD Dimension\n", opt$parameter_set, ",", opt$don_chem_type, ", ", opt$acc_chem_type, ", ", opt$separation, sep=""))
 ggsave(output_fname, height=8.3, width=10.8)
 
 
@@ -268,5 +268,5 @@ summary(d)
 p <- ggplot(d) + theme_bw() +
 	geom_tile(aes(x=cosAHD, y=AHdist, fill=density)) +
   geom_indicator(aes(indicator=paste("cosBAH=", cosBAH, sep=""))) +
-	opts(title=paste("Evaluate HBond Energy Along the cosAHD and AHdist Dimensions\n", opt$parameter_set, ",", opt$don_chem_type, ", ", opt$acc_chem_type, ", ", opt$separation, sep=""))
+	ggtitle(paste("Evaluate HBond Energy Along the cosAHD and AHdist Dimensions\n", opt$parameter_set, ",", opt$don_chem_type, ", ", opt$acc_chem_type, ", ", opt$separation, sep=""))
 ggsave(output_fname, height=8.3, width=10.8)

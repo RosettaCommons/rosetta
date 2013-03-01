@@ -115,12 +115,12 @@ p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x, y_energy, colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_grid(don_chem_type_name ~ acc_chem_type_name) +
-	opts(title = "HBond A-H Distance by Chemical Type, B-Factor < 30\nnormalized for equal weight per unit distance in density estimation") +
+	ggtitle("HBond A-H Distance by Chemical Type, B-Factor < 30\nnormalized for equal weight per unit distance in density estimation") +
 	scale_y_continuous("Energy (arbitrary units)", limits=c(-.6,1.1), breaks=c(-.5,0, .5)) +
 	scale_x_continuous(expression(paste('Acceptor -- Proton Distance (', ring(A), ')')), limits=c(.5,3), breaks=c(1, 1.5, 2, 2.5))
 
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
@@ -131,12 +131,12 @@ p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x, y, colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_grid(don_chem_type_name ~ acc_chem_type_name) +
-	opts(title = "HBond A-H Distance by Chemical Type, B-Factor < 30\nnormalized for equal weight per unit distance in density estimation") +
+	ggtitle("HBond A-H Distance by Chemical Type, B-Factor < 30\nnormalized for equal weight per unit distance in density estimation") +
 	scale_y_continuous("Feature Density") +
 	scale_x_continuous(expression(paste('Acceptor -- Proton Distance (', ring(A), ')')), limits=c(.5,3), breaks=c(1, 1.5, 2, 2.5))
 
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)

@@ -44,10 +44,10 @@ plot_id <- "rotamer_recovery_LYS_relative_divergence"
 ref_ss_id <- f$ref_sample_source[1]
 p <- ggplot(data=f) + theme_bw() +
 	geom_histogram(aes(x=rel_div, fill=new_sample_source)) +
-	opts(title = paste("Lysine Relative Rotamer Recovery against ", ref_ss_id, ", 0 Sasa and B-Factor < 20", sep="")) +
+	ggtitle(paste("Lysine Relative Rotamer Recovery against ", ref_ss_id, ", 0 Sasa and B-Factor < 20", sep="")) +
 	labs(x="New Recovery - Ref Recovery", y="log(FeatureDensity + 1)")
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 

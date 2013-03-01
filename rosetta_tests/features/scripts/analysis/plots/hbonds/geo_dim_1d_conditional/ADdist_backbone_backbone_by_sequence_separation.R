@@ -63,11 +63,11 @@ p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y, colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_wrap( ~ seq_sep ) +
-	opts(title = "Backbone-Backbone HBonds A-D Distance by Sequence Separation\n(DonRes - AccRes) normalized for equal weight per unit distance") +
+	ggtitle("Backbone-Backbone HBonds A-D Distance by Sequence Separation\n(DonRes - AccRes) normalized for equal weight per unit distance") +
 	scale_x_ADdist +
 	scale_y_continuous("FeatureDensity", limits=c(0,6), breaks=c(1,3,5))
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)

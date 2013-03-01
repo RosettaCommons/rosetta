@@ -56,7 +56,7 @@ ddply(f, .(sample_source), function(sub_f){
 		geom_line(aes(x=180-acos(x)*180/pi, y=y, colour=resolution_q)) +
 		geom_indicator(aes(colour=resolution_q, indicator=counts, group=resolution_q)) +
 		facet_grid(don_chem_type ~ acc_chem_type) +
-		opts(title = "HBonds BAH Angle by Resolution Quantile\n(normalized for equal volume per unit distance)") +
+		ggtitle("HBonds BAH Angle by Resolution Quantile\n(normalized for equal volume per unit distance)") +
 		scale_x_continuous(paste('Base -- Acceptor -- Hydrogen (degrees)')) +
 		scale_y_continuous("FeatureDensity", limits=c(0,2.9), breaks=0:2)
 

@@ -130,11 +130,11 @@ p <- ggplot(data=f) + theme_bw() +
 	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	geom_indicator(aes(indicator=mean, color=sample_source, group=sample_source), xpos="left") +
 	facet_wrap( ~ num_sc_hbs, nrow=1 ) +
-	opts(title = "ARG Rotamer Recovery when forming HBonds with ASP/GLU and ARG and Bfactors < 20\nBy Number of sc hbonds between the acceptor and donor residues") +
+	ggtitle("ARG Rotamer Recovery when forming HBonds with ASP/GLU and ARG and Bfactors < 20\nBy Number of sc hbonds between the acceptor and donor residues") +
 	labs(x="Chi Angles Not Recovered", y="FeatureDensity")
 
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
@@ -155,10 +155,10 @@ p <- ggplot(data=dens) + theme_bw() +
 	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	geom_indicator(aes(indicator=mean, color=sample_source, group=sample_source), xpos="left") +
 	facet_wrap( ~ num_sc_hbs, nrow=1 ) +
-	opts(title = "ASP/GLU Rotamer Recovery when forming HBonds with ARG and Bfactors < 20\nBy Number of sc hbonds between the acceptor and donor residues") +
+	ggtitle("ASP/GLU Rotamer Recovery when forming HBonds with ARG and Bfactors < 20\nBy Number of sc hbonds between the acceptor and donor residues") +
   	labs(x="log(Automorphic RMSD + 1)", y="log(FeatureDensity + 1)")
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)

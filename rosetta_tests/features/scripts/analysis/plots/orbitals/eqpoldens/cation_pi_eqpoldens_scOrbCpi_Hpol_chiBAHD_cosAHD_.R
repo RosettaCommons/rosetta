@@ -52,11 +52,11 @@ run=function(self, sample_sources, output_dir, output_formats){
 	f_first <- f[ f$sample_source == levels(sample_sources$sample_source), ]
 	
 	ggplot(data=f_first) + theme_bw() +
-			geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
+			theme(panel.background=element_rect(fill="#00007F", colour="#00007F")) +
 			stat_density2d(
 					aes(x=capx, y=capy, fill=..density..), geom="tile", contour=FALSE ) +
 			polar_equal_area_grids_bw() +
-			opts(title =
+			ggtitle(
 							paste("Cation pi chiBAHD vs AHD Angles with Sequence Separation > 5\n",
 									"Sidechain Donors to Sidechain sp2 Acceptors, Equal Coordinate Projection\n",
 									"LYS+ARG to PHE+TYR+TRP", sep="")) +
@@ -104,11 +104,11 @@ run=function(self, sample_sources, output_dir, output_formats){
 	f_first <- f[ f$sample_source == levels(sample_sources$sample_source), ]
 	
 	ggplot(data=f_first) + theme_bw() +
-			geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
+			theme(panel.background=element_rect(fill="#00007F", colour="#00007F")) +
 			stat_density2d(
 					aes(x=capx, y=capy, fill=..density..), geom="tile", contour=FALSE ) +
 			polar_equal_area_grids_bw() +
-			opts(title =
+			ggtitle(
 							paste("Cation pi chiBAHD vs AHD Angles with Sequence Separation > 5\n",
 									"Sidechain Donors to Sidechain sp2 Acceptors, Equal Coordinate Projection\n",
 									"LYS to PHE at 3.5", sep="")) +
@@ -156,11 +156,11 @@ run=function(self, sample_sources, output_dir, output_formats){
 	f_first <- f[ f$sample_source == levels(sample_sources$sample_source), ]
 	
 	ggplot(data=f_first) + theme_bw() +
-			geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
+			theme(panel.background=element_rect(fill="#00007F", colour="#00007F")) +
 			stat_density2d(
 					aes(x=capx, y=capy, fill=..density..), geom="tile", contour=FALSE ) +
 			polar_equal_area_grids_bw() +
-			opts(title =
+			ggtitle(
 							paste("Cation pi chiBAHD vs AHD Angles with Sequence Separation > 5\n",
 									"Sidechain Donors to Sidechain sp2 Acceptors, Equal Coordinate Projection\n",
 									"LYS to PHE at 2.0", sep="")) +
@@ -208,11 +208,11 @@ run=function(self, sample_sources, output_dir, output_formats){
 	f_first <- f[ f$sample_source == levels(sample_sources$sample_source), ]
 	
 	ggplot(data=f_first) + theme_bw() +
-			geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
+			theme(panel.background=element_rect(fill="#00007F", colour="#00007F")) +
 			stat_density2d(
 					aes(x=capx, y=capy, fill=..density..), geom="tile", contour=FALSE ) +
 			polar_equal_area_grids_bw() +
-			opts(title =
+			ggtitle(
 							paste("Cation pi chiBAHD vs AHD Angles with Sequence Separation > 5\n",
 									"Sidechain Donors to Sidechain sp2 Acceptors, Equal Coordinate Projection\n",
 									"ARG to PHE at 2.0", sep="")) +
@@ -261,11 +261,11 @@ run=function(self, sample_sources, output_dir, output_formats){
 	f_first <- f[ f$sample_source == levels(sample_sources$sample_source), ]
 	
 	ggplot(data=f_first) + theme_bw() +
-			geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
+			theme(panel.background=element_rect(fill="#00007F", colour="#00007F")) +
 			stat_density2d(
 					aes(x=capx, y=capy, fill=..density..), geom="tile", contour=FALSE ) +
 			polar_equal_area_grids_bw() +
-			opts(title =
+			ggtitle(
 							paste("Cation pi chiBAHD vs AHD Angles with Sequence Separation > 5\n",
 									"Sidechain Donors to Sidechain sp2 Acceptors, Equal Coordinate Projection\n",
 									"ARG to PHE at 3.5", sep="")) +

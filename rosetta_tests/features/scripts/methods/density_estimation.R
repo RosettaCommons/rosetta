@@ -55,7 +55,7 @@ estimate_density_1d <-function(
       weights <- weight_fun(factor_df[,variable])
       if(histogram){
         breaks = seq(from=sample_domain[1], to=sample_domain[2], length=n_pts)
-        d <- weighted.hist(x=factor_df[,variable], w=weights, plot=FALSE)
+        d <- weighted.hist(x=factor_df[,variable], w=weights, breaks=breaks, plot=FALSE)
         return(data.frame(x=d$mids, y=d$density, counts=nrow(factor_df)))
       } else {
         adjust <- adjust * general_kernel_adjust
@@ -312,4 +312,18 @@ estimate_density_2d <-function(
     }
     d
   })
+}
+
+
+compute_quantiles <- function(
+	data,
+	ids,
+	variable,
+	n_quantiles=300
+) {
+	ddply(data, ids, function(df){
+		ps <- ppoints(n_quantiles)
+		data.frame(
+			probs=ps, quantiles=quantile(df[,variable], probs=ps))
+	})
 }

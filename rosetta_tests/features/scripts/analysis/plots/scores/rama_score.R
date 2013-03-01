@@ -41,11 +41,11 @@ d_ply(dens, .(score_type), function(sub_dens){
 	p <- ggplot(data=sub_dens) + theme_bw() +
 		geom_line(aes(x=x, y=y, colour=sample_source)) +
 		geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
-		opts(title = paste("Rosetta ", score_type, " Scores", sep="")) +
+		ggtitle(paste("Rosetta ", score_type, " Scores", sep="")) +
 		labs(x="Rosetta Energy Units") +
 		scale_y_continuous("FeatureDensity") +
-		opts(legend.position=c(.58,.15)) +
-		opts(legend.justification=c("right", "top"))
+		theme(legend.position=c(.58,.15)) +
+		theme(legend.justification=c("right", "top"))
 	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 })

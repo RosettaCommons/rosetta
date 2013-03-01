@@ -71,7 +71,7 @@ plot_parts <- list(
 
 if(nrow(sample_sources) <= 3){
  plot_parts <- c(plot_parts,
-	list(opts(legend.position="bottom", legend.direction="horizontal")))
+	list(theme(legend.position="bottom", legend.direction="horizontal")))
 }
 
 
@@ -82,7 +82,7 @@ f_sc_burial_agnostic <- ddply(f_sc,
 
 plot_id <- "sidechain_propensity_to_donate_or_accept_hbonds"
 p <- ggplot(data=f_sc_burial_agnostic, aes(x=don_satisfied)) + plot_parts +
-	opts(title="Sidechain Propensity to Donate or Accept Hydrogen Bonds (unsat/SAT)") +
+	ggtitle("Sidechain Propensity to Donate or Accept Hydrogen Bonds (unsat/SAT)") +
 	facet_grid(acc_satisfied ~ res_type)
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -90,14 +90,14 @@ save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 #####################################
 plot_id <- "sidechain_propensity_to_donate_or_accept_hbonds_buried"
 p <- ggplot(data=f_sc[f_sc$buried=="Buried",], aes(x=don_satisfied)) + plot_parts +
-	opts(title="Buried Sidechain Propensity to Donate or Accept Hydrogen Bonds (unsat/SAT)") +
+	ggtitle("Buried Sidechain Propensity to Donate or Accept Hydrogen Bonds (unsat/SAT)") +
 	facet_grid(acc_satisfied ~ res_type)
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 ###################################
 plot_id <- "sidechain_propensity_to_donate_or_accept_hbonds_exposed"
 p <- ggplot(data=f_sc[f_sc$buried=="Exposed",], aes(x=don_satisfied)) + plot_parts +
-	opts(title="Exposed Sidechain Propensity to Donate or Accept Hydrogen Bonds (unsat/SAT)") +
+	ggtitle("Exposed Sidechain Propensity to Donate or Accept Hydrogen Bonds (unsat/SAT)") +
 	facet_grid(acc_satisfied ~ res_type)
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -107,8 +107,8 @@ save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 ##
 ##plot_id <- "backbone_propensity_to_donate_or_accept_hbonds"
 ##p <- ggplot(data=f_bb, aes(x=don_acc_satisfied)) + theme_bw() +
-##	opts(title="Backbone Propensity to Donate or Accept Hydrogen Bonds (SAT / unsat)") +
-##	opts(axis.text.x=theme_text(angle=-90, hjust=0)) +
+##	ggtitle("Backbone Propensity to Donate or Accept Hydrogen Bonds (SAT / unsat)") +
+##	theme(axis.text.x=theme_text(angle=-90, hjust=0)) +
 ##	facet_grid(buried ~ res_type)
 ##save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 #
@@ -138,8 +138,8 @@ f$chem_type_name <- chem_type_name_linear(f$chem_type)
 
 plot_id <- "hbond_site_propensity_to_hydrogen_bond"
 p <- ggplot(data=f, aes(x=satisfied)) + plot_parts +
-	opts(title="H-Bond Site Propensity to Hydrogen Bond") +
-	opts(axis.text.x=theme_text(angle=-90, hjust=0)) +
+	ggtitle("H-Bond Site Propensity to Hydrogen Bond") +
+	theme(axis.text.x=theme_text(angle=-90, hjust=0)) +
 	facet_grid(buried ~ chem_type_name)
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 

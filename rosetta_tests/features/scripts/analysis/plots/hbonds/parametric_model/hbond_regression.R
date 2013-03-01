@@ -75,7 +75,7 @@ ggplot(all_dens) + theme_bw() +
   geom_line(aes(x=x, y=fitted, colour=sample_source), size=1.3) +
   geom_line(aes(x=x, y=neg_log_y, colour=sample_source)) +
   geom_line(data=dens0.5, aes(x=x, y=neg_log_y, colour=sample_source)) +
-  opts(title = "Hydrogen Bonds A-H Distance Fit with Morse Potential\nnormalized for equal weight per unit distance") +
+  ggtitle("Hydrogen Bonds A-H Distance Fit with Morse Potential\nnormalized for equal weight per unit distance") +
   labs(x=expression(paste('Acceptor -- Proton Distance (', ring(A), ')')),
        y="-log(FeatureDensity)") +
   scale_y_continuous(limits=c(-2,5), breaks=((0:30)/4-2.5))
@@ -124,7 +124,7 @@ ggplot(dens) + theme_bw() +
   geom_line(aes(x=x, y=neg_log_y, colour=sample_source)) +
   geom_indicator(aes(indicator=count, colour=sample_source, group=sample_source)) +
   facet_grid(don_chem_type ~ acc_chem_type) +
-  opts(title = "Hydrogen Bonds A-H Distance by Chemical Type Fitted with Morse Function\nnormalized for equal weight per unit distance") +
+  ggtitle("Hydrogen Bonds A-H Distance by Chemical Type Fitted with Morse Function\nnormalized for equal weight per unit distance") +
   labs(x=expression(paste('Acceptor -- Proton Distance (', ring(A), ')')),
        y="log(FeatureDensity)") +
   scale_y_continuous(limits=c(-2,5), breaks=c(-2,0,2,4)) +

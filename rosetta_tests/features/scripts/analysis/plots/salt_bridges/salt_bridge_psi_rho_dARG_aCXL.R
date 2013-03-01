@@ -61,7 +61,7 @@ p <- ggplot() +
 		data=f,
 		aes(indicator=counts),
 		group=1) +
-	opts(title = "Salt Bridge PSI vs RHO, B-Factor < 30") +
+	ggtitle("Salt Bridge PSI vs RHO, B-Factor < 30") +
 	facet_wrap(~sample_source, ncol=2) +
 	theme_bw() +
 	scale_y_continuous(expression(

@@ -66,7 +66,7 @@ capy_limits <- capx_limits
 
 plot_parts <- list(
 	theme_bw(),
-	geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F"),
+	theme(panel.background=element_rect(fill="#00007F", colour="#00007F")),
 	stat_density2d(
 		aes(x=capx,y=capy, fill=..density..), geom="tile", contour=FALSE),
 	geom_indicator(aes(indicator=counts), color="white"),
@@ -75,7 +75,7 @@ plot_parts <- list(
 	scale_fill_gradientn('Density', colour=jet.colors(15)),
 	scale_x_continuous(limits=capx_limits),
 	scale_y_continuous(limits=capy_limits),
-	opts(
+	theme(
 		axis.text.x=theme_blank(),
 		axis.text.y=theme_blank(),
 		axis.title.x=theme_blank(),
@@ -94,7 +94,7 @@ d_ply(f, .(sample_source), function(sub_f){
 		sub_sub_f$counts <- nrow(sub_sub_f)
 		plot_id = paste("AHchi_AHD_eq_polar_density", don_chem_type, ss_id, sep="_")
 		ggplot(data=sub_sub_f) + plot_parts +
-			opts(title = paste(
+			ggtitle(paste(
 				"Hydrogen Bonds AHchi vs AHD Angle, ", don_chem_type_name, "; SeqSep > 5, BFact < 30\n",
 				"Equal Coordinate Projection   Sample Source: ", ss_id, sep=""))
 		save_plots(self, plot_id, sample_sources, output_dir, output_formats)
@@ -109,7 +109,7 @@ d_ply(f, .(sample_source), function(sub_f){
 		sub_sub_f$counts <- nrow(sub_sub_f)
 		plot_id = paste("AHchi_AHD_eq_polar_density", don_chem_type, acc_chem_type, ss_id, sep="_")
 		ggplot(data=sub_sub_f) + plot_parts +
-			opts(title = paste(
+			ggtitle(paste(
 				"Hydrogen Bonds AHchi vs AHD Angle, ", don_chem_type_name, " ", acc_chem_type_name, ";",
 				"SeqSep > 5, BFact < 30\n",
 				"Equal Coordinate Projection   Sample Source: ", ss_id, sep=""))

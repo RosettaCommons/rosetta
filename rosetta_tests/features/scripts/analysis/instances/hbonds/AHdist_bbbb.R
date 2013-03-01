@@ -59,10 +59,10 @@ f <- query_sample_sources(sample_sources, sele)
 #plot_id <- "rotamer_recovery_LYS_relative_divergence"
 #p <- ggplot(data=dens) + theme_bw() +
 #	geom_line(aes(x=x, y=log(y+1))) +
-#	opts(title = paste("Lysine Relative Rotamer Recovery\nbetween ", paste(ss_ids, collapse=" and "),", B-Factor < 20", sep="")) +
+#	ggtitle(paste("Lysine Relative Rotamer Recovery\nbetween ", paste(ss_ids, collapse=" and "),", B-Factor < 20", sep="")) +
 #	labs(x="Automorphic RMSD_1 - Automorphic RMSD_2", y="log(FeatureDensity + 1)")
 #if(nrow(sample_sources) <= 3){
-#	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+#	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 #}
 #save_plots(self, plot_id, sample_sources[sample_sources$sample_source %in% ss_ids,], output_dir, output_formats)
 #

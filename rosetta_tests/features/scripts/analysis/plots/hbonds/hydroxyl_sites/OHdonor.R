@@ -49,7 +49,7 @@ dens <- estimate_density_1d(
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y, colour=sample_source), size=1.5) +
 	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
-	opts(title = "Hydroxyl Donor Hydrogen Bonds A-H Distance\n(normalized for equal weight per unit distance)") +
+	ggtitle("Hydroxyl Donor Hydrogen Bonds A-H Distance\n(normalized for equal weight per unit distance)") +
 	scale_y_continuous("Feature Density") +
 	scale_x_continuous(
 		expression(paste('Acceptor -- Hydrogen Distance (', ring(A), ')')),
@@ -65,7 +65,7 @@ dens <- estimate_density_1d(
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=acos(x)*180/pi, y=y, colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
-	opts(title = "Hydroxyl Donor Hydrogen Bonds BAH Angle \n(normalized for equal weight per unit distance)") +
+	ggtitle("Hydroxyl Donor Hydrogen Bonds BAH Angle \n(normalized for equal weight per unit distance)") +
 	labs(x=expression(paste('Base -- Acceptor -- Hydrogen (degrees)')),
 	     y="Feature Density")
 
@@ -80,7 +80,7 @@ dens <- estimate_density_1d(
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=acos(x)*180/pi, y=y, colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
-	opts(title = "Hydroxyl Donor Hydrogen Bonds BAH Angle \n(normalized for equal weight per unit distance)") +
+	ggtitle("Hydroxyl Donor Hydrogen Bonds BAH Angle \n(normalized for equal weight per unit distance)") +
 	labs(x=expression(paste('Acceptor -- Hydrogen -- Donor (degrees)')),
               y="Feature Density")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
@@ -93,7 +93,7 @@ dens <- estimate_density_1d_logspline(
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=acos(x)*360/pi, y=y, colour=sample_source)) +
 	geom_indicator(aes(colour=sample_source, indicator=counts, group=sample_source)) +
-	opts(title = "Hydroxyl Donor Hydrogen Bonds BAH Angle \n(normalized for equal weight per unit distance)") +
+	ggtitle("Hydroxyl Donor Hydrogen Bonds BAH Angle \n(normalized for equal weight per unit distance)") +
 	labs(x=expression(paste('Acceptor Base -- Acceptor Torsion (degrees)')),
 	     y="Feature Density")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
@@ -111,7 +111,7 @@ dens <- estimate_density_1d(
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y, colour=sample_source), size=1.5) +
 	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
-	opts(title = "Hydroxyl Donor Hydrogen Bonds A-H Distance to Sidechain Acceptors\n(normalized for equal weight per unit distance)") +
+	ggtitle("Hydroxyl Donor Hydrogen Bonds A-H Distance to Sidechain Acceptors\n(normalized for equal weight per unit distance)") +
 	scale_y_continuous("Feature Density") +
 	scale_x_continuous(
 		expression(paste('Acceptor -- Proton Distance (', ring(A), ')')),
@@ -126,7 +126,7 @@ dens <- estimate_density_1d(
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=acos(x)*360/pi, y=y, colour=sample_source)) +
 	geom_indicator(aes(colour=sample_source, indicator=counts, group=sample_source)) +
-	opts(title = "Hydroxyl Donor Hydrogen Bonds BAH Angle to Sidechain Acceptors\n(normalized for equal weight per unit distance)") +
+	ggtitle("Hydroxyl Donor Hydrogen Bonds BAH Angle to Sidechain Acceptors\n(normalized for equal weight per unit distance)") +
 	labs(x=expression(paste('Base -- Acceptor -- Hydrogen (degrees)')),
               y="Feature Density")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
@@ -139,7 +139,7 @@ dens <- estimate_density_1d(
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=acos(x)*360/pi, y=y, colour=sample_source)) +
 	geom_indicator(aes(colour=sample_source, indicator=counts, group=sample_source)) +
-	opts(title = "Hydroxyl Donor Hydrogen Bonds AHD Angle to Sidechain Acceptors\n(normalized for equal weight per unit distance)") +
+	ggtitle("Hydroxyl Donor Hydrogen Bonds AHD Angle to Sidechain Acceptors\n(normalized for equal weight per unit distance)") +
 	labs(x=expression(paste('Acceptor -- Hydrogen -- Donor (degrees)')),
               y="Feature Density")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
@@ -152,7 +152,7 @@ dens <- estimate_density_1d_logspline(
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=acos(x)*360/pi, y=y, colour=sample_source)) +
 	geom_indicator(aes(colour=sample_source, indicator=counts, group=sample_source)) +
-	opts(title = "Hydroxyl Donor Hydrogen Bonds chi Torsion Angle to Sidechain Acceptors\n(normalized for equal weight per unit distance)") +
+	ggtitle("Hydroxyl Donor Hydrogen Bonds chi Torsion Angle to Sidechain Acceptors\n(normalized for equal weight per unit distance)") +
 	labs(x=expression(paste('Acceptor Base -- Acceptor Torsion (degrees)')),
 	     y="log(FeatureDensity + 1)")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)

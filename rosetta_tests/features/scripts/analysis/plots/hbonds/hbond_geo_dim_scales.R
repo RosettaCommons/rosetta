@@ -16,6 +16,14 @@ scale_y_AHdist <- scale_y_continuous(
 	expression(paste('Acceptor -- Hydrogen Distance (', ring(A), ')')),
 	limits=c(1.4, 3), breaks=c(1.4, 1.8, 2.2, 2.6, 3))
 
+scale_x_AHdist3 <- scale_x_continuous(
+	expression(paste('(Acceptor -- Hydrogen Distance)^3')),
+	limits=c(1.4^3, 3.2^3), breaks=c(1.5^3, 2^3, 3^3), labels=c(1.5, 2, 3))
+
+scale_y_AHdist3 <- scale_y_continuous(
+	expression(paste('(Acceptor -- Hydrogen Distance)^3')),
+	limits=c(1.4^3, 3.2^3), breaks=c(1.4^3, 2^3, 3^3), labels=c(1.4, 2, 3))
+
 scale_x_ADdist <- scale_x_continuous(
 	expression(paste('Acceptor -- Donor Distance (', ring(A), ')')),
 	limits=c(2.4, 3.3), breaks=c(2.6, 2.9, 3.2))

@@ -52,12 +52,12 @@ p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y, colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_wrap( ~ seq_sep ) +
-	opts(title = "Backbone-Backbone HBonds A-H Distance by Sequence Separation\n(DonRes - AccRes) normalized for equal weight per unit distance") +
+	ggtitle("Backbone-Backbone HBonds A-H Distance by Sequence Separation\n(DonRes - AccRes) normalized for equal weight per unit distance") +
 	scale_y_continuous("FeatureDensity)", limits=c(0,6), breaks=c(1,3,5)) +
 	scale_x_continuous(expression(paste('Acceptor -- Proton Distance (', ring(A), ')')), limits=c(1.4,2.7), breaks=c(1.6, 1.9, 2.2, 2.5))
 
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)

@@ -106,7 +106,7 @@ d_ply(f, .(sample_source), function(sub_f){
 	sub_f <- ddply(sub_f, .(acc_chem_type_name1, acc_chem_type_name2),
 		transform, counts = length(sample_source))
 	ggplot(sub_f) + plot_parts +
-		opts(title = paste("HBond Pairs Bifurcated at Donor; bFact < 30  ss_id:",ss_id))
+		ggtitle(paste("HBond Pairs Bifurcated at Donor; bFact < 30  ss_id:",ss_id))
 	save_plots(self, 
 		plot_id,
 		sample_sources[sample_sources$sample_source == ss_id,],
@@ -121,7 +121,7 @@ d_ply(f, .(sample_source), function(sub_f){
 		sub_sub_f <- ddply(sub_sub_f, .(acc_chem_type_name1, acc_chem_type_name2),
 			transform, counts = length(sample_source))
 		ggplot(sub_sub_f) + plot_parts +
-			opts(title = paste(
+			ggtitle(paste(
 				"HBond Pairs Bifurcated at ", don_chem_type_name, ";",
 				" bFact < 30    ss_id:",ss_id))
 		save_plots(self, 
@@ -137,7 +137,7 @@ d_ply(f, .(sample_source), function(sub_f){
 	sub_sub_f <- ddply(sub_sub_f, .(don_ss),
 		transform, counts = length(sample_source))
 	ggplot(sub_sub_f) + plot_parts + facet_wrap(~don_ss) +
-		opts(title = paste(
+		ggtitle(paste(
 			"HBond Backbone Donor Bifurcated to 2 Backbone acceptors;",
 			" bFact < 30    ss_id:",ss_id))
 	save_plots(self, 

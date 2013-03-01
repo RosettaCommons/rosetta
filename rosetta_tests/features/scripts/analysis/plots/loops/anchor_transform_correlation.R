@@ -44,13 +44,13 @@ plotmatrix <- function (input_data, mapping = aes(), columns = names(input_data)
 	 geom_point(na.rm = TRUE, size=0.3) + stat_density(aes(x = x, 
 	 y = ..scaled.. * diff(range(x)) + min(x)), data = densities, 
 	 position = "identity", geom = "line") + 
-	 opts(title = paste("Scatterplot matrix for loop anchor transform degrees of freedom for", loop_length + 1, "residue loops.", sep = " " )) +
+	 ggtitle(paste("Scatterplot matrix for loop anchor transform degrees of freedom for", loop_length + 1, "residue loops.", sep = " " )) +
 	 scale_y_continuous("Degree of freedom") +
 	 scale_x_continuous("Degree of freedom") +
 	 coord_equal(ratio=1)
 
   if(nrow(sample_sources) <= 3){
-	 p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	 p <- p + theme(legend.position="bottom", legend.direction="horizontal")
   }
 }
 

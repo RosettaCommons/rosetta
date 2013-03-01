@@ -52,7 +52,7 @@ p <- ggplot(data=dens, aes(x=x, y=log(y+1), colour=sample_source, indicator=coun
 p <- p + geom_line()
 p <- p + geom_indicator(aes(group=sample_source))
 p <- p + facet_wrap( ~ score_type, ncol = 3)
-p <- p + opts(title = "Residue Level Scores")
+p <- p + ggtitle("Residue Level Scores")
 p <- p + labs(x=expression(paste('Acceptor -- Donor Distance (', ring(A), ')')),
               y="log(FeatureDensity + 1)")
 p <- p + theme_bw()

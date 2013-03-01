@@ -49,10 +49,10 @@ f <- na.omit(f, method="r")
 plot_id <- "hbond_DHdist_don_chem_type"
 p <- ggplot(data=f) + theme_bw() +
 	geom_point(aes(x=don_chem_type, y=DHdist, color=sample_source)) +
-	opts(title = "HBond D-H Distance by Chemical Type")
+	ggtitle("HBond D-H Distance by Chemical Type")
 
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)

@@ -109,7 +109,7 @@ plot_id <- "angle_kernels"
 p <- ggplot(dens) + theme_bw() +
 	geom_line(aes(x, y, color=theta_factor, group=theta_factor)) +
 	facet_wrap(~method, scales="free", ncol=2) +
-	opts(title="Kernels for Angle Distributions")
+	ggtitle("Kernels for Angle Distributions")
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 

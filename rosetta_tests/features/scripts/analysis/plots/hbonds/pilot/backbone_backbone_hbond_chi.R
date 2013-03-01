@@ -72,7 +72,7 @@
 #p <- p + geom_line()
 #p <- p + geom_indicator()
 #p <- p + facet_grid( don_ss ~ acc_ss)
-#p <- p + opts(title = "Backbone Backbone Hydrogen Bond CHI Angle by Donor Secondary Structure (APSA Method)\nnormalized for equal weight per unit distance")
+#p <- p + ggtitle("Backbone Backbone Hydrogen Bond CHI Angle by Donor Secondary Structure (APSA Method)\nnormalized for equal weight per unit distance")
 #p <- p + labs(x=expression(paste('Acceptor Base -- Acceptor Torsion (Degrees)')),
 #              y="log(FeatureDensity + 1)")
 #p <- p + theme_bw()
@@ -89,7 +89,7 @@
 #p <- ggplot(data=dens, aes(x=x, y=log(y+1), colour=acc_ss))
 #p <- p + geom_line()
 #p <- p + facet_wrap(  ~ sample_source )
-#p <- p + opts(title = "Backbone Backbone Hydrogen Bond CHI Angle by Donor Secondary Structure (APSA Method)\nnormalized for equal weight per unit distance")
+#p <- p + ggtitle("Backbone Backbone Hydrogen Bond CHI Angle by Donor Secondary Structure (APSA Method)\nnormalized for equal weight per unit distance")
 #p <- p + labs(x=expression(paste('Acceptor Base -- Acceptor Torsion (Degrees)')),
 #              y="log(FeatureDensity + 1)")
 #p <- p + theme_bw()
@@ -106,7 +106,7 @@
 #p <- ggplot(data=dens, aes(x=x, y=log(y+1), colour=don_ss))
 #p <- p + geom_line()
 #p <- p + facet_wrap(  ~ sample_source )
-#p <- p + opts(title = "Backbone Backbone Hydrogen Bond CHI Angle by Donor Secondary Structure (APSA Method)\nnormalized for equal weight per unit distance")
+#p <- p + ggtitle("Backbone Backbone Hydrogen Bond CHI Angle by Donor Secondary Structure (APSA Method)\nnormalized for equal weight per unit distance")
 #p <- p + labs(x=expression(paste('Acceptor Base -- Acceptor Torsion (Degrees)')),
 #              y="log(FeatureDensity + 1)")
 #p <- p + theme_bw()

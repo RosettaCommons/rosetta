@@ -80,7 +80,7 @@ narrow_output_formats <- transform(output_formats, width=height)
 
 plot_parts <- list(
 	theme_bw(),
-	geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F"),
+	theme(panel.background=element_rect(fill="#00007F", colour="#00007F")),
 	stat_density2d(
 		aes(x=capx,y=capy, fill=..density..), geom="tile", contour=FALSE),
 	geom_indicator(aes(indicator=counts), color="white"),
@@ -89,7 +89,7 @@ plot_parts <- list(
 	scale_fill_gradientn('Density', colours=jet.colors(15)),
 	scale_x_continuous(limits=capx_limits),
 	scale_y_continuous(limits=capy_limits),
-	opts(
+	theme(
 		axis.text.x=theme_blank(),
 		axis.text.y=theme_blank(),
 		axis.title.x=theme_blank(),
@@ -107,7 +107,7 @@ d_ply(f, .(sample_source, hybrid), function(sub_f){
 	hybrid <- sub_f$hybrid[1]
 	sub_plot_id <- paste(plot_id, hybrid, sep="_")
 	ggplot(data=sub_f) + plot_parts +
-		opts(title = paste(hybrid, " Acceptor Hydrogen Bonds seq_sep > 5: chi vs BAH\nEqual Coordinate Projection  ss_id: ", ss_id, sep="")) +
+		ggtitle(paste(hybrid, " Acceptor Hydrogen Bonds seq_sep > 5: chi vs BAH\nEqual Coordinate Projection  ss_id: ", ss_id, sep="")) +
 		coord_equal(ratio=1) +
 		polar_equal_area_grids_bw() +
 		geom_indicator(aes(indicator=counts), color="white") +
@@ -126,7 +126,7 @@ plot_id = "hbond_chi_BAH_eq_polar_density_by_chem_type"
 l_ply(levels(f$sample_source), function(ss){
 	ggplot(data=f[f$sample_source == ss,]) + plot_parts +
 		facet_grid(acc_chem_type_name ~ don_chem_type_name) +
-		opts(title = paste("Hydrogen Bonds chi vs BAH Angles by Chemical Type Sequence Separation > 5\nEqual Coordinate Projection   Sample Source: ", ss, sep="")) +
+		ggtitle(paste("Hydrogen Bonds chi vs BAH Angles by Chemical Type Sequence Separation > 5\nEqual Coordinate Projection   Sample Source: ", ss, sep="")) +
 		coord_equal(ratio=1) +
 		geom_indicator(aes(indicator=counts), color="white") +
 		scale_x_continuous('', limits=capx_limits, breaks=c()) +
@@ -144,7 +144,7 @@ d_ply(f, .(sample_source, don_chem_type, acc_chem_type), function(sub_f){
 
 	ggplot(data=sub_f) + plot_parts +
 		facet_grid(acc_chem_type_name ~ don_chem_type_name) +
-		opts(title = paste(
+		ggtitle(paste(
 			"HBonds chi vs BAH Angles Sequence Separation > 5 ",
 			"Don:", sub_f$don_chem_type_name[1], " ",
 			"Acc:", sub_f$acc_chem_type_name[1], "\n",

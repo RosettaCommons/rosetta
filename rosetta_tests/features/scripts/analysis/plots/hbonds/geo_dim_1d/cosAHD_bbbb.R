@@ -55,12 +55,12 @@ p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=180-180/pi*acos(x), y=y, colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_wrap( ~ seq_sep ) +
-	opts(title = "BB/BB Hydrogen Bonds A-H-D Angle by Sequence Separation\n(donres - accres) normalized for equal weight per unit distance") +
+	ggtitle("BB/BB Hydrogen Bonds A-H-D Angle by Sequence Separation\n(donres - accres) normalized for equal weight per unit distance") +
 	scale_y_continuous("FeatureDensity" ) +
 	scale_x_continuous("Acceptor -- Hydrogen -- Donor Angle (degrees)", limits=c(90,180), breaks=c(90,120,150,180))
 
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)

@@ -70,17 +70,17 @@ plot_id = "chi_sinBAH_eq_polar_density_bb_by_ss"
 d_ply(sample_sources, .(sample_source), function(sample_source){
 	ss_id <- sample_source$sample_source[1]
 	ggplot(data=subset(f, sample_source == ss_id)) + theme_bw() +
-		geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
+		theme(panel.background=element_rect(fill="#00007F", colour="#00007F")) +
 		stat_bin2d(aes(x=capx, y=capy, fill=log(..density..)), binwidth=c(.06,.06)) +
 		polar_equal_area_grids_bw(scale=.6, label_scale=.4) +
 		geom_indicator(aes(indicator=counts), color="white") +
 		facet_grid(don_ss_name ~ acc_ss_name) +
 		coord_equal(ratio=1) +
-		opts(title = paste("Backbone-Backbone HBonds: CHI vs BAH Angles by DSSP\nEqual Coordinate Projection   Sample Source: ", ss_id, sep="")) +
+		ggtitle(paste("Backbone-Backbone HBonds: CHI vs BAH Angles by DSSP\nEqual Coordinate Projection   Sample Source: ", ss_id, sep="")) +
 		scale_x_continuous(limits=capx_limits) +
 		scale_y_continuous(limits=capy_limits) +
 		scale_fill_gradientn('log(Density)', colours=jet.colors(15)) +
-		opts(
+		theme(
 			axis.text.x=theme_blank(),
 			axis.text.y=theme_blank(),
 			axis.title.x=theme_blank(),

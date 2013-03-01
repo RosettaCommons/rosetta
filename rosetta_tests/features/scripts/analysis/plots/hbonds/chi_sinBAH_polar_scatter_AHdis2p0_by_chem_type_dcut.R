@@ -52,7 +52,7 @@ d_ply(sample_sources, .variables=("sample_source"), function(sample_source){
   ggplot(data=sub_f) + theme_bw() +
     geom_point(aes(x=capx, y=capy, color=AHdist), size=1.0) +
     facet_grid(acc_chem_type ~ don_chem_type) +
-    opts(title = paste("Hydrogen Bonds chi vs sinBAH Angles by Chemical Type\nEqual Coordinate Projection   Sample Source: ", ss, sep="")) +
+    ggtitle(paste("Hydrogen Bonds chi vs sinBAH Angles by Chemical Type\nEqual Coordinate Projection   Sample Source: ", ss, sep="")) +
     scale_x_continuous('2*sin(BAH/2) * cos(CHI)', breaks=c(-1, 0, 1)) +
     scale_y_continuous('2*sin(BAH/2) * sin(CHI)', breaks=c(-1, 0, 1))
   save_plots(self, plot_id, sample_source, output_dir, output_formats)
@@ -69,7 +69,7 @@ d_ply(sample_sources, .variables=("sample_source"), function(sample_source){
 #  ggplot(data=sub_f) + theme_bw() +
 #    geom_point(aes(x=capx, y=capy), size=.5) +
 #    facet_grid(acc_chem_type ~ don_chem_type) +
-#    opts(title = paste("Hydrogen Bonds chi vs sinBAH Angles by Chemical Type\nOrthographic Projection   Sample Source: ", ss, sep="")) +
+#    ggtitle(paste("Hydrogen Bonds chi vs sinBAH Angles by Chemical Type\nOrthographic Projection   Sample Source: ", ss, sep="")) +
 #    scale_x_continuous('sin(BAH) * cos(CHI)', breaks=c(-1, 0, 1)) +
 #    scale_y_continuous('sin(BAH) * sin(CHI)', breaks=c(-1, 0, 1))
 #  save_plots(self, plot_id, sample_source, output_dir, output_formats)

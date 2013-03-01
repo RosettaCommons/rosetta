@@ -56,7 +56,7 @@ d_ply(f, .(sample_source), function(sub_f){
 		polar_equal_area_grids_bw(bgcolor="#00007F") +
 		geom_indicator(aes(indicator=counts), color="white") +
 		facet_grid(acc_chem_type ~ don_chem_type) +
-		opts(title =
+		ggtitle(
 			paste("Hydrogen Bonds chi vs BAH Angles with Sequence Separation <= 5\n",
 			"Backbone/Backbone Hydrogen Bonds\n",
 			"Equal Coordinate Projection   Sample Source: ", ss_id, sep="")) +

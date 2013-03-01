@@ -67,11 +67,11 @@ ggplot(data=dens) + theme_bw() +
   geom_line(aes(x=x, y=y, colour=sample_source)) +
   geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_wrap( ~ don_chem_type ) +
-  opts(title = "Hydrogen Distance out of the SP2 Plane") +
+  ggtitle("Hydrogen Distance out of the SP2 Plane") +
   scale_x_continuous('HDist out of plane') +
   scale_y_continuous('Feature Density') +
-	opts(legend.position=c(.58,.35)) +
-	opts(legend.justification=c("left", "top"))
+	theme(legend.position=c(.58,.35)) +
+	theme(legend.justification=c("left", "top"))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 

@@ -55,7 +55,7 @@ dens$neg_log_y = -log(dens$y)
 plot_id <- "hbond_cosBAH_regression_unified"
 ggplot(dens) + plot_parts +
   geom_line(aes(x=x, y=neg_log_y, color=sample_source)) +
-  opts(title = "Hydrogen Bonds cosBAH\nnormalized for equal weight per unit distance") +
+  ggtitle("Hydrogen Bonds cosBAH\nnormalized for equal weight per unit distance") +
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
@@ -70,7 +70,7 @@ ggplot(dens) + plot_parts +
   geom_line(aes(x=x, y=neg_log_y, colour=sample_source)) +
   geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
   facet_grid(seq_sep_geq_6 ~ hybrid) +
-  opts(title = "Hydrogen Bonds cosBAH by Hybridization and Sequence Separation\nnormalized for equal weight per unit distance") +
+  ggtitle("Hydrogen Bonds cosBAH by Hybridization and Sequence Separation\nnormalized for equal weight per unit distance") +
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 #####  Fit by hybrid and sequence separation####
@@ -87,7 +87,7 @@ d_ply(f, c("sample_source"), function(s_f){
 	  geom_line(aes(x=x, y=neg_log_y, colour=don_chem_type)) +
 	  geom_indicator(aes(indicator=counts, colour=don_chem_type, group=don_chem_type)) +
 	  facet_grid(seq_sep_geq_6 ~ hybrid) +
-	  opts(title = paste("Hydrogen Bonds cosBAH by Hybridization and Sequence Separation\nnormalized for equal weight per unit distance  Sample Source: ", ss, sep="")) +
+	  ggtitle(paste("Hydrogen Bonds cosBAH by Hybridization and Sequence Separation\nnormalized for equal weight per unit distance  Sample Source: ", ss, sep="")) +
 		scale_y_continuous("-log(FeatureDensity)", limits=c(-2, 3))
 	save_plots(self, plot_id, sample_sources[sample_sources$sample_source==ss,], output_dir, output_formats)
 })

@@ -54,7 +54,7 @@ ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y, colour=wrapping_count_quantile)) +
 	geom_indicator(aes(indicator=counts, colour=wrapping_count_quantile, group=wrapping_count_quantile)) +
 	facet_wrap(~sample_source, ncol=1) +
-	opts(title = "Backbone Backbone Hydrogen Bond Energy by Dehydron Wrapping Count") +
+	ggtitle("Backbone Backbone Hydrogen Bond Energy by Dehydron Wrapping Count") +
 	labs(x="Rosetta Predicted Energy(lower is better geometry)",
 	     y="FeatureDensity") +
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)

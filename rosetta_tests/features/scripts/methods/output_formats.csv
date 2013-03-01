@@ -3,6 +3,9 @@ output_web_raster	plot	.png	8	10.5	300	1	TRUE	TRUE
 output_web_vector	plot	.svg	8	10.5	300	1	FALSE	TRUE
 output_web_icon	plot	.png	8	10.5	72	1	FALSE	FALSE
 output_web_eps	plot	.eps	8	10.5	300	1	FALSE	TRUE
+output_minimal_raster	plot	.png	3	4	300	1	FALSE	TRUE
+output_minimal_vector	plot	.svg	3	4	300	1	FALSE	TRUE
+output_minimal_pdf	plot	.pdf	3	4	300	1	FALSE	TRUE
 output_slide_raster	plot	.png	6	8	300	1	FALSE	TRUE
 output_slide_vector	plot	.svg	6	8	300	1	FALSE	TRUE
 output_slide_pdf	plot	.pdf	6	8	300	1	FALSE	TRUE

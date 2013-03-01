@@ -58,7 +58,7 @@ d_ply(f, .(sample_source), function(sub_f){
 	sub_f$counts <- sum(sub_f$instance)
 	plot_id <- "salt_bridge_instances_psi_rho_LYS_CXL"
 	p <- ggplot(data=sub_f, aes(x=psi, y=rho)) + plot_parts +
-		opts(title = paste("Salt Bridge LYS donor D/E acceptor, PSI vs RHO by Acceptor\nss_id: ", ss_id,sep="")) +
+		ggtitle(paste("Salt Bridge LYS donor D/E acceptor, PSI vs RHO by Acceptor\nss_id: ", ss_id,sep="")) +
 		scale_x_continuous("Angle Around Donor (Degrees)")
 	save_plots(self, plot_id, ss, output_dir, output_formats)
 })

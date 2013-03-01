@@ -55,11 +55,11 @@ run=function(self, sample_sources, output_dir, output_formats){
 
 	
 	ggplot(data=f_first) + theme_bw() +
-			geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
+			theme(panel.background=element_rect(fill="#00007F", colour="#00007F")) +
 			stat_density2d(
 					aes(x=capx, y=capy, fill=..density..), geom="tile", contour=FALSE ) +
 			polar_equal_area_grids_bw() +
-			opts(title =
+			ggtitle(
 							paste("Pi Stacking chiBDHO vs DHO Angles with Sequence Separation > 5\n",
 									"Sidechain Donors to Sidechain sp2 Acceptors, Equal Coordinate Projection\n",
 									"PHE+TYR+TRP to PHE+TYR+TRP at 2.5A", sep="")) +
@@ -112,11 +112,11 @@ run=function(self, sample_sources, output_dir, output_formats){
 	
 	
 	ggplot(data=f_first) + theme_bw() +
-			geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
+			theme(panel.background=element_rect(fill="#00007F", colour="#00007F")) +
 			stat_density2d(
 					aes(x=capx, y=capy, fill=..density..), geom="tile", contour=FALSE ) +
 			polar_equal_area_grids_bw() +
-			opts(title =
+			ggtitle(
 							paste("Pi Stacking chiBDHO vs DHO Angles with Sequence Separation > 5\n",
 									"Sidechain Donors to Sidechain sp2 Acceptors, Equal Coordinate Projection\n",
 									"PHE to PHE at 2.5A", sep="")) +
@@ -164,11 +164,11 @@ run=function(self, sample_sources, output_dir, output_formats){
 #f_first <- f[ f$sample_source == levels(sample_sources$sample_source), ]
 #
 #ggplot(data=f_first) + theme_bw() +
-#  geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
+#  theme(panel.background=element_rect(fill="#00007F", colour="#00007F")) +
 #  stat_density2d(
 #    aes(x=capx, y=capy, fill=..density..), geom="tile", contour=FALSE ) +
 #  polar_equal_area_grids_bw() +
-#  opts(title =
+#  ggtitle(
 #    paste("Pi Stacking chiBDHO vs DHO Angles with Sequence Separation > 5\n",
 #    "Sidechain Donors to Sidechain sp2 Acceptors, Equal Coordinate Projection\n",
 #    "PHE+TYR+TRP to PHE+TYR+TRP at 3.5A", sep="")) +
@@ -218,11 +218,11 @@ run=function(self, sample_sources, output_dir, output_formats){
 #f_first <- f[ f$sample_source == levels(sample_sources$sample_source), ]
 #
 #ggplot(data=f_first) + theme_bw() +
-#  geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
+#  theme(panel.background=element_rect(fill="#00007F", colour="#00007F")) +
 #  stat_density2d(
 #    aes(x=capx, y=capy, fill=..density..), geom="tile", contour=FALSE ) +
 #  polar_equal_area_grids_bw() +
-#  opts(title =
+#  ggtitle(
 #    paste("Pi Stacking chiBDHO vs DHO Angles with Sequence Separation > 5\n",
 #    "Sidechain Donors to Sidechain sp2 Acceptors, Equal Coordinate Projection\n",
 #    "PHE to PHE at 3.5A", sep="")) +

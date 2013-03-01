@@ -49,7 +49,7 @@ plot <- plot + theme_bw()
 plot <- plot + geom_bar(aes(x=sample_source, y=num_residues, fill=sample_source))
 
 # Set title and axis labels
-plot <- plot + opts(title="Dataset Size") + labs(x="Number of Residues", y="Count")
+plot <- plot + ggtitle("Dataset Size") + labs(x="Number of Residues", y="Count")
 
 # The resulting filename out of save_plots is <plot_id>_<date_code>_<sample_source1>_..._.<extension>
 plot_id <- "EXAMPLE_PLOT"

@@ -38,7 +38,7 @@ d_ply(scores, .(score_type), function(sub_scores){
 #          	geom_point(aes(x=radius_of_gyration, y=score_value, colour=sample_source)) +
 		stat_smooth(aes(x=radius_of_gyration, y=score_value, colour=sample_source), method=lm) +
 #		geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
-		opts(title = paste("Rosetta ", score_type, " Scores", sep="")) +
+		ggtitle(paste("Rosetta ", score_type, " Scores", sep="")) +
 		labs(x="Radius of Gyration (Angstroms)") +
 		scale_y_continuous(paste(score_type, " Rosetta Energy", sep=""))
 	save_plots(self, plot_id, sample_sources, output_dir, output_formats)

@@ -42,7 +42,7 @@ p <- ggplot(
   aes(x=score_value, y=divergence))
 p <- p + geom_point(size=.3)
 p <- p + facet_wrap( ~ res_type )
-p <- p + opts(title = paste("Rotamer Recovery vs Dunbrack Score by Residue Type"))
+p <- p + ggtitle(paste("Rotamer Recovery vs Dunbrack Score by Residue Type"))
 p <- p + labs(x="Score",
               y="AutomorphicRMSD")
 p <- p + theme_bw()

@@ -89,9 +89,18 @@ save_plots <- function(
 		cat("Saving Plot: ", full_path)
 		timing <- system.time({
 			tryCatch({
+				plot <- last_plot()
+				if(as.character(fmt$id) == "output_minimal_raster" ||
+					 as.character(fmt$id) == "output_minimal_vector" ||
+					 as.character(fmt$id) == "output_minimal_pdf"){
+					plot$labels$title <- NULL
+					plot <- plot + theme(legend.position="none")
+				}
+
 				if(fmt$add_footer){
 					ggsave_with_footer(
 						filename=full_path,
+						plot=plot,
 						width=fmt$width,
 						height=fmt$height,
 						dpi=fmt$dpi,
@@ -101,6 +110,7 @@ save_plots <- function(
 				} else {
 					ggsave(
 						filename=full_path,
+						plot=plot,
 						width=fmt$width,
 						height=fmt$height,
 						dpi=fmt$dpi,
@@ -118,8 +128,7 @@ save_plots <- function(
 	})
 }
 
-
-# aggregous code duplication of ggsave to accomodate adding a footer
+# Egregious code duplication of ggsave to accomodate adding a footer
 ggsave_with_footer <- function (
 	filename = default_name(plot),
 	plot = last_plot(),

@@ -46,7 +46,7 @@ p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=log(y+1), colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_wrap( ~ score_type, ncol = 4) +
-	opts(title = "Rosetta Component Scores") +
+	ggtitle("Rosetta Component Scores") +
 	labs(x="Rosetta Energy Units") +
 	scale_y_continuous("log(FeatureDensity + 1)", breaks=c(0, .3, .6))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
@@ -58,7 +58,7 @@ d_ply(dens, .(score_type), function(sub_dens){
 	p <- ggplot(data=sub_dens) + theme_bw() +
 		geom_line(aes(x=x, y=y, colour=sample_source)) +
 		geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
-		opts(title = paste("Rosetta ", score_type, " Scores", sep="")) +
+		ggtitle(paste("Rosetta ", score_type, " Scores", sep="")) +
 		labs(x="Rosetta Energy Units") +
 		scale_y_continuous("FeatureDensity", breaks=c(0, .3, .6))
 	save_plots(self, plot_id, sample_sources, output_dir, output_formats)

@@ -53,7 +53,7 @@ plot_id <- "hbond_backbone_backbon_cosAHD_bump"
 dens <- estimate_density_1d(
 	f, c("sample_source"), "cosAHD", adjust=.1, histogram=TRUE)
 ggplot(data=dens) + plot_parts +
-	opts(title = "Backbone Backbone Hydrogen Bond AHD Angle\nNormalized for equal Weight per Unit Angle") +
+	ggtitle("Backbone Backbone Hydrogen Bond AHD Angle\nNormalized for equal Weight per Unit Angle") +
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id <- "hbond_backbone_backbon_cosAHD_bump_by_don_res_type"
@@ -61,7 +61,7 @@ dens <- estimate_density_1d(
 	f, c("sample_source", "don_res_type"), "cosAHD", adjust=.1)
 ggplot(data=dens) + plot_parts +
 	facet_wrap( ~ don_res_type) +
-	opts(title = "Backbone Backbone Hydrogen Bond AHD Angle by donor and acceptor residue types\nnormalized for equal weight per unit distance")
+	ggtitle("Backbone Backbone Hydrogen Bond AHD Angle by donor and acceptor residue types\nnormalized for equal weight per unit distance")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id <- "hbond_backbone_backbon_cosAHD_bump_by_acc_res_type"
@@ -69,7 +69,7 @@ dens <- estimate_density_1d(
 	f, c("sample_source", "acc_res_type"), "cosAHD", adjust=.1)
 ggplot(data=dens) + plot_parts +
 	facet_wrap(~acc_res_type) +
-	opts(title = "Backbone Backbone Hydrogen Bond AHD Angle by donor and acceptor residue types\nnormalized for equal weight per unit distance")
+	ggtitle("Backbone Backbone Hydrogen Bond AHD Angle by donor and acceptor residue types\nnormalized for equal weight per unit distance")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
@@ -81,7 +81,7 @@ save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 #plot_id <- "hbond_backbone_backbon_cosAHD_bump_AHdist"
 #ggplot(data=dens) + plot_parts +
 #	facet_grid(don_res_type ~ acc_res_type) +
-#	opts(title = "Backbone Backbone Hydrogen Bond AHdist by donor and acceptor residue types (restricted to cosAHD bump)\nnormalized for equal weight per unit distance")
+#	ggtitle("Backbone Backbone Hydrogen Bond AHdist by donor and acceptor residue types (restricted to cosAHD bump)\nnormalized for equal weight per unit distance")
 #save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 

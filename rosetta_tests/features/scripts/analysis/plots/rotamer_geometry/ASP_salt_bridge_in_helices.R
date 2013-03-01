@@ -55,13 +55,13 @@ p <- ggplot(data=dens) +
 	geom_indicator(
 		aes(indicator=counts), group=1, colour="black", ypos=.99) +
 	facet_wrap(~sample_source) +
-	opts(title=paste("ASP chi1 vs chi2 For Helices;  BFact < 30", sep="")) +
+	ggtitle(("ASP chi1 vs chi2 For Helices;  BFact < 30", sep="")) +
 	coord_equal(ratio=1) +
 	scale_x_continuous("chi 1") +
 	scale_y_continuous("chi 2") +
 	scale_fill_gradient("Density", low="white", high="black") +
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)

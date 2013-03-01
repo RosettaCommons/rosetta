@@ -69,6 +69,18 @@ iscript_includes <- function(base_dir, includes){
   cat("\n", file=iscript_fname, append=TRUE)
 }
 
+iscript_parallel_backend <- function(base_dir, ncores){
+	cat(
+		"#Should the analysis be run in parallel? If so, how many cores to use?\n",
+		file=iscript_fname, append=TRUE)
+
+	if(!is.null(ncores)){
+		cat("registerDoMC(", ncores, ")\n", sep="", file=iscript_fname, append=TRUE)
+		cat("use_parallel <- TRUE\n", file=iscript_fname, append=TRUE)
+	} else {
+		cat("use_parallel <- FALSE\n", file=iscript_fname, append=TRUE)
+	}
+}
 
 iscript_summarize_configuration <- function(ss_cmp){
 	cat(

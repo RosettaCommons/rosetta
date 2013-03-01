@@ -63,12 +63,12 @@ l_ply(levels(f$sample_source), function(ss){
 		polar_equal_area_grids_bw() +
 		geom_bin2d(aes(x=capx, y=capy, fill=log(..count..), weight=weight), binwidth=c(.06, .06)) +
 		facet_grid(acc_chem_type ~ don_chem_type) +
-		opts(title = paste("Hydrogen Bonds chi vs BAH Angles with Sequence Separation > 5\nBackbone/Backbone Hydrogen Bonds\nEqual Coordinate Projection   Sample Source: ", ss, sep="")) +
+		ggtitle(paste("Hydrogen Bonds chi vs BAH Angles with Sequence Separation > 5\nBackbone/Backbone Hydrogen Bonds\nEqual Coordinate Projection   Sample Source: ", ss, sep="")) +
 		scale_x_continuous('2*sin(BAH/2) * cos(CHI)', limits=capx_limits, breaks=c(-1, 0, 1)) +
 		scale_y_continuous('2*sin(BAH/2) * sin(CHI)', limits=capy_limits, breaks=c(-1, 0, 1)) +
 		coord_fixed(ratio = 1) +
 		scale_fill_gradientn('log(Normalized\nDensity)', colours=jet.colors(10)) +
-#        	opts(legend.position="bottom", legend.direction="horizontal")
+#        	theme(legend.position="bottom", legend.direction="horizontal")
 	save_plots(self, plot_id, sample_sources[sample_sources$sample_source == ss,], output_dir, output_formats)
 })
 

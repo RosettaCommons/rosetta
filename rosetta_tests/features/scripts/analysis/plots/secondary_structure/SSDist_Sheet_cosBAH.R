@@ -134,13 +134,13 @@ p <- ggplot() + theme_bw() +
   geom_indicator(data=dp, aes(indicator=counts, colour=sample_source, group=sample_source)) +
   geom_line(data=dap, aes(x=180-180/pi*acos(x), y=y, colour=sample_source)) +
   geom_indicator(data=dap, aes(indicator=counts, colour=sample_source, group=sample_source, xpos="left")) +
-  opts(title = "BAH angles for beta-sheet hydrogen bonds\nnormalized for equal weight per unit distance\n(antiparallel-counts left, parallel-counts right)") +
+  ggtitle("BAH angles for beta-sheet hydrogen bonds\nnormalized for equal weight per unit distance\n(antiparallel-counts left, parallel-counts right)") +
   scale_y_continuous("FeatureDensity", ylims) +
   scale_x_continuous("BAH interior angle (degrees)",
 		limits=c(80,180), breaks=c(90, 120, 150, 180))
 
 if(nrow(sample_sources) <= 3){
-  p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+  p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -152,12 +152,12 @@ save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 #  geom_indicator(data=dp, aes(indicator=counts, colour=sample_source)) +
 #	geom_line(data=dap, aes(x=x, y=y, colour=sample_source)) +
 #  geom_indicator(data=dap, aes(indicator=counts, colour=sample_source, xpos="left")) +
-#  opts(title = "O--Ca atom atom distances involving beta-sheet residues (seq. sep. > 1)\nnormalized for equal weight per unit distance") +
+#  ggtitle("O--Ca atom atom distances involving beta-sheet residues (seq. sep. > 1)\nnormalized for equal weight per unit distance") +
 #  scale_y_log10("FeatureDensity", limits=ylims) +
 #  scale_x_continuous(expression(paste('Atom Atom Distances (', ring(A), ')')), limits=c(3,4.5), breaks=c(3, 3.25, 3.5, 3.75, 4, 4.25, 4.5) )
 #
 #if(nrow(sample_sources) <= 3){
-#  p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+#  p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 #}
 #
 #save_plots(self, plot_id, sample_sources, output_dir, output_formats)

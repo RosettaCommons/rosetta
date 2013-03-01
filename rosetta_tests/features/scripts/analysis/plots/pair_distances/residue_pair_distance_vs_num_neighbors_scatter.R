@@ -41,11 +41,11 @@ plot_id <- "residue_pair_distances_vs_neighbors"
 p <- ggplot(data=f, aes(x=dist, y=nbrs, color=sample_source))
 p <- p + geom_point(aes( size = .5)
 p <- p + facet_wrap( ~ res1_type )
-p <- p + opts(title = "Residue Pair Distances vs Burial")
+p <- p + ggtitle("Residue Pair Distances vs Burial")
 p <- p + labs(x="Distance between Action Coordinates",
               y="Sum of Number of Neighbors")
 p <- p + theme_bw()
-p <- p + opts(axis.text.y=theme_blank())
+p <- p + theme(axis.text.y=theme_blank())
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 

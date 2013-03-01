@@ -122,7 +122,7 @@ p <- ggplot() + theme_bw() +
 	geom_point(data=sub_f, aes(x=vDW_atr, y=total), size=.5) +
 	stat_smooth(data=sub_f, aes(x=vDW_atr, y=total), method="lm") +
 	facet_wrap(~res_type, scales="free_x") +
-	opts(title = "Total residue score as a function of Van der Waals attraction ") +
+	ggtitle("Total residue score as a function of Van der Waals attraction ") +
 	labs(x="Residue Total Van der Waals Attration (Rosetta Energy Units)") +
 	scale_y_continuous("Residue Total Energy (Rosetta Energy Units)")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)

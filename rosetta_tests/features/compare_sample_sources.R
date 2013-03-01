@@ -92,7 +92,9 @@ initialize_command_line_options <- function() {
 		make_option(c("--generate_website"), action="store_true", type="logical", default=TRUE, dest="generate_website",
 			help="Add footer to plots saying the analysis script and run date. [Default \"%defulat\"]"),
 		make_option(c("--config"), action="store", type="character", default=NULL, dest="config_filename",
-			help=". [Default \"%default\"]")))
+			help=". [Default \"%default\"]"),
+		make_option(c("--ncores"), action="store_trye", type="integer", default=1, dest="ncores",
+			help="Run in parallel with specified number of cores.")))
 
 	# Density estimation options
 	option_list <- c(option_list, list(
@@ -170,6 +172,11 @@ initialize_packages <- function(opt, base_dir){
 		"polynom",
 		"rjson",
 		"xtable")
+
+	if(!is.null(opt$ncores)){
+		libraries <- c(libraries, "doMC")
+	}
+
 	load_packages(
 		libraries,
 		fail_on_missing_package=opt$options$fail_on_missing_packages)
@@ -204,6 +211,16 @@ initialize_method_scripts <- function(base_dir) {
 		})
 	}
 	iscript_includes(base_dir, includes)
+}
+
+initialize_parallel_backend <- function(opt, base_dir){
+	if(!is.null(opt$ncores)){
+		registerDoMC(opt$ncores)
+		use_parallel <<- TRUE
+	} else {
+		use_parallel <<- FALSE
+	}
+	iscript_parallel_backend(base_dir, opt$ncores)
 }
 
 
@@ -508,6 +525,7 @@ check_basic_input(opt)
 
 initialize_packages(opt, base_dir)
 initialize_method_scripts(base_dir)
+initialize_parallel_backend(opt, base_dir)
 
 database_configuration <- initialize_database_configuration(opt)
 general_kernel_adjust <- initialize_density_estimation_kernel(opt)
@@ -518,7 +536,10 @@ configuration <- add_command_line_options_to_configuration(
 	opt,
 	base_dir)
 
-l_ply(configuration$sample_source_comparisons, function(ss_cmp){
+l_ply(
+	.data=configuration$sample_source_comparisons,
+	.parallel=use_parallel,
+	.fun=function(ss_cmp){
 
 	sample_source_output_dir <- initialize_output_dir(work_dir, opt, ss_cmp)
 	output_formats <- initialize_output_formats(opt, ss_cmp)

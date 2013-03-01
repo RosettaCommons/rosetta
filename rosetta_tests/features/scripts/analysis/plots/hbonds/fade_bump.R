@@ -34,17 +34,17 @@ f <-  query_sample_sources(sample_sources, sele)
 
 plot_parts <- list(
    theme_bw(),
-   geom_line(aes(x,  log(y+1), colour=sample_source)),
+   geom_line(aes(x, y, colour=sample_source), size=1.5),
    geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)),
    labs(x=expression(paste('Acceptor -- Proton Distance (', ring(A), ')')),
-     y="log(FeatureDensity + 1)"))
+     y="FeatureDensity"))
 
 get_density <- function(data, ids){
   estimate_density_1d(
     data = data,
     ids = ids,
     variable = "AHdist",
-    n_pts=100,
+    n_pts=300,
     weight_fun = radial_3d_normalization,
     histogram=TRUE)
 }
@@ -56,7 +56,7 @@ dens <- get_density(f[1.8 <= f$AHdist & f$AHdist <= 2.0, ], c("sample_source"))
 ggplot(data=dens) +
   geom_vline(xintercept = 1.9, colour="darkgray") +
   plot_parts +
-  opts(title = "Hydrogen Bond A-H Distance First Fade Bump\nNormalized for equal Weight per Unit Angle") +
+  ggtitle("Hydrogen Bond A-H Distance First Fade Bump\nNormalized for equal Weight per Unit Angle") +
   scale_x_continuous( breaks=c(1.85, 1.9, 1.95))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -69,7 +69,7 @@ ggplot(data=dens) +
   geom_vline(xintercept = 1.9, colour="darkgray") +
   plot_parts +
   facet_wrap(~don_chem_type) +
-  opts(title = "Hydrogen Bond A-H Distance First Fade Bump by Donor Chem Type\nNormalized for equal Weight per Unit Angle") +
+  ggtitle("Hydrogen Bond A-H Distance First Fade Bump by Donor Chem Type\nNormalized for equal Weight per Unit Angle") +
   scale_x_continuous( breaks=c(1.85, 1.9, 1.95))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -82,7 +82,7 @@ ggplot(data=dens) +
   geom_vline(xintercept = 1.9, colour="darkgray") +
   plot_parts +
   facet_wrap(~acc_chem_type) +
-  opts(title = "Hydrogen Bond A-H Distance First Fade Bump by Acceptor Chem Type\nNormalized for equal Weight per Unit Angle") +
+  ggtitle("Hydrogen Bond A-H Distance First Fade Bump by Acceptor Chem Type\nNormalized for equal Weight per Unit Angle") +
   scale_x_continuous( breaks=c(1.85, 1.9, 1.95))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -95,7 +95,7 @@ ggplot(data=dens) +
   geom_vline(xintercept = 1.9, colour="darkgray") +
   plot_parts +
   facet_grid(don_chem_type ~ acc_chem_type) +
-  opts(title = "Hydrogen Bond A-H Distance First Fade Bump by Chem Type\nNormalized for equal Weight per Unit Angle") +
+  ggtitle("Hydrogen Bond A-H Distance First Fade Bump by Chem Type\nNormalized for equal Weight per Unit Angle") +
   scale_x_continuous( breaks=c(1.82, 1.9, 1.98))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -107,7 +107,7 @@ dens <- get_density(f[2.2 <= f$AHdist & f$AHdist <= 2.4, ], c("sample_source"))
 ggplot(data=dens) +
   geom_vline(xintercept = 2.3, colour="darkgray") +
   plot_parts +
-  opts(title = "Hydrogen Bond A-H Distance Last Fade Bump\nNormalized for equal Weight per Unit Angle") +
+  ggtitle("Hydrogen Bond A-H Distance Last Fade Bump\nNormalized for equal Weight per Unit Angle") +
   scale_x_continuous( breaks=c(2.25, 2.1, 2.45))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -119,7 +119,7 @@ ggplot(data=dens) +
   geom_vline(xintercept = 2.3, colour="darkgray") +
   plot_parts +
   facet_wrap(~don_chem_type) +
-  opts(title = "Hydrogen Bond A-H Distance Last Fade Bump by Donor Chem Type\nNormalized for equal Weight per Unit Angle") +
+  ggtitle("Hydrogen Bond A-H Distance Last Fade Bump by Donor Chem Type\nNormalized for equal Weight per Unit Angle") +
   scale_x_continuous( breaks=c(2.25, 2.1, 2.45))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -132,7 +132,7 @@ ggplot(data=dens) +
   geom_vline(xintercept = 2.3, colour="darkgray") +
   plot_parts +
   facet_wrap(~acc_chem_type) +
-  opts(title = "Hydrogen Bond A-H Distance Last Fade Bump by Acceptor Chem Type\nNormalized for equal Weight per Unit Angle") +
+  ggtitle("Hydrogen Bond A-H Distance Last Fade Bump by Acceptor Chem Type\nNormalized for equal Weight per Unit Angle") +
     scale_x_continuous( breaks=c(2.25, 2.1, 2.45))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -145,7 +145,7 @@ ggplot(data=dens) +
   geom_vline(xintercept = 2.3, colour="darkgray") +
   plot_parts +
   facet_grid(don_chem_type ~ acc_chem_type) +
-  opts(title = "Hydrogen Bond A-H Distance Last Fade Bump by Chem Type\nNormalized for equal Weight per Unit Angle") +
+  ggtitle("Hydrogen Bond A-H Distance Last Fade Bump by Chem Type\nNormalized for equal Weight per Unit Angle") +
   scale_x_continuous( breaks=c(2.22, 2.38))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -155,10 +155,10 @@ plot_id <- "fade_range_bump_all"
 ################################
 dens <- get_density(f[1.85 <= f$AHdist & f$AHdist <= 2.35, ], c("sample_source"))
 ggplot(data=dens) +
-  geom_vline(xintercept = 1.9, colour="darkgray") +
-  geom_vline(xintercept = 2.3, colour="darkgray") +
+#  geom_vline(xintercept = 1.9, colour="darkgray") +
+#  geom_vline(xintercept = 2.3, colour="darkgray") +
   plot_parts +
-  opts(title = "Hydrogen Bond A-H Distance Fade Range\nNormalized for equal Weight per Unit Angle") +
+  ggtitle("Hydrogen Bond A-H Distance Fade Range\nNormalized for equal Weight per Unit Angle") +
   scale_x_continuous( breaks=c(1.9, 2.1, 2.3))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -172,7 +172,7 @@ ggplot(data=dens) +
   geom_vline(xintercept = 2.3, colour="darkgray") +
   plot_parts +
   facet_wrap( ~ don_chem_type) +
-  opts(title = "Hydrogen Bond A-H Distance Fade Range by Donor Chem Type\nNormalized for equal Weight per Unit Angle") +
+  ggtitle("Hydrogen Bond A-H Distance Fade Range by Donor Chem Type\nNormalized for equal Weight per Unit Angle") +
   scale_x_continuous( breaks=c(1.9, 2.3))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -186,7 +186,7 @@ ggplot(data=dens) +
   geom_vline(xintercept = 2.3, colour="darkgray") +
   plot_parts +
   facet_wrap( ~ acc_chem_type) +
-  opts(title = "Hydrogen Bond A-H Distance Fade Range by Acceptor Chem Type\nNormalized for equal Weight per Unit Angle") +
+  ggtitle("Hydrogen Bond A-H Distance Fade Range by Acceptor Chem Type\nNormalized for equal Weight per Unit Angle") +
   scale_x_continuous( breaks=c(1.9, 2.3))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -200,9 +200,12 @@ ggplot(data=dens) +
   geom_vline(xintercept = 2.3, colour="darkgray") +
   plot_parts +
   facet_grid(don_chem_type ~ acc_chem_type) +
-  opts(title = "Hydrogen Bond A-H Distance Fade Range by Chem Type\nNormalized for equal Weight per Unit Angle") +
+  ggtitle("Hydrogen Bond A-H Distance Fade Range by Chem Type\nNormalized for equal Weight per Unit Angle") +
   scale_x_continuous( breaks=c(1.9, 2.3))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
+
+
+dens
 
 })) # end FeaturesAnalysis

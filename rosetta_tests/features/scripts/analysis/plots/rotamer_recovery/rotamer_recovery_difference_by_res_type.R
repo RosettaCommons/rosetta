@@ -65,10 +65,10 @@ d_ply(f, .(sample_source), function(sub_f) {
 		geom_indicator(aes(indicator=counts, colour=burial, group=burial)) +
 		geom_indicator(aes(indicator=mean, color=burial, group=burial), xpos="left") +
 		facet_wrap( ~ res_type ) +
-		opts(title = "Rotamer Recovery by Residue Type and Burial, B-Factor < 20") +
+		ggtitle("Rotamer Recovery by Residue Type and Burial, B-Factor < 20") +
 		labs(x="New Rotamer Recovery - Ref Recovery Score", y="log(counts + 1)") +
-		opts(legend.position=c(.8, .25)) +
-		opts(legend.justification=c("left", "top"))
+		theme(legend.position=c(.8, .25)) +
+		theme(legend.justification=c("left", "top"))
 	save_plots(self, plot_id, sample_sources[sample_sources$sample_source == ss_id,], output_dir, output_formats)
 })
 

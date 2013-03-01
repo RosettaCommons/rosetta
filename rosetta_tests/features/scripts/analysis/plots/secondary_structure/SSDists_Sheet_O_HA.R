@@ -155,13 +155,13 @@ p <- ggplot() + theme_bw() +
   geom_indicator(data=dp, aes(indicator=counts, colour=sample_source, group=sample_source)) +
   geom_line(data=dap, aes(x=x, y=y, colour=sample_source)) +
   geom_indicator(data=dap, aes(indicator=counts, colour=sample_source, group=sample_source, xpos="left")) +
-  opts(title = "O--Ha atom atom distances involving beta-sheet residues\nnormalized for equal weight per unit distance\n(antiparallel-counts left, parallel-counts right)") +
+  ggtitle("O--Ha atom atom distances involving beta-sheet residues\nnormalized for equal weight per unit distance\n(antiparallel-counts left, parallel-counts right)") +
   scale_y_log10("FeatureDensity", ylims) +
   scale_x_continuous(expression(paste('Atom Atom Distances (', ring(A), ')')),
 		limits=c(1.75,3.75), breaks=c(1.75, 2, 2.25, 2.5, 2.75, 3, 3.25, 3.5, 3.75))
 
 if(nrow(sample_sources) <= 3){
-  p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+  p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -173,14 +173,42 @@ p <- ggplot(data=dens) + theme_bw() +
   geom_indicator(data=dp, aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	geom_line(data=dap, aes(x=x, y=y, colour=sample_source)) +
   geom_indicator(data=dap, aes(indicator=counts, colour=sample_source, group=sample_source, xpos="left")) +
-  opts(title = "O--Ha atom atom distances involving beta-sheet residues (seq. sep. > 1)\nnormalized for equal weight per unit distance") +
+  ggtitle("O--Ha atom atom distances involving beta-sheet residues (seq. sep. > 1)\nnormalized for equal weight per unit distance") +
   scale_y_log10("FeatureDensity", limits=ylims) +
   scale_x_continuous(expression(paste('Atom Atom Distances (', ring(A), ')')), limits=c(2,3.5), breaks=c(2, 2.25, 2.5, 2.75, 3, 3.25, 3.5) )
 
 if(nrow(sample_sources) <= 3){
-  p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+  p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+
+
+
+
+gradual_reveal <- function(ss_ids) {
+	dens_ref <- dens[
+		as.character(dens$sample_source) %in% ss_ids &
+		dens$strand_orientation == "antiparallel",]
+
+	ylims <- c(.1,5)
+
+	plot_id <- paste("SSDists_Sheet_O_HA_parallel_anti_parallel_zoom_2_3_", paste(ss_ids, collapse="", sep="_"), sep="")
+	p <- ggplot(data=dens_ref) + theme_bw() +
+	  geom_line(aes(x=x, y=y, colour=sample_source)) +
+		geom_line(aes(x=x, y=y, colour=sample_source), size=2.8) +
+	  ggtitle("O--Ha Distance: Close Contact Anti-parallel Beta-Sheets") +
+	  scale_y_log10("FeatureDensity", limits=ylims) +
+		theme(legend.position=c(.8,.8)) +
+	  scale_x_continuous(expression(paste('Atom Atom Distance (', ring(A), ')')), limits=c(2,3.5), breaks=c(2, 2.25, 2.5, 2.75, 3, 3.25, 3.5) )
+	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+}
+
+gradual_reveal(sample_sources[c(1), "sample_source"])
+gradual_reveal(sample_sources[c(1,2), "sample_source"])
+gradual_reveal(sample_sources[c(1,2,4), "sample_source"])
+gradual_reveal(sample_sources[c(1,2,4,5), "sample_source"])
+
+
 
 })) # end FeaturesAnalysis

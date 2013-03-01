@@ -79,7 +79,7 @@ plot_id <- "hbond_AHdist_rosetta_nstruct_cross_validation"
 p <- ggplot(z) + theme_bw() +
 	geom_boxplot(aes(x=n, y=KL.Divergence, group=n)) +
 #	geom_smooth(aes(ymin=KL.mean - KL.var, ymax=KL.mean+KL.var), stat="identity") +
-	opts(title=paste("Kullback-Leibler divergence of full cross validation of number of Rosetta predictions per sequence\nComputed for HBond A-H distances for sidechain-sidechain bonds with seq. sep. > 5")) +
+	ggtitle(("Kullback-Leibler divergence of full cross validation of number of Rosetta predictions per sequence\nComputed for HBond A-H distances for sidechain-sidechain bonds with seq. sep. > 5")) +
 	scale_x_continuous("Number of Rosetta predictions per Sequence") +
 	scale_y_continuous("KL-Divergence (50 bin)")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
@@ -97,7 +97,7 @@ plot_id <- "hbond_cosBAH_rosetta_nstruct_cross_validation"
 p <- ggplot(z) + theme_bw() +
 	geom_boxplot(aes(x=n, y=KL.Divergence, group=n)) +
 #	geom_smooth(aes(ymin=KL.mean - KL.var, ymax=KL.mean+KL.var), stat="identity") +
-	opts(title=paste("Kullback-Leibler divergence of full cross validation of number of Rosetta predictions per sequence\nComputed for HBond A-H distances for sidechain-sidechain bonds with seq. sep. > 5")) +
+	ggtitle(("Kullback-Leibler divergence of full cross validation of number of Rosetta predictions per sequence\nComputed for HBond A-H distances for sidechain-sidechain bonds with seq. sep. > 5")) +
 	scale_x_continuous("Number of Rosetta predictions per Sequence") +
 	scale_y_continuous("KL-Divergence (50 bin)")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
@@ -117,7 +117,7 @@ d_ply(f, .(sample_source), function(sub_f){
 	z$chem_type <- paste(z$don_chem_type, z$acc_chem_type, sep="_")
 	p <- ggplot(data=z) + theme_bw() +
 		geom_line(aes(x=chem_type, y=KL.Divergence, colour=native_tag)) +
-		opts(title = paste("Hydrogen Bonds A-H Distance by Cross Validation Group\nnormalized for equal weight per unit distance ss_id:", ss_id)) +
+		ggtitle(paste("Hydrogen Bonds A-H Distance by Cross Validation Group\nnormalized for equal weight per unit distance ss_id:", ss_id)) +
 		scale_y_continuous("KL Divergence (50 bins)")
 		scale_x_continuous("Donor and Acceptor Chemical Type")
 	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
@@ -145,13 +145,13 @@ d_ply(f, .(sample_source), function(sub_f){
 	p <- ggplot(data=dens) + theme_bw() +
 		geom_line(aes(x=x, y=y, colour=cv_group)) +
 		geom_indicator(aes(indicator=counts, colour=cv_group, group=cv_group)) +
-		opts(title = paste("Hydrogen Bonds A-H Distance by Cross Validation Group\nnormalized for equal weight per unit distance ss_id:", ss_id)) +
+		ggtitle(paste("Hydrogen Bonds A-H Distance by Cross Validation Group\nnormalized for equal weight per unit distance ss_id:", ss_id)) +
 		facet_grid(don_chem_type ~ acc_chem_type) +
 		scale_y_continuous("FeatureDensity", limits=c(0,6), breaks=c(1,3,5)) +
 		scale_x_continuous(expression(paste('Acceptor -- Proton Distance (', ring(A), ')')), limits=c(1.4,2.7), breaks=c(1.6, 1.9, 2.2, 2.6))
 
 	if(nrow(sample_sources) <= 3){
-		p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+		p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 	}
 
 	save_plots(self, plot_id, sample_sources, output_dir, output_formats)

@@ -28,7 +28,7 @@ f <- query_sample_sources(sample_sources, sele)
 p <- ggplot(f, aes(x=omega)) +
     geom_histogram(aes(y=..density..), fill="grey", colour="grey50") + 
     geom_density(colour="black") +
-    opts(title=expression(paste(omega, " in antibodies")))
+    ggtitle((paste(omega, " in antibodies")))
 save_plots(self, paste("omega_scatterplot_matrix", sep = "_"), sample_sources, output_dir, output_formats)
 
 })) # end FeaturesAnalysis

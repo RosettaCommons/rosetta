@@ -141,7 +141,7 @@ generate_plot <- function(
 			expression(paste('Acceptor -- Hydrogen Distance (', ring(A), ')'))) +
 		scale_colour_grey("HBond Potential", start=.4, end=.7) +
 		theme_bw() +
-		opts(legend.position = c(.36, .85))
+		theme(legend.position = c(.36, .85))
 
 	save_plots(self, plot_id=plot_id, sample_sources, output_dir, output_formats)
 }

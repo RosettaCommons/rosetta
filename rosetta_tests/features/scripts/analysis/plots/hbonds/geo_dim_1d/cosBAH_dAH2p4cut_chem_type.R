@@ -49,7 +49,7 @@ p <- ggplot(data=dens, aes(x=acos(x)*180/pi, y=y, colour=sample_source, indicato
 p <- p + geom_line()
 p <- p + geom_indicator()
 p <- p + facet_grid( don_chem_type ~ acc_chem_type )
-p <- p + opts(title = "Hydrogen Bonds BAH Angle by Chemical Type w/ dist(A,H) < 2.4\n(normalized for equal volume per unit distance)")
+p <- p + ggtitle("Hydrogen Bonds BAH Angle by Chemical Type w/ dist(A,H) < 2.4\n(normalized for equal volume per unit distance)")
 p <- p + labs(x=expression(paste('Base -- Acceptor -- Hydrogen (degrees)')),
               y="FeatureDensity")
 p <- p + theme_bw()

@@ -112,16 +112,16 @@ extract_structures_to_pdbs <- function(
 	# Assume usage of rosetta_database is stored in $ROSETTA3_DB
 	command <-paste(
 		locate_rosetta_application("format_converter"),
-		"-database /home/momeara/rosetta/rosetta/rosetta_database",
-		"-in:use_database",
-		"-dbms:database_name ", as.character(features_database_filename),
-		"-in:dbms:struct_ids", paste(struct_ids, collapse=" "),
-		"-out:path:pdb", output_dir,
-		"-out:no_nstruct_label",
-		"-out:suffix ''",
-		"-overwrite",
-		"-ignore_unrecognized_res",
-		"-run:no_scorefile")
+		" -database /home/momeara/rosetta/rosetta/rosetta_database",
+		" -in:use_database",
+		" -dbms:database_name \"", as.character(features_database_filename), "\"",
+		" -in:dbms:struct_ids ", paste(struct_ids, collapse=" "),
+		" -out:path:pdb \"", output_dir, "\"",
+		" -out:no_nstruct_label",
+		" -out:suffix ''",
+		" -overwrite",
+		" -ignore_unrecognized_res",
+		" -run:no_scorefile", sep="")
 	cat(command, file=file.path(output_dir, "extract_pdbs.log"), sep="\n")
 	cat(command, sep="\n")
 	log <- system(command, intern=T)

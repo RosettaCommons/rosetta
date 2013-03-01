@@ -83,7 +83,7 @@ d_ply(f, .(sample_source), function(sub_f){
 		geom_indicator(aes(indicator=paste("cor:",round(correlation, 3)), xpos=.3)) +
 		facet_wrap(~dssp) +
 		coord_equal(ratio=1) +
-		opts(title = paste("HBond Backbone Amide Correlation by DSSP of Residue\nSample Source:", ss_id)) +
+		ggtitle(paste("HBond Backbone Amide Correlation by DSSP of Residue\nSample Source:", ss_id)) +
 		labs(x=expression(paste('Backbone is Acceptor: Acceptor -- Proton Distance (', ring(A), ')')),
 			y=expression(paste('Backbone is Donor: Acceptor -- Proton Distance (', ring(A), ')')))
 

@@ -67,8 +67,8 @@ ggplot(data=dens) +
 		size=20) +
 	coord_equal(ratio=1) +
 	scale_fill_gradient('Scaled Density', low="white", high="black") +
-	opts(legend.position="bottom", legend.direction="horizontal") +
-#	opts(title = paste(
+	theme(legend.position="bottom", legend.direction="horizontal") +
+#	ggtitle(paste(
 #		"Backbone Torsion Angles in the Beta-Region; B-Factor < 30", sep="")) +
 	scale_x_continuous(expression(paste("phi Angle (Degrees)", sep="")), limits=phi_range) +
 	scale_y_continuous(expression(paste("psi Angle (Degrees)", sep="")), limits=psi_range) +

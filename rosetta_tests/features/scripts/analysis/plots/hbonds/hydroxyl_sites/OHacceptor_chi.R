@@ -79,7 +79,7 @@ l_ply(levels(f$hybrid), function(hybrid){
 			polar_equal_area_grids_bw() +
 			stat_bin2d(aes(x=capx, y=capy, fill=log(..density..)), binwidth=c(.06,.06)) +
 			facet_grid(don_ss ~ acc_ss) +
-			opts(title = paste("Backbone-Backbone Hydrogen Bonds chi vs sinBAH Angles by Secondary Structure\nEqual Coordinate Projection   Sample Source: ", ss_id, sep="")) +
+			ggtitle(paste("Backbone-Backbone Hydrogen Bonds chi vs sinBAH Angles by Secondary Structure\nEqual Coordinate Projection   Sample Source: ", ss_id, sep="")) +
 			scale_x_continuous('2*sin(BAH/2) * cos(CHI)', limits=capx_limits, breaks=c(-1, 0, 1)) +
 			scale_y_continuous('2*sin(BAH/2) * sin(CHI)', limits=capy_limits, breaks=c(-1, 0, 1)) +
 			scale_fill_gradientn('log(Normalized\nDensity)', colours=jet.colors(15))

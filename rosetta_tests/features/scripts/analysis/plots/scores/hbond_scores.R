@@ -41,11 +41,11 @@ plot_id <- "hbond_scores"
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x,y, color=sample_source)) +
 	geom_indicator(aes(indicator=counts, color=sample_source, group=sample_source)) +
-	opts(title = "Unweighted Rosetta HBond Scores") +
+	ggtitle("Unweighted Rosetta HBond Scores") +
 	facet_wrap( ~ sc_type ) +
 	labs(x="Unweighted Rosetta Energy", y = "Feature Density")
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)

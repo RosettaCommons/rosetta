@@ -136,12 +136,12 @@ p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y, colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_grid(at1 ~ at2) +
-	opts(title = "Backbone atom atom distances involving helix residues (seq. sep. > 1)\nnormalized for equal weight per unit distance") +
+	ggtitle("Backbone atom atom distances involving helix residues (seq. sep. > 1)\nnormalized for equal weight per unit distance") +
 	scale_y_log10("FeatureDensity", limits=c(1e-3,1e0)) +
 	scale_x_continuous(expression(paste('Atom Atom Distances (', ring(A), ')')), limits=c(1.5,7), breaks=2:7)
 
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)

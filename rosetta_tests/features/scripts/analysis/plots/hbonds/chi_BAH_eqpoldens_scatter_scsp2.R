@@ -53,12 +53,12 @@ f_first <- f[ f$sample_source == levels(sample_sources$sample_source)[1], ]
 f_second <- f[ f$sample_source == levels(sample_sources$sample_source)[2], ]
 
 ggplot(data=f_first) + theme_bw() +
-	geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
+	theme(panel.background=element_rect(fill="#00007F", colour="#00007F")) +
   stat_density2d(
 		aes(x=capx, y=capy, fill=..density..), geom="tile", contour=FALSE ) +
 	polar_equal_area_grids_bw() +
 	geom_point(data=f_second,aes(x=capx,y=capy),colour="white",size=2) +
-	opts(title =
+	theme(title =
 		paste("Hydrogen Bonds chi vs BAH Angles with Sequence Separation > 5\n",
 		"Sidechain Donors to Sidechain sp2 Acceptors, Equal Coordinate Projection\n",
 		"Reference (density) vs Test (white circles)", sep="")) +

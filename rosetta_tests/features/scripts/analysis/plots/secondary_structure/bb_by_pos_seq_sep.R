@@ -80,12 +80,12 @@ p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y, colour=seq_sep_class)) +
 	geom_indicator(aes(indicator=counts, colour=seq_sep_class, group=seq_sep_class)) +
 	facet_wrap( ~ sample_source) +
-	opts(title = "Backbone-Backbone H-Bonds A-H Distance by Sequence Separation Classes\nB-Factor < 30 normalized for equal weight per unit distance") +
+	ggtitle("Backbone-Backbone H-Bonds A-H Distance by Sequence Separation Classes\nB-Factor < 30 normalized for equal weight per unit distance") +
 	scale_y_continuous("FeatureDensity", limits=c(0,6), breaks=c(1,3,5)) +
 	scale_x_continuous(expression(paste('Acceptor -- Proton Distance (', ring(A), ')')), limits=c(1.4,2.7), breaks=c(1.6, 1.9, 2.2, 2.6))
 
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
@@ -102,12 +102,12 @@ p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=180-acos(x)*180/pi, y=y, colour=seq_sep_class)) +
 	geom_indicator(aes(indicator=counts, colour=seq_sep_class, group=seq_sep_class)) +
 	facet_wrap( ~ sample_source) +
-	opts(title = "Backbone-Backbone H-Bonds AHD Angle by Sequence Separation Classes\nB-Factor < 30 normalized for equal weight per unit distance") +
+	ggtitle("Backbone-Backbone H-Bonds AHD Angle by Sequence Separation Classes\nB-Factor < 30 normalized for equal weight per unit distance") +
 	scale_y_continuous("FeatureDensity", limits=c(0,20), breaks=c(0,5,10,15)) +
 	scale_x_continuous("Acceptor -- Hydrogen -- Donor (degrees)", trans="reverse")
 
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
@@ -122,12 +122,12 @@ p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=acos(x)*180/pi, y=y, colour=seq_sep_class)) +
 	geom_indicator(aes(indicator=counts, colour=seq_sep_class, group=seq_sep_class)) +
 	facet_wrap( ~ sample_source) +
-	opts(title = "Backbone-Backbone H-Bonds BAH Angle by Sequence Separation Classes\nB-Factor < 30 normalized for equal weight per unit distance") +
+	ggtitle("Backbone-Backbone H-Bonds BAH Angle by Sequence Separation Classes\nB-Factor < 30 normalized for equal weight per unit distance") +
 	scale_x_continuous(paste('Base -- Acceptor -- Hydrogen (degrees)')) +
 	scale_y_continuous("FeatureDensity")
 
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
@@ -142,12 +142,12 @@ p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y, colour=seq_sep_class)) +
 	geom_indicator(aes(indicator=counts, colour=seq_sep_class, group=seq_sep_class)) +
 	facet_wrap( ~ sample_source) +
-	opts(title = "Backbone-Backbone H-Bonds CHI Angle by Sequence Separation Classes\nB-Factor < 30 normalized for equal weight per unit distance") +
+	ggtitle("Backbone-Backbone H-Bonds CHI Angle by Sequence Separation Classes\nB-Factor < 30 normalized for equal weight per unit distance") +
 	scale_x_continuous('Acceptor Base -- Acceptor Torsion (degrees)', breaks=c(90,270)) +
 	scale_y_continuous("FeatureDensity")
 
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
@@ -168,18 +168,18 @@ d_ply(f, .(sample_source), function(sub_f){
 	ss_id <- sub_f[1,"sample_source"]
 
 	p <- ggplot(data=sub_f) + theme_bw() +
-		geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
+		theme(panel.background=element_rect(fill="#00007F", colour="#00007F")) +
 		stat_bin2d(aes(x=capx, y=capy, fill=log(..density..)), binwidth=c(.01, .01)) +
 		polar_equal_area_grids_bw() +
 		geom_indicator(aes(indicator=counts, colour="white")) +
 		coord_equal(ratio=1) +
 		facet_wrap( ~ seq_sep_class) +
-		opts(title = paste("Backbone-Backbone H-Bonds CHI Angle by Sequence Separation Classes\nB-Factor < 30 equal coordinate projection Sample Source: ", ss_id, sep="")) +
+		ggtitle(paste("Backbone-Backbone H-Bonds CHI Angle by Sequence Separation Classes\nB-Factor < 30 equal coordinate projection Sample Source: ", ss_id, sep="")) +
 		scale_x_continuous('Longitude: Acceptor Base -- Acceptor Torsion (degrees) ', limits=capx_limits, breaks=c()) +
 		scale_y_continuous("Latitude: Acceptor Base -- Acceptor -- Hydrogen (degrees)", limits=capy_limits, breaks=c())
 
 	if(nrow(sample_sources) <= 3){
-		p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+		p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 	}
 
 	save_plots(self, plot_id, sample_sources[sample_sources$sample_source == ss_id,], output_dir, output_formats)

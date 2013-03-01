@@ -72,11 +72,11 @@
 #p <- p + geom_line()
 #p <- p + geom_indicator()
 #p <- p + facet_grid( don_ss ~ acc_ss)
-#p <- p + opts(title = "Backbone Backbone Hydrogen Bond AHD Angle by Donor Secondary Structure (APSA Method)\nnormalized for equal weight per unit distance")
+#p <- p + ggtitle("Backbone Backbone Hydrogen Bond AHD Angle by Donor Secondary Structure (APSA Method)\nnormalized for equal weight per unit distance")
 #p <- p + labs(x=expression(paste('Acceptor -- Hydrogen -- Donor (Degrees)')),
 #              y="log(FeatureDensity + 1)")
 #p <- p + theme_bw()
-#p <- p + opts(axis.text.y=theme_blank())
+#p <- p + theme(axis.text.y=theme_blank())
 #
 #save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 #
@@ -90,11 +90,11 @@
 #p <- ggplot(data=dens, aes(x=acos(x)*360/pi, y=log(y+1), colour=acc_ss))
 #p <- p + geom_line()
 #p <- p + facet_wrap(  ~ sample_source )
-#p <- p + opts(title = "Backbone Backbone Hydrogen Bond AHD Angle by Donor Secondary Structure (APSA Method)\nnormalized for equal weight per unit distance")
+#p <- p + ggtitle("Backbone Backbone Hydrogen Bond AHD Angle by Donor Secondary Structure (APSA Method)\nnormalized for equal weight per unit distance")
 #p <- p + labs(x=expression(paste('Acceptor -- Hydrogen -- Donor (Degrees)')),
 #              y="log(FeatureDensity + 1)")
 #p <- p + theme_bw()
-#p <- p + opts(axis.text.y=theme_blank())
+#p <- p + theme(axis.text.y=theme_blank())
 #
 #save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 #
@@ -108,10 +108,10 @@
 #p <- ggplot(data=dens, aes(x=acos(x)*360/pi, y=log(y+1), colour=don_ss))
 #p <- p + geom_line()
 #p <- p + facet_wrap(  ~ sample_source )
-#p <- p + opts(title = "Backbone Backbone Hydrogen Bond AHD Angle by Donor Secondary Structure (APSA Method)\nnormalized for equal weight per unit distance")
+#p <- p + ggtitle("Backbone Backbone Hydrogen Bond AHD Angle by Donor Secondary Structure (APSA Method)\nnormalized for equal weight per unit distance")
 #p <- p + labs(x=expression(paste('Acceptor -- Hydrogen -- Donor (Degrees)')),
 #              y="log(FeatureDensity + 1)")
 #p <- p + theme_bw()
-#p <- p + opts(axis.text.y=theme_blank())
+#p <- p + theme(axis.text.y=theme_blank())
 #
 #save_plots(self, plot_id, sample_sources, output_dir, output_formats)

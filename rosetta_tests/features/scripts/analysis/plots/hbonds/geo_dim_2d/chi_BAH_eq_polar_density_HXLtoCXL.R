@@ -51,13 +51,13 @@ d_ply(f, .(sample_source), function(sub_f){
 	ss <- sample_sources[sample_sources$sample_source == ss_id,]
 
 	ggplot(data=sub_f) + theme_bw() +
-		geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
+		theme(panel.background=element_rect(fill="#00007F", colour="#00007F")) +
 	  stat_density2d(
 			aes(x=capx,y=capy, fill=..density..), geom="tile", contour=FALSE ) +
 		polar_equal_area_grids_bw() +
 		geom_indicator(aes(indicator=counts), color="white") +
 		facet_grid(acc_chem_type ~ don_chem_type) +
-		opts(title =
+		ggtitle(
 			paste("Hydrogen Bonds chi vs BAH Angles with Sequence Separation > 5\n",
 			"Sidechain Hydroxyl Donors to Sidechain Carboxyl Acceptors\n",
 			"Equal Coordinate Projection   Sample Source: ", ss_id, sep="")) +

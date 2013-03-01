@@ -65,11 +65,11 @@ ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=acos(x)*180/pi, y=-log(y), colour=sample_source)) +
 	geom_indicator(aes(colour=sample_source, indicator=counts, group=sample_source)) +
 	facet_wrap( ~ acc_chem_type_label) +
-	opts(title = "Hydrogen Bonds BAH Angle by Acceptor Chemical Type\n(normalized for equal volume per unit distance)") +
+	ggtitle("Hydrogen Bonds BAH Angle by Acceptor Chemical Type\n(normalized for equal volume per unit distance)") +
 	scale_x_continuous(paste('Base -- Acceptor -- Hydrogen (degrees)')) +
 	scale_y_continuous("-log(FeatureDensity)", limits=c(-2.3,6)) +
-	opts(legend.position=c(.58,.35)) +
-	opts(legend.justification=c("left", "top"))
+	theme(legend.position=c(.58,.35)) +
+	theme(legend.justification=c("left", "top"))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 filt_f <- f[
@@ -86,11 +86,11 @@ ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=acos(x)*180/pi, y=-log(y), colour=sample_source)) +
 	geom_indicator(aes(colour=sample_source, indicator=counts, group=sample_source)) +
 	facet_wrap( ~ acc_chem_type_label) +
-	opts(title = "HBonds: Sidechain Donor, BFact < 30, SeqSep > 5   BAH Angle by Acceptor Chemical Type\n(normalized for equal volume per unit distance)") +
+	ggtitle("HBonds: Sidechain Donor, BFact < 30, SeqSep > 5   BAH Angle by Acceptor Chemical Type\n(normalized for equal volume per unit distance)") +
 	scale_x_continuous(paste('Base -- Acceptor -- Hydrogen (degrees)')) +
 	scale_y_continuous("-log(FeatureDensity)", limits=c(-2.3,6)) +
-	opts(legend.position=c(.58,.35)) +
-	opts(legend.justification=c("left", "top"))
+	theme(legend.position=c(.58,.35)) +
+	theme(legend.justification=c("left", "top"))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 

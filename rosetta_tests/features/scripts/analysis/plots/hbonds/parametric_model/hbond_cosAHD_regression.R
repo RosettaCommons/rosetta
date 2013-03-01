@@ -80,7 +80,7 @@ ggplot(data=all_dens, aes(x=x)) + theme_bw() +
   geom_line(aes(y=y), size=1.4) +
   geom_line(aes(y=fitted), colour="blue", size=1.4) +
   geom_indicator(aes(indicator=param_string)) +
-  opts(title = "Hydrogen Bonds AHD Angle Fit with Beta Function\n(normalized for equal volume per unit distance)") +
+  ggtitle("Hydrogen Bonds AHD Angle Fit with Beta Function\n(normalized for equal volume per unit distance)") +
   labs(x=expression(paste('Acceptor -- Hydrogen -- Donor (degrees)')),
        y="FeatureDensity")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
@@ -110,7 +110,7 @@ ggplot(data=don_dens, aes(x=x)) + theme_bw() + facet_wrap( ~ don_chem_type ) +
   geom_line(aes(x,y)) +
   geom_line(aes(x,fitted), colour="blue") +
   geom_indicator(aes(indicator=param_string)) +
-  opts(title = "Hydrogen Bonds AHD Angle by Don Chemical Type fit with Beta Function\n(normalized for equal volume per unit distance)") +
+  ggtitle("Hydrogen Bonds AHD Angle by Don Chemical Type fit with Beta Function\n(normalized for equal volume per unit distance)") +
   labs(x=expression(paste('Acceptor -- Hydrogen -- Donor (degrees)')),
        y="FeatureDensity")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
@@ -143,7 +143,7 @@ ggplot(data=acc_dens, aes(x=x)) + theme_bw() + facet_wrap( ~ acc_chem_type ) +
   geom_line(aes(x,y)) +
   geom_line(aes(x,fitted), colour="blue") +
   geom_indicator(aes(indicator=param_string)) +
-  opts(title = "Hydrogen Bonds AHD Angle by Acceptor Chemical Type fit with Beta Function\n(normalized for equal volume per unit distance)") +
+  ggtitle("Hydrogen Bonds AHD Angle by Acceptor Chemical Type fit with Beta Function\n(normalized for equal volume per unit distance)") +
   labs(x=expression(paste('Acceptor -- Hydrogen -- Donor (degrees)')),
        y="FeatureDensity")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
@@ -178,7 +178,7 @@ ggplot(data=each_dens, aes(x=x)) + theme_bw() + facet_grid( don_chem_type ~ acc_
   geom_line(aes(x,y)) +
   geom_line(aes(x,fitted), colour="blue") +
   geom_indicator(aes(indicator=param_string)) +
-  opts(title = "Hydrogen Bonds AHD Angle by Chemical Type fit with Beta Function\n(normalized for equal volume per unit distance)") +
+  ggtitle("Hydrogen Bonds AHD Angle by Chemical Type fit with Beta Function\n(normalized for equal volume per unit distance)") +
   labs(x=expression(paste('Acceptor -- Hydrogen -- Donor (degrees)')),
        y="FeatureDensity")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)

@@ -123,9 +123,9 @@ d_ply(sample_sources, .variables=("sample_source"), function(sample_source){
 		polar_equal_area_grids_bw(bgcolor="#00007F") +
     geom_point(aes(x=capx, y=capy), size=.4, alpha=.5) +
     facet_grid(acc_chem_type_name ~ don_chem_type_name) +
-    opts(title = paste("Hydrogen Bonds chi vs sinBAH Angles by Chemical Type with Sequence Separation > 5\nEqual Coordinate Projection   Sample Source: ", ss, sep="")) +
-    scale_x_continuous('2*sin(BAH/2) * cos(CHI)', breaks=c(-1, 0, 1)) +
-    scale_y_continuous('2*sin(BAH/2) * sin(CHI)', breaks=c(-1, 0, 1))
+    ggtitle(paste("Hydrogen Bonds chi vs sinBAH Angles by Chemical Type with Sequence Separation > 5\nEqual Coordinate Projection   Sample Source: ", ss, sep="")) +
+    scale_x_continuous('', breaks=c(-1, 0, 1)) +
+    scale_y_continuous('', breaks=c(-1, 0, 1))
   save_plots(self, plot_id, sample_source, output_dir, output_formats)
 
 	ddply(f, .(acc_chem_type_name, don_chem_type_name), function(df){
@@ -138,29 +138,29 @@ d_ply(sample_sources, .variables=("sample_source"), function(sample_source){
   	ggplot(data=df) + theme_bw() +
 			polar_equal_area_grids_bw(bgcolor="#00007F") +
   	  geom_point(aes(x=capx, y=capy), size=.4, alpha=.5) +
-  	  opts(title = paste("Hydrogen Bonds chi vs sinBAH Angles ", don_chem_type_name, acc_chem_type_name, " with Sequence Separation > 5\nEqual Coordinate Projection   Sample Source: ", ss, sep="")) +
+  	  ggtitle(paste("Hydrogen Bonds chi vs sinBAH Angles ", don_chem_type_name, acc_chem_type_name, " with Sequence Separation > 5\nEqual Coordinate Projection   Sample Source: ", ss, sep="")) +
   	  scale_x_continuous('', breaks=c(-1, 0, 1)) +
   	  scale_y_continuous('', breaks=c(-1, 0, 1))
   	save_plots(self, plot_id, sample_source, output_dir, output_formats)
 	})
 
 
-  #orthographic projection
-  f <- transform(f,
-    capx = sin(acos(cosBAH))*cos(chi),
-    capy = sin(acos(cosBAH))*sin(chi))
-
-  sub_f <- ddply(f, .variables=c("don_chem_type_name", "acc_chem_type_name"),
-    function(df){sample_rows(df, 5000)})
-
-  plot_id = paste("hbond_sinBAH_ortho_polar_scatter_by_chem_type_long_range", ss, sep="_")
-  ggplot(data=sub_f) + theme_bw() +
-    geom_point(aes(x=capx, y=capy), size=.5, alpha=.4) +
-    facet_grid(acc_chem_type_name ~ don_chem_type_name) +
-    opts(title = paste("Hydrogen Bonds chi vs sinBAH Angles by Chemical Type with Sequence Separation > 5\nOrthographic Projection   Sample Source: ", ss, sep="")) +
-    scale_x_continuous('', breaks=c(-1, 0, 1)) +
-    scale_y_continuous('', breaks=c(-1, 0, 1))
-  save_plots(self, plot_id, sample_source, output_dir, output_formats)
+#  #orthographic projection
+#  f <- transform(f,
+#    capx = sin(acos(cosBAH))*cos(chi),
+#    capy = sin(acos(cosBAH))*sin(chi))
+#
+#  sub_f <- ddply(f, .variables=c("don_chem_type_name", "acc_chem_type_name"),
+#    function(df){sample_rows(df, 5000)})
+#
+#  plot_id = paste("hbond_sinBAH_ortho_polar_scatter_by_chem_type_long_range", ss, sep="_")
+#  ggplot(data=sub_f) + theme_bw() +
+#    geom_point(aes(x=capx, y=capy), size=.5, alpha=.4) +
+#    facet_grid(acc_chem_type_name ~ don_chem_type_name) +
+#    ggtitle(paste("Hydrogen Bonds chi vs sinBAH Angles by Chemical Type with Sequence Separation > 5\nOrthographic Projection   Sample Source: ", ss, sep="")) +
+#    scale_x_continuous('', breaks=c(-1, 0, 1)) +
+#    scale_y_continuous('', breaks=c(-1, 0, 1))
+#  save_plots(self, plot_id, sample_source, output_dir, output_formats)
 
 })
 

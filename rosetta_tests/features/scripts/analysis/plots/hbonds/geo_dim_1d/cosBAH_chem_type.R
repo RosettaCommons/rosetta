@@ -72,11 +72,11 @@ p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=acos(x)*180/pi, y=y, colour=sample_source)) +
 	geom_indicator(aes(colour=sample_source, indicator=counts, group=sample_source)) +
 	facet_grid(don_chem_type ~ acc_chem_type) +
-	opts(title = "HBonds BAH Angle by Chemical Type, B-Factor < 30\n(normalized for equal volume per unit distance)") +
+	ggtitle("HBonds BAH Angle by Chemical Type, B-Factor < 30\n(normalized for equal volume per unit distance)") +
 	scale_x_continuous(paste('Base -- Acceptor -- Hydrogen (degrees)')) +
 	scale_y_continuous("log(FeatureDensity)", limits=c(0,3.5), breaks=c(1,2,3))
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 

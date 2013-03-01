@@ -23,7 +23,7 @@ each sample sample source.",
 feature_reporter_dependencies = c("HBondFeatures"),
 run=function(self, sample_sources, output_dir, output_formats){
 
-description <-
+source("scripts/analysis/plots/hbonds/hbond_geo_dim_scales.R")
 
 sele <-"
 SELECT
@@ -48,21 +48,8 @@ f <- query_sample_sources(sample_sources, sele)
 f$accRank <- factor(f$accRank)
 f$donRank <- factor(f$donRank)
 
-# This is deprecated please use the hbond_chem_types table for the lables instead
-# Order the plots better and give more descriptive labels
-f$don_chem_type <- factor(f$don_chem_type,
-	levels = c("hbdon_IMD", "hbdon_IME", "hbdon_GDE", "hbdon_GDH",
-		"hbdon_AHX", "hbdon_HXL", "hbdon_IND", "hbdon_AMO", "hbdon_CXA", "hbdon_PBA"),
-	labels = c("dIMD: h", "dIME: h", "dGDE: r", "dGDH: r",
-		"dAHX: y", "dHXL: s,t", "dIND: w", "dAMO: k", "dCXA: n,q", "dPBA: bb"))
-
-# This is deprecated please use the hbond_chem_types table for the lables instead
-# Order the plots better and give more descriptive labels
-f$acc_chem_type <- factor(f$acc_chem_type,
-	levels = c("hbacc_IMD", "hbacc_IME", "hbacc_AHX", "hbacc_HXL",
-		"hbacc_CXA", "hbacc_CXL", "hbacc_PBA"),
-	labels = c("aIMD: h", "aIME: h", "aAHX: y", "aHXL: s,t",
-		"aCXA: n,q", "aCXL: d,e", "aPBA: bb"))
+f$don_chem_type_name <- don_chem_type_name_linear(f$don_chem_type)
+f$acc_chem_type_name <- acc_chem_type_name_linear(f$acc_chem_type)
 
 plot_parts <- list(
   geom_line(aes(x, y)),
@@ -70,13 +57,13 @@ plot_parts <- list(
   labs(x=expression(paste('Acceptor -- Proton Distance (', ring(A), ')')),
        y="FeatureDensity"),
   theme_bw(),
-	opts(legend.position="bottom", legend.direction="horizontal"))
+	theme(legend.position="bottom", legend.direction="horizontal"))
 
 if(nrow(sample_sources) <= 3){
 	plot_parts_all <- c(plot_parts,
 		list(
 			facet_wrap( ~ sample_source, nco=1),
-			list(opts(legend.position="bottom", legend.direction="horizontal"))))
+			list(theme(legend.position="bottom", legend.direction="horizontal"))))
 } else {
 	plot_parts_all <- c(plot_parts,
 		list(facet_wrap( ~ sample_source)))
@@ -85,43 +72,43 @@ if(nrow(sample_sources) <= 3){
 plot_id <- "hbond_AHdist_by_donRank"
 d <- estimate_density_1d(f, c("sample_source", "donRank"), "AHdist", radial_3d_normalization)
 ggplot(d, aes(colour=donRank, group=donRank)) + plot_parts_all +
-  opts(title = "Hydrogen Bonds A-H Distance by Donor Rank, B-Factor < 30\nnormalized for equal weight per unit distance")
+  ggtitle("Hydrogen Bonds A-H Distance by Donor Rank, B-Factor < 30\nnormalized for equal weight per unit distance")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id <- "hbond_AHdist_by_accRank"
 d <- estimate_density_1d(f, c("sample_source", "accRank"), "AHdist", radial_3d_normalization)
 ggplot(d, aes(colour=accRank, group=accRank)) + plot_parts_all +
-  opts(title = "HBonds A-H Distance by Acceptor Rank, B-Factor < 30\nnormalized for equal weight per unit distance")
+  ggtitle("HBonds A-H Distance by Acceptor Rank, B-Factor < 30\nnormalized for equal weight per unit distance")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 f1 <- f[f$donRank==1,]
 plot_id <- "hbond_AHdist_donRank_is_1"
 d <- estimate_density_1d(f1, c("sample_source"), "AHdist", radial_3d_normalization)
 ggplot(d, aes(colour=sample_source, group=sample_source)) + plot_parts +
-  opts(title = "HBonds A-H Distance, Primary HBond at Bifuracted Donor, B-Factor < 30\nnormalized for equal weight per unit distance")
+  ggtitle("HBonds A-H Distance, Primary HBond at Bifuracted Donor, B-Factor < 30\nnormalized for equal weight per unit distance")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 f1 <- f[f$donRank==1,]
 plot_id <- "hbond_AHdist_chem_type_donRank_is_1"
-d <- estimate_density_1d(f1, c("sample_source", "don_chem_type", "acc_chem_type"), "AHdist", radial_3d_normalization)
+d <- estimate_density_1d(f1, c("sample_source", "don_chem_type_name", "acc_chem_type_name"), "AHdist", radial_3d_normalization)
 ggplot(d, aes(colour=sample_source, group=sample_source)) + plot_parts +
-  facet_grid( don_chem_type ~ acc_chem_type) +
-  opts(title = "HBonds A-H Distance, Donor Rank=1, B-Factor < 30\nnormalized for equal weight per unit distance")
+  facet_grid( don_chem_type_name ~ acc_chem_type_name) +
+  ggtitle("HBonds A-H Distance, Donor Rank=1, B-Factor < 30\nnormalized for equal weight per unit distance")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 f1 <- f[f$accRank==1,]
 plot_id <- "hbond_AHdist_accRank_is_1"
 d <- estimate_density_1d(f1, c("sample_source"), "AHdist", radial_3d_normalization)
 ggplot(d, aes(colour=sample_source, group=sample_source)) + plot_parts +
-  opts(title = "HBonds A-H Distance, Primary HBond at Bifuracted Acceptor, B-Factor < 30\nnormalized for equal weight per unit distance")
+  ggtitle("HBonds A-H Distance, Primary HBond at Bifuracted Acceptor, B-Factor < 30\nnormalized for equal weight per unit distance")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 f1 <- f[f$accRank==1,]
 plot_id <- "hbond_AHdist_chem_type_accRank_is_1"
-d <- estimate_density_1d(f1, c("sample_source", "acc_chem_type", "acc_chem_type"), "AHdist", radial_3d_normalization)
+d <- estimate_density_1d(f1, c("sample_source", "acc_chem_type_name", "acc_chem_type_name"), "AHdist", radial_3d_normalization)
 ggplot(d, aes(colour=sample_source, group=sample_source)) + plot_parts +
-  facet_grid( don_chem_type ~ acc_chem_type) +
-  opts(title = "HBonds A-H Distance, Acceptor Rank=1, B-Factor < 30\nnormalized for equal weight per unit distance")
+  facet_grid( don_chem_type_name ~ acc_chem_type_name) +
+  ggtitle("HBonds A-H Distance, Acceptor Rank=1, B-Factor < 30\nnormalized for equal weight per unit distance")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 

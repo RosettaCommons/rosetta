@@ -65,10 +65,10 @@ d_ply(f, .(sample_source), function(sub_f) {
 		geom_indicator(aes(indicator=counts, colour=dssp, group=dssp)) +
 		geom_indicator(aes(indicator=mean, color=dssp, group=dssp), xpos="left") +
 		facet_wrap( ~ res_type ) +
-		opts(title = "Rotamer Recovery by Residue Type and DSSP, B-Factor < 20") +
+		ggtitle("Rotamer Recovery by Residue Type and DSSP, B-Factor < 20") +
 		labs(x="New Rotamer Recovery Score - Ref Recovery Score", y="log(Density + 1)") +
-		opts(legend.position=c(.8, .25)) +
-		opts(legend.justification=c("left", "top"))
+		theme(legend.position=c(.8, .25)) +
+		theme(legend.justification=c("left", "top"))
 	save_plots(self, plot_id, sample_sources[sample_sources$sample_source == ss_id,], output_dir, output_formats)
 })
 

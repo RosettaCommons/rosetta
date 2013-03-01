@@ -53,12 +53,12 @@ p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=180-(180/pi*acos(x)), y=y, colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_wrap( ~ seq_sep ) +
-	opts(title = "BB/BB Hydrogen Bonds B-A-H Angles by Sequence Separation\n(donres - accres) normalized for equal weight per unit distance") +
+	ggtitle("BB/BB Hydrogen Bonds B-A-H Angles by Sequence Separation\n(donres - accres) normalized for equal weight per unit distance") +
 	scale_y_continuous("FeatureDensity)", limits=c(0,10), breaks=c(1,3,5,7,9)) +
 	scale_x_continuous('Base -- Acceptor -- Proton Interior Angle (degrees)', limits=c(80,180), breaks=c(90, 120, 150, 180))
 
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)

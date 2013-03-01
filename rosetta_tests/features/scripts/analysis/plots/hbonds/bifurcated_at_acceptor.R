@@ -86,7 +86,7 @@ d_ply(f, .(sample_source), function(sub_f){
 		scale_y_continuous(
 			expression(paste('Acceptor -- Hydrogen Distance (', ring(A), ') Better Energy HBond')),
 			limits=c(1.5, 3), breaks=c(1.5, 2.0, 2.5))+
-                  opts(title = paste("HBond Pairs Bifurcated at Acceptor   ss_id:",ss_id))
+                  ggtitle(paste("HBond Pairs Bifurcated at Acceptor   ss_id:",ss_id))
 	save_plots(self, plot_id, sample_sources[sample_sources$sample_source == ss_id,], output_dir, output_formats)
 })
 

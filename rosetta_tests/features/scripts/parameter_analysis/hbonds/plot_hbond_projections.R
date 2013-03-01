@@ -110,7 +110,7 @@ cat("	output plot:   ", output_fname, "\n")
 
 p <- ggplot(d) + theme_bw() +
   geom_line(aes(x=AHdist, y=density), size=1.2) +
-	opts(title=paste("Project HBond energy to the AHdist Dimension\n",
+	ggtitle(paste("Project HBond energy to the AHdist Dimension\n",
     opt$parameter_set, ",",
     opt$don_chem_type, ", ",
     opt$acc_chem_type, ", ",
@@ -146,7 +146,7 @@ cat("	output plot:   ", output_fname, "\n")
 
 p <- ggplot(d) + theme_bw() +
   geom_line(aes(x=cosBAH, y=density), size=1.2) +
-	opts(title=paste("Project HBond energy to the cosBAH Dimension\n",
+	ggtitle(paste("Project HBond energy to the cosBAH Dimension\n",
     opt$parameter_set, ",",
     opt$don_chem_type, ", ",
     opt$acc_chem_type, ", ",
@@ -182,7 +182,7 @@ cat("	output plot:   ", output_fname, "\n")
 
 p <- ggplot(d) + theme_bw() +
   geom_line(aes(x=cosAHD, y=density), size=1.2) +
-	opts(title=paste("Project HBond energy to the cosAHD Dimension\n",
+	ggtitle(paste("Project HBond energy to the cosAHD Dimension\n",
     opt$parameter_set, ",",
     opt$don_chem_type, ", ",
     opt$acc_chem_type, ", ",

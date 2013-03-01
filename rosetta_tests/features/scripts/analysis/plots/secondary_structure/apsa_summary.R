@@ -29,7 +29,7 @@ f <-  query_sample_sources(sample_sources, sele)
 plot_id <- "apsa_summary"
 p <- ggplot(data=f, aes(x=secondary_struct, y=count, fill=sample_source))
 p <- p + geom_bar(position="dodge") + coord_flip()
-p <- p + opts(title = "Secondary Structure Diversity\nAutomated Protein Structure Analysis Method")
+p <- p + ggtitle("Secondary Structure Diversity\nAutomated Protein Structure Analysis Method")
 p <- p + labs(x = "Type of Secondary Structure",
               y = "Count")
 p <- p + theme_bw()

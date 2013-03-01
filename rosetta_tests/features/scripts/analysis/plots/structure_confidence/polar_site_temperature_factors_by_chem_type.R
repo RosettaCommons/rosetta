@@ -45,7 +45,7 @@ ggplot(data=temperature_quantiles) + theme_bw() +
   geom_line(aes(x=x, y=y, color=sample_source)) +
   facet_wrap( ~ chem_type ) +
   geom_indicator(aes(indicator=counts, color=sample_source, group=sample_source), xpos="left") +
-  opts(title = "Cumulative distribution of H-Bond heavy atom temperature factor by chemical type") +
+  ggtitle("Cumulative distribution of H-Bond heavy atom temperature factor by chemical type") +
 	scale_x_continuous("Temperature Factor", limit=c(0, 60)) +
 	scale_y_continuous("Fraction of polar sites less than temperature factor cut off")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
@@ -63,11 +63,11 @@ save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 #	geom_line(aes(x, log(y+1), colour=sample_source)) +
 #	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 #	facet_wrap(~chem_type) +
-#	opts(title = "Polar Site Heavy Atom Temperature Factor By Chemical Type") +
+#	ggtitle("Polar Site Heavy Atom Temperature Factor By Chemical Type") +
 #	scale_x_continuous("Temperature Factor")
 #	scale_y_continuous("log(FeatureDensity + 1)")
 #if(nrow(sample_sources) <= 3){
-#	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+#	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 #}
 #
 #save_plots(self, plot_id, sample_sources, output_dir, output_formats)

@@ -44,7 +44,7 @@ f <- ddply(
 
 plot_parts <- list(
 	theme_bw(),
-	geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F"),
+	theme\(panel.background=element_rect\(fill="#00007F", colour="#00007F"\)\),
 	stat_density2d(
 		aes(x=phi, y=psi, fill=..density..), geom="tile", contour=FALSE),
 	geom_indicator(aes(indicator=counts), color="white"),
@@ -52,7 +52,7 @@ plot_parts <- list(
 	scale_x_continuous(expression(paste("phi Angle (Degrees)", sep="")), limits=c(-180, 180)),
 	scale_y_continuous(expression(paste("psi Angle (Degrees)", sep="")), limits=c(-180, 180)),
 	scale_fill_gradientn('Density', colours=jet.colors(15)),
-	opts(legend.position="bottom", legend.direction="horizontal"))
+	theme(legend.position="bottom", legend.direction="horizontal"))
 
 
 narrow_output_formats <- transform(output_formats, width=height)
@@ -73,7 +73,7 @@ d_ply(f, .(sample_source, res_type, chi1_bin), function(sub_f){
 		"ramachandran_res-", res_type, "_chi1-", chi1_bin_numeric, "_ssid", ss_id,
 		sep="")
 	ggplot(data=sub_f) + plot_parts +
-		opts(title = paste(
+		ggtitle(paste(
 			"Backbone Torsion Angles Res: ", res_type, " ",
 			chi1_bin_character, " B-Factor < 30\nSample Source: ",
 			ss_id, sep=""))

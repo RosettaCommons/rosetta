@@ -36,7 +36,7 @@ run=function(self, sample_sources, output_dir, output_formats){
 	plot_id = "cation_pi_hist_AOH_scOrbPi_Hpol_all_residues"
 	ggplot(data=all_geom) +
 			geom_freqpoly(aes(x=AOH_angle, fill=sample_source, color = sample_source), density=0.1, binwidth=0.1) +
-			opts(title = "AOH Cation - Pi Measured Via Orb - Hpol \n",
+			ggtitle("AOH Cation - Pi Measured Via Orb - Hpol \n",
 					"ScOrbCpi to Hpol TYR/PHE/TRP to LYS/ARG") +
 			scale_x_continuous(breaks=c(-1,-.9,-.8,-.7,-.6,-.5,-.4, -.3, -.2, -.1, 0, .1, .2, .3, .4, .5, .6, .7, .8), paste('Acceptor -- Orbital -- Hydrogen'))
 	scale_y_continuous("scOrbCpi scHpol Counts < 3.0 A from Orbital -- Hydrogen")
@@ -45,7 +45,7 @@ run=function(self, sample_sources, output_dir, output_formats){
 	plot_id = "cation_pi_hist_DHO_scOrbPi_Hpol_all_residues"
 	ggplot(data=all_geom) +
 			geom_freqpoly(aes(x=DHO_angle, fill=sample_source, color = sample_source), binwidth=0.1) +
-			opts(title = "DHO Cation - Pi Measured Via Orb - Hpol \n",
+			ggtitle("DHO Cation - Pi Measured Via Orb - Hpol \n",
 						"ScOrbCpi to Hpol TYR/PHE/TRP to LYS/ARG") +
 			scale_x_continuous(breaks=c(-1,-.9,-.8,-.7,-.6,-.5,-.4, -.3, -.2, -.1, 0, .1, .2, .3, .4, .5, .6, .7, .8), paste('Donor -- Hydrogen -- Orbital'))
 	scale_y_continuous("scOrbCpi scHpol Counts < 3.0 A from Orbital -- Hydrogen")

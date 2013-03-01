@@ -73,12 +73,12 @@ p <- ggplot(data=qs.merged) + theme_bw() +
 	geom_abline() +
 	geom_line(aes(x=quantiles.ref, y=quantiles.new, colour=sample_source.new)) +
 	facet_grid(don_chem_type_name ~ acc_chem_type_name) +
-	opts(title = paste("HBond AHD Angle Quantiles Against ", ss_id.ref, " Quantiles SeqSep > 5, B-Fact < 30", sep="")) +
+	ggtitle(paste("HBond AHD Angle Quantiles Against ", ss_id.ref, " Quantiles SeqSep > 5, B-Fact < 30", sep="")) +
 	scale_x_continuous(paste(ss_id.ref, " Quantiles", sep="")) +
 	scale_y_continuous("New Sample Source Quantiles")
 
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)

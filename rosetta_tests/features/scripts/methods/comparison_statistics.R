@@ -7,6 +7,21 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
+ref_count <- function(a, b){
+  data.frame(
+    statistic_name = "ref_count",
+    statistic = length(a),
+    p.value = NA)
+}
+
+new_count <- function(a, b){
+  data.frame(
+    statistic_name = "new_count",
+    statistic = length(b),
+    p.value = NA)
+}
+
+
 two_sided_ttest <- function(a, b){
   tryCatch({
     z <- t.test(a, b)
@@ -38,31 +53,52 @@ kolmogorov_smirnov_test_boot <- function(a, b){
     p.value = z$ks$p.value)
 }
 
+
+# Prefer to use the anderson_darling_2_sample comparison
+# cf https://asaip.psu.edu/Articles/beware-the-kolmogorov-smirnov-test
 kolmogorov_smirnov_test <- function(a, b){
+	z <- NULL
   tryCatch({
     z <- ks.test(a, b, exact=F)
   }, error=function(e) {
-		print(paste("Error: ks.test failed with the followinng error", e, sep="", collapse=""))
-		return(
-			data.frame(
-				statistic_name = "kolmogorov_smirnov_D",
-				statistic = NA,
-				p.value = NA))
+		cat(paste("Error: ks.test failed with the followinng error:\n", e, sep="", collapse=""))
 	})
-  data.frame(
-    statistic_name = "kolmogorov_smirnov_D",
-    statistic = z$statistic,
-    p.value = NA)
+
+	if(!is.null(z)){
+	  return(data.frame(
+	    statistic_name =factor("kolmogorov_smirnov_D"),
+	    statistic = z$statistic,
+	    p.value = NA))
+	} else {
+	  return(data.frame(
+	    statistic_name = factor("kolmogorov_smirnov_D"),
+	    statistic = NA,
+	    p.value = NA))
+	}
 }
 
 histogram_kl_divergence <- function(a, b, nbins=50){
-	breaks <- seq(min(a, b), max(a, b), length.out=nbins)
-	ad <- hist(a, breaks, plot=F)$density
-	bd <- hist(b, breaks, plot=F)$density
-	data.frame(
-		statistic_name=factor("KL Divergence"),
-		statistic=sum(ad * log(ad / (bd+.0001)), na.rm = T),
-		p.value = NA)
+	z <- NULL
+	tryCatch({
+		breaks <- seq(min(a, b), max(a, b), length.out=nbins)
+		ad <- hist(a, breaks, plot=F)$density
+		bd <- hist(b, breaks, plot=F)$density
+		z <- data.frame(
+			statistic_name=factor("KL Divergence"),
+			statistic=sum(ad * log(ad / (bd+.0001)), na.rm = T),
+			p.value = NA)
+	}, error=function(e){
+		cat(paste("Error: ks.test failed with the followinng error:\n", e, sep="", collapse=""))
+	})
+
+	if(!is.null(z)){
+		return(z)
+	} else {
+		return(data.frame(
+			stastistic_name=factor("KL Divergence"),
+			statistic=NA,
+			p.value=NA))
+	}
 }
 
 # Here the inputs are probabilities over the sample space
@@ -138,7 +174,12 @@ comparison_statistics <- function(
 	f,
 	id.vars,
 	measure.vars,
-	comp_funs){
+	comp_funs,
+	verbose=FALSE
+	){
+	if(verbose){
+		cat("The input data has the following columns:", paste(names(f), collapse=", "), "\n")
+	}
 
 	for(var in id.vars){
 		if( !(var %in% names(f))){
@@ -146,11 +187,16 @@ comparison_statistics <- function(
 		}
 	}
 
+	measure.vars <- sapply(measure.vars, as.character)
 	for(var in measure.vars){
+		if(verbose){
+			print(paste("checking if the measure variable '", var, "' is a column of f ...", sep=""))
+		}
 		if( !(var %in% names(f))){
-			stop(paste("measure.vars variable '", class.var, "', must be a column of f.\n\tnames(f) = c('", paste(names(f), collapse="', '"), "')", sep=""))
+			stop(paste("measure.vars variable '", var, "', must be a column of f.\n\tnames(f) = c('", paste(names(f), collapse="', '"), "')", sep=""))
 		}
 	}
+
 
 	if(!is.character(comp_funs)){
 		stop("The parameter comp_funs should be a vector of the names of comparison functions.")
@@ -202,17 +248,18 @@ This is usually done by adding this information to the analysis_configuration. F
 		cat("WARNING: No non-reference sample sample sources were specified.\n")
   }
 
-  cat("Comparing sample_sources:
+  cat("Comparing dimension(s): ", paste(measure.vars, collapse=" "), "
+Grouping by: ", paste(id.vars, collapse=" "), "
 	ref: ", paste(ref_sample_sources, collapse=", "), "
 	new: ", paste(new_sample_sources, collapse=", "), "\n", sep="")
 
 	# since there are usually more groups of id.vars than sample
 	# sources, make id.vars the outer loop
   stats <- ddply(f, .variables = id.vars, function(sub_f){
-		cat(
-			"Grouping by these columns: ('",
-			paste(lapply(sub_f[1,id.vars], as.character), collapse="', '"),
-			"') ... ", sep="")
+		if(verbose){
+			cat("Doing comparison for group: '", paste(lapply(sub_f[1,id.vars], as.character), collapse="', '"), "'\n", sep="")
+			print(summary(sub_f))
+		}
 
 		timing <- system.time({
     	z <- ddply(
@@ -229,20 +276,24 @@ This is usually done by adding this information to the analysis_configuration. F
     	  }) # ref_f
     	}) # new_f
 		}) # timing
-		cat(as.character(round(timing[3],2)), "s\n", sep="")
+		cat(as.character(round(timing[3],2)), "s  ", sep="")
 		z
   }) # sub_f
+	cat("\n")
 
 	if(length(id.vars) > 0){
-		cast_formula <- as.formula(
+		cast_formula_str <-
 			paste(
-				paste(id.vars, collapse=" + "),
-				"ref_sample_source + new_sample_source ~ statistic_name", sep=" + "))
+				paste(as.character(id.vars), collapse=" + "),
+				" + ref_sample_source + new_sample_source ~ statistic_name", sep="")
 	} else {
-		cast_formula <- ref_sample_source + new_sample_source ~ statistic_name
+		cast_formula_str <- "ref_sample_source + new_sample_source ~ statistic_name"
 	}
+	cast_formula <- as.formula(cast_formula_str)
+	cat("Casting result as: ", cast_formula_str, "\n", sep="")
 	cast(stats, cast_formula, value="statistic")
 }
+
 
 # Evaluate a two sample tests between different classes of samples
 # conditional on distinct groups of identifying variables.

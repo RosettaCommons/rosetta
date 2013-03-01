@@ -123,12 +123,12 @@ plot_id <- "ASP_GLU_to_ARG_bifurcated_symmetry_scatter"
 p <- ggplot(data=f) + theme_bw() +
 	geom_point(aes(x=close_AHdist, y=far_AHdist, colour=is_symmetric), size=.7) +
 	geom_indicator(data=counts, aes(colour=is_symmetric, group=is_symmetric, indicator=count), ypos=.08) +
-	opts(title="ASP/GLU -> ARG Bifurcated Salt Bridge Asymmetry; SeqSep > 4") +
+	ggtitle("ASP/GLU -> ARG Bifurcated Salt Bridge Asymmetry; SeqSep > 4") +
 	scale_x_continuous("Close AHdist") +
 	scale_y_continuous("Far AHdist") +
 	facet_grid(is_bidentite ~sample_source)
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 

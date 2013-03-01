@@ -38,7 +38,7 @@ plot_id <- "rotamer_recovery_by_secondary_structure"
 p <- ggplot(data=dens, aes(x=log(x+1), y=log(y+1), color=secondary_struct, indicator=counts))
 p <- p + geom_line()
 p <- p + geom_indicator(aes(group=secondary_struct))
-p <- p + opts(title = "Rotamer Recovery by Secondary Structure")
+p <- p + ggtitle("Rotamer Recovery by Secondary Structure")
 p <- p + labs(x="<- better      log(Automorphic RMSD + 1)      worse ->",
               y="log(FeatureDensity + 1)")
 p <- p + theme_bw()

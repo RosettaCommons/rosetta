@@ -70,11 +70,11 @@ p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=180-acos(x)*180/pi, y=y, colour=sample_source)) +
 	geom_indicator(aes(colour=sample_source, indicator=counts, group=sample_source)) +
 	facet_wrap( ~ acc_chem_type) +
-	opts(title = "Hydrogen Bonds AHD Angle by Acceptor Chemical Type; SeqSep > 5; BFact < 30\n(normalized for equal volume per unit distance)") +
+	ggtitle("Hydrogen Bonds AHD Angle by Acceptor Chemical Type; SeqSep > 5; BFact < 30\n(normalized for equal volume per unit distance)") +
 	scale_y_continuous("FeatureDensity", limits=c(0,20), breaks=c(0,5,10,15)) +
 	scale_x_continuous("Acceptor -- Hydrogen -- Donor (degrees)", trans="reverse")+
-	opts(legend.position=c(.58,.35)) +
-	opts(legend.justification=c("left", "top"))
+	theme(legend.position=c(.58,.35)) +
+	theme(legend.justification=c("left", "top"))
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 

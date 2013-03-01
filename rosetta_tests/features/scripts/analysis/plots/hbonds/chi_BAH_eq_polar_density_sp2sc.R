@@ -46,21 +46,21 @@ custom_output_formats$width <- c(3.5)
 
 plot_id = "chi_BAH_eq_polar_density_bb_to_bb2_each"
 ggplot(data=f) + theme_bw() +
-	geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
+	theme(panel.background=element_rect(fill="#00007F", colour="#00007F")) +
 	stat_density2d(
 		aes(x=capx,y=capy, fill=..density..), geom="tile", contour=FALSE) +
 	polar_equal_area_grids_bw(alpha=.5) +
 	geom_indicator(aes(indicator=counts), color="white") +
 	facet_wrap( ~ sample_source, ncol=2) +
-	opts(title = "Hydrogen Bond CHI vs BAH Angles\nBackbone/Backbone SeqSep > 5") +
+	ggtitle("Hydrogen Bond CHI vs BAH Angles\nBackbone/Backbone SeqSep > 5") +
 	scale_x_continuous(
 		'2*sin(BAH/2) * cos(CHI)', limits=capx_limits, breaks=c(-1, 0, 1)) +
 	scale_y_continuous(
 		'2*sin(BAH/2) * sin(CHI)', limits=capy_limits, breaks=c(-1, 0, 1)) +
 	coord_fixed(ratio = 1) +
 	scale_fill_gradientn('Density', colours=jet.colors(10)) +
-	opts(legend.position=c(.68,.35)) +
-	opts(legend.justification=c("left", "top"))
+	theme(legend.position=c(.68,.35)) +
+	theme(legend.justification=c("left", "top"))
 save_plots(self, plot_id, sample_sources, output_dir, custom_output_formats)
 
 

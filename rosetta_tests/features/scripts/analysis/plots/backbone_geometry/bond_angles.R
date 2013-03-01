@@ -54,9 +54,9 @@ plot_id <- "backbone_geometry_bond_angle_NCaC"
 dens <- estimate_density_1d(f, c("sample_source"), "observed")
 p <- ggplot(data=dens) + plot_parts +
 	geom_line(aes(x, y, colour=sample_source), size=1.2) +
-	opts(title = "Backbone N-Ca-C Bond Angle; B-Factor < 30")
+	ggtitle("Backbone N-Ca-C Bond Angle; B-Factor < 30")
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -65,9 +65,9 @@ dens <- estimate_density_1d(f, c("sample_source", "is_helix"), "observed")
 p <- ggplot(data=dens) + plot_parts +
 	geom_line(aes(x, y, colour=sample_source), size=1.2) +
 	facet_wrap(~is_helix, ncol=1) +
-	opts(title = "Backbone N-Ca-C Bond Angle a-Helix vs Other; B-Factor < 30")
+	ggtitle("Backbone N-Ca-C Bond Angle a-Helix vs Other; B-Factor < 30")
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -77,9 +77,9 @@ dens <- estimate_density_1d(f, c("sample_source", "res_type"), "observed")
 p <- ggplot(data=dens) + plot_parts +
 	geom_line(aes(x, y, colour=sample_source), size=1.2) +
 	facet_wrap(~res_type) +
-	opts(title = "Backbone N-Ca-C Bond Angle by Residue Type; B-Factor < 30")
+	ggtitle("Backbone N-Ca-C Bond Angle by Residue Type; B-Factor < 30")
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -88,9 +88,9 @@ dens <- estimate_density_1d(f, c("sample_source", "res_type"), "observed")
 p <- ggplot(data=dens) + plot_parts +
 	geom_line(aes(x, y, colour=res_type), size=1.2) +
 	facet_wrap(~sample_source, ncol=1) +
-	opts(title = "Backbone N-Ca-C Bond Angle by Residue Type; B-Factor < 30")
+	ggtitle("Backbone N-Ca-C Bond Angle by Residue Type; B-Factor < 30")
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -99,9 +99,9 @@ dens <- estimate_density_1d(f, c("sample_source", "dssp_label"), "observed")
 p <- ggplot(data=dens) + plot_parts +
 	geom_line(aes(x, y, colour=sample_source), size=1.2) +
 	facet_wrap(~dssp_label) +
-	opts(title = "Backbone N-Ca-C Bond Angle by DSSP; B-Factor < 30")
+	ggtitle("Backbone N-Ca-C Bond Angle by DSSP; B-Factor < 30")
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -110,9 +110,9 @@ dens <- estimate_density_1d(f, c("sample_source", "dssp_label"), "observed")
 p <- ggplot(data=dens) + plot_parts +
 	geom_line(aes(x, y, colour=dssp_label), size=1.2) +
 	facet_wrap(~sample_source, ncol=1) +
-	opts(title = "Backbone N-Ca-C Bond Angle by DSSP; B-Factor < 30")
+	ggtitle("Backbone N-Ca-C Bond Angle by DSSP; B-Factor < 30")
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -122,9 +122,9 @@ dens <- estimate_density_1d(f[f$res_type != "PRO",], c("sample_source", "res_typ
 p <- ggplot(data=dens) + plot_parts +
 	geom_line(aes(x, y, colour=sample_source), size=1) +
 	facet_grid(res_type ~ dssp_label) +
-	opts(title = "Backbone N-Ca-C Bond Angle by ResType and DSSP; B-Factor < 30")
+	ggtitle("Backbone N-Ca-C Bond Angle by ResType and DSSP; B-Factor < 30")
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 

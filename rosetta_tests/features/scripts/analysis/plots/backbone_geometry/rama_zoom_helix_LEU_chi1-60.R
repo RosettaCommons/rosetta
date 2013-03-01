@@ -63,13 +63,13 @@ d_ply(f, .(sample_source, res_type, chi1_bin), function(sub_f){
 	densdf$counts <- nrow(sub_f)
 	ggplot(data=densdf) +
 		theme_bw() +
-		geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
+		theme(panel.background=element_rect(fill="#00007F", colour="#00007F")) +
 		geom_tile(aes(x=x, y=y, fill=z)) +
 		geom_indicator(aes(indicator=counts), color="white") +
 		coord_equal(ratio=1) +
 		scale_fill_gradientn('Density', colours=jet.colors(15), limits=c(0, .01)) +
-		opts(legend.position="bottom", legend.direction="horizontal") +
-		opts(title = paste(
+		theme(legend.position="bottom", legend.direction="horizontal") +
+		ggtitle(paste(
 			"Backbone Torsion Angles Res (truncated peaks): ", res_type, " ",
 			chi1_bin_character, " B-Factor < 30\nSample Source: ",
 			ss_id, sep="")) +
@@ -85,13 +85,13 @@ d_ply(f, .(sample_source, res_type, chi1_bin), function(sub_f){
 
 	ggplot(data=densdf) +
 		theme_bw() +
-		geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
+		theme(panel.background=element_rect(fill="#00007F", colour="#00007F")) +
 		geom_tile(aes(x=x, y=y, fill=z)) +
 		geom_indicator(aes(indicator=counts), color="white") +
 		coord_equal(ratio=1) +
 		scale_fill_gradientn('Density', colours=jet.colors(15)) +
-		opts(legend.position="bottom", legend.direction="horizontal") +
-		opts(title = paste(
+		theme(legend.position="bottom", legend.direction="horizontal") +
+		ggtitle(paste(
 			"Backbone Torsion Angles Res: ", res_type, " ",
 			chi1_bin_character, " B-Factor < 30\nSample Source: ",
 			ss_id, sep="")) +

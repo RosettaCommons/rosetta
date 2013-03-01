@@ -39,7 +39,7 @@ plot_id <- "structure_scores"
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y, colour=sample_source), size=1.4) +
 	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
-	opts(title = "Rosetta Structure Scores Scores") +
+	ggtitle("Rosetta Structure Scores Scores") +
 	labs(x="Rosetta Energy Units") +
 	scale_y_continuous("FeatureDensity", breaks=c(0, .3, .6))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)

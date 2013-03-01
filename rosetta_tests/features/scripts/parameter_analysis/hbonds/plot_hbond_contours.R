@@ -114,7 +114,7 @@ p <- ggplot(d) + theme_bw() +
   geom_rect(aes(xmin=1.9, xmax=2.3, ymin=-Inf, ymax=Inf), alpha=.05) +
 	geom_indicator(indicator="cosAHD=1") +
   geom_contour(aes(x=AHdist, y=cosBAH, z=density), breaks=seq(1,max(d$density), length.out=20)) +
-  opts(title=paste("Project HBond energy to the AHdist and cosBAH Dimensions\n",
+  ggtitle(paste("Project HBond energy to the AHdist and cosBAH Dimensions\n",
     opt$parameter_set, ",",
     opt$don_chem_type, ", ",
     opt$acc_chem_type, ", ",
@@ -153,7 +153,7 @@ p <- ggplot(d) + theme_bw() +
   geom_rect(aes(xmin=1.9, xmax=2.3, ymin=-Inf, ymax=Inf), alpha=.05) +
 	geom_indicator(indicator="cosBAH=.5") +
   geom_contour(aes(x=AHdist, y=cosAHD, z=density), breaks=seq(1,max(d$density), length.out=20)) +
-  opts(title=paste("Project HBond energy to the AHdist and cosAHD Dimensions\n",
+  ggtitle(paste("Project HBond energy to the AHdist and cosAHD Dimensions\n",
     opt$parameter_set, ",",
     opt$don_chem_type, ", ",
     opt$acc_chem_type, ", ",

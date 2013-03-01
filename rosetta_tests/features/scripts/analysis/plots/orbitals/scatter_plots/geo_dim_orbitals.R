@@ -50,7 +50,7 @@ d_ply(sample_sources, .(sample_source), function(ss){
 	plot_id <- paste("geo_dim_AOH_2d_scatter_OrbHpol", ss_id, sep="_")
 	ggplot(f, aes(x=AOH_angle, y=OrbHdist)) + plot_parts_scatter +
 		labs(x="cos(Acceptor -- Orbital -- Hpol)") +
-		opts(title = paste("Acceptor Orbital Hpol 2D plot\nss_id: ", ss_id, sep=""))
+		ggtitle(paste("Acceptor Orbital Hpol 2D plot\nss_id: ", ss_id, sep=""))
 	save_plots(plot_id, ss, output_dir, output_formats)
 })
 
@@ -60,7 +60,7 @@ d_ply(sample_sources, .(sample_source), function(ss){
   plot_id <- paste("geo_dim_DHO_2d_scatter_OrbHpol", ss_id, sep="_")
   ggplot(f, aes(x=DHO_angle, y=OrbHdist)) + plot_parts_scatter +
     labs(x="cos(Donor -- Hpol -- Orbital)") +
-    opts(title = paste("Donor Hpol Orbital 2D plot\nss_id: ", ss_id, sep=""))
+    ggtitle(paste("Donor Hpol Orbital 2D plot\nss_id: ", ss_id, sep=""))
   save_plots(plot_id, ss, output_dir, output_formats)
 })
 
@@ -87,7 +87,7 @@ d_ply(sample_sources, .(sample_source), function(ss){
   plot_id <- paste("geo_dim_AOH_2d_scatter_OrbHaro", ss_id, sep="_")
   ggplot(f, aes(x=AOH_angle, y=OrbHdist)) + plot_parts_scatter +
     labs(x="cos(Acceptor -- Orbital -- Haro)") +
-    opts(title = paste("Acceptor Orbital Haro 2D plot\nss_id: ", ss_id, sep=""))
+    ggtitle(paste("Acceptor Orbital Haro 2D plot\nss_id: ", ss_id, sep=""))
   save_plots(plot_id, ss, output_dir, output_formats)
 })
 
@@ -97,7 +97,7 @@ d_ply(sample_sources, .(sample_source), function(ss){
   plot_id <- paste("geo_dim_DHO_2d_scatter_OrbHaro", ss_id, sep="_")
   ggplot(f, aes(x=DHO_angle, y=OrbHdist)) + plot_parts_scatter +
     labs(x="cos(Donor -- Haro -- Orbital)") +
-    opts(title = paste("Donor Haro Orbital 2D plot\nss_id: ", ss_id, sep=""))
+    ggtitle(paste("Donor Haro Orbital 2D plot\nss_id: ", ss_id, sep=""))
   save_plots(plot_id, ss, output_dir, output_formats)
 })
 })) # end FeaturesAnalysis

@@ -77,7 +77,7 @@ d_ply(sample_sources, .(sample_source), function(sample_source){
 
 		geom_indicator(aes(indicator=counts)) +
 		facet_grid(don_ss_name ~ acc_ss_name) +
-		opts(title = paste("Backbone-Backbone HBonds with Sequence Separation > 5: CHI vs BAH Angles by DSSP\nEqual Coordinate Projection   Sample Source: ", ss_id, sep="")) +
+		ggtitle(paste("Backbone-Backbone HBonds with Sequence Separation > 5: CHI vs BAH Angles by DSSP\nEqual Coordinate Projection   Sample Source: ", ss_id, sep="")) +
 		scale_x_continuous('2*sin(BAH/2) * cos(CHI)', limits=capx_limits, breaks=c(-1, 0, 1)) +
 		scale_y_continuous('2*sin(BAH/2) * sin(CHI)', limits=capy_limits, breaks=c(-1, 0, 1)) +
 		scale_fill_gradientn('log(Density)', colours=jet.colors(15))

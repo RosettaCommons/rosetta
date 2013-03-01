@@ -181,12 +181,12 @@ p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y, colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_wrap( ~ num_sc_hbs, nrow=1 ) +
-	opts(title = "Hydrogen Bonds A-H Distance between ASP/GLU and ARG with Bfactors < 20\nnormalized for equal weight per unit distance\nBy Number of sc hbonds between the acceptor and donor residues") +
+	ggtitle("Hydrogen Bonds A-H Distance between ASP/GLU and ARG with Bfactors < 20\nnormalized for equal weight per unit distance\nBy Number of sc hbonds between the acceptor and donor residues") +
 	scale_y_continuous("FeatureDensity", limits=c(0,6), breaks=c(1,3,5)) +
 	scale_x_continuous(expression(paste('Acceptor -- Proton Distance (', ring(A), ')')), limits=c(1.4,2.7), breaks=c(1.6, 1.9, 2.2, 2.6))
 
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)

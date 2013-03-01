@@ -65,10 +65,10 @@ p <- ggplot(data=f) + theme_bw() +
 #	geom_indicator(aes(indicator=counts, colour=sample_source)) +
 #	geom_indicator(aes(indicator=mean, color=sample_source, xpos="left")) +
 	facet_wrap( ~ res_type ) +
-	opts(title = "Rotamer Recovery by Residue Type, 0 SASA, B-Factor < 20") +
+	ggtitle("Rotamer Recovery by Residue Type, 0 SASA, B-Factor < 20") +
 	labs(x="Recovery Score", y="log(counts)")
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -90,10 +90,10 @@ p <- ggplot(data=dens) + theme_bw() +
 	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	geom_indicator(aes(indicator=mean, color=sample_source, group=sample_source), xpos="left") +
 	facet_wrap( ~ res_type ) +
-	opts(title = "Rotamer Recovery by Residue Type, B-Factor < 20") +
+	ggtitle("Rotamer Recovery by Residue Type, B-Factor < 20") +
 	labs(x="log(Automorphic RMSD + 1)", y="log(FeatureDensity + 1)")
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 

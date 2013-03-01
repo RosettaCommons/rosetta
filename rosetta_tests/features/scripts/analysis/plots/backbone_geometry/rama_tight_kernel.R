@@ -47,7 +47,7 @@ plot_parts <- list(
 	scale_x_continuous(expression(paste("phi Angle (Degrees)", sep=""))),
 	scale_y_continuous(expression(paste("psi Angle (Degrees)", sep=""))),
 	scale_fill_gradientn('Log(Density)', colours=jet.colors(15)),
-	opts(
+	theme(
 		legend.position="bottom",
 		legend.direction="horizontal",
 		panel.grid.major=theme_blank(),
@@ -70,7 +70,7 @@ d_ply(f, .(sample_source), function(sub_f){
 	cat("estimate density ... ", as.character(round(t[3], 2)), "s\n", sep="")
 
 	ggplot(data=densdf) + plot_parts +
-		opts(title = paste("Backbone Torsion Angles, non Alpha-Helix, B-Factor < 30\nSample Source: ", ss_id, sep=""))
+		ggtitle(paste("Backbone Torsion Angles, non Alpha-Helix, B-Factor < 30\nSample Source: ", ss_id, sep=""))
 
 	save_plots(self, sub_plot_id, sample_sources, output_dir, narrow_output_formats)
 })

@@ -62,7 +62,7 @@ capy_limits <- capx_limits
 
 plot_parts <- list(
 	theme_bw(),
-	geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F"),
+	theme(panel.background=element_rect(fill="#00007F", colour="#00007F")),
 	stat_density2d(
 		aes(x=capx,y=capy, fill=..density..), geom="tile", contour=FALSE),
 	geom_indicator(aes(indicator=counts, group=counts), color="white"),
@@ -71,7 +71,7 @@ plot_parts <- list(
 	scale_fill_gradientn('Density', colours=jet.colors(15)),
 	scale_x_continuous(limits=capx_limits),
 	scale_y_continuous(limits=capy_limits),
-	opts(
+	theme(
 		axis.text.x=theme_blank(),
 		axis.text.y=theme_blank(),
 		axis.title.x=theme_blank(),
@@ -90,7 +90,7 @@ d_ply(f, .(sample_source), function(sub_f){
 
 	print(summary(sub_f))
 	ggplot(data=sub_f) + plot_parts +
-		opts(title = paste(
+		ggtitle(paste(
 			"Hydrogen Bonds AHchi vs AHD Angle; SeqSep > 5, BFact < 30\n",
 			"Equal Coordinate Projection   Sample Source: ", ss_id, sep=""))
 	save_plots(self, plot_id, sample_sources, output_dir, narrow_output_formats)
@@ -100,7 +100,7 @@ d_ply(f, .(sample_source), function(sub_f){
 	sub_f$don_chem_type_name <- don_chem_type_name_wrap(sub_f$don_chem_type)
 	sub_f <- ddply(sub_f, .(don_chem_type), transform, counts = length(sample_source))
 	ggplot(data=sub_f) + plot_parts +
-		opts(title = paste(
+		ggtitle(paste(
 			"Hydrogen Bonds AHchi vs AHD Angle; SeqSep > 5, BFact < 30\n",
 			"Equal Coordinate Projection   Sample Source: ", ss_id, sep="")) +
 		facet_wrap( ~ don_chem_type_name)
@@ -111,7 +111,7 @@ d_ply(f, .(sample_source), function(sub_f){
 	sub_f$acc_chem_type_name <- acc_chem_type_name_wrap(sub_f$acc_chem_type)
 	sub_f <- ddply(sub_f, .(acc_chem_type), transform, counts = length(sample_source))
 	ggplot(data=sub_f) + plot_parts +
-		opts(title = paste(
+		ggtitle(paste(
 			"Hydrogen Bonds AHchi vs AHD Angle; SeqSep > 5, BFact < 30\n",
 			"Equal Coordinate Projection   Sample Source: ", ss_id, sep="")) +
 		facet_wrap( ~ acc_chem_type_name)
@@ -124,7 +124,7 @@ d_ply(f, .(sample_source), function(sub_f){
 	sub_f <- ddply(sub_f, .(don_chem_type, acc_chem_type),
 		transform, counts = length(sample_source))
 	ggplot(data=sub_f) + plot_parts +
-		opts(title = paste(
+		ggtitle(paste(
 			"Hydrogen Bonds AHchi vs AHD Angle; SeqSep > 5, BFact < 30\n",
 			"Equal Coordinate Projection   Sample Source: ", ss_id, sep=""))
 		facet_wrap(don_chem_type_name ~ acc_chem_type_name)

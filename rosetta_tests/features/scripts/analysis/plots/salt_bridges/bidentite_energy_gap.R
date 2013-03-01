@@ -304,11 +304,11 @@ dens <- estimate_density_1d_wrap(
 	adjust=.2)
 
 p <- ggplot(data=dens) + plot_parts +
-	opts(title = "Bifurcated ASP/GLU -> ARG Salt Bridge PSI; SeqSep > 4") +
+	ggtitle("Bifurcated ASP/GLU -> ARG Salt Bridge PSI; SeqSep > 4") +
 	geom_rect(data=problem_region, aes(xmin=xmin, xmax=xmax, ymin=-Inf, ymax=Inf), alpha=.2) +
 	scale_x_continuous("Angle around Donor (degrees)")
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -323,11 +323,11 @@ dens <- estimate_density_1d_wrap(
 	adjust=.2)
 
 p <- ggplot(data=dens) + plot_parts +
-	opts(title = "ASP/GLU -> ARG Bidentite Salt Bridges; SeqSep > 4") +
+	ggtitle("ASP/GLU -> ARG Bidentite Salt Bridges; SeqSep > 4") +
 	geom_rect(data=problem_region, aes(xmin=xmin, xmax=xmax, ymin=-Inf, ymax=Inf), alpha=.2) +
 	scale_x_continuous("Angle around Donor (degrees)")
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -336,24 +336,24 @@ save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 plot_id <- "salt_bridge_bifurcated_ASP_GLU_to_ARG_psi_by_sb_interaction_energy"
 p <- ggplot(data=f_bifurcated) + theme_bw() +
 	geom_point(aes(x=psi, y=sb_interaction_energy), size=.8) +
-	opts(title="ASP/GLU -> ARG Bifurcated Salt Bridges; SeqSep > 4") +
+	ggtitle("ASP/GLU -> ARG Bifurcated Salt Bridges; SeqSep > 4") +
 	scale_x_continuous("Angle around Donor (degrees)") +
 	scale_y_continuous("Weighted Interaction Energy", limits=c(-8, .5)) +
 	facet_wrap(~sample_source, ncol=1)
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id <- "salt_bridge_bidentite_ASP_GLU_to_ARG_psi_by_sb_interaction_energy"
 p <- ggplot(data=f_bidentite) + theme_bw() +
 	geom_point(aes(x=psi, y=sb_interaction_energy), size=.8) +
-	opts(title="ASP/GLU -> ARG Bidentite Salt Bridges; SeqSep > 4") +
+	ggtitle("ASP/GLU -> ARG Bidentite Salt Bridges; SeqSep > 4") +
 	scale_x_continuous("Angle around Donor (degrees)") +
 	scale_y_continuous("Weighted Interaction Energy", limits=c(-8, .5)) +
 	facet_wrap(~sample_source, ncol=1)
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -362,24 +362,24 @@ save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 plot_id <- "salt_bridge_bifurcated_ASP_GLU_to_ARG_psi_by_res_pair_energy"
 p <- ggplot(data=f_bifurcated) + theme_bw() +
 	geom_point(aes(x=psi, y=res_pair_energy), size=.8) +
-	opts(title="ASP/GLU -> ARG Bifurcated Salt Bridges; SeqSep > 4") +
+	ggtitle("ASP/GLU -> ARG Bifurcated Salt Bridges; SeqSep > 4") +
 	scale_x_continuous("Angle around Donor (degrees)") +
 	scale_y_continuous("Weighted Total Energy for Residue Pair", limits=c(-60, .5)) +
 	facet_wrap(~sample_source, ncol=1)
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id <- "salt_bridge_bidentite_ASP_GLU_to_ARG_psi_by_res_pair_energy"
 p <- ggplot(data=f_bidentite) + theme_bw() +
 	geom_point(aes(x=psi, y=res_pair_energy), size=.8) +
-	opts(title="ASP/GLU -> ARG Bidentite Salt Bridges; SeqSep > 4") +
+	ggtitle("ASP/GLU -> ARG Bidentite Salt Bridges; SeqSep > 4") +
 	scale_x_continuous("Angle around Donor (degrees)") +
 	scale_y_continuous("Weighted Total Energy for Residue Pair", limits=c(-8, .5)) +
 	facet_wrap(~sample_source, ncol=1)
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 

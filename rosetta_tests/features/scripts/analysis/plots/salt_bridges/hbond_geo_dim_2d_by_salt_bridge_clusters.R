@@ -48,7 +48,7 @@ plot_parts <- list(
 	stat_density2d(size=.2))
 
 set_plot_title <- function(xdim, ydim, ss_id){
-	opts(title =
+	ggtitle(
 		paste("Hydrogen Bonds ", xdim, " vs ", ydim, "  ss_id: ", ss_id, sep=""))
 }
 
@@ -106,7 +106,7 @@ plot_parts <- list(
 	stat_density2d(size=.2))
 
 set_plot_title <- function(xdim, ydim, don_chem_type, acc_chem_type){
-	opts(title =
+	ggtitle(
 		paste(
 			"Hydrogen Bonds ", xdim, " vs ", ydim, "  ",
 			"don: ", don_chem_type, " acc: ", acc_chem_type, sep=""))

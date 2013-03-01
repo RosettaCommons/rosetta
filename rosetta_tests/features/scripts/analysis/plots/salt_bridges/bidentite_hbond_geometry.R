@@ -139,24 +139,24 @@ f_bidentite$hb1_BAH <- 180-acos(f_bidentite$hb1_cosBAH)*180/pi
 plot_id <- "salt_bridge_bifurcated_ASP_GLU_to_ARG_psi_vs_AHdist"
 p <- ggplot(data=f_bifurcated) + theme_bw() +
 	geom_point(aes(x=psi, y=hb1_AHdist), size=.8) +
-	opts(title="ASP/GLU -> ARG Bifurcated Salt Bridges; SeqSep > 4") +
+	ggtitle("ASP/GLU -> ARG Bifurcated Salt Bridges; SeqSep > 4") +
 	scale_x_continuous("Angle around Donor (degrees)") +
 	scale_y_continuous("A-H Distance") +
 	facet_wrap(~sample_source, ncol=1)
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id <- "salt_bridge_bidentite_ASP_GLU_to_ARG_psi_vs_AHdist"
 p <- ggplot(data=f_bidentite) + theme_bw() +
 	geom_point(aes(x=psi, y=hb1_AHdist), size=.8) +
-	opts(title="ASP/GLU -> ARG Bidentite Salt Bridges; SeqSep > 4") +
+	ggtitle("ASP/GLU -> ARG Bidentite Salt Bridges; SeqSep > 4") +
 	scale_x_continuous("Angle around Donor (degrees)") +
 	scale_y_continuous("A-H Distance") +
 	facet_wrap(~sample_source, ncol=1)
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -164,24 +164,24 @@ save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 plot_id <- "salt_bridge_bifurcated_ASP_GLU_to_ARG_psi_vs_AHD"
 p <- ggplot(data=f_bifurcated) + theme_bw() +
 	geom_point(aes(x=psi, y=acos(hb1_cosAHD)*180/pi), size=.8) +
-	opts(title="ASP/GLU -> ARG Bifurcated Salt Bridges; SeqSep > 4") +
+	ggtitle("ASP/GLU -> ARG Bifurcated Salt Bridges; SeqSep > 4") +
 	scale_x_continuous("Angle around Donor (degrees)") +
 	scale_y_continuous("A-H-D Angle (degrees)") +
 	facet_wrap(~sample_source, ncol=1)
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id <- "salt_bridge_bidentite_ASP_GLU_to_ARG_psi_vs_AHD"
 p <- ggplot(data=f_bidentite) + theme_bw() +
 	geom_point(aes(x=psi, y=acos(hb1_cosAHD)*180/pi), size=.8) +
-	opts(title="ASP/GLU -> ARG Bidentite Salt Bridges; SeqSep > 4") +
+	ggtitle("ASP/GLU -> ARG Bidentite Salt Bridges; SeqSep > 4") +
 	scale_x_continuous("Angle around Donor (degrees)") +
 	scale_y_continuous("A-H-D Angle (degrees)") +
 	facet_wrap(~sample_source, ncol=1)
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -189,24 +189,24 @@ save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 plot_id <- "salt_bridge_bifurcated_ASP_GLU_to_ARG_psi_vs_BAH"
 p <- ggplot(data=f_bifurcated) + theme_bw() +
 	geom_point(aes(x=psi, y=acos(hb1_cosBAH)*180/pi), size=.8) +
-	opts(title="ASP/GLU -> ARG Bifurcated Salt Bridges; SeqSep > 4") +
+	ggtitle("ASP/GLU -> ARG Bifurcated Salt Bridges; SeqSep > 4") +
 	scale_x_continuous("Angle around Donor (degrees)") +
 	scale_y_continuous("B-A-H Angle (degrees)") +
 	facet_wrap(~sample_source, ncol=1)
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id <- "salt_bridge_bidentite_ASP_GLU_to_ARG_psi_vs_BAH"
 p <- ggplot(data=f_bidentite) + theme_bw() +
 	geom_point(aes(x=psi, y=acos(hb1_cosBAH)*180/pi), size=.8) +
-	opts(title="ASP/GLU -> ARG Bidentite Salt Bridges; SeqSep > 4") +
+	ggtitle("ASP/GLU -> ARG Bidentite Salt Bridges; SeqSep > 4") +
 	scale_x_continuous("Angle around Donor (degrees)") +
 	scale_y_continuous("B-A-H Angle (degrees)") +
 	facet_wrap(~sample_source, ncol=1)
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -216,12 +216,12 @@ p <- ggplot(data=f_bifurcated) + theme_bw() +
 	geom_point(
 		aes(x=acos(hb1_cosAHD)*180/pi, y=hb1_AHdist, colour=in_bifurcated_region),
 		size=.8) +
-	opts(title="ASP/GLU -> ARG Bifurcated Salt Bridges; SeqSep > 4") +
+	ggtitle("ASP/GLU -> ARG Bifurcated Salt Bridges; SeqSep > 4") +
 	scale_x_continuous("A-H-D Angle (degrees)") +
 	scale_y_continuous("A-H Distance") +
 	facet_wrap(~sample_source, ncol=1)
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -230,12 +230,12 @@ p <- ggplot(data=f_bidentite) + theme_bw() +
 	geom_point(
 		aes(x=acos(hb1_cosAHD)*180/pi, y=hb1_AHdist, colour=in_bifurcated_region),
 		size=.8) +
-	opts(title="ASP/GLU -> ARG Bidentite Salt Bridges; SeqSep > 4") +
+	ggtitle("ASP/GLU -> ARG Bidentite Salt Bridges; SeqSep > 4") +
 	scale_x_continuous("A-H-D Angle (degrees)") +
 	scale_y_continuous("A-H Distance") +
 	facet_wrap(~sample_source, ncol=1)
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -261,7 +261,7 @@ plot_parts <- list(
 	facet_grid(sample_source ~ in_bifurcated_region),
 	scale_x_continuous('', limits=capx_limits, breaks=c()),
 	scale_y_continuous('', limits=capy_limits, breaks=c()),
-	opts(
+	theme(
 		axis.text.x=theme_blank(),
 		axis.text.y=theme_blank(),
 		axis.title.x=theme_blank(),
@@ -271,7 +271,7 @@ plot_parts <- list(
 
 plot_id <- "salt_bridge_bifurcated_ASP_GLU_to_ARG__BAH_vs_chi_by_in_bifurcated_sample_source"
 ggplot(data=f_bifurcated) + plot_parts +
-	opts(title = "Acceptor Hydrogen Bonds seq_sep > 4: chi vs BAH bifurcated salt bridges") +
+	ggtitle("Acceptor Hydrogen Bonds seq_sep > 4: chi vs BAH bifurcated salt bridges") +
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
@@ -294,13 +294,13 @@ dens <- estimate_density_1d(
 	adjust=.8)
 
 p <- ggplot(data=dens) + theme_bw() +
-	opts(title = "Bifurcated ASP/GLU -> ARG Salt Bridge AHD; SeqSep > 4") +
+	ggtitle("Bifurcated ASP/GLU -> ARG Salt Bridge AHD; SeqSep > 4") +
 	geom_line(aes(x=x, y=y, colour=sample_source)) +
 	facet_wrap(~in_bifurcated_region) +
 	scale_y_continuous("FeatureDensity") +          
 	scale_x_continuous("A-H-D Angle (degrees)")
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
@@ -316,13 +316,13 @@ dens <- estimate_density_1d_reflect_boundary(
 	adjust=.5)
 
 p <- ggplot(data=dens) + plot_parts +
-	opts(title = "Bidentite ASP/GLU -> ARG Salt Bridge AHD; SeqSep > 4") +
+	ggtitle("Bidentite ASP/GLU -> ARG Salt Bridge AHD; SeqSep > 4") +
 	geom_line(aes(x=x, y=y, colour=sample_source)) +
 	facet_wrap(~in_bifurcated_region) +
 	scale_y_continuous("FeatureDensity") +          
 	scale_x_continuous("A-H-D Angle (degrees)")
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 

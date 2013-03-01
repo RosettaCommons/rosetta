@@ -65,7 +65,7 @@ dens <- estimate_density_1d(
 #p <- ggplot(data=z) + theme_bw() +
 #	geom_point(aes(x=log(sample.size), y=log(statistic))) +
 #	stat_smooth(aes(x=log(sample.size), y=log(statistic)), method="lm", se=F) +
-#	opts(title = "Earth Mover's Distance as a function of Sample Size") +
+#	ggtitle("Earth Mover's Distance as a function of Sample Size") +
 #	scale_x_continuous("log(Sample Size)") +
 #	scale_y_continuous("log(Earth Mover's Distance)")
 #save_plots(self, plot_id, sample_sources, output_dir, output_formats)
@@ -74,7 +74,7 @@ dens <- estimate_density_1d(
 #p <- ggplot(data=z[!(z$don_chem_type == "hbdon_PBA" & z$acc_chem_type == "hbacc_PBA"),]) + theme_bw() +
 #	geom_point(aes(x=sample.size, y=statistic)) +
 #	stat_smooth(aes(x=sample.size, y=statistic), method="lm", se=F) +
-#	opts(title = "Earth Mover's Distance as a function of Sample Size") +
+#	ggtitle("Earth Mover's Distance as a function of Sample Size") +
 #	scale_x_continuous("Sample Size") +
 #	scale_y_continuous("Earth Mover's Distance")
 #save_plots(self, plot_id, sample_sources, output_dir, output_formats)
@@ -87,12 +87,12 @@ p <- ggplot(data=dens) + theme_bw() +
 	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 #	geom_indicator(data=z, aes(indicator=round(statistic,2), colour=new_sample_source), xpos="left") +
 	facet_grid(don_chem_type ~ acc_chem_type) +
-	opts(title = "HBond A-H Distance by Chemical Type, SeqSep > 5, B-Factor < 30\nnormalized for equal weight per unit distance") +
+	ggtitle("HBond A-H Distance by Chemical Type, SeqSep > 5, B-Factor < 30\nnormalized for equal weight per unit distance") +
 	scale_y_continuous("FeatureDensity", limits=c(0,7.5), breaks=c(1,3,5,7)) +
 	scale_x_continuous(expression(paste('Acceptor -- Proton Distance (', ring(A), ')')), limits=c(1.4,2.7), breaks=c(1.6, 1.9, 2.2, 2.5))
 
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)

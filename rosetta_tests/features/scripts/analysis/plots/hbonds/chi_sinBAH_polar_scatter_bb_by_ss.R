@@ -114,7 +114,7 @@ d_ply(sample_sources, .variables=("sample_source"), function(sample_source){
 		polar_equal_area_grids_bw() +
 		geom_point(aes(x=capx, y=capy), size=.4, alpha=.5) +
 		facet_grid(don_ss ~ acc_ss) +
-		opts(title = paste("Backbone-Backbone Hydrogen Bonds chi vs sinBAH Angles by Secondary Structure\nEqual Coordinate Projection   Sample Source: ", ss, sep="")) +
+		ggtitle(paste("Backbone-Backbone Hydrogen Bonds chi vs sinBAH Angles by Secondary Structure\nEqual Coordinate Projection   Sample Source: ", ss, sep="")) +
 		scale_x_continuous('2*sin(BAH/2) * cos(CHI)', breaks=c(-1, 0, 1)) +
 		scale_y_continuous('2*sin(BAH/2) * sin(CHI)', breaks=c(-1, 0, 1))
 	save_plots(self, plot_id, sample_source, output_dir, output_formats)
@@ -131,7 +131,7 @@ d_ply(sample_sources, .variables=("sample_source"), function(sample_source){
 	ggplot(data=sub_f) + theme_bw() +
 		geom_point(aes(x=capx, y=capy), size=.5, alpha=.4) +
 		facet_grid(don_ss ~ acc_ss) +
-		opts(title = paste("Backbone-Backbone Hydrogen Bonds chi vs sinBAH Angles by Secondary Structure\nOrthographic Projection   Sample Source: ", ss, sep="")) +
+		ggtitle(paste("Backbone-Backbone Hydrogen Bonds chi vs sinBAH Angles by Secondary Structure\nOrthographic Projection   Sample Source: ", ss, sep="")) +
 		scale_x_continuous('sin(BAH) * cos(CHI)', breaks=c(-1, 0, 1)) +
 		scale_y_continuous('sin(BAH) * sin(CHI)', breaks=c(-1, 0, 1))
 	save_plots(self, plot_id, sample_source, output_dir, output_formats)

@@ -106,7 +106,7 @@ p <- ggplot(dens) + theme_bw() +
 	scale_x_ADdist +
 	scale_y_continuous("FeatureDensity", limits=c(0,8.5), breaks=c(1,3,5,7))
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)

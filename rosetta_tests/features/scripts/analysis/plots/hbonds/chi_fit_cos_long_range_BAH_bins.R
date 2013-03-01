@@ -96,11 +96,11 @@ d_ply(sample_sources, .variables=("sample_source"), function(sample_source){
 		geom_line(aes(x=x, y=y, colour=BAH_bins)) +
 		geom_indicator(aes(indicator=counts, colour=BAH_bins, group=BAH_bins)) +
 		facet_wrap( ~ don_chem_type) +
-		opts(title = paste("Hydrogen Bonds CHI Angle for Sidechain sp2 Acceptors with Sequence Separation > 5\n(normalized for equal volume per Unit Distance) Sample Source: ", ss, sep="")) +
+		ggtitle(paste("Hydrogen Bonds CHI Angle for Sidechain sp2 Acceptors with Sequence Separation > 5\n(normalized for equal volume per Unit Distance) Sample Source: ", ss, sep="")) +
 		scale_x_continuous('Acceptor Base -- Acceptor Torsion (degrees)', breaks=c(90,270)) +
 		scale_y_continuous('Feature Density') +
-		opts(legend.position=c(.58,.35)) +
-		opts(legend.justification=c("left", "top"))
+		theme(legend.position=c(.58,.35)) +
+		theme(legend.justification=c("left", "top"))
 	save_plots(self, plot_id, sample_source, output_dir, output_formats)
 
 
@@ -114,7 +114,7 @@ d_ply(sample_sources, .variables=("sample_source"), function(sample_source){
 		geom_line(aes(x=x, y=y, colour=BAH_bins)) +
 		geom_indicator(aes(indicator=counts, colour=BAH_bins, group=BAH_bins)) +
 		facet_grid(don_chem_type ~ acc_chem_type) +
-		opts(title = paste("Hydrogen Bonds CHI Angle by Acceptor types with sequence separation > 5\n(normalized for equal volume per unit distance) Sample Source: ", ss, sep="")) +
+		ggtitle(paste("Hydrogen Bonds CHI Angle by Acceptor types with sequence separation > 5\n(normalized for equal volume per unit distance) Sample Source: ", ss, sep="")) +
 		scale_x_continuous('Acceptor Base -- Acceptor Torsion (degrees)', breaks=c(90,270)) +
 		scale_y_continuous('Feature Density', breaks=c(90,270))
 	save_plots(self, plot_id, sample_source, output_dir, output_formats)

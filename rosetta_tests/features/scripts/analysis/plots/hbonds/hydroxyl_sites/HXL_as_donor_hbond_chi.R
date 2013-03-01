@@ -159,11 +159,11 @@ ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x*180/pi, y=y, colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_wrap( ~ acc_chem_type ) +
-	opts(title = "HBond Torsional Angle for Hydroxyl As Donors: (CA, CB, OG, A) SeqSep > 5, BFact < 30") +
+	ggtitle("HBond Torsional Angle for Hydroxyl As Donors: (CA, CB, OG, A) SeqSep > 5, BFact < 30") +
 	scale_x_continuous('HBond Torsional Angle (degrees)') +
 	scale_y_continuous('Feature Density') +
-	opts(legend.position=c(.58,.35)) +
-	opts(legend.justification=c("left", "top"))
+	theme(legend.position=c(.58,.35)) +
+	theme(legend.justification=c("left", "top"))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
@@ -176,11 +176,11 @@ p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x*180/pi, y=y, colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_wrap( ~ acc_hybrid ) +
-	opts(title = "HBond Torsional Angle for Hydroxyl (s,t) As Donors: (CA, CB, OG, A) SeqSep > 5, BFact < 30") +
+	ggtitle("HBond Torsional Angle for Hydroxyl (s,t) As Donors: (CA, CB, OG, A) SeqSep > 5, BFact < 30") +
 	scale_x_continuous('HBond Torsional Angle (degrees)') +
 	scale_y_continuous('Feature Density') +
-	opts(legend.position=c(.58,.35)) +
-	opts(legend.justification=c("left", "top"))
+	theme(legend.position=c(.58,.35)) +
+	theme(legend.justification=c("left", "top"))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
@@ -193,11 +193,11 @@ ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x*180/pi, y=y, colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_wrap( ~ acc_chem_type ) +
-	opts(title = "Proton Torsional Angle for Hydroxyl (s,t): (CA, CB, OG, HG) SeqSep > 5, BFact < 30") +
+	ggtitle("Proton Torsional Angle for Hydroxyl (s,t): (CA, CB, OG, HG) SeqSep > 5, BFact < 30") +
 	scale_x_continuous('HBond Torsional Angle (degrees)') +
 	scale_y_continuous('Feature Density') +
-	opts(legend.position=c(.58,.35)) +
-	opts(legend.justification=c("left", "top"))
+	theme(legend.position=c(.58,.35)) +
+	theme(legend.justification=c("left", "top"))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 dens <- estimate_density_1d_wrap(f,
@@ -209,11 +209,11 @@ p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x*180/pi, y=y, colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_wrap( ~ acc_hybrid ) +
-	opts(title = "Proton Torsional Angle for Hydroxyl (s,t): (CA, CB, OG, HG) SeqSep > 5, BFact < 30") +
+	ggtitle("Proton Torsional Angle for Hydroxyl (s,t): (CA, CB, OG, HG) SeqSep > 5, BFact < 30") +
 	scale_x_continuous('HBond Torsional Angle (degrees)') +
 	scale_y_continuous('Feature Density') +
-	opts(legend.position=c(.58,.35)) +
-	opts(legend.justification=c("left", "top"))
+	theme(legend.position=c(.58,.35)) +
+	theme(legend.justification=c("left", "top"))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 dens <- estimate_density_1d(f,
@@ -224,11 +224,11 @@ ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x*180/pi, y=y, colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_wrap( ~ acc_chem_type ) +
-	opts(title = "HBond Torsion Angle - Proton Torsional Angle for Hydroxyl (s,t) Donors\n SeqSep > 5, BFact < 30") +
+	ggtitle("HBond Torsion Angle - Proton Torsional Angle for Hydroxyl (s,t) Donors\n SeqSep > 5, BFact < 30") +
 	scale_x_continuous('HBond Torsional Angle (degrees)') +
 	scale_y_continuous('Feature Density') +
-	opts(legend.position=c(.58,.35)) +
-	opts(legend.justification=c("left", "top"))
+	theme(legend.position=c(.58,.35)) +
+	theme(legend.justification=c("left", "top"))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 dens <- estimate_density_1d(f,
@@ -239,11 +239,11 @@ p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x*180/pi, y=y, colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_wrap( ~ acc_hybrid ) +
-	opts(title = "HBond Torsion Angle - Proton Torsional Angle for Hydroxyl (s,t) Donors\nSeqSep > 5, BFact < 30") +
+	ggtitle("HBond Torsion Angle - Proton Torsional Angle for Hydroxyl (s,t) Donors\nSeqSep > 5, BFact < 30") +
 	scale_x_continuous('HBond Torsional Angle (degrees)') +
 	scale_y_continuous('Feature Density') +
-	opts(legend.position=c(.58,.35)) +
-	opts(legend.justification=c("left", "top"))
+	theme(legend.position=c(.58,.35)) +
+	theme(legend.justification=c("left", "top"))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 

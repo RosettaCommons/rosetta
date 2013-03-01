@@ -151,11 +151,11 @@ p <- ggplot(data=f, aes(x=energy_weighted, y=new_energy_weighted)) +
 	geom_line(data=diagonal, aes(x=x, y=y), color="darkgray") +
 	stat_density2d(size=.2) +
 	facet_wrap(~seq_sep) +
-	opts(title = paste("Weighted HBond Energy Rosetta vs Sp2 Potential:") ) +
+	ggtitle(paste("Weighted HBond Energy Rosetta vs Sp2 Potential:") ) +
 	scale_x_continuous("Weighted Rosetta HBond Energy", limits=c(-1.755, 0), breaks=c(-1.5, -1, -.5)) +
 	scale_y_continuous("Weighted Sp2 Potential HBond Energy", limits=c(-3, 0), breaks=c(-3, -2, -1))
 if(nrow(sample_sources) <= 3){
-	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+	p <- p + theme(legend.position="bottom", legend.direction="horizontal")
 }
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)

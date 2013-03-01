@@ -80,7 +80,7 @@ ldply(res_types, function(res_type){
     aes(x=score_value, y=log(divergence + 1)))
   p <- p + geom_point(size=.5)
   p <- p + facet_wrap( ~ score_type, scales="free_x" )
-  p <- p + opts(title = paste("Rotamer Recovery for", res_type, "by Score Type"))
+  p <- p + ggtitle(paste("Rotamer Recovery for", res_type, "by Score Type"))
   p <- p + labs(x="Score",
                 y="log(AutomorphicRMSD + 1)")
   p <- p + theme_bw()

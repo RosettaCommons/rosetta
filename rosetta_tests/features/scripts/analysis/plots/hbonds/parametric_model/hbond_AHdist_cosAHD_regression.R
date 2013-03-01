@@ -50,7 +50,7 @@ ggplot(data=d, aes(x=x, y=y, fill=-log(z+1))) + theme_bw() +
 #  geom_indicator(aes(indicator=cov)) +
   facet_grid(don_chem_type ~ acc_chem_type) +
   scale_fill_gradient("AHdist", high="lightyellow", low="blue") +
-  opts(title = "Hydrogen Bonds AHdist vs cosAHD Angle Fit with Beta Function\n(normalized for equal volume per unit distance)") +
+  ggtitle("Hydrogen Bonds AHdist vs cosAHD Angle Fit with Beta Function\n(normalized for equal volume per unit distance)") +
   labs(x=expression(paste('cos(Acceptor -- Hydrogen -- Donor)')),
        y=expression(paste('(Acceptor -- Proton Distance)(', ring(A), ')')))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)

@@ -42,7 +42,7 @@ ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=-log(1-x), y=log(y+1), colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_wrap( ~ hb_chem_type) +
-	opts(title = "Geometric Solvation score * HBonding score") +
+	ggtitle("Geometric Solvation score * HBonding score") +
 	labs(x="(Geometric Solvation)*(Hydrogen Bonding)",
 	     y="log(FeatureDensity + 1)")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)

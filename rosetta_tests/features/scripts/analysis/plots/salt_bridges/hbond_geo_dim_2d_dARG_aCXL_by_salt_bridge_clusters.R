@@ -68,7 +68,7 @@ plot_parts <- list(
 	stat_density2d(aes(colour=is_bifurcated_a), size=.1))
 
 set_plot_title <- function(xdim, ydim){
-	opts(title =
+	ggtitle(
 		paste(
 			"Hydrogen Bonds ", xdim, " vs ", ydim, " by Salt Bridge Clusters", sep=""))
 }

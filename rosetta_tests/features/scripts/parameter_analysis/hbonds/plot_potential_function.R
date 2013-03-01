@@ -79,7 +79,7 @@ dimension <- polynomials[polynomials$name==opt$polynomial, "dimension"]
 p <- ggplot(evaluated_polynomial) + theme_bw() +
   geom_hline(yintercept=0, size=.7) +
   geom_line(aes(x, y), size=1.5) +
-  opts(title=paste("Hydrogen Bond Polynomial Evaluation:", opt$polynomial)) +
+  ggtitle(paste("Hydrogen Bond Polynomial Evaluation:", opt$polynomial)) +
   scale_x_continuous(dimension) +
   scale_y_continuous("Raw Energy")
 ggsave(output_fname)

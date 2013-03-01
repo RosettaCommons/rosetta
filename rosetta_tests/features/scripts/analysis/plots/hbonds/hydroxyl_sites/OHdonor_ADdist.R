@@ -84,7 +84,7 @@ generate_plot <- function(
 			expression(paste('Acceptor -- Donor Distance (', ring(A), ')'))) +
 		scale_colour_discrete("HBond Potential") +
 		theme_bw() +
-		opts(legend.position = c(.36, .85))
+		theme(legend.position = c(.36, .85))
 
 	save_plots(self, plot_id=plot_id, sample_sources, output_dir, output_formats)
 }

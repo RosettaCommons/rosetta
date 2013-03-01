@@ -96,56 +96,81 @@ geom_text_boxed <- function(
 #   latitude  (in-out) 30, 60, 90, 120 degrees (starting from the positive x-axis)
 
 # Equal Area Coordinate Grids
-major_long_coords <- transform(
-	expand.grid(long=seq(0, 2*pi, length.out=200), lat=c(pi/6, pi/2)),
-	capx = 2*sin(lat/2)*cos(long),
-	capy = 2*sin(lat/2)*sin(long))
+major_long_coords <- function(
+	lat=c(pi/6, pi/2)
+){
+	transform(
+		expand.grid(long=seq(0, 2*pi, length.out=200), lat=lat),
+		capx = 2*sin(lat/2)*cos(long),
+		capy = 2*sin(lat/2)*sin(long))
+}
 
-minor_long_coords <- transform(
-	expand.grid(long=seq(0, 2*pi, length.out=200), lat=c(pi/3, pi*2/3)),
-	capx = 2*sin(lat/2)*cos(long),
-	capy = 2*sin(lat/2)*sin(long))
+minor_long_coords <- function(
+	lat=c(pi/3, pi*2/3)
+) {
+	transform(
+		expand.grid(long=seq(0, 2*pi, length.out=200), lat=lat),
+		capx = 2*sin(lat/2)*cos(long),
+		capy = 2*sin(lat/2)*sin(long))
+}
 
-major_lat_coords <- transform(
-	expand.grid(long=seq(0,2*pi, length.out=5), lat=c(pi/3, pi*2/3, length.out=200)),
-	capx = 2*sin(lat/2)*cos(long),
-	capy = 2*sin(lat/2)*sin(long))
+major_lat_coords <- function(
+	n_long=5,
+	lat=c(pi/3, pi*2/3)
+) {
+	transform(
+		expand.grid(
+			long=seq(0,2*pi, length.out=n_long), lat=c(pi/3, pi*2/3, length.out=200)),
+		capx = 2*sin(lat/2)*cos(long),
+		capy = 2*sin(lat/2)*sin(long))
+}
 
-minor_lat_coords <- transform(
-	expand.grid(long=seq(0,2*pi, length.out=5) + pi/4, lat=c(pi/3, pi*2/3, length.out=200)),
-	capx = 2*sin(lat/2)*cos(long),
-	capy = 2*sin(lat/2)*sin(long))
+minor_lat_coords <- function() {
+	transform(
+		expand.grid(long=seq(0,2*pi, length.out=5) + pi/4, lat=c(pi/3, pi*2/3, length.out=200)),
+		capx = 2*sin(lat/2)*cos(long),
+		capy = 2*sin(lat/2)*sin(long))
+}
 
-long_labels <- transform(
-	expand.grid(long=pi*3/2, lat=c(pi/6, pi/3, pi/2, pi*2/3)),
-	label = as.character(round(180/pi*lat, 0)),
-	capx = 2*sin(lat/2)*cos(long),
-	capy = 2*sin(lat/2)*sin(long))
+long_labels <- function() {
+	transform(
+		expand.grid(long=pi*3/2, lat=c(pi/6, pi/3, pi/2, pi*2/3)),
+		label = as.character(round(180/pi*lat, 0)),
+		capx = 2*sin(lat/2)*cos(long),
+		capy = 2*sin(lat/2)*sin(long))
+}
 
-polar_equal_area_grids_bw <- function(scale=1, label_scale=1, bgcolor="#00007F", ...) {
+polar_equal_area_grids_bw <- function(
+	scale=1,
+	label_scale=1,
+	box_bgcolor="#00007F",
+	label_color="white",
+	line_color="gray98",
+	...
+) {
 	list(
 		geom_path(
-			data=minor_long_coords,
+			data=minor_long_coords(),
 			aes(x=capx, y=capy, group=lat),
-			size=scale * .5, colour="grey98", ...),
+			size=scale * .5, colour=line_color, ...),
 		geom_path(
-			data=minor_lat_coords,
+			data=minor_lat_coords(),
 			aes(x=capx, y=capy, group=long),
-			size=scale * .5, colour="grey98", ...),
+			size=scale * .5, colour=line_color, ...),
 		geom_path(
-			data=major_long_coords,
+			data=major_long_coords(),
 			aes(x=capx, y=capy, group=lat),
-			size=scale * .2, colour="grey90", ...),
+			size=scale * .2, colour=line_color, ...),
 		geom_path(
-			data=major_lat_coords,
+			data=major_lat_coords(),
 			aes(x=capx, y=capy, group=long),
-			size=scale * .2, colour="grey90", ...),
+			size=scale * .2, colour=line_color, ...),
 		geom_text_boxed(
-			data=long_labels,
+			data=long_labels(),
 			aes(x=capx, y=capy, label=paste(label, sep="")),
 			parse=T,
-			size=label_scale*3, colour="white", bgcol=NA, bgfill=bgcolor),
-		opts(
-			panel.grid.major = theme_blank(),
-			panel.grid.minor = theme_blank()))
+			size=label_scale*3, colour=label_color, bgcol=NA, bgfill=box_bgcolor),
+		theme(
+			panel.grid.major = element_blank(),
+			panel.grid.minor = element_blank()))
 }

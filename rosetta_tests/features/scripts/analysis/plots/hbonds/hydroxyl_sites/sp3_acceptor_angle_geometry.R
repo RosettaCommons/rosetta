@@ -84,19 +84,29 @@ dens_angles <- rbind(
 	data.frame(cosBAH_dens, cell="cosBAH"))
 
 
-d_ply(data=dens_angles, .(sample_source), function(sub_da){
+d_ply(dens_angles, .(sample_source), function(sub_da){
 	ss_id <- sub_da$sample_source[1]
 	plot_id <- paste("sp3_acceptor_angle_geometry_by_seq_sep_", ss_id, sep="")
-	ggplot() + theme_bw() +
-		geom_line(data=dens_angles, aes(x=acos(x)*180/pi, y=y, colour=seq_sep)) +
-		geom_indicator(data=dens_angles, aes(colour=seq_sep, indicator=counts, group=seq_sep)) +
-		facet_wrap( ~ cell) +
-		opts(title = paste("Hydrogen Bond sp3 Acceptors Angle Geometry\nss_id: ", ss_id, sep="")) +
+	ggplot(data=sub_da) + theme_bw() +
+		geom_line(aes(x=acos(x)*180/pi, y=y, colour=seq_sep)) +
+		geom_indicator(aes(colour=seq_sep, indicator=counts, group=seq_sep)) +
+		facet_wrap( ~cell, ncol=1) +
+		ggtitle(paste("Hydrogen Bond sp3 Acceptors Angle Geometry\nss_id: ", ss_id, sep="")) +
 		scale_x_continuous(paste('XXX -- Acceptor -- Donated Hydrogen Angle (degrees)')) +
-		scale_y_continuous("FeatureDensity")+
-		opts(legend.position=c(.7, .35))
+		scale_y_continuous("FeatureDensity") +
+		theme(legend.position="bottom", legend.direction="horizontal")
 	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 })
 
+plot_id <- "sp3_acceptor_angle_geometry_by_seq_sep"
+ggplot(data=dens_angles) + theme_bw() +
+	geom_line(aes(x=acos(x)*180/pi, y=y, colour=seq_sep)) +
+	geom_indicator(aes(colour=seq_sep, indicator=counts, group=seq_sep)) +
+	facet_grid( sample_source ~ cell) +
+	ggtitle("Hydrogen Bond sp3 Acceptors Angle Geometry") +
+	scale_x_continuous(paste('XXX -- Acceptor -- Donated Hydrogen Angle (degrees)')) +
+	scale_y_continuous("FeatureDensity") +
+	theme(legend.position="bottom", legend.direction="horizontal")
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 })) # end FeaturesAnalysis

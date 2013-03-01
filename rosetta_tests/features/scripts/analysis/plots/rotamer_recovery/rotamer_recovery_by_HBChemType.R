@@ -51,7 +51,7 @@ ggplot(data=dens) + theme_bw() +
 	geom_indicator(aes(indicator=counts, color=sample_source, group=sample_source)) +
 	geom_indicator(aes(indicator=mean, color=sample_source, group=sample_source), xpos="left") +
 	facet_wrap( ~ hb_chem_type ) +
-	opts(title = "Rotamer Recovery by Hydrogen Bond Chemical Type") +
+	ggtitle("Rotamer Recovery by Hydrogen Bond Chemical Type") +
 	labs(x="<- better      log(Automorphic RMSD + 1)      worse ->",
 			 y="log(FeatureDensity + 1)")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)

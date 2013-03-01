@@ -40,10 +40,10 @@ plot_id <- "hb_unsat"
 ggplot(f) + theme_bw() +
   geom_bar(aes(x=sample_source, y=log(counts), fill=sample_source)) +
   facet_grid(chem_type ~ probe_radius) +
-  opts(title = "Number of Buried Unsatisfied Hydrogen Bond Sites for Different Probe Radii") +
+  ggtitle("Number of Buried Unsatisfied Hydrogen Bond Sites for Different Probe Radii") +
   coord_flip() +
-	opts(strip.text.y=theme_text(size=7)) +
-	opts(legend.position="none")
+	theme(strip.text.y=theme_text(size=7)) +
+	theme(legend.position="none")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 })) # end FeaturesAnalysis

@@ -51,19 +51,19 @@ plot_parts <- list(
 plot_id <- "lys_rotamer_hbond_interaction_AHdist"
 
 ggplot(f, aes(y=AHdist)) + plot_parts +
-  opts(title = "Lysine Rotamer vs HBond AHdist Length") +
+  ggtitle("Lysine Rotamer vs HBond AHdist Length") +
   labs(y=expression(paste('Acceptor -- Proton Distance (', ring(A), ')')))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id <- "lys_rotamer_hbond_interaction_cosBAH"
 ggplot(f, aes(y=acos(cosBAH)*180/pi)) + plot_parts +
-  opts(title = "Lysine Rotamer vs HBond Interaction cosBAH Angle") +
+  ggtitle("Lysine Rotamer vs HBond Interaction cosBAH Angle") +
   labs(y=expression(paste('Base -- Acceptor -- Hydrogen (degrees)')))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id <- "lys_rotamer_hbond_interaction_cosAHD"
 ggplot(f, aes(y=acos(cosAHD)*180/pi)) + plot_parts +
-  opts(title = "Lysine Rotamer vs HBond Interaction cosAHD Angle") +
+  ggtitle("Lysine Rotamer vs HBond Interaction cosAHD Angle") +
   labs(y=expression(paste('Acceptor -- Hydrogen -- Donor (degrees)')))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 

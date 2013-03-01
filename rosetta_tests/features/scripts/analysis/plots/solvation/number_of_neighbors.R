@@ -39,11 +39,11 @@ p <- ggplot(data=dens, aes(x=x, y=log(y+1), color=sample_source, indicator=count
 p <- p + geom_line()
 p <- p + geom_indicator(aes(group=sample_source))
 p <- p + facet_wrap( ~ res_type )
-p <- p + opts(title = "Residue Burial by Residue Type")
+p <- p + ggtitle("Residue Burial by Residue Type")
 p <- p + labs(x="Number of Neighbors in 10 Angstroms",
               y="log(FeatureDensity + 1)")
 p <- p + theme_bw()
-p <- p + opts(axis.text.y=theme_blank())
+p <- p + theme(axis.text.y=theme_blank())
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
