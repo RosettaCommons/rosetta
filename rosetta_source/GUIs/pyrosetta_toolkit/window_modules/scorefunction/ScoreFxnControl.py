@@ -53,7 +53,21 @@ class ScoreFxnControl():
             "Score Pose",
         ]
       
-
+        self.common_scorefunctions = [
+            "score12prime",
+            "score12",
+            "orbitals",
+            "soft_rep",
+            "soft_rep_design",
+            "mm_std",
+            "ligand",
+            "interchain_cen",
+            "docking",
+            "cen_std",
+        ]
+        
+        self.show_all_scorefunctions = IntVar(); self.show_all_scorefunctions.set(False)
+        
     def makeWindow(self, main, p, r=0, c=0):
         """
         Creates the window to edit, analyze, and explore score functions and score terms.
@@ -77,12 +91,13 @@ class ScoreFxnControl():
         
         self.options = Menu(self.MenBar, tearoff=0)
         #self.options.add_command(label = "Set Working Directory (WD)", command = lambda: self.setWD())
+        self.options.add_checkbutton(label = "Show ALL ScoreFunctions", variable=self.show_all_scorefunctions)
         self.options.add_command(label = "Set Default Score Function (Does not save edits)", command = lambda: self.saveDefaults())
         self.MenBar.add_cascade(label = "Options", menu = self.options)
         
         self.main.config(menu=self.MenBar)
         
-        self.TypeLabel = Label(self.main, text = "Score Type")
+        self.TypeLabel = Label(self.main, text = "Score Function")
         self.ScoreTypeListbox = Listbox(self.main, width=30, height = 18)
         self.ScoreTypeScroll = Scrollbar(self.main)
         self.ScoreTypeListbox.config(yscrollcommand=self.ScoreTypeScroll.set); self.ScoreTypeScroll.config(command=self.ScoreTypeListbox.yview)
@@ -108,9 +123,11 @@ class ScoreFxnControl():
         
         
         #First Actions after selected:
-        self.CommandButton = Button(self.main, text = "Score Pose", command = lambda: self.scoreOption("Score Pose"))
+        self.change_scorefunction_button = Button(self.main, text = "Change ScoreFunction", command = lambda: self.updateScore())
+        self.change_patch_button = Button(self.main, text = "Change/Add Patch", command = lambda: self.updatePatch())
+        self.ScoreButton = Button(self.main, text = "Score Pose", command = lambda: self.scoreOption("Score Pose"))
         self.ScoreOptions = OptionMenu(self.main, self.ScoreOptionsdef, *self.OPTIONS)
-        self.RemovePatchButton = Button(self.main, text = "Remove Patch", command = lambda: self.removePatch())
+        self.RemovePatchButton = Button(self.main, text = "Remove Patch", command = lambda: self.removePatch(), justify=CENTER)
         self.ScoreTypeListbox.bind("<Double-Button-1>", lambda event: self.updateScore())
         self.ScorePatchListbox.bind("<Double-Button-1>", lambda event: self.updatePatch())
         self.NonzeroListbox.bind("<Double-Button-1>", lambda event: self.changeWeight(self.NonzeroListbox))
@@ -123,20 +140,24 @@ class ScoreFxnControl():
         self.ScorePatchListbox.grid(row=r+1, column=c+2, rowspan=6); self.ScorePatchScroll.grid(row=r+1, column=c+3, rowspan=6, sticky=E+N+S)
         
         self.ShoTypeLabel.grid(row=r+7, column=c+0); self.ShoPatchLabel.grid(row=r+7, column=c+2)
-        self.CommandButton.grid(row=r+8, column=c+0, columnspan = 4, sticky=W+E);
+        self.change_scorefunction_button.grid(row=r+8, column=c+0, columnspan=2, sticky=W+E); self.change_patch_button.grid(row=r+8, column=c+2, sticky=W+E, columnspan=2)
+        #elf.ScoreButton.grid(row=r+9, column=c+0, columnspan = 4, sticky=W+E);
         #self.ScoreOptions.grid(row=r+8, column=c+1, sticky = W+E)
-        self.RemovePatchButton.grid(row=r+9, column=c+0, columnspan = 4, sticky=W+E)
+        self.RemovePatchButton.grid(row=r+10, column=c+2, columnspan = 2, sticky=W+E)
         
-        self.NonzeroLabel.grid(row=r+10, column=c+0);self.ZeroLabel.grid(row=r+10, column=c+2)
-        self.NonzeroListbox.grid(row = r+11, column = c+0); self.NonzeroScroll.grid(row=r+11, column=c+1, sticky=E+N+S)
-        self.ZeroListbox.grid(row = r+11, column = c+2); self.ZeroScroll.grid(row=r+11, column=c+3, sticky=E+N+S)
+        self.NonzeroLabel.grid(row=r+11, column=c+0);self.ZeroLabel.grid(row=r+11, column=c+2)
+        self.NonzeroListbox.grid(row = r+12, column = c+0); self.NonzeroScroll.grid(row=r+12, column=c+1, sticky=E+N+S)
+        self.ZeroListbox.grid(row = r+12, column = c+2); self.ZeroScroll.grid(row=r+12, column=c+3, sticky=E+N+S)
         
         #This Gets all of the score types from PyRosetta Database
         self.populateScoreList()
         self.updateScoreandTerms()
+        self.show_all_scorefunctions.trace_variable('w', self.update_scorelist_callback)
     
     
-    
+    def update_scorelist_callback(self, name, index, mode):
+        self.populateScoreList()
+        
     ###Public Methods###
     def set_scorefunction(self, name, patch=None):
         self.ScoreType.set(name)
@@ -188,22 +209,27 @@ class ScoreFxnControl():
         
     def populateScoreList(self):
         """
-        Works with PyRosetta 2.011
+        Populates the ScoreFunction and Patch listboxes with files or common types.
         """
         
-        print "Please Wait, populating score functions..."
+        self.ScoreTypeListbox.delete(0, END)
         print repr(env["PYROSETTA_DATABASE"])
-        Scorefiles = glob.glob(env["PYROSETTA_DATABASE"] +"/scoring/weights/*.wts")
-        Patchfiles = glob.glob(env["PYROSETTA_DATABASE"]+"/scoring/weights/*.wts_patch")
-        #First we populate both score lists:Scorefiles
-        #Later - We should put this as a file, check to see if anything has changed in the dir, and if it has,
-        #Load everything up.
-        for scorefile in sorted(Scorefiles):
-            scorefile = os.path.basename(scorefile).split(".")[0]
-            self.ScoreTypeListbox.insert(END, scorefile)
+        if self.show_all_scorefunctions.get():
             
+            
+            Scorefiles = glob.glob(env["PYROSETTA_DATABASE"] +"/scoring/weights/*.wts")
+            
+            for scorefile in sorted(Scorefiles):
+                scorefile = os.path.basename(scorefile).split(".")[0]
+                self.ScoreTypeListbox.insert(END, scorefile)
+        else:
+            for scorefile in self.common_scorefunctions:
+                self.ScoreTypeListbox.insert(END, scorefile)
+                
         self.ScorePatchListbox.insert(END, "None")
         
+        
+        Patchfiles = glob.glob(env["PYROSETTA_DATABASE"]+"/scoring/weights/*.wts_patch")
         for patchfile in sorted(Patchfiles):
             patchfile = os.path.basename(patchfile).split(".")[0]
             self.ScorePatchListbox.insert(END, patchfile)

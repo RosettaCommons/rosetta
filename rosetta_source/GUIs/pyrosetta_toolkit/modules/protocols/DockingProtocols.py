@@ -53,8 +53,8 @@ class DockingProtocols(ProtocolBaseClass):
         to_dock = tkSimpleDialog.askstring(title = "Input", prompt="Please supply two partners (ex - A_B or A_BC ).  The first will be held rigid.")
         to_dock = to_dock.upper()
         if not to_dock: return
-        if self.score_class.ScorePatch.get()!="docking":
-            result = tkMessageBox.askokcancel(title="Continue?", message="Docking patch not set in scorefunction (use standard as main weights). Continue?")
+        if self.score_class.ScoreType.get()!="docking":
+            result = tkMessageBox.askokcancel(title="Continue?", message="Docking scorefunction not set.  Continue?")
             if not result:return
         dock_mover = DockMCMProtocol()
         dock_mover.set_scorefxn(self.score_class.score)
