@@ -232,6 +232,7 @@ rm -r ref/; ./integration.py    # create reference results using only default se
     if not options.unordered:
         tests = order_tests(tests)
 
+    runtimes={}
     if not options.compareonly:
         queue = Queue()
         queue.TotalNumberOfTasks = len(tests)
@@ -255,7 +256,7 @@ rm -r ref/; ./integration.py    # create reference results using only default se
 
                 cmd_line_sh, workdir = generateIntegrationTestCommandline(test, outdir);
 
-                def run():
+                def run(times):
                     #execute('Running Test %s' % test, 'bash ' + cmd_line_sh)
                     extra = 'ulimit -t%s && ' % Options.timeout  if Options.timeout else ''
                     res = execute('Running Test %s' % test, '%sbash %s' % (extra, cmd_line_sh), return_=True)
@@ -263,37 +264,44 @@ rm -r ref/; ./integration.py    # create reference results using only default se
                         error_string = "*** Test %s did not run!  Check your --mode flag and paths. [%s]\n" % (test, datetime.datetime.now())
                         file(path.join(nt.workdir, ".test_did_not_run.log"), 'w').write(error_string)
                         print error_string,
+                        times[test] = float('nan')
 
                     #execute('Just sleeeping %s...' % test, 'ulimit -t%s && sleep 60 && echo "Done!"' % Options.timeout)
                     #execute('Just echo %s...' % test, 'echo "%s Done!"' % test)
                     #print 'Not even echo %s... ' % test
 
-                def normal_finish(nt):
+                def normal_finish(nt, times):
                     queue.task_done()
                     percent = (100* (queue.TotalNumberOfTasks-queue.qsize())) / queue.TotalNumberOfTasks
-                    print "Finished %-40s in %3i seconds\t [~%4s test (%s%%) started, %4s in queue, %4d running]" % (nt.test, time.time() - nt.start_time, queue.TotalNumberOfTasks-queue.qsize(), percent, queue.qsize(), queue.unfinished_tasks-queue.qsize() )
+                    elapse_time = time.time() - nt.start_time
+                    print "Finished %-40s in %3i seconds\t [~%4s test (%s%%) started, %4s in queue, %4d running]" % (nt.test, elapse_time, queue.TotalNumberOfTasks-queue.qsize(), percent, queue.qsize(), queue.unfinished_tasks-queue.qsize() )
+                    if nt.test not in times: 
+                        times[nt.test] = elapse_time
 
-                def error_finish(nt):
+
+                def error_finish(nt, times):
                     error_string = "*** Test %s did not run!  Check your --mode flag and paths. [%s]\n" % (test, datetime.datetime.now())
                     file(path.join(nt.workdir, ".test_did_not_run.log"), 'w').write(error_string)
                     print error_string,
-                    normal_finish(nt)
+                    times[nt.test] = float('nan') 
+                    normal_finish(nt, times)
 
-                def timeout_finish(nt):
+                def timeout_finish(nt, times):
                     error_string = "*** Test %s exceeded the timeout=%s  and will be killed! [%s]\n" % (test, Options.timeout, datetime.datetime.now())
                     file(path.join(nt.workdir, ".test_got_timeout_kill.log"), 'w').write(error_string)
                     print error_string,
-                    normal_finish(nt)
+                    times[nt.test] = float('inf') 
+                    normal_finish(nt, times)
 
                 if Options.jobs > 1:
-                    pid, nt = mFork(test=test, workdir=workdir, queue=queue, timeout=Options.timeout, normal_finish=normal_finish, error_finish=error_finish, timeout_finish=timeout_finish)
+                    pid, nt = mFork(times=runtimes, test=test, workdir=workdir, queue=queue, timeout=Options.timeout, normal_finish=normal_finish, error_finish=error_finish, timeout_finish=timeout_finish)
                     if not pid:  # we are child process
                         signal.signal(signal.SIGINT, signal.SIG_DFL)
-                        run()
+                        run(runtimes)
                         sys.exit(0)
                 else:
-                    nt = NT(test=test, workdir=workdir, queue=queue, start_time=time.time(), timeout=Options.timeout, normal_finish=normal_finish, error_finish=error_finish, timeout_finish=timeout_finish)
-                    run()
+                    nt = NT(times=runtimes, test=test, workdir=workdir, queue=queue, start_time=time.time(), timeout=Options.timeout, normal_finish=normal_finish, error_finish=error_finish, timeout_finish=timeout_finish)
+                    run(runtimes)
                     if nt.timeout and (time.time() - nt.start_time > nt.timeout): nt.timeout_finish(nt)
                     else: normal_finish(nt)
 
@@ -302,7 +310,7 @@ rm -r ref/; ./integration.py    # create reference results using only default se
         else:
             # Start worker thread(s)
             for i in range(options.num_procs):
-                worker = Worker(queue, outdir, options, timeout_minutes=options.timeout)
+                worker = Worker(queue, outdir, options, times=runtimes, timeout_minutes=options.timeout)
                 thread = threading.Thread(target=worker.work)
                 #thread.setDaemon(True) # shouldn't be necessary here
                 thread.start()
@@ -317,7 +325,7 @@ rm -r ref/; ./integration.py    # create reference results using only default se
                   host= parts[0]
                   nodes= int(parts[1])
                 for node in range(nodes):
-                  worker = Worker(queue, outdir, options, host=host, timeout_minutes=options.timeout)
+                  worker = Worker(queue, outdir, options, times=runtimes, host=host, timeout_minutes=options.timeout)
                   thread = threading.Thread(target=worker.work)
                   #thread.setDaemon(True) # shouldn't be necessary here
                   thread.start()
@@ -404,6 +412,7 @@ rm -r ref/; ./integration.py    # create reference results using only default se
                 print "ok   %s" % test
                 full_log += "ok   %s\n" % test
             else:
+                runtimes[test] = float('nan')
                 print msg
                 full_log += full_log_msg
 
@@ -432,6 +441,11 @@ rm -r ref/; ./integration.py    # create reference results using only default se
             f.write("{total : %s, failed : %s, details : %s, brief : %s}" % (len(tests), diffs, results, brief) )
             f.close()
             '''
+
+    import json
+    time_file = open('new/runtimes.yaml', 'w')
+    json.dump(runtimes, time_file, sort_keys=True, indent=2)
+    time_file.close()
 
     return 0
 
@@ -546,7 +560,7 @@ def print_(msg, color=None, background=None, bright=False, blink=False, action='
     else: return s
 
 
-def mFork(tag=None, overhead=0, **args):
+def mFork(times, tag=None, overhead=0, **args):
     ''' Check if number of child process is below Options.jobs. And if it is - fork the new pocees and return its pid.
     '''
     #print_('Groups:%s' % os.getgroups(), color='cyan')
@@ -555,12 +569,12 @@ def mFork(tag=None, overhead=0, **args):
             r = os.waitpid(j.pid, os.WNOHANG)
             if r == (j.pid, 0):  # process have ended without error
                 normal_finish = getattr(j, 'normal_finish', lambda x: None)
-                normal_finish(j)
+                normal_finish(j, times)
                 Jobs.remove(j)
 
             elif r[0] == j.pid :
                 error_finish = getattr(j, 'error_finish', lambda x: None)
-                error_finish(j)
+                error_finish(j, times)
                 Jobs.remove(j)
 
             else:
@@ -572,7 +586,7 @@ def mFork(tag=None, overhead=0, **args):
                         os.kill(j.pid, signal.SIGKILL)  #
                         #os.killpg(os.getpgid(j.pid), signal.SIGKILL)
                         timeout_finish = getattr(j, 'timeout_finish', lambda x: None)
-                        timeout_finish(j)
+                        timeout_finish(j, times)
                         Jobs.remove(j)
                         break
 
@@ -581,7 +595,7 @@ def mFork(tag=None, overhead=0, **args):
     sys.stdout.flush();  sys.stderr.flush();
     pid = os.fork()
     if pid: pass # We are parent!
-    Jobs.append( NT(pid=pid, tag=tag, start_time=time.time(), **args) )
+    Jobs.append( NT(times=times, pid=pid, tag=tag, start_time=time.time(), **args) )
     return pid, Jobs[-1]
 
 
@@ -595,21 +609,22 @@ def mWait(tag=None, all_=False, timeout=0):
             #print 'Waiting2: ', Jobs
             #try:
             r = os.waitpid(j.pid, os.WNOHANG)
+            times = j.times
             if r == (j.pid, 0):  # process have ended without error
                 normal_finish = getattr(j, 'normal_finish', lambda x: None)
-                normal_finish(j)
+                normal_finish(j, times)
                 Jobs.remove(j)
 
             elif r[0] == j.pid :  # process ended but with error, special case we will have to wait for all process to terminate and call system exit.
                 error_finish = getattr(j, 'error_finish', lambda x: None)
-                error_finish(j)
+                error_finish(j, times)
                 Jobs.remove(j)
 
             elif j.timeout:
                 if time.time() - j.start_time > j.timeout :
                     os.kill(j.pid, signal.SIGKILL)  #os.killpg(os.getpgid(j.pid), signal.SIGKILL)
                     timeout_finish = getattr(j, 'timeout_finish', lambda x: None)
-                    timeout_finish(j)
+                    timeout_finish(j, times)
                     Jobs.remove(j)
 
         time.sleep(.2)
@@ -659,12 +674,13 @@ def generateIntegrationTestCommandline(test, outdir, host=None):
 
 
 class Worker:
-    def __init__(self, queue, outdir, opts, host=None, timeout_minutes=0):
+    def __init__(self, queue, outdir, opts, times, host=None, timeout_minutes=0):
         self.queue = queue
         self.outdir = outdir
         self.opts = opts
         self.host = host
         self.timeout = timeout_minutes * 60
+        self.times = times
 
     def work(self):
         running=0
@@ -695,9 +711,11 @@ class Worker:
                                 time.sleep(1)
                             if retcode is None:
                                 print "*** Test %s exceeded the timeout and will be killed! [%s]\n" % (test, datetime.datetime.now())
+                                self.times[test] = float('inf')
                                 #os.kill(proc.pid, signal.SIGTERM)
                                 os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
                         if retcode != 0 and retcode is not None:
+                            self.times[test] = float('nan')
                             if self.host is None:
                               error_string = "*** Test %s did not run on host %s!  Check your --mode flag and paths. [%s]\n" % (test, 'local_host', datetime.datetime.now())
                             else:
@@ -709,7 +727,9 @@ class Worker:
 
                     finally: # inner try
                         percent = (100* (self.queue.TotalNumberOfTasks-self.queue.qsize())) / self.queue.TotalNumberOfTasks
-                        print "Finished %-40s in %3i seconds\t [~%4s test (%s%%) started, %4s in queue, %4d running]" % (test, time.time() - start, self.queue.TotalNumberOfTasks-self.queue.qsize(), percent, self.queue.qsize(), self.queue.unfinished_tasks-self.queue.qsize() )
+                        elapse_time = time.time() - start
+                        print "Finished %-40s in %3i seconds\t [~%4s test (%s%%) started, %4s in queue, %4d running]" % (test, elapse_time, self.queue.TotalNumberOfTasks-self.queue.qsize(), percent, self.queue.qsize(), self.queue.unfinished_tasks-self.queue.qsize() )
+                        if test not in self.times: self.times[test] = elapse_time
                         self.queue.task_done()
 
                 except Exception, e: # middle try
