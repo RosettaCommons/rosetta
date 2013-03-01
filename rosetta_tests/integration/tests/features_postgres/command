@@ -39,7 +39,7 @@
 #   Run the integration test like this:
 # 
 #     cd path/to/rosetta_tests/integration
-#     ./integration3.py --dbms_host <dbms_host> --dbms_port <dbms_port --dbms_database_name rosetta_tests <test_folder_name>
+#     ./integration3.py --dbms_host <dbms_host> --dbms_user <user_name> --dbms_port <port_num> --dbms_database_name rosetta_tests <test_folder_name>
 #
 #
 cd %(workdir)s
@@ -52,7 +52,7 @@ cd %(workdir)s
 #create a clean schema for this integrtion test:
 echo "DROP SCHEMA %(dbms_pq_schema)s CASCADE;" > log_db_output  2>&1
 psql -h %(dbms_host)s -U %(dbms_user)s -p %(dbms_port)s -w -d %(dbms_database_name)s -c "DROP SCHEMA %(dbms_pq_schema)s CASCADE;" >> log_db_output 2>&1
-echo "CREATE SCHEMA %(dbms_pq_schema)s;\n" >> log_db_output 2>&1
+echo "CREATE SCHEMA %(dbms_pq_schema)s;" >> log_db_output 2>&1
 psql -h %(dbms_host)s -U %(dbms_user)s -p %(dbms_port)s -w -d %(dbms_database_name)s -c "CREATE SCHEMA %(dbms_pq_schema)s;" >> log_db_output 2>&1
 
 %(bin)s/rosetta_scripts.%(binext)s \
@@ -73,6 +73,6 @@ test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executabl
 
 pg_dump -h %(dbms_host)s -U %(dbms_user)s -p %(dbms_port)s -w -n %(dbms_pq_schema)s %(dbms_database_name)s > features_IntegrationTest.sql.dump 2>&1
 
-echo "DROP SCHEMA %(dbms_pq_schema)s CASCADE;\n" >> log_db_output 2>&1 
+echo "DROP SCHEMA %(dbms_pq_schema)s CASCADE;" >> log_db_output 2>&1 
 
 psql -h %(dbms_host)s -U %(dbms_user)s -p %(dbms_port)s -w -d %(dbms_database_name)s -c "DROP SCHEMA %(dbms_pq_schema)s CASCADE;" 2&>1 >> log_db_output
