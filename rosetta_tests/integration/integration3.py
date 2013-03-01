@@ -202,6 +202,7 @@ rm -r ref/; ./integration.py    # create reference results using only default se
     else:
         tests = [ d for d in os.listdir("tests") if not d.startswith(".") and path.isdir(path.join("tests", d)) ]
 
+    runtimes={}
     if not options.compareonly:
         queue = Queue()
         queue.TotalNumberOfTasks = len(tests)
@@ -213,7 +214,7 @@ rm -r ref/; ./integration.py    # create reference results using only default se
 
         # Start worker thread(s)
         for i in range(options.num_procs):
-            worker = Worker(queue, outdir, options, timeout_minutes=options.timeout, index=i )
+            worker = Worker(queue, outdir, options, times=runtimes, timeout_minutes=options.timeout, index=i )
             thread = threading.Thread(target=worker.work)
             #thread.setDaemon(True) # shouldn't be necessary here
             thread.start()
@@ -230,7 +231,7 @@ rm -r ref/; ./integration.py    # create reference results using only default se
               host= parts[0]
               nodes= int(parts[1])
             for node in range(nodes):
-              worker = Worker(queue, outdir, options, host=host, timeout_minutes=options.timeout, index=count)
+              worker = Worker(queue, outdir, options, times=runtimes, host=host, timeout_minutes=options.timeout, index=count)
               thread = threading.Thread(target=worker.work)
               #thread.setDaemon(True) # shouldn't be necessary here
               thread.start()
@@ -239,6 +240,10 @@ rm -r ref/; ./integration.py    # create reference results using only default se
         queue.join()
         #print( "Completed the integration test execution" )
 
+    import json
+    time_file = open('new/runtimes.yaml', 'w')
+    json.dump(runtimes, time_file, sort_keys=True, indent=2)
+    time_file.close()
     # Analyze results
     print()
 
@@ -375,13 +380,14 @@ def wrapNewLine(s):
 
 
 class Worker:
-    def __init__(self, queue, outdir, opts, host=None, timeout_minutes=0, index=0):
+    def __init__(self, queue, outdir, opts, times, host=None, timeout_minutes=0, index=0):
         self.queue = queue
         self.outdir = outdir
         self.opts = opts
         self.host = host
         self.timeout = timeout_minutes * 60
         self.index = index
+        self.times = times
     def work(self):
         running=0
         try:
@@ -459,7 +465,9 @@ class Worker:
 
                     finally: # inner try
                         percent = (100* (self.queue.TotalNumberOfTasks-self.queue.qsize())) / self.queue.TotalNumberOfTasks
-                        print( "Finished %-40s in %3i seconds\t [~%4s test (%4.1f%%) started, %4s in queue, %4d running]" % (test, time.time() - start, self.queue.TotalNumberOfTasks-self.queue.qsize(), percent, self.queue.qsize(), self.queue.unfinished_tasks-self.queue.qsize() ) )
+                        elapse_time = time.time() - start
+                        print( "Finished %-40s in %3i seconds\t [~%4s test (%4.1f%%) started, %4s in queue, %4d running]" % (test, elapse_time, self.queue.TotalNumberOfTasks-self.queue.qsize(), percent, self.queue.qsize(), self.queue.unfinished_tasks-self.queue.qsize() ) )
+                        self.times[test] = elapse_time
                         self.queue.task_done()
 
                 except Exception as e: # middle try
