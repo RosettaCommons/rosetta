@@ -37,6 +37,7 @@
 
 // External Headers
 #include <cppdb/frontend.h>
+#include <boost/assign/list_of.hpp>
 
 // C++ Headers
 #include <string>
@@ -123,31 +124,18 @@ BatchFeatures::report_features(
 		<< "\tdescription '" << description << "'" << std::endl;
 
 
-	//INSERT OR IGNORE probably isnt the best way of dealing with this but i was getting a stupid race condition with MPI before
-	//better designs encouraged.
-	std::string insert_string;
-	switch(db_session->get_db_mode())
-	{
-	case utility::sql_database::DatabaseMode::sqlite3:
-		insert_string = "INSERT OR IGNORE INTO batches (batch_id, protocol_id, name, description) VALUES (?,?,?,?);";
-		break;
-	case utility::sql_database::DatabaseMode::mysql:
-	case utility::sql_database::DatabaseMode::postgres:
-		insert_string = "INSERT IGNORE INTO batches (batch_id, protocol_id, name, description) VALUES (?,?,?,?);";
-		break;
-	default:
-		utility_exit_with_message(
-			"Unrecognized database mode: '" +
-			name_from_database_mode(db_session->get_db_mode()) + "'");
-		break;
-	}
-	cppdb::statement insert_statement = basic::database::safely_prepare_statement(insert_string,db_session);
-	insert_statement.bind(1,batch_id);
-	insert_statement.bind(2,protocol_id);
-	insert_statement.bind(3,name);
-	insert_statement.bind(4,description);
+	using namespace boost::assign;
+	std::vector<string> column_names = list_of("batch_id")("protocol_id")("name")("description");
 
-	basic::database::safely_write_to_database(insert_statement);
+	stringstream batch_id_str;
+	batch_id_str << batch_id;
+
+	stringstream protocol_id_str;
+	protocol_id_str << protocol_id;
+
+	std::vector<string> values =
+		list_of(batch_id_str.str())(protocol_id_str.str())("'"+name+"'")("'"+description+"'");
+	basic::database::insert_or_ignore("batches", column_names, values, db_session);
 
 	return 0;
 }
