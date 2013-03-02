@@ -2402,7 +2402,7 @@ Options = Option_Group( '',
 		Option( 'flip_HNQ', 'Boolean',
 			desc="Consider flipping HIS, ASN, and GLN during hydrogen placement optimization"
 			),
-		Option( 'fix_his_tautomer','IntegerVector', desc='seqpos numbers of his residus whose tautomer should be fixed during repacking',
+		Option( 'fix_his_tautomer','IntegerVector', desc='seqpos numbers of his residus whose tautomer should be fixed during repacking.  If the value 0 is given and is the only value given, then all histadine tautomers will be held fixed',
 			default=[]
 			),
 		Option( 'print_pymol_selection', 'Boolean',

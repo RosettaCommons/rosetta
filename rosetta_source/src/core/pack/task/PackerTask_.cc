@@ -1937,7 +1937,30 @@ PackerTask_::initialize_from_command_line()
 	}
 
 	if ( option[ packing::fix_his_tautomer ].user() ) {
-		or_fix_his_tautomer( option[packing::fix_his_tautomer], true );
+		utility::vector1< int > positions_to_fix( option[ packing::fix_his_tautomer ] );
+		if ( positions_to_fix.size() == 1 && positions_to_fix[ 1 ] == 0 ) {
+			utility::vector1< Size > empty;
+			or_fix_his_tautomer( empty, true );
+		} else {
+			utility::vector1< Size > good_positions;
+			good_positions.reserve( positions_to_fix.size() );
+			for ( Size ii = 1; ii <= positions_to_fix.size(); ++ii ) {
+				if ( positions_to_fix[ ii ] > 0 && positions_to_fix[ ii ] <= int(nres_) ) {
+					good_positions.push_back( positions_to_fix[ ii ] );
+				} else {
+					T.Warning << "Ignoring position " << positions_to_fix[ ii ] << " given on the command line for the fix_his_tautomer flag\n";
+					if ( positions_to_fix[ii] == 0 ) {
+						T.Warning << "The given value of 0 can only be given if there is only a single value given.\n";
+						T.Warning << "If multiple values are given, they must all be greater than 0 and less than the total number of residues in the protein" << std::endl;
+					} else if ( positions_to_fix[ii] < 0 ) {
+						T.Warning << "A negative value was given, but this flag accepts only positive values" << std::endl;
+					} else {
+						T.Warning << "There are only " << nres_ << " residues in the Pose at the time this flag is read" << std::endl;
+					}
+				}
+			}
+			or_fix_his_tautomer( good_positions, true );
+		}
 	}
 
 	if ( option[ packing::repack_only ].value() ) {

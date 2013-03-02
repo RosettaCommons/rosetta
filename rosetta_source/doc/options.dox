@@ -5875,7 +5875,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-fix_his_tautomer</b> \<IntegerVector\><dt>
-<dd>seqpos numbers of his residus whose tautomer should be fixed during repacking</dd><br>
+<dd>seqpos numbers of his residus whose tautomer should be fixed during repacking.  If the value 0 is given and is the only value given, then all histadine tautomers will be held fixed</dd><br>
 <dd>Default: []</dd><br>
 </dl>
 <dl>
