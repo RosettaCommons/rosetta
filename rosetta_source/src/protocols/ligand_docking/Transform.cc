@@ -296,11 +296,9 @@ void Transform::change_conformer(core::conformation::UltraLightResidue & residue
 {
 	assert(ligand_conformers_.size());
 	core::Size index_to_select = RG.random_range(1,ligand_conformers_.size());
-	//get center before overwriting
-	core::Vector center(residue.center());
-	residue = core::conformation::UltraLightResidue(ligand_conformers_[index_to_select]);
-	//slide new conformation back to original center point
-	residue.slide(center);
+	core::conformation::UltraLightResidue new_residue(core::conformation::UltraLightResidue(ligand_conformers_[index_to_select]));
+	new_residue.align_to_residue(residue);
+	residue = new_residue;
 
 }
 

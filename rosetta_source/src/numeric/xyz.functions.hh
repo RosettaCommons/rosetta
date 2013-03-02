@@ -25,13 +25,18 @@
 #include <numeric/xyzMatrix.hh>
 #include <numeric/sphericalVector.hh>
 
+
 //utility headers
 #include <utility/string_util.hh>
+#include <utility/vector1.hh>
 
 // C++ headers
 #include <cmath>
 #include <cstdlib>
 #include <vector>
+
+//ObjexxFCL headers
+#include <ObjexxFCL/FArray2D.hh>
 
 namespace numeric {
 
@@ -971,6 +976,75 @@ comma_seperated_string_to_xyz(std::string triplet)
 
 }
 
+
+///@brief convert a vector1 of xyzVectors to an FArray2D
+template<typename T>
+inline
+ObjexxFCL::FArray2D<T>
+vector_of_xyzvectors_to_FArray(utility::vector1< xyzVector<T> > const & input)
+{
+	ObjexxFCL::FArray2D< T > output(3,input.size());
+	for(numeric::Real index = 1; index <= input.size();++index)
+	{
+		output(1,index) = input[index].x();
+		output(2,index) = input[index].y();
+		output(3,index) = input[index].z();
+	}
+	return output;
+}
+
+///@brief convert an FArray2D to a vector of xyzVectors
+template<typename T>
+inline
+utility::vector1< xyzVector<T> >
+FArray_to_vector_of_xyzvectors(ObjexxFCL::FArray2D<T> const & input)
+{
+	assert(input.size1() == 3);
+	utility::vector1< xyzVector<T> > output(input.size2(),xyzVector<T>());
+	for(numeric::Real index = 1; index <= input.size2();++index)
+	{
+		output[index].x(input(1,index));
+		output[index].y(input(2,index));
+		output[index].z(input(3,index));
+	}
+
+	return output;
+}
+
+///@brief convert a 3x3 FArray 2D to an xyzMatrix
+template<typename T>
+inline
+numeric::xyzMatrix<T>
+FArray_to_xyzmatrix(ObjexxFCL::FArray2D<T> const & input)
+{
+	assert(input.size1() == 3 && input.size2() == 3);
+
+	return xyzMatrix<T>::rows(
+		input(1,1),input(1,2),input(1,3),
+		input(2,1),input(2,2),input(2,3),
+		input(3,1),input(3,2),input(3,3)
+	);
+}
+
+///@brief convert an xyzMatrix to a 3x3 FArray 2D
+template<typename T>
+inline
+ObjexxFCL::FArray2D<T> xyzmatrix_to_FArray(numeric::xyzMatrix<T> const & input)
+{
+	ObjexxFCL::FArray2D<T> output(3,3);
+	output(1,1) = input.xx();
+	output(1,2) = input.xy();
+	output(1,3) = input.xz();
+	output(2,1) = input.yx();
+	output(2,2) = input.yy();
+	output(2,3) = input.yz();
+	output(3,1) = input.zx();
+	output(3,2) = input.zy();
+	output(3,3) = input.zz();
+
+	return output;
+
+}
 
 } // namespace numeric
 

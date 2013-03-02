@@ -25,6 +25,7 @@
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzMatrix.io.hh>
 #include <numeric/constants.hh>
+#include <utility/vector1.hh>
 
 // --------------- Test Class --------------- //
 
@@ -258,6 +259,53 @@ class XYZFunctionsTests : public CxxTest::TestSuite {
 		TS_ASSERT_DELTA(new_xyz.x(),1.0000f,delta_percent);
 		TS_ASSERT_DELTA(new_xyz.y(),1.0000f,delta_percent);
 		TS_ASSERT_DELTA(new_xyz.z(),1.0000f,delta_percent);
+	}
+
+	void test_xyz_farray_conversions() {
+		utility::vector1<numeric::xyzVector<numeric::Real> > input_vector;
+		input_vector.push_back(numeric::xyzVector<numeric::Real>(1.0,2.0,3.0));
+		input_vector.push_back(numeric::xyzVector<numeric::Real>(4.0,5.0,6.0));
+
+		ObjexxFCL::FArray2D<numeric::Real> output_array(numeric::vector_of_xyzvectors_to_FArray(input_vector));
+		TS_ASSERT_EQUALS(output_array.size1(), 3);
+		TS_ASSERT_EQUALS(output_array.size2(), 2);
+
+		TS_ASSERT_EQUALS(output_array(1,1),1.0);
+		TS_ASSERT_EQUALS(output_array(2,1),2.0);
+		TS_ASSERT_EQUALS(output_array(3,1),3.0);
+
+		TS_ASSERT_EQUALS(output_array(1,2),4.0);
+		TS_ASSERT_EQUALS(output_array(2,2),5.0);
+		TS_ASSERT_EQUALS(output_array(3,2),6.0);
+
+		utility::vector1<numeric::xyzVector<numeric::Real> > output_vector(numeric::FArray_to_vector_of_xyzvectors(output_array));
+		TS_ASSERT_EQUALS(output_vector.size(),2);
+		TS_ASSERT_EQUALS(input_vector,output_vector);
+
+		numeric::xyzMatrix<numeric::Real> input_matrix(numeric::xyzMatrix<numeric::Real>::rows(
+			1.0,2.0,3.0,
+			4.0,5.0,6.0,
+			7.0,8.0,9.0
+		));
+
+		ObjexxFCL::FArray2D<numeric::Real> output_matrix_array(numeric::xyzmatrix_to_FArray<numeric::Real>(input_matrix));
+		TS_ASSERT_EQUALS(output_matrix_array.size1(),3);
+		TS_ASSERT_EQUALS(output_matrix_array.size2(),3);
+
+		TS_ASSERT_EQUALS(output_matrix_array(1,1),1.0);
+		TS_ASSERT_EQUALS(output_matrix_array(1,2),2.0);
+		TS_ASSERT_EQUALS(output_matrix_array(1,3),3.0);
+
+		TS_ASSERT_EQUALS(output_matrix_array(2,1),4.0);
+		TS_ASSERT_EQUALS(output_matrix_array(2,2),5.0);
+		TS_ASSERT_EQUALS(output_matrix_array(2,3),6.0);
+
+		TS_ASSERT_EQUALS(output_matrix_array(3,1),7.0);
+		TS_ASSERT_EQUALS(output_matrix_array(3,2),8.0);
+		TS_ASSERT_EQUALS(output_matrix_array(3,3),9.0);
+
+		numeric::xyzMatrix<numeric::Real> output_matrix(numeric::FArray_to_xyzmatrix(output_matrix_array));
+		TS_ASSERT_EQUALS(input_matrix,output_matrix);
 	}
 
 };

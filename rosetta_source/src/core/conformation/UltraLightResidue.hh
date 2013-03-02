@@ -45,6 +45,9 @@ public:
 	//@brief apply some transformation matrix and translation perturbation
 	void transform(numeric::xyzMatrix<core::Real> const & rotation_matrix, core::Vector const & translation_vector );
 
+	//@brief align the residue on to some other residue
+	void align_to_residue(UltraLightResidue const & other_residue);
+
 	//@brief move residue to some center point
 	void slide(core::Vector const & translation_vector);
 
@@ -76,6 +79,12 @@ public:
 	PointPosition center() const
 	{
 		return center_;
+	}
+
+	///@brief get const ref to residue coords
+	utility::vector1<PointPosition> const & coords_vector() const
+	{
+		return coords_;
 	}
 
 private:

@@ -17,6 +17,7 @@
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzTransform.hh>
 #include <numeric/xyz.functions.hh>
+#include <numeric/model_quality/rms.hh>
 
 namespace core {
 namespace conformation {
@@ -52,6 +53,26 @@ void UltraLightResidue::transform(numeric::xyzMatrix<core::Real> const & rotatio
 	{
 		*it = transformer*(*it);
 	}
+}
+
+void UltraLightResidue::align_to_residue(UltraLightResidue const & other_residue)
+{
+
+	utility::vector1<PointPosition> target_coords(other_residue.coords_vector());
+	utility::vector1<core::Real> weights(target_coords.size(),1.0); //weight every atom equally
+	numeric::xyzMatrix<core::Real> rot_matrix;
+	core::Real sigma3 = 0.0; //unused but findUU() needs it
+
+	numeric::model_quality::findUU(coords_,target_coords,weights,target_coords.size(),rot_matrix,sigma3);
+
+	//coords_ and target_coords get recentered to 0,0,0.  rot_matrix gets set to the correct rotation matrix. sigma3 is set but nobody cares
+	//setup the transform, use the last move center to recenter away from zero
+	numeric::xyzTransform<core::Real> transformer(rot_matrix,center_);
+	for(utility::vector1<PointPosition>::iterator it = coords_.begin(); it != coords_.end(); ++it)
+	{
+		*it = transformer*(*it);
+	}
+
 }
 
 void UltraLightResidue::slide(core::Vector const & translation_vector)

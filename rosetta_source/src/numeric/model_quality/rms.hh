@@ -19,6 +19,7 @@
 
 #include <numeric/types.hh>
 #include <numeric/xyzVector.hh>
+#include <numeric/xyzMatrix.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
@@ -85,6 +86,16 @@ calc_rms_fast(
 	ObjexxFCL::FArray1A< numeric::Real > ww,
 	int npoints,
 	numeric::Real ctx
+);
+
+void
+findUU(
+	utility::vector1< numeric::xyzVector<numeric::Real> > & XX,
+	utility::vector1< numeric::xyzVector<numeric::Real> > & YY,
+	utility::vector1< numeric::Real > const & WW,
+	int Npoints,
+	numeric::xyzMatrix< numeric::Real > & UU,
+	numeric::Real & sigma3
 );
 
 void

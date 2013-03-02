@@ -270,7 +270,7 @@ findUU(
 
 	if ( Npoints < 1 ) {
 
-// return identity rotation matrix to moron
+		// return identity rotation matrix to moron
 		for ( int i = 1; i <= 3; ++i ) {
 			for ( int k = 1; k <= 3; ++k ) {
 				UU(i,k) = 0.0;
@@ -311,7 +311,7 @@ findUU(
 		}
 	}
 
-// Multiply CROSS MOMENTS by transpose
+	// Multiply CROSS MOMENTS by transpose
 	BlankMatrixMult(m_moment,3,3,1,m_moment,3,0,rr_moment);
 
 	// Copy to/from xyzMatrix/xyzVector since rest of functions use FArrays
@@ -330,7 +330,7 @@ findUU(
 		}
 	}
 
-// explicitly coded 3 level index sort using eigenvalues
+	// explicitly coded 3 level index sort using eigenvalues
 	for ( int i = 1; i <= 3; ++i ) {
 		sort(i) = i;
 	}
@@ -350,10 +350,10 @@ findUU(
 		}
 	}
 
-// sort is now an index to order of eigen values
+	// sort is now an index to order of eigen values
 
 	if ( w_w(sort(2)) == 0.0 ) { // holy smokes, two eigen values are zeros
-// return identity rotation matrix to moron
+		// return identity rotation matrix to moron
 		for ( int i = 1; i <= 3; ++i ) {
 			for ( int k = 1; k <= 3; ++k ) {
 				UU(i,k) = 0.0;
@@ -368,13 +368,13 @@ findUU(
 		return; // make like a prom dress and slip off
 	}
 
-// sort eigen values
+	// sort eigen values
 	temp1 = w_w(sort(1));
 	temp2 = w_w(sort(2));
 	w_w(3) = w_w(sort(3));
 	w_w(2) = temp2;
 	w_w(1) = temp1;
-// sort first two eigen vectors (dont care about third)
+	// sort first two eigen vectors (dont care about third)
 	for ( int i = 1; i <= 3; ++i ) {
 		temp1 = eVec(i,sort(1));
 		temp2 = eVec(i,sort(2));
@@ -399,9 +399,9 @@ findUU(
 		Ra(j) = bb(j,3);
 	}
 
-// normalize first two bb-basis vectors
-// dont care about third since were going to replace it with b1xb2
-// this also avoids problem of possible zero third eigen value
+	// normalize first two bb-basis vectors
+	// dont care about third since were going to replace it with b1xb2
+	// this also avoids problem of possible zero third eigen value
 	for ( int j = 1; j <= 2; ++j ) {
 		temp1 = 1.0/std::sqrt(w_w(j)); // zero checked for above
 		for ( int k = 1; k <= 3; ++k ) { // x,y,z
@@ -422,9 +422,9 @@ findUU(
 	for ( int j = 1; j <= 3; ++j ) {
 		sigma3 += bb(j,3)*Ra(j);
 	}
-//cems the abs() fixes some round off error situations where the w_w values are
-//cems very small and accidentally negative.  (theoretically they are positive,
-//cems but in practice round off error makes them negative)
+	//cems the abs() fixes some round off error situations where the w_w values are
+	//cems very small and accidentally negative.  (theoretically they are positive,
+	//cems but in practice round off error makes them negative)
 	if ( sigma3 < 0.0 ) {
 		sigma3 = std::sqrt(std::abs(w_w(1))) + std::sqrt(std::abs(w_w(2))) -
 		 std::sqrt(std::abs(w_w(3)));
@@ -434,6 +434,41 @@ findUU(
 	}
 
 } // findUU
+
+/// @brief This is a helper function for using the above implementation of findUU.  There is some cost to the
+/// conversion but everything else is probably slower and also you don't have to use FArrays everywhere
+void
+findUU(
+	utility::vector1< numeric::xyzVector<numeric::Real> > & XX,
+	utility::vector1< numeric::xyzVector<numeric::Real> > & YY,
+	utility::vector1< numeric::Real > const & WW,
+	int Npoints,
+	numeric::xyzMatrix< numeric::Real > & UU,
+	numeric::Real & sigma3
+)
+{
+	FArray2D< numeric::Real > XX_Farray(numeric::vector_of_xyzvectors_to_FArray<numeric::Real>(XX));
+	FArray2D< numeric::Real > YY_Farray(numeric::vector_of_xyzvectors_to_FArray<numeric::Real>(YY));
+	FArray1D< numeric::Real > WW_Farray(WW.size());
+	FArray2D< numeric::Real > UU_Farray(numeric::xyzmatrix_to_FArray<numeric::Real>(UU));
+
+	for(numeric::Size index = 1; index <= WW.size();++index)
+	{
+		WW_Farray(index) = WW[index];
+	}
+
+	findUU(XX_Farray,YY_Farray,WW_Farray,Npoints,UU_Farray,sigma3);
+
+	//XX, YY, and UU were updated, convert those back.  WW is const so don't bother
+
+	XX = numeric::FArray_to_vector_of_xyzvectors(XX_Farray);
+	YY = numeric::FArray_to_vector_of_xyzvectors(YY_Farray);
+	UU = numeric::FArray_to_xyzmatrix(UU_Farray);
+
+
+
+
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @begin BlankMatrixMult
