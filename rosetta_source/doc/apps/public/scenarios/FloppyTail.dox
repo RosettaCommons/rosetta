@@ -67,7 +67,7 @@ This code was intended for a single purpose, but it may work if you have a simil
 
 FloppyTail options
 @li -flexible_start_resnum - integer - this is the start of the flexible tail in PDB numbering. (See below that you have an option for passing a MoveMap file instead).
-@li -flexible_stop_resnum - integer - this is the end of the flexible region, in PDB numbering.  Passing 0 or not using this option means the entire chain after flexible_start_resnum. (See below that you have an option for passing a MoveMap file instead).
+@li -flexible_stop_resnum - integer - this is the end of the flexible region, in PDB numbering.  Not using this option means the entire chain after flexible_start_resnum. (See below that you have an option for passing a MoveMap file instead).
 @li -flexible_chain - string - the first character of this string is interpreted as the PDB chain for the flexible region; any other characters are ignored.
 @li -shear_on - real - In centroid mode, shear moves are completely nonproductive early on when the tail is still largely extended.  This value gives the fraction of centroid cycles when shear moves will be allowed (introduced into the moveset of the RandomMover choosing perturbation moves).  For example, passing 0.333 means that for the first third of centroid mode, shear moves will be disallowed.
 @li -short_tail::short_tail_fraction - real - Fraction of the tail used in the short tail fraction of refinement mode.  0.1 would mean the last tenth of the tail is flexible.  Not compatible with non-terminal flexible regions.
