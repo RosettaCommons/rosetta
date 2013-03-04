@@ -102,8 +102,9 @@ class ligand_ncaa_ptm_manager:
         print "To permenantly enable patches and parameters for amino acids, polymers, and ligands uncomment the file in: "
         print os.environ['PYROSETTA_DATABASE']+'/chemical/residue_type_sets/fa_standard/patches.txt'
         print os.environ['PYROSETTA_DATABASE']+'/chemical/residue_type_sets/fa_standard/residue_types.txt'
-        print "It is recommended to switch at least the statistical residue-based pair potential to the coulumbic atom-based hack_elec potential"
-        print "Please consider using the mm_std scorefunction for more complex NCAA"
+        print "It is recommended to switch at least the statistical residue-based pair potential to the coulumbic atom-based hack_elec potential (Ligands/PTM)"
+        print "Consider using the mm_std scorefunction for NCAA (No DNA)"
+        print "Consider using the orbitals scorefunction for DNA/RNA/NCAA (No Ligands)"
         print "Note that this may increase run time, especially for larger selections"
         #print "In preliminary results, it has also been shown to increase rotamer recovery for cannonical AA's (unpublished/Dunbrack Lab)"
         #print "To add a variant type to a pose, use the Per Residue Control in the advanced menu."
@@ -133,7 +134,9 @@ class ligand_ncaa_ptm_manager:
         self.switch_elec_to_pair_button=Button(self.main, text = "statistical <- coulombic", command = lambda: self.set_hack_elec(False))
         
         self.scorefunction_label = Label(self.main, text = "Score Function")
+        self.switch_to_orbitals_button = Button(self.main, text = "Orbital Based: orbitals", command = lambda: self.set_orbitals())
         self.switch_to_mm_std_button = Button(self.main, text = "Molecular Mechanics Based: mm_std", command = lambda: self.set_mm_std())
+        
         self.current_main_selection.set(self.selections[0])
         
         #Photo.  This is for Jason Labonte, for his help in understanding how Rosetta works with NCAA/Patches
@@ -170,7 +173,8 @@ class ligand_ncaa_ptm_manager:
         self.switch_elec_to_pair_button.grid(row=r+16, column=c+1, columnspan=2)
 
         self.scorefunction_label.grid(row=r+17, column=c+1, columnspan=2, pady=5)
-        self.switch_to_mm_std_button.grid(row=r+18, column=c+1, columnspan=2)
+        self.switch_to_orbitals_button.grid(row=r+18, column=c+1, columnspan=2)
+        self.switch_to_mm_std_button.grid(row=r+19, column=c+1, columnspan=2)
         
         
 ### 'Public' Getter and Setters ###
@@ -287,6 +291,14 @@ class ligand_ncaa_ptm_manager:
         self.score_class.set_scorefunction('mm_std')
         print "Please cite:  P. Douglas Renfrew, Eun Jung Choi, Brian Kuhlman, 'Using Noncanonical Amino Acids in Computational Protein-Peptide Interface Design' (2011) PLoS One."
     
+    def set_orbitals(self):
+        """
+        Sets the orbitals scorefunction.
+        """
+        self.score_class.set_scorefunction('orbitals')
+        print "Orbitals Scorefunction created by Steven Combs - Meiler Lab, Vanderbilt University"
+        print "No paper to cite as of yet."
+        
     def set_prop(self, prop):
         """
         Sets the current propertyclass, whether it be param or patch
