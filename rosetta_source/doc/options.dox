@@ -5265,6 +5265,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-dna_move</b> \<Boolean\><dt>
+<dd>allow dna to move during relax + allow DNA-DNA interactions. Best if used with orbitals scorefunction. DNA stays together with great molprobity results.  Not recommended for general use at this time.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-minimize_bond_lengths</b> \<Boolean\><dt>
 <dd>Free bond length DOFs during relax for all atoms</dd><br>
 <dd>Default: false</dd><br>

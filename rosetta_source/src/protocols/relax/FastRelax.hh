@@ -127,11 +127,6 @@ public:
   /// @brief Apply the FastRelax. Overloaded apply function from mover base class.
 	virtual void apply( core::pose::Pose & pose );
 
-	/// @brief sets the movemap to not allow DNA to move during relax.
-
-	void makeDnaRigid( core::pose::Pose & pose, core::kinematics::MoveMapOP mm );
-
-
   /// @brief Batch Relax, a new even faster way to relax entire batches of structures.
 	void batch_apply( 
 		std::vector < core::io::silent::SilentStructOP > &  input_structs,
@@ -183,6 +178,9 @@ private:   // options
   /// @brief Allow Chi angles to move ?
 	bool repack_;
 
+	/// @brief Allow DNA to move?  default is False.  If True will setup DNA-specific relax settings.
+	bool dna_move_;
+	
 	/// @brief Do only a few test_cycles ?
 	bool test_cycles_;
 
@@ -192,6 +190,8 @@ private:   // options
 	/// @brief Dump pdb after repack, min, or ramp_repack_min?
 	bool dumpall_;
 
+
+	
   /// @brief Quit after this many accepts ?// limits themaximum number of accepts, default is 1000000
 	core::Size script_max_accept_;
 

@@ -1097,6 +1097,7 @@ option.add( basic::options::OptionKeys::relax::limit_aroma_chi2, "limit chi2 rot
 option.add( basic::options::OptionKeys::relax::bb_move, "allow backbone to move during relax" ).def(true);
 option.add( basic::options::OptionKeys::relax::chi_move, "allow sidechain to move during relax" ).def(true);
 option.add( basic::options::OptionKeys::relax::jump_move, "allow jump to move during relax" ).def(false);
+option.add( basic::options::OptionKeys::relax::dna_move, "allow dna to move during relax + allow DNA-DNA interactions. Best if used with orbitals scorefunction. DNA stays together with great molprobity results.  Not recommended for general use at this time." ).def(false);
 option.add( basic::options::OptionKeys::relax::minimize_bond_lengths, "Free bond length DOFs during relax for all atoms" ).def(false);
 option.add( basic::options::OptionKeys::relax::minimize_bond_angles, "Free bond angle DOFs during relax for all atoms" ).def(false);
 option.add( basic::options::OptionKeys::relax::minimize_bondlength_subset, "Minimize only a subset of bondlengths 0 Default  all bondlengths 1          backbone only 2          sidechain only 3          CA only (Ca-C,Ca-N and Ca-Cb)" ).legal(0).legal(1).legal(2).legal(3).def(0);
@@ -1340,10 +1341,10 @@ option.add( basic::options::OptionKeys::rbe::server_port, "port for rosetta back
 option.add( basic::options::OptionKeys::rbe::poll_frequency, "No description" ).def(1.0);
 option.add( basic::options::OptionKeys::blivens::blivens, "blivens option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::blivens::disulfide_scorer::disulfide_scorer, "disulfide_scorer option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::blivens::disulfide_scorer::nds_prob, "The probability of scoring a non-disulfide pair" ).def(0.0);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::blivens::disulfide_scorer::cys_prob, "The probability of outputing a pair of non-disulf cysteines. Default to nds_prob" ).def(-1.0);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::blivens::disulfide_scorer::nds_prob, "The probability of scoring a non-disulfide pair" ).def(0.0);
+option.add( basic::options::OptionKeys::blivens::disulfide_scorer::cys_prob, "The probability of outputing a pair of non-disulf cysteines. Default to nds_prob" ).def(-1.0);
 option.add( basic::options::OptionKeys::blivens::score_type, "The scoring type to use, eg for a filter." ).def("total_score");
 option.add( basic::options::OptionKeys::krassk::krassk, "krassk option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::krassk::left_tail, "No description" ).def(0);
@@ -2010,10 +2011,10 @@ option.add( basic::options::OptionKeys::RBSegmentRelax::nrboutercycles, "number 
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_scorefxn, "number of rigid-body moves" ).def("score5");
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_fragment_moves, "omit fragment insertions (in SS elements)" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_seqshift_moves, "omit sequence shifting moves" ).def(false);
-option.add( basic::options::OptionKeys::RBSegmentRelax::skip_rb_moves, "omit rigid-body moves" ).def(false);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::helical_movement_params, "helical-axis-rotation, helical-axis-translation, off-axis-rotation, off-axis-translation" ).def(utility::vector1<float>(4,0.0));
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::skip_rb_moves, "omit rigid-body moves" ).def(false);
+option.add( basic::options::OptionKeys::RBSegmentRelax::helical_movement_params, "helical-axis-rotation, helical-axis-translation, off-axis-rotation, off-axis-translation" ).def(utility::vector1<float>(4,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::strand_movement_params, "strand-in-plane-rotation, strand-in-plane-translation, out-of-plane-rotation, out-of-plane-translationn" ).def(utility::vector1<float>(4,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::default_movement_params, "default-rotation, default-translation" ).def(utility::vector1<float>(2,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_seqwidth, "sequence width on constraints" ).def(0);

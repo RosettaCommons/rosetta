@@ -56,6 +56,9 @@ public:
 
 typedef utility::vector1< PositionType > PositionTypes;
 
+
+/// @details checks c-beta (except glycine) to base atom-atom distances, not including ribose or phosphate backbone.
+/// @authors ashworth
 bool
 close_to_dna(
 	core::conformation::Residue const & pres,
@@ -64,6 +67,8 @@ close_to_dna(
 	bool base_only = false
 );
 
+/// @details arginine rotamer sweep at a protein residue to see if it should be considered a (potentially) 'dna-contacting' residue
+/// @authors ashworth
 core::Real
 argrot_dna_dis2(
 	core::pose::Pose const & pose,
@@ -74,6 +79,8 @@ argrot_dna_dis2(
 	bool base_only = false
 );
 
+/// @details distance check for contact between two sets of atoms
+/// @authors ashworth
 core::Real
 contact_distance2(
 	core::conformation::Atoms::const_iterator a_begin,
@@ -83,19 +90,27 @@ contact_distance2(
 	core::Real threshold = 0.0
 );
 
+/// @details A sanity check for the arginine rotamer screen. Can prevent the design of positions that are best left alone because they are too far away along the helical axis ('laterally').
+/// @authors ashworth
 core::Real
 z_axis_dist(
 	core::conformation::Residue const & pres,
 	core::conformation::Residue const & dres
 );
 
+/// @brief also consider using the dna_base_partner function below
+/// @authors ashworth
 std::string dna_comp_name_str( std::string const & dna );
 
+/// @begin dna_full_name3
+/// @brief intended to convert any DNA "threeletter code" into the full three-letter code. Note that this does not (necessarily) return the same thing as residue_type::name3 (which returns "  N" format as of Dec 2008)
 std::string dna_full_name3( std::string const & name3 );
 
 core::chemical::AA
 dna_base_partner( core::chemical::AA const & na );
 
+/// @details DnaChains version, adapted from pbradley's code.  More paranoid geometry checks, in order to allow highly distorted basepairs without making mistakes
+/// @authors ashworth
 void
 find_basepairs(
 	core::pose::Pose const & pose,
@@ -110,6 +125,8 @@ make_sequence_combinations(
 	core::pack::task::PackerTaskCOP ptask
 ); */
 
+/// @brief make a list of all single mutants from a base sequence
+/// @authors ashworth
 void
 make_single_mutants(
 	ResTypeSequence const & sequence,
@@ -156,6 +173,8 @@ void print_sequences_pdb_nums(
 	std::ostream &
 );
 
+/// @details for packing a single DNA sequence out of a multi-DNA-sequence RotamerSet
+/// @authors ashworth
 void
 restrict_dna_rotamers(
 	core::pack::rotamer_set::RotamerSetsCOP rotsets,
@@ -163,6 +182,8 @@ restrict_dna_rotamers(
 	utility::vector0<int> & rot_to_pack
 );
 
+/// @details for packing a single sequence out of a RotamerSets that (potentially) represents sequence variability
+/// @authors ashworth
 void
 restrict_to_single_sequence(
 	core::pack::rotamer_set::RotamerSetsCOP rotamer_sets,
@@ -181,6 +202,11 @@ void write_checkpoint( core::pose::Pose & pose, core::Size iter );
 void load_checkpoint( core::pose::Pose & pose, core::Size & iter );
 void checkpoint_cleanup();
 
+/// @brief loads command-line dna design definitions (shorthand alternative to using resfile)
+/// option value is string vector
+///   i.e. -dna_defs C.-6 C.-5
+///   or   -dna_defs C.-6.GUA C.-5.CYT
+/// @author ashworth
 void
 load_dna_design_defs_from_strings(
 	DnaDesignDefOPs & defs,

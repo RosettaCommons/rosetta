@@ -422,6 +422,7 @@ namespace relax { BooleanOptionKey const limit_aroma_chi2( "relax:limit_aroma_ch
 namespace relax { BooleanOptionKey const bb_move( "relax:bb_move" );  }
 namespace relax { BooleanOptionKey const chi_move( "relax:chi_move" );  }
 namespace relax { BooleanOptionKey const jump_move( "relax:jump_move" );  }
+namespace relax { BooleanOptionKey const dna_move( "relax:dna_move" );  }
 namespace relax { BooleanOptionKey const minimize_bond_lengths( "relax:minimize_bond_lengths" );  }
 namespace relax { BooleanOptionKey const minimize_bond_angles( "relax:minimize_bond_angles" );  }
 namespace relax { IntegerOptionKey const minimize_bondlength_subset( "relax:minimize_bondlength_subset" );  }
@@ -665,4 +666,3 @@ namespace rbe { StringOptionKey const server_port( "rbe:server_port" );  }
 namespace rbe { RealOptionKey const poll_frequency( "rbe:poll_frequency" );  }
 namespace blivens { BooleanOptionKey const blivens( "blivens" );  }
 namespace blivens { namespace disulfide_scorer { BooleanOptionKey const disulfide_scorer( "blivens:disulfide_scorer" );  } }
-namespace blivens { namespace disulfide_scorer { RealOptionKey const nds_prob( "blivens:disulfide_scorer:nds_prob" );  } }

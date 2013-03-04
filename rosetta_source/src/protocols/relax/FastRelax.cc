@@ -427,6 +427,8 @@ void FastRelax::set_to_default( )
 
 	force_nonideal_ = false;
 
+	dna_move_ = option[ basic::options::OptionKeys::relax::dna_move]();
+	
   //fpd additional ramady options
 	ramady_num_rebuild_ = basic::options::option[ OptionKeys::relax::ramady_max_rebuild ]();
 	ramady_cutoff_ = basic::options::option[ OptionKeys::relax::ramady_cutoff ]();
@@ -530,24 +532,36 @@ void FastRelax::apply( core::pose::Pose & pose ){
 	// the "constrain to coordinates" codes will wanna mess witht the movemap..
 	core::kinematics::MoveMapOP local_movemap = get_movemap()->clone();
 	initialize_movemap( pose, *local_movemap );
-	make_dna_rigid(pose,*local_movemap);
-	set_movemap(local_movemap);
 
+	set_movemap(local_movemap);
+	
 	// Deal with constraint options and add coodrinate constraints for all or parts of the structure.
 	set_up_constraints( pose, *local_movemap );
 
+		// make a copy of the energy function too. SInce we're going to be ramping around with weights,
+	// we dont want to modify the existing scorefunction
+	ScoreFunctionOP local_scorefxn( get_scorefxn()->clone() );
+
+	// Remember the oroiginal weights - we're gonna be changing these during the ramp ups/downs
+	core::scoring::EnergyMap full_weights = local_scorefxn()->weights();
+	
+	// Make DNA Rigid or setup DNA-specific relax settings.  Use the orbitals scorefunction when relaxing with DNA
+	if (dna_move_){
+		setup_for_dna( *local_scorefxn );
+	}
+	else{
+		make_dna_rigid( pose, *local_movemap );
+	}
+	
+	
+	
 	// Make sure we only allow symmetrical degrees of freedom to move and convert the local_movemap
 	// to a local movemap
   if ( core::pose::symmetry::is_symmetric( pose )  )  {
     core::pose::symmetry::make_symmetric_movemap( pose, *local_movemap );
   }
 
-	// make a copy of the energy function too. SInce we're going to be ramping around with weights,
-	// we dont want to modify the existing scorefunction
-	ScoreFunctionOP local_scorefxn( get_scorefxn()->clone() );
 
-	// Remember the oroiginal weights - we're gonna be changing these during the ramp ups/downs
-	core::scoring::EnergyMap full_weights = local_scorefxn()->weights();
 
 	// Set up the packer task for packing.
 	PackerTaskOP task_;
@@ -1441,19 +1455,6 @@ void FastRelax::batch_apply(
 	}
 
 
-}
-
-void FastRelax::makeDnaRigid( core::pose::Pose & pose, core::kinematics::MoveMapOP mm ){
-	using namespace core::conformation;
-	//if DNA present set so it doesn't move
-	for ( Size i=1; i<=pose.total_residue() ; ++i )      {
-		if( pose.residue(i).is_DNA()){
-			TR << "turning off DNA bb and chi move" << std::endl;
-			mm->set_bb( i, false );
-			mm->set_chi( i, false );
-		}
-	}
-	//end DNA rigidity
 }
 
 

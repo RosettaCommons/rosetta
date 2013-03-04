@@ -37,6 +37,9 @@ void setup_membrane_topology( core::pose::Pose & pose, std::string spanfile );
 ///@brief Make DNA Rigid in movemap if found in pose
 void make_dna_rigid(core::pose::Pose & pose, core::kinematics::MoveMap & mm);
 
+///@brief Set energy method options for DNA-DNA.  Any other optimization for DNA relax should go here.
+void setup_for_dna(core::scoring::ScoreFunction & scorefxn);
+
 void relax_pose( core::pose::Pose& pose, core::scoring::ScoreFunctionOP scorefxn, std::string const& tag );
 
 RelaxProtocolBaseOP generate_relax_from_cmd( bool NULL_if_no_cmd = false );

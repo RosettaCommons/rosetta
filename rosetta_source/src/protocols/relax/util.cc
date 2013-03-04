@@ -23,6 +23,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/util.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/electron_density/util.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/conformation/Residue.hh>
@@ -133,6 +134,14 @@ void make_dna_rigid( pose::Pose & pose, core::kinematics::MoveMap & mm){
 		mm.set_chi( i, false );
 	    }
 	}
+}
+
+void setup_for_dna( core::scoring::ScoreFunction & scorefxn) {
+	
+	scoring::methods::EnergyMethodOptions options( scorefxn.energy_method_options() );
+	options.exclude_DNA_DNA( false );
+	scorefxn.set_energy_method_options( options );
+	
 }
 
 void relax_pose( pose::Pose& pose, core::scoring::ScoreFunctionOP scorefxn, std::string const& tag ) {

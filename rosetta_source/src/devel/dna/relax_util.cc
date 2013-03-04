@@ -13,6 +13,8 @@
 
 // libRosetta headers
 
+#include <devel/dna/relax_util.hh>
+
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Conformation.hh>
@@ -146,7 +148,7 @@ void
 add_dna_base_jumps_to_fold_tree(
 																pose::Pose const & pose,
 																kinematics::FoldTree & f,
-																bool const flip=false
+																bool const flip
 																)
 {
 	using namespace conformation;
@@ -266,7 +268,7 @@ set_dna_jump_atoms( pose::Pose & pose )
 /// @details  Sets a foldtree for base-centric kinematics in a pose
 /// legacy helper code: do not reuse, prefer eg add_dna_base_jumps_to_foldtree and set_dna_base_atoms
 void
-setup_dna_only_fold_tree( pose::Pose & jump_pose, bool const flip = false )
+setup_dna_only_fold_tree( pose::Pose & jump_pose, bool const flip)
 {
 	using namespace conformation;
 	using namespace scoring::dna;
