@@ -449,7 +449,7 @@ rm -r ref/; ./integration.py    # create reference results using only default se
             f.write("{total : %s, failed : %s, details : %s, brief : %s}" % (len(tests), diffs, results, brief) )
             f.close()
             '''
-        write_runtimes(runtimes, 'new')
+        if not options.compareonly: write_runtimes(runtimes, 'new')
         from compare_times import compare_times
         compare_times()
     return 0
