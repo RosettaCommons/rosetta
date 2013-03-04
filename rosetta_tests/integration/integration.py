@@ -310,7 +310,7 @@ rm -r ref/; ./integration.py    # create reference results using only default se
                     nt = NT(times=runtimes, test=test, workdir=workdir, queue=queue, start_time=time.time(), timeout=Options.timeout, normal_finish=normal_finish, error_finish=error_finish, timeout_finish=timeout_finish)
                     run(runtimes)
                     if nt.timeout and (time.time() - nt.start_time > nt.timeout): nt.timeout_finish(nt)
-                    else: normal_finish(nt)
+                    else: normal_finish(nt,runtimes)
 
             mWait(all_=True)  # waiting for all jobs to finish before movinf in to next phase
 

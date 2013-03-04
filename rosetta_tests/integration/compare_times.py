@@ -19,7 +19,7 @@ def compare_times():
 	new, ref = load_files()	
 	runtimes_compare = open('runtime_diffs.txt', 'w')
 	format_string = '%39s %7.2f %7.2f %7.2f %7.2f\n'
-	runtimes_compare.write('%39s %7s %7s %7s %7s\n' % ("TEST", "NEW", "REF", "DIFF", "%"))
+	runtimes_compare.write('%39s %7s %7s %7s %7s\n' % ("TEST", "NEW", "REF", "DIFF", "D/R"))
 
 	from math import isnan, isinf
 	diffs=[]
