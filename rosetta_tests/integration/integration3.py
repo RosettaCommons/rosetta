@@ -742,4 +742,7 @@ class Queue:
 
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv[1:]))
+    print("Do not use integration3.py - it is deprecated!  See https://carbon.structbio.vanderbilt.edu/mantisbt/view.php?id=185 .  If you are using integration3 regularly, bring it up on the mailing list (we had a discussion about this, why didn't you mention it then?)")
+    #sys.exit(main(sys.argv[1:]))
+    sys.exit(1)
+
