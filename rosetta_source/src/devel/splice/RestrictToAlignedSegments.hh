@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/toolbox/task_operations/RestrictToAlignedSegmentsOperation.hh
+/// @file   devel/splice/RestrictToAlignedSegmentsOperation.hh
 /// @brief  TaskOperation class that restricts a chain to repacking
 /// @author Sarel Fleishman sarelf@uw.edu
 
-#ifndef INCLUDED_protocols_toolbox_task_operations_RestrictToAlignedSegments_hh
-#define INCLUDED_protocols_toolbox_task_operations_RestrictToAlignedSegments_hh
+#ifndef INCLUDED_devel_splice_RestrictToAlignedSegments_hh
+#define INCLUDED_devel_splice_RestrictToAlignedSegments_hh
 
 // Unit Headers
-#include <protocols/toolbox/task_operations/RestrictToAlignedSegments.fwd.hh>
+#include <devel/splice/RestrictToAlignedSegments.fwd.hh>
 #include <protocols/toolbox/task_operations/RestrictOperationsBase.hh>
 
 // Project Headers
@@ -33,22 +33,20 @@
 
 #include <utility/vector1.hh>
 
-
-namespace protocols {
-namespace toolbox {
-namespace task_operations {
+namespace devel {
+namespace splice {
 
 ///@details this class is a TaskOperation to prevent repacking of residues not near an interface.
-class RestrictToAlignedSegmentsOperation : public RestrictOperationsBase
+class RestrictToAlignedSegmentsOperation : public protocols::toolbox::task_operations::RestrictOperationsBase
 {
 public:
-	typedef RestrictOperationsBase parent;
+	typedef protocols::toolbox::task_operations::RestrictOperationsBase parent;
 
 	RestrictToAlignedSegmentsOperation();
 
 	virtual ~RestrictToAlignedSegmentsOperation();
 
-	virtual TaskOperationOP clone() const;
+	virtual core::pack::task::operation::TaskOperationOP clone() const;
 
 	virtual
 	void
@@ -73,8 +71,7 @@ private:
 	core::Real repack_shell_; //dflt 6A; allow repack in residues surrounding the aligned segment on chain_
 };
 
-} //namespace protocols
-} //namespace toolbox
-} //namespace task_operations
+} //namespace splice
+} //namespace devel
 
-#endif // INCLUDED_protocols_toolbox_TaskOperations_RestrictToAlignedSegmentsOperation_HH
+#endif //INCLUDED_devel_splice_RestrictToAlignedSegments_hh

@@ -159,8 +159,8 @@ sources = {
 		"SetupHotspotConstraintsMover",
 		"SetupHotspotConstraintsLoopsMover",
 		"SpinMover",
-		"Splice",
-		"SpliceSegment",
+		#"Splice", #moved to devel due to release embargo
+		#"SpliceSegment", #moved to devel due to release embargo
 		"SubroutineMover",
 		"TaskAwareCsts",
 		"TryRotamers",

@@ -180,7 +180,7 @@ static MoverRegistrator< protein_interface_design::movers::SetupHotspotConstrain
 
 static MoverRegistrator< protein_interface_design::movers::SetupHotspotConstraintsLoopsMoverCreator > reg_SetupHotspotConstraintsLoopsMoverCreator;
 static MoverRegistrator< protein_interface_design::movers::SpinMoverCreator > reg_SpinMoverCreator;
-static MoverRegistrator< protein_interface_design::movers::SpliceCreator > reg_SpliceCreator;
+//static MoverRegistrator< protein_interface_design::movers::SpliceCreator > reg_SpliceCreator; //moved into devel due to release embargo
 static MoverRegistrator< protein_interface_design::movers::TaskAwareCstsCreator > reg_TaskAwareCstsCreator;
 static MoverRegistrator< protein_interface_design::movers::SubroutineMoverCreator > reg_SubroutineCreator;
 static MoverRegistrator< protein_interface_design::movers::TryRotamersCreator > reg_TryRotamersCreator;

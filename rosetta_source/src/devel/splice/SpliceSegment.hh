@@ -7,20 +7,20 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/protein_interface_design/movers/SpliceSegment.hh
+/// @file devel/splice/SpliceSegment.hh
 /// @author Sarel Fleishman
 
-#ifndef INCLUDED_protocols_protein_interface_design_movers_SpliceSegment_hh
-#define INCLUDED_protocols_protein_interface_design_movers_SpliceSegment_hh
-#include <protocols/protein_interface_design/movers/SpliceSegment.fwd.hh>
+#ifndef INCLUDED_devel_splice_SpliceSegment_hh
+#define INCLUDED_devel_splice_SpliceSegment_hh
+
+#include <devel/splice/SpliceSegment.fwd.hh>
 #include <core/sequence/SequenceProfile.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 #include <map>
 
-namespace protocols {
-namespace protein_interface_design {
-namespace movers {
+namespace devel {
+namespace splice {
 
 /* A SpliceSegment is one stretch of residues, which is associated with one or more sequence profiles. SpliceSegment is a class that helps manage these profiles
 
@@ -61,9 +61,7 @@ segment_L2 1jxw
 
 core::sequence::SequenceProfileOP concatenate_profiles( utility::vector1< core::sequence::SequenceProfileOP > const profiles, utility::vector1< std::string > segment_names_ordered ); // utility function to generate a single concatenated profile from a vector of profiles
 
-} // movers
-} // protein_interface_design
-} // protocols
+} //splice
+} //devel
 
-
-#endif /*INCLUDED_protocols_protein_interface_design_movers_Splice_HH*/
+#endif //INCLUDED_devel_splice_SpliceSegment_hh

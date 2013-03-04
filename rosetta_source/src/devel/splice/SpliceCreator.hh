@@ -7,31 +7,29 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/protein_interface_design/movers/SpliceCreator.hh
+/// @file   devel/splice/SpliceCreator.hh
 /// @brief  Declaration of the MoverCreator class for the Splice
 /// @author Sarel Fleishman (sarelf@uw.edu)
 
-#ifndef INCLUDED_protocols_protein_interface_design_movers_SpliceCreator_hh
-#define INCLUDED_protocols_protein_interface_design_movers_SpliceCreator_hh
+#ifndef INCLUDED_devel_splice_SpliceCreator_hh
+#define INCLUDED_devel_splice_SpliceCreator_hh
 
 // Project headers
 #include <protocols/moves/MoverCreator.hh>
 
-namespace protocols {
-namespace protein_interface_design {
-namespace movers {
+namespace devel {
+namespace splice {
 
-class SpliceCreator : public moves::MoverCreator
+class SpliceCreator : public protocols::moves::MoverCreator
 {
 public:
-	virtual moves::MoverOP create_mover() const;
+	virtual protocols::moves::MoverOP create_mover() const;
 	virtual std::string keyname() const;
 	static  std::string mover_name();
 
 };
 
-}
-}
-}
+} //splice
+} //devel
 
-#endif
+#endif //INCLUDED_devel_splice_SpliceCreator_hh

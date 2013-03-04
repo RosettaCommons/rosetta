@@ -89,16 +89,16 @@ sources = {
 	"devel/loophash_loopclosure": [
 		"LoopHashLoopClosureMover",
 	],
-  "devel/matdes" : [
-    "util",
-		"TaskAwareSymMinMover",
-    "Symmetrizer",
-    "SymDofMover",
-    "SymDofMoverSampler",
-    "SymmetrizerSampler",
-    "GenericSymmetricSampler",
-    "BuildingBlockInterfaceOperation",
-    "RestrictToNonzeroSASAOperation",
+        "devel/matdes" : [
+		"util",
+                "TaskAwareSymMinMover",
+                "Symmetrizer",
+                "SymDofMover",
+                "SymDofMoverSampler",
+                "SymmetrizerSampler",
+                "GenericSymmetricSampler",
+                "BuildingBlockInterfaceOperation",
+                "RestrictToNonzeroSASAOperation",
 		"RestrictIdentitiesOperation",
 		"OligomericAverageDegreeFilter",
 		"SymUnsatHbondFilter",
@@ -152,6 +152,11 @@ sources = {
 	"devel/simple_options": [
 		"option",
 	],
+        "devel/splice": [
+		"RestrictToAlignedSegments", #moved to devel due to release embargo
+		"Splice", #moved to devel due to release embargo
+		"SpliceSegment", #moved to devel due to release embargo
+        ],
 	#"devel/ssrbrelax": [
 	#	"SSRbClass",
 	#	"SSrbrelax",

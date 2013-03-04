@@ -7,26 +7,24 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/moves/protein_interface_design/movers/SpliceSegment.fwd.hh
+/// @file   devel/splice/SpliceSegment.fwd.hh
 /// @brief  Splice forward declarations header
 
-#ifndef INCLUDED_protocols_protein_interface_design_movers_SpliceSegment_fwd_hh
-#define INCLUDED_protocols_protein_interface_design_movers_SpliceSegment_fwd_hh
+#ifndef INCLUDED_devel_splice_SpliceSegment_fwd_hh
+#define INCLUDED_devel_splice_SpliceSegment_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace protein_interface_design{
-namespace movers{
+namespace devel {
+namespace splice {
 
 //Forwards and OP typedefs
 class SpliceSegment;
 typedef utility::pointer::owning_ptr< SpliceSegment > SpliceSegmentOP;
 typedef utility::pointer::owning_ptr< SpliceSegment const > SpliceSegmentCOP;
 
-}//movers
-}//protein_interface_design
-}//protocols
+} //splice
+} //devel
 
-#endif //INCLUDED_protocols_protein_interface_design_movers_SpliceSegment_FWD_HH
+#endif //INCLUDED_devel_splice_SpliceSegment_fwd_hh

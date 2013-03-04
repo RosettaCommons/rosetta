@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/protein_interface_design/movers/Splice.cc
+/// @file devel/splice/Splice.cc
 /// @brief
 /// @author Sarel Fleishman (sarel@weizmann.ac.il)
 
 // Unit headers
-#include <protocols/protein_interface_design/movers/Splice.hh>
-#include <protocols/protein_interface_design/movers/SpliceSegment.hh>
+#include <devel/splice/Splice.hh>
+#include <devel/splice/SpliceSegment.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
-#include <protocols/protein_interface_design/movers/SpliceCreator.hh>
+#include <devel/splice/SpliceCreator.hh>
 #include <utility/string_util.hh>
 #include <utility/exit.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -82,12 +82,13 @@
 ///////////////////////////////////////////////////
 #include <fstream>
 #include <ctime>
-namespace protocols {
-namespace protein_interface_design {
-namespace movers {
 
-static basic::Tracer TR( "protocols.protein_interface_design.movers.Splice" );
-static basic::Tracer TR_ccd( "protocols.protein_interface_design.movers.Splice_ccd" );
+namespace devel {
+namespace splice {
+
+static basic::Tracer TR( "devel.splice.Splice" );
+static basic::Tracer TR_ccd( "devel.splice.Splice_ccd" );
+
 static numeric::random::RandomGenerator RG( 78289 );
 std::string
 SpliceCreator::keyname() const
@@ -1336,7 +1337,5 @@ Splice::seqprof_taskop() const{
 	return seqprof_taskop_;
 }
 
-} //movers
-} //protein_interface_design
-} //protocols
-
+} //splice
+} //devel

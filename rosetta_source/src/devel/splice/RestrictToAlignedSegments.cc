@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/toolbox/task_operations/RestrictToAlignedSegmentsOperation.cc
+/// @file   devel/splice/RestrictToAlignedSegmentsOperation.cc
 /// @brief
 /// @author Sarelf Fleishman sarelf@uw.edu
 
 // Unit Headers
-#include <protocols/toolbox/task_operations/RestrictToAlignedSegments.hh>
-#include <protocols/toolbox/task_operations/RestrictToAlignedSegmentsCreator.hh>
+#include <devel/splice/RestrictToAlignedSegments.hh>
+#include <devel/splice/RestrictToAlignedSegmentsCreator.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <core/import_pose/import_pose.hh>
@@ -47,11 +47,10 @@
 
 using basic::Error;
 using basic::Warning;
-static basic::Tracer TR( "protocols.toolbox.TaskOperations.RestrictToAlignedSegmentsOperation" );
+static basic::Tracer TR( "devel.splice.RestrictToAlignedSegmentsOperation" );
 
-namespace protocols {
-namespace toolbox {
-namespace task_operations {
+namespace devel {
+namespace splice {
 
 using namespace core::pack::task::operation;
 using namespace std;
@@ -81,13 +80,13 @@ core::pack::task::operation::TaskOperationOP RestrictToAlignedSegmentsOperation:
 void
 RestrictToAlignedSegmentsOperation::apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const
 {
-	using namespace protocols::rosetta_scripts;
+	//using namespace protocols::rosetta_scripts; //cannot be used because of TR in this namespace
 
 	std::set< core::Size > designable;
 	designable.clear();
 	for( core::Size count = 1; count <= source_pose_.size(); ++count ){
-		core::Size const nearest_to_from = find_nearest_res( pose, *source_pose_[ count ], start_res_[ count ], chain() );
-		core::Size const nearest_to_to = find_nearest_res( pose, *source_pose_[ count ], std::min( stop_res_[ count ], source_pose_[ count ]->total_residue() ), chain() );
+		core::Size const nearest_to_from = protocols::rosetta_scripts::find_nearest_res( pose, *source_pose_[ count ], start_res_[ count ], chain() );
+		core::Size const nearest_to_to = protocols::rosetta_scripts::find_nearest_res( pose, *source_pose_[ count ], std::min( stop_res_[ count ], source_pose_[ count ]->total_residue() ), chain() );
 
 		TR<<"Finding nearest residue to residue pair "<<start_res_[ count ]<<','<<stop_res_[ count ]<<" in source pose"<<std::endl;
 		if( nearest_to_from == 0 || nearest_to_to == 0 ){
@@ -98,7 +97,7 @@ RestrictToAlignedSegmentsOperation::apply( core::pose::Pose const & pose, core::
 			designable.insert( position );
   }
 /// in the following we use dao to compute the residues that surround the aligned region. We then go over these residues to make sure they're within the target chain
-	DesignAroundOperationOP dao = new DesignAroundOperation;
+	protocols::toolbox::task_operations::DesignAroundOperationOP dao = new protocols::toolbox::task_operations::DesignAroundOperation;
 	dao->design_shell( 0.1 );
 	dao->repack_shell( repack_shell() );
 	foreach( core::Size const d, designable ){
@@ -181,6 +180,6 @@ RestrictToAlignedSegmentsOperation::parse_tag( TagPtr tag )
 	}
 	repack_shell( tag->getOption< core::Real >( "repack_shell", 6.0 ));
 }
-} //namespace protocols
-} //namespace toolbox
-} //namespace task_operations
+
+} //namespace splice
+} //namespace devel

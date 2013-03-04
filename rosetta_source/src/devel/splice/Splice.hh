@@ -7,13 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/protein_interface_design/movers/Splice.hh
+/// @file devel/splice/Splice.hh
 /// @author Sarel Fleishman (sarelf@u.washington.edu)
 
-#ifndef INCLUDED_protocols_protein_interface_design_movers_Splice_hh
-#define INCLUDED_protocols_protein_interface_design_movers_Splice_hh
-#include <protocols/protein_interface_design/movers/Splice.fwd.hh>
-#include <protocols/protein_interface_design/movers/SpliceSegment.fwd.hh>
+#ifndef INCLUDED_devel_splice_Splice_hh
+#define INCLUDED_devel_splice_Splice_hh
+
+#include <devel/splice/Splice.fwd.hh>
+#include <devel/splice/SpliceSegment.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
@@ -29,9 +30,8 @@
 #include <core/sequence/SequenceProfile.fwd.hh>
 #include <protocols/toolbox/task_operations/SeqprofConsensusOperation.fwd.hh>
 
-namespace protocols {
-namespace protein_interface_design {
-namespace movers {
+namespace devel {
+namespace splice {
 
 //@brief lightweight class containing bb torsions and residue identities
 class BBDofs : public utility::pointer::ReferenceCount
@@ -237,10 +237,7 @@ private:
 	protocols::toolbox::task_operations::SeqprofConsensusOperationOP seqprof_taskop_; // dflt NULL; if set to a previously declared taskoperation, splice will modify this taskop's sequence profile as it's modifying its own sequence profile, thereby allowing design to be restricted to identities specified by the sequence profile
 };
 
+} //splice
+} //devel
 
-} // movers
-} // protein_interface_design
-} // protocols
-
-
-#endif /*INCLUDED_protocols_protein_interface_design_movers_Splice_HH*/
+#endif //INCLUDED_devel_splice_Splice_hh

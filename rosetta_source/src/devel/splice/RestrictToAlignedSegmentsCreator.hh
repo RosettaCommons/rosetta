@@ -7,17 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-#ifndef INCLUDED_protocols_toolbox_task_operations_RestrictToAlignedSegmentsCreator_hh
-#define INCLUDED_protocols_toolbox_task_operations_RestrictToAlignedSegmentsCreator_hh
+#ifndef INCLUDED_devel_splice_RestrictToAlignedSegmentsCreator_hh
+#define INCLUDED_devel_splice_RestrictToAlignedSegmentsCreator_hh
 
 #include <core/pack/task/operation/TaskOperationCreator.hh>
 
 #include <string>
 
-
-namespace protocols {
-namespace toolbox {
-namespace task_operations {
+namespace devel {
+namespace splice {
 
 class RestrictToAlignedSegmentsOperationCreator : public core::pack::task::operation::TaskOperationCreator {
 public:
@@ -25,9 +23,8 @@ public:
 	virtual std::string keyname() const { return "RestrictToAlignedSegments"; }
 };
 
-} //namespace protocols
-} //namespace toolbox
-} //namespace task_operations
+} //namespace splice
+} //namespace devel
 
-#endif
+#endif //INCLUDED_devel_splice_RestrictToAlignedSegmentsCreator_hh
 

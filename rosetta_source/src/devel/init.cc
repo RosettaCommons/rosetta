@@ -44,6 +44,7 @@
 #include <devel/matdes/StoreCombinedStoredTasksMoverCreator.hh>
 #include <devel/matdes/StoreCompoundTaskMoverCreator.hh>
 #include <devel/loophash_loopclosure/LoopHashLoopClosureMoverCreator.hh>
+#include <devel/splice/SpliceCreator.hh> //moved into devel due to release embargo
 
 // Filter creators
 #include <devel/matdes/OligomericAverageDegreeFilterCreator.hh>
@@ -76,6 +77,7 @@
 #include <devel/matdes/RestrictToNonzeroSASAOperationCreator.hh>
 #include <devel/matdes/RestrictIdentitiesOperationCreator.hh>
 #include <devel/matdes/RetrieveStoredTaskOperationCreator.hh>
+#include <devel/splice/RestrictToAlignedSegmentsCreator.hh> //moved into devel due to release embargo
 
 #include <utility/vector1.hh>
 
@@ -104,6 +106,7 @@ static protocols::moves::MoverRegistrator< replica_docking::TempWeightedMetropol
 static protocols::moves::MoverRegistrator< devel::matdes::StoreCombinedStoredTasksMoverCreator > reg_StoreCombinedStoredTasksMoverCreator;
 static protocols::moves::MoverRegistrator< devel::matdes::StoreCompoundTaskMoverCreator > reg_StoreCompoundTaskMoverCreator;
 static protocols::moves::MoverRegistrator< loophash_loopclosure::LoopHashLoopClosureMoverCreator > reg_LoopHashLoopClosureMoverCreator;
+static protocols::moves::MoverRegistrator< devel::splice::SpliceCreator > reg_SpliceCreator; //moved into devel due to release embargo
 
 // Task creators
 core::pack::task::operation::TaskOperationRegistrator< devel::znhash::DisableZnCoordinationResiduesTaskOpCreator > reg_DisableZnCoordinationResiduesTaskOpCreator;
@@ -111,6 +114,7 @@ static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::Bui
 static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::RestrictToNonzeroSASAOperationCreator > RestrictToNonzeroSASAOperationCreator_registrator;
 static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::RestrictIdentitiesOperationCreator > RestrictIdentitiesOperationCreator_registrator;
 static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::RetrieveStoredTaskOperationCreator > RetrieveStoredTaskOperationCreator_registrator;
+static core::pack::task::operation::TaskOperationRegistrator< devel::splice::RestrictToAlignedSegmentsOperationCreator > RestrictToAlignedSegmentsCreator_registrator; //moved into devel due to release embargo
 
 // Filter creators
 static protocols::filters::FilterRegistrator< devel::matdes::OligomericAverageDegreeFilterCreator > OligomericAverageDegreeFilterCreator_registrator;

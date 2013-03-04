@@ -575,7 +575,7 @@ sources = {
 		"RestrictResiduesToRepackingOperation",
 		"RestrictIdentitiesAtAlignedPositions",
 		"RestrictInterGroupVectorOperation",
-		"RestrictToAlignedSegments",
+		#"RestrictToAlignedSegments", #moved to devel due to release embargo
 		"RestrictToCDRH3Loop",
 		"RestrictToInterface",
 		"RestrictToInterfaceOperation",

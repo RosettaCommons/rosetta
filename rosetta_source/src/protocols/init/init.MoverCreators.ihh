@@ -173,7 +173,7 @@
 #include <protocols/protein_interface_design/movers/SetupHotspotConstraintsMoverCreator.hh>
 #include <protocols/protein_interface_design/movers/SetupHotspotConstraintsLoopsMoverCreator.hh>
 #include <protocols/protein_interface_design/movers/SpinMoverCreator.hh>
-#include <protocols/protein_interface_design/movers/SpliceCreator.hh>
+//#include <protocols/protein_interface_design/movers/SpliceCreator.hh> //moved to devel due to release embargo
 #include <protocols/protein_interface_design/movers/TaskAwareCstsCreator.hh>
 #include <protocols/protein_interface_design/movers/SubroutineMoverCreator.hh>
 #include <protocols/protein_interface_design/movers/TryRotamersCreator.hh>

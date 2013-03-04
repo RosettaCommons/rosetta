@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/protein_interface_design/movers/Splice.cc
+/// @file devel/splice/Splice.cc
 /// @brief
 /// @author Sarel Fleishman (sarel@weizmann.ac.il)
 
 // Unit headers
-#include <protocols/protein_interface_design/movers/SpliceSegment.hh>
+#include <devel/splice/SpliceSegment.hh>
 #include <core/sequence/SequenceProfile.hh>
 #include <utility/exit.hh>
 #include <boost/foreach.hpp>
@@ -24,10 +24,10 @@
 #include <utility/io/izstream.hh>
 #include <iostream>
 #include <sstream>
-#include <protocols/protein_interface_design/movers/Splice.hh>
-#include <protocols/protein_interface_design/movers/SpliceSegment.hh>
+#include <devel/splice/Splice.hh>
+#include <devel/splice/SpliceSegment.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
-#include <protocols/protein_interface_design/movers/SpliceCreator.hh>
+#include <devel/splice/SpliceCreator.hh>
 #include <utility/string_util.hh>
 #include <utility/exit.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -83,11 +83,10 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/SequenceProfileConstraint.hh>
 
-namespace protocols {
-namespace protein_interface_design {
-namespace movers {
+namespace devel {
+namespace splice {
 
-static basic::Tracer TR( "protocols.protein_interface_design.movers.SpliceSegment" );
+static basic::Tracer TR( "devel.splice.SpliceSegment" );
 
 using namespace core::sequence;
 using namespace std;
@@ -110,7 +109,7 @@ SpliceSegment::read_profile( string const file_name, string const segment_name )
 
 SequenceProfileOP
 SpliceSegment::get_profile( std::string const segment_name ){
-	
+
 	return sequence_profile_[ segment_name ];
 }
 
@@ -170,6 +169,5 @@ SpliceSegment::read_pdb_profile( std::string const file_name ){
  }
 }
 
-} //movers
-} //protein_interface_design
-} //protocols
+} //splice
+} //devel

@@ -7,27 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/toolbox/task_operations/RestrictToAlignedSegments.fwd.hh
+/// @file   devel/splice/RestrictToAlignedSegments.fwd.hh
 /// @brief
 /// @author Sarel Fleishman sarelf@uw.edu
 
-#ifndef INCLUDED_protocols_toolbox_task_operations_RestrictToAlignedSegments_fwd_hh
-#define INCLUDED_protocols_toolbox_task_operations_RestrictToAlignedSegments_fwd_hh
+#ifndef INCLUDED_devel_splice_RestrictToAlignedSegments_fwd_hh
+#define INCLUDED_devel_splice_RestrictToAlignedSegments_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols {
-namespace toolbox {
-namespace task_operations {
+namespace devel {
+namespace splice {
 
 class RestrictToAlignedSegmentsOperation;
 
 typedef utility::pointer::owning_ptr< RestrictToAlignedSegmentsOperation > RestrictToAlignedSegmentsOperationOP;
 typedef utility::pointer::owning_ptr< RestrictToAlignedSegmentsOperation const > RestrictToAlignedSegmentsOperationCOP;
 
-} //namespace protocols
-} //namespace toolbox
-} //namespace task_operations
+} //namespace splice
+} //namespace devel
 
-#endif // INCLUDED_protocols_toolbox_TaskOperations_RestrictToAlignedSegmentsOperation_FWD_HH
+#endif //INCLUDED_devel_splice_RestrictToAlignedSegments_fwd_hh
 
