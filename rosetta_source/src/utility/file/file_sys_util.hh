@@ -33,7 +33,6 @@ namespace file {
 bool
 file_exists( std::string const & path );
 
-
 /// @brief Delete file
 int
 file_delete( std::string const & path );

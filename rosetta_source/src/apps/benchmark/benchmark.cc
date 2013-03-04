@@ -27,6 +27,10 @@
 #include <numeric/random/random.hh>
 
 #include <utility/excn/Exceptions.hh>
+#include <utility/file/file_sys_util.hh>
+#include <utility/exit.hh>
+#include <stdio.h>
+
 
 #include <fstream>
 
@@ -40,6 +44,7 @@ OPT_1GRP_KEY( Real, run, benchmark_scale )
 OPT_1GRP_KEY( String, run, run_one_benchmark )
 
 const char results_filename[] = "_performance_";
+const char old_results_filename[] = "_old_performance_";
 
 // Initialize performance benchmark tests here:
 #include <apps/benchmark/OptionCollection.bench.hh>
@@ -205,11 +210,12 @@ std::string Benchmark::getReport()
 
 	std::string res = "{\n";
 	for(Size i=0; i<all.size(); i++) {
+		if( i != 0 ) res += ",\n"; // special first case
 		Benchmark * B = all[i];
 		sprintf(buf, "%f", B->result_);
-		res += "    '" + B->name_ + "':" + std::string(buf) + ",\n";
+		res += "    \"" + B->name_ + "\":" + std::string(buf);
 	}
-	res += "}\n";
+	res += "\n}\n";
 	return res;
 }
 
@@ -223,14 +229,15 @@ std::string Benchmark::getOneReport(std::string const & name)
 	char buf[1024];
 
 	std::string res = "{\n";
+
 	for(Size i=0; i<all.size(); i++) {
 		Benchmark * B = all[i];
 		if(B->name() == name){
 			sprintf(buf, "%f", B->result_);
-			res += "    '" + B->name_ + "':" + std::string(buf) + ",\n";
+			res += "    \"" + B->name_ + "\":" + std::string(buf);
 		}
 	}
-	res += "}\n";
+	res += "\n}\n";
 	return res;
 }
 
@@ -287,6 +294,13 @@ int main( int argc, char *argv[])
 		TR << "Results:" << std::endl << report;  TR.flush();
 
 		/// Now, saving report to a file
+		if(utility::file::file_exists(std::string(results_filename))){
+			int i = rename( results_filename, old_results_filename);
+			if( i != 0 ){
+				Error() << "Benchmark:: Unable to rename "<< results_filename << " to " << old_results_filename << std::endl;
+				utility_exit();
+			}
+		}
 		std::ofstream file(results_filename, std::ios::out | std::ios::binary);
 		if(!file) {
 			Error() << "Benchmark:: Unable to open file:" << results_filename << " for writing!!!" << std::endl;
