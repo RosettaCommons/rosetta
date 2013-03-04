@@ -1623,7 +1623,7 @@ ResidueType::update_derived_data()
 		}
 
 		//if ( type.is_polar_hydrogen() &&   (std::abs( graph_[ordered_atoms_[ natoms_ ]].charge() ) > 1.0e-3) ) {
-		if ( type.is_polar_hydrogen() &&   (std::abs(graph_[ordered_atoms_[ natoms_ ]].charge() ) > 1.0e-3) ) {
+		if ( type.is_polar_hydrogen() &&   (!type.is_virtual() ) ) {
 			Hpos_polar_.push_back( i );
 			if ( i >= first_sidechain_hydrogen_ ) {
 				Hpos_polar_sc_.push_back( i );
