@@ -1,7 +1,0 @@
-DEFAULT # applies to all ligands listed after LIGAND keywords 
-#soft_rep old # use soft_repulsive score during docking (but not final minimize) rather than hard.  Old uses Rosetta++ electrostatics, old is default
-protocol abbreviated # 
-
-LIGAND X # PDB ligand chain ID
-start_from -1.731,32.589,-5.039 
-minimize_ligand 10
