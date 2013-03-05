@@ -376,6 +376,7 @@ FragmentLoopInserter::build_fragment_loop(
 	);
 	
 	created_loop_=loop;
+	modified_range(loop.start(), loop.stop());
 }
 	
 utility::vector1< numeric::xyzVector<core::Real> >
