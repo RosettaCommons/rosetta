@@ -101,6 +101,9 @@ BannedFiles = ['utility/PyHelper.hh', 'utility/keys', 'utility/options', 'utilit
 
     'protocols/wum2/EndPoint.hh',  # Function returning a function
 
+    'protocols/rpc',  # Some problem with parser, but in general: do we need RPC calls in PyRosetta? (it easier to implement it in Python anyway)
+
+
     #'protocols/frag_picker', # whole dir not in scons (ie been moved now), temporary
 
 # Lion workarround
