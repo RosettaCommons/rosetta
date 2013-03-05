@@ -11,6 +11,8 @@
 
 import os, sys, os.path, time, commands, subprocess, datetime
 from optparse import OptionParser
+from shutil import move
+import json
 
 # Create global 'Platform' that will hold info of current system
 if sys.platform.startswith("linux"): Platform = "linux" # can be linux1, linux2, etc
@@ -60,7 +62,7 @@ def run(test, options):
 
     # Now we actualy run test...
     proc = subprocess.Popen(["bash", fname+'.sh'], preexec_fn=os.setpgrp)
-
+    retcode=None
     start = time.time() # refined start time
     #if self.timeout == 0:
     # retcode = proc.wait() # does this block all threads?
@@ -87,11 +89,15 @@ def run(test, options):
     max_memory_allocated = max( map(lambda x: x[1], memory) )
     execution_time = memory[-1][0]
 
+    filename=output_dir + '/.results.yaml'
+    if os.path.isfile(filename):
+        move(filename, output_dir+'/.old_results.yaml')
     yaml_data = { 'execution_time_s' : execution_time, 'max_memory_allocated_MB': max_memory_allocated }
-    f = file(output_dir + '/.results.yaml', 'w');  f.write( str(yaml_data) );  f.close()
+    f = file(filename, 'w');  json.dump( yaml_data, f );  f.close()
 
 
     if retcode is None:
+        import signal
         print "*** Test %s exceeded the timeout and will be killed!" % test
         os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
     if retcode != 0 and retcode is not None:
@@ -100,8 +106,6 @@ def run(test, options):
 
         # Writing error_string to a file, so integration test should fail for sure
         file(os.path.join(workdir, ".test_did_not_run.log"), 'w').write(error_string)
-
-
 
 
 
@@ -150,9 +154,6 @@ def main(argv):
     # Now actually running the tests...
     for test in tests:
         run(test, options)
-
-
-
 
 
 if __name__ == "__main__":
