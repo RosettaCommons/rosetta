@@ -88,6 +88,7 @@ ShapeComplementarityFilter::ShapeComplementarityFilter( ShapeComplementarityFilt
 	verbose_( rval.verbose_ ),
 	residues1_( rval.residues1_ ),
 	residues2_( rval.residues2_ ),
+	multicomp_( rval.multicomp_ ),
 	sym_dof_name_( rval.sym_dof_name_ )
 {}
 
@@ -146,7 +147,7 @@ core::Size ShapeComplementarityFilter::compute( Pose const & pose ) const
 			if(!scc_.Calc( pose, sym_aware_jump_id ))
 				return 0;
 
-			utility::vector1<Size> subs = core::pose::symmetry::get_jump_name_to_subunits( pose, sym_dof_name() );	
+			utility::vector1<Size> subs = core::pose::symmetry::get_jump_name_to_subunits( pose, sym_dof_name() );
 			nsubs_scalefactor = (Real) subs.size() ;
 		} else {
 			// SINGLE COMPONENT SYMM
@@ -172,12 +173,12 @@ core::Size ShapeComplementarityFilter::compute( Pose const & pose ) const
 			}
 			// scalefactor
 			nsubs_scalefactor = (Real)( nupstream / core::pose::symmetry::symmetry_info(pose)->get_nres_subunit() );
-			
+
 			if(!scc_.Calc())
 				return 0;
 		}
 	}
-	
+
 	core::scoring::sc::RESULTS const &r = scc_.GetResults();
 	if(verbose_) {
 
@@ -241,7 +242,7 @@ core::Real ShapeComplementarityFilter::report_sm( Pose const & pose ) const
 			// symmetric scalefactor
 			if (core::pose::symmetry::is_symmetric( pose )) {
 				if ( multicomp_ ) {
-					utility::vector1<Size> subs = core::pose::symmetry::get_jump_name_to_subunits( pose, sym_dof_name() );	
+					utility::vector1<Size> subs = core::pose::symmetry::get_jump_name_to_subunits( pose, sym_dof_name() );
 					int_area /= (Real) subs.size() ;
 				} else {
 					ObjexxFCL::FArray1D_bool is_upstream ( pose.total_residue(), false );
@@ -311,7 +312,7 @@ ShapeComplementarityFilter::parse_my_tag(
 	jump_id_ = tag->getOption<Size>( "jump", 1 );
 	write_int_area_ = tag->getOption<bool>( "write_int_area", false );
 	sym_dof_name(tag->getOption<std::string>( "sym_dof_name", "" ));
-	multicomp( tag->getOption< bool >("multicomp", 0) );
+	multicomp( tag->getOption< bool >("multicomp", false) );
 
 	if(tag->hasOption("residues1")) {
 		residues1_ = core::pose::get_resnum_list(tag, "residues1", pose);
