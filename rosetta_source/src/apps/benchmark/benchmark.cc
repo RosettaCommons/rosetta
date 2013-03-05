@@ -75,11 +75,11 @@ DockingBenchmark_high DockingHigh("protocols.docking.DockingHighRes");
 // AUTO-REMOVED #include <apps/benchmark/Design.bench.hh>
 //DesignBenchmark design("protocols.moves.PackRotamersMover");
 
-// AUTO-REMOVED #include <apps/benchmark/LigandDock.bench.hh>
-//LigandDockBenchmark ligand_dock("protocols.ligand_docking.LigandDockProtocol");
+#include <apps/benchmark/LigandDock.bench.hh>
+LigandDockBenchmark ligand_dock("protocols.ligand_docking.LigandDockProtocol");
 
-// AUTO-REMOVED #include <apps/benchmark/LigandDockScript.bench.hh>
-//LigandDockScriptBenchmark ligand_dock_script("protocols.ligand_docking.LigandDockScript");
+#include <apps/benchmark/LigandDockScript.bench.hh>
+LigandDockScriptBenchmark ligand_dock_script("protocols.ligand_docking.LigandDockScript");
 
 #include <apps/benchmark/pdb_io.bench.hh>
 PDB_IOBenchmark PDB_IO_("core.import_pose.pose_from_pdbstring");

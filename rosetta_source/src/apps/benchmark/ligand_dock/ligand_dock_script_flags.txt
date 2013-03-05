@@ -7,8 +7,7 @@
   -native ligand_dock/7cpa_native.pdb
 -out
  -file
-  -atom_tree_diff atom_tree_diff.out
- -overwrite	
+ -overwrite
 -packing
  -no_optH
  #-ex1

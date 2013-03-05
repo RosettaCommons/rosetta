@@ -1,0 +1,5 @@
+test_diffs.txt
+tests/*/output
+tests/*/command.sh
+.old_results.yaml
+.results.yaml
