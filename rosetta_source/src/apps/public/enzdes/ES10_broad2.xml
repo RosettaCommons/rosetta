@@ -1,0 +1,152 @@
+#### EnzScan ####
+# Consider all amino acids at each designed position, accept best amino acid at each position in a "greedy" fashion. Greedy here means that the best mutation is put in, followed by second best, making sure that they are mutually compatible.
+
+#To be run as the following:
+
+rosetta_scripts.linuxgccrelease -database ~/minirosetta_database -extra_res_fa ligand.params @revert_native_xml_flags -parser:protocol ES10_broad2.xml -enzdes:cstfile constraints.cst -in:file:native native.pdb -s design.pdb
+
+# ES10_broad2 uses a larger design shell (10/12/13/15) and total + -5 * SC, as per results from match_design_order benchmark
+# adjusting the filters
+# change in cst10: make the relax mover a softpack; use hard pack in the greedy with enzdes wts. 
+# change in cst 9, make soft pack default in the greedy opt
+# changes in cst8: Remove repacking from the greedy opt's relax_mover, as Chris K. indicates that the greedy opt already does sufficient repacking.
+		Also clean up some of the logic and improve comments.
+
+
+#With a flags file:
+
+-run:preserve_header
+-score:weights enzdes
+
+-ex1
+-ex2
+-use_input_sc
+
+-correct
+-no_his_his_pairE
+-score::hbond_params correct_params
+-lj_hbond_hdis 1.75
+-lj_hbond_OH_donor_dis 2.6
+-use_incorrect_hbond_deriv false
+-linmem_ig 10
+-nblist_autoupdate true
+-chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm
+
+# Comments are marked with a "#"
+
+#Note that this script assumes that there is only one protein chain and one ligand. If not, adjust the various jump parameters accordingly
+
+<ROSETTASCRIPTS>
+        <TASKOPERATIONS>
+                <InitializeFromCommandline name=init/>
+		<DetectProteinLigandInterface name=LigInterface cut1=10 cut2=12 cut3=13 cut4=15 design=1 /> Add resfile, if necessary
+
+	# If you don't want a full scan, choose one of the following mutation schemes (add angle brackets as appropriate):
+	# (Also remember to add it to the task_operation= parameter of GreedyOptMutationMover.)
+	        # To do a simple revert to native:
+		JointSequence name=joint use_current=1 use_native=1 /
+		# If you have a PSSM-format MSA for your template
+		SeqprofConsensus name=seqprof filename=profile.pssm /
+		# If you want to restrict particular identities
+                RestrictAbsentCanonicalAAS name=allaa keep_aas="ACDEFGHIKLMNPQRSTVWY"/
+	# (Note that more complicated possibilities are possible)
+
+		<SetCatalyticResPackBehavior name="catrespack" fix_catalytic_aa=1 /> Don't allow catalytic residues to mutate
+		<RestrictToRepacking name=repack_only /> Don't design when repacking.
+        </TASKOPERATIONS>
+        <SCOREFXNS>
+	        <enzdes weights=enzdes />
+                <soft weights=ligand_soft_rep />
+        </SCOREFXNS>
+	## define the movers needed in the filters, other movers come later.
+        <MOVERS>
+		#Sidechain and rigid body minimization only - adjust as appropriate if you want more flexibility
+                <TaskAwareMinMover name=min bb=0 chi=1 jump=1 scorefxn=enzdes task_operations=LigInterface/>
+	</MOVERS>
+        <FILTERS>
+	        <LigInterfaceEnergy name=LigIntE  scorefxn=enzdes jump_number=1 confidence=0/>
+                <ScoreType name=resid scorefxn=enzdes score_type=res_type_constraint threshold=0 confidence=0/>
+                <EnzScore name=allcst score_type=cstE scorefxn=enzdes whole_pose=1 confidence=0/>
+                <ScoreType name=total_score scorefxn=enzdes score_type=total_score threshold=0 confidence=0/> Also will contain res_type_constraint values
+                <ShapeComplementarity name=SC verbose=0 quick=0 jump=1/>
+		<Sasa name=sasa threshold=0 upper_threshold=9999999 hydrophobic=0 polar=0 jump=1/>
+		<BuriedUnsatHbonds name=burUnsat jump_number=1 cutoff=99999  scorefxn=enzdes/>
+		<Ddg name=ddg scorefxn=enzdes threshold=0 jump=1 repeats=1 repack=true relax_mover=min/>
+
+                # combine total and ligand interface energy
+		<CombinedValue name=total_ligint confidence=0>
+		  <Add filter_name=total_score factor=1/>
+		  <Add filter_name=LigIntE factor=1/>
+		</CombinedValue>
+
+                # combine total and SC, but need to do negative of SC
+		<CombinedValue name=total_SC confidence=0>
+		  <Add filter_name=total_score factor=1/>
+		  <Add filter_name=SC factor=-5/>
+		</CombinedValue>
+
+		<CombinedValue name=total_sasa confidence=0>
+		  <Add filter_name=total_score factor=1/>
+		  <Add filter_name=sasa factor=0.5/>
+		</CombinedValue>
+
+		<CombinedValue name=total_burUnsat confidence=0>
+		  <Add filter_name=total_score factor=1/>
+		  <Add filter_name=burUnsat factor=2/>
+		</CombinedValue>
+
+		<CombinedValue name=total_ddg confidence=0>
+		  <Add filter_name=total_score factor=1/>
+		  <Add filter_name=ddg factor=2/>
+		</CombinedValue>
+
+		<CombinedValue name=total_ligint_cst confidence=0>
+                  <Add filter_name=allcst factor=1 />
+		  <Add filter_name=total_score factor=1/>
+		  <Add filter_name=LigIntE factor=1/>
+		</CombinedValue>
+
+        </FILTERS>
+        <MOVERS>
+	        <AddOrRemoveMatchCsts name=addcst cst_instruction=add_new />
+                <AddOrRemoveMatchCsts name=cst_readd cst_instruction="add_pregenerated"/>
+	        <AddOrRemoveMatchCsts name=cst_remove cst_instruction="remove" keep_covalent=1/>
+		<ScoreMover name=score scorefxn=enzdes verbose=0 />
+		<PackRotamersMover name=repack task_operations=init,LigInterface,catrespack,repack_only/>
+		<PackRotamersMover name=softpack task_operations=init,LigInterface,catrespack,repack_only scorefxn=soft/>
+
+	        #A native residue score bump. IDENTITY with weight of 1 gives -1 to native, 0 to all others
+                # Set to give roughtly -0.05 to native and 0 to others, to match the old cst5 behavior, need to test
+#### comment in to favor the native 
+		<FavorSequenceProfile name=fsp scaling=prob use_native=1 matrix=IDENTITY weight=2.5 scorefxns=enzdes/>
+
+   		<ParsedProtocol name=min_repack_min>
+                        <Add mover=min/>
+                        <Add mover=repack/>
+                        <Add mover=min/>
+                </ParsedProtocol>
+
+   		<ParsedProtocol name=softpack_min>
+                        <Add mover=softpack/>
+                        <Add mover=min/>
+                </ParsedProtocol>
+
+                ## This runs softpack in greedy; then min/hardpack/min in the subsequent relax
+        	<GreedyOptMutationMover name=greedyscan dump_table=0 relax_mover=min_repack_min filter=total_SC task_operations=init,LigInterface,catrespack scorefxn=soft/>
+	</MOVERS>
+        <APPLY_TO_POSE>
+        </APPLY_TO_POSE>
+        <PROTOCOLS>
+	        <Add mover=addcst/>
+	# Remove the following if you don't want to add a bonus for the native identity 
+	        <Add mover=fsp/>
+		<Add mover=greedyscan/>
+##### NOCSTREPACK #### comment out this block to get rid of nocst repack  #####
+		<Add mover=cst_remove />
+		<Add mover=min_repack_min />
+		<Add mover=cst_readd />
+##### END_NOCSTREPACK ## ######################################################
+		<Add mover=score/>
+		<Add filter=LigIntE/>
+        </PROTOCOLS>
+</ROSETTASCRIPTS>
