@@ -70,22 +70,31 @@ void pose_energies_to_json( core::pose::Pose const & pose, utility::json_spirit:
         = core::scoring::ScoreType( emap_iter - emap.begin() + 1 );
       std::string name = core::scoring::name_from_score_type( sc_type );
 
-      json_energies.push_back( utility::json_spirit::Pair( name, float(  (*emap_iter) * (*wts_iter) ) ) ); 
+      json_energies.push_back( utility::json_spirit::Pair( name, float(  (*emap_iter) * (*wts_iter) ) ) );
     } // if ( *wts_iter != 0.0 )
   } // for ( emap_iter ...)
 
 }
 
 
-  // RPC Class
+// RPC Class
+
+JSON_RPC::JSON_RPC(std::string const &msg, bool capture_tracer) :
+	capture_tracer_(capture_tracer), starttime_(0), endtime_(0)
+{
+	msg_ = msg;
+	unpack( msg_ );
+}
+
+
 
   static basic::Tracer TR("rpc");
- 
+
   using namespace utility::json_spirit;
-        
+
   core::Real JSON_RPC::get_fa_score() {
     core::scoring::ScoreFunctionOP fascorefxn = core::scoring::getScoreFunction();
-    return (*fascorefxn)(outputpose_); 
+    return (*fascorefxn)(outputpose_);
   }
 
   core::Real JSON_RPC::get_irms() const {
@@ -95,9 +104,9 @@ void pose_energies_to_json( core::pose::Pose const & pose, utility::json_spirit:
 
 
   void JSON_RPC::unpack( const std::string &msg ){
-     
-     output_capture_start();  // Make sure we're catching all the messages and errors 
-    
+
+     output_capture_start();  // Make sure we're catching all the messages and errors
+
      try{
        mObject parsed_json = read_mObject( msg );
 
@@ -114,27 +123,27 @@ void pose_energies_to_json( core::pose::Pose const & pose, utility::json_spirit:
        std::string pdbdata_string = get_string(parsed_json, "pdbdata");
        // Load any flags that were given as part of this job.
        std::cout << "Initializing options: " << command_ << std::endl;
-       
+
        if ( has_value(parsed_json, "user_flags") ){
          load_new_set_of_user_flags( get_mObject(parsed_json, "user_flags") );
        }
-       
+
        if ( has_value(parsed_json, "flags_file") ){
          std::string flags_file = get_string(parsed_json, "flags_file");
-         std::cerr << "Flags file: " << flags_file << std::endl; 
+         std::cerr << "Flags file: " << flags_file << std::endl;
          load_user_flag_file( flags_file );
        }
-       
+
        // Load any files that were given as part of this job.
        load_new_set_of_virtual_files(  get_Array(parsed_json, "user_files") );
 
        // finally load in the provided PDB
        core::import_pose::pose_from_pdbstring( inputpose_, pdbdata_string );
-       
-       outputpose_ = inputpose_; 
+
+       outputpose_ = inputpose_;
     }
     catch( ... ){
-      output_capture_stop(); 
+      output_capture_stop();
       throw;
     }
   }
@@ -149,12 +158,12 @@ void pose_energies_to_json( core::pose::Pose const & pose, utility::json_spirit:
         // Leave some trace
         std::cout << "Executing: " << command_ << std::endl;
         TR << "Executing: " << command_ << std::endl;
-       
+
         // scoring happens automatically at the end so this is a NOP
         if( command_ == "score" ){
         }
-        
-        
+
+
         // this covers a huge variety of possible operations and move movers are plugged into this system by now.
         if( command_ == "xmlscript" ){
           utility::Inline_File_Provider *provider = utility::Inline_File_Provider::get_instance();
@@ -165,13 +174,13 @@ void pose_energies_to_json( core::pose::Pose const & pose, utility::json_spirit:
           ddp.generate_mover_from_pose( job, outputpose_ , protocol, true, "script.xml" );
           protocol->apply( outputpose_ );
         }
-        
+
         // do a fast core::pose action - this mostly for providing access to simple core::.. functionality via Native Client.
         if( command_ == "poseop" ){
-          
+
 
         }
-        
+
         // here largely as examples - use XML scripts for this.
         if( command_ == "relax" ){
           //protocols::moves::MoverOP protocol = protocols::relax::generate_relax_from_cmd();
@@ -181,21 +190,21 @@ void pose_energies_to_json( core::pose::Pose const & pose, utility::json_spirit:
           //protocols::loophash::LoopHashRelaxProtocolOP lh_protocol = new protocols::loophash::LoopHashRelaxProtocol( loop_hash_library );
           //lh_protocol->manual_call( outputpose_ );
         }
-      } 
+      }
       catch( utility::excn::EXCN_Msg_Exception &excn ){
         std::cerr << "EXCEPTION: " << excn.msg() << std::endl; // print the exception message to the Error stream.
         TR.Error << "EXCEPTION: " << excn.msg() << std::endl; // print the exception message to the Error stream.
         endtime_ = time(NULL);
-        output_capture_stop();  // Make sure we're catching the following message 
-        throw; 
+        output_capture_stop();  // Make sure we're catching the following message
+        throw;
       }
       catch(...) {
         TR.Error << "UNKNOWN ERROR OCCURED DURING RUN" << std::endl;
         endtime_ = time(NULL);
-        output_capture_stop();  // Make sure we're catching the following message 
-        throw; 
+        output_capture_stop();  // Make sure we're catching the following message
+        throw;
       }
-      
+
   }
 
 
@@ -216,18 +225,18 @@ void pose_energies_to_json( core::pose::Pose const & pose, utility::json_spirit:
 
   void JSON_RPC::load_user_flag_file( const std::string &flags_file ){
     std::stringstream options_file;
-    options_file << flags_file << std::endl; // ensure the last line has a CR/lF at the end. 
+    options_file << flags_file << std::endl; // ensure the last line has a CR/lF at the end.
     basic::options::option.load_options_from_stream( options_file );
   }
 
   void JSON_RPC::load_new_set_of_user_flags( const mObject &json_user_flags ){
     std::vector < std::string > user_flags;
-    for( mObject::const_iterator it = json_user_flags.begin(); 
+    for( mObject::const_iterator it = json_user_flags.begin();
          it != json_user_flags.end(); ++it ){
       if( it->second.type() != obj_type ){
         throw utility::excn::EXCN_Msg_Exception("JSON error: expected an object for user_flag member:'" + it->first );
-      }; 
-      const mObject &flag = it->second.get_obj();      
+      };
+      const mObject &flag = it->second.get_obj();
       if( has_value( flag, "value" ) ){
         std::string flagname = it->first;
         std::string flagvalue = get_string( flag, "value" );
@@ -242,20 +251,20 @@ void pose_energies_to_json( core::pose::Pose const & pose, utility::json_spirit:
   void JSON_RPC::load_new_set_of_virtual_files( const mArray &json_user_files , bool clear_previous ){
     utility::Inline_File_Provider *provider = utility::Inline_File_Provider::get_instance();
     if( clear_previous ) provider->clear_input_files();
-    for( mArray::const_iterator it = json_user_files.begin(); 
+    for( mArray::const_iterator it = json_user_files.begin();
          it != json_user_files.end(); ++it ){
       std::cout << it->type() << std::endl;
       if( it->type() != obj_type ){
         throw utility::excn::EXCN_Msg_Exception("JSON error: expected an object for user_file member:'");
-      }; 
-      const mObject &flag = it->get_obj();      
+      };
+      const mObject &flag = it->get_obj();
       if( !has_value( flag, "filename" ) ) {
-        throw utility::excn::EXCN_Msg_Exception("JSON error: Syntax error in user_files field: 'filename' missing "); 
+        throw utility::excn::EXCN_Msg_Exception("JSON error: Syntax error in user_files field: 'filename' missing ");
       }
       if( !has_value( flag, "contents" ) ) {
-        TR.Error << "Warning: Filename " << get_string( flag, "filename" ) << " is missing content field - assuming empty file " << std::endl; 
+        TR.Error << "Warning: Filename " << get_string( flag, "filename" ) << " is missing content field - assuming empty file " << std::endl;
       }
-      
+
       std::string filename = get_string( flag, "filename" );
       std::string contents = get_string_or_empty( flag, "contents" );
       TR << "Loading virtual file: " << filename << " " << contents.size() << " bytes" << std::endl;
