@@ -133,7 +133,7 @@ namespace options {
 	)
 	{
 		using std::string;
-
+    if( args.size() == 0 ) return;
 		// Put the arguments strings in a list
 		ValueStrings arg_strings;
 		for ( std::vector<std::string>::const_iterator arg = args.begin(); arg != args.end();  ++arg ){ 
