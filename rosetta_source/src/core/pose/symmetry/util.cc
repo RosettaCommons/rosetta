@@ -388,6 +388,9 @@ make_symmetric_pdb_info(
 	// rebuild pdb2pose
 	pdb_info_target->rebuild_pdb2pose();
 
+	// copy crystinfo
+	pdb_info_target->set_crystinfo( pdb_info_src->crystinfo() );
+
 	// copy header and remark lines
 	if(pdb_info_src->header_information()){
 		pdb_info_target->header_information( new io::pdb::HeaderInformation(*pdb_info_src->header_information()));
@@ -427,6 +430,9 @@ extract_asymmetric_unit_pdb_info(
 	}
 	// rebuild pdb2pose
 	pdb_info_target->rebuild_pdb2pose();
+
+	// copy crystinfo
+	pdb_info_target->set_crystinfo( pdb_info_src->crystinfo() );
 
 	// copy header and remark lines
 	if(pdb_info_src->header_information()){
@@ -1054,7 +1060,7 @@ get_symdof_subunits(core::pose::Pose const & pose, std::string const & jname){
 			}
 		}
 	} else {
-		utility_exit_with_message("pose not symmetric!");		
+		utility_exit_with_message("pose not symmetric!");
 	}
 	return subs;
 }

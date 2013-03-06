@@ -1,4 +1,3 @@
-namespace RBSegmentRelax { BooleanOptionKey const skip_rb_moves( "RBSegmentRelax:skip_rb_moves" );  }
 namespace RBSegmentRelax { RealVectorOptionKey const helical_movement_params( "RBSegmentRelax:helical_movement_params" );  }
 namespace RBSegmentRelax { RealVectorOptionKey const strand_movement_params( "RBSegmentRelax:strand_movement_params" );  }
 namespace RBSegmentRelax { RealVectorOptionKey const default_movement_params( "RBSegmentRelax:default_movement_params" );  }
@@ -25,7 +24,6 @@ namespace edensity { RealOptionKey const ca_mask( "edensity:ca_mask" );  }
 namespace edensity { BooleanOptionKey const score_symm_complex( "edensity:score_symm_complex" );  }
 namespace edensity { RealOptionKey const sc_scaling( "edensity:sc_scaling" );  }
 namespace edensity { RealOptionKey const render_sigma( "edensity:render_sigma" );  }
-namespace edensity { BooleanOptionKey const missing_density_to_jump( "edensity:missing_density_to_jump" );  }
 namespace patterson { BooleanOptionKey const patterson( "patterson" );  }
 namespace patterson { BooleanOptionKey const debug( "patterson:debug" );  }
 namespace patterson { RealOptionKey const weight( "patterson:weight" );  }

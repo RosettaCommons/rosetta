@@ -35,15 +35,15 @@ class ImportPoseOptions : public io::pdb::PDB_DReaderOptions
 {
 public:
 	ImportPoseOptions();
-	
+
 	virtual ~ImportPoseOptions();
-	
+
 	virtual
 	void parse_my_tag( utility::tag::TagPtr tag );
-	
+
 	virtual
 	std::string type() const;
-	
+
 	// accessors
 	bool centroid() const;
 	bool fold_tree_io() const;
@@ -61,7 +61,7 @@ public:
 	void set_pack_missing_sidechains( bool pack_missing_sidechains );
 	void set_read_fold_tree( bool read_fold_tree );
 	void set_rna( bool rna );
-	void set_skip_set_reasonable_fold_tree_( bool skip_set_reasonable_fold_tree );
+	void set_skip_set_reasonable_fold_tree( bool skip_set_reasonable_fold_tree );
 	void set_residue_type_set( std::string const & residue_type_set );
 
 private:
@@ -76,9 +76,9 @@ private:
 	bool read_fold_tree_;
 	bool rna_;
 	bool skip_set_reasonable_fold_tree_;
-	
+
 	std::string residue_type_set_;
-	
+
 };
 
 } // namespace import_pose

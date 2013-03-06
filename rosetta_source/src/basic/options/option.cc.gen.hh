@@ -34,6 +34,8 @@ option.add( basic::options::OptionKeys::in::remember_unrecognized_water, "Rememb
 option.add( basic::options::OptionKeys::in::detect_disulf, "Forcably enable or disable disulfide detection. When unspecified, rosetta conservatively detects disulfides in full atom input based on SG distance, but will not form centroid disulfides. Setting `-detect_disulf true` will force aggressive disulfide detection in centroid poses based on CB distance. Setting `-detect_disulf false` disables all detection, even in full atom poses. Note that disabling disulfides causes severe clashes for native disulfides." ).legal(true).legal(false);
 option.add( basic::options::OptionKeys::in::detect_disulf_tolerance, "disulf tolerance" ).def(0.5);
 option.add( basic::options::OptionKeys::in::fix_disulf, "Specify disulfide connectivity via a file. Disulfides are specified as two whitespace-seperated residue indicies per line. This option replaces the old '-run:fix_disulf' option." );
+option.add( basic::options::OptionKeys::in::missing_density_to_jump, "If missing density is found in input pdbs, replace with a jump" ).def(false);
+option.add( basic::options::OptionKeys::in::preserve_crystinfo, "Preserve information important for crystal refinement (B factors +CRYST1 line" ).def(false);
 option.add( basic::options::OptionKeys::in::use_stupid_foldtree_format, "use the fold-tree format that existed for one week after revision 21447" ).def(false);
 option.add( basic::options::OptionKeys::in::target_residues, "which residue numbers to pass for getDistConstraints" );
 option.add( basic::options::OptionKeys::in::replonly_residues, "residue numbers regarded as repulsive-only residues" );
@@ -670,10 +672,10 @@ option.add( basic::options::OptionKeys::fold_cst::ramp_coord_cst, "ramp coord cs
 option.add( basic::options::OptionKeys::resample::resample, "resample option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::resample::silent, "a silent file for decoys to restart sampling from " ).def("");
 option.add( basic::options::OptionKeys::resample::tag, "which decoy to select from silent file " ).def("");
-option.add( basic::options::OptionKeys::resample::stage1, "if true restart after stage1, otherwise after stage2 " ).def(false);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::resample::stage2, "if true restart after stage1, otherwise after stage2 " ).def(false);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::resample::stage1, "if true restart after stage1, otherwise after stage2 " ).def(false);
+option.add( basic::options::OptionKeys::resample::stage2, "if true restart after stage1, otherwise after stage2 " ).def(false);
 option.add( basic::options::OptionKeys::resample::jumps, "if true restart after stage1, otherwise after stage2 " ).def(false);
 option.add( basic::options::OptionKeys::resample::min_max_start_seq_sep, "range of (random) start values for seq-separation" ).def(0);
 option.add( basic::options::OptionKeys::loopfcst::loopfcst, "loopfcst option group" ).legal(true).def(true);
@@ -2011,10 +2013,10 @@ option.add( basic::options::OptionKeys::RBSegmentRelax::nrboutercycles, "number 
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_scorefxn, "number of rigid-body moves" ).def("score5");
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_fragment_moves, "omit fragment insertions (in SS elements)" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_seqshift_moves, "omit sequence shifting moves" ).def(false);
+option.add( basic::options::OptionKeys::RBSegmentRelax::skip_rb_moves, "omit rigid-body moves" ).def(false);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::skip_rb_moves, "omit rigid-body moves" ).def(false);
-option.add( basic::options::OptionKeys::RBSegmentRelax::helical_movement_params, "helical-axis-rotation, helical-axis-translation, off-axis-rotation, off-axis-translation" ).def(utility::vector1<float>(4,0.0));
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::helical_movement_params, "helical-axis-rotation, helical-axis-translation, off-axis-rotation, off-axis-translation" ).def(utility::vector1<float>(4,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::strand_movement_params, "strand-in-plane-rotation, strand-in-plane-translation, out-of-plane-rotation, out-of-plane-translationn" ).def(utility::vector1<float>(4,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::default_movement_params, "default-rotation, default-translation" ).def(utility::vector1<float>(2,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_seqwidth, "sequence width on constraints" ).def(0);
@@ -2040,7 +2042,6 @@ option.add( basic::options::OptionKeys::edensity::ca_mask, "override default (=6
 option.add( basic::options::OptionKeys::edensity::score_symm_complex, "If set, scores the structure over the entire symmetric complex; otherwise just use controlling monomer" ).def(false);
 option.add( basic::options::OptionKeys::edensity::sc_scaling, "Scale sidechain density by this amount (default same as mainchain density)" ).def(1.0);
 option.add( basic::options::OptionKeys::edensity::render_sigma, "initially render at this sigma level (extras=graphics build only)" ).def(2);
-option.add( basic::options::OptionKeys::edensity::missing_density_to_jump, "Place jumps where missing density is found" ).def(false);
 option.add( basic::options::OptionKeys::patterson::patterson, "patterson option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::patterson::debug, "No description" ).def(false);
 option.add( basic::options::OptionKeys::patterson::weight, "wt of patterson correlation" ).def(0.0);

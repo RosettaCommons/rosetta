@@ -248,6 +248,16 @@ FileData PDB_DReader::createFileData(std::vector<Record> & VR, PDB_DReaderOption
 			ri.value = VR[i]["value"].value;
 
 			fd.remarks->push_back(ri);
+		} else if( VR[i]["type"].value == "CRYST1")  {
+			pose::CrystInfo ci;
+			ci.A( atof( VR[i]["a"].value.c_str() ) );
+			ci.B( atof( VR[i]["b"].value.c_str() ) );
+			ci.C( atof( VR[i]["c"].value.c_str() ) );
+			ci.alpha( atof( VR[i]["alpha"].value.c_str() ) );
+			ci.beta( atof( VR[i]["beta"].value.c_str() ) );
+			ci.gamma( atof( VR[i]["gamma"].value.c_str() ) );
+			ci.spacegroup( VR[i]["spacegroup"].value );
+			fd.crystinfo = ci;
 		}
 	}
 
@@ -349,6 +359,20 @@ std::vector<Record> PDB_DReader::createRecords(FileData const & fd)
 		R["remarkNum"].value = print_i("%3d", ri.num);
 		R["value"].value = ri.value;
 		VR.push_back(R);
+	}
+
+	R = Field::getRecordCollection()["CRYST1"];
+	pose::CrystInfo ci = fd.crystinfo;
+	if (ci.A() > 0 && ci.B() > 0 && ci.C() > 0) {
+		R["type"].value = "CRYST1";
+		R["a"].value =  print_d("%9.3f", ci.A());
+		R["b"].value =  print_d("%9.3f", ci.B());
+		R["c"].value =  print_d("%9.3f", ci.C());
+		R["alpha"].value = print_d("%7.2f", ci.alpha());
+		R["beta"].value =  print_d("%7.2f", ci.beta());
+		R["gamma"].value = print_d("%7.2f", ci.gamma());
+		R["spacegroup"].value = ci.spacegroup();
+		VR.push_back( R );
 	}
 
 

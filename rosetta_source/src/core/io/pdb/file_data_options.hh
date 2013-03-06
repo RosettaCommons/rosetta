@@ -54,6 +54,8 @@ public:
 	bool ignore_zero_occupancy() const;
 	bool keep_input_protonation_state() const;
 	bool preserve_header() const;
+	bool preserve_crystinfo() const;
+	bool missing_dens_as_jump() const;
 	bool randomize_missing_coords() const;
 	bool remember_unrecognized_res() const;
 	bool remember_unrecognized_water() const;
@@ -69,6 +71,8 @@ public:
 	void set_ignore_zero_occupancy( bool ignore_zero_occupancy );
 	void set_keep_input_protonation_state( bool keep_input_protonation_state );
 	void set_preserve_header( bool preserve_header );
+	void set_preserve_crystinfo( bool preserve_crystinfo );
+	void set_missing_dens_as_jump( bool missing_dens_as_jump );
 	void set_randomize_missing_coords( bool randomize_missing_coords );
 	void set_remember_unrecognized_res( bool remember_unrecognized_res );
 	void set_remember_unrecognized_water( bool remember_unrecognized_water );
@@ -88,6 +92,8 @@ private:
 	bool ignore_zero_occupancy_;
 	bool keep_input_protonation_state_;
 	bool preserve_header_;
+	bool preserve_crystinfo_;
+	bool missing_dens_as_jump_;
 	bool randomize_missing_coords_;
 	bool remember_unrecognized_res_;
 	bool remember_unrecognized_water_;

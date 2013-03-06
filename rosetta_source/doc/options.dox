@@ -155,6 +155,16 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Specify disulfide connectivity via a file. Disulfides are specified as two whitespace-seperated residue indicies per line. This option replaces the old '-run:fix_disulf' option.</dd><br>
 </dl>
 <dl>
+<dt><b>-missing_density_to_jump</b> \<Boolean\><dt>
+<dd>If missing density is found in input pdbs, replace with a jump</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-preserve_crystinfo</b> \<Boolean\><dt>
+<dd>Preserve information important for crystal refinement (B factors +CRYST1 line</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-use_stupid_foldtree_format</b> \<Boolean\><dt>
 <dd>use the fold-tree format that existed for one week after revision 21447</dd><br>
 <dd>Default: false</dd><br>
@@ -9919,11 +9929,6 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-render_sigma</b> \<Real\><dt>
 <dd>initially render at this sigma level (extras=graphics build only)</dd><br>
 <dd>Default: 2</dd><br>
-</dl>
-<dl>
-<dt><b>-missing_density_to_jump</b> \<Boolean\><dt>
-<dd>Place jumps where missing density is found</dd><br>
-<dd>Default: false</dd><br>
 </dl>
  </li>
 <li><h2>patterson</h2>

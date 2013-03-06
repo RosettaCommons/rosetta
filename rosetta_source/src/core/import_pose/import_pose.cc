@@ -222,6 +222,7 @@ pose_from_pdb(
 	read_additional_pdb_data( res, pose, options, read_fold_tree );
 }
 
+
 void
 pose_from_pdb(
 	core::pose::Pose & pose,
@@ -701,6 +702,7 @@ set_reasonable_fold_tree(pose::Pose & pose)
 	TR.Debug << "new fold tree " << newft << std::endl;
 	pose.fold_tree( newft );
 }
+
 
 } // namespace import_pose
 } // namespace core

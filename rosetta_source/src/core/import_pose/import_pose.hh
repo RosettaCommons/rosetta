@@ -272,6 +272,10 @@ typedef std::string String;
 
 void set_reasonable_fold_tree( core::pose::Pose & pose );
 
+/// @brief Look for peptide bonds connected by >3A and replace them with a jump
+void
+convert_missing_dens_to_jump( pose::Pose & pose );
+
 /// @brief Create pose object, using given FileData object.
 /// If PDB cleanin specified - it will be applied first.
 /// Constructs a ImportPoseOptions object from the command line

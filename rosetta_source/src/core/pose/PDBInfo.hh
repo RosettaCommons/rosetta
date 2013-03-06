@@ -31,6 +31,7 @@
 #include <core/conformation/signals/LengthEvent.fwd.hh>
 
 #include <core/pose/PDBPoseMap.hh>
+#include <core/pose/CrystInfo.hh>
 
 #include <core/io/pdb/HeaderInformation.hh>
 #include <core/pose/Remarks.hh>
@@ -527,6 +528,23 @@ public: // pdb-wide accessors/mutators
 	{
 		remarks_ = in;
 	}
+
+	/// @brief Returns the pdb crystinfo
+	inline
+	CrystInfo
+	crystinfo() const
+	{
+		return crystinfo_;
+	}
+
+	/// @brief Sets the pdb crystinfo
+	inline
+	void
+	set_crystinfo(CrystInfo crystinfoin)
+	{
+		crystinfo_ = crystinfoin;
+	}
+
 
 	/// @brief For structures deposited into the protein databank, the
 	/// header information record stores the classfication, deposition
@@ -1226,7 +1244,8 @@ private: // data
 	core::Size num_unrecognized_res_;
 	core::Size num_unrecognized_atoms_;
 
-
+	// fpd spacegroup and crystal parameters
+	CrystInfo crystinfo_;
 }; //end class PDBInfo
 
 // for Python bindings

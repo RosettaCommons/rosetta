@@ -44,11 +44,13 @@ void FileDataOptions::parse_my_tag( utility::tag::TagPtr tag )
 	set_ignore_zero_occupancy( tag->getOption< bool >( "ignore_zero_occupancy", 1 ));
 	set_keep_input_protonation_state( tag->getOption< bool >( "keep_input_protonation_state", 0 ));
 	set_preserve_header( tag->getOption< bool >( "preserve_header", 0 ));
+	set_preserve_crystinfo( tag->getOption< bool >( "preserve_crystinfo", 0 ));
+	set_missing_dens_as_jump( tag->getOption< bool >( "missing_dens_as_jump", 0 ));
 	set_randomize_missing_coords( tag->getOption< bool >( "randomize_missing_coords", 0 ));
 	set_remember_unrecognized_res( tag->getOption< bool >( "remember_unrecognized_res", 0 ));
 	set_remember_unrecognized_water( tag->getOption< bool >( "remember_unrecognized_water", 0 ));
-	
-	set_chains_whose_residues_are_separate_chemical_entities( 
+
+	set_chains_whose_residues_are_separate_chemical_entities(
 		tag->getOption< std::string >( "treat_residues_in_these_chains_as_separate_chemical_entities", " " ));
 }
 
@@ -65,6 +67,8 @@ bool FileDataOptions::ignore_waters() const { return ignore_waters_; }
 bool FileDataOptions::ignore_zero_occupancy() const { return ignore_zero_occupancy_; }
 bool FileDataOptions::keep_input_protonation_state() const { return keep_input_protonation_state_; }
 bool FileDataOptions::preserve_header() const { return preserve_header_; }
+bool FileDataOptions::preserve_crystinfo() const { return preserve_crystinfo_; }
+bool FileDataOptions::missing_dens_as_jump() const { return missing_dens_as_jump_; }
 bool FileDataOptions::randomize_missing_coords() const { return randomize_missing_coords_; }
 bool FileDataOptions::remember_unrecognized_res() const { return remember_unrecognized_res_; }
 bool FileDataOptions::remember_unrecognized_water() const { return remember_unrecognized_water_; }
@@ -96,6 +100,12 @@ void FileDataOptions::set_keep_input_protonation_state( bool keep_input_protonat
 void FileDataOptions::set_preserve_header( bool preserve_header )
 { preserve_header_ = preserve_header; }
 
+void FileDataOptions::set_preserve_crystinfo( bool preserve_crystinfo )
+{ preserve_crystinfo_ = preserve_crystinfo; }
+
+void FileDataOptions::set_missing_dens_as_jump( bool missing_dens_as_jump )
+{ missing_dens_as_jump_ = missing_dens_as_jump; }
+
 void FileDataOptions::set_randomize_missing_coords( bool randomize_missing_coords )
 { randomize_missing_coords_ = randomize_missing_coords; }
 
@@ -113,7 +123,7 @@ void FileDataOptions::init_from_options()
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	
+
 	//set_check_if_residues_are_termini( option[ in::termini ].value());
 	set_check_if_residues_are_Ntermini( option[ in::Ntermini ].value());
 	set_check_if_residues_are_Ctermini( option[ in::Ctermini ].value());
@@ -123,6 +133,8 @@ void FileDataOptions::init_from_options()
 	set_ignore_zero_occupancy( option[ run::ignore_zero_occupancy ]());
 	set_keep_input_protonation_state( option[ pH::keep_input_protonation_state ]());
 	set_preserve_header( option[ run::preserve_header ].value());
+	set_preserve_crystinfo( option[ in::preserve_crystinfo ]() );
+	set_missing_dens_as_jump( option[ in::missing_density_to_jump ]() );
 	set_randomize_missing_coords( option[ run::randomize_missing_coords ]());
 	set_remember_unrecognized_res( option[ in::remember_unrecognized_res ]());
 	set_remember_unrecognized_water( option[ in::remember_unrecognized_water ]());

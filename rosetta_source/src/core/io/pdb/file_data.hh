@@ -29,6 +29,7 @@
 // Project headers
 #include <core/id/AtomID_Mask.fwd.hh>
 #include <core/pose/Remarks.hh>
+#include <core/pose/CrystInfo.hh>
 
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -169,6 +170,9 @@ public:
 	std::string filename;
 	std::string modeltag;
 
+	//fpd:  CRYST1 line
+	pose::CrystInfo crystinfo;
+
 	// map for storing LINK records:
 	// key is 6-character resID of 1st residue in link
 	// TODO: Redesign to allow for multiple branches from the same residue; as keys must be unique, this current method
@@ -218,7 +222,7 @@ public:
 
 	/// @brief Fill FileData structure using information from given pose object.
 	void init_from_pose(core::pose::Pose const & pose);
- 
+
 	/// @brief Fill FileData structure using information from given pose object and a set of options.
 	void init_from_pose(core::pose::Pose const & pose, FileDataOptions const & options);
 
@@ -267,12 +271,12 @@ public:
 	typedef std::map< std::string, Vector > ResidueCoords;
 	typedef std::map< std::string, ResidueCoords > Coords;
 	typedef utility::vector1< std::string > Strings;
-	
+
 	/// @brief Convert FileData into set of residues, sequences, coordinates etc.
 	void create_working_data(
 		utility::vector1< ResidueInformation > & rinfo
 	);
-	
+
 	/// @brief Convert FileData into set of residues, sequences, coordinates etc. using a set of options
 	void create_working_data(
 		utility::vector1< ResidueInformation > & rinfo,
@@ -283,7 +287,8 @@ public:
 	void append_residue(
 		core::conformation::Residue const & rsd,
 		core::Size & atom_index,
-		core::pose::Pose const & pose
+		core::pose::Pose const & pose,
+		bool preserve_crystinfo = false
 	);
 };  // class FileData
 

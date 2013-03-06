@@ -259,14 +259,6 @@ main( int argc, char * argv [] )
 		}
 	}
 
-	// add jumps when missing density is found
-	if ( option [ edensity::missing_density_to_jump ]() ) {
-			protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;
-			seqmov->add_mover( new protocols::simple_moves::MissingDensityToJumpMover );
-  		seqmov->add_mover( mover );
-  		mover = seqmov;
-	}
-
 	// operate this mover and output pdbs/scorefile
 	protocols::jobdist::universal_main( *mover );
 

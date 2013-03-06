@@ -65,14 +65,14 @@ std::string ImportPoseOptions::type() const { return "ImportPoseOptions"; }
 void ImportPoseOptions::parse_my_tag( utility::tag::TagPtr tag )
 {
 	PDB_DReaderOptions::parse_my_tag( tag );
-	
+
 	set_centroid( tag->getOption< bool >( "centroid", 0 ));
 	set_fold_tree_io( tag->getOption< bool >( "fold_tree_io", 0 ));
 	set_no_optH( tag->getOption< bool >( "no_optH", 0 ));
 	set_pack_missing_sidechains( tag->getOption< bool >( "pack_missing_sidechains", 1 ));
 	set_read_fold_tree( tag->getOption< bool >( "read_fold_tree", 0 ));
 	set_rna( tag->getOption< bool >( "rna", 0 ));
-	set_skip_set_reasonable_fold_tree_( tag->getOption< bool >( "skip_set_reasonable_fold_tree", 0 ));
+	set_skip_set_reasonable_fold_tree( tag->getOption< bool >( "skip_set_reasonable_fold_tree", 0 ));
 	set_residue_type_set( tag->getOption< std::string >( "residue_type_set", "fa_standard" ));
 }
 
@@ -94,7 +94,7 @@ void ImportPoseOptions::set_no_optH( bool no_optH ) { no_optH_ = no_optH; }
 void ImportPoseOptions::set_pack_missing_sidechains( bool pack_missing_sidechains ) { pack_missing_sidechains_ = pack_missing_sidechains; }
 void ImportPoseOptions::set_read_fold_tree( bool read_fold_tree ) { read_fold_tree_ = read_fold_tree; }
 void ImportPoseOptions::set_rna( bool rna ) { rna_ = rna; }
-void ImportPoseOptions::set_skip_set_reasonable_fold_tree_( bool skip_set_reasonable_fold_tree ) { skip_set_reasonable_fold_tree_ = skip_set_reasonable_fold_tree; }
+void ImportPoseOptions::set_skip_set_reasonable_fold_tree( bool skip_set_reasonable_fold_tree ) { skip_set_reasonable_fold_tree_ = skip_set_reasonable_fold_tree; }
 
 void ImportPoseOptions::set_residue_type_set( std::string const & residue_type_set ) { residue_type_set_ = residue_type_set; }
 
@@ -103,12 +103,12 @@ void ImportPoseOptions::init_from_options()
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	
+
 	set_centroid( option[ in::file::centroid_input ]()
 		|| option[ in::file::centroid ]()
 		|| ( option[ in::file::fullatom ].user() && !option[ in::file::fullatom ]())
 		|| ( option[ in::file::residue_type_set ].user() && option[ in::file::residue_type_set ]() == "centroid" ));
-	
+
 	// sanity check
 	if ( centroid() &&
 		( option[ in::file::fullatom ]()
@@ -121,8 +121,8 @@ void ImportPoseOptions::init_from_options()
 	set_pack_missing_sidechains( option[ packing::pack_missing_sidechains ].value());
 	set_read_fold_tree( false ); // no option for this parameter - it can only be set to true if you call pose_from_pdd.
 	set_rna(option[ in::file::residue_type_set ].user() && option[ in::file::residue_type_set]()  == "rna");
-	set_skip_set_reasonable_fold_tree_( option[ run::skip_set_reasonable_fold_tree ].value());
-	
+	set_skip_set_reasonable_fold_tree( option[ run::skip_set_reasonable_fold_tree ].value());
+
 	set_residue_type_set( option[ in::file::residue_type_set ]());
 }
 

@@ -124,7 +124,8 @@ PDBInfo::PDBInfo( PDBInfo const & info ) :
 	unrecognized_res_num2name_( info.unrecognized_res_num2name_ ),
 	unrecognized_res_size_    ( info.unrecognized_res_size_ ),
 	num_unrecognized_res_     ( info.num_unrecognized_res_ ),
-	num_unrecognized_atoms_   ( info.num_unrecognized_atoms_ )
+	num_unrecognized_atoms_   ( info.num_unrecognized_atoms_ ),
+	crystinfo_( info.crystinfo_ )
 {}
 
 
@@ -163,6 +164,7 @@ PDBInfo::operator =( PDBInfo const & info )
 		unrecognized_res_size_ = info.unrecognized_res_size_;
 		num_unrecognized_res_ = info.num_unrecognized_res_;
 		num_unrecognized_atoms_ = info.num_unrecognized_atoms_;
+		crystinfo_ = info.crystinfo_;
 	}
 	return *this;
 }

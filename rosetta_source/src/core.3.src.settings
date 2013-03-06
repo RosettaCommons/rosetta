@@ -213,6 +213,9 @@ sources = {
 		"util",
 		"XYZ_Func",
 	],
+	"core/scoring/cryst": [
+		"util",
+	],
 	"core/scoring/custom_pair_distance": [
 		"FullatomCustomPairDistanceEnergy",
 	],

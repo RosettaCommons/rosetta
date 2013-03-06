@@ -1,3 +1,4 @@
+namespace resample { BooleanOptionKey const stage1( "resample:stage1" );  }
 namespace resample { BooleanOptionKey const stage2( "resample:stage2" );  }
 namespace resample { BooleanOptionKey const jumps( "resample:jumps" );  }
 namespace resample { RealVectorOptionKey const min_max_start_seq_sep( "resample:min_max_start_seq_sep" );  }

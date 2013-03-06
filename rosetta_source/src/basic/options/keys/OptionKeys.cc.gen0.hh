@@ -29,6 +29,8 @@ namespace in { BooleanOptionKey const remember_unrecognized_water( "in:remember_
 namespace in { BooleanOptionKey const detect_disulf( "in:detect_disulf" );  }
 namespace in { RealOptionKey const detect_disulf_tolerance( "in:detect_disulf_tolerance" );  }
 namespace in { FileOptionKey const fix_disulf( "in:fix_disulf" );  }
+namespace in { BooleanOptionKey const missing_density_to_jump( "in:missing_density_to_jump" );  }
+namespace in { BooleanOptionKey const preserve_crystinfo( "in:preserve_crystinfo" );  }
 namespace in { BooleanOptionKey const use_stupid_foldtree_format( "in:use_stupid_foldtree_format" );  }
 namespace in { IntegerVectorOptionKey const target_residues( "in:target_residues" );  }
 namespace in { IntegerVectorOptionKey const replonly_residues( "in:replonly_residues" );  }
@@ -665,4 +667,3 @@ namespace fold_cst { BooleanOptionKey const ramp_coord_cst( "fold_cst:ramp_coord
 namespace resample { BooleanOptionKey const resample( "resample" );  }
 namespace resample { FileOptionKey const silent( "resample:silent" );  }
 namespace resample { StringOptionKey const tag( "resample:tag" );  }
-namespace resample { BooleanOptionKey const stage1( "resample:stage1" );  }

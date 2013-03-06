@@ -43,6 +43,7 @@
 #include <core/io/raw_data/DisulfideFile.hh>
 
 #include <core/scoring/dssp/Dssp.hh>
+#include <core/scoring/cryst/util.hh>
 
 #include <core/pose/util.hh>
 
@@ -168,7 +169,8 @@ void
 FileData::append_residue(
 	core::conformation::Residue const & rsd,
 	core::Size & atom_index,
-	core::pose::Pose const & pose // for pdb numbering and chains, could change to PDBInfo if necessary (but casting here is perhaps best)
+	core::pose::Pose const & pose, // for pdb numbering and chains, could change to PDBInfo if necessary (but casting here is perhaps best)
+	bool preserve_crystinfo
 )
 {
 	using namespace core;
@@ -236,6 +238,13 @@ FileData::append_residue(
 			ai.altLoc = pdb_info->alt_loc( rsd.seqpos(), j );
 			ai.occupancy = pdb_info->occupancy( rsd.seqpos(), j );
 			ai.temperature = pdb_info->temperature( rsd.seqpos(), j );
+
+			//fpd: element
+			if (preserve_crystinfo) {
+				core::chemical::AtomTypeSet const &ats = rsd.type().atom_type_set();
+				ai.element = ats[atom.type()].element();
+				if (ai.element.length() == 1) ai.element = " "+ai.element;
+			}
 		} else {
 			// residue
 			runtime_assert( rsd.chain() > 0 );
@@ -406,7 +415,7 @@ void FileData::init_from_pose(core::pose::Pose const & pose, FileDataOptions con
 
 	//get OP to PDBInfo object for remarks header
 	using core::pose::PDBInfo;
-	if( options.preserve_header() == true && pose.pdb_info() ) {
+	if( (options.preserve_header() == true || options.preserve_crystinfo() == true ) && pose.pdb_info() ) {
 		*remarks = pose.pdb_info()->remarks();
 		if(pose.pdb_info()->header_information()){
 			header = new HeaderInformation(*(pose.pdb_info()->header_information()));
@@ -416,10 +425,13 @@ void FileData::init_from_pose(core::pose::Pose const & pose, FileDataOptions con
 	}
 
 	chains.resize(0);
+	if ( options.preserve_crystinfo() && pose.pdb_info() ) {
+		crystinfo = pose.pdb_info()->crystinfo();
+	}
 
 	for ( Size i=1; i<= nres; ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );
-		append_residue( rsd, atom_index, pose );
+		append_residue( rsd, atom_index, pose, options.preserve_crystinfo() );
 	}
 }
 
@@ -1084,23 +1096,42 @@ build_pose_as_is1(
 
 		// Add this new residue to the pose by appending.
 		Size const old_nres( pose.total_residue() );
-		if (!old_nres) /*first residue?*/ {
+		if ( !old_nres ) {
 			pose.append_residue_by_bond( *new_rsd );
+		} else if ( ( is_lower_terminus || !check_Ntermini_for_this_chain ) ||
+						is_branch_lower_terminus ||
+						!new_rsd->is_polymer() ||
+						!pose.residue_type(old_nres).is_polymer() ||
+						!last_residue_was_recognized ) {
+			pose.append_residue_by_jump( *new_rsd, 1 /*pose.total_residue()*/ );
 		} else {
-			if ( ( is_lower_terminus || !check_Ntermini_for_this_chain ) ||
-					is_branch_lower_terminus ||
-					!new_rsd->is_polymer() ||
-					!pose.residue_type(old_nres).is_polymer() ||
-					!last_residue_was_recognized) {
-				pose.append_residue_by_jump(*new_rsd, 1);
+			if (!options.missing_dens_as_jump()) {
+				pose.append_residue_by_bond( *new_rsd );
 			} else {
-				pose.append_residue_by_bond(*new_rsd);
+				//fpd look for missing density in the input PDB
+				//fpd if there is a discontinuity in numbering AND bondlength > 3A
+				//fpd we will consider this missing density
+				Residue const &last_rsd( pose.residue( old_nres ) );
+				core::Real bondlength = ( last_rsd.atom( last_rsd.upper_connect_atom() ).xyz() -
+																	new_rsd->atom( new_rsd->lower_connect_atom() ).xyz() ).length();
+
+				// uncomment to look at PDB ids
+				//int last_resid = utility::string2int( rinfos[pose_to_rinfo[old_nres]].resid.substr(0,4) );
+				//int resid = utility::string2int( rinfo.resid.substr(0,4) );
+
+				if ( bondlength > 3.0 ) {
+					TR << "[ WARNING ] missing density found at residue (rosetta number) " << old_nres << std::endl;
+					pose.append_residue_by_jump( *new_rsd, old_nres );
+					core::pose::add_variant_type_to_pose_residue( pose, chemical::UPPER_TERMINUS, old_nres );
+					core::pose::add_variant_type_to_pose_residue( pose, chemical::LOWER_TERMINUS, old_nres+1 );
+				} else {
+					pose.append_residue_by_bond( *new_rsd );
+				}
 			}
 		}
 		pose_to_rinfo.push_back( Size(i) );
 		pose_resids.push_back( rinfo.resid );
 		pose_temps.push_back( rinfo.temps );
-
 
 		// update the pose-internal chain label if necessary
 		if ( ( ( is_lower_terminus || !check_Ntermini_for_this_chain ) || is_branch_lower_terminus) && pose.total_residue() > 1 ) {
@@ -1223,6 +1254,8 @@ build_pose_as_is1(
 	pdb_info->set_numbering( pdb_numbering );
 	pdb_info->set_chains( pdb_chains );
 	pdb_info->set_icodes( insertion_codes );
+	if ( options.preserve_crystinfo() )
+		pdb_info->set_crystinfo( fd.crystinfo );
 
 	pose.conformation().fill_missing_atoms( missing );
 
@@ -1287,6 +1320,13 @@ build_pose_as_is1(
 	// mark PDBInfo as ok and store in Pose
 	pdb_info->obsolete( false );
 	pose.pdb_info( pdb_info );
+
+	//fpd fix bfactors of missing atoms using neighbors
+	//fpd set hydrogen Bfactors as 1.2x attached atom
+	if (options.preserve_crystinfo()) {
+		core::scoring::cryst::fix_bfactorsMissing( pose );
+		core::scoring::cryst::fix_bfactorsH( pose );
+	}
 }
 
 ///@details The input rsd_type_list are all the residue types that have
