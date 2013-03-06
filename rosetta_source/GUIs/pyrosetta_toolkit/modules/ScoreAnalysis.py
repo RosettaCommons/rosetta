@@ -44,6 +44,8 @@ class ScoreAnalysis:
         self.top_score_map = dict()
         self.top_scoring_by_percent_map = dict()
         self.top_scoring_by_number_map = dict()
+        self.filepath=""
+        
         #self.read_scores()
         
     def set_filepath(self, filepath):

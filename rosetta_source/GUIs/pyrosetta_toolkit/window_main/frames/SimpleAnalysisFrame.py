@@ -101,12 +101,13 @@ class SimpleAnalysisFrame(TkFrame):
     
     #### FUNCTIONS ####
     
-    def rmsd_load_pose(self):
+    def rmsd_load_pose(self, infilename = False):
         self.rmsdP = Pose()
-        f = tkFileDialog.askopenfilename(initialdir=global_variables.current_directory, title='Choose PDB')
-        if not f:return
-        global_variables.current_directory = os.path.dirname(f)
-        pose_from_pdb(self.rmsdP, f)
+        if not infilename:
+            infilename = tkFileDialog.askopenfilename(initialdir=global_variables.current_directory, title='Choose PDB')
+        if not infilename:return
+        global_variables.current_directory = os.path.dirname(infilename)
+        pose_from_pdb(self.rmsdP, infilename)
         print "Pose to compare loaded..."
         return
       

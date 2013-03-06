@@ -49,7 +49,7 @@ from window_modules.ligand_ncaa_ptm_manager.ligand_ncaa_ptm_manager import ligan
 from window_modules.full_control.FullControlWindow import FullControlWindow
 import global_variables
 from pyrosetta_toolkit import main_window
-
+from window_main.IO import SessionIO
 
 #### Import of other GUIs in rosetta_source.  Nessessary check for eventual inclusion into PyRosetta Binaries.
 flag_file_builder_import = True
@@ -104,6 +104,8 @@ class Menus():
 
       #### Import ####
 	self.import_menu = Menu(self.main_menu, tearoff=0)
+        self.import_menu.add_command(label="GUI Session", command = lambda:SessionIO.SessionIO(self.toolkit).load_session())
+        self.import_menu.add_separator()
 	self.import_menu.add_command(label="Param PathList File", command = lambda: self.toolkit.input_class.load_param_list())
 	self.import_menu.add_command(label="Rosetta Loop File", command = lambda: self.toolkit.input_frame.load_loop())
 	#self.import_menu.add_command(label="Rosetta Resfile", command = lambda: input_tools.load_resfile())
@@ -111,6 +113,8 @@ class Menus():
 
       #### Export ####
 	self.export_menu = Menu(self.main_menu, tearoff=0)
+        self.export_menu.add_command(label="GUI Session", command = lambda: SessionIO.SessionIO(self.toolkit).save_session())
+        self.export_menu.add_separator()
 	self.export_menu.add_command(label="SCWRL seq File", command=lambda: output_tools.saveSeqFile(self.toolkit.pose, None, self.toolkit.input_class.loops_as_strings))
 	self.export_menu.add_separator()
 	self.export_menu.add_command(label="Rosetta Loop File", command = lambda: output_tools.save_loop_file(self.toolkit.pose, self.toolkit.input_class.regions))
@@ -209,7 +213,7 @@ class Menus():
 	#self.design_menu.add_command(label="Structure Editing and Grafting", foreground='red')
 	self.advanced_menu.add_cascade(label = "Design", menu=self.design_menu)
 	self.advanced_menu.add_separator()
-	self.advanced_menu.add_command(label ="Add Constraints", command = lambda: self.toolkit.input_class.constraint_file_path.set(\
+	self.advanced_menu.add_command(label ="Add Constraints", command = lambda: self.toolkit.input_class.constraint_file_paths.append(\
 				    input_tools.add_constraints_to_pose_and_scorefunction(self.toolkit.pose, self.toolkit.score_class.score)))
 	#self.advanced_menu.add_command(label ="Enable Symmetry", foreground='red')
 	

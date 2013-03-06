@@ -13,14 +13,14 @@
 @page pyrosetta_toolkit Documentation for the PyRosetta Toolkit GUI
 
 @section metadata Metadata
-This document was last updated January 2013, by Jared Adolf-Bryfogle <jadolfbr@gmail.com>.
+This document was last updated March 2013, by Jared Adolf-Bryfogle <jadolfbr@gmail.com>.
 The PI for this application is Roland Dunbrack <Roland.Dunbrack@fccc.edu>
 
 The application was developed by:
 @li Jared Adolf-Bryfogle
 
 @section code_demos Code and Demo
-The Code is available in both rosetta_source/GUIs/pyrosetta_toolkit and in the PyRosetta release builds.
+The Code is available in both rosetta_source/GUIs/pyrosetta_toolkit and in the newest PyRosetta releases.
 
  PyRosetta Setup:
   http://www.pyrosetta.org/faq#TOC-1.-How-do-I-obtain-and-install-PyRosetta-
@@ -42,8 +42,6 @@ This GUI is used to setup Rosetta specific filetypes, do interactive modeling us
 This application does not run all Rosetta Applications.  It does, however, run the most common ones.  Although multiprocessing is implemented, full production runs of many rosetta applications usually require a cluster.
 Always check relevant Rosetta Documentation on RosettaCommons.  Additional options for most protocols can be added through the Option System Manager.
 
-@modes Modes
-
 @subsection file_menu File Menu
 Load a pose through this menu first either from a file or directly from the RCSB. If you have PyMOL setup, it will send the pose to PyMOL after it loads into Rosetta. 
 Loading a pose will open up the PDB Cleaning window by default. 
@@ -58,8 +56,8 @@ PDB Cleaning Functions:
  renumbering pose from 1 + accounting for insertions
  checking that all residues are able to be read by Rosetta
 
-Current Imports:Param PathList, Loop File
-Current Exports:Param PathList, Loop File, basic Resfile, basic Blueprint, SCWRL seq file, FASTA (pose + regions)
+Current Imports:GUI Session, Param PathList, Loop File
+Current Exports:GUI Session, Param PathList, Loop File, basic Resfile, basic Blueprint, SCWRL seq file, FASTA (pose + regions)
 
 @subsection main Main Window
 The main window is used to run common protocols, some anlysis, setup decoy output, and finally set a region.
@@ -156,6 +154,10 @@ Main Functions:
  
 -Set default Options through the options system manager window
 -Set default Scorefunction through the scorefunction window
+-Save and Load GUI Sessions using the file menu
 -Advanced Users: To add personal windows and functions to the GUI, see developer webpage in pyrosetta_toolkit directory.
+
+@section changelog Changes since last release
+This will be the first release
 
 */

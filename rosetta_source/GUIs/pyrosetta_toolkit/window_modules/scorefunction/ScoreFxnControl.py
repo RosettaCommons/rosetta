@@ -17,6 +17,7 @@ from rosetta import *
 import glob
 from os import environ as env
 from os import path
+import re
 
 #Tkinter Imports
 from Tkinter import *
@@ -362,22 +363,22 @@ class ScoreFxnControl():
                 self.populateETerms(self.nonzero, self.zero)
           
     def ret_Refs(self):
-        print env["PYROSETTA_DATABASE"] +"/scoring/weights/"+self.ScoreType.get()+".wts"
-        ORIGINAL = open(env["PYROSETTA_DATABASE"] +"/scoring/weights/"+self.ScoreType.get()+".wts", 'r')
-        refLine = ORIGINAL.readline()
-        ORIGINAL.close()
-        print refLine
-        return refLine
+        self.getRefs()
+        return self.refLine
     
-    def saveAS(self):
+    def saveAS(self, outfilepath=False):
         """
         Saves New Energy Weights
         """
-        f= tkFileDialog.asksaveasfilename(initialdir = global_variables.current_directory)
-        if not f:
+        
+        if not outfilepath:
+            outfilepath= tkFileDialog.asksaveasfilename(initialdir = global_variables.current_directory)
+        if not outfilepath:
             return
-        global_variables.current_directory = path.dirname(f)
-        FILE = open(f, 'w')
+        self.zero, self.nonzero = self.scoreOption("Breakdown ScoreFxn")
+        
+        global_variables.current_directory = path.dirname(outfilepath)
+        FILE = open(outfilepath, 'w')
         FILE.write(self.ret_Refs())
         for term in sorted(self.nonzero):
             termSP = term.split("; ")
@@ -412,7 +413,11 @@ class ScoreFxnControl():
         """
         
         SCOREFILE = open(env["PYROSETTA_DATABASE"] +"/scoring/weights/"+self.ScoreType.get()+".wts")
-        self.refLine = SCOREFILE.readline()
+        for line in SCOREFILE:
+            if re.search("METHOD_WEIGHTS", line):
+                self.refLine = line
+                break
+        SCOREFILE.close()
         
     def location(self):
         """

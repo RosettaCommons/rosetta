@@ -40,7 +40,7 @@ class GUIInput:
     def __init__(self, toolkit):
         self.toolkit = toolkit; #Basically an AP of the toolkit
         self.pose = self.toolkit.pose
-        self.pdb_path = StringVar(); self.pdb_path.set("0");
+        self.pdb_path = StringVar(); self.pdb_path.set("");
         self.PDBLIST = StringVar(); self.PDBLIST.set("")
         
         self.region_start=StringVar(); #Start of Region
@@ -57,10 +57,10 @@ class GUIInput:
         self.residue_rosetta_resnum = StringVar();
         self.residue_chain = StringVar()
         
-        self.constraint_file_path = StringVar(); #Path to constraint file if loaded through GUI (Not options system).
+        self.constraint_file_paths = []; #Path to constraint file if loaded through GUI (Not options system).
         self.param_pathlist_file = ""; #Path to a file which lists paths to all params to use.  One on each line
         self.param_paths = []; #Array of parameter paths.
-        self.loaded_paths = [];  #Since something about loading a new residuetypeset is global, with horrible exception handling, WE need to keep track of it.
+        self.loaded_paths = [];  #Since ResidueTypeSet is a singleton, with horrible exception handling, WE need to keep track of it.
         self.nonstandard_ResidueTypeSet = ""; #This is set through the ncaa window or loading a param path file.  
         
         self.options_manager= OptionSystemManager(); #This is due to Protocols needing Rosetta to be reinitialized without loosing already set options -  to set the seed up before multiprocessing runs!
@@ -194,11 +194,12 @@ class GUIInput:
         print "PDBLIST set"
         self.PDBLIST.set(infilename)
     
-    def load_param_list(self):
+    def load_param_list(self, infilename=False):
         """
         Loads paths from param path files into an array.  Creates a residue type set from the params.
         """
-        infilename = tkFileDialog.askopenfilename(initialdir=global_variables.current_directory,title='Open param pathList file')
+        if not infilename:
+            infilename = tkFileDialog.askopenfilename(initialdir=global_variables.current_directory,title='Open param pathList file')
         if not infilename: return
         self.param_pathlist_file = infilename
         global_variables.current_directory =os.path.dirname(infilename)
@@ -211,7 +212,7 @@ class GUIInput:
         self.nonstandard_ResidueTypeSet, self.loaded_paths = input_tools.get_residuetypeset_from_path_array(self.param_paths, self.loaded_paths)
         FILE.close()
         
-    def load_loop(self):
+    def load_loop(self, infilename=False):
         """
         Returns a loops_as_strings array to be used by the InputFrame
         """
@@ -220,7 +221,8 @@ class GUIInput:
             print "\nNumbering conversion requires a pose to be loaded...please load a pose.."
             return
         
-        infilename = tkFileDialog.askopenfilename(initialdir=global_variables.current_directory,title='Open Loop file')
+        if not infilename:
+            infilename = tkFileDialog.askopenfilename(initialdir=global_variables.current_directory,title='Open Loop file')
         if not infilename: return
         global_variables.current_directory =os.path.dirname(infilename)
         FILE = open(infilename, 'r')

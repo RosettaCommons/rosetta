@@ -72,7 +72,7 @@ def showPose(p, observer):
     #obs.pymol.apply(p)
     return p
     
-def save_loop_file(p, regions, ask_info=True):
+def save_loop_file(p, regions, ask_info=True, outfilename=False):
     """
     Saves a Rosetta Loop file.  Also asks to discard residues or not.
     Migrate to use Regions.
@@ -94,7 +94,8 @@ def save_loop_file(p, regions, ask_info=True):
     else:
         ask_cut_points = False
         discard_loops = True
-    outfilename = tkFileDialog.asksaveasfilename(initialdir = global_variables.current_directory, title="Output loop file to...")
+    if not outfilename:
+        outfilename = tkFileDialog.asksaveasfilename(initialdir = global_variables.current_directory, title="Output loop file to...")
     if not outfilename: return
     global_variables.current_directory=os.path.dirname(outfilename)
     
@@ -717,15 +718,15 @@ def output_molfile_to_params():
     
     return
     
-def save_param_path_list(array_of_paths):
+def save_param_path_list(array_of_paths, outfilename=False):
     """
     Saves a file of paths.
     """
     if not array_of_paths:
         print "No extra params enabled."
         return
-    
-    outfilename = tkFileDialog.asksaveasfilename(initialdir = global_variables.current_directory, title="Output Parm pathList to...")
+    if not outfilename:
+        outfilename = tkFileDialog.asksaveasfilename(initialdir = global_variables.current_directory, title="Output Parm pathList to...")
     if not outfilename:return
     global_variables.current_directory = os.path.dirname(outfilename)
     FILE = open(outfilename, 'w')

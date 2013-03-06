@@ -102,7 +102,7 @@ def get_pdb_list_from_dir(dir):
             directorylist.remove(Files)
     return directorylist
     
-def add_constraints_to_pose_and_scorefunction(pose, score, default_weight = 1.0, constraint_types = False):
+def add_constraints_to_pose_and_scorefunction(pose, score, default_weight = 1.0, constraint_types = False, constraint_file=False):
     """
     Adds constraint from file to pose and score.  Sets all constraint_types to 1.0.
     Can pass an array of constraint_types.
@@ -113,7 +113,8 @@ def add_constraints_to_pose_and_scorefunction(pose, score, default_weight = 1.0,
     if not constraint_types:
         constraint_types = [atom_pair_constraint, angle_constraint, dihedral_constraint, coordinate_constraint, constant_constraint]
     
-    constraint_file = tkFileDialog.askopenfilename(initialdir=global_variables.current_directory, title = "Open Constraint File")
+    if not constraint_file:
+        constraint_file = tkFileDialog.askopenfilename(initialdir=global_variables.current_directory, title = "Open Constraint File")
     if not constraint_file:return
     global_variables.current_directory = os.path.dirname(constraint_file)
     print "Setting constraints to pose and scorefunction at default weight of 1.0 if not already set.  "
