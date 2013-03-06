@@ -14,35 +14,9 @@
 #include <core/scoring/cryst/util.hh>
 
 #include <core/kinematics/MoveMap.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-
-#include <core/optimization/types.hh>
-#include <core/optimization/Minimizer.hh>
-#include <core/optimization/LineMinimizer.hh>
-
-#include <core/optimization/MinimizerMap.hh>
-#include <core/optimization/AtomTreeMultifunc.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
-
-#include <core/optimization/CartesianMinimizerMap.hh>
-#include <core/optimization/CartesianMultifunc.hh>
-#include <core/optimization/CartesianMinimizer.hh>
-
-#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
-#include <core/optimization/symmetry/SymMinimizerMap.hh>
-#include <core/optimization/symmetry/SymAtomTreeMultifunc.hh>
-
-#include <core/conformation/symmetry/SymmData.hh>
-#include <core/conformation/symmetry/SymDof.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
-
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-
-#include <core/pose/symmetry/util.hh>
 
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>

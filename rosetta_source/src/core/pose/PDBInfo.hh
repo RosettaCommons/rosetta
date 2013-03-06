@@ -17,6 +17,7 @@
 #define INCLUDED_core_pose_PDBInfo_hh
 
 #include <core/pose/PDBInfo.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
 
 // Unit headers
 #include <core/pose/Pose.fwd.hh>
@@ -1114,6 +1115,12 @@ public: // residue insertion/deletion
 		Size const res,
 		Size const natoms
 	);
+
+	/// @brief same as replace_res BUT remaps B factors from src to tgt
+	void
+	replace_res_remap_bfactors(
+		Size const res,
+		conformation::Residue const & tgt );
 
 
 	/// @brief Deletes  <n>  residue records starting from pose residue  <res>

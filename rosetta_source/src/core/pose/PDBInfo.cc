@@ -36,6 +36,9 @@
 #include <utility/vector0.hh>
 #include <ObjexxFCL/format.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+
 //Auto Headers
 #include <core/conformation/signals/ConnectionEvent.hh>
 //using namespace ObjexxFCL;
@@ -213,6 +216,7 @@ PDBInfo::detach_from() {
 void
 PDBInfo::on_connection_change( core::conformation::signals::ConnectionEvent const & event ) {
 	using core::conformation::signals::ConnectionEvent;
+TR << "on_connection_change()" << std::endl;
 
 	switch ( event.tag ) {
 		case ConnectionEvent::DISCONNECT:
@@ -232,6 +236,8 @@ PDBInfo::on_connection_change( core::conformation::signals::ConnectionEvent cons
 /// @brief update atom records when residue identity changes in Conformation
 void
 PDBInfo::on_identity_change( core::conformation::signals::IdentityEvent const & event ) {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using core::conformation::signals::IdentityEvent;
 
 	switch( event.tag ) {
@@ -244,8 +250,11 @@ PDBInfo::on_identity_change( core::conformation::signals::IdentityEvent const & 
 		}
 		case IdentityEvent::RESIDUE: {
 			// replace and zero the records
-			replace_res( event.position, event.residue->natoms() );
-			break;
+			if ( option[ in::preserve_crystinfo ]() ) {
+				replace_res_remap_bfactors( event.position, *event.residue ); //fpd  maintain reasonable bfactors
+			} else {
+				replace_res( event.position, event.residue->natoms() );
+			}
 		}
 		default: {
 			// do nothing, fall through
@@ -268,6 +277,7 @@ void
 PDBInfo::on_length_change( core::conformation::signals::LengthEvent const & event ) {
 	using core::conformation::signals::LengthEvent;
 
+TR << "on_connection_change(" << event.position << ")" << std::endl;
 	switch( event.tag ) {
 		case LengthEvent::INVALIDATE: {
 			obsolete( true );
@@ -648,6 +658,63 @@ PDBInfo::replace_res(
 	residue_rec_[ res ].atomRec = ar;
 
 	// no need to sync map, data should stay constant
+}
+
+void
+PDBInfo::replace_res_remap_bfactors(
+	Size const res,
+	conformation::Residue const & tgt
+)
+{
+	AtomRecords ar( tgt.natoms() );
+
+	//fpd unfortunately, we don't have access to the source residue at this point.
+	//    we'll have to make a reasonable guess at a mapping given the # atoms and the target residue
+	if ( residue_rec_[ res ].atomRec.size() == tgt.natoms() ) {
+		// #atoms doesn't change, assume repack and copy B factors
+		for (Size i=1; i<=tgt.natoms(); ++i) {
+			ar[i].temperature = residue_rec_[ res ].atomRec[i].temperature;
+		}
+	} else {
+		if (tgt.is_protein()) {
+			// redesign or cen <-> fa: copy backbone B's, average the rest
+			for (Size i=1; i<=tgt.last_backbone_atom(); ++i)
+				ar[i].temperature = residue_rec_[ res ].atomRec[i].temperature;
+
+			// set sidechain B factors to the mean
+			Real Bsum = 0.0, Bcount = 0.0;
+			for (Size i=tgt.first_sidechain_atom(); i<=residue_rec_[ res ].atomRec.size(); ++i) {
+				Bsum +=  residue_rec_[ res ].atomRec[i].temperature;
+				Bcount+=1.0;
+			}
+			if (Bcount>0) Bsum /= Bcount;
+			else Bsum = ar[2].temperature;
+			for (Size i=tgt.first_sidechain_atom(); i<=tgt.nheavyatoms(); ++i)
+				ar[i].temperature = Bsum;
+		} else {
+			// ligand (or some other non-protein residue): average all B's
+			Real Bsum = 0.0, Bcount = 0.0;
+			for (Size i=1; i<=residue_rec_[ res ].atomRec.size(); ++i) {
+				Bsum +=  residue_rec_[ res ].atomRec[i].temperature;
+				Bcount+=1.0;
+			}
+			if (Bcount>0) Bsum /= Bcount;
+			else Bsum = 30.0;
+			for (Size i=tgt.first_sidechain_atom(); i<=tgt.nheavyatoms(); ++i)
+				ar[i].temperature = Bsum;
+		}
+
+		// set H to 1.2 x attached heavy atom
+		for (Size i = 1; i <= tgt.nheavyatoms(); ++i) {
+			Real hB = 1.2*ar[i].temperature;
+			for (Size hid = tgt.attached_H_begin(i), hid_end = tgt.attached_H_end(i);
+			          hid <= hid_end; ++hid) {
+				ar[hid].temperature = hB;
+			}
+		}
+	}
+
+	residue_rec_[ res ].atomRec = ar;
 }
 
 
