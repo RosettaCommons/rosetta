@@ -13,4 +13,6 @@
 -edensity:grid_spacing 4.0
 -edensity:fastdens_wt 10.0
 -default_max_cycles 50
+-in::missing_density_to_jump
+-in::preserve_crystinfo
 
