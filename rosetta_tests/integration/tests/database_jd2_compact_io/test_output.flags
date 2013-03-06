@@ -1,0 +1,15 @@
+-ignore_unrecognized_res
+-overwrite
+-correct
+-in
+ -file
+  -s 7cpa_7cpa_input.pdb.gz
+  -extra_res_fa ZN1.params 7cpa.params
+-inout
+ -dbms:database_name structures.db3
+ -dbms:use_compact_residue_schema
+-out
+ -use_database
+-mute core.conformation
+-mute core.pack
+-out

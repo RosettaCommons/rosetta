@@ -32,6 +32,7 @@
 #include <utility/vector1.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/tools/make_vector.hh>
+#include <protocols/features/util.hh>
 
 //Basic Headers
 #include <basic/database/sql_utils.hh>
@@ -45,6 +46,7 @@
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <basic/database/insert_statement_generator/InsertGenerator.hh>
 #include <basic/database/insert_statement_generator/RowData.hh>
+
 // External Headers
 #include <cppdb/frontend.h>
 #include <boost/uuid/uuid_io.hpp>
@@ -70,6 +72,17 @@ using cppdb::result;
 using basic::database::insert_statement_generator::InsertGenerator;
 using basic::database::insert_statement_generator::RowDataBaseOP;
 using basic::database::insert_statement_generator::RowData;
+
+ResidueConformationFeatures::ResidueConformationFeatures()
+{
+	compact_residue_schema_ = basic::options::option[basic::options::OptionKeys::inout::dbms::use_compact_residue_schema]();
+}
+
+ResidueConformationFeatures::ResidueConformationFeatures(
+		ResidueConformationFeatures const & ) : FeaturesReporter()
+{
+	compact_residue_schema_ = basic::options::option[basic::options::OptionKeys::inout::dbms::use_compact_residue_schema]();
+}
 
 string
 ResidueConformationFeatures::type_name() const {
@@ -129,28 +142,47 @@ ResidueConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP
 
 	nonprotein_residue_angles.write(db_session);
 
-	//******residue_atom_coords******//
-	Column atomno("atomno", new DbInteger(), false);
-	Column x("x", new DbDouble(), false);
-	Column y("y", new DbDouble(), false);
-	Column z("z", new DbDouble(), false);
+	if(compact_residue_schema_)
+	{
+		//******compact_residue_atom_coords*****//
+		Column coord_data("coord_data",new DbText());
+		Column atom_count("atom_count",new DbInteger(),false);
+		utility::vector1<Column> compact_res_atom_coords_pkeys;
+		compact_res_atom_coords_pkeys.push_back(struct_id);
+		compact_res_atom_coords_pkeys.push_back(seqpos);
 
-	utility::vector1<Column> res_atm_coords_pkeys;
-	res_atm_coords_pkeys.push_back(struct_id);
-	res_atm_coords_pkeys.push_back(seqpos);
-	res_atm_coords_pkeys.push_back(atomno);
+		Schema compact_residue_atom_coords("compact_residue_atom_coords",PrimaryKey(compact_res_atom_coords_pkeys));
+		compact_residue_atom_coords.add_column(struct_id);
+		compact_residue_atom_coords.add_column(seqpos);
+		compact_residue_atom_coords.add_column(atom_count);
+		compact_residue_atom_coords.add_column(coord_data);
+		compact_residue_atom_coords.add_foreign_key(ForeignKey(fkey_cols, "residues", fkey_reference_cols, true));
+		compact_residue_atom_coords.write(db_session);
 
-	Schema residue_atom_coords("residue_atom_coords", PrimaryKey(res_atm_coords_pkeys));
-	residue_atom_coords.add_column(struct_id);
-	residue_atom_coords.add_column(seqpos);
-	residue_atom_coords.add_column(atomno);
-	residue_atom_coords.add_column(x);
-	residue_atom_coords.add_column(y);
-	residue_atom_coords.add_column(z);
-	residue_atom_coords.add_foreign_key(ForeignKey(fkey_cols, "residues", fkey_reference_cols, true));
+	}else
+	{
+		//******residue_atom_coords******//
+		Column atomno("atomno", new DbInteger(), false);
+		Column x("x", new DbDouble(), false);
+		Column y("y", new DbDouble(), false);
+		Column z("z", new DbDouble(), false);
 
-	residue_atom_coords.write(db_session);
+		utility::vector1<Column> res_atm_coords_pkeys;
+		res_atm_coords_pkeys.push_back(struct_id);
+		res_atm_coords_pkeys.push_back(seqpos);
+		res_atm_coords_pkeys.push_back(atomno);
 
+		Schema residue_atom_coords("residue_atom_coords", PrimaryKey(res_atm_coords_pkeys));
+		residue_atom_coords.add_column(struct_id);
+		residue_atom_coords.add_column(seqpos);
+		residue_atom_coords.add_column(atomno);
+		residue_atom_coords.add_column(x);
+		residue_atom_coords.add_column(y);
+		residue_atom_coords.add_column(z);
+		residue_atom_coords.add_foreign_key(ForeignKey(fkey_cols, "residues", fkey_reference_cols, true));
+
+		residue_atom_coords.write(db_session);
+	}
 }
 
 utility::vector1<std::string>
@@ -199,6 +231,9 @@ ResidueConformationFeatures::report_features(
 	angle_insert.add_column("chinum");
 	angle_insert.add_column("chiangle");
 
+	//We only need one of these but the scoping gets easier to deal with if we just make both
+	//InsertGenerators are really lightweight and everything else about database IO is slower than this function anyways
+	//This entire function is in desperate need of some method extraction, if you're feeling like doing a good deed, this would be one
 	InsertGenerator atom_insert("residue_atom_coords");
 	atom_insert.add_column("struct_id");
 	atom_insert.add_column("seqpos");
@@ -207,6 +242,11 @@ ResidueConformationFeatures::report_features(
 	atom_insert.add_column("y");
 	atom_insert.add_column("z");
 
+	InsertGenerator compact_residue_insert("compact_residue_atom_coords");
+	compact_residue_insert.add_column("struct_id");
+	compact_residue_insert.add_column("seqpos");
+	compact_residue_insert.add_column("atom_count");
+	compact_residue_insert.add_column("coord_data");
 
 	RowDataBaseOP struct_id_data = new RowData<boost::uuids::uuid>("struct_id",struct_id);
 	for (Size i = 1; i <= pose.total_residue(); ++i) {
@@ -246,25 +286,40 @@ ResidueConformationFeatures::report_features(
 
 		}
 		if(!ideal || resi.is_ligand()){ // always store coords for a ligand
-			for(Size atom = 1; atom <= resi.natoms(); ++atom){
-				core::Vector coords = resi.xyz(atom);
 
-				RowDataBaseOP atom_data = new RowData<Size>("atomno",atom);
-				RowDataBaseOP x_data = new RowData<Real>("x",coords.x());
-				RowDataBaseOP y_data = new RowData<Real>("y",coords.y());
-				RowDataBaseOP z_data = new RowData<Real>("z",coords.z());
+			if(compact_residue_schema_)
+			{
 
-				atom_insert.add_row(utility::tools::make_vector(
-					struct_id_data,seqpos_data,atom_data,x_data,y_data,z_data));
+				std::string residue_data_string(serialize_residue_xyz_coords(resi));
+				RowDataBaseOP atom_count = new RowData<core::Size>("atom_count",resi.natoms());
+				RowDataBaseOP residue_data = new RowData<std::string>("coord_data",residue_data_string);
+				compact_residue_insert.add_row(utility::tools::make_vector(struct_id_data,atom_count,seqpos_data,residue_data));
+			}else
+			{
+				for(Size atom = 1; atom <= resi.natoms(); ++atom){
+					core::Vector coords = resi.xyz(atom);
 
+					RowDataBaseOP atom_data = new RowData<Size>("atomno",atom);
+					RowDataBaseOP x_data = new RowData<Real>("x",coords.x());
+					RowDataBaseOP y_data = new RowData<Real>("y",coords.y());
+					RowDataBaseOP z_data = new RowData<Real>("z",coords.z());
 
+					atom_insert.add_row(utility::tools::make_vector(
+						struct_id_data,seqpos_data,atom_data,x_data,y_data,z_data));
+				}
 			}
 		}
 	}
 
 	conformation_insert.write_to_database(db_session);
 	angle_insert.write_to_database(db_session);
-	atom_insert.write_to_database(db_session);
+	if(compact_residue_schema_)
+	{
+		compact_residue_insert.write_to_database(db_session);
+	}else
+	{
+		atom_insert.write_to_database(db_session);
+	}
 
 	return 0;
 }
@@ -284,7 +339,9 @@ ResidueConformationFeatures::delete_record(
 	statement coords_stmt(basic::database::safely_prepare_statement("DELETE FROM residue_atom_coords WHERE struct_id = ?;",db_session));
 	coords_stmt.bind(1,struct_id);
 	basic::database::safely_write_to_database(coords_stmt);
-
+	statement compact_coords_stmt(basic::database::safely_prepare_statement("DELETE FROM compact_residue_atom_coords WHERE struct_id = ?;",db_session));
+	compact_coords_stmt.bind(1,struct_id);
+	basic::database::safely_write_to_database(compact_coords_stmt);
 }
 
 void
@@ -352,7 +409,14 @@ ResidueConformationFeatures::load_conformation(
 			Size seqpos;
 			Size chinum;
 			Real chiangle;
-			set_coords_for_residue(db_session,struct_id,seqpos,pose);
+			if(compact_residue_schema_)
+			{
+				set_coords_for_residue_from_compact_schema(db_session,struct_id,seqpos,pose);
+			}else
+			{
+				set_coords_for_residue(db_session,struct_id,seqpos,pose);
+
+			}
 			res_conformation >> seqpos >> chinum >> chiangle;
 			pose.set_chi(chinum,seqpos,chiangle);
 		}
@@ -382,7 +446,14 @@ ResidueConformationFeatures::load_conformation(
 				// WARNING why are you storing non-protein in the ProteinSilentReport?
 				continue;
 			}
-			set_coords_for_residue(db_session,struct_id,seqpos,pose);
+			if(compact_residue_schema_)
+			{
+				set_coords_for_residue_from_compact_schema(db_session,struct_id,seqpos,pose);
+			}else
+			{
+				set_coords_for_residue(db_session,struct_id,seqpos,pose);
+
+			}
 			pose.set_phi(seqpos,phi);
 			pose.set_psi(seqpos,psi);
 			pose.set_omega(seqpos,omega);
@@ -428,6 +499,41 @@ void ResidueConformationFeatures::set_coords_for_residue(
 
 }
 
+void
+ResidueConformationFeatures::set_coords_for_residue_from_compact_schema(
+	utility::sql_database::sessionOP db_session,
+	boost::uuids::uuid struct_id,
+	core::Size seqpos,
+	core::pose::Pose & pose
+) {
+
+	std::string statement_string =
+		"SELECT\n"
+		"	coord_data,\n"
+		"	atom_count\n"
+		"FROM\n"
+		"	compact_residue_atom_coords\n"
+		"WHERE\n"
+		"	compact_residue_atom_coords.struct_id=? AND compact_residue_atom_coords.seqpos=?";
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+	stmt.bind(1,struct_id);
+	stmt.bind(2,seqpos);
+
+	result res(basic::database::safely_read_from_database(stmt));
+	while(res.next()){
+		std::string coords;
+		core::Size atom_count;
+		res >> coords >>atom_count;
+
+
+		utility::vector1<numeric::xyzVector<core::Real> > residue_coords(deserialize_xyz_coords(coords,atom_count)	);
+		for(core::Size atomno = 1; atomno <= residue_coords.size();++atomno)
+		{
+			core::id::AtomID atom_id(atomno,seqpos);
+			pose.set_xyz(atom_id,residue_coords[atomno]);
+		}
+	}
+}
 
 } // features
 } // protocols

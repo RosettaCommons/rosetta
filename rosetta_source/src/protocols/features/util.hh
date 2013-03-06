@@ -18,6 +18,7 @@
 #include <utility/sql_database/DatabaseSessionManager.hh>
 
 #include <core/types.hh>
+#include <core/conformation/Residue.fwd.hh>
 
 #include <string>
 #include <map>
@@ -40,6 +41,10 @@ get_batch_id(
 	boost::uuids::uuid struct_id,
 	utility::sql_database::sessionOP db_session
 );
+
+std::string serialize_residue_xyz_coords(core::conformation::Residue const & residue);
+
+utility::vector1< numeric::xyzVector<core::Real> > deserialize_xyz_coords(std::string const & data, core::Size natoms);
 
 } //features
 } //protocols

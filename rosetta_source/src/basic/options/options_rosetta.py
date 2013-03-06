@@ -328,7 +328,9 @@ Options = Option_Group( '',
 		    Option('port','Integer',desc="default port for database server access"),
 		    Option('readonly','Boolean',desc="open sqlite3 database in read-only mode by default", default='false'),
 		    Option('separate_db_per_mpi_process','Boolean',desc="In MPI mode,, open a separate sqlite3 database for each process with extension _<mpi_rank>", default='false'),
+            Option('use_compact_residue_schema','Boolean',desc="Store all the atoms for a residue in a binary silent file style blob.  Sacrifices analyzability for scalability. If you don't know if you want this you probably don't",default='false'),
             		),
+            
 	),
 
 	# Output options ---------------------------------------------------------

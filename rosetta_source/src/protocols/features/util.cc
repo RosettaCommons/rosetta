@@ -38,12 +38,15 @@
 #include <utility/mpi_util.hh>
 #include <utility/exit.hh>
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/Binary_Util.hh>
 
 #include <cppdb/frontend.h>
 #include <cppdb/errors.h>
 
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_io.hpp>
+
+#include <core/conformation/Residue.hh>
 
 #include <string>
 #include <sstream>
@@ -306,6 +309,44 @@ get_batch_id(
 	Size batch_id;
 	res >> batch_id;
 	return batch_id;
+}
+
+std::string serialize_residue_xyz_coords(core::conformation::Residue const & residue)
+{
+	//6bitencode and decode work best with arrays
+	core::Real coord_data[residue.natoms()][3];
+	for(core::Size atom_index = 1; atom_index <= residue.natoms();++atom_index)
+	{
+		core::Size array_index = atom_index - 1;
+		numeric::xyzVector<core::Real> xyz_coords(residue.xyz(atom_index));
+
+		coord_data[array_index][0] = xyz_coords.x();
+		coord_data[array_index][1] = xyz_coords.y();
+		coord_data[array_index][2] = xyz_coords.z();
+	}
+
+	std::string output_data;
+	core::Size memory_size = residue.natoms()*3*sizeof(core::Real);
+	utility::encode6bit((unsigned char*)&coord_data,memory_size,output_data);
+	return output_data;
+
+}
+
+utility::vector1< numeric::xyzVector<core::Real> > deserialize_xyz_coords(std::string const & data, core::Size natoms)
+{
+	//natoms really needs to be correct
+	core::Real coord_data[natoms][3];
+	core::Size memory_size = natoms*3*sizeof(core::Real);
+	utility::decode6bit((unsigned char*)&coord_data,data);
+
+	utility::vector1< numeric::xyzVector<core::Real> > xyz_vector;
+	for(core::Size atom_index = 1; atom_index <= natoms;++atom_index)
+	{
+		core::Size array_index = atom_index - 1;
+		xyz_vector.push_back(numeric::xyzVector<core::Real>(coord_data[array_index][0],coord_data[array_index][1],coord_data[array_index][2]));
+	}
+
+	return xyz_vector;
 }
 
 } //namespace protocols

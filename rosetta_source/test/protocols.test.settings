@@ -47,7 +47,8 @@ sources = {
 	"features" : [
 		"BetaTurnDetectionFeatures",
 		"FeaturesReporterTests",
-		"ProteinSilentReportTests"
+		"ProteinSilentReportTests",
+		"CoordSerializationTests",
         ],
 
 	"filters" : [

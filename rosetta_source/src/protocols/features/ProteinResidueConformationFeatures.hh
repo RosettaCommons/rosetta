@@ -40,12 +40,10 @@ namespace features{
 
 class ProteinResidueConformationFeatures : public protocols::features::FeaturesReporter {
 public:
-	ProteinResidueConformationFeatures(){}
+	ProteinResidueConformationFeatures();
 
 	ProteinResidueConformationFeatures(
-		ProteinResidueConformationFeatures const & ) :
-		FeaturesReporter()
-	{}
+		ProteinResidueConformationFeatures const & );
 
 	virtual ~ProteinResidueConformationFeatures(){}
 
@@ -93,6 +91,15 @@ private:
 		utility::sql_database::sessionOP db_session,
 		boost::uuids::uuid struct_id,
 		core::pose::Pose & pose);
+
+	void
+	set_coords_for_residue_from_compact_schema(
+		utility::sql_database::sessionOP db_session,
+		boost::uuids::uuid struct_id,
+		core::pose::Pose & pose);
+
+private:
+	bool compact_residue_schema_;
 
 };
 

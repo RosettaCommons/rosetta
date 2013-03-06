@@ -162,6 +162,7 @@ namespace inout { namespace dbms { StringOptionKey const password( "inout:dbms:p
 namespace inout { namespace dbms { IntegerOptionKey const port( "inout:dbms:port" );  } }
 namespace inout { namespace dbms { BooleanOptionKey const readonly( "inout:dbms:readonly" );  } }
 namespace inout { namespace dbms { BooleanOptionKey const separate_db_per_mpi_process( "inout:dbms:separate_db_per_mpi_process" );  } }
+namespace inout { namespace dbms { BooleanOptionKey const use_compact_residue_schema( "inout:dbms:use_compact_residue_schema" );  } }
 namespace out { BooleanOptionKey const out( "out" );  }
 namespace out { BooleanOptionKey const overwrite( "out:overwrite" );  }
 namespace out { IntegerOptionKey const nstruct( "out:nstruct" );  }
@@ -666,4 +667,3 @@ namespace fold_cst { BooleanOptionKey const no_recover_low_at_constraint_switch(
 namespace fold_cst { BooleanOptionKey const ramp_coord_cst( "fold_cst:ramp_coord_cst" );  }
 namespace resample { BooleanOptionKey const resample( "resample" );  }
 namespace resample { FileOptionKey const silent( "resample:silent" );  }
-namespace resample { StringOptionKey const tag( "resample:tag" );  }

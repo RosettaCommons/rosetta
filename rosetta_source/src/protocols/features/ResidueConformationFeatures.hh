@@ -40,12 +40,10 @@ namespace features{
 
 class ResidueConformationFeatures : public protocols::features::FeaturesReporter {
 public:
-	ResidueConformationFeatures(){}
+	ResidueConformationFeatures();
 
 	ResidueConformationFeatures(
-		ResidueConformationFeatures const & ) :
-		FeaturesReporter()
-	{}
+		ResidueConformationFeatures const & );
 
 	virtual ~ResidueConformationFeatures(){}
 
@@ -94,6 +92,16 @@ private:
 		boost::uuids::uuid struct_id,
 		core::Size seqpos,
 		core::pose::Pose & pose);
+
+	void
+	set_coords_for_residue_from_compact_schema(
+		utility::sql_database::sessionOP db_session,
+		boost::uuids::uuid struct_id,
+		core::Size seqpos,
+		core::pose::Pose & pose);
+
+private:
+	bool compact_residue_schema_;
 
 
 };

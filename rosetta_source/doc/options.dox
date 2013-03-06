@@ -759,6 +759,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>In MPI mode,, open a separate sqlite3 database for each process with extension _<mpi_rank></dd><br>
 <dd>Default: false</dd><br>
 </dl>
+<dl>
+<dt><b>-use_compact_residue_schema</b> \<Boolean\><dt>
+<dd>Store all the atoms for a residue in a binary silent file style blob.  Sacrifices analyzability for scalability. If you don't know if you want this you probably don't</dd><br>
+<dd>Default: false</dd><br>
+</dl>
  </li>
 <li><h2>out</h2>
 <dl>

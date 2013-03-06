@@ -1,0 +1,13 @@
+-overwrite
+-correct
+-in
+ -use_database
+ -file
+  -extra_res_fa ZN1.params 7cpa.params
+ -dbms 
+  -struct_ids 7CFEFABFD0714D5193405FB66DA681C7
+-inout
+ -dbms:database_name structures.db3
+ -dbms:use_compact_residue_schema
+-mute core.conformation
+-mute core.pack

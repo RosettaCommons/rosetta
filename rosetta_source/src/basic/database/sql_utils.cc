@@ -20,6 +20,7 @@
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <basic/Tracer.hh>
 #include <utility/excn/Exceptions.hh>
+#include <numeric/random/random.hh>
 
 #include <platform/types.hh>
 #include <utility/Bound.fwd.hh>
@@ -181,7 +182,7 @@ namespace basic {
 namespace database {
 
 static basic::Tracer TR( "basic.database.sql_utils" );
-
+static numeric::random::RandomGenerator RG(345264);
 
 
 
@@ -398,7 +399,7 @@ safely_write_to_database(
 	statement & statement
 ) {
 
-	platform::Size retry_limit = 10;
+	platform::Size retry_limit = 30;
 	platform::Size cycle = 0;
 	while(true)
 	{
@@ -437,7 +438,13 @@ safely_write_to_database(
 			if(cycle < retry_limit)
 			{
 				TR << "Backend deadlock detected, retrying SQL statement";
+
+#ifdef WIN32
 				sleep(1);
+#else
+				//Sleep some amount between 100-2000 ms
+				usleep(100+1900*RG.uniform());
+#endif
 			}else
 			{
 				utility_exit_with_message(except.what());
@@ -477,7 +484,7 @@ result
 safely_read_from_database(
 	statement & statement
 ) {
-	platform::Size retry_limit = 10;
+	platform::Size retry_limit = 30;
 	platform::Size cycle = 0;
 	while(true)
 	{
@@ -515,7 +522,13 @@ safely_read_from_database(
 			if(cycle < retry_limit)
 			{
 				TR << "Backend deadlock detected, retrying SQL statement";
+
+#ifdef WIN32
 				sleep(1);
+#else
+				//Sleep some amount between 100-2000 ms
+				usleep(100+1900*RG.uniform());
+#endif
 			}else
 			{
 				utility_exit_with_message(except.what());
