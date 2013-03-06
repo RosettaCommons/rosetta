@@ -198,9 +198,9 @@ SecondaryStructureFilter::compute( core::pose::Pose const & pose ) const {
 		++match_count;
 	} //for
 
-	tr << "Successfully " << filtered_ss_ << " was filtered with " << match_count << " residues matching." << std::endl;
+	tr << filtered_ss_ << " was filtered with " << match_count << " residues matching " << pose.secstruct() << std::endl;
 	if( filtered_abego_.size() >= 1 && use_abego_ ) {
-		tr << "Successfully " << abego_manager.get_abego_string( filtered_abego_ ) << " was filtred with " << match_count << " residues matching." << std::endl;
+		tr << abego_manager.get_abego_string( filtered_abego_ ) << " was filtered with " << match_count << " residues matching." << std::endl;
 	}
 	return match_count;
 }
