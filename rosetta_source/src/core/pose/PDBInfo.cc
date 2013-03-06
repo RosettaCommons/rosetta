@@ -216,7 +216,6 @@ PDBInfo::detach_from() {
 void
 PDBInfo::on_connection_change( core::conformation::signals::ConnectionEvent const & event ) {
 	using core::conformation::signals::ConnectionEvent;
-TR << "on_connection_change()" << std::endl;
 
 	switch ( event.tag ) {
 		case ConnectionEvent::DISCONNECT:
@@ -277,7 +276,6 @@ void
 PDBInfo::on_length_change( core::conformation::signals::LengthEvent const & event ) {
 	using core::conformation::signals::LengthEvent;
 
-TR << "on_connection_change(" << event.position << ")" << std::endl;
 	switch( event.tag ) {
 		case LengthEvent::INVALIDATE: {
 			obsolete( true );
