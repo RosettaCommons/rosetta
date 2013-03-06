@@ -1586,12 +1586,7 @@ CartesianBondedEnergy::eval_residue_pair_derivatives(
 
 	// cterm special case
 	Size nres = pose.total_residue();
-<<<<<<< HEAD
-	if( core::pose::symmetry::is_symmetric(pose) )
-		nres = core::pose::symmetry::symmetry_info(pose)->last_independent_residue();
-=======
 	if( core::pose::symmetry::is_symmetric(pose) ) nres = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
->>>>>>> Remove benchmarking the evaluation of the DFIRE score term bacause it is crashing on the testing server.
 	if (rsd2.seqpos() == nres) {
 		eval_singleres_derivatives(rsd2, res2params, phi2, psi2, weights, r2_atom_derivs );
 	}
@@ -1940,12 +1935,8 @@ CartesianBondedEnergy::residue_pair_energy_sorted(
 	// last residue won't ever be rsd1, so we need to explicitly call eval_singleres for rsd2 if rsd2 is the
 	// last residue
 	Size nres = pose.total_residue();
-<<<<<<< HEAD
-	if( core::pose::symmetry::is_symmetric(pose) )
-		nres = core::pose::symmetry::symmetry_info(pose)->last_independent_residue();
-=======
+
 	if( core::pose::symmetry::is_symmetric(pose) ) nres = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
->>>>>>> Remove benchmarking the evaluation of the DFIRE score term bacause it is crashing on the testing server.
 	if (rsd2.seqpos() == nres && rsd2.aa() != core::chemical::aa_vrt) {
 		// get one body component for the last residue
 		eval_singleres_energy(rsd2, rsd2params, phi2, psi2, pose, emap );
