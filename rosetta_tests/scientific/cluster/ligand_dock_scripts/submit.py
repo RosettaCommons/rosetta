@@ -51,7 +51,7 @@ priority = -10
 queue 1
 '''
 
-print 'Running submit.py script for cluster abinitio scientific test...'
+print 'Running submit.py script for cluster ligand_dock_script scientific test...'
 
 m_vars = eval( file('_arguments.py').read() )
 

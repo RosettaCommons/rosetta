@@ -1,0 +1,4 @@
+.results.log
+*.out
+*.pyc
+staResult

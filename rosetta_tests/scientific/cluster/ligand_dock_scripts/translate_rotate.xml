@@ -17,9 +17,6 @@ It will also report the binding energy (ddg) and buried-surface area (sasa) in t
 			<Reweight scoretype=rama weight=0.2/>
 		</hard_rep>
 	</SCOREFXNS>
-	<APPLY_TO_POSE>
-		<load_unbound_rot/> use with the command line option "-packing:unbound_rot file_path"
-	</APPLY_TO_POSE>
 	<LIGAND_AREAS>
 		<docking_sidechain chain=X cutoff=6.0 add_nbr_radius=true all_atom_mode=true minimize_ligand=15/>
 		<final_sidechain chain=X cutoff=6.0 add_nbr_radius=true all_atom_mode=true/>
@@ -38,7 +35,7 @@ It will also report the binding energy (ddg) and buried-surface area (sasa) in t
 	single movers		
 		<Translate name=translate chain=X distribution=uniform angstroms=5.0 cycles=50/>
 		<Rotate name=rotate chain=X distribution=uniform degrees=360 cycles=1000/>
-		<SlideTogether name=slide_together chain=X/>
+		<SlideTogether name=slide_together chains=X/>
 		<HighResDocker name=high_res_docker cycles=6 repack_every_Nth=3 scorefxn=ligand_soft_rep movemap_builder=docking/>
 		<FinalMinimizer name=final scorefxn=hard_rep movemap_builder=final/>
 		<InterfaceScoreCalculator name=add_scores chains=X scorefxn=hard_rep />
