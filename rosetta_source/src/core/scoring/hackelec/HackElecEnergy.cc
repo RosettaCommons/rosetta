@@ -894,29 +894,6 @@ HackElecEnergy::finalize_total_energy(
 		resvect.push_back( & pose.residue( ii ) );
 	}
 
-	for ( Size i=1, i_end = pose.total_residue(); i<= i_end; ++i ) {
-		conformation::Residue const & ires( *resvect[i] );
-		for ( Size ii=1, ii_end=ires.natoms(); ii<= ii_end; ++ii ) {
-			AtomNeighbors const & nbrs( nblist.upper_atom_neighbors(i,ii) );
-			Real const ii_charge = ires.atomic_charge( ii );
-			for ( AtomNeighbors::const_iterator nbr_iter=nbrs.begin(),
-					nbr_end=nbrs.end(); nbr_iter!= nbr_end; ++nbr_iter ) {
-				AtomNeighbor const & nbr( *nbr_iter );
-				Size const  j( nbr.rsd() );
-				Size const jj( nbr.atomno() );
-				// could reorder the nbr lists so that we dont need this check:
-				//if ( ( j < i ) || ( j == i && jj <= ii ) ) continue;
-				conformation::Residue const & jres( *resvect[j] );
-
-				Real d2 = ires.xyz( ii ).distance_squared( jres.xyz( jj ) );
-				nbr.temp1() = nbr.weight() * ii_charge * jres.atomic_charge( jj ) * ( C1_ / ( d2 + 1e-300 ) - C2_ );
-				nbr.temp2() = d2 < max_dis2_ ? 1.0 : 0.0;
-				nbr.temp3() = d2 > min_dis2_ ? 1.0 : 0.0;
-				nbr.temp4() = nbr.weight() * ii_charge * jres.atomic_charge(jj) * min_dis_score_;
-			}
-		}
-	}
-
 	Real bb_sc_scores[ 3 ] = {0.0, 0.0, 0.0};
 	Real total_score( 0.0 );
 	for ( Size i=1, i_end = pose.total_residue(); i<= i_end; ++i ) {
@@ -936,15 +913,10 @@ HackElecEnergy::finalize_total_energy(
 				conformation::Residue const & jres( *resvect[j] );
 				int jj_isbb = jres.atom_is_backbone( jj );
 
-				Real score = nbr.temp1() * nbr.temp2() * nbr.temp3() + nbr.temp4() * ( 1.0 - nbr.temp3());
 				assert( ii_isbb + jj_isbb >= 0 && ii_isbb + jj_isbb < 3 );
 
-				assert(  std::abs( nbr.weight() *
-					eval_atom_atom_hack_elecE( ires.xyz(ii), ires.atomic_charge(ii), jres.xyz(jj), jres.atomic_charge(jj) )
-					- score ) < 1e-15 );
-				//{
-				//		std::cerr << "score discrepancy: " << ires.xyz(ii).distance( jres.xyz(jj) ) << " " << nbr.weight() * eval_atom_atom_hack_elecE( ires.xyz(ii), ires.atomic_charge(ii), jres.xyz(jj), jres.atomic_charge(jj) ) << " " << nbr.temp1() << " " << nbr.temp2() << " " << nbr.temp3() << " " << 1-nbr.temp3() << " " << nbr.temp4() << std::endl;
-				//}
+				Real score = nbr.weight() *
+					eval_atom_atom_hack_elecE( ires.xyz(ii), ires.atomic_charge(ii), jres.xyz(jj), jres.atomic_charge(jj) );
 
 				bb_sc_scores[ ii_isbb + jj_isbb ] += score;
 				total_score += score;

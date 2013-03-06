@@ -22,11 +22,16 @@
 // Package headers
 #include <core/scoring/hackelec/HackElecEnergy.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
+#include <core/scoring/methods/EnergyMethod.hh>
+#include <core/optimization/MinimizerOptions.hh>
+#include <core/optimization/AtomTreeMinimizer.hh>
 
 // Project headers
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
+#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/EnergyMap.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -311,6 +316,37 @@ public:
 		/// This call runs a numeric deriv check on all the free dofs in the system and makes sure
 		/// that the analytic norm matches the numeric norm to 1e-3.
 		adv.simple_deriv_check( true, 1e-6 );
+
+	}
+
+
+	/// @brief Smoothed hack-elec finalize energy check.
+	void test_hackelec_finialize_energy_with_smoothing()
+	{
+		using namespace core;
+		using namespace core::pose;
+		using namespace core::scoring;
+		using namespace core::scoring::methods;
+		using namespace core::optimization;
+
+		Pose pose = pdb1ubq5to13_pose();
+		methods::EnergyMethodOptions em_options;
+		em_options.smooth_hack_elec( true );
+
+		ScoreFunction sfxn;
+		sfxn.set_energy_method_options( em_options );
+		sfxn.set_weight( hack_elec, 0.75 );
+
+		kinematics::MoveMap movemap;
+		movemap.set_bb( true );
+		movemap.set_chi( true );
+
+		core::optimization::MinimizerOptions m_options( "dfpmin", 1e-1, true );
+		m_options.nblist_auto_update(true);
+
+		core::optimization::AtomTreeMinimizer minimizer;
+		minimizer.run( pose, movemap, sfxn, m_options);
+
 
 	}
 
