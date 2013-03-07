@@ -19,12 +19,15 @@ patches/VirtualProteinResidue.txt
 ## uncomment this Brian
 patches/CtermConnect.txt
 
+##fpd
+#patches/CtermTruncation.txt
+#patches/NtermTruncation.txt
+
 ##added by steven combs November 11 2010
 #patches/sc_orbitals.txt
 
 # Added by David P. Nannemann 29 Nov 2012
 patches/PtermProteinFull.txt
-
 
 ## The following were added by Andy M. Chen in June 2009
 ##   for post-translational modifications

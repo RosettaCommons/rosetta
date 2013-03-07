@@ -11,3 +11,7 @@ patches/RepulsiveOnly_fa.txt
 
 ## uncomment this Brian
 patches/CtermConnect.txt
+
+##fpd
+#CtermTruncation.txt
+#NtermTruncation.txt

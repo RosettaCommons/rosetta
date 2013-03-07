@@ -14,3 +14,7 @@ patches/thr_phosphorylated.txt
 patches/LowerDNA.txt
 patches/UpperDNA.txt
 patches/VirtualDNAPhosphate.txt
+
+##fpd
+#patches/CtermTruncation.txt
+#patches/NtermTruncation.txt

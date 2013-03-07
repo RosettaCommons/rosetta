@@ -10,6 +10,7 @@ TYPES LOWER_TERMINUS
 BEGIN_SELECTOR
 PROPERTY PROTEIN
 NOT VARIANT_TYPE LOWER_TERMINUS
+NOT VARIANT_TYPE LOWERTERM_TRUNC
 NOT VARIANT_TYPE ACETYLATED_NTERMINUS
 NOT VARIANT_TYPE N_ACETYLATION
 END_SELECTOR
@@ -289,7 +290,7 @@ ADD_BOND N 1H
 ADD_BOND N 2H
 SET_POLYMER_CONNECT LOWER NONE
 
-## N should become tetrahedral and hydrogens should be like in other positions in 
+## N should become tetrahedral and hydrogens should be like in other positions in
 ## cyclohexo ring
 SET_ICOOR 1H 180 60 1.09 N CA C
 SET_ICOOR 2H  60 60 1 N CA 1H
@@ -316,7 +317,7 @@ ADD_BOND N 1H
 ADD_BOND N 2H
 SET_POLYMER_CONNECT LOWER NONE
 
-## N should become tetrahedral and hydrogens should be like in other positions in 
+## N should become tetrahedral and hydrogens should be like in other positions in
 ## cyclohexo ring
 SET_ICOOR 1H 180 60 1.09 N CA C
 SET_ICOOR 2H -60 60 1 N CA 1H
@@ -343,7 +344,7 @@ ADD_BOND N 1H
 ADD_BOND N 2H
 SET_POLYMER_CONNECT LOWER NONE
 
-## N should become tetrahedral and hydrogens should be like in other positions in 
+## N should become tetrahedral and hydrogens should be like in other positions in
 ## cyclohexo ring
 SET_ICOOR 1H 180 60 1.09 N CA C
 SET_ICOOR 2H  60 60 1 N CA 1H
@@ -370,7 +371,7 @@ ADD_BOND N 1H
 ADD_BOND N 2H
 SET_POLYMER_CONNECT LOWER NONE
 
-## N should become tetrahedral and hydrogens should be like in other positions in 
+## N should become tetrahedral and hydrogens should be like in other positions in
 ## cyclohexo ring
 SET_ICOOR 1H 180 60 1.09 N CA C
 SET_ICOOR 2H -60 60 1 N CA 1H
