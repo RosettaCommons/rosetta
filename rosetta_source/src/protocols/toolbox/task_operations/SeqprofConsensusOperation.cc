@@ -67,7 +67,8 @@ SeqprofConsensusOperation::SeqprofConsensusOperation():
 	seqprof_(NULL),
 	min_aa_probability_(0.0),
 	prob_larger_current_(true),
-	ignore_pose_profile_length_mismatch_(false)
+	ignore_pose_profile_length_mismatch_(false),
+	convert_scores_to_probabilities_( true )
 {
 	if( basic::options::option[ basic::options::OptionKeys::in::file::pssm ].user() )
 		seqprof_filename_ = basic::options::option[ basic::options::OptionKeys::in::file::pssm ][1];
@@ -187,11 +188,13 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 void
 SeqprofConsensusOperation::parse_tag( TagPtr tag )
 {
+	convert_scores_to_probabilities( tag->getOption< bool >("convert_scores_to_probabilities", 1  ) );
 	if( tag->hasOption("filename") ){
 		seqprof_filename_ = tag->getOption< String >( "filename" );
 		tr<<"Loading seqprof from a file named: "<<seqprof_filename_<<std::endl;
 		core::sequence::SequenceProfileOP seqprof = new core::sequence::SequenceProfile( seqprof_filename_ );
-		seqprof->convert_profile_to_probs(); // was previously implicit in from-filename constructor
+		if( convert_scores_to_probabilities() )
+			seqprof->convert_profile_to_probs(); // was previously implicit in from-filename constructor
 		seqprof_ = seqprof;
 	}
 	else{

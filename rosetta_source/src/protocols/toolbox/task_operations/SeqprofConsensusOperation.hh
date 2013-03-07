@@ -83,6 +83,8 @@ public:
 	/// @brief Set the sequence profile. If reweight is true, convert the profile into per-residue probabilities first
 	void
 	set_seqprof( core::sequence::SequenceProfileOP seqprof, bool reweight = false );
+	void convert_scores_to_probabilities( bool const c ){ convert_scores_to_probabilities_ = c; }
+	bool convert_scores_to_probabilities() const{ return convert_scores_to_probabilities_;}
 
 private:
 
@@ -99,7 +101,7 @@ private:
 	/// allows using this taskop in situations where one wants to
 	/// do consensus design on one chain of a protein/protein interface
 	bool ignore_pose_profile_length_mismatch_;
-
+	bool convert_scores_to_probabilities_; //dflt 1; after reading the pssm, should we convert the scores to probabilities?
 };
 
 /// @brief a Task operation that will check whether the amino acid at a
