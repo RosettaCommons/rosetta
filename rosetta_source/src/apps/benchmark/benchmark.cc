@@ -90,6 +90,8 @@ ResidueTypeBenchmark ResidueType_("core.chemical.ResidueType");
 #include <apps/benchmark/xml_parsing.bench.hh>
 XMLParseBenchmark XMLParseBenchmark_("utility_tag_Tag_Create");
 
+#include <apps/benchmark/FastRelax.bench.hh>
+
 // option key includes
 
 // AUTO-REMOVED #include <basic/options/keys/james.OptionKeys.gen.hh>
