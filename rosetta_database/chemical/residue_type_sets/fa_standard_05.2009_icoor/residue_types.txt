@@ -44,6 +44,8 @@ residue_types/GB_AA_PLACEHOLDER.params
 residue_types/SUCK.params
 residue_types/08A.params
 residue_types/08B.params
+residue_types/TP3.params
+residue_types/TP5.params
 residue_types/metal_ions/CA.params
 residue_types/metal_ions/FE.params
 residue_types/metal_ions/FE2.params
