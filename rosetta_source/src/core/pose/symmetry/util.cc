@@ -206,8 +206,6 @@ make_asymmetric_pose(
 //          maintain local foldtree
 void extract_asymmetric_unit(core::pose::Pose const& pose_in, core::pose::Pose & pose_out, bool with_virtual_atoms) {
 	using core::conformation::Residue;
-	using core::chemical::LOWER_TERMINUS;
-	using core::chemical::UPPER_TERMINUS;
 	using core::chemical::aa_vrt;
 	using core::chemical::aa_unk;
 	using namespace core::conformation::symmetry;
@@ -281,8 +279,6 @@ get_asymmetric_pose_copy_from_symmetric_pose(
 )
 {
 	using core::conformation::Residue;
-	using core::chemical::LOWER_TERMINUS;
-	using core::chemical::UPPER_TERMINUS;
 	using core::chemical::aa_vrt;
 	using core::chemical::aa_unk;
 
@@ -293,7 +289,7 @@ get_asymmetric_pose_copy_from_symmetric_pose(
 
 		Residue residue( pose.residue( i ) );
 
-		if(residue.type().has_variant_type( LOWER_TERMINUS ) ||
+		if(residue.type().is_lower_terminus() ||
 				residue.aa() == aa_unk || residue.aa() == aa_vrt || jump_to_next ) {
 
 			if( residue.aa() == aa_unk || residue.aa() == aa_vrt ) {
@@ -303,7 +299,7 @@ get_asymmetric_pose_copy_from_symmetric_pose(
 				///fpd ^^^ the problem is that the residue following the X should be connected by a jump as well.
 				///     it should be of LOWER_TERMINUS variant type, but if not, we'll recover & spit out a warning for now.
 				///     same thing for ligands???
-				if( ! residue.has_variant_type( LOWER_TERMINUS ) )
+				if( ! residue.is_lower_terminus() )
 					TR.Warning << "Residue following X, Z, or an upper terminus is _not_ a lower terminus type!  Continuing ..." << std::endl;
 			}
 			new_pose.append_residue_by_jump( residue, 1, "", "", true ); // each time this happens, a new chain should be started
@@ -314,7 +310,7 @@ get_asymmetric_pose_copy_from_symmetric_pose(
 
 			//fpd If res i is an upper terminus but (i+1) is not a lower terminus, the code exits on a failed assertion
 			//fpd Don't let this happen; always jump in these cases
-			if ( residue.type().has_variant_type( UPPER_TERMINUS )) jump_to_next = true;
+			if ( residue.type().is_upper_terminus(  )) jump_to_next = true;
 		}
 	}
 

@@ -967,8 +967,10 @@ build_pose_as_is1(
 			//TR.Debug << rsd_type.name() << " is_upper_terminus " << rsd_type.has_variant_type( UPPER_TERMINUS ) << std::endl;
 
 			// only take the desired variants
-			if ( is_polymer && ( is_lower_terminus != rsd_type.has_variant_type( LOWER_TERMINUS ) ||
-					is_upper_terminus != rsd_type.has_variant_type( UPPER_TERMINUS )) ) {
+			bool lower_term_type = rsd_type.has_variant_type( LOWER_TERMINUS ) || rsd_type.has_variant_type( LOWERTERM_TRUNC );
+			bool upper_term_type = rsd_type.has_variant_type( UPPER_TERMINUS ) || rsd_type.has_variant_type( UPPERTERM_TRUNC );
+			if ( is_polymer && (
+				(is_lower_terminus != lower_term_type ) || (is_upper_terminus != upper_term_type ) ) ) {
 				TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
 				//TR.Debug << "because a polymer and not a terminus" << std::endl;
 				continue;
@@ -1122,8 +1124,8 @@ build_pose_as_is1(
 				if ( bondlength > 3.0 ) {
 					TR << "[ WARNING ] missing density found at residue (rosetta number) " << old_nres << std::endl;
 					pose.append_residue_by_jump( *new_rsd, old_nres );
-					core::pose::add_variant_type_to_pose_residue( pose, chemical::UPPER_TERMINUS, old_nres );
-					core::pose::add_variant_type_to_pose_residue( pose, chemical::LOWER_TERMINUS, old_nres+1 );
+					core::pose::add_variant_type_to_pose_residue( pose, chemical::UPPERTERM_TRUNC, old_nres );
+					core::pose::add_variant_type_to_pose_residue( pose, chemical::LOWERTERM_TRUNC, old_nres+1 );
 				} else {
 					pose.append_residue_by_bond( *new_rsd );
 				}

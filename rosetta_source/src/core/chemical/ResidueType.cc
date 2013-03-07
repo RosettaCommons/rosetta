@@ -1120,6 +1120,12 @@ ResidueType::add_property( std::string const & property )
 	} else if ( property == "UPPER_TERMINUS" ) {
 		is_terminus_ = true;
 		is_upper_terminus_ = true;
+	} else if ( property == "LOWERTERM_TRUNC" ) {
+		is_terminus_ = true;
+		is_lower_terminus_ = true;
+	} else if ( property == "UPPERTERM_TRUNC" ) {
+		is_terminus_ = true;
+		is_upper_terminus_ = true;
 	} else if ( property == "PHOSPHONATE" ) {
 		is_polymer_ = true;
 		is_phosphonate_ = true;

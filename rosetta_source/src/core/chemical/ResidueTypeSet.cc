@@ -218,7 +218,7 @@ ResidueTypeSet::ResidueTypeSet(
 			patch_filenames.push_back( directory + line );
 		}
 
-        //kdrew: include list allows patches to be included while being commented out in patches.txt, useful for testing non-canonical patches.
+		//kdrew: include list allows patches to be included while being commented out in patches.txt, useful for testing non-canonical patches.
 		//tr << "include_patches activated? " << basic::options::option[ basic::options::OptionKeys::chemical::include_patches ].active() << std::endl;
 		if ( basic::options::option[ basic::options::OptionKeys::chemical::include_patches ].active() ) {
 			utility::vector1< std::string > includelist = basic::options::option[ basic::options::OptionKeys::chemical::include_patches ];
@@ -228,7 +228,15 @@ ResidueTypeSet::ResidueTypeSet(
 				tr << "While generating ResidueTypeSet " << name << ": Including patch " << fname << " as requested" << std::endl;
 			}
 		}
-		
+
+		//fpd  if missing density is to be read correctly, we will have to also load the terminal truncation variants
+		if ( basic::options::option[ basic::options::OptionKeys::in::missing_density_to_jump ]()
+		     || basic::options::option[ basic::options::OptionKeys::in::use_truncated_termini ]() ) {
+			if ( std::find( patch_filenames.begin(), patch_filenames.end(), directory + "patches/NtermTruncation.txt" ) == patch_filenames.end())
+				patch_filenames.push_back( directory + "patches/NtermTruncation.txt" );
+			if ( std::find( patch_filenames.begin(), patch_filenames.end(), directory + "patches/CtermTruncation.txt" ) == patch_filenames.end())
+				patch_filenames.push_back( directory + "patches/CtermTruncation.txt" );
+		}
 
 		apply_patches( patch_filenames );
 	}

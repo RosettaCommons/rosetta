@@ -35,7 +35,8 @@ option.add( basic::options::OptionKeys::in::detect_disulf, "Forcably enable or d
 option.add( basic::options::OptionKeys::in::detect_disulf_tolerance, "disulf tolerance" ).def(0.5);
 option.add( basic::options::OptionKeys::in::fix_disulf, "Specify disulfide connectivity via a file. Disulfides are specified as two whitespace-seperated residue indicies per line. This option replaces the old '-run:fix_disulf' option." );
 option.add( basic::options::OptionKeys::in::missing_density_to_jump, "If missing density is found in input pdbs, replace with a jump" ).def(false);
-option.add( basic::options::OptionKeys::in::preserve_crystinfo, "Preserve information important for crystal refinement (B factors +CRYST1 line" ).def(false);
+option.add( basic::options::OptionKeys::in::preserve_crystinfo, "Preserve information important for crystal refinement (B factors +CRYST1 line)" ).def(false);
+option.add( basic::options::OptionKeys::in::use_truncated_termini, "Will not add extra OXT/Hs at termini if not in input structure" ).def(false);
 option.add( basic::options::OptionKeys::in::use_stupid_foldtree_format, "use the fold-tree format that existed for one week after revision 21447" ).def(false);
 option.add( basic::options::OptionKeys::in::target_residues, "which residue numbers to pass for getDistConstraints" );
 option.add( basic::options::OptionKeys::in::replonly_residues, "residue numbers regarded as repulsive-only residues" );

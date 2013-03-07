@@ -161,7 +161,12 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-preserve_crystinfo</b> \<Boolean\><dt>
-<dd>Preserve information important for crystal refinement (B factors +CRYST1 line</dd><br>
+<dd>Preserve information important for crystal refinement (B factors +CRYST1 line)</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-use_truncated_termini</b> \<Boolean\><dt>
+<dd>Will not add extra OXT/Hs at termini if not in input structure</dd><br>
 <dd>Default: false</dd><br>
 </dl>
 <dl>

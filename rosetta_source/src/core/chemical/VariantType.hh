@@ -35,6 +35,8 @@ namespace chemical {
 
 extern VariantType const UPPER_TERMINUS;
 extern VariantType const LOWER_TERMINUS;
+extern VariantType const UPPERTERM_TRUNC;
+extern VariantType const LOWERTERM_TRUNC;
 extern VariantType const CUTPOINT_UPPER;
 extern VariantType const CUTPOINT_LOWER;
 extern VariantType const DISULFIDE;

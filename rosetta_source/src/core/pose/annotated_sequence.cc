@@ -127,8 +127,8 @@ chemical::ResidueTypeCOPs residue_types_from_sequence(
 			// The next call requires reference -> CAP because ResidueTypeSet's
 			// methods are not yet consistent in handing out ref vs CAP.
 			requested_types.push_back( &residue_set.name_map( fullname_list[ index ] ) );
-			is_lower_terminus = ( *requested_types.back() ).has_variant_type( chemical::LOWER_TERMINUS );
-			is_upper_terminus = ( *requested_types.back() ).has_variant_type( chemical::UPPER_TERMINUS );
+			is_lower_terminus = ( *requested_types.back() ).is_lower_terminus();
+			is_upper_terminus = ( *requested_types.back() ).is_upper_terminus();
 		} else {
 			// use aa_map to find list of possible ResidueTypes
 			chemical::ResidueTypeCOPs const & rsd_type_list( residue_set.aa_map( my_aa ) );

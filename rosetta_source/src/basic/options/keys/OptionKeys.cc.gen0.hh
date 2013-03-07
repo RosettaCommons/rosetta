@@ -31,6 +31,7 @@ namespace in { RealOptionKey const detect_disulf_tolerance( "in:detect_disulf_to
 namespace in { FileOptionKey const fix_disulf( "in:fix_disulf" );  }
 namespace in { BooleanOptionKey const missing_density_to_jump( "in:missing_density_to_jump" );  }
 namespace in { BooleanOptionKey const preserve_crystinfo( "in:preserve_crystinfo" );  }
+namespace in { BooleanOptionKey const use_truncated_termini( "in:use_truncated_termini" );  }
 namespace in { BooleanOptionKey const use_stupid_foldtree_format( "in:use_stupid_foldtree_format" );  }
 namespace in { IntegerVectorOptionKey const target_residues( "in:target_residues" );  }
 namespace in { IntegerVectorOptionKey const replonly_residues( "in:replonly_residues" );  }

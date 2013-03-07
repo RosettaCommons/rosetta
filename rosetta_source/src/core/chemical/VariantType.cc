@@ -49,6 +49,11 @@ VariantType const UPPER_TERMINUS( "UPPER_TERMINUS" );
 /// @brief N-terminus cap
 VariantType const LOWER_TERMINUS( "LOWER_TERMINUS" );
 
+/// @brief C-terminus truncation
+VariantType const UPPERTERM_TRUNC( "UPPERTERM_TRUNC" );
+/// @brief N-terminus truncation
+VariantType const LOWERTERM_TRUNC( "LOWERTERM_TRUNC" );
+
 /// @brief for use during loop modeling, at positions before a cutpoint
 VariantType const CUTPOINT_LOWER( "CUTPOINT_LOWER" );
 /// @brief for use during loop modeling, at positions after a cutpoint
