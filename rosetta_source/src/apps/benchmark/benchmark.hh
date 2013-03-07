@@ -32,17 +32,17 @@ public:
 		for(unsigned int i=0; i<name_.size(); i++) {
 			if( name_[i]=='.' || name_[i]==' ' ) name_[i]='_';
 		}
-	};
-	virtual ~Benchmark() {};
+	}
+	virtual ~Benchmark() {}
 
-	virtual void setUp() {};
-	virtual void run(core::Real /*scaleFactor*/) {};
-	virtual void tearDown() {};
+	virtual void setUp() {}
+	virtual void run(core::Real /*scaleFactor*/) {}
+	virtual void tearDown() {}
 
 	/// Execute benchmark cycle i.e.: setUp() - run() - tearDown()
 	/// return number of seconds that was used to performe 'run' step.
 	double execute(core::Real scaleFactor);
-	std::string name() { return name_; };
+	std::string name() { return name_; }
 
 public:
 	static void executeOneBenchmark(
@@ -57,7 +57,7 @@ private:
 	std::string name_; ///< name of the benchmark, must corelate to namespace ie: core.pose
 
 	/// function for keepig record of all created benchmark classes.
-	static std::vector<Benchmark *> &allBenchmarks();
+	static std::vector< Benchmark * > & allBenchmarks();
 };
 
 

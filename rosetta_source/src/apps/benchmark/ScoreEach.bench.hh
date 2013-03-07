@@ -21,10 +21,18 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
+
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreTypeManager.hh>
 #include <core/scoring/Energies.hh>
+#include <core/scoring/EnergyGraph.hh>
+
+#include <core/scoring/methods/OneBodyEnergy.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
+#include <core/scoring/methods/ShortRangeTwoBodyEnergy.hh>
+#include <core/scoring/methods/LongRangeTwoBodyEnergy.hh>
+#include <core/scoring/LREnergyContainer.hh>
 
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
@@ -41,12 +49,10 @@ public:
 		core::Size base_scale_factor
 	) :
 		Benchmark(name),
-		pose_(),
 		score_type_(score_type),
 		base_scale_factor_(base_scale_factor),
-		scorefxn_(),
 		setup_successful_(false)
-	{};
+	{}
 
 
 	virtual
@@ -58,16 +64,26 @@ public:
 	}
 
 	virtual void setUp() {
-		core::import_pose::pose_from_pdb(pose_, "test_in.pdb");
-		if(!scorefxn_){
-			scorefxn_ = new core::scoring::ScoreFunction();
+		pose_ = new core::pose::Pose;
+		core::import_pose::pose_from_pdb(*pose_, "test_in.pdb");
+		core::scoring::methods::EnergyMethodOptions opts;
+		try {
+			enmeth_ = core::scoring::ScoringManager::get_instance()->energy_method( score_type_, opts );
+		} catch (utility::excn::EXCN_Base& excn){
+			TR.Error
+				<< "Unable to Test scoring with score type '"
+				<< core::scoring::ScoreTypeManager::name_from_score_type(score_type_)
+				<< "'" << std::endl
+				<< "Fail with error:" << std::endl
+				<< excn;
 		}
+		enmethtype_ = enmeth_->method_type();
+
+		scorefxn_ = new core::scoring::ScoreFunction;
 		try{
 			// do this once in case there are one time setup requirements
 			scorefxn_->set_weight(score_type_, 1);
-			scorefxn_->score(pose_);
-			pose_.energies().clear();
-			scorefxn_->set_weight(score_type_, 0);
+			scorefxn_->score(*pose_);
 			setup_successful_ = true;
 		} catch (utility::excn::EXCN_Base& excn){
 			TR.Error
@@ -80,38 +96,148 @@ public:
 	}
 
 	virtual void run(core::Real scaleFactor) {
+		using namespace core::scoring::methods;
+
 		if(!setup_successful_){
 			TR.Error
 				<< "Skipping running this test becuase the setup was not completed successfully." << std::endl;
 			return;
 		}
 
-		core::scoring::ScoreFunction scorefxn;
-		try{
-			for(int i=0; i < base_scale_factor_*scaleFactor; i++) {
-				scorefxn_->set_weight(score_type_, 1);
-				scorefxn_->score(pose_);
-				pose_.energies().clear();
-				scorefxn_->set_weight(score_type_, 0);
+		if ( enmethtype_ == ci_1b || enmethtype_ == cd_1b ) {
+			run_one_body_energy( scaleFactor );
+		} else if ( enmethtype_ == ci_2b || enmethtype_ == cd_2b ) {
+			run_short_ranged_two_body_energy( scaleFactor );
+		} else if ( enmethtype_ == ci_lr_2b || enmethtype_ == cd_lr_2b ) {
+			run_long_ranged_two_body_energy( scaleFactor );
+		} else {
+			// whole structure energies
+			core::scoring::ScoreFunction scorefxn;
+			try{
+				for(int i=0; i < base_scale_factor_*scaleFactor; i++) {
+					scorefxn.set_weight(score_type_, 1);
+					scorefxn.score(*pose_);
+					pose_->energies().clear();
+					scorefxn.set_weight(score_type_, 0);
+				}
+			} catch (utility::excn::EXCN_Base& excn){
+				TR.Error
+					<< "Unable to Test scoring with score type '"
+					<< core::scoring::ScoreTypeManager::name_from_score_type(score_type_)
+					<< "'" << std::endl
+					<< "Fail with error:" << std::endl
+					<< excn;
 			}
-		} catch (utility::excn::EXCN_Base& excn){
+		}
+	}
+
+	void run_one_body_energy( core::Real scaleFactor ) {
+		using namespace core;
+		using namespace core::scoring;
+		using namespace core::scoring::methods;
+
+		utility::vector1< core::conformation::Residue const * > res( pose_->total_residue() );
+		for ( Size ii = 1; ii <= pose_->total_residue(); ++ii ) { res[ ii ] = & pose_->residue( ii ); }
+
+		if ( ! dynamic_cast< OneBodyEnergy const * > ( enmeth_() ) ) {
 			TR.Error
 				<< "Unable to Test scoring with score type '"
 				<< core::scoring::ScoreTypeManager::name_from_score_type(score_type_)
 				<< "'" << std::endl
-				<< "Fail with error:" << std::endl
-				<< excn;
+				<< "Failed dynamic cast of energy method to OneBodyEnergy" << std::endl;
 		}
-	};
+	
+		OneBodyEnergy const & e1b( static_cast< OneBodyEnergy const & > ( *enmeth_() ));
+		EnergyMap emap;
+		for ( core::Size ii = 1; ii <= base_scale_factor_ * scaleFactor; ++ii ) {
+			emap.zero( e1b.score_types() );
+			for ( core::Size jj = 1; jj <= pose_->total_residue(); ++jj ) {
+				e1b.residue_energy( *res[ jj ], *pose_, emap );
+			}
+		}
+	}
 
-	virtual void tearDown() {};
+	void run_short_ranged_two_body_energy( core::Real scaleFactor ) {
+		using namespace core;
+		using namespace core::scoring;
+		using namespace core::scoring::methods;
+		using namespace core::graph;
+
+		utility::vector1< core::conformation::Residue const * > res( pose_->total_residue() );
+		for ( Size ii = 1; ii <= pose_->total_residue(); ++ii ) { res[ ii ] = & pose_->residue( ii ); }
+
+		if ( ! dynamic_cast< ShortRangeTwoBodyEnergy const * > ( enmeth_() ) ) {
+			TR.Error
+				<< "Unable to Test scoring with score type '"
+				<< core::scoring::ScoreTypeManager::name_from_score_type(score_type_)
+				<< "'" << std::endl
+				<< "Failed dynamic cast of energy method to ShortRangeTwoBodyEnergy" << std::endl;
+		}
+
+		ShortRangeTwoBodyEnergy const & e2b( static_cast< ShortRangeTwoBodyEnergy const & > (*enmeth_()) );
+		EnergyMap emap;
+		for ( Size ii = 1; ii <= base_scale_factor_ * scaleFactor; ++ii ) {
+			emap.zero( e2b.score_types() );
+			for ( Size jj = 1; jj <= pose_->total_residue(); ++jj ) {
+				for ( Node::EdgeListConstIter
+						iter     = pose_->energies().energy_graph().get_node( jj )->const_upper_edge_list_begin(),
+						iter_end = pose_->energies().energy_graph().get_node( jj )->const_upper_edge_list_end();
+						iter != iter_end; ++iter ) {
+					Size kk = (*iter)->get_second_node_ind();
+					e2b.residue_pair_energy( *res[ jj ], *res[ kk ], *pose_, *scorefxn_, emap );
+				}
+			}
+		}
+	}
+
+	void run_long_ranged_two_body_energy( core::Real scaleFactor ) {
+		using namespace core;
+		using namespace core::scoring;
+		using namespace core::scoring::methods;
+		using namespace core::graph;
+		if ( ! dynamic_cast< LongRangeTwoBodyEnergy const * > ( enmeth_() ) ) {
+			TR.Error
+				<< "Unable to Test scoring with score type '"
+				<< core::scoring::ScoreTypeManager::name_from_score_type(score_type_)
+				<< "'" << std::endl
+				<< "Failed dynamic cast of energy method to LongRangeTwoBodyEnergy" << std::endl;
+		}
+
+		utility::vector1< core::conformation::Residue const * > res( pose_->total_residue() );
+		for ( Size ii = 1; ii <= pose_->total_residue(); ++ii ) { res[ ii ] = & pose_->residue( ii ); }
+
+		LongRangeTwoBodyEnergy const & e2b( static_cast< LongRangeTwoBodyEnergy const & > (*enmeth_()) );
+		EnergyMap emap;
+		LREnergyContainerOP lrec = pose_->energies().nonconst_long_range_container( e2b.long_range_type() );
+
+		for ( Size ii = 1; ii <= base_scale_factor_ * scaleFactor; ++ii ) {
+			emap.zero( e2b.score_types() );
+			for ( Size jj = 1; jj <= pose_->total_residue(); ++jj ) {
+				for ( ResidueNeighborIteratorOP
+						rni = lrec->upper_neighbor_iterator_begin( jj ),
+						rniend = lrec->upper_neighbor_iterator_end( jj );
+						(*rni) != (*rniend); ++(*rni) ) {
+					Size kk = rni->upper_neighbor_id();
+					e2b.residue_pair_energy( *res[ jj ], *res[ kk ], *pose_, *scorefxn_, emap );
+				}
+			}
+		}
+	
+	}
+
+	virtual void tearDown() {
+		pose_ = 0;
+		scorefxn_ = 0;
+		enmeth_ = 0;
+	}
 
 private:
-	core::pose::Pose pose_;
-
+	core::pose::PoseOP pose_;
 	core::scoring::ScoreType score_type_;
-	core::Size base_scale_factor_;
 	core::scoring::ScoreFunctionOP scorefxn_;
+	core::scoring::methods::EnergyMethodOP enmeth_;
+	core::scoring::methods::EnergyMethodType enmethtype_;
+	core::Size base_scale_factor_;
 	bool setup_successful_;
 };
 
