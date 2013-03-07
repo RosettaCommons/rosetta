@@ -81,6 +81,7 @@
 #include <core/scoring/electron_density/ElecDensAllAtomCenEnergyCreator.hh>
 #include <core/scoring/electron_density/ElecDensEnergyCreator.hh>
 #include <core/scoring/electron_density/PattersonCorrEnergyCreator.hh>
+#include <core/scoring/cryst/XtalMLEnergyCreator.hh>
 #include <core/scoring/electron_density_atomwise/ElecDensAtomwiseEnergyCreator.hh>
 //XRW_B_T1
 //#include <core/scoring/etable/CoarseEtableEnergyCreator.hh>
@@ -228,6 +229,7 @@ using basic::Warning;
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/cryst.OptionKeys.gen.hh>
 #include <basic/options/keys/OptionKeys.hh>
 
 // ResourceManager includes
@@ -324,6 +326,7 @@ static EnergyMethodRegistrator< scoring::electron_density::ElecDensCenEnergyCrea
 static EnergyMethodRegistrator< scoring::electron_density::ElecDensAllAtomCenEnergyCreator > ElecDensAllAtomCenEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::electron_density::ElecDensEnergyCreator > ElecDensEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::electron_density::PattersonCorrEnergyCreator > PattersonCorrEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::cryst::XtalMLEnergyCreator > XtalMLEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::electron_density_atomwise::ElecDensAtomwiseEnergyCreator > ElecDensAtomwiseEnergyCreator_registrator;
 //XRW_B_T1
 //static EnergyMethodRegistrator< scoring::etable::CoarseEtableEnergyCreator > CoarseEtableEnergyCreator_registrator;
@@ -603,6 +606,41 @@ init_score_function_corrections(){
 
 		if ( ! option[ corrections::score::ch_o_bond_potential ].user() ) {
 			option[ corrections::score::ch_o_bond_potential ].value("scoring/score_functions/carbon_hbond/ch_o_bond_potential_near_min_yf.dat");
+		}
+	}
+
+
+	//fpd  crystal-refinement specific changes
+	if( option[cryst::crystal_refine]) {
+		// use -correct icoor
+		if ( ! option[ corrections::chemical::icoor_05_2009 ].user() ) {
+			option[corrections::chemical::icoor_05_2009].value( true );
+		}
+
+		// use -correct rama fixes
+		if ( ! option[ corrections::score::rama_not_squared ].user() ) {
+			option[corrections::score::rama_not_squared].value( true );
+		}
+		if ( ! option[ corrections::score::rama_map ].user() ) {
+			option[ corrections::score::rama_map ].value("scoring/score_functions/rama/Rama09_noEH_kernel25_it08.dat");
+		}
+
+		// use dun10
+		if ( ! option[ corrections::score::dun10 ].user() ) {
+			option[corrections::score::dun10].value( true );
+		}
+
+		// use bicubic interpolation
+		if ( ! option[ corrections::score::use_bicubic_interpolation ].user() ) {
+			option[corrections::score::use_bicubic_interpolation].value( true );
+		}
+
+		// read pdbs properly
+		if ( ! option[ in::missing_density_to_jump ].user() ) {
+			option[in::missing_density_to_jump].value( true );
+		}
+		if ( ! option[ in::preserve_crystinfo ].user() ) {
+			option[in::preserve_crystinfo].value( true );
 		}
 	}
 }

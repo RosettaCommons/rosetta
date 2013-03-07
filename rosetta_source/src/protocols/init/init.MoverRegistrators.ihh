@@ -34,6 +34,14 @@ static MoverRegistrator< canonical_sampling::SilentTrajectoryRecorderCreator > r
 static MoverRegistrator< canonical_sampling::SimulatedTemperingCreator > reg_SimulatedTemperingCreator;
 static MoverRegistrator< canonical_sampling::TrialCounterObserverCreator > reg_TrialCounterObserverCreator;
 
+static MoverRegistrator< cryst::SetCrystWeightMoverCreator > reg_SetCrystWeightMoverCreator;
+static MoverRegistrator< cryst::RecomputeDensityMapMoverCreator > reg_RecomputeDensityMapMoverCreator;
+static MoverRegistrator< cryst::LoadDensityMapMoverCreator > reg_LoadDensityMapMoverCreator;
+static MoverRegistrator< cryst::FitBfactorsMoverCreator > reg_FitBfactorsMoverCreator;
+static MoverRegistrator< cryst::UpdateSolventMoverCreator > reg_UpdateSolventMoverCreator;
+static MoverRegistrator< cryst::TagPoseWithRefinementStatsMoverCreator > reg_TagPoseWithRefinementStatsMoverCreator;
+static MoverRegistrator< cryst::SetRefinementOptionsMoverCreator > reg_SetRefinementOptionsMoverCreator;
+
 static MoverRegistrator< comparative_modeling::LoopRelaxMoverCreator > reg_LoopRelaxMoverCreator;
 static MoverRegistrator< hybridization::HybridizeProtocolCreator > reg_HybridizeProtocolCreator;
 static MoverRegistrator< hybridization::CartesianSamplerCreator > reg_CartesianSamplerCreator;
@@ -187,9 +195,10 @@ static MoverRegistrator< protein_interface_design::movers::TryRotamersCreator > 
 static MoverRegistrator< protein_interface_design::movers::ShoveResidueMoverCreator > reg_ShoveResidueMoverCreator;
 static MoverRegistrator< protein_interface_design::movers::VLBCreator > reg_VLBCreator;
 
-static MoverRegistrator< qsar::RenderGridsToKinemageCreator> reg_RenderGridsToKinemageCreator;
+static MoverRegistrator< qsar::RenderGridsToKinemageCreator > reg_RenderGridsToKinemageCreator;
+static MoverRegistrator< qsar::scoring_grid::GridInitMoverCreator >  reg_GridInitMoverCreator;
 
-static MoverRegistrator<qsar::scoring_grid::GridInitMoverCreator>  reg_GridInitMoverCreator;
+static MoverRegistrator< rbsegment_relax::MakeStarTopologyMoverCreator > reg_MakeStarTopologyMoverCreator;
 
 static MoverRegistrator< relax::FastRelaxCreator> reg_FastRelaxCreator;
 

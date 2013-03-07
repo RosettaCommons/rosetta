@@ -244,7 +244,7 @@ public:
 
 	/// @brief Print cached CCs
 	void showCachedScores( utility::vector1< int > const &reses );
-	inline core::Real getCachedScore( core::Size resid ) { 
+	inline core::Real getCachedScore( core::Size resid ) {
 		runtime_assert( resid <= CCs.size() );
 		return CCs[resid];
 	}
@@ -256,6 +256,9 @@ public:
 
 	inline void setUseExactDerivatives( bool newVal ) { ExactDerivatives = newVal; }
 	inline bool getUseExactDerivatives() const { return ExactDerivatives; }
+
+	inline void setSCscaling( core::Real SC_scalingin) { SC_scaling_=SC_scalingin; }
+	inline core::Real getSCscaling() { return SC_scaling_; }
 
 	inline void setWindow( core::Size window_in ) { WINDOW_ = window_in; }
 	inline core::Size getWindow( ) { return WINDOW_; }
@@ -401,11 +404,11 @@ private:
 	ObjexxFCL::FArray3D< float > density;
 
 	// fft of density
-	ObjexxFCL::FArray3D< std::complex<double> > Fdensity;
+	//ObjexxFCL::FArray3D< std::complex<double> > Fdensity;
 
 	// Controllable parameters
 	std::map< core::Size, bool > scoring_mask_;
-	core::Real reso, ATOM_MASK, CA_MASK, force_apix_;
+	core::Real reso, ATOM_MASK, CA_MASK, force_apix_, SC_scaling_;
 	core::Size WINDOW_;
 	bool score_window_context_, remap_symm_;
 
@@ -514,10 +517,10 @@ private:
 };
 
 /// @brief The EDM instance
-ElectronDensity& getDensityMap();
+ElectronDensity& getDensityMap(std::string filename ="", bool force_reload =false);
 
 /// @brief The EDM instance
-ElectronDensity& getDensityMap_legacy();
+ElectronDensity& getDensityMap_legacy(std::string filename ="", bool force_reload =false);
 
 
 // x mod y, returns z in [0,y-1]

@@ -179,7 +179,8 @@ private:
 		Real & FRET,
 		ConvergenceTest & converge_test,
 		LineMinimizationAlgorithmOP line_min,
-		int const ITMAX
+		int const ITMAX,
+		bool w_rescore = false
 	) const;
 
 	Multifunc & func_;

@@ -412,6 +412,9 @@ enum ScoreType {
 	// patterson correlation
 	patterson_cc,
 
+	// crystallographic ML target
+	xtal_ml,
+
 	hpatch,
   //membrane environment smooth
 	Menv_smooth,

@@ -1,5 +1,3 @@
-namespace RBSegmentRelax { BooleanOptionKey const skip_rb_moves( "RBSegmentRelax:skip_rb_moves" );  }
-namespace RBSegmentRelax { RealVectorOptionKey const helical_movement_params( "RBSegmentRelax:helical_movement_params" );  }
 namespace RBSegmentRelax { RealVectorOptionKey const strand_movement_params( "RBSegmentRelax:strand_movement_params" );  }
 namespace RBSegmentRelax { RealVectorOptionKey const default_movement_params( "RBSegmentRelax:default_movement_params" );  }
 namespace RBSegmentRelax { IntegerOptionKey const cst_seqwidth( "RBSegmentRelax:cst_seqwidth" );  }
@@ -40,6 +38,9 @@ namespace patterson { IntegerOptionKey const nshells( "patterson:nshells" );  }
 namespace patterson { BooleanOptionKey const use_spline_interpolation( "patterson:use_spline_interpolation" );  }
 namespace patterson { BooleanOptionKey const use_on_repack( "patterson:use_on_repack" );  }
 namespace patterson { BooleanOptionKey const dont_use_symm_in_pcalc( "patterson:dont_use_symm_in_pcalc" );  }
+namespace cryst { BooleanOptionKey const cryst( "cryst" );  }
+namespace cryst { StringOptionKey const mtzfile( "cryst:mtzfile" );  }
+namespace cryst { BooleanOptionKey const crystal_refine( "cryst:crystal_refine" );  }
 namespace optE { BooleanOptionKey const optE( "optE" );  }
 namespace optE { StringOptionKey const load_from_silent( "optE:load_from_silent" );  }
 namespace optE { StringOptionKey const data_in( "optE:data_in" );  }

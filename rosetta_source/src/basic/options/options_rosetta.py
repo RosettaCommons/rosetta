@@ -331,7 +331,7 @@ Options = Option_Group( '',
 		    Option('separate_db_per_mpi_process','Boolean',desc="In MPI mode,, open a separate sqlite3 database for each process with extension _<mpi_rank>", default='false'),
             Option('use_compact_residue_schema','Boolean',desc="Store all the atoms for a residue in a binary silent file style blob.  Sacrifices analyzability for scalability. If you don't know if you want this you probably don't",default='false'),
             		),
-            
+
 	),
 
 	# Output options ---------------------------------------------------------
@@ -4086,6 +4086,10 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
                 Option( 'use_spline_interpolation', 'Boolean', default = 'false', desc='use spline interpolation for derivative evaluation? (default trilinear)'),
                 Option( 'use_on_repack', 'Boolean', default = 'false', desc='SLOW - use patterson correlation on repacks (default no)'),
                 Option( 'dont_use_symm_in_pcalc', 'Boolean', default = 'false', desc='perform Pcalc in P1 (default no)'),
+	),
+  Option_Group( 'cryst',
+		Option( 'mtzfile', 'String', desc = 'mtz file'),
+		Option( 'crystal_refine', 'Boolean', desc='Turns on crystal-refinement-specific options', default='false' ),
 	),
 
 	Option_Group( 'optE',

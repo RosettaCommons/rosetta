@@ -10,6 +10,9 @@
 ########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
 sources = {
+"protocols/cryst" : [
+        "cryst_movers",
+],
 "protocols/enzdes": [
 	"AddorRemoveCsts",
 	"BackboneSampler",

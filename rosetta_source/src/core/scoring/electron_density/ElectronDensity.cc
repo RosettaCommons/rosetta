@@ -140,7 +140,7 @@ static void swap4_aligned(void *v, long ndata) {
 ///////////////////////////////  ///////////////////////////////
 ///////////////////////////////  ///////////////////////////////
 
-ElectronDensity &getDensityMap() {
+ElectronDensity& getDensityMap(std::string filename, bool force_reload) {
 	if(basic::resource_manager::ResourceManager::get_instance()->
 		has_resource_with_description("electron_density")){
 
@@ -150,33 +150,46 @@ ElectronDensity &getDensityMap() {
 
 		return *electron_density;
 	} else {
-		return getDensityMap_legacy();
+		return getDensityMap_legacy(filename, force_reload);
 	}
 }
 
 //
-ElectronDensity &getDensityMap_legacy() {
+ElectronDensity& getDensityMap_legacy(std::string filename, bool force_reload) {
 	static ElectronDensity theDensityMap;
 
 #ifdef GL_GRAPHICS
 	pthread_mutex_lock(&density_map_db_mut_);
 #endif
 
-	if (!theDensityMap.isMapLoaded()) {
+	if ( !theDensityMap.isMapLoaded() || force_reload ) {
 		// load map from disk
 		TR << "Loading Density Map" << std::endl;
-		if (!basic::options::option[ basic::options::OptionKeys::edensity::mapfile ].user()) {
-			TR.Warning << "[ Warning ] No density map specified." << std::endl;
+		if (!basic::options::option[ basic::options::OptionKeys::edensity::mapfile ].user() && filename.length()==0 ) {
+			TR.Warning << "[ Warning ] No density map specified" << std::endl;
 		} else {
-			std::string mapfile = basic::options::option[ basic::options::OptionKeys::edensity::mapfile ]();
-			core::Real mapreso = basic::options::option[ basic::options::OptionKeys::edensity::mapreso ]();
-			core::Real mapsampling = basic::options::option[ basic::options::OptionKeys::edensity::grid_spacing ]();
+			bool map_loaded=false;
+			std::string mapfile;
 
-			// Initialize ElectronDensity object
-			bool map_loaded = theDensityMap.readMRCandResize( mapfile , mapreso , mapsampling );
+			if (filename.length()==0) {  // use CMD line args
+				mapfile = basic::options::option[ basic::options::OptionKeys::edensity::mapfile ]();
+				core::Real mapreso = basic::options::option[ basic::options::OptionKeys::edensity::mapreso ]();
+				core::Real mapsampling = basic::options::option[ basic::options::OptionKeys::edensity::grid_spacing ]();
 
+				// Initialize ElectronDensity object
+				TR << "Loading density map" << mapfile << std::endl;
+				map_loaded = theDensityMap.readMRCandResize( mapfile , mapreso , mapsampling );
+			} else {
+				mapfile = filename;
+				core::Real mapreso = 0.0;
+				core::Real mapsampling = 0.0;
+
+				TR << "Loading density map" << mapfile << std::endl;
+				map_loaded = theDensityMap.readMRCandResize( mapfile , mapreso , mapsampling );
+			}
 			if (!map_loaded) {
 				TR << "[ ERROR ] Error loading density map named '" << mapfile << "'" << std::endl;
+				exit(1);
 			}
 		}
 	}
@@ -187,6 +200,7 @@ ElectronDensity &getDensityMap_legacy() {
 
 	return theDensityMap;
 }
+
 
 
 /// null constructor
@@ -1285,11 +1299,11 @@ void ElectronDensity::setup_fastscoring_first_time(core::pose::Pose const &pose)
 	// fastgrid[0] = findSampling( 2*grid[0], MINMULT[0] );
 	// fastgrid[1] = findSampling( 2*grid[1], MINMULT[1] );
 	// fastgrid[2] = findSampling( 2*grid[2], MINMULT[2] );
-	// 
+	//
 	// fastorigin[0] = fastgrid[0]*origin[0] / ((core::Real)grid[0]);
 	// fastorigin[1] = fastgrid[1]*origin[1] / ((core::Real)grid[1]);
 	// fastorigin[2] = fastgrid[2]*origin[2] / ((core::Real)grid[2]);
-	// 
+	//
 	// resample( density, rho_obs_oversample, fastgrid );
 	// TR << "Oversample " << density.u1() << "x" << density.u2() << "x" << density.u3() << " to "
 	// 										<< rho_obs_oversample.u1() << "x" << rho_obs_oversample.u2() << "x" << rho_obs_oversample.u3() << std::endl;
@@ -2892,7 +2906,7 @@ ElectronDensity::matchResFast(
 	numeric::xyzVector< core::Real > fracX, idxX;
 	for (Size i=1; i<=rsd.nheavyatoms(); ++i) {
 		fracX = c2f*rsd.atom(i).xyz();
-		
+
 		idxX[0] = pos_mod (fracX[0]*fastgrid[0] - fastorigin[0] + 1 , (double)fastgrid[0]);
 		idxX[1] = pos_mod (fracX[1]*fastgrid[1] - fastorigin[1] + 1 , (double)fastgrid[1]);
 		idxX[2] = pos_mod (fracX[2]*fastgrid[2] - fastorigin[2] + 1 , (double)fastgrid[2]);
@@ -3558,7 +3572,7 @@ ElectronDensity::readMRCandResize(
 	}
 
 	// fft
-	numeric::fourier::fft3(density, Fdensity);
+	//numeric::fourier::fft3(density, Fdensity);
 
 	// post-processing
 	this->computeStats();

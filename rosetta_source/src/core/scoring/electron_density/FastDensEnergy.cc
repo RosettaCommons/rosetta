@@ -91,10 +91,7 @@ methods::LongRangeEnergyType
 FastDensEnergy::long_range_type() const { return elec_dens_fast_energy; }
 
 /// c-tor
-FastDensEnergy::FastDensEnergy() : parent( new FastDensEnergyCreator ) {
-	// load map
-	map_loaded = core::scoring::electron_density::getDensityMap().isMapLoaded();
-}
+FastDensEnergy::FastDensEnergy() : parent( new FastDensEnergyCreator ) {}
 
 
 /// clone
@@ -134,7 +131,7 @@ FastDensEnergy::setup_for_scoring(
 	using namespace methods;
 
 	// Do we have a map?
-	if (!map_loaded) {
+	if (!	core::scoring::electron_density::getDensityMap().isMapLoaded()) {
 		utility_exit_with_message("Density scoring function called but no map loaded.");
 	}
 
@@ -400,17 +397,17 @@ FastDensEnergy::eval_atom_derivative(
 					numeric::xyzVector<core::Real> X_i = (i==0) ? X : pose.xyz( id::AtomID( atmid, myClones[i] ) );
 					core::scoring::electron_density::getDensityMap().dCCdx_fastRes
 								( atmid, (i==0)?resid:myClones[i], X_i, pose.residue((i==0)?resid:myClones[i]), pose, dCCdx );
-	
+
 					// get R
 					core::scoring::electron_density::getDensityMap().get_R( symminfo->subunit_index( (i==0) ? resid : myClones[i] ), R );
-	
+
 					numeric::xyzVector< core::Real > dEdx = -1*R*dCCdx / ((core::Real)nsubunits);
-	
+
 					numeric::xyzVector<core::Real> atom_x = X;
 					numeric::xyzVector<core::Real> const f2( dEdx );
 					numeric::xyzVector<core::Real> atom_y = -f2 + atom_x;
 					Vector const f1( atom_x.cross( atom_y ) );
-	
+
 					F1 += weights[ elec_dens_fast ] * f1;
 					F2 += weights[ elec_dens_fast ] * f2;
 				}

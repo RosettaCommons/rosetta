@@ -128,7 +128,6 @@ public:
 
 
 private:
-	bool map_loaded;
 	mutable bool pose_is_proper;
 	mutable double structure_score;
 	mutable int nreses;

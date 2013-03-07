@@ -136,7 +136,6 @@ public:
 
 
 private:
-	bool map_loaded;
 	mutable bool pose_is_proper;
 	virtual
 	core::Size version() const;

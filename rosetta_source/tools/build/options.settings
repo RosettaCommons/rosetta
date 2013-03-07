@@ -106,6 +106,9 @@ options = {
         # Enable OpenMP
         "omp",
 
+        # Link to python interpreter
+        "python",
+
         #enable mysql database support
         "mysql",
 

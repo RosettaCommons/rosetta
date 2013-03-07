@@ -19,6 +19,8 @@
 
 // Rosetta Headers
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 
@@ -33,14 +35,17 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 
+#include <core/conformation/symmetry/util.hh>
+#include <core/pose/symmetry/util.hh>
+
 #include <core/chemical/VariantType.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <basic/basic.hh>
 #include <basic/Tracer.hh>
 
 // Random number generator
-// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
+#include <numeric/xyzVector.io.hh>
+#include <numeric/xyz.functions.hh>
 #include <numeric/random/random.hh>
 #include <ObjexxFCL/FArray1D.hh>
 
@@ -48,10 +53,9 @@
 #include <string>
 
 //Auto Headers
-#include <core/id/SequenceMapping.hh>
+#include <core/id/NamedAtomID.hh>
 #include <core/pose/util.hh>
-#include <utility/vector1.hh>
-#include <utility/options/IntegerVectorOption.hh>
+#include <core/id/SequenceMapping.hh>
 
 
 namespace protocols {
@@ -69,7 +73,7 @@ static basic::Tracer TR("protocols::moves::RBSegmentMover");
 void set_rb_constraints(
 	core::pose::Pose & pose,
 	core::pose::Pose const &cst_pose,
-	utility::vector1< RBSegment > const & rbsegs ,
+	utility::vector1< protocols::rbsegment_relax::RBSegment > const & rbsegs ,
 	core::id::SequenceMapping const & resmap,
 	core::Real cst_width,
 	core::Real cst_stdev,
@@ -173,24 +177,39 @@ void set_constraints(
 /// returns jump residues
 utility::vector1< core::Size > setup_pose_rbsegs_keep_loops(
               core::pose::Pose &pose,
-              utility::vector1< RBSegment > const &rbsegs,
+              utility::vector1< protocols::rbsegment_relax::RBSegment > const &rbsegs,
               loops::Loops const &loops,
               core::kinematics::MoveMapOP mm) {
  	using namespace core::kinematics;
 
- 	core::Size nres( pose.total_residue()-1 );
+	//fpd pose should be rooted on vrt!
+	runtime_assert( pose.residue_type( pose.fold_tree().root() ).aa() == core::chemical::aa_vrt );
+
+	FoldTree const &f_in = core::conformation::symmetry::get_asymm_unit_fold_tree( pose.conformation() );
+	// nres points to last protein residue;
+	Size totres = f_in.nres();
+	Size nres = totres - 1;
  	core::Size vrtid = nres+1;
  	core::Size nrbsegs( rbsegs.size() );
 
  	// "star" topology fold tree
-	utility::vector1< core::Size > cuts, jump_res;
+	utility::vector1< core::Size > cuts = f_in.cutpoints(), jump_res;
 	utility::vector1< std::pair<core::Size,core::Size> > jumps;
 	for( loops::Loops::const_iterator it=loops.begin(), it_end=loops.end(); it != it_end; ++it ) {
-		if (it->start() == 1 || it->stop() == nres) continue;
+		//if (pose.residue(it->stop()).is_upper_terminus() && it->stop() != nres)
+		//	cuts.push_back( it->stop() );
+
+		//fpd segment with no rbsegs
+		if (pose.residue(it->start()).is_lower_terminus() && pose.residue(it->stop()).is_upper_terminus()) {
+			core::Size midpt = (it->start()+it->stop()) / 2;
+			jumps.push_back (std::pair<core::Size,core::Size>( vrtid, midpt ) );
+		}
+
+		if (pose.residue(it->start()).is_lower_terminus() || pose.residue(it->stop()).is_upper_terminus()) continue;
 		cuts.push_back( it->cut() );
 	}
-	cuts.push_back( nres );
-	//cuts.push_back( nres+1 ); //?
+	//cuts.push_back( nres );
+
 	for (int i=1; i <= (int)nrbsegs; ++i ) {
 		// jump from vrt to midpt of 1st seg
 		core::Size midpt = (rbsegs[i][1].start()+rbsegs[i][1].end()) / 2;
@@ -212,17 +231,23 @@ utility::vector1< core::Size > setup_pose_rbsegs_keep_loops(
 	for ( Size i=1; i<=jumps.size(); ++i ) {
 		fjumps(1,i) = std::min( jumps[i].first , jumps[i].second );
 		fjumps(2,i) = std::max( jumps[i].first , jumps[i].second );
+		// DEBUG -- PRINT JUMPS AND CUTS
+		TR.Error << " jump " << i << " : " << fjumps(1,i) << " , " << fjumps(2,i) << std::endl;
 	}
-	for ( Size i=1; i<=cuts.size(); ++i ) {
+	for ( Size i = 1; i<=cuts.size(); ++i ) {
 		fcuts(i) = cuts[i];
+		TR.Error << " cut " << i << " : " << fcuts(i) << std::endl;
 	}
+
 	kinematics::FoldTree f;
 	bool valid_tree = f.tree_from_jumps_and_cuts( nres+1, jumps.size(), fjumps, fcuts );
 	runtime_assert( valid_tree );
 	f.reorder( vrtid );
-	TR << "New fold tree: " << f << std::endl;
 
-	pose.fold_tree( f );
+
+	TR << "New (asu) fold tree: " << f << std::endl;
+	core::pose::symmetry::set_asymm_unit_fold_tree( pose , f );
+	TR << "New fold tree: " << pose.fold_tree() << std::endl;
 
 	// movemap
 	mm->clear();
@@ -232,10 +257,14 @@ utility::vector1< core::Size > setup_pose_rbsegs_keep_loops(
 	for (int i=1; i <= (int)nrbsegs; ++i )
 		mm->set_jump(i,true);
 
+	core::pose::PDBInfoOP pdbinfo_old;
+	if (pose.pdb_info())
+		pdbinfo_old = new core::pose::PDBInfo( *(pose.pdb_info()) );
+
 	// cb variants
 	for( protocols::loops::Loops::const_iterator it=loops.begin(), it_end=loops.end(); it != it_end; ++it ) {
 	 	Size const loop_cut(it->cut());
-	 	if ( !pose.residue(loop_cut).is_upper_terminus() ) {
+	 	if ( !pose.residue(loop_cut).is_lower_terminus() && !pose.residue(loop_cut).is_upper_terminus() ) {
 	 		if ( ! pose.residue(loop_cut).has_variant_type(core::chemical::CUTPOINT_LOWER) )
 	 			core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_LOWER, loop_cut );
 	 		if ( ! pose.residue(loop_cut+1).has_variant_type(core::chemical::CUTPOINT_UPPER) )
@@ -243,14 +272,124 @@ utility::vector1< core::Size > setup_pose_rbsegs_keep_loops(
 	 	}
 	}
 
+	// copy back B factors
+	if (pdbinfo_old) {
+		for (Size resid = 1; resid <= nres; ++resid) {
+			core::conformation::Residue const &rsd_i = pose.residue(resid);
+			Size natoms_old = pdbinfo_old->natoms( resid ), natoms_new = rsd_i.natoms();
+			for (Size atmid = 1; atmid <= natoms_new; ++atmid) {
+				Real B = pdbinfo_old->temperature( resid, std::min(atmid,natoms_old) );
+				pose.pdb_info()->temperature( resid, atmid, B );
+			}
+		}
+		pose.pdb_info()->obsolete( false );
+	}
+
 	return jump_res;
+}
+
+////
+//// set up star topology foldtree
+void
+setup_star_topology( core::pose::Pose & pose ) {
+	utility::vector1< RBSegment > rigid_segs, rb_chunks;
+	utility::vector1< core::Size > jumps;
+	protocols::loops::Loops loops;
+	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap();
+
+	core::pose::Pose pose_asu;
+	core::pose::symmetry::extract_asymmetric_unit(pose, pose_asu);
+
+	guess_rbsegs_from_pose( pose_asu, rigid_segs, rb_chunks, loops );  // do this on asu pose
+	jumps = setup_pose_rbsegs_keep_loops( pose,  rigid_segs , loops,  movemap );
+}
+
+////
+//// set up disconnected
+void
+setup_disconnected( core::pose::Pose & pose ) {
+ 	using namespace core::kinematics;
+
+	//fpd pose should be rooted on vrt!
+	runtime_assert( pose.residue_type( pose.fold_tree().root() ).aa() == core::chemical::aa_vrt );
+
+	FoldTree const &f_in = core::conformation::symmetry::get_asymm_unit_fold_tree( pose.conformation() );
+	// nres points to last protein residue;
+	Size totres = f_in.nres();
+	Size nres = totres - 1;
+ 	core::Size vrtid = nres+1;
+
+ 	// "star" topology fold tree
+	utility::vector1< core::Size > cuts;
+	utility::vector1< std::pair<core::Size,core::Size> > jumps;
+	for( core::Size i=1; i<=nres; ++i) {
+		// fpd no terminal CB variants; connect termini w/ peptide bonds
+	 	if ( pose.residue(i).is_lower_terminus() ) {
+			// nothing
+		} else if ( i<nres && pose.residue(i+1).is_upper_terminus() ) {
+			// jump only
+			jumps.push_back (std::pair<core::Size,core::Size>( vrtid, i ) );
+	 	} else if ( pose.residue(i).is_upper_terminus() ) {
+			// cut only
+			cuts.push_back( i );
+		} else {
+			cuts.push_back( i );
+			jumps.push_back (std::pair<core::Size,core::Size>( vrtid, i ) );
+		}
+	}
+
+	ObjexxFCL::FArray2D_int fjumps( 2, jumps.size() );
+	ObjexxFCL::FArray1D_int fcuts ( cuts.size() );
+	for ( Size i=1; i<=jumps.size(); ++i ) {
+		fjumps(1,i) = std::min( jumps[i].first , jumps[i].second );
+		fjumps(2,i) = std::max( jumps[i].first , jumps[i].second );
+	}
+	for ( Size i = 1; i<=cuts.size(); ++i ) {
+		fcuts(i) = cuts[i];
+	}
+
+	kinematics::FoldTree f;
+	bool valid_tree = f.tree_from_jumps_and_cuts( nres+1, jumps.size(), fjumps, fcuts );
+	runtime_assert( valid_tree );
+	f.reorder( vrtid );
+
+	TR << "New (asu) fold tree: " << f << std::endl;
+	core::pose::symmetry::set_asymm_unit_fold_tree( pose , f );
+
+	core::pose::PDBInfoOP pdbinfo_old;
+	if (pose.pdb_info())
+		pdbinfo_old = new core::pose::PDBInfo( *(pose.pdb_info()) );
+
+	// cb variants
+	for( core::Size i=1; i<=nres; ++i) {
+	 	if ( !pose.residue(i).is_lower_terminus() && !pose.residue(i).is_upper_terminus() ) {
+	 		if ( ! pose.residue(i).has_variant_type(core::chemical::CUTPOINT_LOWER) )
+	 			core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_LOWER, i );
+	 		if ( ! pose.residue(i).has_variant_type(core::chemical::CUTPOINT_UPPER) )
+	 			core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_UPPER, i );
+	 	}
+	}
+
+	// copy back B factors
+	if (pdbinfo_old) {
+		for (Size resid = 1; resid <= nres; ++resid) {
+			core::conformation::Residue const &rsd_i = pose.residue(resid);
+			Size natoms_old = pdbinfo_old->natoms( resid ), natoms_new = rsd_i.natoms();
+			for (Size atmid = 1; atmid <= natoms_new; ++atmid) {
+				Real B = pdbinfo_old->temperature( resid, std::min(atmid,natoms_old) );
+				pose.pdb_info()->temperature( resid, atmid, B );
+			}
+		}
+		pose.pdb_info()->obsolete( false );
+	}
+
 }
 
 
 ///
 ///@brief Helper function to set up a loop-removed pose
 void setup_pose_from_rbsegs(
-             utility::vector1< RBSegment > const &rbsegs ,
+             utility::vector1< protocols::rbsegment_relax::RBSegment > const &rbsegs ,
              core::pose::Pose const &pose_in ,
              core::pose::Pose &pose_out ,
              core::id::SequenceMapping &resmap,
@@ -262,13 +401,13 @@ void setup_pose_from_rbsegs(
 	core::Size nres_rb = 0;
 
 	// each ligand is its own rb-segment (for the purposes of fold-tree generation)
-	utility::vector1< RBSegment > rbsegs_with_ligands = rbsegs;
+	utility::vector1< protocols::rbsegment_relax::RBSegment > rbsegs_with_ligands = rbsegs;
 	core::Size last_peptide_res = nres;
 	while ( !pose_in.residue( last_peptide_res ).is_protein() )
 		last_peptide_res--;
 	for (core::Size i=last_peptide_res+1; i<=nres; ++i) {
 		if ( pose_in.residue( i ).aa() != core::chemical::aa_vrt ) {
-			rbsegs_with_ligands.push_back( RBSegment( i, i, 'X' ) );
+			rbsegs_with_ligands.push_back( protocols::rbsegment_relax::RBSegment( i, i, 'X' ) );
 			TR << "setup_pose_from_rbsegs: Ligand at " << i << std::endl;
 		}
 	}
@@ -311,11 +450,7 @@ void setup_pose_from_rbsegs(
 	}
 
 	// virtual res as root
-	core::chemical::ResidueTypeSetCAP const &residue_set(
-									core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )  );
-	core::chemical::ResidueTypeCOPs const & rsd_type_list( residue_set->name3_map("VRT") );
-	core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( *rsd_type_list[1] ) );
-	pose_out.append_residue_by_jump( *new_res , 1 );
+	addVirtualResAsRoot( pose_out );
 
 	// "star" topology fold tree
 	core::kinematics::FoldTree newF;
@@ -372,27 +507,14 @@ void setup_pose_from_rbsegs(
 
 ///@brief Helper function to restore a fully-connected pose
 void restore_pose_from_rbsegs(
-             utility::vector1< RBSegment > const &rbsegs ,
+             utility::vector1< protocols::rbsegment_relax::RBSegment > const &rbsegs ,
              core::pose::Pose const &pose_in ,
              core::pose::Pose &pose_out /* input/output */ )
 {
 	using namespace core::kinematics;
 
 	// each ligand is its own rb-segment (for the purposes of fold-tree generation)
-	utility::vector1< RBSegment > rbsegs_with_ligands = rbsegs;
-	/*
-	int nres( pose_out.total_residue() );
-	// keep ligand confs from starting pose
-	int last_peptide_res = nres;
-	while ( !pose_out.residue( last_peptide_res ).is_protein() )
-		last_peptide_res--;
-	for (core::Size i=last_peptide_res+1; i<=nres; ++i) {
-		if ( pose_out.residue( i ).aa() != core::chemical::aa_vrt ) {
-			rbsegs_with_ligands.push_back( RBSegment( i, i, 'X' ) );
-			TZ << "restore_pose_from_rbsegs: Ligand at " << i << std::endl;
-		}
-	}
-	*/
+	utility::vector1< protocols::rbsegment_relax::RBSegment > rbsegs_with_ligands = rbsegs;
 
 	int res_rb_counter = 1;
 	for ( core::Size i=1; i <= rbsegs_with_ligands.size(); ++i ) {
@@ -416,11 +538,7 @@ void restore_pose_from_rbsegs(
 	}
 
 	// virtual res as root
-	core::chemical::ResidueTypeSetCAP const &residue_set(
-									core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )  );
-	core::chemical::ResidueTypeCOPs const & rsd_type_list( residue_set->name3_map("VRT") );
-	core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( *rsd_type_list[1] ) );
-	pose_out.append_residue_by_jump( *new_res , pose_out.total_residue()/2 );
+	addVirtualResAsRoot( pose_out );
 
 	// make the virt atom the root
 	core::kinematics::FoldTree newF(pose_out.fold_tree());
@@ -456,14 +574,16 @@ void guess_rbsegs_from_pose(
 	bool in_helix=false, in_strand=false;
 	int ss_start = -1;
 	for (int i=1; i<=(int)nres; ++i) {
+		bool is_lower_term = pose.residue(i).is_lower_terminus();
+
 		// strand end
-		if (dssp_pose(i) != 'E' && in_strand) {
+		if ((is_lower_term || dssp_pose(i) != 'E') && in_strand) {
 			in_strand = false;
 			if (i-ss_start >= 3)
 				simple_segments.push_back( RBSegment( ss_start, i-1, 'E' ) );
 		}
 		// helix end
-		if (dssp_pose(i) != 'H' && in_helix) {
+		if ((is_lower_term || dssp_pose(i) != 'H') && in_helix) {
 			in_helix = false;
 			if (i-ss_start >= 5)
 				simple_segments.push_back( RBSegment( ss_start, i-1, 'H' ) );
@@ -480,16 +600,20 @@ void guess_rbsegs_from_pose(
 		}
 	}
 
-	// put at least 2 "loop residues" inbetween each RB segment.
+	// put at least 2 "loop residues" inbetween each RB segment as long as there is no intervening cutpoint
 	// always eat into the helix (even if this leaves a helix < 3 reses)
 	for (int i=1; i< (int)simple_segments.size(); ++i) {
 		if (simple_segments[i+1][1].start() - simple_segments[i][1].end() <= 2) {
+			core::chemical::ResidueType const &restype_i = pose.residue_type( simple_segments[i][1].end()+1 );
+			if (restype_i.is_upper_terminus() || restype_i.is_lower_terminus())
+				continue;
+
 			if (simple_segments[i][1].char_type() == 'H') {
 				simple_segments[i][1].set_end( simple_segments[i+1][1].start()-3 );
 			} else if (simple_segments[i+1][1].char_type() == 'H') {
 				simple_segments[i+1][1].set_start( simple_segments[i][1].end()+3 );
 			} else {
-				// eat into longer strand (will only need to chomp 1 res)
+				// eat into longer strand
 				if (simple_segments[i+1][1].length() > simple_segments[i][1].length() )
 					simple_segments[i+1][1].set_start( simple_segments[i][1].end()+3 );
 				else
@@ -498,34 +622,56 @@ void guess_rbsegs_from_pose(
 		}
 	}
 
-	// check for "1-residue" loops at termini; extend RB segments if necessary
-	if (simple_segments[1][1].start() == 2) simple_segments[1][1].set_start(1);
-	if (simple_segments[simple_segments.size()][1].end() == nres-1) simple_segments[simple_segments.size()][1].set_end(nres);
-
+	// check for "1-residue" near termini; extend RB segments if necessary
+	for (int i=1; i<=(int)simple_segments.size(); ++i) {
+		core::Size start_i = simple_segments[i][1].start(), stop_i = simple_segments[i][1].end();
+		if (start_i>1 && pose.residue(start_i-1).is_lower_terminus()) {
+			TR << start_i << " --> " << start_i-1 << std::endl;
+			simple_segments[i][1].set_start(start_i-1);
+		}
+		if (stop_i<nres  && (pose.residue(stop_i+1).is_upper_terminus() || (stop_i+1 == nres) ) ) {
+			TR << stop_i << " --> " << stop_i+1 << std::endl;
+			simple_segments[i][1].set_end(stop_i+1);
+		}
+	}
 
 	// auto-gen loops
 	if ( simple_segments.size() > 1 ) {
 		std::sort( simple_segments.begin(), simple_segments.end(), RB_lt());
 		int start_res=1, end_res=simple_segments[1][1].start()-1;
-		//int cutpt = (start_res+end_res)/2;
 		int nsegs = simple_segments.size();
 
-		if (end_res >= start_res)
+		if (end_res > start_res)
 			loops.push_back( protocols::loops::Loop(start_res, end_res, 0, 0.0, false) );
+
 		for (int i=1; i<nsegs; ++i) {
 			start_res = simple_segments[i][1].end()+1;
 			end_res   = simple_segments[i+1][1].start()-1;
-			loops.push_back( protocols::loops::Loop(start_res, end_res, 0, 0.0, false) );
+			if (end_res > start_res)
+				loops.push_back( protocols::loops::Loop(start_res, end_res, 0, 0.0, false) );
 		}
 		start_res = simple_segments[nsegs][1].end()+1;
 		end_res   = nres;
-		//cutpt = (start_res+end_res)/2;  // set but never used ~Labonte
-		if (end_res >= start_res)
+		if (end_res > start_res)
 			loops.push_back( protocols::loops::Loop(start_res, end_res, 0, 0.0, false) );
-
-		// TODO: split loops on cutpoints from original pose
 	}
 
+	// split loops on cutpoints from original pose
+	utility::vector1< int > cuts_in = pose.fold_tree().cutpoints();
+	std::sort( cuts_in.begin(), cuts_in.end() );
+	for (int i=1; i<=loops.size(); ++i) {
+		for (Size j=1; j<=cuts_in.size(); ++j) {
+			if (loops[i].start() <= cuts_in[j] && loops[i].stop() > cuts_in[j]) {
+				TR << "splitting [" << loops[i].start() << " , " << loops[i].stop() << "] at " << cuts_in[j] << std::endl;
+				core::Size new_start = cuts_in[j]+1, new_stop = loops[i].stop();
+				loops[i].set_stop(cuts_in[j]);
+				if (new_stop > new_start)
+					loops.push_back( protocols::loops::Loop(new_start, new_stop, 0, 0.0, false) );
+				else // 1 residue segment in original foldtree ...
+					simple_segments.push_back( RBSegment( new_start, new_stop, 'X' ) );
+			}
+		}
+	}
 
 	// now combine paired strands into a compound segment
 	//   look for NH--O distance < 2.6A (?)

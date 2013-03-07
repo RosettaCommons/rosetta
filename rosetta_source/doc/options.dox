@@ -10015,6 +10015,21 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
  </li>
+<li><h2>cryst</h2>
+<dl>
+<dt><b>-cryst</b> \<Boolean\><dt>
+<dd>cryst option group</dd><br>
+</dl>
+<dl>
+<dt><b>-mtzfile</b> \<String\><dt>
+<dd>mtz file</dd><br>
+</dl>
+<dl>
+<dt><b>-crystal_refine</b> \<Boolean\><dt>
+<dd>Turns on crystal-refinement-specific options</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+ </li>
 <li><h2>optE</h2>
 <dl>
 <dt><b>-optE</b> \<Boolean\><dt>

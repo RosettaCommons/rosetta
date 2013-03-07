@@ -100,6 +100,10 @@ Minimizer::run(
 		LineMinimizationAlgorithmOP armijo_line_search( new ArmijoLineMinimization( func_, false, phipsi_inout.size() ) );
 		armijo_line_search->silent( options_.silent() );
 		lbfgs( phipsi, end_func, fractional_converge_test, armijo_line_search, ITMAX );
+	} else if ( type == "lbfgs_armijo_rescored" ) {
+		LineMinimizationAlgorithmOP armijo_line_search( new ArmijoLineMinimization( func_, true, phipsi_inout.size() ) );
+		armijo_line_search->silent( options_.silent() );
+		lbfgs( phipsi, end_func, fractional_converge_test, armijo_line_search, ITMAX, true );
 	} else if ( type == "lbfgs_armijo_atol" ) {
 		LineMinimizationAlgorithmOP armijo_line_search( new ArmijoLineMinimization( func_, false, phipsi_inout.size() ) );
 		armijo_line_search->silent( options_.silent() );
@@ -586,7 +590,8 @@ Minimizer::lbfgs(
 	Real & FRET,
 	ConvergenceTest & converge_test,
 	LineMinimizationAlgorithmOP line_min,
-	int const ITMAX
+	int const ITMAX,
+	bool w_rescore /*= false*/
 ) const {
 	 int const N( X.size() );
 	 static int M( basic::options::option[ basic::options::OptionKeys::optimization::lbfgs_M ]() );
@@ -620,6 +625,10 @@ Minimizer::lbfgs(
 	 Real prior_func_value = func_(X);
 	 pf[1] = prior_func_value;
 	 func_.dfunc(X,G);
+
+	if (w_rescore) {  //fpd   reevaluate score after gradient computation
+		pf[1] = prior_func_value = func_(X);
+	}
 
 	 // Compute the direction
 	 // we assume the initial hessian matrix H_0 as the identity matrix.
@@ -732,8 +741,11 @@ Minimizer::lbfgs(
 			if ( line_min->provide_stored_derivatives() ) {
 				 line_min->fetch_stored_derivatives( G );
 			} else {
-				 //FRET = func_(X);
-				 func_.dfunc(X,G);
+				func_.dfunc(X,G);
+
+				if (w_rescore) {  //fpd   reevaluate score after gradient computation
+					FRET = func_(X);
+				}
 			}
 
 			// LBFGS updates

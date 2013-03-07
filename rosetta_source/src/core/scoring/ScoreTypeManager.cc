@@ -347,6 +347,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "elec_dens_whole_structure_allatom" ] = elec_dens_whole_structure_allatom;
 	name2score_type_[ "elec_dens_atomwise" ] = elec_dens_atomwise;
 	name2score_type_[ "patterson_cc" ] = patterson_cc;
+	name2score_type_[ "xtal_ml" ] = xtal_ml;
 
 	name2score_type_[ "natbias_ss" ] = natbias_ss;
 	name2score_type_[ "natbias_hs" ] = natbias_hs;

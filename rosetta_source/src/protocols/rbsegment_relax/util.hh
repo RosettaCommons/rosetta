@@ -16,26 +16,22 @@
 #define INCLUDED_protocols_rbsegment_relax_util_hh
 
 // Package headers
-// AUTO-REMOVED #include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.hh>
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <protocols/rbsegment_relax/RBSegment.fwd.hh>
+#include <protocols/rbsegment_relax/RBSegment.hh>
 
-// AUTO-REMOVED #include <map>
+#include <map>
 
-// AUTO-REMOVED #include <numeric/xyzVector.hh>
+#include <numeric/xyzVector.hh>
 
-// AUTO-REMOVED #include <utility/pointer/ReferenceCount.hh>
+#include <utility/pointer/ReferenceCount.hh>
 
-// AUTO-REMOVED #include <numeric/conversions.hh>
-// AUTO-REMOVED #include <numeric/xyzMatrix.hh>
-
-#include <core/id/SequenceMapping.fwd.hh>
-#include <protocols/loops/Loops.fwd.hh>
-#include <utility/vector1.hh>
-
+#include <numeric/conversions.hh>
+#include <numeric/xyzMatrix.hh>
 
 
 namespace protocols {
@@ -45,7 +41,7 @@ namespace rbsegment_relax {
 void set_rb_constraints(
 	core::pose::Pose & pose,
 	core::pose::Pose const &cst_pose,
-	utility::vector1< RBSegment > const & rbsegs ,
+	utility::vector1< protocols::rbsegment_relax::RBSegment > const & rbsegs ,
 	core::id::SequenceMapping const & resmap,
 	core::Real cst_width,
 	core::Real cst_stdev,
@@ -59,9 +55,15 @@ void set_constraints(
 	core::Real cst_stdev,
 	core::Size cst_seqwidth );
 
-///@brief remove loops from pose and setup star-topology fold tree
+///@brief setup star-topology fold tree
+void setup_star_topology( core::pose::Pose & pose );
+
+///@brief build a pose where every residue is connected by jumps to vrt
+void setup_disconnected( core::pose::Pose & pose );
+
+///@brief remove loops from pose
 void setup_pose_from_rbsegs(
-             utility::vector1< RBSegment > const &rbsegs ,
+             utility::vector1< protocols::rbsegment_relax::RBSegment > const &rbsegs ,
              core::pose::Pose const &pose_in ,
              core::pose::Pose &pose_out ,
              core::id::SequenceMapping &resmap,
@@ -80,13 +82,13 @@ void guess_rbsegs_from_pose(
 ///@brief
 utility::vector1<core::Size> setup_pose_rbsegs_keep_loops(
               core::pose::Pose &pose,
-              utility::vector1< RBSegment > const &rbsegs ,
+              utility::vector1< protocols::rbsegment_relax::RBSegment > const &rbsegs ,
               protocols::loops::Loops const &loops,
               core::kinematics::MoveMapOP mm );
 
 ///@brief restore loops from pose
 void restore_pose_from_rbsegs(
-             utility::vector1< RBSegment > const &rbsegs ,
+             utility::vector1< protocols::rbsegment_relax::RBSegment > const &rbsegs ,
              core::pose::Pose const &pose_in ,
              core::pose::Pose &pose_out /* input/output */ );
 

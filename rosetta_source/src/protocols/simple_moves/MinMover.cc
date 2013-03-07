@@ -222,6 +222,9 @@ MinMover::apply_dof_tasks_to_movemap(
 }
 
 void
+MinMover::max_iter( Size max_iter_in ) { min_options_->max_iter( max_iter_in ); }
+
+void
 MinMover::apply(
 	pose::Pose & pose
 ) {
@@ -359,16 +362,19 @@ void MinMover::parse_opts(
 			}
 		}
 	}
+	max_iter( tag->getOption< int >( "max_iter", 200 ) );
 	min_type( tag->getOption< std::string >( "type", "dfpmin_armijo_nonmonotone" ) );
 	tolerance( tag->getOption< core::Real >( "tolerance", 0.01 ) );
-
 	cartesian( tag->getOption< core::Real >( "cartesian", false ) );
 
-	//fpd if cartesian default to lbfgs minimization
+	//fpd  if cartesian or nonideal default to lbfgs minimization otherwise the runtime is horrible
 	if ( cartesian() && !tag->hasOption("type") ) {
 		min_type( "lbfgs_armijo_nonmonotone" );
 	}
-
+	if ( ( tag->getOption<bool>("bondangle",0) ||tag->getOption<bool>("bondlength",0) )
+	    && !tag->hasOption("type") ) {
+		min_type( "lbfgs_armijo_nonmonotone" );
+	}
 }
 
 void MinMover::parse_chi_and_bb( TagPtr const tag )
@@ -464,7 +470,7 @@ std::ostream &operator<< (std::ostream &os, MinMover const &mover)
 		os  << mover.score_function()->get_name() << std::endl;
 	}
 	else { os << "none" << std::endl; }
-	os << "Score tolerance:\t" << mover.tolerance() << "\nNb list:\t\t" << (mover.nb_list() ? "True" : "False") << 
+	os << "Score tolerance:\t" << mover.tolerance() << "\nNb list:\t\t" << (mover.nb_list() ? "True" : "False") <<
 			"\nDeriv check:\t\t" << (mover.deriv_check() ? "True" : "False") << std::endl << "Movemap:" << std::endl;
 	if (mover.movemap() != 0) {
 		mover.movemap()->show(os);

@@ -49,6 +49,7 @@
 #include <basic/options/keys/jumps.OptionKeys.gen.hh>
 #include <basic/options/keys/broker.OptionKeys.gen.hh>
 #include <basic/options/keys/orbitals.OptionKeys.gen.hh>
+#include <basic/options/keys/cryst.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/boinc.OptionKeys.gen.hh>
 #include <basic/options/keys/fast_loops.OptionKeys.gen.hh>

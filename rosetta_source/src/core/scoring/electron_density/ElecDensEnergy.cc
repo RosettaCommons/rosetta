@@ -93,11 +93,7 @@ methods::LongRangeEnergyType
 ElecDensEnergy::long_range_type() const { return elec_dens_energy; }
 
 /// c-tor
-ElecDensEnergy::ElecDensEnergy() : parent( new ElecDensEnergyCreator ) {
-	// load map
-	map_loaded = core::scoring::electron_density::getDensityMap().isMapLoaded();
-	TR.Debug << (map_loaded? "Map loaded." : "Error loading map!") << std::endl;
-}
+ElecDensEnergy::ElecDensEnergy() : parent( new ElecDensEnergyCreator ) {}
 
 
 /// clone
@@ -160,7 +156,7 @@ ElecDensEnergy::setup_for_scoring(
 	using namespace methods;
 
 	// Do we have a map?
-	if (!map_loaded) {
+	if (!	core::scoring::electron_density::getDensityMap().isMapLoaded()) {
 		utility_exit_with_message("Density scoring function called but no map loaded.");
 	}
 
@@ -446,26 +442,26 @@ ElecDensEnergy::eval_atom_derivative(
 					numeric::xyzVector<core::Real> X_i = (i==0) ? X : pose.xyz( id::AtomID( atmid, myClones[i] ) );
 					core::scoring::electron_density::getDensityMap().dCCdx_res(
 														 atmid, (i==0)?resid:myClones[i], X_i, pose.residue((i==0)?resid:myClones[i]), pose, dCCdx );
-	
+
 					// get R
 					core::scoring::electron_density::getDensityMap().get_R( symminfo->subunit_index( (i==0) ? resid : myClones[i] ), R );
-	
+
 					Real CC = core::scoring::electron_density::getDensityMap().getCachedScore( (i==0) ? resid : myClones[i] );
 					Real z_CC = CC / 0.1;
 					Real p_null = 0.5 * errfc( z_CC/sqrt(2.0) );
-	
+
 					// divide by the number of subunits since SymmetricScoreFunction will scale up later
 					numeric::xyzVector< core::Real > dEdx = 0.5 * ( 1.0 / p_null ) *
 						(-2.0/sqrt(M_PI)) *
 						exp(-SQ( z_CC/sqrt(2.0) )) *
 						1/sqrt(0.02) *
 						R * dCCdx / ((core::Real)nsubunits);
-	
+
 					numeric::xyzVector<core::Real> atom_x = X;
 					numeric::xyzVector<core::Real> const f2( dEdx );
 					numeric::xyzVector<core::Real> atom_y = -f2 + atom_x;
 					Vector const f1( atom_x.cross( atom_y ) );
-	
+
 					F1 += weights[ elec_dens_window ] * f1;
 					F2 += weights[ elec_dens_window ] * f2;
 				}
@@ -473,7 +469,7 @@ ElecDensEnergy::eval_atom_derivative(
 				Real CC = core::scoring::electron_density::getDensityMap().getCachedScore( resid );
 				Real z_CC = CC / 0.1;
 				Real p_null = 0.5 * errfc( z_CC/sqrt(2.0) );
-		
+
 				core::scoring::electron_density::getDensityMap().dCCdx_res( atmid, resid, X, pose.residue(resid), pose, dCCdx );
 				numeric::xyzVector< core::Real > dEdx = ( 1.0 / p_null ) *
 																						0.5 *
@@ -481,12 +477,12 @@ ElecDensEnergy::eval_atom_derivative(
 																						exp(-SQ( z_CC/sqrt(2.0) )) *
 																						1/sqrt(0.02) *
 																						dCCdx;
-		
+
 				numeric::xyzVector<core::Real> atom_x = X;
 				numeric::xyzVector<core::Real> const f2( dEdx );
 				numeric::xyzVector<core::Real> atom_y = -f2 + atom_x;   // a "fake" atom in the direcion of the gradient
 				Vector const f1( atom_x.cross( atom_y ) );
-		
+
 				F1 += weights[ elec_dens_window ] * f1;
 				F2 += weights[ elec_dens_window ] * f2;
 			}
