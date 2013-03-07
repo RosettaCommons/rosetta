@@ -13,7 +13,7 @@
 /// @brief  Scoring benchmark
 /// @author Sergey Lyskov
 
-#include <apps/benchmark/benchmark.hh>
+#include <apps/performance_benchmark/performance_benchmark.hh>
 
 #include <core/pose/Pose.hh>
 //#include <core/import_pose/import_pose.hh>
@@ -227,12 +227,12 @@
 
 using namespace core;
 
-class ScoreBenchmark : public Benchmark
+class ScoreBenchmark : public PerformanceBenchmark
 {
 public:
 	pose::Pose pose;
 
-	ScoreBenchmark(std::string name) : Benchmark(name) {};
+	ScoreBenchmark(std::string name) : PerformanceBenchmark(name) {};
 
 	virtual void setUp() {
 		core::import_pose::pose_from_pdb(pose, "test_in.pdb");

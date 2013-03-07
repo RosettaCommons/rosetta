@@ -13,7 +13,7 @@
 /// @brief  Performance benchmark for PDB input and output
 /// @author Matthew O'Meara
 
-#include <apps/benchmark/benchmark.hh>
+#include <apps/performance_benchmark/performance_benchmark.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
@@ -27,12 +27,12 @@
 
 using namespace core;
 
-class PDB_IOBenchmark : public Benchmark
+class PDB_IOBenchmark : public PerformanceBenchmark
 {
 public:
 	pose::Pose pose;
 
-	PDB_IOBenchmark(std::string name) : Benchmark(name) {};
+	PDB_IOBenchmark(std::string name) : PerformanceBenchmark(name) {};
 
 	virtual void setUp() {
 

@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file apps/benchmark/scientific/rotamer_recovery.cc
+/// @file apps/performance_benchmark/scientific/rotamer_recovery.cc
 /// @brief this determines the percent of rotamers correctly predictied during a repack
 /// @author Matthew O'Meara (mattjomeara@gmail.com)
 

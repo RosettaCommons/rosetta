@@ -8,13 +8,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/apps/benchmark/benchmark.hh
+/// @file   src/apps/performance_benchmark/performance_benchmark.hh
 ///
 /// @brief  Base class for mini rosetta benchmark system
 /// @author Sergey Lyskov
 
-#ifndef INCLUDED_apps_benchmark_benchmark_hh
-#define INCLUDED_apps_benchmark_benchmark_hh
+#ifndef INCLUDED_apps_performance_benchmark_performance_benchmark_hh
+#define INCLUDED_apps_performance_benchmark_performance_benchmark_hh
 
 #include <core/types.hh>
 #include <basic/Tracer.hh>
@@ -24,16 +24,16 @@
 static basic::Tracer TR("benchmark");
 
 
-class Benchmark
+class PerformanceBenchmark
 {
 public:
-	Benchmark(std::string name) : result_(0.), name_(name) {
+	PerformanceBenchmark(std::string name) : result_(0.), name_(name) {
 		allBenchmarks().push_back(this);
 		for(unsigned int i=0; i<name_.size(); i++) {
 			if( name_[i]=='.' || name_[i]==' ' ) name_[i]='_';
 		}
 	}
-	virtual ~Benchmark() {}
+	virtual ~PerformanceBenchmark() {}
 
 	virtual void setUp() {}
 	virtual void run(core::Real /*scaleFactor*/) {}
@@ -57,8 +57,8 @@ private:
 	std::string name_; ///< name of the benchmark, must corelate to namespace ie: core.pose
 
 	/// function for keepig record of all created benchmark classes.
-	static std::vector< Benchmark * > & allBenchmarks();
+	static std::vector< PerformanceBenchmark * > & allBenchmarks();
 };
 
 
-#endif // INCLUDED_demo_rosetta_benchmark_HH
+#endif

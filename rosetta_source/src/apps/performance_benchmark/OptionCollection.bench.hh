@@ -14,16 +14,16 @@
 /// @author Matthew O'Meara
 
 
-#include <apps/benchmark/benchmark.hh>
+#include <apps/performance_benchmark/performance_benchmark.hh>
 
 #include <utility/keys/KeyLookup.hh>
 #include <basic/options/option.hh>
 
-class OptionCollectionBenchmark : public Benchmark
+class OptionCollectionBenchmark : public PerformanceBenchmark
 {
 public:
 
-	OptionCollectionBenchmark(std::string name) : Benchmark(name) {};
+	OptionCollectionBenchmark(std::string name) : PerformanceBenchmark(name) {};
 
 	virtual void setUp() {
 	};

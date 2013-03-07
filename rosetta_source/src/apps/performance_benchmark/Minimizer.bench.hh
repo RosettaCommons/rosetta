@@ -23,7 +23,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <apps/benchmark/benchmark.hh>
+#include <apps/performance_benchmark/performance_benchmark.hh>
 
 #include <utility/vector1.hh>
 
@@ -32,7 +32,7 @@ using namespace core;
 enum  ScoreFnType {SFT_dfpmin, SFT_dfpmin_armijo, SFT_dfpmin_armijo_nonmonotone};
 
 template  <ScoreFnType sft, int TScale>
-class MinimizerBenchmark : public Benchmark
+class MinimizerBenchmark : public PerformanceBenchmark
 {
 public:
 	pose::PoseOP start_pose;
@@ -40,7 +40,7 @@ public:
 	core::scoring::ScoreFunctionOP scorefxn;
 	core::optimization::AtomTreeMinimizer minimizer;
 
-	MinimizerBenchmark(std::string name) : Benchmark(name) {};
+	MinimizerBenchmark(std::string name) : PerformanceBenchmark(name) {};
 
 	virtual void setUp() {
 		start_pose = new pose::Pose();

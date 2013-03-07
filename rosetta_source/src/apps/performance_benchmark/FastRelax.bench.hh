@@ -16,7 +16,7 @@
 #define INCLUDED_apps_benchmark_FastRelax_bench_hh
 
 
-#include <apps/benchmark/benchmark.hh>
+#include <apps/performance_benchmark/performance_benchmark.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
@@ -50,7 +50,7 @@ enum fast_relax_perf_benchmark {
 	fast_relax_perfbench_sp2hecart
 };
 
-class FastRelaxPerformanceBenchmark : public Benchmark
+class FastRelaxPerformanceBenchmark : public PerformanceBenchmark
 {
 
 public:
@@ -58,7 +58,7 @@ public:
 		std::string name,
 		fast_relax_perf_benchmark benchtype
 	) :
-		Benchmark( name ),
+		PerformanceBenchmark( name ),
 		benchtype_( benchtype )
 	{}
 

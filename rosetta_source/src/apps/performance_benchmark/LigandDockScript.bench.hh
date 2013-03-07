@@ -15,8 +15,8 @@
 /// @author Gordon Lemmon
 
 
-#include <apps/benchmark/benchmark.hh>
-// AUTO-REMOVED #include <apps/benchmark/init_util.hh>
+#include <apps/performance_benchmark/performance_benchmark.hh>
+// AUTO-REMOVED #include <apps/performance_benchmark/init_util.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <protocols/ligand_docking/LigandDockProtocol.hh>
@@ -28,10 +28,10 @@
 #include <protocols/moves/Mover.hh>
 #include <utility/vector1.hh>
 
-class LigandDockScriptBenchmark : public Benchmark
+class LigandDockScriptBenchmark : public PerformanceBenchmark
 {
 public:
-	LigandDockScriptBenchmark(std::string name) : Benchmark(name) {};
+	LigandDockScriptBenchmark(std::string name) : PerformanceBenchmark(name) {};
 
 	virtual void setUp() {
 		basic::options::option.load_options_from_file("ligand_dock/ligand_dock_script_flags.txt");

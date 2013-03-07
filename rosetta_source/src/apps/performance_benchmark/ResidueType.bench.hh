@@ -13,7 +13,7 @@
 /// @brief  Performance benchmark for PDB input and output
 /// @author Gordon Lemmon
 
-#include <apps/benchmark/benchmark.hh>
+#include <apps/performance_benchmark/performance_benchmark.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
@@ -62,13 +62,13 @@ bool is_deletable(chemical::ResidueType const& rsd, Size atom_id){
 	return true;
 }
 
-class ResidueTypeBenchmark : public Benchmark
+class ResidueTypeBenchmark : public PerformanceBenchmark
 {
 public:
 	chemical::ChemicalManager * cm_;
 	chemical::ResidueTypeSetCAP residue_types_;
 
-	ResidueTypeBenchmark(std::string name) : Benchmark(name) {};
+	ResidueTypeBenchmark(std::string name) : PerformanceBenchmark(name) {};
 
 	virtual void setUp() {
 		cm_ = chemical::ChemicalManager::get_instance();

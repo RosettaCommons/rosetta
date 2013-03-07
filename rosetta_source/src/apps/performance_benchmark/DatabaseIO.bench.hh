@@ -13,7 +13,7 @@
 /// @brief  Performance benchmark for database input output
 /// @author Tim Jacobs
 
-#include <apps/benchmark/benchmark.hh>
+#include <apps/performance_benchmark/performance_benchmark.hh>
 
 #include <core/pose/Pose.hh>
 
@@ -30,13 +30,13 @@
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
 
-class DatabaseIOBenchmark : public Benchmark
+class DatabaseIOBenchmark : public PerformanceBenchmark
 {
 public:
 	utility::sql_database::sessionOP db_session_;
 	protocols::features::helixAssembly::ConcurrencyTest test_feature_;
 
-	DatabaseIOBenchmark(std::string name) : Benchmark(name) {};
+	DatabaseIOBenchmark(std::string name) : PerformanceBenchmark(name) {};
 
 	virtual void setUp() {
 		db_session_ =

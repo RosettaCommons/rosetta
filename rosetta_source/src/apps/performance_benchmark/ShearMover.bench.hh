@@ -21,7 +21,7 @@
 
 #include <core/kinematics/MoveMap.hh>
 
-#include <apps/benchmark/benchmark.hh>
+#include <apps/performance_benchmark/performance_benchmark.hh>
 
 #include <utility/vector1.hh>
 
@@ -149,15 +149,15 @@
 
 using namespace core;
 
-class ShearMoverBenchmark : public Benchmark
+class ShearMoverBenchmark : public PerformanceBenchmark
 {
 public:
 	pose::PoseOP pose;
 	kinematics::MoveMapOP movemap;
 	protocols::simple_moves::ShearMover shear_mover;
 
-	//ShearMoverBenchmark(std::string name) : Benchmark(name), shear_mover(300., 100) {};
-	ShearMoverBenchmark(std::string name) : Benchmark(name) {};
+	//ShearMoverBenchmark(std::string name) : PerformanceBenchmark(name), shear_mover(300., 100) {};
+	ShearMoverBenchmark(std::string name) : PerformanceBenchmark(name) {};
 
 	virtual void setUp() {
 		pose = new pose::Pose();

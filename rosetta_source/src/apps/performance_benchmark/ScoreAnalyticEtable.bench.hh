@@ -13,7 +13,7 @@
 /// @brief  Scoring Analytic Etable benchmark
 /// @author Matthew O'Meara (mattjomeara@gmail.com)
 
-#include <apps/benchmark/ScoreEach.bench.hh>
+#include <apps/performance_benchmark/ScoreEach.bench.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 class ScoreAnalyticEtableBenchmark : public ScoreEachBenchmark

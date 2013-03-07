@@ -8,12 +8,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   rosetta_source/src/apps/benchmark/benchmark.cc
+/// @file   rosetta_source/src/apps/performance_benchmark/benchmark.cc
 ///
 /// @brief
 /// @author Sergey Lyskov
 
-#include <apps/benchmark/benchmark.hh>
+#include <apps/performance_benchmark/performance_benchmark.hh>
 
 
 #include <core/chemical/ChemicalManager.hh>
@@ -47,50 +47,50 @@ const char results_filename[] = "_performance_";
 const char old_results_filename[] = "_old_performance_";
 
 // Initialize performance benchmark tests here:
-#include <apps/benchmark/OptionCollection.bench.hh>
+#include <apps/performance_benchmark/OptionCollection.bench.hh>
 OptionCollectionBenchmark OptionCollection_("basic.options.OptionCollection");
 
-#include <apps/benchmark/score.bench.hh>
+#include <apps/performance_benchmark/score.bench.hh>
 ScoreBenchmark Score_("core.scoring.Score");
 
-#include <apps/benchmark/ScoreEach.bench.hh>
-#include <apps/benchmark/ScoreAnalyticEtable.bench.hh>
+#include <apps/performance_benchmark/ScoreEach.bench.hh>
+#include <apps/performance_benchmark/ScoreAnalyticEtable.bench.hh>
 
-#include <apps/benchmark/SmallMover.bench.hh>
+#include <apps/performance_benchmark/SmallMover.bench.hh>
 SmallMoverBenchmark SmallMover_("protocols.moves.SmallMover");
 
-#include <apps/benchmark/ShearMover.bench.hh>
+#include <apps/performance_benchmark/ShearMover.bench.hh>
 ShearMoverBenchmark ShearMover_("protocols.moves.ShearMover");
 
-#include <apps/benchmark/Minimizer.bench.hh>
+#include <apps/performance_benchmark/Minimizer.bench.hh>
 //MinimizerBenchmark Minimizer_("protocols.optimization.Minimizer");
 MinimizerBenchmark_dfpmin Minimizer_dfpmin_("protocols.optimization.Minimizer_dfpmin");
 MinimizerBenchmark_dfpmin_armijo MinimizerBenchmark_dfpmin_armijo_("protocols.optimization.Minimizer_dfpmin_armijo");
 MinimizerBenchmark_dfpmin_armijo_nonmonotone MinimizerBenchmark_dfpmin_armijo_nonmonotone_("protocols.optimization.Minimizer_dfpmin_armijo_nonmonotone");
 
-#include <apps/benchmark/Docking.bench.hh>
+#include <apps/performance_benchmark/Docking.bench.hh>
 DockingBenchmark_low DockingLow("protocols.docking.DockingLowRes");
 DockingBenchmark_high DockingHigh("protocols.docking.DockingHighRes");
 
-// AUTO-REMOVED #include <apps/benchmark/Design.bench.hh>
+// AUTO-REMOVED #include <apps/performance_benchmark/Design.bench.hh>
 //DesignBenchmark design("protocols.moves.PackRotamersMover");
 
-#include <apps/benchmark/LigandDock.bench.hh>
+#include <apps/performance_benchmark/LigandDock.bench.hh>
 LigandDockBenchmark ligand_dock("protocols.ligand_docking.LigandDockProtocol");
 
-#include <apps/benchmark/LigandDockScript.bench.hh>
+#include <apps/performance_benchmark/LigandDockScript.bench.hh>
 LigandDockScriptBenchmark ligand_dock_script("protocols.ligand_docking.LigandDockScript");
 
-#include <apps/benchmark/pdb_io.bench.hh>
+#include <apps/performance_benchmark/pdb_io.bench.hh>
 PDB_IOBenchmark PDB_IO_("core.import_pose.pose_from_pdbstring");
 
-#include <apps/benchmark/ResidueType.bench.hh>
+#include <apps/performance_benchmark/ResidueType.bench.hh>
 ResidueTypeBenchmark ResidueType_("core.chemical.ResidueType");
 
-#include <apps/benchmark/xml_parsing.bench.hh>
+#include <apps/performance_benchmark/xml_parsing.bench.hh>
 XMLParseBenchmark XMLParseBenchmark_("utility_tag_Tag_Create");
 
-#include <apps/benchmark/FastRelax.bench.hh>
+#include <apps/performance_benchmark/FastRelax.bench.hh>
 
 // option key includes
 
@@ -110,13 +110,13 @@ using basic::Warning;
 
 using namespace core;
 
-std::vector<Benchmark *> &Benchmark::allBenchmarks()
+std::vector<PerformanceBenchmark *> & PerformanceBenchmark::allBenchmarks()
 {
-	static std::vector<Benchmark*> * allBenchmarks = new std::vector<Benchmark*>;
+	static std::vector< PerformanceBenchmark * > * allBenchmarks = new std::vector< PerformanceBenchmark * >;
 	return *allBenchmarks;
 }
 
-double Benchmark::execute(Real scaleFactor)
+double PerformanceBenchmark::execute(Real scaleFactor)
 {
 	/// Reseting RG system before each performance run.
 	numeric::random::RandomGenerator::initializeRandomGenerators(
@@ -160,16 +160,16 @@ double Benchmark::execute(Real scaleFactor)
 	return t;
 }
 
-void Benchmark::executeOneBenchmark(
+void PerformanceBenchmark::executeOneBenchmark(
 	std::string const & name,
 	Real scaleFactor
 ){
 	TR << std::endl << "Executing benchmark '" << name << "'" << std::endl << std::endl;
 
-	std::vector<Benchmark * > & all( allBenchmarks() );
+	std::vector<PerformanceBenchmark * > & all( allBenchmarks() );
 	bool found_benchmark(false);
 	for(Size i=0; i<all.size(); i++){
-		Benchmark * B = all[i];
+		PerformanceBenchmark * B = all[i];
 		if(B->name() == name){
 			B->execute(scaleFactor);
 			found_benchmark = true;
@@ -182,20 +182,20 @@ void Benchmark::executeOneBenchmark(
 		TR << std::endl << "Unable to locate benchmark '" << name << "'" << std::endl;
 		TR << "The available benchmarks are:" << std::endl;
 		for(Size i=0; i<all.size(); i++){
-			Benchmark * B = all[i];
+			PerformanceBenchmark * B = all[i];
 			TR << "    name: '" << B->name() << "'" << std::endl;
 		}
 	}
 }
 
-void Benchmark::executeAllBenchmarks(Real scaleFactor)
+void PerformanceBenchmark::executeAllBenchmarks(Real scaleFactor)
 {
 	TR << std::endl << "Executing all benchmarks..." << std::endl << std::endl;
 
-	std::vector<Benchmark *> & all( allBenchmarks() );
+	std::vector<PerformanceBenchmark *> & all( allBenchmarks() );
 
 	for(Size i=0; i<all.size(); i++) {
-		Benchmark * B = all[i];
+		PerformanceBenchmark * B = all[i];
 		B->execute(scaleFactor);
 	}
 	TR << std::endl << "Executing all benchmarks... Done." << std::endl;
@@ -204,16 +204,16 @@ void Benchmark::executeAllBenchmarks(Real scaleFactor)
 ///
 /// Generting report file in python dict format: i.e: { 'Bench1': 1.5, 'Bench2': 1.6 }
 ///
-std::string Benchmark::getReport()
+std::string PerformanceBenchmark::getReport()
 {
-	std::vector<Benchmark *> & all( allBenchmarks() );
+	std::vector<PerformanceBenchmark *> & all( allBenchmarks() );
 
 	char buf[1024];
 
 	std::string res = "{\n";
 	for(Size i=0; i<all.size(); i++) {
 		if( i != 0 ) res += ",\n"; // special first case
-		Benchmark * B = all[i];
+		PerformanceBenchmark * B = all[i];
 		sprintf(buf, "%f", B->result_);
 		res += "    \"" + B->name_ + "\":" + std::string(buf);
 	}
@@ -224,16 +224,16 @@ std::string Benchmark::getReport()
 ///
 /// Generting report file in python dict format: i.e: { 'Bench1': 1.5, 'Bench2': 1.6 }
 ///
-std::string Benchmark::getOneReport(std::string const & name)
+std::string PerformanceBenchmark::getOneReport(std::string const & name)
 {
-	std::vector<Benchmark *> & all( allBenchmarks() );
+	std::vector<PerformanceBenchmark *> & all( allBenchmarks() );
 
 	char buf[1024];
 
 	std::string res = "{\n";
 
 	for(Size i=0; i<all.size(); i++) {
-		Benchmark * B = all[i];
+		PerformanceBenchmark * B = all[i];
 		if(B->name() == name){
 			sprintf(buf, "%f", B->result_);
 			res += "    \"" + B->name_ + "\":" + std::string(buf);
@@ -279,18 +279,18 @@ int main( int argc, char *argv[])
 		Real scale = basic::options::option[ run::benchmark_scale ]();
 
 
-		TR << "Mini Benchmark started! Scale factor: " << scale << " -------------" << std::endl;
+		TR << "Performance Benchmark started! Scale factor: " << scale << " -------------" << std::endl;
 
 		//TR << "CLOCKS_PER_SEC:" << CLOCKS_PER_SEC << "\n";
 
 		std::string report;
 		if(basic::options::option[ run::run_one_benchmark ].user()){
 			std::string const & name(basic::options::option[ run::run_one_benchmark ]());
-			Benchmark::executeOneBenchmark(name, scale);
-			report = Benchmark::getOneReport(name);
+			PerformanceBenchmark::executeOneBenchmark(name, scale);
+			report = PerformanceBenchmark::getOneReport(name);
 		} else {
-			Benchmark::executeAllBenchmarks(scale);
-			report = Benchmark::getReport();
+			PerformanceBenchmark::executeAllBenchmarks(scale);
+			report = PerformanceBenchmark::getReport();
 		}
 
 		TR << "Results:" << std::endl << report;  TR.flush();
@@ -299,20 +299,20 @@ int main( int argc, char *argv[])
 		if(utility::file::file_exists(std::string(results_filename))){
 			int i = rename( results_filename, old_results_filename);
 			if( i != 0 ){
-				Error() << "Benchmark:: Unable to rename "<< results_filename << " to " << old_results_filename << std::endl;
+				Error() << "PerformanceBenchmark:: Unable to rename "<< results_filename << " to " << old_results_filename << std::endl;
 				utility_exit();
 			}
 		}
 		std::ofstream file(results_filename, std::ios::out | std::ios::binary);
 		if(!file) {
-			Error() << "Benchmark:: Unable to open file:" << results_filename << " for writing!!!" << std::endl;
+			Error() << "PerformanceBenchmark:: Unable to open file:" << results_filename << " for writing!!!" << std::endl;
 			return 1;
 		}
 		file << report;
 
 		file.close();
 
-		TR << "Mini Benchmark ended.   --------------------------------" << std::endl;
+		TR << "Performance Benchmark ended.   --------------------------------" << std::endl;
 	} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 	}

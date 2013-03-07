@@ -25,8 +25,8 @@
 
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 
-#include <apps/benchmark/benchmark.hh>
-// AUTO-REMOVED #include <apps/benchmark/init_util.hh>
+#include <apps/performance_benchmark/performance_benchmark.hh>
+// AUTO-REMOVED #include <apps/performance_benchmark/init_util.hh>
 
 //Auto Headers
 #include <utility/vector0.hh>
@@ -197,10 +197,10 @@
 //#include <boost/shared_ptr.hpp>
 
 
-class DesignBenchmark : public Benchmark
+class DesignBenchmark : public PerformanceBenchmark
 {
 public:
-	DesignBenchmark(std::string name) : Benchmark(name) {};
+	DesignBenchmark(std::string name) : PerformanceBenchmark(name) {};
 
 	protocols::simple_moves::PackRotamersMover pack_mover;
 	core::pose::Pose design_pose;

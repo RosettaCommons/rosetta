@@ -28,16 +28,16 @@
 sources = {
 	"": [
 	],
-	"benchmark": [
-		"benchmark",
+	#"curated": [
+	#],
+	"performance_benchmark": [
+		"performance_benchmark",
 	],
-	"benchmark/scientific": [
+	"performance_benchmark/scientific": [
 		"ddg_benchmark",
 		"design_contrast_and_statistic",
 		"rotamer_recovery",
 	],
-	#"curated": [
-	#],
 	"public": [
 		"AbinitioRelax",
 		"backrub",

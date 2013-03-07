@@ -8,7 +8,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/apps/benchmark/Docking.bench.hh
+/// @file   src/apps/performance_benchmark/Docking.bench.hh
 ///
 /// @brief  Run a performance benchmark of docking
 /// @author Monica Berrondo
@@ -21,8 +21,8 @@
 //#include <basic/Tracer.hh>
 //#include <numeric/random/random.hh>
 
-#include <apps/benchmark/benchmark.hh>
-#include <apps/benchmark/init_util.hh>
+#include <apps/performance_benchmark/performance_benchmark.hh>
+#include <apps/performance_benchmark/init_util.hh>
 
 
 #include <utility/vector1.hh>
@@ -31,13 +31,13 @@
 enum DockType {High, Low};
 
 template  <DockType dock, int TScale>
-class DockingBenchmark : public Benchmark
+class DockingBenchmark : public PerformanceBenchmark
 {
 public:
 	core::pose::PoseOP start_pose;
 	protocols::docking::DockingProtocolOP docking;
 
-	DockingBenchmark(std::string name) : Benchmark(name) {};
+	DockingBenchmark(std::string name) : PerformanceBenchmark(name) {};
 
 	virtual void setUp() {
 		if( dock == Low ) core_init_with_additional_options( "-low_res_protocol_only -dock_pert 3 8 -run:constant_seed" );

@@ -39,4 +39,4 @@ See the performance benchmarks section on RosettaTests
        [-run_one_benchmark <name of benchmark>]
 
 3) Look at output for results --or--
-4) Look at rosetta_source/src/apps/benchmark/_performance_ for results
+4) Look at rosetta_source/src/apps/performance_benchmark/_performance_ for results

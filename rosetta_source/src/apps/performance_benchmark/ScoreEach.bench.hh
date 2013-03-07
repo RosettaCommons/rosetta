@@ -17,7 +17,7 @@
 #define INCLUDED_apps_benchmark_ScoreEach_bench_hh
 
 
-#include <apps/benchmark/benchmark.hh>
+#include <apps/performance_benchmark/performance_benchmark.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
@@ -39,7 +39,7 @@
 #include <basic/Tracer.hh>
 
 
-class ScoreEachBenchmark : public Benchmark
+class ScoreEachBenchmark : public PerformanceBenchmark
 {
 
 public:
@@ -48,7 +48,7 @@ public:
 		core::scoring::ScoreType score_type,
 		core::Size base_scale_factor
 	) :
-		Benchmark(name),
+		PerformanceBenchmark(name),
 		score_type_(score_type),
 		base_scale_factor_(base_scale_factor),
 		setup_successful_(false)

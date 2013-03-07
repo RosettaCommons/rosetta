@@ -14,7 +14,7 @@
 /// @brief  parse a representative set of rosetta scripts documents from the integration tests
 /// @author Matthew O'Meara
 
-#include <apps/benchmark/benchmark.hh>
+#include <apps/performance_benchmark/performance_benchmark.hh>
 
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
@@ -23,12 +23,12 @@
 
 using namespace core;
 
-class XMLParseBenchmark : public Benchmark
+class XMLParseBenchmark : public PerformanceBenchmark
 {
 public:
 	std::stringstream rosetta_script_;
 
-	XMLParseBenchmark(std::string name) : Benchmark(name) {};
+	XMLParseBenchmark(std::string name) : PerformanceBenchmark(name) {};
 
 	virtual void setUp() {
 

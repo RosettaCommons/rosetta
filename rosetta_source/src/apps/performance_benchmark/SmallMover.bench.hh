@@ -21,21 +21,21 @@
 
 #include <core/kinematics/MoveMap.hh>
 
-#include <apps/benchmark/benchmark.hh>
+#include <apps/performance_benchmark/performance_benchmark.hh>
 
 #include <utility/vector1.hh>
 
 
 using namespace core;
 
-class SmallMoverBenchmark : public Benchmark
+class SmallMoverBenchmark : public PerformanceBenchmark
 {
 public:
 	pose::PoseOP pose;
 	kinematics::MoveMapOP movemap;
 	protocols::simple_moves::SmallMover small_mover;
 
-	SmallMoverBenchmark(std::string name) : Benchmark(name) {};
+	SmallMoverBenchmark(std::string name) : PerformanceBenchmark(name) {};
 
 	virtual void setUp() {
 		pose = new pose::Pose();

@@ -15,8 +15,8 @@
 /// @author Gordon Lemmon
 
 
-#include <apps/benchmark/benchmark.hh>
-// AUTO-REMOVED #include <apps/benchmark/init_util.hh>
+#include <apps/performance_benchmark/performance_benchmark.hh>
+// AUTO-REMOVED #include <apps/performance_benchmark/init_util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/ligand_docking/LigandDockProtocol.hh>
@@ -28,10 +28,10 @@
 //Auto Headers
 #include <utility/vector1.hh>
 
-class LigandDockBenchmark : public Benchmark
+class LigandDockBenchmark : public PerformanceBenchmark
 {
 public:
-	LigandDockBenchmark(std::string name) : Benchmark(name) {};
+	LigandDockBenchmark(std::string name) : PerformanceBenchmark(name) {};
 
 	core::pose::Pose ligand_dock_pose;
 
