@@ -239,7 +239,7 @@ HackElecEnergyAroAro::residue_pair_energy_aro_aro(
 			Size path_dist( 0 );
 			if ( cpfxn->count( i, j, weight, path_dist ) ) {
 				Real score = weight *
-					eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
+					coloumb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
 
 				total_score += score;
 				emap[ hack_elec_aro_aro ] += score;
@@ -384,7 +384,7 @@ HackElecEnergyAroAro::eval_atom_derivative_aro_aro(
 			Vector const f2( i_xyz - j_xyz );
 			Real const dis2( f2.length_squared() );
 			Real const dE_dr_over_r = weight *
-				eval_dhack_elecE_dr_over_r( dis2, i_charge, j_charge );
+				coloumb().eval_dhack_elecE_dr_over_r( dis2, i_charge, j_charge );
 
 			if ( dE_dr_over_r != 0.0 ) {
 				Vector const f1( i_xyz.cross( j_xyz ) );

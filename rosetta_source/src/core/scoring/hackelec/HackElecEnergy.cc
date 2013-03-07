@@ -62,8 +62,6 @@
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
-#include <numeric/interpolation/spline/SplineGenerator.hh>
-#include <numeric/interpolation/spline/SimpleInterpolator.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -124,151 +122,30 @@ HackElecEnergyCreator::score_types_for_method() const {
 ////////////////////////////////////////////////////////////////////////////
 HackElecEnergy::HackElecEnergy( methods::EnergyMethodOptions const & options ):
 	parent( new HackElecEnergyCreator ),
-	max_dis_( options.hackelec_max_dis() ),
-	min_dis_( options.hackelec_min_dis() ),
-	smooth_hack_elec_( options.smooth_hack_elec() ),
-	die_( options.hackelec_die() ),
-	no_dis_dep_die_( options.hackelec_no_dis_dep_die() ),
+	coloumb_( options ),
 	exclude_protein_protein_( options.exclude_protein_protein_hack_elec() ),
 	exclude_monomer_( options.exclude_monomer_hack_elec() ),
 	exclude_DNA_DNA_( options.exclude_DNA_DNA() )
 {
-	initialize();
+	coloumb_.initialize();
 }
 
 
 ////////////////////////////////////////////////////////////////////////////
 HackElecEnergy::HackElecEnergy( HackElecEnergy const & src ):
 	parent( src ),
-	max_dis_( src.max_dis_ ),
-	min_dis_( src.min_dis_ ),
-	smooth_hack_elec_( src.smooth_hack_elec_ ),
-	die_( src.die_ ),
-	no_dis_dep_die_( src.no_dis_dep_die_ ),
+	coloumb_( src.coloumb() ),
 	exclude_protein_protein_( src.exclude_protein_protein_ ),
 	exclude_monomer_( src.exclude_monomer_ ),
 	exclude_DNA_DNA_( src.exclude_DNA_DNA_ )
 {
-	initialize();
+	coloumb_.initialize();
 }
 
 
 void
 HackElecEnergy::initialize() {
-	// Must have already initialized max_dis_, min_dis_, die_, and no_dis_dep_die_
-
-	//max_dis_ = 5.5;
-	max_dis2_ = max_dis_ * max_dis_;
-	//min_dis_ = 1.5;
-	min_dis2_ = min_dis_ * min_dis_ ;
-
-	// default dielectric is 10r
-	//die_ = 10.0;
-	//no_dis_dep_die_ = false;
-
-	C0_ = 322.0637 ;
-	C1_ = C0_ / die_ ;
-	if( no_dis_dep_die_ ) {
-		C2_ = C1_ / max_dis_ ;
-		min_dis_score_ = C1_ / min_dis_ - C2_ ;
-		dEfac_ = -1.0 * C0_ / die_ ;
-	} else {
-		C2_ = C1_ / max_dis2_ ;
-		min_dis_score_ = C1_ / min_dis2_ - C2_ ;
-		dEfac_ = -2.0 * C0_ / die_ ;
-	}
-
-	if ( smooth_hack_elec_ ) {
-
-
-		low_poly_start_ = min_dis_ - 0.25;
-		low_poly_end_   = min_dis_ + 0.25;
-		low_poly_start2_ = low_poly_start_ * low_poly_start_;
-		low_poly_end2_   = low_poly_end_ * low_poly_end_;
-		low_poly_width_ = low_poly_end_ - low_poly_start_;
-		low_poly_invwidth_ = 1.0 / low_poly_width_;
-
-		// scope low polynomial
-		{
-			using namespace numeric::interpolation::spline;
-			Real low_poly_end_score(0.0), low_poly_end_deriv(0.0);
-			if ( no_dis_dep_die_ ) {
-				low_poly_end_score = C1_ / low_poly_end_ - C2_;
-				low_poly_end_deriv = -1 * C1_ / low_poly_end2_ ;
-
-			} else {
-				low_poly_end_score = C1_ / low_poly_end2_ - C2_;
-				low_poly_end_deriv = -2 * C1_ / ( low_poly_end2_ * low_poly_end_ );
-			}
-			SplineGenerator gen_low_poly(
-				low_poly_start_, min_dis_score_, 0,
-				low_poly_end_, low_poly_end_score, low_poly_end_deriv );
-			InterpolatorOP interp_low( gen_low_poly.get_interpolator() );
-			SimpleInterpolatorOP sinterp_low = dynamic_cast< SimpleInterpolator * > (interp_low() );
-			if ( ! sinterp_low ) {
-				utility_exit_with_message( "Hack Elec created non-simple-interpolator in initialize()" );
-			}
-			low_poly_.ylo  = sinterp_low->y()[ 1 ];
-			low_poly_.yhi  = sinterp_low->y()[ 2 ];
-			low_poly_.y2lo = sinterp_low->ddy()[ 1 ];
-			low_poly_.y2hi = sinterp_low->ddy()[ 2 ];
-		}
-
-		hi_poly_start_    = max_dis_ - 1.0;
-		hi_poly_end_      = max_dis_;
-		hi_poly_start2_   = hi_poly_start_ * hi_poly_start_;
-		hi_poly_end2_     = hi_poly_end_ * hi_poly_end_;
-		hi_poly_width_    = hi_poly_end_ - hi_poly_start_;
-		hi_poly_invwidth_ = 1.0 / hi_poly_width_;
-
-		// scope hi polynomial
-		{
-			using namespace numeric::interpolation::spline;
-			Real hi_poly_start_score(0.0), hi_poly_start_deriv(0.0);
-			if ( no_dis_dep_die_ ) {
-				hi_poly_start_score = C1_ / hi_poly_start_ - C2_;
-				hi_poly_start_deriv = -1 * C1_ / hi_poly_start2_ ;
-
-			} else {
-				hi_poly_start_score = C1_ / hi_poly_start2_ - C2_;
-				hi_poly_start_deriv = -2 * C1_ / ( hi_poly_start2_ * hi_poly_start_ );
-			}
-
-			SplineGenerator gen_hi_poly(
-				hi_poly_start_, hi_poly_start_score, hi_poly_start_deriv,
-				hi_poly_end_, 0, 0 );
-			InterpolatorOP interp_hi( gen_hi_poly.get_interpolator() );
-			SimpleInterpolatorOP sinterp_hi = dynamic_cast< SimpleInterpolator * > (interp_hi() );
-			if ( ! sinterp_hi ) {
-				utility_exit_with_message( "Hack Elec created non-simple-interpolator in initialize()" );
-			}
-			hi_poly_.ylo  = sinterp_hi->y()[ 1 ];
-			hi_poly_.yhi  = sinterp_hi->y()[ 2 ];
-			hi_poly_.y2lo = sinterp_hi->ddy()[ 1 ];
-			hi_poly_.y2hi = sinterp_hi->ddy()[ 2 ];
-		}
-	} else {
-		low_poly_start_ = min_dis_;     low_poly_start2_ = std::pow( low_poly_start_, 2 );
-		low_poly_end_   = min_dis_ / 2; low_poly_end2_   = std::pow( low_poly_end_, 2 );
-		hi_poly_start_  = max_dis_;     hi_poly_start2_  = std::pow( hi_poly_start_, 2 );
-		low_poly_width_ = 0; low_poly_invwidth_ = 0;
-		hi_poly_width_ = 0; hi_poly_invwidth_ = 0;
-	}
-
-
-	//low_fade_start_ = min_dis_;
-	//low_fade_start2_ = low_fade_start_ * low_fade_start_;
-	//low_fade_end_ = min_dis_ + 0.75;
-	//low_fade_end2_ = low_fade_end_ * low_fade_end_;
-	//low_fade_d0_ = min_dis_ + 0.25;
-	//low_fade_K_ = 16;
-	//high_fade_start_ = max_dis_ - 1.0;
-	//high_fade_start2_ = high_fade_start_ * high_fade_start_;
-	//high_fade_end_ = max_dis_;
-	//high_fade_end2_ = high_fade_end_ * high_fade_end_;
-	//high_fade_K_ = -12;
-	//high_fade_d0_ = max_dis_ - 0.25;
-
+	coloumb_.initialize();
 }
 
 
@@ -298,7 +175,7 @@ HackElecEnergy::setup_for_minimizing(
 		// setup the atom-atom nblist
 		NeighborListOP nblist;
 		Real const tolerated_motion = pose.energies().use_nblist_auto_update() ? option[ run::nblist_autoupdate_narrow ] : 1.5;
-		Real const XX = max_dis_ + 2 * tolerated_motion;
+		Real const XX = coloumb().max_dis() + 2 * tolerated_motion;
 		nblist = new NeighborList( min_map.domain_map(), XX*XX, XX*XX, XX*XX);
 		if ( pose.energies().use_nblist_auto_update() ) {
 			nblist->set_auto_update( tolerated_motion );
@@ -433,7 +310,7 @@ HackElecEnergy::residue_pair_energy(
 				Real weight(1.0);
 				if ( cpfxn->count( i, j, weight ) ) {
 					Real energy = weight *
-					eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
+					coloumb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
 					score += energy;
 
 					if (rsd1.atom_is_backbone(i) && rsd2.atom_is_backbone(j)){
@@ -494,7 +371,7 @@ HackElecEnergy::residue_pair_energy(
 				Real const j_charge( rsd2.atomic_charge(j) );
 				if ( j_charge == 0.0 ) continue;
 
-				float energy = eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
+				float energy = coloumb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
 				score += energy;
 				if (rsd1.atom_is_backbone(i) && rsd2.atom_is_backbone(j)){
 					emap[hack_elec_bb_bb]+=energy;
@@ -504,7 +381,7 @@ HackElecEnergy::residue_pair_energy(
 					emap[hack_elec_bb_sc]+=energy;
 				}
 
-				//	score += eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge );
+				//	score += coloumb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge );
 			}
 		}*/
 		Real d2;
@@ -618,7 +495,7 @@ HackElecEnergy::setup_for_minimizing_for_residue_pair(
 
 	/// STOLEN CODE!
 	Real const tolerated_narrow_nblist_motion = 0.75; //option[ run::nblist_autoupdate_narrow ];
-	Real const XX2 = std::pow( max_dis_ + 2*tolerated_narrow_nblist_motion, 2 );
+	Real const XX2 = std::pow( coloumb().max_dis() + 2*tolerated_narrow_nblist_motion, 2 );
 
 	nblist->initialize_from_residues( XX2, XX2, XX2, rsd1, rsd2, count_pair );
 
@@ -656,7 +533,7 @@ HackElecEnergy::eval_residue_pair_derivatives(
 
 		Vector f2 = ( atom1xyz - atom2xyz );
 		Real const dis2( f2.length_squared() );
-		Real const dE_dr_over_r = neighbs[ ii ].weight() * eval_dhack_elecE_dr_over_r( dis2, at1_charge, at2_charge );
+		Real const dE_dr_over_r = neighbs[ ii ].weight() * coloumb().eval_dhack_elecE_dr_over_r( dis2, at1_charge, at2_charge );
 		if ( dE_dr_over_r != 0.0 ) {
 			Real sfxn_weight = hackelec_weight(
 				rsd1.atom_is_backbone( neighbs[ ii ].atomno1() ),
@@ -713,7 +590,7 @@ HackElecEnergy::backbone_backbone_energy(
 				Size path_dist( 0 );
 				if ( cpfxn->count( i, j, weight, path_dist ) ) {
 					score += weight *
-						eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
+						coloumb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
 				}
 			}
 		}
@@ -731,7 +608,7 @@ HackElecEnergy::backbone_backbone_energy(
 				Size const j = rsd2_bb_atoms[ jj ];
 				Real const j_charge( rsd2.atomic_charge(j) );
 				if ( j_charge == 0.0 ) continue;
-				score += eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge );
+				score += coloumb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge );
 			}
 		}
 	}
@@ -778,7 +655,7 @@ HackElecEnergy::backbone_sidechain_energy(
 				Size path_dist( 0 );
 				if ( cpfxn->count( i, j, weight, path_dist ) ) {
 					score += weight *
-						eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
+						coloumb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
 				}
 			}
 		}
@@ -796,7 +673,7 @@ HackElecEnergy::backbone_sidechain_energy(
 				Size const j = rsd2_sc_atoms[ jj ];
 				Real const j_charge( rsd2.atomic_charge(j) );
 				if ( j_charge == 0.0 ) continue;
-				score += eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge );
+				score += coloumb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge );
 			}
 		}
 	}
@@ -845,7 +722,7 @@ HackElecEnergy::sidechain_sidechain_energy(
 				Size path_dist( 0 );
 				if ( cpfxn->count( i, j, weight, path_dist ) ) {
 					score += weight *
-						eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
+						coloumb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
 				}
 			}
 		}
@@ -863,7 +740,7 @@ HackElecEnergy::sidechain_sidechain_energy(
 				Size const j = rsd2_sc_atoms[ jj ];
 				Real const j_charge( rsd2.atomic_charge(j) );
 				if ( j_charge == 0.0 ) continue;
-				score += eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge );
+				score += coloumb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge );
 			}
 		}
 	}
@@ -916,7 +793,7 @@ HackElecEnergy::finalize_total_energy(
 				assert( ii_isbb + jj_isbb >= 0 && ii_isbb + jj_isbb < 3 );
 
 				Real score = nbr.weight() *
-					eval_atom_atom_hack_elecE( ires.xyz(ii), ires.atomic_charge(ii), jres.xyz(jj), jres.atomic_charge(jj) );
+					coloumb().eval_atom_atom_hack_elecE( ires.xyz(ii), ires.atomic_charge(ii), jres.xyz(jj), jres.atomic_charge(jj) );
 
 				bb_sc_scores[ ii_isbb + jj_isbb ] += score;
 				total_score += score;
@@ -1287,7 +1164,7 @@ HackElecEnergy::score_atom_pair(
 	Real & d2
 ) const
 {
-	Real energy = cpweight * eval_atom_atom_hack_elecE(
+	Real energy = cpweight * coloumb().eval_atom_atom_hack_elecE(
 		rsd1.xyz(at1), rsd1.atomic_charge(at1),
 		rsd2.xyz(at2), rsd2.atomic_charge(at2), d2);
 

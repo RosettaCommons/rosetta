@@ -21,6 +21,7 @@
 
 // Package headers
 #include <core/scoring/hackelec/HackElecEnergy.hh>
+#include <core/scoring/etable/coloumb/Coloumb.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/methods/EnergyMethod.hh>
 #include <core/optimization/MinimizerOptions.hh>
@@ -65,18 +66,19 @@ public:
 
 		methods::EnergyMethodOptions options; // default is what we want
 
-		core::scoring::hackelec::HackElecEnergy hackelec( options );
+		core::scoring::etable::coloumb::Coloumb coloumb( options );
 		//options.show(TR);
 
 		EnergyMap emap;
 
-		TS_ASSERT_DELTA( hackelec.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
+		TS_ASSERT_DELTA( coloumb.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
 																												 pose.residue(2).xyz(pose.residue(1).atom_index("CB") ), -0.18 ), 0, TOL ); // CB-CB sits at 5.56174
-		TS_ASSERT_DELTA( hackelec.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
+		TS_ASSERT_DELTA( coloumb.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
 																												 pose.residue(2).xyz(pose.residue(1).atom_index("CA") ), 0.07 ), -0.006643886, TOL ); // CB-CA at 4.49784 (no count pair)
-		TS_ASSERT_DELTA( hackelec.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("C") ), 0.51,
+		TS_ASSERT_DELTA( coloumb.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("C") ), 0.51,
 																												 pose.residue(2).xyz(pose.residue(1).atom_index("N") ), -0.47 ), -3.175849739, TOL ); // C-N at 1.29914 (no count pair)
 
+		core::scoring::hackelec::HackElecEnergy hackelec( options );
 		hackelec.residue_pair_energy( pose.residue(1), pose.residue(2), pose, sfxn, emap );
 		// Value calculated for 1.5/5.5 min/max, die=10r,
 		// with no hack_elec on atoms 1,2,or 3 bonds apart, and a scaling of 0.2 on those 4 bonds apart
@@ -102,18 +104,20 @@ public:
 		sfxn.set_energy_method_options( options );
 		sfxn.set_weight( hack_elec, 1 );
 
-		core::scoring::hackelec::HackElecEnergy hackelec( options );
+		core::scoring::etable::coloumb::Coloumb coloumb( options );
 		options.show(TR);
 
 		EnergyMap emap;
 
 		TR << "Distance : " << pose.residue(1).xyz(pose.residue(1).atom_index("CB")).distance(pose.residue(2).xyz(pose.residue(2).atom_index("CB"))) << std::endl;
-		TS_ASSERT_DELTA( hackelec.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
+		TS_ASSERT_DELTA( coloumb.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
 			pose.residue(2).xyz(pose.residue(2).atom_index("CB") ), -0.18 ), 0.012438172, TOL ); // CB-CB sits at 5.56174
-		TS_ASSERT_DELTA( hackelec.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
+		TS_ASSERT_DELTA( coloumb.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
 			pose.residue(2).xyz(pose.residue(2).atom_index("CA") ), 0.07 ), -0.011777133, TOL ); // CB-CA at 4.49784 (no count pair)
-		TS_ASSERT_DELTA( hackelec.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("C") ), 0.51,
+		TS_ASSERT_DELTA( coloumb.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("C") ), 0.51,
 			pose.residue(2).xyz(pose.residue(2).atom_index("N") ), -0.47 ), -3.273503647, TOL ); // C-N at 1.29914 (no count pair)
+
+		core::scoring::hackelec::HackElecEnergy hackelec( options );
 
 		hackelec.residue_pair_energy( pose.residue(1), pose.residue(2), pose, sfxn, emap );
 		// Value calculated for 1.5/7.0 min/max, die=10r,
@@ -139,18 +143,19 @@ public:
 		sfxn.set_energy_method_options( options );
 		sfxn.set_weight( hack_elec, 1 );
 
-		core::scoring::hackelec::HackElecEnergy hackelec( options );
+		core::scoring::etable::coloumb::Coloumb coloumb( options );
 		//options.show(TR);
 
 		EnergyMap emap;
 
-		TS_ASSERT_DELTA( hackelec.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
+		TS_ASSERT_DELTA( coloumb.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
 																												 pose.residue(2).xyz(pose.residue(2).atom_index("CB") ), -0.18 ), 0, TOL ); // CB-CB sits at 5.56174
-		TS_ASSERT_DELTA( hackelec.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
+		TS_ASSERT_DELTA( coloumb.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
 																												 pose.residue(2).xyz(pose.residue(2).atom_index("CA") ), 0.07 ), -0.006643886, TOL ); // CB-CA at 4.49784 (no count pair)
-		TS_ASSERT_DELTA( hackelec.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("C") ), 0.51,
+		TS_ASSERT_DELTA( coloumb.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("C") ), 0.51,
 																												 pose.residue(2).xyz(pose.residue(2).atom_index("N") ), -0.47 ), -0.602560776, TOL ); // C-N at 1.29914 (no count pair)
 
+		core::scoring::hackelec::HackElecEnergy hackelec( options );
 		hackelec.residue_pair_energy( pose.residue(1), pose.residue(2), pose, sfxn, emap );
 		// Value calculated for 3.0/5.5 min/max, die=10r,
 		// with no hack_elec on atoms 1,2,or 3 bonds apart, and a scaling of 0.2 on those 4 bonds apart
@@ -175,18 +180,19 @@ public:
 		sfxn.set_energy_method_options( options );
 		sfxn.set_weight( hack_elec, 1 );
 
-		core::scoring::hackelec::HackElecEnergy hackelec( options );
+		core::scoring::etable::coloumb::Coloumb coloumb( options );
 		//options.show(TR);
 
 		EnergyMap emap;
 
-		TS_ASSERT_DELTA( hackelec.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
+		TS_ASSERT_DELTA( coloumb.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
 			pose.residue(2).xyz(pose.residue(2).atom_index("CB") ), -0.18 ), 0, TOL ); // CB-CB sits at 5.56174
-		TS_ASSERT_DELTA( hackelec.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
+		TS_ASSERT_DELTA( coloumb.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
 			pose.residue(2).xyz(pose.residue(2).atom_index("CA") ), 0.07 ), -0.016609716, TOL ); // CB-CA at 4.49784 (no count pair)
-		TS_ASSERT_DELTA( hackelec.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("C") ), 0.51,
+		TS_ASSERT_DELTA( coloumb.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("C") ), 0.51,
 			pose.residue(2).xyz(pose.residue(2).atom_index("N") ), -0.47 ), -7.939624349, TOL ); // C-N at 1.29914 (no count pair)
 
+		core::scoring::hackelec::HackElecEnergy hackelec( options );
 		hackelec.residue_pair_energy( pose.residue(1), pose.residue(2), pose, sfxn, emap );
 		// Value calculated for 1.5/5.5 min/max, die=4r,
 		// with no hack_elec on atoms 1,2,or 3 bonds apart, and a scaling of 0.2 on those 4 bonds apart
@@ -211,18 +217,20 @@ public:
 		sfxn.set_energy_method_options( options );
 		sfxn.set_weight( hack_elec, 1 );
 
-		core::scoring::hackelec::HackElecEnergy hackelec( options );
+		core::scoring::etable::coloumb::Coloumb coloumb( options );
 		//options.show(TR);
 
 		EnergyMap emap;
 
-		TS_ASSERT_DELTA( hackelec.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
+		TS_ASSERT_DELTA( coloumb.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
 			pose.residue(2).xyz(pose.residue(2).atom_index("CB") ), -0.18 ), 0, TOL ); // CB-CB sits at 5.56174
-		TS_ASSERT_DELTA( hackelec.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
+		TS_ASSERT_DELTA( coloumb.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("CB") ), -0.18,
 			pose.residue(2).xyz(pose.residue(2).atom_index("CA") ), 0.07 ), -0.016439276, TOL ); // CB-CA at 4.49784 (no count pair)
-		TS_ASSERT_DELTA( hackelec.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("C") ), 0.51,
+		TS_ASSERT_DELTA( coloumb.eval_atom_atom_hack_elecE( pose.residue(1).xyz(pose.residue(1).atom_index("C") ), 0.51,
 			pose.residue(2).xyz(pose.residue(2).atom_index("N") ), -0.47 ), -3.742965764, TOL ); // C-N at 1.29914 (no count pair)
 
+
+		core::scoring::hackelec::HackElecEnergy hackelec( options );
 		hackelec.residue_pair_energy( pose.residue(1), pose.residue(2), pose, sfxn, emap );
 		// Value calculated for 1.5/5.5 min/max, die=10 (no r dependance),
 		// with no hack_elec on atoms 1,2,or 3 bonds apart, and a scaling of 0.2 on those 4 bonds apart

@@ -264,12 +264,15 @@ sources = {
 	],
 	"core/scoring/electron_density_atomwise": [
 		"ElecDensAtomwiseEnergy",
-        "ElectronDensityAtomwise",
+		"ElectronDensityAtomwise",
 	],
-    "core/scoring/etable": [
+	"core/scoring/etable": [
 		"Etable",
 		"EtableEnergy",
 		"EtableOptions",
+	],
+	"core/scoring/etable/coloumb": [
+		"Coloumb",
 	],
 	"core/scoring/etable/count_pair": [
 		"CountPairAll",
