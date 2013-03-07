@@ -40,7 +40,7 @@ def main(args):
 
     #platform = getPlatformID()
     #f = os.popen("""cd demo && ./../build/demo/%s/benchmark %s 1>&2""" % (platform, cl), 'r')
-    f = os.popen("""cd src/apps/benchmark && ./../../../bin/benchmark.postgres.linuxgccrelease %s 1>&2""" % (cl), 'r')
+    f = os.popen("""cd src/apps/performance_benchmark && ./../../../bin/performance_benchmark.default.linuxgccrelease %s 1>&2""" % (cl), 'r')
 
     #f = subprocess.Popen("""cd demo && ./../build/demo/%s/benchmark %s""" % (platform, cl), bufsize=0, shell=True, stdout=subprocess.PIPE).stdout
     for line in f:
