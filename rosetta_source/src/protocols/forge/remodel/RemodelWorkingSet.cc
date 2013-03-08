@@ -411,8 +411,9 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 		//core::Size rep_number = option[ OptionKeys::remodel::repeat_structure];
 		std::string DSSP = data.dssp_updated_ss;
 
-		// I don't know what happens when one assigns -1 to a Size, but this needs to be fixed. ~Labonte
-		core::Size head = -1, tail = -1, headNew = -1, tailNew = -1; //safety, init to negative values
+		// Sachko: Changed Size (unsigned) to int (signed) to make this logic work properly.
+    // Labonte (earlier comment): I don't know what happens when one assigns -1 to a Size, but this needs to be fixed.
+	  int head = -1, tail = -1, headNew = -1, tailNew = -1; //safety, init to negative values
 
 		//use temp_For_copy to identify if it's de novo build; not empty means it's a loop case.
 		if ( option[ OptionKeys::remodel::repeat_structure].user() && !temp_for_copy.empty()) {  // lines_residues_to_remodel
@@ -469,7 +470,8 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
     // Sachko on 02/14/2013
     // "tail" is set to 0 if that position did not exist in the first place, that is to insert a new atom.
     // So, here is a quick & dirty, hack, for now.
-    tail = tail<=0? head+1 : tail;
+    tail = tail<=head? data.blueprint[ idBack ].original_index : tail;
+    assert(tail>head);
 
 		//int gap = idBack - idFront +1;
 		int gap = segmentStorageVector[i].residues.back() - segmentStorageVector[i].residues.front() + 1;

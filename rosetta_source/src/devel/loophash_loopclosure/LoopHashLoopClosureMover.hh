@@ -28,7 +28,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/simple_moves/ddG.fwd.hh>
 #include <protocols/forge/remodel/RemodelMover.fwd.hh>
-
+#include <protocols/loops/Loops.fwd.hh>
 #include <devel/loophash_loopclosure/LoopHashLoopClosureMover.fwd.hh>
 
 #include <utility/tag/Tag.fwd.hh>
@@ -42,6 +42,15 @@
 
 namespace devel {
 namespace loophash_loopclosure {
+class MyLoop{
+public:
+	unsigned int r0_, r1_;
+  	char chain_;
+	unsigned int len_;
+	MyLoop(){}
+  MyLoop(unsigned int r0, unsigned int r1, char chain, unsigned int len) 
+		: r0_(r0), r1_(r1), chain_(chain), len_(len) {}
+};
 
 class LoopHashLoopClosureMover : public protocols::moves::Mover {
 public:
@@ -60,7 +69,14 @@ public:
 
 private:
 	protocols::forge::remodel::RemodelMover_OP remodel_;
-	const std::string make_blueprint(const core::pose::Pose& pose, const std::string & loop_insert_instruction) const;
+	const std::string make_blueprint( const core::pose::Pose& pose, 
+					  const std::string & loop_insert_instruction) const;
+	const std::string make_blueprint( const core::pose::Pose& pose, 
+					  const std::vector<MyLoop> & loops) const;
+	const std::vector<std::string> tokenize( const std::string& in_str, 
+       					const std::string& delimiters ) const;
+	const std::vector<MyLoop> make_loops(const std::string & loop_insert_instruction) const;
+
 };
 } // loophash_loopclosure
 } // devel
