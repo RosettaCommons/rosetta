@@ -22,36 +22,36 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 // type headers
-#include <core/types.hh>
+#include <platform/types.hh>
 #include <string>
 
 namespace utility {
 namespace libsvm {
 
 using utility::vector1;
-using core::Real;
-using core::Size;
 using std::string;
+//using platform::Size;
+//using platform::Real;
 
 class Svm_node_rosetta: public utility::pointer::ReferenceCount {
  public:
-	Svm_node_rosetta(Size index, Real value);
+	Svm_node_rosetta(platform::Size index, platform::Real value);
 	~Svm_node_rosetta();
-	void set_index(Size index){
+	void set_index(platform::Size index){
 		index_ = index;
 	};
-	void set_value(Real value){
+	void set_value(platform::Real value){
 		value_ = value;
 	};
-	Size index(){
+	platform::Size index(){
 		return(index_);
 	};
-	Real value(){
+	platform::Real value(){
 		return(value_);
 	};
  private:
-	Size index_;
-	Real value_;
+	platform::Size index_;
+	platform::Real value_;
 };
 
 
@@ -59,8 +59,8 @@ class Svm_rosetta: public utility::pointer::ReferenceCount {
  public:
   Svm_rosetta(string model_filename);
   ~Svm_rosetta();
-  Size get_nr_class();
-	vector1< Real > predict_probability(vector1< Svm_node_rosettaOP > features);
+  platform::Size get_nr_class();
+	vector1< platform::Real > predict_probability(vector1< Svm_node_rosettaOP > features);
  private:
 	svm_model *svm_model_;
 };
