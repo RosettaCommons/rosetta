@@ -30,6 +30,11 @@
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 
+#include <numeric/xyzMatrix.hh>
+#include <numeric/xyzVector.hh>
+#include <numeric/xyz.functions.hh>
+#include <numeric/xyzVector.io.hh>
+
 #include <string>
 
 namespace core {

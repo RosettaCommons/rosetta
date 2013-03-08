@@ -20,7 +20,7 @@
 #include <protocols/moves/DataMap.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/ScoreFunction.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/electron_density/util.hh>
 #include <protocols/moves/Mover.hh>
@@ -38,7 +38,7 @@ public:
 	moves::MoverOP clone() const { return( protocols::moves::MoverOP( new SetCrystWeightMover( *this ) ) ); }
 
 	virtual void apply( core::pose::Pose & pose );
-	virtual void parse_my_tag( 
+	virtual void parse_my_tag(
 			utility::tag::TagPtr const tag,
 			moves::DataMap &data,
 			filters::Filters_map const &filters,
@@ -64,7 +64,7 @@ public:
 	moves::MoverOP clone() const { return( protocols::moves::MoverOP( new RecomputeDensityMapMover( *this ) ) ); }
 
 	virtual void apply( core::pose::Pose & pose );
-	virtual void parse_my_tag( 
+	virtual void parse_my_tag(
 			utility::tag::TagPtr const tag,
 			moves::DataMap &data,
 			filters::Filters_map const &filters,
@@ -85,7 +85,7 @@ public:
 	moves::MoverOP clone() const { return( protocols::moves::MoverOP( new LoadDensityMapMover( *this ) ) ); }
 
 	virtual void apply( core::pose::Pose & pose );
-	virtual void parse_my_tag( 
+	virtual void parse_my_tag(
 			utility::tag::TagPtr const tag,
 			moves::DataMap &data,
 			filters::Filters_map const &filters,
@@ -108,7 +108,7 @@ public:
 	moves::MoverOP clone() const { return( protocols::moves::MoverOP( new FitBfactorsMover( *this ) ) ); }
 
 	virtual void apply( core::pose::Pose & pose );
-	virtual void parse_my_tag( 
+	virtual void parse_my_tag(
 			utility::tag::TagPtr const tag,
 			moves::DataMap &data,
 			filters::Filters_map const &filters,
@@ -130,7 +130,7 @@ public:
 	moves::MoverOP clone() const { return( protocols::moves::MoverOP( new UpdateSolventMover( *this ) ) ); }
 
 	virtual void apply( core::pose::Pose & pose );
-	virtual void parse_my_tag( 
+	virtual void parse_my_tag(
 			utility::tag::TagPtr const tag,
 			moves::DataMap &data,
 			filters::Filters_map const &filters,
@@ -150,7 +150,7 @@ public:
 	moves::MoverOP clone() const { return( protocols::moves::MoverOP( new TagPoseWithRefinementStatsMover( *this ) ) ); }
 
 	virtual void apply( core::pose::Pose & pose );
-	virtual void parse_my_tag( 
+	virtual void parse_my_tag(
 			utility::tag::TagPtr const tag,
 			moves::DataMap &data,
 			filters::Filters_map const &filters,
@@ -164,7 +164,7 @@ private:
 
 class SetRefinementOptionsMover : public moves::Mover {
 public:
-	SetRefinementOptionsMover() : 
+	SetRefinementOptionsMover() :
 		Mover(), res_high_(0.0), res_low_(0.0), twin_law_(""), algo_(""), target_(""), dm_(false), prime_and_switch_(false), setdm_(false), setprime_and_switch_(false)
 	{}
 
@@ -172,7 +172,7 @@ public:
 	moves::MoverOP clone() const { return( protocols::moves::MoverOP( new SetRefinementOptionsMover( *this ) ) ); }
 
 	virtual void apply( core::pose::Pose & pose );
-	virtual void parse_my_tag( 
+	virtual void parse_my_tag(
 			utility::tag::TagPtr const tag,
 			moves::DataMap &data,
 			filters::Filters_map const &filters,
