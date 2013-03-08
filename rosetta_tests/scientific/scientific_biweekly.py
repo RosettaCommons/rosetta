@@ -111,8 +111,9 @@ rm -rf statistics/; ./scientific.py    # create reference results using only def
       #dest="outdir",
       help="Where the output results should be written. (default: biweekly_statistics)"
     )
-    parser.add_option("--clean-output-dir",
+    parser.add_option("--dont-clean-output-dir",
       default=True,
+      action="store_false",
       dest="clean_outdir",
       help="If the output directory exists should it be cleaned before running the test? (default: True)"
     )
@@ -156,8 +157,10 @@ rm -rf statistics/; ./scientific.py    # create reference results using only def
     outdir = options.output_dir
     if not path.isdir(outdir): os.mkdir(outdir)
     else:
-        if path.isdir(outdir) and options.clean_outdir: shutil.rmtree(outdir)
-        os.mkdir(outdir)
+        if options.clean_outdir:
+            print "Cleaning output_dir: %s " % outdir
+            shutil.rmtree(outdir)
+            os.mkdir(outdir)
 
     # Each test consists of a directory with a "command" file in it.
     if len(args) > 0:

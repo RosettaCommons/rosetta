@@ -38,11 +38,13 @@ def compare_times():
 			ref_values.append(r)
 	new_sum = sum(new_values)
 	ref_sum = sum(ref_values)
-	new_avg = new_sum/float(len(new_values))
-	ref_avg = ref_sum/float(len(ref_values))
+
+	if len(new_values) > 0 and len(ref_values) > 0:
+		new_avg = new_sum/float(len(new_values))
+		ref_avg = ref_sum/float(len(ref_values))
 	
-	runtimes_compare.write( format_string % ('TOTAL', new_sum, ref_sum, new_sum - ref_sum, (new_sum-ref_sum)/ref_sum) )
-	runtimes_compare.write( format_string % ('MEAN', new_avg, ref_avg, new_avg - ref_avg, (new_avg-ref_avg)/ref_avg ) )
+		runtimes_compare.write( format_string % ('TOTAL', new_sum, ref_sum, new_sum - ref_sum, (new_sum-ref_sum)/ref_sum) )
+		runtimes_compare.write( format_string % ('MEAN', new_avg, ref_avg, new_avg - ref_avg, (new_avg-ref_avg)/ref_avg ) )
 	
 def main():
 	compare_times()

@@ -248,6 +248,7 @@ void PdbDataFeatures::load_residue_pdb_identification(
 	pose.pdb_info()->set_numbering(pdb_numbers);
 	pose.pdb_info()->set_chains(pdb_chains);
 	pose.pdb_info()->set_icodes(insertion_codes);
+	pose.pdb_info()->obsolete(false);
 }
 
 void PdbDataFeatures::insert_residue_pdb_identification_rows(
@@ -331,7 +332,7 @@ void PdbDataFeatures::load_residue_pdb_confidence(
 		Residue const & residue(pose.residue(residue_number));
 
 		pose.pdb_info()->resize_atom_records(
-			residue_number, residue.nheavyatoms(), false);
+			residue_number, residue.natoms(), false);
 
 		for(
 			Size atom_index=1;
@@ -344,7 +345,7 @@ void PdbDataFeatures::load_residue_pdb_confidence(
 		}
 		for(
 			Size atom_index = residue.first_sidechain_atom();
-			atom_index <= residue.nheavyatoms();
+			atom_index <= residue.natoms();
 			++atom_index){
 			pose.pdb_info()->temperature(
 				residue_number, atom_index, max_sc_temperature);

@@ -3,11 +3,11 @@
 -correct
 -in
  -use_database
- -dbms 
-  -struct_ids	2c757dd9-380b-42e6-ac3c-ef8f51d2e6dc 6eac5561-7c5c-4897-8feb-96a0df8b42b3 90eedb5b-8bee-49e2-bf7b-641e699cd9da c7ef33bb-d36d-4b82-a1c7-d8413397ba2f
+ -select_structures_from_database SELECT struct_id, tag FROM structures;
 -inout
  -dbms:database_name structures.db3
--parser
- -protocol script.xml
+
+-out:no_nstruct_label
+
 -mute core.conformation
 -mute core.pack

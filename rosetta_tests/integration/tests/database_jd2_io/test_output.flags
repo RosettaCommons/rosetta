@@ -1,17 +1,11 @@
 -ignore_unrecognized_res
 -overwrite
 -correct
--in
- -file
-  -fullatom
-  -silent_struct_type binary
-  -silent ../../tests/cluster/t288_.score.50.out
-  -tags S_56 S_73 S_84 S_93 S_107
+-s ../../tests/make_symmdef_file/inputs/1xu1FH_D.pdb
 -inout
  -dbms:database_name structures.db3
 -out
  -use_database
--parser
- -protocol script.xml
+ -no_nstruct_label
 -mute core.conformation
 -mute core.pack
