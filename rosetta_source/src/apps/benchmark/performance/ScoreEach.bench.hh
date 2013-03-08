@@ -17,7 +17,7 @@
 #define INCLUDED_apps_benchmark_ScoreEach_bench_hh
 
 
-#include <apps/performance_benchmark/performance_benchmark.hh>
+#include <apps/benchmark/performance/performance_benchmark.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>

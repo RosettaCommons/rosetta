@@ -15,37 +15,33 @@
 /// @author Gordon Lemmon
 
 
-#include <apps/performance_benchmark/performance_benchmark.hh>
-// AUTO-REMOVED #include <apps/performance_benchmark/init_util.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/pose/Pose.hh>
-#include <protocols/ligand_docking/LigandDockProtocol.hh>
+#include <apps/benchmark/performance/performance_benchmark.hh>
+// AUTO-REMOVED #include <apps/benchmark/performance/init_util.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <protocols/ligand_docking/LigandDockProtocol.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-
-// Auto-header: duplicate removed #include <core/import_pose/import_pose.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 //Auto Headers
+#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/moves/Mover.hh>
 #include <utility/vector1.hh>
 
-class LigandDockBenchmark : public PerformanceBenchmark
+class LigandDockScriptBenchmark : public PerformanceBenchmark
 {
 public:
-	LigandDockBenchmark(std::string name) : PerformanceBenchmark(name) {};
-
-	core::pose::Pose ligand_dock_pose;
+	LigandDockScriptBenchmark(std::string name) : PerformanceBenchmark(name) {};
 
 	virtual void setUp() {
-		basic::options::option.load_options_from_file("ligand_dock/ligand_dock_flags.txt");
-
-		std::string pdb_file_name= basic::options::option[ basic::options::OptionKeys::in::file::s ]()[1];
-		core::import_pose::pose_from_pdb(ligand_dock_pose, pdb_file_name);
+		basic::options::option.load_options_from_file("ligand_dock/ligand_dock_script_flags.txt");
 	};
 
 	virtual void run(core::Real scaleFactor) {
-		protocols::ligand_docking::LigandDockProtocol dock_protocol;
+		protocols::moves::MoverOP mover;
+
 		for(int i=0; i<scaleFactor; i++) {
-			dock_protocol.apply(ligand_dock_pose);
+			protocols::jd2::JobDistributor::get_instance()->go(mover);
 		}
 	};
 

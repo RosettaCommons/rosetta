@@ -21,7 +21,7 @@
 
 #include <core/kinematics/MoveMap.hh>
 
-#include <apps/performance_benchmark/performance_benchmark.hh>
+#include <apps/benchmark/performance/performance_benchmark.hh>
 
 #include <utility/vector1.hh>
 

@@ -13,7 +13,7 @@
 /// @brief  Performance benchmark for database input output
 /// @author Tim Jacobs
 
-#include <apps/performance_benchmark/performance_benchmark.hh>
+#include <apps/benchmark/performance/performance_benchmark.hh>
 
 #include <core/pose/Pose.hh>
 

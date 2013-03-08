@@ -14,7 +14,7 @@
 /// @brief  parse a representative set of rosetta scripts documents from the integration tests
 /// @author Matthew O'Meara
 
-#include <apps/performance_benchmark/performance_benchmark.hh>
+#include <apps/benchmark/performance/performance_benchmark.hh>
 
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>

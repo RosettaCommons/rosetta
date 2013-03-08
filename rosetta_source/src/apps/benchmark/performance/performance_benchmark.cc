@@ -8,12 +8,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   rosetta_source/src/apps/performance_benchmark/benchmark.cc
+/// @file   rosetta_source/src/apps/benchmark/performance/benchmark.cc
 ///
 /// @brief
 /// @author Sergey Lyskov
 
-#include <apps/performance_benchmark/performance_benchmark.hh>
+#include <apps/benchmark/performance/performance_benchmark.hh>
 
 
 #include <core/chemical/ChemicalManager.hh>
@@ -47,52 +47,52 @@ const char results_filename[] = "_performance_";
 const char old_results_filename[] = "_old_performance_";
 
 // Initialize performance benchmark tests here:
-#include <apps/performance_benchmark/OptionCollection.bench.hh>
+#include <apps/benchmark/performance/OptionCollection.bench.hh>
 OptionCollectionBenchmark OptionCollection_("basic.options.OptionCollection");
 
-#include <apps/performance_benchmark/score.bench.hh>
+#include <apps/benchmark/performance/score.bench.hh>
 ScoreBenchmark Score_("core.scoring.Score");
 
-#include <apps/performance_benchmark/ScoreEach.bench.hh>
-#include <apps/performance_benchmark/ScoreAnalyticEtable.bench.hh>
+#include <apps/benchmark/performance/ScoreEach.bench.hh>
+#include <apps/benchmark/performance/ScoreAnalyticEtable.bench.hh>
 
-#include <apps/performance_benchmark/SmallMover.bench.hh>
+#include <apps/benchmark/performance/SmallMover.bench.hh>
 SmallMoverBenchmark SmallMover_("protocols.moves.SmallMover");
 
-#include <apps/performance_benchmark/ShearMover.bench.hh>
+#include <apps/benchmark/performance/ShearMover.bench.hh>
 ShearMoverBenchmark ShearMover_("protocols.moves.ShearMover");
 
-#include <apps/performance_benchmark/Minimizer.bench.hh>
+#include <apps/benchmark/performance/Minimizer.bench.hh>
 //MinimizerBenchmark Minimizer_("protocols.optimization.Minimizer");
 MinimizerBenchmark_dfpmin Minimizer_dfpmin_("protocols.optimization.Minimizer_dfpmin");
 MinimizerBenchmark_dfpmin_armijo MinimizerBenchmark_dfpmin_armijo_("protocols.optimization.Minimizer_dfpmin_armijo");
 MinimizerBenchmark_dfpmin_armijo_nonmonotone MinimizerBenchmark_dfpmin_armijo_nonmonotone_("protocols.optimization.Minimizer_dfpmin_armijo_nonmonotone");
 
-#include <apps/performance_benchmark/Docking.bench.hh>
+#include <apps/benchmark/performance/Docking.bench.hh>
 DockingBenchmark_low DockingLow("protocols.docking.DockingLowRes");
 DockingBenchmark_high DockingHigh("protocols.docking.DockingHighRes");
 
-// AUTO-REMOVED #include <apps/performance_benchmark/Design.bench.hh>
+// AUTO-REMOVED #include <apps/benchmark/performance/Design.bench.hh>
 //DesignBenchmark design("protocols.moves.PackRotamersMover");
 
-#include <apps/performance_benchmark/LigandDock.bench.hh>
+#include <apps/benchmark/performance/LigandDock.bench.hh>
 LigandDockBenchmark ligand_dock("protocols.ligand_docking.LigandDockProtocol");
 
-//#include <apps/performance_benchmark/LigandDockScript.bench.hh>
+//#include <apps/benchmark/performance/LigandDockScript.bench.hh>
 //LigandDockScriptBenchmark ligand_dock_script("protocols.ligand_docking.LigandDockScript");
 
-#include <apps/performance_benchmark/pdb_io.bench.hh>
+#include <apps/benchmark/performance/pdb_io.bench.hh>
 PDB_IOBenchmark PDB_IO_("core.import_pose.pose_from_pdbstring");
 
-#include <apps/performance_benchmark/ResidueType.bench.hh>
+#include <apps/benchmark/performance/ResidueType.bench.hh>
 ResidueTypeBenchmark ResidueType_("core.chemical.ResidueType");
 
-#include <apps/performance_benchmark/xml_parsing.bench.hh>
+#include <apps/benchmark/performance/xml_parsing.bench.hh>
 XMLParseBenchmark XMLParseBenchmark_("utility_tag_Tag_Create");
 
-#include <apps/performance_benchmark/FastRelax.bench.hh>
+#include <apps/benchmark/performance/FastRelax.bench.hh>
 
-#include <apps/performance_benchmark/InteractionGraph.bench.hh>
+#include <apps/benchmark/performance/InteractionGraph.bench.hh>
 
 // option key includes
 

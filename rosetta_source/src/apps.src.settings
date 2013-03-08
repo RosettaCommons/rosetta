@@ -28,12 +28,10 @@
 sources = {
 	"": [
 	],
-	#"curated": [
-	#],
-	"performance_benchmark": [
-		"performance_benchmark",
+	"benchmark": [
+		"performance/performance_benchmark",
 	],
-	"performance_benchmark/scientific": [
+	"benchmark/scientific": [
 		"ddg_benchmark",
 		"design_contrast_and_statistic",
 		"rotamer_recovery",

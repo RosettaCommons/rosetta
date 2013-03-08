@@ -13,7 +13,7 @@
 /// @brief  Performance benchmark for PDB input and output
 /// @author Gordon Lemmon
 
-#include <apps/performance_benchmark/performance_benchmark.hh>
+#include <apps/benchmark/performance/performance_benchmark.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>

@@ -14,7 +14,7 @@
 /// @author Matthew O'Meara
 
 
-#include <apps/performance_benchmark/performance_benchmark.hh>
+#include <apps/benchmark/performance/performance_benchmark.hh>
 
 #include <utility/keys/KeyLookup.hh>
 #include <basic/options/option.hh>
