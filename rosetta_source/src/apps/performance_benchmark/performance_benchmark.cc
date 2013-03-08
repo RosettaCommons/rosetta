@@ -78,8 +78,8 @@ DockingBenchmark_high DockingHigh("protocols.docking.DockingHighRes");
 #include <apps/performance_benchmark/LigandDock.bench.hh>
 LigandDockBenchmark ligand_dock("protocols.ligand_docking.LigandDockProtocol");
 
-#include <apps/performance_benchmark/LigandDockScript.bench.hh>
-LigandDockScriptBenchmark ligand_dock_script("protocols.ligand_docking.LigandDockScript");
+//#include <apps/performance_benchmark/LigandDockScript.bench.hh>
+//LigandDockScriptBenchmark ligand_dock_script("protocols.ligand_docking.LigandDockScript");
 
 #include <apps/performance_benchmark/pdb_io.bench.hh>
 PDB_IOBenchmark PDB_IO_("core.import_pose.pose_from_pdbstring");
@@ -90,7 +90,7 @@ ResidueTypeBenchmark ResidueType_("core.chemical.ResidueType");
 #include <apps/performance_benchmark/xml_parsing.bench.hh>
 XMLParseBenchmark XMLParseBenchmark_("utility_tag_Tag_Create");
 
-#include <apps/performance_benchmark/FastRelax.bench.hh>
+//#include <apps/performance_benchmark/FastRelax.bench.hh>
 
 // option key includes
 
