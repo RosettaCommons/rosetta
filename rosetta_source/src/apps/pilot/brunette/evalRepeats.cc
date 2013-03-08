@@ -37,6 +37,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 
+#include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -47,6 +48,7 @@
 #include <core/types.hh>
 
 #include <core/util/ABEGOManager.hh>
+#include <core/util/SwitchResidueTypeSet.hh>
 
 #include <devel/init.hh>
 
@@ -117,10 +119,27 @@ Real get_distance(const core::pose::Pose& pose, const protocols::loops::Loop hel
 		return(-1);
 	}
 	xyzVector<double> a, b;
-	avg_ca_position(pose, Loop(helix1.stop()-2, helix1.stop()),&a);
-	avg_ca_position(pose, Loop(helix2.start(), helix2.start()+2),&b);
+	avg_ca_position(pose, Loop(helix1.start(), helix1.stop()),&a);
+	avg_ca_position(pose, Loop(helix2.start(), helix2.stop()),&b);
 	return(a.distance(b));
 }
+
+Real get_distance_midCA(const core::pose::Pose& pose, const protocols::loops::Loop helix1, const protocols::loops::Loop helix2){
+	using protocols::loops::Loop;
+	using numeric::xyzVector;
+	//std::cout <<"helix length" << helix1.length() << "," << helix2.length() << std::endl;
+	if((helix1.length() < 3) || (helix2.length() < 3)){
+		tr.Warning << "distance invoked with helix shorter than 3 residues" << std::endl;
+		return(-1);
+	}
+	xyzVector<double> a, b;
+	Size midHelix1 = (Size)floor((helix1.stop()-helix1.start())/2.0)+helix1.start();
+	Size midHelix2 = (Size)floor((helix2.stop()-helix2.start())/2.0)+helix2.start();
+	a = pose.xyz(core::id::NamedAtomID("CA", midHelix1));
+	b = pose.xyz(core::id::NamedAtomID("CA", midHelix2));
+	return(a.distance(b));
+}
+
 Real get_distance_endpoint(const core::pose::Pose& pose, const protocols::loops::Loop helix1, const protocols::loops::Loop helix2){
 	using protocols::loops::Loop;
 	using numeric::xyzVector;
@@ -180,6 +199,16 @@ Real res_type_score(const core::pose::Pose& pose){
 	return score;
 }
 
+Real get_hb_srbb_score(const core::pose::Pose& pose){
+	//note hb_srbb flag increases the hbond_sr_bb.
+	using namespace core::scoring;
+	core::pose::Pose centroid_pose=pose;
+	core::util::switch_to_residue_type_set( centroid_pose, core::chemical::CENTROID);
+	core::Real score = pose.energies().total_energies()[ScoreType(hbond_sr_bb)];
+	std::cout << "testing" << std::endl;
+	return(score);
+}
+
 
 int main( int argc, char * argv [] ) {
 	using namespace core::chemical;
@@ -197,7 +226,7 @@ int main( int argc, char * argv [] ) {
 	//create vector of input poses.
 	MetaPoseInputStream input = streams_from_cmd_line();
 	vector1<core::pose::PoseOP> poses;
-	output << "score" <<" " << "holes" << " " << "distance" << " " << "distance_endpoint" <<" " << "theta" << " " << "sigma" << " " << "phi" << " " << "tag" <<" " <<"resTypeScore" << " " << "abego" << std::endl;
+	output << "score" <<" " << "holes" << " " << "distance1_2" << " " << "distance1_1prime" << " "<< "distance1_2prime" <<" " <<  "distance2_2prime" << " " << "distance_endpoint" <<" " << "theta" << " " << "sigma" << " " << "phi" << " " << "tag" <<" " <<"resTypeScore" << " " << "hbsrbb" << "  " << "abego" << std::endl;
 	while(input.has_another_pose()){
 		core::pose::PoseOP input_poseOP;
 		input_poseOP = new core::pose::Pose();
@@ -207,7 +236,15 @@ int main( int argc, char * argv [] ) {
 		get_helices(*input_poseOP,&helices);
 		if(helices.num_loop() > 1)
 			 if((helices[1].length() > 3)&&(helices[2].length() > 3)){//assumes repeat proteins with > 1 loops
-				 Real distance = get_distance(*input_poseOP,helices[1],helices[2]);
+				 Real distance1_2 = get_distance(*input_poseOP,helices[1],helices[2]);
+				 Real distance1_1prime = -1;
+				 Real distance1_2prime = -1;
+				 Real distance2_2prime = -1;
+				 if(helices.num_loop() >=4){
+					 distance1_1prime = get_distance(*input_poseOP,helices[1],helices[3]);
+					 distance1_2prime = get_distance(*input_poseOP,helices[1],helices[4]);
+					 distance2_2prime = get_distance(*input_poseOP,helices[2],helices[4]);
+				 }
 				 Real distance_endpoint = get_distance_endpoint(*input_poseOP,helices[1],helices[2]);
 				 Real theta;
 				 Real sigma;
@@ -217,8 +254,9 @@ int main( int argc, char * argv [] ) {
 				 core::scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
 				 Real fa_score = scorefxn->score(*input_poseOP);
 				 Real resTypeScore = res_type_score(*input_poseOP);
+				 Real hb_srbb_score = get_hb_srbb_score(*input_poseOP);
 				 utility::vector1< std::string >  abego_vector = core::util::get_abego(*input_poseOP,1);
-				 output << F(8,3,fa_score) << " " <<F(8,3,holesScore) <<" "<< F(8,3,distance) << " " << F(8,3,distance_endpoint) <<" " << F(8,3,theta) << " "<< F(8,3,sigma) << " " << F(8,3,phi) << " " << I(6,tag) <<" " << I(4,resTypeScore) << " ";
+				 output << F(8,3,fa_score) << " " <<F(8,3,holesScore) <<" "<< F(8,3,distance1_2) << " "<< F(8,3,distance1_1prime) << " "<< F(8,3,distance1_2prime) << " "<< F(8,3,distance2_2prime)  <<" " << F(8,3,distance_endpoint) <<" " << F(8,3,theta) << " "<< F(8,3,sigma) << " " << F(8,3,phi) << " " << I(6,tag) <<" " << I(4,resTypeScore) << " " <<F(8,3,hb_srbb_score) << "  " ;
 				 for (int ii=1; ii<35; ++ii){
 					 output << abego_vector[ii];
 				 }

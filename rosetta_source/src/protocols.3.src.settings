@@ -498,6 +498,9 @@ sources = {
 		"SymRotamerTrialsMover",
 		"SymShakeStructureMover",
 	],
+	"protocols/ss_prediction/":[
+		"SS_predictor",
+	],
 	"protocols/toolbox": [
 		"AllowInsert",
 		"Cluster",

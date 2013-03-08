@@ -85,6 +85,8 @@ sources = {
 		"test", # /* a pilot app */
 	],
 	"pilot/brunette" : [
+		"abego_predict",
+		"hle_predict",
 		"minimalCstRelax",
 		"minimalCstHomology",
 		"aln_to_disulf",

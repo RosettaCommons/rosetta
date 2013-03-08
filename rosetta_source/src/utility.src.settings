@@ -43,7 +43,10 @@ sources = {
 		"ocstream",
 		"ozstream",
 	],
-
+	"utility/libsvm":[
+		"Svm_rosetta",
+		"Svm",
+	],
   "utility/lua": [
     "LuaIterator",
     "LuaObject"
