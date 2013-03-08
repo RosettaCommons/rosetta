@@ -90,7 +90,7 @@ ResidueTypeBenchmark ResidueType_("core.chemical.ResidueType");
 #include <apps/performance_benchmark/xml_parsing.bench.hh>
 XMLParseBenchmark XMLParseBenchmark_("utility_tag_Tag_Create");
 
-//#include <apps/performance_benchmark/FastRelax.bench.hh>
+#include <apps/performance_benchmark/FastRelax.bench.hh>
 
 #include <apps/performance_benchmark/InteractionGraph.bench.hh>
 

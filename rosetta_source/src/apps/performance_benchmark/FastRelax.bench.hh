@@ -209,8 +209,8 @@ public:
 		scorefxn_->set_weight( fa_atr, 0.8 );
 		scorefxn_->set_weight( fa_rep, 0.634454 );
 		scorefxn_->set_weight( fa_sol, 1.16497 );
-		scorefxn_->set_weight( mm_lj_intra_rep, 0.324341 );
-		scorefxn_->set_weight( mm_lj_intra_atr, 0.537815 );
+		//scorefxn_->set_weight( mm_lj_intra_rep, 0.324341 ); // UNCOMMENT THESE WHEN THEY STOP NOT WORKING
+		//scorefxn_->set_weight( mm_lj_intra_atr, 0.537815 );
 		scorefxn_->set_weight( mm_twist, 0.2662 );
 		scorefxn_->set_weight( pro_close, 1.44777 );
 		scorefxn_->set_weight( hbond_sr_bb, 0.656728 );
@@ -222,6 +222,8 @@ public:
 		scorefxn_->set_weight( dslf_ss_dih, 5 );
 		scorefxn_->set_weight( dslf_ca_dih, 5 );
 		scorefxn_->set_weight( unfolded, -0.904283 );
+
+		fr_ = new FastRelax( scorefxn_ );
 	}
 
 	void setup_for_sp2hecart() {
