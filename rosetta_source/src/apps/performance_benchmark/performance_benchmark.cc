@@ -92,6 +92,8 @@ XMLParseBenchmark XMLParseBenchmark_("utility_tag_Tag_Create");
 
 //#include <apps/performance_benchmark/FastRelax.bench.hh>
 
+#include <apps/performance_benchmark/InteractionGraph.bench.hh>
+
 // option key includes
 
 // AUTO-REMOVED #include <basic/options/keys/james.OptionKeys.gen.hh>

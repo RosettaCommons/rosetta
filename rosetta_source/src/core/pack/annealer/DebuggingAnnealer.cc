@@ -16,16 +16,11 @@
 
 // Package Headers
 #include <core/pack/rotamer_set/RotamerSets.hh>
-
-// Rosetta Headers
-//#include "after_opts.h"
-//#include "DebuggingAnnealer.h"
-//#include "InteractionGraphBase.h"
-//#include "param.h"
-//#include "random_numbers.h"
-//#include "RotamerSet.h"
+#include <core/pack/interaction_graph/InteractionGraphBase.hh>
 
 #include <ObjexxFCL/Fmath.hh>
+
+#include <utility/io/izstream.hh>
 
 #include <fstream>
 #include <istream>
@@ -58,14 +53,14 @@ namespace annealer{
 ////////////////////////////////////////////////////////////////////////////////
 DebuggingAnnealer::DebuggingAnnealer(
 	utility::vector0< int > & rot_to_pack,
-	FArray1D_int & bestrotamer_at_seqpos,
+	ObjexxFCL::FArray1D_int & bestrotamer_at_seqpos,
 	float & bestenergy,
 	bool start_with_current, // start simulation with current rotamers
-	pack::InteractionGraphBase * ig,
-	const RotamerSet * p_rotamer_set,
-	FArray1_int & current_rot_index,
+	interaction_graph::InteractionGraphBaseOP ig,
+	rotamer_set::FixbbRotamerSetsCOP p_rotamer_set,
+	ObjexxFCL::FArray1_int & current_rot_index,
 	bool calc_rot_freq,
-	FArray1D_float & rot_freq
+	ObjexxFCL::FArray1D_float & rot_freq
 ):
 	RotamerAssigningAnnealer(
 	rot_to_pack,
@@ -82,14 +77,14 @@ DebuggingAnnealer::DebuggingAnnealer(
 }
 
 DebuggingAnnealer::DebuggingAnnealer(
-	FArray1D_int & bestrotamer_at_seqpos,
-	float & bestenergy,
+	ObjexxFCL::FArray1D_int & bestrotamer_at_seqpos,
+	PackerEnergy & bestenergy,
 	bool start_with_current, // start simulation with current rotamers
-	pack::InteractionGraphBase * ig,
-	const RotamerSet * p_rotamer_set,
-	FArray1_int & current_rot_index,
+	interaction_graph::InteractionGraphBaseOP ig,
+	rotamer_set::FixbbRotamerSetsCOP p_rotamer_set,
+	ObjexxFCL::FArray1_int & current_rot_index,
 	bool calc_rot_freq,
-	FArray1D_float & rot_freq
+	ObjexxFCL::FArray1D_float & rot_freq
 ):
 	RotamerAssigningAnnealer(
 	(ig->get_num_total_states()),
@@ -149,7 +144,6 @@ DebuggingAnnealer::~DebuggingAnnealer()
 ////////////////////////////////////////////////////////////////////////////////
 void DebuggingAnnealer::run()
 {
-	using namespace param;
 
 	//--------------------------------------------------------------------
 	//internal variables
@@ -158,17 +152,9 @@ void DebuggingAnnealer::run()
 	float currentenergy;
 	//FArray1D_int list( p_rotamer_set_->nrotamers() );
 	//FArray1D_int state_on_node( nmoltenres,0 );
-	FArray1D_int best_state_on_node( nmoltenres,0 );
-	FArray1D_int current_state( nmoltenres, 0 );
+	ObjexxFCL::FArray1D_int best_state_on_node( nmoltenres,0 );
+	ObjexxFCL::FArray1D_int current_state( nmoltenres, 0 );
 	//FArray1D_float loopenergy(maxouteriterations,0.0);
-
-	//kwk internal rot_index expanded to handled non amino acid molten residues
-	//kwk rot_to_moltenres(1,X)=moltenres_id
-	//kwk rot_to_moltenres(2,X)=moltenres_state
-	FArray2D_int rot_2_moltenres( 2,ig_->get_num_total_states(),0);
-
-	//bk variables for calculating rotamer frequencies during simulation
-	//int nsteps = 0;
 
 	//--------------------------------------------------------------------
 	//initialize variables
@@ -178,71 +164,30 @@ void DebuggingAnnealer::run()
 	ig_->prepare_for_simulated_annealing();
 	ig_->blanket_assign_state_0();
 
-	int rot_tmp=1;
-	for( int ii =1; ii<=nmoltenres; ++ii){
-		for(int jj =1; jj<=ig_->get_num_states_for_node( ii); ++jj){
-			rot_2_moltenres(1,rot_tmp)=ii;
-			rot_2_moltenres(2,rot_tmp)=jj;
-			rot_tmp++;
-		}
-	}
-
 	//--------------------------------------------------------------------
-	if ( num_of_rot_to_pack_ == 0 ) return;
+	if ( num_rots_to_pack() == 0 ) return;
 
 	setup_iterations();
 
-	FArray1D_float previous_nsteps_for_rot(p_rotamer_set_->nrotamers(), 0.0);
+	ObjexxFCL::FArray1D_float previous_nsteps_for_rot(rotamer_sets()->nrotamers(), 0.0);
 
 	//int outeriterations = get_outeriterations();
 
-	std::string annealer_file( stringafteroption( "db_annealer_file" ));
-	std::ifstream instructions( annealer_file.c_str() );
 
-	while ( instructions )
-	{
-		int node_to_change;
-		instructions >> node_to_change;
+	for ( std::list< RotSub >::const_iterator
+			iter = trajectory_.begin(), iter_end = trajectory_.end();
+			iter != iter_end; ++iter ) {
 
-		if ( node_to_change <= 0 || node_to_change > nmoltenres )
-		{
-			std::cerr << "Error in instructions for Debugging Annealer: node_to_change out of range." << std::endl;
-			std::cerr << "Requires 0 < node_in_range <= nmoltenres.  nmoltenres: " << nmoltenres << " node_to_change: " << node_to_change << std::endl;
-			return;
-		}
-
-		int new_state_for_node;
-		instructions >> new_state_for_node;
-
-		if ( new_state_for_node <= 0 || new_state_for_node > ig_->get_num_states_for_node( node_to_change ) )
-		{
-			std::cerr << "Error in instructions for Debugging Annealer: new_state_for_node out of range." << std::endl;
-			std::cerr << "Requires 0 < new_state_for_node <= num_states_for_node( " <<  node_to_change << ");" << std::endl;
-			std::cerr << "new_state_for_node: " << new_state_for_node << " num_states_for_node( " <<  node_to_change << "): ";
-			std::cerr << ig_->get_num_states_for_node( node_to_change ) << std::endl;
-			return;
-		}
-
-		char decision;
-		instructions >> decision;
-
-		if ( decision != 'A' && decision != 'R' && decision != 'M' )
-		{
-			std::cerr << "Error in instructions for Debugging Annealer: invalid decision" << std::endl;
-			std::cerr << "Requires decision to be either 'A', or 'R' (for accept or reject)" << std::endl;
-			std::cerr << "decision: " << decision << std::endl;
-			return;
-		}
+		int node_to_change = iter->moltenresid;
+		int new_state_for_node = iter->rotamerid;
 
 		float deltaE( 0.0f ), previous_energy_for_node( 0.0f );
 		ig_->consider_substitution( node_to_change, new_state_for_node, deltaE, previous_energy_for_node );
 
-		std::cout << "mres: " << node_to_change << ", state: ";
-		std::cout << new_state_for_node << ", deltaE: " << deltaE << std::endl;
+		//std::cout << "mres: " << node_to_change << ", state: ";
+		//std::cout << new_state_for_node << ", deltaE: " << deltaE << std::endl;
 
-
-		if ( decision == 'A' )
-		{
+		if ( iter->accept ) {
 			ig_->commit_considered_substitution();
 			current_state( node_to_change ) = new_state_for_node;
 		}
@@ -253,11 +198,47 @@ void DebuggingAnnealer::run()
 
 	//convert best_state_on_node into best_rotamer_at_seqpos
 	for (int ii = 1;ii <= nmoltenres; ++ii){
-		int iiresid = p_rotamer_set_->moltenres_2_resid(ii);
-		bestrotamer_at_seqpos_(iiresid) = best_state_on_node(ii) + p_rotamer_set_->rotindex_offsets(iiresid);
+		int iiresid = rotamer_sets()->moltenres_2_resid(ii);
+		bestrotamer_at_seqpos()(iiresid) = best_state_on_node(ii) + rotamer_sets()->nrotamer_offset_for_moltenres(iiresid);
 	}
 
 }
+
+void DebuggingAnnealer::annealer_file( std::string const & fname )
+{
+	trajectory_.clear();
+	utility::io::izstream instructions( fname.c_str() );
+	while ( instructions ) {
+		RotSub rotsub;
+		instructions >> rotsub.moltenresid;
+		if ( rotsub.moltenresid <= 0 || rotsub.moltenresid > ig_->get_num_nodes() ) {
+			std::cerr << "Error in trajectory for Debugging Annealer: node_to_change out of range." << std::endl;
+			std::cerr << "Requires 0 < node_in_range <= nmoltenres.  nmoltenres: " << ig_->get_num_nodes() << " node_to_change: " << rotsub.moltenresid << std::endl;
+			return;
+		}
+
+		instructions >> rotsub.rotamerid;
+
+		if ( rotsub.rotamerid <= 0 || rotsub.rotamerid > ig_->get_num_states_for_node( rotsub.moltenresid ) ) {
+			std::cerr << "Error in instructions for Debugging Annealer: new_state_for_node out of range." << std::endl;
+			std::cerr << "Requires 0 < new_state_for_node <= num_states_for_node( " <<  rotsub.moltenresid << ");" << std::endl;
+			std::cerr << "new_state_for_node: " << rotsub.rotamerid << " num_states_for_node( " <<  rotsub.moltenresid << "): ";
+			std::cerr << ig_->get_num_states_for_node( rotsub.moltenresid ) << std::endl;
+			return;
+		}
+
+		char decision;
+		instructions >> decision;
+		if ( decision == 'A' ) {
+			rotsub.accept = 1;
+		} else {
+			rotsub.accept = 0;
+		}
+		trajectory_.push_back( rotsub );
+	}
+}
+
+
 
 }//end namespace annealer
 }//end namespace pack

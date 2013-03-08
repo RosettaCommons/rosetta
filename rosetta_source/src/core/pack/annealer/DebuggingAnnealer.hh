@@ -23,22 +23,29 @@
 #include <core/pack/annealer/RotamerAssigningAnnealer.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
 
-// ObjexxFCL Headers
+// C++ headers
+#include <list>
 
 namespace core {
 namespace pack {
 namespace annealer {
 
+struct RotSub {
+	int moltenresid;
+	int rotamerid;
+	int accept;
+};
+
 class DebuggingAnnealer : public RotamerAssigningAnnealer
 {
- public:
+public:
 	DebuggingAnnealer(
 		utility::vector0< int > & rot_to_pack,
 		ObjexxFCL::FArray1D_int & bestrotamer_at_seqpos,
-		float & bestenergy,
+		PackerEnergy & bestenergy,
 		bool start_with_current, // start simulation with current rotamers
 		interaction_graph::InteractionGraphBaseOP ig,
-		const rotamer_set::RotamerSet * p_rotamer_set,
+		rotamer_set::FixbbRotamerSetsCOP p_rotamer_set,
 		ObjexxFCL::FArray1_int & current_rot_index,
 		bool calc_rot_freq,
 		ObjexxFCL::FArray1D_float & rot_freq
@@ -46,20 +53,25 @@ class DebuggingAnnealer : public RotamerAssigningAnnealer
 
 	DebuggingAnnealer(
 		ObjexxFCL::FArray1D_int & bestrotamer_at_seqpos,
-		float & bestenergy,
+		PackerEnergy & bestenergy,
 		bool start_with_current, // start simulation with current rotamers
 		interaction_graph::InteractionGraphBaseOP ig,
-		rotamer_set::RotamerSetCOP p_rotamer_set,
+		rotamer_set::FixbbRotamerSetsCOP p_rotamer_set,
 		ObjexxFCL::FArray1_int & current_rot_index,
 		bool calc_rot_freq,
 		ObjexxFCL::FArray1D_float & rot_freq
 	);
 
 	virtual ~DebuggingAnnealer();
-	void run();
 
- private:
+	virtual void run();
+
+	void annealer_file( std::string const & fname );
+
+private:
 	interaction_graph::InteractionGraphBaseOP ig_;
+	std::list< RotSub > trajectory_;
+
 	DebuggingAnnealer(const DebuggingAnnealer& rhs);
 };
 

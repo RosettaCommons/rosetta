@@ -25,9 +25,12 @@
 
 #include <core/pack/rotamer_set/FixbbRotamerSets.fwd.hh>
 
+// Utility headers
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+// C++ headers
+#include <string>
 
 namespace core {
 namespace pack {
@@ -67,8 +70,13 @@ public:
 	virtual ~FixbbSimAnnealer();
 	void run();
 
+	void record_annealer_trajectory( bool setting );
+	void trajectory_file_name( std::string const & setting );
+
  private:
 	InteractionGraphBaseOP ig_;
+	bool record_annealer_trajectory_;
+	std::string trajectory_file_name_;
 	FixbbSimAnnealer(const FixbbSimAnnealer& rhs);
 };
 

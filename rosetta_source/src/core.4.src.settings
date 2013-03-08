@@ -45,6 +45,7 @@ sources = {
 	],
 	"core/pack/annealer": [
 		"AnnealerFactory",
+		"DebuggingAnnealer",
 		"FASTERAnnealer",
 		"FixbbCoupledRotamerSimAnnealer",
 		"FixbbLinkingRotamerSimAnnealer",

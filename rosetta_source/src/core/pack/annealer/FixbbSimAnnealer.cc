@@ -33,6 +33,7 @@
 // AUTO-REMOVED #include <ObjexxFCL/Fmath.hh>
 
 #include <iostream>
+#include <fstream>
 
 #include <core/pack/rotamer_set/FixbbRotamerSets.hh>
 #include <utility/vector0.hh>
@@ -91,7 +92,9 @@ FixbbSimAnnealer::FixbbSimAnnealer(
 	current_rot_index,
 	calc_rot_freq,
 	rot_freq
-	), ig_(ig)
+	),
+	ig_(ig),
+	record_annealer_trajectory_( false )
 {
 }
 
@@ -114,7 +117,9 @@ FixbbSimAnnealer::FixbbSimAnnealer(
 	current_rot_index,
 	calc_rot_freq,
 	rot_freq
-	), ig_(ig)
+	),
+	ig_(ig),
+	record_annealer_trajectory_( false )
 {
 }
 
@@ -154,13 +159,10 @@ void FixbbSimAnnealer::run()
 	int outeriterations = get_outeriterations();
 
 
-	//std::ofstream annealer_trajectory;
-	//static bool const record_annealer_trajectory( truefalseoption("record_annealer_trajectory") ); //look up once
-	//if ( record_annealer_trajectory )
-	//{
-	//	std::string trajectory_file_name( stringafteroption("record_annealer_trajectory" ) );
-	//	annealer_trajectory.open(trajectory_file_name.c_str() );
-	//}
+	std::ofstream annealer_trajectory;
+	if ( record_annealer_trajectory_ ) {
+		annealer_trajectory.open(trajectory_file_name_.c_str() );
+	}
 
 	//std::cout << "Annealing begins" << std::endl;
 
@@ -223,16 +225,13 @@ void FixbbSimAnnealer::run()
 					bestenergy() = currentenergy;
 				}
 
-				//if ( record_annealer_trajectory )
-				//{
-				//	annealer_trajectory << moltenres_id << " " << rotamer_state_on_moltenres << " A\n";
-				//}
+				if ( record_annealer_trajectory_ ) {
+					annealer_trajectory << moltenres_id << " " << rotamer_state_on_moltenres << " A\n";
+				}
 
-			}              // end Metropolis criteria
-			//else if ( record_annealer_trajectory )
-			//{
-			//	annealer_trajectory << moltenres_id << " " << rotamer_state_on_moltenres << " R\n";
-			//}
+			} else if ( record_annealer_trajectory_ ) {
+				annealer_trajectory << moltenres_id << " " << rotamer_state_on_moltenres << " R\n";
+			}
 			//else {
 			//	std::cout << " rejected\n";
 			//}
@@ -241,8 +240,7 @@ void FixbbSimAnnealer::run()
 			loopenergy(nn) = currentenergy;
 			float const temperature = get_temperature();
 
-			if ( calc_rot_freq() && ( temperature <= calc_freq_temp ) )
-			{
+			if ( calc_rot_freq() && ( temperature <= calc_freq_temp ) ) {
 				++nsteps;
 				for (int ii = 1; ii <= nmoltenres; ++ii )
 				{
@@ -300,6 +298,15 @@ void FixbbSimAnnealer::run()
 
 	//std::cout << "Annealing ends" << std::endl;
 }
+
+void FixbbSimAnnealer::record_annealer_trajectory( bool setting ) {
+	record_annealer_trajectory_ = setting;
+}
+
+void FixbbSimAnnealer::trajectory_file_name( std::string const & setting ) {
+	trajectory_file_name_ = setting;
+}
+
 
 }//end namespace annealer
 }//end namespace pack
