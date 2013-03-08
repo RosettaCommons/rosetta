@@ -313,6 +313,8 @@ namespace docking { StringOptionKey const high_patch( "docking:high_patch" );  }
 namespace docking { StringOptionKey const high_min_patch( "docking:high_min_patch" );  }
 namespace docking { StringOptionKey const pack_patch( "docking:pack_patch" );  }
 namespace docking { BooleanOptionKey const use_legacy_protocol( "docking:use_legacy_protocol" );  }
+namespace docking { RealOptionKey const docklowres_trans_magnitude( "docking:docklowres_trans_magnitude" );  }
+namespace docking { RealOptionKey const docklowres_rot_magnitude( "docking:docklowres_rot_magnitude" );  }
 namespace docking { namespace ligand { BooleanOptionKey const ligand( "docking:ligand" );  } }
 namespace docking { namespace ligand { StringOptionKey const protocol( "docking:ligand:protocol" );  } }
 namespace docking { namespace ligand { BooleanOptionKey const soft_rep( "docking:ligand:soft_rep" );  } }
@@ -666,5 +668,3 @@ namespace fold_cst { RealOptionKey const stage2_constraint_threshold( "fold_cst:
 namespace fold_cst { BooleanOptionKey const ignore_sequence_seperation( "fold_cst:ignore_sequence_seperation" );  }
 namespace fold_cst { BooleanOptionKey const no_recover_low_at_constraint_switch( "fold_cst:no_recover_low_at_constraint_switch" );  }
 namespace fold_cst { BooleanOptionKey const ramp_coord_cst( "fold_cst:ramp_coord_cst" );  }
-namespace resample { BooleanOptionKey const resample( "resample" );  }
-namespace resample { FileOptionKey const silent( "resample:silent" );  }

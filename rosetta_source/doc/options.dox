@@ -1495,6 +1495,16 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Use the legacy high resolution docking algorithm for output compatibility.</dd><br>
 <dd>Default: false</dd><br>
 </dl>
+<dl>
+<dt><b>-docklowres_trans_magnitude</b> \<Real\><dt>
+<dd>The magnitude of the translational perturbation during lowres in docking.</dd><br>
+<dd>Default: 0.7</dd><br>
+</dl>
+<dl>
+<dt><b>-docklowres_rot_magnitude</b> \<Real\><dt>
+<dd>The magnitude of the rotational perturbation during lowres in docking.</dd><br>
+<dd>Default: 5.0</dd><br>
+</dl>
  </li>
 <li><h2>docking:ligand</h2>
 <dl>

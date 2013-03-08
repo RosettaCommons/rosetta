@@ -63,6 +63,8 @@ namespace docking { extern StringOptionKey const high_patch; }
 namespace docking { extern StringOptionKey const high_min_patch; }
 namespace docking { extern StringOptionKey const pack_patch; }
 namespace docking { extern BooleanOptionKey const use_legacy_protocol; }
+namespace docking { extern RealOptionKey const docklowres_trans_magnitude; }
+namespace docking { extern RealOptionKey const docklowres_rot_magnitude; }
 namespace docking { namespace ligand { extern BooleanOptionKey const ligand; } }
 namespace docking { namespace ligand { extern StringOptionKey const protocol; } }
 namespace docking { namespace ligand { extern BooleanOptionKey const soft_rep; } }

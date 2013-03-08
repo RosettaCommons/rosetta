@@ -189,6 +189,14 @@ is_heavyatom(
 );
 
 bool
+is_scatom(
+  core::pose::Pose const & pose1,
+  core::pose::Pose const & ,//pose2,
+  core::Size resno,
+  core::Size atomno
+);
+
+bool
 is_nbr_atom(
 	core::pose::Pose const & pose1,
 	core::pose::Pose const & ,//pose2,
@@ -344,6 +352,18 @@ core::Real
 all_atom_rmsd(
 	const core::pose::Pose & pose1,
 	const core::pose::Pose & pose2
+);
+
+core::Real
+all_scatom_rmsd_nosuper(
+  const core::pose::Pose & pose1,
+  const core::pose::Pose & pose2
+);
+
+core::Real
+all_atom_rmsd_nosuper(
+  const core::pose::Pose & pose1,
+  const core::pose::Pose & pose2
 );
 
 core::Real

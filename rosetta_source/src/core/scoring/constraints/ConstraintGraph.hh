@@ -66,6 +66,7 @@ public:
 	void angle_constraint_energy( Energy );
 	void dihedral_constraint_energy( Energy );
 	void backbone_stub_constraint_energy( Energy );
+	void backbone_stub_linear_constraint_energy( Energy );
 	void res_type_linking_constraint_energy( Energy );
 
 
@@ -75,6 +76,7 @@ public:
 	Energy angle_constraint_energy() const;
 	Energy dihedral_constraint_energy() const;
 	Energy backbone_stub_constraint_energy() const;
+	Energy backbone_stub_linear_constraint_energy() const;
 	Energy res_type_linking_constraint_energy() const;
 
 	void energy_computed( bool setting );
@@ -88,6 +90,7 @@ private:
 	Energy angle_constraint_energy_;
 	Energy dihedral_constraint_energy_;
 	Energy backbone_stub_constraint_energy_;
+	Energy backbone_stub_linear_constraint_energy_;
 	Energy res_type_linking_constraint_energy_;
 
 

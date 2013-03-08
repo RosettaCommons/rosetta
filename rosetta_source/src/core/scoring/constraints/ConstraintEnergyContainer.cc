@@ -114,6 +114,7 @@ CstResNeighbIterator::save_energy( EnergyMap const & emap )
 	downcast_cstedge(*edge_iter_)->angle_constraint_energy( emap[ angle_constraint ] );
 	downcast_cstedge(*edge_iter_)->dihedral_constraint_energy( emap[ dihedral_constraint ] );
 	downcast_cstedge(*edge_iter_)->backbone_stub_constraint_energy( emap[ backbone_stub_constraint ] );
+	downcast_cstedge(*edge_iter_)->backbone_stub_linear_constraint_energy( emap[ backbone_stub_linear_constraint ] );
 	downcast_cstedge(*edge_iter_)->res_type_linking_constraint_energy( emap[ res_type_linking_constraint ]);
 
 }
@@ -142,6 +143,7 @@ CstResNeighbIterator::accumulate_energy( EnergyMap & emap ) const
 	emap[ angle_constraint ]     += downcast_cstedge(*edge_iter_)->angle_constraint_energy();
 	emap[ dihedral_constraint ]  += downcast_cstedge(*edge_iter_)->dihedral_constraint_energy();
 	emap[ backbone_stub_constraint ]  += downcast_cstedge(*edge_iter_)->backbone_stub_constraint_energy();
+	emap[ backbone_stub_linear_constraint ]  += downcast_cstedge(*edge_iter_)->backbone_stub_linear_constraint_energy();
 	emap[ res_type_linking_constraint ]  += downcast_cstedge(*edge_iter_)->res_type_linking_constraint_energy();
 
 }
@@ -260,6 +262,7 @@ CstResNeighbConstIterator::retrieve_energy( EnergyMap & emap ) const
 	emap[ angle_constraint ]     = downcast_cstedge(*edge_iter_)->angle_constraint_energy();
 	emap[ dihedral_constraint ]  = downcast_cstedge(*edge_iter_)->dihedral_constraint_energy();
 	emap[ backbone_stub_constraint ]  = downcast_cstedge(*edge_iter_)->backbone_stub_constraint_energy();
+	emap[ backbone_stub_linear_constraint ]  = downcast_cstedge(*edge_iter_)->backbone_stub_linear_constraint_energy();
 	emap[ res_type_linking_constraint ]  = downcast_cstedge(*edge_iter_)->res_type_linking_constraint_energy();
 
 }
@@ -276,6 +279,7 @@ CstResNeighbConstIterator::accumulate_energy( EnergyMap & emap ) const
 	emap[ angle_constraint ]     += downcast_cstedge(*edge_iter_)->angle_constraint_energy();
 	emap[ dihedral_constraint ]  += downcast_cstedge(*edge_iter_)->dihedral_constraint_energy();
 	emap[ backbone_stub_constraint ]  += downcast_cstedge(*edge_iter_)->backbone_stub_constraint_energy();
+	emap[ backbone_stub_linear_constraint ]  += downcast_cstedge(*edge_iter_)->backbone_stub_linear_constraint_energy();
 	emap[ res_type_linking_constraint ]  += downcast_cstedge(*edge_iter_)->res_type_linking_constraint_energy();
 
 }

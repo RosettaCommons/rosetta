@@ -1109,6 +1109,7 @@ ScoringManager::energy_method(
 	case dof_constraint:
 	case res_type_constraint:
 	case backbone_stub_constraint:
+  case backbone_stub_linear_constraint:
 	case big_bin_constraint:
 	case rna_bond_geometry:
 		return new constraints::ConstraintsEnergy;

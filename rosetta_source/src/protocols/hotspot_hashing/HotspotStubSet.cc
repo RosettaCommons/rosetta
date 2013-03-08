@@ -60,6 +60,7 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/scoring/constraints/BackboneStubConstraint.hh>
+#include <core/scoring/constraints/BackboneStubLinearConstraint.hh>
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/XYZ_Func.hh>
 #include <core/scoring/rms_util.hh>
@@ -1211,6 +1212,38 @@ HotspotStubSet::add_hotspot_constraints_to_pose(
 }
 
 
+/// @brief utility function to add hotspot bbcst's to a pose
+void
+HotspotStubSet::add_hotspot_constraints_to_wholepose(
+  core::pose::Pose & pose,
+  core::Size const partner,
+  HotspotStubSetOP hotspot_stub_set,
+  core::Real const & CB_force_constant,
+  core::Real const & worst_allowed_stub_bonus,
+  bool const apply_self_energies,
+  core::Real const & bump_cutoff,
+  bool const apply_ambiguous_constraints // = false
+) {
+
+  // Assign a fixed residue (for the stub constraints)
+  core::Size fixed_res(1);
+  if ( partner == 1 ) fixed_res = pose.total_residue();
+  core::id::AtomID fixed_atom_id = core::id::AtomID( pose.residue(fixed_res).atom_index("CA"), fixed_res );
+
+  core::pack::task::PackerTaskOP packer_task = prepare_hashing_packer_task_( pose, partner );
+
+  add_hotspot_constraints_to_wholepose(
+    pose,
+    fixed_atom_id,
+    packer_task,
+    hotspot_stub_set,
+    CB_force_constant,
+    worst_allowed_stub_bonus,
+    apply_self_energies,
+    bump_cutoff,
+    apply_ambiguous_constraints );
+}
+
 void
 HotspotStubSet::add_hotspot_constraints_to_pose(
 	core::pose::Pose & pose,
@@ -1295,15 +1328,16 @@ HotspotStubSet::add_hotspot_constraints_to_pose(
 		}
 	}
 
-	TR << "Making hotspot constraints..." << std::endl;
-	//Size scaffold_seqpos(0);
+	TR << "Making hotspot constraints... "<< std::endl; 
+  //TR << pose.total_residue() << " residues" << std::endl;
+	Size scaffold_seqpos(0);
 	for ( core::Size resnum=1; resnum <= pose.total_residue(); ++resnum ) {
 
 		// Check that this position is allowed to be used for stub constraints
 		if ( ! packer_task->pack_residue(resnum) ) continue;
 
 		// sets the index used by the hotspot for its associated scaffold
-		//scaffold_seqpos = resnum - pose.conformation().chain_begin( pose.chain( resnum ) );  // set but never used
+		scaffold_seqpos = resnum - pose.conformation().chain_begin( pose.chain( resnum ) );
 
 		// Start the vector which will become a single AmbiguousConstraint, if apply_ambiguous_constraints is true
 		utility::vector1< core::scoring::constraints::ConstraintCOP > ambig_csts;
@@ -1330,7 +1364,7 @@ HotspotStubSet::add_hotspot_constraints_to_pose(
 				}
 
 				core::Real stub_bonus_value = hs_stub->second->bonus_value();
-				//TR << "stub" << hs_stub->residue()->name3() << " pose" << pose.residue(resnum).name3() << resnum << " StubEnergy=" << stub_bonus_value;
+				//TR << "stub: " << hs_stub->second->residue()->name3() << " pose" << pose.residue(resnum).name3() << " " << resnum << " StubEnergy=" << stub_bonus_value << std::endl;
 				// Evaluate how this stub fits on the scaffold
 				// orient the stub onto the pose
 				core::conformation::Residue placed_stub_res = *(hs_stub->second->residue());
@@ -1373,14 +1407,191 @@ HotspotStubSet::add_hotspot_constraints_to_pose(
 		}
 
 		// Finally, add the constraint corresponding to this resnum to the main set
-		if ( ( apply_ambiguous_constraints ) && ( ambig_csts.size() > 0 ) )
+		if ( ( apply_ambiguous_constraints ) && ( ambig_csts.size() > 0 ) ) {
 			constraints_.push_back( new core::scoring::constraints::AmbiguousConstraint(ambig_csts) );
+		}
 	}
+
 	constraints_ = pose.add_constraints( constraints_ );
 	TR << "Applied " << constraints_.size() << " hotspot constraints to the pose." << std::endl;
 	return;
 }
 
+void
+HotspotStubSet::add_hotspot_constraints_to_wholepose(
+	core::pose::Pose & pose,
+	core::id::AtomID const & fixed_atom,
+	core::pack::task::PackerTaskCOP const packer_task,
+	HotspotStubSetOP hotspot_stub_set,
+	core::Real const & CB_force_constant,
+	core::Real const & worst_allowed_stub_bonus,
+	bool const apply_self_energies,
+	core::Real const & bump_cutoff,
+	bool const apply_ambiguous_constraints // = false
+) {
+
+	// Take in a scaffold pose (with PackerTask, for its DesignMap), and a set of stubs.
+	// Each repacked residue will get one "AmbiguousConstraint".
+	// This AmbiguousConstraint will contain a series of BackboneStubLinearConstraints (one for each valid stub)
+
+	runtime_assert( CB_force_constant > -1E-6 ); // these can't be negative
+	runtime_assert( worst_allowed_stub_bonus < 1E-6 ); // these can't be positive
+	runtime_assert( bump_cutoff > -1E-6 ); // these can't be negative
+
+	// setup for evaluating the stub in the context of the scaffold
+	core::pose::Pose unbound_pose = pose;
+	generate_unbound_pose_(unbound_pose);
+
+	// scorefxn for the bump check
+	core::scoring::ScoreFunctionOP bump_scorefxn = new core::scoring::ScoreFunction;
+	bump_scorefxn->reset();
+	bump_scorefxn->set_weight( core::scoring::fa_rep, 1.0 );
+
+	// set scorefunction.
+	core::scoring::ScoreFunctionOP noenvhbond_scorefxn;
+	//if( basic::options::option[ basic::options::OptionKeys::score::weights ].user() ) {
+	//	noenvhbond_scorefxn = core::scoring::getScoreFunction();
+	//}
+	//else {
+	// just use sc12 with no env hbonding. Legacy reasons for this scorefxn, but it's only used for building neighbor graphs, packing ala poses, and bump checking.
+	noenvhbond_scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "score13" );
+	noenvhbond_scorefxn->set_weight( core::scoring::fa_dun, 0.1 );
+	noenvhbond_scorefxn->set_weight( core::scoring::envsmooth, 0 );
+	//}
+	core::scoring::methods::EnergyMethodOptions options( noenvhbond_scorefxn->energy_method_options() );
+	options.hbond_options().use_hb_env_dep( basic::options::option[ basic::options::OptionKeys::hotspot::envhb]() );
+	noenvhbond_scorefxn->set_energy_method_options( options );
+
+	core::scoring::ScoreFunctionOP full_scorefxn( noenvhbond_scorefxn );
+
+	//	core::scoring::ScoreFunctionOP full_scorefxn( core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::STANDARD_WTS, core::scoring::SCORE12_PATCH) );
+
+	// score the pose, to update the tenA_neighbor_graph and setup Hbond stuff
+	(*full_scorefxn)(unbound_pose);
+	core::scoring::TenANeighborGraph const unbound_neighbor_graph = unbound_pose.energies().tenA_neighbor_graph();
+
+	// make an alanine pose to use for checking self energies (since we'll almost always be evaluating stubs in the absence of sidechains)
+	core::pose::Pose ala_pose = unbound_pose;
+	utility::vector1< bool > allowed_aas( core::chemical::num_canonical_aas, false );
+	allowed_aas[ core::chemical::aa_ala ] = true;
+	core::pack::task::PackerTaskOP task( core::pack::task::TaskFactory::create_packer_task( pose ));
+	task->initialize_from_command_line().or_include_current( true );
+	for( core::Size i=1; i<=ala_pose.total_residue(); ++i ) {
+		if( packer_task->pack_residue(i) )
+			task->nonconst_residue_task(i).restrict_absent_canonical_aas( allowed_aas );
+		else
+			task->nonconst_residue_task(i).prevent_repacking();
+	}
+	if( basic::options::option[basic::options::OptionKeys::packing::resfile].user() ) {
+		core::pack::task::parse_resfile(pose, *task);
+	}
+	core::pack::pack_rotamers( ala_pose, *full_scorefxn, task);
+	(*full_scorefxn)( ala_pose ); // to ensure that 10Aneighborgraph_state==GOOD
+	core::scoring::TenANeighborGraph const ala_neighbor_graph = ala_pose.energies().tenA_neighbor_graph();
+
+
+	// *****associate the stub set with the unbound pose
+	// *****hotspot_stub_set->pair_with_scaffold( pose, partner );
+
+	protocols::filters::FilterCOP true_filter( new protocols::filters::TrueFilter );
+	for( core::Size resnum=1; resnum <= pose.total_residue(); ++resnum ) {
+		if (packer_task->pack_residue(resnum) )	{
+			hotspot_stub_set->pair_with_scaffold( pose, pose.chain( resnum ), true_filter );
+			break;
+		}
+	}
+
+	TR << "Making hotspot constraints" << std::endl;
+  //TR<< pose.total_residue() << " residues" << std::endl;
+	utility::vector1< core::scoring::constraints::ConstraintCOP > ambig_csts;
+	Size scaffold_seqpos(0);
+	for ( core::Size resnum=1; resnum <= pose.total_residue(); ++resnum ) {
+
+		// Check that this position is allowed to be used for stub constraints
+		if ( ! packer_task->pack_residue(resnum) ) continue;
+
+		// sets the index used by the hotspot for its associated scaffold
+		scaffold_seqpos = resnum - pose.conformation().chain_begin( pose.chain( resnum ) );
+
+		// Start the vector which will become a single AmbiguousConstraint, if apply_ambiguous_constraints is true
+		// Loop over all allowed AAs at this position
+		std::list< core::chemical::ResidueTypeCOP > allowed_aas = packer_task->residue_task( resnum ).allowed_residue_types();
+		for (std::list< core::chemical::ResidueTypeCOP >::const_iterator restype = allowed_aas.begin();
+				 restype != allowed_aas.end(); ++restype) {
+
+			// Loop over all stubs with this restype
+			Hotspots res_stub_set( hotspot_stub_set->retrieve( (*restype )->name3() ) );
+			for (std::multimap<core::Real,HotspotStubOP >::iterator hs_stub = res_stub_set.begin();
+					 hs_stub != res_stub_set.end(); ++hs_stub) {
+
+				// prevent Gly/Pro constraints
+				if ( (hs_stub->second->residue()->aa() == core::chemical::aa_gly) || (hs_stub->second->residue()->aa() == core::chemical::aa_pro && !basic::options::option[basic::options::OptionKeys::hotspot::allow_proline] ) ) {
+					TR << "ERROR - Gly/Pro stubs cannot be used for constraints." << std::endl;
+					continue;
+				}
+
+				// prevent Gly/Pro constraints
+				if ( (pose.residue(resnum).aa() == core::chemical::aa_gly) || (pose.residue(resnum).aa() == core::chemical::aa_pro && !basic::options::option[basic::options::OptionKeys::hotspot::allow_proline]) ) {
+					TR.Debug << "ERROR - Position " << resnum << " is currently Gly/Pro and cannot be used for stub constraints." << std::endl;
+					continue;
+				}
+
+				core::Real stub_bonus_value = hs_stub->second->bonus_value();
+				//TR << "stub: " << hs_stub->second->residue()->name3() << " pose" << pose.residue(resnum).name3() << " " << resnum << " StubEnergy=" << stub_bonus_value;
+				// Evaluate how this stub fits on the scaffold
+				// orient the stub onto the pose
+				core::conformation::Residue placed_stub_res = *(hs_stub->second->residue());
+				placed_stub_res.orient_onto_residue( unbound_pose.residue(resnum) );
+				// set phi,psi of the placed stub res to match the pose
+				placed_stub_res.mainchain_torsions()[1] = unbound_pose.phi(resnum);
+				placed_stub_res.mainchain_torsions()[2] = unbound_pose.psi(resnum);
+
+				core::Real bump_energy = evaluate_stub_bumps_( placed_stub_res, unbound_pose, resnum, unbound_neighbor_graph, bump_scorefxn, bump_cutoff );
+				if ( bump_energy > bump_cutoff ) {
+					// force cutoff to fail
+					stub_bonus_value = worst_allowed_stub_bonus + 0.1;
+					hs_stub->second->set_scaffold_status( resnum, protocols::hotspot_hashing::reject );
+					//TR << " FailBumpEnergy=" << bump_energy;
+				} else if ( apply_self_energies ) {
+					//TR << " SuccBumpEnergy=" << bump_energy;
+					// note: if the pose can move, these energies won't be totally accurate (but they'll still be good estimates if the movement is small)
+					stub_bonus_value += evaluate_stub_self_energy_( placed_stub_res, unbound_pose, resnum, unbound_neighbor_graph, full_scorefxn );
+					TR.Debug << resnum << " InitBonus " << hs_stub->second->bonus_value() << "    SelfEBonus " << stub_bonus_value << std::endl;
+				}
+				if ( stub_bonus_value < worst_allowed_stub_bonus ) {
+					hs_stub->second->set_scaffold_status( resnum, protocols::hotspot_hashing::accept );
+					//TR << " SuccSelfEnergy=" << stub_bonus_value << std::endl;
+					// ****** accept the pairing -- do we really want this? better to just reject, since bb fit doesn't necessarily mean good pair
+					// ****** hs_stub->scaffold_status( resnum, accept );
+
+					// Build a BackboneStubLinearConstraint from this stub
+					if ( apply_ambiguous_constraints ) {
+						// Push it onto ambig_csts for this residue
+						ambig_csts.push_back( new core::scoring::constraints::BackboneStubLinearConstraint( pose, resnum, fixed_atom, *(hs_stub->second->residue()), stub_bonus_value, CB_force_constant ) );
+					} else {
+						// Apply it directly
+						constraints_.push_back( new core::scoring::constraints::BackboneStubLinearConstraint( pose, resnum, fixed_atom, *(hs_stub->second->residue()), stub_bonus_value, CB_force_constant ) );
+					}
+				}	else hs_stub->second->set_scaffold_status( resnum, protocols::hotspot_hashing::reject );
+				//else TR << " FailSelfEnergy=" << stub_bonus_value << std::endl;
+				// ****** reject the pairing
+				// ******else hs_stub->scaffold_status( resnum, reject );
+			} //end all stubs
+      //TR << "Add ambiguous cst of size for all stubs for a residue: " << ambig_csts.size() << std::endl;
+		}//end all residues
+	}
+
+		// Finally, add the constraint corresponding of all resnum to the main set
+		if ( ( apply_ambiguous_constraints ) && ( ambig_csts.size() > 0 ) ) {
+      //TR << "Add ambiguous cst of size: " << ambig_csts.size() << std::endl;
+      //TR << "Add ambiguous cst of size for all stubs and all residues: " << ambig_csts.size() << std::endl;
+			constraints_.push_back( new core::scoring::constraints::AmbiguousConstraint(ambig_csts) );
+		}
+
+	constraints_ = pose.add_constraints( constraints_ );
+	TR << "Applied " << constraints_.size() << " ambiguous hotspot constraints to whole pose." << std::endl;
+	return;
+}
 bool
 HotspotStubSet::remove_all_hotspot_constraints( core::pose::Pose & pose ) const
 {
@@ -1528,13 +1739,13 @@ remove_hotspot_constraints_from_pose( core::pose::Pose & pose )
     if( cst->type() == "AmbiguousConstraint" ) {
       AmbiguousConstraintCOP ambiguous_cst = AmbiguousConstraintCOP( dynamic_cast< AmbiguousConstraint const *>( cst() ) ); //downcast to derived ambiguous constraint
       if( ambiguous_cst) { // safety check for downcasting
-        if( ambiguous_cst->active_constraint()->type() == "BackboneStub" ) {
+        if( ambiguous_cst->active_constraint()->type() == "BackboneStubLinear" ) {
           bb_csts.push_back( ambiguous_cst() ); // add the entire ambiguous cst, since it contained a bbcst
         }
       }
     }
 		//tricky; some hotspot stub constraints are added directly with no ambiguity
-		else if( cst->type() == "BackboneStub" )
+		else if( cst->type() == "BackboneStubLinear" )
 			bb_csts.push_back( cst );
   }
   pose.remove_constraints( bb_csts ); // remove all the ambigcsts that contain a bbcst

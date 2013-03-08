@@ -175,6 +175,17 @@ public:
 		bool const apply_ambiguous_constraints = false
 	);
 
+  void add_hotspot_constraints_to_wholepose(
+    core::pose::Pose & pose,
+    core::Size const partner,
+    HotspotStubSetOP hotspot_stub_set,
+    core::Real const & CB_force_constant,
+    core::Real const & worst_allowed_stub_bonus,
+    bool const apply_self_energies,
+    core::Real const & bump_cutoff,
+    bool const apply_ambiguous_constraints = false
+  );
+
 	/// @brief Sets up constraints with user-supplied packer task and fixed reference atom
 	void add_hotspot_constraints_to_pose(
 	  core::pose::Pose & pose,
@@ -187,6 +198,19 @@ public:
 		core::Real const & bump_cutoff,
 		bool const apply_ambiguous_constraints = false
 	);
+
+  /// @brief Sets up constraints with user-supplied packer task and fixed reference atom
+  void add_hotspot_constraints_to_wholepose(
+    core::pose::Pose & pose,
+    core::id::AtomID const & fixed_atom,
+    core::pack::task::PackerTaskCOP const packer_task,
+    HotspotStubSetOP hotspot_stub_set,
+    core::Real const & CB_force_constant,
+    core::Real const & worst_allowed_stub_bonus, // = 0.
+    bool const apply_self_energies,
+    core::Real const & bump_cutoff,
+    bool const apply_ambiguous_constraints = false
+  );
 
 	/// @brief remove all ambiguous constraints that contain backbone_stub_constraints from the supplied pose
 	bool remove_all_hotspot_constraints( core::pose::Pose & pose ) const;

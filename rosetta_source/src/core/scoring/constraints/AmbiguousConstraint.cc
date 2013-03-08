@@ -66,6 +66,7 @@ AmbiguousConstraint::init_cst_score_types()
 	cst_score_types_.push_back(angle_constraint);
 	cst_score_types_.push_back(dihedral_constraint);
 	cst_score_types_.push_back(backbone_stub_constraint);
+	cst_score_types_.push_back(backbone_stub_linear_constraint);
 }
 
 
@@ -114,6 +115,7 @@ AmbiguousConstraint::score( XYZ_Func const & xyz_func, EnergyMap const & weights
 			low_EMap_[angle_constraint]         = temp_EMap_[angle_constraint];
 			low_EMap_[dihedral_constraint]      = temp_EMap_[dihedral_constraint];
 			low_EMap_[backbone_stub_constraint] = temp_EMap_[backbone_stub_constraint];
+			low_EMap_[backbone_stub_linear_constraint] = temp_EMap_[backbone_stub_linear_constraint];
 
 		}
 
@@ -125,6 +127,7 @@ AmbiguousConstraint::score( XYZ_Func const & xyz_func, EnergyMap const & weights
 	emap[angle_constraint]         += low_EMap_[angle_constraint];
 	emap[dihedral_constraint]      += low_EMap_[dihedral_constraint];
 	emap[backbone_stub_constraint] += low_EMap_[backbone_stub_constraint];
+	emap[backbone_stub_linear_constraint] += low_EMap_[backbone_stub_linear_constraint];
 
 
 } //score
@@ -135,7 +138,7 @@ core::Real
 AmbiguousConstraint::calculate_total_cst_score( EnergyMap const & weights, EnergyMap & emap ) const
 {
 
-	core::Real total_score = emap[constant_constraint] * weights[constant_constraint] + emap[coordinate_constraint] * weights[coordinate_constraint] + emap[atom_pair_constraint] * weights[atom_pair_constraint] + emap[angle_constraint] * weights[angle_constraint] + emap[dihedral_constraint] * weights[dihedral_constraint] + emap[backbone_stub_constraint] * weights[backbone_stub_constraint];
+	core::Real total_score = emap[constant_constraint] * weights[constant_constraint] + emap[coordinate_constraint] * weights[coordinate_constraint] + emap[atom_pair_constraint] * weights[atom_pair_constraint] + emap[angle_constraint] * weights[angle_constraint] + emap[dihedral_constraint] * weights[dihedral_constraint] + emap[backbone_stub_constraint] * weights[backbone_stub_constraint] + emap[backbone_stub_linear_constraint] * weights[backbone_stub_linear_constraint];
 
 	return total_score;
 }

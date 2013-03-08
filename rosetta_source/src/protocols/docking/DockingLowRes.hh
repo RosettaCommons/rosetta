@@ -97,7 +97,8 @@ public:
 	void set_inner_cycles( core::Size inner_cycles ) { inner_cycles_=inner_cycles; }
 	void set_outer_cycles( core::Size outer_cycles ) { outer_cycles_=outer_cycles; }
 
-
+  void set_trans_magnitude( core::Real trans_magnitude);
+  void set_rot_magnitude( core::Real rot_magnitude);
     
 	virtual void show( std::ostream & out=std::cout ) const;
 	friend std::ostream & operator<<(std::ostream& out, const DockingLowRes & dp );

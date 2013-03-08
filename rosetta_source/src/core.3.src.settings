@@ -149,6 +149,7 @@ sources = {
 		"AngleConstraint",
 		"AtomPairConstraint",
 		"BackboneStubConstraint",
+		"BackboneStubLinearConstraint",
 		"BasicConstraintCreators",
 		"BigBinConstraint",
 		"BoundConstraint",

@@ -107,6 +107,7 @@ KofNConstraint::init_cst_score_types()
   cst_score_types_.push_back(angle_constraint);
   cst_score_types_.push_back(dihedral_constraint);
   cst_score_types_.push_back(backbone_stub_constraint);
+  cst_score_types_.push_back(backbone_stub_linear_constraint);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -152,6 +153,7 @@ KofNConstraint::score( XYZ_Func const & xyz_func, EnergyMap const & weights, Ene
 			emap[angle_constraint]         += tmp_EMaps[i][angle_constraint];
 			emap[dihedral_constraint]      += tmp_EMaps[i][dihedral_constraint];
 			emap[backbone_stub_constraint] += tmp_EMaps[i][backbone_stub_constraint];
+			emap[backbone_stub_linear_constraint] += tmp_EMaps[i][backbone_stub_linear_constraint];
 		}
 	}
 } //score
@@ -168,6 +170,7 @@ KofNConstraint::calculate_total_cst_score( EnergyMap const & weights, EnergyMap 
 		emap[angle_constraint] * weights[angle_constraint] +
 		emap[dihedral_constraint] * weights[dihedral_constraint] +
 		emap[backbone_stub_constraint] * weights[backbone_stub_constraint];
+		emap[backbone_stub_linear_constraint] * weights[backbone_stub_linear_constraint];
 
   return total_score;
 }

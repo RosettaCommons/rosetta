@@ -20,8 +20,9 @@
 // Rosetta Headers
 #include <core/kinematics/MoveMap.hh>
 
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/keys/docking.OptionKeys.gen.hh>
 
 // AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 
@@ -128,10 +129,22 @@ DockingLowRes::clone() const {
 	return new DockingLowRes(*this);
 }
 
+void DockingLowRes::set_trans_magnitude( core::Real trans_magnitude) { trans_magnitude_ = trans_magnitude;}
+
+void DockingLowRes::set_rot_magnitude( core::Real rot_magnitude) { rot_magnitude_ = rot_magnitude;}
+
 
 void DockingLowRes::set_default() {
-	trans_magnitude_ = 0.7;
-	rot_magnitude_ = 5.0;
+
+  core::Real trans_magnitude=basic::options::option[ basic::options::OptionKeys::docking::docklowres_trans_magnitude ]();
+  set_trans_magnitude(trans_magnitude);
+  core::Real rot_magnitude=basic::options::option[ basic::options::OptionKeys::docking::docklowres_rot_magnitude ]();
+  set_rot_magnitude(rot_magnitude);
+	//TR << " Lowres docking trans_magnitude_ " << trans_magnitude_ << std::endl;
+	//TR << " Lowres docking rot_magnitude_" << rot_magnitude_ << std::endl;
+
+	//trans_magnitude_ = 0.7;
+	//rot_magnitude_ = 5.0;
 	chi_ = false;
 	bb_ = false;
 

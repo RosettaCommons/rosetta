@@ -397,6 +397,7 @@ enum ScoreType {
 
 	// for BackboneStubConstraint
 	backbone_stub_constraint,
+  backbone_stub_linear_constraint,
 
 	surface,
 	p_aa,

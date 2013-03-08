@@ -225,28 +225,36 @@ SymDockProtocol::set_default()
 	passed_lowres_filter_ = true; // both default true. filter methods can set false
 	passed_highres_filter_ = true;
 
+	//how to turn on  atom_pair_constraint without patches by default to weight 1
+	docking_score_low_  = ScoreFunctionFactory::create_score_function(  "interchain_cen" );
+	docking_score_high_  = ScoreFunctionFactory::create_score_function( "docking" );
+	docking_score_high_min_ = ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
+	docking_score_pack_ = ScoreFunctionFactory::create_score_function(  "standard" );
+
+	if ( option[ OptionKeys::constraints::cst_file ].user() || option[ OptionKeys::constraints::cst_fa_file ].user() ){
+		docking_score_low_->set_weight(core::scoring::atom_pair_constraint, 1.0);
+		docking_score_high_->set_weight(core::scoring::atom_pair_constraint, 1.0);
+		docking_score_high_min_->set_weight(core::scoring::atom_pair_constraint, 1.0);
+	}
+
 		if ( option[ OptionKeys::docking::low_patch ].user() ) {
-		docking_score_low_  = ScoreFunctionFactory::create_score_function(  "interchain_cen", option[ OptionKeys::docking::low_patch ] );
-	} else {
-		docking_score_low_  = ScoreFunctionFactory::create_score_function(  "interchain_cen" );
+		//docking_score_low_  = ScoreFunctionFactory::create_score_function(  "interchain_cen", option[ OptionKeys::docking::low_patch ] );
+    docking_score_low_->apply_patch_from_file(option[ OptionKeys::docking::low_patch ]);
 	}
 
 	if ( option[ OptionKeys::docking::high_patch ].user() ) {
-		docking_score_high_  = ScoreFunctionFactory::create_score_function( "docking", option[ OptionKeys::docking::high_patch ] );
-	} else {
-		docking_score_high_  = ScoreFunctionFactory::create_score_function( "docking" );
+		//docking_score_high_  = ScoreFunctionFactory::create_score_function( "docking", option[ OptionKeys::docking::high_patch ] );
+    docking_score_high_->apply_patch_from_file(option[ OptionKeys::docking::high_patch ]);
 	}
 
 	if ( option[ OptionKeys::docking::high_min_patch ].user() ) {
-		docking_score_high_min_ = ScoreFunctionFactory::create_score_function( "docking",  option[ OptionKeys::docking::high_min_patch ] );
-	} else {
-		docking_score_high_min_ = ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
+		//docking_score_high_min_ = ScoreFunctionFactory::create_score_function( "docking",  option[ OptionKeys::docking::high_min_patch ] );
+    docking_score_high_min_->apply_patch_from_file(option[ OptionKeys::docking::high_min_patch ]);
 	}
 
 	if ( option[ OptionKeys::docking::pack_patch ].user() ) {
-		docking_score_pack_ = ScoreFunctionFactory::create_score_function(  "standard", option[ OptionKeys::docking::pack_patch ] );
-	} else {
-		docking_score_pack_ = ScoreFunctionFactory::create_score_function(  "standard" );
+		//docking_score_pack_ = ScoreFunctionFactory::create_score_function(  "standard", option[ OptionKeys::docking::pack_patch ] );
+    docking_score_pack_->apply_patch_from_file(option[ OptionKeys::docking::pack_patch ]);
 	}
 
 	// score function setup
@@ -274,9 +282,6 @@ SymDockProtocol::set_default()
 	docking_high_ = new protocols::symmetric_docking::SymDockingHiRes( scorefxn_hires_ );
 */
 	// add density if necessary
-
-
-
 
 	if ( option[ OptionKeys::edensity::mapfile ].user() ) {
 		core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( *docking_score_low_ );
@@ -357,20 +362,6 @@ SymDockProtocol::apply( pose::Pose & pose )
 
 	core::pose::Pose starting_pose = pose;
 	protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
-
-	if ( option[ OptionKeys::constraints::cst_file ].user() || option[ OptionKeys::constraints::cst_fa_file ].user() ){
-		core::scoring::symmetry::SymmetricScoreFunctionOP docking_scorefxn_cst, docking_highres_cst;
-		docking_scorefxn_cst = new core::scoring::symmetry::SymmetricScoreFunction( *docking_score_low_ ) ;
-		docking_scorefxn_cst->set_weight(core::scoring::atom_pair_constraint, 1.0);
-		set_lowres_scorefxn(docking_scorefxn_cst);
-
-		docking_highres_cst = new core::scoring::symmetry::SymmetricScoreFunction( *docking_score_high_ ) ;
-		docking_highres_cst->set_weight(core::scoring::atom_pair_constraint, 1.0);
-		set_highres_scorefxn( docking_highres_cst, docking_score_pack_ ); // sets csts for mc and minimization, but not packing
-
-		docking_low_ = new SymDockingLowRes( docking_scorefxn_cst ); // resetting scorefxn nulled out mover
-		docking_high_ = new SymDockingHiRes( docking_highres_cst, docking_score_pack_ ); // resetting scorefxn nulled out mover
-	}
 
 	if ( option[ OptionKeys::run::score_only ]() ) {
 		score_only( pose );
@@ -517,6 +508,7 @@ SymDockProtocol::docking_lowres_filter( core::pose::Pose & pose){
 
 	if (pose.energies().total_energies()[ interchain_contact ] >= interchain_contact_cutoff ) passed_filter = false;
 	if (pose.energies().total_energies()[ interchain_vdw ] >= interchain_vdw_cutoff ) passed_filter = false;
+
 
 	if ( option[ OptionKeys::constraints::cst_file ].user() ){
 		if (pose.energies().total_energies()[ atom_pair_constraint ] >= distance_constraint_cutoff ) passed_filter = false;
@@ -866,10 +858,15 @@ SymDockProtocol::calc_interaction_energy( core::pose::Pose & pose ){
 	rigid::RigidBodyDofSeqTransMoverOP translate_away ( new rigid::RigidBodyDofSeqTransMover( dofs ) );
 	translate_away->step_size( trans_magnitude );
 
+	//Don't use patches for computer Isc, problematic with constraints for unbound
 	if ( fullatom_ ){
-		docking_scorefxn = new core::scoring::symmetry::SymmetricScoreFunction( *docking_score_high_ ) ;
+		docking_scorefxn = new core::scoring::symmetry::SymmetricScoreFunction( *docking_score_pack_ ) ;
+    docking_scorefxn->set_weight(core::scoring::atom_pair_constraint, 0.0);
+		//docking_scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "docking" );
 	} else {
 		docking_scorefxn = new core::scoring::symmetry::SymmetricScoreFunction( *docking_score_low_ ) ;
+    docking_scorefxn->set_weight(core::scoring::atom_pair_constraint, 0.0);
+		//docking_scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "interchain_cen" );
 	}
 
 	Real bound_energy = (*docking_scorefxn)( complex_pose );

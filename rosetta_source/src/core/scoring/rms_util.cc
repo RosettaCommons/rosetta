@@ -478,6 +478,18 @@ is_heavyatom(
 }
 
 bool
+is_scatom(
+  core::pose::Pose const & pose1,
+  core::pose::Pose const & ,//pose2,
+  core::Size resno,
+  core::Size atomno
+)
+{
+  core::conformation::Residue const & rsd = pose1.residue(resno);
+  return !rsd.atom_is_backbone(atomno);
+}
+
+bool
 is_nbr_atom(
 	core::pose::Pose const & pose1,
 	core::pose::Pose const & ,//pose2,
@@ -738,6 +750,28 @@ all_atom_rmsd(
 	Real rms = rmsd_with_super( pose1, pose2, is_heavyatom );
 	return rms;
 } // all atom rmsd
+
+core::Real
+all_scatom_rmsd_nosuper(
+  const core::pose::Pose & pose1,
+  const core::pose::Pose & pose2
+) {
+
+  using namespace core;
+  Real rms = rmsd_no_super( pose1, pose2, is_scatom );
+  return rms;
+} // sc all atom rmsd no super
+
+core::Real
+all_atom_rmsd_nosuper(
+  const core::pose::Pose & pose1,
+  const core::pose::Pose & pose2
+) {
+
+  using namespace core;
+  Real rms = rmsd_no_super( pose1, pose2, is_heavyatom);
+  return rms;
+} // all atom rmsd no super
 
 core::Real
 all_atom_rmsd(

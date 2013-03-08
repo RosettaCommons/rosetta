@@ -669,12 +669,21 @@ Options = Option_Group( '',
 			desc="Name of weights patch file (without extension .wts) to use during "),
 		Option( 'pack_patch', 'String',
 			desc="Name of weights patch file (without extension .wts) to use during packing"),
-     Option('use_legacy_protocol', 'Boolean',
+     		Option('use_legacy_protocol', 'Boolean',
 			short='Use the legacy high resolution docking algorithm.',
 			desc='Use the legacy high resolution docking algorithm for output compatibility.',
 			default='false'
 			),
-
+                Option('docklowres_trans_magnitude', 'Real',
+                        short='The magnitude of the translational perturbation during lowres in docking.',
+                        desc='The magnitude of the translational perturbation during lowres in docking.',
+                        default='0.7'
+                        ),
+                Option('docklowres_rot_magnitude', 'Real',
+                        short='The magnitude of the rotational perturbation during lowres in docking.',
+                        desc='The magnitude of the rotational perturbation during lowres in docking.',
+                        default='5.0'
+                        ),
 
 		###################################################################################
 		# ligand options ( part of docking )--------------------------------------

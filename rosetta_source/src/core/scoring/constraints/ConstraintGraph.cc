@@ -58,6 +58,7 @@ ConstraintEdge::ConstraintEdge( graph::Graph * owner, Size first_node_ind, Size 
 	angle_constraint_energy_( 0.0 ),
 	dihedral_constraint_energy_( 0.0 ),
 	backbone_stub_constraint_energy_( 0.0 ),
+	backbone_stub_linear_constraint_energy_( 0.0 ),
 	res_type_linking_constraint_energy_( 0.0 ),
 	energy_computed_( false )
 {
@@ -72,6 +73,7 @@ ConstraintEdge::ConstraintEdge( graph::Graph * owner, ConstraintEdge const & exa
 	angle_constraint_energy_( example_edge.angle_constraint_energy_ ),
 	dihedral_constraint_energy_( example_edge.dihedral_constraint_energy_ ),
 	backbone_stub_constraint_energy_( example_edge.backbone_stub_constraint_energy_ ),
+	backbone_stub_linear_constraint_energy_( example_edge.backbone_stub_linear_constraint_energy_ ),
 	res_type_linking_constraint_energy_( example_edge.res_type_linking_constraint_energy_ ),
 	energy_computed_( example_edge.energy_computed_ )
 {}
@@ -87,6 +89,7 @@ ConstraintEdge::copy_from( graph::Edge const * source )
 	angle_constraint_energy_ = cst_source->angle_constraint_energy_;
 	dihedral_constraint_energy_ = cst_source->dihedral_constraint_energy_;
 	backbone_stub_constraint_energy_ = cst_source->backbone_stub_constraint_energy_;
+	backbone_stub_linear_constraint_energy_ = cst_source->backbone_stub_linear_constraint_energy_;
 	res_type_linking_constraint_energy_ = cst_source->res_type_linking_constraint_energy_;
 	energy_computed_ = cst_source->energy_computed_;
 }
@@ -140,6 +143,12 @@ ConstraintEdge::backbone_stub_constraint_energy( Energy setting )
 }
 	
 void
+ConstraintEdge::backbone_stub_linear_constraint_energy( Energy setting )
+{
+	backbone_stub_linear_constraint_energy_ = setting;
+}
+
+void
 ConstraintEdge::res_type_linking_constraint_energy( Energy setting )
 {
 	res_type_linking_constraint_energy_ = setting;
@@ -179,6 +188,12 @@ Energy
 ConstraintEdge::backbone_stub_constraint_energy() const
 {
 	return backbone_stub_constraint_energy_;
+}
+
+Energy
+ConstraintEdge::backbone_stub_linear_constraint_energy() const
+{
+	return backbone_stub_linear_constraint_energy_;
 }
 
 Energy
