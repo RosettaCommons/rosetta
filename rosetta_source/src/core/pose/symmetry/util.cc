@@ -412,18 +412,25 @@ extract_asymmetric_unit_pdb_info(
 				dynamic_cast<SymmetricConformation const & > ( pose.conformation() ) );
 	SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
-	for ( Size res=1; res <= symm_info->get_nres_subunit(); ++res ) {
+	Size nres = symm_info->get_nres_subunit();
+	for ( Size res=1; res <= nres; ++res ) {
 		int res_id = pdb_info_src->number( res );
 		pdb_info_target->number( res, res_id );
 
 		char chn_id = pdb_info_src->chain( res );
 		pdb_info_target->chain( res, chn_id );
 
+		//std::cout << "Remap: " << res << " to " << res_id << chn_id << std::endl;
+
 		// symmetrize B's
 		for ( Size atm=1; atm <= pose.residue(res).natoms(); ++atm) {
 			pdb_info_target->temperature( res, atm, pdb_info_src->temperature( res, atm ) );
 		}
 	}
+	// vrt
+	pdb_info_target->number( nres+1, 1 );
+	pdb_info_target->chain( nres+1, 'Z' );
+
 	// rebuild pdb2pose
 	pdb_info_target->rebuild_pdb2pose();
 
@@ -436,7 +443,6 @@ extract_asymmetric_unit_pdb_info(
 	}
 	pdb_info_target->remarks( pdb_info_src->remarks() );
 }
-
 
 
 // @details setting the movemap to only allow for symmetrical dofs.
