@@ -30,7 +30,9 @@
 
 #ifdef WITH_PYTHON
 #include "Python.h"
-#elif !defined PYROSETTA
+#elif defined PYROSETTA
+#include "Python.h"
+#else
 typedef int PyObject;
 #endif
 
