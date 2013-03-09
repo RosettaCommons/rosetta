@@ -468,7 +468,6 @@ WARN_LOGFILE           =
 # with spaces.
 
 INPUT                  = doc
-#INPUT                  = doc src/core src/utility  src/protocols demo  src/ObjexxFCL src/numeric
 
 # This tag can be used to specify the character encoding of the source files that 
 # doxygen parses. Internally doxygen uses the UTF-8 encoding, which is also the default 
@@ -661,8 +660,7 @@ GENERATE_HTML          = YES
 # If a relative path is entered the value of OUTPUT_DIRECTORY will be 
 # put in front of it. If left blank `html' will be used as the default path.
 
-HTML_OUTPUT            = html/all_at_once
-#HTML_OUTPUT            = html
+HTML_OUTPUT            = html
 
 
 # The HTML_FILE_EXTENSION tag can be used to specify the file extension for 
