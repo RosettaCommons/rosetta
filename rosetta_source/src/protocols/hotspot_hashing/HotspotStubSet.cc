@@ -1504,14 +1504,14 @@ HotspotStubSet::add_hotspot_constraints_to_wholepose(
 	TR << "Making hotspot constraints" << std::endl;
   //TR<< pose.total_residue() << " residues" << std::endl;
 	utility::vector1< core::scoring::constraints::ConstraintCOP > ambig_csts;
-	Size scaffold_seqpos(0);
+	//Size scaffold_seqpos(0);
 	for ( core::Size resnum=1; resnum <= pose.total_residue(); ++resnum ) {
 
 		// Check that this position is allowed to be used for stub constraints
 		if ( ! packer_task->pack_residue(resnum) ) continue;
 
 		// sets the index used by the hotspot for its associated scaffold
-		scaffold_seqpos = resnum - pose.conformation().chain_begin( pose.chain( resnum ) );
+		//scaffold_seqpos = resnum - pose.conformation().chain_begin( pose.chain( resnum ) );
 
 		// Start the vector which will become a single AmbiguousConstraint, if apply_ambiguous_constraints is true
 		// Loop over all allowed AAs at this position
@@ -1739,13 +1739,13 @@ remove_hotspot_constraints_from_pose( core::pose::Pose & pose )
     if( cst->type() == "AmbiguousConstraint" ) {
       AmbiguousConstraintCOP ambiguous_cst = AmbiguousConstraintCOP( dynamic_cast< AmbiguousConstraint const *>( cst() ) ); //downcast to derived ambiguous constraint
       if( ambiguous_cst) { // safety check for downcasting
-        if( ambiguous_cst->active_constraint()->type() == "BackboneStubLinear" ) {
+        if( ambiguous_cst->active_constraint()->type() == "BackboneStubLinear" || ambiguous_cst->active_constraint()->type() == "BackboneStub" ) {
           bb_csts.push_back( ambiguous_cst() ); // add the entire ambiguous cst, since it contained a bbcst
         }
       }
     }
 		//tricky; some hotspot stub constraints are added directly with no ambiguity
-		else if( cst->type() == "BackboneStubLinear" )
+		else if( cst->type() == "BackboneStubLinear" || cst->type() == "BackboneStub" )
 			bb_csts.push_back( cst );
   }
   pose.remove_constraints( bb_csts ); // remove all the ambigcsts that contain a bbcst
