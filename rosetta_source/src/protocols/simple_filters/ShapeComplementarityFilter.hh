@@ -97,13 +97,15 @@ public:// mutator
 	void jump_id( Size const & jump_id );
 	void quick( Size const & quick );
 	void verbose( Size const & verbose );
-	void multicomp( bool multicomp );
-	void sym_dof_name( std::string const & sym_dof_name );
 	void residues1( utility::vector1< core::Size > const & residues );
 	void residues2( utility::vector1< core::Size > const & residues );
-
+	void sym_dof_name( std::string const & sym_dof_name );
 	std::string sym_dof_name() const;
+	void write_int_area( bool write_int_area );
+	bool write_int_area( ) const;
+	void multicomp( bool multicomp );
 	bool multicomp( ) const;
+
 
 public:// parser
 

@@ -52,7 +52,7 @@ public:
 	/// The value is now reduced to 100 in order to help the PDE solver (APBS)
 	/// from blowing up, by default, but can be a user-defined value via RosettaScript option
 	/// or command-line option.
-	static const Real DEFAULT_TRANSLATION_DISTANCE;
+	static const int DEFAULT_TRANSLATION_DISTANCE;
 
 public :
 	ddG();
@@ -68,6 +68,8 @@ public :
 	void rb_jump( core::Size j ) { rb_jump_ = j; }
 	core::Size repeats() const { return repeats_; }
 	void repeats( core::Size repeats ) { repeats_ = repeats; }
+	int translate_by() const { return translate_by_; }
+	void translate_by( int translate_by ) { translate_by_ = translate_by; }
 	virtual ~ddG();
 	protocols::moves::MoverOP fresh_instance() const { return (protocols::moves::MoverOP) new ddG; }
 	protocols::moves::MoverOP clone() const;
@@ -118,7 +120,7 @@ private :
 	bool pb_enabled_;
 
 	/// distance in A to separate moledules
-	Real translate_by_;
+	int translate_by_;
 };
 
 } // movers

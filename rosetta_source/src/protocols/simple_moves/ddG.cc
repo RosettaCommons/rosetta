@@ -103,7 +103,7 @@ using namespace core;
 using namespace protocols::simple_moves;
 using namespace core::scoring;
 
-const Real ddG::DEFAULT_TRANSLATION_DISTANCE = 100.0; // A
+const int ddG::DEFAULT_TRANSLATION_DISTANCE = 100.0; // A
 
 ddG::ddG() :
 		simple_moves::DesignRepackMover(ddGCreator::mover_name()),

@@ -42,7 +42,7 @@ namespace simple_filters {
 
 static basic::Tracer TR( "protocols.simple_filters.DdgFilter" );
 
-const core::Real DdgFilter::DEFAULT_TRANSLATION_DISTANCE = 100.0;
+const int DdgFilter::DEFAULT_TRANSLATION_DISTANCE = 100.0;
 
 protocols::filters::FilterOP
 DdgFilterCreator::create_filter() const { return new DdgFilter; }
@@ -249,6 +249,18 @@ DdgFilter::repeats( core::Size const repeats )
 	repeats_ = repeats;
 }
 
+int
+DdgFilter::translate_by() const
+{
+	return( translate_by_ );
+}
+
+void
+DdgFilter::translate_by( int const translate_by )
+{
+	translate_by_ = translate_by;
+}
+
 core::Real
 DdgFilter::compute( core::pose::Pose const & pose_in ) const {
 	core::pose::Pose pose(pose_in);
@@ -264,6 +276,7 @@ DdgFilter::compute( core::pose::Pose const & pose_in ) const {
 		if ( relax_bound() ) {
 			ddg.relax_bound( relax_bound() );
 		}
+		ddg.translate_by( translate_by() );
 		ddg.relax_mover( relax_mover() );
 		core::Real average( 0.0 );
 		for( core::Size i = 1; i<=repeats_; ++i ){

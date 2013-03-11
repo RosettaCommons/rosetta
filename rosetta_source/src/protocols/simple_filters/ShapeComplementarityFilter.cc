@@ -60,6 +60,7 @@ ShapeComplementarityFilter::ShapeComplementarityFilter():
 	residues1_( ),
 	residues2_( ),
 	sym_dof_name_(""),
+	write_int_area_(false),
 	multicomp_(false)
 {}
 
@@ -88,8 +89,9 @@ ShapeComplementarityFilter::ShapeComplementarityFilter( ShapeComplementarityFilt
 	verbose_( rval.verbose_ ),
 	residues1_( rval.residues1_ ),
 	residues2_( rval.residues2_ ),
-	multicomp_( rval.multicomp_ ),
-	sym_dof_name_( rval.sym_dof_name_ )
+	sym_dof_name_( rval.sym_dof_name_ ),
+	write_int_area_( rval.write_int_area_ ),
+	multicomp_( rval.multicomp_ )
 {}
 
 void ShapeComplementarityFilter::filtered_sc( Real const & filtered_sc ) { filtered_sc_ = filtered_sc; }
@@ -97,12 +99,14 @@ void ShapeComplementarityFilter::filtered_area( Real const & filtered_area ) { f
 void ShapeComplementarityFilter::jump_id( Size const & jump_id ) { jump_id_ = jump_id; }
 void ShapeComplementarityFilter::quick( Size const & quick ) { quick_ = quick; }
 void ShapeComplementarityFilter::verbose( Size const & verbose ) { verbose_ = verbose; }
-void ShapeComplementarityFilter::sym_dof_name( std::string const & sym_dof_name ) { sym_dof_name_ = sym_dof_name; }
-std::string ShapeComplementarityFilter::sym_dof_name() const { return sym_dof_name_; }
-void ShapeComplementarityFilter::multicomp( bool multicomp ) { multicomp_ = multicomp; }
-bool ShapeComplementarityFilter::multicomp() const { return multicomp_; }
 void ShapeComplementarityFilter::residues1( utility::vector1< core::Size > const & residues ) { residues1_ = residues; }
 void ShapeComplementarityFilter::residues2( utility::vector1< core::Size > const & residues ) { residues2_ = residues; }
+void ShapeComplementarityFilter::sym_dof_name( std::string const & sym_dof_name ) { sym_dof_name_ = sym_dof_name; }
+std::string ShapeComplementarityFilter::sym_dof_name() const { return sym_dof_name_; }
+void ShapeComplementarityFilter::write_int_area( bool write_int_area ) { write_int_area_ = write_int_area; }
+bool ShapeComplementarityFilter::write_int_area() const { return write_int_area_; }
+void ShapeComplementarityFilter::multicomp( bool multicomp ) { multicomp_ = multicomp; }
+bool ShapeComplementarityFilter::multicomp() const { return multicomp_; }
 
 /// @brief
 core::Size ShapeComplementarityFilter::compute( Pose const & pose ) const
