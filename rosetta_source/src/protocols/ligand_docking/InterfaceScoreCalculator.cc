@@ -25,6 +25,7 @@
 
 #include <core/pose/util.hh>
 #include <protocols/ligand_docking/ligand_scores.hh>
+#include <protocols/qsar/scoring_grid/GridManager.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
@@ -72,7 +73,8 @@ InterfaceScoreCalculator::InterfaceScoreCalculator():
 		Mover("InterfaceScoreCalculator"),
 		chains_(),
 		native_(NULL),
-		score_fxn_(NULL)
+		score_fxn_(NULL),
+		normalization_function_(NULL)
 {}
 
 InterfaceScoreCalculator::InterfaceScoreCalculator(InterfaceScoreCalculator const & that):
@@ -80,7 +82,8 @@ InterfaceScoreCalculator::InterfaceScoreCalculator(InterfaceScoreCalculator cons
 		protocols::moves::Mover( that ),
 		chains_(that.chains_),
 		native_(that.native_),
-		score_fxn_(that.score_fxn_)
+		score_fxn_(that.score_fxn_),
+		normalization_function_(that.normalization_function_)
 {}
 
 InterfaceScoreCalculator::~InterfaceScoreCalculator() {}
@@ -146,6 +149,10 @@ InterfaceScoreCalculator::parse_my_tag(
 		native_ = new core::pose::Pose;
 		core::import_pose::pose_from_pdb(*native_, native_str);
 	}
+	if(tag->hasOption("normalize")) {
+		std::string const & normalization_mode = tag->getOption<std::string>("normalize");
+		normalization_function_ = protocols::qsar::scoring_grid::get_score_normalization_function(normalization_mode);
+	}
 }
 
 void InterfaceScoreCalculator::apply(core::pose::Pose & pose) {
@@ -178,6 +185,7 @@ void InterfaceScoreCalculator::add_scores_to_job(
 		job->add_string_real_pair(score_term,  weight * pose.energies().total_energies()[ score_type ]);
 	}
 	job->add_string_real_pair(name_from_score_type(core::scoring::total_score), tot_score);
+	
 }
 
 
@@ -201,7 +209,13 @@ InterfaceScoreCalculator::append_ligand_docking_scores(
 
 		utility::vector1<core::Size> jump_ids= core::pose::get_jump_ids_from_chain(chain, after);
 		foreach(core::Size jump_id, jump_ids){
-			append_interface_deltas(jump_id, job, after, score_fxn_);
+			if(normalization_function_)
+			{
+				append_interface_deltas(jump_id,job,after,score_fxn_,normalization_function_);
+			}else
+			{
+				append_interface_deltas(jump_id, job, after, score_fxn_);
+			}
 			append_ligand_docking_scores(jump_id, after, job);
 		}
 	}
@@ -223,7 +237,14 @@ InterfaceScoreCalculator::append_ligand_docking_scores(
 		append_ligand_RMSD(jump_id, job, *native_, after);
 	}
 
-	append_ligand_grid_scores(jump_id,job,after);
+	if(normalization_function_ && !protocols::qsar::scoring_grid::GridManager::get_instance()->is_normalization_enabled())
+	{
+		append_ligand_grid_scores(jump_id,job,after,normalization_function_);
+	}else
+	{
+		append_ligand_grid_scores(jump_id,job,after);
+	}
+
 }
 
 

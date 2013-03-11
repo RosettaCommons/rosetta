@@ -65,6 +65,8 @@ public:
 	void set_qsar_map(qsarMapOP qsar_map);
 	///@brief is a qsar map attached to the grid manager?
 	bool is_qsar_map_attached();
+	///@brief is normalization applied during scoring?
+	bool is_normalization_enabled();
 	///@brief given a grid type, return a pointer to the grid
 	GridBaseOP get_grid(std::string const & grid_name);
 	///@brief get a list of grid names

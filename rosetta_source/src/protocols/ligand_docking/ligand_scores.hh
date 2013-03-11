@@ -25,6 +25,7 @@
 
 #include <core/types.hh>
 #include <protocols/jd2/Job.fwd.hh>
+#include <protocols/qsar/scoring_grid/ScoreNormalization.fwd.hh>
 #include <utility/vector1.hh>
 
 
@@ -42,6 +43,16 @@ append_interface_deltas(
 		const core::scoring::ScoreFunctionOP scorefxn
 );
 
+	
+void
+append_interface_deltas(
+		core::Size jump_id,
+		protocols::jd2::JobOP job,
+		core::pose::Pose const & after,
+		const core::scoring::ScoreFunctionOP scorefxn,
+		protocols::qsar::scoring_grid::ScoreNormalizationOP normalization_function
+);
+
 void
 append_ligand_travel(
 		core::Size jump_id,
@@ -55,6 +66,14 @@ append_ligand_grid_scores(
 		core::Size jump_id,
 		protocols::jd2::JobOP job,
 		core::pose::Pose const & after
+);
+
+void
+append_ligand_grid_scores(
+		core::Size jump_id,
+		protocols::jd2::JobOP job,
+		core::pose::Pose const & after,
+		protocols::qsar::scoring_grid::ScoreNormalizationOP normalization_function
 );
 
 void

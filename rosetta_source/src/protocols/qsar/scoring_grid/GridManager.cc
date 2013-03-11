@@ -144,6 +144,18 @@ void GridManager::insert_grid(std::string const name, GridBaseOP const grid)
 	grid_map_[name] = grid;
 }
 
+bool GridManager::is_normalization_enabled()
+{
+	if(norm_function_)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 GridBaseOP GridManager::get_grid(std::string const & grid_type)
 {
 	return grid_map_.find(grid_type)->second;

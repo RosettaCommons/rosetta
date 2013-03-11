@@ -28,6 +28,8 @@
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <protocols/jd2/Job.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <protocols/qsar/scoring_grid/ScoreNormalization.hh>
+
 
 #include <utility/vector1.hh>
 
@@ -66,6 +68,7 @@ private:
 	utility::vector1<std::string> chains_;
 	core::pose::PoseOP native_;
 	core::scoring::ScoreFunctionOP score_fxn_;
+	protocols::qsar::scoring_grid::ScoreNormalizationOP normalization_function_;
 
 	void
 	add_scores_to_job(
