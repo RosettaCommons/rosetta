@@ -604,6 +604,8 @@ sources = {
 	"pilot/shilei" : [
 		"lowresdock_patchdock_hotspot_cst",
 		"cluster_hotspot_docking",
+		"score_hotspot_cst",
+		#"docking_parallel",
 	],
 	"pilot/smlewis" : [
 		#"Extender",

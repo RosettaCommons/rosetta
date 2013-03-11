@@ -297,6 +297,10 @@ namespace docking { StringOptionKey const ensemble1( "docking:ensemble1" );  }
 namespace docking { StringOptionKey const ensemble2( "docking:ensemble2" );  }
 namespace docking { RealOptionKey const dock_mcm_trans_magnitude( "docking:dock_mcm_trans_magnitude" );  }
 namespace docking { RealOptionKey const dock_mcm_rot_magnitude( "docking:dock_mcm_rot_magnitude" );  }
+namespace docking { RealOptionKey const minimization_threshold( "docking:minimization_threshold" );  }
+namespace docking { RealOptionKey const temperature( "docking:temperature" );  }
+namespace docking { IntegerOptionKey const repack_period( "docking:repack_period" );  }
+namespace docking { BooleanOptionKey const extra_rottrial( "docking:extra_rottrial" );  }
 namespace docking { BooleanOptionKey const dock_rtmin( "docking:dock_rtmin" );  }
 namespace docking { BooleanOptionKey const sc_min( "docking:sc_min" );  }
 namespace docking { BooleanOptionKey const norepack1( "docking:norepack1" );  }
@@ -666,6 +670,3 @@ namespace fold_cst { BooleanOptionKey const skip_on_noviolation_in_stage1( "fold
 namespace fold_cst { RealOptionKey const stage1_ramp_cst_cycle_factor( "fold_cst:stage1_ramp_cst_cycle_factor" );  }
 namespace fold_cst { RealOptionKey const stage2_constraint_threshold( "fold_cst:stage2_constraint_threshold" );  }
 namespace fold_cst { BooleanOptionKey const ignore_sequence_seperation( "fold_cst:ignore_sequence_seperation" );  }
-namespace fold_cst { BooleanOptionKey const no_recover_low_at_constraint_switch( "fold_cst:no_recover_low_at_constraint_switch" );  }
-namespace fold_cst { BooleanOptionKey const ramp_coord_cst( "fold_cst:ramp_coord_cst" );  }
-namespace resample { BooleanOptionKey const resample( "resample" );  }

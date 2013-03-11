@@ -47,6 +47,10 @@ namespace docking { extern StringOptionKey const ensemble1; }
 namespace docking { extern StringOptionKey const ensemble2; }
 namespace docking { extern RealOptionKey const dock_mcm_trans_magnitude; }
 namespace docking { extern RealOptionKey const dock_mcm_rot_magnitude; }
+namespace docking { extern RealOptionKey const minimization_threshold; }
+namespace docking { extern RealOptionKey const temperature; }
+namespace docking { extern IntegerOptionKey const repack_period; }
+namespace docking { extern BooleanOptionKey const extra_rottrial; }
 namespace docking { extern BooleanOptionKey const dock_rtmin; }
 namespace docking { extern BooleanOptionKey const sc_min; }
 namespace docking { extern BooleanOptionKey const norepack1; }

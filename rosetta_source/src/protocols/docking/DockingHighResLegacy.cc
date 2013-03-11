@@ -177,6 +177,10 @@ void DockingHighResLegacy::set_min_type( std::string min_type_in ) { min_type_ =
 
 void DockingHighResLegacy::set_repack( bool repack_switch){ repack_switch_ = repack_switch;}
 
+void DockingHighResLegacy::set_trans_magnitude( core::Real trans_magnitude) { trans_magnitude_ = trans_magnitude;}
+
+void DockingHighResLegacy::set_rot_magnitude( core::Real rot_magnitude) { rot_magnitude_ = rot_magnitude;}
+
 void DockingHighResLegacy::set_task_factory( core::pack::task::TaskFactoryOP task )
 {
 	init_task_factory_ = task;
@@ -199,12 +203,16 @@ void DockingHighResLegacy::set_default( core::pose::Pose & pose ) {
 	// SETS UP the stuff in pose
 	(*scorefxn())( pose );
 
-	trans_magnitude_ = option[ OptionKeys::docking::dock_mcm_trans_magnitude ]();
-	rot_magnitude_ = option[ OptionKeys::docking::dock_mcm_rot_magnitude ]();
+	core::Real trans_magnitude=option[ OptionKeys::docking::dock_mcm_trans_magnitude ]();
+	set_trans_magnitude(trans_magnitude);
+	core::Real rot_magnitude=option[ OptionKeys::docking::dock_mcm_rot_magnitude ]();
+	set_rot_magnitude(rot_magnitude);
 
-	temperature_ = 0.8;
+	temperature_ = option[ OptionKeys::docking::temperature]();
+	//temperature_ = 0.8;
 	repack_switch_ = true;
-	repack_period_ = 8;
+	repack_period_ = option[ OptionKeys::docking::repack_period]();
+	//repack_period_ = 8;
 
 	//sets up MC object
 	mc_ = new moves::MonteCarlo( pose, *scorefxn(), temperature_ );
@@ -530,8 +538,20 @@ void DockingHighResLegacy::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 	rb_mover->add_mover( rb_perturb );
 	if ( repack_switch_ ) rb_mover->add_mover( pack_rottrial );
 
-	core::Real minimization_threshold = 15.0;
-	JumpOutMoverOP rb_mover_min = new JumpOutMover( rb_mover, min_mover, scorefxn(), minimization_threshold );
+	SequenceMoverOP min_repack_mover = new SequenceMover;
+	min_repack_mover->add_mover( min_mover );
+	min_repack_mover->add_mover( pack_rottrial );
+
+	core::Real minimization_threshold = option[ OptionKeys::docking::minimization_threshold]();
+	//core::Real minimization_threshold = 15.0;
+
+  JumpOutMoverOP rb_mover_min;
+	if ( option[ OptionKeys::docking::extra_rottrial] ) {
+		rb_mover_min = new JumpOutMover( rb_mover, min_repack_mover, scorefxn(), minimization_threshold );
+	} else {
+		rb_mover_min = new JumpOutMover( rb_mover, min_mover, scorefxn(), minimization_threshold );
+	}
+
 	TrialMoverOP rb_mover_min_trial = new TrialMover( rb_mover_min, mc_ );
 
 	//every step (rb_mover_min_trial): the standard mcm cycle
@@ -561,8 +581,9 @@ void DockingHighResLegacy::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 	TrialMoverOP minimize_trial = new TrialMover( min_mover, mc_ );
 
 	//set up mcm cycles and mcm_repack cycles
-	RepeatMoverOP mcm_four_cycles = new RepeatMover( rb_mover_min_trial, 4 );
-	RepeatMoverOP mcm_fortyfive_cycles = new RepeatMover( rb_mover_min_trial_repack, 45 );
+	RepeatMoverOP mcm_four_cycles = new RepeatMover( rb_mover_min_trial, option[ OptionKeys::docking::dock_mcm_first_cycles]() );
+	RepeatMoverOP mcm_fortyfive_cycles = new RepeatMover( rb_mover_min_trial_repack, option[ OptionKeys::docking::dock_mcm_second_cycles]() );
+
 	//set up protocol mover
 	TR << "::::::::::::::::::DOCK_MCM:::::::::::::::::::" << std::endl;
 

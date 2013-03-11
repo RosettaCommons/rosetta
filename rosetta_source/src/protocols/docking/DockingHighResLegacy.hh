@@ -82,6 +82,13 @@ public:
 
 	void define_loops( core::pose::Pose const & pose, loops::LoopsOP loop_set, Real & interface_dist );
 
+	void set_trans_magnitude( core::Real trans_magnitude);
+	void set_rot_magnitude( core::Real rot_magnitude);
+	void set_rt_min( bool rt_min ){ rt_min_ = rt_min; }
+	bool rt_min() { return rt_min_; }
+	void set_sc_min( bool sc_min ){ sc_min_ = sc_min; }
+	bool sc_min() { return sc_min_; }
+
 	moves::MonteCarloOP get_mc();
 
 	// protocol functions
@@ -106,6 +113,8 @@ private:
 	bool chi_, bb_;
 	bool repack_switch_; // master switch to turn repacking during docking on/off. Only makes sense if repack_period > 0
 	bool design_;
+	bool rt_min_;
+	bool sc_min_;
 
 	// packing
 	/// @brief utility function to set up packer options for internal task factory

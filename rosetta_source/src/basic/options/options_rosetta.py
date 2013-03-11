@@ -610,6 +610,26 @@ Options = Option_Group( '',
 			desc='The magnitude of the rotational perturbation during mcm in docking.',
 			default='5.0'
 			),
+                Option('minimization_threshold', 'Real',
+                        short='Threhold for Rosetta to decide whether to minimize jump after a rigid_pert',
+                        desc='Threhold for Rosetta to decide whether to minimize jump after a rigid_pert',
+                        default='15'
+                        ),
+                Option('temperature', 'Real',
+                        short='Temperature setting for the mc object during rigid-body docking',
+                        desc='Temperature setting for the mc object during rigid-body docking',
+                        default='0.8'
+                        ),
+                Option('repack_period', 'Integer',
+                        short='full repack period during dockingMCM',
+                        desc='full repack period during dockingMCM',
+                        default='8'
+                        ),
+                Option('extra_rottrial', 'Boolean',
+                        short='extra rotamer trial after minimization',
+                        desc='extra rotamer trial after minimization',
+                        default='false'
+                        ),
 		Option('dock_rtmin', 'Boolean',
 			short='does rotamer trials with minimization, RTMIN',
 			desc='does rotamer trials with minimization, RTMIN',

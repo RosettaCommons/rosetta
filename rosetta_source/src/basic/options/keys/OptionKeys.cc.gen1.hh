@@ -1,3 +1,6 @@
+namespace fold_cst { BooleanOptionKey const no_recover_low_at_constraint_switch( "fold_cst:no_recover_low_at_constraint_switch" );  }
+namespace fold_cst { BooleanOptionKey const ramp_coord_cst( "fold_cst:ramp_coord_cst" );  }
+namespace resample { BooleanOptionKey const resample( "resample" );  }
 namespace resample { FileOptionKey const silent( "resample:silent" );  }
 namespace resample { StringOptionKey const tag( "resample:tag" );  }
 namespace resample { BooleanOptionKey const stage1( "resample:stage1" );  }
@@ -667,5 +670,3 @@ namespace rbe { BooleanOptionKey const rbe( "rbe" );  }
 namespace rbe { StringOptionKey const server_url( "rbe:server_url" );  }
 namespace rbe { StringOptionKey const server_port( "rbe:server_port" );  }
 namespace rbe { RealOptionKey const poll_frequency( "rbe:poll_frequency" );  }
-namespace blivens { BooleanOptionKey const blivens( "blivens" );  }
-namespace blivens { namespace disulfide_scorer { BooleanOptionKey const disulfide_scorer( "blivens:disulfide_scorer" );  } }

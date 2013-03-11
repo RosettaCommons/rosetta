@@ -1424,6 +1424,26 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 5.0</dd><br>
 </dl>
 <dl>
+<dt><b>-minimization_threshold</b> \<Real\><dt>
+<dd>Threhold for Rosetta to decide whether to minimize jump after a rigid_pert</dd><br>
+<dd>Default: 15</dd><br>
+</dl>
+<dl>
+<dt><b>-temperature</b> \<Real\><dt>
+<dd>Temperature setting for the mc object during rigid-body docking</dd><br>
+<dd>Default: 0.8</dd><br>
+</dl>
+<dl>
+<dt><b>-repack_period</b> \<Integer\><dt>
+<dd>full repack period during dockingMCM</dd><br>
+<dd>Default: 8</dd><br>
+</dl>
+<dl>
+<dt><b>-extra_rottrial</b> \<Boolean\><dt>
+<dd>extra rotamer trial after minimization</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-dock_rtmin</b> \<Boolean\><dt>
 <dd>does rotamer trials with minimization, RTMIN</dd><br>
 <dd>Default: false</dd><br>
