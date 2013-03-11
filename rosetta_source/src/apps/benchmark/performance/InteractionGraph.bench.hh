@@ -165,7 +165,6 @@ public:
 
 	void setup_for_score12() {
 		using namespace core::scoring;
-		using namespace protocols::relax;
 
 		scorefxn_->set_weight( fa_atr, 0.8 );
 		scorefxn_->set_weight( fa_rep, 0.44 );
@@ -194,7 +193,6 @@ public:
 		using namespace core::scoring;
 		using namespace core::scoring::methods;
 		using namespace core::scoring::hbonds;
-		using namespace protocols::relax;
 
 		EnergyMethodOptions emo;
 		HBondOptions hbo;
@@ -229,7 +227,6 @@ public:
 
 	void setup_for_sc12he() {
 		using namespace core::scoring;
-		using namespace protocols::relax;
 
 		scorefxn_->set_weight( fa_atr, 0.8 );
 		scorefxn_->set_weight( fa_rep, 0.44 );
@@ -257,7 +254,6 @@ public:
 	void setup_for_mmstd() {
 		using namespace core::scoring;
 		using namespace core::scoring::methods;
-		using namespace protocols::relax;
 
 		EnergyMethodOptions emo;
 		emo.unfolded_energies_type( "UNFOLDED_MM_STD" );
@@ -286,7 +282,6 @@ public:
 		using namespace core::scoring;
 		using namespace core::scoring::methods;
 		using namespace core::scoring::hbonds;
-		using namespace protocols::relax;
 
 		EnergyMethodOptions emo;
 		HBondOptions hbo;

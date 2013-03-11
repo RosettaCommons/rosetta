@@ -57,6 +57,8 @@ public:
 		test_feature_.report_features(pose, struct_id, db_session_);
 	};
 
-	virtual void tearDown() {};
+	virtual void tearDown() {
+		db_session_ = 0;
+	}
 
 };

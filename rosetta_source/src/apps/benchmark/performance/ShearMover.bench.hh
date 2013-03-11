@@ -186,5 +186,8 @@ public:
 		}
 	};
 
-	virtual void tearDown() {};
+	virtual void tearDown() {
+		pose = 0;
+		movemap = 0;
+	}
 };

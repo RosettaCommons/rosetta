@@ -13,8 +13,8 @@
 /// @brief  Base class for mini rosetta benchmark system
 /// @author Sergey Lyskov
 
-#ifndef INCLUDED_apps_performance_benchmark_performance_benchmark_hh
-#define INCLUDED_apps_performance_benchmark_performance_benchmark_hh
+#ifndef INCLUDED_apps_benchmark_performance_benchmark_hh
+#define INCLUDED_apps_benchmark_performance_benchmark_hh
 
 #include <core/types.hh>
 #include <basic/Tracer.hh>

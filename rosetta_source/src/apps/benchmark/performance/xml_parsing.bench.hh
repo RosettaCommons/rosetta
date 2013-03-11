@@ -120,7 +120,7 @@ public:
 			rosetta_script_.clear();
 			rosetta_script_.seekg(std::ios_base::beg);
 		}
-	};
+	}
 
-	virtual void tearDown() {};
+	virtual void tearDown() {}
 };

@@ -16,12 +16,7 @@
 
 
 #include <apps/benchmark/performance/performance_benchmark.hh>
-// AUTO-REMOVED #include <apps/benchmark/performance/init_util.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <protocols/ligand_docking/LigandDockProtocol.hh>
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 //Auto Headers
 #include <protocols/jd2/JobDistributor.hh>

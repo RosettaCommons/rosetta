@@ -279,6 +279,6 @@ FastRelaxPerformanceBenchmark frpb_sc12( "protocols.relax.fast_relax_performance
 FastRelaxPerformanceBenchmark frpb_sc12sp2( "protocols.relax.fast_relax_performance_benchmark_sc12sp2", fast_relax_perfbench_sc12sp2 );
 FastRelaxPerformanceBenchmark frpb_sc12he( "protocols.relax.fast_relax_performance_benchmark_sc12he", fast_relax_perfbench_sc12he );
 FastRelaxPerformanceBenchmark frpb_mmstd( "protocols.relax.fast_relax_performance_benchmark_mmstd", fast_relax_perfbench_mmstd );
-FastRelaxPerformanceBenchmark frpb_sp2hecart( "protocols.relax.fast_relax_performance_benchmark_sp2hecart", fast_relax_perfbench_sp2hecart );
+//FastRelaxPerformanceBenchmark frpb_sp2hecart( "protocols.relax.fast_relax_performance_benchmark_sp2hecart", fast_relax_perfbench_sp2hecart );
 
 #endif

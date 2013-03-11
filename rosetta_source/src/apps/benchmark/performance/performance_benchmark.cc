@@ -75,8 +75,8 @@ DockingBenchmark_high DockingHigh("protocols.docking.DockingHighRes");
 // AUTO-REMOVED #include <apps/benchmark/performance/Design.bench.hh>
 //DesignBenchmark design("protocols.moves.PackRotamersMover");
 
-#include <apps/benchmark/performance/LigandDock.bench.hh>
-LigandDockBenchmark ligand_dock("protocols.ligand_docking.LigandDockProtocol");
+//#include <apps/benchmark/performance/LigandDock.bench.hh>
+//LigandDockBenchmark ligand_dock("protocols.ligand_docking.LigandDockProtocol");
 
 //#include <apps/benchmark/performance/LigandDockScript.bench.hh>
 //LigandDockScriptBenchmark ligand_dock_script("protocols.ligand_docking.LigandDockScript");

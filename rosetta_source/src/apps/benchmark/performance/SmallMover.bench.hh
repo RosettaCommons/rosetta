@@ -55,13 +55,16 @@ public:
 
 		// run once to trigger Ramachandran score calculation.
 		small_mover.apply(*pose);
-	};
+	}
 
 	virtual void run(core::Real scaleFactor) {
 		for(int i=0; i<2000*scaleFactor; i++) {
 			small_mover.apply(*pose);
 		}
-	};
+	}
 
-	virtual void tearDown() {};
+	virtual void tearDown() {
+		pose = 0;
+		movemap = 0;
+	}
 };
