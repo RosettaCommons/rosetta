@@ -30,10 +30,6 @@
 
 #ifdef WITH_PYTHON
 #include "Python.h"
-#elif defined PYROSETTA
-#include "Python.h"
-#else
-typedef int PyObject;
 #endif
 
 namespace core {
@@ -115,6 +111,7 @@ private:
 	// called once to initialize the python evaluator object (needs the pose so it can't be put in the constructor)
 	void initialize_target_evaluator( core::pose::Pose const & pose, std::string eff_file="" );
 
+#ifdef WITH_PYTHON
 	// helper function: convert a pose to a python list
 	PyObject* pose_to_pycoords( core::pose::Pose const & pose );
 
@@ -123,6 +120,7 @@ private:
 		core::pose::Pose const & pose,
 		PyObject* pygrads,
 		utility::vector1 < utility::vector1 < numeric::xyzVector< core::Real > > > & rosgrads );
+#endif
 
 	core::Real res_low_, res_high_;
 	std::string tempdir_;
@@ -135,7 +133,9 @@ private:
 	utility::vector1<std::string> cif_files_;
 	bool dm_, prime_and_switch_;
 
+#ifdef WITH_PYTHON
 	PyObject *target_evaluator_;
+#endif
 
 	// reference pose used to initialize the evaluator
 	core::pose::PoseOP ref_pose_;

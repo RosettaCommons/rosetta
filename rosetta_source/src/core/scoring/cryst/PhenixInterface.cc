@@ -356,8 +356,8 @@ void PhenixInterface::fitBfactors (core::pose::Pose & pose) {
 }
 
 
-PyObject* PhenixInterface::pose_to_pycoords( core::pose::Pose const & pose ) {
 #ifdef WITH_PYTHON
+PyObject* PhenixInterface::pose_to_pycoords( core::pose::Pose const & pose ) {
 	using namespace core::pose::symmetry;
 	using namespace core::conformation::symmetry;
 
@@ -449,17 +449,15 @@ PyObject* PhenixInterface::pose_to_pycoords( core::pose::Pose const & pose ) {
 	}
 
 	return pCoords;  // calling function must dereference this
-#else
-	utility_exit_with_message( "ERROR!  To use crystal refinement compile Rosetta with extras=python." );
-#endif
 	return NULL;
 }
+#endif
 
+#ifdef WITH_PYTHON
 void PhenixInterface::pylist_to_grads(
 			core::pose::Pose const & pose,
 			PyObject* pygrads,
 			utility::vector1 < utility::vector1 < numeric::xyzVector< core::Real > > > & grads ) {
-#ifdef WITH_PYTHON
 	using namespace core::pose::symmetry;
 	using namespace core::conformation::symmetry;
 
@@ -514,10 +512,8 @@ void PhenixInterface::pylist_to_grads(
 			listCounter += 3; // placeholder
 		}
 	}
-#else
-	utility_exit_with_message( "ERROR!  To use crystal refinement compile Rosetta with extras=python." );
-#endif
 }
+#endif
 
 
 void PhenixInterface::stealBfactorsFromFile(core::pose::Pose & pose, std::string filename) {
