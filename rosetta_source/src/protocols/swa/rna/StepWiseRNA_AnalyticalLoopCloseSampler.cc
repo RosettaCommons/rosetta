@@ -10,7 +10,7 @@
 /// @file StepWiseRNA_AnalyticalLoopCloseSampler
 /// @brief Alternative SWA sampling using Analytical Loop Closure
 /// @detailed
-/// @author Fang-Chieh Chou 
+/// @author Fang-Chieh Chou
 
 //////////////////////////////////
 #include <protocols/swa/rna/StepWiseRNA_Classes.hh>
@@ -60,7 +60,7 @@
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/util.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/AtomType.hh> 
+#include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <protocols/rna/RNA_LoopCloser.hh>
@@ -123,7 +123,7 @@ StepWiseRNA_AnalyticalLoopCloseSampler::StepWiseRNA_AnalyticalLoopCloseSampler (
 	finer_sampling_at_chain_closure_ ( false ), //New option Jun 10 2010
 	PBP_clustering_at_chain_closure_ ( false ), //New option Aug 15 2010
 	extra_anti_chi_rotamer_(false), //Split to syn and anti on June 16, 2011
-	extra_syn_chi_rotamer_(false), //Split to syn and anti on June 16, 2011	
+	extra_syn_chi_rotamer_(false), //Split to syn and anti on June 16, 2011
 	use_phenix_geo_(false) //The standard geo from PHENIX
 
 {
@@ -820,6 +820,7 @@ StepWiseRNA_AnalyticalLoopCloseSampler::sample_o2star_hydrogen ( core::pose::Pos
 	//reset the HO2star torsion to its starting value as to prevent randomness due to conformations sampling order...
 	for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ) {
 		if ( pose.residue ( seq_num ).aa() == core::chemical::aa_vrt ) continue; //FCC
+		if ( !pose.residue ( seq_num ).is_RNA()) continue; //FCC
 
 		pose.set_torsion ( TorsionID ( seq_num, id::CHI, 4 ), pose_with_original_HO2star_torsion.torsion ( TorsionID ( seq_num, id::CHI, 4 ) ) );
 	}

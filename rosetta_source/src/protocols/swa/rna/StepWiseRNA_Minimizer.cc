@@ -103,9 +103,9 @@ namespace rna {
 		rm_virt_phosphate_(false),
 		native_edensity_score_cutoff_(-1.0),
 		centroid_screen_(true),
-		perform_o2star_pack_(true), 
-		output_before_o2star_pack_(false), 
-		perform_minimize_(true), 
+		perform_o2star_pack_(true),
+		output_before_o2star_pack_(false),
+		perform_minimize_(true),
 		num_pose_minimize_(999999), //Feb 02, 2012
 		minimize_and_score_sugar_(true),
 		rename_tag_(true),
@@ -127,7 +127,7 @@ namespace rna {
 
 	//////////////////////////////////////////////////////////////////////////
 	bool
-	minimizer_sort_criteria(pose_data_struct2 pose_data_1, pose_data_struct2 pose_data_2) {  
+	minimizer_sort_criteria(pose_data_struct2 pose_data_1, pose_data_struct2 pose_data_2) {
 		return (pose_data_1.score < pose_data_2.score);
 	}
 	//////////////////////////////////////////////////////////////////////////
@@ -147,8 +147,8 @@ namespace rna {
 		Output_boolean(" verbose_=", verbose_ ); std::cout << std::endl;
 		Output_boolean(" native_screen_=", native_screen_ ); std::cout << std::endl;
 		std::cout << " native_screen_rmsd_cutoff_=" << native_screen_rmsd_cutoff_ << std::endl;
-		Output_boolean(" perform_electron_density_screen_=", perform_electron_density_screen_ ); std::cout << std::endl;	
-		Output_boolean(" rm_virt_phosphate_=", rm_virt_phosphate_ ); std::cout << std::endl;	
+		Output_boolean(" perform_electron_density_screen_=", perform_electron_density_screen_ ); std::cout << std::endl;
+		Output_boolean(" rm_virt_phosphate_=", rm_virt_phosphate_ ); std::cout << std::endl;
 		std::cout << " native_edensity_score_cutoff_=" << native_edensity_score_cutoff_ << std::endl;
 		Output_boolean(" centroid_screen_=", centroid_screen_ ); std::cout << std::endl;
 		Output_boolean(" perform_o2star_pack_=", perform_o2star_pack_); std::cout << std::endl;
@@ -156,14 +156,14 @@ namespace rna {
 		std::cout << " (Upper_limit) num_pose_minimize_=" << num_pose_minimize_<< " pose_data_list.size()= " << pose_data_list_.size() <<  std::endl;
 		Output_boolean(" minimize_and_score_sugar_=", minimize_and_score_sugar_ ); std::cout << std::endl;
 		Output_boolean(" user_inputted_VDW_bin_screener_=", user_input_VDW_bin_screener_->user_inputted_VDW_screen_pose() ); std::cout << std::endl;
-		Output_seq_num_list(" working_global_sample_res_list=", job_parameters_->working_global_sample_res_list() ); 
+		Output_seq_num_list(" working_global_sample_res_list=", job_parameters_->working_global_sample_res_list() );
 		Output_boolean(" perform_minimize_=", perform_minimize_); std::cout << std::endl;
 		Output_boolean(" rename_tag_=", rename_tag_); std::cout << std::endl;
 
 		clock_t const time_start( clock() );
 
 		Size const gap_size(  job_parameters_->gap_size() );
-	
+
 		RNA_LoopCloser rna_loop_closer;
 
 		SilentFileData silent_file_data;
@@ -238,14 +238,14 @@ namespace rna {
 				for (Size ii = 1; ii <= pose.total_residue(); ++ii) {
 					pose::remove_variant_type_from_pose_residue(pose, "VIRTUAL_PHOSPHATE", ii);
 				}
-			}			
+			}
 
 			if(verbose_ && output_before_o2star_pack_) output_pose_data_wrapper(tag, 'B', pose, silent_file_data, silent_file_ + "_before_o2star_pack");
 
 			Remove_virtual_O2Star_hydrogen(pose);
 
 			if(perform_o2star_pack_) o2star_minimize(pose, scorefxn_, get_surrounding_O2star_hydrogen(pose, working_minimize_res, o2star_pack_verbose) );
-				
+
 			if(verbose_ && !output_before_o2star_pack_) output_pose_data_wrapper(tag, 'B', pose, silent_file_data, silent_file_ + "_before_minimize");
 
  			///////Minimization/////////////////////////////////////////////////////////////////////////////
@@ -253,7 +253,7 @@ namespace rna {
 				rna_loop_closer.apply( pose, five_prime_chain_break_res ); //This doesn't do anything if rna_loop_closer was already applied during sampling stage...May 10,2010
 
 				if(verbose_) output_pose_data_wrapper(tag, 'C', pose, silent_file_data, silent_file_ + "_after_loop_closure_before_minimize");
-			}			
+			}
 
 			for(Size round=1; round<=move_map_list_.size(); round++){
 				core::kinematics::MoveMap mm=move_map_list_[round];
@@ -261,11 +261,11 @@ namespace rna {
 				if(perform_minimize_) minimizer.run( pose, mm, *(scorefxn_), options );
 				if(perform_o2star_pack_) o2star_minimize(pose, scorefxn_, get_surrounding_O2star_hydrogen(pose, working_minimize_res, o2star_pack_verbose) );
 
-				if( gap_size == 0 ){ 
+				if( gap_size == 0 ){
 					Real mean_dist_err = rna_loop_closer.apply( pose, five_prime_chain_break_res );
 					std::cout << "mean_dist_err (round= " << round << " ) = " <<  mean_dist_err << std::endl;
 
-					if(perform_o2star_pack_) o2star_minimize(pose, scorefxn_, get_surrounding_O2star_hydrogen(pose, working_minimize_res, o2star_pack_verbose) ); 
+					if(perform_o2star_pack_) o2star_minimize(pose, scorefxn_, get_surrounding_O2star_hydrogen(pose, working_minimize_res, o2star_pack_verbose) );
 					if(perform_minimize_) minimizer.run( pose, mm, *(scorefxn_), options );
 
 				}
@@ -293,7 +293,7 @@ namespace rna {
 		std::cout << "FINAL minimized_pose_data_list.size() = " << minimized_pose_data_list.size() << std::endl;
 
 		if(minimized_pose_data_list.size()==0){
-			std::cout << "After finish minimizing,  minimized_pose_data_list.size()==0!" << std::endl;	
+			std::cout << "After finish minimizing,  minimized_pose_data_list.size()==0!" << std::endl;
 			output_empty_minimizer_silent_file();
 		}
 
@@ -327,10 +327,10 @@ namespace rna {
 
 		using namespace ObjexxFCL;
 
-		Size five_prime_chain_break_res = 0; 
+		Size five_prime_chain_break_res = 0;
 
 		if(job_parameters_->Is_simple_full_length_job_params()){
-			//March 03, 2012. If job_parameters_->Is_simple_full_length_job_params()==true, then 
+			//March 03, 2012. If job_parameters_->Is_simple_full_length_job_params()==true, then
 			//actual five_prime_chain_break_res varies from pose to pose and might not correspond to the one given in the job_params!
 
 			Size const gap_size(  job_parameters_->gap_size() );
@@ -350,7 +350,7 @@ namespace rna {
 						error_message+= "but seq_num " + string_of(upper_seq_num) + " is not a cutpoint CUTPOINT_UPPER??";
 						utility_exit_with_message(error_message);
 					}
-					
+
 					five_prime_chain_break_res=lower_seq_num;
 					num_cutpoint_lower_found++;
 
@@ -368,10 +368,10 @@ namespace rna {
 	}
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseRNA_Minimizer::output_pose_data_wrapper(std::string & tag, 
-																							 char tag_first_char, 
-																							 pose::Pose & pose, 
-																							 core::io::silent::SilentFileData & silent_file_data, 
+	StepWiseRNA_Minimizer::output_pose_data_wrapper(std::string & tag,
+																							 char tag_first_char,
+																							 pose::Pose & pose,
+																							 core::io::silent::SilentFileData & silent_file_data,
 																							 std::string const out_silent_file) const{
 
 		using namespace core::io::silent;
@@ -380,7 +380,7 @@ namespace rna {
 		//tag_first_char=C for consistency_check
 		//tag_first_char=M for minimize
 
-	 	tag[0]=tag_first_char; 
+	 	tag[0]=tag_first_char;
 		std::cout << "tag= " << tag <<  std::endl;
 		(*scorefxn_)(pose); //Score pose to ensure that that it has a score to be output
 		Output_data(silent_file_data, out_silent_file, tag, false , pose, get_native_pose(), job_parameters_);
@@ -409,13 +409,13 @@ namespace rna {
 		 using namespace core::id;
 
 		 std::cout << "Freeze pose sugar torsions, nres=" << nres << std::endl;
-		 	 	 	 
-		 for(Size i=1; i<=nres; i++){	 
-			
+
+		 for(Size i=1; i<=nres; i++){
+
 				mm.set( TorsionID( i  , id::BB,  4 ), false ); //delta_i
-				mm.set( TorsionID( i  , id::CHI, 2 ), false ); //nu2_i	
-				mm.set( TorsionID( i  , id::CHI, 3 ), false );	//nu1_i	 
-	
+				mm.set( TorsionID( i  , id::CHI, 2 ), false ); //nu2_i
+				mm.set( TorsionID( i  , id::CHI, 3 ), false );	//nu1_i
+
 		 }
 	}
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -437,13 +437,13 @@ namespace rna {
 		bool pass_screen=true;
 
 		//March 03, 2012. Don't need this for post-process analysis. For full_length_job_params, Is_prepend, moving_res and five_prime_chain_break_res are not well defined.
-		if(job_parameters_->Is_simple_full_length_job_params()==false){ 
+		if(job_parameters_->Is_simple_full_length_job_params()==false){
 
 			Size const five_prime_chain_break_res = job_parameters_->five_prime_chain_break_res();
 			bool const Is_prepend(  job_parameters_->Is_prepend() );
 			Size const moving_res(  job_parameters_->working_moving_res() );
 
-			if (gap_size == 0){		
+			if (gap_size == 0){
 				//Sept 19, 2010 screen for weird delta/sugar conformation. Sometime at the chain closure step, minimization will severely screw up the pose sugar
 				//if the chain is not a closable position. These pose will have very bad score and will be discarded anyway. The problem is that the clusterer check
 				//for weird delta/sugar conformation and call utility_exit_with_message() if one is found (purpose being to detect bad silent file conversion)
@@ -465,7 +465,7 @@ namespace rna {
 						std::cout << "gap_size == 0, " << in_tag << " discarded: five_prime_chain_break_res= " << five_prime_chain_break_res << " five_prime_CB_delta= " << five_prime_delta << " is out of range " << std::endl;
 						pass_screen=false;
 					}
-				}	
+				}
 
 				conformation::Residue const & three_prime_rsd = pose.residue(five_prime_chain_break_res+1);
 				Real const three_prime_delta = numeric::principal_angle_degrees(three_prime_rsd.mainchain_torsion( DELTA ));
@@ -479,12 +479,12 @@ namespace rna {
 				}
 			}
 
-		
+
 			if(centroid_screen_){
 				if(base_centroid_screener_==0) utility_exit_with_message("base_centroid_screener_==0!");
 
 				if ( !base_centroid_screener_->Update_base_stub_list_and_Check_that_terminal_res_are_unstacked( pose, true /*reinitialize*/ ) ){
-					std::cout << in_tag << " discarded: fail Check_that_terminal_res_are_unstacked	" << std::endl;	 
+					std::cout << in_tag << " discarded: fail Check_that_terminal_res_are_unstacked	" << std::endl;
 					pass_screen=false;
 				}
 			}
@@ -496,11 +496,11 @@ namespace rna {
 			}
 
 			if(native_screen_ && get_native_pose()){	//Before have the (&& !Is_chain_break condition). Parin Dec 21, 2009
-	
-				Real const rmsd= suite_rmsd(*get_native_pose(), pose,  moving_res, Is_prepend, true /*ignore_virtual_atom*/); 
+
+				Real const rmsd= suite_rmsd(*get_native_pose(), pose,  moving_res, Is_prepend, true /*ignore_virtual_atom*/);
 				Real const loop_rmsd=	 rmsd_over_residue_list( *get_native_pose(), pose, job_parameters_, true /*ignore_virtual_atom*/);
 
-				if(rmsd > native_screen_rmsd_cutoff_ || loop_rmsd > native_screen_rmsd_cutoff_){ 
+				if(rmsd > native_screen_rmsd_cutoff_ || loop_rmsd > native_screen_rmsd_cutoff_){
 					std::cout << in_tag << " discarded: fail native_rmsd_screen. rmsd= " << rmsd << " loop_rmsd= " << loop_rmsd << " native_screen_rmsd_cutoff_= " << native_screen_rmsd_cutoff_ << std::endl;
 					pass_screen=false;
 				}
@@ -520,7 +520,7 @@ namespace rna {
 
 			bool const pass_native = native_edensity_score_screener(pose, native_pose);
 			if(pass_native==false){
-				std::cout << in_tag << " discarded: fail native_edensity_score_screening" << std::endl;	 
+				std::cout << in_tag << " discarded: fail native_edensity_score_screening" << std::endl;
 				pass_screen=false;
 			}
 	  }
@@ -530,14 +530,14 @@ namespace rna {
 		//In Both standard and floating base sampling, user_input_VDW_bin_screener_ is not used for gap_size==0 or internal case.
 		//This code is buggy for gap_size==0 case IF VDW_screener_pose contains the residue right at 3' or 5' of the building_res
 		//Internal case should be OK.
-		if(user_input_VDW_bin_screener_->user_inputted_VDW_screen_pose() ){ 
+		if(user_input_VDW_bin_screener_->user_inputted_VDW_screen_pose() ){
 
 			//Convert to using physical_pose instead of bin for screening (as default) on June 04, 2011
 			utility::vector1 < core::Size > const & working_global_sample_res_list=job_parameters_->working_global_sample_res_list();
 			bool const pass_physical_pose_VDW_rep_screen=user_input_VDW_bin_screener_->VDW_rep_screen_with_act_pose( pose, working_global_sample_res_list, true /*local verbose*/);
 
 			if( pass_physical_pose_VDW_rep_screen==false){
-				std::cout << in_tag << " discarded: fail physical_pose_VDW_rep_screen" << std::endl;	 
+				std::cout << in_tag << " discarded: fail physical_pose_VDW_rep_screen" << std::endl;
 				pass_screen=false;
 			}
 
@@ -556,11 +556,11 @@ namespace rna {
 	StepWiseRNA_Minimizer::native_edensity_score_screener(pose::Pose & pose, pose::Pose & native_pose) const{
 
 		using namespace core::scoring;
-		
+
 		//get the score of elec_dens_atomwise only
 		static ScoreFunctionOP eden_scorefxn = new ScoreFunction;
 		eden_scorefxn -> set_weight( elec_dens_atomwise, 1.0 );
-		core::Real pose_score = ((*eden_scorefxn)(pose)); 
+		core::Real pose_score = ((*eden_scorefxn)(pose));
 		core::Real native_score = ((*eden_scorefxn)(native_pose));
 		core::Size nres = pose.total_residue();
 		core::Real native_score_cutoff = native_score / (static_cast <double> (nres)) *
@@ -617,6 +617,7 @@ namespace rna {
 		for(Size i = 1; i <= nres; i++ ){
 
 			if (pose.residue(i).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code.
+			if (!pose.residue(i).is_RNA() ) continue; //Fang's electron density code.
 
 			utility::vector1< TorsionID > torsion_ids;
 
@@ -656,6 +657,8 @@ namespace rna {
 
 			if(pose.residue(jump_pos1).aa() == core::chemical::aa_vrt) continue; //Fang's electron density code
 			if(pose.residue(jump_pos2).aa() == core::chemical::aa_vrt) continue; //Fang's electron density code
+			if(!pose.residue(jump_pos1).is_RNA()) continue; //Fang's electron density code
+			if(!pose.residue(jump_pos2).is_RNA()) continue; //Fang's electron density code
 
 			if( allow_insert( jump_pos1 ) || allow_insert( jump_pos2 ) )	mm.set_jump( n, true );
 			std::cout << "jump_pos1= " << jump_pos1 << " jump_pos2= " << jump_pos2 << " mm.jump= "; Output_boolean(allow_insert( jump_pos1 ) || allow_insert( jump_pos2 ) );  std::cout << std::endl;
@@ -699,7 +702,7 @@ namespace rna {
 	//////////////////////////////////////////////////////////////////
 	void
 	StepWiseRNA_Minimizer::set_native_edensity_score_cutoff( core::Real const & setting){
-		
+
 		native_edensity_score_cutoff_=setting;
 
 		perform_electron_density_screen_=(native_edensity_score_cutoff_ > -0.99999 || native_edensity_score_cutoff_ < -1.00001);
