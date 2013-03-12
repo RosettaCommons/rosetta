@@ -681,7 +681,8 @@ get_fade_correction(
 Vector
 get_rna_base_centroid( conformation::Residue const & rsd , bool verbose){
 
-  if( rsd.is_RNA()==false) utility_exit_with_message("rsd.is_RNA()==false");
+  //if( rsd.is_RNA()==false) utility_exit_with_message("rsd.is_RNA()==false");
+  if( rsd.is_RNA()==false) return Vector( 0.0, 0.0, 0.0 );
 
   Vector centroid( 0.0 );
   Size numatoms = 0;
@@ -732,7 +733,9 @@ get_rna_base_coordinate_system( conformation::Residue const & rsd, Vector const 
 
 	using namespace chemical;
 
-  if( rsd.is_RNA()==false) utility_exit_with_message("rsd.is_RNA()==false");
+  //if( rsd.is_RNA()==false) utility_exit_with_message("rsd.is_RNA()==false");
+	if ( !rsd.is_RNA() ) return numeric::xyzMatrix< core::Real >::identity();
+
 
  	Size res_type = rsd.aa();
 

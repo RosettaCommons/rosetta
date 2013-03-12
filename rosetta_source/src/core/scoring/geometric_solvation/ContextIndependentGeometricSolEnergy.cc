@@ -730,6 +730,9 @@ ContextIndependentGeometricSolEnergy::eval_atom_derivative_intra_RNA(
 	conformation::Residue const & current_rsd( pose.residue( i ) );
 	conformation::Residue const &   other_rsd( pose.residue( i ) );
 
+	if ( !current_rsd.is_RNA() ) return;
+	if ( !other_rsd.is_RNA() ) return;
+
 	//Ok right now intrares energy is define only for the RNA case. Parin Sripakdeevong, June 26, 2011.
 	//	if(current_rsd.is_RNA()==false) return;
 	//	if(other_rsd.is_RNA()==false) return; //no effect!
@@ -820,7 +823,7 @@ ContextIndependentGeometricSolEnergy::eval_atom_derivative(
 	Real energy( 0.0 );
 	hbonds::HBondDerivs deriv;
 
-		eval_atom_derivative_intra_RNA(atom_id, pose, weights, F1, F2);
+	eval_atom_derivative_intra_RNA(atom_id, pose, weights, F1, F2);
 
 	conformation::Residue const & current_rsd( pose.residue( atom_id.rsd() ) );
 
@@ -1017,6 +1020,8 @@ ContextIndependentGeometricSolEnergy::donorRes_occludingRes_geometric_sol_RNA_in
 	conformation::Residue const & don_rsd=rsd;
 	conformation::Residue const & occ_rsd=rsd;
 
+	if ( !rsd.is_RNA() ) return 0.0;
+
 	// Here we go -- cycle through polar hydrogens in don_aa, everything heavy in occluding atom.
 	for ( chemical::AtomIndices::const_iterator hnum  = don_rsd.Hpos_polar().begin(), hnume = don_rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
 		Size const don_h_atm( *hnum );
@@ -1042,6 +1047,7 @@ ContextIndependentGeometricSolEnergy::acceptorRes_occludingRes_geometric_sol_RNA
 	conformation::Residue const & acc_rsd=rsd;
 	conformation::Residue const & occ_rsd=rsd;
 
+	if ( !rsd.is_RNA() ) return 0.0;
 
 	Real res_solE( 0.0 ), energy( 0.0 );
 
