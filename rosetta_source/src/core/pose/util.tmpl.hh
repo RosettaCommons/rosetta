@@ -369,6 +369,22 @@ initialize_atomid_map_heavy_only( id::AtomID_Map< T > & atom_map, conformation::
 		atom_map.resize( i, conformation.residue_type(i).nheavyatoms(), value );
 	}
 }
+
+
+// PyRosetta concreate version of functions
+inline void initialize_atomid_map_AtomID( id::AtomID_Map< id::AtomID > & atom_map, pose::Pose const & pose )
+{ initialize_atomid_map(atom_map, pose); }
+
+inline void initialize_atomid_map_AtomID( id::AtomID_Map< id::AtomID > & atom_map, pose::Pose const & pose, id::AtomID const & value )
+{ initialize_atomid_map(atom_map, pose, value); }
+
+
+inline void initialize_atomid_map_AtomID( id::AtomID_Map< id::AtomID > & atom_map, conformation::Conformation const & conformation )
+{ initialize_atomid_map(atom_map, conformation); }
+
+inline void initialize_atomid_map_AtomID( id::AtomID_Map< id::AtomID > & atom_map, conformation::Conformation const & conformation, id::AtomID const & value )
+{ initialize_atomid_map(atom_map, conformation, value); }
+
 } // pose
 } // core
 
