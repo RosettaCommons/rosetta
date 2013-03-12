@@ -591,6 +591,8 @@ namespace rna {
 
  		using namespace chemical;
 
+		if ( !rsd.is_RNA() ) return false;
+
 		//Cytosine and Uracil contain 8 heavy base atoms. Adenine contains 10 heavy base atoms. Guanine contains 11 heavy base atoms.
 		if((rsd.nheavyatoms()-rsd.first_sidechain_atom()+2)<8){ //plus 2 since need to count both start and end atom.
 			utility_exit_with_message( "The rna base " + name_from_aa(rsd.aa()) + " contain lesser than 8 heavy atoms" );
@@ -1121,6 +1123,7 @@ namespace rna {
 
 	  for (core::Size i = 1; i <= pose.total_residue(); i++){
 	    if (pose.residue(i).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
+	    if ( !pose.residue(i).is_RNA()) continue;
 			pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_O2STAR_HYDROGEN", i);
 	  }
 	}
@@ -1131,6 +1134,7 @@ namespace rna {
 
 		for(Size i=1; i<=pose.total_residue(); i++){
 			if (pose.residue(i).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
+	    if ( !pose.residue(i).is_RNA()) continue;
 			if ( pose.residue_type( i ).has_variant_type( "VIRTUAL_O2STAR_HYDROGEN" ) ){
 				pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_O2STAR_HYDROGEN", i);
 			}
@@ -2024,6 +2028,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 		for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
 
 			if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
+			if ( !pose.residue(seq_num).is_RNA() ) continue; //Fang's electron density code
 
 			core::conformation::Residue const & rsd = pose.residue(seq_num);
 			Size const at= rsd.first_sidechain_atom();
@@ -2040,6 +2045,12 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 
 			if(pose.residue(seq_num).aa() == core::chemical::aa_vrt ){
 				if(verbose) std::cout << "res " << seq_num << " is core::chemical::aa_vrt! " << std::endl;
+				Is_O2star_hydrogen_virtual_list.push_back(false); //false since not virtual O2star_hydrogen
+				continue;
+			}
+
+			if( !pose.residue(seq_num).is_RNA() ){
+				if(verbose) std::cout << "res " << seq_num << " is not RNA " << std::endl;
 				Is_O2star_hydrogen_virtual_list.push_back(false); //false since not virtual O2star_hydrogen
 				continue;
 			}
@@ -2293,7 +2304,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 		using namespace core::id;
 		using namespace core::io::pdb;
 
-		static const ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance() -> 
+		static const ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance() ->
 			residue_type_set(	core::chemical::RNA );
 
 		if(verbose) Output_title_text("ENTER Correctly_position_cutpoint_phosphate_torsions function");
@@ -2577,7 +2588,11 @@ principal_angle_degrees( T const & angle )
 		using namespace core::scoring::rna;
 
 		for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
+
 			if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
+
+			if (!pose.residue(seq_num).is_RNA() ) continue;
+
 			conformation::Residue const & rsd(pose.residue(seq_num));
 			Real delta = numeric::principal_angle_degrees(rsd.mainchain_torsion( DELTA ));
 			Real chi = numeric::principal_angle_degrees(rsd.chi(1));
@@ -2744,7 +2759,7 @@ principal_angle_degrees( T const & angle )
 		using namespace core::chemical;
 		using namespace core::conformation;
 
-		static const ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance() -> 
+		static const ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance() ->
 			residue_type_set( core::chemical::RNA );
 
 		core::io::silent::SilentFileData silent_file_data;
@@ -2758,7 +2773,7 @@ principal_angle_degrees( T const & angle )
 			iter->fill_pose( import_pose, *rsd_set );
 		}
 
-		if( num_matching_tag!=1 ){ 
+		if( num_matching_tag!=1 ){
 			utility_exit_with_message( "num_matching_tag=(" + ObjexxFCL::string_of(num_matching_tag) + ")!=1 for tag " + input_tag + " in silent file (" + silent_file + ")!" );
 		}
 
@@ -2896,15 +2911,15 @@ principal_angle_degrees( T const & angle )
 
         bool Is_cutpoint_closed=false;
 
-        bool Is_cutpoint_lower = pose.residue( seq_num ).has_variant_type( 
+        bool Is_cutpoint_lower = pose.residue( seq_num ).has_variant_type(
                                  chemical::CUTPOINT_LOWER );
 
-        bool Is_cutpoint_upper = pose.residue( seq_num ).has_variant_type( 
+        bool Is_cutpoint_upper = pose.residue( seq_num ).has_variant_type(
                                  chemical::CUTPOINT_UPPER );
 
         bool near_cutpoint_closed= Is_cutpoint_lower || Is_cutpoint_upper;
 
-        bool near_cutpoint = pose.fold_tree().is_cutpoint( seq_num ) || 
+        bool near_cutpoint = pose.fold_tree().is_cutpoint( seq_num ) ||
                              pose.fold_tree().is_cutpoint( seq_num - 1 );
 
 

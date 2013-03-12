@@ -454,7 +454,8 @@ get_o1p_o2p_sign( pose::Pose const & pose , Size res_num) {
 
 	conformation::Residue const & rsd( pose.residue(res_num)  );
 
-	if(rsd.is_RNA()==false) utility_exit_with_message("rsd.is_RNA()==false!");
+	//if(rsd.is_RNA()==false) utility_exit_with_message("rsd.is_RNA()==false!");
+	if ( !rsd.is_RNA() ) return 0.0;
 
 	Real const sign = dot( rsd.xyz( " O5*" ) - rsd.xyz( " P  " ), cross( rsd.xyz( " O2P" ) - rsd.xyz( " P  " ), rsd.xyz( " O1P" ) - rsd.xyz( " P  " ) ) );
 
