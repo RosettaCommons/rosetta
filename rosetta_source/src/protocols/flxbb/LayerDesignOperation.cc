@@ -261,6 +261,12 @@ LayerDesignOperation::set_default_layer_residues() {
 							("Helix", 					"DEHKNQRST") 
 							("HelixStart",			"DEHKNQRSTP") 
 							("HelixCapping", 		"DNST") 
+					)
+					("Nterm", boost::assign::map_list_of
+					 ("all", "ACDEFGHIKLMNPQRSTVWY")
+					)
+					("Cterm", boost::assign::map_list_of
+					 ("all", "ACDEFGHIKLMNPQRSTVWY")
 					);
 	
 	boost::assign::insert(design_layer_)
@@ -350,16 +356,24 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 	}
 
 	// terminal residues set to be all aa
-	utility::vector1<bool> restrict_to_aa( 20, true );
-	task.nonconst_residue_task( 1 ).restrict_absent_canonical_aas( restrict_to_aa );
-	task.nonconst_residue_task( pose.total_residue() ).restrict_absent_canonical_aas( restrict_to_aa );
+	//utility::vector1<bool> restrict_to_aa( 20, true );
+	//task.nonconst_residue_task( 1 ).restrict_absent_canonical_aas( restrict_to_aa );
+	//task.nonconst_residue_task( pose.total_residue() ).restrict_absent_canonical_aas( restrict_to_aa );
 
 	TR << "---------------------------------------" << std::endl;
-	for( Size i=2; i<=pose.total_residue()-1; ++i ) {
+	for( Size i=1; i<=pose.total_residue(); ++i ) {
 		// if the residue is not a protein, we should continue on to the next one, but make the non-protein residue repackable only
 		if ( ! pose.residue( i ).is_protein() ){ task.nonconst_residue_task( i ).restrict_to_repacking(); continue; }
 
-		const std::string srbl_layer = srbl_->layer(i);
+
+		std::string srbl_layer = srbl_->layer(i);
+
+		// treat peptide edges diferently because dssp always assigns them as loop
+		if( pose.residue( i ).is_upper_terminus() )
+			srbl_layer = "Cterm";
+		if( pose.residue( i ).is_lower_terminus() )
+			srbl_layer = "Nterm";
+			
 		// check if the residue is specified in any of the task defined layer and
 		// append that layer into the active layers
 		utility::vector1< std::string > active_layers;
@@ -409,14 +423,14 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 			}
 			continue;
 		}
-		
 		BOOST_FOREACH(std::string& layer, active_layers) {
-  	  if( helix_capping[ i ] == true && add_helix_capping_ ) {
+			if( layer == "Nterm" || layer == "Cterm") {
+  			task.nonconst_residue_task( i ).restrict_absent_canonical_aas( get_restrictions( layer, srbl_layer, "all") );
+			} else if( helix_capping[ i ] == true && add_helix_capping_ ) {
   			task.nonconst_residue_task( i ).restrict_absent_canonical_aas( get_restrictions( layer, srbl_layer, "HelixCapping") );
   
   		} else if( initial_helix[i] ) {
   			task.nonconst_residue_task( i ).restrict_absent_canonical_aas( get_restrictions( layer, srbl_layer, "HelixStart") );
-  
   		} else if( ss == 'E') {
   			task.nonconst_residue_task( i ).restrict_absent_canonical_aas( get_restrictions( layer, srbl_layer, "Strand") );
   
@@ -427,6 +441,7 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
   			task.nonconst_residue_task( i ).restrict_absent_canonical_aas( get_restrictions( layer, srbl_layer, "Helix") );
   
   		} 
+		TR << i << " done " << std::endl << std::flush;
 		}
 	} // for( i )
 } // apply
@@ -439,9 +454,9 @@ LayerDesignOperation::parse_tag( TagPtr tag )
 	protocols::moves::DataMap datamap; // for parsing CombinedTaskOperations
 	use_original_ = tag->getOption< bool >( "use_original_non_designed_layer", 1 );
 
-	String design_layers = tag->getOption< String >( "layer", "core_boundary_surface" );
+	String design_layers = tag->getOption< String >( "layer", "core_boundary_surface_Nterm_Cterm" );
 	if (design_layers == "all")
-		design_layers = "core_boundary_surface";
+		design_layers = "core_boundary_surface_Nterm_Cterm";
 	if (design_layers == "other" || design_layers == "user")
 		design_layers = "";
 	utility::vector1< String > layers( utility::string_split( design_layers, '_' ) );
@@ -494,8 +509,8 @@ LayerDesignOperation::parse_tag( TagPtr tag )
 
 	BOOST_FOREACH( utility::tag::TagPtr const layer_tag, tag->getTags() ){
 
-		std::string layer = layer_tag->getName(); // core, residue, boundar orr taskoperation
-		if( layer == "core" || layer =="boundary" || layer == "surface" || task_layers_.count( layer ) ) {
+		std::string layer = layer_tag->getName(); // core, residue, boundary or taskoperation
+		if( layer == "core" || layer =="boundary" || layer == "surface" ||  layer == "Nterm" ||  layer == "Cterm" || task_layers_.count( layer ) ) {
 			TR << "Modifying specification for layer " << layer << std::endl;
 		} else if(layer == "CombinedTasks" ) {
 			std::string comb_name = layer_tag->getOption< std::string >("name");
@@ -533,7 +548,16 @@ LayerDesignOperation::parse_tag( TagPtr tag )
 				TR << "Copying definitions from layer " << layer_to_copy << " to layer " << layer << std::endl;
 				layer_residues_[ layer ] = layer_residues_[ layer_to_copy ];
 			}
-
+			if( secstruct == "all" &&  secstruct_tag->hasOption("aa") ) {
+				const std::string aas = secstruct_tag->getOption< std::string >("aa");
+				LayerResidues::iterator lrs =  layer_residues_.find( layer );
+				TR << "Assigning residues " << aas << " to layer " << lrs->first << std::endl;
+				for(LayerDefinitions::iterator ld = lrs->second.begin(); ld != lrs->second.end(); ld++) {
+					std::set<char> temp_def_res_set;
+					temp_def_res_set.insert( aas.begin(), aas.end() );
+					layer_residues_[ lrs->first ][ ld->first ] = std::string(temp_def_res_set.begin(), temp_def_res_set.end() );
+				}
+			}
 			if( secstruct == "all" &&  secstruct_tag->hasOption("append") ) {
 				const std::string aas = secstruct_tag->getOption< std::string >("append");
 				LayerResidues::iterator lrs =  layer_residues_.find( layer );
