@@ -43,8 +43,8 @@
 OPT_1GRP_KEY( Real, run, benchmark_scale )
 OPT_1GRP_KEY( String, run, run_one_benchmark )
 
-const char results_filename[] = "_performance_";
-const char old_results_filename[] = "_old_performance_";
+const char results_filename[]     = "./../../../../_performance_";
+const char old_results_filename[] = "./../../../../_old_performance_";
 
 // Initialize performance benchmark tests here:
 #include <apps/benchmark/performance/OptionCollection.bench.hh>
