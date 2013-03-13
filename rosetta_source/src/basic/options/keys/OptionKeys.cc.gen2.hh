@@ -315,6 +315,7 @@ namespace rna { BooleanOptionKey const skip_coord_constraints( "rna:skip_coord_c
 namespace rna { BooleanOptionKey const skip_o2star_trials( "rna:skip_o2star_trials" );  }
 namespace rna { StringOptionKey const vall_torsions( "rna:vall_torsions" );  }
 namespace rna { StringOptionKey const jump_database( "rna:jump_database" );  }
+namespace rna { BooleanOptionKey const rna_prot_erraser( "rna:rna_prot_erraser" );  }
 namespace cm { BooleanOptionKey const cm( "cm" );  }
 namespace cm { namespace sanitize { BooleanOptionKey const sanitize( "cm:sanitize" );  } }
 namespace cm { namespace sanitize { RealOptionKey const bound_delta( "cm:sanitize:bound_delta" );  } }
@@ -669,4 +670,3 @@ namespace RBSegmentRelax { IntegerOptionKey const nrboutercycles( "RBSegmentRela
 namespace RBSegmentRelax { StringOptionKey const rb_scorefxn( "RBSegmentRelax:rb_scorefxn" );  }
 namespace RBSegmentRelax { BooleanOptionKey const skip_fragment_moves( "RBSegmentRelax:skip_fragment_moves" );  }
 namespace RBSegmentRelax { BooleanOptionKey const skip_seqshift_moves( "RBSegmentRelax:skip_seqshift_moves" );  }
-namespace RBSegmentRelax { BooleanOptionKey const skip_rb_moves( "RBSegmentRelax:skip_rb_moves" );  }

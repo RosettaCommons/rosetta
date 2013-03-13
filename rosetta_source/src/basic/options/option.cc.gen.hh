@@ -1668,6 +1668,7 @@ option.add( basic::options::OptionKeys::rna::skip_coord_constraints, "Skip first
 option.add( basic::options::OptionKeys::rna::skip_o2star_trials, "No O2* packing in minimizer" ).def(false);
 option.add( basic::options::OptionKeys::rna::vall_torsions, "Torsions file containing information on fragments from RNA models" ).def("rna.torsions");
 option.add( basic::options::OptionKeys::rna::jump_database, "Generate a database of jumps extracted from base pairings from a big RNA file" ).def("rna_jumps.txt");
+option.add( basic::options::OptionKeys::rna::rna_prot_erraser, "Allows rna_prot_erraser residue type set, featuring both RNA and protein (for ERRASER purposes).  You must also use -rna:corrected_geo." ).def(false);
 option.add( basic::options::OptionKeys::cm::cm, "cm option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::cm::sanitize::sanitize, "sanitize option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::cm::sanitize::bound_delta, "Distance in Angstroms from aligned position before a penalty is incurred" ).def(0.5);
@@ -2022,10 +2023,10 @@ option.add( basic::options::OptionKeys::RBSegmentRelax::nrboutercycles, "number 
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_scorefxn, "number of rigid-body moves" ).def("score5");
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_fragment_moves, "omit fragment insertions (in SS elements)" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_seqshift_moves, "omit sequence shifting moves" ).def(false);
-option.add( basic::options::OptionKeys::RBSegmentRelax::skip_rb_moves, "omit rigid-body moves" ).def(false);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::helical_movement_params, "helical-axis-rotation, helical-axis-translation, off-axis-rotation, off-axis-translation" ).def(utility::vector1<float>(4,0.0));
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::skip_rb_moves, "omit rigid-body moves" ).def(false);
+option.add( basic::options::OptionKeys::RBSegmentRelax::helical_movement_params, "helical-axis-rotation, helical-axis-translation, off-axis-rotation, off-axis-translation" ).def(utility::vector1<float>(4,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::strand_movement_params, "strand-in-plane-rotation, strand-in-plane-translation, out-of-plane-rotation, out-of-plane-translationn" ).def(utility::vector1<float>(4,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::default_movement_params, "default-rotation, default-translation" ).def(utility::vector1<float>(2,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_seqwidth, "sequence width on constraints" ).def(0);

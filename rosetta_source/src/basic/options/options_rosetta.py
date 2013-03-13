@@ -3325,6 +3325,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 		Option( 'skip_o2star_trials', 'Boolean', desc='No O2* packing in minimizer',default='false' ),
 		Option( 'vall_torsions', 'String', desc='Torsions file containing information on fragments from RNA models', default='rna.torsions' ),
 	  Option( 'jump_database', 'String', desc='Generate a database of jumps extracted from base pairings from a big RNA file', default='rna_jumps.txt' ),
+		Option( 'rna_prot_erraser', 'Boolean', desc='Allows rna_prot_erraser residue type set, featuring both RNA and protein (for ERRASER purposes).  You must also use -rna:corrected_geo.', default='false' ),
 	),
 	Option_Group( 'cm', # comparative modeling
     Option_Group('sanitize',

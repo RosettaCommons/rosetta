@@ -73,7 +73,7 @@
 namespace core {
 namespace chemical {
 
-static basic::Tracer tr("core.chemical.ChemicalManager");
+static basic::Tracer TR("core.chemical.ChemicalManager");
 
 /// @brief set initial value as no instance
 ChemicalManager* ChemicalManager::instance_( 0 );
@@ -186,10 +186,26 @@ ChemicalManager::residue_type_set( std::string tag )
 
 	using namespace basic;
 
-	bool const use_corrected_rna_geo = basic::options::option[ basic::options::OptionKeys::rna::corrected_geo ];
-	if (use_corrected_rna_geo && tag == "rna") {
-		tag = "rna_phenix";
-	}
+	//There are a few experimental RNA residue type sets under
+	//consideration.  The long term plan is to fold these into
+	//fa_standard.  In the short term, override in ChemicalManager to
+	//detect their use (via cmdline flag) and override base RNA to
+	//something fancier.  Since these are covered by an override, they
+	//are NOT covered by proper global-data-string tags RNA_PHENIX and
+	//RNA_PROT_ERRASER.  SML & FC
+	if ( tag == "rna" ) {
+		using basic::options::OptionKeys::rna::corrected_geo;
+		using basic::options::OptionKeys::rna::rna_prot_erraser;
+		bool const use_corrected_rna_geo = basic::options::option[ corrected_geo ].value();
+		bool const use_RNA_and_protein = basic::options::option[ rna_prot_erraser ].value();
+		if ( use_corrected_rna_geo && !use_RNA_and_protein ) {
+			tag = "rna_phenix";
+		} else if ( use_corrected_rna_geo && use_RNA_and_protein ) {
+			tag = "rna_prot_erraser";
+		} else if ( !use_corrected_rna_geo && use_RNA_and_protein ) {
+			utility_exit_with_message("cannot use -rna:rna_prot_erraser without -rna:corrected_geo");
+		} //final case - if both are false - leave tag as-is
+	} //if ( tag == "rna" ) {
 
 	ResidueTypeSets::const_iterator iter( residue_type_sets_.find( tag ) );
 	if ( iter == residue_type_sets_.end() ) {
@@ -216,15 +232,15 @@ ChemicalManager::residue_type_set( std::string tag )
 				std::string directory=pvec[i].name();
 
 				utility::file::list_dir(directory, files);
-				tr.Debug<< std::endl;
+				TR.Debug<< std::endl;
 				for(size_t j=1; j<= files.size(); j++){
 					if (files[j].find("param")!=std::string::npos){
-						tr.Debug << files[j]<< ", ";
+						TR.Debug << files[j]<< ", ";
 						std::string path= directory+'/'+files[j];
 						extra_params_files.push_back(path);
 					}
 				}
-				tr.Debug<< std::endl;
+				TR.Debug<< std::endl;
 			}
 
 			utility::options::PathVectorOption & pvec_batch
@@ -234,7 +250,7 @@ ChemicalManager::residue_type_set( std::string tag )
 				std::string directory=pvec_batch[i].name();
 
 				utility::file::list_dir(directory, subdirs);
-				tr.Debug<< std::endl;
+				TR.Debug<< std::endl;
 				for(size_t j=1; j<= subdirs.size();++j)
 				{
 					if(subdirs[j] == "." || subdirs[j] == "..")
@@ -245,7 +261,7 @@ ChemicalManager::residue_type_set( std::string tag )
 					utility::file::list_dir(directory+"/"+subdirs[j],files);
 					for(size_t k=1; k<= files.size(); k++){
 						if (files[k].find("param")!=std::string::npos){
-							tr.Debug << files[k]<< ", ";
+							TR.Debug << files[k]<< ", ";
 							std::string path= directory+'/'+subdirs[j]+'/'+files[k];
 							extra_params_files.push_back(path);
 						}
@@ -290,7 +306,7 @@ ChemicalManager::residue_type_set( std::string tag )
 					while(residue_name_file >> residue_name)
 					{
 						//residue_name_file >> residue_name;
-						//tr <<residue_name <<std::endl;
+						//TR <<residue_name <<std::endl;
 						ResidueTypeOP new_residue(
 							residue_database_interface.read_residuetype_from_database(
 								atom_types,
@@ -354,7 +370,7 @@ ChemicalManager::residue_type_set( std::string tag )
 		}
 
 		// read from file
-		tr.Debug << "CHEMICAL_MANAGER: read residue types: " << tag << std::endl;
+		TR.Debug << "CHEMICAL_MANAGER: read residue types: " << tag << std::endl;
 		// redirecting to new icoor folder
 		std::string temp_str( basic::database::full_name( "chemical/residue_type_sets/"+tag ) );
 		if(tag == FA_STANDARD) {
@@ -371,7 +387,7 @@ ChemicalManager::residue_type_set( std::string tag )
 
 		for(core::Size index =0 ;index < extra_residues.size();++index)
 		{
-			//tr << extra_residues[index]->name3() <<std::endl;
+			//TR << extra_residues[index]->name3() <<std::endl;
 			new_set->add_residue_type(extra_residues[index]);
 			extra_residues[index]->residue_type_set(new_setCAP);
 			ResidueTypeSetCAP new_set_cap(new_set.get());

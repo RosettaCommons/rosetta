@@ -29,6 +29,7 @@ namespace rna { extern BooleanOptionKey const skip_coord_constraints; }
 namespace rna { extern BooleanOptionKey const skip_o2star_trials; }
 namespace rna { extern StringOptionKey const vall_torsions; }
 namespace rna { extern StringOptionKey const jump_database; }
+namespace rna { extern BooleanOptionKey const rna_prot_erraser; }
 
 } // namespace OptionKeys
 } // namespace options
