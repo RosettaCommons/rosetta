@@ -31,11 +31,6 @@
 #include <utility/vector1.hh>
 #include <basic/gpu/GPU.hh>
 
-#define NUMBER_OF_PARTICLES 200
-#define ATOMS_ARRAY 20000
-#define RAY_SCORE_ARRAY 2500000
-#define MAX_NUM_RAYS 100000
-
 namespace protocols {
 namespace pockets {
 
@@ -63,7 +58,8 @@ namespace pockets {
   public:
 
     FingerprintBase();
-    virtual ~FingerprintBase();
+
+
     void print_to_file(std::string const & output_filename) const;
     //void print_to_file(std::string const & output_filename, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset) const;
 
@@ -86,11 +82,15 @@ namespace pockets {
     std::list< spherical_coor_triplet > triplet_fingerprint_data_;
     numeric::xyzVector<core::Real> CoM_;
 
+    ///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+    virtual ~FingerprintBase();
+
   };
 
   class NonPlaidFingerprint : public FingerprintBase {
   public:
-    NonPlaidFingerprint() {};
+    NonPlaidFingerprint();
+    ~NonPlaidFingerprint();
 
     std::list< numeric::xyzVector<core::Real> > egg_and_ext_list_;
     std::list< numeric::xyzVector<core::Real> > eggshell_list_;
@@ -100,21 +100,22 @@ namespace pockets {
 
     void setup_from_PocketGrid( core::pose::Pose const & protein_pose, PocketGrid const & pocket_grid, PocketGrid const & grid_for_extshell );
 
+		void setup_from_PocketGrid_and_known_ligand( core::pose::Pose const & protein_pose, PocketGrid const & pocket_grid, PocketGrid const & grid_for_extshell, core::pose::Pose const & known_ligand_pose, core::Real const & trim_dist );
     void setup_from_EggshellGrid();
 
     void write_eggshell_to_pdb_file( std::string const & output_eggshell_name ) const;
 
 #ifdef USEOPENCL
-    void setup_gpu( core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight, int & num_particles, PlaidFingerprint & pf );
-
-    void free_gpu();
-
-    void setup_gpu_rays();
+    void gpu_setup( core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight, int & num_particles, PlaidFingerprint & pf );
+    int gpu_calculate_particle_scores(core::optimization::ParticleOPs & particles, std::vector<basic::gpu::float4> &atoms, std::vector<basic::gpu::float4> &atom_maxmin_phipsi);
+    void gpu_setup_rays();
 #endif
 
     void setup_from_eggshell_pdb_file( std::string const & input_filename);
 
     void trim_based_on_known_ligand( core::pose::Pose const & known_ligand_pose );
+
+		void include_eggshell_points_based_on_known_ligand( core::pose::Pose const & known_ligand_pose, core::Real const & trim_dist);
 
     void setup_from_eggshell_triplet_file(std::string const & input_filename);
 
@@ -136,19 +137,34 @@ namespace pockets {
 
     std::list< numeric::xyzVector<core::Real> > combine_xyz_lists (std::list< numeric::xyzVector<core::Real> > const & xyz_list_1 , std::list< numeric::xyzVector<core::Real> > const & xyz_list_2);
 
-#ifdef USEOPENCL
-    basic::gpu::GPU gpu_;
-    cl_mem gpu_rays_, gpu_atoms_, gpu_ray_scores_, gpu_particle_scores_, gpu_weights_, gpu_atom_maxmin_phipsi_;
-    int gpu_num_rays_, gpu_num_atoms_, gpu_num_particles_;
-    float ray_scores_[RAY_SCORE_ARRAY], particle_scores_[NUMBER_OF_PARTICLES];
-#endif
-    typedef struct {
-      float x, y, z, w;
-    } float4;
-    float4 atom_[ATOMS_ARRAY];
-    float4 atom_maxmin_phipsi_[ATOMS_ARRAY];
-    float4 ligand_maxmin_phipsi_[NUMBER_OF_PARTICLES];
+		std::list<spherical_coor_triplet> remove_duplicate_phi_psi(std::list<spherical_coor_triplet> const & rounded_triplet);
 
+		std::list<spherical_coor_triplet> convert_cart_to_spherical_and_round(std::list< numeric::xyzVector<core::Real> > const & xyz_list);
+
+		std::list<numeric::xyzVector<core::Real> > convert_spherical_list_to_cartesian_list(std::list<spherical_coor_triplet> const & unique_triplet);
+
+		std::list<spherical_coor_triplet> set_rho_to_zero(std::list<spherical_coor_triplet> const & rounded_triplet);
+
+#ifdef USEOPENCL
+	private:
+    basic::gpu::GPU gpu_;
+    struct {
+    	cl_mem rays;
+    	cl_mem atoms;
+    	cl_mem atom_maxmin_phipsi;
+    	cl_mem ray_scores;
+    	cl_mem particle_scores;
+    	cl_mem weights;
+    	unsigned int rays_size;
+    	unsigned int atoms_size;
+    	unsigned int atom_maxmin_phipsi_size;
+    	unsigned int ray_scores_size;
+    	unsigned int particle_scores_size;
+	    int num_rays;
+	    int num_atoms;
+	    int num_particles;
+    } gpu_memory_;
+#endif
   };
 
   class PlaidFingerprint : public FingerprintBase {
@@ -180,9 +196,9 @@ namespace pockets {
 
     void dump_oriented_pose_and_fp_to_pdb( std::string const & pose_filename, std::string const & fp_filename, FingerprintBase & fp, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, utility::vector1<core::Real> const & original_pocket_angle_transform, numeric::xyzVector<core::Real> const & CoM_offset );
 
-    core::pose::Pose get_oriented_pose( FingerprintBase & fp, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, numeric::xyzVector<core::Real> const & CoM_offset );
+    core::pose::Pose get_oriented_pose( FingerprintBase & fp, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, numeric::xyzVector<core::Real> const & CoM_offset, core::Size const conformer );
 
-    core::pose::Pose get_oriented_pose( FingerprintBase & fp, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, utility::vector1<core::Real> const & original_pocket_angle_transform, numeric::xyzVector<core::Real> const & CoM_offset );
+    core::pose::Pose get_oriented_pose( FingerprintBase & fp, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, utility::vector1<core::Real> const & original_pocket_angle_transform, numeric::xyzVector<core::Real> const & CoM_offset, core::Size const conformer );
 
     core::Real rmsd( core::pose::Pose const & original_pose,  core::pose::Pose const & oriented_pose );
 
@@ -195,6 +211,8 @@ namespace pockets {
     core::Size compute_ligand_resnum() const { return compute_ligand_resnum(pose_); };
     core::Size compute_ligand_natoms( core::pose::Pose const & pose ) const;
     core::Size compute_ligand_natoms() const { return compute_ligand_natoms(pose_); };
+    core::Size compute_ligand_nconformers( core::pose::Pose const & pose ) const;
+    core::Size compute_ligand_nconformers() const { return compute_ligand_nconformers(pose_); };
 
   private:
     PlaidFingerprint(); // no default constructor
@@ -204,14 +222,14 @@ namespace pockets {
     // derivatives are optionally filled by build_from_pose_ , used in fp_compare_deriv
     std::list< ray_distance_derivs > derivs_of_ray_distances_; // note: refers to rays in the same order as the triplet data
 
-    void move_ligand_and_update_rhos_(FingerprintBase & fp, numeric::xyzVector<core::Real> const & CoM_offset, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, bool const update_derivatives = false ) {
-      core::conformation::ResidueCOP ligand_rsd = move_ligand_( fp, CoM_offset, angle1_offset, angle2_offset, angle3_offset );
+    void move_ligand_and_update_rhos_(FingerprintBase & fp, numeric::xyzVector<core::Real> const & CoM_offset, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, core::Size const & conformer, bool const update_derivatives = false ) {
+      core::conformation::ResidueCOP ligand_rsd = select_conf_and_move_ligand_( fp, CoM_offset, angle1_offset, angle2_offset, angle3_offset, conformer );
       update_rhos_( fp, ligand_rsd, update_derivatives );
     }
 
     void update_rhos_( FingerprintBase & fp, core::conformation::ResidueCOP curr_ligand_rsd, bool const update_derivatives = false );
 
-    core::conformation::ResidueCOP move_ligand_( FingerprintBase & fp, numeric::xyzVector<core::Real> const & CoM_offset, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset );
+    core::conformation::ResidueCOP select_conf_and_move_ligand_( FingerprintBase & fp, numeric::xyzVector<core::Real> const & CoM_offset, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, core::Size const & conformer );
 
     void apply_rotation_offset_to_pose_( core::pose::Pose & pose, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset ) const;
 

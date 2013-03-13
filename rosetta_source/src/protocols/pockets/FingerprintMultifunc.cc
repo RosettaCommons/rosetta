@@ -15,6 +15,8 @@
 #include <protocols/pockets/FingerprintMultifunc.hh>
 #include <protocols/pockets/Fingerprint.hh>
 
+#include <cmath>
+
 #include <utility/vector1.hh>
 
 
@@ -26,13 +28,15 @@ FingerprintMultifunc::FingerprintMultifunc(
 	PlaidFingerprint & pfp_in,
 	core::Real const & missing_point_weight,
 	core::Real const & steric_weight,
-	core::Real const & extra_point_weight
+	core::Real const & extra_point_weight,
+	core::Size const nconformers
 ) :
 	nfp_( nfp_in ),
 	pfp_( pfp_in ),
   missing_pt_(missing_point_weight),
 	steric_(steric_weight),
-  extra_pt_(extra_point_weight)
+  extra_pt_(extra_point_weight),
+  nconformers_(nconformers)
 {}
 
 core::Real
@@ -42,7 +46,8 @@ FingerprintMultifunc::operator ()( core::optimization::Multivec const & vars ) c
 	origin_offset.y() = vars[2];
 	origin_offset.z() = vars[3];
 
-	pfp_.move_ligand_and_update_rhos_( nfp_, origin_offset, vars[4], vars[5], vars[6] );
+	core::Size const conformer=((core::Size)(floor(vars[7])) % nconformers_);
+	pfp_.move_ligand_and_update_rhos_( nfp_, origin_offset, vars[4], vars[5], vars[6], conformer );
 	core::Real const score = pfp_.fp_compare( nfp_, missing_pt_, steric_, extra_pt_ );
 	return score;
 }
@@ -59,7 +64,7 @@ FingerprintMultifunc::dfunc( core::optimization::Multivec const & vars, core::op
 	origin_offset.y() = vars[2];
 	origin_offset.z() = vars[3];
 
-	pfp_.move_ligand_and_update_rhos_( nfp_, origin_offset, vars[4], vars[5], vars[6] );
+	pfp_.move_ligand_and_update_rhos_( nfp_, origin_offset, vars[4], vars[5], vars[6], vars[7] );
 
 	pfp_.fp_compare_deriv( nfp_, missing_pt_, steric_, extra_pt_, dE_dvars[1], dE_dvars[2], dE_dvars[3], dE_dvars[4], dE_dvars[5], dE_dvars[6] );
 

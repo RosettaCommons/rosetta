@@ -39,7 +39,8 @@ public: // Creation
 		PlaidFingerprint & pfp_in,
 		core::Real const & missing_point_weight,
 		core::Real const & steric_weight,
-		core::Real const & extra_point_weight
+		core::Real const & extra_point_weight,
+		core::Size const nconformers
 	);
 
 	/// @brief Destructor
@@ -74,6 +75,7 @@ private:
 	core::Real missing_pt_;
 	core::Real steric_;
 	core::Real extra_pt_;
+	core::Size nconformers_;
 
 }; // FingerprintMultifunc
 

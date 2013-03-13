@@ -35,9 +35,9 @@ public:
   DarcParticleSwarmMinimizer( NonPlaidFingerprint & nfp_in, PlaidFingerprint & pfp_in,
 		core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight,
 		core::optimization::Multivec p_min, core::optimization::Multivec p_max) :
-	        core::optimization::ParticleSwarmMinimizer(p_min, p_max),
+		core::optimization::ParticleSwarmMinimizer(p_min, p_max),
 		nfp_( nfp_in ),
-   	       	pfp_( pfp_in ),
+		pfp_( pfp_in ),
 		missing_pt_(missing_point_weight),
 		steric_(steric_weight),
 		extra_pt_(extra_point_weight){};
@@ -48,9 +48,8 @@ public:
 
   private:
 
-  void fill_atom_arrays_( core::Size particle_inx, core::conformation::ResidueCOP ligand_rsd );
-
-  core::Real DarcPSO_fp_compare_( core::Size particle_inx, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight );
+  void fill_atom_arrays_( core::Size particle_inx, core::conformation::ResidueCOP ligand_rsd, std::vector<basic::gpu::float4> & atoms, std::vector<basic::gpu::float4> & atom_maxmin_phipsi, std::vector<basic::gpu::float4> & ligand_maxmin_phipsi );
+  core::Real DarcPSO_fp_compare_( core::Size particle_inx, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight, std::vector<basic::gpu::float4> & atoms, std::vector<basic::gpu::float4> & atom_maxmin_phipsi );
 
   NonPlaidFingerprint & nfp_;
   PlaidFingerprint & pfp_;
@@ -65,3 +64,4 @@ public:
 } // namespace protocols
 
 #endif // INCLUDED_protocols_pockets_DarcParticleSwarmMinimizer_HH
+

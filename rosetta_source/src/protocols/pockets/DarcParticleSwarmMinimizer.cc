@@ -28,6 +28,7 @@
 #include <ObjexxFCL/format.hh>
 #include <algorithm>
 #include <utility/vector1.hh>
+#include <cmath>
 
 static numeric::random::RandomGenerator my_RG(6172108); // <- Magic number, do not change it!!!
 
@@ -44,47 +45,32 @@ void DarcParticleSwarmMinimizer::score_all_particles(core::optimization::Multifu
 
   Size const N = particles.size();
   ligand_natoms_ = pfp_.compute_ligand_natoms();
+  Size const nconformers = pfp_.compute_ligand_nconformers();
+
+  std::vector<basic::gpu::float4> atoms(ligand_natoms_ * N);
+  std::vector<basic::gpu::float4> atom_maxmin_phipsi(ligand_natoms_ * N);
+  std::vector<basic::gpu::float4> ligand_maxmin_phipsi(N);
 
   for (Size j = 1; j <= N; ++j) {
-    core::optimization::Multivec const vars = particles[j]->p_;
+    core::optimization::Multivec const vars = particles[j]->p_;//particles[particles_num]->p_;
     numeric::xyzVector<core::Real> origin_offset;
     origin_offset.x() = vars[1];
     origin_offset.y() = vars[2];
     origin_offset.z() = vars[3];
-    core::conformation::ResidueCOP ligand_rsd = pfp_.move_ligand_( nfp_, origin_offset, vars[4], vars[5], vars[6] );
-    fill_atom_arrays_(j-1, ligand_rsd );
+		// note: conformer is indexed starting at 0
+		core::Size conformer=((core::Size)(floor(vars[7])) % nconformers);
+		//    if (j==N) std::cout << "position,conformer,NumC: " << j << "," << conformer << "," << nconformers << " ";
+    core::conformation::ResidueCOP ligand_rsd = pfp_.select_conf_and_move_ligand_( nfp_, origin_offset, vars[4], vars[5], vars[6], conformer );
+    fill_atom_arrays_(j-1, ligand_rsd, atoms, atom_maxmin_phipsi, ligand_maxmin_phipsi );//(j-1, ligand_rsd, N, k-1 );
+    //particles_num++;
   }
 
 #ifdef USEOPENCL
-
-  if(nfp_.gpu_.use()){
-
-    int actual_atom_array_size = ligand_natoms_ * N;
-    nfp_.gpu_.WriteData(nfp_.gpu_atoms_, nfp_.atom_, sizeof(*nfp_.atom_) * actual_atom_array_size);
-
-    if(!nfp_.gpu_.ExecuteKernel("Check_for_intersection", nfp_.gpu_num_rays_, 256, 64, NULL)) {
-      std::cout << "Failed to launch kernel: " << nfp_.gpu_.lastErrorStr() << std::endl;
-      exit(1);
-    }
-
-    if(!nfp_.gpu_.ExecuteKernel("Get_scores", N, 256, 64, NULL)) {
-      std::cout << "Failed to launch kernel: " << nfp_.gpu_.lastErrorStr() << std::endl;
-      exit(1);
-    }
-
-    nfp_.gpu_.ReadData(nfp_.particle_scores_, nfp_.gpu_particle_scores_, sizeof(*nfp_.particle_scores_) * N);
-
-    for (core::Size j = 0; j < N; ++j) {
-      core::Real particle_score = nfp_.particle_scores_[j];
-      particles[j+1]->set_score(particle_score);
-    }
-
-  } else {
-
+  if(!nfp_.gpu_calculate_particle_scores(particles, atoms, atom_maxmin_phipsi)) {
 #endif
 
     for (core::Size j = 1; j <= N; ++j) {
-      core::Real particle_score = DarcPSO_fp_compare_( j-1, missing_pt_, steric_, extra_pt_ );
+      core::Real particle_score = DarcPSO_fp_compare_( j-1, missing_pt_, steric_, extra_pt_, atoms, atom_maxmin_phipsi );
       particles[j]->set_score(particle_score);
     }
 
@@ -94,7 +80,7 @@ void DarcParticleSwarmMinimizer::score_all_particles(core::optimization::Multifu
 
 }
 
-void DarcParticleSwarmMinimizer::fill_atom_arrays_( core::Size particle_inx, core::conformation::ResidueCOP ligand_rsd ) {
+void DarcParticleSwarmMinimizer::fill_atom_arrays_( core::Size particle_inx, core::conformation::ResidueCOP ligand_rsd, std::vector<basic::gpu::float4> & atoms, std::vector<basic::gpu::float4> & atom_maxmin_phipsi, std::vector<basic::gpu::float4> & ligand_maxmin_phipsi ) {
 
   using namespace basic::options;
   core::Real const radius_scale = option[ OptionKeys::fingerprint::atom_radius_scale ];
@@ -102,14 +88,14 @@ void DarcParticleSwarmMinimizer::fill_atom_arrays_( core::Size particle_inx, cor
 
   for (Size i = 1; i <= ligand_natoms_; ++i) {
 
-    core::Size const curr_array_inx = ( ligand_natoms_ * particle_inx ) + ( i-1 );
+		core::Size const curr_array_inx = ( ligand_natoms_ * particle_inx ) + ( i-1 );
 
     numeric::xyzVector<core::Real> this_atomcoors = ligand_rsd->atom(i).xyz() - pfp_.origin();
     core::Real const this_atom_radius = ( ligand_rsd->atom_type(i).lj_radius() - atom_buffer ) * radius_scale;
-    nfp_.atom_[curr_array_inx].x = this_atomcoors.x();
-    nfp_.atom_[curr_array_inx].y = this_atomcoors.y();
-    nfp_.atom_[curr_array_inx].z = this_atomcoors.z();
-    nfp_.atom_[curr_array_inx].w = this_atom_radius;
+    atoms[curr_array_inx].x = this_atomcoors.x();
+    atoms[curr_array_inx].y = this_atomcoors.y();
+    atoms[curr_array_inx].z = this_atomcoors.z();
+    atoms[curr_array_inx].w = this_atom_radius;
 
     // find the atom center (in spherical coors)
     spherical_coor_triplet atom_center;
@@ -124,9 +110,9 @@ void DarcParticleSwarmMinimizer::fill_atom_arrays_( core::Size particle_inx, cor
     if ( std::abs(tmp_atomz) > 0.00001 ) {
       core::Real const inside_phi_asin = this_atom_radius / tmp_atomz;
       if ( std::abs(inside_phi_asin) < 1. ) {
-	core::Real const max_angular_displacement_phi = std::abs( asin( inside_phi_asin ) );
-	curr_max_phi = atom_center.phi + max_angular_displacement_phi;
-	curr_min_phi = atom_center.phi - max_angular_displacement_phi;
+        core::Real const max_angular_displacement_phi = std::abs( asin( inside_phi_asin ) );
+        curr_max_phi = atom_center.phi + max_angular_displacement_phi;
+        curr_min_phi = atom_center.phi - max_angular_displacement_phi;
       }
     }
 
@@ -135,26 +121,25 @@ void DarcParticleSwarmMinimizer::fill_atom_arrays_( core::Size particle_inx, cor
     if ( ( std::abs(tmp_atomx) > 0.00001 ) || ( std::abs(tmp_atomx) > 0.00001 ) ) {
       core::Real const inside_psi_asin = this_atom_radius / sqrt( (tmp_atomx*tmp_atomx) + (tmp_atomy*tmp_atomy) );
       if ( std::abs(inside_psi_asin) < 1. ) {
-	core::Real const max_angular_displacement_psi = std::abs( asin( inside_psi_asin ) );
-	curr_max_psi = atom_center.psi + max_angular_displacement_psi;
-	curr_min_psi = atom_center.psi - max_angular_displacement_psi;
+        core::Real const max_angular_displacement_psi = std::abs( asin( inside_psi_asin ) );
+        curr_max_psi = atom_center.psi + max_angular_displacement_psi;
+        curr_min_psi = atom_center.psi - max_angular_displacement_psi;
       }
     }
 
-    if ( curr_max_phi > nfp_.ligand_maxmin_phipsi_[particle_inx].x ) nfp_.ligand_maxmin_phipsi_[particle_inx].x = curr_max_phi;
-    if ( curr_max_psi > nfp_.ligand_maxmin_phipsi_[particle_inx].y ) nfp_.ligand_maxmin_phipsi_[particle_inx].y = curr_max_psi;
-    if ( curr_min_phi < nfp_.ligand_maxmin_phipsi_[particle_inx].z ) nfp_.ligand_maxmin_phipsi_[particle_inx].z = curr_min_phi;
-    if ( curr_min_psi < nfp_.ligand_maxmin_phipsi_[particle_inx].w ) nfp_.ligand_maxmin_phipsi_[particle_inx].w = curr_min_psi;
-    nfp_.atom_maxmin_phipsi_[curr_array_inx].x = curr_max_phi;
-    nfp_.atom_maxmin_phipsi_[curr_array_inx].y = curr_max_psi;
-    nfp_.atom_maxmin_phipsi_[curr_array_inx].z = curr_min_phi;
-    nfp_.atom_maxmin_phipsi_[curr_array_inx].w = curr_min_psi;
+    if ( curr_max_phi > ligand_maxmin_phipsi[particle_inx].x ) ligand_maxmin_phipsi[particle_inx].x = curr_max_phi;
+    if ( curr_max_psi > ligand_maxmin_phipsi[particle_inx].y ) ligand_maxmin_phipsi[particle_inx].y = curr_max_psi;
+    if ( curr_min_phi < ligand_maxmin_phipsi[particle_inx].z ) ligand_maxmin_phipsi[particle_inx].z = curr_min_phi;
+    if ( curr_min_psi < ligand_maxmin_phipsi[particle_inx].w ) ligand_maxmin_phipsi[particle_inx].w = curr_min_psi;
+    atom_maxmin_phipsi[curr_array_inx].x = curr_max_phi;
+    atom_maxmin_phipsi[curr_array_inx].y = curr_max_psi;
+    atom_maxmin_phipsi[curr_array_inx].z = curr_min_phi;
+    atom_maxmin_phipsi[curr_array_inx].w = curr_min_psi;
 
   }
-
 }
 
-core::Real DarcParticleSwarmMinimizer::DarcPSO_fp_compare_( core::Size particle_inx, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight ) {
+core::Real DarcParticleSwarmMinimizer::DarcPSO_fp_compare_( core::Size particle_inx, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight, std::vector<basic::gpu::float4> & atoms, std::vector<basic::gpu::float4> & atom_maxmin_phipsi ) {
 
   core::Real Total_score = 0;
   core::Size num_rays = 0;
@@ -164,34 +149,35 @@ core::Real DarcParticleSwarmMinimizer::DarcPSO_fp_compare_( core::Size particle_
     core::Real curr_phi = ni->phi;
     core::Real curr_psi = ni->psi;
     core::Real best_rho_sq(9999.);
-    core::Size best_intersecting_atom(0);
+		//    core::Size best_intersecting_atom(0);
     for (Size i = 1, i_end = ligand_natoms_; i <= i_end; ++i) {
 
       core::Size const curr_array_inx = ( ligand_natoms_ * particle_inx ) + ( i-1 );
 
-      if ( nfp_.atom_[curr_array_inx].w < 0.001 ) continue;
+      if ( atoms[curr_array_inx].w < 0.001 ) continue;
 
-      while ( curr_phi < nfp_.atom_maxmin_phipsi_[curr_array_inx].z ) {
-	curr_phi += numeric::constants::r::pi_2;
+      while ( curr_phi < atom_maxmin_phipsi[curr_array_inx].z ) {
+        curr_phi += numeric::constants::r::pi_2;
       }
-      while ( curr_phi > nfp_.atom_maxmin_phipsi_[curr_array_inx].x ) {
-	curr_phi -= numeric::constants::r::pi_2;
+      while ( curr_phi > atom_maxmin_phipsi[curr_array_inx].x ) {
+        curr_phi -= numeric::constants::r::pi_2;
       }
-      while ( curr_psi < nfp_.atom_maxmin_phipsi_[curr_array_inx].w ) {
-	curr_psi += numeric::constants::r::pi_2;
-      }
-      while ( curr_psi > nfp_.atom_maxmin_phipsi_[curr_array_inx].y ) {
-	curr_psi -= numeric::constants::r::pi_2;
-      }
-      if ( curr_phi < nfp_.atom_maxmin_phipsi_[curr_array_inx].z ) continue;
-      if ( curr_psi < nfp_.atom_maxmin_phipsi_[curr_array_inx].w ) continue;
-      if ( curr_phi > nfp_.atom_maxmin_phipsi_[curr_array_inx].x ) continue;
-      if ( curr_psi > nfp_.atom_maxmin_phipsi_[curr_array_inx].y ) continue;
+      if ( curr_phi < atom_maxmin_phipsi[curr_array_inx].z ) continue;
+      if ( curr_phi > atom_maxmin_phipsi[curr_array_inx].x ) continue;
 
-      core::Real const min_intersect_SQ = Find_Closest_Intersect_SQ(curr_phi,curr_psi,nfp_.atom_[curr_array_inx].x,nfp_.atom_[curr_array_inx].y,nfp_.atom_[curr_array_inx].z,nfp_.atom_[curr_array_inx].w);
+      while ( curr_psi < atom_maxmin_phipsi[curr_array_inx].w ) {
+        curr_psi += numeric::constants::r::pi_2;
+      }
+      while ( curr_psi > atom_maxmin_phipsi[curr_array_inx].y ) {
+        curr_psi -= numeric::constants::r::pi_2;
+      }
+      if ( curr_psi < atom_maxmin_phipsi[curr_array_inx].w ) continue;
+      if ( curr_psi > atom_maxmin_phipsi[curr_array_inx].y ) continue;
+
+      core::Real const min_intersect_SQ = Find_Closest_Intersect_SQ(curr_phi, curr_psi, atoms[curr_array_inx].x, atoms[curr_array_inx].y, atoms[curr_array_inx].z, atoms[curr_array_inx].w);
 
       if ( min_intersect_SQ < best_rho_sq ) {
-	best_rho_sq = min_intersect_SQ;
+        best_rho_sq = min_intersect_SQ;
       }
     }
 

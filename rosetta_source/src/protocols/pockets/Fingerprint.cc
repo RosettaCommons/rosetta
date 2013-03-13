@@ -73,7 +73,7 @@ void FingerprintBase::print_to_file(std::string const & output_filename) const {
   out_stream<<"/ORI/"<<std::fixed<<std::setprecision(2)<< origin_.x() << "\t" <<std::fixed<<std::setprecision(2)<< origin_.y() << "\t"<<std::fixed<<std::setprecision(3)<< origin_.z() <<std::endl;
   out_stream<<"/COM/"<<std::fixed<<std::setprecision(2)<< CoM_.x() << "\t" <<std::fixed<<std::setprecision(2)<< CoM_.y() << "\t"<<std::fixed<<std::setprecision(3)<< CoM_.z() <<std::endl;
   for (std::list<spherical_coor_triplet>::const_iterator fi = triplet_fingerprint_data_.begin(); fi != triplet_fingerprint_data_.end(); ++fi) {
-    out_stream<<std::fixed<<std::setprecision(2)<< fi->phi << "\t" <<std::fixed<<std::setprecision(2)<<fi->psi << "\t"<<std::fixed<<std::setprecision(3)<< fi->rho <<std::endl;
+    out_stream<< fi->phi << "\t" <<fi->psi << "\t"<< fi->rho <<std::endl;
   }
   out_stream.close();
   out_stream.clear();
@@ -106,6 +106,18 @@ void FingerprintBase::print_to_pdb(std::string const & output_pdbname, numeric::
   return;
 }
 
+NonPlaidFingerprint::NonPlaidFingerprint() {
+#ifdef USEOPENCL
+  gpu_.profiling(0);
+  gpu_.Init();
+  memset(&gpu_memory_, 0, sizeof(gpu_memory_));
+#endif
+}
+
+NonPlaidFingerprint::~NonPlaidFingerprint() {
+  // All GPU memory is freed automatically when gpu_ is destroyed
+}
+
 void NonPlaidFingerprint::setup_from_PlaidFingerprint( PlaidFingerprint const & pfp ) {
   origin_ = pfp.origin();
   triplet_fingerprint_data_.resize(pfp.triplet_fingerprint_data().size());
@@ -131,6 +143,29 @@ void NonPlaidFingerprint::setup_from_PocketGrid( core::pose::Pose const & protei
   //combine eggshell & extra coord list into a single list
   egg_and_ext_list_.clear();
   egg_and_ext_list_ = combine_xyz_lists(eggshell_list_ , extshell_list_);
+
+  //set CoM_ to the eggshell CoM
+  CoM_ = egg_sg.eggshell_CoM_;
+
+  //set origin
+  set_origin( protein_pose, egg_and_ext_list_);
+
+  setup_from_EggshellGrid();
+
+  return;
+}
+
+void NonPlaidFingerprint::setup_from_PocketGrid_and_known_ligand( core::pose::Pose const & protein_pose, PocketGrid const & pocket_grid, PocketGrid const & grid_for_extshell, core::pose::Pose const & known_ligand_pose, core::Real const & trim_dist ) {
+  EggshellGrid egg_sg(pocket_grid);
+  eggshell_list_ = egg_sg.eggshell_coord_list();
+  EggshellGrid ext_sg(grid_for_extshell, eggshell_list_);
+  extshell_list_ = ext_sg.extra_coord_list();
+
+	//combine eggshell & extra coord list into a single list
+  egg_and_ext_list_.clear();
+  egg_and_ext_list_ = combine_xyz_lists(eggshell_list_ , extshell_list_);
+
+	include_eggshell_points_based_on_known_ligand(known_ligand_pose, trim_dist);
 
   //set CoM_ to the eggshell CoM
   CoM_ = egg_sg.eggshell_CoM_;
@@ -234,54 +269,17 @@ void NonPlaidFingerprint::set_origin_from_option_( core::pose::Pose const & prot
 void NonPlaidFingerprint::setup_from_EggshellGrid() {
 
   // convert from cartesian eggshell to spherical coors
-  triplet_fingerprint_data_.clear();
-  spherical_coor_triplet new_triplet;
+	std::list< spherical_coor_triplet > rounded_egg_triplet = convert_cart_to_spherical_and_round(eggshell_list_);
+	std::list< spherical_coor_triplet > rounded_ext_triplet = convert_cart_to_spherical_and_round(extshell_list_);
 
-  Size num_int_points = 0;//This is only used when gpu is enabled
-  for (std::list< numeric::xyzVector<core::Real> >::const_iterator pd = eggshell_list_.begin(); pd != eggshell_list_.end(); ++pd) {
-    convert_cartesian_to_spherical_coor_triplet( *pd - origin_, new_triplet );
-    triplet_fingerprint_data_.push_back(new_triplet);
-    num_int_points=num_int_points+1;
-  }
+	std::list< spherical_coor_triplet >	unq_egg_triplet = remove_duplicate_phi_psi(rounded_egg_triplet);
+	std::list< spherical_coor_triplet >	unq_ext_triplet = remove_duplicate_phi_psi(rounded_ext_triplet);
 
-  Size num_ext_points = 0;//This is only used when gpu is enabled
-  for (std::list< numeric::xyzVector<core::Real> >::const_iterator pd = extshell_list_.begin(); pd != extshell_list_.end(); ++pd) {
-    convert_cartesian_to_spherical_coor_triplet( *pd - origin_, new_triplet );
-    new_triplet.rho = 0.;
-    triplet_fingerprint_data_.push_back(new_triplet);
-    num_ext_points=num_ext_points+1;
-  }
-
-#ifdef USEOPENCL
-  gpu_num_rays_ = num_int_points + num_ext_points;
-  setup_gpu_rays();
-#endif
-
-  /*
-	std::list< spherical_coor_triplet > temp_egg_triplet;
-
-	spherical_coor_triplet new_triplet;
-	numeric::xyzVector<core::Real> new_coord;
-	temp_egg_triplet.clear();
-
-
-	for (std::list< numeric::xyzVector<core::Real> >::const_iterator pd = eggshell_grid.eggshell_coord_list().begin(); pd != eggshell_grid.eggshell_coord_list().end(); ++pd) {
-		convert_cartesian_to_spherical_coor_triplet( *pd - origin_, new_triplet );
-		temp_egg_triplet.push_back(new_triplet);
-	}
-	std::list< spherical_coor_triplet > temp_ext_triplet = temp_egg_triplet;
-	temp_ext_triplet.clear();
-	for (std::list< numeric::xyzVector<core::Real> >::const_iterator pd = eggshell_grid.extra_coord_list().begin(); pd != eggshell_grid.extra_coord_list().end(); ++pd) {
-		convert_cartesian_to_spherical_coor_triplet( *pd - origin_, new_triplet );
-		temp_ext_triplet.push_back(new_triplet);
-	}
-
-	//filter phi psi
-	for (std::list<spherical_coor_triplet>::const_iterator aa = temp_egg_triplet.begin(); aa != temp_egg_triplet.end(); ++aa) {
-		for (std::list<spherical_coor_triplet>::iterator bb = temp_ext_triplet.begin(); bb != temp_ext_triplet.end();) {
+	//remove ext_tripltet that matches with egg_triplet phi psi angles
+	for (std::list<spherical_coor_triplet>::const_iterator aa = unq_egg_triplet.begin(); aa != unq_egg_triplet.end(); ++aa) {
+		for (std::list<spherical_coor_triplet>::iterator bb = unq_ext_triplet.begin(); bb != unq_ext_triplet.end();) {
       if( (aa->phi == bb->phi) && (aa->psi == bb->psi) ) {
-				std::cout<<"found "<<std::endl;
-        bb = temp_ext_triplet.erase(bb);
+        bb = unq_ext_triplet.erase(bb);
       }
       else {
         ++bb;
@@ -289,124 +287,132 @@ void NonPlaidFingerprint::setup_from_EggshellGrid() {
 		}
   }
 
-	eggshell_list_.clear();
-	extshell_list_.clear();
-	for (std::list<spherical_coor_triplet>::iterator aa = temp_egg_triplet.begin(); aa != temp_egg_triplet.end(); ++aa) {
-		convert_spherical_coor_triplet_to_cartesian( *aa, new_coord );
-		eggshell_list_.push_back(new_coord+origin_);
-	}
-	for (std::list<spherical_coor_triplet>::iterator bb = temp_ext_triplet.begin(); bb != temp_ext_triplet.end(); ++bb) {
-		convert_spherical_coor_triplet_to_cartesian( *bb, new_coord );
-		extshell_list_.push_back(new_coord+origin_);
-	}
-	triplet_fingerprint_data_.clear();
-	triplet_fingerprint_data_ = temp_egg_triplet;
-	for (std::list<spherical_coor_triplet>::iterator bb = temp_ext_triplet.begin(); bb != temp_ext_triplet.end(); ++bb) {
-		bb->rho = 0.;
-		triplet_fingerprint_data_.push_back(*bb);
-	}
-	*/
+	write_eggshell_to_pdb_file("original_eggshell.pdb");
 
-  return;
-}
+	eggshell_list_.clear();
+	eggshell_list_ = convert_spherical_list_to_cartesian_list(unq_egg_triplet);
+	extshell_list_.clear();
+	extshell_list_ = convert_spherical_list_to_cartesian_list(unq_ext_triplet);
+
+
+	triplet_fingerprint_data_.insert(triplet_fingerprint_data_.end(), unq_egg_triplet.begin(), unq_egg_triplet.end());
+	unq_ext_triplet = set_rho_to_zero(unq_ext_triplet);
+	triplet_fingerprint_data_.insert(triplet_fingerprint_data_.end(), unq_ext_triplet.begin(), unq_ext_triplet.end());
+
+  //DUMP EGGSHELL TO A PDB FILE
+  utility::io::ozstream outPDB_stream;
+  outPDB_stream.open("eggshell.pdb", std::ios::out);
+  outPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   ORI A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<origin_.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<origin_.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<origin_.z()<<std::endl;
+  outPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   COM B   2    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.z()<<std::endl;
+  for (std::list<spherical_coor_triplet>::const_iterator pd = triplet_fingerprint_data_.begin(); pd != triplet_fingerprint_data_.end(); ++pd) {
+    numeric::xyzVector<core::Real> new_coor;
+    convert_spherical_coor_triplet_to_cartesian( *pd, new_coor );
+    new_coor += origin_;
+    outPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   EGG C   3    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<new_coor.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<new_coor.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<new_coor.z()<<std::endl;
+  }
+  outPDB_stream.close();
+  outPDB_stream.clear();
+
 
 #ifdef USEOPENCL
-void NonPlaidFingerprint::setup_gpu( core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight, int & num_particles, PlaidFingerprint & pf ) {
-  // GPU Initalization
-  if(gpu_.use()) {
+  gpu_setup_rays();
+#endif
 
-    float weights[4];
-    weights[0] = missing_point_weight;
-    weights[1] = steric_weight;
-    weights[2] = extra_point_weight;
-    weights[3] = num_particles;
-    // Allocate persistent memory for rays
-    gpu_weights_ = gpu_.AllocateMemory(sizeof(*weights) * 4);
-    // Copy ray data to GPU memory
-    gpu_.WriteData(gpu_weights_, weights, sizeof(*weights) * 4);
-
-    gpu_atoms_ = gpu_.AllocateMemory(sizeof(*atom_) * ATOMS_ARRAY);
-
-    if(!gpu_ray_scores_) {
-      // Allocate GPU memory for distances (results)
-      gpu_ray_scores_ = gpu_.AllocateMemory(sizeof(*ray_scores_) * RAY_SCORE_ARRAY);
-    }
-
-    if(!gpu_particle_scores_) {
-      // Allocate GPU memory for distances (results)
-      gpu_particle_scores_ = gpu_.AllocateMemory(sizeof(*particle_scores_) * NUMBER_OF_PARTICLES);
-    }
-
-    std::string fn = basic::database::full_name("gpu/DARC_PSO.cl");
-    if(!gpu_.RegisterProgram(fn.c_str())) {
-      std::cout << "Failed to load CL kernel." << std::endl;
-      exit(1);
-    }
-
-    gpu_num_atoms_ = pf.compute_ligand_natoms();
-    gpu_num_particles_ = num_particles;
-
-    cl_kernel kernel1 = gpu_.BuildKernel("Check_for_intersection");
-    gpu_.setKernelArg(kernel1, 0, sizeof(gpu_rays_), &gpu_rays_);
-    gpu_.setKernelArg(kernel1, 1, sizeof(gpu_atoms_), &gpu_atoms_);
-    gpu_.setKernelArg(kernel1, 2, sizeof(gpu_ray_scores_), &gpu_ray_scores_);
-    gpu_.setKernelArg(kernel1, 3, sizeof(gpu_num_atoms_), &gpu_num_atoms_);
-    gpu_.setKernelArg(kernel1, 4, sizeof(gpu_weights_), &gpu_weights_);
-    gpu_.setKernelArg(kernel1, 5, sizeof(gpu_num_rays_), &gpu_num_rays_);
-
-    cl_kernel kernel2 = gpu_.BuildKernel("Get_scores");
-    gpu_.setKernelArg(kernel2, 0, sizeof(gpu_ray_scores_), &gpu_ray_scores_);
-    gpu_.setKernelArg(kernel2, 1, sizeof(gpu_particle_scores_), &gpu_particle_scores_);
-    gpu_.setKernelArg(kernel2, 2, sizeof(gpu_num_rays_), &gpu_num_rays_);
-    gpu_.setKernelArg(kernel2, 3, sizeof(gpu_num_particles_), &gpu_num_particles_);
-
-  }
+	return;
 }
 
-void NonPlaidFingerprint::free_gpu(){
-  if(gpu_.use()) {
-    if(gpu_rays_) gpu_.Free(gpu_rays_);
-    if(gpu_atoms_) gpu_.Free(gpu_atoms_);
-    if(gpu_ray_scores_) gpu_.Free(gpu_ray_scores_);
-    if(gpu_particle_scores_) gpu_.Free(gpu_particle_scores_);
-    if(gpu_weights_) gpu_.Free(gpu_weights_);
-  }
+
+#ifdef USEOPENCL
+void NonPlaidFingerprint::gpu_setup( core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight, int & num_particles, PlaidFingerprint & pf ) {
+
+  // Initialize GPU memory and variables
+  if(!gpu_.use()) return;
+
+  if(!gpu_.RegisterProgram("gpu/DARC_PSO.cl")) utility_exit_with_message("Failed to load OpenCL program");
+
+  // Custom weights
+  float weights[4] = {
+    missing_point_weight,
+    steric_weight,
+    extra_point_weight,
+    num_particles
+  };
+
+  // Allocate GPU memory for weights (reused), and copy weights to GPU
+  if(!gpu_memory_.weights) gpu_memory_.weights = gpu_.AllocateMemory(sizeof(weights));
+  gpu_.WriteData(gpu_memory_.weights, weights, sizeof(weights));
+  gpu_memory_.num_atoms = pf.compute_ligand_natoms();
+  gpu_memory_.num_particles = num_particles;
 }
 
-void NonPlaidFingerprint::setup_gpu_rays() {
+void NonPlaidFingerprint::gpu_setup_rays() {
 
-  if(gpu_.use()) {
-    if(gpu_num_rays_>MAX_NUM_RAYS){
-      std::cout << "Too many pocket points" << std::endl;
-      exit(2);
-    }
+  if(!gpu_.use()) return;
 
-    gpu_rays_ = NULL;
-    gpu_atoms_ = NULL;
-    gpu_ray_scores_ = NULL;
-    gpu_particle_scores_ = NULL;
-    gpu_weights_ = NULL;
-    gpu_.profiling(0);
-    gpu_.Init();
+  std::vector<basic::gpu::float4> rays;
 
-    basic::gpu::float4 rays[MAX_NUM_RAYS];
-
-    Size i = 0;
-    for (std::list<spherical_coor_triplet>::const_iterator fi = triplet_fingerprint_data_.begin(); fi != triplet_fingerprint_data_.end(); ++fi) {
-      rays[i].x = fi->phi;
-      rays[i].y = fi->psi;
-      rays[i].z = fi->rho;
-      ++i;
-    }
-
-    // Allocate persistent memory for rays
-    gpu_rays_ = gpu_.AllocateMemory(sizeof(*rays) * MAX_NUM_RAYS);
-
-    // Copy ray data to GPU memory
-    gpu_.WriteData(gpu_rays_, rays, sizeof(*rays) * gpu_num_rays_);
+  for (std::list<spherical_coor_triplet>::const_iterator fi = triplet_fingerprint_data_.begin(); fi != triplet_fingerprint_data_.end(); ++fi) {
+    basic::gpu::float4 ray = { fi->phi, fi->psi, fi->rho, 0.0 };
+    rays.push_back(ray);
   }
 
-  return;
+  // Allocate GPU memory (reused) and copy ray coordinates over to GPU
+  unsigned int rays_size = sizeof(basic::gpu::float4) * rays.size();
+  gpu_.AllocateMemoryReuse(gpu_memory_.rays, gpu_memory_.rays_size, rays_size);
+  gpu_.WriteData(gpu_memory_.rays, &rays[0], rays_size);
+  gpu_memory_.num_rays = rays.size();
+}
+
+int NonPlaidFingerprint::gpu_calculate_particle_scores( core::optimization::ParticleOPs & particles, std::vector<basic::gpu::float4> &atoms, std::vector<basic::gpu::float4> &atom_maxmin_phipsi ) {
+
+  if(!gpu_.use()) return 0;
+
+  // For timing of the rest of the function from here on:
+  // basic::gpu::Timer t("gpu_calculate_particle_scores");
+
+  // Allocate GPU memory for particles, intermediate results, and final scores (all reused)
+  gpu_.AllocateMemoryReuse(gpu_memory_.atoms, gpu_memory_.atoms_size, sizeof(basic::gpu::float4) * atoms.size());
+  gpu_.AllocateMemoryReuse(gpu_memory_.atom_maxmin_phipsi, gpu_memory_.atom_maxmin_phipsi_size, sizeof(basic::gpu::float4) * atom_maxmin_phipsi.size());
+  gpu_.AllocateMemoryReuse(gpu_memory_.particle_scores, gpu_memory_.particle_scores_size, sizeof(float) * gpu_memory_.num_particles);
+  gpu_.AllocateMemoryReuse(gpu_memory_.ray_scores, gpu_memory_.ray_scores_size, sizeof(float) * gpu_memory_.num_particles * gpu_memory_.num_rays);
+
+  // Copy particle coordinates over to GPU
+  gpu_.WriteData(gpu_memory_.atoms, &atoms[0], gpu_memory_.atoms_size);
+  // gpu_.WriteData(gpu_memory_.atom_maxmin_phipsi, &atom_maxmin_phipsi[0], gpu_memory_.atom_maxmin_phipsi_size);
+
+  // Execute kernels
+  if(!gpu_.ExecuteKernel("Check_for_intersection", gpu_memory_.num_rays, gpu_memory_.num_rays, 64,
+                           GPU_DEVMEM, gpu_memory_.rays,
+                           GPU_DEVMEM, gpu_memory_.atoms,
+                           GPU_DEVMEM, gpu_memory_.ray_scores,
+                           GPU_IN | GPU_INT, gpu_memory_.num_atoms,
+                           GPU_DEVMEM, gpu_memory_.weights,
+                           GPU_IN | GPU_INT, gpu_memory_.num_rays,
+                           NULL)) {
+    std::cout << "Failed to launch kernel: " << gpu_.lastErrorStr() << std::endl;
+    return 0;
+  }
+
+  if(!gpu_.ExecuteKernel("Get_scores", gpu_memory_.num_particles, gpu_memory_.num_particles, 64,
+                           GPU_DEVMEM, gpu_memory_.ray_scores,
+                           GPU_DEVMEM, gpu_memory_.particle_scores,
+                           GPU_IN | GPU_INT, gpu_memory_.num_rays,
+                           GPU_IN | GPU_INT, gpu_memory_.num_particles,
+                           NULL)) {
+    std::cout << "Failed to launch kernel: " << gpu_.lastErrorStr() << std::endl;
+    return 0;
+  }
+
+  std::vector<float> particle_scores(gpu_memory_.num_particles);
+  gpu_.ReadData(&particle_scores[0], gpu_memory_.particle_scores, gpu_memory_.particle_scores_size);
+
+  Size j =0;
+  for (std::vector<float>::const_iterator ci = particle_scores.begin(); ci != particle_scores.end(); ++ci) {
+    core::Real score = (float)*ci;
+    particles[++j]->set_score(score);
+  }
+
+  return 1;
 }
 #endif
 
@@ -442,47 +448,41 @@ void NonPlaidFingerprint::setup_from_eggshell_pdb_file(std::string const & input
     numeric::xyzVector<core::Real> pdb_coord;
     std::string Xstring, Ystring, Zstring;
 
-    if (name=="END") break;
-    else if ((name=="HETATM")&&(restype=="ORI"))
-      {
-	Xstring = line.substr(30,8);
-	origin_.x() = atof(Xstring.c_str());
-	Ystring = line.substr(38,8);
-	origin_.y() = atof(Ystring.c_str());
-	Zstring = line.substr(46,8);
-	origin_.z() = atof(Zstring.c_str());
-	oricounter++;
-      }
-    else if ((name=="HETATM")&&(restype=="COM"))
-      {
-	Xstring = line.substr(30,8);
-	CoM_.x() = atof(Xstring.c_str());
-	Ystring = line.substr(38,8);
-	CoM_.y() = atof(Ystring.c_str());
-	Zstring = line.substr(46,8);
-	CoM_.z() = atof(Zstring.c_str());
-	comcounter++;
-      }
-    else if ((name=="HETATM")&&(restype=="EGG"))
-      {
-	Xstring = line.substr(30,8);
-	pdb_coord.x() = atof(Xstring.c_str());
-	Ystring = line.substr(38,8);
-	pdb_coord.y() = atof(Ystring.c_str());
-	Zstring = line.substr(46,8);
-	pdb_coord.z() = atof(Zstring.c_str());
-	temp_eggshell_coord_list.push_back(pdb_coord);
-      }
-    else if ((name=="HETATM")&&(restype=="EXT"))
-      {
-	Xstring = line.substr(30,8);
-	pdb_coord.x() = atof(Xstring.c_str());
-	Ystring = line.substr(38,8);
-	pdb_coord.y() = atof(Ystring.c_str());
-	Zstring = line.substr(46,8);
-	pdb_coord.z() = atof(Zstring.c_str());
-	temp_extra_coord_list.push_back(pdb_coord);
-      }
+    if (name=="END") {
+			break;
+		} else if ((name=="HETATM")&&(restype=="ORI")) {
+			Xstring = line.substr(30,8);
+			origin_.x() = atof(Xstring.c_str());
+			Ystring = line.substr(38,8);
+			origin_.y() = atof(Ystring.c_str());
+			Zstring = line.substr(46,8);
+			origin_.z() = atof(Zstring.c_str());
+			oricounter++;
+		} else if ((name=="HETATM")&&(restype=="COM")) {
+			Xstring = line.substr(30,8);
+			CoM_.x() = atof(Xstring.c_str());
+			Ystring = line.substr(38,8);
+			CoM_.y() = atof(Ystring.c_str());
+			Zstring = line.substr(46,8);
+			CoM_.z() = atof(Zstring.c_str());
+			comcounter++;
+		} else if ((name=="HETATM")&&(restype=="EGG")) {
+			Xstring = line.substr(30,8);
+			pdb_coord.x() = atof(Xstring.c_str());
+			Ystring = line.substr(38,8);
+			pdb_coord.y() = atof(Ystring.c_str());
+			Zstring = line.substr(46,8);
+			pdb_coord.z() = atof(Zstring.c_str());
+			temp_eggshell_coord_list.push_back(pdb_coord);
+		} else if ((name=="HETATM")&&(restype=="EXT")) {
+			Xstring = line.substr(30,8);
+			pdb_coord.x() = atof(Xstring.c_str());
+			Ystring = line.substr(38,8);
+			pdb_coord.y() = atof(Ystring.c_str());
+			Zstring = line.substr(46,8);
+			pdb_coord.z() = atof(Zstring.c_str());
+			temp_extra_coord_list.push_back(pdb_coord);
+		}
   }
   inFile.close();
 
@@ -532,10 +532,6 @@ void NonPlaidFingerprint::setup_from_eggshell_triplet_file(std::string const & i
   spherical_coor_triplet new_triplet;
   triplet_fingerprint_data_.clear();
 
-#ifdef USEOPENCL
-  gpu_num_rays_ = 0;
-#endif
-
   while (std::getline(inFile, lineread)) {
 
     std::stringstream sss(lineread);
@@ -580,14 +576,12 @@ void NonPlaidFingerprint::setup_from_eggshell_triplet_file(std::string const & i
     new_triplet.psi = Pock_real_psi;
     new_triplet.rho = Pock_real_rho;
     triplet_fingerprint_data_.push_back(new_triplet);
-#ifdef USEOPENCL
-    gpu_num_rays_ = gpu_num_rays_ + 1;
-#endif
+
   }
   inFile.close();
 
 #ifdef USEOPENCL
-  setup_gpu_rays();
+  gpu_setup_rays();
 #endif
 
   return;
@@ -624,6 +618,57 @@ void NonPlaidFingerprint::trim_based_on_known_ligand(core::pose::Pose const & kn
   }
   outPDB_stream.close();
   outPDB_stream.clear();
+
+  return;
+}
+
+void NonPlaidFingerprint::include_eggshell_points_based_on_known_ligand( core::pose::Pose const & known_ligand_pose, core::Real const & trim_dist) {
+  core::Size lig_res_num = 0;
+  for ( int j = 1, resnum = known_ligand_pose.total_residue(); j <= resnum; ++j ) {
+    if (!known_ligand_pose.residue(j).is_protein()){
+      lig_res_num = j;
+      break;
+    }
+  }
+  if (lig_res_num == 0){
+    std::cout<<"Error, no ligand to include_eggshell_points_based_on_known_ligand" << std::endl;
+    exit(1);
+  }
+
+  core::conformation::Residue const & curr_rsd = known_ligand_pose.conformation().residue(lig_res_num);
+  core::Size ligand_total_atoms = curr_rsd.nheavyatoms();
+  numeric::xyzVector<core::Real> lig_atom_coord;
+  std::list< numeric::xyzVector<core::Real> > lig_atom_coord_list;
+  for(Size i = 1, i_end = ligand_total_atoms; i <= i_end; ++i) {
+    lig_atom_coord.x() = curr_rsd.atom(i).xyz()(1);
+    lig_atom_coord.y() = curr_rsd.atom(i).xyz()(2);
+    lig_atom_coord.z() = curr_rsd.atom(i).xyz()(3);
+    lig_atom_coord_list.push_back(lig_atom_coord);
+  }
+
+  std::list< numeric::xyzVector<core::Real> > new_egg_coord_list;
+  std::list< numeric::xyzVector<core::Real> > new_ext_coord_list;
+	numeric::xyzVector<core::Real> xyz_coord;
+
+	new_egg_coord_list.clear();
+	new_ext_coord_list.clear();
+  for (std::list< numeric::xyzVector<core::Real> >::const_iterator aa = egg_and_ext_list_.begin(); aa != egg_and_ext_list_.end(); ++aa) {
+		xyz_coord = *aa;
+		bool found = false;
+		for (std::list< numeric::xyzVector<core::Real> >::const_iterator bb = lig_atom_coord_list.begin(); bb != lig_atom_coord_list.end(); ++bb) {
+			if(	xyz_coord.distance(*bb) <= trim_dist ) {found = true;break;}
+		}
+		if (found){
+			new_egg_coord_list.push_back(xyz_coord);
+		}
+		else{
+			new_ext_coord_list.push_back(xyz_coord);
+		}
+	}
+	eggshell_list_.clear();
+	eggshell_list_ = new_egg_coord_list;
+	extshell_list_.clear();
+	extshell_list_ = new_ext_coord_list;
 
   return;
 }
@@ -807,7 +852,7 @@ PlaidFingerprint::PlaidFingerprint( core::pose::Pose const & input_pose, Fingerp
   core::conformation::ResidueCOP ligand_rsd = new core::conformation::Residue( pose_.conformation().residue(lig_res_num) );
 
   numeric::xyzVector<core::Real> no_CoM_offset(0.);
-  move_ligand_(fp,no_CoM_offset,0,0,0);
+  select_conf_and_move_ligand_(fp,no_CoM_offset,0,0,0,0);
   update_rhos_(fp, ligand_rsd);
 }
 
@@ -872,22 +917,27 @@ core::Size PlaidFingerprint::compute_ligand_natoms( core::pose::Pose const & pos
   return ligand_total_atoms;
 }
 
-core::conformation::ResidueCOP PlaidFingerprint::move_ligand_( FingerprintBase & fp, numeric::xyzVector<core::Real> const & CoM_offset, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset ) {
+core::Size PlaidFingerprint::compute_ligand_nconformers( core::pose::Pose const & pose ) const {
+  return pose.total_residue();
+}
 
-  core::pose::Pose tmp_pose = pose_;
+core::conformation::ResidueCOP PlaidFingerprint::select_conf_and_move_ligand_( FingerprintBase & fp, numeric::xyzVector<core::Real> const & CoM_offset, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, core::Size const & conformer ) {
 
-  apply_rotation_offset_to_pose_( tmp_pose, angle1_offset, angle2_offset, angle3_offset );
+	// note: conformer passed in is indexed from 0, below is indexed from 1
+  core::pose::PoseOP tmp_pose = new core::pose::Pose(pose_, conformer+1, conformer+1);
+
+  apply_rotation_offset_to_pose_( *tmp_pose, angle1_offset, angle2_offset, angle3_offset );
 
   // set the fingerprint CoM to be the ligand CoM, then apply offset as needed
-  CoM_ = calculate_ligand_CoM(tmp_pose);
+  CoM_ = calculate_ligand_CoM(*tmp_pose);
   // jk note: this next step of setting the origins to match is unnecessary as written, because given current implementation CoM_ and fp.CoM() are the same
   // jk is there a case when this isn't true, or is this leftover from an old approach??
   origin_ = fp.origin() + CoM_ - fp.CoM();
   origin_ += CoM_offset;
 
-  core::Size const lig_res_num = compute_ligand_resnum(tmp_pose);
-  //	core::Size const ligand_natoms = compute_ligand_natoms(tmp_pose);
-  core::conformation::ResidueCOP ligand_rsd = new core::conformation::Residue( tmp_pose.conformation().residue(lig_res_num) );
+  core::Size const lig_res_num = compute_ligand_resnum(*tmp_pose);
+  //	core::Size const ligand_natoms = compute_ligand_natoms(*tmp_pose);
+  core::conformation::ResidueCOP ligand_rsd = new core::conformation::Residue( tmp_pose->conformation().residue(lig_res_num) );
 
   return ligand_rsd;
 
@@ -1234,7 +1284,9 @@ core::Real PlaidFingerprint::search_random_poses( FingerprintBase & fp, core::Si
     core::Real curr_angle2 = (int) (numeric::random::uniform() *359.999);
     core::Real curr_angle3 = (int) (numeric::random::uniform() *359.999);
 
-    move_ligand_and_update_rhos_( fp, CoM_offset, curr_angle1, curr_angle2, curr_angle3 );
+		std::cout<< "JK this code is not yet conformer-enabled, fix it in the app by removing the zero in the call to move_ligand_and_update_rhos_ below..." << std::endl;
+		exit(1);
+    move_ligand_and_update_rhos_( fp, CoM_offset, curr_angle1, curr_angle2, curr_angle3, 0 );
     core::Real curr_score = fp_compare( fp, missing_point_weight, steric_weight, extra_point_weight );
     //std::cout<<"curr_score "<<curr_score<< " " << curr_phi << " " <<curr_psi << std::endl;
     if ( curr_score < best_score ) {
@@ -1265,7 +1317,9 @@ core::Real PlaidFingerprint::find_optimal_rotation( FingerprintBase & fp, core::
       core::Real curr_angle3=0.;
 
       for (core::Size k = 0; k < num_steps; ++k ){
-	move_ligand_and_update_rhos_( fp, CoM_offset, curr_angle1, curr_angle2, curr_angle3 );
+				std::cout<< "JK this code is not yet conformer-enabled, fix it in the app by removing the zero in the call to move_ligand_and_update_rhos_ below..." << std::endl;
+				exit(1);
+				move_ligand_and_update_rhos_( fp, CoM_offset, curr_angle1, curr_angle2, curr_angle3, 0 );
 	core::Real curr_score = fp_compare( fp, missing_point_weight, steric_weight, extra_point_weight );
 	//			std::cout<<"curr_score "<<curr_score<< " " << curr_phi << " " <<curr_psi << std::endl;
 	if ( curr_score < best_score ) {
@@ -1310,7 +1364,9 @@ void PlaidFingerprint::dump_oriented_pose_and_fp_to_pdb( std::string const & pos
 
 void PlaidFingerprint::dump_oriented_pose_and_fp_to_pdb( std::string const & pose_filename, std::string const & fp_filename, FingerprintBase & fp, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, utility::vector1<core::Real> const & original_pocket_angle_transform, numeric::xyzVector<core::Real> const & CoM_offset  ) {
 
-  move_ligand_and_update_rhos_( fp, CoM_offset, angle1_offset, angle2_offset, angle3_offset);
+	std::cout<< "JK this code is not yet conformer-enabled, fix it in the app by removing the zero in the call to move_ligand_and_update_rhos_ below..." << std::endl;
+	exit(1);
+  move_ligand_and_update_rhos_( fp, CoM_offset, angle1_offset, angle2_offset, angle3_offset, 0 );
 
   core::pose::Pose tmp_pose = pose_;
   apply_rotation_offset_to_pose_( tmp_pose, angle1_offset, angle2_offset, angle3_offset );
@@ -1347,16 +1403,16 @@ void PlaidFingerprint::dump_oriented_pose_and_fp_to_pdb( std::string const & pos
 }
 
 
-core::pose::Pose PlaidFingerprint::get_oriented_pose( FingerprintBase &fp , core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, numeric::xyzVector<core::Real> const & CoM_offset ) {
+core::pose::Pose PlaidFingerprint::get_oriented_pose( FingerprintBase &fp , core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, numeric::xyzVector<core::Real> const & CoM_offset, core::Size const conformer ) {
 
   utility::vector1<core::Real> original_pocket_angle_transform(3, 0.);
-  core::pose::Pose oriented_pose = get_oriented_pose( fp, angle1_offset, angle2_offset, angle3_offset, original_pocket_angle_transform, CoM_offset );
+  core::pose::Pose oriented_pose = get_oriented_pose( fp, angle1_offset, angle2_offset, angle3_offset, original_pocket_angle_transform, CoM_offset, conformer );
   return oriented_pose;
 }
 
-core::pose::Pose PlaidFingerprint::get_oriented_pose( FingerprintBase & fp, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, utility::vector1<core::Real> const & original_pocket_angle_transform, numeric::xyzVector<core::Real> const & CoM_offset  ) {
+core::pose::Pose PlaidFingerprint::get_oriented_pose( FingerprintBase & fp, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, utility::vector1<core::Real> const & original_pocket_angle_transform, numeric::xyzVector<core::Real> const & CoM_offset, core::Size const conformer  ) {
 
-  move_ligand_and_update_rhos_( fp, CoM_offset, angle1_offset, angle2_offset, angle3_offset);
+  move_ligand_and_update_rhos_( fp, CoM_offset, angle1_offset, angle2_offset, angle3_offset, conformer );
 
   core::pose::Pose tmp_pose = pose_;
   apply_rotation_offset_to_pose_( tmp_pose, angle1_offset, angle2_offset, angle3_offset );
@@ -1688,6 +1744,73 @@ std::list<numeric::xyzVector<core::Real> > NonPlaidFingerprint::combine_xyz_list
     combined_list.push_back(*pd);
   }
   return combined_list;
+}
+
+
+//round triplet values
+std::list<spherical_coor_triplet> NonPlaidFingerprint::convert_cart_to_spherical_and_round(std::list< numeric::xyzVector<core::Real> > const & xyz_list) {
+	std::list< spherical_coor_triplet > rounded_triplet_list;
+	rounded_triplet_list.clear();
+	spherical_coor_triplet ray_triplet;
+  for (std::list< numeric::xyzVector<core::Real> >::const_iterator pd = xyz_list.begin(); pd != xyz_list.end(); ++pd) {
+    convert_cartesian_to_spherical_coor_triplet( *pd - origin_, ray_triplet );
+ 		ray_triplet.phi = (floor(ray_triplet.phi * 100+0.5)/100);
+		ray_triplet.psi = (floor(ray_triplet.psi * 100+0.5)/100);
+		ray_triplet.rho = (floor(ray_triplet.rho * 100+0.5)/100);
+    rounded_triplet_list.push_back(ray_triplet);
+	  }
+
+return rounded_triplet_list;
+}
+
+//set rho values to zero
+std::list<spherical_coor_triplet> NonPlaidFingerprint::set_rho_to_zero(std::list<spherical_coor_triplet> const & spherical_triplet_list) {
+	std::list< spherical_coor_triplet > rho_zero_triplet_list;
+	rho_zero_triplet_list.clear();
+	spherical_coor_triplet ray_triplet;
+	for (std::list<spherical_coor_triplet>::const_iterator aa = spherical_triplet_list.begin(); aa != spherical_triplet_list.end(); ++aa) {
+		ray_triplet = *aa;
+		ray_triplet.rho = 0;
+    rho_zero_triplet_list.push_back(ray_triplet);
+	  }
+
+return rho_zero_triplet_list;
+}
+
+//remove duplicates from ext_triplet
+std::list<spherical_coor_triplet> NonPlaidFingerprint::remove_duplicate_phi_psi(std::list<spherical_coor_triplet> const & rounded_triplet ) {
+	std::list< spherical_coor_triplet > temp_triplet = rounded_triplet;
+	std::list< spherical_coor_triplet > unique_triplet;
+	unique_triplet.clear();
+
+	for (std::list<spherical_coor_triplet>::const_iterator aa = rounded_triplet.begin(); aa != rounded_triplet.end(); ++aa) {
+		bool found = false;
+		spherical_coor_triplet best_triplet = *aa;
+		for (std::list<spherical_coor_triplet>::iterator bb = temp_triplet.begin(); bb != temp_triplet.end();) {
+			if( (aa->phi == bb->phi) && (aa->psi == bb->psi) ) {
+				found = true;
+				if (bb->rho < best_triplet.rho) { best_triplet = *bb;}
+				bb = temp_triplet.erase(bb);
+			}
+			else {
+				++bb;
+			}
+		}
+		if(found) unique_triplet.push_back(best_triplet);
+	}
+	return unique_triplet;
+}
+
+std::list<numeric::xyzVector<core::Real> > NonPlaidFingerprint::convert_spherical_list_to_cartesian_list(std::list<spherical_coor_triplet> const & unique_triplet) {
+  std::list<numeric::xyzVector<core::Real> > xyz_list;
+  xyz_list.clear();
+  for (std::list<spherical_coor_triplet>::const_iterator pd = unique_triplet.begin(); pd != unique_triplet.end(); ++pd) {
+    numeric::xyzVector<core::Real> new_coor;
+    convert_spherical_coor_triplet_to_cartesian( *pd, new_coor );
+    new_coor += origin_;
+		xyz_list.push_back(new_coor);
+  }
+  return xyz_list;
 }
 
 } // Pockets

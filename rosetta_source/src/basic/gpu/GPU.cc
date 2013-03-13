@@ -149,8 +149,8 @@ const char *GPU::errstr(int errorCode)
 			return "CL_INVALID_GLOBAL_WORK_SIZE";
 		case CL_SUCCESS:
 			return "(No error)";
-			//case CL_PLATFORM_NOT_FOUND_KHR:
-			//return "CL_PLATFORM_NOT_FOUND_KHR";
+			//		case CL_PLATFORM_NOT_FOUND_KHR:
+			//			return "CL_PLATFORM_NOT_FOUND_KHR";
 		default:
 			return "Unknown OpenCL error";
 	}
@@ -499,11 +499,11 @@ cl_mem GPU::AllocateMemory(unsigned int size, void *data, int flags, const char 
 	}
 
 	if(r) {
-		TR.Trace << "Allocated " << size << " bytes = 0x" << hex << r << dec;
+		TR.Trace << "Allocated " << size << " bytes = " << hex << r << dec;
 		if(name)
 			TR.Trace << ", with shared name " << name;
 		if(data)
-			TR.Trace << ", initialized with data 0x" << hex << data << dec;
+			TR.Trace << ", initialized with data " << hex << data << dec;
 		TR.Trace << std::endl;
 
 		if(name)
@@ -518,6 +518,25 @@ cl_mem GPU::AllocateMemory(unsigned int size, void *data, int flags, const char 
 cl_mem GPU::GetSharedMemory(const char *name)
 {
 	return sharedMemoryObjects_[name];
+}
+
+cl_mem GPU::AllocateMemoryReuse(cl_mem &old_mem, unsigned int &old_size, unsigned int new_size, int flags)
+{
+	if(old_mem && old_size < new_size) {
+		Free(old_mem);
+		old_mem = NULL;
+	}
+
+	cl_mem mem = old_mem;
+	
+	if(!mem)
+		mem = AllocateMemory(new_size, NULL, flags);
+		
+	if(mem) {
+		old_mem = mem;
+		old_size = new_size;
+	}
+	return mem;
 }
 
 void GPU::Free(cl_mem h)
@@ -553,7 +572,7 @@ void GPU::Free(cl_mem h)
 	}
 
 	clReleaseMemObject(h);
-	TR.Trace << "Released memory 0x" << hex << h << dec << std::endl;
+	TR.Trace << "Released memory " << hex << h << dec << std::endl;
 }
 
 // Execute kernel on GPU
@@ -716,10 +735,10 @@ int GPU::ReadData(void *dst, cl_mem src, unsigned int size, int blocking)
 {
 	errNum_ = clEnqueueReadBuffer(this_device().commandQueue, src, blocking, 0, size, dst, 0, NULL, NULL);
 	if(errNum_ != CL_SUCCESS) {
-		TR.Error << "Failed to read data from GPU (" << size << " bytes, 0x" << hex << src << " -> 0x" << dst << dec << "): " << errstr(errNum_) << endl;
+		TR.Error << "Failed to read data from GPU (" << size << " bytes, " << hex << src << " -> " << dst << dec << "): " << errstr(errNum_) << endl;
 		return 0;
 	} else
-		TR.Trace << "Read data from GPU: " << size << " bytes, 0x" << hex << src << " -> 0x" << dst << dec << endl;
+		TR.Trace << "Read data from GPU: " << size << " bytes, " << hex << src << " -> " << dst << dec << endl;
 	return 1;
 }
 
@@ -727,10 +746,10 @@ int GPU::WriteData(cl_mem dst, void *src, unsigned int size, int blocking)
 {
 	errNum_ = clEnqueueWriteBuffer(this_device().commandQueue, dst, blocking, 0, size, src, 0, NULL, NULL);
 	if(errNum_ != CL_SUCCESS) {
-		TR.Error << "Failed to write data to GPU (" << size << " bytes, 0x" << hex << src << " -> 0x" << dst << dec << "): " << errstr(errNum_) << endl;
+		TR.Error << "Failed to write data to GPU (" << size << " bytes, " << hex << src << " -> " << dst << dec << "): " << errstr(errNum_) << endl;
 		return 0;
 	} else
-		TR.Trace << "Wrote data to GPU: " << size << " bytes, 0x" << hex << src << " -> 0x" << dst << dec << endl;
+		TR.Trace << "Wrote data to GPU: " << size << " bytes, " << hex << src << " -> " << dst << dec << endl;
 	return 1;
 }
 

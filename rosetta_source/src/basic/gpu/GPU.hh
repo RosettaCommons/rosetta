@@ -11,10 +11,10 @@
 /// @brief  OpenCL-based GPU scheduler class
 /// @author Luki Goldschmidt (luki@mbi.ucla.edu)
 
-#ifdef USEOPENCL
-
 #ifndef INCLUDED_basic_gpu_GPU_hh
 #define INCLUDED_basic_gpu_GPU_hh
+
+#ifdef USEOPENCL
 
 #include <string>
 #include <map>
@@ -30,9 +30,22 @@
 #include <CL/cl.h>
 #endif
 
+#endif // USEOPENCL
+
 
 namespace basic {
 namespace gpu {
+
+
+#ifndef USEOPENCL
+
+// provide a non-GPU definition of basic::gpu::float4 for function definitions that can be GPU or non-GPU
+typedef struct
+{
+	float x, y, z, w;
+} float4;
+
+#else // USEOPENCL
 
 typedef struct
 {
@@ -119,6 +132,7 @@ public:
 	cl_kernel BuildKernel(const char *kernel_name);
 
 	cl_mem AllocateMemory(unsigned int size, void *data =NULL, int flags =0, const char *name =NULL);
+	cl_mem AllocateMemoryReuse(cl_mem &old_mem, unsigned int &old_size, unsigned int new_size, int flags =0);
 	cl_mem GetSharedMemory(const char *name);
 	void Free(cl_mem h);
 
@@ -142,9 +156,9 @@ protected:
 	int _ExecuteKernel(const char *kernel_name, int total_threads, int max_conc_threads_high, int max_conc_threads_low, GPU_KERNEL_ARG *args, int async =0);
 };
 
+#endif // USEOPENCL
+
 } // gpu
 } // basic
 
 #endif // INCLUDED_basic_gpu_GPU_hh
-
-#endif // USEOPENCL
