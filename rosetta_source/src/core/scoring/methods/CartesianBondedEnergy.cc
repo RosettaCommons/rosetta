@@ -642,7 +642,7 @@ IdealParametersDatabase::lookup_bondangle_buildideal(
 	if (atm1 > 0) {
 		x = newres->atom( atm1 ).xyz();
 	} else {
-		x = newres->upper_connect().icoor().build( restype );
+		x = newres->residue_connection(-atm1).icoor().build( restype );
 	}
 
 	y = newres->atom( atm2 ).xyz();
@@ -650,7 +650,7 @@ IdealParametersDatabase::lookup_bondangle_buildideal(
 	if (atm3 > 0) {
 		z = newres->atom( atm3 ).xyz();
 	} else {
-		z = newres->lower_connect().icoor().build( restype );
+		z = newres->residue_connection(-atm3).icoor().build( restype );
 	}
 
 	theta0 = numeric::angle_radians ( x,y,z );
@@ -705,13 +705,13 @@ IdealParametersDatabase::lookup_bondlength_buildideal(
 	if (atm1 > 0) {
 		x = newres->atom( atm1 ).xyz();
 	} else {
-		x = newres->upper_connect().icoor().build( restype );
+		x = newres->residue_connection(-atm1).icoor().build( restype );
 	}
 
 	if (atm2 > 0) {
 		y = newres->atom( atm2 ).xyz();
 	} else {
-		y = newres->lower_connect().icoor().build( restype );
+		y = newres->residue_connection(-atm2).icoor().build( restype );
 	}
 
 	d0 = (x-y).length();
@@ -1349,6 +1349,7 @@ IdealParametersDatabase::create_parameters_for_restype(
 				std::string atm1name=rsd_type.atom_name( upconn_ats[ii].key2() ); boost::trim(atm1name);
 				std::string atm2name=rsd_type.atom_name( upconn_ats[ii].key1() ); boost::trim(atm2name);
 				std::string atm3name="N";
+				if (rsd_type.is_RNA()) atm3name="P";
 
 				// lookup Ktheta and theta0
 				CartBondedParametersCOP ang_params = lookup_angle( rsd_type, prepro,
@@ -1373,6 +1374,7 @@ IdealParametersDatabase::create_parameters_for_restype(
 				std::string atm1name=rsd_type.atom_name( loconn_ats[ii].key2() ); boost::trim(atm1name);
 				std::string atm2name=rsd_type.atom_name( loconn_ats[ii].key1() ); boost::trim(atm2name);
 				std::string atm3name="C";
+				if (rsd_type.is_RNA()) atm3name="O3*";
 
 				// lookup Ktheta and theta0
 				CartBondedParametersCOP ang_params = lookup_angle( rsd_type, prepro,
