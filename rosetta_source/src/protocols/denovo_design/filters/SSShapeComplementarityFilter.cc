@@ -16,14 +16,17 @@
 #include <protocols/denovo_design/filters/SSShapeComplementarityFilter.hh>
 #include <protocols/denovo_design/filters/SSShapeComplementarityFilterCreator.hh>
 
+// Protocol Headers
+
 // Project Headers
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
+#include <core/scoring/dssp/Dssp.hh>
+#include <core/scoring/sc/ShapeComplementarityCalculator.hh>
 #include <protocols/fldsgn/topology/HelixPairing.hh>
 #include <protocols/fldsgn/topology/HSSTriplet.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <protocols/jd2/parser/BluePrint.hh>
-#include <protocols/moves/DsspMover.hh>
 #include <protocols/simple_filters/ShapeComplementarityFilter.hh>
 #include <protocols/toolbox/SelectResiduesByLayer.hh>
 
@@ -81,14 +84,14 @@ SSShapeComplementarityFilterCreator::filter_name()
 ///  ---------------------------------------------------------------------------------
 SSShapeComplementarityFilter::SSShapeComplementarityFilter() :
 	Filter( "SSShapeComplementarityFilter" ),
-	sc_( new simple_filters::ShapeComplementarityFilter() ),
+	verbose_( false ),
 	blueprint_( NULL )
 {
 }
 
 SSShapeComplementarityFilter::SSShapeComplementarityFilter( SSShapeComplementarityFilter const & rval ) :
 	Filter( rval ),
-	sc_( new simple_filters::ShapeComplementarityFilter( *(rval.sc_) ) ),
+	verbose_( rval.verbose_ ),
 	blueprint_( rval.blueprint_ )
 {
 }
@@ -115,19 +118,20 @@ SSShapeComplementarityFilter::fresh_instance() const
 void
 SSShapeComplementarityFilter::parse_my_tag(
 	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & data,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
-	core::pose::Pose const & pose )
+	protocols::moves::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & )
 {
 	std::string const bp_filename( tag->getOption< std::string >( "blueprint", "" ) );
 	if ( bp_filename != "" ) {
 		blueprint_ = new jd2::parser::BluePrint( bp_filename );
+		if ( ! blueprint_ ) {
+			utility_exit_with_message( "Error reading blueprint file." );
+		}
 	}
-	if ( ! blueprint_ ) {
-		utility_exit_with_message( "BluePrint must be specified to SSShapeComplementarityFilter" );
-	}
-	sc_->parse_my_tag( tag, data, filters, movers, pose );
+
+	verbose_ = tag->getOption< bool >( "verbose", verbose_ );
 }
 
 std::string
@@ -139,31 +143,120 @@ SSShapeComplementarityFilter::get_name() const
 void
 SSShapeComplementarityFilter::report( std::ostream & out, core::pose::Pose const & pose ) const
 {
-	sc_->report( out, pose );
+	out << "Secondary Structure Shape Complementarity = " << report_sm( pose ) << std::endl;
 }
 
 core::Real
 SSShapeComplementarityFilter::report_sm( core::pose::Pose const & pose ) const
 {
-	fldsgn::topology::SS_Info2 ss_info( blueprint_->secstruct() );
+	core::scoring::sc::ShapeComplementarityCalculator scc;
+	if ( !scc.Init() ) {
+		TR.Error << "Failed to initialize ShapeComplementarityCalculator!" << std::endl;
+		return -1;
+	}
+	scc.Reset();
 
-	// we will average out the shape complementarity from HSS triplets and Helix-Helix pairings
-	fldsgn::topology::HSSTriplets hss_triplets( fldsgn::topology::HSSTripletSet( blueprint_->hss_triplets() ).hss_triplets() );
+	fldsgn::topology::SS_Info2_OP ss_info;
+	if ( blueprint_ ) {
+		ss_info = new fldsgn::topology::SS_Info2( pose, blueprint_->secstruct() );
+	} else {
+		core::scoring::dssp::Dssp dssp( pose );
+		std::string const & dssp_ss( dssp.get_dssp_secstruct() );
+
+		// only count protein residues
+		std::string secstruct( "" );
+		for ( core::Size i=1; i<=dssp_ss.size(); ++i ) {
+			if ( pose.residue( i ).is_protein() ) {
+				secstruct += dssp_ss[i-1];
+			}
+		}
+
+		ss_info = new fldsgn::topology::SS_Info2( pose, dssp.get_dssp_secstruct() );
+	}
+
+	// we will average out the shape complementarity from Helices to the rest of the protein and loops to the rest of the protein
 	core::Real sum( 0.0 );
-	for ( core::Size i=1; i<=hss_triplets.size(); ++i ) {
-		setup_sc_hss( pose, ss_info, hss_triplets[i] );
-		sum += sc_->report_sm( pose );
-		TR << "SUM=" << sum << std::endl;
+	core::Real total_area( 0.0 );
+	core::Size count( 0 );
+
+	for ( core::Size i=1; i<=ss_info->helices().size(); ++i ) {
+		// only do this if the helix size >= 5 residues
+		if ( ( ss_info->helix( i )->end() - ss_info->helix( i )->begin() ) >= 4 ) {
+			setup_sc( scc, pose, ss_info->helix( i ) );
+			core::scoring::sc::RESULTS const & r( get_sc_and_area( scc ) );
+			if ( r.valid == 1 ) {
+				sum += r.sc * r.area;
+				total_area += r.area;
+				++count;
+				TR << "SUM=" << sum << "; area=" << r.area << "; sc=" << r.sc << std::endl;
+			}
+			// reset SCC for reuse
+			scc.Reset();
+		}
+	}
+	for ( core::Size i=1; i<=ss_info->loops().size(); ++i ) {
+		setup_sc( scc, pose, ss_info->loop( i ) );
+			core::scoring::sc::RESULTS const & r( get_sc_and_area( scc ) );
+			if ( r.valid == 1 ) {
+				sum += r.sc * r.area;
+				total_area += r.area;
+				++count;
+				TR << "SUM=" << sum << "; area=" << r.area << "; sc=" << r.sc << std::endl;
+			}
+			scc.Reset();
+	}
+	/*std::string helix_string;
+	if ( blueprint_ ) {
+		helix_string = blueprint_->helix_pairings();
+	} else {
+		helix_string = detect_helix_pairings( pose, ss_info );
+		TR << "Helix_string=" << helix_string << std::endl;
+	}
+	fldsgn::topology::HelixPairings helix_pairs( fldsgn::topology::HelixPairingSet( helix_string ).helix_pairings() );
+	for ( core::Size i=1; i<=helix_pairs.size(); ++i ) {
+		setup_sc_hh( scc, pose, *ss_info, helix_pairs[i] );
+
+		core::scoring::sc::RESULTS const & r( get_sc_and_area( scc ) );
+		if ( r.valid == 1 ) {
+			sum += r.sc * r.area;
+			total_area += r.area;
+			++count;
+			TR << "SUM=" << sum << "; area=" << r.area << "; sc=" << r.sc << std::endl;
+		}
+		// reset SCC for reuse
+		scc.Reset();
 	}
 
-	fldsgn::topology::HelixPairings helix_pairs( fldsgn::topology::HelixPairingSet( blueprint_->helix_pairings() ).helix_pairings() );
-	for ( core::Size i=1; i<=helix_pairs.size(); ++i ) {
-		setup_sc_hh( pose, ss_info, helix_pairs[i] );
-		sum += sc_->report_sm( pose );
-		TR << "SUM=" << sum << std::endl;
+	std::string hss_string;
+	if ( blueprint_ ) {
+		hss_string = blueprint_->hss_triplets();
+	} else {
+		hss_string = detect_hss_triplets( pose, ss_info );
+		TR << "HSS string = " << hss_string << std::endl;
 	}
-	TR << "Returning " << sum /( hss_triplets.size() + helix_pairs.size() ) << std::endl;
-	return sum /( hss_triplets.size() + helix_pairs.size() );
+	fldsgn::topology::HSSTriplets hss_triplets( fldsgn::topology::HSSTripletSet( hss_string ).hss_triplets() );
+	for ( core::Size i=1; i<=hss_triplets.size(); ++i ) {
+		setup_sc_hss( scc, pose, *ss_info, hss_triplets[i] );
+
+		core::scoring::sc::RESULTS const & r( get_sc_and_area( scc ) );
+
+		// this check makes sure there wasn't an error in the filter calculation.
+		// if there was an error, the result is simply ignored.
+		if ( r.valid == 1 ) {
+			sum += r.sc * r.area;
+			total_area += r.area;
+			++count;
+			TR << "SUM=" << sum << "; area=" << r.area << "; sc=" << r.sc << std::endl;
+		}
+		// reset SCC for reuse
+		scc.Reset();
+		}*/
+
+	if ( count == 0 || total_area <= 0.0 ) {
+		return 0;
+	}
+	TR << "Returning " << sum / total_area << std::endl;
+	return sum / total_area;
 }
 
 /// @brief Does the SSShapeComplementarity Filtering
@@ -173,21 +266,50 @@ SSShapeComplementarityFilter::apply( core::pose::Pose const & pose ) const
 	return report_sm( pose );
 }
 
+
+/// @brief sets up the underlying filter to work based on a helix
+void
+SSShapeComplementarityFilter::setup_sc( core::scoring::sc::ShapeComplementarityCalculator & scc,
+																				core::pose::Pose const & pose,
+																				fldsgn::topology::SS_BaseCOP const ss ) const
+{
+	utility::vector1< core::Size > set1, set2;
+	// set1 is the helix
+	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+		if ( i >= ss->begin() && i <= ss->end() ) {
+			set1.push_back( i );
+		} else {
+			set2.push_back( i );
+		}
+	}
+
+	TR.Debug << "Set residues1 to ";
+	for ( core::Size i=1; i<=set1.size(); ++i ) {
+		TR.Debug << set1[i] << " ";
+		scc.AddResidue( 0, pose.residue( set1[i] ) );
+	}
+	TR.Debug << std::endl << "Set residues2 to ";
+	for ( core::Size i=1; i<=set2.size(); ++i ) {
+		TR.Debug << set2[i] << " ";
+		scc.AddResidue( 1, pose.residue( set2[i] ) );
+	}
+	TR.Debug << std::endl;
+}
+
 /// @brief sets up the underlying shapecomplementarity filter to work based on secondary structure elements
 void
-SSShapeComplementarityFilter::setup_sc_hss( core::pose::Pose const & pose,
+SSShapeComplementarityFilter::setup_sc_hss( core::scoring::sc::ShapeComplementarityCalculator & scc,
+																						core::pose::Pose const & pose,
 																						fldsgn::topology::SS_Info2 const & ss_info,
 																						fldsgn::topology::HSSTripletCOP hss_triplet ) const
 {
-	runtime_assert( blueprint_ );
-	runtime_assert( sc_ );
 	utility::vector1< core::Size > set1, set2;
 	// set 1 is the helix
 	fldsgn::topology::HelixCOP const helix( ss_info.helix( hss_triplet->helix() ) );
 	for ( core::Size i=helix->begin(); i<=helix->end(); ++i ) {
 		set1.push_back( i );
 	}
-	sc_->residues1( set1 );
+
 	fldsgn::topology::StrandCOP const strand( ss_info.strand( hss_triplet->strand1() ) );
 	for ( core::Size i=strand->begin(); i<=strand->end(); ++i ) {
 		set2.push_back( i );
@@ -196,44 +318,95 @@ SSShapeComplementarityFilter::setup_sc_hss( core::pose::Pose const & pose,
 	for ( core::Size i=strand2->begin(); i<=strand2->end(); ++i ) {
 		set2.push_back( i );
 	}
-	sc_->residues2( set2 );
+
 	TR.Debug << "Set residues1 to ";
-	for ( core::Size i=1; i<=set1.size(); ++i )
+	for ( core::Size i=1; i<=set1.size(); ++i ) {
 		TR.Debug << set1[i] << " ";
+		scc.AddResidue( 0, pose.residue( set1[i] ) );
+	}
 	TR.Debug << std::endl << "Set residues2 to ";
-	for ( core::Size i=1; i<=set2.size(); ++i )
+	for ( core::Size i=1; i<=set2.size(); ++i ) {
 		TR.Debug << set2[i] << " ";
+		scc.AddResidue( 1, pose.residue( set2[i] ) );
+	}
 	TR.Debug << std::endl;
 }
 
 /// @brief sets up the underlying shapecomplementarity filter to work based on secondary structure elements
 void
-SSShapeComplementarityFilter::setup_sc_hh( core::pose::Pose const & pose,
+SSShapeComplementarityFilter::setup_sc_hh( core::scoring::sc::ShapeComplementarityCalculator & scc,
+																					 core::pose::Pose const & pose,
 																					 fldsgn::topology::SS_Info2 const & ss_info,
 																					 fldsgn::topology::HelixPairingCOP helix_pair ) const
 {
-	runtime_assert( blueprint_ );
-	runtime_assert( sc_ );
 	utility::vector1< core::Size > set1, set2;
 	// set 1 is helix1, set2 is helix2
 	fldsgn::topology::HelixCOP const helix( ss_info.helix( helix_pair->h1() ) );
 	for ( core::Size i=helix->begin(); i<=helix->end(); ++i ) {
 		set1.push_back( i );
 	}
-	sc_->residues1( set1 );
 
 	fldsgn::topology::HelixCOP const helix2( ss_info.helix( helix_pair->h2() ) );
 	for ( core::Size i=helix2->begin(); i<=helix2->end(); ++i ) {
 		set2.push_back( i );
 	}
-	sc_->residues2( set2 );
+
 	TR.Debug << "Set residues1 to ";
-	for ( core::Size i=1; i<=set1.size(); ++i )
+	for ( core::Size i=1; i<=set1.size(); ++i ) {
 		TR.Debug << set1[i] << " ";
+		scc.AddResidue( 0, pose.residue( set1[i] ) );
+	}
 	TR.Debug << std::endl << "Set residues2 to ";
-	for ( core::Size i=1; i<=set2.size(); ++i )
+	for ( core::Size i=1; i<=set2.size(); ++i ) {
 		TR.Debug << set2[i] << " ";
+		scc.AddResidue( 1, pose.residue( set2[i] ) );
+	}
 	TR.Debug << std::endl;
+}
+
+/// @brief Runs the SC calculator to obtain an SC score and an interaction area. Returns a result in the format core::scoring::sc::RESULTS.  Assumes the SC calculator has been initialized and has the correct residues added.
+core::scoring::sc::RESULTS const &
+SSShapeComplementarityFilter::get_sc_and_area( core::scoring::sc::ShapeComplementarityCalculator & scc ) const
+{
+	if ( ! scc.Calc() ) {
+		TR.Error << "Error in SC calculation!" << std::endl;
+		return scc.GetResults();
+	}
+
+	core::scoring::sc::RESULTS const & r = scc.GetResults();
+
+	if ( verbose_ ) {
+		TR << "==================================================" << std::endl;
+		TR << std::endl;
+		for(int i = 0; i <= 2; i++) {
+			if(i < 2)
+				TR << "Molecule " << (i+1) << ":" << std::endl;
+			else
+				TR << "Total/Average for both molecules:" << std::endl;
+
+			TR << "          Total Atoms: " << r.surface[i].nAtoms << std::endl;
+			TR << "         Buried Atoms: " << r.surface[i].nBuriedAtoms << std::endl;
+			TR << "        Blocked Atoms: " << r.surface[i].nBlockedAtoms << std::endl;
+			TR << "           Total Dots: " << r.surface[i].nAllDots << std::endl;
+			TR << " Trimmed Surface Dots: " << r.surface[i].nTrimmedDots << std::endl;
+			TR << "         Trimmed Area: " << r.surface[i].trimmedArea << " (avg) " << std::endl;
+			TR << std::endl;
+		}
+		TR << std::endl;
+
+		for(int i = 0; i <= 2; i++) {
+			if(i < 2)
+				TR << "Molecule " << (i+1) << "->" << ((i+1)%2+1) << ": " << std::endl;
+			else
+				TR << "Average for both molecules:" << std::endl;
+			TR << "      Mean Separation: " << r.surface[i].d_mean << std::endl;
+			TR << "    Median Separation: " << r.surface[i].d_median << std::endl;
+			TR << "    Mean Shape Compl.: " << r.surface[i].s_mean << std::endl;
+			TR << "  Median Shape Compl.: " << r.surface[i].s_median << std::endl;
+			TR << std::endl;
+		}
+	}  //verbose output
+	return r;
 }
 
 } // namespace filters

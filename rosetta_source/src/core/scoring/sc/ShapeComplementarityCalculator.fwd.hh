@@ -18,8 +18,8 @@
 
 // Utility headers
 
-namespace protocols {
-namespace filters {
+namespace core {
+namespace scoring {
 namespace sc {
 
 // Forward

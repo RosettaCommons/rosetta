@@ -25,7 +25,6 @@
 #include <protocols/fldsgn/topology/HSSTriplet.fwd.hh>
 #include <protocols/fldsgn/topology/SS_Info2.fwd.hh>
 #include <protocols/jd2/parser/BluePrint.fwd.hh>
-#include <protocols/simple_filters/ShapeComplementarityFilter.fwd.hh>
 
 #include <core/kinematics/MoveMap.fwd.hh>
 
@@ -33,6 +32,8 @@
 
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/sc/MolecularSurfaceCalculator.hh>
+#include <core/scoring/sc/ShapeComplementarityCalculator.fwd.hh>
 
 //// C++ headers
 #include <string>
@@ -79,22 +80,33 @@ public:
 	virtual bool apply( core::pose::Pose const & pose ) const;
 
 private:   // private functions
+	/// @brief sets up the underlying filter to work based on a helix
+	void
+	setup_sc( core::scoring::sc::ShapeComplementarityCalculator & scc,
+						core::pose::Pose const & pose,
+						fldsgn::topology::SS_BaseCOP const ss ) const;
+
 	/// @brief sets up the underlying shapecomplementarity filter to work based on secondary structure elements
 	void
-	setup_sc_hss( core::pose::Pose const & pose,
+	setup_sc_hss( core::scoring::sc::ShapeComplementarityCalculator & scc,
+								core::pose::Pose const & pose,
 								fldsgn::topology::SS_Info2 const & ss_info,
 								fldsgn::topology::HSSTripletCOP hss_triplet ) const;
 	void
-	setup_sc_hh( core::pose::Pose const & pose,
+	setup_sc_hh( core::scoring::sc::ShapeComplementarityCalculator & scc,
+							 core::pose::Pose const & pose,
 							 fldsgn::topology::SS_Info2 const & ss_info,
 							 fldsgn::topology::HelixPairingCOP helix_pair ) const;
 
+	/// @brief Runs the SC calculator to obtain an SC score and an interaction area. Returns a result in the format core::scoring::sc::RESULTS.  Assumes the SC calculator has been initialized and has the correct residues added.
+	core::scoring::sc::RESULTS const &
+	get_sc_and_area( core::scoring::sc::ShapeComplementarityCalculator & scc ) const;
+
 private:   // options
+	/// @brief controls outputtting verbose information about SC
+	bool verbose_;
 
 private:   // other data
-	/// @brief the shapecomplementarity filter that does most of the work
-	simple_filters::ShapeComplementarityFilterOP sc_;
-
 	/// @brief the blueprint file that contains secondary structure definitions
 	jd2::parser::BluePrintCOP blueprint_;
 
