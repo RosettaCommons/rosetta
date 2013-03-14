@@ -78,7 +78,7 @@ public:
 			return t_default;
 		}
 		accessed_options_[key]= i->second;
-		T t;
+		T t = t_default;
 		try{
 			t = boost::lexical_cast<T>(i->second);
 		} catch(boost::bad_lexical_cast &) {
@@ -97,14 +97,13 @@ public:
 			runtime_assert( false );
 		}
 		accessed_options_[key]= i->second;
-		T t;
 		try{
-			t = boost::lexical_cast<T>(i->second);
+			return boost::lexical_cast<T>(i->second);
 		} catch(boost::bad_lexical_cast &) {
 			std::cerr << "getOption: key= " << key << " stream extraction failed! Tried to parse '" << i->second <<
-					"' returning uninitialized value: '" << t << "'" << std::endl;
+				"' returning uninitialized value: '" << T() << "'" << std::endl;
 		}
-		return t;
+		return T();
 	}
 
 	options_t const& getOptions() const { return mOptions_; }
