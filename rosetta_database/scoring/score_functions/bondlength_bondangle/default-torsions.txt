@@ -1,3 +1,6 @@
+## library of improper torsions
+##    all planar groups in protein and RNA, nonpolar Hs as well
+##    spring constants are basically guesses
 * CA C N H 0 40 2
 * CA N C O 0 40 2
 ASN CB CG OD1 ND2 0 40 2

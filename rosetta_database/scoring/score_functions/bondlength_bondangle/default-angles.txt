@@ -1,3 +1,8 @@
+## library of standard bondangles
+##    fullatom ideal angles from fa_standard_05.2009_icoor
+##    centroid from centroid residue type set
+##    spring constants come from CHARMM2.7
+##    * denotes wildcard
 * CA N 1H 2.0944 30
 * CA N 2H 2.0944 30
 * CA N 3H 2.0944 30

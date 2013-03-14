@@ -1,3 +1,8 @@
+## library of standard bondlengths
+##    fullatom ideal lengths from fa_standard_05.2009_icoor
+##    centroid from centroid residue type set
+##    spring constants come from CHARMM2.7
+##    * denotes wildcard
 * C N 1.328680 370.0
 * C OXT 1.230000 525.0
 * N 1H 1.010000 403.0
