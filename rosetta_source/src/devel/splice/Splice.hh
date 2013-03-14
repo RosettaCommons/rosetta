@@ -104,7 +104,7 @@ public:
 	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new Splice ); }
 		void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	virtual ~Splice();
-	
+
 	void from_res( core::Size const f ){ from_res_ = f; }
 	core::Size from_res() const { return from_res_; }
 	void to_res( core::Size const t ){ to_res_ = t; }
@@ -187,7 +187,8 @@ public:
 	void restrict_to_repacking_chain2( bool const r ){ restrict_to_repacking_chain2_ = r; }
 	void seqprof_taskop( protocols::toolbox::task_operations::SeqprofConsensusOperationOP op );
 	protocols::toolbox::task_operations::SeqprofConsensusOperationOP seqprof_taskop() const;
-
+  bool add_sequence_constraints_only() const{ return add_sequence_constraints_only_; }
+	void add_sequence_constraints_only( bool const a ){ add_sequence_constraints_only_ = a; }
 private:
 	void save_values(); // call at beginning of apply. Used to keep the from_res/to_res values, which might be changed by apply during a run
 	void retrieve_values(); // call at end of apply
@@ -235,6 +236,7 @@ private:
 	core::Real profile_weight_away_from_interface_; //dflt 1.0; you can define a different weight outside an 8A shell around the partner protein. This should typically be set higher than 1.0, implying that the sequence profile carries a larger weight away from the functional site
 	bool restrict_to_repacking_chain2_; // dflt true; if false, does two-sided design during splice
 	protocols::toolbox::task_operations::SeqprofConsensusOperationOP seqprof_taskop_; // dflt NULL; if set to a previously declared taskoperation, splice will modify this taskop's sequence profile as it's modifying its own sequence profile, thereby allowing design to be restricted to identities specified by the sequence profile
+	bool add_sequence_constraints_only_; // dflt false; if true, only add constraints and return, don't do any splicing. (ask Assaf)
 };
 
 } //splice

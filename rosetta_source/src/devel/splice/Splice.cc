@@ -144,7 +144,8 @@ Splice::Splice() :
 			segment_type_( "" ),
 			profile_weight_away_from_interface_( 1.0 ),
 			restrict_to_repacking_chain2_( true ),
-			seqprof_taskop_( NULL )
+			seqprof_taskop_( NULL ),
+			add_sequence_constraints_only_( false )
 {
 	torsion_database_.clear();
 	delta_lengths_.clear();
@@ -331,6 +332,12 @@ Splice::apply( core::pose::Pose & pose )
 {
 	using namespace protocols::rosetta_scripts;
 	using core::chemical::DISULFIDE;
+
+	if( add_sequence_constraints_only() ){
+		TR<<"Only adding sequence constraints!!! Not doing any splice!!!"<<std::endl;
+		add_sequence_constraints( pose );
+		return;
+	}
 
 	set_last_move_status( protocols::moves::MS_SUCCESS );
 	TR<<"Starting splice apply"<<std::endl;
@@ -909,6 +916,7 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 		TR<<"Splice will modify the seqprof_taskoperation to the current set of segments"<<std::endl;
 	}
 
+	add_sequence_constraints_only( tag->getOption< bool >( "add_sequence_constraints_only", false ) );
 	TR<<"from_res: "<<from_res()<<" to_res: "<<to_res()<<" dbase_iterate: "<<dbase_iterate()<<" randomize_cut: "<<randomize_cut()<<" cut_secondarystruc: "<<cut_secondarystruc()<<" source_pdb: "<<source_pdb()<<" ccd: "<<ccd()<<" rms_cutoff: "<<rms_cutoff()<<" res_move: "<<res_move()<<" template_file: "<<template_file()<<" checkpointing_file: "<<checkpointing_file_<<" loop_dbase_file_name: "<<loop_dbase_file_name_<<" loop_pdb_source: "<<loop_pdb_source()<<" mover_tag: "<<mover_tag_<<" torsion_database: "<<torsion_database_fname_<<" restrict_to_repacking_chain2: "<<restrict_to_repacking_chain2()<<std::endl;
 }
 
@@ -1237,21 +1245,21 @@ Splice::modify_pdb_segments_with_current_segment( std::string const pdb_name ){
 
 // @brief utility function for computing which residues on chain1 are away from the interface
 utility::vector1< core::Size >
-find_residues_on_chain1_outside_interface( core::pose::Pose const & pose ){
+find_residues_on_chain1_inside_interface( core::pose::Pose const & pose ){
 	using namespace protocols::toolbox::task_operations;
-	ProteinInterfaceDesignOperationOP pido;
+	ProteinInterfaceDesignOperationOP pido = new ProteinInterfaceDesignOperation;
 	//TR<<"test pido @line 1163 "<<pose<<pose<<"\n";
 	pido->repack_chain1( true );
 	pido->design_chain1( true );
 	pido->repack_chain2( false );
 	pido->design_chain2( false );
 	pido->interface_distance_cutoff( 8.0 );
-	core::pack::task::TaskFactoryOP tf_outside_interface( new core::pack::task::TaskFactory );
-	tf_outside_interface->push_back( pido );
+	core::pack::task::TaskFactoryOP tf_interface( new core::pack::task::TaskFactory );
+	tf_interface->push_back( pido );
 	///// FIND COMPLEMENT ////////
-	utility::vector1< core::Size > const chain1_outside_interface( protocols::rosetta_scripts::residue_packer_states( pose, tf_outside_interface, false, true ) ); /// find packable but not designable residues; according to pido specifications above these will be on chain1 outside an 8A shell around chain2
+	utility::vector1< core::Size > const chain1_interface( protocols::rosetta_scripts::residue_packer_states( pose, tf_interface, true, true ) ); /// find packable but not designable residues; according to pido specifications above these will be on chain1 outside an 8A shell around chain2
 
-	return chain1_outside_interface;
+	return chain1_interface;
 }
 
 void
@@ -1294,12 +1302,12 @@ Splice::add_sequence_constraints( core::pose::Pose & pose ){
 			ConstraintCOPs constraints( pose.constraint_set()->get_all_constraints() );
 			TR<<"Total number of constraints at End: "<<constraints.size()<<std::endl;
 		}
-		else{ //if pose has two chains than thee is also a ligand therefore we weight antibody rediues accrding to distance from ligand
-			utility::vector1< core::Size > const upweighted_residues( find_residues_on_chain1_outside_interface( pose ) );
+		else{ //if pose has two chains than there is also a ligand therefore we weight antibody rediues according to distance from ligand
+			utility::vector1< core::Size > const non_upweighted_residues( find_residues_on_chain1_inside_interface( pose ) );
 			for( core::Size seqpos = pose.conformation().chain_begin( 1 ); seqpos <= pose.conformation().chain_end( 1 ); ++seqpos ){
 				using namespace core::scoring::constraints;
 				SequenceProfileConstraintOP spc( new SequenceProfileConstraint( pose, seqpos, seqprof ) );
-				if( std::find( upweighted_residues.begin(), upweighted_residues.end(), seqpos ) != upweighted_residues.end() ){
+				if( std::find( non_upweighted_residues.begin(), non_upweighted_residues.end(), seqpos ) == non_upweighted_residues.end() ){//seqpos not in interface so upweight
 					spc->weight( profile_weight_away_from_interface());
 					TR<<seqpos<<",";
 				}
