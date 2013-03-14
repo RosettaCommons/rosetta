@@ -41,12 +41,19 @@ namespace strand_assembly { extern RealOptionKey const min_sheet_torsion_cen_res
 namespace strand_assembly { extern RealOptionKey const max_sheet_torsion_cen_res; }
 namespace strand_assembly { extern RealOptionKey const min_sheet_angle; }
 namespace strand_assembly { extern RealOptionKey const max_sheet_angle; }
+namespace strand_assembly { extern IntegerOptionKey const min_num_strands_in_sheet; }
 namespace strand_assembly { extern RealOptionKey const min_inter_sheet_dis_CA_CA; }
 namespace strand_assembly { extern RealOptionKey const max_inter_sheet_dis_CA_CA; }
 namespace strand_assembly { extern RealOptionKey const min_shortest_dis_sidechain_inter_sheet; }
 namespace strand_assembly { extern BooleanOptionKey const write_chain_B_resnum; }
 namespace strand_assembly { extern BooleanOptionKey const write_phi_psi; }
+namespace strand_assembly { extern BooleanOptionKey const no_helix_in_pdb; }
+namespace strand_assembly { extern BooleanOptionKey const no_helix_in_extracted_sw; }
+namespace strand_assembly { extern BooleanOptionKey const no_strand_in_loop_in_extracted_sw; }
+namespace strand_assembly { extern BooleanOptionKey const exclude_sandwich_that_is_linked_w_same_direction_strand; }
 namespace strand_assembly { extern IntegerOptionKey const max_num_sw_per_pdb; }
+namespace strand_assembly { extern StringOptionKey const check_N_to_C_direction_by; }
+namespace strand_assembly { extern RealOptionKey const check_canonicalness_cutoff; }
 
 } // namespace OptionKeys
 } // namespace options

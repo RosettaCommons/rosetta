@@ -12434,127 +12434,130 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-min_num_strands_to_deal</b> \<Integer\><dt>
 <dd>Minimum number of strands to handle beta-sandwich</dd><br>
-<dd>Default: 5</dd><br>
 </dl>
 <dl>
 <dt><b>-max_num_strands_to_deal</b> \<Integer\><dt>
 <dd>Maximum number of strands to handle beta-sandwich</dd><br>
-<dd>Default: 13</dd><br>
 </dl>
 <dl>
 <dt><b>-extract_native_only</b> \<Boolean\><dt>
 <dd>if true, extract native full strands only</dd><br>
-<dd>Default: false</dd><br>
 </dl>
 <dl>
 <dt><b>-extract_sandwich</b> \<Boolean\><dt>
 <dd>if true, extract sandwich too</dd><br>
-<dd>Default: true</dd><br>
 </dl>
 <dl>
 <dt><b>-min_strand_size</b> \<Integer\><dt>
 <dd>Minimum size of a strand in a bundle</dd><br>
-<dd>Default: 3</dd><br>
 </dl>
 <dl>
 <dt><b>-max_strand_size</b> \<Integer\><dt>
 <dd>Maximum size of a strand in a bundle</dd><br>
-<dd>Default: 22</dd><br>
 </dl>
 <dl>
 <dt><b>-min_CA_CA_dis</b> \<Real\><dt>
 <dd>Minimum distance between CA and CA</dd><br>
-<dd>Default: 4.0</dd><br>
 </dl>
 <dl>
 <dt><b>-max_CA_CA_dis</b> \<Real\><dt>
 <dd>Maximum distance between CA and CA</dd><br>
-<dd>Default: 5.7</dd><br>
 </dl>
 <dl>
 <dt><b>-min_O_N_dis</b> \<Real\><dt>
 <dd>Minimum distance between backbone oxygen and backbone nitrogen</dd><br>
-<dd>Default: 2.6</dd><br>
 </dl>
 <dl>
 <dt><b>-max_O_N_dis</b> \<Real\><dt>
 <dd>Maximum distance between backbone oxygen and backbone nitrogen</dd><br>
-<dd>Default: 3.1</dd><br>
 </dl>
 <dl>
 <dt><b>-min_C_O_N_angle</b> \<Real\><dt>
 <dd>Minimum angle between strands  to become one sheet</dd><br>
-<dd>Default: 120</dd><br>
 </dl>
 <dl>
 <dt><b>-min_sheet_dis</b> \<Real\><dt>
 <dd>Minimum distance between sheets (CA and CA)</dd><br>
-<dd>Default: 6</dd><br>
 </dl>
 <dl>
 <dt><b>-max_sheet_dis</b> \<Real\><dt>
 <dd>Maximum distance between sheets (CA and CA)</dd><br>
-<dd>Default: 16</dd><br>
 </dl>
 <dl>
 <dt><b>-min_sheet_torsion</b> \<Real\><dt>
 <dd>Minimum torsion between sheets (CA and CA) with respect to terminal residues</dd><br>
-<dd>Default: -50</dd><br>
 </dl>
 <dl>
 <dt><b>-max_sheet_torsion</b> \<Real\><dt>
 <dd>Maximum torsion between sheets (CA and CA) with respect to terminal residues</dd><br>
-<dd>Default: -20</dd><br>
 </dl>
 <dl>
 <dt><b>-min_sheet_torsion_cen_res</b> \<Real\><dt>
-<dd>Minimum torsion between sheets (CA and CA) with respect to terminal central residues</dd><br>
-<dd>Default: -90</dd><br>
+<dd>Minimum torsion between sheets (CA and CA) with respect to terminal central residues in each beta-sheet</dd><br>
 </dl>
 <dl>
 <dt><b>-max_sheet_torsion_cen_res</b> \<Real\><dt>
-<dd>Max torsion between sheets (CA and CA) with respect to terminal central residues</dd><br>
-<dd>Default: 90</dd><br>
+<dd>Max torsion between sheets (CA and CA) with respect to terminal central residues in each beta-sheet</dd><br>
 </dl>
 <dl>
 <dt><b>-min_sheet_angle</b> \<Real\><dt>
 <dd>Minimum angle between sheets (CA and CA)</dd><br>
-<dd>Default: 30</dd><br>
 </dl>
 <dl>
 <dt><b>-max_sheet_angle</b> \<Real\><dt>
 <dd>Maximum angle between sheets (CA and CA)</dd><br>
-<dd>Default: 150</dd><br>
+</dl>
+<dl>
+<dt><b>-min_num_strands_in_sheet</b> \<Integer\><dt>
+<dd>a sheet with < 3 strands will be ignored</dd><br>
 </dl>
 <dl>
 <dt><b>-min_inter_sheet_dis_CA_CA</b> \<Real\><dt>
 <dd>minimum distance between inter sheets</dd><br>
-<dd>Default: 4.0</dd><br>
 </dl>
 <dl>
 <dt><b>-max_inter_sheet_dis_CA_CA</b> \<Real\><dt>
 <dd>maximum distance between inter sheets</dd><br>
-<dd>Default: 40.0</dd><br>
 </dl>
 <dl>
 <dt><b>-min_shortest_dis_sidechain_inter_sheet</b> \<Real\><dt>
 <dd>minimum distance between sidechains between sheets (pairs of strands)</dd><br>
-<dd>Default: 2.0</dd><br>
 </dl>
 <dl>
 <dt><b>-write_chain_B_resnum</b> \<Boolean\><dt>
 <dd>if true, write chain_B_resnum file for InterfaceAnalyzer</dd><br>
-<dd>Default: true</dd><br>
 </dl>
 <dl>
 <dt><b>-write_phi_psi</b> \<Boolean\><dt>
 <dd>if true, write phi_psi file</dd><br>
-<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-no_helix_in_pdb</b> \<Boolean\><dt>
+<dd>if true, ignore any pdb that has helix</dd><br>
+</dl>
+<dl>
+<dt><b>-no_helix_in_extracted_sw</b> \<Boolean\><dt>
+<dd>if true, ignore any pdb that has helix in extracted sandwich</dd><br>
+</dl>
+<dl>
+<dt><b>-no_strand_in_loop_in_extracted_sw</b> \<Boolean\><dt>
+<dd>if true, ignore any pdb that has a strand as a loop in extracted sandwich</dd><br>
+</dl>
+<dl>
+<dt><b>-exclude_sandwich_that_is_linked_w_same_direction_strand</b> \<Boolean\><dt>
+<dd>if true, exclude_sandwich_that_is_linked with same_direction_strand</dd><br>
 </dl>
 <dl>
 <dt><b>-max_num_sw_per_pdb</b> \<Integer\><dt>
 <dd>maximum number of sandwiches to be extracted per a pdb file</dd><br>
-<dd>Default: 1</dd><br>
+</dl>
+<dl>
+<dt><b>-check_N_to_C_direction_by</b> \<String\><dt>
+<dd>PE, FE, CBs</dd><br>
+</dl>
+<dl>
+<dt><b>-check_canonicalness_cutoff</b> \<Real\><dt>
+<dd>cutoff to determine canonicalness of L/R, P/A and directionality</dd><br>
 </dl>
  </li>
 <li><h2>pepspec</h2>

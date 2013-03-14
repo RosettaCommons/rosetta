@@ -675,11 +675,11 @@ option.add( basic::options::OptionKeys::fold_cst::skip_on_noviolation_in_stage1,
 option.add( basic::options::OptionKeys::fold_cst::stage1_ramp_cst_cycle_factor, "spend x*<standard cycles> on each step of sequence separation" ).def(0.25);
 option.add( basic::options::OptionKeys::fold_cst::stage2_constraint_threshold, "stop runs that violate this threshold at end of stage2" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::ignore_sequence_seperation, "usually constraints are switched on according to their separation in the fold-tree" ).def(false);
+option.add( basic::options::OptionKeys::fold_cst::no_recover_low_at_constraint_switch, "dont recover low when max_seq_sep is increased" ).def(false);
+option.add( basic::options::OptionKeys::fold_cst::ramp_coord_cst, "ramp coord csts just like chainbreak-weights during fold-cst" ).def(false);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::no_recover_low_at_constraint_switch, "dont recover low when max_seq_sep is increased" ).def(false);
-option.add( basic::options::OptionKeys::fold_cst::ramp_coord_cst, "ramp coord csts just like chainbreak-weights during fold-cst" ).def(false);
-option.add( basic::options::OptionKeys::resample::resample, "resample option group" ).legal(true).def(true);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::resample::resample, "resample option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::resample::silent, "a silent file for decoys to restart sampling from " ).def("");
 option.add( basic::options::OptionKeys::resample::tag, "which decoy to select from silent file " ).def("");
 option.add( basic::options::OptionKeys::resample::stage1, "if true restart after stage1, otherwise after stage2 " ).def(false);
@@ -1349,13 +1349,13 @@ option.add( basic::options::OptionKeys::rbe::rbe, "rbe option group" ).legal(tru
 option.add( basic::options::OptionKeys::rbe::server_url, "serverurl for rosetta backend" );
 option.add( basic::options::OptionKeys::rbe::server_port, "port for rosetta backend" ).def("80");
 option.add( basic::options::OptionKeys::rbe::poll_frequency, "No description" ).def(1.0);
-
-}
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::blivens::blivens, "blivens option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::blivens::blivens, "blivens option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::blivens::disulfide_scorer::disulfide_scorer, "disulfide_scorer option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::blivens::disulfide_scorer::nds_prob, "The probability of scoring a non-disulfide pair" ).def(0.0);
 option.add( basic::options::OptionKeys::blivens::disulfide_scorer::cys_prob, "The probability of outputing a pair of non-disulf cysteines. Default to nds_prob" ).def(-1.0);
-option.add( basic::options::OptionKeys::blivens::score_type, "The scoring type to use, eg for a filter." ).def("total_score");
+
+}
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::blivens::score_type, "The scoring type to use, eg for a filter." ).def("total_score");
 option.add( basic::options::OptionKeys::krassk::krassk, "krassk option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::krassk::left_tail, "No description" ).def(0);
 option.add( basic::options::OptionKeys::krassk::right_tail, "No description" ).def(0);
@@ -2023,15 +2023,15 @@ option.add( basic::options::OptionKeys::RBSegmentRelax::nrboutercycles, "number 
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_scorefxn, "number of rigid-body moves" ).def("score5");
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_fragment_moves, "omit fragment insertions (in SS elements)" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_seqshift_moves, "omit sequence shifting moves" ).def(false);
-
-}
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::skip_rb_moves, "omit rigid-body moves" ).def(false);
+option.add( basic::options::OptionKeys::RBSegmentRelax::skip_rb_moves, "omit rigid-body moves" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::helical_movement_params, "helical-axis-rotation, helical-axis-translation, off-axis-rotation, off-axis-translation" ).def(utility::vector1<float>(4,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::strand_movement_params, "strand-in-plane-rotation, strand-in-plane-translation, out-of-plane-rotation, out-of-plane-translationn" ).def(utility::vector1<float>(4,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::default_movement_params, "default-rotation, default-translation" ).def(utility::vector1<float>(2,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_seqwidth, "sequence width on constraints" ).def(0);
 option.add( basic::options::OptionKeys::edensity::edensity, "edensity option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::edensity::debug, "No description" ).def(false);
+
+}
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::edensity::debug, "No description" ).def(false);
 option.add( basic::options::OptionKeys::edensity::mapfile, "No description" );
 option.add( basic::options::OptionKeys::edensity::mapreso, "No description" ).def(3.0);
 option.add( basic::options::OptionKeys::edensity::grid_spacing, "No description" ).def(0.0);
@@ -2566,31 +2566,38 @@ option.add( basic::options::OptionKeys::helixAssembly::helix_cap_dist_cutoff, "M
 option.add( basic::options::OptionKeys::helixAssembly::helix_contact_dist_cutoff, "Maximum distance between c-alpha residues in two helices in order to call them interacting" );
 option.add( basic::options::OptionKeys::helixAssembly::min_helix_size, "Minimum size of a helix in a bundle" );
 option.add( basic::options::OptionKeys::strand_assembly::strand_assembly, "strand_assembly option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::strand_assembly::min_num_strands_to_deal, "Minimum number of strands to handle beta-sandwich" ).def(5);
-option.add( basic::options::OptionKeys::strand_assembly::max_num_strands_to_deal, "Maximum number of strands to handle beta-sandwich" ).def(13);
-option.add( basic::options::OptionKeys::strand_assembly::extract_native_only, "if true, extract native full strands only" ).def(false);
-option.add( basic::options::OptionKeys::strand_assembly::extract_sandwich, "if true, extract sandwich too" ).def(true);
-option.add( basic::options::OptionKeys::strand_assembly::min_strand_size, "Minimum size of a strand in a bundle" ).def(3);
-option.add( basic::options::OptionKeys::strand_assembly::max_strand_size, "Maximum size of a strand in a bundle" ).def(22);
-option.add( basic::options::OptionKeys::strand_assembly::min_CA_CA_dis, "Minimum distance between CA and CA" ).def(4.0);
-option.add( basic::options::OptionKeys::strand_assembly::max_CA_CA_dis, "Maximum distance between CA and CA" ).def(5.7);
-option.add( basic::options::OptionKeys::strand_assembly::min_O_N_dis, "Minimum distance between backbone oxygen and backbone nitrogen" ).def(2.6);
-option.add( basic::options::OptionKeys::strand_assembly::max_O_N_dis, "Maximum distance between backbone oxygen and backbone nitrogen" ).def(3.1);
-option.add( basic::options::OptionKeys::strand_assembly::min_C_O_N_angle, "Minimum angle between strands  to become one sheet" ).def(120);
-option.add( basic::options::OptionKeys::strand_assembly::min_sheet_dis, "Minimum distance between sheets (CA and CA)" ).def(6);
-option.add( basic::options::OptionKeys::strand_assembly::max_sheet_dis, "Maximum distance between sheets (CA and CA)" ).def(16);
-option.add( basic::options::OptionKeys::strand_assembly::min_sheet_torsion, "Minimum torsion between sheets (CA and CA) with respect to terminal residues" ).def(-50);
-option.add( basic::options::OptionKeys::strand_assembly::max_sheet_torsion, "Maximum torsion between sheets (CA and CA) with respect to terminal residues" ).def(-20);
-option.add( basic::options::OptionKeys::strand_assembly::min_sheet_torsion_cen_res, "Minimum torsion between sheets (CA and CA) with respect to terminal central residues" ).def(-90);
-option.add( basic::options::OptionKeys::strand_assembly::max_sheet_torsion_cen_res, "Max torsion between sheets (CA and CA) with respect to terminal central residues" ).def(90);
-option.add( basic::options::OptionKeys::strand_assembly::min_sheet_angle, "Minimum angle between sheets (CA and CA)" ).def(30);
-option.add( basic::options::OptionKeys::strand_assembly::max_sheet_angle, "Maximum angle between sheets (CA and CA)" ).def(150);
-option.add( basic::options::OptionKeys::strand_assembly::min_inter_sheet_dis_CA_CA, "minimum distance between inter sheets" ).def(4.0);
-option.add( basic::options::OptionKeys::strand_assembly::max_inter_sheet_dis_CA_CA, "maximum distance between inter sheets" ).def(40.0);
-option.add( basic::options::OptionKeys::strand_assembly::min_shortest_dis_sidechain_inter_sheet, "minimum distance between sidechains between sheets (pairs of strands)" ).def(2.0);
-option.add( basic::options::OptionKeys::strand_assembly::write_chain_B_resnum, "if true, write chain_B_resnum file for InterfaceAnalyzer" ).def(true);
-option.add( basic::options::OptionKeys::strand_assembly::write_phi_psi, "if true, write phi_psi file" ).def(false);
-option.add( basic::options::OptionKeys::strand_assembly::max_num_sw_per_pdb, "maximum number of sandwiches to be extracted per a pdb file" ).def(1);
+option.add( basic::options::OptionKeys::strand_assembly::min_num_strands_to_deal, "Minimum number of strands to handle beta-sandwich" );
+option.add( basic::options::OptionKeys::strand_assembly::max_num_strands_to_deal, "Maximum number of strands to handle beta-sandwich" );
+option.add( basic::options::OptionKeys::strand_assembly::extract_native_only, "if true, extract native full strands only" );
+option.add( basic::options::OptionKeys::strand_assembly::extract_sandwich, "if true, extract sandwich too" );
+option.add( basic::options::OptionKeys::strand_assembly::min_strand_size, "Minimum size of a strand in a bundle" );
+option.add( basic::options::OptionKeys::strand_assembly::max_strand_size, "Maximum size of a strand in a bundle" );
+option.add( basic::options::OptionKeys::strand_assembly::min_CA_CA_dis, "Minimum distance between CA and CA" );
+option.add( basic::options::OptionKeys::strand_assembly::max_CA_CA_dis, "Maximum distance between CA and CA" );
+option.add( basic::options::OptionKeys::strand_assembly::min_O_N_dis, "Minimum distance between backbone oxygen and backbone nitrogen" );
+option.add( basic::options::OptionKeys::strand_assembly::max_O_N_dis, "Maximum distance between backbone oxygen and backbone nitrogen" );
+option.add( basic::options::OptionKeys::strand_assembly::min_C_O_N_angle, "Minimum angle between strands  to become one sheet" );
+option.add( basic::options::OptionKeys::strand_assembly::min_sheet_dis, "Minimum distance between sheets (CA and CA)" );
+option.add( basic::options::OptionKeys::strand_assembly::max_sheet_dis, "Maximum distance between sheets (CA and CA)" );
+option.add( basic::options::OptionKeys::strand_assembly::min_sheet_torsion, "Minimum torsion between sheets (CA and CA) with respect to terminal residues" );
+option.add( basic::options::OptionKeys::strand_assembly::max_sheet_torsion, "Maximum torsion between sheets (CA and CA) with respect to terminal residues" );
+option.add( basic::options::OptionKeys::strand_assembly::min_sheet_torsion_cen_res, "Minimum torsion between sheets (CA and CA) with respect to terminal central residues in each beta-sheet" );
+option.add( basic::options::OptionKeys::strand_assembly::max_sheet_torsion_cen_res, "Max torsion between sheets (CA and CA) with respect to terminal central residues in each beta-sheet" );
+option.add( basic::options::OptionKeys::strand_assembly::min_sheet_angle, "Minimum angle between sheets (CA and CA)" );
+option.add( basic::options::OptionKeys::strand_assembly::max_sheet_angle, "Maximum angle between sheets (CA and CA)" );
+option.add( basic::options::OptionKeys::strand_assembly::min_num_strands_in_sheet, "a sheet with < 3 strands will be ignored" );
+option.add( basic::options::OptionKeys::strand_assembly::min_inter_sheet_dis_CA_CA, "minimum distance between inter sheets" );
+option.add( basic::options::OptionKeys::strand_assembly::max_inter_sheet_dis_CA_CA, "maximum distance between inter sheets" );
+option.add( basic::options::OptionKeys::strand_assembly::min_shortest_dis_sidechain_inter_sheet, "minimum distance between sidechains between sheets (pairs of strands)" );
+option.add( basic::options::OptionKeys::strand_assembly::write_chain_B_resnum, "if true, write chain_B_resnum file for InterfaceAnalyzer" );
+option.add( basic::options::OptionKeys::strand_assembly::write_phi_psi, "if true, write phi_psi file" );
+option.add( basic::options::OptionKeys::strand_assembly::no_helix_in_pdb, "if true, ignore any pdb that has helix" );
+option.add( basic::options::OptionKeys::strand_assembly::no_helix_in_extracted_sw, "if true, ignore any pdb that has helix in extracted sandwich" );
+option.add( basic::options::OptionKeys::strand_assembly::no_strand_in_loop_in_extracted_sw, "if true, ignore any pdb that has a strand as a loop in extracted sandwich" );
+option.add( basic::options::OptionKeys::strand_assembly::exclude_sandwich_that_is_linked_w_same_direction_strand, "if true, exclude_sandwich_that_is_linked with same_direction_strand" );
+option.add( basic::options::OptionKeys::strand_assembly::max_num_sw_per_pdb, "maximum number of sandwiches to be extracted per a pdb file" );
+option.add( basic::options::OptionKeys::strand_assembly::check_N_to_C_direction_by, "PE, FE, CBs" );
+option.add( basic::options::OptionKeys::strand_assembly::check_canonicalness_cutoff, "cutoff to determine canonicalness of L/R, P/A and directionality" );
 option.add( basic::options::OptionKeys::pepspec::pepspec, "pepspec option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::pepspec::soft_wts, "No description" ).def("soft_rep.wts");
 option.add( basic::options::OptionKeys::pepspec::cen_wts, "No description" ).def("cen_ghost.wts");

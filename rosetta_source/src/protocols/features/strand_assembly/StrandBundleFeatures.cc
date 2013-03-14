@@ -76,7 +76,7 @@ max_num_strands_to_deal_(13), // (in 1LD9 chain A) 16 is too many number of stra
 extract_native_only_(false), //Option('extract_native_only', 'Boolean', desc="if true, extract native full strands only", default='false' ),
 min_strand_size_(3), // min_strand_size_ used to be 4, but 3 would be OK
 max_strand_size_(22),
-min_O_N_dis_(2.6),
+min_O_N_dis_(2.4), // 1KIT shows (renumbered residues 178-181 and residues 76-81) show that 2.5 A exist!
 max_O_N_dis_(3.1),
 min_sheet_dis_(7.0), // 7 Angstrom may seem OK though
 max_sheet_dis_(15.0), // 15 Angstrom may seem OK though
