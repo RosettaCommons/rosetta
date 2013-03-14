@@ -37,6 +37,8 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/rms_util.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/chemical/VariantType.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/util.hh>
@@ -348,7 +350,34 @@ void HybridizeFoldtreeDynamic::reset( core::pose::Pose & pose ) {
 	}
 	pose.conformation().fold_tree( saved_ft_ );
 
-	protocols::loops::remove_cutpoint_variants( pose );
+	//protocols::loops::remove_cutpoint_variants( pose );
+	core::pose::Pose init_pose = pose;
+	bool pose_changed = false;
+	using namespace core::chemical;
+	for (core::Size ir=1; ir< pose.total_residue() ; ++ir) {
+		if ( pose.residue(ir).has_variant_type(CUTPOINT_LOWER) ) {
+			
+			bool is_cut = false;
+			for (int ic=1; ic<=pose.fold_tree().num_cutpoint() ; ++ic) {
+				core::Size cutpoint = pose.fold_tree().cutpoint(ic);
+				if (ir == cutpoint) {
+					is_cut = true;
+					break;
+				}
+			}
+			if (!is_cut) {
+				pose_changed = true;
+				core::pose::remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, ir );
+				
+				if ( pose.residue(ir+1).has_variant_type(CUTPOINT_UPPER) ) {
+					core::pose::remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, ir );
+				}
+			}
+		}
+	}
+	
+	if ( pose_changed == true ) pose.constraint_set( init_pose.constraint_set()->remapped_clone( init_pose, pose ) );
+
 }
 
 // stolen from protocols::forge::methods::jumps_and_cuts_from_pose
