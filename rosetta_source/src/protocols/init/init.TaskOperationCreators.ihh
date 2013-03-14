@@ -58,3 +58,4 @@
 #include <protocols/toolbox/task_operations/ThreadSequenceOperationCreator.hh>
 #include <protocols/toolbox/task_operations/SelectBySASAOperationCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictNativeResiduesOperationCreator.hh>
+#include <protocols/toolbox/task_operations/ImportUnboundRotamersOperationCreator.hh>
