@@ -67,6 +67,9 @@
 #include <protocols/rna/RNA_IdealCoord.hh>
 #include <core/io/pdb/pose_io.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/rna.OptionKeys.gen.hh>
+
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
@@ -820,7 +823,11 @@ StepWiseRNA_AnalyticalLoopCloseSampler::sample_o2star_hydrogen ( core::pose::Pos
 	//reset the HO2star torsion to its starting value as to prevent randomness due to conformations sampling order...
 	for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ) {
 		if ( pose.residue ( seq_num ).aa() == core::chemical::aa_vrt ) continue; //FCC
-		if ( !pose.residue ( seq_num ).is_RNA()) continue; //FCC
+
+		//SML PHENIX conference
+		if (basic::options::option[basic::options::OptionKeys::rna::rna_prot_erraser].value()){
+			if ( !pose.residue ( seq_num ).is_RNA()) continue;
+		}
 
 		pose.set_torsion ( TorsionID ( seq_num, id::CHI, 4 ), pose_with_original_HO2star_torsion.torsion ( TorsionID ( seq_num, id::CHI, 4 ) ) );
 	}

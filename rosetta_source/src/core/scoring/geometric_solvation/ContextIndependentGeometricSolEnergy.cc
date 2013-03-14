@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/methods/ContextIndependentGeometricSolEnergy.fwd.hh
+/// @file   core/scoring/methods/ContextIndependentGeometricSolEnergy.cc
 /// @author Parin Sripakdeevong (sripakpa@stanford.edu), Rhiju Das (rhiju@stanford.edu)
 /// @brief  Similar to the standard version of GeometricSolEnergy.cc BUT without the CONTEXT_DEPENDENT stuff. ALOT OF CODE DUPLICATION!
 /// @brief  Significantly speed up when used in src/protocol/swa/rna/StepwiseRNA_Sampler.cc!
@@ -45,14 +45,15 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/rna.OptionKeys.gen.hh>
+
 //Auto Headers
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <ObjexxFCL/FArray3D.hh>
 
-
 static basic::Tracer tr("core.scoring.geometric_solvation.ContextIndependentGeometricSolEnergy" );
-
 
 //////////////////////////////////////////////////
 //////////////////////////////////////////////////
@@ -730,12 +731,11 @@ ContextIndependentGeometricSolEnergy::eval_atom_derivative_intra_RNA(
 	conformation::Residue const & current_rsd( pose.residue( i ) );
 	conformation::Residue const &   other_rsd( pose.residue( i ) );
 
-	if ( !current_rsd.is_RNA() ) return;
-	if ( !other_rsd.is_RNA() ) return;
-
-	//Ok right now intrares energy is define only for the RNA case. Parin Sripakdeevong, June 26, 2011.
-	//	if(current_rsd.is_RNA()==false) return;
-	//	if(other_rsd.is_RNA()==false) return; //no effect!
+	//SML PHENIX conference
+	if (basic::options::option[basic::options::OptionKeys::rna::rna_prot_erraser].value()){
+		if ( !current_rsd.is_RNA() ) return;
+		if ( !other_rsd.is_RNA() ) return;
+	}
 
 	static bool const update_deriv( true );
 
@@ -1020,7 +1020,10 @@ ContextIndependentGeometricSolEnergy::donorRes_occludingRes_geometric_sol_RNA_in
 	conformation::Residue const & don_rsd=rsd;
 	conformation::Residue const & occ_rsd=rsd;
 
-	if ( !rsd.is_RNA() ) return 0.0;
+	//SML PHENIX conference
+	if (basic::options::option[basic::options::OptionKeys::rna::rna_prot_erraser].value()){
+		if ( !rsd.is_RNA() ) return 0.0;
+	}
 
 	// Here we go -- cycle through polar hydrogens in don_aa, everything heavy in occluding atom.
 	for ( chemical::AtomIndices::const_iterator hnum  = don_rsd.Hpos_polar().begin(), hnume = don_rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
@@ -1047,7 +1050,10 @@ ContextIndependentGeometricSolEnergy::acceptorRes_occludingRes_geometric_sol_RNA
 	conformation::Residue const & acc_rsd=rsd;
 	conformation::Residue const & occ_rsd=rsd;
 
-	if ( !rsd.is_RNA() ) return 0.0;
+	//SML PHENIX conference
+	if (basic::options::option[basic::options::OptionKeys::rna::rna_prot_erraser].value()){
+		if ( !rsd.is_RNA() ) return 0.0;
+	}
 
 	Real res_solE( 0.0 ), energy( 0.0 );
 

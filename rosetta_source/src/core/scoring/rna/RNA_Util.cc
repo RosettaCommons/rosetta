@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/methods/RNA_LowResolutionPotential.cc
+/// @file   core/scoring/rna/RNA_Util.cc
 /// @author Rhiju Das
 
 // Unit headers
@@ -36,6 +36,9 @@
 #include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/rna.OptionKeys.gen.hh>
+
 #include <ObjexxFCL/string.functions.hh>
 
 // Utility headers
@@ -45,7 +48,7 @@
 
 namespace core {
 namespace scoring {
-namespace rna{
+namespace rna {
 
 ///////////////////////////////////////////////////////////////////////////////
 Size
@@ -681,8 +684,14 @@ get_fade_correction(
 Vector
 get_rna_base_centroid( conformation::Residue const & rsd , bool verbose){
 
-  //if( rsd.is_RNA()==false) utility_exit_with_message("rsd.is_RNA()==false");
-  if( rsd.is_RNA()==false) return Vector( 0.0, 0.0, 0.0 );
+  //SML PHENIX conference
+	if ( !rsd.is_RNA() ) {
+		if (basic::options::option[basic::options::OptionKeys::rna::rna_prot_erraser].value()){
+			return Vector( 0.0, 0.0, 0.0 );
+		} else { //if not option
+			utility_exit_with_message("non-RNA residue inside get_rna_base_centroid");
+		}
+	}//if not RNA
 
   Vector centroid( 0.0 );
   Size numatoms = 0;
@@ -733,9 +742,15 @@ get_rna_base_coordinate_system( conformation::Residue const & rsd, Vector const 
 
 	using namespace chemical;
 
-  //if( rsd.is_RNA()==false) utility_exit_with_message("rsd.is_RNA()==false");
-	if ( !rsd.is_RNA() ) return numeric::xyzMatrix< core::Real >::identity();
 
+  //SML PHENIX conference
+  if ( !rsd.is_RNA() ) {
+    if (basic::options::option[basic::options::OptionKeys::rna::rna_prot_erraser].value()){
+      return numeric::xyzMatrix< core::Real >::identity();
+    } else { //if not option
+      utility_exit_with_message("non-RNA residue inside get_rna_base_coordinate_system, abort");
+    }
+  }//if not RNA
 
  	Size res_type = rsd.aa();
 

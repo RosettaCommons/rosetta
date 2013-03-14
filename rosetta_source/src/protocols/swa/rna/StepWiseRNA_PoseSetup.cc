@@ -47,6 +47,8 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/rna.OptionKeys.gen.hh>
 
 #include <core/io/silent/BinaryRNASilentStruct.hh> //Feb 24, 2011, FARFAR start_silent_file.
 
@@ -335,8 +337,8 @@ namespace rna {
 			}
 		}
 		if (!match) {
-			std::cout << "IMPORT_POSE SEQUENCE " << import_pose.sequence() << std::endl;
-			std::cout << "FULL SEQUENCE " << full_sequence << std::endl;
+			TR.Error << "IMPORT_POSE SEQUENCE " << import_pose.sequence() << std::endl;
+			TR.Error << "FULL SEQUENCE " << full_sequence << std::endl;
 			utility_exit_with_message( "mismatch in sequence between input pose and desired sequence, given input_res " );
 		}
 	}
@@ -579,14 +581,18 @@ namespace rna {
 			Size const input_ONE_seq_num=full_to_input_res_map_ONE.find(full_seq_num)->second;
 			Real const nearest_dist_ONE= get_nearest_dist_to_O2star(input_ONE_seq_num, start_pose_list[1], input_res_vectors[1], common_res_list);
 
-			if ( !start_pose_list[1].residue_type( input_ONE_seq_num ).is_RNA() ) continue;
-
+			//SML PHENIX conference cleanup
+			if (basic::options::option[basic::options::OptionKeys::rna::rna_prot_erraser].value()){
+				if ( !start_pose_list[1].residue_type( input_ONE_seq_num ).is_RNA() ) continue;
+			}
 
 			Size const input_TWO_seq_num=full_to_input_res_map_TWO.find(full_seq_num)->second;
 			Real const nearest_dist_TWO= get_nearest_dist_to_O2star(input_TWO_seq_num, start_pose_list[2], input_res_vectors[2], common_res_list);
 
-			if ( !start_pose_list[2].residue_type( input_TWO_seq_num ).is_RNA() ) continue;
-
+			//SML PHENIX conference cleanup
+			if (basic::options::option[basic::options::OptionKeys::rna::rna_prot_erraser].value()){
+				if ( !start_pose_list[2].residue_type( input_TWO_seq_num ).is_RNA() ) continue;
+			}
 
 			//pose.set_torsion( TorsionID( moving_res, id::CHI, 4 ), 0 );  //This torsion is not sampled. Arbitary set to zero to prevent randomness
 			id::TorsionID const torsion_id(working_seq_num , id::CHI, 4 );
@@ -766,7 +772,10 @@ namespace rna {
 				utility_exit_with_message( "Should not be trying to virtualize phosphate on close cutpoint residue (chain_start= " + string_of(chain_start)  + " )");
 			}
 
-			if ( !pose.residue_type( full_to_sub[ chain_start ] ).is_RNA() ) continue;
+			//SML PHENIX conference cleanup
+			if (basic::options::option[basic::options::OptionKeys::rna::rna_prot_erraser].value()){
+				if ( !pose.residue_type( full_to_sub[ chain_start ] ).is_RNA() ) continue;
+			}
 
 			pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", full_to_sub[ chain_start ] );
 		}

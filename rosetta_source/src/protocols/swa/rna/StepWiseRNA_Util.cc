@@ -65,6 +65,9 @@
 
 #include <numeric/conversions.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/rna.OptionKeys.gen.hh>
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -591,7 +594,10 @@ namespace rna {
 
  		using namespace chemical;
 
-		if ( !rsd.is_RNA() ) return false;
+		//SML PHENIX conference
+		if (basic::options::option[basic::options::OptionKeys::rna::rna_prot_erraser].value()){
+			if ( !rsd.is_RNA() ) return false;
+		}
 
 		//Cytosine and Uracil contain 8 heavy base atoms. Adenine contains 10 heavy base atoms. Guanine contains 11 heavy base atoms.
 		if((rsd.nheavyatoms()-rsd.first_sidechain_atom()+2)<8){ //plus 2 since need to count both start and end atom.
@@ -1123,7 +1129,10 @@ namespace rna {
 
 	  for (core::Size i = 1; i <= pose.total_residue(); i++){
 	    if (pose.residue(i).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
-	    if ( !pose.residue(i).is_RNA()) continue;
+			//SML PHENIX conference
+			if (basic::options::option[basic::options::OptionKeys::rna::rna_prot_erraser].value()){
+				if ( !pose.residue(i).is_RNA()) continue;
+			}
 			pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_O2STAR_HYDROGEN", i);
 	  }
 	}
@@ -1134,7 +1143,10 @@ namespace rna {
 
 		for(Size i=1; i<=pose.total_residue(); i++){
 			if (pose.residue(i).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
-	    if ( !pose.residue(i).is_RNA()) continue;
+			//SML PHENIX conference
+			if (basic::options::option[basic::options::OptionKeys::rna::rna_prot_erraser].value()){
+				if ( !pose.residue(i).is_RNA()) continue;
+			}
 			if ( pose.residue_type( i ).has_variant_type( "VIRTUAL_O2STAR_HYDROGEN" ) ){
 				pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_O2STAR_HYDROGEN", i);
 			}
@@ -2028,7 +2040,10 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 		for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
 
 			if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
-			if ( !pose.residue(seq_num).is_RNA() ) continue; //Fang's electron density code
+			//SML PHENIX conference
+			if (basic::options::option[basic::options::OptionKeys::rna::rna_prot_erraser].value()){
+				if ( !pose.residue(seq_num).is_RNA() ) continue;
+			}
 
 			core::conformation::Residue const & rsd = pose.residue(seq_num);
 			Size const at= rsd.first_sidechain_atom();
@@ -2049,10 +2064,13 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 				continue;
 			}
 
-			if( !pose.residue(seq_num).is_RNA() ){
-				if(verbose) std::cout << "res " << seq_num << " is not RNA " << std::endl;
-				Is_O2star_hydrogen_virtual_list.push_back(false); //false since not virtual O2star_hydrogen
-				continue;
+			//SML PHENIX conference
+			if (basic::options::option[basic::options::OptionKeys::rna::rna_prot_erraser].value()){
+				if( !pose.residue(seq_num).is_RNA() ){
+					if(verbose) std::cout << "res " << seq_num << " is not RNA " << std::endl;
+					Is_O2star_hydrogen_virtual_list.push_back(false); //false since not virtual O2star_hydrogen
+					continue;
+				}
 			}
 
 			core::conformation::Residue const & rsd = pose.residue(seq_num);
@@ -2591,7 +2609,10 @@ principal_angle_degrees( T const & angle )
 
 			if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
 
-			if (!pose.residue(seq_num).is_RNA() ) continue;
+			//SML PHENIX conference
+			if (basic::options::option[basic::options::OptionKeys::rna::rna_prot_erraser].value()){
+				if (!pose.residue(seq_num).is_RNA() ) continue;
+			}
 
 			conformation::Residue const & rsd(pose.residue(seq_num));
 			Real delta = numeric::principal_angle_degrees(rsd.mainchain_torsion( DELTA ));

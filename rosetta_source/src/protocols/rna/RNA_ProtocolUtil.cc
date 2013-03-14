@@ -50,6 +50,8 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/string.functions.hh>
 
+
+
 // External library headers
 // AUTO-REMOVED #include <numeric/random/random.hh>
 #include <utility/io/ozstream.hh>
@@ -65,6 +67,8 @@
 #include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
 #include <ObjexxFCL/format.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/rna.OptionKeys.gen.hh>
 
 
 using namespace core;
@@ -454,8 +458,12 @@ get_o1p_o2p_sign( pose::Pose const & pose , Size res_num) {
 
 	conformation::Residue const & rsd( pose.residue(res_num)  );
 
-	//if(rsd.is_RNA()==false) utility_exit_with_message("rsd.is_RNA()==false!");
-	if ( !rsd.is_RNA() ) return 0.0;
+	//SML PHENIX conference cleanup
+	if (basic::options::option[basic::options::OptionKeys::rna::rna_prot_erraser].value()){
+		if ( !rsd.is_RNA() ) return 0.0;
+	} else {
+		if(rsd.is_RNA()==false) utility_exit_with_message("rsd.is_RNA()==false!");
+	}
 
 	Real const sign = dot( rsd.xyz( " O5*" ) - rsd.xyz( " P  " ), cross( rsd.xyz( " O2P" ) - rsd.xyz( " P  " ), rsd.xyz( " O1P" ) - rsd.xyz( " P  " ) ) );
 

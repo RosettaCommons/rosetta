@@ -54,6 +54,8 @@
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/rna.OptionKeys.gen.hh>
 
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
@@ -617,7 +619,11 @@ namespace rna {
 		for(Size i = 1; i <= nres; i++ ){
 
 			if (pose.residue(i).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code.
-			if (!pose.residue(i).is_RNA() ) continue; //Fang's electron density code.
+
+			//SML PHENIX conference
+			if (basic::options::option[basic::options::OptionKeys::rna::rna_prot_erraser].value()){
+				if (!pose.residue(i).is_RNA() ) continue;
+			}
 
 			utility::vector1< TorsionID > torsion_ids;
 
@@ -657,8 +663,12 @@ namespace rna {
 
 			if(pose.residue(jump_pos1).aa() == core::chemical::aa_vrt) continue; //Fang's electron density code
 			if(pose.residue(jump_pos2).aa() == core::chemical::aa_vrt) continue; //Fang's electron density code
-			if(!pose.residue(jump_pos1).is_RNA()) continue; //Fang's electron density code
-			if(!pose.residue(jump_pos2).is_RNA()) continue; //Fang's electron density code
+
+			//SML PHENIX conference
+			if (basic::options::option[basic::options::OptionKeys::rna::rna_prot_erraser].value()){
+				if(!pose.residue(jump_pos1).is_RNA()) continue;
+				if(!pose.residue(jump_pos2).is_RNA()) continue;
+			}
 
 			if( allow_insert( jump_pos1 ) || allow_insert( jump_pos2 ) )	mm.set_jump( n, true );
 			std::cout << "jump_pos1= " << jump_pos1 << " jump_pos2= " << jump_pos2 << " mm.jump= "; Output_boolean(allow_insert( jump_pos1 ) || allow_insert( jump_pos2 ) );  std::cout << std::endl;

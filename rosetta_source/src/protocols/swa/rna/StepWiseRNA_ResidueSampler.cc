@@ -69,6 +69,8 @@
 #include <protocols/rna/RNA_LoopCloser.hh>
 #include <core/io/pdb/pose_io.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/rna.OptionKeys.gen.hh>
 
 //GreenPacker
 #include <protocols/simple_moves/GreenPacker.hh>
@@ -585,7 +587,10 @@ namespace rna {
 
 			for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
 
-				if ( !pose.residue( seq_num ).is_RNA() ) continue;
+				//SML PHENIX conference
+				if (basic::options::option[basic::options::OptionKeys::rna::rna_prot_erraser].value()){
+					if ( !pose.residue( seq_num ).is_RNA() ) continue;
+				}
 				if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code.
 
 				if( seq_num == moving_res ) continue; //moving_res is actually the working_moving_res
@@ -682,8 +687,10 @@ namespace rna {
 				std::cout << "Residue.aa() " << seq_num << " is core::chemical::aa_vrt!" << std::endl;
 				continue;
 			}
-
-			if ( !pose.residue( seq_num ).is_RNA() ) continue;
+			//SML PHENIX conference
+			if (basic::options::option[basic::options::OptionKeys::rna::rna_prot_erraser].value()){
+				if ( !pose.residue( seq_num ).is_RNA() ) continue;
+			}
 
 			conformation::Residue const & residue_object=pose.residue( seq_num );
 			if(residue_object.has_variant_type( "VIRTUAL_RNA_RESIDUE" )){
