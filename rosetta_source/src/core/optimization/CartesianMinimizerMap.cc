@@ -192,6 +192,9 @@ CartesianMinimizerMap::setup(
 		bool const bb_move( mm.get_bb(i) );
 		bool const chi_move( mm.get_chi(i) );
 
+		//fpd  do not let aa_vrt move
+		if ( pose.fold_tree().is_root( i ) && rsd.aa() == chemical::aa_vrt) continue;
+
 		// cartesian logic ...
 		//    if (chi_move && !bb_move) sc atoms only
 		//    if (bb_move) all atoms
@@ -233,7 +236,7 @@ CartesianMinimizerMap::setup(
 	DOF_ID tmp( id::BOGUS_DOF_ID );
 	pose.atom_tree().root()->setup_min_map( tmp, dof_mask, *this );
 
-	// trim this list ensuring that at least one of the 
+	// trim this list ensuring that at least one of the
 	//   four atoms that define the torsion
 	//   are in our movable set
 	assign_rosetta_torsions_and_trim( pose );

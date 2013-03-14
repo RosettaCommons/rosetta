@@ -292,7 +292,7 @@ ElecDensEnergy::eval_atom_derivative(
 	if ( pose.residue(resid).aa() != core::chemical::aa_vrt && !pose.residue(resid).atom_type(atmid).is_heavyatom() ) return;
 
 	numeric::xyzVector<core::Real> X = pose.xyz(id);
-	numeric::xyzVector< core::Real > dCCdx;
+	numeric::xyzVector< core::Real > dCCdx(0,0,0);
 	numeric::xyzMatrix< core::Real > R = numeric::xyzMatrix<core::Real>::rows(1,0,0, 0,1,0, 0,0,1);
 
 	utility::vector1< conformation::Atom > dummyAtmList;
