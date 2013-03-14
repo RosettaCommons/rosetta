@@ -45,6 +45,7 @@ class FinalMinimizer : public protocols::moves::Mover
 {
 public:
 	FinalMinimizer();
+	FinalMinimizer(core::scoring::ScoreFunctionOP score_fxn, MoveMapBuilderOP movemap_builder);
 	virtual ~FinalMinimizer();
 	FinalMinimizer(FinalMinimizer const & that);
 

@@ -29,7 +29,7 @@ Output  = output/%(target)s-r.logout
 arguments = @flags.txt -nstruct 100 -database %(database)s \\
             -in:file:s input/%(target)s.pdb.gz -in:file:native native/%(target)s.pdb.gz \\
             -packing:unboundrot unbound_from_kwk/%(target)s.pdb.gz \\
-            -out:path output -out:file:atom_tree_diff %(target)s-r-atom_tree_diff.out \\
+						-out:path:pdb output -out:file:atom_tree_diff %(target)s-r-atom_tree_diff.out \\
 						-parser:protocol rotate.xml
 
 priority = -10
@@ -44,7 +44,7 @@ Output  = output/%(target)s-rt-%(n)s.logout
 arguments = @flags.txt -nstruct 100 -database %(database)s \\
             -in:file:s input/%(target)s.pdb.gz -in:file:native native/%(target)s.pdb.gz \\
             -packing:unboundrot unbound_from_kwk/%(target)s.pdb.gz -run:seed_offset %(n)s \\
-            -out:path output -out:file:atom_tree_diff %(target)s-rt-atom_tree_diff.%(n)s \\
+						-out:path:pdb output -out:file:atom_tree_diff %(target)s-rt-atom_tree_diff.%(n)s \\
 						-parser:protocol translate_rotate.xml
 
 priority = -10

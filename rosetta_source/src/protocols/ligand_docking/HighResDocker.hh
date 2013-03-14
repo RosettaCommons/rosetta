@@ -61,6 +61,14 @@ public:
 	HighResDocker();
 	virtual ~HighResDocker();
 	HighResDocker(HighResDocker const & that);
+	HighResDocker(
+			Size num_cycles,
+			Size repack_every_Nth,
+			std::vector<std::string> chains,
+			core::scoring::ScoreFunctionOP score_fxn,
+			MoveMapBuilderOP movemap_builder,
+			std::string resfile=""
+	);
 
 	virtual protocols::moves::MoverOP clone() const;
 	virtual protocols::moves::MoverOP fresh_instance() const;

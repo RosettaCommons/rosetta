@@ -49,6 +49,7 @@ public:
 	MoveMapBuilder();
 	virtual ~MoveMapBuilder();
 	MoveMapBuilder(MoveMapBuilder const & that);
+	MoveMapBuilder(InterfaceBuilderOP sc, InterfaceBuilderOP bb, bool minimize_water);
 
 	void parse_my_tag(
 		utility::tag::TagPtr const tag,

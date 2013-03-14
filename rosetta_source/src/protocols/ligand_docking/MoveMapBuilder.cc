@@ -84,6 +84,18 @@ MoveMapBuilder::MoveMapBuilder(MoveMapBuilder const & that):
 		minimize_water_(that.minimize_water_)
 {}
 
+MoveMapBuilder::MoveMapBuilder(
+	InterfaceBuilderOP sc,
+	InterfaceBuilderOP bb,
+	bool minimize_water
+):
+		ReferenceCount(),
+		sc_interface_builder_(sc),
+		bb_interface_builder_(bb),
+		minimize_water_(minimize_water)
+{}
+
+
 MoveMapBuilder::~MoveMapBuilder() {}
 
 //@brief parse XML (specifically in the context of the parser/scripting scheme)

@@ -1,4 +1,4 @@
-	// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
 // (c) Copyright Rosetta Commons Member Institutions.
@@ -70,16 +70,26 @@ FinalMinimizerCreator::mover_name()
 }
 
 FinalMinimizer::FinalMinimizer():
-		Mover("FinalMinimizer"),
-		score_fxn_(NULL),
-		movemap_builder_(NULL)
-		{}
+				Mover("FinalMinimizer"),
+				score_fxn_(NULL),
+				movemap_builder_(NULL)
+{}
+
+FinalMinimizer::FinalMinimizer(
+		core::scoring::ScoreFunctionOP score_fxn,
+		MoveMapBuilderOP movemap_builder
+):
+	Mover("FinalMinimizer"),
+	score_fxn_(score_fxn),
+	movemap_builder_(movemap_builder)
+
+{}
 
 FinalMinimizer::FinalMinimizer(FinalMinimizer const & that):
-	    //utility::pointer::ReferenceCount(),
-		protocols::moves::Mover( that ),
-		score_fxn_(that.score_fxn_),
-		movemap_builder_(that.movemap_builder_)
+	    		//utility::pointer::ReferenceCount(),
+				protocols::moves::Mover( that ),
+				score_fxn_(that.score_fxn_),
+				movemap_builder_(that.movemap_builder_)
 {}
 
 FinalMinimizer::~FinalMinimizer() {}

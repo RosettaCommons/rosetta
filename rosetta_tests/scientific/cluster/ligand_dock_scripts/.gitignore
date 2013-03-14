@@ -2,3 +2,5 @@
 *.out
 *.pyc
 staResult
+output
+.results.yaml

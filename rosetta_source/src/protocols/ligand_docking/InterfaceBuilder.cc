@@ -49,6 +49,15 @@ InterfaceBuilder::InterfaceBuilder():
 		extension_window_(0)
 {}
 
+InterfaceBuilder::InterfaceBuilder(utility::vector1<LigandAreaOP> ligand_areas, core::Size extension_window):
+		ReferenceCount(),
+		extension_window_(extension_window)
+{
+	foreach(LigandAreaOP ligand_area, ligand_areas){
+		ligand_areas_[ligand_area->chain_] = ligand_area;
+	}
+}
+
 InterfaceBuilder::InterfaceBuilder(InterfaceBuilder const & that):
 		ReferenceCount(),
 		ligand_areas_(that.ligand_areas_),

@@ -20,6 +20,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
+#include <core/graph/Graph.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>

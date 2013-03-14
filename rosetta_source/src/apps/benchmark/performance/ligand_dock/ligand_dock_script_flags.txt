@@ -13,10 +13,6 @@
  #-ex1
  #-ex1aro
  #-ex2
--jd2
- -dd_parser true
--parser
- -protocol ligand_dock/ligand_dock_script.xml
 
 -mute core.util.prof ## dont show timing info
 -mute core.io.database

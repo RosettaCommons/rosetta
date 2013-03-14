@@ -48,6 +48,7 @@ class InterfaceBuilder: public utility::pointer::ReferenceCount
 public:
 	InterfaceBuilder();
 	virtual ~InterfaceBuilder();
+	InterfaceBuilder(utility::vector1<LigandAreaOP> ligand_areas, core::Size extension_window = 0);
 	InterfaceBuilder(InterfaceBuilder const & that);
 
 	void parse_my_tag(

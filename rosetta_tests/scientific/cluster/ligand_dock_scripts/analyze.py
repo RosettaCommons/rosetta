@@ -66,6 +66,7 @@ def main(argv):
 
     for target in targets:
       files= glob('output'+'/'+target+'*'+'atom_tree_diff'+'*')
+      if len(files) == 0: continue
       lines=[]
       for file in files:
         lines += open(file).readlines()
