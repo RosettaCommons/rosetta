@@ -7,3 +7,5 @@
 -edensity:mapfile 1Q9A_map.ccp4 
 -edensity:mapreso 2.0 
 -edensity:realign no
+-scale_d 100
+-scale_theta 10
