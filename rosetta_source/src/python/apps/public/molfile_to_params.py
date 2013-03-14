@@ -1168,11 +1168,11 @@ def write_all_files(m, molfiles, num_frags, options, suffix=""): #{{{
                     if b.a1 not in atoms: atoms.append(b.a1)
                     if b.a2 not in atoms: atoms.append(b.a2)
         for b in m.bonds:
+            #if (b.order == Bond.AROMATIC):
             if (b.order == Bond.DOUBLE and b.a1.elem in ["C"]) or (b.order == Bond.AROMATIC):
-
                 conjugated_atoms = [b.a1, b.a2]
                 expand_atoms_by_one_bond(m.bonds,conjugated_atoms)
-                expand_atoms_by_one_bond(m.bonds,conjugated_atoms)
+                #expand_atoms_by_one_bond(m.bonds,conjugated_atoms)
 
                 for i in range(2,len(conjugated_atoms)):
                     for j in range(i+1,len(conjugated_atoms)):
