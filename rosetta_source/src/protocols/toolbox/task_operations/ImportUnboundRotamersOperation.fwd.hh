@@ -9,7 +9,7 @@
 
 /// @file protocols/toolbox/task_operations/ImportUnboundRotamersOperation.hh
 /// @brief  rotamer set operation forward declaration
-/// @author Nobuyasu Koga (nobuyasu@uw.edu)
+/// @author Dave La (davela@uw.edu)
 
 #ifndef INCLUDED_protocols_toolbox_task_operations_ImportUnboundRotamersOperation_fwd_hh
 #define INCLUDED_protocols_toolbox_task_operations_ImportUnboundRotamersOperation_fwd_hh

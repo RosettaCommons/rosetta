@@ -9,9 +9,7 @@
 
 /// @file   protocols/toolbox/task_operations/ImportUnboundRotamersOperation.hh
 /// @brief  eliminate aromatic rotamers, of which chi2 are around 0, 180 degree.
-/// @detail Chi2=0, 180 rotamers of aromatic residues ( PHE, TYR, HIS ) are not observed in nature very much,
-/// however Rosetta really like them. This is really pathology. For design purpose, we don't need them actually.
-/// @author Nobuyasu Koga ( nobuyasu@uw.edu )
+/// @author Dave La ( davela@uw.edu )
 
 
 #ifndef INCLUDED_protocols_toolbox_task_operations_ImportUnboundRotamersOperation_hh
