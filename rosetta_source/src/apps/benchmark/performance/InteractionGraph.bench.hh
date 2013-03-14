@@ -319,6 +319,7 @@ public:
 	core::pack::task::PackerTaskOP
 	redesign_20() {
 		// create a packer task to redesign 20 residues on test_in.pdb
+		using namespace core;
 		using namespace core::pack::task;
 		PackerTaskOP task = TaskFactory::create_packer_task( *pose_ );
 		for ( Size ii = 21; ii <= pose_->total_residue(); ++ii ) {
@@ -372,6 +373,7 @@ public:
 	}
 
 	void setup_for_denseig() {
+		using namespace core;
 		using namespace core::pack::interaction_graph;
 		task_ = redesign_20();
 		for ( Size ii = 1; ii <= 20; ++ii ) task_->nonconst_residue_task( ii ).restrict_to_repacking();
