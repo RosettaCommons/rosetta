@@ -81,6 +81,7 @@ public:
 	void max_cb_cb_dist( core::Real const mccd );
 	void cb_force( core::Real const cf );
 	void stub_sets( utility::vector1< StubSetStubPos > const & vec );
+  std::string get_stub_scorefxn() const;
 	utility::vector1< StubSetStubPos > const & stub_sets() const;
 	utility::vector1< StubSetStubPos > & stub_sets();
 	~PlacementAuctionMover();
@@ -89,6 +90,7 @@ private:
 	ResidueAuction auction_results_;
 	core::Size host_chain_;
 	core::Real max_cb_cb_dist_, cb_force_;
+  std::string stub_energy_fxn_;
 	utility::vector1< StubSetStubPos > stub_sets_;
 };
 

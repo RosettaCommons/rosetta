@@ -92,6 +92,8 @@ public:
 	///@brief removes and reinstates coordinate constraints for all placed hotspots according to coord_sdev
 	void refresh_coordinate_constraints( core::pose::Pose & pose, core::Real const coord_sdev );
 	core::pack::task::PackerTaskOP create_task_for_hotspot_packing( core::pose::Pose const & );
+	core::pack::task::PackerTaskOP create_task_for_allhotspot_packing( core::pose::Pose const & );
+  void add_coordinatecst_for_hotspot_packing( core::pose::Pose & );
 	void stub_sets( utility::vector1< StubSetStubPos > const sets ) { stub_sets_ = sets; }
 	void host_chain( core::Size const host_chain ) { host_chain_ = host_chain; }
 	virtual ~PlaceSimultaneouslyMover();
@@ -107,6 +109,7 @@ private:
 
 	/// the maximum distance for a stub to be considered a a neighbour to a host residue
 	core::Real max_cb_cb_dist_;
+	core::Real coor_cst_cutoff_;
 	/// Maximum per-residue energy the placed stub can have to be saved
 	core::Real stub_energy_threshold_;
 	utility::vector1< MoverRealPair  > minimization_movers_;

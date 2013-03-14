@@ -10,6 +10,7 @@
 /// @file protocols/protein_interface_design/movers/PlacementAuctionMover.cc
 /// @brief
 /// @author Sarel Fleishman (sarelf@u.washington.edu)
+/// @author Lei Shi (shilei@u.washington.edu)
 
 // Unit headers
 #include <protocols/protein_interface_design/movers/PlacementAuctionMover.hh>
@@ -20,6 +21,7 @@
 #include <protocols/moves/DataMap.hh>
 #include <utility/tag/Tag.hh>
 #include <core/scoring/constraints/BackboneStubConstraint.hh>
+#include <core/scoring/constraints/BackboneStubLinearConstraint.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -158,8 +160,18 @@ PlacementAuctionMover::apply( core::pose::Pose & pose )
 	using namespace core::scoring;
 	ScoreFunctionOP only_stub_scorefxn = new ScoreFunction;
 	only_stub_scorefxn->reset();
-	only_stub_scorefxn->set_weight( backbone_stub_constraint, 1.0 );
-	simple_filters::ScoreTypeFilter const stf( only_stub_scorefxn, backbone_stub_constraint, 1.0 );
+
+  protocols::filters::FilterOP stf; 
+	if ( stub_energy_fxn_ == "backbone_stub_constraint" ) {
+		only_stub_scorefxn->set_weight( backbone_stub_constraint, 1.0 );
+		stf= new protocols::simple_filters::ScoreTypeFilter(only_stub_scorefxn, backbone_stub_constraint, 1.0 );
+	
+	} else if ( stub_energy_fxn_ == "backbone_stub_linear_constraint" ) {
+		only_stub_scorefxn->set_weight( backbone_stub_linear_constraint, 1.0 );
+		stf= new protocols::simple_filters::ScoreTypeFilter(only_stub_scorefxn, backbone_stub_linear_constraint, 1.0 );
+	} else {
+		utility_exit_with_message( "ERROR: unrecognized stub_energy_fxn_. Only support backbone_stub_constraint or backbone_stub_linear_constraint");
+	} 
 
 	ScoreFunctionCOP score12( ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH ));
 	core::Size fixed_res(1);
@@ -186,14 +198,21 @@ PlacementAuctionMover::apply( core::pose::Pose & pose )
 		}
 	}// for host_position
 
+	ResidueAuction saved_auction; /// auction_results_ will be depleted in the following. Then, if successful, I'll reinstate it.
+	if ( stub_energy_fxn_ == "backbone_stub_linear_constraint" ) {
+		saved_auction = auction_results() ; /// auction_results_ will be depleted in the following. Then, if successful, I'll reinstate it.
+	}
+
 	foreach( StubSetStubPos const hs_set, stub_sets_ ){
 		HotspotStubSetOP stub_set( hs_set.first );
+    //TR << "Loop restart: " << std::endl; //loop through each library
 		foreach( HotspotStubSet::Hs_data const stub_pair, *stub_set ){
 			HotspotStubOP stub( stub_pair.second.second );
 			foreach( core::Size const host_residue, host_positions )
 			{
 				core::Real const distance( pose.residue( host_residue ).xyz( "CB" ).distance( stub->residue()->xyz( "CB" ) ) );
 				if( distance >= max_cb_cb_dist_ ) continue;
+				//TR<< "residue: " << pose.residue( host_residue ).seqpos() << " " << pose.residue( host_residue ).name()<< " stub: " << stub->residue()->seqpos() << " " << stub->residue()->name() << " distance: " << distance  << " max_cb_cb_dist_: " << max_cb_cb_dist_ <<std::endl;
 				core::Real const bonus( stub->bonus_value() );
 				// I'm circumventing add_hotspot_constraints to pose and adding the constraint directly
 				// since there's no ambiguity here and no need to switch to ala pose etc. And I don't
@@ -201,53 +220,98 @@ PlacementAuctionMover::apply( core::pose::Pose & pose )
 				using namespace core::scoring::constraints;
 				ConstraintCOPs stub_constraints;
 				core::conformation::Residue const host_res( pose.conformation().residue( host_residue ) );
-				stub_constraints.push_back( new BackboneStubConstraint( pose, host_residue, fixed_atom_id, host_res, bonus, cb_force_ ) );
-				stub_constraints = pose.add_constraints( stub_constraints );
-				core::Real const bb_cst_score( stf.compute( pose ) );
-				if( bb_cst_score <= -0.5 ) // take only residues that make some appreciable contribution
-					insert( std::make_pair( bb_cst_score, std::make_pair( host_residue, std::make_pair( stub_set, stub ) ) ) );
-				pose = saved_pose;
+  				if ( stub_energy_fxn_ == "backbone_stub_constraint" ) {
+						stub_constraints.push_back( new BackboneStubConstraint( pose, host_residue, fixed_atom_id, host_res, bonus, cb_force_ ) );
+						stub_constraints = pose.add_constraints( stub_constraints );
+						core::Real const bb_cst_score( stf->apply( pose ) );
+						if( bb_cst_score <= -0.5 ) // take only residues that make some appreciable contribution
+							insert( std::make_pair( bb_cst_score, std::make_pair( host_residue, std::make_pair( stub_set, stub ) ) ) );
+				} else if ( stub_energy_fxn_ == "backbone_stub_linear_constraint" ) {
+						stub_constraints.push_back( new BackboneStubLinearConstraint( pose, host_residue, fixed_atom_id, *(stub->residue()), bonus, cb_force_ ) );
+						stub_constraints = pose.add_constraints( stub_constraints );
+        		core::Real const bb_cst_score( stf->apply( pose ) );
+						insert( std::make_pair( bonus+bb_cst_score, std::make_pair( host_residue, std::make_pair( stub_set, stub ) ) ) );
+				}
+			 pose = saved_pose;
 			}// foreach host_residue
 		}//foreach stub_pair
+
+		//only for backbone_stub_linear_constraint
+     if ( stub_energy_fxn_ == "backbone_stub_linear_constraint" ) {
+				if( size() == 0 ){
+					TR<<"No pairing found. Failing."<<std::endl;
+					set_last_move_status( protocols::moves::FAIL_RETRY );
+					return;
+				}
+
+      //Insert all auctioned postiions to be used by PlaceSimultaneousMover
+       core::Real best_combined_energy=100;
+       //TR<<"Total possiblitly found: " << size() <<std::endl;
+       for( ResidueAuction::iterator lowest_energy = begin(); lowest_energy != end(); ++lowest_energy) {
+              if (lowest_energy->first <= best_combined_energy ) {
+                 saved_auction.insert(*lowest_energy);
+                 core::Size const position( lowest_energy->second.first );
+                 HotspotStubSetCOP stubset( lowest_energy->second.second.first );
+                 HotspotStubOP stub( lowest_energy->second.second.second );
+
+                 //assign matched positions to stub_sets_
+                foreach( StubSetStubPos & hs_set, stub_sets() ){
+                 if ( position == hs_set.second.second ) // it has already being used!
+                   break;
+                 if( hs_set.first == stubset ){
+                   hs_set.second.first = stub;
+                   hs_set.second.second = position;
+                   break;
+                 }
+               }
+             }
+           }
+           clear(); //clear auction results for one hotspot
+		} //end of backbone_stub_linear_constraint
 	}//foreach hs_set
-	if( size() == 0 ){
-		TR<<"No pairing found. Failing."<<std::endl;
-		set_last_move_status( protocols::moves::FAIL_RETRY );
-		return;
-	}
-	ResidueAuction const saved_auction( auction_results() ); /// auction_results_ will be depleted in the following. Then, if successful, I'll reinstate it.
-	while( size() > 0 ){
-		// The auction ensures that each position is paired to the stubset that bids the lowest-energy stub on that
-		/// position, but allows each stubset to bid multiple positions. This allows stubsets that lose on one position
-		// to potentially succeed on another.
-		PlacementAuctionMover::const_iterator lowest_energy( begin() );
-		core::Size const position( lowest_energy->second.first );
-		HotspotStubSetCOP stubset( lowest_energy->second.second.first );
-		HotspotStubOP stub( lowest_energy->second.second.second );
 
-		foreach( StubSetStubPos & hs_set, stub_sets() ){
-	// This is where the pairing takes place
-			if( hs_set.first == stubset ){
-				hs_set.second.first = stub;
-				hs_set.second.second = position;
-				break;
-			}
-		}
+  if ( stub_energy_fxn_ == "backbone_stub_constraint" ) {
+					if( size() == 0 ){
+						TR<<"No pairing found. Failing."<<std::endl;
+						set_last_move_status( protocols::moves::FAIL_RETRY );
+						return;
+					}
 
-		for( ResidueAuction::iterator energy_set_pair = begin(); energy_set_pair != end(); /*incrementing done within the loop*/ ){
-			ResidueAuction::iterator next_it = energy_set_pair;
-			core::Size const erased_pos( energy_set_pair->second.first );
-			HotspotStubSetCOP erased_stubset( energy_set_pair->second.second.first );
+					saved_auction = auction_results() ; /// auction_results_ will be depleted in the following. Then, if successful, I'll reinstate it.
+					while( size() > 0 ){
+						// The auction ensures that each position is paired to the stubset that bids the lowest-energy stub on that
+						/// position, but allows each stubset to bid multiple positions. This allows stubsets that lose on one position
+						// to potentially succeed on another.
+						PlacementAuctionMover::const_iterator lowest_energy( begin() );
+						core::Size const position( lowest_energy->second.first );
+						HotspotStubSetCOP stubset( lowest_energy->second.second.first );
+						HotspotStubOP stub( lowest_energy->second.second.second );
+        
+						foreach( StubSetStubPos & hs_set, stub_sets() ){
+					// This is where the pairing takes place
+							if( hs_set.first == stubset ){
+								hs_set.second.first = stub;
+								hs_set.second.second = position;
+								break;
+							}
+						}
+        
+						for( ResidueAuction::iterator energy_set_pair = begin(); energy_set_pair != end(); /*incrementing done within the loop*/ ){
+							ResidueAuction::iterator next_it = energy_set_pair;
+							core::Size const erased_pos( energy_set_pair->second.first );
+							HotspotStubSetCOP erased_stubset( energy_set_pair->second.second.first );
+        
+							if( position == erased_pos || stubset == erased_stubset ){
+								++next_it;
+								erase( energy_set_pair );
+								energy_set_pair = next_it;
+							}
+							else ++energy_set_pair;
+						}//for energy_set_pair
+					}//while size()
+	} //end of backbone_stub_constraint 
 
-			if( position == erased_pos || stubset == erased_stubset ){
-				++next_it;
-				erase( energy_set_pair );
-				energy_set_pair = next_it;
-			}
-			else ++energy_set_pair;
-		}//for energy_set_pair
-	}//while size()
-
+	//check if all stub positions have been paired
 	foreach( StubSetStubPos const stubset_pos_pair, stub_sets() ){
 		core::Size const pos( stubset_pos_pair.second.second );
 		if( pos == 0 ){
@@ -256,9 +320,10 @@ PlacementAuctionMover::apply( core::pose::Pose & pose )
 			return;
 		}
 	}//foreach stubset_pos_pair
+
 	// If all went well then retrieve the saved copy of the auction
 	auction_results_ = saved_auction;
-	TR<<"Pairing successful."<<std::endl;
+	TR<<"Pairing successful: "<< size() << std::endl;
 	set_last_move_status( protocols::moves::MS_SUCCESS );
 	pose=saved_pose;
 	TR.flush();
@@ -289,6 +354,11 @@ PlacementAuctionMover::cb_force( core::Real const cb ){
 	cb_force_ = cb;
 }
 
+std::string
+PlacementAuctionMover::get_stub_scorefxn() const {
+	return stub_energy_fxn_;
+}
+
 utility::vector1< protocols::protein_interface_design::movers::PlacementAuctionMover::StubSetStubPos > const &
 PlacementAuctionMover::stub_sets() const{
 	return stub_sets_;
@@ -314,9 +384,10 @@ PlacementAuctionMover::parse_my_tag( TagPtr const tag,
 	utility::vector0< TagPtr > const branch_tags( tag->getTags() );
 	max_cb_cb_dist_ = tag->getOption< core::Real >( "max_cb_dist", 3.0 );
 	cb_force_ = tag->getOption< core::Real >( "cb_force", 0.5 );
+  stub_energy_fxn_ = tag->getOption<std::string>( "stubscorefxn", "backbone_stub_constraint" ) ;
 	stub_sets_ = parse_stub_sets( tag, pose, host_chain_, data );
 	runtime_assert( stub_sets_.size() );
-	TR<<"max cb cb distance set to "<<max_cb_cb_dist_<<" and cb_force to "<<cb_force_<<'\n';
+	TR<<"max cb cb distance set to "<<max_cb_cb_dist_<<" and cb_force to "<<cb_force_<< " stub energy function" << stub_energy_fxn_ << '\n';
 	TR<<"PlacementAuction mover on chain "<<host_chain_<<" with repack_non_ala set to "<<std::endl;
 }
 
