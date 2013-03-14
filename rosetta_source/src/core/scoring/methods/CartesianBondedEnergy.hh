@@ -288,6 +288,11 @@ private:
 		Real &d0
 	);
 
+	// read bb indep tables
+	void read_length_database(std::string infile);
+	void read_angle_database(std::string infile);
+	void read_torsion_database(std::string infile);
+
 	// another helper function: read backbone dependent db files
 	void
 	read_bbdep_table(

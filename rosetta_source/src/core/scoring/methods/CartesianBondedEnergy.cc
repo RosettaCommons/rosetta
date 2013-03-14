@@ -319,89 +319,13 @@ IdealParametersDatabase::init(
 	k_torsion_improper_ = k_tors_improper_in;
 
 	// read bb-independent parameters
-	std::string name3, atom1, atom2, atom3, atom4;
-	Real mu_d, K_d;
-	Size period;
 	std::string libpath = basic::options::option[ basic::options::OptionKeys::score::bonded_params_dir ]();
 	bbdep_bond_params_ = basic::options::option[ basic::options::OptionKeys::corrections::score::bbdep_bond_params ]();
 	bbdep_bond_devs_ = basic::options::option[ basic::options::OptionKeys::corrections::score::bbdep_bond_devs ]();
 
-	{
-		utility::io::izstream instream;
-		atm_name_pair tuple;
-		basic::database::open( instream, libpath+"/default-lengths.txt");
-		while (instream) {
-			instream >> name3 >> atom1 >> atom2 >> mu_d >> K_d;
-			tuple = boost::make_tuple( name3, atom1, atom2 );
-			CartBondedParametersOP params_i = new BBIndepCartBondedParameters(mu_d, K_d);
-			bondlengths_indep_.insert( std::make_pair( tuple, params_i ) );
-			tuple = boost::make_tuple( name3, atom2, atom1 );
-			params_i = new BBIndepCartBondedParameters(mu_d, K_d);
-			bondlengths_indep_.insert( std::make_pair( tuple, params_i ) );
-		}
-		TR << "Read " << bondlengths_indep_.size() << " bb-independent lengths." << std::endl;
-	}
-
-	{
-		utility::io::izstream instream;
-		atm_name_triple tuple;
-		basic::database::open( instream, libpath+"/default-angles.txt");
-		while (instream) {
-			instream >> name3 >> atom1 >> atom2 >> atom3 >> mu_d >> K_d;
-			tuple = boost::make_tuple( name3, atom1, atom2, atom3 );
-			CartBondedParametersOP params_i = new BBIndepCartBondedParameters(mu_d, K_d);
-			bondangles_indep_.insert( std::make_pair( tuple, params_i) );
-			tuple = boost::make_tuple( name3, atom3, atom2, atom1 );
-			bondangles_indep_.insert( std::make_pair( tuple, params_i) );
-		}
-		TR << "Read " << bondangles_indep_.size() << " bb-independent angles." << std::endl;
-	}
-
-	{
-		utility::io::izstream instream;
-		atm_name_quad tuple;
-		basic::database::open( instream, libpath+"/default-torsions.txt");
-		while (instream) {
-			instream >> name3 >> atom1 >> atom2 >> atom3 >> atom4 >> mu_d >> K_d >> period;
-			tuple = boost::make_tuple( name3, atom1, atom2, atom3, atom4 );
-			CartBondedParametersOP params_i = new BBIndepCartBondedParameters(mu_d, K_d, period);
-			torsions_indep_.insert( std::make_pair( tuple, params_i) );
-			//tuple = boost::make_tuple( name3, atom4, atom3, atom2, atom1 );
-			//torsions_indep_.insert( std::make_pair( tuple, params_i) );
-		}
-		TR << "Read " << torsions_indep_.size() << " bb-independent torsions." << std::endl;
-	}
-
-	// Added by hpark
-	if ( basic::options::option[ basic::options::OptionKeys::score::extra_improper_file ].user() )
-		{
-
-			std::string extra_file( basic::options::option[ basic::options::OptionKeys::score::extra_improper_file ]().c_str() );
-			atm_name_quad tuple;
-			std::string line;
-			Size const size_before = torsions_indep_.size();
-
-			utility::io::izstream instream( extra_file );
-
-			if ( !instream.good() ) {
-				utility_exit_with_message( "Unable to open file: " + extra_file + '\n' );
-			}
-
-			while (getline( instream, line) ) {
-				std::istringstream l( line );
-				l >> name3 >> atom1 >> atom2 >> atom3 >> atom4 >> mu_d >> K_d >> period;
-				tuple = boost::make_tuple( name3, atom1, atom2, atom3, atom4 );
-				CartBondedParametersOP params_i = new BBIndepCartBondedParameters(mu_d, K_d, period);
-				torsions_indep_.insert( std::make_pair( tuple, params_i) );
-
-				// Read only once since we are iterating over parameters now!
-				//tuple = boost::make_tuple( name3, atom4, atom3, atom2, atom1 );
-				//torsions_indep_.insert( std::make_pair( tuple, params_i) );
-			}
-			TR << "Read " << torsions_indep_.size() - size_before << " bb-independent torsions from extra_improperfile ";
-			TR << extra_file << std::endl;
-
-		}
+	read_length_database( libpath+"/default-lengths.txt" );
+	read_angle_database( libpath+"/default-angles.txt" );
+	read_torsion_database( libpath+"/default-torsions.txt" );
 
 	if (!bbdep_bond_params_) return;
 
@@ -413,6 +337,106 @@ IdealParametersDatabase::init(
 	read_bbdep_table( libpath+"/bbdep-graphdata-ile-val.txt", bondlengths_bbdep_valile_, bondangles_bbdep_valile_, "VAL" );
 	read_bbdep_table( libpath+"/bbdep-graphdata-pro.txt", bondlengths_bbdep_pro_, bondangles_bbdep_pro_, "PRO" );
 	read_bbdep_table( libpath+"/bbdep-graphdata-xpro.txt", bondlengths_bbdep_prepro_, bondangles_bbdep_prepro_, "ALA" );
+}
+
+
+void
+IdealParametersDatabase::read_length_database(std::string infile) {
+	std::string line;
+	std::string name3, atom1, atom2;
+	Real mu_d, K_d;
+
+	utility::io::izstream instream;
+	atm_name_pair tuple;
+	basic::database::open( instream, infile);
+	while (instream) {
+		getline( instream, line );
+		if (line[0] == '#') continue;
+
+		std::istringstream linestream(line);
+
+		linestream >> name3 >> atom1 >> atom2 >> mu_d >> K_d;
+		tuple = boost::make_tuple( name3, atom1, atom2 );
+		CartBondedParametersOP params_i = new BBIndepCartBondedParameters(mu_d, K_d);
+		bondlengths_indep_.insert( std::make_pair( tuple, params_i ) );
+		tuple = boost::make_tuple( name3, atom2, atom1 );
+		params_i = new BBIndepCartBondedParameters(mu_d, K_d);
+		bondlengths_indep_.insert( std::make_pair( tuple, params_i ) );
+	}
+	TR << "Read " << bondlengths_indep_.size() << " bb-independent lengths." << std::endl;
+}
+
+void
+IdealParametersDatabase::read_angle_database(std::string infile) {
+	std::string line;
+	std::string name3, atom1, atom2, atom3;
+	Real mu_d, K_d;
+
+	utility::io::izstream instream;
+	atm_name_triple tuple;
+	basic::database::open( instream, infile);
+	while (instream) {
+		getline( instream, line );
+		if (line[0] == '#') continue;
+
+		std::istringstream linestream(line);
+
+		linestream >> name3 >> atom1 >> atom2 >> atom3 >> mu_d >> K_d;
+		tuple = boost::make_tuple( name3, atom1, atom2, atom3 );
+		CartBondedParametersOP params_i = new BBIndepCartBondedParameters(mu_d, K_d);
+		bondangles_indep_.insert( std::make_pair( tuple, params_i) );
+		tuple = boost::make_tuple( name3, atom3, atom2, atom1 );
+		bondangles_indep_.insert( std::make_pair( tuple, params_i) );
+	}
+	TR << "Read " << bondangles_indep_.size() << " bb-independent angles." << std::endl;
+}
+
+void
+IdealParametersDatabase::read_torsion_database(std::string infile) {
+	std::string line;
+	std::string name3, atom1, atom2, atom3, atom4;
+	Real mu_d, K_d;
+	Size period;
+
+	utility::io::izstream instream;
+	atm_name_quad tuple;
+	basic::database::open( instream, infile);
+	while (instream) {
+		getline( instream, line );
+		if (line[0] == '#') continue;
+
+		std::istringstream linestream(line);
+
+		linestream >> name3 >> atom1 >> atom2 >> atom3 >> atom4 >> mu_d >> K_d >> period;
+		tuple = boost::make_tuple( name3, atom1, atom2, atom3, atom4 );
+		CartBondedParametersOP params_i = new BBIndepCartBondedParameters(mu_d, K_d, period);
+		torsions_indep_.insert( std::make_pair( tuple, params_i) );
+		//tuple = boost::make_tuple( name3, atom4, atom3, atom2, atom1 );
+		//torsions_indep_.insert( std::make_pair( tuple, params_i) );
+	}
+	TR << "Read " << torsions_indep_.size() << " bb-independent torsions." << std::endl;
+
+	//hpark  extra torsions from the command line
+	if ( basic::options::option[ basic::options::OptionKeys::score::extra_improper_file ].user() ) {
+		std::string extra_file( basic::options::option[ basic::options::OptionKeys::score::extra_improper_file ]().c_str() );
+		atm_name_quad tuple;
+		std::string line;
+		Size const size_before = torsions_indep_.size();
+
+		utility::io::izstream instream( extra_file );
+		if ( !instream.good() ) utility_exit_with_message( "Unable to open file: " + extra_file + '\n' );
+
+		while ( instream.getline( line ) ) {
+			if (line[0] == '#') continue;
+			std::istringstream l( line );
+			l >> name3 >> atom1 >> atom2 >> atom3 >> atom4 >> mu_d >> K_d >> period;
+			tuple = boost::make_tuple( name3, atom1, atom2, atom3, atom4 );
+			CartBondedParametersOP params_i = new BBIndepCartBondedParameters(mu_d, K_d, period);
+			torsions_indep_.insert( std::make_pair( tuple, params_i) );
+		}
+		TR << "Read " << torsions_indep_.size() - size_before << " extra torsions.";
+		TR << extra_file << std::endl;
+	}
 }
 
 
@@ -1302,7 +1326,7 @@ IdealParametersDatabase::create_parameters_for_restype(
 
 			std::string atm1,atm2;
 			core::Size rt1,rt2;
-			if (i==1) { atm1="C";  atm2="N";  rt1 = 0; rt2 = rsd_type.atom_index(" N  ");}
+			if (i==1) { atm1="C";  atm2="N";  rt1 = -rsd_type.lower_connect_id(); rt2 = rsd_type.atom_index(" N  ");}
 			if (i==2) { atm1="N";  atm2="CA"; rt1 = rsd_type.atom_index(" N  "); rt2 = rsd_type.atom_index(" CA "); }
 			if (i==3) { atm1="CA"; atm2="CB"; rt1 = rsd_type.atom_index(" CA "); rt2 = rsd_type.atom_index(" CB "); }
 			if (i==4) { atm1="CA"; atm2="C";  rt1 = rsd_type.atom_index(" CA "); rt2 = rsd_type.atom_index(" C  "); }
@@ -1322,17 +1346,17 @@ IdealParametersDatabase::create_parameters_for_restype(
 			if ((i==6 || i==7) && is_cterm) continue;
 
 			std::string atm1,atm2,atm3;
-			core::Size rt1,rt2,rt3;
-			if (i==1) { atm1="C";  atm2="N";  atm3="CA"; rt1=0;  rt2=rsd_type.atom_index(" N  "); rt3=rsd_type.atom_index(" CA ");}
+			int rt1,rt2,rt3;
+			if (i==1) { atm1="C";  atm2="N";  atm3="CA"; rt1=-rsd_type.lower_connect_id();  rt2=rsd_type.atom_index(" N  "); rt3=rsd_type.atom_index(" CA ");}
 			if (i==2) { atm1="N";  atm2="CA"; atm3="CB"; rt1=rsd_type.atom_index(" N  "); rt2=rsd_type.atom_index(" CA "); rt3=rsd_type.atom_index(" CB "); }
 			if (i==3) { atm1="N";  atm2="CA"; atm3="C";  rt1=rsd_type.atom_index(" N  "); rt2=rsd_type.atom_index(" CA "); rt3=rsd_type.atom_index(" C  "); }
 			if (i==4) { atm1="CB"; atm2="CA"; atm3="C";  rt1=rsd_type.atom_index(" CB "); rt2=rsd_type.atom_index(" CA "); rt3=rsd_type.atom_index(" C  "); }
 			if (i==5) { atm1="CA"; atm2="C";  atm3="O";  rt1=rsd_type.atom_index(" CA "); rt2=rsd_type.atom_index(" C  "); rt3=rsd_type.atom_index(" O  "); }
-			if (i==6) { atm1="CA"; atm2="C";  atm3="N";  rt1=rsd_type.atom_index(" CA "); rt2=rsd_type.atom_index(" C  "); rt3=0; }
-			if (i==7) { atm1="O";  atm2="C";  atm3="N";  rt1=rsd_type.atom_index(" O  "); rt2=rsd_type.atom_index(" C  "); rt3=0; }
+			if (i==6) { atm1="CA"; atm2="C";  atm3="N";  rt1=rsd_type.atom_index(" CA "); rt2=rsd_type.atom_index(" C  "); rt3=-rsd_type.upper_connect_id(); }
+			if (i==7) { atm1="O";  atm2="C";  atm3="N";  rt1=rsd_type.atom_index(" O  "); rt2=rsd_type.atom_index(" C  "); rt3=-rsd_type.upper_connect_id(); }
 
 			ResidueCartBondedParameters::Size3 ids;
-			ids[1] = rt1; ids[2] = rt2; ids[3] = rt3;
+			ids[1] = std::max(rt1,0); ids[2] = std::max(rt2,0); ids[3] = std::max(rt3,0);
 
 			CartBondedParametersCOP ang_params = lookup_angle(rsd_type, prepro, atm1,atm2,atm3, rt1,rt2,rt3 );
 			restype_params->add_bbdep_angle_parameter( ids, ang_params );
