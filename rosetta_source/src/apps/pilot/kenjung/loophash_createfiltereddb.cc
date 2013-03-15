@@ -63,8 +63,6 @@ main( int argc, char * argv [] )
 
 	// Shouldn't these ints be core::size?
 	// Default num_partitions = 1
-	//int num_partitions = option[lh::num_partitions]();  // unused ~Labonte
-	//int assigned_num = 1;  // unused ~Labonte
 // No point in doing this without MPI
 #ifndef USEMPI
 	std::cerr << "You cannot use loophash_createfiltereddb without MPI!" << std::endl;
@@ -72,6 +70,9 @@ main( int argc, char * argv [] )
 #endif
 
 #ifdef USEMPI
+	int num_partitions = option[lh::num_partitions]();  
+	int assigned_num = 1;  
+
 	int mpi_rank_, mpi_npes_;
 	MPI_Comm_rank( MPI_COMM_WORLD, ( int* )( &mpi_rank_ ) );
 	MPI_Comm_size( MPI_COMM_WORLD, ( int* )( &mpi_npes_ ) );
