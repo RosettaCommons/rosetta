@@ -1349,10 +1349,8 @@ int main(int argc, char** argv) {
 
 #include <iostream>
 
-int main(int argc, char** argv) {
+int main(int /*argc*/, char** /*argv*/) {
 	std::cout << "Build with boinc api (scons extras=boinc,static)!" << std::endl;
 }
 
 #endif
-
-

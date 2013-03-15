@@ -327,7 +327,7 @@ SymmetricScoreFunction::setup_for_minimizing(
 					domain_map( ii ) != domain_map( jj ) );
 
 				Real edge_weight = symm_info.score_multiply( ii, jj );
-				Real edge_dweight = symm_info.deriv_multiply( ii, jj );
+				//Real edge_dweight = symm_info.deriv_multiply( ii, jj );
 				if ( edge_weight != 0.0 ) {
 					// adjust/add the edge to the scoring graph
 					setup_for_lr2benmeth_minimization_for_respair(

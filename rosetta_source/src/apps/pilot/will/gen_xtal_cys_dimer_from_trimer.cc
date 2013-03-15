@@ -96,7 +96,7 @@ static basic::Tracer TR("genxtal");
 static core::io::silent::SilentFileData sfd;
 
 
-inline Real const sqr(Real const r) { return r*r; }
+inline Real sqr(Real const r) { return r*r; }
 inline Real sigmoidish_neighbor( Real const & sqdist ) {
   if( sqdist > 9.*9. ) {
     return 0.0;
@@ -233,121 +233,195 @@ struct SYMSUB {
 };
 
 int dumpsymfile_contact(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec cen2, string fname, int & ncontact) {
-  double mxd = 0.0;
-  for(Size i = 1; i <= pose.n_residue(); ++i) {
-    if( pose.residue(i).nbr_atom_xyz().length() > mxd ) mxd = pose.residue(i).nbr_atom_xyz().length();
-  }
-  vector1<Vec> seenit;
-  Mat R3[3];
-  R3[0] = Mat::identity();
-  R3[1] = R3a;
-  R3[2] = R3b;
-  Size acount=0,rcount=0,ccount=0;
-  vector1<SYMSUB> subs;
-  std::map<int,SYMSUB> tsubs;
-  ncontact = 0;
-  for(Size n2a = 0; n2a < 2; n2a++) {
-  for(Size n3a = 0; n3a < 3; n3a++) {
-  for(Size m2a = 0; m2a < 2; m2a++) {
-  for(Size m3a = 0; m3a < 3; m3a++) {
-  for(Size l2a = 0; l2a < 2; l2a++) {
-  for(Size l3a = 0; l3a < 3; l3a++) {
-  for(Size k2a = 0; k2a < 2; k2a++) {
-  for(Size k3a = 0; k3a < 3; k3a++) {
-  for(Size j2a = 0; j2a < 2; j2a++) {
-  for(Size j3a = 0; j3a < 3; j3a++) {
-  for(Size i2a = 0; i2a < 2; i2a++) {
-  for(Size i3a = 0; i3a < 3; i3a++) {
-    Vec chk( pose.xyz(AtomID(1,1)) );
-    chk=R3[i3a]*chk;if(i2a)chk=R2*(chk-cen2)+cen2;chk=R3[j3a]*chk;if(j2a)chk=R2*(chk-cen2)+cen2;chk=R3[k3a]*chk;if(k2a)chk=R2*(chk-cen2)+cen2;
-    chk=R3[l3a]*chk;if(l2a)chk=R2*(chk-cen2)+cen2;chk=R3[m3a]*chk;if(m2a)chk=R2*(chk-cen2)+cen2;chk=R3[n3a]*chk;if(n2a)chk=R2*(chk-cen2)+cen2;
-    for(vector1<Vec>::const_iterator i=seenit.begin(); i != seenit.end(); ++i) {
-      if( i->distance_squared(chk) < 1.0 ) goto cont2;
-    }
-    goto done2; cont2: continue; done2:
-    seenit.push_back(chk);
+	double mxd = 0.0;
+	for(Size i = 1; i <= pose.n_residue(); ++i) {
+		if( pose.residue(i).nbr_atom_xyz().length() > mxd ) mxd = pose.residue(i).nbr_atom_xyz().length();
+	}
+	vector1<Vec> seenit;
+	Mat R3[3];
+	R3[0] = Mat::identity();
+	R3[1] = R3a;
+	R3[2] = R3b;
+	//Size acount=0,rcount=0,ccount=0;  // unsued ~Labonte
+	vector1<SYMSUB> subs;
+	std::map<int,SYMSUB> tsubs;
+	ncontact = 0;
+	for(Size n2a = 0; n2a < 2; n2a++) {
+		for(Size n3a = 0; n3a < 3; n3a++) {
+			for(Size m2a = 0; m2a < 2; m2a++) {
+				for(Size m3a = 0; m3a < 3; m3a++) {
+					for(Size l2a = 0; l2a < 2; l2a++) {
+						for(Size l3a = 0; l3a < 3; l3a++) {
+							for(Size k2a = 0; k2a < 2; k2a++) {
+								for(Size k3a = 0; k3a < 3; k3a++) {
+									for(Size j2a = 0; j2a < 2; j2a++) {
+										for(Size j3a = 0; j3a < 3; j3a++) {
+											for(Size i2a = 0; i2a < 2; i2a++) {
+												for(Size i3a = 0; i3a < 3; i3a++) {
+													Vec chk( pose.xyz(AtomID(1,1)) );
+													chk=R3[i3a]*chk;
+													if(i2a)chk=R2*(chk-cen2)+cen2;
+													chk=R3[j3a]*chk;
+													if(j2a)chk=R2*(chk-cen2)+cen2;
+													chk=R3[k3a]*chk;
+													if(k2a)chk=R2*(chk-cen2)+cen2;
+													chk=R3[l3a]*chk;
+													if(l2a)chk=R2*(chk-cen2)+cen2;
+													chk=R3[m3a]*chk;
+													if(m2a)chk=R2*(chk-cen2)+cen2;
+													chk=R3[n3a]*chk;
+													if(n2a)chk=R2*(chk-cen2)+cen2;
+													for(vector1<Vec>::const_iterator i=seenit.begin();
+															i != seenit.end(); ++i) {
+														if( i->distance_squared(chk) < 1.0 ) goto cont2;
+													}
+													goto done2;
+													cont2: continue;
+													done2: seenit.push_back(chk);
 
-    Vec zero(0,0,0);
-    zero=R3[i3a]*zero;if(i2a)zero=R2*(zero-cen2)+cen2;zero=R3[j3a]*zero;if(j2a)zero=R2*(zero-cen2)+cen2;zero=R3[k3a]*zero;if(k2a)zero=R2*(zero-cen2)+cen2;
-    zero=R3[l3a]*zero;if(l2a)zero=R2*(zero-cen2)+cen2;zero=R3[m3a]*zero;if(m2a)zero=R2*(zero-cen2)+cen2;zero=R3[n3a]*zero;if(n2a)zero=R2*(zero-cen2)+cen2;
-    if( zero.length() > 2.0 * mxd + 10.0 ) continue;
-    bool contact=false;
-    for(Size i=1; i <= pose.n_residue(); ++i) {
-      if(pose.residue(i).aa()==core::chemical::aa_gly||pose.residue(i).aa()==core::chemical::aa_pro) continue;
-      Vec pa=R3[0]*pose.xyz(AtomID(5,i));
-      pa=R3[i3a]*pa;if(i2a)pa=R2*(pa-cen2)+cen2;pa=R3[j3a]*pa;if(j2a)pa=R2*(pa-cen2)+cen2;pa=R3[k3a]*pa;if(k2a)pa=R2*(pa-cen2)+cen2;
-      pa=R3[l3a]*pa;if(l2a)pa=R2*(pa-cen2)+cen2;pa=R3[m3a]*pa;if(m2a)pa=R2*(pa-cen2)+cen2;pa=R3[n3a]*pa;if(n2a)pa=R2*(pa-cen2)+cen2;
-      for(Size j=1; j <= pose.n_residue(); ++j) {
-        if(pose.residue(j).aa()==core::chemical::aa_gly||pose.residue(j).aa()==core::chemical::aa_pro) continue;
-        Vec qa = pose.xyz(AtomID(5,j));
-        if(pa.distance_squared(qa)<400.0) {
-          contact=true;
-          if(pa.distance_squared(qa)<81.0 && (n2a||n3a||m2a||m3a||l2a||l3a||k2a||k3a||j2a||j3a||i2a)) ncontact++;
-        }
-      }
-    }
-    if(!contact) continue;
+													Vec zero(0,0,0);
+													zero=R3[i3a]*zero;
+													if(i2a)zero=R2*(zero-cen2)+cen2;
+													zero=R3[j3a]*zero;
+													if(j2a)zero=R2*(zero-cen2)+cen2;
+													zero=R3[k3a]*zero;
+													if(k2a)zero=R2*(zero-cen2)+cen2;
+													zero=R3[l3a]*zero;
+													if(l2a)zero=R2*(zero-cen2)+cen2;
+													zero=R3[m3a]*zero;
+													if(m2a)zero=R2*(zero-cen2)+cen2;
+													zero=R3[n3a]*zero;
+													if(n2a)zero=R2*(zero-cen2)+cen2;
+													if( zero.length() > 2.0 * mxd + 10.0 ) continue;
+													bool contact=false;
+													for(Size i=1; i <= pose.n_residue(); ++i) {
+														if(pose.residue(i).aa()==core::chemical::aa_gly ||
+																pose.residue(i).aa()==core::chemical::aa_pro) continue;
+														Vec pa=R3[0]*pose.xyz(AtomID(5,i));
+														pa=R3[i3a]*pa;
+														if(i2a)pa=R2*(pa-cen2)+cen2;
+														pa=R3[j3a]*pa;
+														if(j2a)pa=R2*(pa-cen2)+cen2;
+														pa=R3[k3a]*pa;
+														if(k2a)pa=R2*(pa-cen2)+cen2;
+														pa=R3[l3a]*pa;
+														if(l2a)pa=R2*(pa-cen2)+cen2;
+														pa=R3[m3a]*pa;
+														if(m2a)pa=R2*(pa-cen2)+cen2;
+														pa=R3[n3a]*pa;
+														if(n2a)pa=R2*(pa-cen2)+cen2;
+														for(Size j=1; j <= pose.n_residue(); ++j) {
+															if(pose.residue(j).aa()==core::chemical::aa_gly ||
+																	pose.residue(j).aa()==core::chemical::aa_pro) continue;
+															Vec qa = pose.xyz(AtomID(5,j));
+															if(pa.distance_squared(qa)<400.0) {
+																contact=true;
+																if(pa.distance_squared(qa)<81.0 &&
+																		(n2a||n3a||m2a||m3a||l2a||l3a||k2a||k3a||j2a||j3a||i2a)) ncontact++;
+															}
+														}
+													}
+													if(!contact) continue;
 
-    // cout << n2a<<" "<<n3a<<" "<<m2a<<" "<<m3a<<" "<<l2a<<" "<<l3a<<" "<<k2a<<" "<<k3a<<" "<<j2a<<" "<<j3a<<" "<<i2a<<" "<<i3a << endl;
-    SYMSUB s;
-    Vec X = Vec(0,0,1);
-    X=R3[i3a]*X;if(i2a)X=R2*(X);X=R3[j3a]*X;if(j2a)X=R2*(X);X=R3[k3a]*X;if(k2a)X=R2*(X);
-    X=R3[l3a]*X;if(l2a)X=R2*(X);X=R3[m3a]*X;if(m2a)X=R2*(X);X=R3[n3a]*X;if(n2a)X=R2*(X);
-    Vec Y = Vec(0,1,0);
-    Y=R3[i3a]*Y;if(i2a)Y=R2*(Y);Y=R3[j3a]*Y;if(j2a)Y=R2*(Y);Y=R3[k3a]*Y;if(k2a)Y=R2*(Y);
-    Y=R3[l3a]*Y;if(l2a)Y=R2*(Y);Y=R3[m3a]*Y;if(m2a)Y=R2*(Y);Y=R3[n3a]*Y;if(n2a)Y=R2*(Y);
-    Vec C = Vec(0,0,0);
-    C=R3[i3a]*C;if(i2a)C=R2*(C-cen2)+cen2;C=R3[j3a]*C;if(j2a)C=R2*(C-cen2)+cen2;C=R3[k3a]*C;if(k2a)C=R2*(C-cen2)+cen2;
-    C=R3[l3a]*C;if(l2a)C=R2*(C-cen2)+cen2;C=R3[m3a]*C;if(m2a)C=R2*(C-cen2)+cen2;C=R3[n3a]*C;if(n2a)C=R2*(C-cen2)+cen2;
-    s.X = X; s.Y = Y; s.C = C;
-    s.vname = "S"+str(n2a)+str(n3a)+str(m2a)+str(m3a)+str(l2a)+str(l3a)+str(k2a)+str(k3a)+str(j2a)+str(j3a)+str(i2a)+str(i3a);
-    s.trimer_id = 15552*n2a+7776*n3a+2592*m2a+1296*m3a+432*l2a+216*l3a+72*k2a+36*k3a+12*j2a+6*j3a+2*i2a;
-    subs.push_back(s);
-    if(tsubs.count(s.trimer_id)==0) {
-      SYMSUB t;
-      t.X = X; t.Y = Y; t.C = C;
-      t.vname = "T"+str(n2a)+str(n3a)+str(m2a)+str(m3a)+str(l2a)+str(l3a)+str(k2a)+str(k3a)+str(j2a)+str(j3a)+str(i2a);
-      t.trimer_id = 0;
-      tsubs[s.trimer_id] = t;
-    }
-
-  }}}}}}}}}}}}
-
-  {
-    TR << "output" << std::endl;
-    ozstream out( fname );
-    out << "symmetry_name X23D" << endl;
-    out << "anchor_residue 1" << endl;
-    out << "E = 1*" << subs[1].vname;
-    for(Size i = 2; i <= subs.size(); ++i) out << " + 1*(" << subs[1].vname << ":" << subs[i].vname << ")";
-    out << endl;
-    out << "virtual_coordinates_start" << endl;
-    utility::vector1<string> tvnm;
-    for(std::map<int,SYMSUB>::const_iterator i = tsubs.begin(); i != tsubs.end(); ++i) {
-      Vec X=i->second.X, Y=i->second.Y, C=i->second.C;
-      out << "xyz " << "C"+i->second.vname << "  " << X.x()<<","<<X.y()<<","<<X.z() << "  " << Y.x()<<","<<Y.y()<<","<<Y.z() << "  " << C.x()<<","<<C.y()<<","<<C.z() << std::endl;
-      out << "xyz " << "P"+i->second.vname << "  " << X.x()<<","<<X.y()<<","<<X.z() << "  " << Y.x()<<","<<Y.y()<<","<<Y.z() << "  " << C.x()<<","<<C.y()<<","<<C.z() << std::endl;
-      tvnm.push_back(i->second.vname);
-    }
-    for(Size i = 1; i <= subs.size(); ++i) {
-      Vec X=subs[i].X, Y=subs[i].Y, C=subs[i].C;
-      out << "xyz " << subs[i].vname << "  " << X.x()<<","<<X.y()<<","<<X.z() << "  " << Y.x()<<","<<Y.y()<<","<<Y.z() << "  " << C.x()<<","<<C.y()<<","<<C.z() << std::endl;
-    }
-    out << "virtual_coordinates_stop" << endl;
-    for(Size i = 2; i <= tvnm.size(); ++i) out << "connect_virtual JC" << tvnm[i] << " " << "C"+tvnm[1] << " " << "C"+tvnm[i] << endl;
-    for(Size i = 1; i <= tvnm.size(); ++i) out << "connect_virtual JP" << tvnm[i] << " " << "C"+tvnm[i] << " " << "P"+tvnm[i] << endl;
-    for(Size i = 1; i <= subs.size(); ++i) out << "connect_virtual JT" << subs[i].vname << " " << "P"+tsubs[subs[i].trimer_id].vname << " " << subs[i].vname << endl;
-    for(Size i = 1; i <= subs.size(); ++i) out << "connect_virtual JS" << subs[i].vname << " " << subs[i].vname << " SUBUNIT" << endl;
-    out << "set_dof JP" << tvnm[1] << " x(0.0) angle_x(0.0)" << endl;
-    out << "set_jump_group JGP";
-    for(Size i = 1; i <= tvnm.size(); ++i) out << " JP" << tvnm[i];
-    out << endl;
-    out << "set_jump_group JGS";
-    for(Size i = 1; i <= subs.size(); ++i) out << " JS" << subs[i].vname;
-    out << endl;
-    out.close();
-  }
-  return subs.size();
+													// cout << n2a<<" "<<n3a<<" "<<m2a<<" "<<m3a<<" "<<l2a<<" "<<l3a<<" "<<k2a<<" "<<k3a<<" "<<j2a<<" "<<j3a<<" "<<i2a<<" "<<i3a << endl;
+													SYMSUB s;
+													Vec X = Vec(0,0,1);
+													X=R3[i3a]*X;
+													if(i2a)X=R2*(X);
+													X=R3[j3a]*X;
+													if(j2a)X=R2*(X);
+													X=R3[k3a]*X;
+													if(k2a)X=R2*(X);
+													X=R3[l3a]*X;
+													if(l2a)X=R2*(X);
+													X=R3[m3a]*X;
+													if(m2a)X=R2*(X);
+													X=R3[n3a]*X;
+													if(n2a)X=R2*(X);
+													Vec Y = Vec(0,1,0);
+													Y=R3[i3a]*Y;
+													if(i2a)Y=R2*(Y);
+													Y=R3[j3a]*Y;
+													if(j2a)Y=R2*(Y);
+													Y=R3[k3a]*Y;
+													if(k2a)Y=R2*(Y);
+													Y=R3[l3a]*Y;
+													if(l2a)Y=R2*(Y);
+													Y=R3[m3a]*Y;
+													if(m2a)Y=R2*(Y);
+													Y=R3[n3a]*Y;
+													if(n2a)Y=R2*(Y);
+													Vec C = Vec(0,0,0);
+													C=R3[i3a]*C;
+													if(i2a)C=R2*(C-cen2)+cen2;
+													C=R3[j3a]*C;
+													if(j2a)C=R2*(C-cen2)+cen2;
+													C=R3[k3a]*C;
+													if(k2a)C=R2*(C-cen2)+cen2;
+													C=R3[l3a]*C;
+													if(l2a)C=R2*(C-cen2)+cen2;
+													C=R3[m3a]*C;
+													if(m2a)C=R2*(C-cen2)+cen2;
+													C=R3[n3a]*C;
+													if(n2a)C=R2*(C-cen2)+cen2;
+													s.X = X; s.Y = Y; s.C = C;
+													s.vname = "S"+str(n2a)+str(n3a)+str(m2a)+str(m3a)+str(l2a)+str(l3a)+str(k2a)+str(k3a)+str(j2a)+str(j3a)+str(i2a)+str(i3a);
+													s.trimer_id = 15552*n2a+7776*n3a+2592*m2a+1296*m3a+432*l2a+216*l3a+72*k2a+36*k3a+12*j2a+6*j3a+2*i2a;
+													subs.push_back(s);
+													if(tsubs.count(s.trimer_id)==0) {
+														SYMSUB t;
+														t.X = X; t.Y = Y; t.C = C;
+														t.vname = "T"+str(n2a)+str(n3a)+str(m2a)+str(m3a)+str(l2a)+str(l3a)+str(k2a)+str(k3a)+str(j2a)+str(j3a)+str(i2a);
+														t.trimer_id = 0;
+														tsubs[s.trimer_id] = t;
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	{
+		TR << "output" << std::endl;
+		ozstream out( fname );
+		out << "symmetry_name X23D" << endl;
+		out << "anchor_residue 1" << endl;
+		out << "E = 1*" << subs[1].vname;
+		for(Size i = 2; i <= subs.size(); ++i) out << " + 1*(" << subs[1].vname << ":" << subs[i].vname << ")";
+		out << endl;
+		out << "virtual_coordinates_start" << endl;
+		utility::vector1<string> tvnm;
+		for(std::map<int,SYMSUB>::const_iterator i = tsubs.begin(); i != tsubs.end(); ++i) {
+			Vec X=i->second.X, Y=i->second.Y, C=i->second.C;
+			out << "xyz " << "C"+i->second.vname << "  " << X.x()<<","<<X.y()<<","<<X.z() << "  " << Y.x()<<","<<Y.y()<<","<<Y.z() << "  " << C.x()<<","<<C.y()<<","<<C.z() << std::endl;
+			out << "xyz " << "P"+i->second.vname << "  " << X.x()<<","<<X.y()<<","<<X.z() << "  " << Y.x()<<","<<Y.y()<<","<<Y.z() << "  " << C.x()<<","<<C.y()<<","<<C.z() << std::endl;
+			tvnm.push_back(i->second.vname);
+		}
+		for(Size i = 1; i <= subs.size(); ++i) {
+			Vec X=subs[i].X, Y=subs[i].Y, C=subs[i].C;
+			out << "xyz " << subs[i].vname << "  " << X.x()<<","<<X.y()<<","<<X.z() << "  " << Y.x()<<","<<Y.y()<<","<<Y.z() << "  " << C.x()<<","<<C.y()<<","<<C.z() << std::endl;
+		}
+		out << "virtual_coordinates_stop" << endl;
+		for(Size i = 2; i <= tvnm.size(); ++i) out << "connect_virtual JC" << tvnm[i] << " " << "C"+tvnm[1] << " " << "C"+tvnm[i] << endl;
+		for(Size i = 1; i <= tvnm.size(); ++i) out << "connect_virtual JP" << tvnm[i] << " " << "C"+tvnm[i] << " " << "P"+tvnm[i] << endl;
+		for(Size i = 1; i <= subs.size(); ++i) out << "connect_virtual JT" << subs[i].vname << " " << "P"+tsubs[subs[i].trimer_id].vname << " " << subs[i].vname << endl;
+		for(Size i = 1; i <= subs.size(); ++i) out << "connect_virtual JS" << subs[i].vname << " " << subs[i].vname << " SUBUNIT" << endl;
+		out << "set_dof JP" << tvnm[1] << " x(0.0) angle_x(0.0)" << endl;
+		out << "set_jump_group JGP";
+		for(Size i = 1; i <= tvnm.size(); ++i) out << " JP" << tvnm[i];
+		out << endl;
+		out << "set_jump_group JGS";
+		for(Size i = 1; i <= subs.size(); ++i) out << " JS" << subs[i].vname;
+		out << endl;
+		out.close();
+	}
+	return subs.size();
 }
 
 int dumpsymfile_contact3(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec cen2, string fname) {
@@ -360,7 +434,7 @@ int dumpsymfile_contact3(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec cen2, 
   R3[0] = Mat::identity();
   R3[1] = R3a;
   R3[2] = R3b;
-  Size acount=0,rcount=0,ccount=0;
+  //Size acount=0,rcount=0,ccount=0;  // unsued ~Labonte
   vector1<SYMSUB> subs,allsubs;
   for(Size i3a = 0; i3a < 3; i3a++) {
   for(Size i2a = 0; i2a < 2; i2a++) {
@@ -463,7 +537,7 @@ void dumpsymfile_minimal(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec cen2, 
   R3[0] = Mat::identity();
   R3[1] = R3a;
   R3[2] = R3b;
-  Size acount=0,rcount=0,ccount=0;
+  //Size acount=0,rcount=0,ccount=0;  // unsued ~Labonte
   vector1<SYMSUB> subs;
   for(Size i3a = 0; i3a < 3; i3a++) {
   for(Size i2a = 0; i2a < 2; i2a++) {
@@ -681,7 +755,7 @@ bool symclash(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec C2,
                             //xout<<"ATOM  "<<I(5,1)<<' '<<" CA "<<' '<<"ALA"<<' '<<"Z"<<I(4,1)<<"    "<<X<<Y<<Z<<F(6,2,1.0)<<F(6,2,0.0)<<'\n';
                             if( chk.distance_squared(com) > mxd ) continue;
                             //TR << chk << std::endl;
-                            bool contact = false;
+                            //bool contact = false;  // unsued ~Labonte
                             for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
                               for(Size ia = 1; ia <= 5; ++ia) {
                                 Vec X( pose.xyz(AtomID(ia,ir)) );
@@ -804,7 +878,7 @@ get_chi2(
   double oldf1 = fang(dax);
   dax = R * dax;
   for(int i = 1; i < 3601; ++i) {
-    double ang = dax.z();
+    //double ang = dax.z();  // unsued ~Labonte
     double f = fang(dax);
     if( oldf1 <= f && oldf1 <= oldf2 && oldf1 < 1.0) {
       // std::cerr << angle_degrees(Vec(0,0,1),Vec(0,0,0),dax) << " " << i << " " << oldf1 << " " << dax.z() << std::endl;
@@ -865,7 +939,7 @@ void dock(Pose & init, string fname) {
   protocols::sic_dock::xyzStripeHashPose xh2(2.8,init);
   protocols::sic_dock::xyzStripeHashPose xh3(3.5,init);
 
-  Size nres = init.n_residue();
+  //Size nres = init.n_residue();  // unused ~Labonte
   // ScoreFunctionOP sf = core::scoring::getScoreFunction();
   ScoreFunctionOP sf = new core::scoring::symmetry::SymmetricScoreFunction(core::scoring::getScoreFunction());
 

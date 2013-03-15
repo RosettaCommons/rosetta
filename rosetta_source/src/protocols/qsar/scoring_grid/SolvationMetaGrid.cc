@@ -101,7 +101,10 @@ void SolvationMetaGrid::parse_my_tag(utility::tag::TagPtr const /*tag*/)
 {
 }
 
-core::Real SolvationMetaGrid::score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP qsar_map)
+core::Real SolvationMetaGrid::score(
+		core::conformation::UltraLightResidue const & residue,
+		core::Real const /*max_score*/,
+		qsarMapOP /*qsar_map*/)
 {
 	core::Real total_score = 0.0;
 	for(core::Size atom_index = 1; atom_index <= residue.natoms();++atom_index)
@@ -121,7 +124,10 @@ core::Real SolvationMetaGrid::score(core::conformation::UltraLightResidue const 
 	return total_score;
 }
 
-core::Real SolvationMetaGrid::atom_score(core::conformation::UltraLightResidue const & residue, core::Size atomno, qsarMapOP qsar_map)
+core::Real SolvationMetaGrid::atom_score(
+		core::conformation::UltraLightResidue const & residue,
+		core::Size atomno,
+		qsarMapOP /*qsar_map*/)
 {
 	core::conformation::Atom current_atom(residue.residue()->atom(atomno));
 	std::map<core::ShortSize,SingleGridOP>::iterator grid_iterator(grid_map_.find(current_atom.type()));

@@ -287,7 +287,7 @@ int grad3(double grad[3], double *Bcoeff, int dims[3], double X[3], int degree) 
 	int idx[3][6];
 	int i,j,k, pt, dim, gradDim;
 
-	double wtP[6], wtM[6];
+	//double wtP[6], wtM[6];
 
 	// compute interpolation indexes
 	for (gradDim=0; gradDim<3; gradDim++) {

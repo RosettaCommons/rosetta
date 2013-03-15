@@ -252,15 +252,15 @@ RTMin::rtmin(
 				Size const r1 = rni->lower_neighbor_id();
 				Size const r2 = rni->upper_neighbor_id();
 				Size const jjres = ( r1 == iires ? r2 : r1 );
-				bool const res_moving_wrt_eachother( true );
+				//bool const res_moving_wrt_eachother( true );
 
 				if ( ! bgres[ jjres ] && ! input_task->being_packed( jjres )) {
 					inactive_neighbors.push_back( jjres );
 					residue_is_inactive_neighbor[ jjres ] = true;
 					bgres[ jjres ] = new Residue( pose.residue( jjres ) );
 					scminmap->set_natoms_for_residue( jjres, bgres[ jjres ]->natoms() );
-					/// Do setup_for_minimizing for background nodes once and leave them alone for
-					/// the rest of the trajectory
+					// Do setup_for_minimizing for background nodes once and leave them alone for
+					// the rest of the trajectory
 					scfxn.setup_for_minimizing_for_node(
 						* mingraph.get_minimization_node( jjres ), pose.residue( jjres ),
 						*scminmap, pose, false, emap_dummy );

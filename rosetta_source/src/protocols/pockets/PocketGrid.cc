@@ -1815,7 +1815,12 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
 		return DARC_pocket_eval(central_rsd, xyz_func, inPose.total_residue(), grid_center);
 	}
 
-	bool PocketGrid::DARC_pocket_eval( core::conformation::Residue const & central_rsd, core::scoring::constraints::XYZ_Func const & xyz_func, Size const total_residues, numeric::xyzVector<core::Real> grid_center ) {
+	bool PocketGrid::DARC_pocket_eval(
+			core::conformation::Residue const & central_rsd,
+			core::scoring::constraints::XYZ_Func const & xyz_func,
+			Size const total_residues,
+			numeric::xyzVector<core::Real> /*grid_center*/ )
+	{
 		//bool too_small=true;
 		//while (too_small){
 		//recenter( grid_center.x(), grid_center.y(), grid_center.z() );

@@ -74,7 +74,7 @@ public:
 		// translate them ~20A away
 		Size const start(18);
 		Size const stop(41);
-		Real const translation(20);
+		//Real const translation(20);  // unused ~Labonte
 		for ( Size ii = start; ii <= stop; ++ii ) {
 			for ( Size jj = 1; jj <= pose.residue(ii).natoms(); ++jj ) {
 				AtomID id(jj,ii);

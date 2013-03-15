@@ -195,7 +195,7 @@ print_pep_csts(
 )
 {
 	Size min_cas_for_cst( 3 );
-	Real min_tol_for_cst( 1.0 );
+	//Real min_tol_for_cst( 1.0 );  // unused ~Labonte
 	Real max_pep_cs( *( std::max_element( n_pep_cs.begin(), n_pep_cs.end() ) ) );
 	std::string cst_file_name_str( option[ out::file::o ]+".cst" );
 	char const *cst_file_name = cst_file_name_str.c_str();
@@ -205,7 +205,7 @@ print_pep_csts(
 		Real this_tol( pep_cst_all_tols[ i ] + pep_cst_all_tols[ i ] * ( 1.0 - std::pow( ( n_pep_cs[ i ] / max_pep_cs ), 1.0 / 3.0 ) ) );
 		Vector pep_cst_vect( pep_cst_all_vects[ i ] );
 		int pep_pos( pep_cst_all_indices[ i ] );
-		Real pep_cst_tol( pep_cst_all_tols[ i ] );
+		//Real pep_cst_tol( pep_cst_all_tols[ i ] );  // unused ~Labonte
 //		if( pep_cst_tol < min_tol_for_cst ) pep_cst_tol = min_tol_for_cst;
 		cst_file << pep_cst_all_atom_names[ i ] + "\t" + string_of( pep_pos ) + "\t" + string_of( pep_cst_vect.x() ) + "\t" + string_of( pep_cst_vect.y() ) + "\t" + string_of( pep_cst_vect.z() ) + "\t0.0\t" + string_of( pep_cst_all_sds[ i ] ) + "\t" + string_of( this_tol ) + "\n";
 	}
@@ -362,8 +362,8 @@ pep_rmsd_analysis(
 		}
 	}
 	Size ref_prot_begin( ref_pose.conformation().chain_begin( ref_prot_chain ) ); 
-	Size ref_prot_end( ref_pose.conformation().chain_end( ref_prot_chain ) ); 
-	Size ref_prot_anchor( ref_prot_begin );
+	//Size ref_prot_end( ref_pose.conformation().chain_end( ref_prot_chain ) );  // unused ~Labonte
+	//Size ref_prot_anchor( ref_prot_begin );  // unused ~Labonte
 
 	Size pep_nterm( pep_anchor - pep_begin );
 	Size ref_pep_nterm( ref_pep_anchor - ref_pep_begin );
@@ -399,7 +399,7 @@ pep_rmsd_analysis(
 	Real sd( 0.0 );
 	std::string rmsd_analysis( "" );
 	Size natoms( 0 );
-	for( int i_seq = 0; i_seq <= nterm + cterm; ++i_seq ){
+	for( Size i_seq = 0; i_seq <= nterm + cterm; ++i_seq ){
 		Size ref_pep_seqpos = ref_pep_begin + i_seq;
 		Size pep_seqpos = pep_begin + i_seq;
 
@@ -652,7 +652,7 @@ run_pep_prep()
 		ResidueOP pep_anchor_res( ResidueFactory::create_residue( rsd_set.name_map( anchor_type ) ) );
 		pose.append_residue_by_jump( *pep_anchor_res, prot_anchor, prot_anchor_stub2, pep_anchor_stub1, true );
 		Size pep_anchor( pose.total_residue() );
-		Size pep_chain( pose.chain( pep_anchor ) );
+		//Size pep_chain( pose.chain( pep_anchor ) );  // unused ~Labonte
 		Size pep_jump( pose.num_jump() );
 		Pose start_pose( pose );
 		/*
@@ -975,7 +975,8 @@ run_pep_prep()
 			jump_trans_z_sd = max_std_devs * std::sqrt( jump_trans_z_sd );
 		}
 		Vector jump_trans_vector_sd( jump_trans_x_sd, jump_trans_y_sd, jump_trans_z_sd );
-		Real jump_trans_magn_sd( std::sqrt( jump_trans_x_sd * jump_trans_x_sd + jump_trans_y_sd * jump_trans_y_sd + jump_trans_z_sd * jump_trans_z_sd ) );
+		// unused ~Labonte
+		//Real jump_trans_magn_sd( std::sqrt( jump_trans_x_sd * jump_trans_x_sd + jump_trans_y_sd * jump_trans_y_sd + jump_trans_z_sd * jump_trans_z_sd ) );
 
 		if( peptide_loop == 1 ) TR << "RB translation avg: x, y, z: " << jump_trans_vector_avg.x() << ", "  << jump_trans_vector_avg.y() << ", " << jump_trans_vector_avg.z() << std::endl;
 		if( peptide_loop == 1 ) TR << "Max RB translation deviation: x, y, z: " << jump_trans_x_sd << ", "  << jump_trans_y_sd << ", " << jump_trans_z_sd << std::endl;
@@ -1096,7 +1097,7 @@ run_pep_prep()
 		MonteCarloOP mc_dock2 ( new MonteCarlo( pose, *scorefxn, 0.8 ) );
 		pose.update_residue_neighbors();
 		Pose restart_pose( pose ); 
-		for( Size i_dock = 1; i_dock <= option[ pepspec::n_dock_loop]; ++i_dock ){
+		for( Size i_dock = 1; i_dock <= Size(option[ pepspec::n_dock_loop]); ++i_dock ){
 
 			pose = restart_pose;
 			( *scorefxn )( pose );

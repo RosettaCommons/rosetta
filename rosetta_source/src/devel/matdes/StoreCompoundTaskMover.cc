@@ -270,7 +270,12 @@ StoreCompoundTaskMover::apply( core::pose::Pose & pose )
 }
 
 void
-StoreCompoundTaskMover::parse_my_tag( TagPtr const tag, protocols::moves::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose )
+StoreCompoundTaskMover::parse_my_tag(
+		TagPtr const tag,
+		protocols::moves::DataMap & data_map,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const & /*pose*/ )
 {
 
   typedef utility::vector1< std::string > StringVec;

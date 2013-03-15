@@ -1146,7 +1146,8 @@ Splice::read_splice_segments( std::string const segment_type, std::string const 
 }
 
 core::sequence::SequenceProfileOP
-Splice::generate_sequence_profile(core::pose::Pose & pose){
+Splice::generate_sequence_profile(core::pose::Pose & pose)
+{
 	if (use_sequence_profiles_){
 		using namespace core::sequence;
 		using namespace std;
@@ -1158,21 +1159,20 @@ Splice::generate_sequence_profile(core::pose::Pose & pose){
 		core::pose::read_comment_pdb(pdb_tag,pose); //read comments from pdb file
 		map< string, string > const comments = core::pose::get_all_comments( pose );
 		if (comments.size()<3 ){
-			utility_exit_with_message("Please check commetns field in the pdb file (header= ##begin comments##), could not find any comments");
+			utility_exit_with_message(
+					"Please check comments field in the pdb file (header= ##begin comments##), could not find any comments");
 		}
-		///This code will cut the source pdb file name and extract the four letter code
+		// This code will cut the source pdb file name and extract the four letter code
 		std::string tempPDBname;
 		if (torsion_database_fname_!=""){
 			TR<<"Torsion data base filename is: "<<torsion_database_fname_<<std::endl;
 			tempPDBname = dofs_pdb_name;
 			TR<<"tempPDBname: "<<tempPDBname<<std::endl;
-
-		}
-		else {
+		} else {
 			tempPDBname = source_pdb_;//
 		}
 		// Remove directory if present.
-		// Do this before extension removal incase directory has a period character.
+		// Do this before extension removal in case directory has a period character.
 		const size_t last_slash_idx = tempPDBname.find_last_of("\\/");
 		if (std::string::npos != last_slash_idx)
 		{
@@ -1180,37 +1180,43 @@ Splice::generate_sequence_profile(core::pose::Pose & pose){
 		}
 		// Remove extension if present.
 		const size_t period_idx = tempPDBname.rfind('.');
-		if (std::string::npos != period_idx)
-		{
+		if (std::string::npos != period_idx) {
 			tempPDBname.erase(period_idx);
 		}
-		///End of segment
+		// End of segment
 		TR<<"!!!!!!!!!the currnet segment is: "<<segment_type_<<" and the source pdb is "<<tempPDBname<<std::endl;
-		core::pose::add_comment(pose,"segment_"+segment_type_,tempPDBname);//change correct association between current loop and pdb file
+		//change correct association between current loop and pdb file
+		core::pose::add_comment(pose,"segment_"+segment_type_,tempPDBname);
 		load_pdb_segments_from_pose_comments(pose); // get segment name and pdb accosiation from comments in pdb file
 		//	TR<<"!!!!!!!!!the size of pdb segments is: "<<pdb_segments_.size()<<std::endl;
-		runtime_assert( pdb_segments_.size() ); //This assert is in place to make sure that the pdb file has the correct comments, otherwise this function will fail
+		// This assert is in place to make sure that the pdb file has the correct comments;
+		// otherwise this function will fail.
+		runtime_assert( pdb_segments_.size() );
 
-
-		//for( map< string, string >::const_iterator i = pdb_segments_.begin(); i != pdb_segments_.end(); ++i ){ //test that all PDB_segments are present
-		//TR<<i->first<<std::endl;
+		// test that all PDB_segments are present
+		//for( map< string, string >::const_iterator i = pdb_segments_.begin(); i != pdb_segments_.end(); ++i ){
+			//TR<<i->first<<std::endl;
 		//}
 
-		//	std::string segment_name_ordered [14] = {"Frm1.light", "L1","Frm2.light", "L2","Frm3.light", "L3","Frm4.light", "Frm1.heavy","H1","Frm2.heavy","H2","Frm3.heavy","H3","Frm4.heavy"}; //This string array will be used as refernce to arrange the segment profiles correctly
+		// This string array will be used as refernce to arrange the segment profiles correctly.
+		//	std::string segment_name_ordered [14] = {"Frm1.light", "L1","Frm2.light", "L2","Frm3.light",
+				//"L3","Frm4.light", "Frm1.heavy","H1","Frm2.heavy","H2","Frm3.heavy","H3","Frm4.heavy"};
 		utility::vector1< SequenceProfileOP > profile_vector;
 
 		profile_vector.clear(); //this vector holds all the pdb segment profiless
 
 		foreach( std::string const segment_type, segment_names_ordered_ ){ //<- Start of PDB segment iterator
 			if (splice_segments_[ segment_type ]->pdb_profile(pdb_segments_[segment_type])==0){
-				utility_exit_with_message(" could not find the pdb file corresponding to segment "+segment_type+" the pdb name entered was: "+ pdb_segments_[segment_type]+ ", please check the pdb_profile_match file \n");
+				utility_exit_with_message(" could not find the pdb file corresponding to segment "+segment_type+
+						" the pdb name entered was: "+ pdb_segments_[segment_type]+
+						", please check the pdb_profile_match file \n");
 			}
 			profile_vector.push_back( splice_segments_[ segment_type ]->pdb_profile( pdb_segments_[segment_type] ));
 		} // <- End of PDB segment iterator
 		TR<<"The size of the profile vector is: "<<profile_vector.size()<<std::endl;
 		return concatenate_profiles( profile_vector,segment_names_ordered_ );
 	}
-	return NULL;
+	return NULL;  // Control can reach end of non-void function without this line. ~ Labonte
 }
 
 void

@@ -59,9 +59,9 @@ ShapeComplementarityFilter::ShapeComplementarityFilter():
 	verbose_( false ),
 	residues1_( ),
 	residues2_( ),
-	sym_dof_name_(""),
 	write_int_area_(false),
-	multicomp_(false)
+	multicomp_(false),
+	sym_dof_name_("")
 {}
 
 
@@ -170,7 +170,7 @@ core::Size ShapeComplementarityFilter::compute( Pose const & pose ) const
 			// partition & fill residueX_ vectors
 			core::pose::symmetry::partition_by_symm_jumps( sym_aware_jump_ids, pose.fold_tree(), core::pose::symmetry::symmetry_info(pose), is_upstream );
 			Size nupstream=0;
-			for (int i=1; i<=pose.total_residue(); ++i) {
+			for (core::Size i=1; i<=pose.total_residue(); ++i) {
 				if (pose.residue(i).aa() == core::chemical::aa_vrt) continue;
 				scc_.AddResidue(is_upstream(i)?0:1, pose.residue(i));
 				if (is_upstream(i)) nupstream++;
@@ -259,7 +259,7 @@ core::Real ShapeComplementarityFilter::report_sm( Pose const & pose ) const
 					}
 					core::pose::symmetry::partition_by_symm_jumps( sym_aware_jump_ids, pose.fold_tree(), core::pose::symmetry::symmetry_info(pose), is_upstream );
 					Size nupstream=0;
-					for (int i=1; i<=pose.total_residue(); ++i) {
+					for (Size i=1; i<=pose.total_residue(); ++i) {
 						if (pose.residue(i).aa() == core::chemical::aa_vrt) continue;
 						if (is_upstream(i)) nupstream++;
 					}

@@ -585,7 +585,7 @@ mg_scan_test()
 	Size count( 0 );
 
 	pose::Pose pose;
-	Size total_residues( 0 );
+	//Size total_residues( 0 );  // unused ~Labonte
 
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );

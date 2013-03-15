@@ -189,9 +189,9 @@ int main(int argc, char *argv[])
 	// setup other inputs
 	std::string const min_type_in = "linmin";
 	Real tolerance_in = 0.01;
-	bool use_nb_list_in = true;
-	bool deriv_check_in = false;
-	bool deriv_check_verbose_in = false;
+	//bool use_nb_list_in = true;  // unused ~Labonte
+	//bool deriv_check_in = false;  // unused ~Labonte
+	//bool deriv_check_verbose_in = false;  // unused ~Labonte
 	// create a MinMover
 	protocols::simple_moves::MinMover minmover = protocols::simple_moves::MinMover(mm, scorefxn, min_type_in, tolerance_in, true, false, false) ;
 	// print

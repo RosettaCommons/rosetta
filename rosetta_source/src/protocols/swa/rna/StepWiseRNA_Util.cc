@@ -2930,7 +2930,7 @@ principal_angle_degrees( T const & angle )
 
         if(seq_num == pose.total_residue()) continue;
 
-        bool Is_cutpoint_closed=false;
+        //bool Is_cutpoint_closed=false;
 
         bool Is_cutpoint_lower = pose.residue( seq_num ).has_variant_type(
                                  chemical::CUTPOINT_LOWER );

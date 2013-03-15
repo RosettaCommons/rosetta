@@ -98,7 +98,7 @@ main( int argc, char* argv [] ) {
 
 	std::ostream& output( std::cout );
 	Size const width( 10 );
-	Size const precision( 3 );
+	//Size const precision( 3 );  // unused ~Labonte
 	Real dist_cutoff( std::numeric_limits< Real >::max() );
 	if ( option[ james::dist_thresholds ].user() ) {
 		dist_cutoff = option[ james::dist_thresholds ]().front();

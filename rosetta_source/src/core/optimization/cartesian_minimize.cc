@@ -100,7 +100,7 @@ cartesian_dfunc(
 	cartesian_collect_atompairE_deriv( pose, min_map, scorefxn, dE_dvars, scale );
 
 	// now loop over the torsions in the map
-	Size ntorsions=min_map.ntorsions();
+	//Size ntorsions=min_map.ntorsions();
 	cartesian_collect_torsional_deriv( pose, min_map, scorefxn, dE_dvars, scale );
 
 	scorefxn.finalize_after_derivatives( pose );

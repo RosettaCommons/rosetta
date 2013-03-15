@@ -149,7 +149,11 @@ void DelphiElectrostatics::setup_from_DelphiGrid( std::string const & input_file
   outPDB_stream.open("lig_grid.pdb", std::ios::out);
 
 
-	core::Real x0,y0,z0,x1,y1,z1,x_d,y_d,z_d,V_000,V_100,V_010,V_110,V_001,V_101,V_011,V_111,c_00,c_10,c_01,c_11,c_0,c_1,c;
+	core::Real x0, y0, z0,
+			x1, y1, z1,
+			x_d, y_d, z_d,
+			V_000, V_100, V_010, V_110, V_001, V_101, V_011, V_111,
+			c_00, c_10, c_01, c_11, c_0, c_1, c;
 	core::Real E_energy(0.);
 	numeric::xyzVector<core::Real> ligand(0.);
 	conformation::Residue const & curr_rsd = ligand_pose.conformation().residue(lig_res_num);
@@ -162,10 +166,10 @@ void DelphiElectrostatics::setup_from_DelphiGrid( std::string const & input_file
 		y0 = (static_cast<int>(ligand.y()/grid_spacing_))*grid_spacing_;
 		z0 = (static_cast<int>(ligand.z()/grid_spacing_))*grid_spacing_;
 		x1 = x0 + grid_spacing_;
-		x1 = y0 + grid_spacing_;
-		x1 = z0 + grid_spacing_;
+		y1 = y0 + grid_spacing_;  // This was originally x1; I'm assuming it was a bug. ~ Labonte
+		z1 = z0 + grid_spacing_;  // This was originally x1; I'm assuming it was a bug. ~ Labonte
 
-    x_d = (ligand.x() - x0)/(x1 - x0);
+		x_d = (ligand.x() - x0)/(x1 - x0);
 		y_d = (ligand.y() - y0)/(y1 - y0);
 		z_d = (ligand.z() - z0)/(z1 - z0);
 		for (std::list< utility::vector1<core::Real> >::const_iterator pd = esp_grid_point_list_.begin(); pd != esp_grid_point_list_.end(); ++pd) {

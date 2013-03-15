@@ -259,7 +259,7 @@ PB::solve_pb( core::pose::Pose const & pose,
 	write_pqr(pose, charged_residues );
 	write_config(pose);
 	std::string command_line(apbs_path_ + " " + config_filename_);
-	int ret = system(command_line.c_str());
+	/*int ret =*/ system(command_line.c_str());
 
 	// Check if APBS succeeded.  If not, get out.
 	std::ifstream dxstream(dx_filename_.c_str());

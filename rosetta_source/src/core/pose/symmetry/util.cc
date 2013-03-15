@@ -818,16 +818,16 @@ partition_by_symm_jumps(
 
 	// expand jumps to include jump clones
 	Size njumps = jump_numbers.size();
-	for (int i=1; i<=njumps; ++i) {
+	for (Size i=1; i<=njumps; ++i) {
 		utility::vector1< Size > clones_i = symm_info->jump_clones( jump_numbers[i] );
-		for (int j=1; j<= clones_i.size(); ++j) {
+		for (Size j=1; j<= clones_i.size(); ++j) {
 			jump_numbers.push_back( clones_i[j] );
 		}
 	}
 
 	//int const pos1( ft.root() );
 	int pos1;
-	for (int i=1; i<=symm_info->num_total_residues_without_pseudo(); ++i) {
+	for (Size i=1; i<=symm_info->num_total_residues_without_pseudo(); ++i) {
 		if (symm_info->bb_is_independent(i)) {
 			pos1 = i;
 			break;
@@ -1003,9 +1003,9 @@ sealed_symmetric_fold_tree( core::pose::Pose & pose ) {
 //   translates the jump number into the corresponding SymDof so that the
 //   symmetric pose can moved moved appropriately.
 int
-get_sym_aware_jump_num ( core::pose::Pose const & pose, int jump_num ) {
+get_sym_aware_jump_num ( core::pose::Pose const & pose, core::Size jump_num ) {
 	using namespace core::conformation::symmetry;
-	int sym_jump = jump_num;
+	Size sym_jump = jump_num;
 	if (core::pose::symmetry::is_symmetric(pose)) {
 		SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
 		std::map<Size,SymDof> dofs = sym_info->get_dofs();

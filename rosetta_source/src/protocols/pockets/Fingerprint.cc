@@ -589,37 +589,42 @@ void NonPlaidFingerprint::setup_from_eggshell_triplet_file(std::string const & i
 
 void NonPlaidFingerprint::trim_based_on_known_ligand(core::pose::Pose const & known_ligand_pose){
 
-  protocols::pockets::PlaidFingerprint known_pf( known_ligand_pose, *this );
-  std::list< spherical_coor_triplet > triplet_trim_data;
-  for (std::list<spherical_coor_triplet>::const_iterator pro = triplet_fingerprint_data_.begin(), lig = known_pf.triplet_fingerprint_data().begin(); pro != triplet_fingerprint_data_.end(), lig != known_pf.triplet_fingerprint_data().end(); ++pro, ++lig) {
+	protocols::pockets::PlaidFingerprint known_pf( known_ligand_pose, *this );
+	std::list< spherical_coor_triplet > triplet_trim_data;
+	for (std::list<spherical_coor_triplet>::const_iterator pro = triplet_fingerprint_data_.begin(),
+			lig = known_pf.triplet_fingerprint_data().begin();
+			pro != triplet_fingerprint_data_.end() && lig != known_pf.triplet_fingerprint_data().end();
+			++pro, ++lig) {
 
-    //jk note: these are no longer necessarily true, since we alter the Plaid one by shifting up/down by 2*pi
-    //these are useful asserts though, it's worth thinking about how to make them valid again...
-    //assert( std::abs( pro->phi - lig->phi ) < 0.001 );
-    //assert( std::abs( pro->psi - lig->psi ) < 0.001 );
+		//jk note: these are no longer necessarily true, since we alter the Plaid one by shifting up/down by 2*pi
+		//these are useful asserts though, it's worth thinking about how to make them valid again...
+		//assert( std::abs( pro->phi - lig->phi ) < 0.001 );
+		//assert( std::abs( pro->psi - lig->psi ) < 0.001 );
 
-    if ( ( pro->rho > 0.001 ) && ( lig->rho < 0.001 ) ) continue;
-    triplet_trim_data.push_back(*pro);
+		if ( ( pro->rho > 0.001 ) && ( lig->rho < 0.001 ) ) continue;
+		triplet_trim_data.push_back(*pro);
 
-  }
-  triplet_fingerprint_data_.clear();
-  triplet_fingerprint_data_ = triplet_trim_data;
+	}
+	triplet_fingerprint_data_.clear();
+	triplet_fingerprint_data_ = triplet_trim_data;
 
-  //DUMP TRIMED_EGGSHELL TO A PDB FILE
-  utility::io::ozstream outPDB_stream;
-  outPDB_stream.open("trim_eggshell.pdb", std::ios::out);
-  outPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   ORI A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<origin_.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<origin_.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<origin_.z()<<std::endl;
-  outPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   COM B   2    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.z()<<std::endl;
-  for (std::list<spherical_coor_triplet>::const_iterator pd = triplet_fingerprint_data_.begin(); pd != triplet_fingerprint_data_.end(); ++pd) {
-    numeric::xyzVector<core::Real> new_coor;
-    convert_spherical_coor_triplet_to_cartesian( *pd, new_coor );
-    new_coor += origin_;
-    outPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   EGG C   3    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<new_coor.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<new_coor.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<new_coor.z()<<std::endl;
-  }
-  outPDB_stream.close();
-  outPDB_stream.clear();
+	//DUMP TRIMED_EGGSHELL TO A PDB FILE
+	utility::io::ozstream outPDB_stream;
+	outPDB_stream.open("trim_eggshell.pdb", std::ios::out);
+	outPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   ORI A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<origin_.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<origin_.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<origin_.z()<<std::endl;
+	outPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   COM B   2    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.z()<<std::endl;
+	for (std::list<spherical_coor_triplet>::const_iterator pd = triplet_fingerprint_data_.begin();
+			pd != triplet_fingerprint_data_.end();
+			++pd) {
+		numeric::xyzVector<core::Real> new_coor;
+		convert_spherical_coor_triplet_to_cartesian( *pd, new_coor );
+		new_coor += origin_;
+		outPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   EGG C   3    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<new_coor.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<new_coor.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<new_coor.z()<<std::endl;
+	}
+	outPDB_stream.close();
+	outPDB_stream.clear();
 
-  return;
+	return;
 }
 
 void NonPlaidFingerprint::include_eggshell_points_based_on_known_ligand( core::pose::Pose const & known_ligand_pose, core::Real const & trim_dist) {
@@ -1162,110 +1167,133 @@ void PlaidFingerprint::update_rhos_(FingerprintBase & fp, core::conformation::Re
 }
 
 
-core::Real PlaidFingerprint::fp_compare( FingerprintBase & fp, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight ) const {
+core::Real
+PlaidFingerprint::fp_compare(
+		FingerprintBase & fp,
+		core::Real const & missing_point_weight,
+		core::Real const & steric_weight,
+		core::Real const & extra_point_weight ) const
+{
+	core::Real Total_score = 0;
+	core::Size num_rays = 0;
+	using namespace basic::options;
+	bool square  = option[ OptionKeys::fingerprint::square_score ]();
 
-  core::Real Total_score = 0;
-  core::Size num_rays = 0;
-  using namespace basic::options;
-  bool square  = option[ OptionKeys::fingerprint::square_score ]();
+	for (std::list<spherical_coor_triplet>::const_iterator pi = fp.triplet_fingerprint_data().begin(),
+			li = triplet_fingerprint_data_.begin();
+			pi != fp.triplet_fingerprint_data().end() &&
+			li != triplet_fingerprint_data_.end();
+			++pi, ++li) {
+		// jk note: these are no longer necessarily true, since we alter the Plaid one by shifting up/down by 2*pi
+		// these are useful asserts though, it's worth thinking about how to make them valid again...
+		// assert( std::abs( pi->phi - li->phi ) < 0.001 );
+		// assert( std::abs( pi->psi - li->psi ) < 0.001 );
 
-  for (std::list<spherical_coor_triplet>::const_iterator pi = fp.triplet_fingerprint_data().begin(), li = triplet_fingerprint_data_.begin(); pi != fp.triplet_fingerprint_data().end(), li != triplet_fingerprint_data_.end(); ++pi, ++li) {
-
-    // jk note: these are no longer necessarily true, since we alter the Plaid one by shifting up/down by 2*pi
-    // these are useful asserts though, it's worth thinking about how to make them valid again...
-    // assert( std::abs( pi->phi - li->phi ) < 0.001 );
-    // assert( std::abs( pi->psi - li->psi ) < 0.001 );
-
-    if ( (li->rho < 0.001) && (pi->rho < 0.001) ) {
-      continue;
-    } else if (li->rho < 0.001) {
-      Total_score += missing_point_weight;
-    } else if (pi->rho < 0.001 ) {
-      Total_score += extra_point_weight;
-    } else {
-      core::Real dist_deviation = std::abs( pi->rho - li->rho );
-      if (square){
-	if (li->rho > pi->rho) dist_deviation *= dist_deviation;
-	if (li->rho < pi->rho) dist_deviation *= (dist_deviation * steric_weight);
-      }
-      else if (!square) {
-	if (li->rho > pi->rho) dist_deviation = dist_deviation;
-	if (li->rho < pi->rho) dist_deviation = (dist_deviation * steric_weight);
-      }
-      Total_score += dist_deviation;
-    }
-    num_rays++;
-  }
-  //	if ( num_rays < 25 ) return 999.;
-  return (Total_score/num_rays);
+		if ( (li->rho < 0.001) && (pi->rho < 0.001) ) {
+			continue;
+		} else if (li->rho < 0.001) {
+			Total_score += missing_point_weight;
+		} else if (pi->rho < 0.001 ) {
+			Total_score += extra_point_weight;
+		} else {
+			core::Real dist_deviation = std::abs( pi->rho - li->rho );
+			if (square){
+				if (li->rho > pi->rho) dist_deviation *= dist_deviation;
+				if (li->rho < pi->rho) dist_deviation *= (dist_deviation * steric_weight);
+			}
+			else if (!square) {
+				//if (li->rho > pi->rho) dist_deviation = dist_deviation;
+				if (li->rho < pi->rho) dist_deviation = (dist_deviation * steric_weight);
+			}
+			Total_score += dist_deviation;
+		}
+		num_rays++;
+	}
+	//	if ( num_rays < 25 ) return 999.;
+	return (Total_score/num_rays);
 }
 
-void PlaidFingerprint::fp_compare_deriv( FingerprintBase & fp, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight, core::Real & dE_dx, core::Real & dE_dy, core::Real & dE_dz, core::Real & dE_dv4, core::Real & dE_dv5, core::Real & dE_dv6 ) const {
+void
+PlaidFingerprint::fp_compare_deriv(
+		FingerprintBase & fp,
+		core::Real const & missing_point_weight,
+		core::Real const & steric_weight,
+		core::Real const & extra_point_weight,
+		core::Real & dE_dx,
+		core::Real & dE_dy,
+		core::Real & dE_dz,
+		core::Real & dE_dv4,
+		core::Real & dE_dv5,
+		core::Real & dE_dv6 ) const
+{
+	dE_dx = 0.; dE_dy = 0.; dE_dz = 0.; dE_dv4 = 0.; dE_dv5 = 0.; dE_dv6 = 0.;
 
-  dE_dx = 0.; dE_dy = 0.; dE_dz = 0.; dE_dv4 = 0.; dE_dv5 = 0.; dE_dv6 = 0.;
+	if ( derivs_of_ray_distances_.size() < 2 ) {
+		std::cout<<"Error, fingerprint derivatives have not been computed" << std::endl;
+		exit(1);
+	}
+	assert( derivs_of_ray_distances_.size() == fp.triplet_fingerprint_data().size() );
 
-  if ( derivs_of_ray_distances_.size() < 2 ) {
-    std::cout<<"Error, fingerprint derivatives have not been computed" << std::endl;
-    exit(1);
-  }
-  assert( derivs_of_ray_distances_.size() == fp.triplet_fingerprint_data().size() );
+	core::Real Total_score = 0;
+	core::Real Differentiable_score = 0;
+	core::Size num_rays = 0;
+	std::list<ray_distance_derivs>::const_iterator di = derivs_of_ray_distances_.begin();
+	for (std::list<spherical_coor_triplet>::const_iterator pi = fp.triplet_fingerprint_data().begin(),
+			li = triplet_fingerprint_data_.begin();
+			pi != fp.triplet_fingerprint_data().end() &&
+			li != triplet_fingerprint_data_.end() &&
+			di != derivs_of_ray_distances_.end();
+			++pi, ++li, ++di) {
+		assert( std::abs( pi->phi - li->phi ) < 0.001 );
+		assert( std::abs( pi->psi - li->psi ) < 0.001 );
 
-  core::Real Total_score = 0;
-  core::Real Differentiable_score = 0;
-  core::Size num_rays = 0;
-  std::list<ray_distance_derivs>::const_iterator di = derivs_of_ray_distances_.begin();
-  for (std::list<spherical_coor_triplet>::const_iterator pi = fp.triplet_fingerprint_data().begin(), li = triplet_fingerprint_data_.begin(); pi != fp.triplet_fingerprint_data().end(), li != triplet_fingerprint_data_.end(), di != derivs_of_ray_distances_.end(); ++pi, ++li, ++di) {
-    assert( std::abs( pi->phi - li->phi ) < 0.001 );
-    assert( std::abs( pi->psi - li->psi ) < 0.001 );
+		if ( (li->rho < 0.001) && (pi->rho < 0.001) ) {
+			continue;
+		} else if (li->rho < 0.001) {
+			Total_score += missing_point_weight;
+		} else if (pi->rho < 0.001 ) {
+			Total_score += extra_point_weight;
+		} else {
+			core::Real dist_deviation = std::abs( pi->rho - li->rho );
+			// derivative is zero except in the case where the ray hits BOTH ligand and pocket
+			// (ie. "missing point" and "extra point" scores don't contribute to the derivatives)
+			if (li->rho > pi->rho) {
+				dE_dx += di->dDist_dv1;
+				dE_dy += di->dDist_dv2;
+				dE_dz += di->dDist_dv3;
+				dE_dv4 += di->dDist_dv4;
+				dE_dv5 += di->dDist_dv5;
+				dE_dv6 += di->dDist_dv6;
+			} else {
+				dist_deviation *= steric_weight;
+				dE_dx += steric_weight * di->dDist_dv1;
+				dE_dy += steric_weight * di->dDist_dv2;
+				dE_dz += steric_weight * di->dDist_dv3;
+				dE_dv4 += steric_weight * di->dDist_dv4;
+				dE_dv5 += steric_weight * di->dDist_dv5;
+				dE_dv6 += steric_weight * di->dDist_dv6;
+			}
+			Total_score += dist_deviation;
+			Differentiable_score += dist_deviation;
+		}
 
-    if ( (li->rho < 0.001) && (pi->rho < 0.001) ) {
-      continue;
-    } else if (li->rho < 0.001) {
-      Total_score += missing_point_weight;
-    } else if (pi->rho < 0.001 ) {
-      Total_score += extra_point_weight;
-    } else {
-      core::Real dist_deviation = std::abs( pi->rho - li->rho );
-      // derivative is zero except in the case where the ray hits BOTH ligand and pocket
-      // (ie. "missing point" and "extra point" scores don't contribute to the derivatives)
-      if (li->rho > pi->rho) {
-	dE_dx += di->dDist_dv1;
-	dE_dy += di->dDist_dv2;
-	dE_dz += di->dDist_dv3;
-	dE_dv4 += di->dDist_dv4;
-	dE_dv5 += di->dDist_dv5;
-	dE_dv6 += di->dDist_dv6;
-      } else {
-	dist_deviation *= steric_weight;
-	dE_dx += steric_weight * di->dDist_dv1;
-	dE_dy += steric_weight * di->dDist_dv2;
-	dE_dz += steric_weight * di->dDist_dv3;
-	dE_dv4 += steric_weight * di->dDist_dv4;
-	dE_dv5 += steric_weight * di->dDist_dv5;
-	dE_dv6 += steric_weight * di->dDist_dv6;
-      }
-      Total_score += dist_deviation;
-      Differentiable_score += dist_deviation;
-    }
+		num_rays++;
+	}
 
-    num_rays++;
-  }
+	dE_dx /= num_rays;
+	dE_dy /= num_rays;
+	dE_dz /= num_rays;
+	dE_dv4 /= num_rays;
+	dE_dv5 /= num_rays;
+	dE_dv6 /= num_rays;
+	Total_score /= num_rays;
+	Differentiable_score /= num_rays;
 
-  dE_dx /= num_rays;
-  dE_dy /= num_rays;
-  dE_dz /= num_rays;
-  dE_dv4 /= num_rays;
-  dE_dv5 /= num_rays;
-  dE_dv6 /= num_rays;
-  Total_score /= num_rays;
-  Differentiable_score /= num_rays;
+	std::cout<<"DARC score while computing derivatives: " << Total_score << std::endl;
+	//	std::cout<<"DARC score while computing derivatives are total: " << Total_score << " and differentiable part " << Differentiable_score << std::endl;
+	//	std::cout<<"Derivatives are " << dE_dx << " , " << dE_dy << " , " << dE_dz << " , " << dE_dv4 << " , " << dE_dv5 << " , " << dE_dv6 << std::endl;
 
-  std::cout<<"DARC score while computing derivatives: " << Total_score << std::endl;
-  //	std::cout<<"DARC score while computing derivatives are total: " << Total_score << " and differentiable part " << Differentiable_score << std::endl;
-  //	std::cout<<"Derivatives are " << dE_dx << " , " << dE_dy << " , " << dE_dz << " , " << dE_dv4 << " , " << dE_dv5 << " , " << dE_dv6 << std::endl;
-
-  return;
-
+	return;
 }
 
 core::Real PlaidFingerprint::search_random_poses( FingerprintBase & fp, core::Size const & num_pose_search, core::Real & optimal_angle1, core::Real & optimal_angle2, core::Real & optimal_angle3, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight ) {

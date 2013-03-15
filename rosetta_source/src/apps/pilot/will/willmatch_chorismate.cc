@@ -100,7 +100,7 @@ void run() {
 
   core::chemical::ResidueTypeSetCAP cen_residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID );
   core::chemical::ResidueTypeSetCAP  fa_residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-  Real tmpdis = option[willmatch::max_dis_metal]();
+  //Real tmpdis = option[willmatch::max_dis_metal]();  // unused ~Labonte
   // Real const MXDSMTL = tmpdis*tmpdis;
   // Real const MXAGMTL = option[willmatch::max_ang_metal]();
   // Real const MATCH_OVERLAP_DOT = cos(numeric::conversions::radians(option[willmatch::match_overlap_ang]()));

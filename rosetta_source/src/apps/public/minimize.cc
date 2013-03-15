@@ -141,7 +141,7 @@ Minimize::apply( Pose & pose ) {
 	final_mm.set_chi( true );
 	final_mm.set_bb( true );
 
-	core::Real start_score = (*score_function_)(pose);
+	/*core::Real start_score =*/ (*score_function_)(pose);
 	core::Size repeats = 1;
 	for(core::Size i = 0; i < repeats; i++ ){
 		core::optimization::AtomTreeMinimizer().run( pose, final_mm, *score_function_, options );

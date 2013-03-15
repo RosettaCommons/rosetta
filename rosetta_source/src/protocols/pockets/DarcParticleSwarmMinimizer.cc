@@ -139,70 +139,77 @@ void DarcParticleSwarmMinimizer::fill_atom_arrays_( core::Size particle_inx, cor
   }
 }
 
-core::Real DarcParticleSwarmMinimizer::DarcPSO_fp_compare_( core::Size particle_inx, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight, std::vector<basic::gpu::float4> & atoms, std::vector<basic::gpu::float4> & atom_maxmin_phipsi ) {
+core::Real
+DarcParticleSwarmMinimizer::DarcPSO_fp_compare_(
+		core::Size particle_inx,
+		core::Real const & missing_point_weight,
+		core::Real const & steric_weight,
+		core::Real const & extra_point_weight,
+		std::vector<basic::gpu::float4> & atoms,
+		std::vector<basic::gpu::float4> & atom_maxmin_phipsi ) {
 
-  core::Real Total_score = 0;
-  core::Size num_rays = 0;
+	 core::Real Total_score = 0;
+	 core::Size num_rays = 0;
 
-  for (std::list<spherical_coor_triplet>::const_iterator ni = nfp_.triplet_fingerprint_data().begin(); ni != nfp_.triplet_fingerprint_data().end(); ++ni) {
+	for (std::list<spherical_coor_triplet>::const_iterator ni = nfp_.triplet_fingerprint_data().begin();
+			 ni != nfp_.triplet_fingerprint_data().end(); ++ni) {
 
-    core::Real curr_phi = ni->phi;
-    core::Real curr_psi = ni->psi;
-    core::Real best_rho_sq(9999.);
+		core::Real curr_phi = ni->phi;
+		core::Real curr_psi = ni->psi;
+		core::Real best_rho_sq(9999.);
 		//    core::Size best_intersecting_atom(0);
-    for (Size i = 1, i_end = ligand_natoms_; i <= i_end; ++i) {
+		for (Size i = 1, i_end = ligand_natoms_; i <= i_end; ++i) {
+			core::Size const curr_array_inx = ( ligand_natoms_ * particle_inx ) + ( i-1 );
 
-      core::Size const curr_array_inx = ( ligand_natoms_ * particle_inx ) + ( i-1 );
+			if ( atoms[curr_array_inx].w < 0.001 ) continue;
 
-      if ( atoms[curr_array_inx].w < 0.001 ) continue;
+			while ( curr_phi < atom_maxmin_phipsi[curr_array_inx].z ) {
+				curr_phi += numeric::constants::r::pi_2;
+			}
+			while ( curr_phi > atom_maxmin_phipsi[curr_array_inx].x ) {
+				curr_phi -= numeric::constants::r::pi_2;
+			}
+			if ( curr_phi < atom_maxmin_phipsi[curr_array_inx].z ) continue;
+			if ( curr_phi > atom_maxmin_phipsi[curr_array_inx].x ) continue;
 
-      while ( curr_phi < atom_maxmin_phipsi[curr_array_inx].z ) {
-        curr_phi += numeric::constants::r::pi_2;
-      }
-      while ( curr_phi > atom_maxmin_phipsi[curr_array_inx].x ) {
-        curr_phi -= numeric::constants::r::pi_2;
-      }
-      if ( curr_phi < atom_maxmin_phipsi[curr_array_inx].z ) continue;
-      if ( curr_phi > atom_maxmin_phipsi[curr_array_inx].x ) continue;
+			while ( curr_psi < atom_maxmin_phipsi[curr_array_inx].w ) {
+				curr_psi += numeric::constants::r::pi_2;
+			}
+			while ( curr_psi > atom_maxmin_phipsi[curr_array_inx].y ) {
+				curr_psi -= numeric::constants::r::pi_2;
+			}
+			if ( curr_psi < atom_maxmin_phipsi[curr_array_inx].w ) continue;
+			if ( curr_psi > atom_maxmin_phipsi[curr_array_inx].y ) continue;
 
-      while ( curr_psi < atom_maxmin_phipsi[curr_array_inx].w ) {
-        curr_psi += numeric::constants::r::pi_2;
-      }
-      while ( curr_psi > atom_maxmin_phipsi[curr_array_inx].y ) {
-        curr_psi -= numeric::constants::r::pi_2;
-      }
-      if ( curr_psi < atom_maxmin_phipsi[curr_array_inx].w ) continue;
-      if ( curr_psi > atom_maxmin_phipsi[curr_array_inx].y ) continue;
+			core::Real const min_intersect_SQ = Find_Closest_Intersect_SQ(curr_phi, curr_psi,
+					atoms[curr_array_inx].x, atoms[curr_array_inx].y, atoms[curr_array_inx].z, atoms[curr_array_inx].w);
 
-      core::Real const min_intersect_SQ = Find_Closest_Intersect_SQ(curr_phi, curr_psi, atoms[curr_array_inx].x, atoms[curr_array_inx].y, atoms[curr_array_inx].z, atoms[curr_array_inx].w);
+			if ( min_intersect_SQ < best_rho_sq ) {
+				best_rho_sq = min_intersect_SQ;
+			}
+		}
 
-      if ( min_intersect_SQ < best_rho_sq ) {
-        best_rho_sq = min_intersect_SQ;
-      }
-    }
+		core::Real plaid_rho = 9999.;
+		if ( best_rho_sq < 9998. ) {
+			plaid_rho = sqrt(best_rho_sq);
+		}
 
-    core::Real plaid_rho = 9999.;
-    if ( best_rho_sq < 9998. ) {
-      plaid_rho = sqrt(best_rho_sq);
-    }
-
-    if ( (plaid_rho > 9998.) && (ni->rho > 0.001) ) {
-      Total_score += missing_point_weight;
-      num_rays++;
-    }
-    if ( (plaid_rho < 9999.) && (ni->rho < 0.001 ) ) {
-      Total_score += extra_point_weight;
-      num_rays++;
-    }
-    if ( (plaid_rho < 9999.) && (ni->rho > 0.001 ) ) {
-      core::Real dist_deviation = ( plaid_rho - ni->rho );
-      if (dist_deviation < 0.0) dist_deviation = ( ni->rho - plaid_rho ) * steric_weight;
-      Total_score += dist_deviation;
-      num_rays++;
-    }
-  }
-
-  return (Total_score/num_rays);
+		if ( (plaid_rho > 9998.) && (ni->rho > 0.001) ) {
+			Total_score += missing_point_weight;
+			num_rays++;
+		}
+		if ( (plaid_rho < 9999.) && (ni->rho < 0.001 ) ) {
+			Total_score += extra_point_weight;
+			num_rays++;
+		}
+		if ( (plaid_rho < 9999.) && (ni->rho > 0.001 ) ) {
+			core::Real dist_deviation = ( plaid_rho - ni->rho );
+			if (dist_deviation < 0.0) dist_deviation = ( ni->rho - plaid_rho ) * steric_weight;
+			Total_score += dist_deviation;
+			num_rays++;
+		}
+	}
+	return (Total_score/num_rays);
 }
 
 } // namespace pockets

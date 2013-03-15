@@ -94,7 +94,7 @@ ParetoOptMutationMover::ParetoOptMutationMover(
 	protocols::moves::MoverOP relax_mover,
 	vector1< protocols::filters::FilterOP > filters,
 	vector1< std::string > sample_types,
-	vector1< core::Real > filter_deltas,
+	vector1< core::Real > /*filter_deltas*/,
 	bool dump_pdb,
 	bool dump_table,
 	bool parallel,

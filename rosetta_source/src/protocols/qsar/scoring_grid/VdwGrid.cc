@@ -121,7 +121,10 @@ VdwGrid::~VdwGrid()
 
 }
 
-core::Real VdwGrid::score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP qsar_map)
+core::Real VdwGrid::score(
+		core::conformation::UltraLightResidue const & residue,
+		core::Real const max_score,
+		qsarMapOP /*qsar_map*/)
 {
 	core::Real score = 0.0;
 
@@ -143,7 +146,10 @@ core::Real VdwGrid::score(core::conformation::UltraLightResidue const & residue,
 	return score;
 }
 
-core::Real VdwGrid::atom_score(core::conformation::UltraLightResidue const & residue, core::Size atomno, qsarMapOP qsar_map)
+core::Real VdwGrid::atom_score(
+		core::conformation::UltraLightResidue const & residue,
+		core::Size atomno,
+		qsarMapOP /*qsar_map*/)
 {
 	core::Vector const & atom_coord(residue[atomno]);
 	core::Real const & radius(residue.residue()->atom_type(atomno).lj_radius());

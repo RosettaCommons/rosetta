@@ -68,7 +68,7 @@ APBSWrapper::APBSWrapper(core::pose::Pose const & pose,
 APBSResultCOP
 APBSWrapper::exec() {
 
-	const int nwrites = result->nwrites;
+	//const int nwrites = result->nwrites;
 	int ret = 0;
 
 #ifdef LINK_APBS_LIB

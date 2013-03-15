@@ -219,7 +219,7 @@ dock(
 	Mat Rsym1 = rotation_matrix_degrees(Ux,ANG1);
 	Mat Rsym2 = rotation_matrix_degrees(Uy,ANG2);
 
-	int irt=1, iss=1, ic=1;
+	//int irt=1, iss=1, ic=1;  // unused ~Labonte
 	for(Real az = 0.0; az < 1.0; az += 5.0){
 		Mat Rz = rotation_matrix_degrees(Uz,az);
 	for(Real ax = 0.0; ax < 1.0; ax += 5.0){
@@ -418,7 +418,7 @@ int main(int argc, char *argv[]) {
 		trans_pose(pnat,-Vec(0,cen.y(),cen.z()));
 
 		if( pnat.n_residue() > MAX_NRES ) continue;
-		Size cyscnt=0, nhelix=0;
+		//Size cyscnt=0, nhelix=0;  // unused ~Labonte
 		// for(Size ir = 2; ir <= pnat.n_residue()-1; ++ir) {
 		// 	if(pnat.secstruct(ir) == 'H') nhelix++;
 		// 	//if(!pnat.residue(ir).is_protein()) goto cont1;

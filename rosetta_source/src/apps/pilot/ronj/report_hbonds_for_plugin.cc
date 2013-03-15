@@ -277,7 +277,7 @@ apply( pose::Pose& pose ) {
 
 		// need to access donor and acc residues as well as ints
 		Size hatm = bond.don_hatm();
-		scoring::hbonds::HBEvalType type = bond.eval_type();
+		//scoring::hbonds::HBEvalType type = bond.eval_type();  // unused ~Labonte
 		Size don_resnum = bond.don_res(); Size acc_resnum = bond.acc_res();
 
 		// get acc and donor residues from sequence numbers
@@ -285,21 +285,21 @@ apply( pose::Pose& pose ) {
 		conformation::Residue donRes = pose.residue( don_resnum ); std::string don_resname = donRes.name3();
 
 		Size const datm( donRes.atom_base( hatm ) );
-		Vector const & hatm_xyz( donRes.atom( hatm ).xyz() );
-		Vector const & datm_xyz( donRes.atom( datm ).xyz() );
+		//Vector const & hatm_xyz( donRes.atom( hatm ).xyz() );  // unused ~Labonte
+		//Vector const & datm_xyz( donRes.atom( datm ).xyz() );  // unused ~Labonte
 
 		Size aatm = bond.acc_atm();
-		Size const base( accRes.atom_base( aatm ) );
-		Size const base_of_base( accRes.atom_base( base ) );
+		//Size const base( accRes.atom_base( aatm ) );
+		//Size const base_of_base( accRes.atom_base( base ) );
 
-		Size const base2( accRes.abase2( aatm ) );
-		Size const dbase( donRes.atom_base( datm ) );
-		Vector const & aatm_xyz = accRes.atom( aatm ).xyz();
-		Vector const & base_xyz = accRes.atom( base ).xyz();
-		Vector const & base_of_base_xyz = accRes.atom( base_of_base ).xyz();
+		//Size const base2( accRes.abase2( aatm ) );
+		//Size const dbase( donRes.atom_base( datm ) );
+		//Vector const & aatm_xyz = accRes.atom( aatm ).xyz();  // unused ~Labonte
+		//Vector const & base_xyz = accRes.atom( base ).xyz();  // unused ~Labonte
+		//Vector const & base_of_base_xyz = accRes.atom( base_of_base ).xyz();  // unused ~Labonte
 
-		Vector const & base2_xyz = accRes.atom( base2 ).xyz();
-		Vector const & dbase_xyz = donRes.atom( dbase ).xyz();
+		//Vector const & base2_xyz = accRes.atom( base2 ).xyz();  // unused ~Labonte
+		//Vector const & dbase_xyz = donRes.atom( dbase ).xyz();  // unused ~Labonte
 
 		//Size donType = donRes.atom( datm ).type();
 		//Size accType = accRes.atom( aatm ).type();
@@ -314,7 +314,8 @@ apply( pose::Pose& pose ) {
 		const std::string & don_atomname = donRes.atom_name( datm );
 		const std::string & acc_atomname = accRes.atom_name( aatm );
 		//const std::string & h_atomname = donRes.atom_name( hatm );
-		int donElemNum, accElemNum;	//usual atomic numbers from periodic table
+		// usual atomic numbers from periodic table
+		//int donElemNum, accElemNum;  // unused ~Labonte
 
 		char don_chain, acc_chain;
 		int don_pdbresnum, acc_pdbresnum;

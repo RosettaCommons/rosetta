@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
 
 
 	Real const DIST(option[OptionKeys::clash_dis]());
-	Real const DIST2(DIST*DIST);	
+	//Real const DIST2(DIST*DIST);  // unused ~Labonte
 
 	core::pose::Pose p;
 	core::import_pose::pose_from_pdb(p,option[OptionKeys::in::file::s]()[1]);

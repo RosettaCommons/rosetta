@@ -214,7 +214,7 @@ setup_mask(
 			if ( sequence_mask(i) == false ) continue; //Don't worry about it.
 
 			bool found_gap_before( false ), found_gap_after( false );
-			for (int offset = -1 * look_for_gap; offset < 0; offset ++ ) {
+			for (int offset = -1 * (int)look_for_gap; offset < 0; ++offset ) {
 				if ( i+offset > 1 && sequence_mask( i+offset ) == false ) {
 					found_gap_before = true;
 					break;

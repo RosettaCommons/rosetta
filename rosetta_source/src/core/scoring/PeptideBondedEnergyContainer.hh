@@ -242,6 +242,8 @@ public:
 		return ( size_ == 0 );
 	}
 
+	using LREnergyContainer::set_num_nodes;
+
 	virtual
 	void
 	set_num_nodes( Size size_in, Size offset_in=0 ) {

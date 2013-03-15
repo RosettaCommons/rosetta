@@ -201,14 +201,24 @@ std::set< Size > removeConstraintsNearGap(std::set< Size > caAtomsToConstrainAll
 
 
 //one alignment and coord csts for each protein and r
-bool calc_outputCoordCsts(SequenceOP fastaSequenceOP, map<string,SequenceAlignment> alnData, map< string, Pose > poseData, map<string, set<Size> > coordCstsData, Size nResFromGapExclude, Size minNumCoordCsts, bool only_res_out ){
+bool calc_outputCoordCsts(
+		SequenceOP fastaSequenceOP,
+		map<string, SequenceAlignment> alnData,
+		map< string, Pose > poseData,
+		map<string, set<Size> > coordCstsData,
+		Size nResFromGapExclude,
+		Size minNumCoordCsts,
+		bool only_res_out )
+{
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace devel::cstEnergyBalance;
 	map<string,set <Size> >::iterator location_caAtomsToConstrain;
 	map<string, Pose>::iterator location_pdb;
 	map<string,SequenceAlignment>::iterator location_aln;
-	//Check for the presence of all coordinate constraints.  (Some may be blank. The blank coordinate constraints confer meaning that the minimal coordinate constraints have been computed)
+	// Check for the presence of all coordinate constraints.
+	// (Some may be blank.
+	// The blank coordinate constraints confer meaning that the minimal coordinate constraints have been computed.)
 	location_aln=alnData.begin();
 	while(location_aln != alnData.end()){
 		string pdbid = location_aln->second.sequence(2)->id().substr(0,5);
@@ -232,10 +242,17 @@ bool calc_outputCoordCsts(SequenceOP fastaSequenceOP, map<string,SequenceAlignme
 
 		std::set<Size> caAtomsToConstrain;
 		caAtomsToConstrain = removeConstraintsNearGap(caAtomsToConstrainAll,alns[1],nResFromGapExclude);
-		if(caAtomsToConstrain.size()>minNumCoordCsts) //if there are <= 3 coordinate constraints then coordinate constraints are not useful.
-			output_coordCsts(caAtomsToConstrain,coordCstsOut,templatePose,alns[1],fastaSequenceOP->sequence(),only_res_out);
+		// If there are <= 3 coordinate constraints then coordinate constraints are not useful.
+		if(caAtomsToConstrain.size()>minNumCoordCsts)
+			output_coordCsts(caAtomsToConstrain,
+					coordCstsOut,
+					templatePose,
+					alns[1],
+					fastaSequenceOP->sequence(),
+					only_res_out);
 		location_aln++;
 	}
+	return true;  // There was no return in this non-void function. ~ Labonte
 }
 
 

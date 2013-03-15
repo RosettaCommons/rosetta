@@ -202,9 +202,9 @@ string get_tag( core::Size itrial, core::Real kT, int rank ) {
     + lead_zero_string_of( rank, 5);
 }
 
-string get_filename(char* const suffix, core::Real t) {
+string get_filename(string const suffix, core::Real t) {
 	using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options::OptionKeys;
 
 	int index=0;
 	core::Size end=option[mc::re_tlist]().size();
@@ -217,7 +217,7 @@ string get_filename(char* const suffix, core::Real t) {
 	}
 
 	std::ostringstream inputfn;
-  if (option[ mc::re_pdb_prefix ].user()) {
+	if (option[ mc::re_pdb_prefix ].user()) {
 		inputfn << option[ mc::re_pdb_prefix ]();
 		inputfn << "_" << index;
 	}

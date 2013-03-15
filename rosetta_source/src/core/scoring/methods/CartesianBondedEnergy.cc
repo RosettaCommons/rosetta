@@ -1516,7 +1516,7 @@ CartesianBondedEnergy::setup_for_scoring(
 	}
 
 	if ( create_new_lre_container ) {
-		Size nres = pose.total_residue(), offset=0;
+		Size nres = pose.total_residue()/*, offset=0*/;
 		if( core::pose::symmetry::is_symmetric(pose) ) {
 			nres = core::pose::symmetry::symmetry_info(pose)->last_independent_residue();
 		}

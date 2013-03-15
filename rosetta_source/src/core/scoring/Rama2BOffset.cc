@@ -327,14 +327,14 @@ Rama2BOffset::read_paapp_table_from_stream(
 	std::string line;
 
 	paas.resize( chemical::num_canonical_aas );
-	for (int z=1; z<=paas.size(); ++z) {
+	for (core::Size z=1; z<=paas.size(); ++z) {
 		paas[z].dimension(36,36);
 	}
 
 	while ( getline( stream, line ) ) {
 		std::istringstream l(line);
 		l >> i >> j >> psi >> phi;
-		for (int z=1; z<=paas.size(); ++z ) {
+		for (core::Size z=1; z<=paas.size(); ++z ) {
 			l >> prob_n;
 			paas[z](i+1,j+1) = prob_n;
 		}

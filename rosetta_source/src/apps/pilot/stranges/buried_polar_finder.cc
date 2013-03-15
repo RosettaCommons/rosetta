@@ -196,10 +196,10 @@ void CalcsTestMover::apply( core::pose::Pose & pose ){
 	calc_stuff( pose, atom_sasa, atom_hbonds);
 
 	//figure out some percentages
-	core::Real burried_fraction_unsat ( n_burried_unsat_ / n_burried_polars_);
-	core::Real total_fraction_unsat ( n_burried_unsat_ / n_polars_ );
-	core::Real exposed_fraction_sat ( n_exposed_sat_ / n_exposed_polars_);
-	core::Real total_exposed_sat ( n_exposed_sat_ / n_polars_);
+	//core::Real burried_fraction_unsat ( n_burried_unsat_ / n_burried_polars_);  // unused ~Labonte
+	//core::Real total_fraction_unsat ( n_burried_unsat_ / n_polars_ );  // unused ~Labonte
+	//core::Real exposed_fraction_sat ( n_exposed_sat_ / n_exposed_polars_);  // unused ~Labonte
+	//core::Real total_exposed_sat ( n_exposed_sat_ / n_polars_);  // unused ~Labonte
 	// 	//debugging
 	// 	cout << "Total burried:  "<<  n_burried_unsat_ << endl;
 	// 	cout << "Burried Polars:  " << n_burried_polars_ <<  " fraction unsat:  "<< burried_fraction_unsat << endl;

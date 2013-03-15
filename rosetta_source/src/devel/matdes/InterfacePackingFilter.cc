@@ -227,7 +227,7 @@ InterfacePackingFilter::compute( core::pose::Pose const & pose ) const{
 			core::pose::symmetry::partition_by_symm_jumps( sym_aware_jump_ids, pose.fold_tree(), core::pose::symmetry::symmetry_info(pose), is_upstream );
 			utility::vector1<Size> intra_subs;
 			Size nres_monomer = symm_info->num_independent_residues();
-			for (int i=1; i<=symm_info->subunits(); ++i)
+			for (core::Size i=1; i<=symm_info->subunits(); ++i)
 				if (is_upstream( (i-1)*nres_monomer + 1 )) intra_subs.push_back(i);
 			sub_pose = get_neighbor_subs (pose, intra_subs);
 

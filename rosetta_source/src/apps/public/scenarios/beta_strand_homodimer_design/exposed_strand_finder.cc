@@ -170,8 +170,8 @@ private:
   vector1< std::string > strand_def_vector_ ;
   vector1< core::Size > strand_pose_nums_ ; //contains start and end pose_ids
   core::pose::Pose native_pose_ ;
-  int beta_length_ ;
-  int sat_allow_ ;
+  Size beta_length_ ;
+  Size sat_allow_ ;
   Size num_satisfied_;
   core::Real maxE_;
   core::Real maxRMSD_;

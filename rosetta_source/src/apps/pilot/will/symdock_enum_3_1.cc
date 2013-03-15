@@ -614,7 +614,8 @@ struct TCDock {
 			ObjexxFCL::FArray2D<double> & cmpcbpos( i12?cmp1cbpos_:cmp2cbpos_ );
 			ObjexxFCL::FArray2D<double> & cmpcbneg( i12?cmp1cbneg_:cmp2cbneg_ );
 
-			if( option[tcdock::ignore_intra_1]() && i12==1 || option[tcdock::ignore_intra_2]() && i12==0 ){
+			// added parentheses to remove logic warning ~Labonte
+			if( (option[tcdock::ignore_intra_1]() && i12==1) || (option[tcdock::ignore_intra_2]() && i12==0) ){
 				TR << "ignoring intra interactions for component " << (i12?1:2) << std::endl;
 				continue;
 			}

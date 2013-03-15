@@ -338,46 +338,39 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 
 		if (output_lores_silent_file_ ) align_and_output_to_silent_file( pose, lores_silent_file_, out_file_tag );
 
+		if(minimize_structure_){
+			rna_minimizer_->apply( pose );
 
-        if(minimize_structure_){
+			if(close_loops_at_end_){
+				rna_loop_closer_->apply( pose, rna_structure_parameters_->connections() );
+			}
+		}
 
-            rna_minimizer_->apply( pose );
+		if(use_chem_shift_data_) apply_chem_shift_data(pose, out_file_tag);
 
-            if(close_loops_at_end_){
-                rna_loop_closer_->apply(
-                    pose, rna_structure_parameters_->connections() );
-            }
-        }
+		if(relax_structure_)   rna_relaxer_->apply( pose );
 
-        if(use_chem_shift_data_) apply_chem_shift_data(pose, out_file_tag);
+		if(allow_bulge_){
+			core::scoring::ScoreFunctionOP curr_scorefxn = hires_scorefxn_;
 
-        if(relax_structure_)   rna_relaxer_->apply( pose );
+			if(use_chem_shift_data_) curr_scorefxn = chem_shift_scorefxn_;
 
-        if(allow_bulge_){
+			//Identify and virtual the bulge residues.
+			/*Size const num_res_virtualized =*/
+					protocols::swa::rna::virtualize_bulges(
+							pose, allowed_bulge_res_, curr_scorefxn, out_file_tag,
+							true /*allow_pre_virtualize*/, allow_consecutive_bulges_,
+							true /*verbose*/ );
 
-            core::scoring::ScoreFunctionOP curr_scorefxn = hires_scorefxn_;
+			//rescore the pose to add in bulge pseudo-energy term
+			(*curr_scorefxn)( pose );
+		}
 
-            if(use_chem_shift_data_) curr_scorefxn = chem_shift_scorefxn_;
+		std::string const out_file_name = out_file_tag + ".pdb";
+		if (dump_pdb_)	 dump_pdb( pose,  out_file_name );
 
-            //Identify and virtual the bulge residues.
-            Size const num_res_virtualized =
-                protocols::swa::rna::virtualize_bulges( 
-                    pose, allowed_bulge_res_, curr_scorefxn, out_file_tag, 
-                    true /*allow_pre_virtualize*/, allow_consecutive_bulges_, 
-                    true /*verbose*/ );
-
-            //rescore the pose to add in bulge pseudo-energy term
-            (*curr_scorefxn)( pose );
-
-        }
-
-        std::string const out_file_name = out_file_tag + ".pdb";
-        if (dump_pdb_)	 dump_pdb( pose,  out_file_name );
-
-        align_and_output_to_silent_file( pose, silent_file_, out_file_tag );
-
-    } //nstruct
-
+		align_and_output_to_silent_file( pose, silent_file_, out_file_tag );
+	} //nstruct
 }
 
 
@@ -1208,27 +1201,21 @@ RNA_DeNovoProtocol::check_score_filter( Real const lores_score, std::list< Real 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 void
-RNA_DeNovoProtocol::apply_chem_shift_data(core::pose::Pose & pose, std::string const out_file_tag){
+RNA_DeNovoProtocol::apply_chem_shift_data(core::pose::Pose & pose, std::string const /*out_file_tag*/){
 
-    using namespace core::scoring;
+	using namespace core::scoring;
 	using namespace core::io::pdb;
 
-    if(!use_chem_shift_data_) utility_exit_with_message("use_chem_shift_data_ == false!");
+	if(!use_chem_shift_data_) utility_exit_with_message("use_chem_shift_data_ == false!");
 
-    if (minimize_structure_){
+	if (minimize_structure_){
+		rna_minimizer_->set_score_function(chem_shift_scorefxn_); //use the chem_shift_scorefxn_
+		rna_minimizer_->apply( pose );
+		rna_minimizer_->set_score_function(hires_scorefxn_); //set back the original scorefxn.
+		if (close_loops_at_end_) rna_loop_closer_->apply( pose, rna_structure_parameters_->connections() );
+	}
 
-        rna_minimizer_->set_score_function(chem_shift_scorefxn_); //use the chem_shift_scorefxn_
-
-        rna_minimizer_->apply( pose );
-
-        rna_minimizer_->set_score_function(hires_scorefxn_); //set back the original scorefxn.
-
-        if (close_loops_at_end_) rna_loop_closer_->apply( pose, rna_structure_parameters_->connections() );
-    }
-
-    (*chem_shift_scorefxn_)( pose );
-
-
+	(*chem_shift_scorefxn_)( pose );
 }
 
 

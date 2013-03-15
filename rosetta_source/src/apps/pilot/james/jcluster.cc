@@ -116,7 +116,7 @@ main( int argc, char* argv [] ) {
 	// make starting clusters
 	unsigned int const K(10);
 	unsigned int const n_features( data_points.front().size() );
-	double const distance_cutoff(9);
+	//double const distance_cutoff(9);  // unused ~Labonte
 	vector1< vector1< double > > clusters( K, vector1< double >( n_features, 0.0 ) );
 	runtime_assert( data_points.size() > K );
 	for ( unsigned int ii = 1; ii <= clusters.size(); ++ii ) {

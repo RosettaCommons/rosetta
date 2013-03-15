@@ -33,7 +33,7 @@ numeric::xyzMatrix< core::Real > const
 get_rna_base_coordinate_system_from_CS_params( core::conformation::Residue const & rsd, RNA_CS_residue_parameters const & rna_cs_rsd_params){ //x and y coordinate different from 'standard' get_rna_base_coordinate_system;
 
 	using namespace chemical;
- 	Size res_type = rsd.aa();
+ 	//Size res_type = rsd.aa();
 
 	if( rsd.is_RNA()==false ) utility_exit_with_message("rsd.is_RNA()==false!");
 

@@ -79,11 +79,11 @@ GreedyOptMutationMover::GreedyOptMutationMover() :
 	dump_table_( false ),
 	parallel_( false ),
 	stopping_condition_( NULL ),
-  stop_before_condition_( false ),
-  skip_best_check_( false ),
-  rtmin_( false ),
-  shuffle_order_( false ),
-	nstruct_iter_( 1 )
+	nstruct_iter_( 1 ),
+	stop_before_condition_( false ),
+	skip_best_check_( false ),
+	rtmin_( false ),
+	shuffle_order_( false )
 {}
 
 //full ctor
@@ -93,7 +93,7 @@ GreedyOptMutationMover::GreedyOptMutationMover(
 	protocols::moves::MoverOP relax_mover,
 	vector1< protocols::filters::FilterOP > filters,
 	vector1< std::string > sample_types,
-	vector1< core::Real > filter_deltas,
+	vector1< core::Real > /*filter_deltas*/,
 	bool dump_pdb,
 	bool dump_table,
 	bool parallel,

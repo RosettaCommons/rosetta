@@ -850,7 +850,7 @@ void run(std::string fname) {
 
   // Size ANGLE_INCR=30;
 
-  const Real PI = numeric::NumericTraits<Real>::pi();
+  //const Real PI = numeric::NumericTraits<Real>::pi();  // unused ~Labonte
 
   // setup stuff
   ResidueTypeSetCAP frs=ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );

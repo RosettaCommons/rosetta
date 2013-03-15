@@ -466,7 +466,7 @@ void repack_cluster(
 					//mdhist_proposed.record(pose->residue(1).chi());
 					
 					//TR << "boltzmann check " ;
-					bool accept = mc.boltzmann(*after_backrub, move_type, proposal_density_ratio); //  ?
+					/*bool accept =*/ mc.boltzmann(*after_backrub, move_type, proposal_density_ratio); //  ?
 					//TR << accept << std::endl;
 					
 				}
@@ -624,9 +624,17 @@ bool passes_quality_check(
 	bool acceptable = true;
 	core::conformation::Residue res_i(p.residue(i));
 	for (core::Size ii=1; ii <= res_i.natoms(); ii++) {
-		if (p.pdb_info()->temperature(i, ii) > b_factor_threshold || p.residue(i).atom_type(ii).is_heavyatom() && !res_i.atom_type(ii).is_virtual() && (p.pdb_info()->temperature(i, ii) == 0 || p.pdb_info()->occupancy(i, ii) == 0)) { // also remove cases with a b-factor of 0 -- these are usually rebuilt side-chains, so they're not suitable for a packing test -- and those with occupancy 0 -- however, virtual atoms are allowed to have 0 occ
+		// also remove cases with a b-factor of 0 -- these are usually rebuilt side-chains, so they're not suitable for
+		// a packing test -- and those with occupancy 0 -- however, virtual atoms are allowed to have 0 occ
+		// added parentheses to avoid logic warning; hope I got it correct ~Labonte
+		if ((p.pdb_info()->temperature(i, ii) > b_factor_threshold) ||
+				(p.residue(i).atom_type(ii).is_heavyatom() &&
+						!res_i.atom_type(ii).is_virtual() &&
+						(p.pdb_info()->temperature(i, ii) == 0 || p.pdb_info()->occupancy(i, ii) == 0))) {
 			if (basic::options::option[ basic::options::OptionKeys::detect_tight_clusters::debug ]())
-				TR << " INITIAL FILTER -- discarding " << i << " because its b-factor in atom " << p.residue(i).atom_type(ii).name() << " is too high (or 0): " << p.pdb_info()->temperature((i), ii) << std::endl;
+				TR << " INITIAL FILTER -- discarding " << i;
+				TR << " because its b-factor in atom " << p.residue(i).atom_type(ii).name();
+				TR << " is too high (or 0): " << p.pdb_info()->temperature((i), ii) << std::endl;
 			acceptable = false;
 			break;
 		}

@@ -450,7 +450,8 @@ generate_samples_and_cluster( core::pose::Pose & pose,
 	// What are we going to do? SampleGenerator encodes this information...
 	/////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////
-	bool optimize_all( false ); // Usually move_all is specified by sample_res...
+	// Usually move_all is specified by sample_res...
+	//bool optimize_all( false );  // unused ~Labonte
 	StepWisePoseSampleGeneratorOP sample_generator;
 	bool full_optimize = option[ global_optimize ]();
 	bool disallow_backbone_sampling_ = option[ disallow_backbone_sampling ]();

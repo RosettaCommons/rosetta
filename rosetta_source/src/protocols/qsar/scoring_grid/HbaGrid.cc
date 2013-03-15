@@ -129,7 +129,10 @@ void HbaGrid::refresh(core::pose::Pose const & pose, core::Vector const & center
 	refresh(pose,center);
 }
 
-core::Real HbaGrid::score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP qsar_map)
+core::Real HbaGrid::score(
+		core::conformation::UltraLightResidue const & residue,
+		core::Real const max_score,
+		qsarMapOP /*qsar_map*/)
 {
 	core::Real score = 0.0;
 	//GridBaseTracer << "map size is: " << qsar_map->size() <<std::endl;
@@ -157,7 +160,10 @@ core::Real HbaGrid::score(core::conformation::UltraLightResidue const & residue,
 	return score;
 }
 
-core::Real HbaGrid::atom_score(core::conformation::UltraLightResidue const & residue, core::Size atomno, qsarMapOP qsar_map)
+core::Real HbaGrid::atom_score(
+		core::conformation::UltraLightResidue const & residue,
+		core::Size atomno,
+		qsarMapOP /*qsar_map*/)
 {
 	core::Real score = 0;
 	core::Vector const & atom_coord(residue[atomno]);

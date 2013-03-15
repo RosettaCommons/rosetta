@@ -71,7 +71,7 @@ ring_pos(conformation::Residue const & rsd, RNA_CS_residue_parameters const & rn
 static 
 Real dellintk_dm(Real const m) 
 {
-	Real const ak0 = 1.38629436112;
+	//Real const ak0 = 1.38629436112;
 	Real const ak1 = 0.09666344259;
 	Real const ak2 = 0.03590092383;
 	Real const ak3 = 0.03742563713;
@@ -105,7 +105,7 @@ Real dellintk_dm(Real const m)
 static 
 Real dellinte_dm(Real const m) 
 {
-	Real const ae0 = 1.0          ;
+	//Real const ae0 = 1.0          ;
 	Real const ae1 = 0.44325141463;
 	Real const ae2 = 0.06260601220;
 	Real const ae3 = 0.04757383546;
@@ -425,7 +425,7 @@ get_ring_current_deriv(numeric::xyzVector<core::Real> const & CS_data_atom_xyz,
 
 	numeric::xyzVector<core::Real> const rho_vector = r_vector - (base_z_axis * z); 
 
-	Real const r_length = r_vector.length();
+	//Real const r_length = r_vector.length();
 
 	numeric::xyzVector<core::Real> const z_norm = z_vector/z; //This gives back base_z_axis!;
 

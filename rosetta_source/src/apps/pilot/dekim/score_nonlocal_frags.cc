@@ -145,8 +145,8 @@ void MyScoreMover::apply( core::pose::Pose& pose ) {
 	utility::vector1< std::string >  tag = utility::string_split( input_tag, '_');
 	if ( tag.size() != 5 )
 		utility_exit_with_message( "Pose " + input_tag + " format error!" );
-	int frag1_start = atoi(tag[2].c_str());
-	int frag2_start = atoi(tag[3].c_str());
+	core::Size frag1_start = atoi(tag[2].c_str());
+	core::Size frag2_start = atoi(tag[3].c_str());
 	// fragment size should be pose total residue / 2
 	if (pose.total_residue() % 2 != 0)
 		utility_exit_with_message( "Pose " + input_tag + " total_residue() % 2 != 0" );
@@ -162,7 +162,7 @@ void MyScoreMover::apply( core::pose::Pose& pose ) {
 
 	//   Detect disulfides
 	pose.conformation().detect_disulfides();
-  pose.conformation().detect_bonds();
+	pose.conformation().detect_bonds();
 
 	utility::vector1< bool > needToRepack( pose.total_residue(), true );
 	core::pack::task::PackerTaskOP taskstd = core::pack::task::TaskFactory::create_packer_task( pose );
@@ -183,7 +183,7 @@ void MyScoreMover::apply( core::pose::Pose& pose ) {
 	(*sfxn_)( pose );
 
 	// RELAX non-local fragment pair
-  // setup relax protocol for sub pose (frag pair)
+	// setup relax protocol for sub pose (frag pair)
 	protocols::relax::RelaxProtocolBaseOP sub_pose_relax_protocol = protocols::relax::generate_relax_from_cmd();
 	kinematics::MoveMapOP mm = sub_pose_relax_protocol->get_movemap();
 	mm->set_jump(true); // set jumps movable
@@ -207,14 +207,19 @@ void MyScoreMover::apply( core::pose::Pose& pose ) {
 		Size weight = 1;
 		Size max = 6*frag_size; // 3 rdcs per residue (maximum) should be given a weight of 1
 		core::scoring::ResidualDipolarCoupling::RDC_lines rdc_data_given_fragment_lines;
-		for ( core::scoring::ResidualDipolarCoupling::RDC_lines::const_iterator it = rdc_raw_data_.begin(); it != rdc_raw_data_.end(); ++it ) {
-			if ( it->res1() >= frag1_start && it->res1() <= frag1_start + frag_size - 1 && it->res2() >= frag1_start && it->res2() <= frag1_start + frag_size - 1 ) {
+		for ( core::scoring::ResidualDipolarCoupling::RDC_lines::const_iterator it = rdc_raw_data_.begin();
+				it != rdc_raw_data_.end(); ++it ) {
+			if ( it->res1() >= frag1_start && it->res1() <= frag1_start + frag_size - 1 && it->res2() >= frag1_start &&
+					it->res2() <= frag1_start + frag_size - 1 ) {
 				// first fragment of pair
-				core::scoring::RDC selected ( it->res1() - frag1_start + 1, it->atom1(), it->res2() - frag1_start + 1, it->atom2(), it->Jdipolar());
+				core::scoring::RDC selected ( it->res1() - frag1_start + 1, it->atom1(), it->res2() - frag1_start + 1,
+						it->atom2(), it->Jdipolar());
 				rdc_data_given_fragment_lines.push_back( selected );
-			} else if ( it->res1() >= frag2_start && it->res1() <= frag2_start + frag_size - 1 && it->res2() >= frag2_start && it->res2() <= frag2_start + frag_size - 1 ) {
+			} else if ( it->res1() >= frag2_start && it->res1() <= frag2_start + frag_size - 1 &&
+					it->res2() >= frag2_start && it->res2() <= frag2_start + frag_size - 1 ) {
 				// second fragment of pair
-				core::scoring::RDC selected ( it->res1() - frag2_start + 1 + frag_size, it->atom1(), it->res2() - frag2_start + 1 + frag_size, it->atom2(), it->Jdipolar());
+				core::scoring::RDC selected ( it->res1() - frag2_start + 1 + frag_size, it->atom1(),
+						it->res2() - frag2_start + 1 + frag_size, it->atom2(), it->Jdipolar());
 				rdc_data_given_fragment_lines.push_back( selected );
 			}
 		}

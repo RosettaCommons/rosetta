@@ -106,7 +106,7 @@ void read_structures( SilentFileData &sfd, DecoySetEvaluation& ensemble ) {
 }
 
 void run() {
-	bool store_energies ( true );
+	//bool store_energies ( true );  // unused ~Labonte
 
 	DecoySetEvaluation ensemble;
 	SilentFileData sfd;

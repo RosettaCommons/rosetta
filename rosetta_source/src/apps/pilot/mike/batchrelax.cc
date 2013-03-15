@@ -64,94 +64,93 @@ static basic::Tracer TR("main");
 int
 main( int argc, char * argv [] )
 {
- 	using namespace core;
- 	using namespace protocols;
- 	using namespace protocols::jd2;
- 	using namespace basic::options;
- 	using namespace basic::options::OptionKeys;
- 	using io::silent::SilentStructFactory;
- 	using io::silent::SilentStructOP;
+	using namespace core;
+	using namespace protocols;
+	using namespace protocols::jd2;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	using io::silent::SilentStructFactory;
+	using io::silent::SilentStructOP;
 
 
- 	// initialize core
- 	devel::init(argc, argv);
- 	
-  evaluation::PoseEvaluatorsOP evaluators_( new protocols::evaluation::PoseEvaluators() );
-  evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluators_);
+	// initialize core
+	devel::init(argc, argv);
+
+	evaluation::PoseEvaluatorsOP evaluators_( new protocols::evaluation::PoseEvaluators() );
+	evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluators_);
 
 
- 	core::Size nstruct = option[ OptionKeys::out::nstruct ];
- 	core::Size batch_size = option[ OptionKeys::batch_relax::batch_size ];
- 	TR << "The BATCHSIZE: " << batch_size << std::endl;
+	core::Size nstruct = option[ OptionKeys::out::nstruct ];
+	core::Size batch_size = option[ OptionKeys::batch_relax::batch_size ];
+	TR << "The BATCHSIZE: " << batch_size << std::endl;
 	core::import_pose::pose_stream::MetaPoseInputStream input = core::import_pose::pose_stream::streams_from_cmd_line();
 
- 	io::silent::SilentFileData sfd;
- 	std::string silent_file_ = option[ OptionKeys::out::file::silent ]();
+	io::silent::SilentFileData sfd;
+	std::string silent_file_ = option[ OptionKeys::out::file::silent ]();
 
-  core::Size struct_count = 0;
- 	while( input.has_another_pose() )
- 	{
- 		// make a list of simple pointers. This should be safe since the input_structs will all remain in scope.
- 		core::chemical::ResidueTypeSetCAP rsd_set;
- 		if ( option[ in::file::fullatom ]() ) {
- 			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
- 		} else {
- 			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
- 		}
- 		core::Size count = 0;
+	//core::Size struct_count = 0;  // unused ~Labonte
+	while( input.has_another_pose() )
+	{
+		// make a list of simple pointers. This should be safe since the input_structs will all remain in scope.
+		core::chemical::ResidueTypeSetCAP rsd_set;
+		if ( option[ in::file::fullatom ]() ) {
+			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+		} else {
+			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
+		}
+		core::Size count = 0;
 
- 		std::vector < SilentStructOP > input_structs;
- 		while( input.has_another_pose() && (count < batch_size ) ) {
- 			core::pose::Pose pose;
- 			input.fill_pose( pose, *rsd_set );
+		std::vector < SilentStructOP > input_structs;
+		while( input.has_another_pose() && (count < batch_size ) ) {
+			core::pose::Pose pose;
+			input.fill_pose( pose, *rsd_set );
 
- 			SilentStructOP new_struct = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
- 			new_struct->fill_struct( pose );
- 			input_structs.push_back( new_struct );
+			SilentStructOP new_struct = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
+			new_struct->fill_struct( pose );
+			input_structs.push_back( new_struct );
 			count++;
 		}
 
- 		core::scoring::ScoreFunctionOP scorefxn;
- 		scorefxn = core::scoring::getScoreFunction();
+		core::scoring::ScoreFunctionOP scorefxn;
+		scorefxn = core::scoring::getScoreFunction();
 
- 		for ( core::Size j=0;j<nstruct;j++ )
- 		{
- 			std::vector < SilentStructOP > relax_structs;
- 			// Make a deep copy of the input_structs list
- 			for( std::vector < SilentStructOP >::const_iterator it = input_structs.begin();
- 					it != input_structs.end();
- 					++ it )
- 			{
- 				SilentStructOP new_struct;
- 				new_struct = (*it)->clone();
- 				relax_structs.push_back( new_struct );
- 			}
+		for ( core::Size j=0;j<nstruct;j++ )
+		{
+			std::vector < SilentStructOP > relax_structs;
+			// Make a deep copy of the input_structs list
+			for( std::vector < SilentStructOP >::const_iterator it = input_structs.begin();
+					it != input_structs.end();
+					++ it )
+			{
+				SilentStructOP new_struct;
+				new_struct = (*it)->clone();
+				relax_structs.push_back( new_struct );
+			}
 
- 			protocols::relax::FastRelax relax( scorefxn,  option[ OptionKeys::relax::sequence_file ]() );
- 			TR << "BATCHSIZE: " <<  relax_structs.size() << std::endl;
+			protocols::relax::FastRelax relax( scorefxn,  option[ OptionKeys::relax::sequence_file ]() );
+			TR << "BATCHSIZE: " <<  relax_structs.size() << std::endl;
 			long starttime = time(NULL);
-      relax.batch_apply( relax_structs );
-      long endtime = time(NULL);
-      TR << "TIME: " << endtime - starttime << " seconds" << std::endl;
-      
- 			// Now save the resulting decoys
+			relax.batch_apply( relax_structs );
+			long endtime = time(NULL);
+			TR << "TIME: " << endtime - starttime << " seconds" << std::endl;
 
- 			for( std::vector < SilentStructOP >::const_iterator it = relax_structs.begin();
- 					it != relax_structs.end();
- 					++ it )
- 			{
- 				if( evaluators_->size()){
- 					core::pose::Pose cpose;
- 					input.fill_pose( cpose, *rsd_set );
-          evaluators_->apply( cpose, "tag" , *(*it) );
- 				}
- 				
+			// Now save the resulting decoys
 
-        sfd.write_silent_struct( *(*it), silent_file_ );
- 			}
- 		} // nstruct for
- 	} // while
+			for( std::vector < SilentStructOP >::const_iterator it = relax_structs.begin();
+					it != relax_structs.end();
+					++ it )
+			{
+				if( evaluators_->size()){
+					core::pose::Pose cpose;
+					input.fill_pose( cpose, *rsd_set );
+					evaluators_->apply( cpose, "tag" , *(*it) );
+				}
 
- 	return 0;
+
+				sfd.write_silent_struct( *(*it), silent_file_ );
+			}
+		} // nstruct for
+	} // while
+
+	return 0;
 }
-

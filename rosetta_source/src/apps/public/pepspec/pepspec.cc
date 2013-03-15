@@ -1081,7 +1081,7 @@ gen_pep_bb_sequential(
 	Size break_loop( 0 );
 	Size n_prepended( 0 );
 	Size n_appended( 0 );
-	Size iqq( 1 );
+	//Size iqq( 1 );  // unused ~Labonte
 	while( ( n_prepended < n_prepend || n_appended < n_append ) ){
 		Size this_prepend( n_prepend );
 		Size this_append( n_append );

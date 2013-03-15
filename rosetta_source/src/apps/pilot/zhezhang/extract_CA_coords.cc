@@ -107,7 +107,7 @@ void register_options(){
 }
 
 
-void write_for_resnum(int resnum, char chainID){
+void write_for_resnum(int resnum, char /*chainID*/){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace io::silent;
@@ -152,7 +152,7 @@ void run(){
 			Real energy;
 			char outbuf[200];
 			char chainID ='Z';
-			for ( int i=1; i <= option[ reslist ]().size(); i++ ){
+			for ( Size i=1; i <= option[ reslist ]().size(); i++ ){
 				int res = option[ reslist ]()[i];
 				if ( !option[ bfac ]().empty() && it->has_energy( option[ bfac ]() )){
 						energy = it->get_energy( option[ bfac ]() );

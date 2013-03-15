@@ -452,7 +452,7 @@ void PeakAssignmentResidueMap::network_analysis2( ResonanceList const& resonance
 			Size const resj( first_assignment.resid(  2 ) );
 
 			//are resi and resj sequential
-			bool sequential( std::abs( (int) resi- (int) resj ) <= 1 );
+			//bool sequential( std::abs( (int) resi- (int) resj ) <= 1 );
 
 			//get all resonances K that could potentiall give us a triangle i, j, k
 			ResonanceList::Resonances resK;

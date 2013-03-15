@@ -168,7 +168,7 @@ Real check_jump( pose::Pose const& pose, pose::Pose const& native, JumpSample co
 
 Real compare_cartesian_rmsd( Pose const &orig_frag, Pose const &pred_frag ) {
 	Size const nres( orig_frag.total_residue() );
-	Size const nres2( pred_frag.total_residue() );
+	//Size const nres2( pred_frag.total_residue() );  // unused ~Labonte
 	assert( nres == nres2 );
 	Size const cmp ( 9 ); //compare 9mers
 	Size const ncmp ( nres - cmp + 1 );

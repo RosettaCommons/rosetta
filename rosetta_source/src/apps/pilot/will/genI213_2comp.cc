@@ -860,9 +860,9 @@ Real ddg(Pose const & p_in, ScoreFunctionOP sf, Size Ntri, Real & rholes, Real &
   }
   Real s0 = sf->score(p);
   Real p0 = core::scoring::packing::compute_dec15_score(p);
-  Real hsp0 = sfhsp(p);
-  Real ssp0 = sfssp(p);
-  Real sht0 = sfsht(p);
+  //Real hsp0 = sfhsp(p);  // unused ~Labonte
+  //Real ssp0 = sfssp(p);  // unused ~Labonte
+  //Real sht0 = sfsht(p);  // unused ~Labonte
   //p.dump_pdb("test1.pdb");
   for(Size ir = 1; ir <= Ntri; ++ir)for(Size ia = 1; ia <= p.residue_type(ir).natoms(); ++ia) p.set_xyz(AtomID(ia,ir),p.xyz(AtomID(ia,ir))+Vec(9999,9999,9999));
   TR << "ddg repack 1" << std::endl;
@@ -874,9 +874,9 @@ Real ddg(Pose const & p_in, ScoreFunctionOP sf, Size Ntri, Real & rholes, Real &
     repack.apply(p);
   }
   Real s1 = sf->score(p);
-  Real hsp1 = sfhsp(p);
-  Real ssp1 = sfssp(p);
-  Real sht1 = sfsht(p);
+  //Real hsp1 = sfhsp(p);  // unused ~Labonte
+  //Real ssp1 = sfssp(p);  // unused ~Labonte
+  //Real sht1 = sfsht(p);  // unused ~Labonte
 
   for(Size ir = 1; ir <= Ntri; ++ir)for(Size ia = 1; ia <= p.residue_type(ir).natoms(); ++ia) p.set_xyz(AtomID(ia,ir),p.xyz(AtomID(ia,ir))-Vec(9999,9999,9999));
   //  p.dump_pdb("test2.pdb");

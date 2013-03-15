@@ -266,7 +266,7 @@ public:
 		mm_relax->set_chi(true);
 		mm_relax->set_bb(true);
 		for ( Loops::iterator it=loops->v_begin(), it_end=loops->v_end(); it != it_end; ++it )
-			for (int i=it->start(); i<=it->stop(); ++i)
+			for (core::Size i=it->start(); i<=it->stop(); ++i)
 				mm_relax->set_bb(i, true);
 
 		protocols::relax::RelaxProtocolBaseOP relax_prot = protocols::relax::generate_relax_from_cmd();
@@ -389,7 +389,7 @@ public:
 		utility::vector1< char > pdb_chains;
 
 		for ( Size i(1); i <= query_pose.total_residue(); ++i ) {
-			int resid_num;
+			//int resid_num;  // unused ~Labonte
 			if (new_invmapping[i] != 0) {
 				pdb_numbering.push_back( i );
 				pdb_chains.push_back( 'A' );
@@ -625,7 +625,7 @@ public:
 		if (disulfs_.size() > 0) {
 			utility::vector1< std::pair<Size,Size> > disulfides;
 			core::Size ndisulf = disulfs_.size();
-			for (int i=1; i<=ndisulf; ++i) {
+			for (core::Size i=1; i<=ndisulf; ++i) {
 				utility::vector1<std::string> pair_i = utility::string_split( disulfs_[i], ':');
 				runtime_assert( pair_i.size() == 2 );
 				core::Size lres=parse_res( pose, pair_i[1] );

@@ -122,7 +122,7 @@ int main( int argc, char* argv [] ) {
 			numeric::xyzVector<core::Real> coords = resi.xyz("CA");
 
 			vector1< core::Real > chis( 4, 0.0 );
-			for ( Size jj = 1; jj <= std::min( 4, (int) resi.nchi() ); ++jj ) {
+			for ( Size jj = 1; jj <= Size(std::min( 4, (int) resi.nchi() )); ++jj ) {
 				chis[jj] = resi.chi(jj);
 			}
 

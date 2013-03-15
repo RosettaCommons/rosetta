@@ -82,13 +82,12 @@ MyMover::MyMover()
 
 }
 
-void MyMover::apply( core::pose::Pose& pose ) {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+void MyMover::apply( core::pose::Pose& /*pose*/ ) {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core;
 
-  //core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID );
-
+	//core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID );
 }
 
 int

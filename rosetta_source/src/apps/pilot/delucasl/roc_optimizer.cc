@@ -144,7 +144,7 @@ private:
 };
 
 
-void setup_grid_manager(GridWeights const & weights)
+void setup_grid_manager(GridWeights const & /*weights*/)
 {
 	using namespace protocols::qsar::scoring_grid;
 	GridManager* grid_manager( GridManager::get_instance() );

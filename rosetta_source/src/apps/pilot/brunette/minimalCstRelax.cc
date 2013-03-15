@@ -164,7 +164,7 @@ int main( int argc, char * argv [] ) {
 	const Real COORDINATE_CST_WT = 1;
 	SilentFileData sfd;
 	SilentStructOP ss(new core::io::silent::ScoreFileSilentStruct);
-	Size gapBtwConstrainedResidues = option[ minimalCstRelax::coordinate_cst_gap]();
+	//Size gapBtwConstrainedResidues = option[ minimalCstRelax::coordinate_cst_gap]();  // unused ~Labonte
 	//Get input pdbs---------------------------------------------------------------
 	MetaPoseInputStream input = streams_from_cmd_line();
 	std::map<string,SequenceAlignment> alns = input_alignmentsMapped(true);

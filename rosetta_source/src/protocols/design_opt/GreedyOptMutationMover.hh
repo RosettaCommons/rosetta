@@ -120,13 +120,13 @@ private:
 	utility::vector1< utility::vector1< core::Real > > pfront_poses_filter_vals_;
 	utility::vector1< utility::vector1< core::Size > > pfront_poses_filter_ranks_;
 	core::Size nstruct_iter_;
-  bool stop_before_condition_;
-  bool skip_best_check_;
-  utility::vector1<protocols::simple_filters::DeltaFilterOP> reset_delta_filters_;
-  bool rtmin_; //dflt false; should we rtmin after packing?
-  core::Real design_shell_;//dflt -1 to only allow pointmutations, higher allows suroundings to be designed as well
-  core::Real repack_shell_;
-  bool shuffle_order_; //randomize the order that mutations are attempted?
+	bool stop_before_condition_;
+	bool skip_best_check_;
+	utility::vector1<protocols::simple_filters::DeltaFilterOP> reset_delta_filters_;
+	bool rtmin_; //dflt false; should we rtmin after packing?
+	core::Real design_shell_;//dflt -1 to only allow pointmutations, higher allows suroundings to be designed as well
+	core::Real repack_shell_;
+	bool shuffle_order_; //randomize the order that mutations are attempted?
 };
 
 

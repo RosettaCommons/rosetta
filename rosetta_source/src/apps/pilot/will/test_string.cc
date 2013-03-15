@@ -22,7 +22,7 @@
 #include <iostream>
 
 int
-main (int argc, char *argv[])
+main (int /*argc*/, char ** /* *argv[] */)
 {
 
 	using utility::to_string;

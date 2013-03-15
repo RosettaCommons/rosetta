@@ -124,7 +124,8 @@ int main (int argc, char *argv[]) {
 			vector1<Vec> postNoC = non_chain_coords(pose,chain,nres);
 			if(  check_coords_match(preC  ,postC)   ) TR.Error << "FAIL: chain " << chain << " not moved" << std::endl;
 			if( !check_coords_match(preNoC,postNoC) ) TR.Error << "FAIL: not chain " << chain << " moved" << std::endl;
-			fail != check_coords_match(preC,postC) || !check_coords_match(preNoC,postNoC);
+			// The following expression result was unused; I have attempted to correct it. ~Labonte
+			fail = !check_coords_match(preC,postC) || !check_coords_match(preNoC,postNoC);
 		}
 		if(!fail) TR << "WOOT " << files[ifile] << " " << option[basic::options::OptionKeys::symmetry::symmetry_definition]() << std::endl;
 	}

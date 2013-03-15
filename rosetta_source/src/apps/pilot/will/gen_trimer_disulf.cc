@@ -401,9 +401,10 @@ void generate_disulfide_conformations(core::pose::Pose const & in_pose, Size icy
 	}
 	Real start_chi1  = dihedral_degrees(pose.xyz(AtomID(1,0*N+icys)),pose.xyz(AtomID(2,0*N+icys)),pose.xyz(AtomID(5,0*N+icys)),pose.xyz(AtomID(6,0*N+icys)));
 	Real start_chi2  = dihedral_degrees(pose.xyz(AtomID(2,0*N+icys)),pose.xyz(AtomID(5,0*N+icys)),pose.xyz(AtomID(6,0*N+icys)),pose.xyz(AtomID(6,3*N+icys)));
-	Real start_chiss = dihedral_degrees(pose.xyz(AtomID(5,0*N+icys)),pose.xyz(AtomID(6,0*N+icys)),pose.xyz(AtomID(6,3*N+icys)),pose.xyz(AtomID(5,3*N+icys)));
-	Real start_chi2b = dihedral_degrees(pose.xyz(AtomID(2,3*N+icys)),pose.xyz(AtomID(5,3*N+icys)),pose.xyz(AtomID(6,3*N+icys)),pose.xyz(AtomID(5,0*N+icys)));
-	Real start_chi1b = dihedral_degrees(pose.xyz(AtomID(1,3*N+icys)),pose.xyz(AtomID(2,3*N+icys)),pose.xyz(AtomID(5,3*N+icys)),pose.xyz(AtomID(6,3*N+icys)));
+	// unused ~Labonte
+	//Real start_chiss = dihedral_degrees(pose.xyz(AtomID(5,0*N+icys)),pose.xyz(AtomID(6,0*N+icys)),pose.xyz(AtomID(6,3*N+icys)),pose.xyz(AtomID(5,3*N+icys)));
+	//Real start_chi2b = dihedral_degrees(pose.xyz(AtomID(2,3*N+icys)),pose.xyz(AtomID(5,3*N+icys)),pose.xyz(AtomID(6,3*N+icys)),pose.xyz(AtomID(5,0*N+icys)));
+	//Real start_chi1b = dihedral_degrees(pose.xyz(AtomID(1,3*N+icys)),pose.xyz(AtomID(2,3*N+icys)),pose.xyz(AtomID(5,3*N+icys)),pose.xyz(AtomID(6,3*N+icys)));
 	// swap in a CYS with HG placed where paired S goes
 	Pose cys;
  	make_pose_from_sequence(cys,"C","fa_standard",false);

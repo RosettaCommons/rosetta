@@ -143,7 +143,7 @@ core::kinematics::FoldTree
 sealed_symmetric_fold_tree( core::pose::Pose  & pose );
 
 int
-get_sym_aware_jump_num( core::pose::Pose const & pose, int jump_num );
+get_sym_aware_jump_num( core::pose::Pose const & pose, core::Size jump_num );
 
 utility::vector1<std::string>
 sym_dof_names(core::pose::Pose const & pose);

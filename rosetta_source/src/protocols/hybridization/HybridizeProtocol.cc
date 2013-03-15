@@ -804,7 +804,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 				for ( Size ihet=1; ihet <= hetatms.size(); ++ihet ) {
 					core::conformation::Residue const &res_in = templates_[initial_template_index]->residue(hetatms[ihet].first);
 
-					for (int iatm=1; iatm<=res_in.natoms(); ++iatm) {
+					for (Size iatm=1; iatm<=res_in.natoms(); ++iatm) {
 						core::id::AtomID tgt(iatm,hetatms[ihet].second);
 						pose.set_xyz( tgt, res_in.xyz( iatm ) );
 					}
@@ -1170,7 +1170,11 @@ HybridizeProtocol::get_name() const {
 
 void
 HybridizeProtocol::parse_my_tag(
-	utility::tag::TagPtr const tag, moves::DataMap & data, filters::Filters_map const & , moves::Movers_map const & , core::pose::Pose const & pose )
+		utility::tag::TagPtr const tag,
+		moves::DataMap & data,
+		filters::Filters_map const &,
+		moves::Movers_map const &,
+		core::pose::Pose const & /*pose*/ )
 {
 	// config file
 	if( tag->hasOption( "config_file" ) )
