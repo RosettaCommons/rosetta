@@ -144,7 +144,6 @@ Splice::Splice() :
 			segment_type_( "" ),
 			profile_weight_away_from_interface_( 1.0 ),
 			restrict_to_repacking_chain2_( true ),
-			seqprof_taskop_( NULL ),
 			add_sequence_constraints_only_( false )
 {
 	torsion_database_.clear();
@@ -761,6 +760,61 @@ Splice::get_name() const {
 void
 Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protocols::filters::Filters_map const & filters, protocols::moves::Movers_map const &, core::pose::Pose const & pose )
 {
+	utility::vector1< TagPtr > const sub_tags( tag->getTags() );
+
+	typedef utility::vector1< std::string > StringVec;
+	segment_names_ordered_.clear(); //This string vector hold all the segment names inserted bythe user to ensure that the sequence profile is built according to tthe user
+	foreach( TagPtr const sub_tag, sub_tags ){
+		if( sub_tag->getName() == "Segments" ){
+			use_sequence_profiles_ = true;
+			profile_weight_away_from_interface( tag->getOption< core::Real >( "profile_weight_away_from_interface", 1.0 ) );
+			segment_type_ = sub_tag->getOption< std::string >( "current_segment" );
+			TR<<"reading segments in splice "<<tag->getName()<<std::endl;
+			/* e.g.,
+<Splice name=splice_L2...
+  <Segments current_segment=L1>
+				<L1 pdb_profile_match="pdb_profile_match.L1" profiles="L1:L1.pssm"/>
+				<L2 pdb_profile_match="pdb_profile_match.L2" profiles="L2:L2.pssm"/>
+				<L3 pdb_profile_match="pdb_profile_match.L3" profiles="L3:L3.pssm"/>
+				<Frm1 pdb_profile_match="pdb_profile_match.Frm1" profiles="Frm1:frm1.pssm"/>
+				<Frm2 pdb_profile_match="pdb_profile_match.Frm2" profiles="Frm2:frm2.pssm"/>
+				<Frm3 pdb_profile_match="pdb_profile_match.Frm3" profiles="Frm3:frm3.pssm"/>
+                <Frm4 pdb_profile_match="pdb_profile_match.Frm4" profiles="Frm4:frm4.pssm"/>
+			</Segments>
+</Splice>
+			 */
+			utility::vector1< TagPtr > const segment_tags( sub_tag->getTags() );
+			foreach( TagPtr const segment_tag, segment_tags ){
+				std::string const segment_name( segment_tag->getName() );//get name of segment from xml
+				std::string const pdb_profile_match( segment_tag->getOption< std::string >( "pdb_profile_match" ) ); // get name of pdb profile match, this file contains all the matching between pdb name and sub segment name, i.e L1.1,L1.2 etc
+				std::string const profiles_str( segment_tag->getOption< std::string >( "profiles" ) );
+				StringVec const profile_name_pairs( utility::string_split( profiles_str, ',' ) );
+				SpliceSegmentOP splice_segment( new SpliceSegment );
+				//TR<<"Now working on segment:"<<segment_name<<"\n";
+				foreach( std::string const s, profile_name_pairs ){
+					StringVec const profile_name_file_name( utility::string_split( s, ':' ) );
+					TR<<"         line 855       "<<"pssm file:"<<profile_name_file_name[ 2 ]<<",segment name:"<<profile_name_file_name[ 1 ]<<std::endl;
+
+					splice_segment->read_profile( profile_name_file_name[ 2 ], profile_name_file_name[ 1 ] );
+
+				}
+				splice_segment->read_pdb_profile( pdb_profile_match );
+
+
+
+				TR<<"line 886"<<"the segment name is: "<<segment_name<<std::endl;
+				splice_segments_.insert( std::pair< std::string, SpliceSegmentOP >( segment_name, splice_segment ) );
+				segment_names_ordered_.push_back(segment_name);
+			}//foreach segment_tag
+		}// fi Segments
+	}//foreach sub_tag
+
+	add_sequence_constraints_only( tag->getOption< bool >( "add_sequence_constraints_only", false ) );
+	if( add_sequence_constraints_only() ){
+		TR<<"add_sequence_constraints only set to true. Therefore I'm not parsing any of the other Splice flags. Ask Assaf!"<<std::endl;
+		return;
+	}
+
 	start_pose_ = new core::pose::Pose( pose );
 	runtime_assert( tag->hasOption( "task_operations" ) != (tag->hasOption( "from_res" ) || tag->hasOption( "to_res" ) ) || tag->hasOption( "torsion_database" ) ); // it makes no sense to activate both taskoperations and from_res/to_res.
 	runtime_assert( tag->hasOption( "torsion_database" ) != tag->hasOption( "source_pdb" ) );
@@ -811,7 +865,6 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 	equal_length( tag->getOption< bool >( "equal_length", false ) );
 	poly_ala( tag->getOption< bool >( "thread_ala", true ) );
 
-	typedef utility::vector1< std::string > StringVec;
 	std::string delta;
 	if( tag->hasOption( "delta_lengths" ) ){
 		delta = tag->getOption< std::string >( "delta_lengths" );
@@ -862,61 +915,8 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 		mover_tag_ = protocols::moves::get_set_from_datamap< protocols::moves::DataMapObj< std::string > >( "tags", tag->getOption< std::string >( "mover_tag" ), data );
 	loop_pdb_source( tag->getOption< std::string >( "loop_pdb_source", "" ) );
 
-	utility::vector1< TagPtr > const sub_tags( tag->getTags() );
-
-	segment_names_ordered_.clear(); //This string vector hold all the segment names inserted bythe user to ensure that the sequence profile is built according to tthe user
-	foreach( TagPtr const sub_tag, sub_tags ){
-		if( sub_tag->getName() == "Segments" ){
-			use_sequence_profiles_ = true;
-			profile_weight_away_from_interface( tag->getOption< core::Real >( "profile_weight_away_from_interface", 1.0 ) );
-			segment_type_ = sub_tag->getOption< std::string >( "current_segment" );
-			TR<<"reading segments in splice "<<tag->getName()<<std::endl;
-			/* e.g.,
-<Splice name=splice_L2...
-  <Segments current_segment=L1>
-				<L1 pdb_profile_match="pdb_profile_match.L1" profiles="L1:L1.pssm"/>
-				<L2 pdb_profile_match="pdb_profile_match.L2" profiles="L2:L2.pssm"/>
-				<L3 pdb_profile_match="pdb_profile_match.L3" profiles="L3:L3.pssm"/>
-				<Frm1 pdb_profile_match="pdb_profile_match.Frm1" profiles="Frm1:frm1.pssm"/>
-				<Frm2 pdb_profile_match="pdb_profile_match.Frm2" profiles="Frm2:frm2.pssm"/>
-				<Frm3 pdb_profile_match="pdb_profile_match.Frm3" profiles="Frm3:frm3.pssm"/>
-                <Frm4 pdb_profile_match="pdb_profile_match.Frm4" profiles="Frm4:frm4.pssm"/>
-			</Segments>
-</Splice>
-			 */
-			utility::vector1< TagPtr > const segment_tags( sub_tag->getTags() );
-			foreach( TagPtr const segment_tag, segment_tags ){
-				std::string const segment_name( segment_tag->getName() );//get name of segment from xml
-				std::string const pdb_profile_match( segment_tag->getOption< std::string >( "pdb_profile_match" ) ); // get name of pdb profile match, this file contains all the matching between pdb name and sub segment name, i.e L1.1,L1.2 etc
-				std::string const profiles_str( segment_tag->getOption< std::string >( "profiles" ) );
-				StringVec const profile_name_pairs( utility::string_split( profiles_str, ',' ) );
-				SpliceSegmentOP splice_segment( new SpliceSegment );
-				//TR<<"Now working on segment:"<<segment_name<<"\n";
-				foreach( std::string const s, profile_name_pairs ){
-					StringVec const profile_name_file_name( utility::string_split( s, ':' ) );
-					TR<<"         line 855       "<<"pssm file:"<<profile_name_file_name[ 2 ]<<",segment name:"<<profile_name_file_name[ 1 ]<<std::endl;
-
-					splice_segment->read_profile( profile_name_file_name[ 2 ], profile_name_file_name[ 1 ] );
-
-				}
-				splice_segment->read_pdb_profile( pdb_profile_match );
-
-
-
-				TR<<"line 886"<<"the segment name is: "<<segment_name<<std::endl;
-				splice_segments_.insert( std::pair< std::string, SpliceSegmentOP >( segment_name, splice_segment ) );
-				segment_names_ordered_.push_back(segment_name);
-			}//foreach segment_tag
-		}// fi Segments
-	}//foreach sub_tag
 	restrict_to_repacking_chain2( tag->getOption< bool >( "restrict_to_repacking_chain2", true ) );
 
-	if( tag->hasOption( "seqprof_taskoperation" ) ){
-		seqprof_taskop( protocols::moves::get_set_from_datamap< protocols::toolbox::task_operations::SeqprofConsensusOperation >( "task_operations", tag->getOption< std::string > ("seqprof_taskoperation" ), data ) );
-		TR<<"Splice will modify the seqprof_taskoperation to the current set of segments"<<std::endl;
-	}
-
-	add_sequence_constraints_only( tag->getOption< bool >( "add_sequence_constraints_only", false ) );
 	TR<<"from_res: "<<from_res()<<" to_res: "<<to_res()<<" dbase_iterate: "<<dbase_iterate()<<" randomize_cut: "<<randomize_cut()<<" cut_secondarystruc: "<<cut_secondarystruc()<<" source_pdb: "<<source_pdb()<<" ccd: "<<ccd()<<" rms_cutoff: "<<rms_cutoff()<<" res_move: "<<res_move()<<" template_file: "<<template_file()<<" checkpointing_file: "<<checkpointing_file_<<" loop_dbase_file_name: "<<loop_dbase_file_name_<<" loop_pdb_source: "<<loop_pdb_source()<<" mover_tag: "<<mover_tag_<<" torsion_database: "<<torsion_database_fname_<<" restrict_to_repacking_chain2: "<<restrict_to_repacking_chain2()<<std::endl;
 }
 
@@ -1285,11 +1285,6 @@ Splice::add_sequence_constraints( core::pose::Pose & pose ){
 		TR<<"Chain length/seqprof size: "<<pose.conformation().chain_end( 1 ) - pose.conformation().chain_begin( 1 ) + 1<<", "<<seqprof->size()-1<<std::endl;
 		runtime_assert( seqprof->size()-1 == pose.conformation().chain_end( 1 ) - pose.conformation().chain_begin( 1 ) + 1 ); //Please note that the minus 1 after seqprof size is because seqprof size is always +1 to the actual size. Do not chnage this!!
 		cst_num = 0;
-		if( seqprof_taskop()() != NULL ){
-			TR<<"Modifying the sequence profile task operation to match the current sequence profile"<<std::endl;
-			seqprof_taskop()->set_seqprof( seqprof );
-		}
-
 		TR<<"Upweighting sequence constraint for residues: ";
 		if (pose.conformation().num_chains() == 1){//If pose has only one chain (no ligand) than all residues are weighted the same
 			for( core::Size seqpos = pose.conformation().chain_begin( 1 ); seqpos <= pose.conformation().chain_end( 1 ); ++seqpos ) {
@@ -1335,16 +1330,5 @@ void
 Splice::profile_weight_away_from_interface( core::Real const p ){
 	profile_weight_away_from_interface_ = p;
 }
-
-void
-Splice::seqprof_taskop( protocols::toolbox::task_operations::SeqprofConsensusOperationOP op ){
-	seqprof_taskop_ = op;
-}
-
-protocols::toolbox::task_operations::SeqprofConsensusOperationOP
-Splice::seqprof_taskop() const{
-	return seqprof_taskop_;
-}
-
 } //splice
 } //devel
