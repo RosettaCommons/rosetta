@@ -117,30 +117,30 @@ RestrictNativeResiduesOperation::apply( Pose const & pose, PackerTask & task ) c
 	runtime_assert( reference_pose() );
 	core::Size total_residue_ref;
 	core::pose::Pose asym_ref_pose;
-	if(core::pose::symmetry::is_symmetric( *reference_pose() )) { 
+	if(core::pose::symmetry::is_symmetric( *reference_pose() )) {
 		core::pose::symmetry::extract_asymmetric_unit( *reference_pose(), asym_ref_pose);
   	for (core::Size i = 1; i <= asym_ref_pose.total_residue(); ++i) {
     	if (asym_ref_pose.residue_type(i).name() == "VRT") {
 				asym_ref_pose.conformation().delete_residue_slow(asym_ref_pose.total_residue());
 			}
 		}
-		total_residue_ref = asym_ref_pose.total_residue(); 
+		total_residue_ref = asym_ref_pose.total_residue();
 	} else {
-		total_residue_ref = reference_pose()->total_residue(); 
+		total_residue_ref = reference_pose()->total_residue();
 		asym_ref_pose = *reference_pose();
-	} 
+	}
 	core::Size total_residue;
 	core::pose::Pose asym_pose;
-	if (core::pose::symmetry::is_symmetric( pose )) { 
+	if (core::pose::symmetry::is_symmetric( pose )) {
 		core::pose::symmetry::extract_asymmetric_unit(pose, asym_pose);
   	for (core::Size i = 1; i <= asym_pose.total_residue(); ++i) {
     	if (asym_pose.residue_type(i).name() == "VRT") {
 				asym_pose.conformation().delete_residue_slow(asym_pose.total_residue());
 			}
 		}
-		total_residue = asym_pose.total_residue(); 
+		total_residue = asym_pose.total_residue();
 	} else {
-		total_residue = pose.total_residue(); 
+		total_residue = pose.total_residue();
 		asym_pose = pose;
 	}
 	if( total_residue_ref != total_residue )
@@ -153,7 +153,7 @@ RestrictNativeResiduesOperation::apply( Pose const & pose, PackerTask & task ) c
 			else task.nonconst_residue_task(resi).restrict_to_repacking();
 		} else {
 			if ( verbose_ ) {
-				select_non_native_resis.append(ObjexxFCL::string_of(resi) + "+");   
+				select_non_native_resis.append(ObjexxFCL::string_of(resi) + "+");
 			}
 			designable_resis++;
 		}
@@ -181,13 +181,13 @@ RestrictNativeResiduesOperation::parse_tag( TagPtr tag )
 	if( option[ in::file::native ].user() ){
 		reference_pdb = option[ in::file::native ]();
 	} else if ( tag->hasOption("pdbname") ) {
-		reference_pdb = tag->getOption< std::string >("pdbname"); 
+		reference_pdb = tag->getOption< std::string >("pdbname");
 	}
 	if ( reference_pdb != "" ) {
 		core::pose::PoseOP temp_pose( new core::pose::Pose );
 		core::import_pose::pose_from_pdb( *temp_pose, reference_pdb );
 		reference_pose( temp_pose );
-		TR<<"Using pdb "<<reference_pdb<<" as reference.";
+		TR<<"Using pdb "<<reference_pdb<<" as reference."<<std::endl;
 	}	else {
 		throw utility::excn::EXCN_RosettaScriptsOption( "Native PDB not specified." );
 	}

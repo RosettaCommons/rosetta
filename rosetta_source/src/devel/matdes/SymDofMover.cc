@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //
-/// @file 
-/// @brief 
+/// @file
+/// @brief
 /// @author Jacob Bale ( balej@uw.edu )
 
 // Unit headers
@@ -26,6 +26,7 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/symmetry/util.hh>
+#include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/VirtualCoordinate.hh>
 #include <core/conformation/symmetry/SymmData.hh>
 #include <numeric/xyz.functions.hh>
@@ -81,23 +82,23 @@ SymDofMover::SymDofMover() :
 	auto_range_(false)
 { }
 
-protocols::moves::MoverOP 
+protocols::moves::MoverOP
 SymDofMover::clone() const {
 	return new SymDofMover( *this );
 }
 
-protocols::moves::MoverOP 
+protocols::moves::MoverOP
 SymDofMover::fresh_instance() const {
 				return new SymDofMover();
 }
 
 utility::vector1<std::string>
-SymDofMover::get_sym_dof_names() { 
+SymDofMover::get_sym_dof_names() {
 	return sym_dof_names_;
 }
 
 utility::vector1<Real>
-SymDofMover::get_angles() { 
+SymDofMover::get_angles() {
 	utility::vector1< std::string > sym_dof_names = get_sym_dof_names();
 	utility::vector1<Real> angles;
 	if(sampling_mode_ == "grid" ) {
@@ -122,7 +123,7 @@ SymDofMover::get_angles() {
 }
 
 utility::vector1<Real>
-SymDofMover::get_radial_disps() { 
+SymDofMover::get_radial_disps() {
 	utility::vector1< std::string > sym_dof_names = get_sym_dof_names();
 	utility::vector1<Real> radial_disps;
 	if(sampling_mode_ == "grid" ) {
@@ -198,59 +199,121 @@ SymDofMover::apply(Pose & pose) {
 	utility::vector1<Real> radial_disps = get_radial_disps();
 	utility::vector1<Real> angles = get_angles();
 	std::string symm_file = symm_file_;
-	char axis = axis_;
+	std::string symm_name = utility::file_basename(symm_file);
+ 	char axis = axis_;
 	utility::vector1< std::string > flip_about_axis = utility::string_split( flip_about_axis_, ',' );
 	bool align_axis = align_axis_;
 
 // Read in symmetry info from symmetry definition file //
-	
+
 	core::conformation::symmetry::SymmData symmdata( pose.n_residue(), pose.num_jump() );
 	symmdata.read_symmetry_data_from_file(symm_file);
 	std::map< std::string, core::conformation::symmetry::VirtualCoordinate > coords = symmdata.get_virtual_coordinates();
 	std::map< std::string, std::pair< std::string, std::string > > virt_connects = symmdata.get_virtual_connects();
 
-	for (Size i = 1; i <= sym_dof_names.size(); i++) {
 
-		core::Size sub_start= pose.conformation().chain_begin(i);
-		core::Size sub_end= pose.conformation().chain_end(i);
 
-// Rotate subtunit 180 degrees about the specified axis. ie, "reverse" the component before further manipulation.	
-		if ( flip_about_axis_ != "" ) {
-			if (flip_about_axis[i] == "z" ) rot_pose(pose,Vec(0,0,1),180,sub_start,sub_end);
-			else if (flip_about_axis[i] == "x" ) rot_pose(pose,Vec(1,0,0),180,sub_start,sub_end);
-			else if (flip_about_axis[i] == "y" ) rot_pose(pose,Vec(0,1,0),180,sub_start,sub_end);
+	if(symm_name[0]=='P'){
+		TR << "Doing DOF placement for 2D lattice (based on sym file name P* " << symm_file_ << std::endl;
+		for (Size i = 1; i <= sym_dof_names.size(); i++) {
+
+			core::Size sub_start= pose.conformation().chain_begin(i);
+			core::Size sub_end= pose.conformation().chain_end(i);
+
+			// Rotate subtunit 180 degrees about the specified axis. ie, "reverse" the component before further manipulation.
+			if ( flip_about_axis_ != "" ) {
+				if (flip_about_axis[i] == "z" ) rot_pose(pose,Vec(0,0,1),180,sub_start,sub_end);
+				else if (flip_about_axis[i] == "x" ) rot_pose(pose,Vec(1,0,0),180,sub_start,sub_end);
+				else if (flip_about_axis[i] == "y" ) rot_pose(pose,Vec(0,1,0),180,sub_start,sub_end);
+			}
+
+			// rotate each subunit along the specified axis by user defined values //
+			TR << "Rotating component " << i << " " << angles[i] << " degrees" << std::endl;
+			rot_pose(pose,Vec(0,0,1),angles[i],sub_start,sub_end);
+
+			// translate each subunit along the specified axis by user defined values //
+			TR << "Translating component " << i << " " << radial_disps[i] << " angstroms" << std::endl;
+			if(1==i) trans_pose(pose,Vec(0,0,radial_disps[i]) ,sub_start,sub_end);
+			if(2==i) trans_pose(pose,Vec(-radial_disps[i],0,0),sub_start,sub_end);
+
+		}
+		// rot   1  z
+		// rot   2  z
+		// trans 1  z
+		// trans 2 -x
+		// set x jump 2 (below)
+
+	} else {
+
+		for (Size i = 1; i <= sym_dof_names.size(); i++) {
+
+			core::Size sub_start= pose.conformation().chain_begin(i);
+			core::Size sub_end= pose.conformation().chain_end(i);
+
+	// Rotate subtunit 180 degrees about the specified axis. ie, "reverse" the component before further manipulation.
+			if ( flip_about_axis_ != "" ) {
+				if (flip_about_axis[i] == "z" ) rot_pose(pose,Vec(0,0,1),180,sub_start,sub_end);
+				else if (flip_about_axis[i] == "x" ) rot_pose(pose,Vec(1,0,0),180,sub_start,sub_end);
+				else if (flip_about_axis[i] == "y" ) rot_pose(pose,Vec(0,1,0),180,sub_start,sub_end);
+			}
+
+	// translate each subunit along the specified axis by user defined values //
+			TR << "Translating component " << i << " " << radial_disps[i] << " angstroms" << std::endl;
+			if ( axis == 'z') trans_pose(pose,Vec(0,0,radial_disps[i]),sub_start,sub_end);
+			else if ( axis == 'x') trans_pose(pose,Vec(radial_disps[i],0,0),sub_start,sub_end);
+			else if ( axis == 'y') trans_pose(pose,Vec(0,radial_disps[i],0),sub_start,sub_end);
+			else utility_exit_with_message("Specified axis does not match with either x, y, or z");
+
+	// rotate each subunit along the specified axis by user defined values //
+			TR << "Rotating component " << i << " " << angles[i] << " degrees" << std::endl;
+			if (axis == 'z' ) rot_pose(pose,Vec(0,0,1),angles[i],sub_start,sub_end);
+			else if (axis == 'x' ) rot_pose(pose,Vec(1,0,0),angles[i],sub_start,sub_end);
+			else rot_pose(pose,Vec(0,1,0),angles[i],sub_start,sub_end);
+
+	// read in the axes for each subunit //
+			std::string tag (virt_connects.find( sym_dof_names[i])->second.first );
+			TR << sym_dof_names[i] << " -> " << tag << std::endl;
+			conformation::symmetry::VirtualCoordinate virt_coord( coords.find( tag )->second );
+
+	// align the specified axis of each subunit with the appropriate axis of the symdof jump from the symmetry definition file //
+			if ( align_axis ) {
+				TR << "aligned_axis" << std::endl;
+				if ( axis == 'z' ) alignaxis(pose,virt_coord.get_x(),Vec(0,0,1),Vec(0,0,0),sub_start,sub_end);
+				else if ( axis == 'x' ) alignaxis(pose,virt_coord.get_x(),Vec(1,0,0),Vec(0,0,0),sub_start,sub_end);
+				else alignaxis(pose,virt_coord.get_x(),Vec(0,1,0),Vec(0,0,0),sub_start,sub_end);
+			}
 		}
 
-// translate each subunit along the specified axis by user defined values //
-		TR << "Translating component " << i << " " << radial_disps[i] << " angstroms" << std::endl;
-		if ( axis == 'z') trans_pose(pose,Vec(0,0,radial_disps[i]),sub_start,sub_end);
-		else if ( axis == 'x') trans_pose(pose,Vec(radial_disps[i],0,0),sub_start,sub_end);
-		else if ( axis == 'y') trans_pose(pose,Vec(0,radial_disps[i],0),sub_start,sub_end);
-		else utility_exit_with_message("Specified axis does not match with either x, y, or z");
-
-// rotate each subunit along the specified axis by user defined values //
-		TR << "Rotating component " << i << " " << angles[i] << " degrees" << std::endl;
-		if (axis == 'z' ) rot_pose(pose,Vec(0,0,1),angles[i],sub_start,sub_end);
-		else if (axis == 'x' ) rot_pose(pose,Vec(1,0,0),angles[i],sub_start,sub_end);
-		else rot_pose(pose,Vec(0,1,0),angles[i],sub_start,sub_end);
-
-// read in the axes for each subunit //
-		std::string tag (virt_connects.find( sym_dof_names[i])->second.first );
-		TR << sym_dof_names[i] << " -> " << tag << std::endl;
-		conformation::symmetry::VirtualCoordinate virt_coord( coords.find( tag )->second );
-
-// align the specified axis of each subunit with the appropriate axis of the symdof jump from the symmetry definition file //
-		if ( align_axis ) { 
-			TR << "aligned_axis" << std::endl;
-			if ( axis == 'z' ) alignaxis(pose,virt_coord.get_x(),Vec(0,0,1),Vec(0,0,0),sub_start,sub_end);
-			else if ( axis == 'x' ) alignaxis(pose,virt_coord.get_x(),Vec(1,0,0),Vec(0,0,0),sub_start,sub_end);
-			else alignaxis(pose,virt_coord.get_x(),Vec(0,1,0),Vec(0,0,0),sub_start,sub_end);
-		}
 	}
+
 
 // symmetrize pose //
 
 	core::pose::symmetry::make_symmetric_pose(pose, symmdata);
+
+	if(symm_name[0]=='P'){
+		using namespace core::conformation::symmetry;
+		SymmetricConformation const & symm_conf ( dynamic_cast<SymmetricConformation const & > ( pose.conformation() ) );
+		SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
+		std::map< Size, SymDof > dofs ( symm_info->get_dofs() );
+		std::map< Size, SymDof >::iterator it;
+		std::map< Size, SymDof >::iterator it_begin = dofs.begin();
+		std::map< Size, SymDof >::iterator it_end = dofs.end();
+		for(it=it_begin; it != it_end; ++it){
+		 	core::kinematics::Jump j(pose.jump(it->first));
+		 	Vec t = j.get_translation();
+		 	if( t.length() > 0.0001 ){
+			 	Vec newt = Vec(0,-radial_disps[2],0);
+			 	TR << "moving lattice symdof into place based on radial_disps[2]" << std::endl;
+			 	j.set_translation(newt);
+			 	Vec origt = pose.xyz(core::id::AtomID(1,pose.conformation().chain_begin(2)));
+			 	pose.set_jump_now(it->first,j);
+			 	Vec delta = origt - pose.xyz(core::id::AtomID(1,pose.conformation().chain_begin(2)));
+			 	trans_pose(pose,delta,pose.conformation().chain_begin(2),pose.conformation().chain_end(2));
+			 	// cout << "trans jump! " << j << " " << it->first << " " << dcmp1 << " " << dcmp2 << " " << newt-t << " " << delta << endl;
+			}
+		}
+	}
 
 	if( sampling_mode_ == "grid" ) {
 		SymDofMoverSampler::get_instance().step();
@@ -259,7 +322,7 @@ SymDofMover::apply(Pose & pose) {
 }
 
 // Parse info from xml //
-void 
+void
 SymDofMover::parse_my_tag( TagPtr const tag,
 										 DataMap &,
 										 Filters_map const &,
@@ -362,9 +425,9 @@ SymDofMover::parse_my_tag( TagPtr const tag,
 		angles_range_max_ = angles_range_max;
 
 		// If auto_rev_range option is set to true, then the range and signs of the displacements are reversed for negative displacements.
-		// This makes it so that a negative value in the range corresponds to displacement toward the origin and a positive value is away from the origin. 
+		// This makes it so that a negative value in the range corresponds to displacement toward the origin and a positive value is away from the origin.
 		if( auto_range_ ) {
-			utility::vector1<Real> new_radial_disps_range_min, new_radial_disps_range_max;	
+			utility::vector1<Real> new_radial_disps_range_min, new_radial_disps_range_max;
 			for(Size i = 1; i <= radial_disps_.size(); i++) {
 				if( radial_disps_[i] < 0 ) {
 					new_radial_disps_range_min.push_back(-radial_disps_range_max_[i]);
@@ -373,7 +436,7 @@ SymDofMover::parse_my_tag( TagPtr const tag,
 					new_radial_disps_range_min.push_back(radial_disps_range_min_[i]);
 					new_radial_disps_range_max.push_back(radial_disps_range_max_[i]);
 				}
-			}	
+			}
 			radial_disps_range_min_ = new_radial_disps_range_min;
 			radial_disps_range_max_ = new_radial_disps_range_max;
 		}
@@ -400,12 +463,12 @@ SymDofMover::parse_my_tag( TagPtr const tag,
 		radial_disp_steps_ = radial_disp_steps;
 
 		TR << "Setting the exploration grid." << std::endl;
-	
+
 		SymDofMoverSampler::get_instance().set_angle_ranges(angles_range_min_, angles_range_max_, angle_steps);
 
 		SymDofMoverSampler::get_instance().set_radial_disp_ranges(radial_disps_range_min_, radial_disps_range_max_, radial_disp_steps);
 
-	} 
+	}
 
 	if ( sampling_mode_ == "gaussian" ) {
 
@@ -417,7 +480,7 @@ SymDofMover::parse_my_tag( TagPtr const tag,
 			angle_deltas.push_back( real_angle_delta );
 		}
 		angle_deltas_ = angle_deltas;
-	
+
 		utility::vector1< std::string > radial_disp_delta_strings = utility::string_split( tag->getOption< std::string >( "radial_disp_deltas" ), ',' );
 		utility::vector1<Real> radial_disp_deltas;
 		Real real_radial_disp_delta;

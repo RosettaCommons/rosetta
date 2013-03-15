@@ -34,6 +34,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/keys/fold_and_dock.OptionKeys.gen.hh>
+#include <basic/pymol_chains.hh>
 #include <core/id/AtomID.hh>
 #include <numeric/random/random.hh>
 
@@ -327,20 +328,17 @@ make_symmetric_pdb_info(
 {
 	using namespace core::conformation::symmetry;
 
-	std::string chr_chains( "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]{}|-_\\~`\"')=%qrstuvwxyz" );
-
 	runtime_assert( is_symmetric( pose ) );
 	runtime_assert( pdb_info_target->nres() == pose.total_residue() );
-	SymmetricConformation const & symm_conf (
-				dynamic_cast<SymmetricConformation const & > ( pose.conformation() ) );
+	SymmetricConformation const & symm_conf( dynamic_cast<SymmetricConformation const & > ( pose.conformation() ) );
 	SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
 	// for updating chain IDs we need to know how many chains are in the scoring subunit
-	Size lastchnid=0;
+	Size lastchnid=1;
 	for ( Size res=1; res <= pdb_info_src->nres(); ++res ) {
 		char chn_id = pdb_info_src->chain( res );
-		Size chn_idx = chr_chains.find(chn_id);
-		if (chn_idx!=std::string::npos) {  // maybe chn is some other character ... the output chain IDs will be funky then ...
+		Size chn_idx = basic::get_pymol_chain_index_1(chn_id);
+		if (chn_idx!=0) {  // maybe chn is some other character ... the output chain IDs will be funky then ...
 			lastchnid = std::max( lastchnid, chn_idx );
 		}
 	}
@@ -352,9 +350,8 @@ make_symmetric_pdb_info(
 
 		// chnids in scoring subunit
 		char chn_id = pdb_info_src->chain( res );
-		Size chn_idx = chr_chains.find(chn_id);
-		if (chn_idx==std::string::npos)
-			chn_idx = 0; // treat all weird-character chains as 'A' in symm copies
+		Size chn_idx = basic::get_pymol_chain_index_1(chn_id);
+		if (chn_idx==0) chn_idx = 1; // treat all weird-character chains as 'A' in symm copies
 		pdb_info_target->chain( res, chn_id );
 
 		// symmetrize B's
@@ -371,8 +368,8 @@ make_symmetric_pdb_info(
 			int clone_res( *clone );
 			pdb_info_target->number( clone_res, res_id );
 
-			int newchn_idx = chn_idx + (clonecounter++)*(lastchnid+1);
-			pdb_info_target->chain( clone_res, chr_chains[newchn_idx] );
+			int newchn_idx = chn_idx + (clonecounter++)*(lastchnid);
+			pdb_info_target->chain( clone_res, basic::get_pymol_chain(newchn_idx) );
 
 			// symmetrize B's
 			for ( Size atm=1; atm <= pdb_info_src->natoms(res) /*pose.residue(res).natoms()*/; ++atm) {
@@ -428,8 +425,10 @@ extract_asymmetric_unit_pdb_info(
 		}
 	}
 	// vrt
-	pdb_info_target->number( nres+1, 1 );
-	pdb_info_target->chain( nres+1, 'Z' );
+	if(pdb_info_target->nres() > nres){
+		pdb_info_target->number( nres+1, 1 );
+		pdb_info_target->chain( nres+1, 'Z' );
+	}
 
 	// rebuild pdb2pose
 	pdb_info_target->rebuild_pdb2pose();
@@ -818,21 +817,22 @@ partition_by_symm_jumps(
 
 	// expand jumps to include jump clones
 	Size njumps = jump_numbers.size();
-	for (Size i=1; i<=njumps; ++i) {
+	for (int i=1; i<=(int)njumps; ++i) {
 		utility::vector1< Size > clones_i = symm_info->jump_clones( jump_numbers[i] );
-		for (Size j=1; j<= clones_i.size(); ++j) {
+		for (int j=1; j<= (int)clones_i.size(); ++j) {
 			jump_numbers.push_back( clones_i[j] );
 		}
 	}
 
 	//int const pos1( ft.root() );
-	int pos1;
-	for (Size i=1; i<=symm_info->num_total_residues_without_pseudo(); ++i) {
+	int pos1=-1;
+	for (int i=1; i<= (int)symm_info->num_total_residues_without_pseudo(); ++i) {
 		if (symm_info->bb_is_independent(i)) {
 			pos1 = i;
 			break;
 		}
 	}
+	assert(pos1>0);
 
 	partner1 = false;
 	partner1( pos1 ) = true;
@@ -1015,7 +1015,7 @@ get_sym_aware_jump_num ( core::pose::Pose const & pose, core::Size jump_num ) {
 		for(std::map<Size,SymDof>::iterator i = dofs.begin(); i != dofs.end(); i++) {
 			//fpd  if slide moves are not allowed on this jump, then skip it
 			if (!i->second.allow_dof(1) && !i->second.allow_dof(2) && !i->second.allow_dof(3)) continue;
-			if (++jump_counter == jump_num) {
+			if (++jump_counter == (Size)jump_num) {
 				sym_jump = i->first;
 				break;
 			}
