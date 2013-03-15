@@ -370,7 +370,7 @@ void HybridizeFoldtreeDynamic::reset( core::pose::Pose & pose ) {
 				core::pose::remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, ir );
 				
 				if ( pose.residue(ir+1).has_variant_type(CUTPOINT_UPPER) ) {
-					core::pose::remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, ir );
+					core::pose::remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, ir+1 );
 				}
 			}
 		}
