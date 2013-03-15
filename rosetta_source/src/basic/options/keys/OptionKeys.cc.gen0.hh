@@ -456,6 +456,7 @@ namespace jd2 { IntegerOptionKey const buffer_silent_output( "jd2:buffer_silent_
 namespace jd2 { RealOptionKey const buffer_flush_frequency( "jd2:buffer_flush_frequency" );  }
 namespace jd2 { BooleanOptionKey const delete_old_poses( "jd2:delete_old_poses" );  }
 namespace jd2 { FileVectorOptionKey const resource_definition_files( "jd2:resource_definition_files" );  }
+namespace jd2 { FileOptionKey const checkpoint_file( "jd2:checkpoint_file" );  }
 namespace evaluation { BooleanOptionKey const evaluation( "evaluation" );  }
 namespace evaluation { FileVectorOptionKey const rmsd_target( "evaluation:rmsd_target" );  }
 namespace evaluation { StringVectorOptionKey const rmsd_column( "evaluation:rmsd_column" );  }
@@ -671,4 +672,3 @@ namespace fold_cst { RealOptionKey const stage1_ramp_cst_cycle_factor( "fold_cst
 namespace fold_cst { RealOptionKey const stage2_constraint_threshold( "fold_cst:stage2_constraint_threshold" );  }
 namespace fold_cst { BooleanOptionKey const ignore_sequence_seperation( "fold_cst:ignore_sequence_seperation" );  }
 namespace fold_cst { BooleanOptionKey const no_recover_low_at_constraint_switch( "fold_cst:no_recover_low_at_constraint_switch" );  }
-namespace fold_cst { BooleanOptionKey const ramp_coord_cst( "fold_cst:ramp_coord_cst" );  }

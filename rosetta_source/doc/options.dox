@@ -2194,6 +2194,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-resource_definition_files</b> \<FileVector\><dt>
 <dd>Specify all the jobs and all of their resources to the new JD2ResourceManager system</dd><br>
 </dl>
+<dl>
+<dt><b>-checkpoint_file</b> \<File\><dt>
+<dd>write/read nstruct-based checkpoint files to the desired filename.</dd><br>
+</dl>
  </li>
 <li><h2>evaluation</h2>
 <dl>

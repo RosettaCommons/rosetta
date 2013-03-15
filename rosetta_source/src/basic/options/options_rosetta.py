@@ -1174,6 +1174,7 @@ Options = Option_Group( '',
 		Option( 'buffer_flush_frequency', 'Real', default = '1.0', desc = 'when N structures (buffer_silent_output) are collected dump to file with probability X' ),
 		Option( 'delete_old_poses', 'Boolean', default = 'false', desc = 'Delete poses after they have been processed.  For jobs that process a large number of structures, the memory consumed by old poses is wasteful.', ),# NOTE: This option should probably be used by default, however it may have issues with special uses of the job distributor.  Once these issues are resolved, either enable it by default, or just do it with out asking.
 		Option( 'resource_definition_files', 'FileVector', desc = 'Specify all the jobs and all of their resources to the new JD2ResourceManager system', ),
+		Option( 'checkpoint_file', 'File', desc='write/read nstruct-based checkpoint files to the desired filename.' ),
 	), # jd2
 
 	# Evaluator Options ---------------------------------------------------------

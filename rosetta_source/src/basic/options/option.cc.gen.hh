@@ -461,6 +461,7 @@ option.add( basic::options::OptionKeys::jd2::buffer_silent_output, "write struct
 option.add( basic::options::OptionKeys::jd2::buffer_flush_frequency, "when N structures (buffer_silent_output) are collected dump to file with probability X" ).def(1.0);
 option.add( basic::options::OptionKeys::jd2::delete_old_poses, "Delete poses after they have been processed.  For jobs that process a large number of structures, the memory consumed by old poses is wasteful." ).def(false);
 option.add( basic::options::OptionKeys::jd2::resource_definition_files, "Specify all the jobs and all of their resources to the new JD2ResourceManager system" );
+option.add( basic::options::OptionKeys::jd2::checkpoint_file, "write/read nstruct-based checkpoint files to the desired filename." );
 option.add( basic::options::OptionKeys::evaluation::evaluation, "evaluation option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::evaluation::rmsd_target, "[vector] determine rmsd against this/these structure(s)" );
 option.add( basic::options::OptionKeys::evaluation::rmsd_column, "[vector] use xxx as column name: rms_xxx" );
@@ -676,10 +677,10 @@ option.add( basic::options::OptionKeys::fold_cst::stage1_ramp_cst_cycle_factor, 
 option.add( basic::options::OptionKeys::fold_cst::stage2_constraint_threshold, "stop runs that violate this threshold at end of stage2" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::ignore_sequence_seperation, "usually constraints are switched on according to their separation in the fold-tree" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::no_recover_low_at_constraint_switch, "dont recover low when max_seq_sep is increased" ).def(false);
-option.add( basic::options::OptionKeys::fold_cst::ramp_coord_cst, "ramp coord csts just like chainbreak-weights during fold-cst" ).def(false);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::resample::resample, "resample option group" ).legal(true).def(true);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::ramp_coord_cst, "ramp coord csts just like chainbreak-weights during fold-cst" ).def(false);
+option.add( basic::options::OptionKeys::resample::resample, "resample option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::resample::silent, "a silent file for decoys to restart sampling from " ).def("");
 option.add( basic::options::OptionKeys::resample::tag, "which decoy to select from silent file " ).def("");
 option.add( basic::options::OptionKeys::resample::stage1, "if true restart after stage1, otherwise after stage2 " ).def(false);
@@ -1352,10 +1353,10 @@ option.add( basic::options::OptionKeys::rbe::poll_frequency, "No description" ).
 option.add( basic::options::OptionKeys::blivens::blivens, "blivens option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::blivens::disulfide_scorer::disulfide_scorer, "disulfide_scorer option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::blivens::disulfide_scorer::nds_prob, "The probability of scoring a non-disulfide pair" ).def(0.0);
-option.add( basic::options::OptionKeys::blivens::disulfide_scorer::cys_prob, "The probability of outputing a pair of non-disulf cysteines. Default to nds_prob" ).def(-1.0);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::blivens::score_type, "The scoring type to use, eg for a filter." ).def("total_score");
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::blivens::disulfide_scorer::cys_prob, "The probability of outputing a pair of non-disulf cysteines. Default to nds_prob" ).def(-1.0);
+option.add( basic::options::OptionKeys::blivens::score_type, "The scoring type to use, eg for a filter." ).def("total_score");
 option.add( basic::options::OptionKeys::krassk::krassk, "krassk option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::krassk::left_tail, "No description" ).def(0);
 option.add( basic::options::OptionKeys::krassk::right_tail, "No description" ).def(0);
@@ -2028,10 +2029,10 @@ option.add( basic::options::OptionKeys::RBSegmentRelax::helical_movement_params,
 option.add( basic::options::OptionKeys::RBSegmentRelax::strand_movement_params, "strand-in-plane-rotation, strand-in-plane-translation, out-of-plane-rotation, out-of-plane-translationn" ).def(utility::vector1<float>(4,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::default_movement_params, "default-rotation, default-translation" ).def(utility::vector1<float>(2,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_seqwidth, "sequence width on constraints" ).def(0);
-option.add( basic::options::OptionKeys::edensity::edensity, "edensity option group" ).legal(true).def(true);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::edensity::debug, "No description" ).def(false);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::edensity::edensity, "edensity option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::edensity::debug, "No description" ).def(false);
 option.add( basic::options::OptionKeys::edensity::mapfile, "No description" );
 option.add( basic::options::OptionKeys::edensity::mapreso, "No description" ).def(3.0);
 option.add( basic::options::OptionKeys::edensity::grid_spacing, "No description" ).def(0.0);

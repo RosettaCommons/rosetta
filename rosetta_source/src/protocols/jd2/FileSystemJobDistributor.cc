@@ -35,6 +35,7 @@
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <basic/options/keys/jd2.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
 
@@ -72,6 +73,31 @@ void FileSystemJobDistributor::restart() {
 	JobDistributor::restart();
 }
 
+
+core::Size get_min_nstruct_index_checkpoint_file(){
+	using namespace std;
+	using namespace basic::options;
+	if ( option[ basic::options::OptionKeys::jd2::checkpoint_file ].user()) {
+		std::string saved_nstruct_number_file = option[ basic::options::OptionKeys::jd2::checkpoint_file ]();
+		ifstream f( saved_nstruct_number_file.c_str(), ios::in );
+		if( !f.good() ) return 0;
+		core::Size const begin = f.tellg();
+		f.seekg( 0, ios::end );
+		core::Size const end = f.tellg();
+		if( end - begin == 0 ) return 0;
+		f.seekg( 0, ios::beg );
+		std::string line;
+		getline( f, line );
+		std::istringstream line_stream( line );
+		core::Size nstruct_index;
+		line_stream >> nstruct_index;
+		return nstruct_index;
+	}
+	return 0;
+}
+
+
+
 core::Size
 FileSystemJobDistributor::get_new_job_id()
 {
@@ -83,6 +109,7 @@ FileSystemJobDistributor::get_new_job_id()
 	Jobs const & jobs( get_jobs() );
 	JobOutputterOP outputter = job_outputter();
 	core::Size next_job_to_try_assigning( current_job_id() + ( retry_count_ > 0 ? 0 : 1 ) );
+	next_job_to_try_assigning = std::max( next_job_to_try_assigning, get_min_nstruct_index_checkpoint_file() );
 	while ( next_job_to_try_assigning <= jobs.size() ) {
 		if ( jobs[ next_job_to_try_assigning ]->bad() ) {
 			++next_job_to_try_assigning;
@@ -177,6 +204,15 @@ void
 FileSystemJobDistributor::current_job_finished()
 {
 	delete_in_progress_files();
+	using namespace basic::options;
+	if ( option[ basic::options::OptionKeys::jd2::checkpoint_file ].user() ) {
+		std::string saved_nstruct_number_file = option[ basic::options::OptionKeys::jd2::checkpoint_file ]();
+		std::ofstream f;
+	    f.open( saved_nstruct_number_file.c_str(), std::ios::out );
+	    if( !f.good() ) utility_exit_with_message( "Unable to open MC checkpointing file " + saved_nstruct_number_file );
+		f<<(1+current_job()->nstruct_index());
+	    f.close();
+	}
 }
 
 
