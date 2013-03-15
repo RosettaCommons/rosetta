@@ -14,6 +14,7 @@
 
 #include <protocols/symmetric_docking/SymDockProtocol.hh>
 #include <protocols/symmetric_docking/SymSidechainMinMover.hh>
+#include <protocols/symmetric_docking/SymDockProtocolCreator.hh>
 
 ////////////
 #include <protocols/jd2/ScoreMap.hh>
@@ -29,6 +30,7 @@
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoreFunction.hh>
 
 #include <basic/datacache/DiagnosticData.hh>
 
@@ -98,6 +100,11 @@
 #include <utility/vector1.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/prof.hh>
+
+#include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
+#include <protocols/moves/DataMap.hh>
+#include <protocols/rosetta_scripts/util.hh>
+
 
 namespace protocols {
 namespace symmetric_docking {
@@ -949,6 +956,100 @@ SymDockProtocol::score_only( core::pose::Pose & pose )
 		score_and_exit.apply( pose );
 	}
 }
+
+void
+SymDockProtocol::parse_my_tag( TagPtr const tag, protocols::moves::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+{
+	using namespace core::scoring;
+
+	if( tag->hasOption( "task_operations" ) ){
+		task_factory(protocols::rosetta_scripts::parse_task_operations( tag, data ) );
+	}
+
+	if( tag->hasOption("docking_score_low" ) ){
+		std::string const score_low( tag->getOption<std::string>( "docking_score_low" ) );
+		set_lowres_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data, score_low ) );
+	}
+	if( tag->hasOption("docking_score_high" ) ){
+		std::string const score_high( tag->getOption<std::string>( "docking_score_high" ) );
+		set_highres_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data, score_high ) );
+	}
+
+
+	//initialize other flags to control behavior
+
+	//void set_dock_rtmin( bool dock_rtmin_in );
+	if( tag->hasOption("dock_rtmin" ) ){
+		bool const dock_rtmin( tag->getOption<bool>( "dock_rtmin" ) );
+		set_dock_rtmin(dock_rtmin);
+	}
+
+
+	//void set_sc_min( bool sc_min_in );
+	if( tag->hasOption("sc_min" ) ){
+		bool const sc_min( tag->getOption<bool>( "sc_min" ) );
+		set_sc_min(sc_min);
+	}
+
+
+	//void set_max_repeats( Size const max_repeats_in );
+	if( tag->hasOption("max_repeats" ) ){
+		bool const max_repeats( tag->getOption<bool>( "max_repeats" ) );
+		set_max_repeats(max_repeats);
+	}
+
+
+	//void set_dock_ppk( bool dock_ppk_in );
+	if( tag->hasOption("dock_ppk" ) ){
+		bool const dock_ppk( tag->getOption<bool>( "dock_ppk" ) );
+		set_dock_ppk(dock_ppk);
+	}
+
+
+	//void set_fullatom( bool const fullatom_in );
+	if( tag->hasOption("fullatom" ) ){
+		bool const fullatom( tag->getOption<bool>( "fullatom" ) );
+		set_fullatom(fullatom);
+	}
+
+
+	//void set_local_refine( bool const local_refine_in );
+	if( tag->hasOption("local_refine" ) ){
+		bool const local_refine( tag->getOption<bool>( "local_refine" ) );
+		set_local_refine(local_refine);
+	}
+
+
+	//void set_view( bool view_in );
+	if( tag->hasOption("view" ) ){
+		bool const view( tag->getOption<bool>( "view" ) );
+		set_view(view);
+	}
+
+
+
+}//end parse_my_tag
+
+
+
+std::string
+SymDockProtocolCreator::keyname() const
+{
+    return SymDockProtocolCreator::mover_name();
+}
+
+protocols::moves::MoverOP
+SymDockProtocolCreator::create_mover() const {
+    return new SymDockProtocol();
+}
+
+std::string
+SymDockProtocolCreator::mover_name()
+{
+    return "SymDockProtocol";
+}
+
+
 
 } // symmetric_docking
 } // protocols

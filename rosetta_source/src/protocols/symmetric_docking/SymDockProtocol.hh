@@ -34,6 +34,7 @@
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <utility/vector1.hh>
 
+#include <utility/tag/Tag.fwd.hh>
 
 namespace protocols {
 namespace symmetric_docking {
@@ -119,6 +120,9 @@ public:
 	core::pack::task::TaskFactoryOP & task_factory();
 
 	void score_only( core::pose::Pose & pose );
+
+	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
