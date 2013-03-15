@@ -293,7 +293,7 @@ angle_radians(
 {
 	xyzVector< T > const a( ( p2 - p1 ).normalize_or_zero() );
 	xyzVector< T > const b( ( p4 - p3 ).normalize_or_zero() );
-	
+
 	T angle = std::acos( sin_cos_range( dot(a, b) ) );
 	return angle;
 }
@@ -719,11 +719,11 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 		// Compute sign and absolute value of axis vector elements from matrix elements
 		// Sign of axis vector is chosen to correspond to a positive sin_theta value
 		T x = ( R.zy_ > R.yz_ ? ONE : -ONE ) *
-		 sqrt( ( R.xx_ - cos_theta ) / ( ONE - cos_theta ) );
+		 sqrt( max( ZERO, ( R.xx_ - cos_theta ) / ( ONE - cos_theta ) ) );
 		T y = ( R.xz_ > R.zx_ ? ONE : -ONE ) *
-		 sqrt( ( R.yy_ - cos_theta ) / ( ONE - cos_theta ) );
+		 sqrt( max( ZERO, ( R.yy_ - cos_theta ) / ( ONE - cos_theta ) ) );
 		T z = ( R.yx_ > R.xy_ ? ONE : -ONE ) *
-		 sqrt( ( R.zz_ - cos_theta ) / ( ONE - cos_theta ) );
+		 sqrt( max( ZERO, ( R.zz_ - cos_theta ) / ( ONE - cos_theta ) ) );
 		// Above method appears to cover a greater range of cases than the original method:
 		//
 		// return ( xyzVector< T >( R.zy_ - R.yz_, R.xz_ - R.zx_, R.yx_ - R.xy_ )
