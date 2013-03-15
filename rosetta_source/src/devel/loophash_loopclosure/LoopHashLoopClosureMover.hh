@@ -44,12 +44,12 @@ namespace devel {
 namespace loophash_loopclosure {
 class MyLoop{
 public:
-	unsigned int r0_, r1_;
-  	char chain_;
-	unsigned int len_;
+	unsigned int r1_, r2_;
+  	char c1_, c2_;
+	unsigned int minn_, maxn_; // potential length range
 	MyLoop(){}
-  MyLoop(unsigned int r0, unsigned int r1, char chain, unsigned int len) 
-		: r0_(r0), r1_(r1), chain_(chain), len_(len) {}
+  MyLoop(unsigned int r1, char c1, unsigned int minn, unsigned int maxn, unsigned int r2, char c2) 
+		: r1_(r1), r2_(r2), c1_(c1), c2_(c2), minn_(minn), maxn_(maxn) {}
 };
 
 class LoopHashLoopClosureMover : public protocols::moves::Mover {

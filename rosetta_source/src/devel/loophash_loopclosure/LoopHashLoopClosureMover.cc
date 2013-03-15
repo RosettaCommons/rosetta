@@ -40,6 +40,7 @@
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
+#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
@@ -51,11 +52,17 @@
 // C++ headers
 #include <string>
 #include <fstream>
+#include <iostream>
 
 namespace devel{
 namespace loophash_loopclosure{
 
 static basic::Tracer TR ("devel.loophash_loopclosure.LoopHashLoopClosureMover" );
+
+std::ostream& operator<< (std::ostream& out , const MyLoop & loop ) {
+	out << loop.r1_ << loop.c1_ << ":" << loop.minn_ << "-" << "x" << ":" << loop.r2_ << loop.c2_ << std::endl; 
+	return out;
+}
 
 LoopHashLoopClosureMoverCreator::LoopHashLoopClosureMoverCreator()
 {}
@@ -95,14 +102,14 @@ LoopHashLoopClosureMover::apply( core::pose::Pose & pose )
 	}
 
 	// Use hashloop always because this mover is all about it.
-  if( !option[ remodel::RemodelLoopMover::use_loop_hash ] ) {
+  	if( !option[ remodel::RemodelLoopMover::use_loop_hash ] ) {
 		TR.Error << "This mover requires remodel::RemodelLoopMover::use_loop_hash option to be true.  Flipping the flag." << std::endl;
-    utility_exit();
+    		utility_exit();
 	}
-  if( !option[ lh::db_path ].user() ){
+  	if( !option[ lh::db_path ].user() ){
 		TR.Error << "loophash_db_path (path to the loophash library) must be specified." << std::endl;
 		utility_exit();
-  }
+  	}
 
 	if( !option[ remodel::lh_ex_limit ] > 4 ){
 		TR.Warning << "lh_ex_limit may be too big and cause segmentation error: " << option[ remodel::lh_ex_limit ] << std::endl;
@@ -110,8 +117,6 @@ LoopHashLoopClosureMover::apply( core::pose::Pose & pose )
 
 	remodel_ = new protocols::forge::remodel::RemodelMover();
 	remodel_->apply(pose);
-	//protocols::forge::remodel::RemodelLoopMoverOP loop_mover = new protocols::forge::remodel::RemodelLoopMover(loops_);
-	//loop_mover->apply(pose);
 }
 std::string
 LoopHashLoopClosureMover::get_name() const
@@ -164,25 +169,35 @@ LoopHashLoopClosureMover::tokenize( const std::string& in_str,
   return tokens;
 }
 
-
+// r1c1:n:r2c2
+//
+// ultimately we want to support "r1:c1:n1-n2:r2:c2" format
 const std::vector<MyLoop>
 LoopHashLoopClosureMover::make_loops(const std::string & in_str) const {
   using namespace std;
  
   std::vector<std::string> tuples = tokenize(in_str, " ,");
   for( Size i=0; i<tuples.size(); i++ ) {
-    TR.Debug << "tuple[" << i << "] = " << tuples[i] << endl;
+    TR << "tuple[" << i << "] = " << tuples[i] << endl;
   }
   // iterate over tuples and create a Loop object for each
   vector<MyLoop> loop_list;
   for( Size i=0; i<tuples.size(); i++ ) {
-    std::vector<std::string> rcl = tokenize(tuples[i], ": " );
-    runtime_assert(rcl.size() >=3);
-		MyLoop loop(atoi(rcl[0].c_str()),
-							  atoi(rcl[0].c_str())+1,
-								rcl[1].c_str()[0],
-								atoi(rcl[2].c_str()));
+    std::vector<std::string> rclrc = tokenize(tuples[i], ": " );
+    runtime_assert(rclrc.size() >=3);
+    std::vector<std::string> r1_vec = tokenize(rclrc[0], "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+    std::vector<std::string> c1_vec = tokenize(rclrc[0], "0123456789"); 
+    std::vector<std::string> r2_vec = tokenize(rclrc[2], "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+    std::vector<std::string> c2_vec = tokenize(rclrc[2], "0123456789"); 
+
+    MyLoop loop(atoi(r1_vec[0].c_str()),    //r1
+                    (c1_vec[0].c_str()[0]), //c1
+                atoi(rclrc[1].c_str()),    //min len
+                atoi(rclrc[1].c_str()),    //max len
+                atoi(r2_vec[0].c_str()),    //r2
+		    (c2_vec[0].c_str()[0]));//c2
     loop_list.push_back( loop );
+    TR << loop << std::endl;
   }
   return loop_list;
 }
@@ -238,43 +253,41 @@ LoopHashLoopClosureMover::make_blueprint( const core::pose::Pose& pose, const st
 	// Make a fast lookup table by staring res number.
   // Validate the start and end res numbers relationship at the same time.
   // As of Mar 6, 2013, this system cannot build a loop between non-adjacent residues.
-	std::map<Size, MyLoop> loop_by_r0;
+	std::map<Size, MyLoop> lookup_by_r1;
 	for(Size i=0; i<loops.size(); ++i) {
-    if( loops[i].r1_ - loops[i].r0_ != 1 ) {
-			TR.Error << "This version does not support building a loop between non-adjacent residues: ";
-			TR.Error << "start=" << loops[i].r0_ << ",end=" << loops[i].r1_ << ",chain=" << loops[i].chain_ << ",length=" << loops[i].len_ << std::endl;
-			TR.flush();
-			utility_exit();
-    }
-		loop_by_r0[loops[i].r0_] = loops[i];
-  }
+		lookup_by_r1[loops[i].r1_] = loops[i];
+  	}
 	std::string bpname = "dummy.bp";
 	std::ofstream bp( bpname.c_str() );
 	runtime_assert( bp.good() );
 	for ( size_t i=1; i<= pose.total_residue(); ++i ) {
-		if( loop_by_r0.find(i) == loop_by_r0.end() ) {
+		if( lookup_by_r1.find(i) == lookup_by_r1.end() ) {
 			bp << i << " A ." << std::endl;
 			continue;
 		}
-		MyLoop loop = loop_by_r0[i];
-		if( loop.chain_ != chains[ pose.residue(i).chain() ] ) {
-			TR.Error << "Residue " << loop.r0_ << " is not in the chain " << loop.chain_ << ".  Ignore the loop creating instruction." << std::endl;
+		MyLoop loop = lookup_by_r1[i];
+		if( loop.c1_ != chains[ pose.residue(i).chain() ] ) {
+			TR.Error << "Residue " << loop.r1_ << " is not in the chain " << loop.c1_ << ".  Ignore the loop creating instruction." << std::endl;
+			utility_exit();
+		}
+		if( loop.c2_ != chains[ pose.residue(loop.r2_).chain() ] ) {
+			TR.Error << "Residue " << loop.r2_ << " is not in the chain " << loop.c1_ << ".  Ignore the loop creating instruction." << std::endl;
 			utility_exit();
 		}
 		bp << i << " A L" << std::endl;
     		// replace the following residues upto the loop terminal with Ls
-		for(Size j=0; j<loop.len_; ++j) {
+		for(Size j=0; j<loop.minn_; ++j) {
 			bp << "0 x L" << std::endl;
 		}
     		// jump to the terminal-1 (for the FOR loop increment)
-    		i= loop.r1_-1;
+    		i= loop.r2_-1;
 	}
 	bp.close();
 	return bpname;
 }
 
 void LoopHashLoopClosureMover::parse_my_tag(	utility::tag::TagPtr const tag,
-																protocols::moves::DataMap & ,
+						protocols::moves::DataMap & ,
 	    	                        protocols::filters::Filters_map const & ,
   	    	                      protocols::moves::Movers_map const &,
     	    	                    core::pose::Pose const & pose ) {
@@ -282,33 +295,33 @@ void LoopHashLoopClosureMover::parse_my_tag(	utility::tag::TagPtr const tag,
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-  // This mover has multiple modes of specifing loops which are mutually exclusive
+  	// This mover has multiple modes of specifing loops which are mutually exclusive
 	// * loop_insert := loop length in between chains
 	// * blueprint := blueprint file
-  // * loop_insert_rcn := Residue-Chain-Length
+  	// * loop_insert_rclrc := Residue-Chain-Length
 	// Currently, fixed loop length is supported.   
-	if( tag->hasOption("loop_insert") + tag->hasOption("loop_insert_rcn") + tag->hasOption("blueprint") > 1 ) {
-		TR.Error << "\"loop_insert\", \"loop_insert_rcn\" and \"blueprint\" options are mutually exclusive." << std::endl;
+	if( tag->hasOption("loop_insert") + tag->hasOption("loop_insert_rclrc") + tag->hasOption("blueprint") > 1 ) {
+		TR.Error << "\"loop_insert\", \"loop_insert_rclrc\" and \"blueprint\" options are mutually exclusive." << std::endl;
 		utility_exit();
 	}
-  std::string bpname = "dummy.bp";
-  protocols::loops::LoopsOP loops;
-	if( tag->hasOption("loop_insert_rcn") ) {
+  	std::string bpname = "dummy.bp";
+  	protocols::loops::LoopsOP loops;
+	if( tag->hasOption("loop_insert_rclrc") ) {
 		// Instruction string in Residue:Chain:Length format: 
-    // e.g.  25:A:6,50:B:7 for a loop of size 6 residues after 25 (and before 26, implicit)
+    		// e.g.  25:A:6,50:B:7 for a loop of size 6 residues after 25 (and before 26, implicit)
 		// and another of size 7 residues between 50 and 51.
-  	std::string loop_insert_instruction = tag->getOption<std::string>("loop_insert_rcn");
+  		std::string loop_insert_instruction = tag->getOption<std::string>("loop_insert_rclrc");
 		std::vector<MyLoop> loops = make_loops(loop_insert_instruction);
 		bpname = make_blueprint(pose, loops);
-		TR << "Use loop_insert_rcn string (and generate " << bpname << " blueprint file)." << std::endl;
+		TR << "Use loop_insert_rclrc string \"" << loop_insert_instruction << "\" (and generate " << bpname << " blueprint file)." << std::endl;
 	}
-  else if( tag->hasOption("loop_insert") ) {
+  	else if( tag->hasOption("loop_insert") ) {
 		// Instruction string in Between Chains format: 
-    // e.g. "A6B7CDE" to insert a loop of size 6 between chain A and B and another of 7 between B and C.
+    		// e.g. "A6B7CDE" to insert a loop of size 6 between chain A and B and another of 7 between B and C.
 		std::string loop_insert_instruction = tag->getOption<std::string>("loop_insert");
 		bpname = make_blueprint(pose, loop_insert_instruction);
-		TR << "User loop_insert string (and generate " << bpname << " blueprint file)." << std::endl;
-  }
+		TR << "User loop_insert string \"" << loop_insert_instruction << "\" (and generate " << bpname << " blueprint file)." << std::endl;
+  	}
 	else if( tag->hasOption("blueprint") ) {
 		bpname = tag->getOption<std::string>("blueprint");
 		TR << "Use blueprint file: " << bpname << std::endl;
@@ -318,9 +331,16 @@ void LoopHashLoopClosureMover::parse_my_tag(	utility::tag::TagPtr const tag,
 		utility_exit();
 	}
 	option[ OptionKeys::remodel::blueprint ]( bpname );
+	TR << "remodel::blueprint = " << bpname << std::endl;
 
-	bool is_quick_and_dirty = tag->getOption<bool>("quick_and_dirty", true);
-	option[ remodel::quick_and_dirty ]( is_quick_and_dirty );
+	// path to the loophash library
+	if( !tag->hasOption( "loophash_db_path" ) ){
+		TR.Error << "loophash_db_path (path to the loophash library) must be specified." << std::endl;
+		utility_exit();
+	}
+	std::string loophash_db_path = tag->getOption<std::string>( "loophash_db_path" );
+	option[ lh::db_path ]( loophash_db_path );
+	TR << "lh:db_path = " << loophash_db_path << std::endl;
 
 	// Use hashloop always because this mover is all about it.
 	if( option[ remodel::RemodelLoopMover::use_loop_hash ].user() && !option[ remodel::RemodelLoopMover::use_loop_hash ] ) {
@@ -328,28 +348,57 @@ void LoopHashLoopClosureMover::parse_my_tag(	utility::tag::TagPtr const tag,
 		TR.flush();
 	}
 	option[ remodel::RemodelLoopMover::use_loop_hash ]( true );
+	TR << "remodel::RemodelLoopMover::user_loop_hash = true" << std::endl;
 
-	// Use sidechains from input
-	option[ packing::use_input_sc ]( true );
-
-	Size num_trajectory = tag->getOption<Size>("num_trajectory", 1);
-	option[ remodel::num_trajectory ]( num_trajectory );
-
-	Size num_save_top = tag->getOption<Size>("save_top", 1);
-	option[ remodel::save_top ](num_save_top);
-
-	bool no_optH = tag->getOption<bool>( "no_optH", false );
-	option[ packing::no_optH ]( no_optH );
-
-	if( !tag->hasOption( "loophash_db_path" ) ){
-		TR.Error << "loophash_db_path (path to the loophash library) must be specified." << std::endl;
-		utility_exit();
-  }
-	std::string loophash_db_path = tag->getOption<std::string>( "loophash_db_path" );
-	option[ lh::db_path ]( loophash_db_path );
-
+	// loop extension limit
 	Size loophash_ex_limit = tag->getOption<Size>( "loophash_ex_limit", 4 );
 	option[ remodel::lh_ex_limit ]( loophash_ex_limit );
+	TR << "remodel::lh_ex_limit = " << loophash_ex_limit << std::endl;
+
+	// quick dirty?
+	bool is_quick_and_dirty = tag->getOption<bool>("quick_and_dirty", true);
+	option[ remodel::quick_and_dirty ]( is_quick_and_dirty );
+	TR << "remodel::quick_and_dirty = true" << std::endl;
+
+	//
+	// Symmetry and Repeat_structure are mutually exclusive
+	//
+	if( tag->hasOption("symmetry_definition") && tag->hasOption("repeat_structure") ) {
+		TR.Error << "\"symmetry_definition\" and \"repeat_structure\" are mutually exclusive." << std::endl;
+		utility_exit();
+	}
+
+	// Is the structure to be symmetric?
+	if( tag->hasOption("symmetry_definition") ){
+		std::string symm_def = tag->getOption<std::string>("symmetry_definition");
+		option[ symmetry::symmetry_definition ]( symm_def );
+		TR << "symmetry::symmetry_definition = " << symm_def << std::endl;
+	}
+	// How many times should the structure be repeated?
+	if( tag->hasOption("repeat_structure") ) {
+		Size repeat_structure = tag->getOption<int>("repeat_structure");
+		option[ remodel::repeat_structure ] (repeat_structure);
+		TR << "remodel::repeat_structure = " << repeat_structure << std::endl;
+	}
+	// Use sidechains from input
+	bool use_input_sidechains = tag->getOption<bool>("user_input_sc", true);
+	option[ packing::use_input_sc ]( use_input_sidechains );
+	TR << "packing::use_input_sc = " << (use_input_sidechains? "true" : "false") << std::endl;
+
+	// number of trajectories
+	Size num_trajectory = tag->getOption<Size>("num_trajectory", 1);
+	option[ remodel::num_trajectory ]( num_trajectory );
+	TR << "remodel::num_trajectory = " << num_trajectory << std::endl;
+
+	// keep the top n scores
+	Size num_save_top = tag->getOption<Size>("save_top", 1);
+	option[ remodel::save_top ](num_save_top);
+	TR << "remodel::save_top = " << num_save_top << std::endl;
+
+	// No optimization on hydrogens
+	bool no_optH = tag->getOption<bool>( "no_optH", false );
+	option[ packing::no_optH ]( no_optH );
+	TR << "packing::no_optH = " << (no_optH ? "true" : "false") << std::endl;
 }
 
 } // loophash_loopclosure

@@ -520,7 +520,7 @@ namespace loops { FileOptionKey const keep_natro( "loops:keep_natro" );  }
 namespace loops { IntegerOptionKey const refine_design_iterations( "loops:refine_design_iterations" );  }
 namespace loops { namespace loop_closure { BooleanOptionKey const loop_closure( "loops:loop_closure" );  } }
 namespace loops { namespace loop_closure { StringOptionKey const loop_insert( "loops:loop_closure:loop_insert" );  } }
-namespace loops { namespace loop_closure { StringOptionKey const loop_insert_rcn( "loops:loop_closure:loop_insert_rcn" );  } }
+namespace loops { namespace loop_closure { StringOptionKey const loop_insert_rclrcl( "loops:loop_closure:loop_insert_rclrcl" );  } }
 namespace loops { namespace loop_closure { StringOptionKey const blueprint( "loops:loop_closure:blueprint" );  } }
 namespace assembly { BooleanOptionKey const assembly( "assembly" );  }
 namespace assembly { FileOptionKey const pdb1( "assembly:pdb1" );  }
