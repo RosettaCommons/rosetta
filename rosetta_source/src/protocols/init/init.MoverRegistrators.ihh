@@ -228,6 +228,7 @@ static MoverRegistrator< simple_moves::ConstraintSetMoverCreator > reg_Constrain
 static MoverRegistrator< simple_moves::ddGCreator> reg_ddGCreator;
 static MoverRegistrator< simple_moves::ExtendedPoseMoverCreator > reg_ExtendedPoseMoverCreator;
 static MoverRegistrator< simple_moves::FavorSequenceProfileCreator > reg_FavorSequenceProfileCreator;
+static MoverRegistrator< simple_moves::FavorSymmetricSequenceCreator > reg_FavorSymmetricSequenceCreator;
 static MoverRegistrator< simple_moves::ForceDisulfidesMoverCreator > reg_ForceDisulfidesMoverCreator;
 static MoverRegistrator< simple_moves::LoadPDBMoverCreator > reg_LoadPDBMoverCreator;
 static MoverRegistrator< simple_moves::LoadUnboundRotMoverCreator > reg_LoadUnboundRotMoverCreator;

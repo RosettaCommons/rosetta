@@ -413,6 +413,7 @@ sources = {
 		"ExtendedPoseMover",
 		"ExtendedPoseMoverCreator",
 		"FavorSequenceProfile",
+		"FavorSymmetricSequence",
 		"ForceDisulfidesMover",
 		"FragmentMover",
 		"MonteCarloRecover",

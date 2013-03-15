@@ -159,7 +159,7 @@ ResidueTypeLinkingConstraint::score( XYZ_Func const & xyz_func, EnergyMap const 
 	conformation::Residue const & rsd2( xyz_func.residue(seqpos2_) );
 	if( rsd1.aa() != rsd2.aa() ){
 		emap[ this->score_type() ] += bonus_;
-	//std::cout << "res_type_linking_cst " << seqpos1_ << " " << seqpos2_ << " aa1 " << rsd1.type().name3() << " aa2 " << rsd2.type().name3() << " " << emap[ this->score_type() ] << std::endl;
+		//std::cout << "res_type_linking_cst " << seqpos1_ << " " << seqpos2_ << " aa1 " << rsd1.type().name3() << " aa2 " << rsd2.type().name3() << " " << emap[ this->score_type() ] << std::endl;
 	}// no match, don't adjust score
 }
 

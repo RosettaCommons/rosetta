@@ -216,6 +216,7 @@
 #include <protocols/simple_moves/ddGCreator.hh>
 #include <protocols/simple_moves/ExtendedPoseMoverCreator.hh>
 #include <protocols/simple_moves/FavorSequenceProfileCreator.hh>
+#include <protocols/simple_moves/FavorSymmetricSequenceCreator.hh>
 #include <protocols/simple_moves/ForceDisulfidesMoverCreator.hh>
 #include <protocols/simple_moves/LoadPDBMoverCreator.hh>
 #include <protocols/simple_moves/LoadUnboundRotMoverCreator.hh>
