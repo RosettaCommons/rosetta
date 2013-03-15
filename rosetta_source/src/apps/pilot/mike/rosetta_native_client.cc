@@ -16,6 +16,7 @@
 
 #include <ppapi/cpp/instance.h>
 #include <ppapi/cpp/module.h>
+
 #include <ppapi/cpp/var.h>
 
 #include <cstdio>
@@ -28,12 +29,16 @@
 #include <iostream>
 #include <string>
 #include <basic/Tracer.hh>
-#include <basic/options/keys/relax.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <protocols/rpc/rpc.hh>
+
 //Auto Headers
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
+#include <utility/inline_file_provider.hh>
+#include <utility/excn/Exceptions.hh>
 #include <ObjexxFCL/string.functions.hh>
+
+#include "geturl_handler.h"
 
 using namespace ObjexxFCL;
 
@@ -46,97 +51,248 @@ namespace nacl_rosetta {
 // declaration and implementation.
 // TODO(sdk_user): 1. Add the declarations of your method IDs.
 
-const char* const kRunRosettaMethodId = "runRosetta";
-const char* const kGetStdoutMethodId = "getStdout";
+class RosettaInstance;
 
-std::string global_command_line;
-std::stringstream ss_cout;
-pthread_t tid;
+class RosettaURLFileHandler: public utility::Inline_File_Provider_Hook {
+ public:
+  RosettaURLFileHandler( RosettaInstance *rinst):
+    rinst_(rinst), 
+    finished_transfer_mutex_(PTHREAD_MUTEX_INITIALIZER),
+    finished_transfer_cond_(PTHREAD_COND_INITIALIZER)
+  {
+  }
 
-pp::Var MarshallGetStdout() {
-  return pp::Var( std::string( ss_cout.str() ) );
-}
+  // this will be called by Rosetta when it encounters a file it needs from the server. 
+  // This function will request the file on the main thread (via the RosettaInstance pointer ) 
+  // and then idle and periodically check the finished transfer variable until the return_file_callback
+  // has happened. Once done, it will return the file contents to the Rosetta File provider and
+  // return. In other words this function will block until the file transfer has completed (or until a 
+  // timeout has hit ). 
+  virtual bool request_file( const std::string filename, std::string &result_data );
+  
+  // this will be called by GetURLHandler when it is finished downloading the data and hands over the
+  // file contents.
+  virtual void return_file_callback( const std::string &result_data, bool error ); 
+  
+  private:
+    RosettaInstance *rinst_;
 
+    // this three variables are used to make the requesting thread (the rosetta thread) idle until 
+    // the file results have been delivered or an error was returned.   
+    bool finished_transfer_;
+    pthread_mutex_t finished_transfer_mutex_ = PTHREAD_MUTEX_INITIALIZER;
+    pthread_cond_t finished_transfer_cond_ = PTHREAD_COND_INITIALIZER;
 
-void * run( void * data ){
+ 
+    std::string result_data_; 
+    bool        error_;
+};
 
-	using namespace core;
-	using namespace basic::options;
-
-	std::string command_line = global_command_line;
-
-	//pp::Instance* the_instance = (pp::Instance*) void_the_instance;
-	ss_cout << "RunRosetta Native Client version of rosetta\n";
-	ss_cout << "Arguments: '" + command_line + "'\n";
-
-	// build c-style arguments.
-	utility::vector1< std::string > tokens ( utility::split( command_line ) );
-	utility::vector1<std::string> tokens_v1;
-	basic::final_channel = &ss_cout;
-
-	tokens_v1.push_back( "mini_rosetta_native_client.nexe" );
-	for( std::vector< std::string >::const_iterator it=tokens.begin(); it != tokens.end(); ++ it ){
-		tokens_v1.push_back( * it );
-		(*basic::final_channel) << (*it) << std::endl;
-	}
-
-	ss_cout << "start" << std::endl;
-	try{
-	}
-	catch( std::string ex ){
-		ss_cout << "Exception occured: " << ex << std::endl;
-	}
-	catch( ... ){
-		ss_cout << "Unknown exception occured" << std::endl;
-	}
-
-	ss_cout << "DONE" << std::endl;
-
-	pthread_exit(0);
-	return NULL;
-}
-
-
-
-
-// TODO(sdk_user): 2. Implement the methods that correspond to your method IDs.
-/// This is the module's function that invokes FortyTwo and converts the return
-/// value from an int32_t to a pp::Var for return.
-pp::Var MarshallRunRosetta( const std::string& text ) { 
-	//global_command_line = args[0].AsString();
-	//pthread_create(&tid, NULL, run, NULL );
-  return pp::Var(  std::string("The Rosetta Output") + text );
-}
+typedef utility::pointer::owning_ptr< RosettaURLFileHandler > RosettaURLFileHandlerOP;
+typedef utility::pointer::owning_ptr< RosettaURLFileHandler const > RosettaURLFileHandlerCOP;
 
 class RosettaInstance : public pp::Instance {
  public:
-  explicit RosettaInstance(PP_Instance instance) : pp::Instance(instance) {
-    printf("RosettaInstance.\n");
-  }
-  virtual ~RosettaInstance() {}
+    explicit RosettaInstance(PP_Instance instance) : 
+      pp::Instance(instance),
+      tid_(0),callback_factory_(this), message_(""),rurlhandler_(NULL)
+    {
+    }
+    virtual ~RosettaInstance() {}
 
-  virtual void HandleMessage(const pp::Var& var_message);
+    virtual void HandleMessage(const pp::Var& var_message);
+
+    void RosettaThread();
+
+
+    void PostMessage_from_main_thread( const std::string &data_to_send ){
+      pp::Module::Get()->core()->CallOnMainThread( 0, callback_factory().NewCallback( &RosettaInstance::PostStringToBrowser,  data_to_send ));
+    }
+    
+    void RequestFile_from_main_thread( const std::string &data_to_send ){
+      pp::Module::Get()->core()->CallOnMainThread( 0, callback_factory().NewCallback( &RosettaInstance::request_file_transfer,  data_to_send ));
+    }
+  
+  private:
+      
+
+    // setup file Handler
+
+    void setup_file_handler(){
+      if( rurlhandler_ == NULL){
+        // set up the file handler
+        rurlhandler_ = new RosettaURLFileHandler(this);  
+        utility::Inline_File_Provider *provider = utility::Inline_File_Provider::get_instance();
+        provider->add_file_provider_hook( rurlhandler_ ); 
+      }
+    }
+
+    // This method is called from the worker thread using CallOnMainThread.
+    // It is not static, and allows PostMessage to be called.
+    void* PostStringToBrowser(int32_t result, std::string data_to_send) {
+      PostMessage(pp::Var(data_to_send));
+      return 0;
+    }
+
+    // This method is called from the worker thread using CallOnMainThread.
+    // It is not static, and allows PostMessage to be called.
+    void* request_file_transfer(int32_t result, std::string url) {
+      // create the URL handler which will perform the actual download. 
+      GetURLHandler* handler = GetURLHandler::Create(this, url, &(*rurlhandler_) );
+      if (handler != NULL) {
+        handler->Start();
+      }
+      return 0;
+    }
+
+
+    // Return the callback factory.
+    pp::CompletionCallbackFactory<RosettaInstance>& callback_factory() {
+      return callback_factory_;
+    }
+
+    pthread_t tid_;
+    pp::CompletionCallbackFactory<RosettaInstance> callback_factory_;
+    std::string message_;
+
+    RosettaURLFileHandlerOP rurlhandler_;
 };
+  
+
+
+bool RosettaURLFileHandler::request_file( const std::string filename, std::string &result_data )
+{
+    finished_transfer_  = false; 
+    error_  = false; 
+    result_data_.clear();
+
+    // All Rosetta Datafiles are stored in this form on the server
+    std::string url = "/data/rosetta_database/" + filename + ".txt" ; 
+   
+    rinst_->PostMessage_from_main_thread( url ); 
+    rinst_->RequestFile_from_main_thread( url );
+
+    // now wait until the request file thread (it runs on the main thread, while this here is the rosetta thread)
+    // has received the file 
+    pthread_mutex_lock(&finished_transfer_mutex_);
+    while( !finished_transfer_ ){
+      pthread_cond_wait(&finished_transfer_cond_, &finished_transfer_mutex_ ); // we need a timeout here in case the other thread never unlocks us.
+    }
+    pthread_mutex_unlock(&finished_transfer_mutex_); 
+
+    // if no error set the result variable to the data obtained. 
+    if(!error_){
+      result_data = result_data_; 
+      // This is just a debug statement 
+      //rinst_->PostMessage_from_main_thread( "Results of '" + filename + "\n" + ">>>>>"+result_data+"<<<<<" ); 
+    }
+
+    // clean up memory
+    result_data_.clear() ;
+    return (!error_);
+}
+  
+void RosettaURLFileHandler::return_file_callback( const std::string &result_data, bool error ){
+    
+    // set the results of the file request and the error status
+    result_data_ = result_data;
+    error_ = error;
+    
+    // now release the waiting thread
+    finished_transfer_ = true; // << sempahore much better 
+    pthread_mutex_lock(&finished_transfer_mutex_);
+    pthread_cond_signal(&finished_transfer_cond_);
+    pthread_mutex_unlock(&finished_transfer_mutex_); 
+
+}
+
+void* StartRosettaThread(void *rosettaInst) {
+  RosettaInstance *inst = static_cast<RosettaInstance*>(rosettaInst);
+  inst->RosettaThread();
+  return NULL;
+}
+
+void RosettaInstance::RosettaThread(){
+  std::string message  = message_;
+  pp::Var return_var;
+  protocols::rpc::JSON_RPCOP rpc;  
+  utility::json_spirit::Object root;  
+  try{
+    rpc = new protocols::rpc::JSON_RPC( message );
+
+    // its own catch block so we can be sure to get the tracer output is also captured assuming the above constructor returns ok. 
+    try{
+      rpc->run();
+    
+      root.push_back( utility::json_spirit::Pair( "output", rpc->tracer() ) );
+//      utility::json_spirit::Object energies;  
+//      energies.push_back( utility::json_spirit::Pair( "score" ,  rpc->get_fa_score() ) ); 
+//      energies.push_back( utility::json_spirit::Pair( "irms", rpc->get_irms() ) ); 
+//
+//      protocols::rpc::pose_energies_to_json( rpc->outputpose(), energies );
+//      root.push_back( utility::json_spirit::Pair( "energies",  energies ) );                              // rosetta energy values
+//      
+//      std::stringstream pdbdatastream;
+//      rpc->outputpose().dump_pdb( pdbdatastream );
+//      root.push_back( utility::json_spirit::Pair( "pdbdata", pdbdatastream.str() ) ); // the PDB data itself of course
+//      
+//      root.push_back( utility::json_spirit::Pair( "cputime", (int) rpc->runtime() ) );
+    }
+    catch( utility::excn::EXCN_Msg_Exception &excn ){
+      root.push_back( utility::json_spirit::Pair( "error", excn.msg() ) );
+    }
+
+  }
+  catch( utility::excn::EXCN_Msg_Exception &excn ){
+    // we're here because the constructuor of JSON_RPC failed
+    root.push_back( utility::json_spirit::Pair( "error",  excn.msg() ) );
+  }
+  catch ( std::string &s ){ 
+    root.push_back( utility::json_spirit::Pair( "error",  "Exception occured during Rosetta Execution:" + s  ) );
+  }
+  catch ( ... ){ 
+    root.push_back( utility::json_spirit::Pair( "error",  "Unknown Exception occured during Rosetta Execution"  ) );
+  }
+
+  // write out json response and send back
+  std::stringstream sstr;
+  write( root, sstr );
+
+  //PostMessage_from_main_thread( sstr.str() );
+  PostMessage_from_main_thread( "End of Rosetta Thread" );
+  PostMessage_from_main_thread( "Returned: " + sstr.str() );
+
+
+}
 
 void RosettaInstance::HandleMessage(const pp::Var& var_message) {
   if (!var_message.is_string()) {
     return;
   }
-  std::string message = var_message.AsString();
-  pp::Var return_var;
-	if( message == kRunRosettaMethodId){
-		return_var = MarshallRunRosetta( "TestText" );
-	}else
-	if( message == kGetStdoutMethodId){
-		return_var = MarshallGetStdout();
-	}
-  PostMessage(return_var);
+  message_ = var_message.AsString();
+
+//  std::string url = "/data/rosetta_database/chemical/atom_type_sets/fa_standard/atom_properties.txt";
+//  GetURLHandler* handler = GetURLHandler::Create(this, url);
+//  if (handler != NULL) {
+//    handler->Start();
+//  }
+
+  // ensure the file handler is ready to go.
+  setup_file_handler();
+
+
+  // Multi threaded version
+  if( pthread_create( &tid_, NULL,  StartRosettaThread, this)) {
+   PostMessage( pp::Var( "ERROR; pthread_create() failed.\n" ) );
+  } else {
+   PostMessage( pp::Var( "NO ERROR\n" ) );
+  }
 }
 
 class RosettaModule : public pp::Module {
  public:
   RosettaModule() : pp::Module() {
-    printf("Got here.\n");
+    
   }
   virtual ~RosettaModule() {}
 

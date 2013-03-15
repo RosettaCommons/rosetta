@@ -356,7 +356,7 @@ class RosettaJob {
         job_data_string = get_string( parsed_payload, "job_data" ); 
       }
       catch( utility::excn::EXCN_Msg_Exception &excn ){
-        std::cout << "Error connecting to server (server didn't reply with JSON object or taskname was not set) " << std::endl;
+        std::cout << "Error extracting job_data from RPC request" << std::endl;
         TR.Error << "EXCEPTION: " << excn.msg() << std::endl; // print the exception message to the Error stream.
         return false; 
       }
@@ -429,7 +429,7 @@ class RosettaJob {
         root.push_back( utility::json_spirit::Pair( "cputime",  0 ) );
       }
   
-       root.push_back( utility::json_spirit::Pair( "error",  0 ) );
+      root.push_back( utility::json_spirit::Pair( "error",  0 ) );
 
       std::cout << "STDERROR:" <<  rpc->tracer() << std::endl; 
       root.push_back( utility::json_spirit::Pair( "stderr", rpc->tracer() ) ); // stderr output for debugging
@@ -438,7 +438,7 @@ class RosettaJob {
       std::stringstream sstr;
       write( root, sstr );
       std::string output_json = "output=" + sstr.str(); 
-      std::cout << output_json << std::endl;
+      //std::cout << output_json << std::endl;
       CurlPost cg;
       try {
         std::string return_data = cg.post( serverinfo_.url_putresult() , "", output_json );
@@ -502,11 +502,9 @@ class RosettaBackend {
         option_collection.load( argc_, argv_, false);
 
         while( !newjob.request_job_from_server() ){
-          core::Real waittime =  std::min( (double)10.0f, 0.5f* pow( (float)1.3, (float) wait_count )); // in seconds
-
-          // HACK!
+          core::Real waittime;
+          //waittime =  std::min( (double)10.0f, 0.5f* pow( (float)1.3, (float) wait_count )); // in seconds
           waittime =  serverinfo_.poll_frequency();
-
           std::cout << "No work. Waiting " << waittime << " seconds before retrying." << std::endl;
           sleep( waittime );
           wait_count ++;
