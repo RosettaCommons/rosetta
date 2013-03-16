@@ -339,8 +339,8 @@ LoopHashDiversifier::parse_my_tag(
 	Movers_map const & /*movers*/,
 	Pose const & pose
 ){
-	num_iterations_ = tag->getOption< Real >( "num_iterations", 100 );
-	num_try_div_ = tag->getOption< Real >( "num_try_div", 100 );
+	num_iterations_ = tag->getOption< Size >( "num_iterations", 100 );
+	num_try_div_ = tag->getOption< Size >( "num_try_div", 100 );
 	
 	min_inter_ss_bbrms_ = tag->getOption< Real >( "min_inter_ss_bbrms", 0 );
 	max_inter_ss_bbrms_ = tag->getOption< Real >( "max_inter_ss_bbrms", 100000 );

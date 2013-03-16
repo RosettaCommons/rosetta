@@ -364,7 +364,7 @@ public:
 		utility::sql_database::sessionOP db_session);
 
 	core::Real
-	abs (numeric::xyzVector<core::Real> vector);
+	absolute_vec (numeric::xyzVector<core::Real> vector);
 
 	std::string
 	check_LR (
@@ -479,14 +479,20 @@ private:
 	bool
 	no_helix_in_pdb_;
 
-	bool
-	no_helix_in_extracted_sw_;	// if true, ignore any pdb that has helix in extracted sandwich
+	core::Size
+	max_helix_in_extracted_sw_loop_;	//	definition: maximum allowable number of helix residues in extracted sandwich loop
 
 	bool
 	no_strand_in_loop_in_extracted_sw_;
 
 	bool
 	exclude_sandwich_that_is_linked_w_same_direction_strand_;
+
+	core::Real
+	max_inter_strand_angle_to_not_be_same_direction_strands_;
+
+	core::Real
+	max_abs_inter_strand_dihedral_to_not_be_same_direction_strands_;
 
 	bool	
 	write_phi_psi_;

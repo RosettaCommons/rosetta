@@ -48,9 +48,11 @@ namespace strand_assembly { extern RealOptionKey const min_shortest_dis_sidechai
 namespace strand_assembly { extern BooleanOptionKey const write_chain_B_resnum; }
 namespace strand_assembly { extern BooleanOptionKey const write_phi_psi; }
 namespace strand_assembly { extern BooleanOptionKey const no_helix_in_pdb; }
-namespace strand_assembly { extern BooleanOptionKey const no_helix_in_extracted_sw; }
+namespace strand_assembly { extern IntegerOptionKey const max_helix_in_extracted_sw_loop; }
 namespace strand_assembly { extern BooleanOptionKey const no_strand_in_loop_in_extracted_sw; }
 namespace strand_assembly { extern BooleanOptionKey const exclude_sandwich_that_is_linked_w_same_direction_strand; }
+namespace strand_assembly { extern RealOptionKey const max_inter_strand_angle_to_not_be_same_direction_strands; }
+namespace strand_assembly { extern RealOptionKey const max_abs_inter_strand_dihedral_to_not_be_same_direction_strands; }
 namespace strand_assembly { extern IntegerOptionKey const max_num_sw_per_pdb; }
 namespace strand_assembly { extern StringOptionKey const check_N_to_C_direction_by; }
 namespace strand_assembly { extern RealOptionKey const check_canonicalness_cutoff; }

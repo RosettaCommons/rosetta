@@ -12540,8 +12540,8 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>if true, ignore any pdb that has helix</dd><br>
 </dl>
 <dl>
-<dt><b>-no_helix_in_extracted_sw</b> \<Boolean\><dt>
-<dd>if true, ignore any pdb that has helix in extracted sandwich</dd><br>
+<dt><b>-max_helix_in_extracted_sw_loop</b> \<Integer\><dt>
+<dd>maximum allowable number of helix residues in extracted sandwich loop</dd><br>
 </dl>
 <dl>
 <dt><b>-no_strand_in_loop_in_extracted_sw</b> \<Boolean\><dt>
@@ -12550,6 +12550,14 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-exclude_sandwich_that_is_linked_w_same_direction_strand</b> \<Boolean\><dt>
 <dd>if true, exclude_sandwich_that_is_linked with same_direction_strand</dd><br>
+</dl>
+<dl>
+<dt><b>-max_inter_strand_angle_to_not_be_same_direction_strands</b> \<Real\><dt>
+<dd>usage: if (angle_start_res_being_middle > max_inter_strand_angle_to_not_be_same_direction_strands_)</dd><br>
+</dl>
+<dl>
+<dt><b>-max_abs_inter_strand_dihedral_to_not_be_same_direction_strands</b> \<Real\><dt>
+<dd>usage: if (abs(torsion_between_strands) > max_abs_inter_strand_dihedral_to_not_be_same_direction_strands_)</dd><br>
 </dl>
 <dl>
 <dt><b>-max_num_sw_per_pdb</b> \<Integer\><dt>

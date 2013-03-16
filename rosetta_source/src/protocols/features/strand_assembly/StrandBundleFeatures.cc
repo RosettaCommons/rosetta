@@ -837,13 +837,22 @@ StrandBundleFeatures::judge_sw_inter_dis (
 	}
 	return -999;
 }		//judge_sw_inter_dis
-	
+
+Size
+StrandBundleFeatures::round(
+	Real x)
+{
+	Size rounded = static_cast <Size> (floor(x+.5));
+	return rounded;
+} //round
+
+/* //	warning: converting to `core::Size' from `double'
 Size 
 StrandBundleFeatures::round(Real x)
 {
 	return floor(x+.5);
 } //round
-	
+*/	
 
 Size
 StrandBundleFeatures::get_nearest_res_from_strand(

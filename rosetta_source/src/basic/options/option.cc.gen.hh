@@ -2593,9 +2593,11 @@ option.add( basic::options::OptionKeys::strand_assembly::min_shortest_dis_sidech
 option.add( basic::options::OptionKeys::strand_assembly::write_chain_B_resnum, "if true, write chain_B_resnum file for InterfaceAnalyzer" );
 option.add( basic::options::OptionKeys::strand_assembly::write_phi_psi, "if true, write phi_psi file" );
 option.add( basic::options::OptionKeys::strand_assembly::no_helix_in_pdb, "if true, ignore any pdb that has helix" );
-option.add( basic::options::OptionKeys::strand_assembly::no_helix_in_extracted_sw, "if true, ignore any pdb that has helix in extracted sandwich" );
+option.add( basic::options::OptionKeys::strand_assembly::max_helix_in_extracted_sw_loop, "maximum allowable number of helix residues in extracted sandwich loop" );
 option.add( basic::options::OptionKeys::strand_assembly::no_strand_in_loop_in_extracted_sw, "if true, ignore any pdb that has a strand as a loop in extracted sandwich" );
 option.add( basic::options::OptionKeys::strand_assembly::exclude_sandwich_that_is_linked_w_same_direction_strand, "if true, exclude_sandwich_that_is_linked with same_direction_strand" );
+option.add( basic::options::OptionKeys::strand_assembly::max_inter_strand_angle_to_not_be_same_direction_strands, "usage: if (angle_start_res_being_middle > max_inter_strand_angle_to_not_be_same_direction_strands_)" );
+option.add( basic::options::OptionKeys::strand_assembly::max_abs_inter_strand_dihedral_to_not_be_same_direction_strands, "usage: if (abs(torsion_between_strands) > max_abs_inter_strand_dihedral_to_not_be_same_direction_strands_)" );
 option.add( basic::options::OptionKeys::strand_assembly::max_num_sw_per_pdb, "maximum number of sandwiches to be extracted per a pdb file" );
 option.add( basic::options::OptionKeys::strand_assembly::check_N_to_C_direction_by, "PE, FE, CBs" );
 option.add( basic::options::OptionKeys::strand_assembly::check_canonicalness_cutoff, "cutoff to determine canonicalness of L/R, P/A and directionality" );
