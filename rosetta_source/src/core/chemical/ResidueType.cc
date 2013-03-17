@@ -534,8 +534,7 @@ ResidueType::abase2( Size const atomno ) const
 Size
 ResidueType::number_bonded_heavyatoms( Size const atomno ) const
 {
-
-#ifndef NDEBUG
+	return bonded_neighbor_[ atomno ].size () - number_bonded_hydrogens( atomno );
 	/// Graph style
 	Size count = 0;
 	VD vd = ordered_atoms_[atomno];
@@ -546,17 +545,14 @@ ResidueType::number_bonded_heavyatoms( Size const atomno ) const
 		AtomType const& at = (*atom_types_)[graph_[target].atom_type_index()];
 		if( at.is_heavyatom() ) ++count;
 	}
-	assert(count == bonded_neighbor_[ atomno ].size () - number_bonded_hydrogens( atomno ));
-#endif
-	return bonded_neighbor_[ atomno ].size () - number_bonded_hydrogens( atomno );
+	return count;
 }
 
 /// @brief indices of the bonded neighbors for an atom
 AtomIndices const &
 ResidueType::bonded_neighbor( Size const atomno ) const
 {
-
-#ifndef NDEBUG
+	//return bonded_neighbor_[ atomno ];
 	/// Graph style
 	VD vd = ordered_atoms_[atomno];
 	AtomIndices atoms;
@@ -568,18 +564,16 @@ ResidueType::bonded_neighbor( Size const atomno ) const
 			if( ordered_atoms_[i] == target ) atoms.push_back( i );
 		}
 	}
-	assert(bonded_neighbor_[atomno] == atoms);
-#endif
 
+	assert(bonded_neighbor_[atomno] == atoms);
 	return bonded_neighbor_[ atomno ];
-	//return graph_[ ordered_atoms_[atomno] ].bonded_neighbor();
 }
 
 utility::vector1<BondName> const &
 ResidueType::bonded_neighbor_types(Size const atomno) const
 {
+	//return bonded_neighbor_type_[atomno];
 	/// Graph style
-#ifndef NDEBUG
 	utility::vector1<BondName> bond_names;
 	VD vd = ordered_atoms_[atomno];
 	for(OutEdgeIterPair ep = boost::out_edges(vd, graph_); ep.first != ep.second; ++ep.first){
@@ -589,7 +583,6 @@ ResidueType::bonded_neighbor_types(Size const atomno) const
 		bond_names.push_back( b.bond_name() );
 	}
 	assert( bond_names == bonded_neighbor_type_[atomno]);
-#endif
 	return bonded_neighbor_type_[atomno];
 }
 
