@@ -9,7 +9,7 @@
 
 /// @file   core/scoring/methods/CartesianBondedEnergy.cc
 /// @brief  Harmonic bondangle/bondlength/torsion constraints
-/// @author
+/// @author Frank DiMaio
 
 // Unit headers
 #include <core/scoring/methods/CartBondedParameters.hh>
@@ -1325,7 +1325,7 @@ IdealParametersDatabase::create_parameters_for_restype(
 			if (i==3 && rsd_type.aa() == core::chemical::aa_gly) continue;
 
 			std::string atm1,atm2;
-			core::Size rt1,rt2;
+			int rt1,rt2;
 			if (i==1) { atm1="C";  atm2="N";  rt1 = -rsd_type.lower_connect_id(); rt2 = rsd_type.atom_index(" N  ");}
 			if (i==2) { atm1="N";  atm2="CA"; rt1 = rsd_type.atom_index(" N  "); rt2 = rsd_type.atom_index(" CA "); }
 			if (i==3) { atm1="CA"; atm2="CB"; rt1 = rsd_type.atom_index(" CA "); rt2 = rsd_type.atom_index(" CB "); }
@@ -1333,7 +1333,8 @@ IdealParametersDatabase::create_parameters_for_restype(
 			if (i==5) { atm1="C";  atm2="O";  rt1 = rsd_type.atom_index(" C  "); rt2 = rsd_type.atom_index(" O  "); }
 
 			ResidueCartBondedParameters::Size2 ids;
-			ids[1] = rt1; ids[2] = rt2;
+			ids[1] = (core::Size)std::max(rt1,0);
+			ids[2] = (core::Size)std::max(rt2,0);
 
 			CartBondedParametersCOP len_params = lookup_length( rsd_type, is_nterm ? false : prepro, atm1, atm2, rt1, rt2 );
 			restype_params->add_bbdep_length_parameter( ids, len_params );
@@ -1356,7 +1357,7 @@ IdealParametersDatabase::create_parameters_for_restype(
 			if (i==7) { atm1="O";  atm2="C";  atm3="N";  rt1=rsd_type.atom_index(" O  "); rt2=rsd_type.atom_index(" C  "); rt3=-rsd_type.upper_connect_id(); }
 
 			ResidueCartBondedParameters::Size3 ids;
-			ids[1] = std::max(rt1,0); ids[2] = std::max(rt2,0); ids[3] = std::max(rt3,0);
+			ids[1] = (core::Size)std::max(rt1,0); ids[2] = (core::Size)std::max(rt2,0); ids[3] = (core::Size)std::max(rt3,0);
 
 			CartBondedParametersCOP ang_params = lookup_angle(rsd_type, prepro, atm1,atm2,atm3, rt1,rt2,rt3 );
 			restype_params->add_bbdep_angle_parameter( ids, ang_params );
