@@ -19,6 +19,7 @@
 #include <string>
 
 #include <utility/static_database.hh>
+#include <utility/exit.hh>
 
 namespace utility {
 
@@ -37,8 +38,8 @@ void Inline_File_Provider::init_static_inputs(){
 }
 
 void Inline_File_Provider::add_input_file( const std::string &filename, const std::string &contents ){
-	std::stringstream *newstream = new std::stringstream( contents );
-	std::string filtered_filename( standardise_filename( filename ) );
+	std::stringstream *newstream = new std::stringstream(contents);
+  std::string filtered_filename( standardise_filename( filename ) );
 	std::cout << "Creating inline input file: '" << filename << "' = (" << filtered_filename << ")" << std::endl; 
 	input_files.push_back( std::make_pair( filtered_filename, newstream ) ); 
 }
@@ -98,26 +99,30 @@ std::string Inline_File_Provider::standardise_filename( std::string filename ){
 
 bool Inline_File_Provider::file_exists( const std::string& filename )
 {
-	std::string filtered_filename( standardise_filename( filename ) );
 
-	std::cout << "Looking for inline file: '" << filtered_filename << "'" << std::endl; 
-	// first find the data stupid simple search
-  // look through input_files
-	for( std::vector < std::pair < std::string, std::stringstream* > >::iterator it = input_files.begin();
-	     it != input_files.end(); ++it ){
-		if( it->first == filtered_filename ){
-			return true;
-		}
-	}
+// std::string filtered_filename( standardise_filename( filename ) );
+//	std::cout << "Looking for inline file: '" << filtered_filename << "'" << std::endl; 
+//	// first find the data stupid simple search
+//  // look through input_files
+//	for( std::vector < std::pair < std::string, std::stringstream* > >::iterator it = input_files.begin();
+//	     it != input_files.end(); ++it ){
+//		if( it->first == filtered_filename ){
+//			return true;
+//		}
+//	}
+//	
+//	// now look through output_files
+//	for( std::vector < std::pair < std::string, std::stringstream* > >::iterator it = output_files.begin();
+//	     it != output_files.end(); ++it ){
+//		if( it->first == filtered_filename ){
+//			return true;
+//		}
+//	}
 	
-	// now look through output_files
-	for( std::vector < std::pair < std::string, std::stringstream* > >::iterator it = output_files.begin();
-	     it != output_files.end(); ++it ){
-		if( it->first == filtered_filename ){
-			return true;
-		}
-	}
-	return false;
+  // determine if the file exists by opening it. On non-physical local filesystems there sometimes is not specific "does file exist"
+  // mechanism. Trying to access the resource is the only way.
+  std::istream *temp;
+  return get_istream( filename, &temp ); 
 }
 
 bool Inline_File_Provider::get_ostream( const std::string& filename, std::ostream **the_stream )
@@ -135,10 +140,45 @@ bool Inline_File_Provider::get_ostream( const std::string& filename, std::ostrea
 
 
 bool Inline_File_Provider::get_istream( const std::string& filename, std::istream **the_stream ){
-	std::stringstream *the_sstream;
+  std::string standard_filename =  standardise_filename( filename );	
+
+  // check last character 
+  if ( *(standard_filename.rbegin()) == '/' ){
+    // cannot download a directory - only files. Reject this
+    return false;
+  }
+
+  std::stringstream *the_sstream;
 	bool result = get_sstream( filename, &the_sstream );
-	(*the_stream) = the_sstream;
-	return result;
+	if( result ){
+    (*the_stream) = the_sstream;
+    return true;
+  }
+
+  // if here, we haven't found the file. Now go through all the hooks (if any) and ask each if they have the file. If so, take the file, add it to our file store and then 
+  // return the result.
+
+  for( std::vector<Inline_File_Provider_HookOP>::const_iterator it = file_provider_hooks_.begin(); 
+       it != file_provider_hooks_.end(); ++ it ){
+    std::string file_data;
+
+    // try and request the file from that resource - these calls can take a long time to return(!) because the resource can be slow.
+    // this call is blocking ! 
+    if( (*it)->request_file( standard_filename, file_data ) ){
+      // add the contents under the filename
+      add_input_file( filename, file_data );
+      // grab the stream
+      if( get_sstream( filename, &the_sstream ) ){
+        (*the_stream) = the_sstream;
+        return true;
+      }
+    }
+  } 
+
+  // if here we have failed to find the resource
+ 
+  (*the_stream) = NULL; 
+  return false;
 }
 
 bool Inline_File_Provider::find_sstream( std::vector < std::pair < std::string, std::stringstream* > > &file_catalog, const std::string& filename, std::stringstream **the_stream ){
@@ -161,9 +201,15 @@ bool Inline_File_Provider::get_sstream( const std::string& filename, std::string
 
   if( find_sstream( input_files, filtered_filename, the_stream) ) return true;
   if( find_sstream( output_files, filtered_filename, the_stream) ) return true;
-	return false;
+  
+	
+
+  return false;
 }
 
+void Inline_File_Provider::add_file_provider_hook( const Inline_File_Provider_HookOP &new_hook ){
+  file_provider_hooks_.push_back( new_hook );
+} 
 
 Inline_File_Provider* Inline_File_Provider::instance_ = NULL;
 

@@ -18,6 +18,7 @@
 
 // Utility headers
 #include <utility/io/izstream.hh>
+#include <utility/pointer/ReferenceCount.hh>
 
 // C++ headers
 #include <iostream>
@@ -28,10 +29,25 @@
 namespace utility {
 
 
+// Forward
+class Inline_File_Provider_Hook;
+
+typedef utility::pointer::owning_ptr< Inline_File_Provider_Hook > Inline_File_Provider_HookOP;
+typedef utility::pointer::owning_ptr< Inline_File_Provider_Hook const > Inline_File_Provider_HookCOP;
+
+// base class for adding file-providing hooks into Inline_File_Provider
+class Inline_File_Provider_Hook: public utility::pointer::ReferenceCount {
+public:
+  Inline_File_Provider_Hook(){}
+  virtual bool request_file( const std::string filename, std::string &result_data ) = 0;
+  virtual void return_file_callback( const std::string &result_data, bool error ) = 0;
+};
+
 class Inline_File_Provider {
 
 	private:
-		Inline_File_Provider(){
+		Inline_File_Provider()
+    {
 		}
 
 	public:
@@ -49,8 +65,12 @@ class Inline_File_Provider {
 		
 		bool get_istream( const std::string& filename, std::istream **the_stream );
 		bool get_sstream( const std::string& filename, std::stringstream **the_stream );
-	private:
-    
+
+    // Add a functor to the list of hooks. These will be called by file requests to allow
+    // external addition of file sources.	
+    void add_file_provider_hook( const Inline_File_Provider_HookOP &new_hook ); 
+  private:
+
     bool find_sstream( std::vector < std::pair < std::string, std::stringstream* > > &file_catalog, const std::string& filename, std::stringstream **the_stream );
 
 		std::string standardise_filename( std::string filename );
@@ -59,6 +79,8 @@ class Inline_File_Provider {
     std::vector < std::pair < std::string, std::stringstream* > > input_files;
 
 		std::vector < std::pair < std::string, std::stringstream* > > output_files;
+
+    std::vector<Inline_File_Provider_HookOP> file_provider_hooks_; 
 };
 
 
