@@ -9,8 +9,13 @@
 // (c) addressed to university of washington uw techtransfer, email: license@u.washington.edu.
 
 /// @file protocols/features/strand_assembly/SandwichFeatures.cc
-/// @brief analyze beta-sandwich features
+/// @brief extract and analyze beta-sandwich features
 /// @author Doo Nam Kim (based on Tim Jacobs' helix_assembly)
+/// @overview
+///		@ task 1: Identify all beta-strands
+///		@ task 2: Identify all beta-sheets with these strands
+///		@ task 3: Identify all beta-sandwiches with these sheets
+///		@ task 3-1: Write beta-sandwiches that passed canonical tests
 
 
 //Core
@@ -197,7 +202,8 @@ SandwichFeatures::init_from_options()
 } // init_from_options()
 
 utility::vector1<std::string>
-SandwichFeatures::features_reporter_dependencies() const {
+SandwichFeatures::features_reporter_dependencies() const
+{
 	utility::vector1<std::string> dependencies;
 	dependencies.push_back("ResidueFeatures");
 	dependencies.push_back("ProteinResidueConformationFeatures");
@@ -206,7 +212,8 @@ SandwichFeatures::features_reporter_dependencies() const {
 } //features_reporter_dependencies()
 
 void
-SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
+SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const
+{
 	using namespace basic::database::schema_generator;
 
 /****** <begin> writing sheet ******/

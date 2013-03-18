@@ -170,9 +170,18 @@ SecondaryStructureFilter::compute( core::pose::Pose const & pose ) const {
 		String sec = filtered_ss_.substr( i-1, 1 );
 		if( *sec.c_str() == 'D' ){
 			++match_count;
+			continue;
+		}else if( *sec.c_str() == 'h' )	{
+			// small h means secondary structure other than H, so either L/E, therefore as long as it is not capital H (helix), it passes
+			if( pose.secstruct( i ) == 'H')	{
+				// it is capital H (helix), so fails
+				tr << "SS filter fail: current/filtered = "
+				   << pose.secstruct( i ) << '/' << sec << " at position " << i << std::endl;
+				continue;
+			}
 		}else{
 			if( *sec.c_str() != pose.secstruct( i ) ){
-				tr << "SS filter fail: current/filterd = "
+				tr << "SS filter fail: current/filtered = "
 				   << pose.secstruct( i ) << '/' << sec << " at position " << i << std::endl;
 				continue;
 				//return false;

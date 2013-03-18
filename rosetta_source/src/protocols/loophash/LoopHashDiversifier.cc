@@ -107,6 +107,7 @@ LoopHashDiversifier::LoopHashDiversifier() :
 	max_struct_(10),
 	num_iterations_(100),
 	num_try_div_(100),
+	diversify_loop_only_( true ),
 	ideal_( false ),
 	filter_by_phipsi_( false ),
 	cenfilter_( NULL ),
@@ -137,6 +138,7 @@ LoopHashDiversifier::LoopHashDiversifier(
 	core::Size max_struct,
 	core::Size num_iterations,
  	core::Size num_try_div,
+	bool diversify_loop_only,
 	bool ideal,
 	bool filter_by_phipsi,
 	protocols::filters::FilterOP cenfilter,
@@ -159,6 +161,7 @@ LoopHashDiversifier::LoopHashDiversifier(
 	max_struct_(max_struct),
 	num_iterations_(num_iterations),
 	num_try_div_(num_try_div),
+	diversify_loop_only_(diversify_loop_only),
 	ideal_( ideal ),
 	filter_by_phipsi_( filter_by_phipsi ),
 	cenfilter_( cenfilter ),
@@ -213,10 +216,32 @@ LoopHashDiversifier::apply( Pose & pose )
 			//Choose a random window-size of residues to run loophash on
 			core::Size lh_start = numeric::random::random_range(start_res_, stop_res_-window_size_+1);
 			core::Size lh_stop = lh_start+window_size_-1;
-			
+				TR << "lh_start: " << lh_start << ", lh_stop: " << lh_stop << std::endl;
+
+			bool ok_to_diversify = true;
+			if (diversify_loop_only_)
+			{
+				for(core::Size res=lh_start; res<=lh_stop; ++res)
+				{
+					if(pose.conformation().secstruct(res) != 'L')
+					{
+						ok_to_diversify=false;
+					}
+				}
+			}
+			if( !ok_to_diversify )
+			{
+					TR<<"Randomly selected residues have non-loop, so select other residues!"<<std::endl;
+				cur_num_try_div++;
+					TR << "cur_num_try_div: " << cur_num_try_div << std::endl;
+				continue;
+			}
+
+
 			lsampler.set_start_res( lh_start );
 			lsampler.set_stop_res ( lh_start );
-			
+
+
 			//Determine min and max torsion RMSD based on secondary structure
 			char sec_struct = pose.conformation().secstruct(lh_start);
 			bool inter_ss=false;
@@ -245,7 +270,7 @@ LoopHashDiversifier::apply( Pose & pose )
 			lsampler.build_structures( pose, lib_structs );
 			Size endtime = time( NULL );
 			Size nstructs = lib_structs.size();
-			TR << "Found " << nstructs << " alternative states in time: " << endtime - starttime << std::endl;
+				TR << "Found " << nstructs << " alternative states in time: " << endtime - starttime << std::endl;
 
 			//Shuffle the loophash structures
 	//		numeric::random::random_permutation(lib_structs.begin(), lib_structs.end(), numeric::random::RG);
@@ -279,6 +304,7 @@ LoopHashDiversifier::apply( Pose & pose )
 			{
 					TR<<"No structures survived centroid filter. Consider relaxing filters"<<std::endl;
 				cur_num_try_div++;
+					TR << "cur_num_try_div: " << cur_num_try_div << std::endl;
 				//set_last_move_status( protocols::moves::FAIL_RETRY );
 				//return;
 			}
@@ -290,7 +316,7 @@ LoopHashDiversifier::apply( Pose & pose )
 			
 		if (!div_success)
 		{
-			TR<<"diversification failed after " << num_try_div_ << " trials"<<std::endl;
+				TR<<"diversification failed after " << num_try_div_ << " trials"<<std::endl;
 			set_last_move_status( protocols::moves::FAIL_RETRY ); 
 			return;
 		}
@@ -301,7 +327,7 @@ LoopHashDiversifier::apply( Pose & pose )
 		// make best from list the next starting structure
 		std::pair< Real, SilentStructOP > currbest = all_structs_.back();
 		all_structs_.pop_back();
-		TR << "Best score after round " << cur_iter << ": " << -currbest.first << std::endl;
+			TR << "Best score after round " << cur_iter << ": " << -currbest.first << std::endl;
 
 		currbest.second->fill_pose( pose );
 		
@@ -341,7 +367,9 @@ LoopHashDiversifier::parse_my_tag(
 ){
 	num_iterations_ = tag->getOption< Size >( "num_iterations", 100 );
 	num_try_div_ = tag->getOption< Size >( "num_try_div", 100 );
-	
+
+	diversify_loop_only_ = tag->getOption< bool >( "diversify_loop_only", false ); // specify in xml 'diversify_loop_only=1/0'
+
 	min_inter_ss_bbrms_ = tag->getOption< Real >( "min_inter_ss_bbrms", 0 );
 	max_inter_ss_bbrms_ = tag->getOption< Real >( "max_inter_ss_bbrms", 100000 );
 	

@@ -56,6 +56,7 @@ public:
 		core::Size max_struct,
 		core::Size num_iterations,
 		core::Size num_try_div,
+		bool diversify_loop_only,
 		bool ideal,
 		bool filter_by_phipsi,
 		protocols::filters::FilterOP cenfilter,
@@ -138,9 +139,11 @@ private:
 	//Number of loophash runs to try in each execution
 	Size num_try_div_;
 	
+	bool diversify_loop_only_;
+
 	// should we save space and assume structure is ideal?
 	bool ideal_, filter_by_phipsi_;
-	
+
 	//cen actually prune decoys based on the filter's apply function.
 	protocols::filters::FilterOP cenfilter_, ranking_cenfilter_;
 	
