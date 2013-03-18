@@ -43,7 +43,7 @@ namespace json_spirit {
     return value.get_obj();
   }
   
-  mArray get_Array(const mObject& obj, const std::string& name )
+  mArray get_mArray(const mObject& obj, const std::string& name )
   {
     const mValue value = get_value( obj, name );
     if ( value.type() != array_type ) {  throw utility::excn::EXCN_Msg_Exception("JSON error: '" + name + "' is not an Array" ); }
@@ -63,7 +63,7 @@ namespace json_spirit {
     if ( value.type() != str_type ) {  throw utility::excn::EXCN_Msg_Exception("JSON error: '" + name + "' is not a string" ); }
     return value.get_str();
   }
-
+  
   std::string get_string_or_empty(const mObject& obj, const std::string& name )
   {
     const std::string empty_string("");
@@ -72,6 +72,21 @@ namespace json_spirit {
     if ( value.type() != str_type ) { return empty_string; } 
     return value.get_str();
   }
+  
+  double get_real(const mObject& obj, const std::string& name )
+  {
+    mValue value = get_value( obj, name );
+    if ( value.type() != real_type ) {  throw utility::excn::EXCN_Msg_Exception("JSON error: '" + name + "' is not a real" ); }
+    return value.get_real();
+  }
+  
+  int get_int(const mObject& obj, const std::string& name )
+  {
+    mValue value = get_value( obj, name );
+    if ( value.type() != int_type ) {  throw utility::excn::EXCN_Msg_Exception("JSON error: '" + name + "' is not a int" ); }
+    return value.get_int();
+  }
+
 
 
 }

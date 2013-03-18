@@ -28,7 +28,7 @@ namespace json_spirit {
   
   mObject get_mObject(const mObject& obj, const std::string& name );
   
-  mArray get_Array(const mObject& obj, const std::string& name );
+  mArray get_mArray(const mObject& obj, const std::string& name );
   
   mObject read_mObject(  const std::string& json_string );
   
@@ -36,6 +36,9 @@ namespace json_spirit {
   
   std::string get_string_or_empty(const mObject& obj, const std::string& name );
 
+  double get_real(const mObject& obj, const std::string& name );
+  
+  int get_int(const mObject& obj, const std::string& name );
 
 }
 }
