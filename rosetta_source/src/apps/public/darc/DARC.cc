@@ -123,12 +123,12 @@ int main( int argc, char * argv [] ) {
 	Size const nconformers = small_mol_pose.total_residue();
 
 	//create 'tag' for output filenames
-	int dot_index1 = input_protein.rfind(".", input_protein.size());
-	assert(dot_index1 != -1 && "No dot found in filename");
-	std::string protein_name = input_protein.substr(0,dot_index1);
-	int dot_index2 = input_ligand.rfind(".", input_ligand.size());
-	assert(dot_index2 != -1 && "No dot found in filename");
-	std::string ligand_name = input_ligand.substr(0,dot_index2);
+	int pfounddir = input_protein.find_last_of("/\\");
+	int pfounddot = input_protein.find_last_of(".");
+	std::string protein_name = input_protein.substr((pfounddir+1),(pfounddot-(pfounddir+1)));
+	int lfounddir = input_ligand.find_last_of("/\\");
+	int lfounddot = input_ligand.find_last_of(".");
+	std::string ligand_name = input_ligand.substr((lfounddir+1),(lfounddot-(lfounddir+1)));
 	std::string tag = ligand_name + "_" + protein_name;
 	std::string pso_pose_name = "LIGAND_" + tag + ".pdb";
 	std::string darc_complex_filename = "DARC_" + tag + ".pdb";
