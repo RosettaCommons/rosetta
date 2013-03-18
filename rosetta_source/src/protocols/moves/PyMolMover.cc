@@ -348,8 +348,10 @@ void PyMolMover::send_colors(Pose const &pose, std::map<int, int> const & colors
 	utility::vector1<int> energies( pose.total_residue(), default_color);  // energies = [ X11Colors[default_color][0] ] * pose.total_residue()
 
 	for(std::map<int, int>:: const_iterator i = colors.begin(); i!=colors.end(); ++i) {
-		PyAssert( (*i).first >=1 && (*i).first <= pose.total_residue(), "PyMolMover::send_colors residue index is out of range!");
-		PyAssert( (*i).second >= XC_first_color && (*i).second <= XC_last_color, "PyMolMover::send_colors color index is out of range!");
+		PyAssert( (*i).first >=1 && (*i).first <= static_cast<int>(pose.total_residue()),
+				"PyMolMover::send_colors residue index is out of range!");
+		PyAssert( (*i).second >= XC_first_color && (*i).second <= XC_last_color,
+				"PyMolMover::send_colors color index is out of range!");
 
 		energies[ (*i).first ] = (*i).second;  // for r in colors: energies[r-1] = X11Colors[ colors[r] ][0]
 	}

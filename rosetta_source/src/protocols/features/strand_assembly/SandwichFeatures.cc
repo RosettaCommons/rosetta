@@ -1303,7 +1303,7 @@ SandwichFeatures::see_whether_sheet_is_antiparallel(
 
 
 	// <begin> get the largest distance and its residue index
-	Size res_index_having_the_largest_dis;
+	Size res_index_having_the_largest_dis = 0;
 	Real largest_dis = -99;
 
 	for(Size ii=0; ii<=strands_from_i.size()-1; ++ii)

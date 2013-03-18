@@ -390,10 +390,11 @@ void SetCrystWeightMover::parse_my_tag(
 
 ////
 
-void RecomputeDensityMapMover::apply( core::pose::Pose & pose ) {
+void RecomputeDensityMapMover::apply( core::pose::Pose & pose )
+{
 	using namespace core::scoring::electron_density;
 	std::string newMap = core::scoring::cryst::getPhenixInterface().calculateDensityMap( pose, !keep_sidechains_ );
-	ElectronDensity& densityMap = getDensityMap(newMap, true);
+	/*ElectronDensity& densityMap =*/ getDensityMap(newMap, true);
 }
 
 void RecomputeDensityMapMover::parse_my_tag(
@@ -520,7 +521,7 @@ void UpdateSolventMover::parse_my_tag(
 
 void TagPoseWithRefinementStatsMover::apply( core::pose::Pose & pose ) {
 	// make sure fmodel is initialized by scoring the pose
-	core::Real xraytgt = core::scoring::cryst::getPhenixInterface().getScore( pose );
+	/*core::Real xraytgt =*/ core::scoring::cryst::getPhenixInterface().getScore( pose );
 
 	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
 	//fpd if the pose is symmetric use a symmetric scorefunction

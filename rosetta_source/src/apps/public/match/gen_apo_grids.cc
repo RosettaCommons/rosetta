@@ -423,9 +423,9 @@ int main( int argc, char * argv [] )
 				}
 				else
 				{
-					core::Real dis_rad = dis - lj_radius[atypid];
+					//core::Real dis_rad = dis - lj_radius[atypid];  // unused ~Labonte
 					//x1 = ( dis_rad * dis_rad ) * lk_inv_lambda2[atypid];  // unused ~Labonte
-					dis_rad = dis - lj_radius[atypid];
+					//dis_rad = dis - lj_radius[atypid];  // unused ~Labonte
 					//x2 = ( dis_rad * dis_rad ) * lk_inv_lambda2[atypid];  // unused ~Labonte
 
 					//solvE1 = std::exp(-x1) * lk_coeff[atypid] * inv_dis2;  // unused ~Labonte

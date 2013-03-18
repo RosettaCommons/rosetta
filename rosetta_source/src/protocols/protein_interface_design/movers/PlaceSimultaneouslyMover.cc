@@ -392,7 +392,7 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
            PackerTaskOP task = create_task_for_allhotspot_packing( saved_pose );
            //TR << "test loop through saved_auction: " << auction_->auction_results().size() << " , " << new_auction.size() << std::endl;
         
-           Size residue= each_auction_result->second.first;
+           //Size residue= each_auction_result->second.first;  // unused ~Labonte
            residue_level_tasks_for_placed_hotspots_->clear();
            core::pack::task::TaskFactoryOP pack_around_placed_hotspots_ = residue_level_tasks_for_placed_hotspots_->clone();
            pack_around_placed_hotspots_->push_back( new core::pack::task::operation::RestrictToRepacking );

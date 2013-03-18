@@ -719,7 +719,7 @@ JSONFormattedLoopsFileReader::parse_json_residue_info(
 	core::Size & approximate_linenumber
 ) {
 	core::Size resNo = 0;
-	char chain_id;
+	char chain_id = ' ';
 	char insert_code = ' ';
 	bool usesPDBNumbering = false;
 

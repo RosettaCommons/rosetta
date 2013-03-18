@@ -425,7 +425,7 @@ public:
 					TS_ASSERT_DELTA( emap[fa_sol], infasol, 1e-3 );
 
 					EnergyMap emap_ana;
-					Real ana_vs_table_percent_diff_tolerance = ( ii==Hha_idx &&  ( jj==Hha_idx || jj == HREPS_idx ) ) ? 1 : ( d2 < 1 ) ? 1e-1 : 5e-2;
+					Real ana_vs_table_percent_diff_tolerance = ( ii==Size(Hha_idx) &&  ( jj==Size(Hha_idx) || jj == Size(HREPS_idx) ) ) ? 1 : ( d2 < 1 ) ? 1e-1 : 5e-2;
 					ana_lj_energy.atom_pair_energy( at1, at2, 1.0, emap_ana, d2 );
 					TS_ASSERT( ( emap[ fa_atr ] < 0.01 && emap_ana[ fa_atr ] < 0.01 ) ||
 						std::abs( emap[ fa_atr ] - emap_ana[ fa_atr ] ) / std::max( std::abs( emap[ fa_atr ]), std::abs(emap_ana[ fa_atr ])) < ana_vs_table_percent_diff_tolerance );

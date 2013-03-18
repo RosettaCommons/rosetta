@@ -1325,7 +1325,8 @@ IdealParametersDatabase::create_parameters_for_restype(
 			if (i==3 && rsd_type.aa() == core::chemical::aa_gly) continue;
 
 			std::string atm1,atm2;
-			int rt1,rt2;
+			int rt1 = 0;
+			int rt2 = 0;
 			if (i==1) { atm1="C";  atm2="N";  rt1 = -rsd_type.lower_connect_id(); rt2 = rsd_type.atom_index(" N  ");}
 			if (i==2) { atm1="N";  atm2="CA"; rt1 = rsd_type.atom_index(" N  "); rt2 = rsd_type.atom_index(" CA "); }
 			if (i==3) { atm1="CA"; atm2="CB"; rt1 = rsd_type.atom_index(" CA "); rt2 = rsd_type.atom_index(" CB "); }

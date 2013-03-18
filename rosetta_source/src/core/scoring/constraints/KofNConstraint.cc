@@ -161,18 +161,18 @@ KofNConstraint::score( XYZ_Func const & xyz_func, EnergyMap const & weights, Ene
 
 /// @brief helper function to accumulate all constraint scores into one number
 core::Real
-KofNConstraint::calculate_total_cst_score( EnergyMap const & weights, EnergyMap & emap ) const {
+KofNConstraint::calculate_total_cst_score( EnergyMap const & weights, EnergyMap & emap ) const
+{
+	core::Real total_score =
+			emap[constant_constraint] * weights[constant_constraint] +
+			emap[coordinate_constraint] * weights[coordinate_constraint] +
+			emap[atom_pair_constraint] * weights[atom_pair_constraint] +
+			emap[angle_constraint] * weights[angle_constraint] +
+			emap[dihedral_constraint] * weights[dihedral_constraint] +
+			emap[backbone_stub_constraint] * weights[backbone_stub_constraint] +  // + was a semicolon! ~Labonte
+			emap[backbone_stub_linear_constraint] * weights[backbone_stub_linear_constraint];
 
-  core::Real total_score =
-		emap[constant_constraint] * weights[constant_constraint] +
-		emap[coordinate_constraint] * weights[coordinate_constraint] +
-		emap[atom_pair_constraint] * weights[atom_pair_constraint] +
-		emap[angle_constraint] * weights[angle_constraint] +
-		emap[dihedral_constraint] * weights[dihedral_constraint] +
-		emap[backbone_stub_constraint] * weights[backbone_stub_constraint];
-		emap[backbone_stub_linear_constraint] * weights[backbone_stub_linear_constraint];
-
-  return total_score;
+	return total_score;
 }
 
 

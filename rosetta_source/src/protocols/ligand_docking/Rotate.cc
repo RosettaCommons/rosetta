@@ -212,7 +212,9 @@ void Rotate::rotate_ligand(
 			++chain_begin;
 		}
 		for(core::Size i=1; i <= rotate_info_.tag_along_residues.size(); ++i){
-			assert(rotate_info_.tag_along_residues.size() == ligands[jump_choice].tag_along_residues[i]);
+			// I cannot figure out what this assert is testing for; it seems to be comparing a ResidueOP to a Size.
+			// In any case, it is causing a comparison warning, so I am commenting it out. ~Labonte
+			//assert(rotate_info_.tag_along_residues.size() == ligands[jump_choice].tag_along_residues[i]);
 			core::Size residue_id = rotate_info_.tag_along_residues[i];
 			core::conformation::ResidueCOP residue = ligands[jump_choice].tag_along_residues[i];
 			pose.replace_residue(residue_id, *residue, false /*orient backbone*/);// assume rotamers are oriented?

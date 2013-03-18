@@ -315,7 +315,7 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 	{
 		TR.Debug << "Normalizing cross partition contacts by sasa." << std::endl;
 
-		core::Real interface_sasa;
+		core::Real interface_sasa = 0.0;
 
 		if (filter_mode_ == ALL)
 		{

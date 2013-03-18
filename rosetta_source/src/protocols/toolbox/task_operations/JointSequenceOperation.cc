@@ -129,13 +129,13 @@ JointSequenceOperation::apply( Pose const & pose, PackerTask & task ) const
 		utility::vector1< bool > allowed(core::chemical::num_canonical_aas, false);
 
 		if(use_current_pose_) {
-			if( pose.aa(ii) <= allowed.size() ) allowed[ pose.aa(ii) ] = true;
+			if( pose.aa(ii) <= static_cast<int>(allowed.size()) ) allowed[ pose.aa(ii) ] = true;
 		}
 		for( std::vector<core::sequence::SequenceOP>::const_iterator iter(sequences_.begin()); iter != sequences_.end(); iter++ ) {
 			//if ( ii > (*iter)->length() ) continue; // ignore short references
 			char aa( (*(*iter))[ na_ii ] );
 			if( core::chemical::oneletter_code_specifies_aa(aa) ) {
-				if(core::chemical::aa_from_oneletter_code(aa)<=allowed.size()) {
+				if(core::chemical::aa_from_oneletter_code(aa)<=static_cast<int>(allowed.size())) {
 					//TR << "JointSeq: " << pose.aa(ii) << ii << " " << core::chemical::aa_from_oneletter_code(aa) << na_ii << std::endl;
 					allowed[ core::chemical::aa_from_oneletter_code(aa)  ] = true;
 				}

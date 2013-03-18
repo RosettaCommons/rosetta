@@ -137,7 +137,9 @@ InterfacePackingFilter::compute( core::pose::Pose const & pose ) const{
 	core::scoring::packing::HolesParams hp(basic::database::full_name("scoring/rosettaholes/decoy15.params"));
 	core::Real cutoff2 = distance_cutoff_*distance_cutoff_;
 	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
-	core::Size monomer_lower_bound, /*monomer_upper_bound,*/ ir, jr;
+	core::Size monomer_lower_bound = 0;
+	//core::Size monomer_upper_bound = 0;  // unused ~Labonte
+	core::Size ir, jr;
 	core::Size base = 0;
 	utility::vector1<core::Size> sub_pose_resis, neighbor_resis;
 	core::Size count = 0; Real if_score = 0;

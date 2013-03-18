@@ -58,7 +58,7 @@ vector1 < platform::Real > Svm_rosetta::predict_probability(vector1 <Svm_node_ro
 	x[features.size()].index = -1;
 	int nr_class = svm_get_nr_class(svm_model_);
 	double *prob_estimates = (double *) malloc(nr_class*sizeof(double));
-	double predict_label = svm_predict_probability(svm_model_,x,prob_estimates);
+	/*double predict_label =*/ svm_predict_probability(svm_model_,x,prob_estimates);
 	vector1 <platform::Real> probs_to_return;
 	for(int ii=0;ii<nr_class;++ii){
 		probs_to_return.push_back(prob_estimates[ii]);

@@ -352,7 +352,7 @@ pep_rmsd_analysis(
 	Size ref_pep_begin( ref_pose.conformation().chain_begin( ref_pep_chain ) ); 
 	Size ref_pep_end( ref_pose.conformation().chain_end( ref_pep_chain ) ); 
 
-	Size ref_prot_chain;
+	Size ref_prot_chain = 0;
 	for( Size i = 1; i <= ref_pose.conformation().num_chains(); ++i ){
 		if( i == ref_pep_chain ) continue;
 		if( !( ref_pose.residue( ref_pose.conformation().chain_begin( i ) ).is_protein() ) ) continue;
@@ -567,7 +567,7 @@ run_pep_prep()
 
 	//Size const nres( pose.total_residue() );  // unused ~Labonte
 
-	Size prot_chain;
+	Size prot_chain = 0;
 	for( Size i = 1; i <= pose.conformation().num_chains(); ++i ){
 		if( !( pose.residue( pose.conformation().chain_begin( i ) ).is_protein() ) ) continue;
 		else{
@@ -735,7 +735,7 @@ run_pep_prep()
 			Size ref_pep_begin( ref_pose.conformation().chain_begin( ref_pose.chain( ref_pep_anchor ) ) );
 			Size ref_pep_end( ref_pose.conformation().chain_end( ref_pose.chain( ref_pep_anchor ) ) );
 			//set ref prot chain  = first non-peptide protein chain in pose
-			Size ref_prot_chain;
+			Size ref_prot_chain = 0;
 			for( Size ii = 1; ii <= ref_pose.conformation().num_chains(); ++ii ){
 				if( ii == ref_pep_chain ) continue;
 				if( !( ref_pose.residue( ref_pose.conformation().chain_begin( ii ) ).is_protein() ) ) continue;

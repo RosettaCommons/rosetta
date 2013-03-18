@@ -171,7 +171,7 @@ void FullatomRelaxMover::FinalizeMovers(pose::Pose & pose)
 	TR << "Finalizing Movers" << std::endl;
 	// Setting the move map for the peptide
 	// For setting movemap in fullatom
-	Size protein_startseqnum;
+	Size protein_startseqnum = 0;
 	for (Size i=1; i<=pose.total_residue(); ++i){
 		if (pose.residue_type(i).is_protein()){
 			protein_startseqnum=i;

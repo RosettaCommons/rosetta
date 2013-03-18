@@ -173,7 +173,7 @@ int main( int argc, char * argv [] ) {
 
 	protocols::pockets::PlaidFingerprint pf(small_mol_pose, npf);
 	core::pose::Pose oriented_pose;
-	core::Size best_conformer; // note: indexed from zero
+	core::Size best_conformer = 0; // note: indexed from zero
 	std::cout<<"Starting PSO"<<std::endl;
 
   //setup GPU

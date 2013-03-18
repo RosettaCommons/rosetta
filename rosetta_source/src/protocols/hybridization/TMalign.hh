@@ -2145,7 +2145,7 @@ public:
 		n_ali8_=k;
 
 		// Final TMscore
-		double rmsd;
+		//double rmsd;  // unused ~Labonte
 		//double TM1, TM2;  // unused ~Labonte
 		d0_out_=5.0;
 		simplify_step=1;

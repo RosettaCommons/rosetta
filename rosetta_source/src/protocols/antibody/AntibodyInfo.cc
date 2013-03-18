@@ -359,7 +359,7 @@ void AntibodyInfo::setup_CDRsInfo( pose::Pose const & pose ) {
 	int loop_start_in_pose, loop_stop_in_pose, cut_position ;
 	loopsop_having_allcdrs_ = new loops::Loops();
     
-	for (Size i=start_cdr_loop; i<=total_cdr_loops_; ++i ){
+	for (Size i=start_cdr_loop; i<=Size(total_cdr_loops_); ++i ){
 		loop_start_in_pose = pose.pdb_info()->pdb2pose( Chain_IDs_for_CDRs[i], cdr_numbering_[i][start]);
 		if(i != h3 ){
 			loop_stop_in_pose= pose.pdb_info()->pdb2pose( Chain_IDs_for_CDRs[i], cdr_numbering_[i][stop]);

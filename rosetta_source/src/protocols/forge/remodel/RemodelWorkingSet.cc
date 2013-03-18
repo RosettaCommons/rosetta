@@ -151,7 +151,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 	// find C term extension, if any
 	int last_ext;
 	last_ext = (int)data.sequence.find_last_of(Xs);
-	if (last_ext == model_length -1) {
+	if (last_ext == static_cast<int>(model_length -1)) {
 		TR << "workingSetGen(): C-terminal is extended" << std::endl;
 		// if C-term extension, add extra degenerate ss type to get fragments past last res.
 		CtermExt = true;
@@ -224,7 +224,8 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 		}
 	}
 
-	if (option[ OptionKeys::remodel::repeat_structure].user()){ // repeat structure loop over a second time; merge sections and update index
+	// repeat structure loop over a second time; merge sections and update index
+	if (option[ OptionKeys::remodel::repeat_structure].user()){
 		//need to know the original index of the last element, for building
 		//extensions or deletions across jxn points
 		LineObject lastLO = data.blueprint.back();
@@ -515,7 +516,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 			TR << "N-terminal extension found" << std::endl;
 			manager.add( new SegmentRebuild( Interval(1,tail),  data.dssp_updated_ss.substr( headNew-1, gap ), aa.substr( headNew-1,gap )) );
 		}
-		else if ( tail == 0 && segmentStorageVector[i].residues.back() == model_length ) {
+		else if ( tail == 0 && segmentStorageVector[i].residues.back() == static_cast<int>(model_length) ) {
 			TR << "C-terminal extension found" << std::endl;
 			gap = (int)data.blueprint.size()-segmentStorageVector[i].residues.front()+1;
 			manager.add( new SegmentRebuild( Interval(head,input_pose.total_residue()), DSSP.substr( segmentStorageVector[i].residues.front()-1, gap ), aa.substr( segmentStorageVector[i].residues.front()-1, gap )) );
@@ -524,8 +525,8 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 		  TR << "debug: N-term deletion" << std::endl;
 			this->manager.add( new SegmentRebuild( Interval(1,tail),  DSSP.substr( headNew-1, gap ), aa.substr( headNew-1,gap )) );
 		} 
-		else if (tail != static_cast<int>(input_pose.total_residue()) && tailNew == model_length && headNew == 1 &&
-				segmentStorageVector[i].residues.back() == model_length ) { // C-term deletion
+		else if (tail != static_cast<int>(input_pose.total_residue()) && tailNew == static_cast<int>(model_length) && headNew == 1 &&
+				segmentStorageVector[i].residues.back() == static_cast<int>(model_length) ) { // C-term deletion
 			gap = (int)data.blueprint.size()-segmentStorageVector[i].residues.front()+1;
 			TR << "debug: C-term deletion" << std::endl;
 			this->manager.add( new SegmentRebuild( Interval(head,input_pose.total_residue()), DSSP.substr( segmentStorageVector[i].residues.front()-1, gap ), aa.substr( segmentStorageVector[i].residues.front()-1, gap )) );

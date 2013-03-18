@@ -2810,26 +2810,31 @@ svm_model *svm_load_model(const char *model_file_name)
 				return NULL;
 			}
 		}
-		else if(strcmp(cmd,"degree")==0)
+		else if(strcmp(cmd,"degree")==0) {
 			if (fscanf(fp,"%d",&param.degree) == EOF) {
 				std::cout << "Warning! End of file reached without any matches." << std::endl;
 			}
-		else if(strcmp(cmd,"gamma")==0)
+		}
+		else if(strcmp(cmd,"gamma")==0) {
 			if (fscanf(fp,"%lf",&param.gamma) == EOF) {
 				std::cout << "Warning! End of file reached without any matches." << std::endl;
 			}
-		else if(strcmp(cmd,"coef0")==0)
+		}
+		else if(strcmp(cmd,"coef0")==0) {
 			if (fscanf(fp,"%lf",&param.coef0) == EOF) {
 				std::cout << "Warning! End of file reached without any matches." << std::endl;
 			}
-		else if(strcmp(cmd,"nr_class")==0)
+		}
+		else if(strcmp(cmd,"nr_class")==0) {
 			if (fscanf(fp,"%d",&model->nr_class) == EOF) {
 				std::cout << "Warning! End of file reached without any matches." << std::endl;
 			}
-		else if(strcmp(cmd,"total_sv")==0)
+		}
+		else if(strcmp(cmd,"total_sv")==0) {
 			if (fscanf(fp,"%d",&model->l) == EOF) {
 				std::cout << "Warning! End of file reached without any matches." << std::endl;
 			}
+		}
 		else if(strcmp(cmd,"rho")==0)
 		{
 			int n = model->nr_class * (model->nr_class-1)/2;

@@ -226,8 +226,8 @@ utility::vector1<HelicalFragmentOP> HelixBundleFeatures::get_helix_fragments(boo
 
 	utility::vector1<HelicalFragmentOP> all_helices;
 	
-	core::Size prev_residue_begin;
-	core::Size prev_residue_end;
+	core::Size prev_residue_begin = 0;
+	core::Size prev_residue_end = 0;
 	while(res.next())
 	{
 		Size residue_begin, residue_end;

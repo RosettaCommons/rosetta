@@ -337,7 +337,7 @@ utility::vector1< numeric::xyzVector<core::Real> > deserialize_xyz_coords(std::s
 {
 	//natoms really needs to be correct
 	core::Real* coord_data = new core::Real[natoms*3];
-	core::Size memory_size = natoms*3*sizeof(core::Real);
+	//core::Size memory_size = natoms*3*sizeof(core::Real);  // unused ~Labonte
 	utility::decode6bit((unsigned char*)coord_data,data);
 
 	utility::vector1< numeric::xyzVector<core::Real> > xyz_vector;

@@ -251,7 +251,8 @@ get_neighbor_sub_resis (Pose const &pose_in, Real contact_dist, std::string sym_
 
 	//Get the intra_subs
 	Pose pose = pose_in;
-	Size monomer_lower_bound, monomer_upper_bound;
+	Size monomer_lower_bound = 0;
+	Size monomer_upper_bound = 0;
 	utility::vector1<char> subs;
 	utility::vector1<Size> resis; 
 	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
