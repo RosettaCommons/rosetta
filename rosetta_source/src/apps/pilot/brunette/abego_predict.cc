@@ -64,10 +64,10 @@ void predict_ss(vector1< vector1 <Real> > ss_pred, string fasta, string id){
 	std::string out_file_name_str( id + ".abego_ss2");
 	utility::io::ozstream output(out_file_name_str);
 	output << "# PSIPRED VFORMATED but done with Rosetta v1.0\n" << std::endl;
-	for(int ii = 1; ii<= ss_pred.size(); ++ii){
+	for(Size ii = 1; ii<= ss_pred.size(); ++ii){
 		char label = get_label(ss_pred[ii]);
 		output << I(4,ii) << " " << fasta.at(ii-1) << " " << label <<" ";
-		for(int jj = 1; jj<= ss_pred[ii].size(); ++jj){
+		for(Size jj = 1; jj<= ss_pred[ii].size(); ++jj){
 			output <<" " << F(7,3,ss_pred[ii][jj]);
 		}
 		output << std::endl;
@@ -85,7 +85,7 @@ int main( int argc, char * argv [] ) {
 	devel::init(argc, argv);
 	SS_predictor *abego_predictor = new SS_predictor("ABEGO");
 	typedef vector1< SequenceOP > seqlist;
-	for(int ii = 1; ii<= option[in::file::fasta]().size(); ++ii){
+	for(Size ii = 1; ii<= option[in::file::fasta]().size(); ++ii){
 		seqlist query_seq = read_fasta_file(option[in::file::fasta ]()[ii]);
 		string fasta = query_seq[1]->sequence();
 		string id = option[in::file::fasta ]()[ii];

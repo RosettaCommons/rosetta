@@ -912,7 +912,7 @@ FindZnCoordinatingResidues::closest_distance_to_desired_vrt(
 	utility::vector1< std::string > const & coord_atnames
 ) const
 {
-	core::Real closest_d2(-1); core::Size ind;
+	core::Real closest_d2(-1); core::Size ind = 0;
 	for ( core::Size ii = 1; ii <= coord_atnames.size(); ++ii ) {
 		assert( nbr.has( coord_atnames[ii] ));
 		core::Size iiind = nbr.atom_index( coord_atnames[ii] );

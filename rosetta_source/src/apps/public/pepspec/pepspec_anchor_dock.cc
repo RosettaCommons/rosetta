@@ -565,7 +565,7 @@ run_pep_prep()
 
 	ResidueTypeSet const & rsd_set( pose.residue(1).residue_type_set() );
 
-	Size const nres( pose.total_residue() );
+	//Size const nres( pose.total_residue() );  // unused ~Labonte
 
 	Size prot_chain;
 	for( Size i = 1; i <= pose.conformation().num_chains(); ++i ){

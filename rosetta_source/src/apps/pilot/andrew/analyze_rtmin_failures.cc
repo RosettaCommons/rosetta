@@ -129,13 +129,13 @@ int main( int argc, char * argv [] )
 	//utility::vector1< EnergyMap > minimized_scores( roi_rotset->num_rotamers() );
 	//utility::vector1< Real >      minimized_tots( roi_rotset->num_rotamers() );
 
-	Real best_natrot_energy;
+	Real best_natrot_energy = 0.0;
 	EnergyMap best_natrot_energies;
-	ResidueOP best_natrot;
+	ResidueOP best_natrot = 0;
 
-	Real best_nonnatrot_energy;
+	Real best_nonnatrot_energy = 0.0;
 	EnergyMap best_nonnatrot_energies;
-	ResidueOP best_nonnatrot;
+	ResidueOP best_nonnatrot = 0;
 
 	std::cout << "Minimizing " << roi_rotset->num_rotamers() << " rotamers" << std::endl;
 	for ( Size ii = 1; ii <= roi_rotset->num_rotamers(); ++ii ) {

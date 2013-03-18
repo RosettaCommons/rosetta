@@ -36,7 +36,9 @@ std::string base_name(const std::string& str) {
 std::string get_out_tag(std::string fname) {
 	std::string base = base_name(fname);
 	std::transform( base.begin(), base.end(), base.begin(), tolower );
-	system( ("mkdir -p out/" + base.substr(1,2)).c_str() );
+	if (system( ("mkdir -p out/" + base.substr(1,2)).c_str() ) == -1) {
+		return "Error! Shell process failed!";
+	}
 	std::string OUT_TAG = "out/" + base.substr(1,2) + "/" + base;
 	return OUT_TAG;}
 

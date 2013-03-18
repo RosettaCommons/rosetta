@@ -64,7 +64,7 @@ public:
 			assert(1 <= l && l <= 7);
 			assert(fabs(a.length()-1.0) < 0.00001);
 			allnodes_[i] = new SphereNode(l,a);
-			assert(1 <= p && p <= 40974 || p == 65535);
+			assert((1 <= p && p <= 40974) || p == 65535);  // I assume the parentheses should be this way? ~Labonte
 			parent[i] = p;
 			utility::vector1<int> c(7);
 			if(!(in >> c[1])) utility_exit_with_message("problem with sampling/spheres/sphere_hierarchy.dat.gz");
@@ -163,7 +163,7 @@ public:
 		}
 		for(core::Size l = 1; l <= 7; ++l) {
 			for(core::Size i = 1; i <= num_sample(l); ++i) {
-				assert( sample(l,i).level() == l);
+				assert( sample(l,i).level() == (int)l);
 			}
 		}
 		assert( n5==7*12 );

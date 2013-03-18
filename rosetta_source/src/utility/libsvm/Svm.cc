@@ -7,6 +7,7 @@
 #include <stdarg.h>
 #include <limits.h>
 #include <locale.h>
+#include <iostream>
 #include "Svm.hh"
 int libsvm_version = LIBSVM_VERSION;
 typedef float Qfloat;
@@ -2751,11 +2752,15 @@ svm_model *svm_load_model(const char *model_file_name)
 	char cmd[81];
 	while(1)
 	{
-		fscanf(fp,"%80s",cmd);
+		if (fscanf(fp,"%80s",cmd) == EOF) {
+			std::cout << "Warning! End of file reached without any matches." << std::endl;
+		}
 
 		if(strcmp(cmd,"svm_type")==0)
 		{
-			fscanf(fp,"%80s",cmd);
+			if (fscanf(fp,"%80s",cmd) == EOF) {
+				std::cout << "Warning! End of file reached without any matches." << std::endl;
+			}
 			int i;
 			for(i=0;svm_type_table[i];i++)
 			{
@@ -2780,7 +2785,9 @@ svm_model *svm_load_model(const char *model_file_name)
 		}
 		else if(strcmp(cmd,"kernel_type")==0)
 		{
-			fscanf(fp,"%80s",cmd);
+			if (fscanf(fp,"%80s",cmd) == EOF) {
+				std::cout << "Warning! End of file reached without any matches." << std::endl;
+			}
 			int i;
 			for(i=0;kernel_type_table[i];i++)
 			{
@@ -2804,49 +2811,69 @@ svm_model *svm_load_model(const char *model_file_name)
 			}
 		}
 		else if(strcmp(cmd,"degree")==0)
-			fscanf(fp,"%d",&param.degree);
+			if (fscanf(fp,"%d",&param.degree) == EOF) {
+				std::cout << "Warning! End of file reached without any matches." << std::endl;
+			}
 		else if(strcmp(cmd,"gamma")==0)
-			fscanf(fp,"%lf",&param.gamma);
+			if (fscanf(fp,"%lf",&param.gamma) == EOF) {
+				std::cout << "Warning! End of file reached without any matches." << std::endl;
+			}
 		else if(strcmp(cmd,"coef0")==0)
-			fscanf(fp,"%lf",&param.coef0);
+			if (fscanf(fp,"%lf",&param.coef0) == EOF) {
+				std::cout << "Warning! End of file reached without any matches." << std::endl;
+			}
 		else if(strcmp(cmd,"nr_class")==0)
-			fscanf(fp,"%d",&model->nr_class);
+			if (fscanf(fp,"%d",&model->nr_class) == EOF) {
+				std::cout << "Warning! End of file reached without any matches." << std::endl;
+			}
 		else if(strcmp(cmd,"total_sv")==0)
-			fscanf(fp,"%d",&model->l);
+			if (fscanf(fp,"%d",&model->l) == EOF) {
+				std::cout << "Warning! End of file reached without any matches." << std::endl;
+			}
 		else if(strcmp(cmd,"rho")==0)
 		{
 			int n = model->nr_class * (model->nr_class-1)/2;
 			model->rho = Malloc(double,n);
 			for(int i=0;i<n;i++)
-				fscanf(fp,"%lf",&model->rho[i]);
+				if (fscanf(fp,"%lf",&model->rho[i]) == EOF) {
+					std::cout << "Warning! End of file reached without any matches." << std::endl;
+				}
 		}
 		else if(strcmp(cmd,"label")==0)
 		{
 			int n = model->nr_class;
 			model->label = Malloc(int,n);
 			for(int i=0;i<n;i++)
-				fscanf(fp,"%d",&model->label[i]);
+				if (fscanf(fp,"%d",&model->label[i]) == EOF) {
+					std::cout << "Warning! End of file reached without any matches." << std::endl;
+				}
 		}
 		else if(strcmp(cmd,"probA")==0)
 		{
 			int n = model->nr_class * (model->nr_class-1)/2;
 			model->probA = Malloc(double,n);
 			for(int i=0;i<n;i++)
-				fscanf(fp,"%lf",&model->probA[i]);
+				if (fscanf(fp,"%lf",&model->probA[i]) == EOF) {
+					std::cout << "Warning! End of file reached without any matches." << std::endl;
+				}
 		}
 		else if(strcmp(cmd,"probB")==0)
 		{
 			int n = model->nr_class * (model->nr_class-1)/2;
 			model->probB = Malloc(double,n);
 			for(int i=0;i<n;i++)
-				fscanf(fp,"%lf",&model->probB[i]);
+				if (fscanf(fp,"%lf",&model->probB[i]) == EOF) {
+					std::cout << "Warning! End of file reached without any matches." << std::endl;
+				}
 		}
 		else if(strcmp(cmd,"nr_sv")==0)
 		{
 			int n = model->nr_class;
 			model->nSV = Malloc(int,n);
 			for(int i=0;i<n;i++)
-				fscanf(fp,"%d",&model->nSV[i]);
+				if (fscanf(fp,"%d",&model->nSV[i]) == EOF) {
+					std::cout << "Warning! End of file reached without any matches." << std::endl;
+				}
 		}
 		else if(strcmp(cmd,"SV")==0)
 		{

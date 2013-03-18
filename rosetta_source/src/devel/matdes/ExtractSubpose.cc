@@ -118,7 +118,7 @@ ExtractSubpose::apply(Pose & pose) {
 		utility::vector1<std::string> all_names = sym_dof_names(pose);
 		std::map<char,Sizes> comp_subs;
 		utility::vector1<char> secondary_comps;
-		Size n_sec_tert_subs;
+		Size n_sec_tert_subs = 0;
 
 		for (Size i = 1; i <= all_names.size(); i++) {
 			comp_subs.insert(std::make_pair(get_jump_name_to_components(pose,all_names[i])[1],get_jump_name_to_subunits(pose, all_names[i])));

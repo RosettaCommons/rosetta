@@ -308,7 +308,10 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 		old_to_new[old_vd] = vd;//Assuming the boost::graph copy preserves ordering within the vertices list
 		Atom & a = graph_[vd];
 		assert( a == residue_type.graph_[old_vd]);
-		NameVDInserted const name_vd_inserted = atom_graph_index_.insert(NameVDPair(a.name(), vd));
+#ifndef NDEBUG
+		NameVDInserted const name_vd_inserted =
+#endif
+		atom_graph_index_.insert(NameVDPair(a.name(), vd));
 		assert(name_vd_inserted.second); // Don't add atoms with the same name
 		atom_graph_index_.insert( NameVDPair( strip_whitespace( a.name() ), vd) );
 		//assert(strip_name_vd_inserted.second); // If this is 4 chars, than it will be the same as before.

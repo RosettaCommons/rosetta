@@ -3114,7 +3114,7 @@ SandwichFeatures::report_features(
 	Size j;
 	for(Size i=1; i <= all_distinct_sheet_ids.size()-1; ++i) // now I check possible combination only so i < all_distinct_sheet_ids.size()/2
 	{
-		bool compared = false;
+		//bool compared = false;  // unused ~Labonte
 		if (all_distinct_sheet_ids[i] == sheet_j_that_will_be_used_for_pairing_with_sheet_i) // useful to exclude sheet later
 		{
 			continue;
@@ -3151,7 +3151,7 @@ SandwichFeatures::report_features(
 			{
 				continue;
 			}
-			compared = true;
+			//compared = true;  // unused ~Labonte
 
 			// now candidates of sheet pair to be sw are identified
 				TR.Info << "sheet_id (all_distinct_sheet_ids[i]): " << all_distinct_sheet_ids[i] << endl;

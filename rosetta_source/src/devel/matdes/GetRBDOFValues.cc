@@ -132,9 +132,17 @@ void GetRBDOFValues::init_angle( core::Real const init_a ) { init_angle_ = init_
 void GetRBDOFValues::get_init_value( bool const get_init ) { get_init_value_ = get_init; }
 
 /// @brief
-core::Real GetRBDOFValues::compute( Pose const & pose, bool const & verb, std::string const & dof_name, int const & jump, char const & ax, bool const & disp, bool const & ang, core::Real const & init_d, core::Real const & init_a, bool const & get_init ) const
+core::Real GetRBDOFValues::compute(
+		Pose const & pose, bool const & verb,
+		std::string const & dof_name,
+		int const & jump,
+		char const & ax,
+		bool const & disp,
+		bool const & ang,
+		core::Real const & init_d,
+		core::Real const & init_a,
+		bool const & get_init ) const
 {
-
 	typedef numeric::xyzVector<Real> Vec;
 	typedef numeric::xyzMatrix<Real> Mat;
 
@@ -142,7 +150,7 @@ core::Real GetRBDOFValues::compute( Pose const & pose, bool const & verb, std::s
 	int sym_aware_jump_id;
 	if ( dof_name != "" ) {
 		sym_aware_jump_id = core::pose::symmetry::sym_dof_jump_num( pose, dof_name );
-  } else {
+	} else {
 		sym_aware_jump_id = core::pose::symmetry::get_sym_aware_jump_num(pose, jump);
 	}
 
@@ -151,7 +159,7 @@ core::Real GetRBDOFValues::compute( Pose const & pose, bool const & verb, std::s
 	Real value;
 	std::string fn;
 
-	int index;
+	int index = -1;
 	utility::vector1<std::string> sym_dof_names;
 	if (get_init) {
 		if ( dof_name == "" ) utility_exit_with_message("A sym_dof_name must be specified in order to access the initial values from the SymDofSampler.");

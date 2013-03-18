@@ -78,16 +78,17 @@ void run_test() {
 //		protocols::hotspot_hashing::prepare_hashing_packer_task(pose, chain_to_redesign);
 
 	// Assign a fixed residue (for the constraints)
-	core::Size fixed_res(1);
-	if ( chain_to_redesign == 1 ) fixed_res = pose.total_residue();
-	core::id::AtomID fixed_atom_id = core::id::AtomID( pose.residue(fixed_res).atom_index("CA"), fixed_res );
+	// variables below unused ~Labonte
+	//core::Size fixed_res(1);
+	//if ( chain_to_redesign == 1 ) fixed_res = pose.total_residue();
+	//core::id::AtomID fixed_atom_id = core::id::AtomID( pose.residue(fixed_res).atom_index("CA"), fixed_res );
 
 	core::Real const worst_allowed_stub_bonus(-1.);
 	bool const apply_self_energies(false);
 	core::Real const bump_cutoff(10.);
 	bool const apply_ambiguous_constraints(true);
 
-	// Apply strong (short-range) constriants
+	// Apply strong (short-range) constraints
 	hotspot_stub_setOP->add_hotspot_constraints_to_pose( pose, chain_to_redesign, hotspot_stub_setOP, 5., worst_allowed_stub_bonus, apply_self_energies, bump_cutoff, apply_ambiguous_constraints );
 	scorefxn->set_weight( core::scoring::backbone_stub_constraint, 1.0 );
 	(*scorefxn)(pose);

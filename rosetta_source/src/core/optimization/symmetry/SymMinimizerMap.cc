@@ -254,12 +254,16 @@ void SymMinimizerMap::zero_torsion_vectors()
 void
 SymMinimizerMap::link_torsion_vectors()
 {
+#ifndef NDEBUG
 	int last_depth = -1;
+#endif
 	for ( const_iterator it=dof_nodes_.begin(),
 			it_end=dof_nodes_.end(); it != it_end; ++it ) {
 		DOF_Node & dof_node( **it );
 		assert( last_depth == -1 || dof_node.depth() <= last_depth );
+#ifndef NDEBUG
 		last_depth = dof_node.depth();
+#endif
 		dof_node.link_vectors();
 	}
 }

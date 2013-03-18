@@ -37,57 +37,55 @@
 #include <utility/vector1.hh>
 
 
-
 namespace protocols {
 namespace cartesian {
 
-struct CartesianAtom{
- core::Size res;
- core::Size index;
+struct CartesianAtom {
+	core::Size res;
+	core::Size index;
 
- core::id::AtomID atom_id;
- core::Vector position;
- core::Vector velocity;
- core::Vector force;
+	core::id::AtomID atom_id;
+	core::Vector position;
+	core::Vector velocity;
+	core::Vector force;
 
- core::Vector old_position;
- core::Vector old_velocity;
- core::Vector old_force;
+	core::Vector old_position;
+	core::Vector old_velocity;
+	core::Vector old_force;
 
- double mass;
+	core::Real mass;
 };
 
 struct MD_Bond{
-    core::id::AtomID atom_id_1;
-    core::id::AtomID atom_id_2;
-    int index1;
-    int index2;
-    float length;
+	core::id::AtomID atom_id_1;
+	core::id::AtomID atom_id_2;
+	int index1;
+	int index2;
+	core::Length length;
 };
 
 struct MD_Angle{
-    core::id::AtomID atom_id_1;
-    core::id::AtomID atom_id_2;
-    core::id::AtomID atom_id_3;
-    int index1;
-    int index2;
-    int index3;
-    float length;
-    float angle;
+	core::id::AtomID atom_id_1;
+	core::id::AtomID atom_id_2;
+	core::id::AtomID atom_id_3;
+	int index1;
+	int index2;
+	int index3;
+	core::Length length;
+	core::Angle angle;
 };
 
 struct MD_HarmonicDihedral{
-    core::id::AtomID atom_id_1;
-    core::id::AtomID atom_id_2;
-    core::id::AtomID atom_id_3;
-    core::id::AtomID atom_id_4;
-    int index1;
-    int index2;
-    int index3;
-    int index4;
-    float angle;
+	core::id::AtomID atom_id_1;
+	core::id::AtomID atom_id_2;
+	core::id::AtomID atom_id_3;
+	core::id::AtomID atom_id_4;
+	int index1;
+	int index2;
+	int index3;
+	int index4;
+	core::Angle angle;
 };
-
 
 
 class MolecularDynamics {

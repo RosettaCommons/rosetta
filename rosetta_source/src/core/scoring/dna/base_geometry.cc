@@ -561,9 +561,13 @@ get_stub_stub_params(
 	assert( is_orthonormal( M1, 1e-3 ) );
 	assert( is_orthonormal( M2, 1e-3 ) );
 
+#ifndef NDEBUG
 	bool base_flipped = false;
+#endif
 	if ( dot( M1.col_z(), M2.col_z() ) < 0.0 ) {
+#ifndef NDEBUG
 		base_flipped = true;
+#endif
 		basic::T("core.scoring.base_geometry") << "get_stub_stub_params: base flip!!!\n";
 		for (Size i = 1; i <= 6; ++i) {
 			params[i] = -9999;
@@ -1004,9 +1008,13 @@ get_base_pair_params_old(
 	assert( is_orthonormal( M1, 1e-3 ) );
 	assert( is_orthonormal( M2, 1e-3 ) );
 
+#ifndef NDEBUG
 	bool base_flipped = false;
+#endif
 	if ( dot( M1.col_z(), M2.col_z() ) < 0.0 ) {
+#ifndef NDEBUG
 		base_flipped = true;
+#endif
 		basic::T("core.scoring.base_geometry") << "base_pair_params: base flip!!!\n";
 		//utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 	}
@@ -1354,9 +1362,9 @@ get_midstep_stub(
 	assert( is_orthonormal( M1, 1e-3 ) );
 	assert( is_orthonormal( M2, 1e-3 ) );
 
-	bool base_flipped = false;
+	//bool base_flipped = false;  // unused ~Labonte
 	if ( dot( M1.col_z(), M2.col_z() ) < 0.0 ) {
-		base_flipped = true;
+		//base_flipped = true;  // unused ~Labonte
 		basic::T("core.scoring.base_geometry") << "get_midstep_stub: base flip!!!\n";
 		//utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 	}

@@ -61,11 +61,11 @@ namespace downstream {
 static basic::Tracer TR( "protocols.match.downstream.SecondaryMatcherToDownstreamResidue" );
 
 SecondaryMatcherToDownstreamResidue::SecondaryMatcherToDownstreamResidue(
-  core::pose::PoseCOP upstream_pose,
-	Size geom_cst_id
+		core::pose::PoseCOP upstream_pose,
+		Size geom_cst_id
 ) :
-	parent( geom_cst_id ),
-	upstream_pose_(upstream_pose)
+		parent( geom_cst_id ),
+		upstream_pose_(upstream_pose)
 {
 	for( core::Size ii=1; ii<=4; ++ii ){ catalytic_atoms_.push_back(0); }
 }
@@ -105,7 +105,7 @@ SecondaryMatcherToDownstreamResidue::build_hits_at_all_positions(
 				continue;
 			}
 			TR << "Secondary matching against geomcst " << ii << " hits from build point " << target_build_points[ jj ]->original_insertion_point() << std::endl;
-			/// Parallelize here.
+			// Parallelize here.
 			#pragma omp parallel for
 			for ( Size kk = 1; kk <= my_build_points.size(); ++kk ) {
 				//Most of the time we don't want to build residue at the same point

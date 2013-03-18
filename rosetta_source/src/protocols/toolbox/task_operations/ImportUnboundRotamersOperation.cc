@@ -73,15 +73,13 @@ ImportUnboundRotamersOperation::apply( Pose const & /*pose*/, PackerTask & task 
 }
 
 void
-ImportUnboundRotamersOperation::parse_tag( TagPtr tag )
+ImportUnboundRotamersOperation::parse_tag( TagPtr /*tag*/ )
 {
 }
 
 void
-ImportUnboundRotamersOperation::parse_def( utility::lua::LuaObject const & def)
-{
-}                                                                              
-
+ImportUnboundRotamersOperation::parse_def( utility::lua::LuaObject const & /*def*/)
+{}
 
 } // TaskOperations
 } // toolbox

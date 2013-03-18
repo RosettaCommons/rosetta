@@ -32,7 +32,7 @@ namespace cryst {
 
 class SetCrystWeightMover : public moves::Mover {
 public:
-	SetCrystWeightMover() : Mover(), autoset_wt_(true), weight_(0.0), weight_scale_(1.0), cartesian_(false) {}
+	SetCrystWeightMover() : Mover(), autoset_wt_(true), cartesian_(false), weight_(0.0), weight_scale_(1.0) {}
 
 	virtual std::string get_name() const { return SetCrystWeightMoverCreator::mover_name(); }
 	moves::MoverOP clone() const { return( protocols::moves::MoverOP( new SetCrystWeightMover( *this ) ) ); }

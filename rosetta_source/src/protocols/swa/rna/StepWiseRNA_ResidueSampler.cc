@@ -1014,9 +1014,12 @@ namespace rna {
 
 		if(verbose_){ //Don't really need this......May 1, 2010...
 			std::string const foldername="test/";
-			int dummy_return_code;
-			dummy_return_code = system(std::string("rm -r " + foldername).c_str());
-			dummy_return_code = system(std::string("mkdir -p " + foldername).c_str());
+			if (system(std::string("rm -r " + foldername).c_str()) == -1) {
+				TR.Error << "Shell process failed!" << std::endl;
+			}
+			if (system(std::string("mkdir -p " + foldername).c_str()) == -1) {
+				TR.Error << "Shell process failed!" << std::endl;
+			}
 			Analyze_base_bin_map( base_bin_map, foldername);
 		}
 
@@ -1362,7 +1365,7 @@ namespace rna {
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		Real current_score( 0.0 ), delta_rep_score( 0.0), delta_atr_score( 0.0 );
+		Real /*current_score( 0.0 ),*/ delta_rep_score( 0.0), delta_atr_score( 0.0 );
 
 		while( rotamer_generator->has_another_rotamer() ){
 
@@ -1498,7 +1501,7 @@ namespace rna {
 
 			if(include_torsion_value_in_tag_) tag+=create_rotamer_string(pose);
 
-			current_score=Pose_selection_by_full_score(pose_data_list, pose, tag);
+			/*current_score=*/ Pose_selection_by_full_score(pose_data_list, pose, tag);
 
 			if(verbose_){
 				std::cout << tag <<  std::endl;

@@ -45,7 +45,7 @@ AddJobPairData::AddJobPairData() :
 
 }
 
-AddJobPairData::AddJobPairData(AddJobPairData const & src) :
+AddJobPairData::AddJobPairData(AddJobPairData const & src) : Mover(src),
 	string_key_(src.string_key_),
 	string_value_(src.string_value_),
 	real_value_(src.real_value_),

@@ -228,7 +228,7 @@ CAcstGenerator::apply( pose::Pose & pose ){
 	TR.Debug << "foldtree: " << pose.fold_tree();
 
 	pose::PoseOP donor_poseOP;
-	Size start_recipient_chain;
+	Size start_recipient_chain = 0;
 	ca_cst_ =  new core::scoring::constraints::ConstraintSet();
 	
 	//this all has to be checked during run time since parse time input will be inaccurate if the pose has been grown before
@@ -270,7 +270,8 @@ CAcstGenerator::apply( pose::Pose & pose ){
 	}
 
 	
-	add_dist_constraints( pose, donor_poseOP , start_recipient_chain , ca_cst_, all_seeds_ , clear_seeds_ , cutpoints, seed_exceptions_, add_cst_seed_ , stddev_, seq_separation_, distance_cutoff_);
+	add_dist_constraints( pose, donor_poseOP , start_recipient_chain , ca_cst_, all_seeds_ , clear_seeds_ , cutpoints,
+			seed_exceptions_, add_cst_seed_ , stddev_, seq_separation_, distance_cutoff_);
 	
 	if( replace_ ){
 		TR<<"replacing all constraints with newly generated constraint set" <<std::endl;

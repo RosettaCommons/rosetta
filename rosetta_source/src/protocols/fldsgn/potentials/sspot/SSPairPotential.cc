@@ -147,10 +147,10 @@ SSPairPotential::calc_rsigmascore( Real sig, Real dist, Size const sign1, Size c
 	Real tempscore_rsigma = rsigma_dot_( int( idist ), int( isig ), 3 - sign1, 3 - sign2 );
 
 	// Modify sigma potential to no longer give an rsigma bonus to strands in wrong register.
-	if ( sign1 == 1 & sign2 == 1 & sig < 110. & sig > 70.  ) tempscore_rsigma = 0.0;
-	if ( sign1 == 1 & sign2 == 2 & (sig < 75. | sig > 95.) ) tempscore_rsigma = 0.0;
-	if ( sign1 == 2 & sign2 == 1 & (sig < 90. | sig > 110.)) tempscore_rsigma = 0.0;
-	if ( sign1 == 2 & sign2 == 2 & sig < 120. & sig > 80.  ) tempscore_rsigma = 0.0;
+	if ( sign1 == 1 && sign2 == 1 && sig < 110. && sig > 70.  ) tempscore_rsigma = 0.0;
+	if ( sign1 == 1 && sign2 == 2 && (sig < 75. || sig > 95.) ) tempscore_rsigma = 0.0;
+	if ( sign1 == 2 && sign2 == 1 && (sig < 90. || sig > 110.)) tempscore_rsigma = 0.0;
+	if ( sign1 == 2 && sign2 == 2 && sig < 120. && sig > 80.  ) tempscore_rsigma = 0.0;
 
 	return tempscore_rsigma;
 }

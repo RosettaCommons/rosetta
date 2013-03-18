@@ -1554,10 +1554,14 @@ void
 AtomTree::detatch_topological_observer( AtomTreeCAP observer ) const
 {
 	assert( observer->topological_match_to_() == this );
+#ifndef NDEBUG
 	bool found( false );
+#endif
 	for ( Size ii = 1; ii <= topological_observers_.size(); ++ii ) {
 		if ( topological_observers_[ ii ] == observer ) {
+#ifndef NDEBUG
 			found = true;
+#endif
 			topological_observers_[ ii ] = 0;
 			observer->topological_match_to_ = 0;
 			break;

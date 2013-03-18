@@ -177,7 +177,7 @@ public:
 
 	void pack_missing_sidechains( Pose & pose ) {
 		utility::vector1< bool > needToRepack( pose.total_residue() , false );
-		bool needToRepackAny = false;
+		//bool needToRepackAny = false;  // unused ~Labonte
 		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 			// if there is missing density in the sidechain, then we need to repack
 			// check:
@@ -192,12 +192,12 @@ public:
 				cb_pos = pose.residue(i).atom("CB").xyz();
 				if ((ca_pos - cb_pos).length() > 3) {
 					needToRepack[i] = true;
-					needToRepackAny = true;
+					//needToRepackAny = true;  // unused ~Labonte
 				} else {
 					for (int j=(int)pose.residue(i).first_sidechain_atom()+1; j<=(int)pose.residue(i).natoms(); ++j) {
 						if ( (cb_pos - pose.residue(i).atom(j).xyz()).length() > 10 ) {
 							needToRepack[i] = true;
-							needToRepackAny = true;
+							//needToRepackAny = true;  // unused ~Labonte
 							break;
 						}
 					}

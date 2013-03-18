@@ -93,10 +93,10 @@ ExternalEvaluator::ExternalEvaluator( std::string tag, std::string command )
 
 	string const tmp_file_name ("_ExternalEvaluator_"+name( 1 ));
 
-  string dir = "./";
-  if ( option[ OptionKeys::out::file::silent ].user() ) {
-    dir = option[ OptionKeys::out::file::silent ]();
-  }
+	string dir = "./";
+	if ( option[ OptionKeys::out::file::silent ].user() ) {
+		dir = option[ OptionKeys::out::file::silent ]();
+	}
 
 	//also use random number!
 
@@ -105,7 +105,9 @@ ExternalEvaluator::ExternalEvaluator( std::string tag, std::string command )
 		string dircmd( "echo `dirname "+dir+"` | sed s@/@_@g");
 		FILE* get_dir = popen(dircmd.c_str(),"r");
 		char buf[500];
-		fgets(buf,500,get_dir);
+		if (fgets(buf, 500, get_dir) == NULL) {
+			tr.Error << "Read error!" << std::endl;
+		}
 		buf[strlen(buf)-1]='\0';
 		sub_work_dir = string( buf )+"_"+tmp_file_name; //get rid of newline
 		pclose( get_dir );
@@ -123,7 +125,9 @@ ExternalEvaluator::ExternalEvaluator( std::string tag, std::string command )
 		string dircmd( "pwd | sed s@/@_@g");
 		FILE* get_dir = popen(dircmd.c_str(),"r");
 		char buf[500];
-		fgets(buf,500,get_dir);
+		if (fgets(buf, 500, get_dir) == NULL) {
+			tr.Error << "Read error!" << std::endl;
+		}
 		buf[strlen(buf)-1]='\0';
 		string tmp_id = string( buf );
 		work_dir_ = tmp_id.substr( max(0, (int)tmp_id.size()-40) );

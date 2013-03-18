@@ -282,14 +282,13 @@ CarbohydrateInfo::nu_id(core::uint subscript) const
 std::pair<core::id::TorsionType, core::uint>
 CarbohydrateInfo::glycosidic_linkage_id(core::uint torsion_index) const
 {
+#ifndef NDEBUG
 	Size upper_bound = 2;  // for phi and psi
 	if (has_exocyclic_linkage_) {
 		upper_bound = 3;  // for omega
 	}
 	assert((torsion_index >= 1) && (torsion_index <= upper_bound));
-	PyAssert((torsion_index >= 1) && (torsion_index <= upper_bound),
-			"CarbohydrateInfo::glycosidic_linkage_id(core::uint torsion_index): "
-			"no defined torsion angle for this index.");
+#endif
 
 	return glycosidic_linkage_id_[torsion_index];
 }

@@ -259,7 +259,9 @@ PB::solve_pb( core::pose::Pose const & pose,
 	write_pqr(pose, charged_residues );
 	write_config(pose);
 	std::string command_line(apbs_path_ + " " + config_filename_);
-	/*int ret =*/ system(command_line.c_str());
+	if (system(command_line.c_str()) == -1) {
+		TR.Error << "Shell command failed to run!" << std::endl;
+	}
 
 	// Check if APBS succeeded.  If not, get out.
 	std::ifstream dxstream(dx_filename_.c_str());

@@ -130,15 +130,15 @@ main( int argc, char * argv [] )
 	calc_centroids( rotamers, centroids );
 
 	// main loop
-	bool rot_change=true;
-	bool cen_change=true;
+	//bool rot_change=true;  // unused ~Labonte
+	//bool cen_change=true;  // unused ~Labonte
 	Size num_iter(0);
 	//while ( (rot_change && cen_change) || num_iter <= 500 ) {
 	while ( num_iter <= 500 ) {
 		++num_iter;
 		calc_all_dist( rotamers, centroids  );
-		rot_change = calc_rotamer_clusters( rotamers );
-		cen_change = calc_centroids( rotamers, centroids );
+		//rot_change = calc_rotamer_clusters( rotamers );  // unused ~Labonte
+		//cen_change = calc_centroids( rotamers, centroids );  // unused ~Labonte
 		std::cout << "ITER:" << num_iter << std::endl;
 	}
 

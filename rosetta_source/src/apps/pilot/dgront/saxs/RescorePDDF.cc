@@ -53,22 +53,22 @@ void register_options() {
 class RescorePDDF : public protocols::moves::Mover {
 public:
 
-    RescorePDDF() {
+	RescorePDDF() {
 
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 
 		scorefxn_ = core::scoring::getScoreFunction();
 		scorefxn_->set_weight( core::scoring::pddf_score, 1.0 );
-    }
+	}
 
-    virtual ~RescorePDDF() {}
+	virtual ~RescorePDDF() {}
 
-    virtual void apply( core::pose::Pose & pose ) {
+	virtual void apply( core::pose::Pose & pose ) {
 		core::Real score = (*scorefxn_)(pose);
 		trRescorePDDF << "PDDF score: "<< score<<std::endl;
-		core::scoring::EnergyMap emap = pose.energies().total_energies();
-    }
+		//core::scoring::EnergyMap emap = pose.energies().total_energies();  // unused ~Labonte
+	}
 
 	virtual std::string get_name() const { return "RescorePDDF"; }
 

@@ -218,31 +218,36 @@ void NonPlaidFingerprint::set_origin( core::pose::Pose const & protein_pose, std
 
 }
 
-core::Real NonPlaidFingerprint::get_Rvalue( core::pose::Pose const & protein_pose, std::list< numeric::xyzVector<core::Real> > const & egg_and_extra_shell, Size const & set_origin_option ) {
+core::Real NonPlaidFingerprint::get_Rvalue(
+		core::pose::Pose const & protein_pose,
+		std::list< numeric::xyzVector<core::Real> > const & egg_and_extra_shell,
+		Size const & set_origin_option )
+{
+	set_origin_from_option_( protein_pose, egg_and_extra_shell, set_origin_option );
 
-  set_origin_from_option_( protein_pose, egg_and_extra_shell, set_origin_option );
-
-  core::Real min_rho_difference(0.);
-  core::Size num_points(0);
-  for (std::list< numeric::xyzVector<core::Real> >::const_iterator pt1 = egg_and_extra_shell.begin(); pt1 != egg_and_extra_shell.end(); ++pt1) {
-    numeric::xyzVector< core::Real > eggshell_point1 = *pt1 - origin_;
-    spherical_coor_triplet triplet1;
-    convert_cartesian_to_spherical_coor_triplet( eggshell_point1, triplet1 );
-    core::Real min_angle(999.);
-    spherical_coor_triplet triplet2;
-    for (std::list< numeric::xyzVector<core::Real> >::const_iterator pt2 = egg_and_extra_shell.begin(); pt2 != egg_and_extra_shell.end(); ++pt2) {
-      if ( pt1 == pt2 ) continue;
-      core::Real const curr_angle = std::abs(cos_of( *pt1, *pt2 ));
-      if(curr_angle < min_angle){
-	min_angle = curr_angle;
-	numeric::xyzVector< core::Real > eggshell_point2 = *pt2 - origin_;
-	convert_cartesian_to_spherical_coor_triplet( eggshell_point2, triplet2 );
-      }
-    }
-    min_rho_difference += std::abs( triplet1.rho - triplet2.rho );
-    num_points++;
-  }
-  return min_rho_difference / num_points;
+	core::Real min_rho_difference(0.);
+	core::Size num_points(0);
+	for (std::list< numeric::xyzVector<core::Real> >::const_iterator pt1 = egg_and_extra_shell.begin();
+			pt1 != egg_and_extra_shell.end(); ++pt1) {
+		numeric::xyzVector< core::Real > eggshell_point1 = *pt1 - origin_;
+		spherical_coor_triplet triplet1;
+		convert_cartesian_to_spherical_coor_triplet( eggshell_point1, triplet1 );
+		core::Real min_angle(999.);
+		spherical_coor_triplet triplet2;
+		for (std::list< numeric::xyzVector<core::Real> >::const_iterator pt2 = egg_and_extra_shell.begin();
+				pt2 != egg_and_extra_shell.end(); ++pt2) {
+			if ( pt1 == pt2 ) continue;
+			core::Real const curr_angle = std::abs(cos_of( *pt1, *pt2 ));
+			if(curr_angle < min_angle){
+				min_angle = curr_angle;
+				numeric::xyzVector< core::Real > eggshell_point2 = *pt2 - origin_;
+				convert_cartesian_to_spherical_coor_triplet( eggshell_point2, triplet2 );
+			}
+		}
+		min_rho_difference += std::abs( triplet1.rho - triplet2.rho );
+		num_points++;
+	}
+	return min_rho_difference / num_points;
 }
 
 void NonPlaidFingerprint::set_origin_from_option_( core::pose::Pose const & protein_pose, std::list< numeric::xyzVector<core::Real> > const & egg_and_extra_shell, Size const & set_origin_option ) {
@@ -1040,7 +1045,7 @@ void PlaidFingerprint::update_rhos_(FingerprintBase & fp, core::conformation::Re
     core::Real curr_psi = ni->psi;
     // if the current phi and/or psi is outside the overall max/min, set best_rho to zero and jumpout (ie. ray misses the ligand)
     core::Real best_rho_sq(9999.);
-    core::Size best_intersecting_atom(0);
+    //core::Size best_intersecting_atom(0);  // unused ~Labonte
     for (Size i = 1, i_end = ligand_natoms; i <= i_end; ++i) {
 
       if ( atom_radius.at(i) < 0.001 ) continue;
@@ -1067,7 +1072,7 @@ void PlaidFingerprint::update_rhos_(FingerprintBase & fp, core::conformation::Re
 
       if ( min_intersect_SQ < best_rho_sq ) {
 	best_rho_sq = min_intersect_SQ;
-	best_intersecting_atom = i;
+	//best_intersecting_atom = i;  // unused ~Labonte
       }
     }
 

@@ -41,7 +41,7 @@ Coloumb::Coloumb( methods::EnergyMethodOptions const & options ):
 
 
 ////////////////////////////////////////////////////////////////////////////
-Coloumb::Coloumb( Coloumb const & src ):
+Coloumb::Coloumb( Coloumb const & src ): ReferenceCount(),
 	max_dis_( src.max_dis_ ),
 	min_dis_( src.min_dis_ ),
 	smooth_hack_elec_( src.smooth_hack_elec_ ),

@@ -118,7 +118,7 @@ setup_foldtree(
 		cutpoint = f.cutpoint_by_jump(1);
 		movable_jumps.push_back(1);
 	} else {
-		char first_chain_second_partner;
+		char first_chain_second_partner = char();
 		for ( Size i=1; i<=partner_chainID.length()-1; i++ ) {
 			if (partner_chainID[i-1] == '_') {
 				first_chain_second_partner = partner_chainID[i];

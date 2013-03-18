@@ -175,7 +175,7 @@ int main(int argc, char *argv[])
 	core::Real cluster_radius_=basic::options::option[ basic::options::OptionKeys::cluster_hotspot_docking::cluster_radius];
 	core::Size max_total_cluster=basic::options::option[ basic::options::OptionKeys::cluster_hotspot_docking::max_clusters];
 	core::Size output_ddg_clusters=basic::options::option[ basic::options::OptionKeys::cluster_hotspot_docking::output_ddg_clusters];
-	std:string prefix=basic::options::option[ basic::options::OptionKeys::cluster_hotspot_docking::prefix];
+	std::string prefix=basic::options::option[ basic::options::OptionKeys::cluster_hotspot_docking::prefix];
 	core::Size listsize=poselist.size();
 	std::vector < int > neighbors ( poselist.size(), 0 );
 	std::vector < int > clusternr ( poselist.size(), -1 );
@@ -230,7 +230,7 @@ int main(int argc, char *argv[])
 
 	std::multimap< core::Real, core::Size> ddgclustermap;
 
-	for (i=0;i<(int)clustercentre.size();i++ ) {
+	for (i=0;i<clustercentre.size();i++ ) {
 		TR.Info << "CLUSTER " << i << " : ";  
 		bestddg=999;
 		bestj=999;

@@ -117,11 +117,11 @@ main (int argc, char *argv[]){
           core::id::AtomID_Map<AtomID> amap;
           core::pose::initialize_atomid_map(amap,h,core::id::BOGUS_ATOM_ID);
           // get sup atom map
-          Size h1,h2,p1,p2;
+          Size h1, h2, p1/*, p2*/;  // p2 is unused ~Labonte
           if(nc) {
-            p1=1+of; p2=7+of; h1=   h.n_residue()-8; h2=h.n_residue();
+            p1=1+of; /*p2=7+of;*/ h1=   h.n_residue()-8; h2=h.n_residue();
           } else {
-            h1=1; h2=7; p1=pose.n_residue()-8-of; p2=pose.n_residue()-of;
+            h1=1; h2=7; p1=pose.n_residue()-8-of; /*p2=pose.n_residue()-of;*/
           }
           for(Size i = h1; i <= h2; ++i) {
             Size pr = p1+(i-h1);

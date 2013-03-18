@@ -352,20 +352,20 @@ int main( int argc, char * argv [] )
 				int atypid = res->atom_type_index(k);
 
 				// locals
-				core::Real ljE,d_ljE,x1,x2;
+				core::Real ljE, d_ljE/*, x1, x2*/;
 				core::Real dis;
 				core::Real inv_dis,inv_dis2,inv_dis6,inv_dis7,inv_dis12,inv_dis13;
 				core::Real dis2sigma;
 
 				// include after local variables to allow data statements to initialize
 				core::Real atrE = 0.;
-				core::Real d_atrE = 0.;
+				//core::Real d_atrE = 0.;
 				core::Real repE = 0.;
-				core::Real d_repE = 0.;
-				core::Real solvE1 = 0.;
-				core::Real solvE2 = 0.;
-				core::Real dsolvE1 = 0.;
-				core::Real dsolvE2 = 0.;
+				//core::Real d_repE = 0.;
+				//core::Real solvE1 = 0.;  // unused ~Labonte
+				//core::Real solvE2 = 0.;  // unused ~Labonte
+				//core::Real dsolvE1 = 0.;
+				//core::Real dsolvE2 = 0.;  // unused ~Labonte
 
 				//  ctsa - epsilon allows final bin value to be calculated
 				if ( dis2 > max_dis2 ) continue;
@@ -404,12 +404,12 @@ int main( int argc, char * argv [] )
 				if ( ljE < 0. )
 				{
 					atrE = ljE;
-					d_atrE = d_ljE;
+					//d_atrE = d_ljE;  // unused ~Labonte
 				}
 				else
 				{
 					repE = ljE;
-					d_repE = d_ljE;
+					//d_repE = d_ljE;  // unused ~Labonte
 				}
 
 				// ctsa - calc lk
@@ -417,25 +417,24 @@ int main( int argc, char * argv [] )
 				{
 					// ctsa - solvation is constant when the dis/sigma ratio
 					//   falls below minimum threshold
-					solvE1 = lk_min_dis2sigma_value[atypid];
-					solvE2 = lk_min_dis2sigma_value[atypid];
-					dsolvE1 = dsolvE2 = 0.0;
+					//solvE1 = lk_min_dis2sigma_value[atypid];  // unused ~Labonte
+					//solvE2 = lk_min_dis2sigma_value[atypid];  // unused ~Labonte
+					//dsolvE1 = dsolvE2 = 0.0;  // unused ~Labonte
 				}
 				else
 				{
 					core::Real dis_rad = dis - lj_radius[atypid];
-					x1 = ( dis_rad * dis_rad ) * lk_inv_lambda2[atypid];
+					//x1 = ( dis_rad * dis_rad ) * lk_inv_lambda2[atypid];  // unused ~Labonte
 					dis_rad = dis - lj_radius[atypid];
-					x2 = ( dis_rad * dis_rad ) * lk_inv_lambda2[atypid];
+					//x2 = ( dis_rad * dis_rad ) * lk_inv_lambda2[atypid];  // unused ~Labonte
 
-					solvE1 = std::exp(-x1) * lk_coeff[atypid] * inv_dis2;
-					solvE2 = std::exp(-x2) * lk_coeff[atypid] * inv_dis2;
+					//solvE1 = std::exp(-x1) * lk_coeff[atypid] * inv_dis2;  // unused ~Labonte
+					//solvE2 = std::exp(-x2) * lk_coeff[atypid] * inv_dis2;  // unused ~Labonte
 
 					// ctsa - get d(lk_E)/dr
-					dsolvE1 = -2.0 * solvE1 *
-					(((dis-lj_radius[atypid])*lk_inv_lambda2[atypid])+inv_dis);
-					dsolvE2 = -2.0 * solvE2 *
-						(((dis-lj_radius[atypid])*lk_inv_lambda2[atypid])+inv_dis);
+					// variables below unused ~Labonte
+					//dsolvE1 = -2.0 * solvE1 * (((dis-lj_radius[atypid])*lk_inv_lambda2[atypid])+inv_dis);
+					//dsolvE2 = -2.0 * solvE2 * (((dis-lj_radius[atypid])*lk_inv_lambda2[atypid])+inv_dis);
 				}
 
 				//save the energy

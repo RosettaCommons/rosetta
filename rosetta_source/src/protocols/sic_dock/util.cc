@@ -119,7 +119,7 @@ platform::Size
 count_CBs(
 	core::pose::Pose const & pose
 ){
-	platform::Size cbcount;
+	platform::Size cbcount = 0;
 	for(Size ir = 1; ir <= pose.n_residue(); ++ir) cbcount += pose.residue(ir).has("CB");
 	return cbcount;
 }

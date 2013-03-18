@@ -245,11 +245,11 @@ CoordinateCst::apply( pose::Pose & pose )
 
 	TR.Debug << "constrain residue set size : " << constrain_residues_set.size() <<" -- if this is 0, you did NOT read in any residues "<< std::endl;
   
-	Size anchor_res;
+	Size anchor_res = 0;
 	TR.Debug<< "anchor " << anchor_res_ <<std::endl;
 
 	if( !use_jumps_ && anchor_res_ != "" ){
-		//anchor needs to be parse too, could do that explicitly or as a set, incase anyone wanted at some point more than one anchor...
+		//anchor needs to be parsed too, could do that explicitly or as a set, in case anyone wanted at some point more than one anchor...
 		//std::set < core::Size > anchor_set;
 		//adjust_single_residues( pose, anchor_res_ , anchor_set);
 		utility::vector1 < core::Size > anchor_res_vec( adjust_residues( pose, anchor_res_ ) );

@@ -1744,10 +1744,10 @@ RunPepSpec()
 		input_seq = std::string( n_prepend + n_append + 1, 'X' );
 		if( option[ pepspec::input_seq ].user() ) input_seq = std::string( option[ pepspec::input_seq ] );
 
-		bool add_nterm( true );
-		if( pep_anchor == pep_begin ) add_nterm = false;
-		bool add_cterm( true );
-		if( pep_anchor == pep_end ) add_cterm = false;
+		//bool add_nterm( true );
+		//if( pep_anchor == pep_begin ) add_nterm = false;  // unused ~Labonte
+		//bool add_cterm( true );
+		//if( pep_anchor == pep_end ) add_cterm = false;  // unused ~Labonte
 
 		Residue pep_anchor_res = pose.residue( pep_anchor );
 

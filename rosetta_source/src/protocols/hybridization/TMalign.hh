@@ -1798,11 +1798,11 @@ public:
 			 std::list <core::Size> const & ref_residue_list,
 			 core::Size & n_mapped_residues,
 			 core::id::AtomID_Map< core::id::AtomID > & atom_map) {
-		double seq_id;
+		//double seq_id;  // unused ~Labonte
 		int k;
 		double d;
 		do_rotation(xa, xt, xlen, t, u);
-		seq_id=0;
+		//seq_id=0;  // unused ~Labonte
 
 		n_mapped_residues = 0;
 		for(k=0; k<n_ali8_; k++) {
@@ -2145,7 +2145,8 @@ public:
 		n_ali8_=k;
 
 		// Final TMscore
-		double rmsd, TM1, TM2;
+		double rmsd;
+		//double TM1, TM2;  // unused ~Labonte
 		d0_out_=5.0;
 		simplify_step=1;
 		score_sum_method=0;
@@ -2159,13 +2160,13 @@ public:
 		parameter_set4final(Lnorm_0);
 		d0A=d0;
 		//d0_0=d0A;  // set but never used ~Labonte
-		TM1=TMscore8_search(xtm, ytm, n_ali8_, t0, u0, simplify_step, score_sum_method, &rmsd);
+		//TM1=TMscore8_search(xtm, ytm, n_ali8_, t0, u0, simplify_step, score_sum_method, &rmsd);  // unused ~Labonte
 		//TM_0=TM1;  // set but never used ~Labonte
 
 		//normalized by length of structure B
 		parameter_set4final(xlen+0.0);
 		d0B=d0;
-		TM2=TMscore8_search(xtm, ytm, n_ali8_, t, u, simplify_step, score_sum_method, &rmsd);
+		//TM2=TMscore8_search(xtm, ytm, n_ali8_, t, u, simplify_step, score_sum_method, &rmsd);  // unused ~Labonte
 
 		return 0;
 	}

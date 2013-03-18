@@ -128,27 +128,32 @@ AtomPairConstraint::dist( pose::Pose const & pose ) const {
 }
 
 Real AtomPairConstraint::dist( conformation::Conformation  const& conformation ) const {
-		conformation::Residue const& res1( conformation.residue( atom1_.rsd() ) );
-		conformation::Residue const& res2( conformation.residue( atom2_.rsd() ) );
-		bool fail( false );
-		if ( atom1_.atomno() == 0 || atom1_.atomno() > res1.natoms() ) {
-			std::cerr << "AtomPairConstraint: atom1 out of bounds" << atom1_ << std::endl;
-			fail = true;
-		}
-		if ( atom2_.atomno() == 0 || atom2_.atomno() > res2.natoms() ) {
-			std::cerr << "AtomPairConstraint: atom2 out of bounds" << atom2_ << std::endl;
-			fail = true;
-		}
-		assert( conformation.atom_tree().has( atom1_ ) );
-		assert( conformation.atom_tree().has( atom2_ ) );
-
-		if ( !conformation.atom_tree().has( atom1_ ) ) {
-			std::cerr << "AtomPairConstraint: cannot find atom " << atom1_ << std::endl;
-		}
-		if ( !conformation.atom_tree().has( atom2_ ) ) {
-			std::cerr << "AtomPairConstraint: cannot find atom " << atom2_ << std::endl;
-		}
-	  assert( !fail );
+	conformation::Residue const& res1( conformation.residue( atom1_.rsd() ) );
+	conformation::Residue const& res2( conformation.residue( atom2_.rsd() ) );
+#ifndef NDEBUG
+	bool fail( false );
+#endif
+	if ( atom1_.atomno() == 0 || atom1_.atomno() > res1.natoms() ) {
+		std::cerr << "AtomPairConstraint: atom1 out of bounds" << atom1_ << std::endl;
+#ifndef NDEBUG
+		fail = true;
+#endif
+	}
+	if ( atom2_.atomno() == 0 || atom2_.atomno() > res2.natoms() ) {
+		std::cerr << "AtomPairConstraint: atom2 out of bounds" << atom2_ << std::endl;
+#ifndef NDEBUG
+		fail = true;
+#endif
+	}
+	assert( conformation.atom_tree().has( atom1_ ) );
+	assert( conformation.atom_tree().has( atom2_ ) );
+	if ( !conformation.atom_tree().has( atom1_ ) ) {
+		std::cerr << "AtomPairConstraint: cannot find atom " << atom1_ << std::endl;
+	}
+	if ( !conformation.atom_tree().has( atom2_ ) ) {
+		std::cerr << "AtomPairConstraint: cannot find atom " << atom2_ << std::endl;
+	}
+	assert( !fail );
 	Vector const & xyz1( conformation.xyz( atom1_ ) ), xyz2( conformation.xyz( atom2_ ) );
 	Vector const f2( xyz1 - xyz2 );
 	Real const dist( f2.length() );

@@ -225,8 +225,8 @@ namespace antibody{
         Size stop(input_loop.stop()+1);
         
         
-        bool is_kinked( false );
-        bool is_extended( false );
+        //bool is_kinked( false );  // unused ~Labonte
+        //bool is_extended( false );  // unused ~Labonte
         bool is_H3( false );
         
         // extract 3 letter residue codes for the chopped loop
@@ -291,7 +291,7 @@ namespace antibody{
             if( (base_dihedral > kink_lower_bound) && (base_dihedral < kink_upper_bound))
             {
                 // std::cout << "KINK Found" << std::endl; // aroop_temp remove
-                is_kinked = true;
+                //is_kinked = true;  // unused ~Labonte
                 is_H3 = true;
             }
         }
@@ -304,7 +304,7 @@ namespace antibody{
             
             if( ( base_dihedral>extended_lower_bound) && (base_dihedral<extended_upper_bound) ) {
                 // std::cout << "EXTENDED Found" << std::endl; // aroop_temp remove
-                is_extended = true;
+                //is_extended = true;  // unused ~Labonte
                 is_H3 = true;
             }
             
@@ -329,7 +329,7 @@ namespace antibody{
                    ( base_dihedral < kink_upper_bound ) ) {
                     // aroop_temp remove
                     // std::cout << "KINK (special 1b) Found" << std::endl;
-                    is_kinked = true;
+                    //is_kinked = true;  // unused ~Labonte
                     is_H3 = true;
                 }
             }
@@ -344,7 +344,7 @@ namespace antibody{
                (base_dihedral < kink_upper_bound ) ) {
                 // aroop_temp remove
                 // std::cout << "KINK (w sb) Found" << std::endl;
-                is_kinked = true;
+                //is_kinked = true;  // unused ~Labonte
                 is_H3 = true;
             }
             if(!is_H3) {
@@ -356,7 +356,7 @@ namespace antibody{
                    ( base_dihedral < extended_upper_bound ) ) {
                     // aroop_temp remove
                     // std::cout << "EXTENDED (special 1c) Found" << std::endl;
-                    is_extended = true;
+                    //is_extended = true;  // unused ~Labonte
                     is_H3 = true;
                 }
             }
@@ -372,7 +372,7 @@ namespace antibody{
                ( base_dihedral < extended_upper_bound ) ) {
                 // aroop_temp remove
                 // std::cout << "EXTENDED (w sb) Found" << std::endl;
-                is_extended = true;
+                //is_extended = true;  // unused ~Labonte
                 is_H3 = true;
             }
         }

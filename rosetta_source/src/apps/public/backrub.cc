@@ -271,7 +271,7 @@ private:
 	protocols::simple_moves::PackRotamersMover packrotamersmover_;
 };
 
-BackrubProtocol::BackrubProtocol():
+BackrubProtocol::BackrubProtocol(): Mover(),
 		score_fxn_(new core::scoring::ScoreFunction()),
 		main_task_factory_(new core::pack::task::TaskFactory()),
 		backrubmover_(new protocols::backrub::BackrubMover()),
@@ -334,7 +334,7 @@ BackrubProtocol::BackrubProtocol():
 	//backrubmover_= new protocols::backrub::BackrubMover;
 }
 
-BackrubProtocol::BackrubProtocol(BackrubProtocol const & bp):
+BackrubProtocol::BackrubProtocol(BackrubProtocol const & bp): Mover(bp),
 		score_fxn_(bp.score_fxn_),
 		main_task_factory_(bp.main_task_factory_),
 		backrubmover_(bp.backrubmover_),

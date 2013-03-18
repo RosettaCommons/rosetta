@@ -145,10 +145,10 @@ namespace rna {
 
 		Real actual_rep_cutoff=10; //defualt
 
-		bool pass_rep_screen=false;
+		//bool pass_rep_screen=false;  // unused ~Labonte
 
 		if( delta_rep_score < actual_rep_cutoff ){
-			pass_rep_screen=true;
+			//pass_rep_screen=true;  // unused ~Labonte
 			count_data.good_rep_rotamer_count++;
 
 			if ( verbose ) {
@@ -163,7 +163,6 @@ namespace rna {
 			return false;
 		}
 	}
-
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

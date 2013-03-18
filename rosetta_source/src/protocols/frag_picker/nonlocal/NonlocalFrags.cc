@@ -377,7 +377,8 @@ void NonlocalFrags::apply(pose::Pose& pose) {
 				contact_cnt = 0;
 				continue_k = false;
 				Size prev_chain_m, prev_chain_n;
-				Size prev_resnum_m, prev_resnum_n;
+				Size prev_resnum_m = 0;
+				Size prev_resnum_n = 0;
 				numeric::xyzVector< Real> prev_ca_xyz_m, prev_ca_xyz_n;
 				for ( Size m=0; m<frag_len; ++m) {
 					conformation::Residue const & rsd_m = pose.residue(j+m);

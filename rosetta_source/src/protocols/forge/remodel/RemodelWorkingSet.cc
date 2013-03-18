@@ -121,8 +121,8 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 	//core::util::switch_to_residue_type_set( input_pose, core::chemical::CENTROID );
 
 	// find rebuilding segments
-	int model_length = (int)data.sequence.size();
-	bool NtermExt = false;
+	Size model_length = data.sequence.size();
+	//bool NtermExt = false;  // unused ~Labonte
 	bool CtermExt = false;
 	//bool length_changed = false;
 
@@ -145,7 +145,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 	int first_ext;
 	first_ext = (int)data.sequence.find_first_of(Xs);
 	if ( first_ext == 0 ) {
-		NtermExt = true;
+		//NtermExt = true;  // unused ~Labonte
 		TR << "workingSetGen(): N-terminal is extended" << std::endl;
 	}
 	// find C term extension, if any
@@ -412,8 +412,8 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 		std::string DSSP = data.dssp_updated_ss;
 
 		// Sachko: Changed Size (unsigned) to int (signed) to make this logic work properly.
-    // Labonte (earlier comment): I don't know what happens when one assigns -1 to a Size, but this needs to be fixed.
-	  int head = -1, tail = -1, headNew = -1, tailNew = -1; //safety, init to negative values
+		// Labonte (earlier comment): I don't know what happens when one assigns -1 to a Size, but this needs to be fixed.
+		int head = -1, tail = -1, headNew = -1, tailNew = -1; //safety, init to negative values
 
 		//use temp_For_copy to identify if it's de novo build; not empty means it's a loop case.
 		if ( option[ OptionKeys::remodel::repeat_structure].user() && !temp_for_copy.empty()) {  // lines_residues_to_remodel
@@ -467,11 +467,11 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 			headNew = data.blueprint[ idFront-1 ].index;
 			tailNew = data.blueprint[ idBack-1 ].index;
 		}
-    // Sachko on 02/14/2013
-    // "tail" is set to 0 if that position did not exist in the first place, that is to insert a new atom.
-    // So, here is a quick & dirty, hack, for now.
-    tail = tail<=head? data.blueprint[ idBack ].original_index : tail;
-    assert(tail>head);
+		// Sachko on 02/14/2013
+		// "tail" is set to 0 if that position did not exist in the first place, that is to insert a new atom.
+		// So, here is a quick & dirty, hack, for now.
+		tail = tail<=head? data.blueprint[ idBack ].original_index : tail;
+		assert(tail>head);
 
 		//int gap = idBack - idFront +1;
 		int gap = segmentStorageVector[i].residues.back() - segmentStorageVector[i].residues.front() + 1;
@@ -484,7 +484,8 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 		loops.add_loop( segmentStorageVector[i].residues.front(), segmentStorageVector[i].residues.back(), segmentStorageVector[i].residues.front()+1, 0, 0 );
 
 		// process regions containing insertion
-		if ( headNew <= insertStartIndex && tailNew >= insertEndIndex && ( (insertEndIndex - insertStartIndex) != 0 ) ) {
+		if ( headNew <= static_cast<int>(insertStartIndex) && tailNew >= static_cast<int>(insertEndIndex) &&
+				( (insertEndIndex - insertStartIndex) != 0 ) ) {
 			TR << "segment contains insertion, skip normal SegmentRebuild instructions, use SegmentInsert instructions instead" << std::endl;
 
 			String beforeInsert = data.dssp_updated_ss.substr( headNew-1, insertStartIndex-head + 1 ); // if we subtract 'head' and the first position was an extension, you get a really long string here
@@ -523,9 +524,10 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 		  TR << "debug: N-term deletion" << std::endl;
 			this->manager.add( new SegmentRebuild( Interval(1,tail),  DSSP.substr( headNew-1, gap ), aa.substr( headNew-1,gap )) );
 		} 
-		else if (tail != input_pose.total_residue() && tailNew == (Size)model_length && headNew == 1 && segmentStorageVector[i].residues.back() == model_length ){ // C-term deletion
+		else if (tail != static_cast<int>(input_pose.total_residue()) && tailNew == model_length && headNew == 1 &&
+				segmentStorageVector[i].residues.back() == model_length ) { // C-term deletion
 			gap = (int)data.blueprint.size()-segmentStorageVector[i].residues.front()+1;
-		  TR << "debug: C-term deletion" << std::endl;
+			TR << "debug: C-term deletion" << std::endl;
 			this->manager.add( new SegmentRebuild( Interval(head,input_pose.total_residue()), DSSP.substr( segmentStorageVector[i].residues.front()-1, gap ), aa.substr( segmentStorageVector[i].residues.front()-1, gap )) );
 		} else {
 			TR << "normal rebuild" << std::endl;
@@ -533,87 +535,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 		}
 	}
 
-	/*
-	//ConstantLengthFragSetOP frag9( new ConstantLengthFragSet( 9 ) );
-	//ConstantLengthFragSetOP frag3( new ConstantLengthFragSet( 3 ) );
-	OrderedFragSetOP frag1;
-	OrderedFragSetOP fragSet ( new OrderedFragSet );
-
-	for ( protocols::loops::Loops::iterator itr = this->loops.v_begin(); itr != this->loops.v_end(); itr++){
-
-		// setup regions
-		// Pick fragments.  For now just use the 9-mer, 3-mer
-		// breakdown to get things working.  This will be changed
-		// to full-mer/variable length very soon.
-		core::Size length = (*itr).size();
-		//std::cout << "length: " << length << std::endl;
-				for ( core::Size j = 0, je = length; j <= je; ++j ) {
-				TR << "picking " << 200 << " 9-mers for position " << ( (*itr).start() + j ) << std::endl;
-				String ss_sub = ss.substr( (*itr).start() + j - 1, 9 );
-				FrameOP frame = new Frame( (*itr).start() + j, 9 );
-				frame->add_fragment( core::fragment::picking::vall::pick_fragments_by_ss( ss_sub, 200 ) );
-				fragSet->add( frame );
-			}
-
-
-		//pick the matching length fragment
-
-
-		for ( core::Size j = 0, je = length; j <= je; ++j ) {
-			TR << "picking " << 200 << " matching-mers for position " << ( (*itr).start() + j ) << std::endl;
-			String ss_sub = ss.substr( (*itr).start() + j - 1, length );
-			FrameOP frame = new Frame( (*itr).start() + j, length );
-			frame->add_fragment( core::fragment::picking::vall::pick_fragments_by_ss( ss_sub, 200 ) );
-			fragSet->add( frame );
-		}
-
-
-
-			for ( core::Size j = 0, je = length; j <= je; ++j ) {
-				TR << "picking " << 200 << " 3-mers for position " << ( (*itr).start() + j ) << std::endl;
-				String ss_sub = ss.substr( (*itr).start() + j - 1, 3 );
-				FrameOP frame = new Frame( (*itr).start() + j, 3 );
-				frame->add_fragment( core::fragment::picking::vall::pick_fragments_by_ss( ss_sub, 200 ) );
-				fragSet->add( frame );
-			}
-
-
-		// make 1-mers from 3-mers
-		frag1 = protocols::forge::components::smallmer_from_largemer( fragSet->begin(), fragSet->end(), 1 );
-	}
-
-
-	// Init VLB.  Be aware this is a bootstrap implementation, even
-	// remotely sane results are not guaranteed. To get things pinned
-	// down with the proper implementation and benchmarked is going to
-	// take some time.
-	#if defined GL_GRAPHICS
-		protocols::viewer::add_conformation_viewer( model_pose.conformation(), "Remodel Test" );
-	#endif
-	manager.modify(model_pose);
-	//TR<< model_pose.psi(242)<< std::endl;
-	//vlb.apply( model_pose );
-
-	// setup loop building protocol
-	protocols::loops::LoopMover_Perturb_QuickCCD_Moves loop_mover( this->loops, false );
-	loop_mover.set_strict_loops(true);
-	//loop_mover.add_fragments( frag9 );
-	loop_mover.add_fragments( fragSet );
-	//loop_mover.add_fragments( frag3 );
-	loop_mover.add_fragments( frag1 );
-
-	// Run loop modeling.  The loop movers return the original fold tree
-	// after apply().  Do we want that...?  There's also no good way to
-	// check that the loop mover actually finished with a closed loop,
-	// which is troubling.  For now we work around this by post-evaluating
-	// the chainbreak at the original cutpoint.
-	loop_mover.apply( model_pose );
-
-	model_pose.dump_pdb("test_vlb.pdb");
-	*/
-
 	return;
-
 }
 
 

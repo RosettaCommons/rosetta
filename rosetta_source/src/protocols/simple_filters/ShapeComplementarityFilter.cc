@@ -89,9 +89,9 @@ ShapeComplementarityFilter::ShapeComplementarityFilter( ShapeComplementarityFilt
 	verbose_( rval.verbose_ ),
 	residues1_( rval.residues1_ ),
 	residues2_( rval.residues2_ ),
-	sym_dof_name_( rval.sym_dof_name_ ),
 	write_int_area_( rval.write_int_area_ ),
-	multicomp_( rval.multicomp_ )
+	multicomp_( rval.multicomp_ ),
+	sym_dof_name_( rval.sym_dof_name_ )
 {}
 
 void ShapeComplementarityFilter::filtered_sc( Real const & filtered_sc ) { filtered_sc_ = filtered_sc; }

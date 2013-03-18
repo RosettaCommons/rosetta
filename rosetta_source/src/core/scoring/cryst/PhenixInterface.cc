@@ -123,7 +123,13 @@ PhenixInterface::PhenixInterface() {
 
 
 /// @brief score a structure
-core::Real PhenixInterface::getScore (core::pose::Pose const & pose) {
+core::Real PhenixInterface::getScore (
+#ifdef WITH_PYTHON
+		core::pose::Pose const & pose)
+#else
+		core::pose::Pose const & /*pose*/)
+#endif
+{
 #ifdef WITH_PYTHON
 	if (!target_evaluator_) {
 		initialize_target_evaluator( pose );
@@ -160,8 +166,14 @@ core::Real PhenixInterface::getScore (core::pose::Pose const & pose) {
 
 /// @brief score a structure with derivatives
 core::Real PhenixInterface::getScoreAndDerivs (
+#ifdef WITH_PYTHON
 		core::pose::Pose const & pose,
-		utility::vector1 < utility::vector1 < numeric::xyzVector< core::Real > > > & grads) {
+		utility::vector1 < utility::vector1 < numeric::xyzVector< core::Real > > > & grads)
+#else
+		core::pose::Pose const & /*pose*/,
+		utility::vector1 < utility::vector1 < numeric::xyzVector< core::Real > > > & /*grads*/)
+#endif
+{
 #ifdef WITH_PYTHON
 	if (!target_evaluator_) {
 		initialize_target_evaluator( pose );
@@ -204,7 +216,13 @@ core::Real PhenixInterface::getScoreAndDerivs (
 
 
 /// @brief fit bfactors
-void PhenixInterface::fitBfactors (core::pose::Pose & pose) {
+void PhenixInterface::fitBfactors (
+#ifdef WITH_PYTHON
+		core::pose::Pose & pose)
+#else
+		core::pose::Pose & /*pose*/)
+#endif
+{
 #ifdef WITH_PYTHON
 	// this may not be the best place to put this...
 	// if disulfides were formed or broken they will be updated in the asymm pose
@@ -516,7 +534,15 @@ void PhenixInterface::pylist_to_grads(
 #endif
 
 
-void PhenixInterface::stealBfactorsFromFile(core::pose::Pose & pose, std::string filename) {
+void PhenixInterface::stealBfactorsFromFile(
+#ifdef WITH_PYTHON
+		core::pose::Pose & pose,
+		std::string filename)
+#else
+		core::pose::Pose & /*pose*/,
+		std::string /*filename*/)
+#endif
+{
 #ifdef WITH_PYTHON
 	core::pose::Pose pose_asu;
 	core::pose::symmetry::extract_asymmetric_unit(pose, pose_asu);
@@ -636,7 +662,15 @@ void PhenixInterface::optimizeSolvParamsAndMask () {
 
 
 /// @brief update res limits
-void PhenixInterface::setResLimits(core::Real res_high /*=0.0*/, core::Real res_low /*=0.0*/) {
+void PhenixInterface::setResLimits(
+#ifdef WITH_PYTHON
+		core::Real res_high /*=0.0*/,
+		core::Real res_low /*=0.0*/)
+#else
+		core::Real /*res_high=0.0*/,
+		core::Real /*res_low=0.0*/)
+#endif
+{
 #ifdef WITH_PYTHON
 	// set member vars
 	res_low_ = res_low;
@@ -653,7 +687,13 @@ void PhenixInterface::setResLimits(core::Real res_high /*=0.0*/, core::Real res_
 }
 
 void
-PhenixInterface::setTwinLaw(std::string twin_law) {
+PhenixInterface::setTwinLaw(
+#ifdef WITH_PYTHON
+		std::string twin_law)
+#else
+		std::string /*twin_law*/)
+#endif
+{
 #ifdef WITH_PYTHON
 	twin_law_ = twin_law;
 
@@ -668,7 +708,13 @@ PhenixInterface::setTwinLaw(std::string twin_law) {
 }
 
 void
-PhenixInterface::setAlgorithm(std::string algo) {
+PhenixInterface::setAlgorithm(
+#ifdef WITH_PYTHON
+		std::string algo)
+#else
+		std::string /*algo*/)
+#endif
+{
 #ifdef WITH_PYTHON
 	algo_ = algo;
 
@@ -683,7 +729,13 @@ PhenixInterface::setAlgorithm(std::string algo) {
 }
 
 void
-PhenixInterface::set_dm ( bool dm ) {
+PhenixInterface::set_dm (
+#ifdef WITH_PYTHON
+		bool dm)
+#else
+		bool /*dm*/)
+#endif
+{
 #ifdef WITH_PYTHON
 	dm_ = dm;
 
@@ -699,7 +751,13 @@ PhenixInterface::set_dm ( bool dm ) {
 
 
 void
-PhenixInterface::set_prime_and_switch( bool prime_and_switch ) {
+PhenixInterface::set_prime_and_switch(
+#ifdef WITH_PYTHON
+		bool prime_and_switch)
+#else
+		bool /*prime_and_switch*/)
+#endif
+{
 #ifdef WITH_PYTHON
 	prime_and_switch_ = prime_and_switch;
 
@@ -712,7 +770,6 @@ PhenixInterface::set_prime_and_switch( bool prime_and_switch ) {
 	utility_exit_with_message( "ERROR!  To use crystal refinement compile Rosetta with extras=python." );
 #endif
 }
-
 
 
 std::string PhenixInterface::getInfoLine() {
@@ -753,8 +810,15 @@ core::Real PhenixInterface::getRfree() {
 }
 
 
-
-void PhenixInterface::initialize_target_evaluator( core::pose::Pose const & pose, std::string eff_file /*=""*/ ) {
+void PhenixInterface::initialize_target_evaluator(
+#ifdef WITH_PYTHON
+		core::pose::Pose const & pose,
+		std::string eff_file /*=""*/)
+#else
+		core::pose::Pose const & /*pose*/,
+		std::string /*eff_file=""*/)
+#endif
+{
 #ifdef WITH_PYTHON
 	// obvious error check 1
 	//   check that the crystal refinement flag is specified
@@ -798,7 +862,7 @@ void PhenixInterface::initialize_target_evaluator( core::pose::Pose const & pose
 	// load the module
 	std::string arg0 = "phenix.rosetta.xray_target";
 	PyObject *pModule = PyImport_Import( PyString_FromString(arg0.c_str()) );
-  HANDLE_PYTHON_ERROR("In PhenixInterface::initialize_target_evaluator: error importing phenix.rosetta.xray_target");
+	HANDLE_PYTHON_ERROR("In PhenixInterface::initialize_target_evaluator: error importing phenix.rosetta.xray_target");
 
 	// prepare arguments
 	// ['outtmp.pdb' 'file.mtz' 'high_resolution=4.0' 'low_resolution=99.0']
@@ -961,7 +1025,15 @@ void PhenixInterface::makeAlaPose(core::pose::Pose & pose ) {
 	}
 }
 
-std::string PhenixInterface::calculateDensityMap (core::pose::Pose & pose, bool no_sidechain /*=false*/) {
+std::string PhenixInterface::calculateDensityMap (
+#ifdef WITH_PYTHON
+		core::pose::Pose & pose,
+		bool no_sidechain /*=false*/)
+#else
+		core::pose::Pose & /*pose*/,
+		bool /*no_sidechain=false*/)
+#endif
+{
 #ifdef WITH_PYTHON
 	if (!target_evaluator_) {
 		initialize_target_evaluator( pose );
@@ -970,7 +1042,7 @@ std::string PhenixInterface::calculateDensityMap (core::pose::Pose & pose, bool 
 	chdir(tempdir_.c_str());
 
 	PyObject_CallMethod(target_evaluator_, "write_map", "(s)", "outtmp.map");
-  HANDLE_PYTHON_ERROR("PhenixInterface::calculateDensityMap() : error writing map");
+	HANDLE_PYTHON_ERROR("PhenixInterface::calculateDensityMap() : error writing map");
 
 	chdir("..");
 	return tempdir_+"/outtmp.map";
@@ -979,9 +1051,6 @@ std::string PhenixInterface::calculateDensityMap (core::pose::Pose & pose, bool 
 #endif
 	return "";
 }
-
-
-
 
 }
 }

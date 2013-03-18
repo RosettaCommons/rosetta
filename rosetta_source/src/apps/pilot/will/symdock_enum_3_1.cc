@@ -512,10 +512,10 @@ struct TCDock {
 					(i12?cmp1cbs_:cmp2cbs_).push_back(Vecf(ptmp.residue(i).xyz("CB")));
 					(i12?cmp1wts_:cmp2wts_).push_back(cbw);
 				}
-				int natom;
+				Size natom = 0;
 				if( "BB"    == option[tcdock::clash_atoms]() ) natom = (ptmp.residue(i).name3()=="GLY") ? 4 : 5;
 				if( "HEAVY" == option[tcdock::clash_atoms]() ) natom = ptmp.residue(i).nheavyatoms();
-				for(int j = 1; j <= natom; ++j) {
+				for(Size j = 1; j <= natom; ++j) {
 					Vec const & v( ptmp.residue(i).xyz(j) );
 					(i12?clashmap1_:clashmap2_)[AtomID(j,i)] = ptmp.residue(i).atom_type(j).lj_radius();
 					(i12?cmp1pts_:cmp1pts_).push_back(v);

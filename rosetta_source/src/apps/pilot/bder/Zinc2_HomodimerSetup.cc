@@ -10,19 +10,25 @@
 
 /// @file    apps/pilot/bder/Zinc2_HomodimerSetup.cc
 /// @brief   Stage 1 of designing a two-zinc metal seeded symmetric interface.
-/// @details A two-zinc interface is generated in Zinc2_HomodimerSetup.cc by grafting two 2-residue zinc-binding matches onto the surface, duplicating the pose, rotating 180 degrees about the zinc-zinc axes, then rotating 180 degrees about the line that bisects the two zincs.  At this point, there is one significant degree of freedom to exlore WHILE MAINTAINING SYMMETRY.  This DOF is rotation about the zinc-zinc axis.  The rotation is done in a grid-search manner, and any uneclipsed pose with good metal geometry is dumped/written to disk.  The setup is separate from the design to reduce the computational load, and to provide a debugging checkpoint.
-/// @details THIS PROTOCOL IS FOR TWO ZINC's AT THE INTERFACE.  I wrote a similar protocol for designing symmetric interfaces containing only one zinc, but none of these designs worked experimentally.  
+/// @details A two-zinc interface is generated in Zinc2_HomodimerSetup.cc by grafting two 2-residue zinc-binding matches
+/// onto the surface, duplicating the pose, rotating 180 degrees about the zinc-zinc axes, then rotating 180 degrees
+/// about the line that bisects the two zincs.  At this point, there is one significant degree of freedom to explore
+/// WHILE MAINTAINING SYMMETRY.  This DOF is rotation about the zinc-zinc axis.  The rotation is done in a grid-search
+/// manner, and any uneclipsed pose with good metal geometry is dumped/written to disk.  The setup is separate from the
+/// design to reduce the computational load, and to provide a debugging checkpoint.
+/// @details THIS PROTOCOL IS FOR TWO ZINC's AT THE INTERFACE.  I wrote a similar protocol for designing symmetric
+/// interfaces containing only one zinc, but none of these designs worked experimentally.
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////
-//////   Chain1Chain1Chain1
-//////      H   H   H   H           H-H match1, H-H match2
-//////       \ /     \ /
-//////       Zn      Zn             ----------------------------------  axis of symmetry, can rotate about this axis and maintain symmetry
-//////       / \     / \
-//////      H   H   H   H           H-H match2, H-H match1
-//////   Chain2Chain2Chain2
-//////
+///
+///   Chain1Chain1Chain1
+///      H   H   H   H           H-H match1, H-H match2
+///       \ /     \ /
+///       Zn      Zn             -------------------  axis of symmetry, can rotate about this axis and maintain symmetry
+///       / \     / \
+///      H   H   H   H           H-H match2, H-H match1
+///   Chain2Chain2Chain2
+///
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /// @author Bryan Der

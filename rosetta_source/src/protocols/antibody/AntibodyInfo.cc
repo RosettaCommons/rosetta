@@ -1031,7 +1031,7 @@ kinematics::FoldTreeCOP AntibodyInfo::get_FoldTree_AllCDRs_LHDock( pose::Pose co
         Size const loop_stop ( it->stop() );
         Size const loop_cutpoint ( it->cut() );
         Size edge_start(0), edge_stop(0);
-        bool edge_found = false;
+        //bool edge_found = false;  // unused ~Labonte
         const FoldTree & f_const = *f;
         Size const num_jump = f_const.num_jump();
         for( FoldTree::const_iterator it2=f_const.begin(), it2_end=f_const.end(); it2 !=it2_end; ++it2 ) {
@@ -1040,7 +1040,7 @@ kinematics::FoldTreeCOP AntibodyInfo::get_FoldTree_AllCDRs_LHDock( pose::Pose co
             edge_start = std::min( it2->start(), it2->stop() );
             edge_stop  = std::max( it2->start(), it2->stop() );
             if ( ! it2->is_jump() && loop_start > edge_start && loop_stop < edge_stop ) {
-                edge_found = true;
+                //edge_found = true;  // unused ~Labonte
                 break;
             }
         }

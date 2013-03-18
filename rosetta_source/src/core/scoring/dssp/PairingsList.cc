@@ -90,28 +90,28 @@ void read_pairing_list( std::string pairing_file, PairingsList& pairings)
 }
 
 void read_pairing_list( std::istream& pairing_stream, PairingsList& pairings) {
-  std::string line;
-	Size a,b,c,d;
-  while ( getline( pairing_stream, line ) ) {
-    std::istringstream line_stream( line );
-    // a=i, b=j, c=orientation(1 or 2), d=pleating(1 or 2)
-    std::string o, pleat;
-    line_stream >> a >> b >> o >> pleat;
-    if ( line_stream.fail() || o.size() != 1 ) {
-      std::cout << "[ERROR] unable to parse " << line << std::endl;
-      continue;
-    }
+	std::string line;
+	Size a, b, c, d;
+	while ( getline( pairing_stream, line ) ) {
+		std::istringstream line_stream( line );
+		// a=i, b=j, c=orientation(1 or 2), d=pleating(1 or 2)
+		std::string o, pleat;
+		line_stream >> a >> b >> o >> pleat;
+		if ( line_stream.fail() || o.size() != 1 ) {
+			std::cout << "[ERROR] unable to parse " << line << std::endl;
+			continue;
+		}
 
-    if ( o == "A" || o == "1" ) {
-      c = 1;
-    } else if ( o == "P" || o == "2") {
-      c = 2;
-    } else if ( o == "X" ) {
+		if ( o == "A" || o == "1" ) {
+			c = 1;
+		} else if ( o == "P" || o == "2") {
+			c = 2;
+		} else if ( o == "X" ) {
 			c = 0;
 		} else {
-      std::cout << "bad orientation: " << o << std::endl;
-      continue;
-    }
+			std::cout << "bad orientation: " << o << std::endl;
+			continue;
+		}
 
 		if ( pleat == "O" || pleat== "1" ) {
 			d = 1;
@@ -120,21 +120,21 @@ void read_pairing_list( std::istream& pairing_stream, PairingsList& pairings) {
 		} else if ( pleat == "X" ) {
 			d = 0;
 		} else {
+			d = 3;  // avoids [-Wuninitialized] warning ~Labonte
 			std::cout << "bad pleating: " << pleat << std::endl;
 		}
 
-    if ( ( a < 1 || b < 1 ) || ( a == b ) || ( c != 1 && c != 2 && c != 0 ) ||
-      ( d != 1 && d != 2 && d != 0 ) ) {
-      std::cout << "bad pairing:" <<
+		if ( ( a < 1 || b < 1 ) || ( a == b ) || ( c != 1 && c != 2 && c != 0 ) ||
+				( d != 1 && d != 2 && d != 0 ) ) {
+			std::cout << "bad pairing:" <<
 				fmt::SS( a ) << fmt::SS( b ) << fmt::SS( c ) << fmt::SS( d ) << std::endl;
-      utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
-    }
+			utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
+		}
 
 		Pairing p( a, b, c, d);
-    if ( a > b ) p.reverse();
-    pairings.push_back( p );
-
-  }
+		if ( a > b ) p.reverse();
+		pairings.push_back( p );
+	}
 } // read_pairings
 
 std::ostream& operator<< ( std::ostream& out, Pairing const& p) {

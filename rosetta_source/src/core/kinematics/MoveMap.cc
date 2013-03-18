@@ -527,7 +527,7 @@ MoveMap::show( std::ostream & out ) const
 	out << "-------------------------------\n";	
 	out <<A(8,"resnum")<<' '<<A(8,"Type") <<' '<<A(12,"TRUE/FALSE ")<<std::endl;
 	out << "-------------------------------\n";
-	Size prev_resnum;
+	Size prev_resnum = 0;
 	utility::vector1< bool > jumpbool;
 	utility::vector1< Size > jumpnum;
 	for (MoveMapTorsionID_Map::const_iterator it = movemap_torsion_id_begin(), it_end = movemap_torsion_id_end(); it != it_end; ++it){		

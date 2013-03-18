@@ -149,7 +149,7 @@ void DebuggingAnnealer::run()
 	//internal variables
 
 	int const nmoltenres = ig_->get_num_nodes();
-	float currentenergy;
+	//float currentenergy;  // unused ~Labonte
 	//FArray1D_int list( p_rotamer_set_->nrotamers() );
 	//FArray1D_int state_on_node( nmoltenres,0 );
 	ObjexxFCL::FArray1D_int best_state_on_node( nmoltenres,0 );
@@ -159,7 +159,7 @@ void DebuggingAnnealer::run()
 	//--------------------------------------------------------------------
 	//initialize variables
 
-	currentenergy = 0.0;
+	//currentenergy = 0.0;  // unused ~Labonte
 
 	ig_->prepare_for_simulated_annealing();
 	ig_->blanket_assign_state_0();

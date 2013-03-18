@@ -232,7 +232,7 @@ void MinPackMinMover::apply (pose::Pose& pose ) {
 			// under option control for mutations that may push the complex away in minimization
 			movemap->set_jump(false);
 			for(Size ii = 1; ii <= jump_num_.size(); ++ii ){
-				if( jump_num_[ii] > pose.num_jump() )
+				if( jump_num_[ii] > (int)pose.num_jump() )
 					utility_exit_with_message( "Input declared a jump with too high a number, exiting... \n" );
 				else
 					movemap->set_jump( jump_num_[ii], true);

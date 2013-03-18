@@ -659,9 +659,9 @@ void guess_rbsegs_from_pose(
 	// split loops on cutpoints from original pose
 	utility::vector1< int > cuts_in = pose.fold_tree().cutpoints();
 	std::sort( cuts_in.begin(), cuts_in.end() );
-	for (int i=1; i<=loops.size(); ++i) {
+	for (Size i=1; i<=loops.size(); ++i) {
 		for (Size j=1; j<=cuts_in.size(); ++j) {
-			if (loops[i].start() <= cuts_in[j] && loops[i].stop() > cuts_in[j]) {
+			if (loops[i].start() <= Size(cuts_in[j]) && loops[i].stop() > Size(cuts_in[j])) {
 				TR << "splitting [" << loops[i].start() << " , " << loops[i].stop() << "] at " << cuts_in[j] << std::endl;
 				core::Size new_start = cuts_in[j]+1, new_stop = loops[i].stop();
 				loops[i].set_stop(cuts_in[j]);

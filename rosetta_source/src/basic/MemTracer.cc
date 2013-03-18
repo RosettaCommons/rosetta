@@ -91,7 +91,7 @@ namespace basic {
 //     long   ru_nivcsw;        /* involuntary context switches */
 // };
 
-/// it turns out LINUX kernel do not support getrusage() ...
+// it turns out LINUX kernel do not support getrusage() ...
 void get_usage_from_procfilesystem( std::ostream& mem_report ) {
 #if defined(_WIN32) || defined( __native_client__ ) 
 	return;  // disabled on windows
@@ -115,7 +115,9 @@ void get_usage_from_procfilesystem( std::ostream& mem_report ) {
 		unsigned text;//       text (code)
 		unsigned lib;//        library
 		unsigned data;//       data/stack
-		fscanf(pf, "%u %u %u %u %u %u", &size, &resident, &share, &text, &lib, &data );
+		if (fscanf(pf, "%u %u %u %u %u %u", &size, &resident, &share, &text, &lib, &data ) == EOF){
+			mem_report << "WARNING! End of file reached without assignments from fscanf!";
+		}
 		using namespace ObjexxFCL::fmt;
 		mem_report << std::setprecision(4) << "Virt/Res/Share/Exe/Data "
 							 << I( width, (int) size*4/1024 ) << "  "

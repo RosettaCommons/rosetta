@@ -398,15 +398,16 @@ void RecomputeDensityMapMover::apply( core::pose::Pose & pose ) {
 
 void RecomputeDensityMapMover::parse_my_tag(
 			utility::tag::TagPtr const tag,
-			moves::DataMap &data,
+			moves::DataMap & /*data*/,
 			filters::Filters_map const & /*filters*/,
 			moves::Movers_map const & /*movers*/,
-			core::pose::Pose const & pose ) {
+			core::pose::Pose const & /*pose*/ )
+{
 	keep_sidechains_ = tag->getOption<bool>("sidechains", true);
 }
 
 ////
-void LoadDensityMapMover::apply( core::pose::Pose & pose ) {
+void LoadDensityMapMover::apply( core::pose::Pose & /*pose*/ ) {
 	using namespace core::scoring::electron_density;
 
 	ElectronDensity& densityMap = getDensityMap(mapfile_, true);
@@ -418,10 +419,11 @@ void LoadDensityMapMover::apply( core::pose::Pose & pose ) {
 
 void LoadDensityMapMover::parse_my_tag(
 			utility::tag::TagPtr const tag,
-			moves::DataMap &data,
+			moves::DataMap & /*data*/,
 			filters::Filters_map const & /*filters*/,
 			moves::Movers_map const & /*movers*/,
-			core::pose::Pose const & pose ) {
+			core::pose::Pose const & /*pose*/ )
+{
 	mapfile_ = tag->getOption<std::string>("mapfile");
 	sc_scale_ = tag->getOption<core::Real>("sc_scale", 1.0);
 	window_ = tag->getOption<core::Size>("window", 3);
@@ -443,10 +445,11 @@ void FitBfactorsMover::apply( core::pose::Pose & pose ) {
 
 void FitBfactorsMover::parse_my_tag(
 			utility::tag::TagPtr const tag,
-			moves::DataMap &data,
+			moves::DataMap & /*data*/,
 			filters::Filters_map const & /*filters*/,
 			moves::Movers_map const & /*movers*/,
-			core::pose::Pose const & pose ) {
+			core::pose::Pose const & /*pose*/ )
+{
 	std::string adp_strat = tag->getOption<std::string>("adp_strategy", "individual");
 	runtime_assert( adp_strat=="individual" || adp_strat=="group" || adp_strat=="randomize" );
 
@@ -502,10 +505,11 @@ void UpdateSolventMover::apply( core::pose::Pose & pose ) {
 
 void UpdateSolventMover::parse_my_tag(
 			utility::tag::TagPtr const tag,
-			moves::DataMap &data,
+			moves::DataMap & /*data*/,
 			filters::Filters_map const & /*filters*/,
 			moves::Movers_map const & /*movers*/,
-			core::pose::Pose const & pose ) {
+			core::pose::Pose const & /*pose*/ )
+{
 	update_mask_ = tag->getOption<bool>("update_mask", 1);
 	update_fcalc_ = tag->getOption<bool>("update_fcalc", 1);
 	optimize_mask_ = tag->getOption<bool>("optimize_mask", 0);
@@ -567,10 +571,11 @@ void TagPoseWithRefinementStatsMover::apply( core::pose::Pose & pose ) {
 
 void TagPoseWithRefinementStatsMover::parse_my_tag(
 			utility::tag::TagPtr const tag,
-			moves::DataMap &data,
+			moves::DataMap & /*data*/,
 			filters::Filters_map const & /*filters*/,
 			moves::Movers_map const & /*movers*/,
-			core::pose::Pose const & pose ) {
+			core::pose::Pose const & /*pose*/ )
+{
 	tag_ = tag->getOption<std::string>("tag", "");
 	dump_pose_ = tag->getOption<bool>("dump", 0);
 }
@@ -609,7 +614,7 @@ void SetRefinementOptionsMover::apply( core::pose::Pose & /*pose*/ ) {
 
 	if (cif_files_.size() > 0) {
 		TR << "Passing cif files to phenix refine:" << std::endl;
-		for (int i=1; i<=cif_files_.size(); ++i) {
+		for (core::Size i=1; i<=cif_files_.size(); ++i) {
 			TR << "  " << cif_files_[i] << std::endl;
 		}
 		core::scoring::cryst::getPhenixInterface().set_cif_files ( cif_files_ );
@@ -619,10 +624,11 @@ void SetRefinementOptionsMover::apply( core::pose::Pose & /*pose*/ ) {
 
 void SetRefinementOptionsMover::parse_my_tag(
 			utility::tag::TagPtr const tag,
-			moves::DataMap &data,
+			moves::DataMap & /*data*/,
 			filters::Filters_map const & /*filters*/,
 			moves::Movers_map const & /*movers*/,
-			core::pose::Pose const & pose ) {
+			core::pose::Pose const & /*pose*/ )
+{
 	res_high_ = tag->getOption<core::Real>("res_high", 0.0);
 	res_low_ = tag->getOption<core::Real>("res_low", 0.0);
 	twin_law_ = tag->getOption<std::string>("twin_law", "");
@@ -638,9 +644,5 @@ void SetRefinementOptionsMover::parse_my_tag(
 		cif_files_ = utility::string_split( allcifs, ',' );
 }
 
-
-
-
 }
 }
-

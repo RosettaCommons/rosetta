@@ -152,8 +152,16 @@ void DelphiElectrostatics::setup_from_DelphiGrid( std::string const & input_file
 	core::Real x0, y0, z0,
 			x1, y1, z1,
 			x_d, y_d, z_d,
-			V_000, V_100, V_010, V_110, V_001, V_101, V_011, V_111,
 			c_00, c_10, c_01, c_11, c_0, c_1, c;
+	core::Real V_000 = 0.0;
+	core::Real V_100 = 0.0;
+	core::Real V_010 = 0.0;
+	core::Real V_001 = 0.0;
+	core::Real V_110 = 0.0;
+	core::Real V_101 = 0.0;
+	core::Real V_011 = 0.0;
+	core::Real V_111 = 0.0;
+
 	core::Real E_energy(0.);
 	numeric::xyzVector<core::Real> ligand(0.);
 	conformation::Residue const & curr_rsd = ligand_pose.conformation().residue(lig_res_num);
@@ -192,14 +200,14 @@ void DelphiElectrostatics::setup_from_DelphiGrid( std::string const & input_file
 		c = (c_0 * (1 - z_d)) + (c_1 * z_d);
 		E_energy += c * curr_rsd.atomic_charge(i);
 
-    outPDB_stream<<"HETATM"<<std::setw(5)<<1<<" C   GRD A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<x0<<std::setw(8)<<std::fixed<<std::setprecision(3)<<y0<<std::setw(8)<<std::fixed<<std::setprecision(3)<<z0<<std::endl;
-    outPDB_stream<<"HETATM"<<std::setw(5)<<1<<" C   GRD A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<x0+grid_spacing_<<std::setw(8)<<std::fixed<<std::setprecision(3)<<y0<<std::setw(8)<<std::fixed<<std::setprecision(3)<<z0<<std::endl;
-    outPDB_stream<<"HETATM"<<std::setw(5)<<1<<" C   GRD A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<x0<<std::setw(8)<<std::fixed<<std::setprecision(3)<<y0+grid_spacing_<<std::setw(8)<<std::fixed<<std::setprecision(3)<<z0<<std::endl;
-    outPDB_stream<<"HETATM"<<std::setw(5)<<1<<" C   GRD A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<x0<<std::setw(8)<<std::fixed<<std::setprecision(3)<<y0<<std::setw(8)<<std::fixed<<std::setprecision(3)<<z0+grid_spacing_<<std::endl;
-    outPDB_stream<<"HETATM"<<std::setw(5)<<1<<" C   GRD A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<x0+grid_spacing_<<std::setw(8)<<std::fixed<<std::setprecision(3)<<y0+grid_spacing_<<std::setw(8)<<std::fixed<<std::setprecision(3)<<z0<<std::endl;
-    outPDB_stream<<"HETATM"<<std::setw(5)<<1<<" C   GRD A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<x0+grid_spacing_<<std::setw(8)<<std::fixed<<std::setprecision(3)<<y0<<std::setw(8)<<std::fixed<<std::setprecision(3)<<z0+grid_spacing_<<std::endl;
-    outPDB_stream<<"HETATM"<<std::setw(5)<<1<<" C   GRD A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<x0<<std::setw(8)<<std::fixed<<std::setprecision(3)<<y0+grid_spacing_<<std::setw(8)<<std::fixed<<std::setprecision(3)<<z0+grid_spacing_<<std::endl;
-    outPDB_stream<<"HETATM"<<std::setw(5)<<1<<" C   GRD A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<x0+grid_spacing_<<std::setw(8)<<std::fixed<<std::setprecision(3)<<y0+grid_spacing_<<std::setw(8)<<std::fixed<<std::setprecision(3)<<z0+grid_spacing_<<std::endl;
+		outPDB_stream<<"HETATM"<<std::setw(5)<<1<<" C   GRD A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<x0<<std::setw(8)<<std::fixed<<std::setprecision(3)<<y0<<std::setw(8)<<std::fixed<<std::setprecision(3)<<z0<<std::endl;
+		outPDB_stream<<"HETATM"<<std::setw(5)<<1<<" C   GRD A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<x0+grid_spacing_<<std::setw(8)<<std::fixed<<std::setprecision(3)<<y0<<std::setw(8)<<std::fixed<<std::setprecision(3)<<z0<<std::endl;
+		outPDB_stream<<"HETATM"<<std::setw(5)<<1<<" C   GRD A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<x0<<std::setw(8)<<std::fixed<<std::setprecision(3)<<y0+grid_spacing_<<std::setw(8)<<std::fixed<<std::setprecision(3)<<z0<<std::endl;
+		outPDB_stream<<"HETATM"<<std::setw(5)<<1<<" C   GRD A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<x0<<std::setw(8)<<std::fixed<<std::setprecision(3)<<y0<<std::setw(8)<<std::fixed<<std::setprecision(3)<<z0+grid_spacing_<<std::endl;
+		outPDB_stream<<"HETATM"<<std::setw(5)<<1<<" C   GRD A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<x0+grid_spacing_<<std::setw(8)<<std::fixed<<std::setprecision(3)<<y0+grid_spacing_<<std::setw(8)<<std::fixed<<std::setprecision(3)<<z0<<std::endl;
+		outPDB_stream<<"HETATM"<<std::setw(5)<<1<<" C   GRD A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<x0+grid_spacing_<<std::setw(8)<<std::fixed<<std::setprecision(3)<<y0<<std::setw(8)<<std::fixed<<std::setprecision(3)<<z0+grid_spacing_<<std::endl;
+		outPDB_stream<<"HETATM"<<std::setw(5)<<1<<" C   GRD A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<x0<<std::setw(8)<<std::fixed<<std::setprecision(3)<<y0+grid_spacing_<<std::setw(8)<<std::fixed<<std::setprecision(3)<<z0+grid_spacing_<<std::endl;
+		outPDB_stream<<"HETATM"<<std::setw(5)<<1<<" C   GRD A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<x0+grid_spacing_<<std::setw(8)<<std::fixed<<std::setprecision(3)<<y0+grid_spacing_<<std::setw(8)<<std::fixed<<std::setprecision(3)<<z0+grid_spacing_<<std::endl;
 	}
 
 	outPDB_stream.close();

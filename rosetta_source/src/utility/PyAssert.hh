@@ -19,9 +19,9 @@
 
 #include <utility/exit.hh>
 
-/// @brief PyAssert macro. Check if statemnt is true and call utility_exit otherwise, which in turn
-///        will trow boost::python exception that python interpreter will catch.
-///        This macro works only when PY_ROSETTA macro was defined.
+/// @brief PyAssert macro. Check if statement is true and call utility_exit otherwise, which in turn
+///        will throw boost::python exception that python interpreter will catch.
+///        This macro works only when PYROSETTA macro was defined.
 ///
 /// Example of usage: PyAssert( (residue_num > 0) && (residue_num<=pose.n_residue())  )
 ///
