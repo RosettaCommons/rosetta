@@ -549,7 +549,7 @@ ResidueType::number_bonded_heavyatoms( Size const atomno ) const
 		AtomType const& at = (*atom_types_)[graph_[target].atom_type_index()];
 		if( at.is_heavyatom() ) ++count;
 	}
-	assert count = bonded_neighbor_[ atomno ].size () - number_bonded_hydrogens( atomno );
+	assert(count == bonded_neighbor_[ atomno ].size () - number_bonded_hydrogens( atomno ));
 #endif
 	return bonded_neighbor_[ atomno ].size () - number_bonded_hydrogens( atomno );
 }
