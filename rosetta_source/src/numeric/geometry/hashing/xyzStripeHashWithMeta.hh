@@ -275,9 +275,9 @@ public:
 		T x = v.x(); T y = v.y(); T z = v.z();
 		if( x < -grid_size_ || y < -grid_size_ || z < -grid_size_ ) return; // worth it iff
 		if( x > xmx_        || y > ymx_        || z > zmx_        ) return;                      // worth it iff
-		int const ix   = (x<0) ? 0 : numeric::min(xdim_-1,(int)(x/grid_size_));
-		int const iy0  = (y<0) ? 0 : y/grid_size_;
-		int const iz0  = (z<0) ? 0 : z/grid_size_;
+		int const ix   = (x<0) ? 0 : numeric::min(xdim_-1, static_cast<int>(x/grid_size_));
+		int const iy0  = (y<0) ? 0 : static_cast<int>(y/grid_size_);
+		int const iz0  = (z<0) ? 0 : static_cast<int>(z/grid_size_);
 		int const iyl = numeric::max(0,iy0-1);
 		int const izl = numeric::max(0,iz0-1);
 		int const iyu = numeric::min((int)ydim_,iy0+2);

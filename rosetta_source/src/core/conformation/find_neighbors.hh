@@ -146,7 +146,7 @@ struct AddEdgeVisitor{
 		numeric::xyzVector<Real> const & /*v*/, Real  const & vm,
 		numeric::xyzVector<Real> const & /*c*/, Real  const & cm, Real const & d_sq
 	){
-		if( vm < cm ) point_graph.add_edge( vm, cm, Edge( d_sq ) );
+		if( vm < cm ) point_graph.add_edge( Size(vm), Size(cm), Edge( d_sq ) );
 	}
 };
 

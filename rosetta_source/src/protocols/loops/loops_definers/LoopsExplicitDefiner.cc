@@ -63,10 +63,8 @@ LoopsExplicitDefiner::LoopsExplicitDefiner() :
 
 LoopsExplicitDefiner::~LoopsExplicitDefiner() {}
 
-LoopsExplicitDefiner::LoopsExplicitDefiner(
-	LoopsExplicitDefiner const & src
-) :
-	loop_list_(src.loop_list_)
+LoopsExplicitDefiner::LoopsExplicitDefiner(LoopsExplicitDefiner const & src) : LoopsDefiner(src),
+		loop_list_(src.loop_list_)
 {}
 
 /// @brief Create another loops definer of the type matching the most-derived

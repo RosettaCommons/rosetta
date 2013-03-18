@@ -58,7 +58,8 @@ ResidueGridScoresFeatures::ResidueGridScoresFeatures() : chain_(' ')
 
 }
 
-ResidueGridScoresFeatures::ResidueGridScoresFeatures(ResidueGridScoresFeatures const & src) : chain_(src.chain_)
+ResidueGridScoresFeatures::ResidueGridScoresFeatures(ResidueGridScoresFeatures const & src) : FeaturesReporter(src),
+		chain_(src.chain_)
 {
 
 }

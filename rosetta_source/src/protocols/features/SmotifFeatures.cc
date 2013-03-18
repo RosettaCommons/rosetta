@@ -60,7 +60,7 @@ SmotifFeatures::SmotifFeatures(core::scoring::ScoreFunctionOP /*scfxn*/)
 {	
 }
 		
-SmotifFeatures::SmotifFeatures( SmotifFeatures const & /*src*/ )
+SmotifFeatures::SmotifFeatures( SmotifFeatures const & /*src*/ ) : FeaturesReporter(/*src*/)
 {
 }
 		

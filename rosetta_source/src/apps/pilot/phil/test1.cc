@@ -2450,7 +2450,7 @@ backrub_min_test()
 	mainchain.push_back( AtomID( pose.residue( seqpos+1 ).atom_index( "N"), seqpos+1 ) );
 	mainchain.push_back( AtomID( pose.residue( seqpos+1 ).atom_index("CA"), seqpos+1 ) );
 
-	AtomID const downstream_id( AtomID( pose.residue( seqpos+1 ).atom_index("C"), seqpos+1 ) );
+	//AtomID const downstream_id( AtomID( pose.residue( seqpos+1 ).atom_index("C"), seqpos+1 ) );  // unused ~Labonte
 
 	utility::vector1< std::pair< Size, Size > > edges;
 	edges.push_back( std::make_pair( 1, 7 ) ); // CA of seqpos-1 --> CA of seqpos+1

@@ -78,7 +78,7 @@ PdbDataFeatures::PdbDataFeatures()
 
 }
 
-PdbDataFeatures::PdbDataFeatures(PdbDataFeatures const & )
+PdbDataFeatures::PdbDataFeatures(PdbDataFeatures const & ) : FeaturesReporter()
 {
 
 }

@@ -713,7 +713,7 @@ Pose::set_phi( Size const seqpos, Real const setting )
 		// The torsion angle BB X+1 (from the previous residue) is the correct bond but has the incorrect reference atoms,
 		// so get the angle offset.
 		uint x = residue_type(seqpos - 1).carbohydrate_info()->mainchain_glycosidic_bond_acceptor();
-		uint offset = carbohydrates::carbohydrate_phi_offset_from_BB(*this, seqpos);
+		Angle offset = carbohydrates::carbohydrate_phi_offset_from_BB(*this, seqpos);
 		conformation_->set_torsion(TorsionID(seqpos - 1, BB, x + 1), setting - offset);
 	}
 }
@@ -976,12 +976,13 @@ Pose::set_chi(
 	Real const setting
 )
 {
-	PyAssert( (seqpos<=static_cast<int>(total_residue())), "Pose::set_chi( int const chino , Size const seqpos ): "
+	PyAssert( (seqpos<=total_residue()), "Pose::set_chi( int const chino , Size const seqpos ): "
 			"variable seqpos is out of range!" );
 	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_carbohydrate() ),
 			"Pose::set_chi( int const chino , Size const seqpos , Real const setting ): "
 			"residue seqpos is not part of a protein or carbohydrate!" );
-	PyAssert( (chino>0) && (chino<=residue(seqpos).nchi()), "Pose::set_chi( int const chino , Size const seqpos ): "
+	PyAssert( (chino>0) && (chino<=static_cast<int>(residue(seqpos).nchi())),
+			"Pose::set_chi( int const chino , Size const seqpos ): "
 			"variable chino innappropriate for this residue!" );
 	conformation_->set_torsion( TorsionID(seqpos, id::CHI, chino), setting);
 }

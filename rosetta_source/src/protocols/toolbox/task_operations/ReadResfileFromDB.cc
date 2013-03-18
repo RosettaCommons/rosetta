@@ -74,10 +74,9 @@ ReadResfileFromDB::ReadResfileFromDB(
 	db_session_(db_session)
 {}
 
-ReadResfileFromDB::ReadResfileFromDB(
-	ReadResfileFromDB const & src) :
-	database_table_(src.database_table_),
-	db_session_(src.db_session_)
+ReadResfileFromDB::ReadResfileFromDB(ReadResfileFromDB const & src) : TaskOperation(src),
+		database_table_(src.database_table_),
+		db_session_(src.db_session_)
 {}
 
 ReadResfileFromDB::~ReadResfileFromDB() {}

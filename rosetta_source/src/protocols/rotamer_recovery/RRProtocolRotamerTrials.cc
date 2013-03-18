@@ -57,7 +57,7 @@ static Tracer TR("protocol.moves.RRProtocolRotamerTrials");
 
 RRProtocolRotamerTrials::RRProtocolRotamerTrials() {}
 
-RRProtocolRotamerTrials::RRProtocolRotamerTrials( RRProtocolRotamerTrials const & ) {}
+RRProtocolRotamerTrials::RRProtocolRotamerTrials( RRProtocolRotamerTrials const & ) : RRProtocol() {}
 
 RRProtocolRotamerTrials::~RRProtocolRotamerTrials() {}
 

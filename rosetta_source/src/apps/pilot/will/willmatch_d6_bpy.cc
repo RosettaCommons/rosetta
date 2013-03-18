@@ -243,7 +243,7 @@ void run() {
   Size startbpy = 0;
   {
     utility::io::izstream inz(option[out::file::o]()+"/willmatch_d6_bpy.progress");
-    while( inz >> startfile >> startbpy );
+    while( inz >> startfile >> startbpy ) ;
     inz.close();
     if(startfile != "") TR << "continuing from " << startfile << " " << startbpy << std::endl;
   }

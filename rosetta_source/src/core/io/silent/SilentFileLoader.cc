@@ -67,8 +67,7 @@ SilentFileLoader::SilentFileLoader() {}
 
 SilentFileLoader::~SilentFileLoader() {}
 
-SilentFileLoader::SilentFileLoader(
-	SilentFileLoader const &) {}
+SilentFileLoader::SilentFileLoader(	SilentFileLoader const &) : ResourceLoader() {}
 
 ResourceOP
 SilentFileLoader::create_resource(

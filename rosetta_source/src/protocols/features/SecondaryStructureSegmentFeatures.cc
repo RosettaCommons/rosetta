@@ -48,7 +48,8 @@ SecondaryStructureSegmentFeatures::SecondaryStructureSegmentFeatures(core::scori
 {	
 }
 
-SecondaryStructureSegmentFeatures::SecondaryStructureSegmentFeatures( SecondaryStructureSegmentFeatures const & /*src*/ )
+SecondaryStructureSegmentFeatures::SecondaryStructureSegmentFeatures(
+		SecondaryStructureSegmentFeatures const & /*src*/ ) : FeaturesReporter(/*src*/)
 {
 }
 

@@ -59,7 +59,7 @@ RRProtocolRTMin::RRProtocolRTMin() :
 	cartesian_(false)
 {}
 
-RRProtocolRTMin::RRProtocolRTMin(RRProtocolRTMin const & src) :
+RRProtocolRTMin::RRProtocolRTMin(RRProtocolRTMin const & src) : RRProtocol(src),
 	nonideal_(src.nonideal_),
 	cartesian_(src.cartesian_)
 {}

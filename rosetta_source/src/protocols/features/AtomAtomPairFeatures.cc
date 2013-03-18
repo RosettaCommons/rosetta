@@ -133,7 +133,7 @@ AtomAtomPairFeatures::AtomAtomPairFeatures() :
 
 }
 
-AtomAtomPairFeatures::AtomAtomPairFeatures(AtomAtomPairFeatures const & src) :
+AtomAtomPairFeatures::AtomAtomPairFeatures(AtomAtomPairFeatures const & src) : FeaturesReporter(src),
 	min_dist_(src.min_dist_),
 	max_dist_(src.max_dist_),
 	nbins_(src.nbins_),
