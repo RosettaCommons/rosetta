@@ -158,13 +158,13 @@ sources = {
 		"rna_score",
                 "rna_thread",
 	],
-	"public/swa_rna/rna": [
+	"public/swa/rna": [
 		"swa_rna_analytical_closure",
 		"swa_rna_main",
 		"swa_rna_util",
 		"erraser_minimizer",
 	],
-	"public/swa_rna/protein": [
+	"public/swa/protein": [
 		"swa_protein_main",
         ],
 	"public/rosetta_scripts": [
