@@ -56,10 +56,10 @@ class RosettaInstance;
 class RosettaURLFileHandler: public utility::Inline_File_Provider_Hook {
  public:
   RosettaURLFileHandler( RosettaInstance *rinst):
-    rinst_(rinst), 
-    finished_transfer_mutex_(PTHREAD_MUTEX_INITIALIZER),
-    finished_transfer_cond_(PTHREAD_COND_INITIALIZER)
+    rinst_(rinst) 
   {
+    //finished_transfer_mutex_ = PTHREAD_MUTEX_INITIALIZER;
+    //finished_transfer_cond_ = PTHREAD_COND_INITIALIZER;
   }
 
   // this will be called by Rosetta when it encounters a file it needs from the server. 
@@ -80,8 +80,8 @@ class RosettaURLFileHandler: public utility::Inline_File_Provider_Hook {
     // this three variables are used to make the requesting thread (the rosetta thread) idle until 
     // the file results have been delivered or an error was returned.   
     bool finished_transfer_;
-    pthread_mutex_t finished_transfer_mutex_ = PTHREAD_MUTEX_INITIALIZER;
-    pthread_cond_t finished_transfer_cond_ = PTHREAD_COND_INITIALIZER;
+    pthread_mutex_t finished_transfer_mutex_;
+    pthread_cond_t finished_transfer_cond_;
 
  
     std::string result_data_; 
@@ -167,9 +167,9 @@ bool RosettaURLFileHandler::request_file( const std::string filename, std::strin
     result_data_.clear();
 
     // All Rosetta Datafiles are stored in this form on the server
-    std::string url = "/data/rosetta_database/" + filename + ".txt" ; 
+    std::string url = "/data/rosetta_database/" + filename; // + ".txt" ; 
    
-    rinst_->PostMessage_from_main_thread( url ); 
+    //rinst_->PostMessage_from_main_thread( url ); 
     rinst_->RequestFile_from_main_thread( url );
 
     // now wait until the request file thread (it runs on the main thread, while this here is the rosetta thread)
@@ -186,6 +186,10 @@ bool RosettaURLFileHandler::request_file( const std::string filename, std::strin
       // This is just a debug statement 
       //rinst_->PostMessage_from_main_thread( "Results of '" + filename + "\n" + ">>>>>"+result_data+"<<<<<" ); 
     }
+   
+    std::stringstream debugmessage;
+    debugmessage << result_data.size() << std::endl; 
+    //rinst_->PostMessage_from_main_thread( "Results of '" + filename + " " + debugmessage.str() );
 
     // clean up memory
     result_data_.clear() ;
@@ -213,30 +217,31 @@ void* StartRosettaThread(void *rosettaInst) {
 }
 
 void RosettaInstance::RosettaThread(){
-  std::string message  = message_;
-  pp::Var return_var;
-  protocols::rpc::JSON_RPCOP rpc;  
-  utility::json_spirit::Object root;  
+  protocols::rpc::JSON_RPCOP rpc;     // rpc object - a Rosetta specific Object that manages RPC style calls into Rosetta
+  utility::json_spirit::Object root;  // json object to be filled with all the information to be sent back. 
   try{
-    rpc = new protocols::rpc::JSON_RPC( message );
+    // create the JSON_rpc object and initialize it with the json message from the caller
+    rpc = new protocols::rpc::JSON_RPC( message_ );
 
     // its own catch block so we can be sure to get the tracer output is also captured assuming the above constructor returns ok. 
     try{
       rpc->run();
     
       root.push_back( utility::json_spirit::Pair( "output", rpc->tracer() ) );
-//      utility::json_spirit::Object energies;  
-//      energies.push_back( utility::json_spirit::Pair( "score" ,  rpc->get_fa_score() ) ); 
-//      energies.push_back( utility::json_spirit::Pair( "irms", rpc->get_irms() ) ); 
-//
-//      protocols::rpc::pose_energies_to_json( rpc->outputpose(), energies );
-//      root.push_back( utility::json_spirit::Pair( "energies",  energies ) );                              // rosetta energy values
-//      
-//      std::stringstream pdbdatastream;
-//      rpc->outputpose().dump_pdb( pdbdatastream );
-//      root.push_back( utility::json_spirit::Pair( "pdbdata", pdbdatastream.str() ) ); // the PDB data itself of course
-//      
-//      root.push_back( utility::json_spirit::Pair( "cputime", (int) rpc->runtime() ) );
+      utility::json_spirit::Object energies;  
+      energies.push_back( utility::json_spirit::Pair( "score" ,  rpc->get_fa_score() ) ); 
+      energies.push_back( utility::json_spirit::Pair( "irms", rpc->get_irms() ) ); 
+
+      protocols::rpc::pose_energies_to_json( rpc->outputpose(), energies );
+      root.push_back( utility::json_spirit::Pair( "energies",  energies ) );                              // rosetta energy values
+      
+      // Grab the output pose as a PDB file format and write it into the "pdbdata" field of the jsno return message 
+      std::stringstream pdbdatastream;
+      rpc->outputpose().dump_pdb( pdbdatastream );
+      root.push_back( utility::json_spirit::Pair( "pdbdata", pdbdatastream.str() ) ); // the PDB data itself of course
+      
+      // Capture the CPU time spent
+      root.push_back( utility::json_spirit::Pair( "cputime", (int) rpc->runtime() ) );
     }
     catch( utility::excn::EXCN_Msg_Exception &excn ){
       root.push_back( utility::json_spirit::Pair( "error", excn.msg() ) );
@@ -244,7 +249,7 @@ void RosettaInstance::RosettaThread(){
 
   }
   catch( utility::excn::EXCN_Msg_Exception &excn ){
-    // we're here because the constructuor of JSON_RPC failed
+    // we're here because the constructuor of JSON_RPC failed - capture the message of the Exception
     root.push_back( utility::json_spirit::Pair( "error",  excn.msg() ) );
   }
   catch ( std::string &s ){ 
@@ -254,15 +259,12 @@ void RosettaInstance::RosettaThread(){
     root.push_back( utility::json_spirit::Pair( "error",  "Unknown Exception occured during Rosetta Execution"  ) );
   }
 
-  // write out json response and send back
+  // write out json response and send back stringified
   std::stringstream sstr;
-  write( root, sstr );
+  write( root, sstr ); // stringify
 
-  //PostMessage_from_main_thread( sstr.str() );
-  PostMessage_from_main_thread( "End of Rosetta Thread" );
-  PostMessage_from_main_thread( "Returned: " + sstr.str() );
-
-
+  // return data. This will be unpacked and interpreted by the JavaScript caller.
+  PostMessage_from_main_thread( sstr.str() );
 }
 
 void RosettaInstance::HandleMessage(const pp::Var& var_message) {
@@ -270,12 +272,7 @@ void RosettaInstance::HandleMessage(const pp::Var& var_message) {
     return;
   }
   message_ = var_message.AsString();
-
-//  std::string url = "/data/rosetta_database/chemical/atom_type_sets/fa_standard/atom_properties.txt";
-//  GetURLHandler* handler = GetURLHandler::Create(this, url);
-//  if (handler != NULL) {
-//    handler->Start();
-//  }
+  
 
   // ensure the file handler is ready to go.
   setup_file_handler();
@@ -284,9 +281,8 @@ void RosettaInstance::HandleMessage(const pp::Var& var_message) {
   // Multi threaded version
   if( pthread_create( &tid_, NULL,  StartRosettaThread, this)) {
    PostMessage( pp::Var( "ERROR; pthread_create() failed.\n" ) );
-  } else {
-   PostMessage( pp::Var( "NO ERROR\n" ) );
-  }
+  } 
+  
 }
 
 class RosettaModule : public pp::Module {
