@@ -157,13 +157,16 @@ sources = {
 		"rna_minimize",
 		"rna_score",
                 "rna_thread",
-		"erraser_minimizer",
 	],
-	"public/swa_rna": [
+	"public/swa_rna/rna": [
 		"swa_rna_analytical_closure",
 		"swa_rna_main",
 		"swa_rna_util",
+		"erraser_minimizer",
 	],
+	"public/swa_rna/protein": [
+		"swa_protein_main",
+        ],
 	"public/rosetta_scripts": [
 		"revert_design_to_native",
 		"rosetta_scripts",

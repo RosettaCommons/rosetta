@@ -545,7 +545,6 @@ sources = {
 	"pilot/rhiju" : [
 		#"rna_test", # /* Rhiju Das,private app */
 		#"rna_assemble_test", # /* Rhiju Das, private app*/
-		"stepwise_protein_test", # /* Rhiju Das, private app*/
 		"mg_test", # /* Rhiju Das, private app*/
 		"mg_pdbstats", # /* Rhiju Das, private app*/
 		#"rna_protein_test", # /* Rhiju Das, private app*/
