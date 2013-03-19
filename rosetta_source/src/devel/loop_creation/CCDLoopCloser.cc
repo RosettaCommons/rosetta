@@ -134,7 +134,8 @@ CCDLoopCloser::apply(
 	core::kinematics::FoldTree saved_ft = pose.fold_tree();
 	if(prevent_nonloop_modifications())
 	{
-		prepare_fold_tree(pose);
+		//prepare_fold_tree(pose);
+		protocols::loops::set_single_loop_fold_tree( pose, loop() );
 	}
 	
 		

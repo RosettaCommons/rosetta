@@ -51,6 +51,8 @@
 #include <protocols/docking/DockSetupMoverCreator.hh>
 #include <protocols/docking/DockingInitialPerturbationCreator.hh>
 
+#include <protocols/symmetric_docking/SymDockProtocolCreator.hh>
+
 #include <protocols/electron_density/SetupForDensityScoringMoverCreator.hh>
 
 #include <protocols/enzdes/AddOrRemoveMatchCstsCreator.hh>

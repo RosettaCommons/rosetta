@@ -29,6 +29,7 @@
 #include <protocols/loops/Loop.hh>
 #include <devel/loop_creation/LoopCloser.fwd.hh>
 #include <devel/loop_creation/LoopInserter.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 //Core
 #include <core/pose/Pose.fwd.hh>
@@ -105,7 +106,7 @@ public:
 	void
 	parse_my_tag(
 		utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & /*data*/,
+		protocols::moves::DataMap & data,
 		protocols::filters::Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & pose
@@ -161,6 +162,8 @@ private:
 	//DEBUG
 	bool dump_pdbs_;
 	
+
+	core::scoring::ScoreFunctionOP scorefxn_;
 };
 
 } //loop creation

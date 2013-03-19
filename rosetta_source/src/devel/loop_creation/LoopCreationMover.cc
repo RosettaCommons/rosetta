@@ -54,6 +54,7 @@
 #include <protocols/filters/BasicFilters.hh>
 
 #include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 //Devel
 #include <devel/loop_creation/LoopInserter.hh>
@@ -346,9 +347,9 @@ LoopCreationMover::apply(
 			TR << "Unable to create a closed loop between residues "
 				<< loop_inserter_->loop_anchor() << " and " << loop_inserter_->loop_anchor()+1
 				<< ", consider longer loop lengths or a different LoopInserter and/or LoopCloser." << endl;
-//			set_last_move_status(protocols::moves::FAIL_RETRY);
-//			return;
-			utility_exit_with_message(err.str());
+			set_last_move_status(protocols::moves::FAIL_RETRY);
+			return;
+			//utility_exit_with_message(err.str());
 		}
 		if(!loop_passed)
 		{
@@ -356,9 +357,9 @@ LoopCreationMover::apply(
 			TR << "No closed loops between residues "
 				<< loop_inserter_->loop_anchor() << " and " << loop_inserter_->loop_anchor()+1
 				<< " passed filters. Try relaxing filters." << endl;
-			utility_exit_with_message(err.str());
-//			set_last_move_status(protocols::moves::FAIL_RETRY);
-//			return;
+			//utility_exit_with_message(err.str());
+			set_last_move_status(protocols::moves::FAIL_RETRY);
+			return;
 		}
 		
 		update_anchors(loop_anchors_, last_created_loop_, i);
@@ -459,16 +460,27 @@ LoopCreationMover::refine_loop(
 	using namespace std;
 	using namespace core;
 	using utility::vector1;
-	
-	scoring::ScoreFunctionOP scorefxn = scoring::getScoreFunction();
-	scorefxn->set_weight( scoring::chainbreak, 100.0 );//loop should already be closed, so this will just prevent re-breaking by minimization
-	
+
+
+	TR << "REFINE LOOP" << std::endl;
+
+	core::scoring::ScoreFunctionOP scorefxn_min;
+	if( scorefxn_ == 0 ) {
+		scorefxn_ = scoring::getScoreFunction();
+		scorefxn_min = scorefxn_->clone();
+	}
+	else {
+		scorefxn_min = scorefxn_->clone();
+		TR << "found input scorefxn" << std::endl;
+	}
+
+	scorefxn_min->set_weight( scoring::chainbreak, 100.0 );//loop should already be closed, so this will just prevent re-breaking by minimization
 	
 	//Initialize a mover if we haven't already
 	protocols::simple_moves::PackRotamersMoverOP pack_mover =
 		new protocols::simple_moves::PackRotamersMover;
-	
-	
+	pack_mover->score_function( scorefxn_ );
+
 	//Setup task factory for minimization and packing
 	pack::task::TaskFactoryOP task_factory = new pack::task::TaskFactory;
 	
@@ -538,9 +550,9 @@ LoopCreationMover::refine_loop(
 		TR.Debug << "Movemap for minimization: " << *movemap << std::endl;
 			
 		protocols::simple_moves::MinMoverOP min_mover =
-			new protocols::simple_moves::MinMover(movemap, scorefxn, "dfpmin_armijo_nonmonotone", 0.01, false );
+			new protocols::simple_moves::MinMover(movemap, scorefxn_min, "dfpmin_armijo_nonmonotone", 0.01, false );
 			
-		TR << "Score prior to minimization: " << scorefxn->score(pose) << std::endl;
+		TR << "Score prior to minimization: " << scorefxn_min->score(pose) << std::endl;
 //		pose.dump_pdb("pre_minimization.pdb");
 		
 		min_mover->apply(pose);
@@ -553,7 +565,7 @@ LoopCreationMover::refine_loop(
 //	}
 //	
 //	core::Real loop_score = scorefxn->get_sub_score(pose, residues_to_score);
-	core::Real loop_score = scorefxn->score(pose);
+	core::Real loop_score = scorefxn_min->score(pose);
 	return (loop_score/loop.size());
 }
 	
@@ -572,13 +584,21 @@ LoopCreationMover::loop_closer() const
 void
 LoopCreationMover::parse_my_tag(
 	TagPtr const tag,
-	protocols::moves::DataMap & /*data*/,
+	protocols::moves::DataMap & data,
 	Filters_map const & /*filters*/,
 	protocols::moves::Movers_map const & movers,
 	Pose const & /*pose*/
 ){
 	using namespace std;
 	
+	TR << "Parsing tag for LoopCreationMover" << std::endl;
+	if(tag->hasOption("scorefxn")){
+		std::string const scorefxn_name = tag->getOption<std::string>("scorefxn");
+		scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data, scorefxn_name );
+		TR << "Found input scorefxn: " << scorefxn_name << std::endl;
+	}
+
+
 	//****REQUIRED TAGS****//
 	if(tag->hasOption("loop_inserter")){
 		string const loop_inserter_name( tag->getOption< string >( "loop_inserter" ) );
