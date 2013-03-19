@@ -90,16 +90,6 @@ namespace chemical {
 static basic::Tracer tr("core.chemical");
 
 
-// /// must be a better place for this, probably already exists!
-// inline
-// std::string
-// strip_whitespace( std::string const & name )
-// {
-// 	std::string trimmed_name( name );
-// 	left_justify( trimmed_name ); trim( trimmed_name ); // simpler way to dothis?
-// 	return trimmed_name;
-// }
-
 ///////////////////////////////////////////////////////////////////////////////
 /// helper fxn
 

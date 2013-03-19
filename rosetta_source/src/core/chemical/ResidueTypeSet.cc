@@ -323,56 +323,6 @@ ResidueTypeSet::read_files(
 	update_residue_maps();
 }
 
-/* Old code - doesn't respect various command line options. See constructor for current patch-loading functionality
-
-///////////////////////////////////////////////////////////////////////////////
-/// @brief apply patches to base ResidueType to generate variant ResidueTyes
-///
-/// @details loop through all the existing ResidueTypes and apply patch files
-/// given certain selector rules to each of the ResidueTypes to create new variant
-/// types. Patches can be applied combinatorially to create more variant types, e.g.,
-/// a residue with both N-terminus and C-terminus patches.
-///
-void
-ResidueTypeSet::apply_patches(
-	std::string const & list_filename
-)
-{
-
-	// read the files
-	utility::vector1< std::string > filenames;
-	{
-		utility::io::izstream data( list_filename.c_str() );
-		if( !data.good() ) { utility_exit_with_message("Unable to open patch list file " + list_filename); }
-		std::string line;
-		while ( getline( data, line ) ) {
-			// add full database path to the patch filename
-			filenames.push_back( basic::database::full_name( line ) );
-		}
-		data.close();
-	}
-
-	apply_patches( filenames );
-}
-*/
-
-	//XRW_B_T1
-	/*
-///////////////////////////////////////////////////////////////////////////////
-bool
-ResidueTypeSet::coarsify(
-	pose::Pose &coarse_pose, pose::Pose const &fine_pose
-) const
-{
-	if (coarsifier_) {
-		coarsifier_->coarsify(coarse_pose,fine_pose);
-		return true;
-	} else
-		return false;
-}
-	*/
-	 //XRW_E_T1
-
 ///////////////////////////////////////////////////////////////////////////////
 void
 ResidueTypeSet::apply_patches(

@@ -68,6 +68,7 @@ patches/AcetylatedProteinNterm.txt
 ## carbohydrate patches
 patches/carbohydrates/lower_terminus.txt
 patches/carbohydrates/upper_terminus.txt
+patches/carbohydrates/N-linked_glycosylation.txt
 patches/carbohydrates/6-branch.txt
 patches/carbohydrates/branch_lower_term.txt
 

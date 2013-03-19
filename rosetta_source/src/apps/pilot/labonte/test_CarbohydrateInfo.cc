@@ -73,7 +73,8 @@ main(int argc, char *argv[])
 
 	// Declare variables.
 	Pose maltotriose, isomaltose, lactose, amylopectin;
-	/*
+	Pose glycoprotein;
+
 	cout << "------------------------------------------------------------" << endl;
 	cout << "Importing maltotriose:" << endl;
 
@@ -101,12 +102,31 @@ main(int argc, char *argv[])
 	ResidueTypeSetCAP residue_set(ChemicalManager::get_instance()->residue_type_set("fa_standard"));
 	make_pose_from_saccharide_sequence(maltotriose, "alpha-D-Glcp-(1->4)-alpha-D-Glcp-(1->4)-D-Glcp", *residue_set);
 
-	test_sugar(maltotriose);
-	*/
+	//test_sugar(maltotriose);
+	cout << endl << maltotriose << endl;
+
+	cout << "Sequences:" << endl;
+	cout << " Chain 1: ";
+	cout << maltotriose.chain_sequence(1) << endl;
+
 	cout << "------------------------------------------------------------" << endl;
 	cout << "Importing branched amylopectin fragment:" << endl;
 
 	pose_from_pdb(amylopectin, PATH + "amylopectin_fragment.pdb");
 
 	test_sugar(amylopectin);
+
+	cout << "------------------------------------------------------------" << endl;
+	cout << "Importing N-glycosylated sample:" << endl;
+
+	pose_from_pdb(glycoprotein, PATH + "glycosylated_test2.pdb");
+
+	//test_sugar(glycoprotein);
+	cout << endl << glycoprotein << endl;
+
+	cout << "Sequences:" << endl;
+	for (core::uint i = 1; i <= 2; ++i) {
+		cout << " Chain " << i << ": ";
+		cout << glycoprotein.chain_sequence(i) << endl;
+	}
 }
