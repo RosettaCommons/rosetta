@@ -80,6 +80,7 @@ main( int argc, char * argv [] )
 		protocols::vip::VIP_Mover();
 		protocols::vip::VIP_Mover vip_mover;
 		vip_mover.set_initial_pose( in_pose );
+		vip_mover.set_iteration( it );
 		vip_mover.apply();
 
 		out_pose = vip_mover.get_final_pose();

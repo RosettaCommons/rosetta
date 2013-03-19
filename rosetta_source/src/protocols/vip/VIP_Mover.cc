@@ -84,6 +84,7 @@ namespace vip {
 			void_neighbors = vn;
 			void_mutatables = vm;
 			final_energy = fe;
+			iteration_ = 0;
 		}
 
 	VIP_Mover::~VIP_Mover(){}
@@ -271,7 +272,7 @@ namespace vip {
 		VIP_Report();
 		VIP_Report vip_report;
 
-		vip_report.get_GOE_repack_report( initial_pose, favorable_energies, favorable_residues, favorable_positions );
+		vip_report.get_GOE_repack_report( initial_pose, favorable_energies, favorable_residues, favorable_positions, iteration_ );
 	}
 
 
@@ -310,7 +311,7 @@ namespace vip {
 		VIP_Report();
 		VIP_Report vip_report;
 
-		vip_report.get_GOE_relaxed_report( initial_pose, favorable_energies, favorable_residues, favorable_positions );
+		vip_report.get_GOE_relaxed_report( initial_pose, favorable_energies, favorable_residues, favorable_positions, iteration_ );
 //		vip_report.get_GOE_packstat_report( initial_pose, favorable_energies );
 	}
 

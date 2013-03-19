@@ -13,6 +13,8 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/cp.OptionKeys.gen.hh>
 
+#include <core/pose/PDBInfo.hh>
+
 #include <core/scoring/Energies.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -33,7 +35,8 @@ VIP_Report::get_GOE_repack_report(
 	core::pose::Pose & goe_native,
 	utility::vector1<core::Real> & goe_repack_e,
 	utility::vector1<core::conformation::ResidueOP> & goe_repack_res,
-	utility::vector1<core::Size> & goe_repack_pos
+	utility::vector1<core::Size> & goe_repack_pos,
+	core::Size it
 ){
         using namespace basic::options;
         using namespace basic::options::OptionKeys;
@@ -41,16 +44,23 @@ VIP_Report::get_GOE_repack_report(
 	std::string fname = option[cp::vipReportFile];
         output.open( fname.c_str(), std::ios::out | std::ios::app );
 
-	output << " GOE point mutant report: " << std::endl;
+	output << "Iteration " << it << " :  Found candidate mutations:" << std::endl;
 
         core::scoring::ScoreFunctionOP sf2 = core::scoring::ScoreFunctionFactory::create_score_function( option[cp::pack_sfxn] );
 	protocols::simple_moves::ScoreMoverOP score_em = new protocols::simple_moves::ScoreMover(sf2);
 	score_em->apply( goe_native );
 
+	core::Size num_accepted( 0 );
 	for( core::Size i = 1; i <= goe_repack_e.size(); i++ ){
 	    if( goe_repack_e[i] < goe_native.energies().total_energy() ){
 		    if( goe_repack_res[i]->name() != goe_native.residue(goe_repack_pos[i]).name() ){
+					num_accepted++;
 			output << "Position: " << goe_repack_pos[i] << " Native AA: " << goe_native.residue(goe_repack_pos[i]).name() << "  Mutant AA: " << goe_repack_res[i]->name() << "  ddEgoe: " << goe_native.energies().total_energy() - goe_repack_e[i] << std::endl;}}}
+
+	if( num_accepted == 0 ) {
+		output << "Iteration  :  No candidate mutations found!" << std::endl;
+	}
+
 output.close();
 }
 
@@ -60,7 +70,8 @@ VIP_Report::get_GOE_relaxed_report(
 	core::pose::Pose & goe_native,
 	utility::vector1<core::Real> & goe_relax_e,
 	utility::vector1<core::conformation::ResidueOP> & goe_relax_res,
-	utility::vector1<core::Size> & goe_relax_pos
+	utility::vector1<core::Size> & goe_relax_pos,
+	core::Size it
   ){
         using namespace basic::options;
         using namespace basic::options::OptionKeys;
@@ -68,16 +79,33 @@ VIP_Report::get_GOE_relaxed_report(
 	std::string fname = option[cp::vipReportFile];
         output.open( fname.c_str(), std::ios::out | std::ios::app );
 
-        output << " GOE after relax report: " << std::endl;
+				output << "Iteration " << it << " :  The following mutations were accomodated after relaxation:" << std::endl;
 
         core::scoring::ScoreFunctionOP sf2 = core::scoring::ScoreFunctionFactory::create_score_function( option[cp::relax_sfxn] );
         protocols::simple_moves::ScoreMoverOP score_em = new protocols::simple_moves::ScoreMover(sf2);
         score_em->apply( goe_native );
 
+	core::Size num_accepted( 0 );
+	core::Size best_index( -1 );
+	core::Real best_score( -9999.0 );
 	for( core::Size i = 1; i <= goe_relax_e.size(); i++ ){
 	   if( goe_relax_e[i] < goe_native.energies().total_energy() ){
 		    if( goe_relax_res[i]->name() != goe_native.residue(goe_relax_pos[i]).name() ){
-			output << "Position: " << goe_relax_pos[i] << " Native AA: " << goe_native.residue(goe_relax_pos[i]).name() << "  Mutant AA: " << goe_relax_res[i]->name() << "  ddEgoe: " << goe_native.energies().total_energy() - goe_relax_e[i] << std::endl;}}}
+					num_accepted++;
+					core::Real Ediff( goe_native.energies().total_energy() - goe_relax_e[i] );
+					if( Ediff > best_score ) {
+						best_index = i;
+						best_score = Ediff;
+					}
+			output << "Position: " << goe_native.pdb_info()->number( goe_relax_pos[i] ) << " chain:  " << goe_native.pdb_info()->chain( goe_relax_pos[i] )  << " Native AA: " << goe_native.residue(goe_relax_pos[i]).name() << "  Mutant AA: " << goe_relax_res[i]->name() << "  ddEgoe: " << Ediff << std::endl;}}}
+
+
+	if( num_accepted > 0 ) {
+		output << "Accepted mutation from " << goe_native.residue(goe_relax_pos[best_index]).name() << " to " << goe_relax_res[best_index]->name() << " at position " << goe_native.pdb_info()->number( goe_relax_pos[best_index] ) <<  "  chain:  " << goe_native.pdb_info()->chain( goe_relax_pos[best_index] ) << std::endl;
+	} else {
+		output << "Iteration  :  No mutations were accommodated after relaxation!" << std::endl;
+	}
+
 	output.close();
 }
 

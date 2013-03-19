@@ -35,6 +35,7 @@ class VIP_Mover
 		core::Real final_energy;
 
 		utility::vector1<core::Size> excluded_positions;
+		core::Size iteration_;
 
 	public:
 		VIP_Mover();
@@ -56,6 +57,8 @@ class VIP_Mover
 			core::Real);
 		virtual ~VIP_Mover();
 
+		void set_iteration( core::Size it ) { iteration_ = it; }
+		core::Size iteration() { return iteration_; }
 		void set_initial_pose( core::pose::Pose );
 		void minimize_conformation();
 		void compute_number_cavities();
