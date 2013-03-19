@@ -23,13 +23,15 @@ ADD_DEFINITIONS(-DUSE_FILE_PROVIDER)
 ADD_DEFINITIONS(-DEXIT_THROWS_EXCEPTION)
 ADD_DEFINITIONS(-O2)
 ADD_DEFINITIONS(-s)
-ADD_DEFINITIONS(-m64)
+ADD_DEFINITIONS(-m32)
 ADD_DEFINITIONS(-MMD)
 ADD_DEFINITIONS(-pthread)
 ADD_DEFINITIONS(-Wno-long-long)
 ADD_DEFINITIONS(-Wall)
 ADD_DEFINITIONS(-Wswitch-enum)
 ADD_DEFINITIONS(-pedantic)
+ADD_DEFINITIONS(-ffunction-sections) 
+ADD_DEFINITIONS(-fdata-sections)
 
 
 
@@ -128,14 +130,14 @@ SET(LINK_ALL_LIBS ${LINK_STATIC_LIBS} ) # ${LINK_DYNAMIC_LIBS} ${TRAILING_STATIC
 ### Change dynamic linker from default /lib/ld64.so.1 to /lib64/ld-2.5.so,
 ### since that file doesn't exist and path is hardcoded
 
-SET(CMAKE_C_LINK_FLAGS "-Wl,-as-needed  -m64 -pthread " )
-SET(CMAKE_CXX_LINK_FLAGS "-Wl,-as-needed  -m64 -pthread " )
+SET(CMAKE_C_LINK_FLAGS "-Wl,-as-needed  -Wl,--gc-sections -m32 -pthread " )
+SET(CMAKE_CXX_LINK_FLAGS "-Wl,-as-needed -Wl,--gc-sections -m32 -pthread " )
 
 
 ##### Top level binaries
 # just loophash stuff for now
 ### loophash_createfiltereddb 
-ADD_EXECUTABLE(rosetta_native_client.nexe ../../src/apps/pilot/mike/rosetta_native_client.cc)
+ADD_EXECUTABLE(rosetta_native_client.nexe ../../src/apps/pilot/mike/rosetta_native_client.cc ../../src/apps/pilot/mike/geturl_handler.cc )
 TARGET_LINK_LIBRARIES(rosetta_native_client.nexe ${LINK_ALL_LIBS})
 SET_TARGET_PROPERTIES(rosetta_native_client.nexe PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS}")
 #SET_TARGET_PROPERTIES(rosetta_native_client.nexe PROPERTIES LINK_FLAGS "${LINK_FLAGS}")
