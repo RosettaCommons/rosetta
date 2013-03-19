@@ -410,6 +410,7 @@ sources = {
 		"DME_FilterMover",
 		"DOFHistogramRecorder",
 		"DumpPdb",
+		"DockWithHotspot",
 		"ExtendedPoseMover",
 		"ExtendedPoseMoverCreator",
 		"FavorSequenceProfile",

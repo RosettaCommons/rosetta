@@ -297,15 +297,16 @@ void DockingProtocol::sync_objects_with_flags()
 		        
         if ( !perturber_ ){
 			perturber_ = new DockingInitialPerturbation( movable_jumps_, true /*slide into contact*/ );
-		}
-		if ( !docking_lowres_mover_ ){
+	}
+
+	if ( !docking_lowres_mover_ ){
             // Modified by DK
             if( if_ensemble_ ){
                 docking_lowres_mover_ = new DockingLowResEnsemble( docking_scorefxn_low_, movable_jumps_ );
             } else {
                 docking_lowres_mover_ = new DockingLowRes( docking_scorefxn_low_, movable_jumps_ );
             }
-		}
+	}
 		if ( !no_filters_ && !lowres_filter_ ) {
 			lowres_filter_ = new protocols::docking::DockingLowResFilter();
 		}

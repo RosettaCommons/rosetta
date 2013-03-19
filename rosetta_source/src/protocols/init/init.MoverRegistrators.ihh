@@ -160,6 +160,7 @@ static MoverRegistrator< protein_interface_design::movers::DesignMinimizeHbondsC
 static MoverRegistrator< protein_interface_design::movers::DisulfideMoverCreator > reg_DisulfideMoverCreator;
 static MoverRegistrator< protein_interface_design::movers::DockAndRetrieveSidechainsCreator > reg_DockAndRetrieveSidechainsCreator;
 static MoverRegistrator< simple_moves::DumpPdbCreator > reg_DumpPdbCreator;
+static MoverRegistrator< simple_moves::DockWithHotspotCreator > reg_DockWithHotspotCreator;
 static MoverRegistrator< protein_interface_design::movers::FavorNativeResiduePreCycleCreator > reg_FavorNativeResiduePreCycleCreator;
 static MoverRegistrator< protein_interface_design::movers::FavorNonNativeResiduePreCycleCreator > reg_FavorNonNativeResiduePreCycleCreator;
 static MoverRegistrator< protein_interface_design::movers::HotspotDisjointedFoldTreeMoverCreator > reg_HotsotDisjointedFoldTreeMoverCreator;

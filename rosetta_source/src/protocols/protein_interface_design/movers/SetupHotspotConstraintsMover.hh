@@ -41,7 +41,8 @@ public:
 		bool const apply_self_energies,
 		core::Real const & bump_cutoff,
 		bool const apply_ambiguous_constraints,
-		bool const colonyE
+		bool const colonyE,
+		std::string const stub_energy_fxn
 	);
 	protocols::moves::MoverOP clone() const;
 	protocols::moves::MoverOP fresh_instance() const;
@@ -63,6 +64,7 @@ private:
 	core::Real bump_cutoff_;
 	bool apply_ambiguous_constraints_;
 	bool colonyE_;
+  std::string stub_energy_fxn_;
 };
 
 } // movers

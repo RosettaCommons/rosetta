@@ -64,7 +64,8 @@ SetupHotspotConstraintsMover::SetupHotspotConstraintsMover() :
 	apply_self_energies_( true ),
 	bump_cutoff_( 4.0 ),
 	apply_ambiguous_constraints_( true ),
-	colonyE_( false )
+	colonyE_( false ),
+	stub_energy_fxn_( "backbone_stub_constraint" )
 	{}
 
 protocols::moves::MoverOP
@@ -85,7 +86,8 @@ SetupHotspotConstraintsMover::SetupHotspotConstraintsMover(
 	bool const apply_self_energies,
 	core::Real const & bump_cutoff,
 	bool const apply_ambiguous_constraints,
-	bool const colonyE
+	bool const colonyE,
+	std::string const stub_energy_fxn
 ) :
 	protocols::moves::Mover( "SetupHotspotConstraintMover" ),
 	chain_to_design_(chain_to_design),
@@ -94,7 +96,8 @@ SetupHotspotConstraintsMover::SetupHotspotConstraintsMover(
 	apply_self_energies_(apply_self_energies),
 	bump_cutoff_(bump_cutoff),
 	apply_ambiguous_constraints_(apply_ambiguous_constraints),
-	colonyE_( colonyE)
+	colonyE_( colonyE),
+	stub_energy_fxn_( stub_energy_fxn)
 {
 //		packer_task_ = packer_task->clone();
 	hotspot_stub_set_ = new protocols::hotspot_hashing::HotspotStubSet( *hotspot_stub_set );
@@ -109,7 +112,8 @@ SetupHotspotConstraintsMover::SetupHotspotConstraintsMover( SetupHotspotConstrai
 	apply_self_energies_(init.apply_self_energies_),
 	bump_cutoff_(init.bump_cutoff_),
 	apply_ambiguous_constraints_(init.apply_ambiguous_constraints_),
-	colonyE_( init.colonyE_ )
+	colonyE_( init.colonyE_ ),
+	stub_energy_fxn_( init.stub_energy_fxn_ )
 {
 	hotspot_stub_set_ = new protocols::hotspot_hashing::HotspotStubSet( *init.hotspot_stub_set_ );
 }
@@ -121,8 +125,13 @@ SetupHotspotConstraintsMover::apply( core::pose::Pose & pose ) {
 		hotspot_stub_set_ = colonyE_set;
 	}
 	if ( std::abs(CB_force_constant_) > 1E-9 ) {
-		hotspot_stub_set_->add_hotspot_constraints_to_pose( pose, chain_to_design_, hotspot_stub_set_,
+		if ( stub_energy_fxn_ == "backbone_stub_constraint" ) {
+		  hotspot_stub_set_->add_hotspot_constraints_to_pose( pose, chain_to_design_, hotspot_stub_set_,
 			CB_force_constant_, worst_allowed_stub_bonus_, apply_self_energies_, bump_cutoff_, apply_ambiguous_constraints_ );
+		} else if ( stub_energy_fxn_ == "backbone_stub_linear_constraint" ) {
+		  hotspot_stub_set_->add_hotspot_constraints_to_wholepose( pose, chain_to_design_, hotspot_stub_set_,
+			CB_force_constant_, worst_allowed_stub_bonus_, apply_self_energies_, bump_cutoff_, apply_ambiguous_constraints_ );
+		}
 	} else {
 		core::scoring::constraints::ConstraintSetOP empty_constraint_set = new core::scoring::constraints::ConstraintSet;
 		pose.constraint_set( empty_constraint_set );
@@ -147,6 +156,7 @@ SetupHotspotConstraintsMover::parse_my_tag( TagPtr const tag, DataMap & data, pr
   bump_cutoff_ = tag->getOption<Real>( "apply_stub_bump_cutoff", 10. );
   apply_ambiguous_constraints_ = tag->getOption<bool>( "pick_best_energy_constraint", 1 );
 	core::Real const bb_stub_cst_weight( tag->getOption< core::Real >( "backbone_stub_constraint_weight", 1.0 ) );
+  stub_energy_fxn_ = tag->getOption<std::string>( "stubscorefxn", "backbone_stub_constraint" ) ;
 
   colonyE_ = tag->getOption<bool>( "colonyE", 0 );
 
@@ -167,8 +177,8 @@ SetupHotspotConstraintsMover::parse_my_tag( TagPtr const tag, DataMap & data, pr
 				temp_stubset->read_data( file_name );
 				temp_stubset->remove_random_stubs_from_set( temp_stubset->size() - stub_num );
   			hotspot_stub_set_->add_stub_set( *temp_stubset );
-				TR<<"Read stubset from file "<<file_name<<" and associating it with name "<<nickname<<'\n';
-				TR<<stub_num<<" stubs kept in memory\n";
+				TR<<"Read stubset from file "<<file_name<<" and associating it with name "<<nickname<<std::endl;
+				TR<<stub_num<<" stubs kept in memory"<<std::endl;
 				data.add( "hotspot_library", nickname, temp_stubset );
 			}
 		}
@@ -176,19 +186,32 @@ SetupHotspotConstraintsMover::parse_my_tag( TagPtr const tag, DataMap & data, pr
 			utility_exit_with_message( curr_tag->getName() + " not recognized by SetupHotspotConstraints, did you mean HotspotFiles?" );
 	}
 
-	TR<<"applying hotspot hashing constraints to pose with " << " cb_force weight of "<<CB_force_constant_<<", apply ambiguous constraints set to "<<apply_ambiguous_constraints_<< " and colonyE set to " << colonyE_ << "\n";
+	TR<<"applying " <<  stub_energy_fxn_ <<" constraints to pose with " << " cb_force weight of "<<CB_force_constant_<<", apply ambiguous constraints set to "<<apply_ambiguous_constraints_<< " and colonyE set to " << colonyE_ << std::endl;
 	data.add( "constraints" , "hotspot_stubset", hotspot_stub_set_ );
 
 	for( std::map< std::string, utility::pointer::ReferenceCountOP >::const_iterator it = (data)[ "scorefxns" ].begin(); it!=(data)[ "scorefxns" ].end(); ++it ){
 		using namespace core::scoring;
 		ScoreFunctionOP scorefxn( *data.get< ScoreFunction * >( "scorefxns", it->first) );
-		core::Real const weight( scorefxn->get_weight( backbone_stub_constraint ) );
-		if( weight == 0.0 ){
-			scorefxn->set_weight( backbone_stub_constraint, bb_stub_cst_weight );
-			TR<<"Setting bacbkone_stub_constraint weight in scorefxn "<<it->first<<" to "<<bb_stub_cst_weight<<'\n';
+		if ( stub_energy_fxn_ == "backbone_stub_constraint" ) {
+			core::Real const weight( scorefxn->get_weight( backbone_stub_constraint ) );
+		   if( weight == 0.0 ){
+			     scorefxn->set_weight( backbone_stub_constraint, bb_stub_cst_weight );
+			     TR<<"Setting bacbkone_stub_constraint weight in scorefxn "<<it->first<<" to "<<bb_stub_cst_weight<<std::endl;
+		   } else {
+			     TR<<"Skipping resetting of backbone_stub_constraint weight in "<<it->first<<" which is already preset to "<<weight<<std::endl;
+		   }
+		} else if ( stub_energy_fxn_ == "backbone_stub_linear_constraint" ) {
+			core::Real const weight( scorefxn->get_weight( backbone_stub_linear_constraint ) );
+		   if( weight == 0.0 ){
+			     scorefxn->set_weight( backbone_stub_linear_constraint, bb_stub_cst_weight );
+			     TR<<"Setting backbone_stub_linear_constraint weight in scorefxn "<<it->first<<" to "<<bb_stub_cst_weight<<std::endl;
+		   } else {
+			     TR<<"Skipping resetting of backbone_stub_linear_constraint weight in "<<it->first<<" which is already preset to "<<weight<<std::endl;
+		   }
+	  } else {
+					utility_exit_with_message( "ERROR: unrecognized stub_energy_fxn_. Only support backbone_stub_constraint or backbone_stub_linear_constraint");
 		}
-		else
-			TR<<"Skipping resetting of backbone_stub_constraint weight in "<<it->first<<" which is already preset to "<<weight<<'\n';
+
 	}
 	TR.flush();
 }

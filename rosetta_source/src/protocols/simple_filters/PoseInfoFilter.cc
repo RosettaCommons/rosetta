@@ -20,6 +20,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
 
 #include <basic/datacache/BasicDataCache.hh>
 #include <utility/tag/Tag.hh>
@@ -82,6 +83,10 @@ void PoseInfoFilter::report( std::ostream & out, core::pose::Pose const & pose )
 
   // Feel free to add additional pose-related information.
   // The main reason I stopped where I did was I didn't necessarily know how to access relevant others.
+   out << "Constraints: ";
+   pose.constraint_set()->show(out);
+   pose.constraint_set()->show_definition(out,pose);
+   pose.constraint_set()->show_numbers(out);
 }
 
 void PoseInfoFilter::parse_my_tag( utility::tag::TagPtr const,
