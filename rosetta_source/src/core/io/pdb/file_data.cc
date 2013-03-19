@@ -700,7 +700,7 @@ write_additional_pdb_data(
 	// added by rhiju --> "CONECT" lines. Useful for coarse-grained/centroid poses, so that
 	//  rasmol/pymol draws bonds between atoms 'bonded' in Rosetta that are far apart.
 	//  perhaps turn on with a flag?
-	if ( pose.residue(1).is_coarse() || option[ OptionKeys::inout::dump_connect_info]() )  dump_connect_info( pose, out );
+	if ( (pose.total_residue() >= 1 && pose.residue(1).is_coarse()) || option[ OptionKeys::inout::dump_connect_info]() )  dump_connect_info( pose, out );
 
 	if ( write_fold_tree || option[ OptionKeys::inout::fold_tree_io ].user() ) {
 		out << "REMARK " << pose.fold_tree();

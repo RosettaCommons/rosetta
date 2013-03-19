@@ -508,7 +508,12 @@ void FastRelax::apply( core::pose::Pose & pose ){
 	using namespace protocols;
 
 	TR.Debug   << "================== FastRelax: " << script_.size() << " ===============================" << std::endl;
- 	protocols::rosetta_scripts::parse_movemap( movemap_tag_, pose, get_movemap() );
+ 	if( pose.total_residue() == 0 ) {
+		TR.Warning << "WARNING: Pose has no residues. Doing a FastRelax would be pointless. Skipping." << std::endl;
+		return;
+	}
+
+	protocols::rosetta_scripts::parse_movemap( movemap_tag_, pose, get_movemap() );
 
 #if defined GL_GRAPHICS
     protocols::viewer::add_conformation_viewer( pose.conformation(), "TESTING");

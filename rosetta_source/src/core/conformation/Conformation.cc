@@ -3306,6 +3306,12 @@ Conformation::is_centroid() const {
 
 bool
 Conformation::is_residue_typeset( std::string tag ) const {
+	// Empty poses aren't any residue typeset (special case prevents segfault)
+	if( size() == 0 ) {
+		TR.Warning << "WARNING: Attempted to determine the residue type set of an empty pose." << std::endl;
+		return false;
+	}
+
 	Size const seqpos1( std::max( 1, (int) size() / 2 ) );
 	Size const seqpos2( std::min( (int) size(), (int) size() / 2 + 2 ) );
 
