@@ -46,9 +46,7 @@ LoopsFileDefiner::LoopsFileDefiner() :
 
 LoopsFileDefiner::~LoopsFileDefiner() {}
 
-LoopsFileDefiner::LoopsFileDefiner(
-	LoopsFileDefiner const & src
-) :
+LoopsFileDefiner::LoopsFileDefiner(LoopsFileDefiner const & src) : LoopsDefiner(src),
 	loop_list_(src.loop_list_)
 {}
 

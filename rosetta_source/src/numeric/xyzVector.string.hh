@@ -29,7 +29,7 @@ std::string truncate_and_serialize_xyz_vector(xyzVector<T> vector, Real precisio
 
 	//set up proper formatting
 	vector_stream.setf(std::ios::fixed,std::ios::floatfield);
-	vector_stream.precision(precision);
+	vector_stream.precision(static_cast<std::streamsize>(precision));
 
 	//the output of this is not meant to
 	vector_stream << vector.x() << vector.y() << vector.z();
