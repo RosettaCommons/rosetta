@@ -106,7 +106,9 @@ SecondaryMatcherToDownstreamResidue::build_hits_at_all_positions(
 			}
 			TR << "Secondary matching against geomcst " << ii << " hits from build point " << target_build_points[ jj ]->original_insertion_point() << std::endl;
 			// Parallelize here.
+#ifdef USE_OPENMP
 			#pragma omp parallel for
+#endif
 			for ( Size kk = 1; kk <= my_build_points.size(); ++kk ) {
 				//Most of the time we don't want to build residue at the same point
 				//as the target build point, but in the case of backbone matching

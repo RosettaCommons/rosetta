@@ -136,7 +136,9 @@ SecondaryMatcherToUpstreamResidue::build_hits_at_all_positions(
 		//TR << "Secondary matching against geomcst " << target_geomcst_id_ << " hits from protein build point " << target_build_points[ ii ]->original_insertion_point() << std::endl;
 
 		Size ii_total_found_matches( 0 );
+#ifdef USE_OPENMP
 		#pragma omp parallel for reduction( + : ii_total_found_matches )
+#endif
 		for ( Size jj = 1; jj <= my_build_points.size(); ++jj ) {
 			//Most of the time we don't want to build residue at the same point
 			//as the target build point, but in the case of backbone matching

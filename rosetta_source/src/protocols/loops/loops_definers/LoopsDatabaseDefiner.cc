@@ -60,11 +60,9 @@ LoopsDatabaseDefiner::LoopsDatabaseDefiner() :
 
 LoopsDatabaseDefiner::~LoopsDatabaseDefiner() {}
 
-LoopsDatabaseDefiner::LoopsDatabaseDefiner(
-	LoopsDatabaseDefiner const & src
-) :
-	db_session_(src.db_session_),
-	database_table_(src.database_table_)
+LoopsDatabaseDefiner::LoopsDatabaseDefiner(LoopsDatabaseDefiner const & src) : LoopsDefiner(src),
+		db_session_(src.db_session_),
+		database_table_(src.database_table_)
 {}
 
 

@@ -287,7 +287,7 @@ LoophashLoopInserter::find_fragments(
 		LoopHashMap &hashmap = lh_library_->gethash( loop_size );
 		
 		std::vector<core::Size> leap_index_bucket;
-		hashmap.radial_lookup( max_lh_radius_, loop_transform, leap_index_bucket);
+		hashmap.radial_lookup( core::Size(max_lh_radius_), loop_transform, leap_index_bucket);
 		
 		TR.Debug << "radius, loop_size, lookup_size = " << max_lh_radius_ << ", " <<
 			loop_size << "," << leap_index_bucket.size() << std::endl;

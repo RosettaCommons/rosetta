@@ -67,7 +67,9 @@ core::conformation::ResidueCOP
 UpstreamHitCacher::upstream_conformation_for_hit( Size cst_id, Hit const & hit )
 {
 	core::conformation::ResidueCOP residue;
+#ifdef USE_OPENMP
 	#pragma omp critical ( upstream_hit_cacher_upstream_conformation_for_hit )
+#endif
 	{
 	ScaffoldRotamerPair srp; srp[ 1 ] = hit.scaffold_build_id(); srp[ 2 ] = hit.upstream_conf_id();
 	ScaffoldRotamerTuple srt( srp );
