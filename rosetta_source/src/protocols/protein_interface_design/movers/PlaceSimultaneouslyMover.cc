@@ -170,13 +170,13 @@ PlaceSimultaneouslyMover::minimize_all( core::pose::Pose & pose, core::Size cons
 
 			simple_moves::DesignRepackMoverOP const curr_mover( curr.first );
 			core::Real const bb_cst_weight( curr.second );
-			TR<<"applying mover: "<<curr_mover->get_name()<<'\n';
+			TR<<"applying mover: "<<curr_mover->get_name()<<std::endl;
 			//restricting movers for stub minimization
 			curr_mover->prevent_repacking( prevent_repacking() );
 			curr_mover->optimize_foldtree( false );
 			curr_mover->design( false ); //we dont want any design to take place within any mover for stub minimization
-			TR<<" design and repacking during stub minimization is prevented\n";
-			TR<<"using weight: "<<bb_cst_weight<<" for the stub bb constraints\n";
+			TR<<" design and repacking during stub minimization is prevented" << std::endl;
+			TR<<"using weight: "<<bb_cst_weight<<" for the stub bb constraints" << std::endl;
 			TR<<"and 1.0 for coordinate constraints"<<std::endl;
 			ScoreFunctionOP minimize_mover_scorefxn_repack( curr_mover->scorefxn_repack() );
 			if( minimize_mover_scorefxn_repack )
@@ -278,7 +278,7 @@ PlaceSimultaneouslyMover::create_task_for_allhotspot_packing( core::pose::Pose c
       HotspotStubCOP hs_stub_curr( item.second.second.second );
       chemical::ResidueType const type( hs_stub_curr->residue()->type() );
       allowed_aas[ hs_stub_curr->residue()->type().aa() ] = true;
-      //TR << "RestrictAbsentCanonicalAAS: " << pos << " " << hs_stub_curr->residue()->type().aa() << " " << item.first <<  std::endl;
+      TR << "RestrictAbsentCanonicalAAS: " << pos << " " << hs_stub_curr->residue()->type().aa() << " " << item.first <<  std::endl;
 			}
     }//foreach item in auction_->auction_results()
     RestrictAbsentCanonicalAASOP rac_op = new RestrictAbsentCanonicalAAS( pos, allowed_aas );
@@ -332,7 +332,7 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
 	auction_->apply( pose );
 	protocols::moves::MoverStatus const auction_stat( auction_->get_last_move_status() );
 	if( auction_stat != protocols::moves::MS_SUCCESS ){
-		TR<<"Auction failed => PlaceSimultaneously failing.\n";
+		TR<<"Auction failed => PlaceSimultaneously failing." << std::endl;
 		return( false );
 	}
 	stub_sets_ = auction_->stub_sets();//copying the pairings information
@@ -467,7 +467,7 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
            auction_->insert(*selected_auction_result);
            TR << "selected coordinate constraint score: " << selected_auction_result->first << " residue: " << selected_auction_result->second.first << std::endl;
            if ( selected_auction_result->first >= coor_cst_cutoff_ ){
-             TR<<"coordinate constraint energy: " << selected_auction_result->first << " Failed cutoff "<<coor_cst_cutoff_<<", Can be bad rotamer\n";
+             TR<<"coordinate constraint energy: " << selected_auction_result->first << " Failed cutoff "<<coor_cst_cutoff_<<", Can be bad rotamer" << std::endl;
              return( false );
          }
        }
@@ -533,23 +533,23 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
 		bool const pass_stub_set_filter( modified_filter->apply( pose ) );
 		core::Real const distance( pose.residue( pos ).xyz( "CB" ).distance( stub->residue()->xyz( "CB" ) ) );
     if( distance >= max_cb_cb_dist_ ){
-      TR<<"distance: " << distance << " Failed distance cutoff " << max_cb_cb_dist_ << "\n";
+      TR<<"distance: " << distance << " Failed distance cutoff " << max_cb_cb_dist_ << std::endl;
       return( false );
     } else if ( !pass_tot_energy || !pass_stub_set_filter ){
-      TR<<"Failed stub filters \n";
+      TR<<"Failed stub filters " << std::endl;
       return( false );
     }
 	}
 
 	bool const after_placement_pass( after_placement_filter_->apply( pose ) );
 	if( !after_placement_pass ){
-		TR<<"Failed after_placement_filter\n";
+		TR<<"Failed after_placement_filter" << std::endl;
 		return( false );
 	}
 
 	foreach( StubSetStubPos const hs_set, stub_sets_ ){
 		core::Size const position( hs_set.second.second );
-		TR<<"Paired position "<<position<<'\n';
+		TR<<"Paired position "<<position<<std::endl;
 	}
 
 	TR.flush();
@@ -592,7 +592,7 @@ PlaceSimultaneouslyMover::refresh_coordinate_constraints( core::pose::Pose & pos
 	remove_coordinate_constraints_from_pose( pose );
 	saved_coord_constraints_ = pose.add_constraints( saved_coord_constraints_ );
 	if( coord_sdev < 0.0001 ){
-		TR<<"no coordinate constraints applied\n";
+		TR<<"no coordinate constraints applied" << std::endl;
 		return;
 	}
 	foreach( StubSetStubPos hs_set, stub_sets_ ){
@@ -603,7 +603,7 @@ PlaceSimultaneouslyMover::refresh_coordinate_constraints( core::pose::Pose & pos
 		core::scoring::constraints::HarmonicFuncOP dummy_cst;
 		add_coordinate_constraints( pose, *stub->residue(), host_chain_, position, coord_sdev, dummy_cst );
 	}
-	TR<<"applied coordinate constraints\n";
+	TR<<"applied coordinate constraints" << std::endl;
 }
 
 /// @details wraps around the user-defined design movers. Applies coordinate constraints as specified by the user.
@@ -612,7 +612,7 @@ void
 PlaceSimultaneouslyMover::design( core::pose::Pose & pose )
 {
 	using namespace protocols::hotspot_hashing;
-	TR<<"redesigning remainder of interface with user defined design movers\n";
+	TR<<"redesigning remainder of interface with user defined design movers" << std::endl;
 
 	BuildAlaPose toAla( host_chain_ == 1/*partner1*/, host_chain_ == 2 /*partner2*/ );
 	utility::vector1< core::Size > no_repack;
@@ -623,14 +623,14 @@ PlaceSimultaneouslyMover::design( core::pose::Pose & pose )
 		toAla.prevent_repacking( no_repack );
 	}
 	toAla.task_factory( residue_level_tasks_for_placed_hotspots_ );
-	TR<<"switching interface to alanine\n";
+	TR<<"switching interface to alanine" << std::endl;
 	toAla.apply( pose );
 
 	saved_coord_constraints_ = remove_coordinate_constraints_from_pose( pose );
 	foreach( MoverRealPair const mover_coord_cst, design_movers_ ){//design movers
 		core::Real const sdev( mover_coord_cst.second );
 		simple_moves::DesignRepackMoverOP mover( mover_coord_cst.first );
-		TR<<"applying design mover "<<mover->get_name()<<'\n';
+		TR<<"applying design mover "<<mover->get_name()<<std::endl;
 		if( sdev >= 0 ){//use constraints
 			core::Size const before_refresh( pose.constraint_set()->get_all_constraints().size() );
 			refresh_coordinate_constraints( pose, sdev );
@@ -638,14 +638,14 @@ PlaceSimultaneouslyMover::design( core::pose::Pose & pose )
 			TR.Debug<<"before refreshing coord cst "<<before_refresh<<" constraints. after: "<<after_refresh<<std::endl;
 		}//use constraints
 		else
-			TR<<"no constraints applied\n";
+			TR<<"no constraints applied"<< std::endl;
 
 		core::Size const before_apply_design_mover( pose.constraint_set()->get_all_constraints().size() );
 		mover->prevent_repacking( prevent_repacking() );
 		using namespace core::pack::task;
 		mover->task_factory( residue_level_tasks_for_placed_hotspots_ );
 		mover->optimize_foldtree( false );
-		TR<<"setting coordinate constraint weights to 1.0 in design movers\n";
+		TR<<"setting coordinate constraint weights to 1.0 in design movers" << std::endl;
 		core::scoring::ScoreFunctionOP scorefxn_rep( mover->scorefxn_repack() );
 		core::scoring::ScoreFunctionOP scorefxn_min( mover->scorefxn_minimize() );
 		if( scorefxn_rep ) scorefxn_rep->set_weight( coordinate_constraint, 1.0 );
@@ -657,7 +657,7 @@ PlaceSimultaneouslyMover::design( core::pose::Pose & pose )
 			TR<<"ERROR: This design mover changed the number of constraints on the pose. Before: "<< before_apply_design_mover<<" after: "<<after_apply_design_mover<<". This behaviour is unsupported."<<std::endl;
 			runtime_assert( before_apply_design_mover != after_apply_design_mover );
 		}
-		TR<<"removing coordinate constraints\n";
+		TR<<"removing coordinate constraints" << std::endl;
 		remove_coordinate_constraints_from_pose( pose );
 	}//foreach Design movers
 	remove_coordinate_constraints_from_pose( pose ); // just in case
@@ -697,11 +697,12 @@ PlaceSimultaneouslyMover::apply( core::pose::Pose & pose )
 		set_last_move_status( protocols::moves::FAIL_RETRY );
 		return;
 	}
+	TR.flush();
 	protocols::hotspot_hashing::remove_hotspot_constraints_from_pose( pose );
 	minimize_all( pose, minimization_repeats_after_placement_ );
 	TR.flush();
 	design( pose );
-	TR<<"Design done\n";
+	TR<<"Design done" << std::endl;
 	TR.flush();
 	set_last_move_status( protocols::moves::MS_SUCCESS );
 }
@@ -748,7 +749,7 @@ PlaceSimultaneouslyMover::parse_my_tag( TagPtr const tag,
 
 	if( tag->hasOption( "task_operations" ) ){
 		if( task_factory() )
-			TR<<"*****WARNING: ERASING existing task_factory, b/c of specifications for new task operations in\n"<<tag<<std::endl;
+			TR<<"*****WARNING: ERASING existing task_factory, b/c of specifications for new task operations in " << std::endl<<tag<<std::endl;
 		task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	}
 
@@ -786,7 +787,7 @@ PlaceSimultaneouslyMover::parse_my_tag( TagPtr const tag,
 						runtime_assert( drSOP );
 					}//done cast check
 					minimization_movers_.push_back( std::make_pair( drSOP, bb_stub_constraint_weight) );
-					TR<<"added stub minimize mover "<<stub_mover_name<<" to minimize towards the stub. Using this weight for the bb stub constraints: "<< bb_stub_constraint_weight<<'\n';
+					TR<<"added stub minimize mover "<<stub_mover_name<<" to minimize towards the stub. Using this weight for the bb stub constraints: "<< bb_stub_constraint_weight<<std::endl;
 				}
 			}
 		}
@@ -808,9 +809,9 @@ PlaceSimultaneouslyMover::parse_my_tag( TagPtr const tag,
 					design_movers_.push_back( std::make_pair( drOP, ( apply_coord_constraints ? coord_cst_std : -1 ) ) );
 					TR<<"added design mover "<<mover_name<<" to place simultaneously ";
 					if( apply_coord_constraints )
-						TR<<"with with std "<< coord_cst_std<< '\n';
+						TR<<"with with std "<< coord_cst_std<< std::endl;
 					else
-						TR<<"with no coord cst\n";
+						TR<<"with no coord cst" << std::endl;
 				}
 				else{
 					TR<<"***WARNING WARNING! Mover defined for PlaceSimultaneouslyMoverMover not found in mover_list. EXITING ***"<<std::endl;
@@ -878,15 +879,15 @@ PlaceSimultaneouslyMover::parse_my_tag( TagPtr const tag,
 		generate_taskfactory_and_add_task_awareness( btag, movers, data, task_factory() );//residue_level_tasks_for_placed_hotspots_ );
 	}
 	if( minimization_movers_.size() == 0 )
-		TR<<"No StubMinimize movers defined by user, defaulting to minimize_rb and _sc of stubs only\n";
+		TR<<"No StubMinimize movers defined by user, defaulting to minimize_rb and _sc of stubs only" << std::endl;
 
 	auction_->task_factory( data.get< TaskFactory * >( "TaskFactory", "placement" ) );
 	rbstub_minimization_->task_factory( data.get< TaskFactory * >( "TaskFactory", "placement" ) );
 //	stub_score_filter_->parse_my_tag( tag, data, filters, movers, pose );
 //	stub_score_filter_->stub_sets( stub_sets_ );
-	TR<<"Using "<<minimization_repeats_before_placement_<<" minimization steps before placement (bbcst constraints on)\n";
-	TR<<"Using "<<minimization_repeats_after_placement_<<" minimization steps after placement (no constraints on)\n";
-	TR<<"max cb cb distance set to "<<max_cb_cb_dist_<<'\n';
+	TR<<"Using "<<minimization_repeats_before_placement_<<" minimization steps before placement (bbcst constraints on)" << std::endl;
+	TR<<"Using "<<minimization_repeats_after_placement_<<" minimization steps after placement (no constraints on)" << std::endl;
+	TR<<"max cb cb distance set to "<<max_cb_cb_dist_<<std::endl;
 	TR<<"place simultaneously mover on chain "<<host_chain_<<" with repack_non_ala set to "<<repack_non_ala_<<std::endl;
 	TR<<"Using auction energy function: "<<auction_->get_stub_scorefxn() << " with coordinate cst cutoff: " << coor_cst_cutoff_ <<std::endl;
 }
