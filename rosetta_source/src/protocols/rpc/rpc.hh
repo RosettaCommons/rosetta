@@ -50,46 +50,48 @@ public:
 
 	virtual ~JSON_RPC() {}
 
-    virtual void run();
+  JSON_RPC( JSON_RPC const & json_rpc);
 
-    long runtime() const { return endtime_ - starttime_; }
+  JSON_RPC const & operator = ( JSON_RPC const & json_rpc );
 
-    std::string tracer() const { return tracer_output_stream_.str(); }
+  virtual void run();
 
-    const core::pose::Pose& outputpose() const { return outputpose_; }
+  long runtime() const { return endtime_ - starttime_; }
 
-    core::Real get_fa_score();
+  std::string tracer() const { return tracer_output_stream_.str(); }
 
-    core::Real get_irms() const;
+  const core::pose::Pose& outputpose() const { return outputpose_; }
+
+  core::Real get_fa_score();
+
+  core::Real get_irms() const;
 
 private: // member functions
-    void unpack( const std::string &msg );
+  void unpack( const std::string &msg );
 
-    void output_capture_start();
-    void output_capture_stop();
-    void output_capture_clear();
+  void output_capture_start();
+  void output_capture_stop();
+  void output_capture_clear();
 
-    void load_user_flag_file( const std::string &flags_file );
-    void load_new_set_of_user_flags(  const utility::json_spirit::mObject &json_user_flags );
-    void load_new_set_of_virtual_files(  const utility::json_spirit::mArray &json_user_files, bool clear_previous = true );
+  void load_user_flag_file( const std::string &flags_file );
+  void load_new_set_of_user_flags(  const utility::json_spirit::mObject &json_user_flags );
+  void load_new_set_of_virtual_files(  const utility::json_spirit::mArray &json_user_files, bool clear_previous = true );
 
 private: // member variables
-    std::string       msg_;
+  std::string       msg_;
+  std::string       pdbdata_string_;
 
-    core::pose::Pose  inputpose_;
-    core::pose::Pose  outputpose_;
-    std::string       xmlscript_;
-    std::string       command_;
+  core::pose::Pose  inputpose_;
+  core::pose::Pose  outputpose_;
+  std::string       xmlscript_;
+  std::string       command_;
 
-    bool              capture_tracer_;
-    std::stringstream tracer_output_stream_;
-    long              starttime_;
-    long              endtime_;
+  bool              capture_tracer_;
+  std::stringstream tracer_output_stream_;
+  long              starttime_;
+  long              endtime_;
 
-private:
-	// uncopyable due to having std::stringstream as member
-	JSON_RPC( JSON_RPC const & );
-	JSON_RPC const & operator = ( JSON_RPC const & );
+  utility::json_spirit::mObject parsed_json_;
 };
 
 }
