@@ -169,6 +169,7 @@ sources = {
 		"TryRotamers",
 		"ShoveResidueMover",
 		"VLB",
+                "DockWithHotspotMover",
 	],
 "protocols/seeded_abinitio": [
 	"CAcstGenerator",
