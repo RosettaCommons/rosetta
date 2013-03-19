@@ -135,7 +135,7 @@ JSON_RPC::JSON_RPC(std::string const &msg, bool capture_tracer) :
        }
 
        // Load any files that were given as part of this job.
-       load_new_set_of_virtual_files(  get_Array(parsed_json, "user_files") );
+       load_new_set_of_virtual_files(  get_mArray(parsed_json, "user_files") );
 
        // finally load in the provided PDB
        core::import_pose::pose_from_pdbstring( inputpose_, pdbdata_string );
