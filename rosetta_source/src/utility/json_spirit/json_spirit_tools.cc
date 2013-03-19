@@ -14,6 +14,7 @@
 #include <utility/json_spirit/json_spirit_value.h>
 #include <utility/json_spirit/json_spirit_reader.h>
 #include <utility/json_spirit/json_spirit_writer.h>
+#include <utility/json_spirit/json_spirit_tools.hh>
 #include <utility/excn/Exceptions.hh>
 
 namespace utility {
@@ -76,8 +77,10 @@ namespace json_spirit {
   double get_real(const mObject& obj, const std::string& name )
   {
     mValue value = get_value( obj, name );
-    if ( value.type() != real_type ) {  throw utility::excn::EXCN_Msg_Exception("JSON error: '" + name + "' is not a real" ); }
-    return value.get_real();
+    if ( value.type() == real_type ) return value.get_real();
+    if ( value.type() == int_type ) return get_int( obj, name ); 
+    throw utility::excn::EXCN_Msg_Exception("JSON error: '" + name + "' is not a number" );  
+    return 0.0;
   }
   
   int get_int(const mObject& obj, const std::string& name )
