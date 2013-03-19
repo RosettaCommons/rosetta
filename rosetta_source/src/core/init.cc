@@ -196,12 +196,14 @@
 
 #endif
 
+#ifndef __native_client__ 
 #ifndef WIN_PYROSETTA
 	#include <platform/types.hh>
 #endif
 
 #ifdef MAC
 #include <mach-o/dyld.h> // for _NSGetExecutablePath
+#endif
 #endif
 
 
@@ -914,7 +916,9 @@ random_delay(){
 
 void
 locate_rosetta_database(){
-	if ( !option[ in::path::database ].user() ) {
+
+#ifndef __native_client__
+  if ( !option[ in::path::database ].user() ) {
 		std::string database_path;
 		char * descr = getenv("ROSETTA3_DB");
 		if ( descr ) {
@@ -956,6 +960,7 @@ locate_rosetta_database(){
 		}
 
 	}
+#endif
 }
 
 void
