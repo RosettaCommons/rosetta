@@ -33,7 +33,6 @@
 
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 
-
 // ObjexxFCL Headers
 
 // C++ Headers
@@ -250,6 +249,9 @@ ExtractAsymmetricPoseMover::apply( core::pose::Pose & pose )
 	if ( !core::pose::symmetry::is_symmetric( pose ) ) return;
 
 	core::pose::symmetry::make_asymmetric_pose( pose );
+	//clear the symmetry deffinition option so it doesn't interfere with repack and minimization of
+	//the assymetric pose.
+	basic::options::option[OptionKeys::symmetry::symmetry_definition].clear();
 }
 
 void ExtractAsymmetricPoseMover::parse_my_tag(
