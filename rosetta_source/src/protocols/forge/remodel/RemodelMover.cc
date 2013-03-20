@@ -15,6 +15,7 @@
 // unit headers
 #include <protocols/forge/remodel/RemodelMover.hh>
 #include <protocols/forge/remodel/RemodelLoopMover.hh>
+#include <protocols/forge/remodel/RemodelGlobalFrame.hh>
 #include <protocols/forge/remodel/RemodelEnzdesCstModule.fwd.hh>
 #include <protocols/forge/remodel/RemodelMoverCreator.hh>
 
@@ -178,7 +179,7 @@ RemodelMover::RemodelMover() :
 	redesign_loop_neighborhood_( false ),
 	dr_cycles_( basic::options::option[basic::options::OptionKeys::remodel::dr_cycles] ),
 	centroid_sfx_( core::scoring::ScoreFunctionFactory::create_score_function( basic::options::option[basic::options::OptionKeys::remodel::cen_sfxn]  )),
-	fullatom_sfx_( core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::STANDARD_WTS, core::scoring::SCORE12_PATCH ) )
+	fullatom_sfx_ ( core::scoring::getScoreFunction() )
 {
 
 	register_user_options();
@@ -472,7 +473,6 @@ void RemodelMover::apply( Pose & pose ) {
 		}
 	}
 
-
 	//
 	//	Pose testArc;
 	//	testArc = pose;
@@ -544,15 +544,17 @@ void RemodelMover::apply( Pose & pose ) {
 	//pose.dump_pdb("MoverREstore.pdb");
 
 	// initialize symmetry
-	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
+
+	// only symmetrize here if not in the repeat structure mode. for repeats, stay monomer until repeat generation. 
+	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() && !option[ OptionKeys::remodel::repeat_structure ].user() )  {
 		simple_moves::symmetry::SetupForSymmetryMover pre_mover;
 		pre_mover.apply( pose );
 		// Remodel assumes chain ID is ' '
-		pose::PDBInfoOP pdb_info ( pose.pdb_info() );
-		for ( Size i=1; i<= pdb_info->nres(); ++i ){
-			pdb_info->chain(i,' ');
-		}
-		pose.pdb_info( pdb_info );
+		//pose::PDBInfoOP pdb_info ( pose.pdb_info() );
+		//for ( Size i=1; i<= pdb_info->nres(); ++i ){
+		//	pdb_info->chain(i,' ');
+		//}
+		//pose.pdb_info( pdb_info );
 	}
 
 	Size i = option[ OptionKeys::remodel::num_trajectory ]();
@@ -960,14 +962,33 @@ void RemodelMover::apply( Pose & pose ) {
 					TR << "WARNING: DESIGN REFINE SEQ RELAX FAILED!! (one should never see this)" << std::endl;
 					continue;
 				}
+			}
+			else if (basic::options::option[basic::options::OptionKeys::remodel::use_cart_relax]){
+				if (!design_refine_cart_relax(*(*it), designMover)){
+					TR << "WARNING: CARTESIAN MIN FAILED!! (one should never see this)" << std::endl;
+					continue;
+				}
 			} else {
-				if ( !design_refine(*(*it), designMover) ) {
+				if (! design_refine(*(*it), designMover)){
 					TR << "WARNING: DESIGN REFINE FAILED TO CLOSE STRUCTURE!!" << std::endl;
 					continue;
 				}
 			}
 		} else // simple design
 		{
+			if (basic::options::option[basic::options::OptionKeys::remodel::check_scored_centroid].user()){
+					std::stringstream SS;
+					std::string prefix =  basic::options::option[basic::options::OptionKeys::out::prefix];
+					if (!prefix.empty()){
+						SS << prefix << "_" << filecount << "_cen.pdb";
+					}
+					else {
+						SS << filecount << "_cen.pdb";
+					}
+					core::util::switch_to_residue_type_set( *(*it), core::chemical::CENTROID, true);
+					(*(*it)).dump_scored_pdb(SS.str(), *centroid_sfx_);
+			}
+		
 			designMover.set_state("finish");
 			designMover.apply(*(*it));
 
@@ -992,7 +1013,15 @@ void RemodelMover::apply( Pose & pose ) {
 		// this is to make sure that the final scoring is done with SCORE12
 		scoring::ScoreFunctionOP scorefxn = scoring::ScoreFunctionFactory::create_score_function( scoring::STANDARD_WTS, scoring::SCORE12_PATCH );
 
-		(*(*it)).dump_scored_pdb( SS.str(), *scorefxn );
+	  if (option[ OptionKeys::remodel::repeat_structure].user()) {
+						//Experiment with RemodelGlobalFrame
+						RemodelGlobalFrame RGF(remodel_data, working_model, scorefxn);
+						RGF.align_segment(*(*it));
+						RGF.apply(*(*it));
+						
+		}
+
+		(*(*it)).dump_scored_pdb(SS.str(), *scorefxn);
 
 		simple_filters::ScoreTypeFilter const pose_total_score( scorefxn, total_score, 100 );
 		Real score( pose_total_score.compute( *(*it) ) );
@@ -1168,7 +1197,7 @@ bool RemodelMover::centroid_build( Pose & pose ) {
 
 		// record the used manager w/ all mapping info
 		//manager_ = vlb_->manager();
-
+std::cout<< "post VLB?" << std::endl;
 		// safety, clear all the energies before restoring full-atom residues and scoring
 		pose.energies().clear();
 		if (option[ OptionKeys::remodel::repeat_structure ].user()) {
@@ -1177,9 +1206,10 @@ bool RemodelMover::centroid_build( Pose & pose ) {
 		//cases where the monomer pose is extended, so to restore the sidechain,
 		//the source of the sidechains has to be extended too in de novo cases.
 		//but with refining an existing repeat pose, no need to extend
-			if (modified_archive_pose.total_residue() == pose.total_residue()){ //dangerous, assuming no further length change
+		//	if (modified_archive_pose.total_residue() == pose.total_residue()){ //dangerous, assuming no further length change
 				//do nothing.
-			} else { // if there's mismatch, assuming restoration source need extension... dangerous.
+		//	} else { // if there's mismatch, assuming restoration source need extension... dangerous.
+				// because of code-change for always using 2x modified 
 				using namespace protocols::loops;
 				using protocols::forge::methods::intervals_to_loops;
 				std::set< Interval > loop_intervals = manager_.intervals_containing_undefined_positions();
@@ -1189,7 +1219,7 @@ bool RemodelMover::centroid_build( Pose & pose ) {
 				Pose bufferPose(modified_archive_pose);
 				//due to code change, modified_archive_pose would always be 2x length now
 				RLM.repeat_generation_with_additional_residue( bufferPose, modified_archive_pose );
-			}
+		//	}
 		}
 
 		// Swap back original sidechains.  At the moment this is a two step process
@@ -1244,15 +1274,17 @@ bool RemodelMover::design_refine_seq_relax( Pose & pose, RemodelDesignMover & de
 	// collect loops
 	loops::Loops loops = forge::methods::intervals_to_loops( loop_intervals.begin(), loop_intervals.end() );
 
-	if ( !option[ OptionKeys::remodel::repeat_structure ].user() ) {
-		forge::methods::fill_non_loop_cst_set( pose, loops );
+  if (basic::options::option[ OptionKeys::remodel::repeat_structure].user() || basic::options::option[ OptionKeys::remodel::free_relax ].user() ){
+		//do nothing
+	} else {
+		protocols::forge::methods::fill_non_loop_cst_set(pose, loops);
 	}
 
 	// safety, clear the energies object
 	pose.energies().clear();
 
 	// for refinement, always use standard repulsive
-	ScoreFunctionOP sfx = core::scoring::ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH );
+	ScoreFunctionOP sfx = core::scoring::getScoreFunction();
 
 	// turning on weights
 	sfx->set_weight( core::scoring::coordinate_constraint, 1.0 );
@@ -1344,6 +1376,187 @@ bool RemodelMover::design_refine_seq_relax( Pose & pose, RemodelDesignMover & de
 	sfx->set_weight(core::scoring::dihedral_constraint, 0.0 );
 	sfx->set_weight(core::scoring::res_type_constraint, 0.0);
 	sfx->set_weight(core::scoring::res_type_linking_constraint, 0.0);
+
+	(*sfx)( pose );
+
+	return true;
+}
+
+bool RemodelMover::design_refine_cart_relax(
+	Pose & pose,
+	RemodelDesignMover & designMover
+)
+{
+	using core::kinematics::FoldTree;
+	using core::pack::task::operation::RestrictResidueToRepacking;
+	using core::pack::task::operation::RestrictResidueToRepackingOP;
+	using core::pack::task::operation::RestrictToRepacking;
+	using core::scoring::STANDARD_WTS;
+	using core::scoring::SCORE12_PATCH;
+	using core::scoring::ScoreFunctionOP;
+	using core::scoring::ScoreFunctionFactory;
+	using protocols::forge::build::SegmentInsert;
+	using namespace protocols::loops;
+	using protocols::loops::Loops;
+	using protocols::loops::loop_mover::refine::LoopMover_Refine_CCD;
+	using protocols::simple_moves::PackRotamersMover;
+	using protocols::toolbox::task_operations::RestrictToNeighborhoodOperation;
+	using namespace core::scoring::constraints;
+	using namespace basic::options;
+
+
+	using core::pose::annotated_to_oneletter_sequence;
+	using protocols::forge::methods::intervals_to_loops;
+	using protocols::forge::methods::linear_chainbreak;
+	using protocols::loops::remove_cutpoint_variants;
+
+	typedef protocols::forge::build::BuildManager::Positions Positions;
+
+	// collect new regions/positions
+	std::set< Interval > loop_intervals = manager_.intervals_containing_undefined_positions();
+	Original2Modified original2modified_interval_endpoints = manager_.original2modified_interval_endpoints();
+
+	// collect loops
+	Loops loops = intervals_to_loops( loop_intervals.begin(), loop_intervals.end() );
+
+  if (basic::options::option[ OptionKeys::remodel::repeat_structure].user() || basic::options::option[ OptionKeys::remodel::free_relax ].user() ){
+		//do nothing
+	} else {
+		protocols::forge::methods::fill_non_loop_cst_set(pose, loops);
+	}
+
+	// safety, clear the energies object
+	pose.energies().clear();
+
+	//set simple tree 
+	FoldTree minFT;
+	minFT.simple_tree(pose.total_residue());
+	pose.fold_tree(minFT);
+
+// for refinement, always use standard repulsive
+	ScoreFunctionOP sfx = core::scoring::getScoreFunction();
+//turning on weights
+  sfx->set_weight(core::scoring::coordinate_constraint, 1.0 );
+  sfx->set_weight(core::scoring::atom_pair_constraint, 1.0 );
+  sfx->set_weight(core::scoring::angle_constraint, 1.0 );
+  sfx->set_weight(core::scoring::dihedral_constraint, 10.0 ); // 1.0 originally
+  sfx->set_weight(core::scoring::res_type_constraint, 1.0);
+  sfx->set_weight(core::scoring::res_type_linking_constraint, 1.0);
+  sfx->set_weight(core::scoring::cart_bonded, 0.5);
+
+
+ 	core::kinematics::MoveMapOP cmmop = new core::kinematics::MoveMap;
+	//pose.dump_pdb("pretest.pdb");
+	
+	if (basic::options::option[ OptionKeys::remodel::free_relax ].user()) {
+					for (int i = 1; i<= pose.total_residue(); i++){
+							cmmop->set_bb(i, true);
+							cmmop->set_chi(i, true);
+					}
+	}
+	else {	
+					cmmop->import(remodel_data_.natro_movemap_);
+					cmmop->import( manager_.movemap() );
+	}
+
+	for (int i = 1; i<= pose.total_residue(); i++){
+			std::cout << "bb at " << i << " " << cmmop->get_bb(i) << std::endl;
+			std::cout << "chi at " << i << " " << cmmop->get_chi(i) << std::endl;
+			cmmop->set_chi(i,true);
+			std::cout << "chi at " << i << " " << cmmop->get_chi(i) << std::endl;
+	}
+
+	for (int i = 1; i<= pose.total_residue(); i++){
+			std::cout << "bbM at " << i << " " << manager_.movemap().get_bb(i) << std::endl;
+			std::cout << "chiM at " << i << " " << manager_.movemap().get_chi(i) << std::endl;
+	}
+
+  simple_moves::MinMoverOP minMover = new simple_moves::MinMover( cmmop , sfx , "lbfgs_armijo", 0.01, true);
+	minMover->cartesian(true);
+
+
+	ConstraintSetOP cst_set_post_built;
+	if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+
+	// at this stage it should hold generic cstfile and res_type_linking
+	// constraints
+		cst_set_post_built = new ConstraintSet( *pose.constraint_set() );
+	}
+
+	protocols::simple_moves::symmetry::SetupNCSMover setup_ncs;
+	if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+				//Dihedral (NCS) Constraints, need to be updated each mutation cycle for sidechain symmetry
+
+				Size repeat_number = basic::options::option[ OptionKeys::remodel::repeat_structure];
+				Size segment_length = (pose.n_residue())/repeat_number;
+
+
+				for (Size rep = 1; rep < repeat_number-1; rep++){ // from 1 since first segment don't need self-linking
+					std::stringstream templateRangeSS;
+					templateRangeSS << "2-" << segment_length+1; // offset by one to work around the termini
+					std::stringstream targetSS;
+					targetSS << 1+(segment_length*rep)+1 << "-" << segment_length + (segment_length*rep)+1;
+				  TR << "NCS " << templateRangeSS.str() << " " << targetSS.str() << std::endl;
+					setup_ncs.add_group(templateRangeSS.str(), targetSS.str());
+				}
+
+			for (Size rep = 1; rep < repeat_number-1; rep++){ // from 1 since first segment don't need self-linking
+					std::stringstream templateRangeSS;
+					templateRangeSS << "3-" << segment_length+2; // offset by one to work around the termini
+					std::stringstream targetSS;
+					targetSS << 1+(segment_length*rep)+2 << "-" << segment_length + (segment_length*rep)+2;
+				  TR << "NCS " << templateRangeSS.str() << " " << targetSS.str() << std::endl;
+					setup_ncs.add_group(templateRangeSS.str(), targetSS.str());
+				}
+
+
+				std::stringstream templateRangeSS;
+				//take care of the terminal repeat, since the numbers are offset.
+				templateRangeSS << "2-" << segment_length-1; // offset by one to work around the termini
+				std::stringstream targetSS;
+				targetSS << 1+(segment_length*(repeat_number-1))+1 << "-" << segment_length + (segment_length*(repeat_number-1))-1;
+				TR << "NCS " << templateRangeSS.str() << " " << targetSS.str() << std::endl;
+				setup_ncs.add_group(templateRangeSS.str(), targetSS.str());
+
+	}
+
+	// run design-refine cycle
+	for ( Size i = 0; i < dr_cycles_; ++i ) {
+
+
+		designMover.set_state("finish");
+		designMover.apply(pose);
+
+		//update dihedral constraint for repeat structures
+		if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+			setup_ncs.apply(pose);
+
+			//total hack (for now), see if the restypeset fails when initialized
+			//twice.
+			if (option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide].user()){
+		     protocols::forge::methods::cyclize_pose(pose);
+		  }
+
+	//		sfx->show(TR, pose);
+	//		TR << std::endl;
+		}
+
+		minMover->apply(pose);
+
+		//reset constraints without NCS
+		pose.constraint_set(cst_set_post_built);
+			sfx->show(TR, pose);
+			TR << std::endl;
+	}
+
+
+//turning off weights
+  sfx->set_weight(core::scoring::coordinate_constraint, 0.0 );
+  sfx->set_weight(core::scoring::atom_pair_constraint, 0.0 );
+  sfx->set_weight(core::scoring::angle_constraint, 0.0 );
+  sfx->set_weight(core::scoring::dihedral_constraint, 0.0 );
+  sfx->set_weight(core::scoring::res_type_constraint, 0.0);
+  sfx->set_weight(core::scoring::res_type_linking_constraint, 0.0);
 
 	(*sfx)( pose );
 
@@ -1444,6 +1657,9 @@ bool RemodelMover::design_refine( Pose & pose, RemodelDesignMover & designMover 
 			combined_mm->import( remodel_data_.natro_movemap_ );
 			combined_mm->import( manager_.movemap() );
 
+				//remodel_data_.natro_movemap_.show(pose.total_residue());
+				//manager_.movemap().show(pose.total_residue());
+			//combined_mm->show(pose.total_residue());
 			//modify task to accept NATRO definition
 			utility::vector1<core::Size> natroPositions;
 			for (Size i = 1; i<= pose.total_residue(); i++){

@@ -89,7 +89,9 @@ void BindingSiteConstraint::init( core::pose::Pose const &start_pose ) {
 
 	// also create centroid constraints
 	core::pose::Pose start_pose_copy = start_pose;
-	core::util::switch_to_residue_type_set( start_pose_copy, core::chemical::CENTROID );
+	if ( start_pose_copy.residue(1).residue_type_set().name() != core::chemical::CENTROID ){
+		core::util::switch_to_residue_type_set( start_pose_copy, core::chemical::CENTROID );
+	}
 	com = numeric::xyzVector< core::Real >(0,0,0);
 
 	tgt_pos_centroid_.dimension( 3, natoms );

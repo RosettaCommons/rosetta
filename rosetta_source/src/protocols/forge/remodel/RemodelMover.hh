@@ -359,6 +359,12 @@ private: // protocol methods
 	  RemodelDesignMover & designMover
 	);
 
+	bool design_refine_cart_relax(
+		Pose & pose,
+	  RemodelDesignMover & designMover
+	);
+
+
 	/// @brief run the design-refine stage
 	/// @return currently always true
 	bool design_refine(

@@ -75,6 +75,7 @@
 #include <protocols/simple_filters/EnergyPerResidueFilterCreator.hh>
 #include <protocols/simple_filters/ExpiryFilterCreator.hh>
 #include <protocols/simple_filters/NonSequentialNeighborsFilterCreator.hh>
+#include <protocols/simple_filters/GeometryFilterCreator.hh>
 #include <protocols/simple_filters/HolesFilterCreator.hh>
 #include <protocols/simple_filters/InterfaceSasaFilterCreator.hh>
 #include <protocols/simple_filters/InterfaceBindingEnergyDensityFilterCreator.hh>

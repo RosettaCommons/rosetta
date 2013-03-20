@@ -474,8 +474,8 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 		tail = tail<=head? data.blueprint[ idBack ].original_index : tail;
 		assert(tail>head);
 
-		//int gap = idBack - idFront +1;
-		int gap = segmentStorageVector[i].residues.back() - segmentStorageVector[i].residues.front() + 1;
+		int gap = idBack - idFront +1;
+		//int gap = segmentStorageVector[i].residues.back() - segmentStorageVector[i].residues.front() + 1;
 
 		//debug
 		//TR << "dssp size: " << data.dssp_updated_ss.size() << std::endl;

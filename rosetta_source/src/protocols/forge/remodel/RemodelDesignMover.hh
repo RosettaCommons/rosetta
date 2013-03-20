@@ -78,6 +78,7 @@ public: // accessors
 public: // options
 
 	void mode1_packertask(Pose & pose); // auto loop only
+	void mode1_1_packertask(Pose & pose); // auto all 
 	void mode2_packertask(Pose & pose); // auto loop with design neighbor
 	void mode3_packertask(Pose & pose); // auto loop with repack neighbor
 	void mode4_packertask(Pose & pose); // full manual

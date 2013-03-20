@@ -211,7 +211,12 @@ void RemodelDesignMover::apply( Pose & pose ) {
 				mode3_packertask(pose);
 			}
 		} else {
-			mode1_packertask(pose);
+			if (basic::options::option[basic::options::OptionKeys::remodel::design::design_all].user()){
+				mode1_1_packertask(pose);
+			}
+			else {
+				mode1_packertask(pose);
+			}
 		}
 	}
 
@@ -306,7 +311,10 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
   run_calculator(pose, "neighborhood_calc", "neighbors", boollist);
 	std::set<Size> positionList;
 	for (Size i = 1; i <= pose.total_residue(); i++){
-		if (boollist[i]){
+		if (boollist[i] && !option[OptionKeys::remodel::design::design_all].user()){
+			positionList.insert(i);
+		}
+		else { // in case of design all flag, take all positions
 			positionList.insert(i);
 		}
 	}
@@ -315,6 +323,10 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
     "reducetask_calc",
     new NeighborhoodByDistanceCalculator( positionList )
   );
+
+	//compute the bsasa values for each position
+	utility::vector1< core::Real > sasa_list;
+	sasa_list = protocols::forge::methods::calc_rsd_sasa( pose );
 
 	utility::vector1_bool resclass(pose.total_residue(),false);
 	utility::vector1_bool neighbor_count(pose.total_residue(),false);
@@ -328,7 +340,18 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 	//get num_neighbors for each position
 	basic::MetricValue< std::map< core::Size, core::Size > >nbr_map;
 	pose.metric("reducetask_calc", "num_neighbors_map", nbr_map);
-  std::map< core::Size, core::Size > sizemap=nbr_map.value();
+  std::map< core::Size, core::Size > sizemap;
+
+	if (option[ OptionKeys::remodel::resclass_by_sasa ].user()){
+		//simply repackage the values so either metric can feed into the code
+		int count = 1 ;
+		for ( utility::vector1< core::Real >::iterator it = sasa_list.begin(), ite = sasa_list.end(); it != ite ; it++){
+				sizemap[count] = (*it);
+				count++;
+		}
+	} else {
+		sizemap = nbr_map.value();
+	}
 
 		TR.Debug << "sizemap content " << sizemap.size() << std::endl;
 
@@ -358,7 +381,19 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 
 					TR.Debug << "sizemap in repeat decision " << copies[jj] << " " << sizemap[ copies[jj] ] << std::endl;
 
+				if (option[ OptionKeys::remodel::resclass_by_sasa ].user()){
 					//take the counts for each set
+					if ( sizemap[ copies[jj] ] <= CORE_CUTOFF){
+						coreCount++;
+					} else if ( sizemap[ copies[jj] ] > CORE_CUTOFF && sizemap[ copies[jj] ] <= BOUNDARY_CUTOFF ){
+						boundaryCount++;
+					} else if ( sizemap[ copies[jj] ] > BOUNDARY_CUTOFF){
+						surfCount++;
+					} else {
+						TR << "RESCLASS ERROR" << sizemap[i] << std::endl;
+					}
+			}else{		
+			//take the counts for each set
 					if ( sizemap[ copies[jj] ] >= CORE_CUTOFF){
 						coreCount++;
 					} else if ( sizemap[ copies[jj] ] < CORE_CUTOFF && sizemap[ copies[jj] ] >= BOUNDARY_CUTOFF ){
@@ -368,6 +403,8 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 					} else {
 						TR << "RESCLASS ERROR" << sizemap[i] << std::endl;
 					}
+			}
+
 			}
 
 			//assign
@@ -405,15 +442,27 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 		for (Size i = 1; i<= resclass.size(); i++){ //check everyposition in the packertask
 			if (task->nonconst_residue_task(i).being_packed() && sizemap[i]){
 				TR << "touch position " << i << std::endl;
-				if (sizemap[i] >= CORE_CUTOFF){
-					corePos.push_back(i);
-				} else if ( sizemap[i] < CORE_CUTOFF && sizemap[i] >= BOUNDARY_CUTOFF){
-					boundaryPos.push_back(i);
-				} else if ( sizemap[i] < BOUNDARY_CUTOFF){
-					surfPos.push_back(i);
-				} else {
-					TR << "RESCLASS ERROR" << sizemap[i] << std::endl;
-				}
+				if (option[ OptionKeys::remodel::resclass_by_sasa ].user()){
+								if (sizemap[i] <= CORE_CUTOFF){
+									corePos.push_back(i);
+								} else if ( sizemap[i] > CORE_CUTOFF && sizemap[i] <= BOUNDARY_CUTOFF){
+									boundaryPos.push_back(i);
+								} else if ( sizemap[i] > BOUNDARY_CUTOFF){
+									surfPos.push_back(i);
+								} else {
+									TR << "RESCLASS ERROR" << sizemap[i] << std::endl;
+								}
+				}else{
+								if (sizemap[i] >= CORE_CUTOFF){
+									corePos.push_back(i);
+								} else if ( sizemap[i] < CORE_CUTOFF && sizemap[i] >= BOUNDARY_CUTOFF){
+									boundaryPos.push_back(i);
+								} else if ( sizemap[i] < BOUNDARY_CUTOFF){
+									surfPos.push_back(i);
+								} else {
+									TR << "RESCLASS ERROR" << sizemap[i] << std::endl;
+								}
+				}	
 			}
 		}
 	}
@@ -682,6 +731,24 @@ void RemodelDesignMover::mode1_packertask(Pose & pose){ // auto loop only
 	utility::vector1_bool additional_sites(pose.total_residue(), false);
 
 	run_calculator(pose, "neighborhood_calc", "central_residues", additional_sites);
+
+	working_model_.task->restrict_to_residues( additional_sites );
+
+	TR << "number to be packed after adding sites: " << working_model_.task->num_to_be_packed() << std::endl;
+
+}
+
+/// these are split up for convenience reasons, so one can bypass blueprint setting if needed be
+void RemodelDesignMover::mode1_1_packertask(Pose & pose){ // auto loop only
+	TR << "MODE 1.1: AUTO DESIGN everything -- denovo" << std::endl;
+
+  core::pack::task::TaskFactoryOP TF = protocols::forge::methods::remodel_generic_taskfactory();
+
+	//if need more operations added, put them here.
+
+	//create the real task
+  working_model_.task = TF->create_task_and_apply_taskoperations( pose );
+	utility::vector1_bool additional_sites(pose.total_residue(), true);
 
 	working_model_.task->restrict_to_residues( additional_sites );
 

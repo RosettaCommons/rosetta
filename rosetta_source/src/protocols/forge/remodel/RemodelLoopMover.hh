@@ -18,6 +18,7 @@
 
 // unit headers
 #include <protocols/forge/remodel/RemodelLoopMover.fwd.hh>
+#include <protocols/forge/remodel/RemodelGlobalFrame.hh>
 
 // project headers
 #include <core/kinematics/MoveMap.hh>
@@ -84,7 +85,7 @@ public: // typedefs
 	typedef protocols::filters::Filters_map Filters_map;
 	typedef protocols::moves::DataMap DataMap;
 	typedef protocols::moves::Movers_map Movers_map;
-
+	
 
 public: // construct/destruct
 
@@ -591,6 +592,14 @@ private: // data
 
   /// @brief local copy of repeat pose
 	Pose repeat_pose_;
+
+	/// @brief use this for repeat construction in conjunction with symmetry
+	Size unit_length_;
+	Size repeat_length_;
+
+
+	/// @brief RemodelGlobalFrame for helical definitions
+	RemodelGlobalFrame RGF_;
 
 	///@brief whether to keep the FoldTree untouched, i.e. trust the
 	///user to supply a decent FoldTree

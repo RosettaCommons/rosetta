@@ -28,6 +28,7 @@ namespace remodel { extern FileOptionKey const blueprint; }
 namespace remodel { extern FileOptionKey const cstfile; }
 namespace remodel { extern IntegerOptionKey const cstfilter; }
 namespace remodel { extern StringOptionKey const cen_sfxn; }
+namespace remodel { extern BooleanOptionKey const check_scored_centroid; }
 namespace remodel { extern IntegerOptionKey const num_trajectory; }
 namespace remodel { extern IntegerOptionKey const save_top; }
 namespace remodel { extern BooleanOptionKey const swap_refine_confirm_protocols; }
@@ -43,6 +44,8 @@ namespace remodel { extern BooleanOptionKey const quick_and_dirty ; }
 namespace remodel { extern BooleanOptionKey const checkpoint ; }
 namespace remodel { extern BooleanOptionKey const use_ccd_refine ; }
 namespace remodel { extern BooleanOptionKey const use_pose_relax ; }
+namespace remodel { extern BooleanOptionKey const use_cart_relax ; }
+namespace remodel { extern BooleanOptionKey const free_relax ; }
 namespace remodel { extern BooleanOptionKey const use_dssp_assignment; }
 namespace remodel { extern BooleanOptionKey const keep_jumps_in_minimizer ; }
 namespace remodel { extern FileOptionKey const output_fragfiles; }
@@ -63,6 +66,10 @@ namespace remodel { extern BooleanOptionKey const lh_closure_filter; }
 namespace remodel { extern BooleanOptionKey const cen_minimize; }
 namespace remodel { extern IntegerOptionKey const core_cutoff; }
 namespace remodel { extern IntegerOptionKey const boundary_cutoff; }
+namespace remodel { extern BooleanOptionKey const resclass_by_sasa; }
+namespace remodel { extern RealOptionKey const helical_rise; }
+namespace remodel { extern RealOptionKey const helical_radius; }
+namespace remodel { extern RealOptionKey const helical_omega; }
 namespace remodel { namespace domainFusion { extern BooleanOptionKey const domainFusion; } }
 namespace remodel { namespace domainFusion { extern FileOptionKey const insert_segment_from_pdb; } }
 namespace remodel { extern RealOptionKey const vdw; }
@@ -80,6 +87,7 @@ namespace remodel { extern RealOptionKey const match_rt_limit; }
 namespace remodel { extern IntegerVectorOptionKey const disulf_landing_range; }
 namespace remodel { namespace design { extern BooleanOptionKey const design; } }
 namespace remodel { namespace design { extern BooleanOptionKey const no_design ; } }
+namespace remodel { namespace design { extern BooleanOptionKey const design_all; } }
 namespace remodel { namespace design { extern BooleanOptionKey const allow_rare_aro_chi; } }
 namespace remodel { namespace design { extern BooleanOptionKey const silent; } }
 namespace remodel { namespace design { extern BooleanOptionKey const skip_partial; } }

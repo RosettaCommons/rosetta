@@ -256,6 +256,8 @@ fill_non_loop_cst_set(
 	core::pose::Pose & pose,
 	protocols::loops::Loops loops);
 
+utility::vector1< core::Real > const
+calc_rsd_sasa( core::pose::Pose const & pose );
 
 void
 cyclize_pose(core::pose::Pose & pose);

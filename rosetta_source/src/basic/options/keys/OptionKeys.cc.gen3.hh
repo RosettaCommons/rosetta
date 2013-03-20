@@ -1,9 +1,3 @@
-namespace edensity { BooleanOptionKey const edensity( "edensity" );  }
-namespace edensity { BooleanOptionKey const debug( "edensity:debug" );  }
-namespace edensity { StringOptionKey const mapfile( "edensity:mapfile" );  }
-namespace edensity { RealOptionKey const mapreso( "edensity:mapreso" );  }
-namespace edensity { RealOptionKey const grid_spacing( "edensity:grid_spacing" );  }
-namespace edensity { RealOptionKey const centroid_density_mass( "edensity:centroid_density_mass" );  }
 namespace edensity { IntegerOptionKey const sliding_window( "edensity:sliding_window" );  }
 namespace edensity { RealOptionKey const force_apix( "edensity:force_apix" );  }
 namespace edensity { RealOptionKey const fastdens_wt( "edensity:fastdens_wt" );  }
@@ -165,6 +159,7 @@ namespace remodel { FileOptionKey const blueprint( "remodel:blueprint" );  }
 namespace remodel { FileOptionKey const cstfile( "remodel:cstfile" );  }
 namespace remodel { IntegerOptionKey const cstfilter( "remodel:cstfilter" );  }
 namespace remodel { StringOptionKey const cen_sfxn( "remodel:cen_sfxn" );  }
+namespace remodel { BooleanOptionKey const check_scored_centroid( "remodel:check_scored_centroid" );  }
 namespace remodel { IntegerOptionKey const num_trajectory( "remodel:num_trajectory" );  }
 namespace remodel { IntegerOptionKey const save_top( "remodel:save_top" );  }
 namespace remodel { BooleanOptionKey const swap_refine_confirm_protocols( "remodel:swap_refine_confirm_protocols" );  }
@@ -180,6 +175,8 @@ namespace remodel { BooleanOptionKey const quick_and_dirty ( "remodel:quick_and_
 namespace remodel { BooleanOptionKey const checkpoint ( "remodel:checkpoint " );  }
 namespace remodel { BooleanOptionKey const use_ccd_refine ( "remodel:use_ccd_refine " );  }
 namespace remodel { BooleanOptionKey const use_pose_relax ( "remodel:use_pose_relax " );  }
+namespace remodel { BooleanOptionKey const use_cart_relax ( "remodel:use_cart_relax " );  }
+namespace remodel { BooleanOptionKey const free_relax ( "remodel:free_relax " );  }
 namespace remodel { BooleanOptionKey const use_dssp_assignment( "remodel:use_dssp_assignment" );  }
 namespace remodel { BooleanOptionKey const keep_jumps_in_minimizer ( "remodel:keep_jumps_in_minimizer " );  }
 namespace remodel { FileOptionKey const output_fragfiles( "remodel:output_fragfiles" );  }
@@ -200,6 +197,10 @@ namespace remodel { BooleanOptionKey const lh_closure_filter( "remodel:lh_closur
 namespace remodel { BooleanOptionKey const cen_minimize( "remodel:cen_minimize" );  }
 namespace remodel { IntegerOptionKey const core_cutoff( "remodel:core_cutoff" );  }
 namespace remodel { IntegerOptionKey const boundary_cutoff( "remodel:boundary_cutoff" );  }
+namespace remodel { BooleanOptionKey const resclass_by_sasa( "remodel:resclass_by_sasa" );  }
+namespace remodel { RealOptionKey const helical_rise( "remodel:helical_rise" );  }
+namespace remodel { RealOptionKey const helical_radius( "remodel:helical_radius" );  }
+namespace remodel { RealOptionKey const helical_omega( "remodel:helical_omega" );  }
 namespace remodel { namespace domainFusion { BooleanOptionKey const domainFusion( "remodel:domainFusion" );  } }
 namespace remodel { namespace domainFusion { FileOptionKey const insert_segment_from_pdb( "remodel:domainFusion:insert_segment_from_pdb" );  } }
 namespace remodel { RealOptionKey const vdw( "remodel:vdw" );  }
@@ -217,6 +218,7 @@ namespace remodel { RealOptionKey const match_rt_limit( "remodel:match_rt_limit"
 namespace remodel { IntegerVectorOptionKey const disulf_landing_range( "remodel:disulf_landing_range" );  }
 namespace remodel { namespace design { BooleanOptionKey const design( "remodel:design" );  } }
 namespace remodel { namespace design { BooleanOptionKey const no_design ( "remodel:design:no_design " );  } }
+namespace remodel { namespace design { BooleanOptionKey const design_all( "remodel:design:design_all" );  } }
 namespace remodel { namespace design { BooleanOptionKey const allow_rare_aro_chi( "remodel:design:allow_rare_aro_chi" );  } }
 namespace remodel { namespace design { BooleanOptionKey const silent( "remodel:design:silent" );  } }
 namespace remodel { namespace design { BooleanOptionKey const skip_partial( "remodel:design:skip_partial" );  } }

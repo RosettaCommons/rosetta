@@ -16,6 +16,7 @@
 // unit headers
 #include <protocols/forge/remodel/RemodelLoopMover.hh>
 #include <protocols/forge/remodel/RemodelLoopMoverCreator.hh>
+#include <protocols/forge/remodel/RemodelGlobalFrame.hh>
 
 // package headers
 #include <protocols/forge/methods/chainbreak_eval.hh>
@@ -34,6 +35,8 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/symmetry/util.hh>
+#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <core/scoring/Energies.hh>
 #include <core/chemical/AtomType.hh>
 
@@ -76,6 +79,7 @@
 
 // boost headers
 #include <boost/format.hpp>
+#include <boost/algorithm/string.hpp>
 
 // C++ headers
 #include <algorithm>
@@ -469,7 +473,17 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 				}
 			}
 
+// all subsequent steps of repeat_structure gets RGF, so the initial build actually don't need it.
 
+/*								TR <<  "preRGF " << std::endl;
+		if (basic::options::option[ OptionKeys::remodel::helical_rise].user() &&
+		    basic::options::option[ OptionKeys::remodel::helical_radius].user() &&
+		    basic::options::option[ OptionKeys::remodel::helical_omega].user()){
+					RGF_.restore_original_cst(repeat_pose);
+					RGF_.setup_helical_constraint(repeat_pose);
+		}
+								TR <<  "postRGF " << std::endl;
+*/
 		//}
 		//check tree:
 		//TR << f << std::endl;
@@ -684,6 +698,7 @@ void RemodelLoopMover::repeat_sync( //utility function
 	using core::Size;
 	using namespace protocols::loops;
 	using namespace core::kinematics;
+	using namespace basic::options;
 
 	//repeat_pose.dump_pdb("repeatPose_in_rep_propagate.pdb");
 
@@ -760,6 +775,14 @@ void RemodelLoopMover::repeat_sync( //utility function
 				}
 		}
 	}
+	
+	if ( option[ OptionKeys::remodel::helical_rise].user() &&
+	     option[ OptionKeys::remodel::helical_radius].user() &&
+	     option[ OptionKeys::remodel::helical_omega].user()){
+					RGF_.restore_original_cst(repeat_pose);
+					RGF_.setup_helical_constraint(repeat_pose);
+	}
+
 	//repeat_pose.dump_pdb("rep_test.pdb");
 }
 
@@ -771,6 +794,7 @@ void RemodelLoopMover::repeat_propagation( //utility function
 {
 	using core::Size;
 	using namespace protocols::loops;
+	using namespace basic::options;
 	using namespace core::kinematics;
 
 	//repeat_pose.dump_pdb("repeatPose_in_rep_propagate.pdb");
@@ -924,6 +948,12 @@ void RemodelLoopMover::repeat_propagation( //utility function
 		}
 	}
 
+	if (option[ OptionKeys::remodel::helical_rise].user() &&
+			option[ OptionKeys::remodel::helical_radius].user() &&
+			option[ OptionKeys::remodel::helical_omega].user()){
+					RGF_.restore_original_cst(repeat_pose);
+					RGF_.setup_helical_constraint(repeat_pose);
+	}
 	//repeat_pose.dump_pdb("repeatPose_in_rep_propagate_setAngle.pdb");
 	//loop over the tail fragment to the first fragment
 
@@ -946,6 +976,7 @@ void RemodelLoopMover::repeat_propagation( //utility function
 void RemodelLoopMover::apply( Pose & pose ) {
 
 	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core;
 	using core::kinematics::FoldTree;
 	//using protocols::jd2::JobDistributor;
@@ -965,6 +996,27 @@ void RemodelLoopMover::apply( Pose & pose ) {
 	if ( option[ OptionKeys::remodel::repeat_structure ].user() ) {
 		repeat_generation_with_additional_residue(pose, repeat_pose_);
 
+		//initialize values that would be lost once the pose is turn symmetrical
+		unit_length_ = pose.total_residue();
+		repeat_length_ = repeat_pose_.total_residue();
+
+/* not fully implemented yet, developmental
+ if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
+    simple_moves::symmetry::SetupForSymmetryMover pre_mover;
+
+		//try making both symmetrical
+    //pre_mover.apply( repeat_pose_ );
+    pre_mover.apply( pose );
+    // Remodel assumes chain ID is ' '
+    //pose::PDBInfoOP pdb_info ( repeat_pose_.pdb_info() );
+    pose::PDBInfoOP pdb_info ( pose.pdb_info() );
+    for ( Size i=1; i<= pdb_info->nres(); ++i ){
+      pdb_info->chain(i,' ');
+    }
+    pose.pdb_info( pdb_info );
+  }
+*/
+
 		// take care of constraints:
 
 		// user defined constraint from file, make sure to do this first as it
@@ -976,7 +1028,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 			repeat_constraint->apply( repeat_pose_ );
 		}
 
-		/*// ResidueTypeLinkingConstraints
+/* // ResidueTypeLinkingConstraints
 		Size repeat_number = option[ OptionKeys::remodel::repeat_structure ];
 		Real bonus = 10;
 		//std::cout << "RESIDUETYPELINKING CST" << std::endl;
@@ -986,9 +1038,30 @@ void RemodelLoopMover::apply( Pose & pose ) {
 				repeat_pose_.add_constraint( new scoring::constraints::ResidueTypeLinkingConstraint( repeat_pose_, res, res+(segment_length*rep), bonus ) );
 				//std::cout << res << " " << res+(segment_length*rep) << std::endl;
 			}
-		}*/
+		}
+*/	
+			if (option[ OptionKeys::remodel::helical_rise].user() &&
+			    option[ OptionKeys::remodel::helical_radius].user() &&
+			    option[ OptionKeys::remodel::helical_omega].user()){
+							RGF_.set_native_cst_set( repeat_pose_ );
+				TR.Debug << "repeat_pose_ length: " << repeat_length_ << std::endl;
+							RGF_.set_segment_size( repeat_length_/option[ OptionKeys::remodel::repeat_structure] );
+			}
+	}
+/*
+			// ResidueTypeLinkingConstraints
+			Size repeat_number = basic::options::option[ OptionKeys::remodel::repeat_structure];
+			Real bonus = 10;
+			//std::cout << "RESIDUETYPELINKING CST" << std::endl;
+		  Size segment_length = (repeat_pose_.n_residue())/repeat_number;
+		  for (Size rep = 1; rep < repeat_number; rep++ ){ // from 1 since first segment don't need self-linking
+			  for (Size res = 1; res <= segment_length; res++){
+					 repeat_pose_.add_constraint( new ResidueTypeLinkingConstraint(repeat_pose_, res, res+(segment_length*rep), bonus));
+	//				std::cout << res << " " << res+(segment_length*rep) << std::endl;
+			  }
+		  }
 
-		/*std::stringstream templateRangeSS;
+		std::stringstream templateRangeSS;
 		templateRangeSS << "1-" << segment_length;
 
 		// Dihedral (NCS) Constraints
@@ -1000,8 +1073,8 @@ void RemodelLoopMover::apply( Pose & pose ) {
 			//std::cout << templateRangeSS.str() << " " << targetSS.str() << std::endl;
 
 			setup_ncs.add_group(templateRangeSS.str(), targetSS.str());
-		}*/
-
+		}
+*/
 
 /*   If want cyclize peptide in frag insertion, uncomment here.  But in
  *   practice, it seems to screw up more than helping.  So currently do
@@ -1013,7 +1086,6 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		}
 */
 
-	}
 
 	// for accumulation of closed structures (only return the best)
 	std::multimap< Real, PoseOP > accumulator;
@@ -1055,10 +1127,8 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		mc.reset(repeat_pose_);
 	}
 	else {
-			mc.reset(pose);
+		mc.reset(pose);
 	}
-
-
 
 	for ( Size attempt = 1; attempt <= allowed_closure_attempts_; ++attempt ) {
 
@@ -1505,7 +1575,7 @@ void RemodelLoopMover::loophash_stage(
 			add_cutpoint_variants( repeat_pose_ );
 			mc.reset(repeat_pose_);
 		}	else{
-		mc.reset( pose );
+			mc.reset( pose );
 		}
 		// reset counters
 		mc.reset_counters();
@@ -1674,20 +1744,32 @@ void RemodelLoopMover::loophash_stage(
 						Size idxresStop = seg_length-1;
 
 						//special case for DB's test
-						core::util::ABEGOManager AM;
-						std::string alphabet;
-						std::string target = filter_target[loop_number];
-						for (Size idx = idxresStart; idx <= idxresStop; idx++){
-							alphabet += AM.index2symbol( AM.torsion2index(phi[idx],psi[idx], omega[idx],1));
-						}
-						runtime_assert(alphabet.length() == target.length());
-						if ( alphabet.compare( target ) != 0 ){
-							//std::cout << "lh frag at " << idxresStart << " and " << idxresStop << " not as " << target <<  ": " <<  alphabet << std::endl;
-							lh_frag_count--;
-							continue;
-						}
+					  if (basic::options::option[ OptionKeys::remodel::lh_filter_string].user()){
+										core::util::ABEGOManager AM;
+										std::string alphabet;
+										std::string target = filter_target[loop_number];
+										//turn string to same case
+										boost::to_upper(target);
 
+										for (Size idx = idxresStart; idx <= idxresStop; idx++){
+											alphabet += AM.index2symbol( AM.torsion2index(phi[idx],psi[idx], omega[idx],1));
+										}
+										runtime_assert(alphabet.length() == target.length());
 
+										// if X is contained in the filter string, don't filter
+										if ( target.find('X') != std::string::npos){ // X found
+										//do nothing
+										} else if ( alphabet.compare( target ) != 0 && target.find('X') == std::string::npos ){ //No X in filter and if alphabet and target don't match, skip segment
+											TR.Debug << "lh frag at " << idxresStart << " and " << idxresStop << " not as " << target <<  ": " <<  alphabet << std::endl;
+											lh_frag_count--;
+											continue;
+										} else if ( alphabet.compare(target ) == 0 && target.find('X') == std::string::npos ){ 
+										//found a match string, do nothing
+										}
+										else {
+											TR.Debug << "logic error somewhere in lh filter string" << std::endl;
+										}
+						}
 
 						/*
 						Pose test_segment;
@@ -2161,10 +2243,10 @@ void RemodelLoopMover::independent_stage(
 		add_cutpoint_variants( pose );
 		if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
 			repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
-		add_cutpoint_variants( repeat_pose_ );
+			add_cutpoint_variants( repeat_pose_ );
 			mc.reset(repeat_pose_);
 		}	else{
-		mc.reset( pose );
+			mc.reset( pose );
 		}
 		// reset counters
 		mc.reset_counters();
@@ -2409,7 +2491,7 @@ void RemodelLoopMover::boost_closure_stage(
 		add_cutpoint_variants( pose );
 		if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
 			repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
-		add_cutpoint_variants( repeat_pose_ );
+			add_cutpoint_variants( repeat_pose_ );
 			mc.reset(repeat_pose_);
 		}	else{
 			mc.reset( pose );

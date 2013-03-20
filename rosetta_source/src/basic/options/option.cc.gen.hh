@@ -677,11 +677,11 @@ option.add( basic::options::OptionKeys::fold_cst::stage1_ramp_cst_cycle_factor, 
 option.add( basic::options::OptionKeys::fold_cst::stage2_constraint_threshold, "stop runs that violate this threshold at end of stage2" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::ignore_sequence_seperation, "usually constraints are switched on according to their separation in the fold-tree" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::no_recover_low_at_constraint_switch, "dont recover low when max_seq_sep is increased" ).def(false);
+option.add( basic::options::OptionKeys::fold_cst::ramp_coord_cst, "ramp coord csts just like chainbreak-weights during fold-cst" ).def(false);
+option.add( basic::options::OptionKeys::resample::resample, "resample option group" ).legal(true).def(true);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::ramp_coord_cst, "ramp coord csts just like chainbreak-weights during fold-cst" ).def(false);
-option.add( basic::options::OptionKeys::resample::resample, "resample option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::resample::silent, "a silent file for decoys to restart sampling from " ).def("");
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::resample::silent, "a silent file for decoys to restart sampling from " ).def("");
 option.add( basic::options::OptionKeys::resample::tag, "which decoy to select from silent file " ).def("");
 option.add( basic::options::OptionKeys::resample::stage1, "if true restart after stage1, otherwise after stage2 " ).def(false);
 option.add( basic::options::OptionKeys::resample::stage2, "if true restart after stage1, otherwise after stage2 " ).def(false);
@@ -1353,13 +1353,13 @@ option.add( basic::options::OptionKeys::rbe::poll_frequency, "No description" ).
 option.add( basic::options::OptionKeys::blivens::blivens, "blivens option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::blivens::disulfide_scorer::disulfide_scorer, "disulfide_scorer option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::blivens::disulfide_scorer::nds_prob, "The probability of scoring a non-disulfide pair" ).def(0.0);
-
-}
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::blivens::disulfide_scorer::cys_prob, "The probability of outputing a pair of non-disulf cysteines. Default to nds_prob" ).def(-1.0);
+option.add( basic::options::OptionKeys::blivens::disulfide_scorer::cys_prob, "The probability of outputing a pair of non-disulf cysteines. Default to nds_prob" ).def(-1.0);
 option.add( basic::options::OptionKeys::blivens::score_type, "The scoring type to use, eg for a filter." ).def("total_score");
 option.add( basic::options::OptionKeys::krassk::krassk, "krassk option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::krassk::left_tail, "No description" ).def(0);
-option.add( basic::options::OptionKeys::krassk::right_tail, "No description" ).def(0);
+
+}
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::krassk::right_tail, "No description" ).def(0);
 option.add( basic::options::OptionKeys::krassk::tail_mode, "No description" ).def(false);
 option.add( basic::options::OptionKeys::krassk::tail_mode_name, "No description" ).def(1);
 option.add( basic::options::OptionKeys::krassk::tail_output_file_name, "No description" ).def("tail_output");
@@ -2029,15 +2029,15 @@ option.add( basic::options::OptionKeys::RBSegmentRelax::helical_movement_params,
 option.add( basic::options::OptionKeys::RBSegmentRelax::strand_movement_params, "strand-in-plane-rotation, strand-in-plane-translation, out-of-plane-rotation, out-of-plane-translationn" ).def(utility::vector1<float>(4,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::default_movement_params, "default-rotation, default-translation" ).def(utility::vector1<float>(2,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_seqwidth, "sequence width on constraints" ).def(0);
-
-}
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::edensity::edensity, "edensity option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::edensity::edensity, "edensity option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::edensity::debug, "No description" ).def(false);
 option.add( basic::options::OptionKeys::edensity::mapfile, "No description" );
 option.add( basic::options::OptionKeys::edensity::mapreso, "No description" ).def(3.0);
 option.add( basic::options::OptionKeys::edensity::grid_spacing, "No description" ).def(0.0);
 option.add( basic::options::OptionKeys::edensity::centroid_density_mass, "No description" ).def(0.0);
-option.add( basic::options::OptionKeys::edensity::sliding_window, "No description" ).def(1);
+
+}
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::edensity::sliding_window, "No description" ).def(1);
 option.add( basic::options::OptionKeys::edensity::force_apix, "force pixel spacing to take a particular value" ).def(0.0);
 option.add( basic::options::OptionKeys::edensity::fastdens_wt, "wt of fast edens score" ).def(0.0);
 option.add( basic::options::OptionKeys::edensity::sliding_window_wt, "wt of edens sliding-window score" ).def(0.0);
@@ -2198,6 +2198,7 @@ option.add( basic::options::OptionKeys::remodel::blueprint, "blueprint file name
 option.add( basic::options::OptionKeys::remodel::cstfile, "description" );
 option.add( basic::options::OptionKeys::remodel::cstfilter, "filter cst energy" ).def(10);
 option.add( basic::options::OptionKeys::remodel::cen_sfxn, "centroid score function to be used for building" ).def("remodel_cen");
+option.add( basic::options::OptionKeys::remodel::check_scored_centroid, "dump centroid structures after build" );
 option.add( basic::options::OptionKeys::remodel::num_trajectory, "Number of remodel trajectories." ).def(10);
 option.add( basic::options::OptionKeys::remodel::save_top, "the number of final low scoring pdbs to keep." ).def(5);
 option.add( basic::options::OptionKeys::remodel::swap_refine_confirm_protocols, "swapping the protocols used refinement and confirmation" ).def(false);
@@ -2213,6 +2214,8 @@ option.add( basic::options::OptionKeys::remodel::quick_and_dirty , " only do fra
 option.add( basic::options::OptionKeys::remodel::checkpoint , " this writes out the best pdbs collected so far after each design step." );
 option.add( basic::options::OptionKeys::remodel::use_ccd_refine , " maintain a default chainbreak position (loop start+1) and try using CCD for refinement.  try 20 times for 5 closed loops." );
 option.add( basic::options::OptionKeys::remodel::use_pose_relax , " an alternative to the default minimization step, but use constraints in a similar way." );
+option.add( basic::options::OptionKeys::remodel::use_cart_relax , " an alternative to the default minimization step, but use constraints in a similar way." );
+option.add( basic::options::OptionKeys::remodel::free_relax , " running pose_relax with no constraints." );
 option.add( basic::options::OptionKeys::remodel::use_dssp_assignment, " use dssp assignment." );
 option.add( basic::options::OptionKeys::remodel::keep_jumps_in_minimizer , " no constraint is setup for minimization, only rebuilt regions allow bbmove." );
 option.add( basic::options::OptionKeys::remodel::output_fragfiles, "output fragment file [filename ,e.g. aafr01]." );
@@ -2231,8 +2234,12 @@ option.add( basic::options::OptionKeys::remodel::lh_filter_string, "loophash ABE
 option.add( basic::options::OptionKeys::remodel::lh_cbreak_selection, "loophash with cbreak dominant weight" ).def(10);
 option.add( basic::options::OptionKeys::remodel::lh_closure_filter, "filter for close rms when bypass_closure is used" ).def(false);
 option.add( basic::options::OptionKeys::remodel::cen_minimize, "centroid minimization after fragment building" ).def(false);
-option.add( basic::options::OptionKeys::remodel::core_cutoff, "number of neighbors required to consider core in auto design" ).def(15);
-option.add( basic::options::OptionKeys::remodel::boundary_cutoff, "number of neighbors required to consider boundary in auto design" ).def(10);
+option.add( basic::options::OptionKeys::remodel::core_cutoff, "number of neighbors required to consider core in auto design" ).def(18);
+option.add( basic::options::OptionKeys::remodel::boundary_cutoff, "number of neighbors required to consider boundary in auto design" ).def(15);
+option.add( basic::options::OptionKeys::remodel::resclass_by_sasa, "switch to use sasa for residue classification" ).def(false);
+option.add( basic::options::OptionKeys::remodel::helical_rise, "helical parameter: rise" ).def(0.0);
+option.add( basic::options::OptionKeys::remodel::helical_radius, "helical parameter: radius" ).def(0.0);
+option.add( basic::options::OptionKeys::remodel::helical_omega, "helical parameter: omega" ).def(0.0);
 option.add( basic::options::OptionKeys::remodel::domainFusion::domainFusion, "domainFusion option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::remodel::domainFusion::insert_segment_from_pdb, "segment pdb file to be inserted [insert pdb file name]." ).def("");
 option.add( basic::options::OptionKeys::remodel::vdw, "set vdw weight" ).def(1.0);
@@ -2250,6 +2257,7 @@ option.add( basic::options::OptionKeys::remodel::match_rt_limit, "match RT score
 option.add( basic::options::OptionKeys::remodel::disulf_landing_range, "residue range for disulf landing sites" ).n(2);
 option.add( basic::options::OptionKeys::remodel::design::design, "design option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::remodel::design::no_design , " skips all design steps. WARNING: will only output centroid level structures and dump all fragment tries." );
+option.add( basic::options::OptionKeys::remodel::design::design_all, " force AUTO design procedure (layered) to perform design on all positions. " );
 option.add( basic::options::OptionKeys::remodel::design::allow_rare_aro_chi, "allow all aromatic rotamers, not issuing AroChi2 filter" ).def(false);
 option.add( basic::options::OptionKeys::remodel::design::silent, " dumps all structures by silent-mode WARNING: will work only during no_design protocol (see -no_design)." );
 option.add( basic::options::OptionKeys::remodel::design::skip_partial, " skip design stage that operate only on burial positions" ).def(false);

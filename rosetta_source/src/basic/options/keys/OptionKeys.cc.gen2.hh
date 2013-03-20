@@ -1,7 +1,3 @@
-namespace blivens { namespace disulfide_scorer { RealOptionKey const cys_prob( "blivens:disulfide_scorer:cys_prob" );  } }
-namespace blivens { StringOptionKey const score_type( "blivens:score_type" );  }
-namespace krassk { BooleanOptionKey const krassk( "krassk" );  }
-namespace krassk { IntegerOptionKey const left_tail( "krassk:left_tail" );  }
 namespace krassk { IntegerOptionKey const right_tail( "krassk:right_tail" );  }
 namespace krassk { BooleanOptionKey const tail_mode( "krassk:tail_mode" );  }
 namespace krassk { IntegerOptionKey const tail_mode_name( "krassk:tail_mode_name" );  }
@@ -672,3 +668,9 @@ namespace RBSegmentRelax { RealVectorOptionKey const helical_movement_params( "R
 namespace RBSegmentRelax { RealVectorOptionKey const strand_movement_params( "RBSegmentRelax:strand_movement_params" );  }
 namespace RBSegmentRelax { RealVectorOptionKey const default_movement_params( "RBSegmentRelax:default_movement_params" );  }
 namespace RBSegmentRelax { IntegerOptionKey const cst_seqwidth( "RBSegmentRelax:cst_seqwidth" );  }
+namespace edensity { BooleanOptionKey const edensity( "edensity" );  }
+namespace edensity { BooleanOptionKey const debug( "edensity:debug" );  }
+namespace edensity { StringOptionKey const mapfile( "edensity:mapfile" );  }
+namespace edensity { RealOptionKey const mapreso( "edensity:mapreso" );  }
+namespace edensity { RealOptionKey const grid_spacing( "edensity:grid_spacing" );  }
+namespace edensity { RealOptionKey const centroid_density_mass( "edensity:centroid_density_mass" );  }

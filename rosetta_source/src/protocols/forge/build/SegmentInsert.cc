@@ -32,6 +32,8 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/PDBInfo.hh>
 #include <basic/Tracer.hh>
+#include <basic/options/keys/remodel.OptionKeys.gen.hh>
+
 
 // numeric headers
 #include <numeric/random/random.hh>
@@ -393,7 +395,7 @@ SegmentInsert::MoveMap SegmentInsert::movemap() const {
 	}
 
 	// mark fully moveable parts of left flanking region
-	for ( Size i = left_flank.left + 1; i <= left_flank.left; ++i ) {
+	for ( Size i = left_flank.left + 1; i <= left_flank.right; ++i ) {
 		mm.set_bb( i, true );
 	}
 
@@ -725,6 +727,10 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 		false
 	);
 
+	//testing
+	//first identify the number of jups at this stage, this is the number to keep.
+	Size num_jumps_pre_processing (pose.num_jump());
+
 	// BEGIN INTERVAL SHIFT: after this point, interval_ will begin to shift due to length
 	// changes in the Pose
 
@@ -946,13 +952,13 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 	// the new endpoints of the rebuilt segment
 
 	// pick a cutpoint and set the new topology if doing internal insertion
+	Size new_cutpoint = 0; // move this outside of the if statement, because the position is needed for editing no-jump tree
 	if ( !( performing_n_term_insertion || performing_c_term_insertion ) ) {
 
 		FoldTree new_ft = pose.fold_tree();
 		Size const cutpoint = find_cutpoint( pose, interval_.left, interval_.right );
 		assert( cutpoint > 0 ); // there should be a cutpoint
 
-		Size new_cutpoint = 0;
 		switch ( insert_connection_scheme ) {
 			case N: {
 				// must remember to avoid making cut that affects bb torsions
@@ -1040,6 +1046,62 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 		ft.reorder( pose.fold_tree().root() );
 		pose.fold_tree( ft );
 	}
+
+ // special case for Remodel
+  if (basic::options::option[basic::options::OptionKeys::remodel::no_jumps]){
+    //ft.simple_tree(pose.total_residue());
+    //idealize across the loop, in case they are not -- a big problem when taking out jumps
+  //  protocols:loops::Loops loops_def_for_idealization;
+   // loops_def_for_idealization.add_loop(protocols::loops::Loop(interval_.left-2,interval_.right+2, 1));
+
+    utility::vector1<Size> cuts;
+    utility::vector1< std::pair<Size,Size> > jumps;
+    protocols::forge::methods::jumps_and_cuts_from_pose(pose,jumps, cuts);
+    //debug
+    //std::cout << "num cuts: " << cuts.size() << " num jumps: " << jumps.size() << std::endl;
+    //translate:
+    ObjexxFCL::FArray1D_int Fcuts( num_jumps_pre_processing);
+    ObjexxFCL::FArray2D_int Fjumps(2, num_jumps_pre_processing);
+
+  for ( Size i = 1; i<= num_jumps_pre_processing; ++i ) { // only keeping the old jumps, wipe new ones
+      //std::cout << (int)jumps[i].first << " " << (int)jumps[i].second << std::endl;
+
+      Fjumps(1,i) = std::min( (int)jumps[i].first, (int)jumps[i].second);
+      Fjumps(2,i) = std::max( (int)jumps[i].first, (int)jumps[i].second);
+      // DEBUG -- PRINT JUMPS AND CUTS
+      //TR.Error << " jump " << i << " : " << jumps(1,i) << " , " << jumps(2,i) << std::endl;
+    }
+    //for ( Size i = 1; i<= num_jumps_pre_processing; ++i ) {
+    //erase the new cut created
+    for (utility::vector1<Size>::iterator it=cuts.begin(), ite=cuts.end(); it != ite; it++){
+        //std::cout << *it << " vs " << new_cut << std::endl;
+        if (*(it) == new_cutpoint){
+          //std::cout << "erasing " << *it << std::endl;
+          cuts.erase(it);
+        }
+    }
+
+
+    for ( Size i = 1; i<= cuts.size(); ++i ) {
+      //std::cout << "cut " << (int)cuts[i] << std::endl;
+      Fcuts(i) = (int)cuts[i];
+  //    std::cout << " cut " << i << " : " << cuts(i) << std::endl;
+    }
+
+    // 4 make the foldtree
+    FoldTree nojump_ft;
+    nojump_ft.tree_from_jumps_and_cuts( pose.total_residue(), num_jumps_pre_processing, Fjumps, Fcuts, ft.root(), true ); // true );
+    //std::cout << nojump_ft << std::endl;
+
+    pose.fold_tree(nojump_ft);
+    //std::cout << "IDEALIZE " << interval_.left << " to " << interval_.right << std::endl;
+    //protocols::loops::set_extended_torsions_and_idealize_loops( pose, loops_def_for_idealization);
+    for (Size i = interval_.left; i <= interval_.right; i++){
+      core::conformation::idealize_position(i, pose.conformation());
+    }
+  }
+
+
 
 	// Mark flanking regions and any existing connecting residues at left-1 and right
 	// needing omega correction.  Omega correction is not actually performed until

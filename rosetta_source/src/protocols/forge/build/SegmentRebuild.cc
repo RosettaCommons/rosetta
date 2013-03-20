@@ -528,7 +528,8 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 
 		// only grow right; termini will not be recovered here due to prior
 		// residue deletions and is corrected for below
-		assert( grow_right_rtype( pose, interval_.left, r_types.begin(), r_types.end() ) == interval_.right - 1 );
+		Size const right_endpoint = grow_right_rtype( pose, interval_.left, r_types.begin(), r_types.end() ); 
+    assert( right_endpoint == interval_.right - 1 ); 
 
 		// set to proper interval
 		assert( ss_.length() == interval_.right - 1);

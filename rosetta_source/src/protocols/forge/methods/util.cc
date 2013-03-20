@@ -45,6 +45,7 @@
 #include <basic/options/option.hh>
 #include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
 #include <protocols/loops/Loops.hh>
+#include <core/scoring/sasa.hh>
 
 #include <core/pose/PDBPoseMap.hh>
 
@@ -508,6 +509,32 @@ fill_non_loop_cst_set(
 			}
 		}
 	}
+
+/// @brief return accessible surface area for each residue
+utility::vector1< core::Real > const
+calc_rsd_sasa( core::pose::Pose const & pose ) {
+
+  // define atom_map for main-chain and CB
+  core::id::AtomID_Map< bool > atom_map;
+  core::pose::initialize_atomid_map( atom_map, pose, false );
+  for ( core::Size ir = 1; ir <= pose.total_residue(); ++ir ) {
+    for ( core::Size j = 1; j<=5; ++j ) {
+      core::id::AtomID atom( j, ir );
+      atom_map.set( atom, true );
+    }
+  }
+
+  // calc sasa
+  core::id::AtomID_Map< core::Real > atom_sasa;
+  utility::vector1< core::Real > rsd_sasa;
+	core::Real pore_radius = 2.0;
+  core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, pore_radius, false, atom_map );
+
+  return rsd_sasa;
+} // calc_residue_sasa
+
+
+
 
 
 void cyclize_pose(core::pose::Pose & pose) {

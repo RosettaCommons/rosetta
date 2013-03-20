@@ -517,6 +517,9 @@ void VarLengthBuild::apply( Pose & pose ) {
 		pose = archive_pose;
 
 	}
+//	pose.dump_pdb("vlb_aft_everything.pdb");
+//	std::cout << "fold tree after everything: " << pose.fold_tree() << std::endl;
+//	std::cout << "cutpoints: " << pose.fold_tree().cutpoints() << std::endl;
 }
 
 
