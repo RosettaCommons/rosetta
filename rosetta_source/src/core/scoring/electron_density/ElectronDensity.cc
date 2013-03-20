@@ -48,21 +48,22 @@
 #include <basic/resource_manager/ResourceManager.hh>
 #include <basic/resource_manager/util.hh>
 
+//Auto Headers
+#include <core/chemical/AtomType.hh>
+#include <core/chemical/AtomTypeSet.hh>
+#include <core/id/AtomID.hh>
+#include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
+#include <core/scoring/EnergyGraph.hh>
+
 // Utility headers
 #include <utility/string_util.hh>
 
 // C++ headers
 #include <fstream>
 #include <limits>
+#include <complex>
 
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/id/AtomID.hh>
-#include <utility/vector1.hh>
-#include <utility/excn/Exceptions.hh>
-
-//Auto Headers
-#include <core/scoring/EnergyGraph.hh>
 #ifndef WIN32
 	#include <pthread.h>
 #endif
@@ -931,7 +932,6 @@ core::Real ElectronDensity::matchPose(
 
 	if (!DensScoreInMinimizer) cacheCCs = false;
 
-	//ObjexxFCL::FArray3D< double >  rho_calc, inv_rho_mask;
 	ObjexxFCL::FArray3D< double >  inv_rho_mask;
 	rho_calc.dimension(density.u1() , density.u2() , density.u3());
 	inv_rho_mask.dimension(density.u1() , density.u2() , density.u3());
@@ -1163,6 +1163,113 @@ core::Real ElectronDensity::matchPose(
 	}
 
 	return CC_i;
+}
+
+
+/// @brief Compute the FSC in the specified resolution range
+core::Real
+ElectronDensity::getFSC(
+	core::pose::Pose const &pose,
+	core::Real res_low,
+	core::Real res_high
+) {
+	// flip hi/low
+	if (res_high > res_low) {
+		Real temp = res_low;
+		res_low = res_high;
+		res_high = temp;
+	}
+
+	// rho_c
+	const core::Real ATOM_MASK_PADDING = 1.5;
+	rho_calc.dimension(density.u1() , density.u2() , density.u3());
+	for (int i=0; i<density.u1()*density.u2()*density.u3(); ++i) rho_calc[i]=0.0;
+	int nres = pose.total_residue(); //reses.size();
+	for (int i=1 ; i<=nres; ++i) {
+		numeric::xyzVector<core::Real> atm_idx;
+		conformation::Residue const &rsd_i (pose.residue(i));
+		if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
+		if ( scoring_mask_.find(i) != scoring_mask_.end() ) continue;
+
+		int nheavyatoms = rsd_i.nheavyatoms();
+
+		for (int j=1 ; j<=nheavyatoms; ++j) {
+			conformation::Atom const &atm_i( rsd_i.atom(j) );
+			chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
+			std::string elt_i = atom_type_set[ rsd_i.atom_type_index( j ) ].element();
+			OneGaussianScattering sig_j = get_A( elt_i );
+			core::Real k = sig_j.k( PattersonB, max_del_grid );
+			core::Real C = sig_j.C( k );
+
+			if ( is_missing_density( atm_i.xyz() ) ) continue;
+			if ( C < 1e-6 ) continue;
+
+			numeric::xyzVector< core::Real> cartX = atm_i.xyz() - getTransform();
+			numeric::xyzVector< core::Real> fracX = c2f*cartX;
+			numeric::xyzVector< core::Real> atm_j, del_ij;
+			atm_idx[0] = pos_mod (fracX[0]*grid[0] - origin[0] + 1 , (double)grid[0]);
+			atm_idx[1] = pos_mod (fracX[1]*grid[1] - origin[1] + 1 , (double)grid[1]);
+			atm_idx[2] = pos_mod (fracX[2]*grid[2] - origin[2] + 1 , (double)grid[2]);
+			for (int z=1; z<=density.u3(); ++z) {
+				atm_j[2] = z;
+				del_ij[2] = (atm_idx[2] - atm_j[2]) / grid[2];
+				if (del_ij[2] > 0.5) del_ij[2]-=1.0; if (del_ij[2] < -0.5) del_ij[2]+=1.0;
+				del_ij[0] = del_ij[1] = 0.0;
+				if ((f2c*del_ij).length_squared() > (ATOM_MASK+ATOM_MASK_PADDING)*(ATOM_MASK+ATOM_MASK_PADDING)) continue;
+				for (int y=1; y<=density.u2(); ++y) {
+					atm_j[1] = y;
+					del_ij[1] = (atm_idx[1] - atm_j[1]) / grid[1] ;
+					if (del_ij[1] > 0.5) del_ij[1]-=1.0; if (del_ij[1] < -0.5) del_ij[1]+=1.0;
+					del_ij[0] = 0.0;
+					if ((f2c*del_ij).length_squared() > (ATOM_MASK+ATOM_MASK_PADDING)*(ATOM_MASK+ATOM_MASK_PADDING)) continue;
+					for (int x=1; x<=density.u1(); ++x) {
+						atm_j[0] = x;
+						del_ij[0] = (atm_idx[0] - atm_j[0]) / grid[0];
+						if (del_ij[0] > 0.5) del_ij[0]-=1.0; if (del_ij[0] < -0.5) del_ij[0]+=1.0;
+						numeric::xyzVector< core::Real > cart_del_ij = (f2c*del_ij);  // cartesian offset from (x,y,z) to atom_i
+						core::Real d2 = (cart_del_ij).length_squared();
+
+						if (d2 <= (ATOM_MASK+ATOM_MASK_PADDING)*(ATOM_MASK+ATOM_MASK_PADDING)) {
+							core::Real atm = C*exp(-k*d2);
+							core::Real sigmoid_msk = exp( d2 - (ATOM_MASK)*(ATOM_MASK)  );
+							core::Real inv_msk = 1/(1+sigmoid_msk);
+							rho_calc(x,y,z) += atm;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// ffts
+	numeric::fourier::fft3(rho_calc, Frho_calc);
+	numeric::fourier::fft3(density, Fdensity);
+
+	// correl
+	numeric::xyzVector< core::Real > del_ij;
+	core::Real num=0, denom1=0, denom2=0;
+
+	int H,K,L;
+	for (int z=1; z<=(int)density.u3(); ++z) {
+		H = (z < (int)density.u3()/2) ? z-1 : z-density.u3() - 1;
+		for (int y=1; y<=(int)density.u2(); ++y) {
+			K = (y < (int)density.u2()/2) ? y-1 : y-density.u2()-1;
+			for (int x=1; x<=(int)density.u1(); ++x) {
+				L = (x < (int)density.u1()/2) ? x-1 : x-density.u1()-1;
+
+				Real Sinv_hkl = 1/sqrt(S2(H,K,L));
+//std::cerr << H << "," << K << "," << L << " : " << Sinv_hkl << "   " << std::abs( Frho_calc(x,y,z) * std::conj( Fdensity(x,y,z) ) ) << std::endl;
+				if ( Sinv_hkl <= res_low && Sinv_hkl >= res_high ) {
+					num += std::real( Frho_calc(x,y,z) * std::conj( Fdensity(x,y,z) ) );
+					denom1 += std::abs( Frho_calc(x,y,z) ) * std::abs( Frho_calc(x,y,z) );
+					denom2 += std::abs( Fdensity(x,y,z) ) * std::abs( Fdensity(x,y,z) );
+				}
+			}
+		}
+	}
+
+
+	return (num/sqrt(denom1*denom2));
 }
 
 numeric::xyzVector<core::Real> ElectronDensity::delt_cart(

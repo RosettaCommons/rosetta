@@ -118,13 +118,21 @@ public:
 		bool cacheCCs=false
 	);
 
-	/// @brief Quickly matches a centroid pose into a low-resolution density map
+	/// @brief Match a pose into a medium-resolution density map
 	///   by placing a single Gaussian at each atom
 	core::Real
 	matchPose(
 		core::pose::Pose const &pose,
 		core::conformation::symmetry::SymmetryInfoCOP symmInfo=NULL,
 		bool cacheCCs=false
+	);
+
+	/// @brief Compute the FSC in the specified resolution range
+	core::Real
+	getFSC(
+		core::pose::Pose const &pose,
+		core::Real res_low,
+		core::Real res_high
 	);
 
 	/// @brief Match a pose to a patterson map
@@ -403,8 +411,8 @@ private:
 	// the density data array
 	ObjexxFCL::FArray3D< float > density;
 
-	// fft of density
-	//ObjexxFCL::FArray3D< std::complex<double> > Fdensity;
+	// fft of density -- only used in FSC calc
+	ObjexxFCL::FArray3D< std::complex<double> > Fdensity;
 
 	// Controllable parameters
 	std::map< core::Size, bool > scoring_mask_;
@@ -426,7 +434,7 @@ private:
 	numeric::xyzVector< core::Real > fastorigin;  // for resampled maps
 
 	///////////////////
-	/// TONS OF CACHED STUFF
+	/// TONS OF CACHED STUFF <<< this should live in its own class!
 	///////////////////
 	// previously scored computed density map, fft(rho_calc), and patterson map
 	ObjexxFCL::FArray3D< double > rho_calc;
