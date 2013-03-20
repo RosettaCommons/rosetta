@@ -1,4 +1,5 @@
 -relax:fast
+-relax::default_repeats 1
 -pocket_zero_derivatives
 -pocket_max_spacing 12
 -pocket_psp false
