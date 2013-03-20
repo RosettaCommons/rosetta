@@ -245,13 +245,14 @@ ExtractAsymmetricPoseMover::~ExtractAsymmetricPoseMover(){}
 void
 ExtractAsymmetricPoseMover::apply( core::pose::Pose & pose )
 {
+	using namespace basic::options;
 	// If we are not symmetric do nothing
 	if ( !core::pose::symmetry::is_symmetric( pose ) ) return;
 
 	core::pose::symmetry::make_asymmetric_pose( pose );
 	//clear the symmetry deffinition option so it doesn't interfere with repack and minimization of
 	//the assymetric pose.
-	basic::options::option[OptionKeys::symmetry::symmetry_definition].clear();
+	option[OptionKeys::symmetry::symmetry_definition].clear();
 }
 
 void ExtractAsymmetricPoseMover::parse_my_tag(
