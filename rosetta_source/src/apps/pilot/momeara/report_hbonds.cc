@@ -71,6 +71,7 @@
 #include <utility/file/FileName.hh>
 #include <utility/file/FileName.fwd.hh>
 #include <utility/file/file_sys_util.hh>
+#include <utility/excn/Exceptions.hh>
 
 // c++ headers
 #include <iostream>
@@ -516,12 +517,15 @@ typedef utility::pointer::owning_ptr< HBondReporter > HBondReporterOP;
 
 int main( int argc, char* argv[] )
 {
+	try{
+	  NEW_OPT( HBondReporter::output, "Location of dumped hbond data", "hbonds.txt");
+	  NEW_OPT( HBondReporter::relax, "Perform relaxation before dumping hbonds", false);
+	  NEW_OPT( HBondReporter::relevant_chains, "relevant_chains", "*");
+	//NEW_OPT( HBondReporter::job_data_fname, "pdb indexed table with job related information", "");
 
-  NEW_OPT( HBondReporter::output, "Location of dumped hbond data", "hbonds.txt");
-  NEW_OPT( HBondReporter::relax, "Perform relaxation before dumping hbonds", false);
-  NEW_OPT( HBondReporter::relevant_chains, "relevant_chains", "*");
-//NEW_OPT( HBondReporter::job_data_fname, "pdb indexed table with job related information", "");
-
-  devel::init(argc, argv);
-  JobDistributor::get_instance()->go(new HBondReporter);
+	  devel::init(argc, argv);
+	  JobDistributor::get_instance()->go(new HBondReporter);
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 }

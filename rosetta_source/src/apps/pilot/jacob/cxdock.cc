@@ -33,6 +33,8 @@
 
 #include <apps/pilot/will/will_util.ihh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 OPT_1GRP_KEY( Integer      , cxdock, sphere       )
 OPT_1GRP_KEY( IntegerVector, cxdock, syms         )
@@ -555,6 +557,8 @@ void visualize(Pose const & init) {
 
 
 int main(int argc, char *argv[]) {
+	try {
+
 	register_options();
 	devel::init(argc,argv);
 	using namespace basic::options::OptionKeys;
@@ -584,5 +588,11 @@ int main(int argc, char *argv[]) {
 		dock(pala,fn,ssamp);
 		//visualize(pnat);
 	}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+	
+	return 0;
 }
 

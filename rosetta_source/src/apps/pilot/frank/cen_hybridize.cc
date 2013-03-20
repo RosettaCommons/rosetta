@@ -84,6 +84,8 @@
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
+
+
 #include <basic/Tracer.hh>
 
 #include <boost/unordered/unordered_map.hpp>
@@ -761,7 +763,8 @@ my_main( void* ) {
 
 int
 main( int argc, char * argv [] ) {
-	NEW_OPT(fpd::templates, "templates", utility::vector1<utility::file::FileName >(0));
+    try {
+        NEW_OPT(fpd::templates, "templates", utility::vector1<utility::file::FileName >(0));
 	NEW_OPT(fpd::fragments, "fragments", utility::vector1<utility::file::FileName >(0));
 	NEW_OPT(fpd::frag3, "frag3", "");
 	NEW_OPT(fpd::frag9, "frag9", "");
@@ -775,6 +778,10 @@ main( int argc, char * argv [] ) {
 	devel::init( argc, argv );
 
 	protocols::viewer::viewer_main( my_main );
-}
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
+        return 0;
+    }
 
 

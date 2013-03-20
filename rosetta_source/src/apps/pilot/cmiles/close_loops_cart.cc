@@ -30,6 +30,8 @@
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 int main(int argc, char* argv[]) {
+	try {
+
   using core::kinematics::MoveMap;
   using core::optimization::CartesianMinimizer;
   using core::optimization::MinimizerOptions;
@@ -61,4 +63,10 @@ int main(int argc, char* argv[]) {
   CartesianMinimizer minimizer;
   minimizer.run(*pose, mm, *score, options_lbfgs);
   pose->dump_pdb("ending_cart.pdb");
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
+	return 0;
 }

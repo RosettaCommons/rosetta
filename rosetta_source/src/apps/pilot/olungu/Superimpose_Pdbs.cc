@@ -27,6 +27,7 @@
 // AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Atom.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <basic/options/option.hh>
 // Auto-header: duplicate removed #include <basic/options/util.hh>
@@ -163,7 +164,9 @@ generate_factory(){
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 int
 main( int argc, char* argv[] )
-{ std::cout << "blah" << std::endl;
+{ 
+	try{
+	std::cout << "blah" << std::endl;
 	using basic::options::option;
   option.add( align::master_pose_range, "file with master pose range").def("master_range");
   option.add( align::list_pose_range, "file with list pose range").def("list_range");
@@ -295,4 +298,7 @@ main( int argc, char* argv[] )
   full_pose.dump_scored_pdb( fname, *scorefxn );
 	out.close();
  }
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl; 
+	} 
 }

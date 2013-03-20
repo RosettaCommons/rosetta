@@ -232,6 +232,7 @@ void run() {
 int
 main( int argc, char * argv [] )
 {
+	try{
 	register_options();
 	devel::init( argc, argv );
 
@@ -240,7 +241,9 @@ main( int argc, char * argv [] )
 		//	} catch ( utility::excn::EXCN_Base& anExcn ) {
 		//		anExcn.show( std::cerr );
 		//	}
-
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl; 
+	} 
 	return 0;
 }
 

@@ -54,7 +54,7 @@ void register_options() {
 static basic::Tracer trSaxs("SaxsSampler");
 
 int main(int argc, char * argv[]) {
-
+    try {
 	using namespace core;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -176,6 +176,8 @@ int main(int argc, char * argv[]) {
 	abinitio->set_movemap(movemap);
 	// RUN
 	abrelax->fold(init_pose, prot_ptr);
-
-	return 0;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                             std::cout << "caught exception " << e.msg() << std::endl;
+                                }
+       return 0; 
 }

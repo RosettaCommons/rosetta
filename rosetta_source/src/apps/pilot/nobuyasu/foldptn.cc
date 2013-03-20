@@ -51,6 +51,7 @@
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <ObjexxFCL/format.hh>
 
@@ -288,7 +289,7 @@ typedef utility::pointer::owning_ptr< Foldptn > FoldptnOP;
 int
 main( int argc, char * argv [] )
 {
-
+	try{
 	ThisApplication::register_options();
 
 	// init
@@ -300,7 +301,9 @@ main( int argc, char * argv [] )
 
 	// run
 	protocols::jd2::JobDistributor::get_instance()->go( protocol );
-
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 	return 0;
 
 }

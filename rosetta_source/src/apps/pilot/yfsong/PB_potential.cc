@@ -46,6 +46,7 @@
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 #include <utility/io/izstream.hh>
+#include <utility/excn/Exceptions.hh>
 #include <ostream>
 
 //Option( 'PB_charged_chains', 'String', desc="Poisson Boltzmann potential is generated with the charges of given chains" , default="A"),
@@ -210,6 +211,7 @@ private:
 int
 main( int argc, char * argv [] )
 {
+	try {
 	basic::options::option.add( PB_potential::apbs_exe, "APBS executable position" );
 	basic::options::option.add( PB_potential::no_charge_on_chain, "chain with zero charge" );
 	//basic::options::option.add( PB_potential::chain, "Only print given chains" );
@@ -219,4 +221,7 @@ main( int argc, char * argv [] )
 	PB_potential_mover.initialize();
 	
 	protocols::jobdist::universal_main( PB_potential_mover );
+	 } catch ( utility::excn::EXCN_Base const & e ) { 
+		 std::cout << "caught exception " << e.msg() << std::endl;
+	}
 }

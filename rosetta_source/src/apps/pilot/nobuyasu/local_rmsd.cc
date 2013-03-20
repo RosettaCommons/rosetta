@@ -49,6 +49,7 @@
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
+#include <utility/excn/Exceptions.hh>
 
 
 using basic::T;
@@ -195,7 +196,7 @@ typedef utility::pointer::owning_ptr< LocalRmsd > LocalRmsdOP;
 int
 main( int argc, char * argv [] )
 {
-
+	try{
 	//
 	option.add( localrmsd::output_name, "output name" );
 
@@ -208,7 +209,9 @@ main( int argc, char * argv [] )
 
 	// run
 	protocols::jd2::JobDistributor::get_instance()->go( protocol );
-
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 	return 0;
 
 }

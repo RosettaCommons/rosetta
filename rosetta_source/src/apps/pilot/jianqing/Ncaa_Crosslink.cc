@@ -34,6 +34,8 @@ int
 main( int argc, char * argv [] )
 {
 
+	try {
+
 	using namespace basic::options;
 	using namespace protocols::ncaa_crosslink;
 	using namespace protocols::jd2;
@@ -45,6 +47,10 @@ main( int argc, char * argv [] )
 //	NcaaPreCrosslinkOP npc;
 //	npc = new NcaaPreCrosslink();
 
+ 	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+ 
 
 }
 

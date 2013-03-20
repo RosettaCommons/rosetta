@@ -17,6 +17,7 @@
 #include <protocols/pockets/FingerprintMultifunc.hh>
 #include <core/optimization/ParticleSwarmMinimizer.hh>
 #include <core/import_pose/import_pose.hh>
+#include <utility/excn/Exceptions.hh>
 
 //reqd minimization headers
 #include <protocols/simple_moves/ScoreMover.hh>
@@ -74,6 +75,7 @@ OPT_KEY( Real, cst_force_constant )
 static basic::Tracer TR( "apps.pilot.ragul_run_darc_with_input_eggshell.main" );
 
 int main( int argc, char * argv [] ) {
+	try {
 
   NEW_OPT( protein, "protein file name", "protein.pdb" );
   NEW_OPT( ligand, "ligand file name", "ligand.pdb" );
@@ -388,5 +390,9 @@ int main( int argc, char * argv [] ) {
 		std::cout << bound_energy <<"\n"<< "Interface Energy : "<< Interface_Energy << std::endl;
 	}
 
-	return 0;
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
+  return 0;
 }

@@ -29,6 +29,8 @@
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 int main(int argc, char* argv[]) {
+	try {
+
   using core::fragment::FragSetOP;
   using core::fragment::FragSetOP;
   using core::pose::PoseOP;
@@ -70,4 +72,10 @@ int main(int argc, char* argv[]) {
   // Simple kinematics
   closure.apply(*pose);
   pose->dump_pdb("ending_ccd.pdb");
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
+	return 0;
 }

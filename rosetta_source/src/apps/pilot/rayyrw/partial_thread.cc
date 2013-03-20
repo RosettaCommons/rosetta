@@ -27,6 +27,7 @@
 #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceAlignment.hh>
+#include <utility/excn/Exceptions.hh>
 
 // AUTO-REMOVED #include <core/sequence/ScoringScheme.hh>
 // AUTO-REMOVED #include <core/sequence/CompositeScoringScheme.hh>
@@ -96,6 +97,7 @@ poses_from_cmd_line(
 
 int
 main( int argc, char* argv [] ) {
+	try{
 	// options, random initialization
 	devel::init( argc, argv );
 
@@ -199,4 +201,7 @@ main( int argc, char* argv [] ) {
 
 	tr.Debug << "finished building partial models." << std::endl;
 	tr.flush_all_channels();
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl; 
+	} 
 } // int main( int argc, char * argv [] )

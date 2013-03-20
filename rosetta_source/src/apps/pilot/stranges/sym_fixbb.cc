@@ -166,6 +166,9 @@ void SymFixbbMover::apply( core::pose::Pose & pose ) {
 int
 main( int argc, char * argv [] )
 {
+
+	try {
+
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
 
@@ -176,6 +179,11 @@ main( int argc, char * argv [] )
   protocols::jd2::JobDistributor::get_instance()->go( new SymFixbbMover );
 
   std::cout << "Done! -------------------------------"<< std::endl;
+
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 } //end main
 

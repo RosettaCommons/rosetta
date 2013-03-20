@@ -98,6 +98,8 @@ using basic::Error;
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 
 /// @brief super-simple attempt to mimick the Modeller algorithm. Similar to FoldConstraints, except
@@ -162,8 +164,15 @@ my_main( void* ) {
 int
 main( int argc, char* argv [] )
 {
+	try {
+
 	// options, random initialization
 	devel::init( argc, argv );
 	protocols::viewer::viewer_main( my_main );
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 	return 0;
 } // int main

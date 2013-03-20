@@ -33,6 +33,7 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/database/open.hh>
+#include <utility/excn/Exceptions.hh>
 
 
 // option key includes
@@ -47,6 +48,7 @@
 //////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
 {
+    try {
   devel::init(argc, argv);
 
   utility::vector0<std::string> pdbs;
@@ -69,5 +71,8 @@ int main(int argc, char* argv[])
 		const std::string output("output.pdb");
 		pose.dump_scored_pdb(output, scoreFunction);
 	}
-  return(0);
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }

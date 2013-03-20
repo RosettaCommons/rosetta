@@ -88,6 +88,7 @@
 #include <protocols/jobdist/Jobs.hh>
 #include <protocols/jumping/JumpSetup.fwd.hh>
 #include <utility/io/mpistream.hh>
+#include <utility/excn/Exceptions.hh>
 
 ////////////////////////////////////////////////
 // danger USING ////////////////////////////////
@@ -340,9 +341,15 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
+    try {
 
   // initialize option and random number system
   devel::init( argc, argv );
 
   protocols::viewer::viewer_main( my_main );
+
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }

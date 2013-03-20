@@ -46,6 +46,9 @@ public:
 int
 main( int argc, char* argv[] )
 {
+
+	try {
+
 	using basic::options::option;
 	devel::init(argc, argv);
 
@@ -54,4 +57,9 @@ main( int argc, char* argv[] )
 	basic::T("done") << "************************d**o**n**e**************************************" << std::endl;
 
 	return 0;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }

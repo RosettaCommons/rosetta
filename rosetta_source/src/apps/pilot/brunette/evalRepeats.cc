@@ -211,6 +211,8 @@ Real get_hb_srbb_score(const core::pose::Pose& pose){
 
 
 int main( int argc, char * argv [] ) {
+	try {
+
 	using namespace core::chemical;
 	using namespace core::import_pose::pose_stream;
 	using core::import_pose::pose_from_pdb;
@@ -263,5 +265,11 @@ int main( int argc, char * argv [] ) {
 				 output << std::endl;
 			 }
 	}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
+	return 0;
 }
 

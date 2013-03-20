@@ -20,16 +20,20 @@
 // Utility Headers
 #include <devel/init.hh>
 #include <basic/Tracer.hh>
+#include <utility/excn/Exceptions.hh>
 
 static basic::Tracer TR("apps.public.scenarios.FloppyTail");
 
 int main( int argc, char* argv[] )
 {
+	try {
 	devel::init(argc, argv);
 
 	protocols::jd2::JobDistributor::get_instance()->go(new protocols::floppy_tail::FloppyTailMover);
 
 	TR << "************************d**o**n**e**************************************" << std::endl;
-
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 	return 0;
 }

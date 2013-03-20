@@ -66,6 +66,7 @@
 #include <core/kinematics/Edge.fwd.hh>
 #include <core/conformation/Conformation.hh>
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 #include <basic/basic.hh>
 #include <basic/Tracer.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -299,7 +300,7 @@ void writeScores(pose::Pose& workpose, pose::Pose& nativePose, const std::string
 }
 
 int main (int argc, char** argv) {
-
+    try {
 		devel::init(argc,argv);
 		basic::Tracer TR("protocols.moves.CycPep");
 		Size nstruct = option[out::nstruct];
@@ -371,6 +372,11 @@ int main (int argc, char** argv) {
 			writeScores(workpose,nativePose,"Job_"+int2string(s)+".pdb",scorefxn->score(workpose));
 			workpose.dump_pdb("Job_"+int2string(s)+".pdb");
 		}
+
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 
 

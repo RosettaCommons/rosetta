@@ -74,11 +74,15 @@ using basic::Error;
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 
 int
 main( int argc, char * argv [] )
 {
+	try {
+
 	// options, random initialization
 	devel::init( argc, argv );
 	using namespace core::scoring::constraints;
@@ -108,6 +112,10 @@ main( int argc, char * argv [] )
 	for ( utility::vector1< ConstraintCOP >::iterator it = csts.begin(), end = csts.end(); it != end; ++it ) {
 		FuncOP f = it->get_cst_func();
 		f->show_definition( std::cout );
+	}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 	}
 
 	return 0;

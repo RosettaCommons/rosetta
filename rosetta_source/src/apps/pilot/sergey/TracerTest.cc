@@ -233,6 +233,9 @@ void test_Random(void)
 
 int main( int argc, char * argv [] )
 {
+
+	try {
+
 	basic::Tracer TR("main");
 
 	using namespace core;
@@ -309,5 +312,10 @@ int main( int argc, char * argv [] )
 	TR << "TTest ended. #@!  --------------------------------" << std::endl;
 	//TR.flush();
 	return 0;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 

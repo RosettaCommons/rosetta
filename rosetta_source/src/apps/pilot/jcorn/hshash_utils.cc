@@ -62,6 +62,7 @@ basic::Tracer TR( "pilot_apps.jcorn.hshash_utils");
 int
 main( int argc, char * argv [] )
 {
+  try {
 
 	OPT(hotspot::target);
 	OPT(hotspot::residue);
@@ -296,4 +297,8 @@ main( int argc, char * argv [] )
 			}
 		} // if hashout_fname
 	} // for hashname
+
+  } catch ( utility::excn::EXCN_Base const & e ) {
+	 std::cout << "caught exception " << e.msg() << std::endl;
+  }
 }

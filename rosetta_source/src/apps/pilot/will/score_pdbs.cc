@@ -114,6 +114,9 @@ score_pdb( std::string pdb )
 int
 main( int argc, char * argv [] )
 {
+
+	try {
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -123,5 +126,10 @@ main( int argc, char * argv [] )
 	for ( Size ii = 1; ii <= pdbnames.size(); ++ii ) {
 		score_pdb( pdbnames[ ii ]);
 	}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 

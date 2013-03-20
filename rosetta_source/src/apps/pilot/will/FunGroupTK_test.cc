@@ -331,6 +331,9 @@ void run_hd(std::string fname) {
 
 int main (int argc, char *argv[]) {
 
+	try {
+
+
 
   devel::init(argc,argv);
 
@@ -338,6 +341,11 @@ int main (int argc, char *argv[]) {
   using namespace basic::options::OptionKeys;
 
   run_hd(option[in::file::s]()[1]);
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 
 

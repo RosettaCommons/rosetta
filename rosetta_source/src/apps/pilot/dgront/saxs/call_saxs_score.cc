@@ -47,6 +47,7 @@
 #include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
+#include <utility/excn/Exceptions.hh>
 
 basic::Tracer TR("call_saxs_score");
 
@@ -98,7 +99,7 @@ core::Real saxs_energy(core::pose::Pose & a_pose) {
 
 ////////////////////////////////////////////////////////
 int main( int argc, char * argv [] ) {
-
+    try {
     using namespace basic::options;
     using namespace basic::options::OptionKeys;
     register_options();
@@ -122,6 +123,9 @@ int main( int argc, char * argv [] ) {
 	else
 	    std::cout << std::endl;
     }    
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
 
     return 0;
 }

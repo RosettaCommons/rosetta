@@ -1903,6 +1903,9 @@ std::pair<vector1<Size>,vector1<Size> > makesplitwork(Size total, Size total2 = 
 
 int main (int argc, char *argv[])
 {
+
+	try {
+
 	using namespace basic::options::OptionKeys;
 	
 	devel::init(argc,argv);
@@ -2366,6 +2369,11 @@ int main (int argc, char *argv[])
 	}
 
 	return 0;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 
 

@@ -30,6 +30,8 @@
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 using core::Size;
 using utility::vector1;
 
@@ -68,6 +70,8 @@ private:
 
 int
 main( int argc, char * argv [] ) {
+	try {
+
 	using namespace core::chemical;
 	using namespace basic::options::OptionKeys;
 	using namespace basic::options;
@@ -81,6 +85,10 @@ main( int argc, char * argv [] ) {
 	PrintSequenceMoverOP mover ( new PrintSequenceMover() );
 	not_universal_main( *mover );
 	mover->print_seqs( std::cout );
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 	return 0;
 } // int main

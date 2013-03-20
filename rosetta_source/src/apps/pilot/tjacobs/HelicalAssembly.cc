@@ -64,6 +64,9 @@ int
 main( int argc, char * argv [] )
 {
 
+	try {
+
+
 	using namespace std;
 	using namespace utility;
 	using namespace core;
@@ -153,4 +156,9 @@ main( int argc, char * argv [] )
 		clock_t end=clock();
 //		cout << "Time elapsed: " << double(diffclock(end,begin)) << " ms"<< endl;
 	}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }

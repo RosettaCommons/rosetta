@@ -31,6 +31,7 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/broker.OptionKeys.gen.hh>
 #include <basic/MemTracer.hh>
+#include <utility/excn/Exceptions.hh>
 
 // option key includes
 #include <basic/options/keys/run.OptionKeys.gen.hh>
@@ -71,6 +72,7 @@ void register_options_broker() {
 int
 main( int argc, char * argv [] )
 {
+	try{
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   using std::string;
@@ -109,5 +111,8 @@ main( int argc, char * argv [] )
     std::cerr << "Exception : " << std::endl;
     excn.show( std::cerr );
   }
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl; 
+	} 
   return 0;
 }

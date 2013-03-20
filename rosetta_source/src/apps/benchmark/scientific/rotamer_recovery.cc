@@ -34,6 +34,7 @@
 
 // Utility Headers
 #include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/exit.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -91,6 +92,7 @@ register_options() {
 int
 main( int argc, char * argv [] )
 {
+	try{
   register_options();
 
 	devel::init(argc, argv);
@@ -143,10 +145,9 @@ main( int argc, char * argv [] )
     excn.show( TR ); //so its also seen in a >LOG file
   }
 
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
   return 0;
 }
-
-
-
-
-

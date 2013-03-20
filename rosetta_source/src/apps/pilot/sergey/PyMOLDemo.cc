@@ -45,6 +45,9 @@ basic::Tracer TR("PyMOLDemo");
 
 int main( int argc, char * argv [] )
 {
+
+	try {
+
 	using namespace core;
 
 	devel::init(argc, argv);
@@ -97,6 +100,11 @@ int main( int argc, char * argv [] )
 			usleep(1000000);
 		}
 	}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 
 

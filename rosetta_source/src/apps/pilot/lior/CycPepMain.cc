@@ -39,6 +39,7 @@
 #include <core/kinematics/Edge.hh>
 #include <core/kinematics/Edge.fwd.hh>
 #include <core/conformation/Conformation.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <basic/basic.hh>
 //#include <protocols/jobdist/standard_mains.hh>
@@ -266,6 +267,8 @@ int distribute_jobs(protocols::moves::Mover& mover, bool random_permutation)
 int
 main( int argc, char * argv [] )
 {
+    try {
+
 	using namespace protocols;
 	using namespace protocols::jobdist;
 	using namespace protocols::moves;
@@ -301,6 +304,8 @@ main( int argc, char * argv [] )
 	//	protocols::jobdist::main_plain_mover( *fpDock);
 	//protocols::jobdist::universal_main(*fpDock);
 
-	exit(0);
-
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }

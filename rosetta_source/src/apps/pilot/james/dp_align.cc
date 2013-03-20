@@ -66,6 +66,8 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -80,6 +82,8 @@ using namespace basic::options::OptionKeys;
 int
 main( int argc, char* argv [] )
 {
+	try {
+
 	// options, random initialization
 	devel::init( argc, argv );
 
@@ -128,6 +132,10 @@ main( int argc, char* argv [] )
 			);
 
 			protocols::jobdist::not_universal_main( mover );
+	}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 	}
 
 	return 0;

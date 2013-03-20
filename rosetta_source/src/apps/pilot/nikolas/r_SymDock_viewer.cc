@@ -19,6 +19,7 @@
 #include <core/pose/Pose.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
+#include <utility/excn/Exceptions.hh>
 
 //#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
@@ -84,6 +85,7 @@ SymDock_main_local( void *)
 int
 main( int argc, char * argv [] )
 {
+	try{
 	using namespace basic::options;
   using namespace basic::options::OptionKeys;
 	//	NEW_OPT( r_SymDock_app::viewer, "enable viewer", false );
@@ -95,6 +97,8 @@ main( int argc, char * argv [] )
 		protocols::viewer::viewer_main( SymDock_main_local );}
 	else{
 		SymDock_main_local(NULL);}
-
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 	return 0;
 }

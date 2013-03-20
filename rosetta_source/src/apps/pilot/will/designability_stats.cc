@@ -323,6 +323,9 @@ collect_stats(
 }
 
 int main(int argc, char *argv[]) {
+
+	try {
+
 	register_options();
 	devel::init(argc,argv);
 	using namespace basic::options::OptionKeys;
@@ -480,6 +483,10 @@ int main(int argc, char *argv[]) {
 			std::cout << "searching " << fn << std::endl;
 			collect_stats(p,utility::file_basename(fn));
 		}
+	}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+	  std::cout << "caught exception " << e.msg() << std::endl;
 	}
 
 }

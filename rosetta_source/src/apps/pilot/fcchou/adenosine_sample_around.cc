@@ -64,6 +64,9 @@
 #include <iostream>
 #include <string>
 
+#include <utility/excn/Exceptions.hh>
+
+
 using namespace core;
 using namespace protocols;
 using namespace basic::options::OptionKeys;
@@ -620,6 +623,7 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
+    try {
 
 	NEW_OPT( sample_water, "use a water probe instead of carbon", false );
 	NEW_OPT( sample_another_adenosine, "sample another adenosine as the 'probe'", false );
@@ -638,5 +642,9 @@ main( int argc, char * argv [] )
 	core::init(argc, argv);
 
   protocols::viewer::viewer_main( my_main );
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
+        return 0;
 
 }

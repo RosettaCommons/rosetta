@@ -47,6 +47,8 @@
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 // C++ headers
 #include <fstream>
 #include <iostream>
@@ -67,6 +69,8 @@ using utility::vector1;
 int
 main( int argc, char * argv [] )
 {
+	try {
+
 	using namespace core::scoring::constraints;
 	using namespace basic::options::OptionKeys;
 	using namespace basic::options;
@@ -227,5 +231,10 @@ main( int argc, char * argv [] )
 	} // for i
 
 	output.close();
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 	return 0;
 } // int main

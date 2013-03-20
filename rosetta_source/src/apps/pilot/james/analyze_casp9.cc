@@ -43,6 +43,10 @@
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
+
+#include <utility/excn/Exceptions.hh>
+
+
 char
 torsion2big_bin(
 	float const phi,
@@ -145,6 +149,8 @@ chis_from_pose(
 
 int
 main( int argc, char* argv [] ) {
+	try {
+
 	// options, random initialization
 	devel::init( argc, argv );
 
@@ -276,5 +282,10 @@ main( int argc, char* argv [] ) {
 			<< F( width, prec, pct_natrots[4] )
 			<< std::endl;
 	}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 	return 0;
 } // int main( int argc, char * argv [] )

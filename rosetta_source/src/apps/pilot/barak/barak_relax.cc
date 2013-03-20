@@ -42,7 +42,8 @@ static basic::Tracer TR( "avital.stabilize" );
 int
 main( int argc, char * argv [] )
 {
-		using namespace basic;
+	try {
+	using namespace basic;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace protocols::moves;
@@ -89,6 +90,12 @@ main( int argc, char * argv [] )
 	TR << "This structure rules!!! " << std::endl;
 
 	protocols::jobdist::main_plain_pdb_mover( *full_seq, score_fxn );
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
+	return 0;
 
 }
 

@@ -200,6 +200,9 @@ int
 main( int argc, char * argv [] )
 {
 
+	try {
+
+
 	using namespace core;
 	using namespace pose;
 	using namespace protocols;
@@ -247,6 +250,11 @@ main( int argc, char * argv [] )
 		// minimize(pose,sf,iface_res);
 		// pose.dump_pdb( outdir + out_fname + "_minimize_test.pdb" );
 	
+	}
+
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 	}
 
 }

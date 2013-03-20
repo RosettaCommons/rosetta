@@ -42,6 +42,9 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <algorithm>
 
+#include <utility/excn/Exceptions.hh>
+
+
 boost::dynamic_bitset<>
 get_dm_features(
 	core::pose::Pose & pose,
@@ -121,6 +124,8 @@ core::Real pct_features_in_common(
 
 int
 main( int argc, char * argv [] ) {
+	try {
+
 	using namespace core::chemical;
 	using namespace basic::options::OptionKeys;
 	using namespace basic::options;
@@ -169,6 +174,10 @@ main( int argc, char * argv [] ) {
 	}
 
 	basic::prof_show();
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 	return 0;
 } // int main

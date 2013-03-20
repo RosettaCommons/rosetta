@@ -80,6 +80,9 @@
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
+#include <utility/excn/Exceptions.hh>
+
+
 // C++ headers
 #include <fstream>
 #include <iostream>
@@ -1621,7 +1624,7 @@ my_main( void* ) {
 //////////////////////////////////
 int
 main( int argc, char * argv [] ) {
-
+    try {
 	utility::vector1< Size > blank_size_vector;
 	utility::vector1< Real > blank_size_vector_real;
 
@@ -1653,4 +1656,9 @@ main( int argc, char * argv [] ) {
 	//////////////////////////////
 
 	protocols::viewer::viewer_main( my_main );
-}
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
+        return 0;
+
+    }

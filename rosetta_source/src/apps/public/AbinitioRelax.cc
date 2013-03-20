@@ -24,6 +24,7 @@
 #include <protocols/checkpoint/Checkpoint.hh>
 #include <utility/exit.hh>
 #include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 
 // option key includes
 #include <basic/options/keys/run.OptionKeys.gen.hh>

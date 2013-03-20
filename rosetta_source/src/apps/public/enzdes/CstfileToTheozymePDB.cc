@@ -28,16 +28,23 @@
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/toolbox/match_enzdes_util/InvrotTree.hh>
 #include <basic/Tracer.hh>
+#include <utility/excn/Exceptions.hh>
 
 void
 create_theozyme_pdb();
 
 int main( int argc, char * argv [] )
 {
+	try {
+		devel::init( argc, argv );
 
-	devel::init( argc, argv );
+		create_theozyme_pdb();
 
-	create_theozyme_pdb();
+	} catch (utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
+	return 0;
 }
 
 void

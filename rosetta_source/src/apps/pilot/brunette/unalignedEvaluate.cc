@@ -283,6 +283,8 @@ basic::options::FileOptionKey lookback_csts("unalignedEvaluate:lookback_csts");
 }
 
 int main( int argc, char * argv [] ) {
+	try {
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::sequence;
@@ -348,4 +350,10 @@ int main( int argc, char * argv [] ) {
 		input.fill_pose(*input_poseOP,*rsd_set);
 		score_loops(*input_poseOP,*unconverged_loops,native_pose,native_alignment,template_aln,native_relaxed_pose,templatePose,cstSet_, lookBackCstSet_, output);
 	}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
+	return 0;
 }

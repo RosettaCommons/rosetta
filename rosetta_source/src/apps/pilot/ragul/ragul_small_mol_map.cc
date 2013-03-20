@@ -22,6 +22,7 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/backrub/BackrubMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
+#include <utility/excn/Exceptions.hh>
 
 // Core Headers
 #include <core/conformation/Residue.hh>
@@ -89,6 +90,7 @@ core::Real Find_Intersect(core::SSize const & phiAngle, core::SSize const & psiA
 
 int main( int argc, char * argv [] )
 {
+	try{
         const core::Real PI = numeric::NumericTraits<Real>::pi();
         const core::Real RADS_PER_DEG = PI / 180.;
         const core::Real DEGS_PER_RAD = 180./PI;
@@ -360,6 +362,9 @@ core::Real Find_Intersect(core::SSize const & phiAngle , core::SSize const & psi
 //	std::cout << "std- map " << MaxDist[phiAngle][psiAngle] << std::endl;
 //	std::cout << MaxDist[phiAngle][psiAngle] << " " << Xpoint[phiAngle][psiAngle] <<" "<< Ypoint[phiAngle][psiAngle] << " " << Zpoint[phiAngle][psiAngle]<<std::endl;
 	}
+} catch ( utility::excn::EXCN_Base const & e ) {
+	std::cout << "caught exception " << e.msg() << std::endl; 
+} 
 	return 0;
 }
 

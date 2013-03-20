@@ -259,6 +259,9 @@ RT RT_from_epos( FArray2A_float Epos1, FArray2A_float Epos2)
 int
 main( int argc, char* argv [] )
 {
+
+	try {
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -391,6 +394,11 @@ main( int argc, char* argv [] )
 
 		pdb_file_location = "";
 		infile >> pdb_file_location >> res1 >> res2;
+
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 	}
 	//if (pdb_file_location == "") iterate = false;

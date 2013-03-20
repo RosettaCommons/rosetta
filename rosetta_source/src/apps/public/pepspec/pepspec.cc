@@ -148,6 +148,8 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <utility/vector1.hh>
 
+#include <utility/excn/Exceptions.hh>
+
  static numeric::random::RandomGenerator RG(16621);
 
 using namespace core;
@@ -2003,6 +2005,7 @@ my_main( void*)
 int
 main( int argc, char * argv [] )
 {
+	try {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -2010,6 +2013,9 @@ main( int argc, char * argv [] )
 
 	protocols::viewer::viewer_main( my_main );
 	TR.flush();
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 }
 
 

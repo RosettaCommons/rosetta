@@ -27,6 +27,7 @@
 
 // utility headers
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 
 // C++ headers
 #include <sstream>
@@ -58,6 +59,7 @@ class BUNS_Output : public protocols::moves::Mover {
 
 
 int main( int argc, char * argv [] ) {
+	try {
 	using core::pose::metrics::CalculatorFactory;
 	using core::scoring::ScoreFunctionOP;
 	using protocols::simple_moves::ScoreMover;
@@ -89,4 +91,7 @@ int main( int argc, char * argv [] ) {
 
 	// run job
 	JobDistributor::get_instance()->go( seqmover );
+	 } catch ( utility::excn::EXCN_Base const & e ) { 
+		 std::cout << "caught exception " << e.msg() << std::endl;
+	}
 }

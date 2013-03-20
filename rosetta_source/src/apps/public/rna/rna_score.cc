@@ -48,6 +48,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
+#include <utility/excn/Exceptions.hh>
 
 using namespace core;
 using namespace protocols;
@@ -69,25 +70,25 @@ rna_score_test()
 	using namespace core::kinematics;
 	using namespace core::io::silent;
 	using namespace core::import_pose::pose_stream;
-
+    
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
-
+    
 	// input stream
 	PoseInputStreamOP input;
 	if ( option[ in::file::silent ].user() ) {
 		if ( option[ in::file::tags ].user() ) {
 			input = new SilentFilePoseInputStream(
-				option[ in::file::silent ](),
-				option[ in::file::tags ]()
-			);
+                                                  option[ in::file::silent ](),
+                                                  option[ in::file::tags ]()
+                                                  );
 		} else {
 			input = new SilentFilePoseInputStream( option[ in::file::silent ]() );
 		}
 	} else {
 		input = new PDBPoseInputStream( option[ in::file::s ]() );
 	}
-
+    
 	// native pose setup
 	pose::Pose native_pose;
 	bool native_exists( false );
@@ -97,8 +98,8 @@ rna_score_test()
 		protocols::rna::ensure_phosphate_nomenclature_matches_mini( native_pose );
 		native_exists = true;
 	}
-
-
+    
+    
 	// score function setup
 	core::scoring::ScoreFunctionOP scorefxn;
 	if ( basic::options::option[ basic::options::OptionKeys::score::weights ].user() ) {
@@ -106,49 +107,49 @@ rna_score_test()
 	} else {
 		scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::RNA_HIRES_WTS );
 	}
-
+    
 	// Silent file output setup
 	std::string const silent_file = option[ out::file::silent  ]();
 	SilentFileData silent_file_data;
-
+    
 	pose::Pose pose,start_pose;
-
+    
 	Size i( 0 );
-
+    
 	while ( input->has_another_pose() ){
-
+        
 		input->fill_pose( pose, *rsd_set );
 		protocols::rna::ensure_phosphate_nomenclature_matches_mini( pose );
 		i++;
 		protocols::rna::figure_out_reasonable_rna_fold_tree( pose );
-
+        
 		// grpahics viewer.
 		if ( i == 1 ) protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
-
+        
 		// do it
 		if ( ! option[just_calc_rmsd]() ){
 			(*scorefxn)( pose );
 		}
-
+        
 		// tag
 		std::string tag = tag_from_pose( pose );
 		BinaryRNASilentStruct s( pose, tag );
-
+        
 		if ( native_exists ){
 			Real const rmsd      = all_atom_rmsd( native_pose, pose );
 			std::cout << "All atom rmsd: " << tag << " " << rmsd << std::endl;
 			s.add_energy( "rms", rmsd );
 		}
-
+        
 		std::cout << "Outputting " << tag << " to silent file: " << silent_file << std::endl;
 		silent_file_data.write_silent_struct( s, silent_file, false /*write score only*/ );
-
+        
 		//std::string const out_file =  tag + ".pdb";
 		//dump_pdb( pose, out_file );
-
+        
 	}
-
-
+    
+    
 }
 
 
@@ -157,7 +158,7 @@ void*
 my_main( void* )
 {
 	rna_score_test();
-
+    
 	protocols::viewer::clear_conformation_viewers();
 	exit( 0 );
 }
@@ -167,22 +168,25 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
-	using namespace basic::options;
-
-	std::cout << std::endl << "Basic usage:  " << argv[0] << "  -s <pdb file> " << std::endl;
-	std::cout              << "              " << argv[0] << "  -in:file:silent <silent file> " << std::endl;
-	std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
-
-	NEW_OPT( just_calc_rmsd, "Just calculate rmsd -- do not replace score.",false );
-
-	////////////////////////////////////////////////////////////////////////////
-	// setup
-	////////////////////////////////////////////////////////////////////////////
-	core::init(argc, argv);
-
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
-	protocols::viewer::viewer_main( my_main );
-
+    try {
+        using namespace basic::options;
+        
+        std::cout << std::endl << "Basic usage:  " << argv[0] << "  -s <pdb file> " << std::endl;
+        std::cout              << "              " << argv[0] << "  -in:file:silent <silent file> " << std::endl;
+        std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
+        
+        NEW_OPT( just_calc_rmsd, "Just calculate rmsd -- do not replace score.",false );
+        
+        ////////////////////////////////////////////////////////////////////////////
+        // setup
+        ////////////////////////////////////////////////////////////////////////////
+        core::init(argc, argv);
+        
+        ////////////////////////////////////////////////////////////////////////////
+        // end of setup
+        ////////////////////////////////////////////////////////////////////////////
+        protocols::viewer::viewer_main( my_main );
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cout << "caught exception " << e.msg() << std::endl;
+    }
 }

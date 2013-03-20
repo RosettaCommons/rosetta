@@ -50,6 +50,8 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 using namespace core;
 using namespace core::scoring;
@@ -72,6 +74,7 @@ void define_interface( core::pose::Pose & /*input_pose*/ ) {
 int
 main( int argc, char * argv [] )
 {
+	try {
 
 	devel::init(argc, argv);
   pose::Pose input_pose;
@@ -188,6 +191,11 @@ main( int argc, char * argv [] )
 	outstream.close();
 	outstream.clear();
 */
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 	return 0;
 
 }

@@ -56,6 +56,8 @@
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
+#include <utility/excn/Exceptions.hh>
+
 
 #if defined(WIN32) || defined(__CYGWIN__)
 	#include <ctime>
@@ -78,6 +80,7 @@ basic::Tracer TR("pilot_apps.FlexPepDock");
 int
 main( int argc, char * argv [] )
 {
+	try {
 	using namespace protocols;
 	using namespace protocols::jobdist;
 	using namespace protocols::moves;
@@ -115,6 +118,9 @@ main( int argc, char * argv [] )
 	//	protocols::jobdist::main_plain_mover( *fpDock);
 	//protocols::jobdist::universal_main(*fpDock);
 
-	exit(0);
+	} catch ( utility::excn::EXCN_Base const & e ) {
+	  std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
+	return 0;
 }

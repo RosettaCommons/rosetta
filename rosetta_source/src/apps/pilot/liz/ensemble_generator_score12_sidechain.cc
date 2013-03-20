@@ -143,6 +143,7 @@ numeric::random::RandomGenerator RG(1345675431); // <- Magic number, do not chan
 #include <utility/file/FileName.hh>
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
+#include <utility/excn/Exceptions.hh>
 //#include "james_util.hh" //for calculation of burial
 #include <basic/Tracer.hh>
 #include <time.h>
@@ -466,6 +467,7 @@ create_ensemble(pose::Pose & p, ScoreFunctionOP s, std::string output_tag){
 int
 main( int argc, char* argv [] )
 {
+    try {
 	using namespace core;
 	using namespace core::pose;
 	using namespace utility;
@@ -528,4 +530,8 @@ main( int argc, char* argv [] )
 		create_ensemble(pose, scorefxn , (no_pdb.erase(0,(no_pdb.find_last_of("/")+1))));
 
 	}
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }

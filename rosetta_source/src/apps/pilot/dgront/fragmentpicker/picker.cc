@@ -32,6 +32,8 @@
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 //Auto Headers
 #include <utility/io/mpistream.hh>
 
@@ -81,7 +83,7 @@ void register_options() {
 }
 
 int main(int argc, char * argv[]) {
-
+        try {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -119,5 +121,10 @@ int main(int argc, char * argv[]) {
 	}
 
 	basic::prof_show();
+        } catch ( utility::excn::EXCN_Base const & e ) {
+                                  std::cout << "caught exception " << e.msg() << std::endl;
+                                      }
+            return 0;
+
 }
 

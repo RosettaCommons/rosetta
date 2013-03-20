@@ -63,6 +63,7 @@
 
 // Project headers
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <vector>
 
@@ -1273,6 +1274,8 @@ RosettaInvalidParameterHandler(
 
 
 int main(int argc, char** argv) {
+	try {
+
 	using namespace graphics;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -1343,6 +1346,9 @@ int main(int argc, char** argv) {
 #ifdef _DEBUG
 	  boinc_finish_diag();
 #endif
+	 } catch ( utility::excn::EXCN_Base const & e ) { 
+		 std::cout << "caught exception " << e.msg() << std::endl;
+	}
 }
 
 #else // BOINC_GRAPHICS!

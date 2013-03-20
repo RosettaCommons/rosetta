@@ -616,6 +616,9 @@ dock(Pose & init, string fname) {
 }
 
 int main (int argc, char *argv[]) {
+
+	try {
+
   devel::init(argc,argv);
   using namespace basic::options::OptionKeys;
   for(Size ifn = 1; ifn <= option[in::file::s]().size(); ++ifn) {
@@ -634,5 +637,10 @@ int main (int argc, char *argv[]) {
     std::pair<vector1<Hit>,vector1<Hit> > hts = dock(pala,fn);
     // design_hits(pnat,fn,hts.first,hts.second);
   }
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 

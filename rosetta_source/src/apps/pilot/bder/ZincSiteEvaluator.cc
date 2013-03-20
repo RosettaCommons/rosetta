@@ -431,6 +431,7 @@ typedef utility::pointer::owning_ptr< ZincSiteEvaluator > ZincSiteEvaluatorOP;
 
 int main( int argc, char* argv[] )
 {
+	try {
 
 	using basic::options::option;
 	option.add( local::ligand_3_letter_code, "ligand 3 letter code" ).def(" ZN");
@@ -450,6 +451,10 @@ int main( int argc, char* argv[] )
   protocols::jd2::JobDistributor::get_instance()->go(new ZincSiteEvaluator);
 
   TR << "************************d**o**n**e**************************************" << std::endl;
+
+	} catch (utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
   return 0;
 }

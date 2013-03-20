@@ -157,6 +157,9 @@ private:
 int main( int argc, char * argv [] )
 {
 
+	try {
+
+
 	using namespace core;
 
 	//devel::init(argc, argv);
@@ -255,5 +258,10 @@ int main( int argc, char * argv [] )
 
 
 	std::cout << "Done! -------------------------------\n";
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 

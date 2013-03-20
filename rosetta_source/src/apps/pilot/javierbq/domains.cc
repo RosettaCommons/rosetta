@@ -37,6 +37,9 @@
 
 
 #include <sstream>
+
+#include <utility/excn/Exceptions.hh>
+
 template <typename T>
 std::string vec2str(const T& vec){
 		std::ostringstream out;
@@ -266,6 +269,8 @@ class ThisApplication {
 
 int
 main ( int argc, char* argv[] ){
+	try {
+
 		ThisApplication::register_options();
 		devel::init(argc, argv);
 		TR << "Reaading File " << option[pdb]() << std::endl;
@@ -278,6 +283,10 @@ main ( int argc, char* argv[] ){
 		vector1<DomainMatch> ss_matches;
 		TR << "match: " << dd.ss_match(*p, ss_matches) << std::endl;
 		dd.sheet_match(p, ss_matches);
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
     return 0;
 }

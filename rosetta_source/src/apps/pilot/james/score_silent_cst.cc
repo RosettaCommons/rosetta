@@ -58,10 +58,14 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 int
 main( int argc, char* argv[] )
 {
+	try {
+
 	// options, random initialization
 	devel::init( argc, argv );
 
@@ -212,6 +216,10 @@ main( int argc, char* argv[] )
 		}
 	} // for ss in SilentFileData
 	output.close();
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 	return 0;
 } // main

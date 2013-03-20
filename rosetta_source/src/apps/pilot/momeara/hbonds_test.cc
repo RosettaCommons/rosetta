@@ -80,6 +80,7 @@ void dump_hbonds( std::string pdb_filename );
 int
 main( int argc, char * argv [] )
 {
+	try{
 	// initialize
 	devel::init(argc, argv);
 
@@ -111,6 +112,9 @@ main( int argc, char * argv [] )
 	for(std::vector< FileName >::iterator i = pdb_file_names.begin(), i_end = pdb_file_names.end(); i != i_end; ++i)
 	 {
 		dump_hbonds( i->name() );
+	}
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 	}
 }
 

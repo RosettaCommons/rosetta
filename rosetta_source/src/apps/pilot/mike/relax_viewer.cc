@@ -73,6 +73,7 @@
 #include <core/io/pdb/pose_io.hh>
 
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
@@ -169,7 +170,12 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
-	// options, random initialization
-	devel::init( argc, argv );
-	protocols::viewer::viewer_main( my_main );
+    try {
+    	// options, random initialization
+    	devel::init( argc, argv );
+    	protocols::viewer::viewer_main( my_main );
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }

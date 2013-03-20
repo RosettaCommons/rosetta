@@ -83,6 +83,8 @@ core::Real aa2sim_all(core::pose::Pose pose1, core::pose::Pose pose2) {
 
 int main(int argc, char *argv[])
 {
+  try {
+
 	NEW_OPT(cluster_hotspot_docking::cluster_radius, "radius for cluster",1.0);
 	NEW_OPT(cluster_hotspot_docking::max_clusters, "radius for cluster",10);
 	NEW_OPT(cluster_hotspot_docking::output_ddg_clusters, "output the lowest ddg N of the clusters",5);
@@ -282,4 +284,8 @@ int main(int argc, char *argv[])
 	}
 	
 	TR.Info << "done cluster_hotspot_docking" << std::endl;
+
+  } catch ( utility::excn::EXCN_Base const & e ) {
+    std::cout << "caught exception " << e.msg() << std::endl;
+  }
 }

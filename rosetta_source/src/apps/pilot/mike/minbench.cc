@@ -42,6 +42,7 @@
 #include <numeric/random/random.hh>
 #include <string>
 #include <utility/string_util.hh>
+#include <utility/excn/Exceptions.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 #if defined(WIN32) || defined(__CYGWIN__)
@@ -104,7 +105,7 @@ void
 Benchmark::apply( Pose & pose ) {
 	using namespace pose;
 	//using datacache::CacheableDataType::SCORE_MAP;
-			
+
 	core::optimization::MinimizerOptions options( "dfpmin", 0.000, true, false );
 	core::kinematics::MoveMap final_mm;
 	final_mm.set_chi( true );
@@ -138,12 +139,17 @@ Benchmark::get_name() const {
 int
 main( int argc, char * argv [] )
 {
-	using namespace protocols::jobdist;
-	using namespace protocols::moves;
-	using namespace scoring;
+    try {
+    	using namespace protocols::jobdist;
+    	using namespace protocols::moves;
+    	using namespace scoring;
 
-	devel::init(argc, argv);
+    	devel::init(argc, argv);
 
-	MoverOP protocol = new Benchmark();
-	protocols::jd2::JobDistributor::get_instance()->go( protocol );
+    	MoverOP protocol = new Benchmark();
+    	protocols::jd2::JobDistributor::get_instance()->go( protocol );
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }

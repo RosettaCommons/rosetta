@@ -58,6 +58,8 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 using namespace core;
 using namespace core::scoring;
@@ -87,6 +89,8 @@ void register_metrics() {
 int
 main( int argc, char * argv [] )
 {
+	try {
+
 std::vector<std::string> surface;
 std::set <std::string> interface;
   NEW_OPT( max_residues, "Maximum number of residues to return", 1000);
@@ -175,6 +179,10 @@ std::set <std::string> interface;
       os<<*it<<std::endl;
     }
   }
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 	return 0;
 

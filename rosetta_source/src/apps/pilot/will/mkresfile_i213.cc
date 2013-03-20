@@ -155,6 +155,9 @@ void pymol(Vec v, Vec c) {
 int
 main (int argc, char *argv[])
 {
+
+	try {
+
   devel::init(argc,argv);
   using namespace basic::options;
 
@@ -313,6 +316,11 @@ main (int argc, char *argv[])
     tmp.dump_pdb("mutalyze_"+fname+"_sub1.pdb");
 
   }
+
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 }
 

@@ -39,6 +39,7 @@
 #include <utility/io/ozstream.hh>
 #include <utility/exit.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <utility/excn/Exceptions.hh>
 
 
 
@@ -76,6 +77,7 @@ void ThisApplication::register_options() {
 int
 main( int argc, char * argv [] )
 {
+	try{
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using core::io::silent::SilentFileData;
@@ -197,7 +199,9 @@ main( int argc, char * argv [] )
 			ite++;
 		}
 	}
-
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 	return 0;
 }
 

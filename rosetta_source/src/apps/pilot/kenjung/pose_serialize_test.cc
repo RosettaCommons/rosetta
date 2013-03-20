@@ -25,6 +25,8 @@
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/OptionKeys.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 #include <iostream>
 #include <sstream>
 
@@ -40,6 +42,7 @@ OPT_1GRP_KEY(File, m, file)
 int
 main( int argc, char * argv [] )
 {
+    try {
 		// initialize core
 		NEW_OPT(m::file, "file", "");
 
@@ -54,7 +57,7 @@ main( int argc, char * argv [] )
 		PoseSP tmppose(new Pose());
 		core::import_pose::pose_from_pdb( *tmppose, *residue_set, option[ m::file]().name() );
 		tmppose->dump_pdb(option[ m::file]().name()+".dump");
-		
+
 		ScoreFunctionOP scorefxn = getScoreFunction();
 		PoseSP out;
 		(*scorefxn)(*tmppose);
@@ -73,5 +76,9 @@ main( int argc, char * argv [] )
 		(*scorefxn)(*out);
 		trmain << "dumping" << std::endl;
 		out->dump_pdb(option[ m::file]().name()+".redump");
-		return 0;
+
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }

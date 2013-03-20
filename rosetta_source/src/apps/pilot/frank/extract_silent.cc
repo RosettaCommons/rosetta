@@ -13,6 +13,8 @@
 
 // libRosetta headers
 
+#include <utility/excn/Exceptions.hh>
+
 
 #include <core/types.hh>
 
@@ -68,6 +70,7 @@ using basic::Error;
 int
 main( int argc, char* argv [] )
 {
+    try {
 	// options, random initialization
 	devel::init( argc, argv );
 
@@ -101,6 +104,8 @@ main( int argc, char* argv [] )
 		std::string filename = outfile + iter->decoy_tag() + ".pdb";
 		core::io::pdb::dump_pdb( pose , filename );
 	}
-
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
 	return 0;
 }

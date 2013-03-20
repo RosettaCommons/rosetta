@@ -44,6 +44,7 @@
 #include <boost/tokenizer.hpp>
 #include <boost/lexical_cast.hpp>
 
+#include <utility/excn/Exceptions.hh>
 
 static basic::Tracer trace("quotapicker_demo");
 
@@ -248,7 +249,7 @@ void attach_simple_abego_pools(FragmentPickerOP picker,Size n_candidates_,
 }
 
 int main(int argc, char * argv[]) {
-
+    try {
 	using namespace core;
 	using namespace core::sequence;
 	using namespace basic::options;
@@ -335,4 +336,9 @@ int main(int argc, char * argv[]) {
 
 //----------- TO RUN QUOTA PROTOCOL, ONE HAS TO SET UP QUOTA SELECTOR AND QUOTA COLLECTOR
 	my_picker->quota_protocol();
-}
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
+        return 0;
+
+    }

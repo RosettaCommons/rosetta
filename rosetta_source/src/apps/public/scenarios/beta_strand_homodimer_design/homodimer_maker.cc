@@ -96,6 +96,7 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+#include <utility/excn/Exceptions.hh>
 
 static basic::Tracer TR("apps.public.beta_strand_homodimer_design.homodimer_maker");
 
@@ -486,7 +487,7 @@ void HDmakerMover::apply (pose::Pose & pose ) {
 //begin main
 int
 main( int argc, char* argv[] ) {
-
+try {
   //options
   option.add(sheet_start, "Start of beta sheet (PDBNum) to do rolls and translates about");
   option.add(sheet_stop, "End of beta sheet (PDBNum) to do rolls and translates about");
@@ -502,5 +503,8 @@ main( int argc, char* argv[] ) {
 	protocols::jd2::JobDistributor::get_instance()->go( new HDmakerMover );
 
   TR<< "Complete." << std::endl;
-  return 0;
+} catch ( utility::excn::EXCN_Base const & e ) {
+	std::cout << "caught exception " << e.msg() << std::endl;
+}
+return 0;
 }//main

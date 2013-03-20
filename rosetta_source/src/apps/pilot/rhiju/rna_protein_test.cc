@@ -954,6 +954,9 @@ juke_sam_test(){
 int
 main( int argc, char * argv [] )
 {
+
+	try {
+
 	using namespace core::options;
 
 	//Uh, options?
@@ -989,5 +992,10 @@ main( int argc, char * argv [] )
 		juke_sam_test();
 	}
 	exit( 0 );
+
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 }

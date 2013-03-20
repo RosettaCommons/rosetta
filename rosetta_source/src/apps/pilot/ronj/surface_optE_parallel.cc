@@ -29,6 +29,9 @@
 int
 main( int argc, char * argv [] ) {
 
+	try {
+
+
 #ifdef USEMPI
 	MPI_Init(&argc, &argv);
 #endif
@@ -41,5 +44,10 @@ main( int argc, char * argv [] ) {
 #ifdef USEMPI
 	MPI_Finalize();
 #endif
+
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 }

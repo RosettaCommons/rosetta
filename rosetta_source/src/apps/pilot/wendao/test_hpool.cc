@@ -17,6 +17,9 @@
 
 int main(int argc, char *argv[])
 {
+
+	try {
+
 	using namespace core;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -43,5 +46,10 @@ int main(int argc, char *argv[])
     std::cout << "number of centers: " << hp->size() << std::endl;
 
 	return 0;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 

@@ -76,6 +76,8 @@ using namespace core;
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -128,9 +130,15 @@ build_template( void* )
 int
 main( int argc, char * argv [] )
 {
+	try {
+
 	// options, random initialization
 	devel::init( argc, argv );
 	protocols::viewer::viewer_main( build_template );
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 	return 0;
 }

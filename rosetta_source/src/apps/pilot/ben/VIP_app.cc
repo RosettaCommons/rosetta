@@ -41,6 +41,8 @@ basic::options::BooleanOptionKey const minimize_sidechains("minimize_sidechains"
 int
 main( int argc, char * argv [] )
 {
+	try {
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -101,4 +103,9 @@ else{
 		out_pose.dump_pdb( option[cp::output] );
 		iterate = false;}}}
 
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
+	return 0;
 }

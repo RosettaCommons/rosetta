@@ -64,6 +64,8 @@ using utility::vector1;
 #include <protocols/jobdist/Jobs.hh>
 #include <ObjexxFCL/format.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::fmt;
@@ -270,6 +272,8 @@ private:
 int
 main( int argc, char * argv [] )
 {
+	try {
+
 	using namespace core::scoring::constraints;
 	using namespace core::chemical;
 	using namespace basic::options::OptionKeys;
@@ -312,6 +316,10 @@ main( int argc, char * argv [] )
 	ConstraintStatsMoverOP downcast
 		= ConstraintStatsMoverOP( static_cast< ConstraintStatsMover * > ( mover() ) );
 	downcast->print_stats( output );
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 	return 0;
 } // int main

@@ -396,6 +396,7 @@ void write_weights_to_db(utility::sql_database::sessionOP & db_session, GridWeig
 
 int main(int argc, char* argv[])
 {
+    try {
 
 	NEW_OPT(roc_opt::active_list,"a list of active protein_ligand complexes","");
 	NEW_OPT(roc_opt::inactive_list,"a list of inactive protein_ligand complexes","");
@@ -481,5 +482,8 @@ int main(int argc, char* argv[])
 		MPI_Barrier( MPI_COMM_WORLD );
 		MPI_Finalize();
 #endif
-	return 0;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                             std::cout << "caught exception " << e.msg() << std::endl;
+                                }
+       return 0; 
 }

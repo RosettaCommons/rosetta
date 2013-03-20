@@ -54,6 +54,8 @@
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
 #include <basic/options/keys/james.OptionKeys.gen.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 // silly typedefs
 using namespace numeric::kdtree;
 typedef WrappedPrimitive< std::pair< char, char > > SS_Prediction;
@@ -64,6 +66,8 @@ static basic::Tracer tr( "density_grid" );
 ///////////////////////////////////////////////////////////////////////////////
 int
 main( int argc, char* argv [] ) {
+	try {
+
 	// options, random initialization
 	devel::init( argc, argv );
 
@@ -288,4 +292,10 @@ main( int argc, char* argv [] ) {
 	PROF_STOP( KDTREE_SEARCH );
 
 	prof_show();
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
+	return 0;
 } // int main( int argc, char * argv [] )

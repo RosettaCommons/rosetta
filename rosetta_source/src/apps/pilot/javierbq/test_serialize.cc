@@ -30,6 +30,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <utility/excn/Exceptions.hh>
+
 
 using namespace core;
 using namespace basic::options;
@@ -92,6 +94,8 @@ typedef utility::pointer::owning_ptr< SerializablePose const > SerializablePoseC
 
 int
 main ( int argc, char* argv[] ){
+	try {
+
 		ThisApplication::register_options();
 		devel::init(argc, argv);
 		TR << "Reaading File " << option[pdb]() << std::endl;
@@ -111,6 +115,10 @@ main ( int argc, char* argv[] ){
 		core::pose::Pose p2 = string_to_pose(buffer);
 		TR << "size of pose to unflatten " << p2.total_residue() << std::endl;
 		TR << "ss:" << p2.secstruct() << std::endl;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 		
     return 0;
 }

@@ -27,6 +27,8 @@
 #include <core/fragment/picking/scores/FragmentScoringMethod.hh>
 #include <utility>
 
+#include <utility/excn/Exceptions.hh>
+
 //Auto Headers
 #include <utility/io/mpistream.hh>
 
@@ -55,7 +57,7 @@ void setup_nnmake_style_quota() {
 }
 
 int main(int argc, char * argv[]) {
-
+    try {
 	using namespace core;
 	using namespace core::sequence;
 	using namespace core::options;
@@ -113,4 +115,8 @@ int main(int argc, char * argv[]) {
 //----------- WE SET UP BOUNDED COLLECTOR, WE RUN BOUNDED PROTOCOL
 //----------- TO RUN QUOTA PROTOCOL, ONE HAS TO SET UP QUOTA SELECTOR AND QUOTA COLLECTOR
 	my_picker->bounded_protocol();
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
+        return 0;
 }

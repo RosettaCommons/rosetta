@@ -175,12 +175,18 @@ typedef utility::pointer::owning_ptr< Zinc1_HomodimerSetup > Zinc1_HomodimerSetu
 
 int main( int argc, char* argv[] )
 {
+	try {
+
   basic::options::option.add( scaffold_pdb, "protein monomer for metal-mediated dimerization" ).def("3DE8_A.pdb");
   devel::init(argc, argv);
 
   protocols::jd2::JobDistributor::get_instance()->go(new Zinc1_HomodimerSetup);
 
   TR << "************************d**o**n**e**************************************" << std::endl;
+
+	} catch (utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
   return 0;
 }

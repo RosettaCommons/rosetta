@@ -29,6 +29,8 @@
 #include <protocols/frag_picker/scores/FragmentScoringMethod.hh>
 #include <utility>
 
+#include <utility/excn/Exceptions.hh>
+
 static basic::Tracer trace("fragmentpicker_integration_demo");
 
 using namespace core;
@@ -56,7 +58,7 @@ void register_options() {
 }
 
 int main(int argc, char * argv[]) {
-
+    try {
 	using namespace core;
 	using namespace core::sequence;
 	using namespace basic::options;
@@ -132,4 +134,8 @@ int main(int argc, char * argv[]) {
 //----------- WE SET UP BOUNDED COLLECTOR, WE RUN BOUNDED PROTOCOL
 //----------- TO RUN QUOTA PROTOCOL, ONE HAS TO SET UP QUOTA SELECTOR AND QUOTA COLLECTOR
 	my_picker->bounded_protocol();
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
+        return 0;
 }

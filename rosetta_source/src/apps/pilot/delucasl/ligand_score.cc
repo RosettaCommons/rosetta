@@ -16,6 +16,7 @@
 
 int main(int argc, char* argv[])
 {
+    try {
 	devel::init(argc,argv);
 
 
@@ -33,5 +34,8 @@ int main(int argc, char* argv[])
 	mover->write_all_grids("test_");
 
 	//protocols::ligand_docking::qsar::qsarMoverOP
-
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                             std::cout << "caught exception " << e.msg() << std::endl;
+                                }
+    return 0; 
 }

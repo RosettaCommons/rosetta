@@ -138,6 +138,9 @@ private:
 };
 
 int main(int argc, char *argv[]) {
+
+	try {
+
 	using namespace core;
 	using namespace chemical;
 	using namespace scoring;
@@ -221,5 +224,10 @@ int main(int argc, char *argv[]) {
 	pose.dump_pdb(basic::options::option[basic::options::OptionKeys::out::file::o]());
 
 	return 0;
+
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 }

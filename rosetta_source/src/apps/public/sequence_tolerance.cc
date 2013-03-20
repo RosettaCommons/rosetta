@@ -78,7 +78,7 @@ basic::Tracer TR("app.sequence_tolerance");
 // AUTO-REMOVED #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/ms.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
-
+#include <utility/excn/Exceptions.hh>
 
 using namespace core;
 using namespace conformation;
@@ -108,11 +108,15 @@ sequence_tolerance_main( void * );
 int
 main( int argc, char * argv[] )
 {
+	try {
 	NEW_OPT(seq_tol::fitness_master_weights, "fitness function master weights", utility::vector1<core::Real>());
 	NEW_OPT(seq_tol::unsat_polars, "calculate the number of buried unsatisfied polar atoms", false);
 	NEW_OPT(seq_tol::surface, "calculate the the surface score", false);
 	devel::init( argc, argv );
 	protocols::viewer::viewer_main( sequence_tolerance_main );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 	return 0;
 }
 

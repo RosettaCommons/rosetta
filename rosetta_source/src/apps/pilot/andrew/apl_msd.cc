@@ -67,6 +67,7 @@ public:
 
 int main( int argc, char ** argv )
 {
+	try {
 	using namespace devel::pack_daemon;
 	using namespace core;
 	using namespace basic::options;
@@ -161,6 +162,10 @@ int main( int argc, char ** argv )
 		poses[ 1 ]->dump_pdb( "msa_design_" + utility::to_string( counter ) + "_bound.pdb" );
 		poses[ 2 ]->dump_pdb( "msa_design_" + utility::to_string( counter ) + "_unbound.pdb" );
 		break;
+	}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 	}
 
 	return 0;

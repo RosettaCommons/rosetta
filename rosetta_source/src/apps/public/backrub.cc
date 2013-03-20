@@ -56,6 +56,7 @@
 
 // Utility Headers
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 
 // Numeric Headers
 #include <numeric/random/random.hh>
@@ -99,6 +100,8 @@ my_main( void* );
 int
 main( int argc, char * argv [] )
 {
+	try {
+
 	OPT(in::path::database);
 	OPT(in::file::s);
 	OPT(in::file::l);
@@ -129,6 +132,10 @@ main( int argc, char * argv [] )
 	devel::init(argc, argv);
 
 	protocols::viewer::viewer_main( my_main );
+
+	 } catch ( utility::excn::EXCN_Base const & e ) { 
+		 std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 	return 0;
 }

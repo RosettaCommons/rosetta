@@ -39,6 +39,9 @@ typedef xyzTransform<core::Real> X;
 core::Real const eps = 0.000001;
 
 int main(int argv, char **argc){
+
+  try {
+
 	core::init(argv,argc);
 
 	for(core::Size i = 1; i <= 100000; ++i){
@@ -97,4 +100,9 @@ int main(int argv, char **argc){
 
 
 	return 0;
+
+  } catch ( utility::excn::EXCN_Base const & e ) {
+    std::cout << "caught exception " << e.msg() << std::endl;
+  }
+
 }

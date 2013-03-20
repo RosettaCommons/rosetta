@@ -37,7 +37,6 @@
 #include <utility/excn/EXCN_Base.hh>
 #include <basic/Tracer.hh>
 
-
 // C++ headers
 
 void* my_main( void *);

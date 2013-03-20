@@ -62,6 +62,8 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 
 using namespace core;
@@ -77,6 +79,8 @@ OPT_KEY( Boolean, pocket_SA)
 int
 main( int argc, char * argv [] )
 {
+	try {
+
 	using namespace protocols::moves;
 
 	NEW_OPT( pocket_kT, "kT to be used for backrub MC", 1.2 );
@@ -272,6 +276,10 @@ main( int argc, char * argv [] )
 	ddg_outstream.clear();
 
 	std::cout << "Successfully finished relaxing backbone around central residue" << std::endl;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 	return 0;
 }

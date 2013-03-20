@@ -53,7 +53,7 @@
 #include <ObjexxFCL/format.hh>
 
 #include <utility/io/izstream.hh>
-
+#include <utility/excn/Exceptions.hh>
 
 
 // C++ headers
@@ -108,6 +108,8 @@ permutate( utility::vector1<int> &residues_to_randomize ) {
 int
 main( int argc, char * argv [] )
 {
+    try {
+
 	using namespace pose;
 	using namespace core;
 	using namespace scoring;
@@ -240,5 +242,8 @@ main( int argc, char * argv [] )
 	std::string output_name = option[ out::file::o ]();
 	pose.dump_pdb(output_name);
 
-	return 0;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 } // int main

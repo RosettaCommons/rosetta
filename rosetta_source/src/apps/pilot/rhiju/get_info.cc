@@ -332,6 +332,9 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
+
+	try {
+
 	using namespace core::options;
 
 	NEW_OPT( seq_sep_cutoff, "for constraints, minimum sequence separation", 8 );
@@ -356,4 +359,9 @@ main( int argc, char * argv [] )
 	////////////////////////////////////////////////////////////////////////////
 	// end of setup
 	////////////////////////////////////////////////////////////////////////////
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }

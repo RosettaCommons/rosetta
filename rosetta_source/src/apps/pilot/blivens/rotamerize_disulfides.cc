@@ -81,6 +81,7 @@ usage(string msg)
 
 int main( int argc, char * argv [] )
 {
+  try {
 	//init options system
 	devel::init(argc, argv);
 
@@ -208,6 +209,10 @@ int main( int argc, char * argv [] )
 //		(*new_pose)->dump_pdb(outfile.str());
 //		++count;
 //	}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 	return 0;
 } // end main

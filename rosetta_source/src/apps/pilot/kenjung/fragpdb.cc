@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @author Ken Jung
-/// @brief 
+/// @brief
 //	Takes as input an index and offset and returns the corresponding frag in a pdb
 //	OR a bin key and returns the pdbs of all the frags in the bin
 //	should take only one loopsize
@@ -51,6 +51,7 @@ void output_pdb( std::vector < BackboneSegment> & bs_vec_, core::Size loopsize, 
 int
 main( int argc, char * argv [] )
 {
+    try {
 	// initialize core
 	devel::init(argc, argv);
 
@@ -66,12 +67,12 @@ main( int argc, char * argv [] )
 
 
 	std::string out_path = option[lh::fragpdb::out_path];
-	if (out_path != "") 
+	if (out_path != "")
 					out_path = out_path + "/";
 
 	// check if index/offset or key is null, no point in loading db if those are null
 	if (indexoffset[1] == -1 && key.size() == 0 ) {
-				 TR << "Need to set fragpdb:indexoffset or fragpdb:bin" << std::endl;	
+				 TR << "Need to set fragpdb:indexoffset or fragpdb:bin" << std::endl;
 				 return 1;
 	}
 	if (indexoffset[1] != -1 && indexoffset.size() % 2 == 1 ) {
@@ -79,7 +80,7 @@ main( int argc, char * argv [] )
 				return 1;
 	}
 
-	
+
 	if (loopsizes.size() > 1) {
 				TR << "Too many loopsizes!" << std::endl;
 				return 1;
@@ -102,7 +103,7 @@ main( int argc, char * argv [] )
 								TR << "No frags matched" << std::endl;
 					}
 					else {
-								output_pdb(bs_vec_, loopsize, out_path, "");				
+								output_pdb(bs_vec_, loopsize, out_path, "");
 					}
 	}
 	else if (key.size() != 0 ){
@@ -121,13 +122,16 @@ main( int argc, char * argv [] )
 												TR << "No frags matched" << std::endl;
 									}
 									else {
-												output_pdb(bs_vec_, loopsize, out_path, utility::to_string(key[i]) + ".");				
+												output_pdb(bs_vec_, loopsize, out_path, utility::to_string(key[i]) + ".");
 									}
 					}
 
 	}
 
-	return 0;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 
 void output_pdb( std::vector < BackboneSegment> & bs_vec_, core::Size loopsize, std::string out_path, std::string prefix ) {

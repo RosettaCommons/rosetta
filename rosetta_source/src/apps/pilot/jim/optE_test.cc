@@ -88,7 +88,9 @@
 
 
 #include <utility/vector1.hh>
-#include <utility/exit.hh>
+#include <utility/excn/Exceptions.hh>
+//#include <utility/file/file_sys_util.hh>
+//#include <utility/exit.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
@@ -1022,10 +1024,15 @@ accept_new_weight_set(
 int
 main( int argc, char * argv [] )
 {
-	//using namespace core;
-	devel::init( argc, argv );
+    try {
+    	//using namespace core;
+    	devel::init( argc, argv );
 
-	//simple_opte_test();
-	iterative_optE();
+    	//simple_opte_test();
+    	iterative_optE();
 
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }

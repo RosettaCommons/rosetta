@@ -88,7 +88,7 @@ ResidualDipolarCouplingOP filter_rdcs( Size first_pos,Size last_pos, ResidualDip
 
 ///////////////////////////////////////////////////////////////////////////////
 int main(int argc, char * argv[]) {
-
+    try {
     register_options();
     devel::init(argc, argv);
 
@@ -99,6 +99,10 @@ int main(int argc, char * argv[]) {
     for ( residual_dipolar_coupling::RDC_lines::const_iterator it = out_rdcs.begin(); it != out_rdcs.end(); ++it ) {
 	std::cout << *it;
     }
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
+        return 0;
 }
 
 

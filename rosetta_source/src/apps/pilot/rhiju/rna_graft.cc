@@ -396,6 +396,9 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
+
+	try {
+
 	using namespace basic::options;
 
 	utility::vector1< Size > blank_size_vector;
@@ -415,5 +418,10 @@ main( int argc, char * argv [] )
 	////////////////////////////////////////////////////////////////////////////
 
 	protocols::viewer::viewer_main( my_main );
+
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 }

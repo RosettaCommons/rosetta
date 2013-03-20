@@ -153,6 +153,9 @@ test_find_neighbors(core::pose::Pose const & p){
 }
 
 int main(int argc, char *argv[]) {
+
+	try {
+
 	using numeric::geometry::hashing::xyzStripeHash;
 	register_options();
 	devel::init(argc,argv);
@@ -316,4 +319,9 @@ int main(int argc, char *argv[]) {
 	std::cout << "hash speedup over IFC count: " << tifc/th << std::endl;
 
 	return 0;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }

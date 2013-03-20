@@ -311,6 +311,9 @@ void MinPackMinMover::apply (pose::Pose& pose ) {
 int
 main( int argc, char * argv [] )
 {
+
+	try {
+
 	//using namespace protocols;
 	using namespace protocols::jd2;
 	using namespace protocols::moves;
@@ -329,6 +332,11 @@ main( int argc, char * argv [] )
 	protocols::jd2::JobDistributor::get_instance()->go( new MinPackMinMover );
 
 	std::cout << "Done! -------------------------------\n";
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 
 

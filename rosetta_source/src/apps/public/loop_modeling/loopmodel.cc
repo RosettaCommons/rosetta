@@ -20,7 +20,7 @@
 #include <devel/init.hh>
 
 #include <utility/vector1.hh>
-
+#include <utility/excn/Exceptions.hh>
 
 
 ////////////////////////////////////////////////////////
@@ -34,11 +34,15 @@ LoopBuild_main_local( void* ) {
 int
 main( int argc, char * argv [] )
 {
+	try {
 	// options, random initialization
 	protocols::abinitio::ClassicAbinitio::register_options();
 	protocols::abinitio::AbrelaxApplication::register_options();
 	devel::init( argc, argv );
 	protocols::viewer::viewer_main( LoopBuild_main_local );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 	return 0;
 }
 

@@ -66,9 +66,13 @@
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/util.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 int
 main( int argc, char* argv [] ) {
+	try {
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
@@ -185,4 +189,10 @@ main( int argc, char* argv [] ) {
 		tr.Error << "dumping pose to " << output_name << std::endl;
 		modeled_pose.dump_pdb( output_name );
 	}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
+	return 0;
 } // int main( int argc, char * argv [] )

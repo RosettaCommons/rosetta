@@ -50,6 +50,8 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 using namespace core;
 using namespace core::scoring;
@@ -72,6 +74,8 @@ void define_interface( core::pose::Pose & /*input_pose*/ ) {
 int
 main( int argc, char * argv [] )
 {
+	try {
+
   NEW_OPT ( apo_chain, "Chain to find contacts on","A");
   devel::init(argc, argv);
   pose::Pose input_pose;
@@ -134,6 +138,10 @@ main( int argc, char * argv [] )
 
 	TR << std::endl;
 
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 	return 0;
 

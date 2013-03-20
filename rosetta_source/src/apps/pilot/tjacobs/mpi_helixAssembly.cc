@@ -57,6 +57,9 @@ int
 main( int argc, char * argv [] )
 {
 
+	try {
+
+
 #ifdef USEBOOSTMPI
 
   using namespace std;
@@ -363,5 +366,9 @@ main( int argc, char * argv [] )
   TR << "------------DONE!------------" << endl;
 
 #endif
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 }

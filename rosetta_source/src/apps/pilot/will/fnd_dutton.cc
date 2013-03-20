@@ -37,6 +37,9 @@
 
 
 int main(int argc, char *argv[]) {
+
+	try {
+
 	protocols::abinitio::register_options_broker();
 
 	devel::init(argc,argv);
@@ -55,5 +58,10 @@ int main(int argc, char *argv[]) {
 	protocols::jd2::JobDistributor::get_instance()->go( seq_mover );
 
 	return 0;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 

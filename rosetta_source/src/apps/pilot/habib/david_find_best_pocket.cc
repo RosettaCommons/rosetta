@@ -60,6 +60,8 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 
 using namespace core;
@@ -74,6 +76,8 @@ OPT_KEY( Integer, num_angles )
 int
 main( int argc, char * argv [] )
 {
+	try {
+
    	NEW_OPT ( num_angles, "Number of different pose angles to measure score at", 1);
 
 	char chain = '\0';
@@ -197,6 +201,11 @@ std::filebuf fb,fb2;
 	//std::cout << "Constraint score (unweighted) at start with constraint is: " << constraint_pocket_score << std::endl;
 
 */
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 	return 0;
 }
 

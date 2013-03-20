@@ -218,6 +218,9 @@ void cyclic_superimpose(Pose & move, Pose const & ref) {
 
 int main( int argc, char * argv [] ) {
 
+	try {
+
+
 	using basic::options::option;
 	using namespace basic::options::OptionKeys;
 	using namespace core::scoring::constraints;
@@ -331,6 +334,11 @@ int main( int argc, char * argv [] ) {
 
 	TR << "enter canonical sampling mover" << std::endl;
 	csm->apply(pose);
+
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 }
 

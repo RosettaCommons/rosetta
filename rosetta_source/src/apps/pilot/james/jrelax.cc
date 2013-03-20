@@ -41,10 +41,13 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 ///////////////////////////////////////////////////////////////////////////////
 
 int
 main( int argc, char * argv [] ) {
+	try {
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -70,4 +73,10 @@ main( int argc, char * argv [] ) {
 		protocol = seqmov;
 	}
 	not_universal_main( *protocol );
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
+	return 0;
 }

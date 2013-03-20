@@ -52,6 +52,8 @@ void copy_residues(const Pose& src, Size start, Size stop, Pose* dst) {
 }
 
 int main(int argc, char* argv[]) {
+  try {
+
   using core::kinematics::FoldTree;
   using protocols::loops::Loop;
   using namespace basic::options;
@@ -92,5 +94,10 @@ int main(int argc, char* argv[]) {
   core::conformation::idealize_position(f2.stop(), pose.conformation());  // Attach residues following f2.stop() to f2
 
   pose.dump_pdb("pose_final.pdb");
+
+  } catch ( utility::excn::EXCN_Base const & e ) {
+    std::cout << "caught exception " << e.msg() << std::endl;
+  }
+
   return 0;
 }

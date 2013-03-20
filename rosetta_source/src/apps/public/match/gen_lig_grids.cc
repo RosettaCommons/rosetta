@@ -58,6 +58,7 @@
 #include <utility/vector1.hh>
 #include <fstream>
 
+#include <utility/excn/Exceptions.hh>
 
 using namespace std;
 using namespace core;
@@ -101,7 +102,8 @@ inline void assure(std::ofstream& in, const char* filename = "")
 
 int main( int argc, char * argv [] )
 {
-    //normal init
+    try {
+	//normal init
     NEW_OPT(grid_delta, "Size of grids", 0.5);
     NEW_OPT(grid_lig_cutoff, "Grid range around ligand", 4.0);
     NEW_OPT(grid_bb_cutoff, "Backbone occupation size", 2.25);
@@ -299,7 +301,9 @@ int main( int argc, char * argv [] )
         }
         out_grid << endl;
     }
-
+    } catch ( utility::excn::EXCN_Base const & e ) {
+	    std::cout << "caught exception " << e.msg() << std::endl;
+    }
     return EXIT_SUCCESS;
 }
 

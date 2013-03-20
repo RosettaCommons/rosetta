@@ -134,6 +134,8 @@ public:
 
 int main( int argc, char ** argv )
 {
+	try {
+
 	using namespace utility;
 	using namespace devel::pack_daemon;
 	using namespace core;
@@ -321,6 +323,11 @@ int main( int argc, char ** argv )
 #ifdef USEMPI
 	MPI_Finalize();
 #endif
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 	return 0;
 }
 

@@ -61,6 +61,7 @@
 #include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
+#include <utility/excn/Exceptions.hh>
 
 basic::Tracer TR("linker_sampler");
 
@@ -218,7 +219,7 @@ private:
 
 ////////////////////////////////////////////////////////
 int main( int argc, char * argv [] ) {
-
+    try {
     protocols::abinitio::ClassicAbinitio::register_options();
     protocols::abinitio::AbrelaxApplication::register_options();
     register_options();
@@ -226,7 +227,9 @@ int main( int argc, char * argv [] ) {
 
     DomainAssemblerNDocker job;
     job.run();
-
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                             std::cout << "caught exception " << e.msg() << std::endl;
+                                }
     return 0;
 }
 

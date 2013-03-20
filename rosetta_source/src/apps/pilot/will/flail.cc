@@ -351,6 +351,8 @@ struct Bola {
 typedef core::id::AtomID AID;
 
 int main(int argv, char **argc){
+  try {
+
 	register_options();
 	core::init(argv,argc);
 
@@ -413,5 +415,10 @@ int main(int argv, char **argc){
 		out << endl;
 		out.close();
 	}
-	return 0;
+
+  } catch ( utility::excn::EXCN_Base const & e ) {
+    std::cout << "caught exception " << e.msg() << std::endl;
+  }
+
+  return 0;
 }

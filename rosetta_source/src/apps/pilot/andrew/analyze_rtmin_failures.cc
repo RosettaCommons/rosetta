@@ -67,6 +67,8 @@ is_nat_rot(
 
 int main( int argc, char * argv [] )
 {
+  try {
+
 	using namespace core;
 	using namespace core::chemical;
 	using namespace core::conformation;
@@ -188,5 +190,8 @@ int main( int argc, char * argv [] )
 		(*sfxn)(pose);
 		pose.dump_pdb( "rtmin_failure_best_nonnative_rotamer.pdb" );
 	}
+  } catch ( utility::excn::EXCN_Base const & e ) {
+    std::cout << "caught exception " << e.msg() << std::endl;
+  }
 }
 

@@ -1111,6 +1111,9 @@ int
 main( int argc, char * argv [] )
 {
 
+	try {
+
+
 	using namespace core;
 	using namespace scoring;
 	using namespace protocols;
@@ -1264,5 +1267,9 @@ main( int argc, char * argv [] )
 	std::cout.flush();
 	sslog.clear();
 	sslog.str("");
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 }

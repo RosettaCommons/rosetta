@@ -17,6 +17,8 @@
 // C++ headers
 #include <devel/init.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 using basic::T;
 using namespace core;
@@ -28,6 +30,8 @@ static basic::Tracer TR("main");
 int
 main( int argc, char * argv [] )
 {
+    try {
+
 	// initialize core
 	const int HASH_POSITION_GRID_SIZE= 75;
 	devel::init(argc, argv);
@@ -67,6 +71,9 @@ main( int argc, char * argv [] )
 		TR << *itr << std::endl;
 	}
 	*/
-
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 

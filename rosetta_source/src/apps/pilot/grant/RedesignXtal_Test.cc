@@ -61,6 +61,8 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 // Auto-header: duplicate removed #include <protocols/jobdist/standard_mains.hh>
 // AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
@@ -68,6 +70,8 @@
 int
 main( int argc, char * argv [] )
 {
+
+	try {
 
   using namespace basic::options;
   using utility::file::FileName;
@@ -87,6 +91,10 @@ main( int argc, char * argv [] )
 	devel::denovo_protein_design::DesignRelaxMover designrelaxmover( designtaskfactory );
 
 	protocols::jobdist::main_plain_pdb_mover( designrelaxmover, fullfxn);
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
   return 0;
 }

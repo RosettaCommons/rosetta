@@ -33,6 +33,7 @@
 //#include <utility/exit.hh>
 //#include <utility/file/FileName.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/excn/Exceptions.hh>
 #include <string>
 //#include <iostream>
 
@@ -134,12 +135,17 @@ RamaTestMover::get_name() const {
 int
 main( int argc, char * argv [] )
 {
-	using namespace protocols::jobdist;
-	using namespace protocols::moves;
-	using namespace scoring;
+    try {
+    	using namespace protocols::jobdist;
+    	using namespace protocols::moves;
+    	using namespace scoring;
 
-	devel::init(argc, argv);
+    	devel::init(argc, argv);
 
-	MoverOP protocol = new RamaTestMover();
-	protocols::jd2::JobDistributor::get_instance()->go( protocol );
+    	MoverOP protocol = new RamaTestMover();
+    	protocols::jd2::JobDistributor::get_instance()->go( protocol );
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }

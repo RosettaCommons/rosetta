@@ -29,6 +29,7 @@
 #include <protocols/jumping/JumpSetup.hh>
 #include <core/scoring/dssp/PairingsList.hh>
 #include <protocols/jumping/SecondaryStructure.hh>
+#include <utility/excn/Exceptions.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -267,12 +268,16 @@ void Application::run() {
 
 using namespace protocols::abinitio;
 int main( int argc, char** argv ) {
+	try{
   Application::register_options();
   devel::init( argc, argv );
   basic::options::option[ basic::options::OptionKeys::in::path::database ].def( "~/minirosetta_database");
 
   Application app;
   app.run();
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl; 
+	} 
   return 0;
 }
 

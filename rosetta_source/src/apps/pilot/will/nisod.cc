@@ -283,6 +283,9 @@ int
 main( int argc, char * argv [] )
 {
 
+	try {
+
+
 	using namespace core;
 	using namespace chemical;
 	using namespace conformation;
@@ -297,5 +300,10 @@ main( int argc, char * argv [] )
 	CCParam cp;
 	Pose pose = make_coiled_coil(cp);
 	pose.dump_pdb("test.pdb");
+
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 }

@@ -90,6 +90,9 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
+#include <utility/excn/Exceptions.hh>
+
+
 #include <fstream>
 #include <iostream>
 #include <math.h>
@@ -700,6 +703,7 @@ my_main( void* ) {
 
 int
 main( int argc, char * argv [] ) {
+    try {
 	NEW_OPT(crystdes::prefix, "out-prefix", "S");
 	NEW_OPT(crystdes::cen_min, "cen_min", true);
 	NEW_OPT(crystdes::smallres_only, "smallres_only", true);
@@ -723,4 +727,8 @@ main( int argc, char * argv [] ) {
 	devel::init( argc, argv );
 
 	protocols::viewer::viewer_main( my_main );
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
+        return 0;
 }

@@ -312,6 +312,9 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
+
+	try {
+
   using namespace core::options;
 
   NEW_OPT( seq, "sequence", "" );
@@ -333,4 +336,9 @@ main( int argc, char * argv [] )
   ////////////////////////////////////////////////////////////////////////////
   // end of setup
   ////////////////////////////////////////////////////////////////////////////
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }

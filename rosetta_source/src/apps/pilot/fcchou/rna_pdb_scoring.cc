@@ -37,6 +37,9 @@
 
 #include <protocols/viewer/viewers.hh>
 
+#include <utility/excn/Exceptions.hh>
+
+
 //////////////////////////////////////////////////
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -136,6 +139,7 @@ my_main ( void* ) {
 ///////////////////////////////////////////////////////////////////////////////
 int
 main ( int argc, char * argv [] ) {
+    try {
 	using namespace basic::options;
 	NEW_OPT ( force_field_file, "score_file", "rna/rna_hires_elec_dens" );
 	////////////////////////////////////////////////////////////////////////////
@@ -146,4 +150,8 @@ main ( int argc, char * argv [] ) {
 	// end of setup
 	////////////////////////////////////////////////////////////////////////////
 	protocols::viewer::viewer_main ( my_main );
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
+        return 0;
 }

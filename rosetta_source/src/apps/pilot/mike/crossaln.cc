@@ -33,6 +33,7 @@
 #include <utility/io/ozstream.hh>
 #include <utility/file/FileName.hh>
 #include <utility/string_util.hh>
+#include <utility/excn/Exceptions.hh>
 // AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 
 // option key includes
@@ -45,6 +46,7 @@
 
 int
 main( int argc, char* argv [] ) {
+    try {
 	using std::map;
 	using std::string;
 	using core::Size;
@@ -173,6 +175,10 @@ main( int argc, char* argv [] ) {
 	}
 
 	output.close();
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 
 

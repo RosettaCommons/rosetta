@@ -84,6 +84,7 @@ my_main( void *)
 
 
 int main( int argc, char * argv [] ) {
+	try{
   devel::init( argc, argv ); //d
 
   chemical::AtomTypeSetCAP cptr_atom_type_set( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ) );
@@ -159,4 +160,7 @@ int main( int argc, char * argv [] ) {
     assert(false); // core dump in debug mode
     std::exit( 1 );
   }
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl; 
+	} 
 }

@@ -64,6 +64,7 @@ void compute_windowed_rama(PoseCOP pose, FragSetCOP fragments, Size window, vect
 }
 
 int main(int argc, char* argv[]) {
+    try {
   using core::fragment::FragmentIO;
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
@@ -80,4 +81,8 @@ int main(int argc, char* argv[]) {
   for (Size i = 1; i <= ramas.size(); ++i) {
     std::cout << "rama " << i << " " << ramas[i] << std::endl;
   }
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
+        return 0;
 }

@@ -56,6 +56,8 @@ static numeric::random::RandomGenerator RG(12321); // <- Magic number, do not ch
 int
 main( int argc, char * argv [] )
 {
+  try {
+
   using namespace core;
 
   devel::init(argc, argv);
@@ -89,6 +91,9 @@ main( int argc, char * argv [] )
   score12->show(std::cout,pose);
 
 
-  exit(0);
+  } catch ( utility::excn::EXCN_Base const & e ) {
+    std::cout << "caught exception " << e.msg() << std::endl;
+  }
 
+  return 0;
 }

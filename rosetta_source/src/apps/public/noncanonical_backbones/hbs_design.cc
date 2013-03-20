@@ -70,7 +70,7 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
-
+#include <utility/excn/Exceptions.hh>
 // C++ headers
 #include <string>
 #include <sstream>
@@ -142,7 +142,7 @@ typedef utility::pointer::owning_ptr< HbsDesignMover const > HbsDesignMoverCOP;
 int
 main( int argc, char* argv[] )
 {
-
+try{
 	/*********************************************************************************************************************
 	Common Setup
 	**********************************************************************************************************************/
@@ -173,7 +173,9 @@ main( int argc, char* argv[] )
 
 	//call job distributor
 	protocols::jd2::JobDistributor::get_instance()->go( OD_mover );
-
+} catch ( utility::excn::EXCN_Base const & e ) {
+	std::cout << "caught exception " << e.msg() << std::endl;
+}
 }//main
 
 void

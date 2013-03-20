@@ -48,6 +48,7 @@
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/conversions.hh>
@@ -165,6 +166,7 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
+    try {
 	using namespace core::options;
 
 	utility::vector1< Size > blank_size_vector;
@@ -184,7 +186,11 @@ main( int argc, char * argv [] )
 
 	protocols::viewer::viewer_main( my_main );
 
-	exit( 0 );
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
+	//exit( 0 );
 
 	////////////////////////////////////////////////////////////////////////////
 	// end of setup

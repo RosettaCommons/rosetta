@@ -38,6 +38,8 @@
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 using basic::T;
 using basic::Error;
 using basic::Warning;
@@ -191,6 +193,7 @@ typedef utility::pointer::owning_ptr< APDBCMover > APDBCMoverOP;
 
 int main( int argc, char* argv[] )
 {
+	try {
 	using basic::options::option;
 	using namespace basic::options::OptionKeys::AnchoredPDBCreator;
 	option.add( scaffold_loop, "scaffold anchor loop location file").def("scaffold_loop");
@@ -204,6 +207,10 @@ int main( int argc, char* argv[] )
 	protocols::jd2::JobDistributor::get_instance()->go(new APDBCMover);
 
 	TR << "************************d**o**n**e**************************************" << std::endl;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
  	return 0;
 }

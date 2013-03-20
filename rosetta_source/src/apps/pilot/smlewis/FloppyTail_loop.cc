@@ -713,6 +713,9 @@ typedef utility::pointer::owning_ptr< FloppyTailMover > FloppyTailMoverOP;
 
 int main( int argc, char* argv[] )
 {
+
+	try {
+
 	using basic::options::option;
 	using namespace basic::options::OptionKeys;
 	option.add( flexible_start_resnum, "start res for flexible region").def(180);
@@ -732,4 +735,9 @@ int main( int argc, char* argv[] )
 	TR << "************************d**o**n**e**************************************" << std::endl;
 
 	return 0;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }

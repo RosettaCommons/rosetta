@@ -33,6 +33,8 @@
 #include <fstream>
 #include <sstream>
 
+
+
 static basic::Tracer TR("fpd_bbg");
 
 OPT_1GRP_KEY(Integer, bbg, ntrials)
@@ -122,12 +124,16 @@ my_main( void* ) {
 
 int main(int argc, char *argv[])
 {
+    try {
 
     NEW_OPT(bbg::ntrials, "number of Monte Carlo trials to run", 1000);
     NEW_OPT(bbg::kT, "temperature of MC mover", 0.6);
 
     devel::init(argc, argv);
     protocols::viewer::viewer_main( my_main );
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
     return 0;
 }
 

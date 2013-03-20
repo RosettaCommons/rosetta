@@ -40,6 +40,8 @@
 
 #include <string>
 
+#include <utility/excn/Exceptions.hh>
+
 char
 torsion2big_bin(
 	float const phi,
@@ -155,6 +157,8 @@ void print_rot_vector(
 
 int
 main( int argc, char* argv [] ) {
+	try {
+
 	// options, random initialization
 	devel::init( argc, argv );
 
@@ -318,5 +322,10 @@ main( int argc, char* argv [] ) {
 			<< F( width, prec, rsd_hydrophobic_sasa[ii] )
 			<< std::endl;
 	}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 	return 0;
 } // int main( int argc, char * argv [] )

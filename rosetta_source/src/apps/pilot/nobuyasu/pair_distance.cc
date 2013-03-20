@@ -53,6 +53,7 @@
 #include <fstream>
 #include <map>
 #include <numeric/xyzVector.hh>
+#include <utility/excn/Exceptions.hh>
 
 using basic::T;
 using basic::Error;
@@ -330,7 +331,7 @@ typedef utility::pointer::owning_ptr< PairDistance > PairDistanceOP;
 int
 main( int argc, char * argv [] )
 {
-
+	try{
 	ThisApplication::register_options();
 
 	// init
@@ -342,7 +343,9 @@ main( int argc, char * argv [] )
 
 	// run
 	protocols::jd2::JobDistributor::get_instance()->go( protocol );
-
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 	return 0;
 
 }

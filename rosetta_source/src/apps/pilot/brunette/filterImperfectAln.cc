@@ -106,6 +106,7 @@ SequenceAlignment filterAln(SequenceAlignment perfect_aln, SequenceAlignment ori
 }
 
 int main( int argc, char * argv [] ) {
+	try {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::sequence;
@@ -126,5 +127,11 @@ int main( int argc, char * argv [] ) {
 	string out_filename = option[out::file::alignment ]();
 	std::ofstream out_aln_stream( out_filename.c_str() );
 	output_alignments(out_alns,out_aln_stream);
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
+	return 0;
 }
 

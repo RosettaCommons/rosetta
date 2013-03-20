@@ -161,7 +161,7 @@ main( int argc, char * argv [] )
 	} // end optional side chain minimization
 
 	protocols::jd2::JobDistributor::get_instance()->go(seq_mover);
-	} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
-	}
+	} 
 }

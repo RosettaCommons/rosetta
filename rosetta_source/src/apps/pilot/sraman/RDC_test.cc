@@ -55,6 +55,9 @@
 int
 main( int argc, char * argv [] )
 {
+
+	try {
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
@@ -99,6 +102,11 @@ main( int argc, char * argv [] )
 	//v	utility::vector1< devel::residual_dipolar_coupling::RDC > All_RDC_lines( devel::residual_dipolar_coupling::read_RDC_file( filename ) );
 	//v	devel::residual_dipolar_coupling::eval_dipolar( pose, All_RDC_lines );
 	//v	devel::residual_dipolar_coupling::eval_dipolar( extended_pose, All_RDC_lines );
+
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 }
 

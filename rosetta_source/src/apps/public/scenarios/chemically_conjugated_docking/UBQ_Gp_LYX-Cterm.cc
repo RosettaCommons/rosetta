@@ -99,6 +99,7 @@
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
 #include <utility/vector0.hh>
+#include <utility/excn/Exceptions.hh>
 
 //Auto Headers
 #include <core/kinematics/AtomTree.hh>
@@ -719,6 +720,7 @@ typedef utility::pointer::owning_ptr< UBQ_GTPaseMover > UBQ_GTPaseMoverOP;
 
 int main( int argc, char* argv[] )
 {
+try {
 	//initialize options
 	devel::init(argc, argv);
 	basic::prof_reset();
@@ -732,6 +734,8 @@ int main( int argc, char* argv[] )
 
 	basic::prof_show();
 	TR << "************************d**o**n**e**************************************" << std::endl;
-
+} catch ( utility::excn::EXCN_Base const & e ) {
+	std::cout << "caught exception " << e.msg() << std::endl;
+}
 	return 0;
 }

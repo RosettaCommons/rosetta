@@ -61,9 +61,13 @@
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 int
 main( int argc, char* argv [] ) {
+	try {
+
 	using std::min;
 	using core::Size;
 	using core::Real;
@@ -102,6 +106,10 @@ main( int argc, char* argv [] ) {
 	string tag( "start" );
 	ss->fill_struct( fold_pose, tag );
 	sfd.write_silent_struct( *ss, option[ out::file::silent ]() );
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 	return 0;
 }

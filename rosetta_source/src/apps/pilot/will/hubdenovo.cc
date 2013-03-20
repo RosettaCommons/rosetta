@@ -1246,6 +1246,9 @@ void * run(void *) {
 }
 
 int main(int argc, char *argv[]) {
+
+	try {
+
 	register_options();
 	devel::init(argc,argv);
 	using namespace core::scoring;
@@ -1257,6 +1260,11 @@ int main(int argc, char *argv[]) {
 	}
 
 	return 0;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 
 

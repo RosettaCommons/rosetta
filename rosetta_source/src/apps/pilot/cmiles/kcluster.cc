@@ -180,6 +180,7 @@ void write_distances(const vector1<Pose>& models, const vector1<int>& centroids,
 }
 
 int main(int argc, char* argv[]) {
+    try {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   using core::chemical::ChemicalManager;
@@ -206,4 +207,8 @@ int main(int argc, char* argv[]) {
   assign_models(models, centroids, &assignments);
   write_output_files(models, centroids, assignments);
   write_distances(models, centroids, assignments);
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                std::cout << "caught exception " << e.msg() << std::endl;
+     }
+  return 0;
 }

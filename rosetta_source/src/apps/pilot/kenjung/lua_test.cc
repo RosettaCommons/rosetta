@@ -16,6 +16,7 @@
 // this includes lua.h and luabind.h
 #include <utility/lua/LuaObject.hh>
 #include <utility/lua/LuaIterator.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/pose/Pose.hh>
@@ -35,6 +36,7 @@ OPT_1GRP_KEY(File, m, file)
 int
 main( int argc, char * argv [] )
 {
+    try {
 	using namespace utility::lua;
 	NEW_OPT(m::file, "file", "");
 	devel::init(argc, argv);
@@ -105,7 +107,9 @@ main( int argc, char * argv [] )
 		trmain << "Lua interpreting of string failed. Error is:" << std::endl;
 		trmain << lua_tostring(lstate_, -1) << std::endl;
 	}
-	
 
-	return 0;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }

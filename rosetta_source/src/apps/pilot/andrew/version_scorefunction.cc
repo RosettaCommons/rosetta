@@ -222,6 +222,8 @@ typedef utility::pointer::owning_ptr< ScoreFunctionFingerprintMover > ScoreFunct
 
 int main( int argc, char ** argv )
 {
+	try {
+
 	using namespace utility;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -248,6 +250,10 @@ int main( int argc, char ** argv )
 				iter != iter_end; ++iter ) {
 			output_file << *iter;
 		}
+	}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 	}
 
 	return 0;

@@ -198,8 +198,14 @@ MSA_design_main( void* )
 int
 main( int argc, char * argv[] )
 {
+	try {
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	devel::init( argc, argv );
 	protocols::viewer::viewer_main( MSA_design_main );
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 }

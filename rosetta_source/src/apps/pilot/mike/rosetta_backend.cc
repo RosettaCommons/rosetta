@@ -320,20 +320,20 @@ class RosettaJob {
 
       // break down the input data
       //std::cout <<  data << std::endl;
-    
-      utility::json_spirit::mObject parsed_json; 
+
+      utility::json_spirit::mObject parsed_json;
       std::string payload;
       try{
         parsed_json = utility::json_spirit::read_mObject( data );
         payload = get_string( parsed_json, "payload" );
-        taskname_ = get_string( parsed_json, "name" ); 
+        taskname_ = get_string( parsed_json, "name" );
       }
       catch( utility::excn::EXCN_Msg_Exception &excn ){
         TR.Error << "EXCEPTION: " << excn.msg() << std::endl; // print the exception message to the Error stream.
       }
 
       //std::cout << payload << std::endl;
-      utility::json_spirit::mObject parsed_payload; 
+      utility::json_spirit::mObject parsed_payload;
 
       try{
         parsed_payload  = utility::json_spirit::read_mObject( payload );
@@ -341,7 +341,7 @@ class RosettaJob {
       catch( utility::excn::EXCN_Msg_Exception &excn ){
         std::cout << "Error extracting payload" << std::endl;
         TR.Error << "EXCEPTION: " << excn.msg() << std::endl; // print the exception message to the Error stream.
-        return false; 
+        return false;
       }
 
       hash_      = get_string_or_empty( parsed_payload, "hash");
@@ -350,29 +350,29 @@ class RosettaJob {
       operation_ = get_string_or_empty( parsed_payload, "operation");
 
       std::cout << "NEW JOB: Hash: " << hash_ << " KEY: " << key_ << " USER: " << user_id_ << " TASKNAME: " << taskname_ << std::endl;
-      
+
       std::string job_data_string;
       try{
-        job_data_string = get_string( parsed_payload, "job_data" ); 
+        job_data_string = get_string( parsed_payload, "job_data" );
       }
       catch( utility::excn::EXCN_Msg_Exception &excn ){
         std::cout << "Error extracting job_data from RPC request" << std::endl;
         TR.Error << "EXCEPTION: " << excn.msg() << std::endl; // print the exception message to the Error stream.
-        return false; 
+        return false;
       }
-      
+
       //std::cout << "Inputdata: " << job_data_string << std::endl;
       std::cout << "Inputdata: " << job_data_string.size() << " bytes received" << std::endl;
 
       try{
         rpc = new protocols::rpc::JSON_RPC( job_data_string, false );
-        // intrpret the actual RPC contents. 
+        // intrpret the actual RPC contents.
       }
       catch ( utility::excn::EXCN_Base& excn ) {
         return_results_to_server( true );
         return false;
       }
-      
+
       // since a null operation would leave the pose unchanged:
       initialized_ = true;
       return true;
@@ -380,9 +380,9 @@ class RosettaJob {
 
 
     bool return_results_to_server( bool error = false ){
-      
-      utility::json_spirit::Object energies;  
-      utility::json_spirit::Object root;  
+
+      utility::json_spirit::Object energies;
+      utility::json_spirit::Object root;
 
 
       // set the output values
@@ -394,50 +394,50 @@ class RosettaJob {
       root.push_back( utility::json_spirit::Pair( "taskname",  taskname_ ) ); // so we can keep track of the geneaology of structures
       std::stringstream rosetta_version;
       rosetta_version << "Mini-Rosetta version " << core::minirosetta_svn_version() << " from " << core::minirosetta_svn_url();
-      root.push_back( utility::json_spirit::Pair( "workerinfo",  rosetta_version.str() ) ); 
-      
-      
-      if( !error ){ 
+      root.push_back( utility::json_spirit::Pair( "workerinfo",  rosetta_version.str() ) );
+
+
+      if( !error ){
         // do some basic measurements
-        
-        energies.push_back( utility::json_spirit::Pair( "score" ,  rpc->get_fa_score() ) ); 
-        energies.push_back( utility::json_spirit::Pair( "irms", rpc->get_irms() ) ); 
+
+        energies.push_back( utility::json_spirit::Pair( "score" ,  rpc->get_fa_score() ) );
+        energies.push_back( utility::json_spirit::Pair( "irms", rpc->get_irms() ) );
 
         protocols::rpc::pose_energies_to_json( rpc->outputpose(), energies );
 
         // Now send back results to server.
         std::stringstream pdbdatastream;
         rpc->outputpose().dump_pdb( pdbdatastream );
-          
+
         // DEBUG CODE
-//        std::ofstream ofile("b4.pdb"); 
+//        std::ofstream ofile("b4.pdb");
 //        inputpose_.dump_pdb( ofile );
 //        ofile.close();
-//        std::ofstream ofile2("af.pdb"); 
+//        std::ofstream ofile2("af.pdb");
 //        outputpose_.dump_pdb( ofile2 );
-//        ofile2.close(); 
+//        ofile2.close();
         // ENDOF DEBUG CODE
-      
+
         root.push_back( utility::json_spirit::Pair( "pdbdata", pdbdatastream.str() ) ); // the PDB data itself of course
         root.push_back( utility::json_spirit::Pair( "energies",  energies ) );                              // rosetta energy values
         root.push_back( utility::json_spirit::Pair( "cputime", (int) rpc->runtime() ) );
-     
+
      }else{
 
         // set the output values
         root.push_back( utility::json_spirit::Pair( "pdbdata",  "" ) ); // the PDB data itself of course
         root.push_back( utility::json_spirit::Pair( "cputime",  0 ) );
       }
-  
+
       root.push_back( utility::json_spirit::Pair( "error",  0 ) );
 
-      std::cout << "STDERROR:" <<  rpc->tracer() << std::endl; 
+      std::cout << "STDERROR:" <<  rpc->tracer() << std::endl;
       root.push_back( utility::json_spirit::Pair( "stderr", rpc->tracer() ) ); // stderr output for debugging
 
       // add energy info etc other goodies here
       std::stringstream sstr;
       write( root, sstr );
-      std::string output_json = "output=" + sstr.str(); 
+      std::string output_json = "output=" + sstr.str();
       //std::cout << output_json << std::endl;
       CurlPost cg;
       try {
@@ -474,7 +474,7 @@ class RosettaJob {
   bool initialized_;
 
   protocols::rpc::JSON_RPCOP rpc;
-  
+
   ServerInfo serverinfo_;
 };
 
@@ -509,9 +509,9 @@ class RosettaBackend {
           sleep( waittime );
           wait_count ++;
         };
-        
+
         newjob.run_and_return_to_server();
-        
+
         std::cerr << "Returning results to server (mainloop)" << std::endl;
 
 
@@ -530,6 +530,7 @@ class RosettaBackend {
 int
 main( int argc, char * argv [] )
 {
+    try {
  	using namespace core;
  	using namespace protocols;
  	using namespace protocols::loophash;
@@ -562,6 +563,9 @@ main( int argc, char * argv [] )
 
   backend.run();
 
- 	return 0;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 

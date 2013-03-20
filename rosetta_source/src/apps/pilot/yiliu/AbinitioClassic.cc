@@ -119,6 +119,7 @@
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 #include <utility/io/util.hh>
+#include <utility/excn/Exceptions.hh>
 // C++ headers
 #include <cstdlib>
 #include <string>
@@ -182,6 +183,8 @@ int
 
 main( int argc, char * argv [] )
 {
+	try {
+
 	using namespace core;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -243,5 +246,8 @@ main( int argc, char * argv [] )
 	int const nstruct = std::max( 1, option [ out::nstruct ]() );
 	while(nstruct){
 		abinitio.apply(*native_pose);
+	}
+	 } catch ( utility::excn::EXCN_Base const & e ) { 
+		 std::cout << "caught exception " << e.msg() << std::endl;
 	}
 }

@@ -38,6 +38,7 @@
 
 // option key includes
 #include <ObjexxFCL/format.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -142,6 +143,7 @@ void run() {
 int
 main( int argc, char * argv [] )
 {
+	try{
   register_options();
   devel::init( argc, argv );
 
@@ -150,7 +152,9 @@ main( int argc, char * argv [] )
   } catch ( utility::excn::EXCN_Base& excn ) {
     excn.show( std::cerr );
   }
-
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl; 
+	} 
   return 0;
 }
 

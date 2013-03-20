@@ -54,12 +54,16 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 
 
 int
 main( int argc, char * argv [] )
 {
+	try {
+
 	using core::io::atom_tree_diffs::AtomTreeDiff;
 	using basic::options::option;
 	using namespace basic::options::OptionKeys;
@@ -165,6 +169,11 @@ main( int argc, char * argv [] )
 	TR << "Finished all " << num_structures_processed << " structures in " << (overall_end_time - overall_start_time) << " seconds." << std::endl;
 	if ( num_structures_processed == 0 )
 		basic::Warning() << "No structures processed.  Existing output files may have been skipped, did you mean to delete them?" << std::endl;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 	return 0;
 }
 

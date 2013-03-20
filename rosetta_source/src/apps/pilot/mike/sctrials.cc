@@ -42,6 +42,7 @@
 #include <numeric/random/random.hh>
 #include <string>
 #include <utility/string_util.hh>
+#include <utility/excn/Exceptions.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 using namespace ObjexxFCL;
@@ -217,12 +218,17 @@ ScTrials::get_name() const {
 int
 main( int argc, char * argv [] )
 {
-	using namespace protocols::jobdist;
-	using namespace protocols::moves;
-	using namespace scoring;
+    try {
+    	using namespace protocols::jobdist;
+    	using namespace protocols::moves;
+    	using namespace scoring;
 
-	devel::init(argc, argv);
+    	devel::init(argc, argv);
 
-	MoverOP protocol = new ScTrials();
-	protocols::jd2::JobDistributor::get_instance()->go( protocol );
+    	MoverOP protocol = new ScTrials();
+    	protocols::jd2::JobDistributor::get_instance()->go( protocol );
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }

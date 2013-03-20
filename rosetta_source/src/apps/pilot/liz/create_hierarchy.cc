@@ -23,6 +23,7 @@
 #include <protocols/moves/mc_convergence_checks/HierarchicalLevel.fwd.hh>
 
 #include <utility/exit.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <iostream>
 
@@ -71,13 +72,14 @@ assign_tag( Address& addr, std::string & newtag, HierarchicalLevelOP hlevel ) {
 
 int main(int argc, char *argv[])
 {
+    try {
   devel::init(argc, argv);
 
   std::string silentin = option[ in::file::silent ]()[1];
   SilentFileData sfd;
   sfd.read_file( silentin );
 
-  
+
 
   core::Size K_level = option[ cluster::K_level ]();
   utility::vector1< core::Real > level_radii = option[ cluster::K_radius ]();
@@ -118,6 +120,9 @@ int main(int argc, char *argv[])
     //std::cout << std::endl;
     hlevel->add_new( *ss, best_decoy, addr, true, new_level );
   }
-
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 

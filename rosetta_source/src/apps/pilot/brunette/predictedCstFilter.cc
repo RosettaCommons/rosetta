@@ -72,6 +72,8 @@ basic::Tracer tr("brunette.predictedCstFilter");
 
 
 int main( int argc, char * argv [] ) {
+  try {
+
   using core::sequence::read_fasta_file;
   devel::init( argc, argv );
   //step 1: read in fasta,alignment,template,csts
@@ -99,6 +101,12 @@ int main( int argc, char * argv [] ) {
   // option 4: gap, all csts, surface exposed
   // option 5: gap, all csts, surface exposed, seperated into cohesive contact collections.
   //step 3: output sigmoid csts. 
+
+  } catch ( utility::excn::EXCN_Base const & e ) {
+    std::cout << "caught exception " << e.msg() << std::endl;
+  }
+
+  return 0;
 }
 
 

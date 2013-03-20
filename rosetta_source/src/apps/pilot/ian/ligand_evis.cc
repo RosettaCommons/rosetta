@@ -60,6 +60,8 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 
 
@@ -245,6 +247,8 @@ void dump_energy_kinemage(
 int
 main( int argc, char * argv [] )
 {
+	try {
+
 	// Parses command line options and inits RNG.
 	// Doesn't seem to hurt to do it again if already done once (?)
 	// Except in unit testing mode, where it wipes out e.g. -database
@@ -391,6 +395,11 @@ main( int argc, char * argv [] )
 	if ( num_structures_processed == 0 )
 		basic::Warning() << "No structures processed.  Existing output files may have been skipped, did you mean to delete them?" << std::endl;
 	jobdist.shutdown(); // under BOINC, this will cause program exit!
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 	return 0;
 }
 

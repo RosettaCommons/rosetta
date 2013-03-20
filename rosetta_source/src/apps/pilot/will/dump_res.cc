@@ -92,6 +92,9 @@ int
 main( int argc, char * argv [] )
 {
 
+	try {
+
+
 	using namespace core;
 	using namespace chemical;
 	using namespace pose;
@@ -121,4 +124,9 @@ main( int argc, char * argv [] )
 		pose.append_residue_by_jump(*new_rsd,1);
 		pose.dump_pdb("CR5.pdb");
 	}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }

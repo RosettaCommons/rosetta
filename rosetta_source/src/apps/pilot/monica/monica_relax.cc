@@ -48,6 +48,7 @@ using namespace core;
 int
 main( int argc, char * argv [] )
 {
+	try {
 	using namespace protocols;
 	using namespace protocols::jobdist;
 	using namespace protocols::moves;
@@ -62,5 +63,8 @@ main( int argc, char * argv [] )
 
 	protocols::jobdist::main_plain_mover( *relax);
 	std::cout << "Done! -------------------------------\n";
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 }
 

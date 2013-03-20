@@ -86,6 +86,9 @@ void read_in_extension(
 
 int main( int argc, char* argv[] )
 {
+
+	try {
+
 	using basic::options::option;
 	using namespace basic::options::OptionKeys;
 	option.add( extension, "extension file").def("extension");
@@ -148,4 +151,9 @@ int main( int argc, char* argv[] )
 	TR << "************************d**o**n**e**************************************" << std::endl;
 
 	return 0;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }

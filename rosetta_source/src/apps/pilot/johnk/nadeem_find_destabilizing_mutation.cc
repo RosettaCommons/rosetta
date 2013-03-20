@@ -38,6 +38,7 @@
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
+#include <utility/excn/Exceptions.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
@@ -55,7 +56,7 @@ static basic::Tracer TR( "apps.pilot.nadeem_find_destabilizing_mutation.main" );
 int
 main( int argc, char * argv [] )
 {
-
+    try {
 	NEW_OPT( chain_for_destabilization, "the chain ID which will harbor the destabilizing mutation", "A" );
 
 	devel::init(argc, argv);
@@ -236,7 +237,10 @@ main( int argc, char * argv [] )
 
 	TR << "Successfully finished computing ddGs" << std::endl;
 
-	return 0;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 
 

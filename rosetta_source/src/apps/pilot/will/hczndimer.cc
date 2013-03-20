@@ -525,6 +525,9 @@ void dock(Pose init, std::string const & fn) {
 
 
 int main(int argc, char *argv[]) {
+
+	try {
+
   devel::init(argc,argv);
   using namespace basic::options::OptionKeys;
   // loop over input files, do some checks, call dock
@@ -548,5 +551,10 @@ int main(int argc, char *argv[]) {
     } goto done1; cont1: tr << "skipping " << fn << std::endl; continue; done1:
     dock(pnat,fn);
   }
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 

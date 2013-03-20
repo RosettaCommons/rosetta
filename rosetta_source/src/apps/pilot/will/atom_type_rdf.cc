@@ -207,6 +207,9 @@ private:
 int
 main (int argc, char *argv[])
 {
+
+	try {
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace utility;
@@ -233,5 +236,10 @@ main (int argc, char *argv[])
 
 	return 0;
 
+
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 }

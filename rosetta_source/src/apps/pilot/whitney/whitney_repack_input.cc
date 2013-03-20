@@ -49,6 +49,9 @@ int
 main( int argc, char * argv [] )
 {
 
+	try {
+
+
 	devel::init(argc, argv);
 
 	TR << "Starting repacking input" << std::endl;
@@ -142,6 +145,11 @@ main( int argc, char * argv [] )
 	TR << "Successfully finished repacking input." << std::endl;
 
 	return 0;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 
 

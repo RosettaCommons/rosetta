@@ -111,6 +111,7 @@ void MyMover::apply( core::pose::Pose& pose ) {
 int
 main( int argc, char * argv [] )
 {
+    try {
 	using namespace protocols;
 	using namespace protocols::jd2;
 
@@ -134,8 +135,7 @@ main( int argc, char * argv [] )
 	// file and nothing else.
 	protocols::jd2::JobDistributor::get_instance()->set_job_outputter( JobDistributorFactory::create_job_outputter( jobout ));
 
-	try{
-		JobDistributor::get_instance()->go( mymover );
+	JobDistributor::get_instance()->go( mymover );
 	} catch ( utility::excn::EXCN_Base& excn ) {
 		std::cerr << "Exception: " << std::endl;
 		excn.show( std::cerr );

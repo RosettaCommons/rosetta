@@ -331,6 +331,9 @@ void* doit(void* /*x = NULL*/) {
 int
 main( int argc, char * argv [] )
 {
+
+	try {
+
 	devel::init(argc,argv);
 	
 	if (option[ basic::options::OptionKeys::parser::view ]()) {
@@ -339,4 +342,9 @@ main( int argc, char * argv [] )
 		while(1) doit(NULL);
 	}
 	
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }

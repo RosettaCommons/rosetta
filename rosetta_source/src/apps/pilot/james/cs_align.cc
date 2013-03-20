@@ -58,6 +58,8 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 ///////////////////////////////////////////////////////////////////////////////
 
 using std::string;
@@ -101,6 +103,8 @@ void print_matrix_to_file(
 
 int
 main( int argc, char* argv [] ) {
+	try {
+
 	using core::Size;
 	using core::Real;
 	using utility::vector1;
@@ -176,4 +180,10 @@ main( int argc, char* argv [] ) {
 	) {
 		output << *it << std::endl;
 	} // for ( it in aligns )
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
+	return 0;
 } // int main( int argc, char * argv [] )

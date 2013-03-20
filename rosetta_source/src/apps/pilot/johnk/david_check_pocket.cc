@@ -48,6 +48,7 @@
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
+#include <utility/excn/Exceptions.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
@@ -67,7 +68,7 @@ OPT_KEY( Real, pocket_constraint_weight )
 int
 main( int argc, char * argv [] )
 {
-
+    try {
 	NEW_OPT( central_relax_pdb_num, "which residue to carry out backrub around", 1 );
 	NEW_OPT( pocket_constraint_weight, "weight to use for the pocket constraint", 1. );
 
@@ -244,7 +245,10 @@ main( int argc, char * argv [] )
 
 	std::cout << "Successfully finished relaxing backbone around central residue" << std::endl;
 
-	return 0;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 
 

@@ -126,6 +126,9 @@ utility::vector1<ContactMap> processRegions(std::string region_def, core::pose::
 
 // main function
 int main(int argc, char* argv[]) {
+
+	try {
+
 	using namespace core::chemical;
 	using namespace core::import_pose::pose_stream;
 	using namespace basic::options;
@@ -216,4 +219,9 @@ int main(int argc, char* argv[]) {
 	}
 
 	return 0;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 } // main

@@ -24,6 +24,7 @@
 #include <protocols/pockets/PocketGrid.hh>
 #include <core/optimization/ParticleSwarmMinimizer.hh>
 #include <basic/options/option_macros.hh>
+#include <utility/excn/Exceptions.hh>
 // AUTO-REMOVED #include <protocols/pockets/FingerprintMultifunc.hh>
 
 // Utility Headers
@@ -73,7 +74,7 @@ OPT_KEY( Real, extra_point_weight )
 OPT_KEY( Real, origin_cutoff )
 
 int main( int argc, char * argv [] ) {
-
+	try{
   NEW_OPT( central_relax_pdb_num, "target residue", "-1" );
   NEW_OPT( input_protein_file, "protein file name", "protein.pdb" );
   NEW_OPT( input_ligand_file, "ligand file name", "ligand.pdb" );
@@ -285,7 +286,9 @@ int main( int argc, char * argv [] ) {
 	//std::string pose_name = "unal_pose_" + tag + ".pdb";
 	//std::string fp_name = "unal_fp_" + tag + ".pdb";
 	//pf.dump_oriented_pose_and_fp_to_pdb(pose_name, fp_name, npf, 0., 0., 0., original_pocket_angle_transform );
-
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl; 
+	} 
 	return 0;
 
 }

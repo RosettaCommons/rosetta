@@ -56,10 +56,13 @@
 #include <utility/io/izstream.hh>
 #include <boost/algorithm/string/erase.hpp>
 
+#include <utility/excn/Exceptions.hh>
 
 
 int
 main( int argc, char* argv [] ) {
+	try {
+
 	// define relevant options
 	OPT(in::path::database);
 	OPT(in::file::silent);
@@ -171,6 +174,10 @@ main( int argc, char* argv [] ) {
 		//fpd
 
 		tr.flush();
+	}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 	}
 
 	return 0;

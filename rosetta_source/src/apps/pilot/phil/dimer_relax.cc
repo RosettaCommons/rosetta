@@ -43,6 +43,7 @@
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <utility/excn/Exceptions.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 
 
@@ -273,6 +274,7 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
+	try{
 // 	{ // add any new options
 // 		using namespace utility::options;
 // 		BooleanOptionKey const myopt = BooleanOptionKey("phil:dof_constraint_weight");
@@ -283,4 +285,7 @@ main( int argc, char * argv [] )
 	devel::init( argc, argv );
 
 	protocols::viewer::viewer_main( my_main );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl; 
+	} 
 }

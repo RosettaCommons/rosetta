@@ -41,6 +41,7 @@
 #include <numeric/random/random.hh>
 #include <ObjexxFCL//string.functions.hh>
 #include <ObjexxFCL/format.hh>
+#include <utility/excn/Exceptions.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
@@ -68,6 +69,7 @@ static basic::Tracer TR("ediff");
 int
 main( int argc, char * argv [] )
 {
+    try {
 	using namespace protocols::jobdist;
 	using namespace protocols::moves;
 	using namespace basic::options;
@@ -163,4 +165,8 @@ main( int argc, char * argv [] )
 	pose1.dump_pdb("pdb1.pdb");
 	pose2.dump_pdb("pdb2.pdb");
 
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }

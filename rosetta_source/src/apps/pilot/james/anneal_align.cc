@@ -31,6 +31,8 @@
 #include <iostream>
 #include <string>
 
+#include <utility/excn/Exceptions.hh>
+
 ///////////////////////////////////////////////////////////////////////////////
 using std::map;
 using std::min;
@@ -172,6 +174,8 @@ Real get_temp(
 int
 main( int argc, char* argv [] )
 {
+	try {
+
 	// options, random initialization
 	devel::init( argc, argv );
 
@@ -275,4 +279,9 @@ main( int argc, char* argv [] )
 		std::cout << *it << std::endl;
 	}
 
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
+	return 0;
 } // int main( int argc, char * argv [] )

@@ -532,6 +532,9 @@ void InterfaceStrandFinderMover::apply (pose::Pose& pose ) {
 int
 main( int argc, char * argv [] )
 {
+
+	try {
+
   using namespace protocols::jd2;
   using namespace protocols::moves;
   using namespace basic::options;
@@ -551,6 +554,11 @@ main( int argc, char * argv [] )
   protocols::jd2::JobDistributor::get_instance()->go( new InterfaceStrandFinderMover() );
 
   std::cout << "Done! -------------------------------\n";
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 
 

@@ -30,6 +30,7 @@
 #include <core/id/AtomID_Map.hh>
 
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 #include <numeric/xyzVector.hh>
 
 #include <core/sequence/util.hh>
@@ -53,6 +54,8 @@ using utility::vector1;
 
 int
 main( int argc, char * argv [] ) {
+	try {
+
 	using namespace core::chemical;
 	using namespace basic::options::OptionKeys;
 	using namespace basic::options;
@@ -126,6 +129,9 @@ main( int argc, char * argv [] ) {
 	}
 	pose1.dump_pdb( output_name );
 	std::cout << "wrote pdb with name " << output_name << std::endl;
+	 } catch ( utility::excn::EXCN_Base const & e ) { 
+		 std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 	return 0;
 } // int main

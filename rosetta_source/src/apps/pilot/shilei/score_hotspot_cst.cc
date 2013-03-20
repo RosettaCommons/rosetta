@@ -215,6 +215,8 @@ void* my_main( void* ) {
 ///////////////////////////////////////////////////////////////////////////////
 int main( int argc, char * argv [] )
 {
+	try {
+
   NEW_OPT(score_hotspot_cst::hotspot_names, "hotspot_names","hotspot_name.files");
   NEW_OPT(score_hotspot_cst::hotspot_score_weight, "weight for hotspot_score_weight",10.0);
   NEW_OPT(score_hotspot_cst::hotspot_distcb_weight, "weight for Cb distance",utility::vector1<core::Real>());
@@ -227,6 +229,10 @@ int main( int argc, char * argv [] )
 	// run the test
 	// score_hotspot();
   protocols::viewer::viewer_main( my_main );
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 	return 0;
 }

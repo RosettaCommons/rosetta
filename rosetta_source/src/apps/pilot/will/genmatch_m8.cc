@@ -722,11 +722,19 @@ void run_m8() {
 
 int main (int argc, char *argv[]) {
 
+	try {
+
+
 	using namespace basic::options::OptionKeys;
 	using namespace core::id;
 	devel::init(argc,argv);
 
 	run_m8();
+
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 }
 

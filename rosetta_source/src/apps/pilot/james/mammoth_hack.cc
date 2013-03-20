@@ -374,6 +374,8 @@ using utility::vector1;
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
+#include <utility/excn/Exceptions.hh>
+
 
 class SequenceCoords;
 typedef utility::pointer::owning_ptr< SequenceCoords > SequenceCoordsOP;
@@ -633,6 +635,8 @@ core::id::SequenceMapping maxsub_align(
 
 int
 main( int argc, char * argv [] ) {
+	try {
+
 	using namespace core::chemical;
 	using namespace core::sequence;
 	using namespace core::import_pose::pose_stream;
@@ -704,6 +708,10 @@ main( int argc, char * argv [] ) {
 	//	)
 	//);
 	//std::cout << ss_align << std::endl;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 	return 0;
 } // int main

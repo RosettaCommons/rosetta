@@ -42,6 +42,7 @@
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 
 
 #if defined(WIN32) || defined(__CYGWIN__)
@@ -57,6 +58,7 @@ using namespace basic::options;
 
 int
 main( int argc, char * argv [] ) {
+	try {
 
 	using namespace protocols;
 	using namespace protocols::moves;
@@ -285,6 +287,9 @@ main( int argc, char * argv [] ) {
 						<< "s\n  Total: " << time_total - time_start
 						<< std::endl;
 
+	 } catch ( utility::excn::EXCN_Base const & e ) { 
+		 std::cout << "caught exception " << e.msg() << std::endl;
+	}
 	return 0;
 }
 

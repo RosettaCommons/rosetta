@@ -55,6 +55,7 @@ basic::options::BooleanOptionKey const use_pdb_numbering("use_pdb_numbering");
 int
 main( int argc, char* argv[] )
 {
+	try {
 
 	using basic::options::option;
 	option.add( local::surface_residue, "cutoff for surface residues ( <= # is surface)" ).def(18);
@@ -133,6 +134,10 @@ main( int argc, char* argv[] )
 			TR << std::endl;
 		}
 
+	}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 	}
 
 	return 0;

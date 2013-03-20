@@ -55,6 +55,8 @@
 #include <string>
 #include <map>
 
+#include <utility/excn/Exceptions.hh>
+
 void ccd_close_loop(
 	core::pose::Pose & pose,
 	protocols::loops::Loop & loop
@@ -186,6 +188,8 @@ public:
 
 int
 main( int argc, char * argv [] ) {
+	try {
+
 	// options, random initialization
 	devel::init( argc, argv );
 	core::import_pose::pose_stream::MetaPoseInputStream input
@@ -239,6 +243,10 @@ main( int argc, char * argv [] ) {
 				sfd.write_silent_struct( *ss_out, option[ out::file::silent ]() );
 			}
 		}
+	}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 	}
 
 	return 0;

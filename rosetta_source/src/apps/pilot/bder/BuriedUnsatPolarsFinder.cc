@@ -149,6 +149,7 @@ typedef utility::pointer::owning_ptr< BuriedUnsatPolarsFinder > BuriedUnsatPolar
 
 int main( int argc, char* argv[] )
 {
+	try {
 	using basic::options::option;
 
   devel::init(argc, argv);
@@ -157,6 +158,10 @@ int main( int argc, char* argv[] )
 	TR << "Recommended option:   -sasa_calculator_probe_radius 1.2" << std::endl;
 
   TR << "************************d**o**n**e**************************************" << std::endl;
+
+	} catch (utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
   return 0;
 }

@@ -82,6 +82,7 @@
 #include <utility/exit.hh>
 #include <utility/file/FileName.hh>
 #include <utility/io/ozstream.hh> // used to create a resfile
+#include <utility/excn/Exceptions.hh>
 #include <sstream>
 #include <string>
 #include <fstream>
@@ -1391,6 +1392,8 @@ typedef utility::pointer::owning_ptr< supercharge > superchargeOP;
 
 int main( int argc, char* argv[] )
 {
+	try {
+
 	using basic::options::option;
 	option.add( local::AvNAPSA_positive, "AvNAPSA positive supercharge").def(false);
 	option.add( local::AvNAPSA_negative, "AvNAPSA negative supercharge").def(false);
@@ -1425,5 +1428,8 @@ int main( int argc, char* argv[] )
 
   TR << "************************d**o**n**e**************************************" << std::endl;
 
+	 } catch ( utility::excn::EXCN_Base const & e ) { 
+		 std::cout << "caught exception " << e.msg() << std::endl;
+	}
   return 0;
 }

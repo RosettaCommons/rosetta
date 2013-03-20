@@ -87,6 +87,7 @@
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
+#include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 #include <time.h>
 using basic::T;
@@ -105,6 +106,7 @@ numeric::random::RandomGenerator RG(15434); // <- Magic number, do not change it
 int
 main( int argc, char* argv [] )
 {
+    try {
 	using namespace core;
 	using namespace core::pose;
 	using namespace utility;
@@ -156,4 +158,8 @@ main( int argc, char* argv [] )
 		}
 
 	}
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }

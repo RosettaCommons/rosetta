@@ -366,6 +366,7 @@ typedef utility::pointer::owning_ptr< Zinc2_HomodimerDesign > Zinc2_HomodimerDes
 
 int main( int argc, char* argv[] )
 {
+	try {
 
 	using basic::options::option;
 	option.add( repackmin_iterations, "number of repack and minimization cycles" ).def(2);
@@ -377,6 +378,10 @@ int main( int argc, char* argv[] )
   protocols::jd2::JobDistributor::get_instance()->go(new Zinc2_HomodimerDesign);
 
   TR << "************************d**o**n**e**************************************" << std::endl;
+
+	} catch (utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
   return 0;
 }

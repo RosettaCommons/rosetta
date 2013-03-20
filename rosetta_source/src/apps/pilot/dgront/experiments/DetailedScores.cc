@@ -25,6 +25,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 
 static basic::Tracer tr("SaxsSampler");
 
@@ -34,7 +35,7 @@ void register_options() {
 }
 
 int main(int argc, char * argv[]) {
-
+  try {
   using namespace core;
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
@@ -98,4 +99,9 @@ int main(int argc, char * argv[]) {
 
     } // nbrs of i
   } // i=1,nres
+  } catch ( utility::excn::EXCN_Base const & e ) {
+                            std::cout << "caught exception " << e.msg() << std::endl;
+                                }
+      return 0;
+
 }

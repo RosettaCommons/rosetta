@@ -37,6 +37,7 @@
 #include <ObjexxFCL/format.hh>
 
 #include <fstream>
+#include <utility/excn/Exceptions.hh>
 
 static basic::Tracer TR("make_blueprint");
 
@@ -66,6 +67,7 @@ void ThisApplication::register_options() {
 int
 main( int argc, char * argv [] )
 {
+	try{
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using core::chemical::oneletter_code_from_aa;
@@ -136,7 +138,9 @@ main( int argc, char * argv [] )
 							<< std::endl;
 		}
 	}
-
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 	return 0;
 }
 

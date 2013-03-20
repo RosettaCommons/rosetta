@@ -31,6 +31,8 @@
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 //static basic::Tracer TR("apps.jscore");
 
 std::string get_env_var( std::string const & key ) {
@@ -45,6 +47,8 @@ std::string get_env_var( std::string const & key ) {
 
 int
 main( int argc, char * argv [] ) {
+	try {
+
 	using namespace protocols::jobdist;
 	using namespace protocols::moves;
 	using namespace core::scoring;
@@ -72,6 +76,10 @@ main( int argc, char * argv [] ) {
 		mover = loadcsts;
 	}
 	not_universal_main( *mover );
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 	return 0;
 } // main

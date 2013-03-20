@@ -96,6 +96,8 @@ static basic::Tracer TZ("pilot_apps::ca_to_allatom");
 //Auto Headers
 #include <core/kinematics/FoldTree.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 // add options
 OPT_1GRP_KEY( Real, ca_to_allatom, frag_randomness )
 OPT_1GRP_KEY( Boolean, ca_to_allatom, no_lr )
@@ -307,6 +309,7 @@ ca_to_allatom_main( void * )
 int
 main( int argc, char * argv [] )
 {
+try {
 	// options, random initialization
 	NEW_OPT( ca_to_allatom::frag_randomness, "fragment randomness", 0.0 );
 	NEW_OPT( ca_to_allatom::no_lr,           "skip lr?", false );
@@ -314,6 +317,8 @@ main( int argc, char * argv [] )
 
 	devel::init( argc, argv );
 	protocols::viewer::viewer_main( ca_to_allatom_main );
-
+} catch ( utility::excn::EXCN_Base const & e ) {
+	std::cout << "caught exception " << e.msg() << std::endl;
+}
 	return 0;
 }

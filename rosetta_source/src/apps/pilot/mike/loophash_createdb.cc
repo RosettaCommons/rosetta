@@ -24,6 +24,7 @@
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 
 
 #ifdef USEMPI
@@ -42,6 +43,7 @@ static basic::Tracer TR("main");
 int
 main( int argc, char * argv [] )
 {
+    try {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core;
@@ -76,7 +78,10 @@ main( int argc, char * argv [] )
 	loop_hash_library->create_db();
 	loop_hash_library->save_db();
 	TR << "Finished creating loophash library" << std::endl;
-	return 0;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 
 

@@ -77,6 +77,7 @@
 #include <protocols/jobdist/Jobs.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/io/mpistream.hh>
+#include <utility/excn/Exceptions.hh>
 
 //#include <apps/benchmark/init_util.hh>  //for core_init_with_additional_options
 ////////////////////////////////////////////////
@@ -178,17 +179,21 @@ my_main( void* )
   using namespace basic::options;
 
   SymmSilentFileTest();
-
-  return 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 int
 main( int argc, char * argv [] )
 {
+  try {
+    // initialize option and random number system
+    devel::init( argc, argv );
 
-  // initialize option and random number system
-  devel::init( argc, argv );
+    protocols::viewer::viewer_main( my_main );
 
-  protocols::viewer::viewer_main( my_main );
+  } catch ( utility::excn::EXCN_Base const & e ) {
+    std::cerr << "caught exception " << e.msg() << std::endl;
+  }
+
+  return 0;
 }

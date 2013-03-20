@@ -57,6 +57,8 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 //Auto Headers
 using namespace core;
 using namespace protocols;
@@ -164,6 +166,7 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
+try {
 	using namespace basic::options;
 
 	std::cout << std::endl << "Basic usage:  " << argv[0] << "  -seq <sequence of first strand> <sequence of second strand>   -o <name of output pdb file> " << std::endl;
@@ -184,6 +187,8 @@ main( int argc, char * argv [] )
 	////////////////////////////////////////////////////////////////////////////
 
 	protocols::viewer::viewer_main( my_main );
-
+} catch ( utility::excn::EXCN_Base const & e ) {
+	std::cout << "caught exception " << e.msg() << std::endl;
+}
 
 }

@@ -44,6 +44,7 @@
 #include <numeric/random/random.hh>
 #include <protocols/ddg/ddGData.hh>
 #include <utility/file/FileName.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <core/io/pdb/pose_io.hh>
 #include <basic/database/open.hh>
@@ -504,6 +505,7 @@ burial_weight(pose::Pose p, int position){
 **/
 int
 main(int argc, char* argv []){
+    try {
   using namespace core;
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
@@ -578,4 +580,8 @@ main(int argc, char* argv []){
 			print_verbose_ddgs(mut,wt,sfxn,mean,min,experimental_value,outfile);
 		}
 	}
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }

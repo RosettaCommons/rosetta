@@ -66,6 +66,9 @@ namespace BundlePairRmsdCalculator {
 int
 main( int argc, char * argv [] )
 {
+
+	try {
+
 	using cppdb::statement;
 	using cppdb::result;
 	using namespace basic::database::schema_generator;
@@ -442,4 +445,9 @@ main( int argc, char * argv [] )
 //	MPI_Finalize();
 //#endif
 	return 0;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }

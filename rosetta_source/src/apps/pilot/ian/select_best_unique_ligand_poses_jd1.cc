@@ -56,12 +56,16 @@
 #include <core/pose/Pose.hh>
 #include <utility/vector1.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 
 
 int
 main( int argc, char * argv [] )
 {
+	try {
+
 	using basic::options::option;
 	using namespace basic::options::OptionKeys;
 	using namespace protocols;
@@ -164,6 +168,11 @@ main( int argc, char * argv [] )
 	}
 
 	TR << "Selected " << selected_poses.size() << " poses overall" << std::endl;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 	return 0;
 }
 

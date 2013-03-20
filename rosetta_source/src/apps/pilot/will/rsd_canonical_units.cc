@@ -54,6 +54,9 @@
 static basic::Tracer TR("rsd_canonical_units");
 
 int main(int argc, char *argv[]) {
+
+	try {
+
   using namespace core::chemical;
 
   devel::init(argc,argv);
@@ -227,5 +230,10 @@ int main(int argc, char *argv[]) {
     }
   }
 
+
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 }

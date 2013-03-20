@@ -47,6 +47,9 @@
 
 #include "homolog_cst.hh"
 
+#include <utility/excn/Exceptions.hh>
+
+
 // C++ headers
 #include <fstream>
 #include <iostream>
@@ -74,6 +77,7 @@ utility::vector1< int > calculate_burial(
 int
 main( int argc, char* argv [] )
 {
+    try {
 	// options, random initialization
 	devel::init( argc, argv );
 
@@ -168,4 +172,8 @@ main( int argc, char* argv [] )
 		}		// for ( unsigned int i = 1; i <= mypose->total_residue(); ++i )
 		output.close();
 	} // 	for ( iter = pdbfiles.begin(); iter != pdbfiles.end(); ++iter )
-} // int main( int argc, char * argv [] )
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
+            return 0;
+        } // int main( int argc, char * argv [] )

@@ -1221,6 +1221,9 @@ void repack(Pose & arg) {
 
 
 int main (int argc, char *argv[]) {
+
+	try {
+
   devel::init(argc,argv);
 
   const core::Real PI = numeric::NumericTraits<Real>::pi();
@@ -1982,6 +1985,11 @@ for(int ir = 1; ir <= (int)rhits.size(); ++ir) {
   //   }
   //  }
   TR << "MATCHES: " << nhit << std::endl;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 
 

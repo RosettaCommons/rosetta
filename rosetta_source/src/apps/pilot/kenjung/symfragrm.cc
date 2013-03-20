@@ -44,6 +44,8 @@ static basic::Tracer TR("main");
 int
 main( int argc, char * argv [] )
 {
+    try {
+
 	// initialize core
 	devel::init(argc, argv);
 	utility::vector1 < std::string > pdblist;
@@ -96,6 +98,9 @@ main( int argc, char * argv [] )
 					TR << bin_index << std::endl;
 	}
 
-	return 0;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 

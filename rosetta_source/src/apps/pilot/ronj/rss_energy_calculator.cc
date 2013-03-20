@@ -328,6 +328,9 @@ score_folded_residues( std::string pdb_filename, scoring::ScoreFunctionOP scoref
 int
 main( int argc, char * argv [] ) {
 
+	try {
+
+
 	// add application specific options to options system
 	option.add( rss_energy_calculator::no_repack_before_fragmenting, "Do not repack the pose to remove any steric clashes before making fragments." );
 	option.add( rss_energy_calculator::no_repack_before_scoring_fragment, "Do not repack the fragment before scoring it." );
@@ -513,6 +516,11 @@ main( int argc, char * argv [] ) {
 
 			energiesOutFile << std::endl;
 		}
+	}
+
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 	}
 
 }

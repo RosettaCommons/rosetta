@@ -66,6 +66,9 @@ void FoldTreeOutputter::apply(core::pose::Pose & pose){
 int
 main( int argc, char * argv [] )
 {
+
+	try {
+
 	//Another useless comment
   using namespace std;
   using namespace utility;
@@ -77,4 +80,9 @@ main( int argc, char * argv [] )
   protocols::jd2::JobDistributor::get_instance()->go( new FoldTreeOutputter() );
 
   std::cout << "Done! -------------------------------\n";
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }

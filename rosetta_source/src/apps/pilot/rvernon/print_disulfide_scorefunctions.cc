@@ -58,6 +58,9 @@
 
 int
 main( int argc, char* argv [] ) {
+
+	try {
+
 	// options, random initialization
 	devel::init( argc, argv );
 
@@ -66,4 +69,9 @@ main( int argc, char* argv [] ) {
 	potent->print_score_functions();
 
 	return 0;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }

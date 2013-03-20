@@ -23,6 +23,7 @@
 #include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomType.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueMatcher.hh>
@@ -3511,7 +3512,7 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
-
+	try{
 	utility::vector1< Size > blank_size_vector;
 	utility::vector1< std::string > blank_string_vector;
 	utility::vector1< Real > blank_real_vector;
@@ -3586,6 +3587,9 @@ main( int argc, char * argv [] )
   ////////////////////////////////////////////////////////////////////////////
 
   protocols::viewer::viewer_main( my_main );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl; 
+	} 
 
 }
 

@@ -406,6 +406,9 @@ void output_packstat( std::string fname ) {
 int main (int argc, char *argv[])
 {
 
+	try {
+
+
 	devel::init( argc, argv );
 
   using namespace core::scoring::packstat;
@@ -436,6 +439,11 @@ int main (int argc, char *argv[])
   	}
 	}
 	return 0;
+
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 }
 

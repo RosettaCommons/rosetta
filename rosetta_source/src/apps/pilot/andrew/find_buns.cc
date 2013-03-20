@@ -32,6 +32,7 @@
 
 int main( int argc, char * argv [] )
 {
+  try {
 	using namespace core;
 	using namespace core::chemical;
 	using namespace core::conformation;
@@ -128,5 +129,12 @@ int main( int argc, char * argv [] )
 	for ( std::list< AtomID >::const_iterator iter = buns.begin(); iter != buns.end(); ++iter ) {
 		fout << "{" << iter->rsd() << " " << pose.residue( iter->rsd() ).atom_name( iter->atomno() ) << "} P " << pose.xyz( *iter ).x() << " " << pose.xyz( *iter ).y() << " " << pose.xyz( *iter ).z() << "\n";
 	}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
+  return 0;
+
 }
 

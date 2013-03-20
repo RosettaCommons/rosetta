@@ -76,6 +76,8 @@
 #include <protocols/jobdist/Jobs.hh>
 #include <ObjexxFCL/format.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 //Auto using namespaces
 namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
 //Auto using namespaces end
@@ -225,6 +227,8 @@ private:
 
 int
 main( int argc, char* argv [] ) {
+	try {
+
 	using core::Real;
 	using core::Size;
 
@@ -275,4 +279,10 @@ main( int argc, char* argv [] ) {
 	}
 
 	output.close();
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+	
+	return 0;
 } // int main( int argc, char * argv [] )

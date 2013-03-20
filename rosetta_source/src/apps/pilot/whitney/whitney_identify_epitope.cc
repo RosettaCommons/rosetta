@@ -119,6 +119,9 @@ int
 main( int argc, char * argv [] )
 {
 
+	try {
+
+
   NEW_OPT( identify_epitope_chain, "chain to calculate scores for", "B" );
 	NEW_OPT( constant_score_chain, "chain will have the avg score", "A" );
 	NEW_OPT( native_pdb, "chain with original pdb", "native.pdb" );
@@ -256,6 +259,11 @@ main( int argc, char * argv [] )
 	TR << "Done computing residue scores" << std::endl;
 
 	return 0;
+
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 }
 

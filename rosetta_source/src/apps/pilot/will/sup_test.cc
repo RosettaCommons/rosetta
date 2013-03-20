@@ -27,6 +27,9 @@
 
 int main (int argc, char *argv[])
 {
+
+	try {
+
 	
 	devel::init(argc,argv);
 	
@@ -53,6 +56,11 @@ int main (int argc, char *argv[])
 	ref_pose.dump_pdb("fixed_pose.pdb");
 
 	return 0;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 
 

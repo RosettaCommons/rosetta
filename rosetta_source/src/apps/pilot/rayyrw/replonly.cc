@@ -18,6 +18,7 @@
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <utility/excn/Exceptions.hh>
 #include <iostream>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
@@ -38,7 +39,7 @@
 int
 main (int argc, char *argv[])
 {
-
+	try{
 		using namespace core;
 		
 		devel::init(argc, argv);
@@ -60,7 +61,9 @@ main (int argc, char *argv[])
 		pose.dump_scored_pdb("after.pdb",*score);
 
 	  
-
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl; 
+	} 
 		return 0;
 
 }

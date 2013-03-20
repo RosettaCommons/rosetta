@@ -24,6 +24,7 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/viewer/viewers.hh>
+#include <utility/excn/Exceptions.hh>
 
 // utility headers
 #include <utility/file/FileName.hh>
@@ -121,7 +122,7 @@ void * graphics_main( void * ) {
 
 
 int main( int argc, char * argv [] ) {
-
+	try{
 	using namespace basic::options::OptionKeys;
 	using basic::options::option;
 
@@ -129,7 +130,9 @@ int main( int argc, char * argv [] ) {
 	devel::init( argc, argv );
 
 	protocols::viewer::viewer_main( graphics_main );
-
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 	return 0;
 }
 

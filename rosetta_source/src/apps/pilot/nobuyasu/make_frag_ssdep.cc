@@ -37,6 +37,7 @@
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 #include <devel/init.hh>
+#include <utility/excn/Exceptions.hh>
 
 static basic::Tracer TR("pick_fragments");
 
@@ -138,6 +139,7 @@ FrameList pick_fragments(
 int
 main( int argc, char * argv [] )
 {
+	try{
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -187,7 +189,9 @@ main( int argc, char * argv [] )
 
 	// output fragments
 	FragmentIO().write_data( option[ output ], *fragset );
-
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 	return 0;
 }
 

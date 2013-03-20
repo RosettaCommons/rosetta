@@ -50,6 +50,8 @@ StringOptionKey const residue( "residue");
 int
 main( int argc, char * argv [] )
 {
+	try {
+
 	using namespace scoring;
 	option.add( hashfile, "PDB containing existing hash of target");
 	option.add( residue, "The 3-letter Rosetta name for the residue to be docked." );
@@ -68,4 +70,7 @@ main( int argc, char * argv [] )
 	new_set = stubset->cluster();
 	new_set->write_all( "clustered.stubs" );
 
-}
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+ }

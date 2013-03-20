@@ -23,6 +23,7 @@
 //utilities
 #include <devel/init.hh>
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 
 
 // local options
@@ -46,6 +47,7 @@ int process_pose(core::pose::Pose &pose, core::scoring::sc::ShapeComplementarity
 int
 main( int argc, char * argv [] )
 {
+    try {
 	using namespace basic::options;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -136,7 +138,10 @@ main( int argc, char * argv [] )
 	if(count != 1)
 		std::cout << count << " structures processed." << std::endl;
 
-	return 0;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 
 int process_pose(

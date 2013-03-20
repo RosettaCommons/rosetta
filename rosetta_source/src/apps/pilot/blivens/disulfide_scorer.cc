@@ -253,6 +253,7 @@ const string PairScore::sep = "\t";
 
 int main( int argc, char * argv [] )
 {
+  try {
 
 	//init options system
 	option.add(blivens::disulfide_scorer::nds_prob,"Probability of outputing a bond");
@@ -332,6 +333,11 @@ int main( int argc, char * argv [] )
 	}
 
 	out.close();
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 	return 0;
 } // end main
 

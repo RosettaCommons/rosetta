@@ -45,6 +45,7 @@ basic::options::BooleanOptionKey const minimize_sidechains("minimize_sidechains"
 int
 main( int argc, char * argv [] )
 {
+    try {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -75,5 +76,8 @@ main( int argc, char * argv [] )
 
 	protocols::jd2::JobDistributor::get_instance()->go(rotamer_mover);
 
-
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                             std::cout << "caught exception " << e.msg() << std::endl;
+                                }
+    return 0; 
 }

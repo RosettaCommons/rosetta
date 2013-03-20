@@ -49,6 +49,7 @@
 #include <utility/vector1.hh>
 #include <utility/io/util.hh>
 #include <utility/io/irstream.hh>
+#include <utility/excn/Exceptions.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
@@ -113,6 +114,7 @@ void Features::print_features(std::ostream &output)
 
 int
 main(int argc, char* argv[]){
+    try {
 
 	devel::init(argc, argv);
 
@@ -372,8 +374,10 @@ main(int argc, char* argv[]){
 		iter->print_features(std::cout);
 	}
 
-
-	return 0;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 
 /*

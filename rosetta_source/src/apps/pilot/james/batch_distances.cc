@@ -47,9 +47,13 @@
 #include <limits>
 #include <string>
 
+#include <utility/excn/Exceptions.hh>
+
 using namespace ObjexxFCL::fmt;
 
 int main( int argc, char* argv [] ) {
+	try {
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
@@ -160,4 +164,10 @@ int main( int argc, char* argv [] ) {
 			}
 		}
 	}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+	
+	return 0;
 }

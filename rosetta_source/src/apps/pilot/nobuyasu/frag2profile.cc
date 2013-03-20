@@ -32,6 +32,7 @@
 #include <core/fragment/FragmentIO.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
+#include <utility/excn/Exceptions.hh>
 
 // Utility Headers
 #include <basic/options/option_macros.hh>
@@ -84,6 +85,7 @@ bool compare( M_iter const & a, M_iter const & b )
 int
 main( int argc, char * argv [] )
 {
+	try{
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -268,7 +270,9 @@ main( int argc, char * argv [] )
 		}
 		output_ << std::endl;
 	}
-
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 	return 0;
 }
 

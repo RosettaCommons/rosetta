@@ -51,6 +51,7 @@
 #include <core/kinematics/Jump.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 
 
 
@@ -208,12 +209,16 @@ typedef utility::pointer::owning_ptr< PhProtocol > PhProtocolOP;
 int
 main( int argc, char * argv [] )
 {
+    try {
   devel::init(argc, argv);
 
   PhProtocolOP pH_test(new PhProtocol);
 
   protocols::jd2::JobDistributor::get_instance()->go(pH_test);
-
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 
 

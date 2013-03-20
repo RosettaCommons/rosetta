@@ -22,6 +22,9 @@
 
 int main( int argc, char * argv [] )
 {
+
+	try {
+
 	devel::init(argc, argv);
 
 	/// if command line option -out:dry_run set to 'false' (default) output will be compare to file "core.tr"
@@ -38,6 +41,11 @@ int main( int argc, char * argv [] )
 	basic::Tracer::set_ios_hook(0, "");  // Turn off channels monitoring
 
 	return 0;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 
 

@@ -51,6 +51,8 @@
 
 #include <map>
 
+#include <utility/excn/Exceptions.hh>
+
 static basic::Tracer TR("apps.public.ligand_dock.select_best_unique_ligand_poses");
 
 void
@@ -182,6 +184,7 @@ go_main() {
 
 int
 main( int argc, char * argv [] ) {
+	try {
 	using basic::options::option;
 	using namespace basic::options::OptionKeys;
 
@@ -222,7 +225,9 @@ main( int argc, char * argv [] ) {
 	}
 
 	go_main();
-
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 	return 0;
 
 }

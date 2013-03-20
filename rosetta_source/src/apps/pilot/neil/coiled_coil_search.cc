@@ -119,6 +119,7 @@ make_pdb_atom(numeric::xyzVector<Real> const & coords, std::ostream & out, Size 
 
 int
 main (int argc, char *argv[]){
+	try{
   using namespace core;
   using basic::options::option;
   using namespace basic::options::OptionKeys;
@@ -343,6 +344,9 @@ main (int argc, char *argv[]){
 		} // for Size nc
 
   } // ifile
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
   return 0;
 

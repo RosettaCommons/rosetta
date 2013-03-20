@@ -47,6 +47,8 @@
 //Auto Headers
 #include <core/conformation/Conformation.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 ///////////////////////////////////////////////////////////////////////////////
 
 char torsion2big_bin(
@@ -110,6 +112,8 @@ utility::vector1< char > get_ss( core::pose::Pose & pose ) {
 }
 
 int main( int argc, char* argv [] ) {
+	try {
+
 	// options, random initialization
 	devel::init( argc, argv );
 
@@ -176,4 +180,10 @@ int main( int argc, char* argv [] ) {
 				<< std::endl;
 		}	// for ( unsigned int i = 1; i <= mypose->total_residue(); ++i )
 	} // while input.has_another_pose()
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+	
+	return 0;
 } // int main( int argc, char * argv [] )

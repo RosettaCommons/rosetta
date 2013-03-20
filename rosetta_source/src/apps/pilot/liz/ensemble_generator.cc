@@ -52,6 +52,7 @@
 #include <sstream>
 #include <ios>
 #include <utility/io/izstream.hh>
+#include <utility/excn/Exceptions.hh>
 #include <ObjexxFCL/format.hh>
 
 // C++ headers
@@ -452,6 +453,7 @@ create_ensemble(pose::Pose & p, ScoreFunction & s, std::string output_tag){
 int
 main( int argc, char* argv [] )
 {
+    try {
 	using namespace core;
 	using namespace core::pose;
 	using namespace utility;
@@ -511,4 +513,8 @@ main( int argc, char* argv [] )
 		create_ensemble(pose, *scorefxn , (no_pdb.erase(0,(no_pdb.find_last_of("/")+1))));
 
 	}
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }

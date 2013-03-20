@@ -59,12 +59,16 @@
 #include <core/pose/Pose.hh>
 #include <protocols/moves/Mover.fwd.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 
 
 int
 main( int argc, char * argv [] )
 {
+	try {
+
 	using core::conformation::ResidueOP;
 	using basic::options::option;
 	using protocols::cluster::APCluster;
@@ -212,6 +216,10 @@ main( int argc, char * argv [] )
 		//TR << std::endl;
 	}
 	out.close();
+
+	} catch ( utility::excn::EXCN_Base const & e ) { //YOU ADD
+		std::cout << "caught exception " << e.msg() << std::endl; //YOU ADD
+	}
 
 	return 0;
 }

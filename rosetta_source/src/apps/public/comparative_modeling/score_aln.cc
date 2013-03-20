@@ -45,6 +45,7 @@
 #include <utility/string_util.hh>
 #include <utility/file/FileName.hh>
 #include <utility/file/file_sys_util.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <ObjexxFCL/char.functions.hh>
 #include <ObjexxFCL/string.functions.hh>
@@ -174,6 +175,7 @@ void save_per_residue_scores(
 
 int
 main( int argc, char* argv [] ) {
+	try {
 	// options, random initialization
 	devel::init( argc, argv );
 
@@ -341,4 +343,7 @@ main( int argc, char* argv [] ) {
 
 	tr.Debug << "finished rescoring alignments." << std::endl;
 	tr.flush_all_channels();
+	 } catch ( utility::excn::EXCN_Base const & e ) { 
+		 std::cout << "caught exception " << e.msg() << std::endl;
+	}
 } // int main( int argc, char * argv [] )

@@ -1371,6 +1371,9 @@ vector1<Hit> dock(Pose & init, string fname) {
 
 
 int main (int argc, char *argv[]) {
+
+	try {
+
   devel::init(argc,argv);
   using namespace basic::options::OptionKeys;
 
@@ -1400,5 +1403,10 @@ int main (int argc, char *argv[]) {
     vector1<Hit> hts = dock(pala,fn);
     //design_hits(pnat,fn,hts.first,hts.second);
   }
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 

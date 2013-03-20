@@ -517,6 +517,9 @@ void* doit(void*) {
 
 
 int main( int argc, char * argv [] ) {
+
+	try {
+
 	devel::init(argc,argv);
 
 	void* (*func)(void*) = &doit;
@@ -524,6 +527,11 @@ int main( int argc, char * argv [] ) {
 		protocols::viewer::viewer_main( func );
 	} else {
 		func(NULL);
+	}
+
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 	}
 
 }

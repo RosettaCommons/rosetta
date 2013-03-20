@@ -22,6 +22,8 @@
 #include <devel/init.hh>
 #include <basic/Tracer.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 // Numeric headers
 
 // C++ headers
@@ -37,9 +39,13 @@ static basic::Tracer TR("apps.public.interface_design.anchored_design.AnchoredDe
 int
 main( int argc, char* argv[] )
 {
+	try {
 	devel::init(argc, argv);
 	protocols::jd2::JobDistributor::get_instance()->go(new protocols::anchored_design::AnchoredDesignMover());
 	TR << "************************d**o**n**e**************************************" << std::endl;
-
+	}
+	catch (utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 	return 0;
 }

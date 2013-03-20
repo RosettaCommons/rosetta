@@ -44,6 +44,7 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
+#include <utility/excn/Exceptions.hh>
 
 
 using basic::T;
@@ -71,6 +72,7 @@ namespace adapt_rotamers
 int
 main( int argc, char * argv [] )
 {
+    try {
 	using namespace core::pose;
 	using namespace core::scoring;
 	using namespace conformation;
@@ -131,7 +133,9 @@ main( int argc, char * argv [] )
 
 	pose_adpt.dump_pdb( "adapted.pdb");
 	pose_ori.dump_pdb( "ori.pdb");
-
-	exit(0);
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
+        return 0;
 }
 

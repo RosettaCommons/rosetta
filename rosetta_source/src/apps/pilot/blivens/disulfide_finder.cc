@@ -1,3 +1,4 @@
+
 // (c) Copyright Rosetta Commons Member Institutions.
 // (c) This file is part of the Rosetta software suite and is made available under license.
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
@@ -58,6 +59,7 @@ usage(char* msg)
 int
 main( int argc, char * argv [] )
 {
+  try {
 
 	//Load a known disulfide bond as a reference
 
@@ -147,4 +149,9 @@ main( int argc, char * argv [] )
 
 	out.close();
 
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
+  return 0;
 }//end main

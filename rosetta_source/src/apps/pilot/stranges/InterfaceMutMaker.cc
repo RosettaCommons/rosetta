@@ -213,6 +213,9 @@ pose::Pose split_chains( core::pose::Pose & pose, scoring::ScoreFunctionOP & sco
 int
 main( int argc, char* argv[] ) {
 
+	try {
+
+
   option.add( InterfaceMutMaker::mutation, "The mutation to make to the wild-type pose. Format to use is chain,old-residue-type,PDB-res-num,new-residue-type." );
   option.add( InterfaceMutMaker::mutation_file, "The mutation to make to the wild-type pose. Format is a white space or return separated text file. chain,old-residue-type,PDB-res-num,new-residue-type." );
 	//option.add( InterfaceMutMaker::rbjump, "Defines the rigid body jump(s) to split the interface apart by.");
@@ -696,6 +699,11 @@ main( int argc, char* argv[] ) {
 	}// end output all packed poses
 
 	std::cout << "Complete..." << std::endl;
+
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 } //end main
 

@@ -91,7 +91,7 @@
 #include <basic/database/open.hh>
 
 #include <utility/vector1.hh>
-#include <utility/exit.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
@@ -238,9 +238,14 @@ build_asn_motifs()
 int
 main( int argc, char * argv [] )
 {
-	//using namespace core;
-	devel::init( argc, argv );
+    try {
+    	//using namespace core;
+    	devel::init( argc, argv );
 
-	build_asn_motifs();
+    	build_asn_motifs();
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 
 }

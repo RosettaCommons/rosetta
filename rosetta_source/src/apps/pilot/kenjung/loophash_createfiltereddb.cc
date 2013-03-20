@@ -56,7 +56,7 @@ static basic::Tracer TR("main");
 int
 main( int argc, char * argv [] )
 {
-
+    try {
 
 	// initialize core
 	devel::init(argc, argv);
@@ -168,5 +168,8 @@ main( int argc, char * argv [] )
 		TR << "Total time: " << (endtime - starttime) / 60 << " min" << std::endl;
 	}
 #endif
-	return 0;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }

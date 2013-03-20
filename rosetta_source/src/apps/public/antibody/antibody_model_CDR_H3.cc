@@ -23,6 +23,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 //#include <utility/tools/make_vector1.hh>
 
 // option key includes
@@ -37,6 +38,8 @@ static basic::Tracer TR("protocols.antibody");
 int
 main( int argc, char * argv [] )
 {
+	try {
+
 	using namespace basic::options;
 	using namespace protocols::antibody;
 	using namespace protocols::jd2;
@@ -53,6 +56,9 @@ main( int argc, char * argv [] )
 
 	JobDistributor::get_instance()->go(ab_m_h3);
 
+	 } catch ( utility::excn::EXCN_Base const & e ) { 
+		 std::cout << "caught exception " << e.msg() << std::endl;
+	}
 }
 
 

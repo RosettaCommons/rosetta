@@ -105,6 +105,7 @@
 #include <utility/file/FileName.hh>
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <core/scoring/methods/RG_Energy_Fast.hh>
 #include <ObjexxFCL/format.hh>
@@ -170,6 +171,7 @@ void set_lk_dgfree_to_1(core::chemical::ResidueTypeSetOP rsd_set){
 int
 main( int argc, char* argv [] )
 {
+    try {
 	using namespace core;
 	using namespace scoring;
 	using namespace utility;
@@ -286,4 +288,8 @@ main( int argc, char* argv [] )
 								<< nbrs[i] << " " << F( width, precision, fa_atr[i] )<< " " << F( width, precision, fa_sol[i] ) << " " << files[f] << "\n";
 		}
 	}
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }

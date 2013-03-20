@@ -40,6 +40,8 @@ void check_lengths(FragSetCOP fragments, PoseCOP pose) {
 }
 
 int main(int argc, char* argv[]) {
+	try {
+
   using core::Size;
   using core::fragment::FragmentIO;
   using core::fragment::FragmentRmsd;
@@ -60,4 +62,10 @@ int main(int argc, char* argv[]) {
       std::cout << pos << " " << k << " " << calc.rmsd(pos, k, *pose) << std::endl;
     }
   }
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
+	return 0;
 }

@@ -298,6 +298,9 @@ void IAMover::apply( core::pose::Pose & pose ) {
 int
 main( int argc, char* argv[] )
 {
+
+	try {
+
 	using basic::options::option;
 	option.add( jumpnum, "jump between chains of interface" ).def(1);
 	option.add( compute_packstat, "packstat of interface residues only" ).def(false);
@@ -316,4 +319,9 @@ main( int argc, char* argv[] )
 	TR << "************************d**o**n**e**************************************" << std::endl;
 
 	return 0;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }

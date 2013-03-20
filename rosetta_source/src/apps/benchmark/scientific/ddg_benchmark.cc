@@ -48,6 +48,7 @@
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
+#include <utility/excn/Exceptions.hh>
 // AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <basic/Tracer.hh>
 
@@ -283,6 +284,8 @@ void correlation(std::string ddg_out){
 int
 main( int argc, char * argv [] )
 {
+	try{
+
 	using namespace pose;
 	using namespace scoring;
 	using namespace conformation;
@@ -695,5 +698,10 @@ main( int argc, char * argv [] )
   std::ifstream exp_data( exp_filename.c_str() );
 	correlation(ddg_out);
 	exit(0);
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+	return 0;
 }
 

@@ -65,6 +65,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/rigid.OptionKeys.gen.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <apps/pilot/yfsong/util.hh>
 #include <basic/Tracer.hh>
@@ -945,6 +946,8 @@ my_main( void* ) {
 int
 main( int argc, char * argv [] )
 {
+	try {
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -961,4 +964,7 @@ main( int argc, char * argv [] )
 
 	//protocols::viewer::viewer_main( challenge_main );
 	protocols::viewer::viewer_main( my_main );
+	 } catch ( utility::excn::EXCN_Base const & e ) { 
+		 std::cout << "caught exception " << e.msg() << std::endl;
+	}
 }

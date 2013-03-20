@@ -75,6 +75,7 @@ using namespace basic::options::OptionKeys;
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
+#include <utility/excn/Exceptions.hh>
 
 
 basic::Tracer TR( "pilot_apps.kuichan.design_disulfide" );
@@ -91,6 +92,7 @@ usage(char* msg)
 
 int main( int argc, char * argv [] )
 {
+    try {
 	//init options system
 	option.add_relevant( in::file::s );
 	option.add_relevant( out::file::o );
@@ -226,6 +228,9 @@ int main( int argc, char * argv [] )
 
 	}
 
-	return 0;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 } // end main
 

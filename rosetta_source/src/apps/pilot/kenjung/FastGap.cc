@@ -28,6 +28,7 @@
 #include <utility/string_util.hh>
 #include <utility/exit.hh>
 #include <utility/file/file_sys_util.hh>
+#include <utility/excn/Exceptions.hh>
 
 // AUTO-REMOVED #include <core/conformation/Conformation.hh>
 // AUTO-REMOVED #include <core/conformation/util.hh>
@@ -90,20 +91,26 @@ std::map< std::string, core::pose::Pose > poses_from_cmd_line(utility::vector1< 
 int
 main( int argc, char * argv [] )
 {
-	// initialize core
-	devel::init(argc, argv);
-	
-  // read in poses
-	std::map< string, Pose > input_poses = poses_from_cmd_line(option[ in::file::s ]());
+    try {
+    	// initialize core
+    	devel::init(argc, argv);
 
-	typedef std::map< string, Pose >::iterator iter;
-	for( iter it = input_poses.begin(), end = input_poses.end(); it != end; ++it ) {
-			FastGapMoverOP fastgap = new FastGapMover();	
-			fastgap->apply(it->second);
-			// dump resulting pdb
-			string m = it->first + ".closed.pdb";
-		 (it->second).dump_pdb(m);
-	}
+      // read in poses
+    	std::map< string, Pose > input_poses = poses_from_cmd_line(option[ in::file::s ]());
+
+    	typedef std::map< string, Pose >::iterator iter;
+    	for( iter it = input_poses.begin(), end = input_poses.end(); it != end; ++it ) {
+    			FastGapMoverOP fastgap = new FastGapMover();
+    			fastgap->apply(it->second);
+    			// dump resulting pdb
+    			string m = it->first + ".closed.pdb";
+    		 (it->second).dump_pdb(m);
+    	}
+
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 
 

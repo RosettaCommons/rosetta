@@ -57,6 +57,7 @@
 	#include <ctime>
 #endif
 
+#include <utility/excn/Exceptions.hh>
 
 
 static basic::Tracer tr("pilotapps.flo.EnzdesFixBB");
@@ -69,6 +70,7 @@ using namespace core;
 int
 main( int argc, char * argv [])
 {
+    try {
 
 	using namespace protocols::jobdist;
 	protocols::enzdes::EnzdesBaseProtocol::register_options();
@@ -228,7 +230,9 @@ main( int argc, char * argv [])
 	tr << "Finished all " << num_structures_processed << " structures in " << (long)(overall_end_time - overall_start_time) << " seconds." << std::endl;
 	if ( num_structures_processed == 0 )
 		basic::Warning() << "No structures processed.  Existing output files may have been skipped, did you mean to delete them or to use the -overwrite flag?" << std::endl;
-	return 0;
-
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
+        return 0;
 }
 

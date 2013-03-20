@@ -63,6 +63,8 @@ static basic::Tracer TR("thread_sidechains");
 int
 main( int argc, char * argv [] )
 {
+	try {
+
   using namespace core;
   using namespace basic::options;
   using namespace std;
@@ -127,6 +129,9 @@ main( int argc, char * argv [] )
   TR << "Output to [" << output_fname << "]" << endl;
   core::io::pdb::dump_pdb(trg_pose, output_fname);
 
-  exit(0);
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
+	return 0;
 }

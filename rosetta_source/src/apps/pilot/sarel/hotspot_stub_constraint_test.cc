@@ -149,6 +149,9 @@ void run_test() {
 int
 main( int argc, char * argv [] )
 {
+
+	try {
+
 	// setup random numbers and options
 	devel::init(argc, argv);
 
@@ -156,5 +159,10 @@ main( int argc, char * argv [] )
 	run_test();
 
 	return 0;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 

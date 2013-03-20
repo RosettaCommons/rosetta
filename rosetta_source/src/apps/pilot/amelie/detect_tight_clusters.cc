@@ -64,6 +64,7 @@
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
@@ -860,6 +861,8 @@ void find_clusters(
 
 int main( int argc, char * argv [] ) 
 {
+	try{
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	
@@ -1065,4 +1068,8 @@ int main( int argc, char * argv [] )
 	
 	//score_fxn->show(TR, p);
 	
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 }

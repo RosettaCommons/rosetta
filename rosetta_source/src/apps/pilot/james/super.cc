@@ -40,6 +40,8 @@ using utility::vector1;
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 class SuperDeviationMover;
 typedef utility::pointer::owning_ptr< SuperDeviationMover > SuperDeviationMoverOP;
@@ -109,6 +111,8 @@ private:
 
 int
 main( int argc, char * argv [] ) {
+	try {
+
 	using namespace core::chemical;
 	using namespace basic::options::OptionKeys;
 	using namespace basic::options;
@@ -129,6 +133,10 @@ main( int argc, char * argv [] ) {
 	SuperDeviationMoverOP mover ( new SuperDeviationMover( native_pose ) );
 	not_universal_main( *mover );
 	mover->print_stats();
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 	return 0;
 } // int main

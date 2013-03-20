@@ -24,6 +24,8 @@
 #include <devel/init.hh>
 #include <core/types.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 // option key includes
 
 
@@ -39,7 +41,7 @@ void register_options() {
 
 int
 main( int argc, char * argv [] ) {
-
+    try {
         using namespace basic::options;
         using namespace basic::options::OptionKeys;
 
@@ -50,4 +52,8 @@ main( int argc, char * argv [] ) {
 
 	// execution
 	protocols::jd2::JobDistributor::get_instance()->go(mover);
-}
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
+        return 0;
+    }

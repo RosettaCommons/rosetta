@@ -92,6 +92,9 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/cluster.OptionKeys.gen.hh>
 
+#include <utility/excn/Exceptions.hh>
+
+
 using namespace core;
 using namespace protocols;
 using namespace basic::options::OptionKeys;
@@ -1121,6 +1124,7 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
+    try {
 	using namespace core;
 	utility::vector1< Size > blank_size_vector;
 	utility::vector1< Real > blank_size_vector_real;
@@ -1152,4 +1156,8 @@ main( int argc, char * argv [] )
 	//////////////////////////////
 
 	protocols::viewer::viewer_main( my_main );
-}
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
+        return 0;
+    }

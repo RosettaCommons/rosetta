@@ -54,6 +54,8 @@
 int
 main( int argc, char * argv [] )
 {
+	try {
+
 	using namespace ObjexxFCL::fmt;
 
 	// initialize option and random number system
@@ -154,5 +156,11 @@ main( int argc, char * argv [] )
 		std::cerr << "finishing " << i->name() << std::endl;
 	} // finish this pdb
 	outfile.close();
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
+	return 0;
 } // finish main
 

@@ -77,6 +77,9 @@ typedef numeric::xyzMatrix<Real> Mat;
 static basic::Tracer TR("disulf_stat");
 
 int main (int argc, char *argv[]) {
+
+	try {
+
   using namespace basic::options::OptionKeys;
 
   devel::init(argc,argv);
@@ -110,4 +113,9 @@ int main (int argc, char *argv[]) {
   }
 
   TR << "DONE!" << std::endl;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }

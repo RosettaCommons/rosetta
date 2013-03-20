@@ -210,6 +210,8 @@ void benchmark_contacts ( pose::Pose const & start_pose, scoring::ScoreFunctionO
 int
 main( int argc, char * argv [] )
 {
+	try {
+
 	using namespace scoring;
 
 	OPT(hotspot::target);
@@ -467,6 +469,10 @@ main( int argc, char * argv [] )
 		protocols::hotspot_hashing::HotspotStubSetOP cut_stubs = stubset.subset( score_cutoff );
 		std::string newfname = i.str() + "cut_" + hashout_fname;
 		cut_stubs->write_all( newfname);
+	}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 	}
 
 	return 0;

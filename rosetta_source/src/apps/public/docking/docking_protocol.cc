@@ -21,6 +21,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 //#include <utility/tools/make_vector1.hh>
 
 // option key includes
@@ -73,8 +74,14 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
+	try {
 
 	devel::init(argc, argv);
 	protocols::viewer::viewer_main( my_main );
 
+	 } catch ( utility::excn::EXCN_Base const & e ) { 
+		 std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
+

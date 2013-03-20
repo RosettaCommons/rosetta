@@ -50,6 +50,7 @@
 
 #include <utility/vector1.hh>
 
+#include <utility/excn/Exceptions.hh>
 
 // Numeric Headers
 
@@ -111,6 +112,7 @@ typedef utility::pointer::owning_ptr< ExtractATD > ExtractATDOP;
 int
 main( int argc, char * argv [] )
 {
+	try {
 
 	devel::init(argc, argv);
 	protocols::jd2::register_options();
@@ -163,6 +165,8 @@ main( int argc, char * argv [] )
 
 
 	protocols::jd2::JobDistributor::get_instance()->go(extract_mover);
-
+	} catch ( utility::excn::EXCN_Base const & e ) { 
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 }
 

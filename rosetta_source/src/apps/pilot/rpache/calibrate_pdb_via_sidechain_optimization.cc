@@ -155,6 +155,9 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
+
+	try {
+
 	// define viable options
 	NEW_OPT(calibrate_pdb::no_repacking, "skip repacking", false);
 	NEW_OPT(calibrate_pdb::no_rottrials, "skip rotamer trials", false);
@@ -164,4 +167,9 @@ main( int argc, char * argv [] )
 	devel::init( argc, argv );
 
 	protocols::viewer::viewer_main( my_main );
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }

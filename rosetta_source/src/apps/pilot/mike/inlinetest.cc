@@ -30,6 +30,7 @@
 //Auto Headers
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
+#include <utility/excn/Exceptions.hh>
 #include <protocols/relax/ClassicRelax.hh>
 #include <protocols/relax/relax_main.hh>
 #include <devel/init.hh>
@@ -46,6 +47,7 @@
 int
 main( int argc, char * argv [] )
 {
+    try {
  	using namespace core;
  	using namespace protocols;
  	using namespace protocols::jobdist;
@@ -59,19 +61,19 @@ main( int argc, char * argv [] )
 //	provider->show_contents();
 //
 //	std::istream *mystream;
-//	
+//
 //	if(!provider->get_istream( "scoring/myfile.test", &mystream )){
-//		 std::cout << "Cannot find file" << std::endl;	
+//		 std::cout << "Cannot find file" << std::endl;
 //	}else{
-//		std::cout << "Here" << std::endl;	
+//		std::cout << "Here" << std::endl;
 //		if( mystream->good() ){
-//			std::cout << "Here" << std::endl;	
+//			std::cout << "Here" << std::endl;
 //			std::string read_me;
 //			(*mystream) >> read_me;
 //			std::cout << "DATA:" << read_me << std::endl;
 //		}
 //	}
-	
+
 	relax::ClassicRelax::register_options();
 	jd2::register_options();
 	option.add_relevant( OptionKeys::in::file::fullatom );
@@ -79,7 +81,7 @@ main( int argc, char * argv [] )
 	devel::init(argc, argv);
 
 	return relax::Relax_main( false );
-	
+
 
 //	utility::io::izstream data( "./scoring/weights/standard.wts" ); // may or may not include .wts extension
 //	std::cout << __FILE__ << __LINE__ << std::endl;
@@ -95,6 +97,10 @@ main( int argc, char * argv [] )
 //		std::cout << __FILE__ << __LINE__ << std::endl;
 //	}
 //std::cout << __FILE__ << __LINE__ << std::endl;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 
 

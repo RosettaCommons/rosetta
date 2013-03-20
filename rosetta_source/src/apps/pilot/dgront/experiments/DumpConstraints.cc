@@ -34,6 +34,8 @@
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
@@ -46,7 +48,7 @@ void register_options() {
 }
 
 int main(int argc, char * argv[]) {
-
+  try {
   using namespace core;
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
@@ -74,7 +76,9 @@ int main(int argc, char * argv[]) {
   for (utility::vector1<ConstraintCOP>::iterator it = csts.begin(), end = csts.end(); it != end; ++it) {
     (*it)->show_def(std::cout, init_pose);
   }
-
+  } catch ( utility::excn::EXCN_Base const & e ) {
+                            std::cout << "caught exception " << e.msg() << std::endl;
+                                }
   return 0;
 
 }

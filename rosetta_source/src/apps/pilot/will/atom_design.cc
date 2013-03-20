@@ -132,6 +132,9 @@ int
 main( int argc, char * argv [] )
 {
 
+	try {
+
+
 	using namespace core;
 	using namespace chemical;
 	using namespace pose;
@@ -182,4 +185,9 @@ main( int argc, char * argv [] )
 	sf->show(pose);
 
 	mydumppdb(pose,"post_design.pdb");
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }

@@ -264,6 +264,8 @@ void dump_rotamerset_pdb( utility::vector1< core::conformation::ResidueCOP > con
 int
 main( int argc, char * argv [] ) {
 
+	try {
+
 	using namespace basic::options;
 	using namespace core;
 
@@ -785,6 +787,10 @@ main( int argc, char * argv [] ) {
 	// close the results output stream
 	fclose( fout );
 	TR << "Done." << std::endl;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 }
 

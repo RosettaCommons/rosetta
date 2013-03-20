@@ -147,6 +147,8 @@ TwoChainInterface::TwoChainInterface() { }	// empty constructor
 int
 main( int argc, char* argv[] )
 {
+	try {
+
 	pose::Pose pose;
 	devel::init( argc, argv );
 
@@ -170,6 +172,10 @@ main( int argc, char* argv[] )
 			TI << *chain1 << *chain2 << " " << interface.first << std::endl;
 			TI << *chain1 << *chain2 << " " << interface.second << std::endl;
 		}
+	}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 	}
 }	// END main
 

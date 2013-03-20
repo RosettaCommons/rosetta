@@ -102,6 +102,7 @@
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <basic/options/keys/chemically_conjugated_docking.OptionKeys.gen.hh>
 
+#include <utility/excn/Exceptions.hh>
 //tracers
 using basic::Error;
 using basic::Warning;
@@ -863,7 +864,7 @@ typedef utility::pointer::owning_ptr< UBQ_E2Mover > UBQ_E2MoverOP;
 
 int main( int argc, char* argv[] )
 {
-
+try {
 	//initialize options
 	devel::init(argc, argv);
 	basic::prof_reset();
@@ -877,6 +878,8 @@ int main( int argc, char* argv[] )
 
 	basic::prof_show();
 	TR << "************************d**o**n**e**************************************" << std::endl;
-
+} catch ( utility::excn::EXCN_Base const & e ) {
+	std::cout << "caught exception " << e.msg() << std::endl;
+}
 	return 0;
 }

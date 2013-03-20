@@ -139,6 +139,9 @@ largest_cluster( utility::vector1< pose::Pose > lowscore_poses, utility::vector1
 int
 main( int argc, char* argv [] )
 {
+
+	try {
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
@@ -375,6 +378,11 @@ main( int argc, char* argv [] )
 
 		infile >> outfile_location;// >> res1 >> res2 >> native_location;
 	}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 } // int main( int argc, char * argv [] )
 
 //}

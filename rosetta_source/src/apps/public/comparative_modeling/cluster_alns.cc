@@ -17,11 +17,17 @@
 #include <protocols/comparative_modeling/AlignmentClustering.hh>
 
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 
 
 int main( int argc, char * argv [] ) {
+	try {
+
 	using namespace protocols::comparative_modeling;
 	devel::init(argc, argv);
 	AlignmentClusteringOP cluster = new AlignmentClustering();
+	 } catch ( utility::excn::EXCN_Base const & e ) { 
+		 std::cout << "caught exception " << e.msg() << std::endl;
+	}
 	return 0;
 }

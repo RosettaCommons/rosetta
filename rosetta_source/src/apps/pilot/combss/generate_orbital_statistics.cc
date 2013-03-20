@@ -75,6 +75,7 @@ utility::vector1<numeric::histograms::TwoDHistogram<core::Size, core::SSize> > a
 
 int main( int argc, char * argv [] )
 {
+    try {
 	devel::init(argc, argv);
 	//using an old job manager because I cant figure out how to use the new job
 	//manager with this code. Taken from Ian's old job manager
@@ -170,10 +171,12 @@ int main( int argc, char * argv [] )
 
 	}
 
+    } 
 
-
-
-
+catch ( utility::excn::EXCN_Base const & e ) {
+                          std::cout << "caught exception " << e.msg() << std::endl;
+                              }
+    return 0;
 
 
 }

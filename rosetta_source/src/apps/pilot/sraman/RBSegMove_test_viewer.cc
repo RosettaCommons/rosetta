@@ -83,6 +83,7 @@ using namespace core::scoring;
 void
 RBSegmentRelax_test()
 {
+
 	// Parses command line options and inits RNG.
 	//	devel::init(argc, argv);
 
@@ -167,7 +168,15 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
+
+	try {
+
 	// options, random initialization
 	devel::init( argc, argv );
 	protocols::viewer::viewer_main( my_main );
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }

@@ -35,6 +35,9 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <devel/init.hh>
 
+#include <utility/excn/Exceptions.hh>
+
+
 // option key includes
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
@@ -44,6 +47,7 @@
 int
 main( int argc, char * argv [] )
 {
+    try {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -125,4 +129,8 @@ main( int argc, char * argv [] )
 	}
 
 	protocols::jd2::JobDistributor::get_instance()->go(seq_mover);
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
+        return 0;
 }

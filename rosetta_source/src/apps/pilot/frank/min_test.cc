@@ -49,6 +49,8 @@
 
 #include <core/scoring/constraints/util.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
@@ -218,6 +220,7 @@ my_main( void* ) {
 int
 main( int argc, char * argv [] )
 {
+    try {
 	NEW_OPT(min::debug, "debug derivs?", false);
 	NEW_OPT(min::debug_verbose, "debug derivs verbose?", false);
 	NEW_OPT(min::cartesian, "cartesian minimization?", false);
@@ -226,4 +229,8 @@ main( int argc, char * argv [] )
 	devel::init(argc, argv);
 
 	protocols::viewer::viewer_main( my_main );
-}
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
+        return 0;
+    }

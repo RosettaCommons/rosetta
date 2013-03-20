@@ -42,6 +42,9 @@
 
 int
 main( int argc, char* argv [] ) {
+
+	try {
+
 	devel::init( argc, argv );
 
 	using core::Size;
@@ -139,4 +142,9 @@ main( int argc, char* argv [] ) {
 
 	} // while ( input.has_another_pose() )
 	return 0;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }

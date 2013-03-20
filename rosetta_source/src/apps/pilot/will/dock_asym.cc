@@ -235,6 +235,9 @@ void dock(Pose const & init1,
 
 
 int main(int argc, char *argv[]) {
+
+	try {
+
 	register_options();
 	devel::init(argc,argv);
 	using namespace basic::options::OptionKeys;
@@ -275,5 +278,10 @@ int main(int argc, char *argv[]) {
 		}
 		dock(pnat1,pnat2,native,fn1,fn2,ssamp);
 	}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 

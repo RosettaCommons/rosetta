@@ -27,6 +27,8 @@
 #include <core/scoring/rms_util.hh>
 
 int main(int argc, char* argv[]) {
+	try {
+
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   using namespace core::pose;
@@ -44,4 +46,10 @@ int main(int argc, char* argv[]) {
   for (utility::vector1<PoseOP>::const_iterator i = models.begin(); i != models.end(); ++i) {
     cout << core::scoring::gdtha(*ref, **i, all_residues) << endl;
   }
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
+	return 0;
 }

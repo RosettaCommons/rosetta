@@ -31,7 +31,7 @@
 #include <protocols/relax/ClassicRelax.hh>
 #include <protocols/relax/relax_main.hh>
 #include <utility/vector1.hh>
-
+#include <utility/excn/Exceptions.hh>
 
 
 using basic::T;
@@ -51,6 +51,7 @@ using utility::vector1;
 int
 main( int argc, char * argv [] )
 {
+	try {
 	using namespace protocols::moves;
 	using namespace scoring;
 	using namespace basic::options;
@@ -62,6 +63,9 @@ main( int argc, char * argv [] )
     option.add_relevant( OptionKeys::in::file::movemap );
 	option.add_relevant( OptionKeys::relax::fast );
 	devel::init(argc, argv);
-
 	return relax::Relax_main( false );
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 }

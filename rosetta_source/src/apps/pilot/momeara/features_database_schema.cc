@@ -26,6 +26,7 @@
 #include <protocols/features/FeaturesReporterFactory.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 #include <core/types.hh>
 
 using std::string;
@@ -74,5 +75,5 @@ main( int argc, char* argv [] ) {
 		std::cerr << "Exception: " << std::endl;
 		excn.show( std::cerr );
 	}
-	return 0;
+    return 0;
 } // main

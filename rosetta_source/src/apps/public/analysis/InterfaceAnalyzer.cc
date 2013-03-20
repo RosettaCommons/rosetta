@@ -35,6 +35,7 @@
 #include <basic/options/option.hh>
 
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 
 
 using basic::T;
@@ -168,6 +169,8 @@ void IAMover::apply( core::pose::Pose & pose ) {
 int
 main( int argc, char* argv[] )
 {
+	try {
+
 	using basic::options::option;
 	option.add( jumpnum, "jump between chains of interface" ).def(1);
 	option.add( compute_packstat, "compute packstat (of interface residues only)" ).def(false);
@@ -184,6 +187,9 @@ main( int argc, char* argv[] )
 	protocols::jd2::JobDistributor::get_instance()->go(new IAMover());
 
 	TR << "************************d**o**n**e**************************************" << std::endl;
+	 } catch ( utility::excn::EXCN_Base const & e ) { 
+		 std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 	return 0;
 }

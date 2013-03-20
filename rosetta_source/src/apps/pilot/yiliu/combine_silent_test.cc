@@ -47,6 +47,7 @@
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 
 using basic::T;
 using basic::Warning;
@@ -76,6 +77,7 @@ static basic::Tracer TR("apps.pilot.yiliu.silent");
 
 int
 main( int argc, char* argv [] ) {
+	try {
 	// options, random initialization
 	devel::init( argc, argv );
 
@@ -144,4 +146,7 @@ main( int argc, char* argv [] ) {
 //	}
 
 	return 0;
+	 } catch ( utility::excn::EXCN_Base const & e ) { 
+		 std::cout << "caught exception " << e.msg() << std::endl;
+	}
 } // main

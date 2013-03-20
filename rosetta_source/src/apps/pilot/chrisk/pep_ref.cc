@@ -893,12 +893,17 @@ RunPepSpec()
 
 int main( int argc, char * argv [] )
 {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	try {
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
+		RunPepSpec();
 
-	RunPepSpec();
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
+	return 0;
 }

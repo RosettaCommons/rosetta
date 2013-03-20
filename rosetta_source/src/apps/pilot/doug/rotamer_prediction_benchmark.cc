@@ -49,6 +49,7 @@
 #include <core/import_pose/import_pose.hh>
 
 
+#include <utility/excn/Exceptions.hh>
 
 
 // namespaces
@@ -77,6 +78,7 @@ void rotamer_prediction_benchmark( std::string pdb_filename, ScoreFunctionOP sco
 int
 main( int argc, char * argv [] )
 {
+    try {
 	// add application specific options to core options system
 	option.add( rpb::mm_score, "Use MM Torsion Score instead of Dunbrack" );
 	option.add( rpb::start_weight, "Weight to start testing MM Torsion term at" );
@@ -227,4 +229,9 @@ void rotamer_prediction_benchmark( std::string pdb_filename, ScoreFunctionOP sco
 			<< static_cast<Real>(100)*static_cast<Real>(prot_chi1_correct)/static_cast<Real>(prot_total_chi1) << "%\n";
 	RES << "Chi12: " << prot_chi1_chi2_correct << "/" << prot_total_chi2 << " = " << std::setprecision(3) << std::fixed
 			<< static_cast<Real>(100)*static_cast<Real>(prot_chi1_chi2_correct)/static_cast<Real>(prot_total_chi2) << "%\n";
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
+    return 0;
+
 }

@@ -380,7 +380,15 @@ void test_kc2() {
 
 
 int main (int argc, char *argv[]) {
+
+	try {
+
   devel::init(argc,argv);
 	//	numeric::kinematic_closure::test_bridgeObjects();
 	test_kc2();
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }

@@ -48,6 +48,7 @@
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
+
 //
 #include <iostream>
 #include <string>
@@ -87,11 +88,15 @@ my_main( void* ) {
 
 int
 main( int argc, char * argv [] ) {
-
+    try {
 	// initialize option and random number system
     NEW_OPT(bbg::ntrials, "number of Monte Carlo trials to run", 1000);
     NEW_OPT(bbg::kT, "MC temp", 0.6);
 	devel::init( argc, argv );
 
 	protocols::viewer::viewer_main( my_main );
-}
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
+        return 0;
+    }

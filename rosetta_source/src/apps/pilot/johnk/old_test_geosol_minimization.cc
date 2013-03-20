@@ -46,6 +46,7 @@
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
+#include <utility/excn/Exceptions.hh>
 
 // C++ Headers
 #include <cmath>
@@ -72,7 +73,7 @@ static basic::Tracer TR( "apps.pilot.johnk_test_geosol_minimization.main" );
 int
 main( int argc, char * argv [] )
 {
-
+    try {
 	devel::init(argc, argv);
 
 	TR << "jk testing derivatives for geometric solvation" << std::endl;
@@ -105,6 +106,9 @@ main( int argc, char * argv [] )
 
 	TR << "jk finished testing derivatives" << std::endl;
 
-	return 0;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 

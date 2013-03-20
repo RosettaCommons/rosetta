@@ -30,6 +30,8 @@ using namespace core;
 
 #include <basic/options/option_macros.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 OPT_KEY( Real, atom_pair_constraint_weight )
 OPT_KEY( Real, coordinate_constraint_weight )
 OPT_KEY( Boolean, fast )
@@ -46,6 +48,8 @@ register_options() {
 int
 main( int argc, char * argv [] )
 {
+	try {
+
 	using namespace protocols;
 	using namespace protocols::jobdist;
 	using namespace protocols::moves;
@@ -68,6 +72,10 @@ main( int argc, char * argv [] )
 	idealizer.fast( option[ fast ]() );
 
 	not_universal_main( idealizer );
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 	return 0;
 }

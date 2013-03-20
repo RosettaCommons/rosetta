@@ -39,6 +39,7 @@ static basic::Tracer TR("VIP");
 //utilities
 #include <protocols/jd2/JobDistributor.hh>
 #include <devel/init.hh>
+#include <utility/excn/Exceptions.hh>
 
 //local options
 namespace core{ namespace options{ namespace OptionKeys{
@@ -49,6 +50,7 @@ basic::options::BooleanOptionKey const minimize_sidechains("minimize_sidechains"
 int
 main( int argc, char * argv [] )
 {
+	try {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -128,4 +130,7 @@ main( int argc, char * argv [] )
 		not_finished = ( ncycles == 0 ? !done_improving : (it <= ncycles && !done_improving) );
 	}
 	out_pose.dump_pdb( option[ cp::output ] );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 }

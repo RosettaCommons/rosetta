@@ -57,6 +57,8 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 using namespace core;
 using namespace core::scoring;
@@ -135,6 +137,8 @@ void define_interface( core::pose::Pose & input_pose ) {
 int
 main( int argc, char * argv [] )
 {
+	try {
+
   NEW_OPT ( contact_list, "File name for optional list of contact residues to check","");
    NEW_OPT ( num_angles, "Number of different pose angles to measure score at", 1);
   devel::init(argc, argv);
@@ -227,6 +231,10 @@ main( int argc, char * argv [] )
 
   fb.close();
   fb2.close();
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
   return 0;
 

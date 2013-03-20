@@ -61,7 +61,7 @@
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
-
+#include <utility/excn/Exceptions.hh>
 
 
 using namespace core;
@@ -76,6 +76,7 @@ OPT_KEY( Integer, num_angles )
 int
 main( int argc, char * argv [] )
 {
+	try {
   NEW_OPT ( num_angles, "Number of different pose angles to measure score at", 1);
 
 	devel::init(argc, argv);
@@ -178,7 +179,9 @@ main( int argc, char * argv [] )
   largest_pocket_score /= angles;
 	std::cout << "Pocket score (unweighted) is: " << constraint_pocket_score << std::endl;
 	std::cout << "Largest pocket score (unweighted) is: " << largest_pocket_score << std::endl;
-
+  } catch ( utility::excn::EXCN_Base const & e ) {
+	  std::cout << "caught exception " << e.msg() << std::endl;
+  }
 	return 0;
 }
 

@@ -73,6 +73,7 @@
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/constants.hh>
@@ -754,6 +755,7 @@ my_main ( void* ) {
 ///////////////////////////////////////////////////////////////////////////////
 int
 main ( int argc, char * argv [] ) {
+try {
 	utility::vector1< Size > blank_size_vector;
 	utility::vector1< std::string > blank_string_vector;
 	NEW_OPT ( add_virt_root, "add_virt_root", false );
@@ -839,6 +841,9 @@ main ( int argc, char * argv [] ) {
 	// end of setup
 	////////////////////////////////////////////////////////////////////////////
 	protocols::viewer::viewer_main ( my_main );
+} catch ( utility::excn::EXCN_Base const & e ) {
+	std::cout << "caught exception " << e.msg() << std::endl;
+}
 }
 
 

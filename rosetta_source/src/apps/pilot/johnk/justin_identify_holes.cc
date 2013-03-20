@@ -36,6 +36,7 @@
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
+#include <utility/excn/Exceptions.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
@@ -54,7 +55,7 @@ static basic::Tracer TR( "apps.pilot.justin_identify_holes.main" );
 int
 main( int argc, char * argv [] )
 {
-
+    try {
 	//	NEW_OPT( ref_decoy, "the structure to compute RMSD and relative score to", "" );
 
 	devel::init(argc, argv);
@@ -111,8 +112,10 @@ main( int argc, char * argv [] )
 	outstream.close();
 	outstream.clear();
 
-	return 0;
-
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 
 

@@ -71,6 +71,9 @@ int
 main( int argc, char * argv [] )
 {
 
+	try {
+
+
 	NEW_OPT( central_relax_pdb_num, "which residue to carry out backrub around", 1 );
 	NEW_OPT( central_relax_chain, "which chain the residue is on", "A" );
 
@@ -319,6 +322,11 @@ main( int argc, char * argv [] )
 	TR << "Successfully finished relaxing backbone around central residue" << std::endl;
 
 	return 0;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 
 

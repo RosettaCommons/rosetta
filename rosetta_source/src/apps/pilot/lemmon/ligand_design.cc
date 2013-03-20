@@ -24,10 +24,13 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/ligand_docking/GrowLigand.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 /// This wrapper exists so David Kim's BOINC executable can call my real main() method.
 int
 main( int argc, char * argv [] )
 {
+    try {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	option.add_relevant(in::path::database);
@@ -56,5 +59,9 @@ main( int argc, char * argv [] )
 	devel::init(argc, argv);
 
 	protocols::jd2::JobDistributor::get_instance()->go(new protocols::ligand_docking::GrowLigand("X"));
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 

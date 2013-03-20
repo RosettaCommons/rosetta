@@ -105,6 +105,8 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 // C++ headers
 //#include <cstdlib>
@@ -712,7 +714,8 @@ my_main ( void* ) {
 ///////////////////////////////////////////////////////////////////////////////
 int
 main ( int argc, char * argv [] ) {
-	utility::vector1< Size > blank_size_vector;
+    try {
+    utility::vector1< Size > blank_size_vector;
 	utility::vector1< std::string > blank_string_vector;
 	NEW_OPT ( add_virt_root, "add_virt_root", false );
 	NEW_OPT ( job_queue_ID, " rna_resample_test()/combine_long_loop mode: Specify the tag pair in filter_output_filename to be read in and imported (start from 0!)" , 0 );
@@ -795,6 +798,10 @@ main ( int argc, char * argv [] ) {
 	// end of setup
 	////////////////////////////////////////////////////////////////////////////
 	protocols::viewer::viewer_main ( my_main );
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
+        return 0;
 }
 
 

@@ -36,6 +36,7 @@
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
+#include <utility/excn/Exceptions.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
@@ -55,7 +56,7 @@ static basic::Tracer TR( "apps.pilot.johnk_gapless_threading.main" );
 int
 main( int argc, char * argv [] )
 {
-
+    try {
 	NEW_OPT( desired_sequence, "the sequence to thread onto the current backbone", "" );
 	NEW_OPT( repack_preserved, "if true, repack residues which match in both sequences", false );
 
@@ -116,8 +117,10 @@ main( int argc, char * argv [] )
 	TR << "Successfully finished replacing sequence." << std::endl;
 	TR << "Made " << num_mut << " mutations, preserved sequence at " << num_preserved << " positions." << std::endl;
 
-	return 0;
-
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 
 

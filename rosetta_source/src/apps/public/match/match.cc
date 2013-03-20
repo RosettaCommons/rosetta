@@ -56,6 +56,8 @@
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector1.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 #if defined(WIN32) || defined(__CYGWIN__)
 	#include <ctime>
 #endif
@@ -69,12 +71,16 @@ set_ligpose_rotamer( core::pose::Pose & ligpose );
 
 int main( int argc, char * argv [] )
 {
+	try {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
 	devel::init( argc, argv );
 
 	match_main();
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 }
 
 void

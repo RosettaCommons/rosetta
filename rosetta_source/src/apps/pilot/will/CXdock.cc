@@ -732,6 +732,9 @@ get_tasks_from_command_line(
 }
 
 int main(int argc, char *argv[]) {
+
+	try {
+
 	register_options();
 	devel::init(argc,argv);
 	using namespace basic::options::OptionKeys;
@@ -780,5 +783,10 @@ int main(int argc, char *argv[]) {
 
 		dock(pnat,fn,ssamp,olig,nfold,native_ca);
 	}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 

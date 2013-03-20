@@ -62,6 +62,8 @@
 #include <core/import_pose/import_pose.hh>
 #include <protocols/simple_moves/SuperimposeMover.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 using namespace core;
 using namespace basic::options;
@@ -122,6 +124,8 @@ std::cout<<"   "<<mod_pose.pdb_info()->chain(ii)<<mod_pose.pdb_info()->number(ii
 }
 
 int main( int argc, char * argv [] ) {
+
+	try {
 
   NEW_OPT( central_relax_pdb_num, "target residue", "-1" );
 	NEW_OPT( template_protein, "template protein file name", "template.pdb" );
@@ -472,6 +476,10 @@ int main( int argc, char * argv [] ) {
 	if(	remove(aligned_pose_name.c_str()) != 0) perror( "Error deleting Aligned_pose_pdb file" );
 
   }
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 	return 0;
 

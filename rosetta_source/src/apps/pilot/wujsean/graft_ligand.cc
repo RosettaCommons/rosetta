@@ -36,6 +36,7 @@
 #include <core/id/AtomID_Map.hh>
 
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 #include <numeric/xyzVector.hh>
 
 #include <core/sequence/util.hh>
@@ -60,6 +61,7 @@ using utility::vector1;
 
 int
 main( int argc, char * argv [] ) {
+	try {
 	using namespace core::chemical;
 	using namespace basic::options::OptionKeys;
 	using namespace basic::options;
@@ -242,5 +244,8 @@ main( int argc, char * argv [] ) {
 	//Testing
 	//comparative_modeling_pose.pdb_info() -> show(std::cout);
 
+	 } catch ( utility::excn::EXCN_Base const & e ) { 
+		 std::cout << "caught exception " << e.msg() << std::endl;
+	}
 	return 0;
 } // int main

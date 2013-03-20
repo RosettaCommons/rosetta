@@ -257,6 +257,8 @@ bool calc_outputCoordCsts(
 
 
 int main( int argc, char * argv [] ) {
+	try {
+
   using namespace devel::cstEnergyBalance;
   using namespace core::chemical;
   using namespace core::conformation;
@@ -279,4 +281,10 @@ int main( int argc, char * argv [] ) {
 	vector1< SequenceOP > fastaSequenceOP = read_fasta_file(option[ in::file::fasta ]()[1]);
 	//calc coordinate constraints
 	calc_outputCoordCsts(fastaSequenceOP[1],alnDataMapped,poseData,coordCstData,N_RES_FROM_GAP_EXCLUDE,MIN_NUM_COORDCSTS,option[minimalCstHomology::only_res_out]());
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
+	return 0;
 }

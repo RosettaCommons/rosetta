@@ -74,6 +74,7 @@
 #include <utility/exit.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/tools/make_vector1.hh>
+#include <utility/excn/Exceptions.hh>
 
 // C++ headers
 #include <string>
@@ -100,7 +101,7 @@ using basic::Error;
 using basic::Warning;
 using utility::file::FileName;
 
-//kdrew: this app adds oop patches to the given pdb strucure 
+//kdrew: this app adds oop patches to the given pdb strucure
 
 // tracer - used to replace cout
 static basic::Tracer TR("OOP_Creator");
@@ -144,6 +145,7 @@ typedef utility::pointer::owning_ptr< OopCreatorMover const > OopCreatorMoverCOP
 int
 main( int argc, char* argv[] )
 {
+    try {
 	utility::vector1< core::Size > empty_vector(0);
 	option.add( oop_creator::oop_plus_positions, "The positions of the first residues of plus oop rings" ).def( empty_vector );
 	option.add( oop_creator::oop_minus_positions, "The positions of the first residues of minus oop rings" ).def( empty_vector );
@@ -168,6 +170,10 @@ main( int argc, char* argv[] )
 	//call job distributor
 	protocols::jd2::JobDistributor::get_instance()->go( OC_mover );
 
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }//main
 
 void
@@ -190,12 +196,12 @@ OopCreatorMover::apply(
 	//oop::OopPuckMoverOP opm_minus( new oop::OopPuckMover( option[ oop_creator::oop_minus_positions].value(), false, true, false, true ) );
 	//opm_minus->apply(pose);
 
-	utility::vector1< core::Size > all_positions; 
+	utility::vector1< core::Size > all_positions;
 
 	utility::vector1< core::Size > const plus_positions = option[ oop_creator::oop_plus_positions].value();
 	all_positions.insert( all_positions.end(), plus_positions.begin(), plus_positions.end() );
 	for(Size i = 1; i <= plus_positions.size(); i++)
-	{                                     
+	{
 		oop::OopPatcherOP oop_patcher (new oop::OopPatcher( plus_positions[i] ) );
 		oop_patcher->apply( pose );
 
@@ -217,7 +223,7 @@ OopCreatorMover::apply(
 	utility::vector1< core::Size > const d_plus_positions = option[ oop_creator::oop_d_plus_positions].value();
 	all_positions.insert( all_positions.end(), d_plus_positions.begin(), d_plus_positions.end() );
 	for(Size i = 1; i <= d_plus_positions.size(); i++)
-	{                                     
+	{
 		oop::OopPatcherOP oop_patcher (new oop::OopPatcher( d_plus_positions[i] ) );
 		oop_patcher->apply( pose );
 
@@ -298,7 +304,7 @@ OopCreatorMover::apply(
 
 	Size pep_begin( pose.conformation().chain_begin( 1 ) );
 	Size pep_end( pose.conformation().chain_end( 1 ) );
-	
+
 	//kdrew: since we probably added new connection types (i.e. oop CYP and CZP atoms) above, need to reset connections
 	pose.conformation().detect_bonds();
 	pose.conformation().detect_pseudobonds();
@@ -329,8 +335,8 @@ OopCreatorMover::apply(
 	}
 
 
-	//kdrew: monte carlo phi/psi of oop to find low energy 
-	if( option[ oop_creator::final_mc ].value() ) 
+	//kdrew: monte carlo phi/psi of oop to find low energy
+	if( option[ oop_creator::final_mc ].value() )
 	{
 		moves::SequenceMoverOP pert_sequence( new moves::SequenceMover() );
 		moves::MonteCarloOP pert_mc( new moves::MonteCarlo( pose, *score_fxn, 0.2 ) );
@@ -341,18 +347,18 @@ OopCreatorMover::apply(
 		pert_pep_small->angle_max( 'L', 2.0 );
 		pert_pep_small->angle_max( 'E', 2.0 );
 
-		utility::vector1< core::Size > oop_pre_positions; 
+		utility::vector1< core::Size > oop_pre_positions;
 		//kdrew: load all oop_pre positions into vector and make all non-oop_pre positions movable by small mover
 		for( Size i = 1; i <= pose.total_residue(); ++i )
-		{ 
+		{
 			TR << "resid: " << i << " is OOP_PRE: " << pose.residue(i).has_variant_type(chemical::OOP_PRE) << std::endl;
 			if( pose.residue(i).has_variant_type(chemical::OOP_PRE) != 1 )
-			{ 
-				if( is_l_chiral( pose.residue_type( i ) ) )	
-				{ 	
+			{
+				if( is_l_chiral( pose.residue_type( i ) ) )
+				{
 					TR << "setting small movable resid: "<< i<<std::endl;
 					//kdrew: commenting out because small mover fails randomly
-					//pert_pep_mm->set_bb( i ); 
+					//pert_pep_mm->set_bb( i );
 				}
 			}
 			else
@@ -376,7 +382,7 @@ OopCreatorMover::apply(
 
 	}
 
-	if( option[ oop_creator::final_repack ].value() ) 
+	if( option[ oop_creator::final_repack ].value() )
 	{
 
 		// create a task factory and task operations
@@ -384,7 +390,7 @@ OopCreatorMover::apply(
 		tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
 
 		using namespace basic::resource_manager;
-		if ( ResourceManager::get_instance()->has_option( packing::resfile ) ||  option[ packing::resfile ].user() ) 
+		if ( ResourceManager::get_instance()->has_option( packing::resfile ) ||  option[ packing::resfile ].user() )
 		{
 			operation::ReadResfileOP rrop( new operation::ReadResfile() );
 			rrop->default_filename();
@@ -396,8 +402,8 @@ OopCreatorMover::apply(
 			operation::RestrictToRepackingOP rtrp( new operation::RestrictToRepacking() );
 			tf->push_back( rtrp );
 		}
-	 
-	 
+
+
 		// create a pack rotamers mover
 		simple_moves::PackRotamersMoverOP packer( new protocols::simple_moves::PackRotamersMover() );
 		packer->task_factory( tf );
@@ -406,8 +412,8 @@ OopCreatorMover::apply(
 		packer->apply(pose);
 	}
 
-	//kdrew: monte carlo phi/psi of oop to find low energy 
-	if( option[ oop_creator::final_mc ].value() ) 
+	//kdrew: monte carlo phi/psi of oop to find low energy
+	if( option[ oop_creator::final_mc ].value() )
 	{
 		moves::SequenceMoverOP pert_sequence( new moves::SequenceMover() );
 		moves::MonteCarloOP pert_mc( new moves::MonteCarlo( pose, *score_fxn, 0.2 ) );
@@ -418,10 +424,10 @@ OopCreatorMover::apply(
 		pert_pep_small->angle_max( 'L', 2.0 );
 		pert_pep_small->angle_max( 'E', 2.0 );
 
-		utility::vector1< core::Size > oop_pre_positions; 
+		utility::vector1< core::Size > oop_pre_positions;
 		//kdrew: load all oop_pre positions into vector and make all non-oop_pre positions movable by small mover
 		for( Size i = 1; i <= pose.total_residue(); ++i )
-		{ 
+		{
 			if( pose.residue(i).has_variant_type(chemical::OOP_PRE) != 1)
 			{ pert_pep_mm->set_bb( i ); }
 			else
@@ -445,7 +451,7 @@ OopCreatorMover::apply(
 
 	}
 
-	if( option[ oop_creator::final_repack ].value() ) 
+	if( option[ oop_creator::final_repack ].value() )
 	{
 
 		// create a task factory and task operations
@@ -453,7 +459,7 @@ OopCreatorMover::apply(
 		tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
 
 		using namespace basic::resource_manager;
-		if ( ResourceManager::get_instance()->has_option( packing::resfile ) ||  option[ packing::resfile ].user() ) 
+		if ( ResourceManager::get_instance()->has_option( packing::resfile ) ||  option[ packing::resfile ].user() )
 		{
 			operation::ReadResfileOP rrop( new operation::ReadResfile() );
 			rrop->default_filename();
@@ -465,8 +471,8 @@ OopCreatorMover::apply(
 			operation::RestrictToRepackingOP rtrp( new operation::RestrictToRepacking() );
 			tf->push_back( rtrp );
 		}
-	 
-	 
+
+
 		// create a pack rotamers mover
 		simple_moves::PackRotamersMoverOP packer( new protocols::simple_moves::PackRotamersMover() );
 		packer->task_factory( tf );
@@ -476,7 +482,7 @@ OopCreatorMover::apply(
 	}
 
 
-	if( option[ oop_creator::final_minimize ].value() ) 
+	if( option[ oop_creator::final_minimize ].value() )
 	{
 		using namespace core::id;
 		using namespace core::scoring;
@@ -490,11 +496,11 @@ OopCreatorMover::apply(
 
 			//kdrew: put constraint on omega angle
 			pose.conformation().get_torsion_angle_atom_ids( torsion_id, id1, id2, id3, id4 );
-													
+
 			Real torsion_value( pose.torsion( torsion_id ) );
 
 			CircularHarmonicFuncOP circularharm_func  (new CircularHarmonicFunc( numeric::conversions::radians( torsion_value ), numeric::conversions::radians( 10.0 ) ) );
-																					 
+
 			ConstraintCOP dihedral1 = new DihedralConstraint( id1, id2, id3, id4, circularharm_func );
 
 			pose.add_constraint( dihedral1 );

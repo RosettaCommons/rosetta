@@ -88,6 +88,8 @@ using basic::Error;
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 using namespace ObjexxFCL::fmt;
 
@@ -96,6 +98,8 @@ using namespace ObjexxFCL::fmt;
 int
 main( int argc, char * argv [] )
 {
+	try {
+
 	using namespace core::scoring::constraints;
 	using namespace basic::options::OptionKeys;
 	using namespace basic::options;
@@ -236,5 +240,10 @@ main( int argc, char * argv [] )
 	}
 
 	output.close();
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 	return 0;
 }

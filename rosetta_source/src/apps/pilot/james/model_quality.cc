@@ -277,12 +277,16 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
+#include <utility/excn/Exceptions.hh>
+
 
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::fmt;
 
 int
 main( int argc, char * argv [] ) {
+	try {
+
 	using core::Size;
 	using core::Real;
 	using utility::vector1;
@@ -443,5 +447,10 @@ main( int argc, char * argv [] ) {
 
 	dist_output.close();
 	torsion_output.close();
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 	return 0;
 } // int main

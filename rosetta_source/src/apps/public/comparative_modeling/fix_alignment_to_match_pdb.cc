@@ -46,6 +46,7 @@
 #include <utility/string_util.hh>
 #include <utility/file/FileName.hh>
 #include <utility/file/file_sys_util.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <ObjexxFCL/char.functions.hh>
 #include <ObjexxFCL/string.functions.hh>
@@ -102,6 +103,8 @@ poses_from_cmd_line(
 
 int
 main( int argc, char * argv [] ) {
+	try {
+
 	devel::init( argc, argv );
 
 	using std::map;
@@ -224,4 +227,7 @@ main( int argc, char * argv [] ) {
 			} // if found a template pdb
 		} // for alns
 	} // for aln_fn
+	 } catch ( utility::excn::EXCN_Base const & e ) { 
+		 std::cout << "caught exception " << e.msg() << std::endl;
+	}
 } // main

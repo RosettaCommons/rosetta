@@ -21,6 +21,8 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 using namespace core;
 
 void register_options() {
@@ -32,7 +34,7 @@ void register_options() {
 
 ////////////////////////////////////////////////////////
 int main( int argc, char * argv [] ) {
-
+    try {
     using namespace basic::options;
     using namespace basic::options::OptionKeys;
     register_options();
@@ -80,7 +82,9 @@ int main( int argc, char * argv [] ) {
 	std::cout << "\t\t<td width=30%>" << o->name() << "</td>\n";
 	std::cout << "\t</tr>\n";
     }
-    
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
     return 0;
 }
 

@@ -150,6 +150,9 @@ bool do_clustering( KClusterData &data, KClusterElementOP element, Size level, S
 
 int main(int argc, char *argv[])
 {
+
+	try {
+
 	devel::init(argc, argv);
 
 	KClusterData dat;
@@ -201,5 +204,10 @@ int main(int argc, char *argv[])
 	}
 	show_cluster_assignment( elem, dat);
 	std::cout << "done with clustering! you can now use your clusters!" << std::endl;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 

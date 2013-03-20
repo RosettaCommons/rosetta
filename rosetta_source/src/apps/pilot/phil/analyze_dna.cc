@@ -21,6 +21,7 @@
 
 #include <core/scoring/dna/setup.hh>
 #include <core/scoring/dna/base_geometry.hh>
+#include <utility/excn/Exceptions.hh>
 // AUTO-REMOVED #include <core/scoring/dna/BasePartner.hh>
 #include <core/scoring/constraints/Func.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
@@ -146,6 +147,7 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
+	try{
 // 	{ // add any new options
 // 		using namespace utility::options;
 // 		BooleanOptionKey const myopt = BooleanOptionKey("phil:dof_constraint_weight");
@@ -156,4 +158,7 @@ main( int argc, char * argv [] )
 	devel::init( argc, argv );
 
 	protocols::viewer::viewer_main( my_main );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl; 
+	} 
 }

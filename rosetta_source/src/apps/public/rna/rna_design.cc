@@ -81,6 +81,8 @@
 #include <ObjexxFCL/DynamicIndexRange.hh>
 #include <ObjexxFCL/FArray1D.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 //Auto using namespaces
 namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
 namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
@@ -321,6 +323,7 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
+	try {
 	using namespace basic::options;
 
 	std::cout << std::endl << "Basic usage:  " << argv[0] << "  -s <pdb file> [ -resfile <resfile>] " << std::endl;
@@ -345,5 +348,7 @@ main( int argc, char * argv [] )
 	////////////////////////////////////////////////////////////////////////////
 
 	protocols::viewer::viewer_main( my_main );
-
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 }

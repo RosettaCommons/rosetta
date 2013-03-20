@@ -76,6 +76,8 @@
 
 #include <sys/stat.h>
 
+#include <utility/excn/Exceptions.hh>
+
 
 OPT_1GRP_KEY( Integer      , cxdock, sphere       ) // 12872 32672 78032 8192
 OPT_1GRP_KEY( Real         , cxdock, clash_dis    )
@@ -433,6 +435,8 @@ void cxdock_design(Pose const init, std::string const & fn, vector1<xyzVector<do
 
 
 int main(int argc, char *argv[]) {
+	try {
+
   using namespace basic::options;
 
 	register_options();
@@ -472,6 +476,10 @@ int main(int argc, char *argv[]) {
     cxdock_design(pnat,fn,ssamp,iss,irt,ic,cbc);
   }
 
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
+    return 0;
 }
 

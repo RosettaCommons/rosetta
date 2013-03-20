@@ -138,6 +138,7 @@ shear_moves_test( pose::Pose & pose )
 int
 main( int argc, char * argv [] )
 {
+	try {
 	using namespace chemical;
 	using namespace pose;
 	using namespace kinematics;
@@ -167,4 +168,7 @@ main( int argc, char * argv [] )
 	small_moves_test( pose );
 	pose = start_pose;
 	shear_moves_test( pose );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 }

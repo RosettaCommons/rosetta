@@ -14,9 +14,13 @@
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
+#include <utility/excn/Exceptions.hh>
+
+
 int
 main( int argc, char * argv [] ) {
-	using namespace basic::options;
+    try {
+        using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	devel::init(argc, argv);
 	
@@ -26,5 +30,8 @@ main( int argc, char * argv [] ) {
 	core::scoring::electron_density::ElectronDensity edens( models, mapreso, gridspacing );
 	std::string outfile = option[OptionKeys::edensity::mapfile]();
 	edens.writeMRC(outfile);
-}
-
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
+        return 0;
+    }

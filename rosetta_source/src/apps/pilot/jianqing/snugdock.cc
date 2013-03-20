@@ -17,21 +17,29 @@
 #include <protocols/antibody/SnugDockProtocol.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
+#include <utility/excn/Exceptions.hh>
+//#include <utility/exit.hh>
 
 #include <devel/init.hh>
 
 int
 main( int argc, char * argv [] )
 {
-	using namespace protocols::antibody;
-	using namespace protocols::jd2;
+    try {
+		using namespace protocols::antibody;
+		using namespace protocols::jd2;
 
-	SnugDockProtocol::register_options();
-	protocols::jd2::register_options();
+		SnugDockProtocol::register_options();
+		protocols::jd2::register_options();
 
-	// initialize core
-	devel::init(argc, argv);
+		// initialize core
+		devel::init(argc, argv);
 
-	SnugDockProtocolOP snugdock = new SnugDockProtocol;
-	JobDistributor::get_instance()->go( snugdock );
+		SnugDockProtocolOP snugdock = new SnugDockProtocol;
+		JobDistributor::get_instance()->go( snugdock );
+
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }

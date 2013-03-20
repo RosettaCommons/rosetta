@@ -13,6 +13,8 @@
 
 // libRosetta headers
 
+#include <utility/excn/Exceptions.hh>
+
 
 #include <core/types.hh>
 
@@ -90,6 +92,7 @@ using namespace std;
 int
 main( int argc, char* argv [] )
 {
+    try {
 	// options, random initialization
 	devel::init( argc, argv );
 
@@ -146,7 +149,10 @@ main( int argc, char* argv [] )
 		core::Real score12_score = (*energy12scorefxn)(target_pose);
 		cout << *it << '\t' << constraint_score << '\t' << score12_score << '\n';
 	}
-
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
 	return 0;
 }
+
 

@@ -214,6 +214,9 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
+
+	try {
+
 	using namespace core::options;
 
 	//Uh, options?
@@ -231,5 +234,10 @@ main( int argc, char * argv [] )
 	////////////////////////////////////////////////////////////////////////////
 
 	protocols::viewer::viewer_main( my_main );
+
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 }

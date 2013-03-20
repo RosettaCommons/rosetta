@@ -838,6 +838,7 @@ public:
 int
 main( int argc, char ** argv )
 {
+	try {
 	apps::pilot::momeara::register_options();
 
 	devel::init(argc, argv);
@@ -851,6 +852,12 @@ main( int argc, char ** argv )
 	vector1<PoseOP> features
 		(hb_conformation.run_example_hbond_sweep
 		 ("SER", "HG", "GLY", "O", steps));
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+	
+	
 
 	return 0;
 }

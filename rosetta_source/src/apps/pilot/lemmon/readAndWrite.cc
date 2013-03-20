@@ -29,6 +29,7 @@
 /// @author Gordon Lemmon (glemmon@gmail.com)
 
 #include <utility/vector0.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
@@ -48,6 +49,7 @@
 //////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
 {
+    try {
   devel::init(argc, argv);
 
   utility::vector0<std::string> pdbs;
@@ -65,5 +67,8 @@ int main(int argc, char* argv[])
 		const std::string output("output.pdb");
 		pose.dump_pdb(output);
 	}
-  return(0);
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }

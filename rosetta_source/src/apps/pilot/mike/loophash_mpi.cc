@@ -39,6 +39,7 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
+#include <utility/excn/Exceptions.hh>
 
 
 class MPI_LoopHash_Launcher {
@@ -130,6 +131,7 @@ class MPI_LoopHash_Launcher {
 int
 main( int argc, char * argv [] )
 {
+    try {
 	// initialize core
 	devel::init(argc, argv);
 
@@ -140,7 +142,10 @@ main( int argc, char * argv [] )
 		MPI_Barrier( MPI_COMM_WORLD );
 		MPI_Finalize();
 	#endif
-	return 0;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 
 

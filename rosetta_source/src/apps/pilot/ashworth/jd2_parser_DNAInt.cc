@@ -67,12 +67,16 @@ my_main( void * )
 
 
 	TR << "*********************successful completion**************************" << std::endl;
-	return 0;
 }
 
 int
 main( int argc, char * argv [] )
 {
-	devel::init( argc, argv );
-	viewer_main( my_main );
+	try {
+		devel::init( argc, argv );
+		viewer_main( my_main );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+	return 0;
 }

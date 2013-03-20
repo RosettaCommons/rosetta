@@ -37,8 +37,8 @@
 #include <protocols/electron_density/util.hh>
 #include <protocols/topology_broker/TopologyBroker.hh>
 #include <protocols/topology_broker/util.hh>
-
 #include <utility/excn/Exceptions.hh>
+
 #include <utility/exit.hh>
 
 // C++ headers
@@ -140,6 +140,7 @@ void MyScoreMover::apply( core::pose::Pose& pose ) {
 int
 main( int argc, char * argv [] )
 {
+	try{
 	using namespace protocols;
 	using namespace protocols::jd2;
 
@@ -199,6 +200,9 @@ main( int argc, char * argv [] )
 		std::cout << "Exception: " << std::endl;
 		excn.show( std::cout ); //so its also seen in a >LOG file
 	}
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl; 
+	} 
 	return 0;
 }
 

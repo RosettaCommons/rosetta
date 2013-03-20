@@ -198,6 +198,7 @@ rb_test ()
 int
 main( int argc, char * argv [] )
 {
+	try{
 	using namespace core;
 
 	// initialize core
@@ -207,6 +208,9 @@ main( int argc, char * argv [] )
 	rb_test();
 
 	std::cout << "Done! -------------------------------\n";
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 }
 

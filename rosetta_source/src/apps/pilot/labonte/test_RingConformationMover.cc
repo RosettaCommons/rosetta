@@ -18,9 +18,13 @@
 #include <devel/init.hh>
 #include <protocols/jd2/JobDistributor.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 int main(int argc, char *argv[])
 {
+    try {
+
 	using namespace protocols;
 	using namespace simple_moves::carbohydrates;
 	using namespace jd2;
@@ -31,4 +35,9 @@ int main(int argc, char *argv[])
 	// Distribute the mover.
 	RingConformationMoverOP my_mover = new RingConformationMover();
 	JobDistributor::get_instance()->go(my_mover);
+
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }

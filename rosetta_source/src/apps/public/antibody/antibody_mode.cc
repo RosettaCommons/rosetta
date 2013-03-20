@@ -27,6 +27,7 @@
 #include <protocols/moves/Mover.hh>
 
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 
 
 ////////////////////////////////////////////////////////
@@ -39,6 +40,8 @@ using namespace core;
 int
 main( int argc, char * argv [] )
 {
+	try {
+
 	using namespace protocols;
 	using namespace protocols::moves;
 
@@ -48,6 +51,9 @@ main( int argc, char * argv [] )
 	MoverOP RosettaAntibody = new antibody_legacy::AntibodyModeler( );
 	// protocols::jd2::JobDistributor::get_instance()->go( RosettaAntibody );
 	protocols::jobdist::main_plain_mover( *RosettaAntibody );
+	 } catch ( utility::excn::EXCN_Base const & e ) { 
+		 std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 	return 0;
 }

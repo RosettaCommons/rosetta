@@ -27,6 +27,7 @@
 #include <protocols/jumping/JumpSample.hh>
 #include <protocols/jumping/JumpSetup.hh>
 #include <protocols/jumping/SecondaryStructure.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <core/scoring/rms_util.hh>
 
@@ -200,12 +201,15 @@ void ThisApplication::run() {
 }
 
 int main( int argc, char** argv ) {
+	try{
   ThisApplication::register_options();
   devel::init( argc, argv );
 
   ThisApplication app;
   app.run();
-
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl; 
+	} 
 
 
 }

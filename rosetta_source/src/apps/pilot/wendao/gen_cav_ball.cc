@@ -84,6 +84,9 @@ basic::Tracer TR("apps.pilot.wendao.gen_cav_ball");
 
 int main( int argc, char * argv [] )
 {
+
+	try {
+
     //normal init
     devel::init( argc, argv );
 
@@ -514,6 +517,11 @@ int main( int argc, char * argv [] )
 	}//cluster
 */
 	return EXIT_SUCCESS;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 
 

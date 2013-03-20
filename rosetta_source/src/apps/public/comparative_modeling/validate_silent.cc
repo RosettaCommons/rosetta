@@ -21,6 +21,7 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <devel/init.hh>
 #include <utility/exit.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 
 // Project headers
@@ -35,6 +36,8 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
+	try {
+
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   using namespace core::io::silent;
@@ -99,4 +102,8 @@ int main(int argc, char* argv[]) {
   // If the percentage of failures exceeds a threshold, signal
   // failure to external callers using the return code
   return (pct_good >= PCT_THRESHOLD) ? 0 : 1;
+
+	 } catch ( utility::excn::EXCN_Base const & e ) { 
+		 std::cout << "caught exception " << e.msg() << std::endl;
+	}
 }

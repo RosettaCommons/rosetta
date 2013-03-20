@@ -31,6 +31,7 @@ using core::pose::PDBInfoCOP;
 using core::pose::PoseCOP;
 
 int main(int argc, char* argv[]) {
+  try {
   using core::Real;
   using core::Size;
   using namespace std;
@@ -52,4 +53,9 @@ int main(int argc, char* argv[]) {
   Real rmsd = core::scoring::CA_rmsd(*reference, *partial_thread, residues);
   Real gdtmm = core::scoring::CA_gdtmm(*reference, *partial_thread, residues);
   cout << "rmsd: " << rmsd << ", gdtmm: " << gdtmm << endl;
+  } catch ( utility::excn::EXCN_Base const & e ) {
+                            std::cout << "caught exception " << e.msg() << std::endl;
+                                }
+      return 0;
+
 }

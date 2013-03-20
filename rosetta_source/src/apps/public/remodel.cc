@@ -60,6 +60,7 @@
 #include <string>
 #include <vector>
 
+#include <utility/excn/Exceptions.hh>
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
@@ -558,7 +559,7 @@ void* graphics_main( void* ) {
 
 
 int main( int argc, char * argv [] ) {
-
+try {
 	// check to see if no flags or the -h flag were specified.
 	// can't use the option remodel::help because options don't get init'd until after devel::init. use argc/argv instead.
 	//if ( !( option[ remodel::help ].active() ) ) {
@@ -594,7 +595,9 @@ int main( int argc, char * argv [] ) {
 
 	// viewer_main() just calls graphics_main with the parameter NULL and returns 0
 	protocols::viewer::viewer_main( graphics_main );
-
+} catch ( utility::excn::EXCN_Base const & e ) {
+	std::cout << "caught exception " << e.msg() << std::endl;
+}
 	return 0;
 }
 

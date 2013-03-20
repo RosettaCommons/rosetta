@@ -49,9 +49,11 @@
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
+#include <utility/excn/Exceptions.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
+
 
 
 
@@ -70,7 +72,7 @@ static basic::Tracer TR( "apps.pilot.ragul_backbone_diversity.main" );
 int
 main( int argc, char * argv [] )
 {
-
+    try {
 	NEW_OPT( relax_start_resnum, "first residue allowed to move", 0 );
 	NEW_OPT( relax_final_resnum, "last residues allowed to move", 0 );
 
@@ -179,7 +181,10 @@ main( int argc, char * argv [] )
 
 	TR << "Successfully finished relaxing backbone" << std::endl;
 
-	return 0;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 
 

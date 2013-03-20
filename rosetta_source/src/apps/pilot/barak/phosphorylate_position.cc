@@ -61,6 +61,8 @@ static basic::Tracer TR("pilot_app.phoshporylate_position");
 int
 main( int argc, char * argv [] )
 {
+	try {
+
   using namespace core;
   using namespace basic::options;
   using namespace std;
@@ -94,6 +96,8 @@ main( int argc, char * argv [] )
 	core::pose::add_variant_type_to_pose_residue( pose , chemical::PHOSPHORYLATION, pose_res );
   core::io::pdb::dump_pdb(pose, output_fname);
 
-  exit(0);
-
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+	return 0;
 }

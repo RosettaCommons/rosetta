@@ -67,6 +67,8 @@ void predict_ss(vector1< vector1 <Real> > ss_pred, string fasta, string id){
 
 
 int main( int argc, char * argv [] ) {
+	try {
+
 	using namespace protocols::ss_prediction;
 	using namespace basic;
 	using namespace core::sequence;
@@ -81,6 +83,10 @@ int main( int argc, char * argv [] ) {
 		string id = option[in::file::fasta ]()[ii];
 		vector1< vector1 <Real> > ss_pred = hle_predictor->predict_ss(fasta);
 		predict_ss(ss_pred,fasta,id);
+	}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 	}
 }
 

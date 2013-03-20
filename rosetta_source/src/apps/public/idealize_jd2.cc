@@ -48,6 +48,7 @@ void register_options() {
 }
 
 int main( int argc, char * argv [] ) {
+	try {
 	using namespace protocols::idealize;
 	using namespace protocols::jd2;
   using namespace protocols::moves;
@@ -89,4 +90,8 @@ int main( int argc, char * argv [] ) {
     std::cerr << "Exception: " << std::endl;
     excn.show( std::cerr );
   }
+	}
+	catch (utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 }

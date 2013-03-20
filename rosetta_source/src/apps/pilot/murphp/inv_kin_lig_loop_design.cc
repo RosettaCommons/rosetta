@@ -75,7 +75,7 @@ namespace {
 
 
 int main( int argc, char ** argv ) {
-
+	try {
   // Parses command line options and inits RNG.
   // Doesn't seem to hurt to do it again if already done once (?)
   devel::init(argc, argv);
@@ -174,6 +174,8 @@ int main( int argc, char ** argv ) {
     cout << "Finished " << curr_job->output_tag(curr_nstruct) << " in " << (long)(pdb_end_time - pdb_start_time) << " seconds.\n";
   } // loop over jobs and nstructs
   jobdist.shutdown();
-
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
   return 0;
 }

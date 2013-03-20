@@ -22,6 +22,7 @@
 
 // Unit Headers
 #include <utility/stream_util.hh>
+#include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 #include <basic/basic.hh>
 #include <devel/init.hh>
@@ -275,6 +276,7 @@ void statistics( std::string filename ) {
 
 int main( int argc, char * argv [] )
 {
+	try {
 
   using namespace core;
 	using namespace core::io;
@@ -324,6 +326,9 @@ int main( int argc, char * argv [] )
 		}
 		sqc.close();
 		statistics(sqc_file);
+	}
+	 } catch ( utility::excn::EXCN_Base const & e ) { 
+		 std::cout << "caught exception " << e.msg() << std::endl;
 	}
 }
 

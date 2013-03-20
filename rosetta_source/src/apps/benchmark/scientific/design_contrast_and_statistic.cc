@@ -57,6 +57,7 @@
 
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector0.hh>
+#include <utility/excn/Exceptions.hh>
 
 
 
@@ -315,6 +316,7 @@ void statistics( std::string filename ) {
 
 int main( int argc, char * argv [] )
 {
+    try {
 
 	using namespace core;
 	using namespace core::io;
@@ -365,5 +367,9 @@ int main( int argc, char * argv [] )
 		sqc.close();
 		statistics(sqc_file);
 	}
+
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
 }
 

@@ -63,6 +63,7 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
+#include <utility/excn/Exceptions.hh>
 
 
 
@@ -260,7 +261,7 @@ void ThisApplication::run() {
 }
 
 int main( int argc, char** argv ) {
-
+	try{
   ThisApplication::register_options();
   devel::init( argc, argv );
 
@@ -268,5 +269,8 @@ int main( int argc, char** argv ) {
   app.setup();
 
   app.run();
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl; 
+	} 
 
 }

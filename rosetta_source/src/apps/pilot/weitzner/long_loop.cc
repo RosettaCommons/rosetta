@@ -61,6 +61,9 @@ set_all_loop_dihedrals_to_180( pose::PoseOP pose, const Loops::LoopList & loop_l
 
 int
 main( int argc, char * argv [] ) {
+
+	try {
+
 	devel::init(argc, argv);
 
 	pose::PoseOP pose = new pose::Pose();
@@ -86,5 +89,10 @@ main( int argc, char * argv [] ) {
 	CcdLoopClosureMover ccd  = CcdLoopClosureMover( loops->loops()[1], mm);
 	ccd.apply(*pose);
 	pose->dump_pdb("src/apps/pilot/weitzner/1bzq_closed.pdb");
+
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 }

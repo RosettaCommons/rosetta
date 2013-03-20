@@ -148,7 +148,7 @@ void
 int
 main (int argc, char *argv[])
 {
-
+	try{
 	devel::init(argc,argv);
 
 	void* (*func)(void*) = &dostuff;
@@ -159,7 +159,9 @@ main (int argc, char *argv[])
 		func(NULL);
 	}
 
-
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 }
 
 

@@ -49,6 +49,9 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
+#include <utility/excn/Exceptions.hh>
+
+
 // C++ headers
 #include <fstream>
 #include <iostream>
@@ -71,6 +74,7 @@ OPT_1GRP_KEY(Boolean, fpd, skip3)
 
 
 int main(int argc, char **argv) {
+    try {
 	using namespace core::fragment;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -125,6 +129,8 @@ int main(int argc, char **argv) {
 		frags9.add( frame9_i );
 	}
 	FragmentIO().write_data( option[ OptionKeys::out::file::frag_prefix ]()+"9", frags9 );
-
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
 	return 0;
 }

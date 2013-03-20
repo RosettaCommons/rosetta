@@ -451,8 +451,16 @@ process_file_list()
 int
 main( int argc, char * argv [] )
 {
+
+	try {
+
 	devel::init( argc, argv );
 
 	process_file_list();
+
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 }

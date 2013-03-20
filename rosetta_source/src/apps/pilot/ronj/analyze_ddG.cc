@@ -181,6 +181,9 @@ void tokenize_string( const std::string & str, std::vector< std::string > & toke
 ///
 int main( int argc, char* argv[] ) {
 
+	try {
+
+
 	// add application specific options to options system
 	option.add( analyze_ddG_stability::mutation, "The mutation to make to the wild-type pose. Format to use is old-residue-type,PDB-res-num,new-residue-type." );
 
@@ -496,5 +499,10 @@ int main( int argc, char* argv[] ) {
 	ddG_energies -= pose.energies().total_energies();
 	std::cout << A( 12, "difference: " );
 	print_energies( ddG_energies, scorefxn );
+
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 }

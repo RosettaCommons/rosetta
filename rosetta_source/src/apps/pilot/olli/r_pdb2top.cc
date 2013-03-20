@@ -39,6 +39,7 @@
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
+#include <utility/excn/Exceptions.hh>
 // option key includes
 
 // AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -72,6 +73,7 @@ OPT_1GRP_KEY( File, in, ref_top )
 OPT_KEY( Integer, ntest )
 
 int main( int argc, char** argv ) {
+	try{
   Templates::register_options();
   OPT( in::file::s );
 	NEW_OPT( out::top, "write topology info to this file", "");
@@ -224,6 +226,9 @@ int main( int argc, char** argv ) {
 			}
 		}
 	}
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl; 
+	} 
 	// finish with 0 when there's no error
 	return 0;
 }

@@ -84,6 +84,8 @@
 int
 main( int argc, char * argv [] )
 {
+	try {
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using std::string;
@@ -260,6 +262,10 @@ main( int argc, char * argv [] )
 		MPI_Abort( MPI_COMM_WORLD, 911 );
 		#endif
 		return 1;    // MUST return non-0 - otherwise BOINC does not abort!
+	}
+
+	 } catch ( utility::excn::EXCN_Base const & e ) { 
+		 std::cout << "caught exception " << e.msg() << std::endl;
 	}
 	return 0;
 }

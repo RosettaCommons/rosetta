@@ -67,6 +67,7 @@
 #include <utility/exit.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/tools/make_vector1.hh>
+#include <utility/excn/Exceptions.hh>
 
 // C++ headers
 #include <string>
@@ -93,7 +94,7 @@ using basic::Error;
 using basic::Warning;
 using utility::file::FileName;
 
-//kdrew: this app alters chiral configuration of the given pdb strucure 
+//kdrew: this app alters chiral configuration of the given pdb strucure
 
 // tracer - used to replace cout
 static basic::Tracer TR("LD_CONVERTER");
@@ -130,6 +131,7 @@ typedef utility::pointer::owning_ptr< LDConverterMover const > LDConverterMoverC
 int
 main( int argc, char* argv[] )
 {
+    try {
 	utility::vector1< core::Size > empty_vector(0);
 	option.add( ld_converter::convert_L_positions, "The residue positions to convert to L configuration" ).def( empty_vector );
 	option.add( ld_converter::convert_D_positions, "The residue positions to convert to D configuration" ).def( empty_vector );
@@ -148,6 +150,10 @@ main( int argc, char* argv[] )
 	//call job distributor
 	protocols::jd2::JobDistributor::get_instance()->go( LDC_mover );
 
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }//main
 
 void
@@ -164,7 +170,7 @@ LDConverterMover::apply(
 
 	utility::vector1< core::Size > const l_positions = option[ ld_converter::convert_L_positions ].value();
 	for(Size i = 1; i <= l_positions.size(); ++i )
-	{                                     
+	{
 		TR << "residue id: " << l_positions[i] << std::endl;
 		protocols::simple_moves::chiral::ChiralMoverOP cm( new protocols::simple_moves::chiral::ChiralMover( l_positions[i], chiral::L_CHIRALITY ) );
 		cm->apply( pose );
@@ -215,13 +221,13 @@ LDConverterMover::apply(
 
 	if( option[ ld_converter::final_repack ].value() )
 	{
-	
+
 		// create a task factory and task operations
 		TaskFactoryOP tf(new TaskFactory());
 		tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
 
 		using namespace basic::resource_manager;
-		if ( ResourceManager::get_instance()->has_option( packing::resfile ) ||  option[ packing::resfile ].user() ) 
+		if ( ResourceManager::get_instance()->has_option( packing::resfile ) ||  option[ packing::resfile ].user() )
 		{
 			operation::ReadResfileOP rrop( new operation::ReadResfile() );
 			rrop->default_filename();
@@ -233,7 +239,7 @@ LDConverterMover::apply(
 			operation::RestrictToRepackingOP rtrp( new operation::RestrictToRepacking() );
 			tf->push_back( rtrp );
 		}
-	 
+
 
 		// create a pack rotamers mover
 		simple_moves::PackRotamersMoverOP packer( new protocols::simple_moves::PackRotamersMover() );
@@ -256,11 +262,11 @@ LDConverterMover::apply(
 
 			//kdrew: put constraint on omega angle
 			pose.conformation().get_torsion_angle_atom_ids( torsion_id, id1, id2, id3, id4 );
-													
+
 			Real torsion_value( pose.torsion( torsion_id ) );
 
 			CircularHarmonicFuncOP circularharm_func  (new CircularHarmonicFunc( numeric::conversions::radians( torsion_value ), numeric::conversions::radians( 3.0 ) ) );
-																					 
+
 			ConstraintCOP dihedral1 = new DihedralConstraint( id1, id2, id3, id4, circularharm_func );
 
 			pose.add_constraint( dihedral1 );

@@ -62,6 +62,9 @@ get_surface_points(core::pose::Pose const & p, Real /*DIST*/) {
 
 
 int main(int argc, char *argv[]) {
+
+	try {
+
 	register_options();
 	devel::init(argc,argv);
 	using namespace basic::options;
@@ -100,5 +103,10 @@ int main(int argc, char *argv[]) {
 		std::cout << xyzhash.grid_stripe()[j].y << std::endl;
 	}
 	return 0;
+
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 }

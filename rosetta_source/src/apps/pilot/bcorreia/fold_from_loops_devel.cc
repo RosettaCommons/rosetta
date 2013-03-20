@@ -122,6 +122,7 @@ void fold_tree_generator(
 int
 main( int argc, char* argv [] )
 {
+	try {
 
 	protocols::abinitio::ClassicAbinitio::register_options();
 	protocols::abinitio::AbrelaxApplication::register_options();
@@ -221,5 +222,10 @@ main( int argc, char* argv [] )
 
 		JobDistributor::get_instance()->go( trial_mover );
 
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
+	return 0;
 }
 

@@ -23,6 +23,8 @@
 
 #include <core/sequence/util.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 //Auto Headers
 #include <core/conformation/Residue.hh>
 #include <core/import_pose/import_pose.hh>
@@ -43,7 +45,7 @@ void register_options() {
 }
 
 int main(int argc, char * argv[]) {
-
+    try {
 	using namespace core;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -155,6 +157,8 @@ int main(int argc, char * argv[]) {
 		std::cerr << s << std::endl;
 		extended_pose.dump_pdb(s);
 	}
-
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                             std::cout << "caught exception " << e.msg() << std::endl;
+    } 
 	return 0;
 }

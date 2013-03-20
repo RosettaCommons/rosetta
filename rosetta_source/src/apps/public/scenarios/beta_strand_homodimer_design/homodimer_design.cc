@@ -100,6 +100,8 @@
 
 //Auto Headers
 #include <utility/vector0.hh>
+#include <utility/excn/Exceptions.hh>
+
 using basic::Error;
 using basic::Warning;
 static basic::Tracer TR("apps.public.beta_strand_homodimer_design.homodimer_design");
@@ -578,6 +580,7 @@ void HDdesignMover::apply (pose::Pose & pose ) {
 int
 main( int argc, char * argv [] )
 {
+	try {
 	option.add( make_ala_interface, "Make interface residues ALA." ).def(false);
 	option.add( pack_min_runs, "Number of runs of repack/minimize" ).def(1);
 	option.add( find_bb_hbond_E, "Find the energy of bb-bb interactions").def(false);
@@ -591,5 +594,7 @@ main( int argc, char * argv [] )
   protocols::jd2::JobDistributor::get_instance()->go( new HDdesignMover );
 
   std::cout << "Done! -------------------------------"<< std::endl;
-
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 } //end main

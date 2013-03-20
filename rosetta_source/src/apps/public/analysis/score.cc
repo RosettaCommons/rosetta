@@ -85,6 +85,8 @@ namespace score_app { BooleanOptionKey linmin( "score_app:linmin" );
 int
 main( int argc, char * argv [] )
 {
+	try {
+
 	using namespace protocols;
 	using namespace protocols::moves;
 	using namespace core::scoring;
@@ -262,6 +264,9 @@ main( int argc, char * argv [] )
 	// operate this mover and output pdbs/scorefile
 	protocols::jobdist::universal_main( *mover );
 
+	 } catch ( utility::excn::EXCN_Base const & e ) { 
+		 std::cout << "caught exception " << e.msg() << std::endl;
+	}
 	return 0;
 }
 

@@ -36,6 +36,7 @@
 #include <core/scoring/dssp/Dssp.hh>
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/viewer/viewers.hh>
+#include <utility/excn/Exceptions.hh>
 
 // C++ headers
 #include <cstdio>
@@ -247,10 +248,15 @@ void * picking_test( void * ) {
 
 
 int main( int argc, char * argv [] ) {
+	try {
 	// initialize rosetta
 	devel::init( argc, argv );
 
 	protocols::viewer::viewer_main( ligand_test );
+
+	 } catch ( utility::excn::EXCN_Base const & e ) { 
+		 std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 	return 0;
 }

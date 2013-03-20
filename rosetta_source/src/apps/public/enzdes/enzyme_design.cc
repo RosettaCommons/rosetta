@@ -53,6 +53,7 @@
 #include <utility/file/file_sys_util.hh>
 #include <basic/datacache/BasicDataCache.hh>
 
+#include <utility/excn/Exceptions.hh>
 
 #if defined(WIN32) || defined(__CYGWIN__)
 	#include <ctime>
@@ -69,7 +70,7 @@ using namespace core;
 int
 main( int argc, char * argv [])
 {
-
+	try {
 	protocols::enzdes::EnzdesBaseProtocol::register_options();
 	protocols::enzdes::EnzdesFixBBProtocol::register_options();
 	protocols::enzdes::EnzdesFlexBBProtocol::register_options();
@@ -227,6 +228,9 @@ main( int argc, char * argv [])
 	if ( num_structures_processed == 0 )
 		basic::Warning() << "No structures processed.  Existing output files may have been skipped, did you mean to delete them or to use the -overwrite flag?" << std::endl;
 	return 0;
-
+	}
+	catch (utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 }
 

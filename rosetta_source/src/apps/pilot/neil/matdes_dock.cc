@@ -141,6 +141,7 @@ move_pose(pose::Pose & pose, Size sym_jump, Vec dt, Real dr = 0.0) {
 int
 main (int argc, char *argv[])
 {
+	try{
   using namespace core;
 	using namespace basic;
 	using namespace options;
@@ -253,4 +254,7 @@ main (int argc, char *argv[])
     }
   }
 
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 }

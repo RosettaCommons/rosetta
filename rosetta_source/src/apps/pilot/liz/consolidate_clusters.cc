@@ -23,6 +23,7 @@
 #include <basic/options/after_opts.hh>
 
 #include <utility/file/FileName.hh>
+#include <utility/excn/Exceptions.hh>
 
 /**
    for each cluster, assign a occupancy and a radius.
@@ -172,6 +173,8 @@ void read_occupancy_data( SetOfClusters & set, std::string & occupancy_data, std
 
 
 int main( int argc, char *argv[] ) {
+    try {
+
   using namespace core;
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
@@ -274,8 +277,10 @@ int main( int argc, char *argv[] ) {
 
   outdata.close();
 
-
-
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 
 

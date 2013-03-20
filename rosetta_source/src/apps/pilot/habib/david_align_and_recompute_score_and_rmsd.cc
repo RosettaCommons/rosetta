@@ -60,6 +60,8 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 using namespace core;
 using namespace core::scoring;
@@ -247,6 +249,7 @@ interface_rmsd(
 int
 main( int argc, char * argv [] )
 {
+	try {
 
 	NEW_OPT( ref_decoy, "the structure to compute RMSD and relative score to", "" );
   	NEW_OPT ( contact_list, "File name for optional list of contact residues to check","");
@@ -324,6 +327,10 @@ main( int argc, char * argv [] )
 
 	outstream.close();
 	outstream.clear();
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 	return 0;
 

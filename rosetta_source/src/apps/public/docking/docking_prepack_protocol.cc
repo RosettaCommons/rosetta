@@ -25,11 +25,14 @@
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 
 
 int
 main( int argc, char * argv [] )
 {
+	try {
+
 	using namespace basic::options;
 	using namespace protocols::docking;
 	using namespace protocols::jd2;
@@ -43,5 +46,8 @@ main( int argc, char * argv [] )
 	else dp = new DockingPrepackProtocol();
 
 	JobDistributor::get_instance()->go(dp);
+	 } catch ( utility::excn::EXCN_Base const & e ) { 
+		 std::cout << "caught exception " << e.msg() << std::endl;
+	}
 }
 

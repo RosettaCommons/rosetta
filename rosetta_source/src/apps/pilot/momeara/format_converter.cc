@@ -26,6 +26,7 @@
 
 #include <utility/vector1.hh>
 #include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 
 
 using std::cout;
@@ -34,6 +35,9 @@ using std::endl;
 
 int
 main( int argc, char* argv [] ) {
+
+    try {
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	// define relevant options
@@ -186,5 +190,9 @@ main( int argc, char* argv [] ) {
 		std::cerr << "Exception: " << std::endl;
 		excn.show( std::cerr );
 	}
+
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
 	return 0;
 } // main

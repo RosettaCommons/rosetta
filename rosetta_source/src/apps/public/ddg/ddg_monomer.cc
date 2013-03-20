@@ -69,6 +69,7 @@
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 
 //Auto Headers
@@ -189,6 +190,8 @@ read_in_mutations(
 int
 main( int argc, char * argv [] )
 {
+	try {
+
 	using namespace pose;
 	using namespace scoring;
 	using namespace conformation;
@@ -518,5 +521,8 @@ main( int argc, char * argv [] )
 	 ddg_output << std::endl;
 	 **/
 
+	 } catch ( utility::excn::EXCN_Base const & e ) { 
+		 std::cout << "caught exception " << e.msg() << std::endl;
+	}
 }
 

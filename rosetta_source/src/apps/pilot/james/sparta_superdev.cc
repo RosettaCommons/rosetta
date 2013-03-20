@@ -47,6 +47,8 @@
 #include <algorithm>
 #include <numeric>
 
+#include <utility/excn/Exceptions.hh>
+
 class SpartaSuperDeviationMover;
 typedef utility::pointer::owning_ptr< SpartaSuperDeviationMover > SpartaSuperDeviationMoverOP;
 using core::Size;
@@ -268,6 +270,8 @@ private:
 
 int
 main( int argc, char * argv [] ) {
+	try {
+
 	using namespace protocols::moves;
 	using namespace protocols::jobdist;
 	using namespace core::chemical;
@@ -303,6 +307,10 @@ main( int argc, char * argv [] ) {
 	SpartaSuperDeviationMoverOP mover( new SpartaSuperDeviationMover( native_pose, cs_file ) );
 	not_universal_main( *mover );
 	mover->print_stats();
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 	return 0;
 } // int main

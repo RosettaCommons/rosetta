@@ -1072,9 +1072,13 @@ void run() {
 }
 
 int main(int argc, char **argv){
-	register_options();
-	devel::init(argc,argv);
-	run();
+	try {
+		register_options();
+		devel::init(argc,argv);
+		run();
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 }
 
 

@@ -90,6 +90,9 @@ Real dab_sasa(Pose & pose, clock_t & t){
 int main (int argc, char *argv[])
 {
 
+	try {
+
+
 	devel::init(argc,argv);
 
 	Pose pose;
@@ -114,6 +117,11 @@ int main (int argc, char *argv[])
 
 
 	return 0;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 
 

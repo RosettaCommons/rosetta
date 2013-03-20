@@ -64,6 +64,7 @@
 
 #include <protocols/toolbox/Cluster.hh>
 #include <basic/Tracer.hh>
+#include <utility/excn/Exceptions.hh>
 
 // option key includes
 
@@ -263,7 +264,7 @@ void score_clustered_frags( FragSetOP frags, Pose& test_pose, Pose& native_pose 
 }
 
 int main( int argc, char** argv ) {
-
+	try{
   ThisApplication::register_options();
   devel::init( argc, argv );
 
@@ -331,5 +332,8 @@ int main( int argc, char** argv ) {
 					<< F(10,4, rmsd )	<< std::endl;
     }
   }
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl; 
+	} 
 }
 

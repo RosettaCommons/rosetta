@@ -68,6 +68,11 @@ void* star_main(void*) {
 }
 
 int main(int argc, char* argv[]) {
+    try {
   devel::init(argc, argv);
   protocols::viewer::viewer_main(star_main);
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                             std::cout << "caught exception " << e.msg() << std::endl;
+                                }
+       return 0; 
 }

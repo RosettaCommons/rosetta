@@ -74,6 +74,8 @@
 #include <utility/io/ozstream.hh>
 #include <ObjexxFCL/format.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 ///////////////////////////////////////////////////////////////////////////////
 
 using std::map;
@@ -166,6 +168,8 @@ void print_seq_map(
 
 int
 main( int argc, char* argv [] ) {
+	try {
+
 	// options, random initialization
 	devel::init( argc, argv );
 
@@ -283,4 +287,10 @@ main( int argc, char* argv [] ) {
 
 	tr.Debug << "finished rescoring alignments." << std::endl;
 	tr.flush_all_channels();
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
+	return 0;
 } // int main( int argc, char * argv [] )

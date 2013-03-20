@@ -49,7 +49,7 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-
+#include <utility/excn/Exceptions.hh>
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -138,6 +138,7 @@ LigandRepackMinimizeProtocol::apply( core::pose::Pose & pose )
 int
 main( int argc, char * argv [] )
 {
+	try {
 	OPT(in::path::database);
 	OPT(in::file::extra_res_fa);
 	OPT(packing::unboundrot);
@@ -164,5 +165,8 @@ main( int argc, char * argv [] )
 	LigandRepackMinimizeProtocolOP dockingProtocol = new LigandRepackMinimizeProtocol();
 
 	protocols::jd2::JobDistributor::get_instance()->go(dockingProtocol);
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 }
 

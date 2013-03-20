@@ -31,7 +31,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
 
-
+#include <utility/excn/Exceptions.hh>
 
 void register_options() {
   using namespace basic::options;
@@ -46,7 +46,7 @@ void register_options() {
 
 int
 main( int argc, char * argv [] ) {
-
+    try {
         using namespace basic::options;
         using namespace basic::options::OptionKeys;
 
@@ -102,5 +102,9 @@ main( int argc, char * argv [] ) {
 	}
 	std::cout << ires << " : " << rdc_on_Nmer.compute_dipscore(frag_pose) << std::endl;
     }
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
+        return 0;
 }
 

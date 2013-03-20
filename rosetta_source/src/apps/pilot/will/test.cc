@@ -24,6 +24,9 @@
 #include <basic/options/option.hh>
 
 int main(int argc, char *argv[]) {	
+
+	try {
+
 	core::init(argc,argv);
 	core::pose::Pose p,q;
 	core::import_pose::pose_from_pdb(p,basic::options::option[basic::options::OptionKeys::in::file::s]()[1]);
@@ -33,4 +36,9 @@ int main(int argc, char *argv[]) {
 	core::Real x = core::scoring::CA_rmsd(p,q);
 	std::cout << x << std::endl;
 	return 0;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }

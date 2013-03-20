@@ -21,7 +21,7 @@
 #include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/SequenceProfileConstraint.fwd.hh>
 #include <utility/vector1.hh>
-
+#include <utility/excn/Exceptions.hh>
 using namespace core;
 	using namespace scoring;
 		using namespace constraints;
@@ -62,6 +62,10 @@ my_main( void * )
 int
 main( int argc, char * argv [] )
 {
+	try {
 	devel::init( argc, argv );
 	viewer_main( my_main );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 }

@@ -106,6 +106,7 @@
 #include <utility/exit.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
@@ -116,7 +117,6 @@
 #include <protocols/motifs/MotifLibrary.hh>
 #include <protocols/motifs/Motif.hh>
 
-#include <utility/excn/Exceptions.hh>
 #include <core/import_pose/import_pose.hh>
 
 // C++ headers
@@ -625,8 +625,12 @@ process_file_list()
 int
 main( int argc, char * argv [] )
 {
-	devel::init( argc, argv );
+    try {
+    	devel::init( argc, argv );
 
-	process_file_list();
-
+    	process_file_list();
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }

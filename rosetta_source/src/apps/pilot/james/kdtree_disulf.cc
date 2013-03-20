@@ -60,6 +60,8 @@
 #include <numeric/kdtree/KDPointList.hh>
 #include <numeric/kdtree/WrappedPrimitive.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -82,6 +84,8 @@ typedef utility::pointer::owning_ptr< WrappedRT > WrappedRTOP;
 
 int
 main( int argc, char* argv [] ) {
+	try {
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -199,4 +203,10 @@ main( int argc, char* argv [] ) {
 	//std::cout << "naive: "  << naive_time << std::endl;
 	std::cout << kdtree_time << ' ' << naive_time << ' ' << max_dist << std::endl;
 	//std::cout << kdtree_time << ' ' << max_dist << std::endl;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
+	return 0;
 }

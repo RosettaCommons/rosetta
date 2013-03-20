@@ -846,6 +846,9 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
+
+	try {
+
 	using namespace core::options;
 
 	utility::vector1< Size > blank_size_vector;
@@ -883,4 +886,9 @@ main( int argc, char * argv [] )
 	////////////////////////////////////////////////////////////////////////////
 	// end of setup
 	////////////////////////////////////////////////////////////////////////////
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }

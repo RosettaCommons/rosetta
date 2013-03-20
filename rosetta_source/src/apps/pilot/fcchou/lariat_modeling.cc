@@ -54,6 +54,9 @@
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
 
+#include <utility/excn/Exceptions.hh>
+
+
 // C++ headers
 #include <fstream>
 #include <iostream>
@@ -308,6 +311,7 @@ lariat_modeling ()
 int
 main( int argc, char * argv [] )
 {
+    try {
 	using namespace core;
 
 	/////////////////////////////
@@ -319,4 +323,9 @@ main( int argc, char * argv [] )
 	//////////////////////////////
 
 	lariat_modeling();
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
+        return 0;
+
 }

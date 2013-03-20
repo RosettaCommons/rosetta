@@ -27,6 +27,8 @@ static basic::Tracer TR("app.andrew.mpi_test",t_info);
 
 int main( int argc, char ** argv )
 {
+	try {
+
 	using namespace utility;
 
 	devel::init( argc, argv );
@@ -63,4 +65,9 @@ int main( int argc, char ** argv )
 		TR << "Node " << mpi_rank() << " recieved a single double " << receive_double_from_node( 0 ) << std::endl;
 	}
 
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
+	return 0;
 }

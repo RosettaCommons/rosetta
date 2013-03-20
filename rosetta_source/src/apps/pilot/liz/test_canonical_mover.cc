@@ -17,6 +17,7 @@
 #include <protocols/canonical_sampling/CanonicalSamplingApplication.hh>
 #include <protocols/canonical_sampling/CanonicalSamplingMover.hh>
 #include <devel/init.hh>
+#include <utility/excn/Exceptions.hh>
 
 
 
@@ -25,6 +26,7 @@
 
 int
 main( int argc, char * argv [] ){
+    try {
 
 	protocols::canonical_sampling::CanonicalSamplingMover::register_options();
 
@@ -32,5 +34,7 @@ main( int argc, char * argv [] ){
 
 	protocols::canonical_sampling::canonical_sampling_main();
 
-  return 0;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
 }

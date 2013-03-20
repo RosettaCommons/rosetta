@@ -13,6 +13,8 @@
 
 // libRosetta headers
 
+#include <utility/excn/Exceptions.hh>
+
 #include <protocols/jobdist/standard_mains.hh>
 #include <basic/options/option.hh>
 
@@ -57,6 +59,7 @@ relax_main_local( void* ) {
 int
 main( int argc, char * argv [] )
 {
+    try {
 	using namespace protocols::jobdist;
 	using namespace protocols::moves;
 	using namespace scoring;
@@ -72,7 +75,9 @@ main( int argc, char * argv [] )
 	// use viewer if flag given
 	protocols::viewer::viewer_main( relax_main_local );
 	relax_main_local(NULL);
-
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
 	return 0;
 }
 

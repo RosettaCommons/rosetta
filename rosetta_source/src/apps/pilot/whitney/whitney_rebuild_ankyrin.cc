@@ -57,6 +57,9 @@ int
 main( int argc, char * argv [] )
 {
 
+	try {
+
+
 	devel::init(argc, argv);
 
 	std::cout << "Starting to build fasta sequence" << std::endl;
@@ -92,6 +95,11 @@ main( int argc, char * argv [] )
 	std::cout << "Finished printing sequence" << std::endl;
 
 	return 0;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 
 

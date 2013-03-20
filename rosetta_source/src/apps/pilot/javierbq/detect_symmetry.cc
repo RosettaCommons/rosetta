@@ -44,6 +44,8 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
@@ -156,6 +158,8 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
 int main( int argc, char** argv ) {
+	try {
+
 	ThisApplication::register_options();
 	devel::init( argc, argv );
 	// mover
@@ -164,5 +168,10 @@ int main( int argc, char** argv ) {
 
 	// run
 	protocols::jd2::JobDistributor::get_instance()->go( protocol );
-	
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
+	return 0;	
 }

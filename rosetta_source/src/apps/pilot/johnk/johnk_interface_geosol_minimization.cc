@@ -51,6 +51,7 @@
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
+#include <utility/excn/Exceptions.hh>
 
 // C++ Headers
 #include <cmath>
@@ -112,7 +113,7 @@ is_interface_sc(
 int
 main( int argc, char * argv [] )
 {
-
+    try {
 	NEW_OPT( minimize_chi, "include chi angles in minimization", false );
 	NEW_OPT( minimize_bb, "include backbone in minimization", false );
 	NEW_OPT( minimize_jump, "include jumps in minimization", false );
@@ -196,6 +197,9 @@ main( int argc, char * argv [] )
 
 	TR << "jk done analysis" << std::endl;
 
-	return 0;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 

@@ -224,6 +224,9 @@ RT RT_from_epos( FArray2A_float Epos1, FArray2A_float Epos2)
 int
 main( int argc, char* argv [] )
 {
+
+	try {
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -379,6 +382,11 @@ main( int argc, char* argv [] )
 		//std::string name( option[ in::file::vall ]() );
 	//FileName fn( name );
 	//VallReader vall( name );
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 } // int main( int argc, char * argv [] )
 
 //}

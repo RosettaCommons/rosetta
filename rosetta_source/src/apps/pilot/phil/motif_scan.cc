@@ -20,6 +20,7 @@
 // AUTO-REMOVED #include <protocols/frags/TorsionFragment.hh>
 
 #include <protocols/viewer/viewers.hh>
+#include <utility/excn/Exceptions.hh>
 // AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
 // AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
 // AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
@@ -655,9 +656,12 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
-
+	try{
 	// initialize option and random number system
 	devel::init( argc, argv );
 
 	protocols::viewer::viewer_main( my_main );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl; 
+	} 
 }

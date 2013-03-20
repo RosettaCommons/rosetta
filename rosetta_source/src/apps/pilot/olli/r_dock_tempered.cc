@@ -25,11 +25,13 @@
 // option key includes
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
+#include <utility/excn/Exceptions.hh>
 
 
 int
 main( int argc, char * argv [] )
 {
+	try{
   using namespace basic::options;
   using namespace protocols::docking;
   using namespace protocols::jd2;
@@ -42,5 +44,8 @@ main( int argc, char * argv [] )
   //	core::init_random_generators(3,numeric::random::_RND_TestRun_, "mt19937"); //JQX from Sergery
 
 	JobDistributor::get_instance()->go( new TemperedDocking() );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl; 
+	} 
 }
 

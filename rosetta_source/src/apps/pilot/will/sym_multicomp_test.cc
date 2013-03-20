@@ -95,6 +95,9 @@ void move_jump(core::pose::Pose & pose, int jnum) {
 }
 
 int main (int argc, char *argv[]) {
+
+	try {
+
 	devel::init(argc,argv);
 	using basic::options::option;
 	using namespace basic::options::OptionKeys;
@@ -130,6 +133,11 @@ int main (int argc, char *argv[]) {
 		if(!fail) TR << "WOOT " << files[ifile] << " " << option[basic::options::OptionKeys::symmetry::symmetry_definition]() << std::endl;
 	}
 	return 0;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 
 

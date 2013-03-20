@@ -338,6 +338,9 @@ void dock(Pose & init, std::string const & fn, vector1<Vec> const & ssamp) {
 
 
 int main(int argc, char *argv[]) {
+
+	try {
+
 	register_options();
 	devel::init(argc,argv);
 	using namespace basic::options::OptionKeys;
@@ -377,5 +380,10 @@ int main(int argc, char *argv[]) {
 		Pose pala(pnat);
 		dock(pala,fn,ssamp);
 	}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 

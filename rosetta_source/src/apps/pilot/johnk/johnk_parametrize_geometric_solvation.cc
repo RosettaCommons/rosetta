@@ -45,6 +45,7 @@
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
+#include <utility/excn/Exceptions.hh>
 
 // C++ Headers
 #include <cmath>
@@ -164,7 +165,7 @@ void dump_water_grid_file( std::string const & fname, GridInfo const & grid_info
 int
 main( int argc, char * argv [] )
 {
-
+    try {
 	NEW_OPT( atom_type, "The donor / acceptor type to parametrize", "" );
 	NEW_OPT( occluding_radius, "The radius of the occluding atom (default is 2.0, eg. for a carbon)", 2. );
 	NEW_OPT( water_entropy_scaling_factor, "water_entropy_scaling_factor", 1.0 );
@@ -600,6 +601,9 @@ main( int argc, char * argv [] )
 
 	TR << "jk finished computing desired geometric solvation potential" << std::endl;
 
-	return 0;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 

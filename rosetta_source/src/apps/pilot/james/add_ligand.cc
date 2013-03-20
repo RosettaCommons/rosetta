@@ -61,12 +61,16 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 #include <basic/Tracer.hh>
+
+#include <utility/excn/Exceptions.hh>
+
 using basic::T;
 using basic::Error;
 using basic::Warning;
 
 int
 main( int argc, char* argv[] ) {
+	try {
 
 	basic::Tracer tr("james.add_calcium");
 	// options, random initialization
@@ -146,4 +150,12 @@ main( int argc, char* argv[] ) {
 	// remodel loops
 
 	query_pose.dump_pdb( "pose_with_ligand.pdb" );
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+	
+	return 0;
+	
+
 } // main

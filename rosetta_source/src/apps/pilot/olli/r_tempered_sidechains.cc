@@ -24,11 +24,13 @@
 
 // option key includes
 #include <basic/options/option.hh>
+#include <utility/excn/Exceptions.hh>
 
 
 int
 main( int argc, char * argv [] )
 {
+	try{
   using namespace basic::options;
 	using namespace devel::coupled_sidechains;
   using namespace protocols::jd2;
@@ -41,5 +43,8 @@ main( int argc, char * argv [] )
   //	core::init_random_generators(3,numeric::random::_RND_TestRun_, "mt19937"); //JQX from Sergery
 
 	JobDistributor::get_instance()->go( new CoupledSidechainProtocol );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl; 
+	} 
 }
 

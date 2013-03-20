@@ -21,6 +21,7 @@
 #include <protocols/pockets/FingerprintMultifunc.hh>
 
 #include <basic/options/option_macros.hh>
+#include <utility/excn/Exceptions.hh>
 
 // Utility Headers
 #include <core/conformation/Residue.hh>
@@ -58,7 +59,7 @@ OPT_KEY( Real, phi_increment )
 OPT_KEY( Real, psi_increment )
 
 int main( int argc, char * argv [] ) {
-
+	try{
 
 	NEW_OPT( input_ligand_file1, "ligand1 file name", "ligand1.pdb" );
 	NEW_OPT( input_ligand_file2, "ligand2 file name", "ligand2.pdb" );
@@ -137,7 +138,9 @@ int main( int argc, char * argv [] ) {
 	npf.print_to_pdb(np_output_pdbname);
 	*/
 
-
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl; 
+	} 
 	return 0;
 
 }

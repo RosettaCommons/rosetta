@@ -148,6 +148,8 @@ void initialize_initalizeZNcst(
 
 int main( int argc, char * argv [] )
 {
+	try {
+
 	//using namespace core;
 	//using namespace core::chemical;
 	//using namespace core::id;
@@ -227,5 +229,10 @@ int main( int argc, char * argv [] )
 	// GO!
 	protocols::jd2::JobDistributor::get_instance()->go( seq_mover );
 
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
+	return 0;
 }
 

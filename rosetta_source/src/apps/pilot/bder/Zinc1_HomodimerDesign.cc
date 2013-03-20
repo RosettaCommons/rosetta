@@ -539,6 +539,7 @@ typedef utility::pointer::owning_ptr< Zinc1_HomodimerDesign > Zinc1_HomodimerDes
 int
 main( int argc, char* argv[] )
 {
+	try {
   using basic::options::option;
   option.add( lowres_symmetric_design_cycles, "lowres_symmetric_design_cycles" ).def(10);
   option.add( highres_symmetric_design_cycles, "highres_symmetric_design_cycles" ).def(10);
@@ -549,6 +550,11 @@ main( int argc, char* argv[] )
   devel::init(argc, argv);
   protocols::jd2::JobDistributor::get_instance()->go(new Zinc1_HomodimerDesign( option[lowres_symmetric_design_cycles].value(), option[highres_symmetric_design_cycles].value(), option[gridsearch_rollmove_angles].value() ));
   TR << "************************d**o**n**e**************************************" << std::endl;
+
+	} catch (utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
   return 0;
 }
 

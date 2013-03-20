@@ -243,6 +243,9 @@ read_sphere(
 
 
 int main(int argc, char *argv[]) {
+
+	try {
+
 	register_options();
 	devel::init(argc,argv);
 	using namespace basic::options::OptionKeys;
@@ -261,6 +264,11 @@ int main(int argc, char *argv[]) {
 	trans_pose(pnat,-cen);
 
 	dock(pnat,fn,ssamp);
+
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 }
 

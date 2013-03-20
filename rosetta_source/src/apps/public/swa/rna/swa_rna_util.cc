@@ -87,7 +87,7 @@
 #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
 #include <utility/file/file_sys_util.hh> //Parin April 15, 2012
-
+#include <utility/excn/Exceptions.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/conversions.hh>
@@ -1582,7 +1582,7 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
-
+try {
 	utility::vector1< Size > blank_size_vector;
 	utility::vector1< std::string > blank_string_vector;
 	utility::vector1< Real > blank_real_vector;
@@ -1627,7 +1627,9 @@ main( int argc, char * argv [] )
   ////////////////////////////////////////////////////////////////////////////
 
   protocols::viewer::viewer_main( my_main );
-
+} catch ( utility::excn::EXCN_Base const & e ) {
+	std::cout << "caught exception " << e.msg() << std::endl;
+}
 }
 
 

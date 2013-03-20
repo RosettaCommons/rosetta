@@ -154,6 +154,8 @@
 #include <core/pose/util.tmpl.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <utility/vector0.hh>
+#include <utility/excn/Exceptions.hh>
+
 //#include <boost/pool/poolfwd.hpp>
 
  static numeric::random::RandomGenerator RG(16621);
@@ -1272,6 +1274,7 @@ run_pep_prep()
 
 int main( int argc, char * argv [] )
 {
+try {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -1280,4 +1283,7 @@ int main( int argc, char * argv [] )
 
 	run_pep_prep();
 	TR.flush();
+} catch ( utility::excn::EXCN_Base const & e ) {
+	std::cout << "caught exception " << e.msg() << std::endl;
+}
 }

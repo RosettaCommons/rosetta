@@ -147,6 +147,9 @@ void invert_exclude_residues( Size nres, utility::vector1<int> const& exclude_li
 int
 main( int argc, char* argv [] )
 {
+
+	try {
+
 	using namespace core::scoring;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -376,6 +379,11 @@ main( int argc, char* argv [] )
 		}
 	}
 
+
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 } // int main( int argc, char * argv [] )
 

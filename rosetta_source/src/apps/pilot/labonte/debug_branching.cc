@@ -23,6 +23,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 
 // C++ headers
 #include <string>
@@ -44,6 +45,7 @@ string const PATH = "/home/labonte/Workspace/";
 int
 main(int argc, char *argv[])
 {
+    try {
 	// Initialize core.
 	devel::init(argc, argv);
 
@@ -69,4 +71,9 @@ main(int argc, char *argv[])
 		ResidueCAP residue = & pose.residue(res_num);
 		cout << *residue << endl << endl;
 	}
+
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }

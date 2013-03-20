@@ -83,6 +83,9 @@ using namespace conformation;
 int
 main( int argc, char* argv [] )
 {
+
+	try {
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 

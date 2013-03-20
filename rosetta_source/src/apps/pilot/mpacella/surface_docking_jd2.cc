@@ -24,11 +24,13 @@
 // Project header
 #include <protocols/jd2/JobDistributor.hh>
 #include <devel/init.hh>
+#include <utility/excn/Exceptions.hh>
 //#include <protocols/init/init.hh>
 
 int
 main( int argc, char * argv [] )
 {
+	try {
 	using namespace protocols::surface_docking;
 	using namespace protocols::jd2;
 
@@ -38,4 +40,7 @@ main( int argc, char * argv [] )
 
 	SurfaceDockingProtocolOP dp = new SurfaceDockingProtocol();
 	JobDistributor::get_instance()->go(dp);
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 }

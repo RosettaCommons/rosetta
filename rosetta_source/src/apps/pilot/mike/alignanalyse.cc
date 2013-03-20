@@ -25,6 +25,7 @@
 #include <core/io/pdb/file_data.hh>
 #include <core/id/AtomID.hh>
 #include <utility/file/FileName.hh>
+#include <utility/excn/Exceptions.hh>
 #include <core/types.hh>
 
 #include <core/scoring/sasa.hh>
@@ -157,6 +158,7 @@ main( int argc, char * argv [] )
 	// setup
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    try {
 	devel::init(argc, argv);
 
 	using namespace protocols::moves;
@@ -347,20 +349,14 @@ main( int argc, char * argv [] )
 		fd.append_residue( structures[model[ir]].residue(ir), a, structures[model[ir]] );
 	}
 
-
 	data = core::io::pdb::PDB_DReader::createPDBData(fd);
 	out.write( data.c_str(), data.size() );
 
-
 	out.close();
 
-
-
-
-
-
-
-
-
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 

@@ -66,6 +66,7 @@ static basic::Tracer tr("apps.pilot.dan.LoopExtend");
 int
 main( int argc, char* argv[] )
 {
+    try {
 	using protocols::loops::Loops;
 	using protocols::loops::Loop;
 	devel::init(argc, argv);
@@ -117,5 +118,8 @@ main( int argc, char* argv[] )
 	pose.dump_pdb(outfile);
 	tr << "success" << std::endl;
 
-	return 0;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
+        return 0;
 }

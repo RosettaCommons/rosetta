@@ -28,6 +28,9 @@
 int
 main( int argc, char * argv [] )
 {
+
+	try {
+
 	devel::init( argc, argv );
 	protocols::motifs::MotifLibrary motifs( protocols::motifs::get_MotifLibrary_user() );
 	protocols::motifs::MotifCOPs motifcops = motifs.library();
@@ -39,4 +42,9 @@ main( int argc, char * argv [] )
 			protocols::motifs::MotifCOP motifcop( *motifcop_itr );
 			motif_output_file << *motifcop;
 	}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }

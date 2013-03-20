@@ -20,6 +20,7 @@
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <devel/init.hh>
 #include <basic/prof.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/after_opts.hh>
@@ -46,6 +47,7 @@ OPT_1GRP_KEY(Real,test,within)
 
 int
 main(int argc, char* argv []){
+    try {
 	using namespace basic::options::OptionKeys;
 	using namespace basic::options;
 
@@ -151,7 +153,8 @@ main(int argc, char* argv []){
 	  (*sfxn)( pose );
 	  sfxn->show( pose );
 	}
-
-
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
 }
 

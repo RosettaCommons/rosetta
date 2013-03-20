@@ -75,6 +75,8 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -98,6 +100,8 @@ using namespace basic::options::OptionKeys;
 
 int
 main( int argc, char* argv [] ) {
+	try {
+
 	using core::Real;
 	using core::Size;
 
@@ -283,4 +287,11 @@ main( int argc, char* argv [] ) {
 
 		} // for ( it in aligns )
 	} // if option[ in::file::template_pdb ].user()
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+	
+	return 0;
+
 } // int main( int argc, char * argv [] )

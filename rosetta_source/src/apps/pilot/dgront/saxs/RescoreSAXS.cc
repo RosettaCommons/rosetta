@@ -28,6 +28,8 @@
 
 #include <utility/vector1.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 using namespace core;
 
@@ -93,7 +95,7 @@ private:
 };
 
 int main( int argc, char * argv [] ) {
-
+    try {
     using namespace protocols;
     using namespace protocols::jobdist;
     using namespace protocols::moves;
@@ -107,6 +109,9 @@ int main( int argc, char * argv [] ) {
     RescoreSAXS debay;
 
     not_universal_main( debay );
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
 
     return 0;
 }

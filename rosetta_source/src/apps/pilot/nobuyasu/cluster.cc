@@ -17,6 +17,7 @@
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 
@@ -54,7 +55,7 @@ using namespace basic::options;
 
 int
 main( int argc, char * argv [] ) {
-
+	try{
 	using namespace protocols;
 	using namespace protocols::jobdist;
 	using namespace protocols::moves;
@@ -280,7 +281,10 @@ main( int argc, char * argv [] ) {
 						<< "s\n  Additional Clustering: " << time_total - time_initialc
 						<< "s\n  Total: " << time_total - time_start
 						<< std::endl;
-
+		
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 	return 0;
 }
 

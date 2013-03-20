@@ -36,6 +36,8 @@
 
 #include <basic/options/keys/james.OptionKeys.gen.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 class ComputeProfileMover : public protocols::moves::Mover {
 	typedef utility::file::FileName FileName;
 
@@ -115,6 +117,8 @@ public:
 
 int
 main( int argc, char * argv [] ) {
+	try {
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -123,4 +127,10 @@ main( int argc, char * argv [] ) {
 	core::Size const n_designs( option[ james::n_designs ]() );
 	ComputeProfileMover mover( n_designs );
 	protocols::jobdist::not_universal_main( mover );
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+	
+	return 0;
 }

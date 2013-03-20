@@ -522,6 +522,9 @@ void generate_disulfide_conformations(core::pose::Pose const & in_pose, Size icy
 
 
 int main (int argc, char *argv[]) {
+
+	try {
+
 	register_options();
 	devel::init(argc,argv);
 	using namespace basic::options::OptionKeys;
@@ -534,6 +537,11 @@ int main (int argc, char *argv[]) {
 		Pose tri2 = make_two_trimers(pnat,icys,N);
 		generate_disulfide_conformations(tri2,icys,N);
 	}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 
 

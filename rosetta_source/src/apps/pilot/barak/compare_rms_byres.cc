@@ -137,6 +137,7 @@ RMSByResStatistics::apply( core::pose::Pose & pose )
 int
 main( int argc, char * argv [] )
 {
+	try {
   using namespace core;
   using namespace std;
 	using basic::options::option;
@@ -158,7 +159,9 @@ main( int argc, char * argv [] )
 	// run
 	protocols::jd2::JobDistributor::get_instance()->go( rmsCalculator );
 
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
-  exit(0);
-
+	return 0;
 }

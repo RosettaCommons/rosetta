@@ -76,6 +76,8 @@
 #include <boost/tuple/tuple.hpp>
 #include <boost/tuple/tuple_comparison.hpp>
 
+#include <utility/excn/Exceptions.hh>
+
 
 static basic::Tracer tr("main");
 
@@ -138,6 +140,8 @@ void ThisApplication::register_options() {
 
 
 int main( int argc, char** argv ) {
+	try {
+
 	ThisApplication::register_options();
 	devel::init( argc, argv );
 	Pose native;
@@ -164,4 +168,11 @@ int main( int argc, char** argv ) {
 						out << RJ(16,boost::get<0>(*fd)) << RJ(5,boost::get<2>(*fd)) <<RJ(15,boost::get<1>(*fd)) <<RJ(15,boost::get<3>(*fd)) <<RJ(8,boost::get<4>(*fd))<< RJ(6,boost::get<5>(*fd))<< std::endl;
 				}
     }
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+	
+	return 0;
+
 }

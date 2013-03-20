@@ -173,6 +173,8 @@ void output_interface_graphviz(core::pose::Pose const & pose, core::graph::Graph
 int
 main( int argc, char * argv [] )
 {
+	try {
+
 	devel::init(argc, argv);
 
 	Size jump_num(1);
@@ -269,4 +271,7 @@ main( int argc, char * argv [] )
 		}
 
 } // for pdbnames
-}
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+ }

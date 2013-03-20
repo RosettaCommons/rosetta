@@ -94,7 +94,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <protocols/comparative_modeling/AlignmentSet.fwd.hh>
 #include <utility/excn/EXCN_Base.hh>
-
+#include <utility/excn/Exceptions.hh>
 
 
 OPT_1GRP_KEY(Integer, MR, max_gaplength_to_model)
@@ -770,6 +770,7 @@ my_main( void* ) {
 
 int
 main( int argc, char * argv [] ) {
+	try {
 	// initialize option and random number system
 	NEW_OPT(MR::max_gaplength_to_model, "max gaplength to rebuild", true);
     NEW_OPT(MR::mode, "mode", "cm");
@@ -780,4 +781,8 @@ main( int argc, char * argv [] ) {
 	devel::init( argc, argv );
 
 	protocols::viewer::viewer_main( my_main );
+	}
+	catch ( utility::excn::EXCN_Base const & e) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 }

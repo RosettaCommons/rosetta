@@ -35,6 +35,7 @@
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
+#include <utility/excn/Exceptions.hh>
 
 // C++ Headers
 #include <iostream>
@@ -79,7 +80,7 @@ void register_metrics() {
 int
 main( int argc, char * argv [] )
 {
-
+    try {
 	devel::init(argc, argv);
 
 	register_metrics();
@@ -189,6 +190,10 @@ main( int argc, char * argv [] )
 
 	std::cout << "JK Successfully finishing hotspot test" << std::endl;
 
-	return 0;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
+
 }
 

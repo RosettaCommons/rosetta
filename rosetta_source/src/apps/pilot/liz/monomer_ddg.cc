@@ -41,6 +41,7 @@
 
 #include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
@@ -157,6 +158,7 @@ average_score_components( ObjexxFCL::FArray2D< double > &scores_to_average,
 int
 main( int argc, char * argv [] )
 {
+    try {
 	using namespace pose;
 	using namespace scoring;
 	using namespace conformation;
@@ -567,6 +569,9 @@ main( int argc, char * argv [] )
 	}
 	ddg_output << std::endl;
 	//end
-	exit(0);
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 

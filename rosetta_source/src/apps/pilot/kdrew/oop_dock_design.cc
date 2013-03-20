@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 
-//kdrew: based on code from mini/src/apps/public/scenarios/doug_dock_design_min_mod2_cal_cal.cc 
+//kdrew: based on code from mini/src/apps/public/scenarios/doug_dock_design_min_mod2_cal_cal.cc
 //			and https://svn.rosettacommons.org/source/branches/releases/rosetta-3.1/manual/advanced/example_protocol.cc
 
 //Headers are generally organized by either what they do or where they come from.  This organization is first core library headers, then protocols library, then utility stuff.
@@ -75,6 +75,7 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
+#include <utility/excn/Exceptions.hh>
 
 // C++ headers
 #include <string>
@@ -197,7 +198,7 @@ typedef utility::pointer::owning_ptr< OopDockDesignMinimizeMover const > OopDock
 int
 main( int argc, char* argv[] )
 {
-
+    try {
 	/*********************************************************************************************************************
 	Common Setup
 	**********************************************************************************************************************/
@@ -247,6 +248,10 @@ main( int argc, char* argv[] )
 	//call job distributor
 	protocols::jd2::JobDistributor::get_instance()->go( ODDM_mover );
 
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }//main
 
 void
@@ -312,9 +317,9 @@ OopDockDesignMinimizeMover::apply(
 	// create movemap for peptide
 	kinematics::MoveMapOP pert_pep_mm( new kinematics::MoveMap() );
 	pert_pep_mm->set_bb_true_range(pep_start, pep_end);
-	
+
 	//kdrew: automatically find oop positions
-	utility::vector1< core::Size > oop_seq_positions; 
+	utility::vector1< core::Size > oop_seq_positions;
 	for ( Size i = 1; i <= pose.total_residue(); ++i )
 	{
 		if( pose.residue(i).has_variant_type(chemical::OOP_PRE) == 1)
@@ -354,7 +359,7 @@ OopDockDesignMinimizeMover::apply(
 	//oop::OopRandomPuckMoverOP opm_puck( new oop::OopRandomPuckMover( option[ oddm::oop_positions ].value() ) );
 	oop::OopRandomSmallMoverOP opm_small( new oop::OopRandomSmallMover( oop_seq_positions, 2.0 ) );
 	oop::OopRandomPuckMoverOP opm_puck( new oop::OopRandomPuckMover( oop_seq_positions ) );
-	
+
 	/******************************************************************************
 	Rotamer Trials Setup
 	*******************************************************************************/
@@ -486,7 +491,7 @@ OopDockDesignMinimizeMover::apply(
 	}
 	*/
 	TR << "Main loop..." << std::endl;
-	
+
 	protocols::jd2::JobOP curr_job( protocols::jd2::JobDistributor::get_instance()->current_job() );
 
 //kdrew: only turn on pymol observer in debug mode
@@ -503,7 +508,7 @@ if( option[ oddm::pymol ].value() )
 
 		pert_mc->reset(pose);
 
-		//kdrew: a quick design/repack prior to pertubation, often the initial structure given is aligned to hotspot Ca Cb vector 
+		//kdrew: a quick design/repack prior to pertubation, often the initial structure given is aligned to hotspot Ca Cb vector
 		//kdrew: and do not want to perturb away until designed in hotspot residue
 		if( k == 1 && option[ oddm::oop_design_first ].value() )
 		{
@@ -537,7 +542,7 @@ if( option[ oddm::pymol ].value() )
 		mc->boltzmann( pose );
 		TR<< "post mc->boltzmann" << std::endl;
 		mc->show_state();
-		
+
 	}//dock_design for loop
 
 	mc->recover_low( pose );
@@ -625,7 +630,7 @@ if( option[ oddm::pymol ].value() )
 	//stats_pose.dump_pdb("stats_trans1000.pdb");
 
 	Pose repack_stats_pose( stats_pose );
-	
+
 	//kdrew: probably should repack and minimize here after separation
 	TaskFactoryOP tf(new TaskFactory());
 	tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
@@ -692,8 +697,8 @@ if( option[ oddm::pymol ].value() )
 // this only works for two chains and assumes the protein is first and the peptide is second
 // inspired by protocols/docking/DockingProtocol.cc
 void
-OopDockDesignMinimizeMover::setup_pert_foldtree( 
-	core::pose::Pose & pose 
+OopDockDesignMinimizeMover::setup_pert_foldtree(
+	core::pose::Pose & pose
 )
 {
 	using namespace kinematics;

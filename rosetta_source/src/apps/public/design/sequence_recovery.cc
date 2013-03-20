@@ -44,6 +44,7 @@
 #include <utility/file/file_sys_util.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 
 // Option keys
 // AUTO-REMOVED #include <basic/options/keys/optE.OptionKeys.gen.hh>
@@ -401,6 +402,8 @@ void measure_rotamer_recovery( utility::vector1<core::pose::Pose> & /*native_pos
 //@brief main method for the sequence recovery protocol
 int main( int argc, char* argv[] ) {
 
+	try {
+
 	using utility::file::file_exists;
 	using utility::file::FileName;
 
@@ -487,6 +490,9 @@ int main( int argc, char* argv[] ) {
 	} else {
 		TR << "Measuring sequence recovery" << std::endl;
 		measure_sequence_recovery( native_poses, redesign_poses );
+	}
+	 } catch ( utility::excn::EXCN_Base const & e ) { 
+		 std::cout << "caught exception " << e.msg() << std::endl;
 	}
 
 }

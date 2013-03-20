@@ -454,6 +454,7 @@ void run_sandbox( LoopHashLibraryOP /*loop_hash_library*/ ){
 int
 main( int argc, char * argv [] )
 {
+    try {
 	using namespace protocols;
 	using namespace protocols::jd2;
 	using namespace basic::options;
@@ -516,7 +517,10 @@ main( int argc, char * argv [] )
     excn.show( std::cout ); //so its also seen in a >LOG file
   }
 
-	return 0;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 
 

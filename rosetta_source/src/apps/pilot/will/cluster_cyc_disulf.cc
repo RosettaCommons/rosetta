@@ -109,6 +109,9 @@ using namespace basic::options;
 int
 main( int argc, char * argv [] ) {
 
+	try {
+
+
 	using namespace protocols;
 	using namespace protocols::moves;
 	using namespace core::scoring;
@@ -263,5 +266,10 @@ main( int argc, char * argv [] ) {
 	sorted_list.sort();
 
 	return 0;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 

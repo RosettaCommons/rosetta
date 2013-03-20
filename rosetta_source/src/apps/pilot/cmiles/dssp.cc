@@ -27,6 +27,8 @@
 #include <core/scoring/dssp/Dssp.hh>
 
 int main(int argc, char* argv[]) {
+	try {
+
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
 
@@ -41,4 +43,10 @@ int main(int argc, char* argv[]) {
   for (core::Size i = 1; i <= pose->total_residue(); ++i) {
     std::cout << i << "\t" << info->number(i) << "\t" << dssp.get_dssp_secstruct(i) << std::endl;
   }
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
+	return 0;
 }

@@ -37,6 +37,8 @@
 
 #include <utility/vector1.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 using namespace core;
 using ObjexxFCL::string_of;
 
@@ -65,6 +67,8 @@ char torsion2big_bin(float const phi,
 
 
 int main( int argc, char* argv [] ) {
+	try {
+
 	// options, random initialization
 	devel::init( argc, argv );
 
@@ -154,4 +158,10 @@ int main( int argc, char* argv [] ) {
 				<< std::endl;
 		}	// for ( unsigned int i = 1; i <= mypose->total_residue(); ++i )
 	} // for ( iter = pdbfiles.begin(); iter != pdbfiles.end(); ++iter )
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+	
+	return 0;
 } // int main( int argc, char * argv [] )

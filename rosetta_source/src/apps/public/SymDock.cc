@@ -35,6 +35,7 @@
 #include <protocols/jd2/JobInputter.fwd.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 
 
 // option key includes
@@ -48,6 +49,8 @@ using namespace core;
 int
 main( int argc, char * argv [] )
 {
+	try {
+
 	using namespace protocols::symmetric_docking;
 	using namespace protocols::jd2;
 
@@ -55,4 +58,8 @@ main( int argc, char * argv [] )
 	devel::init(argc, argv);
 
 	protocols::symmetric_docking::SymDock_main();
+
+	 } catch ( utility::excn::EXCN_Base const & e ) { 
+		 std::cout << "caught exception " << e.msg() << std::endl;
+	}
 }

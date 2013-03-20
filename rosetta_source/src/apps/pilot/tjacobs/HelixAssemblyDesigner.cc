@@ -63,6 +63,9 @@ basic::options::FileOptionKey const bridge_fragments("bridge_fragments");
 int
 main( int argc, char * argv [] )
 {
+
+	try {
+
 	using namespace std;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -171,4 +174,9 @@ main( int argc, char * argv [] )
 	protocols::jd2::JobDistributor::get_instance()->go(seq_mover);
 
 	cout << "-------------DONE-------------" << endl;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }

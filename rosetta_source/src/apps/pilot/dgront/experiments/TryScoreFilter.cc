@@ -49,6 +49,8 @@
 #include <string>
 #include <sstream>
 
+#include <utility/excn/Exceptions.hh>
+
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
@@ -177,7 +179,7 @@ private:
 
 ////////////////////////////////////////////////////////
 int main( int argc, char * argv [] ) {
-
+try {
     protocols::abinitio::ClassicAbinitio::register_options();
     protocols::abinitio::AbrelaxApplication::register_options();
     register_options();
@@ -185,6 +187,9 @@ int main( int argc, char * argv [] ) {
 
     TryScoreFilter job;
     job.run();
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
 
     return 0;
 }

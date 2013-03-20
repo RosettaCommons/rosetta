@@ -184,6 +184,8 @@ typedef utility::pointer::owning_ptr< JDtestmover > JDtestmoverOP;
 int
 main( int argc, char * argv [] )
 {
+	try {
+
 	devel::init(argc, argv);
 
 	JDtestmoverOP test_mover(new JDtestmover);
@@ -191,5 +193,9 @@ main( int argc, char * argv [] )
 	protocols::jd2::JobDistributor::get_instance()->go(test_mover);
 
 	TR << "*********************successful completion**************************" << std::endl;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 }
 

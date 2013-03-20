@@ -27,6 +27,7 @@
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
+#include <utility/excn/Exceptions.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
@@ -52,7 +53,7 @@ void dump_ddg_pdb(std::string const & tag, Size const & resnum, pose::Pose const
 int
 main( int argc, char * argv [] )
 {
-
+    try {
 	devel::init(argc, argv);
 
 	std::cout << "Starting ddG calculations" << std::endl;
@@ -229,6 +230,9 @@ main( int argc, char * argv [] )
 
 	std::cout << "Successfully finished computing ddGs" << std::endl;
 
-	return 0;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 

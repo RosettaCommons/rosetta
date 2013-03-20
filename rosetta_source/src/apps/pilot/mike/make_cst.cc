@@ -27,6 +27,7 @@
 #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <utility/file/FileName.hh>
+#include <utility/excn/Exceptions.hh>
 #include <protocols/cluster/cluster.hh>
 #include <devel/init.hh>
 
@@ -53,6 +54,7 @@ using namespace basic::options;
 int
 main( int argc, char * argv [] )
 {
+    try {
 	using namespace protocols;
 	using namespace protocols::jobdist;
 	using namespace protocols::moves;
@@ -75,6 +77,9 @@ main( int argc, char * argv [] )
 	MoverOP mover = cec;
 	protocols::jd2::JobDistributor::get_instance()->go( mover );
 	cec->createConstraints( std::cout );
-	return 0;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 

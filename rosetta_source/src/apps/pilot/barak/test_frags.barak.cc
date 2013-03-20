@@ -72,6 +72,8 @@ static numeric::random::RandomGenerator RG(12321); // <- Magic number, do not ch
 int
 main( int argc, char * argv [] )
 {
+	try {
+
   using namespace core;
   using namespace protocols::frags;
 
@@ -135,7 +137,9 @@ main( int argc, char * argv [] )
   }
 
 
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
-  exit(0);
-
+	return 0;
 }

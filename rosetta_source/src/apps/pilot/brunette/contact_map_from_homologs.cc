@@ -260,6 +260,8 @@ multimap <Size,Size> calc_contacts(core::pose::Pose pose,SequenceAlignment aln, 
 ///////////////////////////////////////////////////////////////////////////////
 int
 main( int argc, char * argv [] ) {
+	try {
+
 	using core::Size;
 	using core::Real;
 	using std::map;
@@ -413,6 +415,12 @@ main( int argc, char * argv [] ) {
 		contact_map_start++;
 	}
 	topOutput.close();
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
+	return 0;
 }
 
 	

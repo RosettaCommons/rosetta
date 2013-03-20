@@ -55,6 +55,7 @@
 #include <sstream>
 // AUTO-REMOVED #include <ios>
 #include <utility/io/izstream.hh>
+#include <utility/excn/Exceptions.hh>
 // AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 // C++ headers
@@ -298,6 +299,8 @@ already_minimized(std::string query,utility::vector1<std::string> check){
 int
 main( int argc, char* argv [] )
 {
+	try {
+
 	using namespace core;
 	using namespace core::pose;
 	using namespace utility;
@@ -385,5 +388,8 @@ main( int argc, char* argv [] )
 			//type: HARMONIC
 			//then minimize
 		}
+	}
+	 } catch ( utility::excn::EXCN_Base const & e ) { 
+		 std::cout << "caught exception " << e.msg() << std::endl;
 	}
 }

@@ -242,6 +242,9 @@ read_ddg_file( std::string pdb, std::string fname ) {
 int
 main( int argc, char * argv [] )
 {
+
+	try {
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -263,6 +266,11 @@ main( int argc, char * argv [] )
 	// read_ddg_file( "5azu", d+"5azu-ddG.txt" );
 
 	return 0;
+
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 }
 

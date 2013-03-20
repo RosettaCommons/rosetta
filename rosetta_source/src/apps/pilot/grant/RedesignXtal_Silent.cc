@@ -83,12 +83,16 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 
 
 int
 main( int argc, char * argv [] )
 {
+
+	try {
 
 devel::init(argc, argv);
 
@@ -360,6 +364,10 @@ if( currentseqdis[1] <= nativeseqdis[1]+sig*nativeseqdis[1] and currentseqdis[6]
 
 
   // when we are done will everything we can do some more stuff
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
   return 0;
 }

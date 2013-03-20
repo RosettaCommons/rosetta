@@ -33,6 +33,7 @@
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/util.hh>
 #include <protocols/loops/Loops.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -444,7 +445,11 @@ LoopBuild_main() {
 int
 main( int argc, char * argv [] )
 {
+	try{
 	register_options();
 	devel::init( argc, argv );
 	LoopBuild_main();
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl; 
+	} 
 }

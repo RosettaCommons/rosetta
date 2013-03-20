@@ -22,6 +22,7 @@
 #include <core/util/ABEGOManager.hh>
 #include <core/pose/PDBInfo.hh>
 #include <protocols/moves/DsspMover.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <devel/init.hh>
 #include <basic/Tracer.hh>
@@ -61,6 +62,7 @@ void ThisApplication::register_options() {
 int
 main( int argc, char * argv [] )
 {
+	try{
 	using core::chemical::oneletter_code_from_aa;
 
 	ThisApplication::register_options();
@@ -87,7 +89,9 @@ main( int argc, char * argv [] )
 				<< F( 8, 2, pose.phi( ii ) ) << F( 8, 2, pose.psi( ii ) ) << F( 8, 2, pose.omega( ii ) )
 				<< std::endl;
 	}
-
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 	return 0;
 }
 

@@ -136,6 +136,7 @@
 
 //Auto Headers
 #include <protocols/loops/Loops.fwd.hh>
+#include <utility/excn/Exceptions.hh>
 
 // Namespaces
 using namespace core;
@@ -214,6 +215,7 @@ typedef utility::pointer::owning_ptr< DougsDockDesignMinimizeMagicMover const > 
 int
 main( int argc, char* argv[] )
 {
+	try {
 	/*********************************************************************************************************************
 	  ____                                         ____  _       	  __  __
 	 / ___|___  _ __ ___  _	__ ___ 	 ___  _	__		/ ___||	|_ _   _ / _|/ _|
@@ -262,7 +264,9 @@ main( int argc, char* argv[] )
 
 	// create job distributor
 	protocols::jd2::JobDistributor::get_instance()->go( D3DM );
-
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 }
 
 void

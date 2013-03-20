@@ -22,10 +22,10 @@
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/import_pose/import_pose.hh>
+#include <utility/excn/Exceptions.hh>
 
 // C++ headers
 #include <iostream>
-
 
 using namespace std;
 using namespace core;
@@ -68,6 +68,8 @@ test_sugar(Pose & sugar)
 int
 main(int argc, char *argv[])
 {
+    try {
+
 	// Initialize core.
 	devel::init(argc, argv);
 
@@ -129,4 +131,9 @@ main(int argc, char *argv[])
 		cout << " Chain " << i << ": ";
 		cout << glycoprotein.chain_sequence(i) << endl;
 	}
+
+    } catch ( utility::excn::EXCN_Base const & e ) {
+			std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }

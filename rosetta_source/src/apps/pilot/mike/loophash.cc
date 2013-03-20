@@ -50,6 +50,7 @@
 #include <utility/exit.hh>
 #include <utility/fixedsizearray1.hh>
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/excn/Exceptions.hh>
 #include <core/optimization/MinimizerOptions.hh>
 
 #include <protocols/loophash/LoopHashLibrary.fwd.hh>
@@ -512,6 +513,8 @@ void run_sandbox( LoopHashLibraryOP /*loop_hash_library*/ ){
 int
 main( int argc, char * argv [] )
 {
+    try {
+
 	using namespace protocols;
 	using namespace protocols::jd2;
 	using namespace basic::options;
@@ -577,6 +580,10 @@ main( int argc, char * argv [] )
     std::cout << "Exception: " << std::endl;
     excn.show( TR.Info ); //so its also seen in a >LOG file
   }
+
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
 
 	return 0;
 }

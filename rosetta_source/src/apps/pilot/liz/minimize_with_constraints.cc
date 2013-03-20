@@ -67,6 +67,7 @@
 #include <protocols/comparative_modeling/ConstraintRemodelMover.hh>
 
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 // AUTO-REMOVED #include <utility/io/ozstream.hh>
 
 // Auto-header: duplicate removed #include <basic/Tracer.hh>
@@ -95,6 +96,7 @@ using basic::Error;
 int
 main( int argc, char* argv [] )
 {
+    try {
 	// options, random initialization
 	devel::init( argc, argv );
 
@@ -184,5 +186,8 @@ main( int argc, char* argv [] )
 	// jobdist->dump_pose_and_map( curr_job->output_tag(curr_nstruct), pose );    // output PDB
 
 
-	return 0;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 } // int main

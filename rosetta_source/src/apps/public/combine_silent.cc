@@ -32,10 +32,13 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 
 
 int
 main( int argc, char* argv [] ) {
+	try {
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	// define relevant options
@@ -64,6 +67,9 @@ main( int argc, char* argv [] ) {
 
 	protocols::moves::NullMover mover;
 	protocols::jobdist::not_universal_main( mover );
+	 } catch ( utility::excn::EXCN_Base const & e ) { 
+		 std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 	return 0;
 } // main

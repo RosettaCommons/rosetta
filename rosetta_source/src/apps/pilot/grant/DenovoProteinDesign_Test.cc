@@ -67,12 +67,15 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 
 
 int
 main( int argc, char * argv [] )
 {
+	try {
 
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
@@ -136,6 +139,10 @@ main( int argc, char * argv [] )
         protocols::jobdist::main_plain_pdb_mover(DenovoDesignProtocol, fullfxn);
 
 	//	}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
   return 0;
 }

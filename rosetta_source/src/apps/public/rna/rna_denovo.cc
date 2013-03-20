@@ -53,7 +53,7 @@
 #include <core/pose/annotated_sequence.hh>
 #include <core/sequence/Sequence.hh>
 #include <utility/file/file_sys_util.hh>
-
+#include <utility/excn/Exceptions.hh>
 
 
 using namespace core;
@@ -279,6 +279,7 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
+try {
 	using namespace basic::options;
 
 
@@ -341,5 +342,7 @@ main( int argc, char * argv [] )
 	////////////////////////////////////////////////////////////////////////////
 
 	protocols::viewer::viewer_main( my_main );
-
+} catch ( utility::excn::EXCN_Base const & e ) {
+	std::cout << "caught exception " << e.msg() << std::endl;
+}
 }

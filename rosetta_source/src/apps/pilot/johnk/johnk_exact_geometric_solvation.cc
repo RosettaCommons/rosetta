@@ -37,6 +37,7 @@
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
+#include <utility/excn/Exceptions.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
@@ -69,7 +70,7 @@ void dump_data( std::string const & fname, utility::vector1 <core::Real> & data 
 int
 main( int argc, char * argv [] )
 {
-
+    try {
 	NEW_OPT( report_LK, "whether to report solvation energies from LK", false );
 	NEW_OPT( report_fitted, "whether to report solvation energies from fitted occ", false );
 	NEW_OPT( report_orig_geosol, "whether to old (Hbond energy directly) solvation energies", false );
@@ -162,8 +163,10 @@ main( int argc, char * argv [] )
 
 	TR << "Done computing solvation energies" << std::endl;
 
-	return 0;
-
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 
 

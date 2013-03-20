@@ -74,6 +74,7 @@
 #include <utility/vector1.hh>
 #include <fstream>
 
+#include <utility/excn/Exceptions.hh>
 
 using namespace std;
 using namespace core;
@@ -121,6 +122,7 @@ inline void assure(std::ofstream& in, const char* filename = "")
 
 int main( int argc, char * argv [] )
 {
+	try {
     //normal init
     devel::init( argc, argv );
 
@@ -598,7 +600,9 @@ int main( int argc, char * argv [] )
         }//grids
         out_grid.close();
 	}//cluster
-
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 	return EXIT_SUCCESS;
 }
 

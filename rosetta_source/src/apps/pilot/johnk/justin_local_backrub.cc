@@ -49,6 +49,7 @@
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
+#include <utility/excn/Exceptions.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
@@ -71,7 +72,7 @@ static basic::Tracer TR( "apps.pilot.justin_local_backrub.main" );
 int
 main( int argc, char * argv [] )
 {
-
+    try {
 	NEW_OPT( central_relax_pdb_num1, "which residue to carry out backrub around", -1 );
 	NEW_OPT( central_relax_pdb_num2, "which residue to carry out backrub around", -1 );
 	NEW_OPT( central_relax_pdb_num3, "which residue to carry out backrub around", -1 );
@@ -316,7 +317,10 @@ main( int argc, char * argv [] )
 
 	TR << "Successfully finished relaxing backbone around central cluster" << std::endl;
 
-	return 0;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 
 

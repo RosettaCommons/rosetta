@@ -34,6 +34,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/rotamer_set/RotamerCouplings.hh>
+#include <utility/excn/Exceptions.hh>
 
 
 
@@ -508,9 +509,12 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
-
+	try{
 	// initialize option and random number system
 	devel::init( argc, argv );
 
 	protocols::viewer::viewer_main( my_main );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl; 
+	} 
 }

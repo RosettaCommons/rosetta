@@ -33,6 +33,7 @@
 #include <protocols/match/Hit.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <utility/exit.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -64,6 +65,8 @@ static basic::Tracer TR("main");
 int
 main( int argc, char * argv [] )
 {
+	try {
+
 	using namespace core;
 	using namespace protocols;
 	using namespace protocols::jd2;
@@ -151,6 +154,10 @@ main( int argc, char * argv [] )
 			}
 		} // nstruct for
 	} // while
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+	}
 
 	return 0;
 }

@@ -946,12 +946,20 @@ void run(std::string fname) {
 
 
 int main (int argc, char *argv[]) {
+
+	try {
+
 		devel::init(argc,argv);
 
   using basic::options::option;
   using namespace basic::options::OptionKeys;
 
   run(option[in::file::s]()[1]);
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 
 

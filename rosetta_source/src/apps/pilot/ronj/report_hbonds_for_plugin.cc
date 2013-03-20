@@ -415,10 +415,18 @@ private:
 
 int main( int argc, char* argv[] ) {
 
+	try {
+
+
 	//NEW_OPT( HBondReporter::relax, "Perform relaxation before dumping hbonds", false );
 	NEW_OPT( HBondReporter::relevant_chains, "relevant_chains", "*" );
 
 	devel::init(argc, argv);
 	protocols::jd2::JobDistributor::get_instance()->go( new HBondReporter );
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 

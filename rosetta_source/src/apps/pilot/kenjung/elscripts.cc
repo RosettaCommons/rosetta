@@ -37,6 +37,7 @@ namespace mpi = boost::mpi;
 int
 main( int argc, char * argv [] )
 {
+	try {
 
 	// command line flag preprocessing
 	// also known as c string hell
@@ -162,5 +163,9 @@ main( int argc, char * argv [] )
 	SingleNode role;
 	role.go();
 #endif
-}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+ }
 

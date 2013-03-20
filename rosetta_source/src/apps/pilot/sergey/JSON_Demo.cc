@@ -25,6 +25,9 @@
 
 int main( int argc, char * argv [] )
 {
+
+	try {
+
 	utility::json_spirit::Value v;
 
 	std::string input = "5.55";
@@ -80,5 +83,10 @@ int main( int argc, char * argv [] )
 								          			  ) ) ) );
 
 	std::cout << utility::json_spirit::write(loop, utility::json_spirit::pretty_print) << std::endl;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 

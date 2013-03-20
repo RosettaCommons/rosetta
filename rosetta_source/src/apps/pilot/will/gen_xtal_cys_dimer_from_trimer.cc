@@ -1054,6 +1054,9 @@ void dock(Pose & init, string fname) {
 }
 
 int main (int argc, char *argv[]) {
+
+	try {
+
   devel::init(argc,argv);
   using namespace basic::options::OptionKeys;
   for(Size ifn = 1; ifn <= option[in::file::s]().size(); ++ifn) {
@@ -1071,5 +1074,10 @@ int main (int argc, char *argv[]) {
     std::cout << "searching " << fn << std::endl;
     dock(pnat,fn);
   }
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 

@@ -53,6 +53,8 @@
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -82,6 +84,7 @@ is_locked( std::string const & fn ) {
 int
 main( int argc, char* argv [] )
 {
+	try {
 
 	using core::Real;
 	using core::Size;
@@ -201,4 +204,10 @@ main( int argc, char* argv [] )
 		PROF_STOP( SEQUENCE_COMPARISON );
 		prof_show();
 	} // for two_letter_codes
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+	
+	return 0;
 } // int main( int argc, char * argv [] )

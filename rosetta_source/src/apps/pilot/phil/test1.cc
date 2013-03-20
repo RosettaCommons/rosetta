@@ -24,6 +24,7 @@
 #include <core/scoring/GenBornPotential.hh>
 #include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/methods/Methods.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/MinMover.hh>
@@ -2859,6 +2860,7 @@ set_stub_transform_test()
 int
 main( int argc, char * argv [] )
 {
+	try{
 	using namespace basic::options;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2958,5 +2960,8 @@ main( int argc, char * argv [] )
 
 	simple_loop_modeling_test();
 	exit(0);
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl; 
+	} 
 
 }

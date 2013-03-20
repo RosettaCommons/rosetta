@@ -19,6 +19,7 @@
 #include <iostream>
 #include <string>
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <devel/init.hh>
 #include <core/pose/Pose.hh>
@@ -66,6 +67,8 @@
 
 int main(int argc, char *argv[])
 {
+    try {
+
 	using namespace core;
 	using namespace import_pose;
 	using namespace pose;
@@ -384,4 +387,8 @@ int main(int argc, char *argv[])
 	// create another loopmover (add loops)
 	protocols::loops::loop_mover::perturb::LoopMover_Perturb_CCD loopmover2 (protocols::loops::loop_mover::perturb::LoopMover_Perturb_CCD(loops, scorefxn));
 	std::cout << loopmover2 << std::endl;*/
+
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
 }

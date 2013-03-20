@@ -36,6 +36,9 @@ typedef numeric::xyzVector<core::Real> Vec;
 typedef numeric::xyzMatrix<core::Real> Mat;
 
 int main (int argc, char *argv[]) {
+
+	try {
+
 	devel::init(argc,argv);
 	using basic::options::option;
 	using namespace basic::options::OptionKeys;
@@ -49,6 +52,11 @@ int main (int argc, char *argv[]) {
 
 	}
 	return 0;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 
 

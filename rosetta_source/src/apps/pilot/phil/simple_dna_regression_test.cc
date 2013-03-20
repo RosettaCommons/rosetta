@@ -19,6 +19,7 @@
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/frags/TorsionFragment.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <protocols/viewer/viewers.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
@@ -4751,11 +4752,14 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
-
+	try{
 	// initialize option and random number system
 	devel::init( argc, argv );
 
 	protocols::viewer::viewer_main( my_main );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl; 
+	} 
 }
 
 		// 		// now do specificity calculation

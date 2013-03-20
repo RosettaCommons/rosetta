@@ -18,6 +18,7 @@
 #include <protocols/noesy_assign/PeakAssignmentParameters.hh>
 #include <protocols/noesy_assign/NoesyModule.hh>
 #include <protocols/noesy_assign/PeakFileFormat.hh>
+#include <utility/excn/Exceptions.hh>
 //#include <devel/NoesyAssign/NoeNetwork.hh>
 #include <devel/init.hh>
 
@@ -366,6 +367,7 @@ void run() {
 int
 main( int argc, char * argv [] )
 {
+	try{
 	register_options();
 	protocols::noesy_assign::PeakAssignmentParameters::register_options();
 	protocols::noesy_assign::PeakFileFormat_xeasy::register_options();
@@ -376,6 +378,8 @@ main( int argc, char * argv [] )
 	} catch ( utility::excn::EXCN_Base& anExcn ) {
 		anExcn.show( std::cerr );
 	}
-
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl; 
+	} 
 	return 0;
 }

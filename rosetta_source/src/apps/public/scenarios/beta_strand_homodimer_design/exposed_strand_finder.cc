@@ -85,7 +85,6 @@
 #include <utility/vector0.hh>
 
 
-
 static basic::Tracer TR("apps.public.beta_strand_homodimer_design.exposed_strand_finder");
 static basic::Tracer TRout("ExposedStrand");
 
@@ -662,7 +661,8 @@ void ExposedStrandMover::apply (core::pose::Pose & pose ) {
 int
 main( int argc, char * argv [] )
 {
-  //adding app specific options
+try {
+      	//adding app specific options
   option.add( check_rmsd, "Check RMSD of this strand against another." ).def(false);
   option.add( strand_span, "The span which the strand to compare is.  Format: ChainChar startPDBnum endPDBnum" );
   option.add( beta_length, "The min lenght of a beta sheet to count as exposed." ).def( 3 );
@@ -678,5 +678,7 @@ main( int argc, char * argv [] )
   protocols::jd2::JobDistributor::get_instance()->go( new ExposedStrandMover );
 
   std::cout << "Done! -------------------------------"<< std::endl;
-
+} catch ( utility::excn::EXCN_Base const & e ) {
+	std::cout << "caught exception " << e.msg() << std::endl;
+}
 } //end main

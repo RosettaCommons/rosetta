@@ -54,6 +54,8 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -72,6 +74,8 @@ using namespace basic::options::OptionKeys;
 int
 main( int argc, char* argv [] )
 {
+	try {
+
 	using core::Real;
 	using core::Size;
 
@@ -128,4 +132,10 @@ main( int argc, char* argv [] )
 		out << F( width, precision, *it ) << std::endl;
 	}
 	out.close();
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+	
+	return 0;
 } // int main( int argc, char * argv [] )

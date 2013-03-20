@@ -172,6 +172,9 @@ test_lh_counts(core::pose::Pose const & pose){
 }
 
 int main(int argc, char *argv[]) {
+
+	try {
+
 	using namespace basic::options::OptionKeys;
 	using namespace protocols::loophash;
 	using namespace numeric::geometry::hashing;
@@ -277,6 +280,11 @@ int main(int argc, char *argv[]) {
 			}
 		}
 
+	}
+
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 	}
 
 }

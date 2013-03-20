@@ -84,6 +84,9 @@ static core::io::silent::SilentFileData sfd;
 
 
 int main (int argc, char *argv[]) {
+
+	try {
+
 	
 	devel::init(argc,argv);
 
@@ -119,6 +122,11 @@ int main (int argc, char *argv[]) {
 	
 		pose.dump_pdb(infile+"_DL.pdb");
 	}	
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 
 

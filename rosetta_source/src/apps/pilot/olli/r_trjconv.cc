@@ -60,6 +60,7 @@
 
 
 #include <basic/options/option.hh>
+#include <utility/excn/Exceptions.hh>
 //#include <basic/options/OptionKeys.hh>
 #include <basic/options/after_opts.hh>
 #include <basic/options/option_macros.hh>
@@ -400,6 +401,7 @@ void checked_steal_fragment( Frame& frame, pose::Pose const& pose ) {
 int
 main( int argc, char * argv [] )
 {
+	try{
 	ThisApplication::register_options();
 	devel::init( argc, argv );
 	try {
@@ -421,6 +423,9 @@ main( int argc, char * argv [] )
 		std::cerr << "Exception : " << std::endl;
 		excn.show( std::cerr );
 	}
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl; 
+	} 
 	return 0;
 }
 

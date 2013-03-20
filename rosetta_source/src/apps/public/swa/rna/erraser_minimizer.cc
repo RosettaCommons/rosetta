@@ -116,6 +116,8 @@
 #include <iostream>
 #include <string>
 
+#include <utility/excn/Exceptions.hh>
+
 using namespace core;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
@@ -911,6 +913,7 @@ my_main ( void* ) {
 ///////////////////////////////////////////////////////////////////////////////
 int
 main ( int argc, char * argv [] ) {
+try {
 	utility::vector1< Size > blank_size_vector;
 	utility::vector1< std::string > blank_string_vector;
 	NEW_OPT ( out_pdb, "name of output pdb file", "" );
@@ -930,4 +933,7 @@ main ( int argc, char * argv [] ) {
 	// end of setup
 	////////////////////////////////////////////////////////////////////////////
 	protocols::viewer::viewer_main ( my_main );
+} catch ( utility::excn::EXCN_Base const & e ) {
+	std::cout << "caught exception " << e.msg() << std::endl;
+}
 }

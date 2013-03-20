@@ -575,6 +575,9 @@ void* doit(void*) {
 
 
 int main( int argc, char * argv [] ) {
+
+	try {
+
 	using namespace core::pose;
 	using basic::options::option;
 	using namespace basic::options::OptionKeys;
@@ -593,6 +596,11 @@ int main( int argc, char * argv [] ) {
 		func(NULL);
 	}
 	
+
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 }
 

@@ -82,7 +82,7 @@ private:  //  Data
 	inline void set_distmin(Size i, Size j, Real value ){    distmin_matrix[j  *length + i ] = value; }
 	inline void add_distmin(Size i, Size j, Real value ){    distmin_matrix[j  *length + i ] += value; }
 	Real        get_distmin(Size i, Size j ) const { return  distmin_matrix[j  *length + i ]; }
-	
+
 	inline void set_distmax(Size i, Size j, Real value ){    distmax_matrix[j  *length + i ] = value; }
 	inline void add_distmax(Size i, Size j, Real value ){   distmax_matrix[j *length + i ] += value; }
 	Real        get_distmax(Size i, Size j ) const { return distmax_matrix[j *length + i ]; }
@@ -123,13 +123,13 @@ void SimpleCstMover::write( const std::string &filename )
   Real dist_limit = 12;
 	for( Size i = 1;  i < pose.total_residue(); i ++ ){
 		for( Size j = i+3;  j < pose.total_residue(); j ++ ){
-			
+
 			if( get_distmax( i, j ) < 12 ){
 				if( get_distmax( i, j ) > get_distmin( i, j ) ) { std::cerr "ASSERTION"; }
 
 
 			}
-			
+
 			if ( dist < get_distmin( i, j ) ) set_distmin( i, j, dist );
 			if ( dist > get_distmax( i, j ) ) set_distmax( i, j, dist );
 			std::cout << "C " << count << " I " << i << " J " << j << " D " << distmin << std::endl;
@@ -149,21 +149,25 @@ void SimpleCstMover::write( const std::string &filename )
 int
 main( int argc, char * argv [] )
 {
-	devel::init(argc, argv);
-	using namespace protocols::moves;
-	SimpleCstMoverOP capture3mers =  new SimpleCstMover( 300 );
-	SequenceMoverOP seqmov = new SequenceMover;
-	seqmov->add_mover( capture3mers );
-	MoverOP mover = seqmov;
-	using namespace protocols::jd2;
-	try{
-		JobDistributor::get_instance()->go( mover );
-	} catch ( utility::excn::EXCN_Base& excn ) {
-		std::cerr << "Exception: " << std::endl;
-		excn.show( std::cerr );
-		std::cout << "Exception: " << std::endl;
-		excn.show( std::cout ); //so its also seen in a >LOG file
-	}
-	return 0;
+    try {
+    	devel::init(argc, argv);
+    	using namespace protocols::moves;
+    	SimpleCstMoverOP capture3mers =  new SimpleCstMover( 300 );
+    	SequenceMoverOP seqmov = new SequenceMover;
+    	seqmov->add_mover( capture3mers );
+    	MoverOP mover = seqmov;
+    	using namespace protocols::jd2;
+    	try{
+    		JobDistributor::get_instance()->go( mover );
+    	} catch ( utility::excn::EXCN_Base& excn ) {
+    		std::cerr << "Exception: " << std::endl;
+    		excn.show( std::cerr );
+    		std::cout << "Exception: " << std::endl;
+    		excn.show( std::cout ); //so its also seen in a >LOG file
+    	}
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 

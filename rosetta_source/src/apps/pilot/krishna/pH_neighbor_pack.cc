@@ -23,6 +23,7 @@
 #include <core/pose/util.hh>
 
 #include <devel/init.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
@@ -261,6 +262,7 @@ typedef utility::pointer::owning_ptr< PhProtocol > PhProtocolOP;
 int
 main( int argc, char * argv [] )
 {
+    try {
 //  using namespace protocols;
 //  using namespace protocols::jobdist;
 //  using namespace protocols::moves;
@@ -272,7 +274,10 @@ main( int argc, char * argv [] )
 //  protocols::jobdist::main_plain_mover( *pH_test );
 
   protocols::jd2::JobDistributor::get_instance()->go(pH_test);
-
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 
 

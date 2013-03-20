@@ -31,13 +31,15 @@
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
-
+#include <utility/excn/Exceptions.hh>
 
 basic::Tracer TR("ligand_dock.main");
 
 int
 main( int argc, char * argv [] )
 {
+	try {
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	option.add_relevant(in::path::database);
@@ -102,5 +104,10 @@ main( int argc, char * argv [] )
 	// Note: Another difference from the jd1 version of ligand_dock is that the job order for -s/-l isn't randomized
 
 	return ligand_dock_main();
-}
 
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
+	return 0;
+}

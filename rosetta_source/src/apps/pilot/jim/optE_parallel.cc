@@ -24,23 +24,30 @@
 
 // Protocol headers
 #include <protocols/optimize_weights/IterativeOptEDriver.hh>
+#include <utility/excn/Exceptions.hh>
+// #include <utility/file/file_sys_util.hh>
+// #include <utility/exit.hh>
 
 
 int
 main( int argc, char * argv [] )
 {
-#ifdef USEMPI
-	MPI_Init(&argc, &argv);
-#endif
+    try {
+    #ifdef USEMPI
+    	MPI_Init(&argc, &argv);
+    #endif
 
 
-	devel::init( argc, argv );
+    	devel::init( argc, argv );
 
-	protocols::optimize_weights::IterativeOptEDriver driver;
-	driver.go();
+    	protocols::optimize_weights::IterativeOptEDriver driver;
+    	driver.go();
 
-#ifdef USEMPI
-	MPI_Finalize();
-#endif
-
+    #ifdef USEMPI
+    	MPI_Finalize();
+    #endif
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }

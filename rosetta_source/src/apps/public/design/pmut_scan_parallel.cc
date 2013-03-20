@@ -28,6 +28,7 @@
 #include <utility/file/file_sys_util.hh>
 
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 
 
 static basic::Tracer TR("apps.pmut_scan_parallel");
@@ -49,6 +50,8 @@ basic::options::BooleanOptionKey const alter_spec_disruption_mode( "protocols::p
 
 int
 main( int argc, char * argv [] ) {
+
+	try {
 
 	using namespace basic::options;
 	// add application specific options to options system
@@ -91,6 +94,9 @@ main( int argc, char * argv [] ) {
 		protocols::pmut_scan::AlterSpecDisruptionDriver driver( pdb_file_names, double_mutant_scan, list_file, output_mutant_structures );
 		driver.set_ddG_cutoff(DDG_cutoff);
 		driver.go();
+	}
+	 } catch ( utility::excn::EXCN_Base const & e ) { 
+		 std::cout << "caught exception " << e.msg() << std::endl;
 	}
 
 	return 0;

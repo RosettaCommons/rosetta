@@ -43,7 +43,7 @@
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-
+#include <utility/excn/Exceptions.hh>
 
 using namespace core;
 using namespace protocols::protein_interface_design;
@@ -65,6 +65,7 @@ static basic::Tracer TR( "apps.public.rosetta_scripts.revert_design_to_native" )
 int
 main( int argc, char * argv [] )
 {
+	try {
 	using namespace core::pose;
 	using namespace core::scoring;
 	using namespace conformation;
@@ -114,7 +115,9 @@ main( int argc, char * argv [] )
 	}
 
 	pose_des.dump_scored_pdb( des_fname+".revert.pdb", *scorefxn );//, *scorefxn );
-
-	exit(0);
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+	return 0;
 }
 

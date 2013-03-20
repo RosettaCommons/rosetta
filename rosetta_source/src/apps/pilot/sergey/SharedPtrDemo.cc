@@ -52,6 +52,9 @@ void foo_const_intSP(intCSP) {}
 
 int main( int argc, char * argv [] )
 {
+
+	try {
+
 	intSP a;
 	foo_const_intSP(a);
 
@@ -84,4 +87,9 @@ int main( int argc, char * argv [] )
 	} */
 
 	return 0;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }

@@ -71,10 +71,14 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 
 int
 main( int argc, char * argv [] ) {
+	try {
+
 	// options, random initialization
 	devel::init( argc, argv );
 	using namespace core::scoring::constraints;
@@ -117,6 +121,10 @@ main( int argc, char * argv [] ) {
 		output.close();
 	} else {
 		utility_exit_with_message( "Error: file exists: " + filename  );
+	}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 	}
 
 	return 0;

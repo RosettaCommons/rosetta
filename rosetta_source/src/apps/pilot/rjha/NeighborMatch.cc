@@ -50,7 +50,7 @@ basic::options::StringOptionKey const master("local::master");
 int
 main( int argc, char* argv[] )
 {
-
+	try {
 	using basic::options::option;
 	option.add( local::nbr_residue, "residue whose neighbors we care about" ).def(62);
 	option.add( local::master, "master pose (other poses matched against this" ).def("ubc12.pdb");
@@ -107,6 +107,10 @@ main( int argc, char* argv[] )
 			}
 		}
 		TR << std::endl;
+	}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 	}
 
 	return 0;

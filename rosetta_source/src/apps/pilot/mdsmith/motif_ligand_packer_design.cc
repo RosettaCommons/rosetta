@@ -49,6 +49,7 @@ static basic::Tracer TR("apps.pilot.motif_dna_packer_design");
 #include <utility/vector1.hh>
 using utility::vector1;
 #include <utility/string_util.hh>
+#include <utility/excn/Exceptions.hh>
 using utility::string_split;
 
 // c++ headers
@@ -98,6 +99,7 @@ get_total_rebuild_fullatom_scorefxn()
 int
 main( int argc, char * argv [] )
 {
+    try {
 	using namespace options;
 	using namespace OptionKeys;
 
@@ -192,6 +194,9 @@ main( int argc, char * argv [] )
 		std::cout << "SUCCESSFUL COMPLETION" << std::endl;
 
 	}
-
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 

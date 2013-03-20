@@ -20,6 +20,7 @@
 #include <core/optimization/ParticleSwarmMinimizer.hh>
 #include <basic/options/option_macros.hh>
 #include <protocols/pockets/FingerprintMultifunc.hh>
+#include <utility/excn/Exceptions.hh>
 
 // Utility Headers
 #include <core/conformation/Residue.hh>
@@ -70,7 +71,7 @@ OPT_KEY( Real, origin_cutoff )
 //OPT_KEY( Integer, angle_increment )
 
 int main( int argc, char * argv [] ) {
-
+	try{
   NEW_OPT( central_relax_pdb_num, "target residue", "-1" );
   NEW_OPT( input_protein_file, "protein file name", "protein.pdb" );
   NEW_OPT( input_ligand_file, "ligand file name", "ligand.pdb" );
@@ -326,6 +327,9 @@ int main( int argc, char * argv [] ) {
 	core::pose::Pose oriented_pose = pf.get_oriented_pose(npf, best_vars[4], best_vars[5], best_vars[6], original_pocket_angle_transform, optimized_origin );
 	core::Real rmsd_value = pf.rmsd(original_pose, oriented_pose);
 	std::cout<<"RMSD ["<<tag<<"]: "<<rmsd_value<<std::endl;
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl; 
+	} 
 	return 0;
 
 }

@@ -76,6 +76,9 @@ using namespace core::scoring;
 int
 main( int argc, char * argv [] )
 {
+
+	try {
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -152,5 +155,10 @@ main( int argc, char * argv [] )
 
 	std::string outfile = option[ out::file::o ]();
 	core::io::pdb::dump_pdb( pose , outfile );
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 

@@ -82,6 +82,8 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 #include <numeric/random/random.hh>
 #include <core/import_pose/import_pose.hh>
@@ -114,7 +116,7 @@ static numeric::random::RandomGenerator RG(222578262);
 
 
 int main( int argc, char * argv[] ) {
-
+    try {
   // init option system
   devel::init(argc,argv);
 
@@ -166,6 +168,11 @@ int main( int argc, char * argv[] ) {
   }
 
   fout.close();
+
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
+        return 0;
 
 }
 

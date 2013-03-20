@@ -34,6 +34,8 @@
 #include <fstream>
 #include <iostream>
 
+#include <utility/excn/Exceptions.hh>
+
 using namespace core;
 using namespace ObjexxFCL;
 
@@ -117,7 +119,7 @@ private:
 
 
 int main( int argc, char * argv [] ) {
-
+    try {
     using namespace protocols;
     using namespace protocols::jobdist;
     using namespace protocols::moves;
@@ -140,6 +142,8 @@ int main( int argc, char * argv [] ) {
     Size cnt = all.calculate();
     time_end = time(NULL);
     trAllCrmsd << "Computed " << cnt <<" crmsd values in "<<(time_end - time_start)<<" seconds"<<std::endl;
-
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
     return 0;
 }

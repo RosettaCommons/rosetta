@@ -79,6 +79,8 @@ using basic::Error;
 int
 main( int argc, char* argv [] )
 {
+	try {
+
 	// options, random initialization
 	devel::init( argc, argv );
 
@@ -215,5 +217,10 @@ main( int argc, char* argv [] )
     }
 		//	} // for ntimes
 		output.close();
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 	return 0;
 }

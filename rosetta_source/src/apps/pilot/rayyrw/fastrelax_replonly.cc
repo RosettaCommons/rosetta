@@ -22,6 +22,7 @@
 #include <iostream>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
+#include <utility/excn/Exceptions.hh>
 #include <devel/init.hh>
 
 #include <basic/options/option.hh>
@@ -46,6 +47,7 @@
 // fast_relax_replonly.linuxgccrelease -in:file:s start.pdb -out:file:silent relax_replonly.out -out:file:silent_struct_type binary -nstruct 20
 int
 main ( int argc, char *argv[] ) {
+	try{
 	using namespace core;
 	using namespace protocols;
 	using namespace protocols::jd2;
@@ -60,6 +62,9 @@ main ( int argc, char *argv[] ) {
 	container->add_mover( new protocols::relax::FastRelax(score) );
 
 	JobDistributor::get_instance()->go(container);
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl; 
+	} 
 	return 0;
 }
 

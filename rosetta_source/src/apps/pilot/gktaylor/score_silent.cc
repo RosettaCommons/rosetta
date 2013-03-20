@@ -59,6 +59,8 @@
 
 #include <basic/Tracer.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 
 using basic::T;
@@ -85,6 +87,8 @@ using basic::Error;
 int
 main( int argc, char* argv [] )
 {
+	try {
+
 	// options, random initialization
 	devel::init( argc, argv );
 
@@ -155,6 +159,10 @@ main( int argc, char* argv [] )
 	core::Real score12_score = (*energy12scorefxn)(native_pose);
 	core::Real gdtmm_score = CA_gdtmm(native_pose, native_pose);
 	std::cout << "NATIVE" << '\t' << gdtmm_score << '\t' << constraint_score << '\t' << score12_score << '\n';
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 	return 0;
 }

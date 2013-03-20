@@ -30,6 +30,7 @@
 
 #include <utility/vector1.hh>
 
+#include <utility/excn/Exceptions.hh>
 
 basic::Tracer TR("cluster_anything");
 
@@ -89,7 +90,7 @@ void read_distances(std::istream & input,utility::vector1<utility::vector1<numer
 
 
 int main( int argc, char * argv [] ) {
-
+    try {
     using namespace numeric;
     using namespace basic::options;
     using namespace basic::options::OptionKeys;
@@ -129,7 +130,11 @@ int main( int argc, char * argv [] ) {
 	    std::cout<<" "<<std::setw(5)<<data_out[j];
 	std::cout<<"\n";
     }
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
 
     return 0;
 }
+
 

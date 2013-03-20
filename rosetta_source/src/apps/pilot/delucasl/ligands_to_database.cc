@@ -32,6 +32,7 @@ OPT_1GRP_KEY(String,ligand_import,database_mode)
 
 int main(int argc, char*argv[])
 {
+    try {
 
 	NEW_OPT(ligand_import::params_database_name,"name of the database to import params files into","");
 	NEW_OPT(ligand_import::params_database_pq_schema,"postgreSQL schema of the database to import params files into","");
@@ -72,5 +73,9 @@ int main(int argc, char*argv[])
 
 		residue_database_io.write_residuetype_to_database("fa_standard",*new_residue_type,db_session);
 	}
-
+    }
+    catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }

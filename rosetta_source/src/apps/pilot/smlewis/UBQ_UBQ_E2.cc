@@ -678,6 +678,9 @@ typedef utility::pointer::owning_ptr< UBQ_E2Mover > UBQ_E2MoverOP;
 int main( int argc, char* argv[] )
 {
 
+	try {
+
+
 	using basic::options::option;
 	using namespace basic::options::OptionKeys;
  	option.add( UBQpdb, "ubiquitin structure" ).def("1UBQ.pdb");
@@ -701,4 +704,9 @@ int main( int argc, char* argv[] )
 	TR << "************************d**o**n**e**************************************" << std::endl;
 
 	return 0;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }

@@ -52,7 +52,7 @@
 #include <core/sequence/util.hh>
 
 #include <utility/vector1.hh>
-
+#include <utility/excn/Exceptions.hh>
 
 // C++ headers
 
@@ -73,6 +73,7 @@ using namespace OptionKeys;
 int
 main( int argc, char * argv [] )
 {
+	try {
 	using namespace pose;
 	using namespace scoring;
 	using namespace conformation;
@@ -104,5 +105,10 @@ main( int argc, char * argv [] )
    //dump pdb to output
 	 std::string oFileName= basic::options::option[ out::file::o ]();
    pose.dump_pdb(oFileName);
-   exit(0);
+
+   } catch ( utility::excn::EXCN_Base const & e ) {
+	   std::cout << "caught exception " << e.msg() << std::endl;
+   }
+
+   return 0;
 }

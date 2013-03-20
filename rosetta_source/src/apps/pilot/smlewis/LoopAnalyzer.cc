@@ -53,6 +53,9 @@ public:
 int
 main( int argc, char* argv[] )
 {
+
+	try {
+
 	devel::init(argc, argv);
 
 	// read loops file
@@ -66,4 +69,9 @@ main( int argc, char* argv[] )
 	TR << "************************d**o**n**e**************************************" << std::endl;
 
 	return 0;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }

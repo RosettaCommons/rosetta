@@ -26,6 +26,7 @@
 #include <core/scoring/hbonds/HBondOptions.hh>
 // AUTO-REMOVED #include <ObjexxFCL/ObjexxFCL.hh>
 #include <ObjexxFCL/format.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <basic/Tracer.hh>
 
@@ -54,6 +55,7 @@ static basic::Tracer tr("apps.pilot.yfsong.plot_hb");
 
 int
 main (int argc, char *argv[]){
+	try {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -113,4 +115,7 @@ main (int argc, char *argv[]){
 
 	//	if ( option[ plot_hb::show_poly ]() ) core::scoring::hbonds::show_poly();
 
+	 } catch ( utility::excn::EXCN_Base const & e ) { 
+		 std::cout << "caught exception " << e.msg() << std::endl;
+	}
 }

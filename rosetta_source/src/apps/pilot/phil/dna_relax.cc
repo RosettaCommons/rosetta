@@ -17,6 +17,7 @@
 #include <devel/dna/relax_util.hh>
 #include <devel/dna/base_movers.hh>
 #include <devel/cartesian_frags/DNA_FragLib.hh>
+#include <utility/excn/Exceptions.hh>
 // #include <devel/dna/util.hh>
 // //#include <devel/dna/util.hh>
 // AUTO-REMOVED #include <protocols/loops/ccd_closure.hh>
@@ -359,9 +360,12 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
-
+	try{
 	// initialize option and random number system
 	devel::init( argc, argv );
 
 	protocols::viewer::viewer_main( my_main );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl; 
+	} 
 }

@@ -54,6 +54,9 @@
 // AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 
+#include <utility/excn/Exceptions.hh>
+
+
 class SetupMover : public protocols::moves::Mover {
 public:
 
@@ -137,6 +140,8 @@ void dump_pose(
 
 int
 main( int argc, char * argv [] ) {
+	try {
+
 	using namespace protocols;
 	using namespace protocols::jobdist;
 	using namespace protocols::moves;
@@ -202,4 +207,10 @@ main( int argc, char * argv [] ) {
 	min_mover.apply(pose);
 	std::string const fn_out( "post_min_final.pdb" );
 	pose.dump_pdb(fn_out);
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
+	return 0;
 }

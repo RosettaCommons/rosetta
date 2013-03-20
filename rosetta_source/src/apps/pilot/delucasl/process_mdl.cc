@@ -31,6 +31,7 @@
 
 int main(int argc, char*argv[])
 {
+    try {
   devel::init(argc, argv);
   std::list<std::string> file_list;
   if(basic::options::option[basic::options::OptionKeys::in::file::l].user())
@@ -90,7 +91,9 @@ int main(int argc, char*argv[])
 	  std::cout <<"wrote molfile" <<std::endl;
 
   }
-
-  return(0);
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
+        return 0;
 }
 

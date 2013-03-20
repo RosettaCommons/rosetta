@@ -409,6 +409,9 @@ int
 main( int argc, char * argv [] )
 {
 
+	try {
+
+
 	option.add( print_only_unsat, "Print only unsatisfied atoms" ).def(false);
 	NEW_OPT( bpf::variable_sasa_radii, "Use the ", false );
 
@@ -418,5 +421,10 @@ main( int argc, char * argv [] )
 	protocols::jd2::JobDistributor::get_instance()->go( new CalcsTestMover );
 
 	std::cout << "Done! -------------------------------"<< std::endl;
+
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 } //end main

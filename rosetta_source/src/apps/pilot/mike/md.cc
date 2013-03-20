@@ -128,14 +128,14 @@ public:
 
 		using namespace optimization;
 		using namespace protocols::cartesian;
-		
+
 		(*scorefxn_)(*pose);
 		scorefxn_->show(std::cout, *pose);
 
 		// setup the options
 		MinimizerOptions options( "dfpmin", 0.000010, true ,
 				false , false );
-		AtomTreeMinimizer minimizer;  
+		AtomTreeMinimizer minimizer;
 		std::cout << "MINTEST: p_aa_pp" << "\n";
 		std::cout << "start score: " << (*scorefxn_)( *pose ) << "\n";
 		minimizer.run( *pose, mm, *scorefxn_, options );
@@ -182,7 +182,7 @@ protected:
 int
 main( int argc, char * argv [] )
 {
-
+    try {
 	devel::init(argc, argv);
 
 	using namespace protocols::jobdist;
@@ -205,7 +205,7 @@ main( int argc, char * argv [] )
 	}
 
 	MoverOP protocol = md;
-  
+
 	try{
     protocols::jd2::JobDistributor::get_instance()->go( protocol );
   } catch ( utility::excn::EXCN_Base& excn ) {
@@ -215,4 +215,8 @@ main( int argc, char * argv [] )
     excn.show( std::cout ); //so its also seen in a >LOG file
   }
 
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }

@@ -44,6 +44,7 @@
 #include <core/optimization/CartesianMultifunc.hh>
 #include <core/optimization/CartesianMinimizer.hh>
 
+#include <utility/excn/Exceptions.hh>
 
 
 #include <core/pose/Pose.hh>
@@ -51,7 +52,6 @@
 
 #include <core/kinematics/MoveMap.hh>
 
-#include <utility/excn/Exceptions.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
@@ -163,9 +163,13 @@ my_main( void* ) {
 
 int
 main( int argc, char * argv [] ) {
-
+    try {
 	// initialize option and random number system
 	devel::init( argc, argv );
 
 	protocols::viewer::viewer_main( my_main );
-}
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
+        return 0;
+    }

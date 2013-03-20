@@ -53,6 +53,9 @@
 
 //Auto Headers
 #include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
+
+#include <utility/excn/Exceptions.hh>
+
 utility::vector1< int > calculate_burial(
 	core::pose::Pose & mypose,
 	core::Real const dist_cutoff
@@ -78,6 +81,8 @@ utility::vector1< int > calculate_burial(
 
 int
 main( int argc, char* argv [] ) {
+	try {
+
 	// options, random initialization
 	devel::init( argc, argv );
 
@@ -213,4 +218,10 @@ main( int argc, char* argv [] ) {
 			} // found a pose
 		} // for alns
 	} // for aln_files
+	
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
+	return 0;
 } // int main( int argc, char * argv [] )

@@ -23,6 +23,8 @@
 #include <iostream>
 #include <string>
 
+#include <utility/excn/Exceptions.hh>
+
 using namespace boost::spirit::classic;
 
 bool parse_numbers( char const* str, utility::vector1< core::Real > & v ) {
@@ -48,6 +50,8 @@ bool parse_numbers( char const* str, utility::vector1< core::Real > & v ) {
 
 int
 main( int argc, char * argv [] ) {
+	try {
+
 	using std::pair;
 	using core::Real;
 	using utility::vector1;
@@ -71,4 +75,9 @@ main( int argc, char * argv [] ) {
 	//	std::cout << it->first() << " => " << it->secong() << std::endl;
 	//}
 
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+	
+	return 0;
 } // main

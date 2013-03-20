@@ -15,6 +15,8 @@
 #include <set>
 #include <utility/vector1.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 template< typename T >
 utility::vector1< utility::vector1< T > >
 cartesian_product(
@@ -58,6 +60,8 @@ cartesian_product(
 
 int
 main( int /*argc*/, char* /*argv*/ [] ) {
+	try {
+
 	using std::set;
 	using utility::vector1;
 	set< char > set1;
@@ -87,4 +91,10 @@ main( int /*argc*/, char* /*argv*/ [] ) {
 		}
 		std::cout << std::endl;
 	}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+	
+	return 0;
 } // int main( int argc, char * argv [] )

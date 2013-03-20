@@ -229,7 +229,7 @@ private:
 
 ////////////////////////////////////////////////////////
 int main( int argc, char * argv [] ) {
-
+try {
     protocols::abinitio::ClassicAbinitio::register_options();
     protocols::abinitio::AbrelaxApplication::register_options();
     register_options();
@@ -237,7 +237,9 @@ int main( int argc, char * argv [] ) {
 
     DomainAssemblerNDocker job;
     job.run();
-
+} catch ( utility::excn::EXCN_Base const & e ) {
+                         std::cout << "caught exception " << e.msg() << std::endl;
+                            }
     return 0;
 }
 

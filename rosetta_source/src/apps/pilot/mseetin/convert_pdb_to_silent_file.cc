@@ -254,6 +254,7 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
+	try{
   using namespace basic::options;
 
 	NEW_OPT( output_silent_file, "output_silent_file", "");
@@ -270,6 +271,9 @@ main( int argc, char * argv [] )
   ////////////////////////////////////////////////////////////////////////////
 
   protocols::viewer::viewer_main( my_main );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 }
 

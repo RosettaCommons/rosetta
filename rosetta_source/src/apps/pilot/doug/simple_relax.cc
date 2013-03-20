@@ -46,7 +46,7 @@
 #include <core/import_pose/import_pose.hh>
 #include <protocols/relax/ClassicRelax.hh>
 
-
+#include <utility/excn/Exceptions.hh>
 
 
 // namespaces
@@ -68,6 +68,7 @@ void simple_relax( std::string pdb_filename, ScoreFunctionOP scorefxn );
 int
 main( int argc, char * argv [] )
 {
+    try {
 	// initialize
 	devel::init(argc, argv);
 
@@ -100,6 +101,10 @@ main( int argc, char * argv [] )
 	for(std::vector< FileName >::iterator i = pdb_file_names.begin(), i_end = pdb_file_names.end(); i != i_end; ++i) {
 		simple_relax( i->name(), scfxn );
 	}
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
+        return 0;
 }
 
 void simple_relax( std::string pdb_filename, ScoreFunctionOP scorefxn )

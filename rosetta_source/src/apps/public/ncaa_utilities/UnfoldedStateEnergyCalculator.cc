@@ -53,7 +53,7 @@
 #include <string>
 
 #include <utility/vector1.hh>
-
+#include <utility/excn/Exceptions.hh>
 
 using namespace core;
 using namespace core::scoring;
@@ -74,6 +74,7 @@ namespace usec {
 
 int main( int argc, char* argv[] )
 {
+	try {
  	// add application specific options to options system
 	option.add( usec::frag_size, "Sets the number of residues in each fragment, should be an odd number" ).def( 5 );
 	option.add( usec::residue_name, "Sets the three letter code of the residue typpe which the central residue will be mutated to" ).def( "LEU" );
@@ -119,6 +120,8 @@ int main( int argc, char* argv[] )
   T("UnfoldedStateEnergyCalculator") << "\n+-----------------------------------------------------------------+\n"
 																		 <<   "|                              DONE                               |\n"
 																		 <<   "+-----------------------------------------------------------------+" << std::endl;
-
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
   return 0;
 }

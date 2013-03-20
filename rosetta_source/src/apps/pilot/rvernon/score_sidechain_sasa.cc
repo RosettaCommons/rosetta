@@ -87,6 +87,9 @@ calculate_backbone_sasa(core::id::AtomID_Map< core::Real > & atom_sasa, core::po
 
 int
 main( int argc, char* argv [] ) {
+
+	try {
+
 	// options, random initialization
 	devel::init( argc, argv );
 
@@ -185,4 +188,9 @@ main( int argc, char* argv [] ) {
 	} // while ( input.has_another_pose() )
 
 	return 0;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }

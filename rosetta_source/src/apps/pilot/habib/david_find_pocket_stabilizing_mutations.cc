@@ -42,6 +42,8 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 using namespace core;
 using namespace core::scoring;
@@ -55,6 +57,7 @@ static basic::Tracer TR( "apps.pilot.nadeem_find_destabilizing_mutation.main" );
 int
 main( int argc, char * argv [] )
 {
+	try {
 
 	//NEW_OPT( chain_for_destabilization, "the chain ID which will harbor the destabilizing mutation", "A" );
 
@@ -236,7 +239,6 @@ main( int argc, char * argv [] )
 //			}
 
 //			outstream << std::endl;
-
 		}
 	}
 
@@ -244,6 +246,10 @@ main( int argc, char * argv [] )
 	outstream.clear();
 
 	TR << "Successfully finished computing ddGs" << std::endl;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 	return 0;
 }

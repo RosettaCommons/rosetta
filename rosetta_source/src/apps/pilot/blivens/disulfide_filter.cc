@@ -55,6 +55,7 @@ usage(char* msg)
 
 int main( int argc, char * argv [] )
 {
+  try {
 
 	//init options system
 	devel::init(argc, argv);
@@ -88,6 +89,10 @@ int main( int argc, char * argv [] )
         for(Size j(i+1); j<= pose.total_residue(); ++j) {
 
         }//end residue pair
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 	return 0;
 } // end main

@@ -136,6 +136,7 @@
 #include <utility/file/file_sys_util.hh>
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
+#include <utility/excn/Exceptions.hh>
 
 //new options stuff?
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -325,6 +326,7 @@ already_minimized(std::string query,utility::vector1<std::string> check){
 int
 main( int argc, char* argv [] )
 {
+    try {
 	using namespace core;
 	using namespace core::pose;
 	using namespace utility;
@@ -413,4 +415,8 @@ main( int argc, char* argv [] )
 			//then minimize
 		}
 	}
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }

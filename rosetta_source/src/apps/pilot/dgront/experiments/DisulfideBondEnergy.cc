@@ -27,6 +27,8 @@
 #include <numeric/xyz.functions.hh>
 #include <core/kinematics/types.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 // Numeric headers
 #include <numeric/xyzMatrix.hh>
 
@@ -287,6 +289,7 @@ double DisulfideBondEnergy::tabulate(pose::Pose &pose, int cysId1, int cysId2) {
 
 int main(int argc, char * argv[]) {
 
+  try {
   devel::init(argc, argv);
   register_options();
 
@@ -307,4 +310,9 @@ int main(int argc, char * argv[]) {
     std::cout << ssEn->rebuildAndDetectDisulfideBond(init_pose, id1, -72.029, id2, -69.2231) << std::endl;
     //    tabulate(init_pose, id1, id2);
   }
+  } catch ( utility::excn::EXCN_Base const & e ) {
+                            std::cout << "caught exception " << e.msg() << std::endl;
+                                }
+      return 0;
+
 }

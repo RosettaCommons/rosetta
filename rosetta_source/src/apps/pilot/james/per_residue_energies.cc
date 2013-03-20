@@ -39,6 +39,8 @@
 
 #include <string>
 
+#include <utility/excn/Exceptions.hh>
+
 void all_pair_energies(
 	core::pose::Pose & pose,
 	core::scoring::ScoreFunctionOP scorefxn,
@@ -68,6 +70,8 @@ void all_pair_energies(
 
 int
 main( int argc, char* argv [] ) {
+	try {
+
 	devel::init( argc, argv );
 
 	using core::Size;
@@ -145,6 +149,10 @@ main( int argc, char* argv [] ) {
 			} // for current_pose.total_residue()
 		}
 	} // while ( input.has_another_pose() )
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 	return 0;
 }

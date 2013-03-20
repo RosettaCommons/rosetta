@@ -19,6 +19,7 @@
 #include <core/optimization/CartesianMinimizer.hh>
 #include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
+#include <utility/excn/Exceptions.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -387,6 +388,7 @@ my_main( void* ) {
 int
 main( int argc, char * argv [] )
 {
+	try{
 	NEW_OPT(edrr::dump, "dump high.pdb and low.pdb", false);
 	NEW_OPT(edrr::dump_asymm, "dump asymm high.pdb and low.pdb", false);
 	NEW_OPT(edrr::debug, "debug - trials=1", false);
@@ -404,4 +406,7 @@ main( int argc, char * argv [] )
 	std::string outfile = basic::options::option[ basic::options::OptionKeys::edrr::prefix ]() + ".flips.txt";
 	std::ofstream out( outfile.c_str() );
 	globals::reporter.print_flips( out );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl; 
+	} 
 }

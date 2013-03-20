@@ -27,6 +27,8 @@
 #include <core/fragment/picking/scores/FragmentScoringMethod.hh>
 #include <utility>
 
+#include <utility/excn/Exceptions.hh>
+
 //Auto Headers
 #include <utility/io/mpistream.hh>
 
@@ -132,9 +134,13 @@ void register_options() {
 
 
 int main(int argc, char * argv[]) {
-
+    try {
 	register_options();
 	devel::init(argc, argv);
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
+        return 0;
 
 
 //	my_picker->set_candidates_collector(3, collector);

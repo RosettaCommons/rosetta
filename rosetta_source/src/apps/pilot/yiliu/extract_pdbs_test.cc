@@ -55,6 +55,7 @@
 #include <core/optimization/MinimizerOptions.hh>
 
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <basic/Tracer.hh>
 using basic::T;
@@ -108,6 +109,7 @@ virtual void apply( core::pose::Pose & pose ) {
 int
 main( int argc, char* argv [] )
 {
+	try {
 	// options, random initialization
 	devel::init( argc, argv );
 
@@ -156,5 +158,8 @@ main( int argc, char* argv [] )
 		// pose.dump_pdb( iter->decoy_tag() + ".fix_repack_min.pdb" );
 	}
 
+	 } catch ( utility::excn::EXCN_Base const & e ) { 
+		 std::cout << "caught exception " << e.msg() << std::endl;
+	}
 	return 0;
 } // main

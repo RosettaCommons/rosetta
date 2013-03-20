@@ -519,6 +519,9 @@ void run() {
 
 int main (int argc, char *argv[]) {
 
+	try {
+
+
   // Vec p(-6.456746, 5.922204, -0.982538);
   // Vec d(0.393718,  0.677101,  0.621707);
   // Vec v(0.000000,  0.000000,  0.000000);
@@ -532,6 +535,11 @@ int main (int argc, char *argv[]) {
 
   devel::init(argc,argv);
   run();
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 
 

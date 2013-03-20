@@ -22,6 +22,7 @@
 
 // Unit Headers
 #include <utility/stream_util.hh>
+#include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 #include <basic/basic.hh>
 #include <devel/init.hh>
@@ -74,6 +75,7 @@ static basic::Tracer TR("apps.pilot.yiliu.DC");
 
 int main( int argc, char * argv [] )
 {
+	try {
 
   using namespace core;
 	using namespace core::io;
@@ -118,6 +120,9 @@ int main( int argc, char * argv [] )
 		for (Size j=1;j <=  decoy_poses.size(); ++j){
 			dc.output_sqc_file(native_poses[j], decoy_poses[j], pdb_codes[j], sqc);
 		}
+	}
+	 } catch ( utility::excn::EXCN_Base const & e ) { 
+		 std::cout << "caught exception " << e.msg() << std::endl;
 	}
 }
 

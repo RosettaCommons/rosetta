@@ -140,6 +140,9 @@ void real_test_GA()
 
 int main( int argc, char * argv [] )
 {
+
+	try {
+
 	devel::init(argc, argv);
 
 	//test_GA();
@@ -147,5 +150,10 @@ int main( int argc, char * argv [] )
 
 	TR << "GA test ended. --------------------------------" << std::endl;
 	return 0;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 

@@ -56,6 +56,8 @@
 #include <basic/options/keys/frags.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -363,6 +365,8 @@ private:
 int
 main( int argc, char* argv [] )
 {
+	try {
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -479,4 +483,10 @@ main( int argc, char* argv [] )
 	} // frag_sizes
 
 	std::cout << "end of program." << std::endl;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+	
+	return 0;
 } // int main( int argc, char * argv [] )

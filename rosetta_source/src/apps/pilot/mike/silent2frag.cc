@@ -38,6 +38,7 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 
 
 using basic::T;
@@ -110,30 +111,34 @@ void FragCaptureMover::write( const std::string &filename )
 int
 main( int argc, char * argv [] )
 {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace protocols::moves;
+    try {
+    	using namespace basic::options;
+    	using namespace basic::options::OptionKeys;
+    	using namespace protocols::moves;
 
-	devel::init(argc, argv);
-	jd2::register_options();
+    	devel::init(argc, argv);
+    	jd2::register_options();
 
-	FragCaptureMoverOP capture3mers =  new FragCaptureMover(3);
-	FragCaptureMoverOP capture9mers =  new FragCaptureMover(9);
+    	FragCaptureMoverOP capture3mers =  new FragCaptureMover(3);
+    	FragCaptureMoverOP capture9mers =  new FragCaptureMover(9);
 
-	SequenceMoverOP seqmov = new SequenceMover;
-	if ( option[ run::idealize_before_protocol ]() ) {
-		seqmov->add_mover( new protocols::idealize::IdealizeMover );
-	}
+    	SequenceMoverOP seqmov = new SequenceMover;
+    	if ( option[ run::idealize_before_protocol ]() ) {
+    		seqmov->add_mover( new protocols::idealize::IdealizeMover );
+    	}
 
-	seqmov->add_mover( capture3mers );
-	seqmov->add_mover( capture9mers );
-	MoverOP mover = seqmov;
-	protocols::jd2::JobDistributor::get_instance()->go( seqmov );
+    	seqmov->add_mover( capture3mers );
+    	seqmov->add_mover( capture9mers );
+    	MoverOP mover = seqmov;
+    	protocols::jd2::JobDistributor::get_instance()->go( seqmov );
 
-	std::string prefix = "";
-	if ( option[ out::prefix ].user() ) prefix = option[ out::prefix ]() + "_" ;
-	capture3mers->write( prefix + "aa3mer.1_3" );
-	capture9mers->write( prefix + "aa9mer.1_3" );
+    	std::string prefix = "";
+    	if ( option[ out::prefix ].user() ) prefix = option[ out::prefix ]() + "_" ;
+    	capture3mers->write( prefix + "aa3mer.1_3" );
+    	capture9mers->write( prefix + "aa9mer.1_3" );
 
-	return 0;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }

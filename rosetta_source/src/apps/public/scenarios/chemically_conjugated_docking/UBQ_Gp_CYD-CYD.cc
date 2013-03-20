@@ -87,7 +87,7 @@
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 #include <basic/prof.hh>
-
+#include <utility/excn/Exceptions.hh>
 // C++ headers
 #include <string>
 
@@ -731,6 +731,7 @@ typedef utility::pointer::owning_ptr< UBQ_GTPase_disulfide_Mover > UBQ_GTPase_di
 
 int main( int argc, char* argv[] )
 {
+try {
 	//initialize options
 	devel::init(argc, argv);
 	basic::prof_reset();
@@ -745,6 +746,8 @@ int main( int argc, char* argv[] )
 	basic::prof_show();
 	TR << "NOTE on interpreting results: the interface energies are somewhat broken due to there being a disulfide across the interface; the bond is still scored in the separated state, which leads to enormously bad bond-length energies.  This biases by about 6000 energy units.  Relative ranking (which is all you should do anyway) is still correct." << std::endl;
 	TR << "************************d**o**n**e**************************************" << std::endl;
-
+} catch ( utility::excn::EXCN_Base const & e ) {
+	std::cout << "caught exception " << e.msg() << std::endl;
+}
 	return 0;
 }

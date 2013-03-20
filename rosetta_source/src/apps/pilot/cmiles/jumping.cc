@@ -27,6 +27,8 @@
 #include <protocols/jumping/util.hh>
 
 int main(int argc, char* argv[]) {
+	try {
+
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   devel::init(argc, argv);
@@ -41,4 +43,10 @@ int main(int argc, char* argv[]) {
 
   std::cout << "orientation: " << orientation << std::endl;
   std::cout << "pleating: " << pleating << std::endl;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
+	return 0;
 }

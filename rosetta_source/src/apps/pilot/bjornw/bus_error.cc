@@ -10,15 +10,19 @@
 int
 main( int argc, char * argv [] )
 {
+  try{
+    utility::io::ozstream(output);
+    output.open("bus_error3");
+    output << "TEST1\n"  << std::endl;
+    output.close();
 
-	utility::io::ozstream(output);
-	output.open("bus_error3");
-	output << "TEST1\n"  << std::endl;
-	output.close();
+    std::ofstream output2 ("bus_error.std3");
+    output2 << "TEST2\n";
+    output2.close();
 
+  } catch ( utility::excn::EXCN_Base const & e ) {
+    std::cout << "caught exception " << e.msg() << std::endl;
+  }
 
-	std::ofstream output2 ("bus_error.std3");
-	output2 << "TEST2\n";
-	output2.close();
-
+  return 0;
 }

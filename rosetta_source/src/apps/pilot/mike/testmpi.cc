@@ -16,6 +16,7 @@
 #include <cstdio>
 
 #include <devel/init.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <ObjexxFCL/FArray4D.hh>
 
@@ -27,6 +28,7 @@
 int
 main( int argc, char * argv [] )
 {
+    try {
 	// initialize core
 	devel::init(argc, argv);
 	//protocols::wum::MPI_Relax wum;
@@ -82,7 +84,10 @@ main( int argc, char * argv [] )
 ///
 ///	core::Real a=1e-20;
 ///	for( int inf=0; inf < 1; inf=inf) a = a*1.00000001;
-	return 0;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 
 

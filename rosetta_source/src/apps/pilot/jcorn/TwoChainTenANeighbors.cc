@@ -149,6 +149,8 @@ TwoChainTenANeighbors::TwoChainTenANeighbors() { }	// empty constructor
 int
 main( int argc, char* argv[] )
 {
+	try {
+
 	pose::Pose pose;
 	devel::init( argc, argv );
 
@@ -173,5 +175,8 @@ main( int argc, char* argv[] )
 			TI << *chain1 << *chain2 << " " << interface.second << std::endl;
 		}
 	}
-}	// END main
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+ }	// END main
 

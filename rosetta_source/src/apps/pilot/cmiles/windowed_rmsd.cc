@@ -68,7 +68,8 @@ void show(const string& filename, const vector1<Real>& rmsds) {
 }
 
 int main(int argc, char* argv[]) {
-  using namespace basic::options;
+  try {
+    using namespace basic::options;
   using namespace basic::options::OptionKeys;
   devel::init(argc, argv);
 
@@ -86,5 +87,9 @@ int main(int argc, char* argv[]) {
     vector1<Real> rmsds;
     compute_windowed_rmsd(*reference, model, window, &rmsds);
     show(filename, rmsds);
-  }
+  } 
+  } catch ( utility::excn::EXCN_Base const & e ) {
+                            std::cout << "caught exception " << e.msg() << std::endl;
+                                }
+      return 0;
 }

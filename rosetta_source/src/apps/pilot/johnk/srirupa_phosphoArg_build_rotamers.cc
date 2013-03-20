@@ -43,6 +43,7 @@
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/string_util.hh>
+#include <utility/excn/Exceptions.hh>
 #include <numeric/xyzVector.hh>
 #include <basic/Tracer.hh>
 
@@ -67,7 +68,7 @@ static basic::Tracer TR( "apps.pilot.srirupa_phosphoArg_build_rotamers.main" );
 int
 main( int argc, char * argv [] )
 {
-
+    try {
 	NEW_OPT( phosphotyr_num, "which residue the starting pY is", 0 );
 	NEW_OPT( phosphotyr_chain, "which chain is the starting pY is on", "P" );
 	NEW_OPT( match_distance_cutoff, "required distance from Arg N to pTyr O", 1.0 );
@@ -306,7 +307,10 @@ main( int argc, char * argv [] )
 
 	TR << "Successfully finished building Args" << std::endl;
 
-	return 0;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 
 

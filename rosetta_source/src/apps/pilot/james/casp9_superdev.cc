@@ -44,6 +44,8 @@
 #include <fstream>
 #include <algorithm>
 
+#include <utility/excn/Exceptions.hh>
+
 class SuperDeviationMover;
 typedef utility::pointer::owning_ptr< SuperDeviationMover > SuperDeviationMoverOP;
 using core::Size;
@@ -198,6 +200,8 @@ private:
 
 int
 main( int argc, char * argv [] ) {
+	try {
+
 	using namespace protocols::moves;
 	using namespace protocols::jobdist;
 	using namespace core::chemical;
@@ -219,6 +223,10 @@ main( int argc, char * argv [] ) {
 	SuperDeviationMoverOP mover( new SuperDeviationMover( native_pose ) );
 	not_universal_main( *mover );
 	mover->print_stats();
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 	return 0;
 } // int main

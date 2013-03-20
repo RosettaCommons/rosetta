@@ -36,6 +36,9 @@
 
 //Auto Headers
 #include <numeric/random/random.fwd.hh>
+
+#include <utility/excn/Exceptions.hh>
+
 utility::vector1< unsigned int >
 get_dm(
 	core::pose::Pose & pose,
@@ -88,6 +91,8 @@ void print_dm(
 
 int
 main( int argc, char* argv [] ) {
+	try {
+
 	devel::init( argc, argv );
 
 	using core::pose::Pose;
@@ -161,6 +166,10 @@ main( int argc, char* argv [] ) {
 	}
 
 	//print_debug_information( responsibilities );
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 	return 0;
 }

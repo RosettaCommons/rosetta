@@ -62,6 +62,8 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 using namespace core;
 using namespace core::scoring;
@@ -82,6 +84,8 @@ std::set <std::string> interface;
 int
 main( int argc, char * argv [] )
 {
+	try {
+
 std::vector<std::string> surface;
 std::set <std::string> interface;
   NEW_OPT ( fa_file, "File name for fasta data","");
@@ -168,6 +172,11 @@ std::set <std::string> interface;
 
   pose.pdb_info()->obsolete(false);
   pose.dump_pdb("test.pdb");
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
   return 0;
 
 }

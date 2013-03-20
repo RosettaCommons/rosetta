@@ -84,6 +84,8 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 using namespace core;
 using namespace basic;
 using namespace protocols;
@@ -564,6 +566,7 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
+try {
 	using namespace basic::options;
 
 	//Uh, options?
@@ -590,5 +593,7 @@ main( int argc, char * argv [] )
 	////////////////////////////////////////////////////////////////////////////
 
 	protocols::viewer::viewer_main( my_main );
-
+} catch ( utility::excn::EXCN_Base const & e ) {
+	std::cout << "caught exception " << e.msg() << std::endl;
+}
 }

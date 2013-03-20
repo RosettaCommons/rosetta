@@ -58,6 +58,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <ObjexxFCL/format.hh>
+#include <utility/excn/Exceptions.hh>
 
 // C++ header
 #include <fstream>
@@ -476,7 +477,7 @@ typedef utility::pointer::owning_ptr< PickBAB > PickBABOP;
 int
 main( int argc, char * argv [] )
 {
-
+	try{
 	ThisApplication::register_options();
 
 	// init
@@ -488,7 +489,9 @@ main( int argc, char * argv [] )
 
 	// run
 	protocols::jd2::JobDistributor::get_instance()->go( protocol );
-
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 	return 0;
 
 }

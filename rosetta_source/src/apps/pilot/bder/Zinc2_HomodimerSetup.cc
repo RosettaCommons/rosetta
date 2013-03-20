@@ -445,6 +445,8 @@ typedef utility::pointer::owning_ptr< Zinc2_HomodimerSetup > Zinc2_HomodimerSetu
 int
 main( int argc, char* argv[] )
 {
+	try {
+
   using basic::options::option;
   option.add( match1, "match1" ).def("match1.pdb");
   option.add( match2, "match2" ).def("match2.pdb");
@@ -457,6 +459,11 @@ main( int argc, char* argv[] )
   protocols::jd2::JobDistributor::get_instance()->go( new Zinc2_HomodimerSetup() );
 
   TR << "************************d**o**n**e**************************************" << std::endl;
+
+	} catch (utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
   return 0;
 }
 

@@ -42,6 +42,7 @@ main( int argc, char * argv [] )
 #include <basic/options/option.hh>
 #include <basic/options/after_opts.hh>
 #include <basic/Tracer.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/fragment/BBTorsionSRFD.hh>
@@ -622,10 +623,14 @@ void* my_main( void * )
 int
 main( int argc, char * argv [] )
 {
+	try{
 	ThisApplication::register_options();
 	//FoldConstraint::register_options()
 	devel::init( argc, argv );
 	protocols::viewer::viewer_main( my_main );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl; 
+	} 
 	return 0;
 }
 

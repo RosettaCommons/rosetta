@@ -390,6 +390,9 @@ void cyclic_superimpose(Pose & move, Pose const & ref) {
 // }
 
 int main( int argc, char * argv [] ) {
+
+	try {
+
 	using namespace core::pose;
 	using basic::options::option;
 	using namespace basic::options::OptionKeys;
@@ -434,6 +437,11 @@ int main( int argc, char * argv [] ) {
 	for(Size i = 1; i <= targets_in.size(); ++i) {
 		cyclic_superimpose(targets_in[i],targets_in[argmin]);
 		targets_in[i].dump_pdb("aligned_"+ObjexxFCL::lead_zero_string_of(i,6)+".pdb");
+	}
+
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 	}
 
 }

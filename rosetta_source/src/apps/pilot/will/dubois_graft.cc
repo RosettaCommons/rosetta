@@ -125,6 +125,9 @@ int
 main( int argc, char * argv [] )
 {
 
+	try {
+
+
 	using namespace core;
 	using namespace pose;
 	using namespace protocols;
@@ -230,6 +233,11 @@ main( int argc, char * argv [] )
 			TR << "dumping best " << fname << " " << imodel << " ntot " << ntot << " nmin " << nmin << std::endl;
 			best.dump_pdb( option[out::file::o]+"/"+fname+"__"+lead_zero_string_of(imodel,2)+"__best.pdb");
 		}
+	}
+
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 	}
 
 }

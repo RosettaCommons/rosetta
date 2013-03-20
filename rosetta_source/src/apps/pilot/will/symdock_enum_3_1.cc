@@ -1462,6 +1462,9 @@ struct TCDock {
 
 };
 int main (int argc, char *argv[]) {
+
+	try {
+
 	register_options();
 	devel::init(argc,argv);
 	using basic::options::option;
@@ -1494,6 +1497,11 @@ int main (int argc, char *argv[]) {
 		}
 	}
 	cout << "DONE testing: refactor SICFast scores 2" << endl;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 
 

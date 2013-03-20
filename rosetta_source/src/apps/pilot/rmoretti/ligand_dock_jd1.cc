@@ -209,6 +209,9 @@ ligand_dock_main_jd1()
 int
 main( int argc, char * argv [] )
 {
+
+	try {
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	option.add_relevant(in::path::database);
@@ -248,5 +251,10 @@ main( int argc, char * argv [] )
 	devel::init(argc, argv);
 
 	return ligand_dock_main_jd1();
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 

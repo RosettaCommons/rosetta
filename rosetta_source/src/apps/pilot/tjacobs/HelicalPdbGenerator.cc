@@ -99,6 +99,9 @@ void HelicalPdbGeneratorMover::apply(core::pose::Pose & pose){
 int
 main( int argc, char * argv [] )
 {
+
+	try {
+
   using namespace std;
   using namespace utility;
   using namespace core;
@@ -109,4 +112,9 @@ main( int argc, char * argv [] )
   protocols::jd2::JobDistributor::get_instance()->go( new HelicalPdbGeneratorMover() );
 
   std::cout << "Done! -------------------------------\n";
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }

@@ -77,6 +77,7 @@
 #include <core/io/pdb/pose_io.hh>
 
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
@@ -119,6 +120,7 @@ using io::pdb::dump_pdb;
 int
 main( int argc, char * argv [] )
 {
+    try {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// setup
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -211,5 +213,8 @@ main( int argc, char * argv [] )
 //
 //	(*scorefxn)(*pose);
 //	scorefxn->show(std::cout, *pose);
-
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }

@@ -44,6 +44,7 @@
 //Auto Headers
 #include <core/chemical/AtomType.hh>
 #include <protocols/moves/MoverStatistics.hh>
+#include <utility/excn/Exceptions.hh>
 
 using basic::T;
 using basic::Error;
@@ -294,7 +295,7 @@ void CountContact::apply ( pose::Pose & pose ){
 int
 main( int argc, char * argv [] )
 {
-
+	try{
 	option.add( ncontact::dist, "distance of contact" );
 	option.add( ncontact::seqsep,  "sequence separation distance of sequence to be counted" );
 
@@ -313,7 +314,9 @@ main( int argc, char * argv [] )
   protocol = new CountContact( dist, sep );
 
 	universal_main( *protocol );
-
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 	return 0;
 
 }

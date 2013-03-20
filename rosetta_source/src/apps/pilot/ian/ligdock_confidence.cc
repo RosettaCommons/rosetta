@@ -57,12 +57,16 @@
 #include <core/io/pdb/file_data.hh>
 #include <core/pose/Pose.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 
 
 int
 main( int argc, char * argv [] )
 {
+	try {
+
 	using core::conformation::ResidueOP;
 	using basic::options::option;
 	using utility::vector1;
@@ -209,6 +213,10 @@ main( int argc, char * argv [] )
 		out << std::endl;
 	}
 	out.close();
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 	return 0;
 }

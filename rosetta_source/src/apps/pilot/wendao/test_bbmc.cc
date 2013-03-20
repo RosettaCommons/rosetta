@@ -231,6 +231,9 @@ string get_filename(string const suffix, core::Real t) {
 
 int main( int argc, char * argv [] )
 {
+
+	try {
+
 	//all
 	NEW_OPT(mc::ntrials, "number of Monte Carlo trials to run", 1000);
 	NEW_OPT(mc::kt, "value of kT for Monte Carlo", 0.56);
@@ -279,6 +282,11 @@ int main( int argc, char * argv [] )
 	protocols::viewer::viewer_main( my_main );
 
 	return 0;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 
 

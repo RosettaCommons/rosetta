@@ -273,6 +273,9 @@ void repack_pose( pose::Pose & pose, scoring::ScoreFunctionOP scorefxn ) {
 int
 main( int argc, char* argv[] ) {
 
+	try {
+
+
 	//
 	// add application specific options to options system
 	//
@@ -672,5 +675,10 @@ main( int argc, char* argv[] ) {
 
 
 	} // now do it all over for another structure
+
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 }

@@ -43,6 +43,7 @@
 #include <utility/file/FileName.hh>
 #include <utility/io/izstream.hh>
 #include <utility/options/keys/OptionKey.hh>
+#include <utility/excn/Exceptions.hh>
 
 // boost headers
 #include <boost/lexical_cast.hpp>
@@ -481,6 +482,7 @@ void * graphics_main( void * ) {
 
 
 int main( int argc, char * argv [] ) {
+	try {
 	using namespace basic::options::OptionKeys;
 	using basic::options::option;
 
@@ -509,6 +511,9 @@ int main( int argc, char * argv [] ) {
 	}
 
 	protocols::viewer::viewer_main( graphics_main );
+	 } catch ( utility::excn::EXCN_Base const & e ) { 
+		 std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 	return 0;
 }

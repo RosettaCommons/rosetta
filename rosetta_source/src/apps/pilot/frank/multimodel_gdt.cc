@@ -20,6 +20,8 @@
 #include <protocols/comparative_modeling/hybridize/util.hh>
 #include <utility/vector1.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 void
 superimpose_tmalign( core::pose::Pose const & ref_pose, core::pose::Pose & pose) {
@@ -107,7 +109,8 @@ multimodel_gdt( core::pose::Pose const & ref_pose, utility::vector1<core::pose::
 
 int
 main( int argc, char * argv [] ) {
-	using namespace basic::options;
+    try {
+        using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	devel::init(argc, argv);
 	
@@ -119,5 +122,9 @@ main( int argc, char * argv [] ) {
 		superimpose_tmalign ( *native , models[i]);
 	}
 	multimodel_gdt( *native, models );
-}
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
+        return 0;
+    }
 

@@ -27,6 +27,7 @@ using namespace core;
 
 int main( int argc, char * argv [] )
 {
+  try {
 	devel::init( argc, argv );
 	utility::vector1< protocols::jobdist::BasicJobOP > input_jobs = protocols::jobdist::load_s_and_l();
 	pose::Pose pose;
@@ -76,6 +77,10 @@ int main( int argc, char * argv [] )
 		loop_pose.dump_pdb( "test_sweep_" + utility::to_string( ii ) + ".pdb" );
 
 		++ii;
+	}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 	}
 
 	return 0;

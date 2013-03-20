@@ -15,6 +15,7 @@
 
 #include <devel/init.hh>
 
+#include <utility/excn/Exceptions.hh>
 
 
 #include <boost/algorithm/string.hpp>
@@ -80,6 +81,7 @@ void ReportStubTargetEnergy(core::Size stub, core::Real energy)
 
 int main( int argc, char * argv [] )
 {
+    try {
 	using basic::options::option;
   using namespace basic::options::OptionKeys;
 
@@ -198,4 +200,9 @@ int main( int argc, char * argv [] )
 	stubIdentityFile.close();
 	stubstubEnergyFile.close();
 	stubtargetEnergyFile.close();
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
+        return 0;
+
 }

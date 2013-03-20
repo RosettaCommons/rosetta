@@ -22,6 +22,7 @@
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/after_opts.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <protocols/simple_moves/ScoreMover.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
@@ -253,7 +254,7 @@ interface_rmsd(
 
 
 int main( int argc, char * argv [] ){
-
+	try{
 	NEW_OPT( cst_force_constant, "coordinate constraint force constant", 0.5 );
         NEW_OPT( print_init, "print the initial complex for debugging", true );
         NEW_OPT( print_unbound, "print the mimized protein for debugging", true );
@@ -497,6 +498,9 @@ int main( int argc, char * argv [] ){
  
 	outstream.close();
         outstream.clear();
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl; 
+	} 
 	return 0;
 
 

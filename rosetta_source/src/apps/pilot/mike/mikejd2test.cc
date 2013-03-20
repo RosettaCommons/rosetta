@@ -133,6 +133,7 @@
 #include <utility/io/util.hh>
 #include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
+
 // C++ headers
 #include <cstdlib>
 #include <string>
@@ -222,10 +223,11 @@ void run() {
 int
 main( int argc, char * argv [] )
 {
-	devel::init( argc, argv );
+	try {
 
-	try{
+		devel::init( argc, argv );
 		run();
+
 	} catch ( utility::excn::EXCN_Base& excn ) {
 		std::cerr << "Exception : " << std::endl;
 		excn.show( std::cerr );

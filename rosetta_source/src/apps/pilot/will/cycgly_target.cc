@@ -513,6 +513,9 @@ void target_constraints(core::pose::Pose & pose, core::pose::Pose const & refpos
 
 
 int main( int argc, char * argv [] ) {
+
+	try {
+
 	using namespace core::pose;
 	using basic::options::option;
 	using namespace basic::options::OptionKeys;
@@ -840,26 +843,8 @@ int main( int argc, char * argv [] ) {
 	}
 	TR << "FINAL " << trial->num_accepts() << " accpets " << ntransitions << " transitions " << posebins.size() << " bins filled " << std::endl;
 
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

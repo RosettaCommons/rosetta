@@ -31,6 +31,7 @@
 // AUTO-REMOVED #include <basic/options/util.hh>
 #include <devel/init.hh>
 #include <basic/Tracer.hh>
+#include <utility/excn/Exceptions.hh>
 using basic::T;
 using basic::Error;
 using basic::Warning;
@@ -54,7 +55,7 @@ my_main( void *)
 int
 main( int argc, char * argv [] )
 {
-
+	try{
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
 
@@ -93,7 +94,9 @@ main( int argc, char * argv [] )
 
     protocols::flxbb::FlxbbDesign_main();
   }
-
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
   return 1;
 }
 

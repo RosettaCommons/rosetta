@@ -50,6 +50,9 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <core/chemical/ChemicalManager.hh>
 
+#include <utility/excn/Exceptions.hh>
+
+
 
 // AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 // AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
@@ -66,7 +69,8 @@
 
 
 int main(int argc, char **argv) {
-	using namespace basic::options;
+    try {
+    using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::io::silent;
@@ -115,6 +119,8 @@ int main(int argc, char **argv) {
 		}
 
 	} // while( input.has_another_pose() )
-
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
 	return 0;
 }

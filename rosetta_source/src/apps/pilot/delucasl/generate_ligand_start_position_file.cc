@@ -30,6 +30,7 @@ OPT_KEY(String,start_position_file)
 
 int main(int argc, char*argv[])
 {
+    try {
 	NEW_OPT(ligand_chain,"the name of the ligand chain","");
 	NEW_OPT(start_position_file,"the name of the file to output to","");
 
@@ -78,5 +79,8 @@ int main(int argc, char*argv[])
 	outfile.open(outfile_path.c_str());
 	outfile <<utility::json_spirit::write(json_data,utility::json_spirit::pretty_print);
 	outfile.close();
-
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  } 
+    return 0;
 }

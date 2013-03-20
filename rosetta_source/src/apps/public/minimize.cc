@@ -50,7 +50,7 @@
 #include <core/kinematics/Jump.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-
+#include <utility/excn/Exceptions.hh>
 
 #if defined(WIN32) || defined(__CYGWIN__)
 	#include <ctime>
@@ -164,6 +164,7 @@ Minimize::get_name() const {
 int
 main( int argc, char * argv [] )
 {
+	try {
 	using namespace protocols::moves;
 	using namespace scoring;
 
@@ -171,4 +172,7 @@ main( int argc, char * argv [] )
 
 	MoverOP protocol = new Minimize();
 	protocols::jd2::JobDistributor::get_instance()->go( protocol );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 }

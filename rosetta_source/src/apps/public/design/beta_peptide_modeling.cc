@@ -60,6 +60,7 @@
 #include <utility/tools/make_vector1.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyzVector.hh>
@@ -464,6 +465,7 @@ my_main ( )
 int
 main( int argc, char * argv [] )
 {
+	try {
 
 	using namespace basic::options;
 	utility::vector1< Size > blank_size_vector;
@@ -486,6 +488,10 @@ main( int argc, char * argv [] )
 	////////////////////////////////////////////////////////////////////////////
 
 	my_main();
+
+	 } catch ( utility::excn::EXCN_Base const & e ) { 
+		 std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 	return 0;
 }

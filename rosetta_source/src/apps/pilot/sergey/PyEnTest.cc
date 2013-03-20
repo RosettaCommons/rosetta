@@ -103,6 +103,9 @@ core::scoring::methods::EnergyMethodOP MyCI1B_Creator::create_energy_method(core
 
 int main( int argc, char * argv [] )
 {
+
+	try {
+
 	using namespace core;
 
 	core::scoring::methods::PyEnergyMethodRegistrator ENC( new MyCI1B_Creator() );
@@ -119,5 +122,10 @@ int main( int argc, char * argv [] )
 	scorefxn->set_method_weights(core::scoring::python, v);
 
 	std::cout << "Score:" << scorefxn->score(*pose) << std::endl;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 

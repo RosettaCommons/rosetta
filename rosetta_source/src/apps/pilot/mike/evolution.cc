@@ -19,6 +19,7 @@
 
 #include <utility/file/FileName.hh>
 #include <utility/string_util.hh>
+#include <utility/excn/Exceptions.hh>
 //#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/rms_util.hh>
@@ -440,7 +441,7 @@ void processChildrenIntensification(
 int
 main( int argc, char * argv [] )
 {
-
+    try {
 	devel::init(argc, argv);
 
 	using namespace protocols::jobdist;
@@ -537,7 +538,10 @@ main( int argc, char * argv [] )
 
 	outfile.close();
 	std::cout << "Normal termination." << std::endl;
-	return 0;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 
 

@@ -65,6 +65,9 @@ int
 main( int argc, char * argv [] )
 {
 
+	try {
+
+
 	NEW_OPT( chain_for_destabilization, "the chain ID which will harbor any mutations", "A" );
 
 	devel::init(argc, argv);
@@ -280,6 +283,11 @@ main( int argc, char * argv [] )
 	TR << "Successfully finished computing ddGs" << std::endl;
 
 	return 0;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 
 

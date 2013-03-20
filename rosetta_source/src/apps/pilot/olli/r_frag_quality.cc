@@ -51,6 +51,7 @@
 
 #include <ObjexxFCL/string.functions.hh>
 #include <basic/options/option_macros.hh>
+#include <utility/excn/Exceptions.hh>
 
 
 #include <utility/io/izstream.hh>
@@ -714,7 +715,7 @@ FragSetOP filter_frags( FragSet const& frags_in, std::string const& filter_file 
 
 
 int main( int argc, char** argv ) {
-
+	try{
 	ThisApplication::register_options();
 	devel::init( argc, argv );
 
@@ -995,6 +996,9 @@ int main( int argc, char** argv ) {
 		}
 		// now try some frag insertion and look if jump-qual stays invariant
 	}
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl; 
+	} 
 }
 
 

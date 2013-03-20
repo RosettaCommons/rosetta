@@ -25,6 +25,8 @@
 #include <protocols/frag_picker/scores/FragmentScoringMethod.hh>
 #include <utility>
 
+#include <utility/excn/Exceptions.hh>
+
 //Auto Headers
 #include <utility/io/mpistream.hh>
 
@@ -59,7 +61,7 @@ void register_options() {
 }
 
 int main(int argc, char * argv[]) {
-
+    try {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -112,4 +114,10 @@ int main(int argc, char * argv[]) {
 		pickIt->get_score_manager()->describe_fragments(frags_rescored,
 				std::cerr);
 	}
+    } catch ( utility::excn::EXCN_Base const & e ) {
+                              std::cout << "caught exception " << e.msg() << std::endl;
+                                  }
+        return 0;
+
 }
+

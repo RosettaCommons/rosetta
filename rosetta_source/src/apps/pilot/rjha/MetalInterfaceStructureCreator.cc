@@ -105,6 +105,8 @@ basic::options::BooleanOptionKey const RMS_mode("MetalInterface::RMS_mode");
 int
 main( int argc, char* argv[] )
 {
+	try {
+
 	//add extra options to option system
 	///.def call sets the defaults
 	using basic::options::option;
@@ -356,5 +358,10 @@ main( int argc, char* argv[] )
 	protocols::jd2::JobDistributor::get_instance()->go(mover);
 
 	TR << "************************d**o**n**e**********************************" << std::endl;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
   return 0;
 }

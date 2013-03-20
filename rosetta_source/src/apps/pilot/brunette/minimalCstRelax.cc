@@ -145,6 +145,8 @@ void output_caAtomsToConstraint(const std::set< Size> caAtomsToConstrain,const S
 }
 
 int main( int argc, char * argv [] ) {
+	try {
+
 	using namespace protocols;
 	using namespace relax;
 	using namespace devel::cstEnergyBalance;
@@ -200,5 +202,11 @@ int main( int argc, char * argv [] ) {
 			sfd.write_silent_struct(*ss,option[ out::file::silent ]());
 		}
 	}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
+	return 0;
 }
 

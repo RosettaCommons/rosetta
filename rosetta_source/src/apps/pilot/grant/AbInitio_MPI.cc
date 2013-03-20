@@ -49,6 +49,8 @@
 #include <utility/exit.hh>
 #include <numeric/random/random.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 using basic::T;
 using basic::Error;
 using basic::Warning;
@@ -148,6 +150,8 @@ typedef utility::pointer::owning_ptr< AbInitio_MPI > AbInitio_MPIOP;
 
 int main( int argc, char* argv[] )
 {
+	try {
+
 	using basic::options::option;
 	using namespace basic::options::OptionKeys;
 
@@ -155,6 +159,10 @@ int main( int argc, char* argv[] )
 
 	protocols::jd2::JobDistributor::get_instance()->go(new AbInitio_MPI);
 	TR << "************************d**o**n**e**************************************" << std::endl;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 	return 0;
 }

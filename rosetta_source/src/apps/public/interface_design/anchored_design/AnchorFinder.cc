@@ -59,6 +59,8 @@
 // C++ headers
 #include <string>
 
+#include <utility/excn/Exceptions.hh>
+
 using basic::T;
 using basic::Error;
 using basic::Warning;
@@ -232,6 +234,7 @@ typedef utility::pointer::owning_ptr< AnchorFinderMover > AnchorFinderMoverOP;
 
 int main( int argc, char* argv[] )
 {
+	try {
 	using basic::options::option;
 	option.add( window_size, "window size for loops").def(5);
 	option.add( loopness, "fraction of residues in window that need to be loop").def(0.6);
@@ -242,6 +245,9 @@ int main( int argc, char* argv[] )
 	protocols::jd2::JobDistributor::get_instance()->go(new AnchorFinderMover);
 
 	TR << "************************d**o**n**e**************************************" << std::endl;
-
+	}
+	catch (utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception" << e.msg() << std::endl;
+	}
 	return 0;
 }

@@ -43,6 +43,7 @@
 // C++ header
 #include <fstream>
 #include <map>
+#include <utility/excn/Exceptions.hh>
 
 typedef core::Size Size;
 typedef std::string String;
@@ -182,7 +183,7 @@ typedef utility::pointer::owning_ptr< Sasa > SasaOP;
 int
 main( int argc, char * argv [] )
 {
-
+	try{
 	//
 	// option.add( sasa::output_name, "output name" );
 	// init
@@ -197,7 +198,9 @@ main( int argc, char * argv [] )
 
 	// run
 	protocols::jd2::JobDistributor::get_instance()->go( protocol );
-
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 	return 0;
 
 }

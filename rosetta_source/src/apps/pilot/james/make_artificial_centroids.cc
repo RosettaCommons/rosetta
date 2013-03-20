@@ -43,6 +43,8 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 core::Size count_backbone_atoms(
 	core::pose::Pose const & pose
 ) {
@@ -83,6 +85,8 @@ core::Real calc_sdev(
 
 int
 main( int argc, char * argv [] ) {
+	try {
+
 	using namespace core::chemical;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -157,6 +161,10 @@ main( int argc, char * argv [] ) {
 		}
 	}
 	pose.dump_pdb( "artificial_centroid.pdb" );
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 	return 0;
 } // int main

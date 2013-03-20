@@ -30,6 +30,7 @@
 
 // c++ headers
 #include <string>
+#include <utility/excn/Exceptions.hh>
 
 using namespace core;
 using namespace utility;
@@ -55,6 +56,7 @@ BooleanOptionKey const phe_tyr_hack( "mrlo::phe_tyr_hack" );
 int
 main( int argc, char * argv [] )
 {
+	try {
 
 	// add application specific options to core options system
 	option.add( mrlo::rot_lib_options_file, "Input file for make_rot_lib protocol" );
@@ -170,6 +172,10 @@ main( int argc, char * argv [] )
 	}
 
 	dunbrack_print( final_rotamers, centroids, aa_name );
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
  return 0;
 }

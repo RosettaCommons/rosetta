@@ -41,6 +41,8 @@
 // option key includes
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
@@ -69,6 +71,7 @@ namespace loops_from_density { IntegerOptionKey max_strand_melt( "loops_from_den
 int
 main( int argc, char* argv [] )
 {
+	try {
 	option.add( loops_from_density::max_helix_melt, "Max dist to eat into a helix" ).def( -1 );
 	option.add( loops_from_density::max_strand_melt, "Max dist to eat into a strand" ).def( -1 );
 	option.add( loops_from_density::frac_loop, "Fraction of loop residues" ).def( 0.35 );
@@ -312,4 +315,8 @@ main( int argc, char* argv [] )
 		}
 	}
 	return 0;
+	}
+	catch (utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 }

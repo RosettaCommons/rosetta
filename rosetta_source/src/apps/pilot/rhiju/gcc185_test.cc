@@ -558,6 +558,9 @@ repack_minimize_test( ){
 int
 main( int argc, char * argv [] )
 {
+
+	try {
+
 	using namespace core::options;
 	using namespace core::options::OptionKeys;
 
@@ -574,4 +577,9 @@ main( int argc, char * argv [] )
 
 	repack_minimize_test();
 	exit(0);
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }

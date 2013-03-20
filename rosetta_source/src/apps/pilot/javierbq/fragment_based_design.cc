@@ -40,6 +40,8 @@
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/Job.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
@@ -148,6 +150,8 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
 int main( int argc, char** argv ) {
+	try {
+
 	ThisApplication::register_options();
 	devel::init( argc, argv );
 	// mover
@@ -157,4 +161,10 @@ int main( int argc, char** argv ) {
 	// run
 	protocols::jd2::JobDistributor::get_instance()->go( protocol );
 	
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+	
+	return 0;
+
 }

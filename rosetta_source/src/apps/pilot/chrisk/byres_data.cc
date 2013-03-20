@@ -2033,6 +2033,8 @@ my_main( void*)
 int
 main( int argc, char * argv [] )
 {
+	try {
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace utility;
@@ -2051,6 +2053,11 @@ main( int argc, char * argv [] )
 
 	protocols::viewer::viewer_main( my_main );
 
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
+	return 0;
 }
 
 

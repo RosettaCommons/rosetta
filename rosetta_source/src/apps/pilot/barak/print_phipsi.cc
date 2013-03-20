@@ -155,6 +155,7 @@ printBondAngles(core::Size const seqpos, core::pose::Pose & pose)
 int
 main( int argc, char * argv [] )
 {
+	try {
   using namespace core;
   using namespace std;
 
@@ -179,6 +180,8 @@ main( int argc, char * argv [] )
       printBondAngles(i, pose);
     }
 
-  exit(0);
-
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+	return 0;
 }

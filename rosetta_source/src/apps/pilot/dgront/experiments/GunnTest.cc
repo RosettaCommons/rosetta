@@ -29,6 +29,8 @@
 #include <protocols/abinitio/GunnCost.hh>
 #include <utility/vector1.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
@@ -97,7 +99,7 @@ public:
 
 
 int main(int argc, char * argv[]) {
-
+try {
     using namespace protocols;
     using namespace protocols::jobdist;
     using namespace protocols::moves;
@@ -107,6 +109,9 @@ int main(int argc, char * argv[]) {
 
     GunnTest test;
     not_universal_main( test );
+} catch ( utility::excn::EXCN_Base const & e ) {
+                          std::cout << "caught exception " << e.msg() << std::endl;
+                              }
 
   return 0;
 }

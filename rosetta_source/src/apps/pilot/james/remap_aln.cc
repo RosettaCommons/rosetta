@@ -43,11 +43,15 @@
 //Auto Headers
 #include <basic/Tracer.fwd.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 
 ///////////////////////////////////////////////////////////////////////////////
 
 int
 main( int argc, char* argv [] ) {
+	try {
+
 	using std::map;
 	using std::string;
 	using core::Size;
@@ -133,4 +137,11 @@ main( int argc, char* argv [] ) {
 		} // for alns
 	} // for align_fns
 	output.close();
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+	
+	return 0;
+
 } // int main( int argc, char * argv [] )

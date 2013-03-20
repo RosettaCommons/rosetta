@@ -87,7 +87,7 @@ char torsion2big_bin(core::Real const phi,  core::Real const psi,  core::Real co
 
 
 int main( int argc, char * argv [] ) {
-
+try {
     using namespace protocols;
     using namespace protocols::jobdist;
     using namespace protocols::moves;
@@ -99,6 +99,8 @@ int main( int argc, char * argv [] ) {
 
     PrintFeatures f;
     not_universal_main( f );    
-    
+} catch ( utility::excn::EXCN_Base const & e ) {
+                         std::cout << "caught exception " << e.msg() << std::endl;
+                            }
     return 0;
 }

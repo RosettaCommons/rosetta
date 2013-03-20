@@ -2625,6 +2625,9 @@ calculate_total_hASA_within_distance_avgresiduevalues_allnbs_conditionalonnumnbs
 int
 main( int argc, char* argv[] )
 {
+
+	try {
+
 	clock_t starttime = clock();
 	//basic::prof_reset();
 
@@ -2694,5 +2697,10 @@ main( int argc, char* argv[] )
 	TR << "Whole run took " << ((double) stoptime - starttime )/CLOCKS_PER_SEC << " seconds" << std::endl;
 
 	return 0;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 

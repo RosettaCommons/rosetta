@@ -67,6 +67,8 @@ void RDCScoreMover::apply( core::pose::Pose& pose ) {
 
 int main( int argc, char * argv []   ){
 
+	try {
+
 	using namespace protocols::scoring;
 	using namespace protocols::jd2;
 
@@ -99,5 +101,9 @@ int main( int argc, char * argv []   ){
 		excn.show( std::cout ); //so its also seen in a >LOG file
 	}
 
+ 	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+ 
 	return 0;
 }

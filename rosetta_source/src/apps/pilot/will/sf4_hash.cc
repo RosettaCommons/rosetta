@@ -350,8 +350,16 @@ void run_sf4h() {
 
 
 int main (int argc, char *argv[]) {
+
+	try {
+
 	devel::init(argc,argv);
 	run_sf4h();
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 
 

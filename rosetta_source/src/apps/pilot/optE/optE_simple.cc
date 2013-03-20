@@ -20,6 +20,7 @@
 
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
+#include <utility/excn/Exceptions.hh>
 // AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 // AUTO-REMOVED #include <core/chemical/ResidueSelector.hh>
 // AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
@@ -503,9 +504,13 @@ simple_opte_test()
 int
 main( int argc, char * argv [] )
 {
+	try{
 	//using namespace core;
 	devel::init( argc, argv );
 
 	simple_opte_test();
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl; 
+	} 
 
 }

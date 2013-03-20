@@ -92,6 +92,8 @@
 #include <basic/options/keys/james.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 class InteractionDistMinimizer : public protocols::moves::Mover {
 public:
 	InteractionDistMinimizer( core::Real const dist, core::Real const sdev )
@@ -178,9 +180,15 @@ my_main( void* ) {
 int
 main( int argc, char* argv [] )
 {
+	try {
+
 	// options, random initialization
 	devel::init( argc, argv );
 	protocols::viewer::viewer_main( my_main );
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 	return 0;
 } // int main

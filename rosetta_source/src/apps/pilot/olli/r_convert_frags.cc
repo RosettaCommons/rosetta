@@ -26,6 +26,7 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/util.hh>
+#include <utility/excn/Exceptions.hh>
 // option key includes
 
 
@@ -64,6 +65,7 @@ static numeric::random::RandomGenerator RG(489923);  // <- Magic number, do not 
 
 static basic::Tracer tr("main");
 int main( int argc, char** argv ) {
+	try{
   register_options();
   devel::init( argc, argv );
 
@@ -96,4 +98,7 @@ int main( int argc, char** argv ) {
   }
 
   FragmentIO().write_data( option[ OptionKeys::o ](), *new_frags );
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl; 
+	} 
 }

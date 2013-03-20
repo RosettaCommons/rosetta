@@ -29,6 +29,7 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/MoveMap.hh>
 
+#include <utility/excn/Exceptions.hh>
 //#include <utility/vector1.hh>
 //#include <utility/vector0.hh>
 
@@ -36,6 +37,8 @@
 
 int main(int argc, char *argv[])
 {
+    try {
+
 	using namespace std;
 	using namespace core;
 	using namespace import_pose;
@@ -235,4 +238,9 @@ int main(int argc, char *argv[])
 	cout << "  5 " << pose.chi(5, n_res) << endl;
 
 	pose.dump_pdb("/home/labonte/Workspace/test_output/modified_sugar.pdb", "");
+
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
