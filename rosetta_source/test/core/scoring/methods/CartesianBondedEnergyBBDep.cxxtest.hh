@@ -80,99 +80,99 @@ class CartesianBondedEnergyBBDepTests : public CxxTest::TestSuite {
 		std::cout.precision( before_precision );*/
 
 		{
-		EnergyMap emap;
-		cartbond_energy.residue_pair_energy( trpcage.residue( 1 ), trpcage.residue( 2 ), trpcage, sfxn, emap );
-		TS_ASSERT_DELTA( emap[ cart_bonded ], 0.3994754367186968, 1e-12 );
+			EnergyMap emap;
+			cartbond_energy.residue_pair_energy( trpcage.residue( 1 ), trpcage.residue( 2 ), trpcage, sfxn, emap );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 6.968293646104515, 1e-12 );
 		}
 		{
-		EnergyMap emap;
-		cartbond_energy.residue_pair_energy( trpcage.residue( 2 ), trpcage.residue( 3 ), trpcage, sfxn, emap );
-		TS_ASSERT_DELTA( emap[ cart_bonded ], 0.2070896125666696, 1e-12 );
+			EnergyMap emap;
+			cartbond_energy.residue_pair_energy( trpcage.residue( 2 ), trpcage.residue( 3 ), trpcage, sfxn, emap );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.8909275044636028, 1e-12 );
 		}
 		{
-		EnergyMap emap;
-		cartbond_energy.residue_pair_energy( trpcage.residue( 3 ), trpcage.residue( 4 ), trpcage, sfxn, emap );
-		TS_ASSERT_DELTA( emap[ cart_bonded ], 2.782866996648841, 1e-12 );
+			EnergyMap emap;
+			cartbond_energy.residue_pair_energy( trpcage.residue( 3 ), trpcage.residue( 4 ), trpcage, sfxn, emap );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 3.111314555249422, 1e-12 );
 		}
 		{
-		EnergyMap emap;
-		cartbond_energy.residue_pair_energy( trpcage.residue( 4 ), trpcage.residue( 5 ), trpcage, sfxn, emap );
-		TS_ASSERT_DELTA( emap[ cart_bonded ], 0.1150886226500914, 1e-12 );
+			EnergyMap emap;
+			cartbond_energy.residue_pair_energy( trpcage.residue( 4 ), trpcage.residue( 5 ), trpcage, sfxn, emap );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.3014325170163838, 1e-12 );
 		}
 		{
-		EnergyMap emap;
-		cartbond_energy.residue_pair_energy( trpcage.residue( 5 ), trpcage.residue( 6 ), trpcage, sfxn, emap );
-		TS_ASSERT_DELTA( emap[ cart_bonded ], 0.02043241918649873, 1e-12 );
+			EnergyMap emap;
+			cartbond_energy.residue_pair_energy( trpcage.residue( 5 ), trpcage.residue( 6 ), trpcage, sfxn, emap );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 1.77975110067326, 1e-12 );
 		}
 		{
-		EnergyMap emap;
-		cartbond_energy.residue_pair_energy( trpcage.residue( 6 ), trpcage.residue( 7 ), trpcage, sfxn, emap );
-		TS_ASSERT_DELTA( emap[ cart_bonded ], 0.01170111577615789, 1e-12 );
+			EnergyMap emap;
+			cartbond_energy.residue_pair_energy( trpcage.residue( 6 ), trpcage.residue( 7 ), trpcage, sfxn, emap );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.9650596084597788, 1e-12 );
 		}
 		{
-		EnergyMap emap;
-		cartbond_energy.residue_pair_energy( trpcage.residue( 7 ), trpcage.residue( 8 ), trpcage, sfxn, emap );
-		TS_ASSERT_DELTA( emap[ cart_bonded ], 0.2049078012120293, 1e-12 );
+			EnergyMap emap;
+			cartbond_energy.residue_pair_energy( trpcage.residue( 7 ), trpcage.residue( 8 ), trpcage, sfxn, emap );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.8859399081172433, 1e-12 );
 		}
 		{
-		EnergyMap emap;
-		cartbond_energy.residue_pair_energy( trpcage.residue( 8 ), trpcage.residue( 9 ), trpcage, sfxn, emap );
-		TS_ASSERT_DELTA( emap[ cart_bonded ], 0.008866757864350676, 1e-12 );
+			EnergyMap emap;
+			cartbond_energy.residue_pair_energy( trpcage.residue( 8 ), trpcage.residue( 9 ), trpcage, sfxn, emap );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.1863744488877972, 1e-12 );
 		}
 		{
-		EnergyMap emap;
-		cartbond_energy.residue_pair_energy( trpcage.residue( 9 ), trpcage.residue( 10 ), trpcage, sfxn, emap );
-		TS_ASSERT_DELTA( emap[ cart_bonded ], 0.5115106086310054, 1e-12 );
+			EnergyMap emap;
+			cartbond_energy.residue_pair_energy( trpcage.residue( 9 ), trpcage.residue( 10 ), trpcage, sfxn, emap );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 1.125469148785068, 1e-12 );
 		}
 		{
-		EnergyMap emap;
-		cartbond_energy.residue_pair_energy( trpcage.residue( 10 ), trpcage.residue( 11 ), trpcage, sfxn, emap );
-		TS_ASSERT_DELTA( emap[ cart_bonded ], 0.0007661434506721868, 1e-12 );
+			EnergyMap emap;
+			cartbond_energy.residue_pair_energy( trpcage.residue( 10 ), trpcage.residue( 11 ), trpcage, sfxn, emap );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.03930233029517332, 1e-12 );
 		}
 		{
-		EnergyMap emap;
-		cartbond_energy.residue_pair_energy( trpcage.residue( 11 ), trpcage.residue( 12 ), trpcage, sfxn, emap );
-		TS_ASSERT_DELTA( emap[ cart_bonded ], 0.001019615323618801, 1e-12 );
+			EnergyMap emap;
+			cartbond_energy.residue_pair_energy( trpcage.residue( 11 ), trpcage.residue( 12 ), trpcage, sfxn, emap );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.03835009728494011, 1e-12 );
 		}
 		{
-		EnergyMap emap;
-		cartbond_energy.residue_pair_energy( trpcage.residue( 12 ), trpcage.residue( 13 ), trpcage, sfxn, emap );
-		TS_ASSERT_DELTA( emap[ cart_bonded ], 0.000703677789453935, 1e-12 );
+			EnergyMap emap;
+			cartbond_energy.residue_pair_energy( trpcage.residue( 12 ), trpcage.residue( 13 ), trpcage, sfxn, emap );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.5728329847982782, 1e-12 );
 		}
 		{
-		EnergyMap emap;
-		cartbond_energy.residue_pair_energy( trpcage.residue( 13 ), trpcage.residue( 14 ), trpcage, sfxn, emap );
-		TS_ASSERT_DELTA( emap[ cart_bonded ], 0.3593849331270751, 1e-12 );
+			EnergyMap emap;
+			cartbond_energy.residue_pair_energy( trpcage.residue( 13 ), trpcage.residue( 14 ), trpcage, sfxn, emap );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.9963137225847645, 1e-12 );
 		}
 		{
-		EnergyMap emap;
-		cartbond_energy.residue_pair_energy( trpcage.residue( 14 ), trpcage.residue( 15 ), trpcage, sfxn, emap );
-		TS_ASSERT_DELTA( emap[ cart_bonded ], 15.02174992874151, 1e-12 );
+			EnergyMap emap;
+			cartbond_energy.residue_pair_energy( trpcage.residue( 14 ), trpcage.residue( 15 ), trpcage, sfxn, emap );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 15.64759174392195, 1e-12 );
 		}
 		{
-		EnergyMap emap;
-		cartbond_energy.residue_pair_energy( trpcage.residue( 15 ), trpcage.residue( 16 ), trpcage, sfxn, emap );
-		TS_ASSERT_DELTA( emap[ cart_bonded ], 0.01570813289364886, 1e-12 );
+			EnergyMap emap;
+			cartbond_energy.residue_pair_energy( trpcage.residue( 15 ), trpcage.residue( 16 ), trpcage, sfxn, emap );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.05331704731068346, 1e-12 );
 		}
 		{
-		EnergyMap emap;
-		cartbond_energy.residue_pair_energy( trpcage.residue( 16 ), trpcage.residue( 17 ), trpcage, sfxn, emap );
-		TS_ASSERT_DELTA( emap[ cart_bonded ], 0.1368371139246994, 1e-12 );
+			EnergyMap emap;
+			cartbond_energy.residue_pair_energy( trpcage.residue( 16 ), trpcage.residue( 17 ), trpcage, sfxn, emap );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 2.460850015440859, 1e-12 );
 		}
 		{
-		EnergyMap emap;
-		cartbond_energy.residue_pair_energy( trpcage.residue( 17 ), trpcage.residue( 18 ), trpcage, sfxn, emap );
-		TS_ASSERT_DELTA( emap[ cart_bonded ], 0.00033584504494431, 1e-12 );
+			EnergyMap emap;
+			cartbond_energy.residue_pair_energy( trpcage.residue( 17 ), trpcage.residue( 18 ), trpcage, sfxn, emap );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.5684130621501057, 1e-12 );
 		}
 		{
-		EnergyMap emap;
-		cartbond_energy.residue_pair_energy( trpcage.residue( 18 ), trpcage.residue( 19 ), trpcage, sfxn, emap );
-		TS_ASSERT_DELTA( emap[ cart_bonded ], 0.0004992971808154046, 1e-12 );
+			EnergyMap emap;
+			cartbond_energy.residue_pair_energy( trpcage.residue( 18 ), trpcage.residue( 19 ), trpcage, sfxn, emap );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.565957465191082, 1e-12 );
 		}
 		{
-		EnergyMap emap;
-		cartbond_energy.residue_pair_energy( trpcage.residue( 19 ), trpcage.residue( 20 ), trpcage, sfxn, emap );
-		TS_ASSERT_DELTA( emap[ cart_bonded ], 2.274700474098188, 1e-12 );
+			EnergyMap emap;
+			cartbond_energy.residue_pair_energy( trpcage.residue( 19 ), trpcage.residue( 20 ), trpcage, sfxn, emap );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 3.476952369677647, 1e-12 );
 		}
 	}
 
@@ -186,7 +186,7 @@ class CartesianBondedEnergyBBDepTests : public CxxTest::TestSuite {
 		adv.set_pose( pose );
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
-		adv.validate_start_func_matches_start_score( 11.03682226641448, true );
+		adv.validate_start_func_matches_start_score( 20.31722163820628, true );
 
 	}
 
