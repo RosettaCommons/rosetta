@@ -131,12 +131,16 @@ public: // constructors destructors
 
 public: // public interface
 
-	virtual void set_recovery_threshold( core::Real const setting );
-
-	virtual
-	std::string
-	get_name() const;
-
+  virtual void set_recovery_threshold( core::Real const setting );
+  
+  virtual
+  void
+  set_max_chi_considered( core::Size const max_chi );
+  
+  virtual
+  std::string
+  get_name() const;
+  
 	virtual
 	std::string
 	get_parameters() const;
@@ -152,7 +156,9 @@ public: // public interface
 		bool & recovered);
 
 private: // data members
-	core::Real tolerance_;
+  core::Real tolerance_;
+  bool limit_chi_angles_;
+  core::Size max_chi_considered_; // only relevant if limit_chi_angles_ is set
 
 };
 
