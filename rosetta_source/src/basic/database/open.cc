@@ -76,7 +76,7 @@ open(
 	} else { // Open failed
 		std::stringstream err_msg;
 		err_msg
-			<< "Database file open failed for: " << db_stream.filename() << std::endl;
+			<< "Database file open failed for: \"" << db_file << "\"" << std::endl;
 		throw EXCN_Msg_Exception(err_msg.str());
 
 #ifdef __native_client__
