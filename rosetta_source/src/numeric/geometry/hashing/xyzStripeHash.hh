@@ -256,13 +256,13 @@ public:
 		if( x < -grid_size_ || y < -grid_size_ || z < -grid_size_ ) return 0; // worth it iff
 		if( x > xmx_ || y > ymx_ || z > zmx_ ) return 0;                      // worth it iff
 		int count = 0;
-		int const ix   = (x<0) ? 0 : numeric::min(xdim_-1,(int)(x/grid_size_));
-		int const iy0  = (y<0) ? 0 : y/grid_size_;
-		int const iz0  = (z<0) ? 0 : z/grid_size_;
+		int const ix   = (x<0) ? 0 : numeric::min(xdim_-1, static_cast<int>(x/grid_size_));
+		int const iy0  = (y<0) ? 0 : static_cast<int>(y/grid_size_);
+		int const iz0  = (z<0) ? 0 : static_cast<int>(z/grid_size_);
 		int const iyl = numeric::max(0,iy0-1);
 		int const izl = numeric::max(0,iz0-1);
-		int const iyu = numeric::min((int)ydim_,iy0+2);
-		int const izu = numeric::min((int)zdim_,(int)iz0+2);
+		int const iyu = numeric::min(static_cast<int>(ydim_), iy0+2);
+		int const izu = numeric::min(static_cast<int>(zdim_), static_cast<int>(iz0+2));
 		for(int iy = iyl; iy < iyu; ++iy) {
 			for(int iz = izl; iz < izu; ++iz) {
 				int const ig = ix+xdim_*iy+xdim_*ydim_*iz;
@@ -325,13 +325,13 @@ public:
 		T x = v.x(); T y = v.y(); T z = v.z();
 		if( x < -grid_size_ || y < -grid_size_ || z < -grid_size_ ) return false; // worth it iff
 		if( x > xmx_        || y > ymx_        || z > zmx_        ) return false; // worth it iff
-		int const ix   = (x<0) ? 0 : numeric::min(xdim_-1,(int)(x/grid_size_));
-		int const iy0  = (y<0) ? 0 : y/grid_size_;
-		int const iz0  = (z<0) ? 0 : z/grid_size_;
+		int const ix   = (x<0) ? 0 : numeric::min(xdim_-1, static_cast<int>(x/grid_size_));
+		int const iy0  = (y<0) ? 0 : static_cast<int>(y/grid_size_);
+		int const iz0  = (z<0) ? 0 : static_cast<int>(z/grid_size_);
 		int const iyl = numeric::max(0,iy0-1);
 		int const izl = numeric::max(0,iz0-1);
-		int const iyu = numeric::min((int)ydim_,iy0+2);
-		int const izu = numeric::min((int)zdim_,(int)iz0+2);
+		int const iyu = numeric::min(static_cast<int>(ydim_),iy0+2);
+		int const izu = numeric::min(static_cast<int>(zdim_), static_cast<int>(iz0+2));
 		for(int iy = iyl; iy < iyu; ++iy) {
 			for(int iz = izl; iz < izu; ++iz) {
 				int const ig = ix+xdim_*iy+xdim_*ydim_*iz;
@@ -393,13 +393,13 @@ public:
 		T x = v.x(); T y = v.y(); T z = v.z();
 		if( x < -grid_size_ || y < -grid_size_ || z < -grid_size_ ) return; // worth it iff
 		if( x > xmx_        || y > ymx_        || z > zmx_        ) return;                      // worth it iff
-		int const ix   = (x<0) ? 0 : numeric::min(xdim_-1,(int)(x/grid_size_));
-		int const iy0  = (y<0) ? 0 : y/grid_size_;
-		int const iz0  = (z<0) ? 0 : z/grid_size_;
+		int const ix   = (x<0) ? 0 : numeric::min(xdim_-1, static_cast<int>(x/grid_size_));
+		int const iy0  = (y<0) ? 0 : static_cast<int>(y/grid_size_);
+		int const iz0  = (z<0) ? 0 : static_cast<int>(z/grid_size_);
 		int const iyl = numeric::max(0,iy0-1);
 		int const izl = numeric::max(0,iz0-1);
-		int const iyu = numeric::min((int)ydim_,iy0+2);
-		int const izu = numeric::min((int)zdim_,(int)iz0+2);
+		int const iyu = numeric::min(static_cast<int>(ydim_), iy0+2);
+		int const izu = numeric::min(static_cast<int>(zdim_), static_cast<int>(iz0+2));
 		for(int iy = iyl; iy < iyu; ++iy) {
 			for(int iz = izl; iz < izu; ++iz) {
 				int const ig = ix+xdim_*iy+xdim_*ydim_*iz;

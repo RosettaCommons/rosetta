@@ -145,12 +145,12 @@ XfoxmScore::score(
 	if((ss1=='E' && ss2=='H') || (ss1=='L' && ss2=='H') || (ss1=='L' && ss2=='E')){
 		   get_xform_stats(s2,s1,dx,dy,dz,ex,ey,ez); // reverse
 	} else get_xform_stats(s1,s2,dx,dy,dz,ex,ey,ez);
-	int idx = dx+8.0; // 0.0-0.999 -> 10
-	int idy = dy+8.0;
-	int idz = dz+8.0;
-	int iex = ex/pi_2*24.0 + 12.0;
-	int iey = ey/pi_2*24.0 +  6.0;
-	int iez = ez/pi_2*24.0 + 12.0;
+	int idx = static_cast<int>(dx+8.0); // 0.0-0.999 -> 10
+	int idy = static_cast<int>(dy+8.0);
+	int idz = static_cast<int>(dz+8.0);
+	int iex = static_cast<int>(ex/pi_2*24.0 + 12.0);
+	int iey = static_cast<int>(ey/pi_2*24.0 +  6.0);
+	int iez = static_cast<int>(ez/pi_2*24.0 + 12.0);
 	int index = idx + 16*idy + 16*16*idz + 16*16*16*iex + 16*16*16*24*iey + 16*16*16*24*12*iez;
 	if( 0 > index || index >= 16*16*16*24*12*24 ) utility_exit_with_message("FOO");
 	// expensive memory lookup

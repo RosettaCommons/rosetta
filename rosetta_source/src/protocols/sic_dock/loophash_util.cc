@@ -149,7 +149,7 @@ count_linkers(
 			count0 += loop_hash_library->gethash(*i).radial_count(radius,rt_6);
 		} // else too far, don't bother lookup
 	}
-	return (Real)count0;
+	return count0;
 }
 
 core::Size
