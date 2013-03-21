@@ -1013,6 +1013,11 @@ ResidueType::set_proton_chi(
 	utility::vector1< Real > extra_samples
 )
 {
+	assert( is_proton_chi_.size() >= chi_atoms_.size() );
+	assert( chi_2_proton_chi_.size() >= chi_atoms_.size() );
+  if( chino > chi_atoms_.size() ) {
+		utility_exit_with_message("Error setting proton chi: Chi to set as proton chi does not exist.");
+	}
 	is_proton_chi_[ chino ] = true;
 	proton_chis_.push_back( chino );
 	proton_chi_samples_.push_back( dihedral_samples );
