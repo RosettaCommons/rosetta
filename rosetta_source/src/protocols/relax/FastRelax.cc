@@ -428,7 +428,7 @@ void FastRelax::set_to_default( )
 	force_nonideal_ = false;
 
 	dna_move_ = option[ basic::options::OptionKeys::relax::dna_move]();
-	
+
   //fpd additional ramady options
 	ramady_num_rebuild_ = basic::options::option[ OptionKeys::relax::ramady_max_rebuild ]();
 	ramady_cutoff_ = basic::options::option[ OptionKeys::relax::ramady_cutoff ]();
@@ -436,7 +436,7 @@ void FastRelax::set_to_default( )
 	ramady_rms_limit_ = basic::options::option[ OptionKeys::relax::ramady_rms_limit ]();
 
 	// cartesian
-	
+
 	// dumpall
 	dumpall_ = false;
 
@@ -494,6 +494,7 @@ void FastRelax::do_minimize(
     min_mover = new protocols::simple_moves::MinMover( local_movemap, local_scorefxn, min_type_, tolerance, true );
   }
 	min_mover->cartesian( cartesian_ );
+	if (max_iter_ > 0) min_mover->max_iter( max_iter_ );
   min_mover->apply( pose );
 }
 
@@ -539,7 +540,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 	initialize_movemap( pose, *local_movemap );
 
 	set_movemap(local_movemap);
-	
+
 	// Deal with constraint options and add coodrinate constraints for all or parts of the structure.
 	set_up_constraints( pose, *local_movemap );
 
@@ -549,7 +550,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 
 	// Remember the oroiginal weights - we're gonna be changing these during the ramp ups/downs
 	core::scoring::EnergyMap full_weights = local_scorefxn()->weights();
-	
+
 	// Make DNA Rigid or setup DNA-specific relax settings.  Use the orbitals scorefunction when relaxing with DNA
 	if (dna_move_){
 		setup_for_dna( *local_scorefxn );
@@ -557,9 +558,9 @@ void FastRelax::apply( core::pose::Pose & pose ){
 	else{
 		make_dna_rigid( pose, *local_movemap );
 	}
-	
-	
-	
+
+
+
 	// Make sure we only allow symmetrical degrees of freedom to move and convert the local_movemap
 	// to a local movemap
   if ( core::pose::symmetry::is_symmetric( pose )  )  {
@@ -671,9 +672,9 @@ void FastRelax::apply( core::pose::Pose & pose ){
 		}	else
 
 		if( cmd.command.substr(0,7) == "dumpall" ){
-				if( cmd.command.substr(8) == "true" ) 
+				if( cmd.command.substr(8) == "true" )
 					dumpall_ = true;
-				if( cmd.command.substr(8) == "false" ) 
+				if( cmd.command.substr(8) == "false" )
 					dumpall_ = false;
 		}	else
 
@@ -1026,8 +1027,8 @@ struct SRelaxPose {
 
 void FastRelax::batch_apply(
 		std::vector < SilentStructOP > & input_structs,
-		core::scoring::constraints::ConstraintSetOP input_csts, // = NULL 
-		core::Real decay_rate // = 0.5 
+		core::scoring::constraints::ConstraintSetOP input_csts, // = NULL
+		core::Real decay_rate // = 0.5
 		){
 	using namespace basic::options;
 	using namespace core::scoring;
@@ -1131,13 +1132,13 @@ void FastRelax::batch_apply(
 
 				bool const repack = basic::options::option[ basic::options::OptionKeys::relax::chi_move]();
 				utility::vector1<bool> allow_repack( pose.total_residue(), repack);
-	
+
 				if ( !basic::options::option[ basic::options::OptionKeys::relax::chi_move].user() ) {
 					for ( Size pos = 1; pos <= pose.total_residue(); pos++ ) {
 						allow_repack[ pos ] = local_movemap->get_chi( pos );
 					}
 				}
-	
+
 				task_->initialize_from_command_line().restrict_to_repacking().restrict_to_residues(allow_repack);
 				task_->or_include_current( true );
 				pack_full_repack_ = new protocols::simple_moves::PackRotamersMover( local_scorefxn, task_ );
@@ -1239,7 +1240,7 @@ void FastRelax::batch_apply(
             scoring::ScoreType scale_param = scoring::score_type_from_name(cmd.command.substr(7));
             local_scorefxn->set_weight( scale_param, full_weights[ scale_param ] * ((cmd.param2 - cmd.param1 ) * numeric::random::uniform() + cmd.param1 ));
         }   else
-			
+
 		if( cmd.command.substr(0,6) == "switch" ){
 			// no input validation as of now, relax will just die
 			if( cmd.command.substr(7) == "torsion" ) {
@@ -1293,7 +1294,7 @@ void FastRelax::batch_apply(
 						std::cerr << "Ramp_repack_min exception: " << std::endl;
 						excn.show( std::cerr );
 						// just deactivate this pose
-						relax_decoys[index].active = false;		
+						relax_decoys[index].active = false;
 						// and need to "reset scoring" of the pose we reuse
 						TR << "Throwing out one structure due to scoring problems!" << std::endl;
 						pose.scoring_end(*local_scorefxn);
@@ -1301,7 +1302,7 @@ void FastRelax::batch_apply(
 			}
 
 		}	else
-		if( cmd.command == "batch_shave" ){  
+		if( cmd.command == "batch_shave" ){
 			if( cmd.nparams < 1 ){ utility_exit_with_message( "More parameters expected after : " + cmd.command  ); }
 			core::Real reduce_factor = cmd.param1;
 			if( (reduce_factor <= 0) ||  (reduce_factor >= 1.0)  ){ utility_exit_with_message( "Parameter after : " + cmd.command + " should be > 0 and < 1 " ); }
@@ -1350,7 +1351,7 @@ void FastRelax::batch_apply(
 						std::cerr << "Accept_to_best scoring exception: " << std::endl;
 						excn.show( std::cerr );
 						// just deactivate this pose
-						relax_decoys[index].active = false;		
+						relax_decoys[index].active = false;
 						// and need to "reset scoring" of the pose we reuse
 						TR << "Throwing out one structure due to scoring problems!" << std::endl;
 						pose.scoring_end(*local_scorefxn);

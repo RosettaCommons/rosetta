@@ -251,6 +251,9 @@ void RelaxProtocolBase::set_default_minimization_settings(){
 		min_type_ = option[ OptionKeys::relax::min_type ]();
 	else if (cartesian_ || minimize_bond_lengths_ || minimize_bond_angles_)
 		min_type_ = "lbfgs_armijo_nonmonotone";  // default is different for cartesian/fbal minimization
+
+	//fpd
+	max_iter_ = 0;  // if nonzero, override MinimizerOption default
 }
 
 void RelaxProtocolBase::set_default_coordinate_settings(){
@@ -287,6 +290,10 @@ void RelaxProtocolBase::set_movemap( core::kinematics::MoveMapOP movemap ) {
 
 void RelaxProtocolBase::set_min_type( std::string min_type ) {
 	min_type_ = min_type;
+}
+
+void RelaxProtocolBase::set_max_iter( Size max_iter ) {
+	max_iter_ = max_iter;
 }
 
 void RelaxProtocolBase::set_task_factory( core::pack::task::TaskFactoryOP taskf ) {

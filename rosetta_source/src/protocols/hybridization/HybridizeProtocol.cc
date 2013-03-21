@@ -328,10 +328,10 @@ HybridizeProtocol::check_and_create_fragments( core::pose::Pose & pose ) {
 				for (core::Size j=1; j<=templates_[i]->total_residue(); ++j ) {
 					if (!templates_[i]->residue(j).is_protein()) continue;
 					core::Size tgt_pos = templates_[i]->pdb_info()->number(j);
-					
+
 					runtime_assert( tgt_pos<=nres_tgt );
 					char tgt_ss_j = templates_[i]->secstruct(j);
-					
+
 					if (tgt_ss[tgt_pos-1] == '0') {
 						tgt_ss[tgt_pos-1] = tgt_ss_j;
 					} else if (tgt_ss[tgt_pos-1] != tgt_ss_j) {
@@ -532,12 +532,25 @@ void HybridizeProtocol::add_template(
 	core::pose::PoseOP template_pose = new core::pose::Pose();
 	core::import_pose::pose_from_pdb( *template_pose, *residue_set, template_fn );
 
+	add_template( template_pose, cst_fn, symm_file, weight, domain_assembly_weight, cluster_id, cst_reses, template_fn );
+}
+
+
+void HybridizeProtocol::add_template(
+	core::pose::PoseOP template_pose,
+	std::string cst_fn,
+	std::string symm_file,
+	core::Real weight,
+	core::Real domain_assembly_weight,
+	core::Size cluster_id,
+	utility::vector1<core::Size> cst_reses,
+	std::string filename)
+{
 	// add secondary structure information to the template pose
 	core::scoring::dssp::Dssp dssp_obj( *template_pose );
 	dssp_obj.insert_ss_into_pose( *template_pose );
 
 	// find ss chunks in template
-	//protocols::loops::Loops chunks = protocols::loops::extract_secondary_structure_chunks(*template_pose);
 	protocols::loops::Loops contigs = protocols::loops::extract_continuous_chunks(*template_pose);
 	protocols::loops::Loops chunks = protocols::loops::extract_secondary_structure_chunks(*template_pose, "HE", 3, 6, 3, 4);
 
@@ -547,7 +560,7 @@ void HybridizeProtocol::add_template(
 	TR.Debug << "Chunks from template\n" << chunks << std::endl;
 	TR.Debug << "Contigs from template\n" << contigs << std::endl;
 
-	template_fn_.push_back(template_fn);
+	template_fn_.push_back(filename);
 	templates_.push_back(template_pose);
 	template_cst_fn_.push_back(cst_fn);
 	symmdef_files_.push_back(symm_file);
@@ -606,10 +619,7 @@ void HybridizeProtocol::read_template_structures(utility::vector1 < utility::fil
 	templates_.clear();
 	templates_.resize(template_filenames.size());
 
-	//core::chemical::ResidueTypeSetCAP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
-
-	//fpd remember sidechains from input structure
-	core::chemical::ResidueTypeSetCAP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+	core::chemical::ResidueTypeSetCAP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
 
 	for (core::Size i_ref=1; i_ref<= template_filenames.size(); ++i_ref) {
 		templates_[i_ref] = new core::pose::Pose();
@@ -678,6 +688,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 
 	// make fragments if we don't have them at this point
 	check_and_create_fragments( pose );
+
 	// select random fragments if given variable lengths
 	core::fragment::FragSetOP frags_small = fragments_small_[RG.random_range(1,fragments_small_.size())];
 	core::fragment::FragSetOP frags_big = fragments_big_[RG.random_range(1,fragments_big_.size())];

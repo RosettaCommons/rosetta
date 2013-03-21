@@ -49,6 +49,7 @@ sources = {
 		"HybridizeFoldtreeDynamic",
 		"HybridizeProtocol",
 		"InsertChunkMover",
+		"MRMover",
 		"TemplateHistory",
 		"WeightedFragmentTrialMover",
 		"WeightedFragmentSmoothTrialMover",

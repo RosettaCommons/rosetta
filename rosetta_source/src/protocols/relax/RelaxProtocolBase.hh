@@ -112,6 +112,7 @@ public:
 	void set_movemap( core::kinematics::MoveMapOP movemap );
 
 	void set_min_type( std::string min_type );
+	void set_max_iter( Size max_iter );
 
 public:
 	void set_scorefxn( core::scoring::ScoreFunctionOP score );
@@ -168,6 +169,8 @@ protected:  // Constraint settings
   /// Do cartesian-space minimization?
 	bool cartesian_;
 
+	/// maximum minimizer iterations
+	core::Size max_iter_;
 
 protected:
 

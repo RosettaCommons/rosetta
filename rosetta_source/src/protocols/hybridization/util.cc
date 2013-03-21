@@ -186,7 +186,6 @@ void generate_centroid_constraints(
 					if (symm_info && !symm_info->bb_is_independent( resid_k ) )
 						resid_k = symm_info->bb_follows( resid_k );
 
-std::cerr << "Add CST: " << resid_j << ".2 to " << resid_k << ".2" << std::endl;
 					pose.add_constraint(
 						new AtomPairConstraint( core::id::AtomID(2,resid_j), core::id::AtomID(2,resid_k),
 							new ScalarWeightedFunc( 1.0, new SOGFunc( dist, COORDDEV )  )

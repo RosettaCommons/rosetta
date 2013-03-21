@@ -43,14 +43,25 @@ public:
 
 	void read_template_structures(utility::file::FileName template_list);
 	void read_template_structures(utility::vector1 < utility::file::FileName > const & template_filenames);
+
 	void add_template(
 		std::string template_fn,
 		std::string cst_fn,
-		std::string symmdef_file,
+		std::string symmdef_file = "NULL",
 		core::Real weight = 1.,
-	    core::Real domain_assembly_weight = 0.,
+		core::Real domain_assembly_weight = 0.,
 		core::Size cluster_id = 1,
 		utility::vector1<core::Size> cst_reses = utility::vector1<core::Size>(0) );
+
+	void add_template(
+		core::pose::PoseOP template_pose,
+		std::string cst_fn,
+		std::string symmdef_file = "NULL",
+		core::Real weight = 1.,
+		core::Real domain_assembly_weight = 0.,
+		core::Size cluster_id = 1,
+		utility::vector1<core::Size> cst_reses = utility::vector1<core::Size>(0),
+		std::string filename="default" );
 
 	void pick_starting_template(core::Size & initial_template_index,
 		core::Size & initial_template_index_icluster,
@@ -88,6 +99,14 @@ public:
 
 	virtual void
 	parse_my_tag( TagPtr const, DataMap &, Filters_map const &, Movers_map const &, Pose const & );
+
+	// set options
+	void set_batch_relax( core::Size newval ) { batch_relax_ = newval; }
+	void add_big_fragments( core::fragment::FragSetOP newval ) { fragments_big_.push_back(newval); }
+	void add_small_fragments( core::fragment::FragSetOP newval ) { fragments_small_.push_back(newval); }
+	void set_stage1_scorefxn( core::scoring::ScoreFunctionOP newval ) { stage1_scorefxn_ = newval; }
+	void set_stage2_scorefxn( core::scoring::ScoreFunctionOP newval ) { stage2_scorefxn_ = newval; }
+	void set_fullatom_scorefxn( core::scoring::ScoreFunctionOP newval ) { fa_scorefxn_ = newval; }
 
 private:
 	// parsible options
