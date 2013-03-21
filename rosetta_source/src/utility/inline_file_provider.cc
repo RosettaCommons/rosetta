@@ -141,6 +141,10 @@ bool Inline_File_Provider::get_ostream( const std::string& filename, std::ostrea
 
 bool Inline_File_Provider::get_istream( const std::string& filename, std::istream **the_stream ){
   std::string standard_filename =  standardise_filename( filename );	
+  
+  if ( standard_filename.length() == 0 ){
+    return false;
+  }
 
   // check last character 
   if ( *(standard_filename.rbegin()) == '/' ){
@@ -176,8 +180,6 @@ bool Inline_File_Provider::get_istream( const std::string& filename, std::istrea
   } 
 
   // if here we have failed to find the resource
- 
-  (*the_stream) = NULL; 
   return false;
 }
 
