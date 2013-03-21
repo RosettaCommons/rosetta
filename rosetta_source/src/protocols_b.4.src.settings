@@ -54,6 +54,7 @@ sources = {
 		"RemodelMover",
 		"RemodelRotamerLinks",
 		"RemodelWorkingSet",
+		"RemodelGlobalFrame",
 		"ResidueVicinityRCG",
 	],
 	"protocols/loophash": [

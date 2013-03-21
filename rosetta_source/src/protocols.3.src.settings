@@ -333,6 +333,7 @@ sources = {
 		"ExpiryFilter",
 		"FileExistFilter",
 		"FileRemoveFilter",
+		"GeometryFilter",
 		"EnergyPerResidueFilter",
 		"EvaluatedTrialMover",
 		"ExternalEvaluator",
