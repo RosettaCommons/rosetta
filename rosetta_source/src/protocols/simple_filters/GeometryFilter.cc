@@ -95,8 +95,8 @@ GeometryFilter::apply( core::pose::Pose const & pose ) const {
 }
 
 void
-GeometryFilter::report( std::ostream & out, core::pose::Pose const & pose ) const {
-	core::Real const dist( compute( pose ) );
+GeometryFilter::report( std::ostream & /*out*/, core::pose::Pose const & pose ) const {
+	/*core::Real const dist =*/ compute( pose );
 }
 
 core::Real

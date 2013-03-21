@@ -1231,8 +1231,8 @@ ElectronDensity::getFSC(
 
 						if (d2 <= (ATOM_MASK+ATOM_MASK_PADDING)*(ATOM_MASK+ATOM_MASK_PADDING)) {
 							core::Real atm = C*exp(-k*d2);
-							core::Real sigmoid_msk = exp( d2 - (ATOM_MASK)*(ATOM_MASK)  );
-							core::Real inv_msk = 1/(1+sigmoid_msk);
+							//core::Real sigmoid_msk = exp( d2 - (ATOM_MASK)*(ATOM_MASK)  );  // unused ~Labonte
+							//core::Real inv_msk = 1/(1+sigmoid_msk);  // unused ~Labonte
 							rho_calc(x,y,z) += atm;
 						}
 					}

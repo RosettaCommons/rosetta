@@ -1419,7 +1419,7 @@ bool RemodelMover::design_refine_cart_relax(
 	// collect loops
 	Loops loops = intervals_to_loops( loop_intervals.begin(), loop_intervals.end() );
 
-  if (basic::options::option[ OptionKeys::remodel::repeat_structure].user() || basic::options::option[ OptionKeys::remodel::free_relax ].user() ){
+	if (basic::options::option[ OptionKeys::remodel::repeat_structure].user() || basic::options::option[ OptionKeys::remodel::free_relax ].user() ){
 		//do nothing
 	} else {
 		protocols::forge::methods::fill_non_loop_cst_set(pose, loops);
@@ -1433,45 +1433,45 @@ bool RemodelMover::design_refine_cart_relax(
 	minFT.simple_tree(pose.total_residue());
 	pose.fold_tree(minFT);
 
-// for refinement, always use standard repulsive
+	// for refinement, always use standard repulsive
 	ScoreFunctionOP sfx = core::scoring::getScoreFunction();
-//turning on weights
-  sfx->set_weight(core::scoring::coordinate_constraint, 1.0 );
-  sfx->set_weight(core::scoring::atom_pair_constraint, 1.0 );
-  sfx->set_weight(core::scoring::angle_constraint, 1.0 );
-  sfx->set_weight(core::scoring::dihedral_constraint, 10.0 ); // 1.0 originally
-  sfx->set_weight(core::scoring::res_type_constraint, 1.0);
-  sfx->set_weight(core::scoring::res_type_linking_constraint, 1.0);
-  sfx->set_weight(core::scoring::cart_bonded, 0.5);
+	//turning on weights
+	sfx->set_weight(core::scoring::coordinate_constraint, 1.0 );
+	sfx->set_weight(core::scoring::atom_pair_constraint, 1.0 );
+	sfx->set_weight(core::scoring::angle_constraint, 1.0 );
+	sfx->set_weight(core::scoring::dihedral_constraint, 10.0 ); // 1.0 originally
+	sfx->set_weight(core::scoring::res_type_constraint, 1.0);
+	sfx->set_weight(core::scoring::res_type_linking_constraint, 1.0);
+	sfx->set_weight(core::scoring::cart_bonded, 0.5);
 
 
  	core::kinematics::MoveMapOP cmmop = new core::kinematics::MoveMap;
 	//pose.dump_pdb("pretest.pdb");
 	
 	if (basic::options::option[ OptionKeys::remodel::free_relax ].user()) {
-					for (int i = 1; i<= pose.total_residue(); i++){
-							cmmop->set_bb(i, true);
-							cmmop->set_chi(i, true);
-					}
+		for (Size i = 1; i<= pose.total_residue(); ++i){
+			cmmop->set_bb(i, true);
+			cmmop->set_chi(i, true);
+		}
 	}
 	else {	
-					cmmop->import(remodel_data_.natro_movemap_);
-					cmmop->import( manager_.movemap() );
+		cmmop->import(remodel_data_.natro_movemap_);
+		cmmop->import( manager_.movemap() );
 	}
 
-	for (int i = 1; i<= pose.total_residue(); i++){
-			std::cout << "bb at " << i << " " << cmmop->get_bb(i) << std::endl;
-			std::cout << "chi at " << i << " " << cmmop->get_chi(i) << std::endl;
-			cmmop->set_chi(i,true);
-			std::cout << "chi at " << i << " " << cmmop->get_chi(i) << std::endl;
+	for (Size i = 1; i<= pose.total_residue(); ++i){
+		std::cout << "bb at " << i << " " << cmmop->get_bb(i) << std::endl;
+		std::cout << "chi at " << i << " " << cmmop->get_chi(i) << std::endl;
+		cmmop->set_chi(i,true);
+		std::cout << "chi at " << i << " " << cmmop->get_chi(i) << std::endl;
 	}
 
-	for (int i = 1; i<= pose.total_residue(); i++){
-			std::cout << "bbM at " << i << " " << manager_.movemap().get_bb(i) << std::endl;
-			std::cout << "chiM at " << i << " " << manager_.movemap().get_chi(i) << std::endl;
+	for (Size i = 1; i<= pose.total_residue(); ++i){
+		std::cout << "bbM at " << i << " " << manager_.movemap().get_bb(i) << std::endl;
+		std::cout << "chiM at " << i << " " << manager_.movemap().get_chi(i) << std::endl;
 	}
 
-  simple_moves::MinMoverOP minMover = new simple_moves::MinMover( cmmop , sfx , "lbfgs_armijo", 0.01, true);
+	simple_moves::MinMoverOP minMover = new simple_moves::MinMover( cmmop , sfx , "lbfgs_armijo", 0.01, true);
 	minMover->cartesian(true);
 
 

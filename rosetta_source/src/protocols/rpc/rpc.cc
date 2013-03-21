@@ -52,7 +52,7 @@ namespace protocols {
 namespace rpc {
 
 
-  // Helper functions
+// Helper functions
 
 void pose_energies_to_json( core::pose::Pose const & pose, utility::json_spirit::Object &json_energies ) {
 
@@ -80,13 +80,13 @@ void pose_energies_to_json( core::pose::Pose const & pose, utility::json_spirit:
 }
 
 
-  // RPC Class
+// RPC Class
 
-  static basic::Tracer TR("rpc");
- 
-  using namespace utility::json_spirit;
+static basic::Tracer TR("rpc");
 
-  JSON_RPC::JSON_RPC(const std::string &msg, bool capture_tracer ):
+using namespace utility::json_spirit;
+
+JSON_RPC::JSON_RPC(const std::string &msg, bool capture_tracer ):
     capture_tracer_(capture_tracer),
     starttime_(0),
     endtime_(0)
@@ -95,9 +95,9 @@ void pose_energies_to_json( core::pose::Pose const & pose, utility::json_spirit:
     unpack( msg_ );
   }
 	  
-  JSON_RPC::JSON_RPC( JSON_RPC const & json_rpc){
-    (*this) = json_rpc; 
-  }
+JSON_RPC::JSON_RPC( JSON_RPC const & json_rpc) : ReferenceCount(json_rpc) {
+	(*this) = json_rpc;
+}
 
   JSON_RPC const & JSON_RPC::operator= ( JSON_RPC const & json_rpc )
   {
@@ -201,7 +201,8 @@ void pose_energies_to_json( core::pose::Pose const & pose, utility::json_spirit:
    
     // so an empty init
     int argc = 0;
-    char *argvv = "";
+    std::string empty_str = "";
+    char *argvv = &empty_str[0];
     char **argv = &argvv;
     core::init(argc, argv);
 

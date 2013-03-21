@@ -154,7 +154,7 @@ void RemodelGlobalFrame::get_helical_params( core::pose::Pose & pose ) {
 	using namespace std;
 	using namespace basic::options;
 
-	Size numRes = pose.total_residue();
+	//Size numRes = pose.total_residue();  // unused ~Labonte
 
 	// dumping information into PDB header
   core::pose::PDBInfoOP temp_pdbinfo( new core::pose::PDBInfo(pose,true));
@@ -295,7 +295,7 @@ void RemodelGlobalFrame::align_segment( core::pose::Pose & pose ) {
 
 TR.Debug << "align seg 1" << std::endl;
 
-	Size numRes = pose.total_residue();
+	//Size numRes = pose.total_residue();  // unused ~Labonte
 
 	if (option[ OptionKeys::remodel::repeat_structure].user()){
 	}
@@ -382,7 +382,7 @@ TR.Debug<<"sin_omega "<<sin_omega<<endl;
 
 	Vector3f t = c_B - H*c_A;
 	double L = t.dot(hN) ;  
-	double rise=abs(L);
+	//double rise=abs(L);  // unused ~Labonte
 
 	
 	Matrix3f Ncross; 

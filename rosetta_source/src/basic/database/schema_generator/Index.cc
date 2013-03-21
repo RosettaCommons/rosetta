@@ -111,6 +111,7 @@ Index::print(
 		default:
 			utility_exit_with_message(
 				"Unrecognized database mode: '" + name_from_database_mode(db_session->get_db_mode()) + "'");
+			return "";  // just here to remove warning; lame ~Labonte
 	}
 }
 

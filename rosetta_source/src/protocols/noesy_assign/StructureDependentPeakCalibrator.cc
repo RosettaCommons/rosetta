@@ -130,7 +130,7 @@ void StructureDependentPeakCalibrator::eliminate_violated_constraints() {
 			tr.Trace << "Check peak " << (*it)->peak_id() << " for nudging... "<< std::endl;
 			Real const CORRECTION_STEP( 0.1 );
 			Real const max_correction( peaks()[ ct ]->distance_bound()*( params.calibration_max_nudging_ - 1) );
-			Real const old_violated( violated );
+			Size const old_violated( violated );
 			for ( Real correction = 0.1; correction <= max_correction; correction += CORRECTION_STEP ) {
 				violated = 0;
 				Size pose_ct( 1 );
