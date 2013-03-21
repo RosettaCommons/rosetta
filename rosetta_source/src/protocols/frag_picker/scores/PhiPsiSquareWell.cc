@@ -226,7 +226,7 @@ bool PhiPsiSquareWell::score(FragmentCandidateOP fragment,
 			tmp = 0.0;
 		}
 
-		d += tmp * tmp;
+		//d += tmp * tmp;
 
 		if ( tmp > 0.0 ) {
 			d += 1 / ( 1 + exp( -5*( tmp / query_d_phi_(i + offset_q) ) + 5) );
