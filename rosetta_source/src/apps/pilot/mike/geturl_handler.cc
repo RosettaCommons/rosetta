@@ -8,8 +8,11 @@
 #include "ppapi/c/ppb_instance.h"
 #include "ppapi/cpp/module.h"
 #include "ppapi/cpp/var.h"
+#include "ppapi/cpp/url_response_info.h"
 
 #include "geturl_handler.h"
+#include <iostream>
+#include <stringstream>
 
 #ifdef WIN32
 #undef min
@@ -56,9 +59,17 @@ void GetURLHandler::OnOpen(int32_t result) {
     ReportResultAndDie(url_, "pp::URLLoader::Open() failed", false);
     return;
   }
-  // Here you would process the headers. A real program would want to at least
-  // check the HTTP code and potentially cancel the request.
-  // pp::URLResponseInfo response = loader_.GetResponseInfo();
+  
+  // Check for Success 
+  pp::URLResponseInfo response = url_loader_.GetResponseInfo();
+  
+  int32_t status_code = response.GetStatusCode();
+  if( status_code < 200 || status_code > 299 ){
+    std::stringstream ss;
+    ss << status_code << std::endl;
+    ReportResultAndDie(url_, "pp::URLLoader bad_http_status  ErrorCode:" +  ss.str(), false);
+    return;
+  }
 
   // Try to figure out how many bytes of data are going to be downloaded in
   // order to allocate memory for the response body in advance (this will
@@ -158,14 +169,14 @@ void GetURLHandler::ReportResult(const std::string& fname,
   if (success){
     if (instance_) {
       pp::Var var_result("Successfully loaded: "+fname); 
-      instance_->PostMessage(var_result);
+      //instance_->PostMessage(var_result);
       file_provider_hook_->return_file_callback( text, false );    
     }
   }else{
     if (instance_) {
       pp::Var var_result("Error obtaining: "+fname);
-      instance_->PostMessage(var_result);
-      file_provider_hook_->return_file_callback( "", true );    
+      //instance_->PostMessage(var_result);
+      file_provider_hook_->return_file_callback( text, true );    
     }
     
   }
