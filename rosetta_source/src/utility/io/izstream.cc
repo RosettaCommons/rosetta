@@ -53,7 +53,13 @@ namespace io {
 		 file_provider_stream = &bad_stream;
 		 file_provider_stream->setstate( ios_base::failbit | ios_base::badbit );
 	}
-	
+
+#ifdef __native_client__
+  // in native client mode there is no recourse - no actauly file access is allowed
+  // so ut this point we can only hand back the stream no matter if it is good() or not.
+  return;
+#endif
+
   if (file_provider_stream->good() ){ 
     return;
   }
