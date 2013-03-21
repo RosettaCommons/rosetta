@@ -38,6 +38,7 @@
 #include <utility/vector1.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
+#include <numeric/xyz.functions.hh>
 
 
 namespace protocols {
