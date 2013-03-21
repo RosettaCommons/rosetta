@@ -32,9 +32,12 @@
 
 // C++ headers
 #include <set>
+#include <list>
 #include <iostream>
 
 #include <utility/vector1.hh>
+#include <numeric/xyzMatrix.hh>
+#include <numeric/xyzVector.hh>
 
 
 namespace protocols {
@@ -258,6 +261,15 @@ fill_non_loop_cst_set(
 
 utility::vector1< core::Real > const
 calc_rsd_sasa( core::pose::Pose const & pose );
+
+void
+apply_transformation(
+           core::pose::Pose & mod_pose,
+           std::list <core::Size> const & residue_list,
+           numeric::xyzMatrix< core::Real > const & R, numeric::xyzVector< core::Real > const & preT, numeric::xyzVector< core::Real > const & postT
+           );
+
+
 
 void
 cyclize_pose(core::pose::Pose & pose);

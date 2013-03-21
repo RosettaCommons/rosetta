@@ -533,6 +533,28 @@ calc_rsd_sasa( core::pose::Pose const & pose ) {
   return rsd_sasa;
 } // calc_residue_sasa
 
+void
+apply_transformation(
+  core::pose::Pose & mod_pose,
+  std::list <core::Size> const & residue_list,
+  numeric::xyzMatrix< core::Real > const & R, numeric::xyzVector< core::Real > const & preT, numeric::xyzVector< core::Real > const & postT
+) {
+  using namespace ObjexxFCL;
+  // translate xx2 by COM and fill in the new ref_pose coordinates
+  utility::vector1< core::id::AtomID > ids;
+  utility::vector1< numeric::xyzVector<core::Real> > positions;
+
+  for (std::list<core::Size>::const_iterator it = residue_list.begin();
+     it != residue_list.end();
+     ++it) {
+    core::Size ires = *it;
+    for ( core::Size iatom=1; iatom<= mod_pose.residue_type(ires).natoms(); ++iatom ) { // use residue_type to prevent internal coord update
+      ids.push_back(core::id::AtomID(iatom,ires));
+      positions.push_back(postT + (R*( mod_pose.xyz(core::id::AtomID(iatom,ires)) - preT )));
+    }
+  }
+  mod_pose.batch_set_xyz(ids,positions);
+}
 
 
 

@@ -48,7 +48,6 @@
 #include <core/pack/task/ResfileReader.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <protocols/constraints_additional/BindingSiteConstraint.hh>
-#include <protocols/hybridization/util.hh> //for apply_transformation
 
 // numeric headers
 #include <numeric/random/random.hh>
@@ -293,7 +292,6 @@ void RemodelGlobalFrame::align_segment( core::pose::Pose & pose ) {
 	using namespace std;
 	using namespace numeric;
 	using namespace basic::options;
-	using namespace protocols::hybridization;
 
 TR.Debug << "align seg 1" << std::endl;
 
@@ -433,7 +431,7 @@ TR.Debug << "align seg 4" << std::endl;
 	 xyzVector< core::Real > preT = xyzVector< core::Real >(cA2axis(0),cA2axis(1),cA2axis(2));
 	 xyzVector< core::Real > postT = xyzVector< core::Real >(0,0,0);
 	 identity_matrix( Rid );
-	 apply_transformation( pose, residue_list, Rid, preT, postT);
+	 protocols::forge::methods::apply_transformation( pose, residue_list, Rid, preT, postT);
 
 TR.Debug << "align seg 5" << std::endl;
 
@@ -477,7 +475,7 @@ TR.Debug << "align seg 5" << std::endl;
 	 // in this step no translation
 	 preT =  xyzVector< core::Real >(0,0,0);
 	 postT = xyzVector< core::Real >(0,0,0);
-	 apply_transformation( pose, residue_list, xyzFull, preT, postT);
+	 protocols::forge::methods::apply_transformation( pose, residue_list, xyzFull, preT, postT);
 
 	for (Size i = 1; i <= seg_size ; i++){
 		core::Vector coord = pose.residue(i).xyz("CA");
@@ -508,7 +506,6 @@ RemodelGlobalFrame::setup_helical_constraint(Pose & pose){
 	using namespace core::scoring::constraints;
 	using namespace core::pose;
 	using namespace basic::options;
-	using namespace protocols::hybridization;
 	using namespace core::chemical;
 
 
@@ -598,18 +595,18 @@ TR.Debug << "setup RGF cst 2" << std::endl;
 				postT = xyzVector< core::Real >(t_radius-radius_,0,0);
 
 TR.Debug << "setup RGF cst 3" << std::endl;
-				apply_transformation( *singleton_pose, single_residue_list, Rid, preT, postT );
+				protocols::forge::methods::apply_transformation( *singleton_pose, single_residue_list, Rid, preT, postT );
 				//also have to move the doulbe_pose to the new frame.
-				apply_transformation( *double_pose, double_residue_list, Rid, preT, postT );
+				protocols::forge::methods::apply_transformation( *double_pose, double_residue_list, Rid, preT, postT );
 				//as well as the full frame
-				apply_transformation( pose, fullpose_residue_list, Rid, preT, postT );
+				protocols::forge::methods::apply_transformation( pose, fullpose_residue_list, Rid, preT, postT );
 
 				// package Rz
 				xyzMatrix< core::Real > xyzFull;
 				matrix3f_to_xyzMatrix(Rz, xyzFull);
 				postT = xyzVector< core::Real >(0,0,t_rise);
 
-				apply_transformation( *singleton_pose, single_residue_list, xyzFull, preT, postT );
+				protocols::forge::methods::apply_transformation( *singleton_pose, single_residue_list, xyzFull, preT, postT );
 
 				//update second segment in the double pose
 
