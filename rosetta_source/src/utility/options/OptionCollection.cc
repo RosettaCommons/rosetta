@@ -48,10 +48,8 @@ namespace options {
 
 
 	void std_exit_wrapper( const int error_code ){
-		#ifdef  EXIT_THROWS_EXCEPTION 
-			throw( std::string( "std::exit() was called" ) );
+		  throw( std::string( "std::exit() was called" ) );
 			return;
-		#endif
 		std::exit( error_code );
 	}
 
