@@ -1,12 +1,13 @@
 #Weights file to be used with the hbond sp2 correction version 11c.
 #This is score12prime with Sp2 H-Bond correction version 11c
 # * short range bb hbonds are not down weighted by a half, as they are in score12, but rather have the same strength as the long-range bb/bb hbonds.
-# * reference energies refit using OptE (Andrew's OptE run #209)
+# * reference energies refit using OptE (Andrew's OptE run #208)
 # * the solvation term, increased by 15%
-# * should be used in tandem with these flag
+# * should be used in tandem with these flags
 #   -corrections:hbond_sp2_correction
-# optE209 jsr55_pnataa_sc12dun10_sp2v11_olf11c_hesm16_fmx6_nofapair_hbenv_refonly_final
-METHOD_WEIGHTS ref 0.587342 0.349393 -1.30842 -1.52734 0.42497 0.0709258 0.367898 0.826203 -0.292974 0.580728 0.153077 -0.94758 -0.144885 -1.19957 -0.10676 0.154983 0.17494 0.739244 0.98773 0.110096
+#   -dun10 false
+# optE208 jsr55_pnataa_sc12bicubic_sp2v11_olf11c_hesm16_fmx6_nofapair_hbenv_refonly_final
+METHOD_WEIGHTS ref 0.216142 -0.00580677 -0.63962 -0.714535 1.14177 -0.308274 0.748698 0.479003 -0.656174 0.209528 -0.202123 -0.60678 -0.540085 -0.634773 -0.46196 -0.232217 -0.20426 0.392044 1.16853 0.850896
 fa_atr 0.8
 fa_rep 0.44
 fa_sol 0.75
