@@ -1968,7 +1968,7 @@ void RemodelLoopMover::abinitio_stage(
 	using protocols::loops::remove_cutpoint_variants;
 
 
-	TR << "** abinitio_stage" << std::endl;
+	TR << "** abinitio_stage_" << stage_name << std::endl;
 
 	Real const temp = temperature_;
 	MonteCarlo mc( *sfxOP, temp ); // init without pose
