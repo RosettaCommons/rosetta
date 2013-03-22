@@ -108,7 +108,7 @@ public:
 	void set_stage1_4_cycles(core::Size stage1_4_cycles_in) { stage1_4_cycles_=stage1_4_cycles_in; }
 	void set_add_non_init_chunks(bool add_non_init_chunks_in) { add_non_init_chunks_=add_non_init_chunks_in; }
 	void set_domain_assembly(bool domain_assembly_in) { domain_assembly_=domain_assembly_in; }
-	void set_add_hetatm(bool add_hetatm_in, core::Real hetatm_cst_weight_in) { add_hetatm_=add_hetatm_in; hetatm_cst_weight_=hetatm_cst_weight_in; }
+	void set_add_hetatm(bool add_hetatm_in, core::Real hetatm_self_cst_weight_in, core::Real hetatm_prot_cst_weight_in) { add_hetatm_=add_hetatm_in; hetatm_self_cst_weight_=hetatm_self_cst_weight_in; hetatm_prot_cst_weight_=hetatm_prot_cst_weight_in;}
 	void set_frag_1mer_insertion_weight(core::Real frag_1mer_insertion_weight_in) { frag_1mer_insertion_weight_=frag_1mer_insertion_weight_in; }
 	void set_small_frag_insertion_weight(core::Real small_frag_insertion_weight_in) { small_frag_insertion_weight_=small_frag_insertion_weight_in; }
 	void set_big_frag_insertion_weight(core::Real big_frag_insertion_weight_in) { big_frag_insertion_weight_=big_frag_insertion_weight_in; }
@@ -179,7 +179,7 @@ private:
 	bool add_non_init_chunks_;
 	bool domain_assembly_;
 	bool add_hetatm_;
-	core::Real hetatm_cst_weight_;
+	core::Real hetatm_self_cst_weight_, hetatm_prot_cst_weight_;
 	core::Real frag_weight_aligned_; // fragment insertion to the aligned region, vs. unaligned region
 	bool auto_frag_insertion_weight_; // automatically set the fragment insertion weight
 	core::Size max_registry_shift_;

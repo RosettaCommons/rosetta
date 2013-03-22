@@ -185,7 +185,8 @@ FoldTreeHybridize::init() {
 	top_n_small_frag_ = 200;
 	domain_assembly_ = false;
 	add_hetatm_ = false;
-	hetatm_cst_weight_ = 10.;
+	hetatm_self_cst_weight_ = 10.;
+	hetatm_prot_cst_weight_ = 0.;
 	// default scorefunction
 	set_scorefunction ( core::scoring::ScoreFunctionFactory::create_score_function( "score3" ) );
 
@@ -671,6 +672,7 @@ FoldTreeHybridize::setup_scorefunctions(
 
 	score0->reset();
 	score0->set_weight( core::scoring::vdw, 0.1*scorefxn_->get_weight( core::scoring::vdw ) );
+	score0->set_weight( core::scoring::elec_dens_fast, scorefxn_->get_weight( core::scoring::elec_dens_fast ) );
 
 	score1->reset();
 	score2->set_weight( core::scoring::linear_chainbreak, 0.1*lincb_orig );
@@ -683,6 +685,7 @@ FoldTreeHybridize::setup_scorefunctions(
 	score1->set_weight( core::scoring::hs_pair, scorefxn_->get_weight( core::scoring::hs_pair ) );
 	score1->set_weight( core::scoring::ss_pair, 0.3*scorefxn_->get_weight( core::scoring::ss_pair ) );
 	score1->set_weight( core::scoring::sheet, scorefxn_->get_weight( core::scoring::sheet ) );
+	score1->set_weight( core::scoring::elec_dens_fast, scorefxn_->get_weight( core::scoring::elec_dens_fast ) );
 	//STRAND_STRAND_WEIGHTS 1 11
 	core::scoring::methods::EnergyMethodOptions score1_options(score1->energy_method_options());
 	score1_options.set_strand_strand_weights(1,11);
@@ -704,6 +707,7 @@ FoldTreeHybridize::setup_scorefunctions(
 	score2->set_weight( core::scoring::hs_pair, scorefxn_->get_weight( core::scoring::hs_pair ) );
 	score2->set_weight( core::scoring::ss_pair, 0.3*scorefxn_->get_weight( core::scoring::ss_pair ) );
 	score2->set_weight( core::scoring::sheet, scorefxn_->get_weight( core::scoring::sheet ) );
+	score2->set_weight( core::scoring::elec_dens_fast, scorefxn_->get_weight( core::scoring::elec_dens_fast ) );
 	//STRAND_STRAND_WEIGHTS 1 6
 	core::scoring::methods::EnergyMethodOptions score2_options(score1->energy_method_options());
 	score2_options.set_strand_strand_weights(1,6);
@@ -724,6 +728,7 @@ FoldTreeHybridize::setup_scorefunctions(
 	score5->set_weight( core::scoring::hs_pair, scorefxn_->get_weight( core::scoring::hs_pair ) );
 	score5->set_weight( core::scoring::ss_pair, 0.3*scorefxn_->get_weight( core::scoring::ss_pair ) );
 	score5->set_weight( core::scoring::sheet, scorefxn_->get_weight( core::scoring::sheet ) );
+	score5->set_weight( core::scoring::elec_dens_fast, scorefxn_->get_weight( core::scoring::elec_dens_fast ) );
 	//STRAND_STRAND_WEIGHTS 1 11
 	core::scoring::methods::EnergyMethodOptions score5_options(score1->energy_method_options());
 	score5_options.set_strand_strand_weights(1,11);
@@ -1173,7 +1178,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	if ( scorefxn_->get_weight( core::scoring::atom_pair_constraint ) != 0 ) {
 		setup_centroid_constraints( pose, template_poses_, template_wts_, cst_file_, get_pairings_residues() );
 		if (add_hetatm_)
-			add_non_protein_cst(pose, hetatm_cst_weight_);
+			add_non_protein_cst(pose, hetatm_self_cst_weight_, hetatm_prot_cst_weight_);
 	}
 
 	// Initialize the structure

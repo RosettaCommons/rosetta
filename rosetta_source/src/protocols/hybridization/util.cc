@@ -222,7 +222,7 @@ void add_strand_pairs_cst(core::pose::Pose & pose, utility::vector1< std::pair< 
 	}
 }
 
-void add_non_protein_cst(core::pose::Pose & pose, core::Real const cst_weight) {
+void add_non_protein_cst(core::pose::Pose & pose, core::Real const self_cst_weight, core::Real const het_prot_cst_weight) {
 	//symmetry
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
@@ -234,6 +234,7 @@ void add_non_protein_cst(core::pose::Pose & pose, core::Real const cst_weight) {
 	core::Real MAXDIST = 12.0;
 	core::Real COORDDEV = 3.0;
 
+	if ( het_prot_cst_weight > 1e-7) {
 	// constraints protein<->substrate
 	for (Size ires=1; ires<=pose.total_residue(); ++ires) {
 		if (!pose.residue(ires).is_protein()) continue;
@@ -256,15 +257,17 @@ void add_non_protein_cst(core::pose::Pose & pose, core::Real const cst_weight) {
 					pose.add_constraint(
 						new core::scoring::constraints::AtomPairConstraint(
 							core::id::AtomID(iatom,ires), core::id::AtomID(jatom,jres),
-							new core::scoring::constraints::ScalarWeightedFunc( cst_weight, new core::scoring::constraints::SOGFunc( dist, COORDDEV ) ) ) );
+							new core::scoring::constraints::ScalarWeightedFunc( het_prot_cst_weight, new core::scoring::constraints::SOGFunc( dist, COORDDEV ) ) ) );
 				}
 			}
 		}
 	}
-
+	}
+	
 	MAXDIST = 12.0;
 	COORDDEV = 1.0;
 
+	if (self_cst_weight > 1e-7) {
 	// constraints within substrate
 	for (Size ires=1; ires<=pose.total_residue(); ++ires) {
 		if (pose.residue(ires).is_protein() || pose.residue(ires).aa() == core::chemical::aa_vrt) continue;
@@ -280,11 +283,12 @@ void add_non_protein_cst(core::pose::Pose & pose, core::Real const cst_weight) {
 						pose.add_constraint(
 							new core::scoring::constraints::AtomPairConstraint(
 								core::id::AtomID(iatom,ires), core::id::AtomID(jatom,jres),
-								new core::scoring::constraints::ScalarWeightedFunc( cst_weight, new core::scoring::constraints::SOGFunc( dist, COORDDEV ) ) ) );
+								new core::scoring::constraints::ScalarWeightedFunc( self_cst_weight, new core::scoring::constraints::SOGFunc( dist, COORDDEV ) ) ) );
 					}
 				}
 			}
 		}
+	}
 	}
 }
 

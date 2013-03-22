@@ -216,7 +216,8 @@ HybridizeProtocol::init() {
 	frag_1mer_insertion_weight_ = option[cm::hybridize::frag_1mer_insertion_weight]();
 	small_frag_insertion_weight_ = option[cm::hybridize::small_frag_insertion_weight]();
 	big_frag_insertion_weight_ = option[cm::hybridize::big_frag_insertion_weight]();
-	hetatm_cst_weight_ = 10.;
+	hetatm_self_cst_weight_ = 10.;
+	hetatm_prot_cst_weight_ = 0.;
 	cartfrag_overlap_ = 2;
 
 	if (option[cm::hybridize::starting_template].user()) {
@@ -699,6 +700,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
 		nres_tgt = symm_info->num_independent_residues();
+		nres_protein_tgt = symm_info->num_independent_residues();
 	}
 	if (pose.residue(nres_tgt).aa() == core::chemical::aa_vrt) nres_tgt--;
 	while (!pose.residue(nres_protein_tgt).is_protein()) nres_protein_tgt--;
@@ -731,6 +733,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		if (add_hetatm_) {
 			for ( Size ires=1; ires <= templates_[initial_template_index]->total_residue(); ++ires ) {
 				if (templates_[initial_template_index]->pdb_info()->number(ires) > (int)nres_tgt) {
+					TR.Debug << "Insert hetero residue: " << templates_[initial_template_index]->residue(ires).name3() << std::endl;
 					if ( templates_[initial_template_index]->residue(ires).is_polymer() && !templates_[initial_template_index]->residue(ires).is_lower_terminus() ) {
 						pose.append_residue_by_bond(templates_[initial_template_index]->residue(ires));
 					} else {
@@ -854,7 +857,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			ft_hybridize->set_stage1_4_cycles( stage1_4_cycles_ );
 			ft_hybridize->set_add_non_init_chunks( add_non_init_chunks_ );
 			ft_hybridize->set_domain_assembly( domain_assembly_ );
-			ft_hybridize->set_add_hetatm( add_hetatm_, hetatm_cst_weight_ );
+			ft_hybridize->set_add_hetatm( add_hetatm_, hetatm_self_cst_weight_, hetatm_prot_cst_weight_ );
 			ft_hybridize->set_frag_1mer_insertion_weight( frag_1mer_insertion_weight_ );
 			ft_hybridize->set_small_frag_insertion_weight( small_frag_insertion_weight_ );
 			ft_hybridize->set_big_frag_insertion_weight( big_frag_insertion_weight_ );
@@ -898,7 +901,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			std::string cst_fn = template_cst_fn_[initial_template_index];
 			setup_centroid_constraints( pose, templates_, template_weights_, cst_fn );
 			if (add_hetatm_) {
-				add_non_protein_cst(pose, hetatm_cst_weight_);
+				add_non_protein_cst(pose, hetatm_self_cst_weight_, hetatm_prot_cst_weight_);
 			}
 			if (strand_pairs_.size()) {
 				add_strand_pairs_cst(pose, strand_pairs_);
@@ -972,7 +975,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			if ( stage2_scorefxn_->get_weight( core::scoring::atom_pair_constraint ) != 0 ) {
 				setup_fullatom_constraints( pose, templates_, template_weights_, cst_fn, fa_cst_fn_ );
 				if (add_hetatm_) {
-					add_non_protein_cst(pose, hetatm_cst_weight_);
+					add_non_protein_cst(pose, hetatm_self_cst_weight_, hetatm_prot_cst_weight_);
 				}
 				if (strand_pairs_.size()) {
 					add_strand_pairs_cst(pose, strand_pairs_);
@@ -1211,7 +1214,9 @@ HybridizeProtocol::parse_my_tag(
 	if( tag->hasOption( "add_hetatm" ) )
 		add_hetatm_ = tag->getOption< bool >( "add_hetatm" );
 	if( tag->hasOption( "hetatm_cst_weight" ) )
-		hetatm_cst_weight_ = tag->getOption< core::Real >( "hetatm_cst_weight" );
+		hetatm_self_cst_weight_ = tag->getOption< core::Real >( "hetatm_cst_weight" );
+	if( tag->hasOption( "hetatm_to_protein_cst_weight" ) )
+		hetatm_prot_cst_weight_ = tag->getOption< core::Real >( "hetatm_to_protein_cst_weight" );
 	if( tag->hasOption( "domain_assembly" ) )
 		domain_assembly_ = tag->getOption< bool >( "domain_assembly" );
 	if( tag->hasOption( "realign_domains" ) )

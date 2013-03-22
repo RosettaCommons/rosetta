@@ -72,7 +72,7 @@ void generate_fullatom_constraints(
 
 void add_strand_pairs_cst(core::pose::Pose & pose, utility::vector1< std::pair< core::Size, core::Size > > const strand_pairs);
 
-void add_non_protein_cst(core::pose::Pose & pose, core::Real const cst_weight);
+void add_non_protein_cst(core::pose::Pose & pose, core::Real const self_cst_weight, core::Real const het_prot_cst_weight);
 
 bool discontinued_upper(core::pose::Pose const & pose, core::Size const seqpos);
 
