@@ -287,7 +287,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 		// compare the (i)-th and (i+1)-th element to find contiguous segments
 		if ( next.index == ( first.index + 1 ) ) {
 			segment.residues.push_back( first.index );
-			
+
 			// if reaching the end of the last segment
 			if ( ii + 1 == (int)temp.size() - 1 ) {
 				//TR << "next:" << next.index << std::endl;
@@ -376,15 +376,6 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 		}
 	//		runtime_assert( aa.size() == data.dssp_updated_ss.size());
 
-		if (option[OptionKeys::remodel::repeat_structure].user()){
-			String monomer_seq = aa;
-			Size copies = option[OptionKeys::remodel::repeat_structure];
-			while (copies > 1){ //first copy already made
-				aa.append( monomer_seq );
-				copies--;
-			}
-			//runtime_assert( aa.size() == data.dssp_updated_ss.size());
-		}
 	} else {
 		if ( build_aa_type.compare("A") != 0){
 			//build the aa string to be the same length as dssp updated ss
@@ -479,7 +470,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 
 		//debug
 		//TR << "dssp size: " << data.dssp_updated_ss.size() << std::endl;
-		TR << "head " << head << ":" << headNew << ", tail " << tail << ":" << tailNew << ", gap: " << gap 
+		TR << "head " << head << ":" << headNew << ", tail " << tail << ":" << tailNew << ", gap: " << gap
 			<<  ", dssp_updated_ss.size(): " << data.dssp_updated_ss.size() << ", insert_ss: " << data.dssp_updated_ss.substr( headNew-1, gap ) << std::endl; // head-1 because dssp_updated_ss is 0 based std::string
 
 		loops.add_loop( segmentStorageVector[i].residues.front(), segmentStorageVector[i].residues.back(), segmentStorageVector[i].residues.front()+1, 0, 0 );
@@ -524,7 +515,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 		else if (head != 0 && headNew == 1 && segmentStorageVector[i].residues.front() == 1 ){ // N-term deletion
 		  TR << "debug: N-term deletion" << std::endl;
 			this->manager.add( new SegmentRebuild( Interval(1,tail),  DSSP.substr( headNew-1, gap ), aa.substr( headNew-1,gap )) );
-		} 
+		}
 		else if (tail != static_cast<int>(input_pose.total_residue()) && tailNew == static_cast<int>(model_length) && headNew == 1 &&
 				segmentStorageVector[i].residues.back() == static_cast<int>(model_length) ) { // C-term deletion
 			gap = (int)data.blueprint.size()-segmentStorageVector[i].residues.front()+1;

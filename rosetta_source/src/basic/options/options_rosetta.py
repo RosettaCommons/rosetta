@@ -4331,10 +4331,12 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 		Option(  'core_cutoff', 'Integer', desc='number of neighbors required to consider core in auto design', default = '18'),
 		Option(  'boundary_cutoff', 'Integer', desc='number of neighbors required to consider boundary in auto design', default = '15'),
                 Option(  'resclass_by_sasa', 'Boolean' , desc= 'switch to use sasa for residue classification', default = 'false'),
-			
+
 		Option(  'helical_rise', 'Real', desc='helical parameter: rise', default = '0.0'),
 		Option(  'helical_radius', 'Real', desc='helical parameter: radius', default = '0.0'),
 		Option(  'helical_omega', 'Real', desc='helical parameter: omega', default = '0.0'),
+		Option(  'abinitio_like_sampling', 'Boolean', desc = 'sampling first with 9mers then 3mers. Staged energies. For rebuilding entire structure not loop closure', default = 'false'),
+		Option(  'disallow_sampling_at_pos', 'File', desc = 'locations to disallow sampling (format:1,3,5)', default = ''),
 		Option_Group( 'domainFusion',
 				Option(  'insert_segment_from_pdb', 'File', desc='segment pdb file to be inserted [insert pdb file name].', default=''),
 				#Option(  'rigid_segment_in_refinement', 'Boolean', desc=' rigid segment in refinement.'),

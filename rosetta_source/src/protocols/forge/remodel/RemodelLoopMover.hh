@@ -36,6 +36,7 @@
 #include <utility/vector1.hh>
 
 #include <string>
+#include <set>
 
 #include <protocols/moves/MonteCarlo.fwd.hh>
 
@@ -85,7 +86,7 @@ public: // typedefs
 	typedef protocols::filters::Filters_map Filters_map;
 	typedef protocols::moves::DataMap DataMap;
 	typedef protocols::moves::Movers_map Movers_map;
-	
+
 
 public: // construct/destruct
 
@@ -388,7 +389,18 @@ protected: // loop modeling stages
 	  MonteCarlo & mc,
 	  Real const cbreak_increment
 	);
-
+	/// @brief abinitioo stage: better control of fragments. No loop closure tried
+	void abinitio_stage(
+		Pose & pose,
+		Size const fragmentSize,
+		MoveMap const movemap,
+		ScoreFunctionOP sfxOP,
+		Size const max_outer_cycles,
+		Size const max_inner_cycles,
+		std::set<Size> const & disallowedPos,
+		bool const recover_low,
+		std::string stage_name
+		);
 
 	/// @brief simultaneous stage: multiple loop movement prior to MC accept/reject
 	void simultaneous_stage(
@@ -446,7 +458,12 @@ protected: // fragments
 		MoveMap const & movemap,
 		Size const largest_frag_size = 0
 	);
-
+	/// @brief same as create_fragment_movers except with set size
+	FragmentMoverOPs create_fragment_movers_limit_size_pos(
+		MoveMap const & movemap,
+		Size const frag_size,
+		std::set<Size> const & disallowedPos
+		);
 
 	/// @brief append fragment movers for the list of internally kept fragment sets,
 	///  1 fragment mover for each fragment set
@@ -459,7 +476,6 @@ protected: // fragments
 		FragmentMoverOPs & frag_movers,
 		Size const largest_frag_size = 0
 	);
-
 
 	/// @brief create per-loop fragment movers: 1 fragment mover for each loop (uses
 	///  movemaps to lock down non-loop residues)
@@ -604,7 +620,6 @@ private: // data
 	///@brief whether to keep the FoldTree untouched, i.e. trust the
 	///user to supply a decent FoldTree
 	bool keep_input_foldtree_;
-
 
 };
 

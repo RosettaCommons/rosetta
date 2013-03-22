@@ -4123,7 +4123,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-hbond_sp2_correction</b> \<Boolean\><dt>
-<dd>turn on the hbond Sp2 correction with a single flag use with sp2_correction.wts or sp2_dun10_corrections.wts if you are using -dun10. Note, these weight sets are chosen automatically by default. -score::hb_sp2_chipen -hb_sp2_BAH180_rise 0.75 -hb_sp2_outer_width 0.357 -hb_fade_energy -hbond_measure_sp3acc_BAH_from_hvy -lj_hbond_hdis 1.75 -lj_hbond_OH_donor_dis 2.6 -hbond_params sp2_params -smooth_hack_elec -hackelec_min_dis 1.6 -hackelec_r_option false</dd><br>
+<dd>turn on the hbond Sp2 correction with a single flag use with sp2_correction.wts. Note, these weight sets are chosen automatically by default. -score::hb_sp2_chipen -hb_sp2_BAH180_rise 0.75 -hb_sp2_outer_width 0.357 -hb_fade_energy -hbond_measure_sp3acc_BAH_from_hvy -lj_hbond_hdis 1.75 -lj_hbond_OH_donor_dis 2.6 -hbond_params sp2_params -smooth_hack_elec -hackelec_min_dis 1.6 -hackelec_r_option false</dd><br>
 </dl>
  </li>
 <li><h2>corrections:score</h2>
@@ -10845,6 +10845,16 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-helical_omega</b> \<Real\><dt>
 <dd>helical parameter: omega</dd><br>
 <dd>Default: 0.0</dd><br>
+</dl>
+<dl>
+<dt><b>-abinitio_like_sampling</b> \<Boolean\><dt>
+<dd>sampling first with 9mers then 3mers. Staged energies. For rebuilding entire structure not loop closure</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-disallow_sampling_at_pos</b> \<File\><dt>
+<dd>locations to disallow sampling (format:1,3,5)</dd><br>
+<dd>Default: ""</dd><br>
 </dl>
  </li>
 <li><h2>remodel:domainFusion</h2>

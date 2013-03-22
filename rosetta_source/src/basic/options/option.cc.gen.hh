@@ -862,7 +862,7 @@ option.add( basic::options::OptionKeys::score::nmer_svm_aa_matrix, "nmer svm seq
 option.add( basic::options::OptionKeys::score::nmer_ref_seq_length, "length of nmers in nmer_ref score" ).def(9);
 option.add( basic::options::OptionKeys::corrections::corrections, "corrections option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::corrections::correct, "turn on default corrections:-corrections::chemical:icoor_05_2009-corrections::score:p_aa_pp scoring/score_functions/P_AA_pp/P_AA_pp_08.2009-corrections::score:p_aa_pp_nogridshift-corrections::score:p_aa_pp_nogridshift-corrections::score:rama_not_squared-corrections::score:rama_map scoring/score_functions/rama/Rama.10.2009.yfsong.dat-scoring::hbond_params helix_hb_06_2009-corrections::score:hbond_fade 1.9 2.3 2.3 2.6 0.3 0.7 0.0 0.05-corrections::score:ch_o_bond_potential scoring/score_functions/carbon_hbond/ch_o_bond_potential_near_min_yf.dat" ).def(false);
-option.add( basic::options::OptionKeys::corrections::hbond_sp2_correction, "turn on the hbond Sp2 correction with a single flag use with sp2_correction.wts or sp2_dun10_corrections.wts if you are using -dun10. Note, these weight sets are chosen automatically by default. -score::hb_sp2_chipen -hb_sp2_BAH180_rise 0.75 -hb_sp2_outer_width 0.357 -hb_fade_energy -hbond_measure_sp3acc_BAH_from_hvy -lj_hbond_hdis 1.75 -lj_hbond_OH_donor_dis 2.6 -hbond_params sp2_params -smooth_hack_elec -hackelec_min_dis 1.6 -hackelec_r_option false" );
+option.add( basic::options::OptionKeys::corrections::hbond_sp2_correction, "turn on the hbond Sp2 correction with a single flag use with sp2_correction.wts. Note, these weight sets are chosen automatically by default. -score::hb_sp2_chipen -hb_sp2_BAH180_rise 0.75 -hb_sp2_outer_width 0.357 -hb_fade_energy -hbond_measure_sp3acc_BAH_from_hvy -lj_hbond_hdis 1.75 -lj_hbond_OH_donor_dis 2.6 -hbond_params sp2_params -smooth_hack_elec -hackelec_min_dis 1.6 -hackelec_r_option false" );
 option.add( basic::options::OptionKeys::corrections::score::score, "score option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::corrections::score::bbdep_omega, "Enable phi-psi dependent omega" );
 option.add( basic::options::OptionKeys::corrections::score::bbdep_bond_params, "Enable phi-psi dependent bondlengths and bondangles" );
@@ -2241,6 +2241,8 @@ option.add( basic::options::OptionKeys::remodel::resclass_by_sasa, "switch to us
 option.add( basic::options::OptionKeys::remodel::helical_rise, "helical parameter: rise" ).def(0.0);
 option.add( basic::options::OptionKeys::remodel::helical_radius, "helical parameter: radius" ).def(0.0);
 option.add( basic::options::OptionKeys::remodel::helical_omega, "helical parameter: omega" ).def(0.0);
+option.add( basic::options::OptionKeys::remodel::abinitio_like_sampling, "sampling first with 9mers then 3mers. Staged energies. For rebuilding entire structure not loop closure" ).def(false);
+option.add( basic::options::OptionKeys::remodel::disallow_sampling_at_pos, "locations to disallow sampling (format:1,3,5)" ).def("");
 option.add( basic::options::OptionKeys::remodel::domainFusion::domainFusion, "domainFusion option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::remodel::domainFusion::insert_segment_from_pdb, "segment pdb file to be inserted [insert pdb file name]." ).def("");
 option.add( basic::options::OptionKeys::remodel::vdw, "set vdw weight" ).def(1.0);

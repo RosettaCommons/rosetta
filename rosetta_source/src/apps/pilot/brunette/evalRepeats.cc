@@ -252,14 +252,16 @@ int main( int argc, char * argv [] ) {
 				 Real sigma;
 				 Real phi;
 				 get_angles(*input_poseOP,helices[1],helices[2],theta,sigma,phi);
-				 Real holesScore = get_holes_score(*input_poseOP);
-				 core::scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
-				 Real fa_score = scorefxn->score(*input_poseOP);
+				 //Real holesScore = get_holes_score(*input_poseOP);
+				 //core::scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
+				 //Real fa_score = scorefxn->score(*input_poseOP);
+				 Real holesScore = 0;
+				 Real fa_score = 0;
 				 Real resTypeScore = res_type_score(*input_poseOP);
 				 Real hb_srbb_score = get_hb_srbb_score(*input_poseOP);
 				 utility::vector1< std::string >  abego_vector = core::util::get_abego(*input_poseOP,1);
 				 output << F(8,3,fa_score) << " " <<F(8,3,holesScore) <<" "<< F(8,3,distance1_2) << " "<< F(8,3,distance1_1prime) << " "<< F(8,3,distance1_2prime) << " "<< F(8,3,distance2_2prime)  <<" " << F(8,3,distance_endpoint) <<" " << F(8,3,theta) << " "<< F(8,3,sigma) << " " << F(8,3,phi) << " " << I(6,tag) <<" " << I(4,resTypeScore) << " " <<F(8,3,hb_srbb_score) << "  " ;
-				 for (int ii=1; ii<35; ++ii){
+				 for (int ii=1; ii<50; ++ii){
 					 output << abego_vector[ii];
 				 }
 				 output << std::endl;

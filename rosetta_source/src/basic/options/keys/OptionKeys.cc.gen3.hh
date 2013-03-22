@@ -199,6 +199,8 @@ namespace remodel { BooleanOptionKey const resclass_by_sasa( "remodel:resclass_b
 namespace remodel { RealOptionKey const helical_rise( "remodel:helical_rise" );  }
 namespace remodel { RealOptionKey const helical_radius( "remodel:helical_radius" );  }
 namespace remodel { RealOptionKey const helical_omega( "remodel:helical_omega" );  }
+namespace remodel { BooleanOptionKey const abinitio_like_sampling( "remodel:abinitio_like_sampling" );  }
+namespace remodel { FileOptionKey const disallow_sampling_at_pos( "remodel:disallow_sampling_at_pos" );  }
 namespace remodel { namespace domainFusion { BooleanOptionKey const domainFusion( "remodel:domainFusion" );  } }
 namespace remodel { namespace domainFusion { FileOptionKey const insert_segment_from_pdb( "remodel:domainFusion:insert_segment_from_pdb" );  } }
 namespace remodel { RealOptionKey const vdw( "remodel:vdw" );  }

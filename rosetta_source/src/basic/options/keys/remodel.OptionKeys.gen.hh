@@ -70,6 +70,8 @@ namespace remodel { extern BooleanOptionKey const resclass_by_sasa; }
 namespace remodel { extern RealOptionKey const helical_rise; }
 namespace remodel { extern RealOptionKey const helical_radius; }
 namespace remodel { extern RealOptionKey const helical_omega; }
+namespace remodel { extern BooleanOptionKey const abinitio_like_sampling; }
+namespace remodel { extern FileOptionKey const disallow_sampling_at_pos; }
 namespace remodel { namespace domainFusion { extern BooleanOptionKey const domainFusion; } }
 namespace remodel { namespace domainFusion { extern FileOptionKey const insert_segment_from_pdb; } }
 namespace remodel { extern RealOptionKey const vdw; }
