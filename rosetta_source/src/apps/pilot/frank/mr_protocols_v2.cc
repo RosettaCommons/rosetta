@@ -26,6 +26,7 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
+#include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
 //
 #include <iostream>
@@ -37,6 +38,7 @@ OPT_1GRP_KEY(Integer, MR, max_gaplength_to_model)
 OPT_1GRP_KEY(Real, MR, cen_dens_wt)
 OPT_1GRP_KEY(Real, MR, fa_dens_wt)
 OPT_1GRP_KEY(StringVector, MR, disulf)
+OPT_1GRP_KEY(String, MR, mode)
 
 static basic::Tracer TR("rosetta_MR");
 
@@ -46,6 +48,10 @@ my_main( void* ) {
 	using namespace basic::options::OptionKeys;
 	using namespace protocols::moves;
 	using namespace core::fragment;
+
+	//
+	if (option[ OptionKeys::MR::mode ].user() )
+		TR << "The flag -MR::mode is no longer used.  Ignoring." << std::endl;
 
 	protocols::hybridization::MRMoverOP do_MR( new protocols::hybridization::MRMover );
 
@@ -67,8 +73,10 @@ my_main( void* ) {
 			do_MR->set_small_fragments( frag_lib_op );
 	}
 
-	do_MR->set_centroid_density_weight( option[ OptionKeys::MR::cen_dens_wt ]() );
-	do_MR->set_fullatom_density_weight( option[ OptionKeys::MR::fa_dens_wt ]() );
+	if (option[ OptionKeys::edensity::mapfile ].user()) {
+		do_MR->set_centroid_density_weight( option[ OptionKeys::MR::cen_dens_wt ]() );
+		do_MR->set_fullatom_density_weight( option[ OptionKeys::MR::fa_dens_wt ]() );
+	}
 
 	// run
 	protocols::jd2::JobDistributor::get_instance()->go( do_MR );
@@ -85,6 +93,7 @@ main( int argc, char * argv [] ) {
     NEW_OPT(MR::cen_dens_wt, "centroid density weight", 4.0);
     NEW_OPT(MR::fa_dens_wt, "fullatom density weight", 1.0);
     NEW_OPT(MR::disulf, "disulf patterning", utility::vector1<std::string>());
+    NEW_OPT(MR::mode, "noop", "X");
 
 	devel::init( argc, argv );
 

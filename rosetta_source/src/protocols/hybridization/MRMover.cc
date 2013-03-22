@@ -148,12 +148,12 @@ MRMover::init(){
 
 	// auto constraint weight
 	if (!option[ OptionKeys::constraints::cst_file ].user() && !option[ OptionKeys::constraints::cst_weight ].user()) {
-		cen1_scorefxn_->set_weight( core::scoring::atom_pair_constraint, 0.5 );
-		cen2_scorefxn_->set_weight( core::scoring::atom_pair_constraint, 0.5 );
+		cen1_scorefxn_->set_weight( core::scoring::atom_pair_constraint, 0.25 );
+		cen2_scorefxn_->set_weight( core::scoring::atom_pair_constraint, 0.25 );
 	}
-	//if (!option[ OptionKeys::constraints::cst_fa_file ].user() && !option[ OptionKeys::constraints::cst_fa_weight ].user()) {
-	//	fa_scorefxn_->set_weight( core::scoring::atom_pair_constraint, 0.5 );
-	//}
+	if (!option[ OptionKeys::constraints::cst_fa_file ].user() && !option[ OptionKeys::constraints::cst_fa_weight ].user()) {
+		fa_scorefxn_->set_weight( core::scoring::atom_pair_constraint, 0.25 );
+	}
 
 	// use reasonable defaults
 	if (option[ OptionKeys::edensity::mapfile ].user()) {
@@ -267,16 +267,18 @@ void MRMover::apply( Pose &pose ) {
  		pose.conformation().detect_disulfides();
  	}
 
-	// relax with flexible angles & jumps
-	protocols::relax::RelaxProtocolBaseOP relax_prot = new protocols::relax::FastRelax( fa_scorefxn_, relax_cycles_ );
-	relax_prot->set_current_tag( get_current_tag() );
-	core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap;
-	mm->set_bb( true ); mm->set_chi( true ); mm->set_jump( true );
-	mm->set( core::id::THETA, true );
-	relax_prot->set_movemap( mm );
-	relax_prot->set_min_type("lbfgs_armijo_nonmonotone");
-	relax_prot->set_max_iter( relax_max_iter_ );
-	relax_prot->apply( pose );
+	if (relax_cycles_ > 0) {
+		// relax with flexible angles & jumps
+		protocols::relax::RelaxProtocolBaseOP relax_prot = new protocols::relax::FastRelax( fa_scorefxn_, relax_cycles_ );
+		relax_prot->set_current_tag( get_current_tag() );
+		core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap;
+		mm->set_bb( true ); mm->set_chi( true ); mm->set_jump( true );
+		mm->set( core::id::THETA, true );
+		relax_prot->set_movemap( mm );
+		relax_prot->set_min_type("lbfgs_armijo_nonmonotone");
+		relax_prot->set_max_iter( relax_max_iter_ );
+		relax_prot->apply( pose );
+	}
 }
 
 
