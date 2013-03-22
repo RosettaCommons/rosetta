@@ -1,4 +1,3 @@
-namespace resample { FileOptionKey const silent( "resample:silent" );  }
 namespace resample { StringOptionKey const tag( "resample:tag" );  }
 namespace resample { BooleanOptionKey const stage1( "resample:stage1" );  }
 namespace resample { BooleanOptionKey const stage2( "resample:stage2" );  }
@@ -179,6 +178,7 @@ namespace score { StringOptionKey const nmer_svm_aa_matrix( "score:nmer_svm_aa_m
 namespace score { IntegerOptionKey const nmer_ref_seq_length( "score:nmer_ref_seq_length" );  }
 namespace corrections { BooleanOptionKey const corrections( "corrections" );  }
 namespace corrections { BooleanOptionKey const correct( "corrections:correct" );  }
+namespace corrections { BooleanOptionKey const hbond_sp2_correction( "corrections:hbond_sp2_correction" );  }
 namespace corrections { namespace score { BooleanOptionKey const score( "corrections:score" );  } }
 namespace corrections { namespace score { BooleanOptionKey const bbdep_omega( "corrections:score:bbdep_omega" );  } }
 namespace corrections { namespace score { BooleanOptionKey const bbdep_bond_params( "corrections:score:bbdep_bond_params" );  } }
@@ -674,3 +674,4 @@ namespace blivens { namespace disulfide_scorer { RealOptionKey const cys_prob( "
 namespace blivens { StringOptionKey const score_type( "blivens:score_type" );  }
 namespace krassk { BooleanOptionKey const krassk( "krassk" );  }
 namespace krassk { IntegerOptionKey const left_tail( "krassk:left_tail" );  }
+namespace krassk { IntegerOptionKey const right_tail( "krassk:right_tail" );  }

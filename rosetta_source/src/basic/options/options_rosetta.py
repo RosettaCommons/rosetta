@@ -1889,6 +1889,20 @@ Options = Option_Group( '',
 			"-corrections::score:hbond_fade 1.9 2.3 2.3 2.6 0.3 0.7 0.0 0.05"
 			"-corrections::score:ch_o_bond_potential scoring/score_functions/carbon_hbond/ch_o_bond_potential_near_min_yf.dat",
 			default="false"),
+		Option( 'hbond_sp2_correction', 'Boolean',
+			desc="turn on the hbond Sp2 correction with a single flag"
+			" use with sp2_correction.wts. Note, these weight sets are chosen automatically by default."
+			" -score::hb_sp2_chipen"
+			" -hb_sp2_BAH180_rise 0.75"
+			" -hb_sp2_outer_width 0.357"
+			" -hb_fade_energy"
+			" -hbond_measure_sp3acc_BAH_from_hvy"
+			" -lj_hbond_hdis 1.75"
+			" -lj_hbond_OH_donor_dis 2.6"
+			" -hbond_params sp2_params"
+			" -smooth_hack_elec"
+			" -hackelec_min_dis 1.6"
+			" -hackelec_r_option false"),
 		Option_Group( 'score',
 			Option( 'bbdep_omega', 'Boolean', desc="Enable phi-psi dependent omega", ),
 			Option( 'bbdep_bond_params', 'Boolean', desc="Enable phi-psi dependent bondlengths and bondangles", ),

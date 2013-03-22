@@ -229,6 +229,7 @@ using basic::Warning;
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/cryst.OptionKeys.gen.hh>
@@ -524,6 +525,7 @@ init_mpi(int argc, char * argv []) {
 	int already_initialized( 0 );
 	MPI_Initialized( & already_initialized );
 	if ( already_initialized == 0 ) MPI_Init(&argc, &argv);
+
 }
 #else
 void
@@ -553,6 +555,20 @@ init_options(int argc, char * argv []) {
 
 void
 init_tracers(){
+
+#ifdef USEMPI
+	if( option[ out::mpi_tracer_to_file ].user() ){
+		int mpi_rank( 0 );
+		MPI_Comm_rank( MPI_COMM_WORLD, &mpi_rank );
+
+		std::stringstream outfilename;
+		outfilename << option[ out::mpi_tracer_to_file ]() << "_" << mpi_rank;
+		basic::otstreamOP redirect_tracer = new basic::TracerToFile( outfilename.str() );
+		basic::Tracer::set_ios_hook( redirect_tracer, basic::Tracer::AllChannels, false );
+		basic::Tracer::super_mute( true );
+	}
+#endif
+
 	// set Tracer options
 	basic::TracerOptions & TO( basic::Tracer::tracer_options() );
 
@@ -570,6 +586,77 @@ init_tracers(){
 
 void
 init_score_function_corrections(){
+
+	if( option[ corrections::hbond_sp2_correction ]) {
+		// Note, the weight sets that go with the hbond_sp2_correction
+		// flag are handled in core/scoring/ScorefunctionFactory.hh
+
+		if( ! option[ corrections::score::hb_sp2_chipen ].user() ) {
+			option[ corrections::score::hb_sp2_chipen ].value( true );
+		}
+
+		if( ! option[ corrections::score::hb_sp2_BAH180_rise ].user() ) {
+			option[ corrections::score::hb_sp2_BAH180_rise ].value( 0.75 );
+		}
+
+		if( ! option[ corrections::score::hb_sp2_outer_width ].user() ) {
+			option[ corrections::score::hb_sp2_outer_width ].value( 0.357 );
+		}
+
+		if( ! option[ corrections::score::hb_fade_energy ].user() ) {
+			option[ corrections::score::hb_fade_energy ].value( true );
+		}
+
+		if( ! option[ corrections::score::hbond_measure_sp3acc_BAH_from_hvy ].user() ) {
+			option[ corrections::score::hbond_measure_sp3acc_BAH_from_hvy ].value( true );
+		}
+
+		if( ! option[ corrections::score::lj_hbond_hdis ].user() ) {
+			option[ corrections::score::lj_hbond_hdis ].value( 1.75 );
+		}
+
+		if( ! option[ corrections::score::lj_hbond_OH_donor_dis ].user() ) {
+			option[ corrections::score::lj_hbond_OH_donor_dis ].value( 2.6 );
+		}
+
+		if( ! option[ score::hbond_params ].user() ) {
+			option[ score::hbond_params ].value( "sp2_params" );
+		}
+
+		if( ! option[ score::smooth_hack_elec ].user() ) {
+			option[ score::smooth_hack_elec ].value( true );
+		}
+
+		if( ! option[ score::hackelec_min_dis ].user() ) {
+			option[ score::hackelec_min_dis ].value( 1.6 );
+		}
+
+		if( ! option[ score::hackelec_r_option ].user() ) {
+			option[ score::hackelec_r_option ].value( false );
+		}
+
+		if( ! option[ basic::options::OptionKeys::chemical::set_atom_properties ].user() ) {
+			utility::vector1< std::string > params;
+			params.push_back("fa_standard:ONH2:LK_DGFREE:-5.85");
+			params.push_back("fa_standard:NH2O:LK_DGFREE:-7.8");
+			params.push_back("fa_standard:Narg:LK_DGFREE:-10.0");
+			params.push_back("fa_standard:OH:LK_DGFREE:-6.70" );
+			option[ basic::options::OptionKeys::chemical::set_atom_properties ].value(params);
+		}
+
+		if ( ! option[ corrections::score::dun10 ].user() ) {
+			option[corrections::score::dun10].value( true );
+		}
+
+		if ( ! option[ corrections::score::use_bicubic_interpolation ].user() ) {
+			option[corrections::score::use_bicubic_interpolation].value( true );
+		}
+
+		if( option[corrections::correct] ){
+			throw utility::excn::EXCN_BadInput( "The -corrections::hbond_sp2_correction is incompatible with the -corrections:correct flag.");
+		}
+	}
+
 
 	// set default corrections
 	if( option[corrections::correct]) {
@@ -708,21 +795,6 @@ init_random_number_generators(){
 	if( option[ run::jran ].active() )  seed = option[ run::jran ]();
 	if( option[ run::seed_offset ].active() )  seed_offset = option[ run::seed_offset ]();
 	if( option[ run::use_time_as_seed ].active() )  use_time_as_seed = option[ run::use_time_as_seed ]();
-
-#ifdef USEMPI
-	if( option[ out::mpi_tracer_to_file ].user() ){
-		int mpi_rank( 0 );
-		MPI_Comm_rank( MPI_COMM_WORLD, &mpi_rank );
-
-		std::stringstream outfilename;
-		outfilename << option[ out::mpi_tracer_to_file ]() << "_" << mpi_rank;
-		basic::otstreamOP redirect_tracer = new basic::TracerToFile( outfilename.str() );
-		basic::Tracer::set_ios_hook( redirect_tracer, basic::Tracer::AllChannels, false );
-		basic::Tracer::super_mute( true );
-	}
-
-#endif
-
 
 	std::string random_device_name( option[ run::rng_seed_device ]() ); // typically /dev/urandom or /dev/random
 

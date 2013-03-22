@@ -1,4 +1,3 @@
-namespace krassk { IntegerOptionKey const right_tail( "krassk:right_tail" );  }
 namespace krassk { BooleanOptionKey const tail_mode( "krassk:tail_mode" );  }
 namespace krassk { IntegerOptionKey const tail_mode_name( "krassk:tail_mode_name" );  }
 namespace krassk { StringOptionKey const tail_output_file_name( "krassk:tail_output_file_name" );  }
@@ -674,3 +673,5 @@ namespace edensity { StringOptionKey const mapfile( "edensity:mapfile" );  }
 namespace edensity { RealOptionKey const mapreso( "edensity:mapreso" );  }
 namespace edensity { RealOptionKey const grid_spacing( "edensity:grid_spacing" );  }
 namespace edensity { RealOptionKey const centroid_density_mass( "edensity:centroid_density_mass" );  }
+namespace edensity { IntegerOptionKey const sliding_window( "edensity:sliding_window" );  }
+namespace edensity { RealOptionKey const force_apix( "edensity:force_apix" );  }

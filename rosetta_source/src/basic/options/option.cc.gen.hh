@@ -679,10 +679,10 @@ option.add( basic::options::OptionKeys::fold_cst::ignore_sequence_seperation, "u
 option.add( basic::options::OptionKeys::fold_cst::no_recover_low_at_constraint_switch, "dont recover low when max_seq_sep is increased" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::ramp_coord_cst, "ramp coord csts just like chainbreak-weights during fold-cst" ).def(false);
 option.add( basic::options::OptionKeys::resample::resample, "resample option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::resample::silent, "a silent file for decoys to restart sampling from " ).def("");
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::resample::silent, "a silent file for decoys to restart sampling from " ).def("");
-option.add( basic::options::OptionKeys::resample::tag, "which decoy to select from silent file " ).def("");
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::resample::tag, "which decoy to select from silent file " ).def("");
 option.add( basic::options::OptionKeys::resample::stage1, "if true restart after stage1, otherwise after stage2 " ).def(false);
 option.add( basic::options::OptionKeys::resample::stage2, "if true restart after stage1, otherwise after stage2 " ).def(false);
 option.add( basic::options::OptionKeys::resample::jumps, "if true restart after stage1, otherwise after stage2 " ).def(false);
@@ -862,6 +862,7 @@ option.add( basic::options::OptionKeys::score::nmer_svm_aa_matrix, "nmer svm seq
 option.add( basic::options::OptionKeys::score::nmer_ref_seq_length, "length of nmers in nmer_ref score" ).def(9);
 option.add( basic::options::OptionKeys::corrections::corrections, "corrections option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::corrections::correct, "turn on default corrections:-corrections::chemical:icoor_05_2009-corrections::score:p_aa_pp scoring/score_functions/P_AA_pp/P_AA_pp_08.2009-corrections::score:p_aa_pp_nogridshift-corrections::score:p_aa_pp_nogridshift-corrections::score:rama_not_squared-corrections::score:rama_map scoring/score_functions/rama/Rama.10.2009.yfsong.dat-scoring::hbond_params helix_hb_06_2009-corrections::score:hbond_fade 1.9 2.3 2.3 2.6 0.3 0.7 0.0 0.05-corrections::score:ch_o_bond_potential scoring/score_functions/carbon_hbond/ch_o_bond_potential_near_min_yf.dat" ).def(false);
+option.add( basic::options::OptionKeys::corrections::hbond_sp2_correction, "turn on the hbond Sp2 correction with a single flag use with sp2_correction.wts or sp2_dun10_corrections.wts if you are using -dun10. Note, these weight sets are chosen automatically by default. -score::hb_sp2_chipen -hb_sp2_BAH180_rise 0.75 -hb_sp2_outer_width 0.357 -hb_fade_energy -hbond_measure_sp3acc_BAH_from_hvy -lj_hbond_hdis 1.75 -lj_hbond_OH_donor_dis 2.6 -hbond_params sp2_params -smooth_hack_elec -hackelec_min_dis 1.6 -hackelec_r_option false" );
 option.add( basic::options::OptionKeys::corrections::score::score, "score option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::corrections::score::bbdep_omega, "Enable phi-psi dependent omega" );
 option.add( basic::options::OptionKeys::corrections::score::bbdep_bond_params, "Enable phi-psi dependent bondlengths and bondangles" );
@@ -1357,10 +1358,10 @@ option.add( basic::options::OptionKeys::blivens::disulfide_scorer::cys_prob, "Th
 option.add( basic::options::OptionKeys::blivens::score_type, "The scoring type to use, eg for a filter." ).def("total_score");
 option.add( basic::options::OptionKeys::krassk::krassk, "krassk option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::krassk::left_tail, "No description" ).def(0);
+option.add( basic::options::OptionKeys::krassk::right_tail, "No description" ).def(0);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::krassk::right_tail, "No description" ).def(0);
-option.add( basic::options::OptionKeys::krassk::tail_mode, "No description" ).def(false);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::krassk::tail_mode, "No description" ).def(false);
 option.add( basic::options::OptionKeys::krassk::tail_mode_name, "No description" ).def(1);
 option.add( basic::options::OptionKeys::krassk::tail_output_file_name, "No description" ).def("tail_output");
 option.add( basic::options::OptionKeys::rotamerdump::rotamerdump, "rotamerdump option group" ).legal(true).def(true);
@@ -2035,11 +2036,11 @@ option.add( basic::options::OptionKeys::edensity::mapfile, "No description" );
 option.add( basic::options::OptionKeys::edensity::mapreso, "No description" ).def(3.0);
 option.add( basic::options::OptionKeys::edensity::grid_spacing, "No description" ).def(0.0);
 option.add( basic::options::OptionKeys::edensity::centroid_density_mass, "No description" ).def(0.0);
+option.add( basic::options::OptionKeys::edensity::sliding_window, "No description" ).def(1);
+option.add( basic::options::OptionKeys::edensity::force_apix, "force pixel spacing to take a particular value" ).def(0.0);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::edensity::sliding_window, "No description" ).def(1);
-option.add( basic::options::OptionKeys::edensity::force_apix, "force pixel spacing to take a particular value" ).def(0.0);
-option.add( basic::options::OptionKeys::edensity::fastdens_wt, "wt of fast edens score" ).def(0.0);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::edensity::fastdens_wt, "wt of fast edens score" ).def(0.0);
 option.add( basic::options::OptionKeys::edensity::sliding_window_wt, "wt of edens sliding-window score" ).def(0.0);
 option.add( basic::options::OptionKeys::edensity::score_sliding_window_context, "when using sl. win. density fit, include neighbor atoms (slows trajectory)" ).def(false);
 option.add( basic::options::OptionKeys::edensity::whole_structure_ca_wt, "wt of edens centroid (CA-only) scoring" ).def(0.0);
