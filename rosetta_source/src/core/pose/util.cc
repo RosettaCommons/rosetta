@@ -367,7 +367,7 @@ void addVirtualResAsRoot(const numeric::xyzVector<core::Real>& xyz, core::pose::
 
 	// update PDBinfo
 	if (pose.pdb_info()) {
-		pose.pdb_info()->chain( pose.total_residue(), 'X' );
+		pose.pdb_info()->chain( pose.total_residue(), 'z' );
 		pose.pdb_info()->number( pose.total_residue(), 1 );
 		pose.pdb_info()->obsolete( false );
 	}
@@ -405,7 +405,7 @@ void
 read_comment_pdb(
 	std::string const &file_name,
 	core::pose::Pose & pose
-) {	
+) {
 	utility::io::izstream data(file_name);
   if ( !data ) {
 		TR<<"ERROR! PDB SCAFOLD NAME NOT FOUND!!"<<std::endl;

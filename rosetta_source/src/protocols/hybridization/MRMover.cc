@@ -24,7 +24,6 @@
 
 #include <protocols/relax/util.hh>
 
-#include <devel/init.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/comparative_modeling/ThreadingJob.hh>
@@ -201,19 +200,45 @@ void MRMover::apply( Pose &pose ) {
 		utility::vector1< int > pdb_numbering;
 		utility::vector1< char > pdb_chains;
 		core::pose::PoseOP template_pose = new core::pose::Pose;
+		bool add_by_jump = true;
 		for (Size i=1; i<=pose.total_residue(); ++i) {
 			if (!my_loops->is_loop_residue(i)) {
-				template_pose->append_residue_by_bond( pose.residue(i) );
+				if (add_by_jump) {
+					if (template_pose->total_residue() > 0
+								 && template_pose->residue(template_pose->total_residue()).is_polymer())
+						core::pose::add_upper_terminus_type_to_pose_residue( *template_pose, template_pose->total_residue() );
+
+					template_pose->append_residue_by_jump( pose.residue(i), template_pose->total_residue(), "", "", true );
+					add_by_jump = (!pose.residue(i).is_polymer() || pose.residue(i).is_upper_terminus());
+					if (template_pose->residue(template_pose->total_residue()).is_polymer())
+						core::pose::add_lower_terminus_type_to_pose_residue( *template_pose, template_pose->total_residue() );
+				} else if ( !pose.residue(i).is_polymer() ) {
+					if (template_pose->total_residue() > 0
+								 && template_pose->residue(template_pose->total_residue()).is_polymer())
+						core::pose::add_upper_terminus_type_to_pose_residue( *template_pose, template_pose->total_residue() );
+					template_pose->append_residue_by_jump( pose.residue(i), template_pose->total_residue(), "", "", true );
+					add_by_jump = true;
+				} else {
+					template_pose->append_residue_by_bond( pose.residue(i), false );
+					add_by_jump = (pose.residue(i).is_upper_terminus());
+				}
+
 				pdb_numbering.push_back( i );
 				pdb_chains.push_back( 'A' );
+			} else {
+				add_by_jump = true;
 			}
 		}
+		if (template_pose->total_residue() > 0
+				 && template_pose->residue(template_pose->total_residue()).is_polymer())
+		core::pose::add_upper_terminus_type_to_pose_residue( *template_pose, template_pose->total_residue() );
 		core::pose::PDBInfoOP new_pdb_info = new core::pose::PDBInfo( *template_pose );
 
 		// pdbinfo
 		new_pdb_info->set_numbering( pdb_numbering );
 		new_pdb_info->set_chains( pdb_chains );
 		template_pose->pdb_info( new_pdb_info );
+		template_pose->pdb_info()->obsolete( false );
 
 		protocols::hybridization::HybridizeProtocol rebuild;
 		rebuild.add_template( template_pose, "AUTO", symm_def_file_);
@@ -370,18 +395,18 @@ void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loop
 		if (!to_trim[i]) {
 			if (add_by_jump) {
 				if (new_query_pose.total_residue() > 0
-							 && !new_query_pose.residue(new_query_pose.total_residue()).is_polymer())
+							 && new_query_pose.residue(new_query_pose.total_residue()).is_polymer())
 					core::pose::add_upper_terminus_type_to_pose_residue( new_query_pose, new_query_pose.total_residue() );
 
 				new_query_pose.append_residue_by_jump( query_pose.residue(i), new_query_pose.total_residue(), "", "", true );
 				add_by_jump = !query_pose.residue(i).is_polymer();
 
-				if (!new_query_pose.residue(new_query_pose.total_residue()).is_polymer())
+				if (new_query_pose.residue(new_query_pose.total_residue()).is_polymer())
 					core::pose::add_lower_terminus_type_to_pose_residue( new_query_pose, new_query_pose.total_residue() );
 
 			} else if ( !query_pose.residue(i).is_polymer() ) {
 				if (new_query_pose.total_residue() > 0
-							 && !new_query_pose.residue(new_query_pose.total_residue()).is_polymer())
+							 && new_query_pose.residue(new_query_pose.total_residue()).is_polymer())
 					core::pose::add_upper_terminus_type_to_pose_residue( new_query_pose, new_query_pose.total_residue() );
 				new_query_pose.append_residue_by_jump( query_pose.residue(i), new_query_pose.total_residue(), "", "", true );
 				add_by_jump = true;
@@ -397,7 +422,7 @@ void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loop
 		}
 	}
 	if (new_query_pose.total_residue() > 0
-		 && !new_query_pose.residue(new_query_pose.total_residue()).is_polymer())
+		 && new_query_pose.residue(new_query_pose.total_residue()).is_polymer())
 		core::pose::add_upper_terminus_type_to_pose_residue( new_query_pose, new_query_pose.total_residue() );
 
 	core::kinematics::FoldTree f = new_query_pose.fold_tree();
@@ -421,6 +446,7 @@ void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loop
 	new_pdb_info->set_numbering( pdb_numbering );
 	new_pdb_info->set_chains( pdb_chains );
 	new_query_pose.pdb_info( new_pdb_info );
+	new_query_pose.pdb_info()->obsolete( false );
 
 	// if pose is rooted on VRT update jump point
 	if ( new_query_pose.residue( f.root() ).aa() == core::chemical::aa_vrt ) {
@@ -487,9 +513,15 @@ void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loop
 		// iterate over frames, clone if mapped
 		for ( core::fragment::FrameIterator f=old_frag_set->begin(); f != old_frag_set->end(); ++f ) {
 			core::Size start_res = f->start();
-			if ( new_mapping[ start_res ] != 0 ) {
+			core::Size end_res = f->end();
+
+			// if any residue is unmapped, remove the frame
+			bool keepthis = true;
+			for (Size j=start_res; j<=end_res; ++j)
+				keepthis &= ( new_invmapping[ j ] != 0 );
+			if ( keepthis ) {
 				core::fragment::FrameOP new_f = f->clone_with_frags();
-				new_f->align(new_mapping);
+				new_f->align(new_invmapping);
 				new_frag_set->add( new_f );
 			}
 		}

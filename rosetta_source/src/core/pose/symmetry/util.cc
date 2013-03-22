@@ -420,14 +420,21 @@ extract_asymmetric_unit_pdb_info(
 		//std::cout << "Remap: " << res << " to " << res_id << chn_id << std::endl;
 
 		// symmetrize B's
-		for ( Size atm=1; atm <= pose.residue(res).natoms(); ++atm) {
+		// there may be a CYD<->CYS switch
+		// account for this
+		Size natoms = std::min( pdb_info_src->natoms(res), pdb_info_target->natoms(res) );
+		for ( Size atm=1; atm <= natoms; ++atm) {
 			pdb_info_target->temperature( res, atm, pdb_info_src->temperature( res, atm ) );
+		}
+		for ( Size atm=natoms+1; atm <= pdb_info_target->natoms(res); ++atm) {
+			pdb_info_target->temperature( res, atm, pdb_info_src->temperature( res, natoms ) );
 		}
 	}
 	// vrt
+	pdb_info_target->number( nres+1, 1 );
 	if(pdb_info_target->nres() > nres){
 		pdb_info_target->number( nres+1, 1 );
-		pdb_info_target->chain( nres+1, 'Z' );
+		pdb_info_target->chain( nres+1, 'z' );  //fpd  is this a problem???? should this be an "illegal" chainID instead?
 	}
 
 	// rebuild pdb2pose

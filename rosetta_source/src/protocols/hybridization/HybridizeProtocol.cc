@@ -193,14 +193,6 @@ HybridizeProtocol::HybridizeProtocol() :
 	}
 }
 
-/*
-HybridizeProtocol::HybridizeProtocol(std::string template_list_file) :
-	template_weights_sum_(0),
-{
-	init();
-	read_template_structures(template_list_file);
-}
-*/
 // sets default options
 void
 HybridizeProtocol::init() {
@@ -321,8 +313,7 @@ HybridizeProtocol::check_and_create_fragments( core::pose::Pose & pose ) {
 			for ( core::Size j=1; j<=nres_tgt; ++j ) {
 				tgt_ss[j-1] = psipred[j];
 			}
-		}
-		else {
+		} else {
 			// templates vote on secstruct
 			for (core::Size i=1; i<=templates_.size(); ++i) {
 				for (core::Size j=1; j<=templates_[i]->total_residue(); ++j ) {
