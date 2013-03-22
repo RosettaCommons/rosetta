@@ -314,16 +314,24 @@ estimate_density_2d <-function(
   })
 }
 
-
+# Compute quantiles for specified 'variable' grouping by 'ids' columns
+# in 'variable'. If lengths(probs)==1, then use "Ordinates for
+# Probability Plotting" with 'probs' probability points.
+#
+# Returns data.frame with the following columns
+#   ids, probs, quantiles, counts
+#
+# # for example:
+# q <- compute_quantiles(f, c("id_col1", "id_col2"), "var")
+# ggplot(q) + geom_line(aes(x=quantiles*180/pi, y=probs))
 compute_quantiles <- function(
 	data,
 	ids,
 	variable,
-	n_quantiles=300
+	probs=ppoints(1000)
 ) {
 	ddply(data, ids, function(df){
-		ps <- ppoints(n_quantiles)
 		data.frame(
-			probs=ps, quantiles=quantile(df[,variable], probs=ps))
+			probs=probs, quantiles=quantile(df[,variable], probs=probs), counts=nrow(df))
 	})
 }
