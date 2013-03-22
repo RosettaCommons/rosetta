@@ -872,6 +872,7 @@ void JobDistributor::jd2_signal_handler(int signal_)
 
 	//utility_exit_with_status(1);
 	std::exit(1); // Using pure exit instead of utility_exit_with_status to avoid recursion when compile with EXIT_THROWS_EXCEPTION
+	//SML 3/22/13 - I am no longer sure this is necessary given that all apps are try/catch wrapped and all utility_exit throw exceptions
 }
 
 /// @details Setting up callback function that will be call when our process is about to terminate.

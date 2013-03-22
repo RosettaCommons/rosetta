@@ -48,7 +48,7 @@ settings = {
             "library_path" : os.environ["LD_LIBRARY_PATH"].split(":"),
         },
         "appends" : {
-						"defines" : ["EXIT_THROWS_EXCEPTION"],
+#						"defines" : ["EXIT_THROWS_EXCEPTION"], #no longer exists - on by default
         },
         "overrides" : {
 					#	"cc"            : "mpicc",

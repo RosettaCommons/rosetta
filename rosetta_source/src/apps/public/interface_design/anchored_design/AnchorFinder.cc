@@ -13,12 +13,12 @@
 ////////////////////////////////////////////WARNING WARNING WARNING
 //This code will not run well without some other changes to Rosetta.  It is intended to run across the entire PDB.
 //To use it, you are strongly encouraged to "robustify" Rosetta.  This will cause bad PDBs to be ignored rather than
-//causing crashes!  To robustify mini:
+//causing crashes!  To robustify Rosetta:
 // replace all assert statements in the vectorL (vector1) class with runtime_assert statements
 // replace all assert statements in the Conformation class with runtime_assert statements
 // use the -jd2:delete_old_poses flag to prevent a memory leak in the large -l environment
 // use the -in::file::obey_ENDMDL flag to read in only one model from multimodel NMR PDBs
-// make sure EXIT_THROWS_EXCEPTION is defined in user.settings.
+// use the -ignore_unrecognized_res flag to not crash on ligands
 // See also the "RobustRosetta" documentation file.
 // feel free to contact me for clarification
 

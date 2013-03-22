@@ -9,14 +9,14 @@
 
 /*!
 
-@page robust How to make mini robust against malformed PDBs
+@page robust How to make Rosetta robust against malformed PDBs
 
 @author Steven Lewis smlewi@gmail.com
 
-This document was orginally written 6 Apr 2010 by Steven Lewis.  This document was last updated 26 Nov 2012 by Steven Lewis.
+This document was orginally written 6 Apr 2010 by Steven Lewis.  This document was last updated 23 Mar 2013 by Steven Lewis.
 
 @section purpose What is robust?
-Rosetta's PDB reader is fragile, and the PDB is not particularly carefully curated.  There are lots of PDBs that cannot be read in by Rosetta (several thousand fail to read in at all), and many more that cannot be scored for some reason.  Unfortunately, these bad PDBs tend to cause Rosetta to crash rather than exit gracefully.  This document describes how to "robustify" Rosetta so that it will not crash when encountering a bad PDB.
+Rosetta's PDB reader is fragile.  There are lots of PDBs that cannot be read in by Rosetta (several thousand fail to read in at all), and many more that cannot be scored for some reason.  Unfortunately, these bad PDBs tend to cause Rosetta to crash rather than exit gracefully.  This document describes how to "robustify" Rosetta so that it will not crash when encountering a bad PDB.
 
 @section when When would I use it?
 You might want to robustify Rosetta if you are going to do a small-nstruct, large -l experiment.  In my case, I ran with -nstruct 1 against literally the entire PDB, once in 2010 (?) and once in 2012.
@@ -30,7 +30,6 @@ You NEED to make a few changes:
 @li run your code under jd2
 @li replace all assert() statements in utility/vectorL with runtime_assert statements.  This causes out-of-bounds errors in the Rosetta workhorse vector1 class to be caught in the assert instead of segfaulting.  You could also compile in debug mode, or leave the NDEBUG statements in release mode.  The point is that bounds checking must be on.  (This is what causes the performance hit)
 @li (NOTE: this was not found to be necessary in November 2012!) replace all assert()s in the Conformation class with runtime_assert, or equivalent.
-@li ensure that the preprocessor statement EXIT_THROWS_EXCEPTION is defined.  You can do this on command line, or modify user.settings.  For example, modify user.settings to include: "appends" : { "defines" : ["EXIT_THROWS_EXCEPTION"], },
 
 This combination of changes will cause vector overruns to throw exceptions inside runtime_assert, instead of crashing or causing segfaults.  jd2 will catch the exceptions and treat the failed PDB as a failed job, print an error message, and cleanly move on to the next PDB in your list.
 
