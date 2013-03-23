@@ -105,6 +105,8 @@ public:
 	void add_small_fragments( core::fragment::FragSetOP newval ) { fragments_small_.push_back(newval); }
 	void set_stage1_scorefxn( core::scoring::ScoreFunctionOP newval ) { stage1_scorefxn_ = newval; }
 	void set_stage2_scorefxn( core::scoring::ScoreFunctionOP newval ) { stage2_scorefxn_ = newval; }
+	void set_stage1_increase_cycles( core::Real newval ) { stage1_increase_cycles_ = newval; }
+	void set_stage2_increase_cycles( core::Real newval ) { stage2_increase_cycles_ = newval; }
 	void set_fullatom_scorefxn( core::scoring::ScoreFunctionOP newval ) { fa_scorefxn_ = newval; }
 
 private:

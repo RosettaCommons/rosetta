@@ -193,7 +193,7 @@ CartesianMinimizerMap::setup(
 		bool const chi_move( mm.get_chi(i) );
 
 		//fpd  do not let aa_vrt move
-		if ( pose.fold_tree().is_root( i ) && rsd.aa() == chemical::aa_vrt) continue;
+		if ( rsd.aa() == chemical::aa_vrt) continue;
 
 		// cartesian logic ...
 		//    if (chi_move && !bb_move) sc atoms only

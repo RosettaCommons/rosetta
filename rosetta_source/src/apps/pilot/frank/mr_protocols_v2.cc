@@ -27,6 +27,7 @@
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 //
 #include <iostream>
@@ -62,15 +63,17 @@ my_main( void* ) {
 		do_MR->set_disulf( option[ OptionKeys::MR::disulf ]() );
 
 	// fragment files: BACKWARDS COMPATABILITY with -loop options
-	FileVectorOption frag_files( option[ OptionKeys::loops::frag_files ] );
-	for (core::Size i=1; i<=frag_files.size(); ++i) {
-		if ( frag_files[i] == std::string("none") ) continue;
+	if (option[ OptionKeys::loops::frag_files ].user() ) {
+		FileVectorOption frag_files( option[ OptionKeys::loops::frag_files ] );
+		for (core::Size i=1; i<=frag_files.size(); ++i) {
+			if ( frag_files[i] == std::string("none") ) continue;
 
-		FragSetOP frag_lib_op = (FragmentIO().read_data( frag_files[i] ));
-		if (frag_lib_op->max_frag_length() >= 7)
-			do_MR->set_big_fragments( frag_lib_op );
-		else
-			do_MR->set_small_fragments( frag_lib_op );
+			FragSetOP frag_lib_op = (FragmentIO().read_data( frag_files[i] ));
+			if (frag_lib_op->max_frag_length() >= 7)
+				do_MR->set_big_fragments( frag_lib_op );
+			else
+				do_MR->set_small_fragments( frag_lib_op );
+		}
 	}
 
 	if (option[ OptionKeys::edensity::mapfile ].user()) {

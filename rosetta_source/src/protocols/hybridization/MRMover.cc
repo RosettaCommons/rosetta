@@ -35,6 +35,7 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loop_mover/perturb/LoopMover_QuickCCD.hh>
 #include <protocols/comparative_modeling/LoopRelaxMover.hh>
+#include <protocols/simple_moves/MissingDensityToJumpMover.hh>
 
 #include <protocols/relax/RelaxProtocolBase.hh>
 
@@ -117,7 +118,9 @@ parse_res( core::pose::Pose const &pose, std::string resnum ) {
 //
 //
 
-MRMover::MRMover(){
+MRMover::MRMover() :
+		fragments_big_(NULL),
+		fragments_small_(NULL) {
 	init();
 }
 
@@ -146,14 +149,14 @@ MRMover::init(){
 	core::scoring::constraints::add_constraints_from_cmdline_to_scorefxn( *cen2_scorefxn_  );
 	core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *fa_scorefxn_  );
 
-	// auto constraint weight
-	if (!option[ OptionKeys::constraints::cst_file ].user() && !option[ OptionKeys::constraints::cst_weight ].user()) {
-		cen1_scorefxn_->set_weight( core::scoring::atom_pair_constraint, 0.25 );
-		cen2_scorefxn_->set_weight( core::scoring::atom_pair_constraint, 0.25 );
-	}
-	if (!option[ OptionKeys::constraints::cst_fa_file ].user() && !option[ OptionKeys::constraints::cst_fa_weight ].user()) {
-		fa_scorefxn_->set_weight( core::scoring::atom_pair_constraint, 0.25 );
-	}
+	// use weak centroid constraints by default
+	//if (!option[ OptionKeys::constraints::cst_file ].user() && !option[ OptionKeys::constraints::cst_weight ].user()) {
+	//	cen1_scorefxn_->set_weight( core::scoring::atom_pair_constraint, 0.25 );
+	//	cen2_scorefxn_->set_weight( core::scoring::atom_pair_constraint, 0.25 );
+	//}
+	//if (!option[ OptionKeys::constraints::cst_fa_file ].user() && !option[ OptionKeys::constraints::cst_fa_weight ].user()) {
+	//	fa_scorefxn_->set_weight( core::scoring::atom_pair_constraint, 0.25 );
+	//}
 
 	// use reasonable defaults
 	if (option[ OptionKeys::edensity::mapfile ].user()) {
@@ -175,21 +178,33 @@ void MRMover::apply( Pose &pose ) {
 	protocols::simple_moves::SwitchResidueTypeSetMover to_centroid("centroid");
 	protocols::simple_moves::SwitchResidueTypeSetMover to_fullatom("fa_standard");
 
+	bool threaded = true;
 	protocols::comparative_modeling::ThreadingJobCOP job = dynamic_cast< protocols::comparative_modeling::ThreadingJob const*  >(
 		JobDistributor::get_instance()->current_job()->inner_job().get() );
 	if ( !job ) {
-		utility_exit_with_message(
-			"CORE ERROR: You must use the ThreadingJobInputter with the LoopRelaxThreadingMover "
-			"- did you forget the -in:file:template_pdb option?" );
+		if (option[ OptionKeys::in::file::fasta ].user()) {
+			utility_exit_with_message(
+				"CORE ERROR: You must use the ThreadingJobInputter with the LoopRelaxThreadingMover "
+				"- did you forget the -in:file:template_pdb option?" );
+		}
+
+		threaded = false;
+
+		// make sure gaps were read correctly
+		protocols::simple_moves::MissingDensityToJumpMover read_miss_dens;
+		read_miss_dens.apply( pose );
 	}
 
 	// set up initial loop build
-	core::Size nres = pose.total_residue();
-	while (!pose.residue(nres).is_polymer()) nres--;
-	LoopsOP my_loops = new Loops( job->loops( nres ) );
+	LoopsOP my_loops;
+	if (threaded) {
+		core::Size nres = pose.total_residue();
+		while (!pose.residue(nres).is_polymer()) nres--;
+		my_loops = new Loops( job->loops( nres ) );
 
-	if ( max_gaplength_to_model_ < 999 ) {
-		trim_target_pose( pose, *my_loops, max_gaplength_to_model_ );
+		if ( max_gaplength_to_model_ < 999 ) {
+			trim_target_pose( pose, *my_loops, max_gaplength_to_model_ );
+		}
 	}
 
 	if (max_gaplength_to_model_ > 0) {
@@ -202,7 +217,7 @@ void MRMover::apply( Pose &pose ) {
 		core::pose::PoseOP template_pose = new core::pose::Pose;
 		bool add_by_jump = true;
 		for (Size i=1; i<=pose.total_residue(); ++i) {
-			if (!my_loops->is_loop_residue(i)) {
+			if (!threaded || !my_loops->is_loop_residue(i)) {
 				if (add_by_jump) {
 					if (template_pose->total_residue() > 0
 								 && template_pose->residue(template_pose->total_residue()).is_polymer())
@@ -242,32 +257,35 @@ void MRMover::apply( Pose &pose ) {
 
 		protocols::hybridization::HybridizeProtocol rebuild;
 		rebuild.add_template( template_pose, "AUTO", symm_def_file_);
-		rebuild.add_big_fragments( fragments_big_ );
-		rebuild.add_small_fragments( fragments_small_ );
+		if (fragments_big_) rebuild.add_big_fragments( fragments_big_ );
+		if (fragments_small_) rebuild.add_small_fragments( fragments_small_ );
 		rebuild.set_stage1_scorefxn( cen1_scorefxn_ );
 		rebuild.set_stage2_scorefxn( cen2_scorefxn_ );
+		rebuild.set_stage1_increase_cycles( threaded ? 0.5 : 0.0 );
+		rebuild.set_stage2_increase_cycles( 0.5 );
 		rebuild.set_batch_relax( 0 ); // centroid only
 		rebuild.apply( pose );
-		to_fullatom.apply(pose);
 	}
 
-	// setup disulfides
- 	if (disulfs_.size() > 0) {
- 		utility::vector1< std::pair<Size,Size> > disulfides;
- 		core::Size ndisulf = disulfs_.size();
- 		for (core::Size i=1; i<=ndisulf; ++i) {
- 			utility::vector1<std::string> pair_i = utility::string_split( disulfs_[i], ':');
- 			runtime_assert( pair_i.size() == 2 );
- 			core::Size lres=parse_res( pose, pair_i[1] );
- 			core::Size ures=parse_res( pose, pair_i[2] );
- 			disulfides.push_back(std::make_pair(lres,ures));
- 		}
- 		pose.conformation().fix_disulfides( disulfides );
- 	} else {
- 		pose.conformation().detect_disulfides();
- 	}
-
 	if (relax_cycles_ > 0) {
+		to_fullatom.apply(pose);
+
+		// setup disulfides
+		if (disulfs_.size() > 0) {
+			utility::vector1< std::pair<Size,Size> > disulfides;
+			core::Size ndisulf = disulfs_.size();
+			for (core::Size i=1; i<=ndisulf; ++i) {
+				utility::vector1<std::string> pair_i = utility::string_split( disulfs_[i], ':');
+				runtime_assert( pair_i.size() == 2 );
+				core::Size lres=parse_res( pose, pair_i[1] );
+				core::Size ures=parse_res( pose, pair_i[2] );
+				disulfides.push_back(std::make_pair(lres,ures));
+			}
+			pose.conformation().fix_disulfides( disulfides );
+		} else {
+			pose.conformation().detect_disulfides();
+		}
+
 		// relax with flexible angles & jumps
 		protocols::relax::RelaxProtocolBaseOP relax_prot = new protocols::relax::FastRelax( fa_scorefxn_, relax_cycles_ );
 		relax_prot->set_current_tag( get_current_tag() );
@@ -535,10 +553,6 @@ void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loop
 
 	query_pose = new_query_pose;
 }
-
-
-
-
 
 }
 }
