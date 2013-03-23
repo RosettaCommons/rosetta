@@ -21,7 +21,7 @@
 #include <basic/datacache/CacheableData.hh>
 #include <core/scoring/methods/PoissonBoltzmannEnergy.hh>
 
-#include <protocols/moves/Mover.fwd.hh>
+#include <protocols/moves/Mover.hh>
 #include <core/types.hh>
 #include <protocols/simple_moves/ddG.fwd.hh>
 #include <string>
@@ -29,18 +29,16 @@
 #include <utility/vector1.hh>
 #include <core/pack/task/TaskFactory.hh>
 
-//Auto Headers
-#include <protocols/simple_moves/DesignRepackMover.hh>
-
 #include <vector>
 
 namespace protocols {
 namespace simple_moves {
 
-class ddG : public simple_moves::DesignRepackMover
+// This used to be a subclass of simple_moves::DesignRepackMover, but drifted over time so that it's now completely independant.
+class ddG : public protocols::moves::Mover
 {
 public:
-	
+
 	typedef core::Real Real;
 	typedef core::scoring::ScoreType ScoreType;
 	typedef core::pose::Pose Pose;
@@ -52,7 +50,7 @@ public:
 	/// The value is now reduced to 100 in order to help the PDE solver (APBS)
 	/// from blowing up, by default, but can be a user-defined value via RosettaScript option
 	/// or command-line option.
-	static const int DEFAULT_TRANSLATION_DISTANCE;
+	static const core::Real DEFAULT_TRANSLATION_DISTANCE;
 
 public :
 	ddG();
@@ -60,16 +58,14 @@ public :
 	ddG( core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const jump/*=1*/, utility::vector1<core::Size> const & chain_ids, bool const symmetry /*=false*/ );
 	virtual void apply (Pose & pose);
 	void calculate( Pose const & pose_in );
-	void symm_ddG( core::pose::Pose & pose_in );
-	void no_repack_ddG(core::pose::Pose & pose_in);
 	void report_ddG( std::ostream & out ) const;
 	Real sum_ddG() const;
 	core::Size rb_jump() const { return rb_jump_; }
 	void rb_jump( core::Size j ) { rb_jump_ = j; }
 	core::Size repeats() const { return repeats_; }
 	void repeats( core::Size repeats ) { repeats_ = repeats; }
-	int translate_by() const { return translate_by_; }
-	void translate_by( int translate_by ) { translate_by_ = translate_by; }
+	core::Real translate_by() const { return translate_by_; }
+	void translate_by( core::Real translate_by ) { translate_by_ = translate_by; }
 	virtual ~ddG();
 	protocols::moves::MoverOP fresh_instance() const { return (protocols::moves::MoverOP) new ddG; }
 	protocols::moves::MoverOP clone() const;
@@ -89,6 +85,10 @@ public :
 	bool relax_bound() const { return relax_bound_; }
 
 private :
+	///@brief Helper method to appropriately form unbound complex.
+	void unbind(Pose & pose) const;
+	void setup_task(Pose const & pose);
+
 	std::map< ScoreType, Real > bound_energies_;
 	std::map< ScoreType, Real > unbound_energies_;
 
@@ -103,12 +103,12 @@ private :
 	void fill_per_residue_energy_vector(Pose const & pose, std::map<Size,Real> & energy_map);
 	core::Size rb_jump_;
 	utility::vector1<core::Size> chain_ids_;
-	bool symmetry_;
 	bool per_residue_ddg_;
 	bool repack_;
 	protocols::moves::MoverOP relax_mover_; //dflt NULL; in the unbound state, relax before taking the energy
 
 	core::pack::task::TaskFactoryOP task_factory_;
+	core::pack::task::PackerTaskOP task_;
 	bool use_custom_task_;
 	bool repack_bound_;
 	bool relax_bound_;
@@ -120,7 +120,7 @@ private :
 	bool pb_enabled_;
 
 	/// distance in A to separate moledules
-	int translate_by_;
+	core::Real translate_by_;
 };
 
 } // movers

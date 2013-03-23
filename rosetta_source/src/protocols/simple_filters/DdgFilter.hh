@@ -38,13 +38,13 @@ public:
 	/// The value is now reduced to 100 in order to help the PDE solver (APBS)
 	/// from blowing up, by default, but can be a user-defined value via RosettaScript option
 	/// or command-line option.
-	const static int DEFAULT_TRANSLATION_DISTANCE;
+	const static core::Real DEFAULT_TRANSLATION_DISTANCE;
 
 	DdgFilter();
 	DdgFilter( core::Real const ddg_threshold,
-						 core::scoring::ScoreFunctionCOP scorefxn, 
+						 core::scoring::ScoreFunctionCOP scorefxn,
 						 core::Size const rb_jump=1,
-						 core::Size const repeats=1, 
+						 core::Size const repeats=1,
 						 bool const symmetry=false);
 	bool apply( core::pose::Pose const & pose ) const;
 	filters::FilterOP clone() const;
@@ -58,8 +58,8 @@ public:
   bool repack_bound() const { return repack_bound_; }
   void relax_bound( bool rlb ) { relax_bound_ = rlb; }
   bool relax_bound() const { return relax_bound_; }
-  void translate_by( int const translate_by );
-  int translate_by() const;
+  void translate_by( core::Real const translate_by );
+  core::Real translate_by() const;
   void task_factory( core::pack::task::TaskFactoryOP task_factory ) { task_factory_ = task_factory; }
   core::pack::task::TaskFactoryOP task_factory() const { return task_factory_; }
   void use_custom_task( bool uct ) { use_custom_task_ = uct; }
@@ -96,7 +96,7 @@ private:
 	bool pb_enabled_;
 
 	/// translation distance in A
-	int translate_by_; //dflt 100
+	core::Real translate_by_; //dflt 100
 };
 
 

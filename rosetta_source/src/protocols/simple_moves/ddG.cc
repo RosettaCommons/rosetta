@@ -14,7 +14,7 @@
 /// @author Sarel Fleishman (sarelf@u.washington.edu)
 /// @author Sachko Honda (honda@apl.washington.edu)
 /// Additional notes by Honda on 12/16/2012
-/// When this mover is called with PB_elec (PB potential energy) in scorefxn, 
+/// When this mover is called with PB_elec (PB potential energy) in scorefxn,
 /// it enables caching poses in two (bound/unbound) states so that subsequent calls can avoid
 /// resolving the PDE over and over for the same conformation.
 ///
@@ -103,15 +103,14 @@ using namespace core;
 using namespace protocols::simple_moves;
 using namespace core::scoring;
 
-const int ddG::DEFAULT_TRANSLATION_DISTANCE = 100.0; // A
+const core::Real ddG::DEFAULT_TRANSLATION_DISTANCE = 100.0; // A
 
 ddG::ddG() :
-		simple_moves::DesignRepackMover(ddGCreator::mover_name()),
+		moves::Mover(ddGCreator::mover_name()),
 		bound_total_energy_(0.0),
 		unbound_total_energy_(0.0),
 		repeats_(0),
 		rb_jump_(0),
-		symmetry_(false),
 		per_residue_ddg_(false),
 		repack_(false),
 		relax_mover_( NULL ),
@@ -127,15 +126,14 @@ ddG::ddG() :
 	unbound_per_residue_energies_.clear();
 }
 
-ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in, 
+ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 					core::Size const jump/*=1*/,
-					bool const symmetry /*=false*/ ) : 
-		simple_moves::DesignRepackMover(ddGCreator::mover_name()),
+					bool const symmetry /*=false*/ ) :
+		moves::Mover(ddGCreator::mover_name()),
 		bound_total_energy_(0.0),
 		unbound_total_energy_(0.0),
 		repeats_(1),
 		rb_jump_(jump),
-		symmetry_(symmetry),
 		per_residue_ddg_(false),
 		repack_(true),
 		relax_mover_( NULL ),
@@ -145,7 +143,7 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 		pb_enabled_(false),
 		translate_by_(DEFAULT_TRANSLATION_DISTANCE)
 {
-	scorefxn_ = new core::scoring::ScoreFunction( *scorefxn_in );
+	scorefxn_ = scorefxn_in->clone();
 
 	bound_energies_.clear();
 	unbound_energies_.clear();
@@ -163,16 +161,15 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 	}
 }
 
-ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in, 
-					core::Size const jump/*=1*/, 
-					utility::vector1<core::Size> const & chain_ids, 
-					bool const symmetry /*=false*/ ) : 
-		simple_moves::DesignRepackMover(ddGCreator::mover_name()),
+ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
+					core::Size const jump/*=1*/,
+					utility::vector1<core::Size> const & chain_ids,
+					bool const symmetry /*=false*/ ) :
+		moves::Mover(ddGCreator::mover_name()),
 		bound_total_energy_(0.0),
 		unbound_total_energy_(0.0),
 		repeats_(1),
 		rb_jump_(jump),
-		symmetry_(symmetry),
 		per_residue_ddg_(false),
 		repack_(true),
 		relax_mover_( NULL ),
@@ -182,7 +179,7 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 		pb_enabled_(false),
 		translate_by_(DEFAULT_TRANSLATION_DISTANCE)
 {
-	scorefxn_ = new core::scoring::ScoreFunction( *scorefxn_in );
+	scorefxn_ = scorefxn_in->clone();
 	chain_ids_ = chain_ids;
 
 	bound_energies_.clear();
@@ -208,7 +205,9 @@ void ddG::parse_my_tag(
 	core::pose::Pose const& pose)
 {
 	rb_jump_ = tag->getOption<core::Size>("jump", 1);
-	symmetry_ = tag->getOption<bool>("symmetry",0);
+	if( tag->hasOption("symmetry") ) {
+		TR << "Option 'symmetry' for ddG mover has no effect - symmetry is autodetected from pose." << std::endl;
+	}
 	per_residue_ddg_ = tag->getOption<bool>("per_residue_ddg",0);
 	repack_ = tag->getOption<bool>("repack",0);
 	repeats_ = tag->getOption<Size>("repeats",1);
@@ -216,12 +215,13 @@ void ddG::parse_my_tag(
 	use_custom_task( tag->hasOption("task_operations") );
 	repack_bound_ = tag->getOption<bool>("repack_bound",1);
 	relax_bound_ = tag->getOption<bool>("relax_bound",0);
-	translate_by_ = tag->getOption<int>("translate_by", DEFAULT_TRANSLATION_DISTANCE);
+	translate_by_ = tag->getOption<core::Real>("translate_by", DEFAULT_TRANSLATION_DISTANCE);
 
-	if(tag->hasOption("chains") && symmetry_)
+	if(tag->hasOption("chains") && tag->hasOption("symmetry"))
 	{
 		throw utility::excn::EXCN_RosettaScriptsOption("you cannot specify multiple chains and use symmetry mode in the ddG mover at the same time right now. Sorry");
 	}
+
 
 	if( ( tag->hasOption("chain_num") || tag->hasOption("chain_name") ) && tag->hasOption("jump"))
 	{
@@ -249,7 +249,7 @@ void ddG::parse_my_tag(
 
 	// Construct score function.
 	std::string const scorefxn_name( tag->getOption<std::string>( "scorefxn", "score12" ) );
-	scorefxn_ = new ScoreFunction( *(data.get< ScoreFunction * >( "scorefxns", scorefxn_name )) );
+	scorefxn_ = data.get< ScoreFunction * >( "scorefxns", scorefxn_name )->clone();
 
 	// Determine if this PB enabled.
 	if( scorefxn_->get_weight(core::scoring::PB_elec) != 0.) {
@@ -272,7 +272,6 @@ ddG::~ddG() {}
 void ddG::apply(Pose & pose)
 {
 	using namespace core::scoring::methods;
-	EnergyMethodOptions emoptions = scorefxn_->energy_method_options();
 
 	if(per_residue_ddg_)
 	{
@@ -431,15 +430,9 @@ ddG::calculate( pose::Pose const & pose_original )
 		original_state = cached_data->get_energy_state();
 	}
 
-	if ( core::pose::symmetry::is_symmetric( pose ) ) { //JBB 120423 changed from if (symmetry_)
-		symm_ddG( pose );
-		return;
-	}
-
-	else if(!repack_)
-	{
-		no_repack_ddG(pose);
-		return;
+	if (core::pose::symmetry::is_symmetric( pose )) {
+		// Except for score function conversion, symmetry is now handled inline (pack_rotamers does autodispatch).
+		scorefxn_ = new scoring::symmetry::SymmetricScoreFunction( scorefxn_ );
 	}
 
 	//---------------------------------
@@ -447,51 +440,19 @@ ddG::calculate( pose::Pose const & pose_original )
 	//---------------------------------
 	if( pb_enabled_ ) cached_data->set_energy_state(emoptions.pb_bound_tag());
 
-	repack_partner1_ = true;
-	repack_partner2_ = true;
-	design_partner1_ = false;
-	design_partner2_ = false;
-
-	//setup_packer_and_movemap( pose );
-	task_ = core::pack::task::TaskFactory::create_packer_task( pose );
-	task_->initialize_from_command_line().or_include_current( true );
-	core::pack::task::operation::RestrictToRepacking rpk;
-	rpk.apply( pose, *task_ );
-	core::pack::task::operation::NoRepackDisulfides nodisulf;
-	nodisulf.apply( pose, *task_ );
-	if(chain_ids_.size() > 0 )
-	{
-		//We want to translate each chain the same direction, though it doesnt matter much which one
-		core::Size first_jump = core::pose::get_jump_id_from_chain_id(chain_ids_[1],pose);
-		protocols::toolbox::task_operations::RestrictToInterface rti( first_jump, 8.0 /*interface_distance_cutoff_*/ );
-		if(chain_ids_.size() > 1)
-		{
-			for(core::Size chain_index = 2; chain_index <= chain_ids_.size();++chain_index)
-			{
-				core::Size current_jump = core::pose::get_jump_id_from_chain_id(chain_ids_[chain_index],pose);
-				rti.add_jump(current_jump);
-			}
+	if( repack_ )	{
+    setup_task(pose);
+		if ( repack_bound() ) {
+			pack::pack_rotamers( pose, *scorefxn_, task_ );
 		}
-		rti.apply(pose,*task_);
-	}
-	else
-	{
-		protocols::toolbox::task_operations::RestrictToInterface rti( rb_jump_, 8.0 /*interface_distance_cutoff_*/ );
-		rti.apply( pose, *task_ );
-	}
-
-	if ( repack_bound() ) {
-		pack::pack_rotamers( pose, *scorefxn_, task_ );
-	}
-	if ( relax_bound() ) {
-		if( relax_mover() )
+		if ( relax_bound() && relax_mover() ) {
 			relax_mover()->apply( pose );
-	}
+		}
+	} // repack_
 
 	(*scorefxn_)( pose );
 	fill_energy_vector( pose, bound_energies_ );
-	if(per_residue_ddg_)
-	{
+	if(per_residue_ddg_) {
 		fill_per_residue_energy_vector(pose, bound_per_residue_energies_);
 	}
 
@@ -499,38 +460,19 @@ ddG::calculate( pose::Pose const & pose_original )
 	// Unbound state
 	//---------------------------------
 	if( pb_enabled_ ) cached_data->set_energy_state(emoptions.pb_unbound_tag());
+	unbind(pose);
 
-	if(chain_ids_.size() > 0)
-	{
-		//We want to translate each chain the same direction, though it doesnt matter much which one
-		Vector translation_axis(1,0,0);
-		for(utility::vector1<core::Size>::const_iterator chain_it = chain_ids_.begin(); chain_it != chain_ids_.end();++chain_it)
-		{
-			core::Size current_chain_id = *chain_it;
-			core::Size current_jump_id = core::pose::get_jump_id_from_chain_id(current_chain_id,pose);
-			rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose, current_jump_id) );
-			// Commented by honda: APBS blows up grid > 500.  Just use the default just like bound-state.			
-			translate->step_size( translate_by_ );
-			translate->trans_axis(translation_axis);
-			translate->apply( pose );
-		}
-	}else
-	{
-		rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose, rb_jump_ ) );
-
-		// Commented by honda: APBS blows up grid > 500.  Just use the default just like bound-state.
-		translate->step_size( translate_by_ );
-		translate->apply( pose );
+	if( repack_ ) {
+		// Use the same task which was setup in the bound state.
+		pack::pack_rotamers( pose, *scorefxn_, task_ );
 	}
-
-	pack::pack_rotamers( pose, *scorefxn_, task_ );
-	if( relax_mover() )
+	if( relax_mover() ) {
 		relax_mover()->apply( pose );
+	}
 
 	(*scorefxn_)( pose );
 	fill_energy_vector( pose, unbound_energies_ );
-	if(per_residue_ddg_)
-	{
+	if(per_residue_ddg_) {
 		fill_per_residue_energy_vector(pose, unbound_per_residue_energies_);
 	}
 
@@ -543,188 +485,70 @@ ddG::calculate( pose::Pose const & pose_original )
 	}
 }
 
-// @details compute the energy of a repacked symmetrical complex in bound and unbound states
 void
-ddG::symm_ddG( pose::Pose & pose_original )
-{
-	using namespace pack;
-	using namespace protocols::moves;
-	using namespace core::scoring::methods;
-
-	// work on a copy, don't/can't modify the original comformation.
-	pose::Pose pose = pose_original;
-
-	// Dummy state as default (<= pb_enabled_=false)
-	std::string original_state = "stateless";
-
-	//----------------------------------
-	// Save the original state if pb
-	//----------------------------------
-	// The state is marked in pose's data-cache.
-	PBLifetimeCacheOP cached_data	= 0;
-	core::scoring::methods::EnergyMethodOptions emoptions = scorefxn_->energy_method_options();
-
-	// First see if this method is called as part of PB-electrostatic computation.
-	if( pb_enabled_ ) {
-		cached_data = static_cast< PBLifetimeCacheOP > (pose.data().get_ptr< PBLifetimeCache > ( pose::datacache::CacheableDataType::PB_LIFETIME_CACHE ));
-		runtime_assert( cached_data != 0 );
-		original_state = cached_data->get_energy_state();
-	}
-
-	// Check symmetry
-	assert( core::pose::symmetry::is_symmetric( pose ));
-  SymmetricConformation & symm_conf (
-        dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
-
-  std::map< Size, core::conformation::symmetry::SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
-
-	// convert to symmetric scorefunction
-	scorefxn_ = new scoring::symmetry::SymmetricScoreFunction( scorefxn_ );
-
-	//---------------------------------
-	// Bound state
-	//---------------------------------
-	if( pb_enabled_ ) cached_data->set_energy_state(emoptions.pb_bound_tag());
-
-	//setup_packer_and_movemap( pose );
-	task_ = core::pack::task::TaskFactory::create_packer_task( pose );
+ddG::setup_task( pose::Pose const & pose) {
 	if ( use_custom_task() ) {
 		// Allows the user to define custom tasks that specify which residues
 		// are allowed to repack if RestrictToInterface doesn't work for them.
-		task_ = task_factory_->create_task_and_apply_taskoperations( pose );
+		task_ = task_factory_->create_task_and_apply_taskoperations( pose );  //!!!!!
 	} else {
+		task_ = core::pack::task::TaskFactory::create_packer_task( pose );
 		task_->initialize_from_command_line().or_include_current( true );
 		core::pack::task::operation::RestrictToRepacking rpk;
 		rpk.apply( pose, *task_ );
 		core::pack::task::operation::NoRepackDisulfides nodisulf;
 		nodisulf.apply( pose, *task_ );
-		protocols::toolbox::task_operations::RestrictToInterface rti( rb_jump_, 8.0 /*interface_distance_cutoff_*/ );
-		rti.apply( pose, *task_ );
-	}
-	if ( repack_bound() ) {
-		pack::symmetric_pack_rotamers( pose, *scorefxn_, task_ );
-	}
-	if ( relax_bound() ) {
-		if( relax_mover() )
-			relax_mover()->apply( pose );
-	}
-	(*scorefxn_)( pose );
-	fill_energy_vector( pose, bound_energies_ );
-	if(per_residue_ddg_)
-	{
-		fill_per_residue_energy_vector(pose, bound_per_residue_energies_);
-	}
 
-	//---------------------------------
-	// Unbound state
-	//---------------------------------
-	if( pb_enabled_ ) cached_data->set_energy_state( emoptions.pb_unbound_tag() );
-
-	rigid::RigidBodyDofSeqTransMoverOP translate( new rigid::RigidBodyDofSeqTransMover( dofs ) );
-	translate->step_size( translate_by_ );
-	translate->apply( pose );
-	pack::symmetric_pack_rotamers( pose, *scorefxn_, task_ );
-	if( relax_mover() )
-		relax_mover()->apply( pose );
-	(*scorefxn_)( pose );
-	fill_energy_vector( pose, unbound_energies_ );
-	if(per_residue_ddg_)
-	{
-		fill_per_residue_energy_vector(pose, unbound_per_residue_energies_);
-	}
-
-	//----------------------------------
-	// Return to the original state
-	//----------------------------------
-	if( pb_enabled_ ) {
-		cached_data->set_energy_state( original_state );
-		pb_cached_data_ = cached_data;
-	}
+		if(chain_ids_.size() > 0 ) {
+			if( core::pose::symmetry::is_symmetric( pose ) ) {
+				utility_exit_with_message("Use of chain IDs in ddG with symmetric poses is not yet supported.");
+				// Mostly because I don't know if the following code is sensible with symmetric poses.
+			}
+			//We want to translate each chain the same direction, though it doesnt matter much which one
+			core::Size first_jump = core::pose::get_jump_id_from_chain_id(chain_ids_[1],pose);
+			protocols::toolbox::task_operations::RestrictToInterface rti( first_jump, 8.0 /*interface_distance_cutoff_*/ );
+			if(chain_ids_.size() > 1) {
+				for(core::Size chain_index = 2; chain_index <= chain_ids_.size();++chain_index) {
+					core::Size current_jump = core::pose::get_jump_id_from_chain_id(chain_ids_[chain_index],pose);
+					rti.add_jump(current_jump);
+				}
+			}
+			rti.apply(pose,*task_);
+		} else {
+			protocols::toolbox::task_operations::RestrictToInterface rti( rb_jump_, 8.0 /*interface_distance_cutoff_*/ );
+			rti.apply( pose, *task_ );
+		}
+	} // use_custom_task
 }
 
 void
-ddG::no_repack_ddG(Pose & pose_original)
+ddG::unbind( pose::Pose & pose ) const
 {
-	using namespace core::scoring::methods;
+	if( core::pose::symmetry::is_symmetric( pose ) ) {
+	  SymmetricConformation & symm_conf( dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
+		std::map< Size, core::conformation::symmetry::SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
 
-	// work on a copy, don't/can't modify the original comformation.
-	pose::Pose pose = pose_original;
-
-	// Is PB-potential computation enabled?
-	bool pb_enabled_ = false;
-
-	// Dummy state as default (<= pb_enabled_=false)
-	std::string original_state = "stateless";
-
-	//----------------------------------
-	// Save the original state if pb
-	//----------------------------------
-	// The state is marked in pose's data-cache.
-	PBLifetimeCacheOP cached_data	= 0;
-	core::scoring::methods::EnergyMethodOptions emoptions = scorefxn_->energy_method_options();
-
-	// First see if this method is called as part of PB-electrostatic computation.
-	if( pb_enabled_ ) {
-		cached_data = static_cast< PBLifetimeCacheOP > (pose.data().get_ptr< PBLifetimeCache > ( pose::datacache::CacheableDataType::PB_LIFETIME_CACHE ));
-		runtime_assert( cached_data != 0 );
-		original_state = cached_data->get_energy_state();
-	}
-
-	//---------------------------------
-	// Bound state
-	//---------------------------------
-	if( pb_enabled_ ) cached_data->set_energy_state( emoptions.pb_bound_tag() );
-
-	(*scorefxn_)( pose );
-	fill_energy_vector( pose, bound_energies_ );
-	if(per_residue_ddg_)
-	{
-		fill_per_residue_energy_vector(pose, bound_per_residue_energies_);
-	}
-
-
-	//---------------------------------
-	// Unbound state
-	//---------------------------------
-	if( pb_enabled_ ) cached_data->set_energy_state( emoptions.pb_unbound_tag() );
-
-	if(chain_ids_.size()  > 0 )
-	{
+		rigid::RigidBodyDofSeqTransMoverOP translate( new rigid::RigidBodyDofSeqTransMover( dofs ) );
+		translate->step_size( translate_by_ );
+		translate->apply( pose );
+	} else if(chain_ids_.size() > 0) {
 		//We want to translate each chain the same direction, though it doesnt matter much which one
 		Vector translation_axis(1,0,0);
-
-		for(utility::vector1<core::Size>::const_iterator chain_it = chain_ids_.begin(); chain_it != chain_ids_.end();++chain_it)
-		{
+		for(utility::vector1<core::Size>::const_iterator chain_it = chain_ids_.begin(); chain_it != chain_ids_.end();++chain_it) {
 			core::Size current_chain_id = *chain_it;
 			core::Size current_jump_id = core::pose::get_jump_id_from_chain_id(current_chain_id,pose);
 			rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose, current_jump_id) );
-			translate->trans_axis(translation_axis);
+			// Commented by honda: APBS blows up grid > 500.  Just use the default just like bound-state.
 			translate->step_size( translate_by_ );
+			translate->trans_axis(translation_axis);
 			translate->apply( pose );
 		}
+	} else {
+		rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose, rb_jump_ ) );
 
-	}else
-	{
-		rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose,rb_jump_ ) );
+		// Commented by honda: APBS blows up grid > 500.  Just use the default just like bound-state.
 		translate->step_size( translate_by_ );
 		translate->apply( pose );
-	}
-
-	if( relax_mover() )
-		relax_mover()->apply( pose );
-	(*scorefxn_)( pose );
-	fill_energy_vector( pose,unbound_energies_ );
-	if(per_residue_ddg_)
-	{
-		fill_per_residue_energy_vector(pose, unbound_per_residue_energies_);
-	}
-
-	//----------------------------------
-	// Return to the original state
-	//----------------------------------
-	if( pb_enabled_ ) {
-		cached_data->set_energy_state( original_state );
-		pb_cached_data_ = cached_data;
 	}
 }
 

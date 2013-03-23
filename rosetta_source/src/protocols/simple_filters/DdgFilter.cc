@@ -42,7 +42,7 @@ namespace simple_filters {
 
 static basic::Tracer TR( "protocols.simple_filters.DdgFilter" );
 
-const int DdgFilter::DEFAULT_TRANSLATION_DISTANCE = 100.0;
+const core::Real DdgFilter::DEFAULT_TRANSLATION_DISTANCE = 100.0;
 
 protocols::filters::FilterOP
 DdgFilterCreator::create_filter() const { return new DdgFilter; }
@@ -70,10 +70,10 @@ DdgFilter::DdgFilter() :
 }
 
 
-DdgFilter::DdgFilter( core::Real const ddg_threshold, 
-											core::scoring::ScoreFunctionCOP scorefxn, 
-											core::Size const rb_jump/*=1*/, 
-											core::Size const repeats/*=1*/, 
+DdgFilter::DdgFilter( core::Real const ddg_threshold,
+											core::scoring::ScoreFunctionCOP scorefxn,
+											core::Size const rb_jump/*=1*/,
+											core::Size const repeats/*=1*/,
 											bool const symmetry /*=false*/ ) :
 	Filter("Ddg" ),
 	ddg_threshold_(ddg_threshold),
@@ -122,10 +122,10 @@ DdgFilter::repack() const
 }
 
 void
-DdgFilter::parse_my_tag( utility::tag::TagPtr const tag, 
-												 moves::DataMap & data, 
-												 filters::Filters_map const & , 
-												 moves::Movers_map const & movers, 
+DdgFilter::parse_my_tag( utility::tag::TagPtr const tag,
+												 moves::DataMap & data,
+												 filters::Filters_map const & ,
+												 moves::Movers_map const & movers,
 												 core::pose::Pose const & )
 {
 	using namespace core::scoring;
@@ -141,7 +141,7 @@ DdgFilter::parse_my_tag( utility::tag::TagPtr const tag,
   task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	repack_bound( tag->getOption<bool>( "repack_bound", 1 ) );
 	relax_bound( tag->getOption<bool>( "relax_bound", 0 ) );
-	translate_by_ = tag->getOption<int>( "translate_by", DEFAULT_TRANSLATION_DISTANCE );
+	translate_by_ = tag->getOption<core::Real>( "translate_by", DEFAULT_TRANSLATION_DISTANCE );
 
 	if( tag->hasOption( "relax_mover" ) )
 		relax_mover( protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "relax_mover" ), movers ) );
@@ -193,7 +193,7 @@ void DdgFilter::parse_def( utility::lua::LuaObject const & def,
 	symmetry_ = def["symmetry"] ? def["symmetry"].to<bool>() : false;
 	repack_bound_ = def["repack_bound"] ? def["repack_bound"].to<bool>() : true;
 	relax_bound_ = def["relax_bound"] ? def["relax_bound"].to<bool>() : false;
-	translate_by_ = def["translate_by"] ? def["translate_by"].to<int>() : DEFAULT_TRANSLATION_DISTANCE;
+	translate_by_ = def["translate_by"] ? def["translate_by"].to<core::Real>() : DEFAULT_TRANSLATION_DISTANCE;
 	// ignoring relax_mover option
 	if( def["chain_num"] ) {
 		chain_ids_.clear();
@@ -249,14 +249,14 @@ DdgFilter::repeats( core::Size const repeats )
 	repeats_ = repeats;
 }
 
-int
+core::Real
 DdgFilter::translate_by() const
 {
 	return( translate_by_ );
 }
 
 void
-DdgFilter::translate_by( int const translate_by )
+DdgFilter::translate_by( core::Real const translate_by )
 {
 	translate_by_ = translate_by;
 }
@@ -295,7 +295,7 @@ DdgFilter::compute( core::pose::Pose const & pose_in ) const {
 		if(chain_ids_.size() > 0)
 		{
 			//We want to translate each chain the same direction, though it doesnt matter much which one
-			core::Vector translation_axis(1,0,0); 
+			core::Vector translation_axis(1,0,0);
 			for(utility::vector1<core::Size>::const_iterator chain_it = chain_ids_.begin(); chain_it != chain_ids_.end();++chain_it)
 			{
 				core::Size current_chain_id = *chain_it;
