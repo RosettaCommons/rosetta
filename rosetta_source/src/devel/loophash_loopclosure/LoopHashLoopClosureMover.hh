@@ -69,10 +69,12 @@ public:
 
 private:
 	protocols::forge::remodel::RemodelMover_OP remodel_;
-	const std::string make_blueprint( const core::pose::Pose& pose, 
-					  const std::string & loop_insert_instruction) const;
-	const std::string make_blueprint( const core::pose::Pose& pose, 
-					  const std::vector<MyLoop> & loops) const;
+	void make_blueprint( const core::pose::Pose& pose, 
+											 const std::string & loop_insert_instruction,
+											 const std::string & bpname ) const;
+	void make_blueprint( const core::pose::Pose& pose, 
+											 const std::vector<MyLoop> & loops,
+											 const std::string & bpname ) const;
 	const std::vector<std::string> tokenize( const std::string& in_str, 
        					const std::string& delimiters ) const;
 	const std::vector<MyLoop> make_loops(const std::string & loop_insert_instruction) const;

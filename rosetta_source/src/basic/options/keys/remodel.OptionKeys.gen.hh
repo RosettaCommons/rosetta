@@ -109,6 +109,7 @@ namespace remodel { namespace RemodelLoopMover { extern BooleanOptionKey const f
 namespace remodel { namespace RemodelLoopMover { extern BooleanOptionKey const bypass_closure; } }
 namespace remodel { namespace RemodelLoopMover { extern BooleanOptionKey const cyclic_peptide; } }
 namespace remodel { namespace RemodelLoopMover { extern RealOptionKey const temperature; } }
+namespace remodel { namespace RemodelLoopMover { extern IntegerOptionKey const max_chews; } }
 
 } // namespace OptionKeys
 } // namespace options

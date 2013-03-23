@@ -238,6 +238,7 @@ namespace remodel { namespace RemodelLoopMover { BooleanOptionKey const force_cu
 namespace remodel { namespace RemodelLoopMover { BooleanOptionKey const bypass_closure( "remodel:RemodelLoopMover:bypass_closure" );  } }
 namespace remodel { namespace RemodelLoopMover { BooleanOptionKey const cyclic_peptide( "remodel:RemodelLoopMover:cyclic_peptide" );  } }
 namespace remodel { namespace RemodelLoopMover { RealOptionKey const temperature( "remodel:RemodelLoopMover:temperature" );  } }
+namespace remodel { namespace RemodelLoopMover { IntegerOptionKey const max_chews( "remodel:RemodelLoopMover:max_chews" );  } }
 namespace fold_from_loops { BooleanOptionKey const fold_from_loops( "fold_from_loops" );  }
 namespace fold_from_loops { BooleanOptionKey const native_ca_cst( "fold_from_loops:native_ca_cst" );  }
 namespace fold_from_loops { FileOptionKey const swap_loops( "fold_from_loops:swap_loops" );  }

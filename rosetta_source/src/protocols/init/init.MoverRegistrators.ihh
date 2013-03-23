@@ -95,7 +95,6 @@ static MoverRegistrator< forge::constraints::NtoCCstGeneratorCreator > reg_NtoCC
 static MoverRegistrator< forge::constraints::RemoveCstsCreator > reg_RemoveCstsCreator;
 
 static MoverRegistrator< forge::remodel::ResidueVicinityCstGeneratorCreator > reg_ResidueVicinityCstGeneratorCreator;
-static MoverRegistrator< forge::remodel::RemodelLoopMoverCreator > reg_RemodelLoopMoverCreator;
 static MoverRegistrator< forge::remodel::RemodelMoverCreator > reg_RemodelMoverCreator;
 
 static MoverRegistrator< idealize::IdealizeMoverCreator > reg_IdealizeMoverCreator;

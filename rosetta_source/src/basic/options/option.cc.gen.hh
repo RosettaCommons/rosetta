@@ -1877,8 +1877,8 @@ option.add( basic::options::OptionKeys::loops::allow_lig_move, "allow ligands to
 option.add( basic::options::OptionKeys::loops::keep_natro, "list of residues where the rotamers are kept fixed" ).def("keep_natro");
 option.add( basic::options::OptionKeys::loops::refine_design_iterations, "iterations of refine and design" ).def(1);
 option.add( basic::options::OptionKeys::loops::loop_closure::loop_closure, "loop_closure option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::loops::loop_closure::loop_insert, "List of chain names with loop sizes in between where loops are inserted.  e.g. A5B6CDE to insert a loop of size 5 in between A and B, and a loop of 6 between B and C.  loop_insert_, loop_insert_rclrcl and blueprint options are mutually exclusive." );
-option.add( basic::options::OptionKeys::loops::loop_closure::loop_insert_rclrcl, "Comma delimited list of tuples, each formed as R1:C1:L:R2:C2, where R1:C1 means residue R1 in chain C1 as start terminal and R2 in C2 as end terminal of the loop to be created.  N is the length of the loop in number of residues.  e.g. 25:A:7:28:B,50:B:6:53:C for building a loop of length 6 between res 25 in chain A and 29 in chain B , and another with 6 residues between res 50 in chain B and 53 in chain C.  loop_insert, loop_insert_rcn and blueprint options are mutually exclusive." );
+option.add( basic::options::OptionKeys::loops::loop_closure::loop_insert, "List of chain names with loop sizes in between where loops are inserted.  e.g. A5B6CDE to insert a loop of size 5 in between A and B, and a loop of 6 between B and C.  loop_insert_, loop_insert_rclrc and blueprint options are mutually exclusive." );
+option.add( basic::options::OptionKeys::loops::loop_closure::loop_insert_rclrc, "Comma delimited list of tuples, each formed as R1:C1:L:R2:C2, where R1:C1 means residue R1 in chain C1 as start terminal and R2 in C2 as end terminal of the loop to be created.  N is the length of the loop in number of residues.  e.g. 25:A:7:28:B,50:B:6:53:C for building a loop of length 6 between res 25 in chain A and 29 in chain B , and another with 6 residues between res 50 in chain B and 53 in chain C.  loop_insert, loop_insert_rcn and blueprint options are mutually exclusive." );
 option.add( basic::options::OptionKeys::loops::loop_closure::blueprint, "path to a blueprint file specifying loops.  loop_insert, loop_insert_rcn and blueprint options are mutually exclusive" );
 option.add( basic::options::OptionKeys::assembly::assembly, "assembly option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::assembly::pdb1, "pdb1 file" );
@@ -2280,6 +2280,7 @@ option.add( basic::options::OptionKeys::remodel::RemodelLoopMover::force_cutting
 option.add( basic::options::OptionKeys::remodel::RemodelLoopMover::bypass_closure, "turning off CCD closure in the mover for tethered docking purpose" );
 option.add( basic::options::OptionKeys::remodel::RemodelLoopMover::cyclic_peptide, "circularize structure joining N and C-term." );
 option.add( basic::options::OptionKeys::remodel::RemodelLoopMover::temperature, "temperature for monte carlo ( default 2.0)" );
+option.add( basic::options::OptionKeys::remodel::RemodelLoopMover::max_chews, "maxium number of residues to chew on either side of loop" ).def(1);
 option.add( basic::options::OptionKeys::fold_from_loops::fold_from_loops, "fold_from_loops option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::fold_from_loops::native_ca_cst, "derive constraints from the native topology" ).def(false);
 option.add( basic::options::OptionKeys::fold_from_loops::swap_loops, "pdb of the target loops " ).def("--");

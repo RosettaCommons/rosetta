@@ -223,8 +223,6 @@ public: // mutators
 	// @brief for building repeat structures stored in private variable
 	void repeat_generation_with_additional_residue(Pose & pose, Pose &repeat_pose);
 
-	void repeat_generation(Pose & pose, Pose &repeat_pose);
-
 	void
 	repeat_sync(
 	  core::pose::Pose & repeat_pose,
@@ -528,18 +526,6 @@ protected: // movemap
 		Size const left,
 		Size const right
 	);
-
-private: // parser
-
-
-	void parse_my_tag(
-  	TagPtr const tag,
-		DataMap & data,
-		Filters_map const &,
-		Movers_map const &,
-		Pose const & pose
-	);
-
 
 private: // data
 

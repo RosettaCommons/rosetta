@@ -3908,12 +3908,12 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 		Option('refine_design_iterations','Integer',
 			desc='iterations of refine and design', default='1'
 		),
-                Option_Group( 'loop_closure' ,
-                        Option( 'loop_insert', 'String',
-                        	desc='List of chain names with loop sizes in between where loops are inserted.  e.g. A5B6CDE to insert a loop of size 5 in between A and B, and a loop of 6 between B and C.  loop_insert_, loop_insert_rclrcl and blueprint options are mutually exclusive.',
+		Option_Group( 'loop_closure' ,
+      Option( 'loop_insert', 'String',
+              	desc='List of chain names with loop sizes in between where loops are inserted.  e.g. A5B6CDE to insert a loop of size 5 in between A and B, and a loop of 6 between B and C.  loop_insert_, loop_insert_rclrc and blueprint options are mutually exclusive.',
 			),
-                        Option( 'loop_insert_rclrcl', 'String',
-                        	desc='Comma delimited list of tuples, each formed as R1:C1:L:R2:C2, where R1:C1 means residue R1 in chain C1 as start terminal and R2 in C2 as end terminal of the loop to be created.  N is the length of the loop in number of residues.  e.g. 25:A:7:28:B,50:B:6:53:C for building a loop of length 6 between res 25 in chain A and 29 in chain B , and another with 6 residues between res 50 in chain B and 53 in chain C.  loop_insert, loop_insert_rcn and blueprint options are mutually exclusive.',
+			Option( 'loop_insert_rclrc', 'String',
+               	desc='Comma delimited list of tuples, each formed as R1:C1:L:R2:C2, where R1:C1 means residue R1 in chain C1 as start terminal and R2 in C2 as end terminal of the loop to be created.  N is the length of the loop in number of residues.  e.g. 25:A:7:28:B,50:B:6:53:C for building a loop of length 6 between res 25 in chain A and 29 in chain B , and another with 6 residues between res 50 in chain B and 53 in chain C.  loop_insert, loop_insert_rcn and blueprint options are mutually exclusive.',
 
 			),
 			Option( 'blueprint', 'String',
@@ -4379,6 +4379,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 			Option( 'bypass_closure', 'Boolean', desc="turning off CCD closure in the mover for tethered docking purpose" ),
 			Option( 'cyclic_peptide', 'Boolean', desc="circularize structure joining N and C-term." ),
 			Option( 'temperature', 'Real', desc="temperature for monte carlo ( default 2.0)" ),
+			Option( 'max_chews', 'Integer', desc='maxium number of residues to chew on either side of loop', default='1'),
 		),
 	),
 
