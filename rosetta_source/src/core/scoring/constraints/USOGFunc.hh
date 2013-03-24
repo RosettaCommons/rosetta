@@ -34,11 +34,13 @@ namespace constraints {
 /// @brief Unnormalized, unbounded sum of Gaussians constraint
 class USOGFunc : public Func {
  public:
-  static const core::Real kDerivativeWindow;
-  static const core::Real kMinGaussianScore;
+	static Real background_prob;
 
   /// @brief Used in conjunction with read_data() to initialize a new instance
   USOGFunc() {};
+
+  /// @brief Constructs a new instance with a single gaussian
+  USOGFunc(core::Real mean, core::Real std_dev, core::Real weight=1);
 
   /// @brief Constructs a new instance from the specified lists of means,
   /// standard deviations, and weights. Assumes that all lists have equal
@@ -70,11 +72,6 @@ class USOGFunc : public Func {
 private:
   /// @brief Resets all information associated with this instance
   void resetInstance();
-
-  /// @brief Computes and returns the sum of Gaussians score.
-  /// Responsible for ensuring that the resulting value will not
-  /// cause domain errors when provided to log().
-  core::Real gaussianScore(const core::Real x) const;
 
   utility::vector1<core::Real> means_;
   utility::vector1<core::Real> std_devs_;

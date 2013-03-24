@@ -41,7 +41,7 @@
 #include <protocols/simple_moves/AddConstraintsToCurrentConformationMover.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/ScalarWeightedFunc.hh>
-#include <core/scoring/constraints/SOGFunc.hh>
+#include <core/scoring/constraints/USOGFunc.hh>
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/pose/PDBInfo.hh>
@@ -188,7 +188,7 @@ void generate_centroid_constraints(
 
 					pose.add_constraint(
 						new AtomPairConstraint( core::id::AtomID(2,resid_j), core::id::AtomID(2,resid_k),
-							new ScalarWeightedFunc( 1.0, new SOGFunc( dist, COORDDEV )  )
+							new ScalarWeightedFunc( 1.0, new USOGFunc( dist, COORDDEV )  )
 						)
 					);
 				}
@@ -215,7 +215,7 @@ void add_strand_pairs_cst(core::pose::Pose & pose, utility::vector1< std::pair< 
 			pose.add_constraint(
 				new AtomPairConstraint(	core::id::AtomID(2,strand_pair.first),
 																core::id::AtomID(2,strand_pair.second),
-					new ScalarWeightedFunc( 4.0, new SOGFunc( dist, COORDDEV )  ) // try to lock it down with a high weight
+					new ScalarWeightedFunc( 4.0, new USOGFunc( dist, COORDDEV )  ) // try to lock it down with a high weight
 				)
 			);
 		}
@@ -257,7 +257,7 @@ void add_non_protein_cst(core::pose::Pose & pose, core::Real const self_cst_weig
 					pose.add_constraint(
 						new core::scoring::constraints::AtomPairConstraint(
 							core::id::AtomID(iatom,ires), core::id::AtomID(jatom,jres),
-							new core::scoring::constraints::ScalarWeightedFunc( het_prot_cst_weight, new core::scoring::constraints::SOGFunc( dist, COORDDEV ) ) ) );
+							new core::scoring::constraints::ScalarWeightedFunc( het_prot_cst_weight, new core::scoring::constraints::USOGFunc( dist, COORDDEV ) ) ) );
 				}
 			}
 		}
@@ -283,7 +283,7 @@ void add_non_protein_cst(core::pose::Pose & pose, core::Real const self_cst_weig
 						pose.add_constraint(
 							new core::scoring::constraints::AtomPairConstraint(
 								core::id::AtomID(iatom,ires), core::id::AtomID(jatom,jres),
-								new core::scoring::constraints::ScalarWeightedFunc( self_cst_weight, new core::scoring::constraints::SOGFunc( dist, COORDDEV ) ) ) );
+								new core::scoring::constraints::ScalarWeightedFunc( self_cst_weight, new core::scoring::constraints::USOGFunc( dist, COORDDEV ) ) ) );
 					}
 				}
 			}

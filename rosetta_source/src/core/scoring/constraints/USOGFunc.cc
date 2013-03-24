@@ -27,12 +27,13 @@
 #include <cmath>
 #include <iostream>
 
+#define SQRT_2PI 2.50662721600161
+
 namespace core {
 namespace scoring {
 namespace constraints {
 
-const core::Real USOGFunc::kDerivativeWindow = 1e-6;
-const core::Real USOGFunc::kMinGaussianScore = 1e-8;
+Real USOGFunc::background_prob = exp(-10); // the maximum constraint penalty == -log(background_prob)
 
 USOGFunc::USOGFunc(const utility::vector1<core::Real>& means,
                    const utility::vector1<core::Real>& std_devs,
@@ -43,26 +44,34 @@ USOGFunc::USOGFunc(const utility::vector1<core::Real>& means,
   }
 }
 
+USOGFunc::USOGFunc(core::Real mean, core::Real std_dev, core::Real weight) {
+  means_.push_back( mean );
+	std_devs_.push_back( std_dev );
+	weights_.push_back( weight );
+}
+
 FuncOP USOGFunc::clone() const {
   return new USOGFunc(*this);
 }
 
 core::Real USOGFunc::func(const core::Real x) const {
-  return -std::log(gaussianScore(x));
+	Real score = 0;
+  for (core::Size i = 1; i <= numGaussians(); ++i) {
+		Real Z = (x - means_[i])/std_devs_[i];
+		score += ( weights_[i] / (std_devs_[i] * SQRT_2PI)) * exp( -0.5 * Z * Z );
+	}
+  return -std::log(score + background_prob);
 }
 
 core::Real USOGFunc::dfunc(const core::Real x) const {
-  core::Real w = kDerivativeWindow;
-  return (func(x + w) - func(x - w)) / (2 * w);
-}
-
-core::Real USOGFunc::gaussianScore(const core::Real x) const {
-  core::Real sum = 0;
+	Real score = 0, dscore = 0;
   for (core::Size i = 1; i <= numGaussians(); ++i) {
-    sum += dgaussian(x, means_[i], std_devs_[i], weights_[i]);
-  }
-
-  return std::max(sum, kMinGaussianScore);
+		Real Z = (x - means_[i])/std_devs_[i];
+		Real score_i = ( weights_[i] / (std_devs_[i] * SQRT_2PI)) * exp( -0.5 * Z * Z );
+		score += score_i;
+		dscore += score * (-Z/std_devs_[i]);
+	}
+  return (-dscore / (score + background_prob));
 }
 
 core::Size USOGFunc::numGaussians() const {
