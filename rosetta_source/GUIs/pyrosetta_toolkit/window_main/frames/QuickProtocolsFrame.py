@@ -31,9 +31,8 @@ class QuickProtocolsFrame(TkFrame):
         TkFrame.__init__(self, main, **options)
         
         self.min_cmd = StringVar()
-        self.min_cmd.set("Optimize Rotamers") ; #Default loop command
+        self.min_cmd.set("Optimize Rotamers") ; #Default command
         
-        self.fast_relax_bool=StringVar(); self.fast_relax_bool.set(1)#Fast Relax check_button_ckbox
         self.randomize_loops_bool=StringVar(); #Random Loop check_button_ckbox
         self.set_options_menus()
         
@@ -54,20 +53,18 @@ class QuickProtocolsFrame(TkFrame):
         self.minOPTIONS = {
             "Optimize Rotamers":lambda: self.min_protocols.optimize_rotamers(),
             "Optimize Rotamers (SCWRL)":lambda: self.min_protocols.SCWRL(),
-            "Minimize Structure":lambda: self.min_protocols.minimize(),
-            "Minimize BB":lambda:self.min_protocols.minimize(False, False, True),
-            "Minimize SC":lambda:self.min_protocols.minimize(False, False, False, True),
-            "Relax Structure":lambda: self.min_protocols.relax(self.fast_relax_bool.get()),
-            "Relax BB":lambda:self.min_protocols.relax(self.fast_relax_bool.get(), False, True),
-            "Relax SC":lambda:self.min_protocols.relax(self.fast_relax_bool.get(), False, False, True),
-
+            "Minimize Backbone+Sidechains":lambda: self.min_protocols.minimize(),
+            "Minimize Backbone only":lambda:self.min_protocols.minimize(False, False, True),
+            "Minimize Sidechains only":lambda:self.min_protocols.minimize(False, False, False, True),
+            "FastRelax Backbone+Sidechains":lambda: self.min_protocols.relax(1),
+            "FastRelax Backbone only":lambda:self.min_protocols.relax(1, False, True),
+            "FastRelax Sidechains only":lambda:self.min_protocols.relax(1, False, False, True),
         }
         
     def create_GUI_objects(self):
         
         #self.label_quick_min = Label(self, text="Quick Protocols", font=("Arial"))
         self.randomize_button=Checkbutton(self, text="Randomize Loops?", variable=self.randomize_loops_bool, command=lambda: self.toolkit.pose.assign(tools.loops.initLoops().RandLoop(self.toolkit.pose, self.toolkit.input_class.loops_as_strings, self.output_class.show_pymol.get())))
-        self.fastrelax_button=Checkbutton(self, text="Fast Relax?", variable=self.fast_relax_bool)
         
         self.decoy_entry=Entry(self, textvariable=self.output_class.decoys, justify=CENTER)
         self.rounds_entry=Entry(self, textvariable=self.output_class.rounds, relief=SUNKEN, justify=CENTER)
@@ -92,9 +89,6 @@ class QuickProtocolsFrame(TkFrame):
         self.processors_entry.grid(row=r+3, column=c); self.processors_label.grid(row=r+3, column=c+1, sticky=W)
         self.decoy_entry.grid(row=r+4, column=c); self.decoy_label.grid(row=r+4, column=c+1, sticky=W)
         self.rounds_entry.grid(row=r+5, column=c); self.rounds_label.grid(row=r+5, column=c+1, sticky=W)
-        
-        #self.fastrelax_button.grid(row=r+6, column=c, columnspan = 2) Confusing...
-        
         
         #Minimization
         self.min_options.grid(row=r+1, column = c, sticky=W+E); 

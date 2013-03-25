@@ -93,7 +93,7 @@ class main_window:
       self.input_class.options_manager.print_current_options()
       
       
-      print "\nRegion Selection Tips: N-terminus -> Omit start; C-terminus -> Omit end; Chain -> Omit start + end"
+      print "\nRegion Selection Tips: No regions added = Full structure selected.  \nAdding Regions: For N-terminus omit start; For C-terminus omit end; For whole Chain omit start + end"
       print "For additional protocol options, please use the Option System Manager.\n"
       print "Please see RosettaCommons for full documentation and references for all protocols and tools utilized in the GUI\n"
       
