@@ -22,6 +22,7 @@
 #include <core/scoring/methods/PoissonBoltzmannEnergy.hh>
 
 #include <protocols/moves/Mover.hh>
+#include <protocols/filters/Filter.fwd.hh>
 #include <core/types.hh>
 #include <protocols/simple_moves/ddG.fwd.hh>
 #include <string>
@@ -54,8 +55,8 @@ public:
 
 public :
 	ddG();
-	ddG( core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const jump=1, bool const symmetry=false );
-	ddG( core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const jump/*=1*/, utility::vector1<core::Size> const & chain_ids, bool const symmetry /*=false*/ );
+	ddG( core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const jump=1 );
+	ddG( core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const jump/*=1*/, utility::vector1<core::Size> const & chain_ids );
 	virtual void apply (Pose & pose);
 	void calculate( Pose const & pose_in );
 	void report_ddG( std::ostream & out ) const;
@@ -74,6 +75,8 @@ public :
 	virtual std::string get_name() const;
 	protocols::moves::MoverOP relax_mover() const{ return relax_mover_; }
 	void relax_mover( protocols::moves::MoverOP m ){ relax_mover_ = m; }
+	protocols::filters::FilterOP filter() const;
+	void filter( protocols::filters::FilterOP f );
 
 	void task_factory( core::pack::task::TaskFactoryOP task_factory ) { task_factory_ = task_factory; }
 	core::pack::task::TaskFactoryOP task_factory() const { return task_factory_; }
@@ -105,7 +108,9 @@ private :
 	utility::vector1<core::Size> chain_ids_;
 	bool per_residue_ddg_;
 	bool repack_;
-	protocols::moves::MoverOP relax_mover_; //dflt NULL; in the unbound state, relax before taking the energy
+	protocols::moves::MoverOP relax_mover_; //dflt NULL
+	// Instead of score function delta, use the filter.
+	protocols::filters::FilterOP filter_; //dflt NULL
 
 	core::pack::task::TaskFactoryOP task_factory_;
 	core::pack::task::PackerTaskOP task_;

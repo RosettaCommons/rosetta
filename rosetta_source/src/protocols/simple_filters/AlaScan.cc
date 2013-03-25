@@ -233,7 +233,7 @@ AlaScan::report_symmetry( std::ostream & out, core::pose::Pose const & const_pos
 	interface_obj.distance( distance_threshold_ );
 	interface_obj.calculate( pose );
 
-	simple_filters::DdgFilter const ddg( 100/*ddg_threshold*/, scorefxn_, 1, 1 /*repeats*/, true /*symmetry*/ );
+	simple_filters::DdgFilter const ddg( 100/*ddg_threshold*/, scorefxn_, 1, 1 /*repeats*/ /*, true */ ); //DdfFilter autodetects symmetry from input now
 	core::Real accumulate_ddg( 0 );
 	for( core::Size r=1; r<=repeats_; ++r )
 		accumulate_ddg += ddg.compute( const_pose );

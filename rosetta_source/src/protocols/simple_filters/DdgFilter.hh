@@ -44,8 +44,7 @@ public:
 	DdgFilter( core::Real const ddg_threshold,
 						 core::scoring::ScoreFunctionCOP scorefxn,
 						 core::Size const rb_jump=1,
-						 core::Size const repeats=1,
-						 bool const symmetry=false);
+						 core::Size const repeats=1);
 	bool apply( core::pose::Pose const & pose ) const;
 	filters::FilterOP clone() const;
 	filters::FilterOP fresh_instance() const;
@@ -74,6 +73,8 @@ public:
 					utility::lua::LuaObject const & tasks );
 	void relax_mover( protocols::moves::MoverOP m );
 	protocols::moves::MoverOP relax_mover() const;
+	void filter( protocols::filters::FilterOP m );
+	protocols::filters::FilterOP filter() const;
 private:
 
 	// initialize PB related features
@@ -88,9 +89,9 @@ private:
 	bool relax_bound_; //dflt false; Do you want to relax in the bound state (ddG). Avoid redundant relax if already relaxed before calling the filter.
 	utility::vector1<core::Size> chain_ids_;
 	core::Size repeats_;//average of how many repeats? defaults to 1
-	bool symmetry_; //dflt false
 	bool repack_; //dflt true; Do you want to repack in the bound and unbound states (ddG) or merely compute the dG
 	protocols::moves::MoverOP relax_mover_; //dflt NULL; in the unbound state, prior to taking the energy, should we do any relaxation
+	protocols::filters::FilterOP filter_; //dflt NULL; use a filter instead of the scorefunction
 
 	/// is PB enabled?
 	bool pb_enabled_;

@@ -259,7 +259,7 @@ TaskAwareAlaScan::ddG_for_single_residue( core::pose::Pose const & const_pose, c
   core::pack::pack_rotamers( pose, *scorefxn_, task );
 
 	// Create ddG mover, calculate, and return value
-  protocols::simple_moves::ddG ddG( scorefxn_, sym_aware_jump_id, symmetric );
+  protocols::simple_moves::ddG ddG( scorefxn_, sym_aware_jump_id /*, symmetric*/ ); // ddG autodetects input symmetry now
   if ( use_custom_task() ) {
     ddG.use_custom_task( use_custom_task() );
     ddG.task_factory( ddG_task_factory() );
@@ -295,7 +295,7 @@ TaskAwareAlaScan::report( std::ostream & out, core::pose::Pose const & const_pos
 	}
 
 	// Calculate the ddG of the input pose
-	protocols::simple_moves::ddG ddG( scorefxn_, sym_aware_jump_id, symmetric );
+	protocols::simple_moves::ddG ddG( scorefxn_, sym_aware_jump_id /*, symmetric*/ ); //ddG autodetects symmetry now
 	if ( use_custom_task() ) {
 		ddG.use_custom_task( use_custom_task() );
 		ddG.task_factory( ddG_task_factory() );
@@ -341,7 +341,7 @@ TaskAwareAlaScan::report( std::ostream & out, core::pose::Pose const & const_pos
 
 void TaskAwareAlaScan::write_to_pdb( core::Size const & residue, std::string const & residue_name, core::Real const & ddG ) const
 {
-  
+
   protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
   std::string filter_name = this->name();
   std::string user_name = this->get_user_defined_name();

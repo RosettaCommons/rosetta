@@ -144,9 +144,10 @@ public:
 	FilterOP clone() const { return new StubMultiFilter( *this ); }
 	FilterOP fresh_instance() const {	return new StubMultiFilter(); }
 	void set( utility::vector1<core::Real> const & values, bool truth=true, std::string tag="") { values_ = values, truth_ = truth; tag_ = tag; }
+	void push_back( core::Real value ) { values_.push_back( value); }
 	void set_pos( core::Size pos = 1) { pos_ = pos; }
 	bool apply( core::pose::Pose const & ) const { return truth_; }
-	core::Real report_sm( core::pose::Pose const & ) const { 
+	core::Real report_sm( core::pose::Pose const & ) const {
 		if ( pos_ == 0 || pos_ > values_.size() ) { pos_ = 1; }
 		++pos_; // Overflow taken care of next time around
 		return values_[ pos_ - 1 ];

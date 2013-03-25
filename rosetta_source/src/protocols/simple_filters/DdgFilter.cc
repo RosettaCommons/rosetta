@@ -60,7 +60,6 @@ DdgFilter::DdgFilter() :
 	repack_bound_(true),
 	relax_bound_(false),
 	repeats_( 1 ),
-	symmetry_(false),
 	repack_( true ),
 	relax_mover_( NULL ),
 	pb_enabled_(false),
@@ -73,8 +72,7 @@ DdgFilter::DdgFilter() :
 DdgFilter::DdgFilter( core::Real const ddg_threshold,
 											core::scoring::ScoreFunctionCOP scorefxn,
 											core::Size const rb_jump/*=1*/,
-											core::Size const repeats/*=1*/,
-											bool const symmetry /*=false*/ ) :
+											core::Size const repeats/*=1*/) :
 	Filter("Ddg" ),
 	ddg_threshold_(ddg_threshold),
 	scorefxn_(scorefxn->clone()),
@@ -83,7 +81,6 @@ DdgFilter::DdgFilter( core::Real const ddg_threshold,
 	repack_bound_( true ),
 	relax_bound_( false ),
 	repeats_(repeats),
-	symmetry_(symmetry),
 	repack_( true ),
 	relax_mover_( NULL ),
 	pb_enabled_(false),
@@ -124,7 +121,7 @@ DdgFilter::repack() const
 void
 DdgFilter::parse_my_tag( utility::tag::TagPtr const tag,
 												 moves::DataMap & data,
-												 filters::Filters_map const & ,
+												 filters::Filters_map const & filters,
 												 moves::Movers_map const & movers,
 												 core::pose::Pose const & )
 {
@@ -136,7 +133,9 @@ DdgFilter::parse_my_tag( utility::tag::TagPtr const tag,
 	rb_jump_ = tag->getOption< core::Size >( "jump", 1 );
 	repeats( tag->getOption< core::Size >( "repeats", 1 ) );
 	repack( tag->getOption< bool >( "repack", 1 ) );
-	symmetry_ = tag->getOption<bool>( "symmetry", 0 );
+	if( tag->hasOption( "symmetry" ) ) {
+		TR << "DdgFilter autodetermines symmetry from input pose - symmetry option has no effect." << std::endl;
+	}
 	use_custom_task( tag->hasOption("task_operations") );
   task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	repack_bound( tag->getOption<bool>( "repack_bound", 1 ) );
@@ -145,6 +144,8 @@ DdgFilter::parse_my_tag( utility::tag::TagPtr const tag,
 
 	if( tag->hasOption( "relax_mover" ) )
 		relax_mover( protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "relax_mover" ), movers ) );
+	if( tag->hasOption( "filter" ) )
+		filter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "filter" ), filters ) );
 
 	if(tag->hasOption("chain_num"))
 	{
@@ -154,10 +155,7 @@ DdgFilter::parse_my_tag( utility::tag::TagPtr const tag,
 	if( repeats() > 1 && !repack() )
 		throw utility::excn::EXCN_RosettaScriptsOption( "ERROR: it doesn't make sense to have repeats if repack is false, since the values converge very well." );
 
-	if ( symmetry_ )
-		TR<<"ddg filter with threshold "<< ddg_threshold_<<" repeats="<<repeats()<<" and scorefxn "<<scorefxn_name<<" with symmetry " <<std::endl;
-	else
-		TR<<"ddg filter with threshold "<< ddg_threshold_<<" repeats="<<repeats()<<" and scorefxn "<<scorefxn_name<<" over jump "<<rb_jump_<<" and repack "<<repack()<<std::endl;
+	TR<<"ddg filter with threshold "<< ddg_threshold_<<" repeats="<<repeats()<<" and scorefxn "<<scorefxn_name<<" over jump "<<rb_jump_<<" and repack "<<repack()<<std::endl;
 
 	// Determine if this PB enabled.
 	if( scorefxn_->get_weight(core::scoring::PB_elec) != 0.) {
@@ -190,7 +188,6 @@ void DdgFilter::parse_def( utility::lua::LuaObject const & def,
 	rb_jump_ = def["jump"] ? def["jump"].to<core::Size>() : 1;
 	repeats( def["repeats"] ? def["repeats"].to<core::Size>() : 1 );
 	repack( def["repack"] ? def["repack"].to<bool>() : true );
-	symmetry_ = def["symmetry"] ? def["symmetry"].to<bool>() : false;
 	repack_bound_ = def["repack_bound"] ? def["repack_bound"].to<bool>() : true;
 	relax_bound_ = def["relax_bound"] ? def["relax_bound"].to<bool>() : false;
 	translate_by_ = def["translate_by"] ? def["translate_by"].to<core::Real>() : DEFAULT_TRANSLATION_DISTANCE;
@@ -205,10 +202,7 @@ void DdgFilter::parse_def( utility::lua::LuaObject const & def,
 	if( repeats() > 1 && !repack() )
 		utility_exit_with_message( "ERROR: it doesn't make sense to have repeats if repack is false, since the values converge very well." );
 
-	if ( symmetry_ )
-		TR<<"ddg filter with threshold "<< ddg_threshold_<<" repeats="<<repeats()<<" with symmetry " <<std::endl;
-	else
-		TR<<"ddg filter with threshold "<< ddg_threshold_<<" repeats="<<repeats()<<" over jump "<<rb_jump_<<" and repack "<<repack()<<std::endl;
+	TR<<"ddg filter with threshold "<< ddg_threshold_<<" repeats="<<repeats()<<" over jump "<<rb_jump_<<" and repack "<<repack()<<std::endl;
 }
 
 bool
@@ -265,7 +259,7 @@ core::Real
 DdgFilter::compute( core::pose::Pose const & pose_in ) const {
 	core::pose::Pose pose(pose_in);
 	if( repack() ){
-		protocols::simple_moves::ddG ddg( scorefxn_, rb_jump_, chain_ids_, symmetry_ );
+		protocols::simple_moves::ddG ddg( scorefxn_, rb_jump_, chain_ids_ );
 		if ( use_custom_task() ) {
 			ddg.use_custom_task( use_custom_task() );
 			ddg.task_factory( task_factory() );
@@ -278,6 +272,7 @@ DdgFilter::compute( core::pose::Pose const & pose_in ) const {
 		}
 		ddg.translate_by( translate_by() );
 		ddg.relax_mover( relax_mover() );
+		ddg.filter( filter() );
 		core::Real average( 0.0 );
 		for( core::Size i = 1; i<=repeats_; ++i ){
 			ddg.calculate( pose );
@@ -290,7 +285,12 @@ DdgFilter::compute( core::pose::Pose const & pose_in ) const {
 			utility_exit_with_message( "ERROR: it doesn't make sense to have repeats if repack is false, since the values converge very well." );
 		using namespace protocols::moves;
 
-		simple_filters::ScoreTypeFilter const stf( scorefxn_, core::scoring::total_score, 10000/*threshold*/ );
+		filters::FilterCOP scoring_filter;
+		if( filter_ ) {
+			scoring_filter = filter_;
+		} else {
+			scoring_filter = new simple_filters::ScoreTypeFilter( scorefxn_, core::scoring::total_score, 10000/*threshold*/ );
+		}
 		core::pose::Pose split_pose( pose );
 		if(chain_ids_.size() > 0)
 		{
@@ -312,8 +312,8 @@ DdgFilter::compute( core::pose::Pose const & pose_in ) const {
 			translate->apply( split_pose );
 		}
 
-		core::Real const bound_energy( stf.compute( pose ));
-		core::Real const unbound_energy( stf.compute( split_pose ));
+		core::Real const bound_energy( scoring_filter->report_sm( pose ));
+		core::Real const unbound_energy( scoring_filter->report_sm( split_pose ));
 		core::Real const dG( bound_energy - unbound_energy );
 		return( dG );
 	}
@@ -327,6 +327,13 @@ DdgFilter::relax_mover( protocols::moves::MoverOP m ){
 protocols::moves::MoverOP
 DdgFilter::relax_mover() const{ return relax_mover_; }
 
-
+void
+DdgFilter::filter( protocols::filters::FilterOP f ){
+	filter_ = f;
 }
+
+protocols::filters::FilterOP
+DdgFilter::filter() const{ return filter_; }
+}
+
 }

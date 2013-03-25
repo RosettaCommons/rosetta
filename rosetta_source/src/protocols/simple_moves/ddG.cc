@@ -53,6 +53,7 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <protocols/filters/Filter.hh>
 
 #include <numeric/xyzVector.hh>
 
@@ -127,8 +128,7 @@ ddG::ddG() :
 }
 
 ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
-					core::Size const jump/*=1*/,
-					bool const symmetry /*=false*/ ) :
+					core::Size const jump/*=1*/) :
 		moves::Mover(ddGCreator::mover_name()),
 		bound_total_energy_(0.0),
 		unbound_total_energy_(0.0),
@@ -163,8 +163,7 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 
 ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 					core::Size const jump/*=1*/,
-					utility::vector1<core::Size> const & chain_ids,
-					bool const symmetry /*=false*/ ) :
+					utility::vector1<core::Size> const & chain_ids) :
 		moves::Mover(ddGCreator::mover_name()),
 		bound_total_energy_(0.0),
 		unbound_total_energy_(0.0),
@@ -200,8 +199,8 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 void ddG::parse_my_tag(
 	utility::tag::TagPtr const tag,
 	protocols::moves::DataMap  & data,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
+	protocols::filters::Filters_map const & filters,
+	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const& pose)
 {
 	rb_jump_ = tag->getOption<core::Size>("jump", 1);
@@ -216,6 +215,13 @@ void ddG::parse_my_tag(
 	repack_bound_ = tag->getOption<bool>("repack_bound",1);
 	relax_bound_ = tag->getOption<bool>("relax_bound",0);
 	translate_by_ = tag->getOption<core::Real>("translate_by", DEFAULT_TRANSLATION_DISTANCE);
+
+	if( tag->hasOption( "relax_mover" ) ) {
+		relax_mover( protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "relax_mover" ), movers ) );
+	}
+	if( tag->hasOption( "filter" ) ) {
+		filter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "filter" ), filters ) );
+	}
 
 	if(tag->hasOption("chains") && tag->hasOption("symmetry"))
 	{
@@ -335,16 +341,24 @@ void
 ddG::fill_energy_vector( pose::Pose const & pose, std::map< ScoreType, core::Real > & energy_map )
 {
 	energy_map.clear();
-	using namespace core::scoring;
-	for ( int i=1; i<= n_score_types; ++i ) {
-		if ( (*scorefxn_)[ ScoreType(i) ] != 0.0 && ScoreType(i) != pro_close ) {
-			energy_map.insert( std::make_pair( ScoreType( i ), (*scorefxn_)[ ScoreType(i)] * pose.energies().total_energies()[ ScoreType( i ) ] ) );
+	if( filter_ ) {
+		filter_->report(TR, pose);
+		energy_map[ core::scoring::total_score ] = filter_->report_sm( pose );
+	} else {
+		using namespace core::scoring;
+		for ( int i=1; i<= n_score_types; ++i ) {
+			if ( (*scorefxn_)[ ScoreType(i) ] != 0.0 && ScoreType(i) != pro_close ) {
+				energy_map.insert( std::make_pair( ScoreType( i ), (*scorefxn_)[ ScoreType(i)] * pose.energies().total_energies()[ ScoreType( i ) ] ) );
+			}
 		}
 	}
 }
 
 void ddG::fill_per_residue_energy_vector(pose::Pose const & pose, std::map<Size, Real> & energy_map)
 {
+	if( filter_ ) {
+		utility_exit_with_message("Cannot calculate per-residue ddG's with a specified filter.");
+	}
 	energy_map.clear();
 	for(core::Size resid = 1; resid <= pose.total_residue(); ++resid)
 	{
@@ -550,6 +564,16 @@ ddG::unbind( pose::Pose & pose ) const
 		translate->step_size( translate_by_ );
 		translate->apply( pose );
 	}
+}
+
+void
+ddG::filter( protocols::filters::FilterOP f ) {
+  filter_ = f;
+}
+
+protocols::filters::FilterOP
+ddG::filter() const {
+	return filter_;
 }
 
 std::string

@@ -213,10 +213,12 @@ sources = {
 	],
 
         "simple_filters" : [
+                "DdgFilter",
         	"ResidueCountFilter",
         ],
 
         "simple_moves" : [
+                "ddG",
         	"FavorSequenceProfile",
         ],
 

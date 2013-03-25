@@ -547,7 +547,7 @@ void HDdesignMover::apply (pose::Pose & pose ) {
  	}
 
 	//find ddg
-	protocols::simple_moves::ddGOP ddG_mover = new protocols::simple_moves::ddG( scorefxn_, 1 /*jump*/, true /*symmetric*/ );
+	protocols::simple_moves::ddGOP ddG_mover = new protocols::simple_moves::ddG( scorefxn_, 1 /*jump*/ /* , true */ ); //ddG autodetects symmetry now
 	ddG_mover->calculate(pose);
 	core::Real ddgvalue = ddG_mover->sum_ddG();
 	//some dirty filtering

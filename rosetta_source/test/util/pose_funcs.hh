@@ -98,6 +98,11 @@ create_pdb_string_2res_1ten_2res_trp_cage_pose() {
 	return fullatom_pose_from_string(pdb_string_2res_1ten_2res_trp_cage());
 }
 
+inline
+core::pose::PoseOP
+create_2res_1ten_2res_trp_cage_poseop() {
+	return fullatom_poseop_from_string( pdb_string_2res_1ten_2res_trp_cage() );
+}
 
 inline
 core::pose::Pose
