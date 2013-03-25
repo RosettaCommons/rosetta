@@ -1055,7 +1055,7 @@ option.add( basic::options::OptionKeys::cluster::idealize_final_structures, "Run
 option.add( basic::options::OptionKeys::cluster::limit_dist_matrix, "Only calculate full matrix for a subset of structres. Then simply assign structures to nearest cluster" ).def(-1);
 option.add( basic::options::OptionKeys::cluster::make_ensemble_cst, "Create a set of constraints describing the variablity in each cluster of each residue." ).def(false);
 option.add( basic::options::OptionKeys::cluster::hotspot_hash, "Cluster hotspot hashing results. Each input PDB must contain both the target and the newly docked hotspot (which should be the last residue in the pose)." ).def(false);
-option.add( basic::options::OptionKeys::cluster::loops, "Cluster this loop" ).def(false);
+option.add( basic::options::OptionKeys::cluster::loops, "Cluster the loop specified with the -loops:loop_file option" ).def(false);
 option.add( basic::options::OptionKeys::cluster::population_weight, "Order Clusters by (1-p)*score - p*size whpere p = population_weight " ).def(0.09);
 option.add( basic::options::OptionKeys::cluster::template_scores, "imple textfile containing template names (in caps) and scores." );
 option.add( basic::options::OptionKeys::cluster::K_level, "Hierarchical cluster level number" ).def(1);
@@ -1878,8 +1878,8 @@ option.add( basic::options::OptionKeys::loops::keep_natro, "list of residues whe
 option.add( basic::options::OptionKeys::loops::refine_design_iterations, "iterations of refine and design" ).def(1);
 option.add( basic::options::OptionKeys::loops::loop_closure::loop_closure, "loop_closure option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::loops::loop_closure::loop_insert, "List of chain names with loop sizes in between where loops are inserted.  e.g. A5B6CDE to insert a loop of size 5 in between A and B, and a loop of 6 between B and C.  loop_insert_, loop_insert_rclrc and blueprint options are mutually exclusive." );
-option.add( basic::options::OptionKeys::loops::loop_closure::loop_insert_rclrc, "Comma delimited list of tuples, each formed as R1:C1:L:R2:C2, where R1:C1 means residue R1 in chain C1 as start terminal and R2 in C2 as end terminal of the loop to be created.  N is the length of the loop in number of residues.  e.g. 25:A:7:28:B,50:B:6:53:C for building a loop of length 6 between res 25 in chain A and 29 in chain B , and another with 6 residues between res 50 in chain B and 53 in chain C.  loop_insert, loop_insert_rcn and blueprint options are mutually exclusive." );
-option.add( basic::options::OptionKeys::loops::loop_closure::blueprint, "path to a blueprint file specifying loops.  loop_insert, loop_insert_rcn and blueprint options are mutually exclusive" );
+option.add( basic::options::OptionKeys::loops::loop_closure::loop_insert_rclrc, "Comma delimited list of tuples, each formed as R1C1:L:R2C2, where R1C1 means residue R1 in chain C1 as start terminal and R2 in C2 as end terminal of the loop to be created.  N is the length of the loop in number of residues.  e.g. 25A:7:28B,50B:6:53C for building a loop of length 6 between res 25 in chain A and 29 in chain B , and another with 6 residues between res 50 in chain B and 53 in chain C.  loop_insert, loop_insert_rclrc and blueprint options are mutually exclusive." );
+option.add( basic::options::OptionKeys::loops::loop_closure::blueprint, "path to a blueprint file specifying loops.  loop_insert, loop_insert_rclrc and blueprint options are mutually exclusive" );
 option.add( basic::options::OptionKeys::assembly::assembly, "assembly option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::assembly::pdb1, "pdb1 file" );
 option.add( basic::options::OptionKeys::assembly::pdb2, "pdb2 file" );

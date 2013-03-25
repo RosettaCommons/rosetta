@@ -386,6 +386,46 @@ static basic::Tracer TR ("devel.loophash_loopclosure.LoopHashLoopClosureMover" )
 		option[ remodel::lh_ex_limit ]( loophash_ex_limit );
 		TR << "remodel::lh_ex_limit = " << loophash_ex_limit << std::endl;
 
+		// Max radius.  This should be >= lh_ex_limit.  Default is hard-coded somewhere to 5.
+		Size max_radius = loophash_ex_limit + 2;
+		if( option[ lh::max_radius ] >= loophash_ex_limit ) {
+			option[ lh::max_radius ]( max_radius );
+			TR << "lh::max_radius must be >= loophash_ex_limit.  Adjust to +2: " << max_radius << std::endl;
+			TR.flush();
+		}
+		TR << "lh::max_radius = " << max_radius << std::endl;
+
+		// Disable CCD options if they are set.		
+		if( true ) {//option[ remodel::RemodelLoopMover::independent_cycles] ) {
+			TR.Warning << "Conflicting options.  Turning off remodel::RemodelLoopMover::independent_cycles." << std::endl;
+			option[ remodel::RemodelLoopMover::independent_cycles ]( false );
+		}
+		if( true ) {//option[ remodel::RemodelLoopMover::simultaneous_cycles ] ) {
+			TR.Warning << "Conflicting options.  Turning off remodel::RemodelLoopMover::simultaneous_cycles." << std::endl;
+			option[ remodel::RemodelLoopMover::simultaneous_cycles ] ( false );
+		}
+		if( true ) {//option[ remodel::RemodelLoopMover::bypass_closure ] ) {
+			TR.Warning << "Conflicting options.  Turning ON remodel::RemodelLoopMover::bypass_closure." << std::endl;
+			option[ remodel::RemodelLoopMover::bypass_closure ]( true );
+		}
+		if( true ) { //option[ remodel::RemodelLoopMover::boost_closure_cycles ] ) {
+			TR.Warning << "Conflicting options.  Turning off remodel::RemodelLoopMover::boost_closure_cycles." << std::endl;
+			option[ remodel::RemodelLoopMover::boost_closure_cycles ]( true );
+		}
+/*
+		// reduce loophash cycles to 1 if greater, which makes no senes.
+		if( option[ loophash_cycles ] > 1 ) {
+			TR.Warning << "Conflicting options.  Reducing loophash cycles to one." << std::endl;
+			option[ loophash_cycles ] ( 1 );
+		}
+*/
+/*
+-loophash_cycles 1
+-lh_closure_filter
+-max_linear_chainbreak 2
+-lh_cbreak_selection 10
+*/
+
 		// quick dirty?
 		bool is_quick_and_dirty = tag->getOption<bool>("quick_and_dirty", true);
 		option[ remodel::quick_and_dirty ]( is_quick_and_dirty );
@@ -430,6 +470,15 @@ static basic::Tracer TR ("devel.loophash_loopclosure.LoopHashLoopClosureMover" )
 		option[ remodel::RemodelLoopMover::max_linear_chainbreak ]( linear_chainbreak );
 		TR << "remodel::max_linear_chainbreak = " << linear_chainbreak << std::endl;
 
+/*
+		Size loophash_chainbreak_selection = 10;
+		if( option[ lh_cbreak_selection ] < 10 ) {
+			TR.Warning << "Recommended chainbreak selection is >=10." << std::endl;
+			TR.Warning << "Increasing chainbreak selection to 10." << std::endl;
+			option[ lh_chainbreak_selection ]( 10 );
+		}
+		TR << "lh_cbreak_selection = " << option[ lh_chainbreak_selection ] << std::endl;
+*/	
 		// Use sidechains from input
 		bool use_input_sidechains = tag->getOption<bool>("user_input_sc", true);
 		option[ packing::use_input_sc ]( use_input_sidechains );

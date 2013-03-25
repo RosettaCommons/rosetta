@@ -1511,10 +1511,13 @@ void RemodelLoopMover::loophash_stage(
 		//not doing shuffle for now
 		//numeric::random::random_permutation( leap_index_list.begin(), leap_index_list.end(), RG );
 
-		TR << "collected " << leap_index_list.size() << " fragments." << std::endl;
 		Size lh_frag_count = leap_index_list.size();
 		if (leap_index_list.size() == 0){
-			exit(0);
+			TR.Warning << "No fragment found within radius=" << lh_ex_limit << "A.  No point of continuing.  Quitting..." << std::endl;
+			utility_exit();
+		}
+		else{
+			TR << "Collected " << leap_index_list.size() << " fragments within radius=" << lh_ex_limit << "A." << std::endl;
 		}
 
 		for( std::vector < core::Size >::const_iterator itx = leap_index_list.begin(); itx != leap_index_list.end(); ++itx ){
@@ -1525,7 +1528,8 @@ void RemodelLoopMover::loophash_stage(
 		}
 
 		if( bs_vec_.size() == 0 ) {
-					TR << "No frags matched" << std::endl;
+				TR.Warning << "No fragment found for loop size=" << loopsize << ".  No point of conitinuing.  Quitting..." << std::endl;
+				utility_exit();
 		}
 		else {
 					//output_pdb(bs_vec_, loopsize, out_path, utility::to_string(key[i]) + ".");
