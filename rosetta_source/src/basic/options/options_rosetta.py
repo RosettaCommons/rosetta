@@ -2123,7 +2123,7 @@ Options = Option_Group( '',
 		Option( 'limit_dist_matrix', 'Integer', desc="Only calculate full matrix for a subset of structres. Then simply assign structures to nearest cluster", default = '-1'),
 		Option( 'make_ensemble_cst', "Boolean", desc="Create a set of constraints describing the variablity in each cluster of each residue.", default='false' ),
 		Option( 'hotspot_hash', "Boolean", desc="Cluster hotspot hashing results. Each input PDB must contain both the target and the newly docked hotspot (which should be the last residue in the pose).", default='false' ),
-		Option( 'loops', "Boolean", desc='Cluster this loop', default = 'false' ),
+		Option( 'loops', "Boolean", desc='Cluster the loop specified with the -loops:loop_file option', default = 'false' ),
 		Option( 'population_weight', 'Real', desc="Order Clusters by (1-p)*score - p*size whpere p = population_weight " , default = '0.09' ),
 
 		Option( 'template_scores', 'String', desc="imple textfile containing template names (in caps) and scores." ),
