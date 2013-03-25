@@ -2,14 +2,6 @@
 ########################
 How to get this sample_source setup:
 
-0) Since Rosetta has bugs in how it handles unrecognized residues, in
-   order to read past problematic structures, add the following to
-   rosetta_source/tools/build/user.settings before compiling
-
-        "appends" : {
-            "defines" : ["EXIT_THROWS_EXCEPTION"],
-        },
-
 1) put directory of pdbs into the input/ directory, e.g. 
    ln -s /path/to/datasets/top800/input/top8000_chains_eds_70 .
 
