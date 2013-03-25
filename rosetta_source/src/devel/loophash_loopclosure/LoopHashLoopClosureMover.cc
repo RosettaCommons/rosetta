@@ -57,6 +57,7 @@
 
 // C++ headers
 #include <string>
+#include <ctime>
 #include <sstream>
 #include <iostream>
 #include <unistd.h>
@@ -319,13 +320,19 @@ static basic::Tracer TR ("devel.loophash_loopclosure.LoopHashLoopClosureMover" )
 		pid_t pid = getpid();
 		std::stringstream ss;
 		ss << tag->getOption("name", get_current_tag());
-		ss << "_" << pid << ".bp";
+		//ss << "_" << pid;
+//#ifdef USEMPI
+//	time_t t;
+//	time(&t);
+//  ss << t;
+//#endif
+		ss << ".bp";
 		std::string bpname = ss.str().c_str();
 		TR << "Dummy blueprint: " << bpname << std::endl;
 
-		utility::io::izstream bpstream(bpname.c_str());
-		if( bpstream.good() ){
-			bpstream.close();
+		//utility::io::izstream bpstream(bpname.c_str());
+		if(false){// bpstream.good() ){
+			//bpstream.close();
 		}
 		else{
 			protocols::loops::LoopsOP loops;
