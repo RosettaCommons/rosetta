@@ -36,9 +36,9 @@ public:
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;
 	core::Real report_sm( core::pose::Pose const & pose ) const;
 	core::Real compute( core::pose::Pose const & pose ) const;
-	core::pack::task::TaskFactoryOP task_factory() { return taskfactory_; }
+	core::pack::task::TaskFactoryOP task_factory();
 	/// @brief Set the task factory to limit SASA calculation to packable residues
-	void task_factory( core::pack::task::TaskFactoryOP task_factory ) { taskfactory_ = task_factory; }
+	void task_factory( core::pack::task::TaskFactoryOP task_factory );
 	filters::FilterOP clone() const;
 	filters::FilterOP fresh_instance() const;
 

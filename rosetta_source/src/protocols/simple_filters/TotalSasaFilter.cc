@@ -71,6 +71,15 @@ TotalSasaFilter::fresh_instance() const{
 	return new TotalSasaFilter;
 }
 
+core::pack::task::TaskFactoryOP
+TotalSasaFilter::task_factory() {
+	return taskfactory_;
+}
+void
+TotalSasaFilter::task_factory(core::pack::task::TaskFactoryOP task_factory) {
+	taskfactory_ = task_factory;
+}
+
 void
 TotalSasaFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & data, filters::Filters_map const &,moves::Movers_map const &, core::pose::Pose const & )
 {
