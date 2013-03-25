@@ -21,8 +21,6 @@
 
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
-
-#include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>

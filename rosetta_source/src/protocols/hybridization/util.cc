@@ -40,8 +40,11 @@
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <protocols/simple_moves/AddConstraintsToCurrentConformationMover.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
+#include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/ScalarWeightedFunc.hh>
 #include <core/scoring/constraints/USOGFunc.hh>
+#include <core/scoring/constraints/SOGFunc.hh>
+#include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/pose/PDBInfo.hh>
@@ -65,6 +68,7 @@
 #include <protocols/comparative_modeling/coord_util.hh>
 
 #include <list>
+#include <numeric/xyzVector.hh>
 
 namespace protocols {
 //namespace comparative_modeling {
@@ -195,6 +199,97 @@ void generate_centroid_constraints(
 			}
 		}
 	}
+}
+
+
+void generate_partial_constraints(
+    core::pose::Pose &pose,
+    utility::vector1<core::Size> ignore_res )
+{
+
+  core::conformation::symmetry::SymmetryInfoCOP symm_info;
+  if ( core::pose::symmetry::is_symmetric(pose) ) {
+    core::conformation::symmetry::SymmetricConformation & SymmConf (
+      dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
+    symm_info = SymmConf.Symmetry_Info();
+  }
+
+  core::Real MAXDIST = 0.0;
+  core::Real COORDDEV = 0.05;
+  core::Real MINDIST_NONMOVEj= 999.0;
+
+	core::Size iatom; 
+	core::Real natom = 0.0;
+  numeric::xyzVector<core::Real> sum_xyz;
+  numeric::xyzVector<core::Real> anchor_xyz;
+  core::Real min_dist2 = 1e9;
+  Size best_anchor = 0;
+  core::Real distjm;
+
+  //pose.remove_constraints();
+	//std::cout << "# of chains: " << pose.conformation().num_chains() << std::endl;
+  for (core::Size i=1; i<=pose.conformation().num_chains(); ++i ) {
+		MAXDIST = 0.0;
+		//figure out the centor of mass of chain excluding ignore_res
+		for (core::Size j=pose.conformation().chain_begin(i); j<=pose.conformation().chain_end(i); ++j ) {
+				if ( std::find(ignore_res.begin(),ignore_res.end(),j)==ignore_res.end() ) {
+							if ( pose.residue_type(j).has("CA") ) {
+      						iatom = pose.residue_type(j).atom_index("CA");
+      						sum_xyz += pose.residue(j).xyz(iatom);
+     	 						natom += 1.;
+    					}
+			  }//not at interface
+
+        for (core::Size m=1; m<=ignore_res.size(); ++m) {
+          distjm=pose.conformation().residue(j).xyz(2).distance( pose.conformation().residue(ignore_res[m]).xyz(2) );
+          if ( distjm > MAXDIST ) MAXDIST=distjm;
+        } //figure out the maxdist to any interface residues, used for normalizing coordinate constraints
+
+		}//loop through residues in chain 
+    if (natom > 1e-3) {
+      anchor_xyz = sum_xyz / natom;
+    }
+
+		//figure out best anchor residue
+		min_dist2 = 1e9;
+		best_anchor = 0;
+		for (core::Size j=pose.conformation().chain_begin(i); j<=pose.conformation().chain_end(i); ++j ) {
+				if ( std::find(ignore_res.begin(),ignore_res.end(),j)==ignore_res.end() ) {
+      			if ( pose.residue_type(j).has("CA") ) {
+        			Size iatom = pose.residue_type(j).atom_index("CA");
+        			core::Real dist2 = pose.residue(j).xyz(iatom).distance_squared(anchor_xyz);
+        			if (dist2 < min_dist2) {
+          				min_dist2 = dist2;
+          				best_anchor = j;
+        			}
+			 			}
+      }
+    }
+
+  	for (core::Size j=pose.conformation().chain_begin(i); j<=pose.conformation().chain_end(i); ++j ) {
+					//std::cout << "chain " << i << " residue " << j << " residue " << k << " distance: "  << dist << std::endl; 
+					if ( std::find(ignore_res.begin(),ignore_res.end(),j)==ignore_res.end() ) {
+
+							MINDIST_NONMOVEj= 999.0;
+							for (core::Size m=1; m<=ignore_res.size(); ++m) {
+								distjm=pose.conformation().residue(j).xyz(2).distance( pose.conformation().residue(ignore_res[m]).xyz(2) );
+								if ( distjm < MINDIST_NONMOVEj ) MINDIST_NONMOVEj=distjm;
+							} //closest to nonmovable residues
+		
+						//std::cout << "Add CST: " << j << " chain " << i << " deviation: " << COORDDEV*MAXDIST/MINDIST_NONMOVEj  << std::endl;
+            if (symm_info && !symm_info->bb_is_independent( j ) )
+               j = symm_info->bb_follows( j );
+
+            pose.add_constraint(
+                    new core::scoring::constraints::CoordinateConstraint( core::id::AtomID(pose.residue_type(j).atom_index("CA"),j),
+                                               core::id::AtomID(pose.residue_type(best_anchor).atom_index("CA"),best_anchor),
+																							 pose.residue(j).xyz(pose.residue_type(j).atom_index("CA")),
+																							 new HarmonicFunc( 0.0, COORDDEV*MAXDIST/MINDIST_NONMOVEj)));
+                               // new BoundFunc( 0, bound_width_, coord_dev_, "xyz" )) );
+
+					}
+		} //add through contraints
+	} //loop through each chain
 }
 
 void generate_fullatom_constraints(

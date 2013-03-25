@@ -70,6 +70,10 @@ void generate_fullatom_constraints(
 	utility::vector1 < core::pose::PoseCOP > templates,
 	utility::vector1 < core::Real > template_weights );
 
+void generate_partial_constraints(
+    core::pose::Pose &pose,
+    utility::vector1<core::Size> ignore_res );
+
 void add_strand_pairs_cst(core::pose::Pose & pose, utility::vector1< std::pair< core::Size, core::Size > > const strand_pairs);
 
 void add_non_protein_cst(core::pose::Pose & pose, core::Real const self_cst_weight, core::Real const het_prot_cst_weight);

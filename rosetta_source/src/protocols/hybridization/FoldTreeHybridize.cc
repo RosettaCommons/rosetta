@@ -508,10 +508,10 @@ FoldTreeHybridize::translate_virt_to_CoM(core::pose::Pose & pose) {
 utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_for_big_frags(core::pose::Pose & pose) {
 	using namespace ObjexxFCL::fmt;
 	core::Size num_residues_nonvirt = get_num_residues_nonvirt(pose);
-
 	utility::vector1< core::Real > residue_weights(num_residues_nonvirt, 0.0);
 	TR.Debug << "Fragment insertion positions and weights:" << std::endl;
 	for ( Size ires=1; ires<= num_residues_nonvirt; ++ires ) {
+   if ( std::find(allowed_to_move_.begin(),allowed_to_move_.end(),ires)!=allowed_to_move_.end()) {
 		if (domain_assembly_) {
 			bool residue_in_template = false;
 			for (Size i_template=1; i_template<=template_poses_.size(); ++i_template) {
@@ -542,7 +542,9 @@ utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_for_big_fr
 			}
 		}
 		TR.Debug << " " << ires << ": " << F(7,5,residue_weights[ires]) << std::endl;
-	}
+	} //only residues from the allowed_to_move_ has non-zero weights
+ }
+
 	// reset linker fragment insertion weights
 	if (domain_assembly_) {
 		for (Size i_template=1; i_template<=template_poses_.size(); ++i_template) {
@@ -1185,6 +1187,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	bool use_random_template = false;
 	ChunkTrialMover initialize_chunk_mover(template_poses_, template_chunks_, ss_chunks_pose_, use_random_template, all_chunks);
 	initialize_chunk_mover.set_template(initial_template_index_);
+	initialize_chunk_mover.set_movable_region(allowed_to_move_);
 	initialize_chunk_mover.apply(pose);
 	// strand pairings
 	if (has_strand_pairings) {
@@ -1205,6 +1208,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	Size max_registry_shift = max_registry_shift_;
 	ChunkTrialMoverOP random_sample_chunk_mover(
 		new ChunkTrialMover(template_poses_, template_chunks_, ss_chunks_pose_, use_random_template, random_chunk, max_registry_shift) );
+	random_sample_chunk_mover->set_movable_region(allowed_to_move_);
 
 	// ignore strand pair templates, they will be sampled by a jump mover
 	random_sample_chunk_mover->set_templates_to_ignore(strand_pairings_template_indices_);

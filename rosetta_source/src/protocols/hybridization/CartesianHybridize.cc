@@ -15,6 +15,7 @@
 #include <protocols/hybridization/CartesianHybridize.hh>
 
 #include <protocols/hybridization/TemplateHistory.hh>
+#include <protocols/hybridization/util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 
@@ -429,6 +430,7 @@ CartesianHybridize::apply( Pose & pose ) {
 	options_lbfgs.max_iter(200);
 	core::optimization::CartesianMinimizer minimizer;
 	core::kinematics::MoveMap mm;
+
 	mm.set_bb  ( true );
 	mm.set_chi ( true );
 	mm.set_jump( true );
@@ -450,6 +452,8 @@ CartesianHybridize::apply( Pose & pose ) {
 	TR << "RUNNING FOR " << NMACROCYCLES << " MACROCYCLES" << std::endl;
 
 	Pose pose_in = pose;
+	//add constraints to pose
+  generate_partial_constraints(pose, allowed_to_move_ );
 
 	core::Size nres = pose.total_residue();
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
@@ -545,16 +549,38 @@ sampler:
 			if (action == 3) action_string = "picker";
 
 			if (action == 1 || action == 2) {
-				core::Size templ_id = numeric::random::random_range( 1, templates_.size() );
-				core::Size nfrags = template_contigs_[templ_id].num_loop();
-				// remove non-protein frags
-				while (templates_[templ_id]->pdb_info()->number(template_contigs_[templ_id][nfrags].start()) >
-						(int)n_prot_res) {
-					--nfrags;
-				}
-				//randomly pick frag
-				core::Size frag_id = numeric::random::random_range( 1, nfrags );
-				protocols::loops::LoopOP frag =  new protocols::loops::Loop ( template_contigs_[templ_id][frag_id] );
+				core::Size max_templates_trial=templates_.size()*5;
+				bool movable_loop=false;
+				protocols::loops::LoopOP frag;
+
+				core::Size templ_id;
+				for (core::Size i=1; i<=max_templates_trial; ++i) {
+						templ_id = numeric::random::random_range( 1, templates_.size() );
+						core::Size nfrags = template_contigs_[templ_id].num_loop();
+						// remove non-protein frags
+						while (templates_[templ_id]->pdb_info()->number(template_contigs_[templ_id][nfrags].start()) >
+								(int)n_prot_res) {
+							--nfrags;
+						}
+            
+						core::Size frag_id;
+						core::Size max_frag_trial=nfrags*3;
+						for (core::Size ii=1; ii<=max_frag_trial; ++ii) {
+									frag_id = numeric::random::random_range( 1, nfrags );
+									frag =  new protocols::loops::Loop ( template_contigs_[templ_id][frag_id] );
+									for (core::Size iii=frag->start(); iii<=frag->stop(); ++iii) {
+										 if (std::find(allowed_to_move_.begin(),allowed_to_move_.end(),templates_[templ_id]->pdb_info()->number(iii))!=allowed_to_move_.end()) {
+													TR << "template " << templ_id << " frag_id " << frag_id << " contains " << templates_[templ_id]->pdb_info()->number(iii) << " at interface with size " << frag->size() << std::endl;
+													movable_loop=true;
+													break;
+											}
+									}
+									if ( movable_loop==true)
+											break;
+						} //trial different frags in a tempalte
+				    if ( movable_loop==true)
+							break;
+			} //end of trial different templates	
 
 				if (frag->size() > 14)
 					action_string = action_string+"_15+";
@@ -563,7 +589,8 @@ sampler:
 				else
 					action_string = action_string+"_5-14";
 
-				apply_frag( pose, *templates_[templ_id], *frag, (action==2) );
+				if ( frag->size() > 0 )
+					apply_frag( pose, *templates_[templ_id], *frag, (action==2) );
 
 				if (action == 1) {
 					//fpd assume this was initialized elsewhere
@@ -584,7 +611,9 @@ sampler:
 						residuals[i] = -1;
 					} else if (pose.fold_tree().is_cutpoint(i+1)) {
 						residuals[i] = -1;
-					} else {
+					} else if ( std::find(allowed_to_move_.begin(),allowed_to_move_.end(),i)==allowed_to_move_.end() ) {
+						residuals[i] = -1;
+          } else {
 						numeric::xyzVector< core::Real > c0 , n1;
 						c0 = pose.residue(i).atom(" C  ").xyz();
 						n1 = pose.residue(i+1).atom(" N  ").xyz();
@@ -604,7 +633,8 @@ sampler:
 				}
 
 				// 25% chance of random position
-				max_poses[ 4 ] = numeric::random::random_range(1,n_prot_res);
+				max_poses[ 4 ] = allowed_to_move_[numeric::random::random_range(1,allowed_to_move_.size())];
+				//max_poses[ 4 ] = numeric::random::random_range(1,n_prot_res);
 				int select_position = numeric::random::random_range(1,4);
 				if (select_position == 4)
 					action_string = action_string+"_rand";

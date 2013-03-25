@@ -26,6 +26,7 @@
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/sequence/SequenceAlignment.fwd.hh>
 #include <core/sequence/SequenceAlignment.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 
 #include <utility/file/FileName.hh>
@@ -167,6 +168,11 @@ private:
 	utility::vector1<core::Size> random_sheets_;
 	bool filter_templates_;
 	utility::vector1< std::pair< core::Size, core::Size > > strand_pairs_;
+
+	// task operations
+  core::pack::task::TaskFactoryOP task_factory_;
+  core::pack::task::PackerTaskOP task_;
+	utility::vector1<core::Size> allowed_to_move_;
 
 };
 

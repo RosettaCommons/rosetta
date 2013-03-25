@@ -59,7 +59,7 @@ class ChunkTrialMover: public protocols::moves::Mover
 public:
 	ChunkTrialMover(
 		utility::vector1 < core::pose::PoseCOP > const & template_poses,
-						utility::vector1 < protocols::loops::Loops > const & template_chunks,
+		utility::vector1 < protocols::loops::Loops > const & template_chunks,
 		Loops ss_chunks_pose,
 		bool random_template = true,
 		AlignOption align_option = all_chunks,
@@ -89,6 +89,7 @@ public:
 	) {
 		ignore_template_indices_ = template_indices_in;
 	}
+  void set_movable_region( utility::vector1< core::Size > allowed_to_move_in ) { allowed_to_move_ = allowed_to_move_in; }
 
 private:
 
@@ -105,6 +106,8 @@ private:
 	Size jump_number_; // the jump to be realigned
 
 	std::set< core::Size > ignore_template_indices_;
+
+  utility::vector1<core::Size> allowed_to_move_;
 
 }; //class ChunkTrialMover
 

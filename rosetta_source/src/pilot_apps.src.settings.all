@@ -605,6 +605,7 @@ sources = {
 		"lowresdock_patchdock_hotspot_cst",
 		"cluster_hotspot_docking",
 		"score_hotspot_cst",
+		"compute_Irmsd",
 		#"docking_parallel",
 	],
 	"pilot/smlewis" : [

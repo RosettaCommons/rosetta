@@ -414,7 +414,10 @@ HybridizeProtocol::initialize_and_sample_loops(
 	bool inloop=!templ_coverage[1];
 	core::Size loopstart=1, loopstop;
 	for (Size i=2; i<=nres_tgt; ++i) {
-		if (templ_coverage[i] && inloop) {
+    TR << "in make loopfile scanning " << i << std::endl;
+		if (templ_coverage[i] && inloop && std::find(allowed_to_move_.begin(),allowed_to_move_.end(),i)!=allowed_to_move_.end()) {
+      TR << "in make loopfile selecting " << i << std::endl;
+		//if (templ_coverage[i] && inloop) {
 			// end loop
 			inloop = false;
 			loopstop = i;
@@ -870,6 +873,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			ft_hybridize->set_sheets( sheets_ );
 			ft_hybridize->set_random_sheets( random_sheets_ );
 			ft_hybridize->set_filter_templates( filter_templates_ );
+			ft_hybridize->set_movable_region( allowed_to_move_ );
 
 			ft_hybridize->apply(pose);
 
@@ -925,6 +929,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			cart_hybridize->set_no_global_frame( no_global_frame_ );
 			cart_hybridize->set_linmin_only( linmin_only_ );
 			cart_hybridize->set_cartfrag_overlap( cartfrag_overlap_ );
+			cart_hybridize->set_movable_region( allowed_to_move_ );
 			cart_hybridize->apply(pose);
 		}
 
@@ -945,24 +950,32 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		for (Size i=1; i<= history->size(); ++i ) { TR << I(4, history->get(i)); }
 		TR << std::endl;
 
+		core::kinematics::MoveMapOP mm=new core::kinematics::MoveMap; 
+    mm->set_bb  ( true );
+    mm->set_chi ( true );
+		mm->set_jump( true );
+
 		// stage "2.5" .. minimize with centroid energy + full-strength cart bonded
 		if (!option[cm::hybridize::skip_stage2]()) {
+			TR << " do stage2 " << std::endl;
 			core::optimization::MinimizerOptions options_lbfgs( "lbfgs_armijo_nonmonotone", 0.01, true, false, false );
 			core::optimization::CartesianMinimizer minimizer;
-			core::kinematics::MoveMap mm; mm.set_bb( true ); mm.set_chi( true ); mm.set_jump( true );
+			core::kinematics::MoveMapOP mm=new core::kinematics::MoveMap;
 			if (core::pose::symmetry::is_symmetric(pose) )
-				core::pose::symmetry::make_symmetric_movemap( pose, mm );
+				core::pose::symmetry::make_symmetric_movemap( pose, *mm );
 			options_lbfgs.max_iter(200);
-			(*stage2_scorefxn_)(pose); minimizer.run( pose, mm, *stage2_scorefxn_, options_lbfgs );
+			(*stage2_scorefxn_)(pose); minimizer.run( pose, *mm, *stage2_scorefxn_, options_lbfgs );
 		}
 
 		// STAGE RELAX
 		if (batch_relax_ > 0) {
+			TR << " batch_relax > 0 : " << std::endl;
 			protocols::moves::MoverOP tofa = new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD );
 			tofa->apply(pose);
 
 			// 	disulfide
 			if (disulf_file_.length() > 0) {
+				TR << " add disulfide: " << std::endl;
 				basic::options::option[ basic::options::OptionKeys::in::fix_disulf ].value(disulf_file_);
 				core::pose::initialize_disulfide_bonds(pose);
 				// must to this to avoid possible errors since initialize_disulfide_bonds is used in pose io.
@@ -974,6 +987,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			std::string cst_fn = template_cst_fn_[initial_template_index];
 			if ( stage2_scorefxn_->get_weight( core::scoring::atom_pair_constraint ) != 0 ) {
 				setup_fullatom_constraints( pose, templates_, template_weights_, cst_fn, fa_cst_fn_ );
+			  generate_partial_constraints(pose,allowed_to_move_);
 				if (add_hetatm_) {
 					add_non_protein_cst(pose, hetatm_self_cst_weight_, hetatm_prot_cst_weight_);
 				}
@@ -985,6 +999,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			if (batch_relax_ == 1) {
 				// standard relax
 				// do relax _without_ ramping down coordinate constraints
+				TR << " batch_relax 1 : " << std::endl;
 				protocols::relax::FastRelax relax_prot( fa_scorefxn_, relax_repeats_ ,"NO CST RAMPING" );
 				relax_prot.set_min_type("lbfgs_armijo_nonmonotone");
 				relax_prot.apply(pose);
@@ -1001,6 +1016,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 					relax_prot.set_min_type("lbfgs_armijo_nonmonotone");
 					relax_prot.set_force_nonideal(true);
 					relax_prot.set_script_to_batchrelax_default( relax_repeats_ );
+				  //relax_prot.set_movemap(mm);
 
 					// need to use a packer task factory to handle poses with different disulfide patterning
 					core::pack::task::TaskFactoryOP tf = new core::pack::task::TaskFactory;
@@ -1179,7 +1195,7 @@ HybridizeProtocol::parse_my_tag(
 		moves::DataMap & data,
 		filters::Filters_map const &,
 		moves::Movers_map const &,
-		core::pose::Pose const & /*pose*/ )
+		core::pose::Pose const & pose )
 {
 	// config file
 	if( tag->hasOption( "config_file" ) )
@@ -1190,6 +1206,26 @@ HybridizeProtocol::parse_my_tag(
 	stage2_increase_cycles_ = tag->getOption< core::Real >( "stage2_increase_cycles", 1. );
 	fa_cst_fn_ = tag->getOption< std::string >( "fa_cst_file", "" );
 	batch_relax_ = tag->getOption< core::Size >( "batch" , 1 );
+
+	//task operations
+  if( tag->hasOption( "task_operations" ) ){
+    task_factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data );
+		task_ = task_factory_->create_task_and_apply_taskoperations( pose );
+		//add being designed/packed residue to allowed to move
+		TR << "Allow to move: " << std::endl;
+		for( core::Size resi = 1; resi <= get_num_residues_nonvirt(pose); ++resi ){
+			if( task_->residue_task( resi ).being_designed() || task_->residue_task( resi ).being_packed()) {
+				allowed_to_move_.push_back(resi);
+      	TR << " " << resi;
+			}
+		}
+  } else {
+		for( core::Size resi = 1; resi <= get_num_residues_nonvirt(pose); ++resi ){
+				allowed_to_move_.push_back(resi);
+        TR << " " << resi << std::endl;
+		}
+  } //everything allows to move
+	TR << std::endl;
 
 	// force starting template
 	if( tag->hasOption( "starting_template" ) ) {
