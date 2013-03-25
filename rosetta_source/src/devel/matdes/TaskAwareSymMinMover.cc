@@ -66,7 +66,8 @@ TaskAwareSymMinMover::TaskAwareSymMinMover() :
   min_bb_(false),
   min_rb_(false),
   min_type_("dfpmin_armijo_nonmonotone"),
-  tolerance_(1e-5)
+  tolerance_(1e-5),
+	designable_only_(true)
 { }
 
 TaskAwareSymMinMover::TaskAwareSymMinMover(const TaskAwareSymMinMover& rval) :
@@ -77,7 +78,8 @@ TaskAwareSymMinMover::TaskAwareSymMinMover(const TaskAwareSymMinMover& rval) :
   min_rb_( rval.min_rb_),
   min_type_( rval.min_type_),
   tolerance_( rval.tolerance_),
-  task_factory_( rval.task_factory_)
+  task_factory_( rval.task_factory_),
+	designable_only_( rval.designable_only_ )
 { }
 
 protocols::moves::MoverOP 
@@ -112,9 +114,16 @@ TaskAwareSymMinMover::apply(Pose & pose) {
 		TR.Warning << "Warning: You have not provided any TaskOperations. A default will be used." << std::endl;
 	}
 	for (core::Size i = 1; i <= nres_monomer; i++) {
-		if ( task->pack_residue( i ) ) {
-			movemap->set_bb (i, min_bb_);
-			movemap->set_chi(i, min_chi_);
+		if ( designable_only_ ) {
+			if ( task->design_residue( i ) ) {
+				movemap->set_bb (i, min_bb_);
+				movemap->set_chi(i, min_chi_);
+			}
+		} else {
+			if ( task->pack_residue( i ) ) {
+				movemap->set_bb (i, min_bb_);
+				movemap->set_chi(i, min_chi_);
+			}
 		}
 	}
 
@@ -146,6 +155,7 @@ TaskAwareSymMinMover::parse_my_tag( utility::tag::TagPtr const tag,
 	min_rb_ = tag->getOption< bool >( "rb", false );
   min_type_ = tag->getOption< std::string >( "type", "dfpmin_armijo_nonmonotone" );
   tolerance_ = tag->getOption< core::Real >( "tolerance", 1e-5 );
+	designable_only_ = tag->getOption< bool >( "designable_only", true );
 	// Get the ScoreFunction and TaskOperations from the DataMap
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data, scorefxn_name_ );
 	task_factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data );

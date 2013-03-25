@@ -147,7 +147,7 @@ core::Real TaskAwareSASAFilter::compute( Pose const & p, bool const verbose ) co
 	    }
 		}
 	}
-  core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius(), false, atom_mask );
+  core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius(), false);//, atom_mask );
   utility::vector1<Real> resi_sasa(pose.n_residue(),0.0);
 
   for( core::Size resi=1; resi<=pose.total_residue(); ++resi ) {

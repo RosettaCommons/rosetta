@@ -194,45 +194,64 @@ void FixbbLinkingRotamerSimAnnealer::run()
 	//--------------------------------------------------------------------
 	if ( num_rots_to_pack() == 0 ) return;
 
-	//experimental
-	utility::vector1<int> segmentTest = rotamer_links_->get_equiv(nmoltenres);
-	// get the first element of the last repeat.  it should be segment length
-	//std::cout<< "SEGMENTLENGTH from ROTAMER LINK" << segmentTest[1] << std::endl;
-	//Size repeat_number = segmentTest.back()/segmentTest[1];
-	//std::cout<< "number of repeats" << repeat_number << std::endl;
+	// Detect the quasisymmetrical case by checking to see that there are
+	// residues with only 1 link to themselves as well as residues with multiple
+	// links.
+	bool flag1 = false; bool flag2 = false;
+	for ( int i = 1; i <= nmoltenres; ++i ) {
+		utility::vector1<int> these_links = rotamer_links_->get_equiv(i);
+		if ( flag1 && flag2 ) break;
+		if ( these_links.size() == 1 && these_links[1] == i )
+			flag1 = true;
+		if ( these_links.size() > 1 )
+			flag2 = true;
+	}
 
+	int totalrot = 0;
+	// totalrot needs to be calculated differently for the quasisymmetrical case
+	if ( flag1 && flag2 ) {
+		for ( core::Size res=1; res<=nmoltenres; ++res ) {
+      totalrot += rotamer_sets()->nrotamers_for_moltenres( res );
+    }
+	} else {
 
-			int totalrot = 0;
-			for (int res = segmentTest[1]; res <= segmentTest[1]*2 ; res++){
-				totalrot += rotamer_sets()->nrotamers_for_moltenres(res);
-			}
+		//experimental
+		utility::vector1<int> segmentTest = rotamer_links_->get_equiv(nmoltenres);
+		// get the first element of the last repeat.  it should be segment length
+		//std::cout<< "SEGMENTLENGTH from ROTAMER LINK" << segmentTest[1] << std::endl;
+		//Size repeat_number = segmentTest.back()/segmentTest[1];
+		//std::cout<< "number of repeats" << repeat_number << std::endl;
+
+		for (int res = segmentTest[1]; res <= segmentTest[1]*2 ; res++){
+			totalrot += rotamer_sets()->nrotamers_for_moltenres(res);
+		}
 			//std::cout << "TOTAL ROTAMER " << totalrot << std::endl;
 /*
-	int totalrot1 = 0;
-	for (int res = 1; res <= segmentTest[1] ; res++){
-		totalrot1 += rotamer_sets()->nrotamers_for_moltenres(res);
-	}
-	std::cout << "TOTAL ROTAMER1 " << totalrot1 << std::endl;
+		int totalrot1 = 0;
+		for (int res = 1; res <= segmentTest[1] ; res++){
+			totalrot1 += rotamer_sets()->nrotamers_for_moltenres(res);
+		}
+		std::cout << "TOTAL ROTAMER1 " << totalrot1 << std::endl;
 
-	int totalrot2 = 0;
-	for (int res = segmentTest[1]; res <= segmentTest[2] ; res++){
-		totalrot2 += rotamer_sets()->nrotamers_for_moltenres(res);
-	}
-	std::cout << "TOTAL ROTAMER2 " << totalrot2 << std::endl;
+		int totalrot2 = 0;
+		for (int res = segmentTest[1]; res <= segmentTest[2] ; res++){
+			totalrot2 += rotamer_sets()->nrotamers_for_moltenres(res);
+		}
+		std::cout << "TOTAL ROTAMER2 " << totalrot2 << std::endl;
 
-	int totalrot3 = 0;
-	for (int res = segmentTest[2]; res <= segmentTest[3] ; res++){
-		totalrot3 += rotamer_sets()->nrotamers_for_moltenres(res);
-	}
-	std::cout << "TOTAL ROTAMER3 " << totalrot3 << std::endl;
+		int totalrot3 = 0;
+		for (int res = segmentTest[2]; res <= segmentTest[3] ; res++){
+			totalrot3 += rotamer_sets()->nrotamers_for_moltenres(res);
+		}
+		std::cout << "TOTAL ROTAMER3 " << totalrot3 << std::endl;
 
-	int totalrot4 = 0;
-	for (int res = segmentTest[3]; res <= segmentTest[4] ; res++){
-		totalrot4 += rotamer_sets()->nrotamers_for_moltenres(res);
-	}
-	std::cout << "TOTAL ROTAMER4 " << totalrot4 << std::endl;
+		int totalrot4 = 0;
+		for (int res = segmentTest[3]; res <= segmentTest[4] ; res++){
+			totalrot4 += rotamer_sets()->nrotamers_for_moltenres(res);
+		}
+		std::cout << "TOTAL ROTAMER4 " << totalrot4 << std::endl;
 */
-
+	} // end quasisymmetric if-else
 
 
 	//setup_iterations();
@@ -353,15 +372,25 @@ void FixbbLinkingRotamerSimAnnealer::run()
 						other_rotamer = other_rotamer_set->rotamer(other_rotamer_state);
 						--tries;
 
-						if ( new_rotamer->is_similar_rotamer( *other_rotamer ) ) { //found the same rotamer, move on
-						//if ( new_rotamer->is_similar_aa( *other_rotamer ) ) { //found the same rotamer, move on
-						//std::cout << "found the same rotamer for " << moltenres_id << " and " <<  *itr << "of types " << new_rotamer->aa() << " and " << other_rotamer->aa() << std::endl;
-							found_rotamer = true;
+						// For quasisymmetric case, check for the same AA at linked positions,
+						// but not the same rotamer.
+						if ( flag1 && flag2 ) {
+							if ( new_rotamer->is_similar_aa( *other_rotamer ) ) {
+								found_rotamer = true;
+								resid_states[*itr] = other_rotamer_state;
+								break;
+							}
+						} else { // not psuedosymmetric
+							if ( new_rotamer->is_similar_rotamer( *other_rotamer ) ) { //found the same rotamer, move on
+							//if ( new_rotamer->is_similar_aa( *other_rotamer ) ) { //found the same rotamer, move on
+							//std::cout << "found the same rotamer for " << moltenres_id << " and " <<  *itr << "of types " << new_rotamer->aa() << " and " << other_rotamer->aa() << std::endl;
+								found_rotamer = true;
 
-							// record the state
-							resid_states[*itr] = other_rotamer_state;
+								// record the state
+								resid_states[*itr] = other_rotamer_state;
 
-							break;
+								break;
+							}
 						}
 					}
 					if (!found_rotamer){ // any of the linked position without the same rotamer should be passed
@@ -370,6 +399,16 @@ void FixbbLinkingRotamerSimAnnealer::run()
 					}
 
 				}
+        // For quasisymmetrical design, one might have designable positions that are not
+        // quasisymmetrical, and therefore do not need RotamerLinks to other residues. But in
+        // order to get around a segfault in src/core/pack/rotamer_sets/RotamerSets.cc,
+        // these residues must have RotamerLinks to only themselves; they therefore fail the
+        // if above, leading to a continue directly below at if (!foundrotamer). So, here we
+        // will detect these positions and set found_rotamer to true.
+        else if ( (*itr == moltenres_id) && (linked_residues.size() == 1) ) {
+          found_rotamer = true;
+					other_prevrotamer_state = state_on_node(*itr);
+        }
 			} // for linked residues
 
 			if (!found_rotamer){ // any of the linked position without the same rotamer should be passed

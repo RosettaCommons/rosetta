@@ -24,6 +24,9 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/elscripts/util.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/Energies.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
+#include <utility/string_util.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -45,7 +48,10 @@ AverageInterfaceEnergyFilter::AverageInterfaceEnergyFilter() :
 	task_factory_( NULL ),
 	scorefxn_( NULL ),
 	threshold_( 100000 ),
-	bb_bb_( false )
+	bb_bb_( false ),
+	sym_dof_names_( "" ),
+	jump_( 0 ),
+	return_total_( false )
 {}
 
 core::pack::task::TaskFactoryOP
@@ -98,6 +104,17 @@ AverageInterfaceEnergyFilter::bb_bb( bool const bb ){
 	bb_bb_ = bb;
 }
 
+bool AverageInterfaceEnergyFilter::unbound() const { return unbound_; }
+void AverageInterfaceEnergyFilter::unbound( bool const unbound ) { unbound_ = unbound; }
+std::string AverageInterfaceEnergyFilter::sym_dof_names() const { return sym_dof_names_; }
+void AverageInterfaceEnergyFilter::sym_dof_names( std::string const sym_dofs ) { sym_dof_names_ = sym_dofs; }
+core::Size AverageInterfaceEnergyFilter::jump() const { return jump_; }
+void AverageInterfaceEnergyFilter::jump( core::Size const jump ) { jump_ = jump; }
+bool AverageInterfaceEnergyFilter::return_total() const { return return_total_; }
+void AverageInterfaceEnergyFilter::return_total( bool const total ) { return_total_ = total; }
+std::string AverageInterfaceEnergyFilter::score_type_name() const { return score_type_name_; }
+void AverageInterfaceEnergyFilter::score_type_name( std::string const name ) { score_type_name_ = name; }
+
 bool
 AverageInterfaceEnergyFilter::apply(core::pose::Pose const & pose ) const
 {
@@ -125,22 +142,52 @@ AverageInterfaceEnergyFilter::compute( core::pose::Pose const & pose ) const{
 	}
 	std::string interface_pos("interface positions considered: ");
 	core::Real tie=0;
+	core::Real interface_energy = 0;
 	core::Size interface_size=0;
-	protocols::simple_filters::EnergyPerResidueFilter epr;
-	epr.scorefxn(scorefxn());
-	epr.score_type(score_type());
-	epr.threshold(threshold());
-	epr.bb_bb(bb_bb());
+	core::pose::Pose p = pose;
+
+	// If unbound energies are being evaluated, create the unbound state
+	if ( unbound() ) {
+	  int sym_aware_jump_id = 0;
+	  if ( sym_dof_names() != "" ) {
+	    utility::vector1<std::string> sym_dof_name_list;
+	    sym_dof_name_list = utility::string_split( sym_dof_names() , ',' );
+	    for (Size i = 1; i <= sym_dof_name_list.size(); i++) {
+	      sym_aware_jump_id = core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_name_list[i] );
+	      protocols::rigid::RigidBodyTransMoverOP translate( new protocols::rigid::RigidBodyTransMover( p, sym_aware_jump_id ) );
+	      translate->step_size( 1000.0 );
+	      translate->apply( p );
+	    }
+  	} else if ( jump() != 0 ) {
+	    sym_aware_jump_id = core::pose::symmetry::get_sym_aware_jump_num( pose, jump() );
+	    protocols::rigid::RigidBodyTransMoverOP translate( new protocols::rigid::RigidBodyTransMover( p, sym_aware_jump_id ) );
+	    translate->step_size( 1000.0 );
+		  translate->apply( p );
+  	} else {
+			utility_exit_with_message( "If unbound is set to true, you must provide either sym_dof_names or a jump in order to create the unbound pose!" );
+		}
+	}
+
+	scorefxn()->score( p );
+  core::scoring::EnergyMap em;
 	for( core::Size resi=1; resi<=total_residue; ++resi ){
 		if( packer_task->being_packed( resi ) ) {
 			interface_size += 1;
-			epr.resnum(resi);
-			tie += epr.compute( pose ); 
-			interface_pos.append(ObjexxFCL::string_of(resi) + "+");   
+			interface_pos.append(ObjexxFCL::string_of(resi) + "+");
+			interface_energy += p.energies().residue_total_energy( resi );
+    	em += p.energies().residue_total_energies( resi );
 		}
+	}
+	if ( score_type_name() == "total_score" ) {
+		tie = interface_energy;
+	} else {
+	  em *= scorefxn()->weights();
+		tie = em[score_type()];
 	}
 	core::Real aie = tie / interface_size;
 	TR.Debug <<interface_pos<<std::endl;
+	if ( return_total() )
+		return ( tie );
 	return( aie );
 }
 
@@ -169,8 +216,13 @@ AverageInterfaceEnergyFilter::parse_my_tag( utility::tag::TagPtr const tag,
 	std::string const scorefxn_name( tag->getOption< std::string >( "scorefxn", "score12" ) );
 	scorefxn( data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name ) );
 	score_type(core::scoring::score_type_from_name( tag->getOption<std::string>( "score_type", "total_score" ) ) );
+	score_type_name( tag->getOption<std::string>( "score_type", "total_score" ) );
 	threshold( tag->getOption< core::Real >( "cutoff", 100000 ) );
 	bb_bb( tag->getOption< bool >( "bb_bb", false ) );
+	unbound( tag->getOption< bool >( "unbound", false ) );
+	sym_dof_names( tag->getOption< std::string >( "sym_dof_names", "" ) );
+	jump( tag->getOption< core::Size >( "jump", 0 ) );
+	return_total( tag->getOption< bool >( "return_total", false ) );
 	TR<<"with options scoretype: "<<score_type()<<" and cutoff: "<<threshold()<<std::endl;
 }
 void AverageInterfaceEnergyFilter::parse_def( utility::lua::LuaObject const & def,

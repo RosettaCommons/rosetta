@@ -26,6 +26,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <utility/vector1.hh>
+#include <string>
 
 // Unit headers
 
@@ -64,14 +65,29 @@ public:
 	void task_factory( core::pack::task::TaskFactoryOP task_factory );
 	void scorefxn( core::scoring::ScoreFunctionOP scorefxn );
 	void score_type( core::scoring::ScoreType const st );
+	std::string score_type_name() const;
+	void score_type_name( std::string const name );
 	void threshold( core::Real const thresh );
 	void bb_bb( bool const bb );
+	bool unbound() const;
+	void unbound( bool const unbound );
+	std::string sym_dof_names() const;
+	void sym_dof_names( std::string const sym_dofs );
+	core::Size jump() const;
+	void jump( core::Size const jump );
+	bool return_total() const;
+	void return_total( bool const total );
 private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	core::scoring::ScoreFunctionOP scorefxn_;
 	core::scoring::ScoreType score_type_; // scoretype of interest, defaults to total_energy 
+	std::string score_type_name_;
 	core::Real threshold_; // upper threshold for average interface energy of a given scoretype 
 	bool bb_bb_; // if one wants to evaluate backbone - backbone hydrogen bonding energies (short and long range)
+	bool unbound_; // For evaluating energies in the unbound state
+	std::string sym_dof_names_; // For generating the unbound pose
+	core::Size jump_; // Alternative method of generating the unbound pose
+	bool return_total_;
 };
 
 } // matdes

@@ -72,6 +72,7 @@ private:
   std::string min_type_;
   core::Real tolerance_;
   core::pack::task::TaskFactoryOP task_factory_;
+	bool designable_only_;
 
 };
 
