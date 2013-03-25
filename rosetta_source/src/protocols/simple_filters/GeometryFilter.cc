@@ -110,11 +110,19 @@ GeometryFilter::report_sm( core::pose::Pose const & pose ) const {
 core::Real
 GeometryFilter::compute( core::pose::Pose const & pose ) const {
 	using namespace core::scoring;
+	using namespace core::conformation::symmetry;
+	using namespace core::pose::symmetry;
 	using namespace protocols::simple_filters;
 	using namespace protocols::simple_moves;
 	using core::scoring::ScoreType;
-	
-	core::pose::Pose copy_pose = pose;
+
+	core::pose::Pose copy_pose;
+	if (is_symmetric( pose )){
+			extract_asymmetric_unit( pose, copy_pose, false);
+	}
+	else {
+		copy_pose = pose;
+	}
 
 	copy_pose.update_residue_neighbors();
 
@@ -137,7 +145,7 @@ GeometryFilter::compute( core::pose::Pose const & pose ) const {
 				if (abs(omega) <= omega_cutoff_ && (resnum != copy_pose.total_residue()) )  return(0);
 				if (weighted_score >= cart_bonded_cutoff_ && ( resnum != 1 || resnum != copy_pose.total_residue() ) ) return(0);
 	}
-	
+
 	if (filename_ != "none"){
 		ConstraintSetMoverOP cst_set_mover = new ConstraintSetMover();
 		cst_set_mover->constraint_file( filename_ );
@@ -148,7 +156,7 @@ GeometryFilter::compute( core::pose::Pose const & pose ) const {
 		(*scorefxn)( copy_pose );
 		ScoreTypeFilter const constraint_filter( scorefxn , atom_pair_constraint, cst_cutoff_ );
     bool CScore(constraint_filter.apply( copy_pose ));
-    if (!CScore){  
+    if (!CScore){
 			return(0);
 		}
 	}
