@@ -100,3 +100,4 @@
 #include <protocols/simple_filters/SymmetricMotifFilterCreator.hh>
 #include <protocols/simple_filters/SidechainRmsdFilterCreator.hh>
 #include <protocols/simple_filters/TerminusDistanceFilterCreator.hh>
+#include <protocols/simple_filters/TotalSasaFilterCreator.hh>

@@ -392,6 +392,7 @@ sources = {
 		"StructureSimilarityEvaluatorCreator",
 		"SymmetricMotifFilter",
 		"TerminusDistanceFilter",
+		"TotalSasaFilter",
 	],
 	"protocols/simple_moves": [
 		"AddCavitiesMover",

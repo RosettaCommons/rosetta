@@ -215,6 +215,7 @@ sources = {
         "simple_filters" : [
                 "DdgFilter",
         	"ResidueCountFilter",
+                "TotalSasaFilter",
         ],
 
         "simple_moves" : [
