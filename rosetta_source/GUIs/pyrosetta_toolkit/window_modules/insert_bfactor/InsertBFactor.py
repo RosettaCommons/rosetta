@@ -88,26 +88,46 @@ class InsertBFactor:
         
 ### Functions ###
 
-    def insert(self, filename=""):
-        if self.atomname_column.get()!="NA":
+    def insert(self):
+        filename = tkFileDialog.askopenfilename(title="Data file", initialdir=global_variables.current_directory)
+        if not filename:return
+        global_variables.current_directory = os.path.dirname(filename)
+            
+        if self.atomname_column.get()=="NA":
             self.PythonPDB.read_file_and_replace_b_factors(self.delim_type.get(), filename, \
                 int(self.resnum_column.get()), int(self.chain_column.get()), int(self.data_column.get()))
         else:
             self.PythonPDB.read_file_and_replace_b_factors(self.delim_type.get(), filename, \
                 int(self.resnum_column.get()), int(self.chain_column.get()), int(self.data_column.get()), int(self.atomname_column.get()))
         
-        outname = tkFileDialog.askopenfilename(title="Output Name", initialdir=global_variables.current_directory)
+        outname = tkFileDialog.asksaveasfilename(title="Output PDB Name", initialdir=global_variables.current_directory)
         if not outname:return
-        if not re.search("pdb"):
+        if not re.search("pdb", outname):
             outname = outname+".pdb"
         
         self.PythonPDB.save_PDB(outname)
-        return outname
-    
+        print "PDB bfactor insertion complete.  Model saved."
+        self.main.destroy()
+        
     def insert_and_reload(self):
         filename = tkFileDialog.askopenfilename(title="Data file", initialdir=global_variables.current_directory)
         if not filename:return
         global_variables.current_directory = os.path.dirname(filename)
-        outname = self.insert(filename)
+            
+        if self.atomname_column.get()=="NA":
+            self.PythonPDB.read_file_and_replace_b_factors(self.delim_type.get(), filename, \
+                int(self.resnum_column.get()), int(self.chain_column.get()), int(self.data_column.get()))
+        else:
+            self.PythonPDB.read_file_and_replace_b_factors(self.delim_type.get(), filename, \
+                int(self.resnum_column.get()), int(self.chain_column.get()), int(self.data_column.get()), int(self.atomname_column.get()))
+        
+        outname = tkFileDialog.asksaveasfilename(title="Output PDB Name", initialdir=global_variables.current_directory)
+        if not outname:return
+        if not re.search("pdb", outname):
+            outname = outname+".pdb"
+        
+        self.PythonPDB.save_PDB(outname)
+        print "PDB bfactor insertion complete.  Model saved."
         self.input_class.load_pose(outname)
+        self.main.destroy()
         
