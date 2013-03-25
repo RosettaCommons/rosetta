@@ -47,6 +47,8 @@ from window_modules.clean_pdb.FixPDBWindow import FixPDBWindow
 from window_modules.design.ResfileDesignWindow import ResfileDesignWindow
 from window_modules.ligand_ncaa_ptm_manager.ligand_ncaa_ptm_manager import ligand_ncaa_ptm_manager
 from window_modules.full_control.FullControlWindow import FullControlWindow
+from window_modules.insert_bfactor.InsertBFactor import InsertBFactor
+
 import global_variables
 from pyrosetta_toolkit import main_window
 from window_main.IO import SessionIO
@@ -204,6 +206,8 @@ class Menus():
 	self.analysis_menu.add_command(label = "Packing Analyzer", command = lambda: analysis_tools.analyze_packing(self.toolkit.pose))
 	self.analysis_menu.add_command(label = "Loops Analyzer", command = lambda: analysis_tools.analyze_loops(self.toolkit.pose, self.toolkit.input_class.loops_as_strings))
 	self.analysis_menu.add_command(label = "VIP Analyzer", command = lambda: AnalysisProtocols(self.toolkit.pose, self.toolkit.score_class, self.toolkit.input_class, self.toolkit.output_class).analyze_vip())
+	self.analysis_menu.add_separator()
+	self.analysis_menu.add_command(label = "Insert Data into B-Factor", command=lambda:InsertBFactor(self.toolkit.input_class).show_window(self.main))
 	self.advanced_menu.add_cascade(label = "Analysis", menu = self.analysis_menu)
 	
 	###Design###

@@ -93,7 +93,7 @@ class QuickProtocolsFrame(TkFrame):
         self.decoy_entry.grid(row=r+4, column=c); self.decoy_label.grid(row=r+4, column=c+1, sticky=W)
         self.rounds_entry.grid(row=r+5, column=c); self.rounds_label.grid(row=r+5, column=c+1, sticky=W)
         
-        self.fastrelax_button.grid(row=r+6, column=c, columnspan = 2)
+        #self.fastrelax_button.grid(row=r+6, column=c, columnspan = 2) Confusing...
         
         
         #Minimization

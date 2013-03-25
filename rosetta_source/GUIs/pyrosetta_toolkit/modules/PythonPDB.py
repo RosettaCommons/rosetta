@@ -45,7 +45,10 @@ class PythonPDB:
         return self.pdb_map
 
     def read_pdb_into_map(self):
-
+        """
+        Reads PDB file path into a basic PDB map.  All data is held as strings.
+        """
+        
         FILE = open(self.pdb_file_path, 'r')
         i = 1
         for line in FILE:
@@ -316,7 +319,80 @@ class PythonPDB:
         for num in temp_pdb_map:
             if self.pdb_map[num]["chain"]==chain:
                 del self.pdb_map[num]
-                
+    
+    def read_file_and_replace_b_factors(deliminator=" ", filename="", resnum_column=1, chain_column=2, data_column=3, atomname_column=False):
+        """
+        This function reads a deliminated file with data and inserts the data into the BFactor column.  Used to visualize arbitrary data.
+        Use function options to control which column the data is in as well as where your resnums and chains are located.
+        If atomname column is given, will insert by atom instead of by residue
+        """
+        
+        if not filename:
+            filename = tkFileDialog.askopenfilename(title="Data file", initialdir=global_variables.current_directory)
+            if not filename:return
+            global_variables.current_directory = os.path.dirname(filename)
+        
+        INFILE = open(filename, 'r')
+        for line in INFILE:
+            if line[0] == "#":continue
+            line = line.strip()
+            lineSP = line.split(deliminator)
+            if len(lineSP)<3:
+                print "Could not read line.  Must have resnum, chain, and data columns"
+                continue
+            if not atomname_column:
+                replace_residue_b_factor(lineSP[resnum_column-1], lineSP[chain_column-1], lineSP[data_column-1])
+            else:
+                if len(lineSP)<4:
+                    print "Could not read line.  Must have resnum, chain, atomname, and data columns"
+                    continue
+                replace_atom_b_factor(lineSP[resnum_column-1], lineSP[chain_column-1], lineSP[atomname_column-1], lineSP[data_column-1])
+        INFILE.close()
+        
+    def replace_residue_b_factor(resnum, chain, data):
+        """
+        Replaces the b factor of each atom in the residue with data.
+        Can be all string representations or not.
+        """
+        
+        if type(resnum)!=str:
+            resnum = str(resnum)
+        if type(data)!=str:
+            if data!=float:
+                data=float(data); #In case data is an integer.
+            data = str(data)
+        
+        #Need to make sure Bfactor column is adjusted correctly.
+        
+        for line in self.pdb_map:
+            if ((self.pdb_map[line]['residue_number']==resnum) and (self.pdb_map[line]['chain']==chain)):
+                self.pdb_map[line]['b_factor']="%.2f"%data
+            else:
+                continue
+            
+        
+    
+    def replace_atom_b_factor(resnum, chain, atomname, data):
+        """
+        Replaces the b factor of an atom.
+        Can be all string representations or not.
+        """
+        
+        if type(resnum)!=str:
+            resnum = str(resnum)
+        if type(data)!=str:
+            if data!=float:
+                data=float(data); #In case data is an integer.
+            data = str(data)
+        
+        #Need to make sure Bfactor column is adjusted correctly.
+        
+        for line in self.pdb_map:
+            if ((self.pdb_map[line]['residue_number']==resnum) and (self.pdb_map[line]['chain']==chain) and (self.pdb_map[line]["atom_name"]==atomname)):
+                self.pdb_map[line]['b_factor']="%.2f"%data
+            else:
+                continue
+    
     def clean_PDB(self):
         """
         Removes HSD, Waters: Tries to fix atom and residue name inconsistencies.
