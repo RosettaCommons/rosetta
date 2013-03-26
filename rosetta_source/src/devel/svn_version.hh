@@ -11,29 +11,24 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/svn_version.hh
+/// @file   devel/svn_version.hh
 ///
 /// @brief
 /// @author Ian W. Davis
 /// @author Andrew Leaver-Fay
 
-#ifndef INCLUDED_core_svn_version_hh
-#define INCLUDED_core_svn_version_hh
+
+#ifndef INCLUDED_devel_svn_version_hh
+#define INCLUDED_devel_svn_version_hh
 
 #include <string>
 
-namespace core {
+namespace devel {
 
-/// @brief Initialize this data from a lower-level library at startup to avoid relinking every time
-/// you update your svn / git version.  This function should be called at most once.
-void set_svn_version_and_url( std::string const & version, std::string const & url );
+// @brief This function, called in devel::init(), initializes two peices of data in the core library
+// indicating the version of the code based on the SVN or git repository the executable was compiled from
+void register_version_with_core();
 
-/// @brief Read access to the svn / git version.
-std::string minirosetta_svn_version();
+} // namespace devel
 
-/// @brief Read access to the svn / git url.
-std::string minirosetta_svn_url();
-
-} // namespace core
-
-#endif // INCLUDED_core_svn_version_HH
+#endif // INCLUDED_devel_svn_version_HH

@@ -69,8 +69,8 @@ void LoopBuildMover::apply(core::pose::Pose & pose){
 
 	// symmetrize start pose & loopfile
 	if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() )  {
-			protocols::simple_moves::symmetry::SetupForSymmetryMover pre_mover;
-			pre_mover.apply( pose );
+		protocols::simple_moves::symmetry::SetupForSymmetryMover pre_mover;
+		pre_mover.apply( pose );
 	}
 
 	// bit of a hack for looprelax-into-density

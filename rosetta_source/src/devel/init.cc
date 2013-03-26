@@ -14,6 +14,7 @@
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 #include <devel/init.hh>
+#include <devel/svn_version.hh>
 #include <protocols/init/init.hh>
 
 // Factories
@@ -133,11 +134,13 @@ static protocols::evaluation::EvaluatorRegistrator< devel::replica_docking::Wrap
 
 void init( int argc, char * argv [] )
 {
+	register_version_with_core();
 	protocols::init::init( argc, argv );
 }
 
 void init( utility::vector1< std::string > const & args )
 {
+	register_version_with_core();
 	protocols::init::init( args );
 } // init
 

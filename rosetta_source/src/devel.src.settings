@@ -12,6 +12,7 @@
 sources = {
 	"devel": [
 		"init",
+                "svn_version",
                 #"init.release",
 	],
 	"devel/cartesian_frags": [
