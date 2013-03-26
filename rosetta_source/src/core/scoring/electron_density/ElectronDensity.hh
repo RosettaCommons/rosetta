@@ -127,13 +127,25 @@ public:
 		bool cacheCCs=false
 	);
 
-	/// @brief Compute the FSC in the specified resolution range
-	core::Real
-	getFSC(
-		core::pose::Pose const &pose,
-		core::Real res_low,
-		core::Real res_high
-	);
+	/// @brief get resolution bins (informational)
+ 	utility::vector1< core::Real >
+	getResolutionBins( core::Size nbuckets );
+
+	/// @brief Compute intensities
+	utility::vector1< core::Real >
+	getIntensities( core::Size nbuckets );
+
+	/// @brief Compute intensities
+	utility::vector1< core::Real >
+	getIntensities( core::pose::Pose const &pose, core::Size nbuckets );
+
+	/// @brief Compute the FSC
+	utility::vector1< core::Real >
+	getFSC( core::pose::Pose const &pose, core::Size nbuckets );
+
+	/// @brief Compute intensities, update density
+	void
+	scaleIntensities( utility::vector1< core::Real > I_tgt );
 
 	/// @brief Match a pose to a patterson map
 	core::Real matchPoseToPatterson( core::pose::Pose const &pose, bool cacheCCs=false );
