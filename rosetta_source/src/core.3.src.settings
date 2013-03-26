@@ -389,6 +389,7 @@ sources = {
 		"MMTorsionEnergy",
 		"NMerRefEnergy",
 		"NMerPSSMEnergy",
+		"NMerSVMEnergy",
 		"OmegaTetherEnergy",
 		"OneBodyEnergy",
 		"P_AA_Energy",

@@ -96,6 +96,8 @@ public:
 	void nmer_length( core::Size const );
 	void gate_pssm_scores( bool const );
 	void nmer_pssm_scorecut( core::Real const );
+	core::Real pssm_energy_at_frame_seqpos( core::Size const, core::chemical::AA const, core::Size const ) const;
+	core::Size n_pssms() const;
 
 private:
 	utility::vector1< std::map< core::chemical::AA, utility::vector1< core::Real > > > all_nmer_pssms_;

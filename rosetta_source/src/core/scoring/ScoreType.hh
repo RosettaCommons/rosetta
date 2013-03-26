@@ -284,6 +284,7 @@ enum ScoreType {
 	seqdep_ref,
   nmer_ref,
   nmer_pssm,
+  nmer_svm,
 	envsmooth,
 	e_pH,
 	rna_bulge,

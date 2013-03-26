@@ -68,5 +68,18 @@ vector1 < platform::Real > Svm_rosetta::predict_probability(vector1 <Svm_node_ro
 	return(probs_to_return);
 }
 
+platform::Real Svm_rosetta::predict( const vector1 <Svm_node_rosettaOP> features) 
+{
+	struct svm_node *x = (struct svm_node *) malloc((features.size()+1)*sizeof(struct svm_node));
+	for (platform::Size ii=1; ii<=features.size(); ++ii){
+		x[ii-1].index = (int)features[ii]->index();
+		x[ii-1].value = (double)features[ii]->value();
+	}
+	x[features.size()].index = -1;
+	platform::Real predict_value( svm_predict(svm_model_,x) );
+	delete x;
+	return(predict_value);
+}
+
 }//libsvm
 }//utility

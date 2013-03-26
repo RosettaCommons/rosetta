@@ -9,7 +9,7 @@
 
 /// @file   core/scoring/methods/NMerPSSMEnergy.hh
 /// @brief  PSSMerence energy method implementation
-/// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
+/// @author Chris King (dr.chris.king@gmail.com)
 
 // Unit headers
 #include <core/scoring/methods/NMerPSSMEnergy.hh>
@@ -168,7 +168,7 @@ void NMerPSSMEnergy::read_nmer_pssm( std::string const pssm_fname ) {
 		if( tokens[ 1 ][ 0 ] == '#' ) continue;
 		char const char_aa( tokens[ 1 ][ 0 ] );
 		chemical::AA aa( chemical::aa_from_oneletter_code( char_aa ));
-		if( nmer_pssm.count( aa ) ) utility_exit_with_message( "[ERROR] NMer ref energy database file "
+		if( nmer_pssm.count( aa ) ) utility_exit_with_message( "[ERROR] NMer PSSM energy database file "
 				+ pssm_fname + " has double entry for aa " + char_aa );
 		if( tokens.size() != nmer_length_ + 1 ) utility_exit_with_message( "[ERROR] NMer PSSM database file "
 				+ pssm_fname + " has wrong number entries at line " + line
@@ -187,9 +187,21 @@ void NMerPSSMEnergy::read_nmer_pssm( std::string const pssm_fname ) {
 EnergyMethodOP
 NMerPSSMEnergy::clone() const
 {
-	return new NMerPSSMEnergy( all_nmer_pssms_ );
+	return new NMerPSSMEnergy( *this );
 }
 
+core::Size
+NMerPSSMEnergy::n_pssms() const
+{
+	return all_nmer_pssms_.size();
+}
+
+core::Real
+NMerPSSMEnergy::pssm_energy_at_frame_seqpos( Size const frame_seqpos, core::chemical::AA const aa, Size const idx_pssm ) const
+{
+	if( !all_nmer_pssms_[ idx_pssm ].count( aa ) )  return 0.;
+	return all_nmer_pssms_[ idx_pssm ].find( aa )->second[ frame_seqpos ];
+}
 
 //retrieves ref energy of NMer centered on seqpos
 //we're changing this so energy is computed as sum of all frames that overlap w this seqpos
@@ -207,10 +219,8 @@ NMerPSSMEnergy::residue_energy(
 	if( all_nmer_pssms_.empty() ) return;
 	Size const seqpos( rsd.seqpos() );
 	//over each pssm
-	Size const n_pssms( all_nmer_pssms_.size() );
-	for( Size ipssm = 1; ipssm <= n_pssms; ++ipssm ){
-		std::map< chemical::AA, utility::vector1< core::Real > > const this_nmer_pssm( all_nmer_pssms_[ ipssm ] );
-		if( this_nmer_pssm.empty() ) continue; //this really shouldn't happen, but just in case
+	for( Size ipssm = 1; ipssm <= n_pssms(); ++ipssm ){
+		if( all_nmer_pssms_[ ipssm ].empty() ) continue; //this really shouldn't happen, but just in case
 		//calc nmer's score for this pssm
 		Real rsd_energy( 0.0 );
 		chemical::AA const rsd_aa( pose.residue( seqpos ).aa() );
@@ -226,8 +236,9 @@ NMerPSSMEnergy::residue_energy(
 		for( Size p1_seqpos = p1_seqpos_begin; p1_seqpos <= p1_seqpos_end; ++p1_seqpos ){
 			//get pssm index of seqpos in this p1 frame
 			Size rsd_iseq_nmer( seqpos - p1_seqpos + 1 );
-			//now go ahead and get pssm energy from this_nmer_pssm
-			Real rsd_energy_this_nmer( this_nmer_pssm.find( rsd_aa )->second[ rsd_iseq_nmer ] );
+			//now go ahead and get pssm energy from all_nmer_pssms_[ ipssm ]
+//			Real rsd_energy_this_nmer( all_nmer_pssms_[ ipssm ].find( rsd_aa )->second[ rsd_iseq_nmer ] );
+			Real rsd_energy_this_nmer( pssm_energy_at_frame_seqpos( rsd_iseq_nmer, rsd_aa, ipssm ) );
 
 			//skip this part if not doing gating
 			if( gate_pssm_scores_ ){
@@ -238,8 +249,9 @@ NMerPSSMEnergy::residue_energy(
 					if( iseq_pose > chain_end ) break;
 					chemical::AA const aa( pose.residue( iseq_pose ).aa() );
 					//skip if aa not in this pssm
-					if( !this_nmer_pssm.count( aa ) ) continue;
-					Real this_rsd_energy( this_nmer_pssm.find( aa )->second[ iseq_nmer ] );
+//					if( !all_nmer_pssms_[ ipssm ].count( aa ) ) continue;
+//					Real this_rsd_energy( all_nmer_pssms_[ ipssm ].find( aa )->second[ iseq_nmer ] );
+					Real this_rsd_energy( pssm_energy_at_frame_seqpos( iseq_nmer, aa, ipssm ) );
 					energy += this_rsd_energy;
 				}
 				//gate energy at pssm_scorecut, thus ignoring low-scoring nmers
@@ -253,7 +265,7 @@ NMerPSSMEnergy::residue_energy(
 	}
 	//normalize energy by number of pssms used
 	//otherwise avg scores would become huge if we use lots of pssms instead of just 1
-	emap[ nmer_pssm ] /= n_pssms;
+	emap[ nmer_pssm ] /= n_pssms();
 	return;
 }
 

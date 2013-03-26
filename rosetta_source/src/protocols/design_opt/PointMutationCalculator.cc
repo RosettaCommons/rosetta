@@ -397,6 +397,8 @@ PointMutationCalculator::mutate_and_relax(
 	relax_mover()->apply( pose );
 }
 
+//TODO HEY!~ I think we're evalling the filter TWICE here, once for pass, once for value
+// can't we just get both with one calculation?
 void
 PointMutationCalculator::eval_filters(
 	pose::Pose & pose,

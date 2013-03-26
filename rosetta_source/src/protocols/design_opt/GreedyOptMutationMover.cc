@@ -569,8 +569,11 @@ GreedyOptMutationMover::apply( core::pose::Pose & pose )
 			AA target_aa( seqpos_aa_vals_vec_[ iseq_init ].second[ iaa ].first );
 			pose::Pose new_pose( start_pose );
 			ptmut_calc->mutate_and_relax( new_pose, resi_init, target_aa );
-			//dont need to eval filters because we already know they passed because are in the table
 			pfront_poses_.push_back( new_pose );
+			vector1< Real > vals;
+			bool filter_pass;
+			ptmut_calc->eval_filters( new_pose, filter_pass, vals );
+			pfront_poses_filter_vals_.push_back( vals );
 		}
 
 		//now try to combine pareto opt mutations
@@ -639,7 +642,9 @@ GreedyOptMutationMover::apply( core::pose::Pose & pose )
 			}
 
       //filter new_poses for the pareto opt set
+			assert( pfront_poses_.size() == pfront_poses_filter_vals_.size() );
       filter_pareto_opt_poses( pfront_poses_, pfront_poses_filter_vals_ );
+			assert( pfront_poses_.size() == pfront_poses_filter_vals_.size() );
 
 			//break out if we've reached our stopping condition
 			if( stop ) break;

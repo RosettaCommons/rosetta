@@ -208,6 +208,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "seqdep_ref" ] = seqdep_ref;
   name2score_type_[ "nmer_ref" ] = nmer_ref;
   name2score_type_[ "nmer_pssm" ] = nmer_pssm;
+  name2score_type_[ "nmer_svm" ] = nmer_svm;
 	name2score_type_[ "envsmooth" ] = envsmooth;
 	name2score_type_[ "e_pH" ] = e_pH;
 	name2score_type_[ "rna_bulge"] = rna_bulge;

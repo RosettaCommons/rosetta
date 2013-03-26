@@ -12,6 +12,7 @@
 
 //core library
 #include <math.h>
+#include <stdlib.h>
 #include <devel/init.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -58,11 +59,19 @@
 #include <core/scoring/electron_density/util.hh>
 #include <core/scoring/sasa.hh>
 
+#include <core/id/SequenceMapping.hh>
+#include <core/sequence/Sequence.hh>
+#include <core/sequence/SequenceAlignment.hh>
+#include <core/sequence/NWAligner.hh>
+#include <core/sequence/MatrixScoringScheme.hh>
+#include <core/sequence/ScoringScheme.fwd.hh>
+
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
 
 #include <utility/tools/make_vector1.hh>
 #include <utility/tools/make_map.hh>
+#include <utility/string_util.hh>
 
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -153,7 +162,7 @@ static numeric::random::RandomGenerator RG(2718);
 namespace byres_data
 {
   basic::options::StringOptionKey tag( "byres_data:tag" );
-  basic::options::BooleanOptionKey calc_sasa( "byres_data:calc_sasa" );
+//  basic::options::BooleanOptionKey calc_sasa( "byres_data:calc_sasa" );
   basic::options::BooleanOptionKey solvate( "byres_data:solvate" );
   basic::options::BooleanOptionKey calcs_only( "byres_data:calcs_only" );
   basic::options::BooleanOptionKey solv_unsat_calc( "byres_data:solv_unsat_calc" );
@@ -161,6 +170,7 @@ namespace byres_data
   basic::options::IntegerOptionKey nloop_solvadd( "byres_data:nloop_solvadd" );
   basic::options::IntegerOptionKey nloop_solvdock( "byres_data:nloop_solvdock" );
   basic::options::IntegerOptionKey nloop_hbscan( "byres_data:nloop_hbscan" );
+  basic::options::BooleanOptionKey align_native_seq( "byres_data:align_native_seq" );
 }
 
 /*
@@ -919,16 +929,24 @@ solvate_residue(
 void
 set_pose_occ_and_bfac(
 	Pose & pose,
-	Pose const native_pose
+	Pose const native_pose,
+	vector1< Size > const native_seqpos_map
 )
 {
 	for( Size seqpos = 1; seqpos <= pose.total_residue(); ++seqpos ){
-		if( pose.residue( seqpos ).name3().compare( native_pose.residue( seqpos ).name3() ) != 0 ) utility_exit_with_message( "Native residue type mismatch at " + string_of( seqpos ) + "\n" );
+		if( seqpos > native_seqpos_map.size() ) continue;
+		Size native_seqpos( native_seqpos_map[ seqpos ] );
+//		if( pose.residue( seqpos ).name3().compare( native_pose.residue( native_seqpos_map[ seqpos ] ).name3() ) != 0 ) utility_exit_with_message( "Native residue type mismatch at " + string_of( seqpos ) + "\n" );
+		//skip if mismatch
+		if( native_seqpos == 0 ||
+				pose.residue( seqpos ).name3().compare( native_pose.residue( native_seqpos ).name3() ) != 0 ||
+				pose.residue( seqpos ).natoms() != native_pose.residue( native_seqpos ).natoms()
+				) continue;
 		Residue rsd( pose.residue( seqpos ) );
 		for( Size ii = 1; ii <= rsd.natoms(); ++ii ){
 			if( rsd.atom_is_hydrogen( ii ) ) continue;
-			pose.pdb_info()->occupancy( seqpos, ii, native_pose.pdb_info()->occupancy( seqpos, ii ) ); 
-			pose.pdb_info()->temperature( seqpos, ii, native_pose.pdb_info()->temperature( seqpos, ii ) ); 
+			pose.pdb_info()->occupancy( seqpos, ii, native_pose.pdb_info()->occupancy( native_seqpos, ii ) ); 
+			pose.pdb_info()->temperature( seqpos, ii, native_pose.pdb_info()->temperature( native_seqpos, ii ) ); 
 		}
 	}
 }
@@ -1331,9 +1349,6 @@ get_n_hbonds(
 		if( !( rsd.atom_type( atm ).is_acceptor() || rsd.atom_type( atm ).is_donor() ) ) continue;
 		//we need at least one hbond
 		if( n_atom_hbonds[ atm ] == 0 ){
-			//for ptconway byatom cout hack
-			//std::cout << " seqpos " << seqpos << " atom " << atm << std::endl;
-			//end for ptconway byatom cout hack
 			n_unsat += 1; continue;
 		}
 		//may need > 1 hbond, see BuriedUnsatCalc
@@ -1346,9 +1361,6 @@ get_n_hbonds(
 		Size bonded_heavyatoms = rsd.n_bonded_neighbor_all_res( atm )
 			- rsd.type().number_bonded_hydrogens( atm );
 		if( bonded_heavyatoms + n_atom_hbonds[ atm ] < satisfac_cut ){
-			//for ptconway byatom cout hack
-			//std::cout << " seqpos " << seqpos << " atom " << atm << std::endl;
-			//end for ptconway byatom cout hack
 			n_unsat += 1;
 		}
 	}
@@ -1387,6 +1399,7 @@ get_sc_bfactor(
 		Size const seqpos
 		)
 {
+	if( seqpos == 0 ) return 0.0;
 	Residue native_rsd( native_pose.residue( seqpos ) );
 	Real sc_bfactor( 0.0 );
 	Size count( 0 );
@@ -1404,6 +1417,7 @@ get_sc_bfactor(
 	return sc_bfactor;
 }
 
+/*
 //get sidechain rmsd of seqpos, ignore hydrogens and low occ
 Real
 get_sc_rmsd(
@@ -1427,24 +1441,44 @@ get_sc_rmsd(
 	sc_rmsd = std::sqrt( sc_rmsd / count );
 	return sc_rmsd;
 }
+*/
+
+//get automorphic rmsd
+Real
+get_ca_distance(
+		Pose pose,
+		Pose ref_pose,
+		Size const seqpos,
+		Size const ref_seqpos
+		)
+{
+	return pose.residue( seqpos ).atom( "CA" ).xyz().distance( ref_pose.residue( ref_seqpos ).atom( "CA" ).xyz() );
+}
 
 //get automorphic rmsd
 Real
 get_sc_automorphic_rmsd(
 		Pose pose,
 		Pose ref_pose,
-		Size const seqpos
+		Size const seqpos,
+		Size const ref_seqpos,
+		bool const super
 		)
 {
-	if( pose.residue( seqpos ).name3().compare( ref_pose.residue( seqpos ).name3() ) != 0 ) utility_exit_with_message( "Native residue type mismatch at " + string_of( seqpos ) + "\n" );
+	//return bogus value if mismatch
+	if( ref_seqpos == 0 ||
+			pose.residue( seqpos ).name3().compare( ref_pose.residue( ref_seqpos ).name3() ) != 0 ||
+			pose.residue( seqpos ).natoms() != ref_pose.residue( ref_seqpos ).natoms()
+			) return 9999.;
+//	if( pose.residue( seqpos ).name3().compare( ref_pose.residue( ref_seqpos ).name3() ) != 0 ) utility_exit_with_message( "Native residue type mismatch at " + string_of( seqpos ) + "\n" );
 	//add variant type to virt bb atoms
 	pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_BB", seqpos );
-	pose::add_variant_type_to_pose_residue( ref_pose, "VIRTUAL_BB", seqpos );
+	pose::add_variant_type_to_pose_residue( ref_pose, "VIRTUAL_BB", ref_seqpos );
 
 	Residue rsd( pose.residue( seqpos ) );
-	Residue native_rsd( ref_pose.residue( seqpos ) );
+	Residue ref_rsd( ref_pose.residue( ref_seqpos ) );
 
-	Real sc_rmsd( scoring::automorphic_rmsd( pose.residue( seqpos ), ref_pose.residue( seqpos ), false /*superpose*/ ) );	
+	Real sc_rmsd( scoring::automorphic_rmsd( pose.residue( seqpos ), ref_pose.residue( ref_seqpos ), super /*superpose*/ ) );	
 	return sc_rmsd;
 }
 
@@ -1538,42 +1572,55 @@ get_res_data_ss(
 		io::silent::SilentStructOP & ss,
 		Pose pose,
 		Pose const native_pose,
+		Size const native_seqpos,
 		Size const seqpos,
 		ScoreFunctionOP scorefxn,
 		ScoreFunctionOP scorefxn_edens,
-		bool const do_sc_rmsd,
-		utility::vector1< core::Real > residue_sasa
+		bool const do_sc_rmsd
+//		utility::vector1< core::Real > residue_sasa
 		)
 {
 	using namespace core;
 	using namespace core::scoring;
+
 
 	std::map< std::string, Real > res_data_map;
 
 	scorefxn->score( pose );
 	EnergyMap weights( pose.energies().weights() );
 	EnergyMap rsd_energies( pose.energies().residue_total_energies( seqpos )  );
+	EnergyMap rsd_energies_nat( native_pose.energies().residue_total_energies( native_seqpos )  );
 
 	Real total_score( pose.energies().residue_total_energies( seqpos ).dot( scorefxn->weights() ) );
+	Real total_score_nat( native_pose.energies().residue_total_energies( native_seqpos ).dot( scorefxn->weights() ) );
 	ss->add_energy( "score", total_score );
+	ss->add_energy( "score_d", total_score - total_score_nat );
 
 	for ( int ii = 1; ii <= scoring::n_score_types; ++ii ) {
 		if ( weights[ ScoreType(ii) ] != 0.0 ) {
 			Real const value( rsd_energies[ ScoreType(ii) ] );
+			Real const value_nat( rsd_energies_nat[ ScoreType(ii) ] );
 			std::string const scorename( name_from_score_type( ScoreType(ii) ) );
-			ss->add_energy( scorename, value );
+			ss->add_energy( scorename + "_d", value - value_nat );
 		}
 	}
 
 	//dunbrack split
 	Real fa_dun_rot, fa_dun_dev;
 	pack::dunbrack::RotVector rotvec;
+	Real fa_dun_rot_nat, fa_dun_dev_nat;
+	pack::dunbrack::RotVector rotvec_nat;
 	split_fa_dun( pose, seqpos, fa_dun_rot, fa_dun_dev, rotvec );
+	split_fa_dun( native_pose, native_seqpos, fa_dun_rot_nat, fa_dun_dev_nat, rotvec_nat );
 	Real fa_dun_wt( scorefxn->get_weight( fa_dun ) );
 	fa_dun_rot *= fa_dun_wt;
 	fa_dun_dev *= fa_dun_wt;
+	fa_dun_rot_nat *= fa_dun_wt;
+	fa_dun_dev_nat *= fa_dun_wt;
 	ss->add_energy( "fa_dun_rot", fa_dun_rot );
 	ss->add_energy( "fa_dun_dev", fa_dun_dev );
+	ss->add_energy( "fa_dun_rot_d", fa_dun_rot - fa_dun_rot_nat );
+	ss->add_energy( "fa_dun_dev_d", fa_dun_dev - fa_dun_dev_nat );
 
 	//res hbond_bb energy
 //	Real hbond_bb_score_raw( get_res_hbond_bb_score_raw( pose, seqpos ) );
@@ -1587,11 +1634,13 @@ get_res_data_ss(
 	ss->add_energy( "bb_lk_burial", bb_lk_burial );
 	ss->add_energy( "sc_lk_burial", sc_lk_burial );
 
+/*
 	//residue sasa
 	if( option[ byres_data::calc_sasa ] ){
 			Real residue_sasa_norm( normalize_residue_sasa( pose, seqpos, residue_sasa[ seqpos ] ) );
 			ss->add_energy( "res_sasa", residue_sasa_norm );
 	}
+*/
 
 	//electron density res score
 	Real edens_score( 0.0 );
@@ -1639,15 +1688,32 @@ get_res_data_ss(
   ss->add_energy( "chi3", chi_data[ 3 ] ); 
   ss->add_energy( "chi4", chi_data[ 4 ] ); 
 
+  vector1< Real > nat_chi_data( n_rotbins, 0. );
+  vector1< Real > nat_chis( native_pose.residue( native_seqpos ).chi() );
+  for( Size i = 1; i <= nat_chis.size(); ++i ) nat_chi_data[ i ] = nat_chis[ i ]; 
+  vector1< Real > d_chi_data( n_rotbins, 0. );
+  for( Size i = 1; i <= chi_data.size(); ++i ){
+		d_chi_data[ i ] = std::abs( chi_data[ i ] - nat_chi_data[ i ] );
+		if ( d_chi_data[ i ] > 180. ) d_chi_data[ i ] -= 180.;
+	}
+  ss->add_energy( "d_chi1", d_chi_data[ 1 ] ); 
+  ss->add_energy( "d_chi2", d_chi_data[ 2 ] ); 
+  ss->add_energy( "d_chi3", d_chi_data[ 3 ] ); 
+  ss->add_energy( "d_chi4", d_chi_data[ 4 ] ); 
+
 	//sidechain bfactor from native
-	Real sc_bfactor( get_sc_bfactor( native_pose, seqpos ) );
+	Real sc_bfactor( get_sc_bfactor( native_pose, native_seqpos ) );
 	ss->add_energy( "sc_bfactor", sc_bfactor );
 
 	//sidechain rmsd
 	Real sc_auto_rmsd_nat( 0 );
 	if( do_sc_rmsd ){
-		sc_auto_rmsd_nat = get_sc_automorphic_rmsd( pose, native_pose, seqpos );
+		sc_auto_rmsd_nat = get_sc_automorphic_rmsd( pose, native_pose, seqpos, native_seqpos, false );
 		ss->add_energy( "sc_rmsd", sc_auto_rmsd_nat );
+		sc_auto_rmsd_nat = get_sc_automorphic_rmsd( pose, native_pose, seqpos, native_seqpos, true );
+		ss->add_energy( "sc_rmsd_super", sc_auto_rmsd_nat );
+		Real bb_ca_dist( get_ca_distance( pose, native_pose, seqpos, native_seqpos ) );
+		ss->add_energy( "bb_ca_dist", bb_ca_dist );
 	}
 
 	Size aaidx( pose.residue( seqpos ).aa() );
@@ -1655,6 +1721,8 @@ get_res_data_ss(
 
 	ss->add_energy( "seqpos", static_cast< Real >( seqpos ) );
 	ss->add_string_value( "aa", pose.residue( seqpos ).name3() );
+	ss->add_string_value( "pdb_chain", utility::string_split( pose.pdb_info()->pose2pdb( seqpos ) )[ 1 ] );
+	ss->add_string_value( "pdb_resnum", utility::string_split( pose.pdb_info()->pose2pdb( seqpos ) )[ 2 ] );
 
 }
 
@@ -1719,18 +1787,36 @@ byres_analysis(
 
 	std::string native_pdbname( pdbname );
 	Pose native_pose( pose );
+	//init native_seqpos_map to point to self
+	vector1< Size > native_seqpos_map;
+	for( Size iseq = 1; iseq <= pose.total_residue(); ++iseq ){ native_seqpos_map.push_back( iseq ); }
+	//actually have a diff native pose?
 	if( option[ in::file::native ].user() ){
 		native_pdbname = option[ in::file::native ]();
 		pose_from_pdb( native_pose, native_pdbname );
+		//align structures for edensity cals?
 		if( option[ edensity::mapfile ].user() ) core::scoring::calpha_superimpose_pose( native_pose, pose );
+		//get sequence mapping?
+		if( option[ byres_data::align_native_seq ] ){
+			using namespace sequence;
+			utility::file::FileName blosum62( "/work/chrisk/rosetta/rosetta_database/sequence/substitution_matrix/IDENTITY" ); //TODO: can we get the rosetta db env variable?
+			ScoringSchemeOP ss( new MatrixScoringScheme( -30, -5, blosum62 ) );
+			NWAligner nw_aligner;
+			SequenceOP seq1( new Sequence( pose.sequence(), "target", 1 ) );
+			SequenceOP seq2( new Sequence( native_pose.sequence(), "ref", 1 ) );
+			SequenceAlignment global_align = nw_aligner.align( seq1, seq2, ss );
+			SequenceMapping seq_map( global_align.sequence_mapping( 1, 2 ) );
+			seq_map.show( TR );
+			native_seqpos_map = seq_map.mapping();
+		}
+		set_pose_occ_and_bfac( pose, native_pose, native_seqpos_map );		
 	}
-	set_pose_occ_and_bfac( pose, native_pose );		
 
 	scorefxn->score( pose );
 	scorefxn->score( native_pose );
 
-	utility::vector1< core::Real > residue_sasa;
 /*
+	utility::vector1< core::Real > residue_sasa;
 	//calc sasa, must remove water molecules first!
 	core::id::AtomID_Map< core::Real > atom_sasa;
 	if( option[ byres_data::calc_sasa ] ){
@@ -1815,6 +1901,18 @@ byres_analysis(
 //			pose = start_pose;
 			if( !option[ packing::resfile ].user() && !pose.residue( seqpos ).is_protein() && !pose.residue( seqpos ).is_DNA() ) continue;
 
+			// WARNING TMP HACK BAIL IF NO NATIVE RES //
+			if( seqpos > native_seqpos_map.size() ) continue;
+			// WARNING TMP HACK BAIL IF NO NATIVE RES //
+	
+			//is the native seqpos the same, or coming from a seq alignment?
+			Size native_seqpos( seqpos );
+			if( option[ byres_data::align_native_seq ] ) native_seqpos = native_seqpos_map[ seqpos ];
+
+			// WARNING TMP HACK BAIL IF NO NATIVE RES //
+			if( native_seqpos < 1 ) continue;
+			// WARNING TMP HACK BAIL IF NO NATIVE RES //
+
 			io::silent::SilentStructOP res_ss( new io::silent::ScoreFileSilentStruct );
 			res_ss->decoy_tag( pdbname );
 
@@ -1833,6 +1931,8 @@ byres_analysis(
 				atom_ss->add_string_value( "atom_type", rsd.atom_type( iatom ).name() );
 				atom_ss->add_energy( "seqpos", static_cast< Real >( seqpos ) );
 				atom_ss->add_string_value( "pdbname", pdbname );
+				atom_ss->add_string_value( "pdb_chain", utility::string_split( pose.pdb_info()->pose2pdb( seqpos ) )[ 1 ] );
+				atom_ss->add_string_value( "pdb_resnum", utility::string_split( pose.pdb_info()->pose2pdb( seqpos ) )[ 2 ] );
 				//			TR_unsat << "seqpos\t" << seqpos << "\tatom\t" << rsd.atom_name( iatom ) << "\t";
 				//			TR_unsat << "wat_hbonds\t" << atom_water_hbonds.value()[ id ] << "\t";
 				atom_ss->add_energy( "hbonds", static_cast< Real >( atom_hbonds.value()[ id ] ) );
@@ -1917,14 +2017,10 @@ byres_analysis(
 				}
 			}
 
-
-			//for ptconway byatom cout hack
-			//std::cout << "UNSAT_HBOND: " << pdbname;
-			//end for ptconway byatom cout hack
-
 			//get a bunch of data about residue
 			if( !option[ byres_data::calcs_only ] ){
-				get_res_data_ss( res_ss, pose, native_pose, seqpos, scorefxn, scorefxn_edens, calc_rmsd, residue_sasa );
+//				get_res_data_ss( res_ss, pose, native_pose, native_seqpos, seqpos, scorefxn, scorefxn_edens, calc_rmsd, residue_sasa );
+				get_res_data_ss( res_ss, pose, native_pose, native_seqpos, seqpos, scorefxn, scorefxn_edens, calc_rmsd );
 			}
 
 			//now calculator vals
@@ -2042,12 +2138,13 @@ main( int argc, char * argv [] )
 	option.add( byres_data::solvate, "solvate the whole protein" ).def( false );
 	option.add( byres_data::calcs_only, "pose calcs only" ).def( false );
 	option.add( byres_data::solv_unsat_calc, "add explicitwater pose metric calc" ).def( false );
-	option.add( byres_data::calc_sasa, "calc byatom and byres sasa" ).def( false );
+//	option.add( byres_data::calc_sasa, "calc byatom and byres sasa" ).def( false );
 	option.add( byres_data::tag, "nametag" ).def( "score" );
 	option.add( byres_data::repeat, "rescore structure" ).def( 1 );
 	option.add( byres_data::nloop_solvadd, "number of iter of append water molecule per atom" ).def( 10 );
 	option.add( byres_data::nloop_solvdock, "number of iter of RBMover water molecule per atom" ).def( 10 );
 	option.add( byres_data::nloop_hbscan, "number of iter of hbscan per polar h or acc" ).def( 10 );
+	option.add( byres_data::align_native_seq, "do a sequence alignment to map native seqpos to pose seqpos" ).def( false );
 
 	devel::init(argc, argv);
 
