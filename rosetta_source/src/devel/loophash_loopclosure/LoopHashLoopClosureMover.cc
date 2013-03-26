@@ -297,10 +297,10 @@ static basic::Tracer TR ("devel.loophash_loopclosure.LoopHashLoopClosureMover" )
 	}
 
 	void LoopHashLoopClosureMover::parse_my_tag(	utility::tag::TagPtr const tag,
-																								protocols::moves::DataMap & ,
-																								protocols::filters::Filters_map const & ,
-																								protocols::moves::Movers_map const &,
-																								core::pose::Pose const & pose ) {
+							protocols::moves::DataMap & ,
+							protocols::filters::Filters_map const & ,
+							protocols::moves::Movers_map const &,
+							core::pose::Pose const & pose ) {
 
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
@@ -321,41 +321,30 @@ static basic::Tracer TR ("devel.loophash_loopclosure.LoopHashLoopClosureMover" )
 		std::stringstream ss;
 		ss << tag->getOption("name", get_current_tag());
 		//ss << "_" << pid;
-//#ifdef USEMPI
-//	time_t t;
-//	time(&t);
-//  ss << t;
-//#endif
 		ss << ".bp";
 		std::string bpname = ss.str().c_str();
 		TR << "Dummy blueprint: " << bpname << std::endl;
 
-		//utility::io::izstream bpstream(bpname.c_str());
-		if(false){// bpstream.good() ){
-			//bpstream.close();
+		protocols::loops::LoopsOP loops;
+		if( tag->hasOption("loop_insert_rclrc") ) {
+			// Instruction string in Residue:Chain:Length format: 
+			// e.g.  25:A:6,50:B:7 for a loop of size 6 residues after 25 (and before 26, implicit)
+			// and another of size 7 residues between 50 and 51.
+			std::string loop_insert_instruction = tag->getOption<std::string>("loop_insert_rclrc");
+			std::vector<MyLoop> loops = make_loops(loop_insert_instruction);
+			make_blueprint(pose, loops, bpname);
+			TR << "Use loop_insert_rclrc string \"" << loop_insert_instruction << "\" (and generate " << bpname << " blueprint file)." << std::endl;
 		}
-		else{
-			protocols::loops::LoopsOP loops;
-			if( tag->hasOption("loop_insert_rclrc") ) {
-				// Instruction string in Residue:Chain:Length format: 
-				// e.g.  25:A:6,50:B:7 for a loop of size 6 residues after 25 (and before 26, implicit)
-				// and another of size 7 residues between 50 and 51.
-				std::string loop_insert_instruction = tag->getOption<std::string>("loop_insert_rclrc");
-				std::vector<MyLoop> loops = make_loops(loop_insert_instruction);
-				make_blueprint(pose, loops, bpname);
-				TR << "Use loop_insert_rclrc string \"" << loop_insert_instruction << "\" (and generate " << bpname << " blueprint file)." << std::endl;
-			}
-			else if( tag->hasOption("loop_insert") ) {
-				// Instruction string in Between Chains format: 
-				// e.g. "A6B7CDE" to insert a loop of size 6 between chain A and B and another of 7 between B and C.
-				std::string loop_insert_instruction = tag->getOption<std::string>("loop_insert");
-				make_blueprint(pose, loop_insert_instruction,bpname);
-				TR << "User loop_insert string \"" << loop_insert_instruction << "\" (and generate " << bpname << " blueprint file)." << std::endl;
-			}
-			else if( tag->hasOption("blueprint") ) {
-				bpname = tag->getOption<std::string>("blueprint");
-				TR << "Use blueprint file: " << bpname << std::endl;
-			}
+		else if( tag->hasOption("loop_insert") ) {
+			// Instruction string in Between Chains format: 
+			// e.g. "A6B7CDE" to insert a loop of size 6 between chain A and B and another of 7 between B and C.
+			std::string loop_insert_instruction = tag->getOption<std::string>("loop_insert");
+			make_blueprint(pose, loop_insert_instruction,bpname);
+			TR << "User loop_insert string \"" << loop_insert_instruction << "\" (and generate " << bpname << " blueprint file)." << std::endl;
+		}
+		else if( tag->hasOption("blueprint") ) {
+			bpname = tag->getOption<std::string>("blueprint");
+			TR << "Use blueprint file: " << bpname << std::endl;
 		}
 		if( bpname == "" ) {
 			TR.Error << "You must specify either \"loop_insert\" string or blueprint!" << std::endl;
@@ -388,42 +377,53 @@ static basic::Tracer TR ("devel.loophash_loopclosure.LoopHashLoopClosureMover" )
 
 		// Max radius.  This should be >= lh_ex_limit.  Default is hard-coded somewhere to 5.
 		Size max_radius = loophash_ex_limit + 2;
-		if( option[ lh::max_radius ] >= loophash_ex_limit ) {
+		if( option[ lh::max_radius ].user() ){
+			if( static_cast<Size>(option[ lh::max_radius ]) <= loophash_ex_limit ) {
+				TR << "lh::max_radius must be >= loophash_ex_limit.  Adjust to +2: " << max_radius << std::endl;
+				option[ lh::max_radius ]( max_radius );
+			}
+		}
+		else{
 			option[ lh::max_radius ]( max_radius );
-			TR << "lh::max_radius must be >= loophash_ex_limit.  Adjust to +2: " << max_radius << std::endl;
-			TR.flush();
-		}
-		TR << "lh::max_radius = " << max_radius << std::endl;
-
+		}	
+		TR << "lh::max_radius = " << option[ lh::max_radius ] << std::endl;
+/*
 		// Disable CCD options if they are set.		
-		if( true ) {//option[ remodel::RemodelLoopMover::independent_cycles] ) {
+		if( option[ remodel::RemodelLoopMover::independent_cycles].user() && option[ remodel::RemodelLoopMover::independent_cycles ]  ) {
 			TR.Warning << "Conflicting options.  Turning off remodel::RemodelLoopMover::independent_cycles." << std::endl;
-			option[ remodel::RemodelLoopMover::independent_cycles ]( false );
 		}
-		if( true ) {//option[ remodel::RemodelLoopMover::simultaneous_cycles ] ) {
+		option[ remodel::RemodelLoopMover::independent_cycles ]( false );
+		TR << "remodel::RemodelLoopMover::independent_cycles = " << option[ remodel::RemodelLoopMover::independent_cycles ] << std::endl;
+
+		if( option[ remodel::RemodelLoopMover::simultaneous_cycles ].user() && option[ remodel::RemodelLoopMover::simultaneous_cycles ] ) {
 			TR.Warning << "Conflicting options.  Turning off remodel::RemodelLoopMover::simultaneous_cycles." << std::endl;
-			option[ remodel::RemodelLoopMover::simultaneous_cycles ] ( false );
 		}
-		if( true ) {//option[ remodel::RemodelLoopMover::bypass_closure ] ) {
+		option[ remodel::RemodelLoopMover::simultaneous_cycles ] ( false );
+		TR << "remodel::RemodelLoopMover::simultaneous_cycles = " << option[ remodel::RemodelLoopMover::simultaneous_cycles ] << std::endl;
+
+		if( option[ remodel::RemodelLoopMover::bypass_closure ].user() && !option[ remodel::RemodelLoopMover::bypass_closure ] ) {
 			TR.Warning << "Conflicting options.  Turning ON remodel::RemodelLoopMover::bypass_closure." << std::endl;
-			option[ remodel::RemodelLoopMover::bypass_closure ]( true );
 		}
-		if( true ) { //option[ remodel::RemodelLoopMover::boost_closure_cycles ] ) {
+		option[ remodel::RemodelLoopMover::bypass_closure ]( true );
+		TR << "remodel::RemodelLoopMover::bypass_closure = " << option[ remodel::RemodelLoopMover::bypass_closure ] << std::endl;
+
+		if( option[ remodel::RemodelLoopMover::boost_closure_cycles ].user() && option[ remodel::RemodelLoopMover::boost_closure_cycles ] ) {
 			TR.Warning << "Conflicting options.  Turning off remodel::RemodelLoopMover::boost_closure_cycles." << std::endl;
-			option[ remodel::RemodelLoopMover::boost_closure_cycles ]( true );
 		}
-/*
-		// reduce loophash cycles to 1 if greater, which makes no senes.
-		if( option[ loophash_cycles ] > 1 ) {
-			TR.Warning << "Conflicting options.  Reducing loophash cycles to one." << std::endl;
-			option[ loophash_cycles ] ( 1 );
+		option[ remodel::RemodelLoopMover::boost_closure_cycles ]( false );
+		TR << "remodel::RemodelLoopMover::boost_closure_cycles = " << option[ remodel::RemodelLoopMover::boost_closure_cycles ] << std::endl;
+
+		// reduce loophash cycles to 1 if greater, which won't do any good here.
+		if( option[ remodel::RemodelLoopMover::loophash_cycles ].user() ) {
+			if( option[ remodel::RemodelLoopMover::loophash_cycles ] > 1 ) {
+				TR.Warning << "Conflicting options.  Reducing loophash cycles to one." << std::endl;
+				option[ remodel::RemodelLoopMover::loophash_cycles ] ( 1 );
+			}
 		}
-*/
-/*
--loophash_cycles 1
--lh_closure_filter
--max_linear_chainbreak 2
--lh_cbreak_selection 10
+		else{
+			option[ remodel::RemodelLoopMover::loophash_cycles ]( 1 );
+		}
+		TR << "loophash_cycles = " << option[ remodel::RemodelLoopMover::loophash_cycles ] << std::endl;
 */
 
 		// quick dirty?
@@ -470,19 +470,18 @@ static basic::Tracer TR ("devel.loophash_loopclosure.LoopHashLoopClosureMover" )
 		option[ remodel::RemodelLoopMover::max_linear_chainbreak ]( linear_chainbreak );
 		TR << "remodel::max_linear_chainbreak = " << linear_chainbreak << std::endl;
 
-/*
-		Size loophash_chainbreak_selection = 10;
-		if( option[ lh_cbreak_selection ] < 10 ) {
-			TR.Warning << "Recommended chainbreak selection is >=10." << std::endl;
-			TR.Warning << "Increasing chainbreak selection to 10." << std::endl;
-			option[ lh_chainbreak_selection ]( 10 );
+		if( option[ remodel::lh_cbreak_selection ].user() ) {
+			if( option[ remodel::lh_cbreak_selection ] < 10 ) {
+				TR.Warning << "Recommended chainbreak_selection weight is >= 10.  Your current values is " << option[ remodel::lh_cbreak_selection]  <<  std::endl;
+			}
 		}
-		TR << "lh_cbreak_selection = " << option[ lh_chainbreak_selection ] << std::endl;
-*/	
+		else{
+			option[ remodel::lh_cbreak_selection ]( 10 );
+		}
+		TR << "lh_cbreak_selection = " << option[ remodel::lh_cbreak_selection ] << std::endl;
+	
 		// Use sidechains from input
-		bool use_input_sidechains = tag->getOption<bool>("user_input_sc", true);
-		option[ packing::use_input_sc ]( use_input_sidechains );
-		TR << "packing::use_input_sc = " << (use_input_sidechains? "true" : "false") << std::endl;
+		TR << "packing::use_input_sc = " << (option[packing::use_input_sc].value()? "true" : "false") << std::endl;
 
 		// number of trajectories
 		Size num_trajectory = tag->getOption<Size>("num_trajectory", 1);
@@ -495,9 +494,7 @@ static basic::Tracer TR ("devel.loophash_loopclosure.LoopHashLoopClosureMover" )
 		TR << "remodel::save_top = " << num_save_top << std::endl;
 
 		// No optimization on hydrogens
-		bool no_optH = tag->getOption<bool>( "no_optH", false );
-		option[ packing::no_optH ]( no_optH );
-		TR << "packing::no_optH = " << (no_optH ? "true" : "false") << std::endl;
+		TR << "packing::no_optH = " << (option[packing::no_optH] ? "true" : "false") << std::endl;
 	}
 
 } // loophash_loopclosure
