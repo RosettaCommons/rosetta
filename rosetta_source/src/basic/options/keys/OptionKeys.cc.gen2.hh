@@ -675,3 +675,4 @@ namespace edensity { RealOptionKey const grid_spacing( "edensity:grid_spacing" )
 namespace edensity { RealOptionKey const centroid_density_mass( "edensity:centroid_density_mass" );  }
 namespace edensity { IntegerOptionKey const sliding_window( "edensity:sliding_window" );  }
 namespace edensity { RealOptionKey const force_apix( "edensity:force_apix" );  }
+namespace edensity { RealOptionKey const fastdens_wt( "edensity:fastdens_wt" );  }

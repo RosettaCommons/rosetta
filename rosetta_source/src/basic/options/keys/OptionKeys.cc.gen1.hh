@@ -1,4 +1,3 @@
-namespace resample { StringOptionKey const tag( "resample:tag" );  }
 namespace resample { BooleanOptionKey const stage1( "resample:stage1" );  }
 namespace resample { BooleanOptionKey const stage2( "resample:stage2" );  }
 namespace resample { BooleanOptionKey const jumps( "resample:jumps" );  }
@@ -175,6 +174,8 @@ namespace score { StringOptionKey const nmer_svm( "score:nmer_svm" );  }
 namespace score { StringOptionKey const nmer_svm_list( "score:nmer_svm_list" );  }
 namespace score { RealOptionKey const nmer_svm_scorecut( "score:nmer_svm_scorecut" );  }
 namespace score { StringOptionKey const nmer_svm_aa_matrix( "score:nmer_svm_aa_matrix" );  }
+namespace score { IntegerOptionKey const nmer_svm_term_length( "score:nmer_svm_term_length" );  }
+namespace score { BooleanOptionKey const nmer_svm_pssm_feat( "score:nmer_svm_pssm_feat" );  }
 namespace score { IntegerOptionKey const nmer_ref_seq_length( "score:nmer_ref_seq_length" );  }
 namespace corrections { BooleanOptionKey const corrections( "corrections" );  }
 namespace corrections { BooleanOptionKey const correct( "corrections:correct" );  }

@@ -1871,6 +1871,8 @@ Options = Option_Group( '',
     Option( 'nmer_svm_list', 'String', desc='list of nmer svm filenames (libsvm)' ),
     Option( 'nmer_svm_scorecut', 'Real', desc='nmer svm scorecut gate for ignoring lowscore nmers', default='0.0' ),
     Option( 'nmer_svm_aa_matrix', 'String', desc='nmer svm sequence encoding matrix filename' ),
+    Option( 'nmer_svm_term_length', 'Integer', desc='how many up/dnstream res to avg and incl in svm sequence encoding', default='3' ),
+    Option( 'nmer_svm_pssm_feat', 'Boolean', desc='add pssm features to svm encoding?', default='true' ),
     Option( 'nmer_ref_seq_length', 'Integer', desc='length of nmers in nmer_ref score', default='9' ),
 	),
 
