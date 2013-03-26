@@ -1,0 +1,68 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+///@author Jared Adolf-Bryfogle
+/*!
+
+@page RosettaFlagFileBuilder Documentation for the Rosetta Flag File Builder GUI
+
+@section metadata Metadata
+This document was last updated January 2013, by Jared Adolf-Bryfogle <jadolfbr@gmail.com>.
+The PI for this application is Roland Dunbrack <Roland.Dunbrack@fccc.edu>
+
+The application was developed by:
+@li Jared Adolf-Bryfogle
+
+@section code_demos Code and Demo
+The code is available in rosetta_source/GUIs/RosettaFlagBuilder
+To run the GUI use ./RosettaFlagBuilder.py in the code directory or launch it from the PyRosetta Toolkit.
+This GUI does not require PyRosetta, but does requre Rosetta binaries to be compiled.
+
+The DoxygenParser class is available in rosetta_source/GUIs/pyrosetta_toolkit/modules
+
+@section refs References
+PloSOne RosettaCON2012 Collection
+
+@section purpose Purpose
+The purpose of this GUI is to help running, exploring, and building flag files for Rosetta applications.
+It is useful for exploring both documentation, available options, and default settings of the many Rosetta applications.
+
+@section algorithm Algorithm
+This GUI parses Rosetta Doxygen documentation and the -help flag for each application.
+
+@limits Limitations
+This application attempts to help in formatting a Rosetta flag file and exploring documentation.  However, numerous applications have special formatting for Doxygen documention, including embeded HTML.
+Efforts are under way to standardize and better parse the formatting, but please always refer to rosettacommons for full production runs.  Multiprocessing is not currently implemented.
+
+@modes Modes
+The flag file is interactively built using the textbox in the middle of the UI.  Adding an option, copies it into this box.  Descriptions of options and documentation sections are shown in the textbox to the right.
+
+
+@section tips Tips
+Use pathbuilder checkbox to select items from directories for insertion into the flag file textbox.
+
+Repopulate:
+ Repopulate->Manually Curated For general options, such as input, output, packing, etc.
+
+ Repopulate->All Available Options To get all available options given a particular app (using -help). This overwhelms the Tk GUI, but can be useful if you want to go off the beaten path.
+
+Cluster:
+ QsubClusterSetup app works on all apps, and can be run from the GUI or by itself (python QsubClusterSetup.py).  However, running Rosetta in MPI mode is recommended over using batch processing using Qsub.  If you can get MPI to work on your cluster, use it instead where possible.
+
+ QsubClusterSetup is made to be applicable to all apps and all clusters.  If you find it does not work for yours, please report it on the bugtracker.
+ 
+ To run qsub without the GUI, use qsub_script.py within the GUI's directory.
+
+ Use the PyRosetta Toolkit GUI to fix the directory structure resulting from a qsub run (PDBList menu->Rename all PDBs recursively and copy to output path)
+ 
+ 
+@section outputs Expected Outputs
+Writing a Flag file will put one option on each line.  It will automatically insert the database path specified, and the first line of the file will be the full path to the Rosetta application.  Note that this line is ignored by Rosetta, but required for running using the QsubClusterSetup window that can be launched using this GUI, or run independently on a cluster.  
+
+*/
