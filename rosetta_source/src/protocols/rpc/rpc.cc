@@ -86,10 +86,11 @@ static basic::Tracer TR("rpc");
 
 using namespace utility::json_spirit;
 
-JSON_RPC::JSON_RPC(const std::string &msg, bool capture_tracer ):
+JSON_RPC::JSON_RPC(const std::string &msg, bool capture_tracer, BasicInit *basic_init  ):
     capture_tracer_(capture_tracer),
     starttime_(0),
-    endtime_(0)
+    endtime_(0),
+    basic_init_( basic_init )
   {
     msg_ = msg;
     unpack( msg_ );
@@ -150,6 +151,10 @@ JSON_RPC::JSON_RPC( JSON_RPC const & json_rpc) : ReferenceCount(json_rpc) {
          throw utility::excn::EXCN_Msg_Exception("RPC calls must provide pdbdata field"); 
        }
        pdbdata_string_ = get_string(parsed_json_, "pdbdata");
+       
+       // do a re-init if user has set a basic_init functor
+       if( basic_init_ != NULL) basic_init_->do_init();
+       
        // Load any flags that were given as part of this job.
        std::cout << "Initializing options: " << command_ << std::endl;
        
@@ -198,13 +203,6 @@ JSON_RPC::JSON_RPC( JSON_RPC const & json_rpc) : ReferenceCount(json_rpc) {
     // start capturing Tracer outputs
     output_capture_start();
     starttime_ = time(NULL);
-   
-    // so an empty init
-    int argc = 0;
-    std::string empty_str = "";
-    char *argvv = &empty_str[0];
-    char **argv = &argvv;
-    core::init(argc, argv);
 
     // finally load in the provided PDB
     std::cout << "Loading PDB file: " << std::endl;

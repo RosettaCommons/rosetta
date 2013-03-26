@@ -293,9 +293,10 @@ class ServerInfo {
 
 class RosettaJob {
  public:
-   RosettaJob( const ServerInfo &serverinfo ):
+   RosettaJob( const ServerInfo &serverinfo, protocols::rpc::BasicInit *basic_init):
     serverinfo_(serverinfo),
-    initialized_(false)
+    initialized_(false),
+    basic_init_(basic_init)
    {}
 
    bool request_job_from_server( )
@@ -365,7 +366,7 @@ class RosettaJob {
       std::cout << "Inputdata: " << job_data_string.size() << " bytes received" << std::endl;
 
       try{
-        rpc = new protocols::rpc::JSON_RPC( job_data_string, false );
+        rpc = new protocols::rpc::JSON_RPC( job_data_string, false, basic_init_ );
         // intrpret the actual RPC contents.
       }
       catch ( utility::excn::EXCN_Base& excn ) {
@@ -476,14 +477,14 @@ class RosettaJob {
   protocols::rpc::JSON_RPCOP rpc;
 
   ServerInfo serverinfo_;
+  protocols::rpc::BasicInit *basic_init_;
 };
 
 class RosettaBackend {
  public:
-    RosettaBackend( const ServerInfo &serverinfo, int argc, char * argv [] ) :
+    RosettaBackend( const ServerInfo &serverinfo, protocols::rpc::BasicInit *basic_init ) :
       serverinfo_(serverinfo),
-      argc_(argc),
-      argv_(argv)
+      basic_init_(basic_init)
     {}
 
  private:
@@ -492,14 +493,9 @@ class RosettaBackend {
 
     void run(){
       do{
-        RosettaJob newjob(serverinfo_);
+        RosettaJob newjob(serverinfo_, basic_init_ );
 
         core::Size wait_count = 0;
-
-        using namespace basic::options;
-        using namespace basic::options::OptionKeys;
-        utility::options::OptionCollection &option_collection  = initialize();
-        option_collection.load( argc_, argv_, false);
 
         while( !newjob.request_job_from_server() ){
           core::Real waittime;
@@ -522,9 +518,30 @@ class RosettaBackend {
 
  private:
   ServerInfo serverinfo_;
+  protocols::rpc::BasicInit *basic_init_;
+};
+
+
+// this is a functor that just clears the current options and sets 
+class BasicCmdLineInit: public protocols::rpc::BasicInit
+{
+ public:
+  BasicCmdLineInit( int argc, char * argv [] ) :
+    argc_(argc),
+    argv_(argv)
+  {}
+
+  virtual bool do_init(){
+   std::cout << "DOING BASIC INIT" << std::endl;
+   using namespace basic::options;
+   using namespace basic::options::OptionKeys;
+   utility::options::OptionCollection &option_collection  = initialize();
+   option_collection.load( argc_, argv_, false);
+  }
+ 
+ private:
   int argc_;
   char ** argv_ ;
-
 };
 
 int
@@ -544,6 +561,8 @@ main( int argc, char * argv [] )
  	// initialize core
  	devel::init(argc, argv);
 
+  BasicCmdLineInit basic_init( argc, argv );
+
   evaluation::PoseEvaluatorsOP evaluators_( new protocols::evaluation::PoseEvaluators() );
   evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluators_);
 
@@ -558,7 +577,7 @@ main( int argc, char * argv [] )
   // set up the application server information package
   ServerInfo server( option[rbe::server_url](), option[rbe::server_port](), option[rbe::poll_frequency ]() );
   std::cout << "server: " << server.url_gettask() << std::endl;
-  RosettaBackend backend( server, argc, argv );
+  RosettaBackend backend( server, &basic_init );
 
 
   backend.run();

@@ -36,6 +36,15 @@ namespace rpc {
 
 void pose_energies_to_json( core::pose::Pose const & pose, utility::json_spirit::Object &json_energies );
 
+// this is a virtual functor which is going to act basically as a callback or function pointer but cleaner.
+class BasicInit {
+ public: 
+  BasicInit() {}
+
+  virtual ~BasicInit(){};
+
+  virtual bool do_init() {};
+};
 
 
 // This is an interface to rosetta tailored for remote procedure calls through HTTP requests or via Native Client.
@@ -46,7 +55,7 @@ void pose_energies_to_json( core::pose::Pose const & pose, utility::json_spirit:
 class JSON_RPC : public utility::pointer::ReferenceCount {
 public:
 
-	JSON_RPC(std::string const &msg, bool capture_tracer = true );
+	JSON_RPC(std::string const &msg, bool capture_tracer = true,  BasicInit *basic_init = NULL );
 
 	virtual ~JSON_RPC() {}
 
@@ -92,6 +101,8 @@ private: // member variables
   long              endtime_;
 
   utility::json_spirit::mObject parsed_json_;
+
+  BasicInit         *basic_init_; 
 };
 
 }
