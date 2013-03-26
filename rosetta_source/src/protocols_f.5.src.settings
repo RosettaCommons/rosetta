@@ -10,10 +10,13 @@
 ########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
 sources = {
+        "protocols/denovo_design": [
+                "FastDesign",
+        ],
 	"protocols/denovo_design/filters": [
 		"ExposedHydrophobicsFilter",
 		"SSShapeComplementarityFilter",
-	],	
+	],
 	"protocols/fldsgn": [
 		"BluePrintBDR",
 		"CircularPermutation",

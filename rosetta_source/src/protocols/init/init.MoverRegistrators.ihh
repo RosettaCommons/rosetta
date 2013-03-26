@@ -48,6 +48,8 @@ static MoverRegistrator< hybridization::CartesianSamplerCreator > reg_CartesianS
 
 static MoverRegistrator< contact_map::ContactMapCreator> reg_ContactMapCreator;
 
+static MoverRegistrator< denovo_design::FastDesignCreator > reg_FastDesignCreator;
+
 static MoverRegistrator< design_opt::GreedyOptMutationMoverCreator > reg_GreedyOptMutationMoverCreator;
 static MoverRegistrator< design_opt::ParetoOptMutationMoverCreator > reg_ParetoOptMutationMoverCreator;
 
