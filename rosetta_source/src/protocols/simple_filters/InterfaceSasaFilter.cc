@@ -144,7 +144,7 @@ InterfaceSasaFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMa
 		throw utility::excn::EXCN_RosettaScriptsOption( "Polar and hydrophobic flags specified in Sasa filter." );
 	}
 
-	if( ( polar_ || hydrophobic_ ) && (jumps_.size() != 1 || jumps_[0] != 1))
+	if( ( polar_ || hydrophobic_ ) && (jumps_.size() != 1 || jumps_[1] != 1))
 	{
 		TR.Error << "Only total sasa is supported across a jump other than 1. Remove polar and hydrophobic flags and try again: " << tag << std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption( "Only total sasa is supported across a jump other than 1. Remove polar and hydrophobic flags and try again." );
