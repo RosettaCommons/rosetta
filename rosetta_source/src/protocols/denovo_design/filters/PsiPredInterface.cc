@@ -30,7 +30,7 @@
 
 // C++ headers
 
-basic::Tracer TR("protocols.denovo_design.filters.utility");
+static basic::Tracer TR("protocols.denovo_design.filters.psipredinterface");
 
 namespace protocols {
 namespace denovo_design {
