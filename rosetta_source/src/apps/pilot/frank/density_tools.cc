@@ -18,7 +18,6 @@
 #include <core/types.hh>
 
 #include <core/chemical/AA.hh>
-#include <core/conformation/atom.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
@@ -114,7 +113,7 @@ name2elt( std::string line ) {
 
 		if (atmid == resname) {
 			type = atmid;
-			if (type.size() == 2) type[1] = tolower(type[1]);
+			if (type.size() == 2) type[1] = toupper(type[1]);
 		} else if (resname == "ADR" || resname == "COA" || resname == "FAD" ||
 				resname == "GPG" || resname == "NAD" || resname == "NAL" ||
 				resname == "NDP" || resname == "ABA")  {
