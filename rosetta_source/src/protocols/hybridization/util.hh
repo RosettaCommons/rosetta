@@ -70,7 +70,7 @@ void generate_fullatom_constraints(
 	utility::vector1 < core::pose::PoseCOP > templates,
 	utility::vector1 < core::Real > template_weights );
 
-void generate_partial_constraints(
+void setup_partial_coordinate_constraints(
     core::pose::Pose &pose,
     utility::vector1<bool> ignore_res );
 

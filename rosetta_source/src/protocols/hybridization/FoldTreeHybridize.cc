@@ -1184,7 +1184,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	}
 
 	if ( scorefxn_->get_weight( core::scoring::coordinate_constraint ) != 0 ) {
-     generate_partial_constraints(pose,allowed_to_move_);
+     setup_partial_coordinate_constraints(pose,allowed_to_move_);
 	}
 	// Initialize the structure
 	bool use_random_template = false;

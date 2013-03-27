@@ -202,7 +202,7 @@ void generate_centroid_constraints(
 }
 
 
-void generate_partial_constraints(
+void setup_partial_coordinate_constraints(
     core::pose::Pose &pose,
     utility::vector1<bool> ignore_res )
 {
@@ -232,6 +232,7 @@ void generate_partial_constraints(
 		MAXDIST = 0.0;
 		//figure out the centor of mass of chain excluding ignore_res
 		for (core::Size j=pose.conformation().chain_begin(i); j<=pose.conformation().chain_end(i); ++j ) {
+			if (pose.residue(j).is_protein()) {
 				if ( ignore_res[j]==false ) {
 							if ( pose.residue_type(j).has("CA") ) {
       						iatom = pose.residue_type(j).atom_index("CA");
@@ -246,8 +247,9 @@ void generate_partial_constraints(
           	if ( distjm > MAXDIST ) MAXDIST=distjm;
 					}
         } //figure out the maxdist to any interface residues, used for normalizing coordinate constraints
-
+			}//avoid non-protein residues
 		}//loop through residues in chain 
+
     if (natom > 1e-3) {
       anchor_xyz = sum_xyz / natom;
     }
@@ -256,6 +258,7 @@ void generate_partial_constraints(
 		min_dist2 = 1e9;
 		best_anchor = 0;
 		for (core::Size j=pose.conformation().chain_begin(i); j<=pose.conformation().chain_end(i); ++j ) {
+      if (pose.residue(j).is_protein()) {
 				if ( ignore_res[j]==false ) {
       			if ( pose.residue_type(j).has("CA") ) {
         			Size iatom = pose.residue_type(j).atom_index("CA");
@@ -265,10 +268,12 @@ void generate_partial_constraints(
           				best_anchor = j;
         			}
 			 			}
-      }
+      } //non-moveable residues
+		 } //protien only
     }
 
   	for (core::Size j=pose.conformation().chain_begin(i); j<=pose.conformation().chain_end(i); ++j ) {
+      if (pose.residue(j).is_protein()) {
 					if ( ignore_res[j]==false ) {
       			if ( pose.residue_type(j).has("CA") ) {
 							MINDIST_NONMOVEj= 999.0;
@@ -292,6 +297,7 @@ void generate_partial_constraints(
 					}
 				}
 		} //add through contraints
+	 } //avoid non-protein residues
 	} //loop through each chain
 }
 

@@ -925,6 +925,10 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			}
 		}
 
+	  if ( stage2_scorefxn_->get_weight( core::scoring::coordinate_constraint ) != 0 && task_factory_ ) {
+				setup_partial_coordinate_constraints(pose,allowed_to_move_);
+		}
+
 		// STAGE 2
 		if (!option[cm::hybridize::skip_stage2]()) {
 			core::scoring::ScoreFunctionOP stage2_scorefxn_clone = stage2_scorefxn_->clone();
@@ -1000,13 +1004,16 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			std::string cst_fn = template_cst_fn_[initial_template_index];
 			if ( stage2_scorefxn_->get_weight( core::scoring::atom_pair_constraint ) != 0 ) {
 				setup_fullatom_constraints( pose, templates_, template_weights_, cst_fn, fa_cst_fn_ );
-			  generate_partial_constraints(pose,allowed_to_move_);
 				if (add_hetatm_) {
 					add_non_protein_cst(pose, hetatm_self_cst_weight_, hetatm_prot_cst_weight_);
 				}
 				if (strand_pairs_.size()) {
 					add_strand_pairs_cst(pose, strand_pairs_);
 				}
+			}
+
+	    if ( stage2_scorefxn_->get_weight( core::scoring::coordinate_constraint ) != 0 && task_factory_ ) {
+			  	setup_partial_coordinate_constraints(pose,allowed_to_move_);
 			}
 
 			if (batch_relax_ == 1) {

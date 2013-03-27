@@ -452,8 +452,6 @@ CartesianHybridize::apply( Pose & pose ) {
 	TR << "RUNNING FOR " << NMACROCYCLES << " MACROCYCLES" << std::endl;
 
 	Pose pose_in = pose;
-	//add constraints to pose
-  generate_partial_constraints(pose, allowed_to_move_ );
 
 	core::Size nres = pose.total_residue();
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
