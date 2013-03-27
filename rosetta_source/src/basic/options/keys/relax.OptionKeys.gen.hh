@@ -45,6 +45,7 @@ namespace relax { extern BooleanOptionKey const bb_move; }
 namespace relax { extern BooleanOptionKey const chi_move; }
 namespace relax { extern BooleanOptionKey const jump_move; }
 namespace relax { extern BooleanOptionKey const dna_move; }
+namespace relax { extern BooleanOptionKey const fix_omega; }
 namespace relax { extern BooleanOptionKey const minimize_bond_lengths; }
 namespace relax { extern BooleanOptionKey const minimize_bond_angles; }
 namespace relax { extern IntegerOptionKey const minimize_bondlength_subset; }

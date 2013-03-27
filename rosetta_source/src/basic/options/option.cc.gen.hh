@@ -1112,6 +1112,7 @@ option.add( basic::options::OptionKeys::relax::bb_move, "allow backbone to move 
 option.add( basic::options::OptionKeys::relax::chi_move, "allow sidechain to move during relax" ).def(true);
 option.add( basic::options::OptionKeys::relax::jump_move, "allow jump to move during relax" ).def(false);
 option.add( basic::options::OptionKeys::relax::dna_move, "allow dna to move during relax + allow DNA-DNA interactions. Best if used with orbitals scorefunction. DNA stays together with great molprobity results.  Not recommended for general use at this time." ).def(false);
+option.add( basic::options::OptionKeys::relax::fix_omega, "Fix omega angles during relax" ).def(false);
 option.add( basic::options::OptionKeys::relax::minimize_bond_lengths, "Free bond length DOFs during relax for all atoms" ).def(false);
 option.add( basic::options::OptionKeys::relax::minimize_bond_angles, "Free bond angle DOFs during relax for all atoms" ).def(false);
 option.add( basic::options::OptionKeys::relax::minimize_bondlength_subset, "Minimize only a subset of bondlengths 0 Default  all bondlengths 1          backbone only 2          sidechain only 3          CA only (Ca-C,Ca-N and Ca-Cb)" ).legal(0).legal(1).legal(2).legal(3).def(0);
@@ -1360,10 +1361,10 @@ option.add( basic::options::OptionKeys::blivens::disulfide_scorer::cys_prob, "Th
 option.add( basic::options::OptionKeys::blivens::score_type, "The scoring type to use, eg for a filter." ).def("total_score");
 option.add( basic::options::OptionKeys::krassk::krassk, "krassk option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::krassk::left_tail, "No description" ).def(0);
-option.add( basic::options::OptionKeys::krassk::right_tail, "No description" ).def(0);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::krassk::tail_mode, "No description" ).def(false);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::krassk::right_tail, "No description" ).def(0);
+option.add( basic::options::OptionKeys::krassk::tail_mode, "No description" ).def(false);
 option.add( basic::options::OptionKeys::krassk::tail_mode_name, "No description" ).def(1);
 option.add( basic::options::OptionKeys::krassk::tail_output_file_name, "No description" ).def("tail_output");
 option.add( basic::options::OptionKeys::rotamerdump::rotamerdump, "rotamerdump option group" ).legal(true).def(true);
@@ -2040,10 +2041,10 @@ option.add( basic::options::OptionKeys::edensity::grid_spacing, "No description"
 option.add( basic::options::OptionKeys::edensity::centroid_density_mass, "No description" ).def(0.0);
 option.add( basic::options::OptionKeys::edensity::sliding_window, "No description" ).def(1);
 option.add( basic::options::OptionKeys::edensity::force_apix, "force pixel spacing to take a particular value" ).def(0.0);
-option.add( basic::options::OptionKeys::edensity::fastdens_wt, "wt of fast edens score" ).def(0.0);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::edensity::sliding_window_wt, "wt of edens sliding-window score" ).def(0.0);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::edensity::fastdens_wt, "wt of fast edens score" ).def(0.0);
+option.add( basic::options::OptionKeys::edensity::sliding_window_wt, "wt of edens sliding-window score" ).def(0.0);
 option.add( basic::options::OptionKeys::edensity::score_sliding_window_context, "when using sl. win. density fit, include neighbor atoms (slows trajectory)" ).def(false);
 option.add( basic::options::OptionKeys::edensity::whole_structure_ca_wt, "wt of edens centroid (CA-only) scoring" ).def(0.0);
 option.add( basic::options::OptionKeys::edensity::whole_structure_allatom_wt, "wt of edens centroid (allatom) scoring" ).def(0.0);

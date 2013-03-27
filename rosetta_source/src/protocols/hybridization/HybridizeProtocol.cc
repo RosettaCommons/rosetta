@@ -415,7 +415,7 @@ HybridizeProtocol::initialize_and_sample_loops(
 	core::Size loopstart=1, loopstop;
 	for (Size i=2; i<=nres_tgt; ++i) {
     TR << "in make loopfile scanning " << i << std::endl;
-		if (templ_coverage[i] && inloop && std::find(allowed_to_move_.begin(),allowed_to_move_.end(),i)!=allowed_to_move_.end()) {
+		if (templ_coverage[i] && inloop && allowed_to_move_[i]==true) {
       TR << "in make loopfile selecting " << i << std::endl;
 		//if (templ_coverage[i] && inloop) {
 			// end loop
@@ -689,6 +689,19 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 	core::fragment::FragSetOP frags_big = fragments_big_[RG.random_range(1,fragments_big_.size())];
 	TR.Info << "FRAGMENTS small max length: " << frags_small->max_frag_length() << std::endl;
 	TR.Info << "FRAGMENTS big max length: " << frags_big->max_frag_length() << std::endl;
+
+  //task operations
+	allowed_to_move_.clear();
+	allowed_to_move_.resize(pose.total_residue(),true);
+  if( task_factory_ ){
+    task_ = task_factory_->create_task_and_apply_taskoperations( pose );
+    for( core::Size resi = 1; resi <= get_num_residues_nonvirt(pose); ++resi ){
+      if( task_->residue_task( resi ).being_designed() || task_->residue_task( resi ).being_packed())
+        allowed_to_move_[resi]=true;
+			else
+        allowed_to_move_[resi]=false;
+    }
+   }
 
 	// starting structure pool
 	std::vector < SilentStructOP > post_centroid_structs;
@@ -1207,25 +1220,11 @@ HybridizeProtocol::parse_my_tag(
 	fa_cst_fn_ = tag->getOption< std::string >( "fa_cst_file", "" );
 	batch_relax_ = tag->getOption< core::Size >( "batch" , 1 );
 
-	//task operations
   if( tag->hasOption( "task_operations" ) ){
     task_factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data );
-		task_ = task_factory_->create_task_and_apply_taskoperations( pose );
-		//add being designed/packed residue to allowed to move
-		TR << "Allow to move: " << std::endl;
-		for( core::Size resi = 1; resi <= get_num_residues_nonvirt(pose); ++resi ){
-			if( task_->residue_task( resi ).being_designed() || task_->residue_task( resi ).being_packed()) {
-				allowed_to_move_.push_back(resi);
-      	TR << " " << resi;
-			}
-		}
-  } else {
-		for( core::Size resi = 1; resi <= get_num_residues_nonvirt(pose); ++resi ){
-				allowed_to_move_.push_back(resi);
-        TR << " " << resi << std::endl;
-		}
-  } //everything allows to move
-	TR << std::endl;
+	}	else {
+	  task_factory_ = NULL; 
+	}
 
 	// force starting template
 	if( tag->hasOption( "starting_template" ) ) {

@@ -185,7 +185,7 @@ void ChunkTrialMover::pick_random_chunk(core::pose::Pose & pose) {
 		jump_number_ = RG.random_range(1, pose.num_jump());
     std::list < core::Size > downstream_residues = downstream_residues_from_jump(pose, jump_number_);
 		for (std::list<core::Size>::iterator it = downstream_residues.begin(); it != downstream_residues.end(); it++) {
-				if (std::find(allowed_to_move_.begin(),allowed_to_move_.end(),*it)!=allowed_to_move_.end()) {
+				if (allowed_to_move_[*it]==true) {
 					 chosen_good_jump=true;
 					 interfaceres=*it;
 					 break;
@@ -194,7 +194,6 @@ void ChunkTrialMover::pick_random_chunk(core::pose::Pose & pose) {
 	//}
 	}
 
-  TR << "choose jump " << jump_number_ << " that will effect interface residue " << interfaceres << std::endl; 
 	core::Size jump_residue_pose = pose.fold_tree().downstream_jump_residue(jump_number_);
 	while ( pose.residue(jump_residue_pose).aa() == core::chemical::aa_vrt && --ntrials>0) {
 		jump_number_ = RG.random_range(1, pose.num_jump());
@@ -212,13 +211,7 @@ Size ChunkTrialMover::trial_counter(Size ires) {
 void
 ChunkTrialMover::apply(core::pose::Pose & pose) {
 	max_registry_shift_.resize(pose.num_jump(), max_registry_shift_input_);
-	if (allowed_to_move_.size()==0) {
-					TR << "Somehow allowed_to_move_ has size 0, not initilized!" << std::endl;
-			    for( core::Size resi = 1; resi <= pose.total_residue(); ++resi ){
-        			allowed_to_move_.push_back(resi);
-    			}
-		}
-			
+
 	// pick a random template
 	if (random_template_) {
 		pick_random_template();
@@ -245,19 +238,15 @@ ChunkTrialMover::apply(core::pose::Pose & pose) {
 		// loop over all jumps (we're initializing)
 		for (core::Size jump_number=1; jump_number<=pose.num_jump(); ++jump_number) {
 				bool is_jump_affect_moveable_residue=false;
-				//TR << "Search for a good jump number " << jump_number << std::endl;
     		std::list < core::Size > downstream_residues = downstream_residues_from_jump(pose, jump_number);
     		for (std::list<core::Size>::iterator it = downstream_residues.begin(); it != downstream_residues.end(); it++) {
-            //TR << "Check " << *it << " in the downstream of jump: " << jump_number << std::endl;
-        	if (std::find(allowed_to_move_.begin(),allowed_to_move_.end(),*it)!=allowed_to_move_.end()) {
-            //TR << "Found " << *it << " in allowed to move region" << std::endl;
-						is_jump_affect_moveable_residue=true;
-						break;
+						if (allowed_to_move_[*it]==true) {
+							is_jump_affect_moveable_residue=true;
+							break;
+							}
         	}
-    		}
 
 			if (is_jump_affect_moveable_residue) {
-            TR << "set allowed moveable jump " << jump_number  << std::endl;
 						align_chunk_.set_aligned_chunk(pose, jump_number, true);
 						// apply alignment
 						int registry_shift = RG.random_range(-max_registry_shift_[jump_number], max_registry_shift_[jump_number]);

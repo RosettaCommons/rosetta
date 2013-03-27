@@ -204,7 +204,7 @@ void generate_centroid_constraints(
 
 void generate_partial_constraints(
     core::pose::Pose &pose,
-    utility::vector1<core::Size> ignore_res )
+    utility::vector1<bool> ignore_res )
 {
 
   core::conformation::symmetry::SymmetryInfoCOP symm_info;
@@ -232,7 +232,7 @@ void generate_partial_constraints(
 		MAXDIST = 0.0;
 		//figure out the centor of mass of chain excluding ignore_res
 		for (core::Size j=pose.conformation().chain_begin(i); j<=pose.conformation().chain_end(i); ++j ) {
-				if ( std::find(ignore_res.begin(),ignore_res.end(),j)==ignore_res.end() ) {
+				if ( ignore_res[j]==false ) {
 							if ( pose.residue_type(j).has("CA") ) {
       						iatom = pose.residue_type(j).atom_index("CA");
       						sum_xyz += pose.residue(j).xyz(iatom);
@@ -241,8 +241,10 @@ void generate_partial_constraints(
 			  }//not at interface
 
         for (core::Size m=1; m<=ignore_res.size(); ++m) {
-          distjm=pose.conformation().residue(j).xyz(2).distance( pose.conformation().residue(ignore_res[m]).xyz(2) );
-          if ( distjm > MAXDIST ) MAXDIST=distjm;
+					if (ignore_res[m]==true) {
+          	distjm=pose.conformation().residue(j).xyz(2).distance( pose.conformation().residue(m).xyz(2) );
+          	if ( distjm > MAXDIST ) MAXDIST=distjm;
+					}
         } //figure out the maxdist to any interface residues, used for normalizing coordinate constraints
 
 		}//loop through residues in chain 
@@ -254,7 +256,7 @@ void generate_partial_constraints(
 		min_dist2 = 1e9;
 		best_anchor = 0;
 		for (core::Size j=pose.conformation().chain_begin(i); j<=pose.conformation().chain_end(i); ++j ) {
-				if ( std::find(ignore_res.begin(),ignore_res.end(),j)==ignore_res.end() ) {
+				if ( ignore_res[j]==false ) {
       			if ( pose.residue_type(j).has("CA") ) {
         			Size iatom = pose.residue_type(j).atom_index("CA");
         			core::Real dist2 = pose.residue(j).xyz(iatom).distance_squared(anchor_xyz);
@@ -267,16 +269,16 @@ void generate_partial_constraints(
     }
 
   	for (core::Size j=pose.conformation().chain_begin(i); j<=pose.conformation().chain_end(i); ++j ) {
-					//std::cout << "chain " << i << " residue " << j << " residue " << k << " distance: "  << dist << std::endl; 
-					if ( std::find(ignore_res.begin(),ignore_res.end(),j)==ignore_res.end() ) {
-
+					if ( ignore_res[j]==false ) {
+      			if ( pose.residue_type(j).has("CA") ) {
 							MINDIST_NONMOVEj= 999.0;
 							for (core::Size m=1; m<=ignore_res.size(); ++m) {
-								distjm=pose.conformation().residue(j).xyz(2).distance( pose.conformation().residue(ignore_res[m]).xyz(2) );
-								if ( distjm < MINDIST_NONMOVEj ) MINDIST_NONMOVEj=distjm;
+								if (ignore_res[m]==true) {
+									distjm=pose.conformation().residue(j).xyz(2).distance( pose.conformation().residue(m).xyz(2) );
+									if ( distjm < MINDIST_NONMOVEj ) MINDIST_NONMOVEj=distjm;
+								}
 							} //closest to nonmovable residues
 		
-						//std::cout << "Add CST: " << j << " chain " << i << " deviation: " << COORDDEV*MAXDIST/MINDIST_NONMOVEj  << std::endl;
             if (symm_info && !symm_info->bb_is_independent( j ) )
                j = symm_info->bb_follows( j );
 
@@ -288,6 +290,7 @@ void generate_partial_constraints(
                                // new BoundFunc( 0, bound_width_, coord_dev_, "xyz" )) );
 
 					}
+				}
 		} //add through contraints
 	} //loop through each chain
 }

@@ -126,7 +126,7 @@ public:
 
 	inline void set_scorefunction(core::scoring::ScoreFunctionOP const scorefxn) { scorefxn_ = scorefxn; }
 
-	void set_movable_region( utility::vector1< core::Size > allowed_to_move_in ) { allowed_to_move_ = allowed_to_move_in; }
+	void set_movable_region( utility::vector1< bool > allowed_to_move_in ) { allowed_to_move_ = allowed_to_move_in; }
 
 	void setup_scorefunctions(
 		core::scoring::ScoreFunctionOP score0,
@@ -221,7 +221,7 @@ private:
 
 	core::pose::PoseOP native_;
 
-	utility::vector1<core::Size> allowed_to_move_;
+	utility::vector1<bool> allowed_to_move_;
 
 }; //class FoldTreeHybridize
 

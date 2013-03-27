@@ -124,6 +124,13 @@ void RelaxProtocolBase::initialize_movemap(
 )
 {
 	using namespace core::id;
+
+  if ( fix_omega_ ) {
+			for (Size i=1; i<=pose.total_residue(); ++i) {
+					movemap.set( TorsionID(i, BB, 3),false );
+			}
+  }
+
 	if ( minimize_bond_lengths_ ) {
 		// 0 Default  all bondlengths
 		// 1          backbone only
@@ -240,6 +247,7 @@ void RelaxProtocolBase::set_defaults(){
 void RelaxProtocolBase::set_default_minimization_settings(){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
+	fix_omega_ = option[ OptionKeys::relax::fix_omega]();
 	minimize_bond_lengths_ = option[ OptionKeys::relax::minimize_bond_lengths ]();
 	minimize_bond_angles_ = option[ OptionKeys::relax::minimize_bond_angles ]();
 	minimize_bondlength_subset_ = option[ OptionKeys::relax::minimize_bondlength_subset ]();
@@ -300,11 +308,13 @@ void RelaxProtocolBase::set_task_factory( core::pack::task::TaskFactoryOP taskf 
 	task_factory_ = taskf;
 }
 
+void RelaxProtocolBase::fix_omega( bool setting ) { fix_omega_ = setting; }
 void RelaxProtocolBase::minimize_bond_lengths( bool setting ) { minimize_bond_lengths_ = setting; }
 void RelaxProtocolBase::minimize_bond_angles( bool setting ) { minimize_bond_angles_ = setting; }
 void RelaxProtocolBase::minimize_bondangle_subset( int setting ) { minimize_bondangle_subset_ = setting; }
 void RelaxProtocolBase::minimize_bondlength_subset( int setting ) { minimize_bondlength_subset_ = setting; }
 
+bool RelaxProtocolBase::fix_omega() const { return fix_omega_;}
 bool RelaxProtocolBase::minimize_bond_lengths() const { return minimize_bond_lengths_;}
 bool RelaxProtocolBase::minimize_bond_angles() const { return minimize_bond_angles_;}
 int RelaxProtocolBase::minimize_bondlength_subset() const { return minimize_bondlength_subset_;}
@@ -320,6 +330,7 @@ void RelaxProtocolBase::register_options()
 
 	runonce = true;
 
+	option.add_relevant( OptionKeys::relax::fix_omega );
 	option.add_relevant( OptionKeys::relax::minimize_bond_lengths );
 	option.add_relevant( OptionKeys::relax::minimize_bond_angles );
 	option.add_relevant( OptionKeys::relax::minimize_bondlength_subset );

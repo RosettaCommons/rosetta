@@ -72,7 +72,7 @@ void generate_fullatom_constraints(
 
 void generate_partial_constraints(
     core::pose::Pose &pose,
-    utility::vector1<core::Size> ignore_res );
+    utility::vector1<bool> ignore_res );
 
 void add_strand_pairs_cst(core::pose::Pose & pose, utility::vector1< std::pair< core::Size, core::Size > > const strand_pairs);
 

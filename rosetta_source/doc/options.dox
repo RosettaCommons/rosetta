@@ -4106,6 +4106,16 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>nmer svm sequence encoding matrix filename</dd><br>
 </dl>
 <dl>
+<dt><b>-nmer_svm_term_length</b> \<Integer\><dt>
+<dd>how many up/dnstream res to avg and incl in svm sequence encoding</dd><br>
+<dd>Default: 3</dd><br>
+</dl>
+<dl>
+<dt><b>-nmer_svm_pssm_feat</b> \<Boolean\><dt>
+<dd>add pssm features to svm encoding?</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
 <dt><b>-nmer_ref_seq_length</b> \<Integer\><dt>
 <dd>length of nmers in nmer_ref score</dd><br>
 <dd>Default: 9</dd><br>
@@ -5325,6 +5335,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-dna_move</b> \<Boolean\><dt>
 <dd>allow dna to move during relax + allow DNA-DNA interactions. Best if used with orbitals scorefunction. DNA stays together with great molprobity results.  Not recommended for general use at this time.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-fix_omega</b> \<Boolean\><dt>
+<dd>Fix omega angles during relax</dd><br>
 <dd>Default: false</dd><br>
 </dl>
 <dl>

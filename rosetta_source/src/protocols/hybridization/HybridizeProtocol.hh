@@ -172,7 +172,7 @@ private:
 	// task operations
   core::pack::task::TaskFactoryOP task_factory_;
   core::pack::task::PackerTaskOP task_;
-	utility::vector1<core::Size> allowed_to_move_;
+  utility::vector1<bool> allowed_to_move_;
 
 };
 

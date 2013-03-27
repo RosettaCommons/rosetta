@@ -89,7 +89,7 @@ public:
 	) {
 		ignore_template_indices_ = template_indices_in;
 	}
-  void set_movable_region( utility::vector1< core::Size > allowed_to_move_in ) { allowed_to_move_ = allowed_to_move_in; }
+  void set_movable_region( utility::vector1< bool > allowed_to_move_in ) { allowed_to_move_ = allowed_to_move_in; }
 
 private:
 
@@ -107,7 +107,7 @@ private:
 
 	std::set< core::Size > ignore_template_indices_;
 
-  utility::vector1<core::Size> allowed_to_move_;
+  utility::vector1<bool> allowed_to_move_;
 
 }; //class ChunkTrialMover
 

@@ -511,7 +511,7 @@ utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_for_big_fr
 	utility::vector1< core::Real > residue_weights(num_residues_nonvirt, 0.0);
 	TR.Debug << "Fragment insertion positions and weights:" << std::endl;
 	for ( Size ires=1; ires<= num_residues_nonvirt; ++ires ) {
-   if ( std::find(allowed_to_move_.begin(),allowed_to_move_.end(),ires)!=allowed_to_move_.end()) {
+   if ( allowed_to_move_[ires]==true ) {
 		if (domain_assembly_) {
 			bool residue_in_template = false;
 			for (Size i_template=1; i_template<=template_poses_.size(); ++i_template) {
@@ -1183,6 +1183,9 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 			add_non_protein_cst(pose, hetatm_self_cst_weight_, hetatm_prot_cst_weight_);
 	}
 
+	if ( scorefxn_->get_weight( core::scoring::coordinate_constraint ) != 0 ) {
+     generate_partial_constraints(pose,allowed_to_move_);
+	}
 	// Initialize the structure
 	bool use_random_template = false;
 	ChunkTrialMover initialize_chunk_mover(template_poses_, template_chunks_, ss_chunks_pose_, use_random_template, all_chunks);

@@ -68,11 +68,13 @@ protected:
 public:
 	// Accesors -------------------------------------
 
+	void fix_omega( bool setting );
 	void minimize_bond_lengths( bool setting );
 	void minimize_bond_angles( bool setting );
 	void minimize_bondlength_subset( int setting );
 	void minimize_bondangle_subset( int setting );
 
+	bool fix_omega() const;
 	bool minimize_bond_lengths() const;
 	bool minimize_bond_angles() const;
 	int minimize_bondlength_subset() const;
@@ -148,6 +150,7 @@ protected:
 
 private:  // Essentially MoveMap settings
 
+	bool fix_omega_;
 	bool minimize_bond_lengths_;
 	bool minimize_bond_angles_;
 	int minimize_bondangle_subset_;

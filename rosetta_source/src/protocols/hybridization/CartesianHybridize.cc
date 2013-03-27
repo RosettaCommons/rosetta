@@ -569,8 +569,7 @@ sampler:
 									frag_id = numeric::random::random_range( 1, nfrags );
 									frag =  new protocols::loops::Loop ( template_contigs_[templ_id][frag_id] );
 									for (core::Size iii=frag->start(); iii<=frag->stop(); ++iii) {
-										 if (std::find(allowed_to_move_.begin(),allowed_to_move_.end(),templates_[templ_id]->pdb_info()->number(iii))!=allowed_to_move_.end()) {
-													TR << "template " << templ_id << " frag_id " << frag_id << " contains " << templates_[templ_id]->pdb_info()->number(iii) << " at interface with size " << frag->size() << std::endl;
+										 if ( allowed_to_move_[templates_[templ_id]->pdb_info()->number(iii)]==true ) {
 													movable_loop=true;
 													break;
 											}
@@ -611,7 +610,7 @@ sampler:
 						residuals[i] = -1;
 					} else if (pose.fold_tree().is_cutpoint(i+1)) {
 						residuals[i] = -1;
-					} else if ( std::find(allowed_to_move_.begin(),allowed_to_move_.end(),i)==allowed_to_move_.end() ) {
+					} else if ( allowed_to_move_[i]==false ) {
 						residuals[i] = -1;
           } else {
 						numeric::xyzVector< core::Real > c0 , n1;
@@ -633,7 +632,11 @@ sampler:
 				}
 
 				// 25% chance of random position
-				max_poses[ 4 ] = allowed_to_move_[numeric::random::random_range(1,allowed_to_move_.size())];
+				int random_residue_move=numeric::random::random_range(1,allowed_to_move_.size());				
+				while (!allowed_to_move_[random_residue_move]) {
+						random_residue_move=numeric::random::random_range(1,allowed_to_move_.size());
+				}
+				max_poses[ 4 ] = random_residue_move;
 				//max_poses[ 4 ] = numeric::random::random_range(1,n_prot_res);
 				int select_position = numeric::random::random_range(1,4);
 				if (select_position == 4)

@@ -78,7 +78,7 @@ public:
 	void set_no_global_frame(bool no_global_frame_in) { no_global_frame_=no_global_frame_in; }
 	void set_linmin_only(bool linmin_only_in) { linmin_only_=linmin_only_in; }
 	void set_cartfrag_overlap(core::Size cartfrag_overlap_in) { cartfrag_overlap_=cartfrag_overlap_in; }
-  void set_movable_region( utility::vector1< core::Size > allowed_to_move_in ) { allowed_to_move_ = allowed_to_move_in; }
+  void set_movable_region( utility::vector1< bool > allowed_to_move_in ) { allowed_to_move_ = allowed_to_move_in; }
 
 	//
 	std::string	get_name() const { return "CartesianHybridize"; }
@@ -107,7 +107,7 @@ private:
 	core::scoring::ScoreFunctionOP lowres_scorefxn_, min_scorefxn_, bonds_scorefxn_, nocst_scorefxn_;
 
   // allowed to move regions
-  utility::vector1<core::Size> allowed_to_move_;
+  utility::vector1<bool> allowed_to_move_;
 }; //class CartesianHybridize
 	
 } // hybridize 

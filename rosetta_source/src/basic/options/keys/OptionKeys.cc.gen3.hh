@@ -1,3 +1,4 @@
+namespace edensity { RealOptionKey const fastdens_wt( "edensity:fastdens_wt" );  }
 namespace edensity { RealOptionKey const sliding_window_wt( "edensity:sliding_window_wt" );  }
 namespace edensity { BooleanOptionKey const score_sliding_window_context( "edensity:score_sliding_window_context" );  }
 namespace edensity { RealOptionKey const whole_structure_ca_wt( "edensity:whole_structure_ca_wt" );  }
