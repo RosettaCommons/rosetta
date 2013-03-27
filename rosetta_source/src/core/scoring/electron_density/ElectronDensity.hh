@@ -18,6 +18,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
+#include <core/conformation/Atom.fwd.hh>
 #include <core/scoring/electron_density/xray_scattering.hh>
 #include <core/scoring/electron_density/ElectronDensity.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
@@ -27,6 +28,7 @@
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray3D.hh>
+#include <numeric/xyzVector.hh>
 
 // C++ headers
 #include <string>
@@ -45,6 +47,9 @@ namespace electron_density {
 const core::Real MAX_FLT = 1e37;
 
 float pos_mod(float x,float y);
+
+// minimal required info for many density calcs
+typedef utility::vector1< std::pair< numeric::xyzVector< core::Real >, std::string > > lightPose;
 
 class ElectronDensity : public utility::pointer::ReferenceCount {
 public:
@@ -127,6 +132,10 @@ public:
 		bool cacheCCs=false
 	);
 
+
+	/////  "Density tools"
+	/////    -- all use "light pose" representation
+	/////
 	/// @brief get resolution bins (informational)
  	utility::vector1< core::Real >
 	getResolutionBins( core::Size nbuckets );
@@ -137,16 +146,23 @@ public:
 
 	/// @brief Compute intensities
 	utility::vector1< core::Real >
-	getIntensities( core::pose::Pose const &pose, core::Size nbuckets );
+	getIntensities( lightPose const &pose, core::Size nbuckets );
 
 	/// @brief Compute the FSC
 	utility::vector1< core::Real >
-	getFSC( core::pose::Pose const &pose, core::Size nbuckets );
+	getFSC( lightPose const &pose, core::Size nbuckets );
 
 	/// @brief Compute intensities, update density
 	void
 	scaleIntensities( utility::vector1< core::Real > I_tgt );
 
+	//
+	void
+	calcRhoC( lightPose const &pose );
+
+
+	/////  Scorefunction stuff
+	/////
 	/// @brief Match a pose to a patterson map
 	core::Real matchPoseToPatterson( core::pose::Pose const &pose, bool cacheCCs=false );
 
