@@ -1,0 +1,31 @@
+<dock_design>
+    <TASKOPERATIONS>
+    </TASKOPERATIONS>
+    <SCOREFXNS>
+        <stage1 weights="inputs/stage1" symmetric=1>
+            <Reweight scoretype=atom_pair_constraint weight=0.5/>
+        </stage1>
+        <stage2 weights="inputs/stage2" symmetric=1>
+            <Reweight scoretype=atom_pair_constraint weight=0.5/>
+        </stage2>
+        <fullatom weights="inputs/stage3_rlx" symmetric=1>
+            <Reweight scoretype=atom_pair_constraint weight=0.3/>
+        </fullatom>
+    </SCOREFXNS>
+    <FILTERS>
+    </FILTERS>
+    <MOVERS>
+        <Hybridize name=hybridize stage1_scorefxn=stage1 stage2_scorefxn=stage2 fa_scorefxn=fullatom  batch=1 stage1_increase_cycles=0.005 stage2_increase_cycles=0.005 linmin_only=0 add_hetatm=1 realign_domains=0 >
+            <Fragments 3mers="inputs/aaGDPxx03_05.200_v1_3.gz" 9mers="inputs/aaGDPxx09_05.200_v1_3.gz"/>
+           <Template pdb="inputs/50pct.lowest_edens.14.pdb" weight=0.27 symmdef="inputs/helix.symm"/> 
+           <Template pdb="inputs/50pct.lowest_edens.1.pdb"  weight=0.25 symmdef="inputs/helix.symm"/> 
+           <Template pdb="inputs/50pct.lowest_edens.12.pdb" weight=0.17 symmdef="inputs/helix.symm"/> 
+           <Template pdb="inputs/50pct.lowest_edens.22.pdb" weight=0.05 symmdef="inputs/helix.symm"/> 
+        </Hybridize>
+    </MOVERS>
+    <APPLY_TO_POSE>
+    </APPLY_TO_POSE>
+    <PROTOCOLS>
+        <Add mover=hybridize/>
+    </PROTOCOLS>
+</dock_design>

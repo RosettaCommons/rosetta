@@ -1,0 +1,42 @@
+-in:file:s inputs/refine_start.pdb
+-parser:protocol inputs/hybridize.xml
+-in:file:centroid_input
+-nstruct 1
+-extra_res inputs/GTP.params 
+
+# relax options
+-relax:cartesian
+-relax:minimize_bond_angles
+-relax:minimize_bond_lengths
+-relax:jump_move true
+-relax:default_repeats 1
+-scale_d 1
+-scale_theta 1
+-scale_rb 1
+-default_max_cycles 10
+-relax:min_type lbfgs_armijo_nonmonotone
+-relax:jump_move true
+-score:weights inputs/stage3_rlx.wts
+-use_bicubic_interpolation
+-hybridize:stage1_probability 1.0
+
+# density map options
+-edensity:mapfile inputs/GDP_finalmap_b_seg.mrc
+-edensity:score_symm_complex true
+-edensity:mapreso 10.0
+-edensity:grid_spacing 3.0
+-edensity:realign no
+
+#hackelec options
+-hackelec_min_dis 2.5
+-hackelec_max_dis 8
+-icoor_05_2009
+-parse_charge
+
+-output_virtual
+
+-mute core.io.pdb.file_data core.conformation.Conformation
+
+# reduce memory footprint
+-chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer  VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm
+-ignore_unrecognized_res
