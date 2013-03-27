@@ -13,149 +13,160 @@
 @page pyrosetta_toolkit Documentation for the PyRosetta Toolkit GUI
 
 @section metadata Metadata
-This document was last updated March 2013, by Jared Adolf-Bryfogle <jadolfbr@gmail.com>.
+Last edited March 2013.  Code by Jared Adolf-Bryfogle <jadolfbr@gmail.com>.
 The PI for this application is Roland Dunbrack <Roland.Dunbrack@fccc.edu>
 
-The application was developed by:
-@li Jared Adolf-Bryfogle
 
 @section code_demos Code and Demo
-The Code is available in both rosetta_source/GUIs/pyrosetta_toolkit and in the newest PyRosetta releases.
+The application is available in both rosetta_source/GUIs/pyrosetta_toolkit and in the newest PyRosetta binary releases.
 
  PyRosetta Setup:
-  http://www.pyrosetta.org/faq#TOC-1.-How-do-I-obtain-and-install-PyRosetta-
+  @li http://www.pyrosetta.org/faq#TOC-1.-How-do-I-obtain-and-install-PyRosetta-
 
  PyMOL Integration Setup:
-  See http://www.pyrosetta.org/pymol_mover-tutorial 
+  @li See http://www.pyrosetta.org/pymol_mover-tutorial 
 
  Run the program:
-  Use ./pyrosetta_toolkit.py within the code directory to run the application after setting up PyRosetta paths.
-
+  @li Use <code>./pyrosetta_toolkit.py</code> within /GUIs/pyrosetta_toolkit in rosetta_source or the PyRosetta directory to run the application after setting up PyRosetta paths.
 
 @section refs References
-PloSOne RosettaCON2012 Collection
+Jared Adolf-Bryfogle and Roland Dunbrack (2013) "The PyRosetta Toolkit: A Graphical User Interface for the Rosetta Software Suite. " PloS-ONE RosettaCON2012 special collection (In Publication)
+
+
 
 @section purpose Purpose
 This GUI is used to setup Rosetta specific filetypes, do interactive modeling using Rosetta as its base, run rosetta protocols, and analyze decoy results.
 
-@limits Limitations
+@section limits Limitations
 This application does not run all Rosetta Applications.  It does, however, run the most common ones.  Although multiprocessing is implemented, full production runs of many rosetta applications usually require a cluster.
 Always check relevant Rosetta Documentation on RosettaCommons.  Additional options for most protocols can be added through the Option System Manager.
 
+@section menus Menus
+
 @subsection file_menu File Menu
 Load a pose through this menu first either from a file or directly from the RCSB. If you have PyMOL setup, it will send the pose to PyMOL after it loads into Rosetta. 
-Loading a pose will open up the PDB Cleaning window by default. 
+Loading a pose will open up the PDB Cleaning window by default to prep the PDB for import into Rosetta. 
 
 PDB Cleaning Functions:
- renaming waters
- removing waters
- removing hetatm
- renaming DNA residues
- renaming MD atoms
- changing occupancies to 1.0
- renumbering pose from 1 + accounting for insertions
- checking that all residues are able to be read by Rosetta
+ @li renaming waters
+ @li removing waters
+ @li removing hetatm
+ @li renaming DNA residues
+ @li renaming MD atoms
+ @li changing occupancies to 1.0
+ @li renumbering pose from 1 + accounting for insertions
+ @li checking that all residues are able to be read by Rosetta
 
-Current Imports:GUI Session, Param PathList, Loop File
-Current Exports:GUI Session, Param PathList, Loop File, basic Resfile, basic Blueprint, SCWRL seq file, FASTA (pose + regions)
+@li Current Imports:GUI Session, Param PathList, Loop File
+@li Current Exports:GUI Session, Param PathList, Loop File, basic Resfile, basic Blueprint, SCWRL seq file, FASTA (pose + regions)
 
 @subsection main Main Window
 The main window is used to run common protocols, some anlysis, setup decoy output, and finally set a region.
 
-Regions: 
- Chain: can be added by just specifying the chain
- N-terminus:Leave 'start' entry box blank, or enter any string, specify both chain and end residue number
- C-terminus:Leave 'end' entry box blank, or enter any string, specify both chain and start residue number
+The default region is the whole protein.  To specify loops for loop modeling, regions for minimization or residues for repacking, etc. add a region:
+ @li Chain: can be added by just specifying the chain
+ @li N-terminus:Leave 'start' entry box blank, or enter any string, specify both chain and end residue number
+ @li C-terminus:Leave 'end' entry box blank, or enter any string, specify both chain and start residue number
+ @li Residue: Have start + end be the same residue.
 
 Sequence:
- A sequence of the pose or region can be found in the lower part of the screen.  Placing your cursor at the left part of a residue will show its residue number, chain, and rosetta resnum.  This can be colored in pymol and used to select residues in the Per-residue control window described below.
+ @li A sequence of the pose or region can be found in the lower part of the screen.  Placing your cursor at the left part of a residue will show its residue number, chain, and rosetta resnum.  This can be colored in pymol and used to select residues in the Per-Residue Control Window described below.
 
 Output Options:
- The default output directory is the dir of the current pose.  This and other output options for decoys can be set in the upper right and lower right frames.
+ @li The default output directory is the dir of the current pose.  This and other output options for decoys can be set in the upper right and lower right areas of the main window.
+ @li Multiple Processors are used only for protocol runs of >1 decoy, as well as some functions from the PDBList menu.
 
 Protocols:
- A few common minimization protocols can be ran through the main window (Repack, Minimize, Relax, SCWRL).  
+ @li A few common minimization protocols can be ran through the main window (Repack, Minimize, Relax, SCWRL).  
 
 @subsection options_menu Options Menu
-Setup Rosetta command-line options using the options system manager, set general protocol options, set the current score function.
+@li Setup Rosetta command-line options using the options system manager
+@li Set general protocol options
+@li Set the current score function.
 
 @subsection visualization_menu Visualization Menu
 PyMOL Integration.  A pose can be shown in PyMOL at any time.  Regions can be colored, and the PyMOL Observer can be enabled that updates pymol upon structural and energetic changes to the current pose.
 
 @subsection advanced_menu Advanced Menu
-Enable + explore params + patches for NCAA/Ligands/PTMs, enable constraints, setup a Resfile for design, and use the Per-residue control and analysis window to get detailed data on each residue, as well as mutate, repack, change dihedrals, add and remove variants, etc.
+@li Enable and  explore params + patches for NCAA/Ligands/PTMs
+@li Enable constraints
+@li Setup a Resfile for design
+@li Insert arbitrary data into Bfactor column of loaded protein
+@li Use the Per-residue control and analysis window to get detailed data on each residue, as well as mutate, repack, change dihedrals, add and remove variants, etc.
+
 
 Analysis Movers:
- Interface Analyzer
- Loop Analyzer
- Packing Analyzer
- VIP
+ @li Interface Analyzer
+ @li Loop Analyzer
+ @li Packing Analyzer
+ @li VIP
 
 
 @subsection protocols_menu Protocols Menu
 *For most protocols, options not given in a UI like -constrain_relax_to_start_coords can be set using the options system manager.  
 
 Currently Implemented:
- High/Low Resolution Docking
- High/Low Resolution Loop Modeling (KIC/CCD)
- Fixedbb Design
- Floppytail
- Grafting
- FastRelax
- ClassicRelax
- PackRotamers (Rosetta)
- PackRotamers (SCWRL)
- Minimizer
+ @li High/Low Resolution Docking
+ @li High/Low Resolution Loop Modeling (KIC/CCD)
+ @li Fixedbb Design
+ @li Floppytail
+ @li Grafting
+ @li FastRelax
+ @li ClassicRelax
+ @li PackRotamers (Rosetta)
+ @li PackRotamers (SCWRL)
+ @li Minimizer
 
 Server Links:
- ROSIE
- Fragments
- Backrub
- Interface Alanine Scan
- DNA Interface Scan
- Scaffold Select
+ @li ROSIE
+ @li Fragments
+ @li Backrub
+ @li Interface Alanine Scan
+ @li DNA Interface Scan
+ @li Scaffold Select
 
 
 
-@subsection pdblist_menu PDBList
+@subsection pdblist_menu PDBList Menu
 A PDBList is simply a list of full paths to PDB files, one on each line.  It is used by the GUI to analyze decoys.  Methods for making and using a PDBList reside here.
 
 Main Functions:
- Lowest Energy - get lowest energy poses from a PDBList
- Energy vs RMSD - Calculate Energy vs RMSD + output a file that can be graphed in any graphing application.
- Output FASTA - Output FASTA with sequence for each pose or only of the given region
- Design Statistics - Use FASTA to calculate design stats from a Rosetta design run.  Outputs textfiles and an R plot.  Needs reference pose loaded.  Does not work with insertions and deletions during the design yet.
+ @li Lowest Energy - get lowest energy poses from a PDBList
+ @li Energy vs RMSD - Calculate Energy vs RMSD + output a file that can be graphed in any graphing application.
+ @li Output FASTA - Output FASTA with sequence for each pose or only of the given region
+ @li Design Statistics - Use FASTA to calculate design stats from a Rosetta design run.  Outputs textfiles and an R plot.  Needs reference pose loaded.  Does not work with insertions and deletions during the design yet.
 
 
 @section tips Tips
 
--Setup PyRosetta in bashrc file.  
+@li -Set default (command-line) Options through the options system manager window
+@li -Set default Scorefunction through the scorefunction window - Used by all protocols.
+@li -Save and Load GUI Sessions using the file menu
+@li -Advanced Users: To add personal windows and functions to the GUI, see developer html in pyrosetta_toolkit/documentation directory.
+@li Please visit http://bugs.rosettacommons.org for any Toolkit-specific bugs
+
+@subsection bachrc Bashrc Setup
 
  This is so you do not need to source SetPyRosettaEnvironment.sh each time you want to use Toolkit.  Takes a few minutes, but worth it.  For more information on to what a bash shell is: http://superuser.com/questions/49289/what-is-bashrc-file
  
  To do this:
-  1) open SetPyRosettaEnvironment.sh in a text editor (Can be found in PyRosetta directory).  Copy it's text from where it says export PYROSETTA down.
-  2) open $HOME/.bashrc (linux) or $HOME/.bash_profile (mac) into vi or gedit through the command-line.
-  --> vi $HOME/.bashrc
-  3) paste what was in SetPyRosettaEnvironment, editing this line
-        export PYROSETTA
-              to
-	export PYROSETTA='full/path/to/PyRosetta/directory'
+  @li 1) open SetPyRosettaEnvironment.sh in a text editor (Can be found in PyRosetta directory).  Copy it's text from where it says export PYROSETTA down.
+  @li 2) open $HOME/.bashrc (linux) or $HOME/.bash_profile (mac) into vi or gedit through the command-line.
+  --> <code>vi $HOME/.bashrc</code>
+  @li 3) paste what was in SetPyRosettaEnvironment, editing this line: 
+        <code>export PYROSETTA</code>   to   
+	<code>export PYROSETTA='full/path/to/PyRosetta/directory'</code>
+  @li Also, Make sure there are no extra spaces next to the equals sign. 
+  @li 4) Your bashrc will run each time a new terminal window or tab is created.  To run it now: source $HOME/.bashrc
 
-	*Make sure there are no extra spaces next to the equals sign. 
+@subsection pymol PyMOL Setup 
+Setup so that the pymol server runs + listens each time PyMOL is opened.
 
-  4) Your bashrc will run each time a new terminal window or tab is created.  To run it now: source $HOME/.bashrc
-
-
--Setup pymol server to run each time PyMOL is opened.
-
-  1) Add a line in the file $HOME/.pymolrc (may be a new file):
-  --> run full/path/to/PyMOLPyRosettaServer.py (This file is found in the PyRosetta directory)
+  @li 1) Add a line in the file $HOME/.pymolrc (may be a new file):
+  <code>run full/path/to/PyMOLPyRosettaServer.py</code>
+  (This file is found in the PyRosetta directory)
  
--Set default Options through the options system manager window
--Set default Scorefunction through the scorefunction window
--Save and Load GUI Sessions using the file menu
--Advanced Users: To add personal windows and functions to the GUI, see developer webpage in pyrosetta_toolkit directory.
+
 
 @section changelog Changes since last release
 This will be the first release
