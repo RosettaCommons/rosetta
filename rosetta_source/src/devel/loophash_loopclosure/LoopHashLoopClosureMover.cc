@@ -119,10 +119,6 @@ static basic::Tracer TR ("devel.loophash_loopclosure.LoopHashLoopClosureMover" )
 			utility_exit();
 		}
 
-		if( !option[ remodel::lh_ex_limit ] > 4 ){
-			TR.Warning << "lh_ex_limit may be too big and cause segmentation error: " << option[ remodel::lh_ex_limit ] << std::endl;
-		}
-
 		remodel_ = new protocols::forge::remodel::RemodelMover();
 		remodel_->apply(pose);
 	}
@@ -248,7 +244,7 @@ static basic::Tracer TR ("devel.loophash_loopclosure.LoopHashLoopClosureMover" )
 					for( size_t j=0; j<(size_t)loop_len; ++j ) {
 						bp << "0 x L" << std::endl;
 					}
-					bp << i << " A ." << std::endl;
+					bp << i << " A L" << std::endl;
 				}
 			}
 		}
@@ -289,8 +285,9 @@ static basic::Tracer TR ("devel.loophash_loopclosure.LoopHashLoopClosureMover" )
 			for(Size j=0; j<loop.minn_; ++j) {
 				bp << "0 x L" << std::endl;
 			}
-			// jump to the terminal-1 (for the FOR loop increment)
-			i= loop.r2_-1;
+			bp << loop.r2_ << " A L" << std::endl;
+			// jump to the terminal so that the for loop (++i) starts from the next residue.
+			i= loop.r2_;
 		}
 		bp.close();
 		return;

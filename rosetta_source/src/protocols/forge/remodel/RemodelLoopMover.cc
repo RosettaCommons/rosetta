@@ -1513,13 +1513,14 @@ void RemodelLoopMover::loophash_stage(
 
 		Size lh_frag_count = leap_index_list.size();
 		if (leap_index_list.size() == 0){
-			TR.Warning << "No fragment found within radius=" << lh_ex_limit << "A.  No point of continuing.  Quitting..." << std::endl;
-			utility_exit();
+			TR.Warning << "No fragment found within radius=" << lh_ex_limit << "A.  Skip closure..." << std::endl;
+			return;
 		}
 		else{
 			TR << "Collected " << leap_index_list.size() << " fragments within radius=" << lh_ex_limit << "A." << std::endl;
 		}
 
+		// sanity check
 		for( std::vector < core::Size >::const_iterator itx = leap_index_list.begin(); itx != leap_index_list.end(); ++itx ){
 					core::Size bb_index = *itx;
 					LeapIndex cp = hashmap.get_peptide( bb_index );
@@ -1528,11 +1529,8 @@ void RemodelLoopMover::loophash_stage(
 		}
 
 		if( bs_vec_.size() == 0 ) {
-				TR.Warning << "No fragment found for loop size=" << loopsize << ".  No point of conitinuing.  Quitting..." << std::endl;
-				utility_exit();
-		}
-		else {
-					//output_pdb(bs_vec_, loopsize, out_path, utility::to_string(key[i]) + ".");
+				TR.Warning << "No fragment found for loop size=" << loopsize << ".  Skip closure..." << std::endl;
+				return;
 		}
 
 		// do closure
