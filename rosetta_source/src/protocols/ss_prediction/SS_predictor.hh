@@ -17,6 +17,8 @@
 #ifndef INCLUDED_protocols_ss_prediction_SS_predictor_hh
 #define INCLUDED_protocols_ss_prediction_SS_predictor_hh
 
+//// utility headers
+#include <utility/pointer/ReferenceCount.hh>
 
 //// C++ headers
 #include <string>
@@ -35,7 +37,7 @@ using core::SSize;
 using utility::vector1;
 using namespace utility::libsvm;
 
-class SS_predictor{
+class SS_predictor : public utility::pointer::ReferenceCount {
  public:
 	/// @brief Reads in models for SS prediction etc.
 	SS_predictor(string type);
