@@ -35,6 +35,7 @@
 #include <protocols/fldsgn/filters/SheetTopologyFilterCreator.hh>
 
 #include <protocols/denovo_design/filters/ExposedHydrophobicsFilterCreator.hh>
+#include <protocols/denovo_design/filters/SSPredictionFilterCreator.hh>
 
 #include <protocols/ligand_docking/AtomCountFilterCreator.hh>
 #include <protocols/ligand_docking/ChainExistsFilterCreator.hh>

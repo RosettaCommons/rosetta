@@ -50,6 +50,7 @@ static FilterRegistrator< protocols::fldsgn::filters::SecondaryStructureFilterCr
 static FilterRegistrator< protocols::fldsgn::filters::SheetTopologyFilterCreator > reg_SheetTopologyFilterCreator;
 
 static FilterRegistrator< protocols::denovo_design::filters::ExposedHydrophobicsFilterCreator > reg_ExposedHydrophobicsFilterCreator;
+static FilterRegistrator< protocols::denovo_design::filters::SSPredictionFilterCreator > reg_SSPredictionFilterCreator;
 
 static FilterRegistrator< protocols::ligand_docking::AtomCountFilterCreator > reg_AtomCountFilterCreator;
 static FilterRegistrator< protocols::ligand_docking::CompleteConnectionsFilterCreator > reg_CompleteConnectionsFilterCreator;
