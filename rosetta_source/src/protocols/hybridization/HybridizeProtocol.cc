@@ -980,7 +980,8 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			core::kinematics::MoveMapOP mm=new core::kinematics::MoveMap;
 			if (core::pose::symmetry::is_symmetric(pose) )
 				core::pose::symmetry::make_symmetric_movemap( pose, *mm );
-			options_lbfgs.max_iter(200);
+			Size n_min_cycles =(Size) (200.*stage25_increase_cycles_);
+			options_lbfgs.max_iter(n_min_cycles);
 			(*stage2_scorefxn_)(pose); minimizer.run( pose, *mm, *stage2_scorefxn_, options_lbfgs );
 		}
 
@@ -1224,6 +1225,7 @@ HybridizeProtocol::parse_my_tag(
 	// basic options
 	stage1_increase_cycles_ = tag->getOption< core::Real >( "stage1_increase_cycles", 1. );
 	stage2_increase_cycles_ = tag->getOption< core::Real >( "stage2_increase_cycles", 1. );
+	stage25_increase_cycles_ = tag->getOption< core::Real >( "stage2.5_increase_cycles", 1. );
 	fa_cst_fn_ = tag->getOption< std::string >( "fa_cst_file", "" );
 	batch_relax_ = tag->getOption< core::Size >( "batch" , 1 );
 

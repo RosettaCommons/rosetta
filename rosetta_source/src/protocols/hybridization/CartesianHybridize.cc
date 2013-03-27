@@ -427,7 +427,13 @@ CartesianHybridize::apply( Pose & pose ) {
 	core::optimization::MinimizerOptions options_minilbfgs( "lbfgs_armijo_nonmonotone", 0.01, true, false, false );
 	options_minilbfgs.max_iter(5);
 	core::optimization::MinimizerOptions options_lbfgs( "lbfgs_armijo_nonmonotone", 0.01, true, false, false );
-	options_lbfgs.max_iter(200);
+	if (increase_cycles_ < 1.) {
+		Size niter = (Size) (200*increase_cycles_);
+		options_lbfgs.max_iter(niter);
+	}
+	else {
+		options_lbfgs.max_iter(200);
+	}
 	core::optimization::CartesianMinimizer minimizer;
 	core::kinematics::MoveMap mm;
 
