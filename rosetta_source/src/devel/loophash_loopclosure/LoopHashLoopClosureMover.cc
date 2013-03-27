@@ -314,7 +314,7 @@ static basic::Tracer TR ("devel.loophash_loopclosure.LoopHashLoopClosureMover" )
 
 		// Create a process-unique filename for dummy blueprint,
 		// and let multiple threads, if there is any, share one.
-		pid_t pid = getpid();
+		//pid_t pid = getpid();
 		std::stringstream ss;
 		ss << tag->getOption("name", get_current_tag());
 		//ss << "_" << pid;
