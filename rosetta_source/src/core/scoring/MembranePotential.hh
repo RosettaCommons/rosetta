@@ -176,17 +176,17 @@ public:
 		Real & membrane_cb_score
 	) const;
 
-	///
+	///Where the action happens. Calcluate the energy for the two residues
 	void
 	evaluate_pair(
-				  pose::Pose const & pose,
+		pose::Pose const & pose,
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		Real const cendist,
 		Real & membrane_pair_score
 	) const;
 
-	void
+	virtual void
 	finalize( pose::Pose & pose ) const;
 
 	void

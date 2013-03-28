@@ -98,7 +98,6 @@ public:
 
 	)const;
 
-	void set_orb_weights(ScoreFunction const & weights) const;
 
 private:
 	///@brief number of statistics to put into matrix

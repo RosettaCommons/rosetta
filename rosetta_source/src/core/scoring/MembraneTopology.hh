@@ -10,7 +10,11 @@
 /// @file   core/scoring/methods/MembraneTopology.hh
 /// @brief  MembraneTopology
 /// @author Bjorn Wallner
-
+/*
+This code reads in the spanfile and lipo file that is provided by the user.
+Residues in the membrane are stored in private data which is accessed by
+cacheable data from the pose.
+*/
 
 #ifndef INCLUDED_core_scoring_MembraneTopology_hh
 #define INCLUDED_core_scoring_MembraneTopology_hh
@@ -20,27 +24,13 @@
 // Unit headers
 #include <core/scoring/MembraneTopology.fwd.hh>
 
-// Package headers
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.fwd.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.fwd.hh>
-
-// Project headers
-// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <basic/datacache/CacheableData.hh>
 
-// Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
-
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray3D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray4D.hh>
 
 #include <utility/vector1.hh>
-
-
-// C++
 
 
 namespace core {
@@ -247,7 +237,7 @@ private: // data
 	bool beta_barrel_;
 	bool N_term_inside_;
   bool initialized_; //pba
-	utility::vector1< bool > tmregion_;
+	utility::vector1< bool > tmregion_; //stores if the residue is in the TM or not
 	utility::vector1< bool > allow_scoring_;
 	utility::vector1< bool > allow_tmh_scoring_;
 	Size tmh_inserted_;

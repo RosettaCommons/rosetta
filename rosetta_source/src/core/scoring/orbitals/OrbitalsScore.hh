@@ -64,6 +64,18 @@ public:
 		utility::vector1< DerivVectorPair > & r1_atom_derivs,
 		utility::vector1< DerivVectorPair > & r2_atom_derivs
 	) const;
+	virtual
+	void
+	setup_for_minimizing_for_residue_pair(
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		pose::Pose const & pose,
+		ScoreFunction const & sfxn,
+		kinematics::MinimizerMapBase const & minmap,
+		ResSingleMinimizationData const & res1_data_cache,
+		ResSingleMinimizationData const & res2_data_cache,
+		ResPairMinimizationData & data_cache
+	) const;
 
 	virtual
 	void
@@ -134,24 +146,41 @@ public:
 
 public:
 
+	void scfxn_rules_for_energy(
+		bool hydrogen_interaction,
+		core::Size orbtype1,
+		OrbitalsLookup::h_type htype,
+		core::Size orbtype2,
+		core::Real energy,
+		EnergyMap & emap
+	) const;
+	core::Real scfxn_rules_for_weight(
+		bool hydrogen_interaction,
+		core::Size orbtype1,
+		OrbitalsLookup::h_type htype,
+		core::Size orbtype2,
+		EnergyMap const & emap
+	) const;
+
+
 	void get_E_haro_one_way(
 			core::conformation::Residue const & res1,
 			core::conformation::Residue const & res2,
-			core::Real & HARO_sc_H_sc_orb_E
+			EnergyMap & emap
 	) const;
 
 	void get_E_hpol_one_way(
 			core::conformation::Residue const & res1,
 			core::conformation::Residue const & res2,
-			core::Real & HPOL_sc_H_sc_orb_E,
-			core::Real & HPOL_bb_H_sc_orb_energy
+			EnergyMap & emap
 	) const;
 
 	void get_orb_orb_E(
 			core::conformation::Residue const & res1,
 			core::conformation::Residue const & res2,
-			core::Real & orb_orb_E
+			EnergyMap & emap
 	)const;
+
 	void get_orb_H_distance_and_energy(
 			core::conformation::Residue const & res1,
 			core::Size const & Aindex,
@@ -161,7 +190,8 @@ public:
 			core::Real & sc_energy,
 			core::Real & bb_h_energy,
 			OrbitalsLookup::h_type htype,
-			bool bb_h_flag
+			bool bb_h_flag,
+			EnergyMap & emap
 	) const;
 
 	void assign_haro_derivs_one_way(

@@ -220,7 +220,7 @@ public:
   compute_fa_projection(pose::Pose & pose) const;
 //  compute_fa_projection(pose::Pose const & pose) const;
 
-	void
+	virtual	void
 	finalize( pose::Pose & pose ) const;
 
 protected:

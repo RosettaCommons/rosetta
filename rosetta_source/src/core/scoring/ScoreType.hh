@@ -175,10 +175,13 @@ enum ScoreType {
 
 
 	// All the orbitals scoretypes
-	orbitals_hpol,
-	orbitals_haro,
-	orbitals_orbitals,
 	orbitals_hpol_bb,
+	pci_cation_pi,
+	pci_pi_pi,
+	pci_salt_bridge,
+	pci_hbond,
+
+
 
 	PyRosettaTwoBodyContextIndepenedentEnergy_first,
 	PyRosettaTwoBodyContextIndepenedentEnergy_last = PyRosettaTwoBodyContextIndepenedentEnergy_first + 10,

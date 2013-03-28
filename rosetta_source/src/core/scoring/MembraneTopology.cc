@@ -16,20 +16,11 @@
 // Unit headers
 #include <core/scoring/MembraneTopology.hh>
 
-// Package headers
-
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <basic/database/open.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/pose/Pose.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/after_opts.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 
@@ -83,10 +74,10 @@ MembraneTopology::initialize(std::string const & spanfile)
 	TR << "Initialize Membrane spanning regions with " << spanfile << std::endl;
 	std::string line;
 	utility::io::izstream stream (spanfile);
-	getline(stream,line);
+	getline(stream,line);//header for file. Usually says TM region prediction for...
 	TR << line << std::endl;
 	getline(stream,line);
-	Size total_residue;
+	Size total_residue(0);
 	{
 		std::istringstream l(line);
 		TR << line << std::endl;
@@ -105,20 +96,20 @@ MembraneTopology::initialize(std::string const & spanfile)
 	getline(stream,line); //parallel
 	TR << line << std::endl;
 	for(Size i=1;i<=total_tmhelix_;++i)
+	{
+		getline(stream,line);
 		{
-			getline(stream,line);
-			{
-				std::istringstream l(line);
-				l >> span_(i,1) >> span_(i,2);
-			}
+			std::istringstream l(line);
+			l >> span_(i,1) >> span_(i,2);
+		}
 
-			TR << line << std::endl ;
-			helix_id_(i)=i;
-		}
+		TR << line << std::endl ;
+		helix_id_(i)=i;
+	}
 	if(total_tmhelix_==0)
-		{
-			utility_exit_with_message("bad format for spanfile total_tmhelix=0");
-		}
+	{
+		utility_exit_with_message("bad format for spanfile total_tmhelix=0");
+	}
 	stream.close();
 	stream.clear();
 
@@ -150,7 +141,7 @@ MembraneTopology::initialize(std::string const & spanfile)
 				continue;
 			}
 		}
-		//TR << "tmregion " << i << " " << tmregion_[i] << std::endl;
+		TR << "tmregion " << i << " " << tmregion_[i] << std::endl;
 	}
 
 	//init Lipo

@@ -153,10 +153,12 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "symE_bonus"  ] = symE_bonus;
 	name2score_type_[ "sym_lig"  ] = sym_lig;
 
-	name2score_type_[ "orbitals_hpol" ] = orbitals_hpol;
-	name2score_type_[ "orbitals_haro" ] = orbitals_haro;
 	name2score_type_["orbitals_hpol_bb"] = orbitals_hpol_bb;
-	name2score_type_["orbitals_orbitals"] = orbitals_orbitals;
+	name2score_type_["pci_cation_pi"] = pci_cation_pi;
+	name2score_type_["pci_pi_pi"] =pci_pi_pi;
+	name2score_type_["pci_salt_bridge"] =pci_salt_bridge;
+	name2score_type_["pci_hbond"] =pci_hbond;
+
 
 	name2score_type_[ "geom_sol"    ] = geom_sol;
 	name2score_type_[ "occ_sol_fitted"    ] = occ_sol_fitted;

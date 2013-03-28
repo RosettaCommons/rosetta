@@ -483,11 +483,11 @@ MembranePotential::evaluate_cbeta(
 ///////////////////////////////////////////////////////////////////////////////////////////////
 void
 MembranePotential::evaluate_pair(
-								 pose::Pose const & pose,
-								 conformation::Residue const & rsd1,
+	pose::Pose const & pose,
+	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	Real const cendist,
-		Real & membrane_pair_score
+	Real & membrane_pair_score
 	) const
 {
 
@@ -499,9 +499,9 @@ MembranePotential::evaluate_pair(
 	chemical::AA const aa2( rsd2.aa() );
 
 	//CAR  no pair score if a disulfide
-	if ( aa1 == chemical::aa_cys && aa2 == chemical::aa_cys &&
-			 rsd1.is_bonded( rsd2 ) && rsd1.polymeric_sequence_distance( rsd2 ) > 1 &&
-			 rsd1.has_variant_type( chemical::DISULFIDE ) && rsd2.has_variant_type( chemical::DISULFIDE ) ) return;
+	if (	aa1 == chemical::aa_cys && aa2 == chemical::aa_cys &&
+			rsd1.is_bonded( rsd2 ) && rsd1.polymeric_sequence_distance( rsd2 ) > 1 &&
+			rsd1.has_variant_type( chemical::DISULFIDE ) && rsd2.has_variant_type( chemical::DISULFIDE ) ) return;
 
 	// no pair score for residues closer than 9 in sequence
 	if ( rsd1.polymeric_sequence_distance( rsd2 ) /* j - i */ <= 8 ) return;
@@ -582,7 +582,7 @@ MembranePotential::evaluate_pair(
 	} else {
 		membrane_pair_score =   ( 1.0f - interp2 ) * mem_pair_log_( hydro_layer,icon  , aa1, aa2 );
 	}
-	membrane_pair_score*=2.019;
+	membrane_pair_score*=2.019;//why is this multiplied by 2.019???
 	return;
 }
 
@@ -600,6 +600,7 @@ const
   }
 
   //pba
+  //read in spanfile
   MembraneTopology & topology( nonconst_MembraneTopology_from_pose(pose) );
   if ( !topology.initialized() ) {
 		if(option[in::file::spanfile].user()) {
