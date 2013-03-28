@@ -1,0 +1,22 @@
+METHOD_WEIGHTS ref 0.447092 0.310964 -1.28478 -1.69787 0.7394 -0.0403682 0.488096 0.777846 -0.336068 0.598605 0.241356 -1.25782 -0.196754 -1.32478 -0.418537 -0.0875871 0.0685063 0.695118 1.73396 0.543615 
+fa_atr 0.8
+fa_rep 0.4
+fa_sol 0.583958
+fa_intra_rep 0.004
+pro_close 1
+pci_cation_pi 2
+pci_pi_pi 0.05
+pci_salt_bridge 0.45
+pci_hbond 0.3
+orbitals_hpol_bb 0.2
+hbond_sr_bb 0.585
+hbond_lr_bb 1.17
+dslf_ss_dst 1
+dslf_cs_ang 1
+dslf_ss_dih 1
+dslf_ca_dih 1
+rama 0.2
+omega 0.5
+fa_dun 0.56
+p_aa_pp 0.32
+ref 1
