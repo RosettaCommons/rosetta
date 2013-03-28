@@ -340,6 +340,10 @@ RDC::RDC_TYPE RDC::get_RDC_data_type(std::string const & atom1,
 		RDC_type = RDC_TYPE_NC;
 	else if ((elem1 == "C" && elem2 == "C"))
 		RDC_type = RDC_TYPE_CC;
+	else if ((elem1 == "C" && elem2 == "H") || (elem1 == "H" && elem2 == "C"))
+		RDC_type = RDC_TYPE_CHN;
+	else if ((elem1 == "N" && elem2 == "CA") || (elem1 == "CA" && elem2 == "N"))
+		RDC_type = RDC_TYPE_NCA;
 	else
 		throw(utility::excn::EXCN_BadInput(
 				"unknown combination of atoms for RDC " + atom1 + " " + atom2));
@@ -938,6 +942,14 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(core::pose::Pose const& pose)
           r.normalize(1.525);
           r2 = r.norm_squared();
           invr = 1.0 / sqrt(r2);
+        } else if ( it->type() == RDC::RDC_TYPE_CHN && std::abs((int) it->res1()-(int) it->res2())==1 ) {
+          r.normalize(2.085);
+          r2 = r.norm_squared();
+          invr = 1.0 / sqrt(r2);
+        } else if ( it->type() == RDC::RDC_TYPE_NCA && std::abs((int) it->res1()-(int) it->res2())==0 ) {
+          r.normalize(1.458);
+          r2 = r.norm_squared();
+          invr = 1.0 / sqrt(r2);
         } else {
             tr.Error << "unreognized type or residue sequence separation does not allow using correct_NH" << std::endl;
             throw( utility::excn::EXCN_BadInput("unreognized type or residue sequence separation does not allow using correct_NH "));
@@ -1160,6 +1172,14 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(core::pose::Pose const& pose)
           r.normalize(1.525);
           r2 = r.norm_squared();
           invr = 1.0 / sqrt(r2);
+        } else if ( it->type() == RDC::RDC_TYPE_CHN && std::abs((int) it->res1()-(int) it->res2())==1 ) {
+          r.normalize(2.085);
+          r2 = r.norm_squared();
+          invr = 1.0 / sqrt(r2);
+        } else if ( it->type() == RDC::RDC_TYPE_NCA && std::abs((int) it->res1()-(int) it->res2())==0 ) {
+          r.normalize(1.458);
+          r2 = r.norm_squared();
+          invr = 1.0 / sqrt(r2);
         } else {
             tr.Error << "unreognized type or residue sequence separation does not allow using correct_NH" << std::endl;
             throw( utility::excn::EXCN_BadInput("unreognized type or residue sequence separation does not allow using correct_NH "));
@@ -1362,6 +1382,14 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDa(core::pose::Pose const& pos
           r.normalize(1.525);
           r2 = r.norm_squared();
           invr = 1.0 / sqrt(r2);
+        } else if ( it->type() == RDC::RDC_TYPE_CHN && std::abs((int) it->res1()-(int) it->res2())==1 ) {
+          r.normalize(2.085);
+          r2 = r.norm_squared();
+          invr = 1.0 / sqrt(r2);
+        } else if ( it->type() == RDC::RDC_TYPE_NCA && std::abs((int) it->res1()-(int) it->res2())==0 ) {
+          r.normalize(1.458);
+          r2 = r.norm_squared();
+          invr = 1.0 / sqrt(r2);
         } else {
             tr.Error << "unreognized type or residue sequence separation does not allow using correct_NH" << std::endl;
             throw( utility::excn::EXCN_BadInput("unreognized type or residue sequence separation does not allow using correct_NH "));
@@ -1513,6 +1541,14 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDa(core::pose::Pose const& pos
           invr = 1.0 / sqrt(r2);
         } else if ( it->type() == RDC::RDC_TYPE_CC && std::abs((int) it->res1()-(int) it->res2())==0 ) {
           r.normalize(1.525);
+          r2 = r.norm_squared();
+          invr = 1.0 / sqrt(r2);
+        } else if ( it->type() == RDC::RDC_TYPE_CHN && std::abs((int) it->res1()-(int) it->res2())==1 ) {
+          r.normalize(2.085);
+          r2 = r.norm_squared();
+          invr = 1.0 / sqrt(r2);
+        } else if ( it->type() == RDC::RDC_TYPE_NCA && std::abs((int) it->res1()-(int) it->res2())==0 ) {
+          r.normalize(1.458);
           r2 = r.norm_squared();
           invr = 1.0 / sqrt(r2);
         } else {
@@ -1678,6 +1714,14 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsR(core::pose::Pose const& pose
           r.normalize(1.525);
           r2 = r.norm_squared();
           invr = 1.0 / sqrt(r2);
+        } else if ( it->type() == RDC::RDC_TYPE_CHN && std::abs((int) it->res1()-(int) it->res2())==1 ) {
+          r.normalize(2.085);
+          r2 = r.norm_squared();
+          invr = 1.0 / sqrt(r2);
+        } else if ( it->type() == RDC::RDC_TYPE_NCA && std::abs((int) it->res1()-(int) it->res2())==0 ) {
+          r.normalize(1.458);
+          r2 = r.norm_squared();
+          invr = 1.0 / sqrt(r2);
         } else {
             tr.Error << "unreognized type or residue sequence separation does not allow using correct_NH" << std::endl;
             throw( utility::excn::EXCN_BadInput("unreognized type or residue sequence separation does not allow using correct_NH "));
@@ -1826,6 +1870,14 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsR(core::pose::Pose const& pose
           invr = 1.0 / sqrt(r2);
         } else if ( it->type() == RDC::RDC_TYPE_CC && std::abs((int) it->res1()-(int) it->res2())==0 ) {
           r.normalize(1.525);
+          r2 = r.norm_squared();
+          invr = 1.0 / sqrt(r2);
+        } else if ( it->type() == RDC::RDC_TYPE_CHN && std::abs((int) it->res1()-(int) it->res2())==1 ) {
+          r.normalize(2.085);
+          r2 = r.norm_squared();
+          invr = 1.0 / sqrt(r2);
+        } else if ( it->type() == RDC::RDC_TYPE_NCA && std::abs((int) it->res1()-(int) it->res2())==0 ) {
+          r.normalize(1.458);
           r2 = r.norm_squared();
           invr = 1.0 / sqrt(r2);
         } else {
@@ -1992,6 +2044,14 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDaR(core::pose::Pose const& po
         	r.normalize(1.525);
         	r2 = r.norm_squared();
         	invr = 1.0 / sqrt(r2);
+        } else if ( it->type() == RDC::RDC_TYPE_CHN && std::abs((int) it->res1()-(int) it->res2())==1 ) {
+          r.normalize(2.085);
+          r2 = r.norm_squared();
+          invr = 1.0 / sqrt(r2);
+        } else if ( it->type() == RDC::RDC_TYPE_NCA && std::abs((int) it->res1()-(int) it->res2())==0 ) {
+          r.normalize(1.458);
+          r2 = r.norm_squared();
+          invr = 1.0 / sqrt(r2);
     		} else {
 						tr.Error << "unreognized type or residue sequence separation does not allow using correct_NH" << std::endl;
 						throw( utility::excn::EXCN_BadInput("unreognized type or residue sequence separation does not allow using correct_NH "));
@@ -2147,6 +2207,14 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDaR(core::pose::Pose const& po
           invr = 1.0 / sqrt(r2);
         } else if ( it->type() == RDC::RDC_TYPE_CC && std::abs((int) it->res1()-(int) it->res2())==0 ) {
           r.normalize(1.525);
+          r2 = r.norm_squared();
+          invr = 1.0 / sqrt(r2);
+        } else if ( it->type() == RDC::RDC_TYPE_CHN && std::abs((int) it->res1()-(int) it->res2())==1 ) {
+          r.normalize(2.085);
+          r2 = r.norm_squared();
+          invr = 1.0 / sqrt(r2);
+        } else if ( it->type() == RDC::RDC_TYPE_NCA && std::abs((int) it->res1()-(int) it->res2())==0 ) {
+          r.normalize(1.458);
           r2 = r.norm_squared();
           invr = 1.0 / sqrt(r2);
         } else {
@@ -2313,6 +2381,8 @@ void ResidualDipolarCoupling::show_rdc_values( std::ostream& out, Size ex ) cons
 			if ( it->type() == RDC::RDC_TYPE_CH ) {type ="CH";}
 			if ( it->type() == RDC::RDC_TYPE_NC ) {type ="NC";}
 			if ( it->type() == RDC::RDC_TYPE_CC ) {type ="CC";}
+			if ( it->type() == RDC::RDC_TYPE_CHN ) {type ="CHN";}
+			if ( it->type() == RDC::RDC_TYPE_NCA ) {type ="NCA";}
 			Real rdc_exp( it->Jdipolar() );
 			Real rdc_computed ( it->Jcomputed());
 			out   << A( width, "RDC" )

@@ -212,7 +212,7 @@ class RDC {
 
 public:
 	enum RDC_TYPE {
-		RDC_TYPE_NH = 1, RDC_TYPE_NC, RDC_TYPE_CH, RDC_TYPE_CC
+		RDC_TYPE_NH = 1, RDC_TYPE_NC, RDC_TYPE_CH, RDC_TYPE_CC, RDC_TYPE_CHN, RDC_TYPE_NCA
 	};
 
 	RDC() {
@@ -281,7 +281,10 @@ public:
 			//return 1.08;
 		else if (type() == RDC_TYPE_CC)
 			return 1.525;
-			//return 1.525;
+		else if (type() == RDC_TYPE_CHN)
+			return 2.085;
+		else if (type() == RDC_TYPE_NCA)
+			return 1.458;
 		//should never get here...
 		runtime_assert( 0 );
 		return 0;
@@ -313,7 +316,10 @@ public:
 			//Dcnst = -90.55324;
 		if (type() == RDC_TYPE_CC)
 			Dcnst = 22.76805;
-			//Dcnst = -22.76805;
+		if (type() == RDC_TYPE_CHN)
+			Dcnst = 90.55324;
+		if (type() == RDC_TYPE_NCA)
+			Dcnst = 9.179532;
 		//		std::cout << Dcnst <<std::endl;
 				runtime_assert( Dcnst != 0 ); // at this position the type() should already
 		return Dcnst;
