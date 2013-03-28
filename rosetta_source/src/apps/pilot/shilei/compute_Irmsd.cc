@@ -28,7 +28,7 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
-
+#include <utility/tools/make_vector1.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -85,6 +85,8 @@
 #include <core/sequence/ScoringScheme.fwd.hh>
 #include <core/sequence/MatrixScoringScheme.hh>
 #include <core/id/SequenceMapping.hh>
+
+#include <protocols/docking/metrics.hh>
 
 using basic::T;
 using basic::Error;
@@ -173,10 +175,14 @@ public:
     	std::cout << correspondence_interface;
     	std::cout << std::endl;
 
+
+	core::Real Isc=protocols::docking::calc_interaction_energy(pose,scorefxn,utility::tools::make_vector1<core::Size>(1));
+
 	//std::cout << "CA_rms: " << core::scoring::CA_rmsd( *native_pose, pose, correspondence) << " Irms_CA: " << core::scoring::CA_rmsd( *native_pose, pose, correspondence_interface) << std::endl;
    	protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
    	job->add_string_real_pair("rms_CA", core::scoring::CA_rmsd( *native_pose, pose, correspondence));
    	job->add_string_real_pair("Irms_CA", core::scoring::CA_rmsd( *native_pose, pose, correspondence_interface));
+   	job->add_string_real_pair("Isc", Isc);
 
 	}//end of apply
 

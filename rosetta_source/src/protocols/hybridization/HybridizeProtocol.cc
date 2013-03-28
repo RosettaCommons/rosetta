@@ -888,6 +888,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			ft_hybridize->set_random_sheets( random_sheets_ );
 			ft_hybridize->set_filter_templates( filter_templates_ );
 			ft_hybridize->set_movable_region( allowed_to_move_ );
+			ft_hybridize->set_task_factory( task_factory_ );
 
 			ft_hybridize->apply(pose);
 

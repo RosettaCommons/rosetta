@@ -57,6 +57,7 @@
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 
 #include <protocols/moves/MoverContainer.hh>
@@ -217,6 +218,10 @@ FoldTreeHybridize::normalize_template_wts() {
 	core::Real weight_sum = 0.0;
 	for (Size i=1; i<=template_poses_.size(); ++i) weight_sum += template_wts_[i];
 	for (Size i=1; i<=template_poses_.size(); ++i) template_wts_[i] /= weight_sum;
+}
+
+void FoldTreeHybridize::set_task_factory( core::pack::task::TaskFactoryOP task_factory_in ) {
+ 	  task_factory_ = task_factory_in; 
 }
 
 void
@@ -1183,7 +1188,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 			add_non_protein_cst(pose, hetatm_self_cst_weight_, hetatm_prot_cst_weight_);
 	}
 
-	if ( scorefxn_->get_weight( core::scoring::coordinate_constraint ) != 0 ) {
+	if ( scorefxn_->get_weight( core::scoring::coordinate_constraint ) != 0 && task_factory_ ) {
      setup_partial_coordinate_constraints(pose,allowed_to_move_);
 	}
 	// Initialize the structure

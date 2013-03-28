@@ -56,6 +56,8 @@
 
 #include <set>
 
+#include <core/pack/task/TaskFactory.fwd.hh>
+
 namespace protocols {
 namespace hybridization {
 
@@ -127,6 +129,7 @@ public:
 	inline void set_scorefunction(core::scoring::ScoreFunctionOP const scorefxn) { scorefxn_ = scorefxn; }
 
 	void set_movable_region( utility::vector1< bool > allowed_to_move_in ) { allowed_to_move_ = allowed_to_move_in; }
+	void set_task_factory( core::pack::task::TaskFactoryOP task_factory_in );
 
 	void setup_scorefunctions(
 		core::scoring::ScoreFunctionOP score0,
@@ -222,6 +225,7 @@ private:
 	core::pose::PoseOP native_;
 
 	utility::vector1<bool> allowed_to_move_;
+	core::pack::task::TaskFactoryOP task_factory_;
 
 }; //class FoldTreeHybridize
 
