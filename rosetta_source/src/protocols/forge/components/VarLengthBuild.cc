@@ -40,9 +40,10 @@
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
+#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
-
+#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameIteratorWorker_.hh>
@@ -51,6 +52,8 @@
 #include <core/fragment/picking_old/FragmentLibraryManager.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/chemical/VariantType.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -283,7 +286,9 @@ void VarLengthBuild::apply( Pose & pose ) {
 	using core::kinematics::MoveMap;
 	using protocols::moves::MS_SUCCESS;
 	using protocols::moves::FAIL_DO_NOT_RETRY;
-
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	
 	using core::util::switch_to_residue_type_set;
 	using protocols::forge::methods::fold_tree_from_pose;
 	using protocols::forge::methods::restore_residues;
@@ -416,6 +421,10 @@ void VarLengthBuild::apply( Pose & pose ) {
 			}
 		}
 
+	    // take care of terminal types
+	  core::pose::add_variant_type_to_pose_residue( pose, core::chemical::UPPER_TERMINUS, pose.total_residue());
+	  core::pose::add_variant_type_to_pose_residue( archive_pose, core::chemical::UPPER_TERMINUS, archive_pose.total_residue());
+
 
 		assert( pose.total_residue() == (2* remodel_data_.sequence.length()));
 		repeat_tail_length_ = remodel_data_.sequence.length();
@@ -485,6 +494,12 @@ void VarLengthBuild::apply( Pose & pose ) {
       protocols::forge::remodel::RemodelLoopMover RLM(loops);
       RLM.set_repeat_tail_length(repeat_tail_length_);
       RLM.repeat_generation_with_additional_residue( bufferPose, archive_pose );
+		  if ( option[ OptionKeys::symmetry::symmetry_definition].user()){
+			  //symmetrize if both rep+sym are used
+			  simple_moves::symmetry::SetupForSymmetryMover pre_mover;
+			  pre_mover.apply(archive_pose);
+			  archive_pose.pdb_info()->obsolete(true);
+		  }
 
 	  }
 	}

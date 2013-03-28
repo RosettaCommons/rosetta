@@ -1219,6 +1219,13 @@ std::cout<< "post VLB?" << std::endl;
 				Pose bufferPose(modified_archive_pose);
 				//due to code change, modified_archive_pose would always be 2x length now
 				RLM.repeat_generation_with_additional_residue( bufferPose, modified_archive_pose );
+				if ( option[ OptionKeys::symmetry::symmetry_definition].user()){
+				//symmetrize if both rep+sym are used
+					simple_moves::symmetry::SetupForSymmetryMover pre_mover;
+					pre_mover.apply(modified_archive_pose);
+					modified_archive_pose.pdb_info()->obsolete(true);
+				}
+			
 		//	}
 		}
 

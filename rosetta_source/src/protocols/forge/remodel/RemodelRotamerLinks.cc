@@ -16,6 +16,8 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/symmetry/util.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
 
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
@@ -63,7 +65,15 @@ RemodelRotamerLinks::apply(
 	PackerTask & ptask
 ) const
 {
-	Size const nres( pose.total_residue() );
+	Size nres_asymm;
+	if ( core::pose::symmetry::is_symmetric(pose) ){
+		core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
+		nres_asymm = symm_info->num_independent_residues();
+	} else {
+		nres_asymm = pose.total_residue();
+	}
+
+	Size const nres( nres_asymm );
 	// setup residue couplings
 	RotamerLinksOP links( new RotamerLinks );
 	links->resize( nres );
