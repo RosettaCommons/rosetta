@@ -75,7 +75,7 @@ SET(LINK_ALL_LIBS ${LINK_STATIC_LIBS} )
 
 ### Change dynamic linker from default /lib/ld64.so.1 to /lib64/ld-2.5.so,
 ### since that file doesn't exist and path is hardcoded
-SET(CMAKE_EXE_LINKER_FLAGS "-static -Wl")
+SET(CMAKE_EXE_LINKER_FLAGS "-static -Wl,--relax")
 
 
 
