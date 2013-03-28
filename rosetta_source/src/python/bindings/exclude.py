@@ -47,7 +47,8 @@ BannedFiles = ['utility/PyHelper.hh', 'utility/keys', 'utility/options', 'utilit
     'core/scoring/memb_etable/BaseMembEtableEnergy.hh', # abandoned?
     'core/scoring/rna/RNA_FA_Stack.hh', # not in scons (.hh only)
     'core/scoring/methods/GaussianOverlapEnergyCreator.hh', # not in scons
-
+    'protocols/forge/remodel/RemodelLoopMoverCreator.hh', 
+               
     #'core/pack/dunbrack/DunbrackRotamer.hh', # too many template args (more then 48)
 
     'protocols/abinitio/JumpingFoldConstraints.hh', # not in scons (.hh only)
