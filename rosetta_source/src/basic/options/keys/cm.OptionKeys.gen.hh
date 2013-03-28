@@ -60,6 +60,7 @@ namespace cm { namespace hybridize { extern BooleanOptionKey const add_non_init_
 namespace cm { namespace hybridize { extern StringOptionKey const ss; } }
 namespace cm { namespace hybridize { extern RealOptionKey const stage1_increase_cycles; } }
 namespace cm { namespace hybridize { extern RealOptionKey const stage2_increase_cycles; } }
+namespace cm { namespace hybridize { extern RealOptionKey const stage2min_increase_cycles; } }
 namespace cm { namespace hybridize { extern RealOptionKey const stage1_probability; } }
 namespace cm { namespace hybridize { extern StringOptionKey const stage1_weights; } }
 namespace cm { namespace hybridize { extern StringOptionKey const stage1_patch; } }

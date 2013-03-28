@@ -348,6 +348,7 @@ namespace cm { namespace hybridize { BooleanOptionKey const add_non_init_chunks(
 namespace cm { namespace hybridize { StringOptionKey const ss( "cm:hybridize:ss" );  } }
 namespace cm { namespace hybridize { RealOptionKey const stage1_increase_cycles( "cm:hybridize:stage1_increase_cycles" );  } }
 namespace cm { namespace hybridize { RealOptionKey const stage2_increase_cycles( "cm:hybridize:stage2_increase_cycles" );  } }
+namespace cm { namespace hybridize { RealOptionKey const stage2min_increase_cycles( "cm:hybridize:stage2min_increase_cycles" );  } }
 namespace cm { namespace hybridize { RealOptionKey const stage1_probability( "cm:hybridize:stage1_probability" );  } }
 namespace cm { namespace hybridize { StringOptionKey const stage1_weights( "cm:hybridize:stage1_weights" );  } }
 namespace cm { namespace hybridize { StringOptionKey const stage1_patch( "cm:hybridize:stage1_patch" );  } }
@@ -675,4 +676,3 @@ namespace edensity { RealOptionKey const mapreso( "edensity:mapreso" );  }
 namespace edensity { RealOptionKey const grid_spacing( "edensity:grid_spacing" );  }
 namespace edensity { RealOptionKey const centroid_density_mass( "edensity:centroid_density_mass" );  }
 namespace edensity { IntegerOptionKey const sliding_window( "edensity:sliding_window" );  }
-namespace edensity { RealOptionKey const force_apix( "edensity:force_apix" );  }

@@ -3476,6 +3476,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 			Option( 'ss',                             'String',     desc='secondary structure elements used to split the pose', default='HE' ),
 			Option( 'stage1_increase_cycles',         'Real',     desc='Scale stage 1 cycles', default='1.0' ),
 			Option( 'stage2_increase_cycles',         'Real',     desc='Scale stage 2 cycles', default='1.0' ),
+			Option( 'stage2min_increase_cycles',      'Real',    desc='Scale minimizer cycles after stage 2', default='1.0'),
 			Option( 'stage1_probability',             'Real',     desc='Probability of running stage 1, 0=never, 1=always', default='1.0' ),
 			Option( 'stage1_weights',                 'String',     desc='weight for fold tree hybridize stage', default='score3' ),
 			Option( 'stage1_patch',                   'String',     desc='weight patch for fold tree hybridize stage', default='' ),

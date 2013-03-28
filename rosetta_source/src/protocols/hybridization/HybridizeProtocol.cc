@@ -225,6 +225,7 @@ HybridizeProtocol::init() {
 	}
 
 	stage2_increase_cycles_ = option[cm::hybridize::stage2_increase_cycles]();
+	stage25_increase_cycles_ = option[cm::hybridize::stage2min_increase_cycles]();
 	no_global_frame_ = option[cm::hybridize::no_global_frame]();
 	linmin_only_ = option[cm::hybridize::linmin_only]();
 
@@ -967,7 +968,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		for (Size i=1; i<= history->size(); ++i ) { TR << I(4, history->get(i)); }
 		TR << std::endl;
 
-		core::kinematics::MoveMapOP mm=new core::kinematics::MoveMap; 
+		core::kinematics::MoveMapOP mm=new core::kinematics::MoveMap;
     mm->set_bb  ( true );
     mm->set_chi ( true );
 		mm->set_jump( true );
@@ -1232,7 +1233,7 @@ HybridizeProtocol::parse_my_tag(
   if( tag->hasOption( "task_operations" ) ){
     task_factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data );
 	}	else {
-	  task_factory_ = NULL; 
+	  task_factory_ = NULL;
 	}
 
 	// force starting template

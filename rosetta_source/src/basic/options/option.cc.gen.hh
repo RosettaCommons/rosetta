@@ -1713,6 +1713,7 @@ option.add( basic::options::OptionKeys::cm::hybridize::add_non_init_chunks, "non
 option.add( basic::options::OptionKeys::cm::hybridize::ss, "secondary structure elements used to split the pose" ).def("HE");
 option.add( basic::options::OptionKeys::cm::hybridize::stage1_increase_cycles, "Scale stage 1 cycles" ).def(1.0);
 option.add( basic::options::OptionKeys::cm::hybridize::stage2_increase_cycles, "Scale stage 2 cycles" ).def(1.0);
+option.add( basic::options::OptionKeys::cm::hybridize::stage2min_increase_cycles, "Scale minimizer cycles after stage 2" ).def(1.0);
 option.add( basic::options::OptionKeys::cm::hybridize::stage1_probability, "Probability of running stage 1, 0=never, 1=always" ).def(1.0);
 option.add( basic::options::OptionKeys::cm::hybridize::stage1_weights, "weight for fold tree hybridize stage" ).def("score3");
 option.add( basic::options::OptionKeys::cm::hybridize::stage1_patch, "weight patch for fold tree hybridize stage" ).def("");
@@ -2040,10 +2041,10 @@ option.add( basic::options::OptionKeys::edensity::mapreso, "No description" ).de
 option.add( basic::options::OptionKeys::edensity::grid_spacing, "No description" ).def(0.0);
 option.add( basic::options::OptionKeys::edensity::centroid_density_mass, "No description" ).def(0.0);
 option.add( basic::options::OptionKeys::edensity::sliding_window, "No description" ).def(1);
-option.add( basic::options::OptionKeys::edensity::force_apix, "force pixel spacing to take a particular value" ).def(0.0);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::edensity::fastdens_wt, "wt of fast edens score" ).def(0.0);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::edensity::force_apix, "force pixel spacing to take a particular value" ).def(0.0);
+option.add( basic::options::OptionKeys::edensity::fastdens_wt, "wt of fast edens score" ).def(0.0);
 option.add( basic::options::OptionKeys::edensity::sliding_window_wt, "wt of edens sliding-window score" ).def(0.0);
 option.add( basic::options::OptionKeys::edensity::score_sliding_window_context, "when using sl. win. density fit, include neighbor atoms (slows trajectory)" ).def(false);
 option.add( basic::options::OptionKeys::edensity::whole_structure_ca_wt, "wt of edens centroid (CA-only) scoring" ).def(0.0);
