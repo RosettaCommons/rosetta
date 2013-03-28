@@ -975,7 +975,6 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 
 		// stage "2.5" .. minimize with centroid energy + full-strength cart bonded
 		if (!option[cm::hybridize::skip_stage2]()) {
-			TR << " do stage2 " << std::endl;
 			core::optimization::MinimizerOptions options_lbfgs( "lbfgs_armijo_nonmonotone", 0.01, true, false, false );
 			core::optimization::CartesianMinimizer minimizer;
 			core::kinematics::MoveMapOP mm=new core::kinematics::MoveMap;
@@ -988,7 +987,6 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 
 		// STAGE RELAX
 		if (batch_relax_ > 0) {
-			TR << " batch_relax > 0 : " << std::endl;
 			protocols::moves::MoverOP tofa = new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD );
 			tofa->apply(pose);
 
