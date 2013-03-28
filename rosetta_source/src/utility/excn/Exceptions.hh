@@ -100,6 +100,13 @@ public:
 private:
 };
 
+class EXCN_KeyError : public EXCN_Msg_Exception {
+public:
+	EXCN_KeyError(std::string const & msg) :
+		EXCN_Msg_Exception( msg ) {};
+private:
+};
+
 class EXCN_NullPointer: public EXCN_RangeError {
 public:
 	EXCN_NullPointer( std::string const& msg ) :

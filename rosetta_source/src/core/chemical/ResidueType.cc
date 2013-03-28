@@ -261,6 +261,7 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 	is_coarse_( residue_type.is_coarse_ ), //currently for coarse_RNA only
 	is_adduct_( residue_type.is_adduct_ ),
 	variant_types_( residue_type.variant_types_ ),
+	numeric_properties_(residue_type.numeric_properties_),
 	aa_( residue_type.aa_ ),
 	rotamer_aa_( residue_type.rotamer_aa_ ),
 	name_( residue_type.name_),
@@ -1178,6 +1179,12 @@ ResidueType::add_property( std::string const & property )
 	}
 
 	properties_.push_back( property );
+}
+
+void
+ResidueType::add_numeric_property(std::string const & tag, core::Real value)
+{
+	numeric_properties_.insert(std::make_pair(tag,value));
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -89,6 +89,7 @@
 #include <utility/keys/Key2Tuple.hh>
 #include <utility/keys/Key4Tuple.hh>
 #include <utility/keys/Key3Tuple.hh>
+#include <utility/excn/Exceptions.hh>
 
 // C++ headers
 #include <map>
@@ -1115,6 +1116,10 @@ public:
 	void
 	add_property( std::string const & property );
 
+	///@brief add a numeric property
+	void
+	add_numeric_property(std::string const & tag,core::Real value);
+
 	/// @brief delete properties
 	//    Added by Andy M. Chen in June 2009
 	//    This is needed for deleting properties, which occurs in certain PTM's
@@ -1282,12 +1287,27 @@ public:
 		is_adduct_ = adduct_in;
 	}
 
-
+	// this probably isnt all that slow unless you have lots of properties, if its ever a problem
+	// there is no reason not make properties_ an STL set, since this is basically what sets exist for
 	/// @brief  Generic property access -- SLOW!!!!!
 	bool
 	has_property( std::string const & property ) const
 	{
 		return ( std::find( properties_.begin(), properties_.end(), property ) != properties_.end() );
+	}
+
+	///@brief get a numeric property
+	core::Real
+	get_numeric_property(std::string const & tag) const
+	{
+		std::map<std::string, core::Real>::const_iterator property_it(numeric_properties_.find(tag));
+		if(property_it == numeric_properties_.end())
+		{
+			throw utility::excn::EXCN_KeyError(tag + " does not exist in ResidueType with name " + name3_);
+			return 0.0; //keep compilers happy
+		}
+
+		return property_it->second;
 	}
 
 	/// @brief  Generic variant access -- SLOW!!!!!
@@ -1959,6 +1979,8 @@ private:
 	/// here we store the patch operations/variant types that describe this residue
 	utility::vector1< VariantType > variant_types_;
 
+	///Here we store arbitrary numeric properties with string names
+	std::map<std::string,core::Real> numeric_properties_;
 
 	//////////////////////////////////////////////////
 	// features

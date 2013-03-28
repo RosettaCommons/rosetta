@@ -354,7 +354,11 @@ read_topology_file(
 				l >> tag;
 			}
 
-		} else if ( tag == "VARIANT" ) {
+		}else if (tag == "NUMERIC_PROPERTY "){
+			core::Real value = 0.0;
+			l >> tag >> value;
+			rsd->add_numeric_property(tag,value);
+		}else if ( tag == "VARIANT" ) {
 			l >> tag;
 			while ( !l.fail() ) {
 				rsd->add_variant_type( tag );

@@ -138,6 +138,9 @@ public:
 		rsd.add_property("PROTEIN");
 		TS_ASSERT(rsd.has_property("PROTEIN"));
 
+		rsd.add_numeric_property("foo",1.5);
+		TS_ASSERT_EQUALS(rsd.get_numeric_property("foo"),1.5);
+
 /// Build an Alanine
 		add_atom( rsd, atom_types," N  ", "Nbb", "NH1", -0.47);
 		add_atom( rsd, atom_types," CA ", "CAbb", "CT1", 0.07);
