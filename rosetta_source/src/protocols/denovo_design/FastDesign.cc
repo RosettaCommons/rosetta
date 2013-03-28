@@ -235,7 +235,7 @@ FastDesign::parse_my_tag(
 	utility::tag::TagPtr const tag,
 	protocols::moves::DataMap & data,
 	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
+	protocols::moves::Movers_map const &,
 	core::pose::Pose const & pose
 ) {
 	std::string const scorefxn( tag->getOption<std::string>( "scorefxn", "score12" ));
@@ -1092,8 +1092,8 @@ FastDesign::initialize_aa_cache( core::pose::Pose const & pose )
 /// @brief initializes and creates the packer task
 core::pack::task::PackerTaskOP
 FastDesign::create_packer_task( core::pose::Pose const & pose,
-																 core::kinematics::MoveMapCOP local_movemap,
-																 utility::vector1< core::Size > const & allow_repacking ) const
+																core::kinematics::MoveMapCOP /*local_movemap*/,
+																utility::vector1< core::Size > const & /*allow_repacking*/ ) const
 {
 	core::pack::task::PackerTaskOP task;
 	if ( get_task_factory() != 0 ) {
@@ -1209,7 +1209,7 @@ FastDesign::check_num_redesigns( core::pose::Pose const & pose, core::Size const
 
 /// @brief Creates and returns a pointer to a taskoperation that designs the worst regions of a protein only. Returns NULL if we don't need the taskop
 toolbox::task_operations::DesignAroundOperationOP
-FastDesign::create_worst_region_operation( core::pose::Pose const & pose )
+FastDesign::create_worst_region_operation( core::pose::Pose const & /*pose*/ )
 {
 	/*core::Real const shell_size( 6.0 );
 	utility::vector1< flxbb::filters::HighestEnergyRegionOperationOP > worst_res_ops;

@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/protocols/denovo_design/PsiPredInterface.cc
+/// @file   src/protocols/denovo_design/filters/PsiPredInterface.cc
 /// @brief  Interface to PsiPred for secondary structure prediction
 /// @author Tom Linsky
 
@@ -93,9 +93,8 @@ PsiPredInterface::create_fasta_file( core::pose::Pose const & pose ) const{
 
 /// @brief Parses the psipred pass2 horiz file and returns predicted secondary structure and confidence for each position.
 std::pair< std::string, utility::vector1< core::Size > >
-PsiPredInterface::parse_psipred_horiz_output( core::pose::Pose const & pose,
-																							std::string const & psipred_horiz_filename,
-																							std::string const & blueprint_ss ) const {
+PsiPredInterface::parse_psipred_horiz_output( std::string const & psipred_horiz_filename ) const
+{
 	// open and read psipred output into a stringstream buffer
 	utility::io::izstream t( psipred_horiz_filename );
 	std::stringstream buffer;
@@ -179,7 +178,7 @@ PsiPredInterface::parse_psipred_output( core::pose::Pose const & pose,
 
 	PsiPredResult result;
 	result.psipred_prob = probabilities;
-	std::pair< std::string, utility::vector1< core::Size > > const & horiz_output( parse_psipred_horiz_output( pose, psipred_horiz_filename, blueprint_ss ) );
+	std::pair< std::string, utility::vector1< core::Size > > const & horiz_output( parse_psipred_horiz_output( psipred_horiz_filename ) );
 	result.pred_ss = horiz_output.first;
 	result.psipred2_confidence = horiz_output.second;
 	for ( core::Size i=0; i<blueprint_ss.size(); ++i ) {

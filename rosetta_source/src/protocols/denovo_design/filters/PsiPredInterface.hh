@@ -90,9 +90,7 @@ private:
 
 	/// @brief Parses the psipred pass2 horiz file and returns predicted secondary structure and confidence for each position.
 	std::pair< std::string, utility::vector1< core::Size > >
-	parse_psipred_horiz_output( core::pose::Pose const & pose,
-															std::string const & psipred_horiz_filename,
-															std::string const & blueprint_ss ) const;
+	parse_psipred_horiz_output( std::string const & psipred_horiz_filename ) const;
 
 private:
 	/// @brief This class will cache and store Psipred output for each amino acid sequence string. They are stored in this map, which is indexed by sequence string.
