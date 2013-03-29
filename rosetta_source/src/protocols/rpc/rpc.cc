@@ -13,6 +13,7 @@
 
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
+#include <basic/options/keys/lh.OptionKeys.gen.hh>
 
 #include <core/import_pose/import_pose.hh>
 #include <core/import_pose/pose_stream/util.hh>
@@ -30,6 +31,7 @@
 #include <core/init.hh>
 #include <protocols/moves/Mover.hh>
 #include <utility/excn/Exceptions.hh>
+#include <utility/io/izstream.hh>
 
 #include <utility/assert.hh>
 #include <utility/excn/Exceptions.hh>
@@ -80,11 +82,29 @@ void pose_energies_to_json( core::pose::Pose const & pose, utility::json_spirit:
 }
 
 
+
+
+
+
+
 // RPC Class
 
 static basic::Tracer TR("rpc");
-
 using namespace utility::json_spirit;
+
+
+bool 
+BasicCmdLineInit::do_init(){
+ using namespace basic::options;
+ using namespace basic::options::OptionKeys;
+ core::init(argc_, argv_);
+ //utility::options::OptionCollection &option_collection  = initialize();
+ //option_collection.load( argc_, argv_, false);
+ return true;
+}
+
+
+
 
 JSON_RPC::JSON_RPC(const std::string &msg, bool capture_tracer, BasicInit *basic_init  ):
     capture_tracer_(capture_tracer),
@@ -199,18 +219,20 @@ JSON_RPC::JSON_RPC( JSON_RPC const & json_rpc) : ReferenceCount(json_rpc) {
   }
 
   void JSON_RPC::run(){
-
+    using namespace basic::options;
+    using namespace basic::options::OptionKeys;
+   
     // start capturing Tracer outputs
     output_capture_start();
     starttime_ = time(NULL);
 
     // finally load in the provided PDB
     std::cout << "Loading PDB file: " << std::endl;
-    core::import_pose::pose_from_pdbstring( inputpose_, pdbdata_string_ );
-    
-    outputpose_ = inputpose_; 
-
     try{
+      core::import_pose::pose_from_pdbstring( inputpose_, pdbdata_string_ );
+      
+      outputpose_ = inputpose_; 
+
       // Leave some trace
       std::cout << "Executing: " << command_ << std::endl;
       TR << "Executing: " << command_ << std::endl;

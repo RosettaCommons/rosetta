@@ -43,9 +43,33 @@ class BasicInit {
 
   virtual ~BasicInit(){};
 
-  virtual bool do_init() {};
+  virtual bool do_init() { return false; };
 };
 
+// this is a functor that just clears the current options and sets 
+class BasicCmdLineInit: public protocols::rpc::BasicInit
+{
+ public:
+  BasicCmdLineInit() 
+  {
+    empty_ = "";
+    argc_ = 0;
+    argv_ = &empty_;
+  }
+  
+  BasicCmdLineInit( int argc, char * argv [] ) :
+    argc_(argc),
+    argv_(argv),
+    empty_("")
+  {}
+
+  virtual bool do_init();
+ 
+ private:
+  int argc_;
+  char ** argv_ ;
+  char * empty_;
+};
 
 // This is an interface to rosetta tailored for remote procedure calls through HTTP requests or via Native Client.
 // The idea is that everything needed for a rosetta run is encoded in a JSON object (including an input PDB or PDBs,

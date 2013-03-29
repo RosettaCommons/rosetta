@@ -23,6 +23,7 @@
 #include <ObjexxFCL/string.functions.hh>
 
 #include "geturl_handler.h"
+#include "static_database.hh"
 
 using namespace ObjexxFCL;
 
@@ -34,6 +35,8 @@ namespace nacl_rosetta {
 // A method consists of a const char* for the method ID and the method's
 // declaration and implementation.
 // TODO(sdk_user): 1. Add the declarations of your method IDs.
+ 
+protocols::rpc::BasicCmdLineInit basic_init;
 
 class RosettaInstance;
 
@@ -161,12 +164,12 @@ RosettaURLFileHandler::request_file( const std::string filename, std::string &re
       // and report success
       std::stringstream debugmessage;
       debugmessage << result_data.size() << std::endl; 
-      rinst_->PostMessage_from_main_thread( "Success!'" + filename + " " + debugmessage.str() );
+      rinst_->PostMessage_from_main_thread( "Success!'" + filename + "' " + debugmessage.str() );
       return true;
     } else {
       std::stringstream debugmessage;
       debugmessage << result_data.size() << std::endl; 
-      rinst_->PostMessage_from_main_thread( "Results of '" + filename + " " + debugmessage.str() );
+      rinst_->PostMessage_from_main_thread( "Results of '" + filename + "' " + debugmessage.str() );
     }
   }
   
@@ -226,6 +229,20 @@ void RosettaInstance::setup_file_handler(){
     rurlhandler_ = new RosettaURLFileHandler(this);  
     utility::Inline_File_Provider *provider = utility::Inline_File_Provider::get_instance();
     provider->add_file_provider_hook( rurlhandler_ ); 
+  
+    // also add statically compiled data files
+    for(int i = 0; i < static_database_size; i++){
+      provider->add_input_file( std::string( static_database[i][0]), std::string( static_database[i][1]) ); 
+    }
+      
+    provider->add_black_listed_file( "" ); 
+    provider->add_black_listed_file( ".gz" ); 
+    provider->add_black_listed_file( "chemical/orbital_type_sets/fa_standard/.gz" ); 
+    provider->add_black_listed_file( "chemical/residue_type_sets/fa_standard" );
+    provider->add_black_listed_file( "chemical/residue_type_sets/fa_standard.gz" );
+    provider->add_black_listed_file( "score12" );
+    provider->add_black_listed_file( "standard" );
+
   }
 }
 
@@ -262,9 +279,10 @@ RosettaInstance::callback_factory() {
 void RosettaInstance::RosettaThread(){
   protocols::rpc::JSON_RPCOP rpc;     // rpc object - a Rosetta specific Object that manages RPC style calls into Rosetta
   utility::json_spirit::Object root;  // json object to be filled with all the information to be sent back. 
+  
   try{
     // create the JSON_rpc object and initialize it with the json message from the caller
-    rpc = new protocols::rpc::JSON_RPC( message_ );
+    rpc = new protocols::rpc::JSON_RPC( message_, true, &basic_init );
 
     // its own catch block so we can be sure to get the tracer output is also captured assuming the above constructor returns ok. 
     try{
@@ -308,6 +326,7 @@ void RosettaInstance::RosettaThread(){
 
   // return data. This will be unpacked and interpreted by the JavaScript caller.
   PostMessage_from_main_thread( sstr.str() );
+  PostMessage_from_main_thread( "DONE!" ); 
 }
 
 void RosettaInstance::HandleMessage(const pp::Var& var_message) {

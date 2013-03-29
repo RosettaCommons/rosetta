@@ -522,27 +522,6 @@ class RosettaBackend {
 };
 
 
-// this is a functor that just clears the current options and sets 
-class BasicCmdLineInit: public protocols::rpc::BasicInit
-{
- public:
-  BasicCmdLineInit( int argc, char * argv [] ) :
-    argc_(argc),
-    argv_(argv)
-  {}
-
-  virtual bool do_init(){
-   std::cout << "DOING BASIC INIT" << std::endl;
-   using namespace basic::options;
-   using namespace basic::options::OptionKeys;
-   utility::options::OptionCollection &option_collection  = initialize();
-   option_collection.load( argc_, argv_, false);
-  }
- 
- private:
-  int argc_;
-  char ** argv_ ;
-};
 
 int
 main( int argc, char * argv [] )
