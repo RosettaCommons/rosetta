@@ -60,7 +60,7 @@ static basic::Tracer tr("protocols.simple_moves.ResTypeFragmentMover");
 
 ResTypeFragmentMover::ResTypeFragmentMover(core::fragment::FragSetCOP fragset):ClassicFragmentMover(fragset, "ResTypeFragmentMover"){}
 
-ResTypeFragmentMover::ResTypeFragmentMover(core::fragment::FragSetCOP fragset,	core::kinematics::MoveMapCOP movemap):ClassicFragmentMover( fragset, movemap, "ResTypeFragmentMover"){};
+ResTypeFragmentMover::ResTypeFragmentMover(core::fragment::FragSetCOP fragset,	core::kinematics::MoveMapCOP movemap):ClassicFragmentMover( fragset, movemap, "ResTypeFragmentMover"){}
 
 
 ResTypeFragmentMover::~ResTypeFragmentMover() {}
@@ -106,7 +106,6 @@ bool ResTypeFragmentMover::apply_frames( pose::Pose &pose, core::fragment::Frame
 	//	tr.Trace << "finished the ss-check! : " << valid << std::endl;
 	if ( valid ) {
 		std::string swap_sequence = frames[frame_num]->fragment(frag_num).sequence();
-		core::Size startPos = frames[ frame_num ]->start();
 		swap_residue_types(pose,swap_sequence,frames[ frame_num ]->start());
 		success = apply_fragment( *frames[ frame_num ], frag_num, *movemap_, pose );
 	} else {
