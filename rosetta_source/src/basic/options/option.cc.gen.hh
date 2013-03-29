@@ -681,10 +681,10 @@ option.add( basic::options::OptionKeys::fold_cst::ramp_coord_cst, "ramp coord cs
 option.add( basic::options::OptionKeys::resample::resample, "resample option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::resample::silent, "a silent file for decoys to restart sampling from " ).def("");
 option.add( basic::options::OptionKeys::resample::tag, "which decoy to select from silent file " ).def("");
+option.add( basic::options::OptionKeys::resample::stage1, "if true restart after stage1, otherwise after stage2 " ).def(false);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::resample::stage1, "if true restart after stage1, otherwise after stage2 " ).def(false);
-option.add( basic::options::OptionKeys::resample::stage2, "if true restart after stage1, otherwise after stage2 " ).def(false);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::resample::stage2, "if true restart after stage1, otherwise after stage2 " ).def(false);
 option.add( basic::options::OptionKeys::resample::jumps, "if true restart after stage1, otherwise after stage2 " ).def(false);
 option.add( basic::options::OptionKeys::resample::min_max_start_seq_sep, "range of (random) start values for seq-separation" ).def(0);
 option.add( basic::options::OptionKeys::loopfcst::loopfcst, "loopfcst option group" ).legal(true).def(true);
@@ -1361,11 +1361,11 @@ option.add( basic::options::OptionKeys::blivens::disulfide_scorer::cys_prob, "Th
 option.add( basic::options::OptionKeys::blivens::score_type, "The scoring type to use, eg for a filter." ).def("total_score");
 option.add( basic::options::OptionKeys::krassk::krassk, "krassk option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::krassk::left_tail, "No description" ).def(0);
+option.add( basic::options::OptionKeys::krassk::right_tail, "No description" ).def(0);
+option.add( basic::options::OptionKeys::krassk::tail_mode, "No description" ).def(false);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::krassk::right_tail, "No description" ).def(0);
-option.add( basic::options::OptionKeys::krassk::tail_mode, "No description" ).def(false);
-option.add( basic::options::OptionKeys::krassk::tail_mode_name, "No description" ).def(1);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::krassk::tail_mode_name, "No description" ).def(1);
 option.add( basic::options::OptionKeys::krassk::tail_output_file_name, "No description" ).def("tail_output");
 option.add( basic::options::OptionKeys::rotamerdump::rotamerdump, "rotamerdump option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::rotamerdump::xyz, "when using the RotamerDump application, output the xyz coords of every rotamer" ).def(false);
@@ -2041,12 +2041,12 @@ option.add( basic::options::OptionKeys::edensity::mapreso, "No description" ).de
 option.add( basic::options::OptionKeys::edensity::grid_spacing, "No description" ).def(0.0);
 option.add( basic::options::OptionKeys::edensity::centroid_density_mass, "No description" ).def(0.0);
 option.add( basic::options::OptionKeys::edensity::sliding_window, "No description" ).def(1);
-
-}
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::edensity::force_apix, "force pixel spacing to take a particular value" ).def(0.0);
+option.add( basic::options::OptionKeys::edensity::force_apix, "force pixel spacing to take a particular value" ).def(0.0);
 option.add( basic::options::OptionKeys::edensity::fastdens_wt, "wt of fast edens score" ).def(0.0);
 option.add( basic::options::OptionKeys::edensity::sliding_window_wt, "wt of edens sliding-window score" ).def(0.0);
-option.add( basic::options::OptionKeys::edensity::score_sliding_window_context, "when using sl. win. density fit, include neighbor atoms (slows trajectory)" ).def(false);
+
+}
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::edensity::score_sliding_window_context, "when using sl. win. density fit, include neighbor atoms (slows trajectory)" ).def(false);
 option.add( basic::options::OptionKeys::edensity::whole_structure_ca_wt, "wt of edens centroid (CA-only) scoring" ).def(0.0);
 option.add( basic::options::OptionKeys::edensity::whole_structure_allatom_wt, "wt of edens centroid (allatom) scoring" ).def(0.0);
 option.add( basic::options::OptionKeys::edensity::no_edens_in_minimizer, "exclude density score from minimizer" ).def(false);
@@ -2247,6 +2247,8 @@ option.add( basic::options::OptionKeys::remodel::helical_radius, "helical parame
 option.add( basic::options::OptionKeys::remodel::helical_omega, "helical parameter: omega" ).def(0.0);
 option.add( basic::options::OptionKeys::remodel::abinitio_like_sampling, "sampling first with 9mers then 3mers. Staged energies. For rebuilding entire structure not loop closure" ).def(false);
 option.add( basic::options::OptionKeys::remodel::disallow_sampling_at_pos, "locations to disallow sampling (format:1,3,5)" ).def("");
+option.add( basic::options::OptionKeys::remodel::use_fragment_sequence, "use sequence from fragments" ).def(false);
+option.add( basic::options::OptionKeys::remodel::use_sequence, "AA sequence to use during remodel" ).def("");
 option.add( basic::options::OptionKeys::remodel::domainFusion::domainFusion, "domainFusion option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::remodel::domainFusion::insert_segment_from_pdb, "segment pdb file to be inserted [insert pdb file name]." ).def("");
 option.add( basic::options::OptionKeys::remodel::vdw, "set vdw weight" ).def(1.0);

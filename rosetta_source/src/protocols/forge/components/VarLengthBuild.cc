@@ -44,6 +44,7 @@
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <core/chemical/ResidueTypeSet.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameIteratorWorker_.hh>
@@ -282,6 +283,7 @@ void VarLengthBuild::clear_fragments() {
 ///  by the old Rosetta++ binning method (core::pose::set_ss_from_phipsi)
 ///  or by external method such as reading in a file.
 void VarLengthBuild::apply( Pose & pose ) {
+	using namespace core::chemical;
 	using core::kinematics::FoldTree;
 	using core::kinematics::MoveMap;
 	using protocols::moves::MS_SUCCESS;
@@ -477,14 +479,27 @@ void VarLengthBuild::apply( Pose & pose ) {
 	}
 	//pose.dump_pdb("vlb_aft_centroid_build.pdb");
 
+	// flip back to prior residue type set if necessary
+	if ( pose.residue( 1 ).residue_type_set().name() != archive_pose.residue( 1 ).residue_type_set().name() ) {
+		core::util::switch_to_residue_type_set( pose, archive_pose.residue( 1 ).residue_type_set().name() );
+	}
+
   if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user()) {
 	  if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure] == 1){
 		  // do nothing
 	  } else {
 		//remove the added residue
 		//pose.conformation().delete_residue_slow(pose.total_residue());
-
     //need to extend the archive pose, otherwise the connectivity is wrong
+
+			for(Size ii = 1; ii<=remodel_data_.sequence.length(); ++ii){
+				ResidueType const & rsd_type(pose.residue_type(ii));
+				Size res1 = ii;
+				Size res2 = ii+remodel_data_.sequence.length();
+				replace_pose_residue_copying_existing_coordinates(archive_pose,res1,rsd_type);
+				replace_pose_residue_copying_existing_coordinates(archive_pose,res2,rsd_type);
+			}
+
       using namespace protocols::loops;
       using protocols::forge::methods::intervals_to_loops;
       std::set< Interval > loop_intervals = manager_.intervals_containing_undefined_positions();
@@ -503,13 +518,8 @@ void VarLengthBuild::apply( Pose & pose ) {
 
 	  }
 	}
-
-	// flip back to prior residue type set if necessary
-	if ( pose.residue( 1 ).residue_type_set().name() != archive_pose.residue( 1 ).residue_type_set().name() ) {
-		core::util::switch_to_residue_type_set( pose, archive_pose.residue( 1 ).residue_type_set().name() );
-	}
-
 	// recover side chains in fixed regions
+
 	restore_residues( original2modified, archive_pose, pose );
 
 	// finalize wrt to success/failure
@@ -904,7 +914,7 @@ void VarLengthBuild::pick_all_fragments(
 	}
 	if ( basic::options::option[basic::options::OptionKeys::in::file::frag9].user() ){
     frag9_->read_fragment_file( basic::options::option[basic::options::OptionKeys::in::file::frag9]());
-  } else {    
+  } else {
 		frag9_->add( pick_fragments( complete_ss, complete_aa, complete_abego, interval, 9, n_frags ) );
 	}
 
@@ -917,9 +927,9 @@ void VarLengthBuild::pick_all_fragments(
     tmp_frag3->read_fragment_file( basic::options::option[basic::options::OptionKeys::in::file::frag3]());
     frag3_->read_fragment_file( basic::options::option[basic::options::OptionKeys::in::file::frag3]());
   } else {
-    tmp_frag3->add( pick_fragments( complete_ss, complete_aa, complete_abego, interval, 3, n_frags ) );  
-    frag3_->add( *tmp_frag3 );  
-  } 
+    tmp_frag3->add( pick_fragments( complete_ss, complete_aa, complete_abego, interval, 3, n_frags ) );
+    frag3_->add( *tmp_frag3 );
+  }
 
 	// make 1-mers from 3-mers
 	if ( !frag1_.get() ) {

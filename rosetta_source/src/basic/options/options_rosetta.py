@@ -4341,6 +4341,8 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 		Option(  'helical_omega', 'Real', desc='helical parameter: omega', default = '0.0'),
 		Option(  'abinitio_like_sampling', 'Boolean', desc = 'sampling first with 9mers then 3mers. Staged energies. For rebuilding entire structure not loop closure', default = 'false'),
 		Option(  'disallow_sampling_at_pos', 'File', desc = 'locations to disallow sampling (format:1,3,5)', default = ''),
+		Option(  'use_fragment_sequence', 'Boolean', desc = 'use sequence from fragments', default = 'false'),
+		Option(  'use_sequence', 'String', desc = 'AA sequence to use during remodel', default = ''),
 		Option_Group( 'domainFusion',
 				Option(  'insert_segment_from_pdb', 'File', desc='segment pdb file to be inserted [insert pdb file name].', default=''),
 				#Option(  'rigid_segment_in_refinement', 'Boolean', desc=' rigid segment in refinement.'),

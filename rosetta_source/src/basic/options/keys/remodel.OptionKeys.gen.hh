@@ -72,6 +72,8 @@ namespace remodel { extern RealOptionKey const helical_radius; }
 namespace remodel { extern RealOptionKey const helical_omega; }
 namespace remodel { extern BooleanOptionKey const abinitio_like_sampling; }
 namespace remodel { extern FileOptionKey const disallow_sampling_at_pos; }
+namespace remodel { extern BooleanOptionKey const use_fragment_sequence; }
+namespace remodel { extern StringOptionKey const use_sequence; }
 namespace remodel { namespace domainFusion { extern BooleanOptionKey const domainFusion; } }
 namespace remodel { namespace domainFusion { extern FileOptionKey const insert_segment_from_pdb; } }
 namespace remodel { extern RealOptionKey const vdw; }

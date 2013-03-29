@@ -676,3 +676,4 @@ namespace fold_cst { BooleanOptionKey const ramp_coord_cst( "fold_cst:ramp_coord
 namespace resample { BooleanOptionKey const resample( "resample" );  }
 namespace resample { FileOptionKey const silent( "resample:silent" );  }
 namespace resample { StringOptionKey const tag( "resample:tag" );  }
+namespace resample { BooleanOptionKey const stage1( "resample:stage1" );  }

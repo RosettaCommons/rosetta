@@ -439,6 +439,7 @@ sources = {
 		"RepackSidechainsMover",
 		"RepulsiveOnlyMover",
 		"ReturnSidechainMover",
+        "ResTypeFragmentMover",
 		"RotamerTrialsMinMover",
 		"RotamerTrialsMover",
 		"O2M_MutateMover",

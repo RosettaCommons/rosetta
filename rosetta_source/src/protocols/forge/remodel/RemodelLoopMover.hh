@@ -399,7 +399,8 @@ protected: // loop modeling stages
 		Size const max_inner_cycles,
 		std::set<Size> const & disallowedPos,
 		bool const recover_low,
-		std::string stage_name
+		std::string stage_name,
+		bool const swapResTypes
 		);
 
 	/// @brief simultaneous stage: multiple loop movement prior to MC accept/reject
@@ -462,7 +463,8 @@ protected: // fragments
 	FragmentMoverOPs create_fragment_movers_limit_size_pos(
 		MoveMap const & movemap,
 		Size const frag_size,
-		std::set<Size> const & disallowedPos
+		std::set<Size> const & disallowedPos,
+		bool const swapResType
 		);
 
 	/// @brief append fragment movers for the list of internally kept fragment sets,

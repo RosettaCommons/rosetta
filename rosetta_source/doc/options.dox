@@ -8290,6 +8290,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 1.0</dd><br>
 </dl>
 <dl>
+<dt><b>-stage2min_increase_cycles</b> \<Real\><dt>
+<dd>Scale minimizer cycles after stage 2</dd><br>
+<dd>Default: 1.0</dd><br>
+</dl>
+<dl>
 <dt><b>-stage1_probability</b> \<Real\><dt>
 <dd>Probability of running stage 1, 0=never, 1=always</dd><br>
 <dd>Default: 1.0</dd><br>
@@ -10869,6 +10874,16 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-disallow_sampling_at_pos</b> \<File\><dt>
 <dd>locations to disallow sampling (format:1,3,5)</dd><br>
+<dd>Default: ""</dd><br>
+</dl>
+<dl>
+<dt><b>-use_fragment_sequence</b> \<Boolean\><dt>
+<dd>use sequence from fragments</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-use_sequence</b> \<String\><dt>
+<dd>AA sequence to use during remodel</dd><br>
 <dd>Default: ""</dd><br>
 </dl>
  </li>

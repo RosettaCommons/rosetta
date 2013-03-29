@@ -52,6 +52,8 @@
 #include <ObjexxFCL/format.hh>
 
 // project headers
+#include <core/conformation/Residue.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -83,7 +85,7 @@
 #include <protocols/forge/build/BuildManager.hh>
 #include <protocols/forge/build/SegmentInsert.hh>
 #include <protocols/forge/components/VarLengthBuild.hh>
-#include <protocols/forge/remodel/RemodelMoverCreator.hh> 
+#include <protocols/forge/remodel/RemodelMoverCreator.hh>
 #include <protocols/forge/methods/chainbreak_eval.hh>
 #include <protocols/forge/methods/pose_mod.hh>
 #include <protocols/forge/methods/util.hh>
@@ -351,7 +353,7 @@ void RemodelMover::fullatom_scorefunction( ScoreFunctionOP const & sfx ) {
 /// -remodel::checkpoint
 /// -remodel::domainFusion::insert_segment_from_pdb
 /// -remodel::bypass_fragments,
-/// -remodel::num_trajectory, 
+/// -remodel::num_trajectory,
 /// -remodel::repeat_structure
 /// -remodel::build_disulf
 /// -remodel::quick_and_dirty
@@ -368,6 +370,7 @@ void RemodelMover::apply( Pose & pose ) {
 	using namespace basic::options::OptionKeys;
 	using namespace core;
 	using namespace protocols;
+	using namespace chemical;
 
 	using core::pose::metrics::CalculatorFactory;
 	using protocols::moves::MS_SUCCESS;
@@ -545,7 +548,7 @@ void RemodelMover::apply( Pose & pose ) {
 
 	// initialize symmetry
 
-	// only symmetrize here if not in the repeat structure mode. for repeats, stay monomer until repeat generation. 
+	// only symmetrize here if not in the repeat structure mode. for repeats, stay monomer until repeat generation.
 	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() && !option[ OptionKeys::remodel::repeat_structure ].user() )  {
 		simple_moves::symmetry::SetupForSymmetryMover pre_mover;
 		pre_mover.apply( pose );
@@ -614,7 +617,7 @@ void RemodelMover::apply( Pose & pose ) {
 
 	Size no_attempts_at_centroid_build = 0;
 	//Size no_attempts_to_make_at_centroid_build = 10;
-	
+
 	//bool quick_mode = option[ OptionKeys::remodel::quick_and_dirty ].user();
 
 	Size repeat_number = basic::options::option[ OptionKeys::remodel::repeat_structure];
@@ -665,6 +668,8 @@ void RemodelMover::apply( Pose & pose ) {
 				cached_modified_pose.set_phi( res, pose.phi(res) );
 				cached_modified_pose.set_psi( res, pose.psi(res) );
 				cached_modified_pose.set_omega( res, pose.omega(res) );
+				ResidueType const & rsd_type(pose.residue_type(res));
+				replace_pose_residue_copying_existing_coordinates(cached_modified_pose,res,rsd_type);
 			}
 		}
 
@@ -988,7 +993,7 @@ void RemodelMover::apply( Pose & pose ) {
 					core::util::switch_to_residue_type_set( *(*it), core::chemical::CENTROID, true);
 					(*(*it)).dump_scored_pdb(SS.str(), *centroid_sfx_);
 			}
-		
+
 			designMover.set_state("finish");
 			designMover.apply(*(*it));
 
@@ -1018,7 +1023,7 @@ void RemodelMover::apply( Pose & pose ) {
 						RemodelGlobalFrame RGF(remodel_data, working_model, scorefxn);
 						RGF.align_segment(*(*it));
 						RGF.apply(*(*it));
-						
+
 		}
 
 		(*(*it)).dump_scored_pdb(SS.str(), *scorefxn);
@@ -1200,6 +1205,16 @@ bool RemodelMover::centroid_build( Pose & pose ) {
 std::cout<< "post VLB?" << std::endl;
 		// safety, clear all the energies before restoring full-atom residues and scoring
 		pose.energies().clear();
+		bool denovo = true;
+		//have to loop to identify denovo case
+		for (int i = 0, ie = (int)remodel_data_.blueprint.size(); i < ie; i++){
+			if (remodel_data_.blueprint[i].sstype == "."){ //if anywhere hits this assignment, not de novo
+				denovo = false;
+			}
+		}
+		if(denovo)
+			modified_archive_pose = pose;
+
 		if (option[ OptionKeys::remodel::repeat_structure ].user()) {
 		//this part really needs work....  currently doesn't allow growing a loop
 		//in regional repeat building.  This section is used in de novo rebuild
@@ -1209,7 +1224,7 @@ std::cout<< "post VLB?" << std::endl;
 		//	if (modified_archive_pose.total_residue() == pose.total_residue()){ //dangerous, assuming no further length change
 				//do nothing.
 		//	} else { // if there's mismatch, assuming restoration source need extension... dangerous.
-				// because of code-change for always using 2x modified 
+				// because of code-change for always using 2x modified
 				using namespace protocols::loops;
 				using protocols::forge::methods::intervals_to_loops;
 				std::set< Interval > loop_intervals = manager_.intervals_containing_undefined_positions();
@@ -1225,7 +1240,7 @@ std::cout<< "post VLB?" << std::endl;
 					pre_mover.apply(modified_archive_pose);
 					modified_archive_pose.pdb_info()->obsolete(true);
 				}
-			
+
 		//	}
 		}
 
@@ -1348,7 +1363,7 @@ bool RemodelMover::design_refine_seq_relax( Pose & pose, RemodelDesignMover & de
 	for ( Size i = 0; i < dr_cycles_; ++i ) {
 
 		TR << "design_refine_seq_relax(): dr_cycle: " << i << std::endl;
-		
+
 		designMover.set_state("finish");
 		designMover.apply(pose);
 
@@ -1435,7 +1450,7 @@ bool RemodelMover::design_refine_cart_relax(
 	// safety, clear the energies object
 	pose.energies().clear();
 
-	//set simple tree 
+	//set simple tree
 	FoldTree minFT;
 	minFT.simple_tree(pose.total_residue());
 	pose.fold_tree(minFT);
@@ -1454,14 +1469,14 @@ bool RemodelMover::design_refine_cart_relax(
 
  	core::kinematics::MoveMapOP cmmop = new core::kinematics::MoveMap;
 	//pose.dump_pdb("pretest.pdb");
-	
+
 	if (basic::options::option[ OptionKeys::remodel::free_relax ].user()) {
 		for (Size i = 1; i<= pose.total_residue(); ++i){
 			cmmop->set_bb(i, true);
 			cmmop->set_chi(i, true);
 		}
 	}
-	else {	
+	else {
 		cmmop->import(remodel_data_.natro_movemap_);
 		cmmop->import( manager_.movemap() );
 	}
@@ -1575,7 +1590,7 @@ bool RemodelMover::design_refine_cart_relax(
 /// @begin RemodelMover::design_refine
 ///
 /// @brief
-/// Run the design-refine stage. 
+/// Run the design-refine stage.
 /// Checks the value of -remodel:repeat_structure and -remodel:swap_refine_confirm_protocols
 /// NOTE: CURRENTLY ALWAYS RETURNS TRUE regardless of if chain breaks test passes or fails
 ///

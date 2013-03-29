@@ -1,6 +1,3 @@
-namespace edensity { RealOptionKey const force_apix( "edensity:force_apix" );  }
-namespace edensity { RealOptionKey const fastdens_wt( "edensity:fastdens_wt" );  }
-namespace edensity { RealOptionKey const sliding_window_wt( "edensity:sliding_window_wt" );  }
 namespace edensity { BooleanOptionKey const score_sliding_window_context( "edensity:score_sliding_window_context" );  }
 namespace edensity { RealOptionKey const whole_structure_ca_wt( "edensity:whole_structure_ca_wt" );  }
 namespace edensity { RealOptionKey const whole_structure_allatom_wt( "edensity:whole_structure_allatom_wt" );  }
@@ -202,6 +199,8 @@ namespace remodel { RealOptionKey const helical_radius( "remodel:helical_radius"
 namespace remodel { RealOptionKey const helical_omega( "remodel:helical_omega" );  }
 namespace remodel { BooleanOptionKey const abinitio_like_sampling( "remodel:abinitio_like_sampling" );  }
 namespace remodel { FileOptionKey const disallow_sampling_at_pos( "remodel:disallow_sampling_at_pos" );  }
+namespace remodel { BooleanOptionKey const use_fragment_sequence( "remodel:use_fragment_sequence" );  }
+namespace remodel { StringOptionKey const use_sequence( "remodel:use_sequence" );  }
 namespace remodel { namespace domainFusion { BooleanOptionKey const domainFusion( "remodel:domainFusion" );  } }
 namespace remodel { namespace domainFusion { FileOptionKey const insert_segment_from_pdb( "remodel:domainFusion:insert_segment_from_pdb" );  } }
 namespace remodel { RealOptionKey const vdw( "remodel:vdw" );  }

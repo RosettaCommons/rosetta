@@ -26,8 +26,6 @@
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/io/pdb/file_data.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
 #include <core/id/TorsionID.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
@@ -53,6 +51,8 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <basic/Tracer.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
+#include <protocols/simple_moves/ResTypeFragmentMover.hh>
+#include <protocols/simple_moves/ResTypeFragmentMover.fwd.hh>
 #include <protocols/loops/loop_closure/ccd/ccd_closure.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/moves/DataMap.hh>
@@ -795,6 +795,7 @@ void RemodelLoopMover::repeat_propagation( //utility function
 )
 {
 	using core::Size;
+	using namespace core::chemical;
 	using namespace protocols::loops;
 	using namespace basic::options;
 	using namespace core::kinematics;
@@ -807,7 +808,7 @@ void RemodelLoopMover::repeat_propagation( //utility function
 
 	Pose junk_for_copy;
 	Pose junk_for_copy_repeat;
-	bool is_sym;
+	bool is_sym = false;
 
 	//if symmetric, try use master copy only
 	if (core::pose::symmetry::is_symmetric(pose) && core::pose::symmetry::is_symmetric(repeat_pose)){
@@ -952,14 +953,17 @@ void RemodelLoopMover::repeat_propagation( //utility function
 				//std::cout << "DEBUG: res+segmentlength*rep = " << res+(segment_length*rep) << std::endl;
 				Real loop_phi = 0;
 				Real loop_psi = 0;
+				Size rsd_type_position = res;
 				if (res == 1 ){
+					rsd_type_position = segment_length+1;
 					loop_phi = pose.phi(segment_length+1);
 					loop_psi = pose.psi(segment_length+1);
 				} else {
 					loop_phi = pose.phi(res);
 					loop_psi = pose.psi(res);
 				}
-
+				ResidueType const & rsd_type(pose.residue_type(rsd_type_position));
+				replace_pose_residue_copying_existing_coordinates(repeat_pose,res+(segment_length*rep),rsd_type);
 				repeat_pose.set_phi(res+( segment_length*rep), loop_phi );
 				repeat_pose.set_psi(res+( segment_length*rep), loop_psi );
 				repeat_pose.set_omega( res+(segment_length*rep), pose.omega(res) );
@@ -1006,8 +1010,8 @@ void RemodelLoopMover::apply( Pose & pose ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core;
+	using namespace chemical;
 	using core::kinematics::FoldTree;
-	//using protocols::jd2::JobDistributor;
 	using protocols::forge::methods::fold_tree_from_pose;
 
 	// archive
@@ -1023,8 +1027,6 @@ void RemodelLoopMover::apply( Pose & pose ) {
 
 		//initialize values that would be lost once the pose is turn symmetrical
 		repeat_length_ = repeat_pose_.total_residue();
-		pose.dump_pdb("pre_sym_pose1.pdb");
-		repeat_pose_.dump_pdb("pre_sym_rep_pose1.pdb");
 		pose.pdb_info()->obsolete(true);
 			repeat_pose_.pdb_info()->obsolete(true);
 		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() ) {
@@ -1033,8 +1035,6 @@ void RemodelLoopMover::apply( Pose & pose ) {
 			pre_mover.apply( repeat_pose_ );
 			pose.pdb_info()->obsolete(true);
 			repeat_pose_.pdb_info()->obsolete(true);
-			pose.dump_pdb("sym_pose1.pdb");
-			repeat_pose_.dump_pdb("sym_rep_pose1.pdb");
 		}
 
 
@@ -1140,6 +1140,22 @@ void RemodelLoopMover::apply( Pose & pose ) {
 	ScoreFunctionOP sfxOP = sfx_;
 	sfxOP->set_weight( scoring::linear_chainbreak, 0.0 );
 	if(basic::options::option[ OptionKeys::remodel::abinitio_like_sampling].user()){
+		if(basic::options::option[ OptionKeys::remodel::use_sequence].user()){
+			std::string const & swap_sequence = basic::options::option[ OptionKeys::remodel::use_sequence];
+			std::cout << "pose.size" << pose.total_residue() << "seq.size" << swap_sequence.size() << std::endl;
+			for(Size ii=1; ii<=swap_sequence.size(); ++ii){
+				char aa = swap_sequence[ii-1];
+				AA my_aa = aa_from_oneletter_code( aa );
+				ResidueTypeSetCAP const &residue_set(core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::CENTROID ));
+				ResidueTypeCOPs const & rsd_type_list( residue_set->aa_map( my_aa ) );
+				ResidueType const & rsd_type( *(rsd_type_list[ 1 ]) );
+				replace_pose_residue_copying_existing_coordinates(pose,ii,rsd_type);
+				replace_pose_residue_copying_existing_coordinates(pose,ii+swap_sequence.size(),rsd_type);
+			}
+		}
+
+
+
 		//NOTE::There is no attempt to close loops.
 		ScoreFunctionOP sfx_stage0_OP = ( core::scoring::ScoreFunctionFactory::create_score_function( "score0" ) );
 		ScoreFunctionOP sfx_stage1_OP =  ( core::scoring::ScoreFunctionFactory::create_score_function( "abinitio_remodel_cen" ) );
@@ -1151,7 +1167,8 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		}
 		std::set<Size> disallowedPos;
 
-		abinitio_stage( pose, 9, movemap,sfx_stage0_OP,1,100,disallowedPos,false,"stg0");
+		bool useFragSequence = basic::options::option[ OptionKeys::remodel::use_fragment_sequence].user();
+		abinitio_stage( pose, 9, movemap,sfx_stage0_OP,1,100,disallowedPos,false,"stg0",useFragSequence);
 		//stage1-------------------------------------------
 		if(basic::options::option[ OptionKeys::remodel::disallow_sampling_at_pos].user()){
 			std::string const & disallowed_residues = basic::options::option[ OptionKeys::remodel::disallow_sampling_at_pos];
@@ -1161,16 +1178,14 @@ void RemodelLoopMover::apply( Pose & pose ) {
 				disallowedPos.insert(res);
 			}
 		}
-		abinitio_stage( pose, 9, movemap,sfx_stage1_OP,3,100,disallowedPos,true,"stg1");
+		abinitio_stage( pose, 9, movemap,sfx_stage1_OP,3,100,disallowedPos,true,"stg1",useFragSequence);
 		//cleanup stage------------------------------------
 		PoseOP pose_prime = new Pose( pose );
 		pose_prime->fold_tree( sealed_ft );
-
 		// this is for scoring in repeat context
 		if ( option[ OptionKeys::remodel::repeat_structure].user() ) {
 			repeat_propagation( pose, repeat_pose_, option[ OptionKeys::remodel::repeat_structure] );
 			(*sfxOP)(repeat_pose_);
-
 			//this has to be set because when copying to pose_prime, it lost the
 			//first phi angle
 			pose_prime->set_phi(1, repeat_pose_.phi(1));
@@ -2014,13 +2029,14 @@ void RemodelLoopMover::abinitio_stage(
 	Size const max_inner_cycles,
 	std::set<Size> const & disallowedPos,
 	bool const recover_low,
-	std::string stage_name
+	std::string stage_name,
+	bool const swapResType
 	)
 {
 	using namespace basic::options;
 	using namespace core;
 	using core::kinematics::FoldTree;
-
+	using namespace chemical;
 	using namespace OptionKeys::remodel;
 	using numeric::random::random_permutation;
 
@@ -2041,7 +2057,7 @@ void RemodelLoopMover::abinitio_stage(
 		mc.reset(pose);
 	}
 
-	FragmentMoverOPs frag_movers = create_fragment_movers_limit_size_pos(movemap, fragmentSize,disallowedPos);
+	FragmentMoverOPs frag_movers = create_fragment_movers_limit_size_pos(movemap, fragmentSize,disallowedPos,swapResType);
 	assert( !frag_movers.empty() );
 
 	// set appropriate topology
@@ -2083,6 +2099,10 @@ void RemodelLoopMover::abinitio_stage(
 				pose.set_phi(res,mc.lowest_score_pose().phi(res));
 				pose.set_psi(res,mc.lowest_score_pose().psi(res));
 				pose.set_omega(res,mc.lowest_score_pose().omega(res));
+				if(swapResType){
+					ResidueType const & rsd_type(mc.lowest_score_pose().residue_type(res));
+					replace_pose_residue_copying_existing_coordinates(pose,res,rsd_type);
+				}
 			}
 		}else{
 			pose = mc.lowest_score_pose();
@@ -2119,6 +2139,10 @@ void RemodelLoopMover::abinitio_stage(
 					pose.set_phi(res,mc.lowest_score_pose().phi(res));
 					pose.set_psi(res,mc.lowest_score_pose().psi(res));
 					pose.set_omega(res,mc.lowest_score_pose().omega(res));
+					if(swapResType){
+						ResidueType const & rsd_type(mc.lowest_score_pose().residue_type(res));
+						replace_pose_residue_copying_existing_coordinates(pose,res,rsd_type);
+					}
 				}
 			}
 			else{
@@ -2137,6 +2161,10 @@ void RemodelLoopMover::abinitio_stage(
 						pose.set_phi(res,repeat_pose_.phi(res));
 						pose.set_psi(res,repeat_pose_.psi(res));
 						pose.set_omega(res,repeat_pose_.omega(res));
+						if(swapResType){
+							ResidueType const & rsd_type(repeat_pose_.residue_type(res));
+							replace_pose_residue_copying_existing_coordinates(pose,res,rsd_type);
+						}
 					}
 				}
 		}
@@ -3006,10 +3034,13 @@ RemodelLoopMover::FragmentMoverOPs
 RemodelLoopMover::create_fragment_movers_limit_size_pos(
 	MoveMap const & movemap,
 	Size const frag_size,
-	std::set<Size> const & disallowedPos
+	std::set<Size> const & disallowedPos,
+	bool const swapResType
 	)
 {
 	using protocols::simple_moves::ClassicFragmentMover;
+	using protocols::simple_moves::ResTypeFragmentMover;
+	using protocols::simple_moves::ResTypeFragmentMoverOP;
 	using core::fragment::Frame;
 	using core::fragment::FrameIterator;
 	using core::fragment::ConstantLengthFragSet;
@@ -3023,7 +3054,11 @@ RemodelLoopMover::create_fragment_movers_limit_size_pos(
 					tmp_frags->add((*frame_i));
 				}
 			}
-			ClassicFragmentMoverOP cfm = new ClassicFragmentMover( *f, movemap.clone() );
+			ClassicFragmentMoverOP cfm;
+			if(swapResType)
+				cfm = new ResTypeFragmentMover( *f, movemap.clone() );
+			else
+				cfm = new ClassicFragmentMover( *f, movemap.clone() );
 			cfm->set_check_ss( false );
 			cfm->enable_end_bias_check( false );
 			frag_movers.push_back( cfm );

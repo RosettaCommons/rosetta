@@ -1,4 +1,3 @@
-namespace resample { BooleanOptionKey const stage1( "resample:stage1" );  }
 namespace resample { BooleanOptionKey const stage2( "resample:stage2" );  }
 namespace resample { BooleanOptionKey const jumps( "resample:jumps" );  }
 namespace resample { RealVectorOptionKey const min_max_start_seq_sep( "resample:min_max_start_seq_sep" );  }
@@ -676,3 +675,5 @@ namespace blivens { namespace disulfide_scorer { RealOptionKey const cys_prob( "
 namespace blivens { StringOptionKey const score_type( "blivens:score_type" );  }
 namespace krassk { BooleanOptionKey const krassk( "krassk" );  }
 namespace krassk { IntegerOptionKey const left_tail( "krassk:left_tail" );  }
+namespace krassk { IntegerOptionKey const right_tail( "krassk:right_tail" );  }
+namespace krassk { BooleanOptionKey const tail_mode( "krassk:tail_mode" );  }
