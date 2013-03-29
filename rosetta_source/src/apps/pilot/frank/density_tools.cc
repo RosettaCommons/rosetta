@@ -54,7 +54,10 @@ using namespace protocols;
 
 
 OPT_1GRP_KEY(File, edensity, alt_mapfile)
-OPT_1GRP_KEY(Integer, edensity, nresbins)
+OPT_1GRP_KEY(Integer, denstools, nresbins)
+OPT_1GRP_KEY(Real, denstools, lowres)
+OPT_1GRP_KEY(Real, denstools, hires)
+
 
 // fpd
 //   very quickly read heavy atom positions from a PDB for a possibly massive massive PDB file
@@ -79,25 +82,26 @@ name2elt( std::string line ) {
 			// sometimes non-standard files have, e.g 11HH
 			if (!isdigit(type[1])) type = atmid.substr(1,1);
 			else type = atmid.substr(2,1);
-		} else if (line[12] == ' ' &&
-				type!="Zn" && type!="Fe" && type!="ZN" && type!="FE" ||
-				std::isdigit(type[1]))	//type[1] is digit in Platon
+		} else if ( (line[12] == ' ' && type!="Zn" && type!="Fe" && type!="ZN" && type!="FE")
+								|| isdigit(type[1]) )
 			type = atmid.substr(0,1);     // one-character element
 
-			if (resname.substr(0,2) == "AS" || resname[0] == 'N') {
-				if (atmid == "AD1") type = "O";
-				if (atmid == "AD2") type = "N";
-			}
-			if (resname.substr(0,3) == "HIS" || resname[0] == 'H') {
-				if (atmid == "AD1" || atmid == "AE2") type = "N";
-				if (atmid == "AE1" || atmid == "AD2") type = "C";
-			}
-			if (resname.substr(0,2) == "GL" || resname[0] == 'Q') {
-				if (atmid == "AE1") type = "O";
-				if (atmid == "AE2") type = "N";
-			}
-			if (atmid.substr(0,2) == "HH") // ARG
-          type = "H";
+		if (resname.substr(0,2) == "AS" || resname[0] == 'N') {
+			if (atmid == "AD1") type = "O";
+			if (atmid == "AD2") type = "N";
+		}
+		if (resname.substr(0,3) == "HIS" || resname[0] == 'H') {
+			if (atmid == "AD1" || atmid == "AE2") type = "N";
+			if (atmid == "AE1" || atmid == "AD2") type = "C";
+		}
+		if (resname.substr(0,2) == "GL" || resname[0] == 'Q') {
+			if (atmid == "AE1") type = "O";
+			if (atmid == "AE2") type = "N";
+		}
+		if (atmid.substr(0,2) == "HH") // ARG
+				type = "H";
+		if (atmid.substr(0,2) == "HD" || atmid.substr(0,2) == "HE" || atmid.substr(0,2) == "HG")
+				type = "H";
 	} else {
 		if (isalpha(atmid[0])) {
 			if (atmid.size() > 2 && (atmid[2] == '\0' || atmid[2] == ' '))
@@ -168,12 +172,22 @@ densityTools()
 	using namespace basic::options::OptionKeys;
 
 	// outputs
-	Size nresobins = option[ edensity::nresbins ]();
-	utility::vector1< core::Real > resobins, mapI, modelI, modelmapFSC;
+	Size nresobins = option[ denstools::nresbins ]();
+	utility::vector1< core::Real > resobins, mapI, mapIprime, modelI, solvI, modelSum, modelmapFSC;
+
+	// resolution limits for analysis
+	core::Real hires = option[ denstools::hires ]();
+	core::Real lowres = option[ denstools::lowres ]();
+	if (hires == 0.0) { hires = core::scoring::electron_density::getDensityMap().maxNominalRes(); }
+
+	runtime_assert( lowres > hires );
+
+	hires = 1.0/hires;
+	lowres = 1.0/lowres;
 
 	// [1] map intensity statistics
-	resobins = core::scoring::electron_density::getDensityMap().getResolutionBins(nresobins);
-	mapI = core::scoring::electron_density::getDensityMap().getIntensities(nresobins);
+	resobins = core::scoring::electron_density::getDensityMap().getResolutionBins(nresobins, lowres, hires);
+	mapI = core::scoring::electron_density::getDensityMap().getIntensities(nresobins, lowres, hires);
 
 	// [2] 2ary map stats (intensity + map v map FSC)
 	bool usermap = false;
@@ -189,28 +203,31 @@ densityTools()
 		std::string pdbfile = basic::options::start_file();
 		readPDBcoords( pdbfile, pose );
 
-		modelI = core::scoring::electron_density::getDensityMap().getIntensities( pose, option[ edensity::nresbins ]() );
-		modelmapFSC = core::scoring::electron_density::getDensityMap().getFSC( pose, option[ edensity::nresbins ]() );
-	}
-
-	for (Size i=1; i<=resobins.size(); ++i) {
-		std::cerr << resobins[i] << " " << mapI[i];
-		if (userpose) std::cerr << " " << modelI[i] << " " << modelmapFSC[i];
-		std::cerr << std::endl;
+		core::scoring::electron_density::getDensityMap().getIntensities( pose, nresobins, lowres, hires, modelI, solvI );
+		modelmapFSC = core::scoring::electron_density::getDensityMap().getFSC( pose, nresobins, lowres, hires );
 	}
 
 	// [4] rescale maps to target intensity
 	if (userpose) {
 		utility::vector1< core::Real > rescale_factor(nresobins,0.0);
 		for (Size i=1; i<=nresobins; ++i)
-			rescale_factor[i] = modelI[i] / mapI[i];
-		core::scoring::electron_density::getDensityMap().scaleIntensities( rescale_factor );
+			rescale_factor[i] = sqrt(modelI[i] / mapI[i]);
+		core::scoring::electron_density::getDensityMap().scaleIntensities( rescale_factor, lowres, hires );
 		core::scoring::electron_density::getDensityMap().writeMRC( "scale_modelI.mrc" );
+		mapIprime = core::scoring::electron_density::getDensityMap().getIntensities(nresobins, lowres, hires);
+
 		for (Size i=1; i<=nresobins; ++i)
 			rescale_factor[i] *= modelmapFSC[i];
-		core::scoring::electron_density::getDensityMap().scaleIntensities( rescale_factor );
+		core::scoring::electron_density::getDensityMap().scaleIntensities( rescale_factor, lowres, hires );
 		core::scoring::electron_density::getDensityMap().writeMRC( "scale_modelI_FSCwt.mrc" );
 	}
+
+	for (Size i=1; i<=resobins.size(); ++i) {
+		std::cerr << resobins[i] << " " << mapI[i];
+		if (userpose) std::cerr << " " << modelI[i] << " " << solvI[i] << " " << modelmapFSC[i];
+		std::cerr << std::endl;
+	}
+
 }
 
 
@@ -222,8 +239,10 @@ main( int argc, char * argv [] )
 {
 	try {
 	// options, random initialization
+	NEW_OPT(denstools::lowres, "lowres", 1000.0);
+	NEW_OPT(denstools::hires, "hires", 0.0);
 	NEW_OPT(edensity::alt_mapfile, "alt mapfile", "");
-	NEW_OPT(edensity::nresbins, "#reolution bins for statistics", 50);
+	NEW_OPT(denstools::nresbins, "#reolution bins for statistics", 50);
 	devel::init( argc, argv );
 	densityTools();
 	} catch ( utility::excn::EXCN_Base const & e ) {

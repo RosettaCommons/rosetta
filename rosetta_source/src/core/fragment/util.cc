@@ -177,7 +177,7 @@ void chop_fragments( core::fragment::FragSet& source, core::fragment::FragSet& d
 	Size tlen( dest.max_frag_length() );
 	runtime_assert( tlen < slen );
 	FrameList dest_frames;
-	for ( Size pos = 1; pos <= source.max_pos() - tlen + 1; pos++ ) {
+	for ( Size pos = 1; pos <= source.max_pos() + slen - tlen; pos++ ) {
 		dest_frames.push_back( new Frame( pos, tlen ) );
 	}
 	for ( FrameIterator it=source.begin(), eit=source.end(); it!=eit; ++it ) {

@@ -395,7 +395,7 @@ public:
 				pdb_chains.push_back( 'A' );
 			}
 		}
-	
+
 		// set pdb-wide information
 		new_pdb_info->set_numbering( pdb_numbering );
 		new_pdb_info->set_chains( pdb_chains );
@@ -469,9 +469,9 @@ public:
 			// iterate over frames, clone if mapped
 			for ( core::fragment::FrameIterator f=frag_libs_[i]->begin(); f != frag_libs_[i]->end(); ++f ) {
 				core::Size start_res = f->start();
-				if ( new_mapping[ start_res ] != 0 ) {
+				if ( new_invmapping[ start_res ] != 0 ) {
 					core::fragment::FrameOP new_f = f->clone_with_frags();
-					new_f->align(new_mapping);
+					new_f->align(new_invmapping);
 					new_frag_set->add( new_f );
 				}
 			}

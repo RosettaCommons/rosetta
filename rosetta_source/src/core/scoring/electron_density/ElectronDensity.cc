@@ -270,7 +270,6 @@ ElectronDensity::ElectronDensity( utility::vector1< core::pose::PoseOP > poses, 
 	// atom_mask
 	OneGaussianScattering cscat = get_A( "C" );
 	core::Real mask_min = 2.0 * sqrt( 2.0 / cscat.k(PattersonB,reso/2) ); //?
-	TR.Warning << "ATOM_MASK: " << mask_min << std::endl;
 	ATOM_MASK = mask_min;
 
 	// 2 rho_calc
@@ -715,7 +714,6 @@ core::Real ElectronDensity::matchCentroidPose(
 	core::Real effReso = std::max( 2.4+0.8*reso , reso );
 	core::Real k=square(M_PI/effReso);
 	core::Real a=33.0;  // treat everything as ALA
-	                    //    maybe change this???
 	core::Real C=a*pow(k/M_PI,1.5);
 
 	// per-atom derivs
@@ -1167,9 +1165,9 @@ core::Real ElectronDensity::matchPose(
 }
 
 utility::vector1< core::Real >
-ElectronDensity::getResolutionBins( core::Size nbuckets ) {
-	Real maxreso = 0.0;  // HKL = 000
-	Real minreso = (1/sqrt(3)) * sqrt(S2( density.u1()/2, density.u2()/2, density.u3()/2 ));
+ElectronDensity::getResolutionBins( core::Size nbuckets, core::Real maxreso, core::Real minreso ) {
+	//Real maxreso = 0.0;  // HKL = 000
+	//Real minreso = (1/sqrt(3)) * sqrt(S2( density.u1()/2, density.u2()/2, density.u3()/2 ));
 	Real step = (minreso-maxreso)/nbuckets;
 	utility::vector1< core::Real > retval;
 	for (Size i=1; i<=nbuckets; ++i) retval.push_back( (i+0.5)*step );
@@ -1177,11 +1175,11 @@ ElectronDensity::getResolutionBins( core::Size nbuckets ) {
 }
 
 utility::vector1< core::Real >
-ElectronDensity::getIntensities( core::Size nbuckets ) {
+ElectronDensity::getIntensities( core::Size nbuckets, core::Real maxreso, core::Real minreso ) {
 	if (Fdensity.u1() == 0) numeric::fourier::fft3(density, Fdensity);
 
-	Real maxreso = 0.0;  // HKL = 000
-	Real minreso = (1/sqrt(3)) * sqrt(S2( density.u1()/2, density.u2()/2, density.u3()/2 ));
+	//Real maxreso = 0.0;  // HKL = 000
+	//Real minreso = (1/sqrt(3)) * sqrt(S2( density.u1()/2, density.u2()/2, density.u3()/2 ));
 	Real step = (minreso-maxreso)/nbuckets;
 
 	utility::vector1< core::Real > sum_I2(nbuckets, 0.0);
@@ -1211,20 +1209,23 @@ ElectronDensity::getIntensities( core::Size nbuckets ) {
 }
 
 /// @brief Compute intensities
-utility::vector1< core::Real >
-ElectronDensity::getIntensities( lightPose const &pose, core::Size nbuckets ) {
+void
+ElectronDensity::getIntensities(
+	lightPose const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso,
+	utility::vector1< core::Real > &Imodel, utility::vector1< core::Real > &Isol) {
 
 	// rhoc & FrhoC
-	calcRhoC( pose );
+	calcRhoCandSolvent( pose );
 
 	// fft
 	if (Fdensity.u1() == 0) numeric::fourier::fft3(density, Fdensity);
 
-	Real maxreso = 0.0;  // HKL = 000
-	Real minreso = (1/sqrt(3)) * sqrt(S2( density.u1()/2, density.u2()/2, density.u3()/2 ));
+	//Real maxreso = 0.0;  // HKL = 000
+	//Real minreso = (1/sqrt(3)) * sqrt(S2( density.u1()/2, density.u2()/2, density.u3()/2 ));
 	Real step = (minreso-maxreso)/nbuckets;
 
-	utility::vector1< core::Real > sum_I2(nbuckets, 0.0);
+	Imodel.clear(); Imodel.resize( nbuckets, 0.0 );
+	Isol.clear(); Isol.resize( nbuckets, 0.0 );
 	utility::vector1< core::Size > counts(nbuckets, 0);
 
 	int H,K,L;
@@ -1237,27 +1238,27 @@ ElectronDensity::getIntensities( lightPose const &pose, core::Size nbuckets ) {
 				Real s_i = sqrt(S2(H,K,L));
 				int bucket_i = 1+(int)std::floor( (s_i-maxreso) / step );
 				if ( bucket_i > 0 && bucket_i <= (int)nbuckets ) {
-					sum_I2[bucket_i] += std::real( Frho_calc(x,y,z)*std::conj(Frho_calc(x,y,z)) );
+					Imodel[bucket_i] += std::real( Frho_calc(x,y,z)*std::conj(Frho_calc(x,y,z)) );
+					Isol[bucket_i] += std::real( Frho_solv(x,y,z)*std::conj(Frho_solv(x,y,z)) );
 					counts[bucket_i]++;
 				}
 			}
 		}
 	}
 	for (Size i=1; i<=nbuckets; ++i) {
-		sum_I2[i] /= counts[i];
+		Imodel[i] /= counts[i];
+		Isol[i] /= counts[i];
 	}
-
-	return sum_I2;
 }
 
 
 void
-ElectronDensity::scaleIntensities( utility::vector1< core::Real > scale_i ) {
+ElectronDensity::scaleIntensities( utility::vector1< core::Real > scale_i, core::Real maxreso, core::Real minreso ) {
 	if (Fdensity.u1() == 0) numeric::fourier::fft3(density, Fdensity);
 	Size nbuckets = scale_i.size();
 
-	Real maxreso = 0.0;  // HKL = 000
-	Real minreso = (1/sqrt(3)) * sqrt(S2( density.u1()/2, density.u2()/2, density.u3()/2 ));
+	//Real maxreso = 0.0;  // HKL = 000
+	//Real minreso = (1/sqrt(3)) * sqrt(S2( density.u1()/2, density.u2()/2, density.u3()/2 ));
 	Real step = (minreso-maxreso)/nbuckets;
 
 	int H,K,L;
@@ -1269,7 +1270,9 @@ ElectronDensity::scaleIntensities( utility::vector1< core::Real > scale_i ) {
 				L = (x < (int)density.u1()/2) ? x-1 : x-density.u1()-1;
 				Real s_i = sqrt(S2(H,K,L));
 				int bucket_i = 1+(int)std::floor( (s_i-maxreso) / step );
-				if ( bucket_i > 0 && bucket_i <= (int)nbuckets ) {
+				if ( bucket_i > (int)nbuckets ) {
+					Fdensity(x,y,z) = 0.0;
+				} else if ( bucket_i > 0 ) {
 					Fdensity(x,y,z) *= scale_i[bucket_i];
 				}
 			}
@@ -1282,10 +1285,10 @@ ElectronDensity::scaleIntensities( utility::vector1< core::Real > scale_i ) {
 /// @brief Compute the FSC in the specified resolution range
 utility::vector1< core::Real >
 ElectronDensity::getFSC(
-	lightPose const &pose, core::Size nbuckets ) {
+	lightPose const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso ) {
 
-	Real maxreso = 0.0;  // HKL = 000
-	Real minreso = (1/sqrt(3)) * sqrt(S2( density.u1()/2, density.u2()/2, density.u3()/2 ));
+	//Real maxreso = 0.0;  // HKL = 000
+	//Real minreso = (1/sqrt(3)) * sqrt(S2( density.u1()/2, density.u2()/2, density.u3()/2 ));
 	Real step = (minreso-maxreso)/nbuckets;
 
 	// rhoc & FrhoC
@@ -1324,6 +1327,13 @@ ElectronDensity::getFSC(
 }
 
 
+core::Real
+ElectronDensity::maxNominalRes() {
+	Real S = (1/sqrt(3)) * sqrt(S2( density.u1()/2, density.u2()/2, density.u3()/2 ));
+	return 1.0/S;
+}
+
+
 //
 void
 ElectronDensity::calcRhoC( lightPose const &pose ) {
@@ -1333,7 +1343,7 @@ ElectronDensity::calcRhoC( lightPose const &pose ) {
 	for (int i=0; i<density.u1()*density.u2()*density.u3(); ++i) rho_calc[i]=0.0;
 
 	for (int i=1 ; i<=pose.size(); ++i) {
-		std::string elt_i = pose[i].second;    // horrible hack
+		std::string elt_i = pose[i].second;
 		OneGaussianScattering sig_j = get_A( elt_i );
 		core::Real k = sig_j.k( PattersonB, max_del_grid );   // to do: B factor
 		core::Real C = sig_j.C( k );
@@ -1377,6 +1387,80 @@ ElectronDensity::calcRhoC( lightPose const &pose ) {
 	numeric::fourier::fft3(rho_calc, Frho_calc);
 }
 
+
+//fpd
+//   flat solvent model + bsol/ksol optimization
+void
+ElectronDensity::calcRhoCandSolvent( lightPose const &pose ) {
+	// get rho_c
+	const core::Real ATOM_MASK_PADDING = 1.5;
+	rho_calc.dimension(density.u1() , density.u2() , density.u3());
+	for (int i=0; i<density.u1()*density.u2()*density.u3(); ++i) rho_calc[i]=0.0;
+
+	rho_solv.dimension(density.u1() , density.u2() , density.u3());
+	for (int i=0; i<density.u1()*density.u2()*density.u3(); ++i) rho_solv[i]=1.0;
+
+	for (int i=1 ; i<=pose.size(); ++i) {
+		std::string elt_i = pose[i].second;
+		OneGaussianScattering sig_j = get_A( elt_i );
+		core::Real k = sig_j.k( PattersonB, max_del_grid );   // to do: B factor (real-space!)
+		core::Real C = sig_j.C( k );
+		if ( C < 1e-6 ) continue;
+
+		numeric::xyzVector< core::Real> cartX = pose[i].first - getTransform();
+		numeric::xyzVector< core::Real> fracX = c2f*cartX;
+		numeric::xyzVector< core::Real> atm_j, del_ij, atm_idx;
+		atm_idx[0] = pos_mod (fracX[0]*grid[0] - origin[0] + 1 , (double)grid[0]);
+		atm_idx[1] = pos_mod (fracX[1]*grid[1] - origin[1] + 1 , (double)grid[1]);
+		atm_idx[2] = pos_mod (fracX[2]*grid[2] - origin[2] + 1 , (double)grid[2]);
+		for (int z=1; z<=density.u3(); ++z) {
+			atm_j[2] = z;
+			del_ij[2] = (atm_idx[2] - atm_j[2]) / grid[2];
+			if (del_ij[2] > 0.5) del_ij[2]-=1.0; if (del_ij[2] < -0.5) del_ij[2]+=1.0;
+			del_ij[0] = del_ij[1] = 0.0;
+			if ((f2c*del_ij).length_squared() > (ATOM_MASK+ATOM_MASK_PADDING)*(ATOM_MASK+ATOM_MASK_PADDING)) continue;
+			for (int y=1; y<=density.u2(); ++y) {
+				atm_j[1] = y;
+				del_ij[1] = (atm_idx[1] - atm_j[1]) / grid[1] ;
+				if (del_ij[1] > 0.5) del_ij[1]-=1.0; if (del_ij[1] < -0.5) del_ij[1]+=1.0;
+				del_ij[0] = 0.0;
+				if ((f2c*del_ij).length_squared() > (ATOM_MASK+ATOM_MASK_PADDING)*(ATOM_MASK+ATOM_MASK_PADDING)) continue;
+				for (int x=1; x<=density.u1(); ++x) {
+					atm_j[0] = x;
+					del_ij[0] = (atm_idx[0] - atm_j[0]) / grid[0];
+					if (del_ij[0] > 0.5) del_ij[0]-=1.0; if (del_ij[0] < -0.5) del_ij[0]+=1.0;
+					numeric::xyzVector< core::Real > cart_del_ij = (f2c*del_ij);  // cartesian offset from (x,y,z) to atom_i
+					core::Real d2 = (cart_del_ij).length_squared();
+
+					if (d2 <= (ATOM_MASK+ATOM_MASK_PADDING)*(ATOM_MASK+ATOM_MASK_PADDING)) {
+						core::Real atm = C*exp(-k*d2);
+						rho_calc(x,y,z) += atm;
+					}
+					rho_solv(x,y,z) *= (d2<ATOM_MASK*ATOM_MASK ? 0:1); // should use a probe to determine solvent accessability
+				}
+			}
+		}
+	}
+
+	// ffts
+	numeric::fourier::fft3(rho_calc, Frho_calc);
+	numeric::fourier::fft3(rho_solv, Frho_solv);
+
+	// add solvent contribution to Fmodel
+	Real ksol = 0.35, bsol = 46.0;
+	int H,K,L;
+	for (int z=1; z<=(int)density.u3(); ++z) {
+		H = (z < (int)density.u3()/2) ? z-1 : z-density.u3() - 1;
+		for (int y=1; y<=(int)density.u2(); ++y) {
+			K = (y < (int)density.u2()/2) ? y-1 : y-density.u2()-1;
+			for (int x=1; x<=(int)density.u1(); ++x) {
+				L = (x < (int)density.u1()/2) ? x-1 : x-density.u1()-1;
+				Real s2_i = S2(H,K,L);
+				Frho_calc(x,y,z) += ksol*exp(-bsol*s2_i/4)*Frho_solv(x,y,z);
+			}
+		}
+	}
+}
 
 
 numeric::xyzVector<core::Real> ElectronDensity::delt_cart(
@@ -1534,7 +1618,6 @@ void ElectronDensity::setup_fastscoring_first_time(core::pose::Pose const &pose)
 
 	numeric::xyzVector< core::Real > del_ij;
 	core::Real k = S.k( PattersonB, max_del_grid );
-	//core::Real C = S.C( k );
 
 	core::Size natms=0,nres=0;
 	for (core::Size i=1; i<=pose.total_residue(); ++i) {
@@ -3713,8 +3796,8 @@ ElectronDensity::readMRCandResize(
 	numeric::xyzVector< core::Real > ori_scale;
 	if (force_apix_ > 0) {
 		ori_scale[0] = (force_apix_ * this->grid[0]) / cellDimensions[0];
-		ori_scale[1] = (force_apix_ * this->grid[0]) / cellDimensions[1];
-		ori_scale[2] = (force_apix_ * this->grid[0]) / cellDimensions[2];
+		ori_scale[1] = (force_apix_ * this->grid[1]) / cellDimensions[1];
+		ori_scale[2] = (force_apix_ * this->grid[2]) / cellDimensions[2];
 		cellDimensions[0] = force_apix_ * this->grid[0];
 		cellDimensions[1] = force_apix_ * this->grid[1];
 		cellDimensions[2] = force_apix_ * this->grid[2];
@@ -3767,20 +3850,19 @@ ElectronDensity::readMRCandResize(
 	if (reso/2 > max_del_grid)
 		max_del_grid = reso/2;
 
-	TR << "     max_del_grid =" << max_del_grid << std::endl;
-
 	// potentially adjust mask
 	{
 		OneGaussianScattering cscat = get_A( "C" );
-		// extend mask 2 stdevs from carbon
-		// stdev = sqrt
+		// make sure mask extends >= 2 carbon STDEVS
+		// at this min value there will be a small derivative discontinuity ... is this problematic?
 		core::Real mask_min = 2.0 * sqrt( 2.0 / cscat.k(PattersonB,max_del_grid) );
 		if (ATOM_MASK < mask_min) {
-			TR.Warning << "OVERIDING ATOM MASK SETTING (was " << ATOM_MASK << ", now " << mask_min << ")" << std::endl;
+			TR << "OVERRIDING ATOM MASK SETTING (was " << ATOM_MASK << ", now " << mask_min << ")" << std::endl;
 			ATOM_MASK = mask_min;
 		}
+		mask_min = 2.0 * sqrt(2.0) * std::max( 2.4+0.8*reso , reso ) / M_PI;
 		if (CA_MASK < mask_min) {
-			TR.Warning << "OVERIDING CA MASK SETTING (was " << CA_MASK << ", now " << mask_min << ")" << std::endl;
+			TR << "OVERRIDING CA MASK SETTING (was " << CA_MASK << ", now " << mask_min << ")" << std::endl;
 			CA_MASK = mask_min;
 		}
 	}
@@ -3893,7 +3975,6 @@ void ElectronDensity::initializeSymmOps( utility::vector1< std::string > const &
 		}
 	}
 
-	TR << "MINMULT:  " << MINMULT[0] << "  " <<  MINMULT[1] << "  " << MINMULT[2] << std::endl;
 	return;
 }
 

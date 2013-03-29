@@ -138,29 +138,36 @@ public:
 	/////
 	/// @brief get resolution bins (informational)
  	utility::vector1< core::Real >
-	getResolutionBins( core::Size nbuckets );
+	getResolutionBins( core::Size nbuckets, core::Real maxreso, core::Real minreso );
 
 	/// @brief Compute intensities
 	utility::vector1< core::Real >
-	getIntensities( core::Size nbuckets );
+	getIntensities( core::Size nbuckets, core::Real maxreso, core::Real minreso );
 
 	/// @brief Compute intensities
-	utility::vector1< core::Real >
-	getIntensities( lightPose const &pose, core::Size nbuckets );
+	void
+	getIntensities( lightPose const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso,
+		utility::vector1< core::Real > &Imodel, utility::vector1< core::Real > &Isol);
 
 	/// @brief Compute the FSC
 	utility::vector1< core::Real >
-	getFSC( lightPose const &pose, core::Size nbuckets );
+	getFSC( lightPose const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso );
 
 	/// @brief Compute intensities, update density
 	void
-	scaleIntensities( utility::vector1< core::Real > I_tgt );
+	scaleIntensities( utility::vector1< core::Real > I_tgt, core::Real maxreso, core::Real minreso );
 
-	//
 	void
 	calcRhoC( lightPose const &pose );
 
+	void
+	calcRhoCandSolvent( lightPose const &pose );
 
+	core::Real
+	maxNominalRes();
+
+
+	/////
 	/////  Scorefunction stuff
 	/////
 	/// @brief Match a pose to a patterson map
@@ -465,9 +472,9 @@ private:
 	/// TONS OF CACHED STUFF <<< this should live in its own class!
 	///////////////////
 	// previously scored computed density map, fft(rho_calc), and patterson map
-	ObjexxFCL::FArray3D< double > rho_calc;
+	ObjexxFCL::FArray3D< double > rho_calc, rho_solv;
 	core::Real rho_calc_sum;
-	ObjexxFCL::FArray3D< std::complex<double> > Frho_calc;
+	ObjexxFCL::FArray3D< std::complex<double> > Frho_calc, Frho_solv;
 	utility::vector1<core::Size> bucket_counts;
 	ObjexxFCL::FArray3D< core::Size > bucket_id;
 	core::Real lowres_cut, hires_cut;
