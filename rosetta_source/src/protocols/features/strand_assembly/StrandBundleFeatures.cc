@@ -74,8 +74,8 @@ StrandBundleFeatures::StrandBundleFeatures() :
 min_num_strands_to_deal_(5), // it should be at least 4
 max_num_strands_to_deal_(13), // (in 1LD9 chain A) 16 is too many number of strands, takes too long time
 extract_native_only_(false), //Option('extract_native_only', 'Boolean', desc="if true, extract native full strands only", default='false' ),
-min_strand_size_(3), // min_strand_size_ used to be 4, but 3 would be OK
-max_strand_size_(22),
+min_res_in_strand_(3), // min_res_in_strand_ used to be 4, but 3 would be OK
+max_res_in_strand_(22),
 min_O_N_dis_(2.4), // 1KIT shows (renumbered residues 178-181 and residues 76-81) show that 2.5 A exist!
 max_O_N_dis_(3.1),
 min_sheet_dis_(7.0), // 7 Angstrom may seem OK though
@@ -101,11 +101,11 @@ void StrandBundleFeatures::init_from_options(){
 	if(option[OptionKeys::strand_assembly::extract_native_only].user()){
 		extract_native_only_ = option[OptionKeys::strand_assembly::extract_native_only];
 	}
-	if(option[OptionKeys::strand_assembly::min_strand_size].user()){
-		min_strand_size_ = option[OptionKeys::strand_assembly::min_strand_size];
+	if(option[OptionKeys::strand_assembly::min_res_in_strand].user()){
+		min_res_in_strand_ = option[OptionKeys::strand_assembly::min_res_in_strand];
 	}
-	if(option[OptionKeys::strand_assembly::max_strand_size].user()){
-		max_strand_size_ = option[OptionKeys::strand_assembly::max_strand_size];
+	if(option[OptionKeys::strand_assembly::max_res_in_strand].user()){
+		max_res_in_strand_ = option[OptionKeys::strand_assembly::max_res_in_strand];
 	}
 	if(option[OptionKeys::strand_assembly::min_O_N_dis].user()){
 		min_O_N_dis_ = option[OptionKeys::strand_assembly::min_O_N_dis];
@@ -1148,7 +1148,7 @@ StrandBundleFeatures::report_features(
 		{
 			for(Size temp_res_num = all_strands[ii].get_start(); temp_res_num <= all_strands[ii].get_end()-3; ++temp_res_num)
 			{
-				for(Size jj = min_strand_size_-1; jj <= max_strand_size_; jj++)
+				for(Size jj = min_res_in_strand_-1; jj <= max_res_in_strand_; jj++)
 				{
 					if (temp_res_num + jj <= all_strands[ii].get_end())
 					{
@@ -1161,7 +1161,7 @@ StrandBundleFeatures::report_features(
 						basic::database::safely_write_to_database(beta_selected_insert_stmt);
 						beta_selected_segments_id_counter++;
 					}	//if (temp_res_num + jj =< all_strands[i].get_end())
-				}	//for(Size jj = min_strand_size_; jj <= max_strand_size_; ++jj)
+				}	//for(Size jj = min_res_in_strand_; jj <= max_res_in_strand_; ++jj)
 			}
 		}
 		all_strands = get_selected_strands(struct_id, db_session);
@@ -1171,13 +1171,13 @@ StrandBundleFeatures::report_features(
 	// strand pairing begins
 	for(Size i=1; i<all_strands.size(); ++i) // I don't need the last strand since this double for loops are exhaustive search for all pairs of strands
 	{
-		if (all_strands[i].get_size() >= min_strand_size_ && all_strands[i].get_size() <= max_strand_size_)
-			// the legnth of this beta strand is between min_strand_size_ and max_strand_size_
+		if (all_strands[i].get_size() >= min_res_in_strand_ && all_strands[i].get_size() <= max_res_in_strand_)
+			// the legnth of this beta strand is between min_res_in_strand_ and max_res_in_strand_
 		{
 			for(Size j=i+1; j<=all_strands.size(); ++j) // I need the last strand for this second for loop
 			{
-				if (all_strands[j].get_size() >= min_strand_size_ && all_strands[j].get_size() <= max_strand_size_)
-					// the length of this beta strand is between min_strand_size_ and max_strand_size_ too
+				if (all_strands[j].get_size() >= min_res_in_strand_ && all_strands[j].get_size() <= max_res_in_strand_)
+					// the length of this beta strand is between min_res_in_strand_ and max_res_in_strand_ too
 				{
 						//TR.Info << "-- both strands are long enough to be considered for strands pairing --" << endl;
 

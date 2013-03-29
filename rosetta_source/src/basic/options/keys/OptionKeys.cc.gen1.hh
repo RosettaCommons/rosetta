@@ -1,5 +1,3 @@
-namespace resample { BooleanOptionKey const stage2( "resample:stage2" );  }
-namespace resample { BooleanOptionKey const jumps( "resample:jumps" );  }
 namespace resample { RealVectorOptionKey const min_max_start_seq_sep( "resample:min_max_start_seq_sep" );  }
 namespace loopfcst { BooleanOptionKey const loopfcst( "loopfcst" );  }
 namespace loopfcst { RealOptionKey const coord_cst_weight( "loopfcst:coord_cst_weight" );  }
@@ -677,3 +675,7 @@ namespace krassk { BooleanOptionKey const krassk( "krassk" );  }
 namespace krassk { IntegerOptionKey const left_tail( "krassk:left_tail" );  }
 namespace krassk { IntegerOptionKey const right_tail( "krassk:right_tail" );  }
 namespace krassk { BooleanOptionKey const tail_mode( "krassk:tail_mode" );  }
+namespace krassk { IntegerOptionKey const tail_mode_name( "krassk:tail_mode_name" );  }
+namespace krassk { StringOptionKey const tail_output_file_name( "krassk:tail_output_file_name" );  }
+namespace rotamerdump { BooleanOptionKey const rotamerdump( "rotamerdump" );  }
+namespace rotamerdump { BooleanOptionKey const xyz( "rotamerdump:xyz" );  }

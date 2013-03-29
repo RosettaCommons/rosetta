@@ -175,8 +175,8 @@ private:
 	max_num_strands_to_deal_;
 
 	bool extract_native_only_;
-	core::Size min_strand_size_;
-	core::Size max_strand_size_;
+	core::Size min_res_in_strand_;
+	core::Size max_res_in_strand_;
 	core::Real min_O_N_dis_;
 	core::Real max_O_N_dis_;
 	core::Real min_sheet_dis_;

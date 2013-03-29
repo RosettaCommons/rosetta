@@ -12542,12 +12542,12 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>if true, extract sandwich too</dd><br>
 </dl>
 <dl>
-<dt><b>-min_strand_size</b> \<Integer\><dt>
-<dd>Minimum size of a strand in a bundle</dd><br>
+<dt><b>-min_res_in_strand</b> \<Integer\><dt>
+<dd>minimum number of residues in a strand, for edge strand definition & analysis</dd><br>
 </dl>
 <dl>
-<dt><b>-max_strand_size</b> \<Integer\><dt>
-<dd>Maximum size of a strand in a bundle</dd><br>
+<dt><b>-max_res_in_strand</b> \<Integer\><dt>
+<dd>Maximum number of residues in a strand, for edge strand definition & analysis</dd><br>
 </dl>
 <dl>
 <dt><b>-min_CA_CA_dis</b> \<Real\><dt>
@@ -12626,6 +12626,14 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>if true, write phi_psi file</dd><br>
 </dl>
 <dl>
+<dt><b>-max_starting_loop_size</b> \<Integer\><dt>
+<dd>maximum starting loop size to extract</dd><br>
+</dl>
+<dl>
+<dt><b>-max_ending_loop_size</b> \<Integer\><dt>
+<dd>maximum ending loop size to extract</dd><br>
+</dl>
+<dl>
 <dt><b>-no_helix_in_pdb</b> \<Boolean\><dt>
 <dd>if true, ignore any pdb that has helix</dd><br>
 </dl>
@@ -12634,8 +12642,8 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>maximum allowable number of helix residues in extracted sandwich loop</dd><br>
 </dl>
 <dl>
-<dt><b>-no_strand_in_loop_in_extracted_sw</b> \<Boolean\><dt>
-<dd>if true, ignore any pdb that has a strand as a loop in extracted sandwich</dd><br>
+<dt><b>-max_E_in_extracted_sw_loop</b> \<Integer\><dt>
+<dd>maximum allowable number of E residues in extracted sandwich loop</dd><br>
 </dl>
 <dl>
 <dt><b>-exclude_sandwich_that_is_linked_w_same_direction_strand</b> \<Boolean\><dt>
@@ -12658,8 +12666,24 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>PE, FE, CBs</dd><br>
 </dl>
 <dl>
+<dt><b>-do_not_connect_sheets_by_loops</b> \<Boolean\><dt>
+<dd>if true, don't connect sheets by loops</dd><br>
+</dl>
+<dl>
 <dt><b>-check_canonicalness_cutoff</b> \<Real\><dt>
 <dd>cutoff to determine canonicalness of L/R, P/A and directionality</dd><br>
+</dl>
+<dl>
+<dt><b>-count_AA_with_direction</b> \<Boolean\><dt>
+<dd>if true, count AA considering direction too!</dd><br>
+</dl>
+<dl>
+<dt><b>-inter_sheet_distance_to_see_whether_a_sheet_is_surrounded_by_other_sheets</b> \<Real\><dt>
+<dd>within this distance, sheets are considered to be near each other</dd><br>
+</dl>
+<dl>
+<dt><b>-exclude_desinated_pdbs</b> \<Boolean\><dt>
+<dd>if true, exclude certain designated pdbs</dd><br>
 </dl>
  </li>
 <li><h2>pepspec</h2>

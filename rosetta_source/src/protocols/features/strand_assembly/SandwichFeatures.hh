@@ -268,7 +268,7 @@ public:
 		boost::uuids::uuid struct_id,
 		utility::sql_database::sessionOP db_session);
 
-	bool	
+	std::string
 	see_whether_strand_is_at_edge	(
 		core::pose::Pose const & pose,
 		boost::uuids::uuid struct_id,
@@ -277,21 +277,62 @@ public:
 		std::string sheet_antiparallel,
 		core::Size residue_begin,
 		core::Size residue_end);
-		
-	void	
+
+	std::vector<Size>
+	get_cen_res_in_other_sheet(
+		boost::uuids::uuid struct_id,
+		utility::sql_database::sessionOP	db_session,
+		core::Size sw_can_by_sh_id,
+		core::Size sheet_id);
+
+	std::vector<Size>
+	get_cen_res_in_this_sheet(
+		boost::uuids::uuid struct_id,
+		utility::sql_database::sessionOP	db_session,
+		core::Size sheet_id);
+
+	std::vector<core::Size>
+	count_AA(
+		core::pose::Pose const & pose,
+		core::Size residue_begin,
+		core::Size residue_end);
+
+	std::vector<core::Size>
+	count_AA_w_direction(
+		boost::uuids::uuid struct_id,
+		utility::sql_database::sessionOP	db_session,
+		core::pose::Pose const & pose,
+		core::Size sw_can_by_sh_id,
+		core::Size sheet_id,
+		core::Size residue_begin,
+		core::Size residue_end);
+
+	core::Size
 	fill_sw_by_components(
 		boost::uuids::uuid	struct_id,
 		utility::sql_database::sessionOP	db_session,
+		core::pose::Pose const & pose,
 		core::Size	sw_by_components_PK_id_counter,
 		std::string	tag,
 		core::Size	sw_can_by_sh_id,
 		core::Size	sheet_id,
 		std::string	sheet_antiparellel,
 		core::Size	sw_by_components_bs_id,
-		core::Size	strand_is_at_edge,
+		std::string	strand_is_at_edge,
+		core::Size component_size,
 		core::Size	residue_begin,
 		core::Size	residue_end);
 
+	core::Size
+	update_sw_by_components_by_AA_w_direction(
+		boost::uuids::uuid	struct_id,
+		utility::sql_database::sessionOP	db_session,
+		core::pose::Pose const & pose,
+		core::Size	sw_can_by_sh_id,
+		core::Size	sheet_id,
+		core::Size	residue_begin,
+		core::Size	residue_end);
+	
 	utility::vector1<Size>
 	get_vec_sw_can_by_sh_id(
 		boost::uuids::uuid struct_id,
@@ -321,6 +362,7 @@ public:
 	update_sheet_con(
 		boost::uuids::uuid struct_id,
 		utility::sql_database::sessionOP db_session,
+		core::pose::Pose const & pose,
 		core::Size sw_by_components_PK_id_counter,
 		std::string tag,
 		core::Size sw_can_by_sh_id,
@@ -338,13 +380,6 @@ public:
 		core::Size loop_size,
 		core::Size start_res,
 		core::Size end_res);
-
-	bool
-	see_whether_other_strands_are_contained(
-		boost::uuids::uuid struct_id,
-		utility::sql_database::sessionOP db_session,
-		core::Size sw_can_by_sh_id,
-		core::Size res_num);
 
 	core::Size
 	delete_this_sw_can_by_sh_id(
@@ -417,6 +452,56 @@ public:
 		core::Size start_res,
 		core::Size next_start_res);
 
+	void
+	add_AA_to_terminal_loops (
+		boost::uuids::uuid struct_id,
+		utility::sql_database::sessionOP	db_session,
+		core::pose::Pose & dssp_pose,
+		core::Size	sw_by_components_PK_id_counter,
+		core::Size	sw_can_by_sh_id,
+		std::string tag,
+		bool starting_loop,
+		core::Size residue_begin,
+		core::Size residue_end);
+
+	core::Size
+	add_starting_loop(
+		boost::uuids::uuid	struct_id,
+		utility::sql_database::sessionOP	db_session,
+		core::pose::Pose & dssp_pose,
+		core::Size	sw_by_components_PK_id_counter,
+		core::Size	sw_can_by_sh_id,
+		std::string	tag);
+
+	core::Size
+	add_ending_loop(
+		boost::uuids::uuid	struct_id,
+		utility::sql_database::sessionOP	db_session,
+		core::pose::Pose & dssp_pose,
+		core::Size	sw_by_components_PK_id_counter,
+		core::Size	sw_can_by_sh_id,
+		std::string	tag);
+
+	bool
+	check_whether_this_pdb_should_be_excluded (
+		std::string tag); // I don't know how to correctly extract beta-sandwich from 1W8N for now
+
+	bool
+	check_whether_this_sheet_is_surrounded_by_more_than_1_other_sheet (
+		boost::uuids::uuid	struct_id,
+		utility::sql_database::sessionOP	db_session,
+		core::pose::Pose & dssp_pose,
+		utility::vector1<core::Size>	all_distinct_sheet_ids,
+		core::Size sheet_id);
+
+	core::Real
+	cal_min_dis_between_sheets (
+		boost::uuids::uuid	struct_id,
+		utility::sql_database::sessionOP	db_session,
+		core::pose::Pose & dssp_pose,
+		core::Size sheet_id_1,
+		core::Size sheet_id_2);
+
 private:
 
 	core::Size
@@ -426,7 +511,7 @@ private:
 	max_num_strands_to_deal_;
 		
 	core::Size
-	min_strand_size_;
+	min_res_in_strand_;
 
 	core::Real
 	min_CA_CA_dis_;
@@ -482,8 +567,8 @@ private:
 	core::Size
 	max_helix_in_extracted_sw_loop_;	//	definition: maximum allowable number of helix residues in extracted sandwich loop
 
-	bool
-	no_strand_in_loop_in_extracted_sw_;
+	core::Size
+	max_E_in_extracted_sw_loop_;	//	definition: maximum allowable number of E residues in extracted sandwich loop
 
 	bool
 	exclude_sandwich_that_is_linked_w_same_direction_strand_;
@@ -496,8 +581,15 @@ private:
 
 	bool	
 	write_phi_psi_;
-		
-	core::Size	
+
+	core::Size
+	max_starting_loop_size_;
+
+	core::Size
+	max_ending_loop_size_;
+
+
+	core::Size
 	max_num_sw_per_pdb_;
 
 	std::string
@@ -505,8 +597,20 @@ private:
 								// 2) FE: following_E's CA-CB vector,
 								// 3) CBs: preceding_E's CB to following_E's CB vector
 
+	bool
+	do_not_connect_sheets_by_loops_;
+	
 	core::Real	
 	check_canonicalness_cutoff_;
+
+	bool
+	count_AA_with_direction_;
+
+	core::Real
+	inter_sheet_distance_to_see_whether_a_sheet_is_surrounded_by_other_sheets_;
+
+	bool
+	exclude_desinated_pdbs_;
 
 }; // class SandwichFeatures : public protocols::features::FeaturesReporter
 

@@ -677,3 +677,5 @@ namespace resample { BooleanOptionKey const resample( "resample" );  }
 namespace resample { FileOptionKey const silent( "resample:silent" );  }
 namespace resample { StringOptionKey const tag( "resample:tag" );  }
 namespace resample { BooleanOptionKey const stage1( "resample:stage1" );  }
+namespace resample { BooleanOptionKey const stage2( "resample:stage2" );  }
+namespace resample { BooleanOptionKey const jumps( "resample:jumps" );  }

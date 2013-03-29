@@ -1,7 +1,3 @@
-namespace krassk { IntegerOptionKey const tail_mode_name( "krassk:tail_mode_name" );  }
-namespace krassk { StringOptionKey const tail_output_file_name( "krassk:tail_output_file_name" );  }
-namespace rotamerdump { BooleanOptionKey const rotamerdump( "rotamerdump" );  }
-namespace rotamerdump { BooleanOptionKey const xyz( "rotamerdump:xyz" );  }
 namespace rotamerdump { BooleanOptionKey const one_body( "rotamerdump:one_body" );  }
 namespace rotamerdump { BooleanOptionKey const two_body( "rotamerdump:two_body" );  }
 namespace rotamerdump { BooleanOptionKey const annealer( "rotamerdump:annealer" );  }
@@ -677,3 +673,9 @@ namespace edensity { IntegerOptionKey const sliding_window( "edensity:sliding_wi
 namespace edensity { RealOptionKey const force_apix( "edensity:force_apix" );  }
 namespace edensity { RealOptionKey const fastdens_wt( "edensity:fastdens_wt" );  }
 namespace edensity { RealOptionKey const sliding_window_wt( "edensity:sliding_window_wt" );  }
+namespace edensity { BooleanOptionKey const score_sliding_window_context( "edensity:score_sliding_window_context" );  }
+namespace edensity { RealOptionKey const whole_structure_ca_wt( "edensity:whole_structure_ca_wt" );  }
+namespace edensity { RealOptionKey const whole_structure_allatom_wt( "edensity:whole_structure_allatom_wt" );  }
+namespace edensity { BooleanOptionKey const no_edens_in_minimizer( "edensity:no_edens_in_minimizer" );  }
+namespace edensity { BooleanOptionKey const debug_derivatives( "edensity:debug_derivatives" );  }
+namespace edensity { StringOptionKey const realign( "edensity:realign" );  }
