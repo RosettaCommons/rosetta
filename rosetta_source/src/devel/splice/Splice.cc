@@ -596,11 +596,11 @@ Splice::apply( core::pose::Pose & pose )
 			dao->include_residue( i );
 	}
 	tf->push_back( dao );
-	TR<<"allowing pro/gly only at positions: ";
+	TR<<"allowing pro/gly only at positions (29Mar13, given sequence profiles, now allowing pro/gly/his at all designed positions. The following is kept for benchmarking): ";
 	for(core::Size res_num=1; res_num <= pose.total_residue(); res_num++ ){
 		if( std::find( pro_gly_res.begin(), pro_gly_res.end(), res_num ) == pro_gly_res.end() ){
 			operation::RestrictAbsentCanonicalAASOP racaas = new operation::RestrictAbsentCanonicalAAS;
-			racaas->keep_aas( "ADEFIKLMNQRSTVWY" ); /// disallow pro/gly/cys/his
+			racaas->keep_aas( "ADEFGHIKLMNPQRSTVWY" ); /// disallow pro/gly/cys/his /// 29Mar13 now allowing all residues other than Cys. Expecting sequence profiles to take care of gly/pro/his
 			racaas->include_residue( res_num );
 			tf->push_back( racaas);
 		}
@@ -799,8 +799,6 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 
 				}
 				splice_segment->read_pdb_profile( pdb_profile_match );
-
-
 
 				TR<<"line 886"<<"the segment name is: "<<segment_name<<std::endl;
 				splice_segments_.insert( std::pair< std::string, SpliceSegmentOP >( segment_name, splice_segment ) );
