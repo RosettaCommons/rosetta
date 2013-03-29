@@ -96,8 +96,8 @@ void AddConstraintsToCurrentConformationMover::apply( core::pose::Pose & pose )
 	Size nres = pose.total_residue();
 
 	// find anchor residue
-	numeric::xyzVector<core::Real> sum_xyz;
-	numeric::xyzVector<core::Real> anchor_xyz;
+	numeric::xyzVector<core::Real> sum_xyz(0.0);
+	numeric::xyzVector<core::Real> anchor_xyz(0.0);
 	core::Real natom = 0.0;
 	for ( Size ires = 1; ires <= nres; ++ires ) {
 		if ( pose.residue_type(ires).has("CA") ) {

@@ -223,8 +223,8 @@ void setup_partial_coordinate_constraints(
 
 	core::Size iatom; 
 	core::Real natom = 0.0;
-  numeric::xyzVector<core::Real> sum_xyz;
-  numeric::xyzVector<core::Real> anchor_xyz;
+  numeric::xyzVector<core::Real> sum_xyz(0.0);
+  numeric::xyzVector<core::Real> anchor_xyz(0.0);
   core::Real min_dist2 = 1e9;
   Size best_anchor = 0;
   core::Real distjm;
