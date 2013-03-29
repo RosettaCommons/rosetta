@@ -143,6 +143,8 @@ public:
 	/// @brief deep copy of all contained movers.
 	virtual MoverOP clone() const;
 
+	virtual MoverOP fresh_instance() const;
+
 	/// @brief MoverStatus of the mover will be evaluated after each mover
 	void use_mover_status( bool const flag ){
 		use_mover_status_ = flag;
@@ -187,6 +189,7 @@ public:
 	RandomMover( RandomMover const & );
 
 	virtual MoverOP clone() const;
+	virtual MoverOP fresh_instance() const;
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
@@ -201,27 +204,10 @@ public:
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & );
 
-
 private:
 	Size nmoves_;
 	core::Real last_proposal_density_ratio_; //ek added this member 2/25/10
 }; // RandomMover class
-
-// /// @brief WeightedRandomMover picks a random move and applies it.
-// /// weights determine how often each move is selected.
-// /// @details If nmoves is greater than 1, it repeats this process nmoves times for each call to apply().
-// class WeightedRandomMover : public MoverContainer {
-// public:
-
-// 	// constructor
-// 	RandomMover() : MoverContainer(), nmoves_(1) {}
-
-// 	virtual void apply( core::pose::Pose & pose );
-
-// private:
-// 	Size nmoves_;
-// }; // RandomMover class
-
 
 
 /// @brief CycleMover iterates through its vector of Movers one at a time over many calls to apply().
@@ -234,11 +220,13 @@ public:
 	// constructor
 	CycleMover() : MoverContainer(), next_move_(0) {}
 
-	// @brief Copy constructor.  Performs a deep copy of all contained movers.
+	/// @brief Copy constructor.  Performs a deep copy of all contained movers.
 	CycleMover( CycleMover const & source );
 
-	// @breif Clone returns a new instance of CycleMover representing a deep copy of this mover.
+	/// @brief Clone returns a new instance of CycleMover representing a deep copy of this mover.
 	virtual MoverOP clone() const;
+
+	virtual MoverOP fresh_instance() const;
 
 	virtual void apply( core::pose::Pose& pose );
 	void reset_cycle_index(); //JQX: add reset the cycle mover index next_move_

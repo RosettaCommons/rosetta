@@ -352,18 +352,12 @@ void GraftCDRLoopsProtocol::apply( pose::Pose & frame_pose ) {
     
     basic::prof_show();
 
-
 }// end apply
-
-
-
 
 
 std::string GraftCDRLoopsProtocol::get_name() const {
 	return "GraftCDRLoopsProtocol";
 }
-
-
 
 
 void GraftCDRLoopsProtocol::display_constraint_residues( core::pose::Pose & pose ) {		
@@ -396,16 +390,12 @@ void GraftCDRLoopsProtocol::display_constraint_residues( core::pose::Pose & pose
     return;
 } // display_constraint_residues
 
-    
-    
-    
-    
-    
+
 /// @details  Show the complete setup of the docking protocol
-void GraftCDRLoopsProtocol::show( std::ostream & out ) {
-    out << *this;
+void GraftCDRLoopsProtocol::show( std::ostream & out ) const {
+	out << *this;
 }
-    
+
 std::ostream & operator<<(std::ostream& out, const GraftCDRLoopsProtocol & ab_m_2 )
 {
     using namespace ObjexxFCL::fmt;
@@ -426,10 +416,6 @@ std::ostream & operator<<(std::ostream& out, const GraftCDRLoopsProtocol & ab_m_
     out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
     return out;
 }
-    
-
-    
-    
 
 } // end antibody
 } // end protocols

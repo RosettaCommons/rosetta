@@ -120,11 +120,10 @@ public:
 
 
 	void display_constraint_residues( pose::Pose & pose );
-        
-    void show( std::ostream & out=std::cout );
-    friend std::ostream & operator<<(std::ostream& out, const AntibodyModelerProtocol & ab_m );
-    
-    
+
+	void show( std::ostream & out=std::cout ) const;
+	friend std::ostream & operator<<(std::ostream& out, const AntibodyModelerProtocol & ab_m );
+
 
 private:
     bool model_h3_;

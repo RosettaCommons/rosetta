@@ -38,6 +38,11 @@ namespace comparative_modeling {
 class ThreadingMover : public protocols::moves::Mover {
 
 public:
+	/// @brief Empty constructor
+	ThreadingMover();
+
+	/// @brief  Copy constructor
+	ThreadingMover(ThreadingMover const & object_to_copy);
 
 	/// @brief align describes the association between the query and template
 	/// sequences, template_pose is the conformation from which to build a
@@ -106,6 +111,10 @@ public:
 	virtual void apply( core::pose::Pose & query_pose );
 
 	virtual std::string get_name() const;
+
+	virtual protocols::moves::MoverOP clone() const;
+
+	virtual protocols::moves::MoverOP fresh_instance() const;
 
 private: // methods
 

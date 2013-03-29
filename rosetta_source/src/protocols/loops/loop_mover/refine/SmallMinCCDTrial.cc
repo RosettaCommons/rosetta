@@ -268,7 +268,7 @@ void SmallMinCCDTrial::set_minimizer_options( core::optimization::MinimizerOptio
 }
 
 void
-SmallMinCCDTrial::show( std::ostream & out )
+SmallMinCCDTrial::show( std::ostream & out ) const
 {
 	out << *this;
 }

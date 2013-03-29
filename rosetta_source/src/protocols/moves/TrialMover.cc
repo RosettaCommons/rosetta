@@ -102,6 +102,10 @@ protocols::moves::MoverOP MonteCarloUtil::clone() const
 	return new MonteCarloUtil(mc_);
 }
 
+protocols::moves::MoverOP MonteCarloUtil::fresh_instance() const
+{
+	return new MonteCarloUtil();
+}
 
 
 std::string MonteCarloUtil::get_name() const
@@ -120,15 +124,26 @@ TrialMover::TrialMover() :
 
 // constructor with arguments
 TrialMover::TrialMover( MoverOP mover_in, MonteCarloOP mc_in ) :
-	start_weight_( 0.0 ),
-	original_weight( 0.0 ),
-	ramp_weight( 0.0 ),
-	delta( 0.0 ),
-	stats_type_( all_stats )
+		start_weight_( 0.0 ),
+		original_weight( 0.0 ),
+		ramp_weight( 0.0 ),
+		delta( 0.0 ),
+		stats_type_( all_stats )
 {
 	mover_ = mover_in;
 	mc_ = mc_in;
 }
+
+// Copy constructor
+TrialMover::TrialMover(TrialMover const & object_to_copy) : Mover(object_to_copy),
+		mover_(object_to_copy.mover_),
+		mc_(object_to_copy.mc_),
+		start_weight_(object_to_copy.start_weight_),
+		original_weight(object_to_copy.original_weight),
+		ramp_weight(object_to_copy.ramp_weight),
+		delta(object_to_copy.delta),
+		stats_type_(object_to_copy.stats_type_)
+{}
 
 TrialMover::~TrialMover() {}
 
@@ -197,6 +212,17 @@ TrialMover::get_name() const {
 	return "TrialMover";
 }
 
+protocols::moves::MoverOP
+TrialMover::clone() const
+{
+	return new TrialMover(*this);
+}
+
+protocols::moves::MoverOP
+TrialMover::fresh_instance() const
+{
+	return new TrialMover();
+}
 
 Real TrialMover::acceptance_rate() const
 {

@@ -141,10 +141,10 @@ PsiPredInterface::parse_psipred_horiz_output( std::string const & psipred_horiz_
 
 /// @brief Parses the psipred output and returns the predicted secondary structure and likelihoods of the blueprint secondary structure being present on the pose at each position.
 PsiPredResult
-PsiPredInterface::parse_psipred_output( core::pose::Pose const & pose,
-																				std::string const & psipred_str,
-																				std::string const & blueprint_ss,
-																				std::string const & psipred_horiz_filename ) const {
+PsiPredInterface::parse_psipred_output( core::pose::Pose const & /*pose*/,
+		std::string const & psipred_str,
+		std::string const & blueprint_ss,
+		std::string const & psipred_horiz_filename ) const {
 	std::istringstream psipred( psipred_str );
 	utility::vector1< core::Real > probabilities;
 	std::string pred_ss( "" );

@@ -219,7 +219,7 @@ docking::DockingProtocolOP SnugDockProtocol::docking() const
 }
 
 void
-SnugDockProtocol::show( std::ostream & out )
+SnugDockProtocol::show( std::ostream & out ) const
 {
 	out << *this;
 }

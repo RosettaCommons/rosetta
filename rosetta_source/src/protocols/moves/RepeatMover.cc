@@ -8,44 +8,55 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file src/protocols/moves/RepeatMover.cc
-/// @brief
-/// @author
+/// @brief Method definitions for RepeatMover
 
 // Unit Headers
 #include <protocols/moves/RepeatMover.hh>
 
+// Utility Headers
 #include <utility/vector1.hh>
+
+// Basic Headers
 #include <basic/Tracer.hh>
 
-
-// Package headers
-
-// Project headers
-
-// tracer
-
-// C++ Headers
-
-// ObjexxFCL Headers
 
 namespace protocols {
 namespace moves {
 
 using namespace core;
 
-/// RepeatMover
+// Empty constructor (nmoves=1)
 RepeatMover::RepeatMover() : Mover(), nmoves_(1) {}
 
+/// @details repeatmover = RepeatMover( mover_in , nmoves_in )
+///
+/// Mover    mover_in    /object defining what move to make
+/// int      nmoves_in   /how many times to apply mover_in
 RepeatMover::RepeatMover(
-	MoverOP mover_in,
-	int nmoves_in
+		MoverOP mover_in,
+		int nmoves_in
 ) : Mover("RepeatMover"),
 		mover_(mover_in),
 		nmoves_(nmoves_in)
 {}
 
+// Copy constructor
+RepeatMover::RepeatMover(RepeatMover const & object_to_copy) : Mover(object_to_copy),
+		mover_(object_to_copy.mover_),
+		nmoves_(object_to_copy.nmoves_)
+{}
+
 RepeatMover::~RepeatMover() {}
 
+/// @details
+/// Example(s):
+///     repeatmover.apply(pose)
+/// See Also:
+///     MinMover
+///     SequenceMover
+///     ShearMover
+///     SmallMover
+///     TrialMover
 void
 RepeatMover::apply( core::pose::Pose & pose ) {
 	for ( int i=1; i<=nmoves_; ++i ) {
@@ -57,6 +68,18 @@ RepeatMover::apply( core::pose::Pose & pose ) {
 std::string
 RepeatMover::get_name() const {
 	return "RepeatMover";
+}
+
+protocols::moves::MoverOP
+RepeatMover::clone() const
+{
+	return new RepeatMover(*this);
+}
+
+protocols::moves::MoverOP
+RepeatMover::fresh_instance() const
+{
+	return new RepeatMover();
 }
 
 core::Size
@@ -85,4 +108,3 @@ std::ostream &operator<< (std::ostream &os, RepeatMover const &mover)
 
 } // moves
 } // protocols
-

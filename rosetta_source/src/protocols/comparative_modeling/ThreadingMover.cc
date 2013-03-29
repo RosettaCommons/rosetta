@@ -76,6 +76,28 @@ namespace comparative_modeling {
 
 static basic::Tracer tr("protocols.comparative_modeling.threading");
 
+// Empty constructor
+ThreadingMover::ThreadingMover() : protocols::moves::Mover("ThreadingMover"),
+		query_index_(1),
+		template_index_(2),
+		build_query_loops_(true),
+		repack_query_(true),
+		randomize_loop_coords_(false),
+		min_loop_size_(3)
+{}
+
+// Copy constructor
+ThreadingMover::ThreadingMover(ThreadingMover const & object_to_copy) : protocols::moves::Mover(object_to_copy),
+		query_index_(object_to_copy.query_index_),
+		template_index_(object_to_copy.template_index_),
+		template_pose_(object_to_copy.template_pose_),
+		align_(object_to_copy.align_),
+		build_query_loops_(object_to_copy.build_query_loops_),
+		repack_query_(object_to_copy.repack_query_),
+		randomize_loop_coords_(object_to_copy.randomize_loop_coords_),
+		min_loop_size_(object_to_copy.min_loop_size_)
+{}
+
 ThreadingMover::ThreadingMover(
 	core::sequence::SequenceAlignment const & align,
 	core::pose::Pose const & template_pose
@@ -442,6 +464,18 @@ void ThreadingMover::apply(
 std::string
 ThreadingMover::get_name() const {
 	return "ThreadingMover";
+}
+
+protocols::moves::MoverOP
+ThreadingMover::clone() const
+{
+	return new ThreadingMover(*this);
+}
+
+protocols::moves::MoverOP
+ThreadingMover::fresh_instance() const
+{
+	return new ThreadingMover();
 }
 
 } // comparative_modeling

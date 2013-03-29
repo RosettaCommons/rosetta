@@ -121,7 +121,7 @@ public:
 
 
 	void add_jump( core::SSize const jump_number ){ movable_jumps_.push_back( int( jump_number ) ); }
-	void show( std::ostream & out=std::cout );
+	void show( std::ostream & out=std::cout ) const;
 	friend std::ostream & operator<<(std::ostream& out, const TemperedDocking & dp );
 
 	// function for the parser with lots of accessors

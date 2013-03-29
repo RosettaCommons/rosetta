@@ -40,13 +40,18 @@ namespace simple_moves {
 
 class MissingDensityToJumpMover : public protocols::moves::Mover {
 public:
-	// default constructor (nmoves=1)
+	/// @brief Default constructor (nmoves=1)
 	MissingDensityToJumpMover();
+
+	/// @brief Copy constructor
+	MissingDensityToJumpMover(MissingDensityToJumpMover const & object_to_copy);
 
 	~MissingDensityToJumpMover();
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
+	virtual protocols::moves::MoverOP clone() const;
+	virtual protocols::moves::MoverOP fresh_instance() const;
 
 };
 

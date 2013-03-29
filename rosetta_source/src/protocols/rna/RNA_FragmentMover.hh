@@ -8,29 +8,36 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file loopRNA_minimizer.hh
-/// @brief
-/// @detailed
-///
+/// @brief protocols that are specific to RNA_FragmentMover
 /// @author Rhiju Das
 
 
 #ifndef INCLUDED_protocols_rna_RNA_FragmentMover_HH
 #define INCLUDED_protocols_rna_RNA_FragmentMover_HH
 
-#include <core/types.hh>
-#include <protocols/moves/Mover.hh>
+// Unit headers
 #include <protocols/rna/RNA_Fragments.fwd.hh>
-#include <protocols/toolbox/AllowInsert.fwd.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
+
+// Package headers
+#include <protocols/moves/Mover.hh>
+
+// Project headers
+#include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 
-//// C++ headers
+#include <protocols/toolbox/AllowInsert.fwd.hh>
+
+// ObjexxFCL Headers
+#include <ObjexxFCL/FArray1D.fwd.hh>
+
+// Utility headers
+#include <utility/vector1.hh>
+
+// C++ headers
 #include <string>
 #include <vector>
 #include <map>
 
-#include <utility/vector1.hh>
-#include <ObjexxFCL/FArray1D.fwd.hh>
 
 namespace protocols {
 namespace rna {
@@ -39,8 +46,10 @@ namespace rna {
 class RNA_FragmentMover: public protocols::moves::Mover {
 
 public:
-	/// @brief Construct the protocol object given
-	/// the RNA fragment library to use.
+	/// @brief Empty constructor
+	RNA_FragmentMover();
+
+	/// @brief Construct the protocol object given the RNA fragment library to use.
 	RNA_FragmentMover( RNA_FragmentsOP all_rna_fragments,
 										 protocols::toolbox::AllowInsertOP allow_insert );
 
@@ -49,6 +58,8 @@ public:
 										 ObjexxFCL::FArray1D<bool> const & allow_insert,
 										 core::pose::Pose const & pose );
 
+	/// @brief Copy constructor
+	RNA_FragmentMover(RNA_FragmentMover const & object_to_copy);
 
 	~RNA_FragmentMover();
 
@@ -56,6 +67,10 @@ public:
 	void apply( core::pose::Pose & pose );
 
 	virtual std::string get_name() const;
+
+	virtual protocols::moves::MoverOP clone() const;
+
+	virtual protocols::moves::MoverOP fresh_instance() const;
 
 	core::Size
 	random_fragment_insertion( core::pose::Pose & pose, Size const & frag_size );

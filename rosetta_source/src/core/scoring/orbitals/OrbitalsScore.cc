@@ -88,7 +88,7 @@ OrbitalsScore::clone() const
 	return new OrbitalsScore(*this);
 }
 
-void OrbitalsScore::setup_for_scoring(pose::Pose & pose, ScoreFunction const & weights) const
+void OrbitalsScore::setup_for_scoring(pose::Pose & pose, ScoreFunction const & /*weights*/) const
 {
 	pose.update_residue_neighbors();
 }
@@ -105,12 +105,12 @@ void
 OrbitalsScore::setup_for_minimizing_for_residue_pair(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
-		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		kinematics::MinimizerMapBase const & minmap,
-		ResSingleMinimizationData const & res1_data_cache,
-		ResSingleMinimizationData const & res2_data_cache,
-		ResPairMinimizationData & data_cache
+		pose::Pose const & /*pose*/,
+		ScoreFunction const & /*sfxn*/,
+		kinematics::MinimizerMapBase const & /*minmap*/,
+		ResSingleMinimizationData const & /*res1_data_cache*/,
+		ResSingleMinimizationData const & /*res2_data_cache*/,
+		ResPairMinimizationData & /*data_cache*/
 ) const{
 	//std::cout << "we got to setup for minimizeing" << std::endl;
 	conformation::Residue *res1_ptr = const_cast<conformation::Residue *>(&rsd1);

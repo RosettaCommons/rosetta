@@ -12,7 +12,7 @@
 /// @brief Concrete class derived from LoopRefineInnerCycle to implement the CCD min trial flavor of inner cycle refinement.  
 /// @detailed
 ///
-/// @author Michael Pacella (mpacella88@gmail.com
+/// @author Michael Pacella (mpacella88@gmail.com)
 
 // Unit headers
 #include <protocols/loops/loop_mover/refine/ShearMinCCDTrial.hh>
@@ -199,7 +199,7 @@ core::optimization::AtomTreeMinimizerOP ShearMinCCDTrial::minimizer( core::pose:
 	}
 	return minimizer_;
 }
-void ShearMinCCDTrial::show( std::ostream & out )
+void ShearMinCCDTrial::show( std::ostream & out ) const
 {
 	out << *this;
 }

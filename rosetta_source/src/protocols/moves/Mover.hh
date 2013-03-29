@@ -7,9 +7,19 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
-/// @brief
-/// @author
+/// @file src/protocols/moves/Mover.hh
+/// @brief: A mover is an object that can apply a conformational change to a pose.
+///
+/// @details: Each derived class should define its own apply() statement.
+///   DO NOT JUST GO ADDING FUNCTIONS TO THIS CLASS.  YOU IMPLY EVERYONE WHO
+///   DERIVES FROM IT IS OBLIGATED TO IMPLEMENT THAT FUNCTION, OR, IF THEY
+///   DON'T, THAT THEY ARE IMPLICITLY AGREEING THAT THE BASE CLASS IMPLEMENTATION
+///   IS CORRECT.
+///
+/// @author Monica Berrondo
+/// @author Jeff Gray
+/// @author Steven Lewis
+/// @author Sarel Fleishman
 
 #ifndef INCLUDED_protocols_moves_Mover_hh
 #define INCLUDED_protocols_moves_Mover_hh
@@ -39,6 +49,7 @@
 #include <string>
 #include <map>
 #include <list>
+#include <iostream>
 
 #include <protocols/jobdist/Jobs.fwd.hh>
 #include <utility/vector1.hh>
@@ -67,21 +78,6 @@ void SerializableState_set( SerializableStateSP state, std::string key, core::Re
 std::string SerializableState_get( SerializableStateSP state, std::string key );
 #endif
 
-///////////////////////////////////////////////////////////////////////////////
-/// @brief:
-/// 	A mover is an object that can apply a conformational change to a pose
-///
-/// @detailed:
-/// 	Each derived class should define its own apply() statement
-///   DO NOT JUST GO ADDING FUNCTIONS TO THIS CLASS.  YOU IMPLY EVERYONE WHO
-///   DERIVES FROM IT IS OBLIGATED TO IMPLEMENT THAT FUNCTION, OR, IF THEY
-///   DON'T, THAT THEY ARE IMPLICTLY AGREEING THAT THE BASE CLASS IMPLEMENTATION
-///   IS CORRECT.
-///
-/// @authors Monica Berrondo, Jeff Gray, Steven Lewis, Sarel Fleishman
-///
-/// @last_modified
-///////////////////////////////////////////////////////////////////////////////
 
 class Mover : public utility::pointer::ReferenceCount {
 public:
@@ -94,17 +90,21 @@ public:
 public:
 	Mover();
 	virtual ~Mover();
+
 	// Factory<Mover> functions
 	// this really should be pure
 	virtual MoverSP create();
+
 	static std::string name() {
 		return "UNDEFINED NAME";
 	}
+
 	// elscripts functions
 	virtual void apply( core::io::serialization::PipeMap & pmap);
 
 	// called right before mover is used , allowing mover to set settings based on state
 	virtual void parse_state( SerializableState const & state );	
+
 	// called once, when mover is instantiated
 	virtual void parse_def( utility::lua::LuaObject const & def,
 					utility::lua::LuaObject const & score_fxns,
@@ -122,9 +122,10 @@ public:
 
 	virtual core::Real last_proposal_density_ratio() {return 1;} //ek added 2/25/10
 
-	///@brief overload this static method if you access options within the mover.
-	/// these options will end up in -help of your application if users of this mover call register_options. do this recursively!
-	/// if you use movers within your mover, call their register_options in your register_options() method.
+	///@brief Overload this static method if you access options within the mover.
+	///@details These options will end up in -help of your application if users of this mover call register_options.
+	/// Do this recursively!
+	/// If you use movers within your mover, call their register_options in your register_options() method.
 	static void register_options() {}
 
 	virtual void apply( Pose & ) = 0;
@@ -161,8 +162,8 @@ public:
 	//protected and it allows more detail in MC diagnosis
 	void type( const std::string & type_in ) { type_ = type_in; }
 
-	/// @brief clone has to be overridden only if clone invocation is expected.
-	virtual MoverOP clone() const;
+	/// @brief Return a clone of the Mover object.
+	virtual MoverOP clone() const /*= 0*/;
 
 	//////////////////////////////////begin parser interface////////////////////////////
 
@@ -197,25 +198,24 @@ public:
 	///@brief Strings container can be used to return miscellaneous info (as std::string) from a mover, such as notes about the results of apply(). The job distributor (Apr 09 vintage) will check this function to see if your protocol wants to add string info to the Job that ran this mover. One way this can be useful is that later, a JobOutputter may include/append this info to an output file.
 	///@brief clear_info is called by jd2 before calling apply
 	virtual void clear_info() { info_.clear(); }
+
 	///@brief non-const accessor
 	virtual Strings & info() { return info_; }
+
 	///@brief const accessor
 	virtual Strings const & info() const { return info_; }
 
-	///@brief this function informs the job distributor (august 08 vintage) whether this object needs to be freshly regenerated on each use.
-	virtual
-	bool
-	reinitialize_for_each_job() const;
+	///@brief Inform the Job Distributor (August '08 vintage) whether this object needs to be freshly regenerated on
+	/// each use.
+	virtual bool reinitialize_for_each_job() const;
 
-	///@brief this function informs the job distributor (august 08 vintage) whether this object needs to be regenerated when the input pose is about to change (for example, if the mover has special code on the first apply() that is only valid for that one input pose).
-	virtual
-	bool
-	reinitialize_for_new_input() const;
+	///@brief Inform the Job Distributor (August '08 vintage) whether this object needs to be regenerated when the input
+	/// pose is about to change, (for example, if the Mover has special code on the first apply() that is only valid for
+	/// that one input pose).
+	virtual bool reinitialize_for_new_input() const;
 
-	///@brief this is like clone(), except it generates a new mover object freshly created with the default ctor.  This function _should_ be pure virtual but that would disrupt the code base; MAKE SURE YOU DEFINE IT if you want to have your mover be a protocol handed to the job distributor (august 08 vintage).
-	virtual
-	MoverOP
-	fresh_instance() const;
+	///@brief Generates a new Mover object freshly created with the default ctor.
+	virtual MoverOP	fresh_instance() const /*= 0*/;
 
 	///////////////////////////////end Job Distributor interface////////////////////////////////////////
 
@@ -223,10 +223,12 @@ public:
 
 	jobdist::BasicJobCOP get_current_job() const;
 
+	///@brief Outputs details about the Mover, including current settings.
+	virtual void show(std::ostream & output=std::cout) const;
+
 protected:
 	///@brief nonvirtual setter for MoverStatus last_status_.  Protected means that only the mover itself will be able to change its own status.  The job distributor (august 08 vintage) is aware of status set with this function and will do what the MoverStatus says.
-	void
-	set_last_move_status( MoverStatus status );
+	void set_last_move_status( MoverStatus status );
 
 private:
 
@@ -246,8 +248,8 @@ private:
 
 }; // end Mover base class
 
-/// @brief Test IO operator for debug and Python bindings
-std::ostream & operator << ( std::ostream & os, Mover const & mover);
+///@brief Insertion operator (overloaded so that the Mover can be "printed").
+std::ostream & operator<<(std::ostream & output, Mover const & mover);
 
 } // moves
 } // protocols

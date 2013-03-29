@@ -182,7 +182,7 @@ void RepackTrial::init_options()
 }
 
 void
-RepackTrial::show( std::ostream & out )
+RepackTrial::show( std::ostream & out ) const
 {
 	out << *this;
 }

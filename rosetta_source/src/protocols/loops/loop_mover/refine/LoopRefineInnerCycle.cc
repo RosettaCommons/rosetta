@@ -243,7 +243,7 @@ void LoopRefineInnerCycle::set_loop_mover( LoopMover_Refine_CCDAP new_owner_in_t
 }
 
 void
-LoopRefineInnerCycle::show( std::ostream & out )
+LoopRefineInnerCycle::show( std::ostream & out ) const
 {
 	out << *this;
 }

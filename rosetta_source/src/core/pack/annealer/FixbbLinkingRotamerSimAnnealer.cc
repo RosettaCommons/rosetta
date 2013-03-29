@@ -173,14 +173,14 @@ void FixbbLinkingRotamerSimAnnealer::run()
 {
 	using namespace core::conformation;
 
-	int const nmoltenres = ig_->get_num_nodes();
+	core::Size const nmoltenres = ig_->get_num_nodes();
 
-	FArray1D_int state_on_node( nmoltenres,0 ); // parallel representation of interaction graph's state
-	FArray1D_int best_state_on_node( nmoltenres,0 );
+	FArray1D_int state_on_node( nmoltenres, 0 ); // parallel representation of interaction graph's state
+	FArray1D_int best_state_on_node( nmoltenres, 0 );
 	FArray1D< core::PackerEnergy > loopenergy(maxouteriterations,0.0);
 
 	//bk variables for calculating rotamer frequencies during simulation
-	int nsteps = 0;
+	core::Size nsteps = 0;
 	FArray1D_int nsteps_for_rot( ig_->get_num_total_states(), 0 );
 
 	//--------------------------------------------------------------------
@@ -198,8 +198,8 @@ void FixbbLinkingRotamerSimAnnealer::run()
 	// residues with only 1 link to themselves as well as residues with multiple
 	// links.
 	bool flag1 = false; bool flag2 = false;
-	for ( int i = 1; i <= nmoltenres; ++i ) {
-		utility::vector1<int> these_links = rotamer_links_->get_equiv(i);
+	for ( core::Size i = 1; i <= nmoltenres; ++i ) {
+		utility::vector1<Size> these_links = rotamer_links_->get_equiv(i);
 		if ( flag1 && flag2 ) break;
 		if ( these_links.size() == 1 && these_links[1] == i )
 			flag1 = true;
@@ -207,50 +207,25 @@ void FixbbLinkingRotamerSimAnnealer::run()
 			flag2 = true;
 	}
 
-	int totalrot = 0;
+	core::Size totalrot = 0;
 	// totalrot needs to be calculated differently for the quasisymmetrical case
 	if ( flag1 && flag2 ) {
 		for ( core::Size res=1; res<=nmoltenres; ++res ) {
-      totalrot += rotamer_sets()->nrotamers_for_moltenres( res );
-    }
+			totalrot += rotamer_sets()->nrotamers_for_moltenres( res );
+		}
 	} else {
 
 		//experimental
-		utility::vector1<int> segmentTest = rotamer_links_->get_equiv(nmoltenres);
+		utility::vector1<Size> segmentTest = rotamer_links_->get_equiv(nmoltenres);
 		// get the first element of the last repeat.  it should be segment length
 		//std::cout<< "SEGMENTLENGTH from ROTAMER LINK" << segmentTest[1] << std::endl;
 		//Size repeat_number = segmentTest.back()/segmentTest[1];
 		//std::cout<< "number of repeats" << repeat_number << std::endl;
 
-		for (int res = segmentTest[1]; res <= segmentTest[1]*2 ; res++){
+		for (core::Size res = segmentTest[1]; res <= segmentTest[1]*2 ; res++){
 			totalrot += rotamer_sets()->nrotamers_for_moltenres(res);
 		}
 			//std::cout << "TOTAL ROTAMER " << totalrot << std::endl;
-/*
-		int totalrot1 = 0;
-		for (int res = 1; res <= segmentTest[1] ; res++){
-			totalrot1 += rotamer_sets()->nrotamers_for_moltenres(res);
-		}
-		std::cout << "TOTAL ROTAMER1 " << totalrot1 << std::endl;
-
-		int totalrot2 = 0;
-		for (int res = segmentTest[1]; res <= segmentTest[2] ; res++){
-			totalrot2 += rotamer_sets()->nrotamers_for_moltenres(res);
-		}
-		std::cout << "TOTAL ROTAMER2 " << totalrot2 << std::endl;
-
-		int totalrot3 = 0;
-		for (int res = segmentTest[2]; res <= segmentTest[3] ; res++){
-			totalrot3 += rotamer_sets()->nrotamers_for_moltenres(res);
-		}
-		std::cout << "TOTAL ROTAMER3 " << totalrot3 << std::endl;
-
-		int totalrot4 = 0;
-		for (int res = segmentTest[3]; res <= segmentTest[4] ; res++){
-			totalrot4 += rotamer_sets()->nrotamers_for_moltenres(res);
-		}
-		std::cout << "TOTAL ROTAMER4 " << totalrot4 << std::endl;
-*/
 	} // end quasisymmetric if-else
 
 
@@ -571,7 +546,7 @@ void FixbbLinkingRotamerSimAnnealer::run()
 			if ( calc_rot_freq() && ( temperature <= calc_freq_temp ) )
 			{
 				++nsteps;
-				for (int ii = 1; ii <= nmoltenres; ++ii )
+				for (Size ii = 1; ii <= nmoltenres; ++ii )
 				{
 					int iistate = state_on_node(ii);
 					if (iistate != 0)
@@ -611,8 +586,8 @@ void FixbbLinkingRotamerSimAnnealer::run()
 	}
 
 	//convert best_state_on_node into best_rotamer_at_seqpos
-	for (int ii = 1; ii <= nmoltenres; ++ii){
-		int const iiresid = rotamer_sets()->moltenres_2_resid( ii );
+	for (Size ii = 1; ii <= nmoltenres; ++ii){
+		Size const iiresid = rotamer_sets()->moltenres_2_resid( ii );
 		bestrotamer_at_seqpos()( iiresid ) = rotamer_sets()->moltenres_rotid_2_rotid( ii, best_state_on_node(ii));
 	}
 

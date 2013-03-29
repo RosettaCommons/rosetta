@@ -127,17 +127,18 @@ RemodelGlobalFrame::RemodelGlobalFrame(Size segment_size){
 /// @brief copy constructor
 
 /// @brief default destructor
-  RemodelGlobalFrame::~RemodelGlobalFrame(){}
+RemodelGlobalFrame::~RemodelGlobalFrame(){}
 
 /// @brief clone this object
-  RemodelGlobalFrame::MoverOP RemodelGlobalFrame::clone() {
-  return new RemodelGlobalFrame( *this );
+protocols::moves::MoverOP
+RemodelGlobalFrame::RemodelGlobalFrame::clone() const {
+	return new RemodelGlobalFrame( *this );
 }
 
-
 /// @brief create this type of object
-  RemodelGlobalFrame::MoverOP RemodelGlobalFrame::fresh_instance() {
-  return new RemodelGlobalFrame();
+protocols::moves::MoverOP
+RemodelGlobalFrame::RemodelGlobalFrame::fresh_instance() const {
+	return new RemodelGlobalFrame();
 }
 
 void RemodelGlobalFrame::apply( core::pose::Pose & pose )

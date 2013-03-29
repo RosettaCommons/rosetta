@@ -47,10 +47,15 @@ using basic::Warning;
 namespace protocols {
 namespace simple_moves {
 static basic::Tracer TR("protocols.mover.MissingDensityToJumpMover");
-/// MissingDensityToJumpMover
 
-	MissingDensityToJumpMover::MissingDensityToJumpMover(): protocols::moves::Mover( MissingDensityToJumpMover::get_name() ){}
+// Default constructor
+MissingDensityToJumpMover::MissingDensityToJumpMover(): protocols::moves::Mover( MissingDensityToJumpMover::get_name() )
+{}
 
+// Copy constructor
+MissingDensityToJumpMover::MissingDensityToJumpMover(MissingDensityToJumpMover const & object_to_copy) :
+		Mover(object_to_copy)
+{}
 
 MissingDensityToJumpMover::~MissingDensityToJumpMover() {}
 
@@ -59,13 +64,13 @@ MissingDensityToJumpMover::apply( core::pose::Pose & pose ) {
 	using namespace core;
 	using namespace core::conformation;
 	using namespace core::chemical;
-  Size const nres( pose.total_residue() );
+	Size const nres( pose.total_residue() );
 	for ( Size i=1; i< nres; ++i ) {//don't have to go to last residue thus < rather than <=
-    if ( pose.residue_type(i).is_polymer() && !pose.residue_type(i).is_lower_terminus() && !pose.fold_tree().is_cutpoint(i) ) {
-      Residue const &current_rsd(pose.residue(i));
-      Residue const &next_rsd(pose.residue(i+1));
-      core::Real bondlength = ( current_rsd.atom( current_rsd.upper_connect_atom() ).xyz() - next_rsd.atom( next_rsd.lower_connect_atom() ).xyz() ).length();
-      if( bondlength > 2.5 ){
+		if ( pose.residue_type(i).is_polymer() && !pose.residue_type(i).is_lower_terminus() && !pose.fold_tree().is_cutpoint(i) ) {
+			Residue const &current_rsd(pose.residue(i));
+			Residue const &next_rsd(pose.residue(i+1));
+			core::Real bondlength = ( current_rsd.atom( current_rsd.upper_connect_atom() ).xyz() - next_rsd.atom( next_rsd.lower_connect_atom() ).xyz() ).length();
+			if( bondlength > 2.5 ){
 				TR << "[ WARNING ] missing density found at residue " << i << std::endl;
 				core::kinematics::FoldTree update_tree(pose.fold_tree());
 				update_tree.new_jump(i,i+1,i);
@@ -81,6 +86,17 @@ std::string	MissingDensityToJumpMover::get_name() const {
 	return "MissingDensityToJumpMover";
 }
 
+protocols::moves::MoverOP
+MissingDensityToJumpMover::clone() const
+{
+	return new MissingDensityToJumpMover(*this);
+}
+
+protocols::moves::MoverOP
+MissingDensityToJumpMover::fresh_instance() const
+{
+	return new MissingDensityToJumpMover();
+}
+
 } // moves
 } // protocols
-

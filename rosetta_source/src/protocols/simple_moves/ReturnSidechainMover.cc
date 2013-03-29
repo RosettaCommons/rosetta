@@ -121,14 +121,14 @@ ReturnSidechainMover::get_name() const {
 	return "ReturnSidechainMover";
 }
 
-///@brief default constructor
+// default constructor
 ReturnSidechainMover::ReturnSidechainMover() : protocols::moves::Mover()
 {
 	protocols::moves::Mover::type( "ReturnSidechainMover" );
 	copy_all_chi_ = true;
 }
 
-///@brief constructor with pose
+// constructor with pose
 ReturnSidechainMover::ReturnSidechainMover(
 	core::pose::Pose const & pose_in,
 	core::Size start_res,
@@ -143,7 +143,7 @@ ReturnSidechainMover::ReturnSidechainMover(
 	else end_res_ = end_res;
 }
 
-///@brief constructor with pose
+// constructor with pose
 ReturnSidechainMover::ReturnSidechainMover(
 	core::pose::Pose const & pose_in,
 	utility::vector1<bool> allow_chi_in,
@@ -161,7 +161,29 @@ ReturnSidechainMover::ReturnSidechainMover(
 	else end_res_ = end_res;
 }
 
+// copy constructor
+ReturnSidechainMover::ReturnSidechainMover(ReturnSidechainMover const & object_to_copy) :
+		protocols::moves::Mover(object_to_copy),
+		copy_all_chi_(object_to_copy.copy_all_chi_),
+		allow_chi_copy_(object_to_copy.allow_chi_copy_),
+		remembered_pose_(object_to_copy.remembered_pose_),
+		start_res_(object_to_copy.start_res_),
+		end_res_(object_to_copy.end_res_)
+{}
+
 ReturnSidechainMover::~ReturnSidechainMover() {}
+
+protocols::moves::MoverOP
+ReturnSidechainMover::clone() const
+{
+	return new ReturnSidechainMover(*this);
+}
+
+protocols::moves::MoverOP
+ReturnSidechainMover::fresh_instance() const
+{
+	return new ReturnSidechainMover();
+}
 
 core::Size ReturnSidechainMover::get_start_res() const {
 	return start_res_;

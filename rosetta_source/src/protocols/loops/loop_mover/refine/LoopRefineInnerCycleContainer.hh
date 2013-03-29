@@ -66,7 +66,7 @@ public: // boiler plate / virtuals
 	static void register_options();
 
 public: // printing methods
-	virtual void show( std::ostream & out=std::cout );
+	virtual void show( std::ostream & out=std::cout ) const;
 	friend std::ostream & operator<<(std::ostream& out, LoopRefineInnerCycleContainer const & loop_refine_inner_cycle_container );
 
 public: // class-specific public methods

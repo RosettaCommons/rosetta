@@ -50,8 +50,8 @@ public: // typedefs
 	typedef protocols::moves::MoverOP MoverOP;
 	typedef protocols::forge::remodel::RemodelData RemodelData;
 	typedef protocols::forge::remodel::RemodelWorkingSet RemodelWorkingSet;
-  typedef core::scoring::constraints::ConstraintSetOP ConstraintSetOP;
-  typedef core::scoring::constraints::ConstraintSet ConstraintSet;
+	typedef core::scoring::constraints::ConstraintSetOP ConstraintSetOP;
+	typedef core::scoring::constraints::ConstraintSet ConstraintSet;
 
 
 public: //constructor/destructor
@@ -68,10 +68,10 @@ public: //constructor/destructor
 public: // virtual constructors
 
 	virtual
-	MoverOP clone() ;
+	MoverOP clone() const;
 
 	virtual
-	MoverOP fresh_instance() ;
+	MoverOP fresh_instance() const;
 
 public: // options
 

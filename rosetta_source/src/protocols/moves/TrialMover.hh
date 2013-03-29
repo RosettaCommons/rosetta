@@ -89,6 +89,7 @@ public:
 	);
 	
 	virtual protocols::moves::MoverOP clone() const;
+	virtual protocols::moves::MoverOP fresh_instance() const;
 	virtual std::string get_name() const;
 	
 	
@@ -121,6 +122,9 @@ public:
 	/// MonteCarlo   mc_in      /object defining acceptance
 	TrialMover( MoverOP mover_in, MonteCarloOP mc_in );
 
+	/// @brief Copy constructor
+	TrialMover(TrialMover const & object_to_copy);
+
 	~TrialMover();
 
 
@@ -145,8 +149,13 @@ public:
 	///     SequenceMover
 	///     TrialMover
 	virtual void apply( core::pose::Pose & pose );
+
 	virtual std::string get_name() const;
+	virtual protocols::moves::MoverOP clone() const;
+	virtual protocols::moves::MoverOP fresh_instance() const;
+
 	Real acceptance_rate() const;
+
 	/// @brief Returns the number of moves accepted by this TrialMover
 	int num_accepts() const;
 

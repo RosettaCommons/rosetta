@@ -74,7 +74,7 @@ public:
 	void number_of_high_resolution_cycles( Size const number_of_high_resolution_cycles );
 	void set_antibody_info( AntibodyInfoOP antibody_info );
 
-	void show( std::ostream & out=std::cout );
+	void show( std::ostream & out=std::cout ) const;
 	friend std::ostream & operator<<(std::ostream& out, SnugDock const & snugdock );
 
 private: // methods

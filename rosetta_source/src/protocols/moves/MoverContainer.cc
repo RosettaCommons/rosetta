@@ -101,6 +101,11 @@ SequenceMover::clone() const {
 	return new SequenceMover( *this );
 }
 
+MoverOP
+SequenceMover::fresh_instance() const {
+	return new SequenceMover();
+}
+
 void SequenceMover::apply( core::pose::Pose & pose )
 {
 
@@ -203,6 +208,11 @@ RandomMover::clone() const {
 	return new RandomMover( *this );
 }
 
+MoverOP
+RandomMover::fresh_instance() const {
+	return new RandomMover();
+}
+
 std::string
 RandomMover::get_name() const {
 	return "RandomMover";
@@ -248,6 +258,11 @@ CycleMover::CycleMover( CycleMover const & source ) :
 MoverOP
 CycleMover::clone() const {
 	return new CycleMover( *this );
+}
+
+MoverOP
+CycleMover::fresh_instance() const {
+	return new CycleMover();
 }
 
 void CycleMover::apply( core::pose::Pose& pose )

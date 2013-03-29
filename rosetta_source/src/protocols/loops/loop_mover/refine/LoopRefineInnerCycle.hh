@@ -78,7 +78,7 @@ public: // boiler plate / virtuals
 	// NOTE: The clone() and fresh_instance() virtual methods are omitted because this class is abstract
 
 public: // printing methods
-	virtual void show( std::ostream & out=std::cout );
+	virtual void show( std::ostream & out=std::cout ) const;
 	friend std::ostream & operator<<(std::ostream& out, LoopRefineInnerCycle const & loop_refine_inner_cycle );
 
 public: // class-specific public methods

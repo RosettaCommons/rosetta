@@ -31,7 +31,10 @@
 namespace protocols {
 namespace simple_moves {
 
-///@details This class takes two poses, one at instantiation and one at apply.  It copies the residue type set and chi information from its kept pose to the apply pose.  The intended purpose is for "returning" known sidechains to a pose that was temporarily in centroid mode, although it may work with other residue type sets.
+///@details This class takes two poses, one at instantiation and one at apply.
+/// It copies the residue type set and chi information from its kept pose to the apply pose.
+/// The intended purpose is for "returning" known sidechains to a pose that was temporarily in centroid mode, although
+/// it may work with other residue type sets.
 class ReturnSidechainMover : public protocols::moves::Mover {
 
 public:
@@ -52,10 +55,15 @@ public:
 		core::Size start_res = 0,
 		core::Size end_res = 0 );
 
+	///@brief copy constructor
+	ReturnSidechainMover(ReturnSidechainMover const & object_to_copy);
+
 	virtual ~ReturnSidechainMover();
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
+	virtual protocols::moves::MoverOP clone() const;
+	virtual protocols::moves::MoverOP fresh_instance() const;
 
 	bool copy_all_chi_;
 	utility::vector1<bool> allow_chi_copy_;

@@ -10,7 +10,7 @@
 
 /// @file protocols/antibody/SnugDock.cc
 /// @brief Dock and antigen to an antibody while optimizing the rigid body orientation of the VH and VL chains and performing CDR loop minimization.
-/// @detailed
+/// @details
 ///
 ///
 /// @author Jianqing Xu ( xubest@gmail.com )
@@ -291,7 +291,7 @@ void SnugDock::init_options()
 }
 
 void
-SnugDock::show( std::ostream & out )
+SnugDock::show( std::ostream & out ) const
 {
 	out << *this;
 }

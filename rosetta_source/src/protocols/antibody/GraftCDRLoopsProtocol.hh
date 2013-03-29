@@ -98,17 +98,16 @@ public:
 	}
 	virtual std::string get_name() const;
 
-    
-    /// @brief Associates relevant options with the AntibodyModeler class
-    static void register_options();
-    
-	void display_constraint_residues( core::pose::Pose & pose );
-    
-    void show( std::ostream & out=std::cout );
-    friend std::ostream & operator<<(std::ostream& out, const GraftCDRLoopsProtocol & ab_m_2 );
 
-    
-    
+	/// @brief Associates relevant options with the AntibodyModeler class
+	static void register_options();
+
+	void display_constraint_residues( core::pose::Pose & pose );
+
+	void show( std::ostream & out=std::cout ) const;
+	friend std::ostream & operator<<(std::ostream& out, const GraftCDRLoopsProtocol & ab_m_2 );
+
+
 private:
 	void finalize_setup( core::pose::Pose & pose );
 	void init();

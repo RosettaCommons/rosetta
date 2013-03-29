@@ -113,13 +113,13 @@ public: // functional interface
 
 	virtual
 	void
-	show();
+	show() const;
 
 	virtual
 	void
 	show(
 		std::ostream & out
-	);
+	) const;
 
 private: // data
 

@@ -208,18 +208,18 @@ optimize_linkers_centroid_mode(
 	scoring::ScoreFunctionOP scorefxn_centroid( scoring::ScoreFunctionFactory::create_score_function( scoring::CENTROID_WTS ) );
 	MonteCarloOP mc( new MonteCarlo( full_pose, *scorefxn_centroid, 0.8 /*temperature*/ ) );
 
-  // read fragments file
-  core::fragment::ConstantLengthFragSetOP fragset3mer = NULL;
-  if (basic::options::option[ basic::options::OptionKeys::in::file::frag3].user()){
-    fragset3mer = new core::fragment::ConstantLengthFragSet( 3 );
-    fragset3mer->read_fragment_file( basic::options::option[ basic::options::OptionKeys::in::file::frag3 ]() );
-  }
+	// read fragments file
+	core::fragment::ConstantLengthFragSetOP fragset3mer = NULL;
+	if (basic::options::option[ basic::options::OptionKeys::in::file::frag3].user()){
+		fragset3mer = new core::fragment::ConstantLengthFragSet( 3 );
+		fragset3mer->read_fragment_file( basic::options::option[ basic::options::OptionKeys::in::file::frag3 ]() );
+	}
 
 	// more traditional small moves
-  protocols::simple_moves::SmallMoverOP small_mover( new protocols::simple_moves::SmallMover( mm, 0.8/*temp*/, 1/*nmoves*/ ) );
-  small_mover->angle_max( 'H', 2.0 );  // max angle displacement 180 degrees
-  small_mover->angle_max( 'E', 4.0 );
-  small_mover->angle_max( 'L', 4.0 );
+	protocols::simple_moves::SmallMoverOP small_mover( new protocols::simple_moves::SmallMover( mm, 0.8/*temp*/, 1/*nmoves*/ ) );
+	small_mover->angle_max( 'H', 2.0 );  // max angle displacement 180 degrees
+	small_mover->angle_max( 'E', 4.0 );
+	small_mover->angle_max( 'L', 4.0 );
 
 	//// STAGE 1 /////
 	TrialMoverOP centroid_trial_mover = NULL;
@@ -247,8 +247,8 @@ optimize_linkers_centroid_mode(
 	//// END STAGE 1 ////
 
 	////// STAGE 2 ///////
-  TrialMoverOP stage2_trial = new TrialMover( small_mover, mc );
-  RepeatMoverOP stage2 = new RepeatMover( stage2_trial, inside_steps_stage2 );
+	TrialMoverOP stage2_trial = new TrialMover( small_mover, mc );
+	RepeatMoverOP stage2 = new RepeatMover( stage2_trial, inside_steps_stage2 );
 
 	std::cout << "   Current  Low " << std::endl;
 	for ( Size i = 1; i <= outside_steps_stage2; ++i ) {

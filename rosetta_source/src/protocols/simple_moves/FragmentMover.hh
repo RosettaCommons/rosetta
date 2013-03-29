@@ -12,7 +12,6 @@
 /// @brief  set of fragments
 /// @author Oliver Lange
 /// @date   Wed Aug 22 12:08:31 2007
-///
 
 #ifndef INCLUDED_protocols_simple_moves_FragmentMover_HH
 #define INCLUDED_protocols_simple_moves_FragmentMover_HH
@@ -55,7 +54,7 @@ public:
 
 	using moves::Mover::apply;
 
-	///@broef apply a fragment at pos to movemable dofs
+	///@brief apply a fragment at pos to movemable dofs
 	virtual bool apply( core::pose::Pose&, Size pos ) const; // apply fragment at seqpos ( if possible )
 	virtual std::string get_name() const;
 
@@ -83,11 +82,13 @@ public:
 	}
 
 protected:
+	/// @brief Empty constructor
+	FragmentMover(std::string type);
+
 	FragmentMover(
 		core::fragment::FragSetCOP fragset,
 		std::string type
 	);
-
 
 	///@brief constructor
 	FragmentMover(
@@ -123,25 +124,23 @@ protected:
 /// @brief A FragmentMover that applies uniform sampling of fragments
 class ClassicFragmentMover : public FragmentMover {
 public:
+	/// @brief Empty constructor
+	ClassicFragmentMover();
 
-	/// @brief
+	/// @brief Constructor with supplied FragSet
+	ClassicFragmentMover(core::fragment::FragSetCOP fragset);
+
+	/// @brief Constructor with supplied FragSet and MoveMap
 	ClassicFragmentMover(
-		core::fragment::FragSetCOP fragset
+			core::fragment::FragSetCOP fragset,
+			core::kinematics::MoveMapCOP movemap
 	);
 
-
-	/// @brief
+	/// @brief Constructor with supplied ConstantLengthFragSet and MoveMap
+	/// @note Temp workaround for PyRosetta code, until we find a way to handle owning pointers in this case
 	ClassicFragmentMover(
-		core::fragment::FragSetCOP fragset,
-		core::kinematics::MoveMapCOP movemap
-	);
-
-
-	/// @brief
-	/// @note: temp work around for PyRosetta code, until we find a way to handle owning pointers in this case
-	ClassicFragmentMover(
-		core::fragment::ConstantLengthFragSet const & fragset,
-		core::kinematics::MoveMap const & movemap
+			core::fragment::ConstantLengthFragSet const & fragset,
+			core::kinematics::MoveMap const & movemap
 	);
 
 	~ClassicFragmentMover();
@@ -155,7 +154,10 @@ public:
 	///     Pose
 	///     ConstantLengthFragSet
 	void apply( core::pose::Pose & );
+
 	virtual std::string get_name() const;
+	virtual protocols::moves::MoverOP clone() const;
+	virtual protocols::moves::MoverOP fresh_instance() const;
 
 	// Not defined, commenting out to make Python binding compile
 	//bool apply( core::pose::Pose &, Size pos );

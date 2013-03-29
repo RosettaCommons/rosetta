@@ -278,14 +278,13 @@ RotamerRecoveryMover::score_function(
 }
 
 void
-RotamerRecoveryMover::show() {
+RotamerRecoveryMover::show() const{
 	rotamer_recovery_->show();
 }
 
 void
-RotamerRecoveryMover::show(
-	ostream & out
-) {
+RotamerRecoveryMover::show(ostream & out) const
+{
 	rotamer_recovery_->show( out );
 }
 

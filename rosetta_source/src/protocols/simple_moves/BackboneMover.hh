@@ -7,9 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
-/// @brief
-/// @author
+/// @file   src/protocols/simple_moves/BackboneMover.hh
+/// @brief  Declarations and simple accessor/mutator definitions for SmallMover and ShearMover
 
 
 #ifndef INCLUDED_protocols_simple_moves_BackboneMover_hh
@@ -21,33 +20,28 @@
 // Package headers
 #include <protocols/canonical_sampling/ThermodynamicMover.hh>
 
+// Project headers
 #include <core/types.hh>
-
 #include <core/pose/Pose.fwd.hh>
-
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/id/DOF_ID_Range.fwd.hh>
-
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 
-// ObjexxFCL Headers
+// Utility Headers
+#include <utility/pointer/ReferenceCount.hh>
+#include <utility/vector1.hh>
 
 // C++ Headers
 #include <map>
 #include <string>
-
-// Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
-
-#include <utility/vector1.hh>
 
 
 namespace protocols {
 namespace simple_moves {
 
 ///////////////////////////////////////////////////////////////////////////////
-/// BackboneMover class has elements of the MC temperature to do repetitions
+/// @brief BackboneMover class has elements of the MC temperature to do repetitions
 /// of bb moves (small, shear, wobble, etc.).
 /// @todo change this to some kind of 'protocol' so the MC is managed separately from
 /// conformational moves
@@ -211,7 +205,6 @@ public:
 
 	// default constructor
 	SmallMover();
-//	SmallMover() : BackboneMover() { protocols::moves::Mover::type( "SmallMover" ); }
 
 	/// @brief Constructs a SmallMover
 	/// smallmover = SmallMover( movemap , kT , n_moves )
@@ -225,11 +218,15 @@ public:
 		core::Size nmoves_in
 	);
 
+	/// @brief Copy constructor
+	SmallMover(SmallMover const & object_to_copy);
+
 	//destructor
 	~SmallMover();
-	virtual std::string get_name() const;
 
-	protocols::moves::MoverOP clone() const;
+	virtual std::string get_name() const;
+	virtual protocols::moves::MoverOP clone() const;
+	virtual protocols::moves::MoverOP fresh_instance() const;
 
 	virtual void setup_list( core::pose::Pose & pose );
 	virtual void set_angles( core::Real angle_in );
@@ -272,7 +269,6 @@ public:
 
 	// default constructor
 	ShearMover();
-	//ShearMover() : BackboneMover() { protocols::moves::Mover::type( "ShearMover" );	}
 
 	/// @brief Constructs a ShearMover
 	/// shearmover = ShearMover( movemap , kT , n_moves )
@@ -286,11 +282,15 @@ public:
 		core::Size nmoves_in
 	);
 
+	/// @brief Copy constructor
+	ShearMover(ShearMover const & object_to_copy);
+
 	//destructor
 	~ShearMover();
-	virtual std::string get_name() const;
 
-	protocols::moves::MoverOP clone() const;
+	virtual std::string get_name() const;
+	virtual protocols::moves::MoverOP clone() const;
+	virtual protocols::moves::MoverOP fresh_instance() const;
 
 	virtual void setup_list( core::pose::Pose & pose );
 	virtual void set_angles( core::Real angle_in );

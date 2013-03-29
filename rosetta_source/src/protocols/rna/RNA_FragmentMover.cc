@@ -9,41 +9,41 @@
 
 /// @file relax_protocols
 /// @brief protocols that are specific to RNA_FragmentMover
-/// @detailed
 /// @author Rhiju Das
 
 
+// Unit headers
 #include <protocols/rna/RNA_FragmentMover.hh>
 #include <protocols/rna/RNA_Fragments.hh>
+#include <protocols/rna/RNA_MatchType.hh>
+
+// Project headers
+#include <core/types.hh>
+#include <core/kinematics/Jump.hh>
+#include <core/conformation/Residue.hh>
+#include <core/pose/Pose.hh>
+
 #include <protocols/toolbox/AllowInsert.hh>
 #include <protocols/toolbox/AllowInsert.fwd.hh>
-#include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/scoring/rna/RNA_Util.hh>
-#include <core/pose/Pose.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray3D.hh>
 
-#include <core/types.hh>
+// Basic headers
 #include <basic/Tracer.hh>
 
+// Numeric headers
 #include <numeric/random/random.hh>
 #include <numeric/xyzVector.hh>
 
-// External library headers
-
+// Utility headers
+#include <utility/vector1.hh>
 
 //C++ headers
 #include <vector>
 #include <string>
 #include <sstream>
-// AUTO-REMOVED #include <fstream>
-// AUTO-REMOVED #include <ctime>
 
-#include <core/kinematics/Jump.hh>
-#include <protocols/rna/RNA_MatchType.hh>
-#include <utility/vector1.hh>
 
 using namespace core;
 using basic::T;
@@ -55,30 +55,39 @@ static basic::Tracer TR( "protocols.rna.rna_fragment_mover" ) ;
 namespace protocols {
 namespace rna {
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	RNA_FragmentMover::RNA_FragmentMover(
-																		 RNA_FragmentsOP rna_fragments,
-																		 protocols::toolbox::AllowInsertOP allow_insert ):
-  Mover(),
-	rna_fragments_( rna_fragments ),
-	allow_insert_( allow_insert ),
-	num_insertable_residues_( 0 ),
-	insert_map_frag_size_( 0 ),
-	frag_size_( 0 )
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Empty constructor
+RNA_FragmentMover::RNA_FragmentMover() : Mover(),
+		num_insertable_residues_( 0 ),
+		insert_map_frag_size_( 0 ),
+		frag_size_( 0 )
 {
 	Mover::type("RNA_FragmentMover");
 }
 
-	// This constructor is not actually used anymore -- better to use AllowInsert object above.
-	RNA_FragmentMover::RNA_FragmentMover( RNA_FragmentsOP all_rna_fragments,
-																				ObjexxFCL::FArray1D<bool> const & allow_insert_in,
-																				pose::Pose const & pose ):
-  Mover(),
-	rna_fragments_( all_rna_fragments ),
-	num_insertable_residues_( 0 ),
-	insert_map_frag_size_( 0 ),
-	frag_size_( 0 )
+RNA_FragmentMover::RNA_FragmentMover(
+		RNA_FragmentsOP rna_fragments,
+		protocols::toolbox::AllowInsertOP allow_insert
+) : Mover(),
+		rna_fragments_( rna_fragments ),
+		allow_insert_( allow_insert ),
+		num_insertable_residues_( 0 ),
+		insert_map_frag_size_( 0 ),
+		frag_size_( 0 )
+{
+	Mover::type("RNA_FragmentMover");
+}
+
+// This constructor is not actually used anymore -- better to use AllowInsert object above.
+RNA_FragmentMover::RNA_FragmentMover( RNA_FragmentsOP all_rna_fragments,
+		ObjexxFCL::FArray1D<bool> const & allow_insert_in,
+		pose::Pose const & pose ):
+		Mover(),
+		rna_fragments_( all_rna_fragments ),
+		num_insertable_residues_( 0 ),
+		insert_map_frag_size_( 0 ),
+		frag_size_( 0 )
 {
 	Mover::type("RNA_FragmentMover");
 
@@ -87,9 +96,17 @@ namespace rna {
 	for ( Size i = 1; i <= allow_insert_in.size(); i++ ){
 		if ( pose.residue_type( i ).is_RNA() && allow_insert_in[ i ] ) allow_insert_->set( i, true );
 	}
-
 }
 
+// Copy constructor
+RNA_FragmentMover::RNA_FragmentMover(RNA_FragmentMover const & object_to_copy) : Mover(object_to_copy),
+		rna_fragments_(object_to_copy.rna_fragments_),
+		allow_insert_(object_to_copy.allow_insert_),
+		insert_map_(object_to_copy.insert_map_),
+		num_insertable_residues_(object_to_copy.num_insertable_residues_),
+		insert_map_frag_size_(object_to_copy.insert_map_frag_size_),
+		frag_size_(object_to_copy.frag_size_)
+{}
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -100,6 +117,18 @@ RNA_FragmentMover::~RNA_FragmentMover()
 std::string
 RNA_FragmentMover::get_name() const {
 	return "RNA_FragmentMover";
+}
+
+protocols::moves::MoverOP
+RNA_FragmentMover::clone() const
+{
+	return new RNA_FragmentMover(*this);
+}
+
+protocols::moves::MoverOP
+RNA_FragmentMover::fresh_instance() const
+{
+	return new RNA_FragmentMover();
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

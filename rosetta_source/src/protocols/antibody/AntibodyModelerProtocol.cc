@@ -67,8 +67,6 @@
 using namespace ObjexxFCL::fmt;
 
 
-
-
 using basic::T;
 using basic::Error;
 using basic::Warning;
@@ -94,8 +92,7 @@ AntibodyModelerProtocol::clone() const {
 	return( new AntibodyModelerProtocol() );
 }
 
-    
-    
+
 void AntibodyModelerProtocol::init() 
 {
 	Mover::type( "AntibodyModelerProtocol" );
@@ -105,8 +102,7 @@ void AntibodyModelerProtocol::init()
 	setup_objects();
 }
 
-    
-    
+
 void AntibodyModelerProtocol::set_default()
 {
 	TR <<  "Setting Up defaults.........." << std::endl;
@@ -142,8 +138,7 @@ void AntibodyModelerProtocol::set_default()
     cdr_constraint_ = NULL;
 }
 
-    
-    
+
 void AntibodyModelerProtocol::register_options()
 {
 	using namespace basic::options;
@@ -172,10 +167,7 @@ void AntibodyModelerProtocol::register_options()
     option.add_relevant( OptionKeys::antibody::bad_nter);
 }
 
-    
-    
-    
-    
+
 void AntibodyModelerProtocol::init_from_options() 
 {
 	using namespace basic::options;
@@ -255,7 +247,6 @@ void AntibodyModelerProtocol::init_from_options()
 }
 
 
-    
 void
 AntibodyModelerProtocol::setup_objects() {
     
@@ -296,8 +287,6 @@ std::string AntibodyModelerProtocol::get_name() const
     return "AntibodyModelerProtocol";
 }
 
-    
-    
 
 void AntibodyModelerProtocol::finalize_setup( pose::Pose & pose ) 
 {
@@ -340,7 +329,6 @@ void AntibodyModelerProtocol::finalize_setup( pose::Pose & pose )
 
 
 }
-
 
 
 //APPLY
@@ -489,18 +477,6 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 }// end apply
 
 
-
-
-
-    
-
-    
-    
-    
-    
-    
-    
-
 void AntibodyModelerProtocol::display_constraint_residues( core::pose::Pose & pose )
 {
 
@@ -539,24 +515,15 @@ void AntibodyModelerProtocol::display_constraint_residues( core::pose::Pose & po
     return;
 } // display_constraint_residues
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
 /// @details  Show the complete setup of the antibody modeler protocol
-void AntibodyModelerProtocol::show( std::ostream & out ) {
-    if ( !flags_and_objects_are_in_sync_ ){
-        sync_objects_with_flags();
-    }
-    out << *this;
+void AntibodyModelerProtocol::show( std::ostream & out ) const {
+	/*if ( !flags_and_objects_are_in_sync_ ){
+		sync_objects_with_flags();
+	}*/  // show() should be const
+	out << *this;
 }
-    
+
 std::ostream & operator<<(std::ostream& out, const AntibodyModelerProtocol & ab_m ){
     using namespace ObjexxFCL::fmt;
         
@@ -586,15 +553,7 @@ std::ostream & operator<<(std::ostream& out, const AntibodyModelerProtocol & ab_
     out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
     return out;
 }
-    
 
-
-    
-    
-    
-        
-    
 
 } // end antibody
 } // end protocols
-

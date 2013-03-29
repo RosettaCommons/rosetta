@@ -207,8 +207,6 @@ void CDRsMinPackMin::finalize_setup( pose::Pose & pose )
 }//finalize_setup
 
 
-
-
 void CDRsMinPackMin::apply( pose::Pose & pose ) {
 	finalize_setup(pose);
 	cdr_sequence_move_ -> apply(pose);
@@ -217,14 +215,9 @@ void CDRsMinPackMin::apply( pose::Pose & pose ) {
 }
 
 
-
-
-
-
-
 /// @details  Show the complete setup of the antibody modeler protocol
-void CDRsMinPackMin::show( std::ostream & out ) {
-    out << *this;
+void CDRsMinPackMin::show( std::ostream & out ) const {
+	out << *this;
 }
 
 std::ostream & operator<<(std::ostream& out, const CDRsMinPackMin & ab_m_2 ){
@@ -244,9 +237,6 @@ std::ostream & operator<<(std::ostream& out, const CDRsMinPackMin & ab_m_2 ){
     out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
     return out;
 }
-
-
-
 
 
 std::string CDRsMinPackMin::get_name() const {

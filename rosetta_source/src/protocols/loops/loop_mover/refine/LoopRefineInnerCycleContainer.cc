@@ -212,7 +212,7 @@ void LoopRefineInnerCycleContainer::set_native_pose( PoseCOP pose )
 	}
 }
 void
-LoopRefineInnerCycleContainer::show( std::ostream & out )
+LoopRefineInnerCycleContainer::show( std::ostream & out ) const
 {
 	out << *this;
 }

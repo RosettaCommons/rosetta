@@ -67,7 +67,7 @@ public:
 		turnoff_minimization_=setting;
 	}
 
-	void show( std::ostream & out=std::cout );
+	void show( std::ostream & out=std::cout ) const;
 	friend std::ostream & operator<<(std::ostream& out, const CDRsMinPackMin & ab_m_2 );
     
 

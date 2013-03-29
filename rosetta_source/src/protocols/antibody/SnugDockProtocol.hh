@@ -65,7 +65,7 @@ public: // boiler plate / virtuals
 	static void register_options();
 
 public:
-	void show( std::ostream & out=std::cout );
+	void show( std::ostream & out=std::cout ) const;
 	friend std::ostream & operator<<(std::ostream& out, SnugDockProtocol const & snugdockprotocol );
 
 private: // methods

@@ -1087,10 +1087,10 @@ void DockingProtocol::add_additional_low_resolution_step( protocols::moves::Move
 
 /// @details  Show the complete setup of the docking protocol
 void
-DockingProtocol::show( std::ostream & out ) {
-	if ( !flags_and_objects_are_in_sync_ ){
+DockingProtocol::show( std::ostream & out ) const {
+	/*if ( !flags_and_objects_are_in_sync_ ){
 		sync_objects_with_flags();
-	}
+	}*/  // show() should be const
 	out << *this;
 }
 

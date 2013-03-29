@@ -78,7 +78,7 @@ public: // boiler plate / virtuals
 	virtual moves::MoverOP fresh_instance() const;
 
 public: // printing methods
-	virtual void show( std::ostream & out=std::cout );
+	virtual void show( std::ostream & out=std::cout ) const;
 	friend std::ostream & operator<<(std::ostream& out, ShearMinCCDTrial const & loop_refine_shear_CCD_min_trial_inner_cycle );
 
 public: // class-specific public methods

@@ -74,7 +74,7 @@ public: // boiler plate / virtuals
 	static void register_options();
 	
 public: // printing methods
-	virtual void show( std::ostream & out=std::cout );
+	virtual void show( std::ostream & out=std::cout ) const;
 	friend std::ostream & operator<<(std::ostream& out, SmallMinCCDTrial const & small_min_ccd_trial );
 
 public: // class-specific public methods

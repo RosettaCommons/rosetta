@@ -8,8 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file src/protocols/moves/RepeatMover.hh
-/// @brief
-/// @author
+/// @brief Declarations and simple accessor/mutator definitions for RepeatMover
 
 #ifndef INCLUDED_protocols_moves_RepeatMover_hh
 #define INCLUDED_protocols_moves_RepeatMover_hh
@@ -19,23 +18,14 @@
 #include <protocols/moves/RepeatMover.fwd.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/types.hh>
-
 #include <core/pose/Pose.fwd.hh>
-
-// AUTO-REMOVED #include <core/scoring/ScoreType.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.fwd.hh>
-
-// ObjexxFCL Headers
-
-// C++ Headers
-#include <string>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
-
 #include <utility/vector1.hh>
+
+// C++ Headers
+#include <string>
 
 
 namespace protocols {
@@ -43,32 +33,28 @@ namespace moves {
 
 /// @brief A Mover that repeats an input Mover a user-specified number of times
 ///
-/// Common Methods:
+/// @details Common Methods:
 ///     RepeatMover.apply
 class RepeatMover : public Mover {
 public:
-	// default constructor (nmoves=1)
+	/// @brief Empty constructor (nmoves=1)
 	RepeatMover();
+
 	/// @brief Constructs a RepeatMover
-	/// repeatmover = RepeatMover( mover_in , nmoves_in )
-	///
-	/// Mover    mover_in    /object defining what move to make
-	/// int      nmoves_in   /how many times to apply mover_in
-	RepeatMover( MoverOP mover_in, int nmoves_in );
+	RepeatMover(MoverOP mover_in, int nmoves_in);
+
+	/// @brief Copy constructor
+	RepeatMover(RepeatMover const & object_to_copy);
+
 	~RepeatMover();
 
 	/// @brief Repeats the input Mover a specified number of times
-	///
-	/// example(s):
-	///     repeatmover.apply(pose)
-	/// See Also:
-	///     MinMover
-	///     SequenceMover
-	///     ShearMover
-	///     SmallMover
-	///     TrialMover
 	virtual void apply( core::pose::Pose & pose );
+
 	virtual std::string get_name() const;
+	virtual protocols::moves::MoverOP clone() const;
+	virtual protocols::moves::MoverOP fresh_instance() const;
+
 	core::Size get_nmoves() const;
 	std::string get_mover() const;
 
@@ -82,6 +68,5 @@ std::ostream &operator<< (std::ostream &os, RepeatMover const &mover);
 
 } // moves
 } // protocols
-
 
 #endif

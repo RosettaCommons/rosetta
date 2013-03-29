@@ -282,10 +282,10 @@ protocols::moves::MoverCOP TemperedDocking::to_centroid() const {
 
 /// @details  Show the complete setup of the docking protocol
 void
-TemperedDocking::show( std::ostream & out ) {
-	if ( !flags_and_objects_are_in_sync_ ){
+TemperedDocking::show( std::ostream & out ) const {
+	/*if ( !flags_and_objects_are_in_sync_ ){
 		sync_objects_with_flags();
-	}
+	}*/  // show() should be const.
 	out << *this;
 }
 

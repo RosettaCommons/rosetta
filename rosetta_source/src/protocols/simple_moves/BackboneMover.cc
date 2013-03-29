@@ -7,44 +7,42 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file docking_initialization_protocols
-/// @brief initialization protocols for docking
-/// @detailed
-///		This contains the functions that create initial positions for docking
-///		You can either randomize partner 1 or partner 2, spin partner 2, or
-///		perform a simple perturbation.
-/// @author Mike Tyka
+/// @file   src/protocols/simple_moves/BackboneMover.cc
+/// @brief  Method definitions for SmallMover and ShearMover
 
+// Unit headers
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/BackboneMoverCreator.hh>
-#include <protocols/rosetta_scripts/util.hh>
 
-// Rosetta Headers
-#include <core/pose/Pose.hh>
+// Project Headers
+#include <core/kinematics/MoveMap.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
+#include <core/pose/Pose.hh>
+#include <core/pose/symmetry/util.hh>
 #include <core/scoring/Ramachandran.hh>
 #include <core/scoring/ScoringManager.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <basic/basic.hh>
 #include <core/id/DOF_ID_Range.hh>
-#include <numeric/NumericTraits.hh>
-//symmetry
-#include <core/pose/symmetry/util.hh>
-// Random number generator
-#include <numeric/random/random.hh>
-#include <utility/tag/Tag.hh>
+#include <core/id/TorsionID_Range.hh>
 
-//
-#include <string>
+#include <protocols/rosetta_scripts/util.hh>
 
+// Basic headers
+#include <basic/basic.hh>
 #include <basic/Tracer.hh>
 
-#include <core/id/TorsionID_Range.hh>
+// Numeric headers
+#include <numeric/NumericTraits.hh>
+#include <numeric/random/random.hh>
+
+// Utility headers
+#include <utility/tag/Tag.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/options/IntegerVectorOption.hh>
 
+// C++ headers
+#include <string>
 
 using basic::T;
 using basic::Error;
@@ -287,7 +285,13 @@ SmallMover::SmallMover(
 )
 	: BackboneMover( movemap_in, temperature_in, nmoves_in )
 {
-		moves::Mover::type( "Small" );
+	moves::Mover::type( "Small" );
+}
+
+// Copy constructor
+SmallMover::SmallMover(SmallMover const & object_to_copy) : BackboneMover(object_to_copy)
+{
+	moves::Mover::type( "Small" );
 }
 
 //destructor
@@ -303,6 +307,10 @@ SmallMover::clone() const {
 	return new SmallMover(*this);
 }
 
+protocols::moves::MoverOP
+SmallMover::fresh_instance() const {
+	return new SmallMover();
+}
 
 void SmallMover::setup_list( core::pose::Pose & pose )
 {
@@ -443,6 +451,12 @@ ShearMover::ShearMover(
 		protocols::moves::Mover::type( "Shear" );
 }
 
+// Copy constructor
+ShearMover::ShearMover(ShearMover const & object_to_copy) : BackboneMover(object_to_copy)
+{
+	moves::Mover::type( "Shear" );
+}
+
 //destructor
 ShearMover::~ShearMover() {}
 
@@ -454,6 +468,11 @@ ShearMover::get_name() const {
 protocols::moves::MoverOP
 ShearMover::clone() const {
 	return new protocols::simple_moves::ShearMover(*this);
+}
+
+protocols::moves::MoverOP
+ShearMover::fresh_instance() const {
+	return new protocols::simple_moves::ShearMover();
 }
 
 void protocols::simple_moves::ShearMover::setup_list( core::pose::Pose & pose )

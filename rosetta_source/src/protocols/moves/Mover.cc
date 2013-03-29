@@ -7,11 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file Mover.cc
+/// @file src/protocols/moves/Mover.cc
 /// @brief Method code and full headers for Mover--
 /// keeps heavily-included Mover.hh small and concise to maximize compiling
 /// efficiency and to make the class definitions easier to read.
-/// @author
+/// @author Monica Berrondo
+/// @author Jeff Gray
+/// @author Steven Lewis
+/// @author Sarel Fleishman
 
 // Unit Headers
 #include <protocols/moves/Mover.hh>
@@ -231,10 +234,27 @@ MoverOP Mover::clone() const {
 	return MoverOP(NULL);
 }
 
-std::ostream & operator << ( std::ostream & os, Mover const & mover)
+// Outputs details about the Mover, including current settings.
+///@details Ideally, a child Mover should call Mover.show() and add additional information particular to that Mover.
+void
+Mover::show(std::ostream & output) const
 {
+	output << "Mover name: " << get_name();
+	output << ", Mover type: " << get_type();
+	output << ", Mover current tag:" << get_current_tag() << std::endl;
+}
+
+/*
 	os << "Mover name: " << mover.get_name() << ", Mover type: " << mover.get_type() << ", Mover current tag:" << mover.get_current_tag() << std::endl;
 	return os;
+*/
+
+// Insertion operator (overloaded so that the Mover can be "printed").
+std::ostream &
+operator<<(std::ostream & output, Mover const & mover)
+{
+	mover.show(output);
+	return output;
 }
 
 /// serializable set helper functions

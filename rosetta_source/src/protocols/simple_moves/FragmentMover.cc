@@ -61,6 +61,16 @@ static basic::Tracer tr("protocols.simple_moves.FragmentMover");
 
 FragmentMover::~FragmentMover() {}
 
+/// @brief Empty constructor
+FragmentMover::FragmentMover(std::string type)
+{
+	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+	movemap->set_bb(true); // standard MoveMap
+	movemap_= movemap;
+	protocols::moves::Mover::type(type);
+	update_insert_map();
+}
+
 FragmentMover::FragmentMover(
 	core::fragment::FragSetCOP fragset,
 	std::string type
@@ -144,8 +154,13 @@ FragmentMover::update_insert_map() {
 }
 
 
+// Empty constructor
+ClassicFragmentMover::ClassicFragmentMover() : FragmentMover( "ClassicFragmentMover" )
+{
+	set_defaults();
+}
 
-///@constructor
+// constructor
 ClassicFragmentMover::ClassicFragmentMover(
 	core::fragment::FragSetCOP fragset
 )	: FragmentMover( fragset, "ClassicFragmentMover" )
@@ -154,7 +169,7 @@ ClassicFragmentMover::ClassicFragmentMover(
 }
 
 
-///@constructor
+// constructor
 ClassicFragmentMover::ClassicFragmentMover(
 	core::fragment::FragSetCOP fragset,
 	core::kinematics::MoveMapCOP movemap
@@ -164,7 +179,7 @@ ClassicFragmentMover::ClassicFragmentMover(
 }
 
 
-///@constructor Temp work around for PyRosetta code, until we found a way how to handle owning pointers in this case
+// constructor Temp work around for PyRosetta code, until we found a way how to handle owning pointers in this case
 ClassicFragmentMover::ClassicFragmentMover(
 	core::fragment::ConstantLengthFragSet const & fragset,
 	core::kinematics::MoveMap const & movemap
@@ -176,7 +191,7 @@ ClassicFragmentMover::ClassicFragmentMover(
 ClassicFragmentMover::~ClassicFragmentMover()
 {}
 
-///@brief alternative Constructor to be used by derived classes
+// alternative Constructor to be used by derived classes
 ClassicFragmentMover::ClassicFragmentMover(
 	core::fragment::FragSetCOP fragset,
 	core::kinematics::MoveMapCOP movemap,
@@ -186,7 +201,7 @@ ClassicFragmentMover::ClassicFragmentMover(
 	set_defaults();
 }
 
-///@brief alternative Constructor to be used by derived classes
+// alternative Constructor to be used by derived classes
 ClassicFragmentMover::ClassicFragmentMover(
 	core::fragment::FragSetCOP fragset,
 	std::string type
@@ -199,6 +214,19 @@ std::string
 ClassicFragmentMover::get_name() const {
 	return "ClassicFragmentMover";
 }
+
+protocols::moves::MoverOP
+ClassicFragmentMover::clone() const
+{
+	return new ClassicFragmentMover(*this);
+}
+
+protocols::moves::MoverOP
+ClassicFragmentMover::fresh_instance() const
+{
+	return new ClassicFragmentMover();
+}
+
 
 //return a fragnum for given Frame, overload to make other choices
 bool ClassicFragmentMover::choose_fragment(
