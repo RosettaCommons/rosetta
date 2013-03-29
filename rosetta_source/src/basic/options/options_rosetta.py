@@ -4563,6 +4563,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
         Option( 'fit_method', 'String', legal = [ 'svd', 'nls'], default = 'nls' ),
         Option( 'fixDa', 'RealVector'),
         Option( 'fixR', 'RealVector'),
+        Option( 'nlsrepeat', 'Integer', default = '5' ),
     ),
 
 ############################################################################

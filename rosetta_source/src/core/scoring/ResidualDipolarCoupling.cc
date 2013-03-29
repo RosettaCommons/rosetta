@@ -991,7 +991,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(core::pose::Pose const& pose)
 
   //parameters
 	int n_par = 5; // number of parameters in model function frdc
-	int nrepeat = 5; // number of repeat lmfit
+	int nrepeat = basic::options::option[ basic::options::OptionKeys::rdc::nlsrepeat ](); // number of repeat lmfit
 
 	//double parbest[n_par*nex_];
 	std::vector<double> parbest(n_par*nex_);
@@ -1418,7 +1418,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDa(core::pose::Pose const& pos
 
   //parameters
 	int n_par = 4; // number of parameters in model function frdcDa
-	int nrepeat = 5; // number of repeat lmfit
+	int nrepeat = basic::options::option[ basic::options::OptionKeys::rdc::nlsrepeat ](); // number of repeat lmfit
 
 	//double parbest[n_par*nex_];
 	std::vector<double> parbest(n_par*nex_);
@@ -1750,7 +1750,8 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsR(core::pose::Pose const& pose
 
   //parameters
 	int n_par = 4; // number of parameters in model function frdcR
-	int nrepeat = 5; // number of repeat lmfit
+	int nrepeat = basic::options::option[ basic::options::OptionKeys::rdc::nlsrepeat ](); // number of repeat lmfit
+
 	//double parbest[n_par*nex_];
 	//double par[n_par*nex_];
 	std::vector<double> parbest(n_par*nex_);
@@ -2081,7 +2082,8 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDaR(core::pose::Pose const& po
 
   //parameters
 	int n_par = 3; // number of parameters in model function frdcR
-	int nrepeat = 5; // number of repeat lmfit
+	int nrepeat = basic::options::option[ basic::options::OptionKeys::rdc::nlsrepeat ](); // number of repeat lmfit
+
 	//double parbest[n_par*nex_];
 	//double par[n_par*nex_];
 	std::vector<double> parbest(n_par*nex_);

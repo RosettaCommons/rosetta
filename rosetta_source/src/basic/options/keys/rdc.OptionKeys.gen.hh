@@ -39,6 +39,7 @@ namespace rdc { extern FileOptionKey const select_residues_file; }
 namespace rdc { extern StringOptionKey const fit_method; }
 namespace rdc { extern RealVectorOptionKey const fixDa; }
 namespace rdc { extern RealVectorOptionKey const fixR; }
+namespace rdc { extern IntegerOptionKey const nlsrepeat; }
 
 } // namespace OptionKeys
 } // namespace options

@@ -11633,6 +11633,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-fixR</b> \<RealVector\><dt>
 <dd>No description</dd><br>
 </dl>
+<dl>
+<dt><b>-nlsrepeat</b> \<Integer\><dt>
+<dd>No description</dd><br>
+<dd>Default: 5</dd><br>
+</dl>
  </li>
 <li><h2>csa</h2>
 <dl>

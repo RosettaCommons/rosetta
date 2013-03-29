@@ -355,6 +355,7 @@ namespace rdc { FileOptionKey const select_residues_file( "rdc:select_residues_f
 namespace rdc { StringOptionKey const fit_method( "rdc:fit_method" );  }
 namespace rdc { RealVectorOptionKey const fixDa( "rdc:fixDa" );  }
 namespace rdc { RealVectorOptionKey const fixR( "rdc:fixR" );  }
+namespace rdc { IntegerOptionKey const nlsrepeat( "rdc:nlsrepeat" );  }
 namespace csa { BooleanOptionKey const csa( "csa" );  }
 namespace csa { BooleanOptionKey const useZ( "csa:useZ" );  }
 namespace dc { BooleanOptionKey const dc( "dc" );  }

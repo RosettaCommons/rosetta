@@ -2403,6 +2403,7 @@ option.add( basic::options::OptionKeys::rdc::select_residues_file, "loop/rigid-f
 option.add( basic::options::OptionKeys::rdc::fit_method, "No description" ).legal("svd").legal("nls").def("nls");
 option.add( basic::options::OptionKeys::rdc::fixDa, "No description" );
 option.add( basic::options::OptionKeys::rdc::fixR, "No description" );
+option.add( basic::options::OptionKeys::rdc::nlsrepeat, "No description" ).def(5);
 option.add( basic::options::OptionKeys::csa::csa, "csa option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::csa::useZ, "Use absolute zaxis for scoring csa" );
 option.add( basic::options::OptionKeys::dc::dc, "dc option group" ).legal(true).def(true);

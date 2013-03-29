@@ -557,7 +557,7 @@ sampler:
 				bool movable_loop=false;
 				protocols::loops::LoopOP frag;
 
-				core::Size templ_id;
+				core::Size templ_id=1;
 				for (core::Size i=1; i<=max_templates_trial; ++i) {
 						templ_id = numeric::random::random_range( 1, templates_.size() );
 						core::Size nfrags = template_contigs_[templ_id].num_loop();
