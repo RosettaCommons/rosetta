@@ -546,7 +546,7 @@ sampler:
 			} else if (m==4) {
 				action = 3;
 			}
-
+		  
 			std::string action_string;
 			if (action == 1) action_string = "fragNS";
 			if (action == 2) action_string = "frag";
@@ -672,7 +672,6 @@ sampler:
 			}
 
 			if (n%100 == 0) {
-				TR << "Step " << n << std::endl;
 				mc->show_scores();
 				mc->show_counters();
 			}

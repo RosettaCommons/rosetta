@@ -415,9 +415,7 @@ HybridizeProtocol::initialize_and_sample_loops(
 	bool inloop=!templ_coverage[1];
 	core::Size loopstart=1, loopstop;
 	for (Size i=2; i<=nres_tgt; ++i) {
-    TR << "in make loopfile scanning " << i << std::endl;
 		if (templ_coverage[i] && inloop && allowed_to_move_[i]==true) {
-      TR << "in make loopfile selecting " << i << std::endl;
 		//if (templ_coverage[i] && inloop) {
 			// end loop
 			inloop = false;
@@ -829,17 +827,6 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		}
 
 
-		//task operations
-		allowed_to_move_.clear();
-		allowed_to_move_.resize(pose.total_residue(),true);
-		if( task_factory_ ){
-			for( core::Size resi = 1; resi <= get_num_residues_nonvirt(pose); ++resi ){
-				if( task_->residue_task( resi ).being_designed() || task_->residue_task( resi ).being_packed())
-					allowed_to_move_[resi]=true;
-				else
-					allowed_to_move_[resi]=false;
-			}
-		}
 
 		// initialize template history
 		//keep this after symmetry
@@ -850,6 +837,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
     //task operations
     allowed_to_move_.clear();
     allowed_to_move_.resize(pose.total_residue(),true);
+
     if( task_factory_ ){
       task_ = task_factory_->create_task_and_apply_taskoperations( pose );
       for( core::Size resi = 1; resi <= get_num_residues_nonvirt(pose); ++resi ){
@@ -859,8 +847,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
           allowed_to_move_[resi]=false;
       }
      }
-
-
+	
 		// STAGE 1
 		//fpd constraints are handled a little bit weird
 		//  * foldtree hybridize sets chainbreak variants then applies constraints (so c-beta csts are treated properly)
