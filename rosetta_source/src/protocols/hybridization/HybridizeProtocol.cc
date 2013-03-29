@@ -691,7 +691,6 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 	TR.Info << "FRAGMENTS small max length: " << frags_small->max_frag_length() << std::endl;
 	TR.Info << "FRAGMENTS big max length: " << frags_big->max_frag_length() << std::endl;
 
-
 	// starting structure pool
 	std::vector < SilentStructOP > post_centroid_structs;
 	bool need_more_samples = true;
@@ -847,6 +846,20 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		TemplateHistoryOP history = new TemplateHistory(pose);
 		history->setall( initial_template_index_icluster );
 		pose.data().set( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY, history );
+
+    //task operations
+    allowed_to_move_.clear();
+    allowed_to_move_.resize(pose.total_residue(),true);
+    if( task_factory_ ){
+      task_ = task_factory_->create_task_and_apply_taskoperations( pose );
+      for( core::Size resi = 1; resi <= get_num_residues_nonvirt(pose); ++resi ){
+        if( task_->residue_task( resi ).being_designed() || task_->residue_task( resi ).being_packed())
+          allowed_to_move_[resi]=true;
+    		else
+          allowed_to_move_[resi]=false;
+      }
+     }
+
 
 		// STAGE 1
 		//fpd constraints are handled a little bit weird

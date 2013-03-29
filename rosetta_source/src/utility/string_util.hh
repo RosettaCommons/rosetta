@@ -171,6 +171,10 @@ template <class T>
 inline utility::vector1<T> const string_split (std::string const &in,char splitchar,T)
 {
 	utility::vector1<T> parts;
+  if (in.size()==0) {
+			return parts;
+  }
+
 	size_t i(0), j(0);
 	while ( j != std::string::npos ) {
 		j = in.find( splitchar, i );
@@ -180,7 +184,7 @@ inline utility::vector1<T> const string_split (std::string const &in,char splitc
 		ss >> t;
 		if ( ss.fail() ) {
 				const char* type = typeid(T).name();
-				utility_exit_with_message("cannot convert string "+item+" to type "+type);
+				utility_exit_with_message("cannot convert string '"+item+"' to type "+type);
 			}
 
 		parts.push_back( t );
