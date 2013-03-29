@@ -44,6 +44,10 @@ void Inline_File_Provider::add_input_file( const std::string &filename, const st
 	input_files.push_back( std::make_pair( filtered_filename, newstream ) ); 
 }
 
+void Inline_File_Provider::add_black_listed_file( const std::string &filename ){
+  black_listed_files_.push_back( filename ); 
+}
+
 class predicate_cmp_filename
 {
  public: 
@@ -137,15 +141,23 @@ bool Inline_File_Provider::get_ostream( const std::string& filename, std::ostrea
 }
 
 
+bool Inline_File_Provider::is_black_listed_file( const std::string &filename ){
+  std::vector < std::string >::iterator found;
+  found = std::find( black_listed_files_.begin(), black_listed_files_.end(), filename);
+  return ( found != black_listed_files_.end() );
+}
 
 
 bool Inline_File_Provider::get_istream( const std::string& filename, std::istream **the_stream ){
-  std::string standard_filename =  standardise_filename( filename );	
   
+  std::string standard_filename =  standardise_filename( filename );	
+  if( is_black_listed_file(standard_filename) ) return false;
+
+
   if ( standard_filename.length() == 0 ){
     return false;
   }
-
+  
   // check last character 
   if ( *(standard_filename.rbegin()) == '/' ){
     // cannot download a directory - only files. Reject this
