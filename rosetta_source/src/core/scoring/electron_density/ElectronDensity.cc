@@ -1342,7 +1342,7 @@ ElectronDensity::calcRhoC( lightPose const &pose ) {
 	rho_calc.dimension(density.u1() , density.u2() , density.u3());
 	for (int i=0; i<density.u1()*density.u2()*density.u3(); ++i) rho_calc[i]=0.0;
 
-	for (int i=1 ; i<=pose.size(); ++i) {
+	for (int i=1 ; i<=(int)pose.size(); ++i) {
 		std::string elt_i = pose[i].second;
 		OneGaussianScattering sig_j = get_A( elt_i );
 		core::Real k = sig_j.k( PattersonB, max_del_grid );   // to do: B factor
@@ -1400,7 +1400,7 @@ ElectronDensity::calcRhoCandSolvent( lightPose const &pose ) {
 	rho_solv.dimension(density.u1() , density.u2() , density.u3());
 	for (int i=0; i<density.u1()*density.u2()*density.u3(); ++i) rho_solv[i]=1.0;
 
-	for (int i=1 ; i<=pose.size(); ++i) {
+	for (int i=1 ; i<=(int)pose.size(); ++i) {
 		std::string elt_i = pose[i].second;
 		OneGaussianScattering sig_j = get_A( elt_i );
 		core::Real k = sig_j.k( PattersonB, max_del_grid );   // to do: B factor (real-space!)
@@ -3793,7 +3793,7 @@ ElectronDensity::readMRCandResize(
 	this->grid[2] = grid[2];
 
 	// advanced: force the apix value different than what is provided
-	numeric::xyzVector< core::Real > ori_scale;
+	numeric::xyzVector< core::Real > ori_scale(0,0,0);
 	if (force_apix_ > 0) {
 		ori_scale[0] = (force_apix_ * this->grid[0]) / cellDimensions[0];
 		ori_scale[1] = (force_apix_ * this->grid[1]) / cellDimensions[1];
