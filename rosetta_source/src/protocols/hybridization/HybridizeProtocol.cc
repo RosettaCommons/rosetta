@@ -691,18 +691,6 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 	TR.Info << "FRAGMENTS small max length: " << frags_small->max_frag_length() << std::endl;
 	TR.Info << "FRAGMENTS big max length: " << frags_big->max_frag_length() << std::endl;
 
-  //task operations
-	allowed_to_move_.clear();
-	allowed_to_move_.resize(pose.total_residue(),true);
-  if( task_factory_ ){
-    task_ = task_factory_->create_task_and_apply_taskoperations( pose );
-    for( core::Size resi = 1; resi <= get_num_residues_nonvirt(pose); ++resi ){
-      if( task_->residue_task( resi ).being_designed() || task_->residue_task( resi ).being_packed())
-        allowed_to_move_[resi]=true;
-			else
-        allowed_to_move_[resi]=false;
-    }
-   }
 
 	// starting structure pool
 	std::vector < SilentStructOP > post_centroid_structs;
@@ -839,6 +827,19 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		if ( option[ OptionKeys::edensity::mapfile ].user() ) {
 			MoverOP dens( new protocols::electron_density::SetupForDensityScoringMover );
 			dens->apply( pose );
+		}
+
+
+		//task operations
+		allowed_to_move_.clear();
+		allowed_to_move_.resize(pose.total_residue(),true);
+		if( task_factory_ ){
+			for( core::Size resi = 1; resi <= get_num_residues_nonvirt(pose); ++resi ){
+				if( task_->residue_task( resi ).being_designed() || task_->residue_task( resi ).being_packed())
+					allowed_to_move_[resi]=true;
+				else
+					allowed_to_move_[resi]=false;
+			}
 		}
 
 		// initialize template history
@@ -1229,8 +1230,9 @@ HybridizeProtocol::parse_my_tag(
 	fa_cst_fn_ = tag->getOption< std::string >( "fa_cst_file", "" );
 	batch_relax_ = tag->getOption< core::Size >( "batch" , 1 );
 
-  if( tag->hasOption( "task_operations" ) ){
-    task_factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data );
+	if( tag->hasOption( "task_operations" ) ){
+		task_factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data );
+		task_ = task_factory_->create_task_and_apply_taskoperations( pose );
 	}	else {
 	  task_factory_ = NULL;
 	}

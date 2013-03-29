@@ -70,6 +70,9 @@
 #include <list>
 #include <numeric/xyzVector.hh>
 
+#include <basic/Tracer.hh>
+static basic::Tracer TR( "protocols.hybridization.util" );
+
 namespace protocols {
 //namespace comparative_modeling {
 namespace hybridization {
@@ -432,6 +435,8 @@ downstream_residues_from_jump(core::pose::Pose const & pose, Size const jump_num
 
 	// for jumps to singletons
 	residue_list.push_back(downstream_res);
+
+	TR.Debug << "Downstream residue " << downstream_res << std::endl;
 
 	for (Size i_edge = 1; i_edge <= edges.size(); ++i_edge) {
 		if ( !edges[i_edge].is_polymer() ) continue;
