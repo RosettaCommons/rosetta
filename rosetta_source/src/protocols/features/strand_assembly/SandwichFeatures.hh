@@ -33,7 +33,17 @@
 // for string return
 #include <string>
 
-#include <vector> // for get_sw_can_by_sh_id
+// for get_sw_can_by_sh_id, get_two_central_residues
+#include <vector>
+
+
+// for parse_my_tag
+#include <core/types.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <utility/tag/Tag.fwd.hh>
+#include <protocols/filters/Filter.hh>
+#include <protocols/moves/Mover.hh>
+#include <protocols/moves/DataMap.fwd.hh>
 
 namespace protocols {
 namespace features {
@@ -46,8 +56,6 @@ public:
 
 	SandwichFeatures();
 
-	void init_from_options();
-
 	virtual
 	std::string
 	type_name() const
@@ -59,11 +67,19 @@ public:
 	virtual void
 	write_schema_to_db(utility::sql_database::sessionOP db_session) const;
 
+	void
+	parse_my_tag(
+		utility::tag::TagPtr const tag,
+		protocols::moves::DataMap & /*data*/,
+		protocols::filters::Filters_map const & /*filters*/,
+		protocols::moves::Movers_map const & /*movers*/,
+		core::pose::Pose const & /*pose*/);
+
 	///@brief return the set of features reporters that are required to
 	///also already be extracted by the time this one is used.
 	utility::vector1<std::string>
 	features_reporter_dependencies() const;
-
+	
 	///@brief collect all the feature data for the pose
 	virtual
 	core::Size
@@ -565,7 +581,7 @@ private:
 	no_helix_in_pdb_;
 
 	core::Size
-	max_helix_in_extracted_sw_loop_;	//	definition: maximum allowable number of helix residues in extracted sandwich loop
+	max_H_in_extracted_sw_loop_;	//	definition: maximum allowable number of helix residues in extracted sandwich loop
 
 	core::Size
 	max_E_in_extracted_sw_loop_;	//	definition: maximum allowable number of E residues in extracted sandwich loop

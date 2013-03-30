@@ -33,7 +33,6 @@
 
 //Devel
 #include <protocols/features/strand_assembly/SandwichFeatures.hh>
-#include <protocols/features/strand_assembly/SandwichFragment.hh>
 
 //Utility and basic
 #include <basic/database/sql_utils.hh>
@@ -46,7 +45,6 @@
 #include <core/id/NamedAtomID.hh>
 
 //C library
-#include <string>
 #include <math.h> // for round and sqrt
 
 //External Headers
@@ -67,8 +65,6 @@
 //#include <stdio.h>     //for remove( ) and rename( )
 #include <stdlib.h> // for abs()
 #include <fstream>
-#include <string>
-#include <vector> // for get_sw_can_by_sh_id, get_two_central_residues
 
 // exception handling
 #include <utility/excn/Exceptions.hh>
@@ -80,11 +76,22 @@
 //DSSP
 #include <core/scoring/dssp/Dssp.hh>
 
+// for parse_my_tag
+#include <protocols/moves/DataMap.hh>
+
+
+
 static basic::Tracer TR("protocols.features.strand_assembly.SandwichFeatures");
 
 namespace protocols {
 namespace features {
 namespace strand_assembly {
+
+// for parse_my_tag
+using utility::tag::TagPtr;
+using protocols::filters::Filters_map;
+using protocols::moves::DataMap;
+using protocols::moves::Movers_map;
 
 using namespace std;
 using namespace core;
@@ -94,153 +101,10 @@ using utility::sql_database::sessionOP;
 using cppdb::statement;
 using cppdb::result;
 
-SandwichFeatures::SandwichFeatures() :
-min_num_strands_to_deal_(4), // At least 4 strands should be in pdb file
-max_num_strands_to_deal_(100), // 62 strands seem possible
-min_res_in_strand_(2), // definition: minimum number of residues in a strand, for edge strand definition & analysis
-					 // example: 4=< is recommended (in 1A8M) min_res_in_strand = 2, (in 1PMY) min_res_in_strand = 3
-min_CA_CA_dis_(3.5), // definition: minimum CA_CA_distance between strands in same sheet
-					 // example: (in 1A8M) 'min_CA_CA_dis_= 3.5', (in 1KIT) 'min_CA_CA_dis_= 4.0'
-max_CA_CA_dis_(6.2), // example: (in 1A8M) 'max_CA_CA_dis_= 6.2', (in 1KIT) 'max_CA_CA_dis_= 5.7'
-min_C_O_N_angle_(120), // example: (in 1L0Q chain A), 138 is the smallest C_O_N_angle (C and O from one sheet, N from other sheet)
-min_sheet_dis_(7.0),	// definition: minimum CA_CA_distance between strands in different sheets to constitute a sandwich
-						// 7 Angstrom seems OK
-max_sheet_dis_(15.0),	// definition: maximum CA_CA_distance between strands in different sheets to constitute a sandwich
-						// 15 Angstrom seems OK
-min_sheet_angle_(30.0), //	definition: Minimum angle between sheets (CA and CA)
-						//	usage: used in judge_facing "angle_1 > min_sheet_angle_"
-max_sheet_angle_(150.0), // (in 1TEN) even 155 degree comes from same sheet!
-min_sheet_torsion_cen_res_(-150.0), //	definition: "Minimum torsion between sheets (CA and CA) with respect to terminal central residues in each beta-sheet
-									//	explanation: with respect to central residues, one torsion angles of 1TEN is 84.9
-max_sheet_torsion_cen_res_(150.0),  //	definition: "maximum torsion between sheets (CA and CA) with respect to terminal central residues in each beta-sheet
-								    //	usage: used in judge_facing "torsion_i_j < max_sheet_torsion_cen_res_"
-min_num_strands_in_sheet_(3),	//  definition: a sheet with < 3 strands will be ignored
-								//	usage: if (num_strands_i < min_num_strands_in_sheet_)
-min_inter_sheet_dis_CA_CA_(4.0),	//	example:	(in 12E8) the distance between S52 and G64 is 4.2 A
-									//	example:	(in 2WYF) the distance between val and gln is 5.8 A
-max_inter_sheet_dis_CA_CA_(24.0),
-		//	usage:	shortest_avg_dis_inter_sheet > max_inter_sheet_dis_CA_CA_
-		//	example:	(in 1TEN) shortest_avg_dis_inter_sheet between sheet 1 and 2 = 11.6 A (and these sheets should be a sandwich)
-		//	example:	(in 1A64_chain_A) shortest_avg_dis_inter_sheet between sheet 1 and 2 = 25 A (and these sheets should not be a sandwich)
-		//	example:	(in 1A1M) the average distance between sheet 1 and 4 > 20 A (but these sheets should be a sandwich)
-		//	example:	(in 1ASQ) the average distance between sheet 1 and 4 > 20 A (and these sheets should not be a sandwich)
-extract_sandwich_(true),
-write_chain_B_resnum_(false), // if true, write chain_B_resnum file for InterfaceAnalyzer
-no_helix_in_pdb_(false), // if true, ignore any pdb that has helix
-max_helix_in_extracted_sw_loop_(7),
-		//	definition: maximum allowable number of helix residues in extracted sandwich loop
-		//	example: 0 would be ideal, but then only ~10% of sandwiches will be extracted among CATH classified sandwiches instead even when same_direction_strand linking sw is allowed!
-max_E_in_extracted_sw_loop_(7),
-		//	definition: maximum allowable number of E residues in extracted sandwich loop
-		//	usefulness: If true, it is useful to exclude [1LOQ]
-exclude_sandwich_that_is_linked_w_same_direction_strand_(true),
-		//	definition: if true, exclude_sandwich_that_is_linked with same_direction_strand
-		//	usefulness: If true, it is useful to exclude [1QAC] chain A
-max_inter_strand_angle_to_not_be_same_direction_strands_(120),
-		//	usage: 	if (angle_start_res_being_middle > max_inter_strand_angle_to_not_be_same_direction_strands_)
-		//	example: (in 1BQB chain A) 121 is possible (but this should be excluded as same direction strand)
-		//	example: (in 1A0Q chain L) 127 is possible for 3-6-9 angle (but this should be excluded as same direction strand)
-		//	example: (in 1A3R chain L) 129 is possible for 4-7-10 angle (but this should be excluded as same direction strand)
-max_abs_inter_strand_dihedral_to_not_be_same_direction_strands_(100),
-		//	usage:	if (abs(torsion_between_strands) >	max_abs_inter_strand_dihedral_to_not_be_same_direction_strands_)
-		//	example: (in 1U3J chain A) 105 is possible for 4-7-11-13 dihedral angle (but this should be excluded as same direction strand)
-		//	example: (in 1QAC chain A) 128.5 is possible for 4-7-10-13 dihedral angle (but this should be excluded as same direction strand)
-		//	example: (in 1A3R chain L) 130 is possible for 4-7-10-14 dihedral angle (but this should be excluded as same direction strand)
-write_phi_psi_(false), //	definition: if true, write phi_psi_file
-max_starting_loop_size_(5),	//	definition: maximum starting loop size to extract
-max_ending_loop_size_(5),	//	definition: maximum ending loop size to extract
-max_num_sw_per_pdb_(100),	//	definition: maximum number of sandwiches to be extracted per a pdb file
-check_N_to_C_direction_by_("PE"), //	definition: check N->C going direction by option
-do_not_connect_sheets_by_loops_(false), //	definition: if true, don't connect sheets by loops
-check_canonicalness_cutoff_(80), //	definition:	cutoff to determine canonicalness of L/R, P/A and directionality
-count_AA_with_direction_(true), //	definition:	if true, count AA considering direction too!
-inter_sheet_distance_to_see_whether_a_sheet_is_surrounded_by_other_sheets_(13),
-		//	definition: within this distance, sheets are considered to be near each other
-		//	example: (in 1LOQ) inter-sheet distances are 11.5~14.1
-		//	usefulness: it is useful to exclude [1LOQ] and [1W8O]
-		//	counter_effect: It excludes [3BVT]
-exclude_desinated_pdbs_(false) //	definition: if true, exclude certain designated pdbs
+SandwichFeatures::SandwichFeatures()
 {
-	init_from_options();
+		TR << "A constructor called" << endl;
 }
-
-void
-SandwichFeatures::init_from_options()
-{
-	using namespace basic::options;
-
-	if(option[OptionKeys::strand_assembly::min_num_strands_to_deal].user()){
-		min_num_strands_to_deal_ = option[OptionKeys::strand_assembly::min_num_strands_to_deal];}
-	if(option[OptionKeys::strand_assembly::max_num_strands_to_deal].user()){
-		max_num_strands_to_deal_ = option[OptionKeys::strand_assembly::max_num_strands_to_deal];}
-	if(option[OptionKeys::strand_assembly::min_res_in_strand].user()){
-		min_res_in_strand_ = option[OptionKeys::strand_assembly::min_res_in_strand];}
-	if(option[OptionKeys::strand_assembly::min_CA_CA_dis].user()){
-		min_CA_CA_dis_ = option[OptionKeys::strand_assembly::min_CA_CA_dis];	}
-	if(option[OptionKeys::strand_assembly::max_CA_CA_dis].user()){
-		max_CA_CA_dis_ = option[OptionKeys::strand_assembly::max_CA_CA_dis];}
-	if(option[OptionKeys::strand_assembly::min_C_O_N_angle].user()){
-		min_C_O_N_angle_ = option[OptionKeys::strand_assembly::min_C_O_N_angle];}
-	if(option[OptionKeys::strand_assembly::min_sheet_dis].user()){
-		min_sheet_dis_ = option[OptionKeys::strand_assembly::min_sheet_dis];}
-	if(option[OptionKeys::strand_assembly::max_sheet_dis].user()){
-		max_sheet_dis_ = option[OptionKeys::strand_assembly::max_sheet_dis];}
-	if(option[OptionKeys::strand_assembly::min_sheet_angle].user()){
-		min_sheet_angle_ = option[OptionKeys::strand_assembly::min_sheet_angle];}
-	if(option[OptionKeys::strand_assembly::max_sheet_angle].user()){
-		max_sheet_angle_ = option[OptionKeys::strand_assembly::max_sheet_angle];}
-	if(option[OptionKeys::strand_assembly::min_sheet_torsion_cen_res].user()){
-		min_sheet_torsion_cen_res_ = option[OptionKeys::strand_assembly::min_sheet_torsion_cen_res];}
-	if(option[OptionKeys::strand_assembly::max_sheet_torsion_cen_res].user()){
-		max_sheet_torsion_cen_res_ = option[OptionKeys::strand_assembly::max_sheet_torsion_cen_res];}
-	if(option[OptionKeys::strand_assembly::min_num_strands_in_sheet].user()){
-		min_num_strands_in_sheet_ = option[OptionKeys::strand_assembly::min_num_strands_in_sheet];}
-	if(option[OptionKeys::strand_assembly::min_inter_sheet_dis_CA_CA].user()){
-		min_inter_sheet_dis_CA_CA_ = option[OptionKeys::strand_assembly::min_inter_sheet_dis_CA_CA];}
-	if(option[OptionKeys::strand_assembly::max_inter_sheet_dis_CA_CA].user()){
-		max_inter_sheet_dis_CA_CA_ = option[OptionKeys::strand_assembly::max_inter_sheet_dis_CA_CA];}
-	if(option[OptionKeys::strand_assembly::extract_sandwich].user()){
-		extract_sandwich_ = option[OptionKeys::strand_assembly::extract_sandwich];}
-	if(option[OptionKeys::strand_assembly::write_chain_B_resnum].user()){
-		write_chain_B_resnum_ = option[OptionKeys::strand_assembly::write_chain_B_resnum];}
-	if(option[OptionKeys::strand_assembly::max_starting_loop_size].user()){
-		max_starting_loop_size_ = option[OptionKeys::strand_assembly::max_starting_loop_size];}
-	if(option[OptionKeys::strand_assembly::max_ending_loop_size].user()){
-		max_ending_loop_size_ = option[OptionKeys::strand_assembly::max_ending_loop_size];}
-
-	if(option[OptionKeys::strand_assembly::write_phi_psi].user()){
-		write_phi_psi_ = option[OptionKeys::strand_assembly::write_phi_psi];}
-	if(option[OptionKeys::strand_assembly::no_helix_in_pdb].user()){
-		no_helix_in_pdb_ = option[OptionKeys::strand_assembly::no_helix_in_pdb];}
-	if(option[OptionKeys::strand_assembly::max_helix_in_extracted_sw_loop].user()){
-		max_helix_in_extracted_sw_loop_ = option[OptionKeys::strand_assembly::max_helix_in_extracted_sw_loop];}
-
-	if(option[OptionKeys::strand_assembly::max_E_in_extracted_sw_loop].user()){
-		max_E_in_extracted_sw_loop_ = option[OptionKeys::strand_assembly::max_E_in_extracted_sw_loop];}
-
-	if(option[OptionKeys::strand_assembly::exclude_sandwich_that_is_linked_w_same_direction_strand].user()){
-		exclude_sandwich_that_is_linked_w_same_direction_strand_ = option[OptionKeys::strand_assembly::exclude_sandwich_that_is_linked_w_same_direction_strand];}
-	if(option[OptionKeys::strand_assembly::max_inter_strand_angle_to_not_be_same_direction_strands].user()){
-		max_inter_strand_angle_to_not_be_same_direction_strands_ = option[OptionKeys::strand_assembly::max_inter_strand_angle_to_not_be_same_direction_strands];}
-	if(option[OptionKeys::strand_assembly::max_abs_inter_strand_dihedral_to_not_be_same_direction_strands].user()){
-		max_abs_inter_strand_dihedral_to_not_be_same_direction_strands_ = option[OptionKeys::strand_assembly::max_abs_inter_strand_dihedral_to_not_be_same_direction_strands];}
-	if(option[OptionKeys::strand_assembly::max_num_sw_per_pdb].user()){
-		max_num_sw_per_pdb_ = option[OptionKeys::strand_assembly::max_num_sw_per_pdb];}
-	if(option[OptionKeys::strand_assembly::check_N_to_C_direction_by].user()){
-		check_N_to_C_direction_by_ = option[OptionKeys::strand_assembly::check_N_to_C_direction_by];}
-	if(option[OptionKeys::strand_assembly::do_not_connect_sheets_by_loops].user()){
-		do_not_connect_sheets_by_loops_ = option[OptionKeys::strand_assembly::do_not_connect_sheets_by_loops];}
-
-	if(option[OptionKeys::strand_assembly::check_canonicalness_cutoff].user()){
-		check_canonicalness_cutoff_ = option[OptionKeys::strand_assembly::check_canonicalness_cutoff];}
-	if(option[OptionKeys::strand_assembly::count_AA_with_direction].user()){
-		count_AA_with_direction_ = option[OptionKeys::strand_assembly::count_AA_with_direction];}
-	if(option[OptionKeys::strand_assembly::inter_sheet_distance_to_see_whether_a_sheet_is_surrounded_by_other_sheets].user()){
-		inter_sheet_distance_to_see_whether_a_sheet_is_surrounded_by_other_sheets_ = option[OptionKeys::strand_assembly::inter_sheet_distance_to_see_whether_a_sheet_is_surrounded_by_other_sheets];}
-	if(option[OptionKeys::strand_assembly::exclude_desinated_pdbs].user()){
-		exclude_desinated_pdbs_ = option[OptionKeys::strand_assembly::exclude_desinated_pdbs];}
-
-} // init_from_options()
 
 utility::vector1<std::string>
 SandwichFeatures::features_reporter_dependencies() const
@@ -1301,8 +1165,9 @@ SandwichFeatures::find_sheet(
 					return 1; //  may have kinkness or not, but these strands can be part of one sheet
 				}
 			} // strand_i.get_size() >= 3 && strand_j.get_size() >= 3)
-		}
-	}
+		} // for(Size strand_j_res=0; strand_j_res < strand_j.get_size(); strand_j_res++)
+	} // for(Size strand_i_res=0; strand_i_res < strand_i.get_size(); strand_i_res++)
+	
 	return 0; // these strands cannot be in one sheet
 } //SandwichFeatures::find_sheet
 
@@ -2158,14 +2023,18 @@ SandwichFeatures::see_whether_strand_is_at_edge	(
 	Size residue_begin,
 	Size residue_end)
 {
-// <begin> see two closest strands from temp_strand_i	
+// <begin> see whether this sheet is consisted with two strands only
 	utility::vector1<SandwichFragment> strands_from_sheet_i = get_full_strands_from_sheet(struct_id, db_session, sheet_id);
 
 	if (strands_from_sheet_i.size() < 3)
 	{
 		return "edge"; // this strand is at edge
 	}
-	
+// <end> see whether this sheet is consisted with two strands only
+
+
+// <begin> see two closest strands from temp_strand_i
+
 	SandwichFragment temp_strand_i(residue_begin, residue_end);
 	vector<Real> vec_inter_strand_avg_dis;
 	for(Size i=1; i<=strands_from_sheet_i.size(); ++i)
@@ -2516,7 +2385,7 @@ SandwichFeatures::count_AA_w_direction(
 		vector_of_cen_residues	=	get_cen_res_in_other_sheet(struct_id, db_session, sw_can_by_sh_id,	sheet_id);
 
 		Real shortest_dis_between_AA_and_other_sheet = 9999;
-		Size jj_w_shorest_dis;
+		Size jj_w_shorest_dis =	0 ; // initial value=0 just to avoid build warning at rosetta trunk
 		for (Size jj = 0;	jj	<vector_of_cen_residues.size();	jj++)
 		{
 			Real distance = pose.residue(cen_resnum_ii).atom("CA").xyz().distance(pose.residue(vector_of_cen_residues[jj]).atom("CA").xyz());
@@ -3720,8 +3589,8 @@ SandwichFeatures::add_starting_loop (
 		res >> starting_res_of_any_strand;
 	}
 
-	Size starting_res_of_starting_loop;
-	Size ending_res_of_starting_loop;
+	Size starting_res_of_starting_loop = 0; // initial value=0 just to avoid build warning at rosetta trunk
+	Size ending_res_of_starting_loop = 0 ;  // initial value=0 just to avoid build warning at rosetta trunk
 
 	bool there_is_a_starting_loop = false;
 
@@ -3785,8 +3654,8 @@ SandwichFeatures::add_ending_loop (
 		res >> ending_res_of_any_strand;
 	}
 
-	Size starting_res_of_ending_loop;
-	Size ending_res_of_ending_loop;
+	Size starting_res_of_ending_loop = 0 ;  // initial value=0 just to avoid build warning at rosetta trunk
+	Size ending_res_of_ending_loop = 0;  // initial value=0 just to avoid build warning at rosetta trunk
 
 	bool there_is_an_ending_loop = false;
 
@@ -3794,8 +3663,7 @@ SandwichFeatures::add_ending_loop (
 	for( Size ii = static_cast<Size>(ending_res_of_any_strand+1) ; ii <= dssp_pose.total_residue() && ii <= static_cast<Size>((static_cast<Size>(ending_res_of_any_strand) + static_cast<Size>(max_starting_loop_size_))); ii++ )
 	{
 		char res_ss( dssp_pose.secstruct( ii ) ) ;
-			TR.Info << "res_ss at " << ii << " : " << res_ss << endl;
-			
+
 		if( res_ss == 'L')
 		{
 			if (ii == ending_res_of_any_strand+1)
@@ -3920,6 +3788,105 @@ SandwichFeatures::check_whether_this_sheet_is_surrounded_by_more_than_1_other_sh
 } //check_whether_this_sheet_is_surrounded_by_more_than_1_other_sheet
 
 
+void
+SandwichFeatures::parse_my_tag(
+	TagPtr const tag,
+	DataMap & /*data*/,
+	Filters_map const & /*filters*/,
+	Movers_map const & /*movers*/,
+	Pose const & /*pose*/
+)
+{
+	min_num_strands_to_deal_ = tag->getOption<Size>("min_num_strands_to_deal", 4);
+					// At least 4 strands should be in pdb file
+	max_num_strands_to_deal_ = tag->getOption<Size>("max_num_strands_to_deal", 100);
+					// 62 strands seem possible
+	min_res_in_strand_ = tag->getOption<Size>("min_res_in_strand", 2);
+					// definition: minimum number of residues in a strand, for edge strand definition & analysis
+					// example: 4=< is recommended (in 1A8M) min_res_in_strand = 2, (in 1PMY) min_res_in_strand = 3
+	min_CA_CA_dis_ = tag->getOption<Real>("min_CA_CA_dis", 3.5);
+					// definition: minimum CA_CA_distance between strands in same sheet
+					// example: (in 1A8M) 'min_CA_CA_dis_= 3.5', (in 1KIT) 'min_CA_CA_dis_= 4.0'
+	max_CA_CA_dis_ = tag->getOption<Real>("max_CA_CA_dis", 6.2);
+					// example: (in 1A8M) 'max_CA_CA_dis_= 6.2', (in 1KIT) 'max_CA_CA_dis_= 5.7'
+	min_C_O_N_angle_ = tag->getOption<Real>("min_C_O_N_angle", 120.0);
+					// example: (in 1L0Q chain A), 138 is the smallest C_O_N_angle (C and O from one sheet, N from other sheet)
+	min_sheet_dis_ = tag->getOption<Real>("min_sheet_dis", 7.0);
+					// definition: minimum CA_CA_distance between strands in different sheets to constitute a sandwich
+					// 7 Angstrom seems OK
+	max_sheet_dis_ = tag->getOption<Real>("max_sheet_dis", 15.0);
+					// definition: maximum CA_CA_distance between strands in different sheets to constitute a sandwich
+					// 15 Angstrom seems OK
+	min_sheet_angle_ = tag->getOption<Real>("min_sheet_angle", 30.0);
+					//	definition: Minimum angle between sheets (CA and CA)
+					//	usage: used in judge_facing "angle_1 > min_sheet_angle_"
+	max_sheet_angle_ = tag->getOption<Real>("max_sheet_angle", 150.0);
+					// In [1TEN] even 155 degree comes from same sheet!
+	min_sheet_torsion_cen_res_ = tag->getOption<Real>("min_sheet_torsion_cen_res", -150.0);
+					//	definition: "Minimum torsion between sheets (CA and CA) with respect to terminal central residues in each beta-sheet
+					//	explanation: with respect to central residues, one torsion angles of 1TEN is 84.9
+	max_sheet_torsion_cen_res_ = tag->getOption<Real>("max_sheet_torsion_cen_res", 150.0);
+					//	definition: "maximum torsion between sheets (CA and CA) with respect to terminal central residues in each beta-sheet
+					//	usage: used in judge_facing "torsion_i_j < max_sheet_torsion_cen_res_"
+	min_num_strands_in_sheet_ = tag->getOption<Size>("min_num_strands_in_sheet", 3);
+					//  definition: a sheet with < 3 strands will be ignored
+					//	usage: if (num_strands_i < min_num_strands_in_sheet_)
+	min_inter_sheet_dis_CA_CA_ = tag->getOption<Real>("min_inter_sheet_dis_CA_CA", 4.0);
+					//	example:	(in 12E8) the distance between S52 and G64 is 4.2 A
+	max_inter_sheet_dis_CA_CA_ = tag->getOption<Real>("max_inter_sheet_dis_CA_CA", 24.0);
+					//	example:	(in 2WYF) the distance between val and gln is 5.8 A
+					//	usage:	shortest_avg_dis_inter_sheet > max_inter_sheet_dis_CA_CA_
+					//	example:	(in 1TEN) shortest_avg_dis_inter_sheet between sheet 1 and 2 = 11.6 A (and these sheets should be a sandwich)
+					//	example:	(in 1A64_chain_A) shortest_avg_dis_inter_sheet between sheet 1 and 2 = 25 A (and these sheets should not be a sandwich)
+					//	example:	(in 1A1M) the average distance between sheet 1 and 4 > 20 A (but these sheets should be a sandwich)
+					//	example:	(in 1ASQ) the average distance between sheet 1 and 4 > 20 A (and these sheets should not be a sandwich)
+	extract_sandwich_ = tag->getOption<bool>("extract_sandwich", true);
+	write_chain_B_resnum_ = tag->getOption<bool>("write_chain_B_resnum", false);
+					// if true, write chain_B_resnum file for InterfaceAnalyzer
+	no_helix_in_pdb_ = tag->getOption<bool>("no_helix_in_pdb", false);
+					// if true, ignore any pdb that has helix
+	max_H_in_extracted_sw_loop_ = tag->getOption<Size>("max_H_in_extracted_sw_loop", 7);
+					//	definition: maximum allowable number of helix residues in extracted sandwich loop
+					//	example: 0 would be ideal, but then only ~10% of sandwiches will be extracted among CATH classified sandwiches instead even when same_direction_strand linking sw is allowed!
+	max_E_in_extracted_sw_loop_ = tag->getOption<Size>("max_E_in_extracted_sw_loop_", 7);
+					//	definition: maximum allowable number of E residues in extracted sandwich loop
+					//	usefulness: If true, it is useful to exclude [1LOQ]
+	exclude_sandwich_that_is_linked_w_same_direction_strand_ = tag->getOption<bool>("exclude_sandwich_that_is_linked_w_same_direction_strand", true);
+					//	definition: if true, exclude_sandwich_that_is_linked with same_direction_strand
+					//	usefulness: If true, it is useful to exclude [1QAC] chain A
+	max_inter_strand_angle_to_not_be_same_direction_strands_ = tag->getOption<Real>("max_inter_strand_angle_to_not_be_same_direction_strands", 120.0);
+					//	usage: 	if (angle_start_res_being_middle > max_inter_strand_angle_to_not_be_same_direction_strands_)
+					//	example: (in 1BQB chain A) 121 is possible (but this should be excluded as same direction strand)
+					//	example: (in 1A0Q chain L) 127 is possible for 3-6-9 angle (but this should be excluded as same direction strand)
+	max_abs_inter_strand_dihedral_to_not_be_same_direction_strands_ = tag->getOption<Real>("max_abs_inter_strand_dihedral_to_not_be_same_direction_strands", 100.0);
+					//	usage:	if (abs(torsion_between_strands) >	max_abs_inter_strand_dihedral_to_not_be_same_direction_strands_)
+					//	example: (in 1U3J chain A) 105 is possible for 4-7-11-13 dihedral angle (but this should be excluded as same direction strand)
+					//	example: (in 1QAC chain A) 128.5 is possible for 4-7-10-13 dihedral angle (but this should be excluded as same direction strand)
+					//	example: (in 1A3R chain L) 130 is possible for 4-7-10-14 dihedral angle (but this should be excluded as same direction strand)
+	write_phi_psi_ = tag->getOption<bool>("write_phi_psi", false);
+					//	definition: if true, write phi_psi_file
+	max_starting_loop_size_ = tag->getOption<Size>("max_starting_loop_size", 6);
+					//	definition: maximum starting loop size to extract
+	max_ending_loop_size_ = tag->getOption<Size>("max_ending_loop_size", 6);
+					//	definition: maximum ending loop size to extract
+	max_num_sw_per_pdb_ = tag->getOption<Size>("max_num_sw_per_pdb", 100);
+					//	definition: maximum number of sandwiches to be extracted per a pdb file
+	check_N_to_C_direction_by_ = tag->getOption<string>("check_N_to_C_direction_by", "PE");
+					//	definition: check N->C going direction by option
+	do_not_connect_sheets_by_loops_ = tag->getOption<bool>("do_not_connect_sheets_by_loops", false);
+					//	definition: if true, don't connect sheets by loops
+	check_canonicalness_cutoff_ = tag->getOption<Real>("check_canonicalness_cutoff", 80.0);
+					//	definition:	cutoff to determine canonicalness of L/R, P/A and directionality
+	count_AA_with_direction_ = tag->getOption<bool>("count_AA_with_direction_", true);
+					//	definition:	if true, count AA considering direction too!
+	inter_sheet_distance_to_see_whether_a_sheet_is_surrounded_by_other_sheets_ = tag->getOption<Real>("inter_sheet_distance_to_see_whether_a_sheet_is_surrounded_by_other_sheets_", 13.0);
+					//	definition: within this distance, sheets are considered to be near each other
+					//	example: (in 1LOQ) inter-sheet distances are 11.5~14.1
+					//	usefulness: it is useful to exclude [1LOQ] and [1W8O]
+					//	counter_effect: It excludes [3BVT]
+	exclude_desinated_pdbs_ = tag->getOption<bool>("exclude_desinated_pdbs", false);
+					//	definition: if true, exclude certain designated pdbs
+}
 
 ///@brief collect all the feature data for the pose
 core::Size
@@ -4155,7 +4122,7 @@ SandwichFeatures::report_features(
 /////////////////// <begin> assignment of sheet into sandwich_candidate_by_sheet (sw_can_by_sh)
 		TR.Info << "<begin> assignment of sheet into sandwich_candidate_by_sheet (sw_can_by_sh): " << endl;
 	Size sheet_j_that_will_be_used_for_pairing_with_sheet_i = 0; // temp value
-		TR << "all_distinct_sheet_ids.size(): " << all_distinct_sheet_ids.size() << endl;
+		//TR << "all_distinct_sheet_ids.size(): " << all_distinct_sheet_ids.size() << endl;
 	for(Size i=1; i <= all_distinct_sheet_ids.size()-1; i++) // now I check all possible combinations
 	{
 			TR << "all_distinct_sheet_ids[i]: " << all_distinct_sheet_ids[i] << endl;
@@ -4537,7 +4504,8 @@ SandwichFeatures::report_features(
 
 			former_start_res = next_start_res;
 
-			if (max_helix_in_extracted_sw_loop_ > 0)
+
+			if (max_H_in_extracted_sw_loop_ > 0)
 			{
 				// <begin> check whether there is a helix as a loop in this extracted sandwich candidate
 				Size helix_num = 0;
@@ -4549,9 +4517,9 @@ SandwichFeatures::report_features(
 						helix_num += 1;
 					}
 				}
-				if (helix_num > max_helix_in_extracted_sw_loop_)
+				if (helix_num > max_H_in_extracted_sw_loop_)
 				{
-						TR << "helix_num > max_helix_in_extracted_sw_loop_ " << endl;
+						TR << "helix_num > max_H_in_extracted_sw_loop_ " << endl;
 					bool_proper_num_helix_in_loop = false;
 				}
 				// <end> check whether there is a helix as a loop in this extracted sandwich candidate
@@ -4709,6 +4677,8 @@ SandwichFeatures::report_features(
 			sw_by_components_PK_id_counter++;
 		}
 
+
+		/////////////////// DO NOT ERASE //////////////
 		/*
 		/////////// as of 03/13/2013 temporarily suspend the usage of writing chain_B_resnum, since current 'writing chain_B_resnum' is only, but keep this code!!!
 		appliable when max_num_sw_per_pdb_ = 1
@@ -4730,6 +4700,9 @@ SandwichFeatures::report_features(
 		} //write_chain_B_resnum_
 		// <end> write chain_B_resNum to a file
 		*/ // chain_B_resnum
+		/////////////////// DO NOT ERASE //////////////
+
+
 	}	// per each sandwich_by_sheet_id
 	/////////////////// <end> update sheet_connecting_loops	(2nd judge whether each sandwich_by_sheet_id becomes sandwich_by_components)
 

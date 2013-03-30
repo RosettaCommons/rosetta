@@ -1,3 +1,10 @@
+namespace fold_cst { BooleanOptionKey const ramp_coord_cst( "fold_cst:ramp_coord_cst" );  }
+namespace resample { BooleanOptionKey const resample( "resample" );  }
+namespace resample { FileOptionKey const silent( "resample:silent" );  }
+namespace resample { StringOptionKey const tag( "resample:tag" );  }
+namespace resample { BooleanOptionKey const stage1( "resample:stage1" );  }
+namespace resample { BooleanOptionKey const stage2( "resample:stage2" );  }
+namespace resample { BooleanOptionKey const jumps( "resample:jumps" );  }
 namespace resample { RealVectorOptionKey const min_max_start_seq_sep( "resample:min_max_start_seq_sep" );  }
 namespace loopfcst { BooleanOptionKey const loopfcst( "loopfcst" );  }
 namespace loopfcst { RealOptionKey const coord_cst_weight( "loopfcst:coord_cst_weight" );  }
@@ -665,17 +672,3 @@ namespace lh { namespace symfragrm { FileVectorOptionKey const pdblist( "lh:symf
 namespace rbe { BooleanOptionKey const rbe( "rbe" );  }
 namespace rbe { StringOptionKey const server_url( "rbe:server_url" );  }
 namespace rbe { StringOptionKey const server_port( "rbe:server_port" );  }
-namespace rbe { RealOptionKey const poll_frequency( "rbe:poll_frequency" );  }
-namespace blivens { BooleanOptionKey const blivens( "blivens" );  }
-namespace blivens { namespace disulfide_scorer { BooleanOptionKey const disulfide_scorer( "blivens:disulfide_scorer" );  } }
-namespace blivens { namespace disulfide_scorer { RealOptionKey const nds_prob( "blivens:disulfide_scorer:nds_prob" );  } }
-namespace blivens { namespace disulfide_scorer { RealOptionKey const cys_prob( "blivens:disulfide_scorer:cys_prob" );  } }
-namespace blivens { StringOptionKey const score_type( "blivens:score_type" );  }
-namespace krassk { BooleanOptionKey const krassk( "krassk" );  }
-namespace krassk { IntegerOptionKey const left_tail( "krassk:left_tail" );  }
-namespace krassk { IntegerOptionKey const right_tail( "krassk:right_tail" );  }
-namespace krassk { BooleanOptionKey const tail_mode( "krassk:tail_mode" );  }
-namespace krassk { IntegerOptionKey const tail_mode_name( "krassk:tail_mode_name" );  }
-namespace krassk { StringOptionKey const tail_output_file_name( "krassk:tail_output_file_name" );  }
-namespace rotamerdump { BooleanOptionKey const rotamerdump( "rotamerdump" );  }
-namespace rotamerdump { BooleanOptionKey const xyz( "rotamerdump:xyz" );  }

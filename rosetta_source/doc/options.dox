@@ -12549,10 +12549,6 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>if true, extract native full strands only</dd><br>
 </dl>
 <dl>
-<dt><b>-extract_sandwich</b> \<Boolean\><dt>
-<dd>if true, extract sandwich too</dd><br>
-</dl>
-<dl>
 <dt><b>-min_res_in_strand</b> \<Integer\><dt>
 <dd>minimum number of residues in a strand, for edge strand definition & analysis</dd><br>
 </dl>
@@ -12561,24 +12557,12 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Maximum number of residues in a strand, for edge strand definition & analysis</dd><br>
 </dl>
 <dl>
-<dt><b>-min_CA_CA_dis</b> \<Real\><dt>
-<dd>Minimum distance between CA and CA</dd><br>
-</dl>
-<dl>
-<dt><b>-max_CA_CA_dis</b> \<Real\><dt>
-<dd>Maximum distance between CA and CA</dd><br>
-</dl>
-<dl>
 <dt><b>-min_O_N_dis</b> \<Real\><dt>
 <dd>Minimum distance between backbone oxygen and backbone nitrogen</dd><br>
 </dl>
 <dl>
 <dt><b>-max_O_N_dis</b> \<Real\><dt>
 <dd>Maximum distance between backbone oxygen and backbone nitrogen</dd><br>
-</dl>
-<dl>
-<dt><b>-min_C_O_N_angle</b> \<Real\><dt>
-<dd>Minimum angle between strands  to become one sheet</dd><br>
 </dl>
 <dl>
 <dt><b>-min_sheet_dis</b> \<Real\><dt>
@@ -12597,14 +12581,6 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Maximum torsion between sheets (CA and CA) with respect to terminal residues</dd><br>
 </dl>
 <dl>
-<dt><b>-min_sheet_torsion_cen_res</b> \<Real\><dt>
-<dd>Minimum torsion between sheets (CA and CA) with respect to terminal central residues in each beta-sheet</dd><br>
-</dl>
-<dl>
-<dt><b>-max_sheet_torsion_cen_res</b> \<Real\><dt>
-<dd>Max torsion between sheets (CA and CA) with respect to terminal central residues in each beta-sheet</dd><br>
-</dl>
-<dl>
 <dt><b>-min_sheet_angle</b> \<Real\><dt>
 <dd>Minimum angle between sheets (CA and CA)</dd><br>
 </dl>
@@ -12613,88 +12589,8 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Maximum angle between sheets (CA and CA)</dd><br>
 </dl>
 <dl>
-<dt><b>-min_num_strands_in_sheet</b> \<Integer\><dt>
-<dd>a sheet with < 3 strands will be ignored</dd><br>
-</dl>
-<dl>
-<dt><b>-min_inter_sheet_dis_CA_CA</b> \<Real\><dt>
-<dd>minimum distance between inter sheets</dd><br>
-</dl>
-<dl>
-<dt><b>-max_inter_sheet_dis_CA_CA</b> \<Real\><dt>
-<dd>maximum distance between inter sheets</dd><br>
-</dl>
-<dl>
 <dt><b>-min_shortest_dis_sidechain_inter_sheet</b> \<Real\><dt>
 <dd>minimum distance between sidechains between sheets (pairs of strands)</dd><br>
-</dl>
-<dl>
-<dt><b>-write_chain_B_resnum</b> \<Boolean\><dt>
-<dd>if true, write chain_B_resnum file for InterfaceAnalyzer</dd><br>
-</dl>
-<dl>
-<dt><b>-write_phi_psi</b> \<Boolean\><dt>
-<dd>if true, write phi_psi file</dd><br>
-</dl>
-<dl>
-<dt><b>-max_starting_loop_size</b> \<Integer\><dt>
-<dd>maximum starting loop size to extract</dd><br>
-</dl>
-<dl>
-<dt><b>-max_ending_loop_size</b> \<Integer\><dt>
-<dd>maximum ending loop size to extract</dd><br>
-</dl>
-<dl>
-<dt><b>-no_helix_in_pdb</b> \<Boolean\><dt>
-<dd>if true, ignore any pdb that has helix</dd><br>
-</dl>
-<dl>
-<dt><b>-max_helix_in_extracted_sw_loop</b> \<Integer\><dt>
-<dd>maximum allowable number of helix residues in extracted sandwich loop</dd><br>
-</dl>
-<dl>
-<dt><b>-max_E_in_extracted_sw_loop</b> \<Integer\><dt>
-<dd>maximum allowable number of E residues in extracted sandwich loop</dd><br>
-</dl>
-<dl>
-<dt><b>-exclude_sandwich_that_is_linked_w_same_direction_strand</b> \<Boolean\><dt>
-<dd>if true, exclude_sandwich_that_is_linked with same_direction_strand</dd><br>
-</dl>
-<dl>
-<dt><b>-max_inter_strand_angle_to_not_be_same_direction_strands</b> \<Real\><dt>
-<dd>usage: if (angle_start_res_being_middle > max_inter_strand_angle_to_not_be_same_direction_strands_)</dd><br>
-</dl>
-<dl>
-<dt><b>-max_abs_inter_strand_dihedral_to_not_be_same_direction_strands</b> \<Real\><dt>
-<dd>usage: if (abs(torsion_between_strands) > max_abs_inter_strand_dihedral_to_not_be_same_direction_strands_)</dd><br>
-</dl>
-<dl>
-<dt><b>-max_num_sw_per_pdb</b> \<Integer\><dt>
-<dd>maximum number of sandwiches to be extracted per a pdb file</dd><br>
-</dl>
-<dl>
-<dt><b>-check_N_to_C_direction_by</b> \<String\><dt>
-<dd>PE, FE, CBs</dd><br>
-</dl>
-<dl>
-<dt><b>-do_not_connect_sheets_by_loops</b> \<Boolean\><dt>
-<dd>if true, don't connect sheets by loops</dd><br>
-</dl>
-<dl>
-<dt><b>-check_canonicalness_cutoff</b> \<Real\><dt>
-<dd>cutoff to determine canonicalness of L/R, P/A and directionality</dd><br>
-</dl>
-<dl>
-<dt><b>-count_AA_with_direction</b> \<Boolean\><dt>
-<dd>if true, count AA considering direction too!</dd><br>
-</dl>
-<dl>
-<dt><b>-inter_sheet_distance_to_see_whether_a_sheet_is_surrounded_by_other_sheets</b> \<Real\><dt>
-<dd>within this distance, sheets are considered to be near each other</dd><br>
-</dl>
-<dl>
-<dt><b>-exclude_desinated_pdbs</b> \<Boolean\><dt>
-<dd>if true, exclude certain designated pdbs</dd><br>
 </dl>
  </li>
 <li><h2>pepspec</h2>

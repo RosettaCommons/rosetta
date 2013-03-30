@@ -672,10 +672,3 @@ namespace fold_cst { RealOptionKey const stage1_ramp_cst_cycle_factor( "fold_cst
 namespace fold_cst { RealOptionKey const stage2_constraint_threshold( "fold_cst:stage2_constraint_threshold" );  }
 namespace fold_cst { BooleanOptionKey const ignore_sequence_seperation( "fold_cst:ignore_sequence_seperation" );  }
 namespace fold_cst { BooleanOptionKey const no_recover_low_at_constraint_switch( "fold_cst:no_recover_low_at_constraint_switch" );  }
-namespace fold_cst { BooleanOptionKey const ramp_coord_cst( "fold_cst:ramp_coord_cst" );  }
-namespace resample { BooleanOptionKey const resample( "resample" );  }
-namespace resample { FileOptionKey const silent( "resample:silent" );  }
-namespace resample { StringOptionKey const tag( "resample:tag" );  }
-namespace resample { BooleanOptionKey const stage1( "resample:stage1" );  }
-namespace resample { BooleanOptionKey const stage2( "resample:stage2" );  }
-namespace resample { BooleanOptionKey const jumps( "resample:jumps" );  }

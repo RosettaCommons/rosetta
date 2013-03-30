@@ -1,3 +1,17 @@
+namespace rbe { RealOptionKey const poll_frequency( "rbe:poll_frequency" );  }
+namespace blivens { BooleanOptionKey const blivens( "blivens" );  }
+namespace blivens { namespace disulfide_scorer { BooleanOptionKey const disulfide_scorer( "blivens:disulfide_scorer" );  } }
+namespace blivens { namespace disulfide_scorer { RealOptionKey const nds_prob( "blivens:disulfide_scorer:nds_prob" );  } }
+namespace blivens { namespace disulfide_scorer { RealOptionKey const cys_prob( "blivens:disulfide_scorer:cys_prob" );  } }
+namespace blivens { StringOptionKey const score_type( "blivens:score_type" );  }
+namespace krassk { BooleanOptionKey const krassk( "krassk" );  }
+namespace krassk { IntegerOptionKey const left_tail( "krassk:left_tail" );  }
+namespace krassk { IntegerOptionKey const right_tail( "krassk:right_tail" );  }
+namespace krassk { BooleanOptionKey const tail_mode( "krassk:tail_mode" );  }
+namespace krassk { IntegerOptionKey const tail_mode_name( "krassk:tail_mode_name" );  }
+namespace krassk { StringOptionKey const tail_output_file_name( "krassk:tail_output_file_name" );  }
+namespace rotamerdump { BooleanOptionKey const rotamerdump( "rotamerdump" );  }
+namespace rotamerdump { BooleanOptionKey const xyz( "rotamerdump:xyz" );  }
 namespace rotamerdump { BooleanOptionKey const one_body( "rotamerdump:one_body" );  }
 namespace rotamerdump { BooleanOptionKey const two_body( "rotamerdump:two_body" );  }
 namespace rotamerdump { BooleanOptionKey const annealer( "rotamerdump:annealer" );  }
@@ -658,24 +672,3 @@ namespace RBSegmentRelax { IntegerOptionKey const nrboutercycles( "RBSegmentRela
 namespace RBSegmentRelax { StringOptionKey const rb_scorefxn( "RBSegmentRelax:rb_scorefxn" );  }
 namespace RBSegmentRelax { BooleanOptionKey const skip_fragment_moves( "RBSegmentRelax:skip_fragment_moves" );  }
 namespace RBSegmentRelax { BooleanOptionKey const skip_seqshift_moves( "RBSegmentRelax:skip_seqshift_moves" );  }
-namespace RBSegmentRelax { BooleanOptionKey const skip_rb_moves( "RBSegmentRelax:skip_rb_moves" );  }
-namespace RBSegmentRelax { RealVectorOptionKey const helical_movement_params( "RBSegmentRelax:helical_movement_params" );  }
-namespace RBSegmentRelax { RealVectorOptionKey const strand_movement_params( "RBSegmentRelax:strand_movement_params" );  }
-namespace RBSegmentRelax { RealVectorOptionKey const default_movement_params( "RBSegmentRelax:default_movement_params" );  }
-namespace RBSegmentRelax { IntegerOptionKey const cst_seqwidth( "RBSegmentRelax:cst_seqwidth" );  }
-namespace edensity { BooleanOptionKey const edensity( "edensity" );  }
-namespace edensity { BooleanOptionKey const debug( "edensity:debug" );  }
-namespace edensity { StringOptionKey const mapfile( "edensity:mapfile" );  }
-namespace edensity { RealOptionKey const mapreso( "edensity:mapreso" );  }
-namespace edensity { RealOptionKey const grid_spacing( "edensity:grid_spacing" );  }
-namespace edensity { RealOptionKey const centroid_density_mass( "edensity:centroid_density_mass" );  }
-namespace edensity { IntegerOptionKey const sliding_window( "edensity:sliding_window" );  }
-namespace edensity { RealOptionKey const force_apix( "edensity:force_apix" );  }
-namespace edensity { RealOptionKey const fastdens_wt( "edensity:fastdens_wt" );  }
-namespace edensity { RealOptionKey const sliding_window_wt( "edensity:sliding_window_wt" );  }
-namespace edensity { BooleanOptionKey const score_sliding_window_context( "edensity:score_sliding_window_context" );  }
-namespace edensity { RealOptionKey const whole_structure_ca_wt( "edensity:whole_structure_ca_wt" );  }
-namespace edensity { RealOptionKey const whole_structure_allatom_wt( "edensity:whole_structure_allatom_wt" );  }
-namespace edensity { BooleanOptionKey const no_edens_in_minimizer( "edensity:no_edens_in_minimizer" );  }
-namespace edensity { BooleanOptionKey const debug_derivatives( "edensity:debug_derivatives" );  }
-namespace edensity { StringOptionKey const realign( "edensity:realign" );  }
