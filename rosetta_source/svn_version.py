@@ -62,8 +62,24 @@ namespace devel {
 std::string rosetta_svn_version() { return "%(ver)s"; }
 std::string rosetta_svn_url() { return "%(url)s"; }
 
+class VersionRegistrator
+{
+public:
+	VersionRegistrator() {
+		core::set_svn_version_and_url( rosetta_svn_version(), rosetta_svn_url() );
+	}
+};
+
+// There should only ever be one instance of this class
+// so that core::set_svn_version_and_url is called only once
+VersionRegistrator vr;
+
 void
-register_version_with_core() { core::set_svn_version_and_url( rosetta_svn_version(), rosetta_svn_url() ); }
+register_version_with_core() {
+	// oh -- there's nothing in this function.  But
+	// forcing devel::init to call this function ensures
+	// that the vr variable in this file gets instantiated
+}
 
 } // namespace devel
 ''' % vars())
