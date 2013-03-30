@@ -67,6 +67,7 @@ APBSWrapper::APBSWrapper(core::pose::Pose const & pose,
 }
 APBSResultCOP
 APBSWrapper::exec() {
+
 	int ret = 0;
 
 #ifdef LINK_APBS_LIB
@@ -331,6 +332,7 @@ APBSConfig::APBSConfig(core::pose::Pose const & pose, int natomsIn, int dbgIn, b
 			fcenter[i] = ccenter[i];
 			fglen[i] = length[i] + fadd;
 			cglen[i] = length[i] * cfac;
+			if (cglen[i] <= fglen[i]) cglen[i] = fglen[i] + 1;
 			dime[i] = fglen[i] / space + 1;
 		}
 }
