@@ -19,6 +19,7 @@
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSet_.hh>
 #include <core/pack/rotamer_set/symmetry/SymmetricRotamerSet_.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.hh>
@@ -154,12 +155,19 @@ RotamerSets::build_rotamers(
 
 		set_of_rotamer_sets_[ ii ] = rotset;
 	}
-
+	
+	Size asym_length = 0;
 	// make sure we have a symmetric RotamerSet_ if we have a symmetric pose
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		if ( set_of_rotamer_sets_.size() > 0 )
 			runtime_assert ( dynamic_cast< core::pack::rotamer_set::symmetry::SymmetricRotamerSet_ const * >( set_of_rotamer_sets_[ 1 ].get() ) );
+		// also extract the asymmetric unit length for rotamer link operation
+		core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
+		asym_length = symm_info->num_independent_residues();
+	} else {
+		asym_length = pose.total_residue();
 	}
+
 
 	// now build any additional rotamers that are dependent on placement of other rotamers
 	for ( uint ii = 1; ii <= nmoltenres_; ++ii )
@@ -172,7 +180,7 @@ RotamerSets::build_rotamers(
 	if (task_->rotamer_links_exist()){
 		//check all the linked positions
 
-		utility::vector1<bool> visited(pose.total_residue(),false);
+		utility::vector1<bool> visited(asym_length,false);
 
 		int expected_rot_count = 0;
 
@@ -226,12 +234,12 @@ RotamerSets::build_rotamers(
 					else if ((*itr)->seqpos() == 1 && copies[jj] == 1  ){
 						cloneRes->copy_residue_connections( pose.residue(copies[jj]));
 					}
-					else if ( (*itr)->seqpos() == pose.total_residue() && copies[jj] != (int) pose.total_residue() ){
+					else if ( (*itr)->seqpos() == asym_length && copies[jj] != (int) asym_length ){
 						if (cloneRes->has_variant_type("UPPER_TERMINUS")) cloneRes = core::pose::remove_variant_type_from_residue( *cloneRes, chemical::UPPER_TERMINUS, pose);
 						cloneRes->residue_connection_partner(1, copies[jj]-1, 2);
 						cloneRes->residue_connection_partner(2, copies[jj]+1, 1);
 					}
-					else if ( (*itr)->seqpos() == pose.total_residue() && copies[jj] == (int) pose.total_residue() ){
+					else if ( (*itr)->seqpos() == asym_length && copies[jj] == (int) asym_length ){
 						cloneRes->copy_residue_connections( pose.residue(copies[jj]));
 					}
 					else {
@@ -253,7 +261,7 @@ RotamerSets::build_rotamers(
 						cloneRes = core::pose::add_variant_type_to_residue( *cloneRes, chemical::LOWER_TERMINUS, pose);
 						//std::cout << cloneRes->name()  << " of variant type lower? " << cloneRes->has_variant_type("LOWER_TERMINUS") << std::endl;
 					}
-					if (copies[jj]== (int) pose.total_residue() && !pose.residue(copies[jj]).has_variant_type(CUTPOINT_LOWER)){
+					if (copies[jj]== (int) asym_length && !pose.residue(copies[jj]).has_variant_type(CUTPOINT_LOWER)){
 						cloneRes = core::pose::add_variant_type_to_residue( *cloneRes, chemical::UPPER_TERMINUS, pose);
 						//std::cout << cloneRes->name() << " of variant type upper? " << cloneRes->has_variant_type("UPPER_TERMINUS") <<  std::endl;
 					}

@@ -223,8 +223,6 @@ public: // mutators
 	// @brief for building repeat structures stored in private variable
 	void repeat_generation_with_additional_residue(Pose & pose, Pose &repeat_pose);
 
-	void repeat_generation(Pose & pose, Pose &repeat_pose);
-
 	void
 	repeat_sync(
 	  core::pose::Pose & repeat_pose,
