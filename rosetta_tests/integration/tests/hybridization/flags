@@ -17,7 +17,7 @@
 -default_max_cycles 10
 -relax:min_type lbfgs_armijo_nonmonotone
 -relax:jump_move true
--score:weights inputs/stage3_rlx.wts
+-score:weights inputs/stage2.wts
 -use_bicubic_interpolation
 -hybridize:stage1_probability 1.0
 
