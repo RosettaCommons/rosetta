@@ -25,6 +25,8 @@
 // option key includes
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 
+using namespace basic::options;
+
 namespace protocols {
 namespace forge {
 namespace remodel {
@@ -55,6 +57,10 @@ TaskOperationOP RemodelRotamerLinks::clone() const
 	return new RemodelRotamerLinks( *this );
 }
 
+RemodelRotamerLinks::RemodelRotamerLinks()
+	:  op_remodel_repeat_structure_(option[OptionKeys::remodel::repeat_structure])
+{}
+
 void
 RemodelRotamerLinks::parse_tag( TagPtr /*tag*/ )
 {}
@@ -78,7 +84,7 @@ RemodelRotamerLinks::apply(
 	RotamerLinksOP links( new RotamerLinks );
 	links->resize( nres );
 
-	Size repeat_number = basic::options::option[ OptionKeys::remodel::repeat_structure];
+	Size repeat_number = op_remodel_repeat_structure_;
 	Size segment_length = nres / repeat_number;
 
 	utility::vector1< utility::vector1< Size > > equiv_pos;

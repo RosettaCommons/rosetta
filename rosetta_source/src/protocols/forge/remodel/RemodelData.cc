@@ -40,7 +40,6 @@
 static basic::Tracer TR_REMODEL("protocols.forge.remodel.RemodelData");
 
 using namespace basic::options;
-using namespace basic::options::OptionKeys;
 using namespace core;
 
 namespace protocols {
@@ -54,13 +53,18 @@ namespace remodel {
 /// @brief
 /// constructor
 ///
-RemodelData::RemodelData(){
+RemodelData::RemodelData()
+	: op_user_remodel_repeat_structure_(option[OptionKeys::remodel::repeat_structure].user()),
+		op_user_run_chain_(option[OptionKeys::run::chain].user()),
+		op_run_chain_(option[OptionKeys::run::chain]),
+		op_domainFusion_insert_segment_from_pdb_(option[OptionKeys::remodel::domainFusion::insert_segment_from_pdb]()),
+		op_remodel_repeat_structure_(option[OptionKeys::remodel::repeat_structure])
+{
 	has_design_info_ = false;
 	design_neighbor = false;
 	auto_design = false;
 	natro_movemap_.set_chi( true );
 }
-
 
 ///
 /// @begin RemodelData::splitString
@@ -91,16 +95,10 @@ void RemodelData::splitString( std::string str, std::string delim, std::vector< 
 ///
 void RemodelData::getLoopsToBuildFromFile( std::string filename ) {
 
-	// read blueprint file and load everything into the maps
-	//std::string filename( option[ OptionKeys::remodel::blueprint ]() );
-
 	if ( filename == "" ) {
 		TR_REMODEL << "No blueprint file given!" << std::endl;
 		utility::exit( EXIT_FAILURE, __FILE__, __LINE__ );
 	}
-
-	// read blueprint file and load everything into the maps
-	//std::string filename(option[basic::options::OptionKeys::remodel::blueprint]());
 
 	utility::io::izstream data( filename.c_str() );
 	if (!data) {
@@ -236,8 +234,8 @@ void RemodelData::getLoopsToBuildFromFile( std::string filename ) {
 
 			// for the output resfile, chain is defined by command-line option. no chain by default.
 			if ( design_info ) {
-				if ( option[ run::chain ].user()) {
-					std::string const chain( option[ run::chain ] );
+				if ( op_user_run_chain_) {
+					std::string const chain( op_run_chain_ );
 					oss << line.index << " " << chain << " " ;
 				} else {
 					oss << line.index << " _ " ;
@@ -282,17 +280,17 @@ void RemodelData::getLoopsToBuildFromFile( std::string filename ) {
 
 			// process repeats, pretty dangerous, as this only hacks the resfile string
 			// but not making duplicates in the blueprint held by RemodelData
-			if ( option[ OptionKeys::remodel::repeat_structure ].user() ) {
-				for ( int rep = 1; rep < option[ OptionKeys::remodel::repeat_structure ]; rep++ ) {
+			if ( op_user_remodel_repeat_structure_ ) {
+				for ( Size rep = 1; rep < op_remodel_repeat_structure_; rep++ ) {
 								//chain defined by option, no chain by default
-								if (basic::options::option[ OptionKeys::run::chain].user()) {
-									std::string const chain (basic::options::option[ OptionKeys::run::chain]);
+								if (op_user_run_chain_) {
+									std::string const chain (op_run_chain_);
 									oss << line.index + length*rep << " " << chain << " " ;
 								}
 								else {
 													oss << line.index + length*rep << " _ " ;
 								}
-					for ( int i = 3; i< (int)split_info.size(); i++ ) {
+					for ( Size i = 3; i< (int)split_info.size(); i++ ) {
 						if (split_info[i].substr(0,3) != "CST"){
 							oss << split_info[i] << " " ;
 						}
@@ -312,11 +310,11 @@ void RemodelData::getLoopsToBuildFromFile( std::string filename ) {
 
 			//TR_REMODEL << "manual design overwrite position: " << line.index << std::endl;
 			//this->design_mode = 3; //default manual mode
-			/*if ( option[ Remodel::Design::design_neighbors ]() ) {
+			/*if ( op_Design_design_neighbors_ ) {
 				// fully manual design mode automatically switched on when you assign residues by hand
 				this->design_mode = 4;
 			}
-			if (option[ Remodel::Design::neighbor_repack ]() ) {
+			if (op_Design_neighbor_repack_ ) {
 				// bc repack neigbors
 				this->design_mode = 5;
 			}
@@ -443,10 +441,8 @@ void RemodelData::translateDSSP_ABEGO( std::string & ss, std::string & abego ) {
 void RemodelData::collectInsertionPose(){
 
 	using namespace core;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
 
-	import_pose::pose_from_pdb( insertPose, option[ OptionKeys::remodel::domainFusion::insert_segment_from_pdb ] );
+	import_pose::pose_from_pdb( insertPose, op_domainFusion_insert_segment_from_pdb_ );
 	insertionSize = (int)insertPose.total_residue();
 	TR_REMODEL << "insertionSize: " << insertionSize << std::endl;
 

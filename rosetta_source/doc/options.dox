@@ -11020,46 +11020,57 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-randomize_loops</b> \<Boolean\><dt>
 <dd>randomize loops prior to running main protocol (default true)</dd><br>
+<dd>Default: true</dd><br>
 </dl>
 <dl>
 <dt><b>-use_loop_hash</b> \<Boolean\><dt>
 <dd>centroid build with loop hash (default false)</dd><br>
+<dd>Default: false</dd><br>
 </dl>
 <dl>
 <dt><b>-allowed_closure_attempts</b> \<Integer\><dt>
 <dd>the allowed number of overall closure attempts (default 1)</dd><br>
+<dd>Default: 1</dd><br>
 </dl>
 <dl>
 <dt><b>-loophash_cycles</b> \<Integer\><dt>
 <dd>the number of loophash closure cycles to perform (default 8)</dd><br>
+<dd>Default: 8</dd><br>
 </dl>
 <dl>
 <dt><b>-simultaneous_cycles</b> \<Integer\><dt>
 <dd>the number of simultaneous closure cycles to perform (default 2)</dd><br>
+<dd>Default: 2</dd><br>
 </dl>
 <dl>
 <dt><b>-independent_cycles</b> \<Integer\><dt>
 <dd>the number of independent closure cycles to perform (default 8)</dd><br>
+<dd>Default: 8</dd><br>
 </dl>
 <dl>
 <dt><b>-boost_closure_cycles</b> \<Integer\><dt>
 <dd>the maximum number of possible lockdown closure cycles to perform (default 30)</dd><br>
+<dd>Default: 30</dd><br>
 </dl>
 <dl>
 <dt><b>-force_cutting_N</b> \<Boolean\><dt>
 <dd>force a cutpoint at N-term side of blueprint assignment</dd><br>
+<dd>Default: false</dd><br>
 </dl>
 <dl>
 <dt><b>-bypass_closure</b> \<Boolean\><dt>
 <dd>turning off CCD closure in the mover for tethered docking purpose</dd><br>
+<dd>Default: false</dd><br>
 </dl>
 <dl>
 <dt><b>-cyclic_peptide</b> \<Boolean\><dt>
 <dd>circularize structure joining N and C-term.</dd><br>
+<dd>Default: false</dd><br>
 </dl>
 <dl>
 <dt><b>-temperature</b> \<Real\><dt>
 <dd>temperature for monte carlo ( default 2.0)</dd><br>
+<dd>Default: 2.0</dd><br>
 </dl>
 <dl>
 <dt><b>-max_chews</b> \<Integer\><dt>

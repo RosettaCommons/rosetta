@@ -140,7 +140,10 @@ public:
 		AtomDerivValidator adv( pose, sfxn, movemap );
 		adv.simple_deriv_check( false, 1e-6 );
 	}
-
+	void test_make_compiler_happy()
+	{
+		// without a single active test_xxx(), the compilar quits.
+	}
 
 
 

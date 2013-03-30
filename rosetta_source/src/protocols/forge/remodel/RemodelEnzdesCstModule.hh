@@ -52,6 +52,11 @@ private: // data
 	core::scoring::ScoreFunctionOP scorefxn_;
 	bool backbone_only_;
 
+	// User specified options
+	bool op_user_enzdes_cstfile_;
+
+	// Option values
+	std::string op_enzdes_cstfile_;
 };
 
 } // namespace remodel

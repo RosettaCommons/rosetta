@@ -531,7 +531,6 @@ protected: // movemap
 
 private: // data
 
-
 	/// @brief the score function to use
 	ScoreFunctionOP sfx_;
 
@@ -609,6 +608,53 @@ private: // data
 	///user to supply a decent FoldTree
 	bool keep_input_foldtree_;
 
+	// User specified options
+	bool op_user_RemodelLoopMover_max_linear_chainbreak_;
+	bool op_user_RemodelLoopMover_randomize_loops_; // bool
+	bool op_user_RemodelLoopMover_allowed_closure_attempts_; 
+	bool op_user_RemodelLoopMover_simultaneous_cycles_;
+	bool op_user_RemodelLoopMover_independent_cycles_;
+	bool op_user_RemodelLoopMover_boost_closure_cycles_;
+	bool op_user_RemodelLoopMover_temperature_;
+	bool op_user_remodel_helical_rise_;
+	bool op_user_remodel_helical_radius_;
+	bool op_user_remodel_helical_omega_;
+	bool op_user_remodel_repeat_structure_;
+	bool op_user_remodel_no_jumps_;
+	bool op_user_symmetry_symmetry_definition_;
+	bool op_user_constraints_cst_file_;
+	bool op_user_RemodelLoopMover_cyclic_peptide_; // bool
+	bool op_user_remodel_abinitio_like_sampling_;
+	bool op_user_remodel_use_sequence_;
+	bool op_user_remodel_use_fragment_sequence_;
+	bool op_user_remodel_disallow_sampling_at_pos_;
+	bool op_user_RemodelLoopMover_use_loop_hash_; // bool
+	bool op_user_RemodelLoopMover_bypass_closure_; // bool
+	bool op_user_remodel_lh_filter_string_;
+	bool op_user_RemodelLoopMover_force_cutting_N_; // bool
+	bool op_user_remodel_lh_ex_limit_;
+	bool op_user_remodel_lh_cbreak_selection_;
+	bool op_user_remodel_two_chain_tree_;
+	bool op_user_remodel_lh_closure_filter_;
+	bool op_user_RemodelLoopMover_loophash_cycles_;
+
+	// Option values
+	Real op_RemodelLoopMover_max_linear_chainbreak_;
+	bool op_RemodelLoopMover_randomize_loops_;
+	Size op_RemodelLoopMover_allowed_closure_attempts_;
+	Size op_RemodelLoopMover_loophash_cycles_;
+	Size op_RemodelLoopMover_simultaneous_cycles_;
+	Size op_RemodelLoopMover_independent_cycles_;
+	Size op_RemodelLoopMover_boost_closure_cycles_;
+	Real op_RemodelLoopMover_temperature_;
+	bool op_remodel_no_jumps_;
+	Size op_remodel_repeat_structure_;
+	std::string op_remodel_use_sequence_;
+	std::string op_remodel_disallow_sampling_at_pos_;
+	Size op_remodel_lh_ex_limit_;
+	Size op_remodel_lh_cbreak_selection_;
+	utility::vector1<std::string> op_remodel_lh_filter_string_;
+	Size op_remodel_two_chain_tree_;
 };
 
 

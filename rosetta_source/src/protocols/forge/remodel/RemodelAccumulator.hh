@@ -94,6 +94,19 @@ private: // data
 	ClusterPhilStyleOP cluster_;
 	std::multimap<core::Real,core::pose::PoseOP> pose_store_;
 
+	// user specified options
+	bool op_user_remodel_repeat_structure_;
+	bool op_user_RemodelLoopMover_cyclic_peptide_;
+	bool op_user_constraints_cst_file_;
+
+	// option values
+	bool op_remodel_use_clusters_;
+	Size op_remodel_save_top_;
+	bool op_remodel_cluster_on_entire_pose_;
+	Size op_remodel_repeat_structure_;
+	Real op_remodel_cluster_radius_;
+	Size op_cluster_max_total_cluster_;
+
 public: // accessors
 	core::Size recover_checkpoint();
 

@@ -534,6 +534,72 @@ public: // parser
 
 	virtual void parse_my_tag( TagPtr const tag, DataMap & data, Filters_map const &, Movers_map const &, Pose const & );
 
+private:
+
+	void set_param_from_options();
+
+	// User specified options
+
+	bool op_user_remodel_vdw_;
+	bool op_user_remodel_rama_;
+	bool op_user_remodel_cbeta_;
+	bool op_user_remodel_cenpack_;
+	bool op_user_remodel_hb_lrbb_;
+	bool op_user_remodel_hb_srbb_;
+	bool op_user_remodel_rsigma_;
+	bool op_user_remodel_ss_pair_;
+	bool op_user_domainFusion_insert_segment_from_pdb_;
+	bool op_user_remodel_repeat_structure_;
+	bool op_user_symmetry_symmetry_definition_;
+	bool op_user_remodel_quick_and_dirty_;
+	bool op_user_enzdes_cstfile_;
+	bool op_user_constraints_cst_file_;
+	bool op_user_remodel_build_disulf_;
+	bool op_user_remodel_rg_;
+	bool op_user_remodel_check_scored_centroid_;
+	bool op_user_remodel_run_confirmation_;
+	bool op_user_remodel_free_relax_;
+	bool op_user_RemodelLoopMover_cyclic_peptide_;
+	bool op_user_remodel_swap_refine_confirm_protocols_;
+	bool op_user_design_allow_rare_aro_chi_;
+	bool op_user_packing_soft_rep_design_;
+	bool op_user_remodel_blueprint_;
+	bool op_user_remodel_checkpoint_;
+	bool op_user_remodel_use_pose_relax_;
+	bool op_user_remodel_use_cart_relax_;
+	bool op_user_remodel_use_blueprint_sequence_;
+	bool op_user_remodel_bypass_fragments_;
+
+	// Option values
+	Real op_RemodelLoopMover_max_linear_chainbreak_;
+	Size op_remodel_dr_cycles_;
+	std::string op_remodel_cen_sfxn_;
+	Real op_remodel_vdw_;
+	Real op_remodel_rama_;
+	Real op_remodel_cbeta_;
+	Real op_remodel_cenpack_;
+	Real op_remodel_hb_lrbb_;
+	Real op_remodel_hb_srbb_;
+	Real op_remodel_rsigma_;
+	Real op_remodel_ss_pair_;
+	Real op_run_show_simulation_in_pymol_;
+	Size op_remodel_num_trajectory_;
+	Size op_remodel_repeat_structure_;
+	bool op_remodel_cen_minimize_;
+	Size op_remodel_cstfilter_;
+	Size op_remodel_collect_clustered_top_;
+	std::string op_out_prefix_;
+	bool op_remodel_use_same_length_fragments_;
+
+	bool op_packing_soft_rep_design_;  // no default
+	Real op_remodel_rg_; // no default
+	std::string op_remodel_blueprint_;  // File, no default
+	bool op_remodel_checkpoint_; // no defuault
+	bool op_remodel_use_pose_relax_; // no default
+	bool op_remodel_use_cart_relax_; // no default
+	bool op_remodel_use_blueprint_sequence_; // no default
+	bool op_remodel_bypass_fragments_; // no default
+	bool op_remodel_free_relax_;  // no default
 };
 
 

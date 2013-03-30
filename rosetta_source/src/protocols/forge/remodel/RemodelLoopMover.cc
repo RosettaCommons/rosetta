@@ -103,6 +103,7 @@
 #include <core/conformation/Conformation.hh>
 #include <utility/string_util.hh>
 
+using namespace basic::options;
 
 namespace protocols {
 namespace forge {
@@ -129,7 +130,50 @@ RemodelLoopMover::RemodelLoopMover() :
 	user_provided_movers_apply_cycle_(3),
 	boost_closure_cycles_( 30 ),
 	temperature_( 2.0 ),
-	keep_input_foldtree_( false )
+	keep_input_foldtree_( false ),
+
+	op_user_RemodelLoopMover_max_linear_chainbreak_(option[OptionKeys::remodel::RemodelLoopMover::max_linear_chainbreak].user()),
+	op_user_RemodelLoopMover_randomize_loops_(option[OptionKeys::remodel::RemodelLoopMover::randomize_loops].user()), // bool
+	op_user_RemodelLoopMover_allowed_closure_attempts_(option[OptionKeys::remodel::RemodelLoopMover::allowed_closure_attempts].user()),
+	op_user_RemodelLoopMover_simultaneous_cycles_(option[OptionKeys::remodel::RemodelLoopMover::simultaneous_cycles].user()),
+	op_user_RemodelLoopMover_independent_cycles_(option[OptionKeys::remodel::RemodelLoopMover::independent_cycles].user()),
+	op_user_RemodelLoopMover_boost_closure_cycles_(option[OptionKeys::remodel::RemodelLoopMover::boost_closure_cycles].user()),
+	op_user_RemodelLoopMover_temperature_(option[OptionKeys::remodel::RemodelLoopMover::temperature].user()),
+	op_user_remodel_helical_rise_(option[OptionKeys::remodel::helical_rise].user()),
+	op_user_remodel_helical_radius_(option[OptionKeys::remodel::helical_radius].user()),
+	op_user_remodel_helical_omega_(option[OptionKeys::remodel::helical_omega].user()),
+	op_user_remodel_repeat_structure_(option[OptionKeys::remodel::repeat_structure].user()),
+	op_user_remodel_no_jumps_(option[OptionKeys::remodel::no_jumps].user()),
+	op_user_symmetry_symmetry_definition_(option[OptionKeys::symmetry::symmetry_definition].user()),
+	op_user_constraints_cst_file_(option[OptionKeys::constraints::cst_file].user()),
+	op_user_RemodelLoopMover_cyclic_peptide_(option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide].user()), // bool
+	op_user_remodel_abinitio_like_sampling_(option[OptionKeys::remodel::abinitio_like_sampling].user()),
+	op_user_remodel_use_sequence_(option[OptionKeys::remodel::use_sequence].user()),
+	op_user_remodel_use_fragment_sequence_(option[OptionKeys::remodel::use_fragment_sequence].user()),
+	op_user_remodel_disallow_sampling_at_pos_(option[OptionKeys::remodel::disallow_sampling_at_pos].user()),
+	op_user_RemodelLoopMover_use_loop_hash_(option[OptionKeys::remodel::RemodelLoopMover::use_loop_hash].user()), // bool
+	op_user_RemodelLoopMover_bypass_closure_(option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user()), // bool
+	op_user_remodel_lh_filter_string_(option[OptionKeys::remodel::lh_filter_string].user()),
+	op_user_RemodelLoopMover_force_cutting_N_(option[OptionKeys::remodel::RemodelLoopMover::force_cutting_N].user()), // bool
+	op_user_remodel_lh_ex_limit_(option[OptionKeys::remodel::lh_ex_limit].user()),
+	op_user_remodel_lh_cbreak_selection_(option[OptionKeys::remodel::lh_cbreak_selection].user()),
+	op_user_remodel_two_chain_tree_(option[OptionKeys::remodel::two_chain_tree].user()),
+	op_user_remodel_lh_closure_filter_(option[OptionKeys::remodel::lh_closure_filter].user()),
+	op_user_RemodelLoopMover_loophash_cycles_(option[OptionKeys::remodel::RemodelLoopMover::loophash_cycles].user()),
+	op_RemodelLoopMover_max_linear_chainbreak_(option[OptionKeys::remodel::RemodelLoopMover::max_linear_chainbreak]),
+	op_RemodelLoopMover_randomize_loops_(option[OptionKeys::remodel::RemodelLoopMover::randomize_loops]),
+	op_RemodelLoopMover_allowed_closure_attempts_(option[OptionKeys::remodel::RemodelLoopMover::allowed_closure_attempts]),
+	op_RemodelLoopMover_loophash_cycles_(option[OptionKeys::remodel::RemodelLoopMover::loophash_cycles]),
+	op_RemodelLoopMover_simultaneous_cycles_(option[OptionKeys::remodel::RemodelLoopMover::simultaneous_cycles]),
+	op_RemodelLoopMover_independent_cycles_(option[OptionKeys::remodel::RemodelLoopMover::independent_cycles]),
+	op_RemodelLoopMover_boost_closure_cycles_(option[OptionKeys::remodel::RemodelLoopMover::boost_closure_cycles]),
+	op_RemodelLoopMover_temperature_(option[OptionKeys::remodel::RemodelLoopMover::temperature]),
+	op_remodel_no_jumps_(option[OptionKeys::remodel::no_jumps]),
+	op_remodel_repeat_structure_(option[OptionKeys::remodel::repeat_structure]),
+	op_remodel_use_sequence_(option[OptionKeys::remodel::use_sequence]),
+	op_remodel_disallow_sampling_at_pos_(option[OptionKeys::remodel::disallow_sampling_at_pos]()),
+	op_remodel_lh_ex_limit_(option[OptionKeys::remodel::lh_ex_limit]),
+	op_remodel_lh_cbreak_selection_(option[OptionKeys::remodel::lh_cbreak_selection])
 {
 	set_param_from_options();
 }
@@ -149,8 +193,52 @@ RemodelLoopMover::RemodelLoopMover( loops::LoopsOP const loops ) :
 	user_provided_movers_apply_cycle_(3),
 	boost_closure_cycles_( 30 ),
 	temperature_( 2.0 ),
-	keep_input_foldtree_( false )
+	keep_input_foldtree_( false ),
+
+	op_user_RemodelLoopMover_max_linear_chainbreak_(option[OptionKeys::remodel::RemodelLoopMover::max_linear_chainbreak].user()),
+	op_user_RemodelLoopMover_randomize_loops_(option[OptionKeys::remodel::RemodelLoopMover::randomize_loops].user()), // bool
+	op_user_RemodelLoopMover_allowed_closure_attempts_(option[OptionKeys::remodel::RemodelLoopMover::allowed_closure_attempts].user()),
+	op_user_RemodelLoopMover_simultaneous_cycles_(option[OptionKeys::remodel::RemodelLoopMover::simultaneous_cycles].user()),
+	op_user_RemodelLoopMover_independent_cycles_(option[OptionKeys::remodel::RemodelLoopMover::independent_cycles].user()),
+	op_user_RemodelLoopMover_boost_closure_cycles_(option[OptionKeys::remodel::RemodelLoopMover::boost_closure_cycles].user()),
+	op_user_RemodelLoopMover_temperature_(option[OptionKeys::remodel::RemodelLoopMover::temperature].user()),
+	op_user_remodel_helical_rise_(option[OptionKeys::remodel::helical_rise].user()),
+	op_user_remodel_helical_radius_(option[OptionKeys::remodel::helical_radius].user()),
+	op_user_remodel_helical_omega_(option[OptionKeys::remodel::helical_omega].user()),
+	op_user_remodel_repeat_structure_(option[OptionKeys::remodel::repeat_structure].user()),
+	op_user_remodel_no_jumps_(option[OptionKeys::remodel::no_jumps].user()),
+	op_user_symmetry_symmetry_definition_(option[OptionKeys::symmetry::symmetry_definition].user()),
+	op_user_constraints_cst_file_(option[OptionKeys::constraints::cst_file].user()),
+	op_user_RemodelLoopMover_cyclic_peptide_(option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide].user()), // bool
+	op_user_remodel_abinitio_like_sampling_(option[OptionKeys::remodel::abinitio_like_sampling].user()),
+	op_user_remodel_use_sequence_(option[OptionKeys::remodel::use_sequence].user()),
+	op_user_remodel_use_fragment_sequence_(option[OptionKeys::remodel::use_fragment_sequence].user()),
+	op_user_remodel_disallow_sampling_at_pos_(option[OptionKeys::remodel::disallow_sampling_at_pos].user()),
+	op_user_RemodelLoopMover_use_loop_hash_(option[OptionKeys::remodel::RemodelLoopMover::use_loop_hash].user()), // bool
+	op_user_RemodelLoopMover_bypass_closure_(option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user()), // bool
+	op_user_remodel_lh_filter_string_(option[OptionKeys::remodel::lh_filter_string].user()),
+	op_user_RemodelLoopMover_force_cutting_N_(option[OptionKeys::remodel::RemodelLoopMover::force_cutting_N].user()), // bool
+	op_user_remodel_lh_ex_limit_(option[OptionKeys::remodel::lh_ex_limit].user()),
+	op_user_remodel_lh_cbreak_selection_(option[OptionKeys::remodel::lh_cbreak_selection].user()),
+	op_user_remodel_two_chain_tree_(option[OptionKeys::remodel::two_chain_tree].user()),
+	op_user_remodel_lh_closure_filter_(option[OptionKeys::remodel::lh_closure_filter].user()),
+	op_user_RemodelLoopMover_loophash_cycles_(option[OptionKeys::remodel::RemodelLoopMover::loophash_cycles].user()),
+	op_RemodelLoopMover_max_linear_chainbreak_(option[OptionKeys::remodel::RemodelLoopMover::max_linear_chainbreak]),
+	op_RemodelLoopMover_randomize_loops_(option[OptionKeys::remodel::RemodelLoopMover::randomize_loops]),
+	op_RemodelLoopMover_allowed_closure_attempts_(option[OptionKeys::remodel::RemodelLoopMover::allowed_closure_attempts]),
+	op_RemodelLoopMover_loophash_cycles_(option[OptionKeys::remodel::RemodelLoopMover::loophash_cycles]),
+	op_RemodelLoopMover_simultaneous_cycles_(option[OptionKeys::remodel::RemodelLoopMover::simultaneous_cycles]),
+	op_RemodelLoopMover_independent_cycles_(option[OptionKeys::remodel::RemodelLoopMover::independent_cycles]),
+	op_RemodelLoopMover_boost_closure_cycles_(option[OptionKeys::remodel::RemodelLoopMover::boost_closure_cycles]),
+	op_RemodelLoopMover_temperature_(option[OptionKeys::remodel::RemodelLoopMover::temperature]),
+	op_remodel_no_jumps_(option[OptionKeys::remodel::no_jumps]),
+	op_remodel_repeat_structure_(option[OptionKeys::remodel::repeat_structure]),
+	op_remodel_use_sequence_(option[OptionKeys::remodel::use_sequence]),
+	op_remodel_disallow_sampling_at_pos_(option[OptionKeys::remodel::disallow_sampling_at_pos]()),
+	op_remodel_lh_ex_limit_(option[OptionKeys::remodel::lh_ex_limit]),
+	op_remodel_lh_cbreak_selection_(option[OptionKeys::remodel::lh_cbreak_selection])
 {
+	// Options that don't have default values.  Check before access.
 	set_param_from_options();
 }
 
@@ -173,7 +261,51 @@ RemodelLoopMover::RemodelLoopMover( RemodelLoopMover const & rval ) :
 	boost_closure_cycles_( rval.boost_closure_cycles_ ),
 	temperature_( rval.temperature_ ),
 	fragsets_( rval.fragsets_ ),
-	keep_input_foldtree_(rval.keep_input_foldtree_)
+	keep_input_foldtree_(rval.keep_input_foldtree_),
+	op_user_RemodelLoopMover_max_linear_chainbreak_(rval.op_user_RemodelLoopMover_max_linear_chainbreak_),
+	op_user_RemodelLoopMover_randomize_loops_(rval.op_user_RemodelLoopMover_randomize_loops_),
+	op_user_RemodelLoopMover_allowed_closure_attempts_(rval.op_user_RemodelLoopMover_allowed_closure_attempts_),
+	op_user_RemodelLoopMover_simultaneous_cycles_(rval.op_user_RemodelLoopMover_simultaneous_cycles_),
+	op_user_RemodelLoopMover_independent_cycles_(rval.op_user_RemodelLoopMover_independent_cycles_),
+	op_user_RemodelLoopMover_boost_closure_cycles_(rval.op_user_RemodelLoopMover_boost_closure_cycles_),
+	op_user_RemodelLoopMover_temperature_(rval.op_user_RemodelLoopMover_temperature_),
+	op_user_remodel_helical_rise_(rval.op_user_remodel_helical_rise_),
+	op_user_remodel_helical_radius_(rval.op_user_remodel_helical_radius_),
+	op_user_remodel_helical_omega_(rval.op_user_remodel_helical_omega_),
+	op_user_remodel_repeat_structure_(rval.op_user_remodel_repeat_structure_),
+	op_user_remodel_no_jumps_(rval.op_user_remodel_no_jumps_),
+	op_user_symmetry_symmetry_definition_(rval.op_user_symmetry_symmetry_definition_),
+	op_user_constraints_cst_file_(rval.op_user_constraints_cst_file_),
+	op_user_RemodelLoopMover_cyclic_peptide_(rval.op_user_RemodelLoopMover_cyclic_peptide_), // bool
+	op_user_remodel_abinitio_like_sampling_(rval.op_user_remodel_abinitio_like_sampling_),
+	op_user_remodel_use_sequence_(rval.op_user_remodel_use_sequence_),
+	op_user_remodel_use_fragment_sequence_(rval.op_user_remodel_use_fragment_sequence_),
+	op_user_remodel_disallow_sampling_at_pos_(rval.op_user_remodel_disallow_sampling_at_pos_),
+	op_user_RemodelLoopMover_use_loop_hash_(rval.op_user_RemodelLoopMover_use_loop_hash_), // bool
+	op_user_RemodelLoopMover_bypass_closure_(rval.op_user_RemodelLoopMover_bypass_closure_), // bool
+	op_user_remodel_lh_filter_string_(rval.op_user_remodel_lh_filter_string_),
+	op_user_RemodelLoopMover_force_cutting_N_(rval.op_user_RemodelLoopMover_force_cutting_N_), // bool
+	op_user_remodel_lh_ex_limit_(rval.op_user_remodel_lh_ex_limit_),
+	op_user_remodel_lh_cbreak_selection_(rval.op_user_remodel_lh_cbreak_selection_),
+	op_user_remodel_two_chain_tree_(rval.op_user_remodel_two_chain_tree_),
+	op_user_remodel_lh_closure_filter_(rval.op_user_remodel_lh_closure_filter_),
+	op_user_RemodelLoopMover_loophash_cycles_(rval.op_user_RemodelLoopMover_loophash_cycles_),
+	op_RemodelLoopMover_max_linear_chainbreak_(rval.op_RemodelLoopMover_max_linear_chainbreak_),
+	op_RemodelLoopMover_randomize_loops_(rval.op_RemodelLoopMover_randomize_loops_),
+	op_RemodelLoopMover_allowed_closure_attempts_(rval.op_RemodelLoopMover_allowed_closure_attempts_),
+	op_RemodelLoopMover_loophash_cycles_(rval.op_RemodelLoopMover_loophash_cycles_),
+	op_RemodelLoopMover_simultaneous_cycles_(rval.op_RemodelLoopMover_simultaneous_cycles_),
+	op_RemodelLoopMover_independent_cycles_(rval.op_RemodelLoopMover_independent_cycles_),
+	op_RemodelLoopMover_boost_closure_cycles_(rval.op_RemodelLoopMover_boost_closure_cycles_),
+	op_RemodelLoopMover_temperature_(rval.op_RemodelLoopMover_temperature_),
+	op_remodel_no_jumps_(rval.op_remodel_no_jumps_),
+	op_remodel_repeat_structure_(rval.op_remodel_repeat_structure_),
+	op_remodel_use_sequence_(rval.op_remodel_use_sequence_),
+	op_remodel_disallow_sampling_at_pos_(rval.op_remodel_disallow_sampling_at_pos_),
+	op_remodel_lh_ex_limit_(rval.op_remodel_lh_ex_limit_),
+	op_remodel_lh_cbreak_selection_(rval.op_remodel_lh_cbreak_selection_),
+	op_remodel_lh_filter_string_(rval.op_remodel_lh_filter_string_),
+	op_remodel_two_chain_tree_(rval.op_remodel_two_chain_tree_)
 {}
 
 
@@ -195,20 +327,31 @@ RemodelLoopMover::MoverOP RemodelLoopMover::fresh_instance() const {
 
 /// @brief set parameters from options
 void RemodelLoopMover::set_param_from_options(){
-	using namespace basic::options;
-	using namespace OptionKeys::remodel;
-	if( option[ OptionKeys::remodel::RemodelLoopMover::max_linear_chainbreak ].user() )    max_linear_chainbreak_ = option[ OptionKeys::remodel::RemodelLoopMover::max_linear_chainbreak ].value();
-	if( option[ OptionKeys::remodel::RemodelLoopMover::randomize_loops ].user() )          randomize_loops_       = option[ OptionKeys::remodel::RemodelLoopMover::randomize_loops ].value();
-	if( option[ OptionKeys::remodel::RemodelLoopMover::allowed_closure_attempts ].user() ) allowed_closure_attempts_ = option[ OptionKeys::remodel::RemodelLoopMover::allowed_closure_attempts ].value();
-	if( option[ OptionKeys::remodel::RemodelLoopMover::loophash_cycles ].user() )       loophash_cycles_       = option[ OptionKeys::remodel::RemodelLoopMover::loophash_cycles ].value();
-	if( option[ OptionKeys::remodel::RemodelLoopMover::simultaneous_cycles ].user() )      simultaneous_cycles_      = option[ OptionKeys::remodel::RemodelLoopMover::simultaneous_cycles ].value();
-	if( option[ OptionKeys::remodel::RemodelLoopMover::independent_cycles ].user() )       independent_cycles_       = option[ OptionKeys::remodel::RemodelLoopMover::independent_cycles ].value();
-	if( option[ OptionKeys::remodel::RemodelLoopMover::boost_closure_cycles ].user() ) 	   boost_closure_cycles_     = option[ OptionKeys::remodel::RemodelLoopMover::boost_closure_cycles ].value();
-	if( option[ OptionKeys::remodel::RemodelLoopMover::temperature ].user() ) 	           temperature_              = option[ OptionKeys::remodel::RemodelLoopMover::temperature ].value();
+	if( option.has(OptionKeys::remodel::lh_filter_string) && option[OptionKeys::remodel::lh_filter_string].user() )
+		op_remodel_lh_filter_string_ = option[OptionKeys::remodel::lh_filter_string]();
+	if( option.has(OptionKeys::remodel::two_chain_tree) && option[OptionKeys::remodel::two_chain_tree].user() )
+		op_remodel_two_chain_tree_ = option[OptionKeys::remodel::two_chain_tree];
+
+	if( op_user_RemodelLoopMover_max_linear_chainbreak_ )
+		max_linear_chainbreak_ = op_RemodelLoopMover_max_linear_chainbreak_;
+	if( op_user_RemodelLoopMover_randomize_loops_ )
+		randomize_loops_       = op_RemodelLoopMover_randomize_loops_;
+	if( op_user_RemodelLoopMover_allowed_closure_attempts_ )
+		allowed_closure_attempts_ = op_RemodelLoopMover_allowed_closure_attempts_;
+	if( op_user_RemodelLoopMover_loophash_cycles_ )
+		loophash_cycles_       = op_RemodelLoopMover_loophash_cycles_;
+	if( op_user_RemodelLoopMover_simultaneous_cycles_ )
+		simultaneous_cycles_      = op_RemodelLoopMover_simultaneous_cycles_;
+	if( op_user_RemodelLoopMover_independent_cycles_ )
+		independent_cycles_       = op_RemodelLoopMover_independent_cycles_;
+	if( op_user_RemodelLoopMover_boost_closure_cycles_ )
+		boost_closure_cycles_     = op_RemodelLoopMover_boost_closure_cycles_;
+	if( op_user_RemodelLoopMover_temperature_ )
+		temperature_              = op_RemodelLoopMover_temperature_;
 	// flo may '12 the below option is different bc it's
 	// replacing the way it was used in the code until now,
 	// where the check for the user didn't happen
-	keep_input_foldtree_ = option[OptionKeys::remodel::no_jumps];
+	keep_input_foldtree_ = op_remodel_no_jumps_;
 }
 
 /// @registere options
@@ -272,7 +415,7 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 
 	core::pose::Pose non_terminal_pose(pose);
 
-  if (option[ OptionKeys::remodel::repeat_structure].user()){
+  if (op_user_remodel_repeat_structure_){
 
 		//remove the extra tail from pose, but still use the pose with tail to build
 		Size tail_count = repeat_tail_length_;
@@ -299,7 +442,7 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 		repeat_pose.fold_tree(ft);
     core::pose::remove_lower_terminus_type_from_pose_residue(non_terminal_pose, 1);
 
-    Size repeatFactor = option[ OptionKeys::remodel::repeat_structure];
+    Size repeatFactor = op_remodel_repeat_structure_;
     Size count = 1;
 
     while ( repeatFactor !=1){ // the argument should be total number of copies
@@ -359,7 +502,7 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 	  //set private for the class
 	  repeat_length_=repeat_pose.total_residue();
 
-	Size repeat_number = basic::options::option[ OptionKeys::remodel::repeat_structure];
+	Size repeat_number = op_remodel_repeat_structure_;
 	Size segment_length = repeat_length_/repeat_number;
 	//std::cout << "DEBUG: segment lenght = " << segment_length << std::endl;
 
@@ -432,7 +575,7 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
     }
 	}
 
-		if (option[OptionKeys::remodel::no_jumps].user()){
+		if (op_user_remodel_no_jumps_){
 			remove_cutpoint_variants( pose );
 			remove_cutpoint_variants( repeat_pose );
 			FoldTree FT;
@@ -476,9 +619,9 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 // all subsequent steps of repeat_structure gets RGF, so the initial build actually don't need it.
 
 /*								TR <<  "preRGF " << std::endl;
-		if (basic::options::option[ OptionKeys::remodel::helical_rise].user() &&
-		    basic::options::option[ OptionKeys::remodel::helical_radius].user() &&
-		    basic::options::option[ OptionKeys::remodel::helical_omega].user()){
+		if (op_user_remodel_helical_rise_ &&
+		    op_user_remodel_helical_radius_ &&
+		    op_user_remodel_helical_omega_){
 					RGF_.restore_original_cst(repeat_pose);
 					RGF_.setup_helical_constraint(repeat_pose);
 		}
@@ -517,6 +660,178 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
   }
 }
 
+
+void RemodelLoopMover::repeat_generation(Pose &pose, Pose & repeat_pose)
+{
+	using namespace core::pose;
+	using core::Size;
+	using namespace basic::options;
+	//testing repeat units
+	//two pose symmetry strategy
+
+	core::pose::Pose non_terminal_pose(pose);
+	//core::pose::Pose repeat_pose;
+  if (op_user_remodel_repeat_structure_){
+		repeat_pose=non_terminal_pose;
+
+		//reset foldtree and simply depend on coordinates for appendage
+		core::kinematics::FoldTree ft = repeat_pose.fold_tree();
+		ft.simple_tree(repeat_pose.total_residue());
+		repeat_pose.fold_tree(ft);
+    core::pose::remove_lower_terminus_type_from_pose_residue(non_terminal_pose, 1);
+
+
+		core::pose::remove_lower_terminus_type_from_pose_residue(non_terminal_pose, 1);
+
+    Size repeatFactor = op_remodel_repeat_structure_;
+    Size count = 1;
+    while ( repeatFactor !=1){ // the argument should be total number of copies
+      for (Size rsd = 1; rsd <= non_terminal_pose.total_residue(); rsd++){
+				//intentially insert behind the last residue, this way blueprint definition will cover the junction with fragments
+				if (rsd == non_terminal_pose.total_residue()){
+					repeat_pose.conformation().safely_append_polymer_residue_after_seqpos( non_terminal_pose.residue(rsd),repeat_pose.total_residue(),true);
+				}else {
+					repeat_pose.conformation().safely_append_polymer_residue_after_seqpos( non_terminal_pose.residue(rsd),repeat_pose.total_residue(),false);
+				}
+      }
+      Size junction = (non_terminal_pose.total_residue())* count;
+        repeat_pose.conformation().insert_ideal_geometry_at_polymer_bond(junction);
+        repeat_pose.set_omega(junction,180);
+      //std::cout << "repeat Factor : " << repeatFactor << std::endl;
+      count++;
+      repeatFactor--;
+    }
+		//terminus residue check
+		for (Size res=2; res< repeat_pose.total_residue(); res++){
+			if (repeat_pose.residue(res).is_terminus()){
+				//std::cout<< "FIX TERMINUS " << res << std::endl;
+				core::pose::remove_upper_terminus_type_from_pose_residue(repeat_pose, res);
+				core::pose::remove_lower_terminus_type_from_pose_residue(repeat_pose, res);
+			}
+		}
+	using namespace protocols::loops;
+	using namespace core::kinematics;
+
+	Size repeat_number = op_remodel_repeat_structure_;
+	Size segment_length = repeat_length_/repeat_number;
+	//std::cout << "DEBUG: segment lenght = " << segment_length << std::endl;
+
+	//propagate jumps
+
+  core::kinematics::FoldTree f;
+
+	LoopsOP repeat_loops = new Loops();
+  std::set< Size > lower_termini;
+  std::set< Size > upper_termini;
+  for ( Size i = 1, ie = pose.conformation().num_chains(); i <= ie; ++i ) {
+    lower_termini.insert( pose.conformation().chain_begin( i ) );
+    upper_termini.insert( pose.conformation().chain_end( i ) );
+  }
+
+  for ( Loops::iterator l = loops_->v_begin(), le = loops_->v_end(); l != le; ++l ) {
+    Loop & loop = *l;
+    if (loop.start() == 1 && loop.stop() == segment_length){
+      break;  //don't need to do anything about foldtree if fully de novo
+    } else {
+
+    repeat_loops->push_back(loop); //load the first guy
+    //TR << loop.start() << " " << loop.stop() << " " << loop.cut() << std::endl;
+
+    //math to figure out the different segments
+      for (Size rep = 0; rep < repeat_number; rep++){
+
+        //find equals iterator end means not found.  If the loops is internal, increment by repeats
+        if ( lower_termini.find( loop.start() ) == lower_termini.end() && upper_termini.find( loop.stop() ) == upper_termini.end()){
+          Size tempStart = loop.start()+(segment_length*rep);
+          Size tempStop = loop.stop()+(segment_length*rep);
+          Size tempCut = loop.cut()+(segment_length*rep);
+          if (tempStop > repeat_pose.total_residue()){
+              tempStop = repeat_pose.total_residue();
+						if ( tempCut > tempStop ){
+							tempCut = tempStop;
+						}
+          }
+          LoopOP newLoop = new Loop( tempStart, tempStop , tempCut);
+          //TR << "adding loop in repeat propagation: " << tempStart << " " << tempStop <<  " " << tempCut << std::endl;
+          repeat_loops->push_back(*newLoop);
+        }
+        else {
+          LoopOP newLoop = new Loop(loop.start(), loop.stop(), loop.cut());
+          repeat_loops->push_back(*newLoop);
+        }
+      }
+    }
+  }
+/*
+	for ( Loops::iterator l = loops_->v_begin(), le = loops_->v_end(); l != le; ++l ) {
+    Loop & loop = *l;
+		if (loop.start() == 1 && loop.stop() == segment_length){
+			break;  //don't need to do anything about foldtree if fully de novo
+		} else {
+
+		repeat_loops->push_back(loop); //load the first guy
+		TR << loop.start() << " " << loop.stop() << " " << loop.cut() << std::endl;
+
+		//math to figure out the different segments
+			for (Size rep = 0; rep < repeat_number; rep++){
+				LoopOP newLoop = new Loop(loop.start()+(segment_length*rep), loop.stop()+(segment_length*rep),loop.cut()+(segment_length*rep));
+				TR << "adding loop in repeat propagation: " << loop.start()+(segment_length*rep) << std::endl;
+				repeat_loops->push_back(*newLoop);
+			}
+		}
+	}
+*/
+	  if (!repeat_loops->empty()){
+		  f = protocols::forge::methods::fold_tree_from_loops(repeat_pose, *repeat_loops);
+	  } else {
+		  f.simple_tree(repeat_pose.total_residue());
+	  }
+
+
+    repeat_pose.fold_tree(f);
+
+    //fix geometry for junction
+
+	for ( Loops::iterator l = repeat_loops->v_begin(), le = repeat_loops->v_end(); l != le; ++l ) {
+		Loop & loop = *l;
+    for (Size jxn=loop.start(); jxn <=loop.stop(); jxn++){
+      //std::cout << "fix junction at " << jxn << std::endl;
+			if (jxn != repeat_pose.total_residue()){ //safety
+				repeat_pose.conformation().insert_ideal_geometry_at_polymer_bond(jxn);
+			}
+    }
+	}
+
+		//take the jumps and set repeating RT
+		Size jump_offset = pose.num_jump();
+		for (Size rep = 1; rep < repeat_number; rep++){
+			for (Size i = 1; i<= pose.num_jump(); i++){
+				numeric::xyzMatrix< Real > Rot = pose.jump(i).get_rotation();
+				numeric::xyzVector< Real > Trx = pose.jump(i).get_translation();
+			//	TR <<  "set ROT-TRANS from " << i << " to " << i+jump_offset*rep << std::endl;
+				Jump tempJump = repeat_pose.jump(i+(jump_offset*rep));
+				tempJump.set_rotation( Rot );
+				tempJump.set_translation( Trx );
+				repeat_pose.conformation().set_jump( i+(jump_offset*rep), tempJump );
+			}
+		}
+
+
+
+		//check tree:
+		//TR << f << std::endl;
+
+/*
+		//take care of foldtree
+		core::kinematics::FoldTree f;
+		f.simple_tree(repeat_pose.total_residue());
+		repeat_pose.fold_tree(f);
+		//repeat_pose.dump_pdb("repeat.pdb");
+  //  pose = repeat_pose;
+	//	std::cout << repeat_pose.fold_tree()<< std::endl;
+*/
+  }
+}
 
 void RemodelLoopMover::repeat_sync( //utility function
 	core::pose::Pose & repeat_pose,
@@ -604,9 +919,9 @@ void RemodelLoopMover::repeat_sync( //utility function
 		}
 	}
 
-	if ( option[ OptionKeys::remodel::helical_rise].user() &&
-	     option[ OptionKeys::remodel::helical_radius].user() &&
-	     option[ OptionKeys::remodel::helical_omega].user()){
+	if ( op_user_remodel_helical_rise_ &&
+	     op_user_remodel_helical_radius_ &&
+	     op_user_remodel_helical_omega_){
 					RGF_.restore_original_cst(repeat_pose);
 					RGF_.setup_helical_constraint(repeat_pose);
 	}
@@ -724,7 +1039,7 @@ void RemodelLoopMover::repeat_propagation( //utility function
 		}
 	}
 */
-	if (!repeat_loops->empty() && !basic::options::option[basic::options::OptionKeys::remodel::no_jumps].user()){
+	if (!repeat_loops->empty() && !op_user_remodel_no_jumps_){
 		f = protocols::forge::methods::fold_tree_from_loops(repeat_pose, *repeat_loops);
 	} else {
 		f.simple_tree(repeat_pose.total_residue());
@@ -796,9 +1111,9 @@ void RemodelLoopMover::repeat_propagation( //utility function
 		}
 	}
 
-	if (option[ OptionKeys::remodel::helical_rise].user() &&
-			option[ OptionKeys::remodel::helical_radius].user() &&
-			option[ OptionKeys::remodel::helical_omega].user()){
+	if (op_user_remodel_helical_rise_ &&
+			op_user_remodel_helical_radius_ &&
+			op_user_remodel_helical_omega_){
 					RGF_.restore_original_cst(repeat_pose);
 					RGF_.setup_helical_constraint(repeat_pose);
 	}
@@ -848,14 +1163,14 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		//initialize values that would be lost once the pose is turn symmetrical
 		unit_length_ = pose.total_residue();
 
-	if ( option[ OptionKeys::remodel::repeat_structure ].user() ) {
+	if ( op_user_remodel_repeat_structure_ ) {
 		repeat_generation_with_additional_residue(pose, repeat_pose_);
 
 		//initialize values that would be lost once the pose is turn symmetrical
 		repeat_length_ = repeat_pose_.total_residue();
 		pose.pdb_info()->obsolete(true);
 			repeat_pose_.pdb_info()->obsolete(true);
-		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() ) {
+		if ( op_user_symmetry_symmetry_definition_ ) {
 			simple_moves::symmetry::SetupForSymmetryMover pre_mover;
 			pre_mover.apply( pose );
 			pre_mover.apply( repeat_pose_ );
@@ -865,7 +1180,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 
 
 /* not fully implemented yet, developmental
- if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
+ if ( op_user_symmetry_symmetry_definition_ )  {
     simple_moves::symmetry::SetupForSymmetryMover pre_mover;
 
 		//try making both symmetrical
@@ -887,13 +1202,13 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		// replaces cst object in pose and that wipes out everything already set.
 
 		// only use this type of cst file in this case
-		if ( option[ OptionKeys::constraints::cst_file ].user() ) {
+		if ( op_user_constraints_cst_file_ ) {
 			protocols::simple_moves::ConstraintSetMoverOP repeat_constraint = new protocols::simple_moves::ConstraintSetMover();
 			repeat_constraint->apply( repeat_pose_ );
 		}
 
 /* // ResidueTypeLinkingConstraints
-		Size repeat_number = option[ OptionKeys::remodel::repeat_structure ];
+		Size repeat_number = op_remodel_repeat_structure_;
 		Real bonus = 10;
 		//std::cout << "RESIDUETYPELINKING CST" << std::endl;
 		Size segment_length = ( repeat_pose_.n_residue() ) / repeat_number;
@@ -904,12 +1219,12 @@ void RemodelLoopMover::apply( Pose & pose ) {
 			}
 		}
 */
-			if (option[ OptionKeys::remodel::helical_rise].user() &&
-			    option[ OptionKeys::remodel::helical_radius].user() &&
-			    option[ OptionKeys::remodel::helical_omega].user()){
+			if (op_user_remodel_helical_rise_ &&
+			    op_user_remodel_helical_radius_ &&
+			    op_user_remodel_helical_omega_){
 							RGF_.set_native_cst_set( repeat_pose_ );
 				TR.Debug << "repeat_pose_ length: " << repeat_length_ << std::endl;
-							RGF_.set_segment_size( repeat_length_/option[ OptionKeys::remodel::repeat_structure] );
+							RGF_.set_segment_size( repeat_length_/op_remodel_repeat_structure_ );
 			}
 	}
 
@@ -923,7 +1238,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 
 /*
 			// ResidueTypeLinkingConstraints
-			Size repeat_number = basic::options::option[ OptionKeys::remodel::repeat_structure];
+			Size repeat_number = op_remodel_repeat_structure_;
 			Real bonus = 10;
 			//std::cout << "RESIDUETYPELINKING CST" << std::endl;
 		  Size segment_length = (repeat_pose_.n_residue())/repeat_number;
@@ -954,7 +1269,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
  *   fragment insertion without cyclizing pose, and only enforce this in
  *   refinement stage
 
-		if (option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide].user()){
+		if (op_user_RemodelLoopMover_cyclic_peptide_){
 			protocols::forge::methods::cyclize_pose(repeat_pose_);
 		}
 */
@@ -965,9 +1280,9 @@ void RemodelLoopMover::apply( Pose & pose ) {
 // within simultaneous and independent stages
 	ScoreFunctionOP sfxOP = sfx_;
 	sfxOP->set_weight( scoring::linear_chainbreak, 0.0 );
-	if(basic::options::option[ OptionKeys::remodel::abinitio_like_sampling].user()){
-		if(basic::options::option[ OptionKeys::remodel::use_sequence].user()){
-			std::string const & swap_sequence = basic::options::option[ OptionKeys::remodel::use_sequence];
+	if(op_user_remodel_abinitio_like_sampling_){
+		if(op_user_remodel_use_sequence_){
+			std::string const & swap_sequence = op_remodel_use_sequence_;
 			std::cout << "pose.size" << pose.total_residue() << "seq.size" << swap_sequence.size() << std::endl;
 			for(Size ii=1; ii<=swap_sequence.size(); ++ii){
 				char aa = swap_sequence[ii-1];
@@ -993,11 +1308,11 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		}
 		std::set<Size> disallowedPos;
 
-		bool useFragSequence = basic::options::option[ OptionKeys::remodel::use_fragment_sequence].user();
+		bool useFragSequence = op_user_remodel_use_fragment_sequence_;
 		abinitio_stage( pose, 9, movemap,sfx_stage0_OP,1,100,disallowedPos,false,"stg0",useFragSequence);
 		//stage1-------------------------------------------
-		if(basic::options::option[ OptionKeys::remodel::disallow_sampling_at_pos].user()){
-			std::string const & disallowed_residues = basic::options::option[ OptionKeys::remodel::disallow_sampling_at_pos];
+		if(op_user_remodel_disallow_sampling_at_pos_){
+			std::string const & disallowed_residues = op_remodel_disallow_sampling_at_pos_;
 			utility::vector1< std::string > const res_keys( utility::string_split( disallowed_residues , ',' ) );
 			foreach( std::string const key, res_keys ){
 				Size const res( utility::string2int( key ) );
@@ -1009,8 +1324,8 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		PoseOP pose_prime = new Pose( pose );
 		pose_prime->fold_tree( sealed_ft );
 		// this is for scoring in repeat context
-		if ( option[ OptionKeys::remodel::repeat_structure].user() ) {
-			repeat_propagation( pose, repeat_pose_, option[ OptionKeys::remodel::repeat_structure] );
+		if ( op_user_remodel_repeat_structure_ ) {
+			repeat_propagation( pose, repeat_pose_, op_remodel_repeat_structure_ );
 			(*sfxOP)(repeat_pose_);
 			//this has to be set because when copying to pose_prime, it lost the
 			//first phi angle
@@ -1036,8 +1351,8 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		sfxOP->set_weight( scoring::linear_chainbreak, 0.0 );
 
 		//REPEAT TEST
-		if ( option[ OptionKeys::remodel::repeat_structure].user() ) {
-			sfxOP->set_weight( scoring::atom_pair_constraint, 1.0 * option[ OptionKeys::remodel::repeat_structure] );
+		if ( op_user_remodel_repeat_structure_ ) {
+			sfxOP->set_weight( scoring::atom_pair_constraint, 1.0 * op_remodel_repeat_structure_ );
 		}
 
 		// randomize loops
@@ -1051,8 +1366,8 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		// setup monte carlo
 		Real const temp = temperature_;
 		MonteCarlo mc( *sfxOP, temp ); // init without pose
-		if ( option[ OptionKeys::remodel::repeat_structure].user() ) {
-			repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
+		if ( op_user_remodel_repeat_structure_ ) {
+			repeat_propagation(pose, repeat_pose_, op_remodel_repeat_structure_);
 			(*sfxOP)(repeat_pose_);
 			mc.reset(repeat_pose_);
 		}
@@ -1066,7 +1381,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 
 			// reset score function at the beginning of each attempt
 			mc.score_function( *sfxOP );
-			if (basic::options::option[ OptionKeys::remodel::RemodelLoopMover::use_loop_hash].user()) {
+			if (op_user_RemodelLoopMover_use_loop_hash_) {
 				loophash_stage(pose, mc, cbreak_increment );
 			}
 
@@ -1091,8 +1406,8 @@ void RemodelLoopMover::apply( Pose & pose ) {
 				pose_prime->fold_tree( sealed_ft );
 
 				// this is for scoring in repeat context
-				if ( option[ OptionKeys::remodel::repeat_structure].user() ) {
-					repeat_propagation( pose, repeat_pose_, option[ OptionKeys::remodel::repeat_structure] );
+				if ( op_user_remodel_repeat_structure_ ) {
+					repeat_propagation( pose, repeat_pose_, op_remodel_repeat_structure_ );
 					(*sfxOP)(repeat_pose_);
 
 					//this has to be set because when copying to pose_prime, it lost the
@@ -1109,8 +1424,8 @@ void RemodelLoopMover::apply( Pose & pose ) {
 				// now randomize the loops again for a new starting point
 				if ( attempt < allowed_closure_attempts_ ) {
 					randomize_stage( pose );
-					if ( option[ OptionKeys::remodel::repeat_structure].user() ) {
-						repeat_propagation( pose, repeat_pose_, option[ OptionKeys::remodel::repeat_structure] );
+					if ( op_user_remodel_repeat_structure_ ) {
+						repeat_propagation( pose, repeat_pose_, op_remodel_repeat_structure_ );
 						(*sfxOP)(repeat_pose_);
 						mc.reset( repeat_pose_ );
 					} else{
@@ -1124,8 +1439,8 @@ void RemodelLoopMover::apply( Pose & pose ) {
 				// get trapped.
 
 				insert_random_smallestmer_per_loop( pose, true );
-				if ( option[ OptionKeys::remodel::repeat_structure].user() ) {
-					repeat_propagation(pose, repeat_pose_, option[ OptionKeys::remodel::repeat_structure] );
+				if ( op_user_remodel_repeat_structure_ ) {
+					repeat_propagation(pose, repeat_pose_, op_remodel_repeat_structure_ );
 					(*sfxOP)(repeat_pose_);
 					mc.reset( repeat_pose_ );
 				} else{
@@ -1143,12 +1458,12 @@ void RemodelLoopMover::apply( Pose & pose ) {
 
 	// return the best structure if available, otherwise mark failure
 	if ( !accumulator.empty() ) {
-		if ( option[ OptionKeys::remodel::repeat_structure].user() ) {
+		if ( op_user_remodel_repeat_structure_ ) {
 			pose = *( accumulator.begin()->second );
-			repeat_propagation(pose, repeat_pose_, option[ OptionKeys::remodel::repeat_structure] );
+			repeat_propagation(pose, repeat_pose_, op_remodel_repeat_structure_ );
 			(*sfxOP)(repeat_pose_);
 			// an issue with symmetry info in equal operator assignment, so to be safe explicitly make Pose again
-			if (option[ OptionKeys::symmetry::symmetry_definition].user() ){
+			if (op_user_symmetry_symmetry_definition_ ){
 				Pose junk_for_copy;
 				core::pose::symmetry::extract_asymmetric_unit( repeat_pose_, junk_for_copy, false);
 				pose = junk_for_copy;
@@ -1181,16 +1496,16 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		//but hold on.. the filter failure should be the only reason monomer is
 		//passed on.  so maybe we don't need to grow it afterall
 		/*
-			if (basic::options::option[ OptionKeys::remodel::repeat_structure].user() && basic::options::option[ OptionKeys::remodel::bypass_closure].user()){
+			if (op_user_remodel_repeat_structure_SACHKO.user() && SACHKO_remodel_bypass_closure_){
 			pose = *( accumulator.begin()->second );
-			repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
+			repeat_propagation(pose, repeat_pose_, op_remodel_repeat_structure_);
 			(*sfxOP)(repeat_pose_);
 			pose = repeat_pose_;
 			}
 		*/
 		set_last_move_status( protocols::moves::FAIL_RETRY );
-		if (basic::options::option[ OptionKeys::remodel::RemodelLoopMover::bypass_closure].user() &&
-				basic::options::option[ OptionKeys::remodel::lh_filter_string].user()){
+		if (op_user_RemodelLoopMover_bypass_closure_ &&
+				op_user_remodel_lh_filter_string_){
 			//activates lh_filter for plausible backbone, in this case, a failed
 			//loop should exit.
 			TR << "fail in loop building: EXIT " << std::endl;
@@ -1198,7 +1513,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		}
 	}
 
-	if ( option[ OptionKeys::remodel::repeat_structure].user() ) {
+	if ( op_user_remodel_repeat_structure_ ) {
 		//do nothing?
 	} else {
 		// set original topology
@@ -1311,9 +1626,9 @@ void RemodelLoopMover::insert_random_smallestmer_per_loop(
 
 	for ( FragmentMoverOPs::iterator i = frag_movers.begin(), ie = frag_movers.end(); i != ie; ++i ) {
 		(*i)->apply( pose );
-		if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+		if (op_user_remodel_repeat_structure_){
 			//Pose temp_pose(pose);
-			repeat_propagation(pose, repeat_pose_,  basic::options::option[ OptionKeys::remodel::repeat_structure]);
+			repeat_propagation(pose, repeat_pose_,  op_remodel_repeat_structure_);
 			//pose = temp_pose;
 		}
 	}
@@ -1399,8 +1714,8 @@ void RemodelLoopMover::loophash_stage(
 	// if filter is used, make sure the number of strings specified agree with
 	// num loops.
 	utility::vector1< std::string > filter_target;
-	if (basic::options::option[ OptionKeys::remodel::lh_filter_string].user()){
-		filter_target = basic::options::option[ OptionKeys::remodel::lh_filter_string ];
+	if (op_user_remodel_lh_filter_string_){
+		filter_target = op_remodel_lh_filter_string_;
 		runtime_assert(filter_target.size() == loops_to_model->size());
 	}
 
@@ -1455,8 +1770,8 @@ void RemodelLoopMover::loophash_stage(
 		// alter cutpoint to one before the end of the loop (either direction,
 		// based on option) if closure is bypassed.  this is already set in VLB,
 		// but reenforce here.
-		if (option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user()){
-		//	if (option[OptionKeys::remodel::RemodelLoopMover::force_cutting_N].user()){
+		if (op_user_RemodelLoopMover_bypass_closure_){
+		//	if (op_user_RemodelLoopMover_force_cutting_N_){
 		//		loop.set_cut(loop.start()+1); //1 because remodel needs one residue flanking
 		//	}
 		//	else {
@@ -1484,7 +1799,7 @@ void RemodelLoopMover::loophash_stage(
 			if ( core::pose::symmetry::is_symmetric( pose ) ) {
 				protocols::loops::set_single_loop_fold_tree( pose, loop );
 			} else {
-				if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+				if (op_user_remodel_repeat_structure_){
 					//do nothing. remake foldtree will destroy the pose when propagate across unconnected segments
 				} else {
 					protocols::forge::methods::set_single_loop_fold_tree( pose, loop );
@@ -1518,8 +1833,8 @@ void RemodelLoopMover::loophash_stage(
 		//pose.dump_pdb("fix_junction.pdb");
 		// add cutpoint variants
 		add_cutpoint_variants( pose );
-		if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
-			repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
+		if (op_user_remodel_repeat_structure_){
+			repeat_propagation(pose, repeat_pose_, op_remodel_repeat_structure_);
 			add_cutpoint_variants( repeat_pose_ );
 			mc.reset(repeat_pose_);
 		}	else{
@@ -1584,7 +1899,7 @@ void RemodelLoopMover::loophash_stage(
 		BackboneSegment backbone_;
 		LoopHashMap &hashmap = loop_hash_library->gethash(loopsize);
 
-		Size lh_ex_limit = basic::options::option[ OptionKeys::remodel::lh_ex_limit];
+		Size lh_ex_limit = op_remodel_lh_ex_limit_;
 		std::vector < core::Size > leap_index_list;
 
 		TR << "radius = ";
@@ -1635,27 +1950,27 @@ void RemodelLoopMover::loophash_stage(
 				//sfxOP->get_weight( core::scoring::linear_chainbreak ) + 1
 			);
 
-			if (option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user()){
+			if (op_user_RemodelLoopMover_bypass_closure_){
 				sfxOP->set_weight( core::scoring::linear_chainbreak, 0);
 			}
 
-			if (option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide].user()){
+			if (op_user_RemodelLoopMover_cyclic_peptide_){
 				sfxOP->set_weight(
 					core::scoring::atom_pair_constraint,
 					sfxOP->get_weight( core::scoring::atom_pair_constraint) + cbreak_increment
 				);
 			}
 
-			if (option[OptionKeys::remodel::lh_cbreak_selection].user()){
-				sfxOP->set_weight( core::scoring::linear_chainbreak, option[OptionKeys::remodel::lh_cbreak_selection]);
+			if (op_user_remodel_lh_cbreak_selection_){
+				sfxOP->set_weight( core::scoring::linear_chainbreak, op_remodel_lh_cbreak_selection_);
 			}
 
 			mc.score_function( *sfxOP );
 
 			// recover low
-			if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+			if (op_user_remodel_repeat_structure_){
 				Size copy_size =0;
-				if (basic::options::option[ OptionKeys::remodel::repeat_structure] == 1){
+				if (op_remodel_repeat_structure_ == 1){
 					copy_size = unit_length_-1;
 				} else {
 					copy_size = unit_length_;
@@ -1665,7 +1980,7 @@ void RemodelLoopMover::loophash_stage(
 					pose.set_psi(res,mc.lowest_score_pose().psi(res));
 					pose.set_omega(res,mc.lowest_score_pose().omega(res));
 				}
-				repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
+				repeat_propagation(pose, repeat_pose_, op_remodel_repeat_structure_);
 			}
 			else{
 				pose = mc.lowest_score_pose();
@@ -1675,7 +1990,7 @@ void RemodelLoopMover::loophash_stage(
 			//for ( Size inner = 1; inner <= 1; ++inner ) {
 
 			// fragments
-			if( basic::options::option[ OptionKeys::remodel::lh_filter_string ].user() ) {
+			if( op_user_remodel_lh_filter_string_ ) {
 			for ( std::vector< BackboneSegment >::iterator i = bs_vec_.begin(), ie = bs_vec_.end(); i != ie; ++i) {
 			//if ( loop.is_terminal( pose ) || RG.uniform() * n_standard_cycles > ( outer + simultaneous_cycles() ) || pose.fold_tree().num_cutpoint() == 0 ) {
 
@@ -1694,7 +2009,7 @@ void RemodelLoopMover::loophash_stage(
 						Size idxresStop = seg_length-1;
 
 						//special case for DB's test
-					  if (basic::options::option[ OptionKeys::remodel::lh_filter_string].user()){
+					  if (op_user_remodel_lh_filter_string_){
 										core::util::ABEGOManager AM;
 										std::string alphabet;
 										std::string target = filter_target[loop_number];
@@ -1763,8 +2078,8 @@ void RemodelLoopMover::loophash_stage(
 							}
 						}
 */
-						if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
-						//	repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
+						if (op_user_remodel_repeat_structure_){
+						//	repeat_propagation(pose, repeat_pose_, op_remodel_repeat_structure_);
 						//	if (fast_clash_check( repeat_pose_, clash_ids, 2.0)){
 						//			continue;
 						//	}
@@ -1778,14 +2093,14 @@ void RemodelLoopMover::loophash_stage(
 								repeat_pose_.set_psi( ires, psi[i]);
 								repeat_pose_.set_omega( ires, omega[i]);
 							}
-							repeat_sync( repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
+							repeat_sync( repeat_pose_, op_remodel_repeat_structure_);
 							//if (mc.boltzmann( repeat_pose_, "loophash" )){
 
 							//pass every build through ccd for now
-								if (!option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user()){
+								if (!op_user_RemodelLoopMover_bypass_closure_){
 									ccd_moves( 10, repeat_pose_, movemap, (int)loop.start(), (int)loop.stop(), (int)loop.cut() );
 								}
-								repeat_sync( repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
+								repeat_sync( repeat_pose_, op_remodel_repeat_structure_);
 								mc.boltzmann( repeat_pose_, "loop_hash-ccd");
 							//} //if mc.boltzmann
 							//}
@@ -1799,7 +2114,7 @@ void RemodelLoopMover::loophash_stage(
 								pose.set_omega( ires, omega[i]);
 							}
 							//mc.boltzmann( pose, "loophash" );
-							if (!option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user()){
+							if (!op_user_RemodelLoopMover_bypass_closure_){
 									ccd_moves( 10, pose, movemap, (int)loop.start(), (int)loop.stop(), (int)loop.cut() );
 							}
 							mc.boltzmann( pose, "loop_hash ccd");
@@ -1811,9 +2126,9 @@ void RemodelLoopMover::loophash_stage(
 		} // outer_cycles
 
 		// recover low
-		if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+		if (op_user_remodel_repeat_structure_){
 			Size copy_size =0;
-		  if (basic::options::option[ OptionKeys::remodel::repeat_structure] == 1){
+		  if (op_remodel_repeat_structure_ == 1){
 				copy_size = unit_length_-1;
 			} else {
 				copy_size = unit_length_;
@@ -1828,7 +2143,7 @@ void RemodelLoopMover::loophash_stage(
 				pose = mc.lowest_score_pose();
 		}
 
-		if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+		if (op_user_remodel_repeat_structure_){
 			mc.score_function().show( TR, repeat_pose_ );
 			remove_cutpoint_variants( repeat_pose_ );
 			remove_cutpoint_variants( pose );
@@ -1874,8 +2189,8 @@ void RemodelLoopMover::abinitio_stage(
 
 	Real const temp = temperature_;
 	MonteCarlo mc( *sfxOP, temp ); // init without pose
-	if ( option[ OptionKeys::remodel::repeat_structure].user() ) {
-		repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
+	if ( op_user_remodel_repeat_structure_ ) {
+		repeat_propagation(pose, repeat_pose_, op_remodel_repeat_structure_);
 		(*sfxOP)(repeat_pose_);
 		mc.reset(repeat_pose_);
 	}
@@ -1893,8 +2208,8 @@ void RemodelLoopMover::abinitio_stage(
 	if (pose.num_jump() >0){
 		add_cutpoint_variants( pose );
 	}
-	if ( option[ OptionKeys::remodel::repeat_structure ].user() ) {
-		repeat_propagation( pose, repeat_pose_, option[ OptionKeys::remodel::repeat_structure ] );
+	if ( op_user_remodel_repeat_structure_ ) {
+		repeat_propagation( pose, repeat_pose_, op_remodel_repeat_structure_ );
 			if (repeat_pose_.num_jump()>0){
 				add_cutpoint_variants( repeat_pose_ );
 			}
@@ -1913,9 +2228,9 @@ void RemodelLoopMover::abinitio_stage(
 		ScoreFunctionOP sfxOP = mc.score_function().clone();
 		mc.score_function( *sfxOP );
 		// recover low
-		if ( option[ OptionKeys::remodel::repeat_structure].user() ) {
+		if ( op_user_remodel_repeat_structure_ ) {
 			Size copy_size =0;
-			if ( option[ OptionKeys::remodel::repeat_structure ] == 1 ) {
+			if ( op_remodel_repeat_structure_ == 1 ) {
 				copy_size = pose.total_residue()-1;
 			} else {
 				copy_size = pose.total_residue();
@@ -1934,17 +2249,17 @@ void RemodelLoopMover::abinitio_stage(
 			pose = mc.lowest_score_pose();
 		}
 
-		if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
-			repeat_propagation( pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
+		if (op_user_remodel_repeat_structure_){
+			repeat_propagation( pose, repeat_pose_, op_remodel_repeat_structure_);
 		}
 
 		for ( Size inner = 1; inner <= max_inner_cycles; ++inner ) {
 			// fragments
 			random_permutation( frag_movers.begin(), frag_movers.end(), RG );
 			for ( FragmentMoverOPs::iterator i = frag_movers.begin(), ie = frag_movers.end(); i != ie; ++i ) {
-				if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+				if (op_user_remodel_repeat_structure_){
 					(*i)->apply( repeat_pose_ );
-					repeat_sync( repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
+					repeat_sync( repeat_pose_, op_remodel_repeat_structure_);
 					mc.boltzmann( repeat_pose_, "simul_frag" );
 				}else {
 					(*i)->apply( pose );
@@ -1954,9 +2269,9 @@ void RemodelLoopMover::abinitio_stage(
 		}
 		// recover low
 		if(recover_low){
-			if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+			if (op_user_remodel_repeat_structure_){
 				Size copy_size =0;
-				if (basic::options::option[ OptionKeys::remodel::repeat_structure] == 1){
+				if (op_remodel_repeat_structure_ == 1){
 					copy_size = pose.total_residue() - repeat_tail_length_;
 				} else {
 					copy_size = pose.total_residue();
@@ -1976,9 +2291,9 @@ void RemodelLoopMover::abinitio_stage(
 			}
 		}
 		else{
-				if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+				if (op_user_remodel_repeat_structure_){
 					Size copy_size =0;
-					if (basic::options::option[ OptionKeys::remodel::repeat_structure] == 1){
+					if (op_remodel_repeat_structure_ == 1){
 						copy_size = pose.total_residue() - repeat_tail_length_;
 					} else {
 						copy_size = pose.total_residue();
@@ -2022,7 +2337,7 @@ void RemodelLoopMover::simultaneous_stage(
 
   // filter for non-terminal loops
   for ( Loops::const_iterator l = pre_loops_to_model->begin(), le = pre_loops_to_model->end(); l != le; ++l ) {
-    if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+    if (op_user_remodel_repeat_structure_){
       //take out the terminal loop in repeat cases
       if ( !l->is_terminal( pose ) ) {
           loops_to_model->add_loop( *l );
@@ -2072,8 +2387,8 @@ void RemodelLoopMover::simultaneous_stage(
 	if (pose.num_jump() >0){
 		add_cutpoint_variants( pose );
 	}
-	if ( option[ OptionKeys::remodel::repeat_structure ].user() ) {
-		repeat_propagation( pose, repeat_pose_, option[ OptionKeys::remodel::repeat_structure ] );
+	if ( op_user_remodel_repeat_structure_ ) {
+		repeat_propagation( pose, repeat_pose_, op_remodel_repeat_structure_ );
 			if (repeat_pose_.num_jump()>0){
 				add_cutpoint_variants( repeat_pose_ );
 			}
@@ -2103,10 +2418,10 @@ void RemodelLoopMover::simultaneous_stage(
 		// increment the chainbreak weight
 		ScoreFunctionOP sfxOP = mc.score_function().clone();
 		sfxOP->set_weight( scoring::linear_chainbreak, sfxOP->get_weight( scoring::linear_chainbreak ) + cbreak_increment );
-		if ( option[ OptionKeys::remodel::RemodelLoopMover::bypass_closure ].user() ) {
+		if ( op_user_RemodelLoopMover_bypass_closure_ ) {
 			sfxOP->set_weight( scoring::linear_chainbreak, 0 );
 		}
-		if (option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide].user()){
+		if (op_user_RemodelLoopMover_cyclic_peptide_){
 		//	sfxOP->set_weight( core::scoring::linear_chainbreak, 0);
 			sfxOP->set_weight( core::scoring::atom_pair_constraint, 0);//ramping from 0
 		}
@@ -2114,9 +2429,9 @@ void RemodelLoopMover::simultaneous_stage(
 		mc.score_function( *sfxOP );
 
 		// recover low
-		if ( option[ OptionKeys::remodel::repeat_structure].user() ) {
+		if ( op_user_remodel_repeat_structure_ ) {
 			Size copy_size =0;
-			if ( option[ OptionKeys::remodel::repeat_structure ] == 1 ) {
+			if ( op_remodel_repeat_structure_ == 1 ) {
 				copy_size = unit_length_-1;
 			} else {
 				copy_size = unit_length_;
@@ -2131,8 +2446,8 @@ void RemodelLoopMover::simultaneous_stage(
 			pose = mc.lowest_score_pose();
 		}
 
-		if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
-			repeat_propagation( pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
+		if (op_user_remodel_repeat_structure_){
+			repeat_propagation( pose, repeat_pose_, op_remodel_repeat_structure_);
 		}
 
 		for ( Size inner = 1; inner <= max_inner_cycles; ++inner ) {
@@ -2141,9 +2456,9 @@ void RemodelLoopMover::simultaneous_stage(
 				// fragments
 				random_permutation( frag_movers.begin(), frag_movers.end(), RG );
 				for ( FragmentMoverOPs::iterator i = frag_movers.begin(), ie = frag_movers.end(); i != ie; ++i ) {
-					if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+					if (op_user_remodel_repeat_structure_){
 						(*i)->apply( repeat_pose_ );
-						repeat_sync( repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
+						repeat_sync( repeat_pose_, op_remodel_repeat_structure_);
 						mc.boltzmann( repeat_pose_, "simul_frag" );
 					}else {
 						(*i)->apply( pose );
@@ -2155,14 +2470,14 @@ void RemodelLoopMover::simultaneous_stage(
 				random_permutation( loops_to_model->v_begin(), loops_to_model->v_end(), RG );
 				for ( Loops::const_iterator l = loops_to_model->begin(), le = loops_to_model->end(); l != le; ++l ) {
 					if ( !l->is_terminal( pose ) ) {
-						if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
-							if (!option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user()){
+						if (op_user_remodel_repeat_structure_){
+							if (!op_user_RemodelLoopMover_bypass_closure_){
 								ccd_moves( 10, repeat_pose_, movemap, (int)l->start(), (int)l->stop(), (int)l->cut() );
 							}
-							repeat_sync( repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
+							repeat_sync( repeat_pose_, op_remodel_repeat_structure_);
 							mc.boltzmann( repeat_pose_, "ccd_move" );
 						}else {
-							if (!option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user()){
+							if (!op_user_RemodelLoopMover_bypass_closure_){
 								ccd_moves( 10, pose, movemap, (int)l->start(), (int)l->stop(), (int)l->cut() );
 							}
 							mc.boltzmann( pose, "ccd_move" );
@@ -2188,9 +2503,9 @@ void RemodelLoopMover::simultaneous_stage(
 	} // outer_cycles
 
 	// recover low
-	if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+	if (op_user_remodel_repeat_structure_){
 			Size copy_size =0;
-		  if (basic::options::option[ OptionKeys::remodel::repeat_structure] == 1){
+		  if (op_remodel_repeat_structure_ == 1){
 				copy_size = unit_length_ - repeat_tail_length_;
 			} else {
 				copy_size = unit_length_;
@@ -2209,7 +2524,7 @@ void RemodelLoopMover::simultaneous_stage(
 //	mc.score_function().show_line_headers( TR );
 //	TR << std::endl;
 
-  if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+  if (op_user_remodel_repeat_structure_){
 //		mc.score_function().show_line( TR, repeat_pose_ );
 		mc.score_function().show( TR, repeat_pose_ );
 		check_closure_criteria( repeat_pose_, true );
@@ -2251,7 +2566,7 @@ void RemodelLoopMover::independent_stage(
 
 	// filter for non-terminal loops
 	for ( Loops::const_iterator l = pre_loops_to_model->begin(), le = pre_loops_to_model->end(); l != le; ++l ) {
-		if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+		if (op_user_remodel_repeat_structure_){
 			//take out the terminal loop in repeat cases
 			if ( !l->is_terminal( pose ) ) {
 					loops_to_model->add_loop( *l );
@@ -2266,14 +2581,14 @@ void RemodelLoopMover::independent_stage(
 		}
 	}
 
-	if (option[OptionKeys::remodel::no_jumps].user()){
+	if (op_user_remodel_no_jumps_){
 		// if using no_jumps, chainbreak based loop determination will skip this stage, but we obviously wants to build something...
 		loops_to_model = loops_;
 	}
 /*
 	//TEST 9/28/2012
   //find terminal loops and skip them; loophash can't handle terminal loops
-	if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+	if (op_user_remodel_repeat_structure_){
 					for ( Loops::const_iterator l = loops_->begin(), le = loops_->end(); l != le; ++l ) {
 						bool skip_loop = false;
 						if ( l->is_terminal( pose ) || l->start() == 1) {
@@ -2302,8 +2617,8 @@ void RemodelLoopMover::independent_stage(
 		// alter cutpoint to one before the end of the loop (either direction,
 		// based on option) if closure is bypassed.  this is already set in VLB,
 		// but reenforce here.
-		if (option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user()){
-		//	if (option[OptionKeys::remodel::RemodelLoopMover::force_cutting_N].user()){
+		if (op_user_RemodelLoopMover_bypass_closure_){
+		//	if (op_user_RemodelLoopMover_force_cutting_N_){
 		//		loop.set_cut(loop.start()+1); //1 because remodel needs one residue flanking
 		//	}
 		//	else {
@@ -2332,7 +2647,7 @@ void RemodelLoopMover::independent_stage(
 			if ( core::pose::symmetry::is_symmetric( pose ) ) {
 				protocols::loops::set_single_loop_fold_tree( pose, loop );
 			} else {
-				if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+				if (op_user_remodel_repeat_structure_){
 					//do nothing. remake foldtree will destroy the pose when propagate across unconnected segments
 				} else {
 					protocols::forge::methods::set_single_loop_fold_tree( pose, loop );
@@ -2342,8 +2657,8 @@ void RemodelLoopMover::independent_stage(
 
 		// add cutpoint variants
 		add_cutpoint_variants( pose );
-		if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
-			repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
+		if (op_user_remodel_repeat_structure_){
+			repeat_propagation(pose, repeat_pose_, op_remodel_repeat_structure_);
 			add_cutpoint_variants( repeat_pose_ );
 			mc.reset(repeat_pose_);
 		}	else{
@@ -2362,15 +2677,15 @@ void RemodelLoopMover::independent_stage(
 				sfxOP->get_weight( core::scoring::linear_chainbreak ) + cbreak_increment
 			);
 
-			if (option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user()){
+			if (op_user_RemodelLoopMover_bypass_closure_){
 				sfxOP->set_weight( core::scoring::linear_chainbreak, 0);
 			}
 
-			if (option[OptionKeys::remodel::no_jumps].user() && option[OptionKeys::remodel::two_chain_tree].user()){
+			if (op_user_remodel_no_jumps_ && op_remodel_two_chain_tree_){
 				sfxOP->set_weight( core::scoring::linear_chainbreak, 0);
 			}
 
-			if (option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide].user()){
+			if (op_user_RemodelLoopMover_cyclic_peptide_){
 		//	sfxOP->set_weight( core::scoring::linear_chainbreak, 0);
 			sfxOP->set_weight(
 				core::scoring::atom_pair_constraint,
@@ -2381,9 +2696,9 @@ void RemodelLoopMover::independent_stage(
 			mc.score_function( *sfxOP );
 
 			// recover low
-			if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+			if (op_user_remodel_repeat_structure_){
 			Size copy_size =0;
-		  if (basic::options::option[ OptionKeys::remodel::repeat_structure] == 1){
+		  if (op_remodel_repeat_structure_ == 1){
 				copy_size = unit_length_-1;
 			} else {
 				copy_size = unit_length_;
@@ -2398,17 +2713,17 @@ void RemodelLoopMover::independent_stage(
 				pose = mc.lowest_score_pose();
 			}
 
-			if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
-			repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);			}
+			if (op_user_remodel_repeat_structure_){
+			repeat_propagation(pose, repeat_pose_, op_remodel_repeat_structure_);			}
 
 			for ( Size inner = 1; inner <= max_inner_cycles; ++inner ) {
 				// fragments
 				if ( loop.is_terminal( pose ) || RG.uniform() * n_standard_cycles > ( outer + simultaneous_cycles() ) || pose.fold_tree().num_cutpoint() == 0 ) {
 					random_permutation( frag_movers.begin(), frag_movers.end(), RG );
 					for ( FragmentMoverOPs::iterator i = frag_movers.begin(), ie = frag_movers.end(); i != ie; ++i ) {
-						if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+						if (op_user_remodel_repeat_structure_){
 							(*i)->apply( repeat_pose_ );
-							repeat_sync( repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
+							repeat_sync( repeat_pose_, op_remodel_repeat_structure_);
 							mc.boltzmann( repeat_pose_, "frag" );
 						}else {
 							(*i)->apply( pose );
@@ -2416,14 +2731,14 @@ void RemodelLoopMover::independent_stage(
 						}
 					}
 				} else { // ccd
-					if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
-						if (!option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user()){
+					if (op_user_remodel_repeat_structure_){
+						if (!op_user_RemodelLoopMover_bypass_closure_){
 							ccd_moves( 10, repeat_pose_, movemap, (int)loop.start(), (int)loop.stop(), (int)loop.cut() );
 						}
-						repeat_sync( repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
+						repeat_sync( repeat_pose_, op_remodel_repeat_structure_);
 						mc.boltzmann( repeat_pose_, "ccd_move" );
 					}else {
-						if (!option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user()){
+						if (!op_user_RemodelLoopMover_bypass_closure_){
 							ccd_moves( 10, pose, movemap, (int)loop.start(), (int)loop.stop(), (int)loop.cut() );
 						}
 						mc.boltzmann( pose, "ccd_move" );
@@ -2447,9 +2762,9 @@ void RemodelLoopMover::independent_stage(
 		} // outer_cycles
 
 		// recover low
-		if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+		if (op_user_remodel_repeat_structure_){
 			Size copy_size =0;
-		  if (basic::options::option[ OptionKeys::remodel::repeat_structure] == 1){
+		  if (op_remodel_repeat_structure_ == 1){
 				copy_size = unit_length_-1;
 			} else {
 				copy_size = unit_length_;
@@ -2467,7 +2782,7 @@ void RemodelLoopMover::independent_stage(
 	//	mc.score_function().show_line_headers( TR );
 //	TR << std::endl;
 
-		if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+		if (op_user_remodel_repeat_structure_){
 	//		mc.score_function().show_line( TR, repeat_pose_ );
 			mc.score_function().show( TR, repeat_pose_ );
 			remove_cutpoint_variants( repeat_pose_ );
@@ -2581,7 +2896,7 @@ void RemodelLoopMover::boost_closure_stage(
 			if ( core::pose::symmetry::is_symmetric( pose ) ) {
 				protocols::loops::set_single_loop_fold_tree( pose, loop );
 			} else {
-				if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+				if (op_user_remodel_repeat_structure_){
 					//do nothing. remake foldtree will destroy the pose when propagate across unconnected segments
 				} else {
 					protocols::forge::methods::set_single_loop_fold_tree( pose, loop );
@@ -2590,8 +2905,8 @@ void RemodelLoopMover::boost_closure_stage(
 		}
 		// add cutpoint variants
 		add_cutpoint_variants( pose );
-		if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
-			repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
+		if (op_user_remodel_repeat_structure_){
+			repeat_propagation(pose, repeat_pose_, op_remodel_repeat_structure_);
 			add_cutpoint_variants( repeat_pose_ );
 			mc.reset(repeat_pose_);
 		}	else{
@@ -2611,11 +2926,11 @@ void RemodelLoopMover::boost_closure_stage(
 				sfxOP->get_weight( core::scoring::linear_chainbreak ) + cbreak_increment
 			);
 
-			if (option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user()){
+			if (op_user_RemodelLoopMover_bypass_closure_){
 				sfxOP->set_weight( core::scoring::linear_chainbreak, 0);
 			}
 
-			if (option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide].user()){
+			if (op_user_RemodelLoopMover_cyclic_peptide_){
 		//	sfxOP->set_weight( core::scoring::linear_chainbreak, 0);
 				sfxOP->set_weight(
 					core::scoring::atom_pair_constraint,
@@ -2626,9 +2941,9 @@ void RemodelLoopMover::boost_closure_stage(
 			mc.score_function( *sfxOP );
 
       // recover low
-      if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+      if (op_user_remodel_repeat_structure_){
 				Size copy_size =0;
-				if (basic::options::option[ OptionKeys::remodel::repeat_structure] == 1){
+				if (op_remodel_repeat_structure_ == 1){
 					copy_size = unit_length_-1;
 				} else {
 					copy_size = unit_length_;
@@ -2642,8 +2957,8 @@ void RemodelLoopMover::boost_closure_stage(
 				pose = mc.lowest_score_pose();
 			}
 
-			if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
-				repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
+			if (op_user_remodel_repeat_structure_){
+				repeat_propagation(pose, repeat_pose_, op_remodel_repeat_structure_);
 			}
 
 			// Going into the boost_closure stage implies we are "desperate" to close
@@ -2658,9 +2973,9 @@ void RemodelLoopMover::boost_closure_stage(
 
 					random_permutation( frag1_movers.begin(), frag1_movers.end(), RG );
 					for ( FragmentMoverOPs::iterator i = frag1_movers.begin(), ie = frag1_movers.end(); i != ie; ++i ) {
-						if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+						if (op_user_remodel_repeat_structure_){
 							(*i)->apply( repeat_pose_ );
-							repeat_sync(repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
+							repeat_sync(repeat_pose_, op_remodel_repeat_structure_);
 							mc.boltzmann( repeat_pose_, "frag1" );
 						}
 						else{
@@ -2670,14 +2985,14 @@ void RemodelLoopMover::boost_closure_stage(
 					}
 
 				} else { // ccd_move
-					if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
-						if (!option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user()){
+					if (op_user_remodel_repeat_structure_){
+						if (!op_user_RemodelLoopMover_bypass_closure_){
 							ccd_moves( 10, repeat_pose_, movemap, (int)loop.start(), (int)loop.stop(), (int)loop.cut() );
 						}
-						repeat_sync( repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
+						repeat_sync( repeat_pose_, op_remodel_repeat_structure_);
 						mc.boltzmann( repeat_pose_, "frag1" );
 					} else {
-						if (!option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user()){
+						if (!op_user_RemodelLoopMover_bypass_closure_){
 							ccd_moves( 10, pose, movemap, (int)loop.start(), (int)loop.stop(), (int)loop.cut() );
 						}
 						mc.boltzmann( pose, "ccd_move" );
@@ -2688,9 +3003,9 @@ void RemodelLoopMover::boost_closure_stage(
 		} // outer_cycles
 
 		// recover low
-		if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+		if (op_user_remodel_repeat_structure_){
 			Size copy_size =0;
-		  if (basic::options::option[ OptionKeys::remodel::repeat_structure] == 1){
+		  if (op_remodel_repeat_structure_ == 1){
 				copy_size = unit_length_-1;
 			} else {
 				copy_size = unit_length_;
@@ -2709,7 +3024,7 @@ void RemodelLoopMover::boost_closure_stage(
 	//	mc.score_function().show_line_headers( TR );
 //		TR << std::endl;
 
-		if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+		if (op_user_remodel_repeat_structure_){
 	//		mc.score_function().show_line( TR, repeat_pose_ );
 			mc.score_function().show( TR, repeat_pose_ );
 		remove_cutpoint_variants( repeat_pose_ );
@@ -2777,10 +3092,10 @@ bool RemodelLoopMover::check_closure_criteria(
 	boost::format fmt( "%|5t|%1% %|5t|%2% %|5t|%3% %|8t|%4%" );
 
 	//breakout case if we don't care if the loops are closed
-	if (option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user()){
+	if (op_user_RemodelLoopMover_bypass_closure_){
 		//special case for DB, filtering on close RMS with loophash
 		//only trigger if lh_closure_filter is used before evaluation
-		if (option[OptionKeys::remodel::lh_closure_filter].user()){
+		if (op_user_remodel_lh_closure_filter_){
 			TR << "using cbreak filter under bypass_closure." << std::endl;
 		  bool all_loops_pass = true;
 			for ( Loops::const_iterator l = loops_->begin(), le = loops_->end(); l != le; ++l ) {

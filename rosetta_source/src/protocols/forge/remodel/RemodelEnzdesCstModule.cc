@@ -38,7 +38,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-
+using namespace basic::options;
 
 namespace protocols{
 namespace forge{
@@ -46,8 +46,14 @@ namespace remodel{
 
 static basic::Tracer TR("protocols.forge.remodel.RemodelEnzdesCstModule");
 
-RemodelEnzdesCstModule::RemodelEnzdesCstModule(RemodelData external_data) : protocols::toolbox::match_enzdes_util::EnzConstraintIO(core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )){
-  read_enzyme_cstfile( basic::options::option[basic::options::OptionKeys::enzdes::cstfile]);
+RemodelEnzdesCstModule::RemodelEnzdesCstModule(RemodelData external_data) 
+	: protocols::toolbox::match_enzdes_util::EnzConstraintIO(core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )),
+		op_user_enzdes_cstfile_(option[OptionKeys::enzdes::cstfile].user())
+{
+	if( op_user_enzdes_cstfile_ )
+		op_enzdes_cstfile_ = option[OptionKeys::enzdes::cstfile]();
+ 
+  read_enzyme_cstfile( op_enzdes_cstfile_);
 	scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function(core::scoring::STANDARD_WTS, core::scoring::SCORE12_PATCH);
 	remodel_data_ = external_data;
 
@@ -61,7 +67,7 @@ RemodelEnzdesCstModule::apply(core::pose::Pose & pose)
 	using namespace protocols::toolbox::match_enzdes_util;
 
   //set up constraints (read cstfile, do mapping, etc, then add to pose)
-  if( basic::options::option[basic::options::OptionKeys::enzdes::cstfile].user() ){
+  if( op_user_enzdes_cstfile_ ){
     enable_constraint_scoreterms(scorefxn_);
 
 		//tmp hack -- from florian for cstcashe observer initialization

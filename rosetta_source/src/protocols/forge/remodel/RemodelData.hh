@@ -103,6 +103,16 @@ public:
 						
 	float total_chain_break_score;
 
+private:
+	// User specified options
+	bool op_user_remodel_repeat_structure_;
+	bool op_user_run_chain_;
+
+	// Option values
+	std::string op_run_chain_;
+	std::string op_domainFusion_insert_segment_from_pdb_;
+	core::Size op_remodel_repeat_structure_;
+
 };
 
 

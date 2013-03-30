@@ -35,14 +35,11 @@ namespace remodel{
 // in the future a new variable might be added to delete a certain jump
 // to create domain assembly type of fold-tree
 class RemodelWorkingSet {
-					
+
 public:
 
 	// default constructor
-	RemodelWorkingSet() {
-		hasInsertion = false;
-		buildDisulfide = false;
-	};
+	RemodelWorkingSet();
 
 	// copy constrctor
 	RemodelWorkingSet( RemodelWorkingSet const & rval );
@@ -73,6 +70,10 @@ public:
 	//core::kinematics::FoldTree standard_loop_fold_tree() const;
 
 
+	///
+	// Revisit by Sachko 03/29/2013
+	// Whey are these all public???
+	///
 	protocols::loops::Loops loops;
 	int safe_root_;
 	std::string sequence;
@@ -104,6 +105,16 @@ public:
 	int insertionEndIndex;
 	ObjexxFCL::FArray2D_bool design_matrix;
 
+private:
+
+	// User specified options
+	bool op_user_remodel_repeat_structure_;
+	bool op_user_domainFusion_insert_segment_from_pdb_;
+	bool op_user_remodel_use_blueprint_sequence_;
+
+	// Option values
+	core::Size op_remodel_repeat_structure_;
+	std::string op_remodel_generic_aa_;
 };
 
 class Segment {
