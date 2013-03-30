@@ -9,7 +9,7 @@
 
 /// @file docking_initialization_protocols
 /// @brief initialization protocols for docking
-/// @detailed
+/// @details
 ///		This contains the functions that create initial positions for docking
 ///		You can either randomize partner 1 or partner 2, spin partner 2, or
 ///		perform a simple perturbation.
@@ -45,7 +45,6 @@ namespace docking {
 class DockingInitialPerturbation : public moves::Mover
 {
 public:
-
 	/// @brief Default constructor
 	DockingInitialPerturbation();
 
@@ -126,7 +125,8 @@ private:
 	core::Real uniform_trans_;
 
 	protocols::docking::RigidBodyInfoOP rigid_body_info_;
-};
+};  // class DockingInitialPerturbation
+
 
 /// @brief Contrary to the name, slides things apart first, then together.
 /// OK for proteins, bad for ligands (because they may escape the pocket permanently).
@@ -144,15 +144,18 @@ public:
 	// protocol functions
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
+	virtual void show(std::ostream & output=std::cout) const;
 	core::Size get_jump_num() const { return rb_jump_; }
-	friend std::ostream &operator<< ( std::ostream &os, DockingSlideIntoContact const &mover );
 
 private:
 	core::scoring::ScoreFunctionOP scorefxn_;
 
-	/// which jump to use for docking
+	// which jump to use for docking
 	core::Size rb_jump_;
-};
+};  // class DockingSlideIntoContact
+
+std::ostream &operator<< ( std::ostream &os, DockingSlideIntoContact const &mover );
+
 
 /// @brief Slides docking partners together by monitoring fa_rep.
 /// @details
@@ -170,9 +173,9 @@ public:
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
+	virtual void show(std::ostream & output=std::cout) const;
 	core::Size get_jump_num() const { return rb_jump_; }
 	core::Real get_tolerance() const { return tolerance_; }
-	friend std::ostream &operator<< ( std::ostream &os, FaDockingSlideIntoContact const &fadock );
 
 private:
 	core::Size rb_jump_; // use this or rb_jumps_, not both
@@ -180,7 +183,9 @@ private:
 	core::scoring::ScoreFunctionOP scorefxn_;
 	core::Real tolerance_; ///< how accurate do you want to be?
 
-};
+};  // class FaDockingSlideIntoContact
+
+std::ostream &operator<< ( std::ostream &os, FaDockingSlideIntoContact const &fadock );
 
 } // docking
 } // protocols

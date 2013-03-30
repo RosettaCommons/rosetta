@@ -244,18 +244,6 @@ Mover::show(std::ostream & output) const
 	output << ", Mover current tag:" << get_current_tag() << std::endl;
 }
 
-/*
-	os << "Mover name: " << mover.get_name() << ", Mover type: " << mover.get_type() << ", Mover current tag:" << mover.get_current_tag() << std::endl;
-	return os;
-*/
-
-// Insertion operator (overloaded so that the Mover can be "printed").
-std::ostream &
-operator<<(std::ostream & output, Mover const & mover)
-{
-	mover.show(output);
-	return output;
-}
 
 /// serializable set helper functions
 void SerializableState_set( SerializableStateSP state, std::string key, std::string val ) {
@@ -275,4 +263,18 @@ std::string SerializableState_get( SerializableStateSP state, std::string key ) 
 
 
 } // moves
+
+// Insertion operator (overloaded so that the Mover can be "printed").
+/// @details This helper function is located in protocols so that all Movers can access it. If a child Mover does not
+/// specifically implement the overloading of operator<<, one will still be able to "print" that Mover, because the
+/// implementation below will call the child Mover's show() method (which may or may not be inherited from the parent
+/// Mover.
+// Currently, placing this here triggers other errors that I need to investigate. ~Labonte
+//std::ostream &
+//operator<<(std::ostream & output, moves::Mover const & mover)
+//{
+//	mover.show(output);
+//	return output;
+//}
+
 } // protocols

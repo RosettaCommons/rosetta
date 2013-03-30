@@ -85,13 +85,14 @@ public:
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
+	virtual void show(std::ostream & output=std::cout) const;
+
 	//PackerTaskMover/RotamerTrialsMover needs to have a parent class that implements this?
 	//bool task_is_valid( core::pose::Pose const & pose ) const;
 
 	// setters
 	void score_function( core::scoring::ScoreFunctionCOP sf );
 	void task_factory( core::pack::task::TaskFactoryCOP tf );
-	friend std::ostream &operator<< (std::ostream &os, RotamerTrialsMover const &mover);
 
 public:
 
@@ -130,8 +131,10 @@ private:
 
 	/// @brief showing contents of PackerTask ( default false )
 	bool show_packer_task_;
+};  // class RotamerTrialsMover
 
-};
+std::ostream &operator<< (std::ostream &os, RotamerTrialsMover const &mover);
+
 
 class EnergyCutRotamerTrialsMover : public protocols::simple_moves::RotamerTrialsMover {
 public:
@@ -186,7 +189,7 @@ private:
 	// data
 	protocols::moves::MonteCarloOP mc_;
 	core::Real energycut_;
-};
+};  // class EnergyCutRotamerTrialsMover
 
 } // moves
 } // protocols

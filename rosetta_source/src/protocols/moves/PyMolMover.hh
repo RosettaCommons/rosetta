@@ -279,7 +279,6 @@ public:
 	virtual std::string get_name() const;
 	virtual void apply( Pose & );
 
-
 	using protocols::moves::Mover::apply;
 
 	/// @brief Actually our mover does not change the Pose object, so we have additional const version...
@@ -325,17 +324,8 @@ public:
 
 	/// @brief  Return current update interval.
 	core::Real update_interval() { return update_interval_; };
-	
-	friend std::ostream &operator<< (std::ostream &os, PyMolMover const &mover)
-	{
-		moves::operator<<(os, mover);
-		os << "Keep history:          " << ( ( mover.keep_history_ ) ? ("True") : ("False") ) << std::endl; 
-		os << "Update energy:         " << ( ( mover.update_energy_ ) ? ("True") : ("False") ) << std::endl; 
-		os << "Last packet sent time: " << mover.last_packet_sent_time_ << std::endl;
-		os << "Update interval:       " << mover.update_interval_ << std::endl; 
 
-		return os;
-	}
+	void show(std::ostream & output=std::cout) const;
 
 private:
 	//void send_message(std::string const & message_type, bool keep_history, std::string const & name, std::string const &message);
@@ -352,19 +342,20 @@ private:
 	core::scoring::ScoreType energy_type_;
 
 	/// @brief Should PyMol keep history of all models that was sent? - Default is false.
-    bool keep_history_;
+	bool keep_history_;
 
-    /// @brief  Update interval in seconds.
-    core::Real update_interval_;
+	/// @brief  Update interval in seconds.
+	core::Real update_interval_;
 
-    /// @brief  Time stamp from where last packet was sent.
-    core::Real last_packet_sent_time_;
+	/// @brief  Time stamp from where last packet was sent.
+	core::Real last_packet_sent_time_;
 
-    /// @brief  Name of model in pymol.
-    std::string name_;
-};
+	/// @brief  Name of model in pymol.
+	std::string name_;
+};  // class PyMolMover
 
-
+// Insertion operator (overloaded so that PyMolMover can be "printed") in PyRosetta).
+std::ostream &operator<< (std::ostream & output, PyMolMover const & mover);
 
 class PyMolObserver : public utility::pointer::ReferenceCount
 {

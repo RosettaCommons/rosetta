@@ -155,6 +155,19 @@ LoopMover_Refine_CCD::get_name() const {
 	return "LoopMover_Refine_CCD";
 }
 
+void
+LoopMover_Refine_CCD::show(std::ostream & output) const
+{
+	Mover::show(output);
+	output << "Loops:\n" << get_loops();
+	output <<   "Outer cycles:        " << outer_cycles_ << "\nMax inner cycles:    " << max_inner_cycles_ <<
+				"\nRepack period:       " << repack_period_ << "\nInitial temperature: " << temp_initial_ <<
+				"\nFinal temperature:   " << temp_final_ <<  "\nSet fold tree from loop?: " <<
+				(set_fold_tree_from_loops_ ? "True" : "False") << "\nMovemap:  ";
+	if (move_map() != 0) {output << std::endl; move_map()->show(output);}
+	else {output << "none" << std::endl;}
+}
+
 //clone
 protocols::moves::MoverOP LoopMover_Refine_CCD::clone() const {
 		return new LoopMover_Refine_CCD(*this);
@@ -191,14 +204,7 @@ protocols::loops::LoopsCOP LoopMover_Refine_CCD::get_loops() const {
 
 std::ostream &operator<< ( std::ostream &os, LoopMover_Refine_CCD const &mover )
 {
-	moves::operator<<(os, mover);
-	os << "Loops:\n" << *mover.get_loops();
-	os <<   "Outer cycles:        " << mover.outer_cycles_ << "\nMax inner cycles:    " << mover.max_inner_cycles_ << 
-				"\nRepack period:       " << mover.repack_period_ << "\nInitial temperature: " << mover.temp_initial_ << 
-				"\nFinal temperature:   " << mover.temp_final_ <<  "\nSet fold tree from loop?: " << 
-				(mover.set_fold_tree_from_loops_ ? "True" : "False") << "\nMovemap:  ";
-	if (mover.move_map() != 0) {os << std::endl; mover.move_map()->show(os);}
-	else {os << "none" << std::endl;}
+	mover.show(os);
 	return os;
 }
 

@@ -23,31 +23,22 @@
 // Package headers
 #include <protocols/canonical_sampling/ThermodynamicMover.hh>
 
+// Project headers
 #include <core/types.hh>
-
 #include <core/pose/Pose.fwd.hh>
-
 #include <core/kinematics/MoveMap.fwd.hh>
-
-//#include <core/chemical/ResidueTypeSet.hh>
-//#include <core/scoring/ScoreFunction.fwd.hh>
-
 #include <core/conformation/symmetry/SymDof.hh>
 
-// ObjexxFCL Headers
-
+// Numeric headers
+#include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
+
+// Utility Headers
+#include <utility/pointer/ReferenceCount.hh>
+#include <utility/vector1.hh>
 
 // C++ Headers
 #include <map>
-
-// Utility Headers
-// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
-// AUTO-REMOVED #include <numeric/random/random.hh>
-#include <utility/pointer/ReferenceCount.hh>
-
-#include <utility/vector1.hh>
-#include <numeric/xyzVector.hh>
 
 
 namespace protocols {
@@ -96,6 +87,7 @@ public:
 
 	virtual void apply( core::pose::Pose & pose ) = 0;
 	virtual std::string get_name() const;
+	virtual void show(std::ostream & output=std::cout) const;
 
 	virtual
 	bool
@@ -131,10 +123,10 @@ public:
 
 	void unfreeze(){freeze_=false;}  // create a new trans_axis during apply
 	void freeze(){freeze_=true;} // use the same trans_axis as before (if one is set) during apply
+};  // class RigidBodyMover
 
-};
 
-// does a perturbation defined by the rotational and translational magnitudes
+/// @brief This Mover does a perturbation defined by the rotational and translational magnitudes.
 class RigidBodyPerturbMover : public RigidBodyMover {
 public:
 	typedef RigidBodyMover parent;
@@ -184,6 +176,7 @@ public:
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
+	virtual void show(std::ostream & output=std::cout) const;
 
 	void rot_magnitude( core::Real const magnitude ) { rot_mag_ = magnitude; }
 
@@ -194,19 +187,21 @@ public:
 	/// @brief Manual override of rotation center.
 	void rot_center( core::Vector const /*rot_center_in*/ ); // recreate unless freeze is specified.
 
-	friend std::ostream &operator<< ( std::ostream &os, RigidBodyPerturbMover const &mover );
-
 protected:
-	/// perturbation magnitudes (rotational and translational)
+	// perturbation magnitudes (rotational and translational)
 	core::Real rot_mag_;
 	core::Real trans_mag_;
 	utility::vector1<core::Real>  rb_delta_; // size 6: translateXYZ, rotateXYZ
+
 private:
 	Partner partner_;
 	bool interface_;
 	utility::vector1<core::Size> movable_jumps_;
 	utility::vector1< bool > ok_for_centroid_calculation_;
-};
+};  // class RigidBodyPerturbMover
+
+std::ostream &operator<< ( std::ostream &os, RigidBodyPerturbMover const &mover );
+
 
 ///@brief does a perturbation defined by the rotational and translational magnitudes
 /// 	without setting up the center
@@ -237,7 +232,7 @@ public:
 		Direction dir_in
 	);
 
-// function for the parser with lots of accessors
+	// function for the parser with lots of accessors
 	void parse_my_tag(
 			 utility::tag::TagPtr const tag,
 			 protocols::moves::DataMap &,
@@ -266,7 +261,8 @@ protected:
 private:
 	typedef utility::vector1< core::Size > JumpList;
 	JumpList movable_jumps_;
-};
+};  // class RigidBodyPerturbNoCenterMover
+
 
 class RigidBodyRandomizeMover : public RigidBodyMover {
 public:
@@ -291,9 +287,10 @@ public:
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
+	virtual void show(std::ostream & output=std::cout) const;
+
 	core::Size get_phi() const;
 	core::Size get_psi() const;
-	friend std::ostream &operator<< ( std::ostream &os, RigidBodyRandomizeMover const &randommover );
 
 private:
 	Partner partner_; // which partner gets randomized
@@ -301,10 +298,12 @@ private:
 	core::Size psi_angle_;
 	numeric::xyzMatrix_double rotation_matrix_;
 	bool update_center_after_move_;
+};  // class RigidBodyRandomizeMover
 
-};
+std::ostream &operator<< ( std::ostream &os, RigidBodyRandomizeMover const &randommover );
 
-// spin about a random axis
+
+/// @brief A Mover that spins about a random axis.
 class RigidBodySpinMover : public RigidBodyMover {
 public:
 	typedef RigidBodyMover parent;
@@ -325,43 +324,41 @@ public:
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
-	friend std::ostream &operator<< ( std::ostream &os, RigidBodySpinMover const &spinmover );
 
 protected:
 	core::Vector spin_axis_;
 	bool update_spin_axis_;
+};  // class RigidBodySpinMover
 
-};
-    
-    
+
 class RigidBodyDeterministicSpinMover : public RigidBodySpinMover {
 public:
-    typedef RigidBodySpinMover parent;
-public:
-    //default ctor
-    RigidBodyDeterministicSpinMover();
-        
-    ///@brief constructor with arguments
-    /// spin axis is initialized to 0 then calculated during apply()
-    /// if spin_axis is not already set
-    RigidBodyDeterministicSpinMover( int const rb_jump_in, core::Vector spin_axis, core::Vector rotation_center, float angle_magnitude );
-        
-        
-    //copy ctor
-    RigidBodyDeterministicSpinMover( RigidBodyDeterministicSpinMover const & src );
-        
-    //dtor
-    ~RigidBodyDeterministicSpinMover();
-    void angle_magnitude( float angle_magnitude );
-    virtual void apply( core::pose::Pose & pose );
-    virtual std::string get_name() const;
-    friend std::ostream &operator<< ( std::ostream &os, RigidBodySpinMover const & spinmover );
-        
-private:
-    float angle_magnitude_;
-};
+	typedef RigidBodySpinMover parent;
 
-// translate down an axis
+public:
+	//default ctor
+	RigidBodyDeterministicSpinMover();
+
+	///@brief constructor with arguments
+	/// spin axis is initialized to 0 then calculated during apply()
+	/// if spin_axis is not already set
+	RigidBodyDeterministicSpinMover( int const rb_jump_in, core::Vector spin_axis, core::Vector rotation_center, float angle_magnitude );
+
+	//copy ctor
+	RigidBodyDeterministicSpinMover( RigidBodyDeterministicSpinMover const & src );
+
+	//dtor
+	~RigidBodyDeterministicSpinMover();
+	void angle_magnitude( float angle_magnitude );
+	virtual void apply( core::pose::Pose & pose );
+	virtual std::string get_name() const;
+
+private:
+	float angle_magnitude_;
+};  // RigidBodyDeterministicSpinMover
+
+
+/// @brief This Mover translate down an axis.
 class RigidBodyTransMover : public RigidBodyMover {
 public:
 	typedef RigidBodyMover parent;
@@ -387,15 +384,14 @@ public:
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
-	friend std::ostream &operator<< ( std::ostream &os, RigidBodyTransMover const &mover );
 
-	void parse_my_tag( utility::tag::TagPtr const tag,
+	virtual void parse_my_tag( utility::tag::TagPtr const tag,
 			protocols::moves::DataMap &,
 			protocols::filters::Filters_map const &,
 			protocols::moves::Movers_map const &,
 			core::pose::Pose const &);
-	protocols::moves::MoverOP clone() const;
-	protocols::moves::MoverOP fresh_instance() const;
+	virtual protocols::moves::MoverOP clone() const;
+	virtual protocols::moves::MoverOP fresh_instance() const;
 
 private:
 	core::Vector centroid_axis(core::pose::Pose const & pose_in) const;
@@ -403,7 +399,8 @@ private:
 	core::Real step_size_;
 	core::Vector trans_axis_;
 
-};
+};  // class RigidBodyTransMover
+
 
 /// @brief Rigid-body move that evenly samples the space within a sphere
 class UniformSphereTransMover : public RigidBodyMover {
@@ -433,10 +430,10 @@ private:
 	core::Real step_size_;
 	core::Real random_step_; // by saving these we can apply the same random step to other things after we freeze
 	core::Vector trans_axis_;// by saving these we can apply the same random step to other things after we freeze
-};
+};  // class UniformSphereTransMover
 
-// Initialize all dofs in the system randomly. Start by rotation angles
-// only.
+
+/// @brief A Mover that initializes all DOFs in the system randomly. It starts with rotation angles only.
 class RigidBodyDofRandomizeMover : public RigidBodyMover {
 public:
 	typedef RigidBodyMover parent;
@@ -459,10 +456,10 @@ public:
 
 private:
 	core::conformation::symmetry::SymDof dof_;
-};
+}; // class RigidBodyDofRandomizeMover
 
-// Initialize all dofs in the system randomly. Start by rotation angles
-// only.
+
+/// @brief A Mover that initializes all DOFs in the system randomly. It starts with rotation angles only.
 class RigidBodyDofSeqRandomizeMover : public RigidBodyMover {
 public:
 	typedef RigidBodyMover parent;
@@ -488,9 +485,8 @@ private:
 };
 
 
-// Translate down axis determined by the available dofs.
-// Translations are made along all allowed directions (x,y or z)
-// for a selected jump
+/// @brief A Mover that translates down an axis determined by the available DOFs.
+/// Translations are made along all allowed directions (x,y or z) for a selected jump.
 class RigidBodyDofTransMover : public RigidBodyMover {
 public:
 	typedef RigidBodyMover parent;
@@ -527,12 +523,12 @@ private:
 	int jump_dir_;
 	core::Real step_size_;
 	core::Vector trans_axis_;
+}; // class RigidBodyDofTransMover
 
-};
 
-// Translate down axis determined by the available dofs.
-// Translation are made along all allowed directions (x,y or z)
-// for all available jumps. Jumps are visited in random order
+/// @brief A Mover that translates down an axis determined by the available DOFs.
+/// Translations are made along all allowed directions (x,y or z) for a selected jump.
+/// Jumps are visited in random order
 class RigidBodyDofSeqTransMover : public RigidBodyMover {
 public:
 	typedef RigidBodyMover parent;
@@ -558,18 +554,18 @@ public:
 	virtual std::string get_name() const;
 
 private:
-	 /// allowed dofs
-  std::map< Size, core::conformation::symmetry::SymDof > dofs_;
+	// allowed dofs
+	std::map< Size, core::conformation::symmetry::SymDof > dofs_;
 	// allowed jumps
-  utility::vector1 < int > rb_jumps_;
+	utility::vector1 < int > rb_jumps_;
 	core::Real step_size_;
 	// silly, stores the direction only!!!
 	core::Vector trans_axis_;
-};
+}; // class RigidBodyDofSeqTransMover
 
-// Translate down axis determined by the available dofs.
-// Translation are made along all allowed directions (x,y or z)
-// for a randomly selected jump.
+
+/// @brief A Mover that translates down an axis determined by the available DOFs.
+/// Translations are made along all allowed directions (x,y or z) for a randomly selected jump.
 class RigidBodyDofRandomTransMover : public RigidBodyMover {
 public:
 	typedef RigidBodyMover parent;
@@ -602,14 +598,12 @@ private:
 	core::Real step_size_;
 	// silly, stores the direction only!!!
 	core::Vector trans_axis_;
-};
+}; // class RigidBodyDofRandomTransMover
 
 
-
-
-///@brief does a perturbation defined by the rotational and translational magnitudes
-///   Allowed dofs are specified by a map
-///   Can be defined through a move map or with rb_jump. A single jump is selected
+/// @brief This Mover does a perturbation defined by the rotational and translational magnitudes.
+///   Allowed dofs are specified by a map.
+///   Can be defined through a move map or with rb_jump. A single jump is selected.
 class RigidBodyDofPerturbMover : public RigidBodyMover {
 public:
 	typedef RigidBodyMover parent;
@@ -652,22 +646,17 @@ private:
   /// perturbation magnitudes (rotational and translational)
   core::Real rot_mag_;
   core::Real trans_mag_;
-};
+}; // class RigidBodyDofPerturbMover
 
-///@brief does a perturbation defined by the rotational and translational magnitudes
-///   Allowed dofs are specified by a map
-///   Can be defined through a move map or with rb_jump. All jumps are selected in random order
+
+///@brief This Mover does a perturbation defined by the rotational and translational magnitudes.
+///   Allowed dofs are specified by a map.
+///   Can be defined through a move map or with rb_jump. All jumps are selected in random order.
 class RigidBodyDofSeqPerturbMover : public RigidBodyMover{
 public:
 	typedef RigidBodyMover parent;
 
 public:
-  // default constructor makes no sense at all!!!
-//  RigidBodyDofSeqPerturbMover() : RigidBodyMover(), rot_mag_( 3.0 ), trans_mag_( 8.0 )
-//  {
-//    moves::Mover::type( "RigidBodyDofSeqPerturbMover" );
-//  }
-
 	// constructor with arguments (rb_jump not defined)
 	// movemap used instead
 	RigidBodyDofSeqPerturbMover(
@@ -686,17 +675,16 @@ public:
 	void dofs( std::map< Size, core::conformation::symmetry::SymDof > dofs ) { dofs_ = dofs; }
 
 private:
-	/// allowed dofs
+	// allowed dofs
 	std::map< Size, core::conformation::symmetry::SymDof > dofs_;
 	// allowed jumps
 	utility::vector1 < int > rb_jumps_;
   /// perturbation magnitudes (rotational and translational)
   core::Real rot_mag_;
   core::Real trans_mag_;
-};
+}; // class RigidBodyDofSeqPerturbMover
 
 } // rigid
 } // protocols
-
 
 #endif //INCLUDED_protocols_rigid_RigidBodyMover_HH

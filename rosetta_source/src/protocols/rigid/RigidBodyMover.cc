@@ -9,60 +9,63 @@
 
 /// @file docking_initialization_protocols
 /// @brief initialization protocols for docking
-/// @detailed
+/// @details
 ///		This contains the functions that create initial positions for docking
 ///		You can either randomize partner 1 or partner 2, spin partner 2, or
 ///		perform a simple perturbation.
 /// @author Monica Berrondo
 
+// Unit headers
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rigid/RigidBodyMoverCreator.hh>
+
 // Package headers
 #include <protocols/rigid/RB_geometry.hh>
-#include <core/pose/PDBInfo.hh>
-// Rosetta Headers
-#include <core/pose/Pose.hh>
 
+// Rosetta Headers
+#include <core/pose/PDBInfo.hh>
+#include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
-// AUTO-REMOVED #include <core/scoring/Ramachandran.hh>
-//#include <core/scoring/ScoringManager.hh>
 #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <basic/basic.hh>
-#include <utility/tag/Tag.hh>
+#include <core/id/TorsionID_Range.hh>
 
-// Random number generator
-// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
+// Numeric headers
 #include <numeric/random/random.hh>
 #include <numeric/random/random_permutation.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
+#include <numeric/xyz.functions.hh>
 
+// Basic headers
 #include <basic/Tracer.hh>
+
+// Utility headers
+#include <utility/vector1.hh>
+#include <utility/options/IntegerVectorOption.hh>
+#include <utility/tag/Tag.hh>
+
+// C++ headers
+#include <string>
+
+
 using basic::T;
 using basic::Error;
 using basic::Warning;
 
-//
-#include <string>
-
-#include <core/id/TorsionID_Range.hh>
-#include <utility/vector1.hh>
-#include <utility/options/IntegerVectorOption.hh>
-#include <numeric/xyz.functions.hh>
 
 namespace protocols {
 namespace rigid {
 
-static basic::Tracer TR("protocols.moves.RigidBodyMover");
-static basic::Tracer TRBM("protocols.moves.RigidBodyMover");
 using namespace core;
 
+static basic::Tracer TR("protocols.moves.RigidBodyMover");
+static basic::Tracer TRBM("protocols.moves.RigidBodyMover");
 static numeric::random::RandomGenerator RG(43225);
 
 // Large rotational perturbations produce a distribution of orientations
 // that are neither uniform nor similar to the input orientation.
 // What we probably wanted was a random orientation (possibly plus a translation).
 const Real max_allowed_rot_mag ( 60.0 );
+
 
 // default constructor
 RigidBodyMover::RigidBodyMover() :
@@ -104,6 +107,13 @@ RigidBodyMover::get_name() const {
 	return "RigidBodyMover";
 }
 
+void
+RigidBodyMover::show(std::ostream & output) const
+{
+	Mover::show(output);
+	output << "Jump number:  " << rb_jump() << std::endl;
+}
+
 utility::vector1<core::id::TorsionID_Range>
 RigidBodyMover::torsion_id_ranges(
 	core::pose::Pose & //pose
@@ -111,6 +121,7 @@ RigidBodyMover::torsion_id_ranges(
 {
 	return utility::vector1<core::id::TorsionID_Range>();
 }
+
 
 RigidBodyPerturbMover::RigidBodyPerturbMover(
 		int const rb_jump_in,
@@ -131,7 +142,6 @@ RigidBodyPerturbMover::RigidBodyPerturbMover(
 	TRBM.Debug << "trans_mag " << trans_mag_ << std::endl;
 	Mover::type( "RigidBodyPerturb" );
 }
-
 
 RigidBodyPerturbMover::RigidBodyPerturbMover() :
 	RigidBodyMover(),
@@ -222,8 +232,8 @@ RigidBodyPerturbMover::RigidBodyPerturbMover( RigidBodyPerturbMover const & src 
 RigidBodyPerturbMover::~RigidBodyPerturbMover()
 {}
 
-
-void RigidBodyPerturbMover::apply( core::pose::Pose & pose )
+void
+RigidBodyPerturbMover::apply( core::pose::Pose & pose )
 {
 	// Want to update our center of rotation every time we take a step.
 	// baseclass jump is chosen at random from movable jumps every apply
@@ -267,6 +277,14 @@ RigidBodyPerturbMover::get_name() const {
 	return "RigidBodyPerturbMover";
 }
 
+void
+RigidBodyPerturbMover::show(std::ostream & output) const
+{
+	RigidBodyMover::show(output);
+	output << "Magnitude of translational movement (deg): " << get_trans_mag() << std::endl <<
+			"Magnitude of rotational movement (deg):    " << get_rot_mag() << std::endl;
+}
+
 core::Size
 RigidBodyPerturbMover::get_trans_mag() const {
 	return trans_mag_;
@@ -277,19 +295,19 @@ RigidBodyPerturbMover::get_rot_mag() const {
 	return rot_mag_;
 }
 
-void RigidBodyPerturbMover::rot_center( core::Vector const /*rot_center_in*/ )
+void
+RigidBodyPerturbMover::rot_center( core::Vector const /*rot_center_in*/ )
 {
 	utility_exit_with_message("Rotation point is automatically determined ONLY");
 }
 
-std::ostream &operator<< ( std::ostream &os, RigidBodyPerturbMover const &mover )
+std::ostream
+&operator<< ( std::ostream &os, RigidBodyPerturbMover const &mover )
 {
-	moves::operator<<(os, mover);
-	os << "Jump number:  " << mover.rb_jump() << std::endl;
-	os << "Magnitude of translational movement (deg): " << mover.get_trans_mag() << std::endl << 
-				"Magnitude of rotational movement (deg):    " << mover.get_rot_mag() << std::endl;
+	mover.show(os);
 	return os;
 }
+
 
 void
 RigidBodyPerturbNoCenterMover::parse_my_tag(
@@ -318,7 +336,8 @@ RigidBodyPerturbNoCenterMoverCreator::mover_name() {
 	return "RigidBodyPerturbNoCenter";
 }
 
-moves::MoverOP RigidBodyPerturbNoCenterMover::clone() const {
+moves::MoverOP
+RigidBodyPerturbNoCenterMover::clone() const {
 	return new RigidBodyPerturbNoCenterMover(*this);
 }
 
@@ -341,7 +360,6 @@ RigidBodyPerturbNoCenterMover::RigidBodyPerturbNoCenterMover(
 	movable_jumps_.push_back( rb_jump_in );
 	moves::Mover::type( "RigidBodyPerturbNoCenter" );
 }
-
 
 ///@details constructor for the rbm that doesn't set a center
 RigidBodyPerturbNoCenterMover::RigidBodyPerturbNoCenterMover(
@@ -386,15 +404,18 @@ RigidBodyPerturbNoCenterMover::RigidBodyPerturbNoCenterMover(
 
 RigidBodyPerturbNoCenterMover::~RigidBodyPerturbNoCenterMover() {}
 
-void RigidBodyPerturbNoCenterMover::add_jump( core::Size jump_id ) {
+void
+RigidBodyPerturbNoCenterMover::add_jump( core::Size jump_id ) {
 	movable_jumps_.push_back( jump_id );
 }
 
-void RigidBodyPerturbNoCenterMover::clear_jumps() {
+void
+RigidBodyPerturbNoCenterMover::clear_jumps() {
 	movable_jumps_.clear();
 }
 
-void RigidBodyPerturbNoCenterMover::apply( core::pose::Pose & pose )
+void
+RigidBodyPerturbNoCenterMover::apply( core::pose::Pose & pose )
 {
 	// set baseclass rb_jump_ randomly from list of movable jumps
 	if ( movable_jumps_.size() > 1 ) {
@@ -415,6 +436,7 @@ std::string
 RigidBodyPerturbNoCenterMover::get_name() const {
 	return "RigidBodyPerturbNoCenterMover";
 }
+
 
 RigidBodyRandomizeMover::RigidBodyRandomizeMover() :
 	parent(),
@@ -458,7 +480,8 @@ RigidBodyRandomizeMover::RigidBodyRandomizeMover( RigidBodyRandomizeMover const 
 
 RigidBodyRandomizeMover::~RigidBodyRandomizeMover() {}
 
-void RigidBodyRandomizeMover::apply( core::pose::Pose & pose )
+void
+RigidBodyRandomizeMover::apply( core::pose::Pose & pose )
 {
 	core::kinematics::Jump flexible_jump = pose.jump( rb_jump_ );
 		TRBM << "Randomize: " << "Jump (before): " << flexible_jump << std::endl;
@@ -493,6 +516,14 @@ RigidBodyRandomizeMover::get_name() const {
 	return "RigidBodyRandomizeMover";
 }
 
+void
+RigidBodyRandomizeMover::show(std::ostream & output) const
+{
+	RigidBodyMover::show(output);
+	output << "\nPhi angle:   " << get_phi() <<
+			"\nPsi angle:   " << get_psi() << std::endl;
+}
+
 core::Size
 RigidBodyRandomizeMover::get_phi() const {
 	return phi_angle_;
@@ -503,13 +534,13 @@ RigidBodyRandomizeMover::get_psi() const {
 	return psi_angle_;
 }
 
-std::ostream &operator<< ( std::ostream &os, RigidBodyRandomizeMover const &randommover )
+std::ostream
+&operator<< ( std::ostream &os, RigidBodyRandomizeMover const &randommover )
 {
-	moves::operator<<(os, randommover);
-	os << "Jump number: " << randommover.rb_jump() << "\nPhi angle:   " << randommover.get_phi() << 
-			"\nPsi angle:   " << randommover.get_psi() << std::endl;
+	randommover.show(os);
 	return os;
 }
+
 
 RigidBodySpinMover::RigidBodySpinMover() : parent(), spin_axis_( 0.0 )
 {
@@ -535,20 +566,22 @@ RigidBodySpinMover::RigidBodySpinMover( RigidBodySpinMover const & src ) :
 
 RigidBodySpinMover::~RigidBodySpinMover() {}
 
-void RigidBodySpinMover::spin_axis ( core::Vector spin_axis_in )
+void
+RigidBodySpinMover::spin_axis ( core::Vector spin_axis_in )
 {
 	spin_axis_ = spin_axis_in;
 	update_spin_axis_ = false;
 }
 
-void RigidBodySpinMover::rot_center ( core::Vector const rot_center_in )
+void
+RigidBodySpinMover::rot_center ( core::Vector const rot_center_in )
 {
 	rot_center_ = rot_center_in;
 	update_spin_axis_ = false;
 }
 
-
-void RigidBodySpinMover::apply( core::pose::Pose & pose )
+void
+RigidBodySpinMover::apply( core::pose::Pose & pose )
 {
 	core::kinematics::Jump flexible_jump = pose.jump( rb_jump_ );
 		TRBM << "Spin: " << "Jump (before): " << flexible_jump << std::endl;
@@ -585,12 +618,6 @@ RigidBodySpinMover::get_name() const {
 	return "RigidBodySpinMover";
 }
 
-std::ostream &operator<< ( std::ostream &os, RigidBodySpinMover const &spinmover )
-{
-	moves::operator<<(os, spinmover);
-	os << "Jump number: " << spinmover.rb_jump() << std::endl;
-	return os;
-}
 
 RigidBodyDeterministicSpinMover::RigidBodyDeterministicSpinMover() : parent()
 {
@@ -598,7 +625,7 @@ RigidBodyDeterministicSpinMover::RigidBodyDeterministicSpinMover() : parent()
     angle_magnitude_ = 0.0;
         
 }
-    
+
 ///@brief constructor with arguments
 ///       takes a complete set of arguments needed for apply
 RigidBodyDeterministicSpinMover::RigidBodyDeterministicSpinMover( int const rb_jump_in, core::Vector spin_axis, core::Vector rot_center, float angle_magnitude ):
@@ -610,21 +637,22 @@ parent( rb_jump_in )
     angle_magnitude_ = angle_magnitude;
     update_spin_axis_ = false;
 }
-    
+
 RigidBodyDeterministicSpinMover::RigidBodyDeterministicSpinMover( RigidBodyDeterministicSpinMover const & src ) :
 parent( src ),
 angle_magnitude_( src.angle_magnitude_)
 {}
-    
+
 RigidBodyDeterministicSpinMover::~RigidBodyDeterministicSpinMover() {}
     
-void RigidBodyDeterministicSpinMover::angle_magnitude( float angle_magnitude )
+void
+RigidBodyDeterministicSpinMover::angle_magnitude( float angle_magnitude )
 {
     angle_magnitude_ = angle_magnitude;
 }
-    
-    
-void RigidBodyDeterministicSpinMover::apply( core::pose::Pose & pose )
+
+void
+RigidBodyDeterministicSpinMover::apply( core::pose::Pose & pose )
 {
     core::kinematics::Jump flexible_jump = pose.jump( rb_jump_ );
     TRBM << "Spin: " << "Jump (before): " << flexible_jump << std::endl;
@@ -655,19 +683,13 @@ void RigidBodyDeterministicSpinMover::apply( core::pose::Pose & pose )
     << rot_center_.z() << std::endl;
     TRBM << "Spin: " << "---" << std::endl;
 }
-    
+
 std::string
 RigidBodyDeterministicSpinMover::get_name() const {
     return "RigidBodyDeterministicSpinMover";
 }
-    
-std::ostream &operator<< ( std::ostream &os, RigidBodyDeterministicSpinMover const &spinmover )
-{
-    moves::operator<<(os, spinmover);
-    os << "Jump number: " << spinmover.rb_jump() << std::endl;
-    return os;
-}
-    
+
+
 RigidBodyTransMover::RigidBodyTransMover() : RigidBodyMover()
 {
 	moves::Mover::type( "RigidBodyTrans" );
@@ -694,14 +716,16 @@ RigidBodyTransMover::RigidBodyTransMover( RigidBodyTransMover const & src ) :
 
 RigidBodyTransMover::~RigidBodyTransMover() {}
 
-core::Vector RigidBodyTransMover::centroid_axis(core::pose::Pose const & pose_in) const
+core::Vector
+RigidBodyTransMover::centroid_axis(core::pose::Pose const & pose_in) const
 {
   core::Vector upstream_dummy, downstream_dummy;
   protocols::geometry::centroids_by_jump(pose_in, rb_jump(), upstream_dummy, downstream_dummy );
   return downstream_dummy - upstream_dummy;
 }
 
-void RigidBodyTransMover::apply( core::pose::Pose & pose )
+void
+RigidBodyTransMover::apply( core::pose::Pose & pose )
 {
 	core::Vector axis( trans_axis_ );
 	if ( axis.is_zero() ) {
@@ -720,7 +744,8 @@ RigidBodyTransMover::get_name() const {
 	return "RigidBodyTransMover";
 }
 
-void RigidBodyTransMover::parse_my_tag( utility::tag::TagPtr const tag,
+void
+RigidBodyTransMover::parse_my_tag( utility::tag::TagPtr const tag,
 		protocols::moves::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
@@ -732,13 +757,16 @@ void RigidBodyTransMover::parse_my_tag( utility::tag::TagPtr const tag,
 	trans_axis( axis );
 }
 
-moves::MoverOP RigidBodyTransMover::clone() const {
+moves::MoverOP
+RigidBodyTransMover::clone() const {
 	return new RigidBodyTransMover(*this);
 }
 
-moves::MoverOP RigidBodyTransMover::fresh_instance() const {
+moves::MoverOP
+RigidBodyTransMover::fresh_instance() const {
 	return new RigidBodyTransMover;
 }
+
 
 std::string
 RigidBodyTransMoverCreator::keyname() const {
@@ -755,12 +783,6 @@ RigidBodyTransMoverCreator::mover_name() {
 	return "RigidBodyTransMover";
 }
 
-std::ostream &operator<< ( std::ostream &os, RigidBodyTransMover const &mover )
-{
-	moves::operator<<(os, mover);
-	os << "Jump number: " << mover.rb_jump() << std::endl;
-	return os;
-}
 
 UniformSphereTransMover::UniformSphereTransMover() : parent(), step_size_(1), random_step_(0), trans_axis_()
 {

@@ -8,7 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file /protocols/simple_moves/ReturnSidechainMover.hh
-/// @brief protocols::moves::Mover to "return" proper sidechains to a pose that was temporarily in centroid mode (can be used for any sidechain copying)
+/// @brief protocols::moves::Mover to "return" proper sidechains to a pose that was temporarily in centroid mode (can be
+/// used for any sidechain copying)
 /// @author Steven Lewis
 
 #ifndef INCLUDED_protocols_simple_moves_ReturnSidechainMover_hh
@@ -62,6 +63,7 @@ public:
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
+	virtual void show(std::ostream & output=std::cout) const;
 	virtual protocols::moves::MoverOP clone() const;
 	virtual protocols::moves::MoverOP fresh_instance() const;
 

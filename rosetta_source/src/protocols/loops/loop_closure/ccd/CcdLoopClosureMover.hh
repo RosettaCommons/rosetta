@@ -80,6 +80,7 @@ public:
 
 	virtual void apply( core::pose::Pose &pose );
 	virtual std::string get_name() const;
+	virtual void show(std::ostream & output=std::cout) const;
 
 	core::Real forward_deviation() const {
 		return forward_deviation_;
@@ -106,27 +107,29 @@ public:
 	core::Size get_ccd_cycles() const { return ccd_cycles_; }
 	std::string bRama_check() const { return ( (bRama_check_) ? ("True") : ("False") ); }
 	core::kinematics::MoveMap movemap() const;
-	friend std::ostream &operator<< ( std::ostream &os, CcdLoopClosureMover const &mover ); 
 
 private:
-  Loop loop_;
-  core::kinematics::MoveMapCOP movemap_;
-  core::Real max_rama_score_increase_;
-  core::Real max_total_delta_helix_;
-  core::Real max_total_delta_strand_;
-  core::Real max_total_delta_loop_;
-  core::Real tolerance_;
+	Loop loop_;
+	core::kinematics::MoveMapCOP movemap_;
+	core::Real max_rama_score_increase_;
+	core::Real max_total_delta_helix_;
+	core::Real max_total_delta_strand_;
+	core::Real max_total_delta_loop_;
+	core::Real tolerance_;
 
-  Size ccd_cycles_;
-  bool bRama_check_;
+	Size ccd_cycles_;
+	bool bRama_check_;
 
-  core::Real forward_deviation_; // output
-  core::Real backward_deviation_; // output
-  core::Real torsion_delta_;
-  core::Real rama_delta_;
+	core::Real forward_deviation_; // output
+	core::Real backward_deviation_; // output
+	core::Real torsion_delta_;
+	core::Real rama_delta_;
 
-  Size actual_cycles_;
-};
+	Size actual_cycles_;
+};  // class CcdLoopClosureMover
+
+std::ostream &operator<< ( std::ostream &os, CcdLoopClosureMover const &mover );
+
 
 class CcdMover;
 typedef utility::pointer::owning_ptr< CcdMover > CcdMoverOP;

@@ -160,6 +160,14 @@ LoopMover_Perturb_CCD::get_name() const {
 	return "LoopMover_Perturb_CCD";
 }
 
+void
+LoopMover_Perturb_CCD::show(std::ostream & output) const
+{
+	Mover::show(output);
+	output << "Loops:\n" << get_loops();
+	output << "Scorefunction: " << get_scorefxn()->get_name() << std::endl;
+}
+
 //clone
 protocols::moves::MoverOP LoopMover_Perturb_CCD::clone() const {
 		return new LoopMover_Perturb_CCD(*this);
@@ -455,7 +463,7 @@ core::scoring::ScoreFunctionOP LoopMover_Perturb_CCD::get_scorefxn() const {
 
 basic::Tracer & LoopMover_Perturb_CCD::tr() const
 {
-    return TR;
+	return TR;
 }
 
 LoopMover_Perturb_CCDCreator::~LoopMover_Perturb_CCDCreator() {}
@@ -470,9 +478,7 @@ std::string LoopMover_Perturb_CCDCreator::keyname() const {
 
 std::ostream &operator<< ( std::ostream &os, LoopMover_Perturb_CCD const &mover )
 {
-	moves::operator<<(os, mover);
-	os << "Loops:\n" << *mover.get_loops();
-	os << "Scorefunction: " << mover.get_scorefxn()->get_name() << std::endl;
+	mover.show(os);
 	return os;
 }
 

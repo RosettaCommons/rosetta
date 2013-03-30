@@ -260,6 +260,22 @@ MinMover::get_name() const {
 	return MinMoverCreator::mover_name();
 }
 
+void
+MinMover::show(std::ostream & output) const
+{
+	Mover::show(output);
+	output << "Minimization type:\t" << min_type() << "\nScorefunction:\t\t";
+	if ( score_function() != 0 ) {
+		output  << score_function()->get_name() << std::endl;
+	}
+	else { output << "none" << std::endl; }
+	output << "Score tolerance:\t" << tolerance() << "\nNb list:\t\t" << (nb_list() ? "True" : "False") <<
+			"\nDeriv check:\t\t" << (deriv_check() ? "True" : "False") << std::endl << "Movemap:" << std::endl;
+	if (movemap() != 0) {
+		movemap()->show(output);
+	}
+}
+
 protocols::moves::MoverOP MinMover::clone() const { return new protocols::simple_moves::MinMover( *this ); }
 protocols::moves::MoverOP MinMover::fresh_instance() const { return new MinMover; }
 
@@ -464,20 +480,9 @@ MinMover::parse_dof_tasks(
 
 std::ostream &operator<< (std::ostream &os, MinMover const &mover)
 {
-	moves::operator<<(os, mover);
-	os << "Minimization type:\t" << mover.min_type() << "\nScorefunction:\t\t";
-	if ( mover.score_function() != 0 ) {
-		os  << mover.score_function()->get_name() << std::endl;
-	}
-	else { os << "none" << std::endl; }
-	os << "Score tolerance:\t" << mover.tolerance() << "\nNb list:\t\t" << (mover.nb_list() ? "True" : "False") <<
-			"\nDeriv check:\t\t" << (mover.deriv_check() ? "True" : "False") << std::endl << "Movemap:" << std::endl;
-	if (mover.movemap() != 0) {
-		mover.movemap()->show(os);
-	}
+	mover.show(os);
 	return os;
 }
-
 
 } // moves
 } // protocols

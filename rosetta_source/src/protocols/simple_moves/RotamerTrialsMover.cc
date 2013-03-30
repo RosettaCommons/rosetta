@@ -142,6 +142,16 @@ RotamerTrialsMover::get_name() const {
 	return "RotamerTrialsMover";
 }
 
+void
+RotamerTrialsMover::show(std::ostream & output) const
+{
+	Mover::show(output);
+	if ( scorefxn() != 0 ) {
+		output << "Score function: " << scorefxn()->get_name() << std::endl;
+	}
+	else { output << "Score function: none" << std::endl; }
+}
+
 /// @brief read access for derived classes
 RotamerTrialsMover::ScoreFunctionCOP
 RotamerTrialsMover::scorefxn() const
@@ -184,14 +194,10 @@ RotamerTrialsMover::parse_my_tag(
 
 std::ostream &operator<< (std::ostream &os, RotamerTrialsMover const &mover)
 {
-	moves::operator<<(os, mover);
-	if ( mover.scorefxn() != 0 ) {
-		os << "Score function: " << mover.scorefxn()->get_name() << std::endl;
-	}
-	else { os << "Score function: none" << std::endl; }
-
+	mover.show(os);
 	return os;
 }
+
 
 // default constructor
 EnergyCutRotamerTrialsMover::EnergyCutRotamerTrialsMover() :
@@ -240,7 +246,6 @@ std::string
 EnergyCutRotamerTrialsMover::get_name() const {
 	return "EnergyCutRotamerTrialsMover";
 }
-
 
 /// @details starting from a fresh task, it reduces the number of residues to be repacked to only
 /// those whose energy has increased by energycut_ since the application of the last move.

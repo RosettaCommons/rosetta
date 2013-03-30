@@ -28,41 +28,51 @@ public:
 	virtual ~ConstantScoreBase() {}
 
 	/// @brief initialize a grid of zeros with a given centerpoint, width and resolution (in angstroms).
-	virtual void initialize(core::Vector const & center, core::Real width, core::Real resolution)
+	virtual void initialize(core::Vector const & /*center*/, core::Real /*width*/, core::Real /*resolution*/)
 	{}
 
 	/// @brief populate the grid with values based on a passed pose
-	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center, core::Size const & ligand_chain_id_to_exclude)
+	virtual void refresh(
+			core::pose::Pose const & /*pose*/,
+			core::Vector const & /*center*/,
+			core::Size const & /*ligand_chain_id_to_exclude*/)
 	{}
 
 	/// @brief populate the grid with values based on a passed pose
-	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center,utility::vector1<core::Size> ligand_chain_ids_to_exclude)
+	virtual void refresh(
+			core::pose::Pose const & /*pose*/,
+			core::Vector const & /*center*/,
+			utility::vector1<core::Size> /*ligand_chain_ids_to_exclude*/)
 	{}
 
 	/// @brief populate the grid with values based on a passed pose
-	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center)
+	virtual void refresh(core::pose::Pose const & /*pose*/, core::Vector const & /*center*/)
 	{}
 
 	/// @setup a grid based on RosettaScripts input
 	virtual void parse_my_tag(utility::tag::TagPtr const tag)=0;
+
 	/// @brief return the current score of an UltraLightResidue using the current grid
 	virtual core::Real score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP qsar_map) = 0;
+
 	/// @brief return the current score of an atom using the current grid
-	virtual core::Real atom_score(core::conformation::UltraLightResidue const & residue, core::Size atomno, qsarMapOP qsar_map)
+	virtual core::Real atom_score(core::conformation::UltraLightResidue const & /*residue*/, core::Size /*atomno*/, qsarMapOP /*qsar_map*/)
 	{
 		return 0.0;
 	}
 
 	/// @brief return the current score of a residue using the current grid
 	virtual core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map) = 0;
+
 	/// @brief return the current score of an atom using the current grid
-	virtual core::Real atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP qsar_map)
+	virtual core::Real atom_score(core::conformation::Residue const & /*residue*/, core::Size /*atomno*/, qsarMapOP /*qsar_map*/)
 	{
 		return 0.0;
 	}
 
 	/// @brief get the type of the grid
 	virtual std::string get_type() = 0;
+
 	/// @brief set the chain the grid applies to
 	virtual void set_chain(char )
 	{
@@ -77,18 +87,21 @@ public:
 
 	/// @brief Serialize the GridBase object into a json_spirit Value
 	virtual utility::json_spirit::Value serialize() = 0;
+
 	/// @brief deserialize a json spirit Value into a GridBase object
 	virtual void deserialize(utility::json_spirit::mObject data) = 0;
-    /// @brief determine if all residue atoms are in a grid
-    virtual bool is_in_grid(core::conformation::UltraLightResidue const & residue)
-    {
-    	return true;
-    }
-    /// @brief determine if all residue atoms are in a grid
-    virtual bool is_in_grid(core::conformation::Residue const & residue)
-    {
-    	return true;
-    }
+
+	/// @brief determine if all residue atoms are in a grid
+	virtual bool is_in_grid(core::conformation::UltraLightResidue const & /*residue*/)
+	{
+		return true;
+	}
+
+	/// @brief determine if all residue atoms are in a grid
+	virtual bool is_in_grid(core::conformation::Residue const & /*residue*/)
+	{
+		return true;
+	}
 
 };
 

@@ -22,6 +22,8 @@
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/import_pose/import_pose.hh>
+
+// Utility headers
 #include <utility/excn/Exceptions.hh>
 
 // C++ headers
@@ -69,71 +71,69 @@ int
 main(int argc, char *argv[])
 {
     try {
+		// Initialize core.
+		devel::init(argc, argv);
 
-	// Initialize core.
-	devel::init(argc, argv);
+		// Declare variables.
+		Pose maltotriose, isomaltose, lactose, amylopectin;
+		Pose glycoprotein;
 
-	// Declare variables.
-	Pose maltotriose, isomaltose, lactose, amylopectin;
-	Pose glycoprotein;
+		cout << "------------------------------------------------------------" << endl;
+		cout << "Importing maltotriose:" << endl;
 
-	cout << "------------------------------------------------------------" << endl;
-	cout << "Importing maltotriose:" << endl;
+		pose_from_pdb(maltotriose, PATH + "maltotriose.pdb");
 
-	pose_from_pdb(maltotriose, PATH + "maltotriose.pdb");
+		test_sugar(maltotriose);
 
-	test_sugar(maltotriose);
+		cout << "------------------------------------------------------------" << endl;
+		cout << "Importing isomaltose:" << endl;
 
-	cout << "------------------------------------------------------------" << endl;
-	cout << "Importing isomaltose:" << endl;
+		pose_from_pdb(isomaltose, PATH + "isomaltose.pdb");
 
-	pose_from_pdb(isomaltose, PATH + "isomaltose.pdb");
+		test_sugar(isomaltose);
 
-	test_sugar(isomaltose);
+		cout << "------------------------------------------------------------" << endl;
+		cout << "Importing lactose:" << endl;
 
-	cout << "------------------------------------------------------------" << endl;
-	cout << "Importing lactose:" << endl;
+		pose_from_pdb(lactose, PATH + "lactose.pdb");
 
-	pose_from_pdb(lactose, PATH + "lactose.pdb");
+		test_sugar(lactose);
 
-	test_sugar(lactose);
+		cout << "------------------------------------------------------------" << endl;
+		cout << "Creating maltotriose from sequence:" << endl;
 
-	cout << "------------------------------------------------------------" << endl;
-	cout << "Creating maltotriose from sequence:" << endl;
+		ResidueTypeSetCAP residue_set(ChemicalManager::get_instance()->residue_type_set("fa_standard"));
+		make_pose_from_saccharide_sequence(maltotriose, "alpha-D-Glcp-(1->4)-alpha-D-Glcp-(1->4)-D-Glcp", *residue_set);
 
-	ResidueTypeSetCAP residue_set(ChemicalManager::get_instance()->residue_type_set("fa_standard"));
-	make_pose_from_saccharide_sequence(maltotriose, "alpha-D-Glcp-(1->4)-alpha-D-Glcp-(1->4)-D-Glcp", *residue_set);
+		//test_sugar(maltotriose);
+		cout << endl << maltotriose << endl;
 
-	//test_sugar(maltotriose);
-	cout << endl << maltotriose << endl;
+		cout << "Sequences:" << endl;
+		cout << " Chain 1: ";
+		cout << maltotriose.chain_sequence(1) << endl;
 
-	cout << "Sequences:" << endl;
-	cout << " Chain 1: ";
-	cout << maltotriose.chain_sequence(1) << endl;
+		cout << "------------------------------------------------------------" << endl;
+		cout << "Importing branched amylopectin fragment:" << endl;
 
-	cout << "------------------------------------------------------------" << endl;
-	cout << "Importing branched amylopectin fragment:" << endl;
+		pose_from_pdb(amylopectin, PATH + "amylopectin_fragment.pdb");
 
-	pose_from_pdb(amylopectin, PATH + "amylopectin_fragment.pdb");
+		test_sugar(amylopectin);
 
-	test_sugar(amylopectin);
+		cout << "------------------------------------------------------------" << endl;
+		cout << "Importing N-glycosylated sample:" << endl;
 
-	cout << "------------------------------------------------------------" << endl;
-	cout << "Importing N-glycosylated sample:" << endl;
+		pose_from_pdb(glycoprotein, PATH + "glycosylated_test2.pdb");
 
-	pose_from_pdb(glycoprotein, PATH + "glycosylated_test2.pdb");
+		//test_sugar(glycoprotein);
+		cout << endl << glycoprotein << endl;
 
-	//test_sugar(glycoprotein);
-	cout << endl << glycoprotein << endl;
-
-	cout << "Sequences:" << endl;
-	for (core::uint i = 1; i <= 2; ++i) {
-		cout << " Chain " << i << ": ";
-		cout << glycoprotein.chain_sequence(i) << endl;
-	}
-
-    } catch ( utility::excn::EXCN_Base const & e ) {
-			std::cerr << "caught exception " << e.msg() << std::endl;
+		cout << "Sequences:" << endl;
+		for (core::uint i = 1; i <= 2; ++i) {
+			cout << " Chain " << i << ": ";
+			cout << glycoprotein.chain_sequence(i) << endl;
+		}
+    } catch (utility::excn::EXCN_Base const & e) {
+		cerr << "Caught exception: " << e.msg() << endl;
     }
     return 0;
 }

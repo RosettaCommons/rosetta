@@ -108,6 +108,16 @@ RotamerTrialsMinMover::get_name() const {
 	return "RotamerTrialsMinMover";
 }
 
+void
+RotamerTrialsMinMover::show(std::ostream & output) const
+{
+	Mover::show(output);
+	if ( scorefxn() != 0 ) {
+		output << "Score function: " << scorefxn()->get_name() << std::endl;
+	}
+	else { output << "Score function: none" << std::endl; }
+}
+
 /// @brief read access for derived classes
 RotamerTrialsMinMover::ScoreFunctionCOP
 RotamerTrialsMinMover::scorefxn() const
@@ -175,17 +185,6 @@ RotamerTrialsMinMover::clone() const
 	return new protocols::simple_moves::RotamerTrialsMinMover( *this );
 }
 
-std::ostream &operator<< (std::ostream &os, RotamerTrialsMinMover const &mover)
-{
-	moves::operator<<(os, mover);
-	if ( mover.scorefxn() != 0 ) {
-		os << "Score function: " << mover.scorefxn()->get_name() << std::endl;
-	}
-	else { os << "Score function: none" << std::endl; }
-
-	return os;
-}
-
 std::string
 RotamerTrialsMinMoverCreator::keyname() const
 {
@@ -203,6 +202,13 @@ RotamerTrialsMinMoverCreator::mover_name()
 {
 	return "RotamerTrialsMinMover";
 }
+
+std::ostream &operator<< (std::ostream &os, RotamerTrialsMinMover const &mover)
+{
+	mover.show(os);
+	return os;
+}
+
 
 // default constructor
 EnergyCutRotamerTrialsMinMover::EnergyCutRotamerTrialsMinMover() :

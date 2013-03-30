@@ -41,7 +41,6 @@
 #include <core/optimization/MinimizerOptions.fwd.hh>
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
 namespace protocols {
 namespace loops {
@@ -79,10 +78,11 @@ public:
 
 	core::pack::task::TaskFactoryCOP get_task_factory() const;
 
-	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	virtual void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 
 	void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
+	virtual void show(std::ostream & output=std::cout) const;
 
 	void outer_cycles( core::Size value ) { outer_cycles_ = value; }
 	void max_inner_cycles( core::Size value ) { max_inner_cycles_ = value; }
@@ -96,8 +96,6 @@ public:
 	protocols::loops::LoopsCOP get_loops() const;
 	void set_flank_residue_min(bool value) {flank_residue_min_ = value;} // by JQX
 	bool flank_residue_min() const { return flank_residue_min_; }
-	friend std::ostream &operator<< ( std::ostream &os, LoopMover_Refine_CCD const &mover );
-
 
 	core::Size inner_cycles() const { return inner_cycles_; }
 	core::Size current_cycle_number() const { return current_cycle_number_; }
@@ -121,7 +119,7 @@ protected:
 
 	core::pack::task::TaskFactoryOP task_factory_;
 	bool redesign_loop_;
-    virtual basic::Tracer & tr() const;
+	virtual basic::Tracer & tr() const;
 
 // This private block was added by BDW during refactoring
 private:
@@ -157,6 +155,8 @@ private:
 	core::kinematics::MoveMapOP move_map_;
 	core::scoring::ScoreFunctionOP ramping_scorefxn_;
 }; // LoopMover_Refine_CCD
+
+std::ostream &operator<< ( std::ostream &os, LoopMover_Refine_CCD const &mover );
 
 } //namespace refine
 } //namespace loop_mover

@@ -48,7 +48,9 @@ public:
 	/// @brief Applies ResidueTypeSet converion on the pose
 	/// @note: a single protocols::moves::Mover only converts in ONE direction e.g. to centroid
 	virtual void apply( core::pose::Pose & pose );
+
 	virtual std::string get_name() const;
+	virtual void show(std::ostream & output=std::cout) const;
 
 	void type_set_tag( std::string const & type_set_tag_in ) { type_set_tag_ = type_set_tag_in; }
 

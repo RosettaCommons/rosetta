@@ -70,12 +70,9 @@ public:
 	static void register_options();
 
 	/// @brief  Generate string representation of RingConformationMover for debugging purposes.
-	void show(std::ostream & output=std::cout) const;
+	virtual void show(std::ostream & output=std::cout) const;
 
-	// Insertion operator (overloaded so that RingConformationMover can be "printed" in PyRosetta).
-	friend std::ostream & operator<<(std::ostream & output, RingConformationMover const & object_to_output);
 
-	
 	// Mover methods
 	/// @brief  Return the name of the Mover.
 	virtual std::string get_name() const;
@@ -116,6 +113,9 @@ private:
 	utility::vector1<ring_conf_def> six_membered_ring_conformers_;
 
 };  // class RingConformationMover
+
+// Insertion operator (overloaded so that RingConformationMover can be "printed" in PyRosetta).
+std::ostream & operator<<(std::ostream & output, RingConformationMover const & object_to_output);
 
 }  // namespace carbohydrates
 }  // namespace simple_moves

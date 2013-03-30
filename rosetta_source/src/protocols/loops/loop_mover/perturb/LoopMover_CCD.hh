@@ -75,6 +75,8 @@ public:
 
 	virtual std::string get_name() const;
 
+	virtual void show(std::ostream & output=std::cout) const;
+
 	/// @brief Clone this object
 	virtual protocols::moves::MoverOP clone() const;
 
@@ -85,12 +87,11 @@ public:
 
 protected:
 	std::vector< core::fragment::FragSetOP > frag_libs_;
-    
-    virtual loop_mover::LoopResult model_loop( core::pose::Pose & pose,
-	                 protocols::loops::Loop const & loop );
-                     
-    virtual basic::Tracer & tr() const;
 
+	virtual loop_mover::LoopResult model_loop( core::pose::Pose & pose,
+			protocols::loops::Loop const & loop );
+
+	virtual basic::Tracer & tr() const;
 };
 
 std::ostream &operator<< ( std::ostream &os, LoopMover_Perturb_CCD const &mover );

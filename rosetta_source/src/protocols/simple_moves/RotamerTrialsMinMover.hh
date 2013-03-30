@@ -82,6 +82,7 @@ public:
 	///       and tasks provided by the constructor
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
+	virtual void show(std::ostream & output=std::cout) const;
 
 	//PackerTaskMover/RotamerTrialsMinMover needs to have a parent class that implements this?
 	//bool task_is_valid( core::pose::Pose const & pose ) const;
@@ -103,7 +104,6 @@ public:
 	virtual protocols::moves::MoverOP fresh_instance() const;
 	///@brief Return a copy of this mover instance (for RosettaScripts)
 	virtual protocols::moves::MoverOP clone() const;
-	friend std::ostream &operator<< (std::ostream &os, RotamerTrialsMinMover const &mover);
 
 protected:
 
@@ -133,11 +133,14 @@ private:
 	TaskFactoryCOP factory_;
 	bool nonideal_;
 	bool cartesian_;
-};
+};  // class RotamerTrialsMinMover
 
-	/// @brief Wrapper for Rotamer Trials with Minimization, which modifies only
-	///        rotamers whose energy changed by a given constant
-	class EnergyCutRotamerTrialsMinMover : public protocols::simple_moves::RotamerTrialsMinMover {
+std::ostream &operator<< (std::ostream &os, RotamerTrialsMinMover const &mover);
+
+
+/// @brief Wrapper for Rotamer Trials with Minimization, which modifies only
+///        rotamers whose energy changed by a given constant
+class EnergyCutRotamerTrialsMinMover : public protocols::simple_moves::RotamerTrialsMinMover {
 public:
 
 	// default constructor
@@ -187,7 +190,7 @@ private:
 	// data
 	protocols::moves::MonteCarloOP mc_;
 	core::Real energycut_;
-};
+};  // class EnergyCutRotamerTrialsMinMover
 
 } // moves
 } // protocols

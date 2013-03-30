@@ -358,6 +358,22 @@ void PyMolMover::send_colors(Pose const &pose, std::map<int, int> const & colors
 	send_RAW_Energies(pose, "X11Colors", energies);  //self._send_RAW_Energies(pose, 'X11Colors', energies, autoscale=False)
 }
 
+void PyMolMover::show(std::ostream & output) const
+{
+	Mover::show(output);
+	output << "Keep history:          " << ( ( keep_history_ ) ? ("True") : ("False") ) << std::endl;
+	output << "Update energy:         " << ( ( update_energy_ ) ? ("True") : ("False") ) << std::endl;
+	output << "Last packet sent time: " << last_packet_sent_time_ << std::endl;
+	output << "Update interval:       " << update_interval_ << std::endl;
+}
+
+std::ostream &
+operator<<(std::ostream & output, PyMolMover const & mover)
+{
+	mover.show(output);
+	return output;
+}
+
 
 
 void PyMolObserver::attach(core::pose::Pose &p)
@@ -381,19 +397,7 @@ PyMolObserverOP AddPyMolObserver(core::pose::Pose &p, bool keep_history, core::R
 	return o;
 }
 
-
 } // moves
 } // protocols
 
 #endif // INCLUDED_protocols_moves_PyMolMover_CC
-
-/*
-#if (defined min) && (defined WIN32)  // Workaround for MSVC and windows.h include which used #define min
-	#undef min
-#endif
-
-#if (defined max) && (defined WIN32) // Workaround for MSVC and windows.h include which used #define max
-	#undef max
-#endif
-
-*/

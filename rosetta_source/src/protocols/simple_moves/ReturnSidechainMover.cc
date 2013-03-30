@@ -173,6 +173,14 @@ ReturnSidechainMover::ReturnSidechainMover(ReturnSidechainMover const & object_t
 
 ReturnSidechainMover::~ReturnSidechainMover() {}
 
+void
+ReturnSidechainMover::show(std::ostream & output) const
+{
+	Mover::show(output);
+	output << "                    start\tend" << std::endl;
+	output << "Range of residues:  " << get_start_res() << "\t\t" << get_end_res() << std::endl;
+}
+
 protocols::moves::MoverOP
 ReturnSidechainMover::clone() const
 {
@@ -195,10 +203,7 @@ core::Size ReturnSidechainMover::get_end_res() const {
 
 std::ostream &operator<< (std::ostream &os, ReturnSidechainMover const &mover)
 {
-	moves::operator<<(os, mover);
-	os << "                    start\tend" << std::endl;
-	os << "Range of residues:  " << mover.get_start_res() << "\t\t" << mover.get_end_res() << std::endl;
-
+	mover.show(os);
 	return os;
 }
 

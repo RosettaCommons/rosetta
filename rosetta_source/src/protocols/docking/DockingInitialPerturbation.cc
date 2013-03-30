@@ -366,6 +366,8 @@ DockingInitialPerturbation::parse_my_tag(
 
 	slide_ = tag->getOption<bool>( "slide", true );
 }
+
+
 ////////////////////////////////////////// DockingSlideIntoContact ////////////////////////////////
 
 // default constructor
@@ -439,12 +441,19 @@ DockingSlideIntoContact::get_name() const {
 	return "DockingSlideIntoContact";
 }
 
-std::ostream &operator<< ( std::ostream &os, DockingSlideIntoContact const &mover )
+void
+DockingSlideIntoContact::show(std::ostream & output) const
 {
-	moves::operator<<(os, mover);
-	os << "Jump number: " << mover.get_jump_num() << std::endl;
+	Mover::show(output);
+	output << "Jump number: " << get_jump_num() << std::endl;
+}
+
+std::ostream &operator<< ( std::ostream & os, DockingSlideIntoContact const & mover )
+{
+	mover.show(os);
 	return os;
 }
+
 
 ////////////////////////////////////////// FaDockingSlideIntoContact ////////////////////////////////
 
@@ -559,10 +568,16 @@ FaDockingSlideIntoContact::get_name() const {
 	return "FaDockingSlideTogether";
 }
 
+void
+FaDockingSlideIntoContact::show(std::ostream & output) const
+{
+	Mover::show(output);
+	output << "Jump number: " << get_jump_num() << "\nTolerance:   " << get_tolerance() << std::endl;
+}
+
 std::ostream &operator<< ( std::ostream &os, FaDockingSlideIntoContact const &fadock )
 {
-	moves::operator<<(os, fadock);
-	os << "Jump number: " << fadock.get_jump_num() << "\nTolerance:   " << fadock.get_tolerance() << std::endl;
+	fadock.show(os);
 	return os;
 }
 

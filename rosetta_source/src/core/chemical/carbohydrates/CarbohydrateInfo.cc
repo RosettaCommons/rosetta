@@ -610,7 +610,7 @@ CarbohydrateInfo::define_nu_ids()
 }
 
 
-// Friend methods //////////////////////////////////////////////////////////////
+// Helper methods //////////////////////////////////////////////////////////////
 // Insertion operator (overloaded so that CarbohydrateInfo can be "printed" in PyRosetta).
 std::ostream &
 operator<<(std::ostream & output, CarbohydrateInfo const & object_to_output)

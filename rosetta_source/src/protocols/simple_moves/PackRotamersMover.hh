@@ -11,6 +11,7 @@
 /// @brief
 /// @author Monica Berrondo
 /// @author Modified by Sergey Lyskov
+/// @author ashworth (current form)
 
 #ifndef INCLUDED_protocols_simple_moves_PackRotamersMover_hh
 #define INCLUDED_protocols_simple_moves_PackRotamersMover_hh
@@ -40,8 +41,6 @@
 #include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 
 
-
-
 namespace protocols {
 namespace simple_moves {
 
@@ -52,9 +51,8 @@ namespace simple_moves {
 ///
 /// Common Methods:
 ///     PackRotamersMover.apply
+/// @note please derive from PackRotamersMover instead of attempting to add protocol-specific stuff here!
 class PackRotamersMover : public protocols::moves::Mover {
-/// @brief please derive from PackRotamersMover instead of attempting to add protocol-specific stuff here!
-/// @author ashworth (current form)
 public:
 	typedef core::pack::interaction_graph::InteractionGraphBaseOP InteractionGraphBaseOP;
 	typedef core::pack::interaction_graph::InteractionGraphBaseCOP InteractionGraphBaseCOP;
@@ -67,6 +65,7 @@ public:
 public:
 	/// @brief default constructor
 	PackRotamersMover();
+
 	/// @brief constructor with typename
 	PackRotamersMover( std::string const & );
 
@@ -99,15 +98,17 @@ public:
 	///     PackerTask
 	///     ScoreFunction
 	virtual void apply( Pose & pose );
+
 	virtual std::string get_name() const;
+
+	virtual void show(std::ostream & output=std::cout) const;
+
 	bool task_is_valid( Pose const & pose ) const; // should this be virtual?
 
 	virtual void parse_def( utility::lua::LuaObject const & def,
-					utility::lua::LuaObject const & score_fxns,
-					utility::lua::LuaObject const & tasks,
-					protocols::moves::MoverCacheSP cache );
-
-	/// @brief allow non-const access to the internal minimizer options object
+			utility::lua::LuaObject const & score_fxns,
+			utility::lua::LuaObject const & tasks,
+			protocols::moves::MoverCacheSP cache );
 
 	///@brief parse XML (specifically in the context of the parser/scripting scheme)
 	virtual void parse_my_tag(
@@ -135,6 +136,7 @@ public:
 
 	///@brief required in the context of the parser/scripting scheme
 	virtual protocols::moves::MoverOP fresh_instance() const;
+
 	///@brief required in the context of the parser/scripting scheme
 	virtual protocols::moves::MoverOP clone() const;
 
@@ -148,6 +150,7 @@ public:
 	///     PackRotamersMover
 	///     PackRotamersMover.task
 	void score_function( ScoreFunctionCOP sf );
+
 	/// @brief Sets the TaskFactory to  <tf>
 	///
 	/// example(s):
@@ -156,6 +159,7 @@ public:
 	///     PackRotamersMover
 	///     PackRotamersMover.task
 	void task_factory( TaskFactoryCOP tf );
+
 	/// @brief Sets the PackerTask to  <t>
 	///
 	/// example(s):
@@ -177,6 +181,7 @@ public:
 	///     PackRotamersMover
 	///     PackRotamersMover.task
 	ScoreFunctionCOP score_function() const;
+
 	/// @brief Returns the PackerTask
 	///
 	/// example(s):
@@ -185,7 +190,9 @@ public:
 	///     PackRotamersMover
 	///     PackRotamersMover.task_factory
 	PackerTaskCOP task() const;
+
 	core::Size nloop() const { return nloop_; }
+
 	/// @brief Returns the TaskFactory
 	///
 	/// example(s):
@@ -196,12 +203,12 @@ public:
 	TaskFactoryCOP task_factory() const;
 	RotamerSetsCOP rotamer_sets() const;
 	InteractionGraphBaseCOP ig() const;
-	friend std::ostream &operator<< (std::ostream &os, PackRotamersMover const &mover);
 
 protected:
 	///@brief get rotamers, energies. Also performs lazy initialization of ScoreFunction, PackerTask.
 	virtual void setup( Pose & pose );
-	// need a more elegant rot_to_pack implementation than this
+
+// need a more elegant rot_to_pack implementation than this
 	virtual core::PackerEnergy run(
 		Pose & pose,
 		utility::vector0< int > rot_to_pack = utility::vector0< int >()
@@ -218,8 +225,9 @@ private:
 	// 'really private:' packer data, actually created and owned by this class
 	RotamerSetsOP rotamer_sets_;
 	InteractionGraphBaseOP ig_;
-
 };
+
+std::ostream &operator<< (std::ostream &os, PackRotamersMover const &mover);
 
 // note: it is better to create new files, instead of adding additional classes here
 

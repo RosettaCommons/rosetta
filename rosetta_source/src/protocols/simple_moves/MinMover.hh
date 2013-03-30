@@ -7,7 +7,6 @@
 
 /// @file
 /// @brief
-/// @author
 /// @author Monica Berrondo
 
 #ifndef INCLUDED_protocols_simple_moves_MinMover_hh
@@ -70,7 +69,6 @@ private:
 		DOF_TaskMap;
 
 public:
-
 	// default constructor
 	/// @brief Constructs a MinMover
 	/// minmover = protocols::simple_moves::MinMover()
@@ -91,8 +89,25 @@ public:
 		bool deriv_check_verbose_in = false
 	);
 
+	/// @brief Minimizes the DOFs of  <pose_>  specified in the MoveMap
+	/// using the ScoreFunction
+	///
+	/// example(s):
+	///     minmover.apply(pose)
+	/// See also:
+	///     MinMover
+	///     MinMover.movemap
+	///     MinMover.score_function
+	virtual void apply( core::pose::Pose & pose_ );
+	virtual std::string get_name() const;
+	virtual void show(std::ostream & output=std::cout) const;
+
+	inline void cartesian( bool newval ) { cartesian_ = newval; }
+	inline bool cartesian( ) const { return cartesian_; }
+
 	virtual protocols::moves::MoverOP clone() const;
 	virtual protocols::moves::MoverOP fresh_instance() const;
+
 	/// @brief Called by protocols::moves::MoverFactory when constructing new protocols::moves::Movers. Takes care of the specific mover's parsing.
 	virtual
 	void parse_my_tag(
@@ -122,18 +137,19 @@ public:
 		TagPtr const tag,
 		protocols::moves::DataMap & data);
 
-  virtual void parse_def_opts( utility::lua::LuaObject const & def,
+	virtual void parse_def_opts( utility::lua::LuaObject const & def,
 		utility::lua::LuaObject const & score_fxns,
 		utility::lua::LuaObject const & tasks,
 		protocols::moves::MoverCacheSP cache );
 
-  virtual void parse_def( utility::lua::LuaObject const & def,
+	virtual void parse_def( utility::lua::LuaObject const & def,
 		utility::lua::LuaObject const & score_fxns,
 		utility::lua::LuaObject const & tasks,
 		protocols::moves::MoverCacheSP cache );
 
 	/// @brief allow non-const access to the internal minimizer options object
 	virtual MinimizerOptionsOP min_options();
+
 	/// @brief allow const access to the internal minimizer options object
 	virtual MinimizerOptionsCOP min_options() const;
 
@@ -149,6 +165,7 @@ public:
 	///     MoveMap
 	virtual void movemap( core::kinematics::MoveMapCOP movemap_in );
 	virtual core::kinematics::MoveMapCOP movemap() const;
+
 	/// @brief Sets the ScoreFunction to  <scorefxn_in>
 	/// determines which function to minimize
 	///
@@ -183,26 +200,6 @@ protected:
 		core::pose::Pose const & pose,
 		core::kinematics::MoveMap & movemap) const;
 
-public:
-
-	//	void threshold( Real threshold_in ) { threshold_ = threshold_in; } // TODO: can be deleted?
-	//	Real threshold() { return threshold_; } // TODO: can be deleted?
-
-	/// @brief Minimizes the DOFs of  <pose_>  specified in the MoveMap
-	/// using the ScoreFunction
-	///
-	/// example(s):
-	///     minmover.apply(pose)
-	/// See also:
-	///     MinMover
-	///     MinMover.movemap
-	///     MinMover.score_function
-	virtual void apply( core::pose::Pose & pose_ );
-	virtual std::string get_name() const;
-
-	inline void cartesian( bool newval ) { cartesian_ = newval; }
-	inline bool cartesian( ) const { return cartesian_; }
-
 private:
 	// data
 	core::kinematics::MoveMapOP movemap_;
@@ -211,7 +208,7 @@ private:
 	Real threshold_;
 	bool cartesian_;
 
-	///@detail Until ResidueSubsetOperations are implemented,
+	///@details Until ResidueSubsetOperations are implemented,
 	///RosettaScripts uses TaskOperations as a generic way to specify
 	///sets of residues, so it is necessary to have a method of
 	///controling a movemap from a set of task operations. This is not
@@ -221,7 +218,6 @@ private:
 	///on to it here until the apply. In case MinMover is applied
 	///multiple times, to avoid accumulating state, reset the move map
 	///to before the task operations were applied at the end of apply.
-
 	DOF_TaskMap dof_tasks_;
 };
 
@@ -229,4 +225,5 @@ std::ostream &operator<< (std::ostream &os, MinMover const &mover);
 
 } // moves
 } // rosetta
+
 #endif

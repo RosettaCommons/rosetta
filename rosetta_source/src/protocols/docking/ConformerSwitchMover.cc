@@ -148,6 +148,13 @@ void ConformerSwitchMover::apply( core::pose::Pose & pose )
 	pose.data().set( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA, data );
 }
 
+void ConformerSwitchMover::show(std::ostream & output) const
+{
+	Mover::show(output);
+	output << "Temperature:           " << get_temperature() << std::endl <<
+			"Use random conformer?: " << (use_random_conformer() ? "True" : "False") << std::endl;
+}
+
 void ConformerSwitchMover::GenerateProbTable( core::pose::Pose & pose )
 {
 
@@ -225,14 +232,11 @@ std::string ConformerSwitchMover::get_name() const {
 	return ConformerSwitchMoverCreator::mover_name();
 }
 
-std::ostream &operator<< (std::ostream &os, ConformerSwitchMover const &mover)
+std::ostream &operator<< (std::ostream & output, ConformerSwitchMover const & mover)
 {
-	moves::operator<<(os, mover);
-	os << "Temperature:           " << mover.get_temperature() << std::endl <<
-				"Use random conformer?: " << (mover.use_random_conformer() ? "True" : "False") << std::endl;
-	return os;
+	mover.show(output);
+	return output;
 }
 
 }  // namespace docking
-
 }  // namespace protocols

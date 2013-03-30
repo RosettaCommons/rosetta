@@ -126,6 +126,23 @@ CcdLoopClosureMover::get_name() const {
 	return "CcdLoopClosureMover";
 }
 
+void
+CcdLoopClosureMover::show(std::ostream & output) const
+{
+	Mover::show(output);
+	output << "LOOP start: " << get_loop_start() << "  stop: " << get_loop_stop()<< "  cut: " << get_loop_cut() <<
+			"  size: " << get_loop_size() << "  skip rate: " << get_loop_skip_rate() << "  extended?: " <<
+			get_loop_extended() <<  std::endl;
+	output <<   "Max rama score increase: " << get_max_rama_score_increase() <<
+				"\nNumber of CCD cycles:    " << get_ccd_cycles() <<
+				"\nTolerance:               " << get_tolerance() <<
+				"\nbRama check:             " << bRama_check() <<
+				"\nMax total delta helix:   " << get_max_total_delta("H") <<
+				"\nMax total delta strand:  " << get_max_total_delta("E") <<
+				"\nMax total delta loop:    " << get_max_total_delta("L") << "\nMovemap: " << std::endl;
+	movemap().show(output);
+}
+
 core::Real
 CcdLoopClosureMover::get_max_rama_score_increase() const {
 	return max_rama_score_increase_;
@@ -156,18 +173,7 @@ CcdLoopClosureMover::movemap() const {
 
 std::ostream &operator<< ( std::ostream &os, CcdLoopClosureMover const &mover )
 {
-	moves::operator<<(os, mover);
-	os << "LOOP start: " << mover.get_loop_start() << "  stop: " << mover.get_loop_stop()<< "  cut: " << mover.get_loop_cut() << 
-			"  size: " << mover.get_loop_size() << "  skip rate: " << mover.get_loop_skip_rate() << "  extended?: " << 
-			mover.get_loop_extended() <<  std::endl;
-	os <<   "Max rama score increase: " << mover.get_max_rama_score_increase() << 
-				"\nNumber of CCD cycles:    " << mover.get_ccd_cycles() << 
-				"\nTolerance:               " << mover.get_tolerance() << 
-				"\nbRama check:             " << mover.bRama_check() <<
-				"\nMax total delta helix:   " << mover.get_max_total_delta("H") << 
-				"\nMax total delta strand:  " << mover.get_max_total_delta("E") << 
-				"\nMax total delta loop:    " << mover.get_max_total_delta("L") << "\nMovemap: " << std::endl;
-	mover.movemap().show(os); 
+	mover.show(os);
 	return os;
 }
 

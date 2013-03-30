@@ -18,26 +18,26 @@
 #include <devel/init.hh>
 #include <protocols/jd2/JobDistributor.hh>
 
+// Utility headers
 #include <utility/excn/Exceptions.hh>
 
 
 int main(int argc, char *argv[])
 {
-    try {
-
+	using namespace std;
 	using namespace protocols;
 	using namespace simple_moves::carbohydrates;
 	using namespace jd2;
 
-	// Initialize core.
-	devel::init(argc, argv);
+	try {
+		// Initialize core.
+		devel::init(argc, argv);
 
-	// Distribute the mover.
-	RingConformationMoverOP my_mover = new RingConformationMover();
-	JobDistributor::get_instance()->go(my_mover);
-
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-    }
-    return 0;
+		// Distribute the mover.
+		RingConformationMoverOP my_mover = new RingConformationMover();
+		JobDistributor::get_instance()->go(my_mover);
+	} catch (utility::excn::EXCN_Base const & e) {
+		cerr << "Caught exception: " << e.msg() << endl;
+	}
+	return 0;
 }

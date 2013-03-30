@@ -113,7 +113,7 @@ RingConformationMover::show(std::ostream & output) const
 {
 	using namespace std;
 
-	moves::operator<<(output, *this);  // name, type, tag
+	Mover::show(output);  // name, type, tag
 
 	output << "Current MoveMap:" << endl << *movemap_ << endl;
 }
@@ -325,7 +325,7 @@ RingConformationMover::setup_residue_list(core::pose::Pose & pose)
 }
 
 
-// Friend methods //////////////////////////////////////////////////////////////
+// Helper methods //////////////////////////////////////////////////////////////
 // Insertion operator (overloaded so that RingConformationMover can be "printed" in PyRosetta).
 std::ostream &
 operator<<(std::ostream & output, RingConformationMover const & object_to_output)

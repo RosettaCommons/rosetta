@@ -59,10 +59,7 @@ public:
 
 	// Standard Rosetta methods ////////////////////////////////////////////////
 	/// @brief  Generate string representation of CarbohydrateInfo for debugging purposes.
-	void show(std::ostream & output=std::cout) const;
-
-	// Insertion operator (overloaded so that CarbohydrateInfo can be "printed" in PyRosetta).
-	friend std::ostream & operator<<(std::ostream & output, CarbohydrateInfo const & object_to_output);
+	virtual void show(std::ostream & output=std::cout) const;
 
 
 	// Accessors/Mutators
@@ -439,6 +436,9 @@ private:
 public:
 	static std::map<std::string, std::string> const CODE_TO_ROOT_MAP;
 };  // class CarbohydrateInfo
+
+// Insertion operator (overloaded so that CarbohydrateInfo can be "printed" in PyRosetta).
+std::ostream & operator<<(std::ostream & output, CarbohydrateInfo const & object_to_output);
 
 }  // namespace carbohydrates
 }  // namespace chemical

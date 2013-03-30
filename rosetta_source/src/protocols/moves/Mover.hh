@@ -248,10 +248,11 @@ private:
 
 }; // end Mover base class
 
-///@brief Insertion operator (overloaded so that the Mover can be "printed").
-std::ostream & operator<<(std::ostream & output, Mover const & mover);
-
 } // moves
+
+///@brief Insertion operator (overloaded so that the Mover can be "printed").
+//std::ostream & operator<<(std::ostream & output, moves::Mover const & mover);
+
 } // protocols
 
 #endif //INCLUDED_protocols_moves_Mover_HH

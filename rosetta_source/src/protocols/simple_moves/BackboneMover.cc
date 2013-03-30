@@ -242,6 +242,19 @@ BackboneMover::get_name() const {
 	return "BackboneMover";
 }
 
+void
+BackboneMover::show(std::ostream & output) const
+{
+	Mover::show(output);
+	output << "Max angle for helices (H): " << get_angle_max('H') <<
+			"\nMax angle for strands (E): " << get_angle_max('E') <<
+			"\nMax angle for loops (L):   " << get_angle_max('L') <<
+			"\nTemperature factor (kT):   " << temperature() <<
+			"\nNumber of moves:           " << nmoves() << std::endl;
+	output << "MoveMap:" << std::endl;
+	movemap()->show(output);
+}
+
 void BackboneMover::clear() {
 	tries_=0;
 	pos_list_.erase(pos_list_.begin(), pos_list_.end());
@@ -256,6 +269,12 @@ bool BackboneMover::check_rama() {
 		if ( RG.uniform() >= probability ) return( false );
 	}
 	return( true );
+}
+
+std::ostream &operator<< (std::ostream &os, BackboneMover const &mover)
+{
+	mover.show(os);
+	return os;
 }
 
 
@@ -598,21 +617,5 @@ void protocols::simple_moves::ShearMover::test_move( core::pose::Pose & pose)
 	apply(pose);
 }
 
-
-std::ostream &operator<< (std::ostream &os, BackboneMover const &mover)
-{
-	moves::operator<<(os, mover);
-	os << "Max angle for helices (H): " << mover.get_angle_max('H') <<
-			"\nMax angle for strands (E): " << mover.get_angle_max('E') <<
-			"\nMax angle for loops (L):   " << mover.get_angle_max('L') <<
-			"\nTemperature factor (kT):   " << mover.temperature() <<
-			"\nNumber of moves:           " << mover.nmoves() << std::endl;
-	os << "MoveMap:" << std::endl;
-	mover.movemap()->show(os); 
-	return os;
-}
-
-
 }  // namespace moves
-
 }  // namespace protocols

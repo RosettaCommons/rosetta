@@ -67,6 +67,8 @@ public:
 
 	virtual void apply( core::pose::Pose & pose );
 
+	virtual void show(std::ostream & output=std::cout) const;
+
 	void switch_conformer(
 		core::pose::Pose & pose,
 		core::Size conf_num
@@ -93,8 +95,6 @@ private:
 std::ostream &operator<< (std::ostream &os, ConformerSwitchMover const &mover);
 
 } // docking
-
 } // rosetta
-
 
 #endif

@@ -86,7 +86,6 @@ FragmentMover::FragmentMover(
 	update_insert_map();
 }
 
-
 ///@brief constructor
 FragmentMover::FragmentMover(
 	core::fragment::FragSetCOP fragset,
@@ -99,6 +98,12 @@ FragmentMover::FragmentMover(
 {
 	protocols::moves::Mover::type( type );
 	update_insert_map();
+}
+
+bool FragmentMover::apply( pose::Pose & pose, Size pos ) const {
+	FrameList frames;
+	if ( !fragset_->frames( pos, frames ) ) return false;
+	return apply_frames( pose, frames );
 }
 
 std::string
@@ -168,7 +173,6 @@ ClassicFragmentMover::ClassicFragmentMover(
 	set_defaults();
 }
 
-
 // constructor
 ClassicFragmentMover::ClassicFragmentMover(
 	core::fragment::FragSetCOP fragset,
@@ -177,7 +181,6 @@ ClassicFragmentMover::ClassicFragmentMover(
 {
 	set_defaults();
 }
-
 
 // constructor Temp work around for PyRosetta code, until we found a way how to handle owning pointers in this case
 ClassicFragmentMover::ClassicFragmentMover(
@@ -215,6 +218,24 @@ ClassicFragmentMover::get_name() const {
 	return "ClassicFragmentMover";
 }
 
+void
+ClassicFragmentMover::show(std::ostream & output) const
+{
+	Mover::show(output);
+	output << "-------------------Settings--------------------" << std::endl;
+	output << "End bias:            " << end_bias_ << std::endl <<
+					"Min overlap:         " << min_overlap_ << std::endl <<
+					"Min fragment length: " << min_frag_length_ << std::endl <<
+					"Check ss:            " << ( (check_ss_) ? "True" : "False" ) << std::endl <<
+					"bApplyEndBias:       " << ( ( bApplyEndBias_ ) ? "True" : "False" ) << std::endl <<
+					"Use predefined window start: " << ( (use_predefined_window_start_) ? "True": "False" ) << std::endl <<
+					"Predefined window start:     " << predefined_window_start_ << std::endl;
+	output << "-----------------------------------------------" << std::endl;
+	output << "Movemap: " << std::endl;
+	movemap()->show();
+	output << "**Unless a movemap is specified above, all backbone torsion angles are set to TRUE**" << std::endl;
+}
+
 protocols::moves::MoverOP
 ClassicFragmentMover::clone() const
 {
@@ -226,7 +247,6 @@ ClassicFragmentMover::fresh_instance() const
 {
 	return new ClassicFragmentMover();
 }
-
 
 //return a fragnum for given Frame, overload to make other choices
 bool ClassicFragmentMover::choose_fragment(
@@ -264,12 +284,11 @@ ClassicFragmentMover::set_defaults() {
 	use_predefined_window_start_ = false;
 }
 
-/// accept with probability 1 if the fragment window is centered on the center of the protein.
-/// accept with probability .3677 if the fragment window is centered end-bias residues away from
-/// the center of the protein
+// accept with probability 1 if the fragment window is centered on the center of the protein.
+// accept with probability .3677 if the fragment window is centered end-bias residues away from
+// the center of the protein
 //		if ( total_insert+frag_length != pose.total_residue() ||  r <= std::exp( -( end_dist / end_bias ) ) ) {
 // the question of total_insert+frag_length == pose.total_residue() doesn't make sense if different frag_lengths are involved
-//
 bool ClassicFragmentMover::end_bias_check( core::pose::Pose const& pose, Size begin ) const {
 	Real r = RG.uniform();
 	// classic bias
@@ -315,7 +334,6 @@ ClassicFragmentMover::define_start_window( Size window_start ) {
 	return;
 }
 
-
 bool ClassicFragmentMover::choose_window_start( pose::Pose const& pose, Size, Size &begin ) const {
 
 	Size const total_insert ( insert_map_.size() );
@@ -358,39 +376,6 @@ bool ClassicFragmentMover::apply_fragment(
 	pose::Pose & pose
 ) const {
 	return frame.apply( movemap, frag_num, pose );
-}
-
-
-std::string
-LoggedFragmentMover::get_name() const {
-	return "LoggedFragmentMover";
-}
-
-bool
-LoggedFragmentMover::apply_fragment(
-		core::fragment::Frame const& frame,
-		Size frag_num,
-		core::kinematics::MoveMap const& movemap,
-		core::pose::Pose &pose
-) const {
-	bool success = Parent::apply_fragment( frame, frag_num, movemap, pose );
-	if ( success ) {
-		logs_.push_back( Item( frame.start(), frag_num ) );
-	}
-	return success;
-}
-
-void
-LoggedFragmentMover::show( std::ostream& out ) const {
-	using namespace ObjexxFCL::fmt;
-	for ( Storage::const_iterator it=logs_.begin(), eit=logs_.end(); it!=eit; ++it) {
-		out << RJ(5, it->frame_pos) << ' ' << RJ(5, it->frag_num) << std::endl;
-	}
-}
-
-void
-LoggedFragmentMover::clear() {
-	logs_.clear();
 }
 
 /// @brief DONT ALLOW HELICES OF LESS THAN 3 OR STRANDS OF LESS THAN 2
@@ -537,27 +522,10 @@ bool ClassicFragmentMover::apply_frames( pose::Pose &pose, FrameList const& fram
 
 std::ostream &operator<< ( std::ostream &os, ClassicFragmentMover const &cfmover )
 {
-    moves::operator<<(os, cfmover);
-    os << "-------------------Settings--------------------" << std::endl;
-    os << "End bias:            " << cfmover.end_bias_ << std::endl <<
-					"Min overlap:         " << cfmover.min_overlap_ << std::endl <<
-					"Min fragment length: " << cfmover.min_frag_length_ << std::endl <<
-					"Check ss:            " << ( (cfmover.check_ss_) ? "True" : "False" ) << std::endl <<
-					"bApplyEndBias:       " << ( ( cfmover.bApplyEndBias_ ) ? "True" : "False" ) << std::endl <<
-					"Use predefined window start: " << ( (cfmover.use_predefined_window_start_) ? "True": "False" ) << std::endl <<
-					"Predefined window start:     " << cfmover.predefined_window_start_ << std::endl;
-		os << "-----------------------------------------------" << std::endl;
-		os << "Movemap: " << std::endl;
-		cfmover.movemap()->show();
-		os << "**Unless a movemap is specified above, all backbone torsion angles are set to TRUE**" << std::endl;  
-    return os;
+	cfmover.show(os);
+	return os;
 }
 
-bool FragmentMover::apply( pose::Pose & pose, Size pos ) const {
-	FrameList frames;
-	if ( !fragset_->frames( pos, frames ) ) return false;
-	return apply_frames( pose, frames );
-}
 
 LoggedFragmentMover::LoggedFragmentMover(
 core::fragment::FragSetCOP fragset,
@@ -567,6 +535,38 @@ core::fragment::FragSetCOP fragset,
 
 LoggedFragmentMover::~LoggedFragmentMover()
 {}
+
+std::string
+LoggedFragmentMover::get_name() const {
+	return "LoggedFragmentMover";
+}
+
+bool
+LoggedFragmentMover::apply_fragment(
+		core::fragment::Frame const& frame,
+		Size frag_num,
+		core::kinematics::MoveMap const& movemap,
+		core::pose::Pose &pose
+) const {
+	bool success = Parent::apply_fragment( frame, frag_num, movemap, pose );
+	if ( success ) {
+		logs_.push_back( Item( frame.start(), frag_num ) );
+	}
+	return success;
+}
+
+void
+LoggedFragmentMover::show( std::ostream& out ) const {
+	using namespace ObjexxFCL::fmt;
+	for ( Storage::const_iterator it=logs_.begin(), eit=logs_.end(); it!=eit; ++it) {
+		out << RJ(5, it->frame_pos) << ' ' << RJ(5, it->frag_num) << std::endl;
+	}
+}
+
+void
+LoggedFragmentMover::clear() {
+	logs_.clear();
+}
 
 } // simple_moves
 } // protocols

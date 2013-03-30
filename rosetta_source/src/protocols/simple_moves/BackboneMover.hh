@@ -51,7 +51,6 @@ public:
 	typedef core::Real Real;
 
 public:
-
 	// empty constructor fills the mover with default values
 	// default values from smallmoves.cc of Rosetta++ (small_move_param)
 	BackboneMover();
@@ -68,6 +67,8 @@ public:
 	/// virtual functions that get overridden or called from the inheriting classes
 	virtual void apply( core::pose::Pose & );
 	virtual std::string get_name() const;
+
+	virtual void show(std::ostream & output=std::cout) const;
 
 	virtual void setup_list( core::pose::Pose & ) = 0;
 
@@ -90,7 +91,6 @@ public:
 	// function definitions in .hh files.  Break that rule only if you're able to demonstrate a
 	// genuine inlining performance boost.
 	void movemap(core::kinematics::MoveMapOP new_movemap);
-
 
 	/// @brief Sets the maximum angle of perturbation, independent of
 	/// secondary structure.
@@ -129,7 +129,6 @@ public:
 	///     SmallMover
 	core::Real get_angle_max(char const type) const;
 
-
 	core::Real new_phi();
 	core::Real new_psi();
 
@@ -156,12 +155,9 @@ public:
 	/// @brief get the DOF_IDs perturbed by the mover during moves, along with their ranges
 	virtual
 	utility::vector1<core::id::DOF_ID_Range>
-	dof_id_ranges(
-		core::pose::Pose & pose
-	) = 0;
+	dof_id_ranges(core::pose::Pose & pose) = 0;
 
 protected:
-
 	core::kinematics::MoveMapOP movemap_;
 
 	/// controls bias w/which uphill moves are accepted
@@ -183,11 +179,12 @@ protected:
 	core::Real old_rama_score_, new_rama_score_;
 
 	bool preserve_detailed_balance_;
-};
+};  // class BackboneMover
+
+std::ostream &operator<< (std::ostream &os, BackboneMover const &mover);
+
 
 ///////////////////////////////////////////////////////////////////////////////
-
-
 /// @brief A mover that makes independent random perturbations of the phi and
 /// psi torsion angles of residue i. It selects residue i at random among
 /// movable residues (set by its MoveMap), and the final torsion angle
@@ -202,7 +199,6 @@ protected:
 class SmallMover : public BackboneMover {
 
 public:
-
 	// default constructor
 	SmallMover();
 
@@ -247,12 +243,10 @@ public:
 	dof_id_ranges(
 		core::pose::Pose & pose
 	);
-};
+};  // class SmallMover
 
 
 ///////////////////////////////////////////////////////////////////////////////
-
-
 /// @brief A mover that perturbs the phi of residue i and the psi of residue
 /// i-1 such that they create a 'shearing' effect, minimizing the downstream
 /// consequences of this torsional perturbation. The final torsion angle
@@ -266,7 +260,6 @@ public:
 class ShearMover : public BackboneMover {
 
 public:
-
 	// default constructor
 	ShearMover();
 
@@ -311,13 +304,10 @@ public:
 	dof_id_ranges(
 		core::pose::Pose & pose
 	);
-};
-
-std::ostream &operator<< (std::ostream &os, BackboneMover const &mover);
+};  // class ShearMover
 
 } // simple_moves
 } // protocols
-
 
 #endif //INCLUDED_protocols_simple_moves_BackboneMover_HH
 

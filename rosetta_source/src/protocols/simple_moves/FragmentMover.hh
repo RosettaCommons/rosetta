@@ -58,7 +58,6 @@ public:
 	virtual bool apply( core::pose::Pose&, Size pos ) const; // apply fragment at seqpos ( if possible )
 	virtual std::string get_name() const;
 
-
 	///@brief apply at all movemable positions --- honors movemap
 	virtual Size apply_at_all_positions( core::pose::Pose& ) const; //apply one fragment at each insertable position
 
@@ -118,8 +117,8 @@ protected:
 	//	bool bValidInsertMap_;
 	core::fragment::InsertMap insert_map_;
 	core::fragment::InsertSize insert_size_;
+};  // class FragmentMover
 
-};
 
 /// @brief A FragmentMover that applies uniform sampling of fragments
 class ClassicFragmentMover : public FragmentMover {
@@ -156,6 +155,7 @@ public:
 	void apply( core::pose::Pose & );
 
 	virtual std::string get_name() const;
+	virtual void show(std::ostream & output=std::cout) const;
 	virtual protocols::moves::MoverOP clone() const;
 	virtual protocols::moves::MoverOP fresh_instance() const;
 
@@ -198,10 +198,7 @@ public:
 		min_frag_length_ = setting;
 	}
 
-	friend std::ostream &operator<< ( std::ostream &os, ClassicFragmentMover const &cfmover );
-
 protected:
-
 	///@brief alternative Constructor to be used by derived classes
 	ClassicFragmentMover(
 		core::fragment::FragSetCOP fragset,
@@ -272,10 +269,7 @@ public: //this is actually protected: but need public for some unit-testing
 	virtual bool
 	valid_ss( std::string const & new_ss ) const;
 
-
-
 private:
-
 	// these parameters seem to be more like constant options and therefore I didn't
 	// wrap them in virtual function calls... but of course one may change that...
 	Size min_overlap_;
@@ -288,7 +282,10 @@ private:
 	bool bApplyEndBias_;
 	bool use_predefined_window_start_;
 	Size predefined_window_start_;
-};
+};  // class ClassicFragmentMover
+
+std::ostream &operator<< ( std::ostream &os, ClassicFragmentMover const &cfmover );
+
 
 class LoggedFragmentMover : public ClassicFragmentMover {
 	typedef ClassicFragmentMover Parent;
@@ -322,8 +319,9 @@ public:
 private:
 	typedef utility::vector1< Item > Storage;
 	mutable Storage logs_;
-};
+};  // class LoggedFragmentMover
 
 } //simple_moves
 } //protocols
+
 #endif

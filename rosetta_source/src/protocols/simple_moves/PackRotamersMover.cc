@@ -60,7 +60,7 @@ using basic::Warning;
 using basic::t_warning;
 static basic::Tracer TR("protocols.simple_moves.PackRotamersMover");
 
-/// PackRotamersMover
+// PackRotamersMover
 
 std::string
 PackRotamersMoverCreator::keyname() const
@@ -99,7 +99,7 @@ PackRotamersMover::PackRotamersMover( std::string const & type_name ) :
 	ig_(0)
 {}
 
-	// constructors with arguments
+// constructors with arguments
 PackRotamersMover::PackRotamersMover(
 	ScoreFunctionCOP scorefxn,
 	PackerTaskCOP task,
@@ -157,6 +157,16 @@ PackRotamersMover::apply( Pose & pose )
 std::string
 PackRotamersMover::get_name() const {
 	return PackRotamersMoverCreator::mover_name();
+}
+
+void
+PackRotamersMover::show(std::ostream & output) const
+{
+	Mover::show(output);
+	if ( score_function() != 0 ) {
+		output << "Score function: " << score_function()->get_name() << std::endl;
+	}
+	else { output << "Score function: none" << std::endl; }
 }
 
 ///@brief when the PackerTask was not generated locally, verify compatibility with pose
@@ -329,6 +339,7 @@ void PackRotamersMover::score_function( ScoreFunctionCOP sf )
 	runtime_assert( sf );
 	scorefxn_ = sf;
 }
+
 void PackRotamersMover::task( task::PackerTaskCOP t ) { task_ = t; }
 
 void PackRotamersMover::task_factory( TaskFactoryCOP tf )
@@ -348,12 +359,7 @@ interaction_graph::InteractionGraphBaseCOP PackRotamersMover::ig() const { retur
 
 std::ostream &operator<< (std::ostream &os, PackRotamersMover const &mover)
 {
-	moves::operator<<(os, mover);
-	if ( mover.score_function() != 0 ) {
-		os << "Score function: " << mover.score_function()->get_name() << std::endl;
-	}
-	else { os << "Score function: none" << std::endl; }
-
+	mover.show(os);
 	return os;
 }
 

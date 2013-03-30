@@ -66,7 +66,6 @@ SwitchResidueTypeSetMover::get_residue_type_set() const {
 	return type_set_tag_;
 }
 
-
 void
 SwitchResidueTypeSetMover::apply( Pose & pose )
 {
@@ -76,6 +75,13 @@ SwitchResidueTypeSetMover::apply( Pose & pose )
 std::string
 SwitchResidueTypeSetMover::get_name() const {
 	return SwitchResidueTypeSetMoverCreator::mover_name();
+}
+
+void
+SwitchResidueTypeSetMover::show(std::ostream & output) const
+{
+	Mover::show(output);
+	output << "Residue type set: " << get_residue_type_set() << std::endl;
 }
 
 moves::MoverOP
@@ -101,7 +107,8 @@ SwitchResidueTypeSetMover::parse_my_tag(
 	if ( tag->hasOption("set") ) type_set_tag_ = tag->getOption<std::string>("set");
 }
 
-void SwitchResidueTypeSetMover::parse_def( utility::lua::LuaObject const & def,
+void
+SwitchResidueTypeSetMover::parse_def( utility::lua::LuaObject const & def,
 				utility::lua::LuaObject const & /*score_fxns*/,
 				utility::lua::LuaObject const & /*tasks*/,
 				protocols::moves::MoverCacheSP /*cache*/ ) {
@@ -110,9 +117,7 @@ void SwitchResidueTypeSetMover::parse_def( utility::lua::LuaObject const & def,
 
 std::ostream &operator<< (std::ostream &os, SwitchResidueTypeSetMover const &mover)
 {
-	moves::operator<<(os, mover);
-	os << "Residue type set: " << mover.get_residue_type_set() << std::endl;
-
+	mover.show(os);
 	return os;
 }
 
