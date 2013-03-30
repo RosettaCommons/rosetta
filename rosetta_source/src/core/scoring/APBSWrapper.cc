@@ -67,11 +67,10 @@ APBSWrapper::APBSWrapper(core::pose::Pose const & pose,
 }
 APBSResultCOP
 APBSWrapper::exec() {
-
-	//const int nwrites = result->nwrites;
 	int ret = 0;
 
 #ifdef LINK_APBS_LIB
+	const int nwrites = result->nwrites;
 	std::vector< double * > raw_grid_data;
 	for(int i=0; i<nwrites; i++ ) {
     raw_grid_data.push_back(result->grid_data[i].data());
