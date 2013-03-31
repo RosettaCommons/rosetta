@@ -134,6 +134,9 @@ get_rna_base_coordinate_system( core::conformation::Residue const & rsd, numeric
 bool
 Is_base_phosphate_atom_pair( conformation::Residue const & rsd_1, conformation::Residue const & rsd_2, Size const atomno_1, Size const atomno_2);
 
+utility::vector1< std::string > const &
+get_atoms_involved_in_phosphate_torsion();
+
 } //ns rna
 } //ns scoring
 } //ns core

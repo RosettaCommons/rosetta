@@ -166,7 +166,7 @@ std::string const	default_jump_atom( conformation::Residue const & rsd ) {
 		}
 	}
 	if ( rsd.name3() == " MG" )		return "MG  ";
-	if ( rsd.is_virtual_residue() )	return " Y  ";
+	if ( rsd.name3() == "XXX" )	return " Y  ";
 
 	std::cerr << "Residue ??? " << rsd.name3() << std::endl;
 	utility_exit_with_message( "Do not know jump atom for this residue" );
@@ -808,7 +808,33 @@ Is_base_phosphate_atom_pair( conformation::Residue const & rsd_1, conformation::
 	return Is_base_phosphate_atom_pair;
 
 }
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////////
+utility::vector1< std::string > const &
+get_atoms_involved_in_phosphate_torsion()
+{
+	static utility::vector1< std::string > atoms_involved_in_phosphate_torsion;
+	static bool init( false );
+
+	if ( !init ){
+
+		atoms_involved_in_phosphate_torsion.clear();
+
+		atoms_involved_in_phosphate_torsion.push_back( " P  " );
+		atoms_involved_in_phosphate_torsion.push_back( " O1P" );
+		atoms_involved_in_phosphate_torsion.push_back( " O2P" );
+		atoms_involved_in_phosphate_torsion.push_back( " O5*" );
+		atoms_involved_in_phosphate_torsion.push_back( "1H5*" );
+		atoms_involved_in_phosphate_torsion.push_back( "2H5*" );
+
+		init = true;
+
+	}
+
+	return atoms_involved_in_phosphate_torsion;
+
+}
+
 
 } //ns rna
 } //ns scoring

@@ -9,7 +9,7 @@
 
 /// @file   core/scoring/rna/RNA_VDW_Energy.hh
 /// @brief  Statistically derived rotamer pair potential class declaration
-/// @author Phil Bradley
+/// @author Rhiju Das
 
 
 #ifndef INCLUDED_core_scoring_rna_RNA_VDW_Energy_fwd_hh
