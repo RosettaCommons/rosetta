@@ -7,8 +7,8 @@
 // For more information, see http://www.rosettacommons.org/.
 
 /// @file IterativeAbrelax
-/// @brief iterative protocol starting with abinitio and getting progressively more concerned with full-atom relaxed structures
-/// @detailed
+/// @brief iterative protocol starting with ab initio and getting progressively more concerned with full-atom relaxed structures
+/// @details
 /// @author Oliver Lange
 
 // Unit Headers
@@ -43,31 +43,31 @@ namespace abinitio {
 
 
 
-HedgeArchive::HedgeArchive( std::string name )
-  : score_cut_per_batch_( 0.1 ),
-    add_fuzzy_( 0.1 ) //0 for strictly score based, 1 for totally random
+HedgeArchive::HedgeArchive( std::string name ) :
+		score_cut_per_batch_( 0.1 ),
+		add_fuzzy_( 0.1 ) //0 for strictly score based, 1 for totally random
 {
-  set_name( name );
-  set_max_nstruct( 1e6 ); //more than this and we have clearly too much filesystem load.
-  set_evaluate_local( false ); //never re-evaluate decoys in this Archive
+	set_name( name );
+	set_max_nstruct( static_cast<Size>(1e6) ); //more than this and we have clearly too much file system load.
+	set_evaluate_local( false ); //never re-evaluate decoys in this Archive
 }
 
 void HedgeArchive::incorporate_batch( core::Size batch_id ) {
-  tr.Debug << "batch " << batch_id << " has finished... incorporating into hedge archive " << std::endl;
-  SilentStructs& sorted_decoys( incoming_structures_[ batch_id ] );
-  sorted_decoys.sort();
-  Size ind_max( static_cast< Size > ( sorted_decoys.size()*score_cut_per_batch_ ) );
-  for ( SilentStructs::const_iterator sit = sorted_decoys.begin(); sit != sorted_decoys.end() && ind_max>0; ++sit ) {
-    if ( RG.uniform() < (1-add_fuzzy_) ) {
-      set_max_nstruct( 1e6 );
-      tr.Debug << "add decoy from batch " << batch_id << std::endl;
-      add_structure_at_position( decoys().end(), sit->second );
-      --ind_max;
-    }
-  }
-  incoming_structures_.erase( batch_id );
-  remove_decoys( batch_id );
-  old_batches_.insert( batch_id );
+	tr.Debug << "batch " << batch_id << " has finished... incorporating into hedge archive " << std::endl;
+	SilentStructs& sorted_decoys( incoming_structures_[ batch_id ] );
+	sorted_decoys.sort();
+	Size ind_max( static_cast< Size > ( sorted_decoys.size()*score_cut_per_batch_ ) );
+	for ( SilentStructs::const_iterator sit = sorted_decoys.begin(); sit != sorted_decoys.end() && ind_max>0; ++sit ) {
+		if ( RG.uniform() < (1-add_fuzzy_) ) {
+			set_max_nstruct( static_cast<Size>(1e6) );
+			tr.Debug << "add decoy from batch " << batch_id << std::endl;
+			add_structure_at_position( decoys().end(), sit->second );
+			--ind_max;
+		}
+	}
+	incoming_structures_.erase( batch_id );
+	remove_decoys( batch_id );
+	old_batches_.insert( batch_id );
 }
 
 bool HedgeArchive::add_evaluated_structure( core::io::silent::SilentStructOP evaluated_decoy, jd2::archive::Batch const& batch ) {

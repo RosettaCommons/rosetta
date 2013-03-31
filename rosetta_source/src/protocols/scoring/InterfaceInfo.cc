@@ -15,45 +15,25 @@
 
 
 // Unit headers
-// AUTO-REMOVED #include <protocols/scoring/InterchainPotential.hh>
-
-// AUTO-REMOVED #include <core/scoring/AtomVDW.hh>
-#include <core/scoring/EnvPairPotential.hh>
-// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
+#include <protocols/scoring/InterfaceInfo.hh>
 
 // Package headers
-
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
+#include <core/scoring/EnvPairPotential.hh>
 
 // Project headers
 #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
-// AUTO-REMOVED #include <basic/database/open.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/datacache/CacheableDataType.hh>
-// AUTO-REMOVED #include <basic/datacache/BasicDataCache.hh>
 
-// Utility headers
-// AUTO-REMOVED #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/utility.functions.hh>
-
-// just for debugging
-//#include <ObjexxFCL/format.hh>
-
+// Basic headers
 #include <basic/Tracer.hh>
 
-#include <protocols/scoring/InterfaceInfo.hh>
+// Utility headers
 #include <utility/vector1.hh>
 
 using basic::T;
 using basic::Error;
 using basic::Warning;
 
-
-// C++
 
 namespace protocols {
 namespace scoring {
@@ -140,7 +120,7 @@ core::Size
 InterfaceInfo::closest_interface_residue( core::pose::Pose const & pose, core::Size src_rsd, core::Real & distance ) const
 {
 	core::Size ret_rsd (0);
-	core::Real min_distance (100000.0), temp_dist;
+	core::Real min_distance (100000.0), temp_dist (0.0);
 	for ( core::Size i = 1; i <= num_jump_; ++i ){
 		core::Size temp_rsd = interface_list_[i]->closest_interface_residue( pose, src_rsd, temp_dist );
 		if ( temp_dist < min_distance ) {

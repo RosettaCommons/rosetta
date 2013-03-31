@@ -633,7 +633,7 @@ HeaderInformation::store_experimental_techniques(
 		utility_exit();
 	}
 
-	size_t t_begin, t_len, t_end(-1);
+	size_t t_begin, t_len(0), t_end(-1);
 
 	while(true){
 		t_begin = exp.find_first_not_of(' ', t_end+1);

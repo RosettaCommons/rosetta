@@ -485,6 +485,7 @@ void MolecularDynamics::createBondList( )
 			newbond.atom_id_2 = id::AtomID( indices[j], cartom[i].atom_id.rsd()  );
 			newbond.index1	= -1;
 			newbond.index2	= -1;
+			newbond.length = 0.0;
 
 			bondlist.push_back( newbond );
 		}
@@ -507,6 +508,7 @@ void MolecularDynamics::createBondList( )
 		newbond.atom_id_2 = id::AtomID( atom2, ir+1  );
 		newbond.index1	= atom1;
 		newbond.index2	= atom2;
+		newbond.length = 0.0;
 
 		bondlist.push_back( newbond );
 	}

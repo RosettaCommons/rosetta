@@ -290,7 +290,7 @@ void RemodelData::getLoopsToBuildFromFile( std::string filename ) {
 								else {
 													oss << line.index + length*rep << " _ " ;
 								}
-					for ( Size i = 3; i< (int)split_info.size(); i++ ) {
+					for ( Size i = 3; i< split_info.size(); i++ ) {
 						if (split_info[i].substr(0,3) != "CST"){
 							oss << split_info[i] << " " ;
 						}

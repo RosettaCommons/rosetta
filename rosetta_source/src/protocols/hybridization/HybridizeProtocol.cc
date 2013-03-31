@@ -1234,7 +1234,7 @@ HybridizeProtocol::parse_my_tag(
 		task_factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data );
 		task_ = task_factory_->create_task_and_apply_taskoperations( pose );
 	}	else {
-	  task_factory_ = NULL;
+		task_factory_ = NULL;
 	}
 
 	// force starting template
