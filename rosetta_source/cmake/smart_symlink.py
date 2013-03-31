@@ -30,15 +30,15 @@ for filename in files:
     executable_name = cmake_name.split('.')[0]
     new_name = path + executable_name + '.' + binext
     default_name = path + executable_name + '.default.' + binext
+    default_name_no_extension = path + executable_name
 
     if os.path.exists( executable_name ):
         # removing this print statement as it is unnecessary, and adds extra lines to compact ninja output.
-        #print 'symlinking ', executable_name, ' to ', new_name
-        if os.path.exists( new_name ):
-            os.unlink( new_name )
-        if os.path.exists( default_name ):
-            os.unlink( default_name )
-        os.symlink( os.path.abspath( executable_name ), new_name )
-        os.symlink( os.path.abspath( executable_name ), default_name )
+        # print 'about to try symlinking ', executable_name, ' to ', new_name
+        for new_name_for_symlink in [ new_name, default_name, default_name_no_extension ]:
+            if os.path.exists( new_name_for_symlink ):
+                os.unlink( new_name_for_symlink )
+            print 'symlinking ', executable_name, ' to ', new_name_for_symlink
+            os.symlink( os.path.abspath( executable_name ), new_name_for_symlink )
     else:
          print "Warning: %s doesn't exist!" % ( executable_name )
