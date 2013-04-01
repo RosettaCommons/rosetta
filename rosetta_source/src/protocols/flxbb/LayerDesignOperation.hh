@@ -46,7 +46,7 @@
 #include <protocols/toolbox/SelectResiduesByLayer.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
-
+#include <protocols/jd2/parser/BluePrint.fwd.hh>
 // AUTO-REMOVED #include <iostream>
 #include <utility/vector1.hh>
 
@@ -64,6 +64,17 @@ namespace flxbb {
 class LayerDesignOperation : public core::pack::task::operation::TaskOperation {
 public:
 
+	enum LayerOperationType {
+		DESIGN,
+		NO_DESIGN,
+		OMIT
+	};
+
+	enum LayerSpecificationType {
+		DESIGNABLE,
+		PACKABLE,
+		FIXED
+	};
 
 	typedef std::string String;
 	typedef core::Real Real;
@@ -170,14 +181,18 @@ private:
 	bool make_pymol_script_;
 
 	LayerResidues layer_residues_;
+
 	std::map< std::string, bool > design_layer_;
+	std::map< std::string, LayerSpecificationType > layer_specification_;
+	std::map< std::string, LayerOperationType > layer_operation_;
 
 	TaskLayers task_layers_;
 
 	// define the layer each residue belong to
 	toolbox::SelectResiduesByLayerOP srbl_;
 
-
+	// for defining secondary structure
+	protocols::jd2::parser::BluePrintOP blueprint_;
 };
 
 // utility class for chaining together task operations

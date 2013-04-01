@@ -50,6 +50,7 @@
 #include <protocols/toolbox/SelectResiduesByLayer.hh>
 #include <core/pose/symmetry/util.hh>
 #include <protocols/moves/DataMap.hh>
+#include <protocols/jd2/parser/BluePrint.hh>
 
 // Utility Headers
 #include <protocols/flxbb/utility.hh>
@@ -110,7 +111,8 @@ LayerDesignOperation::LayerDesignOperation():
 	verbose_( false ),
 	restrict_restypes_( true ),
 	make_pymol_script_( false ),
-	srbl_( new toolbox::SelectResiduesByLayer )
+	srbl_( new toolbox::SelectResiduesByLayer ),
+	blueprint_( NULL )
 {
 	set_default_layer_residues();
 }
@@ -124,7 +126,8 @@ LayerDesignOperation::LayerDesignOperation( bool dsgn_core, bool dsgn_boundary, 
 	verbose_( false ),
 	restrict_restypes_( true ),
 	make_pymol_script_( false ),
-	srbl_( new toolbox::SelectResiduesByLayer )
+	srbl_( new toolbox::SelectResiduesByLayer ),
+	blueprint_( NULL )
 {
 	design_layer( dsgn_core, dsgn_boundary, dsgn_surface );
 	set_default_layer_residues();
@@ -238,7 +241,7 @@ void
 LayerDesignOperation::set_default_layer_residues() {
 	TR << "Initializing the layers with the default residues" << std::endl;
 	boost::assign::insert(layer_residues_)
-								("core", boost::assign::map_list_of
+		      ("core", boost::assign::map_list_of
 					 		("all",							"AFILPVWYDNST")
 							("Loop", 						"AFILPVWY") 
 							("Strand",	 				"FILVWY") 
@@ -268,11 +271,21 @@ LayerDesignOperation::set_default_layer_residues() {
 					("Cterm", boost::assign::map_list_of
 					 ("all", "ACDEFGHIKLMNPQRSTVWY")
 					);
-	
+
 	boost::assign::insert(design_layer_)
-					("core", false)
-					("boundary", false)
-					("surface", false);
+					("core", false )
+					("boundary", false )
+					("surface", false );
+
+	boost::assign::insert(layer_specification_)
+		("core", DESIGNABLE)
+		("boundary", DESIGNABLE)
+		("surface", DESIGNABLE);
+	
+	boost::assign::insert(layer_operation_)
+		("core", DESIGN)
+		("boundary", DESIGN)
+		("surface", DESIGN);
 }
 
 utility::vector1<bool> 
@@ -302,10 +315,31 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 		PackerTask_ layer_task(input_pose);
   	task_pair.second->apply(input_pose, layer_task);
 		utility::vector1< bool > designable_residues( layer_task.designing_residues() );
-		for(Size i = 1; i <= designable_residues.size(); i++)
-			if( designable_residues[i] )
+		utility::vector1< bool > packable_residues( layer_task.repacking_residues() );
+		utility::vector1< bool > fixed_residues;
+		runtime_assert( designable_residues.size() == packable_residues.size() );
+		for(Size i = 1; i <= designable_residues.size(); i++) {
+			bool fixed( false );
+			if( designable_residues[i] ) {
 				TR << "\t- residue " << i << " is designable" << std::endl;
-		layer_specification[ task_pair.first ] = designable_residues;
+			} else if ( ! designable_residues[i] && packable_residues[i] ) {
+				TR << "\t- residue " << i << " is repackable" << std::endl;
+			} else {
+				TR << "\t- residue " << i << " is fixed" << std::endl;
+				fixed = true;
+			}
+			fixed_residues.push_back( fixed );
+		}
+		std::map< std::string, LayerSpecificationType >::const_iterator type_it = layer_specification_.find( task_pair.first );
+		runtime_assert( type_it != layer_specification_.end() );
+		LayerSpecificationType const type = (*type_it).second;
+		if ( type == DESIGNABLE ) {
+			layer_specification[ task_pair.first ] = designable_residues;
+		} else if ( type == PACKABLE ) {
+			layer_specification[ task_pair.first ] = packable_residues;
+		} else if ( type == FIXED ) {
+			layer_specification[ task_pair.first ] = fixed_residues;
+		}
 	}
 
 	// symmetry check
@@ -315,12 +349,17 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 	 } else {
 		pose = input_pose;
   }
-
-	core::scoring::dssp::Dssp dssp( pose );
-	dssp.dssp_reduced();
+	
+	std::string secstruct;
+	if ( blueprint_ ) {
+		secstruct = blueprint_->secstruct();
+	} else {
+		core::scoring::dssp::Dssp dssp( pose );
+		dssp.dssp_reduced();
+		secstruct = dssp.get_dssp_secstruct();
+	}
 	
 	// we need to add a SS identifier for the ligand if there is one
-	String secstruct = dssp.get_dssp_secstruct();
 	utility::vector1<Size> ligands = protocols::flxbb::find_ligands( pose );
 	bool has_ligand = false;
   TR << "secstruct is:" << secstruct << std::endl;
@@ -344,7 +383,7 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 	for( Size i=1; i<=pose.total_residue(); ++i ) {
 		// if this residue is not a protein residue, we shouldn't process it further
 		if ( ! pose.residue( i ).is_protein() ) continue;
-		char ss( dssp.get_dssp_secstruct( i ) );
+		char ss( secstruct[i] );
 		if( ss == 'H' && flag == false && i != 1 ) {
 			initial_helix[ i ] = true;
 			helix_capping[ i-1 ] = true;
@@ -382,12 +421,11 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 				active_layers.push_back( layer_pair.first );
 		}
 
-		char ss( dssp.get_dssp_secstruct( i ) );
+		char ss( secstruct[i] );
 		TR << "Residue " << i << std::endl;
 		TR << "    ss=" << ss << " "
 			 << "    Sasa=" << ObjexxFCL::fmt::F( 6, 2, srbl_->rsd_sasa( i ) ) << std::endl;
 		TR << "    basic layer = " << srbl_layer << std::endl;
-
 
 		// If there are no active layers and the working layer is designable
 		// append the working layer
@@ -398,7 +436,7 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 			if( repack_non_designed_residues_ ) {
   			task.nonconst_residue_task( i ).restrict_to_repacking();
 				TR << "    restricting aminoacid to repacking" << std::endl;
-			} 
+			}
 			else {
   			task.nonconst_residue_task( i ).prevent_repacking();
 				TR << "    prenventing aminoacid from  repacking" << std::endl;
@@ -417,9 +455,37 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 
 		// skip the residue if this position is defined as PIKAA, NATRO or NATAA in the resfile
 		const std::string resfile_cmd =  task.residue_task( i ).command_string();
-		if( resfile_cmd.find( "PIKAA" ) != std::string::npos || resfile_cmd.find( "NATRO" ) != std::string::npos ){
+		if( resfile_cmd.find( "PIKAA" ) != std::string::npos ||	resfile_cmd.find( "NATRO" ) != std::string::npos ){
 			if( verbose_ ) {
 				TR << " ,Resfile info is used. (" << resfile_cmd  << ")"<< std::endl;
+			}
+			continue;
+		}
+
+		// operations precedence: 1) OMIT, 2) NO_DESIGN, 3) DESIGN
+		// skip the residue if this position is included in a layer with operation specified as "OMIT"
+ 		bool omit( false );
+		bool design( true );
+		BOOST_FOREACH(std::string& layer, active_layers) {
+			std::map< std::string, LayerOperationType >::const_iterator type_it = layer_operation_.find( layer );
+			runtime_assert( type_it != layer_operation_.end() );
+			LayerOperationType const operation = (*type_it).second;
+			if ( operation == OMIT ) {
+				omit = true;
+			} else if ( operation == NO_DESIGN ) {
+				design = false;
+			}
+		}
+		if ( omit ) {
+			TR << "Omitting residue " << i << std::endl;
+			continue;
+		}
+		if ( !design ) {
+			TR << "Not designing residue " << i << " as specified by no_design in the XML tag." << std::endl;
+			if ( repack_non_designed_residues_ ) {
+				task.nonconst_residue_task( i ).restrict_to_repacking();
+			} else {
+				task.nonconst_residue_task( i ).prevent_repacking();
 			}
 			continue;
 		}
@@ -441,8 +507,8 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
   			task.nonconst_residue_task( i ).restrict_absent_canonical_aas( get_restrictions( layer, srbl_layer, "Helix") );
   
   		} 
-		TR << i << " done " << std::endl << std::flush;
-		}
+			TR << i << " done " << std::endl << std::flush;
+		} // for each layer
 	} // for( i )
 } // apply
 
@@ -503,6 +569,10 @@ LayerDesignOperation::parse_tag( TagPtr tag )
 		srbl_->make_rasmol_format_file( tag->getOption< bool >( "make_rasmol_script" ) );
 	}
 
+	if( tag->hasOption( "blueprint" ) ) {
+		blueprint_ = new protocols::jd2::parser::BluePrint( tag->getOption< std::string >("blueprint") );
+	}
+
 	set_verbose( tag->getOption< bool >( "verbose", false ) );
 	set_restrict_restypes( tag->getOption< bool >( "restrict_restypes", true ) );
 	make_pymol_script( tag->getOption< bool >("make_pymol_script", false) );
@@ -511,6 +581,27 @@ LayerDesignOperation::parse_tag( TagPtr tag )
 
 		std::string layer = layer_tag->getName(); // core, residue, boundary or taskoperation
 		if( layer == "core" || layer =="boundary" || layer == "surface" ||  layer == "Nterm" ||  layer == "Cterm" || task_layers_.count( layer ) ) {
+			std::string const operation_str = layer_tag->getOption< std::string >("operation", "design" );
+			TR << "operation=" << operation_str << std::endl;
+			if ( operation_str == "design" ) {
+				layer_operation_[ layer ] = DESIGN;
+			} else if ( operation_str == "no_design" ) {
+				layer_operation_[ layer ] = NO_DESIGN;
+			} else if ( operation_str == "omit" ) {
+				layer_operation_[ layer ] = OMIT;
+			} else {
+				utility_exit_with_message( "Invalid operation " + operation_str + " specified for layer " + layer + ". Valid options are \"design\", \"no_design\", and \"omit\"." );
+			}
+			std::string const specification = layer_tag->getOption< std::string >("specification", "designable");
+			if ( specification == "designable" ) {
+				layer_specification_[ layer ] = DESIGNABLE;
+			} else if ( specification == "repackable" ) {
+				layer_specification_[ layer ] = PACKABLE;
+			} else if ( specification == "fixed" ) {
+				layer_specification_[ layer ] = FIXED;
+			} else {
+				utility_exit_with_message( "Invalid specification " + specification + " for layer " + layer + ". Valid options are \"designable\", \"packable\", and \"fixed\"." );
+			}
 			TR << "Modifying specification for layer " << layer << std::endl;
 		} else if(layer == "CombinedTasks" ) {
 			std::string comb_name = layer_tag->getOption< std::string >("name");
@@ -525,7 +616,6 @@ LayerDesignOperation::parse_tag( TagPtr tag )
 			task_layers_[ comb_name ] = comb;
 			design_layer_[ comb_name ] = true;
 			layer_residues_[ comb_name ] = std::map< std::string, std::string >();
-
 		} else if( TaskOperationFactory::get_instance()->has_type(layer) ) {
 			std::string task_op_type = layer;
 			std::string task_name = layer_tag->getOption< std::string >("name");
@@ -568,7 +658,7 @@ LayerDesignOperation::parse_tag( TagPtr tag )
 					layer_residues_[ lrs->first ][ ld->first ] = std::string(temp_def_res_set.begin(), temp_def_res_set.end() );
 				}
 			}
-			
+
 			if( secstruct == "all" &&  secstruct_tag->hasOption("exclude") ) {
 				const std::string aas = secstruct_tag->getOption< std::string >("exclude");
 				LayerResidues::iterator lrs =  layer_residues_.find( layer );
@@ -605,6 +695,7 @@ LayerDesignOperation::parse_tag( TagPtr tag )
 				temp_def_res_set.erase(aa);
 			layer_residues_[ layer ][ secstruct ] = std::string(temp_def_res_set.begin(), temp_def_res_set.end() );
 			} 
+
 		}
 	}
 
