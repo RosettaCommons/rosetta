@@ -294,6 +294,8 @@ make_tag_with_dashes( utility::vector1< Size > working_res ){
 	std::string tag = "";
 
 	utility::vector1< std::pair<Size,Size> > working_res_segments;
+	if ( working_res.size() == 0 ) return tag;
+
 	Size start_segment = working_res[1];
 	Size last_res = working_res[1];
 
@@ -383,7 +385,7 @@ prepare_full_length_start_model(
 		if ( !sequence_mask( i ) )  continue;
 		Size const pdb_number( alignment2sequence[ which_sequence ][i] );
 
-		if ( i == 1 || sequence_mask( i-1 ) ){
+		if ( i == 1 ||  ( sequence_mask( i-1 ) && !template_pose.fold_tree().is_cutpoint( i-1) )  ){
 			pose.append_residue_by_bond( template_pose.residue( pdb_number ) );
 		} else {
 			pose.append_residue_by_jump( template_pose.residue( pdb_number ), pose.total_residue() );
@@ -511,6 +513,7 @@ rna_thread_test(){
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 
 	core::import_pose::pose_from_pdb( template_pose, *rsd_set, template_file );
+	protocols::rna::figure_out_reasonable_rna_fold_tree( template_pose );
 
 	prepare_full_length_start_model( template_pose, pose, sequences, sequence_mask,  alignment2sequence, pdb_names, template_file );
 	protocols::rna::virtualize_5prime_phosphates( pose );

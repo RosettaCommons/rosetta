@@ -36,6 +36,7 @@
 //RNA stuff.
 #include <protocols/rna/RNA_Minimizer.hh>
 #include <protocols/rna/RNA_ProtocolUtil.hh>
+#include <protocols/toolbox/AllowInsert.hh>
 
 // C++ headers
 #include <iostream>
@@ -59,6 +60,7 @@ using io::pdb::dump_pdb;
 // i.e., OPT_KEY( Type, key ) -->  OptionKey::key
 // to have them in a namespace use OPT_1GRP_KEY( Type, grp, key ) --> OptionKey::grp::key
 OPT_KEY( Boolean, deriv_check )
+OPT_KEY( IntegerVector, minimize_res )
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -72,6 +74,7 @@ rna_fullatom_minimize_test()
 	using namespace core::kinematics;
 	using namespace core::io::silent;
 	using namespace core::import_pose::pose_stream;
+	using namespace protocols::toolbox;
 
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
@@ -108,7 +111,6 @@ rna_fullatom_minimize_test()
 	rna_minimizer.skip_o2star_trials( option[ basic::options::OptionKeys::rna::skip_o2star_trials] );
 	rna_minimizer.vary_bond_geometry( option[ basic::options::OptionKeys::rna::vary_geometry ] );
 
-
 	// Silent file output setup
 	std::string const silent_file = option[ out::file::silent  ]();
 	SilentFileData silent_file_data;
@@ -123,6 +125,17 @@ rna_fullatom_minimize_test()
 		protocols::rna::ensure_phosphate_nomenclature_matches_mini( pose );
 		i++;
 		protocols::rna::figure_out_reasonable_rna_fold_tree( pose );
+
+		std::cout << pose.fold_tree() << std::endl;
+
+		if ( option[ minimize_res ].user() ){
+			// don't allow anything to move, and then supply minimize_res as 'extra' minimize_res.
+			AllowInsertOP allow_insert = new AllowInsert( pose );
+			allow_insert->set( false );
+			rna_minimizer.set_allow_insert( allow_insert );
+			rna_minimizer.set_extra_minimize_res( option[ minimize_res ]() );
+		}
+
 
 		// graphics viewer.
 		if ( i == 1 ) protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
@@ -181,10 +194,13 @@ try {
 	std::cout              << "              " << argv[0] << "  -in:file:silent <silent file> " << std::endl;
 	std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
 
+	utility::vector1< Size > blank_size_vector;
+
 	NEW_OPT( deriv_check, "Check analytical vs. numerical derivatives",false );
 	option.add_relevant( basic::options::OptionKeys::rna::vary_geometry );
 	option.add_relevant( basic::options::OptionKeys::rna::skip_coord_constraints );
 	option.add_relevant( basic::options::OptionKeys::rna::skip_o2star_trials );
+  NEW_OPT( minimize_res, "Residues to minimize", blank_size_vector  );
 
 	////////////////////////////////////////////////////////////////////////////
 	// setup
