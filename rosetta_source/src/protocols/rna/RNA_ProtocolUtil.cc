@@ -1274,5 +1274,17 @@ translate_virtual_anchor_to_first_rigid_body( pose::Pose & pose ){
 
 }
 
+////////////////////////////////////////////////////////////////////////////////////////
+bool
+involved_in_phosphate_torsion( std::string atomname )
+{
+	utility::vector1< std::string > const & atoms_involved = core::scoring::rna::get_atoms_involved_in_phosphate_torsion();
+
+	for ( Size n = 1; n <= atoms_involved.size(); n++ ){
+		if (  atomname == atoms_involved[ n ] ) return true;
+	}
+	return false;
+}
+
 } // namespace rna
 } // namespace protocols

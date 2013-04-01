@@ -93,6 +93,9 @@ toolbox::AllowInsertOP
 	void
 	setup_base_pair_constraints( core::pose::Pose & pose );
 
+	void
+	setup_virtual_phosphate_variants( core::pose::Pose & pose );
+
 	private:
 
 	void
@@ -118,18 +121,11 @@ toolbox::AllowInsertOP
 	void
 	read_parameters_from_file( std::string const & pairing_file );
 
-
 	void
 	setup_jumps( core::pose::Pose & pose );
 
 	void
 	setup_chainbreak_variants( core::pose::Pose & pose );
-
-	void
-	setup_virtual_phosphate_variants( core::pose::Pose & pose );
-
-	void
-	setup_virtual_phosphate_variants_OLD( core::pose::Pose & pose ); //remove this by end of 2012
 
 	void
 	set_jump_library( RNA_JumpLibraryOP rna_jump_library );

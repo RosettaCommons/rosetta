@@ -238,17 +238,19 @@ RNA_StructureParameters::initialize_allow_insert( core::pose::Pose & pose  )
  	if (allow_insert_res_.size() > 0 ) {
  		allow_insert_->set( false );
  		for (Size n = 1; n <= allow_insert_res_.size(); n++ ) {
+
 			Size const i = allow_insert_res_[ n ];
 			allow_insert_->set( i, true );
 			// new -- make sure loops are moveable (& closeable!) at the 3'-endpoint
 			if ( i < pose.total_residue() ) allow_insert_->set_phosphate( i+1, pose, true );
+
  		}
  	} else {
  		allow_insert_->set( true );
  	}
 
-	//	std::cout << "ALLOW_INSERT after INITIALIZE " << std::endl;
-	//	allow_insert_->show();
+	//std::cout << "ALLOW_INSERT after INITIALIZE_ALLOW_INSERT " << std::endl;
+	//allow_insert_->show();
 
 	// We don't trust phosphates at the beginning of chains!
 	// Wait, this it total nonsense... captured by virtual phosphate stuff later on!
@@ -966,46 +968,16 @@ RNA_StructureParameters::setup_chainbreak_variants( pose::Pose & pose )
 
 }
 
-////////////////////////////////////////////////////////////////////////////////////////
-// remove this by end of 2012.
-void
-RNA_StructureParameters::setup_virtual_phosphate_variants_OLD( pose::Pose & pose )
-{
-
-	if ( pose.residue( 1 ).is_RNA() ) {
-		pose::add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_PHOSPHATE, 1  );
-		allow_insert_->set_phosphate( 1, pose, false );
-	}
-
-	for ( Size n = 1; n < pose.total_residue(); n++ ){
-
-		if ( pose.fold_tree().is_cutpoint( n ) &&
-				 !pose.residue_type( n   ).has_variant_type( chemical::CUTPOINT_LOWER ) &&
-				 !pose.residue_type( n+1 ).has_variant_type( chemical::CUTPOINT_UPPER ) &&
-				 pose.residue_type( n+1 ).is_RNA() ){
-
-			pose::add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_PHOSPHATE, n+1  );
-
-			// not necessary since virtualizing does not (should not!) change atom numbering.
-			//			allow_insert_->renumber_after_variant_changes( pose );
-
-			allow_insert_->set_phosphate( n+1, pose, false );
-
-		}
-
-	}
-
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_StructureParameters::setup_virtual_phosphate_variants( pose::Pose & pose )
 {
 	using namespace id;
+	using namespace chemical;
 
 	if ( pose.residue( 1 ).is_RNA() ) {
-		pose::add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_PHOSPHATE, 1  );
+		if ( ! pose.residue_type( 1 ).has_variant_type( VIRTUAL_PHOSPHATE) ) pose::add_variant_type_to_pose_residue( pose, VIRTUAL_PHOSPHATE, 1  );
 		allow_insert_->set_phosphate( 1, pose, false );
 	}
 
@@ -1017,18 +989,14 @@ RNA_StructureParameters::setup_virtual_phosphate_variants( pose::Pose & pose )
 			utility_exit_with_message( "Do not specify cutpoint_open at last residue of model" );
 		}
 
-		if ( pose.residue_type( n   ).has_variant_type( chemical::CUTPOINT_LOWER ) ||
-				 pose.residue_type( n+1 ).has_variant_type( chemical::CUTPOINT_UPPER ) ){
+		if ( pose.residue_type( n   ).has_variant_type( CUTPOINT_LOWER ) ||
+				 pose.residue_type( n+1 ).has_variant_type( CUTPOINT_UPPER ) ){
 			utility_exit_with_message( "conflicting cutpoint_open & cutpoint_closed" );
 		}
 
 		if ( pose.residue_type( n+1 ).is_RNA() ){
-			pose::add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_PHOSPHATE, n+1  );
+					if ( ! pose.residue_type( n+1 ).has_variant_type( VIRTUAL_PHOSPHATE) ) pose::add_variant_type_to_pose_residue( pose, VIRTUAL_PHOSPHATE, n+1  );
 			allow_insert_->set_phosphate( n+1, pose, false );
-			// make sure no fragments are wasted on moving this phosphate around...
-			// perhaps this should go into set_phosphate itself
-			// allow_insert_->set( named_atom_id_to_atom_id( NamedAtomID( "1H5*", n+1 ), pose ), false );
-			// allow_insert_->set( named_atom_id_to_atom_id( NamedAtomID( "2H5*", n+1 ), pose ), false );
 		}
 
 	}
@@ -1061,21 +1029,21 @@ RNA_StructureParameters::random_jump_change( pose::Pose & pose ) const
 		// Check that we can actually insert here. At least one of the jump partners
 		// should allow moves. (I guess the other one can stay fixed).
 		Size const jump_pos1( pose.fold_tree().upstream_jump_residue( which_jump ) );
-		// Size const jump_pos2( pose.fold_tree().downstream_jump_residue( which_jump ) ); // Unused variable causes warning.
+		Size const jump_pos2( pose.fold_tree().downstream_jump_residue( which_jump ) ); // Unused variable causes warning.
 
 		Residue const & rsd1 = pose.residue( jump_pos1 );
 		AtomID jump_atom_id1( rsd1.atom_index( default_jump_atom( rsd1 ) ), jump_pos1 );
 
-		// Residue const & rsd2 = pose.residue( jump_pos2 ); // Unused variable causes warning.
-		// AtomID jump_atom_id2( rsd2.atom_index( default_jump_atom( rsd2 ) ), jump_pos2 ); // Unused variable causes warning.
+		Residue const & rsd2 = pose.residue( jump_pos2 ); // Unused variable causes warning.
+		AtomID jump_atom_id2( rsd2.atom_index( default_jump_atom( rsd2 ) ), jump_pos2 ); // Unused variable causes warning.
 
 		if ( allow_insert_->get( jump_atom_id1 ) ||
-				 allow_insert_->get( jump_atom_id1 ) ) break; // found an OK jump.
+				 allow_insert_->get( jump_atom_id2 ) ) break; // found an OK jump.
 
 	}
 	if (ntries >= MAX_TRIES ) return false;
 
-	//std::cout << "will try to change jump " << which_jump << std::endl;
+	//	std::cout << "will try to change jump " << which_jump << std::endl;
 
 	// Tweak it -- for connections between chains for which the residue is unknown
 	//  consider alternative connection -- if there aren't any jumps of these types,

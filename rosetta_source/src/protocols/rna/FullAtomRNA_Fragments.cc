@@ -332,6 +332,7 @@ FragmentLibrary::~FragmentLibrary() {}
 																 )
 	{
 		using namespace core::scoring::rna;
+		using namespace core::id;
 
 		Size const size = torsion_set.get_size();
 
@@ -341,11 +342,15 @@ FragmentLibrary::~FragmentLibrary() {}
 
 			pose.set_secstruct( position_offset, torsion_set.secstruct( offset ) );
 
+			bool const has_virtual_phosphate = !allow_insert->get( AtomID( named_atom_id_to_atom_id( NamedAtomID( " P  ", position_offset ), pose ) ) );
+
 			for (Size j = 1; j <= NUM_RNA_TORSIONS; j++) {
 				id::TorsionID rna_torsion_id( position_offset, id::BB, j );
 				if ( j > NUM_RNA_MAINCHAIN_TORSIONS) rna_torsion_id = id::TorsionID( position_offset, id::CHI, j - NUM_RNA_MAINCHAIN_TORSIONS );
 
 				if ( !allow_insert->get( rna_torsion_id , pose.conformation() ) ) continue;
+
+				if ( has_virtual_phosphate && j < 4 ) continue;
 
 				//				if ( position == 1 ) std::cout << "ABOUT TO INSERT: " << position_offset << "      torsion number " << j << std::endl;
 

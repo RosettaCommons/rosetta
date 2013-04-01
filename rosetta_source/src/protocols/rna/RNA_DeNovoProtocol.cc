@@ -245,6 +245,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 			rna_structure_parameters_->setup_fold_tree_and_jumps_and_variants( pose );
 			rna_structure_parameters_->setup_base_pair_constraints( pose ); // needs to happen after setting cutpoint variants, etc.
 			rna_chunk_library_->initialize_random_chunks( pose ); //actually not random if only one chunk in each region.
+
 			if ( close_loops_after_each_move_ ) {
 				rna_loop_closer_->apply( pose );
 				//do_close_loops_ = true;  // set but never used ~Labonte
@@ -463,6 +464,10 @@ RNA_DeNovoProtocol::initialize_movers( core::pose::Pose & pose ){
 	//	rna_structure_parameters_->allow_insert()->show();
 	std::cout << pose.annotated_sequence() << std::endl;
 
+	rna_structure_parameters_->setup_virtual_phosphate_variants( pose ); // needed to refreeze virtual phosphates!
+	//	std::cout << "ALLOW_INSERT AFTER VIRTUAL PHOSPHATE: " << std::endl;
+	//	rna_structure_parameters_->allow_insert()->show();
+
 	rna_chunk_library_->set_allow_insert( rna_structure_parameters_->allow_insert() );
 	rna_fragment_mover_ = new RNA_FragmentMover( all_rna_fragments_, rna_structure_parameters_->allow_insert() );
 
@@ -609,9 +614,9 @@ RNA_DeNovoProtocol::output_silent_struct(
 
 	if ( get_native_pose() ) calc_rmsds( s, pose, out_file_tag  );
 
-	TR << "ADD_NUMBER_BASE_PAIRS" << std::endl;
+	//	TR << "ADD_NUMBER_BASE_PAIRS" << std::endl;
 	add_number_base_pairs( pose, s );
-	TR << "ADD_NUMBER_NATIVE_BASE_PAIRS" << std::endl;
+	//	TR << "ADD_NUMBER_NATIVE_BASE_PAIRS" << std::endl;
 	if ( get_native_pose() ) add_number_native_base_pairs( pose, s );
 
 	if ( output_filters_ ){

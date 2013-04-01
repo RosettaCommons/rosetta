@@ -153,6 +153,10 @@ let_rigid_body_jumps_move( core::kinematics::MoveMap & movemap,
 void
 translate_virtual_anchor_to_first_rigid_body( core::pose::Pose & pose );
 
+
+bool
+involved_in_phosphate_torsion( std::string atomname );
+
 } //rna
 } // protocols
 

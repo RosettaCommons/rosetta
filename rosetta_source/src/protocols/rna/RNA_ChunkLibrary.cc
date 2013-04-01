@@ -397,6 +397,8 @@ namespace rna{
 		FArray1D< bool > connected( pose.total_residue(), false );
 		covered_by_chunk_ = false;
 
+		Size i_prev( 0 );
+
 		for ( ResMap::const_iterator
 						it=res_map.begin(), it_end = res_map.end(); it != it_end; ++it ) {
 
@@ -411,6 +413,9 @@ namespace rna{
 				std::string const & atomname = rsd_i.atom_name( j );
 				Residue const & scratch_rsd = scratch_pose.residue(i_scratch);
 
+				bool at_chainbreak =  ( i_scratch == 1 || scratch_pose.fold_tree().is_cutpoint( i_scratch - 1 ) ||	(i - i_prev ) > 1 );
+				if ( rsd_i.is_RNA() && involved_in_phosphate_torsion( atomname ) && at_chainbreak ) continue; // don't trust phosphates at beginning of chains.
+
 				if ( scratch_rsd.has( atomname ) ) {
 					Size const & scratch_index = scratch_pose.residue( i_scratch ).atom_index( atomname );
 					if ( !scratch_rsd.is_virtual( scratch_index ) ) {
@@ -419,10 +424,7 @@ namespace rna{
 				}
 			}
 
-			//We don't trust phosphates at the beginning of chains!
-			// MAKE THIS AN OPTION?
-			//			if ( i_scratch == 1 || scratch_pose.fold_tree().is_cutpoint( i_scratch - 1 ) ) allow_insert_->set_phosphate( i, pose, true );
-
+			i_prev = i;
 		}
 
 	}
@@ -1007,7 +1009,6 @@ namespace rna{
 			//TR << "NUM_CHUNKS " << chunk_index << " " << chunk_set.num_chunks() << std::endl;
 			chunk_set.insert_chunk_into_pose( pose, chunk_index, allow_insert_ );
 
-
 			// useful for tracking homology modeling: perhaps we can align to first chunk as well -- 3D alignment of Rosetta poses are
 			// arbitrarily set to origin (except in special cases with virtual residues...)
 			if ( n==1  /*&&  pose.residue( pose.total_residue() ).name3() != "VRT"*/ ) align_to_chunk( pose, chunk_set, chunk_index  );
@@ -1026,6 +1027,7 @@ namespace rna{
 		runtime_assert( chunk_sets_.size() > 0 );
 		ChunkSet const & chunk_set( *chunk_sets_[ 1 ] );
 		align_to_chunk( pose, chunk_set,  1  );
+
 	}
 
 	///////////////////////////////////////////////////////////////////////
@@ -1044,6 +1046,7 @@ namespace rna{
 		}
 
 		core::scoring::superimpose_pose( pose, *(chunk_set.mini_pose( chunk_index )), alignment_atom_id_map );
+
 	}
 
 

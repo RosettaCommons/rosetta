@@ -21,11 +21,11 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/chemical/ResidueType.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/types.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
+#include <core/scoring/rna/RNA_Util.hh> // for information on phosphate atoms.
 
 #include <utility/exit.hh>
 
@@ -238,12 +238,12 @@ namespace toolbox{
 		if ( pose.residue(i).is_coarse() ){
 			set_domain( AtomID( named_atom_id_to_atom_id( NamedAtomID( " P  ", i ), pose ) ), setting );
 		} else {
-			set_domain( AtomID( named_atom_id_to_atom_id( NamedAtomID( " P  ", i ), pose ) ), setting );
-			set_domain( AtomID( named_atom_id_to_atom_id( NamedAtomID( " O1P", i ), pose ) ), setting );
-			set_domain( AtomID( named_atom_id_to_atom_id( NamedAtomID( " O2P", i ), pose ) ), setting );
-			set_domain( AtomID( named_atom_id_to_atom_id( NamedAtomID( " O5*", i ), pose ) ), setting );
-			set_domain( AtomID( named_atom_id_to_atom_id( NamedAtomID( "1H5*", i ), pose ) ), setting );
-			set_domain( AtomID( named_atom_id_to_atom_id( NamedAtomID( "2H5*", i ), pose ) ), setting );
+
+			utility::vector1< std::string > const & atoms_involved = core::scoring::rna::get_atoms_involved_in_phosphate_torsion();
+			for ( Size n = 1; n <= atoms_involved.size(); n++ ){
+				set_domain( AtomID( named_atom_id_to_atom_id( NamedAtomID( atoms_involved[ n ], i ), pose ) ), setting );
+			}
+
 		}
 	}
 
