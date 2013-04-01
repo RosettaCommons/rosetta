@@ -259,7 +259,7 @@ RemodelMover::RemodelMover() :
 /// @brief
 /// Copy constructor.
 ///
-RemodelMover::RemodelMover( RemodelMover const & rval ) 
+RemodelMover::RemodelMover( RemodelMover const & rval )
 :	//utility::pointer::ReferenceCount(),
 	Super( rval ),
 
@@ -797,7 +797,6 @@ void RemodelMover::apply( Pose & pose ) {
 				//return;
 			}
 		}
-
 		if ( op_user_remodel_repeat_structure_ ) {
 			// should fold this pose to match just the first segment of a repeat, and that will be used for next round of building
 			for ( Size res = 1; res <= cached_modified_pose.n_residue(); res++ ) {
@@ -808,7 +807,6 @@ void RemodelMover::apply( Pose & pose ) {
 				replace_pose_residue_copying_existing_coordinates(cached_modified_pose,res,rsd_type);
 			}
 		}
-
 		core::pose::renumber_pdbinfo_based_on_conf_chains(
 				pose,
 		    true ,  // fix chain
@@ -855,7 +853,6 @@ void RemodelMover::apply( Pose & pose ) {
 			cstOP->enable_constraint_scoreterms(fullatom_sfx_);
 			designMover.scorefunction(fullatom_sfx_);
 		}
-
 		if (op_user_constraints_cst_file_){
 				//safety
 				pose.remove_constraints();
@@ -1026,46 +1023,50 @@ void RemodelMover::apply( Pose & pose ) {
 				//pose.dump_pdb("test.pdb");
 
 			}
-
 			TR << "apply(): calling RemodelDesignMover apply function." << std::endl;
 			designMover.apply(pose);
-
+			//*****HORRIBLE CODE BELOW why is there a filter in the middle of a loop? Previously this loop didn't maintain the pose correctly which resulted in a difficult to track down seg fault.  In my opinion this section should be scrapped because it makes debugging code with constraints on, but fast model creation impossible.
 			if ( op_user_enzdes_cstfile_ ||
 					 op_user_constraints_cst_file_
-			){
-						simple_filters::ScoreTypeFilter const  pose_constraint( fullatom_sfx_, atom_pair_constraint, op_remodel_cstfilter_ );
-						bool CScore(pose_constraint.apply( pose ));
-						if (!CScore){  // if didn't pass, rebuild
-							TR << "built model did not pass constraints test." << std::endl;
-							continue;
-						}
-						else {
-							accumulator.apply(pose);
-						}
+					 ){
+				simple_filters::ScoreTypeFilter const  pose_constraint( fullatom_sfx_, atom_pair_constraint, op_remodel_cstfilter_ );
+				bool CScore(pose_constraint.apply( pose ));
+				if (!CScore){  // if didn't pass, rebuild
+					TR << "built model did not pass constraints test." << std::endl;
+					if ( op_user_remodel_repeat_structure_ ) {
+						//reset the pose to monomer
+						pose = cached_modified_pose;
+					} else {
+						pose.fold_tree(originalTree);
+					}
+					continue;
+				}
+				else {
+					accumulator.apply(pose);
+				}
 			} else {
 				accumulator.apply(pose);
 			}
-
+			//*****END horrible code.
 		}
-
 		if ( op_remodel_checkpoint_ ) {
 			// debug:
 			TR << "writing chkpnt at step " << num_traj-i+prev_checkpoint << std::endl;
 			accumulator.write_checkpoint(num_traj-i-prev_checkpoint);
 		}
-
 		// restore foldtree
-		if ( op_user_remodel_repeat_structure_ ) {
-			//reset the pose to monomer
-			pose = cached_modified_pose;
-		} else {
-			pose.fold_tree(originalTree);
+		if(i > 1) {//messes up rosetta_scripts if done on last loop.
+			if ( op_user_remodel_repeat_structure_ ) {
+				//reset the pose to monomer
+				pose = cached_modified_pose;
+			} else {
+				pose.fold_tree(originalTree);
+			}
 		}
-
 		i--; // 'i' is the number of remaining trajectories
 
 	}
-/* DONT USE THIS FOR NOW...
+	/* DONT USE THIS FOR NOW...
 	if (get_last_move_status() == FAIL_RETRY){
 		return;
 	}
@@ -1150,7 +1151,6 @@ void RemodelMover::apply( Pose & pose ) {
 		else {
 			SS << filecount << ".pdb";
 		}
-
 		// this is to make sure that the final scoring is done with SCORE12
 		scoring::ScoreFunctionOP scorefxn = scoring::ScoreFunctionFactory::create_score_function( scoring::STANDARD_WTS, scoring::SCORE12_PATCH );
 
@@ -1338,7 +1338,7 @@ bool RemodelMover::centroid_build( Pose & pose ) {
 
 		// record the used manager w/ all mapping info
 		//manager_ = vlb_->manager();
-std::cout<< "post VLB?" << std::endl;
+
 		// safety, clear all the energies before restoring full-atom residues and scoring
 		pose.energies().clear();
 		bool denovo = true;
@@ -1398,7 +1398,6 @@ std::cout<< "post VLB?" << std::endl;
 		}
 
 		return true; // loop closed
-
 	} else {
 		TR << "centroid_build(): variable length build failed. resetting pose to archived pose." << std::endl;
 		// set passed in pose reference to the pose this function was called with?  I guess that means the rebuild tried

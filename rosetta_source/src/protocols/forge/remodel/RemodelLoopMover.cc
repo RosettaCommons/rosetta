@@ -788,7 +788,7 @@ void RemodelLoopMover::repeat_propagation( //utility function
 		pose.pdb_info()->obsolete(true);
 		repeat_pose.pdb_info()->obsolete(true);
 	}
-	
+
 	//propagate jumps
 
   core::kinematics::FoldTree f;
@@ -806,7 +806,7 @@ void RemodelLoopMover::repeat_propagation( //utility function
 
   for ( Loops::iterator l = loops_->v_begin(), le = loops_->v_end(); l != le; ++l ) {
     Loop & loop = *l;
-    if (loop.start() == 1 && loop.stop() == segment_length+2){ // padded 2 shadow residues 
+    if (loop.start() == 1 && loop.stop() == segment_length+2){ // padded 2 shadow residues
       break;  //don't need to do anything about foldtree if fully de novo
     } else {
 
@@ -1146,7 +1146,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 				disallowedPos.insert(res);
 			}
 		}
-		abinitio_stage( pose, 9, movemap,sfx_stage1_OP,3,100,disallowedPos,true,"stg1",useFragSequence);
+		abinitio_stage( pose, 9, movemap,sfx_stage1_OP,3,500,disallowedPos,true,"stg1",useFragSequence);
 		//cleanup stage------------------------------------
 		PoseOP pose_prime = new Pose( pose );
 		pose_prime->fold_tree( sealed_ft );
