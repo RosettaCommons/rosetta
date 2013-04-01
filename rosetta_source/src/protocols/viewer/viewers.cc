@@ -190,8 +190,9 @@ void processMouseActiveMotion(int x, int y) {
 	float delta_x = old_x - x;
 	float delta_y = old_y - y;
 
+	//	std::cout << "clicked_button " << clicked_button << "    specialKey " << specialKey << std::endl;
 
-	if (specialKey == GLUT_ACTIVE_SHIFT & clicked_button == 0) { // Zoom in/out
+	if ( (specialKey == GLUT_ACTIVE_SHIFT & clicked_button == 0) || clicked_button == 1 ) { // Zoom in/out
 		double s = exp( -1.0* (double) delta_y*0.01);
 		glScalef(s,s,s);
 	}
@@ -212,7 +213,7 @@ void processMouseActiveMotion(int x, int y) {
 		glRotatef(delta_x,0,0,1);
 		glMultMatrixf(currentrotation);
 	}
-	else if (clicked_button > 0){ //Pan
+	else if ( specialKey == GLUT_ACTIVE_ALT && clicked_button == 0){ //Pan
 		 GLint viewport[4];
 		 glGetIntegerv(GL_VIEWPORT,viewport);
 		 //glTranslatef( -1.0*delta_x * (_right-_left)/(viewport[2]),
@@ -1871,11 +1872,13 @@ void draw_conformation( utility::vector1< conformation::ResidueCOP > const & res
 	glPushMatrix();
 	glTranslatef(-center.x(), -center.y(), -center.z());
 
-	utility::vector1< conformation::ResidueCOP > residues_protein, other_residues;
+	utility::vector1< conformation::ResidueCOP > residues_protein, other_residues, residues_sphere;
 	for (Size n = 1; n <= residues.size(); n++ ){
 		conformation::ResidueCOP rsd = residues[ n ];
 		if ( rsd->is_protein() ) {
 			residues_protein.push_back( rsd );
+		} else if ( rsd->name3() == " MG" ) { // could use for other ions too!
+			residues_sphere.push_back( rsd );
 		} else {
 			other_residues.push_back( rsd );
 		}
@@ -1895,13 +1898,32 @@ void draw_conformation( utility::vector1< conformation::ResidueCOP > const & res
 		gs.Color_mode = colormode_save;
 	}
 
+	if ( residues_sphere.size() > 0 ) draw_sphere( gs, residues_sphere );
+
 	glPopMatrix();
 	glDisable(GL_LIGHT0);// Turn lighting off
 }
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Vector
+get_center( utility::vector1< conformation::ResidueCOP > const & residues ){
 
+	core::Size nres = residues.size();
+	Vector center_of_mass( 0, 0, 0 );
+
+	for ( int i = 1; i <= (int) nres; ++i ) {
+		conformation::Residue const & rsd = *residues[i];
+		if ( !rsd.is_virtual( rsd.nbr_atom() ) ) center_of_mass += rsd.nbr_atom_xyz();
+	}
+	if ( nres > 0 ) center_of_mass /= nres;
+
+	return center_of_mass;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Is this in use anymore?
 void draw_pose(
 					const core::pose::Pose & pose,
 					GraphicsState & gs,
@@ -1915,16 +1937,11 @@ void draw_pose(
 		residues[i] = pose.residue(i);
 	}
 
-	Vector center_of_mass( 0, 0, 0 );
-	if(centered) {
-		for ( int i = 1; i <= (int) pose.total_residue(); ++i ) {
-			center_of_mass += residues[i]->nbr_atom_xyz();
-		}
-		center_of_mass /= pose.total_residue();
-	}
+	Vector center_of_mass = get_center( residues );
 
 	draw_conformation( residues, ss, gs, center_of_mass );
 }
+
 
 
 #endif

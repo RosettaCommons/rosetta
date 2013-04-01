@@ -180,6 +180,9 @@ draw_conformation_and_density(
 			GraphicsState & gs,
 			core::Vector const & center);
 
+	core::Vector
+get_center( utility::vector1< core::conformation::ResidueCOP > const & residues );
+
 #endif ////////////////////////////////////////////////////////////////
 
 void

@@ -117,17 +117,18 @@ ConformationViewer::display_func()
 	// lock the residues vector
 	pthread_mutex_lock( &residues_mut_ );
 
+	Vector center_vector = residues_[ anchor_id_.rsd() ]->xyz( anchor_id_.atomno() );
+	//	if ( true ) center_vector = get_center( residues_ );
+
 	//display_residues( residues_, anchor_id_ ); // in viewer.cc
 	if ( basic::options::option[ basic::options::OptionKeys::edensity::mapfile ].user()) {
 
 		const core::scoring::electron_density::ElectronDensity& edm = core::scoring::electron_density::getDensityMap();
 		runtime_assert ( edm.isMapLoaded() );
-		draw_conformation_and_density( residues_, secstruct_, triangles_ , current_gs_,
-																	 residues_[ anchor_id_.rsd() ]->xyz( anchor_id_.atomno() ));
+		draw_conformation_and_density( residues_, secstruct_, triangles_ , current_gs_, center_vector );
 
 	} else {
-		draw_conformation( residues_, secstruct_, current_gs_,
-											 residues_[ anchor_id_.rsd() ]->xyz(anchor_id_.atomno() ) ); // in viewer.cc
+		draw_conformation( residues_, secstruct_, current_gs_, center_vector ); // in viewer.cc
 	}
 
 	pthread_mutex_unlock( &residues_mut_ );
