@@ -1918,13 +1918,13 @@ private:
 	/// atom index lookup by atom name string
 	NameVDMap atom_graph_index_;
 
-	/// Legacy/backward compatability device holds an ordered list of nodes' indices
+	/// Legacy/backward compatibility device holds an ordered list of nodes' indices
 	VDs ordered_atoms_; // Position in the vector represents Atom in "ordered arrangement"
 
 	/// atom index lookup by atom name string
 	std::map< std::string, int > orbitals_index_;
 
-	/// Additional non-dunbrack rotamer bins
+	/// Additional non-Dunbrack rotamer bins
 	/**
 			pair<Real,Real>  ==>  mean,sdev
 			for each chi angle i and rotamer j: chi_rotamers_[i][j]
@@ -2125,10 +2125,7 @@ private:
 	// end hack?
 };
 
-
 } // chemical
 } // core
-
-
 
 #endif // INCLUDED_core_chemical_Residues_HH

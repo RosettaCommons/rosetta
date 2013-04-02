@@ -43,7 +43,6 @@ patches/lys_trimethylated.txt
 patches/lys_acetylated.txt
 patches/glu_carboxylated.txt
 
-
 ## The following were added by Andy M. Chen in July 2009
 ##   for post-translational modifications
 ##
@@ -65,13 +64,21 @@ patches/C_methylamidated.txt
 patches/MethylatedProteinCterm.txt
 patches/AcetylatedProteinNterm.txt
 
+
 ## carbohydrate patches
+## termini
 patches/carbohydrates/lower_terminus.txt
 patches/carbohydrates/upper_terminus.txt
+## glycosylation/branching
 patches/carbohydrates/N-linked_glycosylation.txt
-patches/carbohydrates/6-branch.txt
 patches/carbohydrates/branch_lower_term.txt
+patches/carbohydrates/6-branch.txt
+## modifications
+patches/carbohydrates/2-amination.txt
+#patches/carbohydrates/N-acetyl-2-amination.txt
 
+
+## alternative backbones
 #patches/hbs_pre.txt
 #patches/hbs_post.txt
 

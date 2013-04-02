@@ -6,6 +6,7 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
 //////////////////////////////////////////////////////////////////////
 /// @file ResidueType.cc
 ///
@@ -55,12 +56,17 @@
 
 // Project Headers
 #include <core/chemical/ResidueSupport.hh>
+#include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
+#include <core/chemical/Element.hh>
 #include <core/chemical/ElementSet.hh>
+#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
+#include <core/chemical/MMAtomType.hh>
 #include <core/chemical/MMAtomTypeSet.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.hh>
+#include <core/chemical/VariantType.hh>
 
+// Numeric headers
 #include <numeric/xyz.functions.hh>
 #include <numeric/NumericTraits.hh>
 
@@ -68,19 +74,17 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-// Utility headers
+// Basic headers
 #include <basic/Tracer.hh>
-#include <utility/PyAssert.hh>
-
 // Options and Option key includes (needed for protonated versions of the residues - pH mode)
 #include <basic/options/option.hh>
 #include <basic/options/keys/pH.OptionKeys.gen.hh>
 
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/Element.hh>
-#include <core/chemical/MMAtomType.hh>
-#include <core/chemical/VariantType.hh>
+// Utility headers
+#include <utility/PyAssert.hh>
 #include <utility/vector1.hh>
+
+// C++ headers
 #include <algorithm>
 
 //Auto using namespaces
@@ -95,7 +99,7 @@ using namespace ObjexxFCL::fmt;
 
 static basic::Tracer tr("core.chemical.ResidueType");
 
-/// must be a better place for this, probably already exists!
+// must be a better place for this, probably already exists!
 inline
 std::string
 strip_whitespace( std::string const & name )
@@ -376,7 +380,7 @@ Orbital const & ResidueType::orbital(std::string const & orbital_name) const{
 }
 
 
-/// @details set the atom which connects to the lower connection
+/// @brief set the atom which connects to the lower connection
 void
 ResidueType::set_lower_connect_atom( std::string const & atm_name )
 {
@@ -407,7 +411,7 @@ ResidueType::set_lower_connect_atom( std::string const & atm_name )
 	update_residue_connection_mapping();
 }
 
-/// set the atom which connects to the upper connection
+/// @brief set the atom which connects to the upper connection
 void
 ResidueType::set_upper_connect_atom( std::string const & atm_name )
 {
@@ -444,7 +448,6 @@ ResidueType::upper_connect() const
 	return residue_connections_[ upper_connect_id_ ];
 }
 
-///
 ResidueConnection const &
 ResidueType::lower_connect() const
 {
@@ -496,8 +499,7 @@ ResidueType::residue_connection( Size const i )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-//
-
+///
 /// @brief Get the chemical atom_type for this atom by it index number in this residue
 ///
 /// @details If we want the atom_type index (integer), we get this from
@@ -731,12 +733,6 @@ ResidueType::orbital_type(int const orbital_index)const
 	return ( *orbital_types_ )[ orbitals_[ orbital_index ].orbital_type_index() ];
 }
 
-//core::Size
-//ResidueType::orbital_type_index(Size const orb_index) const
-//{
-//	return orbitals_[orb_index].orbital_type_index();
-//}
-
 /// @note this does not set xyz coordiates for the added orbital but sets the index of the orbital and maps
 /// it to the type of orbital.
 void
@@ -770,8 +766,7 @@ ResidueType::add_orbital(
 void
 ResidueType::add_bond(
 	std::string const & atom_name1,
-	std::string const & atom_name2
-)
+	std::string const & atom_name2)
 {
 	// signal that we need to update the derived data
 	finalized_ = false;
@@ -1162,18 +1157,8 @@ ResidueType::add_property( std::string const & property )
 		is_methylated_cterminus_ = true;
 	} else if (property == "BRANCH_POINT") {
 		;  // Null statement for now.... ~ Labonte
-    } else if (
-            (property == "ALDOSE") ||
-            (property == "KETOSE") ||
-            (property == "L_SUGAR") ||
-            (property == "D_SUGAR") ||
-            (property == "FURANOSE") ||
-            (property == "PYRANOSE") ||
-            (property == "SEPTANOSE") ||
-            (property == "ALPHA_SUGAR") ||
-            (property == "BETA_SUGAR") ||
-            (property == "URONIC_ACID")) {
-        ;  // Null statement -- these properties will be added to carbohydrate_info_ by update_derived_data().
+	} else if (carbohydrates::CarbohydrateInfo::SUGAR_PROPERTIES.contains(property)) {
+		;  // Null statement -- these properties will be added to carbohydrate_info_ by update_derived_data().
 	} else {
 		tr.Warning << "WARNING:: unrecognized residue type property: " << property << std::endl;
 	}
@@ -1193,7 +1178,6 @@ ResidueType::add_numeric_property(std::string const & tag, core::Real value)
 /** update boolean property member data accordingly **/
 //    Added by Andy M. Chen in June 2009
 //    This is needed for deleting properties, which occurs in certain PTM's
-
 void
 ResidueType::delete_property( std::string const & property )
 {
@@ -1240,10 +1224,11 @@ ResidueType::delete_property( std::string const & property )
 	} else if ( property == "METHYLATED_CTERMINUS" ) {
 		is_methylated_cterminus_ = false;
 	} else {
-		tr.Warning << "WARNING:: unrecognized residuetype property: " << property << std::endl;
+		tr.Warning << "WARNING:: unrecognized residue type property: " << property << std::endl;
 	}
 
-	properties_.push_back( property );
+	utility::vector1<std::string>::iterator i = std::find(properties_.begin(), properties_.end(), property);
+	properties_.erase(i);
 }
 
 
@@ -1253,7 +1238,6 @@ ResidueType::delete_property( std::string const & property )
 //    Added by Andy M. Chen in June 2009
 //    This function is almost an exact copy of the add_chi function except that vector resizing does NOT occur.
 //    It is needed for certain PTM's that affects proton chis (e.g. phosphorylation and sulfation).
-
 void
 ResidueType::redefine_chi(
 	Size const chino,
@@ -1288,7 +1272,6 @@ ResidueType::redefine_chi(
 } // redefine_chi
 
 
-
 /////////////////////////////////////////////////////////////////
 
 /// @details add an atom to the list for calculating actcoord center
@@ -1318,7 +1301,6 @@ ResidueType::add_actcoord_atom( std::string const & atom )
 	 also fills attached_H_begin, attached_H_end
 
 **/
-
 void
 ResidueType::setup_atom_ordering(
 	AtomIndices & old2new
@@ -1948,7 +1930,6 @@ ResidueType::finalize()
 bool
 ResidueType::variants_match( ResidueType const & other ) const
 {
-
 	if ( ! basic::options::option[ basic::options::OptionKeys::pH::pH_mode ].user() ) {
 		for ( Size ii = 1; ii <= variant_types_.size(); ++ii ) {
 			if ( ! other.has_variant_type( variant_types_[ ii ] ) ) {
@@ -2073,7 +2054,6 @@ ResidueType::orbital_index( std::string const & name ) const
 }
 
 
-
 void
 ResidueType::set_backbone_heavyatom( std::string const & name )
 {
@@ -2138,8 +2118,7 @@ ResidueType::set_icoor(
 	std::string const & stub_atom1,
 	std::string const & stub_atom2,
 	std::string const & stub_atom3,
-	bool const update_xyz // = false
-)
+	bool const update_xyz /* = false*/)
 {
 	ICoorAtomID id( atm, *this );
 	AtomICoor const ic( index, phi, theta, d, stub_atom1, stub_atom2, stub_atom3, *this );
@@ -2197,35 +2176,35 @@ ResidueType::set_icoor(
 
 	Size const atomno( id.atomno() );
 	switch ( id.type() ) {
-	case ICoorAtomID::INTERNAL:
-		if ( ordered_atoms_.size() < atomno ) utility_exit_with_message("ResidueType:: shoudnt get here!");//icoor_.resize(atomno);
-		graph_[ordered_atoms_[ atomno ]].icoor( ic );
-		// update atom_base?
-		if ( ( stub_atom1 != atm ) && has( stub_atom1 ) &&
-				 ( atom_base_.size() < atomno || atom_base_[ atomno ] == 0 || atom_base_[ atomno ] == atomno ) ) {
-			set_atom_base( atm, stub_atom1 );
-		}
-		if ( update_xyz ) {
-			set_ideal_xyz( atm, ic.build( *this ) );
-			//std::cout << "building coords for atm " << name_ << ' ' << atm << ' ' <<
-			//		ic.build(*this)(1) << ' ' <<
-			//		ic.build(*this)(2) << ' ' <<
-			//		ic.build(*this)(3) << std::endl;
-		}
-		break;
-	case ICoorAtomID::CONNECT:
-		residue_connections_[ atomno ].icoor( ic );
-		break;
-	case ICoorAtomID::POLYMER_LOWER:
-		assert( lower_connect_id_ != 0 );
-		residue_connections_[ lower_connect_id_ ].icoor( ic );
-		break;
-	case ICoorAtomID::POLYMER_UPPER:
-		assert( upper_connect_id_ != 0 );
-		residue_connections_[ upper_connect_id_ ].icoor( ic );
-		break;
-	default:
-		utility_exit_with_message( "unrecognized stub atom id type!" );
+		case ICoorAtomID::INTERNAL:
+			if ( ordered_atoms_.size() < atomno ) utility_exit_with_message("ResidueType:: shoudnt get here!");//icoor_.resize(atomno);
+			graph_[ordered_atoms_[ atomno ]].icoor( ic );
+			// update atom_base?
+			if ( ( stub_atom1 != atm ) && has( stub_atom1 ) &&
+					 ( atom_base_.size() < atomno || atom_base_[ atomno ] == 0 || atom_base_[ atomno ] == atomno ) ) {
+				set_atom_base( atm, stub_atom1 );
+			}
+			if ( update_xyz ) {
+				set_ideal_xyz( atm, ic.build( *this ) );
+				//std::cout << "building coords for atm " << name_ << ' ' << atm << ' ' <<
+				//		ic.build(*this)(1) << ' ' <<
+				//		ic.build(*this)(2) << ' ' <<
+				//		ic.build(*this)(3) << std::endl;
+			}
+			break;
+		case ICoorAtomID::CONNECT:
+			residue_connections_[ atomno ].icoor( ic );
+			break;
+		case ICoorAtomID::POLYMER_LOWER:
+			assert( lower_connect_id_ != 0 );
+			residue_connections_[ lower_connect_id_ ].icoor( ic );
+			break;
+		case ICoorAtomID::POLYMER_UPPER:
+			assert( upper_connect_id_ != 0 );
+			residue_connections_[ upper_connect_id_ ].icoor( ic );
+			break;
+		default:
+			utility_exit_with_message( "unrecognized stub atom id type!" );
 	}
 }
 
@@ -2764,8 +2743,6 @@ ResidueType::is_virtual_residue() const{
 	return ( has_variant_type( "VIRTUAL_RESIDUE" ) );
 }
 
-
-///////////////////////////////////////////////////////////////////////////////
 
 } // chemical
 } // core

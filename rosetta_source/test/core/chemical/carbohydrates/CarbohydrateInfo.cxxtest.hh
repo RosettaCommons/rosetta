@@ -48,6 +48,9 @@ public:
 		pose_from_pdb(maltotriose_, "core/chemical/carbohydrates/maltotriose.pdb");
 		pose_from_pdb(isomaltose_,  "core/chemical/carbohydrates/isomaltose.pdb");
 
+		// Test modified sugar patch system.
+		pose_from_pdb(glucosamine_, "core/chemical/carbohydrates/GlcN.pdb");
+
 		// Test that oligosaccharides can be created from a given sequence.
 		make_pose_from_saccharide_sequence(lactose_, "beta-D-Galp-(1->4)-Glcp");
 
@@ -79,6 +82,7 @@ public:
 		expected_out1 << "Carbohydrate Properties for this Residue:" << endl;
 		expected_out1 << " Basic Name: glucose" << endl;
 		expected_out1 << " IUPAC Name: ->4)-D-glucopyranose" << endl;
+		expected_out1 << " Abbreviation: ->4)-D-Glcp" << endl;
 		expected_out1 << " Classification: aldohexose" << endl;
 		expected_out1 << " Stereochemistry: D" << endl;
 		expected_out1 << " Ring Form: pyranose" << endl;
@@ -93,6 +97,7 @@ public:
 		expected_out2 << "Carbohydrate Properties for this Residue:" << endl;
 		expected_out2 << " Basic Name: glucose" << endl;
 		expected_out2 << " IUPAC Name: ->4)-alpha-D-glucopyranosyl" << endl;
+		expected_out2 << " Abbreviation: ->4)-alpha-D-Glcp-" << endl;
 		expected_out2 << " Classification: aldohexose" << endl;
 		expected_out2 << " Stereochemistry: D" << endl;
 		expected_out2 << " Ring Form: pyranose" << endl;
@@ -107,6 +112,7 @@ public:
 		expected_out3 << "Carbohydrate Properties for this Residue:" << endl;
 		expected_out3 << " Basic Name: glucose" << endl;
 		expected_out3 << " IUPAC Name: alpha-D-glucopyranosyl" << endl;
+		expected_out3 << " Abbreviation: alpha-D-Glcp-" << endl;
 		expected_out3 << " Classification: aldohexose" << endl;
 		expected_out3 << " Stereochemistry: D" << endl;
 		expected_out3 << " Ring Form: pyranose" << endl;
@@ -138,6 +144,7 @@ public:
 		TS_ASSERT_EQUALS(maltotriose_.chain_sequence(1), "alpha-D-Glcp-(1->4)-alpha-D-Glcp-(1->4)-D-Glcp");
 		TS_ASSERT_EQUALS(isomaltose_.chain_sequence(1), "alpha-D-Glcp-(1->6)-D-Glcp");
 		TS_ASSERT_EQUALS(lactose_.chain_sequence(1), "beta-D-Galp-(1->4)-D-Glcp");
+		TS_ASSERT_EQUALS(glucosamine_.chain_sequence(1), "D-GlcpN");
 	}
 
 	// Confirm that backbone torsion angles are assigned correctly.
@@ -177,5 +184,6 @@ private:
 	core::pose::Pose maltotriose_;  // a (1alpha->4) trisaccharide of D-glucose
 	core::pose::Pose isomaltose_;  // a (1alpha->6) disaccharide of D-glucose
 	core::pose::Pose lactose_;  // a (1beta->4) disaccharide of D-glucose and D-galactose
+	core::pose::Pose glucosamine_;  // 2-amino-2-deoxy-D-glucopyranose
 
 };  // class CarbohydrateInfoTests

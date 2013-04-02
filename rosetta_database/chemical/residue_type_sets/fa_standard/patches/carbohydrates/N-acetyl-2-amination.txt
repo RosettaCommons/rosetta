@@ -1,0 +1,61 @@
+## full-atom 2-acetylamino-2-deoxy sugar patch
+
+NAME 2-AcNH
+#TYPES 2-MODIFIED_SUGAR
+
+BEGIN_SELECTOR
+PROPERTY CARBOHYDRATE
+#NOT VARIANT_TYPE 2-MODIFIED_SUGAR
+END_SELECTOR
+
+BEGIN_CASE
+
+# First, make into a deoxy sugar.
+SET_ATOM_TYPE HO2 VIRT
+SET_MM_ATOM_TYPE HO2 VIRT
+SET_ATOMIC_CHARGE HO2 0.00
+
+SET_ATOM_TYPE O2 VIRT
+SET_MM_ATOM_TYPE O2 VIRT
+SET_ATOMIC_CHARGE O2 0.00
+
+#Next, add the new atoms
+ADD_ATOM  N2  NH2O X    -0.35  # shouldn't really be an NH
+ADD_ATOM  C'  CNH2 X    0.22
+ADD_ATOM  CA' CH3  X    0.01
+ADD_ATOM  O'  ONH2 X    -0.27
+ADD_ATOM  HN2 Hpol X    0.16
+ADD_ATOM 1HCA Hapo X    0.03
+ADD_ATOM 2HCA Hapo X    0.03
+ADD_ATOM 3HCA Hapo X    0.03
+
+ADD_BOND  C2   N2
+ADD_BOND  N2   C'
+ADD_BOND  C'   O'
+ADD_BOND  C'   CA'
+ADD_BOND  N2   HN2
+ADD_BOND  CA' 1HCA
+ADD_BOND  CA' 2HCA
+ADD_BOND  CA' 3HCA
+
+# I need a method to ADD_CHIs without having to specify the CHI number. Rewrite ADD_CHI so that one can specify N instead?
+#REDEFINE_CHI 2  C1   C2   N2   C'
+#ADD_CHI N+1  C2    N2    C'    CA'
+
+#ADD_CHI_ROTAMERS 2  # Fill in
+#ADD_CHI_ROTAMERS N  180.00  ???
+#ADD_CHI_ROTAMERS N    0.00  ???
+
+# Using H2 to define 0 degree torsion angle, to place N2 at same position as (now virtual) O2 allows us to have a single patch file for either (S) or (R) stereochemistry.
+SET_ICOOR  N2     0.00    69.235  1.334  C2    H2    O2
+SET_ICOOR  C'   -28.295   62.736  1.312  N2    C2    H2
+SET_ICOOR  CA' -178.271   58.957  1.496  C'    N2    C2
+SET_ICOOR  O'     0.654   61.455  1.234  C'    N2    C2
+SET_ICOOR  HN2  152.671   58.88   0.99   N2    C2    H2
+SET_ICOOR 1HCA   33.119   70.479  1.099  CA'   C'    N2
+SET_ICOOR 2HCA  -84.152   70.479  1.099  CA'   C'    N2
+SET_ICOOR 3HCA  157.255   70.479  1.099  CA'   C'    N2
+
+ADD_PROPERTY 2-ACETYLAMINO_SUGAR
+
+END_CASE

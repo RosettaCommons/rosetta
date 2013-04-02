@@ -87,10 +87,7 @@ public:
 	bool
 	is_aldose() const
 	{
-		if (anomeric_carbon_ == 1) {
-			return true;
-		}
-		return false;
+		return (anomeric_carbon_ == 1);
 	}
 
 	/// @brief    Return true if the monosaccharide is a ketose.
@@ -102,10 +99,7 @@ public:
 	bool
 	is_ketose() const
 	{
-		if (anomeric_carbon_ != 1) {
-			return true;
-		}
-		return false;
+		return (anomeric_carbon_ != 1);
 	}
 
 	/// @brief    Return the anomeric carbon number.
@@ -130,50 +124,49 @@ public:
 	bool
 	is_triose() const
 	{
-		if (n_carbons_ == 3) {
-			return true;
-		}
-		return false;
+		return (n_carbons_ == 3);
 	}
 
 	/// @brief  Return true if the monosaccharide is a tetrose.
 	bool
 	is_tetrose() const
 	{
-		if (n_carbons_ == 4) {
-			return true;
-		}
-		return false;
+		return (n_carbons_ == 4);
 	}
 
 	/// @brief  Return true if the monosaccharide is a pentose.
 	bool
 	is_pentose() const
 	{
-		if (n_carbons_ == 5) {
-			return true;
-		}
-		return false;
+		return (n_carbons_ == 5);
 	}
 
 	/// @brief  Return true if the monosaccharide is a hexose.
 	bool
 	is_hexose() const
 	{
-		if (n_carbons_ == 6) {
-			return true;
-		}
-		return false;
+		return (n_carbons_ == 6);
 	}
 
 	/// @brief  Return true if the monosaccharide is a heptose.
 	bool
 	is_heptose() const
 	{
-		if (n_carbons_ == 7) {
-			return true;
-		}
-		return false;
+		return (n_carbons_ == 7);
+	}
+
+	/// @brief    Return true if the monosaccharide is an octose.
+	bool
+	is_octose() const
+	{
+		return (n_carbons_ == 8);
+	}
+
+	/// @brief    Return true if the monosaccharide is a nonose.
+	bool
+	is_nonose() const
+	{
+		return (n_carbons_ == 9);
 	}
 
 
@@ -190,20 +183,14 @@ public:
 	bool
 	is_L_sugar() const
 	{
-		if (stereochem_ == 'L') {
-			return true;
-		}
-		return false;
+		return (stereochem_ == 'L');
 	}
 
 	/// @brief  Return true if the monosaccharide is a D-sugar.
 	bool
 	is_D_sugar() const
 	{
-		if (stereochem_ == 'D') {
-			return true;
-		}
-		return false;
+		return (stereochem_ == 'D');
 	}
 
 
@@ -220,10 +207,7 @@ public:
 	bool
 	is_acyclic() const
 	{
-		if (ring_size_ == 0) {
-			return true;
-		}
-		return false;
+		return (ring_size_ == 0);
 	}
 
 	/// @brief  Return true if the monosaccharide is a ring.
@@ -238,10 +222,7 @@ public:
 	bool
 	is_furanose() const
 	{
-		if (ring_size_ == 5) {
-			return true;
-		}
-		return false;
+		return (ring_size_ == 5);
 	}
 
 	/// @brief    Return true if the monosaccharide is a pyranose.
@@ -249,10 +230,7 @@ public:
 	bool
 	is_pyranose() const
 	{
-		if (ring_size_ == 6) {
-			return true;
-		}
-		return false;
+		return (ring_size_ == 6);
 	}
 
 	/// @brief    Return true if the monosaccharide is a septanose.
@@ -260,10 +238,7 @@ public:
 	bool
 	is_septanose() const
 	{
-		if (ring_size_ == 7) {
-			return true;
-		}
-		return false;
+		return (ring_size_ == 7);
 	}
 
 
@@ -282,10 +257,7 @@ public:
 	bool
 	is_alpha_sugar() const
 	{
-		if (anomer_ == "alpha") {
-			return true;
-		}
-		return false;
+		return (anomer_ == "alpha");
 	}
 
 	/// @brief    Return true if the cyclic monosaccharide is a beta sugar.
@@ -293,10 +265,7 @@ public:
 	bool
 	is_beta_sugar() const
 	{
-		if (anomer_ == "beta") {
-			return true;
-		}
-		return false;
+		return (anomer_ == "beta");
 	}
 
 
@@ -335,7 +304,7 @@ public:
 	/// See also:\n
 	///  CarbohydrateInfo.mainchain_glycosidic_bond_acceptor()\n
 	///  CarbohydrateInfo.branch_point()
-	/// @remarks  Branches are not yet implemented.
+	/// @remarks  Branches are not yet fully implemented.
 	core::Size
 	n_branches() const
 	{
@@ -355,12 +324,16 @@ public:
 
 
 	// Side-chain modifications
-	// TODO: Determine a good way to track modifications at each carbon.
-	// For now, use booleans.
+	/// @brief  Return true if any hydroxyl group has been modified to an amino group or an acetylated amino group.
+	bool
+	is_amino_sugar() const {
+		return modifications_.contains("amino sugar");
+	}
+
 	/// @brief  Return true if the primary hydroxyl group is oxidized to the acid.
 	bool
 	is_uronic_acid() const {
-		return is_uronic_acid_;
+		return modifications_.contains("uronic acid");
 	}
 
 
@@ -409,16 +382,15 @@ private:
 	core::uint anomeric_carbon_;  // also indicative of location of aldehyde/ketone oxidation
 	core::Size n_carbons_;
 	char stereochem_;  // L or D
-	core::Size ring_size_;  // 0 indicates linear sugar
+	core::Size ring_size_;  // 0 indicates linear
 	std::string anomer_;  // alpha, beta, or null
 	bool is_glycoside_;
-	bool is_uronic_acid_;
+	utility::vector1<std::string> modifications_;  // indexed by position
 
 	// Glycosidic bond attachment points, i.e., the second integer in (1->n) notations.
 	core::uint mainchain_glycosidic_bond_acceptor_;  // 0 if N/A, i.e., if residue type is an upper terminus
 	utility::vector1<core::uint> branch_points_;
 	bool has_exocyclic_linkage_;
-
 
 	// Torsion angle mappings
 	// Definitions of phi, psi, omega, and nu angles in terms of Rosetta 3 BB and CHI angles for this particular
@@ -434,6 +406,10 @@ private:
 	static core::Size const MIN_C_SIZE_LIMIT;
 
 public:
+	/// @brief A list of allowed properties in carbohydrate .params and patch files.
+	static utility::vector1<std::string> const SUGAR_PROPERTIES;
+
+	/// @brief A list of Rosetta PDB 3-letter codes for saccharide residues mapped to the corresponding root.
 	static std::map<std::string, std::string> const CODE_TO_ROOT_MAP;
 };  // class CarbohydrateInfo
 

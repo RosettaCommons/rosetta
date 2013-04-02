@@ -247,16 +247,16 @@ RingConformationMover::init(core::kinematics::MoveMapOP movemap)
 
 	// (C-style arrays should normally be avoided, but it makes initializing the vector1 so much easier.)
 	// We only need 4 torsion angles to define a 6-membered conformer.
-	Real angles[4];
+	Angle angles[4];
 
 	// Two chair conformers
 	// It's lazy, but for now, I am adding multiple copies of each to compete with entropy of multiple twist-boat states.
 	// This will result in a 2:1 chair to twist-boat ratio, which at least matches the CAPRI 27 starting structure.
 	for (Size i = 1; i <= 6; ++i) {
 		angles[0] = -60.0; angles[1] = 60.0; angles[2] = -60.0; angles[3] = 60.0;
-		six_membered_ring_conformers_.push_back(make_pair("1C4", vector1<Real>(angles, angles + 4)));
+		six_membered_ring_conformers_.push_back(make_pair("1C4", vector1<Angle>(angles, angles + 4)));
 		angles[0] = 60.0; angles[1] = -60.0; angles[2] = 60.0; angles[3] = -60.0;
-		six_membered_ring_conformers_.push_back(make_pair("4C1", vector1<Real>(angles, angles + 4)));
+		six_membered_ring_conformers_.push_back(make_pair("4C1", vector1<Angle>(angles, angles + 4)));
 	}
 
 	// Six boat conformers

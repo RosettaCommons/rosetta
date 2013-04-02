@@ -273,6 +273,7 @@ testinputfiles = [
 	"chemical/carbohydrates/maltotriose.pdb",
 	"chemical/carbohydrates/isomaltose.pdb",
 	"chemical/carbohydrates/lactose.pdb",
+	"chemical/carbohydrates/GlcN.pdb",
 	"chemical/mm_atom_properties.txt",
 	"chemical/orbitals/orbital_properties.txt",
 	"chemical/uk002.params",

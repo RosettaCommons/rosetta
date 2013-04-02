@@ -75,7 +75,7 @@ main(int argc, char *argv[])
 		devel::init(argc, argv);
 
 		// Declare variables.
-		Pose maltotriose, isomaltose, lactose, amylopectin;
+		Pose maltotriose, isomaltose, lactose, amylopectin, glucosamine;
 		Pose glycoprotein;
 
 		cout << "------------------------------------------------------------" << endl;
@@ -85,6 +85,7 @@ main(int argc, char *argv[])
 
 		test_sugar(maltotriose);
 
+
 		cout << "------------------------------------------------------------" << endl;
 		cout << "Importing isomaltose:" << endl;
 
@@ -92,12 +93,14 @@ main(int argc, char *argv[])
 
 		test_sugar(isomaltose);
 
+
 		cout << "------------------------------------------------------------" << endl;
 		cout << "Importing lactose:" << endl;
 
 		pose_from_pdb(lactose, PATH + "lactose.pdb");
 
 		test_sugar(lactose);
+
 
 		cout << "------------------------------------------------------------" << endl;
 		cout << "Creating maltotriose from sequence:" << endl;
@@ -112,12 +115,14 @@ main(int argc, char *argv[])
 		cout << " Chain 1: ";
 		cout << maltotriose.chain_sequence(1) << endl;
 
+
 		cout << "------------------------------------------------------------" << endl;
 		cout << "Importing branched amylopectin fragment:" << endl;
 
 		pose_from_pdb(amylopectin, PATH + "amylopectin_fragment.pdb");
 
 		test_sugar(amylopectin);
+
 
 		cout << "------------------------------------------------------------" << endl;
 		cout << "Importing N-glycosylated sample:" << endl;
@@ -132,8 +137,17 @@ main(int argc, char *argv[])
 			cout << " Chain " << i << ": ";
 			cout << glycoprotein.chain_sequence(i) << endl;
 		}
-    } catch (utility::excn::EXCN_Base const & e) {
+
+
+		cout << "------------------------------------------------------------" << endl;
+		cout << "Importing glucosamine:" << endl;
+
+		pose_from_pdb(glucosamine, PATH + "GlcN.pdb");
+
+		test_sugar(glucosamine);
+
+	} catch (utility::excn::EXCN_Base const & e) {
 		cerr << "Caught exception: " << e.msg() << endl;
-    }
-    return 0;
+	}
+	return 0;
 }

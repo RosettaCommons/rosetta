@@ -25,11 +25,13 @@
 #include <basic/Tracer.hh>
 
 // C++ headers
+#include <algorithm>
 #include <iostream>
 #include <sstream>
 
 // boost headers
 #include <boost/assign/list_of.hpp>
+#include <boost/algorithm/string.hpp>
 
 
 // Construct tracer.
@@ -41,10 +43,41 @@ namespace chemical {
 namespace carbohydrates {
 
 // Define static data.
-// If we ever add rare sugars larger than 7 carbons, increase the value.
-core::Size const CarbohydrateInfo::MAX_C_SIZE_LIMIT = 7;
+// If we ever add rare sugars larger than 9 carbons, increase the value.
+core::Size const CarbohydrateInfo::MAX_C_SIZE_LIMIT = 9;
 core::Size const CarbohydrateInfo::MIN_C_SIZE_LIMIT = 3;
 
+// TODO: Move to database.
+utility::vector1<std::string> const CarbohydrateInfo::SUGAR_PROPERTIES = boost::assign::list_of
+		// Oxidation types
+		("ALDOSE")
+		("KETOSE")
+
+		// Stereochemistries
+		("L_SUGAR")
+		("D_SUGAR")
+
+		// Ring sizes
+		("FURANOSE")
+		("PYRANOSE")
+		("SEPTANOSE")
+
+		// Anomeric forms
+		("ALPHA_SUGAR")
+		("BETA_SUGAR")
+
+		// Modifications
+		("URONIC_ACID")
+		("2-AMINO_SUGAR")
+		("3-AMINO_SUGAR")
+		("4-AMINO_SUGAR")
+		("5-AMINO_SUGAR")
+		("6-AMINO_SUGAR")
+		("7-AMINO_SUGAR")
+		("8-AMINO_SUGAR")
+		("9-AMINO_SUGAR");
+
+// TODO: Move to database.
 std::map<std::string, std::string> const CarbohydrateInfo::CODE_TO_ROOT_MAP =
 		boost::assign::map_list_of
 				// Aldotriose
@@ -136,8 +169,9 @@ CarbohydrateInfo::show(std::ostream & output) const
 {
 	using namespace std;
 
-	// Parse properties.
 	string prefix, suffix, ring_form, modifications;
+
+	// Parse properties.
 	if (is_aldose()) {
 		prefix = "aldo";
 	} else /*is ketose*/ {
@@ -172,10 +206,13 @@ CarbohydrateInfo::show(std::ostream & output) const
 			ring_form = "septanose";
 			break;
 	}
-	if (is_uronic_acid_) {
-		modifications += string("  uronic acid\n");
+	for (uint position = 1; position <= n_carbons_; ++position) {
+		if (modifications_[position] != "") {
+			modifications += string("  ");
+			modifications += modifications_[position];
+			modifications += string("\n");
+		}
 	}
-	// TODO: Add more modifications.
 	if (modifications == "") {
 		modifications = "  none\n";
 	}
@@ -184,6 +221,7 @@ CarbohydrateInfo::show(std::ostream & output) const
 	output << "Carbohydrate Properties for this Residue:" << endl;
 	output << " Basic Name: " << base_name() << endl;
 	output << " IUPAC Name: " << full_name_ << endl;
+	output << " Abbreviation: " << short_name_ << endl;
 	output << " Classification: " << prefix << suffix << endl;
 	output << " Stereochemistry: " << stereochem_ << endl;
 	if (ring_size_ != 0) {
@@ -206,7 +244,18 @@ CarbohydrateInfo::show(std::ostream & output) const
 std::string
 CarbohydrateInfo::base_name() const
 {
-	return root_from_code(residue_type_->name3()) + "ose";
+	using namespace std;
+
+	string root = root_from_code(residue_type_->name3());
+
+	// The order here matters. Follow IUPAC priority rules.
+	if (is_uronic_acid()) {
+		return root + "uronic acid";
+	} else if (is_amino_sugar()) {
+		return root + "osamine";
+	} else {
+		return root + "ose";
+	}
 }
 
 // Return the attachment point of the downstream saccharide residue attached to ith branch off of this residue.
@@ -311,7 +360,6 @@ CarbohydrateInfo::init(core::chemical::ResidueTypeCAP residue_type)
 	} else {
 		is_glycoside_ = true;
 	}
-	is_uronic_acid_ = false;
 
 	read_and_set_properties();
 
@@ -337,7 +385,7 @@ CarbohydrateInfo::copy_data(
 	object_to_copy_to.ring_size_ = object_to_copy_from.ring_size_;
 	object_to_copy_to.anomer_ = object_to_copy_from.anomer_;
 	object_to_copy_to.is_glycoside_ = object_to_copy_from.is_glycoside_;
-	object_to_copy_to.is_uronic_acid_ = object_to_copy_from.is_uronic_acid_;
+	object_to_copy_to.modifications_ = object_to_copy_from.modifications_;
 	object_to_copy_to.nu_id_ = object_to_copy_from.nu_id_;
 	object_to_copy_to.mainchain_glycosidic_bond_acceptor_ = object_to_copy_from.mainchain_glycosidic_bond_acceptor_;
 	object_to_copy_to.branch_points_ = object_to_copy_from.branch_points_;
@@ -346,6 +394,8 @@ CarbohydrateInfo::copy_data(
 }
 
 // Return the number of carbon atoms (not counting R groups) in the ResidueType.
+// For this to work properly, it is imperative that patch files and PDB files only label non-R-group carbons with
+// numerals.
 core::Size
 CarbohydrateInfo::get_n_carbons() const
 {
@@ -371,86 +421,109 @@ CarbohydrateInfo::read_and_set_properties()
 	using namespace utility;
 
 	vector1<string> properties = residue_type_->properties();
+	string property;
+	uint position;  // location of modification; 0 for a property that does not have an associated position
+	modifications_.resize(n_carbons_);
 
-	bool aldose_or_ketose_set = false;
-	bool stereochem_set = false;
-	bool ring_size_set = false;
-	bool anomer_set = false;
+	bool aldose_or_ketose_is_set = false;
+	bool stereochem_is_set = false;
+	bool ring_size_is_set = false;
+	bool anomer_is_set = false;
 
 	for (uint i = 1, n_properties = properties.size(); i <= n_properties; ++i) {
-		if (properties[i] == "ALDOSE") {
-			if (anomeric_carbon_ != 1) {
-				utility_exit_with_message("A sugar cannot be both an aldose and a ketose; check the .param file.");
-			} else {
-				anomeric_carbon_ = 1;
-				aldose_or_ketose_set = true;
+		// If the 1st character of ith property is a number, it is a modification.
+		// Otherwise, it is a regular property or a modification for which the position is inherent, such as uronic
+		// acid.
+		property = properties[i];
+		position = atoi(&property[0]);
+		if (!position) {
+			if (property == "ALDOSE") {
+				if (anomeric_carbon_ != 1) {
+					utility_exit_with_message(
+							"A sugar cannot be both an aldose and a ketose; check the .params file.");
+				} else {
+					anomeric_carbon_ = 1;
+					aldose_or_ketose_is_set = true;
+				}
+			} else if (property == "KETOSE") {
+				if (aldose_or_ketose_is_set && (anomeric_carbon_ == 1)) {
+					utility_exit_with_message(
+							"A sugar cannot be both an aldose and a ketose; check the .params file.");
+				} else {
+					anomeric_carbon_ = 2;  // TODO: Provide method for dealing with non-ulose ketoses.
+					aldose_or_ketose_is_set = true;
+				}
+			} else if (property == "L_SUGAR") {
+				if (stereochem_is_set && (stereochem_ == 'D')) {
+					utility_exit_with_message("A sugar cannot have both L and D stereochem.; check the .params file.");
+				} else {
+					stereochem_ = 'L';
+					stereochem_is_set = true;
+				}
+			} else if (property == "D_SUGAR") {
+				if (stereochem_ == 'L') {
+					utility_exit_with_message("A sugar cannot have both L and D stereochem.; check the .params file.");
+				} else {
+					stereochem_ = 'D';
+					stereochem_is_set = true;
+				}
+			} else if (property == "FURANOSE") {
+				if (ring_size_is_set && (ring_size_ != 5)) {
+					utility_exit_with_message("A sugar cannot have multiple ring sizes; check the .params file.");
+				} else {
+					ring_size_ = 5;
+					ring_size_is_set = true;
+				}
+			} else if (property == "PYRANOSE") {
+				if (ring_size_is_set && (ring_size_ != 6)) {
+					utility_exit_with_message("A sugar cannot have multiple ring sizes; check the .params file.");
+				} else {
+					ring_size_ = 6;
+					ring_size_is_set = true;
+				}
+			} else if (property == "SEPTANOSE") {
+				if (ring_size_is_set && (ring_size_ != 7)) {
+					utility_exit_with_message("A sugar cannot have multiple ring sizes; check the .params file.");
+				} else {
+					ring_size_ = 7;
+					ring_size_is_set = true;
+				}
+			} else if (property == "ALPHA_SUGAR") {
+				if (anomer_is_set && (anomer_ == "beta")) {
+					utility_exit_with_message("A sugar cannot be both alpha and beta; check the .params file.");
+				} else {
+					anomer_ = "alpha";
+					anomer_is_set = true;
+				}
+			} else if (property == "BETA_SUGAR") {
+				if (anomer_is_set && (anomer_ == "alpha")) {
+					utility_exit_with_message("A sugar cannot be both alpha and beta; check the .params file.");
+				} else {
+					anomer_ = "beta";
+					anomer_is_set = true;
+				}
+			} else if (property == "URONIC_ACID") {
+				modifications_[1] = "uronic acid";
 			}
-		} else if (properties[i] == "KETOSE") {
-			if (aldose_or_ketose_set && (anomeric_carbon_ == 1)) {
-				utility_exit_with_message("A sugar cannot be both an aldose and a ketose; check the .param file.");
+		} else /*property has a position*/ {
+			if (modifications_[position] != "") {
+				utility_exit_with_message(
+						"A sugar cannot have multiple modifications at the same position; check the .params file.");
 			} else {
-				anomeric_carbon_ = 2;  // TODO: Provide method for dealing with non-ulose ketoses.
-				aldose_or_ketose_set = true;
+				property = property.substr(2);  // assumes 2nd character is a hyphen
+				boost::algorithm::to_lower(property);
+				replace(property.begin(), property.end(), '_', ' ');
+				modifications_[position] = property;
 			}
-		} else if (properties[i] == "L_SUGAR") {
-			if (stereochem_set && (stereochem_ == 'D')) {
-				utility_exit_with_message("A sugar cannot have both L and D stereochem.; check the .param file.");
-			} else {
-				stereochem_ = 'L';
-				stereochem_set = true;
-			}
-		} else if (properties[i] == "D_SUGAR") {
-			if (stereochem_ == 'L') {
-				utility_exit_with_message("A sugar cannot have both L and D stereochem.; check the .param file.");
-			} else {
-				stereochem_ = 'D';
-				stereochem_set = true;
-			}
-		} else if (properties[i] == "FURANOSE") {
-			if (ring_size_set && (ring_size_ != 5)) {
-				utility_exit_with_message("A sugar cannot have multiple ring sizes; check the .param file.");
-			} else {
-				ring_size_ = 5;
-				ring_size_set = true;
-			}
-		} else if (properties[i] == "PYRANOSE") {
-			if (ring_size_set && (ring_size_ != 6)) {
-				utility_exit_with_message("A sugar cannot have multiple ring sizes; check the .param file.");
-			} else {
-				ring_size_ = 6;
-				ring_size_set = true;
-			}
-		} else if (properties[i] == "SEPTANOSE") {
-			if (ring_size_set && (ring_size_ != 7)) {
-				utility_exit_with_message("A sugar cannot have multiple ring sizes; check the .param file.");
-			} else {
-				ring_size_ = 7;
-				ring_size_set = true;
-			}
-		} else if (properties[i] == "ALPHA_SUGAR") {
-			if (anomer_set && (anomer_ == "beta")) {
-				utility_exit_with_message("A sugar cannot be both alpha and beta; check the .param file.");
-			} else {
-				anomer_ = "alpha";
-				anomer_set = true;
-			}
-		} else if (properties[i] == "BETA_SUGAR") {
-			if (anomer_set && (anomer_ == "alpha")) {
-				utility_exit_with_message("A sugar cannot be both alpha and beta; check the .param file.");
-			} else {
-				anomer_ = "beta";
-				anomer_set = true;
-			}
-		} else if (properties[i] == "URONIC_ACID") {
-			is_uronic_acid_ = true;
 		}
 	}
 
+	// Double-check for inconsistencies.
 	if ((ring_size_ != 0) && (anomer_ == "")) {
-		utility_exit_with_message("A cyclic sugar must have its anomeric property declared; check the .param file.");
+		utility_exit_with_message("A cyclic sugar must have its anomeric property declared; check the .params file.");
 	}
 	if ((ring_size_ == 0) && (anomer_ != "")) {
-		utility_exit_with_message("An acyclic sugar cannot be alpha or beta; check the .param file.");
+		utility_exit_with_message("An acyclic sugar cannot be alpha or beta; check the .params file.");
 	}
 }
 
@@ -464,9 +537,7 @@ CarbohydrateInfo::determine_polymer_connections()
 	if (!residue_type_->is_upper_terminus()) {
 		uint upper_atom_index = residue_type_->upper_connect_atom();
 		string atom_name = residue_type_->atom_name(upper_atom_index);
-		//char atom_number = atom_name[2];
-		mainchain_glycosidic_bond_acceptor_ = atoi(&atom_name[2]);
-		//uint position = atom_number - '0';
+		mainchain_glycosidic_bond_acceptor_ = atoi(&atom_name[2]);  // 3rd column (index 2) is the atom number
 	} else {
 		mainchain_glycosidic_bond_acceptor_ = 0;
 	}
@@ -526,14 +597,27 @@ CarbohydrateInfo::determine_IUPAC_names()
 	using namespace std;
 
 	// Determine prefixes.
-	stringstream prefixes(stringstream::out);
+	stringstream long_prefixes(stringstream::out);
+	stringstream short_prefixes(stringstream::out);
+
+	// Connectivity
 	if (!residue_type_->is_upper_terminus()) {
-		prefixes << "->" << mainchain_glycosidic_bond_acceptor_ << ")-";
+		long_prefixes << "->" << mainchain_glycosidic_bond_acceptor_ << ")-";
 	}
 	if (!residue_type_->is_lower_terminus()) {
-		prefixes << anomer_ << '-';
+		long_prefixes << anomer_ << '-';
 	}
-	prefixes << stereochem_ << '-';
+	short_prefixes << long_prefixes.str();
+
+	// Substitutions
+	if (is_amino_sugar()) {
+		uint position = modifications_.index_of("amino sugar");
+		long_prefixes << position << "-amino-" << position << "-deoxy-";
+	}
+
+	// Stereochemistry
+	long_prefixes << stereochem_ << '-';
+	short_prefixes << stereochem_ << '-';
 
 	// Determine root.
 	string code = residue_type_->name3();
@@ -558,32 +642,41 @@ CarbohydrateInfo::determine_IUPAC_names()
 	}
 	if (residue_type_->is_lower_terminus()) {
 		if (is_glycoside_) {
-			if (is_uronic_acid_) {
+			if (is_uronic_acid()) {
 				long_suffix << "uronoside";
 				short_suffix << "A";
 			} else {
 				long_suffix << "oside";
+				if (is_amino_sugar()) {
+					short_suffix << "N";
+				}
 			}
 		} else {
-			if (is_uronic_acid_) {
+			if (is_uronic_acid()) {
 				long_suffix << "uronate";
 				short_suffix << "A";
 			} else {
 				long_suffix << "ose";
+				if (is_amino_sugar()) {
+					short_suffix << "N";
+				}
 			}
 		}
 	} else {
-		if (is_uronic_acid_) {
+		if (is_uronic_acid()) {
 			long_suffix << "uronoyl";
 			short_suffix << "A";
 		} else {
 			long_suffix << "osyl";
+			if (is_amino_sugar()) {
+				short_suffix << "N";
+			}
 		}
 		short_suffix << '-';
 	}
 
-	full_name_ = prefixes.str() + root + long_suffix.str();
-	short_name_ = prefixes.str() + code + short_suffix.str();
+	full_name_ = long_prefixes.str() + root + long_suffix.str();
+	short_name_ = short_prefixes.str() + code + short_suffix.str();
 }
 
 // If cyclic, define nu angles in terms of CHI ids.
