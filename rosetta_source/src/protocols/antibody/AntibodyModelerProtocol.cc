@@ -122,6 +122,7 @@ void AntibodyModelerProtocol::set_default()
     use_csts_ = false;
 	constrain_vlvh_qq_ = false;
 	constrain_cter_ = false;
+    packonly_after_graft_=false;
 	
     cst_weight_ = 0.0;
     cen_cst_ = 10.0;
@@ -212,6 +213,9 @@ void AntibodyModelerProtocol::init_from_options()
     }
 	if ( option[ OptionKeys::antibody::constrain_vlvh_qq ].user() ){
         set_constrain_vlvh_qq( option[ OptionKeys::antibody::constrain_vlvh_qq ]() );
+    }
+        if ( option[ OptionKeys::antibody::packonly_after_graft ].user()  ) {
+        set_packonly_after_graft( option[ OptionKeys::antibody::packonly_after_graft ]()  );
     }
     if ( option[ OptionKeys::antibody::sc_min ].user() ) {
         set_sc_min( option[ OptionKeys::antibody::sc_min ]() );
@@ -387,6 +391,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
         CDRsMinPackMinOP cdrs_min_pack_min = new CDRsMinPackMin(ab_info_);
             if(sc_min_) cdrs_min_pack_min->set_sc_min(true);
             if(rt_min_) cdrs_min_pack_min->set_rt_min(true);
+	cdrs_min_pack_min -> set_turnoff_minimization(packonly_after_graft_);
         cdrs_min_pack_min -> apply(pose);
     //}
 

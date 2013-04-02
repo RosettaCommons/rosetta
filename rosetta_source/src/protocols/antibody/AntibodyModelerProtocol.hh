@@ -87,6 +87,9 @@ public:
     void set_flank_residue_min (bool setting) {
         flank_residue_min_ = setting;
     }
+    void set_packonly_after_graft (bool setting){
+        packonly_after_graft_ = setting;
+    }
     void set_perturb_type(std::string remodel) {
         h3_perturb_type_ = remodel;
     }
@@ -139,6 +142,7 @@ private:
     bool flank_residue_min_;
     bool flank_residue_size_;
     bool middle_pack_min_;
+    bool packonly_after_graft_;
     std::string h3_perturb_type_;
     std::string h3_refine_type_;
     core::Real cen_cst_, high_cst_;
