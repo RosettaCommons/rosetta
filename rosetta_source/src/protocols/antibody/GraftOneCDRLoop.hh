@@ -64,7 +64,7 @@ public:
 			h3_stem_not_graft_ = setting;
 		}
 	
-		void set_flank_size(double setting){
+		void set_flank_size(Size setting){
 			flank_size_=setting;
 		}
 		

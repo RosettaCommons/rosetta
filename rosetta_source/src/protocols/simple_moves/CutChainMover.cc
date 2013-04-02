@@ -149,7 +149,7 @@ void CutChainMover::apply( core::pose::Pose & pose )
 core::Size
 CutChainMover::chain_cut( core::pose::Pose & pose)
 {
-	core::Size cut_pos = -1;
+	core::Size cut_pos = 0;
 	for( core::Size resj = pose.conformation().chain_begin( chain_id_ ); resj <= pose.conformation().chain_end( chain_id_ )-1; ++resj ){
 		core::Real const distance = pose.residue( resj+1 ).xyz( "N" ).distance(pose.residue( resj ).xyz( "C" ));
 //			TR<<"distance is: "<<distance<<std::endl;

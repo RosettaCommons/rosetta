@@ -70,7 +70,7 @@ namespace monte_carlo {
   RNA_TorsionMover::apply( core::pose::Pose & pose )
 	{
 		std::string move_type = "";
-		default_sample_range_ = 10.0; //not very elegant.
+		default_sample_range_ = 10; //not very elegant.
 		apply( pose, move_type, default_sample_range_ );
 	}
 

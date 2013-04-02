@@ -285,12 +285,12 @@ RigidBodyPerturbMover::show(std::ostream & output) const
 			"Magnitude of rotational movement (deg):    " << get_rot_mag() << std::endl;
 }
 
-core::Size
+core::Distance
 RigidBodyPerturbMover::get_trans_mag() const {
 	return trans_mag_;
 }
 
-core::Size
+core::Angle
 RigidBodyPerturbMover::get_rot_mag() const {
 	return rot_mag_;
 }

@@ -188,7 +188,7 @@ EvaluatedArchive::evaluate_silent_struct( core::io::silent::SilentStructOP iss )
 	using namespace core::io::silent;
 	utility::vector1< SilentEnergy > old_energies( iss->energies() );
 	pss->clear_energies(); //need to get rid of e.g., _archive_select_score_ // is actually also done implicitly in evaluate_pose, when it calls 'energies_from_pose'
-		//note: clear_energies should not kill the comments (TAG_IN_FILE, SOURCE_FILE ) should still be present...
+	//note: clear_energies should not kill the comments (TAG_IN_FILE, SOURCE_FILE ) should still be present...
 	//need to keep prefa_centroid_score...
 
 	//	runtime_assert( pss->has_energy( "chem_shifts" ) );
@@ -212,7 +212,7 @@ EvaluatedArchive::evaluate_silent_struct( core::io::silent::SilentStructOP iss )
 	//runtime_assert( pss->has_energy( "chem_shifts" ) );
 	int total_time = 0;
 	if ( pss->has_energy( "total_eval_time" ) ) {
-		total_time = pss->get_energy( "total_eval_time" );
+		total_time = static_cast<int>(pss->get_energy( "total_eval_time" ));
 	}
 	total_time += time(NULL)-start_eval_time_;
 	pss->add_energy( "total_eval_time", total_time, 1.0 );

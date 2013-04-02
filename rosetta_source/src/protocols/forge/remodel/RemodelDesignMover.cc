@@ -379,7 +379,7 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 		//simply repackage the values so either metric can feed into the code
 		int count = 1 ;
 		for ( utility::vector1< core::Real >::iterator it = sasa_list.begin(), ite = sasa_list.end(); it != ite ; it++){
-				sizemap[count] = (*it);
+				sizemap[count] = Size(*it);
 				count++;
 		}
 	} else {

@@ -311,7 +311,7 @@ APBSConfig::APBSConfig(core::pose::Pose const & pose, int natomsIn, int dbgIn, b
 	ionq[0] = 1; ionq[1] = -1, ionq[2] = 2; ionq[3] = -2;
 	ionc[0] = .15; ionc[1] = .15, ionc[2] = 0; ionc[3] = 0;
 	ionr[0] = 2; ionr[1] = 2, ionr[2] = 2; ionr[3] = 2;
-  dime[0] = dime[1] = dime[2] = 1.;
+	dime[0] = dime[1] = dime[2] = 1;
 
 	double min_r[] = {9999,9999,9999};
   double max_r[] = {-9999,-9999,-9999};
@@ -333,7 +333,7 @@ APBSConfig::APBSConfig(core::pose::Pose const & pose, int natomsIn, int dbgIn, b
 			fglen[i] = length[i] + fadd;
 			cglen[i] = length[i] * cfac;
 			if (cglen[i] <= fglen[i]) cglen[i] = fglen[i] + 1;
-			dime[i] = fglen[i] / space + 1;
+			dime[i] = static_cast<int>(fglen[i] / space + 1);
 		}
 }
 APBSConfig::~APBSConfig()

@@ -86,7 +86,7 @@ VIP_Report::get_GOE_relaxed_report(
         score_em->apply( goe_native );
 
 	core::Size num_accepted( 0 );
-	core::Size best_index( -1 );
+	core::Size best_index( 0 );
 	core::Real best_score( -9999.0 );
 	for( core::Size i = 1; i <= goe_relax_e.size(); i++ ){
 	   if( goe_relax_e[i] < goe_native.energies().total_energy() ){

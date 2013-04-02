@@ -174,7 +174,7 @@ RingConformationMover::apply(Pose & input_pose)
 
 	TR << "Applying " << get_name() << " to pose...." << endl;
 
-	Size i = RG.uniform() * residue_list_.size() + 1;
+	Size i = Size(RG.uniform() * residue_list_.size() + 1);
 	Size res_num = residue_list_[i];
 	Residue res = input_pose.residue(res_num);
 
@@ -186,12 +186,12 @@ RingConformationMover::apply(Pose & input_pose)
 
 	switch (ring_size) {
 		case 5:
-			//j = RG.uniform() * five_membered_ring_conformers_.size() + 1;
+			//j = Size(RG.uniform() * five_membered_ring_conformers_.size() + 1);
 			//conformer = five_membered_ring_conformers_[j];
 			Warning() << "Ring flips for 5-membered rings not yet coded!" << endl;
 			return;
 		case 6:
-			j = RG.uniform() * six_membered_ring_conformers_.size() + 1;
+			j = Size(RG.uniform() * six_membered_ring_conformers_.size() + 1);
 			conformer = six_membered_ring_conformers_[j];
 			break;
 	}

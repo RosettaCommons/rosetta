@@ -10,9 +10,7 @@
 
 /// @file protocols/antibody/AntibodyModelerProtocol.cc
 /// @brief Build a homology model of an antibody
-/// @detailed
-///
-///
+/// @details
 /// @author Jianqing Xu ( xubest@gmail.com )
 
 #include <protocols/jobdist/JobDistributors.hh> // SJF Keep first for mpi

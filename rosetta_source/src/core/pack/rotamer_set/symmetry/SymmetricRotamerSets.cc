@@ -539,7 +539,7 @@ SymmetricRotamerSets::compute_proline_correction_energies_for_otf_graph(
 			RotamerSetCOP ii_rotset = rotamer_set_for_moltenresidue( ii_master );
 			RotamerSetCOP jj_rotset = rotamer_set_for_moltenresidue( jj_master );
 
-			Size const iijj_scale = symm_info->score_multiply( ii_resid, jj_resid );
+			Size const iijj_scale = Size(symm_info->score_multiply( ii_resid, jj_resid ));
 			if ( iijj_scale == 0 ) continue;
 
 			//std::cout << "SymmetricRotamerSets::compute_proline_corrections " << (*uli)->get_first_node_ind() << " " << (*uli)->get_second_node_ind() << " " << ii_master << " " << jj_master << " " << ii_subunit << " " << jj_subunit << std::endl;

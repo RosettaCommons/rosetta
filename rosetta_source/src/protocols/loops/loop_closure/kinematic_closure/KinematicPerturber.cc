@@ -679,7 +679,7 @@ namespace protocols {
 							
 							if (current_freq > 0)
 								ideal_freq /= current_freq; // adjust frequency for what has been sampled already -- note that this means that the size of the resulting string isn't necessarily num_strings_ any more
-							std::string this_bin = std::string( ceil(ideal_freq*num_strings_), mcs_i->first ); 
+							std::string this_bin = std::string( char(ceil(ideal_freq*num_strings_)), mcs_i->first );
 							torsion_bins_for_pos += this_bin;
 						}
 						while (torsion_bins_for_pos.size() < num_strings_) { // make sure they all have the same size -- with adjustments the size may vary (slightly)
@@ -949,7 +949,7 @@ namespace protocols {
 							
 							if (current_freq > 0)
 								ideal_freq /= current_freq; // adjust frequency for what has been sampled already -- note that this means that the size of the resulting string isn't necessarily num_strings_ any more
-							std::string this_bin = std::string( ceil(ideal_freq*num_strings_), mcs_i->first ); 
+							std::string this_bin = std::string( char(ceil(ideal_freq*num_strings_)), mcs_i->first );
 							torsion_bins_for_pos += this_bin;
 						}
 						while (torsion_bins_for_pos.size() < num_strings_) { // make sure they all have the same size -- with adjustments the size may vary (slightly)

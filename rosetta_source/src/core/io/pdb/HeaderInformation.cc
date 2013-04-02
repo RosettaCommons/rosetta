@@ -633,14 +633,15 @@ HeaderInformation::store_experimental_techniques(
 		utility_exit();
 	}
 
-	size_t t_begin, t_len(0), t_end(-1);
+	size_t t_begin, t_len(0);
+	SSize t_end(-1);
 
 	while(true){
 		t_begin = exp.find_first_not_of(' ', t_end+1);
 		if(t_begin == std::string::npos) return;
 
 		t_end = exp.find(';', t_begin);
-		if(t_end == std::string::npos){
+		if(t_end == SSize(std::string::npos)){
 			experimental_technique_in_progress_ =
 				rstripped_whitespace(exp.substr(t_begin, t_len));
 			return;

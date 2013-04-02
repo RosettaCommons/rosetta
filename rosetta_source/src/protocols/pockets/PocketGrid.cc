@@ -2058,9 +2058,9 @@ core::Real PocketGrid::get_pocket_distance( PocketGrid const & template_pocket, 
 				core::Real const template_y = pit->y*template_pocket.stepSize_+template_pocket.ycorn_;
 				core::Real const template_z = pit->z*template_pocket.stepSize_+template_pocket.zcorn_;
 
-				core::Size const self_x_index = floor( ( ( template_x - xcorn_ ) / stepSize_ ) + 0.5 );
-				core::Size const self_y_index = floor( ( ( template_y - ycorn_ ) / stepSize_ ) + 0.5 );
-				core::Size const self_z_index = floor( ( ( template_z - zcorn_ ) / stepSize_ ) + 0.5 );
+				core::Size const self_x_index = Size(floor( ( ( template_x - xcorn_ ) / stepSize_ ) + 0.5 ));
+				core::Size const self_y_index = Size(floor( ( ( template_y - ycorn_ ) / stepSize_ ) + 0.5 ));
+				core::Size const self_z_index = Size(floor( ( ( template_z - zcorn_ ) / stepSize_ ) + 0.5 ));
 
 				//Check to see if template point is within comparison's grid range
 				if ( ( self_x_index < xdim_ ) && ( self_y_index < ydim_ ) && ( self_z_index < zdim_ ) ) {
@@ -2415,7 +2415,7 @@ core::Real EggshellGrid::get_eggshell_distance( EggshellGrid const & template_eg
 	core::Real const match_weight = 1.;
 	core::Real const mismatch_weight = 0.;
 	core::Real match_score = 0.;
-	core::Size output_res_num = 1.;
+	core::Size output_res_num = 1;
 
 	// Loop over all points in the template eggshell
 	for (std::list< numeric::xyzVector<core::Real> >::const_iterator pd = template_eggshell.eggshell_coord_list().begin(); pd != template_eggshell.eggshell_coord_list().end(); ++pd) {
@@ -2424,9 +2424,9 @@ core::Real EggshellGrid::get_eggshell_distance( EggshellGrid const & template_eg
 		core::Real const template_x = pd->x();
 		core::Real const template_y = pd->y();
 		core::Real const template_z = pd->z();
-		core::Size const self_x_index = floor( ( ( template_x - xcorn_ ) / stepSize_ ) + 0.5 );
-		core::Size const self_y_index = floor( ( ( template_y - ycorn_ ) / stepSize_ ) + 0.5 );
-		core::Size const self_z_index = floor( ( ( template_z - zcorn_ ) / stepSize_ ) + 0.5 );
+		core::Size const self_x_index = Size(floor( ( ( template_x - xcorn_ ) / stepSize_ ) + 0.5 ));
+		core::Size const self_y_index = Size(floor( ( ( template_y - ycorn_ ) / stepSize_ ) + 0.5 ));
+		core::Size const self_z_index = Size(floor( ( ( template_z - zcorn_ ) / stepSize_ ) + 0.5 ));
 
 		//Check to see if template point is within comparison's grid range
 		if ( ( self_x_index < xdim_ ) && ( self_y_index < ydim_ ) && ( self_z_index < zdim_ ) ) {

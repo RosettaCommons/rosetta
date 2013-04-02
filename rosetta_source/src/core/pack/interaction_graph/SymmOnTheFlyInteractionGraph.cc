@@ -380,8 +380,8 @@ SymmOnTheFlyNode::compute_rotamer_pair_energy(
 				EnergyMap emap;
 				Size lr_iijj_score_multiply( iijj_score_multiply );
 				if ( lr_iijj_score_multiply == 0 ) {
-					lr_iijj_score_multiply = get_on_the_fly_owner()->symm_info()->score_multiply(
-						this_rotamer.seqpos(), other_rotamer.seqpos() );
+					lr_iijj_score_multiply = Size(get_on_the_fly_owner()->symm_info()->score_multiply(
+						this_rotamer.seqpos(), other_rotamer.seqpos() ) );
 				}
 				if ( lr_iijj_score_multiply != 0 ) {
 					for ( ScoreFunction::LR_2B_MethodIterator
@@ -564,7 +564,8 @@ SymmOnTheFlyEdge::set_residues_adjacent_for_subunit_pair(
 
 	int const asu_index = 1; // ASSUMPTION, the asymmetric unit is unit 1!
 	int const nres_asu = get_otf_owner()->symm_info()->num_independent_residues();
-	Size const score_multiply = get_otf_owner()->symm_info()->score_multiply( 1, (other_node_subunit-1)*nres_asu + 1 );
+	Size const score_multiply =
+			Size(get_otf_owner()->symm_info()->score_multiply( 1, (other_node_subunit-1)*nres_asu + 1 ));
 	if ( score_multiply == 0 ) return;
 
 	// OK: now iterate across the rotamer representatives for this pair and figure out their cbeta distances

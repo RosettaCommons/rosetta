@@ -1127,14 +1127,14 @@ SecondaryStructurePotential::sheets_from_dimers(
 			// Loop over all strands in sheet
 			for ( utility::vector1< Size >::const_iterator itn = itn_start; itn != itn_end; ++itn ) {
 				Size strand_res (strand_to_SS_resnum[ *itn ] );
-				// determine the weight. Two cases: in scoring subunit or across an inteface to the scoring
+				// determine the weight. Two cases: in scoring subunit or across an interface to the scoring
 				// subunit
 				if ( symm_info->bb_is_independent( strand_res ) )  {
 				 strand_res_native = strand_res;
-				 weight =  symm_info->score_multiply(strand_res_native,strand_res_native);
+				 weight = Size(symm_info->score_multiply(strand_res_native,strand_res_native));
 				} else {
 					if ( strand_res !=0 ) continue; //if we don't have a strand in the scoring subunit
-					Size new_weight (symm_info->score_multiply(strand_res_native, strand_res) );
+					Size new_weight = Size(symm_info->score_multiply(strand_res_native, strand_res) );
 					if (  new_weight > weight ) weight = new_weight;
 				}
 			}
