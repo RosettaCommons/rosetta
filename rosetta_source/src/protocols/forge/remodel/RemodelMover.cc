@@ -1025,7 +1025,7 @@ void RemodelMover::apply( Pose & pose ) {
 			}
 			TR << "apply(): calling RemodelDesignMover apply function." << std::endl;
 			designMover.apply(pose);
-			//*****HORRIBLE CODE BELOW why is there a filter in the middle of a loop? Previously this loop didn't maintain the pose correctly which resulted in a difficult to track down seg fault.  In my opinion this section should be scrapped because it makes debugging code with constraints on, but fast model creation impossible.
+			//****Previously this loop didn't maintain the pose correctly which resulted in a difficult to track down seg fault.  Fixed, but it's questionable weather you would want to filter poses based on constraints.
 			if ( op_user_enzdes_cstfile_ ||
 					 op_user_constraints_cst_file_
 					 ){

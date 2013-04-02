@@ -1127,6 +1127,19 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		//NOTE::There is no attempt to close loops.
 		ScoreFunctionOP sfx_stage0_OP = ( core::scoring::ScoreFunctionFactory::create_score_function( "score0" ) );
 		ScoreFunctionOP sfx_stage1_OP =  ( core::scoring::ScoreFunctionFactory::create_score_function( "abinitio_remodel_cen" ) );
+		if(op_user_remodel_repeat_structure_){
+			std::cout << "setting weights" << std::endl;
+			sfx_stage0_OP->set_weight(scoring::atom_pair_constraint, 1.0 * op_remodel_repeat_structure_);
+			sfx_stage1_OP->set_weight(scoring::atom_pair_constraint, 1.0 * op_remodel_repeat_structure_);
+		}
+		else{
+			sfx_stage0_OP->set_weight(scoring::atom_pair_constraint, 1.0);
+			sfx_stage1_OP->set_weight(scoring::atom_pair_constraint, 1.0);
+		}	
+		std::cout << "sfx0" << std::endl;
+		sfx_stage0_OP->show_pretty(std::cout);
+		std::cout << "sfx1" << std::endl;
+		sfx_stage1_OP->show_pretty(std::cout);
 		//stage0-------------------------------------------
 		MoveMap movemap;
 		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
