@@ -1,0 +1,630 @@
+core.init: Constant seed mode, seed=1111111 seed_offset=0 real_seed=1111111
+core.chemical.ResidueTypeSet: Finished initializing fa_standard residue type set.  Created 6242 residue types
+core.io.pdb.file_data: [ WARNING ] discarding 5 atoms at position 1 in file 2it7.pdb. Best match rsd_type:  GLY_p:NtermProteinFull
+core.io.pdb.file_data: [ WARNING ] discarding 2 atoms at position 2 in file 2it7.pdb. Best match rsd_type:  CYS
+core.io.pdb.file_data: [ WARNING ] discarding 6 atoms at position 3 in file 2it7.pdb. Best match rsd_type:  PRO
+core.io.pdb.file_data: [ WARNING ] discarding 10 atoms at position 4 in file 2it7.pdb. Best match rsd_type:  ARG
+core.io.pdb.file_data: [ WARNING ] discarding 8 atoms at position 5 in file 2it7.pdb. Best match rsd_type:  ILE
+core.io.pdb.file_data: [ WARNING ] discarding 8 atoms at position 6 in file 2it7.pdb. Best match rsd_type:  LEU
+core.io.pdb.file_data: [ WARNING ] discarding 7 atoms at position 7 in file 2it7.pdb. Best match rsd_type:  MET
+core.io.pdb.file_data: [ WARNING ] discarding 10 atoms at position 8 in file 2it7.pdb. Best match rsd_type:  ARG
+core.io.pdb.file_data: [ WARNING ] discarding 2 atoms at position 9 in file 2it7.pdb. Best match rsd_type:  CYS
+core.io.pdb.file_data: [ WARNING ] discarding 11 atoms at position 10 in file 2it7.pdb. Best match rsd_type:  LYS
+core.io.pdb.file_data: [ WARNING ] discarding 6 atoms at position 11 in file 2it7.pdb. Best match rsd_type:  GLN
+core.io.pdb.file_data: [ WARNING ] discarding 2 atoms at position 12 in file 2it7.pdb. Best match rsd_type:  ASP
+core.io.pdb.file_data: [ WARNING ] discarding 2 atoms at position 13 in file 2it7.pdb. Best match rsd_type:  SER
+core.io.pdb.file_data: [ WARNING ] discarding 2 atoms at position 14 in file 2it7.pdb. Best match rsd_type:  ASP
+core.io.pdb.file_data: [ WARNING ] discarding 2 atoms at position 15 in file 2it7.pdb. Best match rsd_type:  CYS
+core.io.pdb.file_data: [ WARNING ] discarding 8 atoms at position 16 in file 2it7.pdb. Best match rsd_type:  LEU
+core.io.pdb.file_data: [ WARNING ] discarding 3 atoms at position 17 in file 2it7.pdb. Best match rsd_type:  ALA
+core.io.pdb.file_data: [ WARNING ] discarding 2 atoms at position 18 in file 2it7.pdb. Best match rsd_type:  GLY
+core.io.pdb.file_data: [ WARNING ] discarding 2 atoms at position 19 in file 2it7.pdb. Best match rsd_type:  CYS
+core.io.pdb.file_data: [ WARNING ] discarding 6 atoms at position 20 in file 2it7.pdb. Best match rsd_type:  VAL
+core.io.pdb.file_data: [ WARNING ] discarding 2 atoms at position 21 in file 2it7.pdb. Best match rsd_type:  CYS
+core.io.pdb.file_data: [ WARNING ] discarding 2 atoms at position 22 in file 2it7.pdb. Best match rsd_type:  GLY
+core.io.pdb.file_data: [ WARNING ] discarding 6 atoms at position 23 in file 2it7.pdb. Best match rsd_type:  PRO
+core.io.pdb.file_data: [ WARNING ] discarding 4 atoms at position 24 in file 2it7.pdb. Best match rsd_type:  ASN
+core.io.pdb.file_data: [ WARNING ] discarding 2 atoms at position 25 in file 2it7.pdb. Best match rsd_type:  GLY
+core.io.pdb.file_data: [ WARNING ] discarding 2 atoms at position 26 in file 2it7.pdb. Best match rsd_type:  PHE
+core.io.pdb.file_data: [ WARNING ] discarding 2 atoms at position 27 in file 2it7.pdb. Best match rsd_type:  CYS
+core.io.pdb.file_data: [ WARNING ] discarding 2 atoms at position 28 in file 2it7.pdb. Best match rsd_type:  GLY_p:CtermProteinFull
+core.pack.task: Packer task: initialize from command line() 
+core.conformation.Conformation: Found disulfide between residues 2 19
+core.conformation.Conformation: current variant for 2 CYS
+core.conformation.Conformation: current variant for 19 CYS
+core.conformation.Conformation: current variant for 2 CYD
+core.conformation.Conformation: current variant for 19 CYD
+core.conformation.Conformation: Found disulfide between residues 9 21
+core.conformation.Conformation: current variant for 9 CYS
+core.conformation.Conformation: current variant for 21 CYS
+core.conformation.Conformation: current variant for 9 CYD
+core.conformation.Conformation: current variant for 21 CYD
+core.conformation.Conformation: Found disulfide between residues 15 27
+core.conformation.Conformation: current variant for 15 CYS
+core.conformation.Conformation: current variant for 27 CYS
+core.conformation.Conformation: current variant for 15 CYD
+core.conformation.Conformation: current variant for 27 CYD
+desired_sequence= GCPRILMRCKQDSDCLAGCVCGPNGFCG
+working_sequence= GCPRILMRCKQDSDCLAGCVCGPNGFCG
+JUMP_RES INFO:  2 2 
+CHAIN 1. Considering jump:  1  to  28. WORKING_RES: 1 1
+CHAIN 1. Considering jump:  7  to  8. WORKING_RES: 123 123
+CHAIN 2. Considering jump:  28  to  1. WORKING_RES: 1 1
+Adding potential jump! 
+POTENTIAL JUMPS: 1 28   chain: 1 2
+POTENTIAL JUMPS: 28 1   chain: 2 1
+Going to test jump: 1 28? 0
+ADDING JUMP: 1 28
+0 0  FULL POSE ANNOTATED SEQUENCE: G[GLY_p:NtermProteinFull]CPRILMRCKQDSDCLAGCVCGPNGFCG[GLY_p:CtermProteinFull]
+Upstream   jump_point= 1  Downstream jump_point= 28  cut_point= 7
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CB  on residue CYS 2
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  SG  on residue CYS 2
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CB  on residue PRO 3
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CG  on residue PRO 3
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CD  on residue PRO 3
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CB  on residue ARG 4
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CG  on residue ARG 4
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CD  on residue ARG 4
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  NE  on residue ARG 4
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CZ  on residue ARG 4
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  NH1 on residue ARG 4
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  NH2 on residue ARG 4
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CB  on residue CYS 5
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  SG  on residue CYS 5
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CB  on residue LYS 6
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CG  on residue LYS 6
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CD  on residue LYS 6
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CE  on residue LYS 6
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  NZ  on residue LYS 6
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CB  on residue GLN 7
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CG  on residue GLN 7
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CD  on residue GLN 7
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  OE1 on residue GLN 7
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  NE2 on residue GLN 7
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CB  on residue ASP 8
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CG  on residue ASP 8
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  OD1 on residue ASP 8
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  OD2 on residue ASP 8
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CB  on residue SER 9
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  OG  on residue SER 9
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CB  on residue ASP 10
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CG  on residue ASP 10
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  OD1 on residue ASP 10
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  OD2 on residue ASP 10
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CB  on residue CYS 11
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  SG  on residue CYS 11
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CB  on residue LEU 12
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CG  on residue LEU 12
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CD1 on residue LEU 12
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CD2 on residue LEU 12
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CB  on residue ALA 13
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CB  on residue CYS 15
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  SG  on residue CYS 15
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CB  on residue VAL 16
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CG1 on residue VAL 16
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CG2 on residue VAL 16
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CB  on residue CYS 17
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  SG  on residue CYS 17
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CB  on residue PRO 19
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CG  on residue PRO 19
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CD  on residue PRO 19
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CB  on residue ASN 20
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CG  on residue ASN 20
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  OD1 on residue ASN 20
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  ND2 on residue ASN 20
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CB  on residue PHE 22
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CG  on residue PHE 22
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CD1 on residue PHE 22
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CD2 on residue PHE 22
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CE1 on residue PHE 22
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CE2 on residue PHE 22
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CZ  on residue PHE 22
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CD2 on residue PHE 22
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CE2 on residue PHE 22
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CD2 on residue PHE 22
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CB  on residue CYS 23
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  SG  on residue CYS 23
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  OXT on residue GLY_p:CtermProteinFull 24
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_missing_sidechains: packing residue number 2 because of missing atom number 5 atom name  CB 
+core.pack.pack_missing_sidechains: packing residue number 3 because of missing atom number 5 atom name  CB 
+core.pack.pack_missing_sidechains: packing residue number 4 because of missing atom number 5 atom name  CB 
+core.pack.pack_missing_sidechains: packing residue number 5 because of missing atom number 5 atom name  CB 
+core.pack.pack_missing_sidechains: packing residue number 6 because of missing atom number 5 atom name  CB 
+core.pack.pack_missing_sidechains: packing residue number 7 because of missing atom number 5 atom name  CB 
+core.pack.pack_missing_sidechains: packing residue number 8 because of missing atom number 5 atom name  CB 
+core.pack.pack_missing_sidechains: packing residue number 9 because of missing atom number 5 atom name  CB 
+core.pack.pack_missing_sidechains: packing residue number 10 because of missing atom number 5 atom name  CB 
+core.pack.pack_missing_sidechains: packing residue number 11 because of missing atom number 5 atom name  CB 
+core.pack.pack_missing_sidechains: packing residue number 12 because of missing atom number 5 atom name  CB 
+core.pack.pack_missing_sidechains: packing residue number 13 because of missing atom number 5 atom name  CB 
+core.pack.pack_missing_sidechains: packing residue number 15 because of missing atom number 5 atom name  CB 
+core.pack.pack_missing_sidechains: packing residue number 16 because of missing atom number 5 atom name  CB 
+core.pack.pack_missing_sidechains: packing residue number 17 because of missing atom number 5 atom name  CB 
+core.pack.pack_missing_sidechains: packing residue number 19 because of missing atom number 5 atom name  CB 
+core.pack.pack_missing_sidechains: packing residue number 20 because of missing atom number 5 atom name  CB 
+core.pack.pack_missing_sidechains: packing residue number 22 because of missing atom number 5 atom name  CB 
+core.pack.pack_missing_sidechains: packing residue number 23 because of missing atom number 5 atom name  CB 
+core.scoring.etable: Starting energy table calculation
+core.scoring.etable: smooth_etable: changing atr/rep split to bottom of energy well
+core.scoring.etable: smooth_etable: spline smoothing lj etables (maxdis = 6)
+core.scoring.etable: smooth_etable: spline smoothing solvation etables (max_dis = 6)
+core.scoring.etable: Finished calculating energy tables.
+basic.io.database: Database file opened: scoring/score_functions/PairEPotential/pdb_pair_stats_fine
+basic.io.database: Database file opened: scoring/score_functions/hbonds/standard_params/HBPoly1D.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/standard_params/HBFadeIntervals.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/standard_params/HBEval.csv
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/env_log.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/cbeta_den.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/pair_log.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/cenpack_log.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/env_log.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/cbeta_den.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/pair_log.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/cenpack_log.txt
+basic.io.database: Database file opened: scoring/score_functions/MembranePotential/CEN6_mem_env_log.txt
+basic.io.database: Database file opened: scoring/score_functions/MembranePotential/CEN10_mem_env_log.txt
+basic.io.database: Database file opened: scoring/score_functions/MembranePotential/memcbeta_den.txt
+basic.io.database: Database file opened: scoring/score_functions/MembranePotential/mem_pair_log.txt
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/P_AA
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/P_AA_n
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/P_AA_pp
+basic.io.database: Database file opened: scoring/score_functions/rama/Rama_smooth_dyn.dat_ss_6.4
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 1283 rotamers at 19 positions.
+core.pack.pack_rotamers: IG: 1258752 bytes
+G[GLY_p:NtermProteinFull]CPRILMRCKQDSDCLAGCVCGPNGFCG[GLY_p:CtermProteinFull]
+G[GLY_p:NtermProteinFull]CPRCKQDSDCLAGCVCGPNGFCG[GLY_p:CtermProteinFull]
+IMPORT_POSE DURING COPY_NEXT_SEGMENT: G[GLY_p:NtermProteinFull]CPRCKQDSDCLAGCVCGPNGFCG[GLY_p:CtermProteinFull]
+PARTITION_RES ==> 6
+PARTITION_DEFINITION ==> 1111110111111111111111111111
+FOLD_TREE FOLD_TREE  EDGE 1 7 -1  JEDGE 1 28 1 N N  INTRA_RES_STUB  EDGE 28 8 -1 
+
+CHECK_CHAIN --> 7 0 8 1
+CUTPOINT CLOSED --> 7 8
+Num. res in partition 0:  1.   Num. res in partition 1: 27. Moving_res is in  partition 1.  New root residue 1
+Applied cutpoint variants to 7
+0 0  FULL POSE ANNOTATED SEQUENCE: G[GLY_p:NtermProteinFull]CPRILMRCKQDSDCLAGCVCGPNGFCG[GLY_p:CtermProteinFull]
+core.io.raw_data.DisulfideFile: Fixing a disulfide between 2 and 19
+core.io.raw_data.DisulfideFile: Fixing a disulfide between 9 and 21
+core.io.raw_data.DisulfideFile: Fixing a disulfide between 15 and 27
+FOUND PAIR: 2--19[in subpose: 2--19]
+FOUND PAIR: 9--21[in subpose: 9--21]
+FOUND PAIR: 15--27[in subpose: 15--27]
+0100000010000010001010000010
+AFTER DISULF: G[GLY_p:NtermProteinFull]C[CYD]PRILM[MET_p:protein_cutpoint_lower]R[ARG_p:protein_cutpoint_upper]C[CYD]KQDSDC[CYD]LAGC[CYD]VC[CYD]GPNGFC[CYD]G[GLY_p:CtermProteinFull]
+NATIVE sequence: G[GLY_p:NtermProteinFull]C[CYD]PRILMRC[CYD]KQDSDC[CYD]LAGC[CYD]VC[CYD]GPNGFC[CYD]G[GLY_p:CtermProteinFull]
+PoseSetup: Align to NATIVE
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/env_log.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/cbeta_den.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/pair_log.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/cenpack_log.txt
+basic.io.database: Database file opened: scoring/score_functions/SecondaryStructurePotential/phi.theta.36.HS.resmooth
+basic.io.database: Database file opened: scoring/score_functions/SecondaryStructurePotential/phi.theta.36.SS.resmooth
+basic.io.database: Database file opened: scoring/score_functions/rama/Rama_smooth_dyn.dat_ss_6.4
+Using StepWiseProteinMainChainSampleGenerator. Num poses: 156
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 3.24777  backward_dev: 2.7585  torsion_delta: 64.8329 rama_delta: 8.97727
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 5.24348  backward_dev: 4.61858  torsion_delta: 69.3076 rama_delta: 4.36934
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 3.52529  backward_dev: 2.78964  torsion_delta: 49.1244 rama_delta: 9.1485
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 3.55591  backward_dev: 2.82428  torsion_delta: 31.4741 rama_delta: 9.5463
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 5.27268  backward_dev: 4.08554  torsion_delta: 58.5922 rama_delta: 9.21835
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 5.31594  backward_dev: 4.08338  torsion_delta: 65.7022 rama_delta: 9.52354
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 5.63262  backward_dev: 4.03693  torsion_delta: 50.979 rama_delta: 6.19765
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 5.6309  backward_dev: 4.03542  torsion_delta: 43.5932 rama_delta: 6.4695
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 5.63144  backward_dev: 4.03589  torsion_delta: 36.0578 rama_delta: 6.61894
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 6.77234  backward_dev: 4.96725  torsion_delta: 76.0267 rama_delta: 9.6912
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 6.98348  backward_dev: 4.93418  torsion_delta: 45.8487 rama_delta: 6.00755
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 6.98247  backward_dev: 4.93282  torsion_delta: 38.4663 rama_delta: 6.06058
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 2.0204  backward_dev: 2.17916  torsion_delta: 108.601 rama_delta: 5.4727
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 3.65923  backward_dev: 3.23595  torsion_delta: 54.1557 rama_delta: 0.818805
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 2.52165  backward_dev: 2.36389  torsion_delta: 62.2326 rama_delta: 9.38642
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 3.10872  backward_dev: 2.83963  torsion_delta: 41.6841 rama_delta: 4.00734
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 0.985566  backward_dev: 1.02067  torsion_delta: 90.1551 rama_delta: 9.41265
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 1.53785  backward_dev: 1.41969  torsion_delta: 112.663 rama_delta: 9.96516
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 1.92872  backward_dev: 1.89853  torsion_delta: 35.3467 rama_delta: 1.83474
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 1.8794  backward_dev: 1.83357  torsion_delta: 29.1961 rama_delta: 2.74695
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 1.94923  backward_dev: 1.89728  torsion_delta: 36.5163 rama_delta: 3.72405
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 2.10092  backward_dev: 2.62937  torsion_delta: 66.5933 rama_delta: 3.0342
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 1.62442  backward_dev: 1.40284  torsion_delta: 22.6921 rama_delta: 0.523663
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 1.57894  backward_dev: 1.11064  torsion_delta: 34.5826 rama_delta: 4.37216
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 1.22643  backward_dev: 1.3039  torsion_delta: 81.4187 rama_delta: 1.73814
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 2.11171  backward_dev: 2.69976  torsion_delta: 53.4651 rama_delta: 1.271
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 0.492029  backward_dev: 1.57065  torsion_delta: 41.1244 rama_delta: 4.55842
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 0.498898  backward_dev: 1.57456  torsion_delta: 35.4384 rama_delta: 4.68925
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 2.26005  backward_dev: 2.32127  torsion_delta: 68.0804 rama_delta: 4.32786
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 0.494022  backward_dev: 1.16567  torsion_delta: 76.7494 rama_delta: 5.55379
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 0.523741  backward_dev: 1.22594  torsion_delta: 59.2631 rama_delta: 5.10898
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 0.529025  backward_dev: 1.39903  torsion_delta: 36.9539 rama_delta: 4.51821
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 0.52546  backward_dev: 1.21943  torsion_delta: 45.655 rama_delta: 5.66756
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 0.677645  backward_dev: 0.766091  torsion_delta: 79.5207 rama_delta: 7.69035
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 0.439105  backward_dev: 0.427249  torsion_delta: 61.3356 rama_delta: 10.4732
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 0.439105  backward_dev: 0.427249  torsion_delta: 53.8356 rama_delta: 10.5383
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 0.641065  backward_dev: 1.33011  torsion_delta: 73.2108 rama_delta: 4.77448
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 2.64649  backward_dev: 2.65678  torsion_delta: 60.4156 rama_delta: 4.82828
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 0.716744  backward_dev: 1.04519  torsion_delta: 71.1972 rama_delta: 6.61332
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 0.716744  backward_dev: 1.04519  torsion_delta: 63.6972 rama_delta: 6.79715
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 0.752024  backward_dev: 0.774541  torsion_delta: 70.5815 rama_delta: 5.4429
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 2.82107  backward_dev: 2.68445  torsion_delta: 71.7808 rama_delta: 4.58449
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 0.797107  backward_dev: 0.862116  torsion_delta: 53.4537 rama_delta: 5.18354
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 0.770867  backward_dev: 0.840191  torsion_delta: 46.2212 rama_delta: 5.47784
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 0.748866  backward_dev: 0.78851  torsion_delta: 43.1341 rama_delta: 5.65112
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 1.46633  backward_dev: 1.18734  torsion_delta: 71.1831 rama_delta: 9.42756
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 1.46633  backward_dev: 1.18734  torsion_delta: 55.1018 rama_delta: 9.44275
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 1.46633  backward_dev: 1.18734  torsion_delta: 47.6018 rama_delta: 9.50786
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 3.4655  backward_dev: 3.18354  torsion_delta: 71.6103 rama_delta: 4.55504
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 3.46291  backward_dev: 3.16548  torsion_delta: 63.6911 rama_delta: 4.07852
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 1.49033  backward_dev: 1.32569  torsion_delta: 46.0264 rama_delta: 6.2746
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 1.41441  backward_dev: 1.31882  torsion_delta: 43.1479 rama_delta: 6.60975
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 2.49596  backward_dev: 2.01274  torsion_delta: 74.1717 rama_delta: 9.26601
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 4.22883  backward_dev: 3.7745  torsion_delta: 65.5178 rama_delta: 4.89719
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 3.29023  backward_dev: 2.52024  torsion_delta: 45.9634 rama_delta: 0.464267
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 2.26379  backward_dev: 1.71511  torsion_delta: 52.969 rama_delta: 5.70468
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 2.56991  backward_dev: 1.78902  torsion_delta: 34.254 rama_delta: 4.79209
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 2.8276  backward_dev: 2.35729  torsion_delta: 81.4057 rama_delta: 8.00796
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 2.8276  backward_dev: 2.35729  torsion_delta: 61.3352 rama_delta: 8.02314
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 3.10877  backward_dev: 2.37573  torsion_delta: 38.7409 rama_delta: 5.19114
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 5.85027  backward_dev: 4.35097  torsion_delta: 70.489 rama_delta: 3.16785
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 7.6136  backward_dev: 5.58693  torsion_delta: 48.6621 rama_delta: 3.03079
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 4.99458  backward_dev: 3.49975  torsion_delta: 75.0475 rama_delta: 9.36814
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 5.33104  backward_dev: 3.94579  torsion_delta: 39.9435 rama_delta: 6.09127
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 3.91738  backward_dev: 2.89305  torsion_delta: 113.766 rama_delta: 8.97135
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 5.06435  backward_dev: 3.58239  torsion_delta: 78.6646 rama_delta: 4.55228
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 4.3032  backward_dev: 3.13882  torsion_delta: 66.5237 rama_delta: 6.65386
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 4.69817  backward_dev: 3.5632  torsion_delta: 73.7969 rama_delta: 4.66647
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 4.93949  backward_dev: 3.46443  torsion_delta: 46.697 rama_delta: 5.60272
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 4.30516  backward_dev: 4.17362  torsion_delta: 78.6739 rama_delta: 7.54046
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 3.64622  backward_dev: 3.0865  torsion_delta: 49.0565 rama_delta: 2.41179
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 3.92855  backward_dev: 3.05391  torsion_delta: 50.1734 rama_delta: 3.98136
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 6.57281  backward_dev: 5.45866  torsion_delta: 77.9507 rama_delta: 2.56543
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 5.83184  backward_dev: 4.9321  torsion_delta: 71.8024 rama_delta: 5.99988
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 5.11538  backward_dev: 3.79871  torsion_delta: 74.427 rama_delta: 7.31005
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 5.23948  backward_dev: 3.90851  torsion_delta: 67.1789 rama_delta: 6.75063
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 4.32686  backward_dev: 4.00131  torsion_delta: 75.6719 rama_delta: 5.55408
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 5.41362  backward_dev: 4.8303  torsion_delta: 56.919 rama_delta: 5.28664
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 4.42247  backward_dev: 3.70107  torsion_delta: 78.429 rama_delta: 4.25749
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 4.471  backward_dev: 3.76984  torsion_delta: 74.9949 rama_delta: 4.42204
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 4.55308  backward_dev: 3.66558  torsion_delta: 46.4764 rama_delta: 5.71032
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 3.73381  backward_dev: 3.97269  torsion_delta: 73.2752 rama_delta: 5.9183
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 2.73837  backward_dev: 2.95744  torsion_delta: 50.4167 rama_delta: 4.96313
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 3.06018  backward_dev: 3.06076  torsion_delta: 46.0072 rama_delta: 4.79912
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 3.95054  backward_dev: 4.46649  torsion_delta: 52.3606 rama_delta: 1.59804
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 3.64618  backward_dev: 4.15718  torsion_delta: 47.0892 rama_delta: 1.61629
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 2.68838  backward_dev: 3.56017  torsion_delta: 46.9589 rama_delta: 4.86267
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 2.78455  backward_dev: 3.66168  torsion_delta: 38.6251 rama_delta: 4.39915
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 1.34531  backward_dev: 2.43025  torsion_delta: 72.9356 rama_delta: 2.34808
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 2.58719  backward_dev: 2.85732  torsion_delta: 59.9887 rama_delta: 1.41856
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 1.42653  backward_dev: 1.59925  torsion_delta: 52.3865 rama_delta: 4.81155
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 1.73431  backward_dev: 2.63852  torsion_delta: 36.0202 rama_delta: 4.33392
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 1.66351  backward_dev: 2.6573  torsion_delta: 30.4118 rama_delta: 3.05659
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 2.07337  backward_dev: 2.09207  torsion_delta: 66.5182 rama_delta: 3.59383
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 0.926298  backward_dev: 1.10273  torsion_delta: 35.8841 rama_delta: 0.743765
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 1.22224  backward_dev: 1.73811  torsion_delta: 35.2722 rama_delta: 0.717102
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 2.55483  backward_dev: 2.58688  torsion_delta: 64.8965 rama_delta: 1.64903
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 2.78774  backward_dev: 3.17313  torsion_delta: 50.1697 rama_delta: 0.502707
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 1.59637  backward_dev: 2.60742  torsion_delta: 37.9565 rama_delta: 4.30428
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 1.60275  backward_dev: 2.61758  torsion_delta: 35.8215 rama_delta: 4.47796
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 1.00129  backward_dev: 1.79779  torsion_delta: 85.525 rama_delta: 4.5438
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 1.00867  backward_dev: 1.27184  torsion_delta: 103.268 rama_delta: 4.74298
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 1.00867  backward_dev: 1.27184  torsion_delta: 80.7675 rama_delta: 4.342
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 1.05677  backward_dev: 1.69154  torsion_delta: 23.4127 rama_delta: 0.617149
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 0.88608  backward_dev: 1.98776  torsion_delta: 38.5408 rama_delta: 3.55814
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 1.90089  backward_dev: 1.80066  torsion_delta: 82.9733 rama_delta: 9.69698
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 0.809617  backward_dev: 0.761138  torsion_delta: 41.6727 rama_delta: -0.362617
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 1.02032  backward_dev: 0.689152  torsion_delta: 34.5123 rama_delta: 0.992525
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 1.03637  backward_dev: 1.3562  torsion_delta: 89.8175 rama_delta: 4.40393
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 0.81319  backward_dev: 1.05359  torsion_delta: 77.3887 rama_delta: 1.64659
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 1.03469  backward_dev: 1.70256  torsion_delta: 39.8061 rama_delta: 4.23597
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 0.98726  backward_dev: 1.36812  torsion_delta: 32.5454 rama_delta: 2.1357
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 1.90962  backward_dev: 1.84006  torsion_delta: 78.7515 rama_delta: 3.3064
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 1.72381  backward_dev: 1.65881  torsion_delta: 71.6383 rama_delta: 1.77292
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 0.272875  backward_dev: 0.536938  torsion_delta: 56.2699 rama_delta: 2.5765
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 0.336492  backward_dev: 0.610337  torsion_delta: 46.555 rama_delta: 2.64128
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 0.340321  backward_dev: 0.615805  torsion_delta: 38.9628 rama_delta: 2.84753
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 1.39364  backward_dev: 1.23112  torsion_delta: 100.763 rama_delta: 13.9839
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 0.935402  backward_dev: 1.04363  torsion_delta: 69.2683 rama_delta: 9.61062
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 0.998804  backward_dev: 0.723694  torsion_delta: 23.2677 rama_delta: 0.25062
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 7.72448  backward_dev: 6.01064  torsion_delta: 80.4744 rama_delta: 5.35795
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 7.57905  backward_dev: 5.90992  torsion_delta: 74.8733 rama_delta: 5.17409
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 8.88804  backward_dev: 6.32189  torsion_delta: 67.749 rama_delta: 4.86213
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 7.17481  backward_dev: 5.4657  torsion_delta: 50.032 rama_delta: 10.6711
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 8.0501  backward_dev: 6.32248  torsion_delta: 80.904 rama_delta: 6.17344
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 9.24698  backward_dev: 7.27516  torsion_delta: 82.8724 rama_delta: 3.627
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 8.26456  backward_dev: 6.24508  torsion_delta: 56.0766 rama_delta: 5.87652
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 8.6987  backward_dev: 6.27646  torsion_delta: 55.2497 rama_delta: 5.2353
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 7.49598  backward_dev: 5.7775  torsion_delta: 52.2114 rama_delta: 9.91505
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 7.76475  backward_dev: 6.6137  torsion_delta: 74.2065 rama_delta: 6.8244
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 6.65485  backward_dev: 5.54084  torsion_delta: 54.0289 rama_delta: 9.46806
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 7.87708  backward_dev: 6.36002  torsion_delta: 48.692 rama_delta: 3.53424
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 3.11411  backward_dev: 3.96927  torsion_delta: 56.2625 rama_delta: 4.63186
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 3.13666  backward_dev: 3.98994  torsion_delta: 46.5115 rama_delta: 4.35097
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 3.49775  backward_dev: 4.15998  torsion_delta: 43.0609 rama_delta: 4.71072
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 3.07379  backward_dev: 4.03102  torsion_delta: 46.4731 rama_delta: 4.90879
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 1.81055  backward_dev: 2.70007  torsion_delta: 88.4797 rama_delta: 5.87612
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 1.95313  backward_dev: 3.49247  torsion_delta: 75.9758 rama_delta: 0.563148
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 2.40417  backward_dev: 3.11875  torsion_delta: 30.091 rama_delta: 0.859216
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 1.8253  backward_dev: 1.89133  torsion_delta: 65.6639 rama_delta: 6.5747
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 2.17078  backward_dev: 3.331  torsion_delta: 48.4557 rama_delta: 4.86553
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 2.86968  backward_dev: 2.57728  torsion_delta: 83.5956 rama_delta: 3.61795
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 2.78795  backward_dev: 2.57069  torsion_delta: 86.022 rama_delta: 3.7761
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 3.31813  backward_dev: 3.09354  torsion_delta: 73.1332 rama_delta: 5.01012
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 1.34048  backward_dev: 1.55508  torsion_delta: 94.8837 rama_delta: 5.18612
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 1.53251  backward_dev: 2.53738  torsion_delta: 69.1847 rama_delta: 4.8428
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 1.77974  backward_dev: 2.82697  torsion_delta: 37.6917 rama_delta: 1.6946
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 2.31758  backward_dev: 1.75041  torsion_delta: 67.5584 rama_delta: 4.69156
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 1.85943  backward_dev: 1.46252  torsion_delta: 96.6943 rama_delta: 6.52543
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 2.4171  backward_dev: 2.54612  torsion_delta: 69.7629 rama_delta: 0.312012
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 2.51289  backward_dev: 2.95752  torsion_delta: 87.5369 rama_delta: -0.346232
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 3.65362  backward_dev: 2.09272  torsion_delta: 36.9667 rama_delta: 0.691361
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 3.49951  backward_dev: 2.31035  torsion_delta: 48.6445 rama_delta: 4.86336
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 3.25812  backward_dev: 2.95115  torsion_delta: 97.6416 rama_delta: 9.25072
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 3.04947  backward_dev: 2.9986  torsion_delta: 90.2033 rama_delta: 9.53218
+protocols.swa.protein.stepwise_protein_ccd_closer: CCD forward_dev: 3.0527  backward_dev: 3.0067  torsion_delta: 82.6552 rama_delta: 9.70995
+CCD closed: 35 out of 156 tries.
+Using StepWiseProteinMainChainSampleGenerator with loops
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION: score12.wts
+ Decoy S_00000 : ROT_TRIALS   Number 1 out of 35
+basic.io.database: Database file opened: scoring/score_functions/disulfides/fa_SS_distance_score
+ Decoy S_00001 : ROT_TRIALS   Number 2 out of 35
+ Decoy S_00002 : ROT_TRIALS   Number 3 out of 35
+ Decoy S_00003 : ROT_TRIALS   Number 4 out of 35
+ Decoy S_00004 : ROT_TRIALS   Number 5 out of 35
+ Decoy S_00005 : ROT_TRIALS   Number 6 out of 35
+ Decoy S_00006 : ROT_TRIALS   Number 7 out of 35
+ Decoy S_00007 : ROT_TRIALS   Number 8 out of 35
+ Decoy S_00008 : ROT_TRIALS   Number 9 out of 35
+ Decoy S_00009 : ROT_TRIALS   Number 10 out of 35
+ Decoy S_00010 : ROT_TRIALS   Number 11 out of 35
+ Decoy S_00011 : ROT_TRIALS   Number 12 out of 35
+ Decoy S_00012 : ROT_TRIALS   Number 13 out of 35
+ Decoy S_00013 : ROT_TRIALS   Number 14 out of 35
+ Decoy S_00014 : ROT_TRIALS   Number 15 out of 35
+ Decoy S_00015 : ROT_TRIALS   Number 16 out of 35
+ Decoy S_00016 : ROT_TRIALS   Number 17 out of 35
+ Decoy S_00017 : ROT_TRIALS   Number 18 out of 35
+ Decoy S_00018 : ROT_TRIALS   Number 19 out of 35
+ Decoy S_00019 : ROT_TRIALS   Number 20 out of 35
+ Decoy S_00020 : ROT_TRIALS   Number 21 out of 35
+ Decoy S_00021 : ROT_TRIALS   Number 22 out of 35
+ Decoy S_00022 : ROT_TRIALS   Number 23 out of 35
+ Decoy S_00023 : ROT_TRIALS   Number 24 out of 35
+ Decoy S_00024 : ROT_TRIALS   Number 25 out of 35
+ Decoy S_00025 : ROT_TRIALS   Number 26 out of 35
+ Decoy S_00026 : ROT_TRIALS   Number 27 out of 35
+ Decoy S_00027 : ROT_TRIALS   Number 28 out of 35
+ Decoy S_00028 : ROT_TRIALS   Number 29 out of 35
+ Decoy S_00029 : ROT_TRIALS   Number 30 out of 35
+ Decoy S_00030 : ROT_TRIALS   Number 31 out of 35
+ Decoy S_00031 : ROT_TRIALS   Number 32 out of 35
+ Decoy S_00032 : ROT_TRIALS   Number 33 out of 35
+ Decoy S_00033 : ROT_TRIALS   Number 34 out of 35
+ Decoy S_00034 : ROT_TRIALS   Number 35 out of 35
+protocols.swa.stepwise_clusterer: Checking: S_00021 with score -14.7515 against list of size 0 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00024 with score -13.7364 against list of size 1 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00030 with score -12.1773 against list of size 2 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00031 with score -11.0843 against list of size 3 ... not added. 
+protocols.swa.stepwise_clusterer: Checking: S_00029 with score -11.0371 against list of size 3 ... not added. 
+protocols.swa.stepwise_clusterer: Checking: S_00009 with score -8.47224 against list of size 3 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00015 with score -8.04961 against list of size 4 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00027 with score -7.74931 against list of size 5 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00019 with score -7.46633 against list of size 6 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00020 with score -7.39827 against list of size 7 ... not added. 
+protocols.swa.stepwise_clusterer: Checking: S_00004 with score -7.36539 against list of size 7 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00013 with score -7.23602 against list of size 8 ... not added. 
+protocols.swa.stepwise_clusterer: Checking: S_00014 with score -7.11408 against list of size 8 ... not added. 
+protocols.swa.stepwise_clusterer: Checking: S_00023 with score -4.97778 against list of size 8 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00026 with score -4.70386 against list of size 9 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00022 with score -4.30072 against list of size 10 ... not added. 
+protocols.swa.stepwise_clusterer: Checking: S_00011 with score -1.77515 against list of size 10 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00017 with score -1.42944 against list of size 11 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00033 with score -1.41212 against list of size 12 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00010 with score -1.38147 against list of size 13 ... not added. 
+protocols.swa.stepwise_clusterer: Checking: S_00006 with score -0.330138 against list of size 13 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00025 with score 4.55233 against list of size 14 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00012 with score 8.83183 against list of size 15 ... not added. 
+protocols.swa.stepwise_clusterer: Checking: S_00002 with score 9.24488 against list of size 15 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00007 with score 9.3953 against list of size 16 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00008 with score 9.81151 against list of size 17 ... not added. 
+protocols.swa.stepwise_clusterer: Checking: S_00005 with score 10.6827 against list of size 17 ... not added. 
+protocols.swa.stepwise_clusterer: Checking: S_00028 with score 14.4937 against list of size 17 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00003 with score 15.2489 against list of size 18 ... not added. 
+protocols.swa.stepwise_clusterer: Checking: S_00018 with score 16.0631 against list of size 18 ... not added. 
+protocols.swa.stepwise_clusterer: Checking: S_00016 with score 16.3542 against list of size 18 ... not added. 
+protocols.swa.stepwise_clusterer: Checking: S_00032 with score 23.0316 against list of size 18 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00001 with score 39.703 against list of size 19 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00034 with score 57.5361 against list of size 20 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00000 with score 96.979 against list of size 21 ... added. 
+protocols.swa.stepwise_clusterer: After clustering, number of decoys: 22
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION: score12.wts
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION: score12.wts
+MOVE TAKEOFF TORSIONS: 1
+ALLOWING BB TO MOVE:  5 6 7 8 9
+Minimizing decoy 1 out of 22
+core.optimization.LineMinimizer: Inaccurate G! step= 1.90735e-06 Deriv= -0.468043 Finite Diff= 0.272761
+core.scoring.NeighborList: Minimization stats: 162 score/deriv cals, 38 narrow-from-wide updates, 7 full updates.
+core.optimization.LineMinimizer: Inaccurate G! step= 1.90735e-06 Deriv= -0.174179 Finite Diff= 0.127951
+core.scoring.NeighborList: Minimization stats: 289 score/deriv cals, 31 narrow-from-wide updates, 2 full updates.
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-08 Deriv= -46.8536 Finite Diff= 33.1168
+core.scoring.NeighborList: Minimization stats: 15 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+Score minimized from  600.271 to   19.084
+Minimizing decoy 2 out of 22
+core.optimization.LineMinimizer: Inaccurate G! step= 1.90735e-06 Deriv= -0.194093 Finite Diff= 0.0643987
+core.scoring.NeighborList: Minimization stats: 277 score/deriv cals, 48 narrow-from-wide updates, 7 full updates.
+core.scoring.NeighborList: Minimization stats: 13 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-08 Deriv= -7.70669 Finite Diff= 5.31941
+core.scoring.NeighborList: Minimization stats: 15 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+Score minimized from  395.758 to   41.607
+Minimizing decoy 3 out of 22
+core.optimization.LineMinimizer: Inaccurate G! step= 1.90735e-06 Deriv= -0.086972 Finite Diff= 0.0781956
+core.scoring.NeighborList: Minimization stats: 236 score/deriv cals, 43 narrow-from-wide updates, 5 full updates.
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-08 Deriv= -0.651574 Finite Diff= 0.344488
+core.scoring.NeighborList: Minimization stats: 15 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-08 Deriv= -0.651574 Finite Diff= 3.31904
+core.scoring.NeighborList: Minimization stats: 15 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+Score minimized from   93.936 to   -1.432
+Minimizing decoy 4 out of 22
+core.optimization.LineMinimizer: Inaccurate G! step= 1.90735e-06 Deriv= -0.525582 Finite Diff= 0.239805
+core.scoring.NeighborList: Minimization stats: 136 score/deriv cals, 19 narrow-from-wide updates, 6 full updates.
+core.scoring.NeighborList: Minimization stats: 319 score/deriv cals, 6 narrow-from-wide updates, 0 full updates.
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-06 Deriv= -0.27109 Finite Diff= 0.294081
+core.scoring.NeighborList: Minimization stats: 101 score/deriv cals, 4 narrow-from-wide updates, 0 full updates.
+Score minimized from   99.013 to    0.946
+Minimizing decoy 5 out of 22
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-06 Deriv= -0.0171323 Finite Diff= 0.00445869
+core.scoring.NeighborList: Minimization stats: 336 score/deriv cals, 37 narrow-from-wide updates, 4 full updates.
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-08 Deriv= -14.6344 Finite Diff= -1.28102
+core.scoring.NeighborList: Minimization stats: 15 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-08 Deriv= -5.60461 Finite Diff= 22.3459
+core.scoring.NeighborList: Minimization stats: 15 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+Score minimized from  151.188 to    2.565
+Minimizing decoy 6 out of 22
+core.optimization.LineMinimizer: Inaccurate G! step= 1.90735e-06 Deriv= -0.0371441 Finite Diff= 0.0269754
+core.scoring.NeighborList: Minimization stats: 194 score/deriv cals, 36 narrow-from-wide updates, 1 full updates.
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-08 Deriv= -0.875862 Finite Diff= -0.0100083
+core.scoring.NeighborList: Minimization stats: 15 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-08 Deriv= -0.875862 Finite Diff= 2.57343
+core.scoring.NeighborList: Minimization stats: 15 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+Score minimized from  109.847 to   -0.730
+Minimizing decoy 7 out of 22
+core.optimization.LineMinimizer: Inaccurate G! step= 1.90735e-06 Deriv= -0.381265 Finite Diff= 0.323662
+core.scoring.NeighborList: Minimization stats: 101 score/deriv cals, 20 narrow-from-wide updates, 5 full updates.
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-08 Deriv= -5.71413 Finite Diff= 0.618538
+core.scoring.NeighborList: Minimization stats: 15 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-08 Deriv= -73.9297 Finite Diff= 9.61532
+core.scoring.NeighborList: Minimization stats: 15 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+Score minimized from  106.955 to   -1.366
+Minimizing decoy 8 out of 22
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-06 Deriv= -0.733244 Finite Diff= 1.17349
+core.scoring.NeighborList: Minimization stats: 202 score/deriv cals, 41 narrow-from-wide updates, 6 full updates.
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-08 Deriv= -0.63261 Finite Diff= 1.37856
+core.scoring.NeighborList: Minimization stats: 15 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-08 Deriv= -0.63261 Finite Diff= 7.39929
+core.scoring.NeighborList: Minimization stats: 15 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+Score minimized from  124.078 to    0.388
+Minimizing decoy 9 out of 22
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-06 Deriv= -0.887432 Finite Diff= 0.241332
+core.scoring.NeighborList: Minimization stats: 145 score/deriv cals, 18 narrow-from-wide updates, 5 full updates.
+core.scoring.NeighborList: Minimization stats: 189 score/deriv cals, 5 narrow-from-wide updates, 0 full updates.
+core.optimization.LineMinimizer: Inaccurate G! step= 1.52588e-07 Deriv= -0.110893 Finite Diff= 0.872637
+core.scoring.NeighborList: Minimization stats: 29 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+Score minimized from  122.959 to   -2.104
+Minimizing decoy 10 out of 22
+core.optimization.LineMinimizer: Inaccurate G! step= 4.76837e-07 Deriv= -0.26022 Finite Diff= 0.224881
+core.scoring.NeighborList: Minimization stats: 172 score/deriv cals, 30 narrow-from-wide updates, 3 full updates.
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-08 Deriv= -5.03605 Finite Diff= 5.67685
+core.scoring.NeighborList: Minimization stats: 15 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-08 Deriv= -5.03605 Finite Diff= 37.9844
+core.scoring.NeighborList: Minimization stats: 15 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+Score minimized from  222.818 to    6.696
+Minimizing decoy 11 out of 22
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-06 Deriv= -0.296629 Finite Diff= 0.178329
+core.scoring.NeighborList: Minimization stats: 235 score/deriv cals, 42 narrow-from-wide updates, 7 full updates.
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-08 Deriv= -0.764495 Finite Diff= 2.71563
+core.scoring.NeighborList: Minimization stats: 15 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-08 Deriv= -0.764495 Finite Diff= 13.1796
+core.scoring.NeighborList: Minimization stats: 15 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+Score minimized from  224.921 to   -0.849
+Minimizing decoy 12 out of 22
+core.optimization.LineMinimizer: Inaccurate G! step= 4.76837e-07 Deriv= -0.442844 Finite Diff= 0.477288
+core.scoring.NeighborList: Minimization stats: 119 score/deriv cals, 27 narrow-from-wide updates, 7 full updates.
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-08 Deriv= -0.121388 Finite Diff= 0.364722
+core.scoring.NeighborList: Minimization stats: 15 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-08 Deriv= -0.121388 Finite Diff= 1.82363
+core.scoring.NeighborList: Minimization stats: 15 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+Score minimized from  145.236 to  -15.175
+Minimizing decoy 13 out of 22
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-06 Deriv= -0.0303174 Finite Diff= 0.000311239
+core.scoring.NeighborList: Minimization stats: 253 score/deriv cals, 42 narrow-from-wide updates, 6 full updates.
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-08 Deriv= -4.27063 Finite Diff= 4.01405
+core.scoring.NeighborList: Minimization stats: 15 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-08 Deriv= -77.2451 Finite Diff= 65.6813
+core.scoring.NeighborList: Minimization stats: 15 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+Score minimized from  169.255 to    2.390
+Minimizing decoy 14 out of 22
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-06 Deriv= -0.0979206 Finite Diff= -0.00573809
+core.scoring.NeighborList: Minimization stats: 111 score/deriv cals, 23 narrow-from-wide updates, 5 full updates.
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-08 Deriv= -0.280415 Finite Diff= -0.0143688
+core.scoring.NeighborList: Minimization stats: 15 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-08 Deriv= -0.280415 Finite Diff= 0.787011
+core.scoring.NeighborList: Minimization stats: 15 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+Score minimized from   78.125 to  -20.067
+Minimizing decoy 15 out of 22
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-06 Deriv= -0.0691458 Finite Diff= 0.0660478
+core.scoring.NeighborList: Minimization stats: 197 score/deriv cals, 43 narrow-from-wide updates, 2 full updates.
+core.scoring.NeighborList: Minimization stats: 10 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-08 Deriv= -0.0828914 Finite Diff= 0.400432
+core.scoring.NeighborList: Minimization stats: 15 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+Score minimized from  172.813 to    8.977
+Minimizing decoy 16 out of 22
+core.optimization.LineMinimizer: Inaccurate G! step= 1.90735e-06 Deriv= -3.63578 Finite Diff= 3.53215
+core.scoring.NeighborList: Minimization stats: 213 score/deriv cals, 45 narrow-from-wide updates, 6 full updates.
+core.scoring.NeighborList: Minimization stats: 295 score/deriv cals, 11 narrow-from-wide updates, 1 full updates.
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-08 Deriv= -2.62988 Finite Diff= -0.210532
+core.scoring.NeighborList: Minimization stats: 15 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+Score minimized from  165.935 to   10.865
+Minimizing decoy 17 out of 22
+core.scoring.NeighborList: Minimization stats: 145 score/deriv cals, 34 narrow-from-wide updates, 4 full updates.
+core.scoring.NeighborList: Minimization stats: 192 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.optimization.LineMinimizer: Inaccurate G! step= 1.90735e-08 Deriv= -0.474934 Finite Diff= 2.29527
+core.scoring.NeighborList: Minimization stats: 34 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+Score minimized from  148.117 to   -3.290
+Minimizing decoy 18 out of 22
+core.optimization.LineMinimizer: Inaccurate G! step= 5.96046e-08 Deriv= -2.08094 Finite Diff= 0.25409
+core.scoring.NeighborList: Minimization stats: 148 score/deriv cals, 20 narrow-from-wide updates, 7 full updates.
+core.scoring.NeighborList: Minimization stats: 90 score/deriv cals, 11 narrow-from-wide updates, 0 full updates.
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-08 Deriv= -111.723 Finite Diff= 124.521
+core.scoring.NeighborList: Minimization stats: 15 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+Score minimized from  200.825 to   12.473
+Minimizing decoy 19 out of 22
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-06 Deriv= -0.152521 Finite Diff= 0.0965713
+core.scoring.NeighborList: Minimization stats: 130 score/deriv cals, 21 narrow-from-wide updates, 1 full updates.
+core.optimization.LineMinimizer: Inaccurate G! step= 7.62939e-08 Deriv= -0.371599 Finite Diff= 0.760104
+core.scoring.NeighborList: Minimization stats: 22 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-08 Deriv= -0.232367 Finite Diff= 2.11238
+core.scoring.NeighborList: Minimization stats: 15 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+Score minimized from   45.744 to  -13.970
+Minimizing decoy 20 out of 22
+core.optimization.LineMinimizer: Inaccurate G! step= 1.90735e-06 Deriv= -0.382851 Finite Diff= 0.677014
+core.scoring.NeighborList: Minimization stats: 178 score/deriv cals, 41 narrow-from-wide updates, 7 full updates.
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-08 Deriv= -0.481031 Finite Diff= 0.234605
+core.scoring.NeighborList: Minimization stats: 15 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-08 Deriv= -0.481031 Finite Diff= 2.38061
+core.scoring.NeighborList: Minimization stats: 15 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+Score minimized from  236.728 to   15.263
+Minimizing decoy 21 out of 22
+core.optimization.LineMinimizer: Inaccurate G! step= 4.76837e-07 Deriv= -1.17508 Finite Diff= 0.659801
+core.scoring.NeighborList: Minimization stats: 144 score/deriv cals, 23 narrow-from-wide updates, 5 full updates.
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-08 Deriv= -0.412219 Finite Diff= 0.296885
+core.scoring.NeighborList: Minimization stats: 15 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-08 Deriv= -0.412219 Finite Diff= 2.42293
+core.scoring.NeighborList: Minimization stats: 15 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+Score minimized from  112.916 to   -7.751
+Minimizing decoy 22 out of 22
+core.optimization.LineMinimizer: Inaccurate G! step= 1.90735e-06 Deriv= -0.444428 Finite Diff= 0.226054
+core.scoring.NeighborList: Minimization stats: 152 score/deriv cals, 26 narrow-from-wide updates, 4 full updates.
+core.scoring.NeighborList: Minimization stats: 7 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.optimization.LineMinimizer: Inaccurate G! step= 3.8147e-08 Deriv= -0.379452 Finite Diff= 1.11062
+core.scoring.NeighborList: Minimization stats: 15 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+Score minimized from  412.191 to  -12.115
+protocols.swa.stepwise_clusterer: Checking: S_00024 with score -20.0675 against list of size 0 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00021 with score -15.1754 against list of size 1 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00030 with score -13.9702 against list of size 2 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00034 with score -12.1155 against list of size 3 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00033 with score -7.7515 against list of size 4 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00027 with score -3.28971 against list of size 5 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00015 with score -2.10356 against list of size 6 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00002 with score -1.4318 against list of size 7 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00009 with score -1.36562 against list of size 8 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00019 with score -0.849233 against list of size 9 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00007 with score -0.729561 against list of size 10 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00011 with score 0.387793 against list of size 11 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00004 with score 0.94643 against list of size 12 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00023 with score 2.39021 against list of size 13 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00006 with score 2.56472 against list of size 14 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00017 with score 6.69596 against list of size 15 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00025 with score 8.97726 against list of size 16 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00026 with score 10.8649 against list of size 17 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00028 with score 12.4729 against list of size 18 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00032 with score 15.2633 against list of size 19 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00000 with score 19.0838 against list of size 20 ... added. 
+protocols.swa.stepwise_clusterer: Checking: S_00001 with score 41.6066 against list of size 21 ... added. 
+protocols.swa.stepwise_clusterer: After clustering, number of decoys: 22

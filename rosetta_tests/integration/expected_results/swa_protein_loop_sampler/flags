@@ -1,0 +1,26 @@
+-rebuild 
+-s1 noloop5-8_2it7_stripsidechain.pdb  
+-input_res1 1-4 9-28  
+-sample_res 5 6 
+-bridge_res 7 8 
+-cutpoint_closed 7   
+-superimpose_res 1-4 9-28  
+-fixed_res 1-4 9-28   
+-calc_rms_res 5-8  
+-jump_res 1 28  
+-ccd_close  
+-out:file:silent_struct_type binary  
+-fasta 2it7.fasta  
+-n_sample 12
+-nstruct 400  
+-cluster:radius 0.100  
+-extrachi_cutoff 0  
+-ex1  
+-ex2  
+-score:weights score12.wts  
+-pack_weights pack_no_hb_env_dep.wts  
+-in:detect_disulf false  
+-add_peptide_plane  
+-native 2it7.pdb  
+-out:file:silent 2it7_rebuild.out 
+-disulfide_file 2it7.disulf
