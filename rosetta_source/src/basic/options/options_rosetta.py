@@ -265,6 +265,7 @@ Options = Option_Group( '',
 			Option( 'new_chain_order', 'Boolean', desc='ensures chain from different MODEL records have differnet mini chains', default = 'false'),
 			Option( 'ddg_predictions_file', 'File', desc = 'File that contains mutational ddG information. Used by ddG task operation/filter.', default = ''),
 			Option( 'input_res','IntegerVector',desc='Residues already present in starting file'),
+			Option( 'md_schfile','String',desc='File name containing MD schedule'),
 			Option("read_pdb_link_records", "Boolean",
 				desc='Sets whether or not the LINK records in PDB files are read.  '
 					'The default value is false.',

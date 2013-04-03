@@ -221,6 +221,14 @@ sources = {
 			"ShearMinCCDTrial",
 			"SmallMinCCDTrial",
 	],
+	"protocols/md": [
+		"MDBase",
+		"CartesianMD",
+	],
+	"protocols/normalmode": [
+		"NormalMode",
+		"NormalModeRelaxMover",
+	],
 	"protocols/qsar": [
 		"qsarMap",
 		"qsarMover",

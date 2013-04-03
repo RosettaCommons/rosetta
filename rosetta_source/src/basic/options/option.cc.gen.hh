@@ -141,6 +141,7 @@ option.add( basic::options::OptionKeys::in::file::obey_ENDMDL, "Stop reading a P
 option.add( basic::options::OptionKeys::in::file::new_chain_order, "ensures chain from different MODEL records have differnet mini chains" ).def(false);
 option.add( basic::options::OptionKeys::in::file::ddg_predictions_file, "File that contains mutational ddG information. Used by ddG task operation/filter." ).def("");
 option.add( basic::options::OptionKeys::in::file::input_res, "Residues already present in starting file" );
+option.add( basic::options::OptionKeys::in::file::md_schfile, "File name containing MD schedule" );
 option.add( basic::options::OptionKeys::in::file::read_pdb_link_records, "Sets whether or not the LINK records in PDB files are read.  The default value is false." ).shortd( "Read LINK records?" ).legal(true).legal(false).def(false);
 option.add( basic::options::OptionKeys::in::rdf::rdf, "rdf option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::in::rdf::sep_bb_ss, "separate RDFs by SS for backbone atypes " ).def(true);

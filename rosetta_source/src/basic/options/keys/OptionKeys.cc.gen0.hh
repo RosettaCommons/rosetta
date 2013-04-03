@@ -136,6 +136,7 @@ namespace in { namespace file { BooleanOptionKey const obey_ENDMDL( "in:file:obe
 namespace in { namespace file { BooleanOptionKey const new_chain_order( "in:file:new_chain_order" );  } }
 namespace in { namespace file { FileOptionKey const ddg_predictions_file( "in:file:ddg_predictions_file" );  } }
 namespace in { namespace file { IntegerVectorOptionKey const input_res( "in:file:input_res" );  } }
+namespace in { namespace file { StringOptionKey const md_schfile( "in:file:md_schfile" );  } }
 namespace in { namespace file { BooleanOptionKey const read_pdb_link_records( "in:file:read_pdb_link_records" );  } }
 namespace in { namespace rdf { BooleanOptionKey const rdf( "in:rdf" );  } }
 namespace in { namespace rdf { BooleanOptionKey const sep_bb_ss( "in:rdf:sep_bb_ss" );  } }

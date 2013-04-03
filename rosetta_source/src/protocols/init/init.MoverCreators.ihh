@@ -127,6 +127,7 @@
 #include <protocols/loops/loop_mover/refine/SmallMinCCDTrialCreator.hh>
 
 #include <protocols/match/MatcherMoverCreator.hh>
+#include <protocols/md/CartesianMDCreator.hh>
 
 #include <protocols/motifs/MotifDnaPackerCreator.hh>
 
