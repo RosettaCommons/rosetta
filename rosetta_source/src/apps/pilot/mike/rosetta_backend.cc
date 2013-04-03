@@ -181,7 +181,6 @@ class CurlPost {
   static int writer(char *data, size_t size, size_t nmemb,
                     std::string *buffer)
   {
-    std::cout << "Post writer function callback" << std::endl;
     // What we will return
     int result = 0;
     //std::cout << "Buffer: " << *buffer << std::endl;
@@ -296,7 +295,8 @@ class RosettaJob {
    RosettaJob( const ServerInfo &serverinfo, protocols::rpc::BasicInit *basic_init):
     serverinfo_(serverinfo),
     initialized_(false),
-    basic_init_(basic_init)
+    basic_init_(basic_init),
+    rpc_(NULL)
    {}
 
    bool request_job_from_server( )
@@ -366,7 +366,7 @@ class RosettaJob {
       std::cout << "Inputdata: " << job_data_string.size() << " bytes received" << std::endl;
 
       try{
-        rpc = new protocols::rpc::JSON_RPC( job_data_string, false, basic_init_ );
+        rpc_ = new protocols::rpc::JSON_RPC( job_data_string, false, basic_init_ );
         // intrpret the actual RPC contents.
       }
       catch ( utility::excn::EXCN_Base& excn ) {
@@ -401,28 +401,18 @@ class RosettaJob {
       if( !error ){
         // do some basic measurements
 
-        energies.push_back( utility::json_spirit::Pair( "score" ,  rpc->get_fa_score() ) );
-        energies.push_back( utility::json_spirit::Pair( "irms", rpc->get_irms() ) );
+        energies.push_back( utility::json_spirit::Pair( "score" ,  rpc_->get_fa_score() ) );
+        energies.push_back( utility::json_spirit::Pair( "irms", rpc_->get_irms() ) );
 
-        protocols::rpc::pose_energies_to_json( rpc->outputpose(), energies );
+        protocols::rpc::pose_energies_to_json( rpc_->outputpose(), energies );
 
         // Now send back results to server.
         std::stringstream pdbdatastream;
-        rpc->outputpose().dump_pdb( pdbdatastream );
-
-        // DEBUG CODE
-//        std::ofstream ofile("b4.pdb");
-//        inputpose_.dump_pdb( ofile );
-//        ofile.close();
-//        std::ofstream ofile2("af.pdb");
-//        outputpose_.dump_pdb( ofile2 );
-//        ofile2.close();
-        // ENDOF DEBUG CODE
+        rpc_->outputpose().dump_pdb( pdbdatastream );
 
         root.push_back( utility::json_spirit::Pair( "pdbdata", pdbdatastream.str() ) ); // the PDB data itself of course
         root.push_back( utility::json_spirit::Pair( "energies",  energies ) );                              // rosetta energy values
-        root.push_back( utility::json_spirit::Pair( "cputime", (int) rpc->runtime() ) );
-
+        root.push_back( utility::json_spirit::Pair( "cputime", (int) rpc_->runtime() ) );
      }else{
 
         // set the output values
@@ -432,8 +422,12 @@ class RosettaJob {
 
       root.push_back( utility::json_spirit::Pair( "error",  0 ) );
 
-      std::cout << "STDERROR:" <<  rpc->tracer() << std::endl;
-      root.push_back( utility::json_spirit::Pair( "stderr", rpc->tracer() ) ); // stderr output for debugging
+      std::string std_err;
+      if( rpc_ ){
+        std_err = rpc_->tracer();
+      } 
+      std::cout << "STDERROR:" <<  std_err << std::endl;
+      root.push_back( utility::json_spirit::Pair( "stderr", std_err ) ); // stderr output for debugging
 
       // add energy info etc other goodies here
       std::stringstream sstr;
@@ -453,7 +447,7 @@ class RosettaJob {
 
     bool run_and_return_to_server(){
       try{
-        rpc->run();
+        rpc_->run();
       }
       catch ( utility::excn::EXCN_Base& excn ) {
         return_results_to_server( true );
@@ -474,7 +468,7 @@ class RosettaJob {
 
   bool initialized_;
 
-  protocols::rpc::JSON_RPCOP rpc;
+  protocols::rpc::JSON_RPCOP rpc_;
 
   ServerInfo serverinfo_;
   protocols::rpc::BasicInit *basic_init_;
@@ -540,7 +534,7 @@ main( int argc, char * argv [] )
  	// initialize core
  	devel::init(argc, argv);
 
-  BasicCmdLineInit basic_init( argc, argv );
+  protocols::rpc::BasicCmdLineInit basic_init( argc, argv );
 
   evaluation::PoseEvaluatorsOP evaluators_( new protocols::evaluation::PoseEvaluators() );
   evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluators_);
