@@ -36,7 +36,7 @@
 #include <ObjexxFCL/string.functions.hh>
 
 #include <utility/vector1.hh>
-
+#include <cmath>
 
 
 namespace core {
@@ -83,7 +83,7 @@ get_base_pucker(
 	for ( int ii=1; ii<= 5; ++ii ) {
 
 		Vector n12 = (( atoms[2]-atoms[1] ).cross( atoms[3]-atoms[2] ) ).normalized();
-		Real dot = std::abs( n12.dot( ( atoms[4]-atoms[3] ).normalized() ) );
+		Real dot = std::fabs( n12.dot( ( atoms[4]-atoms[3] ).normalized() ) );
 		if ( dot < mindot ) {
 			// get pucker
 			//Real pucker_dot = n12.dot( ( atoms[5] - Real(0.5) * ( atoms[4] + atoms[1] ) ).normalized() );
@@ -272,7 +272,7 @@ get_z_axis(
 	} else {
 		flipped = false;
 	}
-	assert( std::abs( z_axis.dot( y_axis ) ) < 1e-3 );
+	assert( std::fabs( z_axis.dot( y_axis ) ) < 1e-3 );
 
 	return z_axis;
 }
@@ -306,7 +306,7 @@ is_orthonormal(
 	float dev( 0.0 );
 	for( int i=1; i<=3; ++i ) {
 		for( int j=1; j<=3; ++j ) {
-			dev += std::abs( X(i,j) - ( i == j ? 1.0 : 0.0 ) );
+			dev += std::fabs( X(i,j) - ( i == j ? 1.0 : 0.0 ) );
 		}
 	}
 	return dev < tol;
@@ -343,7 +343,7 @@ get_base_stub(
 	if ( flipped ) {
 		basic::T( "core.scoring.dna.base_geometry", basic::t_warning ) << "base flip in get_base_stub!!!" << '\n';
 	}
-	assert( std::abs( dot(y_axis, z_axis) ) < 1e-3 );
+	assert( std::fabs( dot(y_axis, z_axis) ) < 1e-3 );
 
 	x_axis = cross( y_axis, z_axis );
 	x_axis.normalize();
@@ -375,7 +375,7 @@ get_base_pair_stub(
 	} else {
 		z_axis = ( z1_axis + z2_axis ).normalized();
 	}
-	assert( std::abs( y_axis.dot( z_axis ) ) <1e-3 );
+	assert( std::fabs( y_axis.dot( z_axis ) ) <1e-3 );
 	Vector x_axis( cross( y_axis, z_axis ) );
 	x_axis.normalize(); // prob unnecessary
 
@@ -591,15 +591,15 @@ get_stub_stub_params(
 
 	// build mid-stub triad
 	assert( M1.col_y().distance( M2.col_y() ) < 1e-3 );
-	assert( std::abs( dot( bo, M1.col_y() ) ) < 1e-3 );
+	assert( std::fabs( dot( bo, M1.col_y() ) ) < 1e-3 );
 
 	Matrix MBT;
 	MBT.col_y( M1.col_y() );
 
-	assert( std::abs( dot( M1.col_z(), MBT.col_y() ) ) < 1e-3 );
-	assert( std::abs( dot( M2.col_z(), MBT.col_y() ) ) < 1e-3 );
-	assert( std::abs( dot( M1.col_x(), MBT.col_y() ) ) < 1e-3 );
-	assert( std::abs( dot( M2.col_x(), MBT.col_y() ) ) < 1e-3 );
+	assert( std::fabs( dot( M1.col_z(), MBT.col_y() ) ) < 1e-3 );
+	assert( std::fabs( dot( M2.col_z(), MBT.col_y() ) ) < 1e-3 );
+	assert( std::fabs( dot( M1.col_x(), MBT.col_y() ) ) < 1e-3 );
+	assert( std::fabs( dot( M2.col_x(), MBT.col_y() ) ) < 1e-3 );
 
 	// get
 	MBT.col_x( ( 0.5f * ( M1.col_x() + M2.col_x() ) ).normalized() );
@@ -614,7 +614,7 @@ get_stub_stub_params(
 	params[1] = std::atan2( dot( M1.col_z(), M2.col_x() ),
 													dot( M1.col_z(), M2.col_z() ) );
 
-	assert( !local_debug || ( std::abs( std::abs( params[1] ) - arccos( dot( M1.col_z(), M2.col_z() ) ) ) < 1e-2 ) );
+	assert( !local_debug || ( std::fabs( std::fabs( params[1] ) - arccos( dot( M1.col_z(), M2.col_z() ) ) ) < 1e-2 ) );
 
 	// buckle:
 	params[2] = gamma * dot( bo, MBT.col_x() );
@@ -635,14 +635,14 @@ get_stub_stub_params(
 		{ // sin gamma version of params[2] is a simple dot product:
 			//Real const tmp1 = (sin( gamma ) * params[2] / gamma);
 			//Real const tmp2 = dot( Vector( cross( stub2.M.col_y(), stub1.M.col_y() ) ), MBT.col_x() );
-			assert( abs( (sin( gamma ) * params[2] / gamma) -
+			assert( std::fabs( (sin( gamma ) * params[2] / gamma) -
 						  dot( Vector( cross( stub2.M.col_y(), stub1.M.col_y() ) ), MBT.col_x() )) < 1e-2 );
 		}
 
 		{ // sin gamma version of params[3] is a simple dot product:
 			//Real const tmp1( sin( gamma ) * params[3] / gamma );
 			//Real const tmp2( dot( Vector( cross( stub2.M.col_y(), stub1.M.col_y() )), MBT.col_z() ) );
-			assert( abs( ( sin( gamma ) * params[3] / gamma ) -
+			assert( std::fabs( ( sin( gamma ) * params[3] / gamma ) -
 						   dot( Vector( cross( stub2.M.col_y(), stub1.M.col_y() )), MBT.col_z() ) ) < 1e-2 );
 		}
 
@@ -658,16 +658,16 @@ get_stub_stub_params(
 		//Real const p1x = std::asin( dot( MBT.col_y(), cross( M2.col_x(), M1.col_x() ) ) );
 		//Real const p1z = std::asin( dot( MBT.col_y(), cross( M2.col_z(), M1.col_z() ) ) );
 		assert( ( base_flipped ) ||
-				( abs( params[1] - asin( dot( MBT.col_y(), cross( M2.col_x(), M1.col_x() ) ) ) ) +
-				  abs( params[1] - asin( dot( MBT.col_y(), cross( M2.col_z(), M1.col_z() ) ) ) ) < 1e-2 ) );
+				( std::fabs( params[1] - asin( dot( MBT.col_y(), cross( M2.col_x(), M1.col_x() ) ) ) ) +
+				  std::fabs( params[1] - asin( dot( MBT.col_y(), cross( M2.col_z(), M1.col_z() ) ) ) ) < 1e-2 ) );
 		//std::cout << "equal? p1: " << params[1] << ' ' << p1x << ' ' << p1z <<
  		//	std::endl;
 
 		//Real const p2 = gamma * cos( phi_prime );
 		//Real const p3 = gamma * sin( phi_prime );
-		//Real const dev( std::abs( p2 - params[2] ) + std::abs( p3 - params[3] ) );
+		//Real const dev( std::fabs( p2 - params[2] ) + std::fabs( p3 - params[3] ) );
 		//std::cout << "dev: " << dev << std::endl;
-		assert( abs( gamma * cos( phi_prime ) - params[2] ) + abs( gamma * sin( phi_prime ) - params[3] ) < 1e-2 );
+		assert( std::fabs( gamma * cos( phi_prime ) - params[2] ) + std::fabs( gamma * sin( phi_prime ) - params[3] ) < 1e-2 );
 
 		// check sign conventions
 		assert( params[1] * dot( MBT.col_y(), cross( M2.col_x(), M1.col_x() ) ) > 0);
@@ -1034,15 +1034,15 @@ get_base_pair_params_old(
 
 	// build mid-base-pair triad
 	assert( M1.col_y().distance( M2.col_y() ) < 1e-3 );
-	assert( std::abs( dot( bo, M1.col_y() ) ) < 1e-3 );
+	assert( std::fabs( dot( bo, M1.col_y() ) ) < 1e-3 );
 
 	Matrix MBT;
 	MBT.col_y( M1.col_y() );
 
-	assert( std::abs( dot( M1.col_z(), MBT.col_y() ) ) < 1e-3 );
-	assert( std::abs( dot( M2.col_z(), MBT.col_y() ) ) < 1e-3 );
-	assert( std::abs( dot( M1.col_x(), MBT.col_y() ) ) < 1e-3 );
-	assert( std::abs( dot( M2.col_x(), MBT.col_y() ) ) < 1e-3 );
+	assert( std::fabs( dot( M1.col_z(), MBT.col_y() ) ) < 1e-3 );
+	assert( std::fabs( dot( M2.col_z(), MBT.col_y() ) ) < 1e-3 );
+	assert( std::fabs( dot( M1.col_x(), MBT.col_y() ) ) < 1e-3 );
+	assert( std::fabs( dot( M2.col_x(), MBT.col_y() ) ) < 1e-3 );
 
 	// get
 	MBT.col_x( ( 0.5f * ( M1.col_x() + M2.col_x() ) ).normalized() );
@@ -1058,7 +1058,7 @@ get_base_pair_params_old(
 													dot( M1.col_z(), M2.col_z() ) );
 
 	if ( local_debug ) {
-		assert( abs( abs( params[1] ) - arccos( dot( M1.col_z(), M2.col_z() ) ) ) < 1e-2 );
+		assert( std::fabs( std::fabs( params[1] ) - arccos( dot( M1.col_z(), M2.col_z() ) ) ) < 1e-2 );
 	}
 
 	// buckle:
@@ -1080,14 +1080,14 @@ get_base_pair_params_old(
 		{ // sin gamma version of params[2] is a simple dot product:
 			//Real const tmp1 = sin( gamma ) * params[2] / gamma;
 			//Real const tmp2 = dot( Vector( cross( stub2.M.col_y(), stub1.M.col_y() ) ), MBT.col_x() );
-			assert( abs(sin( gamma ) * params[2] / gamma -
+			assert( std::fabs(sin( gamma ) * params[2] / gamma -
 						dot( Vector( cross( stub2.M.col_y(), stub1.M.col_y() ) ), MBT.col_x() )) < 1e-2 );
 		}
 
 		{ // sin gamma version of params[3] is a simple dot product:
 			//Real const tmp1( sin( gamma ) * params[3] / gamma );
 			//Real const tmp2( dot( Vector( cross( stub2.M.col_y(), stub1.M.col_y() )), MBT.col_z() ) );
-			assert( abs(sin( gamma ) * params[3] / gamma -
+			assert( std::fabs(sin( gamma ) * params[3] / gamma -
 					dot( Vector( cross( stub2.M.col_y(), stub1.M.col_y() )), MBT.col_z() )) < 1e-2 );
 		}
 
@@ -1103,16 +1103,16 @@ get_base_pair_params_old(
 		//Real const p1x = std::asin( dot( MBT.col_y(), cross( M2.col_x(), M1.col_x() ) ) );
 		//Real const p1z = std::asin( dot( MBT.col_y(), cross( M2.col_z(), M1.col_z() ) ) );
 		assert( ( base_flipped ) ||
-				( abs( params[1] - asin( dot( MBT.col_y(), cross( M2.col_x(), M1.col_x() ) ) ) ) +
-				  abs( params[1] - asin( dot( MBT.col_y(), cross( M2.col_z(), M1.col_z() ) ) ) ) < 1e-2 ) );
+				( std::fabs( params[1] - asin( dot( MBT.col_y(), cross( M2.col_x(), M1.col_x() ) ) ) ) +
+				  std::fabs( params[1] - asin( dot( MBT.col_y(), cross( M2.col_z(), M1.col_z() ) ) ) ) < 1e-2 ) );
 		//std::cout << "equal? p1: " << params[1] << ' ' << p1x << ' ' << p1z <<
  		//	std::endl;
 
 		//Real const p2 = gamma * cos( phi_prime );
 		//Real const p3 = gamma * sin( phi_prime );
-		//Real const dev( std::abs( p2 - params[2] ) + std::abs( p3 - params[3] ) );
+		//Real const dev( std::fabs( p2 - params[2] ) + std::fabs( p3 - params[3] ) );
 		//std::cout << "dev: " << dev << std::endl;
-		assert( abs( gamma * cos( phi_prime ) - params[2] ) + abs( gamma * sin( phi_prime ) - params[3] ) < 1e-2 );
+		assert( std::fabs( gamma * cos( phi_prime ) - params[2] ) + std::fabs( gamma * sin( phi_prime ) - params[3] ) < 1e-2 );
 
 		// check sign conventions
 		assert( params[1] * dot( MBT.col_y(), cross( M2.col_x(), M1.col_x() ) ) > 0);
@@ -1173,15 +1173,15 @@ get_base_step_params(
 
 	// build mid-base-pair triad
 	assert( M1.col_z().distance( M2.col_z() ) < 1e-3 );
-	assert( std::abs( dot( rt, M1.col_z() ) ) < 1e-3 );
+	assert( std::fabs( dot( rt, M1.col_z() ) ) < 1e-3 );
 
 	Matrix MBT;
 	MBT.col_z( M1.col_z() );
 
-	assert( std::abs( dot( M1.col_x(), MBT.col_z() ) ) < 1e-3 );
-	assert( std::abs( dot( M2.col_x(), MBT.col_z() ) ) < 1e-3 );
-	assert( std::abs( dot( M1.col_y(), MBT.col_z() ) ) < 1e-3 );
-	assert( std::abs( dot( M2.col_y(), MBT.col_z() ) ) < 1e-3 );
+	assert( std::fabs( dot( M1.col_x(), MBT.col_z() ) ) < 1e-3 );
+	assert( std::fabs( dot( M2.col_x(), MBT.col_z() ) ) < 1e-3 );
+	assert( std::fabs( dot( M1.col_y(), MBT.col_z() ) ) < 1e-3 );
+	assert( std::fabs( dot( M2.col_y(), MBT.col_z() ) ) < 1e-3 );
 
 	// get
 	MBT.col_y( ( 0.5f * ( M1.col_y() + M2.col_y() ) ).normalized() );
@@ -1196,7 +1196,7 @@ get_base_step_params(
 	params[1] = atan2( dot( M1.col_x(), M2.col_y() ), dot( M1.col_x(), M2.col_x() ) );
 
 	if ( local_debug ) {
-		assert( abs( abs( params[1] ) - arccos( dot( M1.col_x(), M2.col_x() ) ) ) < 1e-2 );
+		assert( std::fabs( std::fabs( params[1] ) - arccos( dot( M1.col_x(), M2.col_x() ) ) ) < 1e-2 );
 	}
 
 
@@ -1219,14 +1219,14 @@ get_base_step_params(
 		{ // sin gamma version of params[2] (roll) is a simple dot product:
 			//Real const tmp1 = sin( gamma ) * params[2] / gamma;
 			//Real const tmp2 = dot( Vector( cross( stub2.M.col_z(), stub1.M.col_z() ) ), MBT.col_y() );
-			assert( abs( sin( gamma ) * params[2] / gamma -
+			assert( std::fabs( sin( gamma ) * params[2] / gamma -
 						 dot( Vector( cross( stub2.M.col_z(), stub1.M.col_z() ) ), MBT.col_y() )) < 1e-2 );
 		}
 
 		{ // sin gamma version of params[3] (tilt) is a simple dot product:
 			//Real const tmp1( sin( gamma ) * params[3] / gamma );
 			//Real const tmp2( dot( Vector( cross( stub2.M.col_z(), stub1.M.col_z() )), MBT.col_x() ) );
-			assert( abs( sin( gamma ) * params[3] / gamma -
+			assert( std::fabs( sin( gamma ) * params[3] / gamma -
 						 dot( Vector( cross( stub2.M.col_z(), stub1.M.col_z() )), MBT.col_x() )) < 1e-2 );
 		}
 
@@ -1243,14 +1243,14 @@ get_base_step_params(
 		//Real const p1z = std::asin( dot( MBT.col_z(), cross( M2.col_x(), M1.col_x() ) ) );
 		//std::cout << "equal? p1: " << params[1] << ' ' << p1x << ' ' << p1z <<
  		//	std::endl;
-		assert( abs( params[1] - asin( dot( MBT.col_z(), cross( M2.col_y(), M1.col_y() ) ) ) ) +
-				abs( params[1] - asin( dot( MBT.col_z(), cross( M2.col_x(), M1.col_x() ) ) ) ) < 1e-2 );
+		assert( std::fabs( params[1] - asin( dot( MBT.col_z(), cross( M2.col_y(), M1.col_y() ) ) ) ) +
+				std::fabs( params[1] - asin( dot( MBT.col_z(), cross( M2.col_x(), M1.col_x() ) ) ) ) < 1e-2 );
 
 		//Real const p2 = gamma * cos( phi_prime );
 		//Real const p3 = gamma * sin( phi_prime );
-		//Real const dev( std::abs( p2 - params[2] ) + std::abs( p3 - params[3] ) );
+		//Real const dev( std::fabs( p2 - params[2] ) + std::fabs( p3 - params[3] ) );
 		//std::cout << "dev: " << dev << std::endl;
-		assert( abs( gamma * cos( phi_prime ) - params[2] ) + abs( gamma * sin( phi_prime ) - params[3] ) < 1e-2 );
+		assert( std::fabs( gamma * cos( phi_prime ) - params[2] ) + std::fabs( gamma * sin( phi_prime ) - params[3] ) < 1e-2 );
 
 		// check sign conventions
 		assert( params[1] * dot( MBT.col_z(), cross( M2.col_y(), M1.col_y() ) ) > 0);
@@ -1300,7 +1300,7 @@ get_base_pucker(
 																			);
 
 		Vector n12 = (( atoms[2]-atoms[1] ).cross( atoms[3]-atoms[2] ) ).normalized();
-		Real dot = std::abs( n12.dot( ( atoms[4]-atoms[3] ).normalized() ) );
+		Real dot = std::fabs( n12.dot( ( atoms[4]-atoms[3] ).normalized() ) );
 		if ( dot < mindot ) {
 			// get pucker
 			//Real pucker_dot = n12.dot( ( atoms[5] - Real(0.5) * ( atoms[4] + atoms[1] ) ).normalized() );
@@ -1388,15 +1388,15 @@ get_midstep_stub(
 
 	// build mid-stub triad
 	assert( M1.col_y().distance( M2.col_y() ) < 1e-3 );
-	assert( std::abs( dot( bo, M1.col_y() ) ) < 1e-3 );
+	assert( std::fabs( dot( bo, M1.col_y() ) ) < 1e-3 );
 
 	Matrix MBT;
 	MBT.col_y( M1.col_y() );
 
-	assert( std::abs( dot( M1.col_z(), MBT.col_y() ) ) < 1e-3 );
-	assert( std::abs( dot( M2.col_z(), MBT.col_y() ) ) < 1e-3 );
-	assert( std::abs( dot( M1.col_x(), MBT.col_y() ) ) < 1e-3 );
-	assert( std::abs( dot( M2.col_x(), MBT.col_y() ) ) < 1e-3 );
+	assert( std::fabs( dot( M1.col_z(), MBT.col_y() ) ) < 1e-3 );
+	assert( std::fabs( dot( M2.col_z(), MBT.col_y() ) ) < 1e-3 );
+	assert( std::fabs( dot( M1.col_x(), MBT.col_y() ) ) < 1e-3 );
+	assert( std::fabs( dot( M2.col_x(), MBT.col_y() ) ) < 1e-3 );
 
 	// get
 	MBT.col_x( ( 0.5f * ( M1.col_x() + M2.col_x() ) ).normalized() );
