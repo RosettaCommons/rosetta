@@ -93,8 +93,8 @@ RemodelGlobalFrame::RemodelGlobalFrame()
 }
 
 /// @brief value constructor
-RemodelGlobalFrame::RemodelGlobalFrame(RemodelData const & remodel_data, 
-																			 RemodelWorkingSet const & working_model, 
+RemodelGlobalFrame::RemodelGlobalFrame(RemodelData const & remodel_data,
+																			 RemodelWorkingSet const & working_model,
 																			 ScoreFunctionOP const & sfxn)
 	: op_user_remodel_repeat_structure_(option[OptionKeys::remodel::repeat_structure].user()),
 		op_remodel_repeat_structure_(option[OptionKeys::remodel::repeat_structure]),
@@ -212,34 +212,34 @@ void RemodelGlobalFrame::get_helical_params( core::pose::Pose & pose ) {
 	Vector3f c_B(B.row(0).mean(), B.row(1).mean(), B.row(2).mean());
 	MatrixXf x_A(A.rows(),A.cols());
 	MatrixXf x_B(B.rows(),B.cols());
-	
+
 	for(int i=0;i<A.cols();i++){
-			x_A.col(i)=A.col(i)-c_A;	
-			x_B.col(i)=B.col(i)-c_B;	
+			x_A.col(i)=A.col(i)-c_A;
+			x_B.col(i)=B.col(i)-c_B;
 	}
-	
+
 	Matrix3f cov= (x_B * x_A.transpose()) / x_A.cols();
 	JacobiSVD<MatrixXf> svd(cov, ComputeFullU | ComputeFullV);
 
 	Matrix3f Rt=svd.matrixU() * svd.matrixV().transpose();
 	Matrix3f R;
 	R<< 1,0,0, 0,1,0, 0,0,Rt.determinant();
-	
-	Matrix3f H= svd.matrixU() * R * svd.matrixV().transpose(); 
+
+	Matrix3f H= svd.matrixU() * R * svd.matrixV().transpose();
 	capture_stream <<"Rotation matrix:\n"<<H<<endl;
 
-	double omega = acos((H.trace()-1)/2);    
+	double omega = acos((H.trace()-1)/2);
 	Matrix3f I = Matrix3f::Identity();
 	Matrix3f N = 0.5*(H+H.transpose()) - cos(omega)*I;
 
-	Vector3f hN;    
-	Real scalar = 0;	
-	Real max_scalar = -10000000;	
+	Vector3f hN;
+	Real scalar = 0;
+	Real max_scalar = -10000000;
 	for (Size i = 0; i<=2; i++){
 		scalar = N.col(i).norm();
 		if (scalar > max_scalar){
 			max_scalar = scalar;
-			hN = N.col(i)/N.col(i).norm();    
+			hN = N.col(i)/N.col(i).norm();
 		}
 	}
 
@@ -249,13 +249,13 @@ void RemodelGlobalFrame::get_helical_params( core::pose::Pose & pose ) {
 
 
 	Vector3f t = c_B - H*c_A;
-	double L = t.dot(hN) ;  
+	double L = t.dot(hN) ;
 	double rise=abs(L);
 
   capture_stream<<"getParams:N:\n"<<N<<endl;
   capture_stream<<"getParams:helical axis:\n"<<hN<<endl;
 
-	
+
 	Matrix3f Ncross;
 	Ncross << 0,-1*hN(2),hN(1), hN(2),0,-1*hN(0), -1*hN(1),hN(0),0 ;
 	Matrix3f R0t= (1-cos(omega))*I - sin(omega)*Ncross;
@@ -271,7 +271,7 @@ void RemodelGlobalFrame::get_helical_params( core::pose::Pose & pose ) {
   cout<<"R0t_inv:\n"<<R0t.inverse()<<endl<<endl;
   cout<<"helical axis:\n"<<hN<<endl<<endl;
 */
-  
+
 	Vector3f pA= (c_A-R0)-(hN*(hN.dot(c_A-R0)));
   Vector3f pB= (c_B-R0)-(hN*(hN.dot(c_B-R0)));
 
@@ -286,7 +286,7 @@ void RemodelGlobalFrame::get_helical_params( core::pose::Pose & pose ) {
 	capture_stream <<"L: " << L << endl << "rise: "<<rise<<endl<<"radius: "<<radius<<endl<<"omega: "<<omega<<endl;
 
 	std::cout << capture_stream.str()<< endl;
-	
+
 	while (capture_stream.good()){
 		std::string one_line;
 		getline(capture_stream, one_line, '\n');
@@ -299,7 +299,7 @@ void RemodelGlobalFrame::get_helical_params( core::pose::Pose & pose ) {
 }
 
 
-// extract parameters from repeating segments and align the first to X axis on XZ plane 
+// extract parameters from repeating segments and align the first to X axis on XZ plane
 void RemodelGlobalFrame::align_segment( core::pose::Pose & pose ) {
 	using Eigen::MatrixXd;
 	using namespace Eigen;
@@ -353,35 +353,35 @@ TR.Debug << "align seg 3" << std::endl;
 	Vector3f c_B(B.row(0).mean(), B.row(1).mean(), B.row(2).mean());
 	MatrixXf x_A(A.rows(),A.cols());
 	MatrixXf x_B(B.rows(),B.cols());
-	
+
 	for(int i=0;i<A.cols();i++){
-			x_A.col(i)=A.col(i)-c_A;	
-			x_B.col(i)=B.col(i)-c_B;	
+			x_A.col(i)=A.col(i)-c_A;
+			x_B.col(i)=B.col(i)-c_B;
 	}
-	
+
 	Matrix3f cov= (x_B * x_A.transpose()) / x_A.cols();
 	JacobiSVD<MatrixXf> svd(cov, ComputeFullU | ComputeFullV);
 
 	Matrix3f Rt=svd.matrixU() * svd.matrixV().transpose();
 	Matrix3f R;
 	R<< 1,0,0, 0,1,0, 0,0,Rt.determinant();
-	
-	Matrix3f H= svd.matrixU() * R * svd.matrixV().transpose(); 
+
+	Matrix3f H= svd.matrixU() * R * svd.matrixV().transpose();
 
 TR.Debug << "H: " << H << std::endl;
 
-	double omega = acos((H.trace()-1)/2);    
+	double omega = acos((H.trace()-1)/2);
 	Matrix3f I = Matrix3f::Identity();
 	Matrix3f N = 0.5*(H+H.transpose()) - cos(omega)*I;
 
-	Vector3f hN;    
-	Real scalar = 0;	
-	Real max_scalar = -10000000;	
+	Vector3f hN;
+	Real scalar = 0;
+	Real max_scalar = -10000000;
 	for (Size i = 0; i<=2; i++){
 		scalar = N.col(i).norm();
 		if (scalar > max_scalar){
 			max_scalar = scalar;
-			hN = N.col(i)/N.col(i).norm();    
+			hN = N.col(i)/N.col(i).norm();
 		}
 	}
 
@@ -395,11 +395,11 @@ TR.Debug<<"sin_omega "<<sin_omega<<endl;
   if( sin_omega < 0) hN = -1 * hN;
 
 	Vector3f t = c_B - H*c_A;
-	double L = t.dot(hN) ;  
+	double L = t.dot(hN) ;
 	//double rise=abs(L);  // unused ~Labonte
 
-	
-	Matrix3f Ncross; 
+
+	Matrix3f Ncross;
 	Ncross << 0,-1*hN(2),hN(1), hN(2),0,-1*hN(0), -1*hN(1),hN(0),0 ;
 	Matrix3f R0t= (1-cos(omega))*I - sin(omega)*Ncross;
 	Vector3f R0 = R0t.inverse() * (t-L*hN);
@@ -409,7 +409,7 @@ TR.Debug<<"sin_omega "<<sin_omega<<endl;
 
   double direction = L * hN.dot(pA.cross(pB));
   left_handed_ = 1;
-  if(direction<0) left_handed_ = -1; 
+  if(direction<0) left_handed_ = -1;
 
 	double radius=pA.norm();
 
@@ -432,7 +432,7 @@ TR.Debug << "align seg 4" << std::endl;
    Vector3f cA2axis= R0 + hN*(hN.dot(c_A-R0));
    double u,v,w;
    u=hN(0),v=hN(1),w=hN(2);
-   // check! u,v,w should not be parallel to Z-axis (0,0,1)        
+   // check! u,v,w should not be parallel to Z-axis (0,0,1)
 
 	 //translation
 	 for(int i=0; i < A.cols(); i++) A.col(i) -= cA2axis;
@@ -464,7 +464,7 @@ TR.Debug << "align seg 5" << std::endl;
    //rotation to z-axis
    A = (rot2Z * A);
    B = (rot2Z * B);
-  
+
 
 	 //figure out the new axis with the CA set of coordinates
    double a,b;
@@ -506,13 +506,13 @@ TR.Debug << "align seg 5" << std::endl;
 		B(1,i-1-seg_size) = coord[1];
 		B(2,i-1-seg_size) = coord[2];
 	}
-*/	
+*/
 
 TR.Debug << "align seg 6" << std::endl;
 
 }
 
-void 
+void
 RemodelGlobalFrame::setup_helical_constraint(Pose & pose){
 	using Eigen::MatrixXd;
 	using namespace Eigen;
@@ -526,8 +526,8 @@ RemodelGlobalFrame::setup_helical_constraint(Pose & pose){
 
 	align_segment(pose);
 
-        // now all coords (A) are along z-axis and the first c_A is in (radius,0,0)     
-        //////////////////////////////////////////////////              
+        // now all coords (A) are along z-axis and the first c_A is in (radius,0,0)
+        //////////////////////////////////////////////////
 TR.Debug << "setup RGF cst 1" << std::endl;
 				//cache the constraints currently in pose
 				ConstraintSetOP input_pose_cst_set;
@@ -550,7 +550,7 @@ TR.Debug << "setup RGF cst 1" << std::endl;
 				// However the constraint type maps the same atoms, so we actually need yet another pose, with two copies.
 				// the strategy is to use the singleton to figure out the coordinates, and dump the xyz to the second segment.
 				// these's going to be an issue with connectivity....
-				
+
 				// expand residue indices to double
 				for(Size i = seg_size+1; i <= 2*seg_size; ++i){
     			residue_indices.push_back(i);
@@ -558,7 +558,7 @@ TR.Debug << "setup RGF cst 1" << std::endl;
 
 				PoseOP double_pose = new Pose;
 				core::io::pdb::pose_from_pose( *double_pose, pose, typeSet, residue_indices);
-				
+
 TR.Debug << "setup RGF cst 2" << std::endl;
 				// make residue list, needed for rotational transformation
 				std::list <core::Size> single_residue_list;
@@ -581,14 +581,14 @@ TR.Debug << "setup RGF cst 2" << std::endl;
 				// make atomID list, use CA for now.   if wanted to adjust the number of atoms involved, do it here.
 				utility::vector1< AtomID > atms;
 
-				// we want to setup constraints for two copies, so make lists spanning the first two segments. 
+				// we want to setup constraints for two copies, so make lists spanning the first two segments.
 				for (Size i = 1; i <= 2*seg_size ; i++){
 					AtomID id = AtomID(double_pose->residue(i).atom_index("CA"), i);
 					atms.push_back(id);
 				}
-	
-        // generating new coordinates following pre-defined helical parameters  
-        // pre-defined helical parameters, inputs from outside  
+
+        // generating new coordinates following pre-defined helical parameters
+        // pre-defined helical parameters, inputs from outside
         double t_rise = op_remodel_helical_rise_;
         double t_radius = op_remodel_helical_radius_;
         double t_omega = op_remodel_helical_omega_;
@@ -605,7 +605,7 @@ TR.Debug << "setup RGF cst 2" << std::endl;
 			  xyzVector< core::Real > preT;
 			  xyzVector< core::Real > postT;
 			  identity_matrix( Rid );
-				//translate 
+				//translate
 				preT = xyzVector< core::Real >(0,0,0);
 				postT = xyzVector< core::Real >(t_radius-radius_,0,0);
 
@@ -642,7 +642,7 @@ TR.Debug << "setup RGF cst 6" << std::endl;
 TR.Debug << "setup RGF cst 7" << std::endl;
 
 				//get_helical_params(pose);
-				
+
 }
 
 
@@ -688,7 +688,7 @@ RemodelGlobalFrame::get_name() const {
 	return "RemodelGlobalFrame";
 }
 
-  
+
 void RemodelGlobalFrame::scorefunction( ScoreFunctionOP const & sfxn) {
 	score_fxn_ = sfxn->clone();
 }

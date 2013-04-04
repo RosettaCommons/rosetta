@@ -938,6 +938,8 @@ void RemodelLoopMover::repeat_propagation( //utility function
 		}
 	}
 
+//repeat_pose.dump_pdb("pre_align.pdb");
+
 	if (op_user_remodel_helical_rise_ &&
 			op_user_remodel_helical_radius_ &&
 			op_user_remodel_helical_omega_){
@@ -945,15 +947,20 @@ void RemodelLoopMover::repeat_propagation( //utility function
 					RGF_.setup_helical_constraint(repeat_pose);
 	}
 
+//repeat_pose.dump_pdb("post_align.pdb");
 	//re-symmetrize
 	if (is_sym){
-		simple_moves::symmetry::SetupForSymmetryMover pre_mover;
-		pre_mover.apply( pose );
-		pre_mover.apply( repeat_pose );
+	//unfortunately need separate movers for the operations
+		simple_moves::symmetry::SetupForSymmetryMover pre_mover1;
+		pre_mover1.apply( pose );
+		simple_moves::symmetry::SetupForSymmetryMover pre_mover2;
+		pre_mover2.apply( repeat_pose );
 		pose.pdb_info()->obsolete(true);
 		repeat_pose.pdb_info()->obsolete(true);
 	}
 
+//repeat_pose.dump_pdb("symmetrize.pdb");
+//exit(0);
 	//repeat_pose.dump_pdb("repeatPose_in_rep_propagate_setAngle.pdb");
 	//loop over the tail fragment to the first fragment
 
@@ -998,9 +1005,10 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		pose.pdb_info()->obsolete(true);
 			repeat_pose_.pdb_info()->obsolete(true);
 		if ( op_user_symmetry_symmetry_definition_ ) {
-			simple_moves::symmetry::SetupForSymmetryMover pre_mover;
-			pre_mover.apply( pose );
-			pre_mover.apply( repeat_pose_ );
+			simple_moves::symmetry::SetupForSymmetryMover pre_mover1;
+			pre_mover1.apply( pose );
+			simple_moves::symmetry::SetupForSymmetryMover pre_mover2;
+			pre_mover2.apply( repeat_pose_ );
 			pose.pdb_info()->obsolete(true);
 			repeat_pose_.pdb_info()->obsolete(true);
 		}

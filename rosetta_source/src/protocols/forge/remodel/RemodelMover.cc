@@ -803,10 +803,12 @@ void RemodelMover::apply( Pose & pose ) {
 				cached_modified_pose.set_phi( res, pose.phi(res) );
 				cached_modified_pose.set_psi( res, pose.psi(res) );
 				cached_modified_pose.set_omega( res, pose.omega(res) );
-				ResidueType const & rsd_type(pose.residue_type(res));
-				replace_pose_residue_copying_existing_coordinates(cached_modified_pose,res,rsd_type);
+				//ResidueType const & rsd_type(pose.residue_type(res));
+				//replace_pose_residue_copying_existing_coordinates(cached_modified_pose,res,rsd_type);
+				//pose.pdb_info()->obsolete(true);
 			}
 		}
+
 		core::pose::renumber_pdbinfo_based_on_conf_chains(
 				pose,
 		    true ,  // fix chain
@@ -1351,7 +1353,7 @@ bool RemodelMover::centroid_build( Pose & pose ) {
 		if(denovo)
 			modified_archive_pose = pose;
 
-		if (op_user_remodel_repeat_structure_) {
+		if (op_user_remodel_repeat_structure_ && !denovo) { // the previous step already swap modified_archive_pose to be full length. skip the following
 		//this part really needs work....  currently doesn't allow growing a loop
 		//in regional repeat building.  This section is used in de novo rebuild
 		//cases where the monomer pose is extended, so to restore the sidechain,
@@ -1364,7 +1366,18 @@ bool RemodelMover::centroid_build( Pose & pose ) {
 				using namespace protocols::loops;
 				using protocols::forge::methods::intervals_to_loops;
 				std::set< Interval > loop_intervals = manager_.intervals_containing_undefined_positions();
-				LoopsOP loops = new Loops( intervals_to_loops( loop_intervals.begin(), loop_intervals.end() ) );
+
+				LoopsOP loops = new Loops();
+
+				//Temporary fix: special case for denovo type, needed artificially
+				//padding residues.  in reality all loops would be padded, but for
+				//archive pose extension, it is only special for de novo case
+				if (loop_intervals.size() == 1 && (*(loop_intervals.begin())).left == 1 && (*(loop_intervals.begin())).right == remodel_data_.blueprint.size()){
+					loops->add_loop( Loop(1, remodel_data_.blueprint.size()+2, 0, 0, true) );
+				} else {
+					loops = new Loops( intervals_to_loops( loop_intervals.begin(), loop_intervals.end() ) );
+				}
+
 				RemodelLoopMover RLM(loops);
 				RLM.set_repeat_tail_length(remodel_data_.sequence.length());
 				Pose bufferPose(modified_archive_pose);

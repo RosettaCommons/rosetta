@@ -290,7 +290,7 @@ void VarLengthBuild::apply( Pose & pose ) {
 	using protocols::moves::FAIL_DO_NOT_RETRY;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	
+
 	using core::util::switch_to_residue_type_set;
 	using protocols::forge::methods::fold_tree_from_pose;
 	using protocols::forge::methods::restore_residues;
@@ -502,8 +502,22 @@ void VarLengthBuild::apply( Pose & pose ) {
 
       using namespace protocols::loops;
       using protocols::forge::methods::intervals_to_loops;
+
       std::set< Interval > loop_intervals = manager_.intervals_containing_undefined_positions();
-      LoopsOP loops = new Loops( intervals_to_loops( loop_intervals.begin(), loop_intervals.end() ) );
+
+			LoopsOP loops = new Loops();
+
+			//Temporary fix: special case for denovo type, needed artificially
+			//padding residues.  in reality all loops would be padded, but for
+			//archive pose extension, it is only special for de novo case
+			//std::cout << (*(loop_intervals.begin())).left << "left" << std::endl;
+			//std::cout << (*(loop_intervals.begin())).right << "right" << std::endl;
+			if (loop_intervals.size() == 1 && (*(loop_intervals.begin())).left == 1 && (*(loop_intervals.begin())).right == remodel_data_.blueprint.size()){
+			//	std::cout << "man handle loop." << std::endl;
+				loops->add_loop( Loop(1, remodel_data_.blueprint.size()+2, 0, 0, true) );
+			} else {
+        loops = new Loops( intervals_to_loops( loop_intervals.begin(), loop_intervals.end() ) );
+			}
 
       Pose bufferPose(archive_pose);
       protocols::forge::remodel::RemodelLoopMover RLM(loops);
@@ -538,7 +552,9 @@ void VarLengthBuild::apply( Pose & pose ) {
 		}
 	} else if ( recover_original_on_failure_ ) {
 
-		// user desires the original Pose
+		// user desires the original Pose ; unadressed issue with symmetry/repeat
+		// propagation, as archive_pose has grown to full length, it's not correct
+		// to reassign it to pose
 		pose = archive_pose;
 
 	}
