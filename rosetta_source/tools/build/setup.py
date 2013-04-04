@@ -125,7 +125,9 @@ directory it is built to, and what settings it ultimately uses.
 
     # Nothing special is currently done to select mode, kind or extras
     if len(actual.extras) == 0:
-      actual.extras.append("default")
+        actual.extras.append("default")
+    else :
+        actual.extras.data.sort()
 
     return requested, actual
 
