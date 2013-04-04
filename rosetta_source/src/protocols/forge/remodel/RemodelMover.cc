@@ -171,83 +171,22 @@ RemodelMoverCreator::mover_name() {
 /// Creates and sets the centroid and fullatom score functions.
 ///
 RemodelMover::RemodelMover() :
-	Super( "RemodelMover" ),
-	// User specified options
-	op_user_remodel_vdw_(option[OptionKeys::remodel::vdw].user()),
-	op_user_remodel_rama_(option[OptionKeys::remodel::rama].user()),
-	op_user_remodel_cbeta_(option[OptionKeys::remodel::cbeta].user()),
-	op_user_remodel_cenpack_(option[OptionKeys::remodel::cenpack].user()),
-	op_user_remodel_hb_lrbb_(option[OptionKeys::remodel::hb_lrbb].user()),
-	op_user_remodel_hb_srbb_(option[OptionKeys::remodel::hb_srbb].user()),
-	op_user_remodel_rsigma_(option[OptionKeys::remodel::rsigma].user()),
-	op_user_remodel_ss_pair_(option[OptionKeys::remodel::ss_pair].user()),
-	op_user_domainFusion_insert_segment_from_pdb_(option[OptionKeys::remodel::domainFusion::insert_segment_from_pdb].user()),
-	op_user_remodel_repeat_structure_(option[OptionKeys::remodel::repeat_structure].user()),
-	op_user_symmetry_symmetry_definition_(option[OptionKeys::symmetry::symmetry_definition].user()),
-	op_user_remodel_quick_and_dirty_(option[OptionKeys::remodel::quick_and_dirty].user()),
-	op_user_enzdes_cstfile_(option[OptionKeys::enzdes::cstfile].user()),
-	op_user_constraints_cst_file_(option[OptionKeys::constraints::cst_file].user()),
-	op_user_remodel_build_disulf_(option[OptionKeys::remodel::build_disulf].user()),
-	op_user_remodel_rg_(option[OptionKeys::remodel::rg].user()),
-	op_user_remodel_check_scored_centroid_(option[OptionKeys::remodel::check_scored_centroid].user()),
-	op_user_remodel_run_confirmation_(option[OptionKeys::remodel::run_confirmation].user()),
-	op_user_remodel_free_relax_(option[OptionKeys::remodel::free_relax].user()),
-	op_user_RemodelLoopMover_cyclic_peptide_(option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide].user()),
-	op_user_remodel_swap_refine_confirm_protocols_(option[OptionKeys::remodel::swap_refine_confirm_protocols].user()),
-	op_user_design_allow_rare_aro_chi_(option[OptionKeys::remodel::design::allow_rare_aro_chi].user()),
-	op_user_packing_soft_rep_design_(option[OptionKeys::packing::soft_rep_design].user()),
-	op_user_remodel_blueprint_(option[OptionKeys::remodel::blueprint].user()),
-	op_user_remodel_checkpoint_(option[OptionKeys::remodel::checkpoint].user()),
-	op_user_remodel_use_pose_relax_(option[OptionKeys::remodel::use_pose_relax].user()),
-	op_user_remodel_use_cart_relax_(option[OptionKeys::remodel::use_cart_relax].user()),
-	op_user_remodel_use_blueprint_sequence_(option[OptionKeys::remodel::use_blueprint_sequence].user()),
-	op_user_remodel_bypass_fragments_(option[OptionKeys::remodel::bypass_fragments].user()),
-	op_RemodelLoopMover_max_linear_chainbreak_(option[OptionKeys::remodel::RemodelLoopMover::max_linear_chainbreak]),
-	op_remodel_dr_cycles_(option[OptionKeys::remodel::dr_cycles]),
-	op_remodel_cen_sfxn_(option[OptionKeys::remodel::cen_sfxn]),
-	op_remodel_vdw_(option[OptionKeys::remodel::vdw]),
-	op_remodel_rama_(option[OptionKeys::remodel::rama]),
-	op_remodel_cbeta_(option[OptionKeys::remodel::cbeta]),
-	op_remodel_cenpack_(option[OptionKeys::remodel::cenpack]),
-	op_remodel_hb_lrbb_(option[OptionKeys::remodel::hb_lrbb]),
-	op_remodel_hb_srbb_(option[OptionKeys::remodel::hb_srbb]),
-	op_remodel_rsigma_(option[OptionKeys::remodel::rsigma]),
-	op_remodel_ss_pair_(option[OptionKeys::remodel::ss_pair]),
-	op_run_show_simulation_in_pymol_(option[OptionKeys::run::show_simulation_in_pymol]),
-	op_remodel_num_trajectory_(option[OptionKeys::remodel::num_trajectory]),
-	op_remodel_repeat_structure_(option[OptionKeys::remodel::repeat_structure]),
-	op_remodel_cen_minimize_(option[OptionKeys::remodel::cen_minimize]),
-	op_remodel_cstfilter_(option[OptionKeys::remodel::cstfilter]),
-	op_remodel_collect_clustered_top_(option[OptionKeys::remodel::collect_clustered_top]),
-	op_out_prefix_(option[OptionKeys::out::prefix]),
-	op_remodel_use_same_length_fragments_(option[OptionKeys::remodel::use_same_length_fragments]),
-	op_packing_soft_rep_design_(false),
-	op_remodel_rg_(0.0),
-	op_remodel_blueprint_(""),
-	op_remodel_checkpoint_(false),
-	op_remodel_use_pose_relax_(false),
-	op_remodel_use_cart_relax_(false),
-	op_remodel_use_blueprint_sequence_(false),
-	op_remodel_bypass_fragments_(false),
-	op_remodel_free_relax_(false)
+	Super( "RemodelMover" )
 {
-	// Do this first
-	set_param_from_options();
-
 	//use_fullmer_ = false;
 	//use_sequence_bias_ = false;
 	//max_linear_chainbreak_ = 0.15;
-	max_linear_chainbreak_ = op_RemodelLoopMover_max_linear_chainbreak_;
+	max_linear_chainbreak_ =option[OptionKeys::remodel::RemodelLoopMover::max_linear_chainbreak];
 	//centroid_loop_mover_str_ = "quick_ccd";
 	centroid_loop_mover_str_ = "RemodelLoopMover";
 	redesign_loop_neighborhood_ = false;
-	dr_cycles_ = op_remodel_dr_cycles_;
-	centroid_sfx_ = core::scoring::ScoreFunctionFactory::create_score_function( op_remodel_cen_sfxn_ );
+	dr_cycles_ =option[OptionKeys::remodel::dr_cycles];
+	centroid_sfx_ = core::scoring::ScoreFunctionFactory::create_score_function(option[OptionKeys::remodel::cen_sfxn] );
 	fullatom_sfx_ = core::scoring::getScoreFunction();
 
 	register_user_options();
 
-	if ( op_packing_soft_rep_design_ ) {
+	if (option[OptionKeys::packing::soft_rep_design] ) {
 		TR << "SWITCHING FULLATOM FUNCITON TO SOFT_REP_DESIGN" << std::endl;
 		fullatom_sfx_ = ScoreFunctionFactory::create_score_function( SOFT_REP_DESIGN_WTS );
 	}
@@ -274,87 +213,13 @@ RemodelMover::RemodelMover( RemodelMover const & rval )
 	dr_cycles_( rval.dr_cycles_ ),
 	centroid_sfx_( rval.centroid_sfx_->clone() ),
 	fullatom_sfx_( rval.fullatom_sfx_->clone() ),
-	blueprint_( rval.blueprint_ ),
-
-	// User specified options
-	op_user_remodel_vdw_(rval.op_user_remodel_vdw_),
-	op_user_remodel_rama_(rval.op_user_remodel_rama_),
-	op_user_remodel_cbeta_(rval.op_user_remodel_cbeta_),
-	op_user_remodel_cenpack_(rval.op_user_remodel_cenpack_),
-	op_user_remodel_hb_lrbb_(rval.op_user_remodel_hb_lrbb_),
-	op_user_remodel_hb_srbb_(rval.op_user_remodel_hb_srbb_),
-	op_user_remodel_rsigma_(rval.op_user_remodel_rsigma_),
-	op_user_remodel_ss_pair_(rval.op_user_remodel_ss_pair_),
-	op_user_domainFusion_insert_segment_from_pdb_(rval.op_user_domainFusion_insert_segment_from_pdb_),
-	op_user_remodel_repeat_structure_(rval.op_user_remodel_repeat_structure_),
-	op_user_symmetry_symmetry_definition_(rval.op_user_symmetry_symmetry_definition_),
-	op_user_remodel_quick_and_dirty_(rval.op_user_remodel_quick_and_dirty_),
-	op_user_enzdes_cstfile_(rval.op_user_enzdes_cstfile_),
-	op_user_constraints_cst_file_(rval.op_user_constraints_cst_file_),
-	op_user_remodel_build_disulf_(rval.op_user_remodel_build_disulf_),
-	op_user_remodel_rg_(rval.op_user_remodel_rg_),
-	op_user_remodel_check_scored_centroid_(rval.op_user_remodel_check_scored_centroid_),
-	op_user_remodel_run_confirmation_(rval.op_user_remodel_run_confirmation_),
-	op_user_remodel_free_relax_(rval.op_user_remodel_free_relax_),
-	op_user_RemodelLoopMover_cyclic_peptide_(rval.op_user_RemodelLoopMover_cyclic_peptide_),
-	op_user_remodel_swap_refine_confirm_protocols_(rval.op_user_remodel_swap_refine_confirm_protocols_),
-	op_user_design_allow_rare_aro_chi_(rval.op_user_design_allow_rare_aro_chi_),
-	op_RemodelLoopMover_max_linear_chainbreak_(rval.op_RemodelLoopMover_max_linear_chainbreak_),
-	op_remodel_dr_cycles_(rval.op_remodel_dr_cycles_),
-	op_remodel_cen_sfxn_(rval.op_remodel_cen_sfxn_),
-	op_remodel_vdw_(rval.op_remodel_vdw_),
-	op_remodel_rama_(rval.op_remodel_rama_),
-	op_remodel_cbeta_(rval.op_remodel_cbeta_),
-	op_remodel_cenpack_(rval.op_remodel_cenpack_),
-	op_remodel_hb_lrbb_(rval.op_remodel_hb_lrbb_),
-	op_remodel_hb_srbb_(rval.op_remodel_hb_srbb_),
-	op_remodel_rsigma_(rval.op_remodel_rsigma_),
-	op_remodel_ss_pair_(rval.op_remodel_ss_pair_),
-	op_run_show_simulation_in_pymol_(rval.op_run_show_simulation_in_pymol_),
-	op_remodel_num_trajectory_(rval.op_remodel_num_trajectory_),
-	op_remodel_repeat_structure_(rval.op_remodel_repeat_structure_),
-	op_remodel_cen_minimize_(rval.op_remodel_cen_minimize_),
-	op_remodel_cstfilter_(rval.op_remodel_cstfilter_),
-	op_remodel_collect_clustered_top_(rval.op_remodel_collect_clustered_top_),
-	op_out_prefix_(rval.op_out_prefix_),
-	op_remodel_use_same_length_fragments_(rval.op_remodel_use_same_length_fragments_),
-	op_packing_soft_rep_design_(rval.op_packing_soft_rep_design_),
-	op_remodel_rg_(rval.op_remodel_rg_),
-	op_remodel_blueprint_(rval.op_remodel_blueprint_),  // File
-	op_remodel_checkpoint_(rval.op_remodel_checkpoint_),
-	op_remodel_use_pose_relax_(rval.op_remodel_use_pose_relax_),
-	op_remodel_use_cart_relax_(rval.op_remodel_use_cart_relax_),
-	op_remodel_use_blueprint_sequence_(rval.op_remodel_use_blueprint_sequence_),
-	op_remodel_bypass_fragments_(rval.op_remodel_bypass_fragments_),
-	op_remodel_free_relax_(rval.op_remodel_free_relax_)
+	blueprint_( rval.blueprint_ )
 {
 	if ( rval.vlb_.get() ) {
 		vlb_ = new VarLengthBuild( *rval.vlb_ );
 	}
 }
 
-void RemodelMover::set_param_from_options()
-{
-	// Options that don't have default values.  Test before access.
-	if( op_user_packing_soft_rep_design_ )
-		op_packing_soft_rep_design_ = option[OptionKeys::packing::soft_rep_design];
-	if( op_user_remodel_rg_ )
-		op_remodel_rg_ = option[OptionKeys::remodel::rg];
-	if( op_user_remodel_blueprint_ )
-		op_remodel_blueprint_ = option[OptionKeys::remodel::blueprint]();  // File
-	if( op_user_remodel_checkpoint_ )
-		op_remodel_checkpoint_ = option[OptionKeys::remodel::checkpoint];
-	if( op_user_remodel_use_pose_relax_ )
-		op_remodel_use_pose_relax_ = option[OptionKeys::remodel::use_pose_relax];
-	if( op_user_remodel_use_cart_relax_ )
-		op_remodel_use_cart_relax_= option[OptionKeys::remodel::use_cart_relax];
-	if( option.has(OptionKeys::remodel::use_blueprint_sequence) )
-		op_remodel_use_blueprint_sequence_ = option[OptionKeys::remodel::use_blueprint_sequence];
-	if( option.has(OptionKeys::remodel::bypass_fragments) )
-		op_remodel_bypass_fragments_ = option[OptionKeys::remodel::bypass_fragments];
-	if( option.has(OptionKeys::remodel::free_relax) )
-		op_remodel_free_relax_ = option[OptionKeys::remodel::free_relax];
-}
 ///
 /// @begin RemodelMover::~RemodelMover
 ///
@@ -374,47 +239,47 @@ RemodelMover::~RemodelMover() {}
 void RemodelMover::register_user_options() {
 
 	// set optional weights
-	if ( op_user_remodel_vdw_ ) {
-		centroid_sfx_->set_weight( vdw, op_remodel_vdw_ );
-		TR << "USER OVERWRITE VDW: " << op_remodel_vdw_ << std::endl;
+	if (option[OptionKeys::remodel::vdw].user() ) {
+		centroid_sfx_->set_weight( vdw,option[OptionKeys::remodel::vdw] );
+		TR << "USER OVERWRITE VDW: " <<option[OptionKeys::remodel::vdw] << std::endl;
 	}
 
-	if ( op_user_remodel_rama_ ){
-		centroid_sfx_->set_weight( rama, op_remodel_rama_ );
-		TR << "USER OVERWRITE RAMA: " << op_remodel_rama_ << std::endl;
+	if (option[OptionKeys::remodel::rama].user() ){
+		centroid_sfx_->set_weight( rama,option[OptionKeys::remodel::rama] );
+		TR << "USER OVERWRITE RAMA: " <<option[OptionKeys::remodel::rama] << std::endl;
 	}
 
-	if ( op_user_remodel_cbeta_ ){
-		centroid_sfx_->set_weight( cbeta, op_remodel_cbeta_ );
-		TR << "USER OVERWRITE CBETA: " << op_remodel_cbeta_ << std::endl;
+	if (option[OptionKeys::remodel::cbeta].user() ){
+		centroid_sfx_->set_weight( cbeta,option[OptionKeys::remodel::cbeta] );
+		TR << "USER OVERWRITE CBETA: " <<option[OptionKeys::remodel::cbeta] << std::endl;
 	}
 
-	if ( op_user_remodel_cenpack_ ){
-		centroid_sfx_->set_weight( cenpack, op_remodel_cenpack_ );
-		TR << "USER OVERWRITE CENPACK: " << op_remodel_cenpack_ << std::endl;
+	if (option[OptionKeys::remodel::cenpack].user() ){
+		centroid_sfx_->set_weight( cenpack,option[OptionKeys::remodel::cenpack] );
+		TR << "USER OVERWRITE CENPACK: " <<option[OptionKeys::remodel::cenpack] << std::endl;
 	}
 
-	if ( op_user_remodel_hb_lrbb_ ){
-		centroid_sfx_->set_weight( hbond_lr_bb, op_remodel_hb_lrbb_ );
-		TR << "USER OVERWRITE HB_LRBB: " << op_remodel_hb_lrbb_ << std::endl;
+	if (option[OptionKeys::remodel::hb_lrbb].user() ){
+		centroid_sfx_->set_weight( hbond_lr_bb,option[OptionKeys::remodel::hb_lrbb] );
+		TR << "USER OVERWRITE HB_LRBB: " <<option[OptionKeys::remodel::hb_lrbb] << std::endl;
 	}
 
-	if ( op_user_remodel_hb_srbb_ ){
-		centroid_sfx_->set_weight( hbond_sr_bb, op_remodel_hb_srbb_ );
-		TR << "USER OVERWRITE HB_SRBB: " << op_remodel_hb_srbb_ << std::endl;
+	if (option[OptionKeys::remodel::hb_srbb].user() ){
+		centroid_sfx_->set_weight( hbond_sr_bb,option[OptionKeys::remodel::hb_srbb] );
+		TR << "USER OVERWRITE HB_SRBB: " <<option[OptionKeys::remodel::hb_srbb] << std::endl;
 	}
-	if ( op_user_remodel_rg_ ){
-		centroid_sfx_->set_weight( rg, op_remodel_rg_ );
-		TR << "USER OVERWRITE RG: " << op_remodel_rg_ << std::endl;
+	if (option[OptionKeys::remodel::rg].user() ){
+		centroid_sfx_->set_weight( rg,option[OptionKeys::remodel::rg] );
+		TR << "USER OVERWRITE RG: " <<option[OptionKeys::remodel::rg] << std::endl;
 	}
 
-	if ( op_user_remodel_rsigma_ ){
-		centroid_sfx_->set_weight( rsigma, op_remodel_rsigma_ );
-		TR << "USER OVERWRITE RSIGMA: " << op_remodel_rsigma_ << std::endl;
+	if (option[OptionKeys::remodel::rsigma].user() ){
+		centroid_sfx_->set_weight( rsigma,option[OptionKeys::remodel::rsigma] );
+		TR << "USER OVERWRITE RSIGMA: " <<option[OptionKeys::remodel::rsigma] << std::endl;
 	}
-	if ( op_user_remodel_ss_pair_ ){
-		centroid_sfx_->set_weight( ss_pair, op_remodel_ss_pair_ );
-		TR << "USER OVERWRITE SSPAIR: " << op_remodel_ss_pair_ << std::endl;
+	if (option[OptionKeys::remodel::ss_pair].user() ){
+		centroid_sfx_->set_weight( ss_pair,option[OptionKeys::remodel::ss_pair] );
+		TR << "USER OVERWRITE SSPAIR: " <<option[OptionKeys::remodel::ss_pair] << std::endl;
 	}
 
 }
@@ -537,7 +402,7 @@ void RemodelMover::apply( Pose & pose ) {
 
 	if (blueprint_ == "") {
 		//TR << "blueprint value 1 is " << blueprint_ << std::endl;
-		blueprint_ = op_remodel_blueprint_;
+		blueprint_ =option[OptionKeys::remodel::blueprint]();
 		//TR << "blueprint value 2 is " << blueprint_ << std::endl;
 	}
 
@@ -558,7 +423,7 @@ void RemodelMover::apply( Pose & pose ) {
 	dssp.insert_ss_into_pose( pose );
 
 	// process domain insertion option
-	if ( op_user_domainFusion_insert_segment_from_pdb_ ) {
+	if (option[OptionKeys::remodel::domainFusion::insert_segment_from_pdb].user() ) {
 		TR << "apply(): INSERT SEGMENT FROM PDB" << std::endl;
 		remodel_data.collectInsertionPose();
 		// remodel_data will have several class member variables updated with the insertion information at this point
@@ -574,7 +439,7 @@ void RemodelMover::apply( Pose & pose ) {
 	working_model_ = working_model;
 
 	// test PyMol viewer
-	if ( op_run_show_simulation_in_pymol_ ) {
+	if (option[OptionKeys::run::show_simulation_in_pymol] ) {
 		moves::AddPyMolObserver( pose, false, core::Real( 0.50 ) );
 	}
 
@@ -592,7 +457,7 @@ void RemodelMover::apply( Pose & pose ) {
 	}
 	*/
 
-	if (op_user_remodel_repeat_structure_) {
+	if(option[OptionKeys::remodel::repeat_structure].user()) {
 		//for cases involve jxn, need to make pose longer so manager won't complain
 		//about missing residues
 
@@ -616,7 +481,7 @@ void RemodelMover::apply( Pose & pose ) {
 	//	Pose testArc;
 	//	testArc = pose;
 	if (working_model.manager.size()!= 0){
-		if (!op_remodel_bypass_fragments_){
+		if (!option[OptionKeys::remodel::bypass_fragments]){
 			working_model.manager.modify(pose);
 			}else{
 			working_model.manager.dummy_modify(pose.total_residue());
@@ -635,7 +500,7 @@ void RemodelMover::apply( Pose & pose ) {
 	}
 
 	//finally recheck length to ensure blueprint compliance
-	if (op_user_remodel_repeat_structure_) {
+	if(option[OptionKeys::remodel::repeat_structure].user()) {
 		Size max_pdb_index = remodel_data_.blueprint.size()*2;
 		while (pose.total_residue() >= max_pdb_index){
 			pose.conformation().delete_residue_slow(pose.total_residue());
@@ -685,7 +550,7 @@ void RemodelMover::apply( Pose & pose ) {
 	// initialize symmetry
 
 	// only symmetrize here if not in the repeat structure mode. for repeats, stay monomer until repeat generation.
-	if ( op_user_symmetry_symmetry_definition_ && !op_remodel_repeat_structure_ )  {
+	if (option[OptionKeys::symmetry::symmetry_definition].user() &&option[OptionKeys::remodel::repeat_structure] )  {
 		simple_moves::symmetry::SetupForSymmetryMover pre_mover;
 		pre_mover.apply( pose );
 		// Remodel assumes chain ID is ' '
@@ -696,13 +561,13 @@ void RemodelMover::apply( Pose & pose ) {
 		//pose.pdb_info( pdb_info );
 	}
 
-	Size i = op_remodel_num_trajectory_;
+	Size i =option[OptionKeys::remodel::num_trajectory];
 	Size num_traj = i; // need this for checkpointing math
 	Size prev_checkpoint = 0;
 
 	forge::remodel::RemodelAccumulator accumulator( working_model );
 
-	if ( op_remodel_checkpoint_ ) {
+	if (option[OptionKeys::remodel::checkpoint] ) {
 		prev_checkpoint = accumulator.recover_checkpoint();
 		if ( prev_checkpoint >= i ) {
 			i = 0;
@@ -729,7 +594,7 @@ void RemodelMover::apply( Pose & pose ) {
 	}
 	*/
 
-	if ( op_user_remodel_repeat_structure_ ) {
+	if (option[OptionKeys::remodel::repeat_structure].user() ) {
 
 		// turning on the res_type_linking constraint weight for designs
 		fullatom_sfx_->set_weight( scoring::atom_pair_constraint, 1.0 );
@@ -754,11 +619,11 @@ void RemodelMover::apply( Pose & pose ) {
 	Size no_attempts_at_centroid_build = 0;
 	//Size no_attempts_to_make_at_centroid_build = 10;
 
-	//bool quick_mode = op_user_remodel_quick_and_dirty_;
+	//bool quick_mode =option[OptionKeys::remodel::quick_and_dirty].user();
 
-	Size repeat_number = op_remodel_repeat_structure_;
+	Size repeat_number =option[OptionKeys::remodel::repeat_structure];
 	//rerooting tree
-	if (op_user_remodel_repeat_structure_ && pose.total_residue() == remodel_data.blueprint.size()*repeat_number) {
+	if(option[OptionKeys::remodel::repeat_structure].user() && pose.total_residue() == remodel_data.blueprint.size()*repeat_number) {
 		core::kinematics::FoldTree f = pose.fold_tree();
 		f.reorder(working_model.safe_root_);
 		pose.fold_tree(f);
@@ -797,7 +662,7 @@ void RemodelMover::apply( Pose & pose ) {
 				//return;
 			}
 		}
-		if ( op_user_remodel_repeat_structure_ ) {
+		if (option[OptionKeys::remodel::repeat_structure].user() ) {
 			// should fold this pose to match just the first segment of a repeat, and that will be used for next round of building
 			for ( Size res = 1; res <= cached_modified_pose.n_residue(); res++ ) {
 				cached_modified_pose.set_phi( res, pose.phi(res) );
@@ -822,7 +687,7 @@ void RemodelMover::apply( Pose & pose ) {
 		/*
 		//extract the constraint currently in Pose for later Recycling
 		ConstraintSetOP cst_set_post_built;
-		if ( op_user_remodel_repeat_structure_ ) {
+		if (option[OptionKeys::remodel::repeat_structure].user() ) {
 
 			// at this stage it should hold generic cstfile and res_type_linking
 			// constraints
@@ -834,7 +699,7 @@ void RemodelMover::apply( Pose & pose ) {
 
 		// handle constraints as soon as centroid is done.  If applying sidechain
 		// constraints, replace residue to the right AA right away.
-		if ( op_user_enzdes_cstfile_ ) {
+		if (option[OptionKeys::enzdes::cstfile].user() ) {
 			TR << "apply(): constraint file found on command line. updating score functions to include constraint terms." << std::endl;
 
 			forge::remodel::RemodelEnzdesCstModuleOP cstOP = new forge::remodel::RemodelEnzdesCstModule(remodel_data);
@@ -855,7 +720,7 @@ void RemodelMover::apply( Pose & pose ) {
 			cstOP->enable_constraint_scoreterms(fullatom_sfx_);
 			designMover.scorefunction(fullatom_sfx_);
 		}
-		if (op_user_constraints_cst_file_){
+		if(option[OptionKeys::constraints::cst_file].user()){
 				//safety
 				pose.remove_constraints();
 
@@ -867,7 +732,7 @@ void RemodelMover::apply( Pose & pose ) {
 				designMover.scorefunction(fullatom_sfx_);
 		}
 
-		if (op_user_remodel_build_disulf_){
+		if(option[OptionKeys::remodel::build_disulf].user()){
 			TR << "apply(): build_disfulf option set. finding disulfides." << std::endl;
 			utility::vector1<std::pair <Size, Size> > disulf_partners;
 			bool disulfPass = false;
@@ -892,7 +757,7 @@ void RemodelMover::apply( Pose & pose ) {
 
 				// for now, accept all disulf build, as it is hard enough to do already.  Accept instead of cst filter?
 				// accumulator.apply(disulf_copy_pose);
-				if ( op_user_enzdes_cstfile_ ) {
+				if (option[OptionKeys::enzdes::cstfile].user() ) {
 					simple_filters::ScoreTypeFilter const pose_constraint( fullatom_sfx_, atom_pair_constraint, 10 );
 					bool CScore(pose_constraint.apply( disulf_copy_pose ));
 					if (!CScore){  // if didn't pass, rebuild
@@ -908,8 +773,8 @@ void RemodelMover::apply( Pose & pose ) {
 
 		} else {
 			// option build_disulf not specified...
-			//if ( op_user_remodel_repeat_structure_ || op_remodel_cen_minimize_ ) {
-			if (op_remodel_cen_minimize_) {
+			//if (option[OptionKeys::remodel::repeat_structure].user() ||option[OptionKeys::remodel::cen_minimize] ) {
+			if(option[OptionKeys::remodel::cen_minimize]) {
 
 				//cache current foldTree;
 				kinematics::FoldTree cenFT = pose.fold_tree();
@@ -949,10 +814,10 @@ void RemodelMover::apply( Pose & pose ) {
 
 				protocols::simple_moves::symmetry::SetupNCSMover setup_ncs;
 
-				if (op_user_remodel_repeat_structure_){
+				if(option[OptionKeys::remodel::repeat_structure].user()){
 							//Dihedral (NCS) Constraints, need to be updated each mutation cycle for sidechain symmetry
 
-							Size repeat_number = op_remodel_repeat_structure_;
+							Size repeat_number =option[OptionKeys::remodel::repeat_structure];
 							Size segment_length = (pose.n_residue())/repeat_number;
 
 
@@ -1028,14 +893,14 @@ void RemodelMover::apply( Pose & pose ) {
 			TR << "apply(): calling RemodelDesignMover apply function." << std::endl;
 			designMover.apply(pose);
 			//****Previously this loop didn't maintain the pose correctly which resulted in a difficult to track down seg fault.  Fixed, but it's questionable weather you would want to filter poses based on constraints.
-			if ( op_user_enzdes_cstfile_ ||
-					 op_user_constraints_cst_file_
+			if (option[OptionKeys::enzdes::cstfile].user() ||
+					option[OptionKeys::constraints::cst_file].user()
 					 ){
-				simple_filters::ScoreTypeFilter const  pose_constraint( fullatom_sfx_, atom_pair_constraint, op_remodel_cstfilter_ );
+				simple_filters::ScoreTypeFilter const  pose_constraint( fullatom_sfx_, atom_pair_constraint,option[OptionKeys::remodel::cstfilter] );
 				bool CScore(pose_constraint.apply( pose ));
 				if (!CScore){  // if didn't pass, rebuild
 					TR << "built model did not pass constraints test." << std::endl;
-					if ( op_user_remodel_repeat_structure_ ) {
+					if (option[OptionKeys::remodel::repeat_structure].user() ) {
 						//reset the pose to monomer
 						pose = cached_modified_pose;
 					} else {
@@ -1051,14 +916,14 @@ void RemodelMover::apply( Pose & pose ) {
 			}
 			//*****END horrible code.
 		}
-		if ( op_remodel_checkpoint_ ) {
+		if (option[OptionKeys::remodel::checkpoint] ) {
 			// debug:
 			TR << "writing chkpnt at step " << num_traj-i+prev_checkpoint << std::endl;
 			accumulator.write_checkpoint(num_traj-i-prev_checkpoint);
 		}
 		// restore foldtree
 		if(i > 1) {//messes up rosetta_scripts if done on last loop.
-			if ( op_user_remodel_repeat_structure_ ) {
+			if (option[OptionKeys::remodel::repeat_structure].user() ) {
 				//reset the pose to monomer
 				pose = cached_modified_pose;
 			} else {
@@ -1089,7 +954,7 @@ void RemodelMover::apply( Pose & pose ) {
 
 	TR << "clustered poses count: " << results.size() << std::endl;
 	for ( std::vector< pose::PoseOP >::iterator it = results.begin(), end= results.end(); it!= end; it++ ) {
-		bool bypass_refinement = op_user_remodel_quick_and_dirty_;
+		bool bypass_refinement =option[OptionKeys::remodel::quick_and_dirty].user();
 
 		if ( working_model.manager.size() == 0 )
 			bypass_refinement = true;
@@ -1101,13 +966,13 @@ void RemodelMover::apply( Pose & pose ) {
 			//(*(*it)).dump_scored_pdb(SS1.str(), *fullatom_sfx_);
 
 			TR << "aggressively refine" << std::endl;
-			if ( op_remodel_use_pose_relax_ ) {
+			if (option[OptionKeys::remodel::use_pose_relax] ) {
 				if ( !design_refine_seq_relax( *(*it), designMover ) ) {
 					TR << "WARNING: DESIGN REFINE SEQ RELAX FAILED!! (one should never see this)" << std::endl;
 					continue;
 				}
 			}
-			else if (op_remodel_use_cart_relax_){
+			else if(option[OptionKeys::remodel::use_cart_relax]){
 				if (!design_refine_cart_relax(*(*it), designMover)){
 					TR << "WARNING: CARTESIAN MIN FAILED!! (one should never see this)" << std::endl;
 					continue;
@@ -1120,9 +985,9 @@ void RemodelMover::apply( Pose & pose ) {
 			}
 		} else // simple design
 		{
-			if (op_user_remodel_check_scored_centroid_){
+			if(option[OptionKeys::remodel::check_scored_centroid].user()){
 					std::stringstream SS;
-					std::string prefix =  op_out_prefix_;
+					std::string prefix = option[OptionKeys::out::prefix];
 					if (!prefix.empty()){
 						SS << prefix << "_" << filecount << "_cen.pdb";
 					}
@@ -1138,7 +1003,7 @@ void RemodelMover::apply( Pose & pose ) {
 
 		}
 
-		if ( op_user_remodel_run_confirmation_ ) {
+		if (option[OptionKeys::remodel::run_confirmation].user() ) {
 			if ( !confirm_sequence(*(*it)) ) {
 				TR << "WARNING: STRUCTURE DID NOT PASS KIC CONFIRMATION!!" << std::endl;
 				continue;
@@ -1146,7 +1011,7 @@ void RemodelMover::apply( Pose & pose ) {
 		}
 
 		std::stringstream SS;
-		std::string prefix =  op_out_prefix_;
+		std::string prefix = option[OptionKeys::out::prefix];
 		if (!prefix.empty()){
 			SS << prefix << "_" << filecount << ".pdb";
 		}
@@ -1156,7 +1021,7 @@ void RemodelMover::apply( Pose & pose ) {
 		// this is to make sure that the final scoring is done with SCORE12
 		scoring::ScoreFunctionOP scorefxn = scoring::ScoreFunctionFactory::create_score_function( scoring::STANDARD_WTS, scoring::SCORE12_PATCH );
 
-	  if (op_user_remodel_repeat_structure_) {
+	  if(option[OptionKeys::remodel::repeat_structure].user()) {
 						//Experiment with RemodelGlobalFrame
 						RemodelGlobalFrame RGF(remodel_data, working_model, scorefxn);
 						RGF.align_segment(*(*it));
@@ -1231,7 +1096,7 @@ std::string RemodelMover::get_name() const {
 bool RemodelMover::centroid_build( Pose & pose, protocols::forge::build::BuildManager & manager ) {
 
 	manager_ = manager;
-	if ( op_remodel_bypass_fragments_ ) {
+	if (option[OptionKeys::remodel::bypass_fragments] ) {
 		TR << "-=BYPASSING FRAGMENT BUILD (REFINE ONLY) =-" << std::endl;
 		return true;
 	}
@@ -1315,14 +1180,14 @@ bool RemodelMover::centroid_build( Pose & pose ) {
 
 	vlb_->scorefunction( centroid_sfx_ );
 	vlb_->vall_memory_usage( VLB_VallMemoryUsage::CLEAR_IF_CACHING_FRAGMENTS );
-	vlb_->use_fullmer( op_remodel_use_same_length_fragments_ );
+	vlb_->use_fullmer(option[OptionKeys::remodel::use_same_length_fragments] );
 	vlb_->max_linear_chainbreak( max_linear_chainbreak_ );
 	vlb_->loop_mover_str( centroid_loop_mover_str_ );
 	vlb_->restart_mode(true);
 	vlb_->new_secondary_structure_override(working_model_.ss);
-	if ( op_remodel_use_blueprint_sequence_ ) {
-	    if (op_user_remodel_repeat_structure_) {
-				Size copies = op_remodel_repeat_structure_;
+	if (option[OptionKeys::remodel::use_blueprint_sequence] ) {
+	    if(option[OptionKeys::remodel::repeat_structure].user()) {
+				Size copies =option[OptionKeys::remodel::repeat_structure];
 				String rep_seq = remodel_data_.sequence;
 				while (copies > 1){
 					rep_seq.append(remodel_data_.sequence);
@@ -1353,7 +1218,7 @@ bool RemodelMover::centroid_build( Pose & pose ) {
 		if(denovo)
 			modified_archive_pose = pose;
 
-		if (op_user_remodel_repeat_structure_ && !denovo) { // the previous step already swap modified_archive_pose to be full length. skip the following
+		if(option[OptionKeys::remodel::repeat_structure].user() && !denovo) { // the previous step already swap modified_archive_pose to be full length. skip the following
 		//this part really needs work....  currently doesn't allow growing a loop
 		//in regional repeat building.  This section is used in de novo rebuild
 		//cases where the monomer pose is extended, so to restore the sidechain,
@@ -1383,7 +1248,7 @@ bool RemodelMover::centroid_build( Pose & pose ) {
 				Pose bufferPose(modified_archive_pose);
 				//due to code change, modified_archive_pose would always be 2x length now
 				RLM.repeat_generation_with_additional_residue( bufferPose, modified_archive_pose );
-				if ( op_user_symmetry_symmetry_definition_){
+				if (option[OptionKeys::symmetry::symmetry_definition].user()){
 				//symmetrize if both rep+sym are used
 					simple_moves::symmetry::SetupForSymmetryMover pre_mover;
 					pre_mover.apply(modified_archive_pose);
@@ -1405,7 +1270,7 @@ bool RemodelMover::centroid_build( Pose & pose ) {
 		(*fullatom_sfx_)( pose );
 
 		TR << "centroid_build(): variable length build succeeded." << std::endl;
-		if (op_user_remodel_repeat_structure_) {
+		if(option[OptionKeys::remodel::repeat_structure].user()) {
 			//return the modified pose to original state, otherwise it keeps growing.
 			modified_archive_pose = archive_pose;
 		}
@@ -1444,7 +1309,7 @@ bool RemodelMover::design_refine_seq_relax( Pose & pose, RemodelDesignMover & de
 	// collect loops
 	loops::Loops loops = forge::methods::intervals_to_loops( loop_intervals.begin(), loop_intervals.end() );
 
-  if (op_user_remodel_repeat_structure_ || op_remodel_free_relax_ ){
+  if(option[OptionKeys::remodel::repeat_structure].user() ||option[OptionKeys::remodel::free_relax] ){
 		//do nothing
 	} else {
 		protocols::forge::methods::fill_non_loop_cst_set(pose, loops);
@@ -1467,16 +1332,16 @@ bool RemodelMover::design_refine_seq_relax( Pose & pose, RemodelDesignMover & de
 
 
 	scoring::constraints::ConstraintSetOP cst_set_post_built;
-	if ( op_user_remodel_repeat_structure_ ) {
+	if (option[OptionKeys::remodel::repeat_structure].user() ) {
 		// at this stage it should hold generic cstfile and res_type_linking constraints
 		cst_set_post_built = new scoring::constraints::ConstraintSet( *pose.constraint_set() );
 	}
 
 	protocols::simple_moves::symmetry::SetupNCSMover setup_ncs;
-	if ( op_user_remodel_repeat_structure_ ) {
+	if (option[OptionKeys::remodel::repeat_structure].user() ) {
 
 		// Dihedral (NCS) Constraints, need to be updated each mutation cycle for sidechain symmetry
-		Size repeat_number = op_remodel_repeat_structure_;
+		Size repeat_number =option[OptionKeys::remodel::repeat_structure];
 		Size segment_length = (pose.n_residue())/repeat_number;
 
 		for ( Size rep = 1; rep < repeat_number-1; rep++ ) { // from 1 since first segment don't need self-linking
@@ -1516,11 +1381,11 @@ bool RemodelMover::design_refine_seq_relax( Pose & pose, RemodelDesignMover & de
 		designMover.apply(pose);
 
 		//update dihedral constraint for repeat structures
-		if ( op_user_remodel_repeat_structure_ ) {
+		if (option[OptionKeys::remodel::repeat_structure].user() ) {
 			setup_ncs.apply(pose);
 
 			//total hack (for now), see if the restypeset fails when initialized twice.
-			if (op_user_RemodelLoopMover_cyclic_peptide_){
+			if(option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide].user()){
 				protocols::forge::methods::cyclize_pose(pose);
 			}
 
@@ -1589,7 +1454,7 @@ bool RemodelMover::design_refine_cart_relax(
 	// collect loops
 	Loops loops = intervals_to_loops( loop_intervals.begin(), loop_intervals.end() );
 
-	if (op_user_remodel_repeat_structure_ || op_remodel_free_relax_ ){
+	if(option[OptionKeys::remodel::repeat_structure].user() ||option[OptionKeys::remodel::free_relax] ){
 		//do nothing
 	} else {
 		protocols::forge::methods::fill_non_loop_cst_set(pose, loops);
@@ -1618,7 +1483,7 @@ bool RemodelMover::design_refine_cart_relax(
  	core::kinematics::MoveMapOP cmmop = new core::kinematics::MoveMap;
 	//pose.dump_pdb("pretest.pdb");
 
-	if (op_user_remodel_free_relax_) {
+	if(option[OptionKeys::remodel::free_relax].user()) {
 		for (Size i = 1; i<= pose.total_residue(); ++i){
 			cmmop->set_bb(i, true);
 			cmmop->set_chi(i, true);
@@ -1646,7 +1511,7 @@ bool RemodelMover::design_refine_cart_relax(
 
 
 	ConstraintSetOP cst_set_post_built;
-	if (op_user_remodel_repeat_structure_){
+	if(option[OptionKeys::remodel::repeat_structure].user()){
 
 	// at this stage it should hold generic cstfile and res_type_linking
 	// constraints
@@ -1654,10 +1519,10 @@ bool RemodelMover::design_refine_cart_relax(
 	}
 
 	protocols::simple_moves::symmetry::SetupNCSMover setup_ncs;
-	if (op_user_remodel_repeat_structure_){
+	if(option[OptionKeys::remodel::repeat_structure].user()){
 				//Dihedral (NCS) Constraints, need to be updated each mutation cycle for sidechain symmetry
 
-				Size repeat_number = op_remodel_repeat_structure_;
+				Size repeat_number =option[OptionKeys::remodel::repeat_structure];
 				Size segment_length = (pose.n_residue())/repeat_number;
 
 
@@ -1698,12 +1563,12 @@ bool RemodelMover::design_refine_cart_relax(
 		designMover.apply(pose);
 
 		//update dihedral constraint for repeat structures
-		if (op_user_remodel_repeat_structure_){
+		if(option[OptionKeys::remodel::repeat_structure].user()){
 			setup_ncs.apply(pose);
 
 			//total hack (for now), see if the restypeset fails when initialized
 			//twice.
-			if (op_user_RemodelLoopMover_cyclic_peptide_){
+			if(option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide].user()){
 		     protocols::forge::methods::cyclize_pose(pose);
 		  }
 
@@ -1809,7 +1674,7 @@ bool RemodelMover::design_refine( Pose & pose, RemodelDesignMover & designMover 
 		// set loop topology
 		pose.fold_tree( loop_ft );
 
-		if ( !op_user_remodel_swap_refine_confirm_protocols_ ) {
+		if (option[OptionKeys::remodel::swap_refine_confirm_protocols].user() ) {
 			// refine the new section
 			loops::loop_mover::refine::LoopMover_Refine_CCD refine( loops, sfx );
 			kinematics::MoveMapOP combined_mm = new kinematics::MoveMap();
@@ -1930,7 +1795,7 @@ bool RemodelMover::confirm_sequence( core::pose::Pose & pose ) {
 
 	//KIC.apply(pose);
 
-	if ( op_user_remodel_swap_refine_confirm_protocols_ ) {
+	if (option[OptionKeys::remodel::swap_refine_confirm_protocols].user() ) {
 		TR << "REFINE USING CCD" << std::endl;
 		// refine the new section
 		// setup the refine TaskFactory
@@ -2049,7 +1914,7 @@ RemodelMover::TaskFactoryOP RemodelMover::generic_taskfactory() {
 	tf->push_back( new InitializeFromCommandline() ); // also inits -ex options
 	tf->push_back( new IncludeCurrent() ); // enforce keeping of input sidechains
 	tf->push_back( new NoRepackDisulfides() );
-  if (!op_user_design_allow_rare_aro_chi_){
+  if (!option[OptionKeys::remodel::design::allow_rare_aro_chi].user()){
 		tf->push_back( new LimitAromaChi2Operation() );
 	}
 

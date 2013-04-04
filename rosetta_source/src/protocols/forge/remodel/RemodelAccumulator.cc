@@ -63,33 +63,15 @@ static basic::Tracer TR( "protocols.forge.remodel.RemodelAccumulator" );
 
 /// @brief default constructor
 RemodelAccumulator::RemodelAccumulator()
-	: op_user_remodel_repeat_structure_(option[OptionKeys::remodel::repeat_structure].user()),
-		op_user_RemodelLoopMover_cyclic_peptide_(option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide].user()),
-		op_user_constraints_cst_file_(option[OptionKeys::constraints::cst_file].user()),
-		op_remodel_use_clusters_(option[OptionKeys::remodel::use_clusters]),
-		op_remodel_save_top_(option[OptionKeys::remodel::save_top]),
-		op_remodel_cluster_on_entire_pose_(option[OptionKeys::remodel::cluster_on_entire_pose]),
-		op_remodel_repeat_structure_(option[OptionKeys::remodel::repeat_structure]),
-		op_remodel_cluster_radius_(option[OptionKeys::remodel::cluster_radius]),
-		op_cluster_max_total_cluster_(option[OptionKeys::cluster::max_total_cluster])
 {
-	cluster_switch_ = op_remodel_use_clusters_;
+	cluster_switch_ =option[OptionKeys::remodel::use_clusters];
 }
 
 /// @brief value constructor
 RemodelAccumulator::RemodelAccumulator( RemodelWorkingSet & working_model)
-	: op_user_remodel_repeat_structure_(option[OptionKeys::remodel::repeat_structure].user()),
-		op_user_RemodelLoopMover_cyclic_peptide_(option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide].user()),
-		op_user_constraints_cst_file_(option[OptionKeys::constraints::cst_file].user()),
-		op_remodel_use_clusters_(option[OptionKeys::remodel::use_clusters]),
-		op_remodel_save_top_(option[OptionKeys::remodel::save_top]),
-		op_remodel_cluster_on_entire_pose_(option[OptionKeys::remodel::cluster_on_entire_pose]),
-		op_remodel_repeat_structure_(option[OptionKeys::remodel::repeat_structure]),
-		op_remodel_cluster_radius_(option[OptionKeys::remodel::cluster_radius]),
-		op_cluster_max_total_cluster_(option[OptionKeys::cluster::max_total_cluster])
 {
 	//check clustering info
-	cluster_switch_ = op_remodel_use_clusters_;
+	cluster_switch_ =option[OptionKeys::remodel::use_clusters];
 
 	//remodel_data_ = remodeldata;
 	working_model_ = working_model;
@@ -126,10 +108,10 @@ void RemodelAccumulator::apply( Pose & pose ){
 	ScoreTypeFilter const  pose_total_score( score12, total_score, 100 );
 	core::Real score(pose_total_score.compute( *pose_pt ));
 	pose_store_.insert(std::pair<core::Real, core::pose::PoseOP>(score, pose_pt));
-	keep_top_pose( op_remodel_save_top_ );
+	keep_top_pose(option[OptionKeys::remodel::save_top] );
 
 	if (cluster_switch_){
-		if (op_remodel_cluster_on_entire_pose_){
+		if(option[OptionKeys::remodel::cluster_on_entire_pose]){
 			cluster_pose();
 		} else { //default uses only loops -- otherwise large structures averages out changes
 			cluster_loop();
@@ -179,7 +161,7 @@ void RemodelAccumulator::write_checkpoint(core::Size progress_point){
 		cpfile << progress_point << std::endl;
 		cpfile.close();
 
-		core::Size num_report = op_remodel_save_top_;
+		core::Size num_report =option[OptionKeys::remodel::save_top];
 
 		core::Size filecount = 1;
 	  for (std::multimap<core::Real, core::pose::PoseOP>::iterator it= pose_store_.begin(), end = pose_store_.end(); it != end; it++){
@@ -208,7 +190,7 @@ core::Size RemodelAccumulator::recover_checkpoint()
 
 		//if reading checkpoint, make sure there's no info stored
 		pose_store_.clear();
-		core::Size num_report = op_remodel_save_top_;
+		core::Size num_report =option[OptionKeys::remodel::save_top];
     for (core::Size i = 1; i<= num_report; i++){
       std::string number(ObjexxFCL::lead_zero_string_of(i, 3));
 
@@ -240,14 +222,14 @@ core::Size RemodelAccumulator::recover_checkpoint()
 				//from the start.  Build constraints are set in RemodelLoopMover, a bit
 				//different from everything else
 
-				if (op_user_remodel_repeat_structure_){
-					if (op_user_constraints_cst_file_){
+				if(option[OptionKeys::remodel::repeat_structure].user()){
+					if(option[OptionKeys::constraints::cst_file].user()){
 						protocols::simple_moves::ConstraintSetMoverOP repeat_constraint = new protocols::simple_moves::ConstraintSetMover();
 						repeat_constraint->apply( dummyPose );
 					}
 
 					// ResidueTypeLinkingConstraints
-					Size repeat_number = op_remodel_repeat_structure_;
+					Size repeat_number =option[OptionKeys::remodel::repeat_structure];
 					Size count=0;
 					Real bonus = 10;
 					Size segment_length = (dummyPose.n_residue())/repeat_number;
@@ -260,7 +242,7 @@ core::Size RemodelAccumulator::recover_checkpoint()
 					std::cout << "linking " << count << " residue pairs" << std::endl;
 				}
 
-				if (op_user_RemodelLoopMover_cyclic_peptide_){ //all processes/constraints has to be applied to checkpointed files
+				if(option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide].user()){ //all processes/constraints has to be applied to checkpointed files
 		      protocols::forge::methods::cyclize_pose(dummyPose);
 		    }
 
@@ -309,7 +291,7 @@ void RemodelAccumulator::run_cluster(){
  	runtime_assert(cluster_switch_);
 
 //set cluster size from command line
-	core::Real radius = op_remodel_cluster_radius_;
+	core::Real radius =option[OptionKeys::remodel::cluster_radius];
 
 
 	cluster_->set_score_function( sfxn_ );
@@ -319,7 +301,7 @@ void RemodelAccumulator::run_cluster(){
 		cluster_->apply((*(*it).second));
 	}
 
-	cluster_->do_clustering(op_cluster_max_total_cluster_);
+	cluster_->do_clustering(option[OptionKeys::cluster::max_total_cluster]);
 	cluster_->do_redistribution();
 
 }

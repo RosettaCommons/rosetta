@@ -37,11 +37,6 @@ public:
 	virtual	void apply( Pose const & pose, PackerTask & ptask ) const;
 	virtual void parse_tag( TagPtr );
 
-private:
-	// User specified options
-
-	// Option values
-	Size op_remodel_repeat_structure_;
 };
 
 } // namespace remodel

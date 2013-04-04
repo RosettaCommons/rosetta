@@ -61,23 +61,7 @@ static numeric::random::RandomGenerator RG( 2342342 ); // magic number, don't ch
 
 // @brief default constructor
 RemodelDesignMover::RemodelDesignMover()
-:
-	op_user_remodel_repeat_structure_(option[OptionKeys::remodel::repeat_structure].user()),
-	op_user_design_no_design_(option[OptionKeys::remodel::design::no_design].user()),
-	op_user_design_find_neighbors_(option[OptionKeys::remodel::design::find_neighbors].user()),
-	op_user_design_design_neighbors_(option[OptionKeys::remodel::design::design_neighbors].user()),
-	op_user_design_design_all_(option[OptionKeys::remodel::design::design_all].user()),
-	op_user_design_skip_partial_(option[OptionKeys::remodel::design::skip_partial].user()),
-	op_user_remodel_resclass_by_sasa_(option[OptionKeys::remodel::resclass_by_sasa].user()),
-	op_user_remodel_disulf_landing_range_(option[OptionKeys::remodel::disulf_landing_range].user()),
-	op_remodel_repeat_structure_(option[OptionKeys::remodel::repeat_structure]),
-	op_remodel_core_cutoff_(option[OptionKeys::remodel::core_cutoff]),
-	op_remodel_boundary_cutoff_(option[OptionKeys::remodel::boundary_cutoff]),
-	op_remodel_match_rt_limit_(option[OptionKeys::remodel::match_rt_limit])
 {
-	if(	op_user_remodel_disulf_landing_range_ )
-		op_remodel_disulf_landing_range_ = option[OptionKeys::remodel::disulf_landing_range]();
-
 	// has to reinitialize state before apply
 	state_.clear();
 }
@@ -86,26 +70,10 @@ RemodelDesignMover::RemodelDesignMover()
 RemodelDesignMover::RemodelDesignMover( RemodelData const & remodel_data, 
 																				RemodelWorkingSet const & working_model, 
 																				ScoreFunctionOP const & sfxn )
-	:
-	op_user_remodel_repeat_structure_(option[OptionKeys::remodel::repeat_structure].user()),
-	op_user_design_no_design_(option[OptionKeys::remodel::design::no_design].user()),
-	op_user_design_find_neighbors_(option[OptionKeys::remodel::design::find_neighbors].user()),
-	op_user_design_design_neighbors_(option[OptionKeys::remodel::design::design_neighbors].user()),
-	op_user_design_design_all_(option[OptionKeys::remodel::design::design_all].user()),
-	op_user_design_skip_partial_(option[OptionKeys::remodel::design::skip_partial].user()),
-	op_user_remodel_resclass_by_sasa_(option[OptionKeys::remodel::resclass_by_sasa].user()),
-	op_user_remodel_disulf_landing_range_(option[OptionKeys::remodel::disulf_landing_range].user()),
-	op_remodel_repeat_structure_(option[OptionKeys::remodel::repeat_structure]),
-	op_remodel_core_cutoff_(option[OptionKeys::remodel::core_cutoff]),
-	op_remodel_boundary_cutoff_(option[OptionKeys::remodel::boundary_cutoff]),
-	op_remodel_match_rt_limit_(option[OptionKeys::remodel::match_rt_limit])
 {
 
 	using core::pose::metrics::CalculatorFactory;
 	using protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator;
-
-	if( op_user_remodel_disulf_landing_range_ )
-		op_remodel_disulf_landing_range_ = option[OptionKeys::remodel::disulf_landing_range]();
 
 	remodel_data_ = remodel_data;
 	working_model_ = working_model;
@@ -122,8 +90,8 @@ RemodelDesignMover::RemodelDesignMover( RemodelData const & remodel_data,
 	//	TR << *i <<  " UUP in DesignMover" <<  std::endl;
 	//}
 
-	if ( op_user_remodel_repeat_structure_ ) {
-		Size repeatCount = op_remodel_repeat_structure_;
+	if (option[OptionKeys::remodel::repeat_structure].user() ) {
+		Size repeatCount =option[OptionKeys::remodel::repeat_structure];
 		for ( Size rep = 0; rep < repeatCount ; rep++ ) {
 			for ( std::set< Size >::iterator it = uup.begin(); it != uup.end(); ++it ) {
 			//DEBUG
@@ -211,15 +179,15 @@ void RemodelDesignMover::set_state( std::string state_tag ){
 ///
 void RemodelDesignMover::apply( Pose & pose ) {
 
-	if ( op_user_design_no_design_ ) {
+	if (option[OptionKeys::remodel::design::no_design].user() ) {
 		TR << "bypassing design due to invokation of -no_design" << std::endl;
 		return;
 	}
 
 	// make decision as to which mode to apply
 	bool manual = remodel_data_.has_design_info_;
-	bool neighbor = op_user_design_find_neighbors_;
-	bool design = op_user_design_design_neighbors_;
+	bool neighbor =option[OptionKeys::remodel::design::find_neighbors].user();
+	bool design =option[OptionKeys::remodel::design::design_neighbors].user();
 
 	if ( !check_state() ) {
 		basic::Error() << "check_state failed, has to set_state first " << std::endl;
@@ -245,7 +213,7 @@ void RemodelDesignMover::apply( Pose & pose ) {
 				mode3_packertask(pose);
 			}
 		} else {
-			if (op_user_design_design_all_){
+			if(option[OptionKeys::remodel::design::design_all].user()){
 				mode1_1_packertask(pose);
 			}
 			else {
@@ -254,7 +222,7 @@ void RemodelDesignMover::apply( Pose & pose ) {
 		}
 	}
 
-	if ( op_user_remodel_repeat_structure_ ) {
+	if (option[OptionKeys::remodel::repeat_structure].user() ) {
 		//try turning off bumpcheck
 		//TR << "bumpcheck off" << std::endl;
 		working_model_.task->set_bump_check( true );
@@ -270,7 +238,7 @@ void RemodelDesignMover::apply( Pose & pose ) {
 		}
 		else {  //auto build always reduce task
 
-			if (!op_user_design_skip_partial_){
+			if (!option[OptionKeys::remodel::design::skip_partial].user()){
 				reduce_task(pose, working_model_.task, true, true, false);
 			}
 			else {
@@ -284,7 +252,7 @@ void RemodelDesignMover::apply( Pose & pose ) {
 		}
 		else {
 		// if finishing design, no need to reduce, but require resetting positios
-    //if (!op_user_design_skip_partial_){
+    //if (!option[OptionKeys::remodel::design::skip_partial].user()){
 			reduce_task(pose, working_model_.task, true, true, true);
 		}
 	}
@@ -344,7 +312,7 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
   run_calculator(pose, "neighborhood_calc", "neighbors", boollist);
 	std::set<Size> positionList;
 	for (Size i = 1; i <= pose.total_residue(); i++){
-		if (boollist[i] && !op_user_design_design_all_){
+		if (boollist[i] &&option[OptionKeys::remodel::design::design_all].user()){
 			positionList.insert(i);
 		}
 		else { // in case of design all flag, take all positions
@@ -367,15 +335,15 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 	utility::vector1<Size> boundaryPos;
 	utility::vector1<Size> surfPos;
 
-	Size CORE_CUTOFF = op_remodel_core_cutoff_;
-	Size BOUNDARY_CUTOFF = op_remodel_boundary_cutoff_;
+	Size CORE_CUTOFF =option[OptionKeys::remodel::core_cutoff];
+	Size BOUNDARY_CUTOFF =option[OptionKeys::remodel::boundary_cutoff];
 
 	//get num_neighbors for each position
 	basic::MetricValue< std::map< core::Size, core::Size > >nbr_map;
 	pose.metric("reducetask_calc", "num_neighbors_map", nbr_map);
   std::map< core::Size, core::Size > sizemap;
 
-	if (op_user_remodel_resclass_by_sasa_){
+	if(option[OptionKeys::remodel::resclass_by_sasa].user()){
 		//simply repackage the values so either metric can feed into the code
 		int count = 1 ;
 		for ( utility::vector1< core::Real >::iterator it = sasa_list.begin(), ite = sasa_list.end(); it != ite ; it++){
@@ -392,7 +360,7 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 		TR.Debug << "neighborlist " << (*it).first << " " <<  (*it).second << std::endl;
 	}
 
-	if (op_user_remodel_repeat_structure_){
+	if(option[OptionKeys::remodel::repeat_structure].user()){
 
 		utility::vector1<bool> visited(pose.total_residue(),false);
 
@@ -414,7 +382,7 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 
 					TR.Debug << "sizemap in repeat decision " << copies[jj] << " " << sizemap[ copies[jj] ] << std::endl;
 
-				if (op_user_remodel_resclass_by_sasa_){
+				if(option[OptionKeys::remodel::resclass_by_sasa].user()){
 					//take the counts for each set
 					if ( sizemap[ copies[jj] ] <= CORE_CUTOFF){
 						coreCount++;
@@ -475,7 +443,7 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 		for (Size i = 1; i<= resclass.size(); i++){ //check everyposition in the packertask
 			if (task->nonconst_residue_task(i).being_packed() && sizemap[i]){
 				TR << "touch position " << i << std::endl;
-				if (op_user_remodel_resclass_by_sasa_){
+				if(option[OptionKeys::remodel::resclass_by_sasa].user()){
 								if (sizemap[i] <= CORE_CUTOFF){
 									corePos.push_back(i);
 								} else if ( sizemap[i] > CORE_CUTOFF && sizemap[i] <= BOUNDARY_CUTOFF){
@@ -622,9 +590,9 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 		TR << "Assignging Landing Range by Blueprint: " << landingRangeStart << " to " << landingRangeStop << std::endl;
 	}
 
-	if (op_user_remodel_disulf_landing_range_){ //overwrite ranges if existed
-		landingRangeStart = op_remodel_disulf_landing_range_[1];
-		landingRangeStop = op_remodel_disulf_landing_range_[2];
+	if(option[OptionKeys::remodel::disulf_landing_range].user()){ //overwrite ranges if existed
+		landingRangeStart =option[OptionKeys::remodel::disulf_landing_range][1];
+		landingRangeStop =option[OptionKeys::remodel::disulf_landing_range][2];
 		TR << "Assignging Landing Range by Arguments: " << landingRangeStart << " to " << landingRangeStop << std::endl;
 	}
 
@@ -716,7 +684,7 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 					disulfPot.score_disulfide( pose.residue(*itr), pose.residue(*itr2), match_t, match_r, match_rt );
 					TR << "DISULF \tmatch_t: " << match_t << ", match_r: " << match_r << ", match_rt: " << match_rt << std::endl;
 					int seqGap = (int)*itr2 - (int)*itr;
-					if ( match_rt < op_remodel_match_rt_limit_ && std::abs( seqGap ) > 1 && (*itr2) <= landingRangeStop && (*itr2) >= landingRangeStart ) {
+					if ( match_rt <option[OptionKeys::remodel::match_rt_limit] && std::abs( seqGap ) > 1 && (*itr2) <= landingRangeStop && (*itr2) >= landingRangeStart ) {
 						TR << "DISULF possible " << dist_squared << std::endl;
 						TR << "DISULF " <<  *itr << "x" << *itr2 << std::endl;
 						TR << "match_rt " << match_rt << std::endl;

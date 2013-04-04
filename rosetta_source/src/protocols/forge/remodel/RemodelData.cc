@@ -54,11 +54,6 @@ namespace remodel {
 /// constructor
 ///
 RemodelData::RemodelData()
-	: op_user_remodel_repeat_structure_(option[OptionKeys::remodel::repeat_structure].user()),
-		op_user_run_chain_(option[OptionKeys::run::chain].user()),
-		op_run_chain_(option[OptionKeys::run::chain]),
-		op_domainFusion_insert_segment_from_pdb_(option[OptionKeys::remodel::domainFusion::insert_segment_from_pdb]()),
-		op_remodel_repeat_structure_(option[OptionKeys::remodel::repeat_structure])
 {
 	has_design_info_ = false;
 	design_neighbor = false;
@@ -234,8 +229,8 @@ void RemodelData::getLoopsToBuildFromFile( std::string filename ) {
 
 			// for the output resfile, chain is defined by command-line option. no chain by default.
 			if ( design_info ) {
-				if ( op_user_run_chain_) {
-					std::string const chain( op_run_chain_ );
+				if (option[OptionKeys::run::chain].user()) {
+					std::string const chain(option[OptionKeys::run::chain] );
 					oss << line.index << " " << chain << " " ;
 				} else {
 					oss << line.index << " _ " ;
@@ -280,11 +275,11 @@ void RemodelData::getLoopsToBuildFromFile( std::string filename ) {
 
 			// process repeats, pretty dangerous, as this only hacks the resfile string
 			// but not making duplicates in the blueprint held by RemodelData
-			if ( op_user_remodel_repeat_structure_ ) {
-				for ( Size rep = 1; rep < op_remodel_repeat_structure_; rep++ ) {
+			if (option[OptionKeys::remodel::repeat_structure].user() ) {
+				for ( Size rep = 1; rep <(Size)option[OptionKeys::remodel::repeat_structure]; rep++ ) {
 								//chain defined by option, no chain by default
-								if (op_user_run_chain_) {
-									std::string const chain (op_run_chain_);
+								if(option[OptionKeys::run::chain].user()) {
+									std::string const chain(option[OptionKeys::run::chain]);
 									oss << line.index + length*rep << " " << chain << " " ;
 								}
 								else {
@@ -310,11 +305,11 @@ void RemodelData::getLoopsToBuildFromFile( std::string filename ) {
 
 			//TR_REMODEL << "manual design overwrite position: " << line.index << std::endl;
 			//this->design_mode = 3; //default manual mode
-			/*if ( op_Design_design_neighbors_ ) {
+			/*if (option[OptionKeys::Design::design_neighbors] ) {
 				// fully manual design mode automatically switched on when you assign residues by hand
 				this->design_mode = 4;
 			}
-			if (op_Design_neighbor_repack_ ) {
+			if(option[OptionKeys::Design::neighbor_repack] ) {
 				// bc repack neigbors
 				this->design_mode = 5;
 			}
@@ -442,7 +437,7 @@ void RemodelData::collectInsertionPose(){
 
 	using namespace core;
 
-	import_pose::pose_from_pdb( insertPose, op_domainFusion_insert_segment_from_pdb_ );
+	import_pose::pose_from_pdb( insertPose,option[OptionKeys::remodel::domainFusion::insert_segment_from_pdb] );
 	insertionSize = (int)insertPose.total_residue();
 	TR_REMODEL << "insertionSize: " << insertionSize << std::endl;
 

@@ -82,11 +82,6 @@ static basic::Tracer TR( "protocols.forge.remodel.RemodelGlobalFrame" );
 
 // @brief default constructor
 RemodelGlobalFrame::RemodelGlobalFrame()
-	: op_user_remodel_repeat_structure_(option[OptionKeys::remodel::repeat_structure].user()),
-		op_remodel_repeat_structure_(option[OptionKeys::remodel::repeat_structure]),
-		op_remodel_helical_rise_(option[OptionKeys::remodel::helical_rise]),
-		op_remodel_helical_radius_(option[OptionKeys::remodel::helical_radius]),
-		op_remodel_helical_omega_(option[OptionKeys::remodel::helical_omega])
 {
 // has to reinitialize state before apply
 	//state_.clear();
@@ -96,11 +91,6 @@ RemodelGlobalFrame::RemodelGlobalFrame()
 RemodelGlobalFrame::RemodelGlobalFrame(RemodelData const & remodel_data,
 																			 RemodelWorkingSet const & working_model,
 																			 ScoreFunctionOP const & sfxn)
-	: op_user_remodel_repeat_structure_(option[OptionKeys::remodel::repeat_structure].user()),
-		op_remodel_repeat_structure_(option[OptionKeys::remodel::repeat_structure]),
-		op_remodel_helical_rise_(option[OptionKeys::remodel::helical_rise]),
-		op_remodel_helical_radius_(option[OptionKeys::remodel::helical_radius]),
-		op_remodel_helical_omega_(option[OptionKeys::remodel::helical_omega])
 {
 
   remodel_data_ = remodel_data;
@@ -109,8 +99,8 @@ RemodelGlobalFrame::RemodelGlobalFrame(RemodelData const & remodel_data,
 	score_fxn_ = sfxn->clone();
 	left_handed_ = 0;
 /*
-	if (op_user_remodel_repeat_structure_){
-		Size repeatCount = op_remodel_repeat_structure_;
+	if(option[OptionKeys::remodel::repeat_structure].user()){
+		Size repeatCount =option[OptionKeys::remodel::repeat_structure];
 		for (Size rep = 0; rep < repeatCount ; rep++){
 			for (std::set< core::Size >::iterator it = uup.begin(); it != uup.end(); ++it){
 			//DEBUG
@@ -177,7 +167,7 @@ void RemodelGlobalFrame::get_helical_params( core::pose::Pose & pose ) {
 	//capture stream
 	std::stringstream capture_stream;
 
-	if (op_user_remodel_repeat_structure_){
+	if(option[OptionKeys::remodel::repeat_structure].user()){
 	}
 	else {
 		TR << "only applicable in Repeat mode";
@@ -311,7 +301,7 @@ TR.Debug << "align seg 1" << std::endl;
 
 	//Size numRes = pose.total_residue();  // unused ~Labonte
 
-	if (op_user_remodel_repeat_structure_){
+	if(option[OptionKeys::remodel::repeat_structure].user()){
 	}
 	else {
 		TR << "only applicable in Repeat mode";
@@ -589,9 +579,9 @@ TR.Debug << "setup RGF cst 2" << std::endl;
 
         // generating new coordinates following pre-defined helical parameters
         // pre-defined helical parameters, inputs from outside
-        double t_rise = op_remodel_helical_rise_;
-        double t_radius = op_remodel_helical_radius_;
-        double t_omega = op_remodel_helical_omega_;
+        double t_rise =option[OptionKeys::remodel::helical_rise];
+        double t_radius =option[OptionKeys::remodel::helical_radius];
+        double t_omega =option[OptionKeys::remodel::helical_omega];
 
         //if(left_handed_ == -1) t_omega *= -1;
 

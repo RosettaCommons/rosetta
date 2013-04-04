@@ -47,13 +47,9 @@ namespace remodel{
 static basic::Tracer TR("protocols.forge.remodel.RemodelEnzdesCstModule");
 
 RemodelEnzdesCstModule::RemodelEnzdesCstModule(RemodelData external_data) 
-	: protocols::toolbox::match_enzdes_util::EnzConstraintIO(core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )),
-		op_user_enzdes_cstfile_(option[OptionKeys::enzdes::cstfile].user())
+	: protocols::toolbox::match_enzdes_util::EnzConstraintIO(core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ))
 {
-	if( op_user_enzdes_cstfile_ )
-		op_enzdes_cstfile_ = option[OptionKeys::enzdes::cstfile]();
- 
-  read_enzyme_cstfile( op_enzdes_cstfile_);
+  read_enzyme_cstfile(option[OptionKeys::enzdes::cstfile]);
 	scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function(core::scoring::STANDARD_WTS, core::scoring::SCORE12_PATCH);
 	remodel_data_ = external_data;
 
@@ -67,7 +63,7 @@ RemodelEnzdesCstModule::apply(core::pose::Pose & pose)
 	using namespace protocols::toolbox::match_enzdes_util;
 
   //set up constraints (read cstfile, do mapping, etc, then add to pose)
-  if( op_user_enzdes_cstfile_ ){
+  if(option[OptionKeys::enzdes::cstfile].user() ){
     enable_constraint_scoreterms(scorefxn_);
 
 		//tmp hack -- from florian for cstcashe observer initialization

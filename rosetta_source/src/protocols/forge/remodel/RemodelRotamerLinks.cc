@@ -58,7 +58,6 @@ TaskOperationOP RemodelRotamerLinks::clone() const
 }
 
 RemodelRotamerLinks::RemodelRotamerLinks()
-	:  op_remodel_repeat_structure_(option[OptionKeys::remodel::repeat_structure])
 {}
 
 void
@@ -84,7 +83,7 @@ RemodelRotamerLinks::apply(
 	RotamerLinksOP links( new RotamerLinks );
 	links->resize( nres );
 
-	Size repeat_number = op_remodel_repeat_structure_;
+	Size repeat_number =option[OptionKeys::remodel::repeat_structure];
 	Size segment_length = nres / repeat_number;
 
 	utility::vector1< utility::vector1< Size > > equiv_pos;

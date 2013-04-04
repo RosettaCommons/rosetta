@@ -105,16 +105,6 @@ public:
 	int insertionEndIndex;
 	ObjexxFCL::FArray2D_bool design_matrix;
 
-private:
-
-	// User specified options
-	bool op_user_remodel_repeat_structure_;
-	bool op_user_domainFusion_insert_segment_from_pdb_;
-	bool op_user_remodel_use_blueprint_sequence_;
-
-	// Option values
-	core::Size op_remodel_repeat_structure_;
-	std::string op_remodel_generic_aa_;
 };
 
 class Segment {

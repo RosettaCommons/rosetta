@@ -60,11 +60,6 @@ namespace remodel{
 static basic::Tracer TR("protocols.forge.remodel.RemodelWorkingSet");
 
 RemodelWorkingSet::RemodelWorkingSet()
-	: op_user_remodel_repeat_structure_(option[OptionKeys::remodel::repeat_structure].user()),
-		op_user_domainFusion_insert_segment_from_pdb_(option[OptionKeys::remodel::domainFusion::insert_segment_from_pdb].user()),
-		op_user_remodel_use_blueprint_sequence_(option[OptionKeys::remodel::use_blueprint_sequence].user()),
-		op_remodel_repeat_structure_(option[OptionKeys::remodel::repeat_structure]),
-		op_remodel_generic_aa_(option[OptionKeys::remodel::generic_aa])
 {
 		hasInsertion = false;
 		buildDisulfide = false;
@@ -87,12 +82,7 @@ RemodelWorkingSet::RemodelWorkingSet(RemodelWorkingSet const & rval):
 	src_end (rval.src_end),
 	manager( rval.manager ),
 	task( rval.task ),
-	rvjump_pose( rval.rvjump_pose),
-	op_user_remodel_repeat_structure_(option[OptionKeys::remodel::repeat_structure].user()),
-	op_user_domainFusion_insert_segment_from_pdb_(option[OptionKeys::remodel::domainFusion::insert_segment_from_pdb].user()),
-	op_user_remodel_use_blueprint_sequence_(option[OptionKeys::remodel::use_blueprint_sequence].user()),
-	op_remodel_repeat_structure_(option[OptionKeys::remodel::repeat_structure]),
-	op_remodel_generic_aa_(option[OptionKeys::remodel::generic_aa])
+	rvjump_pose( rval.rvjump_pose)
 {
 	sequence = rval.sequence;
 	ss = rval.ss;
@@ -118,11 +108,6 @@ RemodelWorkingSet & RemodelWorkingSet::operator= ( RemodelWorkingSet const & rva
 		manager = rval.manager;
 		task = rval.task ;
 		rvjump_pose = rval.rvjump_pose;
-		op_user_remodel_repeat_structure_ = rval.op_user_remodel_repeat_structure_;
-		op_user_domainFusion_insert_segment_from_pdb_ = rval.op_user_domainFusion_insert_segment_from_pdb_;
-		op_user_remodel_use_blueprint_sequence_ = rval.op_user_remodel_use_blueprint_sequence_;
-		op_remodel_repeat_structure_ = rval.op_remodel_repeat_structure_;
-		op_remodel_generic_aa_ = rval.op_remodel_generic_aa_;
 	}
 	return *this;
 }
@@ -153,7 +138,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 	this->abego = data.abego;
 
 	// this is purely experimental for matching fragment set
-	if ( op_user_remodel_repeat_structure_ ) {
+	if (option[OptionKeys::remodel::repeat_structure].user() ) {
 		ss.append( ss );
 		this->abego.append(this->abego);
 	} else {
@@ -187,7 +172,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 
 	//this is needed for manipulating denovo cases, as they are coded as Cterm
 	//extensions.  Affects SegmentRebuld selections.
-	if (op_user_remodel_repeat_structure_ && CtermExt){
+	if(option[OptionKeys::remodel::repeat_structure].user() && CtermExt){
 		model_length = model_length * 2;
 	}
 
@@ -247,7 +232,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 	}
 
 	// repeat structure loop over a second time; merge sections and update index
-	if (op_user_remodel_repeat_structure_){
+	if(option[OptionKeys::remodel::repeat_structure].user()){
 		//need to know the original index of the last element, for building
 		//extensions or deletions across jxn points
 		LineObject lastLO = data.blueprint.back();
@@ -373,7 +358,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 	Size insertStartIndex = 0;
 	Size insertEndIndex = 0;
 	TR << "data.dssp_updated_ss: " << data.dssp_updated_ss << std::endl;
-	if ( op_user_domainFusion_insert_segment_from_pdb_ ) {
+	if (option[OptionKeys::remodel::domainFusion::insert_segment_from_pdb].user() ) {
 		TR << "Processing insertion SS info..." << std::endl;
 		insertStartIndex = data.dssp_updated_ss.find_first_of("I");
 		insertEndIndex = data.dssp_updated_ss.find_last_of("I");
@@ -383,11 +368,11 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 	// set generic aa type before assigning manager tasks.
 
 	// for now only allow one letter code
-	String build_aa_type = op_remodel_generic_aa_; //defaults to VAL
+	String build_aa_type =option[OptionKeys::remodel::generic_aa]; //defaults to VAL
 
 	runtime_assert (build_aa_type.size() == 1);
 
-	if (op_user_remodel_use_blueprint_sequence_){
+	if(option[OptionKeys::remodel::use_blueprint_sequence].user()){
 		for (int i = 0; i < (int)data.blueprint.size(); i++){
 			if ( data.blueprint[i].resname.compare("x") == 0  || data.blueprint[i].resname.compare("X") == 0 ){
 				aa.append(build_aa_type);
@@ -422,7 +407,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 		core::Size idFront = segmentStorageVector[i].residues.front();
 		core::Size idBack = segmentStorageVector[i].residues.back();
 		core::Size seg_size = (int)data.blueprint.size();
-		//core::Size rep_number = op_remodel_repeat_structure_;
+		//core::Size rep_number =option[OptionKeys::remodel::repeat_structure];
 		std::string DSSP = data.dssp_updated_ss;
 
 		// Sachko: Changed Size (unsigned) to int (signed) to make this logic work properly.
@@ -430,7 +415,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 		int head = -1, tail = -1, headNew = -1, tailNew = -1; //safety, init to negative values
 
 		//use temp_For_copy to identify if it's de novo build; not empty means it's a loop case.
-		if ( op_user_remodel_repeat_structure_ && !temp_for_copy.empty()) {  // lines_residues_to_remodel
+		if (option[OptionKeys::remodel::repeat_structure].user() && !temp_for_copy.empty()) {  // lines_residues_to_remodel
 			//duplicate length of dssp and aastring
 			DSSP += DSSP;
 			aa += aa;
@@ -464,7 +449,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 				headNew = data.blueprint[ idFront-1 ].index;
 				tailNew = data.blueprint[ idBack-1 ].index;
 			}
-		} else if ( op_user_remodel_repeat_structure_ && temp_for_copy.empty()) { //de novo case
+		} else if (option[OptionKeys::remodel::repeat_structure].user() && temp_for_copy.empty()) { //de novo case
 			//std::cout << "idFront " << idFront << " idBack " << idBack << std::endl;
 			Size range_limit = data.blueprint.size();
 			if (idBack >= range_limit){ // can't assign beyond blueprint definition, as indices are missing as extensions

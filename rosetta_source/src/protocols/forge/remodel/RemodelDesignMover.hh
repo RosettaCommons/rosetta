@@ -110,24 +110,6 @@ private: // data
 //	PackerTaskOP packer_task_;
 	ScoreFunctionOP score_fxn_;
 //	MoveMap move_map_;
-
-	// User specified options
-	bool op_user_remodel_repeat_structure_;
-	bool op_user_design_no_design_;
-	bool op_user_design_find_neighbors_;
-	bool op_user_design_design_neighbors_;
-	bool op_user_design_design_all_;
-	bool op_user_design_skip_partial_;
-	bool op_user_remodel_resclass_by_sasa_;
-	bool op_user_remodel_disulf_landing_range_;
-
-	// Option values
-	Size op_remodel_repeat_structure_;
-	Size op_remodel_core_cutoff_;
-	Size op_remodel_boundary_cutoff_;
-	//utility::options::IntegerVectorOption op_remodel_disulf_landing_range_;
-	utility::vector1<int>  op_remodel_disulf_landing_range_;
-	Real op_remodel_match_rt_limit_;
 };
 
 } // remodel

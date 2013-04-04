@@ -102,15 +102,6 @@ private: // data
 	int left_handed_;
 	ConstraintSetOP native_cst_set;
 
-	// User specified options
-	bool op_user_remodel_repeat_structure_;
-
-	// Option values
-	Size op_remodel_repeat_structure_;
-	Real op_remodel_helical_rise_;
-	Real op_remodel_helical_radius_;
-	Real op_remodel_helical_omega_;
-
 public: // accessors
 
 	void scorefunction(ScoreFunctionOP const & sfxn);
