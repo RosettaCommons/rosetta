@@ -2398,7 +2398,7 @@ ScoreFunction::setup_for_minimizing_for_node(
 	for ( CD_1B_Methods::const_iterator iter = cd_1b_methods_.begin(),
 			iter_end = cd_1b_methods_.end(); iter != iter_end; ++iter ) {
 		// domain map check here?
-		continue;
+		// continue; -- BUG!
 		min_node.add_onebody_enmeth( *iter, rsd, pose, domain_map( seqpos ) );
 	}
 	/// 1c: context-independent 2body energies

@@ -295,8 +295,7 @@ EnvSmoothEnergy::residue_energy(
 		countN += sigmoidish_neighbor( sqdist );
 	}
 
-	Real score = 0;
-	Real dscoredN = 0;
+	Real score = 0, dscoredN = 0;
 
 	calc_energy( countN, rsd.aa(), score, dscoredN );
 

@@ -219,7 +219,7 @@ void MinimizationNode::add_sfd_2benmeth( TwoBodyEnergyCOP enmeth ) { sfd_req_2be
 bool
 MinimizationNode::classify_onebody_enmeth( OneBodyEnergyCOP enmeth, Residue const & rsd, Pose const & pose, int domain_map_color )
 {
-	if ( domain_map_color == 0 ) {
+	if ( domain_map_color == 0 || enmeth->method_type() == methods::cd_1b ) {
 		if ( enmeth->defines_score_for_residue( rsd )) {
 			if ( enmeth->use_extended_residue_energy_interface() ) {
 				add_active_1benmeth_ext( enmeth );
