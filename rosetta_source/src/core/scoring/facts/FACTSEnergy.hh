@@ -25,13 +25,13 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <core/scoring/EnergyMap.fwd.hh>
-#include <core/pack/task/PackerTask.fwd.hh>
+//#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/kinematics/DomainMap.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSet.fwd.hh>
+//#include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 #include <core/conformation/RotamerSetBase.hh>
 
 // Utility headers

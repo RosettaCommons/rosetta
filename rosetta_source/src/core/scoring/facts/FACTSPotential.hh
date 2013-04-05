@@ -22,7 +22,7 @@
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pack/task/PackerTask.fwd.hh>
+//#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/conformation/RotamerSetBase.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/kinematics/DomainMap.fwd.hh>
@@ -344,8 +344,6 @@ namespace scoring {
 		void setup_for_packing(
 													 pose::Pose & pose,
 													 utility::vector1< bool > const & repacking_residues ) const;
-
-		void setup_for_packing(pose::Pose & pose,	pack::task::PackerTask const & task	) const;
 
 		void update_residue_for_packing( pose::Pose & pose,
 																		 Size const seqpos
