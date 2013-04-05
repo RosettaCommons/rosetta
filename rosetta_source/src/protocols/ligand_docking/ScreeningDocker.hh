@@ -7,19 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/protocols/jd2/ScoreOnlyJobOutputter.fwd.hh
+/// @file  src/protocols/ligand_docking/ScreeningDocker.hh
 /// @author Sam DeLuca
 
-#ifndef INCLUDED_protocols_jd2_ScoreOnlyJobOutputter_fwd_hh
-#define INCLUDED_protocols_jd2_ScoreOnlyJobOutputter_fwd_hh
+#ifndef INCLUDED_protocols_ligand_docking_ScreeningDocker_hh
+#define INCLUDED_protocols_ligand_docking_ScreeningDocker_hh
 
 
-namespace protocols {
-namespace jd2 {
 
-class ScoreOnlyJobOutputter;
-
-}
-}
-
-#endif /* SCOREONLYJOBOUTPUTTER_FWD_HH_ */
+#endif /* SCREENINGDOCKER_HH_ */

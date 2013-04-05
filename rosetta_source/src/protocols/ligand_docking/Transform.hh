@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   /grid/src/protocols/ligand_docking/Transform.hh
+/// @file   src/protocols/ligand_docking/Transform.hh
 /// @author Sam DeLuca
 
 #ifndef INCLUDED_protocols_ligand_docking_Transform_hh
@@ -42,6 +42,8 @@ public:
 	Transform_info(): chain(""), move_distance(0),box_size(0), angle(0), cycles(0),repeats(1){};
 };
 
+
+
 class Transform: public protocols::moves::Mover
 {
 public:
@@ -70,14 +72,15 @@ public:
 	virtual void apply(core::pose::Pose & pose);
 
 private:
-	void transform_ligand(core::conformation::UltraLightResidue & residue);
-	void change_conformer(core::conformation::UltraLightResidue & residue);
+	void transform_ligand(utility::vector1<core::conformation::UltraLightResidue> & conformer_ensemble);
+
+	utility::vector1<core::conformation::UltraLightResidue> create_aligned_conformer_ensemble(core::conformation::UltraLightResidue & residue);
 
 private:
-	//qsar::scoring_grid::GridManagerOP grid_manager_;
 	Transform_info transform_info_;
 	utility::vector1< core::conformation::ResidueOP >  ligand_conformers_;
 	bool optimize_until_score_is_negative_;
+
 
 };
 

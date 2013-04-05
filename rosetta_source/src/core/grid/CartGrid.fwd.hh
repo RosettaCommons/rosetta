@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   /grid/src/core/grid/Grid.fwd.hh
+/// @file   src/core/grid/Grid.fwd.hh
 /// @author Sam DeLuca
 
 #ifndef INCLUDED_core_grid_CartGrid_fwd_hh
