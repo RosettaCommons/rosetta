@@ -7,17 +7,17 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-// @file   core/scoring/facts/FACTSEnergy.hh
+// @file   devel/facts/FACTSEnergy.hh
 // @brief  
 // @author Massih Khorvash
 // @author Hahnbeom Park
 
-#ifndef INCLUDED_core_scoring_methods_FACTSEnergy_HH
-#define INCLUDED_core_scoring_methods_FACTSEnergy_HH
+#ifndef INCLUDED_devel_facts_FACTSEnergy_HH
+#define INCLUDED_devel_facts_FACTSEnergy_HH
 
 // Unit Headers
-#include <core/scoring/FACTSPotential.fwd.hh>
-#include <core/scoring/methods/FACTSEnergy.fwd.hh>
+#include <core/scoring/facts/FACTSPotential.fwd.hh>
+#include <core/scoring/facts/FACTSEnergy.fwd.hh>
 
 // Package headers
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
@@ -25,13 +25,13 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <core/scoring/EnergyMap.fwd.hh>
-//#include <core/pack/task/PackerTask.fwd.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/kinematics/DomainMap.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
-//#include <core/pack/rotamer_set/RotamerSet.fwd.hh>
+#include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 #include <core/conformation/RotamerSetBase.hh>
 
 // Utility headers
@@ -208,6 +208,10 @@ public:
 		Vector & F2
 		) const;
 
+ 	virtual
+ 	Distance
+ 	atomic_interaction_cutoff() const;
+
 	virtual
 		void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const;
 
@@ -242,6 +246,7 @@ private:
 
 	///
 	bool const exclude_DNA_DNA_;
+	Real max_dis_;
 
 	virtual
 	core::Size version() const;

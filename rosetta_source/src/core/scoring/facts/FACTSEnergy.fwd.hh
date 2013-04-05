@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-// @file   core/scoring/facts/FACTSEnergy.fwd.hh
+// @file   apps/pilot/khorvash/FACTSEnergy.hh
 // @brief  
 // @author Massih Khorvash
 // @author Hahnbeom Park
 
-#ifndef INCLUDED_core_scoring_facts_FACTSEnergy_FWD_HH
-#define INCLUDED_core_scoring_facts_FACTSEnergy_FWD_HH
+#ifndef INCLUDED_devel_facts_FACTSEnergy_FWD_HH
+#define INCLUDED_devel_facts_FACTSEnergy_FWD_HH
 
 // Unit Headers
 

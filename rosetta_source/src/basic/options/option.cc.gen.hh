@@ -678,11 +678,11 @@ option.add( basic::options::OptionKeys::fold_cst::stage1_ramp_cst_cycle_factor, 
 option.add( basic::options::OptionKeys::fold_cst::stage2_constraint_threshold, "stop runs that violate this threshold at end of stage2" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::ignore_sequence_seperation, "usually constraints are switched on according to their separation in the fold-tree" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::no_recover_low_at_constraint_switch, "dont recover low when max_seq_sep is increased" ).def(false);
+option.add( basic::options::OptionKeys::fold_cst::ramp_coord_cst, "ramp coord csts just like chainbreak-weights during fold-cst" ).def(false);
+option.add( basic::options::OptionKeys::resample::resample, "resample option group" ).legal(true).def(true);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::ramp_coord_cst, "ramp coord csts just like chainbreak-weights during fold-cst" ).def(false);
-option.add( basic::options::OptionKeys::resample::resample, "resample option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::resample::silent, "a silent file for decoys to restart sampling from " ).def("");
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::resample::silent, "a silent file for decoys to restart sampling from " ).def("");
 option.add( basic::options::OptionKeys::resample::tag, "which decoy to select from silent file " ).def("");
 option.add( basic::options::OptionKeys::resample::stage1, "if true restart after stage1, otherwise after stage2 " ).def(false);
 option.add( basic::options::OptionKeys::resample::stage2, "if true restart after stage1, otherwise after stage2 " ).def(false);
@@ -851,6 +851,18 @@ option.add( basic::options::OptionKeys::score::hackelec_max_dis, "changes the ma
 option.add( basic::options::OptionKeys::score::hackelec_die, "changes the dielectric constant for hack-elec energy" ).def(10.0);
 option.add( basic::options::OptionKeys::score::hackelec_r_option, "changes the dielectric from distance dependent to distance independent" ).def(false);
 option.add( basic::options::OptionKeys::score::smooth_hack_elec, "Smooth the discontinuities in the hackelec energy function using a sigmoidal term" ).def(false);
+option.add( basic::options::OptionKeys::score::facts_GBpair_cut, "GBpair interaction distance cutoff (same as hackelec_max_dis)" ).def(10.0);
+option.add( basic::options::OptionKeys::score::facts_min_dis, "GBpair interaction minimum distance (same as hackelec_min_dis)" ).def(1.5);
+option.add( basic::options::OptionKeys::score::facts_kappa, "GBpair interaction screening factor" ).def(12.0);
+option.add( basic::options::OptionKeys::score::facts_apprx, "Use approximated function form for GBpair calculation in FACTS" ).def(false);
+option.add( basic::options::OptionKeys::score::facts_asp_patch, "AtomicSolvationParameter set for nonpolar interaction in FACTS" ).def(1);
+option.add( basic::options::OptionKeys::score::facts_selfenergy_scale, "Relative scale for FACTS self energy to pair energy" ).def(1.0);
+option.add( basic::options::OptionKeys::score::facts_plane_to_self, "Add atoms in same plane to self energy pairs" ).def(false);
+option.add( basic::options::OptionKeys::score::facts_intrares_scale, "Relative scale for FACTS intrares energy to interres energy" ).def(0.0);
+option.add( basic::options::OptionKeys::score::facts_saltbridge_correction, "FACTS Self energy parameter scaling factor for polarH" ).def(1.0);
+option.add( basic::options::OptionKeys::score::facts_dshift, "FACTS pair term denominator distance shift" ).def(0.0);
+option.add( basic::options::OptionKeys::score::facts_die, "FACTS dielectric constant" ).def(1.0);
+option.add( basic::options::OptionKeys::score::facts_elec_sh_exponent, "Shift function exponent for electrostatic part in FACTS" ).def(2.0);
 option.add( basic::options::OptionKeys::score::nmer_ref_energies, "nmer ref energies database filename" );
 option.add( basic::options::OptionKeys::score::nmer_ref_energies_list, "list of nmer ref energies database filenames" );
 option.add( basic::options::OptionKeys::score::nmer_pssm, "nmer pssm database filename" );
@@ -1347,16 +1359,16 @@ option.add( basic::options::OptionKeys::lh::create_db, "Make database with this 
 option.add( basic::options::OptionKeys::lh::sample_weight_file, "Holds the initial per residue sample weights" );
 option.add( basic::options::OptionKeys::lh::fragpdb::fragpdb, "fragpdb option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::lh::fragpdb::out_path, "Path where pdbs are saved" ).def("");
-option.add( basic::options::OptionKeys::lh::fragpdb::indexoffset, "list of index offset pairs" ).def(-1);
+
+}
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::fragpdb::indexoffset, "list of index offset pairs" ).def(-1);
 option.add( basic::options::OptionKeys::lh::fragpdb::bin, "list of bin keys" ).def(utility::vector1<std::string>());
 option.add( basic::options::OptionKeys::lh::symfragrm::symfragrm, "symfragrm option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::lh::symfragrm::pdblist, "list of pdbs to be processed" );
 option.add( basic::options::OptionKeys::rbe::rbe, "rbe option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::rbe::server_url, "serverurl for rosetta backend" );
 option.add( basic::options::OptionKeys::rbe::server_port, "port for rosetta backend" ).def("80");
-
-}
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::rbe::poll_frequency, "No description" ).def(1.0);
+option.add( basic::options::OptionKeys::rbe::poll_frequency, "No description" ).def(1.0);
 option.add( basic::options::OptionKeys::blivens::blivens, "blivens option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::blivens::disulfide_scorer::disulfide_scorer, "disulfide_scorer option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::blivens::disulfide_scorer::nds_prob, "The probability of scoring a non-disulfide pair" ).def(0.0);
@@ -2026,13 +2038,13 @@ option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on const
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_pdb, "PDB file from which to draw constraints" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrbmoves, "number of rigid-body moves" ).def(100);
-option.add( basic::options::OptionKeys::RBSegmentRelax::nrboutercycles, "number of rigid-body moves" ).def(5);
+
+}
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::nrboutercycles, "number of rigid-body moves" ).def(5);
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_scorefxn, "number of rigid-body moves" ).def("score5");
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_fragment_moves, "omit fragment insertions (in SS elements)" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_seqshift_moves, "omit sequence shifting moves" ).def(false);
-
-}
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::skip_rb_moves, "omit rigid-body moves" ).def(false);
+option.add( basic::options::OptionKeys::RBSegmentRelax::skip_rb_moves, "omit rigid-body moves" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::helical_movement_params, "helical-axis-rotation, helical-axis-translation, off-axis-rotation, off-axis-translation" ).def(utility::vector1<float>(4,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::strand_movement_params, "strand-in-plane-rotation, strand-in-plane-translation, out-of-plane-rotation, out-of-plane-translationn" ).def(utility::vector1<float>(4,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::default_movement_params, "default-rotation, default-translation" ).def(utility::vector1<float>(2,0.0));

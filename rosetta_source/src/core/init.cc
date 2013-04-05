@@ -105,6 +105,7 @@
 #include <core/scoring/methods/Fa_MbenvEnergyCreator.hh>
 #include <core/scoring/methods/Fa_MbsolvEnergyCreator.hh>
 #include <core/scoring/methods/GenBornEnergyCreator.hh>
+#include <core/scoring/facts/FACTSEnergyCreator.hh>
 #include <core/scoring/methods/HybridVDW_EnergyCreator.hh>
 #include <core/scoring/methods/LK_CosThetaEnergyCreator.hh>
 #include <core/scoring/methods/LK_hackCreator.hh>
@@ -354,6 +355,7 @@ static EnergyMethodRegistrator< scoring::methods::DistanceChainbreakEnergyCreato
 static EnergyMethodRegistrator< scoring::methods::Fa_MbenvEnergyCreator > Fa_MbenvEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::Fa_MbsolvEnergyCreator > Fa_MbsolvEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::GenBornEnergyCreator > GenBornEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::FACTSEnergyCreator > FACTSEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::HybridVDW_EnergyCreator > HybridVDW_EnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::LK_CosThetaEnergyCreator > LK_CosThetaEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::LK_hackCreator > LK_hackCreator_registrator;

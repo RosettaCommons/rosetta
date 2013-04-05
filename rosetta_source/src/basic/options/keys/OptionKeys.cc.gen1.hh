@@ -1,5 +1,3 @@
-namespace fold_cst { BooleanOptionKey const ramp_coord_cst( "fold_cst:ramp_coord_cst" );  }
-namespace resample { BooleanOptionKey const resample( "resample" );  }
 namespace resample { FileOptionKey const silent( "resample:silent" );  }
 namespace resample { StringOptionKey const tag( "resample:tag" );  }
 namespace resample { BooleanOptionKey const stage1( "resample:stage1" );  }
@@ -169,6 +167,18 @@ namespace score { RealOptionKey const hackelec_max_dis( "score:hackelec_max_dis"
 namespace score { RealOptionKey const hackelec_die( "score:hackelec_die" );  }
 namespace score { BooleanOptionKey const hackelec_r_option( "score:hackelec_r_option" );  }
 namespace score { BooleanOptionKey const smooth_hack_elec( "score:smooth_hack_elec" );  }
+namespace score { RealOptionKey const facts_GBpair_cut( "score:facts_GBpair_cut" );  }
+namespace score { RealOptionKey const facts_min_dis( "score:facts_min_dis" );  }
+namespace score { RealOptionKey const facts_kappa( "score:facts_kappa" );  }
+namespace score { BooleanOptionKey const facts_apprx( "score:facts_apprx" );  }
+namespace score { IntegerOptionKey const facts_asp_patch( "score:facts_asp_patch" );  }
+namespace score { RealOptionKey const facts_selfenergy_scale( "score:facts_selfenergy_scale" );  }
+namespace score { BooleanOptionKey const facts_plane_to_self( "score:facts_plane_to_self" );  }
+namespace score { RealOptionKey const facts_intrares_scale( "score:facts_intrares_scale" );  }
+namespace score { RealOptionKey const facts_saltbridge_correction( "score:facts_saltbridge_correction" );  }
+namespace score { RealOptionKey const facts_dshift( "score:facts_dshift" );  }
+namespace score { RealOptionKey const facts_die( "score:facts_die" );  }
+namespace score { RealOptionKey const facts_elec_sh_exponent( "score:facts_elec_sh_exponent" );  }
 namespace score { StringOptionKey const nmer_ref_energies( "score:nmer_ref_energies" );  }
 namespace score { StringOptionKey const nmer_ref_energies_list( "score:nmer_ref_energies_list" );  }
 namespace score { StringOptionKey const nmer_pssm( "score:nmer_pssm" );  }
@@ -665,10 +675,3 @@ namespace lh { BooleanOptionKey const create_db( "lh:create_db" );  }
 namespace lh { FileOptionKey const sample_weight_file( "lh:sample_weight_file" );  }
 namespace lh { namespace fragpdb { BooleanOptionKey const fragpdb( "lh:fragpdb" );  } }
 namespace lh { namespace fragpdb { StringOptionKey const out_path( "lh:fragpdb:out_path" );  } }
-namespace lh { namespace fragpdb { IntegerVectorOptionKey const indexoffset( "lh:fragpdb:indexoffset" );  } }
-namespace lh { namespace fragpdb { StringVectorOptionKey const bin( "lh:fragpdb:bin" );  } }
-namespace lh { namespace symfragrm { BooleanOptionKey const symfragrm( "lh:symfragrm" );  } }
-namespace lh { namespace symfragrm { FileVectorOptionKey const pdblist( "lh:symfragrm:pdblist" );  } }
-namespace rbe { BooleanOptionKey const rbe( "rbe" );  }
-namespace rbe { StringOptionKey const server_url( "rbe:server_url" );  }
-namespace rbe { StringOptionKey const server_port( "rbe:server_port" );  }

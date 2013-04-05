@@ -298,6 +298,12 @@ sources = {
 		"TrieCountPairGeneric",
 		"TrieCountPairNone",
 	],
+
+	"core/scoring/facts": [
+		"FACTSPotential",
+		"FACTSEnergy",
+	],
+
 	"core/scoring/geometric_solvation": [
 		"DatabaseOccSolEne",
 		"ExactOccludedHbondSolEnergy",
