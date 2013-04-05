@@ -14,15 +14,15 @@
 /// @details This protocol is for two zincs at the interface.  I wrote a similar protocol for designing symmetric interfaces containing only one zinc, but none of these designs worked experimentally.
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////
-//////   Chain1Chain1Chain1
-//////      H   H   H   H           H-H match1, H-H match2
-//////       \ /     \ /
-//////       Zn      Zn             ----------------------------------  axis of symmetry, can rotate about this axis and maintain symmetry
-//////       / \     / \
-//////      H   H   H   H           H-H match2, H-H match1
-//////   Chain2Chain2Chain2
-//////
+/**
+   Chain1Chain1Chain1
+      H   H   H   H           H-H match1, H-H match2
+       \ /     \ /
+       Zn      Zn             -------------------  axis of symmetry, can rotate about this axis and maintain symmetry
+       / \     / \
+      H   H   H   H           H-H match2, H-H match1
+   Chain2Chain2Chain2
+**/
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /// @author Bryan Der

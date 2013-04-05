@@ -179,14 +179,14 @@ settings = {
             },
         },
 
-	"overrides" : {
+		"overrides" : {
             "flags" : {
                 "cc"        : [ "std=c99" ],   # "-isystem external/boost_1_46_1/"],
                 "cxx"       : [ "std=c++98" ], # "-isystem external/boost_1_46_1/" ],
                 "compile"   : [ "pipe", "ffor-scope" ],
                 "warn"      : [], # "Wall", "Wextra", "pedantic", "Wno-long-long" ],
-	    },
-	},
+		    },
+		},
     },
 
     "gcc, debug" : {
@@ -1188,7 +1188,7 @@ settings = {
                 "#external/dbio",
             ],
         },
-    "removes" : {
+	    "removes" : {
             "include_path"  : [
                 "/usr/local/include",
                 "/usr/include",
@@ -1197,7 +1197,7 @@ settings = {
                 "/usr/local/lib",
                 "/usr/lib",
             ],
-    }
+	    }
     },
 
     # Clang
@@ -1212,9 +1212,9 @@ settings = {
                 # be C99?  Are there portability issues?
                 "cc"        : [ "std=c99", "isystem external/boost_1_46_1/" ],
                 "cxx"       : [ "std=c++98", "isystem external/boost_1_46_1/" ],
-                "compile"   : [ "pipe", "ffor-scope" ],
+                "compile"   : [ "pipe", "Qunused-arguments" ],
                 # By default, warn as much as possible.
-                "warn"      : [ "W", "Wall", "pedantic", "Wno-long-long" ],
+                "warn"      : [ "W", "Weverything", "Wno-long-long" ],
             },
 		    },
     },
@@ -1233,7 +1233,6 @@ settings = {
         "appends" : {
             "flags" : {
                 "compile"   : [ "Werror", ],
-                "warn"      : [ 'Wno-unknown-pragmas', ],
             },
         },
     },
