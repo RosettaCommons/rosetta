@@ -664,13 +664,13 @@ void RemodelMover::apply( Pose & pose ) {
 		}
 		if (option[OptionKeys::remodel::repeat_structure].user() ) {
 			// should fold this pose to match just the first segment of a repeat, and that will be used for next round of building
+			add_lower_terminus_type_to_pose_residue(pose,1);
 			for ( Size res = 1; res <= cached_modified_pose.n_residue(); res++ ) {
 				cached_modified_pose.set_phi( res, pose.phi(res) );
 				cached_modified_pose.set_psi( res, pose.psi(res) );
 				cached_modified_pose.set_omega( res, pose.omega(res) );
-				//ResidueType const & rsd_type(pose.residue_type(res));
-				//replace_pose_residue_copying_existing_coordinates(cached_modified_pose,res,rsd_type);
-				//pose.pdb_info()->obsolete(true);
+				ResidueType const & rsd_type(pose.residue_type(res));
+				replace_pose_residue_copying_existing_coordinates(cached_modified_pose,res,rsd_type);
 			}
 		}
 
