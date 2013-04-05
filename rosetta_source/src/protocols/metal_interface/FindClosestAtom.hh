@@ -7,25 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file devel/metal_interface/FindClosestAtom.hh
+/// @file protocols/metal_interface/FindClosestAtom.hh
 /// @brief Finds the closest atom in a given residue to a point (usually a zinc atom).
 /// @author Bryan Der
 
-#ifndef INCLUDED_devel_metal_interface_FindClosestAtom_HH
-#define INCLUDED_devel_metal_interface_FindClosestAtom_HH
+#ifndef INCLUDED_protocols_metal_interface_FindClosestAtom_HH
+#define INCLUDED_protocols_metal_interface_FindClosestAtom_HH
 
 #include <core/conformation/Residue.fwd.hh>
 #include <utility/vector1.hh>
 #include <core/types.hh>
 #include <string>
 
-namespace devel{
+namespace protocols{
 namespace metal_interface{
 
 //helper function - iterates over all sidechain non-carbon heavy atoms of res to find the one closest to xyz
 std::string find_closest_atom( core::conformation::Residue const & res, core::Vector const & xyz );
 
 }//namespace metal_interface
-}//namespace devel
+}//namespace protocols
 
-#endif // INCLUDED_devel_metal_interface_FindClosestAtom_HH
+#endif // INCLUDED_protocols_metal_interface_FindClosestAtom_HH

@@ -64,9 +64,9 @@ sources = {
 		#"fold_from_loops_devel", # /* Correia,Documentation Location,Demo Location */
 	],
 	"pilot/bder" : [
-                #"supercharge",          #integration test: supercharge.  Application moved to public.
-		"Zinc2_HomodimerSetup",  #integration test: zinc_homodimer_setup
-		"Zinc2_HomodimerDesign", #integration test: zinc_homodimer_design
+                #"supercharge",          #integration test: supercharge.  Application moved to public/design
+		#"Zinc2_HomodimerSetup",  #integration test: zinc_homodimer_setup.  Application moved to public/design
+		#"Zinc2_HomodimerDesign", #integration test: zinc_homodimer_design.  Application moved to public/design
 	],
 	"pilot/ben" : [
 		"VIP_app",
@@ -552,7 +552,7 @@ sources = {
 		#"pdbstats_test" # /* Rhiju Das, private app*/
 	],
 	"pilot/rjha" : [
-		"ZincHeterodimerDesign", # /* ????,Documentation Location,Demo Location */
+		#"ZincHeterodimerDesign", # /* moved to apps/public/design/ZincHeterodimerDesign */
 		#"SurfaceGroups",
 	],
 	"pilot/rmoretti" : [

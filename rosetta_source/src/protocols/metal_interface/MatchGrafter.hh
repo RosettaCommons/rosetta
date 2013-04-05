@@ -7,21 +7,21 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   devel/metal_interface/MatchGrafter.hh
+/// @file   protocols/metal_interface/MatchGrafter.hh
 /// @brief  Takes a scaffold protein and a match pdb from RosettaMatch, grafts the match onto the protein.  For zinc homodimer design, it can then combine two grafted poses by overlaying the zinc atoms.
 /// @author Bryan Der
 
-#ifndef INCLUDED_devel_metal_interface_MatchGrafter_HH
-#define INCLUDED_devel_metal_interface_MatchGrafter_HH
+#ifndef INCLUDED_protocols_metal_interface_MatchGrafter_HH
+#define INCLUDED_protocols_metal_interface_MatchGrafter_HH
 
-#include <devel/metal_interface/MatchGrafter.fwd.hh>
+#include <protocols/metal_interface/MatchGrafter.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 
-namespace devel {
+namespace protocols {
 namespace metal_interface {
 
 
@@ -48,6 +48,6 @@ private:
 
 
 }//namespace metal_interface
-}//namespace devel
+}//namespace protocols
 
-#endif // INCLUDED_devel_metal_interface_MatchGrafter_HH
+#endif // INCLUDED_protocols_metal_interface_MatchGrafter_HH

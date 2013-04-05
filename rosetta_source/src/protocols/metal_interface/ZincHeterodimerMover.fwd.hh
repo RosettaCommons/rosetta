@@ -7,26 +7,26 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   devel/metal_interface/AddZincSiteConstraints.fwd.hh
-/// @brief  AddZincSiteConstraints protocol-mover forward declarations header
-/// @author Bryan Der
+/// @file   protocols/metal_interface/ZincHeterodimerMover.fwd.hh
+/// @brief  ZincHeterodimerMover protocol-mover forward declarations header
+/// @author Steven Lewis (smlewi@unc.edu)
 
 
-#ifndef INCLUDED_devel_metal_interface_AddZincSiteConstraints_FWD_HH
-#define INCLUDED_devel_metal_interface_AddZincSiteConstraints_FWD_HH
+#ifndef INCLUDED_protocols_metal_interface_HeterodimerMover_fwd_hh
+#define INCLUDED_protocols_metal_interface_HeterodimerMover_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace devel{
+namespace protocols{
 namespace metal_interface{
 
 //Forwards and OP typedefs
-class AddZincSiteConstraints;
-typedef utility::pointer::owning_ptr< AddZincSiteConstraints > AddZincSiteConstraintsOP;
-typedef utility::pointer::owning_ptr< AddZincSiteConstraints const > AddZincSiteConstraintsCOP;
+class ZincHeterodimerMover;
+typedef utility::pointer::owning_ptr< ZincHeterodimerMover > ZincHeterodimerMoverOP;
+typedef utility::pointer::owning_ptr< ZincHeterodimerMover const > ZincHeterodimerMoverCOP;
 
 }//metal_interface
-}//devel
+}//protocols
 
-#endif //INCLUDED_devel_metal_interface_AddZincSiteConstraints_FWD_HH
+#endif //INCLUDED_protocols_metal_interface_ZincHeterodimerMover_FWD_HH

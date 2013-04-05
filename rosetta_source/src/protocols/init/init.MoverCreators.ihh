@@ -151,6 +151,7 @@
 #include <protocols/protein_interface_design/movers/DesignMinimizeHbondsCreator.hh>
 #include <protocols/protein_interface_design/movers/DisulfideMoverCreator.hh>
 #include <protocols/protein_interface_design/movers/DockAndRetrieveSidechainsCreator.hh>
+#include <protocols/simple_moves/DumpPdbCreator.hh>
 #include <protocols/protein_interface_design/movers/FavorNativeResiduePreCycleCreator.hh>
 #include <protocols/protein_interface_design/movers/FavorNonNativeResiduePreCycleCreator.hh>
 #include <protocols/protein_interface_design/movers/HotspotDisjointedFoldTreeMoverCreator.hh>
@@ -184,7 +185,6 @@
 #include <protocols/protein_interface_design/movers/TryRotamersCreator.hh>
 #include <protocols/protein_interface_design/movers/ShoveResidueMoverCreator.hh>
 #include <protocols/protein_interface_design/movers/VLBCreator.hh>
-#include <protocols/protein_interface_design/movers/DockWithHotspotMoverCreator.hh>
 
 #include <protocols/qsar/RenderGridsToKinemageCreator.hh>
 #include <protocols/qsar/scoring_grid/GridInitMoverCreator.hh>
@@ -217,11 +217,9 @@
 #include <protocols/simple_moves/ClearConstraintsMoverCreator.hh>
 #include <protocols/simple_moves/ConsensusDesignMoverCreator.hh>
 #include <protocols/simple_moves/ConstraintSetMoverCreator.hh>
-#include <protocols/simple_moves/DumpPdbCreator.hh>
 #include <protocols/simple_moves/ddGCreator.hh>
 #include <protocols/simple_moves/ExtendedPoseMoverCreator.hh>
 #include <protocols/simple_moves/FavorSequenceProfileCreator.hh>
-#include <protocols/simple_moves/FavorSymmetricSequenceCreator.hh>
 #include <protocols/simple_moves/ForceDisulfidesMoverCreator.hh>
 #include <protocols/simple_moves/LoadPDBMoverCreator.hh>
 #include <protocols/simple_moves/LoadUnboundRotMoverCreator.hh>

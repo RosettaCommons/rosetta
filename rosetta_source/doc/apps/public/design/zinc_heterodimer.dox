@@ -10,13 +10,13 @@
 ///@author DOCUMENTATION AUTHOR GOES HERE
 /*!
 
-@page ZincHeterodimerDesign Documentation for ZincHeterodimerDesign application
+@page zinc_heterodimer_design Documentation for zinc_heterodimer_design application
 
 @section metadata Metadata
 Last updated on 12-12-12, Bryan Der (bder@email.unc.edu), Kuhlman lab (bkuhlman@email.unc.edu).
 
 @section code_demos Code and Demo
-Code for this application is in src/apps/pilot/rjha/ZincHeterodimerDesign (setup and driver) and src/devel/metal_interface/ZincHeterodimerMover (mover).  The integration test is called zinc_heterodimer.
+Code for this application is in src/apps/public/design/zinc_heterodimer_design (setup and driver) and src/protocols/metal_interface/ZincHeterodimerMover (mover).  The integration test is called zinc_heterodimer.
 
 @section refs References
 unpublished protocol

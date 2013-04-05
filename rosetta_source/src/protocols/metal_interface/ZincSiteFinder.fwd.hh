@@ -7,26 +7,26 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   devel/metal_interface/MatchGrafter.fwd.hh
-/// @brief  MatchGrafter protocol-mover forward declarations header
+/// @file   protocols/metal_interface/ZincSiteFinder.fwd.hh
+/// @brief  ZincSiteFinder protocol-mover forward declarations header
 /// @author Bryan Der
 
 
-#ifndef INCLUDED_devel_metal_interface_MatchGrafter_FWD_HH
-#define INCLUDED_devel_metal_interface_MatchGrafter_FWD_HH
+#ifndef INCLUDED_protocols_metal_interface_ZincSiteFinder_FWD_HH
+#define INCLUDED_protocols_metal_interface_ZincSiteFinder_FWD_HH
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace devel{
+namespace protocols{
 namespace metal_interface{
 
 //Forwards and OP typedefs
-class MatchGrafter;
-typedef utility::pointer::owning_ptr< MatchGrafter > MatchGrafterOP;
-typedef utility::pointer::owning_ptr< MatchGrafter const > MatchGrafterCOP;
+class ZincSiteFinder;
+typedef utility::pointer::owning_ptr< ZincSiteFinder > ZincSiteFinderOP;
+typedef utility::pointer::owning_ptr< ZincSiteFinder const > ZincSiteFinderCOP;
 
 }//metal_interface
-}//devel
+}//protocols
 
-#endif //INCLUDED_devel_metal_interface_MatchGrafter_FWD_HH
+#endif //INCLUDED_protocols_metal_interface_ZincSiteFinder_FWD_HH

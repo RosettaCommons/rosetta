@@ -6,15 +6,15 @@
 // (C) 199x-2009 Rosetta Commons participating institutions and developers.
 // For more information, see http://www.rosettacommons.org/.
 
-/// @file   devel/metal_interface/bder/ZincSiteFinder.hh
+/// @file   protocols/metal_interface/bder/ZincSiteFinder.hh
 /// @brief  Searches pose for a zinc residue, then fills a vector of MetalSiteResidue objects with info including sequence position of coordinating sidechains, ligand atom xyz, ligand atom name, and atom ids to provide a convenient way for protocols to add metalsite constraints (ligand refers to protein sidechains)
 /// @author Bryan Der
 
-#ifndef INCLUDED_devel_metal_interface_ZincSiteFinder_HH
-#define INCLUDED_devel_metal_interface_ZincSiteFinder_HH
+#ifndef INCLUDED_protocols_metal_interface_ZincSiteFinder_HH
+#define INCLUDED_protocols_metal_interface_ZincSiteFinder_HH
 
-#include <devel/metal_interface/ZincSiteFinder.fwd.hh>
-#include <devel/metal_interface/MetalSiteResidue.fwd.hh> // abbrev. msr
+#include <protocols/metal_interface/ZincSiteFinder.fwd.hh>
+#include <protocols/metal_interface/MetalSiteResidue.fwd.hh> // abbrev. msr
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 #include <core/types.hh>
@@ -22,7 +22,7 @@
 
 
 
-namespace devel {
+namespace protocols {
 namespace metal_interface {
 
 class ZincSiteFinder : public utility::pointer::ReferenceCount {
@@ -34,7 +34,7 @@ public:
 
 	virtual ~ZincSiteFinder();
 
-	utility::vector1< devel::metal_interface::MetalSiteResidueOP > find_zinc_site( core::pose::Pose const & pose );
+	utility::vector1< protocols::metal_interface::MetalSiteResidueOP > find_zinc_site( core::pose::Pose const & pose );
 
 	virtual void set_expecting_n_ligands ( Size n );
 	virtual bool check_for_parse_error();
@@ -43,11 +43,11 @@ private:
 	core::Size n_ligands_;
 	core::Size zinc_res_;
 	bool parse_error_;
-	utility::vector1< devel::metal_interface::MetalSiteResidueOP > msr_;
+	utility::vector1< protocols::metal_interface::MetalSiteResidueOP > msr_;
 
 };//end ZincSiteFinder
 
 }//namespace metal_interface
-}//namespace devel
+}//namespace protocols
 
-#endif // INCLUDED_devel_metal_interface_ZincSiteFinder_HH
+#endif // INCLUDED_protocols_metal_interface_ZincSiteFinder_HH

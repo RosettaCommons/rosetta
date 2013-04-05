@@ -159,6 +159,9 @@ private:
 	//To close multiple loops. This overrides the loop anchor set by the loop inserter
 	utility::vector1<core::Size> loop_anchors_;
 
+	//A hacky way to specify that you want the loop to be copied to other anchors (for fake symmetry)
+	core::Size asym_size_;
+
 	//DEBUG
 	bool dump_pdbs_;
 	

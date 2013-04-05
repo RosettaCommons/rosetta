@@ -31,6 +31,14 @@ sources = {
 		"util",
 		"WatsonCrickRotamerCouplings",
 	],
+	"protocols/metal_interface": [
+                "AddZincSiteConstraints",
+                "FindClosestAtom",
+                "MatchGrafter",
+                "MetalSiteResidue",
+                "ZincHeterodimerMover",
+                "ZincSiteFinder",
+	],
 	"protocols/motifs": [
 		"BuildPosition",
 		"IRCollection",

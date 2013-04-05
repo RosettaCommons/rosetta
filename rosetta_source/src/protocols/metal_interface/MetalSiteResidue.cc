@@ -6,13 +6,13 @@
 // (C) 199x-2009 Rosetta% Commons participating institutions and developers.
 // For more information, see http://www.rosettacommons.org/.
 
-/// @file    devel/metal_interface/MetalSiteResidue.cc
+/// @file    protocols/metal_interface/MetalSiteResidue.cc
 /// @brief   Stores data that describes a metal-coordinating residue.
 /// @details The intended use is for a utility::vector1 of MetalSiteResidues to describe a multiple-residue metal site.  The atom id's make it convenient generalize the process of adding metalsite constraints.
 /// @author Bryan Der
 
 // Headers
-#include <devel/metal_interface/MetalSiteResidue.hh>
+#include <protocols/metal_interface/MetalSiteResidue.hh>
 #include <core/id/AtomID.hh>
 #include <numeric/xyzVector.hh>
 
@@ -22,7 +22,7 @@
 
 typedef numeric::xyzVector<core::Real> point;
 
-namespace devel{
+namespace protocols{
 namespace metal_interface{
 
 MetalSiteResidue::MetalSiteResidue()
@@ -98,4 +98,4 @@ MetalSiteResidue::set_resname( std::string resname ) {
 }
 
 }//namespace metal_interface
-}//namespace devel
+}//namespace protocols

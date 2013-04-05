@@ -107,6 +107,7 @@ sources = {
 		"CyclicMover",
 		"DataMap",
 		"DsspMover",
+                "DualMonteCarlo",
 		"FilterMover",
 		"IfMover",
 		"IteratedConvergenceMover",

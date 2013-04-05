@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 
-/// @file    apps/pilot/bder/Zinc1_HomodimerSetup.cc
+/// @file    apps/public/design/zinc1_homodimer_setup.cc
 /// @brief   Grafts a 2-residue + zinc match onto the match's scaffold, duplicates the pose, then performs two discrete flips (rollmoves) to the second chain that generates a symmetric pose with a tetrahedral metal binding site.
 /// @details Takes a 2-residue + zinc match as -s or -l, requires the scaffold pdb indicated as an option.  The first flip (rollmove) is along the axis that connects p1 with p2 (p1 is an xyzVector one zinc-coordinating atom), and zinc is translated to the origin at the time of the flip.  The second rollmove is along the axis that bisects the p1:p2 and p3:p4.  This protocol preceeds SymMetalInterface_OneZN_design.cc
     /////////////////////parallel///////////////
@@ -19,8 +19,8 @@
 /// @author Bryan Der
 
 #include <devel/init.hh>
-#include <devel/metal_interface/MatchGrafter.hh>
-#include <devel/metal_interface/FindClosestAtom.hh>
+#include <protocols/metal_interface/MatchGrafter.hh>
+#include <protocols/metal_interface/FindClosestAtom.hh>
 #include <protocols/rigid/RollMover.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.hh>
@@ -49,7 +49,7 @@ using basic::Error;
 using basic::Warning;
 //using numeric::conversions::degrees;
 
-static basic::Tracer TR("apps.pilot.bder.Zinc1_HomodimerSetup");
+static basic::Tracer TR("apps.public.design.zinc1_homodimer_setup");
 
 typedef numeric::xyzVector<core::Real> point;
 typedef point axis;
@@ -57,12 +57,12 @@ typedef point axis;
 basic::options::StringOptionKey const scaffold_pdb("scaffold_pdb");
 
 ///@brief
-class Zinc1_HomodimerSetup : public protocols::moves::Mover {
+class zinc1_homodimer_setup : public protocols::moves::Mover {
 public:
-  Zinc1_HomodimerSetup()
+  zinc1_homodimer_setup()
   {
   }
-  virtual ~Zinc1_HomodimerSetup(){};
+  virtual ~zinc1_homodimer_setup(){};
 
 
   virtual
@@ -77,7 +77,7 @@ public:
 
     ///////////////////////////Graft match onto scaffold///////////////////////////////////////////////////////////
 
-    devel::metal_interface::MatchGrafterOP match_grafter = new devel::metal_interface::MatchGrafter;
+    protocols::metal_interface::MatchGrafterOP match_grafter = new protocols::metal_interface::MatchGrafter;
     core::pose::Pose scaffold_with_match = match_grafter->graft( match, scaffold );
 
     core::pose::Pose const homodimer_with_matches = match_grafter->build_combined_pose_with_zinc_overlay( scaffold_with_match, scaffold_with_match );
@@ -101,10 +101,10 @@ public:
 
     metalsite_atom_xyz[5] = homodimer_with_matches.residue( metalsite_seqpos[5] ).atom(1).xyz();
 
-    metalsite_atom_name[1] = devel::metal_interface::find_closest_atom( homodimer_with_matches.residue(metalsite_seqpos[1]), metalsite_atom_xyz[5] );
-    metalsite_atom_name[2] = devel::metal_interface::find_closest_atom( homodimer_with_matches.residue(metalsite_seqpos[2]), metalsite_atom_xyz[5] );
-    metalsite_atom_name[3] = devel::metal_interface::find_closest_atom( homodimer_with_matches.residue(metalsite_seqpos[3]), metalsite_atom_xyz[5] );
-    metalsite_atom_name[4] = devel::metal_interface::find_closest_atom( homodimer_with_matches.residue(metalsite_seqpos[4]), metalsite_atom_xyz[5] );
+    metalsite_atom_name[1] = protocols::metal_interface::find_closest_atom( homodimer_with_matches.residue(metalsite_seqpos[1]), metalsite_atom_xyz[5] );
+    metalsite_atom_name[2] = protocols::metal_interface::find_closest_atom( homodimer_with_matches.residue(metalsite_seqpos[2]), metalsite_atom_xyz[5] );
+    metalsite_atom_name[3] = protocols::metal_interface::find_closest_atom( homodimer_with_matches.residue(metalsite_seqpos[3]), metalsite_atom_xyz[5] );
+    metalsite_atom_name[4] = protocols::metal_interface::find_closest_atom( homodimer_with_matches.residue(metalsite_seqpos[4]), metalsite_atom_xyz[5] );
     metalsite_atom_name[5] = "ZN";
 
     metalsite_atom_xyz[1] = homodimer_with_matches.residue( metalsite_seqpos[1] ).atom( metalsite_atom_name[1] ).xyz();
@@ -162,7 +162,7 @@ public:
 
 	virtual
 	std::string
-	get_name() const { return "Zinc1_HomodimerSetup"; }
+	get_name() const { return "zinc1_homodimer_setup"; }
 
 
 private:
@@ -171,22 +171,21 @@ private:
   //utility::vector1< std::string > metalsite_atom_name_;
 };
 
-typedef utility::pointer::owning_ptr< Zinc1_HomodimerSetup > Zinc1_HomodimerSetupOP;
+typedef utility::pointer::owning_ptr< zinc1_homodimer_setup > zinc1_homodimer_setupOP;
 
 int main( int argc, char* argv[] )
 {
 	try {
-
   basic::options::option.add( scaffold_pdb, "protein monomer for metal-mediated dimerization" ).def("3DE8_A.pdb");
   devel::init(argc, argv);
 
-  protocols::jd2::JobDistributor::get_instance()->go(new Zinc1_HomodimerSetup);
+  protocols::jd2::JobDistributor::get_instance()->go(new zinc1_homodimer_setup);
 
   TR << "************************d**o**n**e**************************************" << std::endl;
 
-	} catch (utility::excn::EXCN_Base const & e ) {
+  } catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
-	}
+  }
 
   return 0;
 }

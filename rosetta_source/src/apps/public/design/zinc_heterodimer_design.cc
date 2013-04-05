@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file apps/pilot/rjha/ZincHeterodimerDesign.cc
+/// @file apps/public/design/zinc_heterodimer_design.cc
 /// @brief This is the application for a metal interface design project.  In its initial conception, the idea was to design an interface between ankyrin and ubc12.  First, RosettaMatch is used to design a histidine/cystine zinc binding site on ankyrin (3 residues).  The fourth residue to coordinate a tetrahedral zinc then comes from ubc12 (present natively).  This metal binding gets the interface going; the protocol searches rigid-body space to try to find a shape-complementary interaction and then designs the interface.
-/// @author Steven Lewis and Ramesh Jha
+/// @author Steven Lewis, Ramesh Jha, Bryan Der
 
 // Unit Headers
 #include <devel/init.hh>
-#include <devel/metal_interface/ZincHeterodimerMover.hh>
-#include <devel/metal_interface/FindClosestAtom.hh>
+#include <protocols/metal_interface/FindClosestAtom.hh>
+#include <protocols/metal_interface/ZincHeterodimerMover.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>
@@ -110,7 +110,7 @@ main( int argc, char* argv[] )
 	core::scoring::ScoreFunctionOP score_fxn = core::scoring::getScoreFunction();
 
 	if(basic::options::option[ basic::options::OptionKeys::in::file::s ].active())
-		utility_exit_with_message("do not use -s with ZincHeterodimerDesign (program uses internally)");
+		utility_exit_with_message("do not use -s with zinc_heterodimer_design (program uses internally)");
 
 	//basic::options::option[ basic::options::OptionKeys::run::skip_set_reasonable_fold_tree ].value(true);
 	//read in our starting structures
@@ -304,8 +304,8 @@ main( int argc, char* argv[] )
 	std::string const & metal_atom_name( combined.residue_type(metal_res).atom_name(1) );
 	core::Vector const & metal_atom_xyz( combined.residue(metal_res).atom(1).xyz() );
 
-	std::string const & partner1_atom_name( devel::metal_interface::find_closest_atom(combined.residue(metal_site[1]), metal_atom_xyz) );
-	std::string const & partner2_atom_name( devel::metal_interface::find_closest_atom(combined.residue(metal_site[p2]), metal_atom_xyz) );
+	std::string const & partner1_atom_name( protocols::metal_interface::find_closest_atom(combined.residue(metal_site[1]), metal_atom_xyz) );
+	std::string const & partner2_atom_name( protocols::metal_interface::find_closest_atom(combined.residue(metal_site[p2]), metal_atom_xyz) );
 
 	//using core::kinematics::Edge;
 	Edge const partner1_to_metal(metal_site[p1_1], metal_res, 1, partner1_atom_name, metal_atom_name, false);
@@ -319,15 +319,16 @@ main( int argc, char* argv[] )
 	basic::options::option[ basic::options::OptionKeys::in::file::s ].value(whole_name.name());
 	//combined.dump_scored_pdb("reread_partner1_metal_partner2.pdb", *score_fxn);
 
-	protocols::moves::MoverOP mover(new devel::metal_interface::ZincHeterodimerMover( metal_site, partner1_to_metal, metal_to_partner2 ));
+	protocols::moves::MoverOP mover(new protocols::metal_interface::ZincHeterodimerMover( metal_site, partner1_to_metal, metal_to_partner2 ));
 
 	protocols::jd2::JobDistributor::get_instance()->go(mover);
 
 	TR << "************************d**o**n**e**********************************" << std::endl;
 
-	} catch ( utility::excn::EXCN_Base const & e ) {
+  } catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
-	}
+  }
+
 
   return 0;
 }

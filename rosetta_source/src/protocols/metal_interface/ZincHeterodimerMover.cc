@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file devel/metal_interface/ZincHeterodimerMover.cc
+/// @file protocols/metal_interface/ZincHeterodimerMover.cc
 /// @brief ZincHeterodimerMover methods implemented - see apps/pilot/rjha/README for details
 /// @author Steven Lewis
 
 
 // Unit Headers
-#include <devel/metal_interface/ZincHeterodimerMover.hh>
+#include <protocols/metal_interface/ZincHeterodimerMover.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>
@@ -38,7 +38,7 @@
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/moves/OutputMovers.hh> //PDBDump for movie
-#include <devel/metal_interface/DualMonteCarlo.hh>
+#include <protocols/moves/DualMonteCarlo.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -74,10 +74,11 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR( "devel.MetalInterface.ZincHeterodimerMover" );
+static basic::Tracer TR( "protocols.metal_interface.ZincHeterodimerMover" );
 
-namespace devel {
+namespace protocols {
 namespace metal_interface {
+
 
 ///@brief local helper function
 void dump_chis( core::conformation::Residue const & res ){
@@ -336,6 +337,5 @@ ZincHeterodimerMover::ZincHeterodimerMover(
 
 ZincHeterodimerMover::~ZincHeterodimerMover(){}
 
-}//MetalInterface
-}//devel
-
+}//metal_interface
+}//protocols

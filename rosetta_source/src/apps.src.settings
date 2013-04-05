@@ -93,6 +93,11 @@ sources = {
 		"sequence_recovery",
 		"beta_peptide_modeling",
 		"supercharge",
+                "zinc_heterodimer_design",
+                #"zinc1_homodimer_setup", #protein interface with one zinc
+                #"zinc1_homodimer_design",
+                "zinc2_homodimer_setup",  #protein interface with two zincs
+                "zinc2_homodimer_design",
 	],
 	"public/docking": [
 		"docking_prepack_protocol",

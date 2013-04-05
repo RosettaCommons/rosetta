@@ -116,7 +116,8 @@ LoopCreationMover::LoopCreationMover():
 	minimize_loops_(true),
 	filter_by_lam_(false),
 	lam_score_cutoff_(0),
-	dump_pdbs_(false)
+	dump_pdbs_(false),
+	asym_size_(0)
 {
 	init();
 }
@@ -159,7 +160,7 @@ protocols::moves::MoverOP
 LoopCreationMover::fresh_instance() const {
 	return protocols::moves::MoverOP( new LoopCreationMover );
 }
-	
+
 std::string
 LoopCreationMover::get_name() const {
 	return "LoopCreationMover";
@@ -181,7 +182,7 @@ LoopCreationMover::apply(
 	using namespace std;
 	using namespace core;
 	using utility::vector1;
-	
+
 	//Sanity checks
 	if(loop_closer_ == 0)
 	{
@@ -206,9 +207,9 @@ LoopCreationMover::apply(
 		//loop_inserter_->loop_anchor(loop_anchor_);
 		loop_anchors_.push_back(loop_inserter_->loop_anchor());
 	}
-	
+
 	protocols::loops::Loop created_loop;
-	
+
 	pose::Pose edit_pose;
 	for(core::Size i=1; i<=loop_anchors_.size(); ++i)
 	{
@@ -225,7 +226,7 @@ LoopCreationMover::apply(
 
 			//copy pose to get a working copy
 			edit_pose = pose;
-			
+
 			//Insert new loop residues
 			TR << "Beginning loop creation attempt " << j << " of " << attempts_per_anchor_
 				<< ", for loop anchor " << i << " of " << loop_anchors_.size() << std::endl;
@@ -361,8 +362,41 @@ LoopCreationMover::apply(
 			set_last_move_status(protocols::moves::FAIL_RETRY);
 			return;
 		}
-		
+
 		update_anchors(loop_anchors_, last_created_loop_, i);
+
+		core::Size temp_asym_size = asym_size_;
+		if(asym_size_ != 0){
+				core::Size cur_anchor=loop_anchors_[i];
+		    temp_asym_size+=last_created_loop_.size();
+        core::Size dup_anchor=cur_anchor+temp_asym_size;
+
+        TR << "first dup anchor is: " << dup_anchor << std::endl;
+        TR << "asym size is: " << temp_asym_size << std::endl;
+        TR << "loop residue size is: " << last_created_loop_.size() << std::endl;
+
+				core::Size last_protein_resnum(0);
+				for(core::Size i(1); i<=pose.total_residue(); ++i) {
+					if( pose.residue(i).is_protein() ) {
+						last_protein_resnum = i;
+					}
+				}
+
+				utility::vector1<core::Size> chain_endings;
+				chain_endings.push_back( cur_anchor + last_created_loop_.size() );
+        while( dup_anchor < last_protein_resnum )//strictly less than so we don't try to build a loop that connects to nothing
+        {
+            TR << "Duplication loop build on anchor " << cur_anchor << " to new anchor: " << dup_anchor << std::endl;
+            copy_last_loop_to_new_anchor(pose, dup_anchor);
+						chain_endings.push_back( dup_anchor + last_created_loop_.size() );
+            dup_anchor+=temp_asym_size;
+
+        }
+
+				pose.conformation().chain_endings( chain_endings );
+
+
+		}
 	}//loop anchors
 }
 
@@ -415,6 +449,10 @@ LoopCreationMover::copy_last_loop_to_new_anchor(
 	runtime_assert((flanking_size*2)+loop_size == modified_size);
 
 	core::pose::Pose loop_pose(pose, modifications_begin-1, modifications_end);
+	for(core::Size i=1; i<=loop_pose.total_residue(); ++i){
+		pose::remove_upper_terminus_type_from_pose_residue(loop_pose, i);
+		pose::remove_lower_terminus_type_from_pose_residue(loop_pose, i);
+	}
 
 	core::id::AtomID_Map< core::id::AtomID > atom_map;
 	atom_map.clear();
@@ -423,11 +461,11 @@ LoopCreationMover::copy_last_loop_to_new_anchor(
 	core::id::AtomID const id1( pose.residue(new_modifications_begin-1).atom_index("CA"), new_modifications_begin-1);
 	core::id::AtomID const id2( loop_pose.residue(1).atom_index("CA"), 1);
 	atom_map[ id2 ] = id1;
-	
+
 	core::id::AtomID const id3( pose.residue(new_modifications_begin-1).atom_index("C"), new_modifications_begin-1);
 	core::id::AtomID const id4( loop_pose.residue(1).atom_index("C"), 1);
 	atom_map[ id4 ] = id3;
-	
+
 	core::id::AtomID const id5( pose.residue(new_modifications_begin-1).atom_index("N"), new_modifications_begin-1);
 	core::id::AtomID const id6( loop_pose.residue(1).atom_index("N"), 1);
 	atom_map[ id6 ] = id5;
@@ -475,7 +513,7 @@ LoopCreationMover::refine_loop(
 	}
 
 	scorefxn_min->set_weight( scoring::chainbreak, 100.0 );//loop should already be closed, so this will just prevent re-breaking by minimization
-	
+
 	//Initialize a mover if we haven't already
 	protocols::simple_moves::PackRotamersMoverOP pack_mover =
 		new protocols::simple_moves::PackRotamersMover;
@@ -483,13 +521,13 @@ LoopCreationMover::refine_loop(
 
 	//Setup task factory for minimization and packing
 	pack::task::TaskFactoryOP task_factory = new pack::task::TaskFactory;
-	
+
 	set<Size> loop_residues;
 	for(Size i=loop.start(); i<=loop.stop(); ++i)
 	{
 		loop_residues.insert(i);
 	}
-	
+
 	//If we're including loop neighbors in packing/redesign then calculate them
 	set<Size> residues_to_pack;
 	if(include_neighbors_)
@@ -497,7 +535,7 @@ LoopCreationMover::refine_loop(
 		string const nb_calc("neighbor_calculator");
 		pose::metrics::CalculatorFactory::Instance().register_calculator( nb_calc,
 			new protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator( loop_residues ) );
-			
+
 		basic::MetricValue< set< Size > > neighbor_mv;
 		pose.metric( nb_calc, "neighbors", neighbor_mv);
 		residues_to_pack = neighbor_mv.value();
@@ -530,17 +568,17 @@ LoopCreationMover::refine_loop(
 	}
 	task_factory->push_back(prevent_packing);
 	task_factory->push_back(repack_res);
-	
+
 	pack_mover->task_factory(task_factory);
 	pack_mover->apply(pose);
-	
+
 	if(minimize_loops_)
 	{
 		core::Size modifications_begin = loop_inserter_->modified_range().first;
 		core::Size modifications_end = loop_inserter_->modified_range().second;
 		protocols::loops::Loop extended_loop(modifications_begin, modifications_end, loop.cut());
 		protocols::loops::set_single_loop_fold_tree(pose, extended_loop);
-		
+
 		kinematics::MoveMapOP movemap = new kinematics::MoveMap;
 		for(core::Size i=extended_loop.start(); i<=extended_loop.stop(); ++i)
 		{
@@ -548,27 +586,27 @@ LoopCreationMover::refine_loop(
 			movemap->set_chi(i, true);
 		}
 		TR.Debug << "Movemap for minimization: " << *movemap << std::endl;
-			
+
 		protocols::simple_moves::MinMoverOP min_mover =
 			new protocols::simple_moves::MinMover(movemap, scorefxn_min, "dfpmin_armijo_nonmonotone", 0.01, false );
-			
+
 		TR << "Score prior to minimization: " << scorefxn_min->score(pose) << std::endl;
 //		pose.dump_pdb("pre_minimization.pdb");
-		
+
 		min_mover->apply(pose);
 	}
-	
+
 //	utility::vector1< bool > residues_to_score(pose.total_residue(), false);
 //	for(core::Size i=loop.start(); i<=loop.stop(); ++i)
 //	{
 //		residues_to_score[i]=true;
 //	}
-//	
+//
 //	core::Real loop_score = scorefxn->get_sub_score(pose, residues_to_score);
 	core::Real loop_score = scorefxn_min->score(pose);
 	return (loop_score/loop.size());
 }
-	
+
 LoopInserterOP
 LoopCreationMover::loop_inserter() const
 {
@@ -590,7 +628,7 @@ LoopCreationMover::parse_my_tag(
 	Pose const & /*pose*/
 ){
 	using namespace std;
-	
+
 	TR << "Parsing tag for LoopCreationMover" << std::endl;
 	if(tag->hasOption("scorefxn")){
 		std::string const scorefxn_name = tag->getOption<std::string>("scorefxn");
@@ -612,7 +650,7 @@ LoopCreationMover::parse_my_tag(
 	else{
 		utility_exit_with_message("loop_inserter tag is required");
 	}
-	
+
 	if(tag->hasOption("loop_closer")){
 		string const loop_closer_name( tag->getOption< string >( "loop_closer" ) );
 		protocols::moves::Movers_map::const_iterator find_mover( movers.find( loop_closer_name ) );
@@ -625,7 +663,7 @@ LoopCreationMover::parse_my_tag(
 	else{
 		utility_exit_with_message("loop_closer tag is required");
 	}
-	
+
 	//****OPTIONAL TAGS****//
 
 	if(tag->hasOption("dump_pdbs")){
@@ -635,7 +673,7 @@ LoopCreationMover::parse_my_tag(
 	if(tag->hasOption("refine")){
 		refine_ = tag->getOption<bool>("refine");
 	}
-	
+
 	if(tag->hasOption("attempts_per_anchor")){
 		attempts_per_anchor_ = tag->getOption< core::Size >("attempts_per_anchor");
 	}
@@ -643,15 +681,15 @@ LoopCreationMover::parse_my_tag(
 	if(tag->hasOption("minimize_loops")){
 		minimize_loops_ = tag->getOption<bool>("minimize_loops");
 	}
-	
+
 	if(tag->hasOption("design_loops")){
 		design_loops_ = tag->getOption<bool>("design_loops");
 	}
-	
+
 	if(tag->hasOption("include_neighbors")){
 		include_neighbors_ = tag->getOption<bool>("include_neighbors");
 	}
-	
+
 	if(tag->hasOption("loop_anchors"))
 	{
 		string const loop_anchors_string = tag->getOption<string>("loop_anchors");
@@ -660,6 +698,11 @@ LoopCreationMover::parse_my_tag(
 		{
 			loop_anchors_.push_back(utility::string2int(loop_anchor_strings[i]));
 		}
+	}
+
+	if(tag->hasOption("asym_size"))
+	{
+		asym_size_ = tag->getOption<core::Size>("asym_size");
 	}
 
 	if(tag->hasOption("filter_by_lam")){

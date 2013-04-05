@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file /devel/*/ZincHeterodimerMover.hh
+/// @file /protocols/metal_interface/ZincHeterodimerMover.hh
 /// @brief ZincHeterodimerMover protocol main mover
 /// @author Steven Lewis
 
-#ifndef INCLUDED_devel_metal_interface_ZincHeterodimerMover_hh
-#define INCLUDED_devel_metal_interface_ZincHeterodimerMover_hh
+#ifndef INCLUDED_protocols_metal_interface_ZincHeterodimerMover_hh
+#define INCLUDED_protocols_metal_interface_ZincHeterodimerMover_hh
 
-#include <devel/metal_interface/ZincHeterodimerMover.fwd.hh>
+#include <protocols/metal_interface/ZincHeterodimerMover.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/Edge.hh> //composition = .hh
@@ -26,10 +26,10 @@
 #include <utility/vector1.hh>
 
 
-namespace devel {
+namespace protocols {
 namespace metal_interface {
 
-///@details ZincHeterodimerMover is a mover for the MetalInterfaceDesign protocol
+///@details ZincHeterodimerMover is a mover for the ZincHeterodimerDesign protocol
 class ZincHeterodimerMover : public protocols::moves::Mover {
 
 public:
@@ -75,7 +75,7 @@ private:
 
 };//end ZincHeterodimerMover
 
-}//namespace metal_interface
-}//namespace devel
+}//metal_interface
+}//protocols
 
-#endif // INCLUDED_devel_MetalInterface_ZincHeterodimerMover_HH
+#endif // INCLUDED_protocols_metal_interface_ZincHeterodimerMover_HH

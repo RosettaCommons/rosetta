@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   devel/metal_interface/MatchGrafter.cc
+/// @file   protocols/metal_interface/MatchGrafter.cc
 /// @brief  Takes a scaffold protein and a match pdb from RosettaMatch, grafts the match onto the protein.  For zinc homodimer design, it can then combine two grafted poses by overlaying the zinc atoms.
 /// @author Bryan Der
 
 
-#include <devel/metal_interface/MatchGrafter.hh>
-#include <devel/metal_interface/FindClosestAtom.hh> // find closest atom to zinc
+#include <protocols/metal_interface/MatchGrafter.hh>
+#include <protocols/metal_interface/FindClosestAtom.hh> // find closest atom to zinc
 
 #include <core/chemical/util.hh>
 #include <core/chemical/VariantType.hh>
@@ -43,12 +43,12 @@
 using basic::T;
 using basic::Error;
 using basic::Warning;
-static basic::Tracer TR( "devel.metal_interface.MatchGrafter" );
+static basic::Tracer TR( "protocols.metal_interface.MatchGrafter" );
 
 typedef core::pose::Pose Pose;
 typedef numeric::xyzVector<core::Real> point;
 
-namespace devel {
+namespace protocols {
 namespace metal_interface {
 
 
@@ -213,5 +213,5 @@ MatchGrafter::ensure_proper_his_tautomers(
 }//ensure_proper_his_tautomers
 
 } // namespace metal_interface
-} // namespace devel
+} // namespace protocols
 

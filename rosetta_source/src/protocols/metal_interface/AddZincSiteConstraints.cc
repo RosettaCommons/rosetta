@@ -6,14 +6,14 @@
 // (C) 199x-2009 Rosetta Commons participating institutions and developers.
 // For more information, see http://www.rosettacommons.org/.
 
-/// @file    devel/metal_interface/AddZincSiteConstraints.cc
+/// @file    protocols/metal_interface/AddZincSiteConstraints.cc
 /// @brief   Adds metal binding site geometry constraints to pose.
 /// @details I typically work with zinc binding sites having tetrahedral coordination geometry, in which case there are 4 distance constraints, 4 angle constraints, 6 tetrahedral constraints, and 4 dihedral constraints.  The code is flexibile enough to accommodate 2, 3, or 4-residue metal binding sites.
 /// @author Bryan Der
 
 // Unit Headers
-#include <devel/metal_interface/AddZincSiteConstraints.hh>
-#include <devel/metal_interface/MetalSiteResidue.hh>
+#include <protocols/metal_interface/AddZincSiteConstraints.hh>
+#include <protocols/metal_interface/MetalSiteResidue.hh>
 
 //Constraint Headers
 #include <core/scoring/constraints/Func.hh>
@@ -49,17 +49,17 @@
 
 typedef numeric::xyzVector<core::Real> point;
 
-static basic::Tracer TR("devel.metal_interface.AddZincSiteConstraints");
+static basic::Tracer TR("protocols.metal_interface.AddZincSiteConstraints");
 static basic::Tracer TR_PYMOL("TR_PYMOL");
 
 using namespace core;
 using core::id::AtomID;
 
-namespace devel {
+namespace protocols {
 namespace metal_interface {
 
-///@details Adds zinc coordination constraints to a pose.  Zinc site should be parsed with devel/metal_interface/ParseMetalSite, and the resulting vector of MetalSiteResidue objects is needed to initialize this class.
-AddZincSiteConstraints::AddZincSiteConstraints( utility::vector1< devel::metal_interface::MetalSiteResidueOP > msr )
+///@details Adds zinc coordination constraints to a pose.  Zinc site should be parsed with protocols/metal_interface/ZincSiteFinder, and the resulting vector of MetalSiteResidue objects is needed to initialize this class.
+AddZincSiteConstraints::AddZincSiteConstraints( utility::vector1< protocols::metal_interface::MetalSiteResidueOP > msr )
 	: msr_(msr)
 {
 }
@@ -586,4 +586,4 @@ AddZincSiteConstraints::output_constraints_file( core::pose::Pose const & pose )
 
 
 } //metal_interface
-} //devel
+} //protocols

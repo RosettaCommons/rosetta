@@ -8,14 +8,14 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 
-/// @file   apps/pilot/bder/Zinc1_HomodimerDesign.cc
-/// @brief  Symmetric design of a zinc-mediated homodimer.  One zinc at the interface.  Gridsearch (or not) of perturbations to the metalsite geometry using rollmoves about axes that pass through zinc.  Metalsite constraints are in place to allow backbone minimization of the designs.  Just make sure that minimization is working, and doesn't give "Inaccurate G!".  This failure to minimize is why I include Zinc1_HomodimerDesign_min.cc as a follow-up protocol.
+/// @file   apps/public/design/zinc1_homodimer_design.cc
+/// @brief  Symmetric design of a zinc-mediated homodimer.  One zinc at the interface.  Gridsearch (or not) of perturbations to the metalsite geometry using rollmoves about axes that pass through zinc.  Metalsite constraints are in place to allow backbone minimization of the designs.
 /// @author Bryan Der
 
 #include <devel/init.hh>
-#include <devel/metal_interface/MetalSiteResidue.hh>
-#include <devel/metal_interface/ZincSiteFinder.hh>
-#include <devel/metal_interface/AddZincSiteConstraints.hh>
+#include <protocols/metal_interface/MetalSiteResidue.hh>
+#include <protocols/metal_interface/ZincSiteFinder.hh>
+#include <protocols/metal_interface/AddZincSiteConstraints.hh>
 
 #include <protocols/anchored_design/InterfaceAnalyzerMover.hh>
 #include <protocols/rigid/RollMover.hh>
@@ -82,7 +82,7 @@ typedef point axis;
 using namespace core;
 using basic::Warning;
 
-static basic::Tracer TR("apps.pilot.bder.Zinc1_HomodimerDesign");
+static basic::Tracer TR("apps.public.design.zinc1_homodimer_design");
 
 basic::options::IntegerOptionKey const lowres_symmetric_design_cycles( "lowres_symmetric_design_cycles" );
 basic::options::IntegerOptionKey const highres_symmetric_design_cycles( "highres_symmetric_design_cycles" );
@@ -92,16 +92,16 @@ basic::options::IntegerOptionKey const nstruct_iterations( "nstruct_iterations" 
 
 
 ///@brief
-class Zinc1_HomodimerDesign : public protocols::moves::Mover {
+class zinc1_homodimer_design : public protocols::moves::Mover {
 public:
-  Zinc1_HomodimerDesign()
+  zinc1_homodimer_design()
   {
   }
-  Zinc1_HomodimerDesign( Size lowres_symmetric_design_cycles, Size highres_symmetric_design_cycles, bool gridsearch_rollmove_angles)
+  zinc1_homodimer_design( Size lowres_symmetric_design_cycles, Size highres_symmetric_design_cycles, bool gridsearch_rollmove_angles)
     : lowres_symmetric_design_cycles_(lowres_symmetric_design_cycles), highres_symmetric_design_cycles_(highres_symmetric_design_cycles), gridsearch_rollmove_angles_(gridsearch_rollmove_angles)
   {
   }
-  virtual ~Zinc1_HomodimerDesign(){};
+  virtual ~zinc1_homodimer_design(){};
 
   virtual void
   apply( Pose & pose ){
@@ -183,7 +183,7 @@ public:
   virtual void
   setup_metalsite( Pose const & pose ) {
     TR << "Parsing metalsite... " << std::endl;
-    devel::metal_interface::ZincSiteFinderOP find_zinc = new devel::metal_interface::ZincSiteFinder();
+    protocols::metal_interface::ZincSiteFinderOP find_zinc = new protocols::metal_interface::ZincSiteFinder();
     msr_ = find_zinc->find_zinc_site(pose);
     TR << "metalsite 1. " << msr_[1]->get_seqpos() << std::endl;
     TR << "metalsite 2. " << msr_[2]->get_seqpos() << std::endl;
@@ -196,7 +196,7 @@ public:
   virtual void
   setup_metalsite_constraints( Pose & pose ) {
     TR << "Adding metalsite constraints..." << std::endl;
-    devel::metal_interface::AddZincSiteConstraintsOP constraints_adder = new devel::metal_interface::AddZincSiteConstraints( msr_ );
+    protocols::metal_interface::AddZincSiteConstraintsOP constraints_adder = new protocols::metal_interface::AddZincSiteConstraints( msr_ );
     //constraints_adder->add_constraints( pose );
 
     //Favor native residue
@@ -476,7 +476,7 @@ public:
 
 	virtual
 	std::string
-	get_name() const { return "Zinc1_HomodimerDesign"; }
+	get_name() const { return "zinc1_homodimer_design"; }
 
 
 
@@ -492,7 +492,7 @@ private:
   Pose /*const*/ starting_centroid_pose_;
   Pose /*const*/ starting_fullatom_pose_;
 
-  utility::vector1< devel::metal_interface::MetalSiteResidueOP > msr_;
+  utility::vector1< protocols::metal_interface::MetalSiteResidueOP > msr_;
   core::pack::task::TaskFactoryCOP taskfactory_;
   core::scoring::symmetry::SymmetricScoreFunctionOP softrep_sym_scorefxn_;
   core::scoring::symmetry::SymmetricScoreFunctionOP score12_sym_scorefxn_;
@@ -533,7 +533,7 @@ private:
 
 };
 
-typedef utility::pointer::owning_ptr< Zinc1_HomodimerDesign > Zinc1_HomodimerDesignOP;
+typedef utility::pointer::owning_ptr< zinc1_homodimer_design > zinc1_homodimer_designOP;
 
 
 int
@@ -548,12 +548,14 @@ main( int argc, char* argv[] )
   option.add( nstruct_iterations, "nstruct_iterations" ).def(1);
 
   devel::init(argc, argv);
-  protocols::jd2::JobDistributor::get_instance()->go(new Zinc1_HomodimerDesign( option[lowres_symmetric_design_cycles].value(), option[highres_symmetric_design_cycles].value(), option[gridsearch_rollmove_angles].value() ));
+  protocols::jd2::JobDistributor::get_instance()->go(new zinc1_homodimer_design( option[lowres_symmetric_design_cycles].value(), option[highres_symmetric_design_cycles].value(), option[gridsearch_rollmove_angles].value() ));
   TR << "************************d**o**n**e**************************************" << std::endl;
 
-	} catch (utility::excn::EXCN_Base const & e ) {
+
+  } catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
-	}
+  }
+
 
   return 0;
 }

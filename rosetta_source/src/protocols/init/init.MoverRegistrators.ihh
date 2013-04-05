@@ -178,7 +178,6 @@ static MoverRegistrator< protein_interface_design::movers::LoopRemodelCreator > 
 static MoverRegistrator< protein_interface_design::movers::MapHotspotCreator > reg_MapHotspotCreator;
 static MoverRegistrator< protein_interface_design::movers::PeptideStapleDesignMoverCreator > reg_PeptideStapleDesignMoverCreator;
 static MoverRegistrator< protein_interface_design::movers::PlacementAuctionMoverCreator > reg_PlacementAuctionMoverCreator;
-static MoverRegistrator< protein_interface_design::movers::DockWithHotspotMoverCreator > reg_DockWithHotspotMoverCreator;
 static MoverRegistrator< protein_interface_design::movers::PlacementMinimizationMoverCreator > reg_PlacementMinimizationMoverCreator;
 static MoverRegistrator< protein_interface_design::movers::PlaceOnLoopCreator > reg_PlaceOnLoopCreator;
 static MoverRegistrator< protein_interface_design::movers::PlaceSimultaneouslyMoverCreator > reg_PlaceSimultaneouslyMoverCreator;
@@ -234,7 +233,6 @@ static MoverRegistrator< simple_moves::ConstraintSetMoverCreator > reg_Constrain
 static MoverRegistrator< simple_moves::ddGCreator> reg_ddGCreator;
 static MoverRegistrator< simple_moves::ExtendedPoseMoverCreator > reg_ExtendedPoseMoverCreator;
 static MoverRegistrator< simple_moves::FavorSequenceProfileCreator > reg_FavorSequenceProfileCreator;
-static MoverRegistrator< simple_moves::FavorSymmetricSequenceCreator > reg_FavorSymmetricSequenceCreator;
 static MoverRegistrator< simple_moves::ForceDisulfidesMoverCreator > reg_ForceDisulfidesMoverCreator;
 static MoverRegistrator< simple_moves::LoadPDBMoverCreator > reg_LoadPDBMoverCreator;
 static MoverRegistrator< simple_moves::LoadUnboundRotMoverCreator > reg_LoadUnboundRotMoverCreator;

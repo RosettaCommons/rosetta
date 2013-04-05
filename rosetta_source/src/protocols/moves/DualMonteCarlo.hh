@@ -12,11 +12,11 @@
 /// @author Steven Lewis
 
 
-#ifndef INCLUDED_devel_metal_interface_DualMonteCarlo_hh
-#define INCLUDED_devel_metal_interface_DualMonteCarlo_hh
+#ifndef INCLUDED_protocols_moves_DualMonteCarlo_hh
+#define INCLUDED_protocols_moves_DualMonteCarlo_hh
 
 // Unit headers
-#include <devel/metal_interface/DualMonteCarlo.fwd.hh>
+#include <protocols/moves/DualMonteCarlo.fwd.hh>
 #include <protocols/moves/MonteCarlo.hh> //composition needs full header (?)
 
 // Project headers
@@ -182,4 +182,4 @@ private:
 } // moves
 } // protocols
 
-#endif //INCLUDED_devel_MetalInterface_DualMonteCarlo_HH
+#endif //INCLUDED_protocols_moves_DualMonteCarlo_HH

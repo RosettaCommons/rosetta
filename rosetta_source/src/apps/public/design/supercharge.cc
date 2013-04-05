@@ -1027,6 +1027,7 @@ public:
 			else if(pose.residue(i).name3() == "GLU") { num_glu++; }
 		}
 		int net_charge = num_arg + num_lys - num_asp - num_glu;
+		TR << outputname_ << "  Net Charge of input structure = " << get_net_charge( starting_pose ) << std::endl;
 		TR << outputname_ << "  R=" << num_arg << ", K=" << num_lys << ", D=" << num_asp << ", E=" << num_glu << std::endl;
 		TR << outputname_ << "  Net Charge = " << net_charge << std::endl;
 

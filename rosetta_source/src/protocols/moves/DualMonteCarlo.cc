@@ -12,7 +12,7 @@
 /// @author Steven Lewis
 
 // Unit Headers
-#include <devel/metal_interface/DualMonteCarlo.hh>
+#include <protocols/moves/DualMonteCarlo.hh>
 #include <protocols/moves/MonteCarlo.hh>
 
 // Project Headers
