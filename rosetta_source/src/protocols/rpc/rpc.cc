@@ -162,10 +162,9 @@ JSON_RPC::JSON_RPC( JSON_RPC const & json_rpc) : ReferenceCount(json_rpc) {
        xmlscript_ = "";
        if( has_value( parsed_json_, "xmlscript" ) ){
          mObject parsed_xmlscript = get_mObject( parsed_json_, "xmlscript" );
-         xmlscript_ = get_string_or_empty( parsed_xmlscript, "contents" );
+         xmlscript_ = get_string_or_empty( parsed_xmlscript, "content" );
+         std::cout << "XML script: " << xmlscript_ << std::endl;
        }
-
-       std::cout << "XML script: " << xmlscript_ << std::endl;
 
        if ( !has_value(parsed_json_, "pdbdata") ){
          throw utility::excn::EXCN_Msg_Exception("RPC calls must provide pdbdata field"); 
@@ -191,12 +190,10 @@ JSON_RPC::JSON_RPC( JSON_RPC const & json_rpc) : ReferenceCount(json_rpc) {
        }
        
        // Load any files that were given as part of this job.
-       //load_new_set_of_virtual_files(  get_mArray(parsed_json_, "user_files") );
-
-
-       
-
-
+       std::cout << "Loading user files: " << std::endl;
+       if ( has_value(parsed_json_, "user_files") ) {
+         load_new_set_of_virtual_files(  get_mArray(parsed_json_, "user_files") );
+       }
     }
     catch( utility::excn::EXCN_Msg_Exception &excn ){
       output_capture_stop();  // Make sure we're catching the following message 
@@ -244,6 +241,10 @@ JSON_RPC::JSON_RPC( JSON_RPC const & json_rpc) : ReferenceCount(json_rpc) {
       
       // this covers a huge variety of possible operations and move movers are plugged into this system by now.
       if( command_ == "xmlscript" ){
+        if( xmlscript_ == "" ){
+            throw utility::excn::EXCN_Msg_Exception("RPC error: XML script is empty! " );
+
+        }
         utility::Inline_File_Provider *provider = utility::Inline_File_Provider::get_instance();
         provider->add_input_file( "script.xml", xmlscript_ );
         protocols::jd2::DockDesignParser ddp;
@@ -316,14 +317,14 @@ JSON_RPC::JSON_RPC( JSON_RPC const & json_rpc) : ReferenceCount(json_rpc) {
       }
       
       // here largely as examples - use XML scripts for this.
-      if( command_ == "relax" ){
-        //protocols::moves::MoverOP protocol = protocols::relax::generate_relax_from_cmd();
-        //protocol->apply( outputpose_ );
-      }
-      if( command_ == "loophash" ){
-        //protocols::loophash::LoopHashRelaxProtocolOP lh_protocol = new protocols::loophash::LoopHashRelaxProtocol( loop_hash_library );
-        //lh_protocol->manual_call( outputpose_ );
-      }
+//        if( command_ == "relax" ){
+//          protocols::moves::MoverOP protocol = protocols::relax::generate_relax_from_cmd();
+//          protocol->apply( outputpose_ );
+//        }
+//        if( command_ == "loophash" ){
+//          protocols::loophash::LoopHashRelaxProtocolOP lh_protocol = new protocols::loophash::LoopHashRelaxProtocol( loop_hash_library );
+//          lh_protocol->manual_call( outputpose_ );
+//        }
     } 
     catch( utility::excn::EXCN_Msg_Exception &excn ){
       std::cerr << "EXCEPTION: " << excn.msg() << std::endl; // print the exception message to the Error stream.
@@ -395,11 +396,16 @@ JSON_RPC::JSON_RPC( JSON_RPC const & json_rpc) : ReferenceCount(json_rpc) {
   }
 
   void JSON_RPC::load_new_set_of_virtual_files( const mArray &json_user_files , bool clear_previous ){
+    std::cerr << __FILE__ << __LINE__ << std::endl;
     utility::Inline_File_Provider *provider = utility::Inline_File_Provider::get_instance();
+    std::cerr << __FILE__ << __LINE__ << std::endl;
     if( clear_previous ) provider->clear_input_files();
+    std::cerr << __FILE__ << __LINE__ << std::endl;
     for( mArray::const_iterator it = json_user_files.begin(); 
          it != json_user_files.end(); ++it ){
+    std::cerr << __FILE__ << __LINE__ << std::endl;
       std::cout << it->type() << std::endl;
+    std::cerr << __FILE__ << __LINE__ << std::endl;
       if( it->type() != obj_type ){
         throw utility::excn::EXCN_Msg_Exception("JSON error: expected an object for user_file member:'");
       }; 
