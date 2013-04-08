@@ -69,22 +69,22 @@ void ifft2(ObjexxFCL::FArray2D< std::complex<double> >  &fX , ObjexxFCL::FArray2
 
 
 ///@brief 3D fft c->c double
-void fft3(ObjexxFCL::FArray3D< std::complex<double> > &X , ObjexxFCL::FArray3D< std::complex<double> > &fX);
+void fft3(ObjexxFCL::FArray3D< std::complex<double> > const &X , ObjexxFCL::FArray3D< std::complex<double> > &fX);
 
 ///@brief 3D inverse fft c->c double
-void ifft3(ObjexxFCL::FArray3D< std::complex<double> > &fX , ObjexxFCL::FArray3D< std::complex<double> > &X);
+void ifft3(ObjexxFCL::FArray3D< std::complex<double> > const &fX , ObjexxFCL::FArray3D< std::complex<double> > &X);
 
 ///@brief 3D fft r->c float
-void fft3(ObjexxFCL::FArray3D< float >  &X , ObjexxFCL::FArray3D< std::complex<double> > &fX);
+void fft3(ObjexxFCL::FArray3D< float >  const &X , ObjexxFCL::FArray3D< std::complex<double> > &fX);
 
 ///@brief 3D fft r->c double
-void fft3(ObjexxFCL::FArray3D< double >  &X , ObjexxFCL::FArray3D< std::complex<double> > &fX);
+void fft3(ObjexxFCL::FArray3D< double >  const &X , ObjexxFCL::FArray3D< std::complex<double> > &fX);
 
 ///@brief 3D inverse ifft c->r float
-void ifft3(ObjexxFCL::FArray3D< std::complex<double> >  &fX , ObjexxFCL::FArray3D< float > &X);
+void ifft3(ObjexxFCL::FArray3D< std::complex<double> > const &fX , ObjexxFCL::FArray3D< float > &X);
 
 ///@brief 3D inverse ifft c->r double
-void ifft3(ObjexxFCL::FArray3D< std::complex<double> >  &fX , ObjexxFCL::FArray3D< double > &X);
+void ifft3(ObjexxFCL::FArray3D< std::complex<double> > const &fX , ObjexxFCL::FArray3D< double > &X);
 
 ///@brief 3D fft c->c double with no static
 void fft3_dynamic(ObjexxFCL::FArray3D< std::complex<double> > &X , ObjexxFCL::FArray3D< std::complex<double> > &fX);

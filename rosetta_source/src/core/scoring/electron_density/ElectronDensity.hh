@@ -266,6 +266,13 @@ public:
 	///   sliding-window/fast scoring
 	void clear_dCCdx_res_cache( core::pose::Pose const &pose );
 
+	void compute_rho(core::pose::Pose const & pose, utility::vector1<core::id::AtomID> const & atom_ids, ObjexxFCL::FArray3D< double > & rho_calc, ObjexxFCL::FArray3D< double > & inv_rho_mask, core::Real const ATOM_MASK_PADDING = 1.5);
+
+	numeric::xyzVector< double > match_fragment(ObjexxFCL::FArray3D< double > const & rho_calc,
+											 ObjexxFCL::FArray3D< double > const & mask,
+											 ObjexxFCL::FArray3D< double > const & rho_obs,
+												core::Real radius = 6.0 );
+
 	/// @brief Get the transformation from indices to Cartesian coords using 'real' origin
 	numeric::xyzVector<core::Real> getTransform() {
 		numeric::xyzVector<core::Real> idxX(  grid[0]-origin[0]+1 , grid[1]-origin[1]+1 , grid[2]-origin[2]+1 ) , cartX;
@@ -339,6 +346,12 @@ public:
 	//////////////////////////////////
 	// raw data pointer
 	inline ObjexxFCL::FArray3D< float > const & data() const { return density; };
+	inline void set_data(ObjexxFCL::FArray3D< double > const & density_in) {
+		assert(density.u1() == density_in.u1());
+		assert(density.u2() == density_in.u2());
+		assert(density.u3() == density_in.u3());
+		for (Size i=0;i<density_in.size(); ++i) density[i] = density_in[i];
+	};
 
 
 	//////////////////////////////////
