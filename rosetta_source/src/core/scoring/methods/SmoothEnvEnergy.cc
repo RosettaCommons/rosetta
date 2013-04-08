@@ -88,6 +88,14 @@ SmoothEnvEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) c
 	potential_.compute_centroid_environment( pose );
 }
 
+///
+void
+SmoothEnvEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const {
+	// compute interpolated number of neighbors at various distance cutoffs
+	pose.update_residue_neighbors();
+	potential_.compute_centroid_environment( pose );
+	potential_.compute_dcentroid_environment( pose );
+}
 
 ///////////////////////////////////////
 //

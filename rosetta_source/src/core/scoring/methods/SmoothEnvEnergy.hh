@@ -60,6 +60,9 @@ public:
 	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
 
 	virtual
+	void setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const;
+
+	virtual
 	void
 	residue_energy(
 		conformation::Residue const & rsd,

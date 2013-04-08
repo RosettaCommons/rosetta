@@ -507,7 +507,7 @@ SigmoidWeightedCenList< numeric::xyzVector< Real > > &
 SmoothEnvPairPotential::nonconst_dcenlist_from_pose( pose::Pose & pose ) const {
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::SIGMOID_WEIGHTED_D_CEN_LIST ) ) {
 		return *( static_cast< SigmoidWeightedCenList< numeric::xyzVector< Real > > * >
-			( pose.data().get_ptr( core::pose::datacache::CacheableDataType::SIGMOID_WEIGHTED_CEN_LIST )() ));
+			( pose.data().get_ptr( core::pose::datacache::CacheableDataType::SIGMOID_WEIGHTED_D_CEN_LIST )() ));
 	}
 	// else
 	SigmoidWeightedCenListVectorOP cenlist = new SigmoidWeightedCenList< numeric::xyzVector< Real > >;
