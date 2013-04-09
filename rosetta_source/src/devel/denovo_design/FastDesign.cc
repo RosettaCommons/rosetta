@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/denovo_design/FastDesign.cc
+/// @file src/devel/denovo_design/FastDesign.cc
 /// @brief The FastDesign
 /// @detailed
 /// @author Tom Linsky
 
 
 //Unit Headers
-#include <protocols/denovo_design/FastDesign.hh>
-#include <protocols/denovo_design/FastDesignCreator.hh>
+#include <devel/denovo_design/FastDesign.hh>
+#include <devel/denovo_design/FastDesignCreator.hh>
 
 //Project Headers
 //#include <protocols/denovo_design/RestrictWorstRegion.hh>
@@ -104,14 +104,14 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("protocols.denovo_design.FastDesign");
+static basic::Tracer TR("devel.denovo_design.FastDesign");
 
 using namespace core;
 using namespace core::io::silent ;
 using io::pdb::dump_pdb;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-namespace protocols {
+namespace devel {
 namespace denovo_design {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -288,13 +288,13 @@ FastDesign::parse_my_tag(
 	for ( core::Size i=1; i<= filter_list.size(); ++i ) {
 		if ( filter_list[i] != "" ) {
 			TR << "Setting up filter " << filter_list[i] << std::endl;
-			filters_.push_back( rosetta_scripts::parse_filter( filter_list[i], filters ) );
+			filters_.push_back( protocols::rosetta_scripts::parse_filter( filter_list[i], filters ) );
 		}
 		}*/
 	/*
 	std::string const design_worst_mover_str( tag->getOption< std::string >( "restrict_worst_mover", "" ) );
 	if ( design_worst_mover_str != "" ) {
-		moves::MoverOP mover = rosetta_scripts::parse_mover( design_worst_mover_str, movers );
+		moves::MoverOP mover = protocols::rosetta_scripts::parse_mover( design_worst_mover_str, movers );
 		assert( utility::pointer::dynamic_pointer_cast< RestrictWorstRegion >( mover ) );
 		worst_region_mover_ = utility::pointer::static_pointer_cast< RestrictWorstRegion >( mover );
 		}*/
@@ -318,7 +318,7 @@ FastDesign::parse_my_tag(
 		if ( filter_name != "" ) {
 			// if the filter is named, add it to the list
 			FilterParams fp;
-			fp.filter = rosetta_scripts::parse_filter( filter_name, filters );
+			fp.filter = protocols::rosetta_scripts::parse_filter( filter_name, filters );
 			if ( sample_type == "low" ) {
 				fp.sample_low = true;
 			} else if ( sample_type == "high" ) {
@@ -436,7 +436,7 @@ void FastDesign::do_minimize(
 
   protocols::simple_moves::MinMoverOP min_mover;
   if ( core::pose::symmetry::is_symmetric( pose ) )  {
-    min_mover = new simple_moves::symmetry::SymMinMover( local_movemap, local_scorefxn, min_type_, tolerance, true );
+    min_mover = new protocols::simple_moves::symmetry::SymMinMover( local_movemap, local_scorefxn, min_type_, tolerance, true );
   } else {
     min_mover = new protocols::simple_moves::MinMover( local_movemap, local_scorefxn, min_type_, tolerance, true );
   }
@@ -517,7 +517,7 @@ void FastDesign::apply( core::pose::Pose & pose ){
 	TaskFactoryOP new_task_factory( new TaskFactory( *old_task_factory ) );
 
 	// create a designaround operation to set all residues within 6 a of the residue in question as designable, everything else repackable.
-	toolbox::task_operations::DesignAroundOperationOP design_around( create_worst_region_operation( pose ) );
+	protocols::toolbox::task_operations::DesignAroundOperationOP design_around( create_worst_region_operation( pose ) );
 
 	// check to see if we are disallowing a residue;
 	// if we are, we should exit with FAIL_DO_NOT_RETRY status since changing a residue can affect montecarlo badly
@@ -538,7 +538,7 @@ void FastDesign::apply( core::pose::Pose & pose ){
 		tmp_task_factory.push_back( design_around );
 	}
 	core::pack::task::PackerTaskOP tmp_task( tmp_task_factory.create_task_and_apply_taskoperations( pose ) );
-	toolbox::task_operations::DesignAroundOperationOP des( new toolbox::task_operations::DesignAroundOperation() );
+	protocols::toolbox::task_operations::DesignAroundOperationOP des( new protocols::toolbox::task_operations::DesignAroundOperation() );
 	des->design_shell( 0 );
 	des->repack_shell( 8 );
 	core::Size des_count( 0 );
@@ -566,7 +566,7 @@ void FastDesign::apply( core::pose::Pose & pose ){
 		core::pack::task::TaskFactory des_task_factory( *old_task_factory );
 		des_task_factory.push_back( des );
 		core::pack::task::PackerTaskOP des_task( des_task_factory.create_task_and_apply_taskoperations( pose ) );
-		simple_moves::PackRotamersMover designer( get_scorefxn(), des_task );
+		protocols::simple_moves::PackRotamersMover designer( get_scorefxn(), des_task );
 		designer.apply( pose );
 		do_minimize( pose, 0.0001, local_movemap, get_scorefxn() );
 		}*/
@@ -627,7 +627,7 @@ void FastDesign::apply( core::pose::Pose & pose ){
 
 	// If symmmetric pose then create a symmeteric rotamers mover
 	if ( core::pose::symmetry::is_symmetric( pose ) )  {
-    pack_full_repack_ = new simple_moves::symmetry::SymPackRotamersMover( local_scorefxn, task );
+    pack_full_repack_ = new protocols::simple_moves::symmetry::SymPackRotamersMover( local_scorefxn, task );
 	}
 	(*local_scorefxn)( pose );
 
@@ -941,7 +941,7 @@ void FastDesign::apply( core::pose::Pose & pose ){
 
 			// If symmmetric pose then create a symmeteric rotamers mover
 			if ( core::pose::symmetry::is_symmetric( pose ) )  {
-				pack_full_repack_ = new simple_moves::symmetry::SymPackRotamersMover( local_scorefxn, task );
+				pack_full_repack_ = new protocols::simple_moves::symmetry::SymPackRotamersMover( local_scorefxn, task );
 			} else {
 				pack_full_repack_ = new protocols::simple_moves::PackRotamersMover( local_scorefxn, task );
 			}
@@ -1150,7 +1150,7 @@ FastDesign::create_packer_task( core::pose::Pose const & pose,
 		}*/
 
 	if( limit_aroma_chi2() ) {
-		toolbox::task_operations::LimitAromaChi2Operation lp_op;
+		protocols::toolbox::task_operations::LimitAromaChi2Operation lp_op;
 		lp_op.apply( pose, *task );
 	}
 
@@ -1159,7 +1159,7 @@ FastDesign::create_packer_task( core::pose::Pose const & pose,
 
 /// @brief checks each mutation at each designable position, and disallows those mutations that hurt the filter score
 utility::vector1< utility::vector1< bool > >
-FastDesign::check_and_disallow_mutations_by_filter( core::pose::Pose const & pose, core::pack::task::PackerTaskOP task, filters::FilterOP filter ) const
+FastDesign::check_and_disallow_mutations_by_filter( core::pose::Pose const & pose, core::pack::task::PackerTaskOP task, protocols::filters::FilterOP filter ) const
 {
 	TR << *task << std::endl;
 	utility::vector1< utility::vector1< bool > > mutations_by_pos;
@@ -1171,7 +1171,7 @@ FastDesign::check_and_disallow_mutations_by_filter( core::pose::Pose const & pos
 		core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter res_iter( task->residue_task( i ).allowed_residue_types_begin() );
 		while ( res_iter != task->residue_task( i ).allowed_residue_types_end() ) {
 			TR << "Testing " << (*res_iter)->name3() << " at pos " << i << std::endl;
-			simple_moves::MutateResidue mut_res( i, (*res_iter)->name() );
+			protocols::simple_moves::MutateResidue mut_res( i, (*res_iter)->name() );
 			core::pose::Pose tmp_pose( pose );
 			mut_res.apply( tmp_pose );
 			core::Real value( filter->report_sm( tmp_pose ) );
@@ -1208,7 +1208,7 @@ FastDesign::check_num_redesigns( core::pose::Pose const & pose, core::Size const
 }
 
 /// @brief Creates and returns a pointer to a taskoperation that designs the worst regions of a protein only. Returns NULL if we don't need the taskop
-toolbox::task_operations::DesignAroundOperationOP
+protocols::toolbox::task_operations::DesignAroundOperationOP
 FastDesign::create_worst_region_operation( core::pose::Pose const & /*pose*/ )
 {
 	/*core::Real const shell_size( 6.0 );
@@ -1246,8 +1246,8 @@ FastDesign::create_worst_region_operation( core::pose::Pose const & /*pose*/ )
 	}
 
 	// now we can just apply a DesignAround operation using the residues that don't match
-	toolbox::task_operations::DesignAroundOperationOP design_around;
-	design_around = new toolbox::task_operations::DesignAroundOperation();
+	protocols::toolbox::task_operations::DesignAroundOperationOP design_around;
+	design_around = new protocols::toolbox::task_operations::DesignAroundOperation();
 	design_around->design_shell( shell_size + 2 );
 	design_around->repack_shell( 1000.0 );
 
@@ -1311,4 +1311,4 @@ FastDesign::create_worst_region_operation( core::pose::Pose const & /*pose*/ )
 
 
 } // namespace denovo_design
-} // namespace protocols
+} // namespace devel

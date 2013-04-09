@@ -7,20 +7,20 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/flxbb/filters/DesignBySecondaryStructure.hh
+/// @file devel/denovo_design/task_operations/DesignBySecondaryStructure.hh
 /// @brief Design residues with secondary structures that don't match the desired secondary structure
 /// specified in the blueprint.
 /// @author Tom Linsky (tlinsky@uw.edu)
 
-#ifndef INCLUDED_protocols_flxbb_filters_designbysecondarystructure_hh
-#define INCLUDED_protocols_flxbb_filters_designbysecondarystructure_hh
+#ifndef INCLUDED_devel_denovo_design_task_operations_designbysecondarystructure_hh
+#define INCLUDED_devel_denovo_design_task_operations_designbysecondarystructure_hh
 
 // unit headers
-#include <devel/denovo_design/DesignBySecondaryStructure.fwd.hh>
+#include <devel/denovo_design/task_operations/DesignBySecondaryStructure.fwd.hh>
 
 // protocol headers
-#include <protocols/denovo_design/filters/PsiPredInterface.fwd.hh>
-#include <devel/denovo_design/HighestEnergyRegion.hh>
+#include <devel/denovo_design/filters/PsiPredInterface.fwd.hh>
+#include <devel/denovo_design/task_operations/HighestEnergyRegion.hh>
 
 
 // project headers
@@ -29,11 +29,11 @@
 // Utility Headers
 #include <core/types.hh>
 
-namespace protocols {
-namespace flxbb {
-namespace filters {
+namespace devel {
+namespace denovo_design {
+namespace task_operations {
 
-class DesignBySecondaryStructureOperation : public flxbb::filters::HighestEnergyRegionOperation {
+class DesignBySecondaryStructureOperation : public HighestEnergyRegionOperation {
 public:
   /// @brief default constructor
   DesignBySecondaryStructureOperation();
@@ -83,8 +83,8 @@ private:
 };
 
 
-} // filters
-} // flxbb
-} // protocols
+} // task_operations
+} // denovo_design
+} // devel
 
 #endif

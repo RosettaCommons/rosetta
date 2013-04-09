@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/denovo_design/RestrictWorstRegion.cc
+/// @file src/devel/denovo_design/RestrictWorstRegion.cc
 /// @brief Tom's Denovo design protocol
 /// @detailed
 /// @author Tom Linsky (tlinsky@gmail.com)
@@ -17,8 +17,8 @@
 #include <devel/denovo_design/RestrictWorstRegionCreator.hh>
 
 // Project Headers
-#include <devel/denovo_design/HighestEnergyRegion.hh>
-#include <devel/denovo_design/DesignBySecondaryStructure.hh>
+#include <devel/denovo_design/task_operations/HighestEnergyRegion.hh>
+#include <devel/denovo_design/task_operations/DesignBySecondaryStructure.hh>
 #include <protocols/jd2/parser/BluePrint.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
@@ -62,11 +62,11 @@
 #include <protocols/boinc/boinc.hh>
 #endif
 
-static basic::Tracer TR("protocols.denovo_design.RestrictWorstRegion");
+static basic::Tracer TR("devel.denovo_design.RestrictWorstRegion");
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-namespace protocols {
+namespace devel {
 namespace denovo_design {
 
 std::string
@@ -156,7 +156,7 @@ RestrictWorstRegion::parse_my_tag(
 	initialize_resfile( tag->getOption< std::string >( "resfile", "" ) );
 	psipred_cmd_ = tag->getOption< std::string >( "psipred_cmd", psipred_cmd_ );
 	blueprint_file_ = tag->getOption< std::string >( "blueprint", blueprint_file_ );
-	task_factory_ = rosetta_scripts::parse_task_operations( tag, data );
+	task_factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data );
 	regions_to_mutate_ = tag->getOption< core::Size >( "num_regions", regions_to_mutate_ );
 	permanent_restriction_ = tag->getOption< core::Size >( "permanent_restriction", permanent_restriction_ );
 	if ( tag->hasOption( "max_trp" ) ) {
@@ -264,20 +264,20 @@ RestrictWorstRegion::apply( core::pose::Pose & pose )
 		 << "; random_mutation: " << metric_stats_[ "random_mutation" ].first << " / " << metric_stats_[ "random_mutation" ].second <<  std::endl;
 	last_type_ = type;
 	++(metric_stats_[ type ].second);
-	flxbb::filters::HighestEnergyRegionOperationOP op( NULL );
+	task_operations::HighestEnergyRegionOperationOP op( NULL );
 	if ( type == "score" ) {
-		op = new flxbb::filters::HighestEnergyRegionOperation();
+		op = new task_operations::HighestEnergyRegionOperation();
 		op->set_scorefxn( scorefxn_ );
 	} else if ( type == "psipred" ) {
-		op = new flxbb::filters::DesignBySecondaryStructureOperation(
+		op = new task_operations::DesignBySecondaryStructureOperation(
 					 blueprint_file_,
 					 psipred_cmd_,
 					 false,
 					 false );
 	} else if ( type == "packstat" ) {
-		op = new flxbb::filters::DesignByPackStatOperation();
+		op = new task_operations::DesignByPackStatOperation();
 	} else if ( type == "random_mutation" ) {
-		op = new flxbb::filters::DesignRandomRegionOperation();
+		op = new task_operations::DesignRandomRegionOperation();
 	} else {
 		utility_exit_with_message( "Bad type specified to RestrictWorstRegion op: " + type_  );
 	}
@@ -305,7 +305,7 @@ RestrictWorstRegion::apply( core::pose::Pose & pose )
 			std::string const allowed_types( residues_allowed( task, residues[residue_idx] ) );
 			char const target_aa( allowed_types[ numeric::random::random_range( 1, allowed_types.size() ) - 1 ] );
 			TR << "Mutating " << pose.residue( residues[residue_idx] ).name1() << residues[residue_idx] << target_aa << std::endl;
-			simple_moves::MutateResidue mut_res( residues[residue_idx], target_aa );
+			protocols::simple_moves::MutateResidue mut_res( residues[residue_idx], target_aa );
 			mut_res.apply( pose );
 			++restrict_count;
 		}
@@ -614,6 +614,6 @@ allow_in_resfile_line( std::string const & cmd_orig, char const aa )
 
 
 } // namespace denovo_design
-} // namespace protocols
+} // namespace devel
 
 

@@ -7,17 +7,17 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/denovo_design/filters/SSShapeComplementarityFilter.hh
+/// @file src/devel/denovo_design/filters/SSShapeComplementarityFilter.hh
 /// @brief Tom's Denovo Protocol. This is freely mutable and used for playing around with stuff
 /// @detailed
 /// @author Tom Linsky (tlinsky@gmail.com)
 
 
-#ifndef INCLUDED_protocols_denovo_design_filters_SSShapeComplementarityFilter_hh
-#define INCLUDED_protocols_denovo_design_filters_SSShapeComplementarityFilter_hh
+#ifndef INCLUDED_devel_denovo_design_filters_SSShapeComplementarityFilter_hh
+#define INCLUDED_devel_denovo_design_filters_SSShapeComplementarityFilter_hh
 
 // Unit headers
-#include <protocols/denovo_design/filters/SSShapeComplementarityFilter.fwd.hh>
+#include <devel/denovo_design/filters/SSShapeComplementarityFilter.fwd.hh>
 
 // Project headers
 #include <protocols/filters/Filter.hh>
@@ -43,7 +43,7 @@
 
 
 
-namespace protocols {
+namespace devel {
 namespace denovo_design {
 namespace filters {
 
@@ -84,19 +84,19 @@ private:   // private functions
 	void
 	setup_sc( core::scoring::sc::ShapeComplementarityCalculator & scc,
 						core::pose::Pose const & pose,
-						fldsgn::topology::SS_BaseCOP const ss ) const;
+						protocols::fldsgn::topology::SS_BaseCOP const ss ) const;
 
 	/// @brief sets up the underlying shapecomplementarity filter to work based on secondary structure elements
 	void
 	setup_sc_hss( core::scoring::sc::ShapeComplementarityCalculator & scc,
 								core::pose::Pose const & pose,
-								fldsgn::topology::SS_Info2 const & ss_info,
-								fldsgn::topology::HSSTripletCOP hss_triplet ) const;
+								protocols::fldsgn::topology::SS_Info2 const & ss_info,
+								protocols::fldsgn::topology::HSSTripletCOP hss_triplet ) const;
 	void
 	setup_sc_hh( core::scoring::sc::ShapeComplementarityCalculator & scc,
 							 core::pose::Pose const & pose,
-							 fldsgn::topology::SS_Info2 const & ss_info,
-							 fldsgn::topology::HelixPairingCOP helix_pair ) const;
+							 protocols::fldsgn::topology::SS_Info2 const & ss_info,
+							 protocols::fldsgn::topology::HelixPairingCOP helix_pair ) const;
 
 	/// @brief Runs the SC calculator to obtain an SC score and an interaction area. Returns a result in the format core::scoring::sc::RESULTS.  Assumes the SC calculator has been initialized and has the correct residues added.
 	core::scoring::sc::RESULTS const &
@@ -108,7 +108,7 @@ private:   // options
 
 private:   // other data
 	/// @brief the blueprint file that contains secondary structure definitions
-	jd2::parser::BluePrintCOP blueprint_;
+	protocols::jd2::parser::BluePrintCOP blueprint_;
 
 };
 
@@ -116,6 +116,6 @@ private:   // other data
 
 } // filters
 } // denovo_design
-} // protocols
+} // devel
 
 #endif

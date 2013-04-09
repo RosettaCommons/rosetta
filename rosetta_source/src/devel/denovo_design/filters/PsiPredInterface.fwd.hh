@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/denovo_design/filters/PsiPredInterface.fwd.hh
+/// @file src/devel/denovo_design/filters/PsiPredInterface.fwd.hh
 /// @brief header file for class which interfaces with psipred
 /// @detailed
 /// @author Tom Linsky (tlinsky@uw.edu)
 
-#ifndef INCLUDED_protocols_denovo_design_filters_psipredinterface_fwd_hh
-#define INCLUDED_protocols_denovo_design_filters_psipredinterface_fwd_hh
+#ifndef INCLUDED_devel_denovo_design_filters_psipredinterface_fwd_hh
+#define INCLUDED_devel_denovo_design_filters_psipredinterface_fwd_hh
 
 // Unit Headers
 
@@ -22,7 +22,7 @@
 // Project headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols {
+namespace devel {
 namespace denovo_design {
 namespace filters {
 

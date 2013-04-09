@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/protocols/denovo_design/FastDesign.fwd.hh
+/// @file   src/devel/denovo_design/FastDesign.fwd.hh
 /// @brief  FastDesign forward header
 /// @author Tom Linsky
 
 
-#ifndef INCLUDED_protocols_denovo_design_FastDesign_fwd_hh
-#define INCLUDED_protocols_denovo_design_FastDesign_fwd_hh
+#ifndef INCLUDED_devel_denovo_design_FastDesign_fwd_hh
+#define INCLUDED_devel_denovo_design_FastDesign_fwd_hh
 
 
 // Utility headers
@@ -21,7 +21,7 @@
 #include <utility/pointer/owning_ptr.fwd.hh>
 
 
-namespace protocols {
+namespace devel {
 namespace denovo_design {
 
 // Forward
@@ -36,6 +36,6 @@ typedef  utility::pointer::access_ptr< FastDesign const >  FastDesignCAP;
 
 
 } // namespace denovo_design
-} // namespace protocols
+} // namespace devel
 
 #endif

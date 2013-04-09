@@ -7,17 +7,17 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/denovo_design/FastDesign.hh
+/// @file src/devel/denovo_design/FastDesign.hh
 /// @brief The FastDesign Protocol
 /// @detailed
 /// @author Tom Linsky
 
 
-#ifndef INCLUDED_protocols_denovo_design_FastDesign_hh
-#define INCLUDED_protocols_denovo_design_FastDesign_hh
+#ifndef INCLUDED_devel_denovo_design_FastDesign_hh
+#define INCLUDED_devel_denovo_design_FastDesign_hh
 
 // Unit headers
-#include <protocols/denovo_design/FastDesign.fwd.hh>
+#include <devel/denovo_design/FastDesign.fwd.hh>
 #include <protocols/relax/RelaxProtocolBase.hh>
 
 // Protocol headers
@@ -43,7 +43,7 @@
 
 
 
-namespace protocols {
+namespace devel {
 namespace denovo_design {
 
 struct FilterParams {
@@ -55,7 +55,7 @@ struct FilterParams {
 		tolerance = 0.0;
 		sample_low = true;
 	}
-	filters::FilterOP filter;
+	protocols::filters::FilterOP filter;
 	bool use_tolerance;
 	bool use_threshold;
 	core::Real threshold;
@@ -80,7 +80,7 @@ struct RelaxScriptCommand {
 	core::Size  nparams;
 };
 
-class FastDesign : public relax::RelaxProtocolBase {
+class FastDesign : public protocols::relax::RelaxProtocolBase {
 public:
 
 	/// @brief default constructor
@@ -157,7 +157,7 @@ private:
 
 	/// @brief checks each mutation at each designable position, and disallows those mutations that hurt the filter score
 	utility::vector1< utility::vector1< bool > >
-	check_and_disallow_mutations_by_filter( core::pose::Pose const & pose, core::pack::task::PackerTaskOP task, filters::FilterOP filter ) const;
+	check_and_disallow_mutations_by_filter( core::pose::Pose const & pose, core::pack::task::PackerTaskOP task, protocols::filters::FilterOP filter ) const;
 
 
 	/// @brief increments the number of times a particular residue (and aa) have been designed on
@@ -167,7 +167,7 @@ private:
 	bool check_num_redesigns( core::pose::Pose const & pose, core::Size const seqpos ) const;
 
 	/// @brief Creates and returns a pointer to a taskoperation that designs the worst regions of a protein only. Returns NULL if we don't need the taskop
-	toolbox::task_operations::DesignAroundOperationOP
+	protocols::toolbox::task_operations::DesignAroundOperationOP
 	create_worst_region_operation( core::pose::Pose const & pose );
 
 private:   // options
@@ -261,7 +261,7 @@ private:   // other data
 
 
 
-}
-} // protocols
+} // denovo_design
+} // devel
 
 #endif

@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/protocols/denovo_design/filters/PsiPredInterface.cc
+/// @file   src/devel/denovo_design/filters/PsiPredInterface.cc
 /// @brief  Interface to PsiPred for secondary structure prediction
 /// @author Tom Linsky
 
 // unit headers
-#include <protocols/denovo_design/filters/PsiPredInterface.hh>
+#include <devel/denovo_design/filters/PsiPredInterface.hh>
 
 // package headers
 
@@ -30,9 +30,9 @@
 
 // C++ headers
 
-static basic::Tracer TR("protocols.denovo_design.filters.psipredinterface");
+static basic::Tracer TR("devel.denovo_design.filters.psipredinterface");
 
-namespace protocols {
+namespace devel {
 namespace denovo_design {
 namespace filters {
 

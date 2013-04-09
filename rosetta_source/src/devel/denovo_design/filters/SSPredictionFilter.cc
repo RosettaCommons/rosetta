@@ -7,17 +7,17 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/denovo_design/filters/SSPredictionFilter.cc
+/// @file src/devel/denovo_design/filters/SSPredictionFilter.cc
 /// @brief Filter to determine agreement with SSPrediction for secondary structure prediction
 /// @detailed
 /// @author Tom Linsky (tlinsky@uw.edu)
 
 // unit headers
-#include <protocols/denovo_design/filters/SSPredictionFilter.hh>
-#include <protocols/denovo_design/filters/SSPredictionFilterCreator.hh>
+#include <devel/denovo_design/filters/SSPredictionFilter.hh>
+#include <devel/denovo_design/filters/SSPredictionFilterCreator.hh>
 
 // package headers
-#include <protocols/denovo_design/filters/PsiPredInterface.hh>
+#include <devel/denovo_design/filters/PsiPredInterface.hh>
 
 // project headers
 #include <core/pose/PDBInfo.hh>
@@ -34,9 +34,9 @@
 #include <fstream>
 #include <cstdlib>
 
-static basic::Tracer TR("protocols.denovo_design.filters.SSPredictionfilter");
+static basic::Tracer TR("devel.denovo_design.filters.SSPredictionfilter");
 
-namespace protocols {
+namespace devel {
 namespace denovo_design {
 namespace filters {
 
@@ -192,9 +192,9 @@ SSPredictionFilter::compute( core::pose::Pose const & pose ) const {
 //parse the rosetta scripts xml
 void SSPredictionFilter::parse_my_tag(
 	utility::tag::TagPtr const tag,
-	moves::DataMap &,
+	protocols::moves::DataMap &,
 	protocols::filters::Filters_map const &,
-	moves::Movers_map const &,
+	protocols::moves::Movers_map const &,
 	core::pose::Pose const & ){
 	threshold_ = tag->getOption< core::Real >( "threshold", threshold_ );
 	use_probability_ = tag->getOption< bool >( "use_probability", use_probability_ );
@@ -209,7 +209,7 @@ void SSPredictionFilter::parse_my_tag(
 
 	// now that cmd is set, create the psipred interface
 	if ( use_svm_ ) {
-		ss_predictor_ = new ss_prediction::SS_predictor( "HLE" );
+		ss_predictor_ = new protocols::ss_prediction::SS_predictor( "HLE" );
 	} else {
 		psipred_interface_ = new PsiPredInterface( cmd_ );
 	}

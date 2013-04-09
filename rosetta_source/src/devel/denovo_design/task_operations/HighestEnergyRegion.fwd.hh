@@ -7,19 +7,19 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/flxbb/filters/HighestEnergyRegion.fwd.hh
+/// @file devel/denovo_design/task_operations/HighestEnergyRegion.fwd.hh
 /// @brief Restrict design to residues in regions with poor total energy
 /// @author Tom Linsky (tlinsky@uw.edu)
 
-#ifndef INCLUDED_protocols_flxbb_filters_highestenergyregion_fwd_hh
-#define INCLUDED_protocols_flxbb_filters_highestenergyregion_fwd_hh
+#ifndef INCLUDED_devel_denovo_design_task_operations_highestenergyregion_fwd_hh
+#define INCLUDED_devel_denovo_design_task_operations_highestenergyregion_fwd_hh
 
 // utilty headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols {
-namespace flxbb {
-namespace filters {
+namespace devel {
+namespace denovo_design {
+namespace task_operations {
 
   // Forward declaration
   class HighestEnergyRegionOperation;

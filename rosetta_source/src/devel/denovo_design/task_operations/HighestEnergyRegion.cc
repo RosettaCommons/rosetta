@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/flxbb/filters/HighestEnergyRegion.cc
+/// @file devel/denovo_design/task_operations/HighestEnergyRegion.cc
 /// @brief Design residue patches with worst energy
 /// @author Tom Linsky (tlinsky@uw.edu)
 
 // unit headers
-#include <devel/denovo_design/HighestEnergyRegion.hh>
-#include <devel/denovo_design/HighestEnergyRegionCreator.hh>
+#include <devel/denovo_design/task_operations/HighestEnergyRegion.hh>
+#include <devel/denovo_design/task_operations/HighestEnergyRegionCreator.hh>
 
 // package headers
-#include <protocols/denovo_design/filters/PsiPredInterface.hh>
+#include <devel/denovo_design/filters/PsiPredInterface.hh>
 #include <protocols/flxbb/utility.hh>
 
 // project headers
@@ -41,11 +41,11 @@
 #include <numeric/random/random.hh>
 #include <utility/tag/Tag.hh>
 
-static basic::Tracer TR( "protocols.flxbb.filters.HighestEnergyRegion" );
+static basic::Tracer TR( "devel.denovo_design.task_operations.HighestEnergyRegion" );
 
-namespace protocols {
-namespace flxbb {
-namespace filters {
+namespace devel {
+namespace denovo_design {
+namespace task_operations {
 
 // default constructor
 HighestEnergyRegionOperation::HighestEnergyRegionOperation()
@@ -342,7 +342,7 @@ DesignByPackStatOperation::get_residues_to_design( core::pose::Pose const & pose
 {
 	// check for calculator; create if it doesn't exist
 	if ( ! core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "PackStat" ) ) {
-		toolbox::pose_metric_calculators::PackstatCalculator calculator;
+		protocols::toolbox::pose_metric_calculators::PackstatCalculator calculator;
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( "PackStat", calculator.clone() );
 	}
 
@@ -357,7 +357,7 @@ DesignByPackStatOperation::get_residues_to_design( core::pose::Pose const & pose
 	}
 
 	// compute SASA and exclude surface-accessible residues.
-	toolbox::SelectResiduesByLayer srbl( true, true, true );
+	protocols::toolbox::SelectResiduesByLayer srbl( true, true, true );
 	srbl.compute( pose, pose.secstruct() );
 
 	// sort the vector based on the psipred probability

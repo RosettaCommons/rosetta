@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/denovo_design/filters/SSShapeComplementarityFilter.cc
+/// @file src/devel/denovo_design/filters/SSShapeComplementarityFilter.cc
 /// @brief Tom's Denovo design protocol
 /// @detailed
 /// @author Tom Linsky (tlinsky@gmail.com)
 
 // Unit headers
-#include <protocols/denovo_design/filters/SSShapeComplementarityFilter.hh>
-#include <protocols/denovo_design/filters/SSShapeComplementarityFilterCreator.hh>
+#include <devel/denovo_design/filters/SSShapeComplementarityFilter.hh>
+#include <devel/denovo_design/filters/SSShapeComplementarityFilterCreator.hh>
 
 // Protocol Headers
 
@@ -54,11 +54,11 @@
 #endif
 
 
-static basic::Tracer TR("protocols.denovo_design.SSShapeComplementarityFilter");
+static basic::Tracer TR("devel.denovo_design.SSShapeComplementarityFilter");
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-namespace protocols {
+namespace devel {
 namespace denovo_design {
 namespace filters {
 
@@ -125,7 +125,7 @@ SSShapeComplementarityFilter::parse_my_tag(
 {
 	std::string const bp_filename( tag->getOption< std::string >( "blueprint", "" ) );
 	if ( bp_filename != "" ) {
-		blueprint_ = new jd2::parser::BluePrint( bp_filename );
+		blueprint_ = new protocols::jd2::parser::BluePrint( bp_filename );
 		if ( ! blueprint_ ) {
 			utility_exit_with_message( "Error reading blueprint file." );
 		}
@@ -156,9 +156,9 @@ SSShapeComplementarityFilter::report_sm( core::pose::Pose const & pose ) const
 	}
 	scc.Reset();
 
-	fldsgn::topology::SS_Info2_OP ss_info;
+	protocols::fldsgn::topology::SS_Info2_OP ss_info;
 	if ( blueprint_ ) {
-		ss_info = new fldsgn::topology::SS_Info2( pose, blueprint_->secstruct() );
+		ss_info = new protocols::fldsgn::topology::SS_Info2( pose, blueprint_->secstruct() );
 	} else {
 		core::scoring::dssp::Dssp dssp( pose );
 		std::string const & dssp_ss( dssp.get_dssp_secstruct() );
@@ -171,7 +171,7 @@ SSShapeComplementarityFilter::report_sm( core::pose::Pose const & pose ) const
 			}
 		}
 
-		ss_info = new fldsgn::topology::SS_Info2( pose, dssp.get_dssp_secstruct() );
+		ss_info = new protocols::fldsgn::topology::SS_Info2( pose, dssp.get_dssp_secstruct() );
 	}
 
 	// we will average out the shape complementarity from Helices to the rest of the protein and loops to the rest of the protein
@@ -212,7 +212,7 @@ SSShapeComplementarityFilter::report_sm( core::pose::Pose const & pose ) const
 		helix_string = detect_helix_pairings( pose, ss_info );
 		TR << "Helix_string=" << helix_string << std::endl;
 	}
-	fldsgn::topology::HelixPairings helix_pairs( fldsgn::topology::HelixPairingSet( helix_string ).helix_pairings() );
+	protocols::fldsgn::topology::HelixPairings helix_pairs( protocols::fldsgn::topology::HelixPairingSet( helix_string ).helix_pairings() );
 	for ( core::Size i=1; i<=helix_pairs.size(); ++i ) {
 		setup_sc_hh( scc, pose, *ss_info, helix_pairs[i] );
 
@@ -234,7 +234,7 @@ SSShapeComplementarityFilter::report_sm( core::pose::Pose const & pose ) const
 		hss_string = detect_hss_triplets( pose, ss_info );
 		TR << "HSS string = " << hss_string << std::endl;
 	}
-	fldsgn::topology::HSSTriplets hss_triplets( fldsgn::topology::HSSTripletSet( hss_string ).hss_triplets() );
+	protocols::fldsgn::topology::HSSTriplets hss_triplets( protocols::fldsgn::topology::HSSTripletSet( hss_string ).hss_triplets() );
 	for ( core::Size i=1; i<=hss_triplets.size(); ++i ) {
 		setup_sc_hss( scc, pose, *ss_info, hss_triplets[i] );
 
@@ -271,7 +271,7 @@ SSShapeComplementarityFilter::apply( core::pose::Pose const & pose ) const
 void
 SSShapeComplementarityFilter::setup_sc( core::scoring::sc::ShapeComplementarityCalculator & scc,
 																				core::pose::Pose const & pose,
-																				fldsgn::topology::SS_BaseCOP const ss ) const
+																				protocols::fldsgn::topology::SS_BaseCOP const ss ) const
 {
 	utility::vector1< core::Size > set1, set2;
 	// set1 is the helix
@@ -300,21 +300,21 @@ SSShapeComplementarityFilter::setup_sc( core::scoring::sc::ShapeComplementarityC
 void
 SSShapeComplementarityFilter::setup_sc_hss( core::scoring::sc::ShapeComplementarityCalculator & scc,
 																						core::pose::Pose const & pose,
-																						fldsgn::topology::SS_Info2 const & ss_info,
-																						fldsgn::topology::HSSTripletCOP hss_triplet ) const
+																						protocols::fldsgn::topology::SS_Info2 const & ss_info,
+																						protocols::fldsgn::topology::HSSTripletCOP hss_triplet ) const
 {
 	utility::vector1< core::Size > set1, set2;
 	// set 1 is the helix
-	fldsgn::topology::HelixCOP const helix( ss_info.helix( hss_triplet->helix() ) );
+	protocols::fldsgn::topology::HelixCOP const helix( ss_info.helix( hss_triplet->helix() ) );
 	for ( core::Size i=helix->begin(); i<=helix->end(); ++i ) {
 		set1.push_back( i );
 	}
 
-	fldsgn::topology::StrandCOP const strand( ss_info.strand( hss_triplet->strand1() ) );
+	protocols::fldsgn::topology::StrandCOP const strand( ss_info.strand( hss_triplet->strand1() ) );
 	for ( core::Size i=strand->begin(); i<=strand->end(); ++i ) {
 		set2.push_back( i );
 	}
-	fldsgn::topology::StrandCOP const strand2( ss_info.strand( hss_triplet->strand2() ) );
+	protocols::fldsgn::topology::StrandCOP const strand2( ss_info.strand( hss_triplet->strand2() ) );
 	for ( core::Size i=strand2->begin(); i<=strand2->end(); ++i ) {
 		set2.push_back( i );
 	}
@@ -336,17 +336,17 @@ SSShapeComplementarityFilter::setup_sc_hss( core::scoring::sc::ShapeComplementar
 void
 SSShapeComplementarityFilter::setup_sc_hh( core::scoring::sc::ShapeComplementarityCalculator & scc,
 																					 core::pose::Pose const & pose,
-																					 fldsgn::topology::SS_Info2 const & ss_info,
-																					 fldsgn::topology::HelixPairingCOP helix_pair ) const
+																					 protocols::fldsgn::topology::SS_Info2 const & ss_info,
+																					 protocols::fldsgn::topology::HelixPairingCOP helix_pair ) const
 {
 	utility::vector1< core::Size > set1, set2;
 	// set 1 is helix1, set2 is helix2
-	fldsgn::topology::HelixCOP const helix( ss_info.helix( helix_pair->h1() ) );
+	protocols::fldsgn::topology::HelixCOP const helix( ss_info.helix( helix_pair->h1() ) );
 	for ( core::Size i=helix->begin(); i<=helix->end(); ++i ) {
 		set1.push_back( i );
 	}
 
-	fldsgn::topology::HelixCOP const helix2( ss_info.helix( helix_pair->h2() ) );
+	protocols::fldsgn::topology::HelixCOP const helix2( ss_info.helix( helix_pair->h2() ) );
 	for ( core::Size i=helix2->begin(); i<=helix2->end(); ++i ) {
 		set2.push_back( i );
 	}
@@ -411,6 +411,6 @@ SSShapeComplementarityFilter::get_sc_and_area( core::scoring::sc::ShapeComplemen
 
 } // namespace filters
 } // namespace denovo_design
-} // namespace protocols
+} // namespace devel
 
 

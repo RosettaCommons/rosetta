@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/flxbb/filters/HighestEnergyRegionCreator.cc
-/// @brief Design residues that make up the highest-energy regions in a protein
+/// @file devel/denovo_design/task_operations/DesignBySecondaryStructureCreator.cc
+/// @brief Design residues that don't match the predicted secondary structure.
 /// @author Tom Linsky (tlinsky@uw.edu)
 
-#ifndef INCLUDED_protocols_flxbb_filters_highestenergyregionoperationcreator_hh
-#define INCLUDED_protocols_flxbb_filters_highestenergyregionoperationcreator_hh
+#ifndef INCLUDED_devel_denovo_design_task_operations_designbysecondarystructurecreator_hh
+#define INCLUDED_devel_denovo_design_task_operations_designbysecondarystructurecreator_hh
 
 // unit headers
 
@@ -21,17 +21,11 @@
 // project headers
 #include <core/pack/task/operation/TaskOperationCreator.hh>
 
-namespace protocols {
-namespace flxbb {
-namespace filters {
+namespace devel {
+namespace denovo_design {
+namespace task_operations {
 
-class HighestEnergyRegionOperationCreator : public core::pack::task::operation::TaskOperationCreator {
-public:
-  virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
-  virtual std::string keyname() const;
-};
-
-class DesignByResidueCentralityOperationCreator : public core::pack::task::operation::TaskOperationCreator {
+class DesignBySecondaryStructureOperationCreator : public core::pack::task::operation::TaskOperationCreator {
 public:
   virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
   virtual std::string keyname() const;

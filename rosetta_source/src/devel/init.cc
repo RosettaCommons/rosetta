@@ -27,6 +27,7 @@
 //#include <devel/constrained_sequence_design/SequenceConstraintFactory.hh>
 
 //mover creators
+#include <devel/denovo_design/FastDesignCreator.hh>
 #include <devel/enzdes/EnzdesRemodelMoverCreator.hh>
 #include <devel/loop_creation/LoopCreationMoverCreator.hh>
 #include <devel/loop_creation/LoophashLoopInserterCreator.hh>
@@ -48,6 +49,8 @@
 #include <devel/splice/SpliceCreator.hh> //moved into devel due to release embargo
 
 // Filter creators
+#include <devel/denovo_design/filters/SSPredictionFilterCreator.hh>
+#include <devel/denovo_design/filters/SSShapeComplementarityFilterCreator.hh>
 #include <devel/matdes/OligomericAverageDegreeFilterCreator.hh>
 #include <devel/matdes/SymUnsatHbondFilterCreator.hh>
 #include <devel/matdes/AverageInterfaceEnergyFilterCreator.hh>
@@ -85,6 +88,8 @@
 namespace devel {
 
 // Mover creators
+static protocols::moves::MoverRegistrator< denovo_design::FastDesignCreator > reg_FastDesignCreator;
+
 protocols::moves::MoverRegistrator< enzdes::EnzdesRemodelMoverCreator > reg_EnzdesRemodelMoverCreator;
 protocols::moves::MoverRegistrator< vardist_solaccess::LoadVarSolDistSasaCalculatorMoverCreator > reg_LoadVarSolDistSasaCalculatorMoverCreator;
 protocols::moves::MoverRegistrator< devel::znhash::InsertZincCoordinationRemarkLinesCreator > reg_InsertZincCoordinationRemarkLinesCreator;
@@ -118,6 +123,8 @@ static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::Ret
 static core::pack::task::operation::TaskOperationRegistrator< devel::splice::RestrictToAlignedSegmentsOperationCreator > RestrictToAlignedSegmentsCreator_registrator; //moved into devel due to release embargo
 
 // Filter creators
+static protocols::filters::FilterRegistrator< denovo_design::filters::SSPredictionFilterCreator > reg_SSPredictionFilterCreator;
+static protocols::filters::FilterRegistrator< denovo_design::filters::SSShapeComplementarityFilterCreator > reg_SSShapeComplementarityFilterCreator;
 static protocols::filters::FilterRegistrator< devel::matdes::OligomericAverageDegreeFilterCreator > OligomericAverageDegreeFilterCreator_registrator;
 static protocols::filters::FilterRegistrator< devel::matdes::SymUnsatHbondFilterCreator > SymUnsatHbondFilterCreator_registrator;
 static protocols::filters::FilterRegistrator< devel::matdes::AverageInterfaceEnergyFilterCreator > AverageInterfaceEnergyFilterCreator_registrator;

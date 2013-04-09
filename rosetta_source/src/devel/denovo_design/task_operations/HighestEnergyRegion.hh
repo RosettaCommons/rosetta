@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/flxbb/filters/HighestEnergyRegion.hh
+/// @file devel/denovo_design/task_operations/HighestEnergyRegion.hh
 /// @brief Design regions with low per-residue energy
 /// @author Tom Linsky (tlinsky@uw.edu)
 
-#ifndef INCLUDED_protocols_flxbb_filters_highestenergyregionoperation_hh
-#define INCLUDED_protocols_flxbb_filters_highestenergyregionoperation_hh
+#ifndef INCLUDED_devel_denovo_design_task_operations_highestenergyregionoperation_hh
+#define INCLUDED_devel_denovo_design_task_operations_highestenergyregionoperation_hh
 
 // unit headers
-#include <devel/denovo_design/HighestEnergyRegion.fwd.hh>
+#include <devel/denovo_design/task_operations/HighestEnergyRegion.fwd.hh>
 // protocol headers
 
 // project headers
@@ -31,9 +31,9 @@
 // Utility Headers
 #include <core/types.hh>
 
-namespace protocols {
-namespace flxbb {
-namespace filters {
+namespace devel {
+namespace denovo_design {
+namespace task_operations {
 
 class HighestEnergyRegionOperation : public core::pack::task::operation::TaskOperation {
 public:
@@ -174,8 +174,8 @@ private:
 };
 
 
-} // filters
-} // flxbb
-} // protocols
+} // task_operations
+} // denovo_design
+} // devel
 
 #endif

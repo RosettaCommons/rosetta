@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/denovo_design/RestrictWorstRegion.hh
+/// @file src/devel/denovo_design/RestrictWorstRegion.hh
 /// @brief Tom's Denovo Protocol. This is freely mutable and used for playing around with stuff
 /// @detailed
 /// @author Tom Linsky (tlinsky@gmail.com)
 
 
-#ifndef INCLUDED_protocols_denovo_design_RestrictWorstRegion_hh
-#define INCLUDED_protocols_denovo_design_RestrictWorstRegion_hh
+#ifndef INCLUDED_devel_denovo_design_RestrictWorstRegion_hh
+#define INCLUDED_devel_denovo_design_RestrictWorstRegion_hh
 
 // Unit headers
 #include <devel/denovo_design/RestrictWorstRegion.fwd.hh>
@@ -44,7 +44,7 @@
 
 
 
-namespace protocols {
+namespace devel {
 namespace denovo_design {
 
 class RestrictWorstRegion : public protocols::moves::Mover {
@@ -175,6 +175,6 @@ std::string
 allow_in_resfile_line( std::string const & cmd_orig, char const aa );
 
 }
-} // protocols
+} // devel
 
 #endif

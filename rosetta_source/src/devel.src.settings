@@ -28,9 +28,17 @@ sources = {
 		"minimalCstRelaxUtil",
 	],
         "devel/denovo_design": [
+                "FastDesign",
+                "RestrictWorstRegion",
+        ],
+        "devel/denovo_design/filters": [
+                "PsiPredInterface",
+                "SSPredictionFilter",
+		"SSShapeComplementarityFilter",
+        ],
+        "devel/denovo_design/task_operations": [
                 "DesignBySecondaryStructure",
                 "HighestEnergyRegion",
-                "RestrictWorstRegion",
         ],
 	"devel/denovo_protein_design": [
 		"CreateStartingStructureMover",

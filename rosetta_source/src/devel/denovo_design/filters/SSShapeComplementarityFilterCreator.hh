@@ -6,36 +6,32 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+/// @file    src/devel/denovo_design/filters/SSShapeComplementarityFilterCreator.fwd.hh
+/// @brief   Creator for Tom's denovo protocol
+/// @author  Tom Linsky (tlinsky@uw.edu)
 
-/// @file src/protocols/denovo_design/filters/SSPredictionFilterCreator.hh
-/// @brief header file for filter creator to determine agreement with psipred for secondary structure prediction
-/// @detailed
-/// @author Tom Linsky (tlinsky@uw.edu)
-
-#ifndef INCLUDED_protocols_denovo_design_filters_sspredictionfiltercreator_hh
-#define INCLUDED_protocols_denovo_design_filters_sspredictionfiltercreator_hh
-
-// Unit Headers
-#include <protocols/denovo_design/filters/SSPredictionFilter.fwd.hh>
+#ifndef INCLUDED_devel_denovo_design_filters_SSShapeComplementarityFilterCreator_hh
+#define INCLUDED_devel_denovo_design_filters_SSShapeComplementarityFilterCreator_hh
 
 // Project headers
-#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/filters/FilterCreator.hh>
 
-namespace protocols {
+namespace devel {
 namespace denovo_design {
 namespace filters {
 
-class SSPredictionFilterCreator : public protocols::filters::FilterCreator
-{
+class SSShapeComplementarityFilterCreator : public protocols::filters::FilterCreator {
+
 public:
 	virtual protocols::filters::FilterOP create_filter() const;
 	virtual std::string keyname() const;
-}; //SSPredictionFilterCreator
+	static  std::string filter_name();
 
-//namespaces
+};
+
 }
 }
 }
+
 
 #endif

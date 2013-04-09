@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/flxbb/filters/DesignBySecondaryStructure.cc
+/// @file devel/flxbb/filters/DesignBySecondaryStructure.cc
 /// @brief Design residues that don't match the predicted secondary structure.
 /// @author Tom Linsky (tlinsky@uw.edu)
 
 // unit headers
-#include <devel/denovo_design/DesignBySecondaryStructure.hh>
-#include <devel/denovo_design/DesignBySecondaryStructureCreator.hh>
+#include <devel/denovo_design/task_operations/DesignBySecondaryStructure.hh>
+#include <devel/denovo_design/task_operations/DesignBySecondaryStructureCreator.hh>
 
 // package headers
-#include <protocols/denovo_design/filters/PsiPredInterface.hh>
+#include <devel/denovo_design/filters/PsiPredInterface.hh>
 #include <protocols/flxbb/utility.hh>
 #include <protocols/moves/DsspMover.hh>
 
@@ -34,11 +34,11 @@
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 
-static basic::Tracer TR( "protocols.flxbb.filters.DesignBySecondaryStructure" );
+static basic::Tracer TR( "devel.denovo_design.task_operations.DesignBySecondaryStructure" );
 
-namespace protocols {
-namespace flxbb {
-namespace filters {
+namespace devel {
+namespace denovo_design {
+namespace task_operations {
 	// helper functions
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -135,7 +135,7 @@ DesignBySecondaryStructureOperation::get_residues_to_design( core::pose::Pose co
 	std::string wanted_ss( blueprint_ss_ );
 	// if a blueprint is not specified, use DSSP to determine pose secondary structure.
 	if ( wanted_ss == "" ) {
-		moves::DsspMover dssp;
+		protocols::moves::DsspMover dssp;
 		core::pose::Pose posecopy( pose );
 		dssp.apply( posecopy );
 		wanted_ss = posecopy.secstruct();
@@ -202,7 +202,7 @@ DesignBySecondaryStructureOperation::apply( Pose const & pose, core::pack::task:
 	std::string wanted_ss( blueprint_ss_ );
 	if ( wanted_ss  == "" ) {
 		core::pose::Pose posecopy( pose );
-		moves::DsspMover dssp;
+		protocols::moves::DsspMover dssp;
 		dssp.apply( posecopy );
 		wanted_ss = posecopy.secstruct();
 	}
