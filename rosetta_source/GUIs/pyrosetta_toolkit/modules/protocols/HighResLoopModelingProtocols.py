@@ -40,7 +40,7 @@ class HighResLoopModelingProtocols(ProtocolBaseClass):
         #ft.simple_tree(self.posetotal_residue())
         print len(self.input_class.loops_as_strings)
         ft, movemap, loops_object=loop_tools.InitializeLoops(self.pose, self.input_class.loops_as_strings, ft, movemap)
-        print "Fold Tree Correct? " + repr(ft.check_fold_tree())
+        #print "Fold Tree Correct? " + repr(ft.check_fold_tree())
         self.pose.fold_tree(ft)        
         loop_refine = LoopMover_Refine_CCD(loops_object)
         loop_refine.set_scorefxn(self.score_class.score)
@@ -63,7 +63,7 @@ class HighResLoopModelingProtocols(ProtocolBaseClass):
         print len(self.input_class.loops_as_strings)
         ft, movemap, loops_object=loop_tools.InitializeLoops(self.pose, self.input_class.loops_as_strings, ft, movemap)
 
-        print "Fold Tree Correct? " + repr(ft.check_fold_tree())
+        #print "Fold Tree Correct? " + repr(ft.check_fold_tree())
         self.pose.fold_tree(ft)
         loop_refine = LoopMover_Refine_KIC(loops_object)
         loop_refine.set_scorefxn(self.score_class.score)

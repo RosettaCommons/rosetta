@@ -75,7 +75,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="textblock"><dl class="author"><dt><b>Author:</b></dt><dd>Jared Adolf-Bryfogle</dd></dl>
 <h2><a class="anchor" id="metadata"></a>
 Metadata</h2>
-<p>Last edited March 2013. Code by Jared Adolf-Bryfogle &lt;<a href="mailto:jadolfbr@gmail.com">jadolfbr@gmail.com</a>&gt;. The PI for this application is Roland Dunbrack &lt;<a href="mailto:Roland.Dunbrack@fccc.edu">Roland.Dunbrack@fccc.edu</a>&gt;</p>
+<p>Last edited April 2013. Code by Jared Adolf-Bryfogle &lt;<a href="mailto:jadolfbr@gmail.com">jadolfbr@gmail.com</a>&gt;. The PI for this application is Roland Dunbrack &lt;<a href="mailto:Roland.Dunbrack@fccc.edu">Roland.Dunbrack@fccc.edu</a>&gt;</p>
 <h2><a class="anchor" id="code_demos"></a>
 Code and Demo</h2>
 <p>The application is available in both rosetta_source/GUIs/pyrosetta_toolkit and in the newest PyRosetta binary releases.</p>
@@ -83,9 +83,14 @@ Code and Demo</h2>
 <ul>
 <li><a href="http://www.pyrosetta.org/faq#TOC-1.-How-do-I-obtain-and-install-PyRosetta-">http://www.pyrosetta.org/faq#TOC-1.-How-do-I-obtain-and-install-PyRosetta-</a></li>
 </ul>
-<p>PyMOL Integration Setup: </p>
+<p>Optional PyMOL Integration Setup: </p>
 <ul>
 <li>See <a href="http://www.pyrosetta.org/pymol_mover-tutorial">http://www.pyrosetta.org/pymol_mover-tutorial</a></li>
+</ul>
+<p>Optional SCWRL Integration Setup: </p>
+<ul>
+<li>Obtain SCWRL from: <a href="http://dunbrack.fccc.edu/scwrl4/">http://dunbrack.fccc.edu/scwrl4/</a> </li>
+<li>Copy the exe/binary into the /GUIs/pyrosetta_toolkit/SCWRL directory in the respective OS directory.</li>
 </ul>
 <p>Run the program: </p>
 <ul>
@@ -93,13 +98,13 @@ Code and Demo</h2>
 </ul>
 <h2><a class="anchor" id="refs"></a>
 References</h2>
-<p>Jared Adolf-Bryfogle and Roland Dunbrack (2013) "The PyRosetta Toolkit: A Graphical User Interface for the Rosetta Software Suite. " PloS-ONE RosettaCON2012 special collection (In Publication)</p>
+<p>Jared Adolf-Bryfogle and Roland Dunbrack (2013) "The PyRosetta Toolkit: A Graphical User Interface for the Rosetta Software Suite. " PloS-ONE RosettaCON2012 special collection (Submitted)</p>
 <h2><a class="anchor" id="purpose"></a>
 Purpose</h2>
 <p>This GUI is used to setup Rosetta specific filetypes, do interactive modeling using Rosetta as its base, run rosetta protocols, and analyze decoy results.</p>
 <h2><a class="anchor" id="limits"></a>
 Limitations</h2>
-<p>This application does not run all Rosetta Applications. It does, however, run the most common ones. Although multiprocessing is implemented, full production runs of many rosetta applications usually require a cluster. Always check relevant Rosetta Documentation on RosettaCommons. Additional options for most protocols can be added through the Option System Manager.</p>
+<p>This application does not run all Rosetta Applications. It does, however, run the most common ones. Although multiprocessing is implemented, full production runs of many rosetta applications usually require a cluster. Always check relevant Rosetta Documentation on RosettaCommons. Options for all protocols can be added through the Option System Manager or through it's protocol-specific UI. Symmetry is not supported at this time.</p>
 <h2><a class="anchor" id="menus"></a>
 Menus</h2>
 <h3><a class="anchor" id="file_menu"></a>
@@ -141,26 +146,57 @@ Main Window</h3>
 </ul>
 <p>Protocols: </p>
 <ul>
-<li>A few common minimization protocols can be ran through the main window (Repack, Minimize, Relax, SCWRL).</li>
+<li>A few common minimization protocols can be ran through the main window in addition to the protocols menu (Repack, Minimize, Relax, SCWRL).</li>
 </ul>
 <h3><a class="anchor" id="options_menu"></a>
 Options Menu</h3>
 <ul>
-<li>Setup Rosetta command-line options using the options system manager </li>
-<li>Set general protocol options </li>
-<li>Set the current score function.</li>
+<li>Option System manager: </li>
+<li>: : Setup Rosetta command-line options using the options system manager </li>
+<li>Configure Score Function: </li>
+<li>: : Default Scorefunction is score12prime. The scorefunction set here is used by all protocols. See the protocols section for more information. Please use this window to change the scorefunction or the weights of any terms. </li>
+<li>: : More weight sets can be given in this window by selecting options-&gt;show ALL scorefunctions </li>
+<li>Set General Protocol Options: </li>
+<li>: : A number of rounds can be set for all protocols. By default, if more than one round is set, the boltzmann criterion is applied to the pose after each round using the current scorefunction. This is especially useful for packing or design. Here, you can control the temperature, and the behavior of what happens each round and if the lowest energy pose is recovered at the end of the run.</li>
 </ul>
 <h3><a class="anchor" id="visualization_menu"></a>
 Visualization Menu</h3>
-<p>PyMOL Integration. A pose can be shown in PyMOL at any time. Regions can be colored, and the PyMOL Observer can be enabled that updates pymol upon structural and energetic changes to the current pose.</p>
+<p>PyMOL Integration through the PyMOL Mover. A pose can be shown in PyMOL at any time. Regions can be colored, and the PyMOL Observer can be enabled that updates pymol upon structural and energetic changes to the current pose. </p>
+<ul>
+<li>Advanced PyMOL Visualization button </li>
+<li>: : This is a simple window that can be used while using PyMOL. It is small so that you can incorporate it into your modeling workflow. </li>
+<li>: : For energies, blue is low energy and red is high energy. Spectrum cannot be changed at this time, but will be added in the future. </li>
+<li>: : Labels for energies can be useful, although slow. Use the PyMOL commands to remove them once sent.</li>
+</ul>
 <h3><a class="anchor" id="advanced_menu"></a>
 Advanced Menu</h3>
+<p>The Ligand/NCAA/PTM Manager </p>
 <ul>
-<li>Enable and explore params + patches for NCAA/Ligands/PTMs </li>
-<li>Enable constraints </li>
-<li>Setup a Resfile for design </li>
-<li>Insert arbitrary data into Bfactor column of loaded protein </li>
-<li>Use the Per-residue control and analysis window to get detailed data on each residue, as well as mutate, repack, change dihedrals, add and remove variants, etc.</li>
+<li>Many non-cannonicals are off-by-default for Rosetta, and this window will allow you to enable them and also design residues into them. </li>
+<li>Energy function optimization is also given here. Since the default electrostatic score term in the default scorefunction is statistical in nature, it will not work for non-cannoicals. At the very least, changing this to the coulumbic score term is a more physically realistic representation of the sytem. </li>
+<li>The mm_std scorefunction ( Douglas Renfrew, Eun Jung Choi, Brian Kuhlman, 'Using Noncanonical Amino Acids in Computational Protein-Peptide Interface Design' (2011) PLoS One. ) is currently undergoing broad tests for proteins and other systems, but seems to work very will for NCAA design and rotamers. </li>
+<li>The orbitals scorefunction, developed by Steven Combs et al (Meiler Lab) is also a great alternative, which is residue independant. Tests are ongoing for all of these scorefunction changes.</li>
+</ul>
+<p>Design Toolbox </p>
+<ul>
+<li>This is a window which will allow you to build a resfile for the loaded pose. You can do individual residues or a region of the pose. See the help menu or paper for information on what the values are in this window. </li>
+<li>The left most box is for residue categories. This is for easy selection and design. Use the etc category for typical rosetta resfile options (NATRO,NATAA,ALLAA). Clicking one of the categories will populate the right box. Here you actually choose the residues types you want to open by double clicking them. Selecting these will limit the design to only those chosen. Residues you have chosen then go into the lower most box. Changing the residue number you have selected, will change what goes in this box so you can edit your current design. Double clicking a residue in the box will remove it. </li>
+<li>Click the Write Resfile button to open a save as dialog.</li>
+</ul>
+<p>Enable constraints </p>
+<ul>
+<li>Will prompt for a constraint file. For more information, please see the rosettacommons manual.</li>
+</ul>
+<p>Insert data into B factor Column </p>
+<ul>
+<li>This is mainly an analysis utility, but it can be useful for data visualization, especially for publications. </li>
+<li>Data should be in a text or csv file, deliminated by either a space, tab, column, comma. </li>
+<li>Data should have at least 3 columns: pdb resnum, chain, data to insert, optional atom name </li>
+<li>The UI for this utility function will allow you choose the colunns for each required piece as well as the deliminator. It will use your currently loaded pose and output a new pose with the data in the B-factor column. Load the pose into PyMOL or your favorite visualizer to see the data.</li>
+</ul>
+<p>Per Residue control and Analysis </p>
+<ul>
+<li>This is a great interactive modeling window. Here you can do many modeling tasks including mutating individual residues, add variants such as phosphorylations/acetylations, repack rotamers, chaing dihedrals, etc. You can also analze rotamer probabilies and individual residue energies.</li>
 </ul>
 <p>Analysis Movers: </p>
 <ul>
@@ -171,19 +207,43 @@ Advanced Menu</h3>
 </ul>
 <h3><a class="anchor" id="protocols_menu"></a>
 Protocols Menu</h3>
-<p>For most protocols, options not given in a UI like -constrain_relax_to_start_coords can be set using the options system manager.</p>
-<p>Currently Implemented: </p>
 <ul>
-<li>High/Low Resolution Docking </li>
-<li>High/Low Resolution Loop Modeling (KIC/CCD) </li>
-<li>Fixedbb Design </li>
-<li>Floppytail </li>
-<li>Grafting </li>
-<li>FastRelax </li>
-<li>ClassicRelax </li>
-<li>PackRotamers (Rosetta) </li>
-<li>PackRotamers (SCWRL) </li>
-<li>Minimizer</li>
+<li>A loaded pose is required for all protocols. Options not given in the main UI or their protocol-specific UI can be set using the options system manager. Please refer to RosettaCommons manual for all protocols, as well as the references listed there and within the GUI. </li>
+<li>The default scorefunction is score12prime. Ligands/NCAA/PTM may require modifications to the scorefunction. Please use the advanced menu to make these modifications. Centroid-based protocols and other specific protocols require different scorefunctions. They are given below, and you will be prompted in the GUI if these are not set.</li>
+</ul>
+<p>Currently Implemented:</p>
+<p>High/Low Resolution Docking </p>
+<ul>
+<li>Will prompt for docking partners using the same notation as the docking application. </li>
+<li>ScoreFunction: Use interchain_cen scorefunction for low-resolution and docking for high-resolution.</li>
+</ul>
+<p>High/Low Resolution Loop Modeling (KIC/CCD) </p>
+<ul>
+<li>Will prompt for fragset(CCD)/ extend options. </li>
+<li>Default cutpoint is around the middle of the loop. </li>
+<li>ScoreFunction: Use centroid + score4L patch for low-resolution.</li>
+</ul>
+<p>Fixedbb Design (UI) </p>
+<ul>
+<li>Will prompt for a resfile.</li>
+</ul>
+<p>Floppytail (UI)</p>
+<p>Grafting (UI) </p>
+<ul>
+<li>Graft a region from one protein into another. </li>
+<li>Many options are given. All are described in the UI. Choosing a graft method will give a description of that method. </li>
+<li>It is assumed that the loaded pose is the one you will graft into. You can pick the doner pose from the UI. They can both be the same PDB file. </li>
+<li>If the region is not already deleted, it will delete it upon grafting.</li>
+</ul>
+<p>FastRelax</p>
+<p>ClassicRelax</p>
+<p>PackRotamers (Rosetta)</p>
+<p>PackRotamers (SCWRL)</p>
+<p>Minimizer </p>
+<ul>
+<li>The Rosetta default minimizer is dfpmin. Use the options system to set a different one setting '-run:min_tolerance' </li>
+<li>The Relax application uses dfpmin_armijo_nonmonotone. Visit <a href="https://www.rosettacommons.org/manuals/archive/rosetta3.4_user_guide/d7/df1/minimization_overview.html">https://www.rosettacommons.org/manuals/archive/rosetta3.4_user_guide/d7/df1/minimization_overview.html</a> for more information. </li>
+<li>The Rosetta default tolerance is 0.000001. Use the options system to set a different value by setting -run:min_tolerance.</li>
 </ul>
 <p>Server Links: </p>
 <ul>
@@ -251,7 +311,7 @@ Changes since last release</h2>
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Mar 27 2013 17:59:42 for My Project by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Apr 9 2013 13:23:32 for My Project by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

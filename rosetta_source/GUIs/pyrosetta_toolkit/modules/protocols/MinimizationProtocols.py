@@ -57,9 +57,8 @@ class MinimizationProtocols(ProtocolBaseClass):
         
         #print "run:min_tolerance: "+repr(tolerance)
         print "-relax:min_type: "+get_string_option('relax:min_type')
-        print "tolerance hardcoded to .01"
         self.score_class.score.set_weight(chainbreak, 100); #Makes sure loop/domain does not break!
-        minmover=MinMover(movemap, self.score_class.score, get_string_option('relax:min_type'), .01, True)
+        minmover=MinMover(movemap, self.score_class.score, get_string_option('relax:min_type'), tolerance, True)
         self.run_protocol(minmover)
             
         self.score_class.score.set_weight(chainbreak, 0)

@@ -46,6 +46,7 @@ class LowResLoopModelingProtocols(ProtocolBaseClass):
           if not fraglength:
                fraglength = tkSimpleDialog.askinteger(title="Fragment Length", initialvalue=3)
                
+          extend = tkMessageBox.askyesno(title="Extended", message="Start with idealized bond lenghths, angles, and discard original phi/psi?") 
           movemap=MoveMap()
           ft = self.pose.fold_tree(); ft_o = FoldTree()
           ft_o.assign(ft)
@@ -53,13 +54,18 @@ class LowResLoopModelingProtocols(ProtocolBaseClass):
           #ft.simple_tree(self.pose.total_residue())
           print len(loops_as_string_array)
           ft, movemap, loops_object=loop_tools.InitializeLoops(p, loops_as_string_array, ft, movemap)
-          print "Fold Tree Correct? " + repr(ft.check_fold_tree())
+          #print "Fold Tree Correct? " + repr(ft.check_fold_tree())
           self.pose.fold_tree(ft)
           Frag = ConstantLengthFragSet(fraglength, fragset)
           
           switch = SwitchResidueTypeSetMover("centroid")
           recover = ReturnSidechainMover(self.pose)
           switch.apply(self.pose)
+          
+          #Setup extended loop to throw away initial loop structure
+          if extend:
+               for loop in loops_object:
+                    loop.set_extended(True)
           x = LoopMover_Perturb_CCD(loops_object, self.score_class.score, Frag)
           self.run_protocol(x)
           recover.apply(self.pose)

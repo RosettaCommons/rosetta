@@ -60,7 +60,7 @@ class SQLPDB:
     def set_modelID(self, modelID):
         self.modelID = modelID
         
-    def read_pdb_into_database_flat(self, filePath, read_header=False, header_only=False):
+    def read_pdb_into_database_flat(self, filePath, specific_chain=False, read_header=False, header_only=False, ):
         """
         Reads the flat filepath specified into a database structure.
         This can then be parsed using the PDB_Database class.
@@ -87,12 +87,21 @@ class SQLPDB:
                 lineSP = line.split()
                 if not header_only:
                     if (lineSP[0]=="ATOM" or lineSP[0]=="HETATM"):
+                        
+                        #Only copy a specific chain into the database.
+                        if not specific_chain:
+                            pass
+                        else:
+                            if specific_chain != line[21].strip():
+                                continue
+                            
+                            
                         cur.execute("INSERT INTO pdb VALUES(NULL, ?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", \
                         (self.pdbID, self.modelID, self.structID, lineSP[0], \
                          
                         
                         #atomNum INT             atomName TEXT             altLoc TEXT           residue TEXT
-                        line[6:11].strip(),      line[11:16].strip(),      line[16],             line[17:21].strip(), \
+                        line[6:11].strip(),      line[12:16],               line[16],             line[17:21].strip(), \
                         #chain TEXT              resNum INT                icode TEXT            x REAL
                         line[21].strip(),        line[22:26].strip(),      line[26],             line[27:38].strip(), \
                         #y REAL                  z REAL                    occupancy REAL        bfactor REAL
@@ -102,7 +111,7 @@ class SQLPDB:
                         
                         
                         #self.stripped_pdb[line_num]["element"]=line[66:78].strip();        self.stripped_pdb[line_num]["charge"]=line[78:79].strip())
-                        
+                      
     def read_pdb_into_database_xml(self, filePath, header_only=False):
         """
         Reads the XML file into a pdb database.
@@ -182,7 +191,10 @@ class PDB_database:
 
     def query_piece_pdbID(self, table, pdbID, start, end, chain):
         self.cur.execute("SELECT * FROM "+table+" WHERE pdbID=? AND chain=? AND resnum BETWEEN ? AND ?", ( pdbID, chain, start, end))
-        
+    
+    def query_piece_pdbID_and_strucID(self, table, pdbID, start, end, chain, strucID):
+        self.cur.execute("SELECT * FROM "+table+" WHERE pdbID=? AND chain=? AND strucID=? and resnum BETWEEN ? AND ?", (pdbID, chain, strucID, start, end))
+    
     def scrub(self, table_name):
         """
         This should help protect from sql injection.  Not that it's important now, but...
@@ -278,8 +290,8 @@ class PDB_database:
         """
 
         #Create the PDB line.
-        line = str(row['type']).ljust(6)+     str(row['atomNum']).rjust(5)+"  "+str(row['atomName']).ljust(3)+ \
-               str(row['altLoc'])+            str(row['residue']).ljust(4)+     str(row['chain'])+             \
+        line = str(row['type']).ljust(6)+     str(row['atomNum']).rjust(5)+" "+str(row['atomName'])+ \
+               str(row['altLoc'])+            (str(row['residue']).rjust(3)).ljust(4)+ str(row['chain'])+             \
                str(row['resNum']).rjust(4)+   str(row['icode']) +                                              \
                ("%.3f"%row['x']).rjust(11)+   ("%.3f"%row['y']).rjust(8)+       ("%.3f"%row['z']).rjust(8) +   \
                str(row['occupancy']).rjust(6)+str(row['bfactor']).rjust(6)

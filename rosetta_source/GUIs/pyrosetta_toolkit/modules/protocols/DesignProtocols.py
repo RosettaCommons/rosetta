@@ -38,7 +38,7 @@ class DesignProtocols(ProtocolBaseClass):
     def setupPackDesign(self, main):
         """
         Follows fixbb.cc to allow most user defined options within the GUI.
-        Limitations: No symmetry.  Annealers should work fine through the options system. Stochastic pack results in segfault.
+        Limitations: No symmetry.  Annealers should work fine through the options system. 
         UI due to major TKinter bug on my mac.
         """
         if self.pose.total_residue()==0:print "Please load a pose."; return
@@ -52,7 +52,7 @@ class DesignProtocols(ProtocolBaseClass):
             mover.stochastic_pack = stochastic_pack.get()
             
             print "Please cite the many references included for Fixed Backbone Design in the Rosetta Manual."
-            print "Further options such as annealing use the options system.  Symmetry, min_pack and stochastic_min are not supported at this time."
+            print "Further options such as annealing use the options system.  Symmetry not supported at this time."
             time.sleep(5)
             
             self.run_protocol(mover)
