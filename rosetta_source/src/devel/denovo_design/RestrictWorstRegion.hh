@@ -98,19 +98,12 @@ private: // private methods
 	/// @brief restricts design at the specified position such that the existing amino acid is not allowed, and writes this action to a resfile so that other movers can use it
 	bool restrict_aa( core::pose::Pose const & pose, core::pack::task::PackerTaskOP task, core::Size const seqpos );
 
-	/// @brief randomly inserts a pdb fragment into the pose, according to the RMSD. Uses desired secondary structure to find the fragments, but not sequence.
-	void mutate_fragment( core::pose::Pose & pose, core::pack::task::PackerTaskOP task, core::Size const resi ) const;
-
 	/// @brief tells whether a given fragment is compatible with the task
 	/// basically, this function makes sure every amino acid in the sequence is allowed at the position given
   core::Size compatible_with_task( core::pack::task::PackerTaskOP task,
 														 core::Size const frag_id,
 														 core::fragment::FrameOP frame ) const;
 
-
-	/// @brief performs design/relax around a fragment
-	void
-	design_around_fragment( core::pose::Pose & pose, core::pack::task::PackerTaskOP task, core::Size const frag_seqpos );
 
 	/// @brief restricts design at the specified position such that only the existing amino acid is allowed, and writes this to a resfile
 	void

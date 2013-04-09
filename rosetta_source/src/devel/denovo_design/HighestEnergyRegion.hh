@@ -96,6 +96,14 @@ public:
 	/// @brief set the shell size for the regions to be examined and designed
 	void set_region_shell( core::Real const region_shell );
 
+	/// @brief accessor function for region_shell member variable
+	core::Real region_shell() const;
+
+	/// @brief mutator for repack_non_selected -- sets behavior for whether we should repack or fix areas outside the design region
+	void repack_non_selected( bool const repack_non_selected );
+
+	/// @brief accessor for repack_non_selected member var
+	bool repack_non_selected() const;
 
 private:
 	/// @brief initializes cache of allowed amino acids

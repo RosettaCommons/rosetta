@@ -83,12 +83,8 @@ DesignBySecondaryStructureOperation::DesignBySecondaryStructureOperation()
 	: HighestEnergyRegionOperation(),
 		blueprint_ss_( "" ),
 		pred_ss_( "" ),
-		design_shell_( 0.0 ),
-		repack_shell_( 0.0 ),
-		nres_to_design_( 0 ),
 		prevent_native_aa_( false ),
 		prevent_bad_point_mutants_( false ),
-		use_cache_( false ),
 		psipred_interface_( NULL )
 {}
 
@@ -97,31 +93,20 @@ DesignBySecondaryStructureOperation::DesignBySecondaryStructureOperation( Design
   : HighestEnergyRegionOperation( rval ),
 		blueprint_ss_( rval.blueprint_ss_ ),
 		pred_ss_( "" ),
-		design_shell_( rval.design_shell_ ),
-		repack_shell_( rval.repack_shell_ ),
-		nres_to_design_( rval.nres_to_design_ ),
 		prevent_native_aa_( rval.prevent_native_aa_ ),
 		prevent_bad_point_mutants_( rval.prevent_bad_point_mutants_ ),
-		use_cache_( false ),
 		psipred_interface_( rval.psipred_interface_ )
 {}
 
 // value constructor
 DesignBySecondaryStructureOperation::DesignBySecondaryStructureOperation( std::string const bp_file,
 																																					std::string const cmd,
-																																					core::Real const design_shell,
-																																					core::Real const repack_shell,
-																																					core::Size const nres_to_design,
 																																					bool const prevent_native,
 																																					bool const prevent_bad_point_mutants )
 	: HighestEnergyRegionOperation(),
 		pred_ss_( "" ),
-		design_shell_( design_shell ),
-		repack_shell_( repack_shell ),
-		nres_to_design_( nres_to_design ),
 		prevent_native_aa_( prevent_native ),
   	prevent_bad_point_mutants_( prevent_bad_point_mutants ),
-		use_cache_( false ),
 	  psipred_interface_( new denovo_design::filters::PsiPredInterface( cmd ) )
 {
 	initialize_blueprint_ss( bp_file );
@@ -162,25 +147,18 @@ DesignBySecondaryStructureOperation::get_residues_to_design( core::pose::Pose co
 	TR << "Calculating predicted SS" << std::endl;
 	runtime_assert( psipred_interface_ );
 	denovo_design::filters::PsiPredResult const & psipred_result( psipred_interface_->run_psipred( pose, wanted_ss ) );
-	if ( nres_to_design_ == 0 ) {
+	if ( regions_to_design() == 0 ) {
 		TR << "Going to design all residues with psipred that doesn't match blueprint secondary structure." << std::endl;
 		std::string pred_ss( "" );
-		if ( use_cache_ && pred_ss_ != "" ) {
-			TR << "Using cached predicted SS" << std::endl;
-			pred_ss = pred_ss_;
-		} else {
-			TR << "Calculating predicted SS" << std::endl;
-			pred_ss = secstruct_with_ligand( psipred_result.pred_ss, ligands );
-		}
+		pred_ss = secstruct_with_ligand( psipred_result.pred_ss, ligands );
 		TR << "Blueprint SS = " << bp_ss << std::endl;
 		TR << "Predicted SS = " << pred_ss << std::endl;
 		runtime_assert( bp_ss.size() == pose.total_residue() );
 		residues_to_design = denovo_design::filters::nonmatching_residues( bp_ss, pred_ss );
 	} else {
-		TR << "Going to design the worst " << nres_to_design_ << " residues." << std::endl;
-		utility::vector1< core::Size > const & psipred_conf( psipred_result.psipred2_confidence );
+		TR << "Going to design the worst " << regions_to_design() << " residues." << std::endl;
 		utility::vector1< core::Real > const & psipred_prob( psipred_result.psipred_prob );
-		//utility::vector1< core::Real > const & psipred_prob( psipred_result.psipred_prob );
+
 		// create a map and insert pairs for residue and probabilities
 		utility::vector1< std::pair< core::Size, core::Real > > res_to_prob;
 		for ( core::Size j=1; j<=psipred_prob.size(); ++j ) {
@@ -190,7 +168,7 @@ DesignBySecondaryStructureOperation::get_residues_to_design( core::pose::Pose co
 		// sort the map based on the psipred probability
 		std::sort( res_to_prob.begin(), res_to_prob.end(), compare_prob );
 		TR << "Top member of sorted probability list is " << res_to_prob[1].second << std::endl;
-		for ( core::Size j=1; ( j<=res_to_prob.size() && j<=nres_to_design_ ); ++j ) {
+		for ( core::Size j=1; ( j<=res_to_prob.size() && j<=regions_to_design() ); ++j ) {
 			residues_to_design.push_back( res_to_prob[j].first );
 		}
 	}
@@ -272,11 +250,12 @@ DesignBySecondaryStructureOperation::apply( Pose const & pose, core::pack::task:
 
   // now we can just apply a DesignAround operation using the residues that don't match
   protocols::toolbox::task_operations::DesignAroundOperation design_around;
-	runtime_assert( design_shell_ >= 0 );
-	runtime_assert( repack_shell_ >= 0 );
-	runtime_assert( repack_shell_ >= design_shell_ );
-  design_around.design_shell( design_shell_ );
-  design_around.repack_shell( repack_shell_ );
+  design_around.design_shell( region_shell() );
+	if ( repack_non_selected() ) {
+		design_around.repack_shell( 1000.0 );
+	} else {
+		design_around.repack_shell( region_shell() );
+	}
   TR << "Residues to design are: ";
   for ( core::Size i=1; i<=resids_to_design.size(); i++) {
     TR << resids_to_design[i] << " ";
@@ -288,6 +267,7 @@ DesignBySecondaryStructureOperation::apply( Pose const & pose, core::pack::task:
 
 void
 DesignBySecondaryStructureOperation::parse_tag( utility::tag::TagPtr tag ) {
+	HighestEnergyRegionOperation::parse_tag( tag );
 	initialize_blueprint_ss( tag->getOption< std::string >( "blueprint", "" ) );
 	std::string const cmd( tag->getOption< std::string >( "cmd", "" ) );
 	if ( cmd == "" ) {
@@ -295,9 +275,6 @@ DesignBySecondaryStructureOperation::parse_tag( utility::tag::TagPtr tag ) {
 	}
 	// now that we have a command, we can create the psipred interface object
 	psipred_interface_ = new denovo_design::filters::PsiPredInterface( cmd );
-	set_design_shell( tag->getOption< core::Real >( "design_shell", design_shell_ ) );
-	set_repack_shell( tag->getOption< core::Real >( "repack_shell", repack_shell_ ) );
-	set_nres_to_design( tag->getOption< core::Size >( "nres_to_design", nres_to_design_ ) );
 	prevent_bad_point_mutants_ = tag->getOption< bool >( "prevent_bad_point_mutations", prevent_bad_point_mutants_ );
 }
 
@@ -323,49 +300,6 @@ std::string
 DesignBySecondaryStructureOperationCreator::keyname() const {
 	return "DesignBySecondaryStructure";
 }
-
-
-/// @brief computes and caches the predicted SS of the pose
-std::string
-DesignBySecondaryStructureOperation::compute_and_cache_ss( core::pose::Pose const & pose ) {
-	std::string wanted_ss( blueprint_ss_ );
-	if ( wanted_ss == "" ) {
-		//utility_exit_with_message( "You need to call initialize_blueprint_ss() before running this task operation." );
-		core::pose::Pose posecopy( pose );
-		moves::DsspMover dssp;
-		dssp.apply( posecopy );
-		wanted_ss = posecopy.secstruct();
-	}
-	utility::vector1< core::Size > const & ligands( find_ligands( pose ) );
-	TR << "Calculating predicted SS" << std::endl;
-	runtime_assert( psipred_interface_ );
-	denovo_design::filters::PsiPredResult const & psipred_result( psipred_interface_->run_psipred( pose, wanted_ss ) );
-	pred_ss_ = psipred_result.pred_ss;
-	psipred_prob_ = psipred_result.psipred_prob;
-	return pred_ss_;
-}
-
-/// @brief sets the number of residues to select
-void
-DesignBySecondaryStructureOperation::set_nres_to_design( core::Size const nres_to_design )
-{
-	nres_to_design_ = nres_to_design;
-}
-
-/// @brief sets the shell (in angstroms) around the target residue(s) to design
-void
-DesignBySecondaryStructureOperation::set_design_shell( core::Real const shell )
-{
-	design_shell_ = shell;
-}
-
-/// @brief sets the shell (in angstroms) around the target residue(s) to repack
-void
-DesignBySecondaryStructureOperation::set_repack_shell( core::Real const shell )
-{
-	repack_shell_ = shell;
-}
-
 
 //namespaces
 }

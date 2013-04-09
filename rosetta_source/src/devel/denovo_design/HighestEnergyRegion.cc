@@ -290,6 +290,26 @@ HighestEnergyRegionOperation::set_region_shell( core::Real const region_shell )
 	region_shell_ = region_shell;
 }
 
+/// @brief accessor for regions shell size
+core::Real
+HighestEnergyRegionOperation::region_shell() const
+{
+	return region_shell_;
+}
+
+/// @brief mutator for repack_non_selected -- sets behavior for whether we should repack or fix areas outside the design region
+void
+HighestEnergyRegionOperation::repack_non_selected( bool const repack_non_selected )
+{
+	repack_non_selected_ = repack_non_selected;
+}
+
+/// @brief accessor for repack_non_selected member var
+bool
+HighestEnergyRegionOperation::repack_non_selected() const
+{
+	return repack_non_selected_;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 /// DesignByPackStat

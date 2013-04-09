@@ -272,9 +272,6 @@ RestrictWorstRegion::apply( core::pose::Pose & pose )
 		op = new flxbb::filters::DesignBySecondaryStructureOperation(
 					 blueprint_file_,
 					 psipred_cmd_,
-					 0.0,
-					 1000.0,
-					 pose.total_residue(),
 					 false,
 					 false );
 	} else if ( type == "packstat" ) {
@@ -362,11 +359,9 @@ RestrictWorstRegion::apply( core::pose::Pose & pose )
 		residues = new_residues;
 	}
 	TR.Warning << "No mutations possible; residues=" << residues << std::endl;
-	//mutate_fragment( pose, task, worst );
 
 	//preserve_fragment( pose, worst );
 
-	//design_around_fragment( pose, task, worst );
 }
 
 /// @brief initialize the resfile -- takes an input resfile, but converts it to a resfile in the output directory
@@ -520,91 +515,6 @@ RestrictWorstRegion::previous_pose()
 	return previous_pose_;
 }
 
-/// @brief randomly inserts a pdb fragment into the pose, according to the RMSD. Uses desired secondary structure to find the fragments, but not sequence.
-void
-RestrictWorstRegion::mutate_fragment( core::pose::Pose & pose, core::pack::task::PackerTaskOP task, core::Size const resi ) const
-{
-	core::Size best_match( 0 );
-	core::Real const rmsd_cutoff( 1.0 );
-	core::Size const frag_length( 9 );
-	core::Size const n_frags( 200 );
-	jd2::parser::BluePrint bp( blueprint_file_ );
-	// i believe string indices start with 0, so we will begin at position resi-1
-	std::string const ss_sub( bp.secstruct().substr( resi-1, frag_length ) );
-	utility::vector1< std::string > const & abego( bp.abego() );
-	utility::vector1< std::string > abego_sub;
-	for ( core::Size i=resi; i<=frag_length+resi; ++i ) {
-		abego_sub.push_back( abego[i] );
-	}
-
-	std::string const aa_sub( "" );
-	core::fragment::FrameOP frame( new core::fragment::Frame( resi, frag_length ) );
-	frame->add_fragment( core::fragment::picking_old::vall::pick_fragments( ss_sub, aa_sub, abego_sub, n_frags, true, core::fragment::IndependentBBTorsionSRFD() ) );
-
-	// now that we have collected fragments, make insertions for all fragments below rmsd cutoff
-	core::pose::Pose test_pose( pose );
-	utility::vector1< core::Size > good_fragments;
-	core::Size best_rmsd_fragment( 0 );
-	core::Real best_rmsd( 10000 );
-	TR << "Original fragment = " << pose.sequence().substr( resi-1, frag_length ) << "; ss=" << ss_sub << std::endl;
-	for ( core::Size i=1; i<=frame->nr_frags(); i++ ) {
-		// insert fragment
-		frame->apply( i, test_pose );
-		// calc rmsd
-		core::Real rmsd;
-		core::Size end( frame->start() + frame->length() - 1 );
-		rmsd = core::scoring::CA_rmsd( pose, test_pose, frame->start(), end );
-		TR << "RMSD=" << rmsd << "; frag seq=" << frame->fragment( i ).sequence() << "; ss=" << frame->fragment( i ).secstruct() << std::endl;
-
-		// keep track of best rmsd fragment
-		if ( rmsd < best_rmsd ) {
-			best_rmsd = rmsd;
-			best_rmsd_fragment = i;
-		}
-		if ( rmsd < rmsd_cutoff ) {
-			// check sequence compatibility with taskops here
-			core::Size match( compatible_with_task( task, i, frame ) );
-			if ( match == best_match ) {
-				TR << "Adding" << std::endl;
-				good_fragments.push_back( i );
-			} else if ( match >= best_match ) {
-				TR << "New best match = " << match << std::endl;
-				best_match = match;
-				good_fragments.clear();
-				good_fragments.push_back( i );
-			} else {
-				TR << "Not the best match" << std::endl;
-			}
-		}
-	}
-
-	TR << "There are " << good_fragments.size() << " fragments." << std::endl;
-	// if we couldn't find anything, just take the best RMSD
-	if ( good_fragments.size() == 0 ) {
-		good_fragments.push_back( best_rmsd_fragment );
-		TR << "using best rmsd fragment of " << best_rmsd << std::endl;
-	}
-	// here, choose a random fragment and mutate all residues to the fragment.
-	core::Size chosen_frag_idx( good_fragments[ numeric::random::random_range( 1, good_fragments.size() )] );
-	core::fragment::FragDataOP chosen_frag( frame->fragment_ptr( chosen_frag_idx ) );
-	TR << "Chose " << chosen_frag->sequence() << " with SS=" << chosen_frag->secstruct() << std::endl;
-
-	// Then, mutate this mofo!
-	std::string seq( chosen_frag->sequence() );
-	for ( core::Size i=0; i<seq.size(); ++i ) {
-		char const aa( seq[i] );
-		if ( residue_is_allowed( task, frame->start() + i, core::chemical::aa_from_oneletter_code( aa ) ) ) {
-			TR << "Mutating " << pose.residue( frame->start() + i ).name3() << frame->start() + i << " to " << aa << std::endl;
-			simple_moves::MutateResidue mut_res( frame->start() + i, aa );
-			mut_res.apply( pose );
-		} else {
-			TR << "Skipping mutation of " << pose.residue( frame->start() + i ).name3() << frame->start() + i << " to " << aa << std::endl;
-		}
-	}
-
-}
-
-
 /// @brief tells whether a given fragment is compatible with the task
 /// basically, this function counts the number of amino acids in each fragment that are compatible with the task
 core::Size
@@ -621,22 +531,6 @@ RestrictWorstRegion::compatible_with_task( core::pack::task::PackerTaskOP task,
 		}
 	}
 	return count;
-}
-
-/// @brief performs design/relax around a fragment
-void
-RestrictWorstRegion::design_around_fragment( core::pose::Pose & /*pose*/, core::pack::task::PackerTaskOP task, core::Size const frag_seqpos )
-{
-	core::Size const frag_size( 9 );
-	toolbox::task_operations::DesignAroundOperation des_frag;
-	des_frag.design_shell( 8.0 );
-	des_frag.repack_shell( 1000.0 );
-	for ( core::Size i=0; i<frag_size; ++i ) {
-		des_frag.include_residue( frag_seqpos + i );
-		task->nonconst_residue_task( frag_seqpos + i ).restrict_to_repacking();
-	}
-	/*core::pack::task::PackerTask packer( scorefxn_, task );
-		packer.apply( pose );*/
 }
 
 /// @brief function that tells whether a given amino acid is allowed at a certain position

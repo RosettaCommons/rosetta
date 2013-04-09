@@ -39,7 +39,10 @@ public:
   DesignBySecondaryStructureOperation();
 
   /// @brief value constructor
-  DesignBySecondaryStructureOperation( std::string const bp_file, std::string const cmd, core::Real const design_shell, core::Real const repack_shell, core::Size const nres_to_design, bool const prevent_native, bool const prevent_bad_point_mutations );
+  DesignBySecondaryStructureOperation( std::string const bp_file,
+																			 std::string const cmd,
+																			 bool const prevent_native,
+																			 bool const prevent_bad_point_mutations );
 
   /// @brief copy constructor
   DesignBySecondaryStructureOperation( DesignBySecondaryStructureOperation const & rval );
@@ -63,18 +66,6 @@ public:
 public:
   void parse_tag( utility::tag::TagPtr tag );
 
-	/// @brief computes and calculates the predicted secondary structure string
-	std::string compute_and_cache_ss( core::pose::Pose const & pose );
-
-	/// @brief sets the number of residues to select
-	void set_nres_to_design( core::Size const nres_to_design );
-
-	/// @brief sets the shell (in angstroms) around the target residue(s) to design
-	void set_design_shell( core::Real const shell );
-
-	/// @brief sets the shell (in angstroms) around the target residue(s) to repack
-	void set_repack_shell( core::Real const shell );
-
 	/// @brief opens the passed blueprint file and determines the desired secondary structure
 	void initialize_blueprint_ss( std::string const blueprint_file );
 
@@ -83,18 +74,10 @@ private:
 	std::string pred_ss_; // cache of the predicted secondary structure
 	utility::vector1< core::Real > psipred_prob_; // cache of the predicted probability of secondary structure
 
-	/// @brief design all residues within this many angstroms of residues that don't match SS
-	core::Real design_shell_;
-	/// @brief repack all residues within this many angstroms of residues that don't match SS
-	core::Real repack_shell_;
-	/// @brief tells how many residues should be set to designable. If set to n, the worst n residues by psipred prediction will be set to designable. If set to 0, any residues that have non-matching secondary structure by psipred will be designed.
-	core::Size nres_to_design_;
 	/// @brief If set, the amino acid residue already in the pose will be disallowed default=false
 	bool prevent_native_aa_;
 	/// @brief If set, all mutations at all positions will be scanned in one pass, and those that cause worse psipred secondary structure agreement will be disallowed (default=false)
 	bool prevent_bad_point_mutants_;
-	/// @brief should we use the cached value if it exists, or call psipred again?
-	bool use_cache_;
 	/// @brief the object which directly communicates with psipred and parses psipred output
 	denovo_design::filters::PsiPredInterfaceOP psipred_interface_;
 };
