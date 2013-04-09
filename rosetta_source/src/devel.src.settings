@@ -27,6 +27,11 @@ sources = {
 	"devel/cstEnergyBalance": [
 		"minimalCstRelaxUtil",
 	],
+        "devel/denovo_design": [
+                "DesignBySecondaryStructure",
+                "HighestEnergyRegion",
+                "RestrictWorstRegion",
+        ],
 	"devel/denovo_protein_design": [
 		"CreateStartingStructureMover",
 		"DesignRelaxMover",
