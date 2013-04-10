@@ -65,6 +65,7 @@ static MoverRegistrator< docking::DockingInitialPerturbationCreator > reg_Dockin
 static MoverRegistrator< symmetric_docking::SymDockProtocolCreator > SymDockProtocolCreator;
 
 static MoverRegistrator< electron_density::SetupForDensityScoringMoverCreator > reg_SetupForDensityScoringMoverCreator;
+static MoverRegistrator< electron_density::DensityMorphingMoverCreator > reg_DensityMorphingMoverCreator;
 
 static MoverRegistrator< enzdes::AddOrRemoveMatchCstsCreator > reg_AddOrRemoveMatchCstsCreator;
 static MoverRegistrator< enzdes::BackboneSamplerCreator > reg_BackboneSamplerCreator;

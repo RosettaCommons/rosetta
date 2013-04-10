@@ -71,6 +71,7 @@ sources = {
 	],
 	"protocols/electron_density": [
 		"SetupForDensityScoringMover",
+		"DensityMorphingMover",
 		"util",
 	],
 	"protocols/fibril": [

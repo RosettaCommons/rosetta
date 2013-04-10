@@ -54,6 +54,7 @@
 #include <protocols/symmetric_docking/SymDockProtocolCreator.hh>
 
 #include <protocols/electron_density/SetupForDensityScoringMoverCreator.hh>
+#include <protocols/electron_density/DensityMorphingMoverCreator.hh>
 
 #include <protocols/enzdes/AddOrRemoveMatchCstsCreator.hh>
 #include <protocols/enzdes/BackboneSamplerCreator.hh>
