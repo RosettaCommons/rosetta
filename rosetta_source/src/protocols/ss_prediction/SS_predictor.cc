@@ -189,5 +189,36 @@ vector1<vector1 <Real> > SS_predictor::predict_ss(string fasta){
 	return(rd2_preds);
 }
 
+/// @brief helper function to get SS char at a position from a vector of reals
+char get_label( utility::vector1< core::Real > const & ss_pred_pos )
+{
+	char label = 'X';
+	if((ss_pred_pos[1] >= ss_pred_pos[2]) && (ss_pred_pos[1] >= ss_pred_pos[3]))
+		label = 'H';
+	else
+		if((ss_pred_pos[2] >= ss_pred_pos[1]) && (ss_pred_pos[2] >= ss_pred_pos[3]))
+			label = 'L';
+		else
+			if((ss_pred_pos[3] >= ss_pred_pos[1]) && (ss_pred_pos[3] >= ss_pred_pos[2]))
+				label = 'E';
+	return(label);
+}
+
+/// @brief helper function to get SS char at a position from a vector of reals
+core::Real get_prob( char wanted_ss, utility::vector1< core::Real > const & ss_pred_pos )
+{
+	// order is "H" "L" "E"
+	if ( wanted_ss == 'H' ) {
+		return ss_pred_pos[1];
+	} else if ( wanted_ss == 'L' ) {
+		return ss_pred_pos[2];
+	} else if ( wanted_ss == 'E' ) {
+		return ss_pred_pos[3];
+	} else {
+		utility_exit_with_message( "Error: secondary structure is something other than 'H', 'L', or 'E': " + wanted_ss );
+		return 99;
+	}
+}
+
 } //ss_prediction
 } //protocols

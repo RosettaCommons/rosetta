@@ -27,6 +27,7 @@
 #include <core/pose/Pose.hh>
 #include <protocols/jd2/parser/BluePrint.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
+#include <protocols/ss_prediction/SS_predictor.hh>
 #include <protocols/toolbox/match_enzdes_util/util_functions.hh>
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
 
@@ -85,7 +86,8 @@ DesignBySecondaryStructureOperation::DesignBySecondaryStructureOperation()
 		pred_ss_( "" ),
 		prevent_native_aa_( false ),
 		prevent_bad_point_mutants_( false ),
-		psipred_interface_( NULL )
+		psipred_interface_( NULL ),
+		ss_predictor_( NULL )
 {}
 
 // copy constructor
@@ -107,8 +109,13 @@ DesignBySecondaryStructureOperation::DesignBySecondaryStructureOperation( std::s
 		pred_ss_( "" ),
 		prevent_native_aa_( prevent_native ),
   	prevent_bad_point_mutants_( prevent_bad_point_mutants ),
-	  psipred_interface_( new denovo_design::filters::PsiPredInterface( cmd ) )
+	  psipred_interface_( NULL )
 {
+	if ( cmd != "" ) {
+		psipred_interface_ = new denovo_design::filters::PsiPredInterface( cmd );
+	} else {
+		ss_predictor_ = new protocols::ss_prediction::SS_predictor( "HLE" );
+	}
 	initialize_blueprint_ss( bp_file );
 }
 
@@ -145,26 +152,40 @@ DesignBySecondaryStructureOperation::get_residues_to_design( core::pose::Pose co
 
 	utility::vector1< core::Size > residues_to_design;
 	TR << "Calculating predicted SS" << std::endl;
-	runtime_assert( psipred_interface_ );
-	denovo_design::filters::PsiPredResult const & psipred_result( psipred_interface_->run_psipred( pose, wanted_ss ) );
+	std::string pred_ss( "" );
+	utility::vector1< core::Real > psipred_prob;
+	if ( ! psipred_interface_ ) {
+		runtime_assert( ss_predictor_ );
+		std::string sequence( "" );
+		for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+			if ( pose.residue( i ).is_protein() )
+				sequence += pose.residue( i ).name1();
+		}
+		utility::vector1< utility::vector1< core::Real > > svm_pred( ss_predictor_->predict_ss( sequence ) );
+		for ( core::Size i=1; i<=wanted_ss.size(); ++i ) {
+			psipred_prob.push_back( protocols::ss_prediction::get_prob( wanted_ss[i-1], svm_pred[i] ) );
+			pred_ss += protocols::ss_prediction::get_label( svm_pred[i] );
+		}
+	} else {
+		denovo_design::filters::PsiPredResult const & psipred_result( psipred_interface_->run_psipred( pose, wanted_ss ) );
+		psipred_prob = psipred_result.psipred_prob;
+		pred_ss = psipred_result.pred_ss;
+	}
+
 	if ( regions_to_design() == 0 ) {
 		TR << "Going to design all residues with psipred that doesn't match blueprint secondary structure." << std::endl;
-		std::string pred_ss( "" );
-		pred_ss = secstruct_with_ligand( psipred_result.pred_ss, ligands );
+		pred_ss = secstruct_with_ligand( pred_ss, ligands );
 		TR << "Blueprint SS = " << bp_ss << std::endl;
 		TR << "Predicted SS = " << pred_ss << std::endl;
 		runtime_assert( bp_ss.size() == pose.total_residue() );
 		residues_to_design = denovo_design::filters::nonmatching_residues( bp_ss, pred_ss );
 	} else {
 		TR << "Going to design the worst " << regions_to_design() << " residues." << std::endl;
-		utility::vector1< core::Real > const & psipred_prob( psipred_result.psipred_prob );
-
 		// create a map and insert pairs for residue and probabilities
 		utility::vector1< std::pair< core::Size, core::Real > > res_to_prob;
 		for ( core::Size j=1; j<=psipred_prob.size(); ++j ) {
 			res_to_prob.push_back( std::pair< core::Size, core::Real >( j, psipred_prob[j] ) );
 		}
-
 		// sort the map based on the psipred probability
 		std::sort( res_to_prob.begin(), res_to_prob.end(), compare_prob );
 		TR << "Top member of sorted probability list is " << res_to_prob[1].second << std::endl;

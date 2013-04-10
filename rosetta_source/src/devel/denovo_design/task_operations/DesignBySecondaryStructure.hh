@@ -24,6 +24,7 @@
 
 
 // project headers
+#include <protocols/ss_prediction/SS_predictor.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 
 // Utility Headers
@@ -80,6 +81,8 @@ private:
 	bool prevent_bad_point_mutants_;
 	/// @brief the object which directly communicates with psipred and parses psipred output
 	denovo_design::filters::PsiPredInterfaceOP psipred_interface_;
+	/// @brief the svm secondary structure predictor
+	protocols::ss_prediction::SS_predictorOP ss_predictor_;
 };
 
 

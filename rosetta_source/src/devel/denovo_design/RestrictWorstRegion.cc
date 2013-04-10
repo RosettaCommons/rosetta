@@ -168,15 +168,6 @@ RestrictWorstRegion::parse_my_tag(
 																														tag->getOption< std::string >( "scorefxn" ) )->clone();
 		assert( scorefxn_ );
 	}
-
-	// make sure required options are there
-	if ( type_ == "psipred" &&
-			 ( blueprint_file_ == "" || psipred_cmd_ == "" ) ) {
-		utility_exit_with_message( "You must specify both a psipred command and blueprint file for psipred type RestrictWorstRegion." );
-	}
-	if ( type_ == "frag_qual" && psipred_cmd_ == "" ) {
-		utility_exit_with_message( "You must specify a psipred command for frag_qual type RestrictWorstRegion." );
-	}
 }
 
 std::string

@@ -28,6 +28,7 @@
 
 //mover creators
 #include <devel/denovo_design/FastDesignCreator.hh>
+#include <devel/denovo_design/RestrictWorstRegionCreator.hh>
 #include <devel/enzdes/EnzdesRemodelMoverCreator.hh>
 #include <devel/loop_creation/LoopCreationMoverCreator.hh>
 #include <devel/loop_creation/LoophashLoopInserterCreator.hh>
@@ -89,6 +90,7 @@ namespace devel {
 
 // Mover creators
 static protocols::moves::MoverRegistrator< denovo_design::FastDesignCreator > reg_FastDesignCreator;
+static protocols::moves::MoverRegistrator< denovo_design::RestrictWorstRegionCreator > reg_RestrictWorstRegionCreator;
 
 protocols::moves::MoverRegistrator< enzdes::EnzdesRemodelMoverCreator > reg_EnzdesRemodelMoverCreator;
 protocols::moves::MoverRegistrator< vardist_solaccess::LoadVarSolDistSasaCalculatorMoverCreator > reg_LoadVarSolDistSasaCalculatorMoverCreator;

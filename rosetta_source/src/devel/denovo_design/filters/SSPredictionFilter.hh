@@ -32,14 +32,6 @@ namespace devel {
 namespace denovo_design {
 namespace filters {
 
-// helper functions
-
-/// @brief helper function to get SS char at a position from a vector of reals
-char get_label( utility::vector1< core::Real > const & ss_pred_pos );
-
-/// @brief helper function to get SS char at a position from a vector of reals
-core::Real get_prob( char wanted_ss, utility::vector1< core::Real > const & ss_pred_pos );
-
 // main SSPredictionFilter class
 class SSPredictionFilter : public protocols::filters::Filter {
 public:
