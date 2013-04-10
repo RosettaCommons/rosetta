@@ -61,14 +61,14 @@ public:
 	virtual std::string get_name() const = 0;
 
 	//virtual void initialize_movemap( core::kinematics::MoveMap & movemap ) = 0;
-	static void register_options();
+	// Undefinded commenting out to fix PyRostta build. static void register_options();
 
 	// Default options -------------------------------------
 	void set_defaults(){
 		dt_ = 0.001;
 	}
 
-	void set_scorefxn( core::scoring::ScoreFunctionOP score );
+	// Undefinded commenting out to fix PyRostta build. void set_scorefxn( core::scoring::ScoreFunctionOP score );
 	
 	core::scoring::ScoreFunctionOP scorefxn(){ return scorefxn_; }
 	
