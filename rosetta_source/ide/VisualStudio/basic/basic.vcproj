@@ -47,7 +47,7 @@
 				InlineFunctionExpansion="0"
 				OmitFramePointers="false"
 				EnableFiberSafeOptimizations="false"
-				AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boost;..\..\..\external\dbio"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boost;..\..\..\external\dbio;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_DEBUG;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -120,7 +120,7 @@
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-				AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boost;..\..\..\external\boinc\zip;..\..\..\external\dbio"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boost;..\..\..\external\boinc\zip;..\..\..\external\dbio;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;NDEBUG;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -194,7 +194,7 @@
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-				AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\dbio"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\dbio;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;NDEBUG;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -266,7 +266,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -339,7 +339,7 @@
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boost;..\..\..\external\boinc\zip;..\..\..\external\dbio"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boost;..\..\..\external\boinc\zip;..\..\..\external\dbio;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -388,18 +388,18 @@
 	</References>
 	<Files>
 		<Filter
-			Name="\basic\datacache\"
+			Name="\basic\gpu\"
 			>
 			<File
-				RelativePath="..\..\..\src\basic\datacache\BasicDataCache.cc"
+				RelativePath="..\..\..\src\basic\gpu\GPU.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\basic__basic__datacache__BasicDataCache.obj"
-						XMLDocumentationFileName="$(IntDir)\basic__basic__datacache__BasicDataCache.xdc"
+						ObjectFile="$(IntDir)\basic__basic__gpu__GPU.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__gpu__GPU.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -407,8 +407,8 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\basic__basic__datacache__BasicDataCache.obj"
-						XMLDocumentationFileName="$(IntDir)\basic__basic__datacache__BasicDataCache.xdc"
+						ObjectFile="$(IntDir)\basic__basic__gpu__GPU.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__gpu__GPU.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -416,8 +416,8 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\basic__basic__datacache__BasicDataCache.obj"
-						XMLDocumentationFileName="$(IntDir)\basic__basic__datacache__BasicDataCache.xdc"
+						ObjectFile="$(IntDir)\basic__basic__gpu__GPU.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__gpu__GPU.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -425,81 +425,73 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\basic__basic__datacache__BasicDataCache.obj"
-						XMLDocumentationFileName="$(IntDir)\basic__basic__datacache__BasicDataCache.xdc"
+						ObjectFile="$(IntDir)\basic__basic__gpu__GPU.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__gpu__GPU.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\basic\datacache\BasicDataCache.fwd.hh"
+				RelativePath="..\..\..\src\basic\gpu\GPU.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\basic\datacache\BasicDataCache.hh"
+				RelativePath="..\..\..\src\basic\gpu\Timer.cc"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__gpu__Timer.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__gpu__Timer.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__gpu__Timer.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__gpu__Timer.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__gpu__Timer.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__gpu__Timer.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__gpu__Timer.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__gpu__Timer.xdc"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\basic\datacache\CacheableData.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\basic\datacache\CacheableData.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\basic\datacache\CacheableString.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\basic\datacache\CacheableString.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\basic\datacache\CacheableStringFloatMap.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\basic\datacache\CacheableStringFloatMap.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\basic\datacache\CacheableStringMap.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\basic\datacache\CacheableStringMap.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\basic\datacache\DataCache.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\basic\datacache\DataCache.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\basic\datacache\DiagnosticData.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\basic\datacache\DiagnosticData.hh"
+				RelativePath="..\..\..\src\basic\gpu\Timer.hh"
 				>
 			</File>
 		</Filter>
 		<Filter
-			Name="\basic\database\"
+			Name="\basic\database\insert_statement_generator\"
 			>
 			<File
-				RelativePath="..\..\..\src\basic\database\open.cc"
+				RelativePath="..\..\..\src\basic\database\insert_statement_generator\InsertGenerator.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\basic__basic__database__open.obj"
-						XMLDocumentationFileName="$(IntDir)\basic__basic__database__open.xdc"
+						ObjectFile="$(IntDir)\basic__basic__database__insert_statement_generator__InsertGenerator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__insert_statement_generator__InsertGenerator.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -507,8 +499,8 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\basic__basic__database__open.obj"
-						XMLDocumentationFileName="$(IntDir)\basic__basic__database__open.xdc"
+						ObjectFile="$(IntDir)\basic__basic__database__insert_statement_generator__InsertGenerator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__insert_statement_generator__InsertGenerator.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -516,8 +508,8 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\basic__basic__database__open.obj"
-						XMLDocumentationFileName="$(IntDir)\basic__basic__database__open.xdc"
+						ObjectFile="$(IntDir)\basic__basic__database__insert_statement_generator__InsertGenerator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__insert_statement_generator__InsertGenerator.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -525,25 +517,29 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\basic__basic__database__open.obj"
-						XMLDocumentationFileName="$(IntDir)\basic__basic__database__open.xdc"
+						ObjectFile="$(IntDir)\basic__basic__database__insert_statement_generator__InsertGenerator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__insert_statement_generator__InsertGenerator.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\basic\database\open.hh"
+				RelativePath="..\..\..\src\basic\database\insert_statement_generator\InsertGenerator.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\basic\database\sql_utils.cc"
+				RelativePath="..\..\..\src\basic\database\insert_statement_generator\InsertGenerator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\insert_statement_generator\RowData.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\basic__basic__database__sql_utils.obj"
-						XMLDocumentationFileName="$(IntDir)\basic__basic__database__sql_utils.xdc"
+						ObjectFile="$(IntDir)\basic__basic__database__insert_statement_generator__RowData.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__insert_statement_generator__RowData.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -551,8 +547,8 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\basic__basic__database__sql_utils.obj"
-						XMLDocumentationFileName="$(IntDir)\basic__basic__database__sql_utils.xdc"
+						ObjectFile="$(IntDir)\basic__basic__database__insert_statement_generator__RowData.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__insert_statement_generator__RowData.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -560,8 +556,8 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\basic__basic__database__sql_utils.obj"
-						XMLDocumentationFileName="$(IntDir)\basic__basic__database__sql_utils.xdc"
+						ObjectFile="$(IntDir)\basic__basic__database__insert_statement_generator__RowData.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__insert_statement_generator__RowData.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -569,13 +565,17 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\basic__basic__database__sql_utils.obj"
-						XMLDocumentationFileName="$(IntDir)\basic__basic__database__sql_utils.xdc"
+						ObjectFile="$(IntDir)\basic__basic__database__insert_statement_generator__RowData.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__insert_statement_generator__RowData.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\basic\database\sql_utils.hh"
+				RelativePath="..\..\..\src\basic\database\insert_statement_generator\RowData.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\insert_statement_generator\RowData.hh"
 				>
 			</File>
 		</Filter>
@@ -776,6 +776,998 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\basic\options\util.hh"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="\basic\database\schema_generator\"
+			>
+			<File
+				RelativePath="..\..\..\src\basic\database\schema_generator\Column.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__schema_generator__Column.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__schema_generator__Column.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__schema_generator__Column.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__schema_generator__Column.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__schema_generator__Column.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__schema_generator__Column.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__schema_generator__Column.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__schema_generator__Column.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\schema_generator\Column.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\schema_generator\Column.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\schema_generator\Constraint.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__schema_generator__Constraint.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__schema_generator__Constraint.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__schema_generator__Constraint.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__schema_generator__Constraint.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__schema_generator__Constraint.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__schema_generator__Constraint.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__schema_generator__Constraint.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__schema_generator__Constraint.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\schema_generator\Constraint.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\schema_generator\Constraint.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\schema_generator\DbDataType.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__schema_generator__DbDataType.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__schema_generator__DbDataType.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__schema_generator__DbDataType.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__schema_generator__DbDataType.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__schema_generator__DbDataType.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__schema_generator__DbDataType.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__schema_generator__DbDataType.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__schema_generator__DbDataType.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\schema_generator\DbDataType.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\schema_generator\DbDataType.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\schema_generator\ForeignKey.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__schema_generator__ForeignKey.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__schema_generator__ForeignKey.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__schema_generator__ForeignKey.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__schema_generator__ForeignKey.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__schema_generator__ForeignKey.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__schema_generator__ForeignKey.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__schema_generator__ForeignKey.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__schema_generator__ForeignKey.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\schema_generator\ForeignKey.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\schema_generator\Index.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__schema_generator__Index.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__schema_generator__Index.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__schema_generator__Index.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__schema_generator__Index.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__schema_generator__Index.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__schema_generator__Index.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__schema_generator__Index.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__schema_generator__Index.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\schema_generator\Index.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\schema_generator\PrimaryKey.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__schema_generator__PrimaryKey.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__schema_generator__PrimaryKey.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__schema_generator__PrimaryKey.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__schema_generator__PrimaryKey.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__schema_generator__PrimaryKey.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__schema_generator__PrimaryKey.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__schema_generator__PrimaryKey.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__schema_generator__PrimaryKey.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\schema_generator\PrimaryKey.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\schema_generator\Schema.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__schema_generator__Schema.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__schema_generator__Schema.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__schema_generator__Schema.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__schema_generator__Schema.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__schema_generator__Schema.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__schema_generator__Schema.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__schema_generator__Schema.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__schema_generator__Schema.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\schema_generator\Schema.hh"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="\basic\svd\"
+			>
+			<File
+				RelativePath="..\..\..\src\basic\svd\SVD_Solver.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__svd__SVD_Solver.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__svd__SVD_Solver.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__svd__SVD_Solver.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__svd__SVD_Solver.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__svd__SVD_Solver.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__svd__SVD_Solver.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__svd__SVD_Solver.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__svd__SVD_Solver.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\svd\SVD_Solver.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\svd\SVD_Solver.hh"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="\basic\resource_manager\fallback_configuration\"
+			>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\fallback_configuration\NativeFallbackConfiguration.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__fallback_configuration__NativeFallbackConfiguration.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__fallback_configuration__NativeFallbackConfiguration.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__fallback_configuration__NativeFallbackConfiguration.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__fallback_configuration__NativeFallbackConfiguration.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__fallback_configuration__NativeFallbackConfiguration.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__fallback_configuration__NativeFallbackConfiguration.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__fallback_configuration__NativeFallbackConfiguration.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__fallback_configuration__NativeFallbackConfiguration.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\fallback_configuration\NativeFallbackConfiguration.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\fallback_configuration\NativeFallbackConfiguration.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\fallback_configuration\NativeFallbackConfigurationCreator.hh"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="\basic\resource_manager\locator\"
+			>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\locator\DatabaseResourceLocator.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__locator__DatabaseResourceLocator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__locator__DatabaseResourceLocator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__locator__DatabaseResourceLocator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__locator__DatabaseResourceLocator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__locator__DatabaseResourceLocator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__locator__DatabaseResourceLocator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__locator__DatabaseResourceLocator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__locator__DatabaseResourceLocator.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\locator\DatabaseResourceLocator.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\locator\DatabaseResourceLocator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\locator\DatabaseResourceLocatorCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\locator\FileListResourceLocator.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__locator__FileListResourceLocator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__locator__FileListResourceLocator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__locator__FileListResourceLocator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__locator__FileListResourceLocator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__locator__FileListResourceLocator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__locator__FileListResourceLocator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__locator__FileListResourceLocator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__locator__FileListResourceLocator.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\locator\FileListResourceLocator.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\locator\FileListResourceLocator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\locator\FileListResourceLocatorCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\locator\FileSystemResourceLocator.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__locator__FileSystemResourceLocator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__locator__FileSystemResourceLocator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__locator__FileSystemResourceLocator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__locator__FileSystemResourceLocator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__locator__FileSystemResourceLocator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__locator__FileSystemResourceLocator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__locator__FileSystemResourceLocator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__locator__FileSystemResourceLocator.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\locator\FileSystemResourceLocator.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\locator\FileSystemResourceLocator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\locator\FileSystemResourceLocatorCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\locator\NullResourceLocator.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__locator__NullResourceLocator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__locator__NullResourceLocator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__locator__NullResourceLocator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__locator__NullResourceLocator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__locator__NullResourceLocator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__locator__NullResourceLocator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__locator__NullResourceLocator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__locator__NullResourceLocator.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\locator\NullResourceLocator.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\locator\NullResourceLocator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\locator\NullResourceLocatorCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\locator\StringResourceStream.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__locator__StringResourceStream.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__locator__StringResourceStream.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__locator__StringResourceStream.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__locator__StringResourceStream.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__locator__StringResourceStream.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__locator__StringResourceStream.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__locator__StringResourceStream.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__locator__StringResourceStream.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\locator\StringResourceStream.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\locator\StringResourceStream.hh"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="\basic\datacache\"
+			>
+			<File
+				RelativePath="..\..\..\src\basic\datacache\BasicDataCache.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__datacache__BasicDataCache.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__datacache__BasicDataCache.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__datacache__BasicDataCache.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__datacache__BasicDataCache.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__datacache__BasicDataCache.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__datacache__BasicDataCache.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__datacache__BasicDataCache.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__datacache__BasicDataCache.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\datacache\BasicDataCache.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\datacache\BasicDataCache.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\datacache\CacheableData.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\datacache\CacheableData.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\datacache\CacheableString.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\datacache\CacheableString.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\datacache\CacheableStringFloatMap.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\datacache\CacheableStringFloatMap.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\datacache\CacheableStringMap.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\datacache\CacheableStringMap.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\datacache\DataCache.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\datacache\DataCache.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\datacache\DiagnosticData.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\datacache\DiagnosticData.hh"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="\basic\database\"
+			>
+			<File
+				RelativePath="..\..\..\src\basic\database\DatabaseSessionFactory.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\DatabaseSessionLoader.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__DatabaseSessionLoader.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__DatabaseSessionLoader.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__DatabaseSessionLoader.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__DatabaseSessionLoader.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__DatabaseSessionLoader.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__DatabaseSessionLoader.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__DatabaseSessionLoader.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__DatabaseSessionLoader.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\DatabaseSessionLoader.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\DatabaseSessionLoader.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\DatabaseSessionLoaderCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\DatabaseSessionOptions.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__DatabaseSessionOptions.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__DatabaseSessionOptions.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__DatabaseSessionOptions.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__DatabaseSessionOptions.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__DatabaseSessionOptions.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__DatabaseSessionOptions.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__DatabaseSessionOptions.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__DatabaseSessionOptions.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\DatabaseSessionOptions.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\DatabaseSessionOptions.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\DatabaseSessionOptionsCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\open.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__open.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__open.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__open.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__open.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__open.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__open.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__open.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__open.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\open.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\sql_utils.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__sql_utils.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__sql_utils.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__sql_utils.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__sql_utils.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__sql_utils.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__sql_utils.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__database__sql_utils.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__database__sql_utils.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\sql_utils.hh"
 				>
 			</File>
 		</Filter>
@@ -1190,20 +2182,24 @@
 				RelativePath="..\..\..\src\basic\prof.hh"
 				>
 			</File>
+			<File
+				RelativePath="..\..\..\src\basic\pymol_chains.hh"
+				>
+			</File>
 		</Filter>
 		<Filter
-			Name="\basic\svd\"
+			Name="\basic\resource_manager\"
 			>
 			<File
-				RelativePath="..\..\..\src\basic\svd\SVD_Solver.cc"
+				RelativePath="..\..\..\src\basic\resource_manager\FallbackConfiguration.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\basic__basic__svd__SVD_Solver.obj"
-						XMLDocumentationFileName="$(IntDir)\basic__basic__svd__SVD_Solver.xdc"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__FallbackConfiguration.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__FallbackConfiguration.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -1211,8 +2207,8 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\basic__basic__svd__SVD_Solver.obj"
-						XMLDocumentationFileName="$(IntDir)\basic__basic__svd__SVD_Solver.xdc"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__FallbackConfiguration.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__FallbackConfiguration.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -1220,8 +2216,8 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\basic__basic__svd__SVD_Solver.obj"
-						XMLDocumentationFileName="$(IntDir)\basic__basic__svd__SVD_Solver.xdc"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__FallbackConfiguration.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__FallbackConfiguration.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -1229,17 +2225,793 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\basic__basic__svd__SVD_Solver.obj"
-						XMLDocumentationFileName="$(IntDir)\basic__basic__svd__SVD_Solver.xdc"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__FallbackConfiguration.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__FallbackConfiguration.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\basic\svd\SVD_Solver.fwd.hh"
+				RelativePath="..\..\..\src\basic\resource_manager\FallbackConfiguration.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\basic\svd\SVD_Solver.hh"
+				RelativePath="..\..\..\src\basic\resource_manager\FallbackConfiguration.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\FallbackConfigurationCreator.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__FallbackConfigurationCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__FallbackConfigurationCreator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__FallbackConfigurationCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__FallbackConfigurationCreator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__FallbackConfigurationCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__FallbackConfigurationCreator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__FallbackConfigurationCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__FallbackConfigurationCreator.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\FallbackConfigurationCreator.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\FallbackConfigurationCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\FallbackConfigurationFactory.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__FallbackConfigurationFactory.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__FallbackConfigurationFactory.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__FallbackConfigurationFactory.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__FallbackConfigurationFactory.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__FallbackConfigurationFactory.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__FallbackConfigurationFactory.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__FallbackConfigurationFactory.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__FallbackConfigurationFactory.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\FallbackConfigurationFactory.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\FallbackConfigurationFactory.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\JobOptions.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__JobOptions.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__JobOptions.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__JobOptions.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__JobOptions.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__JobOptions.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__JobOptions.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__JobOptions.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__JobOptions.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\JobOptions.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\JobOptions.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\LazyResourceManager.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__LazyResourceManager.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__LazyResourceManager.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__LazyResourceManager.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__LazyResourceManager.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__LazyResourceManager.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__LazyResourceManager.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__LazyResourceManager.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__LazyResourceManager.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\LazyResourceManager.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\LazyResourceManager.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\ResourceLoader.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceLoader.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceLoader.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceLoader.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceLoader.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceLoader.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceLoader.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceLoader.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceLoader.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\ResourceLoader.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\ResourceLoader.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\ResourceLoaderCreator.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceLoaderCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceLoaderCreator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceLoaderCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceLoaderCreator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceLoaderCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceLoaderCreator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceLoaderCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceLoaderCreator.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\ResourceLoaderCreator.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\ResourceLoaderCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\ResourceLoaderFactory.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceLoaderFactory.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceLoaderFactory.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceLoaderFactory.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceLoaderFactory.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceLoaderFactory.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceLoaderFactory.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceLoaderFactory.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceLoaderFactory.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\ResourceLoaderFactory.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\ResourceLoaderRegistrator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\ResourceLocator.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceLocator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceLocator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceLocator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceLocator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceLocator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceLocator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceLocator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceLocator.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\ResourceLocator.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\ResourceLocator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\ResourceLocatorCreator.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceLocatorCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceLocatorCreator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceLocatorCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceLocatorCreator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceLocatorCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceLocatorCreator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceLocatorCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceLocatorCreator.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\ResourceLocatorCreator.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\ResourceLocatorCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\ResourceLocatorFactory.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceLocatorFactory.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceLocatorFactory.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceLocatorFactory.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceLocatorFactory.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceLocatorFactory.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceLocatorFactory.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceLocatorFactory.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceLocatorFactory.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\ResourceLocatorFactory.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\ResourceLocatorRegistrator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\ResourceManager.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceManager.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceManager.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceManager.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceManager.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceManager.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceManager.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceManager.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceManager.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\ResourceManager.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\ResourceManager.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\ResourceManagerCreator.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceManagerCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceManagerCreator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceManagerCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceManagerCreator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceManagerCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceManagerCreator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceManagerCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceManagerCreator.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\ResourceManagerCreator.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\ResourceManagerCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\ResourceManagerFactory.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceManagerFactory.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceManagerFactory.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceManagerFactory.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceManagerFactory.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceManagerFactory.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceManagerFactory.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceManagerFactory.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceManagerFactory.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\ResourceManagerFactory.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\ResourceManagerFactory.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\ResourceOptions.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceOptions.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceOptions.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceOptions.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceOptions.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceOptions.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceOptions.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceOptions.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceOptions.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\ResourceOptions.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\ResourceOptions.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\ResourceOptionsCreator.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceOptionsCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceOptionsCreator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceOptionsCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceOptionsCreator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceOptionsCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceOptionsCreator.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceOptionsCreator.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceOptionsCreator.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\ResourceOptionsCreator.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\ResourceOptionsCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\ResourceOptionsFactory.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceOptionsFactory.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceOptionsFactory.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceOptionsFactory.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceOptionsFactory.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceOptionsFactory.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceOptionsFactory.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__resource_manager__ResourceOptionsFactory.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__resource_manager__ResourceOptionsFactory.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\ResourceOptionsFactory.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\ResourceOptionsRegistrator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\types.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\util.hh"
 				>
 			</File>
 		</Filter>
@@ -1256,6 +3028,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\basic\options\keys\DomainAssembly.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\FloppyTail.OptionKeys.gen.hh"
 				>
 			</File>
 			<File
@@ -1519,11 +3295,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\basic\options\keys\carbohydrates.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\basic\options\keys\casp.OptionKeys.gen.hh"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\src\basic\options\keys\chemical.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\chemically_conjugated_docking.OptionKeys.gen.hh"
 				>
 			</File>
 			<File
@@ -1543,6 +3327,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\basic\options\keys\cmiles.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\basic\options\keys\constraints.OptionKeys.gen.hh"
 				>
 			</File>
@@ -1551,7 +3339,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\basic\options\keys\cp.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\basic\options\keys\crossmatch.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\cryst.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\csa.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\dc.OptionKeys.gen.hh"
 				>
 			</File>
 			<File
@@ -1572,6 +3376,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\basic\options\keys\edensity.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\els.OptionKeys.gen.hh"
 				>
 			</File>
 			<File
@@ -1635,6 +3443,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\basic\options\keys\gpu.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\helixAssembly.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\basic\options\keys\holes.OptionKeys.gen.hh"
 				>
 			</File>
@@ -1684,6 +3500,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\basic\options\keys\match.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\matdes.OptionKeys.gen.hh"
 				>
 			</File>
 			<File
@@ -1755,6 +3575,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\basic\options\keys\pb_potential.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\basic\options\keys\pepspec.OptionKeys.gen.hh"
 				>
 			</File>
@@ -1772,6 +3596,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\basic\options\keys\qsar.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\rbe.OptionKeys.gen.hh"
 				>
 			</File>
 			<File
@@ -1799,6 +3627,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\basic\options\keys\rigid.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\basic\options\keys\rna.OptionKeys.gen.hh"
 				>
 			</File>
@@ -1811,6 +3643,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\basic\options\keys\rotamerdump.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\basic\options\keys\run.OptionKeys.gen.hh"
 				>
 			</File>
@@ -1819,7 +3655,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\basic\options\keys\sicdock.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\basic\options\keys\smhybrid.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\strand_assembly.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\swa.OptionKeys.gen.hh"
 				>
 			</File>
 			<File
@@ -1839,7 +3687,159 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\basic\options\keys\willmatch.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\basic\options\keys\wum.OptionKeys.gen.hh"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="\basic\message_listening\"
+			>
+			<File
+				RelativePath="..\..\..\src\basic\message_listening\DbMoverMessageListener.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__message_listening__DbMoverMessageListener.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__message_listening__DbMoverMessageListener.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__message_listening__DbMoverMessageListener.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__message_listening__DbMoverMessageListener.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__message_listening__DbMoverMessageListener.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__message_listening__DbMoverMessageListener.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__message_listening__DbMoverMessageListener.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__message_listening__DbMoverMessageListener.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\message_listening\DbMoverMessageListener.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\message_listening\DbMoverMessageListener.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\message_listening\MessageListener.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\message_listening\MessageListener.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\message_listening\MessageListenerFactory.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__message_listening__MessageListenerFactory.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__message_listening__MessageListenerFactory.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__message_listening__MessageListenerFactory.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__message_listening__MessageListenerFactory.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__message_listening__MessageListenerFactory.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__message_listening__MessageListenerFactory.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__message_listening__MessageListenerFactory.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__message_listening__MessageListenerFactory.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\message_listening\MessageListenerFactory.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\message_listening\util.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__message_listening__util.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__message_listening__util.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__message_listening__util.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__message_listening__util.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__message_listening__util.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__message_listening__util.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__message_listening__util.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__message_listening__util.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\message_listening\util.hh"
 				>
 			</File>
 		</Filter>

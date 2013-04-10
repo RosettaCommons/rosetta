@@ -47,7 +47,7 @@
 				InlineFunctionExpansion="0"
 				OmitFramePointers="false"
 				EnableFiberSafeOptimizations="false"
-				AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_DEBUG;_LIB"
 				StringPooling="false"
 				MinimalRebuild="true"
@@ -124,7 +124,7 @@
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -198,7 +198,7 @@
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-				AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -270,7 +270,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -345,7 +345,7 @@
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -1273,6 +1273,58 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\core\import_pose\PoseFromPDBLoader.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.5__core__import_pose__PoseFromPDBLoader.obj"
+						XMLDocumentationFileName="$(IntDir)\core.5__core__import_pose__PoseFromPDBLoader.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.5__core__import_pose__PoseFromPDBLoader.obj"
+						XMLDocumentationFileName="$(IntDir)\core.5__core__import_pose__PoseFromPDBLoader.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.5__core__import_pose__PoseFromPDBLoader.obj"
+						XMLDocumentationFileName="$(IntDir)\core.5__core__import_pose__PoseFromPDBLoader.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.5__core__import_pose__PoseFromPDBLoader.obj"
+						XMLDocumentationFileName="$(IntDir)\core.5__core__import_pose__PoseFromPDBLoader.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\import_pose\PoseFromPDBLoader.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\import_pose\PoseFromPDBLoader.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\import_pose\PoseFromPDBLoaderCreator.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\core\import_pose\import_pose.cc"
 				>
 				<FileConfiguration
@@ -1314,6 +1366,58 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\core\import_pose\import_pose.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\import_pose\import_pose_options.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.5__core__import_pose__import_pose_options.obj"
+						XMLDocumentationFileName="$(IntDir)\core.5__core__import_pose__import_pose_options.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.5__core__import_pose__import_pose_options.obj"
+						XMLDocumentationFileName="$(IntDir)\core.5__core__import_pose__import_pose_options.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.5__core__import_pose__import_pose_options.obj"
+						XMLDocumentationFileName="$(IntDir)\core.5__core__import_pose__import_pose_options.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.5__core__import_pose__import_pose_options.obj"
+						XMLDocumentationFileName="$(IntDir)\core.5__core__import_pose__import_pose_options.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\import_pose\import_pose_options.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\import_pose\import_pose_options.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\import_pose\import_pose_options_creator.hh"
 				>
 			</File>
 		</Filter>
@@ -1372,6 +1476,54 @@
 		<Filter
 			Name="\core\fragment\picking_old\vall\eval\"
 			>
+			<File
+				RelativePath="..\..\..\src\core\fragment\picking_old\vall\eval\ABEGOEval.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.5__core__fragment__picking_old__vall__eval__ABEGOEval.obj"
+						XMLDocumentationFileName="$(IntDir)\core.5__core__fragment__picking_old__vall__eval__ABEGOEval.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.5__core__fragment__picking_old__vall__eval__ABEGOEval.obj"
+						XMLDocumentationFileName="$(IntDir)\core.5__core__fragment__picking_old__vall__eval__ABEGOEval.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.5__core__fragment__picking_old__vall__eval__ABEGOEval.obj"
+						XMLDocumentationFileName="$(IntDir)\core.5__core__fragment__picking_old__vall__eval__ABEGOEval.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.5__core__fragment__picking_old__vall__eval__ABEGOEval.obj"
+						XMLDocumentationFileName="$(IntDir)\core.5__core__fragment__picking_old__vall__eval__ABEGOEval.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\picking_old\vall\eval\ABEGOEval.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\picking_old\vall\eval\ABEGOEval.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\core\fragment\picking_old\vall\eval\EnergyEval.cc"
 				>
@@ -1958,6 +2110,54 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\core\fragment\FragmentIO.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\FragmentRmsd.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.5__core__fragment__FragmentRmsd.obj"
+						XMLDocumentationFileName="$(IntDir)\core.5__core__fragment__FragmentRmsd.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.5__core__fragment__FragmentRmsd.obj"
+						XMLDocumentationFileName="$(IntDir)\core.5__core__fragment__FragmentRmsd.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.5__core__fragment__FragmentRmsd.obj"
+						XMLDocumentationFileName="$(IntDir)\core.5__core__fragment__FragmentRmsd.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.5__core__fragment__FragmentRmsd.obj"
+						XMLDocumentationFileName="$(IntDir)\core.5__core__fragment__FragmentRmsd.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\FragmentRmsd.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\FragmentRmsd.hh"
 				>
 			</File>
 			<File

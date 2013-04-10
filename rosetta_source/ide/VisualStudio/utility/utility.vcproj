@@ -47,7 +47,7 @@
 				InlineFunctionExpansion="0"
 				OmitFramePointers="false"
 				EnableFiberSafeOptimizations="false"
-				AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boost"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boost;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_DEBUG;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -120,7 +120,7 @@
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-				AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boost;..\..\..\external\boinc\zip"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boost;..\..\..\external\boinc\zip;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;NDEBUG;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -194,7 +194,7 @@
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-				AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;NDEBUG;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -266,7 +266,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -339,7 +339,7 @@
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boost;..\..\..\external\boinc\zip;..\..\..\external\dbio"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boost;..\..\..\external\boinc\zip;..\..\..\external\dbio;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -389,26 +389,18 @@
 	</References>
 	<Files>
 		<Filter
-			Name="\utility\io\"
+			Name="\utility\libsvm\"
 			>
 			<File
-				RelativePath="..\..\..\src\utility\io\all.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\io\all.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\io\icstream.cc"
+				RelativePath="..\..\..\src\utility\libsvm\Svm.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__io__icstream.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__io__icstream.xdc"
+						ObjectFile="$(IntDir)\utility__utility__libsvm__Svm.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__libsvm__Svm.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -416,8 +408,8 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__io__icstream.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__io__icstream.xdc"
+						ObjectFile="$(IntDir)\utility__utility__libsvm__Svm.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__libsvm__Svm.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -425,8 +417,8 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__io__icstream.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__io__icstream.xdc"
+						ObjectFile="$(IntDir)\utility__utility__libsvm__Svm.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__libsvm__Svm.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -434,37 +426,25 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__io__icstream.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__io__icstream.xdc"
+						ObjectFile="$(IntDir)\utility__utility__libsvm__Svm.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__libsvm__Svm.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\utility\io\icstream.fwd.hh"
+				RelativePath="..\..\..\src\utility\libsvm\Svm.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\utility\io\icstream.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\io\irstream.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\io\irstream.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\io\izstream.cc"
+				RelativePath="..\..\..\src\utility\libsvm\Svm_rosetta.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__io__izstream.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__io__izstream.xdc"
+						ObjectFile="$(IntDir)\utility__utility__libsvm__Svm_rosetta.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__libsvm__Svm_rosetta.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -472,8 +452,8 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__io__izstream.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__io__izstream.xdc"
+						ObjectFile="$(IntDir)\utility__utility__libsvm__Svm_rosetta.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__libsvm__Svm_rosetta.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -481,8 +461,8 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__io__izstream.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__io__izstream.xdc"
+						ObjectFile="$(IntDir)\utility__utility__libsvm__Svm_rosetta.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__libsvm__Svm_rosetta.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -490,33 +470,33 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__io__izstream.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__io__izstream.xdc"
+						ObjectFile="$(IntDir)\utility__utility__libsvm__Svm_rosetta.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__libsvm__Svm_rosetta.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\utility\io\izstream.fwd.hh"
+				RelativePath="..\..\..\src\utility\libsvm\Svm_rosetta.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\utility\io\izstream.hh"
+				RelativePath="..\..\..\src\utility\libsvm\Svm_rosetta.hh"
 				>
 			</File>
+		</Filter>
+		<Filter
+			Name="\utility\tag\"
+			>
 			<File
-				RelativePath="..\..\..\src\utility\io\mpistream.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\io\ocstream.cc"
+				RelativePath="..\..\..\src\utility\tag\Tag.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__io__ocstream.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__io__ocstream.xdc"
+						ObjectFile="$(IntDir)\utility__utility__tag__Tag.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__tag__Tag.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -524,8 +504,8 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__io__ocstream.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__io__ocstream.xdc"
+						ObjectFile="$(IntDir)\utility__utility__tag__Tag.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__tag__Tag.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -533,8 +513,8 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__io__ocstream.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__io__ocstream.xdc"
+						ObjectFile="$(IntDir)\utility__utility__tag__Tag.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__tag__Tag.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -542,37 +522,33 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__io__ocstream.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__io__ocstream.xdc"
+						ObjectFile="$(IntDir)\utility__utility__tag__Tag.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__tag__Tag.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\utility\io\ocstream.fwd.hh"
+				RelativePath="..\..\..\src\utility\tag\Tag.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\utility\io\ocstream.hh"
+				RelativePath="..\..\..\src\utility\tag\Tag.hh"
 				>
 			</File>
+		</Filter>
+		<Filter
+			Name="\utility\lua\"
+			>
 			<File
-				RelativePath="..\..\..\src\utility\io\orstream.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\io\orstream.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\io\ozstream.cc"
+				RelativePath="..\..\..\src\utility\lua\LuaIterator.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__io__ozstream.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__io__ozstream.xdc"
+						ObjectFile="$(IntDir)\utility__utility__lua__LuaIterator.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__lua__LuaIterator.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -580,8 +556,8 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__io__ozstream.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__io__ozstream.xdc"
+						ObjectFile="$(IntDir)\utility__utility__lua__LuaIterator.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__lua__LuaIterator.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -589,8 +565,8 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__io__ozstream.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__io__ozstream.xdc"
+						ObjectFile="$(IntDir)\utility__utility__lua__LuaIterator.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__lua__LuaIterator.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -598,25 +574,205 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__io__ozstream.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__io__ozstream.xdc"
+						ObjectFile="$(IntDir)\utility__utility__lua__LuaIterator.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__lua__LuaIterator.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\utility\io\ozstream.fwd.hh"
+				RelativePath="..\..\..\src\utility\lua\LuaIterator.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\utility\io\ozstream.hh"
+				RelativePath="..\..\..\src\utility\lua\LuaIterator.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\utility\io\util.hh"
+				RelativePath="..\..\..\src\utility\lua\LuaObject.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__lua__LuaObject.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__lua__LuaObject.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__lua__LuaObject.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__lua__LuaObject.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__lua__LuaObject.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__lua__LuaObject.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__lua__LuaObject.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__lua__LuaObject.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\lua\LuaObject.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\utility\io\zipstream.hpp"
+				RelativePath="..\..\..\src\utility\lua\LuaObject.hh"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="\utility\pointer\"
+			>
+			<File
+				RelativePath="..\..\..\src\utility\pointer\ReferenceCount.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__pointer__ReferenceCount.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__pointer__ReferenceCount.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__pointer__ReferenceCount.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__pointer__ReferenceCount.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__pointer__ReferenceCount.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__pointer__ReferenceCount.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__pointer__ReferenceCount.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__pointer__ReferenceCount.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\pointer\ReferenceCount.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\pointer\ReferenceCount.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\pointer\ReferenceCountMI.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\pointer\ReferenceCountMI.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\pointer\ReferenceCountMI_.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__pointer__ReferenceCountMI_.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__pointer__ReferenceCountMI_.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__pointer__ReferenceCountMI_.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__pointer__ReferenceCountMI_.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__pointer__ReferenceCountMI_.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__pointer__ReferenceCountMI_.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__pointer__ReferenceCountMI_.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__pointer__ReferenceCountMI_.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\pointer\ReferenceCountMI_.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\pointer\ReferenceCountMI_.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\pointer\access_ptr.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\pointer\access_ptr.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\pointer\all.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\pointer\all.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\pointer\owning_ptr.functions.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\pointer\owning_ptr.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\pointer\owning_ptr.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\pointer\pointer.functions.hh"
 				>
 			</File>
 		</Filter>
@@ -865,18 +1021,26 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="\utility\sql_database\"
+			Name="\utility\json_spirit\"
 			>
 			<File
-				RelativePath="..\..\..\src\utility\sql_database\DatabaseSessionManager.cc"
+				RelativePath="..\..\..\src\utility\json_spirit\json_spirit.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\json_spirit\json_spirit_error_position.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\json_spirit\json_spirit_reader.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__sql_database__DatabaseSessionManager.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__sql_database__DatabaseSessionManager.xdc"
+						ObjectFile="$(IntDir)\utility__utility__json_spirit__json_spirit_reader.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__json_spirit__json_spirit_reader.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -884,8 +1048,8 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__sql_database__DatabaseSessionManager.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__sql_database__DatabaseSessionManager.xdc"
+						ObjectFile="$(IntDir)\utility__utility__json_spirit__json_spirit_reader.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__json_spirit__json_spirit_reader.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -893,8 +1057,8 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__sql_database__DatabaseSessionManager.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__sql_database__DatabaseSessionManager.xdc"
+						ObjectFile="$(IntDir)\utility__utility__json_spirit__json_spirit_reader.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__json_spirit__json_spirit_reader.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -902,49 +1066,181 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__sql_database__DatabaseSessionManager.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__sql_database__DatabaseSessionManager.xdc"
+						ObjectFile="$(IntDir)\utility__utility__json_spirit__json_spirit_reader.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__json_spirit__json_spirit_reader.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\utility\sql_database\DatabaseSessionManager.fwd.hh"
+				RelativePath="..\..\..\src\utility\json_spirit\json_spirit_reader.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\utility\sql_database\DatabaseSessionManager.hh"
+				RelativePath="..\..\..\src\utility\json_spirit\json_spirit_reader_template.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\utility\sql_database\sqlite3_connection_manager.fwd.hh"
+				RelativePath="..\..\..\src\utility\json_spirit\json_spirit_stream_reader.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\utility\sql_database\sqlite3_connection_manager.hh"
+				RelativePath="..\..\..\src\utility\json_spirit\json_spirit_tools.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__json_spirit__json_spirit_tools.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__json_spirit__json_spirit_tools.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__json_spirit__json_spirit_tools.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__json_spirit__json_spirit_tools.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__json_spirit__json_spirit_tools.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__json_spirit__json_spirit_tools.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__json_spirit__json_spirit_tools.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__json_spirit__json_spirit_tools.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\json_spirit\json_spirit_tools.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\utility\sql_database\sqlite3_interface.fwd.hh"
+				RelativePath="..\..\..\src\utility\json_spirit\json_spirit_utils.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\utility\sql_database\sqlite3_interface.hh"
+				RelativePath="..\..\..\src\utility\json_spirit\json_spirit_value.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__json_spirit__json_spirit_value.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__json_spirit__json_spirit_value.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__json_spirit__json_spirit_value.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__json_spirit__json_spirit_value.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__json_spirit__json_spirit_value.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__json_spirit__json_spirit_value.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__json_spirit__json_spirit_value.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__json_spirit__json_spirit_value.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\json_spirit\json_spirit_value.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\json_spirit\json_spirit_writer.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__json_spirit__json_spirit_writer.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__json_spirit__json_spirit_writer.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__json_spirit__json_spirit_writer.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__json_spirit__json_spirit_writer.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__json_spirit__json_spirit_writer.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__json_spirit__json_spirit_writer.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__json_spirit__json_spirit_writer.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__json_spirit__json_spirit_writer.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\json_spirit\json_spirit_writer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\json_spirit\json_spirit_writer_options.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\json_spirit\json_spirit_writer_template.h"
 				>
 			</File>
 		</Filter>
 		<Filter
-			Name="\utility\pointer\"
+			Name="\utility\"
 			>
 			<File
-				RelativePath="..\..\..\src\utility\pointer\ReferenceCount.cc"
+				RelativePath="..\..\..\src\utility\Binary_Util.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__pointer__ReferenceCount.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__pointer__ReferenceCount.xdc"
+						ObjectFile="$(IntDir)\utility__utility__Binary_Util.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__Binary_Util.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -952,8 +1248,8 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__pointer__ReferenceCount.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__pointer__ReferenceCount.xdc"
+						ObjectFile="$(IntDir)\utility__utility__Binary_Util.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__Binary_Util.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -961,8 +1257,8 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__pointer__ReferenceCount.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__pointer__ReferenceCount.xdc"
+						ObjectFile="$(IntDir)\utility__utility__Binary_Util.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__Binary_Util.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -970,37 +1266,73 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__pointer__ReferenceCount.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__pointer__ReferenceCount.xdc"
+						ObjectFile="$(IntDir)\utility__utility__Binary_Util.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__Binary_Util.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\utility\pointer\ReferenceCount.fwd.hh"
+				RelativePath="..\..\..\src\utility\Binary_Util.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\utility\pointer\ReferenceCount.hh"
+				RelativePath="..\..\..\src\utility\BitSet.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\utility\pointer\ReferenceCountMI.fwd.hh"
+				RelativePath="..\..\..\src\utility\BitSet.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\utility\pointer\ReferenceCountMI.hh"
+				RelativePath="..\..\..\src\utility\BitVector.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\utility\pointer\ReferenceCountMI_.cc"
+				RelativePath="..\..\..\src\utility\BitVector.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\Bound.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\Bound.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\DereferenceIterator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\Factory.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\FixedSizeLexicographicalIterator.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\FixedSizeLexicographicalIterator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\FixedSizeLexicographicalIterator.tmpl.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\IndirectSorter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\LexicographicalIterator.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__pointer__ReferenceCountMI_.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__pointer__ReferenceCountMI_.xdc"
+						ObjectFile="$(IntDir)\utility__utility__LexicographicalIterator.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__LexicographicalIterator.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -1008,8 +1340,8 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__pointer__ReferenceCountMI_.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__pointer__ReferenceCountMI_.xdc"
+						ObjectFile="$(IntDir)\utility__utility__LexicographicalIterator.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__LexicographicalIterator.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -1017,8 +1349,8 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__pointer__ReferenceCountMI_.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__pointer__ReferenceCountMI_.xdc"
+						ObjectFile="$(IntDir)\utility__utility__LexicographicalIterator.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__LexicographicalIterator.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -1026,49 +1358,653 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__pointer__ReferenceCountMI_.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__pointer__ReferenceCountMI_.xdc"
+						ObjectFile="$(IntDir)\utility__utility__LexicographicalIterator.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__LexicographicalIterator.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\utility\pointer\ReferenceCountMI_.fwd.hh"
+				RelativePath="..\..\..\src\utility\LexicographicalIterator.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\utility\pointer\ReferenceCountMI_.hh"
+				RelativePath="..\..\..\src\utility\LexicographicalIterator.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\utility\pointer\access_ptr.fwd.hh"
+				RelativePath="..\..\..\src\utility\OrderedTuple.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\utility\pointer\access_ptr.hh"
+				RelativePath="..\..\..\src\utility\OrderedTuple.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\utility\pointer\all.fwd.hh"
+				RelativePath="..\..\..\src\utility\PeriodicSplineReader.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\utility\pointer\all.hh"
+				RelativePath="..\..\..\src\utility\PeriodicSplineReader.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\utility\pointer\owning_ptr.functions.hh"
+				RelativePath="..\..\..\src\utility\PyAssert.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\utility\pointer\owning_ptr.fwd.hh"
+				RelativePath="..\..\..\src\utility\PyExitCallback.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__PyExitCallback.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__PyExitCallback.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__PyExitCallback.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__PyExitCallback.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__PyExitCallback.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__PyExitCallback.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__PyExitCallback.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__PyExitCallback.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\PyExitCallback.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\utility\pointer\owning_ptr.hh"
+				RelativePath="..\..\..\src\utility\PyExitCallback.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\utility\pointer\pointer.functions.hh"
+				RelativePath="..\..\..\src\utility\PyHelper.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\Show.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\SimulateMPI.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__SimulateMPI.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__SimulateMPI.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__SimulateMPI.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__SimulateMPI.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__SimulateMPI.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__SimulateMPI.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__SimulateMPI.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__SimulateMPI.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\SimulateMPI.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\SimulateMPI.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\TopScoreSelector.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\TopScoreSelector.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\all.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\all.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\assert.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\basic_sys_util.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__basic_sys_util.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__basic_sys_util.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__basic_sys_util.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__basic_sys_util.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__basic_sys_util.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__basic_sys_util.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__basic_sys_util.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__basic_sys_util.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\basic_sys_util.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\down_cast.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\exit.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__exit.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__exit.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__exit.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__exit.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__exit.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__exit.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__exit.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__exit.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\exit.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\fix_boinc_read.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\fixedsizearray1.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\fixedsizearray1.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\heap.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__heap.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__heap.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__heap.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__heap.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__heap.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__heap.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__heap.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__heap.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\heap.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\heap.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\in_place_list.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\in_place_list.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\inline_file_provider.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__inline_file_provider.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__inline_file_provider.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__inline_file_provider.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__inline_file_provider.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__inline_file_provider.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__inline_file_provider.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__inline_file_provider.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__inline_file_provider.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\inline_file_provider.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\integer_mapping.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__integer_mapping.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__integer_mapping.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__integer_mapping.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__integer_mapping.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__integer_mapping.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__integer_mapping.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__integer_mapping.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__integer_mapping.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\integer_mapping.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\integer_mapping.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\iter_util.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\minmax.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\mpi_util.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__mpi_util.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__mpi_util.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__mpi_util.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__mpi_util.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__mpi_util.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__mpi_util.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__mpi_util.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__mpi_util.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\mpi_util.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\recent_history_queue.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__recent_history_queue.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__recent_history_queue.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__recent_history_queue.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__recent_history_queue.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__recent_history_queue.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__recent_history_queue.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__recent_history_queue.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__recent_history_queue.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\recent_history_queue.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\sort_predicates.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\static_database.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__static_database.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__static_database.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__static_database.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__static_database.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__static_database.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__static_database.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__static_database.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__static_database.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\static_database.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\stream_util.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\string_util.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__string_util.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__string_util.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__string_util.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__string_util.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__string_util.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__string_util.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__string_util.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__string_util.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\string_util.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\utility.functions.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\vector0.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\vector0.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\vector0_bool.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\vector1.functions.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\vector1.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\vector1.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\vector1_bool.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\vectorL.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\vectorL.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\vectorL_Selector.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\vectorL_bool.hh"
 				>
 			</File>
 		</Filter>
@@ -1337,18 +2273,18 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="\utility\tag\"
+			Name="\utility\sql_database\"
 			>
 			<File
-				RelativePath="..\..\..\src\utility\tag\Tag.cc"
+				RelativePath="..\..\..\src\utility\sql_database\DatabaseSessionManager.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__tag__Tag.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__tag__Tag.xdc"
+						ObjectFile="$(IntDir)\utility__utility__sql_database__DatabaseSessionManager.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__sql_database__DatabaseSessionManager.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -1356,8 +2292,8 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__tag__Tag.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__tag__Tag.xdc"
+						ObjectFile="$(IntDir)\utility__utility__sql_database__DatabaseSessionManager.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__sql_database__DatabaseSessionManager.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -1365,8 +2301,8 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__tag__Tag.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__tag__Tag.xdc"
+						ObjectFile="$(IntDir)\utility__utility__sql_database__DatabaseSessionManager.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__sql_database__DatabaseSessionManager.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -1374,17 +2310,65 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__tag__Tag.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__tag__Tag.xdc"
+						ObjectFile="$(IntDir)\utility__utility__sql_database__DatabaseSessionManager.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__sql_database__DatabaseSessionManager.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\utility\tag\Tag.fwd.hh"
+				RelativePath="..\..\..\src\utility\sql_database\DatabaseSessionManager.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\utility\tag\Tag.hh"
+				RelativePath="..\..\..\src\utility\sql_database\DatabaseSessionManager.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\sql_database\types.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__sql_database__types.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__sql_database__types.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__sql_database__types.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__sql_database__types.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__sql_database__types.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__sql_database__types.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__sql_database__types.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__sql_database__types.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\sql_database\types.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\sql_database\util.hh"
 				>
 			</File>
 		</Filter>
@@ -1433,6 +2417,238 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\utility\boinc\boinc_util.hh"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="\utility\io\"
+			>
+			<File
+				RelativePath="..\..\..\src\utility\io\all.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\io\all.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\io\icstream.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__io__icstream.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__io__icstream.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__io__icstream.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__io__icstream.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__io__icstream.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__io__icstream.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__io__icstream.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__io__icstream.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\io\icstream.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\io\icstream.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\io\irstream.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\io\irstream.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\io\izstream.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__io__izstream.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__io__izstream.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__io__izstream.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__io__izstream.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__io__izstream.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__io__izstream.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__io__izstream.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__io__izstream.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\io\izstream.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\io\izstream.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\io\mpistream.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\io\ocstream.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__io__ocstream.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__io__ocstream.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__io__ocstream.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__io__ocstream.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__io__ocstream.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__io__ocstream.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__io__ocstream.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__io__ocstream.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\io\ocstream.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\io\ocstream.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\io\orstream.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\io\orstream.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\io\ozstream.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__io__ozstream.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__io__ozstream.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__io__ozstream.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__io__ozstream.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__io__ozstream.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__io__ozstream.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__io__ozstream.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__io__ozstream.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\io\ozstream.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\io\ozstream.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\io\util.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\io\zipstream.hpp"
 				>
 			</File>
 		</Filter>
@@ -1621,517 +2837,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\utility\file\gzip_util.hh"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="\utility\"
-			>
-			<File
-				RelativePath="..\..\..\src\utility\BitSet.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\BitSet.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\BitVector.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\BitVector.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\Bound.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\Bound.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\DereferenceIterator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\FixedSizeLexicographicalIterator.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\FixedSizeLexicographicalIterator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\FixedSizeLexicographicalIterator.tmpl.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\IndirectSorter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\LexicographicalIterator.cc"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__LexicographicalIterator.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__LexicographicalIterator.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__LexicographicalIterator.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__LexicographicalIterator.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincDebug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__LexicographicalIterator.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__LexicographicalIterator.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincRelease|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__LexicographicalIterator.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__LexicographicalIterator.xdc"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\LexicographicalIterator.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\LexicographicalIterator.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\OrderedTuple.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\OrderedTuple.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\PeriodicSplineReader.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\PeriodicSplineReader.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\PyAssert.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\PyHelper.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\Show.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\TopScoreSelector.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\TopScoreSelector.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\all.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\all.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\assert.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\basic_sys_util.cc"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__basic_sys_util.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__basic_sys_util.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__basic_sys_util.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__basic_sys_util.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincDebug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__basic_sys_util.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__basic_sys_util.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincRelease|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__basic_sys_util.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__basic_sys_util.xdc"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\basic_sys_util.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\down_cast.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\exit.cc"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__exit.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__exit.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__exit.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__exit.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincDebug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__exit.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__exit.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincRelease|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__exit.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__exit.xdc"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\exit.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\fix_boinc_read.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\fixedsizearray1.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\fixedsizearray1.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\heap.cc"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__heap.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__heap.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__heap.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__heap.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincDebug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__heap.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__heap.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincRelease|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__heap.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__heap.xdc"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\heap.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\heap.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\in_place_list.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\in_place_list.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\inline_file_provider.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\integer_mapping.cc"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__integer_mapping.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__integer_mapping.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__integer_mapping.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__integer_mapping.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincDebug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__integer_mapping.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__integer_mapping.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincRelease|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__integer_mapping.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__integer_mapping.xdc"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\integer_mapping.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\integer_mapping.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\minmax.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\mpi_util.cc"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__mpi_util.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__mpi_util.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__mpi_util.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__mpi_util.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincDebug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__mpi_util.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__mpi_util.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincRelease|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__mpi_util.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__mpi_util.xdc"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\mpi_util.hh"
-				>
-			</File>
-			<File
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\sort_predicates.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\static_database.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\stream_util.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\string_util.cc"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__string_util.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__string_util.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__string_util.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__string_util.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincDebug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__string_util.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__string_util.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincRelease|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\utility__utility__string_util.obj"
-						XMLDocumentationFileName="$(IntDir)\utility__utility__string_util.xdc"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\string_util.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\utility.functions.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\vector0.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\vector0.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\vector0_bool.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\vector1.functions.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\vector1.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\vector1.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\vector1_bool.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\vectorL.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\vectorL.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\vectorL_Selector.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\utility\vectorL_bool.hh"
 				>
 			</File>
 		</Filter>

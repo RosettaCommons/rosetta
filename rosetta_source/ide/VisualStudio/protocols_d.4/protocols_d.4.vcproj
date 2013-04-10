@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="core.1"
-	ProjectGUID="{DCC27C01-8B68-43D3-9A87-BB0F25AF2DDE}"
-	RootNamespace="core.1"
+	Name="protocols_d.4"
+	ProjectGUID="{4740A508-D81B-49C7-B9F1-551CC857279C}"
+	RootNamespace="protocols_d.4"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -47,14 +47,12 @@
 				InlineFunctionExpansion="0"
 				OmitFramePointers="false"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_DEBUG;_LIB"
-				StringPooling="false"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="1"
-				EnableFunctionLevelLinking="true"
 				ForceConformanceInForLoopScope="true"
 				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="0"
@@ -62,7 +60,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				WarningLevel="1"
 				DebugInformationFormat="3"
 				CompileAs="2"
-				DisableSpecificWarnings="4996;4005;4355"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -123,8 +120,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-				WholeProgramOptimization="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -137,7 +133,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				WarningLevel="1"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="0"
-				DisableSpecificWarnings="4996;4005;4355"
+				DisableSpecificWarnings="4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -270,7 +266,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -283,7 +279,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				WarningLevel="1"
 				DebugInformationFormat="3"
 				CompileAs="2"
-				DisableSpecificWarnings="4996;4005;4355"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -339,14 +334,13 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions=" /MP"
 				Optimization="2"
 				InlineFunctionExpansion="2"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
 				WholeProgramOptimization="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api;..\..\..\external\dbio;"
-				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;..\..\..\external\dbio;"
+				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;ZLIB_WINAPI;BOINC;BOINC_GRAPHICS;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
 				ExceptionHandling="1"
@@ -394,22 +388,18 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 	</References>
 	<Files>
 		<Filter
-			Name="\core\"
+			Name="\protocols\cartesian\"
 			>
 			<File
-				RelativePath="..\..\..\src\core\init.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\svn_version.cc"
+				RelativePath="..\..\..\src\protocols\cartesian\md.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.1__core__svn_version.obj"
-						XMLDocumentationFileName="$(IntDir)\core.1__core__svn_version.xdc"
+						ObjectFile="$(IntDir)\protocols_d.4__protocols__cartesian__md.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.4__protocols__cartesian__md.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -417,8 +407,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.1__core__svn_version.obj"
-						XMLDocumentationFileName="$(IntDir)\core.1__core__svn_version.xdc"
+						ObjectFile="$(IntDir)\protocols_d.4__protocols__cartesian__md.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.4__protocols__cartesian__md.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -426,8 +416,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.1__core__svn_version.obj"
-						XMLDocumentationFileName="$(IntDir)\core.1__core__svn_version.xdc"
+						ObjectFile="$(IntDir)\protocols_d.4__protocols__cartesian__md.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.4__protocols__cartesian__md.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -435,41 +425,29 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.1__core__svn_version.obj"
-						XMLDocumentationFileName="$(IntDir)\core.1__core__svn_version.xdc"
+						ObjectFile="$(IntDir)\protocols_d.4__protocols__cartesian__md.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.4__protocols__cartesian__md.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\core\svn_version.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\types.hh"
+				RelativePath="..\..\..\src\protocols\cartesian\md.hh"
 				>
 			</File>
 		</Filter>
 		<Filter
-			Name="\core\graph\"
+			Name="\protocols\unfolded_state_energy_calculator\"
 			>
 			<File
-				RelativePath="..\..\..\src\core\graph\ArrayPool.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\graph\ArrayPool.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\graph\DisjointSets.cc"
+				RelativePath="..\..\..\src\protocols\unfolded_state_energy_calculator\UnfoldedStateEnergyCalculatorJobDistributor.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.1__core__graph__DisjointSets.obj"
-						XMLDocumentationFileName="$(IntDir)\core.1__core__graph__DisjointSets.xdc"
+						ObjectFile="$(IntDir)\protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorJobDistributor.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorJobDistributor.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -477,8 +455,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.1__core__graph__DisjointSets.obj"
-						XMLDocumentationFileName="$(IntDir)\core.1__core__graph__DisjointSets.xdc"
+						ObjectFile="$(IntDir)\protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorJobDistributor.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorJobDistributor.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -486,8 +464,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.1__core__graph__DisjointSets.obj"
-						XMLDocumentationFileName="$(IntDir)\core.1__core__graph__DisjointSets.xdc"
+						ObjectFile="$(IntDir)\protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorJobDistributor.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorJobDistributor.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -495,29 +473,29 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.1__core__graph__DisjointSets.obj"
-						XMLDocumentationFileName="$(IntDir)\core.1__core__graph__DisjointSets.xdc"
+						ObjectFile="$(IntDir)\protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorJobDistributor.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorJobDistributor.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\core\graph\DisjointSets.fwd.hh"
+				RelativePath="..\..\..\src\protocols\unfolded_state_energy_calculator\UnfoldedStateEnergyCalculatorJobDistributor.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\core\graph\DisjointSets.hh"
+				RelativePath="..\..\..\src\protocols\unfolded_state_energy_calculator\UnfoldedStateEnergyCalculatorJobDistributor.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\core\graph\Graph.cc"
+				RelativePath="..\..\..\src\protocols\unfolded_state_energy_calculator\UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.1__core__graph__Graph.obj"
-						XMLDocumentationFileName="$(IntDir)\core.1__core__graph__Graph.xdc"
+						ObjectFile="$(IntDir)\protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -525,8 +503,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.1__core__graph__Graph.obj"
-						XMLDocumentationFileName="$(IntDir)\core.1__core__graph__Graph.xdc"
+						ObjectFile="$(IntDir)\protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -534,8 +512,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.1__core__graph__Graph.obj"
-						XMLDocumentationFileName="$(IntDir)\core.1__core__graph__Graph.xdc"
+						ObjectFile="$(IntDir)\protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -543,37 +521,29 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.1__core__graph__Graph.obj"
-						XMLDocumentationFileName="$(IntDir)\core.1__core__graph__Graph.xdc"
+						ObjectFile="$(IntDir)\protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\core\graph\Graph.fwd.hh"
+				RelativePath="..\..\..\src\protocols\unfolded_state_energy_calculator\UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\core\graph\Graph.hh"
+				RelativePath="..\..\..\src\protocols\unfolded_state_energy_calculator\UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\core\graph\UpperEdgeGraph.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\graph\UpperEdgeGraph.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\graph\graph_util.cc"
+				RelativePath="..\..\..\src\protocols\unfolded_state_energy_calculator\UnfoldedStateEnergyCalculatorMover.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.1__core__graph__graph_util.obj"
-						XMLDocumentationFileName="$(IntDir)\core.1__core__graph__graph_util.xdc"
+						ObjectFile="$(IntDir)\protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorMover.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -581,8 +551,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.1__core__graph__graph_util.obj"
-						XMLDocumentationFileName="$(IntDir)\core.1__core__graph__graph_util.xdc"
+						ObjectFile="$(IntDir)\protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorMover.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -590,8 +560,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.1__core__graph__graph_util.obj"
-						XMLDocumentationFileName="$(IntDir)\core.1__core__graph__graph_util.xdc"
+						ObjectFile="$(IntDir)\protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorMover.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -599,33 +569,61 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.1__core__graph__graph_util.obj"
-						XMLDocumentationFileName="$(IntDir)\core.1__core__graph__graph_util.xdc"
+						ObjectFile="$(IntDir)\protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorMover.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorMover.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\core\graph\graph_util.hh"
+				RelativePath="..\..\..\src\protocols\unfolded_state_energy_calculator\UnfoldedStateEnergyCalculatorMover.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\core\graph\unordered_object_pool.fwd.hpp"
+				RelativePath="..\..\..\src\protocols\unfolded_state_energy_calculator\UnfoldedStateEnergyCalculatorMover.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\core\graph\unordered_object_pool.hpp"
+				RelativePath="..\..\..\src\protocols\unfolded_state_energy_calculator\UnfoldedStateEnergyCalculatorUtil.cc"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorUtil.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorUtil.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorUtil.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorUtil.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorUtil.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorUtil.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorUtil.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.4__protocols__unfolded_state_energy_calculator__UnfoldedStateEnergyCalculatorUtil.xdc"
+					/>
+				</FileConfiguration>
 			</File>
-		</Filter>
-		<Filter
-			Name="\core\grid\"
-			>
 			<File
-				RelativePath="..\..\..\src\core\grid\CartGrid.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\grid\CartGrid.hh"
+				RelativePath="..\..\..\src\protocols\unfolded_state_energy_calculator\UnfoldedStateEnergyCalculatorUtil.hh"
 				>
 			</File>
 		</Filter>

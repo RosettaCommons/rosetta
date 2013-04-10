@@ -47,7 +47,7 @@
 				InlineFunctionExpansion="0"
 				OmitFramePointers="false"
 				EnableFiberSafeOptimizations="false"
-				AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_DEBUG;_LIB"
 				StringPooling="false"
 				MinimalRebuild="true"
@@ -124,7 +124,7 @@
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -198,7 +198,7 @@
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-				AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -270,7 +270,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -345,7 +345,7 @@
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -1545,15 +1545,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\core\pack\scmin\SCMinMinimizerMap.cc"
+				RelativePath="..\..\..\src\core\pack\scmin\AtomTreeSCMinMinimizerMap.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.4__core__pack__scmin__SCMinMinimizerMap.obj"
-						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__scmin__SCMinMinimizerMap.xdc"
+						ObjectFile="$(IntDir)\core.4__core__pack__scmin__AtomTreeSCMinMinimizerMap.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__scmin__AtomTreeSCMinMinimizerMap.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -1561,8 +1561,8 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.4__core__pack__scmin__SCMinMinimizerMap.obj"
-						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__scmin__SCMinMinimizerMap.xdc"
+						ObjectFile="$(IntDir)\core.4__core__pack__scmin__AtomTreeSCMinMinimizerMap.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__scmin__AtomTreeSCMinMinimizerMap.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -1570,8 +1570,8 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.4__core__pack__scmin__SCMinMinimizerMap.obj"
-						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__scmin__SCMinMinimizerMap.xdc"
+						ObjectFile="$(IntDir)\core.4__core__pack__scmin__AtomTreeSCMinMinimizerMap.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__scmin__AtomTreeSCMinMinimizerMap.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -1579,10 +1579,114 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.4__core__pack__scmin__SCMinMinimizerMap.obj"
-						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__scmin__SCMinMinimizerMap.xdc"
+						ObjectFile="$(IntDir)\core.4__core__pack__scmin__AtomTreeSCMinMinimizerMap.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__scmin__AtomTreeSCMinMinimizerMap.xdc"
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\pack\scmin\AtomTreeSCMinMinimizerMap.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\pack\scmin\AtomTreeSCMinMinimizerMap.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\pack\scmin\CartSCMinMinimizerMap.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__scmin__CartSCMinMinimizerMap.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__scmin__CartSCMinMinimizerMap.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__scmin__CartSCMinMinimizerMap.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__scmin__CartSCMinMinimizerMap.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__scmin__CartSCMinMinimizerMap.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__scmin__CartSCMinMinimizerMap.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__scmin__CartSCMinMinimizerMap.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__scmin__CartSCMinMinimizerMap.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\pack\scmin\CartSCMinMinimizerMap.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\pack\scmin\CartSCMinMinimizerMap.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\pack\scmin\CartSCMinMultifunc.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__scmin__CartSCMinMultifunc.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__scmin__CartSCMinMultifunc.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__scmin__CartSCMinMultifunc.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__scmin__CartSCMinMultifunc.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__scmin__CartSCMinMultifunc.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__scmin__CartSCMinMultifunc.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__scmin__CartSCMinMultifunc.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__scmin__CartSCMinMultifunc.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\pack\scmin\CartSCMinMultifunc.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\pack\scmin\CartSCMinMultifunc.hh"
+				>
 			</File>
 			<File
 				RelativePath="..\..\..\src\core\pack\scmin\SCMinMinimizerMap.fwd.hh"
@@ -1737,6 +1841,46 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\core\pack\annealer\DebuggingAnnealer.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__annealer__DebuggingAnnealer.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__annealer__DebuggingAnnealer.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__annealer__DebuggingAnnealer.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__annealer__DebuggingAnnealer.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__annealer__DebuggingAnnealer.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__annealer__DebuggingAnnealer.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__annealer__DebuggingAnnealer.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__annealer__DebuggingAnnealer.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath="..\..\..\src\core\pack\annealer\DebuggingAnnealer.fwd.hh"
 				>
 			</File>
@@ -1838,6 +1982,54 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\core\pack\annealer\FixbbCoupledRotamerSimAnnealer.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\pack\annealer\FixbbLinkingRotamerSimAnnealer.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__annealer__FixbbLinkingRotamerSimAnnealer.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__annealer__FixbbLinkingRotamerSimAnnealer.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__annealer__FixbbLinkingRotamerSimAnnealer.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__annealer__FixbbLinkingRotamerSimAnnealer.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__annealer__FixbbLinkingRotamerSimAnnealer.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__annealer__FixbbLinkingRotamerSimAnnealer.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__annealer__FixbbLinkingRotamerSimAnnealer.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__annealer__FixbbLinkingRotamerSimAnnealer.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\pack\annealer\FixbbLinkingRotamerSimAnnealer.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\pack\annealer\FixbbLinkingRotamerSimAnnealer.hh"
 				>
 			</File>
 			<File
@@ -2182,6 +2374,14 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\core\pack\rotamer_set\RotamerCouplings.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\pack\rotamer_set\RotamerLinks.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\pack\rotamer_set\RotamerLinks.hh"
 				>
 			</File>
 			<File
@@ -2710,6 +2910,50 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\core\pack\rotamer_set\WaterPackingInfo.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\pack\rotamer_set\bb_independent_rotamers.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__rotamer_set__bb_independent_rotamers.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__rotamer_set__bb_independent_rotamers.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__rotamer_set__bb_independent_rotamers.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__rotamer_set__bb_independent_rotamers.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__rotamer_set__bb_independent_rotamers.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__rotamer_set__bb_independent_rotamers.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__rotamer_set__bb_independent_rotamers.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__rotamer_set__bb_independent_rotamers.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\pack\rotamer_set\bb_independent_rotamers.hh"
 				>
 			</File>
 			<File
@@ -4284,6 +4528,150 @@
 				RelativePath="..\..\..\src\core\pack\interaction_graph\SurfacePotential.hh"
 				>
 			</File>
+			<File
+				RelativePath="..\..\..\src\core\pack\interaction_graph\SymmLinMemInteractionGraph.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__interaction_graph__SymmLinMemInteractionGraph.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__interaction_graph__SymmLinMemInteractionGraph.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__interaction_graph__SymmLinMemInteractionGraph.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__interaction_graph__SymmLinMemInteractionGraph.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__interaction_graph__SymmLinMemInteractionGraph.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__interaction_graph__SymmLinMemInteractionGraph.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__interaction_graph__SymmLinMemInteractionGraph.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__interaction_graph__SymmLinMemInteractionGraph.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\pack\interaction_graph\SymmLinMemInteractionGraph.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\pack\interaction_graph\SymmLinMemInteractionGraph.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\pack\interaction_graph\SymmMinimalistInteractionGraph.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__interaction_graph__SymmMinimalistInteractionGraph.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__interaction_graph__SymmMinimalistInteractionGraph.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__interaction_graph__SymmMinimalistInteractionGraph.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__interaction_graph__SymmMinimalistInteractionGraph.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__interaction_graph__SymmMinimalistInteractionGraph.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__interaction_graph__SymmMinimalistInteractionGraph.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__interaction_graph__SymmMinimalistInteractionGraph.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__interaction_graph__SymmMinimalistInteractionGraph.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\pack\interaction_graph\SymmMinimalistInteractionGraph.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\pack\interaction_graph\SymmMinimalistInteractionGraph.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\pack\interaction_graph\SymmOnTheFlyInteractionGraph.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__interaction_graph__SymmOnTheFlyInteractionGraph.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__interaction_graph__SymmOnTheFlyInteractionGraph.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__interaction_graph__SymmOnTheFlyInteractionGraph.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__interaction_graph__SymmOnTheFlyInteractionGraph.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__interaction_graph__SymmOnTheFlyInteractionGraph.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__interaction_graph__SymmOnTheFlyInteractionGraph.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__interaction_graph__SymmOnTheFlyInteractionGraph.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__interaction_graph__SymmOnTheFlyInteractionGraph.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\pack\interaction_graph\SymmOnTheFlyInteractionGraph.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\pack\interaction_graph\SymmOnTheFlyInteractionGraph.hh"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="\core\optimization\symmetry\"
@@ -4910,6 +5298,54 @@
 			</File>
 		</Filter>
 		<Filter
+			Name="\core\pack\task\operation\util\"
+			>
+			<File
+				RelativePath="..\..\..\src\core\pack\task\operation\util\interface_vector_calculate.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__task__operation__util__interface_vector_calculate.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__task__operation__util__interface_vector_calculate.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__task__operation__util__interface_vector_calculate.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__task__operation__util__interface_vector_calculate.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__task__operation__util__interface_vector_calculate.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__task__operation__util__interface_vector_calculate.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__pack__task__operation__util__interface_vector_calculate.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__pack__task__operation__util__interface_vector_calculate.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\pack\task\operation\util\interface_vector_calculate.hh"
+				>
+			</File>
+		</Filter>
+		<Filter
 			Name="\core\pack\dunbrack\"
 			>
 			<File
@@ -5397,6 +5833,98 @@
 			Name="\core\util\"
 			>
 			<File
+				RelativePath="..\..\..\src\core\util\ABEGOManager.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__util__ABEGOManager.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__util__ABEGOManager.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__util__ABEGOManager.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__util__ABEGOManager.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__util__ABEGOManager.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__util__ABEGOManager.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__util__ABEGOManager.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__util__ABEGOManager.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\util\ABEGOManager.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\util\ABEGOManager.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\util\ChainbreakUtil.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__util__ChainbreakUtil.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__util__ChainbreakUtil.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__util__ChainbreakUtil.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__util__ChainbreakUtil.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__util__ChainbreakUtil.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__util__ChainbreakUtil.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__util__ChainbreakUtil.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__util__ChainbreakUtil.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\util\ChainbreakUtil.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\core\util\SwitchResidueTypeSet.cc"
 				>
 				<FileConfiguration
@@ -5441,6 +5969,50 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\core\util\cryst_util.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__util__cryst_util.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__util__cryst_util.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__util__cryst_util.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__util__cryst_util.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__util__cryst_util.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__util__cryst_util.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__util__cryst_util.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__util__cryst_util.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\util\cryst_util.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\core\util\disulfide_util.cc"
 				>
 				<FileConfiguration
@@ -5482,6 +6054,50 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\core\util\disulfide_util.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\util\kinematics_util.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__util__kinematics_util.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__util__kinematics_util.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__util__kinematics_util.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__util__kinematics_util.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__util__kinematics_util.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__util__kinematics_util.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.4__core__util__kinematics_util.obj"
+						XMLDocumentationFileName="$(IntDir)\core.4__core__util__kinematics_util.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\util\kinematics_util.hh"
 				>
 			</File>
 		</Filter>
