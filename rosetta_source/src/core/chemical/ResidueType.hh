@@ -66,8 +66,13 @@
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/MMAtomType.fwd.hh>
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
+#ifdef WIN32
+#include <core/chemical/Orbital.hh>
+#include <core/chemical/ResidueConnection.hh>
+#else
 #include <core/chemical/Orbital.fwd.hh>
 #include <core/chemical/ResidueConnection.fwd.hh>
+#endif
 #include <core/chemical/sdf/MolData.hh>
 #include <core/chemical/rna/RNA_ResidueType.hh>
 // only compiles with the .hh below; anyone know why I can't use the .fwd.hh here? ~Labonte
