@@ -605,7 +605,7 @@ sources = {
 		"ThreadSequenceOperation",
 		"SelectBySASAOperation",
 		"RestrictNativeResiduesOperation",
-		
+		"ImportUnboundRotamersOperation",
 	],
 }
 include_path = [
