@@ -30,6 +30,7 @@
 #include <utility/io/zipstream.hpp>
 
 #include <utility/tools/make_map.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <stdio.h>
 #include <cstring>

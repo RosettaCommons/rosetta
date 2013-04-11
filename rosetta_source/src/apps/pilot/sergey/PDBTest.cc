@@ -64,6 +64,7 @@
 #include <core/types.hh>
 
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <numeric/xyzVector.hh>
 
@@ -181,7 +182,7 @@ int main( int argc, char * argv [] )
     }
     {
 		T("Testing pose_from_sequence...") << std::endl;
-		std::string sequence(5000, 'V');
+		std::string sequence(1000, 'V');
 		core::pose::Pose pose;
 		core::pose::make_pose_from_sequence(pose, sequence, "fa_standard");
 		T("Testing pose_from_sequence... Done!") << std::endl;

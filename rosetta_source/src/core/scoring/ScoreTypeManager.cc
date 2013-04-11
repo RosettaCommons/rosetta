@@ -112,13 +112,15 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "hybrid_vdw" ] = hybrid_vdw;
 	name2score_type_[ "fa_cust_pair_dist" ] = fa_cust_pair_dist;
 	name2score_type_[ "gauss" ] = gauss;
-
+   
 
 	// PyRosetta score types
-	fill_score_range(name2score_type_, "PyRosettaTwoBodyContextIndepenedentEnergy", PyRosettaTwoBodyContextIndepenedentEnergy_first, PyRosettaTwoBodyContextIndepenedentEnergy_last);
-	fill_score_range(name2score_type_, "PyRosettaTwoBodyContextDependentEnergy", PyRosettaTwoBodyContextDependentEnergy_first, PyRosettaTwoBodyContextDependentEnergy_last);
-	fill_score_range(name2score_type_, "PyRosettaEnergy", PyRosettaEnergy_first, PyRosettaEnergy_last);
-
+	#ifdef PYROSETTA 
+		fill_score_range(name2score_type_, "PyRosettaTwoBodyContextIndepenedentEnergy", PyRosettaTwoBodyContextIndepenedentEnergy_first, PyRosettaTwoBodyContextIndepenedentEnergy_last);
+		fill_score_range(name2score_type_, "PyRosettaTwoBodyContextDependentEnergy", PyRosettaTwoBodyContextDependentEnergy_first, PyRosettaTwoBodyContextDependentEnergy_last);
+		fill_score_range(name2score_type_, "PyRosettaEnergy", PyRosettaEnergy_first, PyRosettaEnergy_last);
+	#endif
+		
 	name2score_type_[ "python" ] = python;
 
 	name2score_type_[ "fastsaxs" ] = fastsaxs;
@@ -365,6 +367,7 @@ ScoreTypeManager::setup_score_type_names()
 
 	name2score_type_[ "total_score" ] = total_score;
 
+	name2score_type_[ "dummy_score_type" ] = dummy_score_type;
 
 	assert( name2score_type_.size() == end_of_score_type_enumeration );
 

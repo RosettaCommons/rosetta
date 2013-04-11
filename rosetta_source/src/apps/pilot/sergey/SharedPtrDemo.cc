@@ -16,6 +16,7 @@
 
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/excn/Exceptions.hh>
 
 
 #include <boost/shared_ptr.hpp>

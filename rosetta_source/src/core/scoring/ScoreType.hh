@@ -182,9 +182,10 @@ enum ScoreType {
 	pci_hbond,
 
 
-
-	PyRosettaTwoBodyContextIndepenedentEnergy_first,
-	PyRosettaTwoBodyContextIndepenedentEnergy_last = PyRosettaTwoBodyContextIndepenedentEnergy_first + 10,
+	#ifdef PYROSETTA
+		PyRosettaTwoBodyContextIndepenedentEnergy_first,
+		PyRosettaTwoBodyContextIndepenedentEnergy_last = PyRosettaTwoBodyContextIndepenedentEnergy_first + 10,
+	#endif
 
 	// for in-python runtime-defined methods: most inclusive positioning in the
 	// score type enum: user may define any kind of energy method
@@ -209,8 +210,10 @@ enum ScoreType {
 	hbond_sc,
 	hbond_intra,           //Currently effects only RNA
 
-	PyRosettaTwoBodyContextDependentEnergy_first,
-	PyRosettaTwoBodyContextDependentEnergy_last = PyRosettaTwoBodyContextDependentEnergy_first + 10,
+	#ifdef PYROSETTA
+		PyRosettaTwoBodyContextDependentEnergy_first,
+		PyRosettaTwoBodyContextDependentEnergy_last = PyRosettaTwoBodyContextDependentEnergy_first + 10,
+	#endif
 
 	// protein-protein interface scores
 	interface_dd_pair,
@@ -427,13 +430,18 @@ enum ScoreType {
   //membrane environment smooth
 	Menv_smooth,
 
-	PyRosettaEnergy_first,
-	PyRosettaEnergy_last = PyRosettaEnergy_first + 10,
-
+    #ifdef PYROSETTA
+		PyRosettaEnergy_first,
+		PyRosettaEnergy_last = PyRosettaEnergy_first + 10,
+	#endif
+	
 	// etc etc
 	// Why is there a total score?
 	total_score,
 
+	// Dummy score type to insure that PyRosetta can correctly identify when total_score is used, see bug [bug #0000091] for details
+	dummy_score_type, 
+	
 	/// This element marks the end of the active score types.  Elements in the enumeration
 	/// up to this point will have space allocated for them in the EnergyMap object.  Elements
 	/// past this point are considered inactive and will not have space allocated for them.
@@ -441,7 +449,7 @@ enum ScoreType {
 	/// position in the ScoreType enumeration (described above) and then recompile.
 	/// Inactive score types must still have their names included in the ScoreTypeManager's
 	/// string-to-score-type map.
-	n_score_types = total_score,
+	n_score_types = dummy_score_type,
 
 	/// This element marks the very end of the score type enumeration.  Elements between
 	/// the n_score_types element and this element are considered inactive.  They may not
@@ -449,7 +457,7 @@ enum ScoreType {
 	/// unexpected behavior.  To use an inactived score type, the score type must be moved
 	/// to an earlier position in this enumeration, and the program must be recompiled.
 	/// Keep this guy last.
-	end_of_score_type_enumeration = total_score
+	end_of_score_type_enumeration = dummy_score_type
 };
 
 
