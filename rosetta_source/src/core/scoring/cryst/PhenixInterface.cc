@@ -66,7 +66,9 @@
 #include <limits>
 #include <sstream>
 
+#ifndef WIN32
 #include <unistd.h>
+#endif
 
 namespace core {
 namespace scoring {

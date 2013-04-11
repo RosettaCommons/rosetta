@@ -33,7 +33,7 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
-Real USOGFunc::background_prob = exp(-10); // the maximum constraint penalty == -log(background_prob)
+Real USOGFunc::background_prob = exp(-10.); // the maximum constraint penalty == -log(background_prob)
 
 USOGFunc::USOGFunc(const utility::vector1<core::Real>& means,
                    const utility::vector1<core::Real>& std_devs,

@@ -1336,7 +1336,7 @@ ElectronDensity::getFSC(
 
 core::Real
 ElectronDensity::maxNominalRes() {
-	Real S = (1/sqrt(3)) * sqrt(S2( density.u1()/2, density.u2()/2, density.u3()/2 ));
+	Real S = (1/sqrt(3.)) * sqrt(S2( density.u1()/2, density.u2()/2, density.u3()/2 ));
 	return 1.0/S;
 }
 
