@@ -226,10 +226,8 @@ bool PhiPsiSquareWell::score(FragmentCandidateOP fragment,
 			tmp = 0.0;
 		}
 
-		//d += tmp * tmp;
-
 		if ( tmp > 0.0 ) {
-			d += 1 / ( 1 + exp( -5*( tmp / query_d_phi_(i + offset_q) ) + 5) );
+			d += 1 / ( 1 + exp( -2.5*( tmp / query_d_phi_(i + offset_q) ) + 5) );
 		}
 
 		tmp = std::abs(r->psi() - query_psi_(i + offset_q));
@@ -243,13 +241,11 @@ bool PhiPsiSquareWell::score(FragmentCandidateOP fragment,
 		}
 
 		if ( tmp > 0.0 ) {
-			d += 1 / ( 1 + exp( -5*( tmp / query_d_psi_(i + offset_q) ) + 5) );
+			d += 1 / ( 1 + exp( -2.5*( tmp / query_d_psi_(i + offset_q) ) + 5) );
 		}
 
 		values[i] = std::sqrt(d);
-		//score += d;
 	}
-
 
 
 	std::sort( values.begin(), values.end() );
