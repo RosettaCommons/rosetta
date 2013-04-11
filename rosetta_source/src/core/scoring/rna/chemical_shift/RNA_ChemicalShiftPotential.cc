@@ -114,7 +114,7 @@ namespace chemical_shift {
 			proton_entry_list.push_back(string_list("1H5*"));
 			proton_entry_list.push_back(string_list("2H5*"));
 
-		}else if(H5_prime_mode_=="LEAST_SQUARE" or H5_prime_mode_=="LEAST_SQUARE_IGNORE_DUPLICATE"){
+		}else if(H5_prime_mode_=="LEAST_SQUARE" || H5_prime_mode_=="LEAST_SQUARE_IGNORE_DUPLICATE"){
 			proton_entry_list.push_back(string_list("1H5*", "2H5*")); 
 
 		}else{
