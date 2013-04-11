@@ -167,6 +167,9 @@
 #include <boost/algorithm/string/predicate.hpp>
 #define foreach BOOST_FOREACH
 
+#ifdef WIN32
+#include <windows.h>
+#endif
 
 using std::string;
 using std::stringstream;
@@ -440,7 +443,7 @@ safely_write_to_database(
 				TR << "Backend deadlock detected, retrying SQL statement";
 
 #ifdef WIN32
-				sleep(1);
+				Sleep(1000);
 #else
 				//Sleep some amount between 100-2000 ms
 				usleep(100+1900*RG.uniform());
@@ -524,7 +527,7 @@ safely_read_from_database(
 				TR << "Backend deadlock detected, retrying SQL statement";
 
 #ifdef WIN32
-				sleep(1);
+				Sleep(1000);
 #else
 				//Sleep some amount between 100-2000 ms
 				usleep(100+1900*RG.uniform());
