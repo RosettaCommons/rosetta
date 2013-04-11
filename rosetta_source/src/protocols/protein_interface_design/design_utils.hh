@@ -154,6 +154,12 @@ std::list< core::Size >
 hbonded( core::pose::Pose const & pose, core::Size const target_residue, std::set< core::Size > const & binders,
 		 bool const bb, bool const sc, core::Real const energy_thres, bool const bb_bb = false );
 
+// @brief utility function for finding hbonding partners among a list of potential binder residues to a specific target
+// residue and atom
+std::list< core::Size >
+hbonded_atom( core::pose::Pose const & pose, core::Size const target_residue, std::string target_atom, std::set< core::Size > const & binders,
+		 bool const bb, bool const sc, core::Real const energy_thres, bool const bb_bb = false );
+
 #endif /*INCLUDED_DESIGN_UTILS_H_*/
 
 

@@ -116,6 +116,7 @@ sources = {
 		"DisulfideFilter",
 		"FilterScan",
 		"HbondsToResidueFilter",
+		"HbondsToAtomFilter",
 		"InterfaceHolesFilter",
 		"RelativeSegmentFilter",
 		"RmsdFilter",

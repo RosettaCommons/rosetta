@@ -190,6 +190,25 @@ HbondsToResidueFilter::parse_my_tag( TagPtr const tag, DataMap &, Filters_map co
 }
 
 void
+HbondsToAtomFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
+{
+  partners_ = tag->getOption<core::Size>( "partners" );
+  energy_cutoff_ = tag->getOption<core::Real>( "energy_cutoff", -0.5 );
+  bb_bb_ = tag->getOption<bool>( "bb_bb", 0 );
+  backbone_ = tag->getOption<bool>( "backbone", 0 );
+  sidechain_ = tag->getOption<bool>( "sidechain", 1 );
+  resnum_ = core::pose::get_resnum( tag, pose );
+
+  if ( tag->hasOption( "atomname" ) ) {
+    atomdesg_ = tag->getOption< std::string >( "atomname" );
+  } else {
+      throw utility::excn::EXCN_RosettaScriptsOption("Need to set atomname");
+  }
+
+  TR<<"Hbonds to atom filter for resnum "<<resnum_<<" and name " << atomdesg_ <<" with "<<partners_<<" hbonding partners"<<std::endl;
+}
+
+void
 EnergyPerResidueFilter::parse_my_tag( TagPtr const tag, DataMap & data, Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
 {
 	using namespace core::scoring;

@@ -53,6 +53,7 @@
 #include <protocols/protein_interface_design/filters/DisulfideFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/FilterScanCreator.hh>
 #include <protocols/protein_interface_design/filters/HbondsToResidueFilterCreator.hh>
+#include <protocols/protein_interface_design/filters/HbondsToAtomFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/InterfaceHolesFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/RelativeSegmentFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/RmsdFilterCreator.hh>

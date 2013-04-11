@@ -620,3 +620,106 @@ hbonded(
 	return( hbonded_list );
 }
 
+std::list< core::Size >
+hbonded_atom (
+	Pose const & in_pose, core::Size const target_residue, std::string target_atom, std::set< core::Size > const & binders,
+	bool const bb, bool const sc, core::Real const energy_thres, bool const bb_bb )
+{
+
+	using namespace core::scoring::hbonds;
+	
+	std::list< core::Size > hbonded_list;
+	core::scoring::ScoreFunctionOP scorefxn( core::scoring::ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH ) );
+	Pose pose( in_pose );
+	(*scorefxn)(pose);
+	
+	HBondSet background_hbond_set;
+	background_hbond_set.setup_for_residue_pair_energies( pose, false/*calculate_derivative*/, true/*backbone_only*/ );
+	HBondDatabaseCOP hb_database( HBondDatabase::get_database( background_hbond_set.hbond_options().params_database_tag()));
+
+  if( bb_bb ){
+      TR << "decomposing bb hydrogen bond terms" << std::endl;
+      core::scoring::methods::EnergyMethodOptionsOP energy_options(new core::scoring::methods::EnergyMethodOptions(scorefxn->energy_method_options()));
+      energy_options->hbond_options().decompose_bb_hb_into_pair_energies(true);
+      scorefxn->set_energy_method_options(*energy_options);
+  }
+	
+	EnergyMap hbond_emap;
+	core::conformation::Residue const resi( pose.residue( target_residue ));
+	core::Real const distance_cutoff( 20.0 );
+	for ( std::set< core::Size >::const_iterator binder_it=binders.begin(); binder_it!=binders.end(); ++binder_it ) {
+		core::conformation::Residue const resj( pose.residue(*binder_it) );
+		
+		core::Real const distance( resi.xyz( resi.nbr_atom() ).distance( resj.xyz( resj.nbr_atom() ) ) );
+		if ( distance > distance_cutoff ) continue;
+		
+		HBondSet pair_hbond_set(2);
+		identify_hbonds_1way(
+			*hb_database,
+			resi, resj, background_hbond_set.nbrs(resi.seqpos()), background_hbond_set.nbrs(resj.seqpos()),
+			false /*calculate_derivative*/,
+			!bb, !sc, !sc, !sc, pair_hbond_set);
+		identify_hbonds_1way(
+			*hb_database,
+			resj, resi, background_hbond_set.nbrs(resj.seqpos()), background_hbond_set.nbrs(resi.seqpos()),
+			false /*calculate_derivative*/,
+			!bb, !sc, !sc, !sc, pair_hbond_set);
+		
+		hbond_emap.zero();
+ 		get_hbond_energies( pair_hbond_set, hbond_emap );
+		// The hbond_energies should be controlled by dotting hbond_emap
+		// with the weights file used, but this cannot be done without
+		// effecting hbond_energy_threshold_ which is calibrated for
+		// unweighted hbond energies. Since STANDARD_WTS + SCORE12_PATCH
+		// is hard coded, use this instead:
+//		hbond_emap[ hbond_sr_bb_sc ] = 0;
+//		hbond_emap[ hbond_lr_bb_sc ] = 0;
+		
+		core::Real total_hbond_energy( hbond_emap.sum() );
+		
+		
+		// all of the bb / sc energies are lumped together
+		// but it can be controlled whether bb - bb are included or not
+		
+		// counting the number of hbonds between the two residues
+		if( total_hbond_energy <= energy_thres ) {
+			using namespace core::conformation;
+			for( core::Size i=1; i<=pair_hbond_set.nhbonds(); ++i ){
+				using namespace core::scoring::hbonds;
+				HBond const & hb( pair_hbond_set.hbond( i ) );
+
+				if( !bb && ( hb.don_hatm_is_protein_backbone() && hb.acc_atm_is_protein_backbone() ) ) continue;
+				if( !sc && ( !hb.don_hatm_is_protein_backbone() || !hb.acc_atm_is_protein_backbone() ) ) continue;
+				
+				core::Size const don_res_i( hb.don_res() ), acc_res_i( hb.acc_res() );
+				Residue const & don_rsd( pose.residue( don_res_i ) ),
+				acc_rsd( pose.residue( acc_res_i ) );
+
+				//access atom information
+				core::Size const don_atom_i( hb.don_hatm() ), acc_atom_i( hb.acc_atm() );
+				core::Size target_atom_id=resi.atom_index(target_atom);
+
+				if( ( (don_rsd.seqpos() == *binder_it && acc_rsd.seqpos() == target_residue) && don_atom_i==target_atom_id ) ||
+				    ( (don_rsd.seqpos() == *binder_it && acc_rsd.seqpos() == target_residue) && acc_atom_i==target_atom_id ) ||
+				    ( (don_rsd.seqpos() == target_residue && acc_rsd.seqpos() == *binder_it) && don_atom_i==target_atom_id ) ||
+					  ( (don_rsd.seqpos() == target_residue && acc_rsd.seqpos() == *binder_it) && acc_atom_i==target_atom_id ) ){
+					hbonded_list.push_back( *binder_it );
+					core::Size const width( 10 );
+					TR  << I( width, target_residue )
+					<< I( width, target_atom )
+					<< I( width, *binder_it )
+					<< A( width, resi.name1() )
+					<< A( width, resj.name1() )
+					<< F( width, 3, hbond_emap[ hbond_sr_bb ] )
+					<< F( width, 3, hbond_emap[ hbond_lr_bb ] )
+					<< F( width, 3, hbond_emap[ hbond_sc ] )
+					<< F( width, 3, hbond_emap[ hbond_bb_sc ] )
+					<< F( width, 3, distance ) << "\n";
+				}//correct residues
+			}//hbond num
+		}// if energy passes threshold
+	} // residue j
+	TR.flush();
+	return( hbonded_list );
+}
+
