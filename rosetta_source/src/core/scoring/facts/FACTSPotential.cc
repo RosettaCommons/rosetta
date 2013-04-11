@@ -53,7 +53,12 @@
 #include <utility/exit.hh>
 #include <math.h>
 #include <stdio.h>
+#ifdef WIN32
+#include <WinSock2.h>
+#include <time.h>
+#else
 #include <sys/time.h>
+#endif
 #include <cassert>
 #include <utility/assert.hh>
 
@@ -486,8 +491,9 @@ void FACTSPotential::setup_for_scoring(pose::Pose & pose, bool const & packing) 
 	Size res2;
 
 	timeval t1, t2, t3, t4;
+#ifndef WIN32
 	gettimeofday(&t1, NULL );
-
+#endif
 	PROF_START( basic::FACTS_GET_ALL_BORN_RADII );
 	Size const nres( pose.total_residue() );
 	FACTSPoseInfoOP facts_info;
@@ -540,7 +546,9 @@ void FACTSPotential::setup_for_scoring(pose::Pose & pose, bool const & packing) 
 		}
 	}
 
+#ifndef WIN32
 	gettimeofday(&t2, NULL );
+#endif
 	Real elapsedTime1 = (t2.tv_sec - t1.tv_sec) * 1000.0;
 	elapsedTime1 += (t2.tv_usec - t1.tv_usec) / 1000.0;
 
@@ -552,7 +560,9 @@ void FACTSPotential::setup_for_scoring(pose::Pose & pose, bool const & packing) 
 		get_self_terms( factstype1, facts1, packing );
 	}
 
+#ifndef WIN32
 	gettimeofday(&t3, NULL );
+#endif
 	Real elapsedTime2 = (t3.tv_sec - t2.tv_sec) * 1000.0;
 	elapsedTime2 += (t3.tv_usec - t2.tv_usec) / 1000.0;
 
@@ -624,7 +634,9 @@ void FACTSPotential::setup_for_scoring(pose::Pose & pose, bool const & packing) 
 	*/
 
 
+#ifndef WIN32
 	gettimeofday(&t4, NULL );
+#endif
 	Real elapsedTime3 = (t4.tv_sec - t3.tv_sec) * 1000.0;
 	elapsedTime3 += (t4.tv_usec - t3.tv_usec) / 1000.0;
 	//cout << "Setup for scoring 1/2/3: " << elapsedTime1 << " " << elapsedTime2 << " " << elapsedTime3 << " ms." << endl;
