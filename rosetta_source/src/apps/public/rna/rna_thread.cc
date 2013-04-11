@@ -406,7 +406,7 @@ prepare_full_length_start_model(
 		if ( !sequence_mask( i ) )  continue;
 		Size const pdb_number( alignment2sequence[ which_sequence ][i] );
 
-		if ( i == 1 ||  ( sequence_mask( i-1 ) && !template_pose.fold_tree().is_cutpoint( i-1) )  ){
+		if ( i == 1 ||  ( sequence_mask( i-1 ) && pdb_number > 1 && !template_pose.fold_tree().is_cutpoint( pdb_number-1) )  ){
 			pose.append_residue_by_bond( template_pose.residue( pdb_number ) );
 		} else {
 			pose.append_residue_by_jump( template_pose.residue( pdb_number ), pose.total_residue() );
