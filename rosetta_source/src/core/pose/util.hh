@@ -169,6 +169,9 @@ std::map< std::string, std::string > get_all_comments(
 	core::pose::Pose const & pose
 );
 
+/// @brief Dumps a pdb with comments at end of file
+
+	
 /// @brief Sets a PDB-style REMARK entry in the Pose.
 /// @detailed This is different from a comment in its interpretation by the
 /// silent-file output machinery. A REMARK is written on its own separate line
@@ -276,6 +279,11 @@ bool compare_binary_protein_silent_struct(
 void read_comment_pdb(
 	std::string const &file_name,
 	core::pose::Pose  & pose
+);
+/// @brief  dumps pose+ comments to pdb file
+void dump_comment_pdb(
+	std::string const &file_name,
+	core::pose::Pose const& pose
 );
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 ///@brief A very useful function that copies degrees of freedom from one pose to another. res_map defines how to map residue numbers from the large pose to the smaller "scratch" pose.

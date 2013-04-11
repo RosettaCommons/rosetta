@@ -113,7 +113,7 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 		seqprof = new core::sequence::SequenceProfile;
 		tr<<"Sequence profile was not set until now. Attempting to read sequence profile from the pose's sequenceprofile constraints..."<<std::endl;
 		 ConstraintCOPs constraints( pose.constraint_set()->get_all_constraints() );
-		 tr.Debug<<"Total number of constraints in pose: "<<constraints.size()<<std::endl;
+		 tr<<"Total number of constraints in pose: "<<constraints.size()<<std::endl;
 		 core::Size cst_num( 0 );
 		 foreach( ConstraintCOP const c, constraints ){
 		   if( c->type() == "SequenceProfile" ){
@@ -138,9 +138,9 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 		task.request_symmetrize_by_intersection();
   }
 	core::Size last_res (asymmetric_unit_res <= seqprof->profile().size() ? pose.total_residue() : seqprof->profile().size() );
-	tr.Debug<<"Allowing the following identities:\n";
+	tr<<"Allowing the following identities:\n";
 	for( core::Size i = 1; i <= last_res; ++i){
-		tr.Debug<<"At position "<<i<<": ";
+		tr<<"At position "<<i<<": ";
 
 		if( !pose.residue_type( i ).is_protein() ) continue;
 		//std::cout << "SCO at pos " << i << " allows the following residues: ";
@@ -162,9 +162,9 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 				//std::cout << " " << static_cast<core::chemical::AA>(aa) << " prob=" << prob << ", ";
 			}
 			if( keep_aas[ aa ] )
-				tr.Debug<<core::chemical::oneletter_code_from_aa( static_cast< core::chemical::AA >( aa ) );
+				tr<<core::chemical::oneletter_code_from_aa( static_cast< core::chemical::AA >( aa ) );
 		}
-		tr.Debug<<std::endl;
+		tr<<std::endl;
 		keep_aas[  pose.residue_type(i).aa() ] = true; //current always allowed
 		//std::cout << " native " << pose.residue_type(i).aa() << " prob=" << native_prob << "." << std::endl;
 

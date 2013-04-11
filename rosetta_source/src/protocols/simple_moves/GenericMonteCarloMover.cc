@@ -59,7 +59,11 @@
 #include <core/pose/util.hh>
 #include <protocols/simple_filters/OperatorFilter.hh>
 #include <protocols/filters/BasicFilters.hh>
-
+//////////////////////////////////////////////////
+// option key includes
+#include <basic/options/option.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
+///////////////////////////////////////////////////
 static basic::Tracer TR("protocols.simple_moves.GenericMonteCarloMover");
 static basic::Tracer TR_energies("protocols.simple_moves.GenericMonteCarloMover.individual_energies");
 static numeric::random::RandomGenerator mc_RG(61452); // <- Magic number, do not change it!!!
@@ -542,7 +546,21 @@ GenericMonteCarloMover::boltzmann( Pose & pose )
 						core::pose::add_comment( pose, user_defined_mover_name_, mover_tag_->obj ); /// adding comment to the pose to save the mover's tag since it's accepted
 					}
 					TR<<"Dumping accepted file to disk as: "<<saved_accept_file_name_<<std::endl;
+					if ( basic::options::option[basic::options::OptionKeys::out::file::pdb_comments]() ) { //if pose has comment field then dump it with comments
+						std::ofstream out( saved_accept_file_name_.c_str() );
+						pose.dump_pdb(saved_accept_file_name_);
+/*						        out << "##Begin comments##" << std::endl;
+	 	                        using namespace std;
+	 	                        map< string, string > const comments = core::pose::get_all_comments(pose);
+	 	                        for( std::map< string, string >::const_iterator i = comments.begin(); i != comments.end(); ++i ){
+	 	                                out << i->first<<" "<<i->second << std::endl;
+	 	                        }
+	 	                        out << "##End comments##" << std::endl;
+	*/					
+					}
+					else{
 					pose.dump_pdb( saved_accept_file_name_ );
+					}
 				}
       }
       return( true );
@@ -717,7 +735,24 @@ GenericMonteCarloMover::apply( Pose & pose )
       utility_exit_with_message("Movers returning multiple poses are unsupported by GenericMontoCarloMover.");
 	if( saved_accept_file_name_ != "" ){
 		TR<<"Saving initial pose entering the MC trajectory, for use in checkpoint recovery. Checkpointing filename: "<<saved_accept_file_name_<<std::endl;
-		pose.dump_pdb( saved_accept_file_name_ );
+		if ( basic::options::option[ basic::options::OptionKeys::out::file::pdb_comments]() ) { //if pose has comment field then dump it with comments
+						std::ofstream out( saved_accept_file_name_.c_str() );
+						pose.dump_pdb(saved_accept_file_name_);
+/*						        out << "##Begin comments##" << std::endl;
+						        TR<<"SJF DEbug 1"<<std::endl;
+	 	                        using namespace std;
+	 	                        map< string, string > const comments = core::pose::get_all_comments(pose);
+	 	                        for( std::map< string, string >::const_iterator i = comments.begin(); i != comments.end(); ++i ){
+	 	                                out << i->first<<" "<<i->second << std::endl;
+	 	                                TR<<"writing comment "<<i->first<<" "<<i->second<<std::endl;
+	 	                        }
+	 	                        TR<<"SJF debug 2"<<std::endl;
+	 	                        out << "##End comments##" << std::endl;
+*/					}
+					else{
+					pose.dump_pdb( saved_accept_file_name_ );
+					}
+		
 	}
 
   PoseOP initial_pose = new Pose( pose );

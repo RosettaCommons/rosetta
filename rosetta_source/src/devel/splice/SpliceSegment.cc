@@ -14,74 +14,16 @@
 // Unit headers
 #include <devel/splice/SpliceSegment.hh>
 #include <core/sequence/SequenceProfile.hh>
-#include <utility/exit.hh>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 // Package headers
 #include <basic/Tracer.hh>
-#include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
 #include <utility/io/izstream.hh>
 #include <iostream>
 #include <sstream>
-#include <devel/splice/Splice.hh>
-#include <devel/splice/SpliceSegment.hh>
-#include <core/pack/task/operation/NoRepackDisulfides.hh>
-#include <devel/splice/SpliceCreator.hh>
 #include <utility/string_util.hh>
-#include <utility/exit.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <protocols/loops/Loop.hh>
-#include <protocols/loops/Loops.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/chemical/AA.hh>
-#include <protocols/protein_interface_design/filters/TorsionFilter.hh>
-#include <protocols/protein_interface_design/util.hh>
-#include <boost/foreach.hpp>
-#include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
-#include <protocols/rigid/RB_geometry.hh>
-#define foreach BOOST_FOREACH
-// Package headers
-#include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/conformation/util.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <basic/Tracer.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <utility/tag/Tag.hh>
-#include <utility/vector1.hh>
-#include <protocols/moves/DataMap.hh>
-#include <protocols/moves/DataMapObj.hh>
-#include <protocols/moves/Mover.hh>
-#include <protocols/rosetta_scripts/util.hh>
-#include <core/pose/selection.hh>
-#include <protocols/protein_interface_design/movers/AddChainBreak.hh>
-#include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
-#include <iostream>
-#include <sstream>
-#include <algorithm>
-//Auto Headers
-#include <core/conformation/Residue.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
-#include <protocols/toolbox/task_operations/ProteinInterfaceDesignOperation.hh>
-#include <protocols/toolbox/task_operations/ThreadSequenceOperation.hh>
-#include <protocols/toolbox/task_operations/SeqprofConsensusOperation.hh>
-#include <protocols/loops/loop_mover/refine/LoopMover_CCD.hh>
-#include <numeric/xyzVector.hh>
-#include <protocols/loops/FoldTreeFromLoopsWrapper.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <protocols/protein_interface_design/movers/LoopLengthChange.hh>
-#include <core/scoring/dssp/Dssp.hh>
-#include <numeric/random/random.hh>
-#include <numeric/random/random_permutation.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/SequenceProfileConstraint.hh>
+
 
 namespace devel {
 namespace splice {
@@ -139,14 +81,17 @@ concatenate_profiles( utility::vector1< SequenceProfileOP > const profiles, util
 	core::Size current_segment_name( 1 );
 	foreach( SequenceProfileOP const prof, profiles ){
 		TR<<"now adding profile of segment "<< segment_names_ordered[ current_segment_name]<<std::endl;
-		++current_segment_name;
+		
 		for( core::Size pos = 1; pos <= prof->size(); ++pos ){
 			current_profile_size++;
-			TR<<"The sequence profile row for that residue is: "<<prof->prof_row(pos)<<std::endl;
+			TR<<"The sequence profile row for this residue is: "<<prof->prof_row(pos)<<std::endl;
+			// Check that the flanking segments of the desigend segment are according to profile concensus
+		
 			concatenated_profile->prof_row( prof->prof_row( pos ), current_profile_size );
 		}
+		++current_segment_name;
 	}
-	TR<<"concatenated "<<profiles.size()<<" profiles with a total length of "<<concatenated_profile->size()<<" Current profile size: "<<current_profile_size<<std::endl;
+	TR<<"concatenated "<<profiles.size()<<" profiles with a total length of "<<current_profile_size<<std::endl;
 	return concatenated_profile;
 }
 
@@ -168,6 +113,9 @@ SpliceSegment::read_pdb_profile( std::string const file_name ){
 	}
  }
 }
+/// @brief Helper function to make sure current aa postion in the pose co
+
+
 
 } //splice
 } //devel

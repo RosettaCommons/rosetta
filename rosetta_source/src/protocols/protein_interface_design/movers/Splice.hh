@@ -7,14 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file devel/splice/Splice.hh
+/// @file protocols/protein_interface_design/movers/Splice.hh
 /// @author Sarel Fleishman (sarelf@u.washington.edu)
 
-#ifndef INCLUDED_devel_splice_Splice_hh
-#define INCLUDED_devel_splice_Splice_hh
-
-#include <devel/splice/Splice.fwd.hh>
-#include <devel/splice/SpliceSegment.fwd.hh>
+#ifndef INCLUDED_protocols_protein_interface_design_movers_Splice_hh
+#define INCLUDED_protocols_protein_interface_design_movers_Splice_hh
+#include <protocols/protein_interface_design/movers/Splice.fwd.hh>
+#include <protocols/protein_interface_design/movers/SpliceSegment.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
@@ -30,8 +29,9 @@
 #include <core/sequence/SequenceProfile.fwd.hh>
 #include <protocols/toolbox/task_operations/SeqprofConsensusOperation.fwd.hh>
 
-namespace devel {
-namespace splice {
+namespace protocols {
+namespace protein_interface_design {
+namespace movers {
 
 //@brief lightweight class containing bb torsions and residue identities
 class BBDofs : public utility::pointer::ReferenceCount
@@ -104,7 +104,7 @@ public:
 	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new Splice ); }
 		void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	virtual ~Splice();
-
+	
 	void from_res( core::Size const f ){ from_res_ = f; }
 	core::Size from_res() const { return from_res_; }
 	void to_res( core::Size const t ){ to_res_ = t; }
@@ -185,10 +185,8 @@ public:
 	core::Real profile_weight_away_from_interface() const;
 	bool restrict_to_repacking_chain2() const{ return restrict_to_repacking_chain2_; }
 	void restrict_to_repacking_chain2( bool const r ){ restrict_to_repacking_chain2_ = r; }
-	core::Size get_current_seg() { return current_segment_pos; } ; // getter for the current segemnt number that is being designed
-	bool check_aa(std::string s, utility::vector1<core::Real > profRow);
-  bool add_sequence_constraints_only() const{ return add_sequence_constraints_only_; }
-	void add_sequence_constraints_only( bool const a ){ add_sequence_constraints_only_ = a; }
+	void seqprof_taskop( protocols::toolbox::task_operations::SeqprofConsensusOperationOP op );
+	protocols::toolbox::task_operations::SeqprofConsensusOperationOP seqprof_taskop() const;
 
 private:
 	void save_values(); // call at beginning of apply. Used to keep the from_res/to_res values, which might be changed by apply during a run
@@ -230,17 +228,20 @@ private:
 	protocols::filters::FilterOP splice_filter_;
 
 ///sequence profiles
+	
 	bool use_sequence_profiles_; // dflt false; set internally only, by whether or not the Segments are defined
 	std::string segment_type_; //dflt ""; what segment is this? Used to decide which profiles to use. examples, L1,L2,L3
-	core::Size current_segment_pos; // save the position of the segment_type_ in the segment name ordered vector.
 	std::map< std::string, SpliceSegmentOP > splice_segments_; // stores sequence profiles for all possible segments (this doesn't change during a run), e.g., L1, ...; L2, ....
 	std::map< std::string/*which segment (L1,L2...)*/, std::string/*pdb name*/ > pdb_segments_; // which pdb file did each segment in the current pose come from (used to build the current profile). This uses the pose comment structure to retain the information through successive applies
 	core::Real profile_weight_away_from_interface_; //dflt 1.0; you can define a different weight outside an 8A shell around the partner protein. This should typically be set higher than 1.0, implying that the sequence profile carries a larger weight away from the functional site
 	bool restrict_to_repacking_chain2_; // dflt true; if false, does two-sided design during splice
-	bool add_sequence_constraints_only_; // dflt false; if true, only add constraints and return, don't do any splicing. (ask Assaf)
+	protocols::toolbox::task_operations::SeqprofConsensusOperationOP seqprof_taskop_; // dflt NULL; if set to a previously declared taskoperation, splice will modify this taskop's sequence profile as it's modifying its own sequence profile, thereby allowing design to be restricted to identities specified by the sequence profile
 };
 
-} //splice
-} //devel
 
-#endif //INCLUDED_devel_splice_Splice_hh
+} // movers
+} // protein_interface_design
+} // protocols
+
+
+#endif /*INCLUDED_protocols_protein_interface_design_movers_Splice_HH*/

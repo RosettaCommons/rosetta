@@ -14,10 +14,13 @@
 #define INCLUDED_devel_splice_SpliceSegment_hh
 
 #include <devel/splice/SpliceSegment.fwd.hh>
+#include <devel/splice/Splice.hh>
 #include <core/sequence/SequenceProfile.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 #include <map>
+#include <core/types.hh>
+
 
 namespace devel {
 namespace splice {
@@ -51,6 +54,8 @@ class SpliceSegment : public utility::pointer::ReferenceCount
 	private:
 		std::map< std::string/*L1.1*/, core::sequence::SequenceProfileOP > sequence_profile_;
 		std::map< std::string/*1y32*/, std::string/*L1.1*/ > pdb_to_profile_map_;
+		
+
 };
 
 /* pose comments

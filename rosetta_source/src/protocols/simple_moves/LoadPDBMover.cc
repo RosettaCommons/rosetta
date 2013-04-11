@@ -54,6 +54,7 @@ LoadPDBMover::apply( Pose & pose )
 {
 	TR<<"Loading pdb file "<<filename_<<std::endl;
 	pose = *core::import_pose::pose_from_pdb( filename_, false/*read foldtree*/ );
+	core::pose::read_comment_pdb(filename_,pose); //read comments from pdb file
 }
 
 std::string

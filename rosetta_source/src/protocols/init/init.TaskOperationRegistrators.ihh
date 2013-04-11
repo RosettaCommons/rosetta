@@ -59,8 +59,6 @@ static TaskOperationRegistrator< protocols::toolbox::task_operations::ThreadSequ
 static TaskOperationRegistrator< protocols::toolbox::task_operations::SelectBySASAOperationCreator > SelectBySASAOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictNativeResiduesOperationCreator > RestrictNativeResiduesOperationCreator_registrator;
 
-static TaskOperationRegistrator< protocols::toolbox::task_operations::ImportUnboundRotamersOperationCreator > ImportUnboundRotamersOperationCreator_registrator;
-
 
 using core::pack::task::operation::ResFilterRegistrator;
 static ResFilterRegistrator< protocols::toolbox::task_operations::ProteinCoreFilterCreator > ProteinCoreFilterCreator_registrator;

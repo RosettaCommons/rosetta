@@ -417,7 +417,7 @@ read_comment_pdb(
 			continue;
 			getline( data, line );
 		while (line != "##End comments##"){
-			TR<<"Teting read comments! :"<<line<<std::endl;
+			//TR<<"Testing read comments! :"<<line<<std::endl;
 			std::string const key;
 			std::string const value;
 			utility::vector1<std::string> comment_line(utility::string_split(line,' '));
@@ -425,6 +425,24 @@ read_comment_pdb(
 			getline( data, line );
 	}
 }
+}
+void
+dump_comment_pdb(
+	std::string const &file_name,
+	core::pose::Pose const& pose
+) {
+	std::ofstream out( file_name.c_str() );
+	pose.dump_pdb(out);
+	// verbose output
+	out << "END\n";
+	  out << "##Begin comments##" << std::endl;
+	 	                        using namespace std;
+	 	                        map< string, string > const comments = core::pose::get_all_comments(pose);
+	 	                        for( std::map< string, string >::const_iterator i = comments.begin(); i != comments.end(); ++i ){
+	 	                                out << i->first<<" "<<i->second << std::endl;
+	 	                        }
+	 	                        out << "##End comments##" << std::endl;
+	out.close();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
