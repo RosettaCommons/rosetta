@@ -663,14 +663,12 @@ SymmetricScoreFunction::eval_onebody_energies( pose::Pose & pose ) const
 					ci_intrares_emap *= symm_info->score_multiply_factor();
 					emap += ci_intrares_emap;
 				}
+
 				// context dependent
-				emap.zero( cd_2b_types() ); // cant be cached (here only intrares are relevant)
-				emap.zero( cd_lr_2b_types() ); // cant be cached (here only intrares are relevant)
-				EnergyMap cd_2b_emap = emap;
-				eval_cd_intrares_energy( pose.residue(i), pose, emap );
-				cd_2b_emap -= emap;
-				cd_2b_emap *= -1.0;
-				cd_2b_emap *= symm_info->score_multiply_factor();
+				EnergyMap cd_intrares_emap;
+				eval_cd_intrares_energy( pose.residue(i), pose, cd_intrares_emap );
+				cd_intrares_emap *= symm_info->score_multiply_factor();
+				emap += cd_intrares_emap;
 			}
 
 			totals += emap;
