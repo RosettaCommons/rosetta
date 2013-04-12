@@ -22,7 +22,11 @@
 #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#ifdef WIN32
+#include <core/pose/Pose.hh>
+#else
 #include <core/pose/Pose.fwd.hh>
+#endif
 // AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/vector1.hh>

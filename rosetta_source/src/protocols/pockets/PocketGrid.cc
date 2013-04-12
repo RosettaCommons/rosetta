@@ -188,7 +188,11 @@ void PClusterSet::clear(){
   clusters_.clear();
 }
 
+#ifndef WIN32
 std::_List_iterator<protocols::pockets::PCluster> PClusterSet::add(core::Size x, core::Size y, core::Size z, core::Real step){
+#else
+std::list<PCluster>::iterator PClusterSet::add(core::Size x, core::Size y, core::Size z, core::Real step){
+#endif
   PCluster tmp(x,y,z, step);
   clusters_.push_front(tmp);
   return clusters_.begin();

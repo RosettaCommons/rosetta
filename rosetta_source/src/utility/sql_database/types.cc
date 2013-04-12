@@ -72,6 +72,9 @@ name_from_transaction_mode(
 			<< "Unrecognized transaction mode: '"
 			<< static_cast<platform::Size>(transaction_mode) << "'";
 		utility_exit_with_message(err_msg.str());
+#ifdef WIN32
+		return "Error";
+#endif
 	}
 }
 	
@@ -92,6 +95,9 @@ name_from_database_mode(
 			<< "Unrecognized databse mode: '"
 			<< static_cast<platform::Size>(database_mode) << "'"; 
 		utility_exit_with_message(err_msg.str());
+#ifdef WIN32
+		return "Error";
+#endif
 	}
 }
 

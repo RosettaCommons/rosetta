@@ -134,13 +134,13 @@ RemodelGlobalFrame::~RemodelGlobalFrame(){}
 
 /// @brief clone this object
 protocols::moves::MoverOP
-RemodelGlobalFrame::RemodelGlobalFrame::clone() const {
+RemodelGlobalFrame::clone() const {
 	return new RemodelGlobalFrame( *this );
 }
 
 /// @brief create this type of object
 protocols::moves::MoverOP
-RemodelGlobalFrame::RemodelGlobalFrame::fresh_instance() const {
+RemodelGlobalFrame::fresh_instance() const {
 	return new RemodelGlobalFrame();
 }
 

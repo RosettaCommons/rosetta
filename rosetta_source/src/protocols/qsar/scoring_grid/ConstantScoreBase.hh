@@ -16,6 +16,9 @@
 #define INCLUDED_protocols_qsar_scoring_grid_ConstantScoreBase_HH
 
 #include <protocols/qsar/scoring_grid/GridBase.hh>
+#ifdef WIN32
+#include <protocols/qsar/qsarMap.hh>
+#endif
 
 namespace protocols {
 namespace qsar {
