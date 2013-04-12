@@ -58,6 +58,7 @@
 
 #include <protocols/moves/DataMap.hh>
 #include <protocols/toolbox/pose_manipulation.hh>
+#include <protocols/rosetta_scripts/util.hh>
 #include <utility/tag/Tag.hh>
 
 // C++ headers
@@ -114,7 +115,9 @@ BluePrintBDR::BluePrintBDR() :
 	use_poly_val_( true ),
 	invrot_tree_(NULL),
 	enzcst_io_(NULL)
-{}
+{
+	rcgs_.clear();
+}
 
 /// @brief value constructor
 BluePrintBDR::BluePrintBDR( String const & filename, bool const ss_from_blueprint ) :
@@ -138,6 +141,7 @@ BluePrintBDR::BluePrintBDR( String const & filename, bool const ss_from_blueprin
 	enzcst_io_(NULL)
 {
 	set_blueprint( filename );
+	rcgs_.clear();
 }
 
 /// @brief value constructor
@@ -161,7 +165,9 @@ BluePrintBDR::BluePrintBDR( BluePrintOP const & blueprintOP, bool const ss_from_
 	use_poly_val_( true ),
 	invrot_tree_(NULL),
 	enzcst_io_(NULL)
-{}
+{
+	rcgs_.clear();
+}
 
 /// @Brief copy constructor
 BluePrintBDR::BluePrintBDR( BluePrintBDR const & rval ) :
@@ -185,7 +191,8 @@ BluePrintBDR::BluePrintBDR( BluePrintBDR const & rval ) :
 	rmdl_attempts_( rval.rmdl_attempts_ ),
 	use_poly_val_( rval.use_poly_val_ ),
 	invrot_tree_(rval.invrot_tree_),
-	enzcst_io_(rval.enzcst_io_)
+	enzcst_io_(rval.enzcst_io_),
+	rcgs_( rval.rcgs_ )
 {
 	if ( rval.vlb_.get() ) {
 		vlb_ = new VarLengthBuild( *rval.vlb_ );
@@ -280,6 +287,13 @@ void
 BluePrintBDR::set_constraint_file( String const & constraint_file )
 {
 	constraint_file_ = constraint_file;
+}
+
+/// @brief set list of remodel constraint generators
+void
+BluePrintBDR::set_rcgs( utility::vector1< protocols::forge::remodel::RemodelConstraintGeneratorOP > const & rcgs )
+{
+	rcgs_ = rcgs;
 }
 
 /// @brief dump pdb when this protocol failed
@@ -581,6 +595,13 @@ bool BluePrintBDR::centroid_build(
 		vlb_->add_rcg( cst );
 	}
 
+	// TL: add user-specified RCGS
+	for ( core::Size i=1; i<=rcgs_.size(); ++i ){
+ 		vlb_->add_rcg( rcgs_[i] );
+ 		rcgs_[i]->init( pose );
+ 		TR << "Initialized an RCG called " << rcgs_[i]->get_name() << std::endl;
+	}
+
 	vlb_->scorefunction( sfx_ );
 	vlb_->vall_memory_usage( protocols::forge::components::VLB_VallMemoryUsage::CLEAR_IF_CACHING_FRAGMENTS );
 	vlb_->use_fullmer( use_fullmer_ );
@@ -644,7 +665,7 @@ BluePrintBDR::parse_my_tag(
 	TagPtr const tag,
 	DataMap & data,
 	Filters_map const &,
-	Movers_map const &,
+	Movers_map const & movers,
 	Pose const & )
 {
 	String const blueprint( tag->getOption<std::string>( "blueprint", "" ) );
@@ -690,6 +711,19 @@ BluePrintBDR::parse_my_tag(
 
 	// entire sequence except for rebuilding parts become poly-Val ( default true )
 	use_poly_val_ = tag->getOption<bool>( "use_poly_val", 1 );
+
+	// Use specified constraint generator movers
+ 	// these are called from VLB after the residues are added, but before the actual fragment insertions take place
+	utility::vector1< std::string > const mover_names( utility::string_split( tag->getOption< std::string >( "constraint_generators" ), ',' ) );
+ 	for ( core::Size i=1; i<=mover_names.size(); ++i ) {
+ 		if ( mover_names[i] == "" ) continue;
+ 		protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover( mover_names[i], movers );
+		// check to make sure the mover provided is a RemodelConstraintGenerator and if so, add it to the list
+ 		assert( utility::pointer::dynamic_pointer_cast< protocols::forge::remodel::RemodelConstraintGenerator >( mover ) );
+ 		protocols::forge::remodel::RemodelConstraintGeneratorOP rcg = utility::pointer::static_pointer_cast< protocols::forge::remodel::RemodelConstraintGenerator >( mover );
+ 		rcgs_.push_back( rcg );
+ 		TR << "Added RCG " << mover_names[i] << std::endl;
+ 	}
 
 	//in case we'ref folding up around a ligand
 	if( tag->hasOption("invrot_tree")){

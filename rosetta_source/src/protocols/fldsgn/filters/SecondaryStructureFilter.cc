@@ -167,6 +167,9 @@ SecondaryStructureFilter::compute( core::pose::Pose const & pose ) const {
 	core::util::ABEGOManager abego_manager;
 	core::Size match_count( 0 );
 	for( Size i=1; i<=pose.total_residue(); i++ ){
+		// if this residue is a ligand, ignore and move on
+		if ( ! pose.residue( i ).is_protein() ) continue;
+
 		String sec = filtered_ss_.substr( i-1, 1 );
 		if( *sec.c_str() == 'D' ){
 			++match_count;

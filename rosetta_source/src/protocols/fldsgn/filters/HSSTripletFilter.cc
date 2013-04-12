@@ -263,13 +263,13 @@ HSSTripletFilter::parse_my_tag(
 	using protocols::jd2::parser::BluePrint;
 
 	// set filtered helix_pairings
+	bool triplets_specified( false );
   String const hss3s = tag->getOption<String>( "hsstriplets", "" );
 	if( hss3s != ""  ) {
 		HSSTripletSet hss3set( hss3s );
 		add_hsstriplets( hss3set.hss_triplets() );
+		triplets_specified = true;
 	} else {
-		TR << "[ERROR] no input of hsstriplets in xml " << std::endl;
-		runtime_assert( false );
 	}
 
 	// secondary strucuture info
@@ -277,6 +277,19 @@ HSSTripletFilter::parse_my_tag(
 	if( blueprint != "" ) {
 		BluePrint blue( blueprint );
 		secstruct_ = blue.secstruct();
+		if ( ! triplets_specified ) {
+			HSSTripletSet hss3set( blue.hss_triplets() );
+			add_hsstriplets( hss3set.hss_triplets() );
+			triplets_specified = true;
+		} else {
+			TR.Info << "hsstriplets are spectified in the XML, so the definitions in the blueprint file will be ignored." << std::endl;
+		}
+	}
+
+	// check to make sure we have added hss triplets and throw an error if not
+	if ( ! triplets_specified ) {
+		TR << "[ERROR] no input of hsstriplets in xml " << std::endl;
+		runtime_assert( false );
 	}
 
   filter_min_dist_  = tag->getOption<Real>( "min_dist", 7.5 );

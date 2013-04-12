@@ -28,6 +28,7 @@
 #include <protocols/forge/build/BuildInstruction.fwd.hh>
 #include <protocols/forge/build/BuildManager.hh>
 #include <protocols/forge/components/VarLengthBuild.fwd.hh>
+#include <protocols/forge/remodel/RemodelConstraintGenerator.fwd.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.fwd.hh>
 #include <protocols/toolbox/match_enzdes_util/InvrotTree.fwd.hh>
 // AUTO-REMOVED #include <protocols/forge/constraints/SheetConstraintsRCG.fwd.hh>
@@ -215,6 +216,8 @@ public: // mutators
 	/// @brief dump pdb when this protocol failed
 	void dump_pdb_when_fail( String const & dump_pdb_when_fail );
 
+	/// @brief set list of remodel constraint generators
+	void set_rcgs( utility::vector1< protocols::forge::remodel::RemodelConstraintGeneratorOP > const & rcgs );
 
 public: // virtual main methods
 
@@ -316,6 +319,9 @@ private: // data
 	/// @brief in case we're folding up around a ligand
 	protocols::toolbox::match_enzdes_util::InvrotTreeOP invrot_tree_;
 	toolbox::match_enzdes_util::EnzConstraintIOCOP enzcst_io_;
+
+	/// @brief User-specified constraint generators which will be called from the VarLengthBuild
+	utility::vector1< protocols::forge::remodel::RemodelConstraintGeneratorOP > rcgs_;
 
 private: // per-stage movers
 

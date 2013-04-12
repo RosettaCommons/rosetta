@@ -161,10 +161,6 @@ SheetTopologyFilter::parse_my_tag(
 	Pose const & )
 {
  	filtered_sheet_topology_ = tag->getOption<String>( "topology", "" );
-	if( filtered_sheet_topology_ == "" ) {
-		tr.Error << "Error!,  option of topology is empty." << std::endl;
-		runtime_assert( false );
-	}
 
 	// Blueprint is for giving secondary structure information, otherwise dssp will run for ss definition
 	// SSPAIR line is read for the topology of strand pairings
@@ -183,6 +179,11 @@ SheetTopologyFilter::parse_my_tag(
 			}
 		}
  	} //
+
+	if( filtered_sheet_topology_ == "" ) {
+		tr.Error << "Error!,  option of topology is empty." << std::endl;
+		runtime_assert( false );
+	}
 
 	tr << filtered_sheet_topology_ << " is filtred " << std::endl;
 }

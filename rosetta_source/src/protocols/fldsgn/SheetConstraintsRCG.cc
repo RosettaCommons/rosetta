@@ -270,9 +270,7 @@ SheetConstraintsRCG::generate_remodel_constraints( Pose const & pose )
 		if( pose.residue_type(i).is_ligand() ) {
 			nres--;
 			TR << pose.residue( i ).name3() << i << " = ligand" << std::endl;
-		}	else {
-			TR << pose.residue( i ).name3() << i << std::endl;
-		}
+		}	
 	}
 	runtime_assert( blueprint_ );
 	TR << "Blueprint num res=" << blueprint_->total_residue() << std::endl;
@@ -291,7 +289,6 @@ SheetConstraintsRCG::generate_remodel_constraints( Pose const & pose )
 		StrandPairing spair=**it;
 		for( core::Size iaa=spair.begin1(); iaa<=spair.end1(); iaa++ ) {
 			core::Size jaa( spair.residue_pair( iaa ) );
-			TR << iaa << ' ' << jaa << std::endl;
 			core::id::AtomID atom1( pose.residue_type( iaa ).atom_index( "CA" ), iaa );
 			core::id::AtomID atom2( pose.residue_type( jaa ).atom_index( "CA" ), jaa );
 			csts.push_back( new AtomPairConstraint( atom1, atom2, cstfunc ) );

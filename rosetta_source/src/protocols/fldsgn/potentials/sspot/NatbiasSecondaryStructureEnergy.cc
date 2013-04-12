@@ -25,6 +25,7 @@
 #include <protocols/fldsgn/potentials/sspot/NatbiasStrandPairPotential.hh>
 
 // Project headers
+#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/EnergyMap.hh>
@@ -179,7 +180,9 @@ NatbiasSecondaryStructureEnergy::finalize_total_energy(
 	using protocols::fldsgn::topology::SS_Info2;
 	using protocols::fldsgn::topology::SS_Info2_OP;
 
-	runtime_assert( pose.total_residue() == native_secstruct_.length() );
+	// this runtime_assert causes rosetta to abort if there is a ligand in the pose
+	// However, a ligand-aware version of it occurs in SS_Info2, so it is not necessary to do it here
+	//runtime_assert( pose.total_residue() == native_secstruct_.size() );
 
 	Real ss_score( 0.0 ), hh_score( 0.0 ), hs_score( 0.0 );
 
@@ -217,7 +220,7 @@ NatbiasSecondaryStructureEnergy::indicate_required_context_graphs( utility::vect
 core::Size
 NatbiasSecondaryStructureEnergy::version() const
 {
-	return 1; 
+	return 1;
 }
 
 } // sspot
