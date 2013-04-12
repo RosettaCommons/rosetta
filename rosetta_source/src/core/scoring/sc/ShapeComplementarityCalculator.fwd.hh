@@ -17,6 +17,7 @@
 
 
 // Utility headers
+#include <utility/pointer/owning_ptr.hh>
 
 namespace core {
 namespace scoring {
@@ -26,6 +27,8 @@ namespace sc {
 class ShapeComplementarityCalculator;
 
 // Types
+typedef utility::pointer::owning_ptr< ShapeComplementarityCalculator > ShapeComplementarityCalculatorOP;
+typedef utility::pointer::owning_ptr< ShapeComplementarityCalculator const > ShapeComplementarityCalculatorCOP;
 
 
 } // namespace sc

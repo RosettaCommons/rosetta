@@ -32,6 +32,9 @@
 #include <core/scoring/sc/MolecularSurfaceCalculator.fwd.hh>
 #include <numeric/xyzVector.hh>
 
+/// utility headers
+#include <utility/pointer/ReferenceCount.hh>
+
 //// C++ headers
 #include <vector>
 #include <string>
@@ -171,7 +174,7 @@ public:
 // Molecular Surface Calculator class definition
 ////////////////////////////////////////////////////////////
 
-class MolecularSurfaceCalculator {
+class MolecularSurfaceCalculator : public utility::pointer::ReferenceCount {
 
 public:
 #ifdef SC_PRECISION_REAL

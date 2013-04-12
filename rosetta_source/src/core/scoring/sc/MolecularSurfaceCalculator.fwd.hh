@@ -17,15 +17,18 @@
 
 
 // Utility headers
+#include <utility/pointer/owning_ptr.hh>
 
-namespace protocols {
-namespace filters {
+namespace core {
+namespace scoring {
 namespace sc {
 
 // Forward
 class MolecularSurfaceCalculator;
 
 // Types
+typedef utility::pointer::owning_ptr< MolecularSurfaceCalculator > MolecularSurfaceCalculatorOP;
+typedef utility::pointer::owning_ptr< MolecularSurfaceCalculator const > MolecularSurfaceCalculatorCOP;
 
 
 } // namespace sc
