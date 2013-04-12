@@ -768,7 +768,6 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 	typedef utility::vector1< std::string > StringVec;
 	segment_names_ordered_.clear(); //This string vector hold all the segment names inserted bythe user to ensure that the sequence profile is built according to tthe user
 	foreach( TagPtr const sub_tag, sub_tags ){
-  		scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 		if( sub_tag->getName() == "Segments" ){
 			use_sequence_profiles_ = true;
 			profile_weight_away_from_interface( tag->getOption< core::Real >( "profile_weight_away_from_interface", 1.0 ) );
@@ -817,6 +816,7 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 		return;
 	}
 
+  scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	start_pose_ = new core::pose::Pose( pose );
 	runtime_assert( tag->hasOption( "task_operations" ) != (tag->hasOption( "from_res" ) || tag->hasOption( "to_res" ) ) || tag->hasOption( "torsion_database" ) ); // it makes no sense to activate both taskoperations and from_res/to_res.
 	runtime_assert( tag->hasOption( "torsion_database" ) != tag->hasOption( "source_pdb" ) );
@@ -1157,9 +1157,9 @@ Splice::generate_sequence_profile(core::pose::Pose & pose)
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 		using protocols::jd2::JobDistributor;
-		
+
 		std::string pdb_tag= JobDistributor::get_instance()->current_job()->inner_job()->input_tag();
-		
+
 	//	std::string temp_pdb_name = pdb_tag.erase(pdb_tag.size() - 5); //JD adds "_0001" to input name, we need to erase it
 		//pdb_tag = temp_pdb_name +".pdb";
 		TR<<" The scafold file name is :"<<pdb_tag<<std::endl;//file name of -s pdb file
@@ -1201,11 +1201,11 @@ Splice::generate_sequence_profile(core::pose::Pose & pose)
 		TR<<"!!!!!!!!!the currnet segment is: "<<segment_type_<<" and the source pdb is "<<tempPDBname<<std::endl;
 		core::pose::add_comment(pose,"segment_"+segment_type_,tempPDBname);//change correct association between current loop and pdb file
 		}
-		
+
 		load_pdb_segments_from_pose_comments(pose); // get segment name and pdb accosiation from comments in pdb file
 		TR<<"!!!!!!!!!the size of pdb segments is: "<<pdb_segments_.size()<<std::endl;
-		
-			
+
+
 		runtime_assert( pdb_segments_.size() ); //This assert is in place to make sure that the pdb file has the correct comments, otherwise this function will fail
 //		pose.dump_pdb("test"); //Testing out comment pdb, comment this out after test (GDL)
 
@@ -1226,11 +1226,11 @@ Splice::generate_sequence_profile(core::pose::Pose & pose)
 			profile_vector.push_back( splice_segments_[ segment_type ]->pdb_profile( pdb_segments_[segment_type] ));
 		} // <- End of PDB segment iterator
 		TR<<"The size of the profile vector is: "<<profile_vector.size()<<std::endl;
-		
-		///Before upwweighting constraint we check that the PSSMs are properly aligned by making sure 
+
+		///Before upwweighting constraint we check that the PSSMs are properly aligned by making sure
 		///that the PSSM score of the falnking segments of the current designed segment agree with the identity of the aa (i.e if
 		/// we are designing L1 then we would expect that segments Frm.light1 and Frm.light2 have concensus aa identities)
-		
+
 		core::Size aapos=0;
 		for(core::Size seg=1; seg <=profile_vector.size() ; seg++ ){
 			for( core::Size pos = 1; pos <= profile_vector[seg]->size(); ++pos ){
@@ -1245,8 +1245,8 @@ Splice::generate_sequence_profile(core::pose::Pose & pose)
 				}
 				}
 			}
-		
-		
+
+
 		return concatenate_profiles( profile_vector,segment_names_ordered_ );
 	}
 	return NULL;  // Control can reach end of non-void function without this line. ~ Labonte
@@ -1374,7 +1374,7 @@ Splice::profile_weight_away_from_interface( core::Real const p ){
 }
 
 
-bool 
+bool
 Splice::check_aa(std::string curraa, utility::vector1<core::Real > profRow)
  {
 	// order of amino acids in the .pssm file
@@ -1405,7 +1405,7 @@ Splice::check_aa(std::string curraa, utility::vector1<core::Real > profRow)
 			else{
 			return false;
 		}
-			
+
 }
 
 } //splice
