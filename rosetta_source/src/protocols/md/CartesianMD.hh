@@ -23,7 +23,12 @@
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/CartesianMinimizerMap.hh>
 
+#ifdef WIN32
+#include <time.h>
+#include <WinSock2.h>
+#else
 #include <sys/time.h>
+#endif
 
 namespace protocols {
 namespace md {

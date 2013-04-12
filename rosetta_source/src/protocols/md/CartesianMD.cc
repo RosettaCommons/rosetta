@@ -65,7 +65,11 @@
 //Temporary
 #include <core/io/pdb/pose_io.hh>
 #include <core/scoring/rms_util.hh>
+#ifdef WIN32
+#include <time.h>
+#else
 #include <sys/time.h>
+#endif
 
 namespace protocols{
 namespace md{
@@ -210,8 +214,9 @@ void CartesianMD::do_initialize( core::pose::Pose &pose,
 	pose0_ = pose;
 
 	// Check initial time
+#ifndef WIN32
 	gettimeofday(&inittime_, NULL );
-
+#endif
 	// Allocate
 	xyz_.resize( n_dof() );
 	vel_.resize( n_dof() );
@@ -455,7 +460,9 @@ void CartesianMD::report_MD( core::pose::Pose &pose )
 	*/
 
 	timeval currtime;
+#ifndef WIN32
 	gettimeofday(&currtime, NULL );
+#endif
 	Real elapsedTime = (currtime.tv_sec - inittime_.tv_sec) * 1000.0;
 	elapsedTime += (currtime.tv_usec - inittime_.tv_usec) / 1000.0;
 	elapsedTime /= 60000.0; // in minute
