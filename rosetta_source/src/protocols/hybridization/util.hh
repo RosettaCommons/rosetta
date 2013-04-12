@@ -70,9 +70,9 @@ void generate_fullatom_constraints(
 	utility::vector1 < core::pose::PoseCOP > templates,
 	utility::vector1 < core::Real > template_weights );
 
-void setup_partial_coordinate_constraints(
-    core::pose::Pose &pose,
-    utility::vector1<bool> ignore_res );
+void setup_partial_coordinate_constraints( core::pose::Pose &pose, utility::vector1<bool> ignore_res );
+
+void setup_partial_atompair_constraints( core::pose::Pose &pose, utility::vector1<bool> ignore_res );
 
 void add_strand_pairs_cst(core::pose::Pose & pose, utility::vector1< std::pair< core::Size, core::Size > > const strand_pairs);
 

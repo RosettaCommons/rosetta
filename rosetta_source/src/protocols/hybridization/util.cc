@@ -209,6 +209,7 @@ void setup_partial_coordinate_constraints(
     core::pose::Pose &pose,
     utility::vector1<bool> ignore_res )
 {
+  TR.Debug << " Add partial coordinate constraints for non-interface residues" << std::endl;
 
   core::conformation::symmetry::SymmetryInfoCOP symm_info;
   if ( core::pose::symmetry::is_symmetric(pose) ) {
@@ -303,6 +304,83 @@ void setup_partial_coordinate_constraints(
 	 } //avoid non-protein residues
 	} //loop through each chain
 }
+
+void setup_partial_atompair_constraints(
+    core::pose::Pose &pose,
+    utility::vector1<bool> ignore_res )
+{
+  TR.Debug << " Add partial atom-pair constraints for non-interface residues" << std::endl;
+
+  core::conformation::symmetry::SymmetryInfoCOP symm_info;
+  if ( core::pose::symmetry::is_symmetric(pose) ) {
+    core::conformation::symmetry::SymmetricConformation & SymmConf (
+      dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
+    symm_info = SymmConf.Symmetry_Info();
+  }
+
+  core::Size MINSEQSEP = 5;
+  core::Real MAXDIST = 15.0;
+  core::Real COORDDEV = 3.0;
+  core::Real MINDIST_NONMOVEj= 999.0;
+	core::Real dist=0.0;
+	core::Real distjm=0.0;
+	core::Real distkm=0.0;
+  for (core::Size i=1; i<=pose.conformation().num_chains(); ++i ) {
+    for (core::Size j=pose.conformation().chain_begin(i); j<=pose.conformation().chain_end(i); ++j ) {
+    	for (core::Size k=j+MINSEQSEP; k<=pose.conformation().chain_end(i); ++k ) {
+        if (pose.residue(j).is_protein() && pose.residue(k).is_protein()) {
+          if ( ignore_res[j]==false && ignore_res[k]==false  ) {
+            if ( pose.residue_type(j).has("CA") && pose.residue_type(k).has("CA") ) {
+              MINDIST_NONMOVEj= 999.0;
+              dist=pose.conformation().residue(j).xyz(2).distance( pose.conformation().residue(k).xyz(2) );
+
+              if ( dist <= MAXDIST ) {
+                  for (core::Size m=1; m<=ignore_res.size(); ++m) {
+                    if (ignore_res[m]==true) {
+                      distjm=pose.conformation().residue(j).xyz(2).distance( pose.conformation().residue(m).xyz(2) );
+                      distkm=pose.conformation().residue(k).xyz(2).distance( pose.conformation().residue(m).xyz(2) );
+                      if ( distjm < MINDIST_NONMOVEj ) MINDIST_NONMOVEj=distjm;
+                      if ( distkm < MINDIST_NONMOVEj ) MINDIST_NONMOVEj=distkm;
+                    }
+                  } //closest distance to nonmovable residues
+
+									core::Real weighting_factor=1.0;
+									if ( MINDIST_NONMOVEj < 5 ) {
+											weighting_factor=0.1;
+											COORDDEV=5.0;
+									} else if ( MINDIST_NONMOVEj < 10 ) {
+											weighting_factor=0.5;
+											COORDDEV=3.0;
+									} else if ( MINDIST_NONMOVEj < 15 ) {
+											weighting_factor=1.0;
+											COORDDEV=1.0;
+									} else {
+											weighting_factor=10.0;
+											COORDDEV=0.1;
+                  }
+
+									core::Size resid_j=j;
+									core::Size resid_k=k;
+                  
+                   if (symm_info && !symm_info->bb_is_independent( resid_j ) )
+                     resid_j = symm_info->bb_follows( resid_j );
+                   if (symm_info && !symm_info->bb_is_independent( resid_k ) )
+                     resid_k = symm_info->bb_follows( resid_k );
+                 
+                   pose.add_constraint(
+                     new AtomPairConstraint( core::id::AtomID(2,resid_j), core::id::AtomID(2,resid_k),
+                       new ScalarWeightedFunc( weighting_factor, new USOGFunc( dist, COORDDEV )  )
+                     )
+                   );
+             } //add constraints
+          } //add contraints with MINSEQSEP MAXDIST
+        } // non-interface residues
+      } //protein residues
+    } //loop through residues in chain
+	 } //loop through residues in chain
+	} //loop chains
+}
+
 
 void generate_fullatom_constraints(
 		core::pose::Pose &pose,

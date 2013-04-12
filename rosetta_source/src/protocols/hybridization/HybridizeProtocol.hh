@@ -174,6 +174,10 @@ private:
   core::pack::task::PackerTaskOP task_;
   utility::vector1<bool> allowed_to_move_;
 
+  // jump move
+	bool jump_move_;
+	core::Size jump_move_repeat_;
+
 };
 
 } // hybridization

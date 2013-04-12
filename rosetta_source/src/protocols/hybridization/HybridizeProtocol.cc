@@ -27,6 +27,7 @@
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
@@ -136,6 +137,9 @@
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/jumps.OptionKeys.gen.hh> // strand pairings
 #include <basic/options/keys/evaluation.OptionKeys.gen.hh>
+
+//docking
+#include <protocols/docking/DockingLowRes.hh>
 
 #include <string>
 
@@ -826,8 +830,6 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			dens->apply( pose );
 		}
 
-
-
 		// initialize template history
 		//keep this after symmetry
 		TemplateHistoryOP history = new TemplateHistory(pose);
@@ -860,6 +862,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 
 		// fold tree hybridize
 		if (RG.uniform() < stage1_probability_) {
+     for ( core::Size repeatstage1=0; repeatstage1 < jump_move_repeat_; ++repeatstage1 ) {
 			std::string cst_fn = template_cst_fn_[initial_template_index];
 
 			FoldTreeHybridizeOP ft_hybridize(
@@ -895,18 +898,35 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 
 			// get strand pairings if they exist for constraints in later stages
 			strand_pairs_ = ft_hybridize->get_strand_pairs();
+
+      //Jump perturbation and minimization
+      //how to cycle back to ft hybridize
+      if ( jump_move_ ) {
+        core::Size const rb_move_jump = 1; // use the first jump as the one between partners
+        protocols::docking::DockingLowResOP docking_lowres_mover = new protocols::docking::DockingLowRes( stage1_scorefxn_, rb_move_jump );
+        docking_lowres_mover->apply(pose);
+      
+        core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap;
+        mm->set_bb( false );
+        mm->set_chi( false );
+        mm->set_jump( rb_move_jump, true );
+      
+        protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm, stage1_scorefxn_, "lbfgs_armijo_nonmonotone", 0.01, true );
+       
+        //stage1_scorefxn_->show(TR, pose);
+        min_mover->apply(pose);
+        //stage1_scorefxn_->show(TR, pose);
+      
+        //TR << "Realigning template domains to docking/minimize pose." << std::endl;
+        core::pose::PoseOP stage1pose = new core::pose::Pose( pose );
+        align_by_domain(templates_, domains_, stage1pose);
+        }
+			} //end of repeatstage1
 		} else {
 			// just do frag insertion in unaligned regions
 			core::pose::PoseOP chosen_templ = templates_icluster[initial_template_index_icluster];
 			protocols::loops::Loops chosen_contigs = template_contigs_icluster[initial_template_index_icluster];
 			initialize_and_sample_loops(pose, chosen_templ, chosen_contigs, stage1_scorefxn_);
-		}
-
-		//write gdtmm to output
-		if (native_ && native_->total_residue()) {
-			gdtmm = get_gdtmm(*native_, pose, native_aln);
-			core::pose::setPoseExtraScores( pose, "GDTMM_after_stage1", gdtmm);
-			TR << "GDTMM_after_stage1" << F(8,3,gdtmm) << std::endl;
 		}
 
 		if (realign_domains_stage2_) {
@@ -915,6 +935,16 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			core::pose::PoseOP stage1pose = new core::pose::Pose( pose );
 			align_by_domain(templates_, domains_, stage1pose);
 		}
+
+
+		//write gdtmm to output
+		if (native_ && native_->total_residue()) {
+			gdtmm = get_gdtmm(*native_, pose, native_aln);
+			core::pose::setPoseExtraScores( pose, "GDTMM_after_stage1", gdtmm);
+			TR << "GDTMM_after_stage1" << F(8,3,gdtmm) << std::endl;
+		}
+
+		// STAGE 2
 
 		// apply constraints
 		if ( stage2_scorefxn_->get_weight( core::scoring::atom_pair_constraint ) != 0 ) {
@@ -926,13 +956,15 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			if (strand_pairs_.size()) {
 				add_strand_pairs_cst(pose, strand_pairs_);
 			}
+			if ( task_factory_ ) {
+				setup_partial_atompair_constraints(pose,allowed_to_move_);
+			}
 		}
 
 	  if ( stage2_scorefxn_->get_weight( core::scoring::coordinate_constraint ) != 0 && task_factory_ ) {
 				setup_partial_coordinate_constraints(pose,allowed_to_move_);
 		}
 
-		// STAGE 2
 		if (!option[cm::hybridize::skip_stage2]()) {
 			core::scoring::ScoreFunctionOP stage2_scorefxn_clone = stage2_scorefxn_->clone();
 
@@ -1011,6 +1043,9 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 				}
 				if (strand_pairs_.size()) {
 					add_strand_pairs_cst(pose, strand_pairs_);
+				}
+				if ( task_factory_ ) {
+			  	setup_partial_atompair_constraints(pose,allowed_to_move_);
 				}
 			}
 
@@ -1229,6 +1264,8 @@ HybridizeProtocol::parse_my_tag(
 	stage25_increase_cycles_ = tag->getOption< core::Real >( "stage2.5_increase_cycles", 1. );
 	fa_cst_fn_ = tag->getOption< std::string >( "fa_cst_file", "" );
 	batch_relax_ = tag->getOption< core::Size >( "batch" , 1 );
+	jump_move_= tag->getOption< bool >( "jump_move" , false );
+	jump_move_repeat_= tag->getOption< core::Size >( "jump_move_repeat" , 1 );
 
 	if( tag->hasOption( "task_operations" ) ){
 		task_factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data );

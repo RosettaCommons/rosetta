@@ -1186,6 +1186,8 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 		setup_centroid_constraints( pose, template_poses_, template_wts_, cst_file_, get_pairings_residues() );
 		if (add_hetatm_)
 			add_non_protein_cst(pose, hetatm_self_cst_weight_, hetatm_prot_cst_weight_);
+		if ( task_factory_ )
+      setup_partial_atompair_constraints(pose,allowed_to_move_);
 	}
 
 	if ( scorefxn_->get_weight( core::scoring::coordinate_constraint ) != 0 && task_factory_ ) {
