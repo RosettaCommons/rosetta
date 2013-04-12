@@ -594,8 +594,9 @@ def save_FASTA(pose, base_name, outfilename = False, regions = False ):
         if not outfilename: return
         global_variables.current_directory = os.path.dirname(outfilename)
     OUTFILE = open(outfilename, 'w')
+    region_array = regions.get_regions()
     if regions:
-        for region in regions:
+        for region in region_array:
             if not region.region_exists(pose):continue
             else:
                 seq = region.get_sequence(pose)
@@ -629,16 +630,21 @@ def save_FASTA_PDBLIST(pdblist_path, outfilename=False, regions=False):
         pdbID = pdb.split(".")[0]
         print pdbID
         pose = Pose()
+        region_array = regions.get_regions()
         try:
             pose_from_pdb(pose, pdbpath)
         except PyRosettaException:
             print "Could not load.. "+pdbID+"..Continueing.."
             continue
         if regions:
-            for region in regions:
-                if not region.region_exists(pose):continue
+            for region in region_array:
+                #if not region.region_exists(pose):continue
                 seq = region.get_sequence(pose)
+                
+                
                 header = ">"+pdbID+" "+region.get_region_string()+" "+pdbpath
+                print header
+                print seq
                 OUTFILE.write(header+"\n")
                 OUTFILE.write(seq+"\n")
         else:

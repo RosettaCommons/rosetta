@@ -187,10 +187,11 @@ class ProtocolBaseClass:
         start = self.score_class.score(p)
         mc = MonteCarlo(p, self.score_class.score, self.output_class.kT)
         for x in range(1, self.output_class.rounds.get()+1):
+            mover.apply(p)
             if self.output_class.use_boltzmann.get():
                 if mc.boltzmann(p):
                     print "MC: Pose Accepted"
-            mover.apply(p)
+            
         
         if self.output_class.recover_low.get():
             mc.recover_low(p)

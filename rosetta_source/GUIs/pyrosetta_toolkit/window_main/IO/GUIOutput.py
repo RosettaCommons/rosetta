@@ -25,8 +25,8 @@ class GUIOutput:
         """
         self.toolkit = toolkit;
         self.processors = IntVar(); self.processors.set(1); # We will only use more if the user sets more to use.
-        self.use_boltzmann = IntVar(); self.use_boltzmann.set(True)
-        self.recover_low = IntVar(); self.recover_low.set(True)
+        self.use_boltzmann = IntVar(); self.use_boltzmann.set(False)
+        self.recover_low = IntVar(); self.recover_low.set(False)
         self.kT = 1.0; #Main KT used for rounds
         self.outdir = StringVar(); self.outdir.set(global_variables.current_directory)
         self.outname = StringVar();

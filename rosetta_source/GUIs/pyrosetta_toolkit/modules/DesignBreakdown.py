@@ -55,7 +55,6 @@ class DesignBreakdown:
         self.regions = dict()
         
         self.load_sequences(fasta_path)
-        
         self.results = SequenceResults()
         self.aa_codes = definitions().get_all_one_letter_codes()
         
@@ -65,7 +64,7 @@ class DesignBreakdown:
         
         #Data Output
         if not self.output_directory:
-            self.output_directory = os.path.dirname(fasta_path)+'/RESULTS'
+            self.output_directory = os.path.dirname(fasta_path)+'/'+os.path.basename(fasta_path)+"_RESULTS"
         if not os.path.exists(self.output_directory):
             os.mkdir(self.output_directory)
             print "Outputting results to: "+self.output_directory
@@ -102,10 +101,11 @@ class DesignBreakdown:
                     Seq.set_pdbpath(infoSP[2])
                 self.sequences.append(Seq)
                 continue
-            
             line = line.strip()
             if not line:continue
+            print line
             self.sequences[-1].set_sequence(line)
+        FILE.close()
         print "Sequences Loaded"
         
     def calculate_results(self):
@@ -167,7 +167,7 @@ class DesignBreakdown:
             for Seq in self.sequences:
                 for i in range(1, l+2):
                     residue = Seq.get_residue(i)
-                    self.results.add_residue(i, residue)
+                    self.results.add_residue(i, residue, Seq.get_pdbpath())
         else:
             if not self.are_sequences_for_regions_same_length():
                 return 0
@@ -181,8 +181,8 @@ class DesignBreakdown:
                         #This is so that if there are missing numbers in the PDB between start:end in the region:
                         start = self.reference_pose.pdb_info().pdb2pose(Seq.get_chain(), Seq.get_start_residue())
                         for i in range(0, Seq.get_length()):
-                            
-                            self.results.add_residue(start+i, Seq.get_residue(start+i), Seq.get_pdbpath())
+                            print i
+                            self.results.add_residue(start+i, Seq.get_residue(Seq.get_start_residue()+i), Seq.get_pdbpath())
         return 1
     
     def output_basic_table(self):
@@ -337,7 +337,7 @@ class DesignBreakdown:
                                 x+=1
                                 num = start+i
                                 cur.execute("INSERT INTO raw_data VALUES(NULL, ?,?,?,?)", \
-                                    (self.get_correct_pdb_number_string(num), num, Seq.get_residue(num), Seq.get_pdbpath()))
+                                    (self.get_correct_pdb_number_string(num), num, Seq.get_residue(Seq.get_start_residue()+i), Seq.get_pdbpath()))
             
         print "Database written to SQL_DESIGN_TABLE.db"
         
@@ -535,7 +535,7 @@ class SequenceInfo:
     """
     
     def __init__(self):
-        pass
+        self.start = ""
     
     def get_sequence(self):
         return self.sequence
@@ -562,13 +562,16 @@ class SequenceInfo:
         
         if self.start:
             index_num = resnum-self.start
+            print index_num
             one_letter_code = self.sequence[index_num]
             return one_letter_code
         else:
-            one_letter_code = self.sequence[resnum-1]
+            #Rosetta Resnum
+            one_letter_code = self.sequence[int(resnum)-1]
             return one_letter_code
         
     def set_sequence(self, sequence):
+        print sequence
         self.sequence = sequence
     def set_pdbID(self, pdbID):
         self.pdbID = pdbID

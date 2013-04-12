@@ -119,7 +119,7 @@ class SessionIO:
             output_tools.dumpPDB(self.toolkit.native_pose, self.toolkit.native_pose, outdir+"/native_pose", self.toolkit.score_class.score, True)
         
         #Loop Save
-        output_tools.save_loop_file(self.toolkit.pose, self.toolkit.input_class.regions, outdir+"/temp.loop")
+        output_tools.save_loop_file(self.toolkit.pose, self.toolkit.input_class.regions, False, outdir+"/temp.loop")
         
         #Params Save
         self.save_params()
@@ -149,6 +149,10 @@ class SessionIO:
         
         self.indir = tkFileDialog.askdirectory(title="Open session directory", initialdir=self.toolkit.toolkit_home+"/SESSIONS")
         if not self.indir:return
+        
+        if self.indir == self.toolkit.toolkit_home+"/SESSIONS":
+            print "Directory not chosen.  Please try again."
+            return
         
         #Order is very important here, or everything would be in a map
         self.load_params()
