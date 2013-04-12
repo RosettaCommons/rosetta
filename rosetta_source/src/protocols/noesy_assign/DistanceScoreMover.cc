@@ -58,6 +58,8 @@ DistanceScoreMover::DistanceScoreMover( CrossPeakList& cpl, pose::Pose const& po
   constraints_.reserve( nr_assignments_ );
 	//	peak_constraints_.reserve( cross_peaks_.size() );
 
+ #ifndef WIN32
+
   for ( CrossPeakList::iterator it = cross_peaks_.begin(); it != cross_peaks_.end(); ++it ) {
     for ( CrossPeak::iterator ait = (*it)->begin(); ait != (*it)->end(); ++ait ) {
 			try {
@@ -74,10 +76,12 @@ DistanceScoreMover::DistanceScoreMover( CrossPeakList& cpl, pose::Pose const& po
 			//			peak_constraints_.push_back( NULL );
 		}
   }
+#endif
 }
 
 
 void DistanceScoreMover::prepare_scoring( bool use_for_calibration /*default false */ ) {
+#ifndef WIN32
 	basic::ProfileThis doit( basic::NOESY_ASSIGN_DIST_PREP_SCORE );
 	//assignment_distances_ = VectorReal( nr_assignments_, 0.0 );
 	used_for_calibration_ = use_for_calibration;
@@ -94,6 +98,7 @@ void DistanceScoreMover::prepare_scoring( bool use_for_calibration /*default fal
   }
   count_decoys_ = 0;
 	total_assigned_distances_ = 0;
+#endif
 }
 
 
@@ -166,6 +171,7 @@ void DistanceScoreMover::prepare_scoring( bool use_for_calibration /*default fal
 // }
 
 void DistanceScoreMover::apply( pose::Pose& pose ) {
+#ifndef WIN32
 	basic::ProfileThis doit( basic::NOESY_ASSIGN_DIST_APPLY );
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
 
@@ -254,15 +260,18 @@ void DistanceScoreMover::apply( pose::Pose& pose ) {
 			} ///... divide by M (aka count_decoys_ ) in finalize_scoring
 		}
 	} //loop over peaks
+#endif
 }
 
 void DistanceScoreMover::finalize_scoring() const {
+#ifndef WIN32
 	Size ct_peaks( 1 );
   for ( CrossPeakList::iterator it = cross_peaks_.begin(); it != cross_peaks_.end(); ++it, ++ct_peaks ) {
 		for ( CrossPeak::iterator ait = (*it)->begin(); ait != (*it)->end(); ++ait ) {
 			(*ait)->set_decoy_compatibility( (*ait)->decoy_compatibility()/count_decoys_ );
 		}
 	}
+#endif
 }
 
 // void DistanceScoreMover::eliminate_violated_constraints() const {

@@ -237,6 +237,7 @@ void NoesyModule::read_input_files() {
 }
 
 void NoesyModule::add_dist_viol_to_assignments( core::pose::Pose native_pose) {
+#ifndef WIN32
 	using namespace core::scoring::constraints;
 	for ( CrossPeakList::iterator it = crosspeaks_->begin(); it != crosspeaks_->end(); ++it ) {
 		if ( (*it)->eliminated() ) continue;
@@ -247,6 +248,7 @@ void NoesyModule::add_dist_viol_to_assignments( core::pose::Pose native_pose) {
 			(*ait)->set_native_distance_viol( new_cst->score( native_pose ) );
 		}
 	}
+#endif
 }
 
 ///@brief write peak assignments into peak-file (sparky, cyana)

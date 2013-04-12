@@ -92,7 +92,7 @@ std::ostream& operator<< ( std::ostream& os, CrossPeakInfo const& cpi ) {
 
 std::string CrossPeakInfo::label_atom_name( std::string const& proton_name, core::chemical::AA aa ) const {
   using namespace core::chemical; //for AA
-  if ( label_atom_type_ == "N" or label_atom_type_ == "NC" ) {
+  if ( label_atom_type_ == "N" || label_atom_type_ == "NC" ) {
     if ( aa == aa_arg ) {
       if ( proton_name == "HE" ) return "NE";
       if ( proton_name.substr(0,2) == "HH" ) return "N"+proton_name.substr(1,2); //HH11 HH12 HH21 HH22
@@ -113,7 +113,7 @@ std::string CrossPeakInfo::label_atom_name( std::string const& proton_name, core
   } // atom type is "N"
 
   std::string name;
-  if ( label_atom_type_ == "C" or label_atom_type_ == "NC" ) {
+  if ( label_atom_type_ == "C" || label_atom_type_ == "NC" ) {
 		if ( proton_name[ 0 ] == 'Q' && proton_name[ 1 ] == 'Q' ) { //QQX
 			name = "C" + proton_name.substr(2,1);
 			return name;

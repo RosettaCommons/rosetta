@@ -164,11 +164,13 @@ bool PeakAssignmentResidueMap::has( core::Size res1, core::Size res2 ) {
 }
 
 void PeakAssignmentResidueMap::add( CrossPeakList const& cpl ) {
+#ifndef WIN32
   for ( CrossPeakList::CrossPeaks::const_iterator it = cpl.peaks().begin(); it != cpl.peaks().end(); ++it ) {
     for ( CrossPeak::PeakAssignments::const_iterator ait = (*it)->assignments().begin(); ait != (*it)->assignments().end(); ++ait ) {
       add( *ait );
     }
   }
+#endif
 }
 
 /*void PeakAssignmentResidueMap::invalidate_competitors_to_sequential_NOE( CrossPeakList& ) {
@@ -208,6 +210,7 @@ void PeakAssignmentResidueMap::add( CrossPeakList const& cpl ) {
 }
 */
 void PeakAssignmentResidueMap::check_for_symmetric_peaks( CrossPeakList& cpl, bool accumulate_symmetry ) {
+#ifndef WIN32
   for ( CrossPeakList::CrossPeaks::const_iterator it = cpl.peaks().begin(); it != cpl.peaks().end(); ++it ) {
     CrossPeak::PeakAssignments const& assignments( (*it)->assignments() );
     for ( CrossPeak::PeakAssignments::const_iterator ait = assignments.begin(); ait!=assignments.end(); ++ait ) {
@@ -253,10 +256,12 @@ void PeakAssignmentResidueMap::check_for_symmetric_peaks( CrossPeakList& cpl, bo
       current.set_symmetry( found );
     }
   }
+#endif
 }
 
 typedef PeakAssignmentResidueMap::PeakAssignments PeakAssignments;
 void retrieve_assignment( PeakAssignments const& list, Size resonance_id1, Size resonance_id2, PeakAssignments& intra_res_NOEs ) {
+#ifndef WIN32
 	basic::ProfileThis doit( basic::NOESY_ASSIGN_NETWORK_RETRIEVE_ASSIGN );
 	for ( PeakAssignments::const_iterator it = list.begin(); it != list.end(); ++it ) {
 		if ( ( (*it)->resonance_id( 1 ) == resonance_id1 && (*it)->resonance_id( 2 ) == resonance_id2 )
@@ -264,16 +269,19 @@ void retrieve_assignment( PeakAssignments const& list, Size resonance_id1, Size 
 			intra_res_NOEs.push_back( *it );
 		}
 	}
+#endif
 }
 
 Real sum_IntraNOE( PeakAssignments const& list, id::NamedAtomID const& atom1, id::NamedAtomID const& atom2 ) {
 	Real intra_sumV( 0.0 );
+#ifndef WIN32
 	for ( PeakAssignments::const_iterator it = list.begin(); it != list.end(); ++it ) {
 		if ( ( (*it)->atom( 1 ) == atom1 && (*it)->atom( 2 ) == atom2 )
 			&& ( (*it)->atom( 1 ) == atom2 && (*it)->atom( 2 ) == atom1 ) ) {
 			intra_sumV+=(*it)->normalized_peak_volume();
 		}
 	}
+#endif
 	return intra_sumV;
 }
 

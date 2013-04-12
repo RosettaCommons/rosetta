@@ -39,12 +39,9 @@
 //#include <map>
 #include <set>
 
+#ifndef WIN32
 #include <protocols/noesy_assign/PeakAssignment.fwd.hh>
-
-#ifdef WIN32
-	#include <protocols/noesy_assign/PeakAssignment.hh>
 #endif
-
 
 namespace protocols {
 namespace noesy_assign {
@@ -85,9 +82,11 @@ public:
   };
 
 public:
+#ifndef WIN32
   typedef utility::vector1< PeakAssignmentOP > PeakAssignments;
   typedef PeakAssignments::const_iterator const_iterator;
   typedef PeakAssignments::iterator iterator;
+#endif
   enum EliminationReason {
     NOT_ELIMINATED = 0,
     EL_DISTVIOL,
@@ -255,19 +254,22 @@ public:
 //     return proton1_.next_assigned( last );
 //   }
 
+#ifndef WIN32
   bool assigned() const { return assignments_.size(); }
   bool ambiguous() const { return assignments_.size() > 1; }
   core::Size n_assigned() const { return assignments_.size(); }
-
+#endif
   ///@brief number of assignments with peak volume higher than params.min_volume_
   core::Size n_Vmin_assignments();
 
   //void invalidate_assignment( Size assignment );
 
+#ifndef WIN32
   PeakAssignments const& assignments() const { return assignments_; }
   const_iterator begin() const { return assignments_.begin(); }
   iterator begin() { return assignments_.begin(); }
   const_iterator end() const { return assignments_.end(); }
+#endif
 
   core::Real distance_bound() const { return distance_bound_; }
   void nudge_distance_bound( core::Real offset );
@@ -319,7 +321,9 @@ public:
 private:
 
   FoldResonance UNFOLDED_; //dummy folder
+#ifndef WIN32
   PeakAssignments assignments_;
+#endif
   ResonanceListOP resonances_;
   CrossPeakInfoCOP info1_, info2_;
   Spin proton1_;

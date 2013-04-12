@@ -110,8 +110,9 @@ void CrossPeak::add_full_assignment( Size res_ids[] ) {
 // 	utility_exit_with_message( "stubbed function" );
 	Size ind1 = assign_spin( 1, res_ids );
 	Size ind2 = assign_spin( 2, res_ids );
+#ifndef WIN32
 	assignments_.push_back( new PeakAssignment( this, ind1, ind2 ) );
-
+#endif
 	//	for ( Size i = 1;
 	//need to find resonances in Spins and add them if they are still missing.
 	//get id for spin1 and spin2
@@ -136,8 +137,10 @@ void CrossPeak::find_assignments( ) {
 
   for ( Size ct1 = 1; ct1 <= n_assigned_1; ++ct1 ) {
     for ( Size ct2 = 1; ct2 <= n_assigned_2; ++ct2 ) {
+#ifndef WIN32
       assignments_.push_back( new PeakAssignment( this, ct1, ct2 ) );
-    }
+#endif
+	}
   }
   //write_to_stream( tr.Debug );
   //  tr.Debug << std::endl;
@@ -194,6 +197,7 @@ CrossPeak::create_fa_and_cen_constraint(
 			core::Real padding,
 			bool fa_only
 ) const {
+#ifndef WIN32
 	core::Size const round_digits( 2 );
 	using namespace core::scoring::constraints;
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
@@ -224,7 +228,6 @@ CrossPeak::create_fa_and_cen_constraint(
 		if ( !ct_ambiguous ) first_valid = it;
 		++ct_ambiguous;
 	}
-
 	if ( qc == HI_NEAR_UNAMBIG || qc == HI_UNAMBIG ) {
 		runtime_assert( ct_ambiguous < 2 );
 	}
@@ -303,6 +306,7 @@ CrossPeak::create_fa_and_cen_constraint(
 		}
 		//	tr.Trace << "constraint for " << peak_id() << " finished " << std::endl;
 	}
+#endif
 }
 
 Real sigmoid( Real x, Real tau, Real m, int sign = 1 ) {
@@ -313,6 +317,7 @@ Real sigmoid( Real x, Real tau, Real m, int sign = 1 ) {
 }
 
 core::Real CrossPeak::probability() const {
+#ifndef WIN32
 	Real max_vc_cs( 0.0 );
 	Real max_vc_sym( 0.0 );
 	Real max_vc( 0.0 );
@@ -335,9 +340,13 @@ core::Real CrossPeak::probability() const {
 	s[4] = sigmoid( max_vc, tau[4], m[4], 1 );
 	s[5] = -sigmoid( overall_vc, tau[5], m[5], -1 );
 	return (w[1]*s[1]+w[2]*s[2]+w[3]*s[3]+w[4]*s[4]+w[5]*s[5]+0.4)/1.6;
+#else
+	return 0.;
+#endif
 }
 
 Real CrossPeak::smallest_native_violation() const {
+#ifndef WIN32
 	Real viol( 100000 );
 	QualityClass pclass( quality_class() );
 	for ( const_iterator ait = begin(); ait != end(); ++ait ) {
@@ -347,6 +356,9 @@ Real CrossPeak::smallest_native_violation() const {
 		if ( viol > (*ait)->native_distance_viol() ) viol=(*ait)->native_distance_viol();
 	}
 	return viol;
+#else
+	return 0.;
+#endif
 }
 
 std::string CrossPeak::quality_class_str() const {
@@ -355,6 +367,7 @@ std::string CrossPeak::quality_class_str() const {
 }
 
 CrossPeak::QualityClass CrossPeak::quality_class() const {
+#ifndef WIN32
 	Size count_vc_0p1( 0 );
 	Size count_vc_0p01( 0 );
 	for ( const_iterator ait = begin(); ait != end(); ++ait ) {
@@ -395,15 +408,21 @@ CrossPeak::QualityClass CrossPeak::quality_class() const {
 	} else {
 		return BAD_LOW_PROB;
 	}
-
+#else
+	return BAD_LOW_PROB;
+#endif
 }
 
 core::Real CrossPeak::max_volume_contribution() const {
+#ifndef WIN32
 	Real max_volume( 0.0 );
 	for ( const_iterator ait = begin(); ait != end(); ++ait ) {
 		max_volume= std::max( max_volume, (*ait)->normalized_peak_volume() );
 	}
 	return max_volume;
+#else
+	return 0.;
+#endif
 }
 
 #if 0
@@ -479,6 +498,7 @@ CrossPeak::create_centroid_constraint(
 
 ///@brief do we have a inter residue assignment with at least volume_threshold contribution ?
 Size CrossPeak::min_seq_separation_residue_assignment( Real volume_threshold ) const {
+#ifndef WIN32
 	Size min_seq( 99999 );
 	for ( PeakAssignments::const_iterator it = begin(); it != end(); ++it ) {
 		if ( (*it)->normalized_peak_volume() <= volume_threshold ) continue; //not enough contribution
@@ -488,6 +508,9 @@ Size CrossPeak::min_seq_separation_residue_assignment( Real volume_threshold ) c
 		min_seq = min_seq < diff ? min_seq : diff;
 	}
 	return min_seq;
+#else
+	return 0;
+#endif
 }
 
 std::string CrossPeak::elimination_reason() const {
@@ -504,6 +527,7 @@ std::string CrossPeak::elimination_reason() const {
 }
 
 bool CrossPeak::eliminated( bool recompute, bool do_not_compute ) const {
+#ifndef WIN32
 	if ( recompute && !do_not_compute ) eliminated_ = eliminated_due_to_dist_violations_ ? EL_DISTVIOL : NOT_ELIMINATED;
 	//if dist_cut problem eliminated_ should already be set to false.
 	//	tr.Trace << "elimination check for peak " << peak_id() << "...";
@@ -541,10 +565,12 @@ bool CrossPeak::eliminated( bool recompute, bool do_not_compute ) const {
 
 	if ( eliminated_ ) return true;
 	//	tr.Trace << "passed" << std::endl;
+#endif
 	return false;
 }
 
 core::Size CrossPeak::n_Vmin_assignments() {
+#ifndef WIN32
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
 	Size ct( 0 );
 	for ( PeakAssignments::const_iterator it = begin(); it != end(); ++it ) {
@@ -552,6 +578,9 @@ core::Size CrossPeak::n_Vmin_assignments() {
 		ct += vol > params.min_volume_;
 	}
 	return ct;
+#else
+	return 0;
+#endif
 }
 
 void CrossPeak::nudge_distance_bound( core::Real offset ) {
@@ -559,6 +588,7 @@ void CrossPeak::nudge_distance_bound( core::Real offset ) {
 }
 
 void CrossPeak::calibrate( PeakCalibrator const& calibrator, PeakCalibrator::TypeCumulator& calibration_types ) {
+#ifndef WIN32
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
 	Real sum( 0.0 );
 	Size ct( 0 );
@@ -584,6 +614,7 @@ void CrossPeak::calibrate( PeakCalibrator const& calibrator, PeakCalibrator::Typ
 	if ( max_dist > 0.01 ) {
 		distance_bound_ = std::min( distance_bound_, max_dist );
 	}
+#endif
 }
 
 ///@brief assign protons ass pre-determined

@@ -80,14 +80,17 @@ CrossPeakList::~CrossPeakList() {}
 
 Size CrossPeakList::count_assignments() const {
 	Size total_size( 0 );
+#ifndef WIN32
 	for ( const_iterator it = begin(); it != end(); ++it ) {
 		total_size+=(*it)->assignments().size();
 	}
+#endif
 	return total_size;
 }
 
 void CrossPeakList::delete_diagonal_peaks() {
 	tr.Info << "remove diagonal peaks..." << std::endl;
+#ifndef WIN32
 
 	for ( iterator it = begin(); it != end(); ) {
 		bool delete_peak( false );
@@ -105,6 +108,7 @@ void CrossPeakList::delete_diagonal_peaks() {
 		++it;
 	}
 	assignments_ = NULL;
+#endif
 }
 
 void CrossPeakList::read_from_stream( std::istream& is, PeakFileFormat& input_adaptor, ResonanceListOP resonances  ) {
@@ -203,6 +207,7 @@ void CrossPeakList::update_assignment_list() {
 }
 
 void CrossPeakList::update_peak_volumina() {
+#ifndef WIN32
 	PROF_START( NOESY_ASSIGN_UPDATE_PEAK_VOL );
 	tr.Info << "update peak volumina..."  << std::endl;
 	for ( CrossPeakList::iterator it = begin(); it != end(); ++it ) {
@@ -213,29 +218,35 @@ void CrossPeakList::update_peak_volumina() {
 		(*it)->set_cumulative_peak_volume( sum_volume );
 	}
 	PROF_STOP( NOESY_ASSIGN_UPDATE_PEAK_VOL );
+#endif
 }
 
 void CrossPeakList::update_chemshiftscore() {
+#ifndef WIN32
 	tr.Info << "compute chemical shift score..." << std::endl;
 	for ( CrossPeakList::iterator it = begin(); it != end(); ++it ) {
 		for ( CrossPeak::iterator ait = (*it)->begin(); ait != (*it)->end(); ++ait ) {
 			(*ait)->update_chemshiftscore_from_peak();
 		}
 	}
+#endif
 }
 
 void CrossPeakList::update_upperdistance_score() {
+#ifndef WIN32
 	tr.Info << "compute uppder distance (covalent) score " << std::endl;
 	for ( CrossPeakList::iterator it = begin(); it != end(); ++it ) {
 		for ( CrossPeak::iterator ait = (*it)->begin(); ait != (*it)->end(); ++ait ) {
 			(*ait)->update_upperdistance_score();
 		}
 	}
+#endif
 }
 
 
 
 void CrossPeakList::set_trivial_decoy_compatibility_score() {
+#ifndef WIN32
 	tr.Info << "set trivial 1/n decoy compatibility" << std::endl;
 	for ( CrossPeakList::iterator it = begin(); it != end(); ++it ) {
 		Real invn = 1.0/(*it)->n_assigned();
@@ -243,6 +254,7 @@ void CrossPeakList::set_trivial_decoy_compatibility_score() {
 			(*ait)->set_decoy_compatibility( invn );
 		}
 	}
+#endif
 }
 
 

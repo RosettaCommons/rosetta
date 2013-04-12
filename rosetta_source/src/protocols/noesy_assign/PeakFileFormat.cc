@@ -650,6 +650,7 @@ void PeakFileFormat::write_assignment_stats( std::ostream& os, PeakAssignment& p
 }
 
 void PeakFileFormat::write_assignments( std::ostream& os, CrossPeak const& cp, std::string const& line_end ) const {
+#ifndef WIN32
 	Size assignments_written( 0 );
 
 	if ( write_only_highest_VC() ) {
@@ -681,6 +682,7 @@ void PeakFileFormat::write_assignments( std::ostream& os, CrossPeak const& cp, s
 		}
 	}
 	if ( assignments_written == 0 ) write_nil_assignment( os );
+#endif
 }
 
 void PeakFileFormat::output_diagnosis( std::ostream& os ) const {

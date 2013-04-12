@@ -16,9 +16,10 @@
 
 // Unit Headers
 #include <protocols/noesy_assign/PeakAssignment.fwd.hh>
-
 // Package Headers
+
 #include <protocols/noesy_assign/CrossPeak.hh>
+
 #include <protocols/noesy_assign/ResonanceList.hh>
 #include <protocols/noesy_assign/Resonance.hh>
 
