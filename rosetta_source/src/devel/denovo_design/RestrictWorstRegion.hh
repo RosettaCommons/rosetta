@@ -18,7 +18,7 @@
 
 // Unit headers
 #include <devel/denovo_design/RestrictWorstRegion.fwd.hh>
-
+#include <devel/denovo_design/task_operations/DesignBySecondaryStructure.hh>
 // Project headers
 #include <protocols/moves/Mover.hh>
 
@@ -164,6 +164,8 @@ private:   // other data
 	/// @brief Stores the last residue restricted by any RestrictWorstRegion mover
 	static utility::vector1< core::Size > last_residues_restricted_;
 
+/// @brief strores a vector or the possible highestEnergyRegionOperations
+	utility::vector1<task_operations::HighestEnergyRegionOperationOP> highestEnergyRegionOperation_ops_; 
 };
 
 /// @brief function that tells whether a given amino acid is allowed at a certain position

@@ -129,7 +129,8 @@ RestrictWorstRegion::RestrictWorstRegion( RestrictWorstRegion const & rval ) :
 	scorefxn_( rval.scorefxn_->clone() ),
 	regions_to_mutate_( rval.regions_to_mutate_ ),
 	last_type_( rval.last_type_ ),
-	metric_stats_( rval.metric_stats_ )
+	metric_stats_( rval.metric_stats_ ),
+	highestEnergyRegionOperation_ops_	(rval.highestEnergyRegionOperation_ops_)														 
 {}
 
 /// @brief destructor - this class has no dynamic allocation, so
@@ -167,6 +168,37 @@ RestrictWorstRegion::parse_my_tag(
 		scorefxn_ = data.get< core::scoring::ScoreFunction * >( "scorefxns",
 																														tag->getOption< std::string >( "scorefxn" ) )->clone();
 		assert( scorefxn_ );
+	}
+	bool tmpOpSet = false;
+	std::string type( type_ );
+	if((type == "psipred")||( type == "random" )){
+		task_operations::HighestEnergyRegionOperationOP op = new task_operations::DesignBySecondaryStructureOperation(
+					blueprint_file_,psipred_cmd_,false,false );
+		highestEnergyRegionOperation_ops_.push_back(op);
+		tmpOpSet = true;
+	}
+	if((type == "score")||(type == "random" )){
+		task_operations::HighestEnergyRegionOperationOP op = new task_operations::HighestEnergyRegionOperation();
+		op->set_scorefxn( scorefxn_ );
+		highestEnergyRegionOperation_ops_.push_back(op);
+		tmpOpSet = true;
+	}
+	if((type == "packstat") ||(type == "random" )){
+		task_operations::HighestEnergyRegionOperationOP op = new task_operations::DesignByPackStatOperation();
+		highestEnergyRegionOperation_ops_.push_back(op);
+		tmpOpSet = true;
+	}
+	if((type == "random_mutation")||(type == "random" )){
+		task_operations::HighestEnergyRegionOperationOP op = new task_operations::DesignRandomRegionOperation();
+		highestEnergyRegionOperation_ops_.push_back(op);
+		tmpOpSet = true;	
+	}
+	if(tmpOpSet == false)
+		utility_exit_with_message( "Bad type specified to RestrictWorstRegion op: " + type  );
+	//initialize metric calculator. maybe not the best location for this?
+	for(core::Size ii=1; ii<highestEnergyRegionOperation_ops_.size(); ++ii){
+		std::string opName = highestEnergyRegionOperation_ops_[ii]->get_name();
+		metric_stats_[opName] = std::pair<core::Size,core::Size>(0,0);
 	}
 }
 
@@ -241,37 +273,16 @@ RestrictWorstRegion::apply( core::pose::Pose & pose )
 		}
 	}
 	previous_pose_ = new core::pose::Pose( pose );
-
 	// set operation to find worst region
-	std::string type( type_ );
-	if ( type == "random" ) {
-		std::string const types[3] = { "psipred", "packstat", "random_mutation" };
-		type = types[ numeric::random::random_range( 0, 2 ) ];
-	}
-	TR << "type=" << type_ << "(" << type << ")" << std::endl;
-	TR << "score: " << metric_stats_[ "score" ].first << " / " << metric_stats_[ "score" ].second
-		 << "; psipred: " << metric_stats_[ "psipred" ].first << " / " << metric_stats_[ "psipred" ].second
-		 << "; packstat: " << metric_stats_[ "packstat" ].first << " / " << metric_stats_[ "packstat" ].second
-		 << "; random_mutation: " << metric_stats_[ "random_mutation" ].first << " / " << metric_stats_[ "random_mutation" ].second <<  std::endl;
-	last_type_ = type;
-	++(metric_stats_[ type ].second);
-	task_operations::HighestEnergyRegionOperationOP op( NULL );
-	if ( type == "score" ) {
-		op = new task_operations::HighestEnergyRegionOperation();
-		op->set_scorefxn( scorefxn_ );
-	} else if ( type == "psipred" ) {
-		op = new task_operations::DesignBySecondaryStructureOperation(
-					 blueprint_file_,
-					 psipred_cmd_,
-					 false,
-					 false );
-	} else if ( type == "packstat" ) {
-		op = new task_operations::DesignByPackStatOperation();
-	} else if ( type == "random_mutation" ) {
-		op = new task_operations::DesignRandomRegionOperation();
-	} else {
-		utility_exit_with_message( "Bad type specified to RestrictWorstRegion op: " + type_  );
-	}
+ 	task_operations::HighestEnergyRegionOperationOP op = highestEnergyRegionOperation_ops_[numeric::random::random_range(1,highestEnergyRegionOperation_ops_.size())];		
+	type_ = op->get_name();
+	//output stats on types
+	TR << "type=" << type_ << std::endl;
+	std::map< std::string, std::pair< core::Size, core::Size > >::iterator itr;
+	for(itr = metric_stats_.begin(); itr!= metric_stats_.end(); ++itr)
+		TR << itr->first << ": " << itr->second.first << " / " << itr->second.second << std::endl;
+	last_type_ = type_;
+	++(metric_stats_[ type_ ].second);
 	op->set_regions_to_design( pose.total_residue() );
 	utility::vector1< core::Size > residues( op->get_residues_to_design( pose ) );
 	core::Size restrict_count( 0 );
