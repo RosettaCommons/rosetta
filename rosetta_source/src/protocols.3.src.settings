@@ -58,6 +58,7 @@ sources = {
 		"BindingSiteConstraint",
 		"CombinedConstraintEvaluator",
 		"CombinedConstraintEvaluatorCreator",
+                "COMCoordinateConstraint",
 		"ConstraintEvaluator",
 		"ConstraintEvaluatorCreator",
 		"MaxSeqSepConstraintSet",

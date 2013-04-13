@@ -26,9 +26,23 @@
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <Eigen/Dense>
 
+using Eigen::MatrixXd;
+using namespace Eigen;
+using namespace std;
+
 namespace protocols {
 namespace forge {
 namespace remodel {
+
+
+
+numeric::xyzVector< core::Real >
+compute_center_of_mass( core::pose::Pose const &  pose, core::Size range_start, core::Size range_stop);
+
+double get_RMSD(MatrixXf &A,MatrixXf &B);
+MatrixXf ideal_COMs(double rise, double radius, double omega, int unitn);
+Matrix3f rot_mat(MatrixXf &A,MatrixXf &B);
+
 
 class RemodelGlobalFrame: public protocols::moves::Mover {
 
@@ -59,7 +73,7 @@ public: //constructor/destructor
 	RemodelGlobalFrame();
 
 	RemodelGlobalFrame(RemodelData const & remodel_data, RemodelWorkingSet const & working_model, ScoreFunctionOP const & sfxn);
-	
+
 	RemodelGlobalFrame(Size segment_size);
 
 	virtual
@@ -83,6 +97,7 @@ public:
 	void get_helical_params( Pose & pose );
 	void align_segment( Pose & pose );
 	void setup_helical_constraint( Pose & pose );
+	void setup_CM_helical_constraint( Pose & pose );
 	void matrix3f_to_xyzMatrix( Eigen::Matrix3f const & Re, numeric::xyzMatrix< core::Real> & R  );
 	void identity_matrix( numeric::xyzMatrix< core::Real>  & R );
 	void restore_original_cst( Pose & pose );

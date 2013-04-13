@@ -616,7 +616,8 @@ void RemodelLoopMover::repeat_sync( //utility function
 	    option[OptionKeys::remodel::helical_radius].user() &&
 	    option[OptionKeys::remodel::helical_omega].user()){
 					RGF_.restore_original_cst(repeat_pose);
-					RGF_.setup_helical_constraint(repeat_pose);
+					RGF_.setup_CM_helical_constraint(repeat_pose);
+					//RGF_.align_segment(repeat_pose);
 	}
 
 	//repeat_pose.dump_pdb("rep_test.pdb");
@@ -732,7 +733,7 @@ void RemodelLoopMover::repeat_propagation( //utility function
 		}
 	}
 */
-	if (!repeat_loops->empty() &&option[OptionKeys::remodel::no_jumps].user()){
+	if (!repeat_loops->empty() && !option[OptionKeys::remodel::no_jumps].user()){
 		f = protocols::forge::methods::fold_tree_from_loops(repeat_pose, *repeat_loops);
 	} else {
 		f.simple_tree(repeat_pose.total_residue());
@@ -810,7 +811,8 @@ void RemodelLoopMover::repeat_propagation( //utility function
 			option[OptionKeys::remodel::helical_radius].user() &&
 			option[OptionKeys::remodel::helical_omega].user()){
 					RGF_.restore_original_cst(repeat_pose);
-					RGF_.setup_helical_constraint(repeat_pose);
+					RGF_.setup_CM_helical_constraint(repeat_pose);
+					//RGF_.align_segment(repeat_pose);
 	}
 
 //repeat_pose.dump_pdb("post_align.pdb");
@@ -926,6 +928,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 							RGF_.set_native_cst_set( repeat_pose_ );
 				TR.Debug << "repeat_pose_ length: " << repeat_length_ << std::endl;
 							RGF_.set_segment_size( repeat_length_/option[OptionKeys::remodel::repeat_structure] );
+							//RGF_.setup_CM_helical_constraint( repeat_pose_ );
 			}
 	}
 
@@ -1009,7 +1012,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		else{
 			sfx_stage0_OP->set_weight(scoring::atom_pair_constraint, 1.0);
 			sfx_stage1_OP->set_weight(scoring::atom_pair_constraint, 1.0);
-		}	
+		}
 		std::cout << "sfx0" << std::endl;
 		sfx_stage0_OP->show_pretty(std::cout);
 		std::cout << "sfx1" << std::endl;

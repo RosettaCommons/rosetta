@@ -67,8 +67,8 @@ RemodelDesignMover::RemodelDesignMover()
 }
 
 /// @brief value constructor
-RemodelDesignMover::RemodelDesignMover( RemodelData const & remodel_data, 
-																				RemodelWorkingSet const & working_model, 
+RemodelDesignMover::RemodelDesignMover( RemodelData const & remodel_data,
+																				RemodelWorkingSet const & working_model,
 																				ScoreFunctionOP const & sfxn )
 {
 
@@ -312,7 +312,7 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
   run_calculator(pose, "neighborhood_calc", "neighbors", boollist);
 	std::set<Size> positionList;
 	for (Size i = 1; i <= pose.total_residue(); i++){
-		if (boollist[i] &&option[OptionKeys::remodel::design::design_all].user()){
+		if (boollist[i] && !option[OptionKeys::remodel::design::design_all].user()){
 			positionList.insert(i);
 		}
 		else { // in case of design all flag, take all positions
@@ -393,7 +393,7 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 					} else {
 						TR << "RESCLASS ERROR" << sizemap[i] << std::endl;
 					}
-			}else{		
+			}else{
 			//take the counts for each set
 					if ( sizemap[ copies[jj] ] >= CORE_CUTOFF){
 						coreCount++;
@@ -463,7 +463,7 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 								} else {
 									TR << "RESCLASS ERROR" << sizemap[i] << std::endl;
 								}
-				}	
+				}
 			}
 		}
 	}
@@ -618,7 +618,7 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 		}
 	}
 	TR << "]" << std::endl;
-	
+
 	// manual overwrite of the disulfide mobile range
 	if ( remodel_data_.disulfMobileRange.size() != 0 ) {
 		Size i = 1;
@@ -656,7 +656,7 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 			nbr_res.push_back( ii );
 		}
 	}
-	
+
 	TR << "central residues: ";
 	for ( utility::vector1<Size>::iterator itr = cen_res.begin(), end=cen_res.end(); itr!=end; itr++ ) {
 		TR << *itr << ",";

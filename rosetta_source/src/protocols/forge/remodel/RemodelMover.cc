@@ -37,8 +37,9 @@
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
-// AUTO-REMOVED #include <core/pose/symmetry/util.hh>
+#include <core/pose/symmetry/util.hh>
+#include <core/conformation/symmetry/util.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/MinMover.hh>
@@ -103,7 +104,6 @@
 #include <protocols/moves/PyMolMover.hh>
 #include <protocols/simple_filters/ScoreTypeFilter.hh>
 #include <protocols/simple_moves/PackRotamersMover.fwd.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/symmetry/SetupNCSMover.hh> // dihedral constraint
 #include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
@@ -550,7 +550,7 @@ void RemodelMover::apply( Pose & pose ) {
 	// initialize symmetry
 
 	// only symmetrize here if not in the repeat structure mode. for repeats, stay monomer until repeat generation.
-	if (option[OptionKeys::symmetry::symmetry_definition].user() &&option[OptionKeys::remodel::repeat_structure] )  {
+	if (option[OptionKeys::symmetry::symmetry_definition].user() && !option[OptionKeys::remodel::repeat_structure] )  {
 		simple_moves::symmetry::SetupForSymmetryMover pre_mover;
 		pre_mover.apply( pose );
 		// Remodel assumes chain ID is ' '
@@ -890,8 +890,9 @@ void RemodelMover::apply( Pose & pose ) {
 				//pose.dump_pdb("test.pdb");
 
 			}
+
 			TR << "apply(): calling RemodelDesignMover apply function." << std::endl;
-			designMover.apply(pose);
+
 			//****Previously this loop didn't maintain the pose correctly which resulted in a difficult to track down seg fault.  Fixed, but it's questionable weather you would want to filter poses based on constraints.
 			if (option[OptionKeys::enzdes::cstfile].user() ||
 					option[OptionKeys::constraints::cst_file].user()
@@ -909,9 +910,11 @@ void RemodelMover::apply( Pose & pose ) {
 					continue;
 				}
 				else {
+					designMover.apply(pose);
 					accumulator.apply(pose);
 				}
 			} else {
+				designMover.apply(pose);
 				accumulator.apply(pose);
 			}
 			//*****END horrible code.
@@ -1020,7 +1023,7 @@ void RemodelMover::apply( Pose & pose ) {
 		}
 		// this is to make sure that the final scoring is done with SCORE12
 		scoring::ScoreFunctionOP scorefxn = scoring::ScoreFunctionFactory::create_score_function( scoring::STANDARD_WTS, scoring::SCORE12_PATCH );
-
+/*
 	  if(option[OptionKeys::remodel::repeat_structure].user()) {
 						//Experiment with RemodelGlobalFrame
 						RemodelGlobalFrame RGF(remodel_data, working_model, scorefxn);
@@ -1028,7 +1031,7 @@ void RemodelMover::apply( Pose & pose ) {
 						RGF.apply(*(*it));
 
 		}
-
+*/
 		(*(*it)).dump_scored_pdb(SS.str(), *scorefxn);
 
 		simple_filters::ScoreTypeFilter const pose_total_score( scorefxn, total_score, 100 );
@@ -1300,6 +1303,7 @@ bool RemodelMover::design_refine_seq_relax( Pose & pose, RemodelDesignMover & de
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core;
+	using namespace core::pose::symmetry;
 	using namespace protocols;
 
 	// collect new regions/positions
@@ -1337,12 +1341,22 @@ bool RemodelMover::design_refine_seq_relax( Pose & pose, RemodelDesignMover & de
 		cst_set_post_built = new scoring::constraints::ConstraintSet( *pose.constraint_set() );
 	}
 
+	Size asym_length;
+	if (is_symmetric(pose)){
+		core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
+    asym_length = symm_info->num_independent_residues();
+	} else {
+		asym_length = pose.total_residue();
+	}
+
+
+
 	protocols::simple_moves::symmetry::SetupNCSMover setup_ncs;
 	if (option[OptionKeys::remodel::repeat_structure].user() ) {
 
 		// Dihedral (NCS) Constraints, need to be updated each mutation cycle for sidechain symmetry
 		Size repeat_number =option[OptionKeys::remodel::repeat_structure];
-		Size segment_length = (pose.n_residue())/repeat_number;
+		Size segment_length = asym_length/repeat_number;
 
 		for ( Size rep = 1; rep < repeat_number-1; rep++ ) { // from 1 since first segment don't need self-linking
 			std::stringstream templateRangeSS;
@@ -1423,6 +1437,7 @@ bool RemodelMover::design_refine_cart_relax(
 )
 {
 	using core::kinematics::FoldTree;
+	using namespace core::pose::symmetry;
 	using core::pack::task::operation::RestrictResidueToRepacking;
 	using core::pack::task::operation::RestrictResidueToRepackingOP;
 	using core::pack::task::operation::RestrictToRepacking;
@@ -1463,9 +1478,19 @@ bool RemodelMover::design_refine_cart_relax(
 	// safety, clear the energies object
 	pose.energies().clear();
 
+	Size asym_length;
+
 	//set simple tree
 	FoldTree minFT;
-	minFT.simple_tree(pose.total_residue());
+	if ( is_symmetric(pose) ) {
+	  minFT = sealed_symmetric_fold_tree( pose );
+		core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
+		asym_length = symm_info->num_independent_residues();
+	} else {
+		minFT.simple_tree(pose.total_residue());
+		asym_length = pose.total_residue();
+	}
+
 	pose.fold_tree(minFT);
 
 	// for refinement, always use standard repulsive
@@ -1484,7 +1509,7 @@ bool RemodelMover::design_refine_cart_relax(
 	//pose.dump_pdb("pretest.pdb");
 
 	if(option[OptionKeys::remodel::free_relax].user()) {
-		for (Size i = 1; i<= pose.total_residue(); ++i){
+		for (Size i = 1; i<= asym_length; ++i){
 			cmmop->set_bb(i, true);
 			cmmop->set_chi(i, true);
 		}
@@ -1494,14 +1519,14 @@ bool RemodelMover::design_refine_cart_relax(
 		cmmop->import( manager_.movemap() );
 	}
 
-	for (Size i = 1; i<= pose.total_residue(); ++i){
+	for (Size i = 1; i<= asym_length; ++i){
 		std::cout << "bb at " << i << " " << cmmop->get_bb(i) << std::endl;
 		std::cout << "chi at " << i << " " << cmmop->get_chi(i) << std::endl;
 		cmmop->set_chi(i,true);
 		std::cout << "chi at " << i << " " << cmmop->get_chi(i) << std::endl;
 	}
 
-	for (Size i = 1; i<= pose.total_residue(); ++i){
+	for (Size i = 1; i<= asym_length; ++i){
 		std::cout << "bbM at " << i << " " << manager_.movemap().get_bb(i) << std::endl;
 		std::cout << "chiM at " << i << " " << manager_.movemap().get_chi(i) << std::endl;
 	}
@@ -1523,7 +1548,7 @@ bool RemodelMover::design_refine_cart_relax(
 				//Dihedral (NCS) Constraints, need to be updated each mutation cycle for sidechain symmetry
 
 				Size repeat_number =option[OptionKeys::remodel::repeat_structure];
-				Size segment_length = (pose.n_residue())/repeat_number;
+				Size segment_length = asym_length/repeat_number;
 
 
 				for (Size rep = 1; rep < repeat_number-1; rep++){ // from 1 since first segment don't need self-linking
@@ -1674,7 +1699,7 @@ bool RemodelMover::design_refine( Pose & pose, RemodelDesignMover & designMover 
 		// set loop topology
 		pose.fold_tree( loop_ft );
 
-		if (option[OptionKeys::remodel::swap_refine_confirm_protocols].user() ) {
+		if (!option[OptionKeys::remodel::swap_refine_confirm_protocols].user() ) {
 			// refine the new section
 			loops::loop_mover::refine::LoopMover_Refine_CCD refine( loops, sfx );
 			kinematics::MoveMapOP combined_mm = new kinematics::MoveMap();
