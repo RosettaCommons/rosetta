@@ -73,6 +73,7 @@
 #include <boost/spirit/include/phoenix1_functions.hpp>
 #include <boost/spirit/include/phoenix1_binders.hpp>
 #include <boost/spirit/include/phoenix1_casts.hpp>
+#include <utility/string_util.hh>
 #include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
 #include <boost/foreach.hpp>
@@ -204,6 +205,40 @@ size_t Tag::size() const {
 	}
 	return rval;
 } // Tag::size
+
+//This is explicit specialization for boolean values
+//to allow for use of "true" "false" etc. in addition to 1 and 0
+template<>
+bool
+Tag::getOption<bool>(std::string const& key, bool const& t_default) const {
+	options_t::const_iterator i = mOptions_.find(key);
+	if( i == mOptions_.end() ) {
+		accessed_options_[key]= key;
+		return t_default;
+	}
+	accessed_options_[key]= i->second;
+	if ( utility::is_true_string( i->second ) ) { return true; }
+	if ( utility::is_false_string( i->second ) ) { return false; }
+	std::cerr << "getOption: key= " << key << " stream extraction for boolean value failed! Tried to parse '" << i->second <<
+				"' returning default value: '" << t_default << "'." << std::endl;
+	return t_default;
+}
+
+template<>
+bool
+Tag::getOption<bool>(std::string const& key) const {
+	options_t::const_iterator i = mOptions_.find(key);
+	if( i == mOptions_.end() ) {
+		std::cerr << "Option " << key << " not found." << std::endl;
+		runtime_assert( false );
+	}
+	accessed_options_[key]= i->second;
+	if ( utility::is_true_string( i->second ) ) { return true; }
+	if ( utility::is_false_string( i->second ) ) { return false; }
+	std::cerr << "getOption: key= " << key << " stream extraction for boolean value failed! Tried to parse '" << i->second <<
+				"' returning false." << std::endl;
+	return false;
+}
 
 // ____________________ <boost::spirit parser definition> ____________________
 

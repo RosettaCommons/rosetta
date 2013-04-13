@@ -23,6 +23,8 @@
 #include <utility/options/ScalarOption_T_.hh>
 #include <utility/options/keys/BooleanOptionKey.hh>
 
+#include <utility/string_util.hh>
+
 // C++ headers
 #include <cstdlib>
 #include <iostream>
@@ -186,43 +188,17 @@ protected: // Methods
 	bool
 	is_true_value( std::string const & value_str ) const
 	{
-		return (
-		 ( value_str.empty() ) ||
-		 ( value_str == "true" ) ||
-		 ( value_str == "True" ) ||
-		 ( value_str == "TRUE" ) ||
-		 ( value_str == "t" ) ||
-		 ( value_str == "T" ) ||
-		 ( value_str == "1" ) ||
-		 ( value_str == "on" ) ||
-		 ( value_str == "On" ) ||
-		 ( value_str == "ON" ) ||
-		 ( value_str == "yes" ) ||
-		 ( value_str == "Yes" ) ||
-		 ( value_str == "YES" ) );
+		return ( value_str.empty() || utility::is_true_string( value_str ) );
 	}
 
 
-	/// @brief String accepted as a true value?
+	/// @brief String accepted as a false value?
 	inline
 	bool
 	is_false_value( std::string const & value_str ) const
 	{
-		return (
-		 ( value_str == "false" ) ||
-		 ( value_str == "False" ) ||
-		 ( value_str == "FALSE" ) ||
-		 ( value_str == "f" ) ||
-		 ( value_str == "F" ) ||
-		 ( value_str == "0" ) ||
-		 ( value_str == "off" ) ||
-		 ( value_str == "Off" ) ||
-		 ( value_str == "OFF" ) ||
-		 ( value_str == "no" ) ||
-		 ( value_str == "No" ) ||
-		 ( value_str == "NO" ) );
+		return utility::is_false_string( value_str );
 	}
-
 
 private: // Creation
 

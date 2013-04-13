@@ -78,14 +78,13 @@ public:
 			return t_default;
 		}
 		accessed_options_[key]= i->second;
-		T t = t_default;
 		try{
-			t = boost::lexical_cast<T>(i->second);
+			return boost::lexical_cast<T>(i->second);
 		} catch(boost::bad_lexical_cast &) {
 			std::cerr << "getOption: key= " << key << " stream extraction failed! Tried to parse '" << i->second <<
-					"' returning uninitialized value: '" << t << "'" << std::endl;
+					"' returning default value: '" << t_default << "'" << std::endl;
 		}
-		return t;
+		return t_default;
 	}
 
 	template< class T >
@@ -105,6 +104,8 @@ public:
 		}
 		return T();
 	}
+
+	// See also the explicit specialization of getOption() below.
 
 	options_t const& getOptions() const { return mOptions_; }
 	void setOptions( options_t const& options ) {
@@ -147,6 +148,16 @@ private:
 
 std::ostream& operator<<(std::ostream& out, Tag const& tag);
 std::ostream& operator<<(std::ostream& out, TagPtr const& tag);
+
+//This is explicit specialization for boolean values
+//to allow for use of "true" "false" etc. in addition to 1 and 0
+template<>
+bool
+Tag::getOption<bool>(std::string const& key, bool const& t_default) const;
+
+template<>
+bool
+Tag::getOption<bool>(std::string const& key) const;
 
 } // namespace tag
 } // namespace utility
