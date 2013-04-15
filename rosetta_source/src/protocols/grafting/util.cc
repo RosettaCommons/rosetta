@@ -108,6 +108,11 @@ insert_pose_into_pose(
 	//local copies
 	core::pose::Pose scaffold(scaffold_pose);
 	core::pose::Pose insert(insert_pose);
+	
+	//Get Disulfide information:
+	utility::vector1< std::pair< core::Size, core::Size > > disulfide_pair_list;
+	core::conformation::disulfide_bonds(insert.conformation(), disulfide_pair_list);
+	
 	core::kinematics::FoldTree original_scaffold_tree = scaffold.fold_tree();
 	core::Size const insert_length = insert.total_residue();
 	//strip termini variants from insert if necessary
@@ -128,7 +133,7 @@ insert_pose_into_pose(
 	TR << "insert_point " << insert_point << std::endl;
 	TR << "insert_start " << insert_start << std::endl;
 	TR << "insert_end " << insert_end << std::endl;
-    TR << "insert_length " << insert_length << std::endl;
+	TR << "insert_length " << insert_length << std::endl;
     
 	//Fold tree allows insertion into scaffold (all via jump)
 	using core::kinematics::Edge;
@@ -150,6 +155,16 @@ insert_pose_into_pose(
 	//Set a fold tree.
 	core::kinematics::FoldTree new_tree = core::kinematics::remodel_fold_tree_to_account_for_insertion(original_scaffold_tree, insert_point, insert_length);
 	combined.fold_tree(new_tree);
+	
+	//Fix Disulfides.
+	for (core::Size i = 1; i <= disulfide_pair_list.size(); ++i){
+		core::Size new_resnum1 = disulfide_pair_list[i].first + insert_point;
+		core::Size new_resnum2 = disulfide_pair_list[i].second + insert_point;
+
+		//This should is all we need, as the disulfides have already been detected in conformation. No need to mutate or optimize.
+		combined.conformation().declare_chemical_bond(new_resnum1,"SG",new_resnum2,"SG");
+		
+		
 	return combined;
 }
 

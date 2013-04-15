@@ -107,7 +107,8 @@ void protocols::jd2::PDBJobOutputter::other_pose(
 	TR.Debug << "PDBJobOutputter::other_pose" << std::endl;
 	runtime_assert( !tag.empty() ); //else you'll overwrite your pdb when the job finishes
 
-	std::string const file(path_+tag + extended_name(job));
+	std::string const file(path_ + tag + extended_name(job));
+
 	utility::io::ozstream out( file );
 	if ( !out.good() ) utility_exit_with_message( "Unable to open file: " + file + "\n" );
 	dump_pose(job, pose, out);
