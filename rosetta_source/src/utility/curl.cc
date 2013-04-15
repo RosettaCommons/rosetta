@@ -17,7 +17,7 @@
 namespace utility {
   
 // must include -lcurl during linking if you're using -dwithcurl
-#ifdef withcurl
+#ifdef WITHCURL
 
   CurlGet::CurlGet() 
   {
