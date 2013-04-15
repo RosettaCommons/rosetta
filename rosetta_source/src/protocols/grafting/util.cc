@@ -20,6 +20,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/conformation/Conformation.hh>
+#include <core/conformation/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/util.hh>
