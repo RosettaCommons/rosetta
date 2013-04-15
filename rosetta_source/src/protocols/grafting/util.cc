@@ -161,9 +161,9 @@ insert_pose_into_pose(
 		core::Size new_resnum1 = disulfide_pair_list[i].first + insert_point;
 		core::Size new_resnum2 = disulfide_pair_list[i].second + insert_point;
 
-		//This should is all we need, as the disulfides have already been detected in conformation. No need to mutate or optimize.
+		//This is all we need, as the disulfides have already been detected in conformation. No need to mutate or optimize.
 		combined.conformation().declare_chemical_bond(new_resnum1,"SG",new_resnum2,"SG");
-		
+	}
 		
 	return combined;
 }
