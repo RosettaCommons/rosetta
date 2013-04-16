@@ -88,8 +88,14 @@ main( int argc, char * argv [] )
 		out_pose = vip_mover.get_final_pose();
 		core::Real new_energy = vip_mover.get_final_energy();
 
-		TR << "Comparing new energy " << new_energy << " with old energy " << old_energy << std::endl;
 		bool improved( new_energy < old_energy ? true : false );
+
+		// Check for bogus final_pose
+		if( out_pose.total_residue() == 0 ) {
+			improved = false;
+		} else {
+			TR << "Comparing new energy " << new_energy << " with old energy " << old_energy << std::endl;
+		}
 
 		if( improved ){
 			// Print out the accepted mutation
