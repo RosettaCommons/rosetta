@@ -136,8 +136,8 @@ public:
 	void
 	set_graft_rounds(core::Size graft_rounds);
 	
-	void
-	set_filters();
+	//void
+	//set_filters();
 	
 	///@brief Options are: relax, min, repack.
 	void
@@ -231,8 +231,8 @@ public:
 	set_cdr_cluster_centers_only_range(CDRNameEnum const cdr_start, CDRNameEnum const cdr_end, bool setting);
 	
 	///@brief Leave out these PDBs from sampling.  Mainly for testing, but who knows.
-	void
-	leave_out_pdb_ids(CDRNameEnum const cdr, vector1< std::string > pdbids);
+	//void
+	//leave_out_pdb_ids(CDRNameEnum const cdr, vector1< std::string > pdbids);
 	
 public:
 	////////////////////////////////////////////////////////////////////////////
@@ -240,17 +240,17 @@ public:
 	//
 	//
 	
-	void
-	set_type_weight(CDRNameEnum const cdr, Size type, Real weight);
+	//void
+	//set_type_weight(CDRNameEnum const cdr, Size type, Real weight);
 	
-	void
-	set_native_cluster_weight(CDRNameEnum const cdr, Real weight);
+	//void
+	//set_native_cluster_weight(CDRNameEnum const cdr, Real weight);
 	
-	void
-	set_cdr_weight(CDRNameEnum const cdr, Real weight);
+	//void
+	//set_cdr_weight(CDRNameEnum const cdr, Real weight);
 	
-	void
-	set_center_weight(CDRNameEnum const cdr, Real weight);
+	//void
+	//set_center_weight(CDRNameEnum const cdr, Real weight);
 
 public:
 	////////////////////////////////////////////////////////////////////////////////
