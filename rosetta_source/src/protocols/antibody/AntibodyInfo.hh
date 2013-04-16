@@ -281,8 +281,8 @@ public:
 	get_TaskFactory_OneCDR(pose::Pose & pose, CDRNameEnum const & cdr_name) const;
     
 	///@brief Add CDR flexibility to task factory.
-	void
-	add_CDR_to_TaskFactory(pose::Pose & pose, pack::task::TaskFactoryOP tf, CDRNameEnum const & cdr_name) const;
+	//void
+	//add_CDR_to_TaskFactory(pose::Pose & pose, pack::task::TaskFactoryOP tf, CDRNameEnum const & cdr_name) const;
 	
 public:
 	

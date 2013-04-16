@@ -59,8 +59,8 @@ public:
 	//
 	//
 	///@brief Uses (default) grafting to copy cdrs from one antibody to another.
-	void
-	copy_cdrs(core::pose::Pose& from_pose, core::pose::Pose& to_pose, core::Size overhang);
+	//void
+	//copy_cdrs(core::pose::Pose& from_pose, core::pose::Pose& to_pose, core::Size overhang);
 
 
 	///////////////////////////////////////////////////////////////////////////////////////
