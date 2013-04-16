@@ -680,10 +680,10 @@ option.add( basic::options::OptionKeys::fold_cst::ignore_sequence_seperation, "u
 option.add( basic::options::OptionKeys::fold_cst::no_recover_low_at_constraint_switch, "dont recover low when max_seq_sep is increased" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::ramp_coord_cst, "ramp coord csts just like chainbreak-weights during fold-cst" ).def(false);
 option.add( basic::options::OptionKeys::resample::resample, "resample option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::resample::silent, "a silent file for decoys to restart sampling from " ).def("");
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::resample::silent, "a silent file for decoys to restart sampling from " ).def("");
-option.add( basic::options::OptionKeys::resample::tag, "which decoy to select from silent file " ).def("");
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::resample::tag, "which decoy to select from silent file " ).def("");
 option.add( basic::options::OptionKeys::resample::stage1, "if true restart after stage1, otherwise after stage2 " ).def(false);
 option.add( basic::options::OptionKeys::resample::stage2, "if true restart after stage1, otherwise after stage2 " ).def(false);
 option.add( basic::options::OptionKeys::resample::jumps, "if true restart after stage1, otherwise after stage2 " ).def(false);
@@ -1248,7 +1248,7 @@ option.add( basic::options::OptionKeys::packing::optH_MCA, "If running optH, use
 option.add( basic::options::OptionKeys::packing::pack_missing_sidechains, "Run packer to fix residues with missing sidechain density at PDB load" ).def(true);
 option.add( basic::options::OptionKeys::packing::preserve_c_beta, "Preserve c-beta positions during rotamer construction" );
 option.add( basic::options::OptionKeys::packing::flip_HNQ, "Consider flipping HIS, ASN, and GLN during hydrogen placement optimization" );
-option.add( basic::options::OptionKeys::packing::fix_his_tautomer, "seqpos numbers of his residus whose tautomer should be fixed during repacking.  If the value 0 is given and is the only value given, then all histadine tautomers will be held fixed" );
+option.add( basic::options::OptionKeys::packing::fix_his_tautomer, "seqpos numbers of his residus whose tautomer should be fixed during repacking" );
 option.add( basic::options::OptionKeys::packing::print_pymol_selection, "include pymol-style selections when printing a PackerTask" ).def(false);
 option.add( basic::options::OptionKeys::packing::ex1::ex1, "use extra chi1 sub-rotamers for all residues that pass the extrachi_cutoff" );
 option.add( basic::options::OptionKeys::packing::ex1::level, "use extra chi1 sub-rotamers for all residues that pass the extrachi_cutoff The integers that follow the ex flags specify the pattern for chi dihedral angle sampling There are currently 8 options; they all include the original chi dihedral angle. NO_EXTRA_CHI_SAMPLES          0          original dihedral only; same as using no flag at all EX_ONE_STDDEV                 1 Default  +/- one standard deviation (sd); 3 samples EX_ONE_HALF_STEP_STDDEV       2          +/- 0.5 sd; 3 samples EX_TWO_FULL_STEP_STDDEVS      3          +/- 1 & 2 sd; 5 samples EX_TWO_HALF_STEP_STDDEVS      4          +/- 0.5 & 1 sd; 5 samples EX_FOUR_HALF_STEP_STDDEVS     5          +/- 0.5, 1, 1.5 & 2 sd; 9 samples EX_THREE_THIRD_STEP_STDDEVS   6          +/- 0.33, 0.67, 1 sd; 7 samples EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 13 samples" ).legal(0).legal(1).legal(2).legal(3).legal(4).legal(5).legal(6).legal(7).def(1);
@@ -1359,11 +1359,11 @@ option.add( basic::options::OptionKeys::lh::create_db, "Make database with this 
 option.add( basic::options::OptionKeys::lh::sample_weight_file, "Holds the initial per residue sample weights" );
 option.add( basic::options::OptionKeys::lh::fragpdb::fragpdb, "fragpdb option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::lh::fragpdb::out_path, "Path where pdbs are saved" ).def("");
+option.add( basic::options::OptionKeys::lh::fragpdb::indexoffset, "list of index offset pairs" ).def(-1);
+option.add( basic::options::OptionKeys::lh::fragpdb::bin, "list of bin keys" ).def(utility::vector1<std::string>());
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::fragpdb::indexoffset, "list of index offset pairs" ).def(-1);
-option.add( basic::options::OptionKeys::lh::fragpdb::bin, "list of bin keys" ).def(utility::vector1<std::string>());
-option.add( basic::options::OptionKeys::lh::symfragrm::symfragrm, "symfragrm option group" ).legal(true).def(true);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::symfragrm::symfragrm, "symfragrm option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::lh::symfragrm::pdblist, "list of pdbs to be processed" );
 option.add( basic::options::OptionKeys::rbe::rbe, "rbe option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::rbe::server_url, "serverurl for rosetta backend" );
@@ -2038,12 +2038,12 @@ option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on const
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_pdb, "PDB file from which to draw constraints" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrbmoves, "number of rigid-body moves" ).def(100);
-
-}
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::nrboutercycles, "number of rigid-body moves" ).def(5);
+option.add( basic::options::OptionKeys::RBSegmentRelax::nrboutercycles, "number of rigid-body moves" ).def(5);
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_scorefxn, "number of rigid-body moves" ).def("score5");
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_fragment_moves, "omit fragment insertions (in SS elements)" ).def(false);
-option.add( basic::options::OptionKeys::RBSegmentRelax::skip_seqshift_moves, "omit sequence shifting moves" ).def(false);
+
+}
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::skip_seqshift_moves, "omit sequence shifting moves" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_rb_moves, "omit rigid-body moves" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::helical_movement_params, "helical-axis-rotation, helical-axis-translation, off-axis-rotation, off-axis-translation" ).def(utility::vector1<float>(4,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::strand_movement_params, "strand-in-plane-rotation, strand-in-plane-translation, out-of-plane-rotation, out-of-plane-translationn" ).def(utility::vector1<float>(4,0.0));
@@ -2456,6 +2456,10 @@ option.add( basic::options::OptionKeys::antibody::input_fv, "input antibody vari
 option.add( basic::options::OptionKeys::antibody::camelid, "Camelid input with only heavy (VH) chain" ).def(false);
 option.add( basic::options::OptionKeys::antibody::camelid_constraints, "Display constraints file for use with camelid H3 modeler" ).def(false);
 option.add( basic::options::OptionKeys::antibody::numbering_scheme, "the numbering scheme such as chothia or aho" ).def("chothia");
+option.add( basic::options::OptionKeys::antibody::design::design, "design option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::antibody::design::graft_instructions, "Path for graft instruction file" ).def("/sampling/antibodies/design/default_graft_instructions.txt");
+option.add( basic::options::OptionKeys::antibody::design::antibody_database, "Path to the Antibody Database.  Download from dunbrack.fccc.edu" ).def("/sampling/antibodies/antibody_data_rosetta.db");
+option.add( basic::options::OptionKeys::antibody::design::graft_rounds, "Rounds for graft_design.  Each round is one CDR graft from set" ).def(1000);
 option.add( basic::options::OptionKeys::flexPepDocking::flexPepDocking, "flexPepDocking option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::flexPepDocking::params_file, "parameters file that describe the complex details, like anchor residues, etc." );
 option.add( basic::options::OptionKeys::flexPepDocking::peptide_anchor, "Set the peptide anchor residue mannualy (instead of using the center of mass" ).lower(1).def(1);

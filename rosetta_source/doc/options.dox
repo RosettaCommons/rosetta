@@ -634,6 +634,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Residues already present in starting file</dd><br>
 </dl>
 <dl>
+<dt><b>-md_schfile</b> \<String\><dt>
+<dd>File name containing MD schedule</dd><br>
+</dl>
+<dl>
 <dt><b>-read_pdb_link_records</b> \<Boolean\><dt>
 <dd>Sets whether or not the LINK records in PDB files are read.  The default value is false.</dd><br>
 <dd>Default: false</dd><br>
@@ -4068,6 +4072,66 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-facts_GBpair_cut</b> \<Real\><dt>
+<dd>GBpair interaction distance cutoff (same as hackelec_max_dis)</dd><br>
+<dd>Default: 10.0</dd><br>
+</dl>
+<dl>
+<dt><b>-facts_min_dis</b> \<Real\><dt>
+<dd>GBpair interaction minimum distance (same as hackelec_min_dis)</dd><br>
+<dd>Default: 1.5</dd><br>
+</dl>
+<dl>
+<dt><b>-facts_kappa</b> \<Real\><dt>
+<dd>GBpair interaction screening factor</dd><br>
+<dd>Default: 12.0</dd><br>
+</dl>
+<dl>
+<dt><b>-facts_apprx</b> \<Boolean\><dt>
+<dd>Use approximated function form for GBpair calculation in FACTS</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-facts_asp_patch</b> \<Integer\><dt>
+<dd>AtomicSolvationParameter set for nonpolar interaction in FACTS</dd><br>
+<dd>Default: 1</dd><br>
+</dl>
+<dl>
+<dt><b>-facts_selfenergy_scale</b> \<Real\><dt>
+<dd>Relative scale for FACTS self energy to pair energy</dd><br>
+<dd>Default: 1.0</dd><br>
+</dl>
+<dl>
+<dt><b>-facts_plane_to_self</b> \<Boolean\><dt>
+<dd>Add atoms in same plane to self energy pairs</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-facts_intrares_scale</b> \<Real\><dt>
+<dd>Relative scale for FACTS intrares energy to interres energy</dd><br>
+<dd>Default: 0.0</dd><br>
+</dl>
+<dl>
+<dt><b>-facts_saltbridge_correction</b> \<Real\><dt>
+<dd>FACTS Self energy parameter scaling factor for polarH</dd><br>
+<dd>Default: 1.0</dd><br>
+</dl>
+<dl>
+<dt><b>-facts_dshift</b> \<Real\><dt>
+<dd>FACTS pair term denominator distance shift</dd><br>
+<dd>Default: 0.0</dd><br>
+</dl>
+<dl>
+<dt><b>-facts_die</b> \<Real\><dt>
+<dd>FACTS dielectric constant</dd><br>
+<dd>Default: 1.0</dd><br>
+</dl>
+<dl>
+<dt><b>-facts_elec_sh_exponent</b> \<Real\><dt>
+<dd>Shift function exponent for electrostatic part in FACTS</dd><br>
+<dd>Default: 2.0</dd><br>
+</dl>
+<dl>
 <dt><b>-nmer_ref_energies</b> \<String\><dt>
 <dd>nmer ref energies database filename</dd><br>
 </dl>
@@ -5953,7 +6017,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-fix_his_tautomer</b> \<IntegerVector\><dt>
-<dd>seqpos numbers of his residus whose tautomer should be fixed during repacking.  If the value 0 is given and is the only value given, then all histadine tautomers will be held fixed</dd><br>
+<dd>seqpos numbers of his residus whose tautomer should be fixed during repacking</dd><br>
 <dd>Default: []</dd><br>
 </dl>
 <dl>
@@ -11844,6 +11908,27 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-numbering_scheme</b> \<String\><dt>
 <dd>the numbering scheme such as chothia or aho</dd><br>
 <dd>Default: "chothia"</dd><br>
+</dl>
+ </li>
+<li><h2>antibody:design</h2>
+<dl>
+<dt><b>-design</b> \<Boolean\><dt>
+<dd>design option group</dd><br>
+</dl>
+<dl>
+<dt><b>-graft_instructions</b> \<String\><dt>
+<dd>Path for graft instruction file</dd><br>
+<dd>Default: "/sampling/antibodies/design/default_graft_instructions.txt"</dd><br>
+</dl>
+<dl>
+<dt><b>-antibody_database</b> \<String\><dt>
+<dd>Path to the Antibody Database.  Download from dunbrack.fccc.edu</dd><br>
+<dd>Default: "/sampling/antibodies/antibody_data_rosetta.db"</dd><br>
+</dl>
+<dl>
+<dt><b>-graft_rounds</b> \<Integer\><dt>
+<dd>Rounds for graft_design.  Each round is one CDR graft from set</dd><br>
+<dd>Default: 1000</dd><br>
 </dl>
  </li>
 <li><h2>flexPepDocking</h2>

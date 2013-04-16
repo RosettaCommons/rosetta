@@ -1,6 +1,3 @@
-namespace RBSegmentRelax { IntegerOptionKey const nrboutercycles( "RBSegmentRelax:nrboutercycles" );  }
-namespace RBSegmentRelax { StringOptionKey const rb_scorefxn( "RBSegmentRelax:rb_scorefxn" );  }
-namespace RBSegmentRelax { BooleanOptionKey const skip_fragment_moves( "RBSegmentRelax:skip_fragment_moves" );  }
 namespace RBSegmentRelax { BooleanOptionKey const skip_seqshift_moves( "RBSegmentRelax:skip_seqshift_moves" );  }
 namespace RBSegmentRelax { BooleanOptionKey const skip_rb_moves( "RBSegmentRelax:skip_rb_moves" );  }
 namespace RBSegmentRelax { RealVectorOptionKey const helical_movement_params( "RBSegmentRelax:helical_movement_params" );  }
@@ -414,6 +411,10 @@ namespace antibody { FileOptionKey const input_fv( "antibody:input_fv" );  }
 namespace antibody { BooleanOptionKey const camelid( "antibody:camelid" );  }
 namespace antibody { BooleanOptionKey const camelid_constraints( "antibody:camelid_constraints" );  }
 namespace antibody { StringOptionKey const numbering_scheme( "antibody:numbering_scheme" );  }
+namespace antibody { namespace design { BooleanOptionKey const design( "antibody:design" );  } }
+namespace antibody { namespace design { StringOptionKey const graft_instructions( "antibody:design:graft_instructions" );  } }
+namespace antibody { namespace design { StringOptionKey const antibody_database( "antibody:design:antibody_database" );  } }
+namespace antibody { namespace design { IntegerOptionKey const graft_rounds( "antibody:design:graft_rounds" );  } }
 namespace flexPepDocking { BooleanOptionKey const flexPepDocking( "flexPepDocking" );  }
 namespace flexPepDocking { StringOptionKey const params_file( "flexPepDocking:params_file" );  }
 namespace flexPepDocking { IntegerOptionKey const peptide_anchor( "flexPepDocking:peptide_anchor" );  }

@@ -552,6 +552,47 @@ MonteCarlo::set_lowest_score_pose( Pose const & pose )
 	lowest_score_ = lowest_score_pose_->energies().total_energy();
 }
 
+bool
+MonteCarlo::eval_lowest_score_pose(
+	Pose & pose,
+	bool score_pose, // true
+	bool update_stats, //false
+	std::string const & move_type //unk
+)
+{
+	//Get or calculate energy
+	Real score;
+	if (score_pose){
+		score = (*score_function_)(pose);
+	}
+	else{
+		score =  pose.energies().total_energy();
+	}
+	
+	//Evaluate
+	total_score_of_last_considered_pose_ = score; // save this for the TrialMover so that it may keep statistics.
+	if ( score < lowest_score() ) {
+		*lowest_score_pose_ = pose;
+		lowest_score_ = score;
+		if (update_stats){
+			counter_.count_accepted( move_type );
+			counter_.count_energy_drop( move_type, score - last_accepted_score() );
+			last_accepted_score_ = score;
+			mc_accepted_ = MCA_accepted_score_beat_low;
+			*last_accepted_pose_ = pose;
+			evaluate_convergence_checks( pose, false /*not reject*/, false /*not final*/ );
+		}
+		
+		return true;
+	}
+	else{
+		if (update_stats){
+			mc_accepted_ = MCA_rejected; // rejected
+		}
+		return false;
+	}
+}
+
 core::scoring::ScoreFunction const &
 MonteCarlo::score_function() const
 {

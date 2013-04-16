@@ -45,10 +45,10 @@ public:
 
     /// @brief constructor with arguments
     RefineOneCDRLoopCentroid(AntibodyInfoCOP antibody_info,
-							 AntibodyCDRNameEnum const & loop_name);
+							 CDRNameEnum const & loop_name);
 	
 	RefineOneCDRLoopCentroid(AntibodyInfoCOP antibody_info,
-							 AntibodyCDRNameEnum const & loop_name,
+							 CDRNameEnum const & loop_name,
 					 		core::scoring::ScoreFunctionCOP scorefxn );
 	
     /// @brief constructor with arguments

@@ -70,14 +70,14 @@ namespace antibody {
 
 
 RefineOneCDRLoopCentroid::RefineOneCDRLoopCentroid( AntibodyInfoCOP antibody_info,
-												   AntibodyCDRNameEnum const & loop_name ) : Mover()
+												   CDRNameEnum const & loop_name ) : Mover()
 {
 	the_cdr_loop_ =  antibody_info->get_CDR_loop(loop_name);
 	set_default();
 }
   
 RefineOneCDRLoopCentroid::RefineOneCDRLoopCentroid( AntibodyInfoCOP antibody_info,
-													AntibodyCDRNameEnum const & loop_name,
+													CDRNameEnum const & loop_name,
 												   core::scoring::ScoreFunctionCOP scorefxn) : Mover()
 {
 	lowres_scorefxn_ = new core::scoring::ScoreFunction(*scorefxn);

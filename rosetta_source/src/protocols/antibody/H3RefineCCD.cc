@@ -94,7 +94,7 @@ namespace antibody {
 // default constructor
 H3RefineCCD::H3RefineCCD( ) : Mover() {}
 
-H3RefineCCD::H3RefineCCD( AntibodyInfoOP antibody_info, AntibodyCDRNameEnum loop_name ) : Mover() 
+H3RefineCCD::H3RefineCCD( AntibodyInfoOP antibody_info, CDRNameEnum loop_name ) : Mover() 
 {
     user_defined_ = false;
     ab_info_    = antibody_info;
@@ -105,7 +105,7 @@ H3RefineCCD::H3RefineCCD( AntibodyInfoOP antibody_info, AntibodyCDRNameEnum loop
   
     
 H3RefineCCD::H3RefineCCD(AntibodyInfoOP antibody_info, 
-                                       AntibodyCDRNameEnum loop_name,
+                                       CDRNameEnum loop_name,
                                        scoring::ScoreFunctionCOP highres_scorefxn 
                                        ) : Mover()  
 {

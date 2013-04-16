@@ -1,4 +1,3 @@
-namespace resample { FileOptionKey const silent( "resample:silent" );  }
 namespace resample { StringOptionKey const tag( "resample:tag" );  }
 namespace resample { BooleanOptionKey const stage1( "resample:stage1" );  }
 namespace resample { BooleanOptionKey const stage2( "resample:stage2" );  }
@@ -675,3 +674,5 @@ namespace lh { BooleanOptionKey const create_db( "lh:create_db" );  }
 namespace lh { FileOptionKey const sample_weight_file( "lh:sample_weight_file" );  }
 namespace lh { namespace fragpdb { BooleanOptionKey const fragpdb( "lh:fragpdb" );  } }
 namespace lh { namespace fragpdb { StringOptionKey const out_path( "lh:fragpdb:out_path" );  } }
+namespace lh { namespace fragpdb { IntegerVectorOptionKey const indexoffset( "lh:fragpdb:indexoffset" );  } }
+namespace lh { namespace fragpdb { StringVectorOptionKey const bin( "lh:fragpdb:bin" );  } }

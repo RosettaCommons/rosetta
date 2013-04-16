@@ -12,31 +12,20 @@
 /// @brief
 /// @author Jianqing Xu (xubest@gmail.com)
 
+// Project Headers
 #include <protocols/antibody/AntibodyUtil.hh>
 
-// Rosetta Headers
+// Core Headers
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/types.hh>
-#include <basic/Tracer.hh>
-#include <core/id/AtomID_Map.hh>
-
-#include <protocols/loops/Loop.hh>
-#include <protocols/loops/Loops.hh>
-
-//Auto Headers
 #include <core/pose/util.hh>
 #include <core/pose/util.tmpl.hh>
 #include <core/import_pose/import_pose.hh>
-
-#include <iostream>
-#include <fstream>
-#include <numeric/xyz.functions.hh>
-#include <numeric/numeric.functions.hh>
-#include <numeric/random/random.hh>
-#include <numeric/PCA.hh>
+#include <core/scoring/rms_util.hh>
+#include <core/types.hh>
+#include <core/id/AtomID_Map.hh>
+#include <core/scoring/ScoreFunction.hh>
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -45,17 +34,33 @@
 #include <core/pack/task/operation/OptH.hh>
 #include <core/pack/task/operation/ResFilters.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+#include <core/scoring/constraints/ConstraintIO.hh>
+#include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/dunbrack/RotamerConstraint.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 
+// Protocol Headers
+#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+#include <protocols/simple_moves/ConstraintSetMover.hh>
+#include <protocols/loops/Loop.hh>
+#include <protocols/loops/Loops.hh>
+
+// Numeric Headers
+#include <numeric/xyz.functions.hh>
+#include <numeric/numeric.functions.hh>
+#include <numeric/random/random.hh>
+#include <numeric/PCA.hh>
 
 
-
-
-
-
+// Basic Headers
+#include <iostream>
+#include <fstream>
+#include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <utility/file/FileName.hh>
+#include <utility/file/file_sys_util.hh>
 
 static basic::Tracer TR("antibody.AntibodyUtil");
 
@@ -113,10 +118,6 @@ namespace antibody{
         return;
     } // simple_one_loop_fold_tree
     
-    
-    
-    
-    
     void simple_fold_tree(
                           pose::Pose & pose_in,
                           Size jumppoint1,
@@ -148,21 +149,7 @@ namespace antibody{
         return;
     } // simple_fold_tree
     
-    
-    
-    
-    
-    
 
-    
-    
-    
-    
-    
-
-    
-    
-    
     ///////////////////////////////////////////////////////////////////////////
     /// @begin CDR_H3_filter
     ///
@@ -381,8 +368,7 @@ namespace antibody{
         
         return is_H3;
     } // CDR_H3_filter
-    
-    
+     
 bool CDR_H3_cter_filter(const pose::Pose & pose_in, AntibodyInfoOP ab_info)
 {
     
@@ -461,8 +447,6 @@ bool CDR_H3_cter_filter(const pose::Pose & pose_in, AntibodyInfoOP ab_info)
     return passed;
 }
     
-    
-    
 core::pack::task::TaskFactoryOP setup_packer_task(pose::Pose & pose_in ) 
 {
     using namespace pack::task;
@@ -498,8 +482,6 @@ core::pack::task::TaskFactoryOP setup_packer_task(pose::Pose & pose_in )
     return tf;
         
 } // setup_packer_task
-
-
 
 /*    void
     dle_extreme_repack(
@@ -565,12 +547,10 @@ core::pack::task::TaskFactoryOP setup_packer_task(pose::Pose & pose_in )
     }
 */
     
-    
-    
     //TODO:
     //JQX:
     // should input a variable here to let the user to adjust 1.9
-    
+
     bool cutpoints_separation( core::pose::Pose & pose, AntibodyInfoOP & antibody_info ) 
     {
         
@@ -605,12 +585,6 @@ core::pack::task::TaskFactoryOP setup_packer_task(pose::Pose & pose_in )
         return( cutpoint_separation );
     } // cutpoint_separation
 
-    
-    
-    
-    
-    
-    
     Real global_loop_rmsd (const pose::Pose & pose_in, const pose::Pose & native_pose,loops::LoopsOP current_loop )
     {
         using namespace scoring;
@@ -627,7 +601,6 @@ core::pack::task::TaskFactoryOP setup_packer_task(pose::Pose & pose_in )
         Real rmsG = rmsd_no_super_subset( native_pose, pose_in, superpos_partner, is_protein_backbone_including_O );
         return ( rmsG );
     } 
-    
     
     Real vl_vh_packing_angle ( const pose::Pose & pose_in, AntibodyInfoOP ab_info ) {
 		
@@ -672,13 +645,6 @@ core::pack::task::TaskFactoryOP setup_packer_task(pose::Pose & pose_in )
 		return packing_angle;
 	}
     
-    
-
-	
-
-    
-
-    
     void align_to_native( core::pose::Pose & pose, 
                          core::pose::Pose & native_pose,
                          AntibodyInfoOP ab_info,
@@ -709,13 +675,8 @@ core::pack::task::TaskFactoryOP setup_packer_task(pose::Pose & pose_in )
 					}
 				}
 			}
-			
-			
-			
 		}
-        
-		
-		
+
 		/*
         for (core::Size j=1; j<= ab_info->get_ab_framework().size();j++){
             core::Size count=0;
@@ -734,11 +695,52 @@ core::pack::task::TaskFactoryOP setup_packer_task(pose::Pose & pose_in )
         }
         */
         core::scoring::superimpose_pose( pose, native_pose, atom_map );
-        
-    } // align_to_native()
+} // align_to_native()
 
-    
-    
+void
+set_harmonic_constraints(AntibodyInfoOP & ab_info, core::pose::Pose & pose, core::scoring::ScoreFunctionOP & scorefxn){
+	set_harmonic_constraints(ab_info, pose);
+	scorefxn->set_weight(core::scoring::dihedral_constraint, 1.0);
+}
+
+void
+set_harmonic_constraints(AntibodyInfoOP & ab_info, core::pose::Pose & pose){
+	if (!ab_info->clusters_setup()){
+		ab_info->setup_CDR_clusters(pose);
+	}
+	
+	for (core::Size i=1; i<=CDRNameEnum_total; ++i){
+		CDRNameEnum cdr_name = static_cast<CDRNameEnum>(i);
+		set_harmonic_constraint(ab_info, pose, ab_info->get_CDR_cluster(cdr_name).first);
+	}
+}
+
+void
+set_harmonic_constraint(AntibodyInfoOP & ab_info, core::pose::Pose & pose, CDRClusterEnum cluster){
+	
+	using namespace protocols::simple_moves;
+	using namespace basic::options;
+	
+	
+	std::string cluster_type = ab_info->get_cluster_name(cluster);
+	if (cluster_type=="NA"){
+		TR<< "Cannot add constraint to cluster of type NA.  Skipping."<<std::endl;
+		return;
+	}
+	std::string path = "sampling/antibodies/cluster_based_constraints/CircularHarmonic/";
+	std::string extension = ".txt";
+	std::string specific_path = path + cluster_type + extension;
+	std::string fname = option[ OptionKeys::in::path::database ](1).name() + specific_path;
+	if( !utility::file::file_exists(fname)){
+		TR<< "Fname "<<fname<<" Does not exist.  No constraint will be added."<<std::endl;
+		return;
+	}
+		
+	TR<< "Fname "<<fname<<std::endl;
+	ConstraintSetMoverOP cst_mover = new ConstraintSetMover();
+	cst_mover->constraint_file(fname);
+	cst_mover->apply(pose);
+}
 
 
 } // namespace antibody

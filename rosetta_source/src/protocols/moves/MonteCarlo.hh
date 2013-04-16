@@ -190,7 +190,7 @@ public:
 		std::string const & move_type = "unk",
 		core::Real const proposal_density_ratio = 1
 	);
-
+	
 
 	/// @brief Sets lowest score pose and last accepted pose to
 	/// the score of  <pose>
@@ -275,7 +275,28 @@ public:
 	///     MonteCarlo.lowest_score_pose
 	void set_lowest_score_pose( Pose const & pose );
 
-
+	
+	/// @brief Compares score of <pose> to the lowest score found.
+	/// If lower, sets the current lowest score pose and lowest score.  
+	/// Use internal pose energies if score_pose is false.
+	/// Used to evaluate lowest score without boltzmann.
+	/// @note Does not update simulation statistics or last accepts by default.
+	///
+	/// example(s):
+	///		mc.eval_lowest_score_pose( pose )
+	///	See also:
+	///		MonteCarlo
+	///		MonteCarlo.lowest_score
+	///		MonteCarlo.lowest_score_pose
+	///		MonteCarlo.recover_low
+	bool eval_lowest_score_pose(
+		Pose & pose,
+		bool score_pose = true,
+		bool update_stats = false,
+		std::string const & move_type = "unk"
+	);
+	
+	
 	/// @brief attach observer to last accepted conformation
 	/// @tparam ConformationObserver any class implementing <tt> void attach_to( Conformation & ) </tt>
 	template< typename ConformationObserver >

@@ -34,7 +34,7 @@ public:
 		GraftOneCDRLoop();
 
 		// constructor with arguments        
-		GraftOneCDRLoop(AntibodyCDRNameEnum const & cdr_name,
+		GraftOneCDRLoop(CDRNameEnum const & cdr_name,
 							AntibodyInfoOP antibody_info,
                              Ab_TemplateInfoOP ab_t_info);
 
@@ -88,7 +88,7 @@ private:
         core::Size flank_size_;
 		core::Size stem_copy_size_;
 				
-		AntibodyCDRNameEnum cdr_name_;
+		CDRNameEnum cdr_name_;
 		AntibodyInfoOP ab_info_;
 		Ab_TemplateInfoOP ab_t_info_;
 		

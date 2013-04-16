@@ -110,7 +110,7 @@ void protocols::jd2::PDBJobOutputter::other_pose(
 	std::string const file(path_ + tag + extended_name(job));
 
 	utility::io::ozstream out( file );
-	if ( !out.good() ) utility_exit_with_message( "Unable to open file: " + file + "\n" );
+	if ( !out.good() ) utility_exit_with_message( "Unable to open file: " + path_ + file + "\n" );
 	dump_pose(job, pose, out);
 	out.close();
 

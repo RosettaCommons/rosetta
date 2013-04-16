@@ -93,7 +93,7 @@ RefineOneCDRLoop::RefineOneCDRLoop(AntibodyInfoOP antibody_info,
     
     
 RefineOneCDRLoop::RefineOneCDRLoop(AntibodyInfoOP antibody_info,
-                                    AntibodyCDRNameEnum const & cdr_loop_name,
+                                    CDRNameEnum const & cdr_loop_name,
                                    std::string refine_mode,
                                     scoring::ScoreFunctionCOP scorefxn
                                     ) : Mover()  {

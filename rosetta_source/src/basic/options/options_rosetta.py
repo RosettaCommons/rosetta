@@ -2468,7 +2468,7 @@ Options = Option_Group( '',
 		Option( 'flip_HNQ', 'Boolean',
 			desc="Consider flipping HIS, ASN, and GLN during hydrogen placement optimization"
 			),
-		Option( 'fix_his_tautomer','IntegerVector', desc='seqpos numbers of his residus whose tautomer should be fixed during repacking.  If the value 0 is given and is the only value given, then all histadine tautomers will be held fixed',
+		Option( 'fix_his_tautomer','IntegerVector', desc='seqpos numbers of his residus whose tautomer should be fixed during repacking',
 			default=[]
 			),
 		Option( 'print_pymol_selection', 'Boolean',
@@ -4727,6 +4727,17 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 		Option('numbering_scheme', 'String',
 			desc='the numbering scheme such as chothia or aho',
 			default='chothia'),
+            Option_Group( 'design',
+                Option('graft_instructions', 'String',
+                        desc='Path for graft instruction file',
+                        default='/sampling/antibodies/design/default_graft_instructions.txt'),
+                Option('antibody_database', 'String',
+                        desc='Path to the Antibody Database.  Download from dunbrack.fccc.edu',
+                        default='/sampling/antibodies/antibody_data_rosetta.db'),
+                Option('graft_rounds', 'Integer',
+                        desc='Rounds for graft_design.  Each round is one CDR graft from set',
+                        default='1000'),
+            ), #design
 	), # antibody
 
 	# FlexPepDocking Options -----------------------------------------------------------

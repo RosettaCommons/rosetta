@@ -56,6 +56,10 @@ namespace antibody { extern FileOptionKey const input_fv; }
 namespace antibody { extern BooleanOptionKey const camelid; }
 namespace antibody { extern BooleanOptionKey const camelid_constraints; }
 namespace antibody { extern StringOptionKey const numbering_scheme; }
+namespace antibody { namespace design { extern BooleanOptionKey const design; } }
+namespace antibody { namespace design { extern StringOptionKey const graft_instructions; } }
+namespace antibody { namespace design { extern StringOptionKey const antibody_database; } }
+namespace antibody { namespace design { extern IntegerOptionKey const graft_rounds; } }
 
 } // namespace OptionKeys
 } // namespace options

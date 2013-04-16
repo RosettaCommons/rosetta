@@ -53,10 +53,10 @@ public:
 	H3RefineCCD();
 
     /// @brief constructor with arguments
-    H3RefineCCD(AntibodyInfoOP antibody_info, AntibodyCDRNameEnum loop_name);
+    H3RefineCCD(AntibodyInfoOP antibody_info, CDRNameEnum loop_name);
     
     /// @brief constructor with arguments
-    H3RefineCCD(AntibodyInfoOP antibody_info, AntibodyCDRNameEnum loop_name, 
+    H3RefineCCD(AntibodyInfoOP antibody_info, CDRNameEnum loop_name, 
                        core::scoring::ScoreFunctionCOP highres_scorefxn );
 
     /// @brief constructor with arguments
@@ -87,7 +87,7 @@ public:
 private:
 
     AntibodyInfoOP ab_info_;
-    AntibodyCDRNameEnum loop_name_;
+    CDRNameEnum loop_name_;
     loops::Loop the_loop_;
     core::Real high_cst_;
     core::Size loop_begin_,loop_end_,loop_size_;

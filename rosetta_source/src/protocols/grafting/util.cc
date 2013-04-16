@@ -128,8 +128,6 @@ insert_pose_into_pose(
 	//Not that it's been tested...
 	core::pose::remove_variant_type_from_pose_residue(scaffold, core::chemical::LOWER_TERMINUS, insert_point);
 	core::pose::remove_variant_type_from_pose_residue(scaffold, core::chemical::UPPER_TERMINUS, insert_point_end);
-
-
 	
 	TR << "insert_point " << insert_point << std::endl;
 	TR << "insert_start " << insert_start << std::endl;

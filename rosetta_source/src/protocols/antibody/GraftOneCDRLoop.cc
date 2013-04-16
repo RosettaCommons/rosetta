@@ -36,7 +36,7 @@ GraftOneCDRLoop::GraftOneCDRLoop(){}
 
     
 
-GraftOneCDRLoop::GraftOneCDRLoop( AntibodyCDRNameEnum const & cdr_name,
+GraftOneCDRLoop::GraftOneCDRLoop( CDRNameEnum const & cdr_name,
 								 AntibodyInfoOP antibody_info,
 								 Ab_TemplateInfoOP ab_t_info) : Mover( "GraftOneCDRLoop" ){
 

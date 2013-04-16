@@ -10,21 +10,29 @@
 /// @file protocols/antibody/AntibodyUtil.hh
 /// @brief Utility functions for the Antibody namespace
 /// @author Jianqing Xu (xubest@gmail.com)
+/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #ifndef INCLUDED_protocols_antibody_AntibodyUtil_hh
 #define INCLUDED_protocols_antibody_AntibodyUtil_hh
 
 
+//Core Headers
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
+
+//Protocol Headers
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
-#include <utility/vector1.hh>
-#include <core/pack/task/TaskFactory.fwd.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
+#include <protocols/antibody/AntibodyEnumManager.hh>
+#include <protocols/antibody/CDRClusterEnumManager.hh>
 
+//Utility Headers
+#include <utility/vector1.hh>
 
 
 using namespace core;
@@ -95,6 +103,30 @@ cutpoint_separation(core::pose::Pose & pose_in, Size cutpoint);
 	bool use_unbounds);
   */  
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// CDR Clusters
+//
+//
+
+/// @brief Sets dihedral harmonic constraints to CDR and scorefxn using info in AntibodyInfo
+/// @details Currently requires Modified_AHO numbering.  A server will be available soon. 
+void
+set_harmonic_constraints(AntibodyInfoOP & ab_info, pose::Pose & pose, core::scoring::ScoreFunctionOP & scorefxn);
+
+/// @brief Sets dihedral harmonic constraints to CDR using cluster info in AntibodyInfo
+/// @details Currently requires Modified_AHO numbering.  A server will be available soon. 
+void
+set_harmonic_constraints(AntibodyInfoOP & ab_info, pose::Pose & pose);
+
+/// @brief set a harmonic constraint to a CDR based on cluster type
+/// @details Currently requires Modified_AHO numbering.  A server will be available soon. 
+void
+set_harmonic_constraint(AntibodyInfoOP & ab_info, pose::Pose & pose, CDRClusterEnum const cluster);
+	
+
+	
+
+	
 } //namespace antibody
 } //namespace protocols
 

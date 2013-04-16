@@ -36,11 +36,6 @@ sources = {
 	"protocols/docking/stateless": [
 		"SaneDockingProtocol",
 	],
-    "protocols/grafting":[
-        "AnchoredGraftMover",
-        "GraftMoverBase",
-        "util",
-        ],
 	"protocols/ligand_docking": [
 		"AddHydrogen",
 		"AddHydrogens",

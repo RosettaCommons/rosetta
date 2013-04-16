@@ -22,6 +22,7 @@
 // A collection of Enumerators + TypeDefs to the Antibody Namespace.
 // These keep AntibodyInfo light, allow the use of vectors instead of maps, and keep us from passing around strings.
 // All Enums should have a total for resizing vectors and creating iterations.
+// NOTE: Please see AntibodyEnumManager for conversions if you add anything here.
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace protocols {
@@ -29,7 +30,7 @@ namespace antibody {
 	using utility::vector1;
 	using core::Size;
 	
-enum AntibodyCDRNameEnum{
+enum CDRNameEnum{
 	
 	h1 = 1,
 	h2,
@@ -45,7 +46,9 @@ enum AntibodyCDRNameEnum{
 	L_chain_last_loop = l3,
 	camelid_last_loop = h3,
 	
-	num_cdr_loops = l3			
+	num_cdr_loops = l3,
+	CDRNameEnum_start = h1,
+	CDRNameEnum_total = l3
 };
 
 enum AntibodyNumberingSchemeEnum{
@@ -57,6 +60,7 @@ enum AntibodyNumberingSchemeEnum{
 	Modified_AHO,
 	IMGT,
 	
+	AntibodyNumberingSchemeEnum_start = Aroop,
 	AntibodyNumberingSchemeEnum_total = IMGT
 };
 
@@ -73,6 +77,7 @@ enum H3BaseTypeEnum{
 	Extended,
 	Neutral,
 	
+	H3BaseTypeEnum_start = Kinked,
 	H3BaseTypeEnum_total = Neutral
 			
 };
@@ -85,6 +90,7 @@ enum PackingAngleEnum{
 	VH_sheet_1,
 	VH_sheet_2,
 	
+	PackingAngleEnum_start = VL_sheet_1,
 	PackingAngleEnum_total = VH_sheet_2
 };
 

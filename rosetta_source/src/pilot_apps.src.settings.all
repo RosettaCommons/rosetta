@@ -252,7 +252,15 @@ sources = {
 	],
 
 	# J ######################################################################
- 	"pilot/james" : [
+ 	"pilot/jadolfbr/cluster_utilities" : [
+                "identify_cdr_clusters", # /* Jared Adolf-Bryfogle, In CC file, Demo Location /*
+                "relax_cdrs", # /* Jared Adolf-Bryfogle, In CC file, Demo Location. /*
+        ],
+        "pilot/jadolfbr/antibody_design" : [
+                "graft_design_cdrs",
+                #"antibody_designer",
+        ],
+        "pilot/james" : [
 		"analyze_casp9",
 		"per_residue_features",
 		"jdock",

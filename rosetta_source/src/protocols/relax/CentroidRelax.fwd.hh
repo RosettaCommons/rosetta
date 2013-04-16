@@ -13,7 +13,7 @@
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #ifndef INCLUDED_protocols_relax_CENTROIDRELAX_FWD_HH
-#define	INCLUDED_protocols_relax_CENTROIDRELAX_FWD_HH
+#define INCLUDED_protocols_relax_CENTROIDRELAX_FWD_HH
 
 // Utility headers
 #include <utility/pointer/access_ptr.fwd.hh>
@@ -24,7 +24,7 @@ namespace protocols {
 namespace relax {
 
 // Forward
-class FastRelax;
+class CentroidRelax;
 
 // Types
 typedef  utility::pointer::owning_ptr< CentroidRelax >  CentroidRelaxOP;
@@ -36,7 +36,5 @@ typedef  utility::pointer::access_ptr< CentroidRelax const >  CentroidRelaxCAP;
 
 } // namespace kinematics
 } // namespace core
-
-#endif
 
 #endif	//#ifndef INCLUDED_protocols/relax_CENTROIDRELAX_FWD_HH

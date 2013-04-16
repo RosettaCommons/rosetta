@@ -675,3 +675,4 @@ namespace fold_cst { BooleanOptionKey const ignore_sequence_seperation( "fold_cs
 namespace fold_cst { BooleanOptionKey const no_recover_low_at_constraint_switch( "fold_cst:no_recover_low_at_constraint_switch" );  }
 namespace fold_cst { BooleanOptionKey const ramp_coord_cst( "fold_cst:ramp_coord_cst" );  }
 namespace resample { BooleanOptionKey const resample( "resample" );  }
+namespace resample { FileOptionKey const silent( "resample:silent" );  }

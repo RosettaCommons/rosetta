@@ -13,8 +13,9 @@
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #ifndef INCLUDED_protocols_relax_CENTROIDRELAX_HH
-#define	INCLUDED_protocols_relax_CENTROIDRELAX_HH
+#define INCLUDED_protocols_relax_CENTROIDRELAX_HH
 
+#include <protocols/relax/CentroidRelax.fwd.hh>
 
 //Core Headers
 #include <core/pose/Pose.fwd.hh>

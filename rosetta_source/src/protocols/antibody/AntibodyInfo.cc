@@ -14,8 +14,12 @@
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 // Project Headers
-#include <protocols/antibody/AntibodyEnum.hh>
+
 #include <protocols/antibody/AntibodyInfo.hh>
+#include <protocols/antibody/AntibodyEnum.hh>
+#include <protocols/antibody/AntibodyEnumManager.hh>
+#include <protocols/antibody/CDRClusterEnum.hh>
+#include <protocols/antibody/CDRClusterEnumManager.hh>
 
 // Core Headers
 #include <core/scoring/constraints/ConstraintIO.hh>
@@ -56,6 +60,7 @@
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
 #include <math.h>
+#include <utility/string_util.hh>
 
 // Boost headers
 #include <boost/algorithm/string/classification.hpp>
@@ -75,7 +80,10 @@ namespace antibody{
     
 AntibodyInfo::AntibodyInfo( pose::Pose const & pose,
 						   AntibodyNumberingSchemeEnum const & numbering_scheme,
-						   bool const & cdr_pdb_numbered) {
+						   bool const & cdr_pdb_numbered) :
+						   framework_info_(NULL)
+
+{
 	set_default();
 	
 	numbering_scheme_ = numbering_scheme;
@@ -86,7 +94,7 @@ AntibodyInfo::AntibodyInfo( pose::Pose const & pose,
 }
 
 AntibodyInfo::~AntibodyInfo(){}
-    
+
 void AntibodyInfo::set_default()
 {
     is_camelid_ = false;
@@ -100,6 +108,9 @@ void AntibodyInfo::init(pose::Pose const & pose){
     
 	if(is_camelid_) total_cdr_loops_ = camelid_last_loop;
 	else            total_cdr_loops_ = num_cdr_loops;
+	
+	antibody_manager_ = new AntibodyEnumManager();
+	cdr_cluster_manager_ = new CDRClusterEnumManager();
 	
 	setup_numbering_info_for_scheme(numbering_scheme_);
 
@@ -115,24 +126,6 @@ void AntibodyInfo::init(pose::Pose const & pose){
 
 void AntibodyInfo::setup_numbering_info_for_scheme(AntibodyNumberingSchemeEnum const & numbering_scheme) {
     
-
-	// define local variables
-	//vector1<int> start, stop, pack_angle_start, pack_angle_stop;
-	//vector1< vector1<int> > local_numbering_info;
-
-	// doesn't hurt to clear all the contents, no matter they are empty or not
-	//start.clear(); stop.clear(); pack_angle_start.clear(); pack_angle_stop.clear();
-	//for (Size i=1;i<=local_numbering_info.size(); ++i){
-		//local_numbering_info[i].clear();
-	//}
-	//local_numbering_info.clear();
-    
-	//Resizing to populate with cdr numbering information.
-	//start.resize(num_cdr_loops);
-	//stop.resize(num_cdr_loops);
-	
-	
-	
 	//////////////////////////////////////////////////////////////////////
 	///Feb 2013-
 	///Refactored by Jared Adolf-Bryfogle to use Enums and hold the information rather then creating the vectors
@@ -274,7 +267,7 @@ void AntibodyInfo::setup_numbering_info_for_scheme(AntibodyNumberingSchemeEnum c
     else if(numbering_scheme == IMGT){
     }
     else{
-        throw excn::EXCN_Msg_Exception("the numbering schemes can only be 'Aroop','Chothia','Kabat', 'Enhanced_Chothia', 'AHO', Modified_AHO', 'IMGT' !!!!!! ");
+        utility_exit_with_message("the numbering schemes can only be 'Aroop','Chothia','Kabat', 'Enhanced_Chothia', 'AHO', Modified_AHO', 'IMGT' !!!!!! ");
     }
 
 	//local_numbering_info.push_back(start);
@@ -284,89 +277,127 @@ void AntibodyInfo::setup_numbering_info_for_scheme(AntibodyNumberingSchemeEnum c
 	//return local_numbering_info;
 }
 
+std::string
+AntibodyInfo::get_Current_AntibodyNumberingScheme() {
+	return antibody_manager_->numbering_scheme_enum_to_string(numbering_scheme_);
+}
+
 void AntibodyInfo::identify_antibody(pose::Pose const & pose){
-    
-    switch (pose.conformation().num_chains() ) {
-        case 0:
-            throw excn::EXCN_Msg_Exception("the number of chains in the input pose is '0' !!");
-            break;
-        case 1:     //if pose has only "1" chain, it is a nanobody
-            if (pose.pdb_info()->chain(pose.conformation().chain_end(1)) == 'H'){
-                is_camelid_ = true;
-                InputPose_has_antigen_=false;
-            }
-            else{
-                throw excn::EXCN_Msg_Exception("  A): the input pose has only 1 chain, if it is a nanobody, the chain ID is supposed to be 'H' !!");
-            }
-            break;
-        case 2:       // if pose has "2" chains, it can be 2 possibilities
-            // possiblity 1): L and H, regular antibody
-            if (  (pose.pdb_info()->chain(pose.conformation().chain_end(1)) == 'L')  &&  (pose.pdb_info()->chain(pose.conformation().chain_end(2)) == 'H')  ) {
-                is_camelid_ = false;
-                InputPose_has_antigen_ = false;
-            }
-            // possiblity 2): H nanobody and antigen
-            else if ( pose.pdb_info()->chain(pose.conformation().chain_end(1)) == 'H' ) {
-                is_camelid_ = true;
-                InputPose_has_antigen_ = true;
-            }
-            else{
-                throw excn::EXCN_Msg_Exception("  B): the input pose has two chains, 1). if it is nanobody, the 1st chain should be 'H'. 2). If it is a regular antibody, the 1st and 2nd chains should be 'L' and 'H' !!");
-            }
-            break;
-        default:      // if pose has >=3 chains, it can be 2 possibilities
-            // possiblity 1): L and H, and antigen
-            if(   pose.pdb_info()->chain(pose.conformation().chain_end(1)) == 'L'  &&  pose.pdb_info()->chain(pose.conformation().chain_end(2)) == 'H'    ){
-                is_camelid_ = false;
-                InputPose_has_antigen_ = true;
-            }
-            // possiblity 2):  H annobody and antigen
-            else if (pose.pdb_info()->chain(pose.conformation().chain_end(1)) == 'H'){
-                is_camelid_ = true;
-                InputPose_has_antigen_ = true;
-            }
-            else{
-                throw excn::EXCN_Msg_Exception("  C). the input pose has more than two chains, 1). if it is nanobody, the 1st chain should be 'H'. 2). If it is a regular antibody, the 1st and 2nd chains should be 'L' and 'H' !!");
-            }
-            break;
-    }
-    
-	/// record the antibody sequence
-	Size chain_count = (is_camelid_)? 1:2 ;
-	for (Size i=1; i<=pose.conformation().chain_end(chain_count) ; ++i){
-		ab_sequence_.push_back(pose.residue(i).name1());
+    //Time to rewrite.  Who needs to have L and H as the first chains? come on.
+	
+	//Jadofbr (4/2013)  Allow any order in the PDB file by adding this for loop..
+	//Todo: Add command-line argument for other types (SCFv, nanobody, Diabody, etc.)
+	bool H_found = false; vector1<char> H_sequence;;
+	bool L_found = false; vector1<char> L_sequence;
+	for (core::Size i = 1; i<= pose.conformation().num_chains(); ++i){
+		if(   pose.pdb_info()->chain(pose.conformation().chain_end(i)) == 'L'){
+			L_found=true;
+			L_chain_ = i;
+			
+			for (core::Size x = 1; x<=pose.total_residue(); ++x){
+				//No good way to get a chains sequence that I know about.
+				if (pose.residue(x).chain()==L_chain_){
+					L_sequence.push_back(pose.residue(i).name1());
+					sequence_map_[x]= pose.residue(x).name1();
+				}
+			}
+		}
+		else if(pose.pdb_info()->chain(pose.conformation().chain_end(i)) == 'H' ){
+			H_found=true;
+			H_chain_=i;
+			
+			for (core::Size x = 1; x<=pose.total_residue(); ++x){
+				//No good way to get a chains sequence that I know about.
+				if (pose.residue(x).chain()==H_chain_){
+					H_sequence.push_back(pose.residue(i).name1());
+					sequence_map_[x]= pose.residue(x).name1();
+				}
+			}
+		}
+		else{continue;}
 	}
 	
+	
+	switch (pose.conformation().num_chains() ) {
+		case 0:
+			throw excn::EXCN_Msg_Exception("the number of chains in the input pose is '0' !!");
+			break;
+		case 1:    
+			//if pose has only "1" chain, it is a nanobody
+			if ( H_found ){
+				is_camelid_ = true;
+				InputPose_has_antigen_=false;
+			}
+			else{
+				throw excn::EXCN_Msg_Exception("  A): the input pose has only 1 chain, if it is a nanobody, the chain ID is supposed to be 'H' !!");
+				}
+			break;
+		case 2:       
+			// if pose has "2" chains, it can be 2 possibilities
+			// possiblity 1): L and H, regular antibody
+			if (  L_found  && H_found ) {
+				is_camelid_ = false;
+				InputPose_has_antigen_ = false;
+			}
+			// possiblity 2): H nanobody and antigen
+			else if ( H_found) {
+				is_camelid_ = true;
+				InputPose_has_antigen_ = true;
+			}
+			else{
+				throw excn::EXCN_Msg_Exception("  B): the input pose has two chains, 1). if it is nanobody, the chain should be 'H'. 2). Light chain SCFv not implemented ");
+			}
+			break;
+		default:    
+			// if pose has >=3 chains, it can be 2 possibilities
+			// possiblity 1): L and H, and antigen
+			if(   L_found  &&  H_found ){
+				is_camelid_ = false;
+				InputPose_has_antigen_ = true;
+			}
+			// possiblity 2):  H nanobody and antigen
+			else if ( H_found ){
+				is_camelid_ = true;
+				InputPose_has_antigen_ = true;
+			}
+			else{
+				throw excn::EXCN_Msg_Exception("  C). the input pose has more than two chains, but either 1) Light chain SCFv not implemented 2) Antibody is not renumbered ");
+			}
+			break;
+	}
+    
+	/// record the antibody sequence
+	if (is_camelid_){
+		ab_sequence_ = H_sequence;
+	}
+	else{
+		//ab_sequence_.reserve(L_sequence.size() + H_sequence.size());
+		ab_sequence_.insert(ab_sequence_.end(), L_sequence.begin(), L_sequence.end());
+		ab_sequence_.insert(ab_sequence_.end(), H_sequence.begin(), H_sequence.end());
+
+	}
 }
 
     
-/// TODO: 
-// JQX:
-// The code assumed that the input PDB has been been renumbered using the Aroop
-// numbering scheme [see the "get_AntibodyNumberingScheme()" function below]: as a matter
-// of fact, since this code is desigend for the Rosetta Antibody Homology Modeling
-// the input is always the structure made from different templates, and they are
-// always renumbered by the perl script from the Rosetta Antibody Server
-// A smart way would be to use the "identify_CDR_from_a_sequence()" to automatically
-// check this out. On my list!
 
+//Jadolfbr 3/2012  Refactored to be numbering scheme agnostic.
 void AntibodyInfo::setup_CDRsInfo( pose::Pose const & pose ) {
 	
-	vector1<char> Chain_IDs_for_CDRs;
-	for (Size i=1;i<=3;++i) { Chain_IDs_for_CDRs.push_back('H'); } // HEAVY chain first
-	for (Size i=1;i<=3;++i) { Chain_IDs_for_CDRs.push_back('L'); } // light
+	
+	for (Size i=1;i<=3;++i) { Chain_IDs_for_CDRs_.push_back('H'); } // HEAVY chain first
+	for (Size i=1;i<=3;++i) { Chain_IDs_for_CDRs_.push_back('L'); } // light
 	
 	int loop_start_in_pose, loop_stop_in_pose, cut_position ;
 	loopsop_having_allcdrs_ = new loops::Loops();
     
-	for (Size i=start_cdr_loop; i<=Size(total_cdr_loops_); ++i ){
-		loop_start_in_pose = pose.pdb_info()->pdb2pose( Chain_IDs_for_CDRs[i], cdr_numbering_[i][start]);
+	for (Size i=start_cdr_loop; i<=total_cdr_loops_; ++i ){
+		loop_start_in_pose = pose.pdb_info()->pdb2pose( Chain_IDs_for_CDRs_[i], cdr_numbering_[i][start]);
 		if(i != h3 ){
-			loop_stop_in_pose= pose.pdb_info()->pdb2pose( Chain_IDs_for_CDRs[i], cdr_numbering_[i][stop]);
+			loop_stop_in_pose= pose.pdb_info()->pdb2pose( Chain_IDs_for_CDRs_[i], cdr_numbering_[i][stop]);
 			cut_position = (loop_stop_in_pose - loop_start_in_pose +1) /2 + loop_start_in_pose;
 		}
 		else{
-			loop_stop_in_pose  = pose.pdb_info()->pdb2pose( Chain_IDs_for_CDRs[i], cdr_numbering_[i][stop]+1 );
+			loop_stop_in_pose  = pose.pdb_info()->pdb2pose( Chain_IDs_for_CDRs_[i], cdr_numbering_[i][stop]+1 );
 			loop_stop_in_pose -=1;
 			// JQX:
 			// One should always see 95-102 as the positions for your H3 in your FR02.pdb, but as a matter of fact,
@@ -393,16 +424,27 @@ void AntibodyInfo::setup_CDRsInfo( pose::Pose const & pose ) {
                                             /// FIXME:  ***********************
 	loopsop_having_allcdrs_->sequential_order(); /// TODO: kind of dangerous here
     
-    TR<<"Successfully finished the CDR defintion"<<std::endl;
+    TR<<"Successfully finished the CDR definition"<<std::endl;
             
 }
-    
 
+vector1< vector1<FrameWork> >
+AntibodyInfo::get_AntibodyFrameworkInfo() const{
+	if (framework_info_.empty()){
+		utility_exit_with_message("Numbering scheme setup failed for Framework.");
+	}
+	else{
+		return framework_info_;
+	}
+}
 
 
 void AntibodyInfo::setup_FrameWorkInfo( pose::Pose const & pose ) {
 
-    FrameWork frmwk;
+	//TODO jadolfbr.  This is a hardcoded nightmare.  Plus the framework info is not used by any class.  
+	//Used only by align_to_native in antibody_util.  Is there a normal alignment like pymol in Rosetta
+	
+	FrameWork frmwk;
 	vector1<FrameWork> Lfr, Hfr;
 	
     core::Size H_begin_pos_num = 0;
@@ -410,15 +452,16 @@ void AntibodyInfo::setup_FrameWorkInfo( pose::Pose const & pose ) {
     core::Size L_begin_pos_num = 0;
     core::Size L_end_pos_num = 0;
     
+
     if(is_camelid() == true ){
-        H_begin_pos_num=pose.conformation().chain_begin(1);
-        H_end_pos_num=pose.conformation().chain_end(1);
+        H_begin_pos_num=pose.conformation().chain_begin(H_chain_);
+        H_end_pos_num=pose.conformation().chain_end(H_chain_);
     }
     else{
-        L_begin_pos_num=pose.conformation().chain_begin(1);
-        L_end_pos_num=pose.conformation().chain_end(1);
-        H_begin_pos_num=pose.conformation().chain_begin(2);
-        H_end_pos_num=pose.conformation().chain_end(2);
+        L_begin_pos_num=pose.conformation().chain_begin(L_chain_);
+        L_end_pos_num=pose.conformation().chain_end(L_chain_);
+        H_begin_pos_num=pose.conformation().chain_begin(H_chain_);
+        H_end_pos_num=pose.conformation().chain_end(H_chain_);;
         
         
         if (  L_begin_pos_num   >=    pose.pdb_info()->pdb2pose('L',23)   )  {
@@ -503,17 +546,18 @@ void AntibodyInfo::setup_FrameWorkInfo( pose::Pose const & pose ) {
 	case IMGT:
 		break;
 	default:
-		throw excn::EXCN_Msg_Exception("the numbering schemes can only be 'Aroop','Chothia','Kabat', 'Enhanced_Chothia', 'AHO', 'IMGT' !!!!!! ");
+		utility_exit_with_message("the numbering schemes can only be 'Aroop','Chothia','Kabat', 'Enhanced_Chothia', 'AHO', 'IMGT' !!!!!! ");
 		break;
 	}
 	
 	if (Lfr.size()>0)  { framework_info_.push_back(Lfr);}
 	if (Hfr.size()>0)  { framework_info_.push_back(Hfr);}
-	else { throw excn::EXCN_Msg_Exception("The heavy chain has no framework? This cannot be correct");}
+	
+	//Removed.  Check is now in get_AntibodyFrameworkInfo.
+	//else {utility_exit_with_message("The heavy chain has no framework? This cannot be correct");}
 	
 
 }
-	
 	
 
 void AntibodyInfo::setup_VL_VH_packing_angle( pose::Pose const & pose ) {
@@ -590,7 +634,7 @@ void AntibodyInfo::detect_and_set_camelid_CDR_H3_stem_type(pose::Pose const & po
     if (kinked_H3) predicted_H3_base_type_ = Kinked;
     if (extended_H3) predicted_H3_base_type_ = Extended;
     if (!kinked_H3 && !extended_H3) predicted_H3_base_type_ = Neutral;
-	TR << "AC Finished Detecting Camelid CDR H3 Stem Type: " << get_string_h3_base_type()[predicted_H3_base_type_] << std::endl;
+	TR << "AC Finished Detecting Camelid CDR H3 Stem Type: " << antibody_manager_->h3_base_type_enum_to_string(predicted_H3_base_type_) << std::endl;
 } 
 
 
@@ -675,13 +719,25 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type( pose::Pose const & p
     if (kinked_H3) predicted_H3_base_type_ = Kinked;
     if (extended_H3) predicted_H3_base_type_ = Extended;
     if (!kinked_H3 && !extended_H3) predicted_H3_base_type_ = Neutral;
-	TR << "AC Finished Detecting Regular CDR H3 Stem Type: " << get_string_h3_base_type()[predicted_H3_base_type_] << std::endl;
+	TR << "AC Finished Detecting Regular CDR H3 Stem Type: " << antibody_manager_->h3_base_type_enum_to_string(predicted_H3_base_type_) << std::endl;
 } // detect_regular_CDR_H3_stem_type()
     
     
 void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type_new_rule( pose::Pose const & pose ) {
     TR << "AC Detecting Regular CDR H3 Stem Type" << std::endl;
-        
+    
+
+	//Quick fix to get my stuff to work here due to more hardcoding of residues here.  
+	if (numbering_scheme_ != Aroop){
+		TR << "Stem type could not be set."<<std::endl;
+		TR<< "!! Assuming kinked for now !!"<<std::endl;
+		predicted_H3_base_type_ = Kinked;
+		return;
+	}
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////HACK/////////////////////////////////////////////////////
+	
+	
     bool extended_H3 (false) ;
     bool kinked_H3 (false);
         
@@ -772,15 +828,54 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type_new_rule( pose::Pose 
     if (kinked_H3) predicted_H3_base_type_ = Kinked;
     if (extended_H3) predicted_H3_base_type_ = Extended;
     if (!kinked_H3 && !extended_H3) predicted_H3_base_type_ = Neutral;
-	TR << "AC Finished Detecting Regular CDR H3 Stem Type: " << get_string_h3_base_type()[predicted_H3_base_type_] << std::endl;
+	TR << "AC Finished Detecting Regular CDR H3 Stem Type: " << antibody_manager_->h3_base_type_enum_to_string(predicted_H3_base_type_) << std::endl;
         
         TR << "AC Finished Detecting Regular CDR H3 Stem Type: "
     << "Kink: " << kinked_H3 << " Extended: " << extended_H3 << std::endl;
 } // detect_regular_CDR_H3_stem_type()
 
+std::pair <CDRClusterEnum, Real>
+AntibodyInfo::get_CDR_cluster(CDRNameEnum const cdr_name) {
+	if (cdr_clusters_.empty()){
+		utility_exit_with_message("CDR clusters not setup.  Cannot proceed.");
+	}
+	return std::make_pair(cdr_clusters_[cdr_name], cdr_cluster_distances_[cdr_name]);
+}
 
-std::pair <std::string, Real>
-AntibodyInfo::get_CDR_cluster(pose::Pose const & pose, AntibodyCDRNameEnum const & cdr_name) const {
+Size
+AntibodyInfo::get_CDR_start(CDRNameEnum const & cdr_name, pose::Pose const & pose) const{
+	return pose.pdb_info()->pdb2pose(Chain_IDs_for_CDRs_[cdr_name], cdr_numbering_[cdr_name][start]);
+}
+
+Size
+AntibodyInfo::get_CDR_end(CDRNameEnum const & cdr_name, pose::Pose const & pose) const{
+	return pose.pdb_info()->pdb2pose(Chain_IDs_for_CDRs_[cdr_name], cdr_numbering_[cdr_name][stop]);
+}
+
+void
+AntibodyInfo::setup_CDR_clusters(pose::Pose const & pose){
+	
+	TR << "Setting up CDR Clusters" << std::endl;
+	cdr_clusters_.resize(CDRNameEnum_total);
+	cdr_cluster_distances_.resize(CDRNameEnum_total);
+	for (core::Size i=1; i<=CDRNameEnum_total; ++i){
+		CDRNameEnum cdr_name = static_cast<CDRNameEnum>(i);
+		set_cdr_cluster(pose, cdr_name);
+	}
+}
+
+bool
+AntibodyInfo::clusters_setup(){
+	if (!cdr_clusters_.empty()){
+		return true;
+	}
+	else{
+		return false;
+	}
+}
+
+void
+AntibodyInfo::set_cdr_cluster(pose::Pose const & pose, CDRNameEnum const & cdr_name) {
 	using std::string;
 	using std::map;
 	using core::Size;
@@ -796,7 +891,6 @@ AntibodyInfo::get_CDR_cluster(pose::Pose const & pose, AntibodyCDRNameEnum const
 	string psis;
 	string omegas;
 	Real PI = numeric::NumericTraits<Real>::pi();
-            
 	string const path = "sampling/antibodies/cluster_center_dihedrals.txt";
             
             
@@ -870,12 +964,13 @@ AntibodyInfo::get_CDR_cluster(pose::Pose const & pose, AntibodyCDRNameEnum const
 	clus_stream.close();
 	
 	///Take the minimum distance as the cluster.
-	std::pair<string, Real> result;
+	std::pair<CDRClusterEnum, Real> result;
 	
 	if (! cluster_found){
 		TR <<"Cluster not found for CDR "<<get_CDR_Name(cdr_name)<<std::endl;
-		result = std::make_pair("NA", 10000);
-		return result;
+		cdr_clusters_[cdr_name] = NA;
+		cdr_cluster_distances_[cdr_name] = 1000;
+		return;
 	}      
 	else{
 		//Get minimum and set cluster.
@@ -888,42 +983,50 @@ AntibodyInfo::get_CDR_cluster(pose::Pose const & pose, AntibodyCDRNameEnum const
 		string found_cluster = k_distances_to_cluster[d];
 		TR << get_CDR_Name(cdr_name) <<" cluster found as " << found_cluster << " at k_distance: " << d <<std::endl;
 		//TR <<"Setting this as closest cluster, as no cutoff is yet set. PLEASE manually compare structures.  " <<std::endl;
-		result = std::make_pair(found_cluster, d);
-		return result;
+		CDRClusterEnum cluster_enum = cdr_cluster_manager_->cdr_cluster_string_to_enum(found_cluster);
+		cdr_clusters_[cdr_name] = cluster_enum;
+		cdr_cluster_distances_[cdr_name] = d;
+		return;
 	}
 }
-    
+
+std::string
+AntibodyInfo::get_CDR_Name(CDRNameEnum const & cdr_name) const {
+	return antibody_manager_->cdr_name_enum_to_string(cdr_name);
+}
+
 Size
-AntibodyInfo::get_CDR_length(AntibodyCDRNameEnum const & cdr_name) const {
+AntibodyInfo::get_CDR_length(CDRNameEnum const & cdr_name) const {
 	loops::Loop cdr_loop = get_CDR_loop(cdr_name);
 	Size l = cdr_loop.stop()-cdr_loop.start()+1;
 	return l;
 }
 
-
-void
-AntibodyInfo::set_harmonic_constraint(pose::Pose & pose, 
-							std::string cluster_type) const {
-	
-	using namespace protocols::simple_moves;
-	using namespace basic::options;
-	
-	if (cluster_type=="NA"){return;}
-	std::string path = "sampling/antibody_design/CONSTRAINTS/CircularHarmonic/";
-	std::string extension = ".txt";
-	std::string specific_path = path + cluster_type + extension;
-	std::string fname = option[ OptionKeys::in::path::database ](1).name() + specific_path;
-	if( !utility::file::file_exists(fname)){
-		TR<< "Fname "<<fname<<" Does not exist.  No constraint will be added."<<std::endl;
-		return;
-	}
-		
-	TR<< "Fname "<<fname<<std::endl;
-	ConstraintSetMoverOP cst_mover = new ConstraintSetMover();
-	cst_mover->constraint_file(fname);
-	cst_mover->apply(pose);
+std::string
+AntibodyInfo::get_cluster_name(CDRClusterEnum const cluster){
+	return cdr_cluster_manager_->cdr_cluster_enum_to_string(cluster);
 }
 
+CDRClusterEnum
+AntibodyInfo::get_cluster_enum(const std::string cluster){
+	return cdr_cluster_manager_->cdr_cluster_string_to_enum(cluster);
+}
+
+CDRNameEnum
+AntibodyInfo::get_cdr_enum_for_cluster(CDRClusterEnum const cluster) {
+		std::string cluster_string = cdr_cluster_manager_->cdr_cluster_enum_to_string(cluster);
+		utility::vector1< std::string > cluster_vec = utility::string_split(cluster_string, '-');
+		return antibody_manager_->cdr_name_string_to_enum(cluster_vec[1]);
+	}
+	
+core::Size
+AntibodyInfo::get_cluster_length(CDRClusterEnum const cluster) {
+		std::string cluster_string = cdr_cluster_manager_->cdr_cluster_enum_to_string(cluster);
+		utility::vector1< std::string > cluster_vec = utility::string_split(cluster_string, '-');
+		return utility::string2int(cluster_vec[2]);
+	}
+    
+	
 ////////////////////////////////////////////////////////////////////////////////
 ///                                                                          ///
 ///				provide fold tree utilities for various purpose              ///
@@ -993,7 +1096,8 @@ kinematics::FoldTreeCOP AntibodyInfo::get_FoldTree_AllCDRs (pose::Pose const & p
 ///
 /// @last_modified 07/13/2010
 ///////////////////////////////////////////////////////////////////////////
-kinematics::FoldTreeCOP AntibodyInfo::get_FoldTree_AllCDRs_LHDock( pose::Pose const & pose ) const {
+kinematics::FoldTreeCOP
+AntibodyInfo::get_FoldTree_AllCDRs_LHDock( pose::Pose const & pose ) const {
        
 	using namespace kinematics;
         
@@ -1070,7 +1174,8 @@ kinematics::FoldTreeCOP AntibodyInfo::get_FoldTree_AllCDRs_LHDock( pose::Pose co
 ///
 /// @last_modified 08/14/2012
 ///////////////////////////////////////////////////////////////////////////
-kinematics::FoldTree AntibodyInfo::get_FoldTree_LH_A( pose::Pose const & pose ) const {
+kinematics::FoldTree
+AntibodyInfo::get_FoldTree_LH_A( pose::Pose const & pose ) const {
     
     using namespace core;
     using namespace kinematics;
@@ -1147,7 +1252,8 @@ kinematics::FoldTree AntibodyInfo::get_FoldTree_LH_A( pose::Pose const & pose ) 
 ///
 /// @last_modified 08/14/2012
 ///////////////////////////////////////////////////////////////////////////
-kinematics::FoldTree AntibodyInfo::get_FoldTree_L_HA( pose::Pose const & pose ) const {
+kinematics::FoldTree
+AntibodyInfo::get_FoldTree_L_HA( pose::Pose const & pose ) const {
 	
 	using namespace core;
 	using namespace kinematics;
@@ -1215,7 +1321,8 @@ kinematics::FoldTree AntibodyInfo::get_FoldTree_L_HA( pose::Pose const & pose ) 
 ///
 /// @last_modified 08/14/2012
 ///////////////////////////////////////////////////////////////////////////
-kinematics::FoldTree AntibodyInfo::get_FoldTree_LA_H( pose::Pose const & pose ) const {
+kinematics::FoldTree
+AntibodyInfo::get_FoldTree_LA_H( pose::Pose const & pose ) const {
     
 	using namespace core;
 	using namespace kinematics;
@@ -1278,7 +1385,8 @@ kinematics::FoldTree AntibodyInfo::get_FoldTree_LA_H( pose::Pose const & pose ) 
 	
 }
 
-kinematics::MoveMap AntibodyInfo::get_MoveMap_for_Loops(pose::Pose const & pose,
+kinematics::MoveMap
+AntibodyInfo::get_MoveMap_for_Loops(pose::Pose const & pose,
 														loops::Loops const & the_loops,
 														bool const & bb_only,
 														bool const & include_nb_sc,
@@ -1304,8 +1412,34 @@ kinematics::MoveMap AntibodyInfo::get_MoveMap_for_Loops(pose::Pose const & pose,
 	return move_map;
 }
 	
+void
+AntibodyInfo::add_CDR_to_MoveMap(pose::Pose const & pose,
+		kinematics::MoveMapOP movemap,
+		CDRNameEnum const & cdr_name,
+		bool const & bb_only, 
+		bool const & include_nb_sc,
+		Real const & nb_dist) const
+{
+
+	core::Size start = get_CDR_start(cdr_name, pose);
+	core::Size stop =  get_CDR_end(cdr_name, pose);
+	core::Size cut = (stop-start+1)/2+start;
 	
-kinematics::MoveMap AntibodyInfo::get_MoveMap_for_LoopsandDock(pose::Pose const & pose,
+	loops::Loop cdr_loop = loops::Loop(start, stop, cut);
+	utility::vector1< bool> bb_is_flexible( pose.total_residue(), false );
+	select_loop_residues( pose, cdr_loop, include_nb_sc/*include_neighbors*/, bb_is_flexible, nb_dist);
+	for (core::Size i=1; i<=pose.total_residue(); ++i){
+		if (bb_is_flexible[i]){
+			movemap->set_bb(i, true);
+			if (! bb_only){
+				movemap->set_chi(i, true);
+			}
+		}
+	}
+}
+
+kinematics::MoveMap
+AntibodyInfo::get_MoveMap_for_LoopsandDock(pose::Pose const & pose,
 														loops::Loops const & the_loops,
 														bool const & bb_only,
 														bool const & include_nb_sc,
@@ -1325,7 +1459,8 @@ kinematics::MoveMap AntibodyInfo::get_MoveMap_for_LoopsandDock(pose::Pose const 
     
 
 //JQX: doesn't matter only antibody or antibody-antigen complex, just include CDRs and their neighbors
-pack::task::TaskFactoryOP AntibodyInfo::get_TaskFactory_AllCDRs(pose::Pose & pose)  const{
+pack::task::TaskFactoryOP
+AntibodyInfo::get_TaskFactory_AllCDRs(pose::Pose & pose)  const{
 	
 	vector1< bool> sc_is_packable( pose.total_residue(), false );
 	select_loop_residues( pose, *loopsop_having_allcdrs_, true/*include_neighbors*/, sc_is_packable);
@@ -1352,7 +1487,8 @@ pack::task::TaskFactoryOP AntibodyInfo::get_TaskFactory_AllCDRs(pose::Pose & pos
 	return tf;
 }
     
-pack::task::TaskFactoryOP AntibodyInfo::get_TaskFactory_OneCDR(pose::Pose & pose, AntibodyCDRNameEnum const & cdr_name)  const{
+pack::task::TaskFactoryOP
+AntibodyInfo::get_TaskFactory_OneCDR(pose::Pose & pose, CDRNameEnum const & cdr_name)  const{
 	vector1< bool> sc_is_packable( pose.total_residue(), false );
 	
 	select_loop_residues( pose, *get_CDR_in_loopsop(cdr_name), true/*include_neighbors*/, sc_is_packable);
@@ -1377,7 +1513,8 @@ pack::task::TaskFactoryOP AntibodyInfo::get_TaskFactory_OneCDR(pose::Pose & pose
 ///
 /// @last_modified 08/28/2012 by DK
 ///////////////////////////////////////////////////////////////////////////
-void AntibodyInfo::identify_CDR_from_a_sequence(std::string const & querychain){
+void
+AntibodyInfo::identify_CDR_from_a_sequence(std::string const & querychain){
 	
 	int l1found = 0, l2found = 0, l3found = 1, h1found = 1, h2found = 0, h3found = 1; // 0 if exist; otherwise 1.
 	int lenl1 = 0, lenl2 = 0, lenl3 = 0, lenh1 = 0, lenh2 = 0, lenh3 = 0;
@@ -1679,59 +1816,19 @@ void AntibodyInfo::identify_CDR_from_a_sequence(std::string const & querychain){
     
 
 
-vector1<char> AntibodyInfo::get_CDR_sequence_with_stem(AntibodyCDRNameEnum const & cdr_name,
+vector1<char> AntibodyInfo::get_CDR_sequence_with_stem(CDRNameEnum const & cdr_name,
 													   Size left_stem ,
 													   Size right_stem ) const {
 	vector1<char> sequence;
 	loops::Loop the_loop = get_CDR_loop(cdr_name);
-	/// JQX: the pose number in the loop should be consistent with the number in the ab_sequence_
+	
 	for (Size i=the_loop.start()-left_stem; i<=the_loop.stop()+right_stem; ++i){
-		sequence.push_back( ab_sequence_[i]  );
+		std::map< Size, char >::const_iterator iter(sequence_map_.find(i)); //To keep const
+		sequence.push_back(iter->second);
 	}
 	return sequence;
 }
-    
-    
-vector1<std::string> const & AntibodyInfo::get_string_cdr_name(void)  {
-	static vector1<std::string> *string_cdr_name = 0; /// JQX: this will only be executed once
-	if(string_cdr_name==0){
-		/// JQX: only the first time you can come here
-		string_cdr_name=new vector1<std::string>;
-		string_cdr_name->push_back("H1"); string_cdr_name->push_back("H2");string_cdr_name->push_back("H3");
-		string_cdr_name->push_back("L1"); string_cdr_name->push_back("L2");string_cdr_name->push_back("L3");
-	}
-	return *string_cdr_name;
-}
 
-vector1<std::string> const & AntibodyInfo::get_string_h3_base_type(void)  {
-	static vector1<std::string> *string_h3_base_type = 0; /// JQX: this will only be executed once
-	if(string_h3_base_type==0){
-		/// JQX: only the first time you can come here
-		string_h3_base_type=new vector1<std::string>;
-		string_h3_base_type->push_back("KINKED");
-		string_h3_base_type->push_back("EXTENDED");
-		string_h3_base_type->push_back("NEUTRAL");
-	}
-	return *string_h3_base_type;
-}
-
-vector1<std::string> const & AntibodyInfo::get_string_numbering_scheme(void)  {
-	static vector1<std::string> *string_numbering_scheme = 0; /// JQX: this will only be executed once
-	if(string_numbering_scheme==0){
-		/// JQX: only the first time you can come here
-		string_numbering_scheme=new vector1<std::string>;
-		string_numbering_scheme->push_back("Aroop");
-		string_numbering_scheme->push_back("Chothia");
-		string_numbering_scheme->push_back("Kabat");
-		string_numbering_scheme->push_back("Enhanced_Chothia");
-		string_numbering_scheme->push_back("AHO");
-		string_numbering_scheme->push_back("Modified_AHO");
-		string_numbering_scheme->push_back("IMGT");
-	}
-	return *string_numbering_scheme;
-}
-	
-	
 scoring::ScoreFunctionCOP get_Pack_ScoreFxn(void){
 	static scoring::ScoreFunctionOP pack_scorefxn = 0;
 	if(pack_scorefxn == 0){
@@ -1767,11 +1864,15 @@ scoring::ScoreFunctionCOP get_LoopHighRes_ScoreFxn(void){
 	return loophighres_scorefxn;
 }
 	
-	
-	
-	
-	
-	
+AntibodyEnumManagerOP &
+AntibodyInfo::get_antibody_enum_manager(){
+	return antibody_manager_;
+}
+
+CDRClusterEnumManagerOP &
+AntibodyInfo::get_cdr_cluster_enum_manager(){
+	return cdr_cluster_manager_;
+}
 	
 	
 /// @details  Show the complete setup of the docking protocol
@@ -1792,10 +1893,10 @@ std::ostream & operator<<(std::ostream& out, const AntibodyInfo & ab_info )  {
 	else                    { out << "  Regular Antibody"<< std::endl;}
 	
 	out << line_marker << " Predict H3 Cterminus Base:";
-	out <<"  "<<ab_info.get_string_h3_base_type()[ab_info.get_Predicted_H3BaseType()]<<std::endl;
+	out <<"  "<<ab_info.antibody_manager_->h3_base_type_enum_to_string(ab_info.get_Predicted_H3BaseType())<<std::endl;
 	
 	out << line_marker << space( 74 ) << std::endl;
-	for (AntibodyCDRNameEnum i=start_cdr_loop; i<=ab_info.total_cdr_loops_; i=AntibodyCDRNameEnum(i+1) ){
+	for (CDRNameEnum i=start_cdr_loop; i<=ab_info.total_cdr_loops_; i=CDRNameEnum(i+1) ){
 		out << line_marker << " "+ab_info.get_CDR_Name(i)+" info: "<<std::endl;
 		out << line_marker << "           length:  "<< ab_info.get_CDR_loop(i).length() <<std::endl;
 		out << line_marker << "         sequence:  ";

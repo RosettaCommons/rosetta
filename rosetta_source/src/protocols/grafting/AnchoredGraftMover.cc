@@ -410,7 +410,6 @@ AnchoredGraftMover::apply(Pose & pose){
 
 	//Give back foldtree from pose_into_pose.
 	combined.fold_tree(original_ft);
-
 	TR << "Complete"<<std::endl;
 	pose = combined;
 

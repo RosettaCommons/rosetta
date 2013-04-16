@@ -55,7 +55,7 @@ public:
 
     /// @brief constructor with arguments
     RefineOneCDRLoop(AntibodyInfoOP antibody_info, 
-                     AntibodyCDRNameEnum const & cdr_loop_name,
+                     CDRNameEnum const & cdr_loop_name,
                      std::string refine_mode,
                      core::scoring::ScoreFunctionCOP scorefxn );
 
@@ -104,7 +104,7 @@ private:
     bool H3_filter_;
     core::Size num_filter_tries_;
     std::string refine_mode_;
-    AntibodyCDRNameEnum cdr_loop_name_;
+    CDRNameEnum cdr_loop_name_;
     core::Real high_cst_;
     
     void set_default();

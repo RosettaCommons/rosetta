@@ -31,6 +31,11 @@ sources = {
 		"util",
 		"WatsonCrickRotamerCouplings",
 	],
+	"protocols/grafting":[
+		"AnchoredGraftMover",
+		"GraftMoverBase",
+		"util",
+        ],
 	"protocols/metal_interface": [
                 "AddZincSiteConstraints",
                 "FindClosestAtom",
