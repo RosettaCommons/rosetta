@@ -24,9 +24,9 @@ else: Platform = "_unknown_"
 PlatformBits = platform.architecture()[0][:2]
 
 
-if Platform != "windows":
-    from pyplusplus import module_builder
-    import pyplusplus
+#if Platform != "windows":
+#    from pyplusplus import module_builder
+#    import pyplusplus
 
 import exclude
 
