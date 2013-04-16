@@ -71,6 +71,7 @@
 
 //#include <basic/options/keys/Remodel.OptionKeys.gen.hh>
 #include <core/scoring/constraints/ResidueTypeLinkingConstraint.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
 
 // only needed for intermediate output
@@ -1002,19 +1003,14 @@ void RemodelLoopMover::apply( Pose & pose ) {
 
 
 		//NOTE::There is no attempt to close loops.
-		ScoreFunctionOP sfx_stage0_OP = ( core::scoring::ScoreFunctionFactory::create_score_function( "score0" ) );
 		ScoreFunctionOP sfx_stage1_OP =  ( core::scoring::ScoreFunctionFactory::create_score_function( "abinitio_remodel_cen" ) );
 		if(option[OptionKeys::remodel::repeat_structure].user()){
 			std::cout << "setting weights" << std::endl;
-			sfx_stage0_OP->set_weight(scoring::atom_pair_constraint, 1.0 *option[OptionKeys::remodel::repeat_structure]);
 			sfx_stage1_OP->set_weight(scoring::atom_pair_constraint, 1.0 *option[OptionKeys::remodel::repeat_structure]);
 		}
 		else{
-			sfx_stage0_OP->set_weight(scoring::atom_pair_constraint, 1.0);
 			sfx_stage1_OP->set_weight(scoring::atom_pair_constraint, 1.0);
 		}
-		std::cout << "sfx0" << std::endl;
-		sfx_stage0_OP->show_pretty(std::cout);
 		std::cout << "sfx1" << std::endl;
 		sfx_stage1_OP->show_pretty(std::cout);
 		//stage0-------------------------------------------
@@ -1026,7 +1022,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		std::set<Size> disallowedPos;
 
 		bool useFragSequence =option[OptionKeys::remodel::use_fragment_sequence].user();
-		abinitio_stage( pose, 9, movemap,sfx_stage0_OP,1,100,disallowedPos,false,"stg0",useFragSequence);
+		abinitio_stage( pose, 9, movemap,sfx_stage1_OP,1,100,disallowedPos,true,"stg0",useFragSequence);
 		//stage1-------------------------------------------
 		if(option[OptionKeys::remodel::disallow_sampling_at_pos].user()){
 			std::string const & disallowed_residues =option[OptionKeys::remodel::disallow_sampling_at_pos];
@@ -1037,6 +1033,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 			}
 		}
 		abinitio_stage( pose, 9, movemap,sfx_stage1_OP,3,500,disallowedPos,true,"stg1",useFragSequence);
+		abinitio_stage( pose, 3, movemap,sfx_stage1_OP,3,100,disallowedPos,true,"stg1",useFragSequence);
 		//cleanup stage------------------------------------
 		PoseOP pose_prime = new Pose( pose );
 		pose_prime->fold_tree( sealed_ft );
@@ -1969,7 +1966,6 @@ void RemodelLoopMover::abinitio_stage(
 		if(option[OptionKeys::remodel::repeat_structure].user()){
 			repeat_propagation( pose, repeat_pose_,option[OptionKeys::remodel::repeat_structure]);
 		}
-
 		for ( Size inner = 1; inner <= max_inner_cycles; ++inner ) {
 			// fragments
 			random_permutation( frag_movers.begin(), frag_movers.end(), RG );
@@ -1977,13 +1973,17 @@ void RemodelLoopMover::abinitio_stage(
 				if(option[OptionKeys::remodel::repeat_structure].user()){
 					(*i)->apply( repeat_pose_ );
 					repeat_sync( repeat_pose_,option[OptionKeys::remodel::repeat_structure]);
-					mc.boltzmann( repeat_pose_, "simul_frag" );
+					mc.boltzmann( repeat_pose_, stage_name );
 				}else {
 					(*i)->apply( pose );
-					mc.boltzmann( pose, "simul_frag" );
+					mc.boltzmann( pose, stage_name );
 				}
 			}
 		}
+		mc.show_state();
+		TR<< "showing constraints on repeat pose" << std::endl;
+		repeat_pose_.constraint_set()->show_definition(TR, repeat_pose_);
+		mc.score_function().show( TR, repeat_pose_ );
 		// recover low
 		if(recover_low){
 			if(option[OptionKeys::remodel::repeat_structure].user()){

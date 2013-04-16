@@ -1006,8 +1006,8 @@ compute_center_of_mass( core::pose::Pose const &  pose, core::Size range_start, 
 Matrix3f rot_mat(MatrixXf &A,MatrixXf &B)
 {
   // A,B is 3 x N
-  cout<<"COMs"<<endl<<A.transpose()<<endl<<endl;
-  cout<<"COM_targets"<<endl<<B.transpose()<<endl<<endl;
+ // cout<<"COMs"<<endl<<A.transpose()<<endl<<endl;
+//cout<<"COM_targets"<<endl<<B.transpose()<<endl<<endl;
 
   Vector3f c_A(A.row(0).mean(), A.row(1).mean(), A.row(2).mean());
   Vector3f c_B(B.row(0).mean(), B.row(1).mean(), B.row(2).mean());

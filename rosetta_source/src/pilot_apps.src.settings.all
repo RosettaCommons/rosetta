@@ -91,6 +91,7 @@ sources = {
 		"minimalCstHomology",
 		"aln_to_disulf",
 		"evalRepeats",
+        "armEval",
 		#"cluster_alns", # /#TJ Brunette,Documentation Location,Demo Location */
 		#"identify_homolog_inaccuracies",
 		#"contact_map_from_homologs",
