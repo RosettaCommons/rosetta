@@ -273,19 +273,25 @@ LayerDesignOperation::set_default_layer_residues() {
 					);
 
 	boost::assign::insert(design_layer_)
-					("core", false )
-					("boundary", false )
-					("surface", false );
+		("core", false )
+		("boundary", false )
+		("surface", false )
+		("Nterm", false )
+		("Cterm", false );
 
 	boost::assign::insert(layer_specification_)
 		("core", DESIGNABLE)
 		("boundary", DESIGNABLE)
-		("surface", DESIGNABLE);
-	
+		("surface", DESIGNABLE)
+		("Nterm", DESIGNABLE)
+		("Cterm", DESIGNABLE);
+
 	boost::assign::insert(layer_operation_)
 		("core", DESIGN)
 		("boundary", DESIGN)
-		("surface", DESIGN);
+		("surface", DESIGN)
+		("Nterm", DESIGN)
+		("Cterm", DESIGN);
 }
 
 utility::vector1<bool> 
@@ -349,7 +355,7 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 	 } else {
 		pose = input_pose;
   }
-	
+
 	std::string secstruct;
 	if ( blueprint_ ) {
 		secstruct = blueprint_->secstruct();
@@ -358,7 +364,7 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 		dssp.dssp_reduced();
 		secstruct = dssp.get_dssp_secstruct();
 	}
-	
+
 	// we need to add a SS identifier for the ligand if there is one
 	utility::vector1<Size> ligands = protocols::flxbb::find_ligands( pose );
 	bool has_ligand = false;
@@ -370,12 +376,12 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 	}
 	srbl_->compute( pose, secstruct );
 
-	// make a pymol script for visualizing the layers 
+	// make a pymol script for visualizing the layers
 	if( make_pymol_script_ && !utility::file::file_exists( "layers.py" ) ) {
 		TR << "writing pymol script with the layer specification and saving it as layers.py" << std::endl;
 		write_pymol_script(input_pose, srbl_, layer_specification, has_ligand, "layers.py");
 	}
-	
+
 	// find the position of residues of helix capping and intial residue of helix
 	bool flag( false );
 	utility::vector1< bool > helix_capping( pose.total_residue(), false );
@@ -412,12 +418,12 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 			srbl_layer = "Cterm";
 		if( pose.residue( i ).is_lower_terminus() )
 			srbl_layer = "Nterm";
-			
+
 		// check if the residue is specified in any of the task defined layer and
 		// append that layer into the active layers
 		utility::vector1< std::string > active_layers;
 		BOOST_FOREACH(const LayerSpecification::value_type& layer_pair, layer_specification) {
-			if( (layer_pair.second)[i] == true) 
+			if( (layer_pair.second)[i] == true)
 				active_layers.push_back( layer_pair.first );
 		}
 
@@ -529,7 +535,7 @@ LayerDesignOperation::parse_tag( TagPtr tag )
 	BOOST_FOREACH(std::string &  layer, layers) {
 		design_layer_[ layer ] = true;
 	}
-	
+
 	repack_non_designed_residues_ = tag->getOption< bool >("repack_non_design", 1);
 
 	srbl_->set_design_layer( true, true, true);
