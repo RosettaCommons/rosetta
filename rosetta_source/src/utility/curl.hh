@@ -22,7 +22,7 @@ namespace utility {
 // must include -lcurl during linking if you're using -dwithcurl
 #ifdef WITHCURL
 
-Class CurlGet {
+class CurlGet {
  public:
   CurlGet();
   static int writer(char *data, size_t size, size_t nmemb, std::string *buffer);
