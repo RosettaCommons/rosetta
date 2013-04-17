@@ -659,9 +659,64 @@ init_score_function_corrections(){
 		if( option[corrections::correct] ){
 			throw utility::excn::EXCN_BadInput( "The -corrections::hbond_sp2_correction is incompatible with the -corrections:correct flag.");
 		}
+
+ 		if( option[ corrections::facts_default ]) {
+ 			throw utility::excn::EXCN_BadInput( "The -corrections::hbond_sp2_correction is incompatible with the -corrections:facts_default flag.");
+		}
 	}
 
+ 	// corrections specific for FACTS: this has to precede -correct
+ 	if( option[corrections::facts_default]) {
+ 		// Call all the corrections from -correct
+ 		option[corrections::correct].value(true);
+		
+ 		/// Below are FACTS specific flags
+ 		// Hbond LJ parameters 
+		if ( ! option[ corrections::score::lj_hbond_hdis ].user() )
+			option[corrections::score::lj_hbond_hdis].value(2.3);
 
+		if ( ! option[ corrections::score::lj_hbond_OH_donor_dis ].user() )
+ 		option[corrections::score::lj_hbond_OH_donor_dis].value(3.4);
+
+ 		// FACTS options - these are not fully optimized, can be changed in the future
+ 		if ( ! option[score::facts_GBpair_cut].user() )
+			option[score::facts_GBpair_cut].value(10.0);
+
+ 		if ( ! option[score::facts_min_dis].user() )
+ 		option[score::facts_min_dis].value(1.5);
+
+ 		if ( ! option[score::facts_dshift].user() )
+ 		option[score::facts_dshift].value(1.4);
+
+ 		if ( ! option[score::facts_die].user() )
+ 		option[score::facts_die].value(1.0);
+
+ 		if ( ! option[score::facts_kappa].user() )
+ 		option[score::facts_kappa].value(12.0);
+
+ 		if ( ! option[score::facts_asp_patch].user() )
+ 		option[score::facts_asp_patch].value(3);
+
+ 		if ( ! option[score::facts_intrares_scale].user() )
+ 		option[score::facts_intrares_scale].value(0.4);
+
+ 		if ( ! option[score::facts_elec_sh_exponent].user() )
+ 		option[score::facts_elec_sh_exponent].value(1.8);
+
+ 		// Below are default for sp2correction which are FACTS defaults too
+ 		if ( ! option[corrections::score::use_bicubic_interpolation].user() )
+ 		option[corrections::score::use_bicubic_interpolation].value(true);
+
+ 		if ( ! option[score::hbond_params].user() )
+ 		option[score::hbond_params ].value( "sp2_params" );
+
+ 		if ( ! option[corrections::score::hb_sp2_chipen].user() )
+ 		option[corrections::score::hb_sp2_chipen].value(true);
+
+ 		if ( ! option[corrections::score::hbond_measure_sp3acc_BAH_from_hvy].user() )
+ 		option[corrections::score::hbond_measure_sp3acc_BAH_from_hvy].value(true);
+ 	} // end facts_default
+	
 	// set default corrections
 	if( option[corrections::correct]) {
 		// Pair energy

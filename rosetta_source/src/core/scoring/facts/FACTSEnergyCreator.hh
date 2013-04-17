@@ -7,14 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/core/scoring/facts/FACTSEnergyCreator.hh
+/// @file   src/apps/pilot/khorvash/FACTSEnergyCreator.hh
 /// @brief  Declaration for the class that connects GenBornEnergy with the ScoringManager
 /// @author Massih Khorvash
 
-#ifndef INCLUDED_core_scoring_facts_FACTSEnergyCreator_HH
-#define INCLUDED_core_scoring_facts_FACTSEnergyCreator_HH
+//#ifndef INCLUDED_apps_pilot_khorvash_FACTSEnergyCreator_HH
+//#define INCLUDED_apps_pilot_khorvash_FACTSEnergyCreator_HH
 
 #include <core/scoring/methods/EnergyMethodCreator.hh>
+
+//massih
 
 namespace core {
 	namespace scoring {
@@ -43,4 +45,4 @@ namespace core {
 	}
 }
 
-#endif
+//#endif

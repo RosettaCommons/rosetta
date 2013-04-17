@@ -193,6 +193,7 @@ namespace score { IntegerOptionKey const nmer_ref_seq_length( "score:nmer_ref_se
 namespace corrections { BooleanOptionKey const corrections( "corrections" );  }
 namespace corrections { BooleanOptionKey const correct( "corrections:correct" );  }
 namespace corrections { BooleanOptionKey const hbond_sp2_correction( "corrections:hbond_sp2_correction" );  }
+namespace corrections { BooleanOptionKey const facts_default( "corrections:facts_default" );  }
 namespace corrections { namespace score { BooleanOptionKey const score( "corrections:score" );  } }
 namespace corrections { namespace score { BooleanOptionKey const bbdep_omega( "corrections:score:bbdep_omega" );  } }
 namespace corrections { namespace score { BooleanOptionKey const bbdep_bond_params( "corrections:score:bbdep_bond_params" );  } }

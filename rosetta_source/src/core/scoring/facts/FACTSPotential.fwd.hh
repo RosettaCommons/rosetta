@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-// @file:   apps/pilot/khorvash/FACTSPotential.fwd.h
+// @file:   core/scoring/facts/FACTSPotential.fwd.hh
 // @brief:  This file only creats some easy to use aliases
-// @author: Massih Khorvash (massih.khorvash@gmail.com)
+// @author: Hahnbeom Park
 
 
 #ifndef INCLUDED_core_scoring_facts_FACTSPotential_FWD_HH
@@ -37,7 +37,6 @@ namespace scoring {
 	class FACTSPotential;
 	//Creating an alias for a pointer of type FACTSResidueInfo
   typedef utility::pointer::owning_ptr< FACTSPotential > FACTSPotentialOP;
-	typedef utility::pointer::owning_ptr< FACTSPotential const > FACTSPotentialCOP;
 
 	//struct xyz_coordinates;
 } // scoring

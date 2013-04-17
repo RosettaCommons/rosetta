@@ -1918,6 +1918,27 @@ Options = Option_Group( '',
 			" -smooth_hack_elec"
 			" -hackelec_min_dis 1.6"
 			" -hackelec_r_option false"),
+
+		Option( 'facts_default', 'Boolean',
+			desc="turn on default options for FACTS"
+			" use with scorefacts.wts. Incompatible with hbond_sp2_correction option."
+		  " -correct"
+		  " -lj_hbond_hdis 2.3"
+		  " -lj_hbond_OH_donor_dis 3.4"
+		  " -use_bicubic_interpolation "
+		  " -hbond_params sp2_params"
+		  " -hb_sp2_chipen "
+		  " -hbond_measure_sp3acc_BAH_from_hby"
+		  " -facts_GBpair_cut 10.0"
+		  " -facts_min_dis 1.5"
+  		" -facts_dshift 1.4"
+  		" -facts_die 1.0"
+  		" -facts_kappa 12.0"
+		  " -facts_asp_patch 3"
+		  " -facts_intrares_scale 0.4"
+		  " -facts_elec_sh_exponent 1.8",
+			default="false"),
+
 		Option_Group( 'score',
 			Option( 'bbdep_omega', 'Boolean', desc="Enable phi-psi dependent omega", ),
 			Option( 'bbdep_bond_params', 'Boolean', desc="Enable phi-psi dependent bondlengths and bondangles", ),

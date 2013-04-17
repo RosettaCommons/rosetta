@@ -7,9 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-// @file   apps/pilot/khorvash/FACTSEnergy.hh
+// @file   core/scoring/facts/FACTSEnergy.hh
 // @brief  
-// @author Massih Khorvash
 // @author Hahnbeom Park
 
 #ifndef INCLUDED_devel_facts_FACTSEnergy_FWD_HH

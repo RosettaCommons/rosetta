@@ -7,9 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-// @file   devel/facts/FACTSEnergy.hh
-// @brief  
-// @author Massih Khorvash
+// @file   core/scoring/facts/FACTSEnergy.hh
+// @brief
 // @author Hahnbeom Park
 
 #ifndef INCLUDED_devel_facts_FACTSEnergy_HH
@@ -21,7 +20,7 @@
 
 // Package headers
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
-#include <core/scoring/methods/ContextDependentLRTwoBodyEnergy.hh>
+#include <core/scoring/methods/ContextDependentTwoBodyEnergy.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <core/scoring/EnergyMap.fwd.hh>
@@ -41,37 +40,23 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-class FACTSEnergy : public ContextDependentLRTwoBodyEnergy  {
+class FACTSEnergy : public ContextDependentTwoBodyEnergy  {
 
 public:
-	typedef ContextDependentLRTwoBodyEnergy  parent;
+	typedef ContextDependentTwoBodyEnergy  parent;
 
 public:
-	/// for use by ScoringManager
 	FACTSEnergy( EnergyMethodOptions const & options );
 
-	///
 	FACTSEnergy( FACTSEnergy const & src );
-
-	methods::LongRangeEnergyType long_range_type() const
-	{
-		return facts_lr;
-	}
-
-	virtual
-	bool
-	defines_residue_pair_energy(
-		pose::Pose const & pose,
-		Size res1,
-		Size res2
-	) const;
 
 	/// clone
 	virtual
 	EnergyMethodOP
-	clone() const;
+	clone() const {
+		return new FACTSEnergy(*this);
+	}
 
-	///
 	virtual
 	void
 	setup_for_packing(
@@ -80,15 +65,13 @@ public:
 		utility::vector1< bool > const &
 		) const;
 
-	///
 	virtual
 	void
 	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
 
-	///
 	virtual
 	void
-		setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const;
+	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const;
 
 	virtual
 	void
@@ -117,7 +100,7 @@ public:
 		EnergyMap & emap
 		) const;
 
-	
+
 	virtual
 	void
 	evaluate_rotamer_intrares_energies(
@@ -128,7 +111,7 @@ public:
 		) const;
 
 
-	
+
 	virtual
 	void
 	evaluate_rotamer_intrares_energy_maps(
@@ -144,8 +127,6 @@ public:
 	/// and calls derived class's residue_pair_energy method.  Since short range rotamer pairs
 	/// may not need calculation, the default method looks at blocks of residue type pairs
 	/// and only calls the residue_pair_energy method if the rotamer pairs are within range
-
-	
 	virtual
 	void
 	evaluate_rotamer_pair_energies(
@@ -164,7 +145,6 @@ public:
 	/// Since short range rotamer pairs may not need calculation, the default method
 	/// looks at blocks of residue type pairs and only calls the residue_pair_energy method
 	/// if the rotamer pairs are within range
-
 	virtual
 	void
 	evaluate_rotamer_background_energies(
@@ -174,7 +154,7 @@ public:
 		ScoreFunction const & sfxn,
 		EnergyMap const & weights,
 		utility::vector1< core::PackerEnergy > & energy_vector
-		) const;
+	) const;
 
 
 	/// @brief Batch computation of rotamer/background energies.  Need not be overriden
@@ -206,18 +186,18 @@ public:
 		EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
-		) const;
+	) const;
 
  	virtual
  	Distance
  	atomic_interaction_cutoff() const;
 
 	virtual
-		void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const {}
 
 	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const;
+	defines_intrares_energy( EnergyMap const & /*weights*/ ) const { return true; }
 
 	virtual
 	void
@@ -230,21 +210,15 @@ public:
 
 	/// this is our own special function
 	Real
-	packing_interaction_cutoff() const
-	{
-		return 5.5; // MAGIC NUMBER!!
-		}
+	packing_interaction_cutoff() const { return 5.5; }
 
+private:
 	/////////////////////////////////////////////////////////////////////////////
 	// data
 	/////////////////////////////////////////////////////////////////////////////
-
-private:
-
 	// const-ref to scoring database
 	FACTSPotential const & potential_;
 
-	///
 	bool const exclude_DNA_DNA_;
 	Real max_dis_;
 
