@@ -16,6 +16,7 @@
 #include <devel/denovo_design/task_operations/HighestEnergyRegionCreator.hh>
 
 // package headers
+#include <devel/denovo_design/calculators/ResidueCentralityCalculator.hh>
 #include <devel/denovo_design/filters/PsiPredInterface.hh>
 #include <protocols/flxbb/utility.hh>
 
@@ -416,6 +417,69 @@ DesignRandomRegionOperation::get_residues_to_design( core::pose::Pose const & po
 	}
 
 	//TR.Debug << "Random array=" << residues_to_design << std::endl;
+	return residues_to_design;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+/// DesignByResidueCentrality
+////////////////////////////////////////////////////////////////////////////////
+
+/// @brief creator functions
+core::pack::task::operation::TaskOperationOP
+DesignByResidueCentralityOperationCreator::create_task_operation() const {
+	return new DesignByResidueCentralityOperation;
+}
+
+std::string
+DesignByResidueCentralityOperationCreator::keyname() const {
+	return "DesignByResidueCentrality";
+}
+
+/// @brief default constructor
+DesignByResidueCentralityOperation::DesignByResidueCentralityOperation() :
+	HighestEnergyRegionOperation()
+{}
+
+/// @brief destructor
+DesignByResidueCentralityOperation::~DesignByResidueCentralityOperation()
+{}
+
+/// @brief make clone
+core::pack::task::operation::TaskOperationOP
+DesignByResidueCentralityOperation::clone() const
+{
+	return new DesignByResidueCentralityOperation( *this );
+}
+
+/// @brief Gets a list of residues for design
+utility::vector1< core::Size >
+DesignByResidueCentralityOperation::get_residues_to_design( core::pose::Pose const & pose ) const
+{
+	// check for calculator; create if it doesn't exist
+	if ( ! core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "ResidueCentrality" ) ) {
+		calculators::ResidueCentralityCalculator calculator;
+		core::pose::metrics::CalculatorFactory::Instance().register_calculator( "ResidueCentrality", calculator.clone() );
+	}
+
+	basic::MetricValue< utility::vector1< core::Real > > residue_centralities;
+	pose.metric( "ResidueCentrality", "centrality", residue_centralities );
+
+	// TODO: the calculator puts in a value of -1 for ala/gly. However, we don't want to report or include these in calculations.
+	utility::vector1< core::Size > residues_to_design;
+
+	utility::vector1< std::pair< core::Size, core::Real > > res_to_score;
+	for ( core::Size i=1; i<=residue_centralities.value().size(); ++i ) {
+		res_to_score.push_back( std::pair< core::Size, core::Real >( i, residue_centralities.value()[i] ) );
+	}
+
+	// sort the vector based on the psipred probability
+	std::sort( res_to_score.begin(), res_to_score.end(), compare_prob_energy );
+
+	for ( core::Size j=1; ( j<=res_to_score.size() &&	j<=regions_to_design() ); ++j ) {
+		residues_to_design.push_back( res_to_score[j].first );
+		TR << "Going to design " << pose.residue( res_to_score[j].first ).name3() << res_to_score[j].first << ", value=" << res_to_score[j].second << std::endl;
+	}
+
 	return residues_to_design;
 }
 

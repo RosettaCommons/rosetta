@@ -173,6 +173,24 @@ public:
 private:
 };
 
+/// @brief class for finding residues with highest closeness centrality and designing them
+class DesignByResidueCentralityOperation : public HighestEnergyRegionOperation {
+public:
+	/// @brief default constructor
+	DesignByResidueCentralityOperation();
+
+	/// @brief virtual destructor
+	virtual ~DesignByResidueCentralityOperation();
+
+  /// @brief make clone
+  virtual core::pack::task::operation::TaskOperationOP clone() const;
+
+	/// @brief Gets a list of residues for design
+	virtual utility::vector1< core::Size >
+	get_residues_to_design( core::pose::Pose const & pose ) const;
+
+private:
+};
 
 } // task_operations
 } // denovo_design

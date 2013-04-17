@@ -31,6 +31,9 @@ sources = {
                 "FastDesign",
                 "RestrictWorstRegion",
         ],
+        "devel/denovo_design/calculators": [
+                "ResidueCentralityCalculator",
+        ],
         "devel/denovo_design/filters": [
                 "PsiPredInterface",
                 "SSPredictionFilter",

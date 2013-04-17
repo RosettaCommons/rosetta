@@ -76,6 +76,7 @@
 // Utility Headers
 
 // Task Operation creators
+#include <devel/denovo_design/task_operations/HighestEnergyRegionCreator.hh>
 #include <devel/znhash/SymmZnMoversAndTaskOpsCreators.hh>
 #include <devel/vardist_solaccess/LoadVarSolDistSasaCalculatorMover.hh>
 #include <devel/matdes/BuildingBlockInterfaceOperationCreator.hh>
@@ -117,6 +118,7 @@ static protocols::moves::MoverRegistrator< loophash_loopclosure::LoopHashLoopClo
 static protocols::moves::MoverRegistrator< devel::splice::SpliceCreator > reg_SpliceCreator; //moved into devel due to release embargo
 
 // Task creators
+static core::pack::task::operation::TaskOperationRegistrator< devel::denovo_design::task_operations::DesignByResidueCentralityOperationCreator > reg_DesignByResidueCentralityOperationCreator;
 core::pack::task::operation::TaskOperationRegistrator< devel::znhash::DisableZnCoordinationResiduesTaskOpCreator > reg_DisableZnCoordinationResiduesTaskOpCreator;
 static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::BuildingBlockInterfaceOperationCreator > BuildingBlockInterfaceOperationCreator_registrator;
 static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::RestrictToNonzeroSASAOperationCreator > RestrictToNonzeroSASAOperationCreator_registrator;
