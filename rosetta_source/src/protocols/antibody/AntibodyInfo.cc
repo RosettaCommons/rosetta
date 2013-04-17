@@ -287,7 +287,7 @@ void AntibodyInfo::identify_antibody(pose::Pose const & pose){
 	
 	//Jadofbr (4/2013)  Allow any order in the PDB file by adding this for loop..
 	//Todo: Add command-line argument for other types (SCFv, nanobody, Diabody, etc.)
-	bool H_found = false; vector1<char> H_sequence;;
+	bool H_found = false; vector1<char> H_sequence;
 	bool L_found = false; vector1<char> L_sequence;
 	for (core::Size i = 1; i<= pose.conformation().num_chains(); ++i){
 		if(   pose.pdb_info()->chain(pose.conformation().chain_end(i)) == 'L'){
@@ -433,16 +433,28 @@ AntibodyInfo::get_AntibodyFrameworkInfo() const{
 	if (framework_info_.empty()){
 		utility_exit_with_message("Numbering scheme setup failed for Framework.");
 	}
+	else if (numbering_scheme_ != Aroop){
+		utility_exit_with_message("Framework info only currently works for Aroop numbering scheme.");
+	}
 	else{
 		return framework_info_;
 	}
 }
 
+H3BaseTypeEnum
+AntibodyInfo::get_Predicted_H3BaseType() const {
+	if (numbering_scheme_ != Aroop){
+		utility_exit_with_message("H3 Base type is only currently correct for Aroop numbering scheme.");
+	}
+	else{
+		return predicted_H3_base_type_;
+	}
+}
 
 void AntibodyInfo::setup_FrameWorkInfo( pose::Pose const & pose ) {
 
-	//TODO jadolfbr.  This is a hardcoded nightmare.  Plus the framework info is not used by any class.  
-	//Used only by align_to_native in antibody_util.  Is there a normal alignment like pymol in Rosetta
+	//TODO jadolfbr.  This is a hardcoded nightmare.  
+	//Used only by align_to_native in antibody_util.  Needs to be refactored for other numbering schemes
 	
 	FrameWork frmwk;
 	vector1<FrameWork> Lfr, Hfr;
@@ -730,8 +742,7 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type_new_rule( pose::Pose 
 	//Quick fix to get my stuff to work here due to more hardcoding of residues here.  
 	if (numbering_scheme_ != Aroop){
 		TR << "Stem type could not be set."<<std::endl;
-		TR<< "!! Assuming kinked for now !!"<<std::endl;
-		predicted_H3_base_type_ = Kinked;
+		predicted_H3_base_type_ = Unknown;
 		return;
 	}
 	
@@ -1893,7 +1904,7 @@ std::ostream & operator<<(std::ostream& out, const AntibodyInfo & ab_info )  {
 	else                    { out << "  Regular Antibody"<< std::endl;}
 	
 	out << line_marker << " Predict H3 Cterminus Base:";
-	out <<"  "<<ab_info.antibody_manager_->h3_base_type_enum_to_string(ab_info.get_Predicted_H3BaseType())<<std::endl;
+	out <<"  "<<ab_info.antibody_manager_->h3_base_type_enum_to_string(ab_info.predicted_H3_base_type_)<<std::endl;
 	
 	out << line_marker << space( 74 ) << std::endl;
 	for (CDRNameEnum i=start_cdr_loop; i<=ab_info.total_cdr_loops_; i=CDRNameEnum(i+1) ){

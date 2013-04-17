@@ -122,9 +122,8 @@ public:
 		
 	/// @brief get H3 cterminal kink/extended conformation (predicted by constructor)
 	H3BaseTypeEnum
-	get_Predicted_H3BaseType() const {
-		return predicted_H3_base_type_;
-	}
+	get_Predicted_H3BaseType() const ;
+
 	
 	/// @brief get residues used to calculate VL/VH packing angle
 	vector1< Size >

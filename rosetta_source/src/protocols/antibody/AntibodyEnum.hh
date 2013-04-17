@@ -76,7 +76,7 @@ enum H3BaseTypeEnum{
 	Kinked = 1,
 	Extended,
 	Neutral,
-	
+	Unknown,
 	H3BaseTypeEnum_start = Kinked,
 	H3BaseTypeEnum_total = Neutral
 			

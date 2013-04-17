@@ -83,10 +83,12 @@ AntibodyEnumManager::setup(){
 	h3_base_type_to_string_[Kinked] = "KINKED";
 	h3_base_type_to_string_[Extended] = "EXTENDED";
 	h3_base_type_to_string_[Neutral] = "NEUTRAL";
+	h3_base_type_to_string_[Unknown] = "UNKNOWN";
 	
 	h3_base_type_to_enum_["KINKED"] = Kinked;
 	h3_base_type_to_enum_["EXTENDED"] = Extended;
 	h3_base_type_to_enum_["NEUTRAL"] = Neutral;
+	h3_base_type_to_enum_["UNKNOWN"] = Unknown;
 	
 	packing_angle_to_string_[VL_sheet_1] = "VL_sheet_1";
 	packing_angle_to_string_[VL_sheet_2] = "VL_sheet_2";

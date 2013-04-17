@@ -141,11 +141,13 @@ DesignInstructionsParser::parse_cdr_graft_type_options(GraftInstructions& instru
 		
 		if (includes == "EXCLUDE"){
 			for (core::Size i=4; i<=lineSP.size(); ++i){
+				boost::to_upper(lineSP[i]);
 				instructions[cdr].leave_out_pdb_ids.push_back(lineSP[i]);
 			}
 		}
 		else if (includes == "INCLUDEONLY"){
 			for (core::Size i=4; i<=lineSP.size(); ++i){
+				boost::to_upper(lineSP[i]);
 				instructions[cdr].include_only_pdb_ids.push_back(lineSP[i]);	
 			}
 		}
@@ -184,8 +186,6 @@ DesignInstructionsParser::parse_cdr_graft_mintype(GraftInstructions & instructio
 	string mintype = lineSP[3];
 	boost::to_upper(setting);
 	boost::to_upper(mintype);
-	
-	//This may be refactored to enums.  
 	
 	if (setting == "MINTYPE"){
 		if (mintype == "RELAX"){

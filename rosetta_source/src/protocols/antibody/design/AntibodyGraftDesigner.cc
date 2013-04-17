@@ -147,7 +147,7 @@ AntibodyGraftDesigner::set_cluster_range(
 		const CDRClusterEnum cluster_end,
 		const bool setting)
 {
-	for (core::Size i=cluster_start; i<=cluster_end; ++i){
+	for (core::SSize i=cluster_start; i<=cluster_end; ++i){
 		CDRClusterEnum cluster = static_cast<CDRClusterEnum>(i);
 		if (setting==true){
 			
@@ -166,7 +166,7 @@ AntibodyGraftDesigner::set_mintype(CDRNameEnum cdr_name, MinTypeEnum mintype){
 
 void
 AntibodyGraftDesigner::set_mintype_range(CDRNameEnum cdr_start, CDRNameEnum cdr_end, MinTypeEnum mintype){
-	for (Size i=cdr_start; i<=cdr_end; ++i){
+	for (core::SSize i=cdr_start; i<=cdr_end; ++i){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		set_mintype(cdr, mintype);
 	}
@@ -180,7 +180,7 @@ AntibodyGraftDesigner::set_cdr(const CDRNameEnum cdr, const bool setting){
 
 void
 AntibodyGraftDesigner::set_cdr_range(const CDRNameEnum cdr_start, CDRNameEnum cdr_end, const bool setting){
-	for (Size i=cdr_start; i<=cdr_end; ++i){
+	for (core::SSize i=cdr_start; i<=cdr_end; ++i){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		cdr_instructions_[cdr].graft = setting;
 	}
@@ -199,7 +199,7 @@ AntibodyGraftDesigner::set_cdr_range_stay_in_native_cluster(
 				const bool setting)
 {
 	
-	for (Size i=cdr_start; i<=cdr_end; ++i){
+	for (core::SSize i=cdr_start; i<=cdr_end; ++i){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		cdr_instructions_[cdr].stay_native_cluster = setting;
 	}
@@ -218,7 +218,7 @@ AntibodyGraftDesigner::set_cdr_range_stay_in_type(
 				const core::Size type,
 				const bool setting)
 {
-	for (Size i=cdr_start; i<=cdr_end; ++i){
+	for (core::SSize i=cdr_start; i<=cdr_end; ++i){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		cdr_instructions_[cdr].cluster_types[type]=setting;
 	}
@@ -231,7 +231,7 @@ AntibodyGraftDesigner::set_cdr_min_length(CDRNameEnum const cdr, core::Size leng
 
 void
 AntibodyGraftDesigner::set_cdr_min_length_range(const CDRNameEnum cdr_start, CDRNameEnum cdr_end, core::Size length){
-	for (core::Size i=cdr_start; i<=cdr_end; ++i){
+	for (core::SSize i=cdr_start; i<=cdr_end; ++i){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		set_cdr_min_length(cdr, length);
 	}
@@ -244,7 +244,7 @@ AntibodyGraftDesigner::set_cdr_max_length(CDRNameEnum const cdr, core::Size leng
 
 void
 AntibodyGraftDesigner::set_cdr_max_length_range(const CDRNameEnum cdr_start,const CDRNameEnum cdr_end, core::Size length){
-	for (core::Size i=cdr_start; i<=cdr_end; ++i){
+	for (core::SSize i=cdr_start; i<=cdr_end; ++i){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		set_cdr_max_length(cdr, length);
 	}
@@ -257,7 +257,7 @@ AntibodyGraftDesigner::set_cdr_cluster_centers_only(const CDRNameEnum cdr, bool 
 
 void
 AntibodyGraftDesigner::set_cdr_cluster_centers_only_range(const CDRNameEnum cdr_start, CDRNameEnum cdr_end, bool setting){
-	for (core::Size i=cdr_start; i<=cdr_end; ++i){
+	for (core::SSize i=cdr_start; i<=cdr_end; ++i){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		set_cdr_cluster_centers_only(cdr, setting);
 	}
