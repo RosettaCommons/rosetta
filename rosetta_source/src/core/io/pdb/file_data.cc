@@ -1329,6 +1329,24 @@ build_pose_as_is1(
 		core::scoring::cryst::fix_bfactorsMissing( pose );
 		core::scoring::cryst::fix_bfactorsH( pose );
 	}
+	if ( basic::options::option[ basic::options::OptionKeys::out::file::pdb_comments]() ) {
+		utility::io::izstream data(fd.filename);
+		
+		std::string line;
+		while( getline( data, line ) ) {
+		if( line != "##Begin comments##")
+		continue;
+		getline( data, line );
+		while (line != "##End comments##"){
+		//TR<<"Testing read comments! :"<<line<<std::endl;
+		std::string const key;
+		std::string const value;
+		utility::vector1<std::string> comment_line(utility::string_split(line,' '));
+		core::pose::add_comment(pose,comment_line[1],comment_line[2]);
+		getline( data, line );
+	}
+	}
+	}
 }
 
 ///@details The input rsd_type_list are all the residue types that have
