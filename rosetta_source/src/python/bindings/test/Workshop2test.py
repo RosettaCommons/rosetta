@@ -9,7 +9,10 @@ from rosetta import *
 init()
 
 pose = pose_from_pdb("test/data/workshops/1YY8.clean.pdb")
-pose2 = pose_from_rcsb("1YY8")
+
+# Commenting out this for now to allow tests pass without net connection
+#pose2 = pose_from_rcsb("1YY8")
+
 
 print pose
 print pose.sequence()
@@ -46,4 +49,3 @@ pose.set_chi(1, 5, 180)
 
 pose.conformation().set_bond_length(R5N, R5CA, 1.5)
 pose.conformation().set_bond_angle(R5N, R5CA, R5C, 110./180.*3.14159)
-
