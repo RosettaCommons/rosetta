@@ -1053,8 +1053,8 @@ void FACTSPotential::calculate_GBpair_exact(
 
 			Real BRij = BRi*BRj;
 			Real tmp1 = dis2/Kappa();
-			Real tmp2 = exp(-tmp1/BRij);
-			//Real tmp2 = (Real)fastexp((float)(-tmp1/BRij));
+			//Real tmp2 = exp(-tmp1/BRij);
+			Real tmp2 = (Real)fastexp((float)(-tmp1/BRij));
 			Real tmp3 = dis2 + BRij*tmp2 - dshift2;
 			if ( !(tmp3 > 1.0e-3) ) continue;
 
@@ -1065,8 +1065,8 @@ void FACTSPotential::calculate_GBpair_exact(
 			// Shift function (required for truncation at cut_off)
 			Real sf1 = 1.0 - dis2/cut_off_square;
 			Real sf2 = sf1*sf1;
-			Real sf_elec = std::pow( sf1, elec_sh_exponent_ );
-			//Real sf_elec = (Real)fastpow( (float)sf1, (float)elec_sh_exponent_ );
+			//Real sf_elec = std::pow( sf1, elec_sh_exponent_ );
+			Real sf_elec = (Real)fastpow( (float)sf1, (float)elec_sh_exponent_ );
 
 			// Derivative stuffs
 			Real g1 = 0.5*fsolv/tmp3;
@@ -1297,9 +1297,9 @@ FACTSPotential::atom_atom_context_derivative( FACTSResidueInfo & facts1,
 		TR << "Bad nonpolar derivatives! " << drv_dot2 << std::endl;
 		return;
 	} else {
-		facts1.sasaF2_[atm1] -= dSA_drij_for_F2;
+		facts1.sasaF2_[atm1] += dSA_drij_for_F2;
 		if( full_update || facts2.enumeration_shell() ) 
-			facts2.sasaF2_[atm2] += dSA_drij_for_F2;
+			facts2.sasaF2_[atm2] -= dSA_drij_for_F2;
 	}
 }
 
