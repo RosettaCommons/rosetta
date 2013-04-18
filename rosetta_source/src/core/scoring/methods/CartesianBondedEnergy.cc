@@ -189,7 +189,8 @@ ResidueCartBondedParameters::ResidueCartBondedParameters() :
 	bb_CA_index_( 0 ),
 	bb_C_index_( 0 ),
 	bb_O_index_( 0 ),
-	bb_H_index_( 0 )
+	bb_H_index_( 0 ),
+	pro_CD_index_( 0 )
 {}
 
 ResidueCartBondedParameters::~ResidueCartBondedParameters() {}
@@ -239,6 +240,7 @@ void ResidueCartBondedParameters::bb_CA_index( Size index ) { bb_CA_index_ = ind
 void ResidueCartBondedParameters::bb_C_index( Size index )  { bb_C_index_  = index; }
 void ResidueCartBondedParameters::bb_O_index( Size index )  { bb_O_index_  = index; }
 void ResidueCartBondedParameters::bb_H_index( Size index )  { bb_H_index_  = index; }
+void ResidueCartBondedParameters::pro_CD_index( Size index )  { pro_CD_index_  = index; }
 
 void ResidueCartBondedParameters::ca_cprev_n_h_interres_torsion_params(
 	CartBondedParametersCOP params
@@ -252,6 +254,13 @@ void ResidueCartBondedParameters::ca_nnext_c_o_interres_torsion_params(
 )
 {
 	ca_nnext_c_o_interres_torsion_params_ = params;
+}
+
+void ResidueCartBondedParameters::pro_cd_cprev_n_ca_interres_torsion_params(
+	CartBondedParametersCOP params
+)
+{
+	pro_cd_cprev_n_ca_interres_torsion_params_ = params;
 }
 
 void ResidueCartBondedParameters::cprev_n_bond_length_params(
@@ -1433,6 +1442,9 @@ IdealParametersDatabase::create_parameters_for_restype(
 	if ( rsd_type.has( "H" ) ) {
 		restype_params->bb_H_index( rsd_type.atom_index( "H" ) );
 	}
+	if ( rsd_type.aa() == core::chemical::aa_pro && rsd_type.has( "CD" ) ) {
+		restype_params->pro_CD_index( rsd_type.atom_index( "CD" ) );
+	}
 
 	/// ca_cprev_n_h improper torsion
 	if ( restype_params->bb_N_index() != 0 && restype_params->bb_H_index() != 0 && restype_params->bb_CA_index() != 0 ) {
@@ -1444,6 +1456,12 @@ IdealParametersDatabase::create_parameters_for_restype(
 	if ( restype_params->bb_C_index() != 0 && restype_params->bb_O_index() != 0 && restype_params->bb_CA_index() != 0 ) {
 		CartBondedParametersCOP tor_params = lookup_torsion( rsd_type, "CA", "N", "C", "O" );
 		restype_params->ca_nnext_c_o_interres_torsion_params( tor_params );
+	}
+
+	// ca_nnext_c_o improper torsion
+	if ( restype_params->bb_C_index() != 0 && restype_params->bb_O_index() != 0 && restype_params->bb_CA_index() != 0 ) {
+		CartBondedParametersCOP tor_params = lookup_torsion( rsd_type, "CD", "C", "N", "CA" );
+		restype_params->pro_cd_cprev_n_ca_interres_torsion_params( tor_params );
 	}
 
 	// caprev_n bond length
@@ -2608,7 +2626,40 @@ CartesianBondedEnergy::eval_improper_torsions(
 		}
 	}
 
+	// proline N planarity
+	{
+		CartBondedParametersCOP tor_params = rsd1params.pro_cd_cprev_n_ca_interres_torsion_params();
+		if ( tor_params && !tor_params->is_null() ) {
+			Real const Kphi = tor_params->K(0,0);
+			Real const phi0=tor_params->mu(0,0);
+			Real const phi_step=2*pi/tor_params->period();
+			Real angle = numeric::dihedral_radians(
+				rsd2.xyz( rsd2params.pro_CD_index() ),
+				rsd1.xyz( rsd1params.bb_C_index() ),
+				rsd2.xyz( rsd2params.bb_N_index() ),
+				rsd2.xyz( rsd2params.bb_CA_index() )
+			);
+			Real del_phi = basic::subtract_radian_angles(angle, phi0);
+			del_phi = basic::periodic_range( del_phi, phi_step );
 
+			Real energy_torsion = eval_score( del_phi, Kphi, 0 );
+
+			// Send a message to the user about a bad angle, if necessary.
+			// Make sure not to send output to a tracer in the middle of
+			// scoring unless that tracer is visible, since that can be very expensive
+			if ( energy_torsion > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
+				TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd1.seqpos() << " pdbpos: " <<
+					pose.pdb_info()->number(rsd1.seqpos()) << " improper torsion: " <<
+					rsd1.name() << " : " <<
+					rsd1.atom_name( rsd1params.bb_O_index() ) << " , " << rsd1.atom_name( rsd1params.bb_C_index() ) << " , " <<
+					rsd2.atom_name( rsd2params.bb_N_index() ) << " , " << rsd1.atom_name( rsd1params.bb_CA_index() ) << "   (" <<
+					Kphi << ") " << angle << " " << phi0 << "    sc=" << energy_torsion << std::endl;
+			}
+
+			emap[ cart_bonded ] += energy_torsion;
+			emap[ cart_bonded_torsion ] += energy_torsion;
+		}
+	}
 }
 
 ///
@@ -3278,6 +3329,54 @@ CartesianBondedEnergy::eval_improper_torsion_derivatives(
 				res1.xyz( atm4 ), res1.xyz( atm3 ), res2.xyz( atm2 ), res1.xyz( atm1 ), phi, f1, f2 );
 			r1_atom_derivs[ atm4 ].f1() += dE_dphi * f1;
 			r1_atom_derivs[ atm4 ].f2() += dE_dphi * f2;
+		}
+	}
+
+	//proline N
+	{
+		CartBondedParametersCOP tor_params = rsd1params.pro_cd_cprev_n_ca_interres_torsion_params();
+		if ( tor_params && !tor_params->is_null() ) {
+			core::Size const atm1 = rsd2params.pro_CD_index();
+			core::Size const atm2 = rsd1params.bb_C_index();
+			core::Size const atm3 = rsd2params.bb_N_index();
+			core::Size const atm4 = rsd2params.bb_CA_index();
+
+			Real const Kphi = tor_params->K(0,0);
+			Real const phi0=tor_params->mu(0,0);
+			Real const phi_step=2*pi/tor_params->period();
+
+			Vector f1(0.0), f2(0.0);
+			Real phi=0, dE_dphi;
+
+			numeric::deriv::dihedral_p1_cosine_deriv(
+				res2.xyz( atm1 ), res1.xyz( atm2 ), res2.xyz( atm3 ), res2.xyz( atm4 ), phi, f1, f2 );
+			Real del_phi = basic::subtract_radian_angles(phi, phi0);
+			del_phi = basic::periodic_range( del_phi, phi_step );
+			if (linear_bonded_potential_ && std::fabs(del_phi)>1) {
+				dE_dphi = weight * Kphi * (del_phi>0? 0.5 : -0.5);
+			} else {
+				dE_dphi = weight * Kphi * del_phi;
+			}
+			r2_atom_derivs[ atm1 ].f1() += dE_dphi * f1;
+			r2_atom_derivs[ atm1 ].f2() += dE_dphi * f2;
+
+			f1 = f2 = Vector(0.0);
+			numeric::deriv::dihedral_p2_cosine_deriv(
+				res2.xyz( atm1 ), res1.xyz( atm2 ), res2.xyz( atm3 ), res2.xyz( atm4 ), phi, f1, f2 );
+			r1_atom_derivs[ atm2 ].f1() += dE_dphi * f1;
+			r1_atom_derivs[ atm2 ].f2() += dE_dphi * f2;
+
+			f1 = f2 = Vector(0.0);
+			numeric::deriv::dihedral_p2_cosine_deriv(
+				res2.xyz( atm4 ), res2.xyz( atm3 ), res1.xyz( atm2 ), res2.xyz( atm1 ), phi, f1, f2 );
+			r2_atom_derivs[ atm3 ].f1() += dE_dphi * f1;
+			r2_atom_derivs[ atm3 ].f2() += dE_dphi * f2;
+
+			f1 = f2 = Vector(0.0);
+			numeric::deriv::dihedral_p1_cosine_deriv(
+				res2.xyz( atm4 ), res2.xyz( atm3 ), res1.xyz( atm2 ), res2.xyz( atm1 ), phi, f1, f2 );
+			r2_atom_derivs[ atm4 ].f1() += dE_dphi * f1;
+			r2_atom_derivs[ atm4 ].f2() += dE_dphi * f2;
 		}
 	}
 }

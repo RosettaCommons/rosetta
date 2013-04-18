@@ -97,9 +97,11 @@ public:
 	void bb_C_index( Size index );
 	void bb_O_index( Size index );
 	void bb_H_index( Size index );
+	void pro_CD_index( Size index );
 
 	void ca_cprev_n_h_interres_torsion_params( CartBondedParametersCOP );
 	void ca_nnext_c_o_interres_torsion_params( CartBondedParametersCOP );
+	void pro_cd_cprev_n_ca_interres_torsion_params( CartBondedParametersCOP );
 	void cprev_n_bond_length_params( CartBondedParametersCOP );
 
 	utility::vector1< length_parameter > const &
@@ -152,6 +154,7 @@ public:
 	Size bb_C_index()  const { return bb_C_index_;  }
 	Size bb_O_index()  const { return bb_O_index_;  }
 	Size bb_H_index()  const { return bb_H_index_;  }
+	Size pro_CD_index( )  const { return pro_CD_index_;  }
 
 	CartBondedParametersCOP
 	ca_cprev_n_h_interres_torsion_params() const {
@@ -161,6 +164,11 @@ public:
 	CartBondedParametersCOP
 	ca_nnext_c_o_interres_torsion_params() const {
 		return ca_nnext_c_o_interres_torsion_params_;
+	}
+
+	CartBondedParametersCOP
+	pro_cd_cprev_n_ca_interres_torsion_params() const {
+		return pro_cd_cprev_n_ca_interres_torsion_params_;
 	}
 
 	CartBondedParametersCOP
@@ -192,9 +200,11 @@ private:
 	Size bb_C_index_;
 	Size bb_O_index_;
 	Size bb_H_index_;
+	Size pro_CD_index_;
 
 	CartBondedParametersCOP ca_cprev_n_h_interres_torsion_params_;
 	CartBondedParametersCOP ca_nnext_c_o_interres_torsion_params_;
+	CartBondedParametersCOP pro_cd_cprev_n_ca_interres_torsion_params_;
 	CartBondedParametersCOP cprev_n_bond_length_params_;
 
 };
