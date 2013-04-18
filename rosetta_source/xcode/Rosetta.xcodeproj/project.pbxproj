@@ -10599,6 +10599,10 @@
 		6AD6B86670E6EEAB9DD606F5 /* RMS_Energy.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RMS_Energy.cc; path = ../src/core/scoring/methods/RMS_Energy.cc; sourceTree = SOURCE_ROOT; };
 		6AE1C2757EE0195ECCB40D21 /* FastSAXSEnergy.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FastSAXSEnergy.cc; path = ../src/core/scoring/saxs/FastSAXSEnergy.cc; sourceTree = SOURCE_ROOT; };
 		6AE32E255EAF05BD963F53C7 /* LoopRemodelCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopRemodelCreator.hh; path = ../src/protocols/protein_interface_design/movers/LoopRemodelCreator.hh; sourceTree = SOURCE_ROOT; };
+		6AE8FC741707895500F25AA6 /* FastDesign.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FastDesign.cc; sourceTree = "<group>"; };
+		6AE8FC751707895500F25AA6 /* FastDesign.fwd.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = FastDesign.fwd.hh; sourceTree = "<group>"; };
+		6AE8FC761707895500F25AA6 /* FastDesign.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = FastDesign.hh; sourceTree = "<group>"; };
+		6AE8FC771707895500F25AA6 /* FastDesignCreator.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = FastDesignCreator.hh; sourceTree = "<group>"; };
 		6AFA70E275C01C06890F34BC /* LigandConformer.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LigandConformer.cc; path = ../src/protocols/toolbox/match_enzdes_util/LigandConformer.cc; sourceTree = SOURCE_ROOT; };
 		6B001262ED29467A8A32E171 /* PlacementMinimizationMoverCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PlacementMinimizationMoverCreator.hh; path = ../src/protocols/protein_interface_design/movers/PlacementMinimizationMoverCreator.hh; sourceTree = SOURCE_ROOT; };
 		6B11C23A8D56793660575960 /* rtmin.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = rtmin.cc; path = ../src/core/pack/rtmin.cc; sourceTree = SOURCE_ROOT; };
@@ -20107,6 +20111,10 @@
 		606E5CE337153652D7D6BFD0 /* denovo_design */ = {
 			isa = PBXGroup;
 			children = (
+				6AE8FC741707895500F25AA6 /* FastDesign.cc */,
+				6AE8FC751707895500F25AA6 /* FastDesign.fwd.hh */,
+				6AE8FC761707895500F25AA6 /* FastDesign.hh */,
+				6AE8FC771707895500F25AA6 /* FastDesignCreator.hh */,
 				600CC06C6A5155C9D113BD7F /* filters */,
 			);
 			name = denovo_design;

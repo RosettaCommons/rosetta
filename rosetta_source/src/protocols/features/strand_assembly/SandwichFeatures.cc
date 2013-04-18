@@ -250,23 +250,23 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 		// ending_loop
 
 
-	Column LR	("LR",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
+	Column LR	("LR",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
 
 	Column cano_LR	("cano_LR",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
 	// T, -> true, canonical chiral
 	// F, -> false, non-canonical chiral
 	// U, -> uncertain, this loop-size with this condition has no definite canonical chiral reference in the first place!
 
-	Column PA_by_preceding_E	("PA_by_preceding_E",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
-	Column PA_by_following_E	("PA_by_following_E",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
+	Column PA_by_preceding_E	("PA_by_preceding_E",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
+	Column PA_by_following_E	("PA_by_following_E",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
 
 	Column cano_PA	("cano_PA",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
 	// T, -> true, canonical PA
 	// F, -> false, non-canonical PA
 	// U, -> uncertain, this loop-size with this condition has no definite canonical PA reference in the first place!
 
-	Column heading_direction	("heading_direction",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
-	Column parallel_EE	("parallel_EE",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
+	Column heading_direction	("heading_direction",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
+	Column parallel_EE	("parallel_EE",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
 	Column cano_parallel_EE	("cano_parallel_EE",	new DbText(), true /* could be null*/, false /*no autoincrement*/);	
 	Column component_size	("component_size",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
 
@@ -339,7 +339,9 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	Column Y_surface_heading  ("Y_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
 	Column W_core_heading  ("W_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
 	Column W_surface_heading  ("W_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	
+
+	Column number_of_inward_pointing_AAs_in_a_pair_of_edge_strands ("number_of_inward_pointing_AAs_in_a_pair_of_edge_strands", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+
 	Column residue_begin("residue_begin", new DbInteger(), false /*not null*/, false /*don't autoincrement*/);
 	Column residue_end  ("residue_end", new DbInteger(), false /*not null*/, false /*don't autoincrement*/);
 
@@ -368,7 +370,7 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	sw_by_components.add_column(PA_by_preceding_E);
 	sw_by_components.add_column(PA_by_following_E);
 	sw_by_components.add_column(cano_PA);
-	sw_by_components.add_column(heading_direction);
+	sw_by_components.add_column(heading_direction); // nega,posi,meet ...
 	sw_by_components.add_column(parallel_EE);
 	sw_by_components.add_column(cano_parallel_EE);
 
@@ -394,7 +396,7 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	sw_by_components.add_column(F);
 	sw_by_components.add_column(Y);
 	sw_by_components.add_column(W);
-
+	
 	sw_by_components.add_column(R_core_heading);
 	sw_by_components.add_column(R_surface_heading);
 	sw_by_components.add_column(H_core_heading);
@@ -438,6 +440,8 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	sw_by_components.add_column(W_core_heading);
 	sw_by_components.add_column(W_surface_heading);
 
+	sw_by_components.add_column(number_of_inward_pointing_AAs_in_a_pair_of_edge_strands);
+	
 	sw_by_components.add_column(component_size);
 
 	// ForeignKey
@@ -638,12 +642,12 @@ SandwichFeatures::get_max_sheet_id(
 {
 	string select_string =
 	"SELECT\n"
-	"	max(sh.sheet_id) \n"
+	"	max(sheet_id) \n"
 	"FROM\n"
-	"	sheet AS sh \n"
+	"	sheet \n"
 	"WHERE\n"
-	"	(sh.struct_id = ?) \n"
-	"	AND (sh.sheet_id != 99999);";
+	"	(struct_id = ?) \n"
+	"	AND (sheet_id != 99999);";
 
 	statement select_statement(basic::database::safely_prepare_statement(select_string,db_session));
 	select_statement.bind(1,struct_id);
@@ -1465,6 +1469,8 @@ SandwichFeatures::check_strand_too_closeness(
 
 
 // check whether these sheets are too close, the closeness is checked for every possible distances
+// <tip> I don't need to worry about the possibility of having different distance results depending on directionality of strands since I calculate
+// all possible combinatorial distances
 Real
 SandwichFeatures::get_avg_dis_strands(
 	Pose const & pose,
@@ -2684,7 +2690,175 @@ SandwichFeatures::update_sw_by_components_by_AA_w_direction	(
 
 	basic::database::safely_write_to_database(insert_stmt);
 	return 0;
-} //update_sw_by_components_by_AA_w_direction
+} //SandwichFeatures::update_sw_by_components_by_AA_w_direction
+
+std::pair<Size, Size>
+SandwichFeatures::get_current_bs_id_and_closest_edge_bs_id_in_different_sheet (
+	boost::uuids::uuid struct_id,
+	utility::sql_database::sessionOP db_session,
+	Pose const & pose,
+	Size sw_can_by_sh_id,
+	Size sheet_id,
+	Size residue_begin,
+	Size residue_end)
+{
+	// <begin> retrieve current sw_by_components_bs_id
+	string select_string =
+	"SELECT\n"
+	"	sw_by_components_bs_id \n"
+	"FROM\n"
+	"	sw_by_components \n"
+	"WHERE\n"
+	"	(struct_id = ?) \n"
+	"	AND (sw_can_by_sh_id = ?) \n"
+	"	AND (residue_begin = ?);";
+
+	statement select_statement(basic::database::safely_prepare_statement(select_string,db_session));
+	select_statement.bind(1,	struct_id);
+	select_statement.bind(2,	sw_can_by_sh_id);
+	select_statement.bind(3,	residue_begin);
+	result res(basic::database::safely_read_from_database(select_statement));
+
+	Size current_sw_by_components_bs_id;
+	while(res.next())
+	{
+		res >> current_sw_by_components_bs_id;
+	}
+	// <end> retrieve current sw_by_components_bs_id
+
+
+	// <begin> retrieve other edge_strands in different sheet
+	string select_string_2 =
+	"SELECT\n"
+	"	residue_begin, \n"
+	"	residue_end \n"
+	"FROM\n"
+	"	sw_by_components \n"
+	"WHERE\n"
+	"	(struct_id = ?) \n"
+	"	AND (sw_can_by_sh_id = ?) \n"
+	"	AND (sheet_id != ?) \n"
+	"	AND (strand_edge = \"edge\") \n"
+	"	AND (residue_begin != ?);";
+
+	statement select_statement_2(basic::database::safely_prepare_statement(select_string_2,db_session));
+	select_statement_2.bind(1,	struct_id);
+	select_statement_2.bind(2,	sw_can_by_sh_id);
+	select_statement_2.bind(3,	sheet_id);
+	select_statement_2.bind(4,	residue_begin);
+	result res_2(basic::database::safely_read_from_database(select_statement_2));
+
+	utility::vector1<SandwichFragment> other_edge_strands;
+	while(res_2.next())
+	{
+		Size residue_begin,   residue_end;
+		res_2 >> residue_begin >> residue_end;
+		other_edge_strands.push_back(SandwichFragment(residue_begin, residue_end));
+	}
+	// <end> retrieve other edge_strands in different sheet
+
+
+	// <begin> see which other edge_strand is closest in different sheet
+	SandwichFragment temp_strand_i(residue_begin, residue_end);
+	Real temp_shortest = 999;
+	Size residue_begin_w_shortest_strand = 0; // just initial value to avoid warning
+	for(Size i=1; i<=other_edge_strands.size(); i++)
+	{
+		SandwichFragment temp_strand_j(other_edge_strands[i].get_start(), other_edge_strands[i].get_end());
+		Real inter_strand_avg_dis = get_avg_dis_strands (pose, temp_strand_i, temp_strand_j);
+		if (temp_shortest > inter_strand_avg_dis)
+		{
+			temp_shortest = inter_strand_avg_dis;
+			residue_begin_w_shortest_strand = other_edge_strands[i].get_start();
+		}
+	}
+		// <begin> retrieve the closest sw_by_components_bs_id
+		string select_string_3 =
+		"SELECT\n"
+		"	sw_by_components_bs_id \n"
+		"FROM\n"
+		"	sw_by_components \n"
+		"WHERE\n"
+		"	(struct_id = ?) \n"
+		"	AND (sw_can_by_sh_id = ?) \n"
+		"	AND (residue_begin = ?);";
+
+		statement select_statement_3(basic::database::safely_prepare_statement(select_string_3,db_session));
+		select_statement_3.bind(1,	struct_id);
+		select_statement_3.bind(2,	sw_can_by_sh_id);
+		select_statement_3.bind(3,	residue_begin_w_shortest_strand);
+		result res_3(basic::database::safely_read_from_database(select_statement_3));
+
+		Size closest_sw_by_components_bs_id;
+		while(res_3.next())
+		{
+			res_3 >> closest_sw_by_components_bs_id;
+		}
+		// <end> retrieve the closest sw_by_components_bs_id
+
+	// <end> see which other edge_strand is closest in different sheet
+
+	return std::make_pair(current_sw_by_components_bs_id, closest_sw_by_components_bs_id);
+	
+} // SandwichFeatures::get_current_bs_id_and_closest_edge_bs_id_in_different_sheet
+
+
+Size
+SandwichFeatures::report_number_of_inward_pointing_AAs_in_a_pair_of_edge_strands	(
+	boost::uuids::uuid struct_id,
+	utility::sql_database::sessionOP db_session,
+	Size sw_can_by_sh_id,
+	Size current_bs_id,
+	Size closest_bs_id)
+{
+	// <begin> sum numbers of inward-pointing-AAs in current_bs_id and closest_bs_id
+	string select_string =
+	"SELECT\n"
+	"	sum(K_core_heading + R_core_heading + E_core_heading + D_core_heading + H_core_heading) \n"
+	"FROM\n"
+	"	sw_by_components\n"
+	"WHERE\n"
+	"	(struct_id = ?) \n"
+	"	AND (sw_can_by_sh_id = ?) \n"
+	"	AND ((sw_by_components_bs_id = ?) or (sw_by_components_bs_id = ?));";
+
+	statement select_statement(basic::database::safely_prepare_statement(select_string,db_session));
+	select_statement.bind(1,struct_id);
+	select_statement.bind(2,sw_can_by_sh_id);
+	select_statement.bind(3,current_bs_id);
+	select_statement.bind(4,closest_bs_id);
+	result res(basic::database::safely_read_from_database(select_statement));
+
+	Size number_of_inward_pointing_AAs_in_a_pair_of_edge_strands;
+	while(res.next())
+	{
+		res >> number_of_inward_pointing_AAs_in_a_pair_of_edge_strands ;
+	}
+	// <end> sum numbers of inward-pointing-AAs in current_bs_id and closest_bs_id
+
+	// <begin> report
+	string insert =
+	"UPDATE sw_by_components set \n"
+	"number_of_inward_pointing_AAs_in_a_pair_of_edge_strands = ? \n"
+	"WHERE\n"
+	"	(sw_by_components_bs_id = ?)	\n"
+	"	AND (sw_can_by_sh_id = ?) \n"
+	"	AND	(struct_id = ?) ;";
+	
+	statement insert_stmt(basic::database::safely_prepare_statement(insert,	db_session));
+
+	insert_stmt.bind(1,	number_of_inward_pointing_AAs_in_a_pair_of_edge_strands);
+	insert_stmt.bind(2,	current_bs_id);
+	insert_stmt.bind(3,	sw_can_by_sh_id);
+	insert_stmt.bind(4,	struct_id);
+	
+	basic::database::safely_write_to_database(insert_stmt);
+	// <end> report
+
+	return 0;
+
+} //	SandwichFeatures::report_number_of_inward_pointing_AAs_in_a_pair_of_edge_strands
+
 
 //get_distinct(sw_can_by_sh_id) as a vector
 utility::vector1<Size>
@@ -2837,7 +3011,7 @@ SandwichFeatures::get_starting_res_for_connecting_strands(
 		res_sh_id >> sheet_id;
 	}
 	return std::make_pair(starting_res_for_connecting_strands, sheet_id);
-} //get_starting_res_for_connecting_strands
+} //	SandwichFeatures::get_starting_res_for_connecting_strands
 
 
 //get_next_starting_res_for_connecting_strands
@@ -4346,7 +4520,7 @@ SandwichFeatures::report_features(
 		TR.Info << "<begin> fill a table 'sw_by_components' by secondary_structure_segments" << endl;
 
 	utility::vector1<SandwichFragment> bs_of_sw_can_by_sh = prepare_to_fill_sw_by_components(struct_id, db_session); 
-		// It retrieves beta segments of sandwich_candidate_by_sheets, it does not make sandwich_candidate_by_components
+		// It retrieves beta segments of sandwich_candidate_by_sheets, it does not make sandwich_by_components
 
 	if (bs_of_sw_can_by_sh.size() == 0)
 	{
@@ -4440,9 +4614,40 @@ SandwichFeatures::report_features(
 				update_sw_by_components_by_AA_w_direction (struct_id, db_session, pose, bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id(),	bs_of_sw_can_by_sh[ii].get_sheet_id(), bs_of_sw_can_by_sh[ii].get_start(), bs_of_sw_can_by_sh[ii].get_end());
 			}
 		//// <end> count AA with direction
+
 	}
 /////////////////// <end> fill a table 'sw_by_components' by secondary_structure_segments
 		TR.Info << "<end> fill a table 'sw_by_components' by secondary_structure_segments" << endl;
+
+	//// <begin> report number_of_inward_pointing_AAs_in_a_pair_of_edge_strands
+	if (count_AA_with_direction_)
+	{
+		for(Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ++ii)
+		{
+			if (bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id() > max_num_sw_per_pdb_)
+			{
+				break;
+			}
+			string sheet_antiparallel = get_sheet_antiparallel_info(struct_id, db_session, bs_of_sw_can_by_sh[ii].get_sheet_id());
+			string strand_is_at_edge = see_whether_strand_is_at_edge	(
+									pose,
+									struct_id,
+									db_session,
+									bs_of_sw_can_by_sh[ii].get_sheet_id(),
+									sheet_antiparallel,
+									bs_of_sw_can_by_sh[ii].get_start(),
+									bs_of_sw_can_by_sh[ii].get_end());
+			if (strand_is_at_edge == "edge")
+			{
+				std::pair<Size, Size> current_bs_id_and_closest_edge_bs_id_in_different_sheet	=	get_current_bs_id_and_closest_edge_bs_id_in_different_sheet (struct_id, db_session, pose,	bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id(),	bs_of_sw_can_by_sh[ii].get_sheet_id(), bs_of_sw_can_by_sh[ii].get_start(),	bs_of_sw_can_by_sh[ii].get_end());
+				Size current_bs_id = current_bs_id_and_closest_edge_bs_id_in_different_sheet.first;
+				Size closest_bs_id = current_bs_id_and_closest_edge_bs_id_in_different_sheet.second;
+
+				report_number_of_inward_pointing_AAs_in_a_pair_of_edge_strands (struct_id, db_session, bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id(), current_bs_id,	closest_bs_id);
+			}
+		}
+	}
+	//// <end> report number_of_inward_pointing_AAs_in_a_pair_of_edge_strands
 
 	if (do_not_connect_sheets_by_loops_)
 	{
@@ -4504,46 +4709,42 @@ SandwichFeatures::report_features(
 
 			former_start_res = next_start_res;
 
-
-			if (max_H_in_extracted_sw_loop_ > 0)
+//////////// <begin> check by helix and strand numbers
+			//////////// <begin> check whether there is a helix as a loop in this extracted sandwich candidate
+			Size helix_num = 0;
+			for(Size kk=start_res+1; kk<=next_start_res-1; ++kk)
 			{
-				// <begin> check whether there is a helix as a loop in this extracted sandwich candidate
-				Size helix_num = 0;
-				for(Size kk=start_res+1; kk<=next_start_res-1; ++kk)
+				char res_ss( dssp_pose.secstruct( kk ) ) ;
+				if (res_ss == 'H')
 				{
-					char res_ss( dssp_pose.secstruct( kk ) ) ;
-					if (res_ss == 'H')
-					{
-						helix_num += 1;
-					}
+					helix_num += 1;
 				}
-				if (helix_num > max_H_in_extracted_sw_loop_)
-				{
-						TR << "helix_num > max_H_in_extracted_sw_loop_ " << endl;
-					bool_proper_num_helix_in_loop = false;
-				}
-				// <end> check whether there is a helix as a loop in this extracted sandwich candidate
 			}
-
-			if (max_E_in_extracted_sw_loop_ > 0)
+			if (helix_num > max_H_in_extracted_sw_loop_)
 			{
-				// <begin> check whether there is a strand as a loop in this extracted sandwich candidate
-				Size E_num = 0;
-				for(Size kk=start_res+1; kk<=next_start_res-1; ++kk)
-				{
-					char res_ss( dssp_pose.secstruct( kk ) ) ;
-					if (res_ss == 'E')
-					{
-						E_num += 1;
-					}
-				}
-				if (E_num > max_E_in_extracted_sw_loop_)
-				{
-						TR << "E_num > max_E_in_extracted_sw_loop_ " << endl;
-					bool_proper_num_E_in_loop = false;
-				}
-				// <end> check whether there is a strand as a loop in this extracted sandwich candidate
+					TR << "helix_num > max_H_in_extracted_sw_loop_ " << endl;
+				bool_proper_num_helix_in_loop = false;
 			}
+			//////////// <end> check whether there is a helix as a loop in this extracted sandwich candidate
+
+
+			//////////// <begin> check whether there is a strand as a loop in this extracted sandwich candidate
+			Size E_num = 0;
+			for(Size kk=start_res+1; kk<=next_start_res-1; ++kk)
+			{
+				char res_ss( dssp_pose.secstruct( kk ) ) ;
+				if (res_ss == 'E')
+				{
+					E_num += 1;
+				}
+			}
+			if (E_num > max_E_in_extracted_sw_loop_)
+			{
+					TR << "E_num > max_E_in_extracted_sw_loop_ " << endl;
+				bool_proper_num_E_in_loop = false;
+			}
+			//////////// <end> check whether there is a strand as a loop in this extracted sandwich candidate
+
 
 			if (!bool_proper_num_helix_in_loop || !bool_proper_num_E_in_loop)
 			{
@@ -4555,6 +4756,8 @@ SandwichFeatures::report_features(
 				chance_of_being_canonical_sw = false;
 				break; // break jj 'for' loop
 			}
+//////////// <end> check by helix and strand numbers
+
 
 			string LR = check_LR(dssp_pose, start_res+1, next_start_res-1);
 

@@ -518,6 +518,25 @@ public:
 		core::Size sheet_id_1,
 		core::Size sheet_id_2);
 
+	std::pair<core::Size, core::Size>	
+	get_current_bs_id_and_closest_edge_bs_id_in_different_sheet (
+		boost::uuids::uuid struct_id,
+		utility::sql_database::sessionOP db_session,
+		core::pose::Pose const & pose,
+		core::Size sw_can_by_sh_id,
+		core::Size sheet_id,
+		core::Size residue_begin,
+		core::Size residue_end);
+
+	core::Size
+	report_number_of_inward_pointing_AAs_in_a_pair_of_edge_strands (
+		boost::uuids::uuid struct_id,
+		utility::sql_database::sessionOP db_session,
+		core::Size sw_can_by_sh_id,
+		core::Size current_bs_id,
+		core::Size closest_bs_id);
+
+
 private:
 
 	core::Size
