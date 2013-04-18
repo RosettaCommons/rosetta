@@ -179,14 +179,14 @@ settings = {
             },
         },
 
-		"overrides" : {
+        "overrides" : {
             "flags" : {
                 "cc"        : [ "std=c99" ],   # "-isystem external/boost_1_46_1/"],
                 "cxx"       : [ "std=c++98" ], # "-isystem external/boost_1_46_1/" ],
                 "compile"   : [ "pipe", "ffor-scope" ],
                 "warn"      : [], # "Wall", "Wextra", "pedantic", "Wno-long-long" ],
-		    },
-		},
+            },
+        },
     },
 
     "gcc, debug" : {
@@ -669,7 +669,7 @@ settings = {
         "appends" : {
             "defines" : [ "USE_BOOST_THREAD", "MULTI_THREADED" ],
             "libraries"     : [ "pthread", "boost_thread" ],
-	    "library_path"  : [ "/usr/local/lib", "/opt/boost/lib" ],
+            "library_path"  : [ "/usr/local/lib", "/opt/boost/lib" ],
             "flags"         : {
                 "compile"   : [ "pthread" ],
             },
@@ -679,14 +679,14 @@ settings = {
     "gcc, apbs" : {
 
         "appends" : {
-		"defines" : [ "LINK_APBS_LIB" ],
-		"libraries" : [ "iapbs", "apbs_routines", "apbs_generic", "apbs_mg", "apbs_pmgc", "maloc" ],
-                "library_path" : [ "#external/apbs/apbs-1.4-rosetta/lib" ],
-                "include_path" : [ "#external/apbs/apbs-1.4-rosetta/include" ,
-                                   "#external/apbs/apbs-1.4-rosetta/include/iapbs",
-                                   "#external/apbs/apbs-1.4-rosetta/include/maloc",
-                                   "#external/apbs/apbs-1.4-rosetta/src",
-                                 ],
+            "defines" : [ "LINK_APBS_LIB" ],
+            "libraries" : [ "iapbs", "apbs_routines", "apbs_generic", "apbs_mg", "apbs_pmgc", "maloc" ],
+            "library_path" : [ "#external/apbs/apbs-1.4-rosetta/lib" ],
+            "include_path" : [ "#external/apbs/apbs-1.4-rosetta/include" ,
+                               "#external/apbs/apbs-1.4-rosetta/include/iapbs",
+                               "#external/apbs/apbs-1.4-rosetta/include/maloc",
+                               "#external/apbs/apbs-1.4-rosetta/src",
+                             ],
         },
     },
 
@@ -738,14 +738,14 @@ settings = {
         },
     },
 
-		"gcc, lto" : {
-			"appends" : {
-				"flags" : {
-					"compile" : ["flto", "fwhole-program"],
-					"link" : ["flto", "fwhole-program"],
-				},
-			},
-		},
+    "gcc, lto" : {
+        "appends" : {
+            "flags" : {
+                "compile" : ["flto", "fwhole-program"],
+                "link" : ["flto", "fwhole-program"],
+            },
+        },
+    },
 
     "gcc, linux, static" : {
         "appends" : {
@@ -776,25 +776,25 @@ settings = {
         },
     },
 
-	# include python interpreter
-	"gcc, python" : {
-		"appends" : {
-			"include_path" : [ "#external/include/python2.7" ],
-			"defines"      : [ "WITH_PYTHON=1" ],
-			"libraries" : [ "python2.7","dl","pthread","util" ],
-		},
-	},
+    # include python interpreter
+    "gcc, python" : {
+        "appends" : {
+            "include_path" : [ "#external/include/python2.7" ],
+            "defines"      : [ "WITH_PYTHON=1" ],
+            "libraries" : [ "python2.7","dl","pthread","util" ],
+        },
+    },
 
     # below is a fix for compiling with extras=graphics on OSX 10.5. For more information, see Apple's page here:
     # http://developer.apple.com/qa/qa2007/qa1567.html
     # tex - 8/8/2008
 
     #"gcc, macos, 9.4, graphics" : {
-    #	"appends" : {
-    #		"flags" : {
-    #			"compile" : [ "-dylib_file /system/library/frameworks/opengl.framework/versions/a/libraries/libgl.dylib:/system/library/frameworks/opengl.framework/versions/a/libraries/libgl.dylib" ],
-    #		},
-    #	},
+    #    "appends" : {
+    #        "flags" : {
+    #            "compile" : [ "-dylib_file /system/library/frameworks/opengl.framework/versions/a/libraries/libgl.dylib:/system/library/frameworks/opengl.framework/versions/a/libraries/libgl.dylib" ],
+    #        },
+    #    },
     #},
 
     "gcc, ia64, mpi" : {
@@ -873,9 +873,9 @@ settings = {
         },
     },
     "icc, 12.0, linux" : {
-	"override" : {
-	   "version" : [ "12","0" ],
-	},
+        "override" : {
+           "version" : [ "12","0" ],
+        },
     },
     "icc, linux, debug" : {
         "appends" : {
@@ -1188,7 +1188,7 @@ settings = {
                 "#external/dbio",
             ],
         },
-	    "removes" : {
+        "removes" : {
             "include_path"  : [
                 "/usr/local/include",
                 "/usr/include",
@@ -1197,7 +1197,7 @@ settings = {
                 "/usr/local/lib",
                 "/usr/lib",
             ],
-	    }
+        }
     },
 
     # Clang
@@ -1206,17 +1206,23 @@ settings = {
             "cc" : "clang",
             "cxx" : "clang++",
         },
-				"appends" : {
-				    "flags" : {
+        "appends" : {
+            "flags" : {
                 # We don't use any C -- but if we did would it really
                 # be C99?  Are there portability issues?
                 "cc"        : [ "std=c99", "isystem external/boost_1_46_1/" ],
                 "cxx"       : [ "std=c++98", "isystem external/boost_1_46_1/" ],
                 "compile"   : [ "pipe", "Qunused-arguments" ],
                 # By default, warn as much as possible.
-                "warn"      : [ "W", "Weverything", "Wno-long-long" ],
+                #"warn"      : [ "W", "Weverything",
+                #                "Wno-documentation",
+                #                "Wno-long-long",
+                #                "Wno-padded",
+                #                "Wno-weak-vtables"
+                #              ],
+                "warn"      : [ "W", "pedantic", "Wno-long-long" ],
             },
-		    },
+        },
     },
     "clang, debug" : {
         "appends" : {
