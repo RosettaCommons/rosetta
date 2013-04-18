@@ -809,14 +809,13 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 			}//foreach segment_tag
 		}// fi Segments
 	}//foreach sub_tag
-
+	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	add_sequence_constraints_only( tag->getOption< bool >( "add_sequence_constraints_only", false ) );
 	if( add_sequence_constraints_only() ){
 		TR<<"add_sequence_constraints only set to true. Therefore I'm not parsing any of the other Splice flags. Ask Assaf!"<<std::endl;
 		return;
 	}
 
-  scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	start_pose_ = new core::pose::Pose( pose );
 	runtime_assert( tag->hasOption( "task_operations" ) != (tag->hasOption( "from_res" ) || tag->hasOption( "to_res" ) ) || tag->hasOption( "torsion_database" ) ); // it makes no sense to activate both taskoperations and from_res/to_res.
 	runtime_assert( tag->hasOption( "torsion_database" ) != tag->hasOption( "source_pdb" ) );
@@ -1163,7 +1162,7 @@ Splice::generate_sequence_profile(core::pose::Pose & pose)
 	//	std::string temp_pdb_name = pdb_tag.erase(pdb_tag.size() - 5); //JD adds "_0001" to input name, we need to erase it
 		//pdb_tag = temp_pdb_name +".pdb";
 		TR<<" The scafold file name is :"<<pdb_tag<<std::endl;//file name of -s pdb file
-		core::pose::read_comment_pdb(pdb_tag,pose); //read comments from pdb file
+	//	core::pose::read_comment_pdb(pdb_tag,pose); //read comments from pdb file
 /*		std::string pdb_dump_fname_("test2");
 		std::ofstream out( pdb_dump_fname_.c_str() );
 		pose.dump_pdb(out); //Testing out comment pdb, comment this out after test (GDL) */
@@ -1198,16 +1197,16 @@ Splice::generate_sequence_profile(core::pose::Pose & pose)
 			tempPDBname.erase(period_idx);
 		}
 		if (!add_sequence_constraints_only_){///If only doing sequence constraints then don't add to pose comments source name
-		TR<<"!!!!!!!!!the currnet segment is: "<<segment_type_<<" and the source pdb is "<<tempPDBname<<std::endl;
+		TR<<"Current Segment is: "<<segment_type_<<" and the source pdb is "<<tempPDBname<<std::endl;
 		core::pose::add_comment(pose,"segment_"+segment_type_,tempPDBname);//change correct association between current loop and pdb file
 		}
 
 		load_pdb_segments_from_pose_comments(pose); // get segment name and pdb accosiation from comments in pdb file
-		TR<<"!!!!!!!!!the size of pdb segments is: "<<pdb_segments_.size()<<std::endl;
+		TR<<"Number of PDB segments is: "<<pdb_segments_.size()<<std::endl;
 
 
 		runtime_assert( pdb_segments_.size() ); //This assert is in place to make sure that the pdb file has the correct comments, otherwise this function will fail
-//		pose.dump_pdb("test"); //Testing out comment pdb, comment this out after test (GDL)
+		//pose.dump_pdb("test"); //Testing out comment pdb, comment this out after test (GDL)
 
 		// test that all PDB_segments are present
 		//for( map< string, string >::const_iterator i = pdb_segments_.begin(); i != pdb_segments_.end(); ++i ){
