@@ -1,82 +1,31 @@
-// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
-// vi: set ts=2 noet:
-//
-// (c) Copyright Rosetta Commons Member Institutions.
-// (c) This file is part of the Rosetta software suite and is made available under license.
-// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
-// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
-
-/// @file Mike Tyka
-/// @brief
-
-
 // libRosetta headers
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/DockDesignParser.hh>
-#include <protocols/frag_picker/VallChunk.hh>
-
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/curl.hh>
 
 #include <core/svn_version.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/import_pose/pose_stream/util.hh>
 
-#include <core/chemical/ChemicalManager.hh>
-#include <core/kinematics/Jump.hh>
-#include <core/kinematics/RT.hh>
 #include <basic/options/option.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/rms_util.tmpl.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyMap.hh>
-#include <core/scoring/ScoreType.hh>
-#include <core/scoring/ScoreTypeManager.hh>
 
 #include <basic/Tracer.hh>
 
 #include <devel/init.hh>
-#include <protocols/relax/FastRelax.hh>
-#include <protocols/match/Hit.fwd.hh>
-#include <protocols/moves/Mover.hh>
 #include <protocols/rpc/rpc.hh>
-#include <protocols/loophash/LoopHashRelaxProtocol.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/exit.hh>
 
-#include <core/io/silent/SilentStruct.fwd.hh>
-#include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/silent.fwd.hh>
-#include <core/io/silent/SilentStructFactory.hh>
-#include <core/io/silent/SilentStruct.hh>
-
-#include <protocols/relax/RelaxProtocolBase.hh>
-#include <protocols/relax/util.hh>
 #include <protocols/evaluation/EvaluatorFactory.hh>
 #include <protocols/evaluation/PoseEvaluator.hh>
 
 #include <protocols/loophash/LoopHashLibrary.hh>
-#include <protocols/loophash/LoopHashRelaxProtocol.hh>
-
-#include <protocols/jd2/DockDesignParser.hh>
 
 // C++ headers
-//#include <cstdlib>
 #include <iostream>
 #include <string>
 
 // option key includes
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/relax.OptionKeys.gen.hh>
-#include <basic/options/keys/batch_relax.OptionKeys.gen.hh>
-#include <basic/options/keys/rbe.OptionKeys.gen.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
-
 
 #include <utility/json_spirit/json_spirit_value.h>
 #include <utility/json_spirit/json_spirit_reader.h>
@@ -84,190 +33,11 @@
 #include <utility/json_spirit/json_spirit_tools.hh>
 
 #include <utility/vector1.hh>
-#include <utility/inline_file_provider.hh>
-#include <numeric/random/random.hh>
-
-#include <curl/curl.h>
-
 
 static basic::Tracer TR("main");
-static numeric::random::RandomGenerator RG(7293464);
-
-class CurlGet {
- public:
-   CurlGet() { }
-
-  // This is the writer call back function used by curl
-  static int writer(char *data, size_t size, size_t nmemb,
-                    std::string *buffer)
-  {
-    // What we will return
-    int result = 0;
-
-    // Is there anything in the buffer?
-    if (buffer != NULL)
-    {
-      // Append the data to the buffer
-      buffer->append(data, size * nmemb);
-
-      // How much did we write?
-      result = size * nmemb;
-    }
-
-    return result;
-  }
-
- private:
-  char *getErrorBuffer() { return &errorBuffer[0]; }
-
-  std::string * getbuffer() { return &buffer; }
-
- public:
-  std::string get( const std::string &url ){
-    std::cout << "Retrieving " << url << std::endl;
-
-    // Our curl objects
-    CURL *curl;
-    CURLcode result;
-
-    // Create our curl handle
-    curl = curl_easy_init();
-
-    if (curl)
-    {
-      // Now set up all of the curl options
-      curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, getErrorBuffer() );
-      curl_easy_setopt(curl, CURLOPT_URL, url.c_str() );
-      curl_easy_setopt(curl, CURLOPT_HEADER, 0);
-      curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
-      curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, this->writer);
-      curl_easy_setopt(curl, CURLOPT_WRITEDATA, getbuffer() );
-
-      // Attempt to retrieve the remote page
-      result = curl_easy_perform(curl);
-
-      // Always cleanup
-      curl_easy_cleanup(curl);
-
-      // Did we succeed?
-      if (result == CURLE_OK)
-      {
-        return buffer;
-      }
-      else
-      {
-        std::stringstream ss;
-        ss << "Error: [" << result << "] - " << errorBuffer;
-        throw std::string( ss.str() );
-      }
-    }
-  }
-
- private:
-
-  // Write any errors in here
-  char errorBuffer[CURL_ERROR_SIZE];
-
-  // Write all expected data in here
-  std::string buffer;
-};
-
-
-class CurlPost {
- public:
-   CurlPost() { }
-
-  // This is the writer call back function used by curl
-  static int writer(char *data, size_t size, size_t nmemb,
-                    std::string *buffer)
-  {
-    // What we will return
-    int result = 0;
-    //std::cout << "Buffer: " << *buffer << std::endl;
-    // Is there anything in the buffer?
-    if (buffer != NULL)
-    {
-      // Append the data to the buffer
-      buffer->append(data, size * nmemb);
-
-      // How much did we write?
-      result = size * nmemb;
-    }
-
-    return result;
-  }
-
- private:
-  char *getErrorBuffer() { return &errorBuffer[0]; }
-
-  std::string * getreadbuffer() { return &readbuffer; }
-
-  std::string * getwritebuffer() { return &writebuffer; }
-
- public:
-  std::string post( const std::string &url, const std::string &data, const std::string &fields ){
-    std::cout << "Retrieving " << url << std::endl;
-
-    // Our curl objects
-    CURL *curl;
-    CURLcode result;
-
-    // Create our curl handle
-    curl = curl_easy_init();
-
-    if (curl)
-    {
-      // fill read buffer
-      readbuffer = data;
-
-      // Now set up all of the curl options
-      curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, getErrorBuffer() );
-      curl_easy_setopt(curl, CURLOPT_URL, url.c_str() );
-      curl_easy_setopt(curl, CURLOPT_POSTFIELDS, fields.c_str() );
-      curl_easy_setopt(curl, CURLOPT_HEADER, 0);
-      curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
-      curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, this->writer);
-      curl_easy_setopt(curl, CURLOPT_WRITEDATA, getwritebuffer() );
-
-      // Attempt to retrieve the remote page
-      result = curl_easy_perform(curl);
-
-      // Always cleanup
-      curl_easy_cleanup(curl);
-
-      // Did we succeed?
-      if (result == CURLE_OK)
-      {
-        return writebuffer;
-      }
-      else
-      {
-        std::stringstream ss;
-        ss << "Error: [" << result << "] - " << errorBuffer;
-        throw std::string( ss.str() );
-      }
-    }
-  }
-
- private:
-
-  // Write any errors in here
-  char errorBuffer[CURL_ERROR_SIZE];
-
-  // Write all expected input and out data in here
-  std::string readbuffer;
-  std::string writebuffer;
-};
-
-
-
 
 // Read to go protocols - these are slow to init:
 protocols::loophash::LoopHashLibraryOP loop_hash_library;
-
-
-
-
 
 class ServerInfo {
  public:
@@ -299,11 +69,11 @@ class RosettaJob {
     rpc_(NULL)
    {}
 
-   bool request_job_from_server( )
+   bool request_job_from_server()
    {
       runtime_assert( !initialized_ )
 
-      CurlPost cg;
+      utility::CurlPost cg;
       std::string data;
       std::cout << "URL: " << serverinfo_.url_gettask() << std::endl;
       try {
@@ -380,11 +150,10 @@ class RosettaJob {
     }
 
 
-    bool return_results_to_server( bool error = false ){
-
+    bool return_results_to_server( bool error = false )
+    {
       utility::json_spirit::Object energies;
       utility::json_spirit::Object root;
-
 
       // set the output values
       root.push_back( utility::json_spirit::Pair( "parental_key",  key_ ) );   // the key and hash become parental_  key and hash
@@ -434,7 +203,7 @@ class RosettaJob {
       write( root, sstr );
       std::string output_json = "output=" + sstr.str();
       //std::cout << output_json << std::endl;
-      CurlPost cg;
+      utility::CurlPost cg;
       try {
         std::string return_data = cg.post( serverinfo_.url_putresult() , "", output_json );
         std::cout << "POST " << serverinfo_.url_putresult() << " : " << return_data << std::endl;
@@ -459,7 +228,6 @@ class RosettaJob {
  private:
 
   // input stuff (coming from the server)
-  core::pose::Pose inputpose_;
   std::string taskname_;
   std::string hash_;
   std::string key_;
@@ -480,17 +248,13 @@ class RosettaBackend {
       serverinfo_(serverinfo),
       basic_init_(basic_init)
     {}
-
- private:
-
+ 
  public:
 
     void run(){
       do{
         RosettaJob newjob(serverinfo_, basic_init_ );
-
         core::Size wait_count = 0;
-
         while( !newjob.request_job_from_server() ){
           core::Real waittime;
           //waittime =  std::min( (double)10.0f, 0.5f* pow( (float)1.3, (float) wait_count )); // in seconds
@@ -499,16 +263,11 @@ class RosettaBackend {
           sleep( waittime );
           wait_count ++;
         };
-
         newjob.run_and_return_to_server();
-
         std::cerr << "Returning results to server (mainloop)" << std::endl;
-
-
       } while (true);
 
     };
-
 
  private:
   ServerInfo serverinfo_;
@@ -520,44 +279,38 @@ class RosettaBackend {
 int
 main( int argc, char * argv [] )
 {
-    try {
- 	using namespace core;
- 	using namespace protocols;
- 	using namespace protocols::loophash;
- 	using namespace protocols::jd2;
- 	using namespace basic::options;
- 	using namespace basic::options::OptionKeys;
- 	using io::silent::SilentStructFactory;
- 	using io::silent::SilentStructOP;
+  using namespace core;
+  using namespace protocols;
+  using namespace protocols::loophash;
+  using namespace basic::options;
+  using namespace basic::options::OptionKeys;
+  try {
 
+    // initialize core
+    devel::init(argc, argv);
 
- 	// initialize core
- 	devel::init(argc, argv);
+    protocols::rpc::BasicCmdLineInit basic_init( argc, argv );
 
-  protocols::rpc::BasicCmdLineInit basic_init( argc, argv );
+    evaluation::PoseEvaluatorsOP evaluators_( new protocols::evaluation::PoseEvaluators() );
+    evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluators_);
 
-  evaluation::PoseEvaluatorsOP evaluators_( new protocols::evaluation::PoseEvaluators() );
-  evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluators_);
-
-  // initialize all the protocols
-  // these are slow so only do them once at start up not when the job is requested for lower latency.
-	if( option[lh::db_path].user() ){
-    utility::vector1 < core::Size > loop_sizes = option[lh::loopsizes]();
-    loop_hash_library = new LoopHashLibrary( loop_sizes );
-    loop_hash_library->load_db();
-  }
-
-  // set up the application server information package
-  ServerInfo server( option[rbe::server_url](), option[rbe::server_port](), option[rbe::poll_frequency ]() );
-  std::cout << "server: " << server.url_gettask() << std::endl;
-  RosettaBackend backend( server, &basic_init );
-
-
-  backend.run();
-
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
+    // initialize all the protocols
+    // these are slow so only do them once at start up not when the job is requested for lower latency.
+    if( option[lh::db_path].user() ){
+      utility::vector1 < core::Size > loop_sizes = option[lh::loopsizes]();
+      loop_hash_library = new LoopHashLibrary( loop_sizes );
+      loop_hash_library->load_db();
     }
-    return 0;
+
+    // set up the application server information package
+    ServerInfo server( option[rbe::server_url](), option[rbe::server_port](), option[rbe::poll_frequency ]() );
+    std::cout << "server: " << server.url_gettask() << std::endl;
+    RosettaBackend backend( server, &basic_init );
+    
+    backend.run();
+  } catch ( utility::excn::EXCN_Base const & e ) {
+    std::cerr << "Caught exception " << e.msg() << std::endl;
+  }
+  return 0;
 }
 
