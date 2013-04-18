@@ -736,10 +736,8 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type( pose::Pose const & p
     
     
 void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type_new_rule( pose::Pose const & pose ) {
-    TR << "AC Detecting Regular CDR H3 Stem Type" << std::endl;
-    
-
-	//Quick fix to get my stuff to work here due to more hardcoding of residues here.  
+	TR << "AC Detecting Regular CDR H3 Stem Type" << std::endl;
+     
 	if (numbering_scheme_ != Aroop){
 		TR << "Stem type could not be set."<<std::endl;
 		predicted_H3_base_type_ = Unknown;
