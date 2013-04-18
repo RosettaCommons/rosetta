@@ -327,9 +327,17 @@ LigInterfaceEnergyFilter::report( std::ostream & out, core::pose::Pose const & p
 	using ObjexxFCL::FArray1D_bool;
 
 		core::pose::Pose in_pose = pose;
+		// TL 4/2013: If rb_jump_ is unset, determine jump number according to the number of jumps currently in the pose
+		// previously, if this filter was used in RosettaScripts, rb_jump_ was initialized to jump number according to the number of jumps in the pose when the XML was parsed. This enables adding a ligand to the pose after the XML/Lua is parsed
+		core::Size jump;
+		if ( rb_jump_ == 0 ) {
+			jump = pose.num_jump();
+		} else {
+			jump = rb_jump_;
+		}
 		FArray1D_bool prot_res( in_pose.total_residue(), false );
-		in_pose.fold_tree().partition_by_jump( rb_jump_, prot_res);
-		protocols::scoring::Interface interface_obj(rb_jump_);
+		in_pose.fold_tree().partition_by_jump( jump, prot_res );
+		protocols::scoring::Interface interface_obj( jump );
 		in_pose.update_residue_neighbors();
 		interface_obj.distance( interface_distance_cutoff_ );
 		interface_obj.calculate( in_pose );
@@ -418,7 +426,7 @@ LigInterfaceEnergyFilter::constraint_energy( core::pose::Pose const & in_pose , 
 
 }
 void
-LigInterfaceEnergyFilter::parse_my_tag( TagPtr const tag, DataMap & data, Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
+LigInterfaceEnergyFilter::parse_my_tag( TagPtr const tag, DataMap & data, Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
   using namespace core::scoring;
 
@@ -426,7 +434,7 @@ LigInterfaceEnergyFilter::parse_my_tag( TagPtr const tag, DataMap & data, Filter
   scorefxn_ = new ScoreFunction( *(data.get< ScoreFunction * >( "scorefxns", scorefxn_name ) ));
   threshold_ = tag->getOption<core::Real>( "energy_cutoff", 0.0 );
   include_cstE_ = tag->getOption<bool>( "include_cstE" , 0 );
-  rb_jump_ = tag->getOption<core::Size>( "jump_number", pose.num_jump() ); //assume ligand is connected by last jump
+  rb_jump_ = tag->getOption<core::Size>( "jump_number", 0 );
   interface_distance_cutoff_ = tag->getOption<core::Real>( "interface_distance_cutoff" , 8.0 );
 
 }
