@@ -425,12 +425,23 @@ GenericMonteCarloMover::reset( Pose & pose )
   if( filters_.size() == 0 ) {
     lowest_score_ = scoring( pose );
 	} else {
+		core::Real ranking_score( 0.0 );
     last_accepted_scores_.clear();
     for( Size index = 1; index <= filters_.size(); ++index ){
       protocols::filters::FilterCOP filter( filters_[ index ] );
       Real const flip( sample_types_[ index ] == "high" ? -1 : 1 );
       last_accepted_scores_.push_back( flip * filter->report_sm( pose ) );
+			if ( index == rank_by_filter_ ) {
+				ranking_score = last_accepted_scores_[ rank_by_filter_ ];
+			}
     }
+		if ( boltz_rank_ ) {
+			ranking_score = 0.0;
+			for ( Size index = 1; index <= filters_.size(); ++index ) {
+				ranking_score += last_accepted_scores_[ index ] / temperatures_[ index ];
+			}
+		}
+		lowest_score_ = ranking_score;
   }// fi filters_.size()
 
   lowest_score_pose_ = new Pose( pose );
@@ -491,7 +502,7 @@ GenericMonteCarloMover::boltzmann( Pose & pose )
       Real const temp( temperatures_[ index ] );
       Real const flip( sample_types_[ index ] == "high" ? -1 : 1 );
 			core::Real const filter_val( filter->report_sm( pose ));
-			TR<<"Filter "<<index<<" reports "<<filter_val<<std::endl;
+			TR<<"Filter "<<index<<" reports "<<filter_val<<" ( best="<<last_accepted_scores_[index]<<" )"<<std::endl;
 
       provisional_scores.push_back( flip * filter_val );
       if( index == rank_by_filter_ ) {
@@ -556,7 +567,7 @@ GenericMonteCarloMover::boltzmann( Pose & pose )
 	 	                                out << i->first<<" "<<i->second << std::endl;
 	 	                        }
 	 	                        out << "##End comments##" << std::endl;
-	*/					
+	*/
 					}
 					else{
 					pose.dump_pdb( saved_accept_file_name_ );
