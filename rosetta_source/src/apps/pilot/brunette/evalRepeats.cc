@@ -199,6 +199,17 @@ Real res_type_score(const core::pose::Pose& pose){
 	return score;
 }
 
+Real ala_ct(const core::pose::Pose& pose){
+  Real score = 0;
+	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		if(pose.residue(ii).name3() == "ALA") 
+            score++;
+	}
+	std::cout << "score: " << score << std::endl;
+	return score;
+}
+
+
 Real get_hb_srbb_score(const core::pose::Pose& pose){
 	//note hb_srbb flag increases the hbond_sr_bb.
 	using namespace core::scoring;
@@ -228,7 +239,7 @@ int main( int argc, char * argv [] ) {
 	//create vector of input poses.
 	MetaPoseInputStream input = streams_from_cmd_line();
 	vector1<core::pose::PoseOP> poses;
-	output << "score" <<" " << "holes" << " " << "distance1_2" << " " << "distance1_1prime" << " "<< "distance1_2prime" <<" " <<  "distance2_2prime" << " " << "distance_endpoint" <<" " << "theta" << " " << "sigma" << " " << "phi" << " " << "tag" <<" " <<"resTypeScore" << " " << "hbsrbb" << "  " << "abego" << std::endl;
+	output << "score" <<" " << "holes" << " " << "distance1_2" << " " << "distance1_1prime" << " "<< "distance1_2prime" <<" " <<  "distance2_2prime" << " " << "distance_endpoint" <<" " << "theta" << " " << "sigma" << " " << "phi" << " " << "tag" <<" " <<"resTypeScore" << " " << "alaCt" << "  " << "hbsrbb" << "  " << "abego" << std::endl;
 	while(input.has_another_pose()){
 		core::pose::PoseOP input_poseOP;
 		input_poseOP = new core::pose::Pose();
@@ -252,15 +263,16 @@ int main( int argc, char * argv [] ) {
 				 Real sigma;
 				 Real phi;
 				 get_angles(*input_poseOP,helices[1],helices[2],theta,sigma,phi);
-				 //Real holesScore = get_holes_score(*input_poseOP);
-				 //core::scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
-				 //Real fa_score = scorefxn->score(*input_poseOP);
-				 Real holesScore = 0;
-				 Real fa_score = 0;
+				 Real holesScore = get_holes_score(*input_poseOP);
+				 core::scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
+				 Real fa_score = scorefxn->score(*input_poseOP);
+				 //Real holesScore = 0;
+				 //Real fa_score = 0;
 				 Real resTypeScore = res_type_score(*input_poseOP);
-				 Real hb_srbb_score = get_hb_srbb_score(*input_poseOP);
+				 Real alaCt = ala_ct(*input_poseOP);
+                 Real hb_srbb_score = get_hb_srbb_score(*input_poseOP);
 				 utility::vector1< std::string >  abego_vector = core::util::get_abego(*input_poseOP,1);
-				 output << F(8,3,fa_score) << " " <<F(8,3,holesScore) <<" "<< F(8,3,distance1_2) << " "<< F(8,3,distance1_1prime) << " "<< F(8,3,distance1_2prime) << " "<< F(8,3,distance2_2prime)  <<" " << F(8,3,distance_endpoint) <<" " << F(8,3,theta) << " "<< F(8,3,sigma) << " " << F(8,3,phi) << " " << I(6,tag) <<" " << I(4,resTypeScore) << " " <<F(8,3,hb_srbb_score) << "  " ;
+				 output << F(8,3,fa_score) << " " <<F(8,3,holesScore) <<" "<< F(8,3,distance1_2) << " "<< F(8,3,distance1_1prime) << " "<< F(8,3,distance1_2prime) << " "<< F(8,3,distance2_2prime)  <<" " << F(8,3,distance_endpoint) <<" " << F(8,3,theta) << " "<< F(8,3,sigma) << " " << F(8,3,phi) << " " << I(6,tag) <<" " << I(4,resTypeScore) << " " << I(4,alaCt) << " " <<F(8,3,hb_srbb_score) << "  " ;
 				 for (int ii=1; ii<50; ++ii){
 					 output << abego_vector[ii];
 				 }

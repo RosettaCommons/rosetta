@@ -97,12 +97,12 @@ VallLibrarian::FragDataList VallLibrarian::fragments(
 	for ( Scores::const_iterator i = begin; i != end; ++i, ++num_frags_picked ) {
 		core::Real this_score(i->score);
 		if( this_score < max_allowed_score ){
-			fdl.push_back( extent_to_fragdata( i->extent_begin, i->extent_end, srfd_type ) );
+			fdl.push_back( extent_to_fragdata( i->extent_begin, i->extent_end, this_score, srfd_type ) );
 		}
 		else {
 			if( fdl.size() == 0 ){ //in case every fragment was too bad we only take the first to prevent crash
 				TR_ << "no fragments had good score, only picking 1. this is probably a bad sign..." << std::endl;
-				fdl.push_back( extent_to_fragdata( begin->extent_begin, begin->extent_end, srfd_type ) );
+				fdl.push_back( extent_to_fragdata( begin->extent_begin, begin->extent_end,this_score, srfd_type ) );
 			}
 			else TR_ << "fragments with bad score (" << this_score << ") observed after fragment " << num_frags_picked << ", skipping everything afterwards." << std::endl;
 			break;

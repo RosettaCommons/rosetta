@@ -681,10 +681,10 @@ option.add( basic::options::OptionKeys::fold_cst::no_recover_low_at_constraint_s
 option.add( basic::options::OptionKeys::fold_cst::ramp_coord_cst, "ramp coord csts just like chainbreak-weights during fold-cst" ).def(false);
 option.add( basic::options::OptionKeys::resample::resample, "resample option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::resample::silent, "a silent file for decoys to restart sampling from " ).def("");
+option.add( basic::options::OptionKeys::resample::tag, "which decoy to select from silent file " ).def("");
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::resample::tag, "which decoy to select from silent file " ).def("");
-option.add( basic::options::OptionKeys::resample::stage1, "if true restart after stage1, otherwise after stage2 " ).def(false);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::resample::stage1, "if true restart after stage1, otherwise after stage2 " ).def(false);
 option.add( basic::options::OptionKeys::resample::stage2, "if true restart after stage1, otherwise after stage2 " ).def(false);
 option.add( basic::options::OptionKeys::resample::jumps, "if true restart after stage1, otherwise after stage2 " ).def(false);
 option.add( basic::options::OptionKeys::resample::min_max_start_seq_sep, "range of (random) start values for seq-separation" ).def(0);
@@ -1362,10 +1362,10 @@ option.add( basic::options::OptionKeys::lh::fragpdb::fragpdb, "fragpdb option gr
 option.add( basic::options::OptionKeys::lh::fragpdb::out_path, "Path where pdbs are saved" ).def("");
 option.add( basic::options::OptionKeys::lh::fragpdb::indexoffset, "list of index offset pairs" ).def(-1);
 option.add( basic::options::OptionKeys::lh::fragpdb::bin, "list of bin keys" ).def(utility::vector1<std::string>());
+option.add( basic::options::OptionKeys::lh::symfragrm::symfragrm, "symfragrm option group" ).legal(true).def(true);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::symfragrm::symfragrm, "symfragrm option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::lh::symfragrm::pdblist, "list of pdbs to be processed" );
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::symfragrm::pdblist, "list of pdbs to be processed" );
 option.add( basic::options::OptionKeys::rbe::rbe, "rbe option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::rbe::server_url, "serverurl for rosetta backend" );
 option.add( basic::options::OptionKeys::rbe::server_port, "port for rosetta backend" ).def("80");
@@ -2042,11 +2042,11 @@ option.add( basic::options::OptionKeys::RBSegmentRelax::nrbmoves, "number of rig
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrboutercycles, "number of rigid-body moves" ).def(5);
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_scorefxn, "number of rigid-body moves" ).def("score5");
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_fragment_moves, "omit fragment insertions (in SS elements)" ).def(false);
+option.add( basic::options::OptionKeys::RBSegmentRelax::skip_seqshift_moves, "omit sequence shifting moves" ).def(false);
+option.add( basic::options::OptionKeys::RBSegmentRelax::skip_rb_moves, "omit rigid-body moves" ).def(false);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::skip_seqshift_moves, "omit sequence shifting moves" ).def(false);
-option.add( basic::options::OptionKeys::RBSegmentRelax::skip_rb_moves, "omit rigid-body moves" ).def(false);
-option.add( basic::options::OptionKeys::RBSegmentRelax::helical_movement_params, "helical-axis-rotation, helical-axis-translation, off-axis-rotation, off-axis-translation" ).def(utility::vector1<float>(4,0.0));
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::helical_movement_params, "helical-axis-rotation, helical-axis-translation, off-axis-rotation, off-axis-translation" ).def(utility::vector1<float>(4,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::strand_movement_params, "strand-in-plane-rotation, strand-in-plane-translation, out-of-plane-rotation, out-of-plane-translationn" ).def(utility::vector1<float>(4,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::default_movement_params, "default-rotation, default-translation" ).def(utility::vector1<float>(2,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_seqwidth, "sequence width on constraints" ).def(0);
@@ -2259,10 +2259,12 @@ option.add( basic::options::OptionKeys::remodel::resclass_by_sasa, "switch to us
 option.add( basic::options::OptionKeys::remodel::helical_rise, "helical parameter: rise" ).def(0.0);
 option.add( basic::options::OptionKeys::remodel::helical_radius, "helical parameter: radius" ).def(0.0);
 option.add( basic::options::OptionKeys::remodel::helical_omega, "helical parameter: omega" ).def(0.0);
-option.add( basic::options::OptionKeys::remodel::abinitio_like_sampling, "sampling first with 9mers then 3mers. Staged energies. For rebuilding entire structure not loop closure" ).def(false);
-option.add( basic::options::OptionKeys::remodel::disallow_sampling_at_pos, "locations to disallow sampling (format:1,3,5)" ).def("");
-option.add( basic::options::OptionKeys::remodel::use_fragment_sequence, "use sequence from fragments" ).def(false);
-option.add( basic::options::OptionKeys::remodel::use_sequence, "AA sequence to use during remodel" ).def("");
+option.add( basic::options::OptionKeys::remodel::staged_sampling::staged_sampling, "sampling first with 9mers then 3mers. Staged energies. For rebuilding entire structure not loop closure" ).def(false);
+option.add( basic::options::OptionKeys::remodel::staged_sampling::residues_to_sample, "residues to allow sampling (format:1,3,5)" ).def("");
+option.add( basic::options::OptionKeys::remodel::staged_sampling::use_fragment_sequence, "swaps both backbone and residue type" ).def(false);
+option.add( basic::options::OptionKeys::remodel::staged_sampling::starting_sequence, "AA sequence to start" ).def("");
+option.add( basic::options::OptionKeys::remodel::staged_sampling::starting_pdb, "pdb to start" ).def("");
+option.add( basic::options::OptionKeys::remodel::staged_sampling::require_frags_match_blueprint, "makes sure the frags match the definition in the blueprint" ).def(true);
 option.add( basic::options::OptionKeys::remodel::domainFusion::domainFusion, "domainFusion option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::remodel::domainFusion::insert_segment_from_pdb, "segment pdb file to be inserted [insert pdb file name]." ).def("");
 option.add( basic::options::OptionKeys::remodel::vdw, "set vdw weight" ).def(1.0);

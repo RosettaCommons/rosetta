@@ -398,7 +398,8 @@ protected: // loop modeling stages
 		std::set<Size> const & disallowedPos,
 		bool const recover_low,
 		std::string stage_name,
-		bool const swapResTypes
+		bool const swapResTypes,
+		Real const fragScoreThreshold
 		);
 
 	/// @brief simultaneous stage: multiple loop movement prior to MC accept/reject
@@ -458,16 +459,17 @@ protected: // fragments
 		Size const largest_frag_size = 0
 	);
 	/// @brief same as create_fragment_movers except with set size
-	FragmentMoverOPs create_fragment_movers_limit_size_pos(
+	FragmentMoverOPs create_fragment_movers_limit_size(
 		MoveMap const & movemap,
 		Size const frag_size,
 		std::set<Size> const & disallowedPos,
-		bool const swapResType
+		bool const swapResType,
+		Real const fragScoreThreshold = 999.0
 		);
 
 	/// @brief append fragment movers for the list of internally kept fragment sets,
 	///  1 fragment mover for each fragment set
-	/// @param[in] movemap Use this movemap when initializing fragment movers.
+	/// @param[in] movemap Use this movemap/s when initializing fragment movers.
 	/// @param[out] frag_movers Append fragment movers to this list.
 	/// @param[in] largest_frag_size Only use fragment sets whose largest fragment
 	///  size is this number.  If zero, uses all fragment sets.
@@ -528,6 +530,15 @@ protected: // movemap
 		Size const left,
 		Size const right
 	);
+private: 
+	/// @brief initializes pose with starting pose
+	void set_starting_pdb(Pose & pose);
+
+	/// @brief initializes pose with starting sequence
+	void set_starting_sequence(Pose & pose);
+
+	/// @setup allowed positions per stage
+  std::set<core::Size> generate_residues_to_sample(bool chooseSubsetResidues, Pose & pose);
 
 private: // data
 

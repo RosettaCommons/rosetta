@@ -1,5 +1,3 @@
-namespace RBSegmentRelax { BooleanOptionKey const skip_seqshift_moves( "RBSegmentRelax:skip_seqshift_moves" );  }
-namespace RBSegmentRelax { BooleanOptionKey const skip_rb_moves( "RBSegmentRelax:skip_rb_moves" );  }
 namespace RBSegmentRelax { RealVectorOptionKey const helical_movement_params( "RBSegmentRelax:helical_movement_params" );  }
 namespace RBSegmentRelax { RealVectorOptionKey const strand_movement_params( "RBSegmentRelax:strand_movement_params" );  }
 namespace RBSegmentRelax { RealVectorOptionKey const default_movement_params( "RBSegmentRelax:default_movement_params" );  }
@@ -213,10 +211,12 @@ namespace remodel { BooleanOptionKey const resclass_by_sasa( "remodel:resclass_b
 namespace remodel { RealOptionKey const helical_rise( "remodel:helical_rise" );  }
 namespace remodel { RealOptionKey const helical_radius( "remodel:helical_radius" );  }
 namespace remodel { RealOptionKey const helical_omega( "remodel:helical_omega" );  }
-namespace remodel { BooleanOptionKey const abinitio_like_sampling( "remodel:abinitio_like_sampling" );  }
-namespace remodel { FileOptionKey const disallow_sampling_at_pos( "remodel:disallow_sampling_at_pos" );  }
-namespace remodel { BooleanOptionKey const use_fragment_sequence( "remodel:use_fragment_sequence" );  }
-namespace remodel { StringOptionKey const use_sequence( "remodel:use_sequence" );  }
+namespace remodel { namespace staged_sampling { BooleanOptionKey const staged_sampling( "remodel:staged_sampling" );  } }
+namespace remodel { namespace staged_sampling { FileOptionKey const residues_to_sample( "remodel:staged_sampling:residues_to_sample" );  } }
+namespace remodel { namespace staged_sampling { BooleanOptionKey const use_fragment_sequence( "remodel:staged_sampling:use_fragment_sequence" );  } }
+namespace remodel { namespace staged_sampling { StringOptionKey const starting_sequence( "remodel:staged_sampling:starting_sequence" );  } }
+namespace remodel { namespace staged_sampling { FileOptionKey const starting_pdb( "remodel:staged_sampling:starting_pdb" );  } }
+namespace remodel { namespace staged_sampling { BooleanOptionKey const require_frags_match_blueprint( "remodel:staged_sampling:require_frags_match_blueprint" );  } }
 namespace remodel { namespace domainFusion { BooleanOptionKey const domainFusion( "remodel:domainFusion" );  } }
 namespace remodel { namespace domainFusion { FileOptionKey const insert_segment_from_pdb( "remodel:domainFusion:insert_segment_from_pdb" );  } }
 namespace remodel { RealOptionKey const vdw( "remodel:vdw" );  }

@@ -35,16 +35,16 @@ namespace vall {
 /// @param[in] end Iterator pointing just past the end of the VallResidue extent.
 /// @param[in] srfd_type The type of BBTorsionSRFD to use.
 template< typename VallResidueIterator >
-FragDataOP extent_to_fragdata(
+AnnotatedFragDataOP extent_to_fragdata(
 	VallResidueIterator begin,
-	VallResidueIterator end,
+	VallResidueIterator end,	
 	BBTorsionSRFD const & srfd_type = BBTorsionSRFD()
 ) {
 	AnnotatedFragDataOP fragdata = new AnnotatedFragData( begin->id(), begin->resi() );
 
-	for ( VallResidueIterator r = begin; r != end; ++r ) {
+  for ( VallResidueIterator r = begin; r != end; ++r ) {
 		fragdata->add_residue( r->bbtorsion_srfd( srfd_type ) );
-	}
+		}
 
 	if ( fragdata->size() > 0 ) {
 		fragdata->set_valid();
@@ -53,6 +53,19 @@ FragDataOP extent_to_fragdata(
 	return fragdata;
 }
 
+/// @brief adds score to fragdata object
+//
+template< typename VallResidueIterator >
+AnnotatedFragDataOP extent_to_fragdata(
+	VallResidueIterator begin,
+	VallResidueIterator end,
+	core::Real score,
+	BBTorsionSRFD const & srfd_type = BBTorsionSRFD()
+) {
+	AnnotatedFragDataOP fragdata = extent_to_fragdata(begin,end,srfd_type);
+	fragdata->set_score(score);
+	return fragdata;
+}
 
 /// @brief extract amino acid sequence from a fragment extent into a string
 template< typename VallResidueIterator >

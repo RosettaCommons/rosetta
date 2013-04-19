@@ -27,10 +27,12 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/io/pdb/file_data.hh>
 #include <core/id/TorsionID.hh>
+#include <core/fragment/FragData.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/fragment/ConstantLengthFragSet.fwd.hh>
 #include <core/fragment/Frame.hh>
+#include <core/fragment/Frame.fwd.hh>
 #include <core/fragment/FrameIterator.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
@@ -70,6 +72,7 @@
 
 
 //#include <basic/options/keys/Remodel.OptionKeys.gen.hh>
+#include <core/import_pose/import_pose.hh>
 #include <core/scoring/constraints/ResidueTypeLinkingConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
@@ -985,56 +988,40 @@ void RemodelLoopMover::apply( Pose & pose ) {
 // within simultaneous and independent stages
 	ScoreFunctionOP sfxOP = sfx_;
 	sfxOP->set_weight( scoring::linear_chainbreak, 0.0 );
-	if(option[OptionKeys::remodel::abinitio_like_sampling].user()){
-		if(option[OptionKeys::remodel::use_sequence].user()){
-			std::string const & swap_sequence =option[OptionKeys::remodel::use_sequence];
-			std::cout << "pose.size" << pose.total_residue() << "seq.size" << swap_sequence.size() << std::endl;
-			for(Size ii=1; ii<=swap_sequence.size(); ++ii){
-				char aa = swap_sequence[ii-1];
-				AA my_aa = aa_from_oneletter_code( aa );
-				ResidueTypeSetCAP const &residue_set(core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::CENTROID ));
-				ResidueTypeCOPs const & rsd_type_list( residue_set->aa_map( my_aa ) );
-				ResidueType const & rsd_type( *(rsd_type_list[ 1 ]) );
-				replace_pose_residue_copying_existing_coordinates(pose,ii,rsd_type);
-				replace_pose_residue_copying_existing_coordinates(pose,ii+swap_sequence.size(),rsd_type);
-			}
-		}
-
-
-
-		//NOTE::There is no attempt to close loops.
-		ScoreFunctionOP sfx_stage1_OP =  ( core::scoring::ScoreFunctionFactory::create_score_function( "abinitio_remodel_cen" ) );
-		if(option[OptionKeys::remodel::repeat_structure].user()){
-			std::cout << "setting weights" << std::endl;
-			sfx_stage1_OP->set_weight(scoring::atom_pair_constraint, 1.0 *option[OptionKeys::remodel::repeat_structure]);
-		}
-		else{
-			sfx_stage1_OP->set_weight(scoring::atom_pair_constraint, 1.0);
-		}
-		std::cout << "sfx1" << std::endl;
-		sfx_stage1_OP->show_pretty(std::cout);
-		//stage0-------------------------------------------
+	if(option[OptionKeys::remodel::staged_sampling::staged_sampling].user()){
+		//initialize options
+		if(option[OptionKeys::remodel::staged_sampling::starting_sequence].user())
+			set_starting_sequence(pose);
+		if(option[OptionKeys::remodel::staged_sampling::starting_pdb].user())
+			set_starting_pdb(pose);				
+		bool useFragSequence =option[OptionKeys::remodel::staged_sampling::use_fragment_sequence].user();
+		//setup score functions and movemap and where to sample--------------
 		MoveMap movemap;
 		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
 			movemap.set_bb( i, true );
 			movemap.set_chi( i, true );
 		}
-		std::set<Size> disallowedPos;
-
-		bool useFragSequence =option[OptionKeys::remodel::use_fragment_sequence].user();
-		abinitio_stage( pose, 9, movemap,sfx_stage1_OP,1,100,disallowedPos,true,"stg0",useFragSequence);
-		//stage1-------------------------------------------
-		if(option[OptionKeys::remodel::disallow_sampling_at_pos].user()){
-			std::string const & disallowed_residues =option[OptionKeys::remodel::disallow_sampling_at_pos];
-			utility::vector1< std::string > const res_keys( utility::string_split( disallowed_residues , ',' ) );
-			foreach( std::string const key, res_keys ){
-				Size const res( utility::string2int( key ) );
-				disallowedPos.insert(res);
-			}
-		}
-		abinitio_stage( pose, 9, movemap,sfx_stage1_OP,3,500,disallowedPos,true,"stg1",useFragSequence);
-		abinitio_stage( pose, 3, movemap,sfx_stage1_OP,3,100,disallowedPos,true,"stg1",useFragSequence);
-		//cleanup stage------------------------------------
+		ScoreFunctionOP sfxStaged_OP =  ( core::scoring::ScoreFunctionFactory::create_score_function( "abinitio_remodel_cen" ) );
+		sfxStaged_OP->set_weight(scoring::atom_pair_constraint, 1.0);	
+		if(option[OptionKeys::remodel::repeat_structure].user())	
+			sfxStaged_OP->set_weight(scoring::atom_pair_constraint, 1.0 *option[OptionKeys::remodel::repeat_structure]);
+		sfxStaged_OP->show_pretty(TR);
+		//setup fragments so they sample correctly-----------
+		Real fragScoreThreshold = 0.99999;  //1.00XX indicates 1 ABEGO or HLE mismatch.  I chose to use the numbers for future finer control
+		if(!option[OptionKeys::remodel::staged_sampling::require_frags_match_blueprint]);
+				fragScoreThreshold = 999.0;
+		//setup locations to sample--------------------------
+		std::set<Size> sampleAllResidues = generate_residues_to_sample(false,pose);
+		std::set<Size> sampleSubsetResidues = generate_residues_to_sample(true,pose);
+		//Initialize with any full length fragments-------------------------------
+		if(option[OptionKeys::remodel::use_same_length_fragments])
+				//999 allows for frags > 9 resiudes
+				abinitio_stage( pose,999, movemap,sfxStaged_OP,1,100,sampleAllResidues,true,"full_length_frags",useFragSequence,fragScoreThreshold);
+		//Sample with 9mers in all positions------------------------------
+		abinitio_stage( pose, 9, movemap,sfxStaged_OP,1,100,sampleAllResidues,true,"9mers_allPos",useFragSequence,fragScoreThreshold);
+		abinitio_stage( pose, 9, movemap,sfxStaged_OP,3,500,sampleSubsetResidues,true,"9mers_subsetPos",useFragSequence,fragScoreThreshold);
+		abinitio_stage( pose, 3, movemap,sfxStaged_OP,1,100,sampleSubsetResidues,true,"3mers_subsetPos",useFragSequence,fragScoreThreshold);
+		//cleanup to integrate with Possu------------------------------------
 		PoseOP pose_prime = new Pose( pose );
 		pose_prime->fold_tree( sealed_ft );
 		// this is for scoring in repeat context
@@ -1049,8 +1036,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 			(*sfxOP)( *pose_prime );
 			accumulator.insert( std::make_pair( pose_prime->energies().total_energy(), pose_prime ) );
 		}
-		//set_last_move_status( protocols::moves::MS_SUCCESS );
-	}
+  }
 	else {
 		// setup parameters -- linearly scale the chainbreak weight
 		Real const final_standard_cbreak_weight = 5.0;
@@ -1885,7 +1871,8 @@ void RemodelLoopMover::abinitio_stage(
 	std::set<Size> const & disallowedPos,
 	bool const recover_low,
 	std::string stage_name,
-	bool const swapResType
+	bool const swapResType,
+	Real const fragScoreThreshold
 	)
 {
 	using namespace basic::options;
@@ -1912,7 +1899,7 @@ void RemodelLoopMover::abinitio_stage(
 		mc.reset(pose);
 	}
 
-	FragmentMoverOPs frag_movers = create_fragment_movers_limit_size_pos(movemap, fragmentSize,disallowedPos,swapResType);
+	FragmentMoverOPs frag_movers = create_fragment_movers_limit_size(movemap, fragmentSize,disallowedPos,swapResType,fragScoreThreshold);
 	assert( !frag_movers.empty() );
 
 	// set appropriate topology
@@ -1937,7 +1924,6 @@ void RemodelLoopMover::abinitio_stage(
 
 	// simul frag + ccd_move
 	for ( Size outer = 1; outer <= max_outer_cycles; ++outer ) {
-
 		// increment the chainbreak weight
 		ScoreFunctionOP sfxOP = mc.score_function().clone();
 		mc.score_function( *sfxOP );
@@ -2887,30 +2873,39 @@ RemodelLoopMover::create_fragment_movers(
 
 /// @brief return fragment movers for the list of internally kept fragment sets
 /// @param[in] movemap Use this movemap when initializing fragment movers.
+//  @param[in] note size 999 indicates any size > 9 fragments are allowed.
 /// @param[in] limits size and position of fragments
 RemodelLoopMover::FragmentMoverOPs
-RemodelLoopMover::create_fragment_movers_limit_size_pos(
+RemodelLoopMover::create_fragment_movers_limit_size(
 	MoveMap const & movemap,
 	Size const frag_size,
-	std::set<Size> const & disallowedPos,
-	bool const swapResType
+	std::set<Size> const & allowedPos,
+	bool const swapResType,
+	Real fragScoreThreshold
 	)
 {
 	using protocols::simple_moves::ClassicFragmentMover;
 	using protocols::simple_moves::ResTypeFragmentMover;
 	using protocols::simple_moves::ResTypeFragmentMoverOP;
 	using core::fragment::Frame;
+  using core::fragment::FrameOP;
 	using core::fragment::FrameIterator;
 	using core::fragment::ConstantLengthFragSet;
 	using core::fragment::ConstantLengthFragSetOP;
 	FragmentMoverOPs frag_movers;
 	for ( FragSetOPs::const_iterator f = fragsets_.begin(); f != fragsets_.end(); ++f ) {
-		if((*f)->max_frag_length()==frag_size){
-			ConstantLengthFragSetOP tmp_frags = new ConstantLengthFragSet(frag_size);
+		if((*f)->max_frag_length()==frag_size || ((frag_size == 999)&&((*f)->max_frag_length()>9))) {
+			ConstantLengthFragSetOP tmp_frags = new ConstantLengthFragSet((*f)->max_frag_length());
 			for (FrameIterator frame_i = (*f)->begin(); frame_i != (*f)->end(); ++frame_i){
-				if(disallowedPos.find((*frame_i)->start()) == disallowedPos.end()){
-					tmp_frags->add((*frame_i));
-				}
+				if(allowedPos.find((*frame_i)->start()) != allowedPos.end()){
+						FrameOP tmp_frame = (*frame_i)->clone();
+						for(Size ii = 1; ii<=(*frame_i)->nr_frags(); ++ii){
+								if((*frame_i)->fragment(ii).score()<fragScoreThreshold){
+										tmp_frame->add_fragment((*frame_i)->fragment_ptr(ii));
+									}
+						}
+						tmp_frags->add(tmp_frame);
+					}			
 			}
 			ClassicFragmentMoverOP cfm;
 			if(swapResType)
@@ -3048,6 +3043,62 @@ RemodelLoopMover::Size RemodelLoopMover::count_moveable_residues(
 
 	return n_moveable;
 }
+
+///@brief copies phi,psi,omega from a starting pose.
+void RemodelLoopMover::set_starting_pdb(Pose & pose){
+		using namespace basic::options;
+		using namespace OptionKeys::remodel;
+		using core::Size;
+		PoseOP inputPose = core::import_pose::pose_from_pdb(option[OptionKeys::remodel::staged_sampling::starting_pdb]);
+		assert(inputPose->total_residue() == pose.total_residue()); 
+		for(Size ii=1; ii<=pose.total_residue(); ++ii){
+				pose.set_phi(ii,inputPose->phi(ii));
+				pose.set_psi(ii,inputPose->psi(ii));
+				pose.set_omega(ii,inputPose->omega(ii));
+		}
+}
+
+void RemodelLoopMover::set_starting_sequence(Pose & pose){
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core::chemical;
+		using core::Size;
+		std::string const & swap_sequence =option[OptionKeys::remodel::staged_sampling::starting_sequence];     
+		for(Size ii=1; ii<=swap_sequence.size(); ++ii){
+		  char aa = swap_sequence[ii-1];
+		  AA my_aa = aa_from_oneletter_code( aa );
+			ResidueTypeSetCAP const &residue_set(core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::CENTROID ));
+		  ResidueTypeCOPs const & rsd_type_list( residue_set->aa_map( my_aa ) );
+		  ResidueType const & rsd_type( *(rsd_type_list[ 1 ]) );
+		  if(option[OptionKeys::remodel::repeat_structure].user()){
+				replace_pose_residue_copying_existing_coordinates(pose,ii,rsd_type);//pose has two coppies. This is the first
+				replace_pose_residue_copying_existing_coordinates(pose,ii+swap_sequence.size(),rsd_type);
+			}
+			else
+				replace_pose_residue_copying_existing_coordinates(pose,ii,rsd_type);
+		}
+}
+
+std::set<core::Size> RemodelLoopMover::generate_residues_to_sample(bool chooseSubsetResidues, Pose & pose){
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using core::Size;
+		std::set<Size> allowedRes;
+		if(!chooseSubsetResidues || !option[OptionKeys::remodel::staged_sampling::residues_to_sample].user()){				
+			for(Size ii=1; ii<=pose.total_residue(); ++ii){
+				allowedRes.insert(ii);
+			}
+		}
+		else{	
+			std::string const & allowedRes_str =option[OptionKeys::remodel::staged_sampling::residues_to_sample];
+			utility::vector1< std::string > const res_keys( utility::string_split( allowedRes_str , ',' ) );
+			foreach( std::string const key, res_keys ){
+				Size const res( utility::string2int( key ) );
+				allowedRes.insert(res);
+			}
+		}
+		return(allowedRes);
+}		
 
 } // remodel
 } // forge
