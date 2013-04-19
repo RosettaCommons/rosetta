@@ -146,6 +146,7 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 		//std::cout << "SCO at pos " << i << " allows the following residues: ";
 		utility::vector1< Real > const & pos_profile( (seqprof->profile())[ i ] );
 		utility::vector1< bool > keep_aas( core::chemical::num_canonical_aas, false );
+		runtime_assert( pose.residue_type(i).aa() <= pos_profile.size() );
 		core::Real current_prob( pos_profile[ pose.residue_type(i).aa() ] );
 		core::Real max_prob( -1000.0 ); // at this position, what is the maximal probability for a residue? these identities should always be allowed in design
 		for( core::Size aa = core::chemical::aa_ala; aa <= core::chemical::num_canonical_aas; ++aa){
