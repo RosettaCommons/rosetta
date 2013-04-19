@@ -409,6 +409,7 @@ void FastDesign::cmd_accept_to_best(
     best_pose = pose;
   }
   #ifdef BOINC_GRAPHICS
+		using namespace protocols;
     boinc::Boinc::update_graphics_low_energy( best_pose, best_score  );
     boinc::Boinc::update_graphics_last_accepted( pose, score );
     //boinc::Boinc::update_mc_trial_info( total_count , "FastDesign" );  // total_count not defined
@@ -867,7 +868,7 @@ void FastDesign::apply( core::pose::Pose & pose ){
 			}
 
 			#ifdef BOINC_GRAPHICS
-					boinc::Boinc::update_graphics_low_energy( best_pose, best_score  );
+					boinc::Boinc::update_graphics_low_energy( best_pose, score  );
 					boinc::Boinc::update_graphics_last_accepted( pose, score );
 					boinc::Boinc::update_mc_trial_info( total_count , "FastDesign" );
 			#endif
