@@ -15,6 +15,20 @@ NOT VARIANT_TYPE ACETYLATED_NTERMINUS
 NOT VARIANT_TYPE N_ACETYLATION
 END_SELECTOR
 
+
+### null cases
+BEGIN_CASE
+BEGIN_SELECTOR
+NAME3 DPA
+END_SELECTOR
+END_CASE
+BEGIN_CASE
+BEGIN_SELECTOR
+NAME3 GLV
+END_SELECTOR
+END_CASE
+
+
 ## now we search for a case that matches the residue, take the first one
 ## so put generic case last
 
