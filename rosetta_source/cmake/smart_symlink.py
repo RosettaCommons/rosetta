@@ -37,8 +37,9 @@ for filename in files:
         # print 'about to try symlinking ', executable_name, ' to ', new_name
         for new_name_for_symlink in [ new_name, default_name, default_name_no_extension ]:
             if os.path.exists( new_name_for_symlink ):
-                os.unlink( new_name_for_symlink )
-            print 'symlinking ', executable_name, ' to ', new_name_for_symlink
-            os.symlink( os.path.abspath( executable_name ), new_name_for_symlink )
+                os.remove( new_name_for_symlink )
+                # print "unlinking",new_name_for_symlink
+            #print 'symlinking ', executable_name, ' to ', new_name_for_symlink
+            #os.symlink( os.path.abspath( executable_name ), new_name_for_symlink )
     else:
          print "Warning: %s doesn't exist!" % ( executable_name )
