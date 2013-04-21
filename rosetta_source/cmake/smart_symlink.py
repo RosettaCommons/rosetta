@@ -40,6 +40,6 @@ for filename in files:
                 os.remove( new_name_for_symlink )
                 # print "unlinking",new_name_for_symlink
             #print 'symlinking ', executable_name, ' to ', new_name_for_symlink
-            #os.symlink( os.path.abspath( executable_name ), new_name_for_symlink )
+            os.symlink( os.path.abspath( executable_name ), new_name_for_symlink )
     else:
          print "Warning: %s doesn't exist!" % ( executable_name )
