@@ -110,12 +110,13 @@ ensure enough elements can move to reconnect the junction.
 De novo structure
 @verbatim
 1 A .
-2 A H
+2 A .
 3 A H
 4 A H
 5 A H
+6 A H
 @endverbatim
-Build off of a single amino acid stub (residue 1) any secondary structure desired. In the blueprint above, a 4 residue helix is created and its sidechains are automatically designed. Although the second columns has alanines, it will not affect the final design. 
+Build off of a 2 amino acid stub (residue 1 + 2) any secondary structure desired. In the blueprint above, a 4 residue helix is created and its sidechains are automatically designed. Although the second columns has alanines, it will not affect the final design. 
 In the blueprint file, the second column is only used for extensions ("x") or if sequence-biased fragments are desired (using the flag -remodel:use_blueprint_sequence). In this case, all positions will be automatically designed because no resfile manual assignments
 were made for the positions.  If a single manual resfile assignment is made, RosettaRemodel switches to manual design mode and all positions which are being rebuilt should be given resfile specifications.
 
@@ -432,7 +433,7 @@ on CA atom will not work, so clustering should be turned off by adding "-use_clu
 
 @subsection remodel_structures Structures - REQUIRED
 
-At least one input PDB file must always be given.  A single PDB, or a list of PDBs, must be specified on the command line.  The remodel code is also compatible with PDBs containing DNA.
+At least one input PDB file must always be given.  A single PDB, or a list of PDBs, must be specified on the command line.  If doing denovo design, this is the stub PDB.  The remodel code is also compatible with PDBs containing DNA.
 @verbatim
 -s <pdb1> <pdb2>                                              A list of one or more PDBs to run fixbb upon
 -l <listfile>                                                 A file that lists one or more PDBs to run fixbb upon, one PDB per line
@@ -692,6 +693,8 @@ If you get a seg fault right after reading the blueprint, it may be because you 
 
 If you see errors complaining about some residue doesn't exist or that the ResfileReader generated problems, it's very likely that you have a chain definition in your PDB file and you are running manual design mode. The easiest solution is to delete the chain id from your starting
 PDB or checkpointed PDB's. The checkpointed PDB's carry over whatever chain the starting PDB has, so sometimes they also have to be corrected to remedy this problem.
+
+For denovo design, make sure your stub PDB is at least two residues long.
 
 For extensions, it is important to assign secondary structure to the flanking residues or otherwise errors will occur.
 
