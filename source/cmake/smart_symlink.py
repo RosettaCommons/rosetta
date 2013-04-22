@@ -34,11 +34,12 @@ for filename in files:
 
     if os.path.exists( executable_name ):
         # removing this print statement as it is unnecessary, and adds extra lines to compact ninja output.
-        # print 'about to try symlinking ', executable_name, ' to ', new_name
         for new_name_for_symlink in [ new_name, default_name, default_name_no_extension ]:
-            if os.path.exists( new_name_for_symlink ):
+            #print 'about to try symlinking ', executable_name, ' to ', new_name_for_symlink
+            #print '   exists?',os.path.exists( new_name_for_symlink )
+            if os.path.lexists( new_name_for_symlink ):
+                #print "unlinking",new_name_for_symlink
                 os.remove( new_name_for_symlink )
-                # print "unlinking",new_name_for_symlink
             #print 'symlinking ', executable_name, ' to ', new_name_for_symlink
             os.symlink( os.path.abspath( executable_name ), new_name_for_symlink )
     else:
