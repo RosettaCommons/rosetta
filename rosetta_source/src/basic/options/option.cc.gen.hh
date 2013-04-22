@@ -682,9 +682,7 @@ option.add( basic::options::OptionKeys::fold_cst::ramp_coord_cst, "ramp coord cs
 option.add( basic::options::OptionKeys::resample::resample, "resample option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::resample::silent, "a silent file for decoys to restart sampling from " ).def("");
 option.add( basic::options::OptionKeys::resample::tag, "which decoy to select from silent file " ).def("");
-
-}
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::resample::stage1, "if true restart after stage1, otherwise after stage2 " ).def(false);
+option.add( basic::options::OptionKeys::resample::stage1, "if true restart after stage1, otherwise after stage2 " ).def(false);
 option.add( basic::options::OptionKeys::resample::stage2, "if true restart after stage1, otherwise after stage2 " ).def(false);
 option.add( basic::options::OptionKeys::resample::jumps, "if true restart after stage1, otherwise after stage2 " ).def(false);
 option.add( basic::options::OptionKeys::resample::min_max_start_seq_sep, "range of (random) start values for seq-separation" ).def(0);
@@ -701,7 +699,9 @@ option.add( basic::options::OptionKeys::jumps::fix_chainbreak, "minimize to fix 
 option.add( basic::options::OptionKeys::jumps::fix_jumps, "read jump_file" ).def("");
 option.add( basic::options::OptionKeys::jumps::jump_lib, "read jump_library_file for automatic jumps" ).def("");
 option.add( basic::options::OptionKeys::jumps::loop_definition_from_file, "use ss-def from this file" ).def("");
-option.add( basic::options::OptionKeys::jumps::no_chainbreak_in_relax, "dont penalize chainbreak in relax" ).def(false);
+
+}
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::no_chainbreak_in_relax, "dont penalize chainbreak in relax" ).def(false);
 option.add( basic::options::OptionKeys::jumps::pairing_file, "file with pairings" ).def("");
 option.add( basic::options::OptionKeys::jumps::random_sheets, "random sheet topology--> replaces -sheet1 -sheet2 ... select randomly up to N sheets with up to -sheet_i pairgins for sheet i" ).def(1);
 option.add( basic::options::OptionKeys::jumps::residue_pair_jump_file, "a file to define residue pair jump" ).def("");
@@ -1363,9 +1363,7 @@ option.add( basic::options::OptionKeys::lh::fragpdb::out_path, "Path where pdbs 
 option.add( basic::options::OptionKeys::lh::fragpdb::indexoffset, "list of index offset pairs" ).def(-1);
 option.add( basic::options::OptionKeys::lh::fragpdb::bin, "list of bin keys" ).def(utility::vector1<std::string>());
 option.add( basic::options::OptionKeys::lh::symfragrm::symfragrm, "symfragrm option group" ).legal(true).def(true);
-
-}
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::symfragrm::pdblist, "list of pdbs to be processed" );
+option.add( basic::options::OptionKeys::lh::symfragrm::pdblist, "list of pdbs to be processed" );
 option.add( basic::options::OptionKeys::rbe::rbe, "rbe option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::rbe::server_url, "serverurl for rosetta backend" );
 option.add( basic::options::OptionKeys::rbe::server_port, "port for rosetta backend" ).def("80");
@@ -1399,7 +1397,9 @@ option.add( basic::options::OptionKeys::cmiles::kcluster::num_clusters, "Number 
 option.add( basic::options::OptionKeys::cmiles::jumping::jumping, "jumping option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::cmiles::jumping::resi, "Residue i" );
 option.add( basic::options::OptionKeys::cmiles::jumping::resj, "Residue j" );
-option.add( basic::options::OptionKeys::james::james, "james option group" ).legal(true).def(true);
+
+}
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::james::james, "james option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::james::min_seqsep, "No description" ).def(0);
 option.add( basic::options::OptionKeys::james::atom_names, "No description" ).def(utility::vector1<std::string>());
 option.add( basic::options::OptionKeys::james::dist_thresholds, "No description" ).def(utility::vector1<float>(1, 1.0));
@@ -2044,9 +2044,7 @@ option.add( basic::options::OptionKeys::RBSegmentRelax::rb_scorefxn, "number of 
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_fragment_moves, "omit fragment insertions (in SS elements)" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_seqshift_moves, "omit sequence shifting moves" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_rb_moves, "omit rigid-body moves" ).def(false);
-
-}
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::helical_movement_params, "helical-axis-rotation, helical-axis-translation, off-axis-rotation, off-axis-translation" ).def(utility::vector1<float>(4,0.0));
+option.add( basic::options::OptionKeys::RBSegmentRelax::helical_movement_params, "helical-axis-rotation, helical-axis-translation, off-axis-rotation, off-axis-translation" ).def(utility::vector1<float>(4,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::strand_movement_params, "strand-in-plane-rotation, strand-in-plane-translation, out-of-plane-rotation, out-of-plane-translationn" ).def(utility::vector1<float>(4,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::default_movement_params, "default-rotation, default-translation" ).def(utility::vector1<float>(2,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_seqwidth, "sequence width on constraints" ).def(0);
@@ -2097,7 +2095,9 @@ option.add( basic::options::OptionKeys::optE::data_out, "file to which to write 
 option.add( basic::options::OptionKeys::optE::weights, "a conventional weightfile that optE will use to determine which weights will be counted.  All non-zero weights in the file will contribute to rotamer energies and be fit; use the -optE::fix option to fix any of these weights.  Weight values will also be used as starting values for optimization." );
 option.add( basic::options::OptionKeys::optE::fix, "weights to be fixed (must also appear in the weightfile given by the -optE::weights option)" );
 option.add( basic::options::OptionKeys::optE::free, "IterativeOptEDriver flag: specify a file to read score types that are free -- optionally include a starting weight for each score type" );
-option.add( basic::options::OptionKeys::optE::fixed, "IterativeOptEDriver flag: specify a file to read score types and weights for score types that are on but fixed" );
+
+}
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::fixed, "IterativeOptEDriver flag: specify a file to read score types and weights for score types that are on but fixed" );
 option.add( basic::options::OptionKeys::optE::parse_tagfile, "a file in utility::tag format that optE may parse to customize its operation" );
 option.add( basic::options::OptionKeys::optE::constant_logic_taskops_file, "a file in utility::tag format that optE uses to build a task that will not change with the context of the pose after design" );
 option.add( basic::options::OptionKeys::optE::optE_soft_rep, "Instruct the IterativeOptEDriver to use the soft-repulsion etable" );
@@ -2676,6 +2676,74 @@ option.add( basic::options::OptionKeys::sicdock::contact_dis, "max acceptable co
 option.add( basic::options::OptionKeys::sicdock::hash_2D_vs_3D, "grid spacing top 2D hash" ).def(1.3);
 option.add( basic::options::OptionKeys::sicdock::term_min_expose, "terminus at least X exposed" ).def(0.1);
 option.add( basic::options::OptionKeys::sicdock::term_max_angle, "terminus at most X degrees from XY plane" ).def(45.0);
+option.add( basic::options::OptionKeys::mh::mh, "mh option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::mh::motif_out_file, "file to dump ResPairMotifs to" ).def("default");
+option.add( basic::options::OptionKeys::mh::harvest_motifs, "files to harvest ResPairMotifs from" ).def("SPECIFY_ME_DUMMY");
+option.add( basic::options::OptionKeys::mh::print_motifs, "files to print ResPairMotifs from" ).def("SPECIFY_ME_DUMMY");
+option.add( basic::options::OptionKeys::mh::dump_motif_pdbs, "files to extract ResPairMotifs clusters from" ).def("SPECIFY_ME_DUMMY");
+option.add( basic::options::OptionKeys::mh::merge_motifs, "files to merge ResPairMotifs from" ).def("SPECIFY_ME_DUMMY");
+option.add( basic::options::OptionKeys::mh::merge_motifs_one_per_bin, "keep only one motif per hash bin (for sepcified grid)" ).def(false);
+option.add( basic::options::OptionKeys::mh::generate_reverse_motifs, "keep only one motif per hash bin (for sepcified grid)" ).def(false);
+option.add( basic::options::OptionKeys::mh::dump_input_pdb, "files to dump biount interpretation from" ).def("SPECIFY_ME_DUMMY");
+option.add( basic::options::OptionKeys::mh::score_pdbs, "files to score with input counts file" ).def("SPECIFY_ME_DUMMY");
+option.add( basic::options::OptionKeys::mh::xform_score_data, "motif hash data for scoring" );
+option.add( basic::options::OptionKeys::mh::xform_score_data_ee, "motif hash data for scoring" );
+option.add( basic::options::OptionKeys::mh::xform_score_data_eh, "motif hash data for scoring" );
+option.add( basic::options::OptionKeys::mh::xform_score_data_he, "motif hash data for scoring" );
+option.add( basic::options::OptionKeys::mh::xform_score_data_hh, "motif hash data for scoring" );
+option.add( basic::options::OptionKeys::mh::xform_score_data_sspair, "motif hash data for scoring strand pairings" );
+option.add( basic::options::OptionKeys::mh::sequence_recovery, "pdb files to score" ).def("SPECIFY_ME_DUMMY");
+option.add( basic::options::OptionKeys::mh::explicit_motif_score, "pdb files to score" ).def("SPECIFY_ME_DUMMY");
+option.add( basic::options::OptionKeys::mh::input_motifs, "motifs to score with" ).def("SPECIFY_ME_DUMMY");
+option.add( basic::options::OptionKeys::mh::harvest_scores, "get counts from ResPairMotif files and dump to binary counts file" ).def("");
+option.add( basic::options::OptionKeys::mh::print_scores, "print a binary counts file" ).def("");
+option.add( basic::options::OptionKeys::mh::dump_matching_motifs, "pdb files to score" ).def("SPECIFY_ME_DUMMY");
+option.add( basic::options::OptionKeys::mh::dump_matching_motifs_cutoff, "rms cutoff" ).def(1.0);
+option.add( basic::options::OptionKeys::mh::score_across_chains_only, "ignore intra-chain motifs" ).def(false);
+option.add( basic::options::OptionKeys::mh::normalize_score_ncontact, "normalize by total num contacts" ).def(true);
+option.add( basic::options::OptionKeys::mh::dump_motif_pdbs_min_counts, "min counts to dump" ).def(99999999);
+option.add( basic::options::OptionKeys::mh::hash_cart_size, "dimensions of binned space" ).def(12.0);
+option.add( basic::options::OptionKeys::mh::hash_cart_resl, "width of cartesian bin" ).def(0.8);
+option.add( basic::options::OptionKeys::mh::hash_angle_resl, "width of euler angle bin" ).def(15.0);
+option.add( basic::options::OptionKeys::mh::harvest_motifs_min_hh_ends, "restrict to middle of hilix contacts " ).def(0);
+option.add( basic::options::OptionKeys::mh::harvest_scores_min_count, " " ).def(0);
+option.add( basic::options::OptionKeys::mh::ignore_io_errors, " " ).def(false);
+option.add( basic::options::OptionKeys::mh::motif_match_radius, "width of euler angle bin" ).def(0.6);
+option.add( basic::options::OptionKeys::mh::merge_similar_motifs, "give 3 hash params" );
+option.add( basic::options::OptionKeys::mh::score::score, "score option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::mh::score::noloops, "ignore loop ss in scored structs" ).def(true);
+option.add( basic::options::OptionKeys::mh::score::spread_ss_element, "ignore loop ss in scored structs" ).def(true);
+option.add( basic::options::OptionKeys::mh::score::min_cover_fraction, "ignore loop ss in scored structs" ).def(0.0);
+option.add( basic::options::OptionKeys::mh::score::strand_pair_weight, "ignore loop ss in scored structs" ).def(1.0);
+option.add( basic::options::OptionKeys::mh::filter::filter, "filter option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::mh::filter::filter_harvest, "filter while harvesting" ).def(true);
+option.add( basic::options::OptionKeys::mh::filter::filter_io, "filter while reading filter" ).def(true);
+option.add( basic::options::OptionKeys::mh::filter::restype, "allowed res types" ).def("ACDEFGHIKLMNPQRSTVWY");
+option.add( basic::options::OptionKeys::mh::filter::restype_one, "allowed res types need at least one" ).def("ACDEFGHIKLMNPQRSTVWY");
+option.add( basic::options::OptionKeys::mh::filter::not_restype, "disallowed res types" ).def("ACGP");
+option.add( basic::options::OptionKeys::mh::filter::not_restype_one, "disallowed res types at least one not" ).def("ACGP");
+option.add( basic::options::OptionKeys::mh::filter::seqsep, "min filter seqsep" ).def(0);
+option.add( basic::options::OptionKeys::mh::filter::no_hb_bb, "no bb hbonded" ).def(false);
+option.add( basic::options::OptionKeys::mh::filter::mindist2, "min CA-CA dist sq" ).def(0.0);
+option.add( basic::options::OptionKeys::mh::filter::maxdist2, "max CA-CA dist sq" ).def(999999.0);
+option.add( basic::options::OptionKeys::mh::filter::ss1, "filter ss1" ).def("");
+option.add( basic::options::OptionKeys::mh::filter::ss2, "filter ss2" ).def("");
+option.add( basic::options::OptionKeys::mh::filter::dssp1, "filter dssp1" ).def("");
+option.add( basic::options::OptionKeys::mh::filter::dssp2, "filter dssp2" ).def("");
+option.add( basic::options::OptionKeys::mh::filter::aa1, "filter aa1" ).def("");
+option.add( basic::options::OptionKeys::mh::filter::aa2, "filter aa2" ).def("");
+option.add( basic::options::OptionKeys::mh::filter::sasa, "filter max sasa" ).def(999.0);
+option.add( basic::options::OptionKeys::mh::filter::faatr, "filter max faatr (default 999.0 = no filtering" ).def(999.0);
+option.add( basic::options::OptionKeys::mh::filter::hb_sc, "filter max hb_sc (default 999.0 = no filtering" ).def(999.0);
+option.add( basic::options::OptionKeys::mh::filter::hb_bb_sc, "filter max hb_bb_sc (default 999.0 = no filtering" ).def(999.0);
+option.add( basic::options::OptionKeys::mh::filter::hb_bb, "filter max hb_bb (default 999.0 = no filtering" ).def(999.0);
+option.add( basic::options::OptionKeys::mh::filter::occupancy, "filter min occupancy (default 0.0 = no filtering" ).def(0.0);
+option.add( basic::options::OptionKeys::mh::filter::coorderr, "filter max bfac coorderr = sqrt(B/8*pi**2)) (default 999.0 = no filtering" ).def(999.0);
+option.add( basic::options::OptionKeys::mh::filter::faatr_or_hbbb, "filter require atr or hb (bb allowed) below thresh" ).def(999.0);
+option.add( basic::options::OptionKeys::mh::filter::faatr_or_hb, "filter require atr or hb below thresh" ).def(999.0);
+option.add( basic::options::OptionKeys::mh::filter::noloops, "" ).def(false);
+option.add( basic::options::OptionKeys::mh::filter::oneloop, "" ).def(false);
+option.add( basic::options::OptionKeys::mh::filter::nodisulf, "" ).def(false);
 option.add( basic::options::OptionKeys::orbitals::orbitals, "orbitals option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::orbitals::Hpol, "look at only polar hydrogen interactions" ).def(false);
 option.add( basic::options::OptionKeys::orbitals::Haro, "look at only aromatic hydrogen interactions" ).def(false);

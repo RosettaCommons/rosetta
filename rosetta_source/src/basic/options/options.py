@@ -18,11 +18,33 @@ import sys
 
 import options_class, options_rosetta
 import os.path, os
+#from difflib import Differ
 
 Options = options_rosetta.Options
 james_debug = 1
 
+class KeepSameFile(object):
+    def __init__(self,fname,opts):
+        self.fname = fname
+        self.opts = opts
+        self.body = ""
+    def write(self,s):
+        self.body += s
+    def close(self):
+        ischanged = False
+        with open(self.fname) as existing_file:
+            if existing_file.read() != self.body:
+                ischanged = True
+        if ischanged:
+            print "file",self.fname,"being updated"
+            with open(self.fname,self.opts) as out:
+                out.write(self.body)
+            return 1
+        return 0
+
+
 def main(args):
+    num_changed_files = 0
     if len(args) <= 1:  # no option give - just generating C++ files.
 
         # code below is for if we ever want to split options into separate groups
@@ -76,7 +98,7 @@ def main(args):
                 if file_prefix == 'option.cc.gen.hh':
                     outfile = file_prefix
                     #print outfile
-                    f = file(outfile, 'wb')
+                    f = KeepSameFile(outfile, 'wb')
                     f.write( header_gen_hh )
 
                     split_len = len( output[ file_prefix ] ) / 4 + 1  # for now we generate 4 functions instead of 1
@@ -87,16 +109,16 @@ def main(args):
                             f.write( lines )
                     #lines = output[ file_prefix ]
                     f.write( footer_gen_hh )
-                    f.close()
+                    num_changed_files += f.close()
                 elif file_prefix == 'keys/OptionKeys.cc.gen':
                     split_len = len( output[ file_prefix ] ) / 4 + 1  # for now we split .cc just in four files
                     groups = [ output[ file_prefix ][i: i+split_len] for i in range(0, len(output[ file_prefix ]), split_len) ]
                     for i,g in enumerate(groups):
                         outfile = file_prefix + '%s.hh' % i
                         #print outfile
-                        f = file(outfile, 'wb')
+                        f = KeepSameFile(outfile, 'wb')
                         f.write( "".join(g) )
-                        f.close()
+                        num_changed_files += f.close()
                 else:
                     for ns in output[ file_prefix ].keys():
                         new_filename = ".".join( [ns, filename] )
@@ -112,14 +134,14 @@ def main(args):
                         output[ file_prefix ][ ns ] = header + output[ file_prefix ][ ns ]
                         lines = "".join( output[ file_prefix ][ ns ] )
                         #print outfile
-                        f = file(outfile, 'wb')
+                        f = KeepSameFile(outfile, 'wb')
                         f.write( "".join(lines) )
-                        f.close()
+                        num_changed_files += f.close()
 
-            f = file('option.cc.include.gen.hh', 'wb')
+            f = KeepSameFile('option.cc.include.gen.hh', 'wb')
             for include_file in gen_hh_files:
                 f.write( '#include <basic/options/keys/' + include_file + '>\n' )
-            f.close()
+            num_changed_files += f.close()
 
         else:
             options_class.writeToFile(Options, 'option.cc.gen.hh', options_class.Option.getOptionCC)
@@ -128,11 +150,11 @@ def main(args):
 
         # Generating Doxygen docs
         print "Generating Doxygen docs...",
-        f = file("./../../../doc/options.dox", 'wb')
+        f = KeepSameFile("./../../../doc/options.dox", 'wb')
         f.write( options_class.getDoxygenPage(Options) )
-        f.close()
+        num_changed_files += f.close()
         print " Done!"
-
+        print "number of files updated:",num_changed_files
         print "Total %s options." % len(Options)
 
     elif args[1] == '-Wiki':

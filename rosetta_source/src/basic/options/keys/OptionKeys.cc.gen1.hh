@@ -1,20 +1,3 @@
-namespace resample { BooleanOptionKey const stage1( "resample:stage1" );  }
-namespace resample { BooleanOptionKey const stage2( "resample:stage2" );  }
-namespace resample { BooleanOptionKey const jumps( "resample:jumps" );  }
-namespace resample { RealVectorOptionKey const min_max_start_seq_sep( "resample:min_max_start_seq_sep" );  }
-namespace loopfcst { BooleanOptionKey const loopfcst( "loopfcst" );  }
-namespace loopfcst { RealOptionKey const coord_cst_weight( "loopfcst:coord_cst_weight" );  }
-namespace loopfcst { BooleanOptionKey const coord_cst_all_atom( "loopfcst:coord_cst_all_atom" );  }
-namespace loopfcst { BooleanOptionKey const use_general_protocol( "loopfcst:use_general_protocol" );  }
-namespace loopfcst { FileOptionKey const coord_cst_weight_array( "loopfcst:coord_cst_weight_array" );  }
-namespace loopfcst { FileOptionKey const dump_coord_cst_weight_array( "loopfcst:dump_coord_cst_weight_array" );  }
-namespace jumps { BooleanOptionKey const jumps( "jumps" );  }
-namespace jumps { BooleanOptionKey const evaluate( "jumps:evaluate" );  }
-namespace jumps { FileOptionKey const extra_frags_for_ss( "jumps:extra_frags_for_ss" );  }
-namespace jumps { BooleanOptionKey const fix_chainbreak( "jumps:fix_chainbreak" );  }
-namespace jumps { FileOptionKey const fix_jumps( "jumps:fix_jumps" );  }
-namespace jumps { FileOptionKey const jump_lib( "jumps:jump_lib" );  }
-namespace jumps { FileOptionKey const loop_definition_from_file( "jumps:loop_definition_from_file" );  }
 namespace jumps { BooleanOptionKey const no_chainbreak_in_relax( "jumps:no_chainbreak_in_relax" );  }
 namespace jumps { FileOptionKey const pairing_file( "jumps:pairing_file" );  }
 namespace jumps { IntegerVectorOptionKey const random_sheets( "jumps:random_sheets" );  }
@@ -677,3 +660,37 @@ namespace lh { namespace fragpdb { StringOptionKey const out_path( "lh:fragpdb:o
 namespace lh { namespace fragpdb { IntegerVectorOptionKey const indexoffset( "lh:fragpdb:indexoffset" );  } }
 namespace lh { namespace fragpdb { StringVectorOptionKey const bin( "lh:fragpdb:bin" );  } }
 namespace lh { namespace symfragrm { BooleanOptionKey const symfragrm( "lh:symfragrm" );  } }
+namespace lh { namespace symfragrm { FileVectorOptionKey const pdblist( "lh:symfragrm:pdblist" );  } }
+namespace rbe { BooleanOptionKey const rbe( "rbe" );  }
+namespace rbe { StringOptionKey const server_url( "rbe:server_url" );  }
+namespace rbe { StringOptionKey const server_port( "rbe:server_port" );  }
+namespace rbe { RealOptionKey const poll_frequency( "rbe:poll_frequency" );  }
+namespace blivens { BooleanOptionKey const blivens( "blivens" );  }
+namespace blivens { namespace disulfide_scorer { BooleanOptionKey const disulfide_scorer( "blivens:disulfide_scorer" );  } }
+namespace blivens { namespace disulfide_scorer { RealOptionKey const nds_prob( "blivens:disulfide_scorer:nds_prob" );  } }
+namespace blivens { namespace disulfide_scorer { RealOptionKey const cys_prob( "blivens:disulfide_scorer:cys_prob" );  } }
+namespace blivens { StringOptionKey const score_type( "blivens:score_type" );  }
+namespace krassk { BooleanOptionKey const krassk( "krassk" );  }
+namespace krassk { IntegerOptionKey const left_tail( "krassk:left_tail" );  }
+namespace krassk { IntegerOptionKey const right_tail( "krassk:right_tail" );  }
+namespace krassk { BooleanOptionKey const tail_mode( "krassk:tail_mode" );  }
+namespace krassk { IntegerOptionKey const tail_mode_name( "krassk:tail_mode_name" );  }
+namespace krassk { StringOptionKey const tail_output_file_name( "krassk:tail_output_file_name" );  }
+namespace rotamerdump { BooleanOptionKey const rotamerdump( "rotamerdump" );  }
+namespace rotamerdump { BooleanOptionKey const xyz( "rotamerdump:xyz" );  }
+namespace rotamerdump { BooleanOptionKey const one_body( "rotamerdump:one_body" );  }
+namespace rotamerdump { BooleanOptionKey const two_body( "rotamerdump:two_body" );  }
+namespace rotamerdump { BooleanOptionKey const annealer( "rotamerdump:annealer" );  }
+namespace robert { BooleanOptionKey const robert( "robert" );  }
+namespace robert { StringOptionKey const pairdata_input_pdb_list( "robert:pairdata_input_pdb_list" );  }
+namespace robert { RealOptionKey const pcs_maxsub_filter( "robert:pcs_maxsub_filter" );  }
+namespace robert { RealOptionKey const pcs_maxsub_rmsd( "robert:pcs_maxsub_rmsd" );  }
+namespace robert { BooleanOptionKey const pcs_dump_cluster( "robert:pcs_dump_cluster" );  }
+namespace robert { RealOptionKey const pcs_cluster_coverage( "robert:pcs_cluster_coverage" );  }
+namespace robert { BooleanOptionKey const pcs_cluster_lowscoring( "robert:pcs_cluster_lowscoring" );  }
+namespace cmiles { BooleanOptionKey const cmiles( "cmiles" );  }
+namespace cmiles { namespace kcluster { BooleanOptionKey const kcluster( "cmiles:kcluster" );  } }
+namespace cmiles { namespace kcluster { IntegerOptionKey const num_clusters( "cmiles:kcluster:num_clusters" );  } }
+namespace cmiles { namespace jumping { BooleanOptionKey const jumping( "cmiles:jumping" );  } }
+namespace cmiles { namespace jumping { IntegerOptionKey const resi( "cmiles:jumping:resi" );  } }
+namespace cmiles { namespace jumping { IntegerOptionKey const resj( "cmiles:jumping:resj" );  } }

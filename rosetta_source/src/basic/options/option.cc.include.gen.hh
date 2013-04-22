@@ -85,6 +85,7 @@
 #include <basic/options/keys/fldsgn.OptionKeys.gen.hh>
 #include <basic/options/keys/matdes.OptionKeys.gen.hh>
 #include <basic/options/keys/mc.OptionKeys.gen.hh>
+#include <basic/options/keys/mh.OptionKeys.gen.hh>
 #include <basic/options/keys/cmiles.OptionKeys.gen.hh>
 #include <basic/options/keys/optimization.OptionKeys.gen.hh>
 #include <basic/options/keys/casp.OptionKeys.gen.hh>

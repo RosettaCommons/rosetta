@@ -1,54 +1,3 @@
-namespace RBSegmentRelax { RealVectorOptionKey const helical_movement_params( "RBSegmentRelax:helical_movement_params" );  }
-namespace RBSegmentRelax { RealVectorOptionKey const strand_movement_params( "RBSegmentRelax:strand_movement_params" );  }
-namespace RBSegmentRelax { RealVectorOptionKey const default_movement_params( "RBSegmentRelax:default_movement_params" );  }
-namespace RBSegmentRelax { IntegerOptionKey const cst_seqwidth( "RBSegmentRelax:cst_seqwidth" );  }
-namespace edensity { BooleanOptionKey const edensity( "edensity" );  }
-namespace edensity { BooleanOptionKey const debug( "edensity:debug" );  }
-namespace edensity { StringOptionKey const mapfile( "edensity:mapfile" );  }
-namespace edensity { RealOptionKey const mapreso( "edensity:mapreso" );  }
-namespace edensity { RealOptionKey const grid_spacing( "edensity:grid_spacing" );  }
-namespace edensity { RealOptionKey const centroid_density_mass( "edensity:centroid_density_mass" );  }
-namespace edensity { IntegerOptionKey const sliding_window( "edensity:sliding_window" );  }
-namespace edensity { RealOptionKey const force_apix( "edensity:force_apix" );  }
-namespace edensity { RealOptionKey const fastdens_wt( "edensity:fastdens_wt" );  }
-namespace edensity { RealOptionKey const sliding_window_wt( "edensity:sliding_window_wt" );  }
-namespace edensity { BooleanOptionKey const score_sliding_window_context( "edensity:score_sliding_window_context" );  }
-namespace edensity { RealOptionKey const whole_structure_ca_wt( "edensity:whole_structure_ca_wt" );  }
-namespace edensity { RealOptionKey const whole_structure_allatom_wt( "edensity:whole_structure_allatom_wt" );  }
-namespace edensity { BooleanOptionKey const no_edens_in_minimizer( "edensity:no_edens_in_minimizer" );  }
-namespace edensity { BooleanOptionKey const debug_derivatives( "edensity:debug_derivatives" );  }
-namespace edensity { StringOptionKey const realign( "edensity:realign" );  }
-namespace edensity { StringOptionKey const membrane_axis( "edensity:membrane_axis" );  }
-namespace edensity { RealOptionKey const atom_mask( "edensity:atom_mask" );  }
-namespace edensity { RealOptionKey const ca_mask( "edensity:ca_mask" );  }
-namespace edensity { BooleanOptionKey const score_symm_complex( "edensity:score_symm_complex" );  }
-namespace edensity { RealOptionKey const sc_scaling( "edensity:sc_scaling" );  }
-namespace edensity { RealOptionKey const render_sigma( "edensity:render_sigma" );  }
-namespace patterson { BooleanOptionKey const patterson( "patterson" );  }
-namespace patterson { BooleanOptionKey const debug( "patterson:debug" );  }
-namespace patterson { RealOptionKey const weight( "patterson:weight" );  }
-namespace patterson { RealOptionKey const sc_scaling( "patterson:sc_scaling" );  }
-namespace patterson { RealVectorOptionKey const radius_cutoffs( "patterson:radius_cutoffs" );  }
-namespace patterson { RealVectorOptionKey const resolution_cutoffs( "patterson:resolution_cutoffs" );  }
-namespace patterson { RealOptionKey const Bsol( "patterson:Bsol" );  }
-namespace patterson { RealOptionKey const Fsol( "patterson:Fsol" );  }
-namespace patterson { RealOptionKey const model_B( "patterson:model_B" );  }
-namespace patterson { RealOptionKey const rmsd( "patterson:rmsd" );  }
-namespace patterson { BooleanOptionKey const no_ecalc( "patterson:no_ecalc" );  }
-namespace patterson { IntegerOptionKey const nshells( "patterson:nshells" );  }
-namespace patterson { BooleanOptionKey const use_spline_interpolation( "patterson:use_spline_interpolation" );  }
-namespace patterson { BooleanOptionKey const use_on_repack( "patterson:use_on_repack" );  }
-namespace patterson { BooleanOptionKey const dont_use_symm_in_pcalc( "patterson:dont_use_symm_in_pcalc" );  }
-namespace cryst { BooleanOptionKey const cryst( "cryst" );  }
-namespace cryst { StringOptionKey const mtzfile( "cryst:mtzfile" );  }
-namespace cryst { BooleanOptionKey const crystal_refine( "cryst:crystal_refine" );  }
-namespace optE { BooleanOptionKey const optE( "optE" );  }
-namespace optE { StringOptionKey const load_from_silent( "optE:load_from_silent" );  }
-namespace optE { StringOptionKey const data_in( "optE:data_in" );  }
-namespace optE { StringOptionKey const data_out( "optE:data_out" );  }
-namespace optE { StringOptionKey const weights( "optE:weights" );  }
-namespace optE { StringVectorOptionKey const fix( "optE:fix" );  }
-namespace optE { FileOptionKey const free( "optE:free" );  }
 namespace optE { FileOptionKey const fixed( "optE:fixed" );  }
 namespace optE { FileOptionKey const parse_tagfile( "optE:parse_tagfile" );  }
 namespace optE { FileOptionKey const constant_logic_taskops_file( "optE:constant_logic_taskops_file" );  }
@@ -628,6 +577,74 @@ namespace sicdock { RealOptionKey const contact_dis( "sicdock:contact_dis" );  }
 namespace sicdock { RealOptionKey const hash_2D_vs_3D( "sicdock:hash_2D_vs_3D" );  }
 namespace sicdock { RealOptionKey const term_min_expose( "sicdock:term_min_expose" );  }
 namespace sicdock { RealOptionKey const term_max_angle( "sicdock:term_max_angle" );  }
+namespace mh { BooleanOptionKey const mh( "mh" );  }
+namespace mh { StringOptionKey const motif_out_file( "mh:motif_out_file" );  }
+namespace mh { FileVectorOptionKey const harvest_motifs( "mh:harvest_motifs" );  }
+namespace mh { FileVectorOptionKey const print_motifs( "mh:print_motifs" );  }
+namespace mh { FileVectorOptionKey const dump_motif_pdbs( "mh:dump_motif_pdbs" );  }
+namespace mh { FileVectorOptionKey const merge_motifs( "mh:merge_motifs" );  }
+namespace mh { BooleanOptionKey const merge_motifs_one_per_bin( "mh:merge_motifs_one_per_bin" );  }
+namespace mh { BooleanOptionKey const generate_reverse_motifs( "mh:generate_reverse_motifs" );  }
+namespace mh { FileVectorOptionKey const dump_input_pdb( "mh:dump_input_pdb" );  }
+namespace mh { FileVectorOptionKey const score_pdbs( "mh:score_pdbs" );  }
+namespace mh { FileVectorOptionKey const xform_score_data( "mh:xform_score_data" );  }
+namespace mh { FileVectorOptionKey const xform_score_data_ee( "mh:xform_score_data_ee" );  }
+namespace mh { FileVectorOptionKey const xform_score_data_eh( "mh:xform_score_data_eh" );  }
+namespace mh { FileVectorOptionKey const xform_score_data_he( "mh:xform_score_data_he" );  }
+namespace mh { FileVectorOptionKey const xform_score_data_hh( "mh:xform_score_data_hh" );  }
+namespace mh { FileVectorOptionKey const xform_score_data_sspair( "mh:xform_score_data_sspair" );  }
+namespace mh { FileVectorOptionKey const sequence_recovery( "mh:sequence_recovery" );  }
+namespace mh { FileVectorOptionKey const explicit_motif_score( "mh:explicit_motif_score" );  }
+namespace mh { FileVectorOptionKey const input_motifs( "mh:input_motifs" );  }
+namespace mh { FileVectorOptionKey const harvest_scores( "mh:harvest_scores" );  }
+namespace mh { FileOptionKey const print_scores( "mh:print_scores" );  }
+namespace mh { FileVectorOptionKey const dump_matching_motifs( "mh:dump_matching_motifs" );  }
+namespace mh { RealOptionKey const dump_matching_motifs_cutoff( "mh:dump_matching_motifs_cutoff" );  }
+namespace mh { BooleanOptionKey const score_across_chains_only( "mh:score_across_chains_only" );  }
+namespace mh { BooleanOptionKey const normalize_score_ncontact( "mh:normalize_score_ncontact" );  }
+namespace mh { IntegerOptionKey const dump_motif_pdbs_min_counts( "mh:dump_motif_pdbs_min_counts" );  }
+namespace mh { RealOptionKey const hash_cart_size( "mh:hash_cart_size" );  }
+namespace mh { RealOptionKey const hash_cart_resl( "mh:hash_cart_resl" );  }
+namespace mh { RealOptionKey const hash_angle_resl( "mh:hash_angle_resl" );  }
+namespace mh { IntegerOptionKey const harvest_motifs_min_hh_ends( "mh:harvest_motifs_min_hh_ends" );  }
+namespace mh { IntegerOptionKey const harvest_scores_min_count( "mh:harvest_scores_min_count" );  }
+namespace mh { BooleanOptionKey const ignore_io_errors( "mh:ignore_io_errors" );  }
+namespace mh { RealOptionKey const motif_match_radius( "mh:motif_match_radius" );  }
+namespace mh { RealVectorOptionKey const merge_similar_motifs( "mh:merge_similar_motifs" );  }
+namespace mh { namespace score { BooleanOptionKey const score( "mh:score" );  } }
+namespace mh { namespace score { BooleanOptionKey const noloops( "mh:score:noloops" );  } }
+namespace mh { namespace score { BooleanOptionKey const spread_ss_element( "mh:score:spread_ss_element" );  } }
+namespace mh { namespace score { RealOptionKey const min_cover_fraction( "mh:score:min_cover_fraction" );  } }
+namespace mh { namespace score { RealOptionKey const strand_pair_weight( "mh:score:strand_pair_weight" );  } }
+namespace mh { namespace filter { BooleanOptionKey const filter( "mh:filter" );  } }
+namespace mh { namespace filter { BooleanOptionKey const filter_harvest( "mh:filter:filter_harvest" );  } }
+namespace mh { namespace filter { BooleanOptionKey const filter_io( "mh:filter:filter_io" );  } }
+namespace mh { namespace filter { StringOptionKey const restype( "mh:filter:restype" );  } }
+namespace mh { namespace filter { StringOptionKey const restype_one( "mh:filter:restype_one" );  } }
+namespace mh { namespace filter { StringOptionKey const not_restype( "mh:filter:not_restype" );  } }
+namespace mh { namespace filter { StringOptionKey const not_restype_one( "mh:filter:not_restype_one" );  } }
+namespace mh { namespace filter { IntegerOptionKey const seqsep( "mh:filter:seqsep" );  } }
+namespace mh { namespace filter { BooleanOptionKey const no_hb_bb( "mh:filter:no_hb_bb" );  } }
+namespace mh { namespace filter { RealOptionKey const mindist2( "mh:filter:mindist2" );  } }
+namespace mh { namespace filter { RealOptionKey const maxdist2( "mh:filter:maxdist2" );  } }
+namespace mh { namespace filter { StringOptionKey const ss1( "mh:filter:ss1" );  } }
+namespace mh { namespace filter { StringOptionKey const ss2( "mh:filter:ss2" );  } }
+namespace mh { namespace filter { StringOptionKey const dssp1( "mh:filter:dssp1" );  } }
+namespace mh { namespace filter { StringOptionKey const dssp2( "mh:filter:dssp2" );  } }
+namespace mh { namespace filter { StringOptionKey const aa1( "mh:filter:aa1" );  } }
+namespace mh { namespace filter { StringOptionKey const aa2( "mh:filter:aa2" );  } }
+namespace mh { namespace filter { RealOptionKey const sasa( "mh:filter:sasa" );  } }
+namespace mh { namespace filter { RealOptionKey const faatr( "mh:filter:faatr" );  } }
+namespace mh { namespace filter { RealOptionKey const hb_sc( "mh:filter:hb_sc" );  } }
+namespace mh { namespace filter { RealOptionKey const hb_bb_sc( "mh:filter:hb_bb_sc" );  } }
+namespace mh { namespace filter { RealOptionKey const hb_bb( "mh:filter:hb_bb" );  } }
+namespace mh { namespace filter { RealOptionKey const occupancy( "mh:filter:occupancy" );  } }
+namespace mh { namespace filter { RealOptionKey const coorderr( "mh:filter:coorderr" );  } }
+namespace mh { namespace filter { RealOptionKey const faatr_or_hbbb( "mh:filter:faatr_or_hbbb" );  } }
+namespace mh { namespace filter { RealOptionKey const faatr_or_hb( "mh:filter:faatr_or_hb" );  } }
+namespace mh { namespace filter { BooleanOptionKey const noloops( "mh:filter:noloops" );  } }
+namespace mh { namespace filter { BooleanOptionKey const oneloop( "mh:filter:oneloop" );  } }
+namespace mh { namespace filter { BooleanOptionKey const nodisulf( "mh:filter:nodisulf" );  } }
 namespace orbitals { BooleanOptionKey const orbitals( "orbitals" );  }
 namespace orbitals { BooleanOptionKey const Hpol( "orbitals:Hpol" );  }
 namespace orbitals { BooleanOptionKey const Haro( "orbitals:Haro" );  }
