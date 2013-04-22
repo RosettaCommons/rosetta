@@ -1,6 +1,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 	#include <basic/options/keys/out.OptionKeys.gen.hh>
 	#include <basic/options/keys/mh.OptionKeys.gen.hh>
+	#include <basic/options/keys/sicdock.OptionKeys.gen.hh>
 	#include <basic/options/option_macros.hh>
 	#include <basic/Tracer.hh>
 	#include <basic/database/open.hh>
@@ -86,8 +87,8 @@ OPT_1GRP_KEY( FileVector, sicdock, bench2 )
 	OPT_1GRP_KEY( Boolean, sicdock, rotate_x_only )
 	OPT_1GRP_KEY( Boolean, sicdock, no_recenter )
 	OPT_1GRP_KEY( Integer, sicdock, max_res )
-	OPT_1GRP_KEY( Real, sicdock, contact_dis )
-	OPT_1GRP_KEY( Real, sicdock, clash_dis )
+	// OPT_1GRP_KEY( Real, sicdock, contact_dis )
+	// OPT_1GRP_KEY( Real, sicdock, clash_dis )
 	OPT_1GRP_KEY( Real, sicdock, sample_radius )
 	OPT_1GRP_KEY( Real, sicdock, sample_number )
 	OPT_1GRP_KEY( Real, sicdock, redundancy_angle_cut )
@@ -113,8 +114,8 @@ void register_options() {
 	NEW_OPT( sicdock::nfold                , "C syms to test", 1 );
 	NEW_OPT( sicdock::max_res              , "", 99999 );
 	NEW_OPT( sicdock::dihedral             , "", "false" );
-	NEW_OPT( sicdock::contact_dis          , "", 10.0 );
-	NEW_OPT( sicdock::clash_dis            , "",  3.5 );
+	// NEW_OPT( sicdock::contact_dis          , "", 10.0 );
+	// NEW_OPT( sicdock::clash_dis            , "",  3.5 );
 	NEW_OPT( sicdock::sample_radius        , "",  5.0 );
 	NEW_OPT( sicdock::sample_number        , "",  70728 );
 	NEW_OPT( sicdock::redundancy_angle_cut , "",  3 );
