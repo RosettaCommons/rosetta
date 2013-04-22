@@ -69,7 +69,7 @@ class SixDOffsetTree {
 		SixDOffsetTree();
 
 		// returns only offsets within bounds
-		std::vector< SBin6D > lookup( Size radius, const Bin6D & center, const Bin6D & bounds );
+		std::vector< SBin6D > lookup( Size radius, const Bin6D & center, const Bin6D & bounds ) const;
 
 		//don't put this in the constructor because it will add overhead to anyone using the 6dhasher without the radial tree
 		void init( Size max_radius );
@@ -174,7 +174,7 @@ public:
 	// @brief compute the list of bin indices of a hypershell
 	// Bounding box overflow pruned here
 	std::vector < boost::uint64_t >
-	radial_bin_index( numeric::Size radius, Real6 const & center );
+	radial_bin_index( numeric::Size radius, Real6 const & center ) const;
 
 	Bin6D
 	bin_from_index( boost::uint64_t index ) const {

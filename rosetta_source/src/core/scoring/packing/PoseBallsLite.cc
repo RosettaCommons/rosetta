@@ -123,6 +123,39 @@ PoseBallsLite::PoseBallsLite(
 }
 
 
+PoseBallsLite::PoseBallsLite(
+	core::pose::Pose const & pose,
+	core::id::AtomID_Mask const & whichatoms
+)
+{
+	using namespace numeric;
+
+	// initialize index and vars
+	core::Size index = 0;
+	Size num_unrec = 0;
+	if( pose.pdb_info() ) num_unrec = pose.pdb_info()->get_num_unrecognized_atoms();
+	balls_      .reserve( pose.total_residue()*5 + num_unrec );
+	index_to_id_.reserve( pose.total_residue()*5 + num_unrec );
+	core::pose::initialize_atomid_map( id_to_index_, pose );
+	id_to_index_.resize( pose.total_residue() + num_unrec );
+
+	// add atoms in pose
+	for( core::Size ir = 1; ir <= pose.total_residue(); ++ir ) {
+		for( core::Size ia = 1; ia <= pose.residue(ir).natoms(); ++ia ) {
+			core::id::AtomID aid(ia,ir);
+			if( ! whichatoms[aid] ) continue;
+			atom_num_.push_back(ia);
+			res_num_.push_back(ir);
+			id_to_index_[ aid ] = ++index;
+			index_to_id_.push_back( aid );
+			balls_.push_back(	Ball( pose.xyz(aid), pose.residue(ir).atom_type(ia).lj_radius() )	);
+		}
+	}
+
+	nballs_ = index;
+}
+
+
 } // namespace packing
 } // namespace scoring
 } // namespace core

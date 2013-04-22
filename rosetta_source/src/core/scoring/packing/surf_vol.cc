@@ -45,7 +45,7 @@
 // option key includes
 
 #include <basic/options/keys/holes.OptionKeys.gen.hh>
-
+#include <core/pose/util.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/scoring/packing/PoseBalls.hh>
@@ -116,14 +116,24 @@ get_surf_vol(
 	pose::Pose const & pose,
 	core::Real const   probe_radius
 ) {
+	core::id::AtomID_Mask atoms;
+	core::pose::initialize_atomid_map_heavy_only(atoms,pose,true);
+	return get_surf_vol(pose,atoms,probe_radius);
+}
+
+SurfVol
+get_surf_vol(
+	pose::Pose const & pose,
+	core::id::AtomID_Mask const & whichatoms,
+	core::Real const   probe_radius
+) {
 	using namespace core;
 
 	SurfVol result;
 
 #ifndef WIN32
 
-
-	PoseBallsLite pb(pose);
+	PoseBallsLite pb(pose,whichatoms);
 
 	initialize_AtomID_Map<Real>(result.surf,pb);
 	initialize_AtomID_Map<Real>(result.vol ,pb);
@@ -164,10 +174,20 @@ get_surf_vol(
 	return result;
 }
 
+SurfVolDeriv
+get_surf_vol_deriv(
+	pose::Pose const & pose,
+	core::Real const   probe_radius
+) {
+	core::id::AtomID_Mask atoms;
+	core::pose::initialize_atomid_map_heavy_only(atoms,pose,true);
+	return get_surf_vol_deriv(pose,atoms,probe_radius);
+}
 
 SurfVolDeriv
 get_surf_vol_deriv(
 	pose::Pose const & pose,
+	core::id::AtomID_Mask const & whichatoms,
 	core::Real const   probe_radius
 ) {
 	using namespace core;
@@ -178,7 +198,7 @@ get_surf_vol_deriv(
 
 	PROF_START( basic::DALPHABALL );
 
-	PoseBalls pb(pose);
+	PoseBalls pb(pose,whichatoms);
 
 	initialize_AtomID_Map<Real>(result.surf,pb);
 	initialize_AtomID_Map<Real>(result.vol ,pb);

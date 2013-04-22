@@ -575,7 +575,7 @@ dock(Pose & init, string fname) {
               TR << "HIT " << irsd << " " << ch1 << " " << ch2 << " " << iaxs << " " << ANG << std::endl;
               seen_cen.push_back(R2*(com-HG)+HG);
               seen_axs.push_back(axs1);
-              //dumpsym6( pose, R2, R3a, R3b, HG, fname, irsd, ch1, ch2, ANG);
+              dumpsym2( pose, R2, R3a, R3b, HG, fname, irsd, ch1, ch2, ANG);
 
               Hit h;
               h.rsd = irsd;
@@ -625,12 +625,12 @@ int main (int argc, char *argv[]) {
     string fn = option[in::file::s]()[ifn];
     Pose pnat;
     core::import_pose::pose_from_pdb(pnat,fn);
-    if( pnat.n_residue() > 300 ) continue;
+    // if( pnat.n_residue() > 300 ) continue;
     for(Size ir = 2; ir <= pnat.n_residue()-1; ++ir) {
       if(!pnat.residue(ir).is_protein()) goto cont1;
-      if(pnat.residue(ir).is_lower_terminus()) goto cont1;
-      if(pnat.residue(ir).is_upper_terminus()) goto cont1;
-      if(pnat.residue(ir).name3()=="CYS") goto cont1;
+      if(pnat.residue(ir).is_lower_terminus()) core::pose::remove_lower_terminus_type_from_pose_residue(pnat,ir);
+      if(pnat.residue(ir).is_upper_terminus()) core::pose::remove_upper_terminus_type_from_pose_residue(pnat,ir);
+      // if(pnat.residue(ir).name3()=="CYS") goto cont1;
     } goto done1; cont1: TR << "skipping " << fn << std::endl; continue; done1:
 		//continue;
     Pose pala(pnat);

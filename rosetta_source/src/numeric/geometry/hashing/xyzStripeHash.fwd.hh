@@ -17,12 +17,9 @@ namespace numeric {
 namespace geometry {
 namespace hashing {
 
-template<typename T>
 class xyzStripeHash;
-typedef utility::pointer::owning_ptr< xyzStripeHash<numeric::Real> > xyzStripeHashRealOP;
-typedef utility::pointer::owning_ptr< xyzStripeHash<numeric::Real> const > xyzStripeHashRealCOP;
-typedef utility::pointer::owning_ptr< xyzStripeHash<float> > xyzStripeHashFloatOP;
-typedef utility::pointer::owning_ptr< xyzStripeHash<float> const > xyzStripeHashFloatCOP;
+typedef utility::pointer::owning_ptr< xyzStripeHash > xyzStripeHashOP;
+typedef utility::pointer::owning_ptr< xyzStripeHash const > xyzStripeHashCOP;
 
 }
 }

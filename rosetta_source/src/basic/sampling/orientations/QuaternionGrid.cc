@@ -331,9 +331,9 @@ QuaternionGrid::QuaternionGrid(std::string const & name, std::istream & in): nam
     assert(in.good());
     getline(in, line);
     assert(line == "format grid");
-    in >> delta >> sigma >> ntot >> ncell >> nent >> maxrad >> coverage;
+    in >> delta >> sigma >> ntot >> ncell >> nent >> maxrad_ >> coverage;
     // cout << ntot << " " << fixed
-             // << setprecision(3) << maxrad << " "
+             // << setprecision(3) << maxrad_ << " "
              // << setprecision(5) << coverage << endl;
     size_t ncell1 = 0;
     for (size_t n = 0; n < nent; ++n) {
@@ -366,6 +366,11 @@ QuaternionGrid::QuaternionGrid(std::string const & name, std::istream & in): nam
         }
         assert(s.Number() == ntot);
     }
+}
+
+std::ostream & operator<<(std::ostream & out, QuaternionGrid const & q){
+    out << "QuaternionGrid " << q.name_ << ", nsamp: " << q.ntot << ", covering radius: " << q.maxrad_ << " degrees";
+    return out;
 }
 
 

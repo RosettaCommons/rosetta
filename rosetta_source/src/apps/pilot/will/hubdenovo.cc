@@ -110,9 +110,9 @@ using core::id::NamedAtomID;
 typedef utility::vector1<core::Size> Sizes;
 typedef utility::vector1<std::string> Strings;
 
-OPT_KEY( File  , hub_pdb )
-OPT_KEY( String, hub_ss )
-OPT_KEY( String, hub_sequence )
+OPT_KEY( File, hub_pdb )
+OPT_KEY( Integer, hub_position )
+OPT_KEY( String, hubdenovo_root_atom )
 OPT_KEY( File, hub_cst_cfg )
 OPT_KEY( IntegerVector, hub_ho_cst )
 OPT_KEY( Real, hub_cen_energy_cut )
@@ -121,15 +121,16 @@ OPT_KEY( Boolean, hub_no_fa )
 OPT_KEY( Boolean, hub_graphics )
 OPT_KEY( Boolean, hub_test_config )
 OPT_KEY( Boolean, init_with_first_aa )
+OPT_KEY( File  , target )
 
 #define ERROR_UINT 123456789ul
 
 void register_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	NEW_OPT( hub_pdb      ,"", "input/CHC_HUB_FA.pdb" );
-	NEW_OPT( hub_ss       ,"", "" );
-	NEW_OPT( hub_sequence ,"", "" );
+	NEW_OPT( hub_pdb      ,"", "NO_PBD_INPUT" );
+	NEW_OPT( hub_position, "", 1 );
+	NEW_OPT( hubdenovo_root_atom ,"", "CA" );
 	NEW_OPT( hub_cst_cfg  ,"", "" );
 	NEW_OPT( hub_ho_cst   ,"", utility::vector1< Size >() );
 	NEW_OPT( hub_cen_energy_cut   ,"", 999999.0 );
@@ -138,6 +139,8 @@ void register_options() {
 	NEW_OPT( hub_graphics,"", false );
 	NEW_OPT( hub_test_config,"", false );
 	NEW_OPT( init_with_first_aa,"", false );
+	NEW_OPT( target  ,"pdb of target for rmsd calc", "" );
+
 }
 
 static core::io::silent::SilentFileData sfd;
@@ -230,7 +233,7 @@ public:
 
 // fixed SS
 struct ConstraintConfig {
-	Size nres,nsub,nhub;
+	Size nres,nsub,nhub,hubpos;
 	Real CSTSDMULT;
 	string fname, template_seq_sc, template_seq_bb;
 	vector1<char> ss;
@@ -541,7 +544,7 @@ struct ConstraintConfig {
 					}
 					if(r.size()!=s.size()) utility_exit_with_message("SEQUENCE size mismatch: "+op2+" vs. "+tmp);
 					for(Size i = 1; i <= r.size(); ++i) {
-						if(r[i]==1) { TR << "WARNING: cannot mutate resi "+str(r[i])+"!!! "+op2+" "+tmp << endl; continue; }
+						if((int)r[i]==option[OptionKeys::hub_position]()) { TR << "WARNING: cannot mutate resi "+str(r[i])+"!!! "+op2+" "+tmp << endl; }
 						if(r[i] > nres || r[i] < 1) {
 							if(r[i]==ERROR_UINT)
 								TR << "WARNING: ignoring SEQUENCE "+op2+" "+tmp << ", out of monomer range!" << std::endl;
@@ -590,7 +593,7 @@ struct ConstraintConfig {
 					while(true) {
 						++wcount;
 						if(wcount > 100) utility_exit_with_message("TEMPLATE "+tpdb+" parse error on "+op2);
-						if("MAPPING"==peek(in)||"SIDECHAINS"==peek(in)||"BACKBONE"==peek(in)||"DISTANCES"==peek(in)||"TEMPLATE"==peek(in)||""==peek(in)) break;
+						if("MAPPING"==peek(in)||"SIDECHAINS"==peek(in)||"BACKBONE"==peek(in)||"TEMPLATE"==peek(in)||""==peek(in)) break;
 						if("MAPPING"==op2) {
 							TR << "MAPPING" << endl;
 							Sizes dres = parse_residues(getline(in));
@@ -798,26 +801,53 @@ struct ConstraintConfig {
 				for(vector1<DCST>::iterator i = dcst.begin(); i != dcst.end(); ++i) i->active = false;
 		}
 	std::string pick_sequence() const {
-		string s = "Z";
-		for(Size i = 2; i <= nres; ++i) {
-			if(seq.count(i)) {
+		string s = "";
+		for(Size i = 1; i <= nres; ++i) {
+			Strings choices;
+			std::map<Size,Strings>::const_iterator iseq = seq.find(i);
+			if(iseq == seq.end()) {
 				if(option[basic::options::OptionKeys::init_with_first_aa]()){
-					s += seq.find(i)->second.front();
-				} else {
-					Strings const & choices( seq.find(i)->second );
-					string tmp = choices[ (Size)std::ceil( numeric::random::uniform()*((Real)choices.size()) ) ];
-					//TR << i << " " << tmp << endl;
-					if(tmp.size() != 1) utility_exit_with_message("sequence is bad: '"+tmp+"'");
-					s += tmp;
+					if     (ss[i]=='_') choices.push_back("G");
+					else if(ss[i]=='H') choices.push_back("L");
+					else if(ss[i]=='E') choices.push_back("V");
+					else if(ss[i]=='L') choices.push_back("G");
+					else utility_exit_with_message("bad ss "+ss[i]);
+			 	} else {
+					choices.push_back("A");
+					choices.push_back("C");
+					choices.push_back("D");
+					choices.push_back("E");
+					choices.push_back("F");
+	  				choices.push_back("G");
+					choices.push_back("H");
+					choices.push_back("I");
+					choices.push_back("K");
+					choices.push_back("L");
+				    choices.push_back("M");
+					choices.push_back("N");
+					choices.push_back("P");
+					choices.push_back("Q");
+					choices.push_back("R");
+					choices.push_back("S");
+					choices.push_back("T");
+					choices.push_back("V");
+					choices.push_back("W");
+					choices.push_back("Y");
 				}
+				TR << "WARNING position " << i << " using defailt AA " << (*s.rbegin()) << endl;
 			} else {
-				if     (ss[i]=='_') s += "G";
-				else if(ss[i]=='H') s += "L";
-				else if(ss[i]=='E') s += "V";
-				else if(ss[i]=='L') s += "G";
-				else utility_exit_with_message("bad ss "+ss[i]);
-				//TR << i << " " << "LVG" << endl;
+				cerr << "pos: " << i << " nseq: " << iseq->second.size() << endl;
+				if(option[basic::options::OptionKeys::init_with_first_aa]()){
+					choices.push_back( iseq->second.front() );
+				} else {
+					// std::copy(iseq->second.begin(),iseq->second.end(),choices.end());
+					choices = iseq->second;
+				}
 			}
+			TR << "res " << i << " aa choices: " << choices << endl;
+			string tmp = choices[ (Size)std::ceil( numeric::random::uniform()*((Real)choices.size()) ) ];
+			if(tmp.size() != 1) utility_exit_with_message("sequence is bad: '"+tmp+"'");
+			s += tmp;
 		}
 		if( s.size() != nres ) {
 			utility_exit_with_message("particular sequence doesn't match length of ss");
@@ -840,13 +870,25 @@ struct ConstraintConfig {
 };
 
 struct HubDenovo {
-	Pose hub;
+	Pose hub_,target_;
 	ConstraintConfig cfg;
 	ScoreFunctionOP sf3,sfsym,sfasym,sfsymnocst;
 	protocols::moves::MoverOP rlxcst,rlxnocst,des,fragins3,fraginsL,fragins,cenmin,famin;
 	virtual ~HubDenovo() {}
-	HubDenovo(std::string cstcfgfile) : cfg(cstcfgfile),sf3(NULL),sfsym(NULL),sfasym(NULL),sfsymnocst(NULL),rlxcst(NULL),rlxnocst(NULL),
-	des(NULL),fragins3(NULL),fraginsL(NULL),fragins(NULL),cenmin(NULL)
+	HubDenovo(
+		std::string cstcfgfile
+	):	cfg(cstcfgfile),
+		sf3(NULL),
+		sfsym(NULL),
+		sfasym(NULL),
+		sfsymnocst(NULL),
+		rlxcst(NULL),
+		rlxnocst(NULL),
+		des(NULL),
+		fragins3(NULL),
+		fraginsL(NULL),
+		fragins(NULL),
+		cenmin(NULL)
 	{
 		TR << "RESIDUE NUMBER MAPPING" << endl;
 		for(std::map<string,Sizes>::const_iterator i = cfg.ssmap.begin(); i != cfg.ssmap.end(); ++i){
@@ -870,8 +912,8 @@ struct HubDenovo {
 		core::chemical::ResidueTypeSetCAP rtsfa = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 
 		std::map<string, vector1<core::fragment::FragDataOP> > fds( get_frags_map() );
-		core::fragment::FragSetOP frags3 = make_frag_set(cfg.ss                 ,fds,2);
-		core::fragment::FragSetOP fragsl = make_frag_set(cfg.ssstr().substr(0,6),fds,2);
+		core::fragment::FragSetOP frags3 = make_frag_set(cfg.ss                 ,fds,hub_.n_residue()+1);
+		core::fragment::FragSetOP fragsl = make_frag_set(cfg.ssstr().substr(0,6),fds,hub_.n_residue()+1);
 
 		fragins3  = new protocols::simple_moves::ClassicFragmentMover(frags3);
 		fraginsL  = new protocols::simple_moves::ClassicFragmentMover(fragsl);
@@ -892,29 +934,46 @@ struct HubDenovo {
 		movemap->set_chi(true);
 		famin = new protocols::simple_moves::symmetry::SymMinMover( movemap, sfsymnocst, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
 
-		hub = *core::import_pose::pose_from_pdb(*rtsfa, option[OptionKeys::hub_pdb]() );
+		if(option[OptionKeys::hub_pdb].user()){
+			hub_ = *core::import_pose::pose_from_pdb(*rtsfa, option[OptionKeys::hub_pdb]() );
+		}
+		if( option[OptionKeys::target].user() ){
+			core::import_pose::pose_from_pdb(target_,option[OptionKeys::target]());
+		}
 	}
 	Pose make_start_pose() {
-		Pose p(hub);
-		core::pose::remove_upper_terminus_type_from_pose_residue(p,1);
+		Pose p(hub_);
+		if(p.n_residue()>0) core::pose::remove_upper_terminus_type_from_pose_residue(p,p.n_residue());
+		if(option[OptionKeys::hub_position]() != 1 ) core::pose::remove_lower_terminus_type_from_pose_residue(p,1);
 		string tmpseq = cfg.pick_sequence();
 		// TR << "start sequence " << seq << endl;
-		for(Size ir = 2; ir <= cfg.nres; ++ir) {
+		for(Size ir = option[OptionKeys::hub_position]()-1; ir >= 1; --ir){
+			TR << "make_start_pose prepend" << ir << " " << p.n_residue() << endl;
 			char myaa = tmpseq[ir-1];
 			if     (cfg.template_seq_sc[ir-1]!='_') myaa = cfg.template_seq_sc[ir-1];
 			else if(cfg.template_seq_bb[ir-1]!='_') myaa = cfg.template_seq_bb[ir-1];
 			core::conformation::ResidueOP tmp = core::conformation::ResidueFactory::create_residue(
-				*p.residue(1).residue_type_set().aa_map(core::chemical::aa_from_oneletter_code(myaa))[1] );
+				*cfg.frs->aa_map(core::chemical::aa_from_oneletter_code(myaa))[1] );
+			tmp->seqpos(ir);
+			tmp->chain(1);
+			p.prepend_polymer_residue_before_seqpos(*tmp,1,true);
+		}
+
+		for(Size ir = hub_.n_residue()+option[OptionKeys::hub_position](); ir <= cfg.nres; ++ir) {
+			char myaa = tmpseq[ir-1];
+			if     (cfg.template_seq_sc[ir-1]!='_') myaa = cfg.template_seq_sc[ir-1];
+			else if(cfg.template_seq_bb[ir-1]!='_') myaa = cfg.template_seq_bb[ir-1];
+			core::conformation::ResidueOP tmp = core::conformation::ResidueFactory::create_residue(
+				*cfg.frs->aa_map(core::chemical::aa_from_oneletter_code(myaa))[1] );
 			tmp->seqpos(ir);
 			tmp->chain(1);
 			p.append_residue_by_bond( *tmp, true );
-			p.set_omega(ir-1,180.0);
-			p.set_omega(ir  ,180.0);
 		}
+		for(Size ir = 1; ir <= p.n_residue(); ++ir) p.set_omega(ir,180.0);
 		core::pose::add_upper_terminus_type_to_pose_residue(p,p.n_residue());
 		//sfsym->show(p);
 
-		TR << "make_start_pose: " << p.sequence() << std::endl;
+		TR << "make_start_pose: " << p.sequence() << " " << p.n_residue() <<  std::endl;
 
 		make_symmetric_pose(p);
 		FoldTree ft = p.fold_tree();
@@ -924,7 +983,7 @@ struct HubDenovo {
 		for(int i = 1; i <= (int)ft.num_jump(); ++i){
 			if( ft.upstream_jump_residue(i) > Nreal && ft.downstream_jump_residue(i) <= Nreal ){
 				TR << "SET JUMP ATOM TO CA " << i <<" "<<ft.upstream_jump_residue(i) << " "<< ft.downstream_jump_residue(i) << endl;
-				ft.set_jump_atoms( i, "ORIG", "CA");
+				ft.set_jump_atoms( i, "ORIG", option[basic::options::OptionKeys::hubdenovo_root_atom]() );
 			}
 		}
 		p.fold_tree(ft);
@@ -935,18 +994,18 @@ struct HubDenovo {
 		core::util::switch_to_residue_type_set(p,"centroid");
 		reset_hub(p);
 
-		Vec ca = p.residue(1).xyz(2);
-		Vec c  = p.residue(1).xyz(3);
-		Vec n  = p.residue(2).xyz(1);
-		p.set_xyz( AtomID(4,1), c+(c-(ca+n)/2.0).normalized() * 1.215128 );
+		// Vec ca = p.residue(1).xyz(2);
+		// Vec c  = p.residue(1).xyz(3);
+		// Vec n  = p.residue(2).xyz(1);
+		// p.set_xyz( AtomID(4,1), c+(c-(ca+n)/2.0).normalized() * 1.215128 );
 
-		// p.set_psi(1,hub.psi(1));
+		// p.set_psi(1,hub_.psi(1));
 		// p.dump_pdb("test1.pdb");
 
-		// p.set_psi(1,hub.psi(1) + 10.0);
+		// p.set_psi(1,hub_.psi(1) + 10.0);
 		// p.dump_pdb("test2.pdb");
 
-		// p.set_phi(1,hub.phi(1) + 10.0);
+		// p.set_phi(1,hub_.phi(1) + 10.0);
 		// p.dump_pdb("test3.pdb");
 
 		// utility_exit_with_message("FOO");
@@ -954,16 +1013,18 @@ struct HubDenovo {
 		return p;
 	}
 	void reset_hub(Pose & p){
-		for(Size i = 1; i <= p.residue(1).natoms(); ++i){
-			string const & name( p.residue(1).atom_name(i) );
-			if(name==" O  " || name==" C  ") continue;
-			if(hub.residue(1).has( name )){
-				// cout << "reset " << p.residue(1).atom_name(i) << endl;
-				p.set_xyz( AtomID(i,1), hub.residue(1).xyz( name ) );
+		Size hpos = option[OptionKeys::hub_position]();
+		for(Size irh = 1; irh <= hub_.n_residue(); ++irh){
+			for(Size i = 1; i <= p.residue(irh+hpos-1).natoms(); ++i){
+				string const & name( p.residue(irh+hpos-1).atom_name(i) );
+				if(name==" O  " || name==" C  ") continue;
+				if(hub_.residue(irh).has( name )){
+					// cout << "reset " << p.residue(1).atom_name(i) << endl;
+					p.set_xyz( AtomID(i,irh+hpos-1), hub_.residue(irh).xyz( name ) );
+				}
 			}
 		}
 	}
-
 	bool cen_fold(Pose & p) {
 
 		// set up movemap and min mover
@@ -1094,7 +1155,7 @@ struct HubDenovo {
 	Real stupid_ddg(Pose const & pose_in) {
 
 		if(cfg.nsub==cfg.nhub){
-			TR << "WARNING: stupid_ddg is not for single hub things (nhub==nsub), returning 0." << endl;
+			TR << "WARNING: stupid_ddg is not for single hub_ things (nhub==nsub), returning 0." << endl;
 			return 0;
 			utility_exit_with_message("stupid_ddg is not for single hubs");
 		}
@@ -1158,6 +1219,8 @@ struct HubDenovo {
 				sfd.write_silent_struct( *ss_out, option[OptionKeys::out::file::o]() + "/" + option[ OptionKeys::out::file::silent ]()+"_cen.sc" );
 			}
 
+
+
 			if(tmp.energies().total_energy() > option[OptionKeys::hub_cen_energy_cut]() ) {
 				TR << "CEN fail " << tmp.energies().total_energy() << endl;
 				continue;
@@ -1170,6 +1233,7 @@ struct HubDenovo {
 				continue;
 			}
 			sf3->score(tmp);
+			tmp.dump_pdb(fn+"_cen.pdb");
 
 			TR << "HIT " << tmp.energies().total_energy() << " " << fn << endl;
 
@@ -1220,6 +1284,11 @@ struct HubDenovo {
 				for(int isum=1; isum <= inr; ++isum) esum += tmp.energies().residue_total_energy(isum);
 				ss_out->add_energy("first"+str(inr),esum);
 			}
+
+			Real rms = 0.0;
+			if( option[OptionKeys::target].user() ) rms = core::scoring::CA_rmsd(target_,tmp);
+
+
 			ss_out->add_energy("psi1",tmp.psi(1));
 			ss_out->add_energy("omg1",tmp.omega(1));
 			ss_out->add_energy("phi2",tmp.phi(2));
@@ -1230,6 +1299,7 @@ struct HubDenovo {
 			ss_out->add_energy("ddg3",ddg3);
 			ss_out->add_energy("cst",cstscore);
 			ss_out->add_energy("rg",rg);
+			ss_out->add_energy("rms", rms );
 			TR << "dump scores" << endl;
 			sfd.write_silent_struct( *ss_out, option[OptionKeys::out::file::o]() + "/" + option[ OptionKeys::out::file::silent ]() );
 

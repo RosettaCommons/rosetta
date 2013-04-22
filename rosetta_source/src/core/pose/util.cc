@@ -738,6 +738,16 @@ utility::vector1< char > read_psipred_ss2_file( pose::Pose const & pose ) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+void conf2pdb_chain_default_map( core::pose::Pose const & pose, std::map<int,char> & chainmap ) {
+	chainmap.clear();
+	char letter = 'A';
+	for(int i = 1; i <= pose.conformation().num_chains(); ++i){
+		chainmap[i] = letter;
+		if('Z'==letter) utility_exit_with_message("too many chains to map to letters!!!");
+		letter = static_cast<char>(letter + 1);
+	}
+}
+
 /// @brief get Conformation chain -> PDBInfo chain mapping
 /// @remarks Any chains whose PDBInfo chain records are marked entirely as
 ///  PDBInfo::empty_record() will be mapped to that character.  Note that
@@ -752,7 +762,8 @@ std::map< int, char > conf2pdb_chain( core::pose::Pose const & pose ) {
 	Conf2PDB conf2pdb;
 
 	if ( !pose.pdb_info().get() ) {
-		TR.Warning << "WARNING: conf2pdb_chain(): PDBInfo does not exist, returning empty map" << std::endl;
+		TR.Warning << "WARNING: conf2pdb_chain(): PDBInfo does not exist, returning default map 1=A, 2=B, ..." << std::endl;
+		conf2pdb_chain_default_map(pose,conf2pdb);
 		return conf2pdb;
 	}
 
@@ -775,10 +786,13 @@ std::map< int, char > conf2pdb_chain( core::pose::Pose const & pose ) {
 					continue; // skip empty record
 				} else {
 					// something is inconsistent
-					TR.Warning << "WARNING: conf2pdb_chain(): chain mapping inconsistent, returning empty map; ";
+					TR.Warning << "WARNING: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
+					TR.Warning << "WARNING: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! HERE BE DRAGONS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
+					TR.Warning << "WARNING: conf2pdb_chain(): chain mapping inconsistent, returning default map p 1=A, 2=B, ... ";
+					TR.Warning << "WARNING: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
 					TR.Warning << "existing " << c2p->first << " -> " << c2p->second << "  |  ";
 					TR.Warning << "new " << conf << " -> " << pdb << std::endl;
-					conf2pdb.clear();
+					conf2pdb_chain_default_map(pose,conf2pdb);
 					return conf2pdb;
 				}
 

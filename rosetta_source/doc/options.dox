@@ -12970,6 +12970,342 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 45.0</dd><br>
 </dl>
  </li>
+<li><h2>mh</h2>
+<dl>
+<dt><b>-mh</b> \<Boolean\><dt>
+<dd>mh option group</dd><br>
+</dl>
+<dl>
+<dt><b>-motif_out_file</b> \<String\><dt>
+<dd>file to dump ResPairMotifs to</dd><br>
+<dd>Default: "default"</dd><br>
+</dl>
+<dl>
+<dt><b>-harvest_motifs</b> \<FileVector\><dt>
+<dd>files to harvest ResPairMotifs from</dd><br>
+<dd>Default: "SPECIFY_ME_DUMMY"</dd><br>
+</dl>
+<dl>
+<dt><b>-print_motifs</b> \<FileVector\><dt>
+<dd>files to print ResPairMotifs from</dd><br>
+<dd>Default: "SPECIFY_ME_DUMMY"</dd><br>
+</dl>
+<dl>
+<dt><b>-dump_motif_pdbs</b> \<FileVector\><dt>
+<dd>files to extract ResPairMotifs clusters from</dd><br>
+<dd>Default: "SPECIFY_ME_DUMMY"</dd><br>
+</dl>
+<dl>
+<dt><b>-merge_motifs</b> \<FileVector\><dt>
+<dd>files to merge ResPairMotifs from</dd><br>
+<dd>Default: "SPECIFY_ME_DUMMY"</dd><br>
+</dl>
+<dl>
+<dt><b>-merge_motifs_one_per_bin</b> \<Boolean\><dt>
+<dd>keep only one motif per hash bin (for sepcified grid)</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-generate_reverse_motifs</b> \<Boolean\><dt>
+<dd>keep only one motif per hash bin (for sepcified grid)</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-dump_input_pdb</b> \<FileVector\><dt>
+<dd>files to dump biount interpretation from</dd><br>
+<dd>Default: "SPECIFY_ME_DUMMY"</dd><br>
+</dl>
+<dl>
+<dt><b>-score_pdbs</b> \<FileVector\><dt>
+<dd>files to score with input counts file</dd><br>
+<dd>Default: "SPECIFY_ME_DUMMY"</dd><br>
+</dl>
+<dl>
+<dt><b>-xform_score_data</b> \<FileVector\><dt>
+<dd>motif hash data for scoring</dd><br>
+</dl>
+<dl>
+<dt><b>-xform_score_data_ee</b> \<FileVector\><dt>
+<dd>motif hash data for scoring</dd><br>
+</dl>
+<dl>
+<dt><b>-xform_score_data_eh</b> \<FileVector\><dt>
+<dd>motif hash data for scoring</dd><br>
+</dl>
+<dl>
+<dt><b>-xform_score_data_he</b> \<FileVector\><dt>
+<dd>motif hash data for scoring</dd><br>
+</dl>
+<dl>
+<dt><b>-xform_score_data_hh</b> \<FileVector\><dt>
+<dd>motif hash data for scoring</dd><br>
+</dl>
+<dl>
+<dt><b>-xform_score_data_sspair</b> \<FileVector\><dt>
+<dd>motif hash data for scoring strand pairings</dd><br>
+</dl>
+<dl>
+<dt><b>-sequence_recovery</b> \<FileVector\><dt>
+<dd>pdb files to score</dd><br>
+<dd>Default: "SPECIFY_ME_DUMMY"</dd><br>
+</dl>
+<dl>
+<dt><b>-explicit_motif_score</b> \<FileVector\><dt>
+<dd>pdb files to score</dd><br>
+<dd>Default: "SPECIFY_ME_DUMMY"</dd><br>
+</dl>
+<dl>
+<dt><b>-input_motifs</b> \<FileVector\><dt>
+<dd>motifs to score with</dd><br>
+<dd>Default: "SPECIFY_ME_DUMMY"</dd><br>
+</dl>
+<dl>
+<dt><b>-harvest_scores</b> \<FileVector\><dt>
+<dd>get counts from ResPairMotif files and dump to binary counts file</dd><br>
+<dd>Default: ""</dd><br>
+</dl>
+<dl>
+<dt><b>-print_scores</b> \<File\><dt>
+<dd>print a binary counts file</dd><br>
+<dd>Default: ""</dd><br>
+</dl>
+<dl>
+<dt><b>-dump_matching_motifs</b> \<FileVector\><dt>
+<dd>pdb files to score</dd><br>
+<dd>Default: "SPECIFY_ME_DUMMY"</dd><br>
+</dl>
+<dl>
+<dt><b>-dump_matching_motifs_cutoff</b> \<Real\><dt>
+<dd>rms cutoff</dd><br>
+<dd>Default: 1.0</dd><br>
+</dl>
+<dl>
+<dt><b>-score_across_chains_only</b> \<Boolean\><dt>
+<dd>ignore intra-chain motifs</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-normalize_score_ncontact</b> \<Boolean\><dt>
+<dd>normalize by total num contacts</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-dump_motif_pdbs_min_counts</b> \<Integer\><dt>
+<dd>min counts to dump</dd><br>
+<dd>Default: 99999999</dd><br>
+</dl>
+<dl>
+<dt><b>-hash_cart_size</b> \<Real\><dt>
+<dd>dimensions of binned space</dd><br>
+<dd>Default: 12.0</dd><br>
+</dl>
+<dl>
+<dt><b>-hash_cart_resl</b> \<Real\><dt>
+<dd>width of cartesian bin</dd><br>
+<dd>Default: 0.8</dd><br>
+</dl>
+<dl>
+<dt><b>-hash_angle_resl</b> \<Real\><dt>
+<dd>width of euler angle bin</dd><br>
+<dd>Default: 15.0</dd><br>
+</dl>
+<dl>
+<dt><b>-harvest_motifs_min_hh_ends</b> \<Integer\><dt>
+<dd>restrict to middle of hilix contacts </dd><br>
+<dd>Default: 0</dd><br>
+</dl>
+<dl>
+<dt><b>-harvest_scores_min_count</b> \<Integer\><dt>
+<dd> </dd><br>
+<dd>Default: 0</dd><br>
+</dl>
+<dl>
+<dt><b>-ignore_io_errors</b> \<Boolean\><dt>
+<dd> </dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-motif_match_radius</b> \<Real\><dt>
+<dd>width of euler angle bin</dd><br>
+<dd>Default: 0.6</dd><br>
+</dl>
+<dl>
+<dt><b>-merge_similar_motifs</b> \<RealVector\><dt>
+<dd>give 3 hash params</dd><br>
+</dl>
+ </li>
+<li><h2>mh:score</h2>
+<dl>
+<dt><b>-score</b> \<Boolean\><dt>
+<dd>score option group</dd><br>
+</dl>
+<dl>
+<dt><b>-noloops</b> \<Boolean\><dt>
+<dd>ignore loop ss in scored structs</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-spread_ss_element</b> \<Boolean\><dt>
+<dd>ignore loop ss in scored structs</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-min_cover_fraction</b> \<Real\><dt>
+<dd>ignore loop ss in scored structs</dd><br>
+<dd>Default: 0.0</dd><br>
+</dl>
+<dl>
+<dt><b>-strand_pair_weight</b> \<Real\><dt>
+<dd>ignore loop ss in scored structs</dd><br>
+<dd>Default: 1.0</dd><br>
+</dl>
+ </li>
+<li><h2>mh:filter</h2>
+<dl>
+<dt><b>-filter</b> \<Boolean\><dt>
+<dd>filter option group</dd><br>
+</dl>
+<dl>
+<dt><b>-filter_harvest</b> \<Boolean\><dt>
+<dd>filter while harvesting</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-filter_io</b> \<Boolean\><dt>
+<dd>filter while reading filter</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-restype</b> \<String\><dt>
+<dd>allowed res types</dd><br>
+<dd>Default: "ACDEFGHIKLMNPQRSTVWY"</dd><br>
+</dl>
+<dl>
+<dt><b>-restype_one</b> \<String\><dt>
+<dd>allowed res types need at least one</dd><br>
+<dd>Default: "ACDEFGHIKLMNPQRSTVWY"</dd><br>
+</dl>
+<dl>
+<dt><b>-not_restype</b> \<String\><dt>
+<dd>disallowed res types</dd><br>
+<dd>Default: "ACGP"</dd><br>
+</dl>
+<dl>
+<dt><b>-not_restype_one</b> \<String\><dt>
+<dd>disallowed res types at least one not</dd><br>
+<dd>Default: "ACGP"</dd><br>
+</dl>
+<dl>
+<dt><b>-seqsep</b> \<Integer\><dt>
+<dd>min filter seqsep</dd><br>
+<dd>Default: 0</dd><br>
+</dl>
+<dl>
+<dt><b>-no_hb_bb</b> \<Boolean\><dt>
+<dd>no bb hbonded</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-mindist2</b> \<Real\><dt>
+<dd>min CA-CA dist sq</dd><br>
+<dd>Default: 0.0</dd><br>
+</dl>
+<dl>
+<dt><b>-maxdist2</b> \<Real\><dt>
+<dd>max CA-CA dist sq</dd><br>
+<dd>Default: 999999.0</dd><br>
+</dl>
+<dl>
+<dt><b>-ss1</b> \<String\><dt>
+<dd>filter ss1</dd><br>
+<dd>Default: ""</dd><br>
+</dl>
+<dl>
+<dt><b>-ss2</b> \<String\><dt>
+<dd>filter ss2</dd><br>
+<dd>Default: ""</dd><br>
+</dl>
+<dl>
+<dt><b>-dssp1</b> \<String\><dt>
+<dd>filter dssp1</dd><br>
+<dd>Default: ""</dd><br>
+</dl>
+<dl>
+<dt><b>-dssp2</b> \<String\><dt>
+<dd>filter dssp2</dd><br>
+<dd>Default: ""</dd><br>
+</dl>
+<dl>
+<dt><b>-aa1</b> \<String\><dt>
+<dd>filter aa1</dd><br>
+<dd>Default: ""</dd><br>
+</dl>
+<dl>
+<dt><b>-aa2</b> \<String\><dt>
+<dd>filter aa2</dd><br>
+<dd>Default: ""</dd><br>
+</dl>
+<dl>
+<dt><b>-sasa</b> \<Real\><dt>
+<dd>filter max sasa</dd><br>
+<dd>Default: 999.0</dd><br>
+</dl>
+<dl>
+<dt><b>-faatr</b> \<Real\><dt>
+<dd>filter max faatr (default 999.0 = no filtering</dd><br>
+<dd>Default: 999.0</dd><br>
+</dl>
+<dl>
+<dt><b>-hb_sc</b> \<Real\><dt>
+<dd>filter max hb_sc (default 999.0 = no filtering</dd><br>
+<dd>Default: 999.0</dd><br>
+</dl>
+<dl>
+<dt><b>-hb_bb_sc</b> \<Real\><dt>
+<dd>filter max hb_bb_sc (default 999.0 = no filtering</dd><br>
+<dd>Default: 999.0</dd><br>
+</dl>
+<dl>
+<dt><b>-hb_bb</b> \<Real\><dt>
+<dd>filter max hb_bb (default 999.0 = no filtering</dd><br>
+<dd>Default: 999.0</dd><br>
+</dl>
+<dl>
+<dt><b>-occupancy</b> \<Real\><dt>
+<dd>filter min occupancy (default 0.0 = no filtering</dd><br>
+<dd>Default: 0.0</dd><br>
+</dl>
+<dl>
+<dt><b>-coorderr</b> \<Real\><dt>
+<dd>filter max bfac coorderr = sqrt(B/8*pi**2)) (default 999.0 = no filtering</dd><br>
+<dd>Default: 999.0</dd><br>
+</dl>
+<dl>
+<dt><b>-faatr_or_hbbb</b> \<Real\><dt>
+<dd>filter require atr or hb (bb allowed) below thresh</dd><br>
+<dd>Default: 999.0</dd><br>
+</dl>
+<dl>
+<dt><b>-faatr_or_hb</b> \<Real\><dt>
+<dd>filter require atr or hb below thresh</dd><br>
+<dd>Default: 999.0</dd><br>
+</dl>
+<dl>
+<dt><b>-noloops</b> \<Boolean\><dt>
+<dd></dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-oneloop</b> \<Boolean\><dt>
+<dd></dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-nodisulf</b> \<Boolean\><dt>
+<dd></dd><br>
+<dd>Default: false</dd><br>
+</dl>
+ </li>
 <li><h2>orbitals</h2>
 <dl>
 <dt><b>-orbitals</b> \<Boolean\><dt>

@@ -38,14 +38,14 @@ using std::endl;
 typedef numeric::xyzVector<platform::Real> Vec;
 typedef numeric::xyzMatrix<platform::Real> Mat;
 
-Rose::Rose(PoseCOP pin                                                   ) : p(pin),h(new Hash(3.5,*p,         BB )) {}
-Rose::Rose(PoseCOP pin, sic_dock::PoseCoordPickMode const & coord_picker ) : p(pin),h(new Hash(3.5,*p,coord_picker)) {}
-Rose::Rose(PoseCOP pin, core::id::AtomID_Map<Real>  const & clash_atoms  ) : p(pin),h(new Hash(3.5,*p,clash_atoms )) {}
+Rose::Rose(PoseCOP pin                                                   ) : p(pin),h(new Hash(*p,         BB ,4.0)) {}
+Rose::Rose(PoseCOP pin, sic_dock::PoseCoordPickMode const & coord_picker ) : p(pin),h(new Hash(*p,coord_picker,4.0)) {}
+Rose::Rose(PoseCOP pin, core::id::AtomID_Map<Real>  const & clash_atoms  ) : p(pin),h(new Hash(*p,clash_atoms ,4.0)) {}
 
 
 
 bool Rose::clashes(RCR o) const {
-	// Real const & thresh_2 = h->grid_size2(); // Unused variable causes warning.
+	// Real const & thresh_2 = h->grid_size2();
 	RCR b( h->natom() >  o.h->natom() ? *this : o );
 	RCR s( h->natom() <= o.h->natom() ? *this : o );
 	// XC s2b( b.h->translation() + ( (s.x-s.h->translation()) / b.x ) );
@@ -58,7 +58,7 @@ bool Rose::clashes(RCR o) const {
 
 Size Rose::contacts(RCR o) const {
 	Size count = 0;
-	// Real const & thresh_2 = h->grid_size2(); // Unused variable causes warning.
+	// Real const & thresh_2 = h->grid_size2();
 	RCR b( h->natom() >  o.h->natom() ? *this : o );
 	RCR s( h->natom() <= o.h->natom() ? *this : o );
 	// (~d)*n
@@ -92,9 +92,9 @@ void Rose::dump_pdb(std::string const & fname) const {
 void Rose::dump_minimal_pdb(std::ostream & out, char chain){
 	for(Size ir = 1; ir <= p->n_residue(); ++ir){
 		V v;
-		v = x * p->xyz(AID(1,ir)); out<<"ATOM  "<<I(5,3*ir-2)<<' '<<"  N "<<' '<<"GLY"<<' '<<chain<<I(4,ir)<<"    "<<F(8,3,v.x())<<F(8,3,v.y())<<F(8,3,v.z())<<F(6,2,1.0)<<F(6,2,1.0)<<endl;			
-		v = x * p->xyz(AID(2,ir)); out<<"ATOM  "<<I(5,3*ir-1)<<' '<<" CA "<<' '<<"GLY"<<' '<<chain<<I(4,ir)<<"    "<<F(8,3,v.x())<<F(8,3,v.y())<<F(8,3,v.z())<<F(6,2,1.0)<<F(6,2,1.0)<<endl;			
-		v = x * p->xyz(AID(3,ir)); out<<"ATOM  "<<I(5,3*ir-0)<<' '<<"  C "<<' '<<"GLY"<<' '<<chain<<I(4,ir)<<"    "<<F(8,3,v.x())<<F(8,3,v.y())<<F(8,3,v.z())<<F(6,2,1.0)<<F(6,2,1.0)<<endl;			
+		v = x * p->xyz(AID(1,ir)); out<<"ATOM  "<<I(5,3*ir-2)<<' '<<"  N "<<' '<<"GLY"<<' '<<chain<<I(4,ir)<<"    "<<F(8,3,v.x())<<F(8,3,v.y())<<F(8,3,v.z())<<F(6,2,1.0)<<F(6,2,1.0)<<endl;
+		v = x * p->xyz(AID(2,ir)); out<<"ATOM  "<<I(5,3*ir-1)<<' '<<" CA "<<' '<<"GLY"<<' '<<chain<<I(4,ir)<<"    "<<F(8,3,v.x())<<F(8,3,v.y())<<F(8,3,v.z())<<F(6,2,1.0)<<F(6,2,1.0)<<endl;
+		v = x * p->xyz(AID(3,ir)); out<<"ATOM  "<<I(5,3*ir-0)<<' '<<"  C "<<' '<<"GLY"<<' '<<chain<<I(4,ir)<<"    "<<F(8,3,v.x())<<F(8,3,v.y())<<F(8,3,v.z())<<F(6,2,1.0)<<F(6,2,1.0)<<endl;
 	}
 }
 
@@ -105,7 +105,7 @@ bool Rose::clashes_naive(RCR o) const {
 	Real const thresh_2 = h->grid_size2();
 	for(Hash::const_iterator i = o.h->begin(); i != o.h->end(); ++i){
 		VC u( o.x.xform(*i-o.h->translation()) );
-		for(Hash::const_iterator j = h->begin(); j != h->end(); ++j){		
+		for(Hash::const_iterator j = h->begin(); j != h->end(); ++j){
 			VC v( x.xform(*j-h->translation()) );
 			if( u.distance_squared(v) < thresh_2 ) return true;
 		}
@@ -118,7 +118,7 @@ Size Rose::contacts_naive(RCR o) const {
 	Real const thresh_2 = h->grid_size2();
 	for(Hash::const_iterator i = o.h->begin(); i != o.h->end(); ++i){
 		VC u( o.x.xform(*i-o.h->translation()) );
-		for(Hash::const_iterator j = h->begin(); j != h->end(); ++j){		
+		for(Hash::const_iterator j = h->begin(); j != h->end(); ++j){
 			VC v( x.xform(*j-h->translation()) );
 			if( u.distance_squared(v) <= thresh_2 ) count++;
 		}

@@ -24,6 +24,7 @@
 #include <basic/database/open.hh>
 #include <iomanip>
 #include <iostream>
+#include <sstream>
 #include <numeric/numeric.functions.hh>
 // AUTO-REMOVED #include <numeric/xyz.functions.hh>
 #include <numeric/xyzMatrix.hh>
@@ -31,7 +32,7 @@
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
+#include <utility/io/ozstream.hh>
 
 // AUTO-REMOVED #include <stdlib.h>
 
@@ -63,31 +64,60 @@ void compute_holes_surfs(PoseBalls & pb, std::string ) {
 #ifndef  __native_client__ 
 
 	using namespace std;
-  using namespace basic::options;
+ 	using namespace basic::options;
 
 	for(Size tries = 1; tries <= 10; ++tries) {
 		TR << "compute_holes_surfs try: " << tries << std::endl;
-	   pb.reset_surf();
+		pb.reset_surf();
 
-		 std::string cmd = basic::options::option[ OptionKeys::holes::dalphaball ]();
-		 //utility::io::ozstream pout("test.dab");
-		 redi::pstream proc( cmd + " alpha20_surf" );
-		 proc << "NPOINTS" << endl << pb.nballs() << endl << "COORDS" << endl;
-		 //pout << "NPOINTS" << endl << pb.nballs() << endl << "COORDS" << endl;
+		std::string cmd = basic::options::option[ OptionKeys::holes::dalphaball ]();
+
+		// build DAlphaBall input commands
+		std::ostringstream oss;
+		oss << "NPOINTS" << endl << pb.nballs() << endl << "COORDS" << endl;
 		for( Size i = 1; i <= pb.nballs(); i++ ) {
 			Ball const & b(pb.ball(i));
-			proc << b.x() << " " << b.y() << " " << b.z() << " " << b.r() << " " << endl;
-			//pout << b.x() << " " << b.y() << " " << b.z() << " " << b.r() << " " << endl;
+			oss << b.x() << " " << b.y() << " " << b.z() << " " << b.r() << " " << endl;
 		}
-		proc << "END" << endl << redi::peof;
-		//pout << "END" << endl << redi::peof;
+		oss << "END" << endl;
 
+		if(option[OptionKeys::holes::debug]()) {
+			utility::io::ozstream out("debug_holes_DalphaBall_command.daball");
+			out << oss.str();
+			out.close();
+			utility_exit_with_message("dumped DAlphaBall debug commands");
+		}
+
+		// run DAlphaBall and check
+		redi::pstream proc( cmd + " alpha20_surf" );
+		proc << oss.str() << redi::peof;
+		Size nlines = 0;
+        string buf, tmp;
+        while( getline(proc,tmp) ){
+        	buf += tmp+"\n";
+			++nlines;
+		}
+		proc.close();		
+		if(!proc.eof()){
+			utility_exit_with_message("too much DAlphaBall output!");
+		}
+		if( nlines != 20*pb.nballs() ){
+			utility::io::ozstream out("debug_holes_DalphaBall_command.daball");
+			out << oss.str();
+			out.close();
+			utility::io::ozstream out2("debug_holes_DalphaBall_output.log");
+			out2 << buf;
+			out2.close();
+			utility_exit_with_message("incorrect DAlphaBall output! see debug_holes_DalphaBall_command.log");
+		}
+
+		std::istringstream iss(buf);
 		bool fail = false;
 		for( Size a = 1; a <= 20; a++ ) {
 			for( Size i = 1; i <= pb.nballs(); i++ ) {
 				Size index,ialpha;
 				std::string val;
-				proc >> ialpha >> index >> val;
+				iss >> ialpha >> index >> val;
 				Real rval = atof(val.c_str());
 				if(boost::math::isnan(rval)) rval = 0.0;
 				//TR << "DAlphaBall output index " << ialpha << " " << a << "   " << index << " " << i << std::endl;
@@ -104,6 +134,8 @@ void compute_holes_surfs(PoseBalls & pb, std::string ) {
 		if(!fail) {
 			TR << "compute_holes_surfs completed successfully" << std::endl;
 			return;
+		} else {
+			TR << "failed to run DAlphaBall" << std::endl;
 		}
 		//		utility_exit_with_message("dab test");
 	}

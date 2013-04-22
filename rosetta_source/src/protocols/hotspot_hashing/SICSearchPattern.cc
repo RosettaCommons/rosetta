@@ -17,6 +17,7 @@
 
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
+#include <numeric/xyzTransform.hh>
 #include <numeric/xyz.functions.hh>
 
 #include <basic/Tracer.hh>
@@ -107,7 +108,7 @@ utility::vector1<core::kinematics::Stub> SICPatternAtTransform::Searchpoints()
 
 			source_at_slide_location.v -= slide_vector * starting_displacement_;
 
-			core::Real sic_distance = sic_fast_.slide_into_contact(
+			core::Real sic_distance = sic_fast_.slide_into_contact_DEPRICATED(
 					source_at_slide_location,
 					core::kinematics::default_stub,
 					-slide_vector);

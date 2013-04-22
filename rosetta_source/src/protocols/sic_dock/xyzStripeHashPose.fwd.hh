@@ -11,6 +11,7 @@
 #define INCLUDED_protocols_sic_dock_xyzStripeHashPose_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/pointer/access_ptr.hh>
 
 namespace protocols {
 namespace sic_dock {
@@ -18,6 +19,7 @@ namespace sic_dock {
 	class xyzStripeHashPose;
     typedef utility::pointer::owning_ptr< xyzStripeHashPose > xyzStripeHashPoseOP;
 	typedef utility::pointer::owning_ptr< xyzStripeHashPose const > xyzStripeHashPoseCOP;
+	typedef utility::pointer::access_ptr< xyzStripeHashPose const > xyzStripeHashPoseCAP;
 
 
 }

@@ -58,6 +58,9 @@ public:
 	Dssp( core::pose::Pose const& );
 	~Dssp();
 
+	void dssp_reduced_IG_as_L_if_adjcent_H( ObjexxFCL::FArray1_char &secstruct );
+	void dssp_reduced_IG_as_L( ObjexxFCL::FArray1_char &secstruct );
+
 	void dssp_reduced( ObjexxFCL::FArray1_char &secstruct );
 	void dssp_reduced();
 	void dssp_featurizer( ObjexxFCL::FArray1_char &secstruct );
@@ -69,12 +72,18 @@ public:
 	}
 
 	void insert_ss_into_pose( core::pose::Pose & pose );
+	void insert_dssp_ss_into_pose( core::pose::Pose & pose );
+	void insert_edge_ss_into_pose( core::pose::Pose & pose );
+	void insert_ss_into_pose_no_IG_helix( core::pose::Pose & pose );
 
 	char get_dssp_secstruct( core::Size resid );
 
 	std::string get_dssp_secstruct();
 
 	float bb_pair_score( Size res1, Size res2 );
+
+	Size num_pairings(Size resi ) const;
+	bool in_paired_strands(Size res1, Size res2 ) const;
 
 private:
 	void compute( core::pose::Pose const& );

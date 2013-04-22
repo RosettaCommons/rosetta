@@ -10,17 +10,17 @@
 #ifndef INCLUDED_protocols_sic_dock_designability_score_hh
 #define INCLUDED_protocols_sic_dock_designability_score_hh
 
-#include <core/kinematics/Stub.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
+#include <protocols/sic_dock/types.hh>
 
 namespace protocols{
 namespace sic_dock{
 
 void
 get_xform_stats(
-	core::kinematics::Stub const & sir,
-	core::kinematics::Stub const & sjr,
+	Xform const & sir,
+	Xform const & sjr,
 	platform::Real& dx, platform::Real& dy, platform::Real& dz,
 	platform::Real& ex, platform::Real& ey, platform::Real& ez
 );
@@ -46,8 +46,8 @@ XfoxmScore
 
 	float
 	score(
-		core::kinematics::Stub const & s1,
-		core::kinematics::Stub const & s2,
+		Xform const & s1,
+		Xform const & s2,
 		char ss1, char ss2
 	) const;
 
@@ -61,7 +61,7 @@ XfoxmScore
 	float
 	score(
 		core::pose::Pose & pose,
-		bool compute_ss = true		
+		bool compute_ss = true
 	) const;
 
 	float

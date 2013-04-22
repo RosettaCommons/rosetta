@@ -197,6 +197,105 @@ PoseBalls::PoseBalls(
    compute_smooth_nb();
 }
 
+PoseBalls::PoseBalls(
+	core::pose::Pose const & pose,
+	core::id::AtomID_Mask const & whichatoms
+){
+	using namespace numeric;
+
+	// std::cerr << "PoseBalls.cc:67 (" << pose.total_residue() << ")" << std::endl;
+   ObjexxFCL::FArray1D_char dssp_reduced_secstruct(pose.n_residue());
+   core::scoring::dssp::Dssp(pose).dssp_reduced(dssp_reduced_secstruct);
+
+	// initialize index and vars
+	core::Size index = 0;
+	Size num_unrec = 0;
+	if( pose.pdb_info() ) num_unrec = pose.pdb_info()->get_num_unrecognized_atoms();
+	balls_      .reserve( pose.total_residue()*5 + num_unrec );
+	index_to_id_.reserve( pose.total_residue()*5 + num_unrec );
+	atom_name_  .reserve( pose.total_residue()*5 + num_unrec );
+	atom_type_  .reserve( pose.total_residue()*5 + num_unrec );
+	atom_parent_.reserve( pose.total_residue()*5 + num_unrec );
+	secstruct_  .reserve( pose.total_residue()*5 + num_unrec );
+	res_name_   .reserve( pose.total_residue()*5 + num_unrec );
+	is_heavy_   .reserve( pose.total_residue()*5 + num_unrec );
+	bfac_       .reserve( pose.total_residue()*5 + num_unrec );
+	core::pose::initialize_atomid_map( id_to_index_, pose );
+	id_to_index_.resize( pose.total_residue() + num_unrec );
+
+// std::cerr << "PoseBalls.cc:85 (" << ")" << std::endl;
+
+	// add atoms in pose
+	for( core::Size ir = 1; ir <= pose.total_residue(); ++ir ) {
+		for( core::Size ia = 1; ia <= pose.residue(ir).natoms(); ++ia ) {
+			core::id::AtomID aid(ia,ir);
+			if( ! whichatoms[aid] ) continue;
+			id_to_index_[ aid ] = ++index;
+			index_to_id_.push_back( aid );
+			balls_.push_back(	Ball( pose.xyz(aid), pose.residue(ir).atom_type(ia).lj_radius() )	);
+			res_name_.push_back(pose.residue(ir).name3());
+			atom_num_.push_back(ia);
+			// if( pose.residue(ir).atom_type(ia).is_polar_hydrogen() ) {
+			// 	atom_type_.push_back(100+pose.residue(ir).atom_type_index(pose.residue(ir).atom_base(ia)));
+			// } else {
+				atom_type_.push_back(pose.residue(ir).atom_type_index(ia));
+			// }
+			secstruct_.push_back( dssp_reduced_secstruct(ir) );
+			atom_name_.push_back(pose.residue(ir).atom_type(ia).name());
+			if( pose.pdb_info() ) bfac_.push_back( pose.pdb_info()->temperature(ir,ia) );
+			else                  bfac_.push_back( 0.0 );
+			is_heavy_.push_back( pose.residue(ir).atom_type(ia).is_heavyatom() );
+			if( pose.residue(ir).atom_type(ia).is_hydrogen() /*&&
+			   !pose.residue(ir).atom_type(ia).is_polar_hydrogen()*/ )
+			{ // if is apolar H, set add surf to base heavy atom rather than H itself
+				core::Size iabase = pose.residue(ir).atom_base(ia);
+				atom_parent_.push_back( id_to_index(core::id::AtomID(iabase,ir)) );
+			} else {
+				atom_parent_.push_back(index);
+			}
+			res_num_.push_back(ir);
+		}
+	}
+// std::cerr << "PoseBalls.cc:134 (" << ")" << std::endl;
+
+	// add hetero atoms not in pose
+	// res num is *NOT* necessarially the same as PDBInfo res num!!!!!
+	core::scoring::packstat::AtomRadiusMap arm;
+	std::map<core::Size,core::Size> atomcount;
+	std::map<core::Size,core::Size> resnum;
+	core::Size rescount = 0, skippedlig = 0, skippedligH = 0;
+	for( core::Size i = 1; i <= num_unrec; ++i ) {
+		core::pose::UnrecognizedAtomRecord const & a( pose.pdb_info()->get_unrecognized_atoms()[i] );
+		core::Real radius = arm.get_radius(a.atom_name(),a.res_name());
+		if( radius <= 0.1 ) {
+			skippedlig++;
+			continue;
+		}
+		if( resnum.find(a.res_num()) == resnum.end() ) {
+			resnum[a.res_num()] = ++rescount + pose.total_residue();
+			atomcount[a.res_num()] = 0;
+		}
+		id_to_index_.resize( resnum[a.res_num()], pose.pdb_info()->get_unrecognized_res_size(a.res_num()) );
+		core::id::AtomID aid( ++atomcount[a.res_num()], resnum[a.res_num()] );
+		id_to_index_[ aid ] = ++index;
+		index_to_id_.push_back( aid );
+		atom_name_.push_back(a.atom_name());
+		atom_type_.push_back(0);
+		secstruct_.push_back('U');
+		atom_num_.push_back(atomcount[a.res_num()]);
+		atom_parent_.push_back(index);
+		is_heavy_.push_back( radius > 1.3 );
+		res_name_.push_back(a.res_name());
+		res_num_.push_back(resnum[a.res_num()]);
+		bfac_.push_back( a.temp() );
+		balls_.push_back( Ball( a.coords(), radius ) );
+
+	}
+	nballs_ = index;
+	reset_surf();
+   compute_smooth_nb();
+}
+
 
 void PoseBalls::compute_smooth_nb() {
 

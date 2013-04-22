@@ -117,7 +117,7 @@ SixDCoordinateBinner::bin6( Real6 const & values ) const {
 }
 
 std::vector < boost::uint64_t >
-SixDCoordinateBinner::radial_bin_index( Size radius, Real6 const & center ) {
+SixDCoordinateBinner::radial_bin_index( Size radius, Real6 const & center ) const {
 		std::vector < boost::uint64_t > bin_indices;
     Bin6D center_bin = bin6( center );
 		std::vector < SBin6D > offsets = offset_tree_.lookup(radius, center_bin, dimsizes_);
@@ -244,7 +244,7 @@ void SixDOffsetTree::init( Size max_radius ){
 	}
 }
 
-std::vector< SBin6D > SixDOffsetTree::lookup( Size radius, Bin6D const & center, Bin6D const & bounds ){
+std::vector< SBin6D > SixDOffsetTree::lookup( Size radius, Bin6D const & center, Bin6D const & bounds ) const {
 	typedef boost::unordered_map<SSize, Size>::value_type map_itr;
 	std::vector < SBin6D > offset_list;
 	if (radius > data_.size() ) {

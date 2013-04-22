@@ -8,8 +8,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //
-/// @file 
-/// @brief 
+/// @file
+/// @brief
 /// @author Jacob Bale ( balej@uw.edu )
 
 #ifndef INCLUDED_devel_matdes_SymDofMover_HH
@@ -63,7 +63,7 @@ public:
 	virtual void rot_pose( Pose & pose, numeric::xyzVector<Real> const & axis, double const & ang, numeric::xyzVector<Real> const & cen, Size start, Size end );
 	virtual void alignaxis(core::pose::Pose & pose, numeric::xyzVector<Real> newaxis, numeric::xyzVector<Real> oldaxis, numeric::xyzVector<Real> cen , Size start, Size end );
 
-	// --- virtual copy constructors 
+	// --- virtual copy constructors
 	virtual MoverOP clone() const;
 
 
@@ -101,7 +101,7 @@ private:
 	utility::vector1<Real> radial_disp_deltas_;
 	utility::vector1<Real> angle_deltas_;
 	std::string sampling_mode_;
-	
+
 };
 
 } // matdes

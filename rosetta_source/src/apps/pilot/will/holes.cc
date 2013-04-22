@@ -14,6 +14,7 @@
 #include <core/id/AtomID_Map.hh>
 // AUTO-REMOVED #include <core/id/AtomID_Map.Pose.hh>
 #include <devel/init.hh>
+#include <core/conformation/Residue.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <basic/options/keys/holes.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -121,13 +122,18 @@ apply(
 	using namespace utility;
 	using core::Size;
 
+	TR << "apply to: " << tag_from_pose(pose) << std::endl;
+
 	Size MAX_RES = 5000;
 	if( pose.total_residue() > MAX_RES ) {
 		TR << "nres > " << MAX_RES << ", skipping pose " << tag_from_pose(pose) << std::endl;
 		return;
 	}
 
-   HolesResult result = compute_rosettaholes_score(pose,hp_resl_,hp_dec_,hp_dec15_);
+	HolesResult result = compute_rosettaholes_score(pose,hp_resl_,hp_dec_,hp_dec15_);
+
+	TR << "got holes result: " << tag_from_pose(pose) << std::endl;
+
 
    Real rms = -1;
    if( basic::options::option[ OptionKeys::in::file::native ].user() ) {
@@ -135,6 +141,7 @@ apply(
       core::import_pose::pose_from_pdb( native, basic::options::option[ OptionKeys::in::file::native ]() );
       rms = scoring::CA_rmsd( native, pose );
    }
+
    TR 	<< RJ(30,tag_from_pose(pose)) << " "
       	<< F(7,4,result.score) << " "
 		<< F(7,4,result.resl_score) << " "
@@ -146,6 +153,19 @@ apply(
 	TR << " " << F(9,3,(*sf_)(pose));
 	if( rms != -1 ) TR << " " << F(7,4,rms);
 	TR << std::endl;
+
+	if( residue_scores_ ){
+		// HolesResult dec15result = compute_dec15_score(pose);
+		HolesResult dec15result = compute_holes_score(pose,hp_dec15_);
+		for(Size i = 1; i <= pose.n_residue(); ++i){
+			Real rscore = 0.0;
+			for(Size j = 5; j <= pose.residue(i).nheavyatoms(); ++j){
+				rscore += dec15result.atom_scores[AtomID(j,i)];
+			}
+			rscore /= max(1,(int)pose.residue(i).nheavyatoms()-4);
+			TR << "residue_score " << I(5,i) << " " << pose.residue(i).name3() << " " << F(10,3,rscore) << std::endl;
+		}
+	}
 
 	if( make_pdb_ || make_voids_ ) {
 		std::string dir = "";

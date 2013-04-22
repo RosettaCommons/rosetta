@@ -23,6 +23,10 @@
 #include <iterator>
 #include <cassert>
 
+// #ifdef USEBOOSTSERIALIZE
+// #include ???
+// #endif
+
 namespace utility {
 
 /// Requirements:
@@ -341,6 +345,16 @@ public:
 		for ( Size ii = 0; ii < S; ++ii ) array_[ ii ] = rhs.array_[ ii ];
 		return *this;
 	}
+
+#ifdef USEBOOSTSERIALIZE
+public:
+	template<class Archive> 
+	void 
+	serialize(Archive & ar, const unsigned int /*version*/){
+		for( Size ii = 0; ii < S; ++ii ) ar & array_[ii];
+	}
+#endif
+
 
 public:
 	/// Mutators and accessors

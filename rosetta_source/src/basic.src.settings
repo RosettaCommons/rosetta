@@ -93,6 +93,9 @@ sources = {
 	"basic/resource_manager/fallback_configuration" : [
 		"NativeFallbackConfiguration",
 	],
+        "basic/sampling/orientations": [
+		"QuaternionGrid",
+	],
 	"basic/svd": [
 		"SVD_Solver",
 	],

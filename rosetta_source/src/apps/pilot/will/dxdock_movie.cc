@@ -119,7 +119,7 @@ int thread_num() {
 struct Hit {
 	int iss,irt,sym;
 	Real cbc,xscore,rmsd;
-	core::kinematics::Stub s1,s2;
+	Xform s1,s2;
 	Hit(int is, int ir, Real cb, int sm) : iss(is),irt(ir),sym(sm),cbc(cb) {}
 };
 bool cmpcbc (Hit i,Hit j) { return i.cbc    > j.cbc   ; }
@@ -140,17 +140,17 @@ inline Vec get_rot_center(Xform const & x1, Xform const & x2, int sym){
 inline
 Xform
 get_cx_xform(Hit const & h){
-	// Real halfside = (h.s1.v-h.s2.v).length()/2.0;
+	// Real halfside = (h.s1.t-h.s2.t).length()/2.0;
 	// Real r = halfside / tan(numeric::constants::d::pi/(Real)h.sym); // tan(a/2) * edge_len/2
 	// cout << halfside << " " << r << endl;
 	// core::kinematics::Stub x(h.s2);
-	// x.v = x.v + Vec(0,r,halfside);
+	// x.t = x.t + Vec(0,r,halfside);
 	// Mat R = rotation_matrix_degrees(Vec(1,0,1),180.0);
-	// return Xform( R*x.M, R*x.v );
-	Xform x1(h.s1.M,h.s1.v),x2(h.s2.M,h.s2.v);
+	// return Xform( R*x.R, R*x.t );
+	Xform x1(h.s1.R,h.s1.t),x2(h.s2.R,h.s2.t);
 	Vec cen = get_rot_center(x1,x2, h.sym);
 	// cout << cen << endl;
-	return Xform( h.s2.M, -cen );
+	return Xform( h.s2.R, -cen );
 }
 
 
@@ -228,12 +228,12 @@ dock(
 		Mat Ry = rotation_matrix_degrees(Uy,ay);
 
 		Mat R = Ry*Rx*Rz;
-		Stub const x1(       R, V0);
-		Stub const x2( Rsym1*R, V0 );
+		Xform const x1(       R, V0);
+		Xform const x2( Rsym1*R, V0 );
 		
 		Real t = sic.slide_into_contact(x1,x2,Uz);
 
-		Hit h(1,1,1,S1); h.s1 = x1; h.s2 = x2; h.s1.v += t*Uz;
+		Hit h(1,1,1,S1); h.s1 = x1; h.s2 = x2; h.s1.t += t*Uz;
 
 		Xform x = get_cx_xform(h);
 
@@ -255,7 +255,7 @@ dock(
 				Mat Rd = rotation_matrix_degrees(A1,Real(it-1)*ANG1);
 				Stub x3(         xd.R,         xd.t);
 				Stub x4(Rd*Rsym2*xd.R,Rd*Rsym2*xd.t);
-				Real tmp = sic.slide_into_contact(x3,x4,A1);
+				Real tmp = sic.slide_into_contact_DEPRICATED(x3,x4,A1);
 				if(tmp > 9e8) continue;
 				if( tmp > t && tmp < 9e8 ){
 					t = tmp;

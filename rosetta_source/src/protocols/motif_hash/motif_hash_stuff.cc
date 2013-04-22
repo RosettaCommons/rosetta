@@ -193,11 +193,11 @@ namespace motif_hash {
 	}
 
 	Real6 inverse_rt6(Real6 const & rt){
-		numeric::HomogeneousTransform<float> x;
+		numeric::HomogeneousTransform<Real> x;
 		x.from_euler_angles_deg(numeric::xyzVector<Real>(rt[4],rt[5],rt[6]));
 		x.set_point(Vec(rt[1],rt[2],rt[3]));
 		x = x.inverse();
-		numeric::xyzVector<float> euler_angles =  x.euler_angles_deg();
+		numeric::xyzVector<Real> euler_angles =  x.euler_angles_deg();
 		Real6 rt6;
 		rt6[1] = x.px();
 		rt6[2] = x.py();
@@ -213,7 +213,7 @@ namespace motif_hash {
 
 	Real6
 	rt_to_real6(core::kinematics::RT const & rt){
-		numeric::HomogeneousTransform<float> ht( rt.get_rotation() , rt.get_translation() );
+		numeric::HomogeneousTransform<Real> ht( rt.get_rotation() , rt.get_translation() );
 		numeric::xyzVector < Real > euler_angles =  ht.euler_angles_deg();
 		Real6 rt6;
 		rt6[1] = rt.get_translation().x();
@@ -229,7 +229,7 @@ namespace motif_hash {
 	}
 	core::kinematics::RT
 	real6_to_rt(Real6 const & rt6){
-		numeric::HomogeneousTransform<float> x;
+		numeric::HomogeneousTransform<Real> x;
 		x.from_euler_angles_deg(numeric::xyzVector<Real>(rt6[4],rt6[5],rt6[6]));
 		numeric::xyzMatrix<Real> R( numeric::xyzMatrix<Real>::cols_constructor(x.xaxis(),x.yaxis(),x.zaxis()) );
 		numeric::xyzVector<Real> t(rt6[1],rt6[2],rt6[3]);
@@ -1472,7 +1472,7 @@ namespace motif_hash {
 			if(lookuprad>5) continue;
 			Xform x1,x2;
 			x1.from_euler_angles_deg(Vec(rt[4],rt[5],rt[6]));
-			std::vector<MotifHash::Key> surrounding_cells = hasher().radial_bin_index(lookuprad,rt);
+			std::vector<MotifHash::Key> surrounding_cells = hasher_.radial_bin_index(lookuprad,rt);
 			// cout << surrounding_cells.size() << endl;
 			// utility_exit_with_message("foo");
 			BOOST_FOREACH(MotifHash::Key key,surrounding_cells){

@@ -391,6 +391,7 @@ SymmData::set_symm_transforms(
 // @define: destructor
 SymmData::~SymmData(){}
 
+
 // @details: Parse symmetry information from a textfile. This function fills all data necessary to generate a
 // symmetrical system, score it and move it.
 void
@@ -435,10 +436,15 @@ SymmData::read_symmetry_data_from_stream(
 	// Read the file
 	while( getline(infile,line) ) {
 		linecount++;
-		vector1< string > tokens ( utility::split( line ) );
-
-		if (tokens.size() == 0) continue;      // blank line
-		if (line.substr(0,1) == "#") continue; // comment
+		line = line.substr(0,line.find('#'));
+		vector1< string > tokens( utility::split( line ) );
+		if(tokens.size()==0) continue;
+		// for(vector1< string >::const_iterator it = tmp.begin(); it != tmp.end(); ++it){
+		// 	if( (*it)[0] == '#' ) break;
+		// 	tokens.push_back(*it);
+		// }
+		// std::cout << "TOKENS0"; for(Size i = 1; i <=    tmp.size(); ++i) std::cout << " '" <<    tmp[i] << "'"; std::cout << endl;
+		// std::cout << "TOKENS1"; for(Size i = 1; i <= tokens.size(); ++i) std::cout << " '" << tokens[i] << "'"; std::cout << endl;
 
 		// if we're reading a coordinate block ...
 		if (read_virtual_coords) {
@@ -675,7 +681,7 @@ SymmData::read_symmetry_data_from_stream(
 				// parse the number of different type of interfaces. Required
 				interfaces_ = utility::string2int( tokens[2] );
 			} else if ( tokens[1] == "anchor_residue") {
-				// anchor residue id				
+				// anchor residue id
 				anchor_residue_ = tokens[2];
 			} else if ( tokens[1] == "recenter" ) {
 				recenter_ =  true;
@@ -717,9 +723,17 @@ SymmData::read_symmetry_data_from_stream(
 						if( subchain.size() != 1 || subchain[0]==' ' ) utility_exit_with_message("[ERRIR] bad chain: "+subchain+" specified on SUBUNIT line:\n"+line);
 						virt_id_to_subunit_chain_[ tokens[3] ] = subchain[0];
 						subchains.insert(subchain[0]);
-						if( tokens.size() > 5 ) virt_id_to_subunit_residue_[ tokens[3] ] = tokens[6];
-						else                    virt_id_to_subunit_residue_[ tokens[3] ] = get_anchor_residue(); // default subanchor
-						if( tokens.size() > 6 ) utility_exit_with_message("[ERROR] extra input on SUBUNIT line:\n"+line);
+						if( tokens.size() > 5 && tokens[5][0] != '#' ){
+							virt_id_to_subunit_residue_[ tokens[3] ] = tokens[6];
+						} else {
+							virt_id_to_subunit_residue_[ tokens[3] ] = get_anchor_residue(); // default subanchor
+							continue;
+						}
+						if( tokens.size() > 6 ){
+							if( tokens[7][0] != '#' ) {
+								utility_exit_with_message("[ERROR] extra input on SUBUNIT line:\n"+line);
+							}
+						}
 					}
 				}
 			} else if ( tokens[1] == "set_dof" ) {
@@ -966,18 +980,18 @@ SymmData::read_symmetry_data_from_stream(
 			    vc.get_x().cross(vc.get_y()).normalized().distance(toframe.R*Vec(0,0,1).normalized()) > 0.0000000001 )
 			{
 				std::cerr << virt_id << " " << chain << " " << subnum << " " << "orig  " << vc.get_origin()              << endl;
-				std::cerr << virt_id << " " << chain << " " << subnum << " " << "xform " << toframe*Vec(0,0,0)           << endl;
+				std::cerr << virt_id << " " << chain << " " << subnum << " " << "xform " << toframe  *Vec(0,0,0)           << endl;
 				std::cerr << virt_id << " " << chain << " " << subnum << " " << "orig  " << vc.get_x()                   << endl;
-				std::cerr << virt_id << " " << chain << " " << subnum << " " << "xform " << toframe*Vec(1,0,0)           << endl;
+				std::cerr << virt_id << " " << chain << " " << subnum << " " << "xform " << toframe.R*Vec(1,0,0)           << endl;
 				std::cerr << virt_id << " " << chain << " " << subnum << " " << "orig  " << vc.get_y()                   << endl;
-				std::cerr << virt_id << " " << chain << " " << subnum << " " << "xform " << toframe*Vec(0,1,0)           << endl;
+				std::cerr << virt_id << " " << chain << " " << subnum << " " << "xform " << toframe.R*Vec(0,1,0)           << endl;
 				std::cerr << virt_id << " " << chain << " " << subnum << " " << "orig  " << vc.get_x().cross(vc.get_y()) << endl;
-				std::cerr << virt_id << " " << chain << " " << subnum << " " << "xform " << toframe*Vec(0,0,1)           << endl;
+				std::cerr << virt_id << " " << chain << " " << subnum << " " << "xform " << toframe.R*Vec(0,0,1)           << endl;
 				utility_exit_with_message("computed frame xforms not correct!");
 			}
 			frames[make_pair(chain,(subnum-1)%subunits_+1)] = toframe;
 		}
-	
+
 		// compute relative xforms
 		map<pair<char,Size>,Xform> relxforms;
 		for(map<string,Size>::const_iterator i = virt_id_to_subunit_num_.begin(); i != virt_id_to_subunit_num_.end(); ++i){
@@ -1025,14 +1039,14 @@ SymmData::read_symmetry_data_from_stream(
 			if(chain==firstchain){
 				newsubnum = (subnum-1)%subunits_+1;
 				TR << "MULTICOMPONENT " << "replace raw subunit "<< virt_id <<" num in primary chain " << chain << " with normalized subunit: "
-				          << virt_id_to_subunit_num_[virt_id] << " -> " << newsubnum << endl;
+				          << virt_id_to_subunit_num_[virt_id] << " -> " << newsubnum << ", " << virt_id << " -> " << subunit_num_to_virt_id_[newsubnum] << endl;
 			} else {
 				if(subperm.find(make_pair(chain,subnum)) == subperm.end()){
 					utility_exit_with_message("error computing correct subnum for component!");
 				}
 				newsubnum = subperm[make_pair(chain,subnum)];
 				TR << "MULTICOMPONENT " << "replace raw subunit "<< virt_id <<" num in secondary chain " << chain << " with correctly permuted subunit: "
-				          << virt_id_to_subunit_num_[virt_id] << " -> " << newsubnum << endl;
+				          << virt_id_to_subunit_num_[virt_id] << " -> " << newsubnum << ", " << virt_id << " -> " << subunit_num_to_virt_id_[newsubnum] << endl;
 			}
 			if(newsubnum==0) utility_exit_with_message("error computing correct subnum for component!");
 			virt_id_to_subunit_num_[virt_id] = newsubnum;
@@ -1131,6 +1145,7 @@ SymmData::read_symmetry_data_from_stream(
 
 	if (score_multiply_subunit_string.size() == 0)
 		utility_exit_with_message( "[ERROR] No total energy line specified!" );
+	// std::cout << "score_multiply_subunit_string " << line << std::endl;
 	vector1< string> split_1 = utility::string_split( score_multiply_subunit_string[1], '=' );
 	if (split_1.size() < 2)
 		utility_exit_with_message( "[ERROR] Error parsing line '"+score_multiply_subunit_string[1]+"'" );
@@ -1314,21 +1329,21 @@ SymmData::show()
 
 
 utility::vector1<char> const &
-SymmData::get_components() const { 
+SymmData::get_components() const {
 	return components_;
 }
 
 std::map<std::string,char> const &
-SymmData::get_subunit_name_to_component() const { 
+SymmData::get_subunit_name_to_component() const {
 	return name2component_;
 }
 std::map<std::string,utility::vector1<char> > const &
-SymmData::get_jump_name_to_components() const { 
+SymmData::get_jump_name_to_components() const {
 	return jname2components_;
 }
 
 std::map<std::string,utility::vector1<Size> > const &
-SymmData::get_jump_name_to_subunits() const { 
+SymmData::get_jump_name_to_subunits() const {
 	return jname2subunits_;
 }
 
@@ -1353,7 +1368,7 @@ SymmData::get_parent_virtual(std::string const & vname) const {
 	return NOPARENT;
 }
 
-bool 
+bool
 SymmData::is_ancestor_virtual(
 	std::string const & ancestor,
 	std::string const & child
@@ -1398,7 +1413,7 @@ SymmData::get_least_common_ancertor_virtual(std::string const & vname1, std::str
 	return NOPARENT;
 }
 
-vector1<string> 
+vector1<string>
 SymmData::leaves_of_jump(std::string const & jname) const {
 	if( jump_string_to_virtual_pair_.find(jname) == jump_string_to_virtual_pair_.end() )
 		utility_exit_with_message("unknown jump name in leaves of jump");
@@ -1411,7 +1426,7 @@ SymmData::leaves_of_jump(std::string const & jname) const {
 }
 
 
-vector1<char> 
+vector1<char>
 SymmData::components_moved_by_jump(std::string const & jname) const {
 	vector1<string> leaves = leaves_of_jump(jname);
 	std::set<char> components;

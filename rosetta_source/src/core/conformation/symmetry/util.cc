@@ -59,6 +59,8 @@ namespace core {
 namespace conformation {
 namespace symmetry {
 
+static std::string const chr_chains("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]{}|-_\\~=%zyxwvutsrqponmlkjihgfedcbaABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]{}|-_\\~=%zyxwvutsrqponmlkjihgfedcbaABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]{}|-_\\~=%zyxwvutsrqponmlkjihgfedcbaABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]{}|-_\\~=%zyxwvutsrqponmlkjihgfedcbaABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]{}|-_\\~=%zyxwvutsrqponmlkjihgfedcbaABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]{}|-_\\~=%zyxwvutsrqponmlkjihgfedcbaABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]{}|-_\\~=%zyxwvutsrqponmlkjihgfedcbaABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]{}|-_\\~=%zyxwvutsrqponmlkjihgfedcba");
+
 static basic::Tracer TR("core.conformation.symmetry.util");
 static numeric::random::RandomGenerator RG(408529); // <- Magic number, do not change it!!!
 
@@ -121,7 +123,7 @@ get_component_contiguous_foldtree(
 	ObjexxFCL::FArray1D_int cuts( f_orig.num_cutpoint() );
 	ObjexxFCL::FArray2D_int jumps( 2, f_orig.num_jump() );
 	// utility::vector1<std::string> upatom(f_orig.num_jump() );
-	utility::vector1<std::string> dnatom(f_orig.num_jump() );	
+	utility::vector1<std::string> dnatom(f_orig.num_jump() );
 
 	utility::vector1<int> cutpoints(f_orig.num_cutpoint());
 	for(int i = 1; i <= f_orig.num_cutpoint(); ++i) {
@@ -142,7 +144,7 @@ get_component_contiguous_foldtree(
 	f_contig.tree_from_jumps_and_cuts(f_orig.nres(),f_orig.num_jump(),jumps,cuts);
 	for(Size i = 1; i < cutpoints.size(); ++i) {
 		if(dnatom[i]!="") f_contig.set_jump_atoms(i,"N",dnatom[i]);
-	}	
+	}
 	f_contig.reorder(1);
 
 	// complicated way....
@@ -186,7 +188,7 @@ std::map<char,std::pair<Size,Size> >
 get_chain2range( Conformation const & src_conf, std::map< int, char > src_conf2pdb_chain ) {
 	// TR << src_conf.num_chains() << endl;
 	// for(Size i = 1; i <= src_conf.num_chains(); ++i){
-	// 	TR << "src_conf chain " << i << " " << src_conf.chain_begin(i) << "-" << src_conf.chain_end  (i) << endl;		
+	// 	TR << "src_conf chain " << i << " " << src_conf.chain_begin(i) << "-" << src_conf.chain_end  (i) << endl;
 	// }
 	// TR << "PDBINFO CHAIN MAP" << endl;
 	// for(map< int, char >::const_iterator i = src_conf2pdb_chain.begin(); i != src_conf2pdb_chain.end(); ++i) {
@@ -194,9 +196,8 @@ get_chain2range( Conformation const & src_conf, std::map< int, char > src_conf2p
 	// }
 	// TR << "END PDBINFO CHAIN MAP" << endl;
 	std::map<char,std::pair<Size,Size> > crange;
-	std::string const nullchain = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 	for(Size i = 1; i <= src_conf.num_chains(); ++i) {
-		char chain = src_conf2pdb_chain.count(i)==0 ? nullchain[i-1] : src_conf2pdb_chain[i];
+		char chain = src_conf2pdb_chain.count(i)==0 ? chr_chains[(i-1)%chr_chains.size()] : src_conf2pdb_chain[i];
 		if(crange.count(chain)==0) crange[chain] = std::make_pair(99999999,0);
 		crange[chain].first  = std::min( src_conf.chain_begin(i), crange[chain].first  );
 		crange[chain].second = std::max( src_conf.chain_end  (i), crange[chain].second );
@@ -561,7 +562,7 @@ set_fold_tree_from_symm_data(
 			std::map<int,std::string> downstream_res_to_jump_atom;
 			for(Size i = 1; i <= f_orig.num_jump(); ++i){
 				downstream_res_to_jump_atom[f_orig.downstream_jump_residue(i)] = f_orig.downstream_atom(i);
-			}		
+			}
 			for(Size i = 1; i <= f.num_jump(); ++i){
 				int upres = f.upstream_jump_residue(i);
 				int dnres = f.downstream_jump_residue(i);
@@ -614,9 +615,11 @@ set_fold_tree_from_symm_data(
 			jump_points_subunit(2,nsubjump) = dn;
 		}
 		if(nsubjump != num_jumps_subunit){
-			// TR << "f_orig.num_jump()             " << f_orig.num_jump() << std::endl;
-			// TR << "symmdata.get_num_components() " << symmdata.get_num_components() << std::endl;
-			// TR << "nsubjump                      " << nsubjump << std::endl;
+			TR << "f_orig.num_jump()             " << f_orig.num_jump() << std::endl;
+			TR << "symmdata.get_num_components() " << symmdata.get_num_components() << std::endl;
+			TR << "nsubjump                      " << nsubjump          << std::endl;
+			TR << "num_jumps_subunit             " << num_jumps_subunit << std::endl;
+			TR << f_orig << std::endl;
 			utility_exit_with_message("intra-subunit jump mismatch!");
 		}
 
@@ -734,7 +737,7 @@ set_fold_tree_from_symm_data(
 			std::map<int,std::string> downstream_res_to_jump_atom;
 			for(Size i = 1; i <= f_orig.num_jump(); ++i){
 				downstream_res_to_jump_atom[f_orig.downstream_jump_residue(i)] = f_orig.downstream_atom(i);
-			}		
+			}
 			for(Size i = 1; i <= f.num_jump(); ++i){
 				int upres = f.upstream_jump_residue(i);
 				int dnres = f.downstream_jump_residue(i);
@@ -1071,7 +1074,7 @@ show_foldtree(
 	}
 	for(Size i = 1; i <= symm_conf.fold_tree().num_jump(); ++i) {
 		Size up = symm_conf.fold_tree().upstream_jump_residue(i);
-		Size dn = symm_conf.fold_tree().downstream_jump_residue(i);		
+		Size dn = symm_conf.fold_tree().downstream_jump_residue(i);
 		if( symm_conf.Symmetry_Info()->jump_is_independent(i) && up > nreal && dn > nreal ) {
 			mark_jump_to_res[symm_conf.fold_tree().downstream_jump_residue(i)] = '=';
 		}
@@ -1091,11 +1094,11 @@ show_foldtree(
 	// for(Size i = 1; i <= symm_conf.fold_tree().num_jump(); ++i){
 	// 	using ObjexxFCL::fmt::I;
 	// 	Size up = symm_conf.fold_tree().upstream_jump_residue(i);
-	// 	Size dn = symm_conf.fold_tree().downstream_jump_residue(i);		
-	// 	TR << "JUMP " << I(3,i) << " " << I(4,up) << " -> " << I(4,dn) 
+	// 	Size dn = symm_conf.fold_tree().downstream_jump_residue(i);
+	// 	TR << "JUMP " << I(3,i) << " " << I(4,up) << " -> " << I(4,dn)
 	// 	   << " " << (symm_conf.Symmetry_Info()->jump_is_independent(i) ? "I" : " ")
 	// 	   << " " << I(3,symm_conf.Symmetry_Info()->jump_follows(i))
-	// 	   << " " << labels[up] << " " << labels[dn] 
+	// 	   << " " << labels[up] << " " << labels[dn]
 	// 	   << " " << (dofs.find(i)!=dofs.end() ? "DOF" : "" )
 	// 	   << std::endl;
 	// }

@@ -28,16 +28,16 @@ typedef numeric::xyzMatrix<platform::Real> Mat;
 
 void
 get_xform_stats(
-	core::kinematics::Stub const & sir,
-	core::kinematics::Stub const & sjr,
+	Xform const & sir,
+	Xform const & sjr,
 	Real& dx, Real& dy, Real& dz,
 	Real& ex, Real& ey, Real& ez
 ){
-	Vec d = sir.global2local(sjr.v);
+	Vec d = ~sir * sjr.t;
 	dx = d.x();
 	dy = d.y();
 	dz = d.z();
-	Mat R = sir.M.transposed()*sjr.M;
+	Mat R = sir.R.transposed()*sjr.R;
 	// Real ang;
 	// Vec axis = rotation_axis(R,ang);
 	// ang = numeric::conversions::degrees(ang);
@@ -55,7 +55,7 @@ get_xform_stats(
 			psi = atan2(R.xy(),R.xz());
 		} else {
 			theta = -numeric::constants::d::pi / 2.0;
-			psi = atan2(-R.xy(),-R.xz());			
+			psi = atan2(-R.xy(),-R.xz());
 		}
 		phi = 0;
 	}
@@ -126,13 +126,13 @@ XfoxmScore::makebinary(
 
 float
 XfoxmScore::score(
-	core::kinematics::Stub const & s1,
-	core::kinematics::Stub const & s2,
+	Xform const & s1,
+	Xform const & s2,
 	char ss1, char ss2
 ) const {
 	using numeric::constants::d::pi_2;
 	if( ss1=='L' || ss2=='L' ) return 0.0;
-	if( s1.global2local(s2.v).length_squared() > 64.0 ) return 0.0;	
+	if( (~s1*(s2.t)).length_squared() > 64.0 ) return 0.0;
 	char *a = hh;
 	if( ss1=='E' && ss2=='E' ) a = ee;
 	else if( ss2=='E' || ss1=='E' ) a = he;
@@ -140,7 +140,7 @@ XfoxmScore::score(
 	// // if( ss1=='L' && ss2=='L' ) a = ll;
 	// else if( ss1=='H' && ss2=='E' || ss1=='E' && ss2=='H' ) a = he;
 	// // if( ss1=='H' && ss2=='L' || ss1=='L' && ss2=='H' ) a = hl;
-	// // if( ss1=='E' && ss2=='L' || ss1=='L' && ss2=='E' ) a = el;		
+	// // if( ss1=='E' && ss2=='L' || ss1=='L' && ss2=='E' ) a = el;
 	Real dx,dy,dz,ex,ey,ez;
 	if((ss1=='E' && ss2=='H') || (ss1=='L' && ss2=='H') || (ss1=='L' && ss2=='E')){
 		   get_xform_stats(s2,s1,dx,dy,dz,ex,ey,ez); // reverse
@@ -155,7 +155,7 @@ XfoxmScore::score(
 	if( 0 > index || index >= 16*16*16*24*12*24 ) utility_exit_with_message("FOO");
 	// expensive memory lookup
 	char val = a[index];
-	// 
+	//
 	// std::cout << (int)val << "'" << val << "'"<< std::endl;
 	return val == -127 ? 0.0 : min(10.0,exp(((float)val)/12.0-2.5));
 	// return val == -127 ? -15.0 : ((float)val)/12.0;
@@ -174,19 +174,19 @@ XfoxmScore::score(
 	Vec CBi = pose.residue(rsd1).xyz("CB");
 	Vec CAi = pose.residue(rsd1).xyz("CA");
 	Vec  Ni = pose.residue(rsd1).xyz( "N");
-	core::kinematics::Stub sir(CBi,CAi,Ni);
+	Xform sir(CBi,CAi,Ni);
 	Vec CBj = pose.residue(rsd2).xyz("CB");
 	Vec CAj = pose.residue(rsd2).xyz("CA");
 	Vec  Nj = pose.residue(rsd2).xyz( "N");
 	if( CBi.distance_squared(CBj) > 64.0 ) return 0.0;
-	core::kinematics::Stub sjr(CBj,CAj,Nj);
+	Xform sjr(CBj,CAj,Nj);
 	return score(sir,sjr,pose.secstruct(rsd1),pose.secstruct(rsd2));
 }
 
 float
 XfoxmScore::score(
 	core::pose::Pose & pose,
-	bool compute_ss		
+	bool compute_ss
 ) const {
 	if(compute_ss){
 		core::scoring::dssp::Dssp dssp(pose);
@@ -198,7 +198,7 @@ XfoxmScore::score(
 			float s1 = score(pose,ir,jr);
 			float s2 = score(pose,jr,ir);
 			// if( s1 < 0.0f ) std::cout << s1 << std::endl;
-			// if( s2 < 0.0f ) std::cout << s2 << std::endl;				
+			// if( s2 < 0.0f ) std::cout << s2 << std::endl;
 			tot_score += s1;
 			tot_score += s2;
 		}
@@ -215,7 +215,7 @@ XfoxmScore::score(
 			float s1 = score(pose,ir,jr);
 			float s2 = score(pose,jr,ir);
 			// if( s1 < 0.0f ) std::cout << s1 << std::endl;
-			// if( s2 < 0.0f ) std::cout << s2 << std::endl;				
+			// if( s2 < 0.0f ) std::cout << s2 << std::endl;
 			tot_score += s1;
 			tot_score += s2;
 		}

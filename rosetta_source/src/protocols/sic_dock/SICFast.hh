@@ -11,6 +11,7 @@
 #define INCLUDED_protocols_sic_dock_SICFast_hh
 
 #include <protocols/sic_dock/SICFast.fwd.hh>
+#include <protocols/sic_dock/types.hh>
 
 #include <utility/vector1.hh>
 #include <core/id/AtomID_Map.hh>
@@ -19,7 +20,7 @@
 #include <core/types.hh>
 #include <protocols/sic_dock/xyzStripeHashPose.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
-
+#include <core/kinematics/Stub.fwd.hh>
 
 
 
@@ -58,6 +59,19 @@ public:
 
 	// return distace xmob*pose1 must move along ori to contact xfix*pose2
 	double slide_into_contact(
+		Xform const & xmob,
+		Xform const & xfix,
+		Vec            ori
+	) const;
+
+	double slide_into_contact(
+		Xforms const & xmob,
+		Xforms const & xfix,
+		Vec             ori
+	) const;
+
+	// convenience adaptor
+	double slide_into_contact_DEPRICATED(
 		core::kinematics::Stub const & xmob,
 		core::kinematics::Stub const & xfix,
 		Vec                            ori
@@ -66,7 +80,6 @@ public:
 private:
 	double CTD,CLD,CTD2,CLD2,BIN;
 	xyzStripeHashPose *h1_,*h2_;
-	utility::vector1<double> w1_,w2_;
 };
 
 

@@ -778,7 +778,7 @@ namespace
 					Vector start_ca_loc = displaced_stub.local2global( residue->xyz("CA"));
 					Vector start_cb_loc = displaced_stub.local2global( residue->xyz("CB"));
 
-					core::Real sic_distance = sic_fast.slide_into_contact(
+					core::Real sic_distance = sic_fast.slide_into_contact_DEPRICATED(
 							displaced_stub,
 							core::kinematics::default_stub,
 							slide_vector);

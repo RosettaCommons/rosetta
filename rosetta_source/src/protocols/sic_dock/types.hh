@@ -9,7 +9,8 @@
 #ifndef INCLUDED_protocols_sic_dock_types_hh
 #define INCLUDED_protocols_sic_dock_types_hh
 
-#include <numeric/xyz.functions.hh>
+#include <numeric/xyzVector.hh>
+#include <numeric/xyzTransform.hh>
 #include <utility/vector1.hh>
 
 
@@ -24,10 +25,19 @@ enum PoseCoordPickMode {
 	CA,
 	CB,
 	BB,
+	NCAC,
+	NCO,
 	BNP,
 	HVY,
 	ALL
 };
+
+typedef numeric::xyzVector<platform::Real> Vec;
+typedef numeric::xyzMatrix<platform::Real> Mat;
+typedef numeric::xyzTransform<platform::Real> Xform;
+typedef utility::vector1<Vec> Vecs;
+typedef utility::vector1<Mat> Mats;
+using numeric::Xforms;
 
 }
 }

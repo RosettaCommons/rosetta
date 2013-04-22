@@ -305,7 +305,35 @@ Dssp::dssp_reduced( FArray1_char &secstruct ) {
 	for( Size i = 1; i <= total_residue_; i++ ) {
 		if( dssp_secstruct_(i) == 'H' || dssp_secstruct_(i) == 'G' || dssp_secstruct_(i) == 'I' ) {
 			secstruct(i) = 'H';
-    } else if(dssp_secstruct_(i) == 'B' || dssp_secstruct_(i) == 'E') {
+	    } else if(dssp_secstruct_(i) == 'B' || dssp_secstruct_(i) == 'E') {
+		 	secstruct(i) = 'E';
+		} else secstruct(i) = 'L';
+	}
+}
+
+void
+Dssp::dssp_reduced_IG_as_L_if_adjcent_H( FArray1_char &secstruct ) {
+	for( Size i = 1; i <= total_residue_; i++ ) {
+		if( dssp_secstruct_(i) == 'H' || dssp_secstruct_(i) == 'G' || dssp_secstruct_(i) == 'I' ) {
+			if( ( dssp_secstruct_(i)=='G'|| dssp_secstruct_(i)=='I' ) &&
+				( (i>1 && dssp_secstruct_(i-1)=='H') || (i<total_residue_ && dssp_secstruct_(i+1)=='H'))
+			){
+				secstruct(i) = 'L';
+			} else {
+				secstruct(i) = 'H';
+			}
+	    } else if(dssp_secstruct_(i) == 'B' || dssp_secstruct_(i) == 'E') {
+		 	secstruct(i) = 'E';
+		} else secstruct(i) = 'L';
+	}
+}
+
+void
+Dssp::dssp_reduced_IG_as_L( FArray1_char &secstruct ) {
+	for( Size i = 1; i <= total_residue_; i++ ) {
+		if( dssp_secstruct_(i) == 'H' ) {
+			secstruct(i) = 'H';
+	    } else if(dssp_secstruct_(i) == 'B' || dssp_secstruct_(i) == 'E') {
 		 	secstruct(i) = 'E';
 		} else secstruct(i) = 'L';
 	}
@@ -459,8 +487,37 @@ void
 Dssp::insert_ss_into_pose( core::pose::Pose & pose ) {
 	compute( pose );
 	dssp_reduced( dssp_secstruct_ );
-	for ( core::Size i = 1; i <= total_residue_;/*pose.total_residue();*/ ++i ) {
+	for ( core::Size i = 1; i <= total_residue_; ++i ) {
 		pose.set_secstruct( i, dssp_secstruct_(i) );
+	}
+}
+
+void
+Dssp::insert_ss_into_pose_no_IG_helix( core::pose::Pose & pose ) {
+	compute( pose );
+	dssp_reduced_IG_as_L( dssp_secstruct_ );
+	for ( core::Size i = 1; i <= total_residue_; ++i ) {
+		pose.set_secstruct( i, dssp_secstruct_(i) );
+	}
+}
+
+void
+Dssp::insert_dssp_ss_into_pose( core::pose::Pose & pose ) {
+	compute( pose );
+	for ( core::Size i = 1; i <= total_residue_; ++i ) {
+		char ss = dssp_secstruct_(i);
+		if(ss==' ') ss = '_';
+		pose.set_secstruct( i, ss );
+	}
+}
+void
+Dssp::insert_edge_ss_into_pose( core::pose::Pose & pose ) {
+	compute( pose );
+	for ( core::Size i = 1; i <= total_residue_; ++i ) {
+		char ss = dssp_secstruct_(i);
+		if(ss==' ') ss = 'L';
+		if(ss=='E' && num_pairings(i)<2 ) ss = 'U';
+		pose.set_secstruct( i, ss );
 	}
 }
 
@@ -485,6 +542,23 @@ Dssp::bb_pair_score( Size res1, Size res2 )
 {
 	return hbond_bb_pair_score_( res1, res2 );
 }
+
+Size
+Dssp::num_pairings(Size resi ) const {
+	Size npair = 0;
+	for(StrandPairingSet::const_iterator i = pair_set_->begin(); i != pair_set_->end(); ++i){
+		if(i->contains(resi)) ++npair;
+	}
+	return npair;
+}
+bool
+Dssp::in_paired_strands(Size res1, Size res2 ) const {
+	for(StrandPairingSet::const_iterator i = pair_set_->begin(); i != pair_set_->end(); ++i){
+		if( i->contains(res1) && i->contains(res2) ) return true;
+	}
+	return false;
+}
+
 
 } //dssp
 } //scoring

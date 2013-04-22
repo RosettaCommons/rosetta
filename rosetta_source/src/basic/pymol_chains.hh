@@ -22,11 +22,13 @@ namespace basic {
 
 static std::string const pymol_chains("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]{}|-_\\~=%zyxwvutsrqponmlkjihgfedcba");
 
+static
 char
 get_pymol_chain(numeric::Size i){
 	return pymol_chains[(i-1)%pymol_chains.size()];
 }
 
+static
 numeric::Size
 get_pymol_chain_index_1(char c){
 	numeric::Size i = pymol_chains.find(c);

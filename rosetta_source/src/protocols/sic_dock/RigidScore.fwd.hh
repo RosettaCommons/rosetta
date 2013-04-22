@@ -27,6 +27,10 @@ class LinkerScore;
 typedef utility::pointer::owning_ptr< LinkerScore > LinkerScoreOP;
 typedef utility::pointer::owning_ptr< LinkerScore const > LinkerScoreCOP;
 
+class ConstraintSetScore;
+typedef utility::pointer::owning_ptr< ConstraintSetScore > ConstraintSetScoreOP;
+typedef utility::pointer::owning_ptr< ConstraintSetScore const > ConstraintSetScoreCOP;
+
 // class EdgeStandScore;
 // typedef utility::pointer::owning_ptr< EdgeStandScore > EdgeStandScoreOP;
 // typedef utility::pointer::owning_ptr< EdgeStandScore const > EdgeStandScoreCOP;

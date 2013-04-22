@@ -1336,8 +1336,8 @@ void output_packstat_pdb( core::pose::Pose & pose, std::ostream & out ) {
 
 	for( Size i = 1; i <= clusters.size(); i++ ) {
 		for( Size j = 1; j <= clusters[i].cavballs.size(); j++ ) {
-			if( clusters[i].cavballs[j].radius() > 0.7 )
-				out << clusters[i].cavballs[j].hetero_atom_line( pose.total_residue()+i, i, 0.6 ) << std::endl;
+			if( clusters[i].cavballs[j].radius() > 0.6 )
+				out << clusters[i].cavballs[j].hetero_atom_line( pose.total_residue()+i, i, 0.0 ) << std::endl;
 		}
 	}
 

@@ -54,7 +54,7 @@
 
 #include <utility/vector1.hh>
 
-
+#include <protocols/viewer/visualize.hh>
 
 namespace core {
 namespace pose {
@@ -136,6 +136,7 @@ make_symmetric_pose(
 	assert( is_symmetric( pose ) );
 
 	pose.conformation().detect_bonds();
+
 }
 
 /// @details constructs a symmetric pose with a symmetric conformation and energies object from a monomeric pose
@@ -166,7 +167,42 @@ make_symmetric_pose(
 	assert( is_symmetric( pose ) );
 
 	pose.conformation().detect_disulfides();
+
 	pose.conformation().detect_bonds();
+
+
+	// // protocols::viewer::dump_pose_kinemage("test_make_symmetric_pose_end.kin",pose);
+	// using namespace core::conformation::symmetry;
+
+	// SymmetryInfoCOP symm_info( symm_conf->Symmetry_Info() );
+	// std::map< Size, SymDof > dofs ( symm_info->get_dofs() );
+	// std::map< Size, SymDof >::iterator it;
+	// std::map< Size, SymDof >::iterator it_begin = dofs.begin();
+	// std::map< Size, SymDof >::iterator it_end = dofs.end();
+	// int count = 0;
+
+	// for(it=it_begin; it != it_end; ++it,++count){
+	// 	core::kinematics::Jump j(pose.jump(it->first));
+	// 	j.set_translation(numeric::xyzVector<core::Real>(0,0,0));
+	// 	pose.set_jump(it->first,j);
+	// 	// pose.dump_pdb("test_make_symmetric_pose_testmove"+ObjexxFCL::string_of(count)+".pdb");
+	// }
+
+	// // for(int i = 1; i <= 10; ++i)
+	// 	for(it=it_begin; it != it_end; ++it,++count){
+	// 		core::kinematics::Jump j(pose.jump(it->first));
+	// 		if(it->second.allow_dof(1))	j.gaussian_move_single_rb(-1,05.0,1);
+	// 		if(it->second.allow_dof(2))	j.gaussian_move_single_rb(-1,20.0,2);
+	// 		if(it->second.allow_dof(4))	j.gaussian_move_single_rb(-1,40.0,4);
+	// 		pose.set_jump_now(it->first,j);
+	// 		// protocols::viewer::dump_pose_kinemage("test_make_symmetric_pose_testmove"+ObjexxFCL::string_of(count)+".kin",pose);
+	// 		// pose.dump_pdb("test_make_symmetric_pose_testmove"+ObjexxFCL::string_of(count)+".pdb");
+	// 	}
+
+
+	// pose.dump_pdb("test_make_symmetric_pose_end.pdb");
+
+	// utility_exit_with_message("test_make_symmetric_pose");
 }
 
 /// @details constructs a symmetric pose with a symmetric conformation and energies object from a monomeric pose
@@ -1077,7 +1113,7 @@ get_symdof_subunits(core::pose::Pose const & pose, std::string const & jname){
 }
 
 bool is_singlecomponent(core::pose::Pose const & pose){
-	return symmetry_info(pose)->get_components().size()==1;
+	return symmetry_info(pose)->get_components().size()<=1;
 }
 bool is_multicomponent(core::pose::Pose const & pose){
 	return symmetry_info(pose)->get_components().size()>=2;

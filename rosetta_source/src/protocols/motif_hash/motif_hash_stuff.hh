@@ -127,7 +127,7 @@ namespace motif_hash {
 		typedef double Count;
 		typedef numeric:: geometry::hashing::SixDCoordinateBinner SixDCoordinateBinner;
 		typedef numeric::geometry::hashing::bin_index_hasher bin_index_hasher;
-		SixDCoordinateBinner const hasher_;
+		SixDCoordinateBinner hasher_;
 		typedef boost::unordered_map< Key, Count, bin_index_hasher > CountMap;
 		CountMap total_count_;
 		double cart_size_,cart_resl_,angle_resl_;

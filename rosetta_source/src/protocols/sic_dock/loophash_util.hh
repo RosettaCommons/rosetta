@@ -30,8 +30,8 @@ get_leap_upper_stub(
 	core::pose::Pose const & pose,
 	platform::Size ir
 );
-core::kinematics::Stub vec3_to_stub(Vec3 const & v3);
-core::kinematics::Stub vec3_to_stub(core::kinematics::Stub const & xform, Vec3 const & v3);
+Xform vec3_to_stub(Vec3 const & v3);
+Xform vec3_to_stub(Xform const & xform, Vec3 const & v3);
 
 void
 get_termini_from_pose(
@@ -48,13 +48,13 @@ get_termini_from_pose(
 );
 numeric::geometry::hashing::Real6
 get_leap_6dof(
-	core::kinematics::Stub const & lower,
-	core::kinematics::Stub const & upper
+	Xform const & lower,
+	Xform const & upper
 );
 platform::Size
 count_linkers(
-	core::kinematics::Stub const & lower,
-	core::kinematics::Stub const & upper,
+	Xform const & lower,
+	Xform const & upper,
 	protocols::loophash::LoopHashLibraryOP loop_hash_library,
 	utility::vector1<platform::Size> const & loopsizes,
 	platform::Size radius = 0
@@ -62,13 +62,14 @@ count_linkers(
 
 platform::Size
 dump_loophash_linkers(
-	core::kinematics::Stub const & lower,
-	core::kinematics::Stub const & upper,
+	Xform const & lower,
+	Xform const & upper,
 	// core::pose::Pose const & pose1,
 	// core::pose::Pose const & pose2,
 	protocols::loophash::LoopHashLibraryOP loop_hash_library,
 	utility::vector1<platform::Size> const & loopsizes,
-	platform::Size radius = 0
+	platform::Size radius = 0,
+	std::string const & outtag = ""
 );
 
 platform::Real

@@ -1,4 +1,5 @@
-// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spac, int width=10es:t -*-
 // vi: set ts=2 noet:
 //
 // (c) Copyright Rosetta Commons Member Institutions.
@@ -25,34 +26,36 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <protocols/loophash/LoopHashLibrary.hh>
 
+#include <tr1/unordered_map>
+
+#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/ConstraintSet.fwd.hh>
+
 namespace protocols {
 namespace sic_dock {
 
 
 class RigidScore : public utility::pointer::ReferenceCount {
 protected:
-	typedef platform::Real Real;
-	typedef platform::Size Size;
+	typedef core::Real Real;
+	typedef core::Size Size;
 	typedef core::pose::Pose Pose;
-	typedef core::kinematics::Stub Stub;
 	typedef numeric::xyzVector<Real> Vec;
 	typedef numeric::xyzMatrix<Real> Mat;
 	typedef utility::vector1<Vec> Vecs;
 	typedef utility::vector1<Real> Reals;
 	typedef utility::vector1<Size> Sizes;
-	typedef utility::vector1<Stub> Stubs;
+	typedef numeric::Xforms Xforms;
 	typedef utility::vector1<RigidScoreCOP> Scores;
 public:
 
 	virtual ~RigidScore() {}
 
-	virtual
-	platform::Real
-	score(
-		Stub const & x1,
-		Stub const & x2
-	) const = 0;
+	virtual core::Real score( Xforms const & x1, Xforms const & x2 ) const = 0;
 
+	virtual std::string type() const = 0;
+	virtual void show(std::ostream & out                                      , int width=10) const;
+	virtual void show(std::ostream & out, Xforms const & x1, Xforms const & x2, int width=10) const;
 };
 
 
@@ -66,16 +69,37 @@ public:
 		Real clash_dis,
 		Real contact_dis
 	);
-	platform::Real score( Stub const & x1, Stub const & x2 ) const;
+	CBScore(
+		Pose const & pose1,
+		Pose const & pose2,
+		Real clash_dis,
+		Real contact_dis,
+		core::id::AtomID_Map<core::Real> const & weights1,
+		core::id::AtomID_Map<core::Real> const & weights2
+	);
+	core::Real score( Xforms const & x1, Xforms const & x2 ) const;
+	std::string type() const { return "CBScore"; }
+	Real dist2_score( Real const & sqdist ) const;
 //private:
 	bool const hash_pose1_;
-	platform::Real const clash_dis_, contact_dis_;
+	core::Real const clash_dis_, contact_dis_;
 	Reals const weights_;
 	Vecs const points_;
 	xyzStripeHashPoseWithMeta const xyzhash_;
 	// Pose const & pose1_,pose2_;
 };
 
+inline core::Real CBScore_dist_score( core::Real const & sqdist, core::Real const & start, core::Real const & stop ) {
+	if( sqdist > stop*stop ) {
+		return 0.0;
+	} else if( sqdist < start*start ) {
+		return 1.0;
+	} else {
+		core::Real dist = sqrt( sqdist );
+		return (stop-dist)/(stop-start);
+		//return sqr(1.0	- sqr( (dist - start) / (stop - start) ) );
+	}
+}
 
 class LinkerScore : public RigidScore {
 public:
@@ -83,19 +107,51 @@ public:
 		Pose const & pose1,
 		Pose const & pose2,
 		Size max_loop_len,
-		Size lookup_radius
+		Size lookup_radius,
+		std::string const & outtag
 	);
 	virtual ~LinkerScore(){}
-	platform::Real  score( Stub const & x1, Stub const & x2 ) const;
-	// Undefined, commenting out to fix PyRosetta build  void dump_linkers( Stub const & x1, Stub const & x2 ) const;
+	core::Real  score( Xforms const & x1, Xforms const & x2 ) const;
+	// Undefined, commenting out to fix PyRosetta build  void dump_linkers( Xform const & x1, Xform const & x2 ) const;
+	bool dump_linkers( Xform const & x1, Xform const & x2, std::string const & out_perfix ) const;
+	std::string type() const { return "LinkerScore"; }
 private:
-	protocols::loophash::LoopHashLibraryOP loop_hash_library_;
+	static protocols::loophash::LoopHashLibraryOP loop_hash_library_;
 	Sizes const loopsizes_;
-	platform::Size lookup_radius_;
+	core::Size lookup_radius_;
 	Pose const & pose1_,pose2_;
 	TermInfo lowers1_,uppers1_,lowers2_,uppers2_;
 	Real max_dis2_;
+	std::string outtag_;
 };
+
+
+
+struct AtomIDHashFunction { std::size_t operator ()(core::id::AtomID const aid) const {
+	return aid.atomno()+65536*aid.rsd();
+} };
+
+// NOTE!!!!
+// my convention here is that AtomIDs for pose2 are residue number 1000000 + actual
+//
+class ConstraintSetScore : public RigidScore {
+public:
+	ConstraintSetScore(
+		Pose const & pose1,
+		Pose const & pose2,
+		core::scoring::constraints::ConstraintSet const & cstset
+	);
+	virtual ~ConstraintSetScore(){}
+	core::Real score( Xforms const & x1, Xforms const & x2 ) const;
+	std::string type() const { return "ConstraintSetScore"; }
+private:
+	Pose const & pose1_,pose2_;
+	core::scoring::constraints::ConstraintSet const & cstset_;
+	core::scoring::constraints::ConstraintCOPs const csts_;
+	std::tr1::unordered_map<core::id::AtomID,Vec,AtomIDHashFunction> start_coords_;
+};
+
+
 
 
 
@@ -103,7 +159,7 @@ class EdgeStandScore : public RigidScore {
 public:
 	EdgeStandScore();
 	virtual ~EdgeStandScore(){}
-	// Undefined, commenting out to fix PyRosetta build  platform::Real score( Stub const & x1, Stub const & x2 ) const;
+	// Undefined, commenting out to fix PyRosetta build  core::Real score( Xforms const & x1, Xforms const & x2 ) const;
 private:
 	Vecs donors,acceptors;
 };
@@ -112,7 +168,7 @@ class HelixScore : public RigidScore {
 public:
 	HelixScore();
 	virtual ~HelixScore(){}
-	// Undefined, commenting out to fix PyRosetta build  platform::Real score( Stub const & x1, Stub const & x2 ) const;
+	// Undefined, commenting out to fix PyRosetta build  core::Real score( Xforms const & x1, Xforms const & x2 ) const;
 private:
 };
 
@@ -120,8 +176,8 @@ class BuriedPolarScore : public RigidScore {
 public:
 	BuriedPolarScore(); // c'tor should store the buriend unsat polar coords
 	virtual ~BuriedPolarScore(){}
-	// Undefined, commenting out to fix PyRosetta build 
-	// platform::Real score( Stub const & x1, Stub const & x2 ) const;
+	// Undefined, commenting out to fix PyRosetta build
+	// core::Real score( Xforms const & x1, Xforms const & x2 ) const;
 private:
 	Vecs polars;
 };
@@ -130,27 +186,32 @@ private:
 
 class JointScore : public RigidScore {
 public:
-	JointScore(){}
+	JointScore();
 	JointScore(
 		Scores scores,
 		Reals weights
 	);
 	void add_score(RigidScoreCOP score, Real weight);
+        void set_filter_hack(Real minscore, Real maxscore=9e9){ minscore_hack_ = minscore; maxscore_hack_ = maxscore; }
+
 	virtual ~JointScore(){}
-	platform::Real score( Stub const & x1, Stub const & x2 ) const;
+	std::string type() const { return "JointScore"; }
+	void show(std::ostream & out                                    , int width=10) const;
+	void show(std::ostream & out, Xforms const & x1, Xforms const & x2, int width=10) const;
+	core::Real score( Xforms const & x1, Xforms const & x2 ) const;
 private:
 	Scores scores_;
 	Reals weights_;
+  Real minscore_hack_,maxscore_hack_;
 
 };
-
 
 
 // class CachedScore : public RigidScore {
 // public:
 // 	CachedScore(RigidScoreCOP score);
 // 	virtual ~CachedScore(){}
-// 	platform::Real score( Stub const & x1, Stub const & x2 ) const;
+// 	core::Real score( Xforms const & x1, Xforms const & x2 ) const;
 // private:
 // 	RigidScoreCOP score_;
 // 	// some kind of 6 dof hash

@@ -191,6 +191,15 @@ sources = {
 	"util",
 	"loophash_util",
 	"designability_score",
+	"read_biounit",
+	"xyzStripeHashPose",
+],
+"protocols/sic_dock/scores" : [
+	"MotifHashRigidScore",
+	"TrisBpyScore",
+],
+"protocols/motif_hash" : [
+	"motif_hash_stuff",
 ],
 
 }
@@ -201,6 +210,7 @@ library_path = [
 libraries = [
 ]
 subprojects = [
+	"protocols_f.5",
 	"protocols_b.5",
 	"protocols_h.4",
 	"protocols_g.4",

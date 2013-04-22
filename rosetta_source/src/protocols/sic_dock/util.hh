@@ -11,6 +11,7 @@
 
 #include <core/types.hh>
 #include <core/kinematics/Stub.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <protocols/sic_dock/types.hh>
 #include <protocols/sic_dock/RigidScore.fwd.hh>
 #include <protocols/sic_dock/SICFast.fwd.hh>
@@ -20,10 +21,12 @@
 //#include <numeric/xyzVector.fwd.hh>
 #include <ObjexxFCL/FArray3D.fwd.hh>
 #include <numeric/xyzTransform.hh>
-
+#include <core/kinematics/Stub.fwd.hh>
 
 namespace protocols {
 namespace sic_dock {
+
+core::Real get_rg(core::pose::Pose const & p);
 
 int
 neighbor_count(
@@ -39,83 +42,84 @@ cb_weight(
 	core::Real distance_threshold=10.0
 );
 
+void make_Cx(core::pose::Pose & pose, int N, numeric::xyzVector<core::Real> axis=numeric::xyzVector<core::Real>(0,0,1) );
+
 double
 slide_into_contact_and_score(
+	protocols::sic_dock::SICFast    const & sic,
+	protocols::sic_dock::RigidScore const & sfxn,
+	Xform                                 & xa,
+	Xform                           const & xb,
+	numeric::xyzVector<core::Real>  const & ori,
+	core::Real                            & score
+);
+
+double
+slide_into_contact_and_score_DEPRICATED(
 	protocols::sic_dock::SICFast    const & sic,
 	protocols::sic_dock::RigidScore const & sfxn,
 	core::kinematics::Stub                & xa,
 	core::kinematics::Stub          const & xb,
-	numeric::xyzVector<platform::Real>  const & ori,
-	platform::Real                            & score
-);
-
-double
-slide_into_contact_and_score(
-	protocols::sic_dock::SICFast    const & sic,
-	protocols::sic_dock::RigidScore const & sfxn,
-	numeric::xyzTransform<core::Real>         & xa,
-	numeric::xyzTransform<core::Real>   const & xb,
-	numeric::xyzVector<platform::Real>  const & ori,
-	platform::Real                            & score
+	numeric::xyzVector<core::Real> const  & ori,
+	core::Real                            & score
 );
 
 core::pose::Pose const &                   pose_with_most_CBs( core::pose::Pose const & pose1, core::pose::Pose const & pose2 );
 bool                                       pose1_has_most_CBs( core::pose::Pose const & pose1, core::pose::Pose const & pose2 );
-platform::Size                                          count_CBs( core::pose::Pose const & pose );
+
+core::Size                                          count_CBs( core::pose::Pose const & pose );
+
 core::id::AtomID_Map<double>          cb_weight_map_from_pose( core::pose::Pose const & pose );
-utility::vector1<numeric::xyzVector<platform::Real> > get_CB_Vecs( core::pose::Pose const & pose );
-utility::vector1<platform::Real>             cb_weights_from_pose( core::pose::Pose const & pose );
 
-void
-xform_pose(
-	core::pose::Pose & pose,
-	core::kinematics::Stub const & s,
-	platform::Size sres=1,
-	platform::Size eres=0
-);
-void
-xform_pose_rev(
-	core::pose::Pose & pose,
-	core::kinematics::Stub const & s,
-	platform::Size sres=1,
-	platform::Size eres=0
-);
+utility::vector1<numeric::xyzVector<core::Real> > get_CB_Vecs_from_pose( core::pose::Pose const & pose );
+utility::vector1<numeric::xyzVector<core::Real> > get_CB_Vecs_from_map ( core::pose::Pose const & pose, core::id::AtomID_Map<core::Real> const & map );
 
-void
-xform_pose(
-	core::pose::Pose & pose,
-	numeric::xyzTransform<core::Real> const & x,
-	platform::Size sres=1,
-	platform::Size eres=0
-);
+utility::vector1<                   core::Real>    cb_weights_from_pose( core::pose::Pose const & pose );
+utility::vector1<                   core::Real>    cb_weights_from_map ( core::pose::Pose const & pose, core::id::AtomID_Map<core::Real> const & map );
 
-/* Undefinded, commenting out to fix PyRosetta build  void
-xform_pose_rev(
-	core::pose::Pose & pose,
-	numeric::xyzTransform<core::Real> const & x,
-	platform::Size sres=1,
-	platform::Size eres=0
-); */
-
-utility::vector1<platform::Size> range(platform::Size beg, platform::Size end);
+utility::vector1<core::Size> range(core::Size beg, core::Size end);
 Vec3
 get_leap_lower_stub(
 	core::pose::Pose const & pose,
-	platform::Size ir
+	core::Size ir
 );
 
 int flood_fill3D(int i, int j, int k, ObjexxFCL::FArray3D<double> & grid, double t);
 
 // void termini_exposed(core::pose::Pose const & pose, bool & ntgood, bool & ctgood );
 
-inline core::kinematics::Stub multstubs(core::kinematics::Stub const & a, core::kinematics::Stub const & b){
-	return core::kinematics::Stub( a.M*b.M, a.M*b.v+a.v );
+inline Xform multstubs(Xform const & a, Xform const & b){
+	return Xform( a.R*b.R, a.R*b.t+a.t );
 }
-inline core::kinematics::Stub invstub(core::kinematics::Stub const & a){
-	numeric::xyzMatrix<platform::Real> const MR = a.M.transposed();
-	return core::kinematics::Stub( MR, MR * -a.v );
+inline Xform invstub(Xform const & a){
+	numeric::xyzMatrix<core::Real> const MR = a.R.transposed();
+	return Xform( MR, MR * -a.t );
 }
 
+bool residue_is_floppy(core::pose::Pose const & pose, core::Size const ir, core::Real const ttrim_cut=1.0, core::Size const nfold=1);
+
+void auto_trim_floppy_termini(core::pose::Pose & pose, core::Real const ttrim_cut=1.0, core::Size const nfold=1);
+
+numeric::xyzVector<core::Real> center_of_geom(core::pose::Pose const & pose, core::Size str=1, core::Size end=0);
+void dump_points_pdb(utility::vector1<numeric::xyzVector<core::Real> > const & p, std::string fn);
+void dump_points_pdb(utility::vector1<numeric::xyzVector<core::Real> > const & p, numeric::xyzVector<core::Real>  t, std::string fn);
+void trans_pose(  core::pose::Pose & pose, numeric::xyzVector<core::Real>  const & trans, core::Size start=1, core::Size end=0 );
+void rot_pose  (  core::pose::Pose & pose, numeric::xyzMatrix<core::Real> const & rot, core::Size start=1, core::Size end=0 );
+void rot_pose  (  core::pose::Pose & pose, numeric::xyzMatrix<core::Real> const & rot, numeric::xyzVector<core::Real>  const & cen, core::Size start=1, core::Size end=0 );
+void rot_pose  (  core::pose::Pose & pose, numeric::xyzVector<core::Real> const & axis, core::Real const & ang, core::Size start=1, core::Size end=0 );
+void rot_pose  (  core::pose::Pose & pose, numeric::xyzVector<core::Real> const & axis, core::Real const & ang, numeric::xyzVector<core::Real>  const & cen, core::Size start=1, core::Size end=0 );
+void alignaxis ( core::pose::Pose & pose, numeric::xyzVector<core::Real>  newaxis, numeric::xyzVector<core::Real>  oldaxis, numeric::xyzVector<core::Real>  cen = numeric::xyzVector<core::Real> (0,0,0) );
+numeric::xyzTransform<core::Real> alignaxis_xform (numeric::xyzVector<core::Real>  newaxis, numeric::xyzVector<core::Real>  oldaxis, numeric::xyzVector<core::Real>  cen = numeric::xyzVector<core::Real> (0,0,0) );
+
+
+inline numeric::xyzVector<core::Real>  projperp(numeric::xyzVector<core::Real>  const & u, numeric::xyzVector<core::Real>  const & v) {  return v - projection_matrix(u)*v; }
+
+void xform_pose ( core::pose::Pose & pose,            core::kinematics::Stub const & s, core::Size sres=1, core::Size eres=0 );
+void xform_pose ( core::pose::Pose & pose, numeric::xyzTransform<core::Real> const & s, core::Size sres=1, core::Size eres=0 );
+
+core::kinematics::Stub getxform(core::conformation::Residue const & move_resi, core::conformation::Residue const & fixd_resi);
+
+template<typename T> inline T sqr(T x) { return x*x; }
 
 } // sic_dock
 } // protocols

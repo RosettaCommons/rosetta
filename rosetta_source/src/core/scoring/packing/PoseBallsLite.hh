@@ -19,6 +19,7 @@
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
+#include <core/id/AtomID_Mask.fwd.hh>
 
 #include <core/scoring/packing/Ball.hh>
 
@@ -42,6 +43,7 @@ public:
 	// hmode = 2 --> all H's
 	// in all cases, H area is added to the "parent" atom
 	PoseBallsLite( core::pose::Pose const & pose, core::Size Hmode = 0, bool ignore_water = true );
+	PoseBallsLite( core::pose::Pose const & pose, core::id::AtomID_Mask const & whichatoms );
 
 	inline core::Size const & nballs() const {
 		return nballs_;

@@ -9,7 +9,7 @@
 
 /// Compute electrostatic.
 ///
-/// Options: 
+/// Options:
 ///
 /// vector1<Integer> pb_potential::charged_chain
 ///    The chain numbers (>=1) of which charge is non-zero.
@@ -64,6 +64,8 @@
 
 static basic::Tracer TR("core.scoring.PoissonBoltzmannPotential");
 
+static std::string const chr_chains("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]{}|-_\\~=%zyxwvutsrqponmlkjihgfedcbaABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]{}|-_\\~=%zyxwvutsrqponmlkjihgfedcbaABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]{}|-_\\~=%zyxwvutsrqponmlkjihgfedcbaABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]{}|-_\\~=%zyxwvutsrqponmlkjihgfedcbaABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]{}|-_\\~=%zyxwvutsrqponmlkjihgfedcbaABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]{}|-_\\~=%zyxwvutsrqponmlkjihgfedcbaABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]{}|-_\\~=%zyxwvutsrqponmlkjihgfedcbaABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]{}|-_\\~=%zyxwvutsrqponmlkjihgfedcba");
+
 namespace core {
 namespace scoring {
 
@@ -87,7 +89,7 @@ PB::PoissonBoltzmannPotential()
 }
 
 core::Real
-PB::get_potential(ObjexxFCL::FArray3D< core::Real > const & potential, 
+PB::get_potential(ObjexxFCL::FArray3D< core::Real > const & potential,
 numeric::xyzVector<core::Real> const & cartX) const {
 	if (out_of_bounds(cartX)) return 0.0;
 
@@ -131,8 +133,8 @@ PB::eval_PB_energy_residue(
 
 void
 PB::solve_pb( core::pose::Pose const & pose,
-							std::string const & tag, 
-							std::map<std::string, bool> const &charged_residues ) 
+							std::string const & tag,
+							std::map<std::string, bool> const &charged_residues )
 {
 	using namespace std;
 	time_t begin;
@@ -237,9 +239,9 @@ PB::load_potential(const double grid_meta[],
 #else  // APBS libraries are not linked.  Use system call.
 
 void
-PB::solve_pb( core::pose::Pose const & pose, 
-							std::string const & tag, 
-							std::map<std::string, bool> const &charged_residues ) 
+PB::solve_pb( core::pose::Pose const & pose,
+							std::string const & tag,
+							std::map<std::string, bool> const &charged_residues )
 {
 	using namespace std;
 	time_t begin;
@@ -366,16 +368,14 @@ PB::write_pqr( core::pose::Pose const & pose,
 							 std::map<std::string, bool> const & is_residue_charged_by_name_) const {
 	// Generate .pqr
 	std::ofstream pqr_ostr(pqr_filename_.c_str());
-	
+
 	using namespace basic::options::OptionKeys;
 	utility::vector1<Size> charged_chains;
 	charged_chains.push_back(1);
-	
+
 	Size const nres( pose.total_residue() );
 
 	Size number(0);
-
-	static std::string const chains( " ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890" );
 
 	for ( Size i=1; i<= nres; ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );
@@ -392,9 +392,11 @@ PB::write_pqr( core::pose::Pose const & pose,
 			if ( rsd.atom_type(j).is_virtual() ) continue;
 
 			++number;
-			runtime_assert( rsd.chain() < chains.size() ); // silly restriction
-			
-			char const chain( chains[ rsd.chain() ] );
+
+			//			runtime_assert( rsd.chain() < chains.size() ); // silly restriction
+
+			char const chain( chr_chains[ (rsd.chain()-1)%chr_chains.size() ] );
+			//			char const chain( chains[ rsd.chain() ] );
 			if (residue_charged) {
 				using namespace ObjexxFCL::fmt;
 				pqr_ostr << "ATOM  " << I(5,number) << ' ' << rsd.atom_name(j) << ' ' <<

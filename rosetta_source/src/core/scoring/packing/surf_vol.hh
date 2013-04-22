@@ -21,6 +21,7 @@
 //Package headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/AtomID_Map.hh>
+#include <core/id/AtomID_Mask.fwd.hh>
 
 //numeric headers
 #include <numeric/xyzVector.hh>
@@ -60,9 +61,23 @@ namespace packing {
 		core::Real const   probe_radius = 1.4
 	);
 
+	SurfVol
+	get_surf_vol(
+		pose::Pose const & pose,
+		core::id::AtomID_Mask const & whichatoms,
+		core::Real const   probe_radius = 1.4
+	);
+
 	SurfVolDeriv
 	get_surf_vol_deriv(
 		pose::Pose const & pose,
+		core::Real const   probe_radius = 1.4
+	);
+
+	SurfVolDeriv
+	get_surf_vol_deriv(
+		pose::Pose const & pose,
+		core::id::AtomID_Mask const & whichatoms,
 		core::Real const   probe_radius = 1.4
 	);
 

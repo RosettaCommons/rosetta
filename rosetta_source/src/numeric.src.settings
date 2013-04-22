@@ -33,6 +33,7 @@ sources = {
 	],
 	"numeric/geometry/hashing": [
 		"SixDHasher",
+		"xyzStripeHash",
 	],
 	"numeric/interpolation": [
 		"util",

@@ -211,10 +211,8 @@ SymDofMover::apply(Pose & pose) {
 	std::map< std::string, core::conformation::symmetry::VirtualCoordinate > coords = symmdata.get_virtual_coordinates();
 	std::map< std::string, std::pair< std::string, std::string > > virt_connects = symmdata.get_virtual_connects();
 
-
-
-	if(symm_name[0]=='P'){
-		TR << "Doing DOF placement for 2D lattice (based on sym file name P* " << symm_file_ << std::endl;
+	if(symm_file_[0]=='P' && symm_file_[2]=='_' && symm_file_[5]=='.'){
+		TR << "Doing DOF placement for 2D lattice (based on sym file name P?_??.*" << symm_file_ << std::endl;
 		for (Size i = 1; i <= sym_dof_names.size(); i++) {
 
 			core::Size sub_start= pose.conformation().chain_begin(i);
@@ -291,7 +289,7 @@ SymDofMover::apply(Pose & pose) {
 
 	core::pose::symmetry::make_symmetric_pose(pose, symmdata);
 
-	if(symm_name[0]=='P'){
+	if(symm_file_[0]=='P' && symm_file_[2]=='_' && symm_file_[5]=='.'){
 		using namespace core::conformation::symmetry;
 		SymmetricConformation const & symm_conf ( dynamic_cast<SymmetricConformation const & > ( pose.conformation() ) );
 		SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
@@ -304,7 +302,6 @@ SymDofMover::apply(Pose & pose) {
 		 	Vec t = j.get_translation();
 		 	if( t.length() > 0.0001 ){
 			 	Vec newt = Vec(0,-radial_disps[2],0);
-			 	TR << "moving lattice symdof into place based on radial_disps[2]" << std::endl;
 			 	j.set_translation(newt);
 			 	Vec origt = pose.xyz(core::id::AtomID(1,pose.conformation().chain_begin(2)));
 			 	pose.set_jump_now(it->first,j);

@@ -21,6 +21,9 @@
 #include <core/scoring/sasa.hh>
 #include <core/scoring/constraints/Func.hh>
 #include <core/pose/util.hh>
+#include <core/kinematics/Stub.hh>
+#include <boost/foreach.hpp>
+#include <core/chemical/AtomType.hh>
 
 namespace protocols {
 namespace sic_dock {
@@ -40,18 +43,6 @@ using std::endl;
 typedef numeric::xyzVector<platform::Real> Vec;
 typedef numeric::xyzMatrix<platform::Real> Mat;
 
-template<typename T> inline T sqr(T x) { return x*x; }
-
-
-void dump_points_pdb(utility::vector1<Vec> const & p, std::string fn) {
-        using namespace ObjexxFCL::fmt;
-        std::ofstream o(fn.c_str());
-        for(Size i = 1; i <= p.size(); ++i) {
-                std::string rn = "VIZ"; o<<"HETATM"<<I(5,i)<<' '<<" CA "<<' '<<rn<<' '<<"A"<<I(4,i)<<"    "<<F(8,3,p[i].x())<<F(8,3,p[i].y())<<F(8,3,p[i].z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-        }        o.close();
-}
-
-
 inline double dist_score( double const & sqdist, double const & start, double const & stop ) {
 	if( sqdist > stop*stop ) {
 		return 0.0;
@@ -68,16 +59,14 @@ SICFast::SICFast(core::Real clash_dis) :
 	CLD(clash_dis),
 	CLD2(sqr(CLD)),
 	BIN(CLD*basic::options::option[basic::options::OptionKeys::sicdock::hash_2D_vs_3D]()),
-	h1_(new xyzStripeHashPose(CLD+0.01)),
-	h2_(new xyzStripeHashPose(CLD+0.01))
+	h1_(NULL),h2_(NULL)
 {}
 
 SICFast::SICFast() :
 	CLD(basic::options::option[basic::options::OptionKeys::sicdock::clash_dis]()),
 	CLD2(sqr(CLD)),
 	BIN(CLD*basic::options::option[basic::options::OptionKeys::sicdock::hash_2D_vs_3D]()),
-	h1_(new xyzStripeHashPose(CLD+0.01)),
-	h2_(new xyzStripeHashPose(CLD+0.01))
+	h1_(NULL),h2_(NULL)
 {}
 
 SICFast::~SICFast(){
@@ -129,10 +118,11 @@ SICFast::init(
 	core::id::AtomID_Map<platform::Real> const & clash_atoms2
 ){
 	using core::id::AtomID;
-	h1_->init_with_pose(pose1,clash_atoms1);
-	h2_->init_with_pose(pose2,clash_atoms2);
-	w1_ = cb_weights_from_pose(pose1);
-	w2_ = cb_weights_from_pose(pose2);
+
+	if(h1_) delete h1_;
+	if(h2_) delete h2_;
+	h1_ = new xyzStripeHashPose(pose1,clash_atoms1,CLD+0.01);
+	h2_ = new xyzStripeHashPose(pose2,clash_atoms2,CLD+0.01);
 }
 
 
@@ -144,7 +134,7 @@ get_bounds_intersection(
 	double & xmx, double & xmn,
 	double & ymx, double & ymn
 ){
-	// get bounds for plane hashes
+	// get bounds for plane hashess
 	double xmx1=-9e9,xmn1=9e9,ymx1=-9e9,ymn1=9e9;
 	xmx=-9e9,xmn=9e9,ymx=-9e9,ymn=9e9;
 	for(vector1<Vec>::const_iterator ia = pb.begin(); ia != pb.end(); ++ia) {
@@ -223,8 +213,15 @@ get_mindis_with_plane_hashes(
 				if(i+k < 1 || i+k > xsize) continue;
 				for(int l = -1; l <= 1; ++l) {
 					if(j+l < 1 || j+l > ysize) continue;
-					double const xa1=ha(i,j).x(),ya1=ha(i,j).y(),xb1=hb(i+k,j+l).x(),yb1=hb(i+k,j+l).y(),d21=(xa1-xb1)*(xa1-xb1)+(ya1-yb1)*(ya1-yb1);
-					if(d21<clashdis2){ double const dz=hb(i+k,j+l).z()-ha(i,j).z()-sqrt(clashdis2-d21); if(dz<m) m=dz; }
+					double const xa1 = ha(i,j).x();
+					double const ya1 = ha(i,j).y();
+					double const xb1 = hb(i+k,j+l).x();
+					double const yb1 = hb(i+k,j+l).y();
+					double const d21 = (xa1-xb1)*(xa1-xb1)+(ya1-yb1)*(ya1-yb1);
+					if(d21<clashdis2){
+						double const dz = hb(i+k,j+l).z() - ha(i,j).z() - sqrt(clashdis2-d21);
+						if(dz<m) m=dz;
+					}
 				}
 			}
 		}
@@ -238,7 +235,12 @@ struct CorrectionVisitor {
 	Real correction;
 	int contacts;
 	CorrectionVisitor(Vec const & dof_in, Real const & clash_dis_sq_in) : dof(dof_in),clash_dis_sq(clash_dis_sq_in),correction(9e9),contacts(0) {}
-	void visit( numeric::xyzVector<double> const & v, numeric::xyzVector<double> const & c){
+	void visit(
+		numeric::xyzVector<double> const & v,
+		numeric::xyzVector<double> const & c,
+		double /*vr*/,
+		double /*cr*/
+	){
 		double const dxy2 = dof.cross(v-c).length_squared();
 		if( dxy2 < clash_dis_sq ){
 			double const dz = dof.dot(v) - dof.dot(c) - sqrt(clash_dis_sq-dxy2);
@@ -252,20 +254,22 @@ inline
 double
 refine_mindis_with_xyzHash(
 	xyzStripeHashPose *xh,
-	core::kinematics::Stub const & xform_to_struct2_start,
-	vector1<Vec> const & pa,
+	Xform const & xform_to_struct2_start,
+	vector1<Vec>  const & pa,
+	vector1<Real> const & radii,
 	Vec const & ori,
 	double const & clash_dis_sq,
 	double const & mindis_approx
 ){
 	double mindis = mindis_approx;
 	Mat Rori = rotation_matrix_degrees( (ori.z() < -0.99999) ? Vec(1,0,0) : (Vec(0,0,1)+ori.normalized())/2.0 , 180.0 );
-	Vec hash_ori = xform_to_struct2_start.M.transposed() * ori;
+	Vec hash_ori = xform_to_struct2_start.R.transposed() * ori;
 	while(true){
 		CorrectionVisitor visitor(hash_ori,clash_dis_sq);
-		for(vector1<Vec>::const_iterator ipa = pa.begin(); ipa != pa.end(); ++ipa) {
-			Vec const v = xform_to_struct2_start.global2local(Rori*((*ipa)-Vec(0,0,mindis)));
-			xh->visit_lax(v,visitor);
+		vector1<Real>::const_iterator irad = radii.begin();
+		for(vector1<Vec>::const_iterator ipa = pa.begin(); ipa != pa.end(); ++ipa,++irad) {
+			Vec const v = ~xform_to_struct2_start*(Rori*((*ipa)-Vec(0,0,mindis)));
+			xh->visit_lax(v,*irad,visitor);
 		}
 		if(visitor.contacts == 0){
 			mindis = 9e9;
@@ -279,8 +283,8 @@ refine_mindis_with_xyzHash(
 
 double
 SICFast::slide_into_contact(
-	core::kinematics::Stub const & xa,
-	core::kinematics::Stub const & xb,
+	Xform const & xa,
+	Xform const & xb,
 	Vec                            ori
 ) const {
 	ori.normalize();
@@ -288,8 +292,10 @@ SICFast::slide_into_contact(
 	// get rotated points
 	utility::vector1<Vec> pa(h1_->natom()), pb(h2_->natom());
 	utility::vector1<Vec>::iterator ipa(pa.begin()),ipb(pb.begin());
-	for(xyzStripeHashPose::const_iterator i = h1_->begin(); i != h1_->end(); ++i,++ipa) *ipa = xa.local2global(*i-h1_->translation());
-	for(xyzStripeHashPose::const_iterator i = h2_->begin(); i != h2_->end(); ++i,++ipb) *ipb = xb.local2global(*i-h2_->translation());
+	for(xyzStripeHashPose::const_iterator i = h1_->begin(); i != h1_->end(); ++i,++ipa) *ipa = xa*(*i-h1_->translation());
+	for(xyzStripeHashPose::const_iterator i = h2_->begin(); i != h2_->end(); ++i,++ipb) *ipb = xb*(*i-h2_->translation());
+	utility::vector1<Real> ra;
+	for(xyzStripeHashPose::const_iterator i = h1_->begin(); i != h1_->end(); ++i) ra.push_back(i.radius());
 
 	double xmx,xmn,ymx,ymn;
 	int xlb,ylb,xub,yub;
@@ -307,14 +313,36 @@ SICFast::slide_into_contact(
 	double const mindis_approx = get_mindis_with_plane_hashes(xlb,ylb,xub,yub,ha,hb,CLD2);
 	if( fabs(mindis_approx) > 9e8 ) return 9e9;
 
-	double const mindis = refine_mindis_with_xyzHash(h2_,xb,pa,ori,CLD2,mindis_approx);
+	double const mindis = refine_mindis_with_xyzHash(h2_,xb,pa,ra,ori,CLD2,mindis_approx);
 	if( fabs(mindis) > 9e8 ) return 9e9;
 
 	return -mindis;
 }
 
+double
+SICFast::slide_into_contact(
+	Xforms const & x1s,
+	Xforms const & x2s,
+	Vec            ori
+) const {
+	Real t = -9e9;
+	BOOST_FOREACH(Xform const & x1,x1s){
+		BOOST_FOREACH(Xform const & x2,x2s){
+			Real tmp = slide_into_contact(x1,x2,ori);
+			if(tmp < 9e8) t = max(t,tmp);
+		}
+	}
+	return t;
+}
 
-
+double
+SICFast::slide_into_contact_DEPRICATED(
+	core::kinematics::Stub const & xa,
+	core::kinematics::Stub const & xb,
+	Vec                            ori
+) const {
+	return slide_into_contact(Xform(xa.M,xa.v),Xform(xb.M,xb.v),ori);
+}
 
 } // namespace sic_dock
 } // namespace protocols

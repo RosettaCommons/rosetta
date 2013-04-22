@@ -162,19 +162,17 @@ class QuaternionGrid : public utility::pointer::ReferenceCount {
  	void print() const;
  	long num_samples() const { return ntot; }
  	Quaternion quaternion(long i) const { return s.Orientation(i-1); }
- 	numeric::xyzVector<numeric::Real> euler(long i) const { return s.Orientation(i-1).euler(); }
+    numeric::Real maxrad() const {return maxrad_;}
  	numeric::Real weight(long i) const { return s.Weight(i-1); }
  private:
+ 	numeric::xyzVector<numeric::Real> euler(long i) const { return s.Orientation(i-1).euler(); }
  	std::string name_;
-    numeric::Real delta, sigma, maxrad, coverage;
+    numeric::Real delta, sigma, maxrad_, coverage;
     size_t ncell, ntot, nent;
     QuatSet s;
     friend std::ostream & operator<<(std::ostream & out, QuaternionGrid const & q);
 };
-std::ostream & operator<<(std::ostream & out, QuaternionGrid const & q){
-	out << "QuaternionGrid " << q.name_ << ", nsamp: " << q.ntot << ", covering radius: " << q.maxrad << " degrees";
-	return out;
-}
+std::ostream & operator<<(std::ostream & out, QuaternionGrid const & q);
 
 class QuatDBMetadata {
 public:
@@ -187,12 +185,12 @@ public:
 class QuaternionGridManager : public utility::pointer::ReferenceCount {
 public:
 	static QuaternionGridManager * get_instance();
-	void fill_metadata();
 	QuaternionGridCAP request_by_name(std::string const & name);
 	QuaternionGridCAP request_by_size(long target_size);
 	QuaternionGridCAP request_by_radius(numeric::Real target_radius);
 private:
 	QuaternionGridManager();
+	void fill_metadata();
 	static QuaternionGridManager * instance_;
 	utility::vector1<QuatDBMetadata> by_size_,by_radius_,by_cover_;
 	std::map<std::string,QuaternionGridCAP> grids_;
