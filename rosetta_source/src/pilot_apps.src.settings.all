@@ -660,7 +660,7 @@ sources = {
 		"sicdock",
 		"tcdock",
 		#"dxdock_movie",
-		"flail",
+		#"flail",
 		"test_rose",
 		#"gen_trimer_disulf",
 		#"gen_xtal_cys_dimer_from_trimer",
