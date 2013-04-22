@@ -54,8 +54,6 @@
 
 #include <utility/vector1.hh>
 
-#include <protocols/viewer/visualize.hh>
-
 namespace core {
 namespace pose {
 namespace symmetry {

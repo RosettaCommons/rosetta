@@ -25,9 +25,6 @@
 #include <protocols/sic_dock/xyzStripeHashPoseWithMeta.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <protocols/loophash/LoopHashLibrary.hh>
-
-#include <tr1/unordered_map>
-
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
@@ -148,7 +145,7 @@ private:
 	Pose const & pose1_,pose2_;
 	core::scoring::constraints::ConstraintSet const & cstset_;
 	core::scoring::constraints::ConstraintCOPs const csts_;
-	std::tr1::unordered_map<core::id::AtomID,Vec,AtomIDHashFunction> start_coords_;
+	boost::unordered_map<core::id::AtomID,Vec,AtomIDHashFunction> start_coords_;
 };
 
 

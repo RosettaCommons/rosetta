@@ -286,14 +286,14 @@ LinkerScore::dump_linkers(
 
 class NoPoseXYX_Func : public core::scoring::constraints::XYZ_Func {
  public:
- 	std::tr1::unordered_map<core::id::AtomID,Vec,AtomIDHashFunction> const & start_coords_;
+ 	boost::unordered_map<core::id::AtomID,Vec,AtomIDHashFunction> const & start_coords_;
  	Xform const & x1_;
 	Xform const & x2_;
  	Pose const * dummy_pose_;
  	mutable Vec result_hack_awful_1;
  	mutable Vec result_hack_awful_2;
 	NoPoseXYX_Func(
-		std::tr1::unordered_map<core::id::AtomID,Vec,AtomIDHashFunction> const & start_coords,
+		boost::unordered_map<core::id::AtomID,Vec,AtomIDHashFunction> const & start_coords,
 		Xform const & x1,
 		Xform const & x2
 	) :
