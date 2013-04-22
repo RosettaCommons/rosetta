@@ -1,0 +1,19 @@
+# [ONE LINE DESCRIPTION OF CHANGE]
+
+# NEWS: [DETAILED DESCRIPTION OF CHANGE]
+
+# ----------------------------------------
+# Unit test status: [Pass/Fail/Not Run]
+# Integration test status: [Number of changed tests / Not Run]
+#    [NAME_OF_CHANGED_TEST_1]: explanation of change explanation of change ...
+#                              explanation of change, cont'd.
+
+#    [NAME_OF_CHANGED_TEST_2]: explanation of change
+
+#+BugFix [BUG_NUMBER] [LINK_TO_BUG]
+# Uncomment and fill in the line above to indicate this commit
+# fixes a known bug.
+
+#+TEST
+# Uncomment the line above if you would like your commit to be tested by the testing server.
+# NOTE: Some commits (e.g. merges-to-master and current HEAD) will be automatically tested.
