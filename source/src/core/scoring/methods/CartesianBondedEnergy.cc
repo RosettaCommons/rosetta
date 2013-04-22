@@ -1459,7 +1459,7 @@ IdealParametersDatabase::create_parameters_for_restype(
 	}
 
 	// ca_nnext_c_o improper torsion
-	if ( restype_params->bb_C_index() != 0 && restype_params->bb_O_index() != 0 && restype_params->bb_CA_index() != 0 ) {
+	if ( restype_params->bb_N_index() != 0 && restype_params->pro_CD_index() != 0 && restype_params->bb_CA_index() != 0 ) {
 		CartBondedParametersCOP tor_params = lookup_torsion( rsd_type, "CD", "C", "N", "CA" );
 		restype_params->pro_cd_cprev_n_ca_interres_torsion_params( tor_params );
 	}
@@ -2627,7 +2627,7 @@ CartesianBondedEnergy::eval_improper_torsions(
 	}
 
 	// proline N planarity
-	{
+	if (rsd2.aa() == core::chemical::aa_pro) {
 		CartBondedParametersCOP tor_params = rsd1params.pro_cd_cprev_n_ca_interres_torsion_params();
 		if ( tor_params && !tor_params->is_null() ) {
 			Real const Kphi = tor_params->K(0,0);
@@ -3332,8 +3332,8 @@ CartesianBondedEnergy::eval_improper_torsion_derivatives(
 		}
 	}
 
-	//proline N
-	{
+	// proline N planarity
+	if (res2.aa() == core::chemical::aa_pro) {
 		CartBondedParametersCOP tor_params = rsd1params.pro_cd_cprev_n_ca_interres_torsion_params();
 		if ( tor_params && !tor_params->is_null() ) {
 			core::Size const atm1 = rsd2params.pro_CD_index();
