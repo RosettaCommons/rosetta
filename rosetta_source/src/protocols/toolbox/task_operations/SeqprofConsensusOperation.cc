@@ -137,16 +137,16 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
     asymmetric_unit_res = SymmConf.Symmetry_Info()->num_independent_residues();
 		task.request_symmetrize_by_intersection();
   }
-	core::Size last_res (asymmetric_unit_res <= seqprof->profile().size() ? pose.total_residue() : seqprof->profile().size() );
+	core::Size last_res (asymmetric_unit_res <= seqprof->profile().size() ? pose.total_residue() : seqprof->profile().size() - 1 /*seqprof has size n+1 compared to its real contents; heaven knows why...*/ );
 	tr<<"Allowing the following identities:\n";
 	for( core::Size i = 1; i <= last_res; ++i){
-		tr<<"At position "<<i<<": ";
+		tr<<"At position "<<i<<": "<<std::endl;
 
 		if( !pose.residue_type( i ).is_protein() ) continue;
 		//std::cout << "SCO at pos " << i << " allows the following residues: ";
 		utility::vector1< Real > const & pos_profile( (seqprof->profile())[ i ] );
 		utility::vector1< bool > keep_aas( core::chemical::num_canonical_aas, false );
-		runtime_assert( pose.residue_type(i).aa() <= pos_profile.size() );
+		runtime_assert( pose.residue_type( i ).aa() <= pos_profile.size() );
 		core::Real current_prob( pos_profile[ pose.residue_type(i).aa() ] );
 		core::Real max_prob( -1000.0 ); // at this position, what is the maximal probability for a residue? these identities should always be allowed in design
 		for( core::Size aa = core::chemical::aa_ala; aa <= core::chemical::num_canonical_aas; ++aa){
