@@ -115,6 +115,36 @@ VariantType const HBS_PRE("HBS_PRE");
 ///@ brief hbs_post patch, used for hydrogen bond surrogates
 VariantType const HBS_POST("HBS_POST");
 
+
+// carbohydrate-specific variants
+///@ brief variant for any saccharide residue modified at the 1 position
+VariantType const C1_MODIFIED_SUGAR("C1_MODIFIED_SUGAR");
+
+///@ brief variant for any saccharide residue modified at the 2 position
+VariantType const C2_MODIFIED_SUGAR("C2_MODIFIED_SUGAR");
+
+///@ brief variant for any saccharide residue modified at the 3 position
+VariantType const C3_MODIFIED_SUGAR("C3_MODIFIED_SUGAR");
+
+///@ brief variant for any saccharide residue modified at the 4 position
+VariantType const C4_MODIFIED_SUGAR("C4_MODIFIED_SUGAR");
+
+///@ brief variant for any saccharide residue modified at the 5 position
+VariantType const C5_MODIFIED_SUGAR("C5_MODIFIED_SUGAR");
+
+///@ brief variant for any saccharide residue modified at the 6 position
+VariantType const C6_MODIFIED_SUGAR("C6_MODIFIED_SUGAR");
+
+///@ brief variant for any saccharide residue modified at the 7 position
+VariantType const C7_MODIFIED_SUGAR("C7_MODIFIED_SUGAR");
+
+///@ brief variant for any saccharide residue modified at the 8 position
+VariantType const C8_MODIFIED_SUGAR("C8_MODIFIED_SUGAR");
+
+///@ brief variant for any saccharide residue modified at the 9 position
+VariantType const C9_MODIFIED_SUGAR("C9_MODIFIED_SUGAR");
+
+
 ///@brief This is used for chemically conjugable residues (LYX, CYX)
 ///used for sidechain conjugation (like ubiquitination)
 VariantType const SIDECHAIN_CONJUGATION("SIDECHAIN_CONJUGATION");

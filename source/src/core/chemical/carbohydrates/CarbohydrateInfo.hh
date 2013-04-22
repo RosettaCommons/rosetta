@@ -81,9 +81,14 @@ public:
 	/// @brief  Return the standard/common, non-residue, short name of the monosaccharide.
 	std::string	base_name() const;
 
+
 	// Oxidation type
 	/// @brief    Return true if the monosaccharide is an aldose.
 	/// @details  An aldose sugar is an aldehyde derivative.
+	/// See also:\n
+	///  CarbohydrateInfo.is_ketose()
+	///  CarbohydrateInfo.is_ulose()
+	///  CarbohydrateInfo.anomeric_carbon()
 	bool
 	is_aldose() const
 	{
@@ -95,6 +100,8 @@ public:
 	/// Does not distinguish between 2-ketoses (uloses) and 3-ketoses.\n
 	/// \n
 	/// See also:\n
+	///  CarbohydrateInfo.is_aldose()
+	///  CarbohydrateInfo.is_ulose()
 	///  CarbohydrateInfo.anomeric_carbon()
 	bool
 	is_ketose() const
@@ -102,9 +109,36 @@ public:
 		return (anomeric_carbon_ != 1);
 	}
 
+	/// @brief    Return true if the monosaccharide is an n-ketose.
+	/// @details  A ketose sugar is a ketone derivative.\n
+	/// See also:\n
+	///  CarbohydrateInfo.is_aldose()
+	///  CarbohydrateInfo.is_ulose()
+	///  CarbohydrateInfo.anomeric_carbon()
+	bool
+	is_ketose(core::uint const n) const
+	{
+		return (anomeric_carbon_ == n);
+	}
+
+	/// @brief    Return true if the monosaccharide is a 2-ketose.
+	/// @details  See also:\n
+	///  CarbohydrateInfo.is_aldose()
+	///  CarbohydrateInfo.is_ketose()
+	///  CarbohydrateInfo.anomeric_carbon()
+	bool
+	is_ulose() const
+	{
+		return is_ketose(2);
+	}
+
 	/// @brief    Return the anomeric carbon number.
 	/// @details  For linear monosaccharides, this number corresponds to the carbon that is oxidized to the aldehyde
 	/// or ketone.
+	/// See also:\n
+	///  CarbohydrateInfo.is_aldose()
+	///  CarbohydrateInfo.is_ketose()
+	///  CarbohydrateInfo.is_ulose()
 	core::uint
 	anomeric_carbon() const
 	{
@@ -113,7 +147,8 @@ public:
 
 
 	// Size
-	/// @brief  Get the number of carbons in the monosaccharide.
+	/// @brief    Get the number of carbons in the monosaccharide.
+	/// @details  This ignores carbons found in modifications to the base sugar.
 	core::Size
 	n_carbons() const
 	{
@@ -271,7 +306,7 @@ public:
 
 	// Polymer info
 	/// @brief    Return true if the monosaccharide is attached to something at the anomeric carbon.
-	/// @remarks  not yet implemented
+	/// @remarks  not yet fully implemented
 	bool
 	is_glycoside() const
 	{
@@ -304,7 +339,6 @@ public:
 	/// See also:\n
 	///  CarbohydrateInfo.mainchain_glycosidic_bond_acceptor()\n
 	///  CarbohydrateInfo.branch_point()
-	/// @remarks  Branches are not yet fully implemented.
 	core::Size
 	n_branches() const
 	{

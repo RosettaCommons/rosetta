@@ -29,7 +29,7 @@
 #include <iostream>
 #include <sstream>
 
-// boost headers
+// Boost headers
 #include <boost/assign/list_of.hpp>
 #include <boost/algorithm/string.hpp>
 
@@ -140,7 +140,7 @@ CarbohydrateInfo::CarbohydrateInfo(core::chemical::ResidueTypeCAP residue_type) 
 }
 
 // Copy constructor
-CarbohydrateInfo::CarbohydrateInfo(CarbohydrateInfo const & object_to_copy) : utility::pointer::ReferenceCount()
+CarbohydrateInfo::CarbohydrateInfo(CarbohydrateInfo const & object_to_copy) : utility::pointer::ReferenceCount(object_to_copy)
 {
 	copy_data(*this, object_to_copy);
 }
@@ -194,6 +194,12 @@ CarbohydrateInfo::show(std::ostream & output) const
 		case 7:
 			suffix = "heptose";
 			break;
+		case 8:
+			suffix = "octose";
+			break;
+		case 9:
+			suffix = "nonose";
+			break;
 	}
 	switch (ring_size_) {
 		case 5:
@@ -235,7 +241,16 @@ CarbohydrateInfo::show(std::ostream & output) const
 	} else {
 		output << "  Main chain connection: N/A" << endl;
 	}
-	output << "  Branch connections: " << "branches not yet implemented" << endl;
+	output << "  Branch connections: ";
+	if (n_branches() == 0) {
+		output << "none" << endl;
+	} else {
+		for (uint i = 1; i <= n_branches(); ++i) {
+			output << "(_->" << branch_points_[i] << ')';
+			if (i != n_branches()) output << "; ";
+		}
+		output << endl;
+	}
 }
 
 
@@ -260,8 +275,8 @@ CarbohydrateInfo::base_name() const
 
 // Return the attachment point of the downstream saccharide residue attached to ith branch off of this residue.
 /// @param    <i>: the branch point index
-/// @return   an integer n of (1->n) of polysaccharide nomenclature, where n specifies the attachment point on the
-/// upstream monosaccharide residue; e.g., 4 specifies O4
+/// @return   an integer n of (1->n) of polysaccharide nomenclature, where n specifies the attachment point of the
+/// downstream monosaccharide residue; e.g., 4 specifies O4
 /// @details  A monosaccharide with a group linked to it at one position is a distinct residue type from the same
 /// monosaccharide with the same group linked to it at another position.  For example, Rosetta treats (1->4)-beta-
 /// D-glucopyranose as an entirely distinct residue type from (1->3)-beta-D-glucopyranose, with separate .params
@@ -270,7 +285,6 @@ CarbohydrateInfo::base_name() const
 /// See also:\n
 ///  CarbohydrateInfo.mainchain_glycosidic_bond_acceptor()\n
 ///  CarbohydrateInfo.n_branches()
-/// @remarks  Branches are not yet implemented.
 core::uint
 CarbohydrateInfo::branch_point(core::uint i) const
 {
@@ -534,6 +548,7 @@ CarbohydrateInfo::determine_polymer_connections()
 	using namespace std;
 	using namespace id;
 
+	// Main chain connections
 	if (!residue_type_->is_upper_terminus()) {
 		uint upper_atom_index = residue_type_->upper_connect_atom();
 		string atom_name = residue_type_->atom_name(upper_atom_index);
@@ -542,7 +557,16 @@ CarbohydrateInfo::determine_polymer_connections()
 		mainchain_glycosidic_bond_acceptor_ = 0;
 	}
 
-	// TODO: Implement branching.
+	// Branch points
+	Size n_connections = residue_type_->n_residue_connections();
+	for (uint i = 1; i <= n_connections; ++i) {
+		if (i == residue_type_->lower_connect_id() || i == residue_type_->upper_connect_id()) continue;
+		uint branch_atom_index = residue_type_->residue_connect_atom_index(i);
+		string branch_atom_name = residue_type_->atom_name(branch_atom_index);
+		if (branch_atom_name[1] == 'O') {  // 2nd column (index 1) is the element; must be oxygen
+			branch_points_.push_back(atoi(&branch_atom_name[2]));  // 3rd column (index 2) is the atom number
+		}
+	}
 
 	// Exocyclic linkage?
 	Size carbons_in_ring = ring_size_ - 1 /*oxygen*/;

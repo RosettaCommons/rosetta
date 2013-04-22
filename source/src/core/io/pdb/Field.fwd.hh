@@ -9,7 +9,6 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/io/pdb/Field.fwd.hh
-///
 /// @brief Each line of a PDB file is a Record which is divided into Fields
 /// @author Matthew O'Meara (mattjomeara@gmail.com)
 
@@ -24,21 +23,17 @@ namespace io {
 namespace pdb {
 
 
-
-// Forward
+// forward declaration
 class Field;
 
 typedef std::map<std::string, Field> Record;
 
-/// @brief collection of all possible records (line types), that can
-/// exist in PDB file.
+/// @brief collection of all possible records (line types), that can exist in a PDB file.
 typedef std::map<std::string, Record> RecordRef;
 
 
+} // pdb
+} // io
+} // core
 
-
-} // namespace
-} // namespace
-} // namespace
-
-#endif // include guard
+#endif // INCLUDED_core_io_pdb_Field_fwd_hh

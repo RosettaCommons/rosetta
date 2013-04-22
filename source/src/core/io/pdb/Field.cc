@@ -244,6 +244,6 @@ operator <<(std::ostream &os,Record const & R) {
 }
 
 
-} // namespace
-} // namespace
-} // namespace
+} // pdb
+} // io
+} // core

@@ -9,7 +9,6 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/io/pdb/Field.hh
-///
 /// @brief Each line of a PDB file is a Record which is divided into Fields
 /// @author Matthew O'Meara (mattjomeara@gmail.com)
 
@@ -24,7 +23,6 @@
 // Utility headers
 #include <utility/Show.hh>
 
-
 // c++ headers
 #include <iostream>
 #include <string>
@@ -38,27 +36,27 @@ namespace pdb {
 class Field : public utility::Show {
 public:
 
-  Field();
-  Field(Size s, Size e);
-  Field(std::string type_, Size s, Size e);
+	Field();
+	Field(Size s, Size e);
+	Field(std::string type_, Size s, Size e);
 
-  /// @brief read field value from given string.
-  void getValueFrom(std::string source);
+	/// @brief read field value from given string.
+	void getValueFrom(std::string source);
 
 /// This class is intended to be just 'data' type class
 /// no need to make it private.
 public:
 
-  /// @brief string value of field, type of the field.
-  std::string type, value;
+	/// @brief string value of field, type of the field.
+	std::string type, value;
 
-  /// @brief begining position in line, ending postion in line
-  Size start, end;
+	/// @brief begining position in line, ending postion in line
+	Size start, end;
 
-  /// @brief Debug output.
-  friend
-  std::ostream&
-  operator <<(std::ostream &os, Field const & F);
+	/// @brief Debug output.
+	friend
+	std::ostream&
+	operator <<(std::ostream &os, Field const & F);
 
 	/// @brief collection builder
 	static RecordRef & getRecordCollection();
@@ -67,7 +65,6 @@ private:
 
 	/// @brief static holder for collection.
 	static RecordRef PDB_Records_;
-
 };
 
 
@@ -75,8 +72,8 @@ private:
 std::ostream&
 operator <<(std::ostream &os, Record const & R);
 
-} // namespace
-} // namespace
-} // namespace
+} // pdb
+} // io
+} // core
 
-#endif // include guard
+#endif // INCLUDED_core_io_pdb_Field_hh

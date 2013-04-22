@@ -14,21 +14,9 @@
 #ifndef INCLUDED_core_chemical_VariantType_hh
 #define INCLUDED_core_chemical_VariantType_hh
 
-
-// // Unit headers
-
+// Unit headers
 #include <core/chemical/VariantType.fwd.hh>
 
-// // Package headers
-
-// Project headers
-
-// Utility headers
-//#include <utility/vector1.hh>
-//#include <utility/pointer/owning_ptr.hh>
-//#include <utility/pointer/ReferenceCount.hh>
-
-// C++ headers
 
 namespace core {
 namespace chemical {
@@ -80,12 +68,21 @@ extern VariantType const OOP_POST;
 extern VariantType const HBS_PRE;
 extern VariantType const HBS_POST;
 
+// carbohydrate-specific variants
+extern VariantType const C1_MODIFIED_SUGAR;
+extern VariantType const C2_MODIFIED_SUGAR;
+extern VariantType const C3_MODIFIED_SUGAR;
+extern VariantType const C4_MODIFIED_SUGAR;
+extern VariantType const C5_MODIFIED_SUGAR;
+extern VariantType const C6_MODIFIED_SUGAR;
+extern VariantType const C7_MODIFIED_SUGAR;
+extern VariantType const C8_MODIFIED_SUGAR;
+extern VariantType const C9_MODIFIED_SUGAR;
+
 //This is used for chemically conjugable residues (LYX, CYX) used for sidechain conjugation (like ubiquitination)
 extern VariantType const SIDECHAIN_CONJUGATION;
 
 } // chemical
 } // core
-
-
 
 #endif

@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file	CarbohydrateInfo.cxxtest.hh
+/// @file	 CarbohydrateInfo.cxxtest.hh
 /// @brief   Test suite for CarbohydrateInfo
 /// @author  labonte
 
@@ -92,7 +92,7 @@ public:
 		expected_out1 << "" << endl;
 		expected_out1 << " Polymeric Information:" << endl;
 		expected_out1 << "  Main chain connection: (_->4)" << endl;
-		expected_out1 << "  Branch connections: branches not yet implemented" << endl;
+		expected_out1 << "  Branch connections: none" << endl;
 
 		expected_out2 << "Carbohydrate Properties for this Residue:" << endl;
 		expected_out2 << " Basic Name: glucose" << endl;
@@ -107,7 +107,7 @@ public:
 		expected_out2 << "" << endl;
 		expected_out2 << " Polymeric Information:" << endl;
 		expected_out2 << "  Main chain connection: (_->4)" << endl;
-		expected_out2 << "  Branch connections: branches not yet implemented" << endl;
+		expected_out2 << "  Branch connections: none" << endl;
 
 		expected_out3 << "Carbohydrate Properties for this Residue:" << endl;
 		expected_out3 << " Basic Name: glucose" << endl;
@@ -122,7 +122,7 @@ public:
 		expected_out3 << "" << endl;
 		expected_out3 << " Polymeric Information:" << endl;
 		expected_out3 << "  Main chain connection: N/A" << endl;
-		expected_out3 << "  Branch connections: branches not yet implemented" << endl;
+		expected_out3 << "  Branch connections: none" << endl;
 
 		Residue res1 = maltotriose_.residue(1);
 		res1.carbohydrate_info()->show(output1);

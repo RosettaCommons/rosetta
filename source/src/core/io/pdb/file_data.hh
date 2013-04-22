@@ -175,9 +175,8 @@ public:
 
 	// map for storing LINK records:
 	// key is 6-character resID of 1st residue in link
-	// TODO: Redesign to allow for multiple branches from the same residue; as keys must be unique, this current method
-	// limits us to a single branch. ~ Labonte
-	std::map<std::string, LinkInformation> links;
+	// (A vector is needed because a single saccharide residue can have multiple branches.)
+	std::map<std::string, utility::vector1<LinkInformation> > link_map;
 
 	// map for storing (non-sugar) HETNAM records:
 	// key is hetID

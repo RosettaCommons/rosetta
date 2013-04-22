@@ -110,51 +110,6 @@ typedef utility::keys::Key3Tuple< Size, Size, Size > three_atom_set;
 typedef utility::keys::Key3Tuple< Size, Size, Size > bondangle_atom_set;
 typedef utility::keys::Key4Tuple< Size, Size, Size, Size > dihedral_atom_set;
 
-/// silly demo class -- what would the most familiar residue look like?
-
-/**
-
-Basically a slice of aaproperties pack!
-
-This is an exercise to define the properties of an alternative Residue
-object, arising from frustration with the conformation::Residue hierarchy.
-
-Properties:
-
-- file-based
-
-- Residue includes sidechain and backbone
-
-- flat or simple object hierarchy
-
-- no Atom or Rsd keys, maybe chemical atom keys but of course need
-	to support the addition of new atom types
-
-- file-based atom properties
-	 at the beginning of a run, you read in the residue topology/info files
-	 as well as the atom-properties file (basically forcefield parameters,
-	 ala etable.h). This defines for the course of the run the number of
-	 residues
-
-- variants, at least some of them, handled through a "patching" system
-	 analagous to that in CHARMM. IE you would define patches, eg Nterm,
-	 Cterm, alternate protonation states, in files, which would define a
-	 sequence of operations that one would apply to a target residue to
-	 get the patched or variant form.
-
-- for variants, a notion of which properties of the base residue carry over
-	 eg, dunbrack rotamer info, pair term interactions, plane interactions,
-	 Paa...
-
-
-Questions:
-
-- how do we handle rotamers? vector of atoms plus pointer to "full-fledged"
-	 residue that knows bonded geometry...
-
-**/
-
-// This is used as a predicate to make a filtered graph
 
 class ResidueType : public utility::pointer::ReferenceCount {
 
@@ -186,9 +141,7 @@ public:
 
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////
 	///////////////// Atom Functions              ////////////////////////
-	//////////////////Atom Functions             /////////////////////////
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
 
@@ -258,10 +211,6 @@ public:
 	{
 		return n_hbond_donors_;
 	}
-
-	/// @brief index number of the atom which connects to the lower connection
-	Size
-	lower_connect_atom() const;
 
 	/// @brief path distance (number of bonds separated) between a pair of atoms
 	int
@@ -570,9 +519,7 @@ public:
 
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////
 	///////////////// MMAtom Functions              //////////////////////
-	//////////////////MMAtom Functions             ///////////////////////
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
 
@@ -585,8 +532,6 @@ public:
 
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////
-	/////////////////         Orbital Functions     //////////////////////
 	////////////////          Orbital Functions     //////////////////////
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
@@ -641,11 +586,8 @@ public:
 	orbital_index( std::string const & name ) const;
 
 
-
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////
-	/////////////////         Residue Functions     //////////////////////
 	////////////////          Residue Functions     //////////////////////
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
@@ -702,28 +644,39 @@ public:
 		return proton_chi_extra_samples_[ proton_chi ];
 	}
 
-
-
-	/// @brief set the atom which connects to the lower connection
-	void
-	set_lower_connect_atom( std::string const & atm_name );
-
-	///
-	ResidueConnection const & upper_connect() const;
-
-	///
-	ResidueConnection const & lower_connect() const;
-
-	Size
-	upper_connect_id() const
+	/// @brief all rotamers bins (mean, std) for a given chi angle
+	utility::vector1< std::pair< Real, Real > > const &
+	chi_rotamers( Size const chino ) const
 	{
-		return upper_connect_id_;
+		return chi_rotamers_[ chino ];
 	}
+
+
+	// Connections
+	// Lower
+	ResidueConnection const & lower_connect() const;
 
 	Size
 	lower_connect_id() const
 	{
 		return lower_connect_id_;
+	}
+
+	/// @brief index number of the atom which connects to the lower connection
+	Size
+	lower_connect_atom() const;
+
+	/// @brief set the atom which connects to the lower connection
+	void
+	set_lower_connect_atom( std::string const & atm_name );
+
+	// Upper
+	ResidueConnection const & upper_connect() const;
+
+	Size
+	upper_connect_id() const
+	{
+		return upper_connect_id_;
 	}
 
 	/// @brief index number of the atom which connects to the upper connection
@@ -733,15 +686,6 @@ public:
 	/// @brief set the atom which connects to the upper connection
 	void
 	set_upper_connect_atom( std::string const & atm_name );
-
-
-	/// @brief all rotamers bins (mean, std) for a given chi angle
-	utility::vector1< std::pair< Real, Real > > const &
-	chi_rotamers( Size const chino ) const
-	{
-		return chi_rotamers_[ chino ];
-	}
-
 
 
 	/// @brief number of ResidueConnections, counting polymeric residue connections
@@ -1261,7 +1205,7 @@ public:
 		return is_methylated_cterminus_;
 	}
 
-	/// @brief is branch point for a branched polymer?
+/*	/// @brief is branch point for a branched polymer?
 	bool
 	is_branch_point() const
 	{
@@ -1269,7 +1213,7 @@ public:
 			return false;
 		}
 		return true;
-	}
+	}*/
 
 	/// @brief  Check if atom is virtual.
 	bool
@@ -2075,7 +2019,7 @@ private:
 	Size n_polymeric_residue_connections_;
 
 	// A list of all atoms (by atom name) to which other branches are attached.
-	utility::vector1<std::string> branch_point_atoms_;
+	//utility::vector1<std::string> branch_point_atoms_;
 
 	///////////////////////////////////////////////////////////////////////
 	// These arrays are temporary, will be cleared in finalize():

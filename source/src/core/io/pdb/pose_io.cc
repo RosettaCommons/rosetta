@@ -8,8 +8,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
-///
+/// @file   core/io/pdb/pose_io.cc
 /// @brief
 /// @author
 
@@ -21,17 +20,12 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/AtomType.hh>
-// AUTO-REMOVED #include <core/chemical/orbitals/OrbitalType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/scoring/Energies.hh>
-
 
 #include <ObjexxFCL/format.hh>
 
@@ -44,8 +38,6 @@
 
 // Utility headers
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/string_util.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 
 #include <utility/vector1.hh>
@@ -62,20 +54,15 @@ namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUT
 //Auto using namespaces end
 
 
-
-
-//#include <fstream>
-
-/// A temporary copy of the pose_from_pdb code from the demo directory.
-/// Will be phased out in favor of file_data routines soon.
-///
+// A temporary copy of the pose_from_pdb code from the demo directory.
+// Will be phased out in favor of file_data routines soon.
 
 namespace core {
 namespace io {
 namespace pdb {
 
 
-/// special Tracer instance acting as special param for all traced_dump_pdb functions
+// special Tracer instance acting as special param for all traced_dump_pdb functions
 basic::Tracer TR_dump_pdb_dummy( "core.io.pdb.pose_io.dump_pdb_dummy" );
 
 basic::Tracer TR("core.io.pose_io");
@@ -310,129 +297,6 @@ traced_dump_pdb(
 
 	pose.dump_pdb( filename, tag );
 }
-
-
-// the old way: build termini variants after appending non-terminus residues onto the pose in from the pdb...
-
-// void
-// core::import_pose::pose_from_pdb(
-// 	pose::Pose & pose,
-// 	chemical::ResidueTypeSet const & residue_set,
-// 	std::string const & filename
-// )
-// {
-// 	//using namespace core;
-// 	using namespace conformation;
-
-// 	typedef numeric::xyzVector< Real > Vector;
-
-// 	// reset current data
-// 	pose.clear();
-
-// 	Coords coords;
-// 	Strings resids, sequence, pose_resids;
-
-// 	read_pdb( filename, resids, sequence, coords );
-
-// 	int const nres_pdb( resids.size() );
-
-// 	char prev_chain('?');
-
-
-// 	for ( int i=1; i<= nres_pdb; ++i ) {
-// 		std::string const pdb_name( sequence[i] );
-// 		std::string const resid( resids[i] );
-// 		runtime_assert( resid.size() == 6 );
-// 		char const chain( resid[5] );
-
-// 		ResidueCoords const & xyz( coords.find( resid )->second );
-
-// 		ResidueTypeCOPs const & rsd_type_list( residue_set.name3_map( pdb_name ) );
-// 		if ( rsd_type_list.empty() ) {
-// 			std::cout << "Unrecognized aa: " << pdb_name << '\n';
-// 			continue;
-// 		}
-
-// 		// look for perfect match:
-// 		bool matched( false );
-// 		for ( Size j=1; j<= rsd_type_list.size(); ++j ) {
-// 			ResidueType const & rsd_type( *(rsd_type_list[j]) );
-
-// 			if ( rsd_type.is_terminus() ) continue; // no termini at this stage
-
-// 			int rsd_missing(0), xyz_missing(0);
-
-// 			for ( Size k=1; k<= rsd_type.natoms(); ++k ) {
-// 				if ( xyz.count( rsd_type.atom_name(k) ) == 0 ) ++xyz_missing;
-// 			}
-
-// 			for ( ResidueCoords::const_iterator iter=xyz.begin(), iter_end=xyz.end(); iter!= iter_end; ++iter ) {
-// 				if ( !rsd_type.has( iter->first ) ) ++rsd_missing;
-// 			}
-
-// 			if ( rsd_missing ) continue;
-
-// 			std::cout << "match: " << i << ' ' << rsd_type.name() << ' ' << xyz_missing << std::endl;
-
-// 			matched = true;
-
-// 			// found a perfect match! fill in the coords
-// 			ResidueOP new_rsd( ResidueFactory::create_residue( rsd_type ) );
-
-// 			for ( ResidueCoords::const_iterator iter=xyz.begin(), iter_end=xyz.end(); iter!= iter_end; ++iter ) {
-// 				new_rsd->atom( iter->first ).xyz( iter->second );
-// 			}
-
-
-// 			if ( chain != prev_chain && pose.total_residue() ) {
-// 				pose.append_residue( new_rsd, true, pose.total_residue() );
-// 			} else {
-// 				pose.append_residue( new_rsd );
-// 			}
-// 			pose_resids.push_back( resid );
-
-// 			break;
-// 		} // j=1,rsd_type_list.size()
-
-
-// 		if ( !matched ) {
-// 			// unforgiving for testing purposes
-// 			std::cout << "Unrecognized residue: " << pdb_name << std::endl;
-// 			utility_exit();
-// 		}
-
-// 		// handle termini
-// 		if ( chain != prev_chain ) {
-// 			prev_chain = chain;
-// 			int const seqpos( pose.total_residue() );
-// 			if ( seqpos > 1 ) {
-// 				pose.conformation().insert_chain_ending( seqpos - 1 );
-// 				// make previous residue a terminus
-// 				make_upper_terminus( pose, residue_set, seqpos-1 );
-// 			}
-// 			make_lower_terminus( pose, residue_set, seqpos );
-
-// 		}
-
-// 	} // i=1,nres_pdb
-
-// 	make_upper_terminus( pose, residue_set, pose.total_residue() );
-
-// 	// now handle missing atoms
-// 	id::AtomID_Mask missing( false );
-
-// 	id::initialize( missing, pose ); // dimension the missing-atom mask
-
-// 	for ( Size i=1; i<= pose.total_residue(); ++i ) {
-// 		ResidueCoords const & xyz( coords.find( pose_resids[i] )->second );
-// 		Residue const & rsd( pose.residue(i) );
-// 		for ( Size j=1; j<= rsd.natoms(); ++j ) {
-// 			if ( xyz.count( rsd.atom_name(j) ) == 0 ) missing[ id::AtomID( j, i ) ] = true;
-// 		}
-// 	}
-
-// 	pose.conformation().fill_missing_atoms( missing );
-// }
 
 /// @brief Utility function to round a real value to the given precisions (number of digits after the decimal place) for output.
 /// For use solely by extract_scores()

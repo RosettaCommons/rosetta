@@ -9,7 +9,6 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/io/pdb/file_data.cc
-///
 /// @brief
 /// @author Sergey Lyskov
 
@@ -35,7 +34,6 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/AtomType.hh>
-// AUTO-REMOVED #include <core/chemical/orbitals/OrbitalType.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -46,7 +44,6 @@
 #include <core/scoring/cryst/util.hh>
 
 #include <core/pose/util.hh>
-
 
 // Basic headers
 #include <basic/options/option.hh>
@@ -59,7 +56,6 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
-
 
 #include <numeric/random/random.hh>
 
@@ -77,11 +73,7 @@
 
 // option key includes
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-//#include <basic/options/keys/run.OptionKeys.gen.hh> BDW
-//#include <basic/options/keys/in.OptionKeys.gen.hh> BDW
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/packing.OptionKeys.gen.hh>
-//#include <basic/options/keys/pH.OptionKeys.gen.hh> BDW
 
 #include <core/pose/util.hh>
 #include <utility/vector1.hh>
@@ -274,7 +266,6 @@ FileData::append_residue(
 /// @details
 /// init FileData structure from pose object.
 /// read atoms/residue information from Pose object and put it in FileData object.
-///
 void FileData::init_from_pose(core::pose::Pose const & pose)
 {
 	FileDataOptions options;
@@ -323,8 +314,10 @@ void
 FileData::store_link_record(Record & record)
 {
 	using namespace std;
+	using namespace utility;
 
 	LinkInformation link;
+	vector1<LinkInformation> links;
 
 	// Extract values from record fields.
 	link.name1_ = record["name1"].value;  // 1st atom name
@@ -337,7 +330,13 @@ FileData::store_link_record(Record & record)
 
 	link.length_ = atof(record["length"].value.c_str());  // bond length
 
-	links[link.resID1_] = link;
+	// If key is found in the links map, add this new linkage information to the links already keyed to this residue.
+	if (link_map.count(link.resID1_)) {
+		links = link_map[link.resID1_];
+	}
+	links.push_back(link);
+
+	link_map[link.resID1_] = links;
 
 	TR.Debug << "LINK record information stored successfully." << std::endl;
 }
@@ -822,22 +821,7 @@ build_pose_from_pdb_as_is(
 	}
 	id::AtomID_Mask missing( false );
 	build_pose_as_is1( fd, pose, residue_set, missing, pdr_options);
-
 }
-
-//void
-//build_pose_as_is1( io::pdb::FileData & fd, pose::Pose & pose, chemical::ResidueTypeSet const & residue_set, id::AtomID_Mask & missing )
-//void
-//build_pose_as_is1(
-//	io::pdb::FileData & fd,
-//	pose::Pose & pose,
-//	chemical::ResidueTypeSet const & residue_set,
-//	id::AtomID_Mask & missing
-//)
-//{
-//	FileDataOptions options;
-//	build_pose_as_is1(fd, pose, residue_set, missing, options );
-//}
 
 void
 build_pose_as_is1(
@@ -853,11 +837,10 @@ build_pose_as_is1(
 	typedef std::map< std::string, Vector > ResidueCoords;
 	typedef std::map< std::string, ResidueCoords > Coords;
 	typedef utility::vector1< std::string > Strings;
+	typedef numeric::xyzVector< double > Vector;
 
 	using namespace chemical;
 	using namespace conformation;
-
-	typedef numeric::xyzVector< double > Vector;
 
 	// reset current data
 	pose.clear();
@@ -867,21 +850,21 @@ build_pose_as_is1(
 	// Some residues in the input file may be discarded (missing atoms, unrecognized, etc)
 	utility::vector1< Size > pose_to_rinfo;
 	fd.create_working_data( rinfos, options );
-	//Temps temps;
-	//Coords coords;
-	//Strings resids, sequence,
 	Strings pose_resids;
 	utility::vector1<ResidueTemps> pose_temps;
-	Strings branch_lower_termini;
 
-	int const nres_pdb( rinfos.size() );
+	Strings branch_lower_termini;
+	Strings branch_points;
+
+	Size const nres_pdb( rinfos.size() );
 
 	utility::vector1<Size> UA_res_nums;
 	utility::vector1<std::string> UA_res_names, UA_atom_names;
 	utility::vector1<numeric::xyzVector<Real> > UA_coords;
 	utility::vector1<core::Real> UA_temps;
 
-	std::string chains_whose_residues_are_separate_chemical_entities = options.chains_whose_residues_are_separate_chemical_entities();
+	std::string chains_whose_residues_are_separate_chemical_entities =
+			options.chains_whose_residues_are_separate_chemical_entities();
 	std::string::const_iterator const entities_begin = chains_whose_residues_are_separate_chemical_entities.begin();
 	std::string::const_iterator const entities_end = chains_whose_residues_are_separate_chemical_entities.end();
 
@@ -892,13 +875,12 @@ build_pose_as_is1(
 	std::string::const_iterator const check_Ctermini_begin = chains_to_check_if_Ctermini.begin();
 	std::string::const_iterator const check_Ctermini_end = chains_to_check_if_Ctermini.end();
 
-	//mjo do not add residue by bond if the last residue was not
-	//recognized
+	//mjo do not add residue by bond if the last residue was not recognized
 	bool last_residue_was_recognized(true);
 
 	// Loop over every residue in the FileData extracted from the PDB file, select appropriate ResidueTypes,
 	// create Residues, and build the Pose.
-	for ( int i=1; i<= nres_pdb; ++i ) {
+	for ( Size i=1; i<= nres_pdb; ++i ) {
 		ResidueInformation const & rinfo = rinfos[i];
 		std::string const & pdb_name = rinfo.resName;
 		std::string const & resid = rinfo.resid;
@@ -916,13 +898,19 @@ build_pose_as_is1(
 				true : find(check_Ctermini_begin, check_Ctermini_end, chainID ) ==  check_Ctermini_end;
 
 		// Determine polymer information: termini, branch points, etc.
-		bool const is_branch_point = fd.links.count(resid);  // if found in the links map
+		bool const is_branch_point = fd.link_map.count(resid);  // if found in the linkage map
 		if (is_branch_point) {
-			// Find and store associated 1st residue of the branch to access later.
-			branch_lower_termini.push_back(fd.links[resid].resID2_);
+			// Find and store to access later:
+			//     associated 1st residue of all branches off this residue (determines branch lower termini)
+			//     positions of branch points
+			for (Size branch = 1, n_branches = fd.link_map[resid].size(); branch <= n_branches; ++branch) {
+				branch_lower_termini.push_back(fd.link_map[resid][branch].resID2_);
+				branch_points.push_back(fd.link_map[resid][branch].name1_);  // This only matters for saccharides.
+			}
 		}
 		bool const is_branch_lower_terminus = branch_lower_termini.contains(resid);
-		bool const is_lower_terminus( ( i == 1 || rinfos.empty() || (!same_chain_prev && !is_branch_lower_terminus) ) && check_Ntermini_for_this_chain );
+		bool const is_lower_terminus( ( i == 1 || rinfos.empty() || (!same_chain_prev && !is_branch_lower_terminus) )
+				&& check_Ntermini_for_this_chain );
 		bool const is_upper_terminus( ( i == nres_pdb || !same_chain_next ) && check_Ctermini_for_this_chain );
 
 		TR.Debug << "Residue " << i << std::endl;
@@ -956,7 +944,6 @@ build_pose_as_is1(
 		// try to minimize atoms missing from xyz
 		Size best_index(0), best_rsd_missing( 99999 ), best_xyz_missing( 99999 );
 
-
 		for ( Size j=1; j<= rsd_type_list.size(); ++j ) {
 			ResidueType const & rsd_type( *(rsd_type_list[j]) );
 			bool const is_polymer( rsd_type.is_polymer() ); // need an example residue type, though this will
@@ -967,39 +954,68 @@ build_pose_as_is1(
 			//TR.Debug << rsd_type.name() << " is_upper_terminus " << rsd_type.has_variant_type( UPPER_TERMINUS ) << std::endl;
 
 			// only take the desired variants
-			bool lower_term_type = rsd_type.has_variant_type( LOWER_TERMINUS ) || rsd_type.has_variant_type( LOWERTERM_TRUNC );
-			bool upper_term_type = rsd_type.has_variant_type( UPPER_TERMINUS ) || rsd_type.has_variant_type( UPPERTERM_TRUNC );
+			bool lower_term_type = rsd_type.has_variant_type( LOWER_TERMINUS ) ||
+					rsd_type.has_variant_type( LOWERTERM_TRUNC );
+			bool upper_term_type = rsd_type.has_variant_type( UPPER_TERMINUS ) ||
+					rsd_type.has_variant_type( UPPERTERM_TRUNC );
 			if ( is_polymer && (
 				(is_lower_terminus != lower_term_type ) || (is_upper_terminus != upper_term_type ) ) ) {
 				TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
-				//TR.Debug << "because a polymer and not a terminus" << std::endl;
+				//TR.Debug << "because of the terminus state" << std::endl;
 				continue;
 			}
 			if (is_polymer && (is_branch_point != rsd_type.has_variant_type(BRANCH_POINT))) {
 				TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
-				//TR.Debug << "because a polymer and not a branchpoint" << std::endl;
+				//TR.Debug << "because of the branch state" << std::endl;
 				continue;
 			}
 			if (is_polymer && (is_branch_lower_terminus != rsd_type.has_variant_type(BRANCH_LOWER_TERMINUS))) {
 				TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
-				//TR.Debug << "because a polymer and not a branch lower terminus" << std::endl;
+				//TR.Debug << "because of the branch lower terminus state" << std::endl;
 				continue;
 			}
 			if ( rsd_type.aa() == aa_cys && rsd_type.has_variant_type( DISULFIDE ) && pdb_name != "CYD" ) {
 				TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
-				//TR.Debug << "because CYS and is disulfide and not CYD" << std::endl;
+				//TR.Debug << "because of the disulfide state" << std::endl;
 				continue;
 			}
 			if ( !options.keep_input_protonation_state() &&
 				( rsd_type.has_variant_type( PROTONATED ) || rsd_type.has_variant_type( DEPROTONATED ) )){
 				TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
-				//TR.Debug << "because of protonation state" << std::endl;
+				//TR.Debug << "because of the protonation state" << std::endl;
 				continue;
 			}
-			if (rsd_type.is_carbohydrate() && residue_type_base_name(rsd_type) != fd.carbohydrate_residue_type_base_names[resid]) {
+
+			// special checks to ensure selecting the proper carbohydrate ResidueType
+			if (rsd_type.is_carbohydrate() && residue_type_base_name(rsd_type) !=
+					fd.carbohydrate_residue_type_base_names[resid]) {
 				TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
-				//TR.Debug << "because is carbohydrate" << std::endl;
+				//TR.Debug << "because the residue is not a carbohydrate" << std::endl;
 				continue;
+			}
+			if (rsd_type.is_carbohydrate() && rsd_type.has_variant_type(BRANCH_POINT)) {
+				// The below assumes that ResidueTypes with fewer patches are selected 1st, that is, that an
+				// _p:->2-branch ResidueType will be checked as a possible match before an _p:->2-branch_p:->6-branch
+				// ResidueType.  If this were not the case, Rosetta could misassign an _p:->2-branch_p:->6-branch
+				// ResidueType to a residue that actually only has a single branch at the 2 or 6 position.
+				char branch_point;
+				bool branch_point_is_missing = false;
+				for (Size k = 1, n_branch_points = branch_points.size();
+						k <= n_branch_points; ++k) {
+					branch_point = branch_points[k][2];  // 3rd column (index 2) is the atom number in all saccharides
+					TR.Debug << "Checking '" << rsd_type.name() <<
+							"' for branch at position " << branch_point << std::endl;
+					if (residue_type_all_patches_name(rsd_type).find(string(1, branch_point) + ")-branch") ==
+							string::npos) {
+						branch_point_is_missing = true;
+						break;
+					}
+				}
+				if (branch_point_is_missing) {
+					TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
+					//TR.Debug << "because of a missing branch point" << std::endl;
+					continue;
+				}
 			}
 
 			TR.Debug << "Trying '" << rsd_type.name() << "' ResidueType" << std::endl;
@@ -1012,7 +1028,7 @@ build_pose_as_is1(
 
 			for ( ResidueCoords::const_iterator iter=xyz.begin(), iter_end=xyz.end(); iter!= iter_end; ++iter ) {
 				if ( !rsd_type.has( local_strip_whitespace(iter->first) ) &&
-						!( iter->first == " H  " && is_lower_terminus ) ) { // don't worry about missing backbone H if Nterm
+						!( iter->first == " H  " && is_lower_terminus ) ) { // don't worry about missing BB H if Nterm
 					++rsd_missing;
 				}
 			}
@@ -1023,10 +1039,6 @@ build_pose_as_is1(
 				best_xyz_missing = xyz_missing;
 				best_index = j;
 			}
-// 			if ( rsd_missing == 0 && xyz_missing < best_xyz_missing ) {
-// 				best_xyz_missing = xyz_missing;
-// 				best_index = j;
-// 			}
 		} // j=1,rsd_type_list.size()
 
 		if(!best_index){
@@ -1086,15 +1098,6 @@ build_pose_as_is1(
 			}
 			//else runtime_assert( iter->first == " H  " && rsd_type.is_terminus() ); // special casee
 		}
-
-		// fill in b-factor from pdb file
-		// for ( ResidueTemps::const_iterator iter=res_temps.begin(), iter_end = res_temps.end();
-		// 			iter != iter_end;
-		// 			++iter ) {
-		// 	if ( new_rsd->has( local_strip_whitespace(iter->first) ) ) {
-		// 		new_rsd->atom( local_strip_whitespace(iter->first) ).temperature( iter->second );
-		// 	}
-		// }
 
 		// Add this new residue to the pose by appending.
 		Size const old_nres( pose.total_residue() );
@@ -1484,10 +1487,6 @@ pose_from_pose(
 	build_pose_as_is1( fd, new_pose, residue_set, missing, options );
 }
 
-
-
 } // namespace pdb
 } // namespace io
 } // namespace core
-
-

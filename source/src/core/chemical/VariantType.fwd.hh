@@ -14,18 +14,6 @@
 #ifndef INCLUDED_core_chemical_VariantType_fwd_hh
 #define INCLUDED_core_chemical_VariantType_fwd_hh
 
-
-// // Unit headers
-
-// // Package headers
-
-// Project headers
-
-// Utility headers
-//#include <utility/vector1.hh>
-//#include <utility/pointer/owning_ptr.hh>
-//#include <utility/pointer/ReferenceCount.hh>
-
 // C++ headers
 #include <string>
 
@@ -38,7 +26,5 @@ typedef std::string VariantType;
 
 } // chemical
 } // core
-
-
 
 #endif

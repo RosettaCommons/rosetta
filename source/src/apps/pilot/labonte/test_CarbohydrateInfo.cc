@@ -70,7 +70,7 @@ test_sugar(Pose & sugar)
 int
 main(int argc, char *argv[])
 {
-    try {
+	try {
 		// Initialize core.
 		devel::init(argc, argv);
 

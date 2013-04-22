@@ -288,7 +288,7 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 	upper_connect_id_( residue_type.upper_connect_id_ ),
 	n_non_polymeric_residue_connections_( residue_type.n_non_polymeric_residue_connections_ ),
 	n_polymeric_residue_connections_( residue_type.n_polymeric_residue_connections_ ),
-	branch_point_atoms_(residue_type.branch_point_atoms_),
+	//branch_point_atoms_(residue_type.branch_point_atoms_),
 	delete_atoms_(residue_type.delete_atoms_),
 	force_bb_(residue_type.force_bb_),
 	rna_residuetype_(residue_type.rna_residuetype_),

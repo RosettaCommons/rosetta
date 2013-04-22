@@ -72,6 +72,7 @@ patches/carbohydrates/upper_terminus.txt
 ## glycosylation/branching
 patches/carbohydrates/N-linked_glycosylation.txt
 patches/carbohydrates/branch_lower_term.txt
+patches/carbohydrates/2-branch.txt
 patches/carbohydrates/6-branch.txt
 ## modifications
 patches/carbohydrates/2-amination.txt
