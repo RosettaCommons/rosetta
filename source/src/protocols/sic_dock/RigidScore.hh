@@ -76,7 +76,7 @@ public:
 	);
 	core::Real score( Xforms const & x1, Xforms const & x2 ) const;
 	std::string type() const { return "CBScore"; }
-	Real dist2_score( Real const & sqdist ) const;
+	// Undefinded, commenting out to fix PyRosetta build  Real dist2_score( Real const & sqdist ) const;
 //private:
 	bool const hash_pose1_;
 	core::Real const clash_dis_, contact_dis_;

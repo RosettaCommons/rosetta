@@ -1494,7 +1494,7 @@ namespace motif_hash {
 		}
 	}
 
-	inline float MotifHash::motif_score(Real6 const & rt) const {
+	float MotifHash::motif_score(Real6 const & rt) const {
 		return motif_score( bin_index(rt) );
 	}
 	void MotifHash::generate_scoring_hash(){
@@ -2464,4 +2464,3 @@ namespace motif_hash {
 
 }
 }
-

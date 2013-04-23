@@ -35,7 +35,7 @@ protocols::jd2::Parser::~Parser(){}
 
 ///@details the impetus for this function is that Parser is a friend of the InnerJob class and can modify the pose - actual mover generation/pose updating is handled by derived classes.
 void
-protocols::jd2::Parser::generate_mover_from_job( JobOP job, protocols::moves::MoverOP mover, bool new_input ){
+protocols::jd2::Parser::generate_mover_from_job( JobOP job, protocols::moves::MoverOP & mover, bool new_input ){
 
 	//unpackage job
 	core::pose::Pose pose( *(job->get_pose()) );

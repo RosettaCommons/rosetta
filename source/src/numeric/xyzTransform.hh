@@ -20,6 +20,7 @@
 #include <numeric/xyzTransform.fwd.hh>
 
 // Package headers
+#include <numeric/xyzTriple.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyz.functions.hh>

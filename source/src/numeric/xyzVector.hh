@@ -1914,16 +1914,8 @@ public: // Comparison
 	}
 
 	/// @brief Hashing of coords using boost::hash
-	friend
-	platform::Size
-	hash_value(xyzVector const & v)
-	{
-		platform::Size hash = 0;
-		boost::hash_combine(hash,v.x_);
-		boost::hash_combine(hash,v.y_);
-		boost::hash_combine(hash,v.z_);
-		return hash;
-	}
+	template <typename U>
+	friend platform::Size hash_value(xyzVector<U> const & v);
 
 private: // Methods
 
@@ -1959,6 +1951,18 @@ private: // Fields
 
 
 }; // xyzVector
+
+
+//// @brief Hashing of coords using boost::hash
+template< typename T >
+platform::Size hash_value(xyzVector< T >  const & v)
+{
+	platform::Size hash = 0;
+	boost::hash_combine(hash, v.x_);
+	boost::hash_combine(hash, v.y_);
+	boost::hash_combine(hash, v.z_);
+	return hash;
+}
 
 
 /// @brief xyzVector + xyzVector

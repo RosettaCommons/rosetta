@@ -41,14 +41,16 @@ def isFileInScons(fname):
 
 BannedFiles = ['utility/PyHelper.hh', 'utility/keys', 'utility/options', 'utility/options/keys', 'utility/pointer', 'utility/sql_database/sqlite3_interface.hh',
     'basic/options/keys', 'utility/exit.hh',
+    'numeric/xyzVector.hh',
+
     #'basic/Tracer.hh',
     'core/scoring/etable/BaseMembEtableEnergy.hh',  # abandoned?
     'core/scoring/etable/CoarseEtableEnergyCreator.hh',  # not in scons (.hh only)
     'core/scoring/memb_etable/BaseMembEtableEnergy.hh', # abandoned?
     'core/scoring/rna/RNA_FA_Stack.hh', # not in scons (.hh only)
     'core/scoring/methods/GaussianOverlapEnergyCreator.hh', # not in scons
-    'protocols/forge/remodel/RemodelLoopMoverCreator.hh', 
-               
+    'protocols/forge/remodel/RemodelLoopMoverCreator.hh',
+
     #'core/pack/dunbrack/DunbrackRotamer.hh', # too many template args (more then 48)
 
     'protocols/abinitio/JumpingFoldConstraints.hh', # not in scons (.hh only)
@@ -104,6 +106,19 @@ BannedFiles = ['utility/PyHelper.hh', 'utility/keys', 'utility/options', 'utilit
 
     #'protocols/rpc',  # Some problem with parser, but in general: do we need RPC calls in PyRosetta? (it easier to implement it in Python anyway)
 
+
+#'numeric/xyzTransform.hh',
+
+# 'protocols/sic_dock/RigidScore.hh',
+# 'protocols/sic_dock/Rose.hh',
+# 'protocols/sic_dock/SICFast.hh',
+# 'protocols/sic_dock/designability_score.hh',
+# 'protocols/sic_dock/loophash_util.hh',
+# 'protocols/sic_dock/read_biounit.hh',
+# 'protocols/sic_dock/types.hh',
+# 'protocols/sic_dock/util.hh',
+# 'protocols/sic_dock/xyzStripeHashPose.hh',
+# 'protocols/sic_dock/xyzStripeHashPoseWithMeta.hh',
 
     #'protocols/frag_picker', # whole dir not in scons (ie been moved now), temporary
 

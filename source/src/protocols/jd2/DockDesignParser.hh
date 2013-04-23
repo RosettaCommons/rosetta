@@ -52,7 +52,7 @@ public:
 
 	virtual
 	bool
-	generate_mover_from_pose( protocols::jd2::JobCOP job, core::pose::Pose pose, protocols::moves::MoverOP mover, bool new_input, std::string const xml_fname );
+	generate_mover_from_pose( protocols::jd2::JobCOP job, core::pose::Pose & pose, protocols::moves::MoverOP & mover, bool new_input, std::string const xml_fname );
 
 	void register_factory_prototypes();
 

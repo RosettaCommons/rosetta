@@ -261,7 +261,7 @@ class ResPairMotif {
 	bool write_motifs_binary(  std::ostream        & out   , ResPairMotifs const & motifs);
 	bool write_motifs_binary(        string  const & fname , ResPairMotifs const & motifs);
 	bool read_motifs_binary (vector1<string> const & fnames, ResPairMotifs       & motifs);
-	void read_motifs_boost  (vector1<string> const & fnames, ResPairMotifs       & motifs);
+	// Undefined, commenting out to fix PyRosetta build  void read_motifs_boost  (vector1<string> const & fnames, ResPairMotifs       & motifs);
 	// void read_motifs_boost  (        string  const & fname , ResPairMotifs       & motifs);
 	// void write_motifs_boost (        string  const & fname , ResPairMotifs const & motifs);
 
@@ -370,10 +370,10 @@ public:
 		utility::vector1<Xfres> xfres_;
 		public:
 		XfragSet(core::Real cartsize=10.0, core::Real cartresl=1.0, core::Real angleresl=15.0);
-		void write_binary(std::string fname) const;
-		void read_binary(std::string fname);
-		void add_frags(utility::vector1<Xfrag> const & frags, utility::vector1<Xfres> const & res);
-		void lookup_frags(Real6 const & rt6, utility::vector1<Xfrag> & frags) const;
+		// Undefined, commenting out to fix PyRosetta build  void write_binary(std::string fname) const;
+		// Undefined, commenting out to fix PyRosetta build  void read_binary(std::string fname);
+		// Undefined, commenting out to fix PyRosetta build  void add_frags(utility::vector1<Xfrag> const & frags, utility::vector1<Xfres> const & res);
+		// Undefined, commenting out to fix PyRosetta build  void lookup_frags(Real6 const & rt6, utility::vector1<Xfrag> & frags) const;
 	};
 
 
@@ -411,10 +411,10 @@ public:
 		int count_motifs(Real6 const & rt) const ;
 		int count_motifs(Key const & k) const;
 		void find_motifs_with_radius(Real6 const & rt, Real radius, vector1<Motif> & results) const;
-		inline float motif_score(Real6 const & rt) const;
+		float motif_score(Real6 const & rt) const;
 		void generate_scoring_hash();
 		Size num_motifs() { return motif_hash_.size(); }
-		Key key_of(Motif const & d) const;
+		// Undefined, commenting out to fix PyRosetta build  Key key_of(Motif const & d) const;
 		Real cart_size() const { return cart_size_; }
 		Key bin_index(Real6 const & rt) const;
 		Key bin_index(Motif const & m) const;
@@ -493,7 +493,7 @@ void merge_motifs();
 void dump_motif_pdbs();
 void harvest_scores();
 void print_scores();
-void sequence_recovery();
+	// Undefined, commenting out to fix PyRosetta build  void sequence_recovery();
 void dump_matching_motifs();
 void harvest_motifs();
 void print_motifs(std::ostream & out);
@@ -538,4 +538,3 @@ class MotifRotamerSetOperation : public core::pack::rotamer_set::RotamerSetOpera
 
 
 #endif
-
