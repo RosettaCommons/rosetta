@@ -2,3 +2,4 @@
 *.project
 *.autotools
 *.pydevproject
+.DS_Store
