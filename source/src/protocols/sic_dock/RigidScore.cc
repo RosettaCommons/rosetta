@@ -111,11 +111,11 @@ CBScore::CBScore(
 {}
 
 struct CBScoreVisitor {
-	Real const clash_dis,contact_dis;
-	Real score;
+	float const clash_dis,contact_dis;
+	float score;
 	CBScoreVisitor(
-		Real const & clash_dis_in,
-		Real const & contact_dis_in
+		float const & clash_dis_in,
+		float const & contact_dis_in
 	):
 		clash_dis(clash_dis_in),
 		contact_dis(contact_dis_in),
@@ -124,13 +124,13 @@ struct CBScoreVisitor {
 	inline
 	void
 	visit(
-		numeric::xyzVector<Real> const & /*v*/,
-		                   Real  const & vm,
-		numeric::xyzVector<Real> const & /*c*/,
-		                   Real  const & cm,
-		                   Real  const & d2
+		numeric::xyzVector<float> const & /*v*/,
+		                   float  const & vm,
+		numeric::xyzVector<float> const & /*c*/,
+		                   float  const & cm,
+		                   float  const & d2
 	){
-		score += CBScore_dist_score(d2, 6.0, contact_dis ) * vm * cm;
+		score += CBScore_dist_score(d2, 6.0f, contact_dis ) * vm * cm;
 	}
 };
 

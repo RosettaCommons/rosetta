@@ -86,11 +86,12 @@ public:
 	// Pose const & pose1_,pose2_;
 };
 
-inline core::Real CBScore_dist_score( core::Real const & sqdist, core::Real const & start, core::Real const & stop ) {
+template<typename T>
+inline T CBScore_dist_score( T const & sqdist, T const & start, T const & stop ) {
 	if( sqdist > stop*stop ) {
-		return 0.0;
+		return (T)0.0;
 	} else if( sqdist < start*start ) {
-		return 1.0;
+		return (T)1.0;
 	} else {
 		core::Real dist = sqrt( sqdist );
 		return (stop-dist)/(stop-start);

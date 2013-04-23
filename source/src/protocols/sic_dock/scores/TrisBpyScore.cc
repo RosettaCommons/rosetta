@@ -81,8 +81,10 @@ static Vec   const N  ( 2.649,-1.227, 1.777);
 	static Mat   const chiral3(Mat::cols(1,0,0,0,-1,0,0,0, 1));
 	static Mat   const chiral4(Mat::cols(1,0,0,0,-1,0,0,0,-1));
 	static Mat   const chiral[4] = { chiral1, chiral2, chiral3, chiral4 };
-	static Vec   const nbr1(2.496000,-1.330833,-2.416500);
-	static Vec   const nbr2(0.715000,-2.706833,-5.921667);
+	static Vec   const nbr2(C29);
+	static Vec   const nbr1(C22);
+	// static Vec   const nbr1(2.496000,-1.330833,-2.416500);
+	// static Vec   const nbr2(0.715000,-2.706833,-5.921667);
 	static Vec   const nbr[6] = { nbr1, nbr2, R3z2*nbr1, R3z2*nbr2, R3z3*nbr1, R3z3*nbr2 };
 
 void printbpy(std::ostream & out, Xform const & x,int resi=1000){
@@ -141,7 +143,8 @@ TrisBpyScore::TrisBpyScore(
 		Vec CA = pose_.residue(ir).xyz(2);
 		Vec  C = pose_.residue(ir).xyz(3);
 		bbx_.push_back(Xform(CA,N,CA,C));
-		if(pose_.residue(ir).has("CB")) cb_.push_back(pose_.residue(ir).xyz("CB"));
+		if(pose_.secstruct(ir)!='L') cb_.push_back(pose_.residue(ir).nbr_atom_xyz());
+		else                         cb_.push_back(Vec(9e9,9e9,9e9));
 	}
 	cc_ = new xyzStripeHashPose(pose_,BB,3.2);
 
@@ -200,26 +203,26 @@ TrisBpyScore::score_extra( Xforms const & x1s, Xforms const & x2s, Real&cbc,Real
 				if(clash) continue;
 				cbc = 0;
 				Vec const nbrcb[6] = { xclash*nbr[0],xclash*nbr[1],xclash*nbr[2],xclash*nbr[3],xclash*nbr[4],xclash*nbr[5] };
-				BOOST_FOREACH(Vec const & cb,cb_)
-					for(int inbr=0; inbr<6; ++inbr)
-						cbc += (64.0 > cb.distance_squared(nbrcb[inbr]));
+				// for(int jr=   1; jr <= ir-3       ; ++jr) for(int inbr=0; inbr<6; ++inbr) cbc += CBScore_dist_score(cb_[jr].distance_squared(nbrcb[inbr]),6.0,12.0);
+				// for(int jr=ir+3; jr <= bbx_.size(); ++jr) for(int inbr=0; inbr<6; ++inbr) cbc += CBScore_dist_score(cb_[jr].distance_squared(nbrcb[inbr]),6.0,12.0);
+				for(int jr=4; jr <= (int)bbx_.size()-3; ++jr) for(int inbr=0; inbr<6; ++inbr) cbc += CBScore_dist_score(cb_[jr].distance_squared(nbrcb[inbr]),7.0,15.0);
 				if(cbc < min_bpy_contacts_) continue;
 				// if(numeric::random::uniform()<01.01){
 				// 	#ifdef USE_OPENMP
 				// 		#pragma omp critical
 				// 	#endif
 				// 	{
-						// utility::io::ozstream out("bpytest.pdb");
-						// printbpy(out,xbpy);
-						// out.close();
-						// Pose tmp(pose_);
-						// xform_pose(tmp,x1);
-						// tmp.dump_pdb("test1.pdb");
-						// utility_exit_with_message("foo");
+				// 		utility::io::ozstream out("bpytest.pdb");
+				// 		printbpy(out,xbpy);
+				// 		out.close();
+				// 		Pose tmp(pose_);
+				// 		xform_pose(tmp,x1);
+				// 		tmp.dump_pdb("test1.pdb");
+				// 		utility_exit_with_message("foo");
 				// 	}
 				// }
 				crl=ichiral;
-				return 10000.0;
+				return 10000.0 + 3.0*cbc;
 			}
 		}
 	}

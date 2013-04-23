@@ -56,7 +56,7 @@ MotifHashRigidScore::MotifHashRigidScore(
 	Pose const & _pose1,
 	Pose const & _pose2
 ):
-	pose1_(_pose1),pose2_(_pose2),mh_(NULL),xs_(NULL),xsee_(NULL),xseh_(NULL),xshe_(NULL),xshh_(NULL),xspp_(NULL)
+	pose1_(_pose1),pose2_(_pose2),mh_(NULL),xs_(NULL),xsee_(NULL),xseh_(NULL),xshe_(NULL),xshh_(NULL),xspp_(NULL),nss1_(0),nss2_(0),ssinfo1_(NULL),ssinfo2_(NULL)
 {
 	core::scoring::dssp::Dssp(pose1_).insert_ss_into_pose_no_IG_helix(pose1_);
 	core::scoring::dssp::Dssp(pose2_).insert_ss_into_pose_no_IG_helix(pose2_);
@@ -107,7 +107,7 @@ MotifHashRigidScore::~MotifHashRigidScore(){
 core::Real
 MotifHashRigidScore::score_meta( Xforms const & x1s, Xforms const & x2s, int & nsheet, Real & rawscore, Real & sselem_score, Real & coverage, Real & res_score, Real & sheetsc, int &nres, int &Nhh, int &Nee, int &Neh, int &Nh, int &Ne, int &Nl ) const {
 	using namespace protocols::motif_hash;
-	utility::vector1<Real> sselemsc1(nss1_,0.0),sselemsc2(nss2_,0.0);
+	// utility::vector1<Real> sselemsc1(nss1_,0.0),sselemsc2(nss2_,0.0);
 	Real tot_weighted=0.0, totscore=0.0;
 	std::map<Size,Real> ssp1,ssp2,mres1,mres2;
 	std::set<Size> tres1,tres2;

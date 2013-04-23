@@ -23,7 +23,7 @@ namespace hashing {
 
 template<typename T>
 class xyzStripeHashWithMeta : public utility::pointer::ReferenceCount {
-	
+
 	inline short  short_min( short const a,  short const b) { return (a < b) ? a : b; }
 	inline short  short_max( short const a,  short const b) { return (a > b) ? a : b; }
 	inline short ushort_min(unsigned short const a, unsigned short const b) { return (a < b) ? a : b; }
@@ -42,7 +42,7 @@ public:
 	struct iter_base : public std::iterator<std::input_iterator_tag,T> {
 		iter_base(float4 const *p) : p_(p) {}
 		C & operator=(C const & r) { p_ = r.p_; return *this; }
-		C & operator++() { ++p_; return static_cast<C &>(*this); } 
+		C & operator++() { ++p_; return static_cast<C &>(*this); }
 		bool operator!=(C const & r) const { return (p_ != r.p_); }
 		bool operator==(C const & r) const { return (p_ == r.p_); }
 	protected:
@@ -348,7 +348,7 @@ public:
 	inline int ydim () const { return  ydim_; }
 	inline int zdim () const { return  zdim_; }
 	inline float  grid_size() const { return  grid_size_; }
-	inline const numeric::xyzVector<numeric::Real> translation() const { return translation_; }
+	inline const numeric::xyzVector<T> translation() const { return translation_; }
 
 private:
 	xyzStripeHashWithMeta();
@@ -358,8 +358,8 @@ private:
 	ushort2 const * grid_stripe_;
 	int xdim_,ydim_,zdim_;
 	T xmx_,ymx_,zmx_;
-	//numeric::xyzMatrix<Real> rotation_;
-	numeric::xyzVector<numeric::Real> translation_;
+	//numeric::xyzMatrix<T> rotation_;
+	numeric::xyzVector<T> translation_;
 	// neighbor_iterator neighbor_end_;
 };
 

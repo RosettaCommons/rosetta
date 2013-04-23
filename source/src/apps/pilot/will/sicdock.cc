@@ -42,7 +42,7 @@
 	#include <core/scoring/constraints/ConstraintSet.hh>
 	#include <core/scoring/constraints/AtomPairConstraint.hh>
 
-	using core::id::AtomID;
+using core::id::AtomID;
 	using basic::options::option;
 	using core::pose::Pose;
 	using core::Real;
@@ -269,7 +269,7 @@ dock(
 	Real min_score = option[sicdock::min_score]();
 	if(option[sicdock::dihedral]()) min_score /= 2.0;
 
-	Size nsamp = 0, nsamp_motif=0;
+	Size nsamp = 0, nsamp_motif=0, nsamp_slide=0;
 	#ifdef USE_OPENMP
 	#pragma omp parallel for schedule(dynamic,1)
 	#endif
@@ -281,7 +281,7 @@ dock(
 				#pragma omp critical
 			#endif
 			{
-				cout << F(7,3,(Real)iqg/(Real)totsamp*100.0) << "%" << ", nsamp: " << F(7,3,(Real)nsamp/1000000.0) << "M, nmotif: " << F(7,3,(Real)nsamp_motif/1000.0) << "K";
+				cout << F(5,1,(Real)iqg/(Real)totsamp*100.0) << "%" << ", nsamp: " << F(7,4,(Real)nsamp/1000000.0) << "M, Nsic: " << F(7,4,(Real)nsamp_slide/1000000.0) << "M, nmotif: " << F(7,3,(Real)nsamp_motif/1000.0) << "K";
 				if(hits.size()){ cout<<"   topscore: " <<F(8,2,tophit.rscore); rigidsfxn->show(cout,tophit.x1,tophit.x2); }
 				cout << endl;
 			}
@@ -298,9 +298,10 @@ dock(
 
 			Xform x1(x1_0);
 			Real const t = sic.slide_into_contact(x1,x2,Vec(0,0,1));
+			++nsamp_slide;
 			x1.t.z() += t;
 
-			Real const backoff_delta = min(0.6,max(0.1,qgrid->maxrad() / 180.0 * 3.14159 * fabs(t/4.0)));
+			Real const backoff_delta = min(1.0,max(0.25,qgrid->maxrad() / 180.0 * 3.14159 * fabs(t/4.0)));
 			Size const nang = (Size)(360.0/syms[ic]/1.5/qgrid->maxrad()+1);
 			Real const ang_delta = 360.0/(Real)syms[ic]/(Real)nang;
 
@@ -316,7 +317,8 @@ dock(
 				h.x2 = h.x1 * ~x1 * x2;
 
 				Real rscore = ((protocols::sic_dock::RigidScoreOP)rigidsfxn)->score(h.x1,h.x2);
-				if(rscore >= option[sicdock::motif_hash_min_cbcount]()) ++nsamp_motif;
+				if(     rscore >= option[sicdock::motif_hash_min_cbcount]()    ) ++nsamp_motif;
+				else if(rscore <  option[sicdock::motif_hash_min_cbcount]()*0.666) break;
 				h.rscore = rscore;
 
 				if( h.rscore < min_score ) continue;
@@ -345,6 +347,7 @@ dock(
 					// }
 
 					Real td = sic.slide_into_contact(x1s,x2s,Vec(0,0,1));
+					++nsamp_slide;
 					x1s[1].t.z() += td/2.0; x1s[2].t.z() += td/2.0;
 					x2s[1].t.z() -= td/2.0; x2s[2].t.z() -= td/2.0;
 
@@ -507,8 +510,6 @@ dock(
 				cout << endl;
 				++nout;
 			}
-
-
 }
 
 utility::vector1<Vec>
@@ -606,4 +607,3 @@ int main(int argc, char *argv[]) {
 	}
 	cout << "SICDOCK_DONE" << endl;
 }
-

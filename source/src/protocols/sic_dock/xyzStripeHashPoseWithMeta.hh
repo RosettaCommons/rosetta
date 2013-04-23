@@ -25,21 +25,21 @@
 namespace protocols {
 namespace sic_dock {
 
-class xyzStripeHashPoseWithMeta : public numeric::geometry::hashing::xyzStripeHashWithMeta<double> {
+class xyzStripeHashPoseWithMeta : public numeric::geometry::hashing::xyzStripeHashWithMeta<float> {
 public:
-	xyzStripeHashPoseWithMeta(double radius) : numeric::geometry::hashing::xyzStripeHashWithMeta<double>(radius) {}
+	xyzStripeHashPoseWithMeta(double radius) : numeric::geometry::hashing::xyzStripeHashWithMeta<float>(radius) {}
 
 	xyzStripeHashPoseWithMeta(double radius,
 		core::pose::Pose const & p,
 		PoseCoordPickMode m = BB
-	) : numeric::geometry::hashing::xyzStripeHashWithMeta<double>(radius) {
+	) : numeric::geometry::hashing::xyzStripeHashWithMeta<float>(radius) {
 		init_with_pose(p,m);
 	}
 
 	xyzStripeHashPoseWithMeta(double radius,
 		core::pose::Pose const & p,
 		core::id::AtomID_Map<double> const & amap
-	) : numeric::geometry::hashing::xyzStripeHashWithMeta<double>(radius) {
+	) : numeric::geometry::hashing::xyzStripeHashWithMeta<float>(radius) {
 		init_with_pose(p,amap);
 	}
 
@@ -66,8 +66,8 @@ public:
 				if(amap[AtomID(ia,ir)] > 0)  natom++;
 			}
 		}
-		utility::vector1<numeric::xyzVector<double> > atoms(natom);
-		utility::vector1<double>                      meta (natom);
+		utility::vector1<numeric::xyzVector<float> > atoms(natom);
+		utility::vector1<float>                      meta (natom);
 		platform::uint count = 0;
 		for(int ir = 1; ir <= (int)p.n_residue(); ++ir) {
 			// core::conformation::Residue const & r(p.residue(ir));
@@ -96,8 +96,8 @@ public:
 			if( HVY==m ) natom += r.nheavyatoms();
 			if( ALL==m ) natom += r.natoms();
 		}
-		utility::vector1<numeric::xyzVector<double> > atoms(natom);
-		utility::vector1<double>                      meta (natom);
+		utility::vector1<numeric::xyzVector<float> > atoms(natom);
+		utility::vector1<float>                      meta (natom);
 		platform::uint count = 0;
 		for(int ir = 1; ir <= (int)p.n_residue(); ++ir) {
 			core::conformation::Residue const & r(p.residue(ir));
