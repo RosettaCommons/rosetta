@@ -1,0 +1,69 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<s weights=score12_w_corrections>
+			<Set decompose_bb_hb_into_pair_energies=1/>
+		</s>	
+	</SCOREFXNS>
+	<TASKOPERATIONS>
+		<ReadResfileFromDB name=all database_name=resfiles.db3 database_mode=sqlite3 database_table=resfiles/>
+	</TASKOPERATIONS>
+	<MOVERS>
+		<SavePoseMover name=init_struct reference_name=init_struct/>
+		<ReportToDB name=features_reporter database_name="features_IntegrationTest.db3" sample_source="Test the whole feature generation code stack." task_operations=all>
+			Meta
+			<feature name=PoseCommentsFeatures/>
+
+			Chemical
+			<feature name=AtomTypesFeatures/>
+
+			One-Body
+			<feature name=ResidueFeatures/>
+			<feature name=BetaTurnDetectionFeatures/>
+			<feature name=ProteinBackboneTorsionAngleFeatures/>
+			<feature name=ProteinResidueConformationFeatures/>
+			<feature name=ResidueBurialFeatures/>
+			<feature name=ResidueSecondaryStructureFeatures/>
+			<feature name=SecondaryStructureSegmentFeatures/>
+			<feature name=SmotifFeatures/>
+
+			Two-Body
+			<feature name=AtomAtomPairFeatures min_dist=0 max_dist=3 nbins=2/>
+			<feature name=HBondFeatures scorefxn=s definition_type=AHdist definition_threshold=1.8/>
+			<feature name=ChargeChargeFeatures/>
+			<feature name=LoopAnchorFeatures min_loop_length=5 max_loop_length=7/>
+			<feature name=OrbitalsFeatures/>
+			<feature name=ProteinBackboneAtomAtomPairFeatures/>
+			<feature name=SaltBridgeFeatures/>
+
+			Multi-Body
+			<feature name=GeometricSolvationFeatures/>
+			<feature name=HelixBundleFeatures/>
+			<feature name=SandwichFeatures/>
+			<feature name=StrandBundleFeatures/>
+			<feature name=PairFeatures/>
+			<feature name=PoseConformationFeatures/>
+			<feature name=RadiusOfGyrationFeatures/>
+
+			Multi-Structure
+			<feature name=ProteinRMSDFeatures reference_name=init_struct/>
+			<feature name=RotamerRecoveryFeatures scorefxn=s protocol=RRProtocolRTMin comparer=RRComparerAutomorphicRMSD/>
+
+			Energy-Function
+			<feature name=HBondParameterFeatures scorefxn=s/>
+			<feature name=ScoreTypeFeatures/>
+			<feature name=ResidueScoresFeatures scorefxn=s/>
+			<feature name=ResidueTotalScoresFeatures scorefxn=s/>
+			<feature name=StructureScoresFeatures scorefxn=s/>
+			<feature name=ScoreFunctionFeatures scorefxn=s/>
+
+			Experimental
+			<feature name=PdbDataFeatures/>
+
+    </ReportToDB>
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover_name=init_struct/>
+		<Add mover_name=features_reporter/>
+	</PROTOCOLS>
+</ROSETTASCRIPTS>
+

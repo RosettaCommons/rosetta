@@ -36,6 +36,7 @@
 #include <string>
 #include <iostream>
 
+#include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 
 
@@ -156,6 +157,84 @@ HBondOptions::operator=( HBondOptions const & src )
 	fade_energy_ = src.fade_energy_;
 	Mbhbond_ = src.Mbhbond_; //pba
 	return *this;
+}
+
+
+void
+HBondOptions::parse_my_tag(
+	utility::tag::TagPtr tag
+) {
+	// hbond options
+
+	// DEPRECATE
+	if( tag->hasOption( "exclude_DNA_DNA_hbond" )) {
+		exclude_DNA_DNA( tag->getOption<bool>( "exclude_DNA_DNA_hbond" ) );
+	}
+	if( tag->hasOption( "use_hb_env_dep_DNA" )) {
+		use_hb_env_dep_DNA( tag->getOption<bool>( "use_hb_env_dep_DNA" ) );
+	}
+	if( tag->hasOption( "use_hb_env_dep" )) {
+		use_hb_env_dep( tag->getOption<bool>( "use_hb_env_dep" ) );
+	}
+	if( tag->hasOption( "smooth_hb_env_dep" )) {
+		smooth_hb_env_dep( tag->getOption<bool>( "smooth_hb_env_dep" ) );
+	}
+	if( tag->hasOption( "decompose_bb_hb_into_pair_energies" )) {
+		decompose_bb_hb_into_pair_energies( tag->getOption<bool>( "decompose_bb_hb_into_pair_energies" ) );
+	}
+
+	if( tag->hasOption( "hbonds:exclude_DNA_DNA_hbond" )) {
+		exclude_DNA_DNA( tag->getOption<bool>( "hbonds:exclude_DNA_DNA_hbond" ) );
+	}
+	if( tag->hasOption( "hbonds:use_hb_env_dep_DNA" )) {
+		use_hb_env_dep_DNA( tag->getOption<bool>( "hbonds:use_hb_env_dep_DNA" ) );
+	}
+	if( tag->hasOption( "hbonds:exclude_self_hbonds" )) {
+		exclude_self_hbonds( tag->getOption<bool>( "hbonds:exclude_self_hbonds" ) );
+	}
+	if( tag->hasOption( "hbonds:use_hb_env_dep" )) {
+		use_hb_env_dep( tag->getOption<bool>( "hbonds:use_hb_env_dep" ) );
+	}
+	if( tag->hasOption( "hbonds:smooth_hb_env_dep" )) {
+		smooth_hb_env_dep( tag->getOption<bool>( "hbonds:smooth_hb_env_dep" ) );
+	}
+	if( tag->hasOption( "hbonds:decompose_bb_hb_into_pair_energies" )) {
+		decompose_bb_hb_into_pair_energies( tag->getOption<bool>( "hbonds:decompose_bb_hb_into_pair_energies" ) );
+	}
+
+
+	if( tag->hasOption( "hbonds:include_intra_res_RNA" )) {
+		include_intra_res_RNA( tag->getOption<bool>( "hbonds:include_intra_res_RNA" ) );
+	}
+	if( tag->hasOption( "hbonds:bb_donor_acceptor_check" )) {
+		bb_donor_acceptor_check( tag->getOption<bool>( "hbonds:bb_donor_acceptor_check" ) );
+	}
+	if( tag->hasOption( "hbonds:params_database_tag" )) {
+		params_database_tag( tag->getOption<std::string>( "hbonds:params_database_tag" ) );
+	}
+	if( tag->hasOption( "hbonds:use_incorrect_deriv" )) {
+		use_incorrect_deriv( tag->getOption<bool>( "hbonds:use_incorrect_deriv" ) );
+	}
+	if( tag->hasOption( "hbonds:use_sp2_chi_penalty" )) {
+		use_sp2_chi_penalty( tag->getOption<bool>( "hbonds:use_sp2_chi_penalty" ) );
+	}
+	if( tag->hasOption( "hbonds:sp2_BAH180_rise" )) {
+		sp2_BAH180_rise( tag->getOption<Real>( "hbonds:sp2_BAH180_rise" ) );
+	}
+	if( tag->hasOption( "hbonds:sp2_outer_width" )) {
+		sp2_outer_width( tag->getOption<Real>( "hbonds:sp2_outer_width" ) );
+	}
+	if( tag->hasOption( "hbonds:measure_sp3acc_BAH_from_hvy" )) {
+		measure_sp3acc_BAH_from_hvy( tag->getOption<bool>( "hbonds:measure_sp3acc_BAH_from_hvy" ) );
+	}
+	if( tag->hasOption( "hbonds:fade_energy" )) {
+		fade_energy( tag->getOption<bool>( "hbonds:fade_energy" ) );
+	}
+	if( tag->hasOption( "hbonds:Mbhbond" )) {
+		bb_donor_acceptor_check( tag->getOption<bool>( "hbonds:Mbhbond" ) );
+	}
+
+
 }
 
 ///

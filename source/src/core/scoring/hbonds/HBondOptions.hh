@@ -15,10 +15,12 @@
 /// To add an additional option for hydrogen bonds do the following:
 /// 1) add it to the default constructor
 /// 2) add it to the copy constructor
-/// 3) add a getter and a setter
-/// 4) add it to operator==
-/// 5) add it to the private data
-/// 6) add it to HBondOptions::show
+/// 3) add it to the operator=
+/// 4) add it to the parse_my_tag
+/// 5) add a getter and a setter
+/// 6) add it to operator==
+/// 7) add it to the private data
+/// 8) add it to HBondOptions::show
 
 
 #ifndef INCLUDED_core_scoring_hbonds_HBondOptions_HH
@@ -31,6 +33,7 @@
 #include <core/types.hh>
 
 // Utility headers
+#include <utility/tag/Tag.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ headers
@@ -55,6 +58,13 @@ public:
 	/// copy operator
 	HBondOptions const &
 	operator=( HBondOptions const & src );
+
+	///@brief set hbond options from key value options in a Tag
+	///structure, e.g. from a block in the SCOREFXNS section of a
+	///RosettaScripts file.
+	void
+	parse_my_tag(
+		utility::tag::TagPtr tag);
 
 	/// @brief Double counted hbonds include:
 	/// @brief  - Hydrogen bonds to self
@@ -155,7 +165,7 @@ public:
 	void use_sp2_chi_penalty( bool setting );
 
 	/// @brief Parameter for the sp2 potential that dictates how much worse a head-on hydrogen bond is
-	/// relative to one at a BAH angle of 120 degrees.  Controlled by the command-line flag 
+	/// relative to one at a BAH angle of 120 degrees.  Controlled by the command-line flag
 	/// -corrections:score:hb_sp2_BAH180_rise.  Default of 0.75.
 	Real sp2_BAH180_rise() const;
 	void sp2_BAH180_rise( Real setting );

@@ -90,7 +90,7 @@ void ScoreFunctionLoader::load_data(
 			// Set energy method options:
 			if( mod_tag->getName() == "Set" ){
 				core::scoring::methods::EnergyMethodOptions emoptions( in_scorefxn->energy_method_options() );
-				core::scoring::hbonds::HBondOptionsOP hboptions( emoptions.hbond_options() );
+				emoptions.hbond_options().parse_my_tag(mod_tag);
 
 				if( mod_tag->hasOption( "softrep_etable" )) {
 					if ( mod_tag->getOption<bool>( "softrep_etable" )) {
@@ -117,21 +117,7 @@ void ScoreFunctionLoader::load_data(
 				if( mod_tag->hasOption( "exclude_DNA_DNA" )) {
 					emoptions.exclude_DNA_DNA( mod_tag->getOption<bool>( "exclude_DNA_DNA" ) );
 				}
-				if( mod_tag->hasOption( "exclude_DNA_DNA_hbond" )) {
-					hboptions->exclude_DNA_DNA( mod_tag->getOption<bool>( "exclude_DNA_DNA_hbond" ) );
-				}
-				if( mod_tag->hasOption( "use_hb_env_dep_DNA" )) {
-					hboptions->use_hb_env_dep_DNA( mod_tag->getOption<bool>( "use_hb_env_dep_DNA" ) );
-				}
-				if( mod_tag->hasOption( "use_hb_env_dep" )) {
-					hboptions->use_hb_env_dep( mod_tag->getOption<bool>( "use_hb_env_dep" ) );
-				}
-				if( mod_tag->hasOption( "smooth_hb_env_dep" )) {
-					hboptions->smooth_hb_env_dep( mod_tag->getOption<bool>( "smooth_hb_env_dep" ) );
-				}
-				if( mod_tag->hasOption( "decompose_bb_hb_into_pair_energies" )) {
-					hboptions->decompose_bb_hb_into_pair_energies( mod_tag->getOption<bool>( "decompose_bb_hb_into_pair_energies" ) );
-				}
+
 				if( mod_tag->hasOption( "pb_bound_tag" )) {
 					emoptions.pb_bound_tag( mod_tag->getOption<std::string>("pb_bound_tag" ) );
 					TR << "User defined bound tag: " << emoptions.pb_bound_tag() << std::endl;
