@@ -12,7 +12,7 @@
 ## @brief  Build Python buidings for mini
 ## @author Sergey Lyskov
 
-import os, re, sys, time, commands, shutil, platform, os.path, itertools, gc, json
+import os, re, sys, time, commands, shutil, platform, os.path, itertools, gc, json, types
 import subprocess #, errno
 
 # Create global 'Platform' that will hold info of current system
@@ -43,9 +43,9 @@ from optparse import OptionParser, IndentedHelpFormatter
 class NT:  # named tuple
     def __init__(self, **entries): self.__dict__.update(entries)
     def __repr__(self):
-        r = '|'
+        r = 'NT: |'
         for i in dir(self):
-            if not i.startswith('__'): r += '%s --> %s, ' % (i, getattr(self, i))
+            if not i.startswith('__') and not isinstance(getattr(self, i), types.MethodType): r += '%s --> %s, ' % (i, getattr(self, i))
         return r[:-2]+'|'
 
 

@@ -22,6 +22,8 @@
 ///Project headers
 #include <core/pose/Pose.hh>
 
+#include <protocols/moves/Mover.hh>
+
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 #include <sstream>
@@ -33,11 +35,11 @@ protocols::jd2::Parser::~Parser(){}
 
 ///@details the impetus for this function is that Parser is a friend of the InnerJob class and can modify the pose - actual mover generation/pose updating is handled by derived classes.
 void
-protocols::jd2::Parser::generate_mover_from_job( JobOP job, protocols::moves::MoverOP & mover, bool new_input ){
+protocols::jd2::Parser::generate_mover_from_job( JobOP job, protocols::moves::MoverOP mover, bool new_input ){
 
 	//unpackage job
 	core::pose::Pose pose( *(job->get_pose()) );
-    
+
     std::stringstream err_msg;
     err_msg
 			<< "Attempting to initiate job distribution for "
@@ -45,9 +47,9 @@ protocols::jd2::Parser::generate_mover_from_job( JobOP job, protocols::moves::Mo
 			<< "but the generated pose has no residues."
 			<< "make sure you specified a valid input PDB, silent file "
 			<< "or database.";
-            
+
     runtime_assert_string_msg( pose.total_residue() > 0, err_msg.str() );
-    
+
 	//returns true if there was a pose change (NOT if the mover changed)
 	if ( generate_mover_from_pose( job, pose, mover, new_input, ""/*xml_fname, this means go to options system*/ ) ){
 		//repackage pose into job

@@ -49,7 +49,7 @@ public:
 	///@param [in/out] mover this is a mover; the function can choose to overwrite the input with a new mover
 	///@param [in] bool new_input true if this is different input (a different pose) from the last job distributor cycle
 	void
-	generate_mover_from_job( JobOP job, MoverOP & mover, bool new_input );
+	generate_mover_from_job( JobOP job, MoverOP mover, bool new_input );
 
 	///@brief generate_mover_from_pose is overloaded by derived classes to parse as desired.  The pose is passed by nonconst reference - the function is thus allowed to modify this pose (preferably not at all, but by adding constraints if necessary).  This pose will stay modified for jobs starting off that pose.  The function is expected to use its return bool to signal whether the pose has changed or not (and thus whether it needs to be repackaged back into the InnerJob).  This function should return IMMEDIATELY with false if it chooses not to modify the mover or pose.
 	///@param [in] JobOP job this is the job we're working on (contains the input pose's name)
@@ -59,7 +59,7 @@ public:
 	///@param [out] bool the return value states whether or not the pose has been changed - it will be repackaged into the InnerJob only as necessary
 	virtual
 	bool
-	generate_mover_from_pose( JobCOP job, Pose & pose, MoverOP & mover, bool new_input, std::string const xml_file ) = 0;
+	generate_mover_from_pose( JobCOP job, Pose pose, MoverOP mover, bool new_input, std::string const xml_file ) = 0;
 
 }; // Parser
 
