@@ -23,10 +23,14 @@
 	#include <boost/foreach.hpp>
 	#include <protocols/fldsgn/topology/SS_Info2.hh>
 	#include <core/scoring/dssp/Dssp.hh>
+	#include <protocols/sic_dock/xyzStripeHashPose.hh>
+	#include <boost/foreach.hpp>
 
 namespace protocols {
 namespace sic_dock {
 namespace scores {
+
+#define MAX_MOTIF_D2 49.0
 
 static basic::Tracer TR( "protocols.sic_dock.scores.MotifHashRigidScore" );
 
@@ -56,10 +60,12 @@ MotifHashRigidScore::MotifHashRigidScore(
 	Pose const & _pose1,
 	Pose const & _pose2
 ):
-	pose1_(_pose1),pose2_(_pose2),mh_(NULL),xs_(NULL),xsee_(NULL),xseh_(NULL),xshe_(NULL),xshh_(NULL),xspp_(NULL),nss1_(0),nss2_(0),ssinfo1_(NULL),ssinfo2_(NULL)
+	pose1_(_pose1),pose2_(_pose2),mh_(NULL),xs_(NULL),xsee_(NULL),xseh_(NULL),xshe_(NULL),xshh_(NULL),xspp_(NULL),nss1_(0),nss2_(0),ssinfo1_(NULL),ssinfo2_(NULL),reshash_(NULL)
 {
 	core::scoring::dssp::Dssp(pose1_).insert_ss_into_pose_no_IG_helix(pose1_);
 	core::scoring::dssp::Dssp(pose2_).insert_ss_into_pose_no_IG_helix(pose2_);
+	ss1_ = pose1_.secstruct();
+	ss2_ = pose1_.secstruct();
 	xs_   = protocols::motif_hash::MotifHashManager::get_instance()->xform_score_from_cli();
 	xshh_ = protocols::motif_hash::MotifHashManager::get_instance()->xform_score_hh_from_cli();
 	xseh_ = protocols::motif_hash::MotifHashManager::get_instance()->xform_score_eh_from_cli();
@@ -81,6 +87,14 @@ MotifHashRigidScore::MotifHashRigidScore(
 		Vec  C = pose2_.residue(ir).xyz(3);
 		bbx2_.push_back(Xform(CA,N,CA,C));
 	}
+	hash_pose1_ = pose1_.n_residue() >= pose2_.n_residue();
+	Pose const & hashpose(hash_pose1_?pose1_:pose2_);
+	Pose const & listpose(hash_pose1_?pose2_:pose1_);
+	reshash_ = new xyzStripeHashPose(hashpose,CBorCA,sqrt(MAX_MOTIF_D2));
+	for(int ir = 1; ir <= (int)listpose.n_residue(); ++ir){
+		if     (listpose.residue(ir).has("CB")) reslist_.push_back(std::make_pair(listpose.residue(ir).xyz("CB"),ir));
+		else if(listpose.residue(ir).has("CA")) reslist_.push_back(std::make_pair(listpose.residue(ir).xyz("CA"),ir));
+	}
 	// cout << pose1_.secstruct() << endl;
 	// cout << pose2_.secstruct() << endl;
 	// ssinfo1_ = new protocols::fldsgn::topology::SS_Info2(pose1_,pose1_.secstruct());
@@ -101,66 +115,79 @@ MotifHashRigidScore::MotifHashRigidScore(
 MotifHashRigidScore::~MotifHashRigidScore(){
 	if(ssinfo1_) delete ssinfo1_;
 	if(ssinfo2_) delete ssinfo2_;
+	if(reshash_) delete reshash_;
 }
 
+
+protocols::motif_hash::Real6
+get_rt6(Xform const & x){
+	Vec e = x.euler_angles_deg();
+	protocols::motif_hash::Real6 rt6;
+	rt6[1] = x.t.x(); rt6[2] = x.t.y(); rt6[3] = x.t.z();
+	rt6[4] =   e.x(); rt6[5] =   e.y(); rt6[6] =   e.z();
+	return rt6;
+}
 
 core::Real
 MotifHashRigidScore::score_meta( Xforms const & x1s, Xforms const & x2s, int & nsheet, Real & rawscore, Real & sselem_score, Real & coverage, Real & res_score, Real & sheetsc, int &nres, int &Nhh, int &Nee, int &Neh, int &Nh, int &Ne, int &Nl ) const {
 	using namespace protocols::motif_hash;
-	// utility::vector1<Real> sselemsc1(nss1_,0.0),sselemsc2(nss2_,0.0);
-	Real tot_weighted=0.0, totscore=0.0;
+
+	Real tot_weighted=0.0;
 	std::map<Size,Real> ssp1,ssp2,mres1,mres2;
 	std::set<Size> tres1,tres2;
 	Nhh=0; Neh=0; Nee=0; nres=0;
 	BOOST_FOREACH(Xform const & x1,x1s){
 		BOOST_FOREACH(Xform const & x2,x2s){
-			for(Size ir = 1; ir <= bbx1_.size(); ++ir){
-				char ss1 = pose1_.secstruct(ir);
+			utility::vector1<intint> pairs;
+			pairs.reserve(64);
+			Xform xHtoL = hash_pose1_? ~x1 * x2 : ~x2 * x1 ;
+			BOOST_FOREACH(VecIR const & vi,reslist_) reshash_->fill_pairs(xHtoL*vi.first,vi.second,pairs);
+
+			if(option[mh::score::min_contact_pairs]() > pairs.size()) continue;
+			if(option[mh::score::max_contact_pairs]() < pairs.size()) continue;
+
+			BOOST_FOREACH(intint const & p,pairs){
+				Size const & ir(hash_pose1_?p.second:p.first );
+				Size const & jr(hash_pose1_?p.first :p.second);
 				Xform const xb1 = x1 * bbx1_[ir];
-				for(Size jr = 1; jr <= bbx2_.size(); ++jr){
-					Xform const xb2 = x2 * bbx2_[jr];
-					Xform x = ~xb1 * xb2;
-					if(x.t.length_squared() > 100.0 ) continue;
-					if( x.t.length_squared() < 64.0 ){ tres1.insert(ir); tres2.insert(jr); }
-					char ss2 = pose2_.secstruct(jr);
-					protocols::motif_hash::XformScoreCAP xscore_for_this_ss = xs_;
-					if(option[mh::score::noloops]() && ss1=='L') continue;
-					if(option[mh::score::noloops]() && ss2=='L') continue;
-					if(ss1=='H'&&ss2=='H') xscore_for_this_ss = xshh_;
-					if(ss1=='E'&&ss2=='H') xscore_for_this_ss = xseh_;
-					if(ss1=='H'&&ss2=='E') xscore_for_this_ss = xshe_;
-					if(ss1=='E'&&ss2=='E') xscore_for_this_ss = xsee_;
-					if(x.t.length_squared() <  49.0 ) tot_weighted -= 1.0;
-					Vec e = x.euler_angles_deg();
-					Real6 rt6;
-					rt6[1] = x.t.x(); rt6[2] = x.t.y(); rt6[3] = x.t.z();
-					rt6[4] =   e.x(); rt6[5] =   e.y(); rt6[6] =   e.z();
-					Real raw = min(500.0,xscore_for_this_ss->score_of_bin(rt6));
-					if(raw <= 0) continue;
-					totscore += raw;
-					tot_weighted += sqrt( raw );
-					// sselemsc1[ssinfo1_->ss_element_id(ir)] += sqrt(raw)+raw/30.0;
-					// sselemsc2[ssinfo2_->ss_element_id(jr)] += sqrt(raw)+raw/30.0;//!!!!!!!!!!!!!!!!!!!!!!!!
-					if( x.t.length_squared() <  64.0 ){
-						if(mres1.find(ir)==mres1.end()) mres1[ir]=0; mres1[ir] += raw;
-						if(mres2.find(jr)==mres2.end()) mres2[jr]=0; mres2[jr] += raw;
+				Xform const xb2 = x2 * bbx2_[jr];
+				Xform const x = ~xb1 * xb2;
+				tres1.insert(ir);
+				tres2.insert(jr);
+				protocols::motif_hash::XformScoreCAP xscore_for_this_ss = xs_;
+				if(option[mh::score::noloops]() && ss1_[ir-1]=='L') continue;
+				if(option[mh::score::noloops]() && ss2_[jr-1]=='L') continue;
+				if(ss1_[ir-1]=='H'&&ss2_[jr-1]=='H') xscore_for_this_ss = xshh_;
+				if(ss1_[ir-1]=='E'&&ss2_[jr-1]=='H') xscore_for_this_ss = xseh_;
+				if(ss1_[ir-1]=='H'&&ss2_[jr-1]=='E') xscore_for_this_ss = xshe_;
+				if(ss1_[ir-1]=='E'&&ss2_[jr-1]=='E') xscore_for_this_ss = xsee_;
+				if(x.t.length_squared() <  49.0 ) tot_weighted -= 1.0;
+				Real6 rt6 = get_rt6(x);
+				Real raw = min(500.0,xscore_for_this_ss->score_of_bin(rt6));
+				if(raw <= 0) continue;
+				tot_weighted += sqrt( raw );
+				// sselemsc1[ssinfo1_->ss_element_id(ir)] += sqrt(raw)+raw/30.0;
+				// sselemsc2[ssinfo2_->ss_element_id(jr)] += sqrt(raw)+raw/30.0;//!!!!!!!!!!!!!!!!!!!!!!!!
+				// if( x.t.length_squared() <  64.0 ){
+					if(mres1.find(ir)==mres1.end()) mres1[ir]=0; mres1[ir] += raw;
+					if(mres2.find(jr)==mres2.end()) mres2[jr]=0; mres2[jr] += raw;
+				// }
+
+				if( xspp_ && pose1_.secstruct(ir)=='E' && pose2_.secstruct(jr)=='E' ){
+					Real ss = xspp_->score_of_bin(rt6);
+					if(ss>100.0){
+						if(ssp1.find(ir)==ssp1.end()) ssp1[ir]=0; ssp1[ir] += ss;
+						if(ssp2.find(jr)==ssp2.end()) ssp2[jr]=0; ssp2[jr] += ss;
 					}
-					if( xspp_ && pose1_.secstruct(ir)=='E' && pose2_.secstruct(jr)=='E' ){
-						Real ss = xspp_->score_of_bin(rt6);
-						if(ss>100.0){
-							if(ssp1.find(ir)==ssp1.end()) ssp1[ir]=0; ssp1[ir] += ss;
-							if(ssp2.find(jr)==ssp2.end()) ssp2[jr]=0; ssp2[jr] += ss;
-						}
-					}
-					if(ss1=='H'&&ss2=='H') ++Nhh;
-					if(ss1=='E'&&ss2=='H') ++Neh;
-					if(ss1=='H'&&ss2=='E') ++Neh;
-					if(ss1=='E'&&ss2=='E') ++Nee;
 				}
+
+				if(ss1_[ir-1]=='H'&&ss2_[jr-1]=='H') ++Nhh;
+				if(ss1_[ir-1]=='E'&&ss2_[jr-1]=='H') ++Neh;
+				if(ss1_[ir-1]=='H'&&ss2_[jr-1]=='E') ++Neh;
+				if(ss1_[ir-1]=='E'&&ss2_[jr-1]=='E') ++Nee;
 			}
 		}
 	}
-
 	Real ssscore = 0;
 	// BOOST_FOREACH(Real s,sselemsc1) ssscore += sqrt(s) + s/15.0;
 	// BOOST_FOREACH(Real s,sselemsc2) ssscore += sqrt(s) + s/15.0;

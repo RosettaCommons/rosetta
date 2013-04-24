@@ -1015,7 +1015,6 @@ struct TCDock {
 			// Real const approx_surf = std::pow((Real)cmp1olig_.n_residue(),0.666666) * std::pow((Real)cmp2olig_.n_residue(),0.666666);
 			// Real const hackcut = approx_surf/25.0 * option[tcdock::hash_speed_filter_hack]();
 			// cout << "MotifHashRigidScore / JointScore Speed filter hack scorecut: " << hackcut << endl;
-			jtscore->set_filter_hack( option[tcdock::hash_speed_filter_hack]() );
 		}
 		if(option[tcdock::max_linker_len]() > 0){
 			string lnscore_tag = cmp1name_+"_"+cmp2name_+arch().name()+"_";

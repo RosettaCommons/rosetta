@@ -1,6 +1,3 @@
-namespace optE { FileOptionKey const constant_logic_taskops_file( "optE:constant_logic_taskops_file" );  }
-namespace optE { BooleanOptionKey const optE_soft_rep( "optE:optE_soft_rep" );  }
-namespace optE { BooleanOptionKey const no_hb_env_dependence( "optE:no_hb_env_dependence" );  }
 namespace optE { BooleanOptionKey const no_hb_env_dependence_DNA( "optE:no_hb_env_dependence_DNA" );  }
 namespace optE { BooleanOptionKey const optE_no_protein_hack_elec( "optE:optE_no_protein_hack_elec" );  }
 namespace optE { BooleanOptionKey const design_first( "optE:design_first" );  }
@@ -618,6 +615,8 @@ namespace mh { namespace score { BooleanOptionKey const noloops( "mh:score:noloo
 namespace mh { namespace score { BooleanOptionKey const spread_ss_element( "mh:score:spread_ss_element" );  } }
 namespace mh { namespace score { RealOptionKey const min_cover_fraction( "mh:score:min_cover_fraction" );  } }
 namespace mh { namespace score { RealOptionKey const strand_pair_weight( "mh:score:strand_pair_weight" );  } }
+namespace mh { namespace score { RealOptionKey const min_contact_pairs( "mh:score:min_contact_pairs" );  } }
+namespace mh { namespace score { RealOptionKey const max_contact_pairs( "mh:score:max_contact_pairs" );  } }
 namespace mh { namespace filter { BooleanOptionKey const filter( "mh:filter" );  } }
 namespace mh { namespace filter { BooleanOptionKey const filter_harvest( "mh:filter:filter_harvest" );  } }
 namespace mh { namespace filter { BooleanOptionKey const filter_io( "mh:filter:filter_io" );  } }

@@ -60,6 +60,8 @@ namespace mh { namespace score { extern BooleanOptionKey const noloops; } }
 namespace mh { namespace score { extern BooleanOptionKey const spread_ss_element; } }
 namespace mh { namespace score { extern RealOptionKey const min_cover_fraction; } }
 namespace mh { namespace score { extern RealOptionKey const strand_pair_weight; } }
+namespace mh { namespace score { extern RealOptionKey const min_contact_pairs; } }
+namespace mh { namespace score { extern RealOptionKey const max_contact_pairs; } }
 namespace mh { namespace filter { extern BooleanOptionKey const filter; } }
 namespace mh { namespace filter { extern BooleanOptionKey const filter_harvest; } }
 namespace mh { namespace filter { extern BooleanOptionKey const filter_io; } }

@@ -5199,6 +5199,8 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 			Option('spread_ss_element'        ,'Boolean'         , desc="ignore loop ss in scored structs"                                                  , default=   'true'             ),
 			Option('min_cover_fraction'       ,'Real'            , desc="ignore loop ss in scored structs"                                                  , default=   '0.0'             ),
 			Option('strand_pair_weight'       ,'Real'            , desc="ignore loop ss in scored structs"                                                  , default=   '1.0'             ),
+			Option('min_contact_pairs'        ,'Real'            , desc="ignore loop ss in scored structs"                                                  , default=   '0.0'             ),
+			Option('max_contact_pairs'        ,'Real'            , desc="ignore loop ss in scored structs"                                                  , default=   '9e9'             ),
 		),
 		Option_Group('filter',
 			Option('filter_harvest'           ,'Boolean'         , desc="filter while harvesting"                                                           , default=   'true'             ),

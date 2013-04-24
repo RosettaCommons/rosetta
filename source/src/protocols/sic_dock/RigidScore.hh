@@ -190,11 +190,10 @@ public:
 		Reals weights
 	);
 	void add_score(RigidScoreCOP score, Real weight);
-        void set_filter_hack(Real minscore, Real maxscore=9e9){ minscore_hack_ = minscore; maxscore_hack_ = maxscore; }
 
 	virtual ~JointScore(){}
 	std::string type() const { return "JointScore"; }
-	void show(std::ostream & out                                    , int width=10) const;
+	void show(std::ostream & out                                      , int width=10) const;
 	void show(std::ostream & out, Xforms const & x1, Xforms const & x2, int width=10) const;
 	core::Real score( Xforms const & x1, Xforms const & x2 ) const;
 private:

@@ -1,5 +1,3 @@
-namespace james { IntegerOptionKey const min_seqsep( "james:min_seqsep" );  }
-namespace james { StringVectorOptionKey const atom_names( "james:atom_names" );  }
 namespace james { RealVectorOptionKey const dist_thresholds( "james:dist_thresholds" );  }
 namespace james { RealVectorOptionKey const torsion_thresholds( "james:torsion_thresholds" );  }
 namespace james { RealOptionKey const sog_cutoff( "james:sog_cutoff" );  }
@@ -695,3 +693,6 @@ namespace optE { StringVectorOptionKey const fix( "optE:fix" );  }
 namespace optE { FileOptionKey const free( "optE:free" );  }
 namespace optE { FileOptionKey const fixed( "optE:fixed" );  }
 namespace optE { FileOptionKey const parse_tagfile( "optE:parse_tagfile" );  }
+namespace optE { FileOptionKey const constant_logic_taskops_file( "optE:constant_logic_taskops_file" );  }
+namespace optE { BooleanOptionKey const optE_soft_rep( "optE:optE_soft_rep" );  }
+namespace optE { BooleanOptionKey const no_hb_env_dependence( "optE:no_hb_env_dependence" );  }

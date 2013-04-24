@@ -417,7 +417,7 @@ JointScore::score(
 	for(Scores::const_iterator s = scores_.begin(); s != scores_.end(); ++s,++w){
 		if( fabs(*w) == 0 ) continue;
 		score += (*s)->score(x1,x2) * (*w);
-		if(score < minscore_hack_ || score > maxscore_hack_ ) break;
+		// if(score < minscore_hack_ || score > maxscore_hack_ ) break;
 	}
 	return score;
 }

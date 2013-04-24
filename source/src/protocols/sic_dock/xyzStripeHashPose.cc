@@ -89,6 +89,9 @@ namespace sic_dock {
 				if(r.has("CA")) amap[AtomID(p.residue(ir).atom_index("CA"),ir)] = 1.0;
 			} else if(CB==m) {
 				if(r.has("CB")) amap[AtomID(p.residue(ir).atom_index("CB"),ir)] = 1.0;
+			} else if(CBorCA==m) {
+				if(     r.has("CB")) amap[AtomID(p.residue(ir).atom_index("CB"),ir)] = 1.0;
+				else if(r.has("CA")) amap[AtomID(p.residue(ir).atom_index("CA"),ir)] = 1.0;
 			} else if(NBR==m) {
 				               amap[AtomID(r.nbr_atom()                   ,ir)] = 1.0;
 			} else if(BB==m) {

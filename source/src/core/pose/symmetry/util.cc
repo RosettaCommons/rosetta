@@ -133,7 +133,7 @@ make_symmetric_pose(
 
 	assert( is_symmetric( pose ) );
 
-	if (option[ OptionKeys::symmetry::detect_bonds ]){
+	if (basic::options::option[ basic::options::OptionKeys::symmetry::detect_bonds ]){
 		pose.conformation().detect_bonds();
 	}
 

@@ -24,6 +24,7 @@ enum PoseCoordPickMode {
 	NBR,
 	CA,
 	CB,
+	CBorCA,
 	BB,
 	NCAC,
 	NCO,

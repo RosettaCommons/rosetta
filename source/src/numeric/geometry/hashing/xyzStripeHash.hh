@@ -98,6 +98,13 @@ public:
 	bool
 	clash_raw( Vec const & v ) const;
 
+	void fill_pairs(
+		Vec const & v,
+		int const & ir,
+		utility::vector1<std::pair<int,int> > & pairs,
+		float maxd2=0.0
+	) const;
+
 	template<typename V>
 	void
 	visit( Vec const & v_in, V & visitor ) const {

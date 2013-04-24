@@ -54,9 +54,9 @@ namespace hashing {
 			zmx = numeric::max(zmx,balls[i].z());
 		}
 
-		xdim_ = (int)((xmx-xmn+0.0001)/grid_size_+0.999999);
-		ydim_ = (int)((ymx-ymn+0.0001)/grid_size_+0.999999);
-		zdim_ = (int)((zmx-zmn+0.0001)/grid_size_+0.999999);
+		xdim_ = static_cast<int>((xmx-xmn+0.0001)/grid_size_+0.999999);
+		ydim_ = static_cast<int>((ymx-ymn+0.0001)/grid_size_+0.999999);
+		zdim_ = static_cast<int>((zmx-zmn+0.0001)/grid_size_+0.999999);
 		assert(xdim_ < 9999); assert(ydim_ < 9999); assert(zdim_ < 9999);
 		int const gsize = xdim_*ydim_*zdim_;
 		ushort2 *gindex  = new ushort2[gsize];
@@ -65,9 +65,9 @@ namespace hashing {
 		//TR<<"atom "<<natom_<<" grid1 "<<xdim_*ydim_*zdim_<<" "<<xdim_<<" "<<ydim_<<" "<<zdim_<<std::endl;
 
 		for(int i = 1; i <= natom_; ++i) {
-			int ix = (int)((balls[i].x()-xmn/*+FUDGE*/)/grid_size_);
-			int iy = (int)((balls[i].y()-ymn/*+FUDGE*/)/grid_size_);
-			int iz = (int)((balls[i].z()-zmn/*+FUDGE*/)/grid_size_);
+			int ix = static_cast<int>((balls[i].x()-xmn/*+FUDGE*/)/grid_size_);
+			int iy = static_cast<int>((balls[i].y()-ymn/*+FUDGE*/)/grid_size_);
+			int iz = static_cast<int>((balls[i].z()-zmn/*+FUDGE*/)/grid_size_);
 			assert(ix >= 0); assert(iy >= 0); assert(iz >= 0); assert(ix < xdim_); assert(iy < ydim_); assert(iz < zdim_);
 			int ig = ix+xdim_*iy+xdim_*ydim_*iz;
 			assert(ig>=0);assert(ig<9999999);
@@ -92,9 +92,9 @@ namespace hashing {
 		ushort *gridc = new ushort[gsize];
 		for(int i = 0; i < gsize; ++i) gridc[i] = 0;
 		for(int i = 1; i <= natom_; ++i) {
-			int const ix = (int)((balls[i].x()-xmn/*+FUDGE*/)/grid_size_);
-			int const iy = (int)((balls[i].y()-ymn/*+FUDGE*/)/grid_size_);
-			int const iz = (int)((balls[i].z()-zmn/*+FUDGE*/)/grid_size_);
+			int const ix = static_cast<int>((balls[i].x()-xmn/*+FUDGE*/)/grid_size_);
+			int const iy = static_cast<int>((balls[i].y()-ymn/*+FUDGE*/)/grid_size_);
+			int const iz = static_cast<int>((balls[i].z()-zmn/*+FUDGE*/)/grid_size_);
 			int const ig = ix+xdim_*iy+xdim_*ydim_*iz;
 			int const idx = gindex[ig].x + gridc[ig];
 			gatom[ idx ].x() = balls[i].x()-xmn/*+FUDGE*/;
@@ -157,13 +157,13 @@ namespace hashing {
 		if( x < -grid_size_ || y < -grid_size_ || z < -grid_size_ ) return 0; // worth it iff
 		if( x > xmx_ || y > ymx_ || z > zmx_ ) return 0;                      // worth it iff
 		int count = 0;
-		int const ix   = (x<0) ? 0 : numeric::min(xdim_-1,(int)(x/grid_size_));
-		int const iy0  = (y<0) ? 0 : y/grid_size_;
-		int const iz0  = (z<0) ? 0 : z/grid_size_;
+		int const ix   = (x<0) ? 0 : numeric::min(xdim_-1,static_cast<int>(x/grid_size_));
+		int const iy0  = (y<0) ? 0 : static_cast<int>(y/grid_size_);
+		int const iz0  = (z<0) ? 0 : static_cast<int>(z/grid_size_);
 		int const iyl = numeric::max(0,iy0-1);
 		int const izl = numeric::max(0,iz0-1);
-		int const iyu = numeric::min((int)ydim_,iy0+2);
-		int const izu = numeric::min((int)zdim_,(int)iz0+2);
+		int const iyu = numeric::min(static_cast<int>(ydim_),iy0+2);
+		int const izu = numeric::min(static_cast<int>(zdim_),static_cast<int>(iz0)+2);
 		for(int iy = iyl; iy < iyu; ++iy) {
 			for(int iz = izl; iz < izu; ++iz) {
 				int const ig = ix+xdim_*iy+xdim_*ydim_*iz;
@@ -225,13 +225,13 @@ namespace hashing {
 		float x = v.x(); float y = v.y(); float z = v.z();
 		if( x < -grid_size_ || y < -grid_size_ || z < -grid_size_ ) return false; // worth it iff
 		if( x > xmx_        || y > ymx_        || z > zmx_        ) return false; // worth it iff
-		int const ix   = (x<0) ? 0 : numeric::min(xdim_-1,(int)(x/grid_size_));
-		int const iy0  = (y<0) ? 0 : (int)(y/grid_size_);
-		int const iz0  = (z<0) ? 0 : (int)(z/grid_size_);
+		int const ix   = (x<0) ? 0 : numeric::min(xdim_-1,static_cast<int>(x/grid_size_));
+		int const iy0  = (y<0) ? 0 : static_cast<int>(y/grid_size_);
+		int const iz0  = (z<0) ? 0 : static_cast<int>(z/grid_size_);
 		int const iyl = numeric::max(0,iy0-1);
 		int const izl = numeric::max(0,iz0-1);
-		int const iyu = numeric::min((int)ydim_,iy0+2);
-		int const izu = numeric::min((int)zdim_,(int)iz0+2);
+		int const iyu = numeric::min(static_cast<int>(ydim_),iy0+2);
+		int const izu = numeric::min(static_cast<int>(zdim_),static_cast<int>(iz0)+2);
 		for(int iy = iyl; iy < iyu; ++iy) {
 			for(int iz = izl; iz < izu; ++iz) {
 				int const ig = ix+xdim_*iy+xdim_*ydim_*iz;
@@ -259,13 +259,13 @@ namespace hashing {
 		float x = v.x(); float y = v.y(); float z = v.z();
 		if( x < -grid_size_ || y < -grid_size_ || z < -grid_size_ ) return false; // worth it iff
 		if( x > xmx_        || y > ymx_        || z > zmx_        ) return false; // worth it iff
-		int const ix   = (x<0) ? 0 : numeric::min(xdim_-1,(int)(x/grid_size_));
-		int const iy0  = (y<0) ? 0 : (int)(y/grid_size_);
-		int const iz0  = (z<0) ? 0 : (int)(z/grid_size_);
+		int const ix   = (x<0) ? 0 : numeric::min(xdim_-1,static_cast<int>(x/grid_size_));
+		int const iy0  = (y<0) ? 0 : static_cast<int>(y/grid_size_);
+		int const iz0  = (z<0) ? 0 : static_cast<int>(z/grid_size_);
 		int const iyl = numeric::max(0,iy0-1);
 		int const izl = numeric::max(0,iz0-1);
-		int const iyu = numeric::min((int)ydim_,iy0+2);
-		int const izu = numeric::min((int)zdim_,(int)iz0+2);
+		int const iyu = numeric::min(static_cast<int>(ydim_),iy0+2);
+		int const izu = numeric::min(static_cast<int>(zdim_),static_cast<int>(iz0)+2);
 		for(int iy = iyl; iy < iyu; ++iy) {
 			for(int iz = izl; iz < izu; ++iz) {
 				int const ig = ix+xdim_*iy+xdim_*ydim_*iz;
@@ -319,6 +319,46 @@ namespace hashing {
 		}
 		return false;
 	}
+
+	void
+	xyzStripeHash::fill_pairs(
+		Vec const & v_in,
+		int const & ir,
+		utility::vector1<std::pair<int,int> > & pairs,
+		float maxd2
+	) const {
+		if(0.0==maxd2) maxd2=grid_size2_;
+		Vec const v = v_in+translation_;
+		float x = v.x(); float y = v.y(); float z = v.z();
+		if( x < -grid_size_ || y < -grid_size_ || z < -grid_size_ ) return; // worth it iff
+		if( x > xmx_        || y > ymx_        || z > zmx_        ) return; // worth it iff
+		int const ix   = (x<0) ? 0 : numeric::min(xdim_-1,static_cast<int>(x/grid_size_));
+		int const iy0  = (y<0) ? 0 : static_cast<int>(y/grid_size_);
+		int const iz0  = (z<0) ? 0 : static_cast<int>(z/grid_size_);
+		int const iyl = numeric::max(0,iy0-1);
+		int const izl = numeric::max(0,iz0-1);
+		int const iyu = numeric::min(static_cast<int>(ydim_),iy0+2);
+		int const izu = numeric::min(static_cast<int>(zdim_),static_cast<int>(iz0)+2);
+		for(int iy = iyl; iy < iyu; ++iy) {
+			for(int iz = izl; iz < izu; ++iz) {
+				int const ig = ix+xdim_*iy+xdim_*ydim_*iz;
+				assert(ig < xdim_*ydim_*zdim_);
+				assert(ix < xdim_);
+				assert(iy < ydim_);
+				assert(iz < zdim_);
+				int const & igl = grid_stripe_[ig].x;
+				int const & igu = grid_stripe_[ig].y;
+				for(int i = igl; i < igu; ++i) {
+					Ball const a2 = grid_atoms_[i];
+					float const d2 = (x-a2.x())*(x-a2.x()) + (y-a2.y())*(y-a2.y()) + (z-a2.z())*(z-a2.z());
+					if( d2 <= maxd2 ) {
+						pairs.push_back(std::make_pair(ir,a2.resid_));
+					}
+				}
+			}
+		}
+	}
+
 
 
 

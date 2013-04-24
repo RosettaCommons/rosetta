@@ -94,10 +94,9 @@ OPT_1GRP_KEY( FileVector, sicdock, bench2 )
 	OPT_1GRP_KEY( Real, sicdock, redundancy_angle_cut )
 	OPT_1GRP_KEY( Real, sicdock, redundancy_dist_cut )
 	OPT_1GRP_KEY( Real, sicdock, motif_hash_weight )
-	OPT_1GRP_KEY( Real, sicdock, motif_hash_min_cbcount )
-	OPT_1GRP_KEY( Real, sicdock, motif_hash_max_cbcount )
 	OPT_1GRP_KEY( Real, sicdock, sample_thickness )
 	OPT_1GRP_KEY( Real, sicdock, min_score )
+	OPT_1GRP_KEY( Real, sicdock, min_contact_score_cut )
 	OPT_1GRP_KEY( Integer, sicdock, nscore )
 	OPT_1GRP_KEY( IntegerVector, sicdock, iori )
 	OPT_1GRP_KEY( Real, sicdock, trisbpy )
@@ -123,9 +122,8 @@ void register_options() {
 	NEW_OPT( sicdock::nscore, "",   100 );
 	NEW_OPT( sicdock::motif_hash_weight, "",  10.0 );
 	NEW_OPT( sicdock::sample_thickness, "",  0.0 );
-	NEW_OPT( sicdock::motif_hash_min_cbcount, "",  20.0 );
-	NEW_OPT( sicdock::motif_hash_max_cbcount, "",  9e9 );
 	NEW_OPT( sicdock::min_score, "",  200.0 );
+	NEW_OPT( sicdock::min_contact_score_cut, "",  20.0 );
 	NEW_OPT( sicdock::rotate_x_only, "",  false );
 	NEW_OPT( sicdock::no_recenter, "",  false );
 	NEW_OPT( sicdock::iori, "",  -1 );
@@ -232,7 +230,7 @@ dock(
 	protocols::sic_dock::scores::TrisBpyScoreCOP bpy3_sc_(NULL);
 	protocols::sic_dock::JointScoreOP rigidsfxn = new protocols::sic_dock::JointScore;
 	protocols::sic_dock::RigidScoreCOP cbscore_  = new protocols::sic_dock::CBScore(init_pose,init_pose,option[sicdock::clash_dis](),option[sicdock::contact_dis]());
-	rigidsfxn->add_score(cbscore_,1.0);
+	// rigidsfxn->add_score(cbscore_,1.0);
 
 	if(option[basic::options::OptionKeys::sicdock::trisbpy].user()){
 		bpy3_sc_ = new protocols::sic_dock::scores::TrisBpyScore(init_pose,option[sicdock::trisbpy](),option[sicdock::trisbpy_min_contacts]());
@@ -242,7 +240,6 @@ dock(
 	if(option[basic::options::OptionKeys::mh::xform_score_data].user()){
 		mhscore_ = new protocols::sic_dock::scores::MotifHashRigidScore(init_pose,init_pose);
 		rigidsfxn->add_score(mhscore_, option[sicdock::motif_hash_weight]() );
-		rigidsfxn->set_filter_hack( option[sicdock::motif_hash_min_cbcount](), option[sicdock::motif_hash_max_cbcount]() );
 	}
 
 	utility::vector1<Vec> init_ca;
@@ -264,11 +261,6 @@ dock(
 	Size totsamp = qgrid->num_samples();
 	Size outinterval = min((Size)100000,totsamp/10);
 
-	// Real const backoff_delta = qgrid->maxrad() / 180.0 * 3.14159 * protocols::sic_dock::get_rg(init_pose);
-	// cout << "backoff_delta " << backoff_delta << endl;
-	Real min_score = option[sicdock::min_score]();
-	if(option[sicdock::dihedral]()) min_score /= 2.0;
-
 	Size nsamp = 0, nsamp_motif=0, nsamp_slide=0;
 	#ifdef USE_OPENMP
 	#pragma omp parallel for schedule(dynamic,1)
@@ -281,7 +273,7 @@ dock(
 				#pragma omp critical
 			#endif
 			{
-				cout << F(5,1,(Real)iqg/(Real)totsamp*100.0) << "%" << ", nsamp: " << F(7,4,(Real)nsamp/1000000.0) << "M, Nsic: " << F(7,4,(Real)nsamp_slide/1000000.0) << "M, nmotif: " << F(7,3,(Real)nsamp_motif/1000.0) << "K";
+				cout << F(5,1,(Real)iqg/(Real)totsamp*100.0) << "%" << ", nsamp: " << F(7,4,(Real)nsamp/1000000.0) << "M, Nsic: " << F(7,4,(Real)nsamp_slide/1000000.0) << "M ";
 				if(hits.size()){ cout<<"   topscore: " <<F(8,2,tophit.rscore); rigidsfxn->show(cout,tophit.x1,tophit.x2); }
 				cout << endl;
 			}
@@ -301,7 +293,7 @@ dock(
 			++nsamp_slide;
 			x1.t.z() += t;
 
-			Real const backoff_delta = min(1.0,max(0.25,qgrid->maxrad() / 180.0 * 3.14159 * fabs(t/4.0)));
+			Real const backoff_delta = min(1.0,max(0.1547933,qgrid->maxrad() / 180.0 * 3.14159 * fabs(t/4.0)));
 			Size const nang = (Size)(360.0/syms[ic]/1.5/qgrid->maxrad()+1);
 			Real const ang_delta = 360.0/(Real)syms[ic]/(Real)nang;
 
@@ -317,11 +309,9 @@ dock(
 				h.x2 = h.x1 * ~x1 * x2;
 
 				Real rscore = ((protocols::sic_dock::RigidScoreOP)rigidsfxn)->score(h.x1,h.x2);
-				if(     rscore >= option[sicdock::motif_hash_min_cbcount]()    ) ++nsamp_motif;
-				else if(rscore <  option[sicdock::motif_hash_min_cbcount]()*0.666) break;
+				if( rscore < option[sicdock::min_contact_score_cut]() ) break;
+				if( rscore < option[sicdock::min_score            ]() ) continue;
 				h.rscore = rscore;
-
-				if( h.rscore < min_score ) continue;
 
 				if(!option[sicdock::dihedral]()){
 					#ifdef USE_OPENMP
@@ -356,7 +346,8 @@ dock(
 						x2s[1].t.z() -= backoff_delta/2.0; x2s[2].t.z() -= backoff_delta/2.0;
 
 						rscore = h0.rscore + rigidsfxn->score(x1s[1],x2s);
-						if(rscore-h0.rscore >= option[sicdock::motif_hash_min_cbcount]()) ++nsamp_motif;
+						if( rscore < 2.0*option[sicdock::min_contact_score_cut]() ) break;
+						if( rscore < 2.0*option[sicdock::min_score            ]() ) continue;
 
 						++nsamp;
 						h.rscore = rscore;
@@ -367,7 +358,7 @@ dock(
 						#ifdef USE_OPENMP
 							#pragma omp critical
 						#endif
-						if( h.rscore >= min_score ){
+						if( h.rscore >= option[sicdock::min_score]() ){
 							hits.push_back(h);
 							if(h.rscore>tophit.rscore) tophit = h;
 							// if(uniform() <= 0.001){
@@ -586,6 +577,7 @@ int main(int argc, char *argv[]) {
 
 		Pose pnat;
 		core::import_pose::pose_from_pdb(pnat,fn);
+		if(pnat.n_residue()>300){ cout << fn << " is too big" << endl; continue; }
 		core::scoring::dssp::Dssp dssp(pnat);
 		dssp.insert_ss_into_pose(pnat);
 

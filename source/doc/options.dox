@@ -10940,6 +10940,16 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>helical parameter: omega</dd><br>
 <dd>Default: 0.0</dd><br>
 </dl>
+<dl>
+<dt><b>-COM_sd</b> \<Real\><dt>
+<dd>center of mass coordinate constraint sd value</dd><br>
+<dd>Default: 1.0</dd><br>
+</dl>
+<dl>
+<dt><b>-COM_tolerance</b> \<Real\><dt>
+<dd>center of mass coordinate constraint tolerance value</dd><br>
+<dd>Default: 0.0</dd><br>
+</dl>
  </li>
 <li><h2>remodel:staged_sampling</h2>
 <dl>
@@ -11252,6 +11262,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-initialize_rigid_body_dofs</b> \<Boolean\><dt>
 <dd>Initialize the RB dofs from the symmetry definition file?</dd><br>
 <dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-detect_bonds</b> \<Boolean\><dt>
+<dd>allow new cross subunit bond formation</dd><br>
+<dd>Default: true</dd><br>
 </dl>
 <dl>
 <dt><b>-perturb_rigid_body_dofs</b> \<RealVector\><dt>
@@ -13168,6 +13183,16 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-strand_pair_weight</b> \<Real\><dt>
 <dd>ignore loop ss in scored structs</dd><br>
 <dd>Default: 1.0</dd><br>
+</dl>
+<dl>
+<dt><b>-min_contact_pairs</b> \<Real\><dt>
+<dd>ignore loop ss in scored structs</dd><br>
+<dd>Default: 0.0</dd><br>
+</dl>
+<dl>
+<dt><b>-max_contact_pairs</b> \<Real\><dt>
+<dd>ignore loop ss in scored structs</dd><br>
+<dd>Default: 9e9</dd><br>
 </dl>
  </li>
 <li><h2>mh:filter</h2>

@@ -1,4 +1,3 @@
-namespace jumps { FileOptionKey const pairing_file( "jumps:pairing_file" );  }
 namespace jumps { IntegerVectorOptionKey const random_sheets( "jumps:random_sheets" );  }
 namespace jumps { FileOptionKey const residue_pair_jump_file( "jumps:residue_pair_jump_file" );  }
 namespace jumps { IntegerVectorOptionKey const sheets( "jumps:sheets" );  }
@@ -695,3 +694,5 @@ namespace cmiles { namespace jumping { BooleanOptionKey const jumping( "cmiles:j
 namespace cmiles { namespace jumping { IntegerOptionKey const resi( "cmiles:jumping:resi" );  } }
 namespace cmiles { namespace jumping { IntegerOptionKey const resj( "cmiles:jumping:resj" );  } }
 namespace james { BooleanOptionKey const james( "james" );  }
+namespace james { IntegerOptionKey const min_seqsep( "james:min_seqsep" );  }
+namespace james { StringVectorOptionKey const atom_names( "james:atom_names" );  }

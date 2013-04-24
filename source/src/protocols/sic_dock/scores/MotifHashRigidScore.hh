@@ -34,6 +34,8 @@ using core::pose::Pose;
 
 class MotifHashRigidScore : public RigidScore {
 	typedef std::map<std::string,Real> Stats;
+	typedef std::pair<int,int> intint;
+	typedef std::pair<numeric::xyzVector<float>,int> VecIR;
  public:
 	MotifHashRigidScore(Pose const & pose1, Pose const & pose2);
 	virtual ~MotifHashRigidScore();
@@ -59,6 +61,10 @@ class MotifHashRigidScore : public RigidScore {
 	protocols::motif_hash::XformScoreCAP xs_, xsee_, xseh_, xshe_, xshh_, xspp_;
 	protocols::fldsgn::topology::SS_Info2 *ssinfo1_, *ssinfo2_;
 	core::Size nss1_,nss2_;
+	xyzStripeHashPose* reshash_;
+	utility::vector1< std::pair<numeric::xyzVector<float>,int> > reslist_;
+	bool hash_pose1_;
+	std::string ss1_,ss2_;
 };
 
 
