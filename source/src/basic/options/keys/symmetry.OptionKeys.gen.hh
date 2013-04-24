@@ -25,6 +25,7 @@ namespace symmetry { extern BooleanOptionKey const symmetry; }
 namespace symmetry { extern StringOptionKey const symmetry_definition; }
 namespace symmetry { extern RealOptionKey const reweight_symm_interactions; }
 namespace symmetry { extern BooleanOptionKey const initialize_rigid_body_dofs; }
+namespace symmetry { extern BooleanOptionKey const detect_bonds; }
 namespace symmetry { extern RealVectorOptionKey const perturb_rigid_body_dofs; }
 namespace symmetry { extern BooleanOptionKey const symmetric_rmsd; }
 

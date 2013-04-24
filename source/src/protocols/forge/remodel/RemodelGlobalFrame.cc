@@ -29,6 +29,7 @@
 #include <core/util/disulfide_util.hh>
 #include <core/conformation/util.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/symmetry/util.hh>
 #include <core/pose/Remarks.hh>
 #include <core/pose/util.hh> // for pdbinfo
 #include <core/id/AtomID.hh>
@@ -47,6 +48,7 @@
 #include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
 #include <core/pack/task/ResfileReader.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
+#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/constraints_additional/BindingSiteConstraint.hh>
 #include <protocols/constraints_additional/COMCoordinateConstraint.hh>
 
@@ -297,8 +299,25 @@ void RemodelGlobalFrame::align_segment( core::pose::Pose & pose ) {
 	using namespace std;
 	using namespace numeric;
 	using namespace basic::options;
+	using namespace core::pose::symmetry;
+	using namespace core::scoring::constraints;
+	using namespace protocols;
 
 TR.Debug << "align seg 1" << std::endl;
+
+
+	bool is_sym = false;
+	if ( is_symmetric( pose ) ){  // if symmetrical, has to extract monomer for the transformation
+		is_sym = true;
+		ConstraintSetOP pose_cst_set = new ConstraintSet( *pose.constraint_set() );
+		Pose junk_for_copy;
+		extract_asymmetric_unit( pose, junk_for_copy, false);
+		pose=junk_for_copy;
+		pose.constraint_set(pose_cst_set);
+		pose.pdb_info()->obsolete(true);
+	}
+
+
 
 	//Size numRes = pose.total_residue();  // unused ~Labonte
 
@@ -499,6 +518,14 @@ TR.Debug << "align seg 5" << std::endl;
 	}
 */
 
+		if (is_sym) { //re-symmetrize
+						ConstraintSetOP pose_cst_set = new ConstraintSet( *pose.constraint_set() );
+						simple_moves::symmetry::SetupForSymmetryMover pre_mover1;
+						pre_mover1.apply( pose );
+						pose.constraint_set(pose_cst_set);
+						pose.pdb_info()->obsolete(true);
+			}
+
 TR.Debug << "align seg 6" << std::endl;
 
 }
@@ -638,7 +665,7 @@ TR.Debug << "setup RGF cst 7" << std::endl;
 				//get_helical_params(pose);
 
 }
-/*
+
 void
 RemodelGlobalFrame::setup_CM_helical_constraint(Pose & pose){
 	using Eigen::MatrixXd;
@@ -665,49 +692,43 @@ TR.Debug << "setup RGF cst 1" << std::endl;
 				//duplicate the native_set and add the new ones to it.
 				input_pose_cst_set = new ConstraintSet(*native_cst_set);
 
-				xyzVector< Real > com1 = compute_center_of_mass( pose, 1, seg_size);
-				xyzVector< Real > com2 = compute_center_of_mass( pose, seg_size+1, 2*seg_size);
-				xyzVector< Real > com3 = compute_center_of_mass( pose, 2*seg_size+1, 3*seg_size);
-				xyzVector< Real > com4 = compute_center_of_mass( pose, 3*seg_size+1, 4*seg_size);
-				xyzVector< Real > com5 = compute_center_of_mass( pose, 4*seg_size+1, 5*seg_size);
-				xyzVector< Real > com6 = compute_center_of_mass( pose, 5*seg_size+1, 6*seg_size);
+				Size repeat_number = option[OptionKeys::remodel::repeat_structure];
 
-				MatrixXf COMs(3,6);
+				MatrixXf COMs( 3, repeat_number );
+
+				for (Size i = 0; i < repeat_number ; i++){
+				xyzVector< Real > com1 = compute_center_of_mass( pose, i*seg_size+1, (i+1)*seg_size);
+					COMs.col(i) << com1[0], com1[1], com1[2];
+				}
+
+/*
 				//3 x N, column is x, y and z
 				COMs << com1[0], com2[0], com3[0], com4[0], com5[0], com6[0],
 					      com1[1], com2[1], com3[1], com4[1], com5[1], com6[1],
 								com1[2], com2[2], com3[2], com4[2], com5[2], com6[2];
-
+*/
 				double t_rise =option[OptionKeys::remodel::helical_rise];
         double t_radius =option[OptionKeys::remodel::helical_radius];
 			  double t_omega =option[OptionKeys::remodel::helical_omega];
+			  double sd = option[OptionKeys::remodel::COM_sd];
+			  double tolerance = option[OptionKeys::remodel::COM_tolerance];
 
-				MatrixXf COM_target = ideal_COMs(t_rise , t_radius , t_omega, 6);
-				//get_RMSD(COMs,COM_target);
+				MatrixXf COM_target = ideal_COMs(t_rise , t_radius , t_omega, repeat_number);
 
 				Matrix3f H = rot_mat(COMs,COM_target);
 //				cout <<"CM Rotation matrix:\n"<<H<<endl<<endl;
-
-				//repackage COM_target
-
-				Vector idealCM_1( COM_target(0,0), COM_target(1,0), COM_target(2,0));
-				Vector idealCM_2( COM_target(0,1), COM_target(1,1), COM_target(2,1));
-				Vector idealCM_3( COM_target(0,2), COM_target(1,2), COM_target(2,2));
-				Vector idealCM_4( COM_target(0,3), COM_target(1,3), COM_target(2,3));
-				Vector idealCM_5( COM_target(0,4), COM_target(1,4), COM_target(2,4));
-				Vector idealCM_6( COM_target(0,5), COM_target(1,5), COM_target(2,5));
-
-
 
 				Vector3f c_COMs(COMs.row(0).mean(), COMs.row(1).mean(), COMs.row(2).mean());
 				Vector3f c_COM_target(COM_target.row(0).mean(), COM_target.row(1).mean(), COM_target.row(2).mean());
 				xyzVector< Real >  preT (c_COMs(0), c_COMs(1), c_COMs(2));   // preT
 				xyzVector< Real >  postT (c_COM_target(0), c_COM_target(1), c_COM_target(2));   // preT
 
+				using namespace core::pose::symmetry;
+				using namespace protocols;
 
 				// build residue list for transformation
 				std::list <core::Size> fullpose_residue_list;
-				for ( Size ires=1; ires<= pose.total_residue(); ++ires ) {
+				for ( Size ires=1; ires<= seg_size*repeat_number; ++ires ) {
 						if ( !pose.residue(ires).is_protein() ) continue;
 						fullpose_residue_list.push_back(ires);
 				}
@@ -718,6 +739,7 @@ TR.Debug << "setup RGF cst 1" << std::endl;
 
 				protocols::forge::methods::apply_transformation( pose, fullpose_residue_list, xyzFull , preT, postT );
 
+				/* debug
 				// re-assess the RMSD after transformation
 				com1 = compute_center_of_mass( pose, 1, seg_size);
 				com2 = compute_center_of_mass( pose, seg_size+1, 2*seg_size);
@@ -731,70 +753,33 @@ TR.Debug << "setup RGF cst 1" << std::endl;
 								com1[2], com2[2], com3[2], com4[2];
 
 				//get_RMSD( newCOMs, COM_target);
+				*/
 
-				//get coordinates for the moving target
-				utility::vector1< id::AtomID > ID_1s; //pull on first segment
-				utility::vector1< id::AtomID > ID_2s; //pull on second segment
-				utility::vector1< id::AtomID > ID_3s; //pull on second segment
-				utility::vector1< id::AtomID > ID_4s; //pull on second segment
-				utility::vector1< id::AtomID > ID_5s; //pull on second segment
-				utility::vector1< id::AtomID > ID_6s; //pull on second segment
-				for( Size ires = 1; ires <= seg_size; ++ires){
-					conformation::Residue const &rsd = pose.residue(ires);
-					for(Size atmno=1 ; atmno <= rsd.natoms(); ++atmno ){
-						//std::cout << ires << " " << atmno << std::endl;
-						ID_1s.push_back( id::AtomID(atmno, ires) );
-					}
-				}
-				for( Size ires = 1; ires <= seg_size; ++ires){
-					conformation::Residue const &rsd = pose.residue(ires+seg_size); // offset here
-					for(Size atmno=1 ; atmno <= rsd.natoms(); ++atmno ){
-						//std::cout << ires << " " << atmno << std::endl;
-						ID_2s.push_back( id::AtomID(atmno, ires+seg_size) ); //offset here
-					}
-				}
-				for( Size ires = 1; ires <= seg_size; ++ires){
-					conformation::Residue const &rsd = pose.residue(ires+2*seg_size); // offset here
-					for(Size atmno=1 ; atmno <= rsd.natoms(); ++atmno ){
-						//std::cout << ires << " " << atmno << std::endl;
-						ID_3s.push_back( id::AtomID(atmno, ires+2*seg_size) ); //offset here
-					}
-				}
-				for( Size ires = 1; ires <= seg_size; ++ires){
-					conformation::Residue const &rsd = pose.residue(ires+3*seg_size); // offset here
-					for(Size atmno=1 ; atmno <= rsd.natoms(); ++atmno ){
-						//std::cout << ires << " " << atmno << std::endl;
-						ID_4s.push_back( id::AtomID(atmno, ires+3*seg_size) ); //offset here
-					}
-				}
-				for( Size ires = 1; ires <= seg_size; ++ires){
-					conformation::Residue const &rsd = pose.residue(ires+4*seg_size); // offset here
-					for(Size atmno=1 ; atmno <= rsd.natoms(); ++atmno ){
-						//std::cout << ires << " " << atmno << std::endl;
-						ID_5s.push_back( id::AtomID(atmno, ires+4*seg_size) ); //offset here
-					}
-				}
-				for( Size ires = 1; ires <= seg_size; ++ires){
-					conformation::Residue const &rsd = pose.residue(ires+5*seg_size); // offset here
-					for(Size atmno=1 ; atmno <= rsd.natoms(); ++atmno ){
-						//std::cout << ires << " " << atmno << std::endl;
-						ID_6s.push_back( id::AtomID(atmno, ires+5*seg_size) ); //offset here
-					}
-				}
+				for (Size i = 0; i < repeat_number ; i++){
 
-				//constraint
-				input_pose_cst_set->add_constraint( new protocols::constraints_additional::COMCoordinateConstraint( ID_1s, idealCM_1 ));
-				input_pose_cst_set->add_constraint( new protocols::constraints_additional::COMCoordinateConstraint( ID_2s, idealCM_2 ));
-				input_pose_cst_set->add_constraint( new protocols::constraints_additional::COMCoordinateConstraint( ID_3s, idealCM_3 ));
-				input_pose_cst_set->add_constraint( new protocols::constraints_additional::COMCoordinateConstraint( ID_4s, idealCM_4 ));
-				input_pose_cst_set->add_constraint( new protocols::constraints_additional::COMCoordinateConstraint( ID_5s, idealCM_5 ));
-				input_pose_cst_set->add_constraint( new protocols::constraints_additional::COMCoordinateConstraint( ID_6s, idealCM_6 ));
+					//get coordinates for the moving target
+					utility::vector1< id::AtomID > ID_1s; //pull on first segment
+					for( Size ires = 1; ires <= seg_size; ++ires){
+						conformation::Residue const &rsd = pose.residue(ires + seg_size*i); // offset
+						for(Size atmno=1 ; atmno <= rsd.natoms(); ++atmno ){
+							//std::cout << ires << " " << atmno << std::endl;
+							ID_1s.push_back( id::AtomID(atmno, ires+ seg_size*i) ); // offset
+						}
+					}
+
+					// repackage
+					Vector idealCM_1( COM_target(0,i), COM_target(1,i), COM_target(2,i));
+
+					//constraint
+					input_pose_cst_set->add_constraint( new protocols::constraints_additional::COMCoordinateConstraint( ID_1s, idealCM_1, sd, tolerance ));
+				}
 
 				pose.constraint_set(input_pose_cst_set);
 
 
 }
-*/
+
+/*  CODE BASE FOR 4 COM superposition
 void
 RemodelGlobalFrame::setup_CM_helical_constraint(Pose & pose){
 	using Eigen::MatrixXd;
@@ -930,7 +915,7 @@ TR.Debug << "setup RGF cst 1" << std::endl;
 
 
 }
-
+*/
 
 void
 RemodelGlobalFrame::restore_original_cst(Pose & pose){
@@ -1006,8 +991,6 @@ compute_center_of_mass( core::pose::Pose const &  pose, core::Size range_start, 
 Matrix3f rot_mat(MatrixXf &A,MatrixXf &B)
 {
   // A,B is 3 x N
- // cout<<"COMs"<<endl<<A.transpose()<<endl<<endl;
-//cout<<"COM_targets"<<endl<<B.transpose()<<endl<<endl;
 
   Vector3f c_A(A.row(0).mean(), A.row(1).mean(), A.row(2).mean());
   Vector3f c_B(B.row(0).mean(), B.row(1).mean(), B.row(2).mean());

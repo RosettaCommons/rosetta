@@ -605,6 +605,7 @@ void RemodelMover::apply( Pose & pose ) {
 
 		// turning on the res_type_linking constraint weight for designs
 		fullatom_sfx_->set_weight( scoring::atom_pair_constraint, 1.0 );
+		fullatom_sfx_->set_weight( scoring::coordinate_constraint, 1.0 );
 		fullatom_sfx_->set_weight( scoring::res_type_linking_constraint, 0.3 );
 		fullatom_sfx_->set_weight( scoring::res_type_constraint, 1.0 );
 
@@ -736,6 +737,7 @@ void RemodelMover::apply( Pose & pose ) {
 				constraint->apply( pose );
 
 				fullatom_sfx_->set_weight(core::scoring::atom_pair_constraint, 1.0);
+				fullatom_sfx_->set_weight(core::scoring::coordinate_constraint, 1.0);
 				fullatom_sfx_->set_weight(core::scoring::dihedral_constraint, 10.0);
 				designMover.scorefunction(fullatom_sfx_);
 		}
@@ -863,6 +865,7 @@ void RemodelMover::apply( Pose & pose ) {
 				//TR << std::endl;
 
 				centroid_sfx_->set_weight( core::scoring::atom_pair_constraint, 1.0);
+				centroid_sfx_->set_weight( core::scoring::coordinate_constraint, 1.0);
 				centroid_sfx_->set_weight(core::scoring::dihedral_constraint, 10.0 );
 				//enable cartesian bond terms
 				centroid_sfx_->set_weight(core::scoring::cart_bonded_angle,  0.1 );
@@ -1031,7 +1034,7 @@ void RemodelMover::apply( Pose & pose ) {
 		}
 		// this is to make sure that the final scoring is done with SCORE12
 		scoring::ScoreFunctionOP scorefxn = scoring::ScoreFunctionFactory::create_score_function( scoring::STANDARD_WTS, scoring::SCORE12_PATCH );
-/*
+
 	  if(option[OptionKeys::remodel::repeat_structure].user()) {
 						//Experiment with RemodelGlobalFrame
 						RemodelGlobalFrame RGF(remodel_data, working_model, scorefxn);
@@ -1039,7 +1042,7 @@ void RemodelMover::apply( Pose & pose ) {
 						RGF.apply(*(*it));
 
 		}
-*/
+
 		(*(*it)).dump_scored_pdb(SS.str(), *scorefxn);
 
 		simple_filters::ScoreTypeFilter const pose_total_score( scorefxn, total_score, 100 );
@@ -1684,6 +1687,7 @@ bool RemodelMover::design_refine( Pose & pose, RemodelDesignMover & designMover 
 
 //turning on weights, for paranoya
   sfx->set_weight(core::scoring::atom_pair_constraint, 1.0 );
+  sfx->set_weight(core::scoring::coordinate_constraint, 1.0 );
   sfx->set_weight(core::scoring::dihedral_constraint, 10.0 ); // 1.0 originally
 
 	// setup the refine TaskFactory
@@ -1764,6 +1768,7 @@ bool RemodelMover::design_refine( Pose & pose, RemodelDesignMover & designMover 
 
 //turning off weights, for paranoya
   sfx->set_weight(core::scoring::atom_pair_constraint, 0.0 );
+  sfx->set_weight(core::scoring::coordinate_constraint, 0.0 );
   sfx->set_weight(core::scoring::dihedral_constraint, 0.0 ); // 1.0 originally
 
 	// must score one last time since we've removed variants and set

@@ -651,7 +651,8 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 			TR << "central " << ii <<  std::endl;
 			cen_res.push_back( ii );
 		}
-		if ( modeled_clusters[ ii ] == 0 && residue_clusters[ ii ] == 1 ) {
+	//	if ( modeled_clusters[ ii ] == 0 && residue_clusters[ ii ] == 1 ) {
+	if ( residue_clusters[ii] == 1 ) {
 			TR << "neighbor " << ii <<  std::endl;
 			nbr_res.push_back( ii );
 		}

@@ -133,7 +133,9 @@ make_symmetric_pose(
 
 	assert( is_symmetric( pose ) );
 
-	pose.conformation().detect_bonds();
+	if (option[ OptionKeys::symmetry::detect_bonds ]){
+		pose.conformation().detect_bonds();
+	}
 
 }
 
@@ -145,6 +147,9 @@ make_symmetric_pose(
 	conformation::symmetry::SymmData & symmdata
 )
 {
+
+	using namespace basic::options;
+
 	pose::PDBInfoOP pdb_info_src( pose.pdb_info() );
 	if ( !pose.pdb_info() ) {
 		pdb_info_src = new pose::PDBInfo( pose, true );
@@ -166,7 +171,9 @@ make_symmetric_pose(
 
 	pose.conformation().detect_disulfides();
 
-	pose.conformation().detect_bonds();
+	if (option[ OptionKeys::symmetry::detect_bonds ]){
+		pose.conformation().detect_bonds();
+	}
 
 
 	// // protocols::viewer::dump_pose_kinemage("test_make_symmetric_pose_end.kin",pose);

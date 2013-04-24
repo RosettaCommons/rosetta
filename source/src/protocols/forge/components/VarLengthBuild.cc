@@ -367,13 +367,13 @@ void VarLengthBuild::apply( Pose & pose ) {
 			Size max_pdb_index = remodel_data_.blueprint.size()*2;
 	//std::cout << "max_pdb index" << max_pdb_index <<  std::endl;
 
-			while (pose.total_residue() >= max_pdb_index){
+			while (pose.total_residue() > max_pdb_index){
 	//std::cout << "pose total" << pose.total_residue() <<  std::endl;
 				pose.conformation().delete_residue_slow(pose.total_residue());
 			}
 
 			//similarly update archive pose in repeat cases
-			while (archive_pose.total_residue() >= max_pdb_index){
+			while (archive_pose.total_residue() > max_pdb_index){
 				archive_pose.conformation().delete_residue_slow(archive_pose.total_residue());
 			}
 		}
@@ -388,8 +388,9 @@ void VarLengthBuild::apply( Pose & pose ) {
 			Size len_diff = (2*remodel_data_.sequence.length()) - pose.total_residue();
 			// append a tail of the same length
 			for (Size i = 1; i<= len_diff; i++){
-				core::chemical::ResidueTypeSet const & rsd_set = (pose.residue(1).residue_type_set());
-				core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set.name_map("ALA") ) );
+				//core::chemical::ResidueTypeSet const & rsd_set = (pose.residue(2).residue_type_set());
+				core::chemical::ResidueTypeSetCAP const & rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
+				core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set->name_map("VAL") ) );
 				pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.total_residue(), true);
 				pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.total_residue()-1);
 				pose.set_omega(pose.total_residue()-1,180);
@@ -409,8 +410,9 @@ void VarLengthBuild::apply( Pose & pose ) {
 			Size len_diff = (2*remodel_data_.sequence.length()) - archive_pose.total_residue();
 			// append a tail of the same length
 			for (Size i = 1; i<= len_diff; i++){
-				core::chemical::ResidueTypeSet const & rsd_set = (archive_pose.residue(1).residue_type_set());
-				core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set.name_map("ALA") ) );
+				//core::chemical::ResidueTypeSet const & rsd_set = (archive_pose.residue(2).residue_type_set());
+				core::chemical::ResidueTypeSetCAP const & rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
+				core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set->name_map("VAL") ) );
 				archive_pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,archive_pose.total_residue(), true);
 				archive_pose.conformation().insert_ideal_geometry_at_polymer_bond(archive_pose.total_residue()-1);
 				archive_pose.set_omega(archive_pose.total_residue()-1,180);
@@ -478,6 +480,7 @@ void VarLengthBuild::apply( Pose & pose ) {
 		}
 	}
 	//pose.dump_pdb("vlb_aft_centroid_build.pdb");
+	//archive_pose.dump_pdb("arc_pose_vlb_aft_centroid_build.pdb");
 
 	// flip back to prior residue type set if necessary
 	if ( pose.residue( 1 ).residue_type_set().name() != archive_pose.residue( 1 ).residue_type_set().name() ) {

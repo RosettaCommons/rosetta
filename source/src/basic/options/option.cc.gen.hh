@@ -2260,6 +2260,8 @@ option.add( basic::options::OptionKeys::remodel::resclass_by_sasa, "switch to us
 option.add( basic::options::OptionKeys::remodel::helical_rise, "helical parameter: rise" ).def(0.0);
 option.add( basic::options::OptionKeys::remodel::helical_radius, "helical parameter: radius" ).def(0.0);
 option.add( basic::options::OptionKeys::remodel::helical_omega, "helical parameter: omega" ).def(0.0);
+option.add( basic::options::OptionKeys::remodel::COM_sd, "center of mass coordinate constraint sd value" ).def(1.0);
+option.add( basic::options::OptionKeys::remodel::COM_tolerance, "center of mass coordinate constraint tolerance value" ).def(0.0);
 option.add( basic::options::OptionKeys::remodel::staged_sampling::staged_sampling, "sampling first with 9mers then 3mers. Staged energies. For rebuilding entire structure not loop closure" ).def(false);
 option.add( basic::options::OptionKeys::remodel::staged_sampling::residues_to_sample, "residues to allow sampling (format:1,3,5)" ).def("");
 option.add( basic::options::OptionKeys::remodel::staged_sampling::use_fragment_sequence, "swaps both backbone and residue type" ).def(false);
@@ -2322,6 +2324,7 @@ option.add( basic::options::OptionKeys::symmetry::symmetry, "symmetry option gro
 option.add( basic::options::OptionKeys::symmetry::symmetry_definition, "Text file describing symmetry setup" );
 option.add( basic::options::OptionKeys::symmetry::reweight_symm_interactions, "Scale intersubunit interactions by a specified weight" ).def(1.0);
 option.add( basic::options::OptionKeys::symmetry::initialize_rigid_body_dofs, "Initialize the RB dofs from the symmetry definition file?" ).def(false);
+option.add( basic::options::OptionKeys::symmetry::detect_bonds, "allow new cross subunit bond formation" ).def(true);
 option.add( basic::options::OptionKeys::symmetry::perturb_rigid_body_dofs, "(As in docking) Do a small perturbation of the symmetric DOFs: -perturb_rigid_body_dofs ANGSTROMS DEGREES" ).n(2);
 option.add( basic::options::OptionKeys::symmetry::symmetric_rmsd, "calculate the rmsd symmetrically by checking all chain orderings" );
 option.add( basic::options::OptionKeys::fold_and_dock::fold_and_dock, "fold_and_dock option group" ).legal(true).def(true);

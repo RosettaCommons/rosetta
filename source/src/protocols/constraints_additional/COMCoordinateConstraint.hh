@@ -43,7 +43,7 @@ public:
 
 	/// null constructor
 	COMCoordinateConstraint( ) :
-		scoring::constraints::Constraint( scoring::atom_pair_constraint )
+		scoring::constraints::Constraint( scoring::coordinate_constraint )
 	{ }
 
 	/// ctor from atom list + input pose
@@ -52,20 +52,20 @@ public:
 		Vector const & COM_target,
 		Real stdv,
 		Real interval,
-		scoring::ScoreType scoretype = scoring::atom_pair_constraint
+		scoring::ScoreType scoretype = scoring::coordinate_constraint
 	);
 
 	COMCoordinateConstraint(
 	  utility::vector1< AtomID > const & atms,
 		Vector const & COM_target,
 		Real stdv,
-		scoring::ScoreType scoretype = scoring::atom_pair_constraint
+		scoring::ScoreType scoretype = scoring::coordinate_constraint
 	);
 
 	COMCoordinateConstraint(
 	  utility::vector1< AtomID > const & atms,
 		Vector const & COM_target,
-		scoring::ScoreType scoretype = scoring::atom_pair_constraint
+		scoring::ScoreType scoretype = scoring::coordinate_constraint
 	);
 
 	virtual scoring::constraints::ConstraintOP clone() const {

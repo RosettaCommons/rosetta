@@ -158,6 +158,8 @@ namespace remodel { BooleanOptionKey const resclass_by_sasa( "remodel:resclass_b
 namespace remodel { RealOptionKey const helical_rise( "remodel:helical_rise" );  }
 namespace remodel { RealOptionKey const helical_radius( "remodel:helical_radius" );  }
 namespace remodel { RealOptionKey const helical_omega( "remodel:helical_omega" );  }
+namespace remodel { RealOptionKey const COM_sd( "remodel:COM_sd" );  }
+namespace remodel { RealOptionKey const COM_tolerance( "remodel:COM_tolerance" );  }
 namespace remodel { namespace staged_sampling { BooleanOptionKey const staged_sampling( "remodel:staged_sampling" );  } }
 namespace remodel { namespace staged_sampling { FileOptionKey const residues_to_sample( "remodel:staged_sampling:residues_to_sample" );  } }
 namespace remodel { namespace staged_sampling { BooleanOptionKey const use_fragment_sequence( "remodel:staged_sampling:use_fragment_sequence" );  } }
@@ -220,6 +222,7 @@ namespace symmetry { BooleanOptionKey const symmetry( "symmetry" );  }
 namespace symmetry { StringOptionKey const symmetry_definition( "symmetry:symmetry_definition" );  }
 namespace symmetry { RealOptionKey const reweight_symm_interactions( "symmetry:reweight_symm_interactions" );  }
 namespace symmetry { BooleanOptionKey const initialize_rigid_body_dofs( "symmetry:initialize_rigid_body_dofs" );  }
+namespace symmetry { BooleanOptionKey const detect_bonds( "symmetry:detect_bonds" );  }
 namespace symmetry { RealVectorOptionKey const perturb_rigid_body_dofs( "symmetry:perturb_rigid_body_dofs" );  }
 namespace symmetry { BooleanOptionKey const symmetric_rmsd( "symmetry:symmetric_rmsd" );  }
 namespace fold_and_dock { BooleanOptionKey const fold_and_dock( "fold_and_dock" );  }

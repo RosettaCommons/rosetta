@@ -360,7 +360,7 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 			}
 		}
 	  if (! repeat_pose.residue(1).is_terminus()){
-		  core::pose::add_variant_type_to_pose_residue( repeat_pose, core::chemical::LOWER_TERMINUS, repeat_pose.total_residue());
+		  core::pose::add_variant_type_to_pose_residue( repeat_pose, core::chemical::LOWER_TERMINUS, 1 );
 	  }
 	  if (! repeat_pose.residue( repeat_pose.total_residue() ).is_terminus()){
 		  core::pose::add_variant_type_to_pose_residue( repeat_pose, core::chemical::UPPER_TERMINUS, repeat_pose.total_residue());
@@ -622,15 +622,13 @@ void RemodelLoopMover::repeat_sync( //utility function
 				}
 		}
 	}
-
 	if (option[OptionKeys::remodel::helical_rise].user() &&
 	    option[OptionKeys::remodel::helical_radius].user() &&
 	    option[OptionKeys::remodel::helical_omega].user()){
 					RGF_.restore_original_cst(repeat_pose);
 					RGF_.setup_CM_helical_constraint(repeat_pose);
-					//RGF_.align_segment(repeat_pose);
+	//				RGF_.align_segment(repeat_pose);
 	}
-
 	//repeat_pose.dump_pdb("rep_test.pdb");
 }
 
@@ -646,6 +644,7 @@ void RemodelLoopMover::repeat_propagation( //utility function
 	using namespace basic::options;
 	using namespace core::kinematics;
 	using namespace core::pose::symmetry;
+	using namespace core::scoring::constraints;
 
 	//repeat_pose.dump_pdb("repeatPose_in_rep_propagate.pdb");
 
@@ -658,11 +657,21 @@ void RemodelLoopMover::repeat_propagation( //utility function
 
 	//if symmetric, try use master copy only
 	if (core::pose::symmetry::is_symmetric(pose) && core::pose::symmetry::is_symmetric(repeat_pose)){
+
+		// save the constraints, as it would be lost
+		ConstraintSetOP pose_cst_set = new ConstraintSet( *pose.constraint_set() );
+		ConstraintSetOP repeat_pose_cst_set = new ConstraintSet( *repeat_pose_.constraint_set() );
+
 		extract_asymmetric_unit( pose, junk_for_copy, false);
 		extract_asymmetric_unit( repeat_pose, junk_for_copy_repeat, false);
 		is_sym = true;
 		pose=junk_for_copy;
 		repeat_pose=junk_for_copy_repeat;
+
+		//reset constraints
+		pose.constraint_set(pose_cst_set);
+		repeat_pose.constraint_set(repeat_pose_cst_set);
+
 		pose.pdb_info()->obsolete(true);
 		repeat_pose.pdb_info()->obsolete(true);
 	}
@@ -818,8 +827,6 @@ void RemodelLoopMover::repeat_propagation( //utility function
 		}
 	}
 
-//repeat_pose.dump_pdb("pre_align.pdb");
-
 	if(option[OptionKeys::remodel::helical_rise].user() &&
 			option[OptionKeys::remodel::helical_radius].user() &&
 			option[OptionKeys::remodel::helical_omega].user()){
@@ -827,18 +834,27 @@ void RemodelLoopMover::repeat_propagation( //utility function
 					RGF_.setup_CM_helical_constraint(repeat_pose);
 					//RGF_.align_segment(repeat_pose);
 	}
-
 //repeat_pose.dump_pdb("post_align.pdb");
 	//re-symmetrize
 	if (is_sym){
+		// save the constraints, as it would be lost
+		ConstraintSetOP pose_cst_set = new ConstraintSet( *pose.constraint_set() );
+		ConstraintSetOP repeat_pose_cst_set = new ConstraintSet( *repeat_pose_.constraint_set() );
+
 	//unfortunately need separate movers for the operations
 		simple_moves::symmetry::SetupForSymmetryMover pre_mover1;
 		pre_mover1.apply( pose );
 		simple_moves::symmetry::SetupForSymmetryMover pre_mover2;
 		pre_mover2.apply( repeat_pose );
+
+		//reset constraints
+		pose.constraint_set(pose_cst_set);
+		repeat_pose.constraint_set(repeat_pose_cst_set);
+
 		pose.pdb_info()->obsolete(true);
 		repeat_pose.pdb_info()->obsolete(true);
 	}
+
 
 //repeat_pose.dump_pdb("symmetrize.pdb");
 //exit(0);
@@ -1002,7 +1018,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		if(option[OptionKeys::remodel::staged_sampling::starting_sequence].user())
 			set_starting_sequence(pose);
 		if(option[OptionKeys::remodel::staged_sampling::starting_pdb].user())
-			set_starting_pdb(pose);				
+			set_starting_pdb(pose);
 		bool useFragSequence =option[OptionKeys::remodel::staged_sampling::use_fragment_sequence].user();
 		//setup score functions and movemap and where to sample--------------
 		MoveMap movemap;
@@ -1011,8 +1027,8 @@ void RemodelLoopMover::apply( Pose & pose ) {
 			movemap.set_chi( i, true );
 		}
 		ScoreFunctionOP sfxStaged_OP =  ( core::scoring::ScoreFunctionFactory::create_score_function( "abinitio_remodel_cen" ) );
-		sfxStaged_OP->set_weight(scoring::atom_pair_constraint, 1.0);	
-		if(option[OptionKeys::remodel::repeat_structure].user())	
+		sfxStaged_OP->set_weight(scoring::atom_pair_constraint, 1.0);
+		if(option[OptionKeys::remodel::repeat_structure].user())
 			sfxStaged_OP->set_weight(scoring::atom_pair_constraint, 1.0 *option[OptionKeys::remodel::repeat_structure]);
 	//	sfxStaged_OP->set_weight(scoring::big_bin_constraint,10.0);
 		sfxStaged_OP->show_pretty(TR);
@@ -1063,6 +1079,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		//REPEAT TEST
 		if (option[OptionKeys::remodel::repeat_structure].user() ) {
 			sfxOP->set_weight( scoring::atom_pair_constraint, 1.0 *option[OptionKeys::remodel::repeat_structure] );
+			sfxOP->set_weight( scoring::coordinate_constraint, 1.0 *option[OptionKeys::remodel::repeat_structure] );
 		}
 
 		// randomize loops
@@ -1072,13 +1089,17 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		} else {
 			TR << "Randomize stage was skipped " << std::endl;
 		}
-
 		// setup monte carlo
 		Real const temp = temperature_;
 		MonteCarlo mc( *sfxOP, temp ); // init without pose
 		if (option[OptionKeys::remodel::repeat_structure].user() ) {
 			repeat_propagation(pose, repeat_pose_,option[OptionKeys::remodel::repeat_structure]);
 			(*sfxOP)(repeat_pose_);
+			mc.score_function().show(TR, repeat_pose_);
+			TR << std::endl;
+			//std::cout << "check_constraint" << std::endl;
+			//repeat_pose_.constraint_set()->show_definition(TR, repeat_pose_);
+			//TR << std::endl;
 			mc.reset(repeat_pose_);
 		}
 		else {
@@ -1175,8 +1196,10 @@ void RemodelLoopMover::apply( Pose & pose ) {
 			// an issue with symmetry info in equal operator assignment, so to be safe explicitly make Pose again
 			if(option[OptionKeys::symmetry::symmetry_definition].user() ){
 				Pose junk_for_copy;
+				core::scoring::constraints::ConstraintSetOP pose_cst_set = new core::scoring::constraints::ConstraintSet( *pose.constraint_set() );
 				core::pose::symmetry::extract_asymmetric_unit( repeat_pose_, junk_for_copy, false);
 				pose = junk_for_copy;
+				pose.constraint_set(pose_cst_set);
 				pose.pdb_info()->obsolete(true);
 				//resymmetrize
 				protocols::simple_moves::symmetry::SetupForSymmetryMover pre_mover;
@@ -2925,9 +2948,9 @@ RemodelLoopMover::create_fragment_movers_limit_size(
 										tmp_frame->add_fragment((*frame_i)->fragment_ptr(ii));
 									}
 						}
-						assert(frag_ct != 0);//0 frags at this position. You have chosen a bad abego definition.  
+						assert(frag_ct != 0);//0 frags at this position. You have chosen a bad abego definition.
 						tmp_frags->add(tmp_frame);
-					}			
+					}
 			}
 			ClassicFragmentMoverOP cfm;
 			if(swapResType)
@@ -3072,7 +3095,7 @@ void RemodelLoopMover::set_starting_pdb(Pose & pose){
 		using namespace OptionKeys::remodel;
 		using core::Size;
 		PoseOP inputPose = core::import_pose::pose_from_pdb(option[OptionKeys::remodel::staged_sampling::starting_pdb]);
-		assert(inputPose->total_residue() == pose.total_residue()); 
+		assert(inputPose->total_residue() == pose.total_residue());
 		for(Size ii=1; ii<=pose.total_residue(); ++ii){
 				pose.set_phi(ii,inputPose->phi(ii));
 				pose.set_psi(ii,inputPose->psi(ii));
@@ -3086,7 +3109,7 @@ void RemodelLoopMover::set_starting_sequence(Pose & pose){
 		using namespace basic::options::OptionKeys;
 		using namespace core::chemical;
 		using core::Size;
-		std::string const & swap_sequence =option[OptionKeys::remodel::staged_sampling::starting_sequence];     
+		std::string const & swap_sequence =option[OptionKeys::remodel::staged_sampling::starting_sequence];
 		for(Size ii=1; ii<=swap_sequence.size(); ++ii){
 		  char aa = swap_sequence[ii-1];
 		  AA my_aa = aa_from_oneletter_code( aa );
@@ -3107,12 +3130,12 @@ std::set<core::Size> RemodelLoopMover::generate_residues_to_sample(bool chooseSu
 		using namespace basic::options::OptionKeys;
 		using core::Size;
 		std::set<Size> allowedRes;
-		if(!chooseSubsetResidues || !option[OptionKeys::remodel::staged_sampling::residues_to_sample].user()){				
+		if(!chooseSubsetResidues || !option[OptionKeys::remodel::staged_sampling::residues_to_sample].user()){
 			for(Size ii=1; ii<=pose.total_residue(); ++ii){
 				allowedRes.insert(ii);
 			}
 		}
-		else{	
+		else{
 			std::string const & allowedRes_str =option[OptionKeys::remodel::staged_sampling::residues_to_sample];
 			utility::vector1< std::string > const res_keys( utility::string_split( allowedRes_str , ',' ) );
 			foreach( std::string const key, res_keys ){
@@ -3121,7 +3144,7 @@ std::set<core::Size> RemodelLoopMover::generate_residues_to_sample(bool chooseSu
 			}
 		}
 		return(allowedRes);
-}		
+}
 
 } // remodel
 } // forge
