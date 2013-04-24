@@ -116,6 +116,8 @@ make_symmetric_pose(
 	conformation::symmetry::SymmetryInfo symmetry_info
 )
 {
+	using namespace basic::options;
+
 	conformation::symmetry::SymmetricConformationOP symm_conf ( new core::conformation::symmetry::SymmetricConformation( pose.conformation(), symmetry_info ) ) ;
 
 	scoring::symmetry::SymmetricEnergiesOP symm_energy( new scoring::symmetry::SymmetricEnergies( pose.energies()) );
