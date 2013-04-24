@@ -63,7 +63,7 @@
 
 	#include <protocols/sic_dock/read_biounit.hh>
 
-	#include <tr1/unordered_set>
+	#include <boost/unordered_set.hpp>
 
 	#include <boost/foreach.hpp>
 
@@ -952,7 +952,7 @@ namespace motif_hash {
 			return 0 == memcmp(&a,&b,48);
 		}
 	};
-	typedef std::tr1::unordered_set<ResPairMotif,MyHash,MyPred> MotifSet;
+	typedef boost::unordered_set<ResPairMotif,MyHash,MyPred> MotifSet;
 	void ResPairMotifs::filter_structurally_identical_motifs(){
 		MotifSet motifset;
 		BOOST_FOREACH(ResPairMotif const & rpm, *this) motifset.insert(rpm);
