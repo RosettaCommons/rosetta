@@ -223,13 +223,13 @@ PlacementAuctionMover::apply( core::pose::Pose & pose )
   				if ( stub_energy_fxn_ == "backbone_stub_constraint" ) {
 						stub_constraints.push_back( new BackboneStubConstraint( pose, host_residue, fixed_atom_id, host_res, bonus, cb_force_ ) );
 						stub_constraints = pose.add_constraints( stub_constraints );
-						core::Real const bb_cst_score( stf->apply( pose ) );
+						core::Real const bb_cst_score( stf->report_sm( pose ) );
 						if( bb_cst_score <= -0.5 ) // take only residues that make some appreciable contribution
 							insert( std::make_pair( bb_cst_score, std::make_pair( host_residue, std::make_pair( stub_set, stub ) ) ) );
 				} else if ( stub_energy_fxn_ == "backbone_stub_linear_constraint" ) {
 						stub_constraints.push_back( new BackboneStubLinearConstraint( pose, host_residue, fixed_atom_id, *(stub->residue()), bonus, cb_force_ ) );
 						stub_constraints = pose.add_constraints( stub_constraints );
-        		core::Real const bb_cst_score( stf->apply( pose ) );
+        		core::Real const bb_cst_score( stf->report_sm( pose ) );
 						insert( std::make_pair( bonus+bb_cst_score, std::make_pair( host_residue, std::make_pair( stub_set, stub ) ) ) );
 				}
 			 pose = saved_pose;

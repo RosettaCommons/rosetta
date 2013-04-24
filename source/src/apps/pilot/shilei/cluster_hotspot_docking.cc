@@ -20,6 +20,7 @@
 #include <core/pose/util.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
+#include <core/id/AtomID.hh>
 
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStruct.hh>
@@ -31,9 +32,11 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/conformation/Residue.hh>
+#include <protocols/docking/metrics.hh>
 
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
+#include <utility/tools/make_vector1.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
 #include <iostream>
@@ -58,7 +61,9 @@ OPT_1GRP_KEY(Real,cluster_hotspot_docking,cluster_radius)
 OPT_1GRP_KEY(Integer,cluster_hotspot_docking,max_clusters)
 OPT_1GRP_KEY(Integer,cluster_hotspot_docking,output_ddg_clusters)
 OPT_1GRP_KEY(Boolean,cluster_hotspot_docking,heavyatom)
+OPT_1GRP_KEY(Boolean,cluster_hotspot_docking,ca)
 OPT_1GRP_KEY(String,cluster_hotspot_docking,prefix)
+OPT_1GRP_KEY(String,cluster_hotspot_docking,column)
 
 static basic::Tracer TR("cluster_hotspot_docking");
 
@@ -81,6 +86,15 @@ core::Real aa2sim_all(core::pose::Pose pose1, core::pose::Pose pose2) {
         return rms;
 }
 
+core::Real aa2sim_ca(core::pose::Pose pose1, core::pose::Pose pose2) {
+        core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+        core::Real rms(0.0);
+	std::map< core::id::AtomID, core::id::AtomID > CA_map;
+	core::scoring::setup_matching_CA_atoms(pose1, pose2, CA_map );
+        rms=core::scoring::rms_at_corresponding_atoms_no_super( pose1, pose2, CA_map );
+        return rms;
+}
+
 int main(int argc, char *argv[])
 {
   try {
@@ -89,7 +103,9 @@ int main(int argc, char *argv[])
 	NEW_OPT(cluster_hotspot_docking::max_clusters, "radius for cluster",10);
 	NEW_OPT(cluster_hotspot_docking::output_ddg_clusters, "output the lowest ddg N of the clusters",5);
 	NEW_OPT(cluster_hotspot_docking::heavyatom, "use all heavy atom for clustering",false);
+	NEW_OPT(cluster_hotspot_docking::ca, "use CA atom for clustering (proteins)",false);
 	NEW_OPT(cluster_hotspot_docking::prefix, "Prefix for output","");
+	NEW_OPT(cluster_hotspot_docking::column, "Score column for clustering","ddg");
 	core::init(argc, argv);
 
 	//read in silent file	
@@ -106,6 +122,7 @@ int main(int argc, char *argv[])
 	std::vector< std::string > taglist;
 	//std::vector< std::string > outtaglist;
 	utility::vector1< std::string > outtaglist;
+        std::string scorecolumn=basic::options::option[ basic::options::OptionKeys::cluster_hotspot_docking::column];
 
         core::scoring::ScoreFunctionOP sfxn = core::scoring::getScoreFunction();
 	Real score;
@@ -118,10 +135,17 @@ int main(int argc, char *argv[])
 		ss->fill_pose(pose);
 
 		//control over the columns for ranking
-		getPoseExtraScores( pose, "ddg", score);
+		//getPoseExtraScores( pose, "ddg", score);
+		if ( getPoseExtraScores( pose, scorecolumn, score) ) {
+			TR.Info << "Pose: "<< scorecolumn << ": " << score << std::endl;
+		} else if ( scorecolumn == "Isc" ) {
+			score=protocols::docking::calc_interaction_energy(pose,sfxn,utility::tools::make_vector1<core::Size>(1));
+			TR.Info << "Compute " << scorecolumn << ": " << score << std::endl;
+		} else {
+			utility_exit_with_message("scorecolumn not in silent header, only those in header or Isc is supported");
+		}
 
 		//score = (*sfxn)(pose) ;
-		//TR.Info << "Pose: "<< ii << " Score: " << score << std::endl;
 		// remove the chain one from the pose
 
 		//get chain 1 sequence from pose and remove chain 1
@@ -129,7 +153,7 @@ int main(int argc, char *argv[])
 		Size chainstart(pose.conformation().chain_begin( inputchain ));
 		Size chainend(pose.conformation().chain_end( inputchain ) );
 		pose.conformation().delete_residue_range_slow( chainstart, chainend);
-		//TR.Info << "PoseSize: "<< pose.conformation().size() << " ddgScore: " << score << " description "<< tags[ ii ] << std::endl;
+		TR.Info << "PoseSize: "<< pose.conformation().size() << " " << scorecolumn<< "Score: " << score << " description "<< tags[ ii ] << std::endl;
 		
 		poselist.push_back( pose );
 		ddglist.push_back( score);
@@ -143,6 +167,12 @@ int main(int argc, char *argv[])
 		for ( Size i = 0; i < poselist.size(); i++ ) {
 	    	for ( Size j = i+1 ; j < poselist.size(); j++ ) {
 				sc_matrix(i+1,j+1)=aa2sim_all(poselist[i],poselist[j]);	
+			}
+		}
+	} else if ( basic::options::option[ basic::options::OptionKeys::cluster_hotspot_docking::ca] ) {
+		for ( Size i = 0; i < poselist.size(); i++ ) {
+	    	for ( Size j = i+1 ; j < poselist.size(); j++ ) {
+				sc_matrix(i+1,j+1)=aa2sim_ca(poselist[i],poselist[j]);	
 			}
 		}
 	} else {
@@ -187,7 +217,7 @@ int main(int argc, char *argv[])
 	core::Size i,j;
 	std::vector <int> clustercentre;
 
-        TR.Info << "Clustering of " << listsize << " structures with radius " <<  cluster_radius_ << " with max of  " << max_total_cluster << " cluster "<< " and output lowest " <<  output_ddg_clusters << "ddg cluster centers"<<  std::endl;
+        TR.Info << "Clustering of " << listsize << " structures with radius " <<  cluster_radius_ << " with max of  " << max_total_cluster << " cluster "<< " and output lowest " <<  output_ddg_clusters << " " << scorecolumn << " cluster centers"<<  std::endl;
 	
   	// now assign groupings
   	while(true) {
@@ -251,7 +281,7 @@ int main(int argc, char *argv[])
     		}
 		TR.Info << std::endl;
 
-		TR.Info << "bestddg: " << bestddg << " from: " << taglist[bestj] << " of Cluster " << i << " Size: " << sizei << std::endl;
+		TR.Info << "best"<<scorecolumn<<": " << bestddg << " from: " << taglist[bestj] << " of Cluster " << i << " Size: " << sizei << std::endl;
 		ddgclustermap.insert( std::make_pair(bestddg, bestj) );
 
 		sizei=0;
@@ -271,13 +301,21 @@ int main(int argc, char *argv[])
 
 	while ( input->has_another_pose() ) {
 		input->fill_pose( pose );
-		getPoseExtraScores( pose, "ddg", score);
+                if ( getPoseExtraScores( pose, scorecolumn, score) ) {
+                        TR.Info << "Pose: "<< scorecolumn << ": " << score << std::endl;
+                } else if ( scorecolumn == "Isc" ) {
+                        score=protocols::docking::calc_interaction_energy(pose,sfxn,utility::tools::make_vector1<core::Size>(1));
+                } else {
+                        utility_exit_with_message("scorecolumn not in silent header, only those in header or Isc is supported");
+                }
+		//getPoseExtraScores( pose, "ddg", score);
 		std::string tag( tag_from_pose( pose ) );
 
     		std::ostringstream ss;
     		ss << std::fixed << std::setprecision(3);
     		ss << score;
-		std::string out_prefix = prefix+"_ddg_"+ss.str()+"_";
+		std::string out_prefix = prefix+"_"+scorecolumn+"_"+ss.str()+"_";
+		//std::string out_prefix = prefix+"_ddg_"+ss.str()+"_";
 		//std::string out_prefix = prefix+"_ddg_"+boost::lexical_cast<std::string>(score)+"_";
 		std::string fn( out_prefix + tag + ".pdb" );
 		pose.dump_pdb(fn);
