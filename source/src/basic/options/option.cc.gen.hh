@@ -699,10 +699,10 @@ option.add( basic::options::OptionKeys::jumps::fix_chainbreak, "minimize to fix 
 option.add( basic::options::OptionKeys::jumps::fix_jumps, "read jump_file" ).def("");
 option.add( basic::options::OptionKeys::jumps::jump_lib, "read jump_library_file for automatic jumps" ).def("");
 option.add( basic::options::OptionKeys::jumps::loop_definition_from_file, "use ss-def from this file" ).def("");
+option.add( basic::options::OptionKeys::jumps::no_chainbreak_in_relax, "dont penalize chainbreak in relax" ).def(false);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::no_chainbreak_in_relax, "dont penalize chainbreak in relax" ).def(false);
-option.add( basic::options::OptionKeys::jumps::pairing_file, "file with pairings" ).def("");
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::pairing_file, "file with pairings" ).def("");
 option.add( basic::options::OptionKeys::jumps::random_sheets, "random sheet topology--> replaces -sheet1 -sheet2 ... select randomly up to N sheets with up to -sheet_i pairgins for sheet i" ).def(1);
 option.add( basic::options::OptionKeys::jumps::residue_pair_jump_file, "a file to define residue pair jump" ).def("");
 option.add( basic::options::OptionKeys::jumps::sheets, "sheet topology--> replaces -sheet1 -sheet2 ... -sheetN" ).def(1);
@@ -828,6 +828,7 @@ option.add( basic::options::OptionKeys::score::extra_improper_file, "Add extra p
 option.add( basic::options::OptionKeys::score::pro_close_planar_constraint, "stdev of CD,N,CA,prevC trigonal planar constraint in pro_close energy method" ).def(0.1);
 option.add( basic::options::OptionKeys::score::linear_bonded_potential, "use linear (instead of quadratic) bonded potential" ).def(false);
 option.add( basic::options::OptionKeys::score::geom_sol_correct_acceptor_base, "Fixed definition of base atom for acceptors to match hbonds_geom" ).def(false);
+option.add( basic::options::OptionKeys::score::rg_local_span, "First,last res in rg_local. For example to calc rg_local from 1-20 would be 1,20" ).def(0);
 option.add( basic::options::OptionKeys::score::saxs::saxs, "saxs option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::score::saxs::min_score, "minimum value of saxs score; the parameter is used to flatten the energy funnel around its minimum" ).def(-5);
 option.add( basic::options::OptionKeys::score::saxs::custom_ff, "Name of config file providing extra from factors" ).def("");
@@ -1397,10 +1398,10 @@ option.add( basic::options::OptionKeys::cmiles::kcluster::num_clusters, "Number 
 option.add( basic::options::OptionKeys::cmiles::jumping::jumping, "jumping option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::cmiles::jumping::resi, "Residue i" );
 option.add( basic::options::OptionKeys::cmiles::jumping::resj, "Residue j" );
+option.add( basic::options::OptionKeys::james::james, "james option group" ).legal(true).def(true);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::james::james, "james option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::james::min_seqsep, "No description" ).def(0);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::james::min_seqsep, "No description" ).def(0);
 option.add( basic::options::OptionKeys::james::atom_names, "No description" ).def(utility::vector1<std::string>());
 option.add( basic::options::OptionKeys::james::dist_thresholds, "No description" ).def(utility::vector1<float>(1, 1.0));
 option.add( basic::options::OptionKeys::james::torsion_thresholds, "No description" ).def(utility::vector1<float>(1, 30.0));
@@ -2095,11 +2096,11 @@ option.add( basic::options::OptionKeys::optE::data_out, "file to which to write 
 option.add( basic::options::OptionKeys::optE::weights, "a conventional weightfile that optE will use to determine which weights will be counted.  All non-zero weights in the file will contribute to rotamer energies and be fit; use the -optE::fix option to fix any of these weights.  Weight values will also be used as starting values for optimization." );
 option.add( basic::options::OptionKeys::optE::fix, "weights to be fixed (must also appear in the weightfile given by the -optE::weights option)" );
 option.add( basic::options::OptionKeys::optE::free, "IterativeOptEDriver flag: specify a file to read score types that are free -- optionally include a starting weight for each score type" );
+option.add( basic::options::OptionKeys::optE::fixed, "IterativeOptEDriver flag: specify a file to read score types and weights for score types that are on but fixed" );
+option.add( basic::options::OptionKeys::optE::parse_tagfile, "a file in utility::tag format that optE may parse to customize its operation" );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::fixed, "IterativeOptEDriver flag: specify a file to read score types and weights for score types that are on but fixed" );
-option.add( basic::options::OptionKeys::optE::parse_tagfile, "a file in utility::tag format that optE may parse to customize its operation" );
-option.add( basic::options::OptionKeys::optE::constant_logic_taskops_file, "a file in utility::tag format that optE uses to build a task that will not change with the context of the pose after design" );
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::constant_logic_taskops_file, "a file in utility::tag format that optE uses to build a task that will not change with the context of the pose after design" );
 option.add( basic::options::OptionKeys::optE::optE_soft_rep, "Instruct the IterativeOptEDriver to use the soft-repulsion etable" );
 option.add( basic::options::OptionKeys::optE::no_hb_env_dependence, "Disable environmental dependent weighting of hydrogen bond terms" );
 option.add( basic::options::OptionKeys::optE::no_hb_env_dependence_DNA, "Disable environmental dependent weighting of hydrogen bonds involving DNA" );
@@ -2271,6 +2272,7 @@ option.add( basic::options::OptionKeys::remodel::vdw, "set vdw weight" ).def(1.0
 option.add( basic::options::OptionKeys::remodel::rama, "set rama weight" ).def(0.1);
 option.add( basic::options::OptionKeys::remodel::cbeta, "set cbeta weight" ).def(0.0);
 option.add( basic::options::OptionKeys::remodel::cenpack, "set cenpack weight" ).def(0.0);
+option.add( basic::options::OptionKeys::remodel::rg_local, "set rg_local weight" ).def(0.0);
 option.add( basic::options::OptionKeys::remodel::hb_lrbb, "set hbond_lrbb weight" ).def(0.0);
 option.add( basic::options::OptionKeys::remodel::hb_srbb, "set hbond_srbb weight" ).def(0.0);
 option.add( basic::options::OptionKeys::remodel::rg, "set rg weight" );

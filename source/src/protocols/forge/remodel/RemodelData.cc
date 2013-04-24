@@ -32,6 +32,8 @@
 
 #include <protocols/forge/remodel/RemodelData.hh>
 
+#include <ObjexxFCL/format.hh>
+#include <ObjexxFCL/string.functions.hh>
 // C++ Headers
 #include <vector>
 #include <string>
@@ -89,7 +91,7 @@ void RemodelData::splitString( std::string str, std::string delim, std::vector< 
 /// Reads in the blueprint file. 
 ///
 void RemodelData::getLoopsToBuildFromFile( std::string filename ) {
-
+  using namespace ObjexxFCL;  
 	if ( filename == "" ) {
 		TR_REMODEL << "No blueprint file given!" << std::endl;
 		utility::exit( EXIT_FAILURE, __FILE__, __LINE__ );
@@ -340,14 +342,31 @@ void RemodelData::getLoopsToBuildFromFile( std::string filename ) {
 
 	// process blueprint to initialize all the needed strings/vectors
 	// iterate over all the LineObject objects and save the sequence and ss.
+	bool hle_abego_mode = false;
 	std::vector< protocols::forge::remodel::LineObject >::iterator iter;
 	for ( iter = this->blueprint.begin(); iter != this->blueprint.end(); iter++ ) {
 		// sequence and ss are class member variables
 		sequence.append( iter->resname );
-		ss.append( iter->sstype );
+		if(iter->sstype.size()==1)
+			ss.append( iter->sstype ); //std case
+		else if(iter->sstype.size()==2){
+				hle_abego_mode=true;
+				char tmp_ss = iter->sstype[0];
+				char tmp_abego = iter->sstype[1];
+				ss.append(1,tmp_ss);
+				abego.append(1,tmp_abego);
+				if(!(tmp_ss=='H'||tmp_ss=='L'||tmp_ss=='E'||tmp_ss=='D'))
+							utility_exit_with_message("First SS-term is:" + string_of(tmp_ss)+ " but must be either H,L,E or D if you want it ignored");
+				if(!(tmp_abego=='A'||tmp_abego=='B'||tmp_abego=='E'||tmp_abego=='G'||tmp_abego=='O')||(tmp_abego=='D'))
+						utility_exit_with_message("Second SS-term is:" +string_of(tmp_abego)+" but must be either A,B,E,G,O or D if you want it ignored");
+		}
+		if(iter->sstype.size()==1 && hle_abego_mode==true)
+				utility_exit_with_message("Blueprint style must be either all abego,HLE or HLE followed by ABEGO but not both");
+		if(iter->sstype.size()==3)
+				utility_exit_with_message("Blueprint must have no more than 2 ssTYPES. Ex. HA");
 	}
-	
-	translateDSSP_ABEGO(this->ss, this->abego);
+	if(hle_abego_mode==false)
+		translateDSSP_ABEGO(this->ss, this->abego);
 
 	TR_REMODEL << " sequence (based on blueprint): " << std::endl << " " << sequence << std::endl;
 	TR_REMODEL << " ss (based on blueprint): " << std::endl << " " << ss << std::endl;
@@ -386,10 +405,10 @@ void RemodelData::translateDSSP_ABEGO( std::string & ss, std::string & abego ) {
 	bool abego_switch = false; 
 	found_idx = ss.find_first_of("abgoABGO"); // E is shared so only ABGO for mapping
 	if (found_idx == std::string::npos){
-		std::cout << "SS based assignment found" << std::endl; // in case of only E assignment, treat it as DSSP
+		TR_REMODEL << "SS based assignment found" << std::endl; // in case of only E assignment, treat it as DSSP
 	} else if (found_idx != std::string::npos){
 		abego_switch = true;
-		std::cout << "ABEGO based assignment found" << std::endl;
+		TR_REMODEL << "ABEGO based assignment found" << std::endl;
 	}
 	std::string trans_ss;
 	
@@ -397,19 +416,19 @@ void RemodelData::translateDSSP_ABEGO( std::string & ss, std::string & abego ) {
 		found_idx = ss.find_first_of("abegoABEGO"); // this substitution use all 5 regions
 		for (core::Size idx = 0; idx < ss.length(); idx++){
 			if (ss[idx] == 'A' || ss[idx] == 'a'){
-				trans_ss.push_back('H');
+				trans_ss.push_back('D');
 			}
 			else if (ss[idx] == 'B' || ss[idx] == 'b'){
-				trans_ss.push_back('E');
+				trans_ss.push_back('D');
 			}
 			else if (ss[idx] == 'E' || ss[idx] == 'e'){
-				trans_ss.push_back('L');
+				trans_ss.push_back('D');
 			}
 			else if (ss[idx] == 'G' || ss[idx] == 'g'){
-				trans_ss.push_back('L');
+				trans_ss.push_back('D');
 			}
 			else if (ss[idx] == 'O' || ss[idx] == 'o'){
-				trans_ss.push_back('L');
+				trans_ss.push_back('D');
 			}
 			else if (ss[idx] == '.'){
 				trans_ss.push_back('.');

@@ -3957,6 +3957,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Fixed definition of base atom for acceptors to match hbonds_geom</dd><br>
 <dd>Default: false</dd><br>
 </dl>
+<dl>
+<dt><b>-rg_local_span</b> \<IntegerVector\><dt>
+<dd>First,last res in rg_local. For example to calc rg_local from 1-20 would be 1,20</dd><br>
+<dd>Default: 0</dd><br>
+</dl>
  </li>
 <li><h2>score:saxs</h2>
 <dl>
@@ -10998,6 +11003,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-cenpack</b> \<Real\><dt>
 <dd>set cenpack weight</dd><br>
+<dd>Default: 0.0</dd><br>
+</dl>
+<dl>
+<dt><b>-rg_local</b> \<Real\><dt>
+<dd>set rg_local weight</dd><br>
 <dd>Default: 0.0</dd><br>
 </dl>
 <dl>

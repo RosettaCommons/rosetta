@@ -567,26 +567,30 @@ void RemodelLoopMover::repeat_sync( //utility function
 				Real loop_phi = 0;
 				Real loop_psi = 0;
 				Real loop_omega = 0;
-
+				char loop_secstruct = 'H';
 				if (res <= segment_length ){ // should already be, just to be sure
 
 					if (res == 1){ //if the first and last positions are involved, loop around
 						loop_phi = repeat_pose.phi(segment_length+1);
 						loop_psi = repeat_pose.psi(segment_length+1);
 						loop_omega = repeat_pose.omega(segment_length+1);
+						loop_secstruct = repeat_pose.secstruct(segment_length+1);
 						repeat_pose.set_phi( 1, loop_phi);
 						repeat_pose.set_psi( 1, loop_psi);
 						repeat_pose.set_omega( 1, loop_omega);
+						repeat_pose.set_secstruct(1,loop_secstruct);
 					} else {
 						loop_phi = repeat_pose.phi(res);
 						loop_psi = repeat_pose.psi(res);
 						loop_omega = repeat_pose.omega(res);
+						loop_secstruct = repeat_pose.secstruct(res);
 					}
 
 					for (Size rep = 1; rep < repeat_number; rep++){
 						repeat_pose.set_phi(res+( segment_length*rep), loop_phi );
 						repeat_pose.set_psi(res+( segment_length*rep), loop_psi );
 						repeat_pose.set_omega( res+(segment_length*rep),loop_omega );
+						repeat_pose.set_secstruct( res+(segment_length*rep),loop_secstruct );
 					}
 				}
 				else if (res > segment_length ){ //for spanning builds
@@ -596,16 +600,19 @@ void RemodelLoopMover::repeat_sync( //utility function
 					repeat_pose.set_phi(res-segment_length, repeat_pose.phi(res));
 					repeat_pose.set_psi(res-segment_length, repeat_pose.psi(res));
 					repeat_pose.set_omega(res-segment_length, repeat_pose.omega(res));
-
+					repeat_pose.set_secstruct(res-segment_length, repeat_pose.secstruct(res));
 					//then propagate
 					loop_phi = repeat_pose.phi(res-segment_length);
 					loop_psi = repeat_pose.psi(res-segment_length);
 					loop_omega = repeat_pose.omega(res-segment_length);
+					loop_secstruct = repeat_pose.secstruct(res-segment_length);
 					for (Size rep = 1; rep < repeat_number; rep++){
 						if (res+( segment_length*rep)<= repeat_length_){
 							repeat_pose.set_phi(res+( segment_length*rep), loop_phi );
 							repeat_pose.set_psi(res+( segment_length*rep), loop_psi );
 							repeat_pose.set_omega( res+(segment_length*rep),loop_omega );
+							repeat_pose.set_secstruct( res+(segment_length*rep),loop_secstruct );
+
 						}
 					}
 
@@ -779,7 +786,8 @@ void RemodelLoopMover::repeat_propagation( //utility function
 	//take care of the start if build across jxn
 	if (build_across_jxn){
 		while (residues_beyond_jxn){
-			pose.set_phi(residues_beyond_jxn, pose.phi(residues_beyond_jxn+segment_length));
+		  pose.set_secstruct(residues_beyond_jxn, pose.secstruct(residues_beyond_jxn+segment_length));
+		  pose.set_phi(residues_beyond_jxn, pose.phi(residues_beyond_jxn+segment_length));
 			pose.set_psi(residues_beyond_jxn, pose.psi(residues_beyond_jxn+segment_length));
 			pose.set_omega(residues_beyond_jxn, pose.omega(residues_beyond_jxn+segment_length));
 			residues_beyond_jxn--;
@@ -806,6 +814,7 @@ void RemodelLoopMover::repeat_propagation( //utility function
 				repeat_pose.set_phi(res+( segment_length*rep), loop_phi );
 				repeat_pose.set_psi(res+( segment_length*rep), loop_psi );
 				repeat_pose.set_omega( res+(segment_length*rep), pose.omega(res) );
+				repeat_pose.set_secstruct( res+(segment_length*rep),pose.secstruct(res) );
 		}
 	}
 
@@ -1005,10 +1014,11 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		sfxStaged_OP->set_weight(scoring::atom_pair_constraint, 1.0);	
 		if(option[OptionKeys::remodel::repeat_structure].user())	
 			sfxStaged_OP->set_weight(scoring::atom_pair_constraint, 1.0 *option[OptionKeys::remodel::repeat_structure]);
+	//	sfxStaged_OP->set_weight(scoring::big_bin_constraint,10.0);
 		sfxStaged_OP->show_pretty(TR);
 		//setup fragments so they sample correctly-----------
 		Real fragScoreThreshold = 0.99999;  //1.00XX indicates 1 ABEGO or HLE mismatch.  I chose to use the numbers for future finer control
-		if(!option[OptionKeys::remodel::staged_sampling::require_frags_match_blueprint]);
+		if(!option[OptionKeys::remodel::staged_sampling::require_frags_match_blueprint])
 				fragScoreThreshold = 999.0;
 		//setup locations to sample--------------------------
 		std::set<Size> sampleAllResidues = generate_residues_to_sample(false,pose);
@@ -1679,6 +1689,7 @@ void RemodelLoopMover::loophash_stage(
 					pose.set_phi(res,mc.lowest_score_pose().phi(res));
 					pose.set_psi(res,mc.lowest_score_pose().psi(res));
 					pose.set_omega(res,mc.lowest_score_pose().omega(res));
+					pose.set_secstruct(res,mc.lowest_score_pose().secstruct(res));
 				}
 				repeat_propagation(pose, repeat_pose_,option[OptionKeys::remodel::repeat_structure]);
 			}
@@ -1748,7 +1759,7 @@ void RemodelLoopMover::loophash_stage(
 							test_segment.set_psi( i, psi[i]);
 							test_segment.set_omega( i, omega[i]);
 						}
-						(*i).apply_to_pose(test_segment,3);
+						(*i).apply_to_pose(test_segment,3);/
 						std::string name = "segment" + utility::to_string(j) + ".pdb";
 						test_segment.dump_pdb(name);
 						*/
@@ -1940,6 +1951,7 @@ void RemodelLoopMover::abinitio_stage(
 				pose.set_phi(res,mc.lowest_score_pose().phi(res));
 				pose.set_psi(res,mc.lowest_score_pose().psi(res));
 				pose.set_omega(res,mc.lowest_score_pose().omega(res));
+				pose.set_secstruct(res,mc.lowest_score_pose().secstruct(res));
 				if(swapResType){
 					ResidueType const & rsd_type(mc.lowest_score_pose().residue_type(res));
 					replace_pose_residue_copying_existing_coordinates(pose,res,rsd_type);
@@ -1948,7 +1960,6 @@ void RemodelLoopMover::abinitio_stage(
 		}else{
 			pose = mc.lowest_score_pose();
 		}
-
 		if(option[OptionKeys::remodel::repeat_structure].user()){
 			repeat_propagation( pose, repeat_pose_,option[OptionKeys::remodel::repeat_structure]);
 		}
@@ -1983,6 +1994,7 @@ void RemodelLoopMover::abinitio_stage(
 					pose.set_phi(res,mc.lowest_score_pose().phi(res));
 					pose.set_psi(res,mc.lowest_score_pose().psi(res));
 					pose.set_omega(res,mc.lowest_score_pose().omega(res));
+					pose.set_secstruct(res,mc.lowest_score_pose().secstruct(res));
 					if(swapResType){
 						ResidueType const & rsd_type(mc.lowest_score_pose().residue_type(res));
 						replace_pose_residue_copying_existing_coordinates(pose,res,rsd_type);
@@ -2005,6 +2017,7 @@ void RemodelLoopMover::abinitio_stage(
 						pose.set_phi(res,repeat_pose_.phi(res));
 						pose.set_psi(res,repeat_pose_.psi(res));
 						pose.set_omega(res,repeat_pose_.omega(res));
+						pose.set_secstruct(res,repeat_pose_.secstruct(res));
 						if(swapResType){
 							ResidueType const & rsd_type(repeat_pose_.residue_type(res));
 							replace_pose_residue_copying_existing_coordinates(pose,res,rsd_type);
@@ -2144,6 +2157,7 @@ void RemodelLoopMover::simultaneous_stage(
 				pose.set_phi(res,mc.lowest_score_pose().phi(res));
 				pose.set_psi(res,mc.lowest_score_pose().psi(res));
 				pose.set_omega(res,mc.lowest_score_pose().omega(res));
+				pose.set_secstruct(res,mc.lowest_score_pose().secstruct(res));
 			}
 		}else{
 			pose = mc.lowest_score_pose();
@@ -2217,6 +2231,7 @@ void RemodelLoopMover::simultaneous_stage(
 			pose.set_phi(res,mc.lowest_score_pose().phi(res));
 			pose.set_psi(res,mc.lowest_score_pose().psi(res));
 			pose.set_omega(res,mc.lowest_score_pose().omega(res));
+		  pose.set_secstruct(res,mc.lowest_score_pose().secstruct(res));
 		}
 	}
 	else{
@@ -2410,6 +2425,7 @@ void RemodelLoopMover::independent_stage(
 					pose.set_phi(res,mc.lowest_score_pose().phi(res));
 					pose.set_psi(res,mc.lowest_score_pose().psi(res));
 					pose.set_omega(res,mc.lowest_score_pose().omega(res));
+				  pose.set_secstruct(res, mc.lowest_score_pose().secstruct(res));
 				}
 			}
 			else{
@@ -2476,6 +2492,7 @@ void RemodelLoopMover::independent_stage(
 					pose.set_phi(res,mc.lowest_score_pose().phi(res));
 					pose.set_psi(res,mc.lowest_score_pose().psi(res));
 					pose.set_omega(res,mc.lowest_score_pose().omega(res));
+				  pose.set_secstruct(res,mc.lowest_score_pose().secstruct(res));
 				}
 		} else{
 				pose = mc.lowest_score_pose();
@@ -2655,6 +2672,7 @@ void RemodelLoopMover::boost_closure_stage(
 					pose.set_phi(res,mc.lowest_score_pose().phi(res));
 					pose.set_psi(res,mc.lowest_score_pose().psi(res));
 					pose.set_omega(res,mc.lowest_score_pose().omega(res));
+				  pose.set_secstruct(res,mc.lowest_score_pose().secstruct(res));
 				}
       } else {
 				pose = mc.lowest_score_pose();
@@ -2717,7 +2735,8 @@ void RemodelLoopMover::boost_closure_stage(
           pose.set_phi(res,mc.lowest_score_pose().phi(res));
           pose.set_psi(res,mc.lowest_score_pose().psi(res));
           pose.set_omega(res,mc.lowest_score_pose().omega(res));
-        }
+				  pose.set_secstruct(res,mc.lowest_score_pose().secstruct(res));
+					}
     } else{
         pose = mc.lowest_score_pose();
     }
@@ -2899,11 +2918,14 @@ RemodelLoopMover::create_fragment_movers_limit_size(
 			for (FrameIterator frame_i = (*f)->begin(); frame_i != (*f)->end(); ++frame_i){
 				if(allowedPos.find((*frame_i)->start()) != allowedPos.end()){
 						FrameOP tmp_frame = (*frame_i)->clone();
+						Size frag_ct= 0;
 						for(Size ii = 1; ii<=(*frame_i)->nr_frags(); ++ii){
 								if((*frame_i)->fragment(ii).score()<fragScoreThreshold){
+										frag_ct++;
 										tmp_frame->add_fragment((*frame_i)->fragment_ptr(ii));
 									}
 						}
+						assert(frag_ct != 0);//0 frags at this position. You have chosen a bad abego definition.  
 						tmp_frags->add(tmp_frame);
 					}			
 			}
@@ -3055,6 +3077,7 @@ void RemodelLoopMover::set_starting_pdb(Pose & pose){
 				pose.set_phi(ii,inputPose->phi(ii));
 				pose.set_psi(ii,inputPose->psi(ii));
 				pose.set_omega(ii,inputPose->omega(ii));
+				pose.set_secstruct(ii,inputPose->secstruct(ii));
 		}
 }
 

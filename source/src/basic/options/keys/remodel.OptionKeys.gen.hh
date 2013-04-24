@@ -82,6 +82,7 @@ namespace remodel { extern RealOptionKey const vdw; }
 namespace remodel { extern RealOptionKey const rama; }
 namespace remodel { extern RealOptionKey const cbeta; }
 namespace remodel { extern RealOptionKey const cenpack; }
+namespace remodel { extern RealOptionKey const rg_local; }
 namespace remodel { extern RealOptionKey const hb_lrbb; }
 namespace remodel { extern RealOptionKey const hb_srbb; }
 namespace remodel { extern RealOptionKey const rg; }

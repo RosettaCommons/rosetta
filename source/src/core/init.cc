@@ -57,6 +57,7 @@
 #include <core/scoring/methods/ProClosureEnergyCreator.hh>
 #include <core/scoring/methods/BurialEnergyCreator.hh>
 #include <core/scoring/methods/RG_Energy_FastCreator.hh>
+#include <core/scoring/methods/RG_LocalEnergyCreator.hh>
 #include <core/scoring/methods/SA_EnergyCreator.hh>
 #include <core/scoring/methods/RMS_EnergyCreator.hh>
 #include <core/scoring/methods/Rama2BOffsetEnergyCreator.hh>
@@ -305,6 +306,7 @@ static EnergyMethodRegistrator< scoring::methods::PeptideBondEnergyCreator > Pep
 static EnergyMethodRegistrator< scoring::methods::ProClosureEnergyCreator > ProClosureEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::BurialEnergyCreator > BurialCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::RG_Energy_FastCreator > RG_Energy_FastCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::RG_LocalEnergyCreator > RG_LocalEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::SA_EnergyCreator > SA_EnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::RMS_EnergyCreator > RMS_EnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::Rama2BOffsetEnergyCreator > Ramac2BOffsetEnergyCreator_registrator;

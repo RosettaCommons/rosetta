@@ -133,6 +133,7 @@ void setup_tag2string() {
 	tag2string[ STAGE5 ] = "STAGE5";
 	tag2string[ FRAGMENT_MOVER ] = "FRAGMENT_MOVER";
 	tag2string[ RG ] = "RG";
+	tag2string[ RG_LOCAL ] = "RG_LOCAL";
 	tag2string[ SEQUENCE_COMPARISON ] = "SEQUENCE_COMPARISON";
 	tag2string[ KDTREE_CONSTRUCT] = "KDTREE_CONSTRUCT";
 	tag2string[ KDTREE_SEARCH] = "KDTREE_SEARCH";

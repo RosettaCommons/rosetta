@@ -1,5 +1,3 @@
-namespace optE { FileOptionKey const fixed( "optE:fixed" );  }
-namespace optE { FileOptionKey const parse_tagfile( "optE:parse_tagfile" );  }
 namespace optE { FileOptionKey const constant_logic_taskops_file( "optE:constant_logic_taskops_file" );  }
 namespace optE { BooleanOptionKey const optE_soft_rep( "optE:optE_soft_rep" );  }
 namespace optE { BooleanOptionKey const no_hb_env_dependence( "optE:no_hb_env_dependence" );  }
@@ -172,6 +170,7 @@ namespace remodel { RealOptionKey const vdw( "remodel:vdw" );  }
 namespace remodel { RealOptionKey const rama( "remodel:rama" );  }
 namespace remodel { RealOptionKey const cbeta( "remodel:cbeta" );  }
 namespace remodel { RealOptionKey const cenpack( "remodel:cenpack" );  }
+namespace remodel { RealOptionKey const rg_local( "remodel:rg_local" );  }
 namespace remodel { RealOptionKey const hb_lrbb( "remodel:hb_lrbb" );  }
 namespace remodel { RealOptionKey const hb_srbb( "remodel:hb_srbb" );  }
 namespace remodel { RealOptionKey const rg( "remodel:rg" );  }

@@ -244,6 +244,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "Menv_smooth" ] = Menv_smooth;
 
 	name2score_type_[ "rg" ] = rg;
+	name2score_type_[ "rg_local" ] = rg_local;
 	name2score_type_[ "co" ] = co;
 	name2score_type_[ "peptide_bond" ] = peptide_bond;
 	name2score_type_[ "pcs" ] = pcs;

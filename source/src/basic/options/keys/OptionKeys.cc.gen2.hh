@@ -1,4 +1,3 @@
-namespace james { BooleanOptionKey const james( "james" );  }
 namespace james { IntegerOptionKey const min_seqsep( "james:min_seqsep" );  }
 namespace james { StringVectorOptionKey const atom_names( "james:atom_names" );  }
 namespace james { RealVectorOptionKey const dist_thresholds( "james:dist_thresholds" );  }
@@ -694,3 +693,5 @@ namespace optE { StringOptionKey const data_out( "optE:data_out" );  }
 namespace optE { StringOptionKey const weights( "optE:weights" );  }
 namespace optE { StringVectorOptionKey const fix( "optE:fix" );  }
 namespace optE { FileOptionKey const free( "optE:free" );  }
+namespace optE { FileOptionKey const fixed( "optE:fixed" );  }
+namespace optE { FileOptionKey const parse_tagfile( "optE:parse_tagfile" );  }

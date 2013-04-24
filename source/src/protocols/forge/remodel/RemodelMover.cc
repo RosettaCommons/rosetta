@@ -259,6 +259,10 @@ void RemodelMover::register_user_options() {
 		TR << "USER OVERWRITE CENPACK: " <<option[OptionKeys::remodel::cenpack] << std::endl;
 	}
 
+	if (option[OptionKeys::remodel::rg_local].user() ){
+		centroid_sfx_->set_weight( rg_local,option[OptionKeys::remodel::rg_local] );
+		TR << "USER OVERWRITE RG_LOCAL: " <<option[OptionKeys::remodel::rg_local] << std::endl;
+	}
 	if (option[OptionKeys::remodel::hb_lrbb].user() ){
 		centroid_sfx_->set_weight( hbond_lr_bb,option[OptionKeys::remodel::hb_lrbb] );
 		TR << "USER OVERWRITE HB_LRBB: " <<option[OptionKeys::remodel::hb_lrbb] << std::endl;
@@ -388,9 +392,9 @@ void RemodelMover::apply( Pose & pose ) {
 
 	// store the starting pose for KIC confirmation RMSD calculation
 	native_pose_ = pose;
-
 	// assign secondary structure
 	scoring::dssp::Dssp dssp( pose );
+
 
 	forge::remodel::RemodelData remodel_data;
 	forge::remodel::RemodelWorkingSet working_model;
@@ -420,8 +424,7 @@ void RemodelMover::apply( Pose & pose ) {
 	TR << std::endl;
 
 	remodel_data.updateWithDsspAssignment( dsspSS );
-	dssp.insert_ss_into_pose( pose );
-
+	//dssp.insert_ss_into_pose( pose ); This put the assigned sec structure into the pose, as opposed to the actual SS of the pose. Thus eliminated 
 	// process domain insertion option
 	if (option[OptionKeys::remodel::domainFusion::insert_segment_from_pdb].user() ) {
 		TR << "apply(): INSERT SEGMENT FROM PDB" << std::endl;
@@ -477,6 +480,7 @@ void RemodelMover::apply( Pose & pose ) {
 		}
 	}
 
+
 	//
 	//	Pose testArc;
 	//	testArc = pose;
@@ -485,7 +489,10 @@ void RemodelMover::apply( Pose & pose ) {
 			working_model.manager.modify(pose);
 			}else{
 			working_model.manager.dummy_modify(pose.total_residue());
-		}
+		}	
+
+		scoring::dssp::Dssp dssp( pose );
+		dssp.insert_ss_into_pose( pose ); 
 		//	protocols::forge::methods::restore_residues(working_model.manager.original2modified(), testArc, pose);
 		//	pose.dump_pdb("testArcRestore.pdb");
 		//testArc=pose;
@@ -498,7 +505,6 @@ void RemodelMover::apply( Pose & pose ) {
 			false // rotate_chain_id
 		);
 	}
-
 	//finally recheck length to ensure blueprint compliance
 	if(option[OptionKeys::remodel::repeat_structure].user()) {
 		Size max_pdb_index = remodel_data_.blueprint.size()*2;
@@ -560,6 +566,7 @@ void RemodelMover::apply( Pose & pose ) {
 		//}
 		//pose.pdb_info( pdb_info );
 	}
+
 
 	Size i =option[OptionKeys::remodel::num_trajectory];
 	Size num_traj = i; // need this for checkpointing math
@@ -669,6 +676,7 @@ void RemodelMover::apply( Pose & pose ) {
 				cached_modified_pose.set_phi( res, pose.phi(res) );
 				cached_modified_pose.set_psi( res, pose.psi(res) );
 				cached_modified_pose.set_omega( res, pose.omega(res) );
+				cached_modified_pose.set_secstruct(res, pose.secstruct(res));
 				ResidueType const & rsd_type(pose.residue_type(res));
 				replace_pose_residue_copying_existing_coordinates(cached_modified_pose,res,rsd_type);
 			}
@@ -917,7 +925,7 @@ void RemodelMover::apply( Pose & pose ) {
 				designMover.apply(pose);
 				accumulator.apply(pose);
 			}
-			//*****END horrible code.
+			//*****
 		}
 		if (option[OptionKeys::remodel::checkpoint] ) {
 			// debug:

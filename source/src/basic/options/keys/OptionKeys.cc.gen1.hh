@@ -1,4 +1,3 @@
-namespace jumps { BooleanOptionKey const no_chainbreak_in_relax( "jumps:no_chainbreak_in_relax" );  }
 namespace jumps { FileOptionKey const pairing_file( "jumps:pairing_file" );  }
 namespace jumps { IntegerVectorOptionKey const random_sheets( "jumps:random_sheets" );  }
 namespace jumps { FileOptionKey const residue_pair_jump_file( "jumps:residue_pair_jump_file" );  }
@@ -125,6 +124,7 @@ namespace score { StringOptionKey const extra_improper_file( "score:extra_improp
 namespace score { RealOptionKey const pro_close_planar_constraint( "score:pro_close_planar_constraint" );  }
 namespace score { BooleanOptionKey const linear_bonded_potential( "score:linear_bonded_potential" );  }
 namespace score { BooleanOptionKey const geom_sol_correct_acceptor_base( "score:geom_sol_correct_acceptor_base" );  }
+namespace score { IntegerVectorOptionKey const rg_local_span( "score:rg_local_span" );  }
 namespace score { namespace saxs { BooleanOptionKey const saxs( "score:saxs" );  } }
 namespace score { namespace saxs { RealOptionKey const min_score( "score:saxs:min_score" );  } }
 namespace score { namespace saxs { StringOptionKey const custom_ff( "score:saxs:custom_ff" );  } }
@@ -694,3 +694,4 @@ namespace cmiles { namespace kcluster { IntegerOptionKey const num_clusters( "cm
 namespace cmiles { namespace jumping { BooleanOptionKey const jumping( "cmiles:jumping" );  } }
 namespace cmiles { namespace jumping { IntegerOptionKey const resi( "cmiles:jumping:resi" );  } }
 namespace cmiles { namespace jumping { IntegerOptionKey const resj( "cmiles:jumping:resj" );  } }
+namespace james { BooleanOptionKey const james( "james" );  }

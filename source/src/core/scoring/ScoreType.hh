@@ -317,6 +317,7 @@ enum ScoreType {
 	Menv_tm_proj,
 	Mlipo,
 	rg, // radius of gyration
+	rg_local, //radius of gyration for repeat proteins
 	co, // contact order
 	hs_pair,
 	ss_pair,
