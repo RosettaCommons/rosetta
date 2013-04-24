@@ -43,7 +43,7 @@ namespace antibody {
 struct FrameWork{
 	Size    start;
 	Size    stop;
-	char chain_name;
+	std::string chain_name;
 };
 	
 	

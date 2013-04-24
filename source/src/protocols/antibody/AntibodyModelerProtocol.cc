@@ -458,15 +458,18 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 
 	
 	
-	
+	align_to_native( pose, native_pose, ab_info_, native_ab_info, "H" );
 	
 	job->add_string_real_pair("H3_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(h3) ));
 	job->add_string_real_pair("H2_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(h2) ));
 	job->add_string_real_pair("H1_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(h1) ));
+	//pose.dump_pdb("aligned_H.pdb");
 	if( camelid_ == false ) {
+		align_to_native( pose, native_pose, ab_info_, native_ab_info, "L" );
 		job->add_string_real_pair("L3_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(l3) ));
 		job->add_string_real_pair("L2_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(l2) ));
 		job->add_string_real_pair("L1_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(l1) ));
+		//pose.dump_pdb("aligned_L.pdb");
 	}
 	//job->add_string_real_pair("AP_constraint", atom_pair_constraint_score);
 	job->add_string_real_pair("VL_VH_angle", vl_vh_packing_angle( pose, ab_info_ ));

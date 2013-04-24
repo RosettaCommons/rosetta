@@ -645,56 +645,56 @@ core::pack::task::TaskFactoryOP setup_packer_task(pose::Pose & pose_in )
 		return packing_angle;
 	}
     
-    void align_to_native( core::pose::Pose & pose, 
-                         core::pose::Pose & native_pose,
-                         AntibodyInfoOP ab_info,
-                         AntibodyInfoOP native_ab_info ) {
+void align_to_native( core::pose::Pose & pose, 
+					  core::pose::Pose const & native_pose,
+                      AntibodyInfoOP const ab_info,
+                      AntibodyInfoOP const native_ab_info,
+					  std::string const & reqeust_chain) {
+		
+		
+		std::string pose_seq        = pose.sequence();
+		std::string native_pose_seq = native_pose.sequence();
+		if(pose_seq != native_pose_seq   ){
+			throw excn::EXCN_Msg_Exception(" the pose sequence does not match native_pose sequence ");
+		}
+
         
         core::id::AtomID_Map< core::id::AtomID > atom_map;
         core::pose::initialize_atomid_map( atom_map, pose, core::id::BOGUS_ATOM_ID );
-        
+		
+        // loop over the L and H chains
 		for (Size i_chain=1; i_chain<=ab_info->get_AntibodyFrameworkInfo().size(); i_chain++){
 			vector1<FrameWork>        chain_frmwk =        ab_info->get_AntibodyFrameworkInfo()[i_chain];
 			vector1<FrameWork> native_chain_frmwk = native_ab_info->get_AntibodyFrameworkInfo()[i_chain];
 
-			
-			
-			for (Size j_seg=1; j_seg<=chain_frmwk.size(); j_seg++) { // for loop of the framework segments
-				Size count=0;
+			if(  (chain_frmwk[1].chain_name == reqeust_chain ) || (reqeust_chain =="LH")  ){
 				
-				for (Size k_res=chain_frmwk[j_seg].start; k_res<= chain_frmwk[j_seg].stop; k_res++){
-					count++;
-					Size res_counter = k_res;
-					Size nat_counter = native_chain_frmwk[j_seg].start+count-1;
-					//TR<< res_counter<<"    "<<nat_counter<<std::endl;
+			  	// loop over the segments on the framework of one chain
+				for (Size j_seg=1; j_seg<=chain_frmwk.size(); j_seg++) { // for loop of the framework segments
+					Size count=0;
+				
+					// loop over the residues on one segment on one framework of one chain
+					for (Size k_res=chain_frmwk[j_seg].start; k_res<= chain_frmwk[j_seg].stop; k_res++){
+						count++;
+						Size res_counter = k_res;
+						Size nat_counter = native_chain_frmwk[j_seg].start+count-1;
+						//TR<<"Matching Residue "<< res_counter<<" with  "<<nat_counter<<std::endl;
 					
-					for( core::Size latm=1; latm <= 4; latm++ ) {
-						core::id::AtomID const id1( latm, res_counter );
-						core::id::AtomID const id2( latm, nat_counter );
-						atom_map[ id1 ] = id2;
+						// loop over the backbone atoms including Oxygen
+						for( core::Size latm=1; latm <= 4; latm++ ) {
+							core::id::AtomID const id1( latm, res_counter );
+							core::id::AtomID const id2( latm, nat_counter );
+							atom_map[ id1 ] = id2;
+						}
 					}
-				}
-			}
+					
+				}// end of the for loop
+				
+			}//end of the if statement
 		}
 
-		/*
-        for (core::Size j=1; j<= ab_info->get_ab_framework().size();j++){
-            core::Size count=0;
-            for (core::Size k=ab_info->get_ab_framework()[j].start(); k<= ab_info->get_ab_framework()[j].stop();k++){
-                count++;
-                core::Size res_counter = k;
-                core::Size nat_counter = native_ab_info->get_ab_framework()[j].start()+count-1;
-                //TR<< res_counter<<"    "<<nat_counter<<std::endl;
-
-                for( core::Size atm_counter=1; atm_counter <= 4; atm_counter++ ) {
-                    core::id::AtomID const id1( atm_counter, res_counter );
-                    core::id::AtomID const id2( atm_counter, nat_counter );
-                    atom_map[ id1 ] = id2;
-                }
-            }
-        }
-        */
         core::scoring::superimpose_pose( pose, native_pose, atom_map );
+		
 } // align_to_native()
 
 void

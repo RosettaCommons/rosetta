@@ -55,9 +55,10 @@ simple_fold_tree(
 /// @brief align current Fv to native.Fv
 void
 align_to_native( core::pose::Pose & pose, 
-	core::pose::Pose & native_pose,
-	AntibodyInfoOP ab_info,
-	AntibodyInfoOP native_ab_info);
+	core::pose::Pose const & native_pose,
+	AntibodyInfoOP const ab_info,
+	AntibodyInfoOP const native_ab_info,
+	std::string const & request_chain="LH");
 
 bool 
 CDR_H3_filter_legacy_code_with_old_rule(
