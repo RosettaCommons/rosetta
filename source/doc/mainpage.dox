@@ -69,6 +69,10 @@ put links to commonly referred to documentation pages here.
 
 @section docs_apps Documentations for applications
 	- @ref pilot_apps_info "Index Page for Pilot Application Documentation"
+	- @ref antibody_protocol "Documentation for the RosettaAntibody3 application: Workflow"
+	    - @ref antibody_python_script "Documentation for RosettaAntibody3 application: the Python Pre-Processing Script"
+	    - @ref antibody_assemble_CDRs "Documentation for RosettaAntibody3 application: Antibody CDR Grafting Protocol"
+	    - @ref antibody_model_CDR_H3 "Documentation for RosettaAntibody3 application: Antibody Modeler Protocol (Loop H3 and VL-VH) "
 	- @ref ligand_dock "Documentation for the ligand_dock application"
 	- @ref rna_denovo "Documentation for the RNA 3D modeling applications"
 	- @ref rna_design "Documentation for RNA fixed backbone design"
