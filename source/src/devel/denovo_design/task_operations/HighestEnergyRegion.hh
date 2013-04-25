@@ -151,6 +151,9 @@ public:
 	virtual utility::vector1< core::Size >
 	get_residues_to_design( core::pose::Pose const & pose ) const;
 
+	/// @brief Returns the name of the class
+	virtual std::string get_name() const { return "PackStat"; }
+
 private:
 };
 
@@ -170,6 +173,9 @@ public:
 	virtual utility::vector1< core::Size >
 	get_residues_to_design( core::pose::Pose const & pose ) const;
 
+	/// @brief Returns the name of the class
+	virtual std::string get_name() const { return "RandomRegion"; }
+
 private:
 };
 
@@ -188,6 +194,9 @@ public:
 	/// @brief Gets a list of residues for design
 	virtual utility::vector1< core::Size >
 	get_residues_to_design( core::pose::Pose const & pose ) const;
+
+	/// @brief Returns the name of the class
+	virtual std::string get_name() const { return "ResidueCentrality"; }
 
 private:
 };

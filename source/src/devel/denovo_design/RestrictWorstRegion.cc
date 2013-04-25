@@ -130,7 +130,7 @@ RestrictWorstRegion::RestrictWorstRegion( RestrictWorstRegion const & rval ) :
 	regions_to_mutate_( rval.regions_to_mutate_ ),
 	last_type_( rval.last_type_ ),
 	metric_stats_( rval.metric_stats_ ),
-	highestEnergyRegionOperation_ops_	(rval.highestEnergyRegionOperation_ops_)														 
+	highestEnergyRegionOperation_ops_	(rval.highestEnergyRegionOperation_ops_)
 {}
 
 /// @brief destructor - this class has no dynamic allocation, so
@@ -177,7 +177,7 @@ RestrictWorstRegion::parse_my_tag(
 		highestEnergyRegionOperation_ops_.push_back(op);
 		tmpOpSet = true;
 	}
-	if((type == "score")||(type == "random" )){
+	if(type == "score"){
 		task_operations::HighestEnergyRegionOperationOP op = new task_operations::HighestEnergyRegionOperation();
 		op->set_scorefxn( scorefxn_ );
 		highestEnergyRegionOperation_ops_.push_back(op);
@@ -191,14 +191,14 @@ RestrictWorstRegion::parse_my_tag(
 	if((type == "random_mutation")||(type == "random" )){
 		task_operations::HighestEnergyRegionOperationOP op = new task_operations::DesignRandomRegionOperation();
 		highestEnergyRegionOperation_ops_.push_back(op);
-		tmpOpSet = true;	
+		tmpOpSet = true;
 	}
 	if(tmpOpSet == false)
 		utility_exit_with_message( "Bad type specified to RestrictWorstRegion op: " + type  );
 	//initialize metric calculator. maybe not the best location for this?
-	for(core::Size ii=1; ii<highestEnergyRegionOperation_ops_.size(); ++ii){
+	for(core::Size ii=1; ii<=highestEnergyRegionOperation_ops_.size(); ++ii){
 		std::string opName = highestEnergyRegionOperation_ops_[ii]->get_name();
-		metric_stats_[opName] = std::pair<core::Size,core::Size>(0,0);
+		metric_stats_[opName] = std::pair< core::Size, core::Size >( 0, 0 );
 	}
 }
 
@@ -269,18 +269,19 @@ RestrictWorstRegion::apply( core::pose::Pose & pose )
 		}
 		// increment counter if sequence changes occurred in the pose
 		if ( changed ) {
-			++(metric_stats_[ last_type_ ].first);
+			++( metric_stats_[ last_type_ ].first );
 		}
 	}
 	previous_pose_ = new core::pose::Pose( pose );
 	// set operation to find worst region
- 	task_operations::HighestEnergyRegionOperationOP op = highestEnergyRegionOperation_ops_[numeric::random::random_range(1,highestEnergyRegionOperation_ops_.size())];		
+ 	task_operations::HighestEnergyRegionOperationOP op = highestEnergyRegionOperation_ops_[numeric::random::random_range(1,highestEnergyRegionOperation_ops_.size())];
 	type_ = op->get_name();
 	//output stats on types
 	TR << "type=" << type_ << std::endl;
 	std::map< std::string, std::pair< core::Size, core::Size > >::iterator itr;
 	for(itr = metric_stats_.begin(); itr!= metric_stats_.end(); ++itr)
-		TR << itr->first << ": " << itr->second.first << " / " << itr->second.second << std::endl;
+		TR << itr->first << ": " << itr->second.first << " / " << itr->second.second << " ; ";
+	TR << std::endl;
 	last_type_ = type_;
 	++(metric_stats_[ type_ ].second);
 	op->set_regions_to_design( pose.total_residue() );

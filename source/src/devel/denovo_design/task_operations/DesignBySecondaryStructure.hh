@@ -62,7 +62,7 @@ public:
 	get_residues_to_design( core::pose::Pose const & pose ) const;
 
 	/// @brief Returns the name of the class
-	virtual std::string get_name() const { return "DesignBySecondaryStructureOperation"; }
+	virtual std::string get_name() const { return "SSPrediction"; }
 
 public:
   void parse_tag( utility::tag::TagPtr tag );
