@@ -133,6 +133,24 @@ LayerDesignOperation::LayerDesignOperation( bool dsgn_core, bool dsgn_boundary, 
 	set_default_layer_residues();
 }
 
+LayerDesignOperation::LayerDesignOperation( LayerDesignOperation const & rval ):
+	 add_helix_capping_( rval.add_helix_capping_ ),
+	 use_original_( rval.use_original_ ),
+	 repack_non_designed_residues_( rval.repack_non_designed_residues_ ),
+	 verbose_( rval.verbose_ ),
+	 restrict_restypes_( rval.restrict_restypes_ ),
+	 make_pymol_script_( rval.make_pymol_script_ ),
+	 layer_residues_( rval.layer_residues_ ),
+	 design_layer_( rval.design_layer_ ),
+	 layer_specification_( rval.layer_specification_ ),
+	 layer_operation_( rval.layer_operation_ ),
+	 task_layers_( rval.task_layers_ ),
+	 srbl_( rval.srbl_ ),
+	 blueprint_( rval.blueprint_ )
+{
+}
+
+
 /// @brief destructor
 LayerDesignOperation::~LayerDesignOperation() {
 }

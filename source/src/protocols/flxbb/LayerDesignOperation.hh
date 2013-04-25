@@ -104,6 +104,8 @@ public:
 	/// @brief value constructor
 	LayerDesignOperation( bool dsgn_core, bool dsgn_boundary, bool dsgn_surface );
 
+	LayerDesignOperation( LayerDesignOperation const & rval );
+
 	/// @brief destructor
 	virtual ~LayerDesignOperation();
 
