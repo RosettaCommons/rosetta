@@ -53,6 +53,8 @@ class MotifHashRigidScore : public RigidScore {
 
 	protocols::motif_hash::MotifHashCAP motif_hash() const { return mh_; }
 
+	core::Size nhashlookups() const { return nhashlookups_; }
+
  private:
  	MotifHashRigidScore(){}
 	Pose pose1_,pose2_;
@@ -65,6 +67,7 @@ class MotifHashRigidScore : public RigidScore {
 	utility::vector1< std::pair<numeric::xyzVector<float>,int> > reslist_;
 	bool hash_pose1_;
 	std::string ss1_,ss2_;
+	mutable core::Size nhashlookups_;
 };
 
 

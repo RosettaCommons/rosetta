@@ -275,7 +275,7 @@ dock(
 			{
 				cout << F(5,1,(Real)iqg/(Real)totsamp*100.0) << "%" << ", nsamp: " << F(7,4,(Real)nsamp/1000000.0) << "M, Nsic: " << F(7,4,(Real)nsamp_slide/1000000.0) << "M ";
 				if(hits.size()){ cout<<"   topscore: " <<F(8,2,tophit.rscore); rigidsfxn->show(cout,tophit.x1,tophit.x2); }
-				cout << endl;
+				cout << F(7,3,(Real)mhscore_->nhashlookups()/1000000.0) <<  endl;
 			}
 		}
 

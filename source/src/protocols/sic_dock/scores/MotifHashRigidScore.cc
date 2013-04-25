@@ -30,7 +30,7 @@ namespace protocols {
 namespace sic_dock {
 namespace scores {
 
-#define MAX_MOTIF_D2 49.0
+#define MAX_MOTIF_D2 64.0
 
 static basic::Tracer TR( "protocols.sic_dock.scores.MotifHashRigidScore" );
 
@@ -60,7 +60,21 @@ MotifHashRigidScore::MotifHashRigidScore(
 	Pose const & _pose1,
 	Pose const & _pose2
 ):
-	pose1_(_pose1),pose2_(_pose2),mh_(NULL),xs_(NULL),xsee_(NULL),xseh_(NULL),xshe_(NULL),xshh_(NULL),xspp_(NULL),nss1_(0),nss2_(0),ssinfo1_(NULL),ssinfo2_(NULL),reshash_(NULL)
+	pose1_(_pose1),
+	pose2_(_pose2),
+	mh_(NULL),
+	xs_(NULL),
+	xsee_(NULL),
+	xseh_(NULL),
+	xshe_(NULL),
+	xshh_(NULL),
+	xspp_(NULL),
+	nss1_(0),
+	nss2_(0),
+	ssinfo1_(NULL),
+	ssinfo2_(NULL),
+	reshash_(NULL),
+	nhashlookups_(0)
 {
 	core::scoring::dssp::Dssp(pose1_).insert_ss_into_pose_no_IG_helix(pose1_);
 	core::scoring::dssp::Dssp(pose2_).insert_ss_into_pose_no_IG_helix(pose2_);
@@ -152,8 +166,8 @@ MotifHashRigidScore::score_meta( Xforms const & x1s, Xforms const & x2s, int & n
 				Xform const xb1 = x1 * bbx1_[ir];
 				Xform const xb2 = x2 * bbx2_[jr];
 				Xform const x = ~xb1 * xb2;
-				tres1.insert(ir);
-				tres2.insert(jr);
+				if( x.t.length_squared() <= 49.0 ) tres1.insert(ir);
+				if( x.t.length_squared() <= 49.0 ) tres2.insert(jr);
 				protocols::motif_hash::XformScoreCAP xscore_for_this_ss = xs_;
 				if(option[mh::score::noloops]() && ss1_[ir-1]=='L') continue;
 				if(option[mh::score::noloops]() && ss2_[jr-1]=='L') continue;
@@ -163,8 +177,14 @@ MotifHashRigidScore::score_meta( Xforms const & x1s, Xforms const & x2s, int & n
 				if(ss1_[ir-1]=='E'&&ss2_[jr-1]=='E') xscore_for_this_ss = xsee_;
 				if(x.t.length_squared() <  49.0 ) tot_weighted -= 1.0;
 				Real6 rt6 = get_rt6(x);
-				Real raw = min(500.0,xscore_for_this_ss->score_of_bin(rt6));
+				Real raw = xscore_for_this_ss->score_of_bin(rt6);
+				#ifdef USE_OPENMP
+				#pragma omp critical
+				#endif
+				++nhashlookups_;
 				if(raw <= 0) continue;
+				if( x.t.length_squared() >  49.0 ) tres1.insert(ir);
+				if( x.t.length_squared() >  49.0 ) tres2.insert(jr);
 				tot_weighted += sqrt( raw );
 				// sselemsc1[ssinfo1_->ss_element_id(ir)] += sqrt(raw)+raw/30.0;
 				// sselemsc2[ssinfo2_->ss_element_id(jr)] += sqrt(raw)+raw/30.0;//!!!!!!!!!!!!!!!!!!!!!!!!
@@ -175,7 +195,7 @@ MotifHashRigidScore::score_meta( Xforms const & x1s, Xforms const & x2s, int & n
 
 				if( xspp_ && pose1_.secstruct(ir)=='E' && pose2_.secstruct(jr)=='E' ){
 					Real ss = xspp_->score_of_bin(rt6);
-					if(ss>100.0){
+					if(ss>0.0){
 						if(ssp1.find(ir)==ssp1.end()) ssp1[ir]=0; ssp1[ir] += ss;
 						if(ssp2.find(jr)==ssp2.end()) ssp2[jr]=0; ssp2[jr] += ss;
 					}
@@ -192,8 +212,9 @@ MotifHashRigidScore::score_meta( Xforms const & x1s, Xforms const & x2s, int & n
 	// BOOST_FOREACH(Real s,sselemsc1) ssscore += sqrt(s) + s/15.0;
 	// BOOST_FOREACH(Real s,sselemsc2) ssscore += sqrt(s) + s/15.0;
 
+	nres      = tres1.size()+tres2.size();
 	res_score = tres1.size()+tres2.size();
-	res_score = -res_score * 0.666;
+	res_score = -res_score * 0.6666;
 	typedef std::map<Size,Real>::value_type  MapVal;
 	BOOST_FOREACH(MapVal v,mres1) res_score += sqrt(v.second);
 	BOOST_FOREACH(MapVal v,mres2) res_score += sqrt(v.second);
@@ -213,7 +234,7 @@ MotifHashRigidScore::score_meta( Xforms const & x1s, Xforms const & x2s, int & n
 
 	sheetsc = option[basic::options::OptionKeys::mh::score::strand_pair_weight]() * ( 30*nsheetsc );
 
-	return res_score + sheetsc;
+	return (res_score + sheetsc);
 }
 
 core::Real

@@ -692,7 +692,7 @@ void initsyms(){
 		NEW_OPT( tcdock::intra            ,"weight for intra contacts"           ,  1.0   );
 		NEW_OPT( tcdock::intra1           ,"weight for comp1 intra contacts"     ,  1.0   );
 		NEW_OPT( tcdock::intra2           ,"weight for conp2 intra contacts"     ,  1.0   );
-		NEW_OPT( tcdock::nsamp1           ,"check around X top lowres hits"      , 2000   );
+		NEW_OPT( tcdock::nsamp1           ,"check around X top lowres hits"      , 20000   );
 		NEW_OPT( tcdock::topx             ,"output top X hits"                   , 10     );
 		NEW_OPT( tcdock::peak_grid_size   ,"peak detect grid size (2*N+1)"       , 24     );
 		NEW_OPT( tcdock::peak_grid_smooth ,"peak detect grid smooth (0+)"        ,  1     );
@@ -731,7 +731,7 @@ void initsyms(){
 		NEW_OPT( tcdock::trim_floppy_termini ,"", 0.0 );
 		NEW_OPT( tcdock::debug,""         , false );
 
-		NEW_OPT( tcdock::require_inter_contact,""         , true );
+		NEW_OPT( tcdock::require_inter_contact,""         , false );
 		NEW_OPT( tcdock::print_dumped_motifs,""         , false );
 
 		NEW_OPT( tcdock::dump_transforms,""         ,"" );
@@ -1007,14 +1007,14 @@ struct TCDock {
 		rigid_sfxn_ = jtscore;
 		final_sfxn_ = fnscore;
 
-		jtscore->add_score(cbscore ,1.0);
-
 		if(option[basic::options::OptionKeys::mh::xform_score_data].user()){
 			mhscore_ = new protocols::sic_dock::scores::MotifHashRigidScore(cmp1olig_,cmp2olig_);
 			jtscore->add_score(mhscore_,option[tcdock::motif_hash_weight]());
 			// Real const approx_surf = std::pow((Real)cmp1olig_.n_residue(),0.666666) * std::pow((Real)cmp2olig_.n_residue(),0.666666);
 			// Real const hackcut = approx_surf/25.0 * option[tcdock::hash_speed_filter_hack]();
 			// cout << "MotifHashRigidScore / JointScore Speed filter hack scorecut: " << hackcut << endl;
+		} else {
+			jtscore->add_score(cbscore ,1.0);
 		}
 		if(option[tcdock::max_linker_len]() > 0){
 			string lnscore_tag = cmp1name_+"_"+cmp2name_+arch().name()+"_";
@@ -1501,7 +1501,7 @@ struct TCDock {
 
 			Real old = 9e9;
 			int count = 0;
-			for(Real slidedis = contact; slidedis > contact - 0.1; slidedis -= 0.2){
+			for(Real slidedis = contact; slidedis > contact - 3.0; slidedis -= 0.2){
 				xa.t = -slidedis*sicaxis; // move into slid position
 				Real score = rigid_sfxn_->score(xa,xb);
 
@@ -1607,7 +1607,7 @@ struct TCDock {
 				}
 			}
 		}
-		return td;
+		return td>9e8? -1: td;
 	 }
 	Real min_termini_proj(Real a1, Real a2, Vec sicaxis){
 		using basic::options::option;
@@ -1678,7 +1678,7 @@ struct TCDock {
 		m3 /= (Real)pts.size();
 		m4 /= (Real)pts.size();
 		m2 = std::pow(m2,0.5);
-		m3 = std::pow(m3,1.0/3.0);
+		m3 = std::pow(fabs(m3),1.0/3.0) * (m3>0?1.0:-1.0);
 		m4 = std::pow(m4,0.25);
 	 }
 	void gather_hits(vector1<LMAX> & local_maxima, bool const & reverse) {
@@ -1727,7 +1727,7 @@ struct TCDock {
 						    << (reverse?"R ":"F ")
 						    <<I(2,100*icmp1/arch().nangle1())
 						    <<"% done, max_score: "
-						    <<F(10,6,max_score)
+						    <<F(10,3,max_score)
 						    // <<" rate: "<<rate<<" confs/sec"
 						    // <<" "<<rate/Real(num_threads())<<" confs/sec/thread"
 						    <<endl;
@@ -1790,10 +1790,12 @@ struct TCDock {
 						    <<cmp2name_<<" "
 						    <<I(2,100*icmp1/arch().nangle1())
 						    <<"% done, max_score: "
-						    <<F(10,6,max_score)
+						    <<F(10,3,max_score)
 						    // <<" rate: "<<rate<<" confs/sec"
 						    // <<" "<<rate/num_threads()<<" confs/sec/thread"<<" " <<num_threads()
-						    <<endl;
+							<< " hash lookups:  " << F(10,3,(Real)mhscore_->nhashlookups()/1000.0) << "K"
+							<< " confs sampled: " << F(10,3,conf_count_/1000.0) << "K"
+						    << endl;
 					}
 
 					Real const score = dock_score(icmp2,icmp1,iori);
@@ -1825,7 +1827,7 @@ struct TCDock {
 
 		///////////////////////////////// STAGE 2 ////////////////////////////////////
 		utility::vector1<vector1<int> > cmp2lmx,cmp1lmx,orilmx; { // set up work for main loop 2
-			Real topX_3 = 0;
+			Real topX_3 = -9e6;
 			vector1<Real> cbtmp;
 			for(Size i = 0; i < gscore.size(); ++i) if(gscore[i] > 0) cbtmp.push_back(gscore[i]);
 			std::sort(cbtmp.begin(),cbtmp.end());
@@ -1866,6 +1868,10 @@ struct TCDock {
 						for(vector1<int>::const_iterator piori = orilmx[ilmx].begin(); piori != orilmx[ilmx].end(); ++piori) {
 							int iori = *piori;
 							dock_score(icmp2,icmp1,iori);
+							#ifdef USE_OPENMP
+							#pragma omp critical
+							#endif
+							++conf_count_;
 						}
 					}
 				}
@@ -1922,6 +1928,8 @@ struct TCDock {
 				}
 			}
 		}
+		cout << " hash lookups:  " << F(10,3,(Real)mhscore_->nhashlookups()/1000.0) << "K confs sampled: " << F(10,3,conf_count_/1000.0) << "K" << endl;
+
 	 }
 	void dump_top_hits(vector1<LMAX> & local_maxima){
 		using basic::options::option;
