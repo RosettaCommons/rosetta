@@ -1205,16 +1205,6 @@ public:
 		return is_methylated_cterminus_;
 	}
 
-/*	/// @brief is branch point for a branched polymer?
-	bool
-	is_branch_point() const
-	{
-		if (branch_point_atoms_.size() == 0) {
-			return false;
-		}
-		return true;
-	}*/
-
 	/// @brief  Check if atom is virtual.
 	bool
 	is_virtual( Size const & atomno ) const;
@@ -2017,9 +2007,6 @@ private:
 
 	Size n_non_polymeric_residue_connections_;
 	Size n_polymeric_residue_connections_;
-
-	// A list of all atoms (by atom name) to which other branches are attached.
-	//utility::vector1<std::string> branch_point_atoms_;
 
 	///////////////////////////////////////////////////////////////////////
 	// These arrays are temporary, will be cleared in finalize():

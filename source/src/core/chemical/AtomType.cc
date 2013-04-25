@@ -7,33 +7,24 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //////////////////////////////////////////////////////////////////////
-/// @begin AtomType
+/// @file AtomType.cc
 ///
 /// @brief
 /// A class for defining atom parameters, known as atom_types
 ///
-/// @detailed
+/// @details
 /// This class contains the "chemical" information for atoms. This does not contain the actual
 /// xyz coordinates of the class (xyz found in core/conformation/Atom.hh. The atom_type properties
 /// are assigned by the class AtomTypeSet which is initiated from the ChemicalManager. Atom type properties
 /// are currently are read in from the file located chemical/atom_type_sets/fa_standard/atom_properties.txt.
 /// These properties contain the the properties of LJ_RADIUS, LJ_WDEPTH, LK_DGRFREE, LK_LAMBDA, LK_VOLUME.
-/// These properties are used in the scoring function fa_atr, fa_rep, fa_sol, which is located in the Etable (core/scoring/etable/Etable.hh)
-/// Additional parameters are acceptor/donor, hybridzation, and orbital paramaters.
+/// These properties are used in the scoring function fa_atr, fa_rep, fa_sol, which is located in the Etable
+/// (core/scoring/etable/Etable.hh)
+/// Additional parameters are acceptor/donor, hybridization, and orbital parameters.
 ///
-///
-///
-/// @authors
-/// Phil Bradley
-/// Steven Combs - comments
-///
-///
-/// @last_modified December 6 2010
+/// @author Phil Bradley
+/// @author Steven Combs - comments
 /////////////////////////////////////////////////////////////////////////
-
-
-
-
 
 
 // Rosetta headers
@@ -77,7 +68,8 @@ AtomType::print(
 	case RING_HYBRID: out << "RING_HYBRID "; break;
 	case UNKNOWN_HYBRID: break;
 	default:
-		utility_exit_with_message("Attempting retrive hydrid for atom type '" + name() + "', however the hybridization type is not recognized.");
+		utility_exit_with_message("Attempting retrive hydrid for atom type '" + name() +
+				"', however the hybridization type is not recognized.");
 	}
 	out << std::endl;
 	out << "Extra Parameters:";
@@ -106,10 +98,9 @@ bool AtomType::is_virtual() const
 ///
 /// @details currently parameters are "LJ_RADIUS","LJ_WDEPTH","LK_VOLUME",
 /// "LK_DGFREE","LK_LAMBDA".It will abort if the parameter name is not
-/// recoganized. Supplemented by membrane specific solvation parameters:
+/// Recognized. Supplemented by membrane specific solvation parameters:
 /// "MEMB_LK_DGFREE","MEMB_LK_DGREFCE","LK_DGREFCE". These are the header files
 /// in atom_properties.txt
-///
 void
 AtomType::set_parameter(
 	std::string const & param,
@@ -142,7 +133,7 @@ AtomType::set_parameter(
 ///
 /// @details currently properties are "ACCEPTOR","DONOR","POLAR_HYDROGEN",
 /// "H2O", and hybridization types including "SP2_HYBRID", "SP3_HYBRID" and
-/// "RING_HYBRID". It will abort if the property name is not recoganized. To add
+/// "RING_HYBRID". It will abort if the property name is not recognized. To add
 /// properties, edit atom_properties.txt and add your property to the last column
 /// then add code here that will read the property.
 ///
@@ -215,7 +206,8 @@ AtomType::add_property(
 	} else if ( property == "RING_HYBRID" ) {
 		hybridization_ = RING_HYBRID;
 	} else {
-		utility_exit_with_message("Attempting to set non-existant property '" + property + "' on atom type '" + name() + "'.");
+		utility_exit_with_message("Attempting to set non-existant property '" + property +
+				"' on atom type '" + name() + "'.");
 	}
 }
 
@@ -223,7 +215,7 @@ AtomType::add_property(
 utility::vector1< std::string >
 AtomType::get_all_properties() const {
 	utility::vector1< std::string > properties;
-	if(is_acceptor())	properties.push_back("ACCEPTOR");
+	if(is_acceptor()) properties.push_back("ACCEPTOR");
 	if(is_donor()) properties.push_back("DONOR");
 	if(is_polar_hydrogen()) properties.push_back("POLAR_HYDROGEN");
 	if(is_aromatic()) properties.push_back("AROMATIC");
@@ -237,7 +229,8 @@ AtomType::get_all_properties() const {
 	case RING_HYBRID: properties.push_back("RING_HYBRID"); break;
 	case UNKNOWN_HYBRID: break;
 	default:
-		utility_exit_with_message("Attempting retrive hydrid for atom type '" + name() + "', however the hybridization type is not recognized.");
+		utility_exit_with_message("Attempting retrive hydrid for atom type '" + name() +
+				"', however the hybridization type is not recognized.");
 	}
 	return properties;
 }
@@ -248,11 +241,6 @@ AtomType::set_all_extra_parameters(
 ) {
 	extra_parameters_ = extra_parameters;
 }
-
-
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
 
 
 } // pose

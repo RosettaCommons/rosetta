@@ -20,7 +20,6 @@
 /// added for residues, this is where they would be added.  Once it assigns the types, it then reads in extra residue
 /// params that are passed through the command line.  Finally, patches are applied to all residues added.
 ///
-///
 /// @author
 /// Phil Bradley
 /// Steven Combs - these comments
@@ -31,27 +30,17 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/Patch.hh>
 #include <core/chemical/ChemicalManager.hh>
-
-//XRW_B_T1
-/*
-// Commented by inclean daemon #include <core/coarse/Translator.hh>
-#include <core/coarse/TranslatorSet.hh>
-#include <core/coarse/Rules.hh>
-*/
-//XRW_E_T1
-
 #include <core/chemical/residue_io.hh>
 #include <core/chemical/adduct_util.hh>
 
 // Basic headers
 #include <basic/database/open.hh>
 #include <basic/options/option.hh>
-#include <utility/io/izstream.hh>
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include  <utility/file/FileName.hh>
-
+#include <utility/file/FileName.hh>
+#include <utility/io/izstream.hh>
 
 // C++ headers
 #include <fstream>

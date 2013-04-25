@@ -54,13 +54,12 @@ typedef utility::pointer::owning_ptr< FACTSRsdTypeInfo > FACTSRsdTypeInfoOP;
 typedef utility::pointer::owning_ptr< FACTSRsdTypeInfo const > FACTSRsdTypeInfoCOP;
 typedef std::map< chemical::ResidueType const *, FACTSRsdTypeInfoCOP > FACTSRsdTypeMap;
 
-/**************************************************************************************************/
-/*                                                                                                */
-/*    @brief: The FACTSRsdTypeInfo class provides all the constants and parameters for given      */
-/*            residue type                                                                        */
-/*                                                                                                */
-/**************************************************************************************************/
-
+/****************************************************************************************************/
+/**                                                                                                **/
+/**    @brief: The FACTSRsdTypeInfo class provides all the constants and parameters for given      **/
+/**            residue type                                                                        **/
+/**                                                                                                **/
+/****************************************************************************************************/
 class FACTSRsdTypeInfo : public utility::pointer::ReferenceCount {
 
 public:
@@ -126,16 +125,15 @@ private:
 	utility::vector1< bool > is_chargedH_;
 };
 
-/**************************************************************************************************/
-/*                                                                                                */
-/*    @brief: The FACTSResidueInfo class provides all the functions, constants and parameters     */
-/*            for different atoms, which are required to calculate the solvation free energy of   */
-/*                      of a        molecule embedded in a continuum solvent using FACTS method   */
-/*                                                                                                */
-/**************************************************************************************************/
-
 //This class provides the information that is specific for each atoms of a residue in FACTS algorithm
 // (such as van der waals radii,  Ai_i, Bi_i, lookup_on_radius_, esolvE_i, sasa, ...)
+/****************************************************************************************************/
+/**                                                                                                **/
+/**    @brief: The FACTSResidueInfo class provides all the functions, constants and parameters     **/
+/**            for different atoms, which are required to calculate the solvation free energy of   **/
+/**                      of a        molecule embedded in a continuum solvent using FACTS method   **/
+/**                                                                                                **/
+/****************************************************************************************************/
 class FACTSResidueInfo : public utility::pointer::ReferenceCount {
 
 public:
@@ -238,7 +236,12 @@ private:
 	FACTSRsdTypeInfoCOP restypeinfo_;
 };
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/****************************************************************************************************/
+/**                                                                                                **/
+/**    @brief: The class FACTSPoseInfo                                                             **/
+/**                                                                                                **/
+/****************************************************************************************************/
 class FACTSPoseInfo : public basic::datacache::CacheableData {
 
 public:
@@ -297,7 +300,11 @@ public:
 	bool context_derivative_empty_;
 };
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
+/****************************************************************************************************/
+/**                                                                                                **/
+/**    @brief: The  class    FACTSRotamerSetInfo                                                   **/
+/**                                                                                                **/
+/****************************************************************************************************/
 class FACTSRotamerSetInfo : public basic::datacache::CacheableData {
 
 public:
@@ -336,14 +343,13 @@ public:
 		utility::vector1< FACTSResidueInfoOP > residue_info_;
 	};
 
-/**************************************************************************************************/
-/*                                                                                                */
-/*    @brief: The FACTSPotential class provides all the functions, constants, and parameters      */
-/*            common to all atoms required to calculate the free energy of solvation of a         */
-/* (macro)molecule embedded in a continuum solvent using FACTS method               */
-/*                                                                                                */
-/**************************************************************************************************/
-
+/****************************************************************************************************/
+/**                                                                                                **/
+/**    @brief: The FACTSPotential class provides all the functions, constants, and parameters      **/
+/**            common to all atoms required to calculate the free energy of solvation of a         **/
+/** (macro)molecule embedded in a continuum solvent using FACTS method                             **/
+/**                                                                                                **/
+/****************************************************************************************************/
 class FACTSPotential : public utility::pointer::ReferenceCount {
 
 public:

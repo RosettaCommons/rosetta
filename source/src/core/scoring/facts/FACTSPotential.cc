@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
  // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-// @file:   core/scoring/facts/FACTSPotential.cc
-// @brief:  The definitions of 3 classes of the FACTS algorithm resides here (see devel/khorvash/FACTSPotential.hh
-// @author: Hahnbeom Park
+/// @file:   core/scoring/facts/FACTSPotential.cc
+/// @brief:  The definitions of 3 classes of the FACTS algorithm resides here (see devel/khorvash/FACTSPotential.hh
+/// @author: Hahnbeom Park
 
 // Unit headers
 #include <core/scoring/facts/FACTSPotential.hh>
@@ -66,41 +66,34 @@ namespace core {
 namespace scoring {
 
 
-///
-/// fast math -- from https://code.google.com/p/fastapprox/downloads/detail?name=fastapprox-0.3.2.tar.gz
+// fast math -- from https://code.google.com/p/fastapprox/downloads/detail?name=fastapprox-0.3.2.tar.gz
 inline float
 fastpow2 (float p) {
-  float offset = (p < 0.0) ? 1.0f : 0.0f;
-  float clipp = (p < -126.0) ? -126.0f : p;
-  int w = (int)(clipp);
-  float z = clipp - (float)(w) + offset;
-  union { uint32_t i; float f; } v = { (uint32_t) ( (1 << 23) * (clipp + 121.2740575f + 27.7280233f / (4.84252568f - z) - 1.49012907f * z) ) };
+	float offset = (p < 0.0) ? 1.0f : 0.0f;
+	float clipp = (p < -126.0) ? -126.0f : p;
+	int w = (int)(clipp);
+	float z = clipp - (float)(w) + offset;
+	union { uint32_t i; float f; } v = { (uint32_t) ( (1 << 23) * (clipp + 121.2740575f + 27.7280233f / (4.84252568f - z) - 1.49012907f * z) ) };
 
-  return v.f;
+	return v.f;
 }
 
 inline float
 fastlog2 (float x) {
-  union { float f; uint32_t i; } vx = { x };
-  union { uint32_t i; float f; } mx = { (vx.i & 0x007FFFFF) | 0x3f000000 };
-  float y = vx.i;
-  y *= 1.1920928955078125e-7f;
+	union { float f; uint32_t i; } vx = { x };
+	union { uint32_t i; float f; } mx = { (vx.i & 0x007FFFFF) | 0x3f000000 };
+	float y = vx.i;
+	y *= 1.1920928955078125e-7f;
 
-  return y - 124.22551499f
-           - 1.498030302f * mx.f
-           - 1.72587999f / (0.3520887068f + mx.f);
+	return y - 124.22551499f
+			- 1.498030302f * mx.f
+			- 1.72587999f / (0.3520887068f + mx.f);
 }
 
 inline float fastexp (float p) { return fastpow2 (1.442695040f * p); }
 inline float fastpow (float x, float p) { return fastpow2 (p * fastlog2 (x)); }
 
 
-/**************************************************************************************************/
-/*                                                                                                */
-/*    @brief: The FACTSRsdTypeInfo class provides all the constants and parameters for given      */
-/*            residue type                                                                        */
-/*                                                                                                */
-/**************************************************************************************************/
 void FACTSRsdTypeInfo::create_info( chemical::ResidueType const & rsd )
 {
 	initialize_parameters( rsd );
@@ -110,8 +103,8 @@ void FACTSRsdTypeInfo::create_info( chemical::ResidueType const & rsd )
 // This function initializes native parameters that are used for empirical function calculations
 void FACTSRsdTypeInfo::initialize_parameters( chemical::ResidueType const & rsd ){
 
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
 	// First define natoms
 	natoms_ = rsd.natoms();
@@ -189,7 +182,7 @@ void FACTSRsdTypeInfo::initialize_parameters( chemical::ResidueType const & rsd 
 			a0_[i] = -0.123827e+3; a1_[i] =  0.123827e+3; a2_[i] = 0.185613e-2; a3_[i] =  0.347902e+3;
 			c0_[i] =  0.315402e+2; c1_[i] = -0.313502e+2; c2_[i] = 0.567384e-3; c3_[i] = -0.142830e+5;
 
-  	// Otherwise just use default
+		// Otherwise just use default
 		} else {
 			vdw_radius = type.extra_parameter( FACTS_RADIUS_INDEX );
 			if ( vdw_radius <= 1.0e-6 ){
@@ -220,18 +213,6 @@ void FACTSRsdTypeInfo::initialize_parameters( chemical::ResidueType const & rsd 
 		}
 		volume_[i] = (4.0/3.0) * Math_PI * vdw_radius * vdw_radius * vdw_radius;
 	}
-
-	// Reduce Born radii for charged polarH: sidechain Hpol of ARG/LYS/HIS
-	/*
-	for(Size i = 1; i <= natoms(); ++i){
-		if( option[ score::facts_saltbridge_correction ].user() &&is_chargedH ){
-			a0_[i] *= option[ score::facts_saltbridge_correction ]();
-			a1_[i] *= option[ score::facts_saltbridge_correction ]();
-			TR.Debug << rsd.seqpos() << " " << atmname << " " << a0_[i] << std::endl;
-		}
-	}
-	*/
-
 }
 
 void FACTSRsdTypeInfo::initialize_selfpair( chemical::ResidueType const & rsd ){
@@ -274,15 +255,6 @@ void FACTSRsdTypeInfo::initialize_selfpair( chemical::ResidueType const & rsd ){
 		}
 	}
 } // END void initialize_selfpair
-/// FACTSRsdTypeInfo
-
-/**************************************************************************************************/
-/*                                                                                                */
-/*    @brief: The FACTSResidueInfo class provides all the functions, constants and parameters     */
-/*            for different atoms, which are required to calculate the solvation free energy of   */
-/*                      of a molecule embedded in water using FACTS method                        */
-/*                                                                                                */
-/**************************************************************************************************/
 
 //This function initializes all the values for FACTS original parameters, atomic volume, Ai, Bi, esolvE, sasa...
 void FACTSResidueInfo::initialize(
@@ -334,11 +306,6 @@ void FACTSResidueInfo::store_xyz( Residue const &rsd ){
 	}
 }
 
-/**************************************************************************************************/
-/*                                                                                                */
-/*    @breif: The class FACTSPoseInfo                                                             */
-/*                                                                                                */
-/**************************************************************************************************/
 
 // Constructor
 FACTSPoseInfo::FACTSPoseInfo() :
@@ -500,11 +467,6 @@ FACTSPoseInfo::update_enumeration_shell( pose::Pose const &pose,
 	}
 }
 
-/**************************************************************************************************/
-/*                                                                                                */
-/*    @brief: The  class    FACTSRotamerSetInfo                                                   */
-/*                                                                                                */
-/**************************************************************************************************/
 
 void FACTSRotamerSetInfo::initialize( RotamerSet const & rotamer_set, FACTSRsdTypeMap &rsdtypemap )
 {
@@ -525,13 +487,7 @@ void FACTSRotamerSetInfo::initialize( RotamerSet const & rotamer_set, FACTSRsdTy
 	}
 }
 
-/**************************************************************************************************/
-/*                                                                                                */
-/*    @breif: The FACTSPotential class provides all the functions, constants, and parameters      */
-/*            common to all atoms required to calculate the free energy of solvation of a         */
-/*               (macro)molecule embedded in a continuum solvent using FACTS method               */
-/*                                                                                                */
-/**************************************************************************************************/
+
 FACTSPotential::FACTSPotential ():
 	MultiplicitiveFactor_(332.07156)
 {
@@ -697,39 +653,6 @@ void FACTSPotential::setup_for_scoring(pose::Pose & pose, bool const & packing) 
 	pose.data().set( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO, facts_info );
 	PROF_STOP( basic::FACTS_GET_ALL_BORN_RADII );
 
-	/*
-	// Log for Born radii and SASA
-	for( res1 = 1; res1 <= nres; ++ res1 ){
-		FACTSResidueInfo & facts1( facts_info->residue_info( res1 ) );
-		Residue const & rsd1( pose.residue( res1 ) );
-
-		for( Size atm1 = 1; atm1 <= pose.residue(res1).natoms(); ++atm1 ){
-
-			Real norm1 = sqrt(facts1.polarF2d(atm1)[0]*facts1.polarF2d(atm1)[0] +
-												facts1.polarF2d(atm1)[1]+facts1.polarF2d(atm1)[1]+
-												facts1.polarF2d(atm1)[2]+facts1.polarF2d(atm1)[2]);
-			Real norm2 = sqrt(facts1.polarF2BR(atm1)[0]*facts1.polarF2BR(atm1)[0] +
-												facts1.polarF2BR(atm1)[1]+facts1.polarF2BR(atm1)[1]+
-												facts1.polarF2BR(atm1)[2]+facts1.polarF2BR(atm1)[2]);
-
-			string atmname = pose.residue(res1).atom_type(atm1).atom_type_name();
-
-			if( atmname.compare("HNbb") == 0 || atmname.compare("Hpol") == 0 ||
-					atmname.compare("OOC") == 0 || atmname.compare("OCbb") == 0){
-				cout << "Res/Atm/Type/" << setw(4) << res1 << setw(4) << atm1 << " " << setw(4) << atmname;
-				cout << "| " << setw(10) << facts1.BR(atm1);
-				cout << "| " << setw(10) << facts1.sasa(atm1);
-				cout << "| " << setw(10) << norm1 << " " << setw(10) << norm2 << std::endl;
-				//cout << "|" << setw(10) << facts1.b1(atm1) << "|" << setw(10) << facts1.b2(atm1);
-				//cout << "|" << setw(10) << facts1.d1(atm1) << "|" << setw(10) << facts1.d2(atm1);
-				//cout << "|" << setw(10) << facts1.Ai(atm1) << "|" << setw(10) << facts1.Bi(atm1);
-				//cout << "|" << setw(10) << facts1.Ci(atm1) << "|" << setw(10) << facts1.Di(atm1) << endl;
-			}
-		}
-	}
-	*/
-
-
 	gettimeofday(&t4, NULL );
 	Real elapsedTime3 = (t4.tv_sec - t3.tv_sec) * 1000.0;
 	elapsedTime3 += (t4.tv_usec - t3.tv_usec) / 1000.0;
@@ -740,11 +663,11 @@ void FACTSPotential::setup_for_scoring(pose::Pose & pose, bool const & packing) 
 // This function evaluates Ai (volume of each atom) and components of Bi (symmetry of each atom),
 // which are converted to Born Radius & SASA in the next step
 void FACTSPotential::res_res_burial(
-																		conformation::Residue const & rsd1,
-																		FACTSResidueInfo & facts1,
-																		conformation::Residue const & rsd2,
-																		FACTSResidueInfo const & facts2
-																		) const
+		conformation::Residue const & rsd1,
+		FACTSResidueInfo & facts1,
+		conformation::Residue const & rsd2,
+		FACTSResidueInfo const & facts2
+		) const
 {
 	bool const same_res( rsd1.seqpos() == rsd2.seqpos() );
 	Size natoms1 = rsd1.natoms();
@@ -803,11 +726,11 @@ void FACTSPotential::res_res_burial(
 // This function has same logic with res_res_burial, but modified for efficient scoring
 // and for derivative evaluation
 void FACTSPotential::res_res_burial_for_scoring(
-																		conformation::Residue const & rsd1,
-																		FACTSResidueInfo & facts1,
-																		conformation::Residue const & rsd2,
-																		FACTSResidueInfo & facts2
-																		) const
+		conformation::Residue const & rsd1,
+		FACTSResidueInfo & facts1,
+		conformation::Residue const & rsd2,
+		FACTSResidueInfo & facts2
+		) const
 {
 	bool const same_res( rsd1.seqpos() == rsd2.seqpos() );
 
@@ -908,10 +831,10 @@ void FACTSPotential::res_res_burial_for_scoring(
 
 // Converts Ai & Bi (actually its nmtr & dnmtr) into Born Radius & SASA
 void FACTSPotential::get_self_terms(
-																		FACTSRsdTypeInfoCOP factstype1,
-																		FACTSResidueInfo & facts1,
-																		bool const packing
-																		) const
+		FACTSRsdTypeInfoCOP factstype1,
+		FACTSResidueInfo & facts1,
+		bool const packing
+		) const
 {
 	for( Size atm1 = 1; atm1<=factstype1->natoms(); atm1++ ){
 		// Confirm B denominator isn't any strange value
@@ -965,11 +888,11 @@ void FACTSPotential::get_self_terms(
 
 // Calculate polar interaction between rsd1 & rsd2 using Born Radius information
 void FACTSPotential::calculate_GBpair_exact(
-												 conformation::Residue const & rsd1,
-												 conformation::Residue const & rsd2,
-												 FACTSResidueInfo & facts1,
-												 FACTSResidueInfo & facts2
-												 ) const
+		 conformation::Residue const & rsd1,
+		 conformation::Residue const & rsd2,
+		 FACTSResidueInfo & facts1,
+		 FACTSResidueInfo & facts2
+		 ) const
 {
 	using namespace core::scoring::etable::count_pair;
 
@@ -1115,7 +1038,6 @@ void FACTSPotential::calculate_GBpair_exact(
 } //END FACTSPotential::calculate_GBpair
 
 
-
 // Calculate derivatives for both polar & nonpolar interactions
 // Note:
 // "res_res_burial, get_self_terms, calculate_GBpair" should precede this function,
@@ -1123,7 +1045,6 @@ void FACTSPotential::calculate_GBpair_exact(
 //
 // Then derivative for distance dependent part will be took into account during setup_for_scoring
 // This is only for Context-dependent part: Born Radius & SASA dependent terms
-//
 void FACTSPotential::setup_for_derivatives( pose::Pose & pose ) const
 {
 	FACTSPoseInfoOP facts_info;
@@ -1187,9 +1108,9 @@ void FACTSPotential::setup_for_derivatives( pose::Pose & pose ) const
 				Vector const dxyz( crd1 - crd2 );
 
 				atom_atom_context_derivative( facts1, facts1, atm1, atm2, dxyz,
-																			dB_dBdnmtr, dB_dBnmtr, dBR_dG,
-																			CutOff_sqr1, CutOff_sqr, 
-																			full_update );
+						dB_dBdnmtr, dB_dBnmtr, dBR_dG,
+						CutOff_sqr1, CutOff_sqr,
+						full_update );
 			}
 
 			// inter-res
@@ -1207,9 +1128,9 @@ void FACTSPotential::setup_for_derivatives( pose::Pose & pose ) const
 					Vector const dxyz( crd1 - crd2 );
 
 					atom_atom_context_derivative( facts1, facts2, atm1, atm2, dxyz,
-																				dB_dBdnmtr, dB_dBnmtr, dBR_dG,
-																				CutOff_sqr1, CutOff_sqr,
-																				full_update );
+							dB_dBdnmtr, dB_dBnmtr, dBR_dG,
+							CutOff_sqr1, CutOff_sqr,
+							full_update );
 
 				}
 
@@ -1231,17 +1152,17 @@ void FACTSPotential::setup_for_derivatives( pose::Pose & pose ) const
 // All the information is being stored into facts1 & facts2
 void
 FACTSPotential::atom_atom_context_derivative( FACTSResidueInfo & facts1,
-																							FACTSResidueInfo & facts2,
-																							Size const & atm1,
-																							Size const & atm2,
-																							Vector const & dxyz,
-																							Real const & dB_dBdnmtr,
-																							Real const & dB_dBnmtr,
-																							Real const & dBR_dG,
-																							Real const & CutOff_sqr1,
-																							Real const & CutOff_sqr,
-																							bool const full_update
-																							) const
+		FACTSResidueInfo & facts2,
+		Size const & atm1,
+		Size const & atm2,
+		Vector const & dxyz,
+		Real const & dB_dBdnmtr,
+		Real const & dB_dBnmtr,
+		Real const & dBR_dG,
+		Real const & CutOff_sqr1,
+		Real const & CutOff_sqr,
+		bool const full_update
+		) const
 {
 	FACTSRsdTypeInfoCOP factstype1 = facts1.restypeinfo();
 	FACTSRsdTypeInfoCOP factstype2 = facts2.restypeinfo();
@@ -1305,12 +1226,12 @@ FACTSPotential::atom_atom_context_derivative( FACTSResidueInfo & facts1,
 
 // Called at scoring step - for polar energy
 // Just reuse scores calculated at setup_for_scoring
-void FACTSPotential::evaluate_polar_energy(Residue const & rsd1,
-																					 FACTSResidueInfo const & facts1,
-																					 Residue const & rsd2,
-																					 Real & E_elec,
-																					 Real & E_solv
-																					 ) const {
+void FACTSPotential::evaluate_polar_energy(Residue const & /*rsd1*/,
+		 FACTSResidueInfo const & facts1,
+		 Residue const & rsd2,
+		 Real & E_elec,
+		 Real & E_solv
+		 ) const {
 
 	E_elec = facts1.E_elec( rsd2.seqpos() );
 	E_solv = facts1.E_solv( rsd2.seqpos() );
@@ -1319,9 +1240,9 @@ void FACTSPotential::evaluate_polar_energy(Residue const & rsd1,
 // Called at scoring step - for nonpolar energy
 // Just reuse scores calculated at setup_for_scoring
 Real FACTSPotential::evaluate_nonpolar_energy(Residue const & rsd1,
-																							FACTSResidueInfo const & facts1,
-																							Residue const & rsd2
-																							) const {
+		FACTSResidueInfo const & facts1,
+		Residue const & rsd2
+		) const {
 	Real E_SA = 0.0;
 	FACTSRsdTypeInfoCOP factstype1 = facts1.restypeinfo();
 
@@ -1342,18 +1263,18 @@ Real FACTSPotential::evaluate_nonpolar_energy(Residue const & rsd1,
 }
 
 void FACTSPotential::eval_atom_polar_derivative(
-																					id::AtomID const & id,
-																					Real const weight_elec,
-																					Real const weight_solv,
-																					pose::Pose const & pose,
-																					kinematics::DomainMap const & domain_map,
-																					bool const exclude_DNA_DNA,
-																					Vector & F1,
-																					Vector & F2
-																					) const
+		id::AtomID const & id,
+		Real const weight_elec,
+		Real const weight_solv,
+		pose::Pose const & pose,
+		kinematics::DomainMap const & /*domain_map*/,
+		bool const /*exclude_DNA_DNA*/,
+		Vector & F1,
+		Vector & F2
+		) const
 {
 	FACTSPoseInfo const & facts_info( static_cast< FACTSPoseInfo const & >
-																		( pose.data().get( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO )));
+			( pose.data().get( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO )));
 	Size const atm1( id.atomno() );
 	Size const res1( id.rsd() );
 
@@ -1376,17 +1297,17 @@ void FACTSPotential::eval_atom_polar_derivative(
 
 // Called during minimization; Just call derivatives calculated at setup_for_derivative
 void FACTSPotential::eval_atom_nonpolar_derivative(
-																					id::AtomID const & id,
-																					Real const weight,
-																					pose::Pose const & pose,
-																					kinematics::DomainMap const & domain_map,
-																					bool const exclude_DNA_DNA,
-																					Vector & F1,
-																					Vector & F2
-																					) const
+		id::AtomID const & id,
+		Real const weight,
+		pose::Pose const & pose,
+		kinematics::DomainMap const & /*domain_map*/,
+		bool const /*exclude_DNA_DNA*/,
+		Vector & F1,
+		Vector & F2
+		) const
 {
 	FACTSPoseInfo const & facts_info( static_cast< FACTSPoseInfo const & >
-																		( pose.data().get( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO )));
+			( pose.data().get( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO )));
 	Size const atm1( id.atomno() );
 	Size const res1( id.rsd() );
 
@@ -1405,8 +1326,8 @@ void FACTSPotential::eval_atom_nonpolar_derivative(
 	F1 += crd1.cross( virtualcrd );
 }
 
-/// Note: when called at the beginning of rotamer_trials, task.being_packed(i) will be false for all i
-/// this ensures that we use all the information we have to compute the current set of radii
+// Note: when called at the beginning of rotamer_trials, task.being_packed(i) will be false for all i
+// this ensures that we use all the information we have to compute the current set of radii
 void FACTSPotential::setup_for_packing(
   pose::Pose & pose,
 	utility::vector1< bool > const & repacking_residues ) const
@@ -1458,7 +1379,7 @@ void FACTSPotential::get_template_born_radii(pose::Pose const & pose, FACTSPoseI
 void FACTSPotential::update_residue_for_packing(pose::Pose & pose,Size const seqpos) const
 {
 	FACTSPoseInfo & facts_info( static_cast< FACTSPoseInfo & >
-															( pose.data().get( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO ) ) );
+			( pose.data().get( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO ) ) );
 	FACTSResidueInfo & facts( facts_info.residue_info( seqpos ) );
 
 	Residue const & rsd( pose.residue( seqpos ) );
@@ -1480,7 +1401,7 @@ void FACTSPotential::update_residue_for_packing(pose::Pose & pose,Size const seq
 void FACTSPotential::get_rotamers_born_radii(pose::Pose const & pose, conformation::RotamerSetBase & rotamer_set) const {
 
 	FACTSPoseInfo const & facts_info_pose( static_cast< FACTSPoseInfo const & >
-																				 (pose.data().get( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO )));
+			(pose.data().get( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO )));
 
 	// this will get cached in the rotamer set
 	// this call should initialize the residue_info objects with the appropriate Residue info
@@ -1496,9 +1417,9 @@ void FACTSPotential::get_rotamers_born_radii(pose::Pose const & pose, conformati
 }
 
 void FACTSPotential::get_single_rotamer_born_radii(Residue const & rsd1,
-																									 pose::Pose const & pose,
-																									 FACTSPoseInfo const & facts_info,
-																									 FACTSResidueInfo  & facts1) 	const
+		 pose::Pose const & pose,
+		 FACTSPoseInfo const & facts_info,
+		 FACTSResidueInfo  & facts1) 	const
 {
 	Size natoms1, natoms2;
 	FACTSRsdTypeInfoCOP factstype1 = facts1.restypeinfo();
@@ -1517,15 +1438,15 @@ void FACTSPotential::get_single_rotamer_born_radii(Residue const & rsd1,
 
 // Given precalculated born radius, called at packing - for polar energy
 void FACTSPotential::evaluate_polar_otf_energy(Residue const & rsd1,
-																							 FACTSResidueInfo const & facts1,
-																							 Residue const & rsd2,
-																							 FACTSResidueInfo const & facts2,
-																							 utility::vector1< Real > const & dBRi1,
-																							 utility::vector1< Real > const & dBRi2,
-																							 Real & E_elec,
-																							 Real & E_solv,
-																							 bool do_correction
-																							 ) const {
+		FACTSResidueInfo const & facts1,
+		Residue const & rsd2,
+		FACTSResidueInfo const & facts2,
+		utility::vector1< Real > const & /*dBRi1*/,
+		utility::vector1< Real > const & /*dBRi2*/,
+		Real & E_elec,
+		Real & E_solv,
+		bool /*do_correction*/
+		) const {
 
 	// Initialize
 	E_elec = 0.0;
@@ -1650,260 +1571,6 @@ void FACTSPotential::evaluate_polar_otf_energy(Residue const & rsd1,
 		}
 	}
 }
-
-/*
-// Calculate polar interaction between rsd1 & rsd2 using Born Radius information
-// Note that this function is applied when rsd1=rsd2; use exact instead to reduce error
-void FACTSPotential::calculate_GBpair_apprx(
-												 conformation::Residue const & rsd1,
-												 conformation::Residue const & rsd2,
-												 FACTSResidueInfo & facts1,
-												 FACTSResidueInfo & facts2 ) const
-{
-	Real cut_off_square = GBpair_cut_ * GBpair_cut_;
-	Real GBpair = 0.0;
-	Real Kappa_sqrt = sqrt(Kappa());
-	Real a12 = 0.865924478668;
-	Real b12 = 0.4399086973;
-
-	FACTSRsdTypeInfoCOP factstype1 = get_factstype( rsd1.type() );
-	FACTSRsdTypeInfoCOP factstype2 = get_factstype( rsd2.type() );
-
-	for ( Size atm1 = 1; atm1 <= rsd1.natoms(); ++atm1 ) {
-		Vector const &xyz1 = rsd1.xyz(atm1);
-		Real const &q1 = factstype1->q(atm1);
-
-		if( factstype1->not_using(atm1) || std::fabs( q1 ) < 1.0e-6 ) continue;
-		Real dE_dBR = 0.0;
-
-		for ( Size atm2 = 1; atm2 <= rsd2.natoms(); ++atm2 ) {
-			Real const &q2 = factstype2->q( atm2 );
-
-			if( factstype2->not_using(atm2) || std::fabs( q2 ) < 1.0e-6 ) continue;
-
-			Vector const &xyz2 = rsd2.xyz( atm2 );
-			Real dis2 = xyz1.distance_squared( xyz2 );
-
-			if ( !(dis2 < cut_off_square ) ) continue;
-
-			Real const &BRi = facts1.BR(atm1);
-			Real const &BRj = facts2.BR(atm2);
-
-			Real BRij = BRi*BRj;
-			Real m = sqrt(BRi*BRj);
-			Real dis = std::sqrt(dis2);
-			Vector dxyz = xyz1 - xyz2;
-
-			Real fpair_exact = -MultiplicitiveFactor()*Tau()*q1*q2/
-				sqrt(dis2+BRij*exp(-dis2/(Kappa()*BRij)))*(1.0-dis2/cut_off_square)*(1.0-dis2/cut_off_square);
-
-			if ( dis < m ){ // Inside approximator
-				Real arg = 1.0/((a12+b12)*m);
-				Real sfm = (1.0 - BRij/cut_off_square);
-				Real fm = arg*sfm*sfm;
-				Real gm = -arg*(sfm*sfm*a12*arg + sfm*4.0*m/cut_off_square);
-
-				Real c = (gm - 2.0*fm/m + 2.0/BRij)/BRij;
-				Real d = (-gm + 3.0*fm/m - 3.0/BRij)/m;
-
-				Real fpair = -MultiplicitiveFactor()*Tau()*q1*q2*(c*dis2*dis + d*dis2 + 1.0/m);
-				Real gpair = -MultiplicitiveFactor()*Tau()*q1*q2*(c*dis + d);
-
-				// Store here and reuse at res_pair scoring & derivative call
-				GBpair += fpair;
-				facts1.dE_drij2_[atm1] += gpair*dxyz;
-				facts2.dE_drij2_[atm2] -= gpair*dxyz;
-
-				// Forget about dE_dBR for now... too messy
-				//facts1.dE_dBR_[atm1] += ;
-				//facts2.dE_dBR_[atm2] += ;
-
-			}	else { // Outside approximater
-				Real sf1 = 1.0 - dis2/cut_off_square;
-				Real dsf2_drij = 4.0*sf1/cut_off_square;
-				Real farg = a12*dis + b12*m;
-				Real fpair = -MultiplicitiveFactor()*Tau()*(q1*q2/farg);
-				Real farg2 = fpair*sf1*sf1/farg;
-
-				// Shift function (required for truncation at cut_off)
-				Real dEsf_drij = -farg2/dis - fpair*dsf2_drij;
-
-				// Store here and reuse at res_pair scoring & derivative call
-				GBpair += fpair*sf1*sf1;
-
-				facts1.dE_drij2_[atm1] += dEsf_drij*dxyz;
-				facts2.dE_drij2_[atm2] -= dEsf_drij*dxyz;
-				facts1.dE_dBR_[atm1] += 0.5*farg2*b12*BRj / m;
-				facts2.dE_dBR_[atm2] += 0.5*farg2*b12*BRi / m;
-
-			}
-		}//atm2
-
-	}//atm1
-
-	facts1.GBpair_[rsd2.seqpos()] = GBpair;
-} //END FACTSPotential::calculate_GBpair
-
-// Given rotamer pair, calculate BR & SA change induced by each other
-// This is not being used currently
-void FACTSPotential::evaluate_context_change_for_packing(
-    Residue const & rsd1_ref,
-		Residue const & rsd1,
-		FACTSResidueInfo const & facts1,
-		Residue const & rsd2_ref,
-		Residue const & rsd2,
-		FACTSResidueInfo const & facts2,
-		utility::vector1< Real > & dBRi1,
-		utility::vector1< Real > & dBRi2,
-		utility::vector1< Real > & dSAi1,
-		utility::vector1< Real > & dSAi2
-		) const {
-
-	bool const same_res = ( rsd1.seqpos() == rsd2.seqpos() );
-	Real fct = 1.0;
-	if ( same_res ) {
-		fct = 0.5;
-	}
-
-	Real theta_sqrt, thetaij, thetaij_ref;
-
-	utility::vector1< Real > Ai1 = facts1.Ai();
-	utility::vector1< Vector > nmtr1 = facts1.nmtr();
-	utility::vector1< Real > dnmtr1 = facts1.dnmtr();
-	utility::vector1< Real > Ai2 = facts2.Ai();
-	utility::vector1< Vector > nmtr2 = facts2.nmtr();
-	utility::vector1< Real > dnmtr2 = facts2.dnmtr();
-
-	for ( Size atm1 = 1; atm1 <= rsd1.natoms(); ++atm1 ) {
-		Vector xyz1 = rsd1.xyz(atm1);
-		Real CutOff_sqr1 = facts1.COradius(atm1)*facts1.COradius(atm1);
-
-		for ( Size atm2 = 1; atm2 <= rsd2.natoms(); ++atm2 ) {
-			if ( same_res && atm1 == atm2 ) continue;
-
-			Real CutOff_sqr2 = facts2.COradius(atm2)*facts2.COradius(atm2);
-			Vector xyz2 = rsd2.xyz( atm2 );
-			Vector dxyz = xyz1 - xyz2;
-
-			Real dis2 = dxyz[0]*dxyz[0] + dxyz[1]*dxyz[1] + dxyz[2]*dxyz[2];
-			Real dis = sqrt(dis2);
-
-			// rotamer1
-			Vector dxyz_ref1 = xyz1 - rsd2_ref.xyz(atm2);
-			Real dis2_ref1 = dxyz_ref1[0]*dxyz_ref1[0] + dxyz_ref1[1]*dxyz_ref1[1]
-				+ dxyz_ref1[2]*dxyz_ref1[2];
-
-			if ( abs(facts1.esolvE(atm1)) > 1e-6 && abs(dis2 - dis2_ref1) > 1e-3
-					 && ( dis2 < CutOff_sqr1 || dis2_ref1 < CutOff_sqr1 )) {
-				Real dis_ref = sqrt(dis2_ref1);
-
-				if ( dis2 < CutOff_sqr1 ){
-					theta_sqrt = 1.0 - (dis2 / CutOff_sqr1);
-					thetaij = theta_sqrt*theta_sqrt;
-				}	else {
-					thetaij = 0.0;
-				}
-
-				if ( dis2_ref1 < CutOff_sqr1 ){
-					theta_sqrt = 1.0 - (dis2_ref1 / CutOff_sqr1);
-					thetaij_ref = theta_sqrt*theta_sqrt;
-				}	else {
-					thetaij_ref = 0.0;
-				}
-
-				Ai1[atm1] += fct*facts2.volume(atm2)*(thetaij - thetaij_ref);
-
-				nmtr1[atm1] += fct*facts2.volume(atm2)*(thetaij*dxyz/dis2
-																					 - thetaij_ref*dxyz_ref1/dis2_ref1);
-				dnmtr1[atm1] += fct*facts2.volume(atm2)*(thetaij/dis - thetaij_ref/dis_ref);
-
-			}
-
-			// rotamer2
-			Vector dxyz_ref2 = xyz2 - rsd1_ref.xyz(atm1);
-			Real dis2_ref2 = dxyz_ref2[0]*dxyz_ref2[0] + dxyz_ref2[1]*dxyz_ref2[1]
-				+ dxyz_ref2[2]*dxyz_ref2[2];
-
-			if ( abs(facts2.esolvE(atm2)) > 1e-6 && abs(dis2_ref2 - dis2) > 1e-3
-					 && (dis2 < CutOff_sqr2 || dis2_ref2 < CutOff_sqr2) ) {
-				Real dis_ref = sqrt(dis2_ref2);
-
-				if ( dis2 < CutOff_sqr2 ){
-					theta_sqrt = 1.0 - (dis2 / CutOff_sqr2);
-					thetaij = theta_sqrt*theta_sqrt;
-				}	else {
-					thetaij = 0.0;
-				}
-
-				if ( dis2_ref2 < CutOff_sqr2 ){
-					theta_sqrt = 1.0 - (dis2_ref2 / CutOff_sqr2);
-					thetaij_ref = theta_sqrt*theta_sqrt;
-				}	else {
-					thetaij_ref = 0.0;
-				}
-
-				Ai2[atm2] += fct*facts1.volume(atm1)*(thetaij - thetaij_ref);
-				nmtr2[atm2] += fct*facts1.volume(atm1)*(thetaij*(-dxyz)/dis2
-																					 - thetaij_ref*dxyz_ref2/dis2_ref2);
-				dnmtr2[atm2] += fct*facts1.volume(atm1)*(thetaij/dis - thetaij_ref/dis_ref);
-			}
-
-		}
-	}
-
-	// Re-evalute Ci and Di
-	for ( Size atm1 = 1; atm1 <= rsd1.natoms(); ++atm1 ) {
-		Real const &Ai = Ai1[atm1];
-		Real const &Bi = nmtr1[atm1].norm()/dnmtr1[atm1];
-
-		if ( abs(facts1.esolvE(atm1)) > 1e-6 ){
- 			Real Ci = Ai + facts1.b1(atm1)*Bi + facts1.b2(atm1)*Ai*Bi;
-			Real Gi = facts1.a0(atm1) + facts1.a1(atm1)/
-				(1.0 + exp( -facts1.a2(atm1) *	(Ci - facts1.a3(atm1)) ) );
-			dBRi1[atm1] = -0.5*Tau()*MultiplicitiveFactor()/Gi;
-		}
-		Real dDi = Ai + facts1.d1(atm1)*Bi + facts1.d2(atm1)*Ai*Bi - facts1.Di(atm1);
-		dSAi1[atm1] = facts1.alpha(atm1)*facts1.dSA_dDi(atm1)*dDi;
-
-	}
-
-	for ( Size atm2 = 1; atm2 <= rsd2.natoms(); ++atm2 ) {
-		Real const &Ai = Ai2[atm2];
-		Real const &Bi = nmtr2[atm2].norm()/dnmtr2[atm2];
-
-		if ( abs(facts2.esolvE(atm2)) > 1e-6 ){
-			Real Ci = Ai + facts2.b1(atm2)*Bi + facts2.b2(atm2)*Ai*Bi;
-			Real Gi = facts2.a0(atm2) + facts2.a1(atm2)/
-			(1.0 + exp( -facts2.a2(atm2) *	(Ci - facts2.a3(atm2)) ) );
-			dBRi2[atm2] = -0.5*Tau()*MultiplicitiveFactor()/Gi;
-		}
-
-		Real dDi = Ai + facts2.d1(atm2)*Bi + facts2.d2(atm2)*Ai*Bi - facts2.Di(atm2);
-		dSAi2[atm2] = facts2.alpha(atm2)*facts2.dSA_dDi(atm2)*dDi;
-
-	}
-}
-
-Real FACTSPotential::polar_energy_pack_corrector( Residue const & ref_rsd,
-																									Residue const & rsd,
-																									FACTSResidueInfo const & facts_info
-																									) const
-{
-	Real score_correction = 0.0;
-
-	for( Size iatm = 1; iatm <= rsd.natoms(); ++iatm ){
-		Vector const &dxyz = rsd.xyz(iatm) - ref_rsd.xyz(iatm);
-		Vector const &drv = facts_info.polarF2BR(iatm); //+ facts_info.polarF2d(iatm);
-
-		Real dabs = dxyz[0]*dxyz[0] + dxyz[1]*dxyz[1] + dxyz[2]*dxyz[2];
-
-		if( dabs > 1.0e-3 && dabs < 0.25 ){
-			score_correction += drv[0]*dxyz[0] + drv[1]*dxyz[1] + drv[2]*dxyz[2];
-		}
-	}
-	return score_correction;
-}
-*/
 
 } // namespace scoring
 } // namespace core

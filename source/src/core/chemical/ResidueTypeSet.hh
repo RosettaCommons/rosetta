@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
+/// @file core/chemical/ResidueTypeSet.hh
 /// @author Phil Bradley
 
 
@@ -18,29 +18,13 @@
 // Unit headers
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 
-
 // Package headers
 #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueSelector.fwd.hh>
-// Commented by inclean daemon #include <core/chemical/AtomTypeSet.hh>
-// Commented by inclean daemon #include <core/chemical/MMAtomTypeSet.hh>
-
-// Project headers
-//XRW_B_T1
-// Commented by inclean daemon #include <core/coarse/TranslatorSet.fwd.hh>
-//XRW_E_T1
-//#include <core/pose/Pose.fwd.hh>
-
-// Utility Headers
-// Commented by inclean daemon #include <utility/pointer/ReferenceCount.hh>
-// Commented by inclean daemon #include <utility/vector1_bool.hh>
-
 
 // STL headers
 #include <list>
 
-// AUTO-REMOVED #include <core/chemical/Adduct.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/chemical/ElementSet.fwd.hh>
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
@@ -120,10 +104,6 @@ public:
 //		CSDAtomTypeSetCAP csd_atom_types kwk commenting out the csd atomtypes until I have had a chance to implement them
 	);
 
-// Old code - doesn't respect various command line options. See constructor for current patch-loading functionality
-//	/// @brief apply patches to base ResidueType to generate variant ResidueTyes
-//	void
-//	apply_patches( std::string const & filename );
 
 	void
 	apply_patches(

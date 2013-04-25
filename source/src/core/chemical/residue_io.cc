@@ -14,61 +14,50 @@
 // Unit header
 #include <core/chemical/residue_io.hh>
 
-
 // Rosetta headers
+#include <platform/types.hh>
+
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueSupport.hh>
-
 #include <core/chemical/Atom.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/MMAtomType.hh>
-// AUTO-REMOVED #include <core/chemical/orbitals/OrbitalType.hh>
-
-// Commented by inclean daemon #include <core/chemical/Adduct.hh>
 
 #include <core/id/AtomID.hh>
-// AUTO-REMOVED #include <core/id/DOF_ID.hh>
-#include <core/kinematics/Stub.hh>
-// AUTO-REMOVED #include <core/kinematics/AtomTree.hh>
-//#include <core/pack/dunbrack/SingleLigandRotamerLibrary.hh>
-
-// Commented by inclean daemon #include <basic/basic.hh>
-#include <basic/Tracer.hh>
-
-// ObjexxFCL headers
-// AUTO-REMOVED #include <ObjexxFCL/ObjexxFCL.hh>
-#include <ObjexxFCL/string.functions.hh>
-
-// Utility headers
-//#include <utility/io/izstream.hh>
-// Commented by inclean daemon #include <utility/vector1.hh>
-#include <utility/file/FileName.hh>
-#include <utility/file/file_sys_util.hh>
-
-// Numeric headers
-#include <numeric/conversions.hh>
-
-//Auto Headers
-#include <platform/types.hh>
 #include <core/id/DOF_ID.fwd.hh>
 #include <core/kinematics/Jump.hh>
+#include <core/kinematics/Stub.hh>
+
+// Basic headers
+#include <basic/Tracer.hh>
+#include <basic/options/keys/corrections.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
+#include <boost/foreach.hpp>
+
+// ObjexxFCL headers
+#include <ObjexxFCL/string.functions.hh>
+#include <ObjexxFCL/Dimension.hh>
+#include <ObjexxFCL/DynamicIndexRange.hh>
+#include <ObjexxFCL/FArray.hh>
+#include <ObjexxFCL/FArray2D.hh>
+
+// Utility headers
+#include <utility/file/FileName.hh>
+#include <utility/file/file_sys_util.hh>
 #include <utility/Bound.hh>
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
 #include <utility/keys/AutoKey.hh>
 #include <utility/keys/SmallKeyVector.hh>
+
+// Numeric headers
+#include <numeric/conversions.hh>
 #include <numeric/xyz.functions.hh>
-#include <ObjexxFCL/Dimension.hh>
-#include <ObjexxFCL/DynamicIndexRange.hh>
-#include <ObjexxFCL/FArray.hh>
-#include <ObjexxFCL/FArray2D.hh>
-#include <basic/options/keys/corrections.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
-#include <boost/foreach.hpp>
+
 
 //Auto Headers
 #define foreach BOOST_FOREACH
@@ -76,13 +65,6 @@
 //Auto using namespaces
 namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
 //Auto using namespaces end
-
-
-
-// C++ headers
-// Commented by inclean daemon #include <iostream>
-// Commented by inclean daemon #include <sstream>
-// Commented by inclean daemon #include <fstream>
 
 namespace core {
 namespace chemical {
@@ -152,7 +134,7 @@ read_topology_file(
 	chemical::ElementSetCAP elements,
 	chemical::MMAtomTypeSetCAP mm_atom_types,
 	chemical::orbitals::OrbitalTypeSetCAP orbital_atom_types,
-//	chemical::CSDAtomTypeSetCAP csd_atom_types kwk commenting out until they have been fully implemented
+	//chemical::CSDAtomTypeSetCAP csd_atom_types kwk commenting out until they have been fully implemented
 	chemical::ResidueTypeSetCAP rsd_type_set
 )
 {
@@ -168,7 +150,7 @@ read_topology_file(
     std::string line;
 	utility::vector1< std::string > lines;
 	{
-// 		utility::io::izstream data( filename );
+		//utility::io::izstream data( filename );
 		while ( getline( data, line ) ) {
 			std::istringstream l( line );
 			//if ( line.size() < 1 || line[0] == '#' ) continue;
@@ -615,138 +597,10 @@ read_topology_file(
 			}
 		}
 
-		////////////////////////////////////////////////////////
-		////////////////////////////////////////////////////////
-		////////////////////////////////////////////////////////
-		////////////////////////////////////////////////////////
-
-
 		// now also need to store the information about the geometry
 		// at the links...
 
 	} // scope
-
-// 			AtomID
-// 				child_atom_id  ( atom_id_from_icoor_line(   child_atom, *rsd ) ),
-// 				parent_atom_id ( atom_id_from_icoor_line(  parent_atom, *rsd ) ),
-// 				angle_atom_id  ( atom_id_from_icoor_line(   angle_atom, *rsd ) ),
-// 				torsion_atom_id( atom_id_from_icoor_line( torsion_atom, *rsd ) );
-
-// 			bool child_is_bonded_atom( true );
-// 			if ( atom_tree.has( parent_atom_id ) ) {
-// 				// not the root of the tree
-// 				atom_tree.add_atom( child_atom_id, parent_atom_id, child_is_bonded_atom, false /* by xyz */ );
-// 			} else {
-// 				// root of the tree
-// 				child_is_bonded_atom = false;
-// 				atom_tree.add_atom( child_atom_id, id::BOGUS_ATOM_ID, child_is_bonded_atom, false /* by xyz */);
-// 			}
-
-// 			if ( child_is_bonded_atom ) {
-// 				// set the internal coordinates in the atom_tree
-// 				atom_tree.set_dof( DOF_ID( child_atom_id, id::THETA ), theta );
-// 				atom_tree.set_dof( DOF_ID( child_atom_id, id::D     ),     d );
-
-// 				if ( ( child_atom_id == angle_atom_id ) || ( child_atom_id == torsion_atom_id ) ) {
-// 					// one of the first three atoms in the tree, some internal coords not defined
-// 					assert( std::abs( phi ) < 1e-3 );
-// 					atom_tree.set_dof( DOF_ID( child_atom_id, id::PHI ), phi );
-// 				} else if ( ( parent_atom_id ==   angle_atom_id ) ||
-// 										( parent_atom_id == torsion_atom_id ) ||
-// 										( angle_atom_id == torsion_atom_id ) ) {
-// 					// this would not be good for set_torsion_angle
-// 					// should be special case for single-atom residue
-// 					// we are not going to use the xyz's from the atomtree anyhow, so we dont need to do anything
-// 					assert( natoms == 1 );
-// 				} else {
-// 					atom_tree.set_dof( DOF_ID( child_atom_id, id::PHI ), 0.0 /*temporary value*/ );
-// 					atom_tree.set_torsion_angle( child_atom_id, parent_atom_id, angle_atom_id, torsion_atom_id, phi );
-// 				}
-// 			} // is the child atom a bonded atom, ie is it not the root of the tree?
-
-
-
-// 	// set icoor coordinates, store information about polymer links
-// 	// also sets up base_atom
-// 	{
-// 		Size root_atomno, anchor_atomno;
-
-// 		bool first_line( true );
-// 		for ( Size i=1; i<= nlines; ++i ) {
-// 			std::string const & line( lines[i] );
-// 			std::istringstream l( line );
-// 			std::string tag, child_atom, parent_atom;
-// 			Real phi, theta, d;
-// 			l >> tag;
-// 			if ( tag != "ICOOR_INTERNAL" ) continue;
-// 			l >> child_atom >> parent_atom >> phi >> theta >> d;
-// 			phi = radians(phi); theta = radians(theta);
-// 			// 		if ( parent_atom[0] == '-' ) {
-// 			// 			assert( rsd->is_polymer() );
-// 			// 			// anchor atom in previous residue
-// 			// 			continue;
-// 			// 		}
-// 			Size child_rsd(1), parent_rsd(1);
-// 			if ( parent_atom[0] == '-' ) {
-// 				continue; // do nothing, temporarily
-// // 				parent_rsd = 0;
-// // 				parent_atom.erase(0,1);
-// 			} else if ( child_atom[0] == '+' ) {
-// 				child_rsd = 2;
-// 				child_atom.erase(0,1);
-// 			} else {
-// 				rsd->set_atom_base( child_atom, parent_atom );
-// 				if ( first_line ) {
-// 					rsd->set_atom_base( parent_atom, child_atom );
-// 				}
-// 			}
-
-// 			AtomID
-// 				child_id ( rsd->atom_index( child_atom ), child_rsd ),
-// 				parent_id( rsd->atom_index( parent_atom ), parent_rsd );
-
-// 			if ( first_line ) {
-// 				atom_tree.add_atom( parent_id, id::BOGUS_ATOM_ID, false,
-// 																	 false /* by xyz */ );
-// 				root_atomno = parent_id.atomno();
-// 				first_line = false;
-// 			} else if ( child_rsd == 2 ) {
-// 				anchor_atomno = parent_id.atomno();
-// 			}
-
-// 			atom_tree.add_atom( child_id, parent_id, true /* bonded */,
-// 													false /* by xyz */ );
-// 			atom_tree.set_dof( DOF_ID( child_id, id::PHI   ),   phi );
-// 			atom_tree.set_dof( DOF_ID( child_id, id::THETA ), theta );
-// 			atom_tree.set_dof( DOF_ID( child_id, id::D     ),     d );
-// 		}
-
-// 		if ( rsd->is_polymer() ) {
-// 			// fill in the mainchain info
-// 			AtomIndices mainchain;
-// 			mainchain.push_back( anchor_atomno );
-// 			while ( true ) {
-// 				anchor_atomno = rsd->atom_base( anchor_atomno );
-// 				if ( std::find( mainchain.begin(), mainchain.end(), anchor_atomno ) !=
-// 						 mainchain.end() ) {
-// 					utility_exit_with_message("failure deriving mainchain from atom_base");
-// 				}
-// 				mainchain.insert( mainchain.begin(), anchor_atomno );
-// 				if ( anchor_atomno == root_atomno ) break;
-// 			}
-// 			rsd->set_mainchain_atoms( mainchain );
-// 		}
-
-
-// 		// fill in the icoor values
-// 		for ( Size i=1; i<= natoms; ++i ) {
-// 			rsd->atom(i).xyz( atom_tree.xyz( id::AtomID(i,1) ) );
-// 		}
-
-// 		// now also need to store the information about the geometry
-// 		// at the links...
-// 	}
-
 
 	// calculate any remaining derived data
 	rsd->finalize();
@@ -917,10 +771,6 @@ write_topology_file(
 	out.close();
 
 } //write_topology_file
-
-
-
-
 
 } // chemical
 } // core

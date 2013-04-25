@@ -1,0 +1,50 @@
+# A list of allowed properties in carbohydrate .params and patch files.
+
+# Any properties added to this list will be ignored when a ResidueType is
+# constructed but still saved in the properties_ data member.  These properies
+# will instead be processed by the read_and_set_properties() method of
+# CarbohydrateInfo.
+
+# If the 1st character of a property is a number, it is a sugar modification.
+# Otherwise, it is a regular property or a modification for which the position
+# is inherent, such as uronic acid.  The patch system is set up such that only
+# one modification can occur at each position.  The position of any modifica-
+# tion is used in the proper IUPAC naming of the residue.  Most modifications
+# listed here should come in sets of nine, one property for each possible
+# position 1 through 9.
+
+# Handling for regular properties must be explicitly defined within
+# read_and_set_properties().  Handling for modifications with positions is
+# general, with 1) the position being extracted and stored, 2) all-caps con-
+# verted to lower case, and 3) underscores replaced with spaces.  This string
+# is stored in the modifications_ vector, which has a size corresponding to the
+# number of carbon atoms in the saccharide residue.
+
+# Oxidation types
+ALDOSE
+KETOSE
+
+# Stereochemistries
+L_SUGAR
+D_SUGAR
+
+# Ring sizes
+FURANOSE
+PYRANOSE
+SEPTANOSE
+
+# Anomeric forms
+ALPHA_SUGAR
+BETA_SUGAR
+
+# Modifications
+URONIC_ACID
+1-AMINO_SUGAR
+2-AMINO_SUGAR
+3-AMINO_SUGAR
+4-AMINO_SUGAR
+5-AMINO_SUGAR
+6-AMINO_SUGAR
+7-AMINO_SUGAR
+8-AMINO_SUGAR
+9-AMINO_SUGAR

@@ -42,13 +42,12 @@ ElementSet::~ElementSet() {}
 
 /// @details Initialize an ElementSet from an external file "filename",
 /// and set parameters and properties for each Element.
-/// Refer to minirosetta_database_stock/chemical/element_properties.txt
+/// Refer to rosetta_database_/chemical/element_sets/fa_standard/element_properties.txt
 /// for file format
-///
 void
 ElementSet::read_file( std::string const & filename )
 {
-	 utility::io::izstream data( filename.c_str() ); 
+	utility::io::izstream data( filename.c_str() );
 
 	if ( !data.good() ) utility_exit_with_message( "Unable to open element file: "+filename );
 

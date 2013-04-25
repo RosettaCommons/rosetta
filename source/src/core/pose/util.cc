@@ -741,7 +741,7 @@ utility::vector1< char > read_psipred_ss2_file( pose::Pose const & pose ) {
 void conf2pdb_chain_default_map( core::pose::Pose const & pose, std::map<int,char> & chainmap ) {
 	chainmap.clear();
 	char letter = 'A';
-	for(int i = 1; i <= pose.conformation().num_chains(); ++i){
+	for(core::Size i = 1; i <= pose.conformation().num_chains(); ++i){
 		chainmap[i] = letter;
 		if('Z'==letter) utility_exit_with_message("too many chains to map to letters!!!");
 		letter = static_cast<char>(letter + 1);

@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file    CarbohydrateInfo.hh
+/// @file    core/chemical/carbohydrates/CarbohydrateInfo.hh
 /// @brief   Declarations and simple accessor/mutator definitions for CarbohydrateInfo.
 /// @author  labonte
 
@@ -440,8 +440,9 @@ private:
 	static core::Size const MIN_C_SIZE_LIMIT;
 
 public:
+	// Static constant data access
 	/// @brief A list of allowed properties in carbohydrate .params and patch files.
-	static utility::vector1<std::string> const SUGAR_PROPERTIES;
+	static utility::vector1<std::string> const & sugar_properties();
 
 	/// @brief A list of Rosetta PDB 3-letter codes for saccharide residues mapped to the corresponding root.
 	static std::map<std::string, std::string> const CODE_TO_ROOT_MAP;
@@ -449,6 +450,8 @@ public:
 
 // Insertion operator (overloaded so that CarbohydrateInfo can be "printed" in PyRosetta).
 std::ostream & operator<<(std::ostream & output, CarbohydrateInfo const & object_to_output);
+
+
 
 }  // namespace carbohydrates
 }  // namespace chemical

@@ -7,12 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file    CarbohydrateInfo.cc
+/// @file    core/chemical/carbohydrates/CarbohydrateInfo.cc
 /// @brief   Method definitions for CarbohydrateInfo.
 /// @author  labonte
 
 // Unit header
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
+#include <core/chemical/carbohydrates/database_io.hh>
 
 // Package headers
 #include <core/chemical/ResidueType.hh>
@@ -22,6 +23,8 @@
 #include <utility/exit.hh>
 
 // Basic headers
+#include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 // C++ headers
@@ -47,37 +50,7 @@ namespace carbohydrates {
 core::Size const CarbohydrateInfo::MAX_C_SIZE_LIMIT = 9;
 core::Size const CarbohydrateInfo::MIN_C_SIZE_LIMIT = 3;
 
-// TODO: Move to database.
-utility::vector1<std::string> const CarbohydrateInfo::SUGAR_PROPERTIES = boost::assign::list_of
-		// Oxidation types
-		("ALDOSE")
-		("KETOSE")
-
-		// Stereochemistries
-		("L_SUGAR")
-		("D_SUGAR")
-
-		// Ring sizes
-		("FURANOSE")
-		("PYRANOSE")
-		("SEPTANOSE")
-
-		// Anomeric forms
-		("ALPHA_SUGAR")
-		("BETA_SUGAR")
-
-		// Modifications
-		("URONIC_ACID")
-		("2-AMINO_SUGAR")
-		("3-AMINO_SUGAR")
-		("4-AMINO_SUGAR")
-		("5-AMINO_SUGAR")
-		("6-AMINO_SUGAR")
-		("7-AMINO_SUGAR")
-		("8-AMINO_SUGAR")
-		("9-AMINO_SUGAR");
-
-// TODO: Move to database.
+// TODO: Move to database and create static const accessor.
 std::map<std::string, std::string> const CarbohydrateInfo::CODE_TO_ROOT_MAP =
 		boost::assign::map_list_of
 				// Aldotriose
@@ -123,6 +96,24 @@ using namespace core;
 
 
 // Public methods //////////////////////////////////////////////////////////////
+// Static constant data access
+utility::vector1<std::string> const &
+CarbohydrateInfo::sugar_properties()
+{
+	using namespace std;
+	using namespace utility;
+
+	static vector1<string> *SUGAR_PROPERTIES = 0;
+
+	if (!SUGAR_PROPERTIES) {
+		SUGAR_PROPERTIES = new vector1<string>(read_properties_from_database_file(
+				basic::options::option[basic::options::OptionKeys::in::path::database](1).name() +
+				"chemical/carbohydrates/sugar_properties.list"));
+	}
+
+	return *SUGAR_PROPERTIES;
+}
+
 // Standard methods ////////////////////////////////////////////////////////////
 // Empty constructor
 CarbohydrateInfo::CarbohydrateInfo() : utility::pointer::ReferenceCount()

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file    core/pose/carbohydrates/util.cc
-/// @brief   Utility function definitions for carbohydrate-containing poses..
+/// @brief   Utility function definitions for carbohydrate-containing poses.
 /// @author  labonte
 
 // Unit headers

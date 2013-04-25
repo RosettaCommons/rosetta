@@ -141,16 +141,3 @@ private:
 
 #endif
 
-// 	/// @brief  Duplicate a ResidueTypeSet, preparatory to modifying it in some way DOES NOT DUPLICATE ITS ATOMTYPESETS
-// 	void
-// 	copy_residue_type_set(
-// 		std::string const & old_name,
-// 		std::string const & new_name
-// 	);
-
-// 	/// @brief  Duplicate an AtomTypeSet, preparatory to modifying it in some way
-// 	void
-// 	copy_atom_type_set(
-// 		std::string const & old_name,
-// 		std::string const & new_name
-// 	);

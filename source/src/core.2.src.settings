@@ -49,8 +49,9 @@ sources = {
 	],
 
 	"core/chemical/carbohydrates": [
-        "CarbohydrateInfo",
-    ],
+		"CarbohydrateInfo",
+		"database_io",
+	],
 
 	"core/chemical/orbitals": [
 		"AssignOrbitals",

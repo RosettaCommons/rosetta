@@ -7,28 +7,23 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //////////////////////////////////////////////////////////////////////
-/// @begin AtomType
+/// @file AtomType.hh
 ///
 /// @brief
 /// A class for defining atom parameters, known as atom_types
 ///
-/// @detailed
+/// @details
 /// This class contains the "chemical" information for atoms. This does not contain the actual
 /// xyz coordinates of the class (xyz found in core/conformation/Atom.hh. The atom_type properties
 /// are assigned by the class AtomTypeSet which is initiated from the ChemicalManager. Atom type properties
 /// are currently are read in from the file located chemical/atom_type_sets/fa_standard/atom_properties.txt.
 /// These properties contain the the properties of LJ_RADIUS, LJ_WDEPTH, LK_DGRFREE, LK_LAMBDA, LK_VOLUME.
-/// These properties are used in the scoring function fa_atr, fa_rep, fa_sol, which is located in the Etable (core/scoring/etable/Etable.hh)
-/// Additional parameters are acceptor/donor, hybridzation, and orbital paramaters.
+/// These properties are used in the scoring function fa_atr, fa_rep, fa_sol, which is located in the Etable
+/// (core/scoring/etable/Etable.hh)
+/// Additional parameters are acceptor/donor, hybridization, and orbital parameters.
 ///
-///
-///
-/// @authors
-/// Phil Bradley
-/// Steven Combs - comments
-///
-///
-/// @last_modified December 6 2010
+/// @author Phil Bradley
+/// @author Steven Combs - comments
 /////////////////////////////////////////////////////////////////////////
 
 
@@ -60,7 +55,6 @@ extern Real const MAX_CHEMICAL_BOND_TO_HYDROGEN_LENGTH;
 /// @brief basic atom type
 ///
 /// @details name, element, certain properties and parameters
-///
 class AtomType {
 
 public:
@@ -205,20 +199,19 @@ public:
 	}
 
 
-
 	/// @brief set LJ and LK solvation parameter for this atom type
 	void
 	set_parameter(
-		std::string const & param,
-		Real const setting
+			std::string const & param,
+			Real const setting
 	);
 
 
 	/// @brief set relevant properties for this atom type hh
 	void
 	set_property(
-		std::string const & property,
-		bool const setting
+			std::string const & property,
+			bool const setting
 	);
 
 	/// @brief retrieve an atom's hybridization status.
@@ -236,8 +229,7 @@ public:
 
 	///@brief set standard property to true, or set the specified hybridization
 	void
-	add_property(
-		std::string const & property);
+	add_property(std::string const & property);
 
 	utility::vector1< std::string >
 	get_all_properties() const;
@@ -272,8 +264,7 @@ public:
 
 	/// @set all the extra parameters at once
 	void
-	set_all_extra_parameters(
-		utility::vector1< Real > const & extra_parameters);
+	set_all_extra_parameters(utility::vector1< Real > const & extra_parameters);
 
 	std::string const& name() const { return name_; };
 
@@ -311,13 +302,9 @@ private:
 	bool atom_is_virtual_;
 
 	Hybridization hybridization_;
-
 };
-
 
 } // chemical
 } // core
-
-
 
 #endif // INCLUDED_core_chemical_AtomType_HH
