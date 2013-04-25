@@ -28,10 +28,13 @@ class NT:  # named tuple
 Jobs = []  # Global list of NameTuples  (pid, tag, start_time, out_dir,...)
 
 def write_runtimes(runtimes, dir):
-    import json
-    time_file = open(dir+'/runtimes.yaml', 'w')
-    json.dump(runtimes, time_file, sort_keys=True, indent=2)
-    time_file.close()
+    try:
+      import json
+      time_file = open(dir+'/runtimes.yaml', 'w')
+      json.dump(runtimes, time_file, sort_keys=True, indent=2)
+      time_file.close()
+    except:
+      pass # if no JSON, just forget this step
 
 
 
@@ -435,20 +438,23 @@ rm -r ref/; ./integration.py    # create reference results using only default se
                 print "All tests passed."
 
         if options.yaml:
-            import json
-            data = dict(total=len(tests), failed=diffs, details=results, brief=makeBriefResults(full_log).decode('utf8', 'replace'))
-            f = file(options.yaml, 'w')
-            json.dump(data, f, sort_keys=True, indent=2)
-            f.close()
+            try:
+              import json
+              data = dict(total=len(tests), failed=diffs, details=results, brief=makeBriefResults(full_log).decode('utf8', 'replace'))
+              f = file(options.yaml, 'w')
+              json.dump(data, f, sort_keys=True, indent=2)
+              f.close()
+              '''
+              f = file(options.yaml, 'w')
+              brief = makeBriefResults(full_log)
+              brief = brief.replace('"', '\\"')
+              brief = '"' + brief.replace('\n', '\\n') + '"'
+              f.write("{total : %s, failed : %s, details : %s, brief : %s}" % (len(tests), diffs, results, brief) )
+              f.close()
+              '''
+            except:
+              pass
 
-            '''
-            f = file(options.yaml, 'w')
-            brief = makeBriefResults(full_log)
-            brief = brief.replace('"', '\\"')
-            brief = '"' + brief.replace('\n', '\\n') + '"'
-            f.write("{total : %s, failed : %s, details : %s, brief : %s}" % (len(tests), diffs, results, brief) )
-            f.close()
-            '''
         if not options.compareonly: write_runtimes(runtimes, 'new')
         from compare_times import compare_times
         compare_times()
