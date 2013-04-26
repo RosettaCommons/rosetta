@@ -255,7 +255,6 @@ generate_nodes( core::pose::Pose const & pose )
 {
 	utility::vector1<NodeOP> nodes;
 	// populate lists of nodes and edges
-	core::Size nligands = 0;
 	for ( core::Size i=1; i<=pose.total_residue(); i++ ){
 		std::string resname = pose.residue( i ).name3() + boost::lexical_cast<std::string>( i );
 		TR.Debug << "Adding node " << resname << std::endl;
@@ -278,7 +277,6 @@ generate_edges( core::pose::Pose const & pose, utility::vector1<NodeOP> const & 
 	runtime_assert( n_vec[1].size() == pose.total_residue() );
 
 	// populate lists of nodes and edges
-	core::Size nligands = 0;
 	for ( core::Size i=1; i<=pose.total_residue()-1; ++i ){
 		NodeOP newnode = nodes[i];
 		std::string resname = pose.residue( i ).name3() + boost::lexical_cast<std::string>( i );

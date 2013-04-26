@@ -41,6 +41,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/filters/Filter.hh>
+#include <protocols/rosetta_scripts/ParsedProtocol.fwd.hh>
 
 // Package headers
 #include <protocols/moves/DataMap.fwd.hh>
@@ -74,6 +75,7 @@ public:
 	typedef core::pack::task::PackerTaskOP PackerTaskOP;
 	typedef core::pack::task::PackerTaskCOP PackerTaskCOP;
 	typedef core::pack::task::TaskFactoryOP TaskFactoryOP;
+	typedef protocols::rosetta_scripts::ParsedProtocolOP ParsedProtocolOP;
 
 	typedef utility::tag::TagPtr TagPtr;
 	typedef protocols::moves::DataMap DataMap;
@@ -196,6 +198,12 @@ public:
 	/// @brief Returns the number of triggers
 	Size num_triggers() const;
 
+	/// @brief Returns maximum number of trials
+	Size maxtrials() const { return maxtrials_; }
+
+	/// @brief Returns the task scaling value
+	Size task_scaling() const { return task_scaling_; }
+
 	public: // mutators
 
 	/// @brief Removes the trigger with the specified id
@@ -277,9 +285,27 @@ public:
 	void save_trial_number_to_checkpoint( core::Size const i ) const;
 	void reset_baselines( bool const r ){ reset_baselines_ = r; };
 	bool reset_baselines() const{ return reset_baselines_; }
-private:
-	/// @brief evalute pose by ScoreFunctionOP or FilterOP
-	Real scoring( Pose & pose );
+	void task_factory( core::pack::task::TaskFactoryOP tf );
+	core::pack::task::TaskFactoryOP task_factory() const{ return factory_; }
+	Size trial_counter() const { return trial_counter_; }
+	Size accept_counter() const { return accept_counter_; }
+	utility::vector1< Real > temperatures() const { return temperatures_; }
+	void temperatures( utility::vector1< Real > const & temps ) { temperatures_ = temps; }
+	bool recover_low() const { return recover_low_; }
+	MoverOP mover() const { return mover_; }
+	utility::vector1< FilterOP > const & filters() const { return filters_; }
+	ScoreFunctionOP scorefxn() const { return scorefxn_; }
+	utility::pointer::owning_ptr< protocols::moves::DataMapObj< bool > > mover_stopping_condition() const { return mover_stopping_condition_; }
+	bool preapply() const { return preapply_; }
+	bool drift() const { return drift_; }
+	bool boltz_rank() const { return boltz_rank_; }
+	utility::vector1< String > const & sample_types() const { return sample_types_; }
+	utility::vector1< core::Real > const & last_accepted_scores() const { return last_accepted_scores_; }
+	utility::vector1< core::Real > const & last_tested_scores() const { return last_tested_scores_; }
+	utility::vector1< core::Real > const & lowest_scores() const { return lowest_scores_; }
+	void lowest_score( core::Real const score ) { lowest_score_ = score; }
+	void last_accepted_score( core::Real const score ) { last_accepted_score_ = score; }
+protected:
 
 	/// @brief Executes all triggers. The order of trigger execution is undefined.
 	/// Do not assume, depend, or in any way rely on a particular ordering.
@@ -288,6 +314,10 @@ private:
 		Size num_cycles,
 		const Pose& pose,
 		ScoreFunctionOP scoring);
+
+private:
+	/// @brief evalute pose by ScoreFunctionOP or FilterOP
+	Real scoring( Pose & pose );
 
 	/// @brief max number of MC trials
 	Size maxtrials_;
@@ -315,15 +345,14 @@ private:
 	utility::vector1< Real > temperatures_; // temperature per filter.
 	utility::vector1< String > sample_types_; // low/high, dflt low
 	utility::vector1< Real > last_accepted_scores_;
+	utility::vector1< Real > lowest_scores_; // best filter scores
+	utility::vector1< Real > last_tested_scores_;
 
 	/// @brief Count the number of rejections each filter resulted in.
 	utility::vector1< core::Size > num_rejections_;
 
 	/// @brief Pose is evaluated by ScoreFunctionOP during MC trials
 	ScoreFunctionOP scorefxn_;
-
-	/// @brief setter
-	void task_factory( core::pack::task::TaskFactoryOP tf );
 
 	/// @brief acceptance criterion temperature
 	Real temperature_;// temperature for non-filters

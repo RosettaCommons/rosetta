@@ -29,6 +29,7 @@
 //mover creators
 #include <devel/denovo_design/FastDesignCreator.hh>
 #include <devel/denovo_design/RestrictWorstRegionCreator.hh>
+#include <devel/denovo_design/GenericSimulatedAnnealerCreator.hh>
 #include <devel/enzdes/EnzdesRemodelMoverCreator.hh>
 #include <devel/loop_creation/LoopCreationMoverCreator.hh>
 #include <devel/loop_creation/LoophashLoopInserterCreator.hh>
@@ -92,6 +93,7 @@ namespace devel {
 // Mover creators
 static protocols::moves::MoverRegistrator< denovo_design::FastDesignCreator > reg_FastDesignCreator;
 static protocols::moves::MoverRegistrator< denovo_design::RestrictWorstRegionCreator > reg_RestrictWorstRegionCreator;
+static protocols::moves::MoverRegistrator< denovo_design::GenericSimulatedAnnealerCreator > reg_GenericSimulatedAnnealerCreator;
 
 protocols::moves::MoverRegistrator< enzdes::EnzdesRemodelMoverCreator > reg_EnzdesRemodelMoverCreator;
 protocols::moves::MoverRegistrator< vardist_solaccess::LoadVarSolDistSasaCalculatorMoverCreator > reg_LoadVarSolDistSasaCalculatorMoverCreator;
@@ -119,6 +121,7 @@ static protocols::moves::MoverRegistrator< devel::splice::SpliceCreator > reg_Sp
 
 // Task creators
 static core::pack::task::operation::TaskOperationRegistrator< devel::denovo_design::task_operations::DesignByResidueCentralityOperationCreator > reg_DesignByResidueCentralityOperationCreator;
+static core::pack::task::operation::TaskOperationRegistrator< devel::denovo_design::task_operations::DesignCatalyticResiduesOperationCreator > reg_DesignCatalyticResiduesOperationCreator;
 core::pack::task::operation::TaskOperationRegistrator< devel::znhash::DisableZnCoordinationResiduesTaskOpCreator > reg_DisableZnCoordinationResiduesTaskOpCreator;
 static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::BuildingBlockInterfaceOperationCreator > BuildingBlockInterfaceOperationCreator_registrator;
 static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::RestrictToNonzeroSASAOperationCreator > RestrictToNonzeroSASAOperationCreator_registrator;

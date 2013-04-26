@@ -56,7 +56,7 @@ public:
 	virtual void cache_result( core::pose::Pose const & pose );
 
 	/// @brief Returns the name of the class
-	virtual std::string get_name() const { return "HighestEnergyRegion"; }
+	virtual std::string get_name() const { return "Score"; }
 
 	/// @brief Gets a list of residues for design
 	virtual utility::vector1< core::Size >
@@ -197,6 +197,28 @@ public:
 
 	/// @brief Returns the name of the class
 	virtual std::string get_name() const { return "ResidueCentrality"; }
+
+private:
+};
+
+/// @brief class for finding catalytic residues and designing around them
+class DesignCatalyticResiduesOperation : public HighestEnergyRegionOperation {
+public:
+	/// @brief default constructor
+	DesignCatalyticResiduesOperation();
+
+	/// @brief virtual destructor
+	virtual ~DesignCatalyticResiduesOperation();
+
+  /// @brief make clone
+  virtual core::pack::task::operation::TaskOperationOP clone() const;
+
+	/// @brief Gets a list of residues for design
+	virtual utility::vector1< core::Size >
+	get_residues_to_design( core::pose::Pose const & pose ) const;
+
+	/// @brief Returns the name of the class
+	virtual std::string get_name() const { return "CatalyticResidues"; }
 
 private:
 };

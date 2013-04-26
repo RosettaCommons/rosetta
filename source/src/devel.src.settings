@@ -29,6 +29,7 @@ sources = {
 	],
         "devel/denovo_design": [
                 "FastDesign",
+                "GenericSimulatedAnnealer",
                 "RestrictWorstRegion",
         ],
         "devel/denovo_design/calculators": [

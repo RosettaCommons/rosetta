@@ -28,6 +28,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/Pose.hh>
+#include <protocols/enzdes/EnzdesTaskOperations.hh>
 #include <protocols/jd2/parser/BluePrint.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
@@ -50,7 +51,8 @@ namespace task_operations {
 
 // default constructor
 HighestEnergyRegionOperation::HighestEnergyRegionOperation()
-	: region_shell_( 8.0 ),
+	: TaskOperation(),
+	  region_shell_( 8.0 ),
 		regions_to_design_( 1 ),
 		repack_non_selected_( false ),
 		use_cache_( false ),
@@ -60,7 +62,8 @@ HighestEnergyRegionOperation::HighestEnergyRegionOperation()
 
 // copy constructor
 HighestEnergyRegionOperation::HighestEnergyRegionOperation( HighestEnergyRegionOperation const & rval )
-	: region_shell_( rval.region_shell_ ),
+	: TaskOperation( rval ),
+	  region_shell_( rval.region_shell_ ),
 		regions_to_design_( rval.regions_to_design_ ),
 		repack_non_selected_( rval.repack_non_selected_ ),
 		use_cache_( rval.use_cache_ ),
@@ -464,12 +467,14 @@ DesignByResidueCentralityOperation::get_residues_to_design( core::pose::Pose con
 	basic::MetricValue< utility::vector1< core::Real > > residue_centralities;
 	pose.metric( "ResidueCentrality", "centrality", residue_centralities );
 
-	// TODO: the calculator puts in a value of -1 for ala/gly. However, we don't want to report or include these in calculations.
+	// TODO: the calculator puts in a value of -9999 for ala/gly. However, we don't want to report or include these in calculations.
 	utility::vector1< core::Size > residues_to_design;
 
 	utility::vector1< std::pair< core::Size, core::Real > > res_to_score;
 	for ( core::Size i=1; i<=residue_centralities.value().size(); ++i ) {
-		res_to_score.push_back( std::pair< core::Size, core::Real >( i, residue_centralities.value()[i] ) );
+		if ( residue_centralities.value()[i] > -9998 ) {
+			res_to_score.push_back( std::pair< core::Size, core::Real >( i, residue_centralities.value()[i] ) );
+		}
 	}
 
 	// sort the vector based on the psipred probability
@@ -480,6 +485,60 @@ DesignByResidueCentralityOperation::get_residues_to_design( core::pose::Pose con
 		TR << "Going to design " << pose.residue( res_to_score[j].first ).name3() << res_to_score[j].first << ", value=" << res_to_score[j].second << std::endl;
 	}
 
+	return residues_to_design;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+/// DesignCatalyticResidues
+////////////////////////////////////////////////////////////////////////////////
+
+/// @brief creator functions
+core::pack::task::operation::TaskOperationOP
+DesignCatalyticResiduesOperationCreator::create_task_operation() const {
+	return new DesignCatalyticResiduesOperation;
+}
+
+std::string
+DesignCatalyticResiduesOperationCreator::keyname() const {
+	return "DesignCatalyticResidues";
+}
+
+/// @brief default constructor
+DesignCatalyticResiduesOperation::DesignCatalyticResiduesOperation() :
+	HighestEnergyRegionOperation()
+{}
+
+/// @brief destructor
+DesignCatalyticResiduesOperation::~DesignCatalyticResiduesOperation()
+{}
+
+/// @brief make clone
+core::pack::task::operation::TaskOperationOP
+DesignCatalyticResiduesOperation::clone() const
+{
+	return new DesignCatalyticResiduesOperation( *this );
+}
+
+/// @brief Gets a list of residues for design
+utility::vector1< core::Size >
+DesignCatalyticResiduesOperation::get_residues_to_design( core::pose::Pose const & pose ) const
+{
+	utility::vector1< core::Size > residues_to_design;
+
+	// apply setcatalyticrespackbehavior taskop and see which residues are fixed.
+	core::pack::task::PackerTaskOP task( core::pack::task::TaskFactory::create_packer_task( pose ) );
+	protocols::enzdes::SetCatalyticResPackBehavior cat_res_op;
+	cat_res_op.set_fix_catalytic_aa( true );
+	cat_res_op.apply( pose, *task );
+	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+		if ( ( ! task->being_packed( i ) ) && ( ! task->being_designed( i ) ) ) {
+			if ( residues_to_design.size() < regions_to_design() ) {
+				residues_to_design.push_back( i );
+			} else {
+				TR.Warning << "Residue " << i << " is catalytic, but won't be desinged because the maximum number of regions to design (" << regions_to_design() << ") have already been found." << std::endl;
+			}
+		}
+	}
 	return residues_to_design;
 }
 
