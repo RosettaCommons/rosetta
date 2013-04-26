@@ -2422,7 +2422,7 @@ void RemodelLoopMover::independent_stage(
 				sfxOP->set_weight( core::scoring::linear_chainbreak, 0);
 			}
 
-			if(option[OptionKeys::remodel::no_jumps].user() &&option[OptionKeys::remodel::two_chain_tree]){
+			if(option[OptionKeys::remodel::no_jumps].user() && option[OptionKeys::remodel::two_chain_tree].user() ){
 				sfxOP->set_weight( core::scoring::linear_chainbreak, 0);
 			}
 
