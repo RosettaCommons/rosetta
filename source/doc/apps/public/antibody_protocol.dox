@@ -35,8 +35,9 @@ We recommend the following articles for further studies of RosettaDock methodolo
 
 @section overview Overview
 
-
+<b>
 Please realize this the overview is to speed you up to run the protocol asap with minimum knowledge. For details of each steps, please check <br> 
+</b>
 @ref antibody_python_script "Documentation for RosettaAntibody3 application: the Python Pre-Processing Script" <br>
 @ref antibody_assemble_CDRs "Documentation for RosettaAntibody3 application: Antibody CDR Grafting Protocol"  <br>
 @ref antibody_model_CDR_H3 "Documentation for RosettaAntibody3 application: Antibody Modeler Protocol (Loop H3 and VL-VH) " <br>
@@ -148,8 +149,8 @@ Constraints file for optional use, output from steps 1 and 2:	cter_constraint
 Outputs:
 <ol><li>
 Set of modeled and refined Fv pdbs with loop modeled CDH3 loops: <grafted.relaxed_000X.pdb>
-We recommend generating at least 2000 decoys during this step.
-</li><ol>
+We recommend generating at least 2000 decoys during this step
+
 
 
 
