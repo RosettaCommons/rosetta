@@ -42,7 +42,7 @@
 
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
+// #include <core/scoring/Energies.hh> // AS April 25, 2013 -- needed to get chainbreak energy
 #include <core/scoring/ScoreFunction.hh>
 
 #include <core/pose/symmetry/util.hh>
@@ -265,6 +265,8 @@ void LoopMover_Refine_KIC::apply(
 	//	min_scorefxn->set_weight( chainbreak, 1.0*10.0/3.0 ); // confirm that chainbreak weight is set
 	loop_mover::loops_set_chainbreak_weight( scorefxn(), 1 );
 	loop_mover::loops_set_chainbreak_weight( min_scorefxn, 1 );
+	loop_mover::loops_set_chainbreak_weight( local_scorefxn, 1 ); // AS April 25, 2013 -- the local_scorefxn didn't have a chainbreak weight, restoring that
+	
 	//scorefxn->set_weight(core::scoring::mm_bend, 1.0);
 
 	// AS: add rama2b weight in case we're sampling with rama2b
@@ -488,6 +490,7 @@ void LoopMover_Refine_KIC::apply(
 		//min_scorefxn->set_weight( chainbreak, float(i)*10.0/3.0 );
 		loop_mover::loops_set_chainbreak_weight( scorefxn(), i );
 		loop_mover::loops_set_chainbreak_weight( min_scorefxn, i );
+		loop_mover::loops_set_chainbreak_weight( local_scorefxn, i ); // AS April 25, 2013
 		//scorefxn->set_weight( chainbreak, float(i) );
 				
 		// AS: try ramping the fa_rep over the outer cycles
@@ -593,10 +596,39 @@ void LoopMover_Refine_KIC::apply(
 
 				myKinematicMover.set_pivots(kic_start, kic_middle, kic_end);
 				myKinematicMover.set_temperature(temperature);
+				
+				core::pose::Pose last_accepted_pose = pose; // backup in case of undetected chain breaks
 				myKinematicMover.apply( pose );
 
+				
+				// AS April 25, 2013
+				// There seems to be a bug in KIC that makes it occasionally report open conformations but stating they are closed. We're looking into why exactly this happens -- for the moment this is a workaround that discards structures with a chainbreak score > 0, as this indicates that the chain probably isn't closed after all
+				
+				// note that overall scores here may be very high, due to side chain clashes (rotamer trials and/or repacking below)
+				
+				/* // moved to KinematicMover.cc
+				(*local_scorefxn)(pose);
+				core::Real current_chainbreak = pose.energies().total_energies()[ core::scoring::chainbreak ] * local_scorefxn->get_weight( chainbreak );
+				
+				//getPoseExtraScores(pose, "chainbreak", current_chainbreak);
+				
+				tr() << "AS_DEBUG -- chainbreak score " << current_chainbreak << std::endl;
+		
+				if ( current_chainbreak > option[ OptionKeys::loops::kic_chainbreak_threshold ]() ) { // todo: make this option-dependent -- AS_DEBUG
+					tr() << "AS_DEBUG -- this structure probably has a chain break, skipping it " << kic_start << "-" << kic_end << std::endl;
+					local_scorefxn->show(pose); // AS_DEBUG
+					
+					
+					pose.dump_pdb("high_chainbreak_score_" + utility::to_string(i) + "_" + utility::to_string(j) + "_" + utility::to_string(kic_start) + "_" + utility::to_string(kic_end) + ".pdb");
+					
+					pose = last_accepted_pose;				
+					
+				} else
+				 */
+				
 				if ( myKinematicMover.last_move_succeeded() ) {
 					// get the movemap and allowed side-chains for the current loop
+
 
 					//fpd symmetrize mm_all_loops
 					if ( core::pose::symmetry::is_symmetric( pose ) )  {
@@ -699,7 +731,7 @@ void LoopMover_Refine_KIC::apply(
 							loop_outfile << "ENDMDL" << std::endl;
 						}
 						//tr << "temperature: " << temperature << std::endl;
-						//tr << "chainbreak: " << pose.energies().total_energies()[ scoring::chainbreak ] << std::endl;
+						//tr << "chainbreak: " << pose.energies().total_energies()[ core::scoring::chainbreak ] << std::endl; 
 						if ( verbose ) tr() << "energy after accepted move: " << (*local_scorefxn)(pose) << std::endl;
 					}
 					//mc.show_scores();
@@ -727,8 +759,10 @@ void LoopMover_Refine_KIC::apply(
 					core::pose::symmetry::make_residue_mask_symmetric( pose, allow_sc_move_all_loops );  //fpd symmetrize res mask -- does nothing if pose is not symm
 					repack_packer_task->restrict_to_residues( allow_sc_move_all_loops );
 					rottrials_packer_task->restrict_to_residues( allow_sc_move_all_loops );
+
 					pack::pack_rotamers( pose, *local_scorefxn, repack_packer_task ); // design here if resfile supplied
 					if ( verbose ) tr() << "energy after design: " << (*local_scorefxn)(pose) << std::endl; // DJM remove
+					
 					if ( redesign_loop_ ) { // need to make new rottrials packer task with redesigned sequence
 						rottrials_packer_task = task_factory->create_task_and_apply_taskoperations( pose );
 						rottrials_packer_task->restrict_to_repacking();

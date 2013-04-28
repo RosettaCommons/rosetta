@@ -71,7 +71,7 @@ namespace protocols {
 														   core::pose::Pose & pose,
 														   utility::vector1<core::Real> const & torsions,
 														   utility::vector1<core::Real> const &, //bond_ang,
-														   utility::vector1<core::Real> const &, //bond_len,
+														   utility::vector1<core::Real> const &, //bond_len, 
 														   bool //closure_successful
 														   ) const
 				{
@@ -87,7 +87,9 @@ namespace protocols {
 						pose.set_psi( start + res, torsions[ (3*(res+1)) + 2 ] );
 						if ( also_copy_omega ) pose.set_omega( start + res, torsions[ (3*(res+1)) + 3 ] );
 						
+						
 					}
+					
 				} //set_pose_after_closure
 				
 				///////////////////////////////////////////////////////////////////////////////////////////
@@ -202,26 +204,86 @@ namespace protocols {
 																		  utility::vector1<core::Real> const & torsions,
 																		  utility::vector1<core::Real> const & bond_ang,
 																		  utility::vector1<core::Real> const & bond_len,
-																		  bool closure_successful // what is this used for?
+																		  bool closure_successful 
 																		  ) const
 				{
 					
 					//	parent::set_pose_after_closure( pose, torsions, bond_ang, bond_len, closure_successful, sample_omega_for_pre_prolines_ );
 					parent::set_pose_after_closure( pose, torsions, bond_ang, bond_len, closure_successful );
 					
-					if( vary_ca_bond_angles_ ){
-						
+					if(!closure_successful || vary_ca_bond_angles_ ){ // if the closure wasn't successful, we may need to overwrite previously idealized angles
 						core::Real offset( 0.0 );
-						for (Size res=kinmover_->start_res(), atom=5; res<= kinmover_->end_res(); res++, atom+=3) {
+
+						 
+						// C-N-CA
+						for (Size res=kinmover_->start_res(), atom=4; res<= kinmover_->end_res(); res++, atom+=3) {
+							const core::id::AtomID atomid_N (1, res);
+							const core::id::AtomID atomid_CA(2, res);
+							const core::id::AtomID atomid_C (3, res-1);
 							
+							core::id::DOF_ID dof_of_interest = pose.atom_tree().bond_angle_dof_id(atomid_C, atomid_N, atomid_CA, offset ); // DOFs canoot be set across jumps (segfault)
+							if (pose.has_dof(dof_of_interest))
+								pose.set_dof(dof_of_interest, numeric::conversions::radians(180 - bond_ang[atom]));
+						}
+
+						
+						
+						// N-CA-C -- these are all within the same residue, so jumps are not an issue
+						for (Size res=kinmover_->start_res(), atom=5; res<= kinmover_->end_res(); res++, atom+=3) {
 							const core::id::AtomID atomid_N (1, res);
 							const core::id::AtomID atomid_CA(2, res);
 							const core::id::AtomID atomid_C (3, res);
 							pose.set_dof(pose.atom_tree().bond_angle_dof_id(atomid_N, atomid_CA, atomid_C, offset ),
 										 numeric::conversions::radians(180 - bond_ang[atom]));
-							
 						}
+
+						// CA-C-N
+						for (Size res=kinmover_->start_res(), atom=6; res<= kinmover_->end_res(); res++, atom+=3) {
+							const core::id::AtomID atomid_N (1, res+1);
+							const core::id::AtomID atomid_CA(2, res);
+							const core::id::AtomID atomid_C (3, res);
+							core::id::DOF_ID dof_of_interest = pose.atom_tree().bond_angle_dof_id(atomid_CA, atomid_C, atomid_N, offset );
+							if (pose.has_dof(dof_of_interest)) {
+								pose.set_dof(dof_of_interest, numeric::conversions::radians(180 - bond_ang[atom]));
+							}
+						}
+
 					}
+					
+					// overwrite bond lengths, at least if the closure was not successful
+					if(!closure_successful) { // if sampling of bond lengths is added, activate this section
+
+						// N-CA
+						for (Size res=kinmover_->start_res(), atom=4; res<= kinmover_->end_res(); res++, atom+=3) {
+							const core::id::AtomID atomid_N (1, res);
+							const core::id::AtomID atomid_CA(2, res);
+							
+							pose.set_dof(pose.atom_tree().bond_length_dof_id(atomid_N, atomid_CA ),
+										 numeric::conversions::radians(180 - bond_len[atom]));
+						}
+						
+						// CA-C
+						for (Size res=kinmover_->start_res(), atom=5; res<= kinmover_->end_res(); res++, atom+=3) {
+							const core::id::AtomID atomid_CA(2, res);
+							const core::id::AtomID atomid_C (3, res);
+							
+							pose.set_dof(pose.atom_tree().bond_length_dof_id(atomid_CA, atomid_C ),
+										 numeric::conversions::radians(180 - bond_len[atom]));
+						}
+
+						// C-N
+						for (Size res=kinmover_->start_res(), atom=6; res<= kinmover_->end_res(); res++, atom+=3) {
+							const core::id::AtomID atomid_C (3, res);
+							const core::id::AtomID atomid_N (1, res+1);
+							
+							core::id::DOF_ID dof_of_interest = pose.atom_tree().bond_length_dof_id(atomid_C, atomid_N);
+							if (pose.has_dof(dof_of_interest)) {
+								pose.set_dof(dof_of_interest, numeric::conversions::radians(180 - bond_len[atom]));
+							}
+						}
+
+					}
+					
 				} //TorsionSamplingKinematicPerturber::set_pose_after_closure(
 				
 				
@@ -305,19 +367,79 @@ namespace protocols {
 					//	parent::set_pose_after_closure( pose, torsions, bond_ang, bond_len, closure_successful, sample_omega_for_pre_prolines_ );
 					parent::set_pose_after_closure( pose, torsions, bond_ang, bond_len, closure_successful );
 					
-					if( vary_ca_bond_angles_ ){
-						
+					if(!closure_successful || vary_ca_bond_angles_ ){ // if the closure wasn't successful, we may need to overwrite previously idealized angles
 						core::Real offset( 0.0 );
-						for (Size res=kinmover_->start_res(), atom=5; res<= kinmover_->end_res(); res++, atom+=3) {
+						
+						
+						// C-N-CA
+						for (Size res=kinmover_->start_res(), atom=4; res<= kinmover_->end_res(); res++, atom+=3) {
+							const core::id::AtomID atomid_N (1, res);
+							const core::id::AtomID atomid_CA(2, res);
+							const core::id::AtomID atomid_C (3, res-1);
 							
+							core::id::DOF_ID dof_of_interest = pose.atom_tree().bond_angle_dof_id(atomid_C, atomid_N, atomid_CA, offset ); // DOFs canoot be set across jumps (segfault)
+							if (pose.has_dof(dof_of_interest))
+								pose.set_dof(dof_of_interest, numeric::conversions::radians(180 - bond_ang[atom]));
+						}
+						
+						
+						
+						// N-CA-C -- these are all within the same residue, so jumps are not an issue
+						for (Size res=kinmover_->start_res(), atom=5; res<= kinmover_->end_res(); res++, atom+=3) {
 							const core::id::AtomID atomid_N (1, res);
 							const core::id::AtomID atomid_CA(2, res);
 							const core::id::AtomID atomid_C (3, res);
 							pose.set_dof(pose.atom_tree().bond_angle_dof_id(atomid_N, atomid_CA, atomid_C, offset ),
 										 numeric::conversions::radians(180 - bond_ang[atom]));
-							
 						}
+						
+						// CA-C-N
+						for (Size res=kinmover_->start_res(), atom=6; res<= kinmover_->end_res(); res++, atom+=3) {
+							const core::id::AtomID atomid_N (1, res+1);
+							const core::id::AtomID atomid_CA(2, res);
+							const core::id::AtomID atomid_C (3, res);
+							core::id::DOF_ID dof_of_interest = pose.atom_tree().bond_angle_dof_id(atomid_CA, atomid_C, atomid_N, offset );
+							if (pose.has_dof(dof_of_interest)) {
+								pose.set_dof(dof_of_interest, numeric::conversions::radians(180 - bond_ang[atom]));
+							}
+						}
+						
 					}
+					
+					// overwrite bond lengths, at least if the closure was not successful
+					if(!closure_successful) { // if sampling of bond lengths is added, activate this section
+						
+						// N-CA
+						for (Size res=kinmover_->start_res(), atom=4; res<= kinmover_->end_res(); res++, atom+=3) {
+							const core::id::AtomID atomid_N (1, res);
+							const core::id::AtomID atomid_CA(2, res);
+							
+							pose.set_dof(pose.atom_tree().bond_length_dof_id(atomid_N, atomid_CA ),
+										 numeric::conversions::radians(180 - bond_len[atom]));
+						}
+						
+						// CA-C
+						for (Size res=kinmover_->start_res(), atom=5; res<= kinmover_->end_res(); res++, atom+=3) {
+							const core::id::AtomID atomid_CA(2, res);
+							const core::id::AtomID atomid_C (3, res);
+							
+							pose.set_dof(pose.atom_tree().bond_length_dof_id(atomid_CA, atomid_C ),
+										 numeric::conversions::radians(180 - bond_len[atom]));
+						}
+						
+						// C-N
+						for (Size res=kinmover_->start_res(), atom=6; res<= kinmover_->end_res(); res++, atom+=3) {
+							const core::id::AtomID atomid_C (3, res);
+							const core::id::AtomID atomid_N (1, res+1);
+							
+							core::id::DOF_ID dof_of_interest = pose.atom_tree().bond_length_dof_id(atomid_C, atomid_N);
+							if (pose.has_dof(dof_of_interest)) {
+								pose.set_dof(dof_of_interest, numeric::conversions::radians(180 - bond_len[atom]));
+							}
+						}
+						
+					}
+					
 				} //VicinitySamplingKinematicPerturber::set_pose_after_closure(
 				
 				
@@ -490,19 +612,79 @@ namespace protocols {
 					//	parent::set_pose_after_closure( pose, torsions, bond_ang, bond_len, closure_successful, sample_omega_for_pre_prolines_ );
 					parent::set_pose_after_closure( pose, torsions, bond_ang, bond_len, closure_successful );
 					
-					if( vary_ca_bond_angles_ ){
-						
+					if(!closure_successful || vary_ca_bond_angles_ ){ // if the closure wasn't successful, we may need to overwrite previously idealized angles
 						core::Real offset( 0.0 );
-						for (Size res=kinmover_->start_res(), atom=5; res<= kinmover_->end_res(); res++, atom+=3) {
+						
+						
+						// C-N-CA
+						for (Size res=kinmover_->start_res(), atom=4; res<= kinmover_->end_res(); res++, atom+=3) {
+							const core::id::AtomID atomid_N (1, res);
+							const core::id::AtomID atomid_CA(2, res);
+							const core::id::AtomID atomid_C (3, res-1);
 							
+							core::id::DOF_ID dof_of_interest = pose.atom_tree().bond_angle_dof_id(atomid_C, atomid_N, atomid_CA, offset ); // DOFs canoot be set across jumps (segfault)
+							if (pose.has_dof(dof_of_interest))
+								pose.set_dof(dof_of_interest, numeric::conversions::radians(180 - bond_ang[atom]));
+						}
+						
+						
+						
+						// N-CA-C -- these are all within the same residue, so jumps are not an issue
+						for (Size res=kinmover_->start_res(), atom=5; res<= kinmover_->end_res(); res++, atom+=3) {
 							const core::id::AtomID atomid_N (1, res);
 							const core::id::AtomID atomid_CA(2, res);
 							const core::id::AtomID atomid_C (3, res);
 							pose.set_dof(pose.atom_tree().bond_angle_dof_id(atomid_N, atomid_CA, atomid_C, offset ),
 										 numeric::conversions::radians(180 - bond_ang[atom]));
-							
 						}
+						
+						// CA-C-N
+						for (Size res=kinmover_->start_res(), atom=6; res<= kinmover_->end_res(); res++, atom+=3) {
+							const core::id::AtomID atomid_N (1, res+1);
+							const core::id::AtomID atomid_CA(2, res);
+							const core::id::AtomID atomid_C (3, res);
+							core::id::DOF_ID dof_of_interest = pose.atom_tree().bond_angle_dof_id(atomid_CA, atomid_C, atomid_N, offset );
+							if (pose.has_dof(dof_of_interest)) {
+								pose.set_dof(dof_of_interest, numeric::conversions::radians(180 - bond_ang[atom]));
+							}
+						}
+						
 					}
+					
+					// overwrite bond lengths, at least if the closure was not successful
+					if(!closure_successful) { // if sampling of bond lengths is added, activate this section
+						
+						// N-CA
+						for (Size res=kinmover_->start_res(), atom=4; res<= kinmover_->end_res(); res++, atom+=3) {
+							const core::id::AtomID atomid_N (1, res);
+							const core::id::AtomID atomid_CA(2, res);
+							
+							pose.set_dof(pose.atom_tree().bond_length_dof_id(atomid_N, atomid_CA ),
+										 numeric::conversions::radians(180 - bond_len[atom]));
+						}
+						
+						// CA-C
+						for (Size res=kinmover_->start_res(), atom=5; res<= kinmover_->end_res(); res++, atom+=3) {
+							const core::id::AtomID atomid_CA(2, res);
+							const core::id::AtomID atomid_C (3, res);
+							
+							pose.set_dof(pose.atom_tree().bond_length_dof_id(atomid_CA, atomid_C ),
+										 numeric::conversions::radians(180 - bond_len[atom]));
+						}
+						
+						// C-N
+						for (Size res=kinmover_->start_res(), atom=6; res<= kinmover_->end_res(); res++, atom+=3) {
+							const core::id::AtomID atomid_C (3, res);
+							const core::id::AtomID atomid_N (1, res+1);
+							
+							core::id::DOF_ID dof_of_interest = pose.atom_tree().bond_length_dof_id(atomid_C, atomid_N);
+							if (pose.has_dof(dof_of_interest)) {
+								pose.set_dof(dof_of_interest, numeric::conversions::radians(180 - bond_len[atom]));
+							}
+						}
+						
+					}
+					
 				} //NeighborDependentTorsionSamplingKinematicPerturber::set_pose_after_closure(
 				
 				
@@ -620,19 +802,79 @@ namespace protocols {
 					//	parent::set_pose_after_closure( pose, torsions, bond_ang, bond_len, closure_successful, sample_omega_for_pre_prolines_ );
 					parent::set_pose_after_closure( pose, torsions, bond_ang, bond_len, closure_successful );
 					
-					if( vary_ca_bond_angles_ ){
-						
+					if(!closure_successful || vary_ca_bond_angles_ ){ // if the closure wasn't successful, we may need to overwrite previously idealized angles
 						core::Real offset( 0.0 );
-						for (Size res=kinmover_->start_res(), atom=5; res<= kinmover_->end_res(); res++, atom+=3) {
+						
+						
+						// C-N-CA
+						for (Size res=kinmover_->start_res(), atom=4; res<= kinmover_->end_res(); res++, atom+=3) {
+							const core::id::AtomID atomid_N (1, res);
+							const core::id::AtomID atomid_CA(2, res);
+							const core::id::AtomID atomid_C (3, res-1);
 							
+							core::id::DOF_ID dof_of_interest = pose.atom_tree().bond_angle_dof_id(atomid_C, atomid_N, atomid_CA, offset ); // DOFs canoot be set across jumps (segfault)
+							if (pose.has_dof(dof_of_interest))
+								pose.set_dof(dof_of_interest, numeric::conversions::radians(180 - bond_ang[atom]));
+						}
+						
+						
+						
+						// N-CA-C -- these are all within the same residue, so jumps are not an issue
+						for (Size res=kinmover_->start_res(), atom=5; res<= kinmover_->end_res(); res++, atom+=3) {
 							const core::id::AtomID atomid_N (1, res);
 							const core::id::AtomID atomid_CA(2, res);
 							const core::id::AtomID atomid_C (3, res);
 							pose.set_dof(pose.atom_tree().bond_angle_dof_id(atomid_N, atomid_CA, atomid_C, offset ),
 										 numeric::conversions::radians(180 - bond_ang[atom]));
-							
 						}
+						
+						// CA-C-N
+						for (Size res=kinmover_->start_res(), atom=6; res<= kinmover_->end_res(); res++, atom+=3) {
+							const core::id::AtomID atomid_N (1, res+1);
+							const core::id::AtomID atomid_CA(2, res);
+							const core::id::AtomID atomid_C (3, res);
+							core::id::DOF_ID dof_of_interest = pose.atom_tree().bond_angle_dof_id(atomid_CA, atomid_C, atomid_N, offset );
+							if (pose.has_dof(dof_of_interest)) {
+								pose.set_dof(dof_of_interest, numeric::conversions::radians(180 - bond_ang[atom]));
+							}
+						}
+						
 					}
+					
+					// overwrite bond lengths, at least if the closure was not successful
+					if(!closure_successful) { // if sampling of bond lengths is added, activate this section
+						
+						// N-CA
+						for (Size res=kinmover_->start_res(), atom=4; res<= kinmover_->end_res(); res++, atom+=3) {
+							const core::id::AtomID atomid_N (1, res);
+							const core::id::AtomID atomid_CA(2, res);
+							
+							pose.set_dof(pose.atom_tree().bond_length_dof_id(atomid_N, atomid_CA ),
+										 numeric::conversions::radians(180 - bond_len[atom]));
+						}
+						
+						// CA-C
+						for (Size res=kinmover_->start_res(), atom=5; res<= kinmover_->end_res(); res++, atom+=3) {
+							const core::id::AtomID atomid_CA(2, res);
+							const core::id::AtomID atomid_C (3, res);
+							
+							pose.set_dof(pose.atom_tree().bond_length_dof_id(atomid_CA, atomid_C ),
+										 numeric::conversions::radians(180 - bond_len[atom]));
+						}
+						
+						// C-N
+						for (Size res=kinmover_->start_res(), atom=6; res<= kinmover_->end_res(); res++, atom+=3) {
+							const core::id::AtomID atomid_C (3, res);
+							const core::id::AtomID atomid_N (1, res+1);
+							
+							core::id::DOF_ID dof_of_interest = pose.atom_tree().bond_length_dof_id(atomid_C, atomid_N);
+							if (pose.has_dof(dof_of_interest)) {
+								pose.set_dof(dof_of_interest, numeric::conversions::radians(180 - bond_len[atom]));
+							}
+						}
+						
+					}
+					
 				} //TorsionRestrictedKinematicPerturber::set_pose_after_closure(
 				
 				
@@ -873,19 +1115,79 @@ namespace protocols {
 					//	parent::set_pose_after_closure( pose, torsions, bond_ang, bond_len, closure_successful, sample_omega_for_pre_prolines_ );
 					parent::set_pose_after_closure( pose, torsions, bond_ang, bond_len, closure_successful );
 					
-					if( vary_ca_bond_angles_ ){
-						
+					if(!closure_successful || vary_ca_bond_angles_ ){ // if the closure wasn't successful, we may need to overwrite previously idealized angles
 						core::Real offset( 0.0 );
-						for (Size res=kinmover_->start_res(), atom=5; res<= kinmover_->end_res(); res++, atom+=3) {
+						
+						
+						// C-N-CA
+						for (Size res=kinmover_->start_res(), atom=4; res<= kinmover_->end_res(); res++, atom+=3) {
+							const core::id::AtomID atomid_N (1, res);
+							const core::id::AtomID atomid_CA(2, res);
+							const core::id::AtomID atomid_C (3, res-1);
 							
+							core::id::DOF_ID dof_of_interest = pose.atom_tree().bond_angle_dof_id(atomid_C, atomid_N, atomid_CA, offset ); // DOFs canoot be set across jumps (segfault)
+							if (pose.has_dof(dof_of_interest))
+								pose.set_dof(dof_of_interest, numeric::conversions::radians(180 - bond_ang[atom]));
+						}
+						
+						
+						
+						// N-CA-C -- these are all within the same residue, so jumps are not an issue
+						for (Size res=kinmover_->start_res(), atom=5; res<= kinmover_->end_res(); res++, atom+=3) {
 							const core::id::AtomID atomid_N (1, res);
 							const core::id::AtomID atomid_CA(2, res);
 							const core::id::AtomID atomid_C (3, res);
 							pose.set_dof(pose.atom_tree().bond_angle_dof_id(atomid_N, atomid_CA, atomid_C, offset ),
 										 numeric::conversions::radians(180 - bond_ang[atom]));
-							
 						}
+						
+						// CA-C-N
+						for (Size res=kinmover_->start_res(), atom=6; res<= kinmover_->end_res(); res++, atom+=3) {
+							const core::id::AtomID atomid_N (1, res+1);
+							const core::id::AtomID atomid_CA(2, res);
+							const core::id::AtomID atomid_C (3, res);
+							core::id::DOF_ID dof_of_interest = pose.atom_tree().bond_angle_dof_id(atomid_CA, atomid_C, atomid_N, offset );
+							if (pose.has_dof(dof_of_interest)) {
+								pose.set_dof(dof_of_interest, numeric::conversions::radians(180 - bond_ang[atom]));
+							}
+						}
+						
 					}
+					
+					// overwrite bond lengths, at least if the closure was not successful
+					if(!closure_successful) { // if sampling of bond lengths is added, activate this section
+						
+						// N-CA
+						for (Size res=kinmover_->start_res(), atom=4; res<= kinmover_->end_res(); res++, atom+=3) {
+							const core::id::AtomID atomid_N (1, res);
+							const core::id::AtomID atomid_CA(2, res);
+							
+							pose.set_dof(pose.atom_tree().bond_length_dof_id(atomid_N, atomid_CA ),
+										 numeric::conversions::radians(180 - bond_len[atom]));
+						}
+						
+						// CA-C
+						for (Size res=kinmover_->start_res(), atom=5; res<= kinmover_->end_res(); res++, atom+=3) {
+							const core::id::AtomID atomid_CA(2, res);
+							const core::id::AtomID atomid_C (3, res);
+							
+							pose.set_dof(pose.atom_tree().bond_length_dof_id(atomid_CA, atomid_C ),
+										 numeric::conversions::radians(180 - bond_len[atom]));
+						}
+						
+						// C-N
+						for (Size res=kinmover_->start_res(), atom=6; res<= kinmover_->end_res(); res++, atom+=3) {
+							const core::id::AtomID atomid_C (3, res);
+							const core::id::AtomID atomid_N (1, res+1);
+							
+							core::id::DOF_ID dof_of_interest = pose.atom_tree().bond_length_dof_id(atomid_C, atomid_N);
+							if (pose.has_dof(dof_of_interest)) {
+								pose.set_dof(dof_of_interest, numeric::conversions::radians(180 - bond_len[atom]));
+							}
+						}
+						
+					}
+					
 				} //TabooSamplingKinematicPerturber::set_pose_after_closure(
 				
 				
@@ -1127,19 +1429,79 @@ namespace protocols {
 					//	parent::set_pose_after_closure( pose, torsions, bond_ang, bond_len, closure_successful, sample_omega_for_pre_prolines_ );
 					parent::set_pose_after_closure( pose, torsions, bond_ang, bond_len, closure_successful );
 					
-					if( vary_ca_bond_angles_ ){
-						
+					if(!closure_successful || vary_ca_bond_angles_ ){ // if the closure wasn't successful, we may need to overwrite previously idealized angles
 						core::Real offset( 0.0 );
-						for (Size res=kinmover_->start_res(), atom=5; res<= kinmover_->end_res(); res++, atom+=3) {
+						
+						
+						// C-N-CA
+						for (Size res=kinmover_->start_res(), atom=4; res<= kinmover_->end_res(); res++, atom+=3) {
+							const core::id::AtomID atomid_N (1, res);
+							const core::id::AtomID atomid_CA(2, res);
+							const core::id::AtomID atomid_C (3, res-1);
 							
+							core::id::DOF_ID dof_of_interest = pose.atom_tree().bond_angle_dof_id(atomid_C, atomid_N, atomid_CA, offset ); // DOFs canoot be set across jumps (segfault)
+							if (pose.has_dof(dof_of_interest))
+								pose.set_dof(dof_of_interest, numeric::conversions::radians(180 - bond_ang[atom]));
+						}
+						
+						
+						
+						// N-CA-C -- these are all within the same residue, so jumps are not an issue
+						for (Size res=kinmover_->start_res(), atom=5; res<= kinmover_->end_res(); res++, atom+=3) {
 							const core::id::AtomID atomid_N (1, res);
 							const core::id::AtomID atomid_CA(2, res);
 							const core::id::AtomID atomid_C (3, res);
 							pose.set_dof(pose.atom_tree().bond_angle_dof_id(atomid_N, atomid_CA, atomid_C, offset ),
 										 numeric::conversions::radians(180 - bond_ang[atom]));
-							
 						}
+						
+						// CA-C-N
+						for (Size res=kinmover_->start_res(), atom=6; res<= kinmover_->end_res(); res++, atom+=3) {
+							const core::id::AtomID atomid_N (1, res+1);
+							const core::id::AtomID atomid_CA(2, res);
+							const core::id::AtomID atomid_C (3, res);
+							core::id::DOF_ID dof_of_interest = pose.atom_tree().bond_angle_dof_id(atomid_CA, atomid_C, atomid_N, offset );
+							if (pose.has_dof(dof_of_interest)) {
+								pose.set_dof(dof_of_interest, numeric::conversions::radians(180 - bond_ang[atom]));
+							}
+						}
+						
 					}
+					
+					// overwrite bond lengths, at least if the closure was not successful
+					if(!closure_successful) { // if sampling of bond lengths is added, activate this section
+						
+						// N-CA
+						for (Size res=kinmover_->start_res(), atom=4; res<= kinmover_->end_res(); res++, atom+=3) {
+							const core::id::AtomID atomid_N (1, res);
+							const core::id::AtomID atomid_CA(2, res);
+							
+							pose.set_dof(pose.atom_tree().bond_length_dof_id(atomid_N, atomid_CA ),
+										 numeric::conversions::radians(180 - bond_len[atom]));
+						}
+						
+						// CA-C
+						for (Size res=kinmover_->start_res(), atom=5; res<= kinmover_->end_res(); res++, atom+=3) {
+							const core::id::AtomID atomid_CA(2, res);
+							const core::id::AtomID atomid_C (3, res);
+							
+							pose.set_dof(pose.atom_tree().bond_length_dof_id(atomid_CA, atomid_C ),
+										 numeric::conversions::radians(180 - bond_len[atom]));
+						}
+						
+						// C-N
+						for (Size res=kinmover_->start_res(), atom=6; res<= kinmover_->end_res(); res++, atom+=3) {
+							const core::id::AtomID atomid_C (3, res);
+							const core::id::AtomID atomid_N (1, res+1);
+							
+							core::id::DOF_ID dof_of_interest = pose.atom_tree().bond_length_dof_id(atomid_C, atomid_N);
+							if (pose.has_dof(dof_of_interest)) {
+								pose.set_dof(dof_of_interest, numeric::conversions::radians(180 - bond_len[atom]));
+							}
+						}
+						
+					}
+					
 				} //NeighborDependentTabooSamplingKinematicPerturber::set_pose_after_closure(
 				
 				

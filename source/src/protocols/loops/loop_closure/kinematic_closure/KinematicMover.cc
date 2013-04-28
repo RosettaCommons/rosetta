@@ -38,6 +38,7 @@
 #include <core/scoring/Ramachandran.hh>
 #include <core/scoring/ScoreFunction.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
+// #include <core/scoring/Energies.hh> // AS April 25, 2013 -- would be needed to get chainbreak energy
 #include <core/scoring/ScoringManager.hh>
 // AUTO-REMOVED #include <basic/basic.hh>
 #include <basic/Tracer.hh>
@@ -293,6 +294,9 @@ void KinematicMover::apply( core::pose::Pose & pose )
 	// DJM: debug
 	//TR << "from " << start_res_ << " to " << end_res_ << std::endl;
 
+	// make backup copy to restore pose, if all trials fail
+	core::pose::Pose start_p = pose;
+	
 	// inputs to loop closure
 	utility::vector1<utility::vector1<Real> > atoms;
 	utility::vector1<Size> pivots (3), order (3);
@@ -418,7 +422,8 @@ void KinematicMover::apply( core::pose::Pose & pose )
 
 	// idealize the loop if requested
 	if (idealize_loop_first_) {
-		// save a backbup of the non-ideal residues in case closure fails
+		
+		// save a backbup of the non-ideal residues in case closure fails -- AS_DEBUG: now trying to simply store the entire pose and write it back
 		save_residues.resize(seg_len);
 		for (Size seqpos=start_res_, i=1; seqpos<=end_res_; seqpos++, i++) {
 			conformation::ResidueOP saveres=pose.conformation().residue( seqpos ).clone();
@@ -437,11 +442,13 @@ void KinematicMover::apply( core::pose::Pose & pose )
 			if( db_len.size() >= (i+2) ) db_len[i+2]=idl_C_N_;
 			if( dt_ang.size() >= (i+2) ) dt_ang[i+2]=OMEGA_MEAN_;
 		}
+
 		// setting pose omegas here, don't set them later!
 		for ( Size i= start_res_; i<= end_res_; ++i ) {
 			conformation::idealize_position( i, pose.conformation() ); // this is coupled to above values!
-			pose.set_omega(i, OMEGA_MEAN_);
+			pose.set_omega(i, OMEGA_MEAN_); 
 		}
+
 	}
 
 	// If preserving detailed balance, compute the Rosenbluth factor for the before state
@@ -501,8 +508,10 @@ void KinematicMover::apply( core::pose::Pose & pose )
 			}
 			// place the solution into the pose and bump check+eventual filters
 			// set the torsions
-			perturber_->set_pose_after_closure( pose, t_ang[pos[i]], b_ang[pos[i]], b_len[pos[i]], true );
-
+			perturber_->set_pose_after_closure( pose, t_ang[pos[i]], b_ang[pos[i]], b_len[pos[i]], true /* closure successful? */);
+			
+			
+			
 			// AS: fetch & set the torsion string for Taboo Sampling 
 			insert_sampled_torsion_string_into_taboo_map( torsion_features_string( pose ) );
 			
@@ -511,7 +520,7 @@ void KinematicMover::apply( core::pose::Pose & pose )
 			if( do_hardsphere_bump_check_ && !perform_bump_check(pose, start_res_, end_res_) ){
 				continue;
 			}
-
+			
 			if( do_sfxn_eval_every_iteration_ ) (*sfxn_)( pose );
 
 			if( filters_.size() != 0 ){
@@ -527,6 +536,26 @@ void KinematicMover::apply( core::pose::Pose & pose )
 				}
 			}
 
+			
+			// AS April 25, 2013
+			// adding temporary filter option to remove cases with a chainbreak score that exceeds the threshold -- there appears to be a bug in KIC that makes it occasionally return open conformations; while we're working on fixing the underlying issue, use this filter to remove problematic cases
+			
+			/*
+			if (sfxn_ && sfxn_->get_weight( chainbreak ) > 0) { // sfxn_ must be defined
+				(*sfxn_)(pose);
+				core::Real current_chainbreak = pose.energies().total_energies()[ core::scoring::chainbreak ] * sfxn_->get_weight( chainbreak );
+				
+				TR << "AS_DEBUG -- chainbreak score " << current_chainbreak << std::endl;
+				if ( current_chainbreak > basic::options::option[ basic::options::OptionKeys::loops::kic_chainbreak_threshold ]() ) { 
+					TR << "AS_DEBUG -- this structure probably has a chain break, skipping it " << start_res_ << "-" << end_res_ << std::endl;
+					sfxn_->show(pose); // AS_DEBUG
+					
+					pose.dump_pdb("high_chainbreak_score_" + utility::to_string(nits) + "_" + utility::to_string(start_res_) + "_" + utility::to_string(end_res_) + ".pdb");
+					continue;
+				}
+			}
+			 */
+			
 			last_move_succeeded_ = true;
 			//std::cerr << "kinmover success after " << nits << "...   ";
 			return;
@@ -537,18 +566,9 @@ void KinematicMover::apply( core::pose::Pose & pose )
 	last_move_succeeded_ = false;
 	//TR << "!!!last move not succeeded to pass filters" << std::endl;
 
-	//// no solution found. restore the old pose
-	if (! idealize_loop_first_) { // if we didn't idealize, we only changed the torsions and N_CA_C bond angles
-
-		perturber_->set_pose_after_closure( pose, save_t_ang, save_b_ang, save_b_len, false );
-
-	}
-	else { // loop residues were idealized so restore from saved non-ideal residues
-		for (Size seqpos=start_res_, i=1; seqpos<=end_res_; seqpos++, i++) {
-			pose.conformation().replace_residue(seqpos, *save_residues[i], false);
-		}
-	}
-
+	// AS_DEBUG -- replace pose by stored pose in case the loop closure trials didn't work
+	pose = start_p; 
+	
 	//TR << "\tnumber of its: " << nits << std::endl;
 	return;
 
