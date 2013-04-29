@@ -10,6 +10,7 @@
 // Rosetta headers
 #include <utility/pointer/owning_ptr.hh>
 #include <core/pose/Pose.hh>
+#include <core/import_pose/import_pose.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
@@ -148,7 +149,7 @@ int main(int argc, char *argv[]) {
   	}	
 
 	// parse jobs list and split into batches
-	vector<string> batches;
+	vector<string> batches;				//yes, im mixing vector0 and vector1 in this app - sue me
 	SilentFileData sfd;
 	string silent_file_name;
 	int infile_size;
@@ -279,6 +280,7 @@ int main(int argc, char *argv[]) {
 	else if (numprocs > 1) {
 		int batch_id;
 		SilentFileDataOP sfd_in;
+		core::pose::PoseOP native_pose;
 		string silent_filename = "";
 		#ifdef USEMPI
 		while ( true )		// block for messages until receive batch_id: EXIT_BATCH_ID, then quit
@@ -299,8 +301,10 @@ int main(int argc, char *argv[]) {
 				silent_filename = split_string(batches[batch_id],0);
 				sfd_in = new SilentFileData();
 				sfd_in->read_file( silent_filename );
+			
+				string native_pdb_file = split_string(batches[batch_id],1);
+				native_pose = core::import_pose::pose_from_pdb( native_pdb_file );
 			}
-			string native_pdb = split_string(batches[batch_id],1);
 			int start = atof(split_string(batches[batch_id],2).c_str());
 			int end = atof(split_string(batches[batch_id],3).c_str());
 
@@ -325,6 +329,7 @@ int main(int argc, char *argv[]) {
 				}
 				
 				protocols::relax::FastRelax relax( scorefxn, option[ OptionKeys::relax::sequence_file ]() );
+				relax.set_native_pose( native_pose );
 				
 				TR << "BATCHSIZE: " <<  relax_structs.size() << endl;
 				long starttime = time(NULL);
