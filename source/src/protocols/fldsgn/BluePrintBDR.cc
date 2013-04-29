@@ -113,6 +113,7 @@ BluePrintBDR::BluePrintBDR() :
 	dump_pdb_when_fail_( "" ),
 	rmdl_attempts_( 1 ),
 	use_poly_val_( true ),
+	tell_vlb_to_not_touch_fold_tree_(false),
 	invrot_tree_(NULL),
 	enzcst_io_(NULL)
 {
@@ -137,6 +138,7 @@ BluePrintBDR::BluePrintBDR( String const & filename, bool const ss_from_blueprin
 	dump_pdb_when_fail_( "" ),
 	rmdl_attempts_( 1 ),
 	use_poly_val_( true ),
+	tell_vlb_to_not_touch_fold_tree_(false),
 	invrot_tree_(NULL),
 	enzcst_io_(NULL)
 {
@@ -163,6 +165,7 @@ BluePrintBDR::BluePrintBDR( BluePrintOP const & blueprintOP, bool const ss_from_
 	dump_pdb_when_fail_( "" ),
 	rmdl_attempts_( 1 ),
 	use_poly_val_( true ),
+	tell_vlb_to_not_touch_fold_tree_(false),
 	invrot_tree_(NULL),
 	enzcst_io_(NULL)
 {
@@ -190,6 +193,7 @@ BluePrintBDR::BluePrintBDR( BluePrintBDR const & rval ) :
 	dump_pdb_when_fail_( rval.dump_pdb_when_fail_ ),
 	rmdl_attempts_( rval.rmdl_attempts_ ),
 	use_poly_val_( rval.use_poly_val_ ),
+	tell_vlb_to_not_touch_fold_tree_( rval.tell_vlb_to_not_touch_fold_tree_),
 	invrot_tree_(rval.invrot_tree_),
 	enzcst_io_(rval.enzcst_io_),
 	rcgs_( rval.rcgs_ )
@@ -613,6 +617,10 @@ bool BluePrintBDR::centroid_build(
 		vlb_->set_abego( blueprint_->abego() );
 	}
 
+	if( tell_vlb_to_not_touch_fold_tree_ ){
+		vlb_->loop_mover_fold_tree_constant( true );
+	}
+
 	if( invrot_tree_ ){
     this->setup_invrot_tree_in_vlb( *vlb_, pose );
   }
@@ -713,7 +721,7 @@ BluePrintBDR::parse_my_tag(
 	use_poly_val_ = tag->getOption<bool>( "use_poly_val", 1 );
 
 	// Use specified constraint generator movers
- 	// these are called from VLB after the residues are added, but before the actual fragment insertions take place
+	// these are called from VLB after the residues are added, but before the actual fragment insertions take place
 	utility::vector1< std::string > const mover_names( utility::string_split( tag->getOption< std::string >( "constraint_generators" ), ',' ) );
  	for ( core::Size i=1; i<=mover_names.size(); ++i ) {
  		if ( mover_names[i] == "" ) continue;
@@ -724,6 +732,10 @@ BluePrintBDR::parse_my_tag(
  		rcgs_.push_back( rcg );
  		TR << "Added RCG " << mover_names[i] << std::endl;
  	}
+
+	if( tag->hasOption("keep_fold_tree") ){
+		tell_vlb_to_not_touch_fold_tree_ = tag->getOption<bool>( "keep_fold_tree", false );
+	}
 
 	//in case we'ref folding up around a ligand
 	if( tag->hasOption("invrot_tree")){

@@ -316,6 +316,9 @@ private: // data
 	/// @brief Entire sequence except for rebuilding regions become poly Val
 	bool use_poly_val_;
 
+	///@brief if we a fold tree has already been set up prior
+	bool tell_vlb_to_not_touch_fold_tree_;
+
 	/// @brief in case we're folding up around a ligand
 	protocols::toolbox::match_enzdes_util::InvrotTreeOP invrot_tree_;
 	toolbox::match_enzdes_util::EnzConstraintIOCOP enzcst_io_;

@@ -65,6 +65,9 @@ sources = {
 		"domain_assembly_setup",
 		"DomainAssemblyReader",
 	],
+	"devel/domain_insertion": [
+		"FusePosesNtoCMover",
+	],
 	"devel/enzdes": [
 		"DesignSilentStruct",
 		"EnzdesRemodelProtocol",
