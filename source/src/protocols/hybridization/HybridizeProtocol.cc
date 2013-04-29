@@ -140,6 +140,8 @@
 
 //docking
 #include <protocols/docking/DockingLowRes.hh>
+#include <protocols/symmetric_docking/SymDockingLowRes.hh>
+#include <protocols/simple_moves/symmetry/SymMinMover.hh>
 
 #include <string>
 
@@ -849,7 +851,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
           allowed_to_move_[resi]=false;
       }
      }
-	
+
 		// STAGE 1
 		//fpd constraints are handled a little bit weird
 		//  * foldtree hybridize sets chainbreak variants then applies constraints (so c-beta csts are treated properly)
@@ -862,65 +864,78 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 
 		// fold tree hybridize
 		if (RG.uniform() < stage1_probability_) {
-     for ( core::Size repeatstage1=0; repeatstage1 < jump_move_repeat_; ++repeatstage1 ) {
-			std::string cst_fn = template_cst_fn_[initial_template_index];
+			for ( core::Size repeatstage1=0; repeatstage1 < jump_move_repeat_; ++repeatstage1 ) {
+				std::string cst_fn = template_cst_fn_[initial_template_index];
 
-			FoldTreeHybridizeOP ft_hybridize(
-				new FoldTreeHybridize(
-					initial_template_index_icluster, templates_icluster, weights_icluster,
-					template_chunks_icluster, template_contigs_icluster, frags_small, frags_big) ) ;
-			ft_hybridize->set_constraint_file( cst_fn );
-			ft_hybridize->set_scorefunction( stage1_scorefxn_ );
-			ft_hybridize->set_increase_cycles( stage1_increase_cycles_ );
-			ft_hybridize->set_stage1_1_cycles( stage1_1_cycles_ );
-			ft_hybridize->set_stage1_2_cycles( stage1_2_cycles_ );
-			ft_hybridize->set_stage1_3_cycles( stage1_3_cycles_ );
-			ft_hybridize->set_stage1_4_cycles( stage1_4_cycles_ );
-			ft_hybridize->set_add_non_init_chunks( add_non_init_chunks_ );
-			ft_hybridize->set_domain_assembly( domain_assembly_ );
-			ft_hybridize->set_add_hetatm( add_hetatm_, hetatm_self_cst_weight_, hetatm_prot_cst_weight_ );
-			ft_hybridize->set_frag_1mer_insertion_weight( frag_1mer_insertion_weight_ );
-			ft_hybridize->set_small_frag_insertion_weight( small_frag_insertion_weight_ );
-			ft_hybridize->set_big_frag_insertion_weight( big_frag_insertion_weight_ );
-			ft_hybridize->set_frag_weight_aligned( frag_weight_aligned_ );
-			ft_hybridize->set_auto_frag_insertion_weight( auto_frag_insertion_weight_ );
-			ft_hybridize->set_max_registry_shift( max_registry_shift_ );
+				FoldTreeHybridizeOP ft_hybridize(
+					new FoldTreeHybridize(
+						initial_template_index_icluster, templates_icluster, weights_icluster,
+						template_chunks_icluster, template_contigs_icluster, frags_small, frags_big) ) ;
+				ft_hybridize->set_constraint_file( cst_fn );
+				ft_hybridize->set_scorefunction( stage1_scorefxn_ );
+				ft_hybridize->set_increase_cycles( stage1_increase_cycles_ );
+				ft_hybridize->set_stage1_1_cycles( stage1_1_cycles_ );
+				ft_hybridize->set_stage1_2_cycles( stage1_2_cycles_ );
+				ft_hybridize->set_stage1_3_cycles( stage1_3_cycles_ );
+				ft_hybridize->set_stage1_4_cycles( stage1_4_cycles_ );
+				ft_hybridize->set_add_non_init_chunks( add_non_init_chunks_ );
+				ft_hybridize->set_domain_assembly( domain_assembly_ );
+				ft_hybridize->set_add_hetatm( add_hetatm_, hetatm_self_cst_weight_, hetatm_prot_cst_weight_ );
+				ft_hybridize->set_frag_1mer_insertion_weight( frag_1mer_insertion_weight_ );
+				ft_hybridize->set_small_frag_insertion_weight( small_frag_insertion_weight_ );
+				ft_hybridize->set_big_frag_insertion_weight( big_frag_insertion_weight_ );
+				ft_hybridize->set_frag_weight_aligned( frag_weight_aligned_ );
+				ft_hybridize->set_auto_frag_insertion_weight( auto_frag_insertion_weight_ );
+				ft_hybridize->set_max_registry_shift( max_registry_shift_ );
 
-			// strand pairings
-			ft_hybridize->set_pairings_file( pairings_file_ );
-			ft_hybridize->set_sheets( sheets_ );
-			ft_hybridize->set_random_sheets( random_sheets_ );
-			ft_hybridize->set_filter_templates( filter_templates_ );
-			ft_hybridize->set_movable_region( allowed_to_move_ );
-			ft_hybridize->set_task_factory( task_factory_ );
+				// strand pairings
+				ft_hybridize->set_pairings_file( pairings_file_ );
+				ft_hybridize->set_sheets( sheets_ );
+				ft_hybridize->set_random_sheets( random_sheets_ );
+				ft_hybridize->set_filter_templates( filter_templates_ );
+				ft_hybridize->set_movable_region( allowed_to_move_ );
+				ft_hybridize->set_task_factory( task_factory_ );
 
-			ft_hybridize->apply(pose);
+				ft_hybridize->apply(pose);
 
-			// get strand pairings if they exist for constraints in later stages
-			strand_pairs_ = ft_hybridize->get_strand_pairs();
+				// get strand pairings if they exist for constraints in later stages
+				strand_pairs_ = ft_hybridize->get_strand_pairs();
 
-      //Jump perturbation and minimization
-      //how to cycle back to ft hybridize
-      if ( jump_move_ ) {
-        core::Size const rb_move_jump = 1; // use the first jump as the one between partners
-        protocols::docking::DockingLowResOP docking_lowres_mover = new protocols::docking::DockingLowRes( stage1_scorefxn_, rb_move_jump );
-        docking_lowres_mover->apply(pose);
-      
-        core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap;
-        mm->set_bb( false );
-        mm->set_chi( false );
-        mm->set_jump( rb_move_jump, true );
-      
-        protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm, stage1_scorefxn_, "lbfgs_armijo_nonmonotone", 0.01, true );
-       
-        //stage1_scorefxn_->show(TR, pose);
-        min_mover->apply(pose);
-        //stage1_scorefxn_->show(TR, pose);
-      
-        //TR << "Realigning template domains to docking/minimize pose." << std::endl;
-        core::pose::PoseOP stage1pose = new core::pose::Pose( pose );
-        align_by_domain(templates_, domains_, stage1pose);
-        }
+				//jump perturbation and minimization
+				if ( jump_move_ ) {
+					// call docking or symm docking
+					if (core::pose::symmetry::is_symmetric(pose) ) {
+						protocols::symmetric_docking::SymDockingLowResOP docking_lowres_mover = new protocols::symmetric_docking::SymDockingLowRes(stage1_scorefxn_);
+						docking_lowres_mover->apply(pose);
+
+						core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap;
+						mm->set_bb( false ); mm->set_chi( false ); mm->set_jump( true );
+						core::pose::symmetry::make_symmetric_movemap( pose, *mm );
+
+						protocols::simple_moves::symmetry::SymMinMoverOP min_mover = new protocols::simple_moves::symmetry::SymMinMover( mm, stage1_scorefxn_, "lbfgs_armijo_nonmonotone", 0.01, true );
+						min_mover->apply(pose);
+
+						//TR << "Realigning template domains to docking/minimize pose." << std::endl;
+						core::pose::PoseOP stage1pose = new core::pose::Pose();
+						core::pose::symmetry::extract_asymmetric_unit(pose, *stage1pose);
+						align_by_domain(templates_, domains_, stage1pose);
+					} else {
+						core::Size const rb_move_jump = 1; // use the first jump as the one between partners <<<< fpd: MAKE THIS A PARSIBLE OPTION
+						protocols::docking::DockingLowResOP docking_lowres_mover = new protocols::docking::DockingLowRes( stage1_scorefxn_, rb_move_jump );
+						docking_lowres_mover->apply(pose);
+
+						core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap;
+						mm->set_bb( false );
+						mm->set_chi( false );
+						mm->set_jump( rb_move_jump, true );
+						protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm, stage1_scorefxn_, "lbfgs_armijo_nonmonotone", 0.01, true );
+						min_mover->apply(pose);
+					}
+
+					//TR << "Realigning template domains to docking/minimize pose." << std::endl;
+					core::pose::PoseOP stage1pose = new core::pose::Pose( pose );
+					align_by_domain(templates_, domains_, stage1pose);
+				}
 			} //end of repeatstage1
 		} else {
 			// just do frag insertion in unaligned regions
@@ -945,7 +960,6 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		}
 
 		// STAGE 2
-
 		// apply constraints
 		if ( stage2_scorefxn_->get_weight( core::scoring::atom_pair_constraint ) != 0 ) {
 			std::string cst_fn = template_cst_fn_[initial_template_index];

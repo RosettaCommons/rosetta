@@ -223,7 +223,7 @@ SymmetricConformation::set_torsion_angle(
 		parent_atom1 = id::AtomID( atom1.atomno(), symm_info_->bb_follows( atom1.rsd() ) );
 		parent_atom2 = id::AtomID( atom2.atomno(), symm_info_->bb_follows( atom2.rsd() ) );
 		parent_atom3 = id::AtomID( atom3.atomno(), symm_info_->bb_follows( atom3.rsd() ) );
-		parent_atom4 = id::AtomID( atom3.atomno(), symm_info_->bb_follows( atom3.rsd() ) );
+		parent_atom4 = id::AtomID( atom4.atomno(), symm_info_->bb_follows( atom4.rsd() ) );
 	} else {
 		parent_atom1=atom1;
 		parent_atom2=atom2;
