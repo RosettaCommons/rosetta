@@ -819,7 +819,7 @@ ResidueType::add_bond(
 
 	ResidueGraph::edge_descriptor e_added;
 	bool added;
-	boost::tie(e_added, added) = graph_.add_edge( vd_source, vd_target);
+	boost::tie(e_added, added) = graph_.add_edge( vd_source, vd_target, Bond(-1, SingleBond));
 	assert(added);
 }
 
@@ -874,7 +874,7 @@ void ResidueType::add_bond(std::string const & atom_name1, std::string const & a
 
 	ResidueGraph::edge_descriptor e_added;
 	bool added;
-	boost::tie(e_added, added) = graph_.add_edge( vd_source, vd_target);
+	boost::tie(e_added, added) = graph_.add_edge( vd_source, vd_target, Bond(-1, bondLabel)); /// -1 means Bond distance not set here. This will be fixed in the future
 	assert(added);
 }
 
