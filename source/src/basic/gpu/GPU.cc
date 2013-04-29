@@ -447,9 +447,14 @@ int GPU::RegisterProgram(std::vector<std::string> & files)
 		TR.Error << "Failed to compile CL program from " << filename << ": " << errstr(errNum_) << endl;
 		// Determine the reason for the error
 		char buildLog[16384];
-		clGetProgramBuildInfo(program, this_device().device, CL_PROGRAM_BUILD_LOG, sizeof(buildLog), buildLog, NULL);
+		std::cout << "buildlog: " << sizeof(buildLog) << std::endl;
+		platform::Size actual_size(0);
+		clGetProgramBuildInfo(program, this_device().device, CL_PROGRAM_BUILD_LOG, sizeof(buildLog), buildLog, &actual_size);
+		TR.Error << "Error log size: " << actual_size << std::endl;
 		TR.Error << "Error in kernel: " << endl;
-		TR.Error << buildLog;
+		std::string build_log_string( buildLog, actual_size );
+		TR.Error << build_log_string << std::endl;
+		TR.Error << buildLog << std::endl;;
 		clReleaseProgram(program);
 		return 0;
 	}

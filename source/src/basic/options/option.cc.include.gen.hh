@@ -38,7 +38,6 @@
 #include <basic/options/keys/rotamerdump.OptionKeys.gen.hh>
 #include <basic/options/keys/robert.OptionKeys.gen.hh>
 #include <basic/options/keys/smhybrid.OptionKeys.gen.hh>
-#include <basic/options/keys/helixAssembly.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/motifs.OptionKeys.gen.hh>
 #include <basic/options/keys/membrane.OptionKeys.gen.hh>
@@ -111,6 +110,7 @@
 #include <basic/options/keys/templates.OptionKeys.gen.hh>
 #include <basic/options/keys/patterson.OptionKeys.gen.hh>
 #include <basic/options/keys/optE.OptionKeys.gen.hh>
+#include <basic/options/keys/sewing.OptionKeys.gen.hh>
 #include <basic/options/keys/residues.OptionKeys.gen.hh>
 #include <basic/options/keys/dc.OptionKeys.gen.hh>
 #include <basic/options/keys/phil.OptionKeys.gen.hh>

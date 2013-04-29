@@ -5051,7 +5051,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 
 	################################
 	## In development helix assembly options
-	Option_Group( 'helixAssembly',
+	Option_Group( 'sewing',
         ####Old options - to be removed shortly####
 		Option('query_structure_path','File', desc=""),
 		Option('frag1_start','Integer', desc=""),
@@ -5064,6 +5064,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 		Option('helix_pair_rmsd_cutoff','Real', desc=""),
         ####End old stuff####
 
+        Option('nat_ro_file','File', desc="A file containing coordinates for 'native' rotamers"),
         Option('helix_cap_dist_cutoff','Real', desc="Maximum distance between c-alpha residues at the end of two helices in order to call them part of the same bundle"),
         Option('helix_contact_dist_cutoff','Real', desc="Maximum distance between c-alpha residues in two helices in order to call them interacting"),
         Option('min_helix_size','Integer', desc="Minimum size of a helix in a bundle"),

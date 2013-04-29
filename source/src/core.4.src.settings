@@ -88,6 +88,7 @@ sources = {
 		"SymmMinimalistInteractionGraph",
 	],
 	"core/pack/rotamer_set": [
+		"AddResiduesRotamerSetOperation",
 		"bb_independent_rotamers",
 		"BumpSelector",
 		"ContinuousRotamerSet",

@@ -13,10 +13,7 @@
 
 /// @author Tim Jacobs
 
-#include <protocols/wum/DatabaseQueryWorkUnitManager.hh>
-#include <protocols/wum/DatabaseEntryWorkUnit.hh>
-
-#include <devel/helixAssembly/BundlePairRmsdWorkUnit.hh>
+#include <devel/sewing/BundlePairRmsdWorkUnit.hh>
 
 
 #include <core/pose/util.hh>
@@ -56,12 +53,22 @@
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/string_util.hh>
 
-static basic::Tracer TRACER("BundlePairRmsdCalculator");
+static basic::Tracer TR("BundlePairRmsdCalculator");
 
 namespace BundlePairRmsdCalculator {
 	basic::options::IntegerOptionKey const total_fractions( "total_fractions" ); // fraction to run
 	basic::options::IntegerOptionKey const fraction( "fraction" ); // fraction to run
+	basic::options::IntegerOptionKey const subfraction_size( "subfraction_size" ); // subfraction size
 }
+
+struct node_data
+{
+	int node_index;
+	int bundle_index;
+	int helix_1_ind;
+	int helix_2_ind;
+	int n_atoms_in_rms_calc;
+};
 
 int
 main( int argc, char * argv [] )
@@ -83,367 +90,326 @@ main( int argc, char * argv [] )
 
 	option.add( BundlePairRmsdCalculator::total_fractions, "The number of fractions to split the selection into");
 	option.add( BundlePairRmsdCalculator::fraction, "The fraction of results to run RMSD comparisons on");
+//	option.add( BundlePairRmsdCalculator::subfraction_size, "Size of each subfraction");
 
 	// initialize core
 	core::init(argc, argv);
 
-	std::string db_name=option[OptionKeys::inout::dbms::database_name].value();
-
-	std::cout << "database name " << db_name << std::endl;
-
 	// Initialize DB
-	utility::sql_database::sessionOP db_session(basic::database::get_db_session());
+	utility::sql_database::sessionOP db_session(
+		basic::database::get_db_session());
 
-//	WorkUnitList wulist;
-//
-//	// Create a workunit for waiting - why is this necessary?
-//	protocols::wum::WorkUnit_WaitOP wait_wu = new protocols::wum::WorkUnit_Wait( 2 );
-//	wulist.register_work_unit( "waitwu", wait_wu );
-//
-//	//Create a workunit for processing db results
-//	std::string db_wu_name = "bundle_pair_rmsd_wu";
-//	DatabaseEntryWorkUnitOP bundle_pair_rmsd_wu = new BundlePairRmsdWorkUnit( db_session );
-//	wulist.register_work_unit(db_wu_name, bundle_pair_rmsd_wu );
-
-//	std::string bundle_pairs_generation =
-//	"CREATE TABLE bundle_pairs AS \n"
-//	"SELECT\n"
-//	"   bundles.struct_id,\n"
-//	"	bundles.bundle_id,\n"
-//	"   helices1.helix_id AS helix_id_1,\n"
-//	"	helices1.residue_begin AS helix_1_begin,\n"
-//	"	helices1.residue_end AS helix_1_end,\n"
-//	"   helices2.helix_id AS helix_id_2,\n"
-//	"	helices2.residue_begin AS helix_2_begin,\n"
-//	"	helices2.residue_end AS helix_2_end\n"
-//	"FROM\n"
-//	"	helix_bundles AS bundles\n"
-//	"JOIN bundle_helices AS helices1 ON\n"
-//	"   bundles.bundle_id = helices1.bundle_id\n"
-//	"JOIN bundle_helices AS helices2 ON\n"
-//	"   bundles.bundle_id = helices2.bundle_id\n"
-//	"WHERE\n"
-//	"   helices1.bundle_id = helices2.bundle_id AND\n"
-//	"   helices1.helix_id < helices2.helix_id AND\n"
-//	"   helices1.helix_id <> helices2.helix_id;";
-//
-//	TRACER << "Bundle selection string " << bundle_pairs_generation << std::endl;
-//
-//	cppdb::statement bundle_pairs_statement(basic::database::safely_prepare_statement(bundle_pairs_generation,db_session));
-//	basic::database::safely_write_to_database(bundle_pairs_statement);
-
-	//database query to distribute
-
+	/**Get fraction of comparisons to be run**/
 	int fraction = option[BundlePairRmsdCalculator::fraction].def(1);
 	int total_fractions = option[BundlePairRmsdCalculator::total_fractions].def(1000);
+//	int subfraction_size = option[BundlePairRmsdCalculator::subfraction_size].def(1000000);
 
-	std::string select_string =
-"SELECT * FROM(\n"
-	"SELECT\n"
-	"		pair1.struct_id AS struct_id_1,\n"
-	"		pair1.pair_id AS pair_id_1,\n"
-	"		pair1.helix_1_flipped AS pair_1_helix_1_flipped,\n"
-	"		pair1.helix_1_begin AS pair_1_helix_1_begin,\n"
-	"		pair1.helix_1_end AS pair_1_helix_1_end,\n"
-	"		pair1.helix_2_flipped AS pair_1_helix_2_flipped,\n"
-	"		pair1.helix_2_begin AS pair_1_helix_2_begin,\n"
-	"		pair1.helix_2_end AS pair_1_helix_2_end,\n"
-	"		pair1.helix_3_flipped AS pair_1_helix_3_flipped,\n"
-	"		pair1.helix_3_begin AS pair_1_helix_3_begin,\n"
-	"		pair1.helix_3_end AS pair_1_helix_3_end,\n"
-	"\n"
-	"		pair2.struct_id AS struct_id_2,\n"
-	"		pair2.pair_id AS pair_id_2,\n"
-	"		pair2.helix_1_flipped AS pair_2_helix_1_flipped,\n"
-	"		pair2.helix_1_begin AS pair_2_helix_1_begin,\n"
-	"		pair2.helix_1_end AS pair_2_helix_1_end,\n"
-	"		pair2.helix_2_flipped AS pair_2_helix_2_flipped,\n"
-	"		pair2.helix_2_begin AS pair_2_helix_2_begin,\n"
-	"		pair2.helix_2_end AS pair_2_helix_2_end,\n"
-	"		pair2.helix_3_flipped AS pair_2_helix_3_flipped,\n"
-	"		pair2.helix_3_begin AS pair_2_helix_3_begin,\n"
-	"		pair2.helix_3_end AS pair_2_helix_3_end\n"
-", ntile(" + utility::to_string(total_fractions) + ") over (order by pair1.struct_id) as fraction\n"
-	"FROM bundle_pairs pair1\n"
-	"JOIN bundle_pairs pair2 ON\n"
-	"		pair1.struct_id <> pair2.struct_id AND\n"
-	"		pair1.pair_id < pair2.pair_id\n"
-") as temp WHERE fraction = " + utility::to_string(fraction);
-	;
+	std::string get_count_string =
+	"SELECT max(node_id) FROM protein_graph_nodes;";
+	cppdb::statement get_count=basic::database::safely_prepare_statement(get_count_string, db_session);
+	cppdb::result count_res=basic::database::safely_read_from_database(get_count);
 
-	//begin a transaction for all this nonsense
-	db_session->begin();
+	core::Size total_rows=0;
+	while(count_res.next())
+	{
+		count_res >> total_rows;
+	}
 
-	cppdb::statement select_stmt=basic::database::safely_prepare_statement(select_string, db_session);
-	cppdb::result res=basic::database::safely_read_from_database(select_stmt);
+	core::Size num_rows_per_fraction = total_rows/total_fractions+1;
 
-	boost::uuids::uuid struct_id_1;
-	boost::uuids::uuid struct_id_2;
+	core::Size overall_min_id = num_rows_per_fraction*fraction - num_rows_per_fraction + 1;
+	core::Size overall_max_id = num_rows_per_fraction*fraction;
+	TR << "overall_min_id: " << overall_min_id << std::endl;
+	TR << "overall_max_id: " << overall_max_id << std::endl;
 
-	core::Size pair_id_1;
+//	core::Size total_sub_fractions=num_rows_per_fraction/subfraction_size+1;
+//	core::Size min_id=overall_min_id;
+//	core::Size max_id=min_id+subfraction_size;
+//
+//	TR << "num_rows_per_fraction: " << num_rows_per_fraction << std::endl;
+//	TR << "total_sub_fractions: " << total_sub_fractions << std::endl;
 
-	core::Size pair_1_helix_1_flipped;
-	core::Size pair_1_helix_1_begin;
-	core::Size pair_1_helix_1_end;
+	/**Get coordinates**/
+	std::string select_helix_coords =
+//	"SELECT bh.bundle_id, bh.helix_id, bh.flipped, res.x, res.y, res.z\n"
+//	"FROM bundle_helices bh\n"
+//	"JOIN structures s ON\n"
+//	"	s.struct_id = bh.struct_id\n"
+//	"JOIN residue_atom_coords res ON\n"
+//	"	bh.struct_id = res.struct_id AND\n"
+//	"	res.atomno IN (1,2,3,4) AND\n"
+//	"	(res.seqpos BETWEEN bh.residue_begin AND bh.residue_end)\n"
+//	"ORDER BY bh.helix_id, res.seqpos, res.atomno;";
+	
+	/**For smotifs**/
+	"SELECT sp.smotif_pair_id, sss.segment_id, res.x, res.y, res.z\n"
+	"FROM smotif_pairs sp\n"
+	"JOIN smotifs s1 ON\n"
+	"	sp.smotif_id_1 = s1.smotif_id\n"
+	"JOIN smotifs s2 ON\n"
+	"	sp.smotif_id_2 = s2.smotif_id\n"
+	"JOIN secondary_structure_segments sss ON\n"
+	"	s1.secondary_struct_segment_id_1 = sss.segment_id OR\n"
+	"	s1.secondary_struct_segment_id_2 = sss.segment_id OR\n"
+	"	s2.secondary_struct_segment_id_1 = sss.segment_id OR\n"
+	"	s2.secondary_struct_segment_id_2 = sss.segment_id\n"
+	"JOIN residue_atom_coords res ON\n"
+	"	sp.struct_id = res.struct_id AND\n"
+	"	res.atomno IN (1,2,3,4) AND\n"
+	"	(res.seqpos BETWEEN sss.residue_begin AND sss.residue_end)\n"
+	"ORDER BY sss.segment_id, res.seqpos, res.atomno;";
 
-	core::Size pair_1_helix_2_flipped;
-	core::Size pair_1_helix_2_begin;
-	core::Size pair_1_helix_2_end;
+	cppdb::statement coords_stmt=basic::database::safely_prepare_statement(select_helix_coords, db_session);
+	cppdb::result coords_res=basic::database::safely_read_from_database(coords_stmt);
+	TR << "Done querying coordinates from DB" << std::endl;
 
-	core::Size pair_1_helix_3_flipped;
-	core::Size pair_1_helix_3_begin;
-	core::Size pair_1_helix_3_end;
+	std::map<core::Size, utility::vector1< numeric::xyzVector<core::Real> > > helix_coords;
+	std::map<core::Size, utility::vector1< core::Size > > bundle_helices;
+	std::map<core::Size, bool > helix_flipped;
+	while(coords_res.next())
+	{
+		core::Size bundle_id, helix_id;
+		core::Real x, y, z;
 
-	core::Size pair_id_2;
+		coords_res >> bundle_id >> helix_id >>  x >> y >> z;
+		helix_coords[helix_id].push_back(numeric::xyzVector< core::Real >(x,y,z));
+		bundle_helices[bundle_id].push_back(helix_id);
+//		helix_flipped[helix_id]=flipped;
+	}
 
-	core::Size pair_2_helix_1_flipped;
-	core::Size pair_2_helix_1_begin;
-	core::Size pair_2_helix_1_end;
+	TR << "Done populating helix coords and bundle helices" << std::endl;
 
-	core::Size pair_2_helix_2_flipped;
-	core::Size pair_2_helix_2_begin;
-	core::Size pair_2_helix_2_end;
+	//COUNT NODES
+	std::string count_nodes =
+		"SELECT\n"
+		" count(*)\n"
+		"FROM protein_graph_nodes;\n";
+	cppdb::statement count_nodes_stmt =
+		basic::database::safely_prepare_statement(count_nodes, db_session);
+	cppdb::result count_nodes_res =
+		basic::database::safely_read_from_database( count_nodes_stmt );
 
-	core::Size pair_2_helix_3_flipped;
-	core::Size pair_2_helix_3_begin;
-	core::Size pair_2_helix_3_end;
+	core::Size n_nodes;
+	if ( ! count_nodes_res.next() ) {
+		utility_exit_with_message( "Failed to retrieve the number of nodes from the database" );
+	}
+	count_nodes_res >> n_nodes;
+	TR << "Done counting nodes from the database.  n_nodes = " << n_nodes  << std::endl;
+	
+	//FILL VECTOR OF NODE DATA
+	std::string select_all_nodes =
+		"SELECT\n"
+		"	node_id, substruct_id, comparison_element_1, comparison_element_2\n"
+		"FROM protein_graph_nodes;\n";
+	cppdb::statement select_all_nodes_stmt=
+		basic::database::safely_prepare_statement(select_all_nodes, db_session);
 
-	std::string helix_coords_select =
-	"SELECT\n"
-	"	res.x,\n"
-	"	res.y,\n"
-	"	res.z\n"
-	"FROM residue_atom_coords res\n"
-	"WHERE\n"
-	"	res.struct_id = ? AND\n"
-	"	res.atomno = 2 AND\n" //atomno 2 is the CA. It is bad practice to use this directly, but, I do what I want
-	"	res.seqpos BETWEEN ? AND ?\n"
-	"ORDER BY seqpos ASC;";
-
-	statement select_coords_stmt(basic::database::safely_prepare_statement(helix_coords_select,db_session));
-
-	std::string comparison_insert = "INSERT INTO pair_comparisons(pair_id_1, pair_id_2,rmsd,third_helix_rmsd) VALUES(?,?,?,?);";
+	cppdb::result select_all_nodes_res=basic::database::safely_read_from_database(select_all_nodes_stmt);
+	
+	utility::vector1< node_data > nodes( n_nodes );
+	for ( core::Size ii = 1; ii <= n_nodes; ++ii ) {
+		if ( ! select_all_nodes_res.next() ) {
+			std::cerr << "Retrieved fewer nodes from the select_all_nodes query than the n_nodes query:" << ii << " vs " << n_nodes << std::endl;
+			utility_exit_with_message( "problem with BundlePairRMSDCalculatorGPU application" );
+		}
+		select_all_nodes_res >> nodes[ii].node_index >> nodes[ii].bundle_index >> nodes[ii].helix_1_ind >> nodes[ii].helix_2_ind;
+	}
+	
+	//INSERT STATEMENT
+	std::string comparison_insert =
+	"INSERT INTO node_comparisons(node_id_1, node_id_2, rmsd, clash_score) VALUES(?,?,?,?);";
 	cppdb::statement comparison_insert_stmt(basic::database::safely_prepare_statement(comparison_insert,db_session));
-	while(res.next()){
+	
+	//LOOP THROUGH ALL NODES
+	db_session->begin();
+	for(core::Size ii=1; ii<=n_nodes; ++ii)
+	{
+		for(core::Size jj=ii+1; jj<=n_nodes; ++jj)
+		{
+			//ensure the secondary structure elements we are comparing are the right size
+			if(helix_coords[ nodes[ii].helix_1_ind ].size() != helix_coords[ nodes[jj].helix_1_ind ].size()) continue;
+			if(helix_coords[ nodes[ii].helix_2_ind ].size() != helix_coords[ nodes[jj].helix_2_ind ].size()) continue;
+			
+			//ensure we aren't comparing the same smotif to itself. This could be easier if we had the smotif id and not the smotif pair id
+			if(helix_coords[ nodes[ii].helix_1_ind ] == helix_coords[ nodes[jj].helix_1_ind ]) continue;
+			if(helix_coords[ nodes[ii].helix_2_ind ] == helix_coords[ nodes[jj].helix_2_ind ]) continue;
+			
+			utility::vector1< numeric::xyzVector<core::Real> > node_1_coords;
+			node_1_coords.insert( node_1_coords.end(),
+				helix_coords[ nodes[ii].helix_1_ind ].begin(),
+				helix_coords[ nodes[ii].helix_1_ind ].end()
+			);
+			node_1_coords.insert( node_1_coords.end(),
+				helix_coords[ nodes[ii].helix_2_ind ].begin(),
+				helix_coords[ nodes[ii].helix_2_ind ].end()
+			);
 
-		res >> struct_id_1 >> pair_id_1 >> pair_1_helix_1_flipped >> pair_1_helix_1_begin >> pair_1_helix_1_end
-			>> pair_1_helix_2_flipped >> pair_1_helix_2_begin >> pair_1_helix_2_end
-			>> pair_1_helix_3_flipped >> pair_1_helix_3_begin >> pair_1_helix_3_end
-			>> struct_id_2 >> pair_id_2 >> pair_2_helix_1_flipped >> pair_2_helix_1_begin >> pair_2_helix_1_end
-			>> pair_2_helix_2_flipped >> pair_2_helix_2_begin >> pair_2_helix_2_end
-			>> pair_2_helix_3_flipped >> pair_2_helix_3_begin >> pair_2_helix_3_end;
+			utility::vector1< numeric::xyzVector<core::Real> > node_2_coords;
+			node_2_coords.insert( node_2_coords.end(),
+				helix_coords[ nodes[jj].helix_1_ind ].begin(),
+				helix_coords[ nodes[jj].helix_1_ind ].end()
+			);
+			node_2_coords.insert( node_2_coords.end(),
+				helix_coords[ nodes[jj].helix_2_ind ].begin(),
+				helix_coords[ nodes[jj].helix_2_ind ].end()
+			);
 
-		core::Size helix_size = pair_1_helix_1_end-pair_1_helix_1_begin;//all helices are the same size
+			//TESTING
+			TR << "Nodes " << nodes[ii].node_index << " " << nodes[jj].node_index << std::endl;
+			TR << "Substructure ids " << nodes[ii].bundle_index << " " << nodes[jj].bundle_index << std::endl;
+			TR << "Comparison element 1s: " << nodes[ii].helix_1_ind << " " << nodes[jj].helix_1_ind << std::endl;
+			TR << "Comparison element 2s: " << nodes[ii].helix_2_ind << " " << nodes[jj].helix_2_ind << std::endl;
+//			TR << "helix 1 coords size : " << node_1_coords.size() << std::endl;
+//			TR << "helix 2 coords size : " << node_2_coords.size() << std::endl;
+			core::Real test_rmsd = numeric::model_quality::calc_rms(node_1_coords,node_2_coords);
+			TR << "TEST RMSD: " << test_rmsd << std::endl;
 
-		select_coords_stmt.bind(1,struct_id_1);
-		select_coords_stmt.bind(2, pair_1_helix_1_begin);
-		select_coords_stmt.bind(3, pair_1_helix_1_end);
-		result pair_1_helix_1_res(basic::database::safely_read_from_database(select_coords_stmt));
+			//Convert to FArrays
+			runtime_assert(node_1_coords.size() == node_2_coords.size());
 
-		select_coords_stmt.bind(1,struct_id_2);
-		select_coords_stmt.bind(2, pair_2_helix_1_begin);
-		select_coords_stmt.bind(3, pair_2_helix_1_end);
-		result pair_2_helix_1_res(basic::database::safely_read_from_database(select_coords_stmt));
-
-		core::Size counter = 0;
-		utility::vector1< numeric::xyzVector<core::Real> > pair_1_helix_1_coords;
-		utility::vector1< numeric::xyzVector<core::Real> > pair_2_helix_1_coords;
-		while(pair_1_helix_1_res.next()){
-			pair_2_helix_1_res.next();
-
-			core::Real x1,y1,z1,x2,y2,z2;
-			pair_1_helix_1_res >> x1 >> y1 >> z1;
-			pair_2_helix_1_res >> x2 >> y2 >> z2;
-
-			//		TR << "Coords for pos " << counter << " of pair 1: " << x1 << " " << y1 << " " << z1 << std::endl;
-			//		TR << "Coords for pos " << counter << " of pair 2: " << x2 << " " << y2 << " " << z2 << std::endl;
-			pair_1_helix_1_coords.push_back(numeric::xyzVector< core::Real >(x1,y1,z1));
-			pair_2_helix_1_coords.push_back(numeric::xyzVector< core::Real >(x2,y2,z2));
-			++counter;
-		}
-		if(pair_1_helix_1_flipped){reverse(pair_1_helix_1_coords.begin(), pair_1_helix_1_coords.end());}
-		if(pair_2_helix_1_flipped){reverse(pair_2_helix_1_coords.begin(), pair_2_helix_1_coords.end());}
-
-
-		select_coords_stmt.bind(1,struct_id_1);
-		select_coords_stmt.bind(2, pair_1_helix_2_begin);
-		select_coords_stmt.bind(3, pair_1_helix_2_end);
-		result pair_1_helix_2_res(basic::database::safely_read_from_database(select_coords_stmt));
-
-		select_coords_stmt.bind(1,struct_id_2);
-		select_coords_stmt.bind(2, pair_2_helix_2_begin);
-		select_coords_stmt.bind(3, pair_2_helix_2_end);
-		result pair_2_helix_2_res(basic::database::safely_read_from_database(select_coords_stmt));
-
-		utility::vector1< numeric::xyzVector<core::Real> > pair_1_helix_2_coords;
-		utility::vector1< numeric::xyzVector<core::Real> > pair_2_helix_2_coords;
-		while(pair_1_helix_2_res.next()){
-			pair_2_helix_2_res.next();
-
-			core::Real x1,y1,z1,x2,y2,z2;
-			pair_1_helix_2_res >> x1 >> y1 >> z1;
-			pair_2_helix_2_res >> x2 >> y2 >> z2;
-
-			pair_1_helix_2_coords.push_back(numeric::xyzVector< core::Real >(x1,y1,z1));
-			pair_2_helix_2_coords.push_back(numeric::xyzVector< core::Real >(x2,y2,z2));
-			++counter;
-		}
-		if(pair_1_helix_2_flipped){reverse(pair_1_helix_2_coords.begin(), pair_1_helix_2_coords.end());}
-		if(pair_2_helix_2_flipped){reverse(pair_2_helix_2_coords.begin(), pair_2_helix_2_coords.end());}
-
-
-		utility::vector1< numeric::xyzVector<core::Real> > pair_1_coords;
-		pair_1_coords.insert( pair_1_coords.end(), pair_1_helix_1_coords.begin(), pair_1_helix_1_coords.end() );
-		pair_1_coords.insert( pair_1_coords.end(), pair_1_helix_2_coords.begin(), pair_1_helix_2_coords.end() );
-
-		utility::vector1< numeric::xyzVector<core::Real> > pair_2_coords;
-		pair_2_coords.insert( pair_2_coords.end(), pair_2_helix_1_coords.begin(), pair_2_helix_1_coords.end() );
-		pair_2_coords.insert( pair_2_coords.end(), pair_2_helix_2_coords.begin(), pair_2_helix_2_coords.end() );
-
-//		core::Real bundle_pair_rmsd = numeric::model_quality::calc_rms(pair_1_coords,pair_2_coords);
-
-
-		/* NOW COMES THE TRICKEIR PART*/
-
-		//Convert to FArrays
-		runtime_assert(pair_1_coords.size() == pair_2_coords.size());
-
-		//Save coords to FArrays
-		FArray2D< numeric::Real > p1_coords( 3, pair_1_coords.size() );
-		FArray2D< numeric::Real > p2_coords( 3, pair_2_coords.size() );
-		for ( Size i = 1; i <= pair_1_coords.size(); ++i ) {
-			for ( Size k = 1; k <= 3; ++k ) { // k = X, Y and Z
-				p1_coords(k,i) = pair_1_coords[i](k);
-				p2_coords(k,i) = pair_2_coords[i](k);
+			//Save coords to FArrays
+			FArray2D< numeric::Real > p1_coords( 3, node_1_coords.size() );
+			FArray2D< numeric::Real > p2_coords( 3, node_2_coords.size() );
+			for ( Size i = 1; i <= node_1_coords.size(); ++i )
+			{
+				for ( Size k = 1; k <= 3; ++k )// k = X, Y and Z
+				{
+					p1_coords(k,i) = node_1_coords[i](k);
+					p2_coords(k,i) = node_2_coords[i](k);
+				}
 			}
-		}
 
-		//uu is rotational matrix that transforms p2coords onto p1coords in a way that minimizes rms. Do this for ONLY the first two helices
-		FArray1D< numeric::Real > ww( pair_1_coords.size(), 1.0 );//weight matrix, all 1 for my purposes
-		FArray2D< numeric::Real > uu( 3, 3, 0.0 );//transformation matrix
-		numeric::Real ctx;
-		numeric::model_quality::findUU( p1_coords, p2_coords, ww, pair_1_coords.size(), uu, ctx );
+			//uu is rotational matrix that transforms p2coords onto p1coords in a way that minimizes rms. Do this for ONLY the first two helices
+			FArray1D< numeric::Real > ww( node_1_coords.size(), 1.0 );//weight matrix, all 1 for my purposes
+			FArray2D< numeric::Real > uu( 3, 3, 0.0 );//transformation matrix
+			numeric::Real ctx;
+			numeric::model_quality::findUU( p1_coords, p2_coords, ww, node_1_coords.size(), uu, ctx );
 
-		//get coords for third helices of both pairs
-		select_coords_stmt.bind(1,struct_id_1);
-		select_coords_stmt.bind(2, pair_1_helix_3_begin);
-		select_coords_stmt.bind(3, pair_1_helix_3_end);
-		result pair_1_helix_3_res(basic::database::safely_read_from_database(select_coords_stmt));
+			//Fill arrays with all coords not involved in the RMSD calculation. These coordinates
+			//are used to calculate a clash score.
+			utility::vector1< numeric::xyzVector<core::Real> > node_1_other_helix_coords;
+//			utility::vector1< core::Size> node_1_helices = bundle_helices[ nodes[ii].bundle_index ];
+//			for(core::Size i=1; i<=node_1_helices.size(); ++i)
+//			{
+//				if( node_1_helices[i] != node_1_helix_id_1 &&
+//					node_1_helices[i] != node_1_helix_id_2)
+//				{
+//					if(helix_flipped[node_1_helices[i]])
+//					{
+//						node_1_other_helix_coords.insert(node_1_other_helix_coords.end(),
+//							helix_coords[node_1_helices[i]].begin(), helix_coords[node_1_helices[i]].end() );
+//					}
+//					else
+//					{
+//						utility::vector1< numeric::xyzVector<core::Real> > temp = helix_coords[node_1_helices[i]];
+//						reverse(temp.begin(), temp.end());
+//						node_1_other_helix_coords.insert( node_1_other_helix_coords.end(), temp.begin(), temp.end() );
+//					}
+//				}
+//			}
+//
+			utility::vector1< numeric::xyzVector<core::Real> > node_2_other_helix_coords;
+//			utility::vector1< core::Size> node_2_helices = bundle_helices[ nodes[jj].bundle_index ];
+//			for(core::Size i=1; i<=node_2_helices.size(); ++i)
+//			{
+//				if( node_2_helices[i] != node_2_helix_id_1 &&
+//					node_2_helices[i] != node_2_helix_id_2)
+//				{
+//					if(helix_flipped[node_2_helices[i]])
+//					{
+//						node_2_other_helix_coords.insert(node_2_other_helix_coords.end(),
+//							helix_coords[node_2_helices[i]].begin(), helix_coords[node_2_helices[i]].end() );
+//					}
+//					else
+//					{
+//						utility::vector1< numeric::xyzVector<core::Real> > temp = helix_coords[node_2_helices[i]];
+//						reverse(temp.begin(), temp.end());
+//						node_2_other_helix_coords.insert( node_2_other_helix_coords.end(), temp.begin(), temp.end() );
+//					}
+//				}
+//			}
+//
+//			assert(node_1_other_helix_coords.size() == node_2_other_helix_coords.size());
 
-		select_coords_stmt.bind(1,struct_id_2);
-		select_coords_stmt.bind(2, pair_2_helix_3_begin);
-		select_coords_stmt.bind(3, pair_2_helix_3_end);
-		result pair_2_helix_3_res(basic::database::safely_read_from_database(select_coords_stmt));
+			//Add other helix coords to node vectors, these are now essentiall bundle-vectors
+//			node_1_coords.insert( node_1_coords.end(), node_1_other_helix_coords.begin(), node_1_other_helix_coords.end() );
+//			node_2_coords.insert( node_2_coords.end(), node_2_other_helix_coords.begin(), node_2_other_helix_coords.end() );
 
-		counter = 0;
-		utility::vector1< numeric::xyzVector<core::Real> > pair_1_helix_3_coords;
-		utility::vector1< numeric::xyzVector<core::Real> > pair_2_helix_3_coords;
-		while(pair_1_helix_3_res.next()){
-			pair_2_helix_3_res.next();
-
-			core::Real x1,y1,z1,x2,y2,z2;
-			pair_1_helix_3_res >> x1 >> y1 >> z1;
-			pair_2_helix_3_res >> x2 >> y2 >> z2;
-
-			pair_1_helix_3_coords.push_back(numeric::xyzVector< core::Real >(x1,y1,z1));
-			pair_2_helix_3_coords.push_back(numeric::xyzVector< core::Real >(x2,y2,z2));
-			++counter;
-		}
-		if(pair_1_helix_3_flipped){reverse(pair_1_helix_3_coords.begin(), pair_1_helix_3_coords.end());}
-		if(pair_2_helix_3_flipped){reverse(pair_2_helix_3_coords.begin(), pair_2_helix_3_coords.end());}
-
-		//Add third helix to pair vectors, these are now essentiall bundle-vectors
-		pair_1_coords.insert( pair_1_coords.end(), pair_1_helix_3_coords.begin(), pair_1_helix_3_coords.end() );
-		pair_2_coords.insert( pair_2_coords.end(), pair_2_helix_3_coords.begin(), pair_2_helix_3_coords.end() );
-
-		//Save coords, now with third helix, to new FArrays
-		FArray2D< numeric::Real > b1_coords( 3, pair_1_coords.size() );
-		FArray2D< numeric::Real > b2_coords( 3, pair_2_coords.size() );
-		for ( Size i = 1; i <= pair_1_coords.size(); ++i ) {
-			for ( Size k = 1; k <= 3; ++k ) { // k = X, Y and Z
-				b1_coords(k,i) = pair_1_coords[i](k);
-				b2_coords(k,i) = pair_2_coords[i](k);
+			//Save coords, now with third helix, to new FArrays
+			FArray2D< numeric::Real > b1_coords( 3, node_1_coords.size() );
+			FArray2D< numeric::Real > b2_coords( 3, node_2_coords.size() );
+			for ( Size i = 1; i <= node_1_coords.size(); ++i )
+			{
+				for ( Size k = 1; k <= 3; ++k )// k = X, Y and Z
+				{
+					b1_coords(k,i) = node_1_coords[i](k);
+					b2_coords(k,i) = node_2_coords[i](k);
+				}
 			}
-		}
 
-		//move bundle to the origin using the center of mass for only the first two helices
-		for ( int k = 1; k <= 3; ++k ) {
-			numeric::Real bundle_1_offset = 0.0;
-			numeric::Real bundle_2_offset = 0.0;
+			//move bundle to the origin using the center of mass for only the first two helices
+			for ( int k = 1; k <= 3; ++k )
+			{
+				numeric::Real bundle_1_offset = 0.0;
+				numeric::Real bundle_2_offset = 0.0;
 
-			for ( int j = 1; j <= pair_2_coords.size()-pair_2_helix_3_coords.size(); ++j ) {
-				bundle_1_offset += b1_coords(k,j);
-				bundle_2_offset += b2_coords(k,j);
+				for ( int j = 1; j <= node_2_coords.size()-node_1_other_helix_coords.size(); ++j )
+				{
+					bundle_1_offset += b1_coords(k,j);
+					bundle_2_offset += b2_coords(k,j);
+				}
+				bundle_1_offset /= (node_2_coords.size()-node_1_other_helix_coords.size());
+				bundle_2_offset /= (node_2_coords.size()-node_1_other_helix_coords.size());
+
+				for ( int j = 1; j <= node_1_coords.size(); ++j )
+				{
+					b1_coords(k,j) -= bundle_1_offset;
+					b2_coords(k,j) -= bundle_2_offset;
+				}
 			}
-			bundle_1_offset /= (pair_2_coords.size()-pair_2_helix_3_coords.size());
-			bundle_2_offset /= (pair_2_coords.size()-pair_2_helix_3_coords.size());
 
-			for ( int j = 1; j <= pair_1_coords.size(); ++j ) {
-				b1_coords(k,j) -= bundle_1_offset;
-				b2_coords(k,j) -= bundle_2_offset;
+			//transform the coords of the entire bundle using rotational matrix produced by findUU for the first two helices
+			FArray2D< numeric::Real > b2_coords_transformed(3, node_2_coords.size());
+			for ( int i = 1; i <= node_2_coords.size(); ++i )
+			{
+				b2_coords_transformed(1,i) = ( uu(1,1)*b2_coords(1,i) )+( uu(1,2)*b2_coords(2,i) ) +( uu(1,3)*b2_coords(3,i) );
+				b2_coords_transformed(2,i) = ( uu(2,1)*b2_coords(1,i) )+( uu(2,2)*b2_coords(2,i) ) +( uu(2,3)*b2_coords(3,i) );
+				b2_coords_transformed(3,i) = ( uu(3,1)*b2_coords(1,i) )+( uu(3,2)*b2_coords(2,i) ) +( uu(3,3)*b2_coords(3,i) );
 			}
-		}
 
-		//transform the coords of the entire bundle using rotational matrix produced by findUU for the first two helices
-		FArray2D< numeric::Real > b2_coords_transformed(3, pair_2_coords.size());
-		for ( int i = 1; i <= pair_2_coords.size(); ++i ) {//iterate through all points
-			b2_coords_transformed(1,i) = ( uu(1,1)*b2_coords(1,i) )+( uu(1,2)*b2_coords(2,i) ) +( uu(1,3)*b2_coords(3,i) );
-			b2_coords_transformed(2,i) = ( uu(2,1)*b2_coords(1,i) )+( uu(2,2)*b2_coords(2,i) ) +( uu(2,3)*b2_coords(3,i) );
-			b2_coords_transformed(3,i) = ( uu(3,1)*b2_coords(1,i) )+( uu(3,2)*b2_coords(2,i) ) +( uu(3,3)*b2_coords(3,i) );
-		}
-
-		//Calculate RMSD for the first two helices
-		numeric::Real tot = 0;
-		for ( int i = 1; i <= pair_2_coords.size()-pair_2_helix_3_coords.size(); ++i ) {
-			for ( int j = 1; j <= 3; ++j ) {
-				tot += std::pow( b1_coords(j,i) - b2_coords_transformed(j,i), 2 );
+			//Calculate RMSD for the first two helices
+			numeric::Real tot = 0;
+			for ( int i = 1; i <= node_2_coords.size()-node_2_other_helix_coords.size(); ++i )
+			{
+				for ( int j = 1; j <= 3; ++j )
+				{
+					tot += std::pow( b1_coords(j,i) - b2_coords_transformed(j,i), 2 );
+				}
 			}
+			core::Real bundle_pair_rmsd = std::sqrt(tot/(node_2_coords.size()-node_2_other_helix_coords.size()));
+
+//			//calc rms between transformed bundle_2_helix_3 pts and bundle_1_helix_3 pts
+//			tot = 0;
+//			for(int i = helix_coords[node_1_helix_id_1].size()+helix_coords[node_1_helix_id_2].size()+1;
+//				i <= node_2_coords.size(); ++i )
+//			{
+//				for ( int j = 1; j <= 3; ++j ) {
+//					tot += std::pow( b1_coords(j,i) - b2_coords_transformed(j,i), 2 );
+//				}
+//			}
+//			core::Real third_helix_rmsd = std::sqrt(tot/node_1_other_helix_coords.size() );
+			core::Real third_helix_rmsd = 0;
+			
+			TR << "ALL THE RMSDS: " << bundle_pair_rmsd << " " << test_rmsd << " " << third_helix_rmsd << std::endl;
+
+			comparison_insert_stmt.bind(1, nodes[ii].node_index);
+			comparison_insert_stmt.bind(2, nodes[jj].node_index);
+			comparison_insert_stmt.bind(3, bundle_pair_rmsd);
+			comparison_insert_stmt.bind(4, third_helix_rmsd);
+			basic::database::safely_write_to_database(comparison_insert_stmt);
 		}
-		core::Real bundle_pair_rmsd = std::sqrt(tot/(pair_2_coords.size()-pair_2_helix_3_coords.size()));
-
-		//calc rms between transformed bundle_2_helix_3 pts and bundle_1_helix_3 pts
-		tot = 0;
-		for ( int i = pair_1_helix_1_coords.size()+pair_1_helix_2_coords.size()+1; i <= pair_2_coords.size(); ++i ) {
-			for ( int j = 1; j <= 3; ++j ) {
-				tot += std::pow( b1_coords(j,i) - b2_coords_transformed(j,i), 2 );
-			}
-		}
-		core::Real third_helix_rmsd = std::sqrt(tot/pair_2_helix_3_coords.size());
-
-//		TRACER << "ALL THE RMSDS: " << bundle_pair_rmsd << " " << test_rmsd << " " << third_helix_rmsd << std::endl;
-
-		comparison_insert_stmt.bind(1, pair_id_1);
-		comparison_insert_stmt.bind(2, pair_id_2);
-		comparison_insert_stmt.bind(3, bundle_pair_rmsd);
-		comparison_insert_stmt.bind(4, third_helix_rmsd);
-		basic::database::safely_write_to_database(comparison_insert_stmt);
-
 	}
 	db_session->commit();
-
-	//Currently, fuck WUM, message sending is way to slow compared to the RMSD comparisons
-	// Now define the structure of the algorithm, i.e. assign roles to individual nodes
-//	WorkUnitManagerOP wu_manager;
-//	core::Size master_id = 0; /* only 1 master for this protocol */
-//	if ( mpi_rank() == 0 ){
-//		wu_manager = new DatabaseQueryWorkUnitManager<BundlePairRmsdWorkUnit>(master_id, db_session, select_string, db_wu_name);
-////		wu_manager = new DatabaseQueryWorkUnitManager(master_id, db_session, select_string, "dbwu");
-//	}
-//	else
-//	{
-//		wu_manager = new MPI_WorkUnitManager_Slave(master_id);
-//	}
-//
-//	// make sure all the necessary work unit have been properly initiated.
-//	wu_manager->register_work_units( wulist );
-//
-//	// now launch this node
-//	wu_manager->go();
-//
-//#ifdef USEMPI
-//	MPI_Barrier( MPI_COMM_WORLD );
-//	MPI_Finalize();
-//#endif
 	return 0;
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

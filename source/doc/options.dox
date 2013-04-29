@@ -12604,10 +12604,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 9</dd><br>
 </dl>
  </li>
-<li><h2>helixAssembly</h2>
+<li><h2>sewing</h2>
 <dl>
-<dt><b>-helixAssembly</b> \<Boolean\><dt>
-<dd>helixAssembly option group</dd><br>
+<dt><b>-sewing</b> \<Boolean\><dt>
+<dd>sewing option group</dd><br>
 </dl>
 <dl>
 <dt><b>-query_structure_path</b> \<File\><dt>
@@ -12644,6 +12644,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-helix_pair_rmsd_cutoff</b> \<Real\><dt>
 <dd></dd><br>
+</dl>
+<dl>
+<dt><b>-nat_ro_file</b> \<File\><dt>
+<dd>A file containing coordinates for 'native' rotamers</dd><br>
 </dl>
 <dl>
 <dt><b>-helix_cap_dist_cutoff</b> \<Real\><dt>

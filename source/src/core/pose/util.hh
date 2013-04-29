@@ -63,6 +63,24 @@ namespace pose {
 
 typedef std::set<int> Jumps;
 
+/// @brief Append residues of pose2 to pose1.
+void
+append_pose_to_pose(
+	core::pose::Pose & pose1,
+	core::pose::Pose const & pose2,
+	bool new_chain = true
+);
+
+/// @brief Append specified residues of pose2 to pose1.
+void
+append_subpose_to_pose(
+	core::pose::Pose & pose1,
+	core::pose::Pose const & pose2,
+	core::Size start_res,
+	core::Size end_res,
+	bool new_chain = true
+);
+
 /// @brief Retrieves jump information from <pose>, storing the result in <jumps>.
 /// Jumps are keyed by their jump id.
 void jumps_from_pose(const core::pose::Pose& pose, Jumps* jumps);

@@ -7,18 +7,18 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file mpi_helixAssembly.cc
+/// @file mpi_sewing.cc
 ///
 /// @brief
 
 /// @author Tim jacobs
 
 // Unit headers
-#include <devel/helixAssembly/HelixAssemblyMover.hh>
-#include <devel/helixAssembly/HelixAssemblyJob.hh>
-#include <protocols/features/helixAssembly/HelicalFragment.hh>
-#include <devel/helixAssembly/NativeAtom.hh>
-#include <devel/helixAssembly/NativeResidue.hh>
+#include <devel/sewing/HelixAssemblyMover.hh>
+#include <devel/sewing/HelixAssemblyJob.hh>
+#include <protocols/features/sewing/HelicalFragment.hh>
+#include <devel/sewing/NativeAtom.hh>
+#include <devel/sewing/NativeResidue.hh>
 
 // Devel headers
 #include <devel/init.hh>
@@ -33,7 +33,7 @@
 // option key includes
 #include <basic/options/util.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/helixAssembly.OptionKeys.gen.hh>
+#include <basic/options/keys/sewing.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
@@ -50,7 +50,7 @@ BOOST_IS_MPI_DATATYPE(HelixAssemblyJob)
 // C++ headers
 #include <stdio.h>
 
-static basic::Tracer TR("mpi_helixAssembly");
+static basic::Tracer TR("mpi_sewing");
 
 // run protocol
 int
@@ -117,14 +117,14 @@ main( int argc, char * argv [] )
       }
 
       //Read original query pdb into a string
-      std::string originalQueryPdbPath( option[ helixAssembly::query_structure_path].value());
+      std::string originalQueryPdbPath( option[ sewing::query_structure_path].value());
       utility::io::izstream originalQueryPdbData( originalQueryPdbPath.c_str() );
       std::string originalQueryPdbString;
       utility::slurp(originalQueryPdbData, originalQueryPdbString);
 
       vector1<HelixAssemblyJob> job_queue;
       vector1<int> freeProcessors;
-      Size helices_to_add = option[ helixAssembly::helices_to_add ];
+      Size helices_to_add = option[ sewing::helices_to_add ];
 
       TR << "library size: " << pdb_library.size() << endl;
 
@@ -135,14 +135,14 @@ main( int argc, char * argv [] )
           temp_job.set_name(pdb_library[i].base());
           temp_job.set_query_structure(originalQueryPdbString);
           temp_job.set_search_index(i);
-          temp_job.set_remaining_rounds(option[helixAssembly::helices_to_add]);
+          temp_job.set_remaining_rounds(option[sewing::helices_to_add]);
           temp_job.set_direction_needed(true); //doesn't matter for first round
           temp_job.set_first_round(true);
 
-          core::Size frag1_start = option[ helixAssembly::frag1_start];
-          core::Size frag1_end = option[ helixAssembly::frag1_end];
-          core::Size frag2_start = option[ helixAssembly::frag2_start];
-          core::Size frag2_end = option[ helixAssembly::frag2_end];
+          core::Size frag1_start = option[ sewing::frag1_start];
+          core::Size frag1_end = option[ sewing::frag1_end];
+          core::Size frag2_start = option[ sewing::frag2_start];
+          core::Size frag2_end = option[ sewing::frag2_end];
 
           HelicalFragment fragment1(frag1_start, frag1_end, true);
           fragment1.set_pdb_source(pdb_library[i].name());

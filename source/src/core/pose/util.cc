@@ -85,6 +85,41 @@ namespace pose {
 
 static basic::Tracer TR("core.pose.util");
 
+void
+append_pose_to_pose(
+	core::pose::Pose & pose1,
+	core::pose::Pose const & pose2,
+	bool new_chain
+){
+	append_subpose_to_pose(pose1, pose2, 1, pose2.total_residue(), new_chain);
+}
+
+void
+append_subpose_to_pose(
+	core::pose::Pose & pose1,
+	core::pose::Pose const & pose2,
+	core::Size start_res,
+	core::Size end_res,
+	bool new_chain
+){
+	if(pose2.total_residue()>=start_res){
+		pose1.append_residue_by_jump(pose2.residue(start_res), pose1.total_residue() , "", "", new_chain);
+		for(core::Size i=start_res+1; i<=end_res; ++i){
+			if(pose2.residue(i).is_lower_terminus()){
+				if(i > 1 && pose2.chain(i) == pose2.chain(i-1)){
+					pose1.append_residue_by_jump(pose2.residue(i), pose1.total_residue(), "","", false);
+				}
+				else{
+					pose1.append_residue_by_jump(pose2.residue(i), pose1.total_residue(), "","", true);
+				}
+			}
+			else{
+				pose1.append_residue_by_bond(pose2.residue(i));
+			}
+		}
+	}
+}
+
 void jumps_from_pose(const core::pose::Pose& pose, Jumps* jumps) {
 	assert(jumps);
 	for (Size i = 1; i <= pose.num_jump(); ++i) {
