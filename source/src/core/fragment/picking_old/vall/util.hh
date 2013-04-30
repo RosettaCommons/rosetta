@@ -99,7 +99,7 @@ std::string extent_ss_str( VallResidueIterator begin, VallResidueIterator end ) 
 /// @param[in] randomize add random noise within [0, 0.001) to
 /// @param[in] srfd_type The BBTorsionSRFD type to use.
 ///  score to break up equivalent scores
-core::fragment::FragDataList
+core::fragment::FragDataOPs
 pick_fragments_by_ss(
 	std::string const & ss,
 	core::Size const top_n,
@@ -115,7 +115,7 @@ pick_fragments_by_ss(
 /// @param[in] randomize add random noise within [0, 0.001) to
 /// @param[in] srfd_type The BBTorsionSRFD type to use.
 ///  score to break up equivalent scores
-core::fragment::FragDataList
+core::fragment::FragDataOPs
 pick_fragments_by_ss_plus_aa(
 	std::string const & ss,
 	std::string const & aa,
@@ -133,7 +133,7 @@ pick_fragments_by_ss_plus_aa(
 /// @param[in] randomize add random noise within [0, 0.001) to
 /// @param[in] srfd_type The BBTorsionSRFD type to use.
 ///  score to break up equivalent scores
-core::fragment::FragDataList
+core::fragment::FragDataOPs
 pick_fragments(
 	std::string const & ss,
 	std::string const & aa,

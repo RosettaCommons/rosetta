@@ -228,19 +228,24 @@ rm -r ref/; ./integration.py    # create reference results using only default se
     else: rename_to_ref = False
     outdir = "new"
 
-    if not options.compareonly:
-        # Remove everything in the current outdir, then re-create it empty
-        if path.isdir(outdir): shutil.rmtree(outdir)
-        os.mkdir(outdir)
-
     # Each test consists of a directory with a "command" file in it.
     if len(args) > 0:
         tests = args
     else:
         tests = [ d for d in os.listdir("tests") if not d.startswith(".") and path.isdir(path.join("tests", d)) ]
-
+  
     if not options.unordered:
         tests = order_tests(tests)
+    
+    if not options.compareonly:
+        if len(args)>0 and path.isdir(outdir): #we have individual tests... only remove single test directories
+            for test in tests:
+                testdir=outdir+'/'+test
+                if path.isdir(testdir): shutil.rmtree(testdir)
+        else:
+        # Remove everything in the current outdir, then re-create it empty
+            if path.isdir(outdir): shutil.rmtree(outdir)
+            os.mkdir(outdir)  
 
     runtimes={}
     if not options.compareonly:

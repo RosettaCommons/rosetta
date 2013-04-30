@@ -467,7 +467,7 @@ public:
 			core::fragment::FragSetOP new_frag_set( frag_libs_[i]->empty_clone() );
 
 			// iterate over frames, clone if mapped
-			for ( core::fragment::FrameIterator f=frag_libs_[i]->begin(); f != frag_libs_[i]->end(); ++f ) {
+			for ( core::fragment::ConstFrameIterator f=frag_libs_[i]->begin(); f != frag_libs_[i]->end(); ++f ) {
 				core::Size start_res = f->start();
 				if ( new_invmapping[ start_res ] != 0 ) {
 					core::fragment::FrameOP new_f = f->clone_with_frags();

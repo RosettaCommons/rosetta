@@ -140,6 +140,7 @@ void StructureDependentPeakCalibrator::eliminate_violated_constraints() {
 				}
 				if ( violated <= params.calibration_stop_nudging_*structures_.size() ) {
 					peaks()[ ct ]->nudge_distance_bound( correction );
+					Size pose_ct( 1 );
 					for ( PoseVector::const_iterator pose_it = structures_.begin(); pose_it != structures_.end(); ++pose_it, ++pose_ct ) {
 						distance_deltas[ pose_ct ] -= correction;
 					}
@@ -159,7 +160,9 @@ void StructureDependentPeakCalibrator::eliminate_violated_constraints() {
 			tr.Debug << "peak: " << (*it)->peak_id() <<" " << (*it)->filename() << " violations: " << violated << std::endl;
 			(*it)->set_eliminated_due_to_dist_violations( violated > ( params.nr_conformers_violatable_*structures_.size() ) );
 			std::ostringstream elim_msg;
-			elim_msg << violated << " ("<<distance_deltas.size()<<") violated by >" << distance_deltas[1] << "A (" << params.dcut_ << "A) ";
+			std::sort( distance_deltas.begin(), distance_deltas.end() );
+			core::Size median_position( lrint( 0.5*distance_deltas.size()+0.5 ) );
+			elim_msg << violated << " ("<<distance_deltas.size()<<") violated by >" << distance_deltas[median_position] << "A (" << params.dcut_ << "A) ";
 			(*it)->set_elimination_comment( elim_msg.str() );
 		} else {  //local dist viol
 

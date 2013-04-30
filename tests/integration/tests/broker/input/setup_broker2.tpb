@@ -1,7 +1,7 @@
 USE_INPUT_POSE
 
 
-CLAIMER JumpClaimer
+CLAIMER FragmentJumpClaimer
 END_CLAIMER
 
 CLAIMER StartStructClaimer

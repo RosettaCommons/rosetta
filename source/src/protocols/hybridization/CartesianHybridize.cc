@@ -148,7 +148,7 @@ CartesianHybridize::CartesianHybridize(
 	for (int i=1; i<=(int)templates_.size(); ++i) template_wts_[i] /= weight_sum;
 
 	// map resids to frames
-	for (core::fragment::FrameIterator i = fragments9_->begin(); i != fragments9_->end(); ++i) {
+	for (core::fragment::ConstFrameIterator i = fragments9_->begin(); i != fragments9_->end(); ++i) {
 		core::Size position = (*i)->start();
 		library_[position] = **i;
 	}

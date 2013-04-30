@@ -173,7 +173,7 @@ CartesianSampler::update_fragment_library_pointers() {
 	// map positions to fragments
 	library_.resize( nfragsets );
 	for (int i=1; i<=(int)nfragsets; ++i) {
-		for (core::fragment::FrameIterator j = fragments_[i]->begin(); j != fragments_[i]->end(); ++j) {
+		for (core::fragment::ConstFrameIterator j = fragments_[i]->begin(); j != fragments_[i]->end(); ++j) {
 			core::Size position = (*j)->start();
 			library_[i][position] = **j;
 		}
@@ -407,7 +407,7 @@ CartesianSampler::compute_fragment_bias(Pose & pose) {
 	for (Size i_frag_set = 1; i_frag_set<=fragments_.size(); ++i_frag_set) {
 		utility::vector1< core::Real > frame_weights(fragments_[i_frag_set]->nr_frames(), 0.0);
 		for (Size i_frame = 1; i_frame <= fragments_[i_frag_set]->nr_frames(); ++i_frame) {
-			core::fragment::FrameIterator frame_it = fragments_[i_frag_set]->begin(); // first frame of the fragment library
+			core::fragment::ConstFrameIterator frame_it = fragments_[i_frag_set]->begin(); // first frame of the fragment library
 			advance(frame_it, i_frame-1);  // point frame_it to the i_frame of the library
 			core::Size seqpos_start = (*frame_it)->start();  // find starting and ending residue seqpos of the inserted fragment
 			core::Size seqpos_end   = (*frame_it)->end();

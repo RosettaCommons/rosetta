@@ -200,7 +200,7 @@ bool FragData::steal( pose::Pose const& pose, Frame const& frame ) {
 	return success;
 }
 
-FragDataOP FragData::generate_sub_fragment( Size start, Size stop ) {
+FragDataOP FragData::generate_sub_fragment( Size start, Size stop ) const {
 	runtime_assert( stop >= start );
 	runtime_assert( stop <= size() );
 	FragDataOP new_frag = new FragData;

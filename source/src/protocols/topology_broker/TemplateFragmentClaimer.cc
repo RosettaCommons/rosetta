@@ -16,7 +16,7 @@
 #include <protocols/topology_broker/TemplateFragmentClaimer.hh>
 
 // Package Headers
-#include <protocols/topology_broker/DofClaim.hh>
+#include <protocols/topology_broker/claims/DofClaim.hh>
 #include <protocols/topology_broker/Exceptions.hh>
 
 // Project Headers

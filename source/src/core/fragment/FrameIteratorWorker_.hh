@@ -58,6 +58,7 @@ namespace fragment {
 // virtual Base class for FrameIterator
 class FrameIteratorWorker_ : public utility::pointer::ReferenceCount {
 	friend class FrameIterator;
+	friend class ConstFrameIterator;
 	friend class FragID_Iterator;
 protected:
 	//	FrameIteratorWorker_ ( BaseFragSet& bfs );

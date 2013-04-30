@@ -1,3 +1,9 @@
+namespace jumps { FileOptionKey const fix_jumps( "jumps:fix_jumps" );  }
+namespace jumps { FileOptionKey const jump_lib( "jumps:jump_lib" );  }
+namespace jumps { FileOptionKey const loop_definition_from_file( "jumps:loop_definition_from_file" );  }
+namespace jumps { BooleanOptionKey const no_chainbreak_in_relax( "jumps:no_chainbreak_in_relax" );  }
+namespace jumps { FileOptionKey const pairing_file( "jumps:pairing_file" );  }
+namespace jumps { IntegerVectorOptionKey const random_sheets( "jumps:random_sheets" );  }
 namespace jumps { FileOptionKey const residue_pair_jump_file( "jumps:residue_pair_jump_file" );  }
 namespace jumps { IntegerVectorOptionKey const sheets( "jumps:sheets" );  }
 namespace jumps { FileOptionKey const topology_file( "jumps:topology_file" );  }
@@ -384,6 +390,7 @@ namespace cluster { RealOptionKey const score_diff_cut( "cluster:score_diff_cut"
 namespace cluster { BooleanOptionKey const auto_tune( "cluster:auto_tune" );  }
 namespace rescore { BooleanOptionKey const rescore( "rescore" );  }
 namespace rescore { BooleanOptionKey const pose_metrics( "rescore:pose_metrics" );  }
+namespace rescore { BooleanOptionKey const assign_ss( "rescore:assign_ss" );  }
 namespace rescore { BooleanOptionKey const skip( "rescore:skip" );  }
 namespace rescore { BooleanOptionKey const verbose( "rescore:verbose" );  }
 namespace rescore { StringOptionKey const msms_analysis( "rescore:msms_analysis" );  }
@@ -692,8 +699,3 @@ namespace cmiles { namespace kcluster { IntegerOptionKey const num_clusters( "cm
 namespace cmiles { namespace jumping { BooleanOptionKey const jumping( "cmiles:jumping" );  } }
 namespace cmiles { namespace jumping { IntegerOptionKey const resi( "cmiles:jumping:resi" );  } }
 namespace cmiles { namespace jumping { IntegerOptionKey const resj( "cmiles:jumping:resj" );  } }
-namespace james { BooleanOptionKey const james( "james" );  }
-namespace james { IntegerOptionKey const min_seqsep( "james:min_seqsep" );  }
-namespace james { StringVectorOptionKey const atom_names( "james:atom_names" );  }
-namespace james { RealVectorOptionKey const dist_thresholds( "james:dist_thresholds" );  }
-namespace james { RealVectorOptionKey const torsion_thresholds( "james:torsion_thresholds" );  }

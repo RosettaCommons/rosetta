@@ -18,11 +18,11 @@
 
 
 // Unit Headers
-#include <protocols/topology_broker/JumpClaimer.fwd.hh>
+#include <protocols/topology_broker/FragmentJumpClaimer.fwd.hh>
 
 // Package Headers
 #include <protocols/topology_broker/FragmentClaimer.hh>
-#include <protocols/topology_broker/DofClaim.fwd.hh>
+#include <protocols/topology_broker/claims/DofClaim.fwd.hh>
 #include <protocols/topology_broker/weights/AbinitioMoverWeight.hh>
 
 // Project Headers
@@ -60,17 +60,17 @@ namespace topology_broker {
 /// it supports only JumpFrames of type  [ BBTorsion ] UpJump DownJump [ BBTorsion ]
 /// the class JumpSample is still used to transport the information jumps and jump_atoms, but cuts are ignored
 /// all functionality of JumpSample is not used anymore
-class JumpClaimer : public FragmentClaimer {
+class FragmentJumpClaimer : public FragmentClaimer {
 	typedef FragmentClaimer Parent;
 public:
-	JumpClaimer(); //for factory
-	JumpClaimer( jumping::BaseJumpSetupOP jump_def, std::string const& mover_tag = "JumpMove",  weights::AbinitioMoverWeightOP weight = NULL );
-	JumpClaimer( JumpClaimer const & src );
-	~JumpClaimer();
+	FragmentJumpClaimer(); //for factory
+	FragmentJumpClaimer( jumping::BaseJumpSetupOP jump_def, std::string const& mover_tag = "JumpMove",  weights::AbinitioMoverWeightOP weight = NULL );
+	FragmentJumpClaimer( FragmentJumpClaimer const & src );
+	~FragmentJumpClaimer();
 
 	virtual TopologyClaimerOP clone() const;
 
-	virtual void generate_claims( DofClaims& );
+	virtual void generate_claims( claims::DofClaims& );
 
 	virtual void new_decoy( core::pose::Pose const& );
 	virtual void new_decoy();
@@ -80,10 +80,10 @@ public:
 		return _static_type_name();
 	}
 
-	virtual void initialize_dofs( core::pose::Pose&, DofClaims const& init_claims, DofClaims& failed_to_init );
+	virtual void initialize_dofs( core::pose::Pose&, claims::DofClaims const& init_claims, claims::DofClaims& failed_to_init );
 
 	static std::string _static_type_name() {
-		return "JumpClaimer";
+		return "FragmentJumpClaimer";
 	}
 
 	virtual bool read_tag( std::string tag, std::istream& is );
@@ -92,6 +92,8 @@ protected:
 	void set_jump_def( jumping::BaseJumpSetupOP jump_def ) {
 		jump_def_ = jump_def;
 	}
+
+	virtual void generate_claims( claims::DofClaims&, std::string, std::string );
 
 	jumping::BaseJumpSetupOP jump_def() {
 		return jump_def_;

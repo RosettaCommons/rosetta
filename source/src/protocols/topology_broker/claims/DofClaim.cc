@@ -13,7 +13,13 @@
 /// @author Oliver Lange
 
 // Unit Headers
-#include <protocols/topology_broker/DofClaim.hh>
+//#include <protocols/topology_broker/claims/DofClaim.hh>
+//#include <protocols/topology_broker/claims/BBClaim.hh>
+//#include <protocols/topology_broker/claims/CutClaim.hh>
+//#include <protocols/topology_broker/claims/JumpClaim.hh>
+//#include <protocols/topology_broker/claims/LegacyRootClaim.hh>
+//#include <protocols/topology_broker/claims/SequenceClaim.hh>
+//#include <protocols/topology_broker/claims/SymmetryClaim.hh>
 
 // Package Headers
 #include <protocols/topology_broker/TopologyClaimer.hh> //for printing
@@ -23,9 +29,6 @@
 // ObjexxFCL Headers
 
 // Utility headers
-//#include <utility/io/izstream.hh>
-//#include <utility/io/ozstream.hh>
-//#include <utility/io/util.hh>
 #include <basic/Tracer.hh>
 //#include <basic/options/option.hh>
 
@@ -34,9 +37,6 @@
 
 #include <utility/vector1.hh>
 
-
-//#include <fstream>
-
 // option key includes
 
 
@@ -44,6 +44,7 @@ static basic::Tracer tr("protocols.topo_broker",basic::t_info);
 
 namespace protocols {
 namespace topology_broker {
+namespace claims {
 
 /// @details Auto-generated virtual destructor
 DofClaim::~DofClaim() {}
@@ -51,8 +52,7 @@ DofClaim::~DofClaim() {}
 using namespace core;
 
 void DofClaim::show( std::ostream& os ) const {
-	os << "DofClaim-" << str_type() << " owned by a " << owner()->type() << "  at pos";
-	for ( Size i = 1; i<=size(); ++i ) { os << " " << pos(i);}
+    os << "owned by, " << owner()->type() << ";";
 }
 
 extern std::ostream& operator<<( std::ostream& os, DofClaim const& dof ) {
@@ -71,5 +71,6 @@ extern std::ostream& operator<<( std::ostream& os, DofClaims const& dofs ) {
 	return os;
 }
 
+} //claims
 } //topology_broker
 } //protocols

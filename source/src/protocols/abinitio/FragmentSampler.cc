@@ -170,11 +170,11 @@ void FragmentSampler::apply( pose::Pose & pose ) {
 		replace_scorefxn( pose, STAGE_4, 1.0 );
 		return;
 	}
-
+    
 	total_trials_ = 0;
 	current_scorefxn()(pose);
 	jd2::output_intermediate_pose( pose, "stage0" );
-
+    
 	try {
 		if ( !contains_stageid( skip_stages_, STAGE_1 ) ) {
 			prepare_stage1( pose );

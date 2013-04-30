@@ -22,47 +22,24 @@
 
 // Package Headers
 #include <protocols/topology_broker/FragmentClaimer.hh>
-#include <protocols/topology_broker/DofClaim.fwd.hh>
+#include <protocols/topology_broker/claims/DofClaim.hh>
+#include <protocols/topology_broker/claims/JumpClaim.fwd.hh>
 #include <protocols/topology_broker/weights/AbinitioMoverWeight.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <protocols/jumping/JumpSetup.hh>
-// AUTO-REMOVED #include <protocols/jumping/JumpSample.hh>
 #include <protocols/jumping/DisulfPairingsList.hh>
 #include <protocols/jumping/DisulfPairingLibrary.hh>
 
 #include <core/fragment/FrameList.hh>
 #include <core/fragment/Frame.hh>
-// AUTO-REMOVED #include <core/fragment/FrameIteratorWorker_.hh>
-// AUTO-REMOVED #include <core/fragment/JumpingFrame.hh>
-// AUTO-REMOVED #include <core/fragment/BBTorsionSRFD.hh>
-// AUTO-REMOVED #include <core/fragment/JumpSRFD.hh>
-
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 
 // ObjexxFCL Headers
 
 // Utility headers
-//#include <utility/io/izstream.hh>
-//#include <utility/io/ozstream.hh>
-//#include <utility/io/util.hh>
-//#include <basic/Tracer.hh>
-//#include <basic/options/option.hh>
-
 #include <utility/pointer/ReferenceCount.hh>
-
 #include <utility/vector1.hh>
-
-
-//#include <basic/options/option_macros.hh>
-
-//// C++ headers
-//#include <fstream>
-
-
-// option key includes
 
 
 namespace protocols {
@@ -92,7 +69,7 @@ void generate_jump_frags(
 	//	 core::fragment::FrameList& all_frames,
 	// core::kinematics::MoveMap const& mm) const;
 
-	virtual void generate_claims( DofClaims& );
+	virtual void generate_claims( claims::DofClaims& );
 
 	virtual void new_decoy( core::pose::Pose const& );
 	virtual void new_decoy();
@@ -102,7 +79,7 @@ void generate_jump_frags(
 		return _static_type_name();
 	}
 
-	virtual void initialize_dofs( core::pose::Pose&, DofClaims const& init_claims, DofClaims& failed_to_init );
+	virtual void initialize_dofs( core::pose::Pose&, claims::DofClaims const& init_claims, claims::DofClaims& failed_to_init );
 
 	static std::string _static_type_name() {
 		return "DisulfJumpClaimer";
@@ -123,7 +100,6 @@ private:
 	//jumping::BaseJumpSetupOP jump_def_;
 	//jumping::JumpSample current_jumps_;
 
-
 	//std::string secstruct_;
 	//size nr_jumps_;
 	//ObjexxFCL::FArray2D< std::string > use_jump_atoms_;
@@ -131,10 +107,10 @@ private:
 	//ObjexxFCL::FArray1D_int use_cuts_;
 	//core::kinematics::FoldTreeOP use_fold_tree_;
 
+	utility::vector1< claims::JumpClaimOP > local_disulf_data_;
 	utility::vector1< protocols::jumping::DisulfPairing > all_jump_pairings_;
 	core::fragment::FrameList all_frames_;
 
-	//	abinitio::ClassicFragmentMoverOP init_mover_;
 	bool bKeepJumpsFromInputPose_;
 }; //class DisulfJumpClaimer
 

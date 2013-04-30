@@ -157,7 +157,12 @@ sources = {
         "devel/replica_docking": [
                "AddEncounterConstraintMover",
         #       "FrozenSidechainsMover",
+               "FnatFilter",
+               "IrmsdFilter",
+               "CaIrmsdFilter",
                "InteractionScoreFilter",
+               "LrmsdFilter",
+               "FnonnatFilter",
 	       "WrapFilterAsEvaluator",
 	       "WrapFilterAsEvaluatorCreator",
                "ModulatedMover",

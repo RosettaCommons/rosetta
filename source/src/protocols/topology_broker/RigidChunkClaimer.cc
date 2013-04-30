@@ -16,7 +16,11 @@
 #include <protocols/topology_broker/RigidChunkClaimer.hh>
 
 // Package Headers
-#include <protocols/topology_broker/DofClaim.hh>
+#include <protocols/topology_broker/claims/DofClaim.hh>
+#include <protocols/topology_broker/claims/JumpClaim.hh>
+#include <protocols/topology_broker/claims/CutClaim.hh>
+#include <protocols/topology_broker/claims/BBClaim.hh>
+#include <protocols/topology_broker/SequenceNumberResolver.hh>
 
 // Project Headers
 #include <core/conformation/Conformation.hh>
@@ -120,10 +124,7 @@ void RigidChunkClaimer::receive_message( ClaimerMessage& cm ) {
 	}
 }
 
-bool RigidChunkClaimer::read_tag(
-	std::string tag,
-	std::istream& is
-)
+bool RigidChunkClaimer::read_tag( std::string tag, std::istream& is )
 {
 	loops::PoseNumberedLoopFileReader reader;
 	reader.hijack_loop_reading_code_set_loop_line_begin_token( "RIGID" );
@@ -217,7 +218,7 @@ void RigidChunkClaimer::select_parts() {
 
 ///@detail generate exclusive backbone claims for each residue of the rigid-chunk
 /// jumps are not exclusive and are added later in final_claims --- want to reuse other jumps if possible
-void RigidChunkClaimer::generate_claims( DofClaims& new_claims ) {
+void RigidChunkClaimer::generate_claims( claims::DofClaims& new_claims ) {
 	using namespace loops;
 	tr.Trace << "rigid chunk -- generate claim " << std::endl;
 
@@ -227,7 +228,9 @@ void RigidChunkClaimer::generate_claims( DofClaims& new_claims ) {
 	//	new_claims.push_back( new CutBiasClaim( *this ) ); we don't need this claim type --- always call manipulate_cut_bias
 	for ( Loops::const_iterator loop_it = current_rigid_core_.begin(); loop_it != current_rigid_core_.end(); ++loop_it ) {
 		for ( Size pos = loop_it->start(); pos <= loop_it->stop(); ++pos ) {
-			new_claims.push_back( new BBClaim( this, pos, DofClaim::EXCLUSIVE ) );
+			new_claims.push_back( new claims::BBClaim( this,
+																								 std::make_pair( label(), pos ),
+																								 claims::DofClaim::EXCLUSIVE ) );
 		}
 	}
 }
@@ -260,50 +263,66 @@ void RigidChunkClaimer::new_decoy( core::pose::Pose const& pose ) {
 	new_decoy();
 }
 
-bool RigidChunkClaimer::allow_claim( DofClaim const& foreign_claim ) {
+bool RigidChunkClaimer::allow_claim( claims::DofClaim const& foreign_claim ) {
 	if ( foreign_claim.owner() == this ) return true; // always allow your own claims!
 
 	// check foreign claim
-	if ( foreign_claim.type() == DofClaim::BB && current_rigid_core_.is_loop_residue( foreign_claim.pos( 1 ) ) ) {
+
+	claims::BBClaimCOP bb_ptr( dynamic_cast< const claims::BBClaim* >( &foreign_claim ) );
+
+	if ( bb_ptr && current_rigid_core_.is_loop_residue( bb_ptr->global_position() ) ) {
 		if ( bExclusive_ ) { 	// if we want exclusive claim this is not acceptable
 			return false;
 		} else {
 			// allow only the weakest claim. We want to initialize ourselves... don't know if we need to be so restrictive!
-			if ( !(foreign_claim.right() == DofClaim::CAN_INIT) ) return false;
+			if ( !(foreign_claim.right() == claims::DofClaim::CAN_INIT) ) return false;
 		}
 	} // DofClaim::BB
 
-	if ( foreign_claim.type() == DofClaim::JUMP ) {
+	claims::JumpClaimCOP jump_ptr( dynamic_cast< const claims::JumpClaim* >( &foreign_claim ) );
+
+	if ( jump_ptr ) {
 		runtime_assert( current_jump_calculator_ );
-		if ( current_jump_calculator_->irrelevant_jump( foreign_claim.pos( 1 ), foreign_claim.pos( 2 ) ) ) return true;
-		if ( !current_jump_calculator_->good_jump( foreign_claim.pos( 1 ), foreign_claim.pos( 2 ) ) ) {
+		if ( current_jump_calculator_->irrelevant_jump( jump_ptr->global_pos1(), jump_ptr->global_pos2() ) ) {
+			return true;
+		} else if ( !current_jump_calculator_->good_jump( jump_ptr->global_pos1(), jump_ptr->global_pos2() ) ) {
 			return false;
 		} else if ( bExclusive_ ) { // but probably a good jump --- since it has a physical reason.
 			//reclaim the claim
-			current_jumps_.push_back( new JumpClaim( this, foreign_claim.pos( 1 ), foreign_claim.pos( 2 ), DofClaim::EXCLUSIVE ) );
+			current_jumps_.push_back( new claims::JumpClaim( this, jump_ptr->local_pos1(), jump_ptr->local_pos2(), claims::DofClaim::EXCLUSIVE ) );
 			return false;
 		} else {
 			current_jumps_.push_back( foreign_claim.clone() ); //ok - remember this jump, since it connects rigid1 and rigid2
 		}
 	} // DofClaim::JUMP
 
-	if ( foreign_claim.type() == DofClaim::CUT) {
+	claims::CutClaimCOP cut_ptr( dynamic_cast< const claims::CutClaim* >( &foreign_claim ) );
+
+	if ( cut_ptr ) {
 		for ( loops::Loops::const_iterator region = current_rigid_core_.begin(); region != current_rigid_core_.end(); ++region ) {
-			if (foreign_claim.pos( 1 ) >= region->start() && foreign_claim.pos( 1 ) < region->stop() )  // cut claim can be at the chunk end
-			 return false; // no cuts within our rigid-core boundaries
+
+			//TODO: ensure that the label setting code is correctly functioning in this claimer
+
+			claims::LocalPosition cut_position = cut_ptr->get_position();
+			Size absolute_cut_position = broker().sequence_number_resolver().find_global_pose_number( cut_position );
+
+			if ( absolute_cut_position >= region->start() &&
+					 absolute_cut_position < region->stop() ) // cut claim can be at the chunk end
+				return false; // no cuts within our rigid-core boundaries
 		}
 	}
 	return true;
 }
 
-bool RigidChunkClaimer::accept_declined_claim( DofClaim const& was_declined ) {
+bool RigidChunkClaimer::accept_declined_claim( claims::DofClaim const& was_declined ) {
 	tr.Warning << "[WARNING] RigidChunkClaimer couldn't get " << was_declined << std::endl;
 	return false; // no tolerance here --- don't accept any of these
 }
 
-void RigidChunkClaimer::finalize_claims( DofClaims& new_claims ) {
-	DofClaims extra_jumps;
-	current_jump_calculator_->generate_rigidity_jumps( this, extra_jumps );
+void RigidChunkClaimer::finalize_claims( claims::DofClaims& new_claims ) {
+	claims::DofClaims extra_jumps;
+	current_jump_calculator_->generate_rigidity_jumps( this, extra_jumps, label() );
+
 	std::copy( extra_jumps.begin(), extra_jumps.end(), std::back_inserter( current_jumps_ ) );
 	std::copy( current_jumps_.begin(), current_jumps_.end(), std::back_inserter( new_claims ) );
 }
@@ -459,7 +478,7 @@ void RigidChunkClaimer::adjust_relax_movemap(  core::kinematics::MoveMap& mm ) c
 	}
 }
 
-void RigidChunkClaimer::initialize_dofs( core::pose::Pose& pose, DofClaims const& /* init_claims*/, DofClaims& /*failed_init_claims*/ ) {
+void RigidChunkClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofClaims const& /* init_claims*/, claims::DofClaims& /*failed_init_claims*/ ) {
 	//need to copy coords and jumps --- if chunks were idealized no problem .... but non-idealized stuff ?
 	//also take care of fullatom vs centroid...
 	//	tr.Warning << "[WARNING] *** use input structure of RigidChunkClaimer --- NEEDS TO BE IDEALIZED !!! *** \n";
@@ -573,19 +592,23 @@ bool is_not_neighbor_to_rigid( loops::Loops const& rigid, Size pos1, Size pos2 )
 }
 
 bool connects_rigid_regions( loops::Loops const& rigid, Size pos1, Size pos2 ) {
+	//TODO: this is probably easier with label checks...
 	Size rigid1 = rigid.loop_index_of_residue( pos1 );
 	Size rigid2 = rigid.loop_index_of_residue( pos2 );
 	return rigid1 && rigid2;
 }
 
-bool RigidChunkClaimer::JumpCalculator::irrelevant_jump( Size pos1, Size pos2 ) {
-	tr.Trace << "RigidChunk::irrelavant jumps " << pos1 << " " << pos2 << std::endl;
-	tr.Trace << "connects_rigid: " << connects_rigid_regions( rigid_, pos1, pos2 ) << std::endl;
-	tr.Trace << "is not_neighbor_to_rigid: " << is_not_neighbor_to_rigid( rigid_, pos1, pos2 ) << std::endl;
-	tr.Trace << "bAllowAdjacent: " << bAllowAdjacentJumps_ << std::endl;
+bool RigidChunkClaimer::JumpCalculator::irrelevant_jump( Size global_start, Size global_end ) {
+	//TODO make better use of local positions
+	if( tr.Trace.visible() ) {
+		tr.Trace << "Irrelevant_jump check for " << global_start << "->" << global_end << std::endl;
+		tr.Trace << "connects_rigid: " << connects_rigid_regions( rigid_,	global_start, global_end ) << std::endl;
+		tr.Trace << "is not_neighbor_to_rigid: " << is_not_neighbor_to_rigid( rigid_, global_start, global_end ) << std::endl;
+		tr.Trace << "bAllowAdjacent: " << bAllowAdjacentJumps_ << std::endl;
+	}
 
-	if ( !connects_rigid_regions( rigid_, pos1, pos2 ) ) {
-		return bAllowAdjacentJumps_ || is_not_neighbor_to_rigid( rigid_, pos1, pos2 );//jump doesn't connect two rigid regions -- irrelevant
+	if ( !connects_rigid_regions( rigid_, global_start, global_end ) ) {
+		return bAllowAdjacentJumps_ || is_not_neighbor_to_rigid( rigid_, global_start, global_end );//jump doesn't connect two rigid regions -- irrelevant
 	}
 	return false; //either connects rigid regions or is neighbor to rigid region
 }
@@ -595,13 +618,15 @@ bool RigidChunkClaimer::JumpCalculator::irrelevant_jump( Size pos1, Size pos2 ) 
 ///   not connecting already conntected rigid stretches
 /// if it connects two unconnected rigid stretches ---> its a good jump we'll keep it,
 /// *** --> update visited_ ***
-bool RigidChunkClaimer::JumpCalculator::good_jump( Size up, Size down ) {
-	Size up_loop( rigid_.loop_index_of_residue( up ) );
-	Size down_loop( rigid_.loop_index_of_residue( down ) );
+bool RigidChunkClaimer::JumpCalculator::good_jump( core::Size global_start, core::Size global_end ) {
+	//TODO make better use of local positions
+
+	Size up_loop( rigid_.loop_index_of_residue( global_start ) );
+	Size down_loop( rigid_.loop_index_of_residue( global_end ) );
 
 	//we arrive here only if jump is not irrelevant...
 	//if we don't allow adjacent jump that means this jump connects rigid regions or is a bad neighbor
-	if ( !bAllowAdjacentJumps_ && !connects_rigid_regions( rigid_, up, down ) ) return false;
+	if ( !bAllowAdjacentJumps_ && !connects_rigid_regions( rigid_, global_start, global_end ) ) return false;
 
 	runtime_assert( up_loop && down_loop ); //since this would be irrelevant --- already checked.
 
@@ -638,7 +663,7 @@ bool RigidChunkClaimer::JumpCalculator::good_jump( Size up, Size down ) {
 
 ///@detail generate a list of Jumps (Size tupels) that fix the remaining part of the chunk
 void
-RigidChunkClaimer::JumpCalculator::generate_rigidity_jumps( RigidChunkClaimer* THIS, DofClaims& extra_jumps ) {
+RigidChunkClaimer::JumpCalculator::generate_rigidity_jumps( RigidChunkClaimer* parent_claimer, claims::DofClaims& extra_jumps, std::string label ) {
 	if( visited_.size() == 0 ){ // No rigid chunks ??
 		return;
 	}
@@ -671,7 +696,11 @@ RigidChunkClaimer::JumpCalculator::generate_rigidity_jumps( RigidChunkClaimer* T
 		if ( visited_[ region ] != visited_[ root_reg ] ) {
 			Size target_pos (	rigid_loops[ region ].start()
 							 + static_cast< Size >( 0.5*( rigid_loops[ region ].stop()-rigid_loops[ region ].start() ) ) );
-			extra_jumps.push_back( new JumpClaim( THIS, anchor, target_pos, DofClaim::EXCLUSIVE ) );
+
+			extra_jumps.push_back( new claims::JumpClaim( parent_claimer,
+																										std::make_pair( label, anchor),
+																										std::make_pair( label, target_pos),
+																										claims::DofClaim::EXCLUSIVE ) );
 			visited_[ region ] = visited_[ root_reg ];
 
 			if ( old_visited ) { //if we connected a cluster make sure to update all its nodes

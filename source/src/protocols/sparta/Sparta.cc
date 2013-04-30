@@ -50,6 +50,7 @@
 //// C++ headers
 #include <cstdlib>
 #include <string>
+#include <algorithm>    // std::min
 // AUTO-REMOVED #include <cmath>
 
 #ifdef WIN32
@@ -68,6 +69,8 @@
 #include <basic/database/open.hh>
 
 #include <numeric/NumericTraits.hh>
+#include <boost/algorithm/string/erase.hpp>
+
 
 namespace protocols {
 namespace sparta {
@@ -159,7 +162,33 @@ void Sparta::SpartaLib::setup_for_scoring( core::pose::Pose const & pose ) {
 	tr.Info << "run ANN Sparta for pose with " << rN-r1+1 << " residues " << std::endl;
 }
 
+
+void Sparta::check_pose( core::pose::Pose const & pose ) {
+	std::string pose_sequence( pose.sequence() );
+	std::string tab_sequence( REF_CS_Tab.getData("SEQUENCE") );
+	//std::replace(tab_sequence.begin(),tab_sequence.end(),' ','');
+	boost::erase_all(tab_sequence," ");
+	core::Size compare_len( min( pose_sequence.length(),tab_sequence.length() ) );
+	if ( pose_sequence.compare(0,compare_len, tab_sequence,0,compare_len ) != 0 ) {
+		bool match(true);
+		for ( std::string::size_type i=0; i<=compare_len; ++i ) {
+			if ( pose_sequence[i] != tab_sequence[i] && tab_sequence[i] != '_' ) {
+				match=false;
+				break;
+			}
+		}
+		if ( match==false ) {
+			tr.Debug << "The sequence of pose is:  " << pose_sequence << std::endl;
+			tr.Debug << "The sequence of tab is:   " << tab_sequence << std::endl;
+			utility_exit_with_message("the pose and tab don't start with the same residues");
+		}
+	}
+}
+
+
 Real Sparta::score_pose( core::pose::Pose const & pose ) {
+
+	check_pose( pose);
 	lib().setup_for_scoring( pose );
 	return run_A_ANN_Prediction();
 }

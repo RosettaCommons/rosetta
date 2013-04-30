@@ -95,7 +95,7 @@ void register_options() {
 	NEW_OPT( rmsf::out, "write rmsf into this file", "rmsf.dat" );
 	NEW_OPT( rigid::out, "write a RIGID definition", "rigid.loops" );
 	NEW_OPT( rigid::cutoff, "residues with less then loop_cutoff will go into RIGID definition", 2 );
-	NEW_OPT( rigid::min_gap, "don't have less then min_gap residues between rigid regions", 5 );
+	NEW_OPT( rigid::min_gap, "don't have less then min_gap residues between rigid regions", 1 );
 	NEW_OPT( calc::rmsd, "calculate RMSD from mean, and average pairwise RMSD", false);
 }
 
@@ -125,7 +125,7 @@ class FitMover : public moves::Mover {
 public:
 	virtual void apply( core::pose::Pose& );
 	std::string get_name() const { return "FitMover"; }
-	FitMover() : first( true ), iref( 1 ) {};
+	FitMover() : first( true ), iref( 0 ) {};
 	ObjexxFCL::FArray1D_double weights_;
 	core::pose::Pose ref_pose_;
 	bool first;
@@ -161,18 +161,23 @@ void read_structures( RmsfMoverOP rmsf_tool ) {
 	}
 }
 
-void read_input_weights( FArray1D_double& weights, Size natoms) {
-	if ( !option[ rigid::in ].user() ) return;
+core::Size read_input_weights( FArray1D_double& weights, Size natoms) {
+	if ( !option[ rigid::in ].user() ) return natoms;
 	loops::PoseNumberedLoopFileReader loop_file_reader;
 	loop_file_reader.hijack_loop_reading_code_set_loop_line_begin_token( "RIGID" );
 	std::ifstream is( option[ rigid::in ]().name().c_str() );
 	if (!is) utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + option[ rigid::in ]().name() + "'" );
 	loops::SerializedLoopList loops = loop_file_reader.read_pose_numbered_loops_file(is, option[ rigid::in ](), false );
 	loops::Loops rigid = loops::Loops( loops );
+	core::Size count_expected( 0 );
 	for ( Size i=1;i<=natoms; ++i ) {
-		if (rigid.is_loop_residue( i ) ) weights( i )=1.0;
+		if (rigid.is_loop_residue( i ) ) {
+			weights( i )=1.0;
+			++count_expected;
+		}
 		else weights( i )=0.0;
 	}
+	return count_expected;
 }
 
 Size superimpose( DecoySetEvaluation& eval, utility::vector1< Real >& rmsf_result, FArray1D_double& weights ) {
@@ -207,7 +212,8 @@ void run() {
 	//initialize wRMSD weights with 1.0 unless we have -rigid:in file active
 	FArray1D_double weights( rmsf_tool->eval_.n_atoms(), 1.0 );
 	FArray1D_double input_weights( rmsf_tool->eval_.n_atoms(), 1.0 );
-	read_input_weights(weights,rmsf_tool->eval_.n_atoms());
+	core::Size const expected_rigid_atoms( read_input_weights(weights,rmsf_tool->eval_.n_atoms()) );
+
 	input_weights=weights;
 	rmsf_tool->eval_.set_weights( weights );
 
@@ -281,7 +287,7 @@ void run() {
 				++ct;
 			}
 		}
-		tr.Info << "computer RMSD on ";
+		tr.Info << "computed RMSD on " << std::endl;;
 		rigid.write_loops_to_stream( tr.Info, "RIGID" );
 		tr.Info << std::endl;
 
@@ -293,7 +299,8 @@ void run() {
 			mean_rmsd+=1.0/rmsf_tool->eval_.n_decoys()*
 				rmsf_tool->eval_.rmsd( weights, average_structure, xx );
 		}
-		tr.Info << "number of atoms from " <<rmsf_tool->eval_.n_atoms() << " for mean RMSD: " << ct << std::endl;
+		tr.Info << "number of atoms from " << expected_rigid_atoms << " for mean RMSD: " << ct << std::endl;
+		tr.Info << "fraction of residues converged: " << round(1.0*ct/expected_rigid_atoms,2) << std::endl;
 		tr.Info << "mean RMSD to average structure: " << round(mean_rmsd,2) << std::endl;
 		Size ct_pairs( 0 );
 		Real rmsd_pairs( 0.0 );
@@ -305,7 +312,9 @@ void run() {
 				rmsd_pairs+=rmsf_tool->eval_.rmsd( weights, xx1, xx2 );
 			}
 		}
+		core::Real fraction=1.0*ct/expected_rigid_atoms;
 		tr.Info << "mean pairwise RMSD: " << round(rmsd_pairs/ct_pairs,2) << std::endl;
+		tr.Info << "mean pairwise RMSD * superposed_fraction_of_atoms^-1: " << round(rmsd_pairs/ct_pairs/fraction,2 ) << std::endl;
 	}
 	return;
 }

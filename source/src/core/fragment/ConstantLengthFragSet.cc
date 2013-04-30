@@ -82,14 +82,15 @@ Size ConstantLengthFragSet::region(
 	FrameList &frames
 ) const {
 	Size count( 0 );
-	for ( Size pos=start; pos<=frames_.size() && pos<=end; pos++ ) {
-		if ( frames_[pos] ) {
+	for ( Size pos=start -  global_offset() ; pos<=frames_.size() && pos<=end-global_offset(); pos++ ) {
+		if ( frames_[ pos ] ) {
 			if ( frames_[pos]->is_applicable( mm ) && frames_[pos]->is_valid() ) {
 				frames.push_back( frames_[ pos ] );
 				count++;
 			}
 		}
 	}
+
 	return count;
 }
 
@@ -243,11 +244,19 @@ void ConstantLengthFragSet::read_fragment_stream( utility::io::izstream & data, 
 					<< endl;
 }
 
-FrameIterator ConstantLengthFragSet::begin() const {
+ConstFrameIterator ConstantLengthFragSet::begin() const {
+	return ConstFrameIterator( new ConstantLengthFragSetIterator_( frames_.begin(), frames_.end() ) );
+}
+
+ConstFrameIterator ConstantLengthFragSet::end() const {
+	return ConstFrameIterator( new ConstantLengthFragSetIterator_( frames_.end(), frames_.end() ) );
+}
+
+FrameIterator ConstantLengthFragSet::nonconst_begin() {
 	return FrameIterator( new ConstantLengthFragSetIterator_( frames_.begin(), frames_.end() ) );
 }
 
-FrameIterator ConstantLengthFragSet::end() const {
+FrameIterator ConstantLengthFragSet::nonconst_end() {
 	return FrameIterator( new ConstantLengthFragSetIterator_( frames_.end(), frames_.end() ) );
 }
 

@@ -49,7 +49,9 @@ InteractionScoreFilter::InteractionScoreFilter() :
 	upper_threshold_(0.0),
 	jump_( 1 ),
 	scorefxn_( NULL )
-{}
+{
+	scorefxn_ = core::scoring::getScoreFunction();
+}
 
 InteractionScoreFilter::InteractionScoreFilter( std::string const scorefxn_name, core::Size const rb_jump,core::Real const lower_threshold, core::Real const upper_threshold ) :
 	Filter( "I_sc" ),

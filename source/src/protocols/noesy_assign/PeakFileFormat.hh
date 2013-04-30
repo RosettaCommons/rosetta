@@ -53,7 +53,9 @@ public:
   PeakFileFormat_Base()
     : ignore_assignments_( false ),
       min_VC_to_write_( 0.0 ),
-      write_only_highest_VC_( false )
+      write_only_highest_VC_( false ),
+      ignore_negative_intensity_( false ),
+      minimum_peak_intensity_( 0.0 )
   {};
 
   virtual ~PeakFileFormat_Base() {
@@ -117,6 +119,14 @@ public:
      ignore_negative_intensity_ = setting;
   }
 
+  void set_minimum_peak_intensity( core::Real setting ) {
+    minimum_peak_intensity_ = setting;
+  }
+
+  core::Real minimum_peak_intensity() const {
+    return minimum_peak_intensity_;
+  }
+
 protected:
   CrossPeakInfoOP info1_;
   CrossPeakInfoOP info2_;
@@ -127,13 +137,14 @@ private:
   core::Real min_VC_to_write_;
   bool write_only_highest_VC_;
   bool ignore_negative_intensity_;
+  core::Real minimum_peak_intensity_;
   //  virtual void write_header( std::ostream& );
 };
 
 class PeakFileFormat : public PeakFileFormat_Base {
 public:
   PeakFileFormat();
-  PeakFileFormat( ResonanceListOP const& );
+  //  PeakFileFormat( ResonanceListOP const& );
   virtual ~PeakFileFormat();
   virtual void write_peak( std::ostream&, core::Size ct, CrossPeak const& ) const;
   virtual void write_resonances( std::ostream&, CrossPeak const& ) const;
@@ -166,7 +177,7 @@ public:
   }
 
   core::Size ncol() const { return col2proton_.size(); }
-  ResonanceList const& resonances() const { return *resonances_; }
+  //  ResonanceList const& resonances() const { return *resonances_; }
 protected:
   utility::vector1< std::string > column_labels_; //eg. NhH
   utility::vector1< core::Size > col2proton_; //up to 4 columns may read 1 1 2 2 or 1 2 1 (NhH) or 1 2 2 for hHN
@@ -174,14 +185,14 @@ protected:
 
 private:
   static bool options_registered_;
-  ResonanceListOP resonances_;
+  //  ResonanceListOP resonances_;
   bool write_atom_names_;
 };
 
 class PeakFileFormat_xeasy : public PeakFileFormat {
 public:
   PeakFileFormat_xeasy() : PeakFileFormat() {};
-  PeakFileFormat_xeasy( ResonanceListOP const& rop ) : PeakFileFormat( rop ) {};
+  //  PeakFileFormat_xeasy( ResonanceListOP const& rop ) : PeakFileFormat( rop ) {};
 };
 
 }

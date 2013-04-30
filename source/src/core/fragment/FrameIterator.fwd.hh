@@ -21,6 +21,7 @@ namespace core {
 namespace fragment {
 
 class FrameIterator;
+class ConstFrameIterator;
 
 }
 }

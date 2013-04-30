@@ -27,7 +27,7 @@
 
 
 // Package Headers
-#include <protocols/topology_broker/DofClaim.hh>
+#include <protocols/topology_broker/claims/DofClaim.hh>
 #include <protocols/topology_broker/TopologyBroker.hh>
 #include <protocols/moves/MoverContainer.hh>
 
@@ -98,8 +98,8 @@ void MembraneTopologyClaimer::new_decoy( core::pose::Pose const& pose ) {
 
 void MembraneTopologyClaimer::initialize_dofs(
 	core::pose::Pose& pose,
-	DofClaims const& /*init_dofs*/,
-	DofClaims& /*failed_to_init*/
+	claims::DofClaims const& /*init_dofs*/,
+	claims::DofClaims& /*failed_to_init*/
 ) {
 	using basic::options::option;
 	using namespace basic::options;

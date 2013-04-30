@@ -1,6 +1,7 @@
 #include <core/fragment/BBTorsionSRFD.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/fragment/FragData.hh>
+#include <core/fragment/FragData.fwd.hh>
 #include <core/fragment/FragmentIO.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/types.hh>
@@ -15,7 +16,7 @@
 #include <string>
 #include <sstream>
 
-void read_fragdata( utility::vector1< core::fragment::FragDataOP > & fds, std::istream & in ) {
+void read_fragdata( core::fragment::FragDataCOPs & fds, std::istream & in ) {
 	using namespace core::fragment;
 	core::Size n,count=0;
 	while( in >> n ) {
@@ -38,12 +39,12 @@ void read_fragdata( utility::vector1< core::fragment::FragDataOP > & fds, std::i
 	}
 }
 
-std::map<std::string, utility::vector1<core::fragment::FragDataOP> >
+std::map<std::string, core::fragment::FragDataCOPs >
 get_frags_map( ) {
 	using namespace core::fragment;
 	//cout << "reading frags" << std::endl;
 	utility::io::izstream in;
-	std::map<std::string,utility::vector1<FragDataOP> > fds;
+	std::map<std::string,FragDataCOPs > fds;
 	basic::database::open(in,"sampling/ss_fragfiles/EEE.fragfile"); read_fragdata(fds["EEE"],in); in.close();
 	basic::database::open(in,"sampling/ss_fragfiles/EEH.fragfile"); read_fragdata(fds["EEH"],in); in.close();
 	basic::database::open(in,"sampling/ss_fragfiles/EEL.fragfile"); read_fragdata(fds["EEL"],in); in.close();
@@ -71,7 +72,7 @@ get_frags_map( ) {
 }
 
 
-core::fragment::FragSetOP make_frag_set(std::string ss, std::map<std::string, utility::vector1<core::fragment::FragDataOP> > & fds, int start=1,int stop=-1) {
+core::fragment::FragSetOP make_frag_set(std::string ss, std::map<std::string, core::fragment::FragDataCOPs > & fds, int start=1,int stop=-1) {
 	using namespace core::fragment;
 	FragSetOP frags = new ConstantLengthFragSet();
 	if(-1==stop) stop = ss.size() + 1 - 3;
@@ -92,9 +93,9 @@ core::fragment::FragSetOP make_frag_set(std::string ss, std::map<std::string, ut
 		for( core::Size l = 1; l <= ss2.size(); ++l ) {
 			std::string ss=""; ss+=ss0[j]; ss+=ss1[k]; ss+=ss2[l];
 			//cout << "adding ss " << ss << " '" << ss0[j] << "' '" << ss1[k] << "' '" << ss2[l] << "'" << std::endl;
-			utility::vector1<FragDataOP>::iterator beg = fds[ss].begin();
-			utility::vector1<FragDataOP>::iterator end = fds[ss].end();
-			for( utility::vector1<FragDataOP>::iterator fi = beg; fi != end; ++fi ) {
+			FragDataCOPs::iterator beg = fds[ss].begin();
+			FragDataCOPs::iterator end = fds[ss].end();
+			for( FragDataCOPs::iterator fi = beg; fi != end; ++fi ) {
 				frame->add_fragment(*fi);
 				nfrag++;
 			}
@@ -107,7 +108,7 @@ core::fragment::FragSetOP make_frag_set(std::string ss, std::map<std::string, ut
 	return frags;
 }
 
-core::fragment::FragSetOP make_frag_set(utility::vector1<char> ss, std::map<std::string, utility::vector1<core::fragment::FragDataOP> > & fds,int start=1,int stop=-1) {
+core::fragment::FragSetOP make_frag_set(utility::vector1<char> ss, std::map<std::string, core::fragment::FragDataCOPs > & fds,int start=1,int stop=-1) {
 	std::string s = "";
 	for(core::Size i = 1; i <= ss.size(); ++i) s += ss[i];
 	return make_frag_set(s,fds,start,stop);
@@ -115,14 +116,14 @@ core::fragment::FragSetOP make_frag_set(utility::vector1<char> ss, std::map<std:
 
 core::fragment::FragSetOP make_frag_set_9mers(core::Size nres) {
 	using namespace core::fragment;
-	utility::vector1<core::fragment::FragDataOP> fds9;
+	FragDataCOPs fds9;
 	std::ifstream in("input/loop_helix.9mers");
 	read_fragdata(fds9,in);
 
 	FragSetOP frags = new ConstantLengthFragSet();
 	for( core::Size i = 1; i <= nres-8; ++i ) {
 		FrameOP frame = new Frame(i,9);
-		for( utility::vector1<FragDataOP>::iterator fi = fds9.begin(); fi != fds9.end(); ++fi ) {
+		for( FragDataCOPs::iterator fi = fds9.begin(); fi != fds9.end(); ++fi ) {
 			frame->add_fragment(*fi);
 		}
 		frags->add(frame);

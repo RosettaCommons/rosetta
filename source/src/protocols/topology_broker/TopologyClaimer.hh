@@ -18,7 +18,9 @@
 
 // Package headers
 #include <protocols/topology_broker/TopologyBroker.fwd.hh>
-#include <protocols/topology_broker/DofClaim.hh>
+#include <protocols/topology_broker/claims/SymmetryClaim.hh>
+#include <protocols/topology_broker/claims/DofClaim.hh>
+#include <protocols/topology_broker/claims/SequenceClaim.hh>
 #include <protocols/topology_broker/weights/AbinitioMoverWeight.hh>
 #include <protocols/topology_broker/weights/ConstAbinitioMoverWeight.hh>
 #include <protocols/topology_broker/ClaimerMessage.fwd.hh>
@@ -63,11 +65,18 @@ namespace topology_broker {
 class TopologyClaimer : public utility::pointer::ReferenceCount {
 public:
 	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~TopologyClaimer();
-	TopologyClaimer() : abinitio_mover_weight_ ( new weights::ConstAbinitioMoverWeight( 1.0 ) ) {};
+	virtual ~TopologyClaimer(){}
+
+	TopologyClaimer() :
+		abinitio_mover_weight_ ( new weights::ConstAbinitioMoverWeight( 1.0 ) ),
+		label_( "NO_LABEL" )
+	{};
 
 	///@brief construct with weight-set ( how important is mover for different abinitio stages ? )
-	TopologyClaimer( weights::AbinitioMoverWeightOP weight ) : abinitio_mover_weight_ ( weight ) {
+	TopologyClaimer( weights::AbinitioMoverWeightOP weight ) :
+		abinitio_mover_weight_ ( weight ),
+		label_( "NO_LABEL" )
+	{
 		if ( !weight ) abinitio_mover_weight_ = new weights::ConstAbinitioMoverWeight( 1.0 );
 	};
 
@@ -77,27 +86,29 @@ public:
 	///@brief name of Claimer
 	virtual std::string type() const = 0;
 
-
 	///@brief read definition of Claimer from setup file, i.e., a CLAIMER <type> ... END_CLAIMER block
 	virtual void read( std::istream & );
 
 	///@brief generate claims that affect the sequence of the pose
-	virtual void generate_sequence_claims( DofClaims& ){}; //add to list ( never call clear() on list )
+	virtual void generate_sequence_claims( claims::DofClaims& ){}; //add to list ( never call clear() on list )
+
+	///@brief generate claims that affect the sequence of the pose
+	virtual void generate_symmetry_claims( claims::SymmetryClaims& ){}; //add to list ( never call clear() on list )
 
 	///@brief generate first round of DOF claims
-	virtual void generate_claims( DofClaims& ) {}; //add to list ( never call clear() on list )
+	virtual void generate_claims( claims::DofClaims& ) {}; //add to list ( never call clear() on list )
 
 	///@brief is called after all round1 claims have been approved or retracted -- additional claims can be issued in this round
-	virtual void finalize_claims( DofClaims& ) {};
+	virtual void finalize_claims( claims::DofClaims& ) {};
 
 	///@brief allow a claim from a foreign Claimer
-	virtual bool allow_claim( DofClaim const& /*foreign_claim*/ ) { return true; };
+	virtual bool allow_claim( claims::DofClaim const& /*foreign_claim*/ ) { return true; };
 
 	///@brief initialize sequence ( for approved sequence claims given as init_claim ) Claimer searches init_claims for claims owned by *this
-	virtual void initialize_residues( core::pose::Pose&, SequenceClaimOP init_claim, DofClaims& failed_to_init );
+	//void initialize_residues( core::pose::Pose&, claims::SequenceClaimOP init_claim, claims::DofClaims& failed_to_init ){}
 
 	///@brief initialize dofs -- e.g., torsions, jumps -- Claimer searches init_claims for claims owned by *this
-	virtual void initialize_dofs( core::pose::Pose&, DofClaims const& init_claims, DofClaims& failed_to_init );
+	virtual void initialize_dofs( core::pose::Pose&, claims::DofClaims const& init_claims, claims::DofClaims& failed_to_init );
 
 	///@brief has this Claimer some side chain conformations to add?
 	/// starts with bNeedToRepack true for all residues... if you have a sidechain ---> copy it to pose and set needtoRepack false for this residue
@@ -110,10 +121,10 @@ public:
 
 	///@brief notification of declined claims: update your internal representation (e.g., movemap ) to remember this !
 	//// return false   -- if you can't live without this claim being accepted. ( e.g., RigidChunks ... )
-	virtual bool accept_declined_claim( DofClaim const& /*was_declined*/ ) { return true; }
+	virtual bool accept_declined_claim( claims::DofClaim const& /*was_declined*/ ) { return true; }
 
 	///@brief this claim of yours was accepted.... I so far haven't done anything with this... might go away.
-	virtual void claim_accepted( DofClaimOP my_claim ) {
+	virtual void claim_accepted( claims::DofClaimOP my_claim ) {
 		current_claims_.push_back( my_claim );
 	}
 
@@ -205,7 +216,7 @@ private:
 	void unknown_tag( std::string tag, std::istream& is ) const;
 
 	///@brief currently accepted claims... dunno haven't used that yet.
-	DofClaims current_claims_;
+	claims::DofClaims current_claims_;
 
 	///@brief weight set .. how often shall this claimer's mover be sampled during different stages ?
 	weights::AbinitioMoverWeightOP abinitio_mover_weight_;

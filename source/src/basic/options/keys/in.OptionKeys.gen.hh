@@ -143,6 +143,7 @@ namespace in { namespace file { extern FileOptionKey const ddg_predictions_file;
 namespace in { namespace file { extern IntegerVectorOptionKey const input_res; } }
 namespace in { namespace file { extern StringOptionKey const md_schfile; } }
 namespace in { namespace file { extern BooleanOptionKey const read_pdb_link_records; } }
+namespace in { namespace file { extern FileOptionKey const native_contacts; } }
 namespace in { namespace rdf { extern BooleanOptionKey const rdf; } }
 namespace in { namespace rdf { extern BooleanOptionKey const sep_bb_ss; } }
 

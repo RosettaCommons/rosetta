@@ -642,6 +642,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Sets whether or not the LINK records in PDB files are read.  The default value is false.</dd><br>
 <dd>Default: false</dd><br>
 </dl>
+<dl>
+<dt><b>-native_contacts</b> \<File\><dt>
+<dd>native contacts pair list for fnat/fnon-nat calculation in Docking</dd><br>
+</dl>
  </li>
 <li><h2>in:rdf</h2>
 <dl>
@@ -2386,6 +2390,36 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-I_sc</b> \<String\><dt>
 <dd>score function name used to calculate I_sc</dd><br>
 <dd>Default: "score12"</dd><br>
+</dl>
+<dl>
+<dt><b>-Irms</b> \<Boolean\><dt>
+<dd>will compute the docking interface rmsd</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-Ca_Irms</b> \<Boolean\><dt>
+<dd>will compute the docking Ca-atom interface rmsd</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-Fnat</b> \<Boolean\><dt>
+<dd>will compute the docking recovered fraction of native contacts</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-Lrmsd</b> \<Boolean\><dt>
+<dd>will compute the docking ligand rmsd</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-Fnonnat</b> \<Boolean\><dt>
+<dd>will compute the fraction of non-native contacts for docking</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-DockMetrics</b> \<Boolean\><dt>
+<dd>will compute all docking metrics (I_sc/Irms/Fnat/Lrmsd for now) for replica docking</dd><br>
+<dd>Default: false</dd><br>
 </dl>
  </li>
 <li><h2>filters</h2>
@@ -5230,6 +5264,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-pose_metrics</b> \<Boolean\><dt>
 <dd>Do pose metrics calc</dd><br>
+</dl>
+<dl>
+<dt><b>-assign_ss</b> \<Boolean\><dt>
+<dd>Invoke DSSP to assign secondary structure.</dd><br>
+<dd>Default: false</dd><br>
 </dl>
 <dl>
 <dt><b>-skip</b> \<Boolean\><dt>

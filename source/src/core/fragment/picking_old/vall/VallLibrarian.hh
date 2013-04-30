@@ -70,7 +70,7 @@ public: // typedefs
 
 	typedef core::Size Size;
 
-	typedef core::fragment::FragDataList FragDataList;
+	typedef core::fragment::FragDataOPs FragDataOPs;
 	typedef core::fragment::FragData FragData;
 	typedef core::fragment::FragDataOP FragDataOP;
 
@@ -260,7 +260,7 @@ public: // fragment extraction
 	/// @brief get top 'N' fragments from prior catalog()
 	/// @param n The number of fragments to get.
 	/// @param srfd_type The BBTorsionSRFD type to use.
-	FragDataList top_fragments(
+	FragDataOPs top_fragments(
 		Size const n,
 		BBTorsionSRFD const & srfd_type = BBTorsionSRFD()
 	) const;
@@ -270,8 +270,8 @@ public: // fragment extraction
 	/// @param from index of the first fragment in the list, indexing starts from '1'
 	/// @param to index of the last fragment in the list (inclusive)
 	/// @param srfd_type The BBTorsionSRFD type to use.
-	/// @return filled FragDataList if sort() was called successfully, otherwise empty FragDataList
-	FragDataList fragments(
+	/// @return filled FragDataOPs if sort() was called successfully, otherwise empty FragDataOPs
+	FragDataOPs fragments(
 		Size from,
 		Size to,
 		BBTorsionSRFD const & srfd_type = BBTorsionSRFD()

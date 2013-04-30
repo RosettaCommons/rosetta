@@ -71,7 +71,7 @@ class FragSet : public utility::pointer::ReferenceCount {
 
 	//how to iterate over fragments that fit certain search criteria ?
 public:
-	FragSet() : min_pos_ ( 100000 ), max_pos_( 0 ), max_frag_length_( 0 )
+	FragSet() : min_pos_ ( 100000 ), max_pos_( 0 ), max_frag_length_( 0 ), global_offset_ (0)
 	{}
 
 	virtual ~FragSet() {}
@@ -84,8 +84,13 @@ public:
 
 
 	///@brief iterate over contents
-	virtual FrameIterator begin() const = 0;
-	virtual FrameIterator end() const = 0;
+	virtual ConstFrameIterator begin() const = 0;
+	virtual ConstFrameIterator end() const = 0;
+
+	///@brief iterate over contents
+	virtual FrameIterator nonconst_begin() = 0;
+	virtual FrameIterator nonconst_end() = 0;
+
 
 	///@brief appends frames at sequence position pos to frames, returns nr of frames added
 	virtual Size frames( core::Size pos, FrameList &frames ) const {
@@ -124,18 +129,18 @@ public:
 
 	///@brief returns the maximal sequence position that can be affected by fragments in this set
 	Size max_pos() const
-	{ return max_pos_; }
+	{ return max_pos_ + global_offset_; }
 
 	///@brief returns the first sequence position that can be affected by fragments in this set
 	Size min_pos() const
-	{ return min_pos_; }
+	{ return min_pos_ + global_offset_; }
 
 	///@brief returns the longest fragment stored in this FragSet.
 	Size max_frag_length() const
 	{ return max_frag_length_; }
 
 	///@brief add a single frame. if compatible frame is already in set the frames will be merged
-	void add( FrameOP aFrame );
+	void add( FrameCOP aFrame );
 
 	///@brief add all Frames in list
 	void add( FrameList const& frames );
@@ -168,6 +173,27 @@ public:
 
 	friend std::ostream & operator<<(std::ostream & out, FragSet const & frags );
 
+	///@brief shift all frames in FragSet by offset
+	virtual void shift_by( int offset );
+
+	///@brief shift all frames in FragSet to old position + offset
+	virtual void shift_to( core::Size offset );
+
+	core::Size global_offset() const{
+		return global_offset_;
+	}
+
+	void global_offset( core::Size offset ) {
+		global_offset_ = offset;
+	}
+
+	///@brief resets global_offset of FragSet and shifts FragSet if necessary by calling shift_to
+	void set_global_offset (core::Size);
+
+
+	FragSetOP clone_shifted( core::Size ) const;
+
+
 protected:
 	///@brief setter for max_frag_length_
 	void set_max_frag_length( Size setting ) {
@@ -180,10 +206,15 @@ protected:
 	/// @brief storage classes have to overload this one to add frames to their container
 	virtual void add_( FrameOP aFrame ) = 0;
 
+
+
 private:
 	Size min_pos_;
 	Size max_pos_;
 	Size max_frag_length_;
+
+	///@brief global offset of current Fragmentset. Default = 0
+	core::Size global_offset_;
 
 }; // class FragSet
 

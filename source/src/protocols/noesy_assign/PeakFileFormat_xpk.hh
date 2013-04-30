@@ -43,7 +43,7 @@ namespace noesy_assign {
 class PeakFileFormat_xpk : public PeakFileFormat {
 public:
   PeakFileFormat_xpk() {};
-  PeakFileFormat_xpk( ResonanceListOP const& );
+  //  PeakFileFormat_xpk( ResonanceListOP const& );
   //  virtual ~PeakFileFormat_xpk();
 
   virtual void set_format_from_peak( CrossPeak const& );

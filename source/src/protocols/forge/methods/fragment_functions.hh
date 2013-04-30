@@ -38,8 +38,8 @@ namespace methods {
 ///  position.
 core::fragment::ConstantLengthFragSetOP
 smallmer_from_largemer(
-	core::fragment::FrameIterator begin,
-	core::fragment::FrameIterator end,
+	core::fragment::ConstFrameIterator begin,
+	core::fragment::ConstFrameIterator end,
 	core::Size const smallmer_size = 1,
 	bool const all_possible_smallmers = false
 );

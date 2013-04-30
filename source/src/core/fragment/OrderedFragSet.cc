@@ -95,11 +95,19 @@ Size OrderedFragSet::frames( Size pos, FrameList &out_frames ) const
 	return 0;
 }
 
-FrameIterator OrderedFragSet::begin() const {
+ConstFrameIterator OrderedFragSet::begin() const {
+ return ConstFrameIterator( new OrderedFragSetIterator_( frames_.begin(), frames_.end() ) );
+}
+
+ConstFrameIterator OrderedFragSet::end() const {
+ return ConstFrameIterator( new OrderedFragSetIterator_( frames_.end(), frames_.end() ) );
+}
+
+FrameIterator OrderedFragSet::nonconst_begin() {
  return FrameIterator( new OrderedFragSetIterator_( frames_.begin(), frames_.end() ) );
 }
 
-FrameIterator OrderedFragSet::end() const {
+FrameIterator OrderedFragSet::nonconst_end() {
  return FrameIterator( new OrderedFragSetIterator_( frames_.end(), frames_.end() ) );
 }
 

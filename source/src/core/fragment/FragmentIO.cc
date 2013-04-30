@@ -281,7 +281,7 @@ void FragmentIO::read_data( std::string const& filename, FrameList& frames ) {
 
 void FragmentIO::write_data( std::string const& file, FragSet const& frags )  {
 	utility::io::ozstream out( file );
-	for ( FrameIterator it=frags.begin(), eit=frags.end(); it!=eit; ++it ) {
+	for ( ConstFrameIterator it=frags.begin(), eit=frags.end(); it!=eit; ++it ) {
 		(*it)->show( out );
 	}
 }

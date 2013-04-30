@@ -25,6 +25,7 @@
 
 #include <basic/Tracer.hh>
 #include <devel/init.hh>
+#include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -52,6 +53,8 @@
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
+
+#include <basic/options/option_macros.hh>
 
 #include <core/pose/Pose.hh>
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
@@ -91,6 +94,7 @@ private:
 
 	bool keep_scores_flag_;   // retains the previous scores from the input silent file or whatever
 	bool skip_scoring_;       // skips the actual scoring call, calling evaluators only
+	bool assign_ss_;          // Call the dssp object to assign a secondary structure.
 };
 
 MyScoreMover::MyScoreMover():
@@ -110,6 +114,11 @@ MyScoreMover::MyScoreMover():
 		set_skip_scoring();
 	}
 
+	assign_ss_ = false;
+	if ( option[ rescore::assign_ss ]() ){
+		assign_ss_ = true;
+	}
+
 	// add cst scores from cmd line
 	if( option[ in::file::fullatom ]() ) {
 		core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *sfxn_ );
@@ -124,14 +133,21 @@ MyScoreMover::MyScoreMover():
 }
 
 void MyScoreMover::apply( core::pose::Pose& pose ) {
-	if( !keep_scores_flag_ ){
+	if ( !keep_scores_flag_ ) {
 		pose.energies().clear();
 		pose.data().clear();
 	}
+
+	if ( assign_ss_ ) {
+		core::scoring::dssp::Dssp my_dssp( pose );
+		//core::scoring::dssp::DsspOP my_dssp_OP = new core::scoring::dssp::Dssp( pose );
+		my_dssp.insert_ss_into_pose( pose );
+	}
+
 	sfxn_->set_weight( core::scoring::linear_chainbreak, 4.0/3.0 );
 	sfxn_->set_weight( core::scoring::overlap_chainbreak, 1.0 );
 
-	if( ! skip_scoring_ ){
+	if ( ! skip_scoring_ ) {
 		(*sfxn_)( pose );
 	}
 }
@@ -149,6 +165,9 @@ main( int argc, char * argv [] )
 	using namespace core;
 
 	jd2::register_options();
+
+	OPT(rescore::assign_ss);
+	OPT(rescore::skip);
 
 	// initialize core
 	devel::init(argc, argv);
@@ -223,7 +242,7 @@ main( int argc, char * argv [] )
 		std::cout << "Exception: " << std::endl;
 		excn.show( std::cout ); //so its also seen in a >LOG file
 	}
-	 } catch ( utility::excn::EXCN_Base const & e ) { 
+	 } catch ( utility::excn::EXCN_Base const & e ) {
 		 std::cout << "caught exception " << e.msg() << std::endl;
 	}
 	return 0;

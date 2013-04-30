@@ -23,6 +23,7 @@
 // Package Headers
 #include <protocols/topology_broker/TopologyClaimer.hh>
 
+
 // Project Headers
 //#include <core/pose/Pose.fwd.hh>
 
@@ -56,12 +57,14 @@ public:
 	CutBiasClaimer(); //for factory
 	CutBiasClaimer( utility::vector1< core::Real > const& );
 	CutBiasClaimer( core::fragment::SecondaryStructure const& ss_def );
+	CutBiasClaimer( core::fragment::SecondaryStructure const& ss_def, std::string label );
+
 
 	virtual TopologyClaimerOP clone() const {
 		return new CutBiasClaimer( *this );
 	}
 
-	virtual void generate_claims( DofClaims& ) {};
+	virtual void generate_claims( claims::DofClaims& ) {};
 
 	///@brief read definition of Claimer from setup file, i.e., a CLAIMER <type> ... END_CLAIMER block
 	virtual void read( std::istream & ) {};

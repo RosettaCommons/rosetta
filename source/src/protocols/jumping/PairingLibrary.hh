@@ -86,7 +86,7 @@ public:
     int const orientation,
 		int const pleating,
 		bool bWithTorsion,
-		core::fragment::FragDataList &
+		core::fragment::FragDataOPs &
 	) const = 0;
 
 	virtual void
@@ -137,7 +137,7 @@ public:
     int const orientation,
 		int const pleating,
 		bool bWithTorsion,
-		core::fragment::FragDataList &
+		core::fragment::FragDataOPs &
 	) const;
 
 	core::Size

@@ -48,21 +48,22 @@ namespace devel {
 namespace replica_docking {
 
 using namespace core;
-WrapFilterAsEvaluator::WrapFilterAsEvaluator( std::string tag, std::string scorefxn_name ) :
+WrapFilterAsEvaluator::WrapFilterAsEvaluator( protocols::filters::FilterOP filter, std::string tag ) :
 	protocols::evaluation::SingleValuePoseEvaluator<core::Real>( tag )
 	//	iscfilter_( scorefxn_name )
 {
-	iscfilter_ = new devel::replica_docking::InteractionScoreFilter( scorefxn_name );
-	tr << " Interaction Score/I_sc Evaluator " << std::endl;
+	//	iscfilter_ = new devel::replica_docking::InteractionScoreFilter( scorefxn_name );
+	filter_ = filter;
+	tr << "Evaluator " << tag << std::endl;
 
 }
 
 Real WrapFilterAsEvaluator::apply( pose::Pose& pose ) const {
-	return iscfilter_->report_sm( pose );
+	return filter_->report_sm( pose );
 }
 
-bool WrapFilterAsEvaluator::applicable( pose::Pose const& pose ) const {
-  return pose.is_fullatom();
+bool WrapFilterAsEvaluator::applicable( pose::Pose const& /*pose*/ ) const {
+  return true; //pose.is_fullatom();
 }
 
 }

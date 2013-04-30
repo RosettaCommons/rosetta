@@ -60,7 +60,7 @@ void steal_constant_length_frag_set_from_pose (
 void steal_frag_set_from_pose(
   pose::Pose const & pose_in,
   FragSet & fragset,
-  core::fragment::FragDataOP frag_type
+  core::fragment::FragDataCOP frag_type
 );
 
 void steal_frag_set_from_pose (
@@ -68,13 +68,13 @@ void steal_frag_set_from_pose (
   Size const begin,
   Size const end,
   FragSet& fragset,
-  core::fragment::FragDataOP frag_type
+  core::fragment::FragDataCOP frag_type
 );
 
 void steal_frag_set_from_pose(
   pose::Pose const & pose_in,
   FragSet & fragset,
-  core::fragment::FragDataOP frag_type,
+  core::fragment::FragDataCOP frag_type,
   std::set< core::Size > const& active_residues
 );
 

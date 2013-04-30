@@ -13,10 +13,14 @@
 /// @author Oliver Lange
 
 // Unit Headers
-#include <protocols/topology_broker/JumpClaimer.hh>
+#include <protocols/topology_broker/FragmentJumpClaimer.hh>
 
 // Package Headers
-#include <protocols/topology_broker/DofClaim.hh>
+#include <protocols/topology_broker/claims/DofClaim.hh>
+#include <protocols/topology_broker/claims/BBClaim.hh>
+#include <protocols/topology_broker/claims/JumpClaim.hh>
+
+
 
 // Project Headers
 #include <core/pose/Pose.hh>
@@ -60,7 +64,7 @@ namespace topology_broker {
 
 using namespace core;
 
-JumpClaimer::JumpClaimer() :
+FragmentJumpClaimer::FragmentJumpClaimer() :
 	jump_def_( NULL ),
 	init_mover_( NULL ),
 	bKeepJumpsFromInputPose_( true )
@@ -68,7 +72,7 @@ JumpClaimer::JumpClaimer() :
 	set_bInitDofs( true ); //we want to initialize jumps
 }
 
-JumpClaimer::JumpClaimer( jumping::BaseJumpSetupOP jump_def, std::string const& tag, weights::AbinitioMoverWeightOP weight ) :
+FragmentJumpClaimer::FragmentJumpClaimer( jumping::BaseJumpSetupOP jump_def, std::string const& tag, weights::AbinitioMoverWeightOP weight ) :
 	FragmentClaimer( NULL, tag, weight ),
 	jump_def_ ( jump_def ),
 	init_mover_( NULL ),
@@ -77,7 +81,7 @@ JumpClaimer::JumpClaimer( jumping::BaseJumpSetupOP jump_def, std::string const& 
 	set_bInitDofs( true ); //we want to initialize jumps
 }
 
-JumpClaimer::JumpClaimer( JumpClaimer const & src ) :
+FragmentJumpClaimer::FragmentJumpClaimer( FragmentJumpClaimer const & src ) :
 	TopologyClaimer( src ),
 	Parent( src )
 {
@@ -88,26 +92,26 @@ JumpClaimer::JumpClaimer( JumpClaimer const & src ) :
 
 }
 
-JumpClaimer::~JumpClaimer() {}
+FragmentJumpClaimer::~FragmentJumpClaimer() {}
 
-TopologyClaimerOP JumpClaimer::clone() const
+TopologyClaimerOP FragmentJumpClaimer::clone() const
 {
-	return new JumpClaimer( *this );
+	return new FragmentJumpClaimer( *this );
 }
 
 
-void JumpClaimer::new_decoy() {
+void FragmentJumpClaimer::new_decoy() {
 	discard_jumps_ = true;
 	input_pose_.clear();
 }
 
 
-void JumpClaimer::new_decoy( core::pose::Pose const& pose ) {
+void FragmentJumpClaimer::new_decoy( core::pose::Pose const& pose ) {
 	new_decoy();
 	input_pose_ = pose;
 }
 
-void JumpClaimer::initialize_dofs( core::pose::Pose& pose, DofClaims const& init_dofs, DofClaims& failed_to_init ) {
+void FragmentJumpClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofClaims const& init_dofs, claims::DofClaims& failed_to_init ) {
 	//need to copy coords and jumps --- if chunks were idealized no problem .... but non-idealized stuff ?
 	if ( init_mover_ ) {
 		simple_moves::FragmentMoverOP frag_mover = get_frag_mover_ptr();
@@ -120,7 +124,7 @@ void JumpClaimer::initialize_dofs( core::pose::Pose& pose, DofClaims const& init
 	}
 }
 
-void JumpClaimer::init_jumps() {
+void FragmentJumpClaimer::init_jumps() {
 	discard_jumps_ = false;
 	if ( bKeepJumpsFromInputPose_ && input_pose_.total_residue() > 0 ) {
 		tr.Info << type()
@@ -155,6 +159,7 @@ void JumpClaimer::init_jumps() {
 		Size attempts( 10 );
 		do {
 			current_jumps_ = jump_def_->create_jump_sample();
+
 			if ( tr.Debug.visible() && !current_jumps_.is_valid() ) {
 				tr.Debug << "was not able to make fold-tree for " << current_jumps_ << std::endl;
 			}
@@ -162,7 +167,7 @@ void JumpClaimer::init_jumps() {
 	}
 
 	if ( !current_jumps_.is_valid() ) {
-		throw utility::excn::EXCN_BadInput("not able to build valid fold-tree from a "+jump_def_->type_name()+" in 10 attempts in JumpClaimer");
+		throw utility::excn::EXCN_BadInput("not able to build valid fold-tree from a "+jump_def_->type_name()+" in 10 attempts in FragmentJumpClaimer");
 	}
 	tr.Debug << "current_jumps " << current_jumps_ << std::endl;
 
@@ -191,7 +196,10 @@ void JumpClaimer::init_jumps() {
 
 }
 
-void JumpClaimer::generate_claims( DofClaims& new_claims ) {
+void FragmentJumpClaimer::generate_claims( claims::DofClaims& new_claims,
+																					 std::string uplabel,
+																					 std::string downlabel ) {
+
 	if ( discard_jumps_ ) init_jumps();
 	// get flexible jumps ( beta-sheet stuff etc. )
 	/// in future get rid of JumpSample class all-together.
@@ -220,6 +228,12 @@ void JumpClaimer::generate_claims( DofClaims& new_claims ) {
 	for ( Size i = 1; i<=nr_jumps; ++i ) {
 		Size const up( current_jumps_.jumps()( 1, i ) );
 		Size const down( current_jumps_.jumps()( 2, i ) );
+
+		Size local_upnum = up - broker().sequence_number_resolver().offset( uplabel );
+		Size local_downnum = down - broker().sequence_number_resolver().offset( downlabel );
+		claims::LocalPosition const local_up = std::make_pair( uplabel, local_upnum );
+		claims::LocalPosition const local_dn = std::make_pair( downlabel, local_downnum );
+
 		std::string up_atom( current_jumps_.jump_atoms()(1, i ) );
 		std::string down_atom( current_jumps_.jump_atoms()(2, i ) );
 		//now this assumes that we have the BB - Jump -  BB frags...
@@ -234,12 +248,14 @@ void JumpClaimer::generate_claims( DofClaims& new_claims ) {
 			if ( 2 == (*it)->nr_res_affected( jump_mm ) ) {
 				//that is our jump-fragment
 				found_frame = true;
-				new_claims.push_back( new JumpClaim( this, up, down, up_atom, down_atom, DofClaim::INIT ) );
-				kinematics::MoveMap bb_mm; bb_mm.set_bb( false );
+				new_claims.push_back( new claims::JumpClaim( this, local_up, local_dn, up_atom, down_atom, claims::DofClaim::INIT ) );
+				kinematics::MoveMap bb_mm;
+				bb_mm.set_bb( false );
 				bb_mm.set_bb( up, true );
-				if ( 2 == (*it)->nr_res_affected( bb_mm ) ) 	new_claims.push_back( new BBClaim( this, up ) ); //up jump always counted
-				bb_mm.set_bb( down, true );		bb_mm.set_bb( up, false);
-				if ( 2 == (*it)->nr_res_affected( bb_mm ) ) 	new_claims.push_back( new BBClaim( this, down ) ); //up jump always counted
+				if ( 2 == (*it)->nr_res_affected( bb_mm ) ) 	new_claims.push_back( new claims::BBClaim( this, local_up ) ); //up jump always counted
+				bb_mm.set_bb( down, true );
+				bb_mm.set_bb( up, false);
+				if ( 2 == (*it)->nr_res_affected( bb_mm ) ) 	new_claims.push_back( new claims::BBClaim( this, local_dn ) ); //up jump always counted
 				break;
 			}
 		}
@@ -247,7 +263,11 @@ void JumpClaimer::generate_claims( DofClaims& new_claims ) {
 	} // for 1..nr_jumps
 }
 
-bool JumpClaimer::read_tag( std::string tag, std::istream& is ) {
+void FragmentJumpClaimer::generate_claims( claims::DofClaims& new_claims ){
+	generate_claims( new_claims, label(), label() );
+}
+
+bool FragmentJumpClaimer::read_tag( std::string tag, std::istream& is ) {
 	if ( tag == "NO_USE_INPUT_POSE" ) {
 		bKeepJumpsFromInputPose_ = false;
 	} else if ( tag == "USE_INPUT_POSE" ) {

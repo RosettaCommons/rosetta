@@ -16,7 +16,7 @@
 #include <protocols/topology_broker/TemplateJumpClaimer.hh>
 
 // Package Headers
-#include <protocols/topology_broker/DofClaim.hh>
+#include <protocols/topology_broker/claims/DofClaim.hh>
 #include <protocols/topology_broker/Exceptions.hh>
 
 #ifdef WIN32
@@ -70,7 +70,7 @@ TemplateJumpClaimer::TemplateJumpClaimer() : templates_( NULL )
 }
 
 TemplateJumpClaimer::TemplateJumpClaimer( std::string config_file,  weights::AbinitioMoverWeightOP weight )
-	: JumpClaimer( NULL, "template-jumps", weight )
+	: FragmentJumpClaimer( NULL, "template-jumps", weight )
 {
 	set_keep_jumps_from_input_pose( false );
 	read_config_file( config_file );
@@ -138,7 +138,7 @@ bool TemplateJumpClaimer::read_tag( std::string tag, std::istream& is ) {
 		is >> file;
 		if ( jump_def() ) EXCN_Input( "Define either template config-file or topology_file for " + type() );
 		read_topol_file( file );
-	} else return JumpClaimer::read_tag( tag, is );
+	} else return FragmentJumpClaimer::read_tag( tag, is );
 	return true;
 }
 

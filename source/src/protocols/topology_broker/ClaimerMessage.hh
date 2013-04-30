@@ -22,7 +22,7 @@
 #include <protocols/topology_broker/ClaimerMessage.fwd.hh>
 // AUTO-REMOVED #include <protocols/topology_broker/TopologyBroker.fwd.hh>
 #include <protocols/topology_broker/TopologyClaimer.fwd.hh>
-#include <protocols/topology_broker/DofClaim.fwd.hh>
+#include <protocols/topology_broker/claims/DofClaim.fwd.hh>
 
 // Package Headers
 
@@ -108,7 +108,7 @@ class SuggestValueMessage : public ClaimerMessage {
 public:
 	SuggestValueMessage( std::string label );
 	virtual ~SuggestValueMessage();
-	DofClaimOP some_claim_; //e.g., a ROOT Claim
+	claims::DofClaimOP some_claim_; //e.g., a ROOT Claim
 };
 
 

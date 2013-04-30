@@ -46,9 +46,22 @@ core::Real calc_Lrmsd( const core::pose::Pose & pose, const core::pose::Pose & n
 /// @brief Calculates the all-atom RMSD of all residues within 5A of the interface at superposition along those same atoms
 core::Real calc_Irmsd( const core::pose::Pose & pose, const core::pose::Pose & native_pose, const core::scoring::ScoreFunctionCOP dock_scorefxn, DockJumps const movable_jumps );
 
+/// @brief calcluates the CA-atom RMSD of all residues within 5A of the interface at superposition along those same atoms
+core::Real calc_CA_Irmsd( const core::pose::Pose & pose, const core::pose::Pose & native_pose, const core::scoring::ScoreFunctionCOP dock_scorefxn, DockJumps const movable_jumps );
+
 /// @brief Calculates the fraction of native contacts recovered between the input and native pose.  A native-contact is defined
 /// as defined by a residue from one partner being within 5A of a residue from the other partner in the native structure
 core::Real calc_Fnat( const core::pose::Pose & pose, const core::pose::Pose & native_pose, const core::scoring::ScoreFunctionCOP dock_scorefxn, DockJumps const movable_jumps );
+
+/// @brief Calculates the fraction of non-native contacts recovered between the input and native pose.  A native-contact is defined
+/// as defined by a residue from one partner being within 5A of a residue from the other partner in the native structure. Fnonnat = Nnon-native-contact/Nnative_contact
+core::Real calc_Fnonnat( const core::pose::Pose & pose, const core::pose::Pose & native_pose, const core::scoring::ScoreFunctionCOP dock_scorefxn, DockJumps const movable_jumps );
+
+/// @brief Calculates the fraction of native contacts from the given native contacts pair list
+core::Real calc_Fnat( const core::pose::Pose & pose, std::string const& list_file, DockJumps const movable_jumps );
+
+/// @brief Calculates the fraction of non-native contacts from the given native contacts pari list
+core::Real calc_Fnonnat( const core::pose::Pose & pose, std::string const& list_file, DockJumps const movable_jumps );
 
 // @brief Determines if two residues are in contact within a supplied cutoff distance
 bool calc_res_contact( core::conformation::ResidueOP rsd1, core::conformation::ResidueOP rsd2, core::Real dist_cutoff);

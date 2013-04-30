@@ -39,7 +39,7 @@ test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executabl
 if type -P sqlite3 &>/dev/null; then
    sqlite3 features_IntegrationTest.db3 'UPDATE protocols SET svn_url = "";'
    sqlite3 features_IntegrationTest.db3 'UPDATE protocols SET svn_version = "";'
-   sqlite3 features_IntegrationTest.db3 '.dump' > features_IntegrationTest.db3.dump 
+   sqlite3 features_IntegrationTest.db3 '.dump' | egrep -vf ../../ignore_list > features_IntegrationTest.db3.dump 
 else
    echo "Please install the sqlite3 command line application to correctly run this test." > log_db_output
 fi

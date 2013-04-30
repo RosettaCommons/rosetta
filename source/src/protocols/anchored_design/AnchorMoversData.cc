@@ -677,7 +677,7 @@ core::fragment::FragSetCOP protocols::anchored_design::AnchorMoversData::autogen
 	core::fragment::FragSetOP fragset(new core::fragment::ConstantLengthFragSet( frags_length ));
 
 	std::string ss_string(frags_length, 'L');
-	core::fragment::FragDataList list;
+	core::fragment::FragDataOPs list;
 	list =  core::fragment::picking_old::vall::pick_fragments_by_ss( ss_string, 4000, false ); //magic number: 4000 fragments
 
 	core::Size const numloop = num_loops();
@@ -709,7 +709,7 @@ core::fragment::FragSetCOP protocols::anchored_design::AnchorMoversData::autogen
 	core::fragment::FragSetOP fragset(new core::fragment::ConstantLengthFragSet( frags_length ));
 
 	std::string ss_string(frags_length, 'L');
-	core::fragment::FragDataList list;
+	core::fragment::FragDataOPs list;
 
 	core::Size const numloop = num_loops();
 	std::set< core::Size > loop_posns;

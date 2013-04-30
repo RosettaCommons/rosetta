@@ -16,6 +16,13 @@
 
 // Package Headers
 #include <protocols/evaluation/EvaluatorCreator.hh>
+#include <protocols/filters/Filter.hh>
+#include <devel/replica_docking/InteractionScoreFilter.hh>
+#include <devel/replica_docking/IrmsdFilter.hh>
+#include <devel/replica_docking/FnatFilter.hh>
+#include <devel/replica_docking/LrmsdFilter.hh>
+#include <devel/replica_docking/FnonnatFilter.hh>
+#include <devel/replica_docking/CaIrmsdFilter.hh>
 
 // Package Headers
 #include <protocols/evaluation/PoseEvaluator.fwd.hh>
@@ -60,6 +67,11 @@ void WrapFilterAsEvaluatorCreator::register_options() {
 	options_registered_ = true;
 
 	OPT( evaluation::I_sc );
+ 	OPT( evaluation::Irms );
+	OPT( evaluation::Fnat );
+	OPT( evaluation::Lrmsd );
+	OPT( evaluation::Ca_Irms );
+	OPT( evaluation::DockMetrics );
 
 }
 
@@ -69,28 +81,31 @@ void WrapFilterAsEvaluatorCreator::add_evaluators( protocols::evaluation::MetaPo
 	using namespace basic::options::OptionKeys;
 
 
-	if ( option[ OptionKeys::evaluation::I_sc ].user() ) {
+	if ( option[ OptionKeys::evaluation::I_sc ].user() || option[ OptionKeys::evaluation::DockMetrics ].user() ) {
+		tr << "Add I_sc evaluator " << std::endl;
+		protocols::filters::FilterOP f = new devel::replica_docking::InteractionScoreFilter();
+		eval.add_evaluation( new devel::replica_docking::WrapFilterAsEvaluator( f , "I_sc" ) );
+	}
+	if ( option[ OptionKeys::evaluation::Irms ].user() || option[ OptionKeys::evaluation::DockMetrics ].user() ) {
+		tr << "Add Irms evaluator " << std::endl;
+		eval.add_evaluation( new WrapFilterAsEvaluator( new devel::replica_docking::IrmsdFilter(), "Irms" ) );
+	}
 
-		tr << "Add evaluator of I_sc " << std::endl;
-		std::string scorefxn_name = option[ OptionKeys::evaluation::I_sc ]();
-		eval.add_evaluation( new WrapFilterAsEvaluator( "I_sc", scorefxn_name ) );
-
-
-//     typedef utility::vector1< std::string > CSVector;
-// 		CSVector const& cs_shifts( option[ OptionKeys::evaluation::chemical_shifts ]() );
-
-// 		for ( CSVector::const_iterator it=cs_shifts.begin(); it!=cs_shifts.end(); ++it ) {
-// 			std::string fname( *it );
-// 			std::string column;
-// 			++it;
-// 			if ( it != cs_shifts.end() ) {
-// 				column = *it;
-// 			} else {
-// 				utility_exit_with_message(
-// 							 "need to specify dupletss <cs_shifts> <column> with option -evaluation:chemical_shifts   last read: "+fname );
-// 			}
-// 			eval.add_evaluation( new ChemicalShiftEvaluator( column, fname ) );
-// 		}
+	if ( option[ OptionKeys::evaluation::Ca_Irms ].user() || option[ OptionKeys::evaluation::DockMetrics ].user() ) {
+		tr << "Add Irms evaluator " << std::endl;
+		eval.add_evaluation( new WrapFilterAsEvaluator( new devel::replica_docking::CaIrmsdFilter(), "Ca_Irms" ) );
+	}
+	if ( option[ OptionKeys::evaluation::Fnat ].user() || option[ OptionKeys::evaluation::DockMetrics ].user() ) {
+		tr << "Add evaluator of Fnat " << std::endl;
+		eval.add_evaluation( new WrapFilterAsEvaluator( new FnatFilter(), "Fnat_n" ) );
+	}
+	if ( option[ OptionKeys::evaluation::Lrmsd ].user() || option[ OptionKeys::evaluation::DockMetrics ].user() ) {
+		tr << "Add Lrmsd evaluator " << std::endl;
+		eval.add_evaluation( new WrapFilterAsEvaluator( new devel::replica_docking::LrmsdFilter(), "Lrmsd" ) );
+	}
+	if ( option[ OptionKeys::evaluation::Fnonnat ].user() || option[ OptionKeys::evaluation::DockMetrics ].user() ) {
+		tr << "Add evaluator of Fnonnat " << std::endl;
+		eval.add_evaluation( new WrapFilterAsEvaluator( new FnonnatFilter(), "Fnonnat" ) );
 	}
 }
 

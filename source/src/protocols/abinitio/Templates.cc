@@ -335,7 +335,7 @@ void Templates::_get_scored_list( TemplateList& cst_list, Size topN, Real wTopol
 
 
 Size
-Templates::pick_frags( FragSet& frag_set, core::fragment::FragDataOP frag_type, Size ncopies /* default 1 */) const {
+Templates::pick_frags( FragSet& frag_set, core::fragment::FragDataCOP frag_type, Size ncopies /* default 1 */) const {
 
 	Size nframes = target_total_residue() - frag_type->size() + 1;
 	FrameList frames;
@@ -359,7 +359,7 @@ Templates::pick_frags( FragSet& frag_set, core::fragment::FragDataOP frag_type, 
 
 
 FragSetOP
-Templates::pick_frags( FragSetOP frag_set, core::fragment::FragDataOP frag_type, Size min_nr_frags, Size ncopies /* default 1 */ ) const {
+Templates::pick_frags( FragSetOP frag_set, core::fragment::FragDataCOP frag_type, Size min_nr_frags, Size ncopies /* default 1 */ ) const {
 
 	ConstantLengthFragSet template_frags;
 	Size total( 0 );

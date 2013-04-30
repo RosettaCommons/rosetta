@@ -64,6 +64,12 @@ namespace evaluation { extern IntegerOptionKey const score_sscore_maxloop; }
 namespace evaluation { extern BooleanOptionKey const rpf; }
 namespace evaluation { extern IntegerOptionKey const window_size; }
 namespace evaluation { extern StringOptionKey const I_sc; }
+namespace evaluation { extern BooleanOptionKey const Irms; }
+namespace evaluation { extern BooleanOptionKey const Ca_Irms; }
+namespace evaluation { extern BooleanOptionKey const Fnat; }
+namespace evaluation { extern BooleanOptionKey const Lrmsd; }
+namespace evaluation { extern BooleanOptionKey const Fnonnat; }
+namespace evaluation { extern BooleanOptionKey const DockMetrics; }
 
 } // namespace OptionKeys
 } // namespace options

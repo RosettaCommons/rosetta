@@ -272,6 +272,7 @@ Options = Option_Group( '',
 				short="Read LINK records?",
 				legal=["true", "false"],
 				default="false"),
+                        Option( 'native_contacts', 'File', desc='native contacts pair list for fnat/fnon-nat calculation in Docking'),
 		), # file
 		Option_Group( 'rdf',
 			Option( 'sep_bb_ss', 'Boolean',
@@ -1228,6 +1229,12 @@ Options = Option_Group( '',
 		Option( 'rpf', 'Boolean', desc='will compute RPF score with distance cutoff 5 and store in column rpf_score', default='false' ),
 		Option( 'window_size', 'Integer', desc='Window size for local RMSD calculations in windowed_rmsd app', default='5'),
 		Option( 'I_sc', 'String', desc='score function name used to calculate I_sc', default = 'score12' ),
+		Option( 'Irms', 'Boolean', desc='will compute the docking interface rmsd', default='false'),
+    Option( 'Ca_Irms', 'Boolean', desc='will compute the docking Ca-atom interface rmsd', default='false'),
+		Option( 'Fnat', 'Boolean', desc='will compute the docking recovered fraction of native contacts', default='false'),
+		Option( 'Lrmsd', 'Boolean', desc='will compute the docking ligand rmsd', default='false'),
+		Option( 'Fnonnat', 'Boolean', desc='will compute the fraction of non-native contacts for docking', default='false'),
+		Option( 'DockMetrics', 'Boolean', desc='will compute all docking metrics (I_sc/Irms/Fnat/Lrmsd for now) for replica docking', default='false'),
 	),
 
 	# Filter Options -----------------------------------------------------------
@@ -2183,6 +2190,8 @@ Options = Option_Group( '',
 	# rescore mode -----------------------------------------------------------
 	Option_Group( 'rescore',
 		Option( 'pose_metrics', 'Boolean', desc="Do pose metrics calc" ),
+
+		Option( 'assign_ss', 'Boolean', desc="Invoke DSSP to assign secondary structure.", default = 'false' ),
 
 		Option( 'skip', 'Boolean', desc="Dont actually call scoring function (i.e. get evaluators only)" ),
 		Option( 'verbose', 'Boolean', desc="Full break down of weights, raw scores and weighted scores ?" ),

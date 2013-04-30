@@ -50,6 +50,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/prof.hh>
 
+#include <ObjexxFCL/string.functions.hh>
 //Auto Headers
 #include <core/io/silent/SilentFileData.hh>
 #include <protocols/noesy_assign/CrossPeakList.impl.hh>
@@ -141,7 +142,8 @@ NoesyModule::~NoesyModule() {}
 ///Constructor   - read input files / requires options to be initialized
 NoesyModule::NoesyModule( std::string const& fasta_sequence ) :
   crosspeaks_( NULL ),
-  main_resonances_( new ResonanceList( fasta_sequence ) )
+	sequence_( fasta_sequence )
+	//  main_resonances_( new ResonanceList( fasta_sequence ) )
 {
 	read_input_files();
 	runtime_assert( options_registered_ );
@@ -153,12 +155,13 @@ NoesyModule::NoesyModule( std::string const& fasta_sequence ) :
 ///delete all data and read input files again...  aka fresh_instance()
 void NoesyModule::reset() {
 	crosspeaks_ = NULL;
-	main_resonances_ = new ResonanceList( main_resonances_->sequence() );
+	//	main_resonances_ = new ResonanceList( main_resonances_->sequence() );
 	read_input_files();
 }
 
 ///read peak- and resonance files
 void NoesyModule::read_input_files() {
+	ResonanceListOP main_resonances( new ResonanceList( sequence() ) );
 	basic::ProfileThis doit( basic::NOESY_ASSIGN_READ_INPUT );
 	using namespace basic::options;
 	//read resonances
@@ -166,11 +169,11 @@ void NoesyModule::read_input_files() {
 		utility::io::izstream input_file( option[ OptionKeys::noesy::in::resonances ]() );
 		utility::io::ozstream output_file( option[ OptionKeys::noesy::out::resonances ]() );
 		if ( input_file.good() ) {
-			main_resonances_->read_from_stream( input_file );
-			main_resonances_->write_to_stream( output_file );
+			main_resonances->read_from_stream( input_file );
+			main_resonances->write_to_stream( output_file );
 			if ( option[ OptionKeys::noesy::out::talos ].user() ) {
 				utility::io::ozstream talos_file( option[ OptionKeys::noesy::out::talos ]() );
-				main_resonances_->write_talos_format( talos_file, true /*backbone only*/ );
+				main_resonances->write_talos_format( talos_file, true /*backbone only*/ );
 			}
 		} else {
 			tr.Error << "cannot read " << input_file << std::endl;
@@ -188,14 +191,14 @@ void NoesyModule::read_input_files() {
 			std::string file( option[ OptionKeys::noesy::in::peaks ]()[ ifile ] );
 			utility::io::izstream input_file( file );
 			if ( input_file.good() ) {
-				if ( main_resonances_->size() < 1 ) {
+				if ( main_resonances->size() < 1 ) {
 					throw utility::excn::EXCN_BadInput( "attempt to read Peak-Files with option -noesy:in:peaks without a global resonance file: -noesy:in:resonances" );
 				}
 				PeakFileFormat_xeasy format;
 				format.set_filename( option[ OptionKeys::noesy::in::peaks ]()[ ifile ].base() );
 				format.set_ignore_assignments( !option[ OptionKeys::noesy::in::use_assignments ]() );
 				tr.Info << "reading " << file << "... " << std::endl;
-				crosspeaks_->read_from_stream( input_file, format, main_resonances_ );
+				crosspeaks_->read_from_stream( input_file, format, main_resonances );
 			} else {
 				tr.Error << "cannot read " << file << std::endl;
 			}
@@ -209,10 +212,14 @@ void NoesyModule::read_input_files() {
 			throw utility::excn::EXCN_BadInput( "odd number of entries in option -noesy:in:peak_resonance_pairs, always provide pairs of files  <*.peaks> <*.prot>" );
 		}
 		for ( core::Size ifile = 1; ifile <= n_pair_files; ifile += 2 ) {
-			ResonanceListOP resonances = new ResonanceList( main_resonances_->sequence() );
+			ResonanceListOP resonances = new ResonanceList( sequence() );
 			utility::io::izstream res_input_file( option[ OptionKeys::noesy::in::peak_resonance_pairs ]()[ ifile+1 ] );
 			if ( res_input_file.good() ) {
 				resonances->read_from_stream( res_input_file );
+				if ( tr.Debug.visible() ) {
+					utility::io::ozstream output_file( "cs_"+ObjexxFCL::string_of( ceil(ifile/2 ))+".dat" );
+					resonances->write_to_stream( output_file );
+				}
 			} else {
 				tr.Error << "cannot read " << res_input_file << std::endl;
 				throw utility::excn::EXCN_FileNotFound( option[ OptionKeys::noesy::in::resonances ]() );
@@ -262,9 +269,9 @@ void NoesyModule::write_assignments( std::string file_name ) {
 	PeakFileFormatOP format;
 	std::string const format_str( option[ OptionKeys::noesy::out::format ]() );
 	if ( format_str == "xeasy" ) {
-		format = new PeakFileFormat_xeasy( main_resonances_ );
+		format = new PeakFileFormat_xeasy();
 	} else if ( format_str == "sparky" ) {
-		format = new PeakFileFormat_Sparky( main_resonances_ );
+		format = new PeakFileFormat_Sparky();
 	} else utility_exit_with_message( "NOE_data output format "+format_str+" is not known! ");
 	format->set_write_atom_names( option[ OptionKeys::noesy::out::names ]() );
 	format->set_write_only_highest_VC( option[ OptionKeys::noesy::out::unambiguous ]() );
@@ -295,10 +302,10 @@ void NoesyModule::assign() {
 		}
 	}
 	if ( sfd.begin() != sfd.end() ) {
-		if ( sfd.begin()->sequence().one_letter_sequence() != resonances().sequence() ) {
+		if ( sfd.begin()->sequence().one_letter_sequence() != sequence() ) {
 			std::ostringstream str;
 			str << "Sequence of input structures in file " << file_name << " does not match the sequence in resonance file and fasta-file\n";
-			str << "Resonances: " << resonances().sequence() << "\n";
+			str << "Resonances: " << sequence() << "\n";
 			str << "Ensemble: " << sfd.begin()->sequence().one_letter_sequence();
 			utility_exit_with_message( str.str() );
 		}

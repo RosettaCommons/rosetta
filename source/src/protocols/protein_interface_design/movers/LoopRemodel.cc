@@ -410,10 +410,10 @@ LoopRemodel::pick_loop_frags( protocols::loops::LoopsCOP loops_in, std::string c
 				TR.Debug << "Window aa: " << aa << std::endl;
 
 				// pick fragments
-				FragDataList list;
+				FragDataOPs list;
 				if( design() ) list =  picking_old::vall::pick_fragments_by_ss( ss, 4000, true /*add random noise*/ ); //magic number: 4000 fragments
 				else list = picking_old::vall::pick_fragments_by_ss_plus_aa( ss, aa, 4000, true );
-				for( FragDataList::const_iterator it = list.begin(); it != list.end(); ++it ) {
+				for( FragDataOPs::const_iterator it = list.begin(); it != list.end(); ++it ) {
 					TR.Debug << (*it)->size() << " " << (*it)->sequence() << std::endl;
 				}
 

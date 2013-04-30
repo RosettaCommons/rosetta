@@ -210,7 +210,7 @@ public:
 		core::Size const frags_length(3); //magic number: 3mer fragments!!
 		core::fragment::FragSetOP fragset(new core::fragment::ConstantLengthFragSet( frags_length ));
 		std::string ss_string(frags_length, 'L');
-		core::fragment::FragDataList list;
+		core::fragment::FragDataOPs list;
 
 		if(!basic::options::option[basic::options::OptionKeys::debug_skip_fragment_generation].value()){
 			for (core::Size j = start; j <= stop-frags_length+1; ++j){

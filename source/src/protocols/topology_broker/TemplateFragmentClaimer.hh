@@ -22,7 +22,7 @@
 
 // Package Headers
 #include <protocols/topology_broker/FragmentClaimer.hh>
-#include <protocols/topology_broker/DofClaim.fwd.hh>
+#include <protocols/topology_broker/claims/DofClaim.fwd.hh>
 #include <protocols/topology_broker/weights/AbinitioMoverWeight.hh>
 
 // Project Headers

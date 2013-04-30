@@ -16,10 +16,10 @@
 
 
 // Unit Headers
-// AUTO-REMOVED #include <protocols/topology_broker/FoldandDockClaimer.fwd.hh>
+#include <protocols/topology_broker/MembraneTopologyClaimer.fwd.hh>
 
 // Package Headers
-#include <protocols/topology_broker/DofClaim.fwd.hh>
+#include <protocols/topology_broker/claims/DofClaim.fwd.hh>
 #include <protocols/topology_broker/TopologyClaimer.hh>
 
 // Project Headers
@@ -67,8 +67,8 @@ namespace protocols {
 								   );
 
 			virtual void initialize_dofs( core::pose::Pose&,
-										 DofClaims const& init_claims,
-										 DofClaims& /*failed_to_init*/ );
+										 claims::DofClaims const& init_claims,
+										 claims::DofClaims& /*failed_to_init*/ );
 
 			void addVirtualResAsRootMembrane( core::pose::Pose & pose );
 

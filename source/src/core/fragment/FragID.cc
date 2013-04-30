@@ -30,7 +30,7 @@ namespace fragment {
 
 FragID::FragID() : first( 0 ), second( 0 ) {}
 
-FragID::FragID( FrameOP frame, Size frag_id )
+FragID::FragID( FrameCOP frame, Size frag_id )
 	: first( frame ), second( frag_id )
 {
 	assert( frame->nr_frags() >= frag_id );
@@ -59,14 +59,11 @@ FragID::frame_ptr() const { return first; }
 Frame const&
 FragID::frame() const { return *first; }
 
-Frame&
-FragID::frame() { return *first; }
+//Frame&
+//FragID::frame() { return *first; }
 
 Size
 FragID::id() const { return second; } // stores the nr you get by asking frame.frag_id ( nr );
-
-FragData &
-FragID::fragment() { return frame().fragment( id() ); }
 
 FragData const &
 FragID::fragment() const { return frame().fragment( id() ); }

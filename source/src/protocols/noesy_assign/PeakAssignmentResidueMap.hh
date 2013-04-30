@@ -86,7 +86,7 @@ public:
   //void invalidate_competitors_to_sequential_NOE( CrossPeakList& );
 
 	void network_analysis( Size n_total_assignments );
-	void network_analysis2( ResonanceList const& resonances );
+	void network_analysis2(); // ResonanceList const& resonances );
   ///@brief get list of PeakAssignments for pair of residues --- throws Exception
   PeakAssignments const& assignments( core::Size resi, core::Size resj ) const;
   PeakAssignments& assignments( core::Size resi, core::Size resj );

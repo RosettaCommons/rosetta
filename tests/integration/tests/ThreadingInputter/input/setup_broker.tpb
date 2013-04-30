@@ -23,13 +23,6 @@ END_CLAIMER
 #FILE start_autobuild_4_trim_cterm_0001.pdb
 #END_CLAIMER
 
-ABINITIO_FRAGS
-#this will initialize fragments mover as in classic-abinitio
-#small frags and large frags   smooth moves in stage4
-#LARGE boinc_aaem_nsf09_05.200_v1_3.gz
-#SMALL boinc_aaem_nsf03_05.200_v1_3.gz
-END_ABINITO
-
 CLAIMER RigidChunkClaimer
 # defines a chunk
 USE_THREADING_LOOPS

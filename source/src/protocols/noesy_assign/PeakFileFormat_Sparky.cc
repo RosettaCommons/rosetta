@@ -61,9 +61,9 @@ namespace noesy_assign {
 
 using namespace core;
 
-PeakFileFormat_Sparky::PeakFileFormat_Sparky( ResonanceListOP const& res )  :
-	PeakFileFormat( res )
-{}
+//PeakFileFormat_Sparky::PeakFileFormat_Sparky( ResonanceListOP const& res )  :
+//	PeakFileFormat( res )
+//{}
 
 void PeakFileFormat_Sparky::write_peak( std::ostream& os, Size ct, CrossPeak const& cp ) const {
 	std::ostringstream line_end;
@@ -157,7 +157,7 @@ void PeakFileFormat_Sparky::write_assignment( std::ostream& os, PeakAssignment c
 			else atom = pa.label_atom( iproton );
 			if ( resid != atom.rsd() ) {
 				resid = atom.rsd();
-				core::chemical::AA aa( resonances().aa_from_resid( atom.rsd() ));
+				core::chemical::AA aa( pa.resonances().aa_from_resid( atom.rsd() ));
 				buf << oneletter_code_from_aa(aa) << resid;
 			}
 			buf << atom.atom();

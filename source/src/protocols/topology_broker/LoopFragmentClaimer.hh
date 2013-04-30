@@ -58,6 +58,8 @@ namespace topology_broker {
 class LoopFragmentClaimer : public FragmentClaimer {
 public:
 	LoopFragmentClaimer( core::fragment::FragSetOP );
+	LoopFragmentClaimer( core::fragment::FragSetOP, std::string label );
+
 
 	///@brief type() is specifying the output name of the TopologyClaimer
 	virtual std::string type() const {

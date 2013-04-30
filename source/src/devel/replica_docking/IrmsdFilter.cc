@@ -13,24 +13,30 @@
 
 #include <devel/replica_docking/IrmsdFilter.hh>
 #include <devel/replica_docking/IrmsdFilterCreator.hh>
+
 #include <core/pose/Pose.hh>
-#include <core/id/AtomID_Map.hh>
-#include <core/conformation/Residue.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/import_pose/import_pose.hh>
+#include <core/types.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
-#include <basic/MetricValue.hh>
-#include <utility/tag/Tag.hh>
 #include <protocols/moves/DataMap.hh>
+#include <protocols/docking/metrics.hh>
+
+
+#include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
+#include <utility/tools/make_vector1.hh>
 
-#include <core/import_pose/import_pose.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-
+#include <basic/options/option_macros.hh>
+#include <basic/MetricValue.hh>
 // Project Headers
-#include <core/types.hh>
+
+
+
 
 static basic::Tracer TR( "devel.replica_docking.IrmsdFilter" );
 
@@ -43,30 +49,47 @@ IrmsdFilterCreator::create_filter() const { return new IrmsdFilter; }
 std::string
 IrmsdFilterCreator::keyname() const { return "Irms"; }
 
+void IrmsdFilter::register_options() {
+	using namespace basic::options;
+	if ( options_registered_ ) return;
+	options_registered_ = true;
+
+	OPT( in::file::native );
+}
+
 
 IrmsdFilter::IrmsdFilter() :
 	Filter( "Irms" ),
 	lower_threshold_( 0.0 ),
-	upper_threshold_(9999),
-	jump_( 1 )
+	upper_threshold_(9999)
 {
-	if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
-		core::import_pose::pose_from_pdb( *native_pose_, basic::options::option[ basic::options::OptionKeys::inf::file::native ]);
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	if ( option[ in::file::native ].user() ) {
+		core::pose::PoseOP native_pose = new core::pose::Pose();
+		core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]());
+ 		native_pose_ = native_pose;
 	} else {
 		utility_exit_with_message("need to specify native pdb to calculate Irms");
 	}
 	scorefxn_ = core::scoring::getScoreFunction();
+	//	scorefxn_->show(TR.Info);
+	movable_jumps_ = utility::tools::make_vector1<core::Size>(1);
+	TR << "End constructer"<<std::endl;
 
 }
 
 IrmsdFilter::IrmsdFilter( core::scoring::ScoreFunctionOP sfxn, core::Size const rb_jump,core::Real const lower_threshold, core::Real const upper_threshold ) :
 	Filter( "Irms" ),
 	lower_threshold_( lower_threshold ),
-	upper_threshold_(upper_threshold),
-	jump_( rb_jump )
+	upper_threshold_(upper_threshold)
 {
-	if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
-		core::import_pose::pose_from_pdb( *native_pose_, basic::options::option[ basic::options::OptionKeys::inf::file::native ]);
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	if ( option[ in::file::native ].user() ) {
+		core::pose::PoseOP native_pose = new core::pose::Pose();
+		core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]);
+ 		native_pose_ = native_pose;
 	} else {
 		utility_exit_with_message("need to specify native pdb to calculate Irms");
 	}
@@ -76,8 +99,10 @@ IrmsdFilter::IrmsdFilter( core::scoring::ScoreFunctionOP sfxn, core::Size const 
 	} else {
 		scorefxn_ = sfxn->clone();
 	}
-	tr.Info <<"IrmsdEvaluator: "<<"score" << std::endl;
-	scorefxn_->show(tr.Info);
+	TR.Info <<"IrmsdEvaluator: "<<"score" << std::endl;
+	//	scorefxn_->show(TR.Info);
+	movable_jumps_.push_back( rb_jump );
+	TR << "End constructer"<<std::endl;
 
 }
 
@@ -94,11 +119,16 @@ IrmsdFilter::fresh_instance() const{
 }
 
 void
-IrmsdFilter::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose )
-{
+IrmsdFilter::parse_my_tag(
+	utility::tag::TagPtr const tag,
+	protocols::moves::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const &
+	) {
 
-//  	std::string const scorefxn_name( tag->getOption<std::string>( "scorefxn", "score12" ) );
-// 	scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( scorefxn_name );
+ 	std::string const scorefxn_name( tag->getOption<std::string>( "scorefxn", "score12" ) );
+	scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( scorefxn_name );
 // // 	scorefxn_ = new core::scoring::ScoreFunction( *(data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name )) );
 
 // //	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data );
@@ -111,6 +141,7 @@ IrmsdFilter::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::Dat
 
 bool
 IrmsdFilter::apply( core::pose::Pose const & pose ) const {
+
 	core::Real const Irms( compute( pose ) );
 
 	TR<<"Irms is "<<Irms<<". ";
@@ -137,23 +168,18 @@ IrmsdFilter::report_sm( core::pose::Pose const & pose ) const {
 }
 
 void
-IrmsdFilter::jump( core::Size const jump )
+IrmsdFilter::jump( core::Size const jump_id )
 {
-	jump_ = jump;
+	movable_jumps_.push_back( jump_id );
 }
 
-core::Size
-IrmsdFilter::jump() const
-{
-	return jump_;
-}
 
 core::Real
 IrmsdFilter::compute( core::pose::Pose const & pose ) const {
+	TR<<"compute Irms"<< std::endl;
 
-	irms = protocols::docking::Calc_Irms( pose, *native_pose_, scorefxn_, jump_ );
-
-	return( interaction_energy );
+	core::Real irms = protocols::docking::calc_Irmsd( pose, *native_pose_, scorefxn_, movable_jumps_ );
+	return( irms );
 }
 
 }

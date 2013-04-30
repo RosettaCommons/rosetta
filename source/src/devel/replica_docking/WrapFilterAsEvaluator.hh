@@ -47,11 +47,11 @@ namespace replica_docking {
 
 class WrapFilterAsEvaluator : public protocols::evaluation::SingleValuePoseEvaluator< core::Real > {
 public:
-  WrapFilterAsEvaluator( std::string tag, std::string scorefxn_name );
+  WrapFilterAsEvaluator( protocols::filters::FilterOP, std::string );
 	virtual core::Real apply( core::pose::Pose& pose ) const;
   virtual bool applicable( core::pose::Pose const&pose ) const;
 private:
-	protocols::filters::FilterOP iscfilter_; //since this class is far from const-correct..
+	protocols::filters::FilterOP filter_; //since this class is far from const-correct..
 };
 
 // class WrapFilterAsEvaluator : public ExternalEvaluator {

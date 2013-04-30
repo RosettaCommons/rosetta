@@ -22,7 +22,7 @@
 
 // Package Headers
 #include <protocols/topology_broker/TopologyClaimer.hh>
-#include <protocols/topology_broker/JumpClaimer.hh>
+#include <protocols/topology_broker/FragmentJumpClaimer.hh>
 #include <protocols/topology_broker/SequenceClaimer.hh>
 
 #include <protocols/jumping/ResiduePairJumpSetup.hh>
@@ -60,7 +60,7 @@
 namespace protocols {
 namespace topology_broker {
 
-class MetalloClaimer : public SequenceClaimer, public JumpClaimer {
+class MetalloClaimer : public SequenceClaimer, public FragmentJumpClaimer {
 public:
 	MetalloClaimer(); //for factory
 	~MetalloClaimer() {};
@@ -71,25 +71,22 @@ public:
 		return new MetalloClaimer( *this );
 	}
 
-	virtual void generate_sequence_claims( DofClaims& dc ) {
-		JumpClaimer::generate_sequence_claims( dc );
+	virtual void generate_sequence_claims( claims::DofClaims& dc ) {
+		FragmentJumpClaimer::generate_sequence_claims( dc );
 		SequenceClaimer::generate_sequence_claims( dc );
 	};
 
 	///mainly calls parent function... but is also used to figure out what residue number we are jumping to.
-	virtual void initialize_residues( core::pose::Pose&, SequenceClaimOP init_claim, DofClaims& failed_to_init );
+	// virtual void initialize_residues( core::pose::Pose&, claims::SequenceClaimOP init_claim, claims::DofClaims& failed_to_init );
 
-	virtual void generate_claims( protocols::topology_broker::DofClaims& dc) {
-		JumpClaimer::generate_claims( dc );
-		SequenceClaimer::generate_claims( dc );
-	}
+	virtual void generate_claims( protocols::topology_broker::claims::DofClaims& dc);
 
 	///@brief is called after all round1 claims have been approved or retracted -- additional claims can be issued in this round
 	//virtual DofClaims finalize_claims( DofClaims& );
 
- 	virtual void initialize_dofs( core::pose::Pose& pose, DofClaims const& init_claims, DofClaims& failed_to_init ) {
- 		DofClaims my_failures;
-		JumpClaimer::initialize_dofs( pose, init_claims, my_failures );
+ 	virtual void initialize_dofs( core::pose::Pose& pose, claims::DofClaims const& init_claims, claims::DofClaims& failed_to_init ) {
+ 		claims::DofClaims my_failures;
+		FragmentJumpClaimer::initialize_dofs( pose, init_claims, my_failures );
  		SequenceClaimer::initialize_dofs( pose, my_failures, failed_to_init );
  	};
 

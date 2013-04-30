@@ -31,7 +31,7 @@ OPT_1GRP_KEY( Real, noesy_weights, symmetry )
 OPT_1GRP_KEY( Real, noesy_weights, covalent )
 //OPT_1GRP_KEY( Real, noesy_weights, decoys )
 OPT_1GRP_KEY( Real, noesy_weights, Smax )
-OPT_1GRP_KEY( Real, noesy_weights, dcut )
+
 OPT_1GRP_KEY( Real, noesy_weights, network_min )
 OPT_1GRP_KEY( Real, noesy_weights, network_atom_min )
 OPT_1GRP_KEY( Real, noesy_weights, dcalibrate )
@@ -53,9 +53,14 @@ OPT_2GRP_KEY( RealVector, noesy_weights, defaults, dcalibrate )
 OPT_2GRP_KEY( RealVector, noesy_weights, defaults, calibration_target )
 
 
-OPT_1GRP_KEY( Real, noesy_weights, elim_dist_viol )
+
 OPT_1GRP_KEY( Real, noesy_weights, centroid_padding )
 OPT_1GRP_KEY( Boolean, noesy, map_to_cen_atom )
+
+OPT_2GRP_KEY( Integer, noesy, elim, max_assign )
+OPT_2GRP_KEY( Real, noesy, elim, vmin )
+OPT_2GRP_KEY( Real, noesy, elim, dist_viol )
+OPT_2GRP_KEY( Real, noesy, elim, dcut )
 
 
 OPT_1GRP_KEY( Real, noesy_weights, cst_strength  )

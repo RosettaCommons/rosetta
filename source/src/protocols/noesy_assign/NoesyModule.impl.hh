@@ -87,7 +87,7 @@ void NoesyModule::assign( DecoyIterator const& decoys_begin, DecoyIterator const
     }
     //PROF_START( basic::NOESY_ASSIGN_NETWORK_TOTAL );
     if ( !params.no_network_ ) {
-      crosspeaks_->network_analysis( resonances() );
+      crosspeaks_->network_analysis();
     }
     crosspeaks_->update_peak_volumina();
     //PROF_STOP( basic::NOESY_ASSIGN_NETWORK_TOTAL );

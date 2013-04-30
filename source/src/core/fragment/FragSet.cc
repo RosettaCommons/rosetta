@@ -146,7 +146,7 @@ void FragSet::add( FragID const& frag_id ) {
 void
 FragSet::generate_insert_map( MoveMap const& mm, InsertMap &insert_map, InsertSize &insert_size ) const {
 	tr.Debug << "generate insert map from Movemap:\n";
-	for ( Size i = 1; i<=max_pos(); i++) {
+	for ( Size i = 1; i<= max_pos(); i++) {
 		if ( mm.get_bb( i ) ) tr.Debug << "*";
 		else tr.Debug << "x";
 	}
@@ -154,7 +154,7 @@ FragSet::generate_insert_map( MoveMap const& mm, InsertMap &insert_map, InsertSi
 	typedef std::map< Size, Size> InsertSet;
 	InsertSet insert_set;
 
-	for ( FrameIterator it=begin(), eit=end(); it!=eit; ++it ) {
+	for ( ConstFrameIterator it=begin(), eit=end(); it!=eit; ++it ) {
 		Size size ( it->is_valid() ? it->is_applicable( mm ) : 0 );
 		if ( size ) {
 			if ( insert_set[ it->start() ] < size ) insert_set[ it->start() ] = size;
@@ -177,7 +177,7 @@ FragSet::generate_insert_map( MoveMap const& mm, InsertMap &insert_map, InsertSi
 
 Size FragSet::size() const {
 	Size tot = 0;
-	for ( FrameIterator it=begin(), eit=end(); it!=eit; ++it ) {
+	for ( ConstFrameIterator it=begin(), eit=end(); it!=eit; ++it ) {
 		tot+=(*it)->nr_frags();
 	}
 	return tot; //frames_.size();
@@ -185,14 +185,14 @@ Size FragSet::size() const {
 
 Size FragSet::nr_frames() const {
 	Size tot = 0;
-	for ( FrameIterator it=begin(), eit=end(); it!=eit; ++it ) {
+	for ( ConstFrameIterator it=begin(), eit=end(); it!=eit; ++it ) {
 		tot+=1;
 	}
 	return tot; //frames_.size();
 }
 
 void
-FragSet::add( FrameOP aFrame ) {
+FragSet::add( FrameCOP aFrame ) {
 	//std::cerr << "FragSet::add_frame " << std::endl;
 	runtime_assert( aFrame->nr_frags() ); // do not allow insertion of empty frames --> makes frag_id iterator sooo much easier
 	Size start ( aFrame->start() );
@@ -207,6 +207,8 @@ FragSet::add( FrameOP aFrame ) {
 		set_max_pos( end );
 	};
 
+
+
 	//	tr.Trace << "frag length " << length << " ( " << max_frag_length() <<  " ) " << std::endl;
 	if ( length > max_frag_length() ) {
 		tr.Trace << "set max frag length " << length << std::endl;
@@ -217,7 +219,7 @@ FragSet::add( FrameOP aFrame ) {
 	FrameList present_frames;
 	Size nr_present = frames( start, present_frames );
 	if ( !nr_present ) {
-		add_( aFrame );
+		add_( aFrame->clone_with_frags() );
 	} else {
 		for ( FrameList::iterator it = present_frames.begin(),
 						eit = present_frames.end(); it!=eit; ++it ) {
@@ -227,7 +229,7 @@ FragSet::add( FrameOP aFrame ) {
 			}
 		}
 		//didn't found mergable frames at this sequence position
-		add_( aFrame );
+		add_( aFrame->clone_with_frags() );
 	}
 }
 
@@ -240,17 +242,63 @@ FragSet::add( FrameList const& frames ) {
 
 void
 FragSet::add( FragSet const& cframes ) {
-	for ( FrameIterator it=cframes.begin(), eit=cframes.end(); it!=eit; ++it ) {
+	for ( ConstFrameIterator it=cframes.begin(), eit=cframes.end(); it!=eit; ++it ) {
 		add( *it );
 	}
 }
 
 std::ostream& operator<< (std::ostream& out, FragSet const& cfrags ) {
-	for ( FrameIterator it = cfrags.begin(), eit = cfrags.end(); it!=eit; ++it ) {
+	for ( ConstFrameIterator it = cfrags.begin(), eit = cfrags.end(); it!=eit; ++it ) {
 		out << *(*it);
 	}
 	return out;
 }
+
+void FragSet::shift_by( int offset ) {
+	if ( offset == 0 ) return;
+	min_pos_ += offset;
+	max_pos_ += offset;
+	for ( FrameIterator it=nonconst_begin(), eit=nonconst_end(); it!=eit; ++it ) {
+		if ( *it != NULL ) {
+			it->shift_by( offset );
+		}
+	}
+}
+
+
+void FragSet::shift_to( core::Size offset ) {
+	core::Size pos =  offset + 1; //offset = number of residues in front of desired position
+	for ( FrameIterator it=nonconst_begin(), eit=nonconst_end(); it!=eit; ++it ) {
+		if ( *it != NULL ) {
+			it->shift_to( pos );
+			pos++;
+		}
+	}
+}
+
+void FragSet::set_global_offset ( core::Size offset ){
+	if ( offset == global_offset_ ) {
+		tr.Debug << "FragSets have not been shifted as they are already in place (offset: " << offset << ")." << std::endl;
+		return;
+	}
+	global_offset_ = offset;
+	tr.Debug << "Shifted FragSet to position " << offset << std::endl;
+	shift_to( global_offset_ );
+}
+
+
+FragSetOP FragSet::clone_shifted( core::Size offset ) const {
+	FragSetOP newFragSet = empty_clone();
+	core::Size pos = offset + 1;
+	for ( ConstFrameIterator it=begin(), eit=end(); it!=eit; ++it ) {
+		FrameOP newFrame = (*it)->clone_with_frags();
+		newFrame->shift_to( pos );
+		pos += 1;
+		newFragSet->add( newFrame );
+	}
+	return newFragSet;
+}
+
 
 } //fragment
 } //core

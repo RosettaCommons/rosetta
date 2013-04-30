@@ -983,7 +983,7 @@ make_frags(
 	core::Size const frags_length( 1 ); //magic number: 3mer fragments!!
 	core::fragment::FragSetOP fragset( new core::fragment::ConstantLengthFragSet( frags_length ) );
 	std::string ss_string( frags_length, 'L' );
-	core::fragment::FragDataList list;
+	core::fragment::FragDataOPs list;
 
 	for( core::Size j = start; j <= stop - frags_length + 1; ++j ){
 		std::string const seqsubstr( seq, j-1, frags_length ); //j-1 accounts for string [] from 0
@@ -1008,7 +1008,7 @@ make_1mer_frags(
 	core::Size const frags_length( 1 ); 
 	core::fragment::FragSetOP fragset( new core::fragment::ConstantLengthFragSet( frags_length ) );
 	//80% L, 10% H, 10% S
-	core::fragment::FragDataList list;
+	core::fragment::FragDataOPs list;
 
 	for( core::Size j = seqpos_start; j <= seqpos_stop - frags_length + 1; ++j ){
 		//get substr

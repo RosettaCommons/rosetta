@@ -1,0 +1,145 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file protocols/protein_interface_design/filters/RmsdFilter.cc
+/// @brief rmsd filtering
+/// @author Jacob Corn (jecorn@u.washington.edu)
+#include <protocols/protein_interface_design/filters/IRmsdFilter.hh>
+#include <protocols/protein_interface_design/filters/IRmsdFilterCreator.hh>
+#include <protocols/filters/Filter.hh>
+
+// Project Headers
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/types.hh>
+#include <core/pose/Pose.hh>
+#include <core/conformation/Conformation.hh>
+#include <utility/tag/Tag.hh>
+#include <protocols/moves/DataMap.hh>
+#include <protocols/moves/Mover.fwd.hh> //Movers_map
+#include <core/pose/PDBInfo.hh>
+#include <protocols/docking/metrics.hh>
+#include <protocols/rosetta_scripts/util.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+#include <core/import_pose/import_pose.hh>
+
+#include <algorithm>
+#include <list>
+
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+#include <basic/Tracer.hh>
+
+namespace protocols {
+namespace protein_interface_design {
+namespace filters {
+
+IRmsdFilter::IRmsdFilter() :
+  protocols::filters::Filter( "IRmsd" ),
+  threshold_( 5.0 ),
+  reference_pose_( NULL )
+{}
+
+IRmsdFilter::IRmsdFilter(protocols::docking::DockJumps const movable_jumps,
+			 core::Real const threshold,
+			 core::pose::PoseOP reference_pose)
+  : protocols::filters::Filter( "IRmsd" ),
+    threshold_(threshold),
+    reference_pose_(reference_pose),
+    movable_jumps_(movable_jumps)
+{}
+
+IRmsdFilter::~IRmsdFilter() {}
+
+protocols::filters::FilterOP
+IRmsdFilter::clone() const {
+	return new IRmsdFilter( *this );
+}
+
+static basic::Tracer TR( "protocols.protein_interface_design.filters.IRmsdFilter" );
+core::Real
+IRmsdFilter::compute( core::pose::Pose const & pose ) const
+{
+	//ScoreFunctionOP temp = new ScoreFuntion(scorefxn_)
+  return protocols::docking::calc_Irmsd(pose, *reference_pose_, scorefxn_, movable_jumps_);
+}
+
+bool
+IRmsdFilter::apply( core::pose::Pose const & pose ) const {
+	TR << "Beginning compute" << std::endl;
+	core::Real const rmsd( compute( pose ));
+	TR << "I_rmsd: " << rmsd ;
+	if( rmsd <= threshold_ )
+	{
+		TR<<" passing."<<std::endl;
+		return( true );
+	}
+	else TR<<" failing." << std::endl;
+	return( false );
+}
+
+void
+IRmsdFilter::report( std::ostream & out, core::pose::Pose const & pose ) const {
+	core::Real const rmsd( compute( pose ));
+	out<<"RMSD: " << rmsd <<'\n';
+}
+
+core::Real
+IRmsdFilter::report_sm( core::pose::Pose const & pose ) const {
+	core::Real const rmsd( compute( pose ));
+	return( (core::Real) rmsd );
+}
+
+void
+IRmsdFilter::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & reference_pose )
+{
+	/// @details
+	///if the save pose mover has been instantiated, this filter can calculate the rms
+	///against the ref pose
+	if( tag->hasOption("reference_name") ){
+		reference_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag,data_map );
+	}
+	else{
+		reference_pose_ = new core::pose::Pose( reference_pose );
+		if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() )
+			core::import_pose::pose_from_pdb( *reference_pose_, basic::options::option[ basic::options::OptionKeys::in::file::native ] );
+	}
+
+	threshold_ = tag->getOption<core::Real>( "threshold", 5 );
+
+	//TODO: support multiple jumps
+	core::Size jump_num = tag->getOption<core::Size>( "jump", 1);
+
+	movable_jumps_.push_back(jump_num);
+
+	std::string const scorefxn_name( tag->getOption<std::string>( "scorefxn", "score12" ) );
+	core::scoring::ScoreFunction* scorefxn_nasty_pointer =
+		data_map.get< core::scoring::ScoreFunction* >( "scorefxns", scorefxn_name );
+
+	scorefxn_ = new core::scoring::ScoreFunction( *( scorefxn_nasty_pointer ));
+
+	TR<<"Built IRmsdFilter with threshold " << threshold_ << ", scorefxn " <<
+		scorefxn_name <<", jump "<< jump_num << std::endl;
+
+}
+
+protocols::filters::FilterOP
+IRmsdFilterCreator::create_filter() const { return new IRmsdFilter; }
+
+std::string
+IRmsdFilterCreator::keyname() const { return "IRmsd"; }
+
+
+} // filters
+} // protein_interface_design
+} // devel
+
+

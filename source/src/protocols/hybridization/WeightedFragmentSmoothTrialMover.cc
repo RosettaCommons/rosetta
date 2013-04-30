@@ -48,7 +48,7 @@ void WeightedFragmentSmoothTrialMover::update_sampler_weights( utility::vector1<
 	for (Size i_frag_set = 1; i_frag_set<=frag_libs_.size(); ++i_frag_set) {
 		utility::vector1< core::Real > frame_weights(frag_libs_[i_frag_set]->nr_frames(), 0.0);
 		for (Size i_frame = 1; i_frame <= frag_libs_[i_frag_set]->nr_frames(); ++i_frame) {
-			core::fragment::FrameIterator frame_it = frag_libs_[i_frag_set]->begin(); // first frame of the fragment library
+			core::fragment::ConstFrameIterator frame_it = frag_libs_[i_frag_set]->begin(); // first frame of the fragment library
 			std::advance(frame_it, i_frame-1);  // point frame_it to the i_frame of the library
 			core::Size seqpos_start = (*frame_it)->start();  // find starting and ending residue seqpos of the inserted fragment
 			core::Size seqpos_end   = (*frame_it)->end();
@@ -84,7 +84,7 @@ void WeightedFragmentSmoothTrialMover::apply(core::pose::Pose & pose)
 		// pick insertion position
 		core::Size insert_pos = weighted_sampler_[i_frag_set].random_sample(RG);
 
-		core::fragment::FrameIterator frame_it = frag_libs_[i_frag_set]->begin();
+		core::fragment::ConstFrameIterator frame_it = frag_libs_[i_frag_set]->begin();
 		std::advance(frame_it, insert_pos-1);
 		core::Size nr_frags = frame_it->nr_frags();
 		if (nr_frags_ && nr_frags_ < nr_frags) nr_frags = nr_frags_;

@@ -19,7 +19,8 @@
 // AUTO-REMOVED #include <core/conformation/symmetry/SymmetricConformation.hh>
 
 // Package Headers
-#include <protocols/topology_broker/DofClaim.hh>
+#include <protocols/topology_broker/claims/DofClaim.hh>
+#include <protocols/topology_broker/claims/CutClaim.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <basic/Tracer.hh>
 
@@ -41,6 +42,9 @@
 
 //Auto Headers
 #include <core/kinematics/FoldTree.hh>
+
+//C++ Headers
+#include <utility>
 
 // Project Headers
 
@@ -103,8 +107,8 @@ FoldandDockClaimer::add_mover(
 
 void FoldandDockClaimer::initialize_dofs(
 	core::pose::Pose& pose,
-	DofClaims const& init_dofs,
-	DofClaims& /*failed_to_init*/ ) {
+	claims::DofClaims const& init_dofs,
+	claims::DofClaims& /*failed_to_init*/ ) {
 
 	using namespace core::conformation::symmetry;
 
@@ -132,7 +136,7 @@ void FoldandDockClaimer::initialize_dofs(
 	movemap->set_jump( false );
 	core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
 
-	for ( DofClaims::const_iterator it = init_dofs.begin(), eit = init_dofs.end();
+	for ( claims::DofClaims::const_iterator it = init_dofs.begin(), eit = init_dofs.end();
           it != eit; ++it ) {
 		if ( (*it)->owner()==this ) {
 			(*it)->toggle( *movemap, true );
@@ -140,11 +144,12 @@ void FoldandDockClaimer::initialize_dofs(
 	}
 }
 
-void FoldandDockClaimer::generate_claims( DofClaims& new_claims ) {
+void FoldandDockClaimer::generate_claims( claims::DofClaims& new_claims ) {
 	// Set all cuts to real cuts. We don't want to close any of them...
 	utility::vector1< int > cuts( input_pose_.conformation().fold_tree().cutpoints() );
 	for ( Size i = 1; i <= cuts.size(); ++i ) {
-		new_claims.push_back( new CutClaim( this, cuts[i], DofClaim::INIT /* for now... eventually CAN_INIT ? */ ) );
+		new_claims.push_back( new claims::CutClaim( this, std::make_pair( Parent::label(), cuts[i]),
+																								claims::DofClaim::INIT /* for now... eventually CAN_INIT ? */ ) );
 	}
 }
 

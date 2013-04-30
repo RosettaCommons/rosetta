@@ -613,7 +613,7 @@ void PairingLibrary::create_jump_fragments(
   int const orientation,
 	int const pleating,
 	bool bWithTorsion,
-	core::fragment::FragDataList& frags
+	core::fragment::FragDataOPs& frags
 ) const {
 	using namespace core::fragment;
 
@@ -689,7 +689,7 @@ PairingLibrary::generate_jump_frags(
     {
       Size o_key( it->first.first ); //orientation
       Size p_key( it->first.second ); //pleating ... believe me or not, it is in first.second
-			fragment::FragDataList frag_data;
+			fragment::FragDataOPs frag_data;
       create_jump_fragments( o_key, p_key, bWithTorsion, frag_data );
       for ( JumpList::const_iterator jit=it->second.begin(), ejit=it->second.end();
 						jit!=ejit; ++jit ) {

@@ -252,9 +252,7 @@ void protocols::abinitio::IterativeBase::register_options() {
 		NEW_OPT( iterative::update_noesy_filter_cst, "update noesy filter restraints (used for pool selection) as often as possible", false );
 		NEW_OPT( iterative::never_update_noesy_filter_cst, "never update noesy filter restraints (used for pool selection) not even once for fullatom stage", false );
 		NEW_OPT( iterative::refine_auto_noe_flags, "file with extra flags to modify NOESY-Module behavior in refinement phase (stage5+ )", "" );
-
 		NEW_OPT8( iterative::staged_auto_noe_flags, "files with extra flags for each RASREC stage, say NONE for no option file", "NONE", "NONE", "NONE", "NONE", "NONE", "NONE", "NONE", "NONE" );
-
 		NEW_OPT( iterative::split_autoNOE_restraints, "split the generated restraints into HI and MED accuracy class and use restraint combination only on the 2nd class", false );
 		NEW_OPT( iterative::randomize_elimination_candidates, "put the elimination candidates into extra restraint file and only randomly activate them", 0 );
 
@@ -1184,7 +1182,7 @@ void IterativeBase::gen_resample_stage2( jd2::archive::Batch& batch ) {
 					 << "CLAIMER StartStructClaimer\n"
 			     << "PERTURB " << option[ iterative::perturb_resampling ] << std::endl
 					 << "END_CLAIMER\n\n"
-					 << "CLAIMER JumpClaimer\n"
+					 << "CLAIMER FragmentJumpClaimer\n"
 					 << "END_CLAIMER\n\n" << std::endl;
 
 		//skip stage 1
@@ -1382,7 +1380,7 @@ void IterativeBase::gen_cen2fullatom( Batch& batch ) {
 	broker << "\nUSE_INPUT_POSE\n"
 				 << "CLAIMER StartStructClaimer\n"
 				 << "END_CLAIMER\n\n"
-				 << "CLAIMER JumpClaimer\n"
+				 << "CLAIMER FragmentJumpClaimer\n"
 				 << "END_CLAIMER\n\n" << std::endl;
 
 
@@ -1487,7 +1485,7 @@ void IterativeBase::gen_cen2fullatom_non_pool_decoys( Batch& batch ) {
 	broker << "\nUSE_INPUT_POSE\n"
 				 << "CLAIMER StartStructClaimer\n"
 				 << "END_CLAIMER\n\n"
-				 << "CLAIMER JumpClaimer\n"
+				 << "CLAIMER FragmentJumpClaimer\n"
 				 << "END_CLAIMER\n\n" << std::endl;
 
 

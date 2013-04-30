@@ -35,7 +35,7 @@ static basic::Tracer trPdbFilter("protocols.frag_picker.PdbIdChunkFilter");
 void PdbIdChunkFilter::load_pdb_id_from_file(std::string file_name) {
 
 	utility::io::izstream data(file_name.c_str());
-	trPdbFilter.Info << "read allowed PDB ids  from: " << file_name
+	trPdbFilter.Info << "read PDB ids from: " << file_name
 			<< std::endl;
 	if (!data)
 		utility_exit_with_message("[ERROR] Unable to open a file fith allowed PDB ids: "

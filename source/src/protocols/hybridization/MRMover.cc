@@ -531,7 +531,7 @@ void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loop
 		core::fragment::FragSetOP new_frag_set( old_frag_set->empty_clone() );
 
 		// iterate over frames, clone if mapped
-		for ( core::fragment::FrameIterator f=old_frag_set->begin(); f != old_frag_set->end(); ++f ) {
+		for ( core::fragment::ConstFrameIterator f=old_frag_set->begin(); f != old_frag_set->end(); ++f ) {
 			core::Size start_res = f->start();
 			core::Size end_res = f->end();
 

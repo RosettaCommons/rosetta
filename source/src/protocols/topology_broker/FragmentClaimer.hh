@@ -27,6 +27,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <protocols/simple_moves/FragmentMover.fwd.hh>
+#include <core/fragment/FragSet.fwd.hh>
 #include <protocols/loops/Loops.hh>
 
 // ObjexxFCL Headers
@@ -49,7 +50,8 @@ class FragmentClaimer : public virtual TopologyClaimer {
 	typedef TopologyClaimer Parent;
 public:
 	FragmentClaimer(); //for factory
-	FragmentClaimer( simple_moves::FragmentMoverOP, std::string mover_tag, weights::AbinitioMoverWeightOP weight );
+ 	FragmentClaimer( simple_moves::FragmentMoverOP, std::string mover_tag, weights::AbinitioMoverWeightOP weight );
+	FragmentClaimer( simple_moves::FragmentMoverOP, std::string mover_tag, weights::AbinitioMoverWeightOP weight, std::string label, core::fragment::FragSetOP fags );
 	FragmentClaimer( simple_moves::FragmentMoverOP );
 	FragmentClaimer( FragmentClaimer const & src );
 
@@ -59,14 +61,14 @@ public:
 		return new FragmentClaimer( *this );
 	}
 
-	virtual void generate_claims( DofClaims& );
+	virtual void generate_claims( claims::DofClaims& );
 
 	///@brief is called after all round1 claims have been approved or retracted -- additional claims can be issued in this round
 	//virtual DofClaims finalize_claims( DofClaims& );
 
-	virtual void initialize_dofs( core::pose::Pose&, DofClaims const& init_claims, DofClaims& failed_to_init );
+	virtual void initialize_dofs( core::pose::Pose&, claims::DofClaims const& init_claims, claims::DofClaims& failed_to_init );
 
-	virtual bool accept_declined_claim( DofClaim const& was_declined );
+	virtual bool accept_declined_claim( claims::DofClaim const& was_declined );
 
 	///@brief type() is specifying the output name of the TopologyClaimer
 	virtual std::string type() const {
@@ -93,6 +95,16 @@ public:
 
 	void get_sequence_region( std::set< core::Size >& start_region ) const;
 
+	/*void current_offset(core::Size offset){
+		current_offset_ = offset;
+	}
+
+	core::Size current_offset(){
+		return current_offset_;
+	}*/
+
+
+
 
 protected:
 	simple_moves::FragmentMover const & mover() const {
@@ -102,7 +114,11 @@ protected:
 
 	simple_moves::FragmentMoverOP get_frag_mover_ptr();
 
-	void set_claim_right( DofClaim::ClaimRight setting ) {
+	core::fragment::FragSetCOP fragments();
+
+	void set_fragments( core::fragment::FragSetOP );
+
+	void set_claim_right( claims::DofClaim::ClaimRight setting ) {
 		claim_right_ = setting;
 	}
 
@@ -120,7 +136,7 @@ private:
 	//if false the initialize_dofs routine won't do anything -- but also not report the dof as failed-to initialized
 	bool bInitDofs_;
 
-	DofClaim::ClaimRight claim_right_; /*default CAN_INIT */
+	claims::DofClaim::ClaimRight claim_right_; /*default CAN_INIT */
 
 	///@brief regions that can be used for fragment insertions
 	loops::Loops region_;
@@ -128,6 +144,11 @@ private:
 	///@brief if non-empty this claimer operates only on the sequences with these labels...
 	/// create std::set< Size > with residue numbers by get_sequence_region();
 	utility::vector1< std::string > active_sequence_labels_;
+
+	/*
+	///@brief Stores offset of current FragmentClaimer (based on global sequence)
+	core::Size current_offset_;
+	*/
 
 }; //class FragmentClaimer
 

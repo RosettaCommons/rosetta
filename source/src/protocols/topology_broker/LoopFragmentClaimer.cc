@@ -16,7 +16,7 @@
 #include <protocols/topology_broker/LoopFragmentClaimer.hh>
 
 // Package Headers
-#include <protocols/topology_broker/DofClaim.hh>
+#include <protocols/topology_broker/claims/DofClaim.hh>
 #include <protocols/topology_broker/weights/AbinitioMoverWeight.hh>
 #include <core/fragment/FragSet.hh>
 
@@ -57,6 +57,14 @@ LoopFragmentClaimer::LoopFragmentClaimer( fragment::FragSetOP frags ) :
 		"Loops", new weights::ConstAbinitioMoverWeight( 0.0 ) )
 {
  	runtime_assert( frags );
+}
+
+LoopFragmentClaimer::LoopFragmentClaimer( fragment::FragSetOP frags, std::string label ) :
+	FragmentClaimer( new simple_moves::ClassicFragmentMover( frags, new kinematics::MoveMap ),
+		"Loops", new weights::ConstAbinitioMoverWeight( 0.0 ) )
+{
+ 	runtime_assert( frags );
+ 	set_label( label );
 }
 
 fragment::FragSetCOP LoopFragmentClaimer::loop_frags( kinematics::MoveMap& movemap) const {

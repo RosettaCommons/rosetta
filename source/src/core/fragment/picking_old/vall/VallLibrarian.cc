@@ -46,7 +46,7 @@ VallLibrarian::~VallLibrarian()
 
 
 /// @brief get top 'N' fragments from prior catalog()
-VallLibrarian::FragDataList VallLibrarian::top_fragments(
+VallLibrarian::FragDataOPs VallLibrarian::top_fragments(
 	Size const n,
 	BBTorsionSRFD const & srfd_type
 ) const {
@@ -57,14 +57,14 @@ VallLibrarian::FragDataList VallLibrarian::top_fragments(
 /// @brief get fragments from prior catalog() [from, to]
 /// @param from index of the first fragment in the list, indexing starts from '1'
 /// @param to index of the last fragment in the list (inclusive)
-/// @return filled FragDataList if sort() was called successfully, otherwise empty FragDataList
-VallLibrarian::FragDataList VallLibrarian::fragments(
+/// @return filled FragDataOPs if sort() was called successfully, otherwise empty FragDataOPs
+VallLibrarian::FragDataOPs VallLibrarian::fragments(
 	Size from,
 	Size to,
 	BBTorsionSRFD const & srfd_type
 ) const
 {
-	FragDataList fdl;
+	FragDataOPs fdl;
 
 	if ( scores().size() == 0 ) {
 		return fdl;

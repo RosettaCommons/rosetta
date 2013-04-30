@@ -51,6 +51,8 @@ public:
 
   std::string one_letter_sequence() const;
 
+	core::Size length() const;
+
 private:
 
   void calculate_map() const;
@@ -59,6 +61,8 @@ private:
 
   mutable PositionMap pos_map_;
   mutable bool map_is_clean_;
+  mutable std::string one_letter_sequence_;
+  mutable core::Size length_;
 };
 
 }

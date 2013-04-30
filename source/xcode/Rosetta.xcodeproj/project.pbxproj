@@ -1417,7 +1417,6 @@
 		8391B260B691146477FC5C43 /* ObserverCache.cc in Sources */ = {isa = PBXBuildFile; fileRef = DEBFEDAFD94D9F220D49202B /* ObserverCache.cc */; };
 		8399545280195BDBBE23647C /* MembraneJump.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7E455141D04D3877FA820F50 /* MembraneJump.cc */; };
 		83BD0AAE62E1B1C0C1C2E9DB /* RotamerRecoveryCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = E276ECF35C4EB8A0640AB139 /* RotamerRecoveryCreator.cc */; };
-		8415D242FC84A80B365D0D35 /* DofClaim.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6F473F60D921CDC57E14A8D9 /* DofClaim.cc */; };
 		841FC0DCE35821BABD888B71 /* CacheableDataType.cc in Sources */ = {isa = PBXBuildFile; fileRef = D5281F14A056D40F25F15948 /* CacheableDataType.cc */; };
 		84210F30A069A1C0C61433DA /* MMLJScore.cc in Sources */ = {isa = PBXBuildFile; fileRef = 082B5EC330AE04A1DC24993E /* MMLJScore.cc */; };
 		84418DBA9E21E30BA5654B28 /* HelixPairing.cc in Sources */ = {isa = PBXBuildFile; fileRef = AA6D37AE5AE4297AA3E3E1A3 /* HelixPairing.cc */; };
@@ -1824,6 +1823,24 @@
 		ADF2682C207B13700D114F70 /* RB_geometry.cc in Sources */ = {isa = PBXBuildFile; fileRef = E892FD9359315509274594EF /* RB_geometry.cc */; };
 		AE1304A91424C03D80FB2545 /* SecondaryIdentity.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5F114E9F81C1031F8401BDE1 /* SecondaryIdentity.cc */; };
 		AE177D3C84562CC0A0150CDE /* DockingProtocol.cc in Sources */ = {isa = PBXBuildFile; fileRef = E2FF1E37DEF56FF0A68E18C9 /* DockingProtocol.cc */; };
+		AE23BA271702F4A900A5CF9F /* SymmetryClaimer.cc in Sources */ = {isa = PBXBuildFile; fileRef = AE23BA241702F4A900A5CF9F /* SymmetryClaimer.cc */; };
+		AE23BA281702F4A900A5CF9F /* SymmetryClaimer.fwd.hh in Headers */ = {isa = PBXBuildFile; fileRef = AE23BA251702F4A900A5CF9F /* SymmetryClaimer.fwd.hh */; };
+		AE23BA291702F4A900A5CF9F /* SymmetryClaimer.hh in Headers */ = {isa = PBXBuildFile; fileRef = AE23BA261702F4A900A5CF9F /* SymmetryClaimer.hh */; };
+		AE23BA671702F50B00A5CF9F /* BBClaim.fwd.hh in Headers */ = {isa = PBXBuildFile; fileRef = AE23BA491702F50B00A5CF9F /* BBClaim.fwd.hh */; };
+		AE23BA681702F50B00A5CF9F /* BBClaim.hh in Headers */ = {isa = PBXBuildFile; fileRef = AE23BA4A1702F50B00A5CF9F /* BBClaim.hh */; };
+		AE23BA691702F50B00A5CF9F /* CutClaim.fwd.hh in Headers */ = {isa = PBXBuildFile; fileRef = AE23BA4B1702F50B00A5CF9F /* CutClaim.fwd.hh */; };
+		AE23BA6A1702F50B00A5CF9F /* CutClaim.hh in Headers */ = {isa = PBXBuildFile; fileRef = AE23BA4C1702F50B00A5CF9F /* CutClaim.hh */; };
+		AE23BA6B1702F50B00A5CF9F /* DofClaim.cc in Sources */ = {isa = PBXBuildFile; fileRef = AE23BA4D1702F50B00A5CF9F /* DofClaim.cc */; };
+		AE23BA6C1702F50B00A5CF9F /* DofClaim.fwd.hh in Headers */ = {isa = PBXBuildFile; fileRef = AE23BA4E1702F50B00A5CF9F /* DofClaim.fwd.hh */; };
+		AE23BA6D1702F50B00A5CF9F /* DofClaim.hh in Headers */ = {isa = PBXBuildFile; fileRef = AE23BA4F1702F50B00A5CF9F /* DofClaim.hh */; };
+		AE23BA6E1702F50B00A5CF9F /* JumpClaim.fwd.hh in Headers */ = {isa = PBXBuildFile; fileRef = AE23BA501702F50B00A5CF9F /* JumpClaim.fwd.hh */; };
+		AE23BA6F1702F50B00A5CF9F /* JumpClaim.hh in Headers */ = {isa = PBXBuildFile; fileRef = AE23BA511702F50B00A5CF9F /* JumpClaim.hh */; };
+		AE23BA701702F50B00A5CF9F /* RootClaim.fwd.hh in Headers */ = {isa = PBXBuildFile; fileRef = AE23BA521702F50B00A5CF9F /* RootClaim.fwd.hh */; };
+		AE23BA711702F50B00A5CF9F /* RootClaim.hh in Headers */ = {isa = PBXBuildFile; fileRef = AE23BA531702F50B00A5CF9F /* RootClaim.hh */; };
+		AE23BA721702F50B00A5CF9F /* SequenceClaim.fwd.hh in Headers */ = {isa = PBXBuildFile; fileRef = AE23BA541702F50B00A5CF9F /* SequenceClaim.fwd.hh */; };
+		AE23BA731702F50B00A5CF9F /* SequenceClaim.hh in Headers */ = {isa = PBXBuildFile; fileRef = AE23BA551702F50B00A5CF9F /* SequenceClaim.hh */; };
+		AE23BA741702F50B00A5CF9F /* SymmetryClaim.fwd.hh in Headers */ = {isa = PBXBuildFile; fileRef = AE23BA561702F50B00A5CF9F /* SymmetryClaim.fwd.hh */; };
+		AE23BA751702F50B00A5CF9F /* SymmetryClaim.hh in Headers */ = {isa = PBXBuildFile; fileRef = AE23BA571702F50B00A5CF9F /* SymmetryClaim.hh */; };
 		AE8AF8F76C53463533BF7561 /* StepWiseClusterer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 43F49E3A2F5425FDFB87F79E /* StepWiseClusterer.cc */; };
 		AEAA0B87E4ADD2878F5F8282 /* StepWiseRNA_JobParameters.cc in Sources */ = {isa = PBXBuildFile; fileRef = 24BF6C5BFB0974458F2375F7 /* StepWiseRNA_JobParameters.cc */; };
 		AEAE82EB74404EBD8999A8AD /* format.cc in Sources */ = {isa = PBXBuildFile; fileRef = 260B204FDF005E35D750D37B /* format.cc */; };
@@ -8259,7 +8276,6 @@
 		1F15114F15E5265D6C5D7293 /* ElectronDensityOptions.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ElectronDensityOptions.cc; path = ../src/core/scoring/electron_density/ElectronDensityOptions.cc; sourceTree = SOURCE_ROOT; };
 		1F1E247C45B116E005DDB1F8 /* RNA_Torsion.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_Torsion.fwd.hh; path = ../src/core/scoring/rna/RNA_Torsion.fwd.hh; sourceTree = SOURCE_ROOT; };
 		1F201C18EE54FB86DB26170D /* ProteinDNA_Relax.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ProteinDNA_Relax.hh; path = ../src/devel/dna/ProteinDNA_Relax.hh; sourceTree = SOURCE_ROOT; };
-		1F21DDD08F18B9EC761C1FF9 /* DofClaim.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DofClaim.hh; path = ../src/protocols/topology_broker/DofClaim.hh; sourceTree = SOURCE_ROOT; };
 		1F24DC44E03016E14D26FA02 /* RotamerRecoveryCreator.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RotamerRecoveryCreator.fwd.hh; path = ../src/protocols/rotamer_recovery/RotamerRecoveryCreator.fwd.hh; sourceTree = SOURCE_ROOT; };
 		1F2AF9A5974889CF3C001CAB /* packer_neighbors.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = packer_neighbors.hh; path = ../src/core/pack/packer_neighbors.hh; sourceTree = SOURCE_ROOT; };
 		1F3F50EABCEBA53D0718B549 /* PlaceSurfaceProbeCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PlaceSurfaceProbeCreator.hh; path = ../src/protocols/hotspot_hashing/movers/PlaceSurfaceProbeCreator.hh; sourceTree = SOURCE_ROOT; };
@@ -8889,7 +8905,7 @@
 		3368A24CFCDBB099EE293774 /* ExtendedPoseMoverCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ExtendedPoseMoverCreator.hh; path = ../src/protocols/simple_moves/ExtendedPoseMoverCreator.hh; sourceTree = SOURCE_ROOT; };
 		336F197EDA6183528A1E7B11 /* LoopRelaxMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LoopRelaxMover.cc; path = ../src/protocols/comparative_modeling/LoopRelaxMover.cc; sourceTree = SOURCE_ROOT; };
 		337236310EE170B9876E86B4 /* AtomGraph.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AtomGraph.hh; path = ../src/core/conformation/AtomGraph.hh; sourceTree = SOURCE_ROOT; };
-		3378632AFE2A4CF1505DC10B /* SequenceClaimer.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SequenceClaimer.cc; path = ../src/protocols/topology_broker/SequenceClaimer.cc; sourceTree = SOURCE_ROOT; };
+		3378632AFE2A4CF1505DC10B /* SequenceClaimer.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SequenceClaimer.cc; path = ../src/protocols/topology_broker/SequenceClaimer.cc; sourceTree = SOURCE_ROOT; };
 		3380E4B845D285DA605357F7 /* sphericalVector.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = sphericalVector.hh; path = "../src/numeric//sphericalVector.hh"; sourceTree = SOURCE_ROOT; };
 		338B99D506A981C41D761DBF /* FullatomRelaxMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FullatomRelaxMover.fwd.hh; path = ../src/protocols/surface_docking/FullatomRelaxMover.fwd.hh; sourceTree = SOURCE_ROOT; };
 		338C4D71EE177A7D57195807 /* RestrictChainToRepackingOperation.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RestrictChainToRepackingOperation.hh; path = ../src/protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh; sourceTree = SOURCE_ROOT; };
@@ -10819,7 +10835,6 @@
 		6F3B46E55B6BD88D15C52194 /* PlaceOnLoopCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PlaceOnLoopCreator.hh; path = ../src/protocols/protein_interface_design/movers/PlaceOnLoopCreator.hh; sourceTree = SOURCE_ROOT; };
 		6F3FA099D51697AD79A738F0 /* UpstreamBuilder.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = UpstreamBuilder.hh; path = ../src/protocols/match/upstream/UpstreamBuilder.hh; sourceTree = SOURCE_ROOT; };
 		6F41B035FA2257406CE2156A /* OptionKeys2.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = OptionKeys2.cc; path = ../src/basic/options/keys/OptionKeys2.cc; sourceTree = SOURCE_ROOT; };
-		6F473F60D921CDC57E14A8D9 /* DofClaim.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DofClaim.cc; path = ../src/protocols/topology_broker/DofClaim.cc; sourceTree = SOURCE_ROOT; };
 		6F4758BB4A5F1FB6FC51CA60 /* ThreadingMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ThreadingMover.hh; path = ../src/protocols/comparative_modeling/ThreadingMover.hh; sourceTree = SOURCE_ROOT; };
 		6F5308F039D2DA0DEEFCB593 /* AlignPoseToInvrotTreeMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AlignPoseToInvrotTreeMover.fwd.hh; path = ../src/protocols/toolbox/match_enzdes_util/AlignPoseToInvrotTreeMover.fwd.hh; sourceTree = SOURCE_ROOT; };
 		6F5AB4F6BB39101554345B79 /* UnconstrainedTorsionsMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = UnconstrainedTorsionsMover.fwd.hh; path = ../src/protocols/ligand_docking/UnconstrainedTorsionsMover.fwd.hh; sourceTree = SOURCE_ROOT; };
@@ -12040,7 +12055,6 @@
 		95498586FFE72BD2715A3DC5 /* CountPairData_1_1.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = CountPairData_1_1.fwd.hh; path = ../src/core/scoring/etable/etrie/CountPairData_1_1.fwd.hh; sourceTree = SOURCE_ROOT; };
 		9565883DB9B4086AD8711140 /* ContingentFilter.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ContingentFilter.fwd.hh; path = ../src/protocols/filters/ContingentFilter.fwd.hh; sourceTree = SOURCE_ROOT; };
 		956CB0DABA2E68E79EDECCB3 /* NeighborTypeFilter.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = NeighborTypeFilter.cc; path = ../src/protocols/simple_filters/NeighborTypeFilter.cc; sourceTree = SOURCE_ROOT; };
-		95721BAD7FBA25F3A0CB1180 /* DofClaim.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DofClaim.fwd.hh; path = ../src/protocols/topology_broker/DofClaim.fwd.hh; sourceTree = SOURCE_ROOT; };
 		9573A92B4D8DEEB2D115847A /* CacheableString.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = CacheableString.fwd.hh; path = ../src/basic/datacache/CacheableString.fwd.hh; sourceTree = SOURCE_ROOT; };
 		9588E4F617F17556AACF59E3 /* SandwichFeatures.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SandwichFeatures.fwd.hh; path = ../src/protocols/features/strand_assembly/SandwichFeatures.fwd.hh; sourceTree = SOURCE_ROOT; };
 		958BD8F87B018D36D1E4CE55 /* SetupHotspotConstraintsLoopsMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SetupHotspotConstraintsLoopsMover.cc; path = ../src/protocols/protein_interface_design/movers/SetupHotspotConstraintsLoopsMover.cc; sourceTree = SOURCE_ROOT; };
@@ -12831,6 +12845,24 @@
 		ADF73A8A22CC834844E7FC5F /* RotamerDNAHBondFilter.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RotamerDNAHBondFilter.hh; path = ../src/protocols/dna/RotamerDNAHBondFilter.hh; sourceTree = SOURCE_ROOT; };
 		ADF79394E929049123BB782B /* PoissonBoltzmannPotential.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = PoissonBoltzmannPotential.cc; path = ../src/core/scoring/PoissonBoltzmannPotential.cc; sourceTree = SOURCE_ROOT; };
 		AE0C1CD9069C5BE48FD26261 /* DirectReadoutEnergy.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DirectReadoutEnergy.cc; path = ../src/core/scoring/methods/DirectReadoutEnergy.cc; sourceTree = SOURCE_ROOT; };
+		AE23BA241702F4A900A5CF9F /* SymmetryClaimer.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SymmetryClaimer.cc; sourceTree = "<group>"; };
+		AE23BA251702F4A900A5CF9F /* SymmetryClaimer.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SymmetryClaimer.fwd.hh; sourceTree = "<group>"; };
+		AE23BA261702F4A900A5CF9F /* SymmetryClaimer.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SymmetryClaimer.hh; sourceTree = "<group>"; };
+		AE23BA491702F50B00A5CF9F /* BBClaim.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = BBClaim.fwd.hh; sourceTree = "<group>"; };
+		AE23BA4A1702F50B00A5CF9F /* BBClaim.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = BBClaim.hh; sourceTree = "<group>"; };
+		AE23BA4B1702F50B00A5CF9F /* CutClaim.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CutClaim.fwd.hh; sourceTree = "<group>"; };
+		AE23BA4C1702F50B00A5CF9F /* CutClaim.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CutClaim.hh; sourceTree = "<group>"; };
+		AE23BA4D1702F50B00A5CF9F /* DofClaim.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DofClaim.cc; sourceTree = "<group>"; };
+		AE23BA4E1702F50B00A5CF9F /* DofClaim.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = DofClaim.fwd.hh; sourceTree = "<group>"; };
+		AE23BA4F1702F50B00A5CF9F /* DofClaim.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = DofClaim.hh; sourceTree = "<group>"; };
+		AE23BA501702F50B00A5CF9F /* JumpClaim.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = JumpClaim.fwd.hh; sourceTree = "<group>"; };
+		AE23BA511702F50B00A5CF9F /* JumpClaim.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = JumpClaim.hh; sourceTree = "<group>"; };
+		AE23BA521702F50B00A5CF9F /* RootClaim.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = RootClaim.fwd.hh; sourceTree = "<group>"; };
+		AE23BA531702F50B00A5CF9F /* RootClaim.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = RootClaim.hh; sourceTree = "<group>"; };
+		AE23BA541702F50B00A5CF9F /* SequenceClaim.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SequenceClaim.fwd.hh; sourceTree = "<group>"; };
+		AE23BA551702F50B00A5CF9F /* SequenceClaim.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SequenceClaim.hh; sourceTree = "<group>"; };
+		AE23BA561702F50B00A5CF9F /* SymmetryClaim.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SymmetryClaim.fwd.hh; sourceTree = "<group>"; };
+		AE23BA571702F50B00A5CF9F /* SymmetryClaim.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SymmetryClaim.hh; sourceTree = "<group>"; };
 		AE288DEE07856D1A9549D3A7 /* svn_version.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = svn_version.hh; path = "../src/core//svn_version.hh"; sourceTree = SOURCE_ROOT; };
 		AE41B0C8D5C646675E3B38E4 /* qsarMap.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = qsarMap.fwd.hh; path = ../src/protocols/qsar/qsarMap.fwd.hh; sourceTree = SOURCE_ROOT; };
 		AE43499C7A983CB05E6D6222 /* SymmData.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SymmData.cc; path = ../src/core/conformation/symmetry/SymmData.cc; sourceTree = SOURCE_ROOT; };
@@ -17375,6 +17407,7 @@
 		23C6356D8654FFE290F2D9C2 /* topology_broker */ = {
 			isa = PBXGroup;
 			children = (
+				AE23BA481702F50A00A5CF9F /* claims */,
 				92E76A026C52267BD07FDAF9 /* AsymFoldandDockClaimer.cc */,
 				C905B5300F59106FA42CD992 /* AsymFoldandDockClaimer.fwd.hh */,
 				FCD952CD6430B0FFA5CDEECA /* AsymFoldandDockClaimer.hh */,
@@ -17401,9 +17434,6 @@
 				F41BF953C53AE5376BF6750F /* DisulfJumpClaimer.cc */,
 				24A302E1EECF73B173AAF8F9 /* DisulfJumpClaimer.fwd.hh */,
 				C84DBE7366A9049F9FA820B9 /* DisulfJumpClaimer.hh */,
-				6F473F60D921CDC57E14A8D9 /* DofClaim.cc */,
-				95721BAD7FBA25F3A0CB1180 /* DofClaim.fwd.hh */,
-				1F21DDD08F18B9EC761C1FF9 /* DofClaim.hh */,
 				B4D28B51856DB76A6A146250 /* Exceptions.hh */,
 				35FAAC3D92300F6465A752F0 /* FibrilModelingClaimer.cc */,
 				2C7C7183566A683B10E4B5EC /* FibrilModelingClaimer.fwd.hh */,
@@ -17440,6 +17470,9 @@
 				88201323BA3684F676575464 /* StartStructClaimer.cc */,
 				0C4742184CF2059E3B8510EC /* StartStructClaimer.fwd.hh */,
 				9367D70718212DE74F20D792 /* StartStructClaimer.hh */,
+				AE23BA241702F4A900A5CF9F /* SymmetryClaimer.cc */,
+				AE23BA251702F4A900A5CF9F /* SymmetryClaimer.fwd.hh */,
+				AE23BA261702F4A900A5CF9F /* SymmetryClaimer.hh */,
 				64D8C568DA46A179596D3DE1 /* TemplateFragmentClaimer.cc */,
 				AF1174863928268F8449B494 /* TemplateFragmentClaimer.fwd.hh */,
 				10CF7B2BC65615497D84FE21 /* TemplateFragmentClaimer.hh */,
@@ -23449,6 +23482,28 @@
 			path = ../src/core/scoring/mm/;
 			sourceTree = SOURCE_ROOT;
 		};
+		AE23BA481702F50A00A5CF9F /* claims */ = {
+			isa = PBXGroup;
+			children = (
+				AE23BA491702F50B00A5CF9F /* BBClaim.fwd.hh */,
+				AE23BA4A1702F50B00A5CF9F /* BBClaim.hh */,
+				AE23BA4B1702F50B00A5CF9F /* CutClaim.fwd.hh */,
+				AE23BA4C1702F50B00A5CF9F /* CutClaim.hh */,
+				AE23BA4D1702F50B00A5CF9F /* DofClaim.cc */,
+				AE23BA4E1702F50B00A5CF9F /* DofClaim.fwd.hh */,
+				AE23BA4F1702F50B00A5CF9F /* DofClaim.hh */,
+				AE23BA501702F50B00A5CF9F /* JumpClaim.fwd.hh */,
+				AE23BA511702F50B00A5CF9F /* JumpClaim.hh */,
+				AE23BA521702F50B00A5CF9F /* RootClaim.fwd.hh */,
+				AE23BA531702F50B00A5CF9F /* RootClaim.hh */,
+				AE23BA541702F50B00A5CF9F /* SequenceClaim.fwd.hh */,
+				AE23BA551702F50B00A5CF9F /* SequenceClaim.hh */,
+				AE23BA561702F50B00A5CF9F /* SymmetryClaim.fwd.hh */,
+				AE23BA571702F50B00A5CF9F /* SymmetryClaim.hh */,
+			);
+			path = claims;
+			sourceTree = "<group>";
+		};
 		AF32852343DCBDF50ED02DDB /* count_pair */ = {
 			isa = PBXGroup;
 			children = (
@@ -27104,6 +27159,22 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AE23BA281702F4A900A5CF9F /* SymmetryClaimer.fwd.hh in Headers */,
+				AE23BA291702F4A900A5CF9F /* SymmetryClaimer.hh in Headers */,
+				AE23BA671702F50B00A5CF9F /* BBClaim.fwd.hh in Headers */,
+				AE23BA681702F50B00A5CF9F /* BBClaim.hh in Headers */,
+				AE23BA691702F50B00A5CF9F /* CutClaim.fwd.hh in Headers */,
+				AE23BA6A1702F50B00A5CF9F /* CutClaim.hh in Headers */,
+				AE23BA6C1702F50B00A5CF9F /* DofClaim.fwd.hh in Headers */,
+				AE23BA6D1702F50B00A5CF9F /* DofClaim.hh in Headers */,
+				AE23BA6E1702F50B00A5CF9F /* JumpClaim.fwd.hh in Headers */,
+				AE23BA6F1702F50B00A5CF9F /* JumpClaim.hh in Headers */,
+				AE23BA701702F50B00A5CF9F /* RootClaim.fwd.hh in Headers */,
+				AE23BA711702F50B00A5CF9F /* RootClaim.hh in Headers */,
+				AE23BA721702F50B00A5CF9F /* SequenceClaim.fwd.hh in Headers */,
+				AE23BA731702F50B00A5CF9F /* SequenceClaim.hh in Headers */,
+				AE23BA741702F50B00A5CF9F /* SymmetryClaim.fwd.hh in Headers */,
+				AE23BA751702F50B00A5CF9F /* SymmetryClaim.hh in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -29692,7 +29763,6 @@
 				AC6833DB67A1A36D3E1C3E7B /* CutBiasClaimer.cc in Sources */,
 				44CB6BBEAC4DC65D6ECE1BAF /* DensityScoringClaimer.cc in Sources */,
 				7977A7CEAB037FEBDDD282CD /* DisulfJumpClaimer.cc in Sources */,
-				8415D242FC84A80B365D0D35 /* DofClaim.cc in Sources */,
 				E87E0187F0A9B62D25BEB5CA /* FibrilModelingClaimer.cc in Sources */,
 				E98B14E3712851F7B28896EB /* FoldandDockClaimer.cc in Sources */,
 				FDFDCDEA8B8339DAA9BA7EE0 /* FragmentClaimer.cc in Sources */,
@@ -29711,6 +29781,8 @@
 				4E813B0B2D3BF574A984B2DF /* TopologyClaimer.cc in Sources */,
 				0A64CEA10572A0A38B8A1E61 /* TopologyClaimerFactory.cc in Sources */,
 				2BFE14F421EE17CF7ED7D8B9 /* util.cc in Sources */,
+				AE23BA271702F4A900A5CF9F /* SymmetryClaimer.cc in Sources */,
+				AE23BA6B1702F50B00A5CF9F /* DofClaim.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

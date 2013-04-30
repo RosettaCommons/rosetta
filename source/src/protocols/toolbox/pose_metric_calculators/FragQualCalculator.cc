@@ -181,7 +181,7 @@ FragQualCalculator::recompute( Pose const & pose )
 	using ObjexxFCL::fmt::RJ;
 	using ObjexxFCL::fmt::F;
 	using core::scoring::CA_rmsd;
-	using core::fragment::FrameIterator;
+	using core::fragment::ConstFrameIterator;
 
 	// initialization
 	if( begin_ == 0 ) begin_ = 1;
@@ -200,7 +200,7 @@ FragQualCalculator::recompute( Pose const & pose )
 	core::util::switch_to_residue_type_set( input_pose, core::chemical::CENTROID );
 	core::util::switch_to_residue_type_set(  test_pose, core::chemical::CENTROID );
 
-	for ( FrameIterator frame = frag_->begin(); frame != frag_->end(); ++frame ) {
+	for ( ConstFrameIterator frame = frag_->begin(); frame != frag_->end(); ++frame ) {
 
 		Size const start ( frame->start() );
 		runtime_assert( start <= pose.total_residue() );
@@ -224,7 +224,7 @@ FragQualCalculator::recompute( Pose const & pose )
 		if( goodfrags_[ start ] >= frame->nr_frags()*ratio_cutoff_goodfrag_ ) {
 			is_covered[ start ] = true;
 		}
-	} // FrameIterator
+	} // ConstFrameIterator
 
 	// calc coverage
 	Size count( 0 );

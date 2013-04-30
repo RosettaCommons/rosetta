@@ -165,7 +165,7 @@ void add_apc(core::pose::Pose & pose, core::id::AtomID aid1, core::id::AtomID ai
 }
 
 
-void read_fragdata( utility::vector1< core::fragment::FragDataOP > & fds, utility::io::izstream & in, bool /*design = false*/ ) {
+void read_fragdata( FragDataCOPs& fds, utility::io::izstream & in, bool /*design = false*/ ) {
 	using namespace core::fragment;
 	Size n,count=0;
 	while( in >> n ) {
@@ -189,12 +189,12 @@ void read_fragdata( utility::vector1< core::fragment::FragDataOP > & fds, utilit
 	in.close();
 }
 
-std::map<std::string, utility::vector1<core::fragment::FragDataOP> >
+std::map<std::string, FragDataCOPs >
 get_frags_map( bool design = false ) {
 	using namespace core::fragment;
 	TR << "reading frags" << std::endl;
 	utility::io::izstream in;
-	std::map<std::string,utility::vector1<FragDataOP> > fds;
+	std::map<std::string, FragDataCOPs > fds;
 	// basic::database::open(in,"sampling/ss_fragfiles/EEE.fragfile"); read_fragdata(fds["EEE"],in,design);
 	// basic::database::open(in,"sampling/ss_fragfiles/EEH.fragfile"); read_fragdata(fds["EEH"],in,design);
 	// basic::database::open(in,"sampling/ss_fragfiles/EEL.fragfile"); read_fragdata(fds["EEL"],in,design);
@@ -222,16 +222,16 @@ get_frags_map( bool design = false ) {
 }
 
 
-core::fragment::FragSetOP make_frag_set(Size start, std::string ss, std::map<std::string, utility::vector1<core::fragment::FragDataOP> > fds) {
+core::fragment::FragSetOP make_frag_set(Size start, std::string ss, std::map<std::string, FragDataCOPs > const& fds) {
 	using namespace core::fragment;
 	FragSetOP frags = new ConstantLengthFragSet();
 	Size const stop = ss.size() + start - 3;
 	if(start >= stop) return NULL;
 	for( Size i = start; i <= stop; ++i ) {
 		FrameOP frame = new Frame(i,3);
-		utility::vector1<FragDataOP>::iterator beg = fds[ss.substr(i-start,3)].begin();
-		utility::vector1<FragDataOP>::iterator end = fds[ss.substr(i-start,3)].end();
-		for( utility::vector1<FragDataOP>::iterator fi = beg; fi != end; ++fi ) {
+		FragDataCOPs::const_iterator beg = fds[ss.substr(i-start,3)].begin();
+		FragDataCOPs::const_iterator end = fds[ss.substr(i-start,3)].end();
+		for( FragDataCOPs::const_iterator fi = beg; fi != end; ++fi ) {
 			frame->add_fragment(*fi);
 		}
 		frags->add(frame);
@@ -597,7 +597,7 @@ main( int argc, char * argv [] )
 	using numeric::random::uniform;
 
 	devel::init(argc,argv);
-	std::map<std::string, utility::vector1<core::fragment::FragDataOP> > fds = get_frags_map( true );
+	std::map<std::string, FragDataCOPs > fds = get_frags_map( true );
 	std::ostringstream oss;
 
 	while(true) {

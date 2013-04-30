@@ -110,7 +110,7 @@ ConstraintClaimer::ConstraintClaimer( bool CmdFlag, bool centroid, bool fullatom
 	runtime_assert( CmdFlag );
 }
 
-void ConstraintClaimer::generate_claims( DofClaims& /*new_claims*/ ) {
+void ConstraintClaimer::generate_claims( claims::DofClaims& /*new_claims*/ ) {
 }
 
 void ConstraintClaimer::new_decoy() {

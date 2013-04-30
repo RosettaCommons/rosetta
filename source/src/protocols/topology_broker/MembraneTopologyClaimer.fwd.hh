@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/kinematics/ShortestPathInFoldTree.fwd.hh
-/// @brief  kinematics::ShortestPathInFoldTree forward declarations header
+/// @file
+/// @brief
 /// @author Oliver Lange
 
 
-#ifndef INCLUDED_protocols_topology_broker_JumpClaimer_fwd_hh
-#define INCLUDED_protocols_topology_broker_JumpClaimer_fwd_hh
+#ifndef INCLUDED_protocols_topology_broker_MembraneTopologyClaimer_fwd_hh
+#define INCLUDED_protocols_topology_broker_MembraneTopologyClaimer_fwd_hh
 
 
 // Utility headers
@@ -25,14 +25,14 @@ namespace protocols {
 namespace topology_broker {
 
 // Forward
-class JumpClaimer;
+class MembraneTopologyClaimer;
 
 // Types
-typedef  utility::pointer::owning_ptr< JumpClaimer >  JumpClaimerOP;
-typedef  utility::pointer::owning_ptr< JumpClaimer const >  JumpClaimerCOP;
+typedef  utility::pointer::owning_ptr< MembraneTopologyClaimer >  MembraneTopologyClaimerOP;
+typedef  utility::pointer::owning_ptr< MembraneTopologyClaimer const >  MembraneTopologyClaimerCOP;
 
-typedef  utility::pointer::access_ptr< JumpClaimer >  JumpClaimerAP;
-typedef  utility::pointer::access_ptr< JumpClaimer const >  JumpClaimerCAP;
+typedef  utility::pointer::access_ptr< MembraneTopologyClaimer >  MembraneTopologyClaimerAP;
+typedef  utility::pointer::access_ptr< MembraneTopologyClaimer const >  MembraneTopologyClaimerCAP;
 
 
 } // namespace kinematics

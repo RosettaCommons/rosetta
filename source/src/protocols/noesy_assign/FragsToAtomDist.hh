@@ -56,19 +56,21 @@ public:
 		core::Real average_dist() const { return cum_dist_ / count_; }
 		core::Real min_dist() const { return min_dist_; }
 		core::Real popular_bin() const ;
+		utility::vector1< core::Real > dist_track() const { return dist_track_ ; }
+		//		std::map< core::Real, core::Size > hist_dist() const { return hist_dist_ };
 
 	private:
 		core::Real cum_dist6_;
 		core::Real cum_dist_;
 		core::Real min_dist_;
 		core::Size count_;
-		std::map< core::Real, core::Size > hist_dist_;
-		std::map< core::Real, core::Size > hist_dist6_;
+		utility::vector1< core::Real > dist_track_;
+		//		std::map< core::Real, core::Size > hist_dist_;
+		//		std::map< core::Real, core::Size > hist_dist6_;
 	};
 
 	typedef std::map< core::id::NamedAtomID, DistanceRecord > NamedInnerMap;
 	typedef std::map< core::id::NamedAtomID, NamedInnerMap > NamedDistanceMap;
-
 	static DistanceRecord NO_CONTACT;
 	//( 100.0, 100.0, 100.0, 1 );
 public:
@@ -79,11 +81,11 @@ public:
 	// read/write from stream
 	void read_from_stream( std::istream& );
 	void write_to_stream( std::ostream& ) const;
-
+	void write_hist_to_stream( std::ostream& ) const;
 	// wrapper for read/write from file
 	void read_from_file( std::string const& filename ); // open stream call read_from_stream
 	void write_to_file( std::string const& filename ) const; //open output file, call write_to_stream
-
+	void write_hist_to_file( std::string const& filename ) const;
 	// generate distance data from fragments
 	void generate_from_fragments(
 			 core::fragment::FragSetOP fragments,

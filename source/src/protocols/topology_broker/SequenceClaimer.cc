@@ -16,7 +16,10 @@
 #include <protocols/topology_broker/SequenceClaimer.hh>
 
 // Package Headers
-#include <protocols/topology_broker/DofClaim.hh>
+#include <protocols/topology_broker/claims/DofClaim.hh>
+#include <protocols/topology_broker/claims/BBClaim.hh>
+#include <protocols/topology_broker/claims/SequenceClaim.hh>
+#include <protocols/topology_broker/claims/CutClaim.hh>
 #include <protocols/topology_broker/Exceptions.hh>
 // Project Headers
 #include <core/chemical/ChemicalManager.hh>
@@ -40,6 +43,9 @@
 #include <core/pose/annotated_sequence.hh>
 #include <utility/vector1.hh>
 
+// C++ Headers
+#include <utility>
+
 #ifdef WIN32
 #include <iterator>
 #endif
@@ -51,141 +57,161 @@ namespace topology_broker {
 
 using namespace core;
 SequenceClaimer::SequenceClaimer() :
-	sequence_( "NO_SEQUENCE" ),
 	rsd_type_set_( core::chemical::CENTROID ),
-	offset_( 0 ),
-	nr_res_( 0 )
+	priority_( 0.0 ),
+	input_sequence_( "" ),
+	sequence_claim_( NULL )
 {}
 
-SequenceClaimer::SequenceClaimer( std::string const& sequence, std::string const& rsd_type_set_identifier, std::string label ) :
+SequenceClaimer::SequenceClaimer( std::string const& sequence, std::string const& label,
+	std::string const& rsd_type_set_identifier = core::chemical::CENTROID ) :
 	rsd_type_set_( rsd_type_set_identifier ),
-	offset_( 0 )
+	priority_( 0.0 ),
+	input_sequence_( sequence ),
+	sequence_claim_( NULL )
 {
-	set_sequence( sequence );
-	set_label( label );
+	Parent::set_label(label);
 }
+
 
 TopologyClaimerOP SequenceClaimer::clone() const
 {
 	return new SequenceClaimer( *this );
 }
 
-
-void SequenceClaimer::set_sequence( std::string const& str ) {
-	sequence_ = str;
+void SequenceClaimer::make_sequence_claim() {
+	tr.Debug << "SequenceClaimer " << label() << " making pose from sequence '"
+            << input_sequence_ << "' to get annotated sequence." << std::endl;
 	pose::Pose my_pose;
-	tr.Info << "make pose from sequence: " << str << std::endl;
 	core::pose::make_pose_from_sequence(
-				my_pose,
-				sequence_,
-				*( chemical::ChemicalManager::get_instance()->residue_type_set( rsd_type_set_ ))
+		my_pose,
+		input_sequence_,
+		*( chemical::ChemicalManager::get_instance()->residue_type_set( rsd_type_set_ ))
 	);
-	annotated_sequence_ = my_pose.annotated_sequence();
-	nr_res_ = my_pose.total_residue();
+	sequence_claim_ =
+		new claims::SequenceClaim(
+				this,
+				my_pose.annotated_sequence(),
+				label(),
+				priority_
+		);
+	runtime_assert( my_pose.total_residue() == sequence_claim_->length() );
 }
 
-void SequenceClaimer::generate_sequence_claims( DofClaims& new_claims ) {
-
-	new_claims.push_back( new SequenceClaim( this, 1, nr_res_, label(), DofClaim::INIT /* for now... eventually CAN_INIT ? */ ) );
+void SequenceClaimer::generate_sequence_claims( claims::DofClaims& new_claims ) {
+	if ( !sequence_claim_ ) {
+		make_sequence_claim();
+	}
+	new_claims.push_back( sequence_claim_ );
 }
 
-void SequenceClaimer::generate_claims( DofClaims& new_claims ) {
-	// that doesn't seem necessary. the atom-tree has them as lower and upper termini anyway
- 	if ( offset() > 1 ) {
- 		new_claims.push_back( new CutClaim( this, offset() - 1, DofClaim::INIT /* for now... eventually CAN_INIT ? */ ) );
- 	}
+void SequenceClaimer::read_fasta_file( std::string file ) {
+	using namespace core::sequence;
+	utility::vector1< SequenceOP > sequences = core::sequence::read_fasta_file( file );
+	if ( sequences.size() > 1 ) {
+		throw EXCN_Input( "SequenceClaimer found multiple sequences in fasta file '"+file+
+			"'\nTo resolve this, split fasta file into multiple files, and claim using multiple SequenceClaimers.");
+	}
+	input_sequence_ = sequences[1]->sequence();
+    tr.Debug << "SequenceClaimer read sequence " << input_sequence_
+            << " from fasta file '" << file << "'" << std::endl;
+}
+
+bool SequenceClaimer::read_tag( std::string tag, std::istream& is ) {
+	if ( tag == "file" || tag == "FILE" || tag == "file:" ) {
+		is >> tag;
+		read_fasta_file(tag);
+	} else if ( tag == "PRIORITY" || tag == "Priority" || tag == "priority" ) {
+		is >> priority_;
+	}	else if ( tag == "DEF" ) {
+		//Expects input of the form:
+		//DEF
+		//HHHHHHAG GMPADFADF ADFAKDFLAK ADKFJ
+		//FFFFF ADKFAJLDFJ ADFKAJ LFJ
+		//END_DEF
+
+		if ( input_sequence_ != "" ) {
+			throw EXCN_Input( "SequenceClaimer found multiple definitions for its sequence. Ambiguity cannot be resolved.");
+		}
+		while ( is >> tag && tag != "END_DEF" ) {
+			if ( tag[0]=='#' ) {
+				getline( is, tag );
+				continue;
+			}
+			input_sequence_ += tag;
+		}
+		if ( tag != "END_DEF" ) {
+			throw EXCN_Input( "END_DEF expected after DEF while reading sequence" );
+		}
+	} else if ( tag == "CMD_FLAG" ) {
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		if ( option[ in::file::fasta ].user() ) {
+			read_fasta_file( option[ in::file::fasta ]()[1] );
+		} else {
+			throw EXCN_Input( "SequenceClaimer found tag CMD_FLAG but option '-in:file:fasta' is not set on cmd-line" );
+		}
+	} else return Parent::read_tag( tag, is );
+	return true;
+}
+
+void SequenceClaimer::init_after_reading() {
+	if ( input_sequence_.size() == 0 ) {
+		throw EXCN_Input( "No sequence found when reading " +type() );
+	}
+	if ( label() == "NO_LABEL" ) {
+		throw EXCN_Input( "SequenceClaimer left unlabeled: use the LABEL command to specify a label for each SequenceClaimer" );
+	}
+}
+
+void SequenceClaimer::generate_claims( claims::DofClaims& new_claims ) {
+	//Make a new cut at the end of this sequence.
+	//TODO: Make TopologyBroker get rid of cuts outside valid sequence.
+	new_claims.push_back( new claims::CutClaim( this, std::make_pair( label(), sequence_claim_->length() ) ) );
 
 	//special --- if only 1 residue chain... the torsion will be irrelvant and probably unclaimed
 	// ... make broker happy but don't do anything...
-	if ( nr_res_ == 1 ) new_claims.push_back( new BBClaim( this, offset() ) );
+	if ( sequence_claim_->length() == 1 ) {
+
+		new_claims.push_back( new claims::BBClaim( this, std::make_pair( label(), 1 ) ) );
+	}
 }
 
-void SequenceClaimer::initialize_dofs( core::pose::Pose& pose, DofClaims const& init_claims, DofClaims& failed_to_init ) {
-	if ( nr_res_ > 1 ) {
-		TopologyClaimer::initialize_dofs( pose, init_claims, failed_to_init );
-	} else { //special case the BBTorsion claim for position offset() is ours and is left unitialized...
-		for ( DofClaims::const_iterator it = init_claims.begin(), eit = init_claims.end();
-					it != eit; ++it ) {
-			if ( (*it)->owner()==this ) {
-				if ( (*it)->type() == DofClaim::BB  && (*it)->pos( 1 ) == offset() ) {
-					tr.Trace << "SequenceClaimer: 1-residue chain --- no need to init: " << **it << std::endl;
-					continue;
-				}	else {
-					tr.Trace << "SequenceClaimer: can't handle " << **it << std::endl;
-					failed_to_init.push_back( *it );
-				}
-			} // our claim
-		} //loop
-	} //nr_res_ == 1
-}
 
-//bool SequenceClaimer::allow_claim( DofClaim const& foreign_claim ) {
+// void SequenceClaimer::initialize_residues( core::pose::Pose& pose, claims::SequenceClaimOP my_claim, claims::DofClaims& /*failed_to_init*/ ) {
+// 	//need to copy coords and jumps --- if chunks were idealized no problem .... but non-idealized stuff ?
+// 	//also take care of fullatom vs centroid...
+
+// 	//    core::sequence::SequenceOP seq = NULL;
+// 	//    for( Size i=1; i <= sequences_.size(); ++i){
+// 	//        if( sequences_.at(i)->id() == my_claim->label() ){
+// 	//            seq = sequences_.at(i);
+// 	//        }
+// 	//    }
+// 	//    runtime_assert(seq != NULL);
+
+// }
+
+
+} //topology_broker
+} //protocols
+
+
+
+
+//bool SequenceClaimer::allow_claim( claims::DofClaim const& foreign_claim ) {
 // 	if ( foreign_claim.owner() == this ) return true; // always allow your own claims!
-// 	if ( foreign_claim.type() == DofClaim::SEQUENCE ) {
-// 		if ( foreign_claim.pos( 1 ) == 1  && foreing_claim.right() == DofClaim::EXCLUSIVE ) {
+// 	if ( foreign_claim.type() == claims::DofClaim::SEQUENCE ) {
+// 		if ( foreign_claim.pos( 1 ) == 1  && foreing_claim.right() == claims::DofClaim::EXCLUSIVE ) {
 // 			return false; // don't accept any other fixed positions right now --- maybe never ?!
 // 		}
 // 	}
 //	return true;
 //} // SequenceClaimer::allow_claim()
 
+//void SequenceClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofClaims const& init_claims,	claims::DofClaims& failed_to_init ) {
+	//special case the BBTorsion claim for position offset() is ours and is left unitialized...
+	//	for ( claims::DofClaims::const_iterator it = init_claims.begin(), eit = init_claims.end();
+	//		it != eit; ++it ) {
+		//		claims::BBClaimOP bb_ptr( dynamic_cast< claims::BBClaim* >( it->get() ) );
 
-void SequenceClaimer::initialize_residues( core::pose::Pose& pose, SequenceClaimOP my_claim, DofClaims& /*failed_to_init*/ ) {
-	//need to copy coords and jumps --- if chunks were idealized no problem .... but non-idealized stuff ?
-	//also take care of fullatom vs centroid...
-	tr.Debug << "add sequence " << sequence_ << " to " << pose.annotated_sequence() << std::endl;
-	offset_ = my_claim->offset();
-	runtime_assert( offset_ == pose.total_residue() + 1 );
-	runtime_assert( nr_res_ > 0 );
-	core::pose::make_pose_from_sequence(
-				 pose,
-				 pose.annotated_sequence()+annotated_sequence_,
-				 *( chemical::ChemicalManager::get_instance()->residue_type_set( rsd_type_set_ ))
-	);
-	// make extended chain
-	for ( Size pos = 1; pos <= pose.total_residue(); pos++ ) {
-		if ( ! pose.residue(pos).is_protein() ) continue;
-		pose.set_phi( pos, -150 );
-		pose.set_psi( pos, 150);
-		pose.set_omega( pos, 180 );
-	}
-
-}
-
-bool SequenceClaimer::read_tag( std::string tag, std::istream& is ) {
-	if ( tag == "file" || tag == "FILE" || tag == "file:" ) {
-		is >> tag;
-		set_sequence( core::sequence::read_fasta_file( tag )[1]->sequence() );
-	} else if ( tag == "DEF" ) {
-		while ( is >> tag && tag != "END_DEF" ) {
-			if ( tag[0]=='#' ) {
-				getline( is, tag );
-				continue;
-			}
-			copy( tag.begin(), tag.end(), std::back_inserter( sequence_ ) );
-			set_sequence( sequence_ ); //to get the dependent values updated!
-		}
-		if ( tag != "END_DEF" ) {
-			throw EXCN_Input( "END_DEF expected after DEF while reading sequence" );
-		}
-	} else if ( tag == "CMD_FLAG" ) {
-			using namespace basic::options;
-			using namespace basic::options::OptionKeys;
-			if ( option[ in::file::fasta ].user() ) {
-				set_sequence( core::sequence::read_fasta_file( option[ in::file::fasta ]()[1] )[1]->sequence() );
-				tr.Info << "read fasta sequence: " << sequence_.size() << " residues\n"  << sequence_ << std::endl;
-			} else {
-				throw EXCN_Input( "SequenceClaimer found tag CMD_FLAG but no -in:file:fasta on command-line");
-			}
-	} else return Parent::read_tag( tag, is );
-	return true;
-}
-
-void SequenceClaimer::init_after_reading() {
-	if ( nr_res_ == 0 ) {
-		throw EXCN_Input( "no sequence found when reading " +type() );
-	}
-}
-
-} //topology_broker
-} //protocols

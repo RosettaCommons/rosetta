@@ -125,9 +125,13 @@ public:
 // 		FrameList & frame
 // 	);
 
-	FrameIterator begin() const;
+	///@brief iterate over contents
+	ConstFrameIterator begin() const;
+	ConstFrameIterator end() const;
 
-	FrameIterator end() const;
+
+	virtual FrameIterator nonconst_begin();
+	virtual FrameIterator nonconst_end();
 
 	virtual bool empty() const {
 		return frames_.size()==0;

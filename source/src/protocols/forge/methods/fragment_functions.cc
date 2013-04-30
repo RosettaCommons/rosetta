@@ -40,22 +40,20 @@ namespace methods {
 ///  position.
 core::fragment::ConstantLengthFragSetOP
 smallmer_from_largemer(
-	core::fragment::FrameIterator begin,
-	core::fragment::FrameIterator end,
+	core::fragment::ConstFrameIterator begin,
+	core::fragment::ConstFrameIterator end,
 	core::Size const smallmer_size,
 	bool const all_possible_smallmers
 )
 {
-	using core::Size;
-	using core::fragment::ConstantLengthFragSet;
-	using core::fragment::ConstantLengthFragSetOP;
-	using core::fragment::FrameIterator;
+	using namespace core;
+	using namespace core::fragment;
 
 	assert( smallmer_size > 0 );
 
 	ConstantLengthFragSetOP small = new ConstantLengthFragSet( smallmer_size );
 
-	for ( FrameIterator f = begin; f != end; ++f ) {
+	for ( ConstFrameIterator f = begin; f != end; ++f ) {
 		Size const ie = all_possible_smallmers ? f->length() - smallmer_size + 1 : 1;
 		for ( Size i = 1; i <= ie; ++i ) {
 			small->add( f->generate_sub_frame( smallmer_size, i ) );

@@ -112,7 +112,7 @@ public:
   core::Size count_assignments() const;
   void delete_diagonal_peaks();
   void update_peak_volumina();
-  void network_analysis( ResonanceList const& );
+  void network_analysis();// ResonanceList const& );
   void set_trivial_decoy_compatibility_score();
   CrossPeaks const& peaks() const { return peaks_; }
   const_iterator begin() const { return peaks_.begin(); }

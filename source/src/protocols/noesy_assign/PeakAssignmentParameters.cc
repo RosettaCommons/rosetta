@@ -97,12 +97,12 @@ void protocols::noesy_assign::PeakAssignmentParameters::register_options() {
   NEW_OPT7( noesy_weights::defaults::calibration_target, "target for NOE calibration > 1 -- (A) (structure independent ) <1 (%) of models violated", 3.8, 0.15, 0.15, 0.1, 0.1, 0.1, 0.1 );
 
 	//cycle dependent
-	NEW_OPT( noesy_weights::Vmin, "acceptable minimial volume contribution per assignment", 0.01 );
+
 	NEW_OPT( noesy_weights::symmetry, "contribution of symmetry compliance to peak volume", 10.0 );
   NEW_OPT( noesy_weights::covalent, "contribution of local covalent compliance to peak volume", 10.0 );
 	//  NEW_OPT( noesy_weights::decoys, "exponent controlling contribution of decoy compliance to peak volume", 3 );
 	NEW_OPT( noesy_weights::Smax,"maximum cumulative contribution of symmetry, covalent and network to peak volume", 20 );
-  NEW_OPT( noesy_weights::dcut, "upper limit on acceptable distance violation for elimination of spurious NOESY cross peaks (A)", -1 );
+
 
 	//	NEW_OPT( noesy_weights::network_min, "Threshold for acceptable lower limit of network-anchoring per residue", 1.0 );
   //NEW_OPT( noesy_weights::network_atom_min, "contribution of network anchoring to peak volume", 0.25 );
@@ -110,9 +110,12 @@ void protocols::noesy_assign::PeakAssignmentParameters::register_options() {
   NEW_OPT( noesy_weights::calibration_target, "target for NOE calibration > 1 -- (A) (structure independent ) <1 (%) of models violated", 5 );
 	NEW_OPT( noesy::atom_dependent_calibration, "individual calibration constants per atom-group: backbone, side-chain, methyl", false );
 
-	NEW_OPT( noesy::map_to_cen_atom,"map the centroid restraints to CEN atom", false );
+	NEW_OPT( noesy::elim::max_assign, "maximum number of assignments to a peak before it is eliminated", 20 );
+	NEW_OPT( noesy::elim::vmin, "acceptable minimial volume contribution per assignment", 0.01 );
+	NEW_OPT( noesy::elim::dist_viol, "percentage of decoys that can be violated by distance constraints before it is eliminated ->set to 1 to switch this feature off", 0.5 );
+  NEW_OPT( noesy::elim::dcut, "upper limit on acceptable distance violation for elimination of spurious NOESY cross peaks (A)", -1 );
 
-	NEW_OPT( noesy_weights::elim_dist_viol, "percentage of decoys that can be violated by distance constraints before it is eliminated ->set to 1 to switch this feature off", 0.5 );
+	NEW_OPT( noesy::map_to_cen_atom,"map the centroid restraints to CEN atom", false );
 
 	NEW_OPT( noesy_weights::cst_strength, "curvature of the constraint potential after upper distance is violated", 4 );
 	NEW_OPT( noesy_weights::cycle, "set to cycle 1-7 to select a set of cycle-dependent options", 1 );
@@ -177,8 +180,8 @@ void protocols::noesy_assign::PeakAssignmentParameters::set_options_from_cmdline
 	//  dmax_ = 5.5;
   vmin_ = option[ noesy::network::vmin ](); //previously 0.1 minimum peak-volume contribution to network anchoring
   vmax_ = option[ noesy::network::vmax ](); //previously 1.0; //maximum peak-volume contribution to network anchoring
-  nmax_ = 20; //maximum number of assignments
-  nr_conformers_violatable_ = option[ noesy_weights::elim_dist_viol ](); // M/2
+  nmax_ = option[ noesy::elim::max_assign ](); //20 maximum number of assignments
+  nr_conformers_violatable_ = option[ noesy::elim::dist_viol ](); // M/2
 	network_reswise_min_ = option[ noesy::network::reswise_min ]();
 	network_atom_min_ = option[ noesy::network::atomwise_min ]();
 	//	opt_read_out_macro( network_reswise_min_, network_min );
@@ -194,14 +197,21 @@ void protocols::noesy_assign::PeakAssignmentParameters::set_options_from_cmdline
 	}\
 }\
 
+#define opt_read_out_macro2( VAR, OPT, DIROPT )														 \
+{ VAR = option[ noesy_weights::defaults::OPT ]()[ cycle_selector_ ]; \
+	if ( option [ noesy::DIROPT ].user() ) {  \
+		VAR = option[ noesy::DIROPT ](); \
+	}\
+}\
+
 
 	//read cycle-dependent default value -- overwrite if option is selected
-	opt_read_out_macro( min_volume_, Vmin );
+	opt_read_out_macro2( min_volume_, Vmin, elim::vmin );
 	opt_read_out_macro( symmetry_compliance_weight_, symmetry );
 	opt_read_out_macro( covalent_compliance_weight_, covalent );
 	//	opt_read_out_macro( decoy_compatibility_exponent_, decoys );
 	opt_read_out_macro( smax_, Smax );
-	opt_read_out_macro( dcut_, dcut );
+	opt_read_out_macro2( dcut_, dcut, elim::dcut );
 	opt_read_out_macro( dcalibrate_, dcalibrate );
 
 	opt_read_out_macro( calibration_target_, calibration_target );

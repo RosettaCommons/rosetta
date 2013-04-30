@@ -12,8 +12,8 @@
 /// @author Oliver Lange
 
 
-#ifndef INCLUDED_protocols_topology_broker_DofClaim_fwd_hh
-#define INCLUDED_protocols_topology_broker_DofClaim_fwd_hh
+#ifndef INCLUDED_protocols_topology_broker_claims_SequenceClaim_fwd_hh
+#define INCLUDED_protocols_topology_broker_claims_SequenceClaim_fwd_hh
 
 
 // Utility headers
@@ -26,19 +26,7 @@
 
 namespace protocols {
 namespace topology_broker {
-
-// Forward
-class DofClaim;
-
-// Types
-typedef  utility::pointer::owning_ptr< DofClaim >  DofClaimOP;
-typedef  utility::pointer::owning_ptr< DofClaim const >  DofClaimCOP;
-
-typedef  utility::pointer::access_ptr< DofClaim >  DofClaimAP;
-typedef  utility::pointer::access_ptr< DofClaim const >  DofClaimCAP;
-
-typedef utility::vector1< DofClaimOP > DofClaims;
-
+namespace claims {
 
 class SequenceClaim;
 
@@ -51,26 +39,9 @@ typedef  utility::pointer::access_ptr< SequenceClaim const >  SequenceClaimCAP;
 
 typedef utility::vector1< SequenceClaimOP > SequenceClaims;
 
-class JumpClaim;
 
-// Types
-typedef  utility::pointer::owning_ptr< JumpClaim >  JumpClaimOP;
-typedef  utility::pointer::owning_ptr< JumpClaim const >  JumpClaimCOP;
-
-typedef  utility::pointer::access_ptr< JumpClaim >  JumpClaimAP;
-typedef  utility::pointer::access_ptr< JumpClaim const >  JumpClaimCAP;
-
-class BBClaim;
-
-// Types
-typedef  utility::pointer::owning_ptr< BBClaim >  BBClaimOP;
-typedef  utility::pointer::owning_ptr< BBClaim const >  BBClaimCOP;
-
-typedef  utility::pointer::access_ptr< BBClaim >  BBClaimAP;
-typedef  utility::pointer::access_ptr< BBClaim const >  BBClaimCAP;
-
-
-} // namespace kinematics
-} // namespace core
+}
+}
+}
 
 #endif

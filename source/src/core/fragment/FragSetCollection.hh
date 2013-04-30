@@ -71,9 +71,11 @@ public:
 		FrameList &frames
 	) const;
 
-	virtual FrameIterator begin() const;
+	virtual ConstFrameIterator begin() const;
+	virtual ConstFrameIterator end() const;
 
-	virtual FrameIterator end() const;
+	virtual FrameIterator nonconst_begin();
+	virtual FrameIterator nonconst_end();
 
 	virtual bool empty() const;
 

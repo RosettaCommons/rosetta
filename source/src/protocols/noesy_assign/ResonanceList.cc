@@ -194,43 +194,47 @@ void ResonanceList::read_from_stream( std::istream& is ) {
 		line_stream >> aa_name; //1-letter
 
 		Real intensity( 1.0 );
-		line_stream >> intensity;
-		if ( !line_stream ) { //option field intensity present ?
-			intensity=1.0;
-		}
+		// 3/8/13: this is totally buggy, as input files are not curated accordingly
+		// remove completely for now.
+		//	line_stream >> intensity;
+		//		if ( !line_stream ) { //option field intensity present ?
+		//			intensity=1.0;
+		//		}
 
 		std::string fl_tag;
 		line_stream >> fl_tag;
 		typedef std::set< core::Size > FloatList;
 		FloatList floats;
 		if ( line_stream ) {
-			if ( fl_tag[0]!='#' && fl_tag[0]!='[' ) {
-				throw utility::excn::EXCN_BadInput( "did not recognize item " +fl_tag + " in line " + line );
-			} else {
-				std::stringstream float_info;
-				fl_tag[0]=' ';
-				bool closed( false );
-				if ( fl_tag[ fl_tag.size()-1 ]==']' ) {
-						fl_tag.replace( fl_tag.size()-1, 1, " ");
-						closed = true;
-				}
-				float_info << fl_tag;
-				while ( line_stream && !closed ) {
-					line_stream >> fl_tag;
+			if ( fl_tag!="None" ) {
+				if ( fl_tag[0]!='#' && fl_tag[0]!='[' ) {
+					throw utility::excn::EXCN_BadInput( "did not recognize item " +fl_tag + " in line " + line );
+				} else { //that means fl_tag[0]=='[' or fl_tag[0]=='#'
+					std::stringstream float_info;
+					fl_tag[0]=' ';
+					bool closed( false );
 					if ( fl_tag[ fl_tag.size()-1 ]==']' ) {
 						fl_tag.replace( fl_tag.size()-1, 1, " ");
 						closed = true;
 					}
 					float_info << fl_tag;
-				}
-				if ( !closed ) {
-					throw utility::excn::EXCN_BadInput( "expect closing ] in line " + line );
-				}
-				char cstr[100];
-				while ( float_info.getline(cstr, 50, ',' ) ) {
-					tr.Debug << "add " << cstr << " to float group for resonance " << label << std::endl;
-					floats.insert( utility::string2int( cstr ));
-					tr.Debug << floats.size() << std::endl;
+					while ( line_stream && !closed ) {
+						line_stream >> fl_tag;
+						if ( fl_tag[ fl_tag.size()-1 ]==']' ) {
+							fl_tag.replace( fl_tag.size()-1, 1, " ");
+							closed = true;
+						}
+						float_info << fl_tag;
+					}
+					if ( !closed ) {
+						throw utility::excn::EXCN_BadInput( "expect closing ] in line " + line );
+					}
+					char cstr[100];
+					while ( float_info.getline(cstr, 50, ',' ) ) {
+						tr.Debug << "add " << cstr << " to float group for resonance " << label << std::endl;
+						floats.insert( utility::string2int( cstr ));
+						tr.Debug << floats.size() << std::endl;
+					}
 				}
 			}
 		}

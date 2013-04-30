@@ -23,6 +23,7 @@ namespace OptionKeys {
 
 namespace rescore { extern BooleanOptionKey const rescore; }
 namespace rescore { extern BooleanOptionKey const pose_metrics; }
+namespace rescore { extern BooleanOptionKey const assign_ss; }
 namespace rescore { extern BooleanOptionKey const skip; }
 namespace rescore { extern BooleanOptionKey const verbose; }
 namespace rescore { extern StringOptionKey const msms_analysis; }

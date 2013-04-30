@@ -2929,16 +2929,12 @@ RemodelLoopMover::create_fragment_movers_limit_size(
 	using protocols::simple_moves::ClassicFragmentMover;
 	using protocols::simple_moves::ResTypeFragmentMover;
 	using protocols::simple_moves::ResTypeFragmentMoverOP;
-	using core::fragment::Frame;
-  using core::fragment::FrameOP;
-	using core::fragment::FrameIterator;
-	using core::fragment::ConstantLengthFragSet;
-	using core::fragment::ConstantLengthFragSetOP;
+	using namespace core::fragment;
 	FragmentMoverOPs frag_movers;
 	for ( FragSetOPs::const_iterator f = fragsets_.begin(); f != fragsets_.end(); ++f ) {
 		if((*f)->max_frag_length()==frag_size || ((frag_size == 999)&&((*f)->max_frag_length()>9))) {
 			ConstantLengthFragSetOP tmp_frags = new ConstantLengthFragSet((*f)->max_frag_length());
-			for (FrameIterator frame_i = (*f)->begin(); frame_i != (*f)->end(); ++frame_i){
+			for( ConstFrameIterator frame_i = (*f)->begin(); frame_i != (*f)->end(); ++frame_i ){
 				if(allowedPos.find((*frame_i)->start()) != allowedPos.end()){
 						FrameOP tmp_frame = (*frame_i)->clone();
 						Size frag_ct= 0;

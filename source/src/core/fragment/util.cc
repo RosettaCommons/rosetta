@@ -79,7 +79,7 @@ static numeric::random::RandomGenerator RG(125923489);  // <- Magic number, do n
 using namespace ObjexxFCL::fmt;
 
 void retain_top(core::Size k, FragSetOP fragments) {
-	for (FrameIterator i = fragments->begin(); i != fragments->end(); ++i) {
+	for (FrameIterator i = fragments->nonconst_begin(); i != fragments->nonconst_end(); ++i) {
 		FrameOP existing_frame = *i;
 
 		// create a new frame containing only the desired fragments
@@ -123,7 +123,7 @@ void steal_constant_length_frag_set_from_pose ( pose::Pose const& pose_in, Const
 	}
 }
 
-void steal_frag_set_from_pose ( pose::Pose const& pose_in, FragSet& fragset, core::fragment::FragDataOP frag_type ) {
+void steal_frag_set_from_pose ( pose::Pose const& pose_in, FragSet& fragset, core::fragment::FragDataCOP frag_type ) {
 	//Size nbb ( 3 ); // three backbone torsions for Protein
 	Size const len( frag_type->size() );
 	runtime_assert( len > 0 );
@@ -137,7 +137,7 @@ void steal_frag_set_from_pose ( pose::Pose const& pose_in, FragSet& fragset, cor
 	}
 }
 
-void steal_frag_set_from_pose ( pose::Pose const& pose_in, Size const begin, Size const end, FragSet& fragset, core::fragment::FragDataOP frag_type ) {
+void steal_frag_set_from_pose ( pose::Pose const& pose_in, Size const begin, Size const end, FragSet& fragset, core::fragment::FragDataCOP frag_type ) {
 
 	Size const len( frag_type->size() );
 	runtime_assert( len > 0 );
@@ -154,7 +154,7 @@ void steal_frag_set_from_pose ( pose::Pose const& pose_in, Size const begin, Siz
 void steal_frag_set_from_pose (
   pose::Pose const& pose_in,
 	FragSet& fragset,
-	core::fragment::FragDataOP frag_type,
+	core::fragment::FragDataCOP frag_type,
 	std::set< core::Size > const& selected_residues )
 {
 	//Size nbb ( 3 ); // three backbone torsions for Protein
@@ -180,12 +180,12 @@ void chop_fragments( core::fragment::FragSet& source, core::fragment::FragSet& d
 	for ( Size pos = 1; pos <= source.max_pos() + slen - tlen; pos++ ) {
 		dest_frames.push_back( new Frame( pos, tlen ) );
 	}
-	for ( FrameIterator it=source.begin(), eit=source.end(); it!=eit; ++it ) {
-		Frame& fr( **it );
+	for ( ConstFrameIterator it=source.begin(), eit=source.end(); it!=eit; ++it ) {
+		Frame const& fr( **it );
 		for ( Size pos = fr.start(); pos<= fr.end() - tlen + 1; pos++ ) {
 			Frame& dest_fr( *dest_frames[ pos ] );
 			for ( Size nr = 1; nr <= fr.nr_frags(); ++nr ) {
-				FragData& long_frag( fr.fragment( nr ) );
+				FragData const& long_frag( fr.fragment( nr ) );
 				dest_fr.add_fragment( long_frag.generate_sub_fragment( pos-fr.start()+1, pos-fr.start()+tlen ) );
 			}
 		}
@@ -202,7 +202,7 @@ void compute_per_residue_coverage( core::fragment::FragSet const& _frags, utilit
 		nr_frags.resize( _frags.max_pos(), 0 );
 	}
 
-	for ( FrameIterator it=_frags.begin(), eit=_frags.end(); it!=eit; ++it ) {
+	for ( ConstFrameIterator it=_frags.begin(), eit=_frags.end(); it!=eit; ++it ) {
 		// so far this implementation doesn't work for non-continous frames
 		runtime_assert( it->is_continuous() );
 
@@ -462,13 +462,13 @@ void read_std_frags_from_cmd( FragSetOP& fragset_large, FragSetOP& fragset_small
 
 	if ( fragset_small && option[ OptionKeys::abinitio::dump_frags ]() ) { //diagnosis
 		utility::io::ozstream dump_frag_small( "fragset_small.dump" );
-		for ( FrameIterator it=fragset_small->begin(), eit=fragset_small->end(); it!=eit; ++it ) {
+		for ( ConstFrameIterator it=fragset_small->begin(), eit=fragset_small->end(); it!=eit; ++it ) {
 			(*it)->show( dump_frag_small );
 		}
 	}
 	if ( fragset_large && option[ OptionKeys::abinitio::dump_frags ]() ) { //diagnosis
 		utility::io::ozstream dump_frag_large( "fragset_large.dump" );
-		for ( FrameIterator it=fragset_large->begin(), eit=fragset_large->end(); it!=eit; ++it ) {
+		for ( ConstFrameIterator it=fragset_large->begin(), eit=fragset_large->end(); it!=eit; ++it ) {
 			(*it)->show( dump_frag_large );
 		}
 	}

@@ -19,7 +19,7 @@
 #include <protocols/topology_broker/RigidChunkClaimer.fwd.hh>
 
 // Package Headers
-#include <protocols/topology_broker/DofClaim.fwd.hh>
+#include <protocols/topology_broker/claims/DofClaim.fwd.hh>
 #include <protocols/topology_broker/TopologyClaimer.hh>
 
 // Project Headers
@@ -74,23 +74,23 @@ public:
 	virtual void new_decoy( core::pose::Pose const& );
 
 	///@brief generate DofClaims for BB
-	virtual void generate_claims( DofClaims& ); //add to list ( never call clear() on list )
+	virtual void generate_claims( claims::DofClaims& ); //add to list ( never call clear() on list )
 
 	///@brief has to decline foreign BB claims for rigid regions, reclaim jumps where appropriate
-	virtual bool allow_claim( DofClaim const& /*foreign_claim*/ );
+	virtual bool allow_claim( claims::DofClaim const& /*foreign_claim*/ );
 
 	///@brief issue jump-claims for jumps yet missing to keep rigid regions fixed
-	virtual void finalize_claims( DofClaims& );
+	virtual void finalize_claims( claims::DofClaims& );
 
 	//	virtual void initialize_residues( core::pose::Pose&, DofClaims const& init_claims, DofClaims& failed_to_init );
 	///@brief initialize BB residues and rigid-internal jumps from starting structure --- copying atom-tree dofs
-	virtual void initialize_dofs( core::pose::Pose&, DofClaims const& init_claims, DofClaims& failed_to_init );
+	virtual void initialize_dofs( core::pose::Pose&, claims::DofClaims const& init_claims, claims::DofClaims& failed_to_init );
 
 	///@brief rigid-chunk can probably provide some side-chain info from full-length model
 	virtual void switch_to_fullatom( core::pose::Pose&, utility::vector1< bool > bNeedToRepack ) const;
 
 	///@brief will fail if a BB torsion claim of the rigid region has been declined
-	virtual bool accept_declined_claim( DofClaim const& was_declined );
+	virtual bool accept_declined_claim( claims::DofClaim const& was_declined );
 
 	///@brief multiply your bias to this -- if its zero don't change that, i.e., multiply only
 	virtual void manipulate_cut_bias( utility::vector1< core::Real >& cut_bias );
@@ -138,7 +138,7 @@ private:
 	loops::Loops current_rigid_core_;
 
 	///@brief jumps used this round --- since generate_claims()
-	DofClaims current_jumps_;
+	claims::DofClaims current_jumps_;
 
 	///@brief flag used to specify if the rigid regions should really be treated exclusivity --- i.e., are they really rigid ?
 	///@brief changing this flag to false, will allow everything to move, but together with coordinate constraints this might yield
@@ -180,7 +180,7 @@ private:
 		bool irrelevant_jump( core::Size pos1, core::Size pos2 );
 
 		///@brief get the missing jumps
-		void generate_rigidity_jumps( RigidChunkClaimer*, DofClaims& extra_jumps );
+		void generate_rigidity_jumps( RigidChunkClaimer*, claims::DofClaims& extra_jumps, std::string );
 
 	private:
 		///@brief what should be rigid

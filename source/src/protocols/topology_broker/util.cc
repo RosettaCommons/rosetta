@@ -27,7 +27,7 @@
 #include <protocols/topology_broker/LoopFragmentClaimer.hh>
 #include <protocols/topology_broker/CutBiasClaimer.hh>
 #include <core/fragment/SecondaryStructure.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
 #include <basic/options/option.hh>
@@ -42,7 +42,7 @@
 
 // C++ headers
 #include <fstream>
-
+#include <sstream>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/import_pose/import_pose.hh>
 #include <protocols/topology_broker/weights/LargeFragWeight.hh>
@@ -63,9 +63,42 @@ using namespace core::fragment;
 
 struct CmdLineData {
 	CmdLineData() : b_has_constraint_claimer( false ) {};
-	FragSetOP frags_large;
-	FragSetOP frags_small;
 	bool b_has_constraint_claimer;
+};
+
+class FragmentContainer {
+
+public:
+
+	FragmentContainer( FragSetOP large, FragSetOP small, std::string label ):
+		frags_large_ ( large ),
+		frags_small_ ( small ),
+		label_ ( label )
+	{}
+
+	FragSetOP frags_large(){
+		return frags_large_;
+	}
+
+	FragSetOP frags_small(){
+		return frags_small_;
+	}
+
+	std::string label(){
+		return label_;
+	}
+
+	void set_label( std::string label ){
+		label_ = label;
+	}
+
+private:
+	FragSetOP frags_large_;
+	FragSetOP frags_small_;
+	std::string label_;
+
+
+
 };
 
 //some modifiers for the fragment reading can be read from the stream
@@ -96,7 +129,7 @@ core::fragment::FragSetOP read_frags( std::istream& is, core::fragment::Fragment
 	return NULL;
 }
 
-void add_claims_from_stream( TopologyBroker& broker, std::istream& is ,  CmdLineData& cmdline_data ) {
+void add_claims_from_stream( TopologyBroker& broker, std::istream& is ,  CmdLineData& cmdline_data, utility::vector1< FragmentContainer> & fragment_list ) {
 	std::string tag;
 	using namespace core::fragment;
 	using namespace basic::options;
@@ -120,6 +153,10 @@ void add_claims_from_stream( TopologyBroker& broker, std::istream& is ,  CmdLine
 		} else if ( tag == "ABINITIO_FRAGS" ) {
 			tr.Debug << "install Abinitio fragments " << std::endl;
 
+			FragSetOP frags_large;
+			FragSetOP frags_small;
+			std::string frags_label;
+
 			//short cut for the FragmentClaimers need for abinitio runs:
 			std::string file;
 			while ( is >> tag && tag.substr(0,4) != "END_" ) {
@@ -127,23 +164,38 @@ void add_claims_from_stream( TopologyBroker& broker, std::istream& is ,  CmdLine
 					FragmentIO frag_io(option[ OptionKeys::abinitio::number_9mer_frags ](),
 									   option[ OptionKeys::frags::nr_large_copies ](),
 									   option[ OptionKeys::frags::annotate ]() );
-					cmdline_data.frags_large = read_frags( is, frag_io );
+					frags_large = read_frags( is, frag_io );
+
 				} else if ( tag == "SMALL" ) {
 					FragmentIO frag_io(option[ OptionKeys::abinitio::number_3mer_frags ](),
 									   1,
 									   option[ OptionKeys::frags::annotate ]() );
-					cmdline_data.frags_small = read_frags( is, frag_io );
+					frags_small = read_frags( is, frag_io );
+				} else if ( tag == "LABEL" ){
+					is >> frags_label;
 				} else if ( tag[0] == '#' ) {
 					getline( is, tag );
 				}
 			}
+			if ( tr.Trace.visible() ) {
+				tr.Trace << "LARGE Fragments read for label: " << frags_label << std::endl;// << *fragment.frags_large() << std::endl;
+				tr.Trace << "SMALL Fragments read for label: " << frags_label << std::endl;// << *fragment.frags_small_ << std::endl;
+			}
+
+			if( !frags_large || !frags_small ){
+				throw utility::excn::EXCN_BadInput("ABINITIO_FRAGS macro used in topology broker setup without both 'LARGE' and 'SMALL' tags specifying 9-mer and 3-mer frags.");
+			}
+
+			fragment_list.add_back( FragmentContainer(frags_large, frags_small, frags_label) );
 		} else {
 			throw utility::excn::EXCN_BadInput(" unrecognized tag " + tag );
 		}
 	} //while is tag
+
+
 }
 
-void add_claims_from_file( TopologyBroker& broker, std::string const& file , CmdLineData& cmdline_data ) {
+void add_claims_from_file( TopologyBroker& broker, std::string const& file , CmdLineData& cmdline_data, utility::vector1< FragmentContainer> & fragment_list ) {
 	utility::io::izstream is;
 	if ( file != "NO_SETUP_FILE" ) {
 		is.open( file );
@@ -151,7 +203,7 @@ void add_claims_from_file( TopologyBroker& broker, std::string const& file , Cmd
 	}
 
 	try {
-		add_claims_from_stream( broker, is , cmdline_data );
+		add_claims_from_stream( broker, is , cmdline_data, fragment_list );
 	} catch ( EXCN_BadInput &excn ) {
 		throw EXCN_BadInput( excn.msg() + " occurred when reading file "+file ); //of course I loose the speciality of the EXCEPTION
 	}
@@ -169,15 +221,28 @@ void add_cmdline_claims( TopologyBroker& broker, bool const do_I_need_frags ) {
 	using weights::SmoothFragWeight;
 
 	CmdLineData cmdline_data;
+
+	utility::vector1< FragmentContainer > input_fragments;
+
+
 	if ( option[ OptionKeys::broker::setup ].user() ) {
 		FileVectorOption& files( option[ OptionKeys::broker::setup ] );
 		for ( Size i = 1; i<= files.size(); ++i ) {
-			add_claims_from_file( broker, files[ i ], cmdline_data );
+			add_claims_from_file( broker, files[ i ], cmdline_data, input_fragments );
 		}
 	}
 
-	core::fragment::read_std_frags_from_cmd( cmdline_data.frags_large, cmdline_data.frags_small );
-	if ( !cmdline_data.frags_large || !cmdline_data.frags_small ) {
+	// If no fragments have been specified in the input file, read from command line.
+	if ( input_fragments.size() == 0 ){
+		tr.Debug << "Reading FragmentFiles from cmd." << std::endl;
+
+		FragSetOP large;
+		FragSetOP small;
+
+		core::fragment::read_std_frags_from_cmd( large, small );
+		input_fragments.add_back( FragmentContainer( large, small, "DEFAULT" ) );
+	}
+	if ( input_fragments.size() == 0 ) {
 		if(do_I_need_frags){
 			throw utility::excn::EXCN_BadInput( "expected LARGE and SMALL fragment sets in ABINITIO_FRAGS section or via command line ");
 		}
@@ -186,34 +251,59 @@ void add_cmdline_claims( TopologyBroker& broker, bool const do_I_need_frags ) {
 		}
 	}
 
-	simple_moves::ClassicFragmentMoverOP bms, bml, sms;
-	broker.add(new FragmentClaimer(bml = new ClassicFragmentMover(cmdline_data.frags_large), "LargeFrags", new LargeFragWeight));
-	broker.add(new FragmentClaimer(bms = new ClassicFragmentMover(cmdline_data.frags_small), "SmallFrags", new SmallFragWeight));
-	broker.add(new FragmentClaimer(sms = new SmoothFragmentMover (cmdline_data.frags_small, /*dummy -*/ new GunnCost), "SmoothFrags", new SmoothFragWeight));
 
-	broker.add( new LoopFragmentClaimer( cmdline_data.frags_small ) );
-	core::fragment::SecondaryStructureOP ss_def = new core::fragment::SecondaryStructure( *cmdline_data.frags_small, false /*no JustUseCentralResidue */ );
-	broker.add( new CutBiasClaimer( *ss_def ) );
+	//Add 5 claimers for each FragmentContainer in <input_fragments>
+	for ( utility::vector1< FragmentContainer >::iterator i = input_fragments.begin(); i != input_fragments.end(); ++i ){
 
-	bms->set_end_bias( option[ OptionKeys::abinitio::end_bias ] ); //default is 30.0
-	bml->set_end_bias( option[ OptionKeys::abinitio::end_bias ] );
-	sms->set_end_bias( option[ OptionKeys::abinitio::end_bias ] );
+		if ( i->label() == "" ) {
+			i->set_label( "DEFAULT" );
+		}
+
+		tr.Info << " Adding claimers for fragments with label '" << i->label() << "'." <<std::endl;
+
+		simple_moves::ClassicFragmentMoverOP bms, bml, sms;
+
+		broker.add( new FragmentClaimer(bml = new ClassicFragmentMover(i->frags_large()), "LargeFrags", new LargeFragWeight, i->label(), i->frags_large()));
+		broker.add( new FragmentClaimer(bms = new ClassicFragmentMover(i->frags_small()), "SmallFrags", new SmallFragWeight, i->label(), i->frags_small()) );
+		broker.add( new FragmentClaimer(sms = new SmoothFragmentMover (i->frags_small(), /*dummy -*/ new GunnCost), "SmoothFrags", new SmoothFragWeight, i->label(), i->frags_small() ));
+		broker.add( new LoopFragmentClaimer( i->frags_small(), i->label() ));
+		core::fragment::SecondaryStructureOP ss_def = new core::fragment::SecondaryStructure(*(i->frags_small()), false /*no JustUseCentralResidue */ );
+		broker.add( new CutBiasClaimer( *ss_def, i->label() ) );
+
+		bms->set_end_bias( option[ OptionKeys::abinitio::end_bias ] ); //default is 30.0
+		bml->set_end_bias( option[ OptionKeys::abinitio::end_bias ] );
+		sms->set_end_bias( option[ OptionKeys::abinitio::end_bias ] );
+
+	}
 
 	//check if there are any SequenceClaimers: if not make at least one from FASTA file
 	if ( !broker.has_sequence_claimer() ) {
 		using namespace basic::options::OptionKeys;
-		std::string sequence;
+
+		std::string label;
+        std::string sequence;
 		if ( option[ in::file::fasta ].user() ) {
-			sequence = core::sequence::read_fasta_file( option[ in::file::fasta ]()[1] )[1]->sequence();
-			tr.Info << "read fasta sequence: " << sequence.size() << " residues\n"  << sequence << std::endl;
+            std::string filename = option[ in::file::fasta ]()[1];
+            sequence = core::sequence::read_fasta_file( filename  )[1]->sequence();
+            // label = core::sequence::read_fasta_file( filename )[1]->id();
+            broker.add( new SequenceClaimer ( sequence, "DEFAULT", core::chemical::CENTROID ) );
+
+            tr.Debug << "Read command-line to instantiate a default SequenceClaimer. Read sequence is '"
+                    << sequence << "' from command-line (-in:file:fasta or similar) specified file "
+                    << filename << std::endl;
 		} else if ( option[ in::file::native ].user() ) {
 			pose::PoseOP native_pose = new pose::Pose;
 			core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]() );
-			sequence = native_pose->sequence();
+			sequence = native_pose->annotated_sequence();
+			utility::vector1< core::pose::PoseOP > chain_poses = native_pose->split_by_chain();
+
+			broker.add( new SequenceClaimer ( sequence, "DEFAULT", core::chemical::CENTROID ) );
+
 		} else {
-			utility_exit_with_message("Error: can't read sequence! Use -in::file::fasta sequence.fasta or -in::file::native native.pdb!");
+			throw utility::excn::EXCN_BadInput("Error: can't read sequence! Use -in::file::fasta sequence.fasta or -in::file::native native.pdb!");
 		}
-		broker.add( new SequenceClaimer( sequence, core::chemical::CENTROID, "main" ) );
+
+        //broker.add( new SequenceClaimer ( sequence, core::chemical::CENTROID ) );
 	}
 
 	if ( !cmdline_data.b_has_constraint_claimer && basic::options::option[ constraints::cst_file ].user() ) {

@@ -19,9 +19,10 @@
 #include <protocols/topology_broker/RigidChunkClaimer.hh>
 #include <protocols/topology_broker/ConstraintClaimer.hh>
 #include <protocols/topology_broker/FragmentClaimer.hh>
-#include <protocols/topology_broker/JumpClaimer.hh>
+#include <protocols/topology_broker/FragmentJumpClaimer.hh>
 #include <protocols/topology_broker/DisulfJumpClaimer.hh>
 #include <protocols/topology_broker/SequenceClaimer.hh>
+#include <protocols/topology_broker/SymmetryClaimer.hh>
 #include <protocols/topology_broker/MetalloClaimer.hh>
 #include <protocols/topology_broker/MembraneTopologyClaimer.hh>
 #include <protocols/topology_broker/TemplateJumpClaimer.hh>
@@ -34,6 +35,7 @@
 #include <protocols/topology_broker/PseudocontactShiftEnergyController.hh>
 #include <protocols/topology_broker/PcsEnergyController.hh>
 #include <protocols/topology_broker/FibrilModelingClaimer.hh>
+#include <protocols/topology_broker/BasicJumpClaimer.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -57,7 +59,7 @@ TopologyClaimerFactory* TopologyClaimerFactory::instance_ = NULL;
 TopologyClaimerFactory::TopologyClaimerFactory() {
 	add_type(new RigidChunkClaimer());
 	add_type(new SequenceClaimer());
-	add_type(new JumpClaimer());
+	add_type(new FragmentJumpClaimer());
 	add_type(new DisulfJumpClaimer());
 	add_type(new FragmentClaimer());
 	add_type(new ConstraintClaimer());
@@ -73,6 +75,8 @@ TopologyClaimerFactory::TopologyClaimerFactory() {
 	add_type(new FoldandDockClaimer());
 	add_type(new FibrilModelingClaimer());
 	add_type(new AsymFoldandDockClaimer());
+	add_type(new SymmetryClaimer());
+	add_type(new BasicJumpClaimer());
 }
 
 TopologyClaimerFactory::~TopologyClaimerFactory() {

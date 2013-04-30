@@ -182,7 +182,7 @@ CloseFold::fa_scorefxn(){
 
 void
 CloseFold::initialize_fragments() {
-  core::fragment::FrameIterator i;
+  core::fragment::ConstFrameIterator i;
   for (i = fragments_->begin(); i != fragments_->end(); ++i) {
     Size position = (*i)->start();
     library_[position] = **i;

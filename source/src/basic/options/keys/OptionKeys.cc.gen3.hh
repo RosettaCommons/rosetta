@@ -1,3 +1,7 @@
+namespace optE { BooleanOptionKey const no_hb_env_dependence( "optE:no_hb_env_dependence" );  }
+namespace optE { BooleanOptionKey const no_hb_env_dependence_DNA( "optE:no_hb_env_dependence_DNA" );  }
+namespace optE { BooleanOptionKey const optE_no_protein_hack_elec( "optE:optE_no_protein_hack_elec" );  }
+namespace optE { BooleanOptionKey const design_first( "optE:design_first" );  }
 namespace optE { IntegerOptionKey const n_design_cycles( "optE:n_design_cycles" );  }
 namespace optE { BooleanOptionKey const recover_nat_rot( "optE:recover_nat_rot" );  }
 namespace optE { FileOptionKey const component_weights( "optE:component_weights" );  }

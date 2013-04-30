@@ -21,8 +21,8 @@
 #include <protocols/topology_broker/TemplateJumpClaimer.fwd.hh>
 
 // Package Headers
-#include <protocols/topology_broker/JumpClaimer.hh>
-#include <protocols/topology_broker/DofClaim.fwd.hh>
+#include <protocols/topology_broker/FragmentJumpClaimer.hh>
+#include <protocols/topology_broker/claims/DofClaim.fwd.hh>
 #include <protocols/topology_broker/weights/AbinitioMoverWeight.hh>
 #include <protocols/abinitio/Templates.hh>
 // Project Headers
@@ -60,7 +60,7 @@ namespace topology_broker {
 
 ///@brief hacky wrapper to keep the old Template code alive a bit longer
 /// this claimer deals with the Jumpy part of the Templates.
-class TemplateJumpClaimer : public JumpClaimer {
+class TemplateJumpClaimer : public FragmentJumpClaimer {
 public:
 	TemplateJumpClaimer(); //for factory
 	TemplateJumpClaimer( std::string config_file,  weights::AbinitioMoverWeightOP weight = NULL );

@@ -23,7 +23,7 @@
 // Package Headers
 #include <protocols/topology_broker/TopologyClaimer.hh>
 #include <protocols/topology_broker/SequenceClaimer.hh>
-#include <protocols/topology_broker/DofClaim.fwd.hh>
+#include <protocols/topology_broker/claims/DofClaim.fwd.hh>
 
 // AUTO-REMOVED #include <protocols/jumping/ResiduePairJumpSetup.hh>
 
@@ -59,21 +59,18 @@
 namespace protocols {
 namespace topology_broker {
 
-class DensityScoringClaimer : public SequenceClaimer {
+class DensityScoringClaimer : public virtual TopologyClaimer {
 public:
 	DensityScoringClaimer(); //for factory
 
 	virtual TopologyClaimerOP clone() const;
 
 	///mainly calls parent function... but is also used to figure out what residue number we are jumping to.
-	virtual void initialize_residues( core::pose::Pose&, SequenceClaimOP init_claim, DofClaims& failed_to_init );
+	//virtual void initialize_residues( core::pose::Pose&, claims::SequenceClaimOP init_claim, claims::DofClaims& failed_to_init );
 
-	virtual void generate_claims( protocols::topology_broker::DofClaims& dc);
+	virtual void generate_sequence_claims( claims::DofClaims& );
 
- 	virtual void initialize_dofs( core::pose::Pose& pose, DofClaims const& /*init_claims*/, DofClaims& failed_to_init ) {
- 		DofClaims my_failures;
- 		SequenceClaimer::initialize_dofs( pose, my_failures, failed_to_init );
- 	};
+	virtual void generate_claims( protocols::topology_broker::claims::DofClaims& dc);
 
 	///@brief type() is specifying the output name of the TopologyClaimer
 	virtual std::string type() const {
@@ -86,7 +83,7 @@ public:
 
 	virtual void add_constraints( core::pose::Pose& /*pose*/ ) const;
 
-	virtual bool accept_declined_claim( DofClaim const& was_declined );
+	virtual bool accept_declined_claim( claims::DofClaim const& was_declined );
 protected:
 
 	virtual void set_defaults();

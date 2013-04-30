@@ -16,16 +16,20 @@
 #include <protocols/topology_broker/FragmentClaimer.hh>
 
 // Package Headers
-#include <protocols/topology_broker/DofClaim.hh>
+#include <protocols/topology_broker/claims/DofClaim.hh>
+#include <protocols/topology_broker/claims/SequenceClaim.hh>
+#include <protocols/topology_broker/claims/BBClaim.hh>
 #include <protocols/topology_broker/weights/AbinitioMoverWeight.hh>
 #include <protocols/topology_broker/TopologyBroker.hh>
+#include <protocols/topology_broker/SequenceNumberResolver.hh>
+
 
 // Project Headers
 #include <core/pose/Pose.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/util.hh> //visualize
 #include <utility/exit.hh>
-
+#include <core/kinematics/Exceptions.hh>
 #include <core/fragment/FragSet.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
 
@@ -41,7 +45,7 @@
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>
-
+#include <sstream>
 
 //#include <basic/options/option.hh>
 
@@ -59,10 +63,11 @@ namespace topology_broker {
 using namespace core;
 
 FragmentClaimer::FragmentClaimer() :
+	TopologyClaimer(),
 	mover_( NULL ),
 	mover_tag_( "NoTag" ),
 	bInitDofs_( false ),
-	claim_right_( DofClaim::CAN_INIT )
+	claim_right_( claims::DofClaim::CAN_INIT )
 {
 	movemap_ = new kinematics::MoveMap;
 }
@@ -72,16 +77,36 @@ FragmentClaimer::FragmentClaimer( simple_moves::FragmentMoverOP mover, std::stri
 	mover_( mover ),
 	mover_tag_( tag ),
 	bInitDofs_( false ),
-	claim_right_( DofClaim::CAN_INIT )
+	claim_right_( claims::DofClaim::CAN_INIT )
 {
 	movemap_ = new kinematics::MoveMap;
+	runtime_assert( fragments() );
 }
 
+FragmentClaimer::FragmentClaimer( simple_moves::FragmentMoverOP mover, std::string tag, weights::AbinitioMoverWeightOP weight, std::string label, core::fragment::FragSetOP frags ) :
+	TopologyClaimer( weight ),
+	mover_( mover ),
+	mover_tag_( tag ),
+	bInitDofs_( false ),
+	claim_right_( claims::DofClaim::CAN_INIT )
+{
+	movemap_ = new kinematics::MoveMap;
+	set_label( label );
+	set_fragments( frags );
+	runtime_assert( fragments() );
+}
+
+
 FragmentClaimer::FragmentClaimer( simple_moves::FragmentMoverOP mover ) :
-	mover_( mover )
+	TopologyClaimer(),
+	mover_( mover ),
+	mover_tag_( "NoTag" ),
+	bInitDofs_( false ),
+	claim_right_( claims::DofClaim::CAN_INIT )
 {
 	if ( mover_) mover_tag_ = mover_->type();
 	movemap_ = new kinematics::MoveMap;
+	runtime_assert( fragments() );
 }
 
 
@@ -102,19 +127,43 @@ FragmentClaimer::FragmentClaimer( FragmentClaimer const & src ) :
 FragmentClaimer::~FragmentClaimer() {}
 
 void FragmentClaimer::get_sequence_region( std::set< Size >& start_region ) const {
+	//TODO: this should probably use local positions rather than absolute positions, but AIN'T NOBODY GOT TIME FOR REFACTORING
+	//runtime_assert( false );
+
 	start_region.clear();
 	tr.Trace << "FragmentClaimer::get_sequence_region" << std::endl;
 	for ( core::Size i = 1; i<= active_sequence_labels_.size(); ++i ) {
 		tr.Trace << " look for label : " << active_sequence_labels_[ i ] << std::endl;
-		SequenceClaim const& seq_claim = broker().resolve_sequence_label( active_sequence_labels_[ i ] );
-		for ( core::Size pos = seq_claim.offset(); pos <= seq_claim.last_residue(); ++pos ) {
+		claims::SequenceClaim const& seq_claim = broker().resolve_sequence_label( active_sequence_labels_[ i ] );
+		core::Size start_pos = broker().sequence_number_resolver().find_global_pose_number( active_sequence_labels_[ i ] );
+		core::Size end_pos = start_pos + seq_claim.length() - 1 ;
+		for ( core::Size pos = start_pos; pos <= end_pos; ++pos ) {
 			start_region.insert( pos );
 		}
 	}
 }
 
 
-void FragmentClaimer::generate_claims( DofClaims& new_claims ) {
+void FragmentClaimer::generate_claims( claims::DofClaims& new_claims ) {
+
+	// At this point, the global sequence is set and the fragment positions have to be updated.
+	core::Size fragment_offset = broker().sequence_number_resolver().offset( label() );
+
+	core::Size seq_length = broker().resolve_sequence_label( label() ).length();
+	core::Size frag_seq_length = fragments()->nr_frames() + fragments()->max_frag_length() -1;
+
+	if ( seq_length != frag_seq_length ){
+		std::ostringstream msg;
+		msg << " Sequence length of SequenceClaim with label " << label() << "(length: "<< seq_length
+				<< ") and sequence length of corresponding FragmentClaimer (length: " << frag_seq_length << ") do not match." << std::endl;
+		throw utility::excn::EXCN_BadInput( msg.str() );
+	}
+
+	tr.Debug << "Adapt fragment positions of FragmentClaimer " << label() << "-" << mover_tag_
+			<< " to offset of " << fragment_offset <<std::endl;
+
+	core::fragment::FragSetOP shifted_fragments = fragments()->clone_shifted( fragment_offset );
+	set_fragments( shifted_fragments );
 
 	if ( region_.size() ) {
 		region_.switch_movemap( *movemap_, core::id::BB, true );
@@ -125,9 +174,9 @@ void FragmentClaimer::generate_claims( DofClaims& new_claims ) {
 
 	core::fragment::InsertMap insert_map;
 	core::fragment::InsertSize insert_size;
-	if ( !mover_ || !mover_->fragments() ) return;
+	if ( !mover_ || !fragments() ) return;
 
-	mover_->fragments()->generate_insert_map( *movemap_, insert_map, insert_size );
+	fragments()->generate_insert_map( *movemap_, insert_map, insert_size );
 
 	if ( insert_size.size() == 0 ){
 		std::cerr << "Insert Size is 0 in  FragmentClaimer::generate_claims( .. ). File: " << __FILE__ << " Line: " << __LINE__ << std::endl;
@@ -145,17 +194,19 @@ void FragmentClaimer::generate_claims( DofClaims& new_claims ) {
 
 	for ( core::fragment::InsertMap::const_iterator it = insert_map.begin(), eit = insert_map.end();
 				it != eit; ++it ) {
-		Size const start ( *it );
-		Size const length( insert_size[ start ] );
-		new_claims.push_back( new BBClaim( this, *it, claim_right_ ) );
-		for ( Size i = start + 1; i < start+length && insert_size[ i ] == 0; i++ ) {
-			new_claims.push_back( new BBClaim( this, i, claim_right_ ) );
+		Size const start ( *it - fragment_offset );
+		Size const length( insert_size[ *it ] );
+		new_claims.push_back( new claims::BBClaim( this, std::make_pair( label(), start ), claim_right_) );
+		//new_claims.push_back( new claims::BBClaim( this, *it, claim_right_ ) );
+		for ( Size i = start + 1; i < start+length && insert_size[ i + fragment_offset ] == 0; i++ ) {
+			new_claims.push_back( new claims::BBClaim( this, std::make_pair( label(), i), claim_right_ ));
+			//new_claims.push_back( new claims::BBClaim( this, i, claim_right_ ) );
 		}
 	}
 	tr.Trace << std::endl;
 }
 
-bool FragmentClaimer::accept_declined_claim( DofClaim const& was_declined ) {
+bool FragmentClaimer::accept_declined_claim( claims::DofClaim const& was_declined ) {
 	was_declined.toggle( *movemap_, false ); //this could even be BaseClass --- or BaseClass with MoveMap...
 	tr.Debug << "OK: FragmentClaimer couldn't get " << was_declined << std::endl;
 	return true; // full tolerance here ---
@@ -176,7 +227,7 @@ simple_moves::FragmentMoverOP FragmentClaimer::get_frag_mover_ptr() {
 }
 
 
-void FragmentClaimer::initialize_dofs( core::pose::Pose& pose, DofClaims const& init_dofs, DofClaims& /*failed_to_init*/ ) {
+void FragmentClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofClaims const& init_dofs, claims::DofClaims& /*failed_to_init*/ ) {
 	//need to copy coords and jumps --- if chunks were idealized no problem .... but non-idealized stuff ?
 	//also take care of fullatom vs centroid...
 
@@ -186,7 +237,7 @@ void FragmentClaimer::initialize_dofs( core::pose::Pose& pose, DofClaims const& 
 	test_map.set_bb( true );
 	test_map.set_jump( true );
 	if ( mover_ ) {
-		mover_->fragments()->generate_insert_map( test_map, insert_map, insert_size );
+		fragments()->generate_insert_map( test_map, insert_map, insert_size );
 	}
 
 	Size const total_insert ( insert_map.size() );
@@ -200,7 +251,7 @@ void FragmentClaimer::initialize_dofs( core::pose::Pose& pose, DofClaims const& 
 	init_map->set_bb( false );
 	init_map->set_jump( false );
 
-	for ( DofClaims::const_iterator it = init_dofs.begin(), eit = init_dofs.end();
+	for ( claims::DofClaims::const_iterator it = init_dofs.begin(), eit = init_dofs.end();
 				it != eit; ++it ) {
 		if ( (*it)->owner()==this ) {
 			(*it)->toggle( *init_map, true );
@@ -215,15 +266,19 @@ void FragmentClaimer::initialize_dofs( core::pose::Pose& pose, DofClaims const& 
 	if ( mover_ && bInitDofs_ ) {
 		mover_->set_movemap( init_map );
 		mover_->apply_at_all_positions( pose );
-		tr.Info << type() << " " << label() << " init-dof-map: ";
+		if( tr.Debug.visible() ){
+			tr.Debug << type() << " " << label() << " init-dof-map: ";
+			core::kinematics::simple_visualize_fold_tree_and_movemap( pose.fold_tree(), *movemap_, tr.Debug );
+			tr.Debug << std::endl;
+		}
+	}
+	if ( mover_ ) mover_->set_movemap( movemap_ );
+
+	if( tr.Debug.visible() ){
+		tr.Info << type() << " " << label() << " movemap: ";
 		core::kinematics::simple_visualize_fold_tree_and_movemap( pose.fold_tree(), *movemap_, tr.Info );
 		tr.Info << std::endl;
 	}
-	if ( mover_ ) mover_->set_movemap( movemap_ );
-	tr.Info << type() << " " << label() << " movemap: ";
-	core::kinematics::simple_visualize_fold_tree_and_movemap( pose.fold_tree(), *movemap_, tr.Info );
-	tr.Info << std::endl;
-
 }//initialize dofs
 
 bool FragmentClaimer::read_tag( std::string tag, std::istream& is ) {
@@ -253,12 +308,20 @@ bool FragmentClaimer::read_tag( std::string tag, std::istream& is ) {
 
 void FragmentClaimer::init_after_reading() {
 	if ( active_sequence_labels_.size() == 0 ) {
-		active_sequence_labels_.push_back("main");
+		active_sequence_labels_.push_back( label() );
 	}
 }
 
 moves::MoverOP FragmentClaimer::get_mover( core::pose::Pose const& /*pose*/ ) const {
 	return mover_;
+}
+
+void FragmentClaimer::set_fragments( core::fragment::FragSetOP frags ){
+	mover_->set_fragments( frags );
+}
+
+core::fragment::FragSetCOP FragmentClaimer::fragments() {
+	return mover_->fragments();
 }
 
 } //topology_broker

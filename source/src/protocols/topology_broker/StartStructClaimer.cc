@@ -16,7 +16,9 @@
 #include <protocols/topology_broker/StartStructClaimer.hh>
 
 // Package Headers
-#include <protocols/topology_broker/DofClaim.hh>
+#include <protocols/topology_broker/claims/DofClaim.hh>
+#include <protocols/topology_broker/claims/SequenceClaim.hh>
+#include <protocols/topology_broker/claims/BBClaim.hh>
 #include <protocols/topology_broker/Exceptions.hh>
 // Project Headers
 #include <core/pose/Pose.hh>
@@ -63,13 +65,13 @@ using namespace core;
 
 StartStructClaimer::StartStructClaimer() : bUseInputPose_( true ), perturb_( 0.0 )
 {
-	set_claim_right( DofClaim::INIT );
+	set_claim_right( claims::DofClaim::INIT );
 	set_bInitDofs( true );
 }
 
 StartStructClaimer::StartStructClaimer( core::pose::Pose const& pose ) : bUseInputPose_( true ), perturb_( 0.0 )
 {
-	set_claim_right( DofClaim::INIT );
+	set_claim_right( claims::DofClaim::INIT );
 	//	generate_init_frags( pose );
 	start_pose_ = pose;
 	set_bInitDofs( true );
@@ -87,10 +89,6 @@ void StartStructClaimer::new_decoy( core::pose::Pose const& pose ) {
 	// generate_init_frags( start_pose_ );
 
 	//	start_pose_.clear();
-}
-
-void StartStructClaimer::generate_sequence_claims( DofClaims& new_claims ) {
-	new_claims.push_back( new SequenceClaim( this, 0, 0, label(), DofClaim::NEED_TO_KNOW /* for now... eventually CAN_INIT ? */ ) );
 }
 
 void StartStructClaimer::generate_init_frags( core::pose::Pose const& pose ) {
@@ -114,23 +112,26 @@ void StartStructClaimer::generate_init_frags( core::pose::Pose const& pose ) {
 	simple_moves::ClassicFragmentMoverOP mover = new simple_moves::ClassicFragmentMover( fragset );
 	mover->set_check_ss( false ); /* not good if we want to initialize from 1mer fragments */
 	set_mover( mover );
+	set_fragments( fragset );
 
 }
 
-void StartStructClaimer::initialize_residues( core::pose::Pose&, SequenceClaimOP , DofClaims&  ) {
-	//now the sequence is known:
-	if ( start_pose_.total_residue() > 0 ) {
-		generate_init_frags( start_pose_ ); //requires sequence definition --- had to wait until now.
+void StartStructClaimer::generate_claims( claims::DofClaims& new_claims ){
+	for( Size i=1; i <= broker().resolve_sequence_label( label() ).length(); ++i){
+		new_claims.push_back( new claims::BBClaim( this, std::make_pair( label(), i ), claims::DofClaim::INIT ) );
 	}
-	//start_pose_.clear(); // save the space..
 }
-
 
 void StartStructClaimer::initialize_dofs(
 		 core::pose::Pose& pose,
-		 DofClaims const& init_dofs,
-		 DofClaims& failed_to_init
+		 claims::DofClaims const& init_dofs,
+		 claims::DofClaims& failed_to_init
 ) {
+	//now the sequence is known, and we have access to the pose:
+	if ( start_pose_.total_residue() > 0 ) {
+		generate_init_frags( start_pose_ ); //requires sequence definition and access to the pose --- had to wait until now.
+	}
+	//start_pose_.clear(); // save the space..
 
 	try{
 		mover();
@@ -140,14 +141,23 @@ void StartStructClaimer::initialize_dofs(
 
 	FragmentClaimer::initialize_dofs( pose, init_dofs, failed_to_init );
 	if ( perturb_ == 0.0 ) return;
-	for ( DofClaims::const_iterator it = init_dofs.begin(), eit = init_dofs.end();
+	for ( claims::DofClaims::const_iterator it = init_dofs.begin(), eit = init_dofs.end();
 				it != eit; ++it ) {
 		//don't really know how this looks for jumps
-		if ( (*it)->type() == DofClaim::BB ) {
-			Size pos( (*it)->pos( 1 ) );
+
+		claims::BBClaimOP bb_ptr( dynamic_cast< claims::BBClaim* >( it->get() ) );
+
+		if ( bb_ptr ) {
+			Size pos( (platform::Size) bb_ptr->global_position() );
 			pose.set_phi( pos, pose.phi( pos ) + RG.gaussian()*perturb_ );
 			pose.set_psi( pos, pose.psi( pos ) + RG.gaussian()*perturb_ );
 		}
+
+		/*if ( (*it)->type() == claims::DofClaim::BB ) {
+			Size pos( (*it)->pos( 1 ) );
+			pose.set_phi( pos, pose.phi( pos ) + RG.gaussian()*perturb_ );
+			pose.set_psi( pos, pose.psi( pos ) + RG.gaussian()*perturb_ );
+		}*/
 	}
 }
 
@@ -167,7 +177,6 @@ bool StartStructClaimer::read_tag( std::string tag, std::istream& is ) {
 	} else return FragmentClaimer::read_tag( tag, is );
 	return true;
 }
-
 
 
 } //topology_broker

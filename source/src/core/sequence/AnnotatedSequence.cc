@@ -37,7 +37,9 @@ AnnotatedSequence::AnnotatedSequence( std::string const& str_in )
 AnnotatedSequence::AnnotatedSequence( AnnotatedSequence const& other ) :
 	std::string( other ),
 	pos_map_( other.pos_map_ ),
-	map_is_clean_( other.map_is_clean_ )
+	map_is_clean_( other.map_is_clean_ ),
+	one_letter_sequence_( other.one_letter_sequence_ ),
+	length_( other.length_ )
 {}
 
 AnnotatedSequence& AnnotatedSequence::operator=( AnnotatedSequence const& other ) {
@@ -45,6 +47,8 @@ AnnotatedSequence& AnnotatedSequence::operator=( AnnotatedSequence const& other 
 	std::string::operator=( other );
 	map_is_clean_ = other.map_is_clean_;
 	pos_map_ = other.pos_map_;
+	one_letter_sequence_ = other.one_letter_sequence_;
+	length_ = other.length_;
 	return *this;
 }
 
@@ -93,28 +97,15 @@ core::chemical::AA AnnotatedSequence::aa( core::Size seqpos ) const {
 	return core::chemical::aa_from_oneletter_code( one_letter( seqpos ) );
 }
 
+
 std::string AnnotatedSequence::one_letter_sequence() const {
-  std::string const& annotated_seq = *this;
-  std::string sequence("");
-  bool in_bracket = false;
-  for ( Size i = 0, ie = annotated_seq.length(); i < ie; ++i ) {
-    char c = annotated_seq[i];
-    if ( c == '[' ) {
-      in_bracket = true;
-      continue;
-    } else if ( c == ']' ) {
-      in_bracket = false;
-      continue;
-    } else {
-      if ( in_bracket ) {
-	continue;
-      } else {
-	sequence = sequence + c;
-      }
-    }
-  }
-  runtime_assert( !in_bracket );
-  return sequence;
+	if ( !map_is_clean_ ) calculate_map();
+	return one_letter_sequence_;
+}
+
+core::Size AnnotatedSequence::length() const {
+	if ( !map_is_clean_ )	calculate_map();
+	return one_letter_sequence_.size();
 }
 
 void AnnotatedSequence::calculate_map() const {
@@ -122,6 +113,8 @@ void AnnotatedSequence::calculate_map() const {
   map_is_clean_ = true;
 
   std::string const& annotated_seq = *this;
+  std::string sequence("");
+
   bool in_bracket = false;
   pos_map_.clear();
   pos_map_.reserve( annotated_seq.length() ); //a little more ... but avoiding resizing...
@@ -137,10 +130,13 @@ void AnnotatedSequence::calculate_map() const {
       if ( in_bracket ) {
 	continue;
       } else {
-	pos_map_.push_back( i );
+				pos_map_.push_back( i );
+				sequence = sequence + c;
       }
     }
   }
+  one_letter_sequence_ = sequence;
+	runtime_assert( !in_bracket );
 }
 
 

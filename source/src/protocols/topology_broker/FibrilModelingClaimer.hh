@@ -20,7 +20,7 @@
 #include <protocols/topology_broker/FibrilModelingClaimer.fwd.hh>
 
 // Package Headers
-#include <protocols/topology_broker/DofClaim.fwd.hh>
+#include <protocols/topology_broker/claims/DofClaim.fwd.hh>
 #include <protocols/topology_broker/TopologyClaimer.hh>
 
 // Project Headers
@@ -76,13 +76,13 @@ public:
 	);
 
 	virtual void initialize_dofs( core::pose::Pose&,
-																DofClaims const& init_claims,
-																DofClaims& /*failed_to_init*/ );
+																claims::DofClaims const& init_claims,
+																claims::DofClaims& /*failed_to_init*/ );
 
-  virtual void generate_claims( DofClaims& new_claims );
+  virtual void generate_claims( claims::DofClaims& new_claims );
 
 	///@brief has to decline foreign BB claims for slave regions
-	virtual bool allow_claim( DofClaim const& /*foreign_claim*/ );
+	virtual bool allow_claim( claims::DofClaim const& /*foreign_claim*/ );
 
 protected:
 

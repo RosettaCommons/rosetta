@@ -9,7 +9,7 @@
 /// @file   basic/options/keys/RBSegmentRelax.OptionKeys.gen.hh
 /// @brief  basic::options::OptionKeys collection
 /// @author Stuart G. Mentzer (Stuart_Mentzer@objexx.com)
-/// @author James M. Thompson (tex@u.washington.edu)
+/// @author FJames M. Thompson (tex@u.washington.edu)
 
 #ifndef INCLUDED_basic_options_keys_RBSegmentRelax_OptionKeys_gen_HH
 #define INCLUDED_basic_options_keys_RBSegmentRelax_OptionKeys_gen_HH

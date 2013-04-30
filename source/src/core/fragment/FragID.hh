@@ -45,16 +45,15 @@ namespace fragment {
 class FragID {
 public:
 	FragID();
-	FragID( FrameOP frame, Size frag_id );
+	FragID( FrameCOP frame, Size frag_id );
 	FragID( FragID const & );
 	~FragID();
 	FragID const & operator = ( FragID const & rhs );
 
 	FrameCOP frame_ptr() const;
 	Frame const& frame() const;
-	Frame& frame();
+	//Frame& frame();
 	Size id() const;
-	FragData& fragment();
 	FragData const & fragment() const;
 	FragDataCOP fragment_ptr() const;
 	Size apply( kinematics::MoveMap const& mm, pose::Pose& pose) const;
@@ -72,7 +71,7 @@ public:
 /// TEMP!  soon to be private!
 public:
 	/// Pretend this is a std pair
-	FrameOP first;
+	FrameCOP first;
 	Size    second;
 
 };

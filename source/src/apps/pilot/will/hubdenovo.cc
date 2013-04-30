@@ -911,7 +911,7 @@ struct HubDenovo {
 		sfsym->set_weight(atom_pair_constraint,4*cstwt);
 		core::chemical::ResidueTypeSetCAP rtsfa = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 
-		std::map<string, vector1<core::fragment::FragDataOP> > fds( get_frags_map() );
+		std::map<string, vector1<core::fragment::FragDataCOP> > fds( get_frags_map() );
 		core::fragment::FragSetOP frags3 = make_frag_set(cfg.ss                 ,fds,hub_.n_residue()+1);
 		core::fragment::FragSetOP fragsl = make_frag_set(cfg.ssstr().substr(0,6),fds,hub_.n_residue()+1);
 

@@ -16,7 +16,7 @@
 #include <protocols/topology_broker/ClaimerMessage.hh>
 #include <protocols/topology_broker/TopologyClaimer.hh>
 // AUTO-REMOVED #include <protocols/topology_broker/TopologyBroker.hh>
-#include <protocols/topology_broker/DofClaim.hh>
+#include <protocols/topology_broker/claims/DofClaim.hh>
 
 #include <iostream>
 

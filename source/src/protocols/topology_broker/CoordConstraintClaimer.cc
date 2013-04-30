@@ -16,6 +16,8 @@
 #include <protocols/topology_broker/CoordConstraintClaimer.hh>
 
 // Package Headers
+#include <protocols/topology_broker/claims/DofClaim.hh>
+#include <protocols/topology_broker/claims/LegacyRootClaim.hh>
 #include <protocols/topology_broker/TopologyBroker.hh>
 #include <protocols/topology_broker/RigidChunkClaimer.hh>
 
@@ -117,7 +119,7 @@ void CoordConstraintClaimer::new_decoy( core::pose::Pose const& pose ) {
 	new_decoy();
 }
 
-void CoordConstraintClaimer::generate_claims( DofClaims& new_claims ) {
+void CoordConstraintClaimer::generate_claims( claims::DofClaims& new_claims ) {
 	if ( bLocal_ ) {
 		Size new_root( root_ );
 		RigidChunkClaimer::CM_SuggestFixResidue msg( root_from_label_ );
@@ -140,7 +142,7 @@ void CoordConstraintClaimer::generate_claims( DofClaims& new_claims ) {
 		}
 		runtime_assert( root_ != 0 );
 	}
-	if ( !bLocal_ ) new_claims.push_back( new RootClaim( this, root_, DofClaim::NEED_TO_KNOW ) );
+	if ( !bLocal_ ) new_claims.push_back( new claims::LegacyRootClaim( this, root_, claims::DofClaim::NEED_TO_KNOW ) );
 }
 
 void CoordConstraintClaimer::read_cst_pose() {

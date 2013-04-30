@@ -33,7 +33,8 @@ class FragData;
 typedef utility::pointer::owning_ptr< FragData > FragDataOP;
 typedef utility::pointer::owning_ptr< FragData const > FragDataCOP;
 
-typedef utility::vector1< FragDataOP > FragDataList;
+typedef utility::vector1< FragDataCOP > FragDataCOPs;
+typedef utility::vector1< FragDataOP > FragDataOPs;
 
 class AnnotatedFragData;
 

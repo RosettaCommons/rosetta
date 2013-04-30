@@ -592,7 +592,7 @@ void CrossPeak::calibrate( PeakCalibrator const& calibrator, PeakCalibrator::Typ
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
 	Real sum( 0.0 );
 	Size ct( 0 );
-	if ( volume_ <= 0.0 ) throw utility::excn::EXCN_BadInput("Peak intensity negative or zero for "+ObjexxFCL::string_of( peak_id_ ) );
+	//	if ( volume_ <= 0.0 ) throw utility::excn::EXCN_BadInput("Peak intensity negative or zero for "+ObjexxFCL::string_of( peak_id_ ) );
 	for ( PeakAssignments::const_iterator it = begin(); it != end(); ++it ) {
 		CALIBRATION_ATOM_TYPE type1, type2;
 		type1 = (*it)->calibration_atom_type( 1 );
@@ -607,7 +607,7 @@ void CrossPeak::calibrate( PeakCalibrator const& calibrator, PeakCalibrator::Typ
 		sum += (vol > params.min_volume_ ? vol : 0 ) / cal / int_factor;
 		ct += vol > params.min_volume_;
 	}
-	if ( ct > 0 )	distance_bound_ = pow( sum*volume_, -1.0/6.0 );
+	if ( ct > 0 )	distance_bound_ = pow( sum*std::abs( volume_ ), -1.0/6.0 );
 	else distance_bound_ = 0.0;
 
 	core::Real max_dist( info( 1 ).max_noe_distance() );
@@ -679,6 +679,9 @@ void CrossPeak3D::assign_labelled_spin( Size iproton ) {
 					id::NamedAtomID atomID( info( iproton ).label_atom_name( it->second->atom().atom(), resonances().aa_from_resid( resid ) ), resid );
 					Resonance const& label_reso ( resonances()[ atomID ] );
 					//					if ( std::abs( fold_resonance( label_reso.freq(), iproton+2 ) - my_label_freq ) < my_label_tolerance ) {
+					//					if ( tr_labels.Trace.visible() ) {
+					//						tr_labels.Trace << "trying to match " << atomID << " as label to " << it->second->atom() << std::endl;
+					//					}
 					if ( label_reso.match( my_label_freq, my_label_tolerance, folder( iproton+2 ) ) ) {
 						proton( iproton ).add_assignment( it->first );
 						label( iproton ).add_assignment( label_reso.label() );
@@ -692,8 +695,9 @@ void CrossPeak3D::assign_labelled_spin( Size iproton ) {
 					}
 					continue; //if no label is known we don't assign this proton
 				} catch ( EXCN_UnknownAtomname& exception ) { //this happens if we try to assign a proton that can't have a label: i.e., a H in a HCH spectrum
-					//tr_labels.Trace << "cannot find label atom for resid: " + it->second->atom().atom() + " " + ObjexxFCL::string_of( resid ) + " --- ignore proton assignment" << std::endl;
-					//if ( tr.Debug.visible() ) exception.show( tr.Debug );
+					if ( tr_labels.Trace.visible() ) {
+						tr_labels.Trace << "cannot find label atom for resid: " + it->second->atom().atom() + " " + ObjexxFCL::string_of( resid ) + " --- ignore proton assignment" << std::endl;
+					}
 					continue;
 				}
 			}

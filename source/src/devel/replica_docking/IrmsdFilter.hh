@@ -15,14 +15,21 @@
 #define INCLUDED_devel_replica_docking_IrmsdFilter_hh
 
 #include <devel/replica_docking/IrmsdFilter.fwd.hh>
-#include <core/types.hh>
+
 #include <protocols/filters/Filter.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
+#include <protocols/docking/types.hh>
+
+#include <core/types.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
+
+#include <utility/tag/Tag.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
+//#include <utility/vector1.hh>
+
 
 namespace devel {
 namespace replica_docking {
@@ -39,16 +46,20 @@ public:
 	protocols::filters::FilterOP clone() const;
 	protocols::filters::FilterOP fresh_instance() const;
 
+	void register_options();
+
 	virtual ~IrmsdFilter();
-	void jump( core::Size const jump );
-	core::Size jump() const;
+	void jump( core::Size const jump_id );
+
 	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 private:
 	core::Real lower_threshold_;
 	core::Real upper_threshold_;
-	core::Size jump_; // dflt 1; across which jump to compute sasa
+	//  utility::vector1< core::Size > movable_jumps_;
+ 	protocols::docking::DockJumps movable_jumps_;
 	core::scoring::ScoreFunctionOP scorefxn_;
-	core::pose::PoseOP native_pose_;
+	core::pose::PoseCOP native_pose_;
+	bool options_registered_;
 };
 
 }

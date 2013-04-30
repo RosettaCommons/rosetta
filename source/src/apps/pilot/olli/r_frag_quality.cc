@@ -298,7 +298,7 @@ void write_cluster_frags( FragSetOP predicted_frags, FragSetOP fill_frags, FragS
 	mm.set_bb( true );
 
 	//iterate over frames to read all clusters
-	for ( FrameIterator itframe = predicted_frags->begin(), eitframe=predicted_frags->end();
+	for ( ConstFrameIterator itframe = predicted_frags->begin(), eitframe=predicted_frags->end();
 				itframe != eitframe; ++itframe ) {
 		Frame const& frame ( **itframe );
 
@@ -364,7 +364,7 @@ void write_cluster_frags( FragSetOP predicted_frags, FragSetOP fill_frags, FragS
 	//	in insert_size smaller 9 take fragments that are taken in positions to the right ( clusters ) and add chopped std_frags
 	//	if insert_size 0 take cluster frags
 
-	for ( FrameIterator itframe = predicted_frags->begin(), eitframe=predicted_frags->end();
+	for ( ConstFrameIterator itframe = predicted_frags->begin(), eitframe=predicted_frags->end();
 				itframe != eitframe; ++itframe ) {
 		Size pos = (*itframe)->start();
 		ClusterList cluster = clusters[ pos ];
@@ -447,7 +447,7 @@ void write_cluster_frags( FragSetOP predicted_frags, FragSetOP fill_frags, FragS
 		FrameList decoy_frames;
 		predicted_frags->frames( pos, decoy_frames);
 		runtime_assert( decoy_frames.size() == 1);
-		FrameOP frame( decoy_frames[ 1 ] );
+		FrameCOP frame( decoy_frames[ 1 ] );
 
 		// collect fragments from bad decoys here
 		FrameOP decoy_fill_frame = new Frame( pos, decoy_frames[ 1 ]->length() );
@@ -500,8 +500,8 @@ void write_cluster_frags( FragSetOP predicted_frags, FragSetOP fill_frags, FragS
 
 		//chopping...
 		FragSetOP chopped_frags = new OrderedFragSet;
-		for ( FrameIterator it = new_frags->begin(), eit = new_frags->end(); it != eit; ++it ) {
-			Frame& fr( **it );
+		for ( ConstFrameIterator it = new_frags->begin(), eit = new_frags->end(); it != eit; ++it ) {
+			Frame const& fr( **it );
 
 			//already small enough --- don't chop
 			if ( fr.length() <= chops ) {
@@ -555,7 +555,7 @@ void compute_intrinsic_deviation( Pose& test_pose, FragSetOP predicted_frags, Po
 		if ( !cluster_in.good() ) utility_exit_with_message( "can't open cluster file " + std::string( option[ cluster::in ]()) );
 	}
 
-	for ( FrameIterator itframe = predicted_frags->begin(), eitframe=predicted_frags->end();
+	for ( ConstFrameIterator itframe = predicted_frags->begin(), eitframe=predicted_frags->end();
 				itframe != eitframe; ++itframe ) {
 		Frame const& frame ( **itframe );
 
@@ -828,7 +828,7 @@ int main( int argc, char** argv ) {
 		}
 		if ( !option [ intrinsic ] ) {
 			utility::io::ozstream out( option[ out::qual ] );
-			for ( FrameIterator frame = predicted_frags->begin(), eframe=predicted_frags->end();
+			for ( ConstFrameIterator frame = predicted_frags->begin(), eframe=predicted_frags->end();
 						frame != eframe; ++frame ) {
 				for ( Size i=1; i<=frame->nr_frags(); i++ ) {
 					Size len = frame->length();

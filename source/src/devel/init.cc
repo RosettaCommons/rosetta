@@ -66,7 +66,11 @@
 #include <devel/replica_docking/InteractionScoreFilterCreator.hh>
 #include <devel/matdes/MutationsFilterCreator.hh>
 #include <devel/matdes/GenericSymmetricSamplerCreator.hh>
-
+#include <devel/replica_docking/IrmsdFilterCreator.hh>
+#include <devel/replica_docking/CaIrmsdFilterCreator.hh>
+#include <devel/replica_docking/FnatFilterCreator.hh>
+#include <devel/replica_docking/LrmsdFilterCreator.hh>
+#include <devel/replica_docking/FnonnatFilterCreator.hh>
 #include <devel/replica_docking/WrapFilterAsEvaluatorCreator.hh>
 
 // dataloader creators
@@ -145,6 +149,11 @@ static protocols::filters::FilterRegistrator< devel::matdes::ClashCheckFilterCre
 static protocols::filters::FilterRegistrator< devel::matdes::GetRBDOFValuesCreator > GetRBDOFValuesCreator_registrator;
 static protocols::filters::FilterRegistrator< devel::replica_docking::InteractionScoreFilterCreator > IscCreator_registrator;
 static protocols::filters::FilterRegistrator< devel::matdes::MutationsFilterCreator > MutationsFilterCreator_registrator;
+static protocols::filters::FilterRegistrator< devel::replica_docking::IrmsdFilterCreator > IrmsdCreator_registrator;
+static protocols::filters::FilterRegistrator< devel::replica_docking::FnatFilterCreator > FnatCreator_registrator;
+static protocols::filters::FilterRegistrator< devel::replica_docking::LrmsdFilterCreator > LrmsdCreator_registrator;
+static protocols::filters::FilterRegistrator< devel::replica_docking::FnonnatFilterCreator > FnonnatCreator_registrator;
+static protocols::filters::FilterRegistrator< devel::replica_docking::CaIrmsdFilterCreator > CaIrmsdCreator_registrator;
 
 static protocols::evaluation::EvaluatorRegistrator< devel::replica_docking::WrapFilterAsEvaluatorCreator > reg_WrapFilterAsEvaluatorCreator;
 

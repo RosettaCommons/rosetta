@@ -138,6 +138,7 @@ namespace in { namespace file { FileOptionKey const ddg_predictions_file( "in:fi
 namespace in { namespace file { IntegerVectorOptionKey const input_res( "in:file:input_res" );  } }
 namespace in { namespace file { StringOptionKey const md_schfile( "in:file:md_schfile" );  } }
 namespace in { namespace file { BooleanOptionKey const read_pdb_link_records( "in:file:read_pdb_link_records" );  } }
+namespace in { namespace file { FileOptionKey const native_contacts( "in:file:native_contacts" );  } }
 namespace in { namespace rdf { BooleanOptionKey const rdf( "in:rdf" );  } }
 namespace in { namespace rdf { BooleanOptionKey const sep_bb_ss( "in:rdf:sep_bb_ss" );  } }
 namespace MM { BooleanOptionKey const MM( "MM" );  }
@@ -501,6 +502,12 @@ namespace evaluation { IntegerOptionKey const score_sscore_maxloop( "evaluation:
 namespace evaluation { BooleanOptionKey const rpf( "evaluation:rpf" );  }
 namespace evaluation { IntegerOptionKey const window_size( "evaluation:window_size" );  }
 namespace evaluation { StringOptionKey const I_sc( "evaluation:I_sc" );  }
+namespace evaluation { BooleanOptionKey const Irms( "evaluation:Irms" );  }
+namespace evaluation { BooleanOptionKey const Ca_Irms( "evaluation:Ca_Irms" );  }
+namespace evaluation { BooleanOptionKey const Fnat( "evaluation:Fnat" );  }
+namespace evaluation { BooleanOptionKey const Lrmsd( "evaluation:Lrmsd" );  }
+namespace evaluation { BooleanOptionKey const Fnonnat( "evaluation:Fnonnat" );  }
+namespace evaluation { BooleanOptionKey const DockMetrics( "evaluation:DockMetrics" );  }
 namespace filters { BooleanOptionKey const filters( "filters" );  }
 namespace filters { BooleanOptionKey const disable_all_filters( "filters:disable_all_filters" );  }
 namespace filters { BooleanOptionKey const disable_rg_filter( "filters:disable_rg_filter" );  }
@@ -691,9 +698,3 @@ namespace jumps { BooleanOptionKey const jumps( "jumps" );  }
 namespace jumps { BooleanOptionKey const evaluate( "jumps:evaluate" );  }
 namespace jumps { FileOptionKey const extra_frags_for_ss( "jumps:extra_frags_for_ss" );  }
 namespace jumps { BooleanOptionKey const fix_chainbreak( "jumps:fix_chainbreak" );  }
-namespace jumps { FileOptionKey const fix_jumps( "jumps:fix_jumps" );  }
-namespace jumps { FileOptionKey const jump_lib( "jumps:jump_lib" );  }
-namespace jumps { FileOptionKey const loop_definition_from_file( "jumps:loop_definition_from_file" );  }
-namespace jumps { BooleanOptionKey const no_chainbreak_in_relax( "jumps:no_chainbreak_in_relax" );  }
-namespace jumps { FileOptionKey const pairing_file( "jumps:pairing_file" );  }
-namespace jumps { IntegerVectorOptionKey const random_sheets( "jumps:random_sheets" );  }

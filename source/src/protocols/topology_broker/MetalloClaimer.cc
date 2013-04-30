@@ -16,9 +16,12 @@
 #include <protocols/topology_broker/MetalloClaimer.hh>
 
 // Package Headers
-#include <protocols/topology_broker/DofClaim.hh>
+#include <protocols/topology_broker/claims/DofClaim.hh>
+#include <protocols/topology_broker/claims/SequenceClaim.hh>
 #include <protocols/topology_broker/Exceptions.hh>
 #include <protocols/topology_broker/TopologyBroker.hh>
+#include <protocols/topology_broker/SequenceNumberResolver.hh>
+
 
 // Project Headers
 #include <core/chemical/ChemicalManager.hh>
@@ -72,17 +75,65 @@ MetalloClaimer::MetalloClaimer() : residue_pair_jump_( NULL )
 // 	}
 //	return true;
 //} // MetalloClaimer::allow_claim()
-void MetalloClaimer::initialize_residues( core::pose::Pose& pose, SequenceClaimOP my_claim, DofClaims& failed_to_init ) {
-	SequenceClaimer::initialize_residues( pose, my_claim, failed_to_init );
-	// I know this guy isn't doing anything JumpClaimer::initialize_residues( pose, my_claim, failed_to_init );
+
+//void MetalloClaimer::initialize_residues( core::pose::Pose& pose, claims::SequenceClaimOP my_claim, claims::DofClaims& failed_to_init ) {
+void MetalloClaimer::generate_claims( claims::DofClaims& new_claims ) {
+
+	// TODO: refactor FragmentJumpClaimer to deal with this correctly.
+	// What we want to do is create a jump from the zinc to the anchor chain, and build the appropriate fragments including
+	// the jump itself? This is done with old "jump interval" code that is nasty nasty.
+	// Also, much of this code is broken/stupid, because we're in the process of refactoring.
+	//runtime_assert( false );
+
+	//Find claim of anchor chain
+	claims::SequenceClaim my_claim = broker().resolve_sequence_label( label() );
+
 	jump_setup_->clear();
-	resolved_anchor_residue_ = broker().resolve_residue( anchor_chain_, anchor_residue_ );
-	tr.Trace << "MetalloClaimer: setup jump between " << anchor_residue_ << " " << my_claim->offset() << std::endl;
+	resolved_anchor_residue_ = broker().sequence_number_resolver().find_global_pose_number( anchor_chain_, anchor_residue_ );
+	core::Size my_claim_pos = broker().sequence_number_resolver().find_global_pose_number(my_claim.label());
+
+	tr.Trace << "MetalloClaimer: setup jump between " << resolved_anchor_residue_ << " " << my_claim_pos<< std::endl;
+
+	core::Size cut_interval_low  = my_claim_pos - 1;
+	core::Size cut_interval_high = my_claim_pos;
+
+	std::pair<core::Size, std::string> terminal_label = broker().sequence_number_resolver().terminal_pair();
+	core::Size seq_length = terminal_label.first + broker().resolve_sequence_label( terminal_label.second ).length();
+
+	if (cut_interval_low < 1) {
+		cut_interval_low = 1; // no cut in front of first element of sequence possible
+	}
+	if (cut_interval_high >= seq_length ) {
+		cut_interval_high = seq_length -1;	// no cut possible behind the last residue
+	}
+
+
+	tr.Trace << "Cut Interval: " << cut_interval_low << " " << cut_interval_high << std::endl;
+
+	//Size cut_position = my_claim->offset() +
+
+	core::Size jump_start;
+	core::Size jump_end;
+
+	switch ( resolved_anchor_residue_ < my_claim_pos ){
+	case 1 :
+		jump_start = resolved_anchor_residue_;
+		jump_end = my_claim_pos;
+		break;
+	case 0 :
+		jump_start = my_claim_pos;
+		jump_end = resolved_anchor_residue_;
+		break;
+	}
+
 	jump_setup_->add_jump(
-			jumping::Interval( anchor_residue_, my_claim->offset()), //jump
-			jumping::Interval( my_claim->offset() - 1, my_claim->offset() - 1 ) //cutpoint interval
+			jumping::Interval( jump_start, jump_end ), //jump
+			jumping::Interval( cut_interval_low, cut_interval_high ) //cutpoint interval
 	);
 	new_decoy();
+
+	FragmentJumpClaimer::generate_claims( new_claims,  anchor_chain_, label() );
+	SequenceClaimer::generate_claims( new_claims );
 }
 
 void MetalloClaimer::add_constraints( core::pose::Pose& ) const {
@@ -90,7 +141,7 @@ void MetalloClaimer::add_constraints( core::pose::Pose& ) const {
 
 void  MetalloClaimer::set_defaults() {
 	SequenceClaimer::set_defaults();
-	JumpClaimer::set_defaults();
+	FragmentJumpClaimer::set_defaults();
 	anchor_chain_ = ""; //usually anchored to DEFAULT chain
 	anchor_residue_ = 0;
 	residue_pair_jump_ = new jumping::ResiduePairJump;
@@ -164,7 +215,7 @@ bool MetalloClaimer::read_tag( std::string tag, std::istream& is ) {
 		} else runtime_assert( 0 ); //if you are here you missed a tag in the statement above.
 	} else if ( SequenceClaimer::read_tag( tag, is ) ) {
 		//noop
-	} else if ( JumpClaimer::read_tag( tag, is ) ) {
+	} else if ( FragmentJumpClaimer::read_tag( tag, is ) ) {
 		//noop
 	} else return false;
 	return true;
@@ -175,15 +226,28 @@ void MetalloClaimer::init_after_reading() {
 		throw EXCN_Input( "need to specify anchor residue for MetalloLigand "+ligand_ );
 	}
 
-	set_label( ligand_ + ObjexxFCL::string_of( anchor_residue_ ) + anchor_chain_ );
-	if ( !anchor_chain_.size() ) anchor_chain_ = "DEFAULT"; //do this after labelling so we don't have "DEFAULT" appearing in the label
+	if (anchor_chain_ == ""){
+		tr.Info << "anchor chain has not been specified. DEFAULT chain will be used." << std::endl;
+		anchor_chain_ = "DEFAULT";
+	}
 
+	set_label( ligand_ + ObjexxFCL::string_of( anchor_residue_ ) + anchor_chain_ );
+
+	//Parent SequenceClaimer should only produce one claim, that label is the anchor_chain_.
+	//runtime_assert( get_sequence_labels().size() == 1);
+	//if ( !anchor_chain_.size() ) anchor_chain_ = get_sequence_labels().at(1);
 	set_sequence( "Z["+ligand_+"]" );
+	//set_label( "metal_"+ligand_ );
+
+	//start_label( anchor_chain_ );
+	//start_position( anchor_residue_ );
+	//end_label(label() );
+	//end_position ( 1 );
 
 	residue_pair_jump_->init_mini_pose();
-	jump_setup_ = new	jumping::ResiduePairJumpSetup;
+	jump_setup_ = new jumping::ResiduePairJumpSetup;
 	jump_setup_->add_residue_pair_jump( residue_pair_jump_ );
-	set_jump_def( jump_setup_ ); //tell the underlying JumpClaimer
+	set_jump_def( jump_setup_ ); //tell the underlying FragmentJumpClaimer
 }
 
 

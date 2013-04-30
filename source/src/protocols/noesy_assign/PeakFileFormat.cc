@@ -73,14 +73,7 @@ namespace protocols {
 namespace noesy_assign {
 
 using namespace core;
-PeakFileFormat::PeakFileFormat() :
-	resonances_( NULL )
-{
-	runtime_assert( options_registered_ );
-}
-
-PeakFileFormat::PeakFileFormat( ResonanceListOP const& res )  :
-	resonances_( res )
+PeakFileFormat::PeakFileFormat()
 {
 	runtime_assert( options_registered_ );
 }
@@ -107,9 +100,9 @@ void PeakFileFormat::write_peak( std::ostream& os, Size ct, CrossPeak const& cp 
   os << ObjexxFCL::fmt::RJ( 6, ct ) << " ";
   // cp.write_to_stream( os );
   write_resonances( os, cp );
-	os << " 1 U";
+	os << " 1 U ";
   write_strength( os, cp );
-	os << " e 0";
+	os << " e 0 ";
   write_assignments( os, cp, line_end.str() );
 }
 
@@ -296,6 +289,10 @@ void PeakFileFormat::read_header( std::istream& is, std::string& next_line ) {
 			fold_ends[ fold_dim ]=end;
 		} else if ( tag == "#IGNORE_NEGATIVE_INTENSITY" ) {
 			set_ignore_negative_intensity();
+		} else if ( tag == "#MINIMUM_PEAK_INTENSITY" ) {
+			core::Real val;
+			line_stream >> val;
+			set_minimum_peak_intensity( val );
 		} else if ( tag == "#MAX_NOE_DIST" ) {
 			if ( max_noe_dist < 0.01 ) {
 				tr.Warning << "MAX_NOE_DIST flag in peak-file ignored because of 0.0 in -noesy::calibration::max_noe_dist" << std::endl;
@@ -502,7 +499,7 @@ void PeakFileFormat::write_resonances( std::ostream& os, CrossPeak const& cp ) c
 void PeakFileFormat::read_strength( std::istream& is, CrossPeak& cp ) const {
   core::Real val;
   is >> val;
-	val = val < 0 ? -val : val;
+	//val = val < 0 ? -val : val;
   cp.set_volume( val );
   is >> val; //read 0.00E+00
 }
@@ -620,7 +617,7 @@ void PeakFileFormat::read_assignments( std::istream& is, std::istream& rest_is, 
 }
 
 void PeakFileFormat::write_assignment_indent( std::ostream& os, CrossPeak const& cp ) const {
-	os << std::endl << "                                                                ";
+	os << std::endl << "                                                                  ";
 	if ( cp.has_label( 1 ) && cp.has_label( 2 ) ) os << "         ";
 }
 

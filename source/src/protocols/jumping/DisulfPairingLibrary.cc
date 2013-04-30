@@ -398,7 +398,7 @@ DisulfPairingLibrary::read_from_file( std::string const& fn)
 /// list of FragData's. Try to reuse these FragData for different Frames that have same orientation and pleating
 void DisulfPairingLibrary::create_jump_fragments(
 	bool bWithTorsion,
-	core::fragment::FragDataList& frags
+	core::fragment::FragDataOPs& frags
 ) const {
 	using namespace core::fragment;
 
@@ -447,7 +447,7 @@ DisulfPairingLibrary::generate_jump_frags(
 	core::fragment::FragSet& frags_accumulator
 ) {
 
-	fragment::FragDataList frag_data;
+	fragment::FragDataOPs frag_data;
 	create_jump_fragments( bWithTorsion, frag_data );
 
 	for ( Size jump_nr = 1; jump_nr <= pairings.size(); ++jump_nr) {

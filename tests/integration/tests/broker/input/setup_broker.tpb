@@ -2,7 +2,6 @@ USE_INPUT_POSE
 
 CLAIMER SequenceClaimer
 CMD_FLAG #take sequence from -in:file:fasta
-LABEL main
 END_CLAIMER
 
 

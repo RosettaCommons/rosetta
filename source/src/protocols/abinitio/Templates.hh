@@ -69,8 +69,8 @@ public:
 
 	Templates( std::string const& config_file, core::pose::PoseCOP native = NULL );
 	virtual ~Templates();
-	core::fragment::FragSetOP pick_frags( core::fragment::FragSetOP, core::fragment::FragDataOP frag_type, Size min_nr_frags, Size ncopies = 1 ) const;
-	Size pick_frags( core::fragment::FragSet&, core::fragment::FragDataOP frag_type, Size ncopies = 1 ) const;
+	core::fragment::FragSetOP pick_frags( core::fragment::FragSetOP, core::fragment::FragDataCOP frag_type, Size min_nr_frags, Size ncopies = 1 ) const;
+	Size pick_frags( core::fragment::FragSet&, core::fragment::FragDataCOP frag_type, Size ncopies = 1 ) const;
 
 	void read_pairings( std::string const& filename, core::scoring::dssp::PairingsList& ) const;
 

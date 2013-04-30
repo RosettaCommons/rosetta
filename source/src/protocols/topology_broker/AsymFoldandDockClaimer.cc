@@ -17,29 +17,30 @@
 #include <protocols/simple_moves/asym_fold_and_dock/AsymFoldandDockMoveRbJumpMover.hh>
 
 // Package Headers
-#include <protocols/topology_broker/DofClaim.hh>
+#include <protocols/topology_broker/claims/DofClaim.hh>
+#include <protocols/topology_broker/claims/CutClaim.hh>
+
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/LoopsFileIO.hh>
 #include <protocols/docking/DockingProtocol.hh>
 #include <protocols/docking/util.hh>
-#include <basic/Tracer.hh>
 
-// Utility header
+// Utility headers
 #include <numeric/random/random.hh>
 #include <core/pose/PDBInfo.hh>
 #include <utility/excn/Exceptions.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/fold_and_dock.OptionKeys.gen.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-
-
+#include <basic/Tracer.hh>
 #include <core/conformation/Conformation.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+//C++ Headers
+#include <utility>
 
 // Project Headers
 
@@ -130,8 +131,8 @@ bool AsymFoldandDockClaimer::read_tag( std::string tag, std::istream& is ) {
 
 void AsymFoldandDockClaimer::initialize_dofs(
 	core::pose::Pose& pose,
-	DofClaims const& init_dofs,
-	DofClaims& /*failed_to_init*/ ) {
+	claims::DofClaims const& init_dofs,
+	claims::DofClaims& /*failed_to_init*/ ) {
 
 	using namespace loops;
 	using namespace kinematics;
@@ -185,7 +186,7 @@ void AsymFoldandDockClaimer::initialize_dofs(
 	movemap->set_bb( true );
 	movemap->set_jump( true );
 
-	for ( DofClaims::const_iterator it = init_dofs.begin(), eit = init_dofs.end();
+	for ( claims::DofClaims::const_iterator it = init_dofs.begin(), eit = init_dofs.end();
           it != eit; ++it ) {
 		if ( (*it)->owner()==this ) {
 			(*it)->toggle( *movemap, true );
@@ -194,7 +195,7 @@ void AsymFoldandDockClaimer::initialize_dofs(
 
 }
 
-void AsymFoldandDockClaimer::generate_claims( DofClaims& new_claims ) {
+void AsymFoldandDockClaimer::generate_claims( claims::DofClaims& new_claims ) {
 	// Set all cuts to real cuts. We don't want to close any of them...
 	loops::Loops loops;
 	loops::Loop single_loop;
@@ -202,7 +203,10 @@ void AsymFoldandDockClaimer::generate_claims( DofClaims& new_claims ) {
 	std::cout << input_pose_.fold_tree() << std::endl;
 	utility::vector1< int > cuts( input_pose_.conformation().fold_tree().cutpoints() );
 	for ( Size i = 1; i <= cuts.size(); ++i ) {
-		new_claims.push_back( new CutClaim( this, cuts[i], DofClaim::INIT /* for now... eventually CAN_INIT ? */ ) );
+
+		new_claims.push_back( new claims::CutClaim( this, std::make_pair( Parent::label(), cuts[i]),
+																								claims::DofClaim::INIT // for now... eventually CAN_INIT ?
+																								) );
 	}
 }
 

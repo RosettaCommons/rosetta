@@ -50,15 +50,15 @@ the *it would change and return a Frame* ...
 namespace core {
 namespace fragment {
 
-FrameIterator::FrameIterator( FrameIteratorWorker_OP it ) : it_( it ) {}
-FrameIterator::FrameIterator() : it_( NULL ) {}
-FrameIterator::~FrameIterator() {}
+ConstFrameIterator::ConstFrameIterator( FrameIteratorWorker_OP it ) : it_( it ) {}
+ConstFrameIterator::ConstFrameIterator() : it_( NULL ) {}
+ConstFrameIterator::~ConstFrameIterator() {}
 
-bool FrameIterator::operator != ( FrameIterator const& fi) const {
+bool ConstFrameIterator::operator != ( ConstFrameIterator const& fi) const {
 	return (*it_)!=(*fi.it_);
 }
 
-bool FrameIterator::operator == ( FrameIterator const& fi) const {
+bool ConstFrameIterator::operator == ( ConstFrameIterator const& fi) const {
 	return (*it_)==(*fi.it_);
 }
 
@@ -72,7 +72,23 @@ FrameIterator& FrameIterator::operator+ ( Size offset ) {
 	return *this;
 }
 
+ConstFrameIterator& ConstFrameIterator::operator++ () {
+	++(*it_);
+	return *this;
+}
+
+ConstFrameIterator& ConstFrameIterator::operator+ ( Size offset ) {
+	(*it_)+( offset);
+	return *this;
+}
+
+
 FrameIterator const & FrameIterator::operator = ( FrameIterator const& itr ) {
+	it_=itr.it_; //copy the pointers to the real iterators
+	return *this;
+}
+
+ConstFrameIterator const & ConstFrameIterator::operator = ( ConstFrameIterator const& itr ) {
 	it_=itr.it_; //copy the pointers to the real iterators
 	return *this;
 }
@@ -81,7 +97,7 @@ FrameOP FrameIterator::operator* () {
 	return frame_ptr();
 }
 
-FrameCOP FrameIterator::operator* () const {
+FrameCOP ConstFrameIterator::operator* () const {
 	return frame_ptr();
 }
 
@@ -89,7 +105,7 @@ FrameOP FrameIterator::operator-> () {
 	return frame_ptr();
 }
 
-FrameCOP FrameIterator::operator-> () const {
+FrameCOP ConstFrameIterator::operator-> () const {
 	return frame_ptr();
 }
 
@@ -97,7 +113,7 @@ FrameOP FrameIterator::frame_ptr() {
 	return it_->frame_ptr();
 }
 
-FrameCOP FrameIterator::frame_ptr() const{
+FrameCOP ConstFrameIterator::frame_ptr() const{
 	return it_->frame_ptr();
 }
 

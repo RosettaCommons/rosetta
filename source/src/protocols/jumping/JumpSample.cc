@@ -472,7 +472,7 @@ JumpSample::generate_jump_frags(
     {
       Size o_key( it->first.first ); //orientation
       Size p_key( it->first.second ); //pleating ... believe me or not, it is in first.second
-      FragDataList frag_data;
+      FragDataOPs frag_data;
       lib.create_jump_fragments( o_key, p_key, bWithTorsion, frag_data );
       for ( JumpList::const_iterator jit=it->second.begin(), ejit=it->second.end();
 						jit!=ejit; ++jit ) {

@@ -51,6 +51,7 @@ namespace fragment {
 
 class FragID_Iterator : std::iterator< std::forward_iterator_tag, FragID > {
 public:
+	FragID_Iterator( ConstFrameIterator it );
 	FragID_Iterator( FrameIterator it );
 	FragID_Iterator( FrameIteratorWorker_OP it );
 	FragID_Iterator( FrameList::iterator it );

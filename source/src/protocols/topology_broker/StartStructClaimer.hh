@@ -68,7 +68,6 @@ public:
 	StartStructClaimer(); //for factory
 	StartStructClaimer( core::pose::Pose const& /*idealized*/ );
 
-	virtual void generate_sequence_claims(  DofClaims& );
 
 	virtual TopologyClaimerOP clone() const {
 		return new StartStructClaimer( *this );
@@ -80,7 +79,9 @@ public:
 	}
 
 	///@brief overloaded to allow perturbation of start structure
-	virtual void initialize_dofs( core::pose::Pose&, DofClaims const& init_claims, DofClaims& failed_to_init );
+	virtual void initialize_dofs( core::pose::Pose&, claims::DofClaims const& init_claims, claims::DofClaims& failed_to_init );
+	virtual void generate_claims( claims::DofClaims& );
+
 
 	static std::string _static_type_name() {
 		return "StartStructClaimer";
@@ -89,9 +90,6 @@ public:
 	virtual void new_decoy( core::pose::Pose const& );
 	virtual void new_decoy( );
 	virtual bool read_tag( std::string tag, std::istream & );
-
-	///@brief initialize sequence ( for approved sequence claims given as init_claim ) Claimer searches init_claims for claims owned by *this
-	virtual void initialize_residues( core::pose::Pose&, SequenceClaimOP init_claim, DofClaims& failed_to_init );
 
 	virtual moves::MoverOP get_mover(	core::pose::Pose const& /*pose*/ ) const
 	{ return NULL; }; /*does not provide mover*/

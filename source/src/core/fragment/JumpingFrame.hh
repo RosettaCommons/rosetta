@@ -63,14 +63,17 @@ public:
     : Frame( start, end, length ), pos_( length )
   {};
 
-  // copy c'stor, necessary or is pos_ copied automatically ?
-  // i think it will be copied just fine
-  //  NonContinuousFrame
-	///
-  /// @brief clone method, new frame with same alignment position, fragments are not copied!
-	//  virtual FrameOP clone() {
-	//    return new NonContinuousFrame( *this );
-	//  }
+	/// @brief clone method, new frame with same alignment position, fragments are not copied!
+ 	virtual FrameOP clone() const;
+
+//  -- cloneing with fragments is taken care of by base-class...
+
+// 	/// @brief clone method, new frame with same alignment position, fragments are not copied!
+// 	virtual NonContinuousFrameOP clone_with_frags() const;
+
+// 	/// @brief clone method, new frame with same alignment position, one fragments is copied as template ( valid() == false )
+// 	virtual NonContinuousFrameOP clone_with_template();
+
 
   /// @brief translate intra-frame position into sequence position. (trivial for base-class)
   virtual core::Size seqpos( core::Size intra_pos ) const { // BaseClass --> continuous frames
@@ -92,6 +95,12 @@ public:
     assert( intra_pos <= length() );
     pos_[ intra_pos ] = setting;
   }
+
+	/// @brief shift to new start position ( change end accordingly )
+	virtual void shift_to( core::Size setting );
+
+	/// @brief shift frame by offset relative to current start position ( change end accordingly )
+	virtual void shift_by( int offset );
 
 	virtual void show( std::ostream& ) const;
 	virtual void read( std::istream& );

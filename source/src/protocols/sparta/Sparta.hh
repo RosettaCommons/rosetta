@@ -43,8 +43,8 @@ public:
 
   static void register_options();
   core::Real score_pose( core::pose::Pose const & pose );
+  void check_pose( core::pose::Pose const & pose );
   utility::vector1< float > score_pose_per_residue( core::pose::Pose const & pose );
-
 private:
   class SpartaLib;
   SpartaLib& lib() { return *lib_instance_; } //no it is not a constant reference since we do the calculation in SPARTA_LIB. assumption here: no threads
@@ -65,7 +65,6 @@ private: ///{ most of the original SPARTA class goes into SpartaLib -- to be reu
     void init();
     GDB get_ANN_data( bool create_output );
     void getResInfo( bool create_output ); //Get the list of useful shifts from a given residue. get 2nd chemical shift and apply correction
-
     float getANN_PredError(float phi, float psi, std::string aa, std::string aName); // get the prediction error from error surface
     void init_PredErrorSurface();
 

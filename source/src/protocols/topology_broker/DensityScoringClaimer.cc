@@ -16,9 +16,14 @@
 #include <protocols/topology_broker/DensityScoringClaimer.hh>
 
 // Package Headers
-#include <protocols/topology_broker/DofClaim.hh>
+#include <protocols/topology_broker/claims/DofClaim.hh>
+#include <protocols/topology_broker/claims/BBClaim.hh>
+#include <protocols/topology_broker/claims/LegacyRootClaim.hh>
+#include <protocols/topology_broker/claims/JumpClaim.hh>
 #include <protocols/topology_broker/Exceptions.hh>
 #include <protocols/topology_broker/TopologyBroker.hh>
+#include <protocols/topology_broker/SequenceNumberResolver.hh>
+
 
 // Project Headers
 // AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
@@ -60,25 +65,33 @@ using namespace core;
 DensityScoringClaimer::DensityScoringClaimer()
 {}
 
-void DensityScoringClaimer::initialize_residues( core::pose::Pose& pose, SequenceClaimOP my_claim, DofClaims& failed_to_init ) {
+/* void DensityScoringClaimer::initialize_residues( core::pose::Pose& pose, claims::SequenceClaimOP my_claim, claims::DofClaims& failed_to_init ) {
 	SequenceClaimer::initialize_residues( pose, my_claim, failed_to_init );
-	resolved_anchor_residue_ = broker().resolve_residue( anchor_chain_, anchor_residue_ );
-
-	vrt_id_ = my_claim->offset(); // now that we know it, set vrt id here
+	resolved_anchor_residue_ = broker().sequence_number_resolver().find_global_pose_number( anchor_chain_, anchor_residue_ );
+	//resolved_anchor_residue_ = broker().resolve_residue( anchor_chain_, anchor_residue_ );
+	vrt_id_ = broker().sequence_number_resolver().find_global_pose_number(my_claim->label());
+	//vrt_id_ = my_claim->offset(); // now that we know it, set vrt id here
 	tr.Debug << "Setting vrt_id_ to " << vrt_id_ << std::endl;
 	tr.Debug << "Setting resolved_anchor_residue_ to " << resolved_anchor_residue_ << std::endl;
+} */
+
+
+void DensityScoringClaimer::generate_sequence_claims( claims::DofClaims& new_claims ){
+	//SequenceClaim for ElectronDensityCenter
+	new_claims.push_back ( new claims::SequenceClaim( this, "X", label() ));
 }
 
-void DensityScoringClaimer::generate_claims( DofClaims& new_claims ) {
-	new_claims.push_back( new RootClaim( this, vrt_id_, DofClaim::EXCLUSIVE ) );
-	new_claims.push_back( new JumpClaim( this, vrt_id_, resolved_anchor_residue_, "ORIG", "CA", DofClaim::EXCLUSIVE ) );
-	//new_claims.push_back( new JumpClaim( this, resolved_anchor_residue_, vrt_id_,  "ORIG", "CA", DofClaim::EXCLUSIVE ) );
 
-	// sequence claimer does not claim the cut automatically??
-	//   ??? it should ....
-	//new_claims.push_back( new CutClaim( this, vrt_id_-1, DofClaim::EXCLUSIVE ) );
+void DensityScoringClaimer::generate_claims( claims::DofClaims& new_claims ) {
 
-	SequenceClaimer::generate_claims( new_claims );
+	std::pair < std::string, core::Size> local_vrt_pos ( label() ,1);
+	std::pair < std::string, core::Size> local_anchor_pos ( anchor_chain_, anchor_residue_ );
+	new_claims.push_back( new claims::LegacyRootClaim( this, local_vrt_pos, claims::DofClaim::EXCLUSIVE) );
+	new_claims.push_back( new claims::JumpClaim( this, local_vrt_pos, local_anchor_pos, "ORIG", "CA", claims::DofClaim::EXCLUSIVE ) );
+
+	//Claim the BB torsion for the virtual residue, which shouldn't be modified anyway, to make the Broker happy
+	new_claims.push_back( new claims::BBClaim( this, std::make_pair( label(), 1 ) ) );
+
 }
 
 TopologyClaimerOP DensityScoringClaimer::clone() const {
@@ -91,37 +104,41 @@ void DensityScoringClaimer::add_constraints( core::pose::Pose& ) const {
 }
 
 void  DensityScoringClaimer::set_defaults() {
-	SequenceClaimer::set_defaults();
+	set_label( "ElectronDensityCenter" );	// Needed for SequenceClaim generated with generate_sequence_claims for Residue X.
 	anchor_chain_ = ""; //usually anchored to DEFAULT chain
 	anchor_residue_ = 0;
 }
 
 bool DensityScoringClaimer::read_tag( std::string tag, std::istream& is ) {
 	using namespace jumping;
-	if ( tag == "anchor" ) {
+	if ( tag == "anchor_residue" ) {
 		is >> anchor_residue_;
 		tr.Debug << "Read anchor res = " << anchor_residue_ << std::endl;
-	} else if ( SequenceClaimer::read_tag( tag, is ) ) {
+	} else if ( tag == "anchor_chain" ){
+		is >> anchor_chain_;
+		tr.Debug << "Reading anchor chain: " << anchor_chain_ << std::endl;
+	}
+	/*else if ( SequenceClaimer::read_tag( tag, is ) ) {
 		//noop
-	} else return false;
+	} */ else return false;
 	return true;
 }
 
-bool DensityScoringClaimer::accept_declined_claim( DofClaim const& was_declined ) {
-	tr.Error << "JumpClaim of " << type() << " was declined: " << was_declined << std::endl;
+bool DensityScoringClaimer::accept_declined_claim( claims::DofClaim const& was_declined ) {
+	tr.Error << "JumpClaim of " << /*<< type() <<*/ " was declined: " << was_declined << std::endl;
 	return false; // full tolerance here ---
 }
 
 
 void DensityScoringClaimer::init_after_reading() {
-	if ( !anchor_residue_ ) {
-		throw EXCN_Input( "need to specify anchor residue for DensityScoring" );
+	if ( anchor_residue_ == 0 || anchor_chain_ == "" ) {
+		throw EXCN_Input( "need to specify both anchor residue (tag = anchor_residue) and anchor chain (tag = anchor_chain) for DensityScoring" );
 	}
 
-	set_label( ObjexxFCL::string_of( anchor_residue_ ) + anchor_chain_ );
-	if ( !anchor_chain_.size() ) anchor_chain_ = "main"; // ?????
-
+	/*set_label( ObjexxFCL::string_of( anchor_residue_ ) + anchor_chain_ );
 	set_sequence( "X" );
+	set_label( "ElectronDensityCenter" );
+	*/
 }
 
 

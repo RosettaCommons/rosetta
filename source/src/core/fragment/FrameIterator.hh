@@ -64,30 +64,30 @@ namespace core {
 namespace fragment {
 
 
-class FrameIterator : public std::iterator< std::forward_iterator_tag, Frame > {
+class ConstFrameIterator : public std::iterator< std::forward_iterator_tag, Frame > {
 	friend class FragID_Iterator;
 
 public:
-	FrameIterator( FrameIteratorWorker_OP it );
-	FrameIterator();
-	~FrameIterator();
+	ConstFrameIterator( FrameIteratorWorker_OP it );
+	ConstFrameIterator();
+	~ConstFrameIterator();
 
-	bool operator != ( FrameIterator const& fi) const;
-	bool operator == ( FrameIterator const& fi) const;
-	FrameIterator & operator++ ();
-	FrameIterator & operator+ ( Size offset );
+	bool operator != ( ConstFrameIterator const& fi) const;
+	bool operator == ( ConstFrameIterator const& fi) const;
+	ConstFrameIterator & operator++ ();
+	ConstFrameIterator & operator+ ( Size offset );
 
-	FrameIterator const & operator = ( FrameIterator const& itr );
+	ConstFrameIterator const & operator = ( ConstFrameIterator const& itr );
 
-	FrameOP operator* ();
+	//	FrameOP operator* ();
 
 	FrameCOP operator* () const;
 
-	FrameOP operator-> ();
+	//FrameOP operator-> ();
 
 	FrameCOP operator-> () const;
 
-	FrameOP frame_ptr();
+	//FrameOP frame_ptr();
 
 	FrameCOP frame_ptr() const;
 
@@ -95,6 +95,38 @@ protected:
 	FrameIteratorWorker_OP it_;
 
 };
+
+class FrameIterator : public ConstFrameIterator {
+	friend class FragID_Iterator;
+
+public:
+	FrameIterator( FrameIteratorWorker_OP it ) : ConstFrameIterator( it ) {};
+	FrameIterator() {};
+	~FrameIterator() {};
+
+	//	bool operator != ( FrameIterator const& fi) const;
+	//	bool operator == ( FrameIterator const& fi) const;
+
+	FrameIterator & operator++ ();
+	FrameIterator & operator+ ( Size offset );
+
+	FrameIterator const & operator = ( FrameIterator const& itr );
+
+	FrameOP operator* ();
+
+	//	FrameCOP operator* () const;
+
+	FrameOP operator-> ();
+
+	//	FrameCOP operator-> () const;
+
+	FrameOP frame_ptr();
+
+	//	FrameCOP frame_ptr() const;
+
+
+};
+
 
 }
 }

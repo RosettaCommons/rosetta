@@ -429,10 +429,10 @@ safely_write_to_database(
 		}catch(cppdb::not_supported_by_backend & except)
 		{
 			utility_exit_with_message(except.what());
-		}catch(cppdb::null_value_fetch & except)
+		} catch(cppdb::null_value_fetch & except)
 		{
 			utility_exit_with_message(except.what());
-		}catch(cppdb::backend_deadlock & except)
+			/*		} catch( cppdb::backend_deadlock & except)
 		{
 			//retry until we hit the retry limit and then die
 			//deadlocks sometimes happen with mysql.
@@ -453,10 +453,12 @@ safely_write_to_database(
 				utility_exit_with_message(except.what());
 			}
 
-		}catch(cppdb::cppdb_error & except)
+		}
+			*/
+		}	catch(cppdb::cppdb_error & except)
 		{
 #ifdef USEMPI
-			if(except.what() == "database is locked"){
+			if( except.what() == "database is locked"){
 				stringstream err_msg;
 				err_msg
 					<< "database is locked" << std::endl
@@ -516,7 +518,7 @@ safely_read_from_database(
 		}catch(cppdb::null_value_fetch & except)
 		{
 			utility_exit_with_message(except.what());
-		}catch(cppdb::backend_deadlock & except)
+			/*		}catch(cppdb::backend_deadlock & except)
 		{
 			//retry until we hit the retry limit and then die
 			//deadlocks sometimes happen with mysql.
@@ -536,7 +538,7 @@ safely_read_from_database(
 			{
 				utility_exit_with_message(except.what());
 			}
-
+			*/
 		}catch(cppdb::cppdb_error & except)
 		{
 			utility_exit_with_message(except.what());

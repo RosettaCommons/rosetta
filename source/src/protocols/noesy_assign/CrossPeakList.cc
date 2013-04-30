@@ -124,7 +124,10 @@ void CrossPeakList::read_from_stream( std::istream& is, PeakFileFormat& input_ad
 			cp->set_resonances( resonances );
 			input_adaptor.write_peak( tr.Debug, cp->peak_id(), *cp );
 			tr.Debug << std::endl;
-			if ( std::abs( cp->volume() ) < 0.1 ) {
+			if ( std::abs( cp->volume() ) < input_adaptor.minimum_peak_intensity() ) {
+				cp->set_volume( input_adaptor.minimum_peak_intensity() );
+			}
+			if ( std::abs( cp->volume() ) < 0.01 ) {
 				tr.Warning << "ignored peak: zero intensity for peak " << cp->peak_id() << std::endl;
 				continue;
 			}
@@ -267,7 +270,7 @@ void CrossPeakList::update_symmetry_score() {
 	assignments().check_for_symmetric_peaks( *this, min_sym_cont < 0.99 );
 }
 
-void CrossPeakList::network_analysis( ResonanceList const& resonances ) {
+void CrossPeakList::network_analysis() { //ResonanceList const& resonances ) {
 	tr.Info << " network analysis ... " << std::endl;
 	if ( !assignments_ ) update_assignment_list();
 	runtime_assert( assignments_ );
@@ -276,7 +279,7 @@ void CrossPeakList::network_analysis( ResonanceList const& resonances ) {
 		Size n_assignments( count_assignments() );
 		assignments_->network_analysis( n_assignments );
 	} else if ( params.network_mode_ == "clean" ) {
-		assignments_->network_analysis2( resonances );
+		assignments_->network_analysis2();
 	} else {
 		utility_exit_with_message(" network mode " + params.network_mode_ + " is unknown " );
 	}

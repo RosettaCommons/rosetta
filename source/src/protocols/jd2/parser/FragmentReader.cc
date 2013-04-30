@@ -221,7 +221,7 @@ FragmentReader::apply( FragSetOP & fragset )
 		using core::fragment::Frame;
 		using core::fragment::FrameOP;
 		using core::fragment::FragmentIO;
-		using core::fragment::FrameIterator;
+		using core::fragment::ConstFrameIterator;
 		using core::fragment::ConstantLengthFragSet;
 		using core::fragment::ConstantLengthFragSetOP;
 		using core::fragment::OrderedFragSet;
@@ -233,11 +233,11 @@ FragmentReader::apply( FragSetOP & fragset )
 
 		FrameList frames;
 		if ( cf.get() != NULL && of.get() == NULL ) {
-			for( FrameIterator it=cf->begin(), end( cf->end() ); it!=end; ++it ) {
+			for( ConstFrameIterator it=cf->begin(), end( cf->end() ); it!=end; ++it ) {
 				frames.push_back( new Frame( **it ) );
 			}
 		} else if ( of.get() != NULL && cf.get() == NULL ) {
-			for( FrameIterator it=of->begin(), end( of->end() ); it!=end; ++it ) {
+			for( ConstFrameIterator it=of->begin(), end( of->end() ); it!=end; ++it ) {
 				frames.push_back( new Frame( **it ) );
 			}
 		} else {

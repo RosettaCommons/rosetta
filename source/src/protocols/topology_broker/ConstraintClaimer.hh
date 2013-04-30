@@ -22,7 +22,7 @@
 
 // Package Headers
 #include <protocols/topology_broker/TopologyClaimer.hh>
-#include <protocols/topology_broker/DofClaim.fwd.hh>
+#include <protocols/topology_broker/claims/DofClaim.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 
 // Project Headers
@@ -64,7 +64,7 @@ public:
 		return new ConstraintClaimer( *this );
 	}
 
-	virtual void generate_claims( DofClaims& );
+	virtual void generate_claims( claims::DofClaims& );
 
 	///@brief type() is specifying the output name of the TopologyClaimer
 	virtual std::string type() const {

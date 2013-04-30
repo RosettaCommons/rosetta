@@ -38,7 +38,7 @@
 
 #include <core/fragment/FragData.hh>
 #include <utility/vector1.hh>
-
+#include <utility/excn/Exceptions.hh>
 
 namespace core {
 namespace fragment {
@@ -110,7 +110,7 @@ Frame::Frame( core::Size start ) :
 	nr_res_( 0 )
 {}
 
-Frame::Frame( core::Size start, FragDataOP frag1 ) :
+Frame::Frame( core::Size start, FragDataCOP const& frag1 ) :
 	start_( start ),
 	end_( start + frag1->size() - 1 ),
 	nr_res_( frag1->size() )
@@ -132,7 +132,7 @@ FrameOP Frame::clone() const {
 }
 
 /// @brief clone method, new frame with same alignment position, fragments are not copied!
-FrameOP Frame::clone_with_frags() {
+FrameOP Frame::clone_with_frags() const {
 	FrameOP newFrame = clone();// new Frame( start(), end(), length() );
 	*newFrame = *this; //usually that is enough
 	return newFrame;
@@ -142,8 +142,9 @@ FrameOP Frame::clone_with_frags() {
 FrameOP Frame::clone_with_template() {
 	FrameOP newFrame = clone();// new Frame( start(), end(), length() );
 	if ( nr_frags() ) {
-		newFrame->frag_list_.push_back( frag_list_[ 1 ]->clone() );
-		newFrame->frag_list_[ 1 ]->set_valid( false );
+		FragDataOP new_frag_data=frag_list_[ 1 ]->clone();
+		new_frag_data->set_valid( false );
+		newFrame->frag_list_.push_back( new_frag_data );
 	}
 	return newFrame;
 }
@@ -164,9 +165,9 @@ FragData const & Frame::fragment( core::Size frag_num ) const {
 }
 
 /// @brief accessor for underlying FragData
-FragData & Frame::fragment( core::Size frag_num ) {
-	return *frag_list_[ frag_num ];
-}
+//FragData const& Frame::fragment( core::Size frag_num ) {
+//	return *frag_list_[ frag_num ];
+//}
 
 /// @brief accessor for underlying FragData as owning ptr
 FragDataCOP Frame::fragment_ptr( core::Size frag_num ) const {
@@ -174,9 +175,9 @@ FragDataCOP Frame::fragment_ptr( core::Size frag_num ) const {
 }
 
 /// @brief accessor for underlying FragData as owning ptr
-FragDataOP Frame::fragment_ptr( core::Size frag_num ) {
-	return frag_list_[ frag_num ];
-}
+//FragDataOP Frame::fragment_ptr( core::Size frag_num ) {
+	//return frag_list_[ frag_num ];
+//}
 
 /// @brief a frame is considered valid if at least one fragment is contained and this fragment is also valid
 /// (not an empty template fragment)
@@ -318,7 +319,7 @@ void Frame::init_length( core::Size start, core::Size end, core::Size length ) {
 
 ////////////////////////////////////////// I M P L E M E N T A T I O N S ///////////////////////////////////////////////
 
-core::Size Frame::add_fragment( FragDataOP new_frag ) {
+core::Size Frame::add_fragment( FragDataCOP new_frag ) {
 	assert( new_frag );
 	bool success ( is_compatible( new_frag ) );
 	if ( success ) frag_list_.push_back( new_frag );
@@ -382,6 +383,18 @@ void Frame::shift_to( core::Size setting ) {
 	assert( nr_res_ == ( end_ - start_ + 1 ) ); //OL: changed assert to use == instead of "=",  much better now
 }
 
+void Frame::shift_by( int offset ) {
+	if ( start_ + offset < 1 ) {
+		std::ostringstream msg;
+		msg << "offset " << offset << " would shift Frame " << *this << " to negative or zero starting position " << std::endl;
+		throw utility::excn::EXCN_RangeError( msg.str() );
+	}
+	start_ += offset;
+	end_ += offset;
+}
+
+
+
 // void show( std::ostream& out ) {
 //
 // }
@@ -405,8 +418,8 @@ void Frame::fragment_as_pose(
 	fragment( frag_num ).apply( pose, 1, length() );
 }
 
-bool Frame::add_fragment( FragDataList new_frag ) {
-	for ( FragDataList::const_iterator it=new_frag.begin(), eit=new_frag.end();
+bool Frame::add_fragment( FragDataCOPs new_frag ) {
+	for ( FragDataCOPs::const_iterator it=new_frag.begin(), eit=new_frag.end();
 				it!=eit; ++it ) {
 		bool success ( add_fragment( *it ) );
 		if ( !success ) return false;
@@ -459,7 +472,7 @@ bool Frame::merge( Frame const& other ) {
 	//copy cached data
 	Size insert_pos = frag_list_.size()+1;
 	Size other_frag_num = 1;
-	for ( FragDataList::const_iterator it = other.frag_list_.begin(),
+	for ( FragDataCOPs::const_iterator it = other.frag_list_.begin(),
 					eit = other.frag_list_.end(); it!=eit; ++it ) {
 		frag_list_.push_back( *it );
 		clone_cache_data( other, other_frag_num++, insert_pos++ );
@@ -488,13 +501,13 @@ bool Frame::align( core::id::SequenceMapping const& map) {
 	return success;
 }
 
-FrameOP Frame::generate_sub_frame(  Size length, Size start /* = 1*/ ) {
+FrameOP Frame::generate_sub_frame(  Size length, Size start /* = 1*/ ) const {
 	if ( !is_continuous() ) return NULL;
 	FrameOP sub_frame( clone() ); //creates empty frame with same type
 	sub_frame->start_ += start - 1;
 	sub_frame->nr_res_ = length;
 	sub_frame->end_ = sub_frame->start_ + length - 1;
-	for ( FragDataList::const_iterator it = frag_list_.begin(), eit = frag_list_.end();
+	for ( FragDataCOPs::const_iterator it = frag_list_.begin(), eit = frag_list_.end();
 				it!=eit; ++it ) {
 		sub_frame->add_fragment( (*it)->generate_sub_fragment( start, start + length - 1 ) );
 	}

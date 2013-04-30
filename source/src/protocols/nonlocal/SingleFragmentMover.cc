@@ -202,7 +202,7 @@ bool SingleFragmentMover::valid() const {
 }
 
 void SingleFragmentMover::initialize_library() {
-  core::fragment::FrameIterator i;
+  core::fragment::ConstFrameIterator i;
   for (i = fragments_->begin(); i != fragments_->end(); ++i) {
     Size position = (*i)->start();
     library_[position] = **i;

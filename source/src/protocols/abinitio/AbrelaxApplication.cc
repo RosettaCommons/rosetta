@@ -1239,11 +1239,11 @@ void AbrelaxApplication::setup_fragments() {// FragSetOP& fragsetA, FragSetOP& f
 
 	if ( option[ OptionKeys::abinitio::dump_frags ]() ) { //diagnosis
 		utility::io::ozstream dump_frag_small( "fragset_small.dump" );
-		for ( FrameIterator it=fragset_small_->begin(), eit=fragset_small_->end(); it!=eit; ++it ) {
+		for ( ConstFrameIterator it=fragset_small_->begin(), eit=fragset_small_->end(); it!=eit; ++it ) {
 			(*it)->show( dump_frag_small );
 		}
 		utility::io::ozstream dump_frag_large( "fragset_large.dump" );
-		for ( FrameIterator it=fragset_large_->begin(), eit=fragset_large_->end(); it!=eit; ++it ) {
+		for ( ConstFrameIterator it=fragset_large_->begin(), eit=fragset_large_->end(); it!=eit; ++it ) {
 			(*it)->show( dump_frag_large );
 		}
 	}
@@ -1805,7 +1805,7 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 		// retrieve starting pose
 		pose::Pose fold_pose ( init_pose );
     // Can we add the PyMOL mover here?
-    if (option[OptionKeys::run::show_simulation_in_pymol].user() 
+    if (option[OptionKeys::run::show_simulation_in_pymol].user()
 			&& option[OptionKeys::run::show_simulation_in_pymol].value() > 0.0)
 		{
 			protocols::moves::AddPyMolObserver(fold_pose,

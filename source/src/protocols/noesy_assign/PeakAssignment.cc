@@ -166,7 +166,7 @@ bool PeakAssignment::is_symmetric_partner_of( PeakAssignment const& other ) cons
 
 	//because I also allow now the peaks that have not turned around residue numbers we have to exclude assignments with the same peak
 	if ( crosspeak_->same_peak( *other.crosspeak_ ) ) {
-		tr.Debug << " SAME ";
+		//		tr.Debug << " SAME " << std::endl;
 		return false;
 	}
 	for ( Size select = 1; select <=2 && match; ++select ) {

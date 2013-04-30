@@ -22,8 +22,13 @@
 #include <protocols/topology_broker/TopologyBroker.fwd.hh>
 
 // Package Headers
-#include <protocols/topology_broker/DofClaim.fwd.hh>
+#include <protocols/topology_broker/claims/DofClaim.fwd.hh>
+#include <protocols/topology_broker/claims/SymmetryClaim.fwd.hh>
+#include <protocols/topology_broker/claims/SequenceClaim.fwd.hh>
+#include <protocols/topology_broker/SequenceNumberResolver.fwd.hh>
 #include <protocols/topology_broker/ClaimerMessage.fwd.hh>
+#include <protocols/topology_broker/TopologyClaimer.fwd.hh>
+#include <protocols/topology_broker/SymmetryClaimer.fwd.hh>
 
 // Project Headers
 #include <protocols/abinitio/FragmentSampler.fwd.hh>
@@ -31,6 +36,8 @@
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
+#include <core/conformation/symmetry/SymmData.hh>
+
 
 #ifdef __clang__
 #include <core/kinematics/ShortestPathInFoldTree.hh>
@@ -46,8 +53,6 @@
 // C/C++ headers
 #include <cassert>
 #include <string>
-
-#include <protocols/topology_broker/TopologyClaimer.fwd.hh>
 
 #ifdef WIN32
 	#include <protocols/topology_broker/TopologyClaimer.hh>
@@ -184,9 +189,14 @@ public:
 
 	///@brief get the sequence claim that is consistent with the label,
 	/// throws EXCN_Unknown_SequenceLabel if not found
-	SequenceClaim& resolve_sequence_label( std::string const& label ) const;
+	claims::SequenceClaim& resolve_sequence_label( std::string const& label ) const;
 
-	core::Size resolve_residue( std::string const& chain_label, core::Size pos ) const;
+	//core::Size resolve_residue( std::string const& chain_label, core::Size pos ) const;
+
+	const SequenceNumberResolver& sequence_number_resolver() const {
+		runtime_assert( sequence_number_resolver_ );
+		return *sequence_number_resolver_;
+	}
 
 	void relay_message( ClaimerMessage& msg ) const;
 	//// ------------------------------- End Consulting --------------------------------------------
@@ -199,33 +209,42 @@ public:
 
 private:
 	///@brief first round claims are collected
-	void generate_sequence_claims( DofClaims& all_claims );
+	void generate_sequence_claims( claims::DofClaims& all_claims );
+
+	///@brief collects symmetry claims
+	void generate_symmetry_claims( claims::SymmetryClaims& all_claims );
+
+	///@brief checks whether only one sequence claim is there, otherwise crashes.
+    SymmetryClaimerOP resolve_symmetry_claims( claims::SymmetryClaims& symm_claims );
+
+	void make_sequence_symmetric( claims::DofClaims pre_accepted, core::pose::Pose& pose);
+
 
 	///@brief first round claims are collected
-	void generate_round1( DofClaims& all_claims );
+	void generate_round1( claims::DofClaims& all_claims );
 
 	///@brief second round claims are collected
-	void generate_final_claims( DofClaims& all_claims );
+	void generate_final_claims( claims::DofClaims& all_claims );
 
 	///@brief notify owner of accepted claims
-	void accept_claims( DofClaims& claims );
+	void accept_claims( claims::DofClaims& claims );
 
 	///@brief run thru list of claims, ask all claimers if this claims is acceptable --- > returns accepted claims in pre_accepted
 	/// throws EXCN_ExclusiveClaimDeclined if the call to the owners TopologyClaimer::accept_declined_claim( declined_claim ) returns false
-	bool broking( DofClaims const& all_claims, DofClaims& pre_accepted );
+	bool broking( claims::DofClaims const& all_claims, claims::DofClaims& pre_accepted );
 
 	///@brief creates a fold-tree from the Jump- and CutClaims
 	/// throws EXCN_InvalidFoldTree at failure
-	void build_fold_tree( DofClaims& claims, Size nres );
+	void build_fold_tree( claims::DofClaims& claims, Size nres );
 
 	///@brief create new pose from SeqClaims
-	void initialize_sequence( DofClaims& claims, core::pose::Pose& new_pose );
+	void initialize_sequence( claims::DofClaims& claims, core::pose::Pose& new_pose );
 
 	///@brief creates the list "to_be_closed_cuts_" from current fold-tree and CutClaims
-	void initialize_cuts( DofClaims& claims, core::pose::Pose& new_pose );
+	void initialize_cuts( claims::DofClaims& claims, core::pose::Pose& new_pose );
 
 	///@brief initialize dofs
-	void initialize_dofs( DofClaims& claims, core::pose::Pose& new_pose );
+	void initialize_dofs( claims::DofClaims& claims, core::pose::Pose& new_pose );
 
 	///@brief add constraints --> referred to Claimers ( e.g., ConstraintClaimer, RigidChunkClaimer )
 	void add_constraints( core::pose::Pose& ) const;
@@ -238,7 +257,7 @@ private:
 	//all these are derived infos and change each time that we use apply ( generate a new pose with foldtree etc )
 
 	///@brief list of dof-claims currently active
-	DofClaims current_claims_;
+	claims::DofClaims current_claims_;
 
 	///@brief current pose has nres total_residues
 	core::Size nres_;
@@ -259,8 +278,9 @@ private:
 	///@brief these cuts are not physical and should be closed ( i.e., chainbreak energy, loop-closing )
 	utility::vector1< Size > start_pose_cuts_; //keeps the residue number not the cut-nr --- thats safer.
 
-	SequenceClaims sequence_claims_;
+	claims::SequenceClaims sequence_claims_;
 
+	SequenceNumberResolverOP sequence_number_resolver_;
 	///@brief we restart from the input pose... call steal( pose ) for all claimers
 	bool bUseJobPose_;
 

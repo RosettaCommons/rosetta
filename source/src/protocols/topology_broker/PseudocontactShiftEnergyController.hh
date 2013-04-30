@@ -23,7 +23,7 @@
 
 // Package Headers
 #include <protocols/topology_broker/TopologyClaimer.hh>
-#include <protocols/topology_broker/DofClaim.fwd.hh>
+#include <protocols/topology_broker/claims/DofClaim.fwd.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 
 // Project Headers

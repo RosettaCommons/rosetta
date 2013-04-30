@@ -221,12 +221,14 @@ core::Real  DecoySetEvaluation::rmsd( FArray1_double const& weights, FArray2_dou
 	fit_centered_coords( n_atoms_, weights, xx_ref, xx, R );
 	Real rmsd( 0.0 );
 	Real invn( 1.0/n_atoms() );
+	Real tot_weight( 0.0 );
 	for ( Size n = 1; n <= n_atoms(); n++) {
+		tot_weight += weights_( n );
 		for ( Size d = 1; d<=3; ++d ) {
-			rmsd += ( xx( d, n ) -  xx_ref( d, n ) ) * ( xx( d, n ) - xx_ref( d, n ) ) * invn * weights_( n );
+			rmsd += ( xx( d, n ) -  xx_ref( d, n ) ) * ( xx( d, n ) - xx_ref( d, n ) ) * weights_( n );
 		}
 	}
-	return rmsd = sqrt( rmsd );
+	return rmsd = sqrt( rmsd/tot_weight );
 }
 
 void DecoySetEvaluation::superimpose( FArray1_double const& weights, Size icenter ) {

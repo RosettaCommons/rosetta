@@ -87,7 +87,7 @@ public:
   //  int const orientation,
 	//	int const pleating,
 	//	bool bWithTorsion,
-	//	core::fragment::FragDataList &
+	//	core::fragment::FragDataOPs &
 	//) const = 0;
 
 	//virtual void
@@ -111,7 +111,7 @@ public:
 	void
 	create_jump_fragments(
 															 bool bWithTorsion,
-															 core::fragment::FragDataList& frags
+															 core::fragment::FragDataOPs& frags
 															 ) const;
 
 	core::Size

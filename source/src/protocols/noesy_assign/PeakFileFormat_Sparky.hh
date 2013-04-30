@@ -43,7 +43,7 @@ namespace noesy_assign {
 class PeakFileFormat_Sparky : public PeakFileFormat {
 public:
   PeakFileFormat_Sparky() {};
-  PeakFileFormat_Sparky( ResonanceListOP const& );
+  //  PeakFileFormat_Sparky( ResonanceListOP const& );
   //  virtual ~PeakFileFormat_Sparky();
 
   virtual void set_format_from_peak( CrossPeak const& );

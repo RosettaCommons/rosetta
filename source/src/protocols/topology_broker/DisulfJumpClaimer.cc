@@ -16,7 +16,8 @@
 #include <protocols/topology_broker/DisulfJumpClaimer.hh>
 
 // Package Headers
-#include <protocols/topology_broker/DofClaim.hh>
+#include <protocols/topology_broker/claims/DofClaim.hh>
+#include <protocols/topology_broker/claims/JumpClaim.hh>
 #include <protocols/jumping/DisulfPairingsList.hh>
 
 // Project Headers
@@ -114,7 +115,7 @@ void DisulfJumpClaimer::new_decoy( core::pose::Pose const& pose ) {
 	new_decoy();
 }
 
-void DisulfJumpClaimer::initialize_dofs( core::pose::Pose& pose, DofClaims const& init_dofs, DofClaims& failed_to_init ) {
+void DisulfJumpClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofClaims const& init_dofs, claims::DofClaims& failed_to_init ) {
 
 	//init_mover_ = new simple_moves::ClassicFragmentMover( jump_frags, movemap_ );
 	//init_mover_->type( mover_tag() );
@@ -152,9 +153,11 @@ void DisulfJumpClaimer::generate_jump_frags(
 ) const
 {
 	typedef utility::vector1< Size > JumpList;
-	all_frames.reserve( all_frames.size() + all_jump_pairings_.size() );
+	all_frames.reserve( all_frames.size() + local_disulf_data_.size() );
 
-	core::fragment::FragDataList frag_data;
+	//TODO False assert. Fragments have to be dealt with properly here and idk how to do it atm.
+	runtime_assert( false );
+	core::fragment::FragDataOPs frag_data;
 	lib.create_jump_fragments( false, frag_data );
 
 	for ( Size i = 1; i <= all_jump_pairings_.size(); ++i) {
@@ -206,7 +209,33 @@ void DisulfJumpClaimer::generate_jump_frags(
 // }
 
 
-void DisulfJumpClaimer::generate_claims( DofClaims& new_claims ) {
+void DisulfJumpClaimer::generate_claims( claims::DofClaims& new_claims ) {
+	using claims::LocalPosition;
+	using std::pair;
+
+	//Initialize all_jump_pairings_ list with the data gathered during read_tag
+	for( utility::vector1< claims::JumpClaimOP >::iterator bond_it = local_disulf_data_.begin();
+			 bond_it != local_disulf_data_.end(); ++bond_it ) {
+		claims::JumpClaimOP claim = bond_it->get();
+
+		core::Size pos1 = claim->global_pos1();
+		core::Size pos2 = claim->global_pos2();
+
+		protocols::jumping::DisulfPairing dis_pair;
+
+		dis_pair.pos1 = pos1;
+		dis_pair.pos2 = pos2;
+		dis_pair.seq_sep = abs((int)(pos1-pos2));
+		//TODO: use ss1, ss2 to do... something? with the secondary structure
+		dis_pair.ss_type = 1;//PLACEHOLDER!
+
+		all_jump_pairings_.push_back( dis_pair );
+
+		new_claims.push_back( new claims::JumpClaim( this,
+																								 claim->local_pos1(),
+																								 claim->local_pos2(),
+																								 claims::DofClaim::INIT ) );
+	}
 
 	// get flexible jumps ( beta-sheet stuff etc. )
 	/// in future get rid of JumpSample class all-together.
@@ -219,37 +248,40 @@ void DisulfJumpClaimer::generate_claims( DofClaims& new_claims ) {
 
 // 	//generate_jump_frames( jump_frames, *movemap_ );
 // 	jump_frags->add( jump_frames );
-
-
-	for ( Size i = 1; i <= all_jump_pairings_.size(); ++i) {
-
-		Size const up( all_jump_pairings_[i].pos1 );
-		Size const down( all_jump_pairings_[i].pos2 );
-
-			//new_claims.push_back( new JumpClaim( this, up, down, up_atom, down_atom, DofClaim::INIT ) );
-		new_claims.push_back( new JumpClaim( this, up, down, DofClaim::INIT ) );
-
-	}
-
 }
 
 bool DisulfJumpClaimer::read_tag( std::string tag, std::istream& is ) {
 	if ( tag == "NO_USE_INPUT_POSE" ) {
 		bKeepJumpsFromInputPose_ = false;
 	} else if ( tag == "DISULF" ) {
+		//Requires syntax label1 pos1 ss1 label2 pos2 ss2
+		std::string label1, label2;
 		Size pos1, pos2;
-		char ss1, ss2;
+		std::string ss1, ss2;
 
-		is >> pos1 >> ss1 >> pos2 >> ss2;
+		is >> pos1 >> label1 >> ss1 >> pos2 >> label2 >> ss2;
 
-		protocols::jumping::DisulfPairing dis_pair;
+		if( !( ss1 == "S" || ss1 == "H" || ss1 == "E" )  ) {
+			throw utility::excn::EXCN_BadInput(
+           "When reading DisulfJumpClaimer, secondary structure character '"
+					 +ss1+"' was invalid. Valid characters are 'S', 'H', and 'E'." );
+		} else if( !( ss2 == "S" || ss2 == "H" || ss2 == "E" )  ) {
+			throw utility::excn::EXCN_BadInput(
+					 "When reading DisulfJumpClaimer, secondary structure character '"
+					 +ss2+"' was invalid. Valid characters are 'S', 'H', and 'E'." );
+		}
 
-		dis_pair.pos1 = pos1;
-		dis_pair.pos2 = pos2;
-		dis_pair.seq_sep = abs((int)(pos1-pos2));
-		dis_pair.ss_type = 1;//PLACEHOLDER!
+		claims::LocalPosition local_pos1 = std::make_pair( label1, pos1 );
+		claims::LocalPosition local_pos2 = std::make_pair( label2, pos2 );
 
-		all_jump_pairings_.push_back( dis_pair );
+		//Use jump claim's atom to keep track of the secondary structure (a bit hacky, I know)
+		claims::JumpClaimOP disulf_bond = new claims::JumpClaim( this,
+																														 std::make_pair( label1, pos1 ),
+																														 std::make_pair( label2, pos2 ),
+																														 ss1,
+																														 ss2 );
+
+		local_disulf_data_.push_back( disulf_bond );
 
 	} else if ( tag == "mover_weight" ) {
 		read_mover_weight( is );

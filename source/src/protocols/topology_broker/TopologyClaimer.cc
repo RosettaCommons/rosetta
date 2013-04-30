@@ -25,8 +25,10 @@
 #include <protocols/topology_broker/weights/ConstAbinitioMoverWeight.hh>
 #include <protocols/moves/MoverContainer.hh>
 
+
 // Utility headers
 #include <basic/Tracer.hh>
+
 
 // C/C++ headers
 #ifdef WIN32
@@ -46,13 +48,13 @@ namespace protocols {
 namespace topology_broker {
 
 /// @details Auto-generated virtual destructor
-TopologyClaimer::~TopologyClaimer() {}
+//TopologyClaimer::~TopologyClaimer();
 
 using namespace core;
 
-void TopologyClaimer::initialize_dofs( core::pose::Pose&, DofClaims const& init_dofs, DofClaims& failed_to_init ) {
-	DofClaims my_claims;
-	for ( DofClaims::const_iterator it = init_dofs.begin(), eit = init_dofs.end();
+void TopologyClaimer::initialize_dofs( core::pose::Pose&, claims::DofClaims const& init_dofs, claims::DofClaims& failed_to_init ) {
+	claims::DofClaims my_claims;
+	for ( claims::DofClaims::const_iterator it = init_dofs.begin(), eit = init_dofs.end();
 				it != eit; ++it ) {
 		if ( (*it)->owner()==this ) {
 			my_claims.push_back( *it );
@@ -64,11 +66,11 @@ void TopologyClaimer::initialize_dofs( core::pose::Pose&, DofClaims const& init_
 	std::copy( my_claims.begin(), my_claims.end(), std::back_inserter( failed_to_init ) );
 }
 
-void TopologyClaimer::initialize_residues( core::pose::Pose&, SequenceClaimOP init_claim, DofClaims& failed_to_init ) {
+/*void TopologyClaimer::initialize_residues( core::pose::Pose&, claims::SequenceClaimOP init_claim, claims::DofClaims& failed_to_init ) {
 	runtime_assert( init_claim->owner()==this );
 	failed_to_init.push_back( init_claim );
 	tr.Warning << "[WARNING]" << type() << "did not initialize residues as requested for claim..." << *init_claim << std::endl;
-}
+}*/
 
 void TopologyClaimer::add_mover(
   	moves::RandomMover& random_mover,
@@ -113,7 +115,7 @@ void TopologyClaimer::read( std::istream& is ) {
 			getline( is, tag );
 			continue;
 		}
-		tr.Trace << "READ_SETUP: tag = " << tag << std::endl;
+		tr.Trace << "READ_SETUP (" << type() << "): tag = " << tag << std::endl;
 		if ( !read_tag( tag, is ) ) unknown_tag( tag, is );
 	}
 	init_after_reading();
@@ -122,13 +124,19 @@ void TopologyClaimer::read( std::istream& is ) {
 bool TopologyClaimer::read_tag( std::string tag, std::istream& is ) {
 	if ( tag == "LABEL" ) {
 		is >> label_;
-	} else return false;
-	return true;
+		return true;
+	}
+
+    std::string arg;
+    is >> arg;
+    tr.Error << "[ERROR]: The tag '" << tag << "' with argument '" << arg << "' was not recognized." << std::endl;
+    return false;
 }
 
 void TopologyClaimer::set_defaults() {
-	label_ = type();
+	label_ = "DEFAULT";
 }
+
 
 } //topology_broker
 } //protocols

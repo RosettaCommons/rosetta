@@ -33,6 +33,12 @@ class JumpingFrame;
 typedef utility::pointer::owning_ptr< JumpingFrame > JumpingFrameOP;
 typedef utility::pointer::owning_ptr< JumpingFrame const > JumpingFrameCOP;
 
+// Forward
+class NonContinuousFrame;
+
+typedef utility::pointer::owning_ptr< NonContinuousFrame > NonContinuousFrameOP;
+typedef utility::pointer::owning_ptr< NonContinuousFrame const > NonContinuousFrameCOP;
+
 
 } // namespace fragment
 } // namespace core

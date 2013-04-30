@@ -143,6 +143,7 @@ option.add( basic::options::OptionKeys::in::file::ddg_predictions_file, "File th
 option.add( basic::options::OptionKeys::in::file::input_res, "Residues already present in starting file" );
 option.add( basic::options::OptionKeys::in::file::md_schfile, "File name containing MD schedule" );
 option.add( basic::options::OptionKeys::in::file::read_pdb_link_records, "Sets whether or not the LINK records in PDB files are read.  The default value is false." ).shortd( "Read LINK records?" ).legal(true).legal(false).def(false);
+option.add( basic::options::OptionKeys::in::file::native_contacts, "native contacts pair list for fnat/fnon-nat calculation in Docking" );
 option.add( basic::options::OptionKeys::in::rdf::rdf, "rdf option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::in::rdf::sep_bb_ss, "separate RDFs by SS for backbone atypes " ).def(true);
 option.add( basic::options::OptionKeys::MM::MM, "MM option group" ).legal(true).def(true);
@@ -506,6 +507,12 @@ option.add( basic::options::OptionKeys::evaluation::score_sscore_maxloop, "defin
 option.add( basic::options::OptionKeys::evaluation::rpf, "will compute RPF score with distance cutoff 5 and store in column rpf_score" ).def(false);
 option.add( basic::options::OptionKeys::evaluation::window_size, "Window size for local RMSD calculations in windowed_rmsd app" ).def(5);
 option.add( basic::options::OptionKeys::evaluation::I_sc, "score function name used to calculate I_sc" ).def("score12");
+option.add( basic::options::OptionKeys::evaluation::Irms, "will compute the docking interface rmsd" ).def(false);
+option.add( basic::options::OptionKeys::evaluation::Ca_Irms, "will compute the docking Ca-atom interface rmsd" ).def(false);
+option.add( basic::options::OptionKeys::evaluation::Fnat, "will compute the docking recovered fraction of native contacts" ).def(false);
+option.add( basic::options::OptionKeys::evaluation::Lrmsd, "will compute the docking ligand rmsd" ).def(false);
+option.add( basic::options::OptionKeys::evaluation::Fnonnat, "will compute the fraction of non-native contacts for docking" ).def(false);
+option.add( basic::options::OptionKeys::evaluation::DockMetrics, "will compute all docking metrics (I_sc/Irms/Fnat/Lrmsd for now) for replica docking" ).def(false);
 option.add( basic::options::OptionKeys::filters::filters, "filters option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::filters::disable_all_filters, "turn off all centroid filters: RG, CO, and Sheet" ).def(false);
 option.add( basic::options::OptionKeys::filters::disable_rg_filter, "turn off RG filter" ).def(false);
@@ -696,15 +703,15 @@ option.add( basic::options::OptionKeys::jumps::jumps, "jumps option group" ).leg
 option.add( basic::options::OptionKeys::jumps::evaluate, "evaluate N-CA-C gemoetry for all jumps in the fold-tree" ).def(false);
 option.add( basic::options::OptionKeys::jumps::extra_frags_for_ss, "use ss-def from this fragset" ).def("");
 option.add( basic::options::OptionKeys::jumps::fix_chainbreak, "minimize to fix ccd in re-runs" ).def(false);
-option.add( basic::options::OptionKeys::jumps::fix_jumps, "read jump_file" ).def("");
+
+}
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::fix_jumps, "read jump_file" ).def("");
 option.add( basic::options::OptionKeys::jumps::jump_lib, "read jump_library_file for automatic jumps" ).def("");
 option.add( basic::options::OptionKeys::jumps::loop_definition_from_file, "use ss-def from this file" ).def("");
 option.add( basic::options::OptionKeys::jumps::no_chainbreak_in_relax, "dont penalize chainbreak in relax" ).def(false);
 option.add( basic::options::OptionKeys::jumps::pairing_file, "file with pairings" ).def("");
 option.add( basic::options::OptionKeys::jumps::random_sheets, "random sheet topology--> replaces -sheet1 -sheet2 ... select randomly up to N sheets with up to -sheet_i pairgins for sheet i" ).def(1);
-
-}
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::residue_pair_jump_file, "a file to define residue pair jump" ).def("");
+option.add( basic::options::OptionKeys::jumps::residue_pair_jump_file, "a file to define residue pair jump" ).def("");
 option.add( basic::options::OptionKeys::jumps::sheets, "sheet topology--> replaces -sheet1 -sheet2 ... -sheetN" ).def(1);
 option.add( basic::options::OptionKeys::jumps::topology_file, "read a file with topology info ( PairingStats )" ).def("");
 option.add( basic::options::OptionKeys::jumps::bb_moves, "Apply bb_moves ( wobble, small, shear) during stage3 and stage 4." ).def(false);
@@ -1090,6 +1097,7 @@ option.add( basic::options::OptionKeys::cluster::score_diff_cut, "score differen
 option.add( basic::options::OptionKeys::cluster::auto_tune, "autotune rmsd for clustering between 0.1A up to 2.0A, for SWA clusterer" ).def(false);
 option.add( basic::options::OptionKeys::rescore::rescore, "rescore option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::rescore::pose_metrics, "Do pose metrics calc" );
+option.add( basic::options::OptionKeys::rescore::assign_ss, "Invoke DSSP to assign secondary structure." ).def(false);
 option.add( basic::options::OptionKeys::rescore::skip, "Dont actually call scoring function (i.e. get evaluators only)" );
 option.add( basic::options::OptionKeys::rescore::verbose, "Full break down of weights, raw scores and weighted scores ?" );
 option.add( basic::options::OptionKeys::rescore::msms_analysis, "Run MSMS on the structure and determine surface properties. " );
@@ -1371,7 +1379,6 @@ option.add( basic::options::OptionKeys::rbe::server_port, "port for rosetta back
 option.add( basic::options::OptionKeys::rbe::poll_frequency, "No description" ).def(1.0);
 option.add( basic::options::OptionKeys::blivens::blivens, "blivens option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::blivens::disulfide_scorer::disulfide_scorer, "disulfide_scorer option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::blivens::disulfide_scorer::nds_prob, "The probability of scoring a non-disulfide pair" ).def(0.0);
 option.add( basic::options::OptionKeys::blivens::disulfide_scorer::cys_prob, "The probability of outputing a pair of non-disulf cysteines. Default to nds_prob" ).def(-1.0);
 option.add( basic::options::OptionKeys::blivens::score_type, "The scoring type to use, eg for a filter." ).def("total_score");
 option.add( basic::options::OptionKeys::krassk::krassk, "krassk option group" ).legal(true).def(true);
@@ -1398,14 +1405,14 @@ option.add( basic::options::OptionKeys::cmiles::kcluster::num_clusters, "Number 
 option.add( basic::options::OptionKeys::cmiles::jumping::jumping, "jumping option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::cmiles::jumping::resi, "Residue i" );
 option.add( basic::options::OptionKeys::cmiles::jumping::resj, "Residue j" );
-option.add( basic::options::OptionKeys::james::james, "james option group" ).legal(true).def(true);
+
+}
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::james::james, "james option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::james::min_seqsep, "No description" ).def(0);
 option.add( basic::options::OptionKeys::james::atom_names, "No description" ).def(utility::vector1<std::string>());
 option.add( basic::options::OptionKeys::james::dist_thresholds, "No description" ).def(utility::vector1<float>(1, 1.0));
 option.add( basic::options::OptionKeys::james::torsion_thresholds, "No description" ).def(utility::vector1<float>(1, 30.0));
-
-}
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::james::sog_cutoff, "No description" ).def(5.0);
+option.add( basic::options::OptionKeys::james::sog_cutoff, "No description" ).def(5.0);
 option.add( basic::options::OptionKeys::james::shift_sog_func, "No description" ).def(true);
 option.add( basic::options::OptionKeys::james::min_type, "No description" ).def("dfpmin_armijo_nonmonotone");
 option.add( basic::options::OptionKeys::james::min_tol, "No description" ).def(0.0001);
@@ -2045,7 +2052,6 @@ option.add( basic::options::OptionKeys::RBSegmentRelax::rb_scorefxn, "number of 
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_fragment_moves, "omit fragment insertions (in SS elements)" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_seqshift_moves, "omit sequence shifting moves" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_rb_moves, "omit rigid-body moves" ).def(false);
-option.add( basic::options::OptionKeys::RBSegmentRelax::helical_movement_params, "helical-axis-rotation, helical-axis-translation, off-axis-rotation, off-axis-translation" ).def(utility::vector1<float>(4,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::strand_movement_params, "strand-in-plane-rotation, strand-in-plane-translation, out-of-plane-rotation, out-of-plane-translationn" ).def(utility::vector1<float>(4,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::default_movement_params, "default-rotation, default-translation" ).def(utility::vector1<float>(2,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_seqwidth, "sequence width on constraints" ).def(0);
@@ -2100,13 +2106,16 @@ option.add( basic::options::OptionKeys::optE::fixed, "IterativeOptEDriver flag: 
 option.add( basic::options::OptionKeys::optE::parse_tagfile, "a file in utility::tag format that optE may parse to customize its operation" );
 option.add( basic::options::OptionKeys::optE::constant_logic_taskops_file, "a file in utility::tag format that optE uses to build a task that will not change with the context of the pose after design" );
 option.add( basic::options::OptionKeys::optE::optE_soft_rep, "Instruct the IterativeOptEDriver to use the soft-repulsion etable" );
-option.add( basic::options::OptionKeys::optE::no_hb_env_dependence, "Disable environmental dependent weighting of hydrogen bond terms" );
 option.add( basic::options::OptionKeys::optE::no_hb_env_dependence_DNA, "Disable environmental dependent weighting of hydrogen bonds involving DNA" );
 option.add( basic::options::OptionKeys::optE::optE_no_protein_hack_elec, "Instruct the IterativeOptEDriver to use the soft-repulsion etable" ).def(false);
 option.add( basic::options::OptionKeys::optE::design_first, "Do not optimize the weights in the context of the native structure, but rather, start by designing the protein with the input weight set.  Requires that all score types listed in -optE::free have specificed weights." );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::n_design_cycles, "The number of outer-loop design cycles to complete; default of 10 after which convergence has usually occurred" ).def(10);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::no_hb_env_dependence, "Disable environmental dependent weighting of hydrogen bond terms" );
+option.add( basic::options::OptionKeys::optE::no_hb_env_dependence_DNA, "Disable environmental dependent weighting of hydrogen bonds involving DNA" );
+option.add( basic::options::OptionKeys::optE::optE_no_protein_hack_elec, "Instruct the IterativeOptEDriver to use the soft-repulsion etable" ).def(false);
+option.add( basic::options::OptionKeys::optE::design_first, "Do not optimize the weights in the context of the native structure, but rather, start by designing the protein with the input weight set.  Requires that all score types listed in -optE::free have specificed weights." );
+option.add( basic::options::OptionKeys::optE::n_design_cycles, "The number of outer-loop design cycles to complete; default of 10 after which convergence has usually occurred" ).def(10);
 option.add( basic::options::OptionKeys::optE::recover_nat_rot, "With the iterative optE driver, repack to recover the native rotamers" );
 option.add( basic::options::OptionKeys::optE::component_weights, "With the iterative optE driver, weight the individual components according to the input file -- default weight of 1 for all components.  Weight file consists of component-name/weight pairs on separate lines: e.g. prob_native_structure 100.0" );
 option.add( basic::options::OptionKeys::optE::optimize_nat_aa, "With the iterative optE driver, optimize weights to maximize the probability of the native rotamer" );

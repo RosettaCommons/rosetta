@@ -65,6 +65,13 @@ using namespace ObjexxFCL::fmt;
 
 void SecondaryStructure::compute_fractions( core::fragment::FragSet const& frags, bool bJustCenterResidue /*default false */ ) {
 	using namespace core::fragment;
+
+	//make sure, that the fragments that are used start with position 1 (local position)
+	if ( frags.global_offset() != 0 ){
+		tr.Debug << "SecondaryStructure computations must be carried out with local coordinates (global offset of fragments must be 0)." << std::endl;
+		runtime_assert( false );
+	}
+
   Size frag_nres = frags.max_pos();
 	if ( total_residue_ < frag_nres ) total_residue_ = frag_nres;
   tr.Info << "compute strand/loop fractions for " << total_residue_ << " residues... " << std::endl;

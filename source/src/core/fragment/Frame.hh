@@ -120,7 +120,7 @@ public:
 
 	Frame( core::Size start );
 
-	Frame( core::Size start, FragDataOP frag1 );
+	Frame( core::Size start, FragDataCOP const& frag1 );
 
 	Frame( core::Size start, core::Size length, SingleResidueFragDataOP srfd );
 
@@ -128,7 +128,7 @@ public:
 	virtual FrameOP clone() const;
 
 	/// @brief clone method, new frame with same alignment position, fragments are not copied!
-	virtual FrameOP clone_with_frags();
+	virtual FrameOP clone_with_frags() const;
 
 	/// @brief clone method, new frame with same alignment position, one fragments is copied as template ( valid() == false )
 	virtual FrameOP clone_with_template();
@@ -140,10 +140,10 @@ public:
 
 
 	/// @brief add a fragment .. return new frag_nr
-	core::Size add_fragment( FragDataOP new_frag );
+	core::Size add_fragment( FragDataCOP new_frag );
 
 	/// @brief add all fragments in list
-	bool add_fragment( FragDataList new_frags );
+	bool add_fragment( FragDataCOPs new_frags );
 
 	/// @brief delete a fragment: Attention: all data in the FragCache is invalidated ( and deleted )
 	/// it would be complicated to change this behaviour. Thus, it is desirable to avoid using delete_fragment() altogether.
@@ -154,13 +154,13 @@ public:
 	FragData const & fragment( core::Size frag_num ) const;
 
 	/// @brief accessor for underlying FragData
-	FragData & fragment( core::Size frag_num );
+	//FragData & fragment( core::Size frag_num );
 
 	/// @brief accessor for underlying FragData as owning ptr
 	FragDataCOP fragment_ptr( core::Size frag_num ) const;
 
 	/// @brief accessor for underlying FragData as owning ptr
-	FragDataOP fragment_ptr( core::Size frag_num );
+	//FragDataOP fragment_ptr( core::Size frag_num );
 
 	/// @brief a frame is considered valid if at least one fragment is contained and this fragment is also valid
 	/// (not an empty template fragment)
@@ -222,7 +222,10 @@ public:
 	//	void start( core::Size setting );
 
 	/// @brief shift to new start position ( change end accordingly )
-	void shift_to( core::Size setting ); // this should be made virtual ... so that it also applies to NonContinuousFrame
+	virtual void shift_to( core::Size setting );
+
+	/// @brief shift frame by offset relative to current start position ( change end accordingly )
+	virtual void shift_by( int offset );
 
 	/// @brief last sequence position affected by this frame
 	core::Size end() const;
@@ -273,7 +276,7 @@ public:
 	bool align( core::id::SequenceMapping const& map );
 
 	///@brief generate_sub_frame of length from start ( internal numbers )
-	FrameOP generate_sub_frame( Size length, Size start = 1 );
+	FrameOP generate_sub_frame( Size length, Size start = 1 ) const;
 
 	///@brief NOT IMPLEMENTED YET: generate_sub_frame according to mapping ( residue numbers ) returns NULL if mapping invalid
 	// Commenting out to make Python bindings compile
@@ -315,7 +318,7 @@ private:
 	mutable CacheMap cache_;
 
 	// a list of fragments for this frame
-	FragDataList frag_list_;
+	FragDataCOPs frag_list_;
 
 	//static pose::PoseOP my_static_pose_for_testing_; //replace that with something more sensible ...
 };

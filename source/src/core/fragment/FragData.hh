@@ -135,7 +135,7 @@ public:
 	}
 
 	//returns new FragData object with residues start...stop
-	FragDataOP generate_sub_fragment( Size start, Size stop );
+	FragDataOP generate_sub_fragment( Size start, Size stop ) const;
 
 	virtual void show( std::ostream &out ) const;
 	virtual void show( std::ostream &out, Frame const& ) const;
@@ -168,7 +168,7 @@ public:
 	}
 
 	/// @brief Returns the score for this fragment
-	Real score() {
+	Real score() const {
 		return score_;
 	}
 

@@ -19,7 +19,9 @@
 // AUTO-REMOVED #include <core/conformation/symmetry/SymmetricConformation.hh>
 
 // Package Headers
-#include <protocols/topology_broker/DofClaim.hh>
+#include <protocols/topology_broker/claims/DofClaim.hh>
+#include <protocols/topology_broker/claims/BBClaim.hh>
+#include <protocols/topology_broker/claims/CutClaim.hh>
 #include <protocols/fibril/SetupForFibrilMover.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/fold_and_dock.OptionKeys.gen.hh>
@@ -159,8 +161,8 @@ FibrilModelingClaimer::add_mover(
 
 void FibrilModelingClaimer::initialize_dofs(
 	core::pose::Pose& pose,
-	DofClaims const& init_dofs,
-	DofClaims& /*failed_to_init*/ ) {
+	claims::DofClaims const& init_dofs,
+	claims::DofClaims& /*failed_to_init*/ ) {
 
 	using namespace core::conformation::symmetry;
 
@@ -179,7 +181,7 @@ void FibrilModelingClaimer::initialize_dofs(
   movemap->set_jump( false );
 	core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
 
-	for ( DofClaims::const_iterator it = init_dofs.begin(), eit = init_dofs.end();
+	for ( claims::DofClaims::const_iterator it = init_dofs.begin(), eit = init_dofs.end();
         it != eit; ++it ) {
     if ( (*it)->owner()==this ) {
       (*it)->toggle( *movemap, true );
@@ -187,16 +189,17 @@ void FibrilModelingClaimer::initialize_dofs(
 	}
 }
 
-void FibrilModelingClaimer::generate_claims( DofClaims& new_claims ) {
+void FibrilModelingClaimer::generate_claims( claims::DofClaims& new_claims ) {
   // Set all cuts to real cuts. We don't want to close any of them...
 	utility::vector1< int > cuts( input_pose_.conformation().fold_tree().cutpoints() );
 	for ( Size i = 1; i <= cuts.size(); ++i ) {
-    new_claims.push_back( new CutClaim( this, cuts[i], DofClaim::INIT /* for now... eventually CAN_INIT ? */ ) );
+    new_claims.push_back( new claims::CutClaim( this, std::make_pair( Parent::label(), cuts[i]),
+																								claims::DofClaim::INIT /* for now... eventually CAN_INIT ? */ ) );
   }
 }
 
 
-bool FibrilModelingClaimer::allow_claim( DofClaim const& foreign_claim ) {
+bool FibrilModelingClaimer::allow_claim( claims::DofClaim const& foreign_claim ) {
 
 	using namespace core::conformation::symmetry;
 
@@ -205,9 +208,11 @@ bool FibrilModelingClaimer::allow_claim( DofClaim const& foreign_claim ) {
 	//std::cout<<"claim_pos "<<foreign_claim.pos( 1 )<<" "<<is_symmetric( input_pose_ )<<std::endl;
 	if ( core::conformation::symmetry::is_symmetric( *symminfo_ ) ) {
 
+
 		// check foreign claim
-		if ( foreign_claim.type() == DofClaim::BB ) {
-			if ( ! symminfo_->bb_is_independent( foreign_claim.pos( 1 ) ) ) return false;
+		claims::BBClaimCOP bb_ptr( dynamic_cast< const claims::BBClaim* >( &foreign_claim ) );
+		if ( bb_ptr ) {
+			if ( ! symminfo_->bb_is_independent( bb_ptr->global_position() ) ) return false;
 		} // DofClaim::BB
 
 		//if ( foreign_claim.type() == DofClaim::JUMP ) {

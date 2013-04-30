@@ -394,7 +394,7 @@ Real sum_peak_volumes( PeakAssignments const& list, core::Size i, core::Size j )
 	return intra_sumV;
 }
 
-void PeakAssignmentResidueMap::network_analysis2( ResonanceList const& resonances ) {
+void PeakAssignmentResidueMap::network_analysis2() { // ResonanceList const& resonances ) {
 	tr.Info << "start network analysis (type2)..." << std::endl;
 	typedef std::pair< core::Size, core::Size > ResonancePair;
 	typedef std::map< ResonancePair, core::Real > AnchorMap;
@@ -473,11 +473,15 @@ void PeakAssignmentResidueMap::network_analysis2( ResonanceList const& resonance
 			}
 			for ( std::set< core::Size >::const_iterator sit=neighbor_residues.begin(); sit!=neighbor_residues.end(); ++sit ) {
 				try {
-					ResonanceList::Resonances const& retrieved( resonances.resonances_at_residue( *sit ) );
+					ResonanceList::Resonances const& retrieved( first_assignment.resonances().resonances_at_residue( *sit ) );
+					//					tr.Debug << resi << " " << resj << " resonance k @ " << *sit << std::endl;
 					copy( retrieved.begin(), retrieved.end(), back_inserter( resK ) );
 				} catch ( EXCN_UnknownResonance excn ) {
 				}
 			}
+			//			for ( ResonanceList::Resonances::const_iterator itK = resK.begin(); itK != resK.end(); ++itK ) {
+			//				if ( (*itK)->is_proton() ) tr.Debug << (*itK)->atom() << std::endl;
+			//			}
 
 			core::Real sumNK_resij( 0.0 );
 			//now compute network anchoring for each assignment between residue-i and residue-j

@@ -33,7 +33,7 @@ namespace fragment {
 FragmentRmsd::~FragmentRmsd() {}
 
 FragmentRmsd::FragmentRmsd(FragSetCOP fragments) : fragments_(fragments) {
-  for (FrameIterator i = fragments_->begin(); i != fragments_->end(); ++i) {
+  for ( ConstFrameIterator i = fragments_->begin(); i != fragments_->end(); ++i) {
     FrameCOP frame = *i;
     frames_[frame->start()] = frame;
   }

@@ -97,9 +97,13 @@ public:
   CrossPeakList const& crosspeaks() const { return *crosspeaks_; }
 
   ///@brief return resonance assignments (prot-file)
-  ResonanceList const& resonances() const { return *main_resonances_; }
+  //  ResonanceList const& resonances() const { return *main_resonances_; }
 
   void add_dist_viol_to_assignments( core::pose::Pose native_pose);
+
+  std::string const& sequence() {
+    return sequence_;
+  }
 
 private:
 
@@ -109,7 +113,9 @@ private:
   //  bool skip_network_analysis_; //moved to PeakAssignmentParameters
   ///@brief private data, peak-list and master-resonances (sometimes different resonances for different peak-lists, thus the name)
   CrossPeakListOP crosspeaks_;
-  ResonanceListOP main_resonances_;
+  //ResonanceListOP main_resonances_;
+  std::string sequence_;
+
 
 };
 
