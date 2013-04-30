@@ -20,6 +20,7 @@
 #include <protocols/relax/FastRelax.hh>
 #include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
+#include <utility/string_util.hh>
 
 #include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -282,6 +283,7 @@ int main(int argc, char *argv[]) {
 		SilentFileDataOP sfd_in;
 		core::pose::PoseOP native_pose;
 		string silent_filename = "";
+		string silent_out_filename = "";
 		#ifdef USEMPI
 		while ( true )		// block for messages until receive batch_id: EXIT_BATCH_ID, then quit
 		{
@@ -357,7 +359,12 @@ int main(int argc, char *argv[]) {
 			// block for write approval
 			MPI_Recv( &batch_id, 1, MPI_INT, 0, TAG_WRITE_APPROVE, MPI_COMM_WORLD, &status );
 			// write
-			sfd_out->write_all( silent_filename + ".batchrelax" );
+			// todo: use JobOutputter::affixed_number_name convention for output names
+			silent_out_filename = option[ OptionKeys::out::prefix ]();
+			silent_out_filename += utility::file_basename( silent_filename ) + ".batchrelax"; 
+			silent_out_filename += option[ OptionKeys::out::suffix ]();
+			TR << "Saving to " << silent_out_filename << endl;
+			sfd_out->write_all( silent_out_filename );
 			//cout << "writing to " << split_string( batches[batch_id], 0 ) << endl;
 			MPI_Send( &batch_id, 1, MPI_INT, 0, TAG_WRITE_SUCCESS, MPI_COMM_WORLD );
 		}
