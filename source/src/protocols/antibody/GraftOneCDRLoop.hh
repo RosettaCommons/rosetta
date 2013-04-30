@@ -60,8 +60,8 @@ public:
 		///       H3 loop modeling later. But the terminal has been changed by this
 		///       grafting. Therefore, in R3, an option for not copying h3 stem is
 		///       provided.
-		void h3_stem_off( bool setting ){
-			h3_stem_not_graft_ = setting;
+		void set_no_stem_copy( bool const & setting ){
+			stem_not_graft_ = setting;
 		}
 	
 		void set_flank_size(Size setting){
@@ -93,9 +93,10 @@ private:
 		Ab_TemplateInfoOP ab_t_info_;
 		
 		bool benchmark_;
-		bool h3_stem_not_graft_;
+		bool stem_not_graft_;
 
 		core::scoring::ScoreFunctionCOP scorefxn_;
+		std::string preprocessing_script_version_;
 
 
 }; // class GraftOneCDRLoop

@@ -11,3 +11,5 @@
 -out:file:scorefile score.fasc
 -out:file:fullatom #output in fullatom scorefile
 -mute core.io.database
+-antibody::preprocessing_script_version R2_Perl
+-antibody::stem_optimize true

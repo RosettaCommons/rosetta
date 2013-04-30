@@ -27,6 +27,7 @@ sources = {
 		"CDRsMinPackMin",
 		"GraftCDRLoopsProtocol",
 		"GraftOneCDRLoop",
+                "GraftedStemOptimizer",
 		"CloseOneCDRLoop",
 		"H3CterInsert",
 		"H3PerturbCCD",

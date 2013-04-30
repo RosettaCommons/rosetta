@@ -22,6 +22,9 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/pose/util.tmpl.hh>
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/antibody.OptionKeys.gen.hh>
+
 
 
 static basic::Tracer TRG("protocols.antibody.GraftOneCDRLoop");
@@ -64,8 +67,9 @@ void GraftOneCDRLoop::set_default() {
     //       on the C-ter and N-ter of the actual loop
     //       However, based on the old R2 antibody code, only 3 residues on each stem
 	
-	h3_stem_not_graft_ = false;
+	stem_not_graft_ = false;
 	benchmark_ = false;
+	preprocessing_script_version_ = "R3_Python"; //JQX: R2_Perl or R3_Python
 
 }
 
@@ -88,7 +92,7 @@ void GraftOneCDRLoop::finalize_setup(){
 		scorefxn_=core::scoring::ScoreFunctionFactory::create_score_function( "standard","score12");
 	}
 	
-	if(h3_stem_not_graft_){
+	if(stem_not_graft_){
 		stem_copy_size_ = 0 ;
 	}
 	
@@ -138,9 +142,20 @@ void GraftOneCDRLoop::apply( pose::Pose & pose_in ){
 
     
     //   ****AAAAAAAAAAAAAAAAAAA****  the template pose should have 4 residues each side
-    //    @@@AAAAAAAAAAAAAAAAAAA@@@   the real alignment only based on 3 residues each side
+    //    @@@AAAAAAAAAAAAAAAAAAA@@@   the real alignment only based on 3 residues each side due to error in R2_Perl
+    //   @@@@AAAAAAAAAAAAAAAAAAA@@@@  the corrected alignment based on 4 residues each side in R3_Python
     
-    for( Size start_stem = 2; start_stem <= flank_size_; ++start_stem ) { 
+    using namespace basic::options;
+    using namespace basic::options::OptionKeys;
+    if ( option[ OptionKeys::antibody::preprocessing_script_version ].user() ){
+	preprocessing_script_version_ = option[ OptionKeys::antibody::preprocessing_script_version ]() ;
+    }
+
+    Size correction ;
+    if(preprocessing_script_version_ == "R2_Perl") correction = 1;
+    if(preprocessing_script_version_ == "R3_Python") correction = 0;
+
+    for( Size start_stem = 1+correction; start_stem <= flank_size_; ++start_stem ) {
     		/// starting from the 2nd residue in the l1-3.pdb, H1-3.pdb
         	Size const ref_stem ( start_stem  );
         	for( Size j=1; j <= 4; j++ ) {    /// four backbone heavy atoms
@@ -152,7 +167,7 @@ void GraftOneCDRLoop::apply( pose::Pose & pose_in ){
     }
 
 	// start at the end of the actual loop
-    for( Size end_stem = query_size+flank_size_+1; end_stem <= query_size+flank_size_+flank_size_-1; ++end_stem ) { 
+    for( Size end_stem = query_size+flank_size_+1; end_stem <= query_size+flank_size_+flank_size_-correction; ++end_stem ) {
         	Size const ref_stem ( end_stem);  
 		//   if(template_name_ == "h3") Size const ref_stem(end_stem+1);
         	for( Size j=1; j <= 4; j++ ) {    /// four backbone heavy atoms
@@ -249,7 +264,7 @@ void GraftOneCDRLoop::initForEqualOperatorAndCopyConstructor(GraftOneCDRLoop & l
 	lhs.ab_info_=rhs.ab_info_;
 	lhs.ab_t_info_=rhs.ab_t_info_;
 	lhs.benchmark_=rhs.benchmark_;
-	lhs.h3_stem_not_graft_=rhs.h3_stem_not_graft_;
+	lhs.stem_not_graft_=rhs.stem_not_graft_;
 }
     
     

@@ -28,6 +28,8 @@
 #include <protocols/antibody/GraftCDRLoopsProtocol.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
+#include <protocols/antibody/CDRsMinPackMin.fwd.hh>
+
 
 
 using namespace core;
@@ -78,6 +80,9 @@ public:
 	void set_packonly_after_graft (bool setting){
 		packonly_after_graft_ = setting;
 	}
+	void set_stem_optimize (bool setting){
+		stem_optimize_ = setting;
+	}
 	void set_camelid( bool camelid ) {
 		camelid_ = camelid;
 	}
@@ -124,6 +129,7 @@ private:
     bool sc_min_;
 	bool rt_min_;
 	bool benchmark_;
+	bool stem_optimize_;
     
 	core::Real cst_weight_;
 	core::scoring::ScoreFunctionOP scorefxn_pack_;
@@ -134,6 +140,9 @@ private:
 	pack::task::TaskFactoryOP tf_;
 
     protocols::moves::SequenceMoverOP graft_sequence_ ;
+    protocols::moves::SequenceMoverOP optimize_sequence_ ;
+    CDRsMinPackMinOP cdrs_min_pack_min_;
+
 
 
 

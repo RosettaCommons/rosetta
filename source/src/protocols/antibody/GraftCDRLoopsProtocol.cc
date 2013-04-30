@@ -50,6 +50,7 @@
 #include <protocols/antibody/GraftCDRLoopsProtocol.hh>
 #include <protocols/antibody/AntibodyUtil.hh>
 #include <protocols/antibody/CDRsMinPackMin.hh>
+#include <protocols/antibody/GraftedStemOptimizer.hh>
 
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
@@ -110,6 +111,7 @@ void GraftCDRLoopsProtocol::set_default()
 	camelid_constraints_ = false;
 	sc_min_ = false;
 	rt_min_ = false;
+	stem_optimize_ = true;
     cst_weight_ = 0.0;
     
 }
@@ -120,8 +122,7 @@ void GraftCDRLoopsProtocol::register_options()
 {
 	using namespace basic::options;
 
-	option.add_relevant( OptionKeys::antibody::camelid );
-	option.add_relevant( OptionKeys::antibody::camelid_constraints );
+
 	option.add_relevant( OptionKeys::antibody::graft_l1 );
 	option.add_relevant( OptionKeys::antibody::graft_l2 );
 	option.add_relevant( OptionKeys::antibody::graft_l3 );
@@ -129,6 +130,11 @@ void GraftCDRLoopsProtocol::register_options()
 	option.add_relevant( OptionKeys::antibody::graft_h2 );
 	option.add_relevant( OptionKeys::antibody::graft_h3 );
 	option.add_relevant( OptionKeys::antibody::h3_no_stem_graft );
+	option.add_relevant( OptionKeys::antibody::camelid );
+	option.add_relevant( OptionKeys::antibody::camelid_constraints );
+	option.add_relevant( OptionKeys::antibody::packonly_after_graft);
+	option.add_relevant( OptionKeys::antibody::stem_optimize);
+	option.add_relevant( OptionKeys::antibody::stem_optimize_size);
 	option.add_relevant( OptionKeys::constraints::cst_weight );
 	option.add_relevant( OptionKeys::run::benchmark );
 	option.add_relevant( OptionKeys::in::file::native );
@@ -158,9 +164,11 @@ void GraftCDRLoopsProtocol::init_from_options() {
 	if ( option[ OptionKeys::antibody::graft_h3 ].user() )
                 set_graft_h3( option[ OptionKeys::antibody::graft_h3 ]() );
 	if ( option[ OptionKeys::antibody::h3_no_stem_graft ].user()  )
-		set_h3_stem_graft( option[ OptionKeys::antibody::h3_no_stem_graft ]()  );
+		    set_h3_stem_graft( option[ OptionKeys::antibody::h3_no_stem_graft ]()  );
 	if ( option[ OptionKeys::antibody::packonly_after_graft ].user()  )
-		set_packonly_after_graft( option[ OptionKeys::antibody::packonly_after_graft ]()  );
+		    set_packonly_after_graft( option[ OptionKeys::antibody::packonly_after_graft ]()  );
+	if ( option[ OptionKeys::antibody::stem_optimize ].user()  )
+	            set_stem_optimize( option[ OptionKeys::antibody::stem_optimize ]()  );
 	if ( option[ OptionKeys::antibody::camelid ].user() )
                 set_camelid( option[ OptionKeys::antibody::camelid ]() );
 	if ( option[ OptionKeys::antibody::camelid_constraints ].user() )
@@ -251,7 +259,7 @@ void GraftCDRLoopsProtocol::finalize_setup( pose::Pose & frame_pose ) {
                                       graft_h1_, graft_h2_, graft_h3_, camelid_);
     
     graft_sequence_ = new moves::SequenceMover();
-    
+
     
     TR<<" Checking AntibodyInfo object: "<<std::endl<<*ab_info_<<std::endl<<std::endl;
     TR<<" Checking Ab_TemplateInfo object: "<<std::endl<<*ab_t_info_<<std::endl<<std::endl;
@@ -262,18 +270,25 @@ void GraftCDRLoopsProtocol::finalize_setup( pose::Pose & frame_pose ) {
             TR << "                   stop (chothia): "<<ab_info_->get_CDR_loop(it).stop()<<std::endl;
             
             GraftOneCDRLoopOP graft_one_cdr = new GraftOneCDRLoop( it, ab_info_, ab_t_info_) ;
-			if(it == h3 && h3_no_stem_graft_){ graft_one_cdr->h3_stem_off(true); }
+			if(it == h3 && h3_no_stem_graft_){ graft_one_cdr->set_no_stem_copy(true); }
+
+
             graft_one_cdr->enable_benchmark_mode( benchmark_ );
             graft_sequence_->add_mover( graft_one_cdr);
             
             
             /*
-             CloseOneCDRLoopOP closeone( new CloseOneCDRLoop( ab_info.get_loop(it->first)->start(),
+             CloseOneCDRLoopOP closeone( new Clos eOneCDRLoop( ab_info.get_loop(it->first)->start(),
              ab_info.get_loop(it->first)->stop()   )     );
              closeone->enable_benchmark_mode( benchmark_ );
              graft_sequence_->add_mover( closeone );
              */
     }
+
+//	TR<<" frame_pose.total_residue()  =  "<< frame_pose.total_residue()<<std::endl;
+
+
+
     
     // Exact match Aroop's old code in Rosetta 2:
     // graft all CDRs by superimpose stems, then pack the whole new pose
@@ -281,15 +296,27 @@ void GraftCDRLoopsProtocol::finalize_setup( pose::Pose & frame_pose ) {
     // When do packing, pack the whole pose, but minimize the CDRs
     tf_ = setup_packer_task(frame_pose);
     
-    CDRsMinPackMinOP cdrs_min_pack_min = new CDRsMinPackMin(ab_info_);
-        cdrs_min_pack_min -> set_task_factory(tf_);
+    cdrs_min_pack_min_ = new CDRsMinPackMin(ab_info_);
+        cdrs_min_pack_min_ -> set_task_factory(tf_);
         // the tf_ include all the residues, the movemap is to use the deafult one in CDRsMinPackMin, which is the CDRs
-        cdrs_min_pack_min->set_sc_min(sc_min_);
-        cdrs_min_pack_min->set_sc_min(rt_min_);
-		cdrs_min_pack_min -> set_turnoff_minimization(packonly_after_graft_);
+        cdrs_min_pack_min_->set_sc_min(sc_min_);
+        cdrs_min_pack_min_->set_sc_min(rt_min_);
+		cdrs_min_pack_min_ -> set_turnoff_minimization(packonly_after_graft_);
     
-    graft_sequence_->add_mover(cdrs_min_pack_min);
-    
+
+
+
+
+    optimize_sequence_ = new moves::SequenceMover();
+
+    for(CDRNameEnum it = start_cdr_loop; it <= ab_info_->get_total_num_CDRs(); it=CDRNameEnum(it+1) ){
+	    if (  !(it == h3 && h3_no_stem_graft_)   ){
+	            GraftedStemOptimizerOP optimize_oneCDR_stems = new GraftedStemOptimizer(it, ab_info_);
+	            optimize_sequence_->add_mover(optimize_oneCDR_stems);
+	    }
+    }
+
+
 }
 
  
@@ -335,6 +362,22 @@ void GraftCDRLoopsProtocol::apply( pose::Pose & frame_pose ) {
     }
     
     graft_sequence_->apply( frame_pose );
+
+    frame_pose.dump_pdb("grafted.pdb");
+    
+    cdrs_min_pack_min_->apply(frame_pose);
+    frame_pose.dump_pdb("grafted_minimized.pdb");
+       
+    if(stem_optimize_){
+	optimize_sequence_->apply(frame_pose);
+	frame_pose.dump_pdb("grafted_minimized_stem-optimized.pdb");
+	    
+	cdrs_min_pack_min_->apply(frame_pose);
+	frame_pose.dump_pdb("grafted_minimized_stem-optimized_minimized.pdb");
+    }
+     
+
+
     
     // Recover secondary structures
     for( Size i = 1; i <= nres; i++ ) frame_pose.set_secstruct( i, secondary_struct_storage[ i ] );
