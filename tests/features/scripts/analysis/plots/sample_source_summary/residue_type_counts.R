@@ -41,36 +41,42 @@ f <-  query_sample_sources(sample_sources, sele)
 
 plot_id <- "residue_type_counts"
 p <- ggplot(data=f) + theme_bw() +
-	geom_bar(aes(x=res_type, y=count, fill=sample_source), position="dodge") +
+	geom_bar(aes(x=res_type, y=count, fill=sample_source), stat="identity", position="dodge") +
 	coord_flip() +
 	ggtitle("Residue Type Counts (B-Fact < 30)") +
 	labs(x = "Residue Type", y = "Count")
 
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
+
+
+
 table_id <- "residue_types_counts"
+f_c <- cast(f, res_type ~ sample_source, value="count")
 save_tables(
 	self,
-	f,
-	plot_id,
+	f_c,
+	table_id,
 	sample_sources, output_dir, output_formats,
-	caption="Residue Type Counts (B-Fact < 30)", caption.placement="top")
+	caption="Residue Type Counts", caption.placement="top")
 
 table_id <- "protein_residue_types_counts"
+f_c <- cast(f[as.character(f$is_protein) == 'protein',], res_type ~ sample_source, value="count")
 save_tables(
 	self,
-	f[as.character(f$is_protein) == 'protein',],
-	plot_id,
+	f_c,
+	table_id,
 	sample_sources, output_dir, output_formats,
-	caption="Protein Residue Type Counts (B-Fact < 30)", caption.placement="top")
+	caption="Protein Residue Type Counts", caption.placement="top")
 
 table_id <- "non_protein_residue_types_counts"
+f_c <- cast(f[as.character(f$is_protein) != 'protein',], res_type ~ sample_source, value="count")
 save_tables(
 	self,
-	f[as.character(f$is_protein) == 'protein',],
-	plot_id,
+	f_c,
+	table_id,
 	sample_sources, output_dir, output_formats,
-	caption="Protein Residue Type Counts (B-Fact < 30)", caption.placement="top")
+	caption="Non-Protein Residue Type Counts", caption.placement="top")
 
 
 
