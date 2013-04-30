@@ -4682,6 +4682,18 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 			desc='Only do packing after grafting, do not do minimization',
 			default='false'
 			),
+		Option( 'stem_optimize', 'Boolean',
+			desc='turn on/off the option to optimize the grafted stems',
+			default='true'
+			),
+		Option( 'stem_optimize_size', 'Integer',
+			desc=' define the size of the stem to optimize ',
+			default='4'
+			),
+		Option( 'preprocessing_script_version', 'String',
+			desc='Rosetta 2 using Perl script has errors for grafting',
+			default='R3_Python'
+			),
 		Option( 'model_h3', 'Boolean',
 			desc='Model CDR H3 from scratch using fragments',
 			default='false'

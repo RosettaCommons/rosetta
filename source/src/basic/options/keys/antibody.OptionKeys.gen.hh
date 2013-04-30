@@ -36,6 +36,9 @@ namespace antibody { extern BooleanOptionKey const graft_h3; }
 namespace antibody { extern StringOptionKey const h3_template; }
 namespace antibody { extern BooleanOptionKey const h3_no_stem_graft; }
 namespace antibody { extern BooleanOptionKey const packonly_after_graft; }
+namespace antibody { extern BooleanOptionKey const stem_optimize; }
+namespace antibody { extern IntegerOptionKey const stem_optimize_size; }
+namespace antibody { extern StringOptionKey const preprocessing_script_version; }
 namespace antibody { extern BooleanOptionKey const model_h3; }
 namespace antibody { extern BooleanOptionKey const snugfit; }
 namespace antibody { extern BooleanOptionKey const refine_h3; }

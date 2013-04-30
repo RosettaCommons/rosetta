@@ -701,10 +701,10 @@ option.add( basic::options::OptionKeys::jumps::jump_lib, "read jump_library_file
 option.add( basic::options::OptionKeys::jumps::loop_definition_from_file, "use ss-def from this file" ).def("");
 option.add( basic::options::OptionKeys::jumps::no_chainbreak_in_relax, "dont penalize chainbreak in relax" ).def(false);
 option.add( basic::options::OptionKeys::jumps::pairing_file, "file with pairings" ).def("");
+option.add( basic::options::OptionKeys::jumps::random_sheets, "random sheet topology--> replaces -sheet1 -sheet2 ... select randomly up to N sheets with up to -sheet_i pairgins for sheet i" ).def(1);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::random_sheets, "random sheet topology--> replaces -sheet1 -sheet2 ... select randomly up to N sheets with up to -sheet_i pairgins for sheet i" ).def(1);
-option.add( basic::options::OptionKeys::jumps::residue_pair_jump_file, "a file to define residue pair jump" ).def("");
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::residue_pair_jump_file, "a file to define residue pair jump" ).def("");
 option.add( basic::options::OptionKeys::jumps::sheets, "sheet topology--> replaces -sheet1 -sheet2 ... -sheetN" ).def(1);
 option.add( basic::options::OptionKeys::jumps::topology_file, "read a file with topology info ( PairingStats )" ).def("");
 option.add( basic::options::OptionKeys::jumps::bb_moves, "Apply bb_moves ( wobble, small, shear) during stage3 and stage 4." ).def(false);
@@ -1401,11 +1401,11 @@ option.add( basic::options::OptionKeys::cmiles::jumping::resj, "Residue j" );
 option.add( basic::options::OptionKeys::james::james, "james option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::james::min_seqsep, "No description" ).def(0);
 option.add( basic::options::OptionKeys::james::atom_names, "No description" ).def(utility::vector1<std::string>());
+option.add( basic::options::OptionKeys::james::dist_thresholds, "No description" ).def(utility::vector1<float>(1, 1.0));
+option.add( basic::options::OptionKeys::james::torsion_thresholds, "No description" ).def(utility::vector1<float>(1, 30.0));
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::james::dist_thresholds, "No description" ).def(utility::vector1<float>(1, 1.0));
-option.add( basic::options::OptionKeys::james::torsion_thresholds, "No description" ).def(utility::vector1<float>(1, 30.0));
-option.add( basic::options::OptionKeys::james::sog_cutoff, "No description" ).def(5.0);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::james::sog_cutoff, "No description" ).def(5.0);
 option.add( basic::options::OptionKeys::james::shift_sog_func, "No description" ).def(true);
 option.add( basic::options::OptionKeys::james::min_type, "No description" ).def("dfpmin_armijo_nonmonotone");
 option.add( basic::options::OptionKeys::james::min_tol, "No description" ).def(0.0001);
@@ -2101,12 +2101,12 @@ option.add( basic::options::OptionKeys::optE::parse_tagfile, "a file in utility:
 option.add( basic::options::OptionKeys::optE::constant_logic_taskops_file, "a file in utility::tag format that optE uses to build a task that will not change with the context of the pose after design" );
 option.add( basic::options::OptionKeys::optE::optE_soft_rep, "Instruct the IterativeOptEDriver to use the soft-repulsion etable" );
 option.add( basic::options::OptionKeys::optE::no_hb_env_dependence, "Disable environmental dependent weighting of hydrogen bond terms" );
-
-}
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::no_hb_env_dependence_DNA, "Disable environmental dependent weighting of hydrogen bonds involving DNA" );
+option.add( basic::options::OptionKeys::optE::no_hb_env_dependence_DNA, "Disable environmental dependent weighting of hydrogen bonds involving DNA" );
 option.add( basic::options::OptionKeys::optE::optE_no_protein_hack_elec, "Instruct the IterativeOptEDriver to use the soft-repulsion etable" ).def(false);
 option.add( basic::options::OptionKeys::optE::design_first, "Do not optimize the weights in the context of the native structure, but rather, start by designing the protein with the input weight set.  Requires that all score types listed in -optE::free have specificed weights." );
-option.add( basic::options::OptionKeys::optE::n_design_cycles, "The number of outer-loop design cycles to complete; default of 10 after which convergence has usually occurred" ).def(10);
+
+}
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::n_design_cycles, "The number of outer-loop design cycles to complete; default of 10 after which convergence has usually occurred" ).def(10);
 option.add( basic::options::OptionKeys::optE::recover_nat_rot, "With the iterative optE driver, repack to recover the native rotamers" );
 option.add( basic::options::OptionKeys::optE::component_weights, "With the iterative optE driver, weight the individual components according to the input file -- default weight of 1 for all components.  Weight file consists of component-name/weight pairs on separate lines: e.g. prob_native_structure 100.0" );
 option.add( basic::options::OptionKeys::optE::optimize_nat_aa, "With the iterative optE driver, optimize weights to maximize the probability of the native rotamer" );
@@ -2444,6 +2444,9 @@ option.add( basic::options::OptionKeys::antibody::graft_h3, "Graft CDR H3 from t
 option.add( basic::options::OptionKeys::antibody::h3_template, "Choose specified template for CDR H3 grafting" ).def("h3.pdb");
 option.add( basic::options::OptionKeys::antibody::h3_no_stem_graft, "Graft CDR H3 from template, use stem to superimpose, but do not copy the stem" ).def(false);
 option.add( basic::options::OptionKeys::antibody::packonly_after_graft, "Only do packing after grafting, do not do minimization" ).def(false);
+option.add( basic::options::OptionKeys::antibody::stem_optimize, "turn on/off the option to optimize the grafted stems" ).def(true);
+option.add( basic::options::OptionKeys::antibody::stem_optimize_size, " define the size of the stem to optimize " ).def(4);
+option.add( basic::options::OptionKeys::antibody::preprocessing_script_version, "Rosetta 2 using Perl script has errors for grafting" ).def("R3_Python");
 option.add( basic::options::OptionKeys::antibody::model_h3, "Model CDR H3 from scratch using fragments" ).def(false);
 option.add( basic::options::OptionKeys::antibody::snugfit, "Adjust relative orientation of VL-VH" ).def(false);
 option.add( basic::options::OptionKeys::antibody::refine_h3, "Refine CDR H3 in high resolution" ).def(true);

@@ -75,8 +75,6 @@ private:
 	bool sc_min_;
 	bool rt_min_;
 	bool turnoff_minimization_;
-	/// @brief refine H3 only
-	core::Real cen_cst_, high_cst_;
 
 	// Benchmark mode for shorter_cycles
 	bool benchmark_;

@@ -11852,6 +11852,21 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-stem_optimize</b> \<Boolean\><dt>
+<dd>turn on/off the option to optimize the grafted stems</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-stem_optimize_size</b> \<Integer\><dt>
+<dd> define the size of the stem to optimize </dd><br>
+<dd>Default: 4</dd><br>
+</dl>
+<dl>
+<dt><b>-preprocessing_script_version</b> \<String\><dt>
+<dd>Rosetta 2 using Perl script has errors for grafting</dd><br>
+<dd>Default: "R3_Python"</dd><br>
+</dl>
+<dl>
 <dt><b>-model_h3</b> \<Boolean\><dt>
 <dd>Model CDR H3 from scratch using fragments</dd><br>
 <dd>Default: false</dd><br>

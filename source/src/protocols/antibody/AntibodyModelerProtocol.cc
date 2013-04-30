@@ -164,6 +164,7 @@ void AntibodyModelerProtocol::register_options()
     //option.add_relevant( OptionKeys::antibody::middle_pack_min);
     option.add_relevant( OptionKeys::antibody::h3_filter_tolerance);
     option.add_relevant( OptionKeys::antibody::bad_nter);
+    option.add_relevant( OptionKeys::antibody::packonly_after_graft);
 }
 
 

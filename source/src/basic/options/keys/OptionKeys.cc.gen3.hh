@@ -1,6 +1,3 @@
-namespace optE { BooleanOptionKey const no_hb_env_dependence_DNA( "optE:no_hb_env_dependence_DNA" );  }
-namespace optE { BooleanOptionKey const optE_no_protein_hack_elec( "optE:optE_no_protein_hack_elec" );  }
-namespace optE { BooleanOptionKey const design_first( "optE:design_first" );  }
 namespace optE { IntegerOptionKey const n_design_cycles( "optE:n_design_cycles" );  }
 namespace optE { BooleanOptionKey const recover_nat_rot( "optE:recover_nat_rot" );  }
 namespace optE { FileOptionKey const component_weights( "optE:component_weights" );  }
@@ -339,6 +336,9 @@ namespace antibody { BooleanOptionKey const graft_h3( "antibody:graft_h3" );  }
 namespace antibody { StringOptionKey const h3_template( "antibody:h3_template" );  }
 namespace antibody { BooleanOptionKey const h3_no_stem_graft( "antibody:h3_no_stem_graft" );  }
 namespace antibody { BooleanOptionKey const packonly_after_graft( "antibody:packonly_after_graft" );  }
+namespace antibody { BooleanOptionKey const stem_optimize( "antibody:stem_optimize" );  }
+namespace antibody { IntegerOptionKey const stem_optimize_size( "antibody:stem_optimize_size" );  }
+namespace antibody { StringOptionKey const preprocessing_script_version( "antibody:preprocessing_script_version" );  }
 namespace antibody { BooleanOptionKey const model_h3( "antibody:model_h3" );  }
 namespace antibody { BooleanOptionKey const snugfit( "antibody:snugfit" );  }
 namespace antibody { BooleanOptionKey const refine_h3( "antibody:refine_h3" );  }
