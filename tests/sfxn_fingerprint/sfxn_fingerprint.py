@@ -66,8 +66,8 @@ rm -r ref/; ./ScoreVersion.py    # create reference results using only default s
     parser.add_option("-m", "--mini_home",
       #default=path.join( path.expanduser("~"), "mini"),
       #default=path.dirname( path.dirname( path.dirname(path.abspath(sys.argv[0])) ) ),
-      default= path.join( path.dirname( path.dirname( path.dirname(path.abspath(sys.argv[0])) ) ), 'rosetta_source'),
-      help="Directory where Mini is found (default: ../../rosetta_source/)",
+      default= path.join( path.dirname( path.dirname( path.dirname(path.abspath(sys.argv[0])) ) ), 'source'),
+      help="Directory where Mini is found (default: ../../source/)",
     )
     parser.add_option("--data",
       default = path.dirname( path.dirname(path.abspath(sys.argv[0]) ) + '/data/'),
@@ -125,9 +125,9 @@ rm -r ref/; ./ScoreVersion.py    # create reference results using only default s
 
     (options, args) = parser.parse_args(args=argv)
 
-    options.mini_home = path.abspath( options.mini_home )                                                                                                        
-    print 'Using Rosetta source dir at:', options.mini_home                                                                                                      
-        
+    options.mini_home = path.abspath( options.mini_home )
+    print 'Using Rosetta source dir at:', options.mini_home
+
 
     if options.digs > 0:
         options.num_procs = 0 # don't use local processors too, b/c local *is* a dig

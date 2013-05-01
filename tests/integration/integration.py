@@ -81,7 +81,7 @@ rm -r ref/; ./integration.py    # create reference results using only default se
     # )
     parser.add_option("-d", "--database",
       default="", # processed below
-      help="Path to Rosetta database. (default: $ROSETTA_DB, ../..//rosetta_database)",
+      help="Path to Rosetta database. (default: $ROSETTA_DB, ../../database)",
     )
 
     parser.add_option("-m", "--mini_home",
@@ -215,7 +215,7 @@ rm -r ref/; ./integration.py    # create reference results using only default se
     # Using argv[] here causes problems when people try to run the script as "python integration.py ..."
     #os.chdir( path.dirname(sys.argv[0]) ) # argv[0] is the script name
     if not path.isdir("tests"):
-        print "You must run this script from rosetta/rosetta_tests/integration/"
+        print "You must run this script from rosetta/tests/integration/"
         return 2
 
     # If the "ref" directory doesn't exist, compute that;
@@ -233,10 +233,10 @@ rm -r ref/; ./integration.py    # create reference results using only default se
         tests = args
     else:
         tests = [ d for d in os.listdir("tests") if not d.startswith(".") and path.isdir(path.join("tests", d)) ]
-  
+
     if not options.unordered:
         tests = order_tests(tests)
-    
+
     if not options.compareonly:
         if len(args)>0 and path.isdir(outdir): #we have individual tests... only remove single test directories
             for test in tests:
@@ -245,7 +245,7 @@ rm -r ref/; ./integration.py    # create reference results using only default se
         else:
         # Remove everything in the current outdir, then re-create it empty
             if path.isdir(outdir): shutil.rmtree(outdir)
-            os.mkdir(outdir)  
+            os.mkdir(outdir)
 
     runtimes={}
     if not options.compareonly:
@@ -290,7 +290,7 @@ rm -r ref/; ./integration.py    # create reference results using only default se
                     percent = (100* (queue.TotalNumberOfTasks-queue.qsize())) / queue.TotalNumberOfTasks
                     elapse_time = time.time() - nt.start_time
                     print "Finished %-40s in %3i seconds\t [~%4s test (%s%%) started, %4s in queue, %4d running]" % (nt.test, elapse_time, queue.TotalNumberOfTasks-queue.qsize(), percent, queue.qsize(), queue.unfinished_tasks-queue.qsize() )
-                    if nt.test not in times: 
+                    if nt.test not in times:
                         times[nt.test] = elapse_time
 
 
@@ -298,14 +298,14 @@ rm -r ref/; ./integration.py    # create reference results using only default se
                     error_string = "*** Test %s did not run!  Check your --mode flag and paths. [%s]\n" % (test, datetime.datetime.now())
                     file(path.join(nt.workdir, ".test_did_not_run.log"), 'w').write(error_string)
                     print error_string,
-                    times[nt.test] = float('nan') 
+                    times[nt.test] = float('nan')
                     normal_finish(nt, times)
 
                 def timeout_finish(nt, times):
                     error_string = "*** Test %s exceeded the timeout=%s  and will be killed! [%s]\n" % (test, Options.timeout, datetime.datetime.now())
                     file(path.join(nt.workdir, ".test_got_timeout_kill.log"), 'w').write(error_string)
                     print error_string,
-                    times[nt.test] = float('inf') 
+                    times[nt.test] = float('inf')
                     normal_finish(nt, times)
 
                 if Options.jobs > 1:
