@@ -587,6 +587,10 @@ core::pack::task::TaskFactoryOP setup_packer_task(pose::Pose & pose_in )
 
     Real global_loop_rmsd (const pose::Pose & pose_in, const pose::Pose & native_pose,loops::LoopsOP current_loop )
     {
+			  if (pose_in.total_residue() != native_pose.total_residue() ){
+						throw excn::EXCN_Msg_Exception("The sequence length of two poses are not the same ");
+				}
+
         using namespace scoring;
         
         Size loop_start = (*current_loop)[1].start();
