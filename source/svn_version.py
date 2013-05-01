@@ -16,7 +16,7 @@ def svn_version():
     '''
     import os, re
     # If svnversion is not found, returns "" -> "unknown"
-    # These commands work correctly because our current working directory is the Mini root.
+    # These commands work correctly because our current working directory is the Rosetta/main root.
     ver = os.popen("svnversion .").read().strip() or "unknown"
     url = "unknown"
 
