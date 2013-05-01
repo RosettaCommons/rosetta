@@ -65,8 +65,8 @@ rm -r ref/; ./integration.py    # create reference results using only default se
 
     parser.add_option("-m", "--mini_home",
       #default=path.join( path.expanduser("~"), "mini"),
-      default= path.join( path.dirname( path.dirname( path.dirname(path.abspath(sys.argv[0])) ) ), 'rosetta_source'),
-      help="Directory where Mini is found (default: ../../rosetta_source/)",
+      default= path.join( path.dirname( path.dirname( path.dirname(path.abspath(sys.argv[0])) ) ), 'source'),
+      help="Directory where Mini is found (default: ../../source/)",
     )
     parser.add_option("-j", "--num_procs",
       default=1,
