@@ -77,4 +77,4 @@ def project_callback(project, project_path, project_files):
 	outfile.writelines(source_files_lines)
 	outfile.writelines(e_lines)
 
-build_util.project_main(PATH_TO_ROOT + 'rosetta_source/', sys.argv, project_callback)
+build_util.project_main(PATH_TO_ROOT + 'source/', sys.argv, project_callback)
