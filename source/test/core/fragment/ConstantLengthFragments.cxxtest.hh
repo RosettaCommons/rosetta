@@ -277,8 +277,8 @@ void FragmentConstantLengthTest::test_frag_iterator() {
 			};
 		};
 		FragSet& bfragset( fragset );
-		FrameIterator it = bfragset.begin();
-		FrameIterator eit= bfragset.end();
+		ConstFrameIterator it = bfragset.begin();
+		ConstFrameIterator eit= bfragset.end();
 
 		for ( Size pos = 1; pos <=  pose_.total_residue(); pos++) {
 			FrameList frames;
@@ -299,8 +299,8 @@ void FragmentConstantLengthTest::test_frag_iterator() {
 		TS_ASSERT( it == eit );
 		{
 			FragSet& bfragset( fragset );
-			FrameIterator it = bfragset.begin();
-			FrameIterator eit= bfragset.end();
+			ConstFrameIterator it = bfragset.begin();
+			ConstFrameIterator eit= bfragset.end();
 			for ( Size pos=1 ; it!=eit; ++it ) {
 				Size val;
 				silly_cache.retrieve( **it, 1, val);
@@ -339,6 +339,8 @@ void FragmentConstantLengthTest::test_frag_iterator() {
 
 		}
 		{
+			TS_ASSERT_EQUALS( "Fix me!", "" );  // There seems to be no ConstFrameList so I adding assert(false) and commenting code below so other test could be run
+			/*
 			FrameList new_frame_list;
 			std::copy(fragset.begin(), fragset.end(), std::back_inserter(new_frame_list) );
 			FragID_Iterator it = new_frame_list.begin();
@@ -348,7 +350,8 @@ void FragmentConstantLengthTest::test_frag_iterator() {
 				silly_cache.retrieve( *it, val);
 				TS_ASSERT_EQUALS( val, pos );
 				++pos;
-			};
+			}
+			*/
 		}
 	}
 }
@@ -460,4 +463,3 @@ void FragmentConstantLengthTest::sub_insertion( Size size, fragment::FragSet con
 		}
 	}
 }
-

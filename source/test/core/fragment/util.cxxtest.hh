@@ -33,6 +33,7 @@ using core::Size;
 using core::fragment::FragSetOP;
 using core::fragment::Frame;
 using core::fragment::FrameIterator;
+using core::fragment::ConstFrameIterator;
 
 class UtilTest : public CxxTest::TestSuite {
  public:
@@ -60,7 +61,7 @@ class UtilTest : public CxxTest::TestSuite {
     TS_ASSERT_EQUALS(all_fragments_->max_frag_length(), fragments->max_frag_length());
 
     // but reduced number of fragments per frame
-    for (FrameIterator i = fragments->begin(); i != fragments->end(); ++i) {
+    for (ConstFrameIterator i = fragments->begin(); i != fragments->end(); ++i) {
       TS_ASSERT_LESS_THAN_EQUALS((*i)->nr_frags(), k);
     }
   }

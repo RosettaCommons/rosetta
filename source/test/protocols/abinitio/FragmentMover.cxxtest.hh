@@ -270,11 +270,11 @@ void FragmentMoverTest::test_steal() {
   using namespace simple_moves;
   using namespace scoring;
 
-	for ( FrameIterator it = fragset3mer_->begin(), eit = fragset3mer_->end(); it!=eit; ++it ){
+	for ( ConstFrameIterator it = fragset3mer_->begin(), eit = fragset3mer_->end(); it!=eit; ++it ){
 		TS_ASSERT_EQUALS( (*it)->nr_frags() , 200 );
 	}
 	steal_constant_length_frag_set_from_pose( pose_, *fragset3mer_ );
-	for ( FrameIterator it = fragset3mer_->begin(), eit = fragset3mer_->end(); it!=eit; ++it ){
+	for ( ConstFrameIterator it = fragset3mer_->begin(), eit = fragset3mer_->end(); it!=eit; ++it ){
 		TS_ASSERT_EQUALS( (*it)->nr_frags() , 201 );
 	}
 

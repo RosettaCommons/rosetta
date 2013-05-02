@@ -74,7 +74,7 @@
 #include <protocols/scoring/methods/pcs/PseudocontactShiftEnergy.fwd.hh>
 #include <protocols/scoring/methods/pcs/PseudocontactShiftTensor.fwd.hh>
 #include <protocols/topology_broker/ClaimerMessage.fwd.hh>
-#include <protocols/topology_broker/DofClaim.fwd.hh>
+//#include <protocols/topology_broker/DofClaim.fwd.hh>
 #include <protocols/topology_broker/TopologyBroker.fwd.hh>
 #include <protocols/topology_broker/TopologyClaimer.fwd.hh>
 #include <utility/down_cast.hh>

@@ -100,7 +100,7 @@ void BBTorsionSRFDTest::test_cartesian_coordinates_iter() {
 	using core::Real;
 	using core::Size;
 
-	for (FrameIterator i = fragments_->begin(); i != fragments_->end(); ++i) {
+	for (ConstFrameIterator i = fragments_->begin(); i != fragments_->end(); ++i) {
 		// foreach frame (P)
 		FrameCOP frame = *i;
 		Size fragment_length = frame->length();

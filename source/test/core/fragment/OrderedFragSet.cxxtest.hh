@@ -140,6 +140,9 @@ void OrderedFragSetTest::test_frag_iterator() {
   steal_constant_length_frag_set_from_pose ( pose_, fragset3 );
 
   OrderedFragSet fragset;
+
+  TS_ASSERT_EQUALS( "Fix me!", "" );  // There seems to be a probelem with const/non-const conversion, Commenting code below so other test could be run
+  /*
   // consolidate both fragsets in new OrderedFragSet
   for ( FrameIterator it = fragset3.begin(), eit = fragset3.end();
 	it!=eit; ++it ) {
@@ -185,5 +188,5 @@ void OrderedFragSetTest::test_frag_iterator() {
 		if (!( cit!=ecit )) break; //avoid run-time errors
 		TS_ASSERT( (*it)->start() == (*cit)->start() );
   }
+  */
 }
-
