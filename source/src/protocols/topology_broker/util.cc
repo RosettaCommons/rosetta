@@ -233,7 +233,7 @@ void add_cmdline_claims( TopologyBroker& broker, bool const do_I_need_frags ) {
 	}
 
 	// If no fragments have been specified in the input file, read from command line.
-	if ( input_fragments.size() == 0 ){
+	if ( input_fragments.size() == 0 && do_I_need_frags ){
 		tr.Debug << "Reading FragmentFiles from cmd." << std::endl;
 
 		FragSetOP large;

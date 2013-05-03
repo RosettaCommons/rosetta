@@ -141,15 +141,13 @@ void OrderedFragSetTest::test_frag_iterator() {
 
   OrderedFragSet fragset;
 
-  TS_ASSERT_EQUALS( "Fix me!", "" );  // There seems to be a probelem with const/non-const conversion, Commenting code below so other test could be run
-  /*
   // consolidate both fragsets in new OrderedFragSet
-  for ( FrameIterator it = fragset3.begin(), eit = fragset3.end();
+  for ( ConstFrameIterator it = fragset3.begin(), eit = fragset3.end();
 	it!=eit; ++it ) {
     fragset.add( *it );
   }
 
-  for ( FrameIterator it = fragset9.begin(), eit = fragset9.end();
+  for ( ConstFrameIterator it = fragset9.begin(), eit = fragset9.end();
 	it!=eit; ++it ) {
     fragset.add( *it );
   }
@@ -157,7 +155,7 @@ void OrderedFragSetTest::test_frag_iterator() {
   // now there should be two frames with the same starting positions until we run out of
   // 9mers...  let's check this.
   Size ct = 1;
-  for ( FrameIterator it = fragset.begin(), eit = fragset.end();
+  for ( ConstFrameIterator it = fragset.begin(), eit = fragset.end();
 	it!=eit; ++it ) {
     //    tr.Info << " ct: " << ct << " " << (*it)->start() << "\n";
     TS_ASSERT( (*it)->start() == ct );
@@ -179,14 +177,13 @@ void OrderedFragSetTest::test_frag_iterator() {
 
 	//let's check the clone function
 	FragSetOP cloned = fragset.clone();
-	FrameIterator cit = cloned->begin();
-	FrameIterator ecit = cloned->end();
-  for ( FrameIterator it = fragset.begin(), eit = fragset.end();
+	ConstFrameIterator cit = cloned->begin();
+	ConstFrameIterator ecit = cloned->end();
+  for ( ConstFrameIterator it = fragset.begin(), eit = fragset.end();
 				it!=eit; ++it,++cit ) {
     //    tr.Info << " ct: " << ct << " " << (*it)->start() << "\n";
     TS_ASSERT( cit != ecit );
 		if (!( cit!=ecit )) break; //avoid run-time errors
 		TS_ASSERT( (*it)->start() == (*cit)->start() );
   }
-  */
 }

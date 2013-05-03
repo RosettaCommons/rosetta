@@ -339,10 +339,8 @@ void FragmentConstantLengthTest::test_frag_iterator() {
 
 		}
 		{
-			TS_ASSERT_EQUALS( "Fix me!", "" );  // There seems to be no ConstFrameList so I adding assert(false) and commenting code below so other test could be run
-			/*
 			FrameList new_frame_list;
-			std::copy(fragset.begin(), fragset.end(), std::back_inserter(new_frame_list) );
+			std::copy(fragset.nonconst_begin(), fragset.nonconst_end(), std::back_inserter(new_frame_list) );
 			FragID_Iterator it = new_frame_list.begin();
 			FragID_Iterator eit = new_frame_list.end();
 			for ( Size pos=1 ; it!=eit; ++it ) {
@@ -351,7 +349,6 @@ void FragmentConstantLengthTest::test_frag_iterator() {
 				TS_ASSERT_EQUALS( val, pos );
 				++pos;
 			}
-			*/
 		}
 	}
 }

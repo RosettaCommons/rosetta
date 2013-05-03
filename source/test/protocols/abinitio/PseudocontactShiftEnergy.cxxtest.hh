@@ -74,7 +74,7 @@
 #include <protocols/scoring/methods/pcs/PseudocontactShiftEnergy.fwd.hh>
 #include <protocols/scoring/methods/pcs/PseudocontactShiftTensor.fwd.hh>
 #include <protocols/topology_broker/ClaimerMessage.fwd.hh>
-//#include <protocols/topology_broker/DofClaim.fwd.hh>
+#include <protocols/topology_broker/claims/DofClaim.fwd.hh>
 #include <protocols/topology_broker/TopologyBroker.fwd.hh>
 #include <protocols/topology_broker/TopologyClaimer.fwd.hh>
 #include <utility/down_cast.hh>
@@ -211,7 +211,8 @@ class PseudocontactShiftTests : public CxxTest::TestSuite {
 		core_init();
 
 		//core_init_with_additional_options("-broker:setup protocols/abinitio/pcs_broker_setup.txt -mute all");
-		core_init_with_additional_options("-broker:setup protocols/abinitio/pcs_broker_setup.txt");
+		core_init_with_additional_options("-broker:setup protocols/abinitio/pcs_broker_setup.txt\
+ -in:file:fasta protocols/abinitio/pose_funcs_test.fasta");
 
 		//We read the setup file with the topologyclaimer framework
 		top_bro_OP_ = new  protocols::topology_broker::TopologyBroker();

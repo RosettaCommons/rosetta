@@ -396,8 +396,6 @@ void TopologyBroker::build_fold_tree( claims::DofClaims& claims, Size nres ) {
 		}
 	}
 
-	tr.Trace << "negotiable jumps: " << negotiable_jumps << std::endl;
-	tr.Trace << "exclusive jumps: " << exclusive_jumps << std::endl;
 	bool bValidTree = false;
 	bool try_again = true;
 

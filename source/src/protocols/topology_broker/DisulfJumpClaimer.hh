@@ -41,6 +41,8 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 
+//C++ Headers
+#include <string>
 
 namespace protocols {
 namespace topology_broker {

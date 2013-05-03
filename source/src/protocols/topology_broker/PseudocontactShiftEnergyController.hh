@@ -49,7 +49,7 @@ class PseudocontactShiftEnergyController : public TopologyClaimer {
 
 	typedef TopologyClaimer Parent;
 public:
-                 	PseudocontactShiftEnergyController(); //for factory
+	PseudocontactShiftEnergyController(); //for factory
 
 	virtual TopologyClaimerOP clone() const {
 		return new PseudocontactShiftEnergyController( *this );
@@ -66,8 +66,7 @@ public:
 
 	virtual bool read_tag( std::string tag, std::istream & );
 
-	virtual void set_defaults(); //eg before reading starts.
-
+	//virtual void set_defaults(); //eg before reading starts.
 
 	virtual void add_mover(
     moves::RandomMover& /* random_mover */,

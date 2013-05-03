@@ -125,10 +125,6 @@ PseudocontactShiftEnergyController::PseudocontactShiftEnergyController()
 	pcs_weight_stage3_ = 10.0;
 	pcs_weight_stage4_ = 10.0;
 }
-void
-PseudocontactShiftEnergyController::set_defaults( ){
-
-}
 
 bool PseudocontactShiftEnergyController::read_tag( std::string tag, std::istream& is ) {
 	using namespace protocols::scoring::methods::pcs;
