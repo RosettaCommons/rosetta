@@ -60,12 +60,11 @@ public:
 
 	//Returns offset of a given label.
 	core::Size offset( std::string const& label ) const {
-		try {
-			return offset_map_.at( label );
-		} catch ( const std::out_of_range& ex ) {
-			throw utility::excn::EXCN_BadInput( "SequenceNumberResolver asked to resolve SequenceClaim label '"
-																					+ label + "', which does not match any SequenceClaim labels." );
-		}
+		OffsetMap::const_iterator p = offset_map_.find(label);
+
+		if( p != offset_map_.end() ) return p->second;
+		else throw utility::excn::EXCN_BadInput( "SequenceNumberResolver asked to resolve SequenceClaim label '"
+												 + label + "', which does not match any SequenceClaim labels." );
 	}
 
 	// returns the map element with the largest offset = SequenceClaim at the end of the sequence
