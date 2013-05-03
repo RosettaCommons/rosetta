@@ -14,6 +14,7 @@ ADD_DEFINITIONS(-DMULTI_THREADED)
 
 SET(COMPILE_FLAGS "-pipe -w -O3 -ffast-math -funroll-loops -finline-functions -finline-limit=20000 -fopenmp")
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -finline-limit=20000")
+SET(CMAKE_SHARED_LINKER_FLAGS "-lgomp")
 SET(CMAKE_EXE_LINKER_FLAGS "-lgomp")
 
 
