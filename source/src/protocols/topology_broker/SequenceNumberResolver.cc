@@ -69,7 +69,7 @@ void SequenceNumberResolver::register_label_offset( std::string const& label, co
 }
 
 core::Size SequenceNumberResolver::find_global_pose_number(std::string const&label, core::Size resid) const {
-	return (offset_map_.at(label) + resid );
+	return offset_map_.find(label)->second + resid ;
 }
 
 core::Size SequenceNumberResolver::find_global_pose_number(std::pair< std::string, core::Size> pos_pair ) const {

@@ -110,28 +110,28 @@ void SymmetryClaimer::symmetry_duplicate( claims::DofClaims& pre_accepted,
     for (Size i=1; i<=symm_data_->get_subunits(); ++i){
         sequence += pose.annotated_sequence();
     }
-    
+
     core::pose::make_pose_from_sequence( pose, sequence,
                                         *( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID )));
-    
+
     //Build symmetry-related virtual residues
     for ( Size i=1; i<=symm_data_->get_num_virtual(); ++i ){
         // create the new residue
         core::chemical::ResidueTypeSet const & rsd_set( pose.conformation().residue(1).residue_type_set() );
         core::conformation::ResidueOP rsd( core::conformation::ResidueFactory::create_residue( rsd_set.name_map( "VRT" ) ) );
-        
-        std::string tag = symm_data_->get_virtual_num_to_id().at( i );
-        
-        core::conformation::symmetry::VirtualCoordinate virt_coord( symm_data_->get_virtual_coordinates().at( tag ) );
+
+        std::string tag = symm_data_->get_virtual_num_to_id().find(i)->second;
+
+        core::conformation::symmetry::VirtualCoordinate virt_coord( symm_data_->get_virtual_coordinates().find(tag)->second );
         rsd->set_xyz( "ORIG", virt_coord.get_origin() );
         rsd->set_xyz( "X", virt_coord.get_x().normalized() + virt_coord.get_origin() );
         rsd->set_xyz( "Y", virt_coord.get_y().normalized() + virt_coord.get_origin() );
         //append it to the end of the monomer i
         pose.append_residue_by_jump( *rsd, pose.total_residue() );
-        
+
         pre_accepted.push_back(new claims::SequenceClaim( this, "X", tag ));
     }
-    
+
 }
 
 }
