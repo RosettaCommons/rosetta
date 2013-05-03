@@ -1,0 +1,9 @@
+README
+
+How to get these scripts to be useful in building a native xcode project for mini.
+
+3) run rosetta_source/xcode/make_project.py all
+
+That should be it! 
+
+The rosetta_static and rosetta_scripts_static targets are a proof of principle showing how one could make static binaries using the same object files as those produced by another project. This would allow one to switch all the other libraries to dynamically loaded libriaries, while still being able to compile static executables. The empty rosetta_static.cc file is part of the rosetta_static build.
