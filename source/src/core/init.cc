@@ -625,8 +625,12 @@ init_score_function_corrections(){
 			option[ corrections::score::lj_hbond_OH_donor_dis ].value( 2.6 );
 		}
 
+		if ( ! option[ corrections::chemical::expand_st_chi2sampling ].user() ) {
+			option[ corrections::chemical::expand_st_chi2sampling ].value( true );
+		}
+
 		if( ! option[ score::hbond_params ].user() ) {
-			option[ score::hbond_params ].value( "sp2_params" );
+			option[ score::hbond_params ].value( "sp2_hackelec_params" );
 		}
 
 		if( ! option[ score::smooth_hack_elec ].user() ) {

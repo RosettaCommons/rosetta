@@ -1922,7 +1922,8 @@ Options = Option_Group( '',
 			" -hbond_measure_sp3acc_BAH_from_hvy"
 			" -lj_hbond_hdis 1.75"
 			" -lj_hbond_OH_donor_dis 2.6"
-			" -hbond_params sp2_params"
+			" -hbond_params sp2_hackelec_params"
+			" -expand_st_chi2sampling"
 			" -smooth_hack_elec"
 			" -hackelec_min_dis 1.6"
 			" -hackelec_r_option false"),
