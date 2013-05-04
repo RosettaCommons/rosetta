@@ -150,6 +150,9 @@ sources = {
 		"InvrotTree",
 	],
 
+	"motif_grafting" : [
+		"MotifGraftMover"
+	],
 	"moves" : [
 		"BackrubMover",
 		"MoverContainer",
@@ -362,6 +365,15 @@ testinputfiles = [
 	"match_enzdes_util/mocktim.cst",
 	"match_enzdes_util/1n1.params",
 	"match_enzdes_util/1ney_invtree_unittest.pdb",
+	"motif_grafting/2nm1_context.pdb",
+	"motif_grafting/2nm1_motif_1fragment.pdb",
+	"motif_grafting/2nm1_motif_2fragment.pdb",
+	"motif_grafting/1zx3a.pdb",
+	"motif_grafting/1zx3a_translated_and_rotated.pdb",
+	"motif_grafting/2nm1_1zx3a_hybrid.pdb",
+	"motif_grafting/1zx3a_as_motif_1fragment.pdb",
+	"motif_grafting/1zx3a_as_motif_2fragment.pdb",
+	"motif_grafting/1zx3a_as_motif_3fragment.pdb",
 	"moves/centroid_typeset.test_in_short.pdb",
 	"moves/fullatom_typeset.test_in_short.pdb",
 	"moves/kinematic_closure/VicinitySamplingKinematicPerturber.u",
