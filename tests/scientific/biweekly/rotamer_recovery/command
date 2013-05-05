@@ -36,7 +36,7 @@ then
         echo To retrieve the structure execute the following:
         echo
         echo "    " cd ${minidir%%source}tests/scientific/biweekly/rotamer_recovery
-        echo "    " svn checkout https://svn.rosettacommons.org/source/trunk/mini.data/tests/scientific/tests/rotamer_recovery/inputs inputs
+        echo "    " svn checkout https://svn.rosettacommons.org/source/trunk/rosetta.data/tests/scientific/tests/rotamer_recovery/inputs inputs
         echo
         echo Then run the test again.
         exit 1      

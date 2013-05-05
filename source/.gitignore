@@ -1,14 +1,4 @@
-.svn
-*.pyc
-*.o
-*.so
 !/external/lib/*/*/*.so
-*.dylib
-*.os
-._*
-*~
-*.swp
-\#*\#
 /build/*
 /bin/*
 /html/

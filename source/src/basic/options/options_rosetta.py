@@ -1935,7 +1935,7 @@ Options = Option_Group( '',
 		  " -lj_hbond_hdis 2.3"
 		  " -lj_hbond_OH_donor_dis 3.4"
 		  " -use_bicubic_interpolation "
-		  " -hbond_params sp2_params"
+		  " -hbond_params sp2_hackelec_params"
 		  " -hb_sp2_chipen "
 		  " -hbond_measure_sp3acc_BAH_from_hby"
 		  " -facts_GBpair_cut 10.0"

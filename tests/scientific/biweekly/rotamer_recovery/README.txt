@@ -25,22 +25,22 @@ ____________________________________________________
 1) Download input structures
 
    cd %(minidir)s/tests/rotamer_recovery
-   svn checkout https://svn.rosettacommons.org/source/trunk/mini.data/tests/scientific/tests/rotamer_recovery/inputs inputs
+   svn checkout https://svn.rosettacommons.org/source/trunk/rosetta.data/tests/scientific/tests/rotamer_recovery/inputs inputs
 
 
 2) Compile Rosetta
 
-   cd mini_base_dir
+   cd main/source
    ./scons.py bin mode=release -j<num_processors>
 
 3) Run test
 
-   cd mini_base_dir/test/scientific
-   ./scientific.py rotamer_recovery -d mini_database_dir
+   cd main/tests/scientific
+   ./scientific.py rotamer_recovery -d main/database
 
 4) Investigate results
 
-   cd mini_base_dir/test/scientific/statistics/rotamer_recovery
+   cd main/tests/scientific/statistics/rotamer_recovery
    -> outputs
 
 ____________________________________________________
