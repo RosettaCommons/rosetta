@@ -200,7 +200,7 @@ rm -r ref/; ./integration.py    # create reference results using only default se
         if os.environ.get('ROSETTA3_DB') is not None and \
                 path.isdir(os.environ.get('ROSETTA3_DB')):
             options.database = os.environ.get('ROSETTA3_DB')
-        else:  options.database = path.join( path.dirname( path.dirname( path.dirname(path.abspath(sys.argv[0])) ) ), 'rosetta_database')
+        else:  options.database = path.join( path.dirname( path.dirname( path.dirname(path.abspath(sys.argv[0])) ) ), 'database')
 
         if not path.isdir( options.database ):
             options.database = path.join( path.expanduser("~"), "rosetta_database")
