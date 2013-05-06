@@ -93,6 +93,10 @@ private: // private functions
 private:
 	/// @brief counter for how many accepts it takes to reach equilibrium at a given temperature
 	core::Size history_;
+	/// @brief mover to be called every eval_period steps
+	protocols::moves::MoverOP periodic_mover_;
+	/// @brief how many steps in between running the periodic mover?
+	core::Size eval_period_;
 	/// @brief a history of accepted scores, used for adapting temperature
 	utility::vector1< utility::vector1< core::Real > > accepted_scores_;
 	/// @brief the initial temperatures, used for adapting temperature

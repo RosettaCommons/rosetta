@@ -58,6 +58,8 @@ GenericSimulatedAnnealerCreator::mover_name()
 GenericSimulatedAnnealer::GenericSimulatedAnnealer():
 	GenericMonteCarloMover(),
 	history_( 5 ),
+	periodic_mover_( NULL ),
+	eval_period_( 0 ),
 	anneal_step_( 1 ),
 	temp_step_( 1 )
 {
@@ -256,8 +258,8 @@ GenericSimulatedAnnealer::calculate_temps()
 		bool cool( true );
 		for ( core::Size i=1; i<=filters().size(); ++i ) {
 			TR << "slope=" << lines[i][1] << ", error=" << lines[i][3] << std::endl;
-			// if any parameter's slope is not within error of zero within one-half SEM, don't cool yet
-			if ( ( lines[i][1] - lines[i][3]/2 ) > 0 ) {
+			// if any parameter's slope is not within error of zero, don't cool yet
+			if ( ( lines[i][1] - lines[i][3] ) > 0 ) {
 				cool = false;
 				TR << "NOT COOLING." << std::endl;
 			}
@@ -347,6 +349,11 @@ GenericSimulatedAnnealer::apply( Pose & pose )
 		} else if ( res == FAILED ) {
 			break;
 		}
+		// if we are ready for the periodic mover, run it
+		if ( periodic_mover_ && eval_period_ && ( i % eval_period_ == 0 ) ) {
+			TR << "Running periodic mover..." << std::endl;
+			periodic_mover_->apply( pose );
+		}
 	}
 
 	// Output final diagnositics, for potential tuning
@@ -416,6 +423,16 @@ GenericSimulatedAnnealer::parse_my_tag( TagPtr const tag,
 {
 	GenericMonteCarloMover::parse_my_tag( tag, data, filters, movers, pose );
 	history_ = tag->getOption< core::Size >( "history", history_ );
+	eval_period_ = tag->getOption< core::Size >( "eval_period", eval_period_ );
+	std::string const mover_name( tag->getOption< std::string >( "periodic_mover", "" ) );
+	if ( mover_name != "" ) {
+		Movers_map::const_iterator find_mover( movers.find( mover_name ) );
+		if ( find_mover == movers.end() ) {
+			TR.Error << "Error! Mover not found in map: " << mover_name << std::endl;
+		}
+		runtime_assert( find_mover != movers.end() );
+		periodic_mover_ = find_mover->second;
+	}
 }
 
 
