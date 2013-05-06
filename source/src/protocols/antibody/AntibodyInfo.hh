@@ -249,6 +249,11 @@ public:
 				bool const & include_nb_sc = false,
 				Real const & nb_dist = 10.0) const;
 	
+	kinematics::MoveMap
+	get_MoveMap_for_AllCDRsSideChains_and_H3backbone(pose::Pose const & pose,
+				bool const & include_nb_sc = false,
+				Real const & nb_dist = 10.0) const;
+
 	/// @brief Add CDR flexibility to a movemap. Uses pose for numbering.
 	void
 	add_CDR_to_MoveMap(pose::Pose const & pose,

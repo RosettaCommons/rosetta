@@ -1420,6 +1420,38 @@ AntibodyInfo::get_MoveMap_for_Loops(pose::Pose const & pose,
 
 	return move_map;
 }
+
+kinematics::MoveMap
+AntibodyInfo::get_MoveMap_for_AllCDRsSideChains_and_H3backbone(pose::Pose const & pose, 
+							    bool const & include_nb_sc , 
+							    Real const & nb_dist ) const{
+
+	kinematics::MoveMap move_map ;
+
+        move_map.clear();
+        move_map.set_chi( false );
+        move_map.set_bb( false );
+        utility::vector1< bool> bb_is_flexible( pose.total_residue(), false );
+        utility::vector1< bool> sc_is_flexible( pose.total_residue(), false );
+
+        TR<<"start: "<<get_CDR_start(h3, pose)<<std::endl;
+        TR<<"end  : "<<get_CDR_end(h3, pose)<<std::endl;
+        for(Size ii=get_CDR_start(h3, pose); ii<=get_CDR_end(h3, pose); ii++){
+            bb_is_flexible[ii] = true;
+            TR<<"Setting Residue "<< ii<<" to be true"<<std::endl;
+        }
+        move_map.set_bb( bb_is_flexible );
+
+        select_loop_residues( pose, *(get_AllCDRs_in_loopsop()), include_nb_sc, sc_is_flexible, nb_dist);
+        move_map.set_chi( sc_is_flexible );
+
+        for( Size ii = 1; ii <= (get_AllCDRs_in_loopsop())->num_loop(); ++ii ){
+            move_map.set_jump( ii, false );
+        }
+
+
+    return move_map;
+}
 	
 void
 AntibodyInfo::add_CDR_to_MoveMap(pose::Pose const & pose,
