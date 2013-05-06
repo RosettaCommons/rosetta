@@ -877,6 +877,11 @@ settings = {
            "version" : [ "12","0" ],
         },
     },
+    "icc, 13.1, linux" : {
+	"override" : {
+	   "version" : [ "13","1" ],
+	},
+    },
     "icc, linux, debug" : {
         "appends" : {
             "flags" : {
