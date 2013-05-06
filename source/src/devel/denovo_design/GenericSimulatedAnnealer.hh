@@ -91,8 +91,6 @@ private: // private functions
 	scale_temperatures( core::Real const temp_factor );
 
 private:
-	/// @brief target acceptance rate
-	core::Real target_acceptance_rate_;
 	/// @brief counter for how many accepts it takes to reach equilibrium at a given temperature
 	core::Size history_;
 	/// @brief a history of accepted scores, used for adapting temperature

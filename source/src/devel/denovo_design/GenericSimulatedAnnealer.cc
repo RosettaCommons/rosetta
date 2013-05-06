@@ -57,7 +57,6 @@ GenericSimulatedAnnealerCreator::mover_name()
 /// @brief default constructor
 GenericSimulatedAnnealer::GenericSimulatedAnnealer():
 	GenericMonteCarloMover(),
-	target_acceptance_rate_( 0.234 ),
 	history_( 5 ),
 	anneal_step_( 1 ),
 	temp_step_( 1 )
@@ -348,27 +347,27 @@ GenericSimulatedAnnealer::apply( Pose & pose )
 		} else if ( res == FAILED ) {
 			break;
 		}
+	}
 
-		/*core::Real const rate( (core::Real)accept_counter() / trial_counter() );
-		core::Real const temp_factor( std::exp( target_acceptance_rate_ - rate ) );
-		TR << "Accepts: " << accept_counter() << "; Trials: " << trial_counter() << "; Rate: " << rate << "; temp_factor: " << temp_factor << std::endl;
-		// if the acceptance rate is above the target rate, reduce the temperature to do simulated annealing
-		if ( rate > target_acceptance_rate_ ) {
-			utility::vector1< core::Real > temps( temperatures() );
-			TR << "New temps= [";
-			for ( core::Size j=1; j<=temps.size(); ++j ) {
-				temps[j] *= temp_factor;
-				TR << " " << temps[j];
-			}
-			TR << " ]" << std::endl;
-			temperatures( temps );
-			}*/
+	// Output final diagnositics, for potential tuning
+	show_scores(TR);
+	show_counters(TR);
+	TR<<"Finished MC. Out of "<<trials<<" "<<accept<<" accepted "<<" and "<<reject<<" rejected."<<std::endl;
+
+  // Recover pose that have the lowest score, or the last accepted pose, as appropriate
+	if ( recover_low() ) {
+		recover_low( pose );
+	} else {
+		if ( last_accepted_pose() ) {
+			pose = *last_accepted_pose();
+		}
 	}
 
 	// reset the genericmontecarlo to use the task factory again next time
 	if ( tf ) {
 		task_factory( tf );
 	}
+
 }// apply
 
 TrialResult
@@ -416,7 +415,6 @@ GenericSimulatedAnnealer::parse_my_tag( TagPtr const tag,
 																				 core::pose::Pose const & pose )
 {
 	GenericMonteCarloMover::parse_my_tag( tag, data, filters, movers, pose );
-	target_acceptance_rate_ = tag->getOption< core::Real >( "acceptance_rate", target_acceptance_rate_ );
 	history_ = tag->getOption< core::Size >( "history", history_ );
 }
 
