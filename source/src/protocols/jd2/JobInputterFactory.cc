@@ -89,12 +89,17 @@ JobInputterFactory::get_new_JobInputter()
 {
 	//initial copy of this code copied at XRW2 by SML+BDW from about SVN:46190 from JobDistributorFactory.cc
 
+
 	if ( basic::options::option[ basic::options::OptionKeys::jd2::pose_input_stream ]() ) {
 		return get_JobInputter_from_string( "PoseInputStreamJobInputter" );
 	}
 
 	if( basic::options::option[ basic::options::OptionKeys::jd2::resource_definition_files ].user() ){
 		return get_JobInputter_from_string("JD2ResourceManagerJobInputter" );
+	}
+
+	if( basic::options::option[ basic::options::OptionKeys::in::file::screening_job_file].user()) {
+		return get_JobInputter_from_string("ScreeningJobInputter");
 	}
 
 	//PDB input block

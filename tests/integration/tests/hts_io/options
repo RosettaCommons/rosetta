@@ -1,0 +1,9 @@
+-in
+	-file
+		-extra_res_fa 000.params 001.params
+		-screening_job_file job.js
+		
+-parser
+	-protocol protocol.xml
+-out
+	-nooutput

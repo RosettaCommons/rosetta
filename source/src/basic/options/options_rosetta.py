@@ -158,6 +158,7 @@ Options = Option_Group( '',
 			Option( 'l', 'FileVector', desc="File(s) containing list(s) of PDB files to process" ), # TODO remove this option or move list to l
 			Option( 'list', 'FileVector', desc="File(s) containing list(s) of PDB files.  PDBs on the same line become one pose" ),
 			Option( 'screening_list','FileVector',desc="Files containing lists of PDB files. all permutations of the files in the list become poses"),
+            Option( 'screening_job_file','File', desc="A JSON file containing groups of ligands and proteins to screen"),
 			Option( 'native', 'File', desc="Native PDB filename"),
 			Option( 'torsion_bin_probs', 'File',
 				desc="File describing probabilities over torsion bins A,B,E,G,O",

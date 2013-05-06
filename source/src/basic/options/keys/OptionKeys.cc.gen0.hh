@@ -50,6 +50,7 @@ namespace in { namespace file { FileVectorOptionKey const s( "in:file:s" );  } }
 namespace in { namespace file { FileVectorOptionKey const l( "in:file:l" );  } }
 namespace in { namespace file { FileVectorOptionKey const list( "in:file:list" );  } }
 namespace in { namespace file { FileVectorOptionKey const screening_list( "in:file:screening_list" );  } }
+namespace in { namespace file { FileOptionKey const screening_job_file( "in:file:screening_job_file" );  } }
 namespace in { namespace file { FileOptionKey const native( "in:file:native" );  } }
 namespace in { namespace file { FileOptionKey const torsion_bin_probs( "in:file:torsion_bin_probs" );  } }
 namespace in { namespace file { FileOptionKey const PCS_frag_cst( "in:file:PCS_frag_cst" );  } }
@@ -698,4 +699,3 @@ namespace jumps { BooleanOptionKey const jumps( "jumps" );  }
 namespace jumps { BooleanOptionKey const evaluate( "jumps:evaluate" );  }
 namespace jumps { FileOptionKey const extra_frags_for_ss( "jumps:extra_frags_for_ss" );  }
 namespace jumps { BooleanOptionKey const fix_chainbreak( "jumps:fix_chainbreak" );  }
-namespace jumps { FileOptionKey const fix_jumps( "jumps:fix_jumps" );  }

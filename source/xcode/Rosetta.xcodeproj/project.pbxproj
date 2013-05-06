@@ -1293,6 +1293,7 @@
 		BD031236DEDF8E248A9AE48E /* PoseInputStreamJobInputter.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9FE71F67665E6026E4FEC0CE /* PoseInputStreamJobInputter.cc */; };
 		BBD69D468135F63A25422E19 /* ScoreMap.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4E142F244C671CD37E98652A /* ScoreMap.cc */; };
 		2D8AFFF1AF2E5EF13B59187A /* ScoreOnlyJobOutputter.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6BCF60E1B087F9B591F0C8CC /* ScoreOnlyJobOutputter.cc */; };
+		497E89B38212FA97AECB0FB2 /* ScreeningJobInputter.cc in Sources */ = {isa = PBXBuildFile; fileRef = 167D972EB75364710CE611ED /* ScreeningJobInputter.cc */; };
 		2C1AA19B533002F7793B625E /* ShuffleJobDistributor.cc in Sources */ = {isa = PBXBuildFile; fileRef = C5E2724C74B5AB4AE3238261 /* ShuffleJobDistributor.cc */; };
 		DEE6BF96B9910EA44DE9413F /* SilentFileJobInputter.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1AD1D58FA5667E53B4B388D6 /* SilentFileJobInputter.cc */; };
 		0AD27FD7A9FA3AA9EA90D4E4 /* SilentFileJobOutputter.cc in Sources */ = {isa = PBXBuildFile; fileRef = BD5FD1039767DB5B82BCB850 /* SilentFileJobOutputter.cc */; };
@@ -2101,6 +2102,7 @@
 		5F08B55DD7F0EE385A790B83 /* ScoreFunctionFeaturesCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = C74298F10F654A5256DCFF7E /* ScoreFunctionFeaturesCreator.cc */; };
 		252EA610FAF75E4077CF65C4 /* ScoreTypeFeatures.cc in Sources */ = {isa = PBXBuildFile; fileRef = AD62E21DC80071ED73C08000 /* ScoreTypeFeatures.cc */; };
 		EF28BE4A36BA2C4697A5D008 /* ScoreTypeFeaturesCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = A124DFC96E4CBE5CC4B9B7BF /* ScoreTypeFeaturesCreator.cc */; };
+		C2BEC8F2A3E579B6416982B6 /* ScreeningFeatures.cc in Sources */ = {isa = PBXBuildFile; fileRef = EDCE5546BDA3D774D8059450 /* ScreeningFeatures.cc */; };
 		C79650FA8E91817AD5556096 /* SecondaryStructureSegmentFeatures.cc in Sources */ = {isa = PBXBuildFile; fileRef = D465D2CC09A64841F667B1F1 /* SecondaryStructureSegmentFeatures.cc */; };
 		D3E13AA85AFDE554B8733C45 /* SecondaryStructureSegmentFeaturesCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = CA2BA52F3BB3CDCD4DADBA95 /* SecondaryStructureSegmentFeaturesCreator.cc */; };
 		D5F8170704D82069CB879994 /* SmotifFeatures.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1FB99CD99700B22231FA8FF9 /* SmotifFeatures.cc */; };
@@ -2653,6 +2655,7 @@
 		35B096CD67DF6D1B8E76B09F /* ScaffoldBuildPoint.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C46364A1CF0047C5676F034 /* ScaffoldBuildPoint.cc */; };
 		D17752EB04393C016AAF0F1C /* UpstreamBuilder.cc in Sources */ = {isa = PBXBuildFile; fileRef = A4DC904F91F8C4FAA1FF0095 /* UpstreamBuilder.cc */; };
 		8A214D1578456890F6255DAF /* UpstreamResTypeGeometry.cc in Sources */ = {isa = PBXBuildFile; fileRef = E0EF02B4F4DAE2F331D61A54 /* UpstreamResTypeGeometry.cc */; };
+		43CC2B723973FC5B43A9043B /* MotifGraftMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 328B0BF5AA579AA3C9844844 /* MotifGraftMover.cc */; };
 		83D3FDC893B33CA99256C2D3 /* motif_hash_stuff.cc in Sources */ = {isa = PBXBuildFile; fileRef = 61124EFB1A62A657FC430A66 /* motif_hash_stuff.cc */; };
 		15C38867D0FA19D8361CD799 /* DockDesignFilterFactory.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1DEA1519C55E93CE13F8BF51 /* DockDesignFilterFactory.cc */; };
 		F991667EE8B5364BB2A0E282 /* ParserJobInputter.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9FA8150A53A9EDF6D8761CCF /* ParserJobInputter.cc */; };
@@ -11201,6 +11204,10 @@
 		012DDCFE682ACA2E631FC19C /* ScoreOnlyJobOutputter.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ScoreOnlyJobOutputter.fwd.hh; path = ../src/protocols/jd2/ScoreOnlyJobOutputter.fwd.hh; sourceTree = SOURCE_ROOT; };
 		4835DB8976683EAD087497BB /* ScoreOnlyJobOutputter.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ScoreOnlyJobOutputter.hh; path = ../src/protocols/jd2/ScoreOnlyJobOutputter.hh; sourceTree = SOURCE_ROOT; };
 		ADE6C460C8309008173264A3 /* ScoreOnlyJobOutputterCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ScoreOnlyJobOutputterCreator.hh; path = ../src/protocols/jd2/ScoreOnlyJobOutputterCreator.hh; sourceTree = SOURCE_ROOT; };
+		167D972EB75364710CE611ED /* ScreeningJobInputter.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScreeningJobInputter.cc; path = ../src/protocols/jd2/ScreeningJobInputter.cc; sourceTree = SOURCE_ROOT; };
+		98A6035AAA040687C935AD8B /* ScreeningJobInputter.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ScreeningJobInputter.fwd.hh; path = ../src/protocols/jd2/ScreeningJobInputter.fwd.hh; sourceTree = SOURCE_ROOT; };
+		B27ED70448C1826F45303B16 /* ScreeningJobInputter.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ScreeningJobInputter.hh; path = ../src/protocols/jd2/ScreeningJobInputter.hh; sourceTree = SOURCE_ROOT; };
+		C7B1BAF7F375095174EF8963 /* ScreeningJobInputterCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ScreeningJobInputterCreator.hh; path = ../src/protocols/jd2/ScreeningJobInputterCreator.hh; sourceTree = SOURCE_ROOT; };
 		C5E2724C74B5AB4AE3238261 /* ShuffleJobDistributor.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ShuffleJobDistributor.cc; path = ../src/protocols/jd2/ShuffleJobDistributor.cc; sourceTree = SOURCE_ROOT; };
 		F44CD2211E16698453DF0147 /* ShuffleJobDistributor.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ShuffleJobDistributor.hh; path = ../src/protocols/jd2/ShuffleJobDistributor.hh; sourceTree = SOURCE_ROOT; };
 		1AD1D58FA5667E53B4B388D6 /* SilentFileJobInputter.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SilentFileJobInputter.cc; path = ../src/protocols/jd2/SilentFileJobInputter.cc; sourceTree = SOURCE_ROOT; };
@@ -13669,6 +13676,9 @@
 		8EFE32CAD4829FA82695D928 /* ScoreTypeFeatures.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ScoreTypeFeatures.hh; path = ../src/protocols/features/ScoreTypeFeatures.hh; sourceTree = SOURCE_ROOT; };
 		A124DFC96E4CBE5CC4B9B7BF /* ScoreTypeFeaturesCreator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScoreTypeFeaturesCreator.cc; path = ../src/protocols/features/ScoreTypeFeaturesCreator.cc; sourceTree = SOURCE_ROOT; };
 		668CAD10AE8D37832581FE82 /* ScoreTypeFeaturesCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ScoreTypeFeaturesCreator.hh; path = ../src/protocols/features/ScoreTypeFeaturesCreator.hh; sourceTree = SOURCE_ROOT; };
+		EDCE5546BDA3D774D8059450 /* ScreeningFeatures.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScreeningFeatures.cc; path = ../src/protocols/features/ScreeningFeatures.cc; sourceTree = SOURCE_ROOT; };
+		01917264128CBD33B9238A2E /* ScreeningFeatures.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ScreeningFeatures.fwd.hh; path = ../src/protocols/features/ScreeningFeatures.fwd.hh; sourceTree = SOURCE_ROOT; };
+		376002EB634F4DCF5A3FFD9E /* ScreeningFeatures.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ScreeningFeatures.hh; path = ../src/protocols/features/ScreeningFeatures.hh; sourceTree = SOURCE_ROOT; };
 		D465D2CC09A64841F667B1F1 /* SecondaryStructureSegmentFeatures.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SecondaryStructureSegmentFeatures.cc; path = ../src/protocols/features/SecondaryStructureSegmentFeatures.cc; sourceTree = SOURCE_ROOT; };
 		8C0657DD865A6023BD621704 /* SecondaryStructureSegmentFeatures.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SecondaryStructureSegmentFeatures.fwd.hh; path = ../src/protocols/features/SecondaryStructureSegmentFeatures.fwd.hh; sourceTree = SOURCE_ROOT; };
 		7C3B2632853AEDB5323B7A27 /* SecondaryStructureSegmentFeatures.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SecondaryStructureSegmentFeatures.hh; path = ../src/protocols/features/SecondaryStructureSegmentFeatures.hh; sourceTree = SOURCE_ROOT; };
@@ -15284,6 +15294,9 @@
 		E0EF02B4F4DAE2F331D61A54 /* UpstreamResTypeGeometry.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = UpstreamResTypeGeometry.cc; path = ../src/protocols/match/upstream/UpstreamResTypeGeometry.cc; sourceTree = SOURCE_ROOT; };
 		1CAEAC88C3A693758BBA9BDE /* UpstreamResTypeGeometry.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = UpstreamResTypeGeometry.fwd.hh; path = ../src/protocols/match/upstream/UpstreamResTypeGeometry.fwd.hh; sourceTree = SOURCE_ROOT; };
 		079701B51CA316B4D2A4F466 /* UpstreamResTypeGeometry.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = UpstreamResTypeGeometry.hh; path = ../src/protocols/match/upstream/UpstreamResTypeGeometry.hh; sourceTree = SOURCE_ROOT; };
+		BF56240378D204AD6E7BDDED /* MotifGraftCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = MotifGraftCreator.hh; path = ../src/protocols/motif_grafting/movers/MotifGraftCreator.hh; sourceTree = SOURCE_ROOT; };
+		328B0BF5AA579AA3C9844844 /* MotifGraftMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = MotifGraftMover.cc; path = ../src/protocols/motif_grafting/movers/MotifGraftMover.cc; sourceTree = SOURCE_ROOT; };
+		E02BA987C2C76E330D675D02 /* MotifGraftMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = MotifGraftMover.hh; path = ../src/protocols/motif_grafting/movers/MotifGraftMover.hh; sourceTree = SOURCE_ROOT; };
 		61124EFB1A62A657FC430A66 /* motif_hash_stuff.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = motif_hash_stuff.cc; path = ../src/protocols/motif_hash/motif_hash_stuff.cc; sourceTree = SOURCE_ROOT; };
 		C43BBE358C62DB34A6CBF65F /* motif_hash_stuff.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = motif_hash_stuff.fwd.hh; path = ../src/protocols/motif_hash/motif_hash_stuff.fwd.hh; sourceTree = SOURCE_ROOT; };
 		8002B8D936FF074D65616BFD /* motif_hash_stuff.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = motif_hash_stuff.hh; path = ../src/protocols/motif_hash/motif_hash_stuff.hh; sourceTree = SOURCE_ROOT; };
@@ -21471,6 +21484,10 @@
 				012DDCFE682ACA2E631FC19C /* ScoreOnlyJobOutputter.fwd.hh */,
 				4835DB8976683EAD087497BB /* ScoreOnlyJobOutputter.hh */,
 				ADE6C460C8309008173264A3 /* ScoreOnlyJobOutputterCreator.hh */,
+				167D972EB75364710CE611ED /* ScreeningJobInputter.cc */,
+				98A6035AAA040687C935AD8B /* ScreeningJobInputter.fwd.hh */,
+				B27ED70448C1826F45303B16 /* ScreeningJobInputter.hh */,
+				C7B1BAF7F375095174EF8963 /* ScreeningJobInputterCreator.hh */,
 				C5E2724C74B5AB4AE3238261 /* ShuffleJobDistributor.cc */,
 				F44CD2211E16698453DF0147 /* ShuffleJobDistributor.hh */,
 				1AD1D58FA5667E53B4B388D6 /* SilentFileJobInputter.cc */,
@@ -24757,6 +24774,9 @@
 				8EFE32CAD4829FA82695D928 /* ScoreTypeFeatures.hh */,
 				A124DFC96E4CBE5CC4B9B7BF /* ScoreTypeFeaturesCreator.cc */,
 				668CAD10AE8D37832581FE82 /* ScoreTypeFeaturesCreator.hh */,
+				EDCE5546BDA3D774D8059450 /* ScreeningFeatures.cc */,
+				01917264128CBD33B9238A2E /* ScreeningFeatures.fwd.hh */,
+				376002EB634F4DCF5A3FFD9E /* ScreeningFeatures.hh */,
 				D465D2CC09A64841F667B1F1 /* SecondaryStructureSegmentFeatures.cc */,
 				8C0657DD865A6023BD621704 /* SecondaryStructureSegmentFeatures.fwd.hh */,
 				7C3B2632853AEDB5323B7A27 /* SecondaryStructureSegmentFeatures.hh */,
@@ -26733,6 +26753,7 @@
 				D8D2ACEA42BB0A86397DD8C4 /* enzdes */,
 				1B5636C3FEA3A14FA677B9FD /* hotspot_hashing */,
 				1277F0D0A63622F8FC9AD3A9 /* match */,
+				83F81198899FF448EDA4607D /* motif_grafting */,
 				CDA1C5547AA86685E0C40759 /* motif_hash */,
 				B4E31826CDBC629B7E079217 /* protein_interface_design */,
 				EE71D5747EE6FAA14BD33625 /* seeded_abinitio */,
@@ -27030,6 +27051,26 @@
 			);
 			name = upstream;
 			path = ../src/protocols/match/upstream/;
+			sourceTree = SOURCE_ROOT;
+		};
+		83F81198899FF448EDA4607D /* motif_grafting */ = {
+			isa = PBXGroup;
+			children = (
+				509592D0C40E37EC87305941 /* movers */,
+			);
+			name = motif_grafting;
+			path = ../src/protocols/motif_grafting/;
+			sourceTree = SOURCE_ROOT;
+		};
+		509592D0C40E37EC87305941 /* movers */ = {
+			isa = PBXGroup;
+			children = (
+				BF56240378D204AD6E7BDDED /* MotifGraftCreator.hh */,
+				328B0BF5AA579AA3C9844844 /* MotifGraftMover.cc */,
+				E02BA987C2C76E330D675D02 /* MotifGraftMover.hh */,
+			);
+			name = movers;
+			path = ../src/protocols/motif_grafting/movers/;
 			sourceTree = SOURCE_ROOT;
 		};
 		CDA1C5547AA86685E0C40759 /* motif_hash */ = {
@@ -29878,6 +29919,7 @@
 				5F08B55DD7F0EE385A790B83 /* ScoreFunctionFeaturesCreator.cc in Sources */,
 				252EA610FAF75E4077CF65C4 /* ScoreTypeFeatures.cc in Sources */,
 				EF28BE4A36BA2C4697A5D008 /* ScoreTypeFeaturesCreator.cc in Sources */,
+				C2BEC8F2A3E579B6416982B6 /* ScreeningFeatures.cc in Sources */,
 				C79650FA8E91817AD5556096 /* SecondaryStructureSegmentFeatures.cc in Sources */,
 				D3E13AA85AFDE554B8733C45 /* SecondaryStructureSegmentFeaturesCreator.cc in Sources */,
 				D5F8170704D82069CB879994 /* SmotifFeatures.cc in Sources */,
@@ -30314,6 +30356,7 @@
 				35B096CD67DF6D1B8E76B09F /* ScaffoldBuildPoint.cc in Sources */,
 				D17752EB04393C016AAF0F1C /* UpstreamBuilder.cc in Sources */,
 				8A214D1578456890F6255DAF /* UpstreamResTypeGeometry.cc in Sources */,
+				43CC2B723973FC5B43A9043B /* MotifGraftMover.cc in Sources */,
 				83D3FDC893B33CA99256C2D3 /* motif_hash_stuff.cc in Sources */,
 				15C38867D0FA19D8361CD799 /* DockDesignFilterFactory.cc in Sources */,
 				F991667EE8B5364BB2A0E282 /* ParserJobInputter.cc in Sources */,
@@ -31816,6 +31859,7 @@
 				BD031236DEDF8E248A9AE48E /* PoseInputStreamJobInputter.cc in Sources */,
 				BBD69D468135F63A25422E19 /* ScoreMap.cc in Sources */,
 				2D8AFFF1AF2E5EF13B59187A /* ScoreOnlyJobOutputter.cc in Sources */,
+				497E89B38212FA97AECB0FB2 /* ScreeningJobInputter.cc in Sources */,
 				2C1AA19B533002F7793B625E /* ShuffleJobDistributor.cc in Sources */,
 				DEE6BF96B9910EA44DE9413F /* SilentFileJobInputter.cc in Sources */,
 				0AD27FD7A9FA3AA9EA90D4E4 /* SilentFileJobOutputter.cc in Sources */,

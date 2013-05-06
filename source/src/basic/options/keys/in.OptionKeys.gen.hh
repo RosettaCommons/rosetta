@@ -55,6 +55,7 @@ namespace in { namespace file { extern FileVectorOptionKey const s; } }
 namespace in { namespace file { extern FileVectorOptionKey const l; } }
 namespace in { namespace file { extern FileVectorOptionKey const list; } }
 namespace in { namespace file { extern FileVectorOptionKey const screening_list; } }
+namespace in { namespace file { extern FileOptionKey const screening_job_file; } }
 namespace in { namespace file { extern FileOptionKey const native; } }
 namespace in { namespace file { extern FileOptionKey const torsion_bin_probs; } }
 namespace in { namespace file { extern FileOptionKey const PCS_frag_cst; } }

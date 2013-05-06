@@ -89,6 +89,8 @@ sources = {
 		"RotamerRecoveryFeaturesCreator",
 		"SaltBridgeFeatures",
 		"SaltBridgeFeaturesCreator",
+		"ScreeningFeatures",
+        "ScreeningFeaturesCreator",
 		"ScoreFunctionFeatures",
 		"ScoreFunctionFeaturesCreator",
 		"ScoreTypeFeatures",

@@ -27,5 +27,6 @@ static JobInputterRegistrator< AtomTreeDiffJobInputterCreator > reg_AtomTreeDiff
 static JobInputterRegistrator< comparative_modeling::ThreadingJobInputterCreator > reg_ThreadingJobInputterCreator;
 static JobInputterRegistrator< features::DatabaseJobInputterCreator > reg_DatabaseJobInputterCreator;
 static JobInputterRegistrator< comparative_modeling::GenericJobInputterCreator > reg_GenericJobInputterCreator;
+static JobInputterRegistrator< ScreeningJobInputterCreator > reg_ScreeningJobInputterCreator;
 
 } //namespace protocols
