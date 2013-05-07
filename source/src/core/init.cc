@@ -199,7 +199,7 @@
 
 #endif
 
-#ifndef __native_client__ 
+#ifndef __native_client__
 #ifndef WIN_PYROSETTA
 	#include <platform/types.hh>
 #endif
@@ -675,9 +675,9 @@ init_score_function_corrections(){
  	if( option[corrections::facts_default]) {
  		// Call all the corrections from -correct
  		option[corrections::correct].value(true);
-		
+
  		/// Below are FACTS specific flags
- 		// Hbond LJ parameters 
+ 		// Hbond LJ parameters
 		if ( ! option[ corrections::score::lj_hbond_hdis ].user() )
 			option[corrections::score::lj_hbond_hdis].value(2.3);
 
@@ -722,7 +722,7 @@ init_score_function_corrections(){
  		if ( ! option[corrections::score::hbond_measure_sp3acc_BAH_from_hvy].user() )
  		option[corrections::score::hbond_measure_sp3acc_BAH_from_hvy].value(true);
  	} // end facts_default
-	
+
 	// set default corrections
 	if( option[corrections::correct]) {
 		// Pair energy
@@ -1074,15 +1074,15 @@ locate_rosetta_database(){
 #endif
 #ifdef WIN32
 			TR << "There is some way to automatically figure out the path to rosetta_database with GetModuleFileName in Windows. This is already set up for linux and mac, its probably just one line to change in core/init.cc" << std::endl;
-			// I think its this -- can someone comment out and compile on Windows?
+			// I think its this -- can someone comment out and compile on Windows? -- rhiju
 			// GetModuleFileName( NULL, path, path_size );
 #endif
 
 			std::string path_string( path );
-			Size found = path_string.find("rosetta_source/"); //This better be in the path -- now part of the standard rosetta3 directory structure!
+			Size found = path_string.find("source/"); // This better be in the path -- now part of the standard rosetta3 directory structure!
 			if ( found != std::string::npos && path_size > 0){
 				std::string rosetta_exe_dir = path_string.substr(0,found);
-				database_path = rosetta_exe_dir + "rosetta_database/";
+				database_path = rosetta_exe_dir + "database/";
 				TR << "Looking for database based on location of executable: " << database_path << std::endl;
 			} else {
 				TR << "Could not determine location of executable." << std::endl;
